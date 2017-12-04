@@ -1,589 +1,4407 @@
 # All asteroid colors (except for Dactyl) are derived from SMASS spectra
 # and converted to RGB values using Matt Wronkiewicz's spectrum2rgb utility
 # that is distributed with the Celestia source package.
+# This database contains 157 asteroids, including 16 asteroids, 19 pairs and 1 triple of asteroids with a common barycenter.
+# Updated by Art Blos, Zemlyanin, Greg Frieger ("Celestia Origin" project).
 
-# A few main belt asteroids . . 
-"1 Ceres:Ceres:A899 OF" "Sol" 
-{ 
-	Class "dwarfplanet" 
-	Texture "asteroid.jpg" 
-	Color [ 1.000 0.945 0.881 ]
-	BlendTexture true
-	Radius 487.5        # 975x909km
-	Oblateness 0.068    # Thomas et al, Nature, 8 Sep 2005
-
-	EllipticalOrbit 
-	{ 
-	Epoch       2452600.5     # 2002 Nov 22 00:00UT 
-	Period            4.60014 
-	SemiMajorAxis     2.7660 
-	Eccentricity      0.0793 
-	Inclination      10.584 
-	AscendingNode    80.483 
-	ArgOfPericenter  74.043 
-	MeanAnomaly     232.067 
-	} 
-
-	UniformRotation
-	{
-	Period         9.074170 # Icarus 2007,188(2):451 
-	Epoch    2449249.91125  # 1993 Sep 19 09:52:12UT 
-	Inclination             11 
-	AscendingNode  		29 
-	MeridianAngle       339.85 
-	}
-
-	Albedo 0.113 
-} 
-
-"2 Pallas:Pallas" "Sol" 
-# Pole and shape from Schmidt et al
-# "Hubble takes a look at Pallas: Shape, Size and Surface"
-# (2008) http://www.lpi.usra.edu/meetings/lpsc2008/pdf/2502.pdf
-{ 
-	Class "asteroid" 
-	Texture "asteroid.jpg" 
-	Color [ 1.000 0.952 0.903 ]
-	BlendTexture true
-	SemiAxes [ 291 278 250 ] 
-
-	EllipticalOrbit 
-	{ 
-	Epoch       2452600.5     # 2002 Nov 22 00:00UT 
-	Period            4.61868 
-	SemiMajorAxis     2.7733 
-	Eccentricity      0.2300 
-	Inclination      34.846 
-	AscendingNode   173.166 
-	ArgOfPericenter 310.423 
-	MeanAnomaly     218.057 
-	} 
-
-	UniformRotation
-	{
-	Period		7.81323264 
-	Inclination	113 
-	AscendingNode	118 
-	MeridianAngle	339 
-	}
-
-	Albedo 0.159 
-} 
-
-"3 Juno:Juno" "Sol"
-{ 
-	Class "asteroid" 
-	Texture "asteroid.jpg" 
-        Color [ 1.000 0.912 0.833 ]
-	BlendTexture true
-	SemiAxes [ 145 120 95 ] 
-
-	EllipticalOrbit 
-	{ 
-	Epoch       2452600.5     # 2002 Nov 22 00:00UT 
-	Period            4.35540 
-	SemiMajorAxis     2.6669 
-	Eccentricity      0.2589 
-	Inclination      12.972 
-	AscendingNode   170.133 
-	ArgOfPericenter 247.948 
-	MeanAnomaly     119.146 
-	} 
-
-	UniformRotation
-	{
-	Period         7.811 
-	Inclination             56 
-	AscendingNode 196 
-	}
-
-	Albedo 0.238 
-} 
-
-"4 Vesta:Vesta" "Sol" 
-{ 
-	Class "asteroid" 
-	Mesh   "vesta.cmod" 
-	Texture "asteroid.jpg" 
-        Color [ 1.000 0.923 0.851 ]
-	BlendTexture true
-	Radius    279 # maximum semi-axis
-	MeshCenter [ 0.77 3.424 -0.554 ]
-
-	InfoURL "http://www.solarviews.com/eng/vesta.htm"
-
-	EllipticalOrbit 
-	{ 
-	Epoch       2452000.5       # 2001 Apr 1 00:00UT 
-	Period            3.62729 
-	SemiMajorAxis     2.3670775 
-	Eccentricity      0.089753 
-	Inclination       7.1346 
-	AscendingNode   103.9510 
-	ArgOfPericenter 149.4585 
-	MeanAnomaly     104.980 
-	} 
-
-	UniformRotation
-	{
-	Period         5.342 
-	Epoch    2450124.90833 # 1996 May 11 09:48UT 
-	Inclination             40 
-	AscendingNode  91 
-	MeridianAngle       325.77 
-	}
-
-	Albedo 0.423 
-} 
-
-
-
-# Some of the asteroids visited by spacecraft
-"951 Gaspra:Gaspra:A913 YA" "Sol"
+"Pallas:2 Pallas" "Sol"
 {
-	Class "asteroid"
-	Mesh "gaspra.cmod"
-	Texture "gaspramosaic.*" # Phil Stooke
-	Color [ 1.000 0.883 0.769 ]
-	BlendTexture true
-	Radius    9.1 # maximum semi-axis
-	MeshCenter [ 1.540 -0.064 -0.118 ]
-
+	Class	"asteroid"
+	Mesh	"pallas.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"pallas.jpg"
+	Radius	275
+	Visible	true
+	Clickable	true
 	EllipticalOrbit
 	{
-	Epoch     2448559.0        # 1991 Oct 29 12:00UT (Galileo encounter)
-	Period          3.2837     # average
-	SemiMajorAxis   2.2096348  # at epoch
-	Eccentricity    0.1738752  # at epoch
-	Inclination     4.0975771  # at epoch
-	AscendingNode   253.445592 # at epoch
-	ArgOfPericenter 129.045896 # at epoch
-	MeanAnomaly     280.769206 # at epoch
+		Epoch	2458000.5  # 2017 Sept 04+
+		Period	4.617990239708
+		SemiMajorAxis	2.773085152812
+		Eccentricity	0.230597410901
+		Inclination	34.837919132331
+		AscendingNode	173.087177425298
+		ArgOfPericenter	309.991558144537
+		MeanAnomaly	291.651362921859
 	}
-
 	UniformRotation
 	{
-	Period         7.042073
-	Inclination             69.28
-	AscendingNode 109.59
-	MeridianAngle        58.865
+		Period	7.8132214
+		Inclination	84
+		AscendingNode	118
+		MeridianAngle	339
 	}
-
-	Albedo 0.1
+	Albedo	0.1587
+	InfoURL	"https://en.wikipedia.org/wiki/2_Pallas"
 }
 
-"243 Ida:Ida:A910 CD" "Sol"
+"Juno (asteroid):3 Juno" "Sol"
 {
-	Class "asteroid"
-	Mesh "ida.cmod"
-	Texture "idamosaic.*" # Phil Stooke
-        Color [ 1.000 0.901 0.815 ]
-	BlendTexture true
-	Radius    28.9 # maximum semi-axis
-	MeshCenter [ -1.424 -0.417 0.115 ]
-
+	Class	"asteroid"
+	Mesh	"juno.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"juno.jpg"
+	Radius	160
+	Visible	true
+	Clickable	true
 	EllipticalOrbit
 	{
-	Epoch	  2449228.0        # 1993 Aug 28 12:00UT (Galileo encounter)
-	Period          4.8417     # mean
-	SemiMajorAxis   2.863731   # at epoch
-	Eccentricity    0.043109   # at epoch
-	Inclination     1.137110   # at epoch
-	AscendingNode   324.586055 # at epoch
-	ArgOfPericenter 113.017101 # at epoch
-        MeanAnomaly     131.594945 # at epoch
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	4.364614795847
+		SemiMajorAxis	2.670700240558908
+		Eccentricity	0.2554482627817375
+		Inclination	12.98166179450518
+		AscendingNode	169.8711811946533
+		ArgOfPericenter	248.4099652667037
+		MeanAnomaly	33.07715332505229
 	}
-
 	UniformRotation
 	{
-	Period         4.633632
-	Inclination	     156.96
-	AscendingNode 352.77
-	MeridianAngle       359.46
+		Period	7.21
+		Inclination	50
+		AscendingNode	196
 	}
-
-	Albedo 0.24
+	Albedo	0.2383
+	InfoURL	"https://en.wikipedia.org/wiki/3_Juno"
 }
 
-"Dactyl:243 Ida I:Ida I:1993 (243) 1" "Sol/Ida"
+"Vesta:4 Vesta" "Sol"
 {
-	# Data for Dactyl taken from: 
-	# Petit et al.: The Long-Term Dynamics of Dactyl's Orbit
-	# (Icarus 1997: 130; 177-197) - linked in the InfoURL
+	Class	"asteroid"
+	Mesh	"vesta.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"vesta.dds"
+	Color	[ 1.000 0.951 0.842 ]
+	BlendTexture	true
+	Radius	286.3
+	Timeline
+	[
+		{
+			Ending	2455758.5  # 2011 Jul 16
+			EllipticalOrbit
+			{
+				Epoch	2455758.5  # 2011 Jul 16+
+				Period	3.62836007583978
+				SemiMajorAxis	2.361210929973734
+				Eccentricity	0.08832831300785485
+				Inclination	7.134624563415957
+				AscendingNode	103.9042950966112
+				ArgOfPericenter	149.8717417341852
+				MeanAnomaly	45.00138131809307
+			}
+			UniformRotation
+			{
+				Period	5.34212766
+				Epoch	2450124.90833  # 1996 Feb 11 09:48
+				Inclination	40
+				AscendingNode	91
+				MeridianAngle	325.77
+			}
+		}
+		{
+			Ending	2456175.5  # 2012 Sept 05
+			SampledTrajectory
+			{
+				Source	"4 Vesta-Dawn.xyzv"
+				DoublePrecision	true
+				Interpolation	"cubic"
+			}
+			UniformRotation
+			{
+				Period	5.34212766
+				Epoch	2450124.90833  # 1996 Feb 11 09:48
+				Inclination	40
+				AscendingNode	91
+				MeridianAngle	325.77
+			}
+		}
+		{
+			EllipticalOrbit
+			{
+				Epoch	2456175.5  # 2012 Sept 05
+				Period	3.63292885584386
+				SemiMajorAxis	2.363192649967952
+				Eccentricity	0.08797741701310743
+				Inclination	7.135761582657627
+				AscendingNode	103.8670723667979
+				ArgOfPericenter	150.4965056887144
+				MeanAnomaly	157.6155423490833
+			}
+			UniformRotation
+			{
+				Period	5.34212766
+				Epoch	2450124.90833  # 1996 Feb 11 09:48
+				Inclination	40
+				AscendingNode	91
+				MeridianAngle	325.77
+			}
+		}
+	]
+	Albedo	0.4228
+	InfoURL	"https://en.wikipedia.org/wiki/4_Vesta"
+}
 
-	InfoURL "http://www.lpl.arizona.edu/~hurfordt/research/papers/Icarus130.pdf"
+AltSurface "Topography" "Sol/4 Vesta"
+{
+	Texture	"vesta-topo.dds"
+}
 
-	Class "asteroid"
-	Texture "asteroid.jpg"
-	# Use the same color as for Ida--uncertain if this is correct
-        Color [ 1.000 0.901 0.815 ]
-	BlendTexture true
-	Mesh "roughsphere.cms"
-	Radius   0.7
+AltSurface "Colorless" "Sol/4 Vesta"
+{
+	Texture	"vesta.dds"
+}
 
+"Astraea:5 Astraea:1969 SE" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"astraea.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"asteroid.jpg"
+	Radius	83.5
+	Visible	true
+	Clickable	true
 	EllipticalOrbit
 	{
-	Epoch	     2449228.2028  # 1993 Aug 28 16:52:05UT
-	Period             0.96534 # stable 5:1 resonant orbit (Petit et al.)
-	SemiMajorAxis     83.5     # stable 5:1 resonant orbit (Petit et al.)
-	Eccentricity       0.13    # stable 5:1 resonant orbit (Petit et al.)
-	LongOfPericenter 310       # stable pericenter at 90:E Ida longitude (Petit et al.)
-	AscendingNode     90       # VERY approximate - chosen to place Dactyl north 
-                                   # of Ida's equator, as seen at time of Galileo encounter
-	Inclination        8       # estimated at 7-9 degrees (Petit et al.)
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	4.129264264179
+		SemiMajorAxis	2.573809010565
+		Eccentricity	0.191135484153
+		Inclination	5.368522063873
+		AscendingNode	141.595567518442
+		ArgOfPericenter	358.928976307537
+		MeanAnomaly	260.189541840981
 	}
-
 	UniformRotation
 	{
-	MeridianAngle   123       # place prime meridian facing Ida
+		Period	16.806
+		Inclination	33
 	}
-
-	Albedo 0.2
+	Albedo	0.274
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=5"
 }
 
-
-"433 Eros:Eros:1898 DQ" "Sol"
+"Hebe:6 Hebe:1947 JB" "Sol"
 {
-	Class "asteroid"
-	Mesh   "eros.cmod"
-	Texture "eros.*"
-	# NormalMap "erosbump2k.jpg"
-        Color [ 1.000 0.880 0.764 ]
-        # The texture is already tinted with the asteroid color
-	#BlendTexture true
-	Radius 16.3 # maximum semi-axis
-	MeshCenter [ -1.262 0.168 -0.164 ]
-
+	Class	"asteroid"
+	Mesh	"hebe.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"asteroid.jpg"
+	Color	[ 1.000 0.895 0.811 ]
+	BlendTexture	true
+	Radius	102.5
+	Visible	true
+	Clickable	true
 	EllipticalOrbit
 	{
-	Epoch       2451171.0      # 1998 Dec 23 12:00UT (NEAR-Shoemaker encounter)
-	Period            1.761    # average
-	SemiMajorAxis     1.458261 # at epoch
-	Eccentricity      0.222885 # at epoch
-	Inclination      10.830143 # at epoch
-	AscendingNode   304.430882 # at epoch
-	ArgOfPericenter 178.613184 # at epoch
-	MeanAnomaly     208.403434 # at epoch
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	3.777201849087
+		SemiMajorAxis	2.425351344822
+		Eccentricity	0.20144904126
+		Inclination	14.748162341569
+		AscendingNode	138.703621828055
+		ArgOfPericenter	239.407929909549
+		MeanAnomaly	29.214242077932
 	}
-
 	UniformRotation
 	{
-	Period                5.270
-	Inclination          78.70
-	AscendingNode 	    107.23
-	MeridianAngle       338.165
+		Period	7.2745
+		Inclination	42
+		AscendingNode	69
 	}
-
-	Albedo 0.16
+	Albedo	0.2679
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=6"
 }
 
-"25143 Itokawa:Itokawa:1998 SF36" "Sol"
+"Iris:7 Iris" "Sol"
 {
-    Class "asteroid"
-
-    Mesh "itokawa.cmod"
-    Radius 0.315
-
-    InfoURL "http://en.wikipedia.org/wiki/25143_Itokawa"
-
-    # Osculating elements from HORIZONS
-    EllipticalOrbit
-    {
-        Epoch             2453625.5 # 2005 Sep 12--Hayabusa arrival
-        Period 	          1.523231392
-        SemiMajorAxis     1.323849003
-        Eccentricity      0.2801215972
-        Inclination       1.622265921
-        AscendingNode    69.09461308
-        ArgOfPericenter 162.7594572
-        MeanAnomaly     310.6795025
-    }
-
-    # Retrograde rotation pole with RA 90.53 and Dec -66.30
-    # From "Pole and global shape of 25143 Itokawa",
-    # Demura et al, Science, 2 Jun 2006
-    BodyFrame { EquatorJ2000 {} }      
-    UniformRotation
-    {
-        Inclination    156.30
-        AscendingNode  180.53
-        Period          12.132
-    }
-
-    Color [ 1 0.96 0.80 ] # Approximation based on natural color images
-    LunarLambert 0.5      # Approximate a dusty surface
-
-    # Align model with Celestia's coordinate system
-#   Orientation [ 90 1 0 0 ]
-    Orientation [ 180 0 1 1 ]
-
-    Albedo 0.53
-}
-
-
-
-# Radar-imaged asteroids
-"4179 Toutatis:Toutatis:1989 AC" "Sol"
-{
-	Class "asteroid"
-	Mesh   "toutatis.cmod"
-	Texture "asteroid.jpg"
-        Color [ 1.000 0.904 0.803 ]
-	BlendTexture true
-	Radius  2.3 # maximum semi-axis
-	MeshCenter [ 0.0313 0.2171 0.0064 ]
-
-	InfoURL "http://echo.jpl.nasa.gov/asteroids/4179_Toutatis/toutatis.html"
-
+	Class	"asteroid"
+	Mesh	"iris.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"asteroid.jpg"
+	Color	[ 1.000 0.903 0.813 ]
+	BlendTexture	true
+	Radius	120
+	Visible	true
+	Clickable	true
 	EllipticalOrbit
 	{
-	Epoch       2452200.5       # 2001 Oct 18 00:00UT
-	Period            3.976715
-	SemiMajorAxis     2.5100537
-	Eccentricity      0.6342274
-	Inclination       0.46959
-	AscendingNode   128.24788
-	ArgOfPericenter 274.78070
-        MeanAnomaly      86.28120
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	3.687177060118
+		SemiMajorAxis	2.386659850432
+		Eccentricity	0.230794473062
+		Inclination	5.522701053639
+		AscendingNode	259.620745112804
+		ArgOfPericenter	145.461261500671
+		MeanAnomaly	72.148648650913
 	}
+	UniformRotation
+	{
+		Period	7.139
+		Inclination	85
+		AscendingNode	110
+	}
+	Albedo	0.2766
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=7"
+}
 
+"Flora:9 Flora" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"flora.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"gaspra.jpg"
+	Radius	68
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	3.26754657121
+		SemiMajorAxis	2.201958126302
+		Eccentricity	0.156337133523
+		Inclination	5.88777142681
+		AscendingNode	110.922321274183
+		ArgOfPericenter	285.466915996966
+		MeanAnomaly	71.838733866775
+	}
+	UniformRotation
+	{
+		Period	12.865
+		Inclination	78
+		AscendingNode	250
+	}
+	Albedo	0.226
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=8"
+}
+
+"Metis (asteroid):9 Metis:1974 QU2" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"metis.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"asteroid.jpg"
+	Radius	111
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	3.686655380408
+		SemiMajorAxis	2.386434727642
+		Eccentricity	0.122290137207
+		Inclination	5.574443831745
+		AscendingNode	68.944752954067
+		ArgOfPericenter	5.868801508668
+		MeanAnomaly	209.685652098233
+	}
+	UniformRotation
+	{
+		Period	5.079
+		Inclination	74
+	}
+	Albedo	0.118
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=9"
+}
+
+"Hygiea:10 Hygiea:A900 GA" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"hygiea.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.000 0.949 0.904 ]
+	BlendTexture	true
+	Radius	265
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2458000.5  # 2017 Sept 04+
+		Period	5.56387566276
+		SemiMajorAxis	3.139878255737
+		Eccentricity	0.112690954914
+		Inclination	3.832012281026
+		AscendingNode	283.218265204903
+		ArgOfPericenter	312.038513009788
+		MeanAnomaly	46.192291358658
+	}
+	UniformRotation
+	{
+		Period	27.63
+		Inclination	60
+		AscendingNode	205
+	}
+	Albedo	0.0717
+	InfoURL	"https://en.wikipedia.org/wiki/10_Hygiea"
+}
+
+"Eunomia:15 Eunomia" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"eunomia.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"asteroid.jpg"
+	Color	[ 1.000 0.908 0.817 ]
+	BlendTexture	true
+	Radius	178.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	4.299118113498
+		SemiMajorAxis	2.643914763022
+		Eccentricity	0.187459416379
+		Inclination	11.738880564302
+		AscendingNode	293.187114720433
+		ArgOfPericenter	97.554182779461
+		MeanAnomaly	277.52951988594
+	}
+	UniformRotation
+	{
+		Period	6.083
+		Inclination	165
+		AscendingNode	85
+	}
+	Albedo	0.248
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=15"
+}
+
+"Psyche:16 Psyche" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"psyche.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"asteroid.jpg"
+	Color	[ 1.000 0.918 0.842 ]
+	BlendTexture	true
+	Radius	107
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2458000.5  # 2017 Sept 04+
+		Period	5.004425931212
+		SemiMajorAxis	2.925706179637
+		Eccentricity	0.134858463479
+		Inclination	3.09753380587
+		AscendingNode	150.263004735697
+		ArgOfPericenter	227.54627620102
+		MeanAnomaly	171.497548601837
+	}
+	UniformRotation
+	{
+		Period	4.196
+		Inclination	95
+		AscendingNode	125
+	}
+	Albedo	0.1203
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=16"
+}
+
+"Lutetia:21 Lutetia" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"lutetia.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"lutetia.jpg"
+	Color	[ 1.000 0.966 0.938 ]
+	BlendTexture	true
+	Radius	60.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2455387.5  # 2010 Jul 10+
+		Period	3.8019400433816
+		SemiMajorAxis	2.435929459338225
+		Eccentricity	0.1628635150749446
+		Inclination	3.063729334850146
+		AscendingNode	80.90023215493108
+		ArgOfPericenter	250.1877248972368
+		MeanAnomaly	230.6845505220987
+	}
+	UniformRotation
+	{
+		Period	8.1655
+		Inclination	96
+		AscendingNode	129
+	}
+	Albedo	0.2212
+	InfoURL	"https://en.wikipedia.org/wiki/21_Lutetia"
+}
+
+"Eugenia:45 Eugenia:1941 BN" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"eugenia.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.000 0.946 0.898 ]
+	BlendTexture	true
+	Radius	152.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2458000.5  # 2017 Sept 04+
+		Period	4.484917855643
+		SemiMajorAxis	2.719553001322
+		Eccentricity	0.083995064986
+		Inclination	6.60400093601
+		AscendingNode	147.671344344275
+		ArgOfPericenter	88.756620020242
+		MeanAnomaly	265.975038609184
+	}
+	UniformRotation
+	{
+		Period	5.69916
+		Inclination	117
+		AscendingNode	214
+	}
+	Albedo	0.045
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=45"
+}
+
+"2004 45 I" "Sol/45 Eugenia"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.000 0.946 0.898 ]
+	BlendTexture	true
+	Radius	2.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2452980.0  # 2003 Dec 06 12:00+
+		Period	1.793
+		SemiMajorAxis	610.59
+		Eccentricity	0.11
+		AscendingNode	206.67
+		ArgOfPericenter	95.0
+		MeanAnomaly	173.0
+	}
+	Albedo	0.045
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00045.html"
+}
+
+"Petit-Prince:45 Eugenia I:Eugenia I:1998 45 I" "Sol/45 Eugenia"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.000 0.946 0.898 ]
+	BlendTexture	true
+	Radius	3.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2452980.0  # 2003 Dec 06 12:00+
+		Period	4.716
+		SemiMajorAxis	1164.42
+		Eccentricity	0.002
+		Inclination	8.0
+		AscendingNode	201.93
+		ArgOfPericenter	138.0
+		MeanAnomaly	5.0
+	}
+	Albedo	0.045
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00045.html"
+}
+
+"Europa (asteroid):52 Europa:1948 LA" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"europa.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"darkasteroid.jpg"
+	Radius	189.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2458000.5  # 2017 Sept 04+
+		Period	5.443678513927
+		SemiMajorAxis	3.094493047815
+		Eccentricity	0.109886572769
+		Inclination	7.47679574141
+		AscendingNode	128.619819522041
+		ArgOfPericenter	343.811840985066
+		MeanAnomaly	128.201582010108
+	}
+	UniformRotation
+	{
+		Period	5.6304
+	}
+	Albedo	0.057
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=52"
+}
+
+"Sylvia:87 Sylvia:A909 GA" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"sylvia.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.000 0.937 0.880 ]
+	BlendTexture	true
+	Radius	192
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2458000.5  # 2017 Sept 04+
+		Period	6.495430988052
+		SemiMajorAxis	3.481233710965
+		Eccentricity	0.092565751846
+		Inclination	10.876609632171
+		AscendingNode	73.050545955994
+		ArgOfPericenter	263.529065106678
+		MeanAnomaly	1.865052575291
+	}
+	UniformRotation
+	{
+		Period	5.18364
+		Inclination	29.1
+		AscendingNode	161
+	}
+	Albedo	0.046
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=87"
+}
+
+"Remus:87 Sylvia II:Sylvia II:2004 87 I" "Sol/87 Sylvia"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.000 0.937 0.880 ]
+	BlendTexture	true
+	Radius	5.3
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2453249.5  # 2004 Sept 01+
+		Period	1.373
+		SemiMajorAxis	701.64
+		Eccentricity	0.093
+		Inclination	2.0
+		AscendingNode	194.28
+		ArgOfPericenter	135.0
+		MeanAnomaly	281.0
+	}
+	Albedo	0.046
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00087.html"
+}
+
+"Romulus:87 Sylvia I:Sylvia I:2001 87 I" "Sol/87 Sylvia"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.000 0.937 0.880 ]
+	BlendTexture	true
+	Radius	5.4
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2453249.5  # 2004 Sept 01+
+		Period	3.654
+		SemiMajorAxis	1351.35
+		Eccentricity	0.0069
+		Inclination	1.7
+		AscendingNode	193.17
+		ArgOfPericenter	175.0
+		MeanAnomaly	167.0
+	}
+	Albedo	0.046
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00087.html"
+}
+
+"Antiope System" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	80
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	5.59365993354
+		SemiMajorAxis	3.15107377853
+		Eccentricity	0.164589059356
+		Inclination	2.206859156361
+		AscendingNode	69.993894189384
+		ArgOfPericenter	244.636682741381
+		MeanAnomaly	223.277548591198
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00090.html"
+}
+
+"Antiope:90 Antiope:1952 BK2" "Sol/Antiope System"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"antiope.dds"
+	SemiAxes	[ 46.5 43.5 41.8 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.6877125
+		SemiMajorAxis	80
+		Eccentricity	0.003
+		Inclination	63.7
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	16.5051
+		Inclination	63.7
+	}
+	Albedo	0.058
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=90"
+}
+
+"2000 90 I" "Sol/Antiope System"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"2000 90 I.dds"
+	SemiAxes	[ 44.7 41.4 39.8 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.6877125
+		SemiMajorAxis	91
+		Eccentricity	0.003
+		Inclination	63.7
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	16.5051
+		Inclination	63.7
+	}
+	Albedo	0.058
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00090.html"
+}
+
+"Hilda:153 Hilda:1935 GD" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	85.315
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	7.926340758798
+		SemiMajorAxis	3.975359032398
+		Eccentricity	0.139078841613
+		Inclination	7.826419387823
+		AscendingNode	228.17877509918
+		ArgOfPericenter	38.593762931213
+		MeanAnomaly	337.145763349056
+	}
+	UniformRotation
+	{
+		Period	5.9587
+	}
+	Albedo	0.0618
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=153"
+}
+
+"Ismene:190 Ismene:1947 QJ:1951 DB" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	79.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	7.979902830253
+		SemiMajorAxis	3.993247856386
+		Eccentricity	0.166155707784
+		Inclination	6.172971779004
+		AscendingNode	175.469693585656
+		ArgOfPericenter	272.069379851327
+		MeanAnomaly	60.035322857819
+	}
+	UniformRotation
+	{
+		Period	6.52
+	}
+	Albedo	0.066
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=190"
+}
+
+"Kleopatra:216 Kleopatra:A905 OA:A910 RA" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"kleopatra.cmod"
+	MeshCenter	[ -3.049 2.379 1.429 ]
+	Texture	"kleopatra.jpg"
+	Radius	108.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+++
+		Period	4.6760998931657
+		SemiMajorAxis	2.796299716258806
+		Eccentricity	0.2495816447956427
+		Inclination	13.09911969964037
+		AscendingNode	215.3998678859999
+		ArgOfPericenter	180.3016146247538
+		MeanAnomaly	92.72228400219782
+	}
+	UniformRotation
+	{
+		Period	5.385277
+		Inclination	63
+		AscendingNode	162
+	}
+	Albedo	0.1164
+	InfoURL	"https://en.wikipedia.org/wiki/216_Kleopatra"
+}
+
+"Cleoselene:216 Kleopatra II:Kleopatra II:2008 216 II" "Sol/216 Kleopatra"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Texture	"kleopatra.jpg"
+	Radius	3.45
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	1.24
+		SemiMajorAxis	454
+		Eccentricity	0.0
+	}
+	Albedo	0.1164
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00216.html"
+}
+
+"Alexhelios:216 Kleopatra I:Kleopatra I:2008 216 I" "Sol/216 Kleopatra"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"kleopatra.jpg"
+	Radius	4.45
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	2.32
+		SemiMajorAxis	678
+		Eccentricity	0.0
+	}
+	Albedo	0.1164
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00216.html"
+}
+
+"Ida:243 Ida:1988 DB1:A910 CD" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"ida.cmod"
+	MeshCenter	[ -1.424 -0.417 0.115 ]
+	Texture	"ida.jpg"
+	Radius	29.9
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2449227.5  # 1993 Aug 28+
+		Period	4.8462685261763
+		SemiMajorAxis	2.863735135636234
+		Eccentricity	0.04310710055698948
+		Inclination	1.137110894899130
+		AscendingNode	324.5866431229683
+		ArgOfPericenter	113.0166231618901
+		MeanAnomaly	131.4933081625327
+	}
+	UniformRotation
+	{
+		Period	4.633632
+		Inclination	156.96
+		AscendingNode	352.77
+		MeridianAngle	359.46
+	}
+	Albedo	0.2383
+	InfoURL	"https://en.wikipedia.org/wiki/243_Ida"
+}
+
+AltSurface "Limit of knowledge" "Sol/243 Ida"
+{
+	Texture	"idamosaic.jpg"
+	Color	[ 0.68 0.61 0.52 ]
+	BlendTexture	true
+}
+
+"Dactyl:243 Ida I:Ida I:1993 243 I" "Sol/243 Ida"
+{
+	Class	"moon"
+	Mesh	"dactyl.cmod"
+	Texture	"dactyl.jpg"
+	Radius	0.8
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2449228.2028  # 1993 Aug 28 16:52:02+
+		Period	0.96534
+		SemiMajorAxis	83.5
+		Eccentricity	0.13
+		Inclination	8.0
+		AscendingNode	90.0
+		LongOfPericenter	310.0
+	}
+	UniformRotation
+	{
+		MeridianAngle	123
+	}
+	Albedo	0.21
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00243.html"
+}
+
+"Mathilde:253 Mathilde:1949 OL1:A915 TN" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"mathilde.cmod"
+	Texture	"mathilde.jpg"
+	Radius	33
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	4.305465902303
+		SemiMajorAxis	2.646516674188
+		Eccentricity	0.265866219776
+		Inclination	6.74113015438
+		AscendingNode	179.606846249382
+		ArgOfPericenter	157.277981479241
+		MeanAnomaly	33.339667571414
+	}
+	UniformRotation
+	{
+		Period	417.7
+	}
+	Albedo	0.0436
+	InfoURL	"https://en.wikipedia.org/wiki/253_Mathilde"
+}
+
+AltSurface "Limit of knowledge" "Sol/253 Mathilde"
+{
+	Texture	"mathildemosaic.jpg"
+	Color	[ 0.58 0.57 0.59 ]
+	BlendTexture	true
+}
+
+"Eros:433 Eros:1898 DQ:1956 PC" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"eros.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Radius	17.2
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	1.7604630749018
+		SemiMajorAxis	1.457960681567809
+		Eccentricity	0.2226338073109678
+		Inclination	10.8289993701657
+		AscendingNode	304.3345371635228
+		ArgOfPericenter	178.7956772122569
+		MeanAnomaly	231.4013672840452
+	}
+	UniformRotation
+	{
+		Period	5.270
+		Inclination	78.70
+		AscendingNode	107.23
+		MeridianAngle	338.165
+	}
+	Albedo	0.25
+	InfoURL	"https://en.wikipedia.org/wiki/433_Eros"
+}
+
+"Davida:511 Davida:1903 LU" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"davida.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"darkasteroid.jpg"
+	Radius	178.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	5.632188969749
+		SemiMajorAxis	3.165526913718
+		Eccentricity	0.188375716391
+		Inclination	15.941927378198
+		AscendingNode	107.629345740772
+		ArgOfPericenter	337.935911348735
+		MeanAnomaly	53.159739217522
+	}
+	UniformRotation
+	{
+		Period	5.1297
+	}
+	Albedo	0.076
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=511"
+}
+
+"Achilles:588 Achilles:1906 TG" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	67.735
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	11.867840956566
+		SemiMajorAxis	5.202862439479
+		Eccentricity	0.147661803422
+		Inclination	10.315228901499
+		AscendingNode	316.579720740196
+		ArgOfPericenter	133.423616224521
+		MeanAnomaly	105.500594025022
+	}
+	UniformRotation
+	{
+		Period	7.306
+	}
+	Albedo	0.0328
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=588"
+}
+
+"Patroclus-Menoetius" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	294
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	11.91826662694
+		SemiMajorAxis	5.217589767847
+		Eccentricity	0.139284878993
+		Inclination	22.049245950923
+		AscendingNode	44.363959282959
+		ArgOfPericenter	308.482775981466
+		MeanAnomaly	70.608674103869
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00617.html"
+}
+
+"Patroclus:617 Patroclus:1906 VY:1941 XC:1962 NB" "Sol/Patroclus-Menoetius"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"patroclus.dds"
+	Radius	53
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	4.283
+		SemiMajorAxis	300
+		Eccentricity	0.02
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	103.02
+	}
+	Albedo	0.047
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=617"
+}
+
+"Menoetius:617 Patroclus I:Patroclus I:2001 617 I" "Sol/Patroclus-Menoetius"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"menoetius.dds"
+	Radius	49
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	4.283
+		SemiMajorAxis	380
+		Eccentricity	0.02
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	103.02
+	}
+	Albedo	0.047
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00617.html"
+}
+
+"Hektor:624 Hektor:1907 XM:1948 VD" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"hektor.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.885 0.782 ]
+	BlendTexture	true
+	Radius	208
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	12.028762030161
+		SemiMajorAxis	5.249788661969
+		Eccentricity	0.024404703413
+		Inclination	18.169013725832
+		AscendingNode	342.809042997472
+		ArgOfPericenter	182.146707721216
+		MeanAnomaly	40.849551772658
+	}
+	UniformRotation
+	{
+		Period	6.924
+	}
+	Albedo	0.025
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=624"
+}
+
+"Skamandrios:624 Hektor I:Hektor I:2006 624 I" "Sol/624 Hektor"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.885 0.782 ]
+	BlendTexture	true
+	Radius	6
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	2.965079
+		SemiMajorAxis	957.5
+		Eccentricity	0.31
+	}
+	Albedo	0.025
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-00624.html"
+}
+
+
+
+"Interamnia:704 Interamnia:1910 KU:1952 MW" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"darkasteroid.jpg"
+	SemiAxes	[ 175.15 151.8 151.8 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	5.34592027982
+		SemiMajorAxis	3.057333750327
+		Eccentricity	0.154129777663
+		Inclination	17.309122497215
+		AscendingNode	280.303711958403
+		ArgOfPericenter	95.350965380575
+		MeanAnomaly	165.286412928062
+	}
+	UniformRotation
+	{
+		Period	8.727
+	}
+	Albedo	0.0742
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=704"
+}
+
+"Gaspra:951 Gaspra:1916 S45:1955 MG1:A913 YA" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"gaspra.cmod"
+	MeshCenter	[ 1.540 -0.064 -0.118 ]
+	Texture	"gaspra.jpg"
+	Radius	9.1
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2448558.5  # 1991 Oct 29+
+		Period	3.2846479784353
+		SemiMajorAxis	2.209634387508869
+		Eccentricity	0.1738754270123919
+		Inclination	4.097577988971894
+		AscendingNode	253.4454444531708
+		ArgOfPericenter	129.0460702731027
+		MeanAnomaly	280.6191587386546
+	}
+	UniformRotation
+	{
+		Period	7.042073
+		Inclination	69.28
+		AscendingNode	109.59
+		MeridianAngle	58.865
+	}
+	Albedo	0.22
+	InfoURL	"https://en.wikipedia.org/wiki/951_Gaspra"
+}
+
+AltSurface "Limit of knowledge" "Sol/951 Gaspra"
+{
+	Texture	"gaspramosaic.jpg"
+	Color	[ 0.85 0.71 0.56 ]
+	BlendTexture	true
+}
+
+AltSurface "Geology" "Sol/951 Gaspra"
+{
+	Texture	"gaspra-geol.jpg"
+}
+
+
+"Gunnie:961 Gunnie:1921 KM:1930 XT:1968 HO" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	18.91
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	4.417681554898
+		SemiMajorAxis	2.692304247826
+		Eccentricity	0.092581675338
+		Inclination	10.987253982717
+		AscendingNode	26.683050333583
+		ArgOfPericenter	284.174011994939
+		MeanAnomaly	97.165941246661
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.0373
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=961"
+}
+
+"Tama System" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	3.293417138307
+		SemiMajorAxis	2.213565407571
+		Eccentricity	0.127473217059
+		Inclination	3.726746353846
+		AscendingNode	71.496807383774
+		ArgOfPericenter	354.300632459367
+		MeanAnomaly	143.620875027993
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-01089.html"
+}
+
+"Tama:1089 Tama:1927 WB:1930 ST:1952 HE4:A894 VA:A904 VD:A919 HA" "Sol/Tama System"
+{
+	Class	"asteroid"
+	Mesh	"tama.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"gaspra.jpg"
+	Radius	5.35
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.6852
+		SemiMajorAxis	5
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	16.4448
+	}
+	Albedo	0.216
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=1089"
+}
+
+"2003 1089 I" "Sol/Tama System"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"gaspra.jpg"
+	Radius	3.665
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.6852
+		SemiMajorAxis	15.7
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	16.4448
+	}
+	Albedo	0.216
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-01089.html"
+}
+
+"Anchises:1173 Anchises:1930 UB" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	63.135
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	12.209352677267
+		SemiMajorAxis	5.302202267107
+		Eccentricity	0.137136477799
+		Inclination	6.91533000201
+		AscendingNode	283.904693301186
+		ArgOfPericenter	41.089809185171
+		MeanAnomaly	86.757043268947
+	}
+	UniformRotation
+	{
+		Period	11.6
+	}
+	Albedo	0.0308
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=1173"
+}
+
+"Celestia:1252 Celestia:1933 DG:1934 PA1" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Radius	8.695
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	4.4246175943383
+		SemiMajorAxis	2.695121569548736
+		Eccentricity	0.2071987011077538
+		Inclination	33.84405530038728
+		AscendingNode	140.9352174139787
+		ArgOfPericenter	63.64036103939761
+		MeanAnomaly	140.4909989674621
+	}
+	UniformRotation
+	{
+		Period	10.636
+	}
+	Albedo	0.2573
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=1252"
+}
+
+"Icarus:1566 Icarus:1949 MA" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Radius	0.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	1.11915916039
+		SemiMajorAxis	1.077926381267
+		Eccentricity	0.82696079431
+		Inclination	22.827863100233
+		AscendingNode	88.024449077533
+		ArgOfPericenter	31.358231870571
+		MeanAnomaly	231.089639388324
+	}
+	UniformRotation
+	{
+		Period	2.273
+	}
+	Albedo	0.51
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=1566"
+}
+
+"Geographos:1620 Geographos:1951 RA:1983 CY3" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"geographos.cmod"
+	MeshCenter	[ 0.154 -0.002 -0.026 ]
+	Texture	"geographos.jpg"
+	Radius	2.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	1.3901518471382
+		SemiMajorAxis	1.245573498070266
+		Eccentricity	0.335430907784686
+		Inclination	13.33763553912958
+		AscendingNode	337.2193489353145
+		ArgOfPericenter	276.8688555134938
+		MeanAnomaly	256.826134483741
+	}
+	UniformRotation
+	{
+		Period	5.22204
+		Inclination	136
+		AscendingNode	145
+	}
+	Albedo	0.3258
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=1620"
+}
+
+"Shaposhnikov:1902 Shaposhnikov:1972 HU:1940 GK:1941 MC:1950 TD4:1951 WY1:1951 YD:1958 TP1:1958 VB:1959 XA:1972 JA" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"shaposhnikov.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"darkasteroid.jpg"
+	Radius	41.722
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2458000.5  # 2017 Sept 04+
+		Period	7.895807110464
+		SemiMajorAxis	3.9651432819
+		Eccentricity	0.221888715591
+		Inclination	12.495448260173
+		AscendingNode	59.315313891276
+		ArgOfPericenter	268.15571753972
+		MeanAnomaly	186.17414682274
+	}
+	UniformRotation
+	{
+		Period	21.2
+	}
+	Albedo	0.04
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=1902"
+}
+
+"Chiron:2060 Chiron:1977 UB:95P" "Sol"  # Classified and as a comet
+{
+	Class	"asteroid"
+	# Class	"comet"
+	Mesh	"roughsphere.cmod"
+	Texture	"comet.jpg"
+	Radius	83
+	OrbitColor	[ 0.611765 0.317647 0.12549 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	50.367656524406
+		SemiMajorAxis	13.63836664794301
+		Eccentricity	0.3820988962489677
+		Inclination	6.93836227190589
+		AscendingNode	209.2780463186957
+		ArgOfPericenter	339.3496505871891
+		MeanAnomaly	134.5261255874151
+	}
+	Rings
+	{
+		Inner	291
+		Outer	313
+		Texture	"centaur-rings.png"
+	}
+	UniformRotation
+	{
+		Period	5.918 
+	}
+	Albedo	0.15
+	InfoURL	"https://en.wikipedia.org/wiki/2060_Chiron"
+}
+
+"Bacchus:2063 Bacchus:1977 HB" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"bacchus.cmod"
+	MeshCenter	[ -0.00936 -0.00610 0.00289 ]
+	Texture	"bacchus.jpg"
+	Radius	1.3
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	1.1189823567767
+		SemiMajorAxis	1.077812851809965
+		Eccentricity	0.3493591230032135
+		Inclination	9.432425275473552
+		AscendingNode	33.1108977627244
+		ArgOfPericenter	55.29954702156508
+		MeanAnomaly	312.4660429303114
+	}
+	UniformRotation
+	{
+		Period	14.904
+		Inclination	116
+		AscendingNode	114
+	}
+	Albedo	0.56
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=2063"
+}
+
+"Litva:2577 Litva:1975 EE3:1934 VY:1954 JD:1976 SA2" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Radius	2
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+++
+		Period	2.627786017403
+		SemiMajorAxis	1.904237865355
+		Eccentricity	0.137859443067
+		Inclination	22.909225733024
+		AscendingNode	182.607652241289
+		ArgOfPericenter	283.948461181
+		MeanAnomaly	101.624948684902
+	}
+	UniformRotation
+	{
+		Period	2.813
+	}
+	Albedo	0.1
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=2577"
+}
+
+"2009 2577 I" "Sol/2577 Litva"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	Radius	0.7
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	1.495
+		SemiMajorAxis	21
+	}
+	UniformRotation
+	{
+		Period	5.6842
+	}
+	Albedo	0.1
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-02577.html"
+}
+
+"2012 2577 I" "Sol/2577 Litva"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Radius	0.6
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	214
+		SemiMajorAxis	378
+	}
+	Albedo	0.1
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-02577.html"
+}
+
+"Masursky:2685 Masursky:1981 JN:1950 VO:1973 QF:1975 XJ5:1977 KU" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	8.75
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2451566.5  # 2000 Jan 23+
+		Period	4.1207208620348
+		SemiMajorAxis	2.570257663638510
+		Eccentricity	0.1113734785392097
+		Inclination	12.13354852982020
+		AscendingNode	215.4673461045547
+		ArgOfPericenter	288.2458889872455
+		MeanAnomaly	266.9228460828900
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.085
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=2685"
+}
+
+"Steins:2867 Steins:1969 VC:1954 QL:1979 FJ4:1980 VV1:1980 WB" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"steins.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"steins.jpg"
+	Radius	3.335
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2454714.5  # 2008 Sept 05+
+		Period	3.6332341337077
+		SemiMajorAxis	2.363325035403005
+		Eccentricity	0.1462213379829717
+		Inclination	9.944941616831395
+		AscendingNode	55.52931056779465
+		ArgOfPericenter	250.5168619972865
+		MeanAnomaly	317.3097878957633
+	}
+	UniformRotation
+	{
+		Period	6.049
+		Inclination	169.5
+	}
+	Albedo	0.34
+	InfoURL	"https://en.wikipedia.org/wiki/2867_Steins"
+}
+
+"Eurybates:3548 Eurybates:1973 SO:1954 CB:1957 JX:1978 EE5:1985 TZ" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	36.07
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	11.80604271069
+		SemiMajorAxis	5.184785157375
+		Eccentricity	0.089953674295
+		Inclination	8.067543696809
+		AscendingNode	43.570147966403
+		ArgOfPericenter	28.009969515962
+		MeanAnomaly	136.977745269635
+	}
+	UniformRotation
+	{
+		Period	8.711
+	}
+	Albedo	0.0538
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=3548"
+}
+
+"Cruithne:3753 Cruithne:1986 TO:1983 UH" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	2.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	0.996543327812
+		SemiMajorAxis	0.997681660382
+		Eccentricity	0.514873364462
+		Inclination	19.807604746548
+		AscendingNode	126.244999815522
+		ArgOfPericenter	43.812001748101
+		MeanAnomaly	348.458971732306
+	}
+	UniformRotation
+	{
+		Period	27.3099
+	}
+	Albedo	0.04
+	InfoURL	"https://en.wikipedia.org/wiki/3753_Cruithne"
+}
+
+"Toutatis:4179 Toutatis:1989 AC:1934 CT" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"toutatis.cmod"
+	MeshCenter	[ 0.0313 0.2171 0.0064 ]
+	Texture	"toutatis.jpg"
+	Radius	2.13
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	4.0335954783319
+		SemiMajorAxis	2.533899735306762
+		Eccentricity	0.6296101756201973
+		Inclination	0.4471200287566686
+		AscendingNode	124.3647618253029
+		ArgOfPericenter	278.7510751311503
+		MeanAnomaly	184.1319033839458
+	}
 	PrecessingRotation
 	{
-	Period  129.6         # 5.41 days
-	Inclination       145
-	PrecessionPeriod  -0.0201        # 7.35 day period
+		Period	176
+		Inclination	145
+		PrecessionPeriod	-0.0201
 	}
-
-	Albedo 0.16
+	Albedo	0.16
+	InfoURL	"https://en.wikipedia.org/wiki/4179_Toutatis"
 }
 
-"1620 Geographos:Geographos:1951 RA" "Sol"
+"Castalia:4769 Castalia:1989 PB" "Sol"
 {
-	Class "asteroid"
-	Mesh   "geographos.cmod"
-	Texture "asteroid.jpg"
-        Color [ 1.000 0.901 0.802 ]
-	BlendTexture true
-	Radius  2.53 # maximum semi-axis
-	MeshCenter [ 0.154 -0.002 -0.026 ]
-
-	InfoURL "http://www.solarviews.com/eng/geograph.htm"
-
+	Class	"asteroid"
+	Mesh	"castalia.cmod"
+	MeshCenter	[ -0.0456 -0.0347 -0.0178 ]
+	Texture	"castalia.jpg"
+	Radius	0.9
+	Visible	true
+	Clickable	true
 	EllipticalOrbit
 	{
-	Epoch       2450800.5    # 1997 Dec 18 00:00UT
-	Period            1.39 
-	SemiMajorAxis     1.2455
-	Eccentricity      0.3354
-	Inclination      13.34
-	AscendingNode   337.352
-	ArgOfPericenter 276.756
-        MeanAnomaly     180.595
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	1.0964554311904
+		SemiMajorAxis	1.06329846579985
+		Eccentricity	0.4831758779219762
+		Inclination	8.886375314583967
+		AscendingNode	325.5963169809532
+		ArgOfPericenter	121.3573923850026
+		MeanAnomaly	327.6374077005201
 	}
-
 	UniformRotation
 	{
-	Period         5.223 
-	Inclination            136 
-	AscendingNode 145 
+		Period	4.095
+		Inclination	146
+		AscendingNode	325
 	}
-
-	Albedo 0.326 
+	Albedo	0.1
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=4769"
 }
 
-"216 Kleopatra:Kleopatra:A905 OA" "Sol"
+"Eureka:5261 Eureka:1990 MB" "Sol"
 {
-	Class "asteroid"
-	Mesh   "kleopatra.cmod"
-	Texture "asteroid.jpg"
-        Color [ 1.000 0.932 0.888 ]
-	BlendTexture true
-	Radius  110 # maximum semi-axis
-	MeshCenter [ -3.049 2.379 1.429 ]
-
-	InfoURL "http://echo.jpl.nasa.gov/~ostro/kle/index.html" 
-
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Radius	0.595
+	Visible	true
+	Clickable	true
 	EllipticalOrbit
 	{
-	Epoch       2450800.5    # 1997 Dec 12 00:00UT
-	Period            4.67
-	SemiMajorAxis     2.791
-	Eccentricity      0.2531
-	Inclination      13.138
-	AscendingNode   215.699
-	ArgOfPericenter 179.350
-        MeanAnomaly     225.804
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	1.880555238438
+		SemiMajorAxis	1.523533220033
+		Eccentricity	0.06485967901
+		Inclination	20.280350684053
+		AscendingNode	245.062271504151
+		ArgOfPericenter	95.470351542616
+		MeanAnomaly	295.624269390609
 	}
-
 	UniformRotation
 	{
-	Period         5.385
-	Inclination             63 
-	AscendingNode 162    
+		Period	2.6902
 	}
+	Albedo	0.39
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=5261"
+}
 
-	Albedo 0.16
-	# Class M
+"2011 5261 I" "Sol/5261 Eureka"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	Radius	0.23
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.7054
+		SemiMajorAxis	2.1
+	}
+	Albedo	0.39
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-05261.html"
+}
 
+"Annefrank:5535 Annefrank:1942 EM:1978 EK6:1986 TV14:1991 BO2" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"annefrank.cmod"
+	Texture	"asteroid.jpg"
+	Radius	3.3
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	3.290528442882
+		SemiMajorAxis	2.212270855212
+		Eccentricity	0.063675909128
+		Inclination	4.247525254277
+		AscendingNode	120.649639544706
+		ArgOfPericenter	8.748802523881
+		MeanAnomaly	83.932456492748
+	}
+	UniformRotation
+	{
+		Period	15.12
+	}
+	Albedo	0.25
+	InfoURL	"https://en.wikipedia.org/wiki/5535_Annefrank"
+}
+
+"Golevka:6489 Golevka:1991 JX" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"golevka.cmod"
+	MeshCenter	[ -0.0289 -0.0111 -0.0331 ]
+	Texture	"golevka.jpg"
+	Radius	0.265
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2451986.5  # 2001 Mar 18+
+		Period	3.9821799646425
+		SemiMajorAxis	2.512320953350836
+		Eccentricity	0.6009767835157114
+		Inclination	2.287528857325901
+		AscendingNode	212.1865625269534
+		ArgOfPericenter	65.22830030999425
+		MeanAnomaly	156.4488038691053
+	}
+	UniformRotation
+	{
+		Period	6.0289
+		Inclination	135
+		AscendingNode	292
+	}
+	Albedo	0.151
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=6489"
+}
+
+"Asbolus:8405 Asbolus:1995 GO" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Radius	33
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	76.462645585739
+		SemiMajorAxis	18.014715675965
+		Eccentricity	0.619029003148
+		Inclination	17.63490283818
+		AscendingNode	6.120119730796
+		ArgOfPericenter	290.354984968327
+		MeanAnomaly	58.314385001631
+	}
+	UniformRotation
+	{
+		Period	8.9351
+	}
+	Albedo	0.13
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=8405"
+}
+
+"Braille:9969 Braille:1992 KD" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"braille.cmod"
+	Texture	"asteroid.jpg"
+	Color	[ 1.00 0.670 0.375 ]
+	BlendTexture	true
+	Radius	1.05
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2451388.5  # 1999 Jul 29+
+		Period	3.5835965736465
+		SemiMajorAxis	2.341750420812260
+		Eccentricity	0.4335434953067092
+		Inclination	28.94885142204759
+		AscendingNode	242.1583629212672
+		ArgOfPericenter	355.3586728897821
+		MeanAnomaly	1.676369430480154
+	}
+	UniformRotation
+	{
+		Period	226.4
+	}
+	Albedo	0.34
+	InfoURL	"https://en.wikipedia.org/wiki/9969_Braille"
+}
+
+"Chariklo:10199 Chariklo:1997 CU26" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"chariklo.dds"
+	Radius	167
+	Oblateness	0.485
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	62.594548024307
+		SemiMajorAxis	15.76469370105405
+		Eccentricity	0.1719643594866243
+		Inclination	23.41138909866385
+		AscendingNode	300.3802743177763
+		ArgOfPericenter	241.7647116227398
+		MeanAnomaly	63.09348272451239
+	}
+	Rings
+	{
+		Inner	387.2675
+		Outer	406.425
+		Texture	"chariklo-rings.png"
+	}
+	UniformRotation
+	{
+		Period	7.004
+	}
+	Albedo	0.045
+	InfoURL	"https://en.wikipedia.org/wiki/10199_Chariklo"
+}
+
+"Leucus:11351 Leucus:1997 TS25:1996 VP39" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	17.077
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	12.1293842033
+		SemiMajorAxis	5.279024776422
+		Eccentricity	0.064563748669
+		Inclination	11.563277548568
+		AscendingNode	251.085273603087
+		ArgOfPericenter	161.548960995621
+		MeanAnomaly	159.937471995456
+	}
+	UniformRotation
+	{
+		Period	515
+	}
+	Albedo	0.079
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=11351"
+}
+
+"Polymele:15094 Polymele:1999 WB2:1997 WR57" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	10.538
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457800.5  # 2017 Feb 16+
+		Period	11.736471920087
+		SemiMajorAxis	5.164396457112
+		Eccentricity	0.094389186911
+		Inclination	12.991916717042
+		AscendingNode	50.329467126336
+		ArgOfPericenter	4.885487128041
+		MeanAnomaly	219.589774369082
+	}
+	UniformRotation
+	{
+		Period	6.1
+	}
+	Albedo	0.091
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=15094"
+}
+
+"15760 1992 QB1:1992 QB1" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.609 0.507 ]
+	BlendTexture	true
+	Radius	83.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	290.854137702061
+		SemiMajorAxis	43.897996156032
+		Eccentricity	0.06782130657
+		Inclination	2.190706810461
+		AscendingNode	359.4942555763
+		ArgOfPericenter	4.297177734564
+		MeanAnomaly	24.140481049401
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.09
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=15760"
+}
+
+"1978 VF11 System" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	16
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	12.092579957677
+		SemiMajorAxis	5.268340589432
+		Eccentricity	0.078790013352
+		Inclination	11.645548389842
+		AscendingNode	252.150310723803
+		ArgOfPericenter	118.237384245261
+		MeanAnomaly	60.160056203685
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-17365.html"
+}
+
+"17365 1978 VF11:1978 VF11:1998 MM49:1999 RE121" "Sol/1978 VF11 System"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	16.3
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.528
+		SemiMajorAxis	16
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	12.672
+	}
+	Albedo	0.074
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=17365"
+}
+
+"2005 17365 I" "Sol/1978 VF11 System"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Radius	13.75
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.528
+		SemiMajorAxis	27
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	12.672
+	}
+	Albedo	0.074
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-17365.html"
+}
+
+"Arawn:15810 Arawn:1994 JR1" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	63.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457485.5  # 2016 Apr 07+
+		Period	247.245454304481
+		SemiMajorAxis	39.39248777849546
+		Eccentricity	0.1188955749596919
+		Inclination	3.80822038827738
+		AscendingNode	144.6832318250492
+		ArgOfPericenter	101.3624763658904
+		MeanAnomaly	29.92925327079456
+	}
+	UniformRotation
+	{
+		Period	5.4
+	}
+	Albedo	0.09
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=15810"
+}
+
+"Chaos:19521 Chaos:1998 WH24" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"darkasteroid.jpg"
+	Radius	300
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	311.355238689112
+		SemiMajorAxis	45.937284248341
+		Eccentricity	0.107954342926
+		Inclination	12.037508936202
+		AscendingNode	49.989281303915
+		ArgOfPericenter	57.52567525546
+		MeanAnomaly	336.892338216847
+	}
+	UniformRotation
+	{
+		Period	95.64
+	}
+	Albedo	0.050
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=19521"
+}
+
+"Varuna:20000 Varuna:2000 WR106" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.670 0.375 ]
+	BlendTexture	true
+	SemiAxes	[ 429.5 226.65 226.65 ]
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	283.88331897409
+		SemiMajorAxis	43.19377031145665
+		Eccentricity	0.05117909388906188
+		Inclination	17.14753975846482
+		AscendingNode	97.26730091461472
+		ArgOfPericenter	273.0157903639222
+		MeanAnomaly	101.4829638116023
+	}
+	UniformRotation
+	{
+		Period	6.3436
+	}
+	Albedo	0.07 
+	InfoURL	"https://en.wikipedia.org/wiki/20000_Varuna"
+}
+
+"Dioretsa:20461 Dioretsa:1999 LD31" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.750 0.583 ]
+	BlendTexture	true
+	Radius	7
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	115.936298942309
+		SemiMajorAxis	23.776111018455
+		Eccentricity	0.899477840507
+		Inclination	160.403583611246
+		AscendingNode	297.220975626018
+		ArgOfPericenter	102.44746218977
+		MeanAnomaly	46.843937165752
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.03
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=20461"
+}
+
+"Orus:21900 Orus:1999 VQ10:1998 VD18" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	25.405
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457800.5  # 2017 Feb 16+
+		Period	11.611081390746
+		SemiMajorAxis	5.127546939265
+		Eccentricity	0.0355644929
+		Inclination	8.467756058321
+		AscendingNode	258.560844351336
+		ArgOfPericenter	180.460728939171
+		MeanAnomaly	169.841253881692
+	}
+	UniformRotation
+	{
+		Period	13.45
+	}
+	Albedo	0.075
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=21900"
+}
+
+"Itokawa:25143 Itokawa:1998 SF36" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"itokawa.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Radius	0.2675
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	1.5236988653184
+		SemiMajorAxis	1.324119845185226
+		Eccentricity	0.2800494589196127
+		Inclination	1.621460231737667
+		AscendingNode	69.08143643597246
+		ArgOfPericenter	162.8103324760146
+		MeanAnomaly	333.9418224137787
+	}
+	BodyFrame { EquatorJ2000 {} }
+	UniformRotation
+	{
+		Period	12.132
+		Inclination	156.30
+		AscendingNode	180.53
+	}
+	Albedo	0.53
+	InfoURL	"https://en.wikipedia.org/wiki/25143_Itokawa"
+}
+
+"Ixion:28978 Ixion:2001 KX76" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"asteroid.jpg"
+	Color	[ 1.00 0.670 0.375 ]
+	BlendTexture	true
+	Radius	308.5
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	247.50445854745
+		SemiMajorAxis	39.41999361876776
+		Eccentricity	0.2425952731158688
+		Inclination	19.64520131798551
+		AscendingNode	71.03556422578181
+		ArgOfPericenter	300.2455397750147
+		MeanAnomaly	278.4884904068966
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.141
+	InfoURL	"https://en.wikipedia.org/wiki/28978_Ixion"
+}
+
+"Eurydamas System" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	12
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	12.135518895455
+		SemiMajorAxis	5.280804611905
+		Eccentricity	0.072296082805
+		Inclination	15.234770933941
+		AscendingNode	143.372994105863
+		ArgOfPericenter	135.314808148497
+		MeanAnomaly	161.258165247915
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-29314.html"
+}
+
+"Eurydamas:29314 Eurydamas:1994 CR18:2000 TR49" "Sol/Eurydamas System"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	16
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.6265
+		SemiMajorAxis	12
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	15.035
+	}
+	Albedo	0.04
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=29314"
+}
+
+"2005 29314 I" "Sol/Eurydamas System"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Radius	12
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.6265
+		SemiMajorAxis	29
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	15.035
+	}
+	Albedo	0.04
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-29314.html"
+}
+
+"Rhadamanthus:38083 Rhadamanthus:1999 HX11" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	100.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	244.69757621657
+		SemiMajorAxis	39.121392986745
+		Eccentricity	0.154854432292
+		Inclination	12.729478985438
+		AscendingNode	9.973453946747
+		ArgOfPericenter	81.521146503865
+		MeanAnomaly	96.071485814756
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.09
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=38083"
+}
+
+"Huya System" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	220
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	248.09064744498
+		SemiMajorAxis	39.482210547462
+		Eccentricity	0.27731538876
+		Inclination	15.465647438865
+		AscendingNode	169.246507991615
+		ArgOfPericenter	67.504702581564
+		MeanAnomaly	359.97955552154
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-38628.html"
+}
+
+"Huya:38628 Huya:2000 EB173" "Sol/Huya System"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.750 0.583 ]
+	BlendTexture	true
+	Radius	203
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	3.2
+		SemiMajorAxis	220
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	5.28
+	}
+	Albedo	0.083
+	InfoURL	"https://en.wikipedia.org/wiki/38628_Huya"
+}
+
+"2012 38628 I" "Sol/Huya System"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.750 0.583 ]
+	BlendTexture	true
+	Radius	106.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	3.2
+		SemiMajorAxis	1520
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	5.28
+	}
+	Albedo	0.083
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-38628.html"
+}
+
+"2001 UR163:42301 2001 UR163" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.732 0.476 ]
+	BlendTexture	true
+	Radius	318
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	369.247394116423
+		SemiMajorAxis	51.468260592026
+		Eccentricity	0.281702475138
+		Inclination	0.752307037728
+		AscendingNode	302.277655729761
+		ArgOfPericenter	342.511590437213
+		MeanAnomaly	76.206641618462
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.09
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=42301"
+}
+
+"Typhon-Echidna" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	111
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	235.882733242784
+		SemiMajorAxis	38.176135734022
+		Eccentricity	0.540814077516
+		Inclination	2.425096126661
+		AscendingNode	351.908297686875
+		ArgOfPericenter	159.135523429766
+		MeanAnomaly	13.042859303108
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-42355.html"
+}
+
+"Typhon:42355 Typhon:2002 CR46" "Sol/Typhon-Echidna"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	81
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2454000.0  # 2006 Sept 21 12:00
+		Period	18.982
+		SemiMajorAxis	225
+		Eccentricity	0.507
+		Inclination	42.0
+		AscendingNode	254.0
+		ArgOfPericenter	174.0
+		MeanAnomaly	11.0
+	}
+	UniformRotation
+	{
+		Period	9.67
+		Inclination	42.0
+		AscendingNode	254.0
+	}
+	Albedo	0.044
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=42355"
+}
+
+"Echidna:42355 Typhon I:Typhon I:2006 42355 I" "Sol/Typhon-Echidna"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Radius	44.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2454000.0  # 2006 Sept 21 12:00+
+		Period	18.982
+		SemiMajorAxis	1355
+		Eccentricity	0.507
+		Inclination	42.0
+		AscendingNode	254.0
+		ArgOfPericenter	354.0
+		MeanAnomaly	11.0
+	}
+	UniformRotation
+	{
+		Period	9.67
+		Inclination	42.0
+		AscendingNode	254.0
+	}
+	Albedo	0.044
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-42355.html"
+}
+
+"1999 TC36 System" "Sol"  # Lempo-Hiisi Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	382
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+++
+		Period	247.3171615562
+		SemiMajorAxis	39.40010393608378
+		Eccentricity	0.2245161542675895
+		Inclination	8.411215777001217
+		AscendingNode	97.17287644973914
+		ArgOfPericenter	295.4753124828463
+		MeanAnomaly	359.0752705700177
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-47171.html"
+}
+
+"47171 1999 TC36 A1:1999 TC36 A1" "Sol/1999 TC36 System"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.609 0.507 ]
+	BlendTexture	true
+	Radius	136
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	1.907
+		SemiMajorAxis	382
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	45.768
+	}
+	Albedo	0.079
+	InfoURL	"https://en.wikipedia.org/wiki/(47171)_1999_TC36"
+}
+
+"47171 1999 TC36 A2:1999 TC36 A2" "Sol/1999 TC36 System"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.609 0.507 ]
+	BlendTexture	true
+	Radius	125.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	1.907
+		SemiMajorAxis	485
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	45.768
+	}
+	Albedo	0.079
+	InfoURL	"https://en.wikipedia.org/wiki/(47171)_1999_TC36"
+}
+
+"2001 47171 I:1999 TC36 B" "Sol/1999 TC36 System"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.609 0.507 ]
+	BlendTexture	true
+	Radius	66
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	50.3 
+		SemiMajorAxis	7411
+	}
+	Albedo	0.079
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-47171.html"
+}
+
+"Quaoar:50000 Quaoar:2002 LM60" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"quaoar.dds"
+	NormalMap	"quaoar-normal.*"
+	Color	[ 1.00 0.670 0.375 ]
+	BlendTexture	true
+	Radius	535
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457800.5  # 2017 Feb 16++
+		Period	286.915511494408
+		SemiMajorAxis	43.500797328411
+		Eccentricity	0.035753383409
+		Inclination	7.986455383438
+		AscendingNode	188.751626335942
+		ArgOfPericenter	150.85448137954
+		MeanAnomaly	293.34958176384
+	}
+	UniformRotation
+	{
+		Period	8.839
+	}
+	Albedo	0.109
+	InfoURL	"https://en.wikipedia.org/wiki/50000_Quaoar"
+}
+
+"Weywot:50000 Quaoar I:Quaoar I:2006 50000 I" "Sol/50000 Quaoar"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Color	[ 1.00 0.670 0.375 ]
+	BlendTexture	true
+	Radius	40.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	12.26
+		SemiMajorAxis	13800
+		Eccentricity	0.148
+		Inclination	14.0
+		AscendingNode	1.0
+		ArgOfPericenter	348.0
+	}
+	Albedo	0.109
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-50000.html"
+}
+
+"Donaldjohanson:52246 Donaldjohanson:1981 EQ5:1998 YF26" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Radius	1.948
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457800.5  # 2017 Feb 16+
+		Period	3.68122403875
+		SemiMajorAxis	2.384090285198
+		Eccentricity	0.185723645177
+		Inclination	4.419202772805
+		AscendingNode	262.851331702357
+		ArgOfPericenter	213.000875797668
+		MeanAnomaly	317.070039342646
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.103
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=52246"
+}
+
+"Deucalion:53311 Deucalion:1999 HU11" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	110.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	293.427594680869
+		SemiMajorAxis	44.156553397155
+		Eccentricity	0.060673770939
+		Inclination	0.366288645027
+		AscendingNode	51.430951437801
+		ArgOfPericenter	239.081986608028
+		MeanAnomaly	299.759491238757
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.09
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=53311"
+}
+
+"2002 AW197:55565 2002 AW197" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"asteroid.jpg"
+	Color	[ 1.00 0.670 0.375 ]
+	BlendTexture	true
+	Radius	367
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	327.45458650153
+		SemiMajorAxis	47.50747155598051
+		Eccentricity	0.1299130054972144
+		Inclination	24.33298092458305
+		AscendingNode	297.4107993216403
+		ArgOfPericenter	293.228355614586
+		MeanAnomaly	292.6022119780332
+	}
+	UniformRotation
+	{
+		Period	8.86
+	}
+	Albedo	0.117
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=55565"
+}
+
+"2002 UX25:55637 2002 UX25" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"asteroid.jpg"
+	Color	[ 1.00 0.670 0.375 ]
+	BlendTexture	true
+	Radius	332.5
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	279.235062064985
+		SemiMajorAxis	42.720975880565
+		Eccentricity	0.14460004683
+		Inclination	19.450948147439
+		AscendingNode	204.64617590605
+		ArgOfPericenter	277.376053111648
+		MeanAnomaly	294.05899478554
+	}
+	UniformRotation
+	{
+		Period	14.382
+	}
+	Albedo	0.115
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=55637"
+}
+
+"2007 55637 I" "Sol/55637 2002 UX25"
+{
+	Class	"moon"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Radius	105
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	8.309
+		SemiMajorAxis	4770
+		Eccentricity	0.17
+	}
+	Albedo	0.05
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-55637.html"
+}
+
+"Logos-Zoe" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	1316
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09
+		Period	306.860040123005
+		SemiMajorAxis	45.49406636567
+		Eccentricity	0.123715351445
+		Inclination	2.894719083955
+		AscendingNode	132.494602106907
+		ArgOfPericenter	338.37553925648
+		MeanAnomaly	55.892820016926
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-58534.html"
+}
+
+"Logos:58534 Logos:1997 CQ29" "Sol/Logos-Zoe"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"asteroid.jpg"
+	Radius	41
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2452600.0  # 2002 Nov 21 12:00+
+		Period	309.87
+		SemiMajorAxis	2900
+		Eccentricity	0.5463
+		Inclination	95.43
+		AscendingNode	16.07
+		ArgOfPericenter	43.8
+		MeanAnomaly	259.47
+	}
+	UniformRotation
+	{
+		Period	7436.88
+		Inclination	95.43
+		AscendingNode	16.07
+	}
+	Albedo	0.39
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=58534"
+}
+
+"Zoe:58534 Logos I:Logos I:2001 58534 I" "Sol/Logos-Zoe"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	Radius	33.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2452600.0  # 2002 Nov 21 12:00+
+		Period	309.87
+		SemiMajorAxis	5317
+		Eccentricity	0.5463
+		Inclination	95.43
+		AscendingNode	16.07
+		ArgOfPericenter	223.8
+		MeanAnomaly	259.47
+	}
+	UniformRotation
+	{
+		Period	7436.88
+		Inclination	95.43
+		AscendingNode	16.07
+	}
+	Albedo	0.39
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-58534.html"
+}
+
+"Ceto-Phorcys" "Sol"  # Barycenter#
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	570
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	1034.37146446553
+		SemiMajorAxis	102.27721314498
+		Eccentricity	0.825904948796
+		Inclination	22.27219573046
+		AscendingNode	171.881103480617
+		ArgOfPericenter	319.886838778823
+		MeanAnomaly	8.814027977404
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-65489.html"
+}
+
+"Ceto:65489 Ceto:2003 FX128" "Sol/Ceto-Phorcys"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	111.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	9.554
+		SemiMajorAxis	572
+		Eccentricity	0.004
+		Inclination	68.8
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	4.43
+		Inclination	68.8
+	}
+	Albedo	0.056
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=65489"
+}
+
+"Phorcys:65489 Ceto I:Ceto I:2006 65489 I" "Sol/Ceto-Phorcys"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Radius	85.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	9.554
+		SemiMajorAxis	1268
+		Eccentricity	0.004
+		Inclination	68.8
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	4.43
+		Inclination	68.8
+	}
+	Albedo	0.056
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-65489.html"
+}
+
+"Borasisi-Pabu" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	848
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09
+		Period	287.732646515574
+		SemiMajorAxis	43.58335165152
+		Eccentricity	0.084855574306
+		Inclination	0.563096991331
+		AscendingNode	84.635857449696
+		ArgOfPericenter	195.92868420587
+		MeanAnomaly	57.947455350986
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-66652.html"
+}
+
+"Borasisi:66652 Borasisi:1999 RZ253" "Sol/Borasisi-Pabu"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"asteroid.jpg"
+	Radius	63
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2451900.0  # 2000 Dec 21 12:00+
+		Period	46.2888
+		SemiMajorAxis	1600
+		Eccentricity	0.4700
+		Inclination	54.31
+		AscendingNode	70.44
+		ArgOfPericenter	58.85
+		MeanAnomaly	214.4
+	}
+	UniformRotation
+	{
+		Period	6.4
+		Inclination	54.31
+		AscendingNode	70.44
+	}
+	Albedo	0.175
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=66652"
+}
+
+"Pabu:66652 Borasisi I:Borasisi I:2003 66652 I" "Sol/Borasisi-Pabu"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	Radius	51.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2451900.0  # 2000 Dec 21 12:00+
+		Period	46.2888
+		SemiMajorAxis	2928
+		Eccentricity	0.4700
+		Inclination	54.31
+		AscendingNode	70.44
+		ArgOfPericenter	238.85
+		MeanAnomaly	214.4
+	}
+	UniformRotation
+	{
+		Period	6.4
+		Inclination	54.31
+		AscendingNode	70.44
+	}
+	Albedo	0.175
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-66652.html"
+}
+
+"Hermes System" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	0.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	2.128873194254
+		SemiMajorAxis	1.654859246368
+		Eccentricity	0.624080748017
+		Inclination	6.067913784683
+		AscendingNode	34.239766248961
+		ArgOfPericenter	92.720516712496
+		MeanAnomaly	52.909788447231
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-69230.html"
+}
+
+"Hermes:69230 Hermes:1937 UB" "Sol/Hermes System"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Radius	0.3
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.5789
+		SemiMajorAxis	0.5
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	13.894
+	}
+	Albedo	0.1
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=69230"
+}
+
+"2003 69230 I" "Sol/Hermes System"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	Radius	0.27
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.5789
+		SemiMajorAxis	0.6
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	13.892
+	}
+	Albedo	0.1
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-69230.html"
+}
+
+"Sila-Nunam" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	1254
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	293.33831247936
+		SemiMajorAxis	44.147595834143
+		Eccentricity	0.016524015246
+		Inclination	2.237894132287
+		AscendingNode	304.32358074995
+		ArgOfPericenter	216.907788023568
+		MeanAnomaly	336.078844174258
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-79360.html"
+}
+
+"Sila:79360 Sila:1997 CS29" "Sol/Sila-Nunam"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.609 0.507 ]
+	BlendTexture	true
+	Radius	124.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	12.50995
+		SemiMajorAxis	1277
+		Eccentricity	0.018
+		Inclination	103.51
+		AscendingNode	140.76
+		ArgOfPericenter	146.0
+		MeanAnomaly	16.3
+	}
+	UniformRotation
+	{
+		Period	300.2388
+		Inclination	103.51
+		AscendingNode	140.76
+	}
+	Albedo	0.086
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=79360"
+}
+
+"Nunam:79360 Sila I:Sila I:2005 79360 I" "Sol/Sila-Nunam"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.609 0.507 ]
+	BlendTexture	true
+	Radius	118
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	12.50995
+		SemiMajorAxis	1500
+		Eccentricity	0.018
+		Inclination	103.51
+		AscendingNode	140.76
+		ArgOfPericenter	326.0
+		MeanAnomaly	16.3
+	}
+	UniformRotation
+	{
+		Period	300.2388
+		Inclination	103.51
+		AscendingNode	140.76
+	}
+	Albedo	0.086
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-79360.html"
+}
+
+"2002 TC302:84522 2002 TC302" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"asteroid.jpg"
+	Color	[ 1.00 0.750 0.583 ]
+	BlendTexture	true
+	Radius	292.05
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	413.135101906162
+		SemiMajorAxis	55.469714338254
+		Eccentricity	0.296602921433
+		Inclination	35.073544417722
+		AscendingNode	23.880024717635
+		ArgOfPericenter	86.745653870366
+		MeanAnomaly	321.549771220683
+	}
+	UniformRotation
+	{
+		Period	5.41
+	}
+	Albedo	0.115
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=84522"
+}
+
+"Teharonhiawako-Sawiskera" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	5726
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09
+		Period	290.503758960022
+		SemiMajorAxis	43.862734461943
+		Eccentricity	0.03080079468
+		Inclination	2.586240385403
+		AscendingNode	304.826584251464
+		ArgOfPericenter	234.205433027341
+		MeanAnomaly	159.433587151458
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-88611.html"
+}
+
+"Teharonhiawako:88611 Teharonhiawako:2001 QT297" "Sol/Teharonhiawako-Sawiskera"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"asteroid.jpg"
+	Radius	89
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2452000.0  # 2001 Mar 31 12:00+
+		Period	828.76
+		SemiMajorAxis	7629
+		Eccentricity	0.2494
+		Inclination	144.42
+		AscendingNode	54.22
+		ArgOfPericenter	200.1
+		MeanAnomaly	296.2
+	}
+	UniformRotation
+	{
+		Period	9.505
+		Inclination	144.42
+		AscendingNode	54.22
+	}
+	Albedo	0.275
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=88611"
+}
+
+"Sawiskera:88611 Teharonhiawako I:Teharonhiawako I:2001 88611 I" "Sol/Teharonhiawako-Sawiskera"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	Radius	64.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2452000.0  # 2001 Mar 31 12:00+
+		Period	828.76
+		SemiMajorAxis	20041
+		Eccentricity	0.2494
+		Inclination	144.42
+		AscendingNode	54.22
+		ArgOfPericenter	20.1
+		MeanAnomaly	296.2
+	}
+	UniformRotation
+	{
+		Period	9.50
+		Inclination	144.42
+		AscendingNode	54.22
+	}
+	Albedo	0.275
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-88611.html"
+}
+
+"Sedna:90377 Sedna:2003 VB12" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"sedna.dds"
+	NormalMap	"sedna-normal.*"
+	Radius	497.5
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457800.5  # 2017 Feb 16+
+		Period	10951.8189667344
+		SemiMajorAxis	493.157190055355
+		Eccentricity	0.845826717985
+		Inclination	11.928833699904
+		AscendingNode	144.498334355135
+		ArgOfPericenter	311.586364857642
+		MeanAnomaly	358.041815117189
+	}
+	UniformRotation
+	{
+		Period	10.273
+	}
+	Albedo	0.32 
+	InfoURL	"https://en.wikipedia.org/wiki/90377_Sedna"
+}
+
+"Orcus:90482 Orcus:2004 DW" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"asteroid.jpg"
+	Radius	458.5
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	247.87975405474
+		SemiMajorAxis	39.4598323899821
+		Eccentricity	0.2184290122654654
+		Inclination	20.55201347342247
+		AscendingNode	268.481627646052
+		ArgOfPericenter	73.39553738443479
+		MeanAnomaly	172.5684571430559
+	}
+	UniformRotation
+	{
+		Period	13.18841
+	}
+	Albedo	0.231
+	InfoURL	"https://en.wikipedia.org/wiki/90482_Orcus"
+}
+
+"Vanth:90482 Orcus I:Orcus I:2005 90482 I" "Sol/90482 Orcus"
+{
+	Class	"moon"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	Color	[ 1.00 0.670 0.375 ]
+	BlendTexture	true
+	Radius	138
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2454439.28  # 2007 Dec 04 18:43:12+
+		Period	9.539
+		SemiMajorAxis	9006
+		Eccentricity	0.001
+		Inclination	90.2
+		AscendingNode	50.0
+		MeanAnomaly	143.1
+	}
+	Albedo	0.12
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-90482.html"
+}
+
+"2004 GV9:90568 2004 GV9" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"darkasteroid.jpg"
+	Radius	340
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	272.762425440753
+		SemiMajorAxis	42.058220563358
+		Eccentricity	0.079949758533
+		Inclination	21.998660987955
+		AscendingNode	250.577333452633
+		ArgOfPericenter	291.862641158942
+		MeanAnomaly	34.482142614556
+	}
+	UniformRotation
+	{
+		Period	5.86
+	}
+	Albedo	0.077
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=90568"
+}
+
+"Bennu:101955 Bennu:1999 RQ36" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"bennu.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"darkasteroid.jpg"
+	Radius	0.2825
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2455562.5  # 2011 Jan 01+
+		Period	1.195479064102
+		SemiMajorAxis	1.126391025983
+		Eccentricity	0.203745128236
+		Inclination	6.034936934608
+		AscendingNode	2.060867741322
+		ArgOfPericenter	66.2230735282
+		MeanAnomaly	101.703945362495
+	}
+	UniformRotation
+	{
+		Period	4.297
+		Inclination	176
+	}
+	Albedo	0.046
+	InfoURL	"https://en.wikipedia.org/wiki/101955_Bennu"
+}
+
+"2002 WC19:119979 2002 WC19" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"darkasteroid.jpg"
+	Radius	220
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	334.133975621627
+		SemiMajorAxis	48.151330351112
+		Eccentricity	0.265635875803
+		Inclination	9.16851012515
+		AscendingNode	109.774228203243
+		ArgOfPericenter	43.751685314506
+		MeanAnomaly	315.338191526945
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.07
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=119979"
+}
+
+"2007 119979 I" "Sol/119979 2002 WC19"
+{
+	Class	"moon"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	69.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	8.403
+		SemiMajorAxis	4090
+		Eccentricity	0.2
+	}
+	Albedo	0.07
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-119979.html"
+}
+
+"Salacia:120347 Salacia:2004 SB60" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"darkasteroid.jpg"
+	Radius	427
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	271.289501203195
+		SemiMajorAxis	41.906673637311
+		Eccentricity	0.107326476334
+		Inclination	23.942086136431
+		AscendingNode	280.208132447504
+		ArgOfPericenter	308.008459942669
+		MeanAnomaly	120.360755407181
+	}
+	UniformRotation
+	{
+		Period	6.5
+	}
+	Albedo	0.044
+	InfoURL	"https://en.wikipedia.org/wiki/120347_Salacia"
+}
+
+"Actaea:120347 Salacia I:Salacia I:2006 120347 I" "Sol/120347 Salacia"
+{
+	Class	"moon"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Radius	143
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	5.49380
+		SemiMajorAxis	5619
+		Eccentricity	0.0084  
+	}
+	Albedo	0.044
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-120347.html"
+}
+
+"APL:132524 APL:2002 JF56" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Radius	1.15
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2453899.5  # 2006 Jun 13+
+		Period	4.2066743461856
+		SemiMajorAxis	2.605876286628448
+		Eccentricity	0.2714355390920677
+		Inclination	4.163281385976950
+		AscendingNode	51.78946343547695
+		ArgOfPericenter	262.0254463743247
+		MeanAnomaly	297.2221938933485
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.1
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=132524"
+}
+
+"2001 QG298 System" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	68
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	246.377579567947
+		SemiMajorAxis	39.300250755328
+		Eccentricity	0.191793092693
+		Inclination	6.497709636413
+		AscendingNode	162.595637100203
+		ArgOfPericenter	209.685636351959
+		MeanAnomaly	5.523935834278
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-139775.html"
+}
+
+"2001 QG298:139775 2001 QG298" "Sol/2001 QG298 System"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"asteroid.jpg"
+	SemiAxes	[ 82 65 58 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.573933
+		SemiMajorAxis	68
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	13.774392
+	}
+	Albedo	0.1
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=139775"
+}
+
+"2004 139775 I" "Sol/2001 QG298 System"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	SemiAxes	[ 84 80 75 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	0.573933
+		SemiMajorAxis	104
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	13.774392
+	}
+	Albedo	0.1
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-139775.html"
+}
+
+
+"2005 RN43:145452 2005 RN43" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"asteroid.jpg"
+	Radius	339.5
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	266.10986673041
+		SemiMajorAxis	41.37155551941084
+		Eccentricity	0.01985749870233349
+		Inclination	19.29786164154896
+		AscendingNode	186.9500389108745
+		ArgOfPericenter	178.1102024692385
+		MeanAnomaly	333.6951630339105
+	}
+	UniformRotation
+	{
+		Period	6.95
+	}
+	Albedo	0.1
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=145452"
+}
+
+"Altjira System" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	2729
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	295.37504146466
+		SemiMajorAxis	44.35171272196187
+		Eccentricity	0.05839038150209473
+		Inclination	5.20462398507132
+		AscendingNode	1.989458444017555
+		ArgOfPericenter	300.1561628060923
+		MeanAnomaly	120.5090911992867
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-148780.html"
+}
+
+"Altjira:148780 Altjira:2001 UQ18" "Sol/Altjira System"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"asteroid.jpg"
+	Radius	123
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2454300.0  # 2007 Jul 18 12:00
+		Period	139.561
+		SemiMajorAxis	4163
+		Eccentricity	0.3445
+		Inclination	35.19
+		AscendingNode	312.73
+		ArgOfPericenter	281.96
+		MeanAnomaly	224.89
+	}
+	UniformRotation
+	{
+		Period	3349.464
+		Inclination	35.19
+		AscendingNode	312.73
+	}
+	Albedo	0.1
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=148780"
+}
+
+"2007 148780 I" "Sol/Altjira System"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	Radius	110.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2454300.0  # 2007 Jul 18 12:00
+		Period	139.561
+		SemiMajorAxis	5741
+		Eccentricity	0.3445
+		Inclination	35.19
+		AscendingNode	312.73
+		ArgOfPericenter	101.96
+		MeanAnomaly	224.89
+	}
+	UniformRotation
+	{
+		Period	3349.464
+		Inclination	35.19
+		AscendingNode	312.73
+	}
+	Albedo	0.1
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-148780.html"
+}
+
+"Ryugu:162173 Ryugu:1999 JU3" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Radius	0.490
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	1.297357202153
+		SemiMajorAxis	1.189508573396
+		Eccentricity	0.190260012521
+		Inclination	5.883876645567
+		AscendingNode	251.611720614838
+		ArgOfPericenter	211.425716033738
+		MeanAnomaly	114.326399555117
+	}
+	UniformRotation
+	{
+		Period	7.627
+	}
+	Albedo	0.1
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=162173"
+}
+
+"Varda-Ilmare" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	558
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	308.782620501552
+		SemiMajorAxis	45.683892143712
+		Eccentricity	0.14090552251
+		Inclination	21.50017141058
+		AscendingNode	183.994138431281
+		ArgOfPericenter	183.943165671985
+		MeanAnomaly	264.685872831353
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-174567.html"
+}
+
+"Varda:174567 Varda:2003 MW12" "Sol/Varda-Ilmare"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"asteroid.jpg"
+	Radius	352.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	5.7508
+		SemiMajorAxis	568
+		Eccentricity	0.017
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	5.91
+	}
+	Albedo	0.102
+	InfoURL	"https://en.wikipedia.org/wiki/174567_Varda"
+}
+
+"Ilmare:174567 Varda I:Varda I:2006 174567 I" "Sol/Varda-Ilmare"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	Radius	180.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	5.7508
+		SemiMajorAxis	4232
+		Eccentricity	0.017
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	5.91
+	}
+	Albedo	0.102
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-174567.html"
+}
+
+"2003 AZ84:208996 2003 AZ84" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"asteroid.jpg"
+	Radius	361.5
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	249.93086084504
+		SemiMajorAxis	39.67720961425341
+		Eccentricity	0.175004983176668
+		Inclination	13.55364896948906
+		AscendingNode	251.9826435352414
+		ArgOfPericenter	13.82712555907433
+		MeanAnomaly	227.6810749664907
+	}
+	UniformRotation
+	{
+		Period	13.44
+	}
+	Albedo	0.107
+	InfoURL	"https://en.wikipedia.org/wiki/(208996)_2003_AZ84"
+}
+
+"2007 OR10:225088 2007 OR10" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.609 0.507 ]
+	BlendTexture	true
+	Radius	767.5
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	546.554796688827
+		SemiMajorAxis	66.847269423718
+		Eccentricity	0.505845873337
+		Inclination	30.93761314717
+		AscendingNode	336.815258445639
+		ArgOfPericenter	206.652395469321
+		MeanAnomaly	103.846466702455
+	}
+	UniformRotation
+	{
+		Period	44.81
+	}
+	Albedo	0.089
+	InfoURL	"https://en.wikipedia.org/wiki/(225088)_2007_OR10"
+}
+
+"2002 MS4:307261 2002 MS4" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"darkasteroid.jpg"
+	Radius	467
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	268.694387225093
+		SemiMajorAxis	41.638997174947
+		Eccentricity	0.146672780841
+		Inclination	17.689326825563
+		AscendingNode	216.043219403184
+		ArgOfPericenter	215.613712674413
+		MeanAnomaly	214.667830046244
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.051
+	InfoURL	"https://en.wikipedia.org/wiki/(307261)_2002_MS4"
+}
+
+"Mors-Somnus" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	8414
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	245.906114891338
+		SemiMajorAxis	39.25009847971
+		Eccentricity	0.265248846503
+		Inclination	11.291232915202
+		AscendingNode	196.725561706546
+		ArgOfPericenter	205.747858744005
+		MeanAnomaly	356.233586916376
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-341520.html"
+}
+
+"Mors:341520 Mors:2007 TY430" "Sol/Mors-Somnus"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"asteroid.jpg"
+	Radius	51
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	971.7
+		SemiMajorAxis	9890
+		Eccentricity	0.1492
+		Inclination	15.68
+		ArgOfPericenter	200
+	}
+	UniformRotation
+	{
+		Period	9.28
+		Inclination	15.68
+	}
+	Albedo	0.23
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=341520"
+}
+
+"Somnus:341520 Mors I:Mors I:2007 341520 I" "Sol/Mors-Somnus"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	Radius	48.5
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Period	971.7
+		SemiMajorAxis	11150
+		Eccentricity	0.1492
+		Inclination	15.68
+		ArgOfPericenter	20
+	}
+	UniformRotation
+	{
+		Period	9.28
+		Inclination	15.68
+	}
+	Albedo	0.23
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-341520.html"
+}
+
+"Manwe-Thorondor" "Sol"  # Barycenter
+{
+	Class	"asteroid"
+	Mesh	""
+	Radius	466
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	287.795397216125
+		SemiMajorAxis	43.589688057866
+		Eccentricity	0.114683913137
+		Inclination	2.666615383328
+		AscendingNode	68.527642335707
+		ArgOfPericenter	21.581614404649
+		MeanAnomaly	273.453508129914
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-385446.html"
+}
+
+"Manwe:385446 Manwe:2003 QW111" "Sol/Manwe-Thorondor"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"asteroid.jpg"
+	Radius	80
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2454400.0  # 2007 Oct 26 12:00
+		Period	110.176
+		SemiMajorAxis	1066
+		Eccentricity	0.5632
+		Inclination	25.58
+		AscendingNode	163.56
+		ArgOfPericenter	70.8
+		MeanAnomaly	126.51
+	}
+	UniformRotation
+	{
+		Period	2644.224
+		Inclination	25.58
+		AscendingNode	163.56
+	}
+	Albedo	0.1
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=385446"
+}
+
+"Thorondor:385446 Manwe I:Manwe I:2006 385446 I" "Sol/Manwe-Thorondor"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"asteroid.jpg"
+	Radius	46
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2454400.0  # 2007 Oct 26 12:00
+		Period	110.176
+		SemiMajorAxis	5608
+		Eccentricity	0.5632
+		Inclination	25.58
+		AscendingNode	163.56
+		ArgOfPericenter	250.8
+		MeanAnomaly	126.51
+	}
+	UniformRotation
+	{
+		Period	2644.224
+		Inclination	25.58
+		AscendingNode	163.56
+	}
+	Albedo	0.1
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-385446.html"
+}
+
+"Otrera:385571 Otrera:2004 UP10" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	38
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	165.37047006501
+		SemiMajorAxis	30.1277365996962
+		Eccentricity	0.02689999028874916
+		Inclination	1.434717221799064
+		AscendingNode	34.75902479652976
+		ArgOfPericenter	7.321797211531099
+		MeanAnomaly	346.0081739233894
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.09
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=385571"
+}
+
+"2014 MU69:486958 2014 MU69:1110113Y:PT1" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"2014-mu69.cmod"
+	Texture	"asteroid.jpg"
+	Color	[ 1.00 0.609 0.507 ]
+	BlendTexture	true
+	Radius	10
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2458484.5  # 2019 Jan 01+
+		Period	297.849436807833
+		SemiMajorAxis	44.59906157430602
+		Eccentricity	0.04974843772870993
+		Inclination	2.450497111677099
+		AscendingNode	159.0275660134564
+		ArgOfPericenter	181.459555570047
+		MeanAnomaly	310.1948420778463
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.11
+	InfoURL	"https://en.wikipedia.org/wiki/(486958)_2014_MU69"
 }
 
 "1998 KY26" "Sol"
 {
-	Class "asteroid"
-	Mesh   "ky26.cmod"
-	Texture "asteroid.jpg"
-	Radius  0.015 # maximum semi-axis
-	MeshCenter [ -0.000718 -0.000099 0.000556 ]
-
-	InfoURL "http://echo.jpl.nasa.gov/~ostro/KY26/index.html"
-
+	Class	"asteroid"
+	Mesh	"ky26.cmod"
+	MeshCenter	[ -0.000718 -0.000099 0.000556 ]
+	Texture	"ky26.jpg"
+	Radius	0.015
+	Visible	true
+	Clickable	true
 	EllipticalOrbit
 	{
-	Epoch       2452000.5        # 2001 Apr 1 00:00UT
-	Period            1.3752
-	SemiMajorAxis     1.2320798
-	Eccentricity      0.20151423
-	Inclination       1.48127
-	AscendingNode    84.45490
-	ArgOfPericenter 209.14766
-        MeanAnomaly     356.6879717
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	1.368899121085
+		SemiMajorAxis	1.232845993843401
+		Eccentricity	0.2019176893830575
+		Inclination	1.48044409000416
+		AscendingNode	84.36214896718073
+		ArgOfPericenter	209.3725697026434
+		MeanAnomaly	359.5729719228407
 	}
-
 	UniformRotation
 	{
-	Period 0.178
+		Period	0.1784
 	}
-
-	Albedo 0.15
-
+	Albedo	0.1
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=1998+KY26"
 }
 
-"2063 Bacchus:Bacchus:1977 HB" "Sol"
+"1998 WW31 System" "Sol"  # Barycenter
 {
-	Class "asteroid"
-	Mesh   "bacchus.cmod"
-	Texture "asteroid.jpg"
-        Color [ 1.000 0.899 0.777 ]
-	BlendTexture true
-	Radius  0.55 # maximum semi-axis
-	MeshCenter [ -0.00936 -0.00610 0.00289 ]
-
-	InfoURL "http://echo.jpl.nasa.gov/~ostro/bacchus/index.html" 
-
+	Class	"asteroid"
+	Mesh	""
+	Radius	1493
+	Visible	true
+	Clickable	true
 	EllipticalOrbit
 	{
-	Epoch       2452000.5        # 2001 Apr 1 00:00UT 
-	Period            1.1223
-	SemiMajorAxis     1.0781035
-	Eccentricity      0.34951251
-	Inclination       9.43160
-	AscendingNode    33.23590
-	ArgOfPericenter  55.18040
-        MeanAnomaly     229.8627955
+		Epoch	2457000.5  # 2014 Dec 09++
+		Period	299.49848629776646
+		SemiMajorAxis	44.76352579065019
+		Eccentricity	0.08283917190609871
+		Inclination	6.794733295270969
+		AscendingNode	237.0905583202673
+		ArgOfPericenter	51.82578585086611
+		MeanAnomaly	135.202910379568
 	}
-
-	UniformRotation
-	{
-	Period        14.90 
-	Inclination            116 
-	AscendingNode 114 
-	}
-
-	Albedo 0.15
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am1998ww31.html"
 }
 
-"6489 Golevka:Golevka:1991 JX" "Sol"
+"1998 WW31" "Sol/1998 WW31 System"
 {
-	Class "asteroid"
-	Mesh   "golevka.cmod"
-	Texture "asteroid.jpg"
-        Color [ 1.000 0.856 0.747 ]
-	BlendTexture true
-	Radius  0.34 # maximum semi-axis
-	MeshCenter [ -0.0289 -0.0111 -0.0331 ]
-
-	InfoURL "http://echo.jpl.nasa.gov/~ostro/gol/index.html" 
-
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	74
+	Visible	true
+	Clickable	true
 	EllipticalOrbit
 	{
-	Epoch       2452000.5        # 2001 Apr 1 00:00UT 
-	Period            3.995
-	SemiMajorAxis     2.5120500
-	Eccentricity      0.60117380
-	Inclination       2.28701
-	AscendingNode   212.16560
-	ArgOfPericenter  65.25133
-        MeanAnomaly     159.8983670
+		Epoch	2452300.5  # 2002 Jan 26
+		Period	587.3
+		SemiMajorAxis	8249
+		Eccentricity	0.819
+		Inclination	41.4
+		AscendingNode	94.6
+		ArgOfPericenter	168.5
+		MeanAnomaly	30.8
 	}
-
 	UniformRotation
 	{
-	Period         6.0289 
-	Inclination            135 
-	AscendingNode 292 
+		Period	14095.2
+		Inclination	41.4
+		AscendingNode	94.6
 	}
-    
-	Albedo 0.15 
+	Albedo	0.07
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=1998+WW31"
 }
 
-"4769 Castalia:Castalia:1989 PB" "Sol"
-{ 
-	Class "asteroid"
-	Mesh   "castalia.cmod"
-	Texture "asteroid.jpg"
-	BlendTexture true
-	Radius  0.81 # maximum semi-axis
-	MeshCenter [ -0.0456 -0.0347 -0.0178 ]
-
-	InfoURL "http://echo.jpl.nasa.gov/asteroids/4769_Castalia/cast01.html"
-
+"2000 1998 WW31 I" "Sol/1998 WW31 System"
+{
+	Class	"asteroid"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"darkasteroid.jpg"
+	Radius	61.5
+	Visible	true
+	Clickable	true
 	EllipticalOrbit
 	{
-	Epoch       2452000.5        # 2001 Apr 1 00:00UT
-	Period            1.096
-	SemiMajorAxis     1.0632007
-	Eccentricity      0.48324394
-	Inclination       8.88806
-	AscendingNode   325.71246
-	ArgOfPericenter 121.26355
-        MeanAnomaly     152.5186007
+		Epoch	2452300.5  # 2002 Jan 26
+		Period	587.3
+		SemiMajorAxis	14371
+		Eccentricity	0.819
+		Inclination	41.4
+		AscendingNode	94.6
+		ArgOfPericenter	348.5
+		MeanAnomaly	30.8
 	}
-
 	UniformRotation
 	{
-	Period         4.095 
-	Inclination            146 
-	AscendingNode 325 
+		Period	14095.2
+		Inclination	41.4
+		AscendingNode	94.6
 	}
-
-	Albedo 0.15 
+	Albedo	0.07
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am1998ww31.html"
 }
 
-# Centaurs
-"2060 Chiron:Chiron:1977 UB:95P Chiron" "Sol" 
-{ 
-	Class "asteroid" 
-	Texture "asteroid.jpg" 
-        Color [ 1.000 0.960 0.919 ]
-	BlendTexture true
-	Radius 144 
-
-	EllipticalOrbit 
-	{ 
-	Epoch        2449608.5      # 1994 Sep 13 00:00UT
-	Period            50.90359 
-	SemiMajorAxis     13.734941 
-	Eccentricity       0.384424 
-	Inclination        6.927771 
-	AscendingNode    209.395188 
-	ArgOfPericenter  339.432152 
-	MeanAnomaly      349.983669 
-	} 
-
+"2003 UZ413:455502 2003 UZ413" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"darkasteroid.jpg"
+	Color	[ 1.00 0.732 0.476 ]
+	BlendTexture	true
+	Radius	318
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	245.798898442344
+		SemiMajorAxis	39.238688808051
+		Eccentricity	0.220860064489
+		Inclination	12.042489650859
+		AscendingNode	136.173914512113
+		ArgOfPericenter	145.22711548
+		MeanAnomaly	107.035824068952
+	}
 	UniformRotation
 	{
-	Period 5.918 
+		Period	4.14
 	}
-
-	Albedo 0.048 
+	Albedo	0.09
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=2003+UZ413"
 }
+
+"2004 XR190" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"darkasteroid.jpg"
+	Radius	290
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	438.44713749626
+		SemiMajorAxis	57.71287256830396
+		Eccentricity	0.1094918923387402
+		Inclination	46.59497186792814
+		AscendingNode	252.3628385298381
+		ArgOfPericenter	281.6361935007498
+		MeanAnomaly	277.636302515104
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.09
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=2004+XR190"
+}
+
+"2011 HM102" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	53
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2456597.5  # 2013 Nov 01+
+		Period	164.65013654073
+		SemiMajorAxis	30.04018447314188
+		Eccentricity	0.07922009031032798
+		Inclination	29.42755958016819
+		AscendingNode	100.9889060604037
+		ArgOfPericenter	150.2338765686575
+		MeanAnomaly	26.39853693948664
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.09
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=2011+HM102"
+}
+
+"2013 BL76" "Sol"
+{
+	Class	"asteroid"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	15
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457000.5  # 2014 Dec 09+
+		Period	44381.5149450983
+		SemiMajorAxis	1253.51426395699
+		Eccentricity	0.993319900508
+		Inclination	98.607141368809
+		AscendingNode	180.198132864871
+		ArgOfPericenter	166.113321084745
+		MeanAnomaly	0.017153812033
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.09
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=2013+BL76"
+}
+
+"2013 FY27" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"asteroid.jpg"
+	Radius	376
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2456549.5  # 2013 Sept 14+
+		Period	460.30334599126
+		SemiMajorAxis	59.61523858579225
+		Eccentricity	0.4037466760868446
+		Inclination	33.12113097009031
+		AscendingNode	187.0505237776004
+		ArgOfPericenter	133.2396603750165
+		MeanAnomaly	221.6213835536648
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.15
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=2013+FY27"
+}
+
+"2014 UZ224" "Sol"
+{
+	Class	"asteroid"  # Candidate to the Dwarf Planet
+	Texture	"asteroid.jpg"
+	Color	[ 1.00 0.609 0.507 ]
+	BlendTexture	true
+	Radius	317.5
+	OrbitColor	[ 0.27451 0.078431 0.54902 ]
+	Visible	true
+	Clickable	true
+	EllipticalOrbit
+	{
+		Epoch	2457800.5  # 2017 Feb 16+
+		Period	1132.45737104527
+		SemiMajorAxis	108.644840603755
+		Eccentricity	0.65089923203
+		Inclination	26.785384838617
+		AscendingNode	131.084768059672
+		ArgOfPericenter	29.709247314154
+		MeanAnomaly	320.275516175698
+	}
+	UniformRotation
+	{
+		Period	6
+	}
+	Albedo	0.131
+	InfoURL	"http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=2014+UZ224"
+}
+

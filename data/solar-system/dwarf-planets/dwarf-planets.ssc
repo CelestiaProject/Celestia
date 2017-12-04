@@ -1,0 +1,516 @@
+# Five official dwarf planets of the Solar System together with all known satellites.
+# Total number of satellites 9, of which 7 are not in hydrostatic equilibrium state
+# and assigned the class "Small Moon".
+# Created by Art Blos, Zemlyanin, Greg Frieger, Askaniy ("Celestia Origin" project).
+
+# Created On: Sep 06, 2014
+# Updated: 8/27/2017
+
+"Ceres:1 Ceres:1943 XB:A899 OF" "Sol"
+{
+	Class	"dwarfplanet"
+	Mesh	"ceres.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"ceres.dds"
+	Radius	482.6
+	OrbitColor	[ 0.556863 0.235294 0.576471 ]
+	Timeline
+	[
+		{
+			Ending	2457087.5  # 2015 Mar 06
+			EllipticalOrbit
+			{
+				Epoch	2457087.5  # 2015 Mar 06
+				Period	4.60448985029235
+				SemiMajorAxis	2.767677895200867
+				Eccentricity	0.07582355092759185
+				Inclination	10.59298976951364
+				AscendingNode	80.3290197643724
+				ArgOfPericenter	72.57244779564185
+				MeanAnomaly	114.560076126873
+			}
+			UniformRotation
+			{
+				Period	9.074170
+				Epoch	2449249.91125  # 1993 Sept 19 9:52:12
+				Inclination	11
+				AscendingNode	29
+				MeridianAngle	339.85
+			}
+		}
+		{
+			Ending	2457991.5  # 2017 Aug 26
+			SampledTrajectory
+			{
+				Source	"Ceres-Dawn.xyzv"
+				DoublePrecision	true
+				Interpolation	"cubic"
+			}
+			UniformRotation
+			{
+				Period	9.074170
+				Epoch	2449249.91125  # 1993 Sept 19 9:52:12
+				Inclination	11
+				AscendingNode	29
+				MeridianAngle	339.85
+			}
+		}
+		{
+			EllipticalOrbit
+			{
+				Epoch	2457991.5  # 2017 Aug 26
+				Period	4.60385734034075
+				SemiMajorAxis	2.767424428989992
+				Eccentricity	0.07560946350668821
+				Inclination	10.59319865444592
+				AscendingNode	80.30885694929545
+				ArgOfPericenter	73.02004225672739
+				MeanAnomaly	307.5708831586204
+			}
+			UniformRotation
+			{
+				Period	9.074170
+				Epoch	2449249.91125  # 1993 Sept 19 9:52:12
+				Inclination	11
+				AscendingNode	29
+				MeridianAngle	339.85
+			}
+		}
+	]
+	Albedo	0.09
+	InfoURL	"https://en.wikipedia.org/wiki/Ceres_(dwarf_planet)"
+}
+
+AltSurface "Topography" "Sol/Ceres"
+{
+	Texture	"ceres-topo.dds"
+}
+
+"Pluto-Charon" "Sol"  # Barycenter
+{
+	Class	"dwarfplanet"
+	Mesh	""
+	Radius	2035
+	OrbitColor	[ 0.556863 0.235294 0.576471 ]
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2457217.5  # 2015 Jul 14
+		Period	248.0541848468
+		SemiMajorAxis	39.47834200664590
+		Eccentricity	0.2501732811304472
+		Inclination	17.16201351793483
+		AscendingNode	110.2878066070713
+		ArgOfPericenter	113.3688155797719
+		MeanAnomaly	37.59714922781219
+	}
+	Albedo	0
+	InfoURL	"http://www.johnstonsarchive.net/astro/astmoons/am-pluto.html"
+}
+
+"Pluto:134340 Pluto" "Sol/Pluto-Charon"
+{
+	Class	"dwarfplanet"
+	Mesh	"pluto.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"pluto.dds"
+	Radius	1187
+	Atmosphere
+	{
+		Height	130
+		Lower	[ 0.04 0.06 0.08 ]
+		Upper	[ 0.04 0.06 0.08 ]
+		Sky	[ 0.16 0.24 0.32 ]
+		Sunset	[ 0.20 0.29 0.40 ]
+	}
+	OrbitColor	[ 0.556863 0.235294 0.576471 ]
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2457217.5  # 2015 Jul 14
+		Period	6.3872273
+		SemiMajorAxis	2035
+		Eccentricity	0.000075
+		Inclination	112.896
+		AscendingNode	227.402
+		ArgOfPericenter	357.940
+		MeanAnomaly	179.759
+	}
+	UniformRotation
+	{
+		Period	153.2934552
+		Inclination	115.60
+		AscendingNode	228.34
+		MeridianAngle	320.75
+	}
+	Albedo	0.56
+	InfoURL	"https://en.wikipedia.org/wiki/Pluto"
+}
+
+AltSurface "Limit of knowledge" "Sol/Pluto-Charon/Pluto"
+{
+	Texture	"pluto-lok.dds"
+}
+
+AltSurface "Hubble" "Sol/Pluto-Charon/Pluto"
+{
+	Texture	"pluto-hubble.png"
+}
+
+"Charon:134340 Pluto I:Pluto I:1978 P 1:1978 134340 I" "Sol/Pluto-Charon"
+{
+	Class	"moon"
+	Mesh	"charon.cmod"
+	Orientation	[ 90 0 1 0 ]
+	Texture	"charon.dds"
+	Radius	606
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2457217.5  # 2015 Jul 14
+		Period	6.3872273
+		SemiMajorAxis	17538
+		Eccentricity	0.000075
+		Inclination	112.896
+		AscendingNode	227.402
+		ArgOfPericenter	178.031
+		MeanAnomaly	179.672
+	}
+	UniformRotation
+	{
+		Period	153.2934552
+		Inclination	115.9
+		AscendingNode	227.3
+		MeridianAngle	140.4
+	}
+	Albedo	0.372
+	InfoURL	"https://en.wikipedia.org/wiki/Charon_(moon)"
+}
+
+AltSurface "Limit of knowledge" "Sol/Pluto-Charon/Charon"
+{
+	Texture	"charon-lok.dds"
+}
+
+AltSurface "Hubble" "Sol/Pluto-Charon/Charon"
+{
+	Texture	"charon-hubble.png"
+}
+
+"Styx:134340 Pluto V:Pluto V:2012 P 1:2012 134340 I:P5" "Sol/Pluto-Charon"
+{
+	Class	"minormoon"
+	Mesh	"roughsphere.cmod"
+	Texture	"asteroid.jpg"
+	SemiAxes	[ 8 4.5 4 ]
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2457217.5  # 2015 Jul 14
+		Period	20.16155
+		SemiMajorAxis	42656
+		Eccentricity	0.005787
+		Inclination	112.852
+		AscendingNode	227.410
+		ArgOfPericenter	66.378
+		MeanAnomaly	268.585
+	}
+	PrecessingRotation
+	{
+		Period	77.76
+		Inclination	82
+		PrecessionPeriod	0.0175
+	}
+	Albedo	0.65
+	InfoURL	"https://en.wikipedia.org/wiki/Styx_(moon)"
+}
+
+"Nix:134340 Pluto II:Pluto II:2005 P 2:2005 134340 II" "Sol/Pluto-Charon"
+{
+	Class	"minormoon"
+	Mesh	"roughsphere.cmod"
+	Texture	"nix.jpg"
+	SemiAxes	[ 25 17.5 16.5 ]
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2457217.5  # 2015 Jul 14
+		Period	24.85463
+		SemiMajorAxis	48694
+		Eccentricity	0.002036
+		Inclination	112.907
+		AscendingNode	227.406
+		ArgOfPericenter	170.720
+		MeanAnomaly	19.742
+	}
+	PrecessingRotation
+	{
+		Period	43.896
+		Inclination	132
+		PrecessionPeriod	0.0175
+	}
+	Albedo	0.56
+	InfoURL	"https://en.wikipedia.org/wiki/Nix_(moon)"
+}
+
+"Kerberos:134340 Pluto IV:Pluto IV:2011 P 1:2011 134340 I:P4" "Sol/Pluto-Charon"
+{
+	Class	"minormoon"
+	Mesh	"roughsphere.cmod"
+	Texture	"asteroid.jpg"
+	SemiAxes	[ 9.5 5 4.5 ]
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2457217.5  # 2015 Jul 14
+		Period	32.16756
+		SemiMajorAxis	57783
+		Eccentricity	0.003280
+		Inclination	113.006
+		AscendingNode	227.847
+		ArgOfPericenter	13.009
+		MeanAnomaly	34.021
+	}
+	PrecessingRotation
+	{
+		Period	127.44
+		Inclination	60
+		PrecessionPeriod	0.0175
+	}
+	Albedo	0.56
+	InfoURL	"https://en.wikipedia.org/wiki/Kerberos_(moon)"
+}
+
+"Hydra:134340 Pluto III:Pluto III:2005 P 1:2005 134340 I" "Sol/Pluto-Charon"
+{
+	Class	"minormoon"
+	Mesh	"asteroid.cms"
+	Texture	"lightasteroid.jpg"
+	Radius	32.5
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2457217.5  # 2015 Jul 14
+		Period	38.20177
+		SemiMajorAxis	64738
+		Eccentricity	0.005862
+		Inclination	112.873
+		AscendingNode	227.711
+		ArgOfPericenter	16.234
+		MeanAnomaly	49.041
+	}
+	PrecessingRotation
+	{
+		Period	10.308
+		Inclination	60
+		PrecessionPeriod	0.0175
+	}
+	Albedo	0.7  # 0.83
+	InfoURL	"https://en.wikipedia.org/wiki/Hydra_(moon)"
+}
+
+"Haumea:136108 Haumea:2003 EL61" "Sol"
+{
+	Class	"dwarfplanet"
+	Texture	"haumea.dds"
+	NormalMap	"haumea-normal.*"
+	SemiAxes	[ 980 759 498 ]
+	OrbitColor	[ 0.556863 0.235294 0.576471 ]
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2457754.5  # 2017 Jan 01
+		Period	285.397549416457
+		SemiMajorAxis	43.34723081151652
+		Eccentricity	0.1890786974514257
+		Inclination	28.19991468079053
+		AscendingNode	121.9098883633316
+		ArgOfPericenter	239.1613049764564
+		MeanAnomaly	212.8672863540487
+	}
+	UniformRotation
+	{
+		Period	3.9154
+		Inclination	255
+		AscendingNode	25
+	}
+	Albedo	0.7  # 0.804
+	InfoURL	"https://en.wikipedia.org/wiki/Haumea"
+}
+
+"Namaka:136108 Haumea II:Haumea II:2005 2003 EL61 II" "Sol/Haumea"
+{
+	Class	"minormoon"
+	Mesh	"roughsphere.cmod"
+	Texture	"haumeanfamily.dds"
+	Radius	80
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Period	18.2783
+		SemiMajorAxis	25657
+		Eccentricity	0.249
+		Inclination	113.013
+		AscendingNode	205.016
+		ArgOfPericenter	178.9
+		MeanAnomaly	178.5
+	}
+	UniformRotation
+	{
+		Period	10
+		Inclination	275
+		AscendingNode	25
+	}
+	Albedo	0.7  # 0.8
+	InfoURL	"https://en.wikipedia.org/wiki/Namaka_(moon)"
+}
+
+"Hi'iaka:136108 Haumea I:Haumea I:2005 2003 EL61 I" "Sol/Haumea"
+{
+	Class	"minormoon"
+	Mesh	"roughsphere.cmod"
+	Orientation	[ 180 1 0 0 ]
+	Texture	"haumeanfamily.dds"
+	Radius	160
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Period	49.462
+		SemiMajorAxis	49880
+		Eccentricity	0.0513
+		Inclination	126.356
+		AscendingNode	206.766
+		ArgOfPericenter	154.1
+		MeanAnomaly	152.8
+	}
+	UniformRotation
+	{
+		Period	10
+		Inclination	235
+		AscendingNode	25
+	}
+	Albedo	0.7  # 0.8
+	InfoURL	"https://en.wikipedia.org/wiki/Hi'iaka_(moon)"
+}
+
+"Makemake:136472 Makemake:2005 FY9" "Sol"
+{
+	Class	"dwarfplanet"
+	Texture	"makemake.dds"
+	NormalMap	"makemake-normal.*"
+	Radius	717
+	Oblateness	0.0083682
+	OrbitColor	[ 0.556863 0.235294 0.576471 ]
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2457754.5  # 2017 Jan 01
+		Period	309.455480667431
+		SemiMajorAxis	45.7502337840583
+		Eccentricity	0.1541148091612063
+		Inclination	28.99154991411699
+		AscendingNode	79.53671234818503
+		ArgOfPericenter	296.3828107491902
+		MeanAnomaly	159.7684362949699
+	}
+	UniformRotation
+	{
+		Period	7.771
+	}
+	Albedo	0.7  # 0.8
+	InfoURL	"https://en.wikipedia.org/wiki/Makemake"
+}
+
+"2015 136472 I:MK 2" "Sol/Makemake"
+{
+	Class	"minormoon"
+	Mesh	"roughsphere.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	87.5
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Period	12.4
+		SemiMajorAxis	21100
+	}
+	UniformRotation
+	{
+		Period	10
+	}
+	Albedo	0.07
+	InfoURL	"https://en.wikipedia.org/wiki/S/2015_(136472)_1"
+}
+
+"Eris:136199 Eris:2003 UB313" "Sol"
+{
+	Class	"dwarfplanet"
+	Texture	"eris.dds"
+	NormalMap	"eris-normal.*"
+	Radius	1163
+	Atmosphere
+	{
+		Height	1
+		Lower	[ 0.5 0.5 0.5 ]
+		Upper	[ 0.5 0.5 0.5 ]
+		Sky	[ 0.0 0.0 0.0 ]
+	}
+	OrbitColor	[ 0.556863 0.235294 0.576471 ]
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2457754.5  # 2017 Jan 01
+		Period	556.482596354727
+		SemiMajorAxis	67.65432876860559
+		Eccentricity	0.4421551714017062
+		Inclination	44.19161581533506
+		AscendingNode	35.88355205146119
+		ArgOfPericenter	151.3935958617589
+		MeanAnomaly	204.7392457572878
+	}
+	UniformRotation
+	{
+		Period	25.92
+		Inclination	79.8
+		AscendingNode	144
+	}
+	Albedo	0.7  # 0.96
+	InfoURL	"https://en.wikipedia.org/wiki/Eris_(dwarf_planet)"
+}
+
+"Dysnomia:136199 Eris I:Eris I:2005 2003 UB313 I" "Sol/Eris"
+{
+	Class	"moon"
+	Texture	"dysnomia.jpg"
+	Radius	257
+	Visible	false
+	Clickable	false
+	EllipticalOrbit
+	{
+		Epoch	2453979  # 2006 Aug 31 12:00
+		Period	15.79
+		SemiMajorAxis	37580
+		Eccentricity	0.017
+		Inclination	61.3
+		AscendingNode	139
+		MeanAnomaly	328.6
+	}
+	UniformRotation
+	{
+		Period	10
+	}
+	Albedo	0.7  # 0.96
+	InfoURL	"https://en.wikipedia.org/wiki/Dysnomia_(moon)"
+}

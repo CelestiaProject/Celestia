@@ -61,7 +61,44 @@
 #
 # When alternate data sources are used for orbits or rotational elements, the
 # source is noted by a comment in the body definition
-
+# ======================================================================================
+# Update-1
+# Additional moons of the planets.
+# SVN revision 4909 (2009 Nov 10)
+#
+# This file supplements the solar system moons defined in
+# the Celestia distribution files solarsys.ssc and minormoons.ssc.
+# Added to these files, it provides Celestia with a complete
+# set of all the known planetary moons with well-defined orbits.
+# It does not contain some recently discovered moons, and some moons
+# which were discovered in the past but not subsequently recovered -
+# the orbits of such moons are poorly known and unreliable. If you
+# want a representation of these in Celestia, you could try the
+# "poormoons" add-on at:
+# http://www.lns.cornell.edu/~seb/celestia/hutchison/poormoons.html
+# which supplements this file without overlap.
+#
+# Explanatory Note:
+# This file was originally named "numberedmoons.ssc" a) because it 
+# originally contained only unnamed moons and b) to ensure that it
+# loaded after "minormoons.ssc". Although many of the moons have
+# now been named, for reasons of backward compatibility the file has
+# not been renamed, and moons have not been transferred between files.
+# ======================================================================================
+# Update-2
+# Named minor moons of the giant planets.
+#
+# Semiaxes from the Natural Satellites Data Center
+# http://lnfm1.sai.msu.ru/neb/nss/pardihe.htm,
+# supplemented by Karkoschka "Sizes, shapes and albedos
+# of the inner satellites of Neptune" Icarus 2003; 162: 400
+# and Porco et al. "Physical characteristics and possible
+# accretionary origins for Saturn's small satellites" (2006)
+# http://www.lpi.usra.edu/meetings/lpsc2006/pdf/2289.pdf
+# ======================================================================================
+# Update-3
+# Collection of exclusive space objects. Thanks for Art Blos, Zemlyanin, Greg Frieger ("Celestia Origin" project).
+# =======================================================================================
 
 "Mercury" "Sol"
 {
@@ -206,7 +243,6 @@
 	Albedo            0.30
 }
 
-
 "Moon:Earth I" "Sol/Earth"
 {
 	Texture "moon.*"
@@ -246,7 +282,6 @@
 
 	Albedo           0.12
 }
-
 
 "Mars" "Sol"
 {
@@ -305,7 +340,6 @@
 
 	Albedo            0.150
 }
-
 
 "Phobos:Mars I" "Sol/Mars"
 {
@@ -424,6 +458,49 @@
 	Albedo 0.51
 }
 
+"Metis:Jupiter XVI:1979 J 3" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 30 20 20 ]
+
+	EllipticalOrbit
+	{
+	Period		0.294780
+	SemiMajorAxis	127979
+	Eccentricity	0.0012
+	Inclination	0.019
+	AscendingNode	263.953	#
+	ArgOfPericenter 274.588	# J2000.0
+	MeanAnomaly	7.649	#
+	}
+
+	RotationOffset		366
+
+	Albedo 0.061
+}
+
+"Adrastea:Jupiter XV:1979 J 1" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 10 8 7 ]
+
+	EllipticalOrbit
+	{
+	Period		0.29826
+	SemiMajorAxis	128980
+	Eccentricity	0.0018
+	Inclination	0.054
+	AscendingNode	36.236	#
+	ArgOfPericenter 213.656	# J2000.0
+	MeanAnomaly	344.875	#
+	}
+
+	RotationOffset		 55
+
+	Albedo 0.1
+}
 
 "Amalthea:Jupiter V" "Sol/Jupiter"
 {
@@ -459,6 +536,28 @@
 	Albedo          0.06
 }
 
+"Thebe:Jupiter XIV:1979 J 2" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 58 49 42 ]
+
+	EllipticalOrbit
+	{
+	Period		0.6745
+	SemiMajorAxis	221900
+	Eccentricity	0.0177
+	Inclination	1.075	#
+	AscendingNode	0.415	#
+	ArgOfPericenter 28.001	# J2000.0
+	MeanAnomaly	181.090	#
+	}
+
+	Obliquity		  0.0
+	RotationOffset		 29.5
+
+	Albedo 0.047
+}
 
 "Io:Jupiter I" "Sol/Jupiter"
 {
@@ -620,6 +719,1480 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	OverlayTexture "callisto-lok-mask.png"
 }
 
+"Themisto:Jupiter XVIII:2000 J 1" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		4.0
+
+	EllipticalOrbit
+	{
+	Period		130.02
+	SemiMajorAxis	7507000
+	Eccentricity	0.2420
+	Inclination	47.584	#
+	AscendingNode	223.444	#
+	ArgOfPericenter	238.413	# J2000.0
+	MeanAnomaly     289.151	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Leda:Jupiter XIII" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		10
+
+	EllipticalOrbit
+	{
+	Period		240.92
+	SemiMajorAxis	11650000
+	Eccentricity	0.1636
+	Inclination	28.776	#
+	AscendingNode	235.611	# J2000.0
+	ArgOfPericenter	275.215	#
+	MeanAnomaly     232.639	#
+	}
+
+	RotationPeriod  10   	# Guess
+
+	Albedo 0.04
+}
+
+"Himalia:Jupiter VI" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 75 60 60 ]
+
+	EllipticalOrbit
+	{
+	Period		250.56
+	SemiMajorAxis	11461000
+	Eccentricity	0.1623
+	Inclination	30.182	#
+	AscendingNode	90.236	#
+	ArgOfPericenter	316.730	# J2000.0
+	MeanAnomaly	78.236	#
+	}
+
+	RotationPeriod  9.6
+
+	Albedo 0.04
+}
+
+"Lysithea:Jupiter X" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		18
+
+	EllipticalOrbit
+	{
+	Period		259.20
+	SemiMajorAxis	11717000
+	Eccentricity	0.1124
+	Inclination	25.989	#
+	AscendingNode	33.831	#
+	ArgOfPericenter	45.606	# J2000.0
+	MeanAnomaly     328.460	#
+	}
+
+	RotationPeriod  10   	# Guess
+
+	Albedo 0.04
+}
+
+"Elara:Jupiter VII" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		43
+
+	EllipticalOrbit
+	{
+	Period		259.64
+	SemiMajorAxis	11741000
+	Eccentricity	0.2174
+	Inclination	30.520	#
+	AscendingNode	137.714	#
+	ArgOfPericenter	126.817	# J2000.0
+	MeanAnomaly     346.909	#
+	}
+
+	RotationPeriod  12
+
+	Albedo 0.04
+}
+
+"Dia:Jupiter LIII:2000 J 11" "Sol/Jupiter" # Update-3
+{
+	Class	"minormoon"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	2
+	# Visible	false
+	# Clickable false 
+	OrbitFrame
+	{
+		EclipticJ2000	{ Center "Sol/Jupiter" }
+	}
+	EllipticalOrbit
+	{
+		Epoch	2457754.5  # 2017 Jan 01
+		Period	287.0
+		SemiMajorAxis	12555000
+		Eccentricity	0.248
+		Inclination	26.850
+		AscendingNode	270.397
+		ArgOfPericenter	240.026
+		MeanAnomaly	22.686
+	}
+	UniformRotation
+	{
+		Period	10
+	}
+	Albedo	0.04
+	InfoURL	"https://en.wikipedia.org/wiki/Dia_(moon)"
+}
+
+"Carpo:Jupiter XLVI:2003 J 20" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.5
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		456.10 		# mean
+	SemiMajorAxis	16989000	# mean
+	Eccentricity	0.4297		# mean
+	Inclination	54.223
+	AscendingNode	72.057
+	ArgOfPericenter	78.282
+	MeanAnomaly     140.992
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003 J 12" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		0.5
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		489.50		# mean
+	SemiMajorAxis	17582000	# mean
+	Eccentricity	0.5095		# mean
+	Inclination	141.880
+	AscendingNode	82.853
+	ArgOfPericenter	19.516
+	MeanAnomaly     113.072
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Euporie:Jupiter XXXIV:2001 J 10" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Period		550.74
+	SemiMajorAxis	19304000
+	Eccentricity	0.1432
+	Inclination	146.861	#
+	AscendingNode	82.199	#
+	ArgOfPericenter	105.607	# J2000.0
+	MeanAnomaly     56.246	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2011 J 1" "Sol/Jupiter" # Update-3
+{
+	Class	"minormoon"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	0.5
+	# Visible	false
+	# Clickable false 
+	OrbitFrame
+	{
+		EclipticJ2000	{ Center "Sol/Jupiter" }
+	}
+	EllipticalOrbit
+	{
+		Epoch	2457754.5  # 2017 Jan 01
+		Period	580.7
+		SemiMajorAxis	20155000
+		Eccentricity	0.2962952
+		Inclination	164.367
+		AscendingNode	314.713
+		ArgOfPericenter	85.798
+		MeanAnomaly	60.404
+	}
+	UniformRotation
+	{
+		Period	10
+	}
+	Albedo	0.04
+	InfoURL	"https://en.wikipedia.org/wiki/S/2011_J_1"
+}
+
+"2003 J 3" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		583.88		# mean
+	SemiMajorAxis	20221000	# mean
+	Eccentricity	0.1970		# mean
+	Inclination	146.629
+	AscendingNode	262.887
+	ArgOfPericenter	72.641
+	MeanAnomaly     271.954
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Jupiter LII:2010 J 2" "Sol/Jupiter" # Update-3
+{
+	Class	"minormoon"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	0.5
+	# Visible	false
+	# Clickable false 
+	OrbitFrame
+	{
+		EclipticJ2000	{ Center "Sol/Jupiter" }
+	}
+	EllipticalOrbit
+	{
+		Epoch	2457754.5  # 2017 Jan 01
+		Period	588.1
+		SemiMajorAxis	20307150
+		Eccentricity	0.30761
+		Inclination	149.913
+		AscendingNode	54.441
+		ArgOfPericenter	75.536
+		MeanAnomaly	317.294
+	}
+	UniformRotation
+	{
+		Period	10
+	}
+	Albedo	0.04
+	InfoURL	"https://en.wikipedia.org/wiki/Jupiter_LII"
+}
+
+"Jupiter LV:2003 J 18" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		596.59		# mean
+	SemiMajorAxis	20514000	# mean
+	Eccentricity	0.0221		# mean
+	Inclination	147.719
+	AscendingNode	204.340
+	ArgOfPericenter	123.909
+	MeanAnomaly     174.708
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Jupiter LIV:2016 J 1" "Sol/Jupiter" # Update-3
+{
+	Class	"minormoon"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	1.5
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2458000.5  # 2017 Sept 04
+		Period	603.83
+		SemiMajorAxis	20595776.08
+		Eccentricity	0.1404545
+		Inclination	139.83916
+		AscendingNode	293.75814
+		ArgOfPericenter	328.15054
+		MeanAnomaly	25.52802
+	}
+	UniformRotation
+	{
+		Period	10
+	}
+	Albedo	0.04
+	InfoURL	"https://en.wikipedia.org/wiki/Jupiter_LIV"
+}
+
+"2003 J 16" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		616.36		# mean
+	SemiMajorAxis	20957000	# mean
+	Eccentricity	0.2246		# mean
+	Inclination	147.370
+	AscendingNode	41.164
+	ArgOfPericenter	72.310
+	MeanAnomaly     206.244
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Mneme:Jupiter XL:2003 J 21" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		620.04 		# mean
+	SemiMajorAxis	21069000	# mean
+	Eccentricity	0.2273		# mean
+	Inclination	145.402
+	AscendingNode	34.889
+	ArgOfPericenter	48.811
+	MeanAnomaly     168.011
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Euanthe:Jupiter XXXIII:2001 J 7" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.5
+
+	EllipticalOrbit
+	{
+	Period		620.49
+	SemiMajorAxis	20797000
+	Eccentricity	0.2321
+	Inclination	145.251	#
+	AscendingNode	290.469	#
+	ArgOfPericenter	316.075	# J2000.0
+	MeanAnomaly     353.616	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Helike:Jupiter XLV:2003 J 6" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		634.77		# mean
+	SemiMajorAxis	21263000	# mean
+	Eccentricity	0.1558		# mean
+	Inclination	157.740
+	AscendingNode	117.752
+	ArgOfPericenter	293.662
+	MeanAnomaly     326.097
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Harpalyke:Jupiter XXII:2000 J 5" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.2
+
+	EllipticalOrbit
+	{
+	Period		623.34
+	SemiMajorAxis	21105000
+	Eccentricity	0.2259
+	Inclination	148.725	#
+	AscendingNode	54.669	#
+	ArgOfPericenter	100.638	# J2000.0
+	MeanAnomaly     255.488	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Praxidike:Jupiter XXVII:2000 J 7" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3.4
+
+	EllipticalOrbit
+	{
+	Period		625.30
+	SemiMajorAxis	21147000
+	Eccentricity	0.2296
+	Inclination	141.869	#
+	AscendingNode	305.912	#
+	ArgOfPericenter	185.546	# J2000.0
+	MeanAnomaly     127.898	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Orthosie:Jupiter XXXV:2001 J 9" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Period		622.56
+	SemiMajorAxis	20720000
+	Eccentricity	0.2808
+	Inclination	145.538	#
+	AscendingNode	237.202	#
+	ArgOfPericenter	247.923	# J2000.0
+	MeanAnomaly     161.134	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Thelxinoe:Jupiter XLII:2003 J 22" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		628.09 		# mean
+	SemiMajorAxis	21162000	# mean
+	Eccentricity	0.2206		# mean
+	Inclination	150.941
+	AscendingNode	215.311
+	ArgOfPericenter	323.714
+	MeanAnomaly     191.904
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Thyone:Jupiter XXIX:2001 J 2" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.0
+
+	EllipticalOrbit
+	{
+	Period		627.21
+	SemiMajorAxis	20939000
+	Eccentricity	0.2286
+	Inclination	150.100	#
+	AscendingNode	266.835	#
+	ArgOfPericenter	109.494	# J2000.0
+	MeanAnomaly     242.603	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Iocaste:Jupiter XXIV:2000 J 3" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.6
+
+	EllipticalOrbit
+	{
+	Period		631.49
+	SemiMajorAxis	21269000
+	Eccentricity	0.2156
+	Inclination	148.117	#
+	AscendingNode	294.484	#
+	ArgOfPericenter	95.230	# J2000.0
+	MeanAnomaly     182.064	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Ananke:Jupiter XII" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		14
+
+	EllipticalOrbit
+	{
+	Period		629.77
+	SemiMajorAxis	21276000
+	Eccentricity	0.2435
+	Inclination	149.828	#
+	AscendingNode	33.659	#
+	ArgOfPericenter	76.129	# J2000.0
+	MeanAnomaly     271.820	#
+	}
+
+	RotationPeriod  10	# Guess
+
+	Albedo 0.04
+}
+
+"Hermippe:Jupiter XXX:2001 J 3" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.0
+
+	EllipticalOrbit
+	{
+	Period		633.90
+	SemiMajorAxis	21131000
+	Eccentricity	0.2096
+	Inclination	147.712	#
+	AscendingNode	353.025	#
+	ArgOfPericenter	277.841	# J2000.0
+	MeanAnomaly     158.433	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Jupiter LVIII:2003 J 15" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		689.77		# mean
+	SemiMajorAxis	22627000	# mean
+	Eccentricity	0.1910		# mean
+	Inclination	142.204
+	AscendingNode	266.001
+	ArgOfPericenter	28.760
+	MeanAnomaly     270.870
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003 J 10" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		716.25		# mean
+	SemiMajorAxis	23041000	# mean
+	Eccentricity	0.4295		# mean
+	Inclination	164.202
+	AscendingNode	195.659
+	ArgOfPericenter	177.632
+	MeanAnomaly     113.134
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Pasithee:Jupiter XXXVIII:2001 J 6" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Period		719.44
+	SemiMajorAxis	23004000
+	Eccentricity	0.2675
+	Inclination	161.049	#
+	AscendingNode	341.650	#
+	ArgOfPericenter	210.162	# J2000.0
+	MeanAnomaly     237.866	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Eurydome:Jupiter XXXII:2001 J 4" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.5
+
+	EllipticalOrbit
+	{
+	Period		717.33
+	SemiMajorAxis	22865000
+	Eccentricity	0.2759
+	Inclination	144.350	#
+	AscendingNode	321.938	#
+	ArgOfPericenter	225.861	# J2000.0
+	MeanAnomaly     281.794	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Chaldene:Jupiter XXI:2000 J 10" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.9
+
+	EllipticalOrbit
+	{
+	Period		723.78
+	SemiMajorAxis	23179000
+	Eccentricity	0.2512
+	Inclination	167.733	#
+	AscendingNode	152.657	#
+	ArgOfPericenter	227.365	# J2000.0
+	MeanAnomaly     275.502	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Isonoe:Jupiter XXVI:2000 J 6" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.9
+
+	EllipticalOrbit
+	{
+	Period		725.52
+	SemiMajorAxis	23217000
+	Eccentricity	0.2461
+	Inclination	168.026	#
+	AscendingNode	152.118	#
+	ArgOfPericenter	126.560	# J2000.0
+	MeanAnomaly     116.296	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Kallichore:Jupiter XLIV:2003 J 11" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		764.73		# mean
+	SemiMajorAxis	24043000	# mean
+	Eccentricity	0.2640		# mean
+	Inclination	162.600
+	AscendingNode	50.546
+	ArgOfPericenter	353.932
+	MeanAnomaly     260.174
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Erinome:Jupiter XXV:2000 J 4" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.6
+
+	EllipticalOrbit
+	{
+	Period		728.26
+	SemiMajorAxis	23279000
+	Eccentricity	0.2659
+	Inclination	159.212	#
+	AscendingNode	336.042	#
+	ArgOfPericenter	2.668	# J2000.0
+	MeanAnomaly     273.099	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Kale:Jupiter XXXVII:2001 J 8" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Period		729.47
+	SemiMajorAxis	23217000
+	Eccentricity	0.2599
+	Inclination	166.119	#
+	AscendingNode	69.924	#
+	ArgOfPericenter	60.165	# J2000.0
+	MeanAnomaly     175.650	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Jupiter LI:2010 J 1" "Sol/Jupiter" # Update-3
+{
+	Class	"minormoon"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	1
+	# Visible	false
+	# Clickable false 
+	OrbitFrame
+	{
+		EclipticJ2000	{ Center "Sol/Jupiter" }
+	}
+	EllipticalOrbit
+	{
+		Epoch	2457754.5  # 2017 Jan 01
+		Period	723.2
+		SemiMajorAxis	23314335
+		Eccentricity	0.3202199
+		Inclination	165.748
+		AscendingNode	347.041
+		ArgOfPericenter	251.469
+		MeanAnomaly	317.774
+	}
+	UniformRotation
+	{
+		Period	10
+	}
+	Albedo	0.04
+	InfoURL	"https://en.wikipedia.org/wiki/Jupiter_LI"
+}
+
+"Aitne:Jupiter XXXI:2001 J 11" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.5
+
+	EllipticalOrbit
+	{
+	Period		730.18
+	SemiMajorAxis	23229000
+	Eccentricity	0.2643
+	Inclination	163.705	#
+	AscendingNode	17.939	#
+	ArgOfPericenter	69.387	# J2000.0
+	MeanAnomaly     120.574	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Eukelade:Jupiter XLVII:2003 J 1" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		746.39		# mean
+	SemiMajorAxis	23661000	# mean
+	Eccentricity	0.2721		# mean
+	Inclination	164.105
+	AscendingNode	244.009
+	ArgOfPericenter	344.815
+	MeanAnomaly     18.464
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Jupiter LVI:2011 J 2" "Sol/Jupiter" # Update-3
+{
+	Class	"minormoon"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	0.5
+	# Visible	false
+	# Clickable false 
+	OrbitFrame
+	{
+		EclipticJ2000	{ Center "Sol/Jupiter" }
+	}
+	EllipticalOrbit
+	{
+		Epoch	2457754.5  # 2017 Jan 01
+		Period	726.8
+		SemiMajorAxis	23330000
+		Eccentricity	0.3866892
+		Inclination	147.545
+		AscendingNode	103.211
+		ArgOfPericenter	352.276
+		MeanAnomaly	149.296
+	}
+	UniformRotation
+	{
+		Period	10
+	}
+	Albedo	0.04
+	InfoURL	"https://en.wikipedia.org/wiki/Jupiter_LVI"
+}
+
+"Arche:Jupiter XLIII:2002 J 1" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.5
+
+	EllipticalOrbit
+	{
+	Period		723.90
+	SemiMajorAxis	22931000
+	Eccentricity	0.2588
+	Inclination	160.380	#
+	AscendingNode	356.413	#
+	ArgOfPericenter	171.807	# J2000.0
+	MeanAnomaly     29.942	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Taygete:Jupiter XX:2000 J 9" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.5
+
+	EllipticalOrbit
+	{
+	Period		732.24
+	SemiMajorAxis	23360000
+	Eccentricity	0.2516
+	Inclination	160.215	#
+	AscendingNode	326.765	#
+	ArgOfPericenter	211.713	# J2000.0
+	MeanAnomaly     116.364	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003 J 9" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		0.5
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		733.29		# mean
+	SemiMajorAxis	23384000	# mean
+	Eccentricity	0.2632		# mean
+	Inclination	165.070
+	AscendingNode	72.935
+	ArgOfPericenter	314.062
+	MeanAnomaly     150.232
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Carme:Jupiter XI" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		23
+
+	EllipticalOrbit
+	{
+	Period		734.17
+	SemiMajorAxis	23404000
+	Eccentricity	0.2533
+	Inclination	166.287	#
+	AscendingNode	131.608	#
+	ArgOfPericenter 0.166	# J2000.0
+	MeanAnomaly     259.474 #
+	}
+
+	RotationPeriod  10	# Guess
+
+	Albedo 0.04
+}
+
+"Herse:Jupiter L:2003 J 17" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		714.47		# mean
+	SemiMajorAxis	22992000	# mean
+	Eccentricity	0.2378		# mean
+	Inclination	161.918
+	AscendingNode	332.506
+	ArgOfPericenter	355.621
+	MeanAnomaly     309.139
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Jupiter LIX:2017 J 1" "Sol/Jupiter" # Update-3
+{
+	Class	"minormoon"
+	Mesh	"asteroid.cmod"
+	Texture	"darkasteroid.jpg"
+	Radius	1
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2458000.5  # 2017 Sept 04
+		Period	735.21
+		SemiMajorAxis	23484312.72
+		Eccentricity	0.3968680
+		Inclination	149.19651
+		AscendingNode	326.77425
+		ArgOfPericenter	79.73238
+		MeanAnomaly	161.32649
+	}
+	UniformRotation
+	{
+		Period	10
+	}
+	Albedo	0.04
+	InfoURL	"https://en.wikipedia.org/wiki/Jupiter_LIX"
+}
+
+"Jupiter LVII:2003 J 5" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		738.73		# mean
+	SemiMajorAxis	23495000	# mean
+	Eccentricity	0.2478		# mean
+	Inclination	166.487
+	AscendingNode	231.685
+	ArgOfPericenter	144.401
+	MeanAnomaly     125.909
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003 J 19" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		740.42		# mean
+	SemiMajorAxis	23533000	# mean
+	Eccentricity	0.2556		# mean
+	Inclination	162.048
+	AscendingNode	51.355
+	ArgOfPericenter	180.864
+	MeanAnomaly     34.860
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003 J 23" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		732.44 		# mean
+	SemiMajorAxis	23563000	# mean
+	Eccentricity	0.2714		# mean
+	Inclination	146.420
+	AscendingNode	67.747
+	ArgOfPericenter	253.422
+	MeanAnomaly     328.912
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Kalyke:Jupiter XXIII:2000 J 2" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.6
+
+	EllipticalOrbit
+	{
+	Period		742.98
+	SemiMajorAxis	23583000
+	Eccentricity	0.2453
+	Inclination	165.215	#
+	AscendingNode	52.607	#
+	ArgOfPericenter	232.978	# J2000.0
+	MeanAnomaly     225.334	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Hegemone:Jupiter XXXIX:2003 J 8" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.5
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		739.60		# mean
+	SemiMajorAxis	23947000	# mean
+	Eccentricity	0.3276		# mean
+	Inclination	150.102
+	AscendingNode	350.813
+	ArgOfPericenter	217.762
+	MeanAnomaly     43.073
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Pasiphae:Jupiter VIII" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		30
+
+	EllipticalOrbit
+	{
+	Period		743.63
+	SemiMajorAxis	23624000
+	Eccentricity	0.4090
+	Inclination	138.021	#
+	AscendingNode	338.919	#
+	ArgOfPericenter	174.075	# J2000.0
+	MeanAnomaly     279.225	#
+	}
+
+	RotationPeriod  10   	# Guess
+
+	Albedo 0.04
+}
+
+"Cyllene:Jupiter XLVIII:2003 J 13" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		751.94		# mean
+	SemiMajorAxis	23951000	# mean
+	Eccentricity	0.4116		# mean
+	Inclination	141.205
+	AscendingNode	281.643
+	ArgOfPericenter	212.880
+	MeanAnomaly     277.114
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Sponde:Jupiter XXXVI:2001 J 5" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Period		748.34
+	SemiMajorAxis	23487000
+	Eccentricity	0.3121
+	Inclination	153.405	#
+	AscendingNode	128.207	#
+	ArgOfPericenter	52.911	# J2000.0
+	MeanAnomaly     177.408	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Megaclite:Jupiter XIX:2000 J 8" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.7
+
+	EllipticalOrbit
+	{
+	Period		752.82
+	SemiMajorAxis	23806000
+	Eccentricity	0.4210
+	Inclination	150.370	#
+	AscendingNode	317.211	#
+	ArgOfPericenter	313.167	# J2000.0
+	MeanAnomaly     116.082	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003 J 4" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		755.24		# mean
+	SemiMajorAxis	23930000	# mean
+	Eccentricity	0.3618		# mean
+	Inclination	145.092
+	AscendingNode	211.910
+	ArgOfPericenter	201.451
+	MeanAnomaly     75.428
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Sinope:Jupiter IX" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		19
+
+	EllipticalOrbit
+	{
+	Period		758.90
+	SemiMajorAxis	23939000
+	Eccentricity	0.2495
+	Inclination	150.190	#
+	AscendingNode	332.196	#
+	ArgOfPericenter	356.497	# J2000.0
+	MeanAnomaly     157.451	#
+	}
+
+	RotationPeriod  10   	# Guess
+
+	Albedo 0.04
+}
+
+"Aoede:Jupiter XLI:2003 J 7" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		761.50		# mean
+	SemiMajorAxis	23981000	# mean
+	Eccentricity	0.4322		# mean
+	Inclination	160.844
+	AscendingNode	219.018
+	ArgOfPericenter	96.186
+	MeanAnomaly     343.823
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Autonoe:Jupiter XXVIII:2001 J 1" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.0
+
+	EllipticalOrbit
+	{
+	Period		765.95
+	SemiMajorAxis	24046000
+	Eccentricity	0.3168
+	Inclination	149.551	#
+	AscendingNode	290.639	#
+	ArgOfPericenter	65.418	# J2000.0
+	MeanAnomaly     134.044	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Callirrhoe:Jupiter XVII:1999 J 1" "Sol/Jupiter" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		4.3
+
+	EllipticalOrbit
+	{
+	Period		758.77
+	SemiMajorAxis	24102000
+	Eccentricity	0.2827
+	Inclination	138.004 #
+	AscendingNode	302.562	#
+	ArgOfPericenter	16.381	# J2000.0
+	MeanAnomaly     117.900	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Kore:Jupiter XLIX:2003 J 14" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		779.18		# mean
+	SemiMajorAxis	24011000	# mean
+	Eccentricity	0.3351		# mean
+	Inclination	136.767
+	AscendingNode	2.112
+	ArgOfPericenter	127.569
+	MeanAnomaly     225.954
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003 J 2" "Sol/Jupiter" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		979.99		# mean
+	SemiMajorAxis	29541000	# mean
+	Eccentricity	0.2255		# mean
+	Inclination	149.167
+	AscendingNode	24.567
+	ArgOfPericenter	165.326
+	MeanAnomaly     337.868
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+#=========================================================
 "Saturn" "Sol"
 {
 	Texture "saturn.*"
@@ -668,6 +2241,369 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	}
 }
 
+"2009 S 1" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Color	[ 1.00 0.985 0.958 ]
+	BlendTexture	true
+	Radius	0.15
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Period	0.4714
+		SemiMajorAxis	117000
+		Eccentricity	0.0
+		Inclination	0.0
+		MeanAnomaly	145.0
+	}
+	UniformRotation
+	{
+		MeridianAngle	296.8
+	}
+	Albedo	0.5
+	InfoURL	"https://en.wikipedia.org/wiki/S/2009_S_1"
+}
+
+"Pan:Saturn XVIII:1981 S 13" "Sol/Saturn"   # Cassini-epoch data # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 17.6 17.3 11.5 ]
+
+	EllipticalOrbit
+	{
+	Epoch		2453177.5 # 2004 Jun 21 00:00UT
+	Period		0.57505
+	SemiMajorAxis	133584
+	Eccentricity	0.00021
+	Inclination	0.007
+	AscendingNode	263.0
+	LongOfPericenter 209.0
+	MeanLongitude	106.645
+	}
+
+	RotationEpoch	    2453177.5 # 2004 Jun 21 00:00UT
+	Obliquity		  0.0
+	RotationOffset		287
+
+	Albedo 0.5
+}
+
+"Earhart" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"  # Satellite propeller
+	Mesh	"propeller.cmod"
+	Orientation	[ 25 0 1 0 ]
+	Texture	"propeller.png"
+	SemiAxes	[ 0.9 11.25 0.9 ]
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2454102.0  # 2007 Jan 01 12:00
+		Period	0.577885188
+		SemiMajorAxis	133797.8401
+		Eccentricity	0.0
+		Inclination	0.0
+		AscendingNode	0.0
+		ArgOfPericenter	0.0
+		MeanAnomaly	57.85
+	}
+	Albedo	0.1
+	InfoURL	"https://en.wikipedia.org/wiki/Moons_of_Saturn#Ring_moonlets"
+}
+
+"Post" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"  # Satellite propeller
+	Mesh	"propeller.cmod"
+	Orientation	[ 95 0 1 0 ]
+	Texture	"propeller.png"
+	SemiAxes	[ 0.58 7.25 0.58 ]
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2454102.0  # 2007 Jan 01 12:00
+		Period	0.577925032
+		SemiMajorAxis	133803.99
+		Eccentricity	0.0
+		Inclination	0.0
+		AscendingNode	0.0
+		ArgOfPericenter	0.0
+		MeanAnomaly	58.09
+	}
+	Albedo	0.1
+	InfoURL	"https://en.wikipedia.org/wiki/Moons_of_Saturn#Ring_moonlets"
+}
+
+"Sikorsky" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"  # Satellite propeller
+	Mesh	"propeller.cmod"
+	Orientation	[ 75 0 1 0 ]
+	Texture	"propeller.png"
+	SemiAxes	[ 0.44 5.5 0.44 ]
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2454102.0  # 2007 Jan 01 12:00
+		Period	0.578450265
+		SemiMajorAxis	133885.0475
+		Eccentricity	0.0
+		Inclination	0.0
+		AscendingNode	0.0
+		ArgOfPericenter	0.0
+		MeanAnomaly	70.37
+	}
+	Albedo	0.1
+	InfoURL	"https://en.wikipedia.org/wiki/Moons_of_Saturn#Ring_moonlets"
+}
+
+"Curtiss" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"  # Satellite propeller
+	Mesh	"propeller.cmod"
+	Orientation	[ 40 0 1 0 ]
+	Texture	"propeller.png"
+	SemiAxes	[ 0.54 6.75 0.54 ]
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2454102.0  # 2007 Jan 01 12:00
+		Period	0.578607836
+		SemiMajorAxis	133909.36
+		Eccentricity	0.0
+		Inclination	0.0
+		AscendingNode	0.0
+		ArgOfPericenter	0.0
+		MeanAnomaly	210.04
+	}
+	Albedo	0.1
+	InfoURL	"https://en.wikipedia.org/wiki/Moons_of_Saturn#Ring_moonlets"
+}
+
+"Lindbergh" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"  # Satellite propeller
+	Mesh	"propeller.cmod"
+	Orientation	[ 130 0 1 0 ]
+	Texture	"propeller.png"
+	SemiAxes	[ 0.23 2.875 0.23 ]
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2454102.0  # 2007 Jan 01 12:00
+		Period	0.579005382
+		SemiMajorAxis	133970.69
+		Eccentricity	0.0
+		Inclination	0.0
+		AscendingNode	0.0
+		ArgOfPericenter	0.0
+		MeanAnomaly	112.08
+	}
+	Albedo	0.1
+	InfoURL	"https://en.wikipedia.org/wiki/Moons_of_Saturn#Ring_moonlets"
+}
+
+"Wright" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"  # Satellite propeller
+	Mesh	"propeller.cmod"
+	Orientation	[ 25 0 1 0 ]
+	Texture	"propeller.png"
+	SemiAxes	[ 0.12 1.5 0.12 ]
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2454102.0  # 2007 Jan 01 12:00
+		Period	0.579714358
+		SemiMajorAxis	134080.03
+		Eccentricity	0.0
+		Inclination	0.0
+		AscendingNode	0.0
+		ArgOfPericenter	0.0
+		MeanAnomaly	251.85
+	}
+	Albedo	0.1
+	InfoURL	"https://en.wikipedia.org/wiki/Moons_of_Saturn#Ring_moonlets"
+}
+
+"Kingsford Smith" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"  # Satellite propeller
+	Mesh	"propeller.cmod"
+	Orientation	[ 20 0 1 0 ]
+	Texture	"propeller.png"
+	SemiAxes	[ 0.92 11.5 0.92 ]
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2454102.0  # 2007 Jan 01 12:00
+		Period	0.581381305
+		SemiMajorAxis	134336.935
+		Eccentricity	0.0
+		Inclination	0.0
+		AscendingNode	0.0
+		ArgOfPericenter	0.0
+		MeanAnomaly	202.44
+	}
+	Albedo	0.1
+	InfoURL	"https://en.wikipedia.org/wiki/Moons_of_Saturn#Ring_moonlets"
+}
+
+"Hinkler" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"  # Satellite propeller
+	Mesh	"propeller.cmod"
+	Orientation	[ 75 0 1 0 ]
+	Texture	"propeller.png"
+	SemiAxes	[ 0.32 4 0.32 ]
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2454102.0  # 2007 Jan 01 12:00
+		Period	0.582275463
+		SemiMajorAxis	134474.639
+		Eccentricity	0.0
+		Inclination	0.0
+		AscendingNode	0.0
+		ArgOfPericenter	0.0
+		MeanAnomaly	58.85
+	}
+	Albedo	0.1
+	InfoURL	"https://en.wikipedia.org/wiki/Moons_of_Saturn#Ring_moonlets"
+}
+
+"Santos-Dumont" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"  # Satellite propeller
+	Mesh	"propeller.cmod"
+	Orientation	[ 10 0 1 0 ]
+	Texture	"propeller.png"
+	SemiAxes	[ 0.75 9.375 0.75 ]
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2454102.0  # 2007 Jan 01 12:00
+		Period	0.582600034
+		SemiMajorAxis	134524.6067
+		Eccentricity	0.0
+		Inclination	0.0
+		AscendingNode	0.0
+		ArgOfPericenter	0.0
+		MeanAnomaly	324.11
+	}
+	Albedo	0.1
+	InfoURL	"https://en.wikipedia.org/wiki/Moons_of_Saturn#Ring_moonlets"
+}
+
+"Richthofen" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"  # Satellite propeller
+	Mesh	"propeller.cmod"
+	Orientation	[ 60 0 1 0 ]
+	Texture	"propeller.png"
+	SemiAxes	[ 0.42 5.25 0.42 ]
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2454102.0  # 2007 Jan 01 12:00
+		Period	0.584252302
+		SemiMajorAxis	134778.83
+		Eccentricity	0.0
+		Inclination	0.0
+		AscendingNode	0.0
+		ArgOfPericenter	0.0
+		MeanAnomaly	122.90
+	}
+	Albedo	0.1
+	InfoURL	"https://en.wikipedia.org/wiki/Moons_of_Saturn#Ring_moonlets"
+}
+
+"Bleriot" "Sol/Saturn" # Update-3
+{
+	Class	"minormoon"  # Satellite propeller
+	Mesh	"propeller.cmod"
+	Orientation	[ 175 0 1 0 ]
+	Texture	"propeller.png"
+	SemiAxes	[ 0.95 11.875 0.95 ]
+	# Visible	false
+	# Clickable false 
+	EllipticalOrbit
+	{
+		Epoch	2454102.0  # 2007 Jan 01 12:00
+		Period	0.585120028
+		SemiMajorAxis	134912.24521
+		Eccentricity	0.0
+		Inclination	0.0
+		AscendingNode	0.0
+		ArgOfPericenter	0.0
+		MeanAnomaly	193.65
+	}
+	Albedo	0.1
+	InfoURL	"https://en.wikipedia.org/wiki/Moons_of_Saturn#Ring_moonlets"
+}
+
+"Daphnis:Saturn XXXV:2005 S 1" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture "asteroid.jpg"
+	Mesh    "asteroid.cms"
+	Radius 3.5
+
+	EllipticalOrbit
+	{
+	Period          0.5998503
+	SemiMajorAxis	136500     # Fit to Celestia's Keeler Gap
+#	Eccentricity      0.004827 # Fit to Celestia's Keeler Gap
+	Inclination       0.000950
+	AscendingNode   191.701
+	ArgOfPericenter 281.908
+	MeanAnomaly       0.000
+	}
+
+	Albedo 0.5
+}
+
+#"Peggy" "Sol/Saturn"  # Unconfirmed satellite
+
+"Atlas:Saturn XV:1980 S 28" "Sol/Saturn"   # Cassini-epoch data # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 22.8 19.0 9.6 ]
+
+	EllipticalOrbit
+	{
+	Epoch		2453177.5 # 2004 Jun 21 00:00UT
+	Period		0.60169
+	SemiMajorAxis	137665
+	Eccentricity	0.0012
+	Inclination	0.009
+	AscendingNode	241.0
+	LongOfPericenter 42.3
+	MeanLongitude	331.432
+	}
+
+	RotationEpoch	    2453177.5 # 2004 Jun 21 00:00UT
+	Obliquity		  0.0
+	RotationOffset		151
+
+	Albedo 0.4
+}
+
 "Prometheus:Saturn XVI:1980 S 27" "Sol/Saturn"
 {
 	Texture	 	"prometheus.*"
@@ -696,6 +2632,12 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 	Albedo 0.6
 }
+
+#"S-2004 S 6" "Sol/Saturn"  # Unconfirmed satellite
+
+#"S-2004 S 4" "Sol/Saturn"  # Unconfirmed satellite
+
+#"S-2004 S 3" "Sol/Saturn"  # Unconfirmed satellite
 
 "Pandora:Saturn XVII:1980 S 26" "Sol/Saturn"
 {
@@ -789,6 +2731,30 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	Albedo 0.6
 }
 
+# Hedman et al. "Aegaeon (Saturn LIII), a G-ring object"
+# Icarus 2010;207: 433-447
+"Aegaeon:Saturn LIII:2008 S 1" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	"asteroid.jpg"
+	Mesh    "asteroid.cms"
+	Radius 0.24
+
+	EllipticalOrbit
+	{
+	Epoch		2454467.00075444
+	Period		0.80811114
+	SemiMajorAxis	167493.665
+	Eccentricity	0.00042277
+	Inclination	0.0007
+	AscendingNode	350
+	LongOfPericenter 312.728
+	MeanLongitude	5.641248
+	}
+
+	Albedo 0.06  # Estimate
+}
+
 "Mimas:Saturn I" "Sol/Saturn"
 {
 	Texture "mimas.*"
@@ -820,6 +2786,72 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	Albedo         0.5
 }
 
+"Methone:Saturn XXXII:2004 S 1" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.6
+
+	EllipticalOrbit
+	{
+	Epoch		 2453177.5 # 2004 Jun 21 00:00UT
+	Period		 1.00971
+	SemiMajorAxis	 194251
+	Eccentricity	 0.001
+	Inclination	 0.018
+	AscendingNode	 311.0
+	LongOfPericenter 308.0
+	MeanLongitude    154.79
+	}
+
+	RotationEpoch	 2453177.5 # 2004 Jun 21 00:00UT
+	RotationOffset	 335
+}
+
+"Anthe:Saturn XLIX:2007 S 4" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture "asteroid.jpg"
+	Mesh    "asteroid.cms"
+	Radius 1.1
+
+	EllipticalOrbit
+	{
+	Period          1.041149
+	SemiMajorAxis   198105.6
+	Eccentricity    0.001102
+	Inclination     0.0186
+	AscendingNode   251.702
+	ArgOfPericenter 349.181
+	MeanAnomaly     355.247
+	}
+
+	Albedo 0.06  # Estimate
+}
+
+"Pallene:Saturn XXXIII:2004 S 2" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.2
+
+	EllipticalOrbit
+	{
+	Epoch		 2453177.5 # 2004 Jun 21 00:00UT
+	Period		 1.15374
+	SemiMajorAxis 	 212283
+	Eccentricity	 0.004
+	Inclination	 0.181
+	AscendingNode	 327.0
+	LongOfPericenter 38
+	MeanLongitude    85.51
+	}
+
+	RotationEpoch	 2453177.5 # 2004 Jun 21 00:00UT
+	RotationOffset   266
+}
 
 "Enceladus:Saturn II" "Sol/Saturn"
 {
@@ -883,6 +2915,80 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	Albedo         0.9
 }
 
+"Telesto:Saturn XIII:1980 S 13" "Sol/Saturn" # Update-2
+# Leading Lagrange point of Tethys
+{
+	Class "minormoon"
+	Texture		"asteroid.jpg"
+	SemiAxes [ 15 12.5 7.5 ]
+
+	EllipticalOrbit
+	{
+	Period		1.887802
+	SemiMajorAxis	294660
+	Eccentricity	0.0010
+	Inclination	1.170	#
+	AscendingNode	188.718	#
+	ArgOfPericenter	358.944	# J2000.0
+	MeanAnomaly     18.554	#
+	}
+
+	Obliquity		  1.2
+	EquatorAscendingNode	 80.8
+	RotationOffset		306.0
+
+	Albedo 1.0
+}
+
+"Calypso:Saturn XIV:1980 S 25" "Sol/Saturn" # Update-2
+# Trailing Lagrange point of Tethys
+{
+	Class "minormoon"
+	Texture 	"asteroid.jpg"
+	SemiAxes [ 15 8 8 ]
+
+	EllipticalOrbit
+	{
+	Period		1.887802
+	SemiMajorAxis	294660
+	Eccentricity	0.0005
+	Inclination	1.472	#
+	AscendingNode	273.860	#
+	ArgOfPericenter	186.307	# J2000.0
+	MeanAnomaly     348.156	#
+	}
+
+	Obliquity		  1.6	#
+	EquatorAscendingNode	 12.4	# J2000.0
+	RotationOffset		255
+
+	Albedo 0.7
+}
+
+"Polydeuces:Saturn XXXIV:2004 S 5" "Sol/Saturn" # Update-1
+# Trailing Lagrange point of Dione
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.75
+
+	EllipticalOrbit
+	{
+	Epoch		 2453006.5 # 2004 Jan 2 00:00UT
+	Period		 2.73690
+	SemiMajorAxis 	 377390
+	Eccentricity	 0.0182
+	Inclination	 0.1705
+	AscendingNode	 262
+	LongOfPericenter 103.22
+	MeanLongitude    67.61
+	}
+
+	RotationEpoch	 2453006.5 # 2004 Jan 2 00:00UT
+	RotationOffset   248
+}
+
 "Dione:Saturn IV" "Sol/Saturn"
 {
 	Texture "dione.*"
@@ -912,6 +3018,29 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	# }
 
 	Albedo         0.7
+}
+
+"Helene:Saturn XII:1980 S 6" "Sol/Saturn" # Update-2
+# Leading Lagrange point of Dione
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 18 16 15 ]
+
+	EllipticalOrbit
+	{
+	Period		2.736915
+	SemiMajorAxis	377400
+	Eccentricity	0.0001
+	Inclination	0.202	#
+	AscendingNode	121.154	#
+	ArgOfPericenter	48.574	# J2000.0
+	MeanAnomaly     19.782	# 
+	}
+
+	RotationOffset		 10
+
+	Albedo 0.6
 }
 
 "Rhea:Saturn V" "Sol/Saturn"
@@ -1064,6 +3193,52 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	Albedo         0.2
 }
 
+"Kiviuq:Saturn XXIV:2000 S 5" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		7
+
+	EllipticalOrbit
+	{
+	Period		449.22
+	SemiMajorAxis	11365000
+	Eccentricity	0.3335
+	Inclination	76.796	#
+	AscendingNode	182.386	#
+	ArgOfPericenter	93.291	# J2000.0
+	MeanAnomaly     168.548	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Ijiraq:Saturn XXII:2000 S 6" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		5
+
+	EllipticalOrbit
+	{
+	Period		451.48
+	SemiMajorAxis	11440000
+	Eccentricity	0.3216
+	Inclination	23.892	#
+	AscendingNode	326.568	#
+	ArgOfPericenter	88.423	# J2000.0
+	MeanAnomaly     28.424	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
 "Phoebe:Saturn IX" "Sol/Saturn"
 {
 	Mesh "phoebe.cmod"
@@ -1099,7 +3274,837 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	Albedo         0.05
 }
 
+"Paaliaq:Saturn XX:2000 S 2" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		9.5
 
+	EllipticalOrbit
+	{
+	Period		686.91
+	SemiMajorAxis	15199000
+	Eccentricity	0.3636
+	Inclination	75.327	#
+	AscendingNode	182.777	#
+	ArgOfPericenter	239.203	# J2000.0
+	MeanAnomaly     304.651	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Skathi:Saturn XXVII:2000 S 8" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3.2
+
+	EllipticalOrbit
+	{
+	Period		728.93
+	SemiMajorAxis	15647000
+	Eccentricity	0.2697
+	Inclination	148.361	#
+	AscendingNode	67.100	#
+	ArgOfPericenter	148.021	# J2000.0
+	MeanAnomaly     117.271	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Albiorix:Saturn XXVI:2000 S 11" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		13
+
+	EllipticalOrbit
+	{
+	Period		783.45
+	SemiMajorAxis	16404000
+	Eccentricity	0.4778
+	Inclination	31.518	#
+	AscendingNode	259.354	#
+	ArgOfPericenter	112.808	# J2000.0
+	MeanAnomaly     17.224	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2007 S 2" "Sol/Saturn" # MPEC 2007-J09 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2454200.5	# 2007 Apr 10
+	Period		792.96
+	SemiMajorAxis	16523160
+	Eccentricity	0.2181375
+	Inclination	170.320
+	AscendingNode	314.099
+	ArgOfPericenter  62.038     
+	MeanAnomaly     184.606
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Bebhionn:Saturn XXXVII:2004 S 11" "Sol/Saturn" # MPEC 2006-C55 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		838.77
+	SemiMajorAxis	17153520
+	Eccentricity	0.3189491
+	Inclination	 37.707
+	AscendingNode	 28.249
+	ArgOfPericenter	 10.424     
+	MeanAnomaly      59.188              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Erriapus:Saturn XXVIII:2000 S 10" "Sol/Saturn" # (previously Erriapo) # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		4.3
+
+	EllipticalOrbit
+	{
+	Period		871.92
+	SemiMajorAxis	17616000
+	Eccentricity	0.4740
+	Inclination	13.545	#
+	AscendingNode	286.903	#
+	ArgOfPericenter	332.997	# J2000.0
+	MeanAnomaly     306.656	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Skoll:Saturn XLVII:2006 S 8" "Sol/Saturn" # MPEC 2006-M48 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		862.37
+	SemiMajorAxis	17473800
+	Eccentricity	0.4221689
+	Inclination	161.837
+	AscendingNode	121.645
+	ArgOfPericenter 206.421     
+	MeanAnomaly     229.323              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Tarqeq:Saturn LII:2007 S 1" "Sol/Saturn" # MPEC 2007-G38 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3.5
+
+	EllipticalOrbit
+	{
+	Epoch		2454200.5	# 2007 Apr 10
+	Period		894.91
+	SemiMajorAxis	17910560
+	Eccentricity	0.1081156
+	Inclination	 46.073
+	AscendingNode	 16.099
+	ArgOfPericenter  65.594     
+	MeanAnomaly     126.537
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Siarnaq:Saturn XXIX:2000 S 3" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		16
+
+	EllipticalOrbit
+	{
+	Period		893.08
+	SemiMajorAxis	18160000
+	Eccentricity	0.2948
+	Inclination	60.642	#
+	AscendingNode	235.860	#
+	ArgOfPericenter	99.707	# J2000.0
+	MeanAnomaly     190.719	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Tarvos:Saturn XXI:2000 S 4" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		6.5
+
+	EllipticalOrbit
+	{
+	Period		925.60
+	SemiMajorAxis	18247000
+	Eccentricity	0.5355
+	Inclination	36.341	#
+	AscendingNode	244.676	#
+	ArgOfPericenter	332.621	# J2000.0
+	MeanAnomaly     255.729	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004 S 13" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		905.85
+	SemiMajorAxis	18056253
+	Eccentricity	0.2610261
+	Inclination	145.257
+	AscendingNode	339.270
+	ArgOfPericenter	6.322
+	MeanAnomaly     33.254
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Hyrrokkin:Saturn XLIV:2004 S 19" "Sol/Saturn" # (previously Hyrokkin) MPEC 2006-M44 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		4
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		914.29
+	SemiMajorAxis	18168300
+	Eccentricity	0.3604062
+	Inclination	151.827
+	AscendingNode	248.953
+	ArgOfPericenter 268.525     
+	MeanAnomaly      89.589              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Greip:Saturn LI:2006 S 4" "Sol/Saturn" # MPEC 2006-M45 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		906.56
+	SemiMajorAxis	18065700
+	Eccentricity	0.3735237
+	Inclination	175.914
+	AscendingNode	235.009
+	ArgOfPericenter 141.501     
+	MeanAnomaly     105.502              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Mundilfari:Saturn XXV:2000 S 9" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.8
+
+	EllipticalOrbit
+	{
+	Period		951.38
+	SemiMajorAxis	18709000
+	Eccentricity	0.2078
+	Inclination	150.253	#
+	AscendingNode	338.432	#
+	ArgOfPericenter	16.508	# J2000.0
+	MeanAnomaly     97.432	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2006 S 1" "Sol/Saturn" # MPEC 2006-M45 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		972.41
+	SemiMajorAxis	18930200
+	Eccentricity	0.1302807
+	Inclination	159.579
+	AscendingNode	178.730
+	ArgOfPericenter 138.788     
+	MeanAnomaly     241.766              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2007 S 3" "Sol/Saturn" # MPEC 2007-J09 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.5
+
+	EllipticalOrbit
+	{
+	Epoch		2454200.5	# 2007 Apr 10
+	Period		991.66
+	SemiMajorAxis	19179340
+	Eccentricity	0.1506156
+	Inclination	171.507
+	AscendingNode	337.152
+	ArgOfPericenter 284.032     
+	MeanAnomaly     199.246
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Bergelmir:Saturn XXXVIII:2004 S 15" "Sol/Saturn" # MPEC 2006-C55 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		985.95
+	SemiMajorAxis	19105640
+	Eccentricity	0.1297284
+	Inclination	155.983
+	AscendingNode	 30.246
+	ArgOfPericenter	146.038
+	MeanAnomaly      34.682
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Jarnsaxa:Saturn L:2006 S 6" "Sol/Saturn" # MPEC 2007-D79 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2454200.5	# 2007 Apr 10
+	Period		978.75
+	SemiMajorAxis	19012500
+	Eccentricity	0.1929545
+	Inclination	164.138
+	AscendingNode	232.487
+	ArgOfPericenter 234.702     
+	MeanAnomaly      70.074
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Narvi:Saturn XXXI:2003 S 1" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3.3
+
+	EllipticalOrbit
+	{
+	Epoch		2452629.5	# 2002 Dec 21
+	Period		956.19		# mean
+	SemiMajorAxis	18719000	# mean
+	Eccentricity	0.3522		# mean
+	Inclination	106.989
+	AscendingNode	9.524
+	ArgOfPericenter	172.396
+	MeanAnomaly     139.109
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004 S 17" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		985.45
+	SemiMajorAxis	19099175
+	Eccentricity	0.2259100
+	Inclination	153.848
+	AscendingNode	331.252
+	ArgOfPericenter	175.790
+	MeanAnomaly     165.425
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Suttungr:Saturn XXIII:2000 S 12" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.8
+
+	EllipticalOrbit
+	{
+	Period		1016.31
+	SemiMajorAxis	19463000
+	Eccentricity	0.1138
+	Inclination	150.914	#
+	AscendingNode	10.905	#
+	ArgOfPericenter	350.499	# J2000.0
+	MeanAnomaly     317.642	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Hati:Saturn XLIII:2004 S 14" "Sol/Saturn" # MPEC 2006-C74 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1033.05
+	SemiMajorAxis	19709340
+	Eccentricity	0.3080404
+	Inclination	169.323
+	AscendingNode	160.912
+	ArgOfPericenter	 30.574
+	MeanAnomaly     224.303
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004 S 12" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.5
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		1048.54
+	SemiMajorAxis	19905866
+	Eccentricity	0.3962529
+	Inclination	163.328
+	AscendingNode	30.672
+	ArgOfPericenter	96.528
+	MeanAnomaly     286.163
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Bestla:Saturn XXXIX:2004 S 18" "Sol/Saturn" # MPEC 2006-C55 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3.5
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1097.35
+	SemiMajorAxis	20518960
+	Eccentricity	0.7453905
+	Inclination	153.357
+	AscendingNode	115.433
+	ArgOfPericenter	 82.190
+	MeanAnomaly     288.253
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Farbauti:Saturn XL:2004 S 9" "Sol/Saturn" # MPEC 2006-C72 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.5
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1054.78
+	SemiMajorAxis	19984780
+	Eccentricity	0.1747573
+	Inclination	152.085
+	AscendingNode	332.181
+	ArgOfPericenter	351.158
+	MeanAnomaly     310.328
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Thrymr:Saturn XXX:2000 S 7" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.8
+
+	EllipticalOrbit
+	{
+	Period		1086.91
+	SemiMajorAxis	20382000
+	Eccentricity	0.4701
+	Inclination	150.486	#
+	AscendingNode	10.020	#
+	ArgOfPericenter	23.091	# J2000.0
+	MeanAnomaly     350.670	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Aegir:Saturn XXXVI:2004 S 10" "Sol/Saturn" # MPEC 2006-C55 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1093.12
+	SemiMajorAxis	20466110
+	Eccentricity	0.2255397
+	Inclination	163.662
+	AscendingNode	  4.888
+	ArgOfPericenter	264.241
+	MeanAnomaly      25.842
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004 S 7" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		1101.99
+	SemiMajorAxis	20576693
+	Eccentricity	0.5541269
+	Inclination	150.244
+	AscendingNode	29.863
+	ArgOfPericenter	100.469
+	MeanAnomaly     292.198
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Kari:Saturn XLV:2006 S 2" "Sol/Saturn" # MPEC 2006-M48 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3.5
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1245.06
+	SemiMajorAxis	22321200
+	Eccentricity	0.3399560
+	Inclination	154.373
+	AscendingNode	115.635
+	ArgOfPericenter 181.696     
+	MeanAnomaly     209.511              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2006 S 3" "Sol/Saturn" # MPEC 2006-M45 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1142.37
+	SemiMajorAxis	21076300
+	Eccentricity	0.4709957
+	Inclination	150.165
+	AscendingNode	 38.575
+	ArgOfPericenter 190.856     
+	MeanAnomaly     100.635              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Fenrir:Saturn XLI:2004 S 16" "Sol/Saturn" # MPEC 2006-C72 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1212.53
+	SemiMajorAxis	21930640
+	Eccentricity	0.1049966
+	Inclination	163.768
+	AscendingNode	 47.473
+	ArgOfPericenter	124.324
+	MeanAnomaly      66.315
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Surtur:Saturn XLVIII:2006 S 7" "Sol/Saturn" # MPEC 2006-N06 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1242.36
+	SemiMajorAxis	22288900
+	Eccentricity	0.3688000
+	Inclination	169.482
+	AscendingNode	 58.170
+	ArgOfPericenter 329.289     
+	MeanAnomaly      50.553              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Loge:Saturn XLVI:2006 S 5" "Sol/Saturn" # MPEC 2006-M48 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1300.95
+	SemiMajorAxis	22984300
+	Eccentricity	0.1423235
+	Inclination	171.183
+	AscendingNode	197.088
+	ArgOfPericenter  46.810     
+	MeanAnomaly     218.554              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Ymir:Saturn XIX:2000 S 1" "Sol/Saturn" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		8
+
+	EllipticalOrbit
+	{
+	Period		1312.37
+	SemiMajorAxis	23096000
+	Eccentricity	0.3331
+	Inclination	145.961	#
+	AscendingNode	7.260	#
+	ArgOfPericenter	16.394	# J2000.0
+	MeanAnomaly     216.669	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"Fornjot:Saturn XLII:2004 S 8" "Sol/Saturn" # MPEC 2006-C74 # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1430.37
+	SemiMajorAxis	24484380
+	Eccentricity	0.1663457
+	Inclination	171.801
+	AscendingNode	 71.103
+	ArgOfPericenter	331.856
+	MeanAnomaly      40.554              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+#=======================================================================
 "Uranus" "Sol"
 {
 	Texture "uranus.*"
@@ -1149,6 +4154,297 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	}
 }
 
+"Cordelia:Uranus VI:1986 U 7" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 25 18 18 ]
+
+	EllipticalOrbit
+	{
+	Period		0.3350331
+	SemiMajorAxis	49752
+	Eccentricity	0.0003
+	Inclination	0.085
+	AscendingNode	307.256	#
+	ArgOfPericenter	276.012	# J2000.0
+	MeanAnomaly     352.546	#
+	}
+	
+	RotationOffset		 36
+
+	Albedo 0.07
+}
+
+"Ophelia:Uranus VII:1986 U 8" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 27 19 19 ]
+
+	EllipticalOrbit
+	{
+	Period		0.3764089
+	SemiMajorAxis	53764
+	Eccentricity	0.0099
+	Inclination	0.104
+	AscendingNode	92.308	#
+	ArgOfPericenter	165.041	# J2000.0
+	MeanAnomaly     78.064	#
+	}
+	
+	RotationOffset		155
+
+	Albedo 0.07
+}
+
+"Bianca:Uranus VIII:1986 U 9" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 32 23 23 ]
+
+	EllipticalOrbit
+	{
+	Period		0.4345772
+	SemiMajorAxis	59165
+	Eccentricity	0.0009
+	Inclination	0.193
+	AscendingNode	242.850	#
+	ArgOfPericenter	24.255	# J2000.0
+	MeanAnomaly     324.540	#
+	}
+	
+	RotationOffset		 52
+
+	Albedo 0.07
+}
+
+"Cressida:Uranus IX:1986 U 3" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 46 37 37 ]
+
+	EllipticalOrbit
+	{
+	Period		0.4635700
+	SemiMajorAxis	61777
+	Eccentricity	0.0004
+	Inclination	0.006
+	AscendingNode	112.262	#
+	ArgOfPericenter	184.425	# J2000.0
+	MeanAnomaly     3.135	#
+	}
+
+	
+	RotationOffset		120
+
+	Albedo 0.07
+}
+
+"Desdemona:Uranus X:1986 U 6" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 45 27 27 ]
+
+	EllipticalOrbit
+	{
+	Period		0.4736510
+	SemiMajorAxis	62659
+	Eccentricity	0.0001
+	Inclination	0.113
+	AscendingNode	133.615	#
+	ArgOfPericenter	141.145	# J2000.0
+	MeanAnomaly     357.199	#
+	}
+
+	RotationOffset		  92
+	
+	Albedo 0.07
+}
+
+"Juliet:Uranus XI:1986 U 2" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 75 37 37 ]
+
+	EllipticalOrbit
+	{
+	Period		0.4930660
+	SemiMajorAxis	64358
+	Eccentricity	0.0007
+	Inclination	0.065
+	AscendingNode	332.582	#
+	ArgOfPericenter	32.168 # J2000.0
+	MeanAnomaly     51.564	#
+	}
+	
+	RotationOffset		236
+
+	Albedo 0.07
+}
+
+"Portia:Uranus XII:1986 U 1" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 78 63 63 ]
+
+	EllipticalOrbit
+	{
+	Period		0.5131958
+	SemiMajorAxis	66097
+	Eccentricity	0.0001
+	Inclination	0.059
+	AscendingNode	308.717	#
+	ArgOfPericenter	24.520	# J2000.0
+	MeanAnomaly     356.184	#
+	}
+	
+	RotationOffset		149
+
+	Albedo 0.07
+}
+
+"Rosalind:Uranus XIII:1986 U 4" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		36
+
+	EllipticalOrbit
+	{
+	Period		0.5584589
+	SemiMajorAxis	69927
+	Eccentricity	0.0001
+	Inclination	0.279
+	AscendingNode	206.572	#
+	ArgOfPericenter	180.858	# J2000.0
+	MeanAnomaly     9.041	#
+	}
+	
+	RotationOffset		216
+
+	Albedo 0.07
+}
+
+"Cupid:Uranus XXVII:2003 U 2" "Sol/Uranus" # Update-1
+{
+	Class "minormoon"
+	Texture "asteroid.jpg"
+	Mesh    "asteroid.cms"
+	Radius 5
+
+	EllipticalOrbit
+	{
+	Period          0.61359
+	SemiMajorAxis   74439
+	Eccentricity      0.000884
+	Inclination       0.0991
+	AscendingNode    79.496
+	ArgOfPericenter 106.781
+	MeanAnomaly     123.625
+	}
+
+	RotationPeriod  10   # guess
+
+	Albedo 0.07   # guess
+}
+
+"Belinda:Uranus XIV:1986 U 5" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 64 32 32 ]
+
+	EllipticalOrbit
+	{
+	Period		0.6235248
+	SemiMajorAxis	75255
+	Eccentricity	0.0001
+	Inclination	0.031
+	AscendingNode	277.820	#
+	ArgOfPericenter	119.908	# J2000.0
+	MeanAnomaly     6.896	#
+	}
+	
+	RotationOffset		225
+
+	Albedo 0.07
+}
+
+"Perdita:Uranus XXV:1986 U 10" "Sol/Uranus" # Update-1
+{
+	Class "minormoon"
+	Texture "asteroid.jpg"
+	Mesh    "asteroid.cms"
+	Radius 10
+
+	EllipticalOrbit
+	{
+	Period            0.63877
+	SemiMajorAxis   76462
+	Eccentricity      0.01160
+	Inclination       0.470
+	AscendingNode   150.095
+	ArgOfPericenter 199.193
+	MeanAnomaly     270.068
+	}
+
+	RotationPeriod  10   # guess
+
+	Albedo 0.07  # guess
+}
+
+"Puck:Uranus XV:1985 U 1" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		81
+
+	EllipticalOrbit
+	{
+	Period		0.7618321
+	SemiMajorAxis	86004
+	Eccentricity	0.0001
+	Inclination	0.319
+	AscendingNode	214.713	#
+	ArgOfPericenter	33.582	# J2000.0
+	MeanAnomaly     12.990	#
+	}
+	
+	RotationOffset		 81
+
+	Albedo 0.07
+}
+
+"Mab:Uranus XXVI:2003 U 1" "Sol/Uranus" # Update-1
+{
+	Class "minormoon"
+	Texture "asteroid.jpg"
+	Mesh    "asteroid.cms"
+	Radius 5
+
+	EllipticalOrbit
+	{
+	Period          0.92362
+	SemiMajorAxis   97771
+	Eccentricity      0.00242
+	Inclination       0.133
+	AscendingNode   224.525
+	ArgOfPericenter 123.862
+	MeanAnomaly     255.590
+	}
+
+	RotationPeriod  10   # guess
+
+	Albedo 0.07   # guess
+}
 
 "Miranda:Uranus V" "Sol/Uranus"
 {
@@ -1340,6 +4636,214 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	OverlayTexture "oberon-lok-mask.png"
 }
 
+"Francisco:Uranus XXII:2001 U 3" "Sol/Uranus" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		6
+
+	EllipticalOrbit
+	{
+	Period		266.56
+	SemiMajorAxis	4276000
+	Eccentricity	0.1459
+	Inclination	70.110	#
+	AscendingNode	329.112	#
+	ArgOfPericenter	195.118	# J2000.0
+	MeanAnomaly     20.667	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.07
+}
+
+"Caliban:Uranus XVI:1997 U 1" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		49
+
+	EllipticalOrbit
+	{
+	Period		579.73
+	SemiMajorAxis	7231000
+	Eccentricity	0.1587
+	Inclination	42.491	#
+	AscendingNode	7.152	#
+	ArgOfPericenter	328.345	# J2000.0
+	MeanAnomaly     26.273	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.07
+}
+
+"Stephano:Uranus XX:1999 U 2" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		10
+
+	EllipticalOrbit
+	{
+	Period		677.36
+	SemiMajorAxis	8004000
+	Eccentricity	0.2292
+	Inclination	47.483	#
+	AscendingNode	18.306	#
+	ArgOfPericenter	358.810	# J2000.0
+	MeanAnomaly     255.381	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.07
+}
+
+"Trinculo:Uranus XXI:2001 U 1" "Sol/Uranus" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		5
+
+	EllipticalOrbit
+	{
+	Period		749.24
+	SemiMajorAxis	8504000
+	Eccentricity	0.2200
+	Inclination	70.509	#
+	AscendingNode	7.574	#
+	ArgOfPericenter	128.839	# J2000.0
+	MeanAnomaly     182.392	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.07
+}
+
+"Sycorax:Uranus XVII:1997 U 2" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		95
+
+	EllipticalOrbit
+	{
+	Period		1288.30
+	SemiMajorAxis	12179000
+	Eccentricity	0.5224
+	Inclination	82.190	#
+	AscendingNode	27.683	#
+	ArgOfPericenter	285.483	# J2000.0
+	MeanAnomaly     261.598	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.07
+}
+
+"Margaret:Uranus XXIII:2003 U 3" "Sol/Uranus" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		5.5
+
+	EllipticalOrbit
+	{
+	Period		1687.01
+	SemiMajorAxis	14345000
+	Eccentricity	0.6608
+	Inclination	137.282	#
+	AscendingNode	217.574	#
+	ArgOfPericenter	128.558	# J2000.0
+	MeanAnomaly     325.270	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.07
+}
+
+"Prospero:Uranus XVIII:1999 U 3" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		15
+
+	EllipticalOrbit
+	{
+	Period		1978.29
+	SemiMajorAxis	16256000
+	Eccentricity	0.4448
+	Inclination	112.068	#
+	AscendingNode	16.124	#
+	ArgOfPericenter	21.033	# J2000.0
+	MeanAnomaly     247.473	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.07
+}
+
+"Setebos:Uranus XIX:1999 U 1" "Sol/Uranus" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		15
+
+	EllipticalOrbit
+	{
+	Period		2225.21
+	SemiMajorAxis	17418000
+	Eccentricity	0.5914
+	Inclination	79.227	#
+	AscendingNode	33.869	#
+	ArgOfPericenter	275.958	# J2000.0
+	MeanAnomaly     173.109	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.07
+}
+
+"Ferdinand:Uranus XXIV:2001 U 2" "Sol/Uranus" # Update-1
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		6
+
+	EllipticalOrbit
+	{
+	Period		2887.21
+	SemiMajorAxis	20901000
+	Eccentricity	0.3682
+	Inclination	75.339	#
+	AscendingNode	10.695	#
+	ArgOfPericenter	109.325	# J2000.0
+	MeanAnomaly     25.166	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.07
+}
+
+#========================================================
 
 "Neptune" "Sol"
 {
@@ -1389,6 +4893,96 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	}
 }
 
+"Naiad:Neptune III:1989 N 6" "Sol/Neptune" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 47 30 26 ]
+
+	EllipticalOrbit
+	{
+	Period		0.294396
+	SemiMajorAxis	48227
+	Eccentricity	0.0004
+	Inclination	5.167	#
+	AscendingNode	8.998	#
+	ArgOfPericenter	30.956	# J2000.0
+	MeanAnomaly     7.538	#
+	}
+
+	Obliquity		  0.1
+	EquatorAscendingNode	346.7
+	RotationOffset		242.9
+
+	Albedo 0.060
+}
+
+"Thalassa:Neptune IV:1989 N 5" "Sol/Neptune" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 54 50 26 ]
+
+	EllipticalOrbit
+	{
+	Period		0.311485
+	SemiMajorAxis	50075
+	Eccentricity	0.0002
+	Inclination	0.381	#
+	AscendingNode	353.390	#
+	ArgOfPericenter	274.850	# J2000.0
+	MeanAnomaly     350.880	#
+	}
+
+	RotationOffset		77.6
+
+	Albedo 0.060
+}
+
+"Despina:Neptune V:1989 N 3" "Sol/Neptune" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 90 74 64 ]
+
+	EllipticalOrbit
+	{
+	Period		0.334655
+	SemiMajorAxis	52526
+	Eccentricity	0.0002
+	Inclination	0.589	#
+	AscendingNode	334.279	#
+	ArgOfPericenter	133.891	# J2000.0
+	MeanAnomaly     349.678	#
+	}
+
+	RotationOffset		282.0
+	
+	Albedo 0.059
+}
+
+"Galatea:Neptune VI:1989 N 4" "Sol/Neptune" # Update-2
+{
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	SemiAxes [ 102 92 72 ]
+
+	EllipticalOrbit
+	{
+	Period		0.428745
+	SemiMajorAxis	61953
+	Eccentricity	0.0000
+	Inclination	0.565	#
+	AscendingNode	327.929	#
+	ArgOfPericenter	89.060	# J2000.0
+	MeanAnomaly     2.357	#
+	}
+
+	RotationOffset		233.6
+
+	Albedo 0.063
+}
+
 "Larissa:Neptune VII:1989 N 2" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
@@ -1416,6 +5010,33 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	}
 
 	Albedo 0.056
+}
+
+"2004 N 1" "Sol/Neptune" # Update-3
+{
+	Class	"minormoon"
+	Mesh	"asteroid.cmod"
+	Texture	"asteroid.jpg"
+	Radius	9
+	# Visible	false
+	# Clickable false 
+	OrbitFrame
+	{
+		EclipticJ2000	{ Center "Sol/Neptune" }
+	}
+	EllipticalOrbit
+	{
+		Epoch	2447763.5  # 1989 Aug 25
+		Period	0.9362
+		SemiMajorAxis	105283
+		Eccentricity	0.0003
+		Inclination	28.501
+		AscendingNode	48.805
+		ArgOfPericenter	213.635
+		MeanAnomaly	360.000
+	}
+	Albedo	0.10
+	InfoURL	"https://en.wikipedia.org/wiki/S/2004_N_1"
 }
 
 "Proteus:Neptune VIII:1989 N 1" "Sol/Neptune"
@@ -1517,113 +5138,117 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 	Albedo          0.155
 }
 
-ReferencePoint "Pluto-Charon" "Sol"
+"Halimede:Neptune IX:2002 N 1" "Sol/Neptune" # Update-1
 {
-    CustomOrbit "pluto"
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		24
 
-    # Make the orbit and label visible
-    Visible true
-    Clickable true
+	EllipticalOrbit
+	{
+	Period		1879.71
+	SemiMajorAxis	15728000
+	Eccentricity	0.5711
+	Inclination	139.094	#
+	AscendingNode	163.249	#
+	ArgOfPericenter	148.454	# J2000.0
+	MeanAnomaly     230.015	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.155
 }
 
-# Updated from "Masses of Nix and Hydra" Tholen et al. 
-# http://arxiv.org/ftp/arxiv/papers/0712/0712.1261.pdf
-
-"Pluto:134340 Pluto" "Sol"
+"Sao:Neptune XI:2002 N 2" "Sol/Neptune" # Update-1
 {
-    Class "dwarfplanet"
-    Texture "pluto-lok.*"
-    SpecularTexture "pluto-lok-spec.*"
-    SpecularColor            [ 0.135 0.12 0.08 ]
-    SpecularPower             9.5
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		24
 
-    Radius 1151
+	EllipticalOrbit
+	{
+	Period		2914.07
+	SemiMajorAxis	22422000
+	Eccentricity	0.2931
+	Inclination	26.351	#
+	AscendingNode	23.961	#
+	ArgOfPericenter	47.566	# J2000.0
+	MeanAnomaly     14.560	#
+	}
 
-    OrbitFrame {
-        EquatorJ2000 { Center "Sol/Pluto-Charon" }
-    }
+	RotationPeriod  10   # Guess
 
-    BodyFrame {
-        EclipticJ2000 { Center "Sol/Pluto-Charon" }
-    }
-
-    EllipticalOrbit
-    {
-	Epoch		2452600.5   # 2002 Nov 22
-        Period           6.387206   # mean
-        SemiMajorAxis    2043.1     # mass ratio of 0.1166
-        Eccentricity     0.003484   # mean
-        Inclination      96.1680    # mean
-        AscendingNode   223.0539    # mean
-        ArgOfPericenter 337.92      # mean
-        MeanLongitude	 77.960     
-    }
-
-    UniformRotation
-    {
-    Period		153.292944
-    Inclination		115.60
-    AscendingNode	228.34
-    MeridianAngle	320.75
-    }
-	
-    Albedo           0.55
+	Albedo 0.155
 }
 
-AltSurface "limit of knowledge" "Sol/Pluto"
+"Laomedeia:Neptune XII:2002 N 3" "Sol/Neptune" # Update-1
 {
-    Texture "pluto-lok.*"
-    SpecularTexture "pluto-lok-spec.*"
-    SpecularColor            [ 0.135 0.12 0.08 ]
-    SpecularPower             9.5
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		24
+
+	EllipticalOrbit
+	{
+	Period		3167.85
+	SemiMajorAxis	23571000
+	Eccentricity	0.4237
+	Inclination	9.933	#
+	AscendingNode	13.595	#
+	ArgOfPericenter	122.752	# J2000.0
+	MeanAnomaly     154.007	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.155
 }
 
-"Charon:Pluto I:134340 Pluto I:1978 P 1" "Sol/Pluto"
+"Psamathe:Neptune X:2003 N 1" "Sol/Neptune" # Update-1
 {
-    Texture "charon-lok.*"
-    SpecularTexture "charon-lok-spec.*"
-    SpecularColor            [ 0.135 0.12 0.08 ]
-    SpecularPower             9.5
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		14
 
-    Radius   593
+	EllipticalOrbit
+	{
+	Period		9115.91
+	SemiMajorAxis	46695000
+	Eccentricity	0.4499
+	Inclination	118.763	#
+	AscendingNode	288.194	#
+	ArgOfPericenter	161.232	# J2000.0
+	MeanAnomaly     182.071	#
+	}
 
-    InfoURL "http://www.nineplanets.org/pluto.html#Charon"
+	RotationPeriod  10   # Guess
 
-    OrbitFrame {
-        EquatorJ2000 { Center "Sol/Pluto-Charon" }
-    }
-
-    BodyFrame {
-        EclipticJ2000 { Center "Sol/Pluto-Charon" }
-    }
-
-    EllipticalOrbit
-    {
-	Epoch		2452600.5 # 2002 Nov 22
-        Period          6.387206
-        SemiMajorAxis   17527.4   # mass ratio of 0.1166
-        Eccentricity    0.003484  # mean
-        Inclination      96.1680  # mean
-        AscendingNode   223.0539  # mean
-        ArgOfPericenter 157.92    # mean
-        MeanLongitude   257.960
-    }
-
-    UniformRotation
-    {
-    Period              153.292944
-    Inclination         115.9
-    AscendingNode       227.3
-    MeridianAngle       140.4
-    }
-	
-    Albedo               0.35
+	Albedo 0.155
 }
 
-AltSurface "limit of knowledge" "Sol/Pluto/Charon"
+"Neso:Neptune XIII:2002 N 4" "Sol/Neptune" # Update-1
 {
-	Texture "charon-lok.*"
-        SpecularTexture "charon-lok-spec.*"
-        SpecularColor            [ 0.135 0.12 0.08 ]
-        SpecularPower             9.5
+	Class "minormoon"
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		30
+
+	EllipticalOrbit
+	{
+	Period		9373.99
+	SemiMajorAxis	48387000
+	Eccentricity	0.4945
+	Inclination	113.569	#
+	AscendingNode	351.648	#
+	ArgOfPericenter	 77.981	# J2000.0
+	MeanAnomaly     216.988	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.155
 }
