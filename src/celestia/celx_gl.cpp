@@ -221,7 +221,6 @@ static int gl_PushMatrix(lua_State* l)
 void LoadLuaGraphicsLibrary(lua_State* l)
 {
     CelxLua celx(l);
-    lua_pushstring(l, "gl");
     lua_newtable(l);
     
     celx.registerMethod("Frustum", gl_Frustum);
@@ -259,11 +258,10 @@ void LoadLuaGraphicsLibrary(lua_State* l)
     celx.registerValue("NEAREST", GL_NEAREST);
     celx.registerValue("SRC_ALPHA", GL_SRC_ALPHA);
     celx.registerValue("ONE_MINUS_SRC_ALPHA", GL_ONE_MINUS_SRC_ALPHA);
-    lua_settable(l, LUA_GLOBALSINDEX);
+    lua_setglobal(l, "gl");
     
-    lua_pushstring(l, "glu");
     lua_newtable(l);
     celx.registerMethod("LookAt", glu_LookAt);
     celx.registerMethod("Ortho2D", glu_Ortho2D);
-    lua_settable(l, LUA_GLOBALSINDEX);
+    lua_setglobal(l, "glu");
 }

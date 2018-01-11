@@ -73,8 +73,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
 
     if (!moduleName.empty())
     {
-        lua_pushstring(luaState, "require");
-        lua_gettable(luaState, LUA_GLOBALSINDEX);
+        lua_getglobal(luaState, "require");
         if (!lua_isfunction(luaState, -1))
         {
             clog << "Cannot load ScriptedOrbit package: 'require' function is unavailable\n";
@@ -92,8 +91,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     }
 
     // Get the orbit generator function
-    lua_pushstring(luaState, funcName.c_str());
-    lua_gettable(luaState, LUA_GLOBALSINDEX);
+    lua_getglobal(luaState, funcName.c_str());
 
     if (lua_isfunction(luaState, -1) == 0)
     {
@@ -157,9 +155,8 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     luaOrbitObjectName = GenerateScriptObjectName();
 
     // Attach the name to the script orbit
-    lua_pushstring(luaState, luaOrbitObjectName.c_str());
     lua_pushvalue(luaState, -2); // dup the orbit object on top of stack
-    lua_settable(luaState, LUA_GLOBALSINDEX);
+    lua_setglobal(luaState, luaOrbitObjectName.c_str());
 
     // Now, call orbit object methods to get the bounding radius
     // and valid time range.
@@ -206,8 +203,7 @@ ScriptedOrbit::computePosition(double tjd) const
 {
     Point3d pos(0.0, 0.0, 0.0);
 
-    lua_pushstring(luaState, luaOrbitObjectName.c_str());
-    lua_gettable(luaState, LUA_GLOBALSINDEX);
+    lua_getglobal(luaState, luaOrbitObjectName.c_str());
     if (lua_istable(luaState, -1))
     {
         lua_pushstring(luaState, "position");
