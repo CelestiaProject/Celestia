@@ -969,7 +969,12 @@ int LuaState::loadScript(istream& in, const string& streamname)
         lua_settable(state, LUA_REGISTRYINDEX);
     }
 
+#if LUA_VER >= 0x050200    
+    int status = lua_load(state, readStreamChunk, &info, streamname.c_str(),
+			  NULL);
+#else
     int status = lua_load(state, readStreamChunk, &info, streamname.c_str());
+#endif
     if (status != 0)
         cout << "Error loading script: " << lua_tostring(state, -1) << '\n';
 
