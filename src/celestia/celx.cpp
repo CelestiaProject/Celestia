@@ -661,8 +661,11 @@ static int resumeLuaThread(lua_State *L, lua_State *co, int narg)
     //if (!lua_checkstack(co, narg))
     //   luaL_error(L, "too many arguments to resume");
     lua_xmove(L, co, narg);
-
+#if LUA_VER >= 0x050200
+    status = lua_resume(co, NULL, narg);
+#else
     status = lua_resume(co, narg);
+#endif
 #if LUA_VER >= 0x050100
     if (status == 0 || status == LUA_YIELD)
 #else
