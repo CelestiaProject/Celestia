@@ -990,9 +990,33 @@
       </layout>
      </widget>
     </widget>
-   </item>
+  </item>
+  <item>
+    <widget class="QDialogButtonBox" name="buttonBox" >
+      <property name="standardButtons" >
+      <set>QDialogButtonBox::Ok</set>
+      </property>
+    </widget>
+  </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+  <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>preferencesDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>407</x>
+     <y>471</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>8</x>
+     <y>445</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
