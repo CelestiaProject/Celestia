@@ -671,7 +671,7 @@ macx {
     LIBS += macosx/lib/cspice.a
 }
 
-DEFINES += CELX LUA_VER=0x050100
+DEFINES += CELX LUA_VER=0x050200
 
 # QMAKE_CXXFLAGS += -ffast-math
 
