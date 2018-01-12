@@ -272,9 +272,13 @@ static void openLuaLibrary(lua_State* l,
                            const char* name,
                            lua_CFunction func)
 {
+#if LUA_VER >= 0x050200
+    luaL_requiref(l, name, func, 1);
+#else
     lua_pushcfunction(l, func);
     lua_pushstring(l, name);
     lua_call(l, 1, 0);
+#endif
 }
 #endif
 
