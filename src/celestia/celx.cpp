@@ -512,7 +512,7 @@ LuaState::LuaState() :
     ioMode(NoIO),
     eventHandlerEnabled(false)
 {
-    state = lua_open();
+    state = luaL_newstate();
     timer = CreateTimer();
     screenshotCount = 0;
 }
@@ -969,7 +969,7 @@ int LuaState::loadScript(istream& in, const string& streamname)
         lua_settable(state, LUA_REGISTRYINDEX);
     }
 
-#if LUA_VER >= 0x050200    
+#if LUA_VER >= 0x050200
     int status = lua_load(state, readStreamChunk, &info, streamname.c_str(),
 			  NULL);
 #else
