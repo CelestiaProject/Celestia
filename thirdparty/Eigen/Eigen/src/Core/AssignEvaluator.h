@@ -83,11 +83,11 @@ private:
                        && int(OuterStride)!=Dynamic && int(OuterStride)%int(InnerPacketSize)==0
                        && (EIGEN_UNALIGNED_VECTORIZE  || int(JointAlignment)>=int(InnerRequiredAlignment)),
     MayLinearize = bool(StorageOrdersAgree) && (int(DstFlags) & int(SrcFlags) & LinearAccessBit),
-    MayLinearVectorize = bool(MightVectorize) && MayLinearize && DstHasDirectAccess
+    MayLinearVectorize = bool(MightVectorize) && MayLinearize && (DstHasDirectAccess != 0)
                        && (EIGEN_UNALIGNED_VECTORIZE || (int(DstAlignment)>=int(LinearRequiredAlignment)) || MaxSizeAtCompileTime == Dynamic),
       /* If the destination isn't aligned, we have to do runtime checks and we don't unroll,
          so it's only good for large enough sizes. */
-    MaySliceVectorize  = bool(MightVectorize) && bool(DstHasDirectAccess)
+    MaySliceVectorize  = bool(MightVectorize) && bool(DstHasDirectAccess != 0)
                        && (int(InnerMaxSize)==Dynamic || int(InnerMaxSize)>=(EIGEN_UNALIGNED_VECTORIZE?InnerPacketSize:(3*InnerPacketSize)))
       /* slice vectorization can be slow, so we only want it if the slices are big, which is
          indicated by InnerMaxSize rather than InnerSize, think of the case of a dynamic block
