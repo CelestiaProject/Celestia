@@ -6,6 +6,7 @@ dnl
 AC_PREREQ(2.57)
 AC_INIT([celestia], [1.6.2], [celestia-developers@lists.sf.net])
 AC_CONFIG_SRCDIR(acinclude.m4)
+AC_CONFIG_MACRO_DIRS([macros])
 
 dnl The following section confirms that the user provided necessary option
 dnl BEFORE anything is checked.
@@ -14,7 +15,7 @@ AC_ARG_WITH([glut],
             AC_HELP_STRING([--with-glut], [Use Glut for the UI]),
             ui_glut="yes"; ui_gtk="no"; ui_gnome="no"; ui_kde="no",
             ui_glut="no")
-			
+
 AC_ARG_WITH([gtk],
             AC_HELP_STRING([--with-gtk], [Use Gtk for an enhanced GUI]),
 	        ui_gtk="yes"; ui_glut="no"; ui_gnome="no"; ui_kde="no",
@@ -72,7 +73,7 @@ AC_CANONICAL_SYSTEM
 dnl Perform program name transformation
 AC_ARG_PROGRAM
 
-AM_INIT_AUTOMAKE([-Wno-portability])
+AM_INIT_AUTOMAKE([-Wno-portability subdir-objects])
 AM_CONFIG_HEADER(config.h)
 
 AM_PO_SUBDIRS
@@ -170,7 +171,7 @@ dnl
 
 AC_ARG_WITH([cspice-dir],
             AC_HELP_STRING([--with-cspice-dir=DIR], [Specify SPICE directory location]),
-            SPICE_CFLAGS="-I$withval/include -DUSE_SPICE"; 
+            SPICE_CFLAGS="-I$withval/include -DUSE_SPICE";
             SPICE_LIBS="$withval/lib/cspice.a")
 
 AC_SUBST(SPICE_CFLAGS)
@@ -477,7 +478,7 @@ AC_MSG_RESULT([Use Lua: $enable_lua]);
 
 if (test "$LUA_VER" = "0x050000"); then
 	AC_MSG_RESULT([    Warning: Lua 5.1 is not available on your system, Lua 5.0 will be used
-    instead but it may not be fully compatible with existing CELX scripts. 
+    instead but it may not be fully compatible with existing CELX scripts.
     It is recommanded that you install Lua 5.0 and rerun configure.]);
 fi
 

@@ -30,7 +30,7 @@ if ENABLE_KDE
 noinst_LIBRARIES = libkdegui.a
 noinst_HEADERS = $(wildcard *.h)
 
-INCLUDES = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
+AM_CPPFLAGS = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
 
 libkdegui_a_CXXFLAGS = $(LUA_CFLAGS) $(THEORA_CFLAGS)
 

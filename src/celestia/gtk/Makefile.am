@@ -1,6 +1,6 @@
 SUBDIRS = data
 
-INCLUDES = -I../..
+AM_CPPFLAGS = -I../..
 
 DEFS = -DCONFIG_DATA_DIR='"$(PKGDATADIR)"' -DLOCALEDIR='"$(datadir)/locale"' @DEFS@
 
