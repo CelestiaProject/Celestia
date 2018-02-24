@@ -462,24 +462,23 @@ int main(int argc, char* argv[])
     ready = false;
 
     char c;
-	int startfile = 0;
+    int startfile = 0;
     while ((c = getopt(argc, argv, "v::f")) > -1)
     {
-        if (c == '?')
+        switch (c)
         {
+        case '?':
             cout << "Usage: celestia [-v] [-f <filename>]\n";
             exit(1);
-        }
-        else if (c == 'v')
-        {
+        case 'v':
             if(optarg)
                 SetDebugVerbosity(atoi(optarg));
             else
                 SetDebugVerbosity(0);
+            break;
+        case 'f':
+            startfile = 1;
         }
-		else if (c == 'f') {
-			startfile = 1;
-		}
     }
 
     appCore = new CelestiaCore();
