@@ -2,7 +2,7 @@ SUBDIRS = celutil celmath cel3ds celtxf celengine celephem celmodel celestia
 
 DEFS = -DHIP_DATA_DIR='"$(HIPDIR)"' @DEFS@
 
-INCLUDES = -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include
+AM_CPPFLAGS = -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include
 
 buildstardb_SOURCES = buildstardb.cpp
 EXTRA_DIST = packdb.cpp packnames.cpp readstars.cpp
