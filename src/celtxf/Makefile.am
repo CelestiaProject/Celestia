@@ -5,9 +5,7 @@ noinst_DATA = $(dosstuff)
 
 EXTRA_DIST = $(noinst_DATA)
 
-INCLUDES = -I..
+AM_CPPFLAGS = -I..
 
 libceltxf_a_SOURCES = \
 	texturefont.cpp
-
-

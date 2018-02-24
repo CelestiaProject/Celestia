@@ -5,7 +5,7 @@ noinst_DATA = $(dosstuff)
 
 EXTRA_DIST = $(noinst_DATA)
 
-INCLUDES = -I..
+AM_CPPFLAGS = -I..
 
 libcelmath_a_SOURCES = \
 	frustum.cpp \

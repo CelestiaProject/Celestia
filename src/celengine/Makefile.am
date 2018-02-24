@@ -8,7 +8,7 @@ EXTRA_DIST = \
 	3dsmesh.cpp \
 	solarsysxml.cpp
 
-INCLUDES = -I..
+AM_CPPFLAGS = -I..
 
 if ENABLE_SPICE
 SPICESOURCES = spiceinterface.cpp spiceorbit.cpp spicerotation.cpp
