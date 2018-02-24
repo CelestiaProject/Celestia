@@ -79,4 +79,4 @@ noinst_DATA = ../../celestia
 CLEANFILES = ../../celestia
 
 ../../celestia: celestia
-	(cd ../..; ln -s src/celestia/celestia)
+	(cd ../..; ln -sf src/celestia/celestia)
