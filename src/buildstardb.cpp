@@ -1090,26 +1090,25 @@ int main(int argc, char* argv[])
     int c;
     while((c=getopt(argc,argv,"v::qd:"))>-1)
     {
-        if (c=='?')
+        switch (c)
         {
+        case '?':
             cout << "Usage: buildstardb [-v[<verbosity_level>] [-q] [-d <drop-level>\n";
             exit(1);
-        }
-        else if (c=='v')
-        {
+        case 'v':
             if (optarg)
-                {
+            {
                 verbose=(int)atol(optarg);
                 if (verbose<-1)
                     verbose=-1;
                 else if (verbose>3)
                     verbose=3;
-                }
+            }
             else
                 verbose=1;
-        }
-        else if (c=='d')
-        {   /* Dropstar level. 0 = don't drop stars
+            break;
+        case 'd':
+            /* Dropstar level. 0 = don't drop stars
                                1 = drop only non-naked eye visible stars
                                2 = drop all stars with strange values */
             dropstars=(int)atol(optarg);
@@ -1117,9 +1116,8 @@ int main(int argc, char* argv[])
                 dropstars=0;
             else if (dropstars>2)
                 dropstars=2;
-        }
-        else if (c=='q')
-        {
+            break;
+        case 'q':
             verbose=-1;
         }
     }
