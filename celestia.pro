@@ -14,6 +14,35 @@ unix {
     QMAKE_DISTCLEAN += config.h
 }
 
+TRANSLATIONS = \
+    ts/celestia_ar.ts \
+    ts/celestia_be.ts \
+    ts/celestia_bg.ts \
+    ts/celestia_de.ts \
+    ts/celestia_el.ts \
+    ts/celestia_es.ts \
+    ts/celestia_fr.ts \
+    ts/celestia_gl.ts \
+    ts/celestia_hu.ts \
+    ts/celestia_it.ts \
+    ts/celestia_ja.ts \
+    ts/celestia_ko.ts \
+    ts/celestia_lt.ts \
+    ts/celestia_lv.ts \
+    ts/celestia_nl.ts \
+    ts/celestia_no.ts \
+    ts/celestia_pl.ts \
+    ts/celestia_pt_BR.ts \
+    ts/celestia_pt.ts \
+    ts/celestia_ro.ts \
+    ts/celestia_ru.ts \
+    ts/celestia_sk.ts \
+    ts/celestia_sv.ts \
+    ts/celestia_tr.ts \
+    ts/celestia_uk.ts \
+    ts/celestia_zh_CN.ts \
+    ts/celestia_zh_TW.ts
+
 #### Utility library ####
 
 UTIL_SOURCES = \
