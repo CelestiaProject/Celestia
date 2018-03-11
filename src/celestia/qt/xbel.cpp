@@ -210,7 +210,7 @@ XbelReader::skipUnknownElement()
 
 XbelWriter::XbelWriter(QIODevice* device) :
     QXmlStreamWriter(device)
-{  
+{
     setAutoFormatting(true);
 }
 

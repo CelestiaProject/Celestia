@@ -1,5 +1,5 @@
 // winssbrowser.h
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Solar system browser tool for Windows.

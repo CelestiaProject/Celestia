@@ -32,14 +32,14 @@ public:
      *  distance unmodified.
      */
     virtual bool pick(const Ray3d& r, double& distance) const = 0;
-    
+
     virtual bool isOpaque() const = 0;
 
     virtual bool isNormalized() const
     {
         return true;
     }
-    
+
     /*! Return true if the specified texture map type is used at
      *  all within this geometry object. This information is used
      *  to decide whether multiple rendering passes are required.

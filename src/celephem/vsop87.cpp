@@ -46,7 +46,7 @@ struct VSOPSeries
 // ftp://ftp.imcce.fr/pub/ephem/planets/vsop87/
 // They were processed with the tools vsoptrunc-rect and
 // vsoptrunc-sph. The source code for these tools is included
-// with the Celestia source package in the directory 
+// with the Celestia source package in the directory
 // src/tools/vsop.
 
 static VSOPTerm mercury_L0[] = {

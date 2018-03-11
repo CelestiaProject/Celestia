@@ -43,18 +43,18 @@ ParticleSystem*
 ParticleSystemLoader::load()
 {
     ParticleSystem* particleSystem = new ParticleSystem();
-    
+
     while (m_tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
         string objType;
-        
+
         if (m_tokenizer.getTokenType() != Tokenizer::TokenName)
         {
             raiseError("Error parsing particle system");
             delete particleSystem;
             return NULL;
         }
-        
+
         objType = m_tokenizer.getNameValue();
         if (objType != "Emitter")
         {
@@ -74,7 +74,7 @@ ParticleSystemLoader::load()
             delete particleSystem;
             return NULL;
         }
-        
+
         Hash* objParams = objParamsValue->getHash();
         if (objType == "Emitter")
         {
@@ -84,11 +84,11 @@ ParticleSystemLoader::load()
                 delete particleSystem;
                 return NULL;
             }
-            
+
             particleSystem->addEmitter(emitter);
         }
     }
-    
+
     return particleSystem;
 }
 
@@ -101,7 +101,7 @@ ParticleSystemLoader::parseGenerator(Hash* params)
     {
         return new ConstantGenerator(constantValue);
     }
-    
+
     Value* generatorValue = NULL;
     generatorValue = params->getValue("Box");
     if (generatorValue != NULL)
@@ -111,17 +111,17 @@ ParticleSystemLoader::parseGenerator(Hash* params)
             raiseError("Error in Box syntax");
             return NULL;
         }
-        
+
         Hash* boxParams = generatorValue->getHash();
-        
+
         Vector3f center(0.0f, 0.0f, 0.0f);
         Vector3f size(0.0f, 0.0f, 0.0f);
         boxParams->getVector("Center", center);
         boxParams->getVector("Size", size);
-        
+
         return new BoxGenerator(center, size);
     }
-    
+
     generatorValue = params->getValue("Line");
     if (generatorValue != NULL)
     {
@@ -130,17 +130,17 @@ ParticleSystemLoader::parseGenerator(Hash* params)
             raiseError("Error in Line syntax");
             return NULL;
         }
-        
+
         Hash* lineParams = generatorValue->getHash();
-        
+
         Vector3f p0(0.0f, 0.0f, 0.0f);
         Vector3f p1(0.0f, 0.0f, 0.0f);
         lineParams->getVector("Point1", p0);
         lineParams->getVector("Point2", p1);
-        
+
         return new LineGenerator(p0, p1);
     }
-    
+
     generatorValue = params->getValue("EllipsoidSurface");
     if (generatorValue != NULL)
     {
@@ -149,17 +149,17 @@ ParticleSystemLoader::parseGenerator(Hash* params)
             raiseError("Error in EllipsoidSurface syntax");
             return NULL;
         }
-        
+
         Hash* ellipsoidSurfaceParams = generatorValue->getHash();
-        
+
         Vector3f center(0.0f, 0.0f, 0.0f);
         Vector3f size(2.0f, 2.0f, 2.0f);
         ellipsoidSurfaceParams->getVector("Center", center);
         ellipsoidSurfaceParams->getVector("Size", size);
-        
-        return new EllipsoidSurfaceGenerator(center, size * 0.5f);        
+
+        return new EllipsoidSurfaceGenerator(center, size * 0.5f);
     }
-    
+
     generatorValue = params->getValue("Cone");
     if (generatorValue != NULL)
     {
@@ -168,9 +168,9 @@ ParticleSystemLoader::parseGenerator(Hash* params)
             raiseError("Error in Cone syntax");
             return NULL;
         }
-        
+
         Hash* coneParams = generatorValue->getHash();
-        
+
         double minAngle = 0.0;
         double maxAngle = 0.0;
         double minSpeed = 0.0;
@@ -179,8 +179,8 @@ ParticleSystemLoader::parseGenerator(Hash* params)
         coneParams->getNumber("MaxAngle", maxAngle);
         coneParams->getNumber("MinSpeed", minSpeed);
         coneParams->getNumber("MaxSpeed", maxSpeed);
-        
-        return new ConeGenerator((float) degToRad(minAngle), (float) degToRad(maxAngle), (float) minSpeed, (float) maxSpeed);                
+
+        return new ConeGenerator((float) degToRad(minAngle), (float) degToRad(maxAngle), (float) minSpeed, (float) maxSpeed);
     }
 
     generatorValue = params->getValue("GaussianDisc");
@@ -191,17 +191,17 @@ ParticleSystemLoader::parseGenerator(Hash* params)
             raiseError("Error in GaussianDisc syntax");
             return NULL;
         }
-        
+
         Hash* gaussianDiscParams = generatorValue->getHash();
-        
+
         double sigma = 1.0;
         gaussianDiscParams->getNumber("Sigma", sigma);
 
         return new GaussianDiscGenerator((float) sigma);
     }
-    
+
     raiseError("Missing generator for emitter");
-    
+
     return NULL;
 }
 
@@ -215,27 +215,27 @@ ParticleSystemLoader::parseEmitter(Hash* params)
     {
         textureHandle = GetTextureManager()->getHandle(TextureInfo(textureFileName, getTexturePath(), TextureInfo::BorderClamp));
     }
-    
+
     double rate = 1.0;
     double lifetime = 1.0;
     params->getNumber("Rate", rate);
     params->getNumber("Lifetime", lifetime);
-    
+
     double startSize = 1.0;
     double endSize = 1.0;
     params->getNumber("StartSize", startSize);
     params->getNumber("EndSize", endSize);
-    
+
     Color startColor(Color::White);
     Color endColor(Color::Black);
     float startOpacity = 0.0f;
     float endOpacity = 0.0f;
-    
+
     params->getColor("StartColor", startColor);
     params->getNumber("StartOpacity", startOpacity);
     params->getColor("EndColor", endColor);
     params->getNumber("EndOpacity", endOpacity);
-    
+
     VectorGenerator* initialPositionGenerator = NULL;
     Value* positionValue = params->getValue("InitialPosition");
     if (positionValue == NULL)
@@ -253,12 +253,12 @@ ParticleSystemLoader::parseEmitter(Hash* params)
             initialPositionGenerator = parseGenerator(positionValue->getHash());
         }
     }
-    
+
     if (initialPositionGenerator == NULL)
     {
         return NULL;
     }
-    
+
     VectorGenerator* initialVelocityGenerator = NULL;
     Value* velocityValue = params->getValue("InitialVelocity");
     if (velocityValue == NULL)
@@ -276,26 +276,26 @@ ParticleSystemLoader::parseEmitter(Hash* params)
             initialVelocityGenerator = parseGenerator(velocityValue->getHash());
         }
     }
-    
+
     if (initialVelocityGenerator == NULL)
     {
         delete initialPositionGenerator;
         return NULL;
     }
-    
+
     Vector3f acceleration;
     params->getVector("Acceleration", acceleration);
-    
+
     double startTime = -numeric_limits<double>::infinity();
     double endTime   =  numeric_limits<double>::infinity();
     params->getNumber("Beginning", startTime);
     params->getNumber("Ending", endTime);
-    
+
     double minRotationRate = 0.0;
     double maxRotationRate = 0.0;
     params->getNumber("MinRotationRate", minRotationRate);
     params->getNumber("MaxRotationRate", maxRotationRate);
-    
+
     ParticleEmitter* emitter = new ParticleEmitter();
     emitter->m_texture = textureHandle;
     emitter->m_rate = (float) rate;
@@ -307,12 +307,12 @@ ParticleSystemLoader::parseEmitter(Hash* params)
     emitter->m_positionGenerator = initialPositionGenerator;
     emitter->m_velocityGenerator = initialVelocityGenerator;
     emitter->createMaterial();
-    
+
     emitter->setAcceleration(acceleration);
-    
+
     emitter->setLifespan(startTime, endTime);
     emitter->setRotationRateRange((float) degToRad(minRotationRate), (float) degToRad(maxRotationRate));
-    
+
     return emitter;
 }
 
@@ -345,7 +345,7 @@ ParticleSystemLoader::getTexturePath() const
 }
 
 
-ParticleSystem* 
+ParticleSystem*
 LoadParticleSystem(istream& in, const string& texPath)
 {
     ParticleSystemLoader* loader = new ParticleSystemLoader(in);

@@ -128,7 +128,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     asteroidOrbitsAction   = createCheckableAction(_("Asteroids"), orbitsMenu, Body::Asteroid);
     cometOrbitsAction      = createCheckableAction(_("Comets"), orbitsMenu, Body::Comet);
     spacecraftOrbitsAction = createCheckableAction(_("Spacecraft"), orbitsMenu, Body::Spacecraft);
-    
+
     connect(starOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
     connect(planetOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
     connect(dwarfPlanetOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
@@ -242,7 +242,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     lightTimeDelayAction->setCheckable(true);
     lightTimeDelayAction->setToolTip("Subtract one-way light travel time to selected object");
     connect(lightTimeDelayAction, SIGNAL(triggered()), this, SLOT(slotSetLightTimeDelay()));
-    
+
     syncWithRenderer(appCore->getRenderer());
     syncWithAppCore();
     appCore->getRenderer()->addWatcher(this);
@@ -272,7 +272,7 @@ void CelestiaActions::syncWithRenderer(const Renderer* renderer)
     constellationsAction->setChecked(renderFlags & Renderer::ShowDiagrams);
     boundariesAction->setChecked(renderFlags & Renderer::ShowBoundaries);
     orbitsAction->setChecked(renderFlags & Renderer::ShowOrbits);
-    
+
     labelGalaxiesAction->setChecked(labelMode & Renderer::GalaxyLabels);
     labelGlobularsAction->setChecked(labelMode & Renderer::GlobularLabels);
     labelOpenClustersAction->setChecked(labelMode & Renderer::OpenClusterLabels);

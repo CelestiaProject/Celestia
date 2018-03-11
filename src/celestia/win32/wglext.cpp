@@ -99,34 +99,34 @@ static void WGLCallback(HWND wnd)
 {
     if (wnd == NULL)
         return;
-    
-    HDC	hdc = GetDC(wnd);
+
+    HDC hdc = GetDC(wnd);
 
     if (hdc == NULL)
         return;
 
-    PIXELFORMATDESCRIPTOR pfd = { 
-        sizeof(PIXELFORMATDESCRIPTOR),  //  size of this pfd 
-        1,                              // version number 
-        PFD_DRAW_TO_WINDOW |            // support window 
-        PFD_SUPPORT_OPENGL |            // support OpenGL 
-        PFD_DOUBLEBUFFER,		// double buffered 
-        PFD_TYPE_RGBA,                  // RGBA type 
-        24,                             // 24-bit color depth 
-        0, 0, 0, 0, 0, 0,		// color bits ignored 
-        0,                              // no alpha buffer 
-        0,                              // shift bit ignored 
-        0,                              // no accumulation buffer 
-        0, 0, 0, 0,                     // accum bits ignored 
-        24,                             // 24-bit z-buffer     
-        0,                              // no stencil buffer 
-        0,                              // no auxiliary buffer 
-        PFD_MAIN_PLANE,                 // main layer 
-        0,                              // reserved 
-        0, 0, 0                         // layer masks ignored 
-    }; 
+    PIXELFORMATDESCRIPTOR pfd = {
+        sizeof(PIXELFORMATDESCRIPTOR),  //  size of this pfd
+        1,                              // version number
+        PFD_DRAW_TO_WINDOW |            // support window
+        PFD_SUPPORT_OPENGL |            // support OpenGL
+        PFD_DOUBLEBUFFER,        // double buffered
+        PFD_TYPE_RGBA,                  // RGBA type
+        24,                             // 24-bit color depth
+        0, 0, 0, 0, 0, 0,        // color bits ignored
+        0,                              // no alpha buffer
+        0,                              // shift bit ignored
+        0,                              // no accumulation buffer
+        0, 0, 0, 0,                     // accum bits ignored
+        24,                             // 24-bit z-buffer
+        0,                              // no stencil buffer
+        0,                              // no auxiliary buffer
+        PFD_MAIN_PLANE,                 // main layer
+        0,                              // reserved
+        0, 0, 0                         // layer masks ignored
+    };
 
-    unsigned int	pixelFormat = ChoosePixelFormat(hdc, &pfd);
+    unsigned int pixelFormat = ChoosePixelFormat(hdc, &pfd);
 
     DescribePixelFormat(hdc, pixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
     if (!SetPixelFormat(hdc, pixelFormat, &pfd))
@@ -142,8 +142,8 @@ static void WGLCallback(HWND wnd)
     if (wglGetExtensionsStringARB == NULL)
         return;
 
-    const char	*ext = wglGetExtensionsStringARB(hdc);
-    char        buff[100];
+    const char *ext = wglGetExtensionsStringARB(hdc);
+    char       buff[100];
 
     if (ext == NULL)
         return;
@@ -160,7 +160,7 @@ static void WGLCallback(HWND wnd)
             wglGetPixelFormatAttribivARB = (PFNWGLGETPIXELFORMATATTRIBIVARBPROC) wglGetProcAddress("wglGetPixelFormatAttribivARB");
             wglGetPixelFormatAttribfvARB = (PFNWGLGETPIXELFORMATATTRIBFVARBPROC) wglGetProcAddress("wglGetPixelFormatAttribfvARB");
             wglChoosePixelFormatARB      = (PFNWGLCHOOSEPIXELFORMATARBPROC) wglGetProcAddress("wglChoosePixelFormatARB");
-            
+
             if (wglChoosePixelFormatARB      != NULL &&
                 wglGetPixelFormatAttribivARB != NULL &&
                 wglGetPixelFormatAttribfvARB != NULL)
@@ -197,9 +197,9 @@ static void WGLCallback(HWND wnd)
         {
         }
 
-        ext += strlen(buff) + 1;					
+        ext += strlen(buff) + 1;
     }
-    
+
     // Close down this context
     wglMakeCurrent(NULL, NULL);
     wglDeleteContext(context);
@@ -210,20 +210,20 @@ static void WGLCallback(HWND wnd)
 // This window exists only to call WGLCallback when its created
 static LRESULT CALLBACK WGLWindProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    switch (uMsg) 
-    { 
+    switch (uMsg)
+    {
     case WM_CREATE:
         {
             CREATESTRUCT *cs = (CREATESTRUCT *) lParam;
             WGLCallback(hwnd);
-            return -1; 
-	}
- 
-    default: 
-        return DefWindowProc(hwnd, uMsg, wParam, lParam); 
-    } 
+            return -1;
+        }
 
-    return 0; 
+    default:
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    }
+
+    return 0;
 }
 
 
@@ -233,7 +233,7 @@ void InitWGLExtensions(HINSTANCE appInstance)
     WNDCLASS wglClass = {
         0, WGLWindProc, 0, 0, appInstance, NULL, NULL, NULL, NULL, "InitWGL"
     };
-    ATOM classId  = RegisterClass(&wglClass);	
+    ATOM classId  = RegisterClass(&wglClass);
     HWND hwnd = CreateWindow("InitWGL", "",
                              0, 0, 0, 0, 0,
                              (HWND) NULL,

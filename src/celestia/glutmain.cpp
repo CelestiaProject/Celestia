@@ -1,5 +1,5 @@
 // glutmain.cpp
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // GLUT front-end for Celestia.
@@ -318,7 +318,7 @@ static void initMenus(void) {
     glutAddMenuEntry("Select the sun (Home)    H",001);
 /*    glutAddMenuEntry("Select by name       ENTER",002); */
     glutAddMenuEntry("Run demo                         D",003);
-/*   
+/*
     gMouse=glutCreateMenu(menuCallback);
     glutAddSubMenu("*Orient camera    CLICK+DRAG",000);
     glutAddSubMenu("*Orbit object    RCLICK+DRAG",000);
@@ -432,23 +432,23 @@ static void dirFixup(char *argv0) {
 
 int main(int argc, char* argv[])
 {
-	setlocale(LC_ALL, "");
-	setlocale(LC_NUMERIC, "C");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	bind_textdomain_codeset(PACKAGE, "UTF-8");
-	textdomain(PACKAGE);
-			
-   #ifdef MACOSX
-   #define BUNDLEONLY 1
-   #ifndef BUNDLEONLY
-   // for bundles only!
-   if (argc==2 && argv[1][0]=='-' && argv[1][1]=='p' && argv[1][2]=='s' && argv[1][3]=='n')
-   {
-   #endif /* !BUNDLEONLY */
+    setlocale(LC_ALL, "");
+    setlocale(LC_NUMERIC, "C");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    bind_textdomain_codeset(PACKAGE, "UTF-8");
+    textdomain(PACKAGE);
+
+    #ifdef MACOSX
+    #define BUNDLEONLY 1
+    #ifndef BUNDLEONLY
+    // for bundles only!
+    if (argc==2 && argv[1][0]=='-' && argv[1][1]=='p' && argv[1][2]=='s' && argv[1][3]=='n')
+    {
+    #endif /* !BUNDLEONLY */
         argc--;
         dirFixup(argv[0]);
     #ifndef BUNDLEONLY
-    } else  
+    } else
     /* BE REAL DAMN CAREFUL WITH THIS LINGERING IF! */
     #endif /* !BUNDLEONLY */
     #else /* MACOSX */
@@ -534,15 +534,15 @@ int main(int argc, char* argv[])
     appCore->setTimeZoneName(tzname[daylight?0:1]);
     #endif
 
-	if (startfile == 1) {
-		if (argv[argc - 1][0] == '-') {
-			cout << "Missing Filename.\n";
-			return 1;
-		}
-	
-		cout << "*** Using CEL File: " << argv[argc - 1] << endl;
-		appCore->runScript(argv[argc - 1]);
-	}
+    if (startfile == 1) {
+        if (argv[argc - 1][0] == '-') {
+            cout << "Missing Filename.\n";
+            return 1;
+        }
+
+        cout << "*** Using CEL File: " << argv[argc - 1] << endl;
+        appCore->runScript(argv[argc - 1]);
+    }
 
     ready = true;
     glutMainLoop();

@@ -41,7 +41,7 @@ class PlanetarySystem
     Body* getPrimaryBody() const { return primary; };
     int getSystemSize() const { return satellites.size(); };
     Body* getBody(int i) const { return satellites[i]; };
-    
+
     void addAlias(Body* body, const std::string& alias);
     void removeAlias(const Body* body, const std::string& alias);
     void addBody(Body* body);
@@ -65,7 +65,7 @@ class PlanetarySystem
  private:
     void addBodyToNameIndex(Body* body);
     void removeBodyFromNameIndex(const Body* body);
-    
+
  private:
     typedef std::map<std::string, Body*, UTF8StringOrderingPredicate> ObjectIndex;
 
@@ -77,7 +77,7 @@ class PlanetarySystem
 };
 
 
-class RingSystem 
+class RingSystem
 {
  public:
     float innerRadius;
@@ -201,7 +201,7 @@ class Body
     const Orbit* getOrbit(double tdb) const;
     const ReferenceFrame* getBodyFrame(double tdb) const;
     const RotationModel* getRotationModel(double tdb) const;
- 
+
     // Size methods
     void setSemiAxes(const Eigen::Vector3f&);
     Eigen::Vector3f getSemiAxes() const;
@@ -321,7 +321,7 @@ class Body
         SunDirection   =   0x08,
         VelocityVector =   0x10,
     };
-	
+
     bool referenceMarkVisible(uint32) const;
     uint32 getVisibleReferenceMarks() const;
     void setVisibleReferenceMarks(uint32);

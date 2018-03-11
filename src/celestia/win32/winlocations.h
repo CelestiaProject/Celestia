@@ -1,5 +1,5 @@
 // winlocations.h
-// 
+//
 // Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
 //
 // Miscellaneous utilities for Locations UI implementation.

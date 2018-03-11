@@ -1,5 +1,5 @@
 // watcher.h
-// 
+//
 // Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or

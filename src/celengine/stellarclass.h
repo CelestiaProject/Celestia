@@ -21,26 +21,26 @@ class StellarClass
 public:
     enum StarType
     {
-	NormalStar     = 0,
-	WhiteDwarf     = 1,
-	NeutronStar    = 2,
+        NormalStar     = 0,
+        WhiteDwarf     = 1,
+        NeutronStar    = 2,
         BlackHole      = 3,
     };
 
     enum SpectralClass
     {
-	Spectral_O     = 0,
-	Spectral_B     = 1,
-	Spectral_A     = 2,
-	Spectral_F     = 3,
-	Spectral_G     = 4,
-	Spectral_K     = 5,
-	Spectral_M     = 6,
-	Spectral_R     = 7, // superceded by class C
-	Spectral_S     = 8,
-	Spectral_N     = 9, // superceded by class C
-	Spectral_WC    = 10,
-	Spectral_WN    = 11,
+        Spectral_O     = 0,
+        Spectral_B     = 1,
+        Spectral_A     = 2,
+        Spectral_F     = 3,
+        Spectral_G     = 4,
+        Spectral_K     = 5,
+        Spectral_M     = 6,
+        Spectral_R     = 7, // superceded by class C
+        Spectral_S     = 8,
+        Spectral_N     = 9, // superceded by class C
+        Spectral_WC    = 10,
+        Spectral_WN    = 11,
         Spectral_Unknown = 12,
         Spectral_L     = 13,
         Spectral_T     = 14,
@@ -66,14 +66,14 @@ public:
 
     enum LuminosityClass
     {
-	Lum_Ia0     = 0,
-	Lum_Ia      = 1,
-	Lum_Ib      = 2,
-	Lum_II      = 3,
-	Lum_III     = 4,
-	Lum_IV      = 5,
-	Lum_V       = 6,
-	Lum_VI      = 7,
+        Lum_Ia0     = 0,
+        Lum_Ia      = 1,
+        Lum_Ib      = 2,
+        Lum_II      = 3,
+        Lum_III     = 4,
+        Lum_IV      = 5,
+        Lum_V       = 6,
+        Lum_VI      = 7,
         Lum_Unknown = 8,
         Lum_Count   = 9,
     };
@@ -85,9 +85,9 @@ public:
 
     inline StellarClass();
     inline StellarClass(StarType,
-			SpectralClass,
-			unsigned int,
-			LuminosityClass);
+                        SpectralClass,
+                        unsigned int,
+                        LuminosityClass);
 
     inline StarType getStarType() const;
     inline SpectralClass getSpectralClass() const;
@@ -122,9 +122,9 @@ std::ostream& operator<<(std::ostream& s, const StellarClass& sc);
 bool operator<(const StellarClass& sc0, const StellarClass& sc1);
 
 StellarClass::StellarClass(StarType t,
-			   SpectralClass sc,
-			   unsigned int ssub,
-			   LuminosityClass lum) :
+                           SpectralClass sc,
+                           unsigned int ssub,
+                           LuminosityClass lum) :
     starType(t),
     specClass(sc),
     lumClass(lum),
@@ -138,7 +138,7 @@ StellarClass::StellarClass() :
     lumClass(Lum_Unknown),
     subclass(Subclass_Unknown)
 {
-    
+
 }
 
 StellarClass::StarType StellarClass::getStarType() const

@@ -1,5 +1,5 @@
 // lodspheremesh.h
-// 
+//
 // Copyright (C) 2001-2010, Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
@@ -60,7 +60,7 @@ public:
             context(_context)
         {};
 
-        int step;                 
+        int step;
         unsigned int attributes;  // vertex attributes
         const Frustum& frustum;   // frustum, for culling
         Point3f fp[8];            // frustum points, for culling
@@ -68,7 +68,7 @@ public:
         const GLContext& context;
     };
 
-    int renderPatches(int phi0, int theta0, 
+    int renderPatches(int phi0, int theta0,
                       int extent,
                       int level,
                       const RenderInfo&);

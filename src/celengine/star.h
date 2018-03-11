@@ -34,7 +34,7 @@ class StarDetails
     StarDetails(const StarDetails&);
 
     ~StarDetails();
-    
+
  private:
     // Prohibit assignment of StarDetails objects
     StarDetails& operator=(const StarDetails&);
@@ -70,7 +70,7 @@ class StarDetails
     void setInfoURL(const std::string& _infoURL);
 
     bool shared() const;
-    
+
     enum
     {
         KnowRadius   = 0x1,
@@ -106,7 +106,7 @@ class StarDetails
     Eigen::Vector3f semiAxes;
 
     std::string* infoURL;
-    
+
     std::vector<Star*>* orbitingStars;
     bool isShared;
 
@@ -117,7 +117,7 @@ class StarDetails
         MultiResTexture neutronStarTex;
         MultiResTexture starTex[StellarClass::Spectral_Count];
     };
-    
+
  public:
     static StarDetails* GetStarDetails(const StellarClass&);
     static StarDetails* CreateStandardStarType(const std::string& _specType,
@@ -132,9 +132,9 @@ class StarDetails
     static StarDetails* GetNeutronStarDetails();
     static StarDetails* GetBlackHoleDetails();
     static StarDetails* GetBarycenterDetails();
-    
+
     static void SetStarTextures(const StarTextureSet&);
-    
+
  private:
     static StarTextureSet starTextures;
 };

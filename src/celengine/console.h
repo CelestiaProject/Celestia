@@ -61,7 +61,7 @@ class Console : public std::ostream
     void newline();
 #if 0
     void printf(const char*, ...);
-#endif    
+#endif
 
     int getRow() const;
     int getColumn() const;

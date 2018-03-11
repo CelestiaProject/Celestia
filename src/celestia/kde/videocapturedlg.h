@@ -17,7 +17,7 @@ public:
     VideoCaptureDlg(QWidget *parent, const QString & dir);
     virtual ~VideoCaptureDlg();
     QString getDir() const;
-    
+
 
 public slots:
     void newAspectRatioSlot(int aspectIdx);

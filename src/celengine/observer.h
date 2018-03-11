@@ -34,44 +34,44 @@ public:
         BodyFixed       = 3,
         PhaseLock       = 5,
         Chase           = 6,
-        
+
         // Previous versions of PhaseLock and Chase used the
         // spin axis of the reference object as a secondary
         // vector for the coordinate system.
         PhaseLock_Old   = 100,
         Chase_Old       = 101,
-        
+
         // ObserverLocal is not a real frame; it's an optional
         // way to specify view vectors. Eventually, there will
         // be some other way to accomplish this and ObserverLocal
         // will go away.
         ObserverLocal   = 200,
-        
+
         Unknown         = 1000,
     };
-    
+
     ObserverFrame();
     ObserverFrame(CoordinateSystem cs,
                   const Selection& _refObject,
                   const Selection& _targetObj = Selection());
     ObserverFrame(const ObserverFrame&);
     ObserverFrame(const ReferenceFrame& f);
-    
+
     ~ObserverFrame();
-    
+
     ObserverFrame& operator=(const ObserverFrame& f);
-    
+
     CoordinateSystem getCoordinateSystem() const;
     Selection getRefObject() const;
     Selection getTargetObject() const;
-    
+
     const ReferenceFrame* getFrame() const;
-    
+
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
     Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const;
     Eigen::Quaterniond convertToUniversal(const Eigen::Quaterniond& q, double tjd) const;
-    
+
     static UniversalCoord convert(const ObserverFrame* fromFrame,
                                   const ObserverFrame* toFrame,
                                   const UniversalCoord& uc,
@@ -80,12 +80,12 @@ public:
                                       const ObserverFrame* toFrame,
                                       const Eigen::Quaterniond& q,
                                       double t);
-    
+
 private:
     ReferenceFrame* createFrame(CoordinateSystem _coordSys,
                                 const Selection& _refObject,
                                 const Selection& _targetObject);
-    
+
 private:
     CoordinateSystem coordSys;
     const ReferenceFrame* frame;
@@ -107,24 +107,24 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     Observer();
-	Observer(const Observer& o);
+    Observer(const Observer& o);
 
-	Observer& operator=(const Observer& o);
-        
+    Observer& operator=(const Observer& o);
+
     UniversalCoord getPosition() const;
     void          setPosition(const UniversalCoord&);
-    void          setPosition(const Eigen::Vector3d&);    
-    
+    void          setPosition(const Eigen::Vector3d&);
+
     Eigen::Quaterniond getOrientation() const;
     Eigen::Quaternionf getOrientationf() const;
     void          setOrientation(const Eigen::Quaternionf&);
     void          setOrientation(const Eigen::Quaterniond&);
-    
+
     Eigen::Vector3d getVelocity() const;
     void          setVelocity(const Eigen::Vector3d&);
     Eigen::Vector3d getAngularVelocity() const;
     void          setAngularVelocity(const Eigen::Vector3d&);
-    
+
     float          getFOV() const;
     void           setFOV(float);
 
@@ -144,7 +144,7 @@ public:
 
     const std::string& getDisplayedSurface() const;
     void setDisplayedSurface(const std::string&);
-    
+
     uint32 getLocationFilter() const;
     void setLocationFilter(uint32);
 
@@ -214,7 +214,7 @@ public:
         Free                    = 0,
         Travelling              = 1,
     };
-    
+
     ObserverMode getMode() const;
     void setMode(ObserverMode);
 
@@ -222,7 +222,7 @@ public:
     {
         Linear        = 0,
         GreatCircle   = 1,
-        CircularOrbit = 2,          
+        CircularOrbit = 2,
     };
 
     struct JourneyParams
@@ -241,7 +241,7 @@ public:
         Eigen::Quaterniond rotation1; // rotation on the CircularOrbit around centerObject
 
         Selection centerObject;
-        
+
         TrajectoryType traj;
     };
 
@@ -277,7 +277,7 @@ public:
 
     void updateUniversal();
     void convertFrameCoordinates(const ObserverFrame* newFrame);
-    
+
  private:
     double         simTime;
 
@@ -286,14 +286,14 @@ public:
     Eigen::Quaterniond  orientation;
     Eigen::Vector3d     velocity;
     Eigen::Vector3d     angularVelocity;
-    
+
     // Position and orientation in universal coordinates, derived from the
     // equivalent quantities in the observer reference frame.
     UniversalCoord positionUniv;
     Eigen::Quaterniond  orientationUniv;
-    
+
     ObserverFrame* frame;
-    
+
     double          realTime;
 
     double          targetSpeed;
@@ -302,7 +302,7 @@ public:
     double          beginAccelTime;
 
     ObserverMode     observerMode;
-    JourneyParams    journey;    
+    JourneyParams    journey;
     Selection        trackObject;
 
     Eigen::Quaterniond trackingOrientation;   // orientation prior to selecting tracking

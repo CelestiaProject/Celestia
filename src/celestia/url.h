@@ -56,9 +56,9 @@ public:
         UseSystemTime     = 2,
         TimeSourceCount   = 3,
     };
-   
+
     Url();
-    
+
     // parses str
     Url(const std::string& str, CelestiaCore *core);
     // current url of appCore
@@ -76,11 +76,11 @@ public:
 
     static std::string decodeString(const std::string& str);
     static std::string encodeString(const std::string& str);
-    
+
 private:
     void initVersion2(std::map<std::string, std::string>& params, const std::string& timeString);
     void initVersion3(std::map<std::string, std::string>& params, const std::string& timeString);
-    
+
 private:
     std::string urlStr;
     std::string name;
@@ -114,14 +114,14 @@ private:
     UrlType type;
     TimeSource timeSource;
     unsigned int version;
-    
+
     void evalName();
-    
+
     // Variables specific to Global Urls
     UniversalCoord coord;
     astro::Date date;
     Eigen::Quaternionf orientation;
-    
+
     // Variables specific to Relative Urls
     double distance, longitude, latitude;
 };
@@ -141,11 +141,11 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     CelestiaState();
-    
+
     bool loadState(std::map<std::string, std::string>& params);
     void saveState(std::map<std::string, std::string>& params);
     void captureState(CelestiaCore* appCore);
-    
+
     // Observer frame, position, and orientation. For multiview, there needs
     // be one instance of these parameters per view saved.
     ObserverFrame::CoordinateSystem coordSys;
@@ -155,15 +155,15 @@ public:
     UniversalCoord observerPosition;
     Eigen::Quaternionf observerOrientation;
     float fieldOfView;
-    
+
     // Time parameters
     double tdb;
     float timeScale;
     bool pauseState;
     bool lightTimeDelay;
-    
+
     string selectedBodyName;
-    
+
     int labelMode;
     int renderFlags;
 };

@@ -1,5 +1,5 @@
 // celx.h
-// 
+//
 // Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
 //
 // Lua script extensions for Celestia
@@ -76,7 +76,7 @@ public:
     bool callLuaHook(void* obj, const char* method, float x, float y);
     bool callLuaHook(void* obj, const char* method, float x, float y, int b);
     bool callLuaHook(void* obj, const char* method, double dt);
-    
+
     enum IOMode {
         NoIO = 1,
         Asking = 2,

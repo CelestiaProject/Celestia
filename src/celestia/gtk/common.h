@@ -30,47 +30,47 @@
 
 typedef struct _AppData AppData;
 struct _AppData {
-	/* Core Pointers */
-	CelestiaCore* core;
-	Renderer* renderer;
-	Simulation* simulation;
+    /* Core Pointers */
+    CelestiaCore* core;
+    Renderer* renderer;
+    Simulation* simulation;
 
-	/* Important Widgets */
-	GtkWidget* mainWindow;
-	GtkWidget* mainMenu;
-	GtkWidget* glArea;
-	GtkWidget* optionDialog;
-	GtkWidget* contextMenu;
-	
-	/* Action Groups */
-	GtkActionGroup* agMain;
-	GtkActionGroup* agRender;
-	GtkActionGroup* agOrbit;
-	GtkActionGroup* agLabel;
-	GtkActionGroup* agVerbosity;
-	GtkActionGroup* agStarStyle;
-	GtkActionGroup* agAmbient;
-	
-	/* Settings */
-	#ifdef GNOME
-	GConfClient* client;
-	#else
-	GKeyFile* settingsFile;
-	#endif /* GNOME */
-	
-	/* Ready to render? */
-	gboolean bReady;
-	
-	/* Mouse motion tracking */
-	int lastX;
-	int lastY;
-	
-	/* Starting URL */
-	char* startURL;
-	
-	/* A few preferences not tracked by the core */
-	gboolean showLocalTime;
-	gboolean fullScreen;
+    /* Important Widgets */
+    GtkWidget* mainWindow;
+    GtkWidget* mainMenu;
+    GtkWidget* glArea;
+    GtkWidget* optionDialog;
+    GtkWidget* contextMenu;
+
+    /* Action Groups */
+    GtkActionGroup* agMain;
+    GtkActionGroup* agRender;
+    GtkActionGroup* agOrbit;
+    GtkActionGroup* agLabel;
+    GtkActionGroup* agVerbosity;
+    GtkActionGroup* agStarStyle;
+    GtkActionGroup* agAmbient;
+
+    /* Settings */
+    #ifdef GNOME
+    GConfClient* client;
+    #else
+    GKeyFile* settingsFile;
+    #endif /* GNOME */
+
+    /* Ready to render? */
+    gboolean bReady;
+
+    /* Mouse motion tracking */
+    int lastX;
+    int lastY;
+
+    /* Starting URL */
+    char* startURL;
+
+    /* A few preferences not tracked by the core */
+    gboolean showLocalTime;
+    gboolean fullScreen;
 };
 
 
@@ -102,7 +102,7 @@ void setDefaultRenderFlags(AppData* app);
 
 
 /* Constants used throughout */
-const char * const monthOptions[] = 
+const char * const monthOptions[] =
 {
     "January",
     "February",
@@ -121,22 +121,22 @@ const char * const monthOptions[] =
 
 static const float amLevels[] =
 {
-    0.0, 
+    0.0,
     0.1,
     0.25
 };
 
 static const int resolutions[] =
 {
-	0,        /* Must start with 0 */
-	640,
-	800,
-	1024,
-	1152,
-	1280,
-	1400,
-	1600,
-	-1        /* Must end with -1 */
+    0,        /* Must start with 0 */
+    640,
+    800,
+    1024,
+    1152,
+    1280,
+    1400,
+    1600,
+    -1        /* Must end with -1 */
 };
 
 /* This is the spacing used for widgets throughout the program */

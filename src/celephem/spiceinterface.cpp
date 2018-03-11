@@ -76,7 +76,7 @@ bool GetNaifId(const string& name, int* id)
  */
 bool IsSpiceKernelLoaded(const string& filepath)
 {
-	return ResidentSpiceKernels.find(filepath) != ResidentSpiceKernels.end();
+    return ResidentSpiceKernels.find(filepath) != ResidentSpiceKernels.end();
 }
 
 
@@ -85,31 +85,31 @@ bool IsSpiceKernelLoaded(const string& filepath)
  */
 bool LoadSpiceKernel(const string& filepath)
 {
-	// Only load the kernel if it is not already resident. Note that this detection
+    // Only load the kernel if it is not already resident. Note that this detection
     // of duplicate kernels will not work if a file was originally loaded through
     // a metakernel.
-	if (IsSpiceKernelLoaded(filepath))
-		return true;
+    if (IsSpiceKernelLoaded(filepath))
+        return true;
 
-	ResidentSpiceKernels.insert(filepath);
-	furnsh_c(filepath.c_str());
+    ResidentSpiceKernels.insert(filepath);
+    furnsh_c(filepath.c_str());
 
-	// If there was an error loading the kernel, dump the error message.
-	if (failed_c())
-	{
-		char errMsg[1024];
-		getmsg_c("long", sizeof(errMsg), errMsg);
-		clog << errMsg << "\n";
+    // If there was an error loading the kernel, dump the error message.
+    if (failed_c())
+    {
+        char errMsg[1024];
+        getmsg_c("long", sizeof(errMsg), errMsg);
+        clog << errMsg << "\n";
 
-		// Reset the SPICE error state so that future calls to
-		// SPICE can still succeed.
-		reset_c();
+        // Reset the SPICE error state so that future calls to
+        // SPICE can still succeed.
+        reset_c();
 
-		return false;
-	}
-	else
-	{
-		clog << "Loaded SPK file " << filepath << "\n";
-		return true;
-	}
+        return false;
+    }
+    else
+    {
+        clog << "Loaded SPK file " << filepath << "\n";
+        return true;
+    }
 }

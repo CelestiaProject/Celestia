@@ -42,7 +42,7 @@ template<class T> class Sphere
         radius(_radius)
     {
     }
- 
+
  public:
     Eigen::Matrix<T, 3, 1> center;
     T radius;

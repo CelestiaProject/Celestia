@@ -1228,16 +1228,16 @@ Shadow(unsigned int light, unsigned int shadow)
     // surrounded by a ring of linear falloff from maxDepth to zero. For a total
     // eclipse, maxDepth is zero. In reality, the falloff function is much more complex:
     // to calculate the exact amount of sunlight blocked, we need to calculate the
-    // a circle-circle intersection area. 
+    // a circle-circle intersection area.
     // (See http://mathworld.wolfram.com/Circle-CircleIntersection.html)
-    
+
     // The code generated below will compute:
     // r = 2 * sqrt(dot(shadowCenter, shadowCenter));
     // shadowR = clamp((r - 1) * shadowFalloff, 0, shadowMaxDepth)
     source += "shadowR = clamp((2.0 * sqrt(dot(shadowCenter, shadowCenter)) - 1.0) * " +
         IndexedParameter("shadowFalloff", light, shadow) + ", 0.0, " +
         IndexedParameter("shadowMaxDepth", light, shadow) + ");\n";
-    
+
     source += "shadow *= 1.0 - shadowR;\n";
 
     return source;
@@ -1537,7 +1537,7 @@ PointSizeCalculation()
     source += "float ptSize = pointScale * pointSize / length(vec3(gl_ModelViewMatrix * gl_Vertex));\n";
     source += "pointFade = min(1.0, ptSize * ptSize);\n";
     source += "gl_PointSize = ptSize;\n";
-    
+
     return source;
 }
 
@@ -2036,7 +2036,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         source += DeclareVarying("pointFade", Shader_Float);
     }
-    
+
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
 
@@ -2243,7 +2243,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             if (!props.usesTangentSpaceLighting())
             {
                 source += "float totalLight = ";
-                
+
                 if (props.nLights == 0)
                 {
                     source += "0.0f\n";
@@ -2763,7 +2763,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
         source += "    gl_TexCoord[0].st = " + TexCoord2D(0) + ";\n";
     }
 
-    // Set the color. 
+    // Set the color.
     string colorSource;
     if (props.texUsage & ShaderProperties::VertexColors)
         colorSource = "gl_Color.rgb";
@@ -2811,7 +2811,7 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
     {
         source += "varying float pointFade;\n";
     }
-    
+
     // Begin main()
     source += "\nvoid main(void)\n";
     source += "{\n";
@@ -2825,7 +2825,7 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 #endif
         colorSource = "color";
     }
-    
+
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
         source += "    gl_FragColor = " + colorSource + " * texture2D(diffTex, gl_TexCoord[0].st);\n";
@@ -2859,30 +2859,30 @@ GLVertexShader*
 ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
 {
     ostringstream source;
-    
+
     source << CommonHeader;
-    
+
     source << "// PARTICLE SHADER\n";
     source << "// shadow count: " << props.shadowCounts << endl;
-    
+
     source << DeclareLights(props);
-    
+
     source << "uniform vec3 eyePosition;\n";
 
     // TODO: scattering constants
-    
+
     if (props.texUsage & ShaderProperties::PointSprite)
     {
         source << "uniform float pointScale;\n";
         source << "attribute float pointSize;\n";
     }
-    
+
     // Shadow parameters
     if (props.shadowCounts != 0)
     {
         source << "varying vec3 position_obj;\n";
     }
-    
+
     // Begin main() function
     source << "\nvoid main(void)\n{\n";
 
@@ -2913,26 +2913,26 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     {
         source << "    gl_TexCoord[0].st = " << TexCoord2D(0) << ";\n";
     }
-    
+
     // Set the color. Should *always* use vertex colors for color and opacity.
     source << "    gl_FrontColor = gl_Color * brightness;\n";
-    
+
     // Optional point size
     if ((props.texUsage & ShaderProperties::PointSprite) != 0)
         source << PointSizeCalculation();
-    
+
     source << "    gl_Position = ftransform();\n";
-    
+
     source << "}\n";
     // End of main()
-    
+
     if (g_shaderLogFile != NULL)
     {
         *g_shaderLogFile << "Vertex shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source.str());
         *g_shaderLogFile << endl;
     }
-    
+
     GLVertexShader* vs = NULL;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source.str(), &vs);
     if (status != ShaderStatus_OK)
@@ -2948,7 +2948,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
     ostringstream source;
 
     source << CommonHeader;
-    
+
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
         source << "uniform sampler2D diffTex;\n";
@@ -2960,9 +2960,9 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             source << "uniform vec3 " << FragLightProperty(i, "color") << ";\n";
-        }        
+        }
     }
-    
+
     // Declare shadow parameters
     if (props.shadowCounts != 0)
     {
@@ -2978,11 +2978,11 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
             }
         }
     }
-    
+
     // Begin main()
     source << "\nvoid main(void)\n";
     source << "{\n";
-    
+
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
         source << "    gl_FragColor = gl_Color * texture2D(diffTex, gl_TexCoord[0].st);\n";
@@ -2991,17 +2991,17 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
     {
         source << "    gl_FragColor = gl_Color;\n";
     }
-    
+
     source << "}\n";
     // End of main()
-    
+
     if (g_shaderLogFile != NULL)
     {
         *g_shaderLogFile << "Fragment shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source.str());
         *g_shaderLogFile << '\n';
     }
-    
+
     GLFragmentShader* fs = NULL;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source.str(), &fs);
     if (status != ShaderStatus_OK)
@@ -3415,7 +3415,7 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                 // Compose the world-to-shadow matrix
                 Matrix4f worldToShadow = shadowRotation *
                                          Affine3f(Scaling(1.0f / shadow.penumbraRadius)).matrix() *
-					                     Affine3f(Translation3f(-shadow.origin)).matrix();
+                                         Affine3f(Translation3f(-shadow.origin)).matrix();
 
                 // Finally, multiply all the matrices together to get the mapping from
                 // object space to shadow map space.
@@ -3468,6 +3468,6 @@ CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
     // in the vertex shader.
     Vector3f tScatterCoeffSum = tRayleighCoeff.array() + tMieCoeff;
     scatterCoeffSum = tScatterCoeffSum;
-	invScatterCoeffSum = tScatterCoeffSum.cwiseInverse();
+    invScatterCoeffSum = tScatterCoeffSum.cwiseInverse();
     extinctionCoeff = tScatterCoeffSum + tAbsorptionCoeff;
 }

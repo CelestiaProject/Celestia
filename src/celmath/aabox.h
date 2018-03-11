@@ -34,7 +34,7 @@ class AxisAlignedBox
     inline void include(const Point3f&);
     inline void include(const AxisAlignedBox&);
 
- private:    
+ private:
     Point3f minimum;
     Point3f maximum;
 };

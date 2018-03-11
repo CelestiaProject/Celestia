@@ -9,7 +9,7 @@ using namespace std;
 
 enum bitmapType {eNormal, eDisabled, eShadow, eFaded};
 
-typedef struct tagODMENUITEM 
+typedef struct tagODMENUITEM
 {
     UINT dwType;
     UINT wID;
@@ -51,18 +51,18 @@ class ODMenu
     HBRUSH m_hIconShadowBrush;
     HBRUSH m_hCheckMarkBackgroundBrush;
     HBRUSH m_hCheckMarkBackgroundHighlightBrush;
-	HBRUSH m_hItemBackground;
+    HBRUSH m_hItemBackground;
     HBRUSH m_hHighlightItemBackgroundBrush;
     HPEN m_hSelectionOutlinePen;
     HPEN m_hSeparatorPen;
     HPEN m_hCheckMarkPen;
     HFONT m_hFont;
-    
+
     UINT m_seqNumber;
     HMENU m_hRootMenu;
     TCHAR m_szItemText[256];
     ODMENUITEMS m_menuItems;
-    
+
     int m_alpDx[256];
 
     void EnumMenuItems(HMENU hMenu);

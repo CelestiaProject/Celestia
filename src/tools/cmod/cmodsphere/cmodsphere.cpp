@@ -160,7 +160,7 @@ void triangleMesh(unsigned int subdiv,
         {
             unsigned int t0 = baseIndex + trinum(i) + j;
             unsigned int t1 = baseIndex + trinum(i + 1) + j;
-            
+
             cout << t0 << " " << t1 << " " << t1 + 1 << "\n";
             if (j != i)
                 cout << t0 << " " << t1 + 1 << " " << t0 + 1 << "\n";

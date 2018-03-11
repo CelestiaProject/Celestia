@@ -45,7 +45,7 @@ Q_OBJECT
     void syncWithAppCore();
     QAction* createCheckableAction(const QString& text, QMenu* menu, int data);
     QAction* createCheckableAction(const QString& text, int data);
-    
+
  public:
     QAction* equatorialGridAction;
     QAction* galacticGridAction;
@@ -62,7 +62,7 @@ Q_OBJECT
     QAction* globularsAction;
     QAction* openClustersAction;
     QAction* nebulaeAction;
-    
+
     QAction* labelGalaxiesAction;
     QAction* labelGlobularsAction;
     QAction* labelOpenClustersAction;

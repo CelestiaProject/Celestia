@@ -86,7 +86,7 @@ string GeometryInfo::resolve(const string& baseDir)
     // This suffix is stripped before the file is actually loaded.
     char uniquifyingSuffix[128];
     sprintf(uniquifyingSuffix, "%c%f,%f,%f,%f,%d", UniqueSuffixChar, center.x(), center.y(), center.z(), scale, (int) isNormalized);
-    
+
     if (!path.empty())
     {
         string filename = path + "/models/" + source;
@@ -107,7 +107,7 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
     // Strip off the uniquifying suffix
     string::size_type uniquifyingSuffixStart = resolvedFilename.rfind(UniqueSuffixChar);
     string filename(resolvedFilename, 0, uniquifyingSuffixStart);
-    
+
     clog << _("Loading model: ") << filename << '\n';
     Model* model = NULL;
     ContentType fileType = DetermineFileType(filename);
@@ -168,7 +168,7 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
         }
     }
 #endif
-        
+
     // Condition the model for optimal rendering
     if (model != NULL)
     {
@@ -468,7 +468,7 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
                 Vector2f texCoord = mesh.getTexCoord(triVert[j]);
                 vertexData[dataOffset + 6] = texCoord.x();
                 vertexData[dataOffset + 7] = texCoord.y();
-            }            
+            }
         }
     }
 

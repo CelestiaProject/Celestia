@@ -49,22 +49,22 @@ using namespace Qt;
 
 
 const int DEFAULT_RENDER_FLAGS =
-		  Renderer::ShowStars              |
-		  Renderer::ShowPlanets            |
-		  Renderer::ShowGalaxies           |
-		  Renderer::ShowGlobulars          |
-		  Renderer::ShowCloudMaps          |
-		  Renderer::ShowAtmospheres        |
-		  Renderer::ShowEclipseShadows     |
-		  Renderer::ShowRingShadows        |
-		  Renderer::ShowCometTails         |
-		  Renderer::ShowNebulae            |
-		  Renderer::ShowOpenClusters       |
-		  Renderer::ShowAutoMag            |
-		  Renderer::ShowNightMaps          |
-		  Renderer::ShowCloudShadows       |
-		  Renderer::ShowTintedIllumination |
-		  Renderer::ShowSmoothLines;
+          Renderer::ShowStars              |
+          Renderer::ShowPlanets            |
+          Renderer::ShowGalaxies           |
+          Renderer::ShowGlobulars          |
+          Renderer::ShowCloudMaps          |
+          Renderer::ShowAtmospheres        |
+          Renderer::ShowEclipseShadows     |
+          Renderer::ShowRingShadows        |
+          Renderer::ShowCometTails         |
+          Renderer::ShowNebulae            |
+          Renderer::ShowOpenClusters       |
+          Renderer::ShowAutoMag            |
+          Renderer::ShowNightMaps          |
+          Renderer::ShowCloudShadows       |
+          Renderer::ShowTintedIllumination |
+          Renderer::ShowSmoothLines;
 
 const int DEFAULT_ORBIT_MASK = Body::Planet | Body::Moon | Body::Stellar;
 
@@ -166,9 +166,9 @@ void CelestiaGlWidget::initializeGL()
     appRenderer->setResolution(settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toUInt());
 
     if (settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt() == 0)
-    appRenderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+        appRenderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
     else
-    appRenderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+        appRenderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
 
     appCore->getSimulation()->setFaintestVisible((float) settings.value("Preferences/VisualMagnitude", DEFAULT_VISUAL_MAGNITUDE).toDouble());
 
@@ -212,7 +212,7 @@ void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
         buttons |= CelestiaCore::ShiftKey;
     if (m->modifiers() & ControlModifier)
         buttons |= CelestiaCore::ControlKey;
-    
+
 #ifdef TARGET_OS_MAC
     // On the Mac, right dragging is be simulated with Option+left drag.
     // We may want to enable this on other platforms, though it's mostly only helpful
@@ -287,7 +287,6 @@ void CelestiaGlWidget::mousePressEvent( QMouseEvent* m )
         appCore->mouseButtonDown(m->x(), m->y(), CelestiaCore::MiddleButton);
     else if (m->button() == RightButton)
         appCore->mouseButtonDown(m->x(), m->y(), CelestiaCore::RightButton);
-
 }
 
 
@@ -396,7 +395,7 @@ bool CelestiaGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
 /*    case Key_F10:
         if (e->modifiers()& ShiftModifier)
             k = CelestiaCore::Key_F10;
-        break;*/     
+        break;*/
     case Key_0:
         if (e->modifiers() & Qt::KeypadModifier)
             k = CelestiaCore::Key_NumPad0;

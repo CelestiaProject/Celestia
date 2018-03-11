@@ -36,9 +36,9 @@ void gcSetLabelMode(int flag, gboolean state, GConfClient* client);
 
 
 enum {
-	Render = 0,
-	Orbit = 1,
-	Label = 2,
+    Render = 0,
+    Orbit = 1,
+    Label = 2,
 };
 
 #endif /* GTK_SETTINGS_GCONF_H */

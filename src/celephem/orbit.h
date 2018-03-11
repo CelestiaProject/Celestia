@@ -27,8 +27,8 @@ class Orbit
 
     /*! Return the orbital velocity in the orbit's reference frame at the
      * specified time (TDB). Units are kilometers per day. If the method
-	 * is not overridden, the velocity will be computed by differentiation
-	 * of position.
+     * is not overridden, the velocity will be computed by differentiation
+     * of position.
      */
     virtual Eigen::Vector3d velocityAtTime(double) const;
 
@@ -122,8 +122,8 @@ class CachingOrbit : public Orbit
     mutable Eigen::Vector3d lastPosition;
     mutable Eigen::Vector3d lastVelocity;
     mutable double lastTime;
-	mutable bool positionCacheValid;
-	mutable bool velocityCacheValid;
+    mutable bool positionCacheValid;
+    mutable bool velocityCacheValid;
 };
 
 

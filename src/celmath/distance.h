@@ -50,8 +50,8 @@ template<class T> T distance(const Eigen::Matrix<T, 3, 1>& p, const Ray3<T>& r)
 
 // Distance between a point and a segment defined by orig+dir*t, 0 <= t <= 1
 template<class T> T distanceToSegment(const Point3<T>& p,
-				      const Point3<T>& origin,
-				      const Vector3<T>& direction)
+                                      const Point3<T>& origin,
+                                      const Vector3<T>& direction)
 {
     T t = ((p - origin) * direction) / (direction * direction);
     if (t <= 0)

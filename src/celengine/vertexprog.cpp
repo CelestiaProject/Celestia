@@ -191,7 +191,7 @@ static bool LoadARBVertexProgram(const string& filename, unsigned int& id)
         const char* errMsg = (const char*) glGetString(GL_PROGRAM_ERROR_STRING_ARB);
         if (errMsg == NULL)
             errMsg = "Unknown error";
-        
+
         cout << _("Error in vertex program ") << filename <<
             _(", line ") << findLineNumber(*source, errPos) << ": " << errMsg << '\n';
     }
@@ -390,7 +390,7 @@ void VertexProcessor::parameter(vp::Parameter param, const Color& c)
 
 // VertexProcessorNV implementation
 
-static unsigned int parameterMappings[] = 
+static unsigned int parameterMappings[] =
 {
     16, // LightDirection0
     15, // EyePosition
@@ -441,7 +441,7 @@ void VertexProcessorNV::use(unsigned int prog)
 void VertexProcessorNV::parameter(vp::Parameter param,
                                   float x, float y, float z, float w)
 {
-    glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, 
+    glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV,
                                 parameterMappings[param], x, y, z, w);
 }
 

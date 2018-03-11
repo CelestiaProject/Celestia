@@ -80,55 +80,55 @@ Observer::Observer() :
 
 /*! Copy constructor. */
 Observer::Observer(const Observer& o) :
-	simTime(o.simTime),
-	position(o.position),
-	orientation(o.orientation),
-	velocity(o.velocity),
-	angularVelocity(o.angularVelocity),
-	frame(NULL),
-	realTime(o.realTime),
-	targetSpeed(o.targetSpeed),
-	targetVelocity(o.targetVelocity),
-	beginAccelTime(o.beginAccelTime),
-	observerMode(o.observerMode),
-	journey(o.journey),
-	trackObject(o.trackObject),
-	trackingOrientation(o.trackingOrientation),
-	fov(o.fov),
-	reverseFlag(o.reverseFlag),
-	locationFilter(o.locationFilter),
-	displayedSurface(o.displayedSurface)
+    simTime(o.simTime),
+    position(o.position),
+    orientation(o.orientation),
+    velocity(o.velocity),
+    angularVelocity(o.angularVelocity),
+    frame(NULL),
+    realTime(o.realTime),
+    targetSpeed(o.targetSpeed),
+    targetVelocity(o.targetVelocity),
+    beginAccelTime(o.beginAccelTime),
+    observerMode(o.observerMode),
+    journey(o.journey),
+    trackObject(o.trackObject),
+    trackingOrientation(o.trackingOrientation),
+    fov(o.fov),
+    reverseFlag(o.reverseFlag),
+    locationFilter(o.locationFilter),
+    displayedSurface(o.displayedSurface)
 {
-	frame = new ObserverFrame(*o.frame);
-	updateUniversal();
+    frame = new ObserverFrame(*o.frame);
+    updateUniversal();
 }
 
 
 Observer& Observer::operator=(const Observer& o)
 {
-	simTime = o.simTime;
-	position = o.position;
-	orientation = o.orientation;
-	velocity = o.velocity;
-	angularVelocity = o.angularVelocity;
-	frame = NULL;
-	realTime = o.realTime;
-	targetSpeed = o.targetSpeed;
-	targetVelocity = o.targetVelocity;
-	beginAccelTime = o.beginAccelTime;
-	observerMode = o.observerMode;
-	journey = o.journey;
-	trackObject = o.trackObject;
-	trackingOrientation = o.trackingOrientation;
-	fov = o.fov;
-	reverseFlag = o.reverseFlag;
-	locationFilter = o.locationFilter;
-	displayedSurface = o.displayedSurface;
+    simTime = o.simTime;
+    position = o.position;
+    orientation = o.orientation;
+    velocity = o.velocity;
+    angularVelocity = o.angularVelocity;
+    frame = NULL;
+    realTime = o.realTime;
+    targetSpeed = o.targetSpeed;
+    targetVelocity = o.targetVelocity;
+    beginAccelTime = o.beginAccelTime;
+    observerMode = o.observerMode;
+    journey = o.journey;
+    trackObject = o.trackObject;
+    trackingOrientation = o.trackingOrientation;
+    fov = o.fov;
+    reverseFlag = o.reverseFlag;
+    locationFilter = o.locationFilter;
+    displayedSurface = o.displayedSurface;
 
-	setFrame(*o.frame);
-	updateUniversal();
+    setFrame(*o.frame);
+    updateUniversal();
 
-	return *this;
+    return *this;
 }
 
 
@@ -155,7 +155,7 @@ double Observer::getRealTime() const
 void Observer::setTime(double jd)
 {
     simTime = jd;
-	updateUniversal();
+    updateUniversal();
 }
 
 
@@ -260,7 +260,7 @@ void Observer::setAngularVelocity(const Vector3d& v)
  */
 // TODO: This is a generally useful function that should be moved to
 // the celmath package.
-template<class T> static Quaternion<T> 
+template<class T> static Quaternion<T>
 lookAt(Matrix<T, 3, 1> from, Matrix<T, 3, 1> to, Matrix<T, 3, 1> up)
 {
     Matrix<T, 3, 1> n = to - from;
@@ -277,7 +277,7 @@ lookAt(Matrix<T, 3, 1> from, Matrix<T, 3, 1> to, Matrix<T, 3, 1> up)
 }
 
 #ifdef CELVEC
-template<class T> static Quat<T> 
+template<class T> static Quat<T>
 lookAt(Point3<T> from, Point3<T> to, Vector3<T> up)
 {
     Vector3<T> n = to - from;
@@ -487,7 +487,7 @@ void Observer::update(double dt, double timeScale)
 
         position = p;
         orientation = q;
-        
+
         // If the journey's complete, reset to manual control
         if (t == 1.0f)
         {
@@ -530,7 +530,7 @@ void Observer::update(double dt, double timeScale)
         orientation.normalize();
 #endif
     }
-   
+
     updateUniversal();
 
     // Update orientation for tracking--must occur after updateUniversal(), as it
@@ -539,7 +539,7 @@ void Observer::update(double dt, double timeScale)
     {
         Vector3d up = getOrientation().conjugate() * Vector3d::UnitY();
         Vector3d viewDir = trackObject.getPosition(getTime()).offsetFromKm(getPosition()).normalized();
-        
+
         setOrientation(lookAt<double>(Vector3d::Zero(), viewDir, up));
     }
 }
@@ -627,17 +627,17 @@ void Observer::computeGotoParameters(const Selection& destination,
     {
         setFrame(frame->getCoordinateSystem(), destination);
     }
-    
+
     UniversalCoord targetPosition = destination.getPosition(getTime());
     Vector3d v = targetPosition.offsetFromKm(getPosition()).normalized();
-    
+
     jparams.traj = Linear;
     jparams.duration = gotoTime;
     jparams.startTime = realTime;
-    
+
     // Right where we are now . . .
     jparams.from = getPosition();
-    
+
     if (offsetCoordSys == ObserverFrame::ObserverLocal)
     {
         jparams.to = targetPosition.offsetKm(orientationUniv.conjugate() * offset);
@@ -647,7 +647,7 @@ void Observer::computeGotoParameters(const Selection& destination,
         ObserverFrame offsetFrame(offsetCoordSys, destination);
         jparams.to = targetPosition.offsetKm(offsetFrame.getFrame()->getOrientation(getTime()).conjugate() * offset);
     }
-    
+
     Vector3d upd = up.cast<double>();
     if (upCoordSys == ObserverFrame::ObserverLocal)
     {
@@ -658,25 +658,25 @@ void Observer::computeGotoParameters(const Selection& destination,
         ObserverFrame upFrame(upCoordSys, destination);
         upd = upFrame.getFrame()->getOrientation(getTime()).conjugate() * upd;
     }
-    
+
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
     jparams.finalOrientation = lookAt<double>(Vector3d::Zero(), focus, upd);
     jparams.startInterpolation = min(startInter, endInter);
     jparams.endInterpolation   = max(startInter, endInter);
-    
+
     jparams.accelTime = 0.5;
     double distance = jparams.from.offsetFromKm(jparams.to).norm() / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
                                                0.0001, 100.0,
                                                1e-10);
     jparams.expFactor = sol.first;
-    
+
     // Convert to frame coordinates
     jparams.from = frame->convertFromUniversal(jparams.from, getTime());
     jparams.initialOrientation = frame->convertFromUniversal(jparams.initialOrientation, getTime());
     jparams.to = frame->convertFromUniversal(jparams.to, getTime());
-    jparams.finalOrientation = frame->convertFromUniversal(jparams.finalOrientation, getTime());        
+    jparams.finalOrientation = frame->convertFromUniversal(jparams.finalOrientation, getTime());
 }
 
 
@@ -707,7 +707,7 @@ void Observer::computeGotoParametersGC(const Selection& destination,
 
     ObserverFrame offsetFrame(offsetCoordSys, destination);
     Vector3d offsetTransformed = offsetFrame.getFrame()->getOrientation(getTime()).conjugate() * offset;
-    
+
     jparams.to = targetPosition.offsetKm(offsetTransformed);
 
     Vector3d upd = up.cast<double>();
@@ -720,7 +720,7 @@ void Observer::computeGotoParametersGC(const Selection& destination,
         ObserverFrame upFrame(upCoordSys, destination);
         upd = upFrame.getFrame()->getOrientation(getTime()).conjugate() * upd;
     }
-    
+
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
     jparams.finalOrientation = lookAt<double>(Vector3d::Zero(), focus, upd);
@@ -738,7 +738,7 @@ void Observer::computeGotoParametersGC(const Selection& destination,
     jparams.from = frame->convertFromUniversal(jparams.from, getTime());
     jparams.initialOrientation = frame->convertFromUniversal(jparams.initialOrientation, getTime());
     jparams.to = frame->convertFromUniversal(jparams.to, getTime());
-    jparams.finalOrientation = frame->convertFromUniversal(jparams.finalOrientation, getTime());    
+    jparams.finalOrientation = frame->convertFromUniversal(jparams.finalOrientation, getTime());
 }
 
 
@@ -771,7 +771,7 @@ void Observer::computeCenterParameters(const Selection& destination,
     jparams.from = frame->convertFromUniversal(jparams.from, getTime());
     jparams.initialOrientation = frame->convertFromUniversal(jparams.initialOrientation, getTime());
     jparams.to = frame->convertFromUniversal(jparams.to, getTime());
-    jparams.finalOrientation = frame->convertFromUniversal(jparams.finalOrientation, getTime());    
+    jparams.finalOrientation = frame->convertFromUniversal(jparams.finalOrientation, getTime());
 }
 
 
@@ -845,12 +845,12 @@ void Observer::setMode(Observer::ObserverMode mode)
 void Observer::convertFrameCoordinates(const ObserverFrame* newFrame)
 {
     double now = getTime();
-    
+
     // Universal coordinates don't change.
     // Convert frame coordinates to the new frame.
     position = newFrame->convertFromUniversal(positionUniv, now);
     orientation = newFrame->convertFromUniversal(orientationUniv, now);
-    
+
     // Convert goto parameters to the new frame
     journey.from               = ObserverFrame::convert(frame, newFrame, journey.from, now);
     journey.initialOrientation = ObserverFrame::convert(frame, newFrame, journey.initialOrientation, now);
@@ -864,7 +864,7 @@ void Observer::convertFrameCoordinates(const ObserverFrame* newFrame)
 */
 void Observer::setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj, const Selection& targetObj)
 {
-    ObserverFrame* newFrame = new ObserverFrame(cs, refObj, targetObj);    
+    ObserverFrame* newFrame = new ObserverFrame(cs, refObj, targetObj);
     if (newFrame != NULL)
     {
         convertFrameCoordinates(newFrame);
@@ -891,17 +891,17 @@ void Observer::setFrame(const ObserverFrame& f)
     if (frame != &f)
     {
         ObserverFrame* newFrame = new ObserverFrame(f);
-        
+
         if (newFrame != NULL)
         {
-			if (frame != NULL)
-			{
-				convertFrameCoordinates(newFrame);
-				delete frame;
-			}
+            if (frame != NULL)
+            {
+                convertFrameCoordinates(newFrame);
+                delete frame;
+            }
             frame = newFrame;
         }
-    }    
+    }
 }
 
 
@@ -1080,7 +1080,7 @@ static double getPreferredDistance(const Selection& selection)
         // Handle reference points (i.e. invisible objects) specially, since the
         // actual radius of the point is meaningless. Instead, use the size of
         // bounding sphere of all child objects. This is useful for system
-        // barycenters--the normal goto command will place the observer at 
+        // barycenters--the normal goto command will place the observer at
         // a viewpoint in which the entire system can be seen.
         if (selection.body()->getClassification() == Body::Invisible)
         {
@@ -1309,10 +1309,10 @@ void Observer::gotoLocation(const UniversalCoord& toPosition,
     journey.duration = duration;
 
     journey.from = position;
-    journey.initialOrientation = orientation;    
+    journey.initialOrientation = orientation;
     journey.to = toPosition;
     journey.finalOrientation = toOrientation;
-    
+
     journey.startInterpolation = 0.25f;
     journey.endInterpolation   = 0.75f;
 
@@ -1338,7 +1338,7 @@ void Observer::getSelectionLongLat(const Selection& selection,
     {
         ObserverFrame frame(ObserverFrame::BodyFixed, selection);
         Vector3d bfPos = frame.convertFromUniversal(positionUniv, getTime()).offsetFromKm(UniversalCoord::Zero());
-        
+
         // Convert from Celestia's coordinate system
         double x = bfPos.x();
         double y = -bfPos.z();
@@ -1355,7 +1355,7 @@ void Observer::gotoSurface(const Selection& sel, double duration)
 {
     Vector3d v = getPosition().offsetFromKm(sel.getPosition(getTime()));
     v.normalize();
-    
+
     Vector3d viewDir = orientationUniv.conjugate() * -Vector3d::UnitZ();
     Vector3d up      = orientationUniv.conjugate() * Vector3d::UnitY();
     Quaterniond q = orientationUniv;
@@ -1363,16 +1363,16 @@ void Observer::gotoSurface(const Selection& sel, double duration)
     {
         q = lookAt<double>(Vector3d::Zero(), up, v);
     }
-    
+
     ObserverFrame frame(ObserverFrame::BodyFixed, sel);
     UniversalCoord bfPos = frame.convertFromUniversal(positionUniv, getTime());
     q = frame.convertFromUniversal(q, getTime());
-    
+
     double height = 1.0001 * sel.radius();
     Vector3d dir = bfPos.offsetFromKm(UniversalCoord::Zero()).normalized() * height;
     UniversalCoord nearSurfacePoint = UniversalCoord::Zero().offsetKm(dir);
-    
-    gotoLocation(nearSurfacePoint, q, duration);    
+
+    gotoLocation(nearSurfacePoint, q, duration);
 };
 
 
@@ -1412,7 +1412,7 @@ void Observer::geosynchronousFollow(const Selection& selection)
 void Observer::phaseLock(const Selection& selection)
 {
     Selection refObject = frame->getRefObject();
-    
+
     if (selection != refObject)
     {
         if (refObject.body() != NULL || refObject.star() != NULL)
@@ -1427,7 +1427,7 @@ void Observer::phaseLock(const Selection& selection)
         if (selection.body() != NULL)
         {
             setFrame(ObserverFrame::PhaseLock, selection, Selection(selection.body()->getSystem()->getStar()));
-        }        
+        }
     }
 }
 
@@ -1525,12 +1525,12 @@ ObserverFrame& ObserverFrame::operator=(const ObserverFrame& f)
 {
     coordSys = f.coordSys;
     targetObject = f.targetObject;
-    
+
     // In case frames are the same, make sure we addref before releasing
     f.frame->addRef();
     frame->release();
     frame = f.frame;
-    
+
     return *this;
 }
 
@@ -1570,7 +1570,7 @@ ObserverFrame::getFrame() const
 }
 
 
-UniversalCoord 
+UniversalCoord
 ObserverFrame::convertFromUniversal(const UniversalCoord& uc, double tjd) const
 {
     return frame->convertFromUniversal(uc, tjd);
@@ -1584,7 +1584,7 @@ ObserverFrame::convertToUniversal(const UniversalCoord& uc, double tjd) const
 }
 
 
-Quaterniond 
+Quaterniond
 ObserverFrame::convertFromUniversal(const Quaterniond& q, double tjd) const
 {
     return frame->convertFromUniversal(q, tjd);
@@ -1634,30 +1634,30 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
     {
     case Universal:
         return new J2000EclipticFrame(Selection());
-        
+
     case Ecliptical:
         return new J2000EclipticFrame(_refObject);
-        
+
     case Equatorial:
         return new BodyMeanEquatorFrame(_refObject, _refObject);
-        
+
     case BodyFixed:
         return new BodyFixedFrame(_refObject, _refObject);
-        
+
     case PhaseLock:
     {
         return new TwoVectorFrame(_refObject,
                                   FrameVector::createRelativePositionVector(_refObject, _targetObject), 1,
                                   FrameVector::createRelativeVelocityVector(_refObject, _targetObject), 2);
     }
-        
+
     case Chase:
     {
         return new TwoVectorFrame(_refObject,
                                   FrameVector::createRelativeVelocityVector(_refObject, _refObject.parent()), 1,
                                   FrameVector::createRelativePositionVector(_refObject, _refObject.parent()), 2);
     }
-        
+
     case PhaseLock_Old:
     {
         FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
@@ -1666,12 +1666,12 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
                                   FrameVector::createRelativePositionVector(_refObject, _targetObject), 3,
                                   rotAxis, 2);
     }
-        
+
     case Chase_Old:
     {
         FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
                                                               new BodyMeanEquatorFrame(_refObject, _refObject)));
-        
+
         return new TwoVectorFrame(_refObject,
                                   FrameVector::createRelativeVelocityVector(_refObject.parent(), _refObject), 3,
                                   rotAxis, 2);
@@ -1681,7 +1681,7 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
         // TODO: This is only used for computing up vectors for orientation; it does
         // define a proper frame for the observer position orientation.
         return new J2000EclipticFrame(Selection());
-        
+
     default:
         return new J2000EclipticFrame(_refObject);
     }

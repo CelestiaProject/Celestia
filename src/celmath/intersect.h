@@ -74,9 +74,9 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
                                         T& distance)
 {
     Eigen::Matrix<T, 3, 1> diff = ray.origin - e.center;
-	Eigen::Matrix<T, 3, 1> s = e.axes.cwiseInverse().array().square();
-	Eigen::Matrix<T, 3, 1> sdir = ray.direction.cwiseProduct(s);
-	Eigen::Matrix<T, 3, 1> sdiff = diff.cwiseProduct(s);
+    Eigen::Matrix<T, 3, 1> s = e.axes.cwiseInverse().array().square();
+    Eigen::Matrix<T, 3, 1> sdir = ray.direction.cwiseProduct(s);
+    Eigen::Matrix<T, 3, 1> sdiff = diff.cwiseProduct(s);
 
     T a = ray.direction.dot(sdir);
     T b = ray.direction.dot(sdiff);

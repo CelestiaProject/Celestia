@@ -69,7 +69,7 @@ bool Asterism::getActive() const
  */
 void Asterism::setActive(bool _active)
 {
-	active = _active;
+    active = _active;
 }
 
 
@@ -106,7 +106,7 @@ void Asterism::unsetOverrideColor()
  *  if it should be drawn in the default color.
  */
 bool Asterism::isColorOverridden() const
-{ 
+{
     return useOverrideColor;
 }
 

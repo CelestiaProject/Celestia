@@ -65,7 +65,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 {
     float radius = semiAxes.maxCoeff();
 
-    Texture* textures[MAX_SPHERE_MESH_TEXTURES] = 
+    Texture* textures[MAX_SPHERE_MESH_TEXTURES] =
         { NULL, NULL, NULL, NULL, NULL, NULL };
     unsigned int nTextures = 0;
 
@@ -186,7 +186,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     // Track the total number of shadows; if there are too many, we'll have
     // to fall back to multipass.
     unsigned int totalShadows = 0;
-    
+
     for (unsigned int li = 0; li < ls.nLights; li++)
     {
         if (ls.shadows[li] && !ls.shadows[li]->empty())
@@ -205,7 +205,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
             ringsTex->bind();
             nTextures++;
-            
+
             // Tweak the texture--set clamp to border and a border color with
             // a zero alpha.
             float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -225,8 +225,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             }
         }
     }
-    
-    
+
+
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
     if (prog == NULL)
@@ -402,7 +402,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 {
     float radius = semiAxes.maxCoeff();
 
-    Texture* textures[MAX_SPHERE_MESH_TEXTURES] = 
+    Texture* textures[MAX_SPHERE_MESH_TEXTURES] =
         { NULL, NULL, NULL, NULL, NULL, NULL };
     unsigned int nTextures = 0;
 
@@ -448,7 +448,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
         }
     }
 #endif
-    
+
     if (atmosphere != NULL)
     {
         if (renderFlags & Renderer::ShowAtmospheres)
@@ -502,7 +502,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
         prog->ringWidth = 1.0f / (ringWidth / cloudRadius);
     }
 #endif
-    
+
     if (shadprop.shadowCounts != 0)
         prog->setEclipseShadowParameters(ls, semiAxes, planetOrientation);
 

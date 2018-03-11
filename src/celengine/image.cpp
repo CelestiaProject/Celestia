@@ -403,7 +403,7 @@ Image* LoadImageFromFile(const string& filename)
 
 struct my_error_mgr
 {
-    struct jpeg_error_mgr pub;	// "public" fields
+    struct jpeg_error_mgr pub;  // "public" fields
     jmp_buf setjmp_buffer;      // for return to caller
 };
 
@@ -438,8 +438,8 @@ Image* LoadJPEGImage(const string& filename, int)
     // struct, to avoid dangling-pointer problems.
     struct my_error_mgr jerr;
     // More stuff
-    JSAMPARRAY buffer;		// Output row buffer
-    int row_stride;		// physical row width in output buffer
+    JSAMPARRAY buffer;        // Output row buffer
+    int row_stride;        // physical row width in output buffer
     long cont;
 
     // In this example we want to open the input file before doing anything else,

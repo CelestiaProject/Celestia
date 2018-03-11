@@ -54,30 +54,30 @@ CelestiaState::captureState(CelestiaCore* appCore)
 {
     Simulation *sim = appCore->getSimulation();
     Renderer *renderer = appCore->getRenderer();
-    
+
     const ObserverFrame* frame = sim->getFrame();
-    
+
     coordSys = frame->getCoordinateSystem();
     if (coordSys != ObserverFrame::Universal)
     {
         refBodyName = getEncodedObjectName(frame->getRefObject(), appCore);
-        if (coordSys == ObserverFrame::PhaseLock) 
+        if (coordSys == ObserverFrame::PhaseLock)
         {
             targetBodyName = getEncodedObjectName(frame->getTargetObject(), appCore);
         }
     }
-    
+
     tdb = sim->getTime();
-    
+
     // Store the position and orientation of the observer in the current
     // frame.
     observerPosition = sim->getObserver().getPosition();
     observerPosition = frame->convertFromUniversal(observerPosition, tdb);
-        
+
     Quaterniond q = sim->getObserver().getOrientation();
     q = frame->convertFromUniversal(q, tdb);
     observerOrientation = q.cast<float>();
-        
+
     Selection tracked = sim->getTrackedObject();
     trackedBodyName = getEncodedObjectName(tracked, appCore);
     Selection selected = sim->getSelection();
@@ -97,11 +97,11 @@ bool CelestiaState::loadState(std::map<std::string, std::string> params)
     sscanf(timeString.c_str(), "%d-%d-%dT%d:%d:%lf",
            &date.year, &date.month, &date.day,
            &date.hour, &date.minute, &date.seconds);
-    
+
     observerPosition = UniversalCoord(BigFix(params["x"]),
                                       BigFix(params["y"]),
                                       BigFix(params["z"]));
-    
+
     float ow = 0.0f;
     float ox = 0.0f;
     float oy = 0.0f;
@@ -113,9 +113,9 @@ bool CelestiaState::loadState(std::map<std::string, std::string> params)
     {
         return false;
     }
-    
+
     orientation = Quatf(ow, ox, oy, oz);
-    
+
     if (params["select"] != "")
         selectedBodyName = params["select"];
     if (params["track"] != "")
@@ -124,19 +124,19 @@ bool CelestiaState::loadState(std::map<std::string, std::string> params)
         lightTimeDelay = (strcmp(params["ltd"].c_str(), "1") == 0);
     else
         lightTimeDelay = false;
-    
+
     if (params["fov"] != "")
     {
         if (sscanf(params["fov"].c_str(), "%f", &fieldOfView) != 1.0f)
             return false;
     }
-    
-    if (params["ts"] != "") 
+
+    if (params["ts"] != "")
     {
         if (sscanf(params["ts"].c_str(), "%f", &timeScale) != 1.0f)
             return false;
     }
-    
+
     int paused = 0;
     if (params["p"] != "")
     {
@@ -146,7 +146,7 @@ bool CelestiaState::loadState(std::map<std::string, std::string> params)
             return false;
         pauseState = paused == 1;
     }
-    
+
     // Render settings
     if (params["rf"] != "")
     {
@@ -193,7 +193,7 @@ Url::Url(const std::string& str, CelestiaCore *core):
     {
         version = 1;
     }
-    
+
     pos = urlStr.find("/", 6);
     if (pos == std::string::npos)
         pos = urlStr.find("?", 6);
@@ -233,13 +233,13 @@ Url::Url(const std::string& str, CelestiaCore *core):
         type = Settings;
         nbBodies = 0;
     }
-    
+
     if (nbBodies == -1)
     {
         urlStr = "";
         return; // Mode not recognized
     }
-    
+
     endPrevious = pos;
     int nb = nbBodies, i=1;
     while (nb != 0 && endPrevious != std::string::npos) {
@@ -249,7 +249,7 @@ Url::Url(const std::string& str, CelestiaCore *core):
         if (pos == std::string::npos) bodyName = urlStr.substr(endPrevious + 1);
         else bodyName = urlStr.substr(endPrevious + 1, pos - endPrevious - 1);
         endPrevious = pos;
-        
+
         bodyName = decodeString(bodyName);
         pos = 0;
         if (i==1) body1 = bodyName;
@@ -258,30 +258,30 @@ Url::Url(const std::string& str, CelestiaCore *core):
             pos = bodyName.find(":", pos + 1);
             if (pos != std::string::npos) bodyName[pos]='/';
         }
-        
+
         bodies.push_back(sim->findObjectFromPath(bodyName));
-        
+
         nb--;
         i++;
     }
-    
+
     if (nb != 0) {
         urlStr = "";
         return; // Number of bodies in Url doesn't match Mode
     }
-    
+
     if (nbBodies == 0) ref = ObserverFrame();
     if (nbBodies == 1) ref = ObserverFrame(mode, bodies[0]);
     if (nbBodies == 2) ref = ObserverFrame(mode, bodies[0], bodies[1]);
     fromString = true;
-        
+
     std::string time="";
     pos = urlStr.find("?", endPrevious + 1);
     if (pos == std::string::npos)
         time = urlStr.substr(endPrevious + 1);
     else time = urlStr.substr(endPrevious + 1, pos - endPrevious -1);
         time = decodeString(time);
-        
+
     switch (version)
     {
     case 1:
@@ -305,7 +305,7 @@ Url::Url(CelestiaCore* core, UrlType type)
     appCore = core;
     version = 2;
     timeSource = UseUrlTime;
-    
+
     Simulation *sim = appCore->getSimulation();
     Renderer *renderer = appCore->getRenderer();
 
@@ -325,7 +325,7 @@ Url::Url(CelestiaCore* core, UrlType type)
     }
 
     double simTime = sim->getTime();
-    
+
     char date_str[50];
     date = astro::Date(simTime);
     char buff[255];
@@ -397,23 +397,23 @@ Url::Url(CelestiaCore* core, UrlType type)
 Url::Url(const CelestiaState& appState, unsigned int _version, TimeSource _timeSource)
 {
     ostringstream u;
-    
+
     appCore = NULL;
-    
+
     assert(_version >= 3);
     version = _version;
     timeSource = _timeSource;
     type = Absolute;
-    
+
     modeStr      = getCoordSysName(appState.coordSys);
     body1        = appState.refBodyName;
     body2        = appState.targetBodyName;
     selectedStr  = appState.selectedBodyName;
     trackedStr   = appState.trackedBodyName;
-    
+
     coord        = appState.observerPosition;
     orientation  = appState.observerOrientation;
-    
+
     //ref =
     //selected =
     //tracked =
@@ -422,18 +422,18 @@ Url::Url(const CelestiaState& appState, unsigned int _version, TimeSource _timeS
         nbBodies = 0;
     else if (appState.coordSys ==  ObserverFrame::PhaseLock)
         nbBodies = 2;
-    
+
     fieldOfView      = appState.fieldOfView;
     renderFlags      = appState.renderFlags;
     labelMode        = appState.labelMode;
-    
+
     date             = astro::Date(appState.tdb);
     timeScale        = appState.timeScale;
     pauseState       = appState.pauseState;
-    lightTimeDelay   = appState.lightTimeDelay;    
-    
+    lightTimeDelay   = appState.lightTimeDelay;
+
     u << "cel://" << modeStr;
-    
+
     if (appState.coordSys != ObserverFrame::Universal)
     {
         u << "/" << appState.refBodyName;
@@ -442,22 +442,22 @@ Url::Url(const CelestiaState& appState, unsigned int _version, TimeSource _timeS
             u << "/" << appState.targetBodyName;
         }
     }
-        
+
     char date_str[50];
     snprintf(date_str, sizeof(date_str), "%04d-%02d-%02dT%02d:%02d:%08.5f",
              date.year, date.month, date.day, date.hour, date.minute, date.seconds);
     u << "/" << date_str;
-        
+
     // observer position
     u << "?x=" << coord.x.toString() << "&y=" << coord.y.toString() << "&z=" << coord.z.toString();
-    
+
     // observer orientation
     u << "&ow=" << orientation.w()
       << "&ox=" << orientation.x()
       << "&oy=" << orientation.y()
       << "&oz=" << orientation.z();
-    
-    if (trackedStr != "") 
+
+    if (trackedStr != "")
         u << "&track=" << trackedStr;
     if (selectedStr != "")
         u << "&select=" << selectedStr;
@@ -481,7 +481,7 @@ Url::Url(const CelestiaState& appState, unsigned int _version, TimeSource _timeS
 
 
 void Url::initVersion2(std::map<std::string, std::string>& params,
-                       const std::string& timeString) 
+                       const std::string& timeString)
 {
     if (type != Settings)
     {
@@ -490,26 +490,26 @@ void Url::initVersion2(std::map<std::string, std::string>& params,
         else
             type = Absolute;
     }
-    
+
     switch (type) {
         case Absolute:
             date = astro::Date(0.0);
             sscanf(timeString.c_str(), "%d-%d-%dT%d:%d:%lf",
                    &date.year, &date.month, &date.day,
                    &date.hour, &date.minute, &date.seconds);
-            
+
             coord = UniversalCoord(BigFix(params["x"]),
                                    BigFix(params["y"]),
                                    BigFix(params["z"]));
-            
+
             float ow, ox, oy, oz;
             sscanf(params["ow"].c_str(), "%f", &ow);
             sscanf(params["ox"].c_str(), "%f", &ox);
             sscanf(params["oy"].c_str(), "%f", &oy);
             sscanf(params["oz"].c_str(), "%f", &oz);
-            
+
             orientation = Quaternionf(ow, ox, oy, oz);
-            
+
             // Intentional Fall-Through
         case Relative:
             if (params["dist"] != "") {
@@ -547,14 +547,14 @@ void Url::initVersion2(std::map<std::string, std::string>& params,
         case Settings:
             break;
     }
-    
+
     if (params["rf"] != "") {
         sscanf(params["rf"].c_str(), "%d", &renderFlags);
     }
     if (params["lm"] != "") {
         sscanf(params["lm"].c_str(), "%d", &labelMode);
     }
-    
+
 }
 
 
@@ -564,24 +564,24 @@ void Url::initVersion3(std::map<std::string, std::string>& params,
     // Type field not used for version 3 urls; position is always relative
     // to the frame center. Time setting is controlled by the time source.
     type = Absolute;
-    
+
     date = astro::Date(0.0);
     sscanf(timeString.c_str(), "%d-%d-%dT%d:%d:%lf",
            &date.year, &date.month, &date.day,
            &date.hour, &date.minute, &date.seconds);
-    
+
     coord = UniversalCoord(BigFix(params["x"]),
                            BigFix(params["y"]),
                            BigFix(params["z"]));
-    
+
     float ow, ox, oy, oz;
     sscanf(params["ow"].c_str(), "%f", &ow);
     sscanf(params["ox"].c_str(), "%f", &ox);
     sscanf(params["oy"].c_str(), "%f", &oy);
     sscanf(params["oz"].c_str(), "%f", &oz);
-    
+
     orientation = Quaternionf(ow, ox, oy, oz);
-    
+
     if (params["select"] != "")
         selectedStr = params["select"];
     if (params["track"] != "")
@@ -590,12 +590,12 @@ void Url::initVersion3(std::map<std::string, std::string>& params,
         lightTimeDelay = (strcmp(params["ltd"].c_str(), "1") == 0);
     else
         lightTimeDelay = false;
-    
+
     if (params["fov"] != "")
         sscanf(params["fov"].c_str(), "%f", &fieldOfView);
-    if (params["ts"] != "") 
+    if (params["ts"] != "")
         sscanf(params["ts"].c_str(), "%f", &timeScale);
-    
+
     int paused = 0;
     if (params["p"] != "")
         sscanf(params["p"].c_str(), "%d", &paused);
@@ -606,7 +606,7 @@ void Url::initVersion3(std::map<std::string, std::string>& params,
         sscanf(params["rf"].c_str(), "%d", &renderFlags);
     if (params["lm"] != "")
         sscanf(params["lm"].c_str(), "%d", &labelMode);
-        
+
     int timeSourceInt = 0;
     if (params["tsrc"] != "")
         sscanf(params["tsrc"].c_str(), "%d", &timeSourceInt);
@@ -727,7 +727,7 @@ static std::string getBodyName(Universe* universe, Body* body)
     else
         assert(0);
         // TODO: Figure out why the line below was added.
-        //parentBody = body->getOrbitBarycenter();  
+        //parentBody = body->getOrbitBarycenter();
 
     while (parentBody != NULL)
     {
@@ -825,7 +825,7 @@ void Url::goTo()
             default:
                 break;
         }
-        
+
         // Position and orientation stored in frame coordinates; convert them
         // to universal and set the observer position.
         double tdb = sim->getTime();
@@ -937,13 +937,13 @@ getEncodedObjectName(const Selection& selection, const CelestiaCore* appCore)
 {
     Universe *universe = appCore->getSimulation()->getUniverse();
     string name;
-    
+
     switch (selection.getType())
     {
         case Selection::Type_Body:
             name = getBodyName(universe, selection.body());
             break;
-            
+
         case Selection::Type_Star:
             name = universe->getStarCatalog()->getStarName(*selection.star());
             break;
@@ -960,7 +960,7 @@ getEncodedObjectName(const Selection& selection, const CelestiaCore* appCore)
                     name = getBodyName(universe, parentBody) + ":" + name;
             }
             break;
-            
+
         default:
             return "";
     }

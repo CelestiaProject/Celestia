@@ -146,7 +146,7 @@ public:
         else
         {
             double phi = -viewportY * fov / 2.0 + PI / 2.0;
-            double theta = viewportX * fov / 2.0 + PI / 2.0; 
+            double theta = viewportX * fov / 2.0 + PI / 2.0;
             viewDir.x = sin(phi) * cos(theta);
             viewDir.y = cos(phi);
             viewDir.z = sin(phi) * sin(theta);
@@ -254,7 +254,7 @@ class LUT2
 {
 public:
     LUT2(unsigned int w, unsigned int h);
-    
+
     Vec3d getValue(unsigned int x, unsigned int y) const;
     void setValue(unsigned int x, unsigned int y, const Vec3d&);
     Vec3d lookup(double x, double y) const;
@@ -272,7 +272,7 @@ class LUT3
 {
 public:
     LUT3(unsigned int w, unsigned int h, unsigned int d);
-    
+
     Vec4d getValue(unsigned int x, unsigned int y, unsigned int z) const;
     void setValue(unsigned int x, unsigned int y, unsigned int z, const Vec4d&);
     Vec4d lookup(double x, double y, double z) const;
@@ -292,7 +292,7 @@ class Scene
 {
 public:
     Scene() {};
-    
+
     void setParameters(ParameterSet& params);
 
     Color raytrace(const Ray3d& ray) const;
@@ -336,7 +336,7 @@ public:
                    unsigned int w,
                    unsigned int h)
     {
-        
+
         uint8 r = floatToByte(color.r);
         uint8 g = floatToByte(color.g);
         uint8 b = floatToByte(color.b);
@@ -398,7 +398,7 @@ static void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
 
 
 bool WritePNG(const string& filename, const RGBImage& image)
-              
+
 {
     int rowStride = image.width * 3;
 
@@ -759,7 +759,7 @@ double mu2g(double mu)
     // improved Henyey-Greenstein(HG) phase function:
     // mu = <cosTheta>= 3*g *(g^2 + 4)/(5*(2+g^2))
 
-    double mu2 = mu * mu; 
+    double mu2 = mu * mu;
     double x = 0.5555555556 * mu + 0.17146776 * mu * mu2 + sqrt(max(2.3703704 - 1.3374486 * mu2 + 0.57155921 * mu2 * mu2, 0.0));
     double y = pow(x, 0.33333333333);
     return 0.55555555556 * mu - (1.33333333333 - 0.30864198 * mu2) / y + y;
@@ -767,8 +767,8 @@ double mu2g(double mu)
 
 
 double phaseHenyeyGreenstein_CS(double cosTheta, double g)
-{ 
-    // improved HG - phase function -> Rayleigh phase function for 
+{
+    // improved HG - phase function -> Rayleigh phase function for
     // g -> 0, -> HG-phase function for g -> 1.
     double g2 = g * g;
     return 1.5 * (1.0 - g2) * (1.0 + cosTheta * cosTheta) /((2.0 + g2) * pow(1.0 + g2 - 2.0 * g * cosTheta, 1.5));
@@ -850,7 +850,7 @@ OpticalDepths integrateOpticalDepth(const Scene& scene,
         depth.rayleigh   += scene.atmosphere.rayleighDensity(h) * stepDist;
         depth.mie        += scene.atmosphere.mieDensity(h)      * stepDist;
         depth.absorption += scene.atmosphere.absorbDensity(h)   * stepDist;
-        
+
         samplePoint += stepDist * dir;
     }
 
@@ -942,7 +942,7 @@ Vec3d integrateInscattering(const Scene& scene,
         // Add the inscattered light from Rayleigh and Mie scattering particles
         rayleighScatter += scene.atmosphere.rayleighDensity(h) * stepDist * extinction;
         mieScatter +=      scene.atmosphere.mieDensity(h)      * stepDist * extinction;
-        
+
         samplePoint += stepDist * dir;
     }
 
@@ -1002,7 +1002,7 @@ Vec4d integrateInscatteringFactors(const Scene& scene,
         // Add the inscattered light from Rayleigh and Mie scattering particles
         rayleighScatter += scene.atmosphere.rayleighDensity(h) * stepDist * extinction;
         mieScatter +=      scene.atmosphere.mieDensity(h)      * stepDist * extinction;
-        
+
         samplePoint += stepDist * dir;
     }
 
@@ -1052,7 +1052,7 @@ buildExtinctionLUT(const Scene& scene)
             double cosAngle = (double) j / (ExtinctionLUTViewAngleSteps - 1) * 2.0 - 1.0;
             double sinAngle = sqrt(1.0 - min(1.0, cosAngle * cosAngle));
             Vec3d viewDir(cosAngle, sinAngle, 0.0);
-            
+
             Ray3d ray(atmStart, viewDir);
             double dist = 0.0;
 
@@ -1115,7 +1115,7 @@ buildOpticalDepthLUT(const Scene& scene)
             double cosAngle = (double) j / (ExtinctionLUTViewAngleSteps - 1) * 2.0 - 1.0;
             double sinAngle = sqrt(1.0 - min(1.0, cosAngle * cosAngle));
             Vec3d dir(cosAngle, sinAngle, 0.0);
-            
+
             Ray3d ray(atmStart, dir);
             double dist = 0.0;
 
@@ -1230,7 +1230,7 @@ Vec3d integrateInscattering_LUT(const Scene& scene,
         // Add the inscattered light from Rayleigh and Mie scattering particles
         rayleighScatter += scene.atmosphere.rayleighDensity(h) * stepDist * extinction;
         mieScatter      += scene.atmosphere.mieDensity(h)      * stepDist * extinction;
-        
+
         samplePoint += stepDist * viewDir;
     }
 
@@ -1307,7 +1307,7 @@ Vec4d integrateInscatteringFactors_LUT(const Scene& scene,
         // Add the inscattered light from Rayleigh and Mie scattering particles
         rayleighScatter += scene.atmosphere.rayleighDensity(h) * stepDist * extinction;
         mieScatter      += scene.atmosphere.mieDensity(h) * stepDist * extinction;
-        
+
         samplePoint += stepDist * viewDir;
     }
 
@@ -1353,7 +1353,7 @@ buildScatteringLUT(const Scene& scene)
                 double sinLightAngle = sqrt(1.0 - min(1.0, cosLightAngle * cosLightAngle));
                 Vec3d lightDir(cosLightAngle, sinLightAngle, 0.0);
 
-#if 0                
+#if 0
                 Vec4d inscatter = integrateInscatteringFactors_LUT(scene,
                                                                    atmStart,
                                                                    atmEnd,
@@ -1440,7 +1440,7 @@ Color Scene::raytrace(const Ray3d& ray) const
             normal.normalize();
             Vec3d lightDir = -light.direction;
             double diffuse = max(0.0, normal * lightDir);
-            
+
             Point3d surfacePt = Point3d(0.0, 0.0, 0.0) + (intersectPoint - planet.center);
             Color planetColor = getPlanetColor(*this, surfacePt);
 
@@ -1464,7 +1464,7 @@ Color Scene::raytrace(const Ray3d& ray) const
             // Reflected color of planet surface is:
             //   surface color * sun color * atmospheric extinction
             baseColor = (planetColor * extinction) * light.color * diffuse;
-            
+
             atmEnd = ray.origin + dist * ray.direction;
         }
 
@@ -1529,7 +1529,7 @@ Scene::raytrace_LUT(const Ray3d& ray) const
             Ray3d sunRay(surfacePt, lightDir);
             double sunDist = 0.0;
             testIntersection(sunRay, shell, sunDist);
-            
+
             // Compute color of sunlight filtered by the atmosphere; consider extinction
             // along both the sun-to-surface and surface-to-eye paths.
             Vec3d sunExt = lookupExtinction(*this, surfacePt, sunRay.point(sunDist));
@@ -1570,7 +1570,7 @@ Scene::raytrace_LUT(const Ray3d& ray) const
 #if 1
                 if (!hit || planetEnter < 0.0)
                 {
-                    rayleighScatter = 
+                    rayleighScatter =
                         lookupScattering(*this, eyePt, atmEnd, -light.direction);
                 }
                 else
@@ -1578,7 +1578,7 @@ Scene::raytrace_LUT(const Ray3d& ray) const
                     atmEnd = atmStart;
                     atmStart = mray.point(planetEnter);
                     //cout << atmEnter << ", " << planetEnter << ", " << atmExit << "\n";
-                    rayleighScatter = 
+                    rayleighScatter =
                         lookupScattering(*this, atmStart, atmEnd, -light.direction) -
                         lookupScattering(*this, eyePt, atmEnd, -light.direction);
 
@@ -1682,7 +1682,7 @@ void Scene::setParameters(ParameterSet& params)
     if (phaseFunc == 0)
     {
         double mu                      = params["MieAsymmetry"];
-	atmosphere.mieAsymmetry        = mu2g(mu);
+        atmosphere.mieAsymmetry        = mu2g(mu);
         atmosphere.miePhaseFunction    = phaseHenyeyGreenstein_CS;
     }
     else if (phaseFunc == 1)
@@ -1696,7 +1696,7 @@ void Scene::setParameters(ParameterSet& params)
         atmosphere.mieAsymmetry        = schlick_g2k(k);
         atmosphere.miePhaseFunction    = phaseSchlick;
     }
-    
+
     atmosphere.absorbScaleHeight   = params["AbsorbScaleHeight"];
     atmosphere.absorbCoeff.x       = params["AbsorbRed"];
     atmosphere.absorbCoeff.y       = params["AbsorbGreen"];
@@ -1723,7 +1723,7 @@ void setSceneDefaults(ParameterSet& params)
     params["RayleighRed"]         = 0.0;
     params["RayleighGreen"]       = 0.0;
     params["RayleighBlue"]        = 0.0;
-    
+
     params["MieScaleHeight"]      = 1.2;
     params["Mie"]                 = 0.0;
     params["MieAsymmetry"]        = 0.0;
@@ -1802,7 +1802,7 @@ bool LoadParameterSet(ParameterSet& params, const string& filename)
 
 
 
-template<class T> static Matrix4<T> 
+template<class T> static Matrix4<T>
 lookAt(Point3<T> from, Point3<T> to, Vector3<T> up)
 {
     Vector3<T> n = to - from;
@@ -2037,14 +2037,14 @@ int main(int argc, char* argv[])
     Camera cameraHighPhase;
     cameraHighPhase.fov = degToRad(45.0);
     cameraHighPhase.front = 1.0;
-    cameraHighPhase.transform = 
+    cameraHighPhase.transform =
         Mat4d::translation(Point3d(0.0, 0.0, -cameraFarDist)) *
         Mat4d::yrotation(degToRad(160.0));
 
     Camera cameraClose;
     cameraClose.fov = degToRad(45.0);
     cameraClose.front = 1.0;
-    cameraClose.transform = 
+    cameraClose.transform =
         Mat4d::xrotation(degToRad(55.0)) *
         Mat4d::translation(Point3d(0.0, 0.0, -cameraCloseDist)) *
         Mat4d::yrotation(degToRad(50.0));
@@ -2052,7 +2052,7 @@ int main(int argc, char* argv[])
     Camera cameraSurface;
     cameraSurface.fov = degToRad(45.0);
     cameraSurface.front = 1.0;
-    cameraSurface.transform = 
+    cameraSurface.transform =
         Mat4d::xrotation(degToRad(85.0)) *
         Mat4d::translation(Point3d(0.0, 0.0, -planetRadius * 1.0002)) *
         Mat4d::yrotation(degToRad(20.0));
@@ -2064,7 +2064,7 @@ int main(int argc, char* argv[])
     Camera cameraFisheyeMidday;
     cameraFisheyeMidday.fov = fisheyeFOV;
     cameraFisheyeMidday.type = Camera::Spherical;
-    cameraFisheyeMidday.transform = 
+    cameraFisheyeMidday.transform =
         Mat4d::xrotation(degToRad(85.0)) *
         Mat4d::translation(Point3d(0.0, 0.0, -planetRadius * 1.0002)) *
         Mat4d::yrotation(degToRad(20.0));
@@ -2072,7 +2072,7 @@ int main(int argc, char* argv[])
     Camera cameraFisheyeSunset;
     cameraFisheyeSunset.fov = degToRad(180.0);
     cameraFisheyeSunset.type = Camera::Spherical;
-    cameraFisheyeSunset.transform = 
+    cameraFisheyeSunset.transform =
         Mat4d::zrotation(degToRad(-5.0)) *
         Mat4d::yrotation(degToRad(90.0)) *
         Mat4d::xrotation(degToRad(85.0)) *

@@ -1066,13 +1066,13 @@ void CompareTycho()
     {
         CheckStarRecord(tycDatabase);
         if (++recs % 10000 == 0)
-            {
+        {
             if (verbose>=0)
                 cout << recs << " records.\n";
             else
                 cout << ".";
-                cout.flush();
-            }
+            cout.flush();
+        }
     }
     if (verbose<0)
         cout << "\n";
@@ -1137,13 +1137,13 @@ int main(int argc, char* argv[])
         {
             ReadStarRecord(mainDatabase);
             if (stars.size() % 10000 == 0)
-                {
+            {
                 if (verbose>=0)
                     cout << stars.size() << " records.\n";
                 else
                     cout << ".";
-                    cout.flush();
-                }
+                cout.flush();
+            }
         }
         if (verbose<0)
             cout << "\n";

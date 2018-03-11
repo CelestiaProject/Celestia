@@ -78,7 +78,7 @@ JoinVertices(std::vector<Face>& faces,
             uint32 index = faces[f].i[j];
             vertices[f * 3 + j] = Vertex(index,
                                          vertexPoints + desc.stride * index);
-                                         
+
         }
     }
 

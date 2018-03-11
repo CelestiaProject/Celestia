@@ -22,7 +22,7 @@
 // for astronomical applications:
 //
 // - The standard Windows date picker does not permit setting years
-//   prior to 1752, the point that the US and UK switched to the 
+//   prior to 1752, the point that the US and UK switched to the
 //   Gregorian calendar. Celestia's date picker allows setting any
 //   year from -9999 to 9999.
 //
@@ -38,7 +38,7 @@
 // - No invalid date is permitted, including the skipped days in
 //   October 1582.
 
-static char* Months[12] = 
+static char* Months[12] =
 {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -58,7 +58,7 @@ class DatePicker
 public:
     DatePicker(HWND _hwnd, CREATESTRUCT& cs);
     ~DatePicker();
-    
+
     LRESULT paint(HDC hdc);
     void redraw(HDC hdc);
     LRESULT keyDown(DWORD vkcode, LPARAM lParam);
@@ -91,7 +91,7 @@ private:
     char textBuffer[64];
     HFONT hFont;
     DWORD style;
-    
+
     bool haveFocus;
     bool firstDigit;
 
@@ -191,13 +191,13 @@ DatePicker::redraw(HDC hdc)
             HBRUSH hbrush = CreateSolidBrush(GetSysColor(COLOR_HIGHLIGHT));
             FillRect(hdc, &r, hbrush);
             DeleteObject(hbrush);
-			
-			SetTextColor(hdc, GetSysColor(COLOR_HIGHLIGHTTEXT));
+
+            SetTextColor(hdc, GetSysColor(COLOR_HIGHLIGHTTEXT));
         }
-		else
-		{
-			SetTextColor(hdc, GetSysColor(COLOR_WINDOWTEXT));
-		}
+        else
+        {
+            SetTextColor(hdc, GetSysColor(COLOR_WINDOWTEXT));
+        }
 
         DrawText(hdc, fieldText[i], strlen(fieldText[i]), &fieldRects[i], DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
     }
@@ -289,7 +289,7 @@ DatePicker::keyDown(DWORD vkcode, LPARAM flags)
                     date.day = day;
                 }
                 break;
-            
+
             case MonthField:
                 {
                     unsigned int month = date.month * 10 + digit;
@@ -300,7 +300,7 @@ DatePicker::keyDown(DWORD vkcode, LPARAM flags)
                     date.month = month;
                 }
                 break;
-                
+
             case YearField:
                 {
                     unsigned int year = date.year * 10 + digit;
@@ -333,7 +333,7 @@ DatePicker::keyDown(DWORD vkcode, LPARAM flags)
         case VK_LEFT:
             if ((int) selectedField == 0)
                 selectedField = DatePickerField((int) NumFields - 1);
-            else 
+            else
                 selectedField = DatePickerField((int) selectedField - 1);
             break;
 
@@ -343,7 +343,7 @@ DatePicker::keyDown(DWORD vkcode, LPARAM flags)
             else
                 selectedField = DatePickerField((int) selectedField + 1);
             break;
-            
+
         case VK_UP:
             incrementField();
             notifyDateChanged();
@@ -353,7 +353,7 @@ DatePicker::keyDown(DWORD vkcode, LPARAM flags)
             decrementField();
             notifyDateChanged();
             break;
-            
+
         default:
             break;
         }
@@ -380,8 +380,8 @@ DatePicker::leftButtonDown(WORD key, int x, int y)
         selectedField = YearField;
 
     InvalidateRect(hwnd, NULL, TRUE);
-	
-	::SetFocus(hwnd); // note that this is the Win32 API function, not the class method
+
+    ::SetFocus(hwnd); // note that this is the Win32 API function, not the class method
 
     return 0;
 }
@@ -399,7 +399,7 @@ DatePicker::setFocus(HWND lostFocus)
     firstDigit = true;
 
     InvalidateRect(hwnd, NULL, TRUE);
-    
+
     return 0;
 }
 
@@ -602,7 +602,7 @@ DatePicker::getSystemTime(SYSTEMTIME* sysTime)
         sysTime->wMonth = date.month;
         sysTime->wDay = date.day;
     }
-    
+
     return GDT_VALID;
 }
 
@@ -611,7 +611,7 @@ static LRESULT
 DatePickerNCCreate(HWND hwnd, CREATESTRUCT& cs)
 {
     DWORD exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-    
+
     exStyle |= WS_EX_CLIENTEDGE;
     SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
 
@@ -646,7 +646,7 @@ DatePickerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case DTM_SETSYSTEMTIME:
         return dp->setSystemTime(wParam, reinterpret_cast<SYSTEMTIME*>(lParam));
         break;
-        
+
     case DTM_GETSYSTEMTIME:
         return dp->getSystemTime(reinterpret_cast<SYSTEMTIME*>(lParam));
         break;

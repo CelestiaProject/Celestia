@@ -86,7 +86,7 @@ public:
 
     bool operator()(const Vertex& a, const Vertex& b) const
     {
-	return compare(a, b);
+        return compare(a, b);
     }
 };
 
@@ -159,8 +159,8 @@ class PointTexCoordOrderingPredicate : public VertexComparator
 {
 public:
     PointTexCoordOrderingPredicate(uint32 _posOffset,
-				   uint32 _texCoordOffset,
-				   bool _wrap) :
+                                   uint32 _texCoordOffset,
+                                   bool _wrap) :
         posOffset(_posOffset),
         texCoordOffset(_texCoordOffset),
         wrap(_wrap)
@@ -250,7 +250,7 @@ public:
                 approxEqual(p0->y(),  p1->y(), tolerance) &&
                 approxEqual(p0->z(),  p1->z(), tolerance));
     }
-		
+
 private:
     uint32 posOffset;
     float tolerance;
@@ -261,13 +261,13 @@ class PointTexCoordEquivalencePredicate : public VertexComparator
 {
 public:
     PointTexCoordEquivalencePredicate(uint32 _posOffset,
-				      uint32 _texCoordOffset,
-				      bool _wrap,
-				      float _tolerance) :
+                                      uint32 _texCoordOffset,
+                                      bool _wrap,
+                                      float _tolerance) :
         posOffset(_posOffset),
         texCoordOffset(_texCoordOffset),
         wrap(_wrap),
-	tolerance(_tolerance)
+        tolerance(_tolerance)
     {
     }
 
@@ -286,7 +286,7 @@ public:
                 approxEqual(tc0->x(), tc1->x(), tolerance) &&
                 approxEqual(tc0->y(), tc1->y(), tolerance));
     }
-		
+
 private:
     uint32 posOffset;
     uint32 texCoordOffset;
@@ -441,7 +441,7 @@ bool uniquifyVertices(Mesh& mesh)
         if (i == 0 || !equal(vertices[i - 1], vertices[i], desc.stride))
             uniqueVertexCount++;
     }
-    
+
     // No work left to do if we couldn't eliminate any vertices
     if (uniqueVertexCount == nVertices)
         return true;
@@ -481,7 +481,7 @@ getVertex(const void* vertexData,
           uint32 index)
 {
     const float* fdata = reinterpret_cast<const float*>(reinterpret_cast<const char*>(vertexData) + stride * index + positionOffset);
-    
+
     return Vector3f(fdata[0], fdata[1], fdata[2]);
 }
 
@@ -493,7 +493,7 @@ getTexCoord(const void* vertexData,
             uint32 index)
 {
     const float* fdata = reinterpret_cast<const float*>(reinterpret_cast<const char*>(vertexData) + stride * index + texCoordOffset);
-    
+
     return Vector2f(fdata[0], fdata[1]);
 }
 
@@ -558,7 +558,7 @@ augmentVertexDescription(Mesh::VertexDescription& desc,
     uint32 stride = 0;
     uint32 nAttributes = 0;
     bool foundMatch = false;
-    
+
     for (uint32 i = 0; i < desc.nAttributes; i++)
     {
         if (semantic == desc.attributes[i].semantic &&
@@ -596,10 +596,10 @@ augmentVertexDescription(Mesh::VertexDescription& desc,
 
 template<typename T, typename U> void
 joinVertices(vector<Face>& faces,
-	     const void* vertexData,
-	     const Mesh::VertexDescription& desc,
-	     const T& orderingPredicate,
-	     const U& equivalencePredicate)
+             const void* vertexData,
+             const Mesh::VertexDescription& desc,
+             const T& orderingPredicate,
+             const U& equivalencePredicate)
 {
     // Don't do anything if we're given no data
     if (faces.size() == 0)
@@ -623,7 +623,7 @@ joinVertices(vector<Face>& faces,
             uint32 index = faces[f].i[j];
             vertices[f * 3 + j] = Vertex(index,
                                          vertexPoints + desc.stride * index);
-                                         
+
         }
     }
 
@@ -636,10 +636,10 @@ joinVertices(vector<Face>& faces,
     uint32 uniqueCount = 0;
     for (uint32 i = 0; i < nVertices; i++)
     {
-	if (i == 0 || !equivalencePredicate(vertices[i - 1], vertices[i]))
-	{
+        if (i == 0 || !equivalencePredicate(vertices[i - 1], vertices[i]))
+        {
             lastUnique = i;
-	    uniqueCount++;
+            uniqueCount++;
         }
 
         mergeMap[vertices[i].index] = vertices[lastUnique].index;
@@ -670,13 +670,13 @@ generateNormals(Mesh& mesh,
         return NULL;
     }
     uint32 posOffset = desc.getAttribute(Mesh::Position).offset;
- 
+
     uint32 nFaces = 0;
     uint32 i;
     for (i = 0; mesh.getGroup(i) != NULL; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
-        
+
         switch (group->prim)
         {
         case Mesh::TriList:
@@ -712,7 +712,7 @@ generateNormals(Mesh& mesh,
     for (i = 0; mesh.getGroup(i) != NULL; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
-        
+
         switch (group->prim)
         {
         case Mesh::TriList:
@@ -928,23 +928,23 @@ generateNormals(Mesh& mesh,
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(groupIndex);
         unsigned int faceCount = 0;
-        
+
         switch (group->prim)
         {
         case Mesh::TriList:
-	    faceCount = group->nIndices / 3;
+            faceCount = group->nIndices / 3;
             break;
         case Mesh::TriStrip:
         case Mesh::TriFan:
-	    faceCount = group->nIndices - 2;
-	    break;
+            faceCount = group->nIndices - 2;
+            break;
         default:
             assert(0);
             break;
         }
 
-	newMesh->addGroup(Mesh::TriList, mesh.getGroup(groupIndex)->materialIndex, faceCount * 3, indices + firstIndex);
-	firstIndex += faceCount * 3;
+        newMesh->addGroup(Mesh::TriList, mesh.getGroup(groupIndex)->materialIndex, faceCount * 3, indices + firstIndex);
+        firstIndex += faceCount * 3;
     }
 
     // Clean up
@@ -1011,7 +1011,7 @@ generateTangents(Mesh& mesh,
             return NULL;
         }
     }
-    
+
     // Build the array of faces; this may require decomposing triangle strips
     // and fans into triangle lists.
     vector<Face> faces(nFaces);
@@ -1020,7 +1020,7 @@ generateTangents(Mesh& mesh,
     for (i = 0; mesh.getGroup(i) != NULL; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
-        
+
         switch (group->prim)
         {
         case Mesh::TriList:
@@ -1043,7 +1043,7 @@ generateTangents(Mesh& mesh,
     uint32 texCoordOffset = desc.getAttribute(Mesh::Texture0).offset;
 
     const void* vertexData = mesh.getVertexData();
-    
+
     // Compute tangents for faces
     for (f = 0; f < nFaces; f++)
     {
@@ -1080,10 +1080,10 @@ generateTangents(Mesh& mesh,
     // points and merge them.  Otherwise, the point indices will be the same
     // as the attribute indices.
     if (weld)
-    { 
+    {
         joinVertices(faces, vertexData, desc,
-		     PointTexCoordOrderingPredicate(posOffset, texCoordOffset, true),
-		     PointTexCoordEquivalencePredicate(posOffset, texCoordOffset, true, 1.0e-5f));
+                     PointTexCoordOrderingPredicate(posOffset, texCoordOffset, true),
+                     PointTexCoordEquivalencePredicate(posOffset, texCoordOffset, true, 1.0e-5f));
     }
     else
     {
@@ -1205,23 +1205,23 @@ generateTangents(Mesh& mesh,
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(groupIndex);
         unsigned int faceCount = 0;
-        
+
         switch (group->prim)
         {
         case Mesh::TriList:
-	    faceCount = group->nIndices / 3;
+            faceCount = group->nIndices / 3;
             break;
         case Mesh::TriStrip:
         case Mesh::TriFan:
-	    faceCount = group->nIndices - 2;
-	    break;
+            faceCount = group->nIndices - 2;
+            break;
         default:
             assert(0);
             break;
         }
 
-	newMesh->addGroup(Mesh::TriList, mesh.getGroup(groupIndex)->materialIndex, faceCount * 3, indices + firstIndex);
-	firstIndex += faceCount * 3;
+        newMesh->addGroup(Mesh::TriList, mesh.getGroup(groupIndex)->materialIndex, faceCount * 3, indices + firstIndex);
+        firstIndex += faceCount * 3;
     }
 
     // Clean up
@@ -1281,7 +1281,7 @@ mergeModelMeshes(const Model& model)
     {
         const Mesh::VertexDescription& desc =
             meshes[meshIndex]->getVertexDescription();
-        
+
         // Count the number of matching meshes
         uint32 nMatchingMeshes;
         for (nMatchingMeshes = 1;
@@ -1308,7 +1308,7 @@ mergeModelMeshes(const Model& model)
         Mesh* mergedMesh = new Mesh();
         mergedMesh->setVertexDescription(desc);
         mergedMesh->setVertices(totalVertices, vertexData);
-        
+
         // Copy the vertex data and reindex and add primitive groups
         uint32 vertexCount = 0;
         for (j = meshIndex; j < meshIndex + nMatchingMeshes; j++)
@@ -1413,7 +1413,7 @@ convertToStrips(Mesh& mesh)
                 newGroup->indices = new uint32[newGroup->nIndices];
                 for (uint32 k = 0; k < newGroup->nIndices; k++)
                     newGroup->indices[k] = strips[j].indices[k];
-                
+
                 groups.push_back(newGroup);
             }
         }
@@ -1545,10 +1545,10 @@ int main(int argc, char* argv[])
     {
         model = LoadModel(cin);
     }
-    
+
     if (model == NULL)
         return 1;
-    
+
     if (genNormals || genTangents)
     {
         Model* newModel = new Model();

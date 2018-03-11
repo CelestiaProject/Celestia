@@ -55,7 +55,7 @@ class CelestiaAppWindow : public QMainWindow
  public slots:
     void celestia_tick();
     void slotShowSelectionContextMenu(const QPoint& pos, Selection& sel);
-	void slotManual();
+    void slotManual();
 
  private slots:
     void slotGrabImage();
@@ -72,7 +72,7 @@ class CelestiaAppWindow : public QMainWindow
 
     void slotSplitViewVertically();
     void slotSplitViewHorizontally();
-    void slotCycleView();	
+    void slotCycleView();
     void slotSingleView();
     void slotDeleteView();
     void slotToggleFramesVisible();
@@ -88,15 +88,15 @@ class CelestiaAppWindow : public QMainWindow
 
     void slotToggleFullScreen();
 
-	void slotShowAbout();
+    void slotShowAbout();
     void slotShowGLInfo();
-    
+
     void slotAddBookmark();
     void slotOrganizeBookmarks();
     void slotBookmarkTriggered(const QString& url);
 
     void handleCelUrl(const QUrl& url);
-    
+
  signals:
     void progressUpdate(const QString& s, int align, const QColor& c);
 
@@ -116,7 +116,7 @@ class CelestiaAppWindow : public QMainWindow
     CelestialBrowser* celestialBrowser;
 
     CelestiaCore* m_appCore;
-    
+
     CelestiaActions* actions;
 
     QMenu* fileMenu;
@@ -125,17 +125,17 @@ class CelestiaAppWindow : public QMainWindow
     QMenu* displayMenu;
     QMenu* bookmarkMenu;
     QMenu* viewMenu;
-	QMenu* helpMenu;
+    QMenu* helpMenu;
 
     InfoPanel* infoPanel;
     EventFinder* eventFinder;
 
     CelestiaCore::Alerter* alerter;
-    
+
     PreferencesDialog* m_preferencesDialog;
     BookmarkManager* m_bookmarkManager;
     BookmarkToolBar* m_bookmarkToolBar;
-        
+
     QString m_dataDirPath;
 };
 

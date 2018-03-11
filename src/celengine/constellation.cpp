@@ -125,19 +125,19 @@ Constellation::Constellation(const char *_name, const char *_genitive, const cha
 Constellation* Constellation::getConstellation(unsigned int n)
 {
     if (constellations == NULL)
-	initialize();
+        initialize();
 
     if (constellations == NULL ||
-	n >= sizeof(constellationInfo) / sizeof(constellationInfo[0]))
-	return NULL;
+        n >= sizeof(constellationInfo) / sizeof(constellationInfo[0]))
+        return NULL;
     else
-	return constellations[n];
+        return constellations[n];
 }
 
 Constellation* Constellation::getConstellation(const string& name)
 {
     if (constellations == NULL)
-	initialize();
+    initialize();
 
     for (unsigned int i = 0;
          i < sizeof(constellationInfo) / sizeof(constellationInfo[0]);
@@ -176,11 +176,11 @@ void Constellation::initialize()
 
     if (constellations != NULL)
     {
-	for (int i = 0; i < nConstellations; i++)
+        for (int i = 0; i < nConstellations; i++)
         {
-	    constellations[i] = new Constellation(constellationInfo[i].name,
-						  constellationInfo[i].gen,
-						  constellationInfo[i].abbr);
-	}
+            constellations[i] = new Constellation(constellationInfo[i].name,
+                                                  constellationInfo[i].gen,
+                                                  constellationInfo[i].abbr);
+        }
     }
 }

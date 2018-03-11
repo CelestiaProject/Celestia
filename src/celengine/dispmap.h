@@ -18,7 +18,7 @@ typedef float (*DisplacementMapFunc)(float, float, void*);
 class DisplacementMap
 {
  public:
-    DisplacementMap(int w, int h); 
+    DisplacementMap(int w, int h);
     ~DisplacementMap();
     int getWidth() const { return width; };
     int getHeight() const { return height; };
@@ -26,7 +26,7 @@ class DisplacementMap
     inline void setDisplacement(int x, int y, float d);
     void generate(DisplacementMapFunc func, void* info = NULL);
     void clear();
-    
+
  private:
     int width;
     int height;

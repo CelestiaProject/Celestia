@@ -260,7 +260,7 @@ void InfoPanel::buildStarPage(const Star* star, const Universe* universe, double
 {
     string name = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*star, true));
     stream << "<h1>" << QString::fromUtf8(name.c_str()) << "</h1><br>\n";
-    
+
     // Compute the star's position relative to the Solar System Barycenter. Note that
     // this will ignore the effect of parallax in the star's position.
     // TODO: Use either the observer's position or the Earth's position as the
@@ -289,7 +289,7 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
 {
     string name = universe->getDSOCatalog()->getDSOName(dso, true);
     stream << "<h1>" << QString::fromUtf8(name.c_str()) << "</h1><br>\n";
-    
+
     Vector3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(dso->getPosition()));
     Vector3d sph = rectToSpherical(eqPos);
 
@@ -306,7 +306,7 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
 
     Vector3d galPos = astro::equatorialToGalactic(eqPos);
     sph = rectToSpherical(galPos);
-    
+
     astro::decimalToDegMinSec(radToDeg(sph.x()), degrees, minutes, seconds);
     stream << "L: " << degrees << QString::fromUtf8(UTF8_DEGREE_SIGN) << " " <<
         abs(minutes) << "' " << abs(seconds) << "\"<br>\n";

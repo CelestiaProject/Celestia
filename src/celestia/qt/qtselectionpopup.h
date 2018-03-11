@@ -48,7 +48,7 @@ Q_OBJECT
     void slotGotoStartDate();
     void slotGotoEndDate();
     void slotInfo();
-	void slotToggleVisibility(bool);
+    void slotToggleVisibility(bool);
 
     void popupAtGoto(const QPoint& p);
     void popupAtCenter(const QPoint& p);

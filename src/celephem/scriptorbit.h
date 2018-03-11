@@ -1,5 +1,5 @@
 // scriptorbit.h
-// 
+//
 // Copyright (C) 2006, Chris Laurel <claurel@shatters.net>
 //
 // Interface for a Celestia trajectory implemented via a Lua script.

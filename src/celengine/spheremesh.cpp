@@ -287,7 +287,7 @@ void SphereMesh::scale(const Vector3f& s)
     {
         // TODO: Make a fast special case for uniform scale factors, where
         // renormalization is not required.
-		Vector3f is = s.cwiseInverse();
+        Vector3f is = s.cwiseInverse();
         for (i = 0; i < nVertices; i++)
         {
             int n = i * 3;

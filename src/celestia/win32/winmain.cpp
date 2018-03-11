@@ -326,7 +326,7 @@ CelestiaDropTarget::Drop(IDataObject* pDataObject,
                 if (medium.tymed == TYMED_HGLOBAL && medium.hGlobal != 0)
                 {
                     char* s = (char*) GlobalLock(medium.hGlobal);
-					appCore->goToUrl(s);
+                    appCore->goToUrl(s);
                     GlobalUnlock(medium.hGlobal);
                     break;
                 }
@@ -456,7 +456,7 @@ static bool CopyStateURLToClipboard()
 
     CelestiaState appState;
     appState.captureState(appCore);
-    
+
     Url url(appState, Url::CurrentVersion);
     string urlString = url.getAsString();
 
@@ -1802,7 +1802,7 @@ bool EnableFullScreen(const DEVMODE& dm)
     if (ChangeDisplaySettings(&devMode, CDS_FULLSCREEN) !=
         DISP_CHANGE_SUCCESSFUL)
     {
-	MessageBox(NULL,
+        MessageBox(NULL,
                    "Unable to switch to full screen mode; running in window mode",
                    "Error",
                    MB_OK | MB_ICONERROR);
@@ -1824,13 +1824,13 @@ ChooseBestMSAAPixelFormat(HDC hdc, int *formats, unsigned int numFormats,
                           int samplesRequested)
 {
     int idealFormat = 0;
-    int	bestFormat  = 0;
-    int	bestSamples = 0;
+    int bestFormat  = 0;
+    int bestSamples = 0;
 
     for (unsigned int i = 0; i < numFormats; i++)
     {
         int query = WGL_SAMPLES_ARB;
-    	int result = 0;
+        int result = 0;
         bool isFloatFormat = false;
 
         query = WGL_SAMPLES_ARB;
@@ -1863,23 +1863,23 @@ bool SetDCPixelFormat(HDC hDC)
     {
         msaa = true;
     }
-        
+
     if (!msaa)
     {
         static PIXELFORMATDESCRIPTOR pfd = {
-            sizeof(PIXELFORMATDESCRIPTOR),	// Size of this structure
-            1,				// Version of this structure
-            PFD_DRAW_TO_WINDOW |	// Draw to Window (not to bitmap)
-            PFD_SUPPORT_OPENGL |	// Support OpenGL calls in window
-            PFD_DOUBLEBUFFER,		// Double buffered mode
-            PFD_TYPE_RGBA,		// RGBA Color mode
+            sizeof(PIXELFORMATDESCRIPTOR),    // Size of this structure
+            1,                // Version of this structure
+            PFD_DRAW_TO_WINDOW |    // Draw to Window (not to bitmap)
+            PFD_SUPPORT_OPENGL |    // Support OpenGL calls in window
+            PFD_DOUBLEBUFFER,        // Double buffered mode
+            PFD_TYPE_RGBA,        // RGBA Color mode
             GetDeviceCaps(hDC, BITSPIXEL),// Want the display bit depth
-            0,0,0,0,0,0,		  // Not used to select mode
-            0,0,			// Not used to select mode
-            0,0,0,0,0,			// Not used to select mode
-            24,				// Size of depth buffer
-            0,				// Not used to select mode
-            0,				// Not used to select mode
+            0,0,0,0,0,0,          // Not used to select mode
+            0,0,            // Not used to select mode
+            0,0,0,0,0,            // Not used to select mode
+            24,                // Size of depth buffer
+            0,                // Not used to select mode
+            0,                // Not used to select mode
             PFD_MAIN_PLANE,             // Draw in main plane
             0,                          // Not used to select mode
             0,0,0                       // Not used to select mode
@@ -2019,7 +2019,7 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
         MessageBox(NULL,
                    "Could not get appropriate pixel format for OpenGL rendering.", "Fatal Error",
                    MB_OK | MB_ICONERROR);
-		return NULL;
+        return NULL;
     }
 
     if (newMode == 0)
@@ -2027,24 +2027,24 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     else
         hideMenuBar = true;
 
-	bool firstContext = false;
+    bool firstContext = false;
     if (glContext == NULL)
-	{
+    {
         glContext = wglCreateContext(deviceContext);
-		firstContext = true;
-	}
+        firstContext = true;
+    }
     wglMakeCurrent(deviceContext, glContext);
 
-	if (firstContext)
-	{
-		GLenum glewErr = glewInit();
-		if (glewErr != GLEW_OK)
-		{
-			MessageBox(NULL, "Could not set up OpenGL extensions.", "Fatal Error",
-					   MB_OK | MB_ICONERROR);
-			return NULL;
-		}
-	}
+    if (firstContext)
+    {
+        GLenum glewErr = glewInit();
+        if (glewErr != GLEW_OK)
+        {
+            MessageBox(NULL, "Could not set up OpenGL extensions.", "Fatal Error",
+                       MB_OK | MB_ICONERROR);
+            return NULL;
+        }
+    }
 
     return hwnd;
 }
@@ -2233,7 +2233,7 @@ static void BuildScriptsMenu(HMENU menuBar, const string& scriptsDir)
         EnableMenuItem(fileMenu, ID_FILE_SCRIPTS, MF_GRAYED);
         return;
     }
-    
+
     MENUITEMINFO info;
     memset(&info, sizeof(info), 0);
     info.cbSize = sizeof(info);
@@ -2297,9 +2297,9 @@ static void syncMenusWithRendererState()
     CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_DISCS,
                   style == Renderer::ScaledDiscStars ? MF_CHECKED : MF_UNCHECKED);
 
-	const ColorTemperatureTable* color = appCore->getRenderer()->getStarColorTable();
-	CheckMenuItem(menuBar, ID_STARCOLOR_DISABLED, color == GetStarColorTable(ColorTable_Enhanced) ? MF_CHECKED : MF_UNCHECKED);
-	CheckMenuItem(menuBar, ID_STARCOLOR_ENABLED,  color == GetStarColorTable(ColorTable_Blackbody_D65) ? MF_CHECKED : MF_UNCHECKED);		  
+    const ColorTemperatureTable* color = appCore->getRenderer()->getStarColorTable();
+    CheckMenuItem(menuBar, ID_STARCOLOR_DISABLED, color == GetStarColorTable(ColorTable_Enhanced) ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_STARCOLOR_ENABLED,  color == GetStarColorTable(ColorTable_Blackbody_D65) ? MF_CHECKED : MF_UNCHECKED);
 
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
                   textureRes == 0 ? MF_CHECKED : MF_UNCHECKED);
@@ -2337,9 +2337,9 @@ public:
 
     void fatalError(const std::string& msg)
     {
-		if (s_splash != NULL)
-			s_splash->close();
-			
+        if (s_splash != NULL)
+            s_splash->close();
+
         MessageBox(NULL,
                    msg.c_str(),
                    "Fatal Error",
@@ -2517,8 +2517,8 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "StarsColor", &prefs.starsColor, sizeof(prefs.starsColor));
     prefs.starStyle = Renderer::FuzzyPointStars;
     GetRegistryValue(key, "StarStyle", &prefs.starStyle, sizeof(prefs.starStyle));
-	prefs.renderPath = GLContext::GLPath_Basic;
-	prefs.renderPathSet = GetRegistryValue(key, "RenderPath", &prefs.renderPath, sizeof(prefs.renderPath));
+    prefs.renderPath = GLContext::GLPath_Basic;
+    prefs.renderPathSet = GetRegistryValue(key, "RenderPath", &prefs.renderPath, sizeof(prefs.renderPath));
 
     GetRegistryValue(key, "LastVersion", &prefs.lastVersion, sizeof(prefs.lastVersion));
     GetRegistryValue(key, "TextureResolution", &prefs.textureResolution, sizeof(prefs.textureResolution));
@@ -3177,12 +3177,12 @@ class WinSplashProgressNotifier : public ProgressNotifier
 public:
     WinSplashProgressNotifier(SplashWindow* _splash) : splash(_splash) {};
     virtual ~WinSplashProgressNotifier() {};
-    
+
     virtual void update(const string& filename)
     {
         splash->setMessage(UTF8ToCurrentCP(_("Loading: ")) + filename);
     }
-    
+
 private:
     SplashWindow* splash;
 };
@@ -3192,7 +3192,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      LPSTR     lpCmdLine,
                      int       nCmdShow)
 {
-        
+
     // Say we're not ready to render yet.
     bReady = false;
 
@@ -3237,11 +3237,11 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (startDirectory != "")
         SetCurrentDirectory(startDirectory.c_str());
 
-	s_splash = new SplashWindow("splash.png");
+    s_splash = new SplashWindow("splash.png");
     s_splash->setMessage("Loading data files...");
     if (!skipSplashScreen)
         s_splash->showSplash();
-    
+
     OleInitialize(NULL);
     dropTarget = new CelestiaDropTarget();
     if (dropTarget)
@@ -3332,20 +3332,20 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             delete s_splash;
             s_splash = NULL;
         }
-		
+
         MessageBox(NULL,
                    "Out of memory.", "Fatal Error",
-                   MB_OK | MB_ICONERROR | MB_TOPMOST);		   
+                   MB_OK | MB_ICONERROR | MB_TOPMOST);
         return false;
     }
 
     // Gettext integration
-    setlocale(LC_ALL, ""); 
-    setlocale(LC_NUMERIC, "C"); 
+    setlocale(LC_ALL, "");
+    setlocale(LC_NUMERIC, "C");
     bindtextdomain("celestia","locale");
-    bind_textdomain_codeset("celestia", "UTF-8"); 
+    bind_textdomain_codeset("celestia", "UTF-8");
     bindtextdomain("celestia_constellations","locale");
-    bind_textdomain_codeset("celestia_constellations", "UTF-8"); 
+    bind_textdomain_codeset("celestia_constellations", "UTF-8");
     textdomain("celestia");
 
     // Loading localized resources
@@ -3364,23 +3364,23 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     WinSplashProgressNotifier* progressNotifier = NULL;
     if (!skipSplashScreen)
         progressNotifier = new WinSplashProgressNotifier(s_splash);
-        
+
     string* altConfig = useAlternateConfigFile ? &configFileName : NULL;
     bool initSucceeded = appCore->initSimulation(altConfig, &extrasDirectories, progressNotifier);
-    
+
     delete progressNotifier;
 
     // Close the splash screen after all data has been loaded
-	if (s_splash != NULL)
-	{
-		s_splash->close();
-		delete s_splash;
+    if (s_splash != NULL)
+    {
+        s_splash->close();
+        delete s_splash;
         s_splash = NULL;
-	}
-	
-	// Give up now if we failed initialization
-	if (!initSucceeded)
-		return 1;
+    }
+
+    // Give up now if we failed initialization
+    if (!initSucceeded)
+        return 1;
 
     if (startURL != "")
         appCore->setStartURL(startURL);
@@ -3426,7 +3426,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         MessageBox(NULL,
                    "Failed to create the application window.",
                    "Fatal Error",
-	           MB_OK | MB_ICONERROR);
+                   MB_OK | MB_ICONERROR);
         return FALSE;
     }
 
@@ -3494,7 +3494,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         // Set default render flags for a new installation
         appCore->getRenderer()->setRenderFlags(Renderer::DefaultRenderFlags);
     }
-    
+
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     BuildScriptsMenu(menuBar, ScriptsDirectory);
     syncMenusWithRendererState();
@@ -3502,7 +3502,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore->setContextMenuCallback(ContextMenu);
 
     bReady = true;
-    
+
     // Get the current time
     time_t systime = time(NULL);
     struct tm *gmt = gmtime(&systime);
@@ -3712,9 +3712,9 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
     case WM_MOUSEMOVE:
         {
-	    int x, y;
-	    x = LOWORD(lParam);
-	    y = HIWORD(lParam);
+            int x, y;
+            x = LOWORD(lParam);
+            y = HIWORD(lParam);
 
             bool reallyMoved = x != lastMouseMove.x || y != lastMouseMove.y;
             lastMouseMove.x = x;
@@ -4261,7 +4261,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
         case ID_TIME_SETTIME:
             ShowSetTimeDialog(hRes, hWnd, appCore);
-            
+
             // Update the local time menu item--since the set time dialog handles setting the time zone,
             // should we just get rid of the menu item?
             if (appCore->getTimeZoneBias() == 0)
@@ -4371,7 +4371,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 if (urlString != NULL)
                 {
                     appCore->flash(string("URL: ") + string(urlString));
-					appCore->goToUrl(urlString);
+                    appCore->goToUrl(urlString);
                 }
             }
             break;
@@ -4384,7 +4384,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                     MarkerRepresentation markerRep(MarkerRepresentation::Diamond,
                                                    10.0f,
                                                    Color(0.0f, 1.0f, 0.0f, 0.9f));
-						 
+
                     sim->getUniverse()->markObject(sim->getSelection(),
                                                    markerRep,
                                                    1);

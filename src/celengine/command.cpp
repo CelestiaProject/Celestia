@@ -632,7 +632,7 @@ void CommandMark::process(ExecutionEnvironment& env)
 
     if (env.getSimulation()->getUniverse() != NULL)
     {
-        
+
         env.getSimulation()->getUniverse()->markObject(sel, rep, 1, occludable);
     }
 }
@@ -867,7 +867,7 @@ void CommandSetRadius::process(ExecutionEnvironment& env)
         {
             body->setSemiAxes(body->getSemiAxes() * ((float) radius / iradius));
         }
-        
+
         if (body->getRings() != NULL)
         {
             RingSystem rings(0.0f, 0.0f);
@@ -1017,7 +1017,7 @@ void CommandScriptImage::process(ExecutionEnvironment& env)
 }
 
 // Verbosity command
-CommandVerbosity::CommandVerbosity(int _level) : 
+CommandVerbosity::CommandVerbosity(int _level) :
     level(_level)
 {
 }
@@ -1033,9 +1033,9 @@ void CommandVerbosity::process(ExecutionEnvironment& env)
 //====================================================
 CommandConstellations::CommandConstellations()
 {
-	numConstellations = 0;
-	all = 0;
-	none = 0;
+    numConstellations = 0;
+    all = 0;
+    none = 0;
 }
 
 void CommandConstellations::process(ExecutionEnvironment& env)
@@ -1043,72 +1043,72 @@ void CommandConstellations::process(ExecutionEnvironment& env)
     Universe* u = env.getSimulation()->getUniverse();
     if (u != NULL)
     {
-		AsterismList* asterisms = u->getAsterisms();
+        AsterismList* asterisms = u->getAsterisms();
         for (AsterismList::const_iterator iter = asterisms->begin();
              iter != asterisms->end(); iter++)
         {
-			Asterism* ast = *iter;
-			if (none) 
+            Asterism* ast = *iter;
+            if (none)
             {
-				ast->setActive(0);
+                ast->setActive(0);
             }
-			else if (all) 
+            else if (all)
             {
-				ast->setActive(1);
+                ast->setActive(1);
             }
-			else
+            else
             {
-				for (int i = 0; i < numConstellations; i++)
+                for (int i = 0; i < numConstellations; i++)
                 {
-					if (compareIgnoringCase(constellation[i],ast->getName(false)) == 0)
+                    if (compareIgnoringCase(constellation[i],ast->getName(false)) == 0)
                     {
-						ast->setActive(active[i] != 0);
-						break;
-					}
+                        ast->setActive(active[i] != 0);
+                        break;
+                    }
                 }
-			}
+            }
         }
     }
 }
 
 void CommandConstellations::setValues(string cons, int act)
 {
-	int found = 0;
-	for (unsigned int j = 0; j < cons.size(); j++)
+    int found = 0;
+    for (unsigned int j = 0; j < cons.size(); j++)
     {
-		if(cons[j] == '_')
-			cons[j] = ' ';
+        if(cons[j] == '_')
+            cons[j] = ' ';
     }
-	
-	// ignore all above 99 constellations
-	if (numConstellations == MAX_CONSTELLATIONS)
-		return;
 
-	for (int i = 0; i < numConstellations; i++)
+    // ignore all above 99 constellations
+    if (numConstellations == MAX_CONSTELLATIONS)
+        return;
+
+    for (int i = 0; i < numConstellations; i++)
     {
-		if (compareIgnoringCase(constellation[i], cons) == 0 )
+        if (compareIgnoringCase(constellation[i], cons) == 0 )
         {
-			active[i]=act;
-			found=1;
-			break;
-		}
-	}
+            active[i]=act;
+            found=1;
+            break;
+        }
+    }
 
-	if (!found)
+    if (!found)
     {
-		constellation[numConstellations]=cons;
-		active[numConstellations]=act;
-		numConstellations++;
-	}
+        constellation[numConstellations]=cons;
+        active[numConstellations]=act;
+        numConstellations++;
+    }
 }
 
 
 CommandConstellationColor::CommandConstellationColor()
 {
-	numConstellations=0;
-	all=0;
-	none=0;
-	unset=0;
+    numConstellations=0;
+    all=0;
+    none=0;
+    unset=0;
 }
 
 
@@ -1117,33 +1117,33 @@ void CommandConstellationColor::process(ExecutionEnvironment& env)
     Universe* u = env.getSimulation()->getUniverse();
     if (u != NULL)
     {
-		AsterismList* asterisms = u->getAsterisms();
+        AsterismList* asterisms = u->getAsterisms();
         for (AsterismList::const_iterator iter = asterisms->begin();
              iter != asterisms->end(); iter++)
         {
-			Asterism* ast = *iter;
-			if (none) 
+            Asterism* ast = *iter;
+            if (none)
             {
-				ast->unsetOverrideColor();
+                ast->unsetOverrideColor();
             }
-			else if (all) 
+            else if (all)
             {
-				ast->setOverrideColor(rgb);
+                ast->setOverrideColor(rgb);
             }
-			else
+            else
             {
-				for(int i = 0; i < numConstellations; i++)
+                for(int i = 0; i < numConstellations; i++)
                 {
-					if (compareIgnoringCase(constellation[i],ast->getName(false)) ==0 )
+                    if (compareIgnoringCase(constellation[i],ast->getName(false)) ==0 )
                     {
-						if(unset)
-							ast->unsetOverrideColor();
-						else
-							ast->setOverrideColor(rgb);
-						break;
-					}
+                        if(unset)
+                            ast->unsetOverrideColor();
+                        else
+                            ast->setOverrideColor(rgb);
+                        break;
+                    }
                 }
-			}
+            }
         }
     }
 }
@@ -1152,41 +1152,41 @@ void CommandConstellationColor::process(ExecutionEnvironment& env)
 void CommandConstellationColor::setColor(float r, float g, float b)
 {
     rgb = Color(r, g, b);
-	unset = 0;
+    unset = 0;
 }
 
 
 void CommandConstellationColor::unsetColor()
 {
-	unset = 1;
+    unset = 1;
 }
 
 
 void CommandConstellationColor::setConstellations(string cons)
 {
-	int found=0;
-	for (unsigned int j = 0; j < cons.size(); j++)
+    int found=0;
+    for (unsigned int j = 0; j < cons.size(); j++)
     {
-		if (cons[j] == '_')
-			cons[j] = ' ';
+        if (cons[j] == '_')
+            cons[j] = ' ';
     }
-	
-	// ignore all above 99 constellations
-	if (numConstellations == MAX_CONSTELLATIONS)
-		return;
 
-	for (int i=0; i<numConstellations; i++)
+    // ignore all above 99 constellations
+    if (numConstellations == MAX_CONSTELLATIONS)
+        return;
+
+    for (int i=0; i<numConstellations; i++)
     {
-		if (compareIgnoringCase(constellation[i], cons) == 0)
+        if (compareIgnoringCase(constellation[i], cons) == 0)
         {
-			found=1;
-			break;
-		}
-	}
+            found=1;
+            break;
+        }
+    }
 
-	if (!found)
+    if (!found)
     {
-		constellation[numConstellations]=cons;
-		numConstellations++;
-	}
+        constellation[numConstellations]=cons;
+        numConstellations++;
+    }
 }

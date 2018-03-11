@@ -25,10 +25,10 @@ void dialogTourGuide(AppData* app);
 /* Local Data Struct */
 typedef struct _TourData TourData;
 struct _TourData {
-	AppData* app;
-	
-	Destination* selected;
-	GtkWidget* descLabel;
+    AppData* app;
+
+    Destination* selected;
+    GtkWidget* descLabel;
 };
 
 #endif /* GTK_DIALOG_TOUR_H */

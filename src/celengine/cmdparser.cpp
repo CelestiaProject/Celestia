@@ -121,8 +121,8 @@ void CommandParser::error(const string errMsg)
 
 static ObserverFrame::CoordinateSystem parseCoordinateSystem(const string& name)
 {
-	// 'geographic' is a deprecated name for the bodyfixed coordinate system,
-	// maintained here for compatibility with older scripts.
+    // 'geographic' is a deprecated name for the bodyfixed coordinate system,
+    // maintained here for compatibility with older scripts.
     if (compareIgnoringCase(name, "observer") == 0)
         return ObserverFrame::ObserverLocal;
     else if (compareIgnoringCase(name, "bodyfixed") == 0)
@@ -558,31 +558,31 @@ Command* CommandParser::parseCommand()
 
         cmd = new CommandOrbitFlags(setFlags, clearFlags);
     }
-	else if (commandName == "constellations")
+    else if (commandName == "constellations")
     {
         string s;
-		CommandConstellations *cmdcons= new CommandConstellations();
-		
+        CommandConstellations *cmdcons= new CommandConstellations();
+
         if (paramList->getString("set", s))
             parseConstellations(cmdcons, s, 1);
         if (paramList->getString("clear", s))
-            parseConstellations(cmdcons, s, 0);   
-		cmd = cmdcons;
+            parseConstellations(cmdcons, s, 0);
+        cmd = cmdcons;
     }
 
-	else if (commandName == "constellationcolor")
+    else if (commandName == "constellationcolor")
     {
         string s;
-		CommandConstellationColor *cmdconcol= new CommandConstellationColor();
-		
-		Vec3d colorv(1.0f, 0.0f, 0.0f);
+        CommandConstellationColor *cmdconcol= new CommandConstellationColor();
+
+        Vec3d colorv(1.0f, 0.0f, 0.0f);
         paramList->getVector("color", colorv);
 
         if (paramList->getString("set", s))
             parseConstellationColor(cmdconcol, s, &colorv, 1);
         if (paramList->getString("clear", s))
-            parseConstellationColor(cmdconcol, s, &colorv, 0);   
-		cmd = cmdconcol;
+            parseConstellationColor(cmdconcol, s, &colorv, 0);
+        cmd = cmdconcol;
     }
     else if (commandName == "setvisibilitylimit")
     {
@@ -668,12 +668,12 @@ Command* CommandParser::parseCommand()
             else if (compareIgnoringCase(symbolString, "disk") == 0)
                 rep = MarkerRepresentation(MarkerRepresentation::Disk);
         }
-        
+
         string label;
         paramList->getString("label", label);
         rep.setSize((float) size);
         rep.setColor(color);
-        rep.setLabel(label);        
+        rep.setLabel(label);
 
         bool occludable = true;
         paramList->getBoolean("occludable", occludable);
@@ -784,7 +784,7 @@ Command* CommandParser::parseCommand()
         float alpha;
         string filename;
         int fitscreen;
-        
+
         if(!paramList->getNumber("duration", duration))
             duration = 3;
         if(!paramList->getNumber("xoffset", xoffset))
@@ -804,7 +804,7 @@ Command* CommandParser::parseCommand()
     else if (commandName == "verbosity")
     {
         int level;
-        
+
         if(!paramList->getNumber("level", level))
             level = 2;
 
@@ -923,12 +923,12 @@ int parseConstellations(CommandConstellations* cmd, string s, int act)
         if (ttype == Tokenizer::TokenName)
         {
             string name = tokenizer.getNameValue();
-			if (compareIgnoringCase(name, "all") == 0 && act==1)
-				cmd->all=1;
-			else if (compareIgnoringCase(name, "all") == 0 && act==0)
-				cmd->none=1;
-			else 
-				cmd->setValues(name,act);
+            if (compareIgnoringCase(name, "all") == 0 && act==1)
+                cmd->all=1;
+            else if (compareIgnoringCase(name, "all") == 0 && act==0)
+                cmd->none=1;
+            else
+                cmd->setValues(name,act);
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
@@ -951,10 +951,10 @@ int parseConstellationColor(CommandConstellationColor* cmd, string s, Vec3d *col
     Tokenizer tokenizer(&in);
     int flags = 0;
 
-	if(!act)
-		cmd->unsetColor();
-	else
-		cmd->setColor((float)col->x, (float)col->y, (float)col->z);
+    if(!act)
+        cmd->unsetColor();
+    else
+        cmd->setColor((float)col->x, (float)col->y, (float)col->z);
 
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
@@ -962,13 +962,13 @@ int parseConstellationColor(CommandConstellationColor* cmd, string s, Vec3d *col
         if (ttype == Tokenizer::TokenName)
         {
             string name = tokenizer.getNameValue();
-			if (compareIgnoringCase(name, "all") == 0 && act==1)
-				cmd->all=1;
-			else if (compareIgnoringCase(name, "all") == 0 && act==0)
-				cmd->none=1;
-			else 
-				cmd->setConstellations(name);
-				
+            if (compareIgnoringCase(name, "all") == 0 && act==1)
+                cmd->all=1;
+            else if (compareIgnoringCase(name, "all") == 0 && act==0)
+                cmd->none=1;
+            else
+                cmd->setConstellations(name);
+
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
                 ttype = tokenizer.nextToken();

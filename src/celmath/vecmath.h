@@ -634,8 +634,8 @@ template<class T> Matrix3<T>& Matrix3<T>::operator*=(T s)
 template<class T> Vector3<T> operator*(const Matrix3<T>& m, const Vector3<T>& v)
 {
     return Vector3<T>(m.r[0].x * v.x + m.r[0].y * v.y + m.r[0].z * v.z,
-		      m.r[1].x * v.x + m.r[1].y * v.y + m.r[1].z * v.z,
-		      m.r[2].x * v.x + m.r[2].y * v.y + m.r[2].z * v.z);
+                      m.r[1].x * v.x + m.r[1].y * v.y + m.r[1].z * v.z,
+                      m.r[2].x * v.x + m.r[2].y * v.y + m.r[2].z * v.z);
 }
 
 
@@ -661,8 +661,8 @@ template<class T> Point3<T> operator*(const Matrix3<T>& m, const Point3<T>& p)
 template<class T> Point3<T> operator*(const Point3<T>& p, const Matrix3<T>& m)
 {
     return Point3<T>(m.r[0].x * p.x + m.r[1].x * p.y + m.r[2].x * p.z,
-		     m.r[0].y * p.x + m.r[1].y * p.y + m.r[2].y * p.z,
-		     m.r[0].z * p.x + m.r[1].z * p.y + m.r[2].z * p.z);
+                     m.r[0].y * p.x + m.r[1].y * p.y + m.r[2].y * p.z,
+                     m.r[0].z * p.x + m.r[1].z * p.y + m.r[2].z * p.z);
 }
 
 
@@ -951,8 +951,8 @@ template<class T> Matrix4<T> Matrix4<T>::scaling(T scale)
 template<class T> Vector3<T> operator*(const Matrix4<T>& m, const Vector3<T>& v)
 {
     return Vector3<T>(m.r[0].x * v.x + m.r[0].y * v.y + m.r[0].z * v.z,
-		      m.r[1].x * v.x + m.r[1].y * v.y + m.r[1].z * v.z,
-		      m.r[2].x * v.x + m.r[2].y * v.y + m.r[2].z * v.z);
+                      m.r[1].x * v.x + m.r[1].y * v.y + m.r[1].z * v.z,
+                      m.r[2].x * v.x + m.r[2].y * v.y + m.r[2].z * v.z);
 }
 
 // multiply row vector by a 4x4 matrix
@@ -975,17 +975,17 @@ template<class T> Point3<T> operator*(const Matrix4<T>& m, const Point3<T>& p)
 template<class T> Point3<T> operator*(const Point3<T>& p, const Matrix4<T>& m)
 {
     return Point3<T>(m.r[0].x * p.x + m.r[1].x * p.y + m.r[2].x * p.z + m.r[3].x,
-		     m.r[0].y * p.x + m.r[1].y * p.y + m.r[2].y * p.z + m.r[3].y,
-		     m.r[0].z * p.x + m.r[1].z * p.y + m.r[2].z * p.z + m.r[3].z);
+                     m.r[0].y * p.x + m.r[1].y * p.y + m.r[2].y * p.z + m.r[3].y,
+                     m.r[0].z * p.x + m.r[1].z * p.y + m.r[2].z * p.z + m.r[3].z);
 }
 
 // multiply column vector by a 4x4 matrix
 template<class T> Vector4<T> operator*(const Matrix4<T>& m, const Vector4<T>& v)
 {
     return Vector4<T>(m.r[0].x * v.x + m.r[0].y * v.y + m.r[0].z * v.z + m.r[0].w * v.w,
-		      m.r[1].x * v.x + m.r[1].y * v.y + m.r[1].z * v.z + m.r[1].w * v.w,
-		      m.r[2].x * v.x + m.r[2].y * v.y + m.r[2].z * v.z + m.r[2].w * v.w,
-		      m.r[3].x * v.x + m.r[3].y * v.y + m.r[3].z * v.z + m.r[3].w * v.w);
+                      m.r[1].x * v.x + m.r[1].y * v.y + m.r[1].z * v.z + m.r[1].w * v.w,
+                      m.r[2].x * v.x + m.r[2].y * v.y + m.r[2].z * v.z + m.r[2].w * v.w,
+                      m.r[3].x * v.x + m.r[3].y * v.y + m.r[3].z * v.z + m.r[3].w * v.w);
 }
 
 // multiply row vector by a 4x4 matrix

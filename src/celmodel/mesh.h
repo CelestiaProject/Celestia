@@ -104,7 +104,7 @@ class Mesh
     private:
         void clearSemanticMap();
         void buildSemanticMap();
-        
+
         // Vertex attributes indexed by semantic
         VertexAttribute semanticMap[SemanticMax];
     };
@@ -129,7 +129,7 @@ class Mesh
         ~PrimitiveGroup();
 
         unsigned int getPrimitiveCount() const;
-        
+
         PrimitiveGroupType prim;
         unsigned int materialIndex;
         index32* indices;

@@ -90,7 +90,7 @@ public:
             return false;
         }
     }
-    
+
     bool operator!=(const Token& other) const
     {
         return !(*this == other);
@@ -494,7 +494,7 @@ Token TokenStream::nextToken()
                 double x = numberFromParts(integerValue, fractionValue, fracExp, exponentValue, exponentSign, sign);
                 newToken = Token::NumberToken(x);
             }
-            else 
+            else
             {
                 syntaxError("Bad character in number");
             }

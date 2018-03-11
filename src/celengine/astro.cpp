@@ -66,7 +66,7 @@ static const Quaterniond EQUATORIAL_TO_GALACTIC_ROTATION =
     XRotation(degToRad(GALACTIC_INCLINATION)) *
     ZRotation(degToRad(-GALACTIC_LONGITUDE_AT_NODE));
 static const Matrix3d EQUATORIAL_TO_GALACTIC_MATRIX = EQUATORIAL_TO_GALACTIC_ROTATION.toRotationMatrix();
-    
+
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423
 
@@ -395,7 +395,7 @@ void astro::anomaly(double meanAnomaly, double eccentricity,
 {
     double e, delta, err;
     double tol = 0.00000001745;
-    int iterations = 20;	// limit while() to maximum of 20 iterations.
+    int iterations = 20;    // limit while() to maximum of 20 iterations.
 
     e = meanAnomaly - 2*PI * (int) (meanAnomaly / (2*PI));
     err = 1;
@@ -573,8 +573,8 @@ const char* astro::Date::toCStr(Format format) const
     {
     case Locale:
     case TZName:
-        snprintf(date, sizeof(date), "%04d %s %02d %02d:%02d:%02d %s", 
-                 year, _(MonthAbbrList[month-1]), day, 
+        snprintf(date, sizeof(date), "%04d %s %02d %02d:%02d:%02d %s",
+                 year, _(MonthAbbrList[month-1]), day,
                  hour, minute, (int)seconds, tzname.c_str());
         break;
     case UTCOffset:
@@ -582,8 +582,8 @@ const char* astro::Date::toCStr(Format format) const
             int sign = utc_offset < 0 ? -1:1;
             int h_offset = sign * utc_offset / 3600;
             int m_offset = (sign * utc_offset - h_offset * 3600) / 60;
-            snprintf(date, sizeof(date), "%04d %s %02d %02d:%02d:%02d %c%02d%02d", 
-                    year, _(MonthAbbrList[month-1]), day, 
+            snprintf(date, sizeof(date), "%04d %s %02d %02d:%02d:%02d %c%02d%02d",
+                    year, _(MonthAbbrList[month-1]), day,
                     hour, minute, (int)seconds, (sign==1?'+':'-'), h_offset, m_offset);
         }
         break;
@@ -678,7 +678,7 @@ astro::Date::systemDate()
     d.hour = gmt->tm_hour;
     d.minute = gmt->tm_min;
     d.seconds = (int) gmt->tm_sec;
-    
+
     return d;
 }
 
@@ -845,7 +845,7 @@ astro::TDBtoLocal(double tdb)
                     hourdiff = -24;
                 else
                     hourdiff = 24;
-                d.utc_offset = (hourdiff + d.hour - utcDate.hour) * 3600 
+                d.utc_offset = (hourdiff + d.hour - utcDate.hour) * 3600
                              + (d.minute - utcDate.minute) * 60;
             }
             d.tzname = localt->tm_isdst ? _("DST"): _("STD");
@@ -920,7 +920,7 @@ bool astro::getLengthScale(string unitName, double& scale)
             break;
         }
     }
-    
+
     return foundMatch;
 }
 
@@ -939,7 +939,7 @@ bool astro::getTimeScale(string unitName, double& scale)
             break;
         }
     }
-    
+
     return foundMatch;
 }
 
@@ -958,7 +958,7 @@ bool astro::getAngleScale(string unitName, double& scale)
             break;
         }
     }
-    
+
     return foundMatch;
 }
 

@@ -80,7 +80,7 @@ class QtEclipseFinder
     double findEclipseStart(const Body& recever, const Body& occulter, double now, double startStep, double minStep) const;
     double findEclipseEnd(const Body& recever, const Body& occulter, double now, double startStep, double minStep) const;
 
- private:                    
+ private:
     Body* body;
     EclipseFinderWatcher* watcher;
 };
@@ -104,10 +104,10 @@ static double QDateToTDB(const QDate& date)
 static QDateTime TDBToQDate(double tdb)
 {
     astro::Date date = astro::TDBtoUTC(tdb);
-    
+
     int sec = (int) date.seconds;
     int msec = (int) ((date.seconds - sec) * 1000);
-    
+
     return QDateTime(QDate(date.year, date.month, date.day),
                      QTime(date.hour, date.minute, sec, msec));
 }
@@ -217,12 +217,12 @@ double QtEclipseFinder::findEclipseEnd(const Body& receiver, const Body& occulte
     // of startStep.
     while (testEclipse(receiver, occulter, now + startStep))
         now += startStep;
-    
+
     double step = startStep / 2;
     double t = now + step;
     bool eclipsed = true;
 
-    
+
     // Perform a binary search to find the end of the eclipse
     while (step > minStep)
     {
@@ -251,7 +251,7 @@ void QtEclipseFinder::findEclipses(double startDate,
                                    vector<EclipseRecord>& eclipses)
 {
     PlanetarySystem* satellites = body->getSatellites();
- 
+
     // See if there's anything that could test
     if (satellites == NULL)
         return;
@@ -442,7 +442,7 @@ QVariant EventTableModel::data(const QModelIndex& index, int role) const
             {
                 int minutes = (int) ((eclipse.endTime - eclipse.startTime) * 24 * 60);
                 return QString("%1:%2").arg(minutes / 60).arg(minutes % 60, 2, 10, QLatin1Char('0'));
-                
+
             }
         default:
             return QVariant();
@@ -579,7 +579,7 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
     // Search the search range box
     QGroupBox* searchRangeBox = new QGroupBox(_("Search range"));
     QVBoxLayout* searchRangeLayout = new QVBoxLayout();
-    
+
     startDateEdit = new QDateEdit(searchRangeBox);
     endDateEdit = new QDateEdit(searchRangeBox);
     startDateEdit->setDisplayFormat("dd MMM yyyy");
@@ -588,7 +588,7 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
     searchRangeLayout->addWidget(endDateEdit);
 
     searchRangeBox->setLayout(searchRangeLayout);
-    
+
     // subgroup for layout
     QWidget* subgroup = new QWidget(this);
     QHBoxLayout* subLayout = new QHBoxLayout();
@@ -623,7 +623,7 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
 
     model = new EventTableModel();
     eventTable->setModel(model);
-    
+
     this->setWidget(finderWidget);
 }
 
@@ -689,7 +689,7 @@ void EventFinder::slotFindEclipses()
 
     QtEclipseFinder finder(obj.body(), this);
     searchTimer.start();
-    
+
     double startTimeTDB = QDateToTDB(startDate);
     double endTimeTDB = QDateToTDB(endDate);
 
@@ -700,7 +700,7 @@ void EventFinder::slotFindEclipses()
     progress = new QProgressDialog(_("Finding eclipses..."), "Abort", (int) startTimeTDB, (int) endTimeTDB, this);
     progress->setWindowModality(Qt::WindowModal);
     progress->show();
-    
+
 
     vector<EclipseRecord> eclipses;
     finder.findEclipses(startTimeTDB, endTimeTDB,
@@ -708,7 +708,7 @@ void EventFinder::slotFindEclipses()
                         eclipses);
     delete progress;
     progress = NULL;
-    
+
     model->setEclipses(eclipses);
 
     eventTable->resizeColumnToContents(EventTableModel::OcculterColumn);

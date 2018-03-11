@@ -38,7 +38,7 @@ SpiceOrbit::SpiceOrbit(const std::string& _targetBodyName,
     spiceErr(false),
     validIntervalBegin(_beginning),
     validIntervalEnd(_ending),
-	useDefaultTimeInterval(false)
+    useDefaultTimeInterval(false)
 {
 }
 
@@ -51,17 +51,17 @@ SpiceOrbit::SpiceOrbit(const std::string& _targetBodyName,
  *  be constructed with an explicitly specified time range.
  */
 SpiceOrbit::SpiceOrbit(const std::string& _targetBodyName,
-	                   const std::string& _originName,
+                       const std::string& _originName,
                        double _period,
                        double _boundingRadius) :
-	targetBodyName(_targetBodyName),
-	originName(_originName),
-	period(_period),
-	boundingRadius(_boundingRadius),
-	spiceErr(false),
-	validIntervalBegin(0.0),
-	validIntervalEnd(0.0),
-	useDefaultTimeInterval(true)
+    targetBodyName(_targetBodyName),
+    originName(_originName),
+    period(_period),
+    boundingRadius(_boundingRadius),
+    spiceErr(false),
+    validIntervalBegin(0.0),
+    validIntervalEnd(0.0),
+    useDefaultTimeInterval(true)
 {
 }
 
@@ -102,9 +102,9 @@ SpiceOrbit::init(const string& path,
         for (list<string>::const_iterator iter = requiredKernels->begin(); iter != requiredKernels->end(); iter++)
         {
             string filepath = path + string("/data/") + *iter;
-	        if (!LoadSpiceKernel(filepath))
-            {    
-		        spiceErr = true;
+            if (!LoadSpiceKernel(filepath))
+            {
+                spiceErr = true;
                 break;
             }
         }
@@ -125,95 +125,95 @@ SpiceOrbit::init(const string& path,
         return false;
     }
 
-	SpiceInt spkCount = 0;
-	ktotal_c("spk", &spkCount);
+    SpiceInt spkCount = 0;
+    ktotal_c("spk", &spkCount);
 
     // Get coverage window for target and origin object
-	const int MaxIntervals = 10;
-	SPICEDOUBLE_CELL ( targetCoverage, MaxIntervals * 2 );
+    const int MaxIntervals = 10;
+    SPICEDOUBLE_CELL ( targetCoverage, MaxIntervals * 2 );
 
     // Clear the coverage window.
     scard_c(0, &targetCoverage);
 
-	for (SpiceInt i = 0; i < spkCount; i++)
-	{
-		SpiceChar filename[512];
-		SpiceChar filetype[32];
-		SpiceChar source[256];
-		SpiceInt handle;
-		SpiceBoolean found;
+    for (SpiceInt i = 0; i < spkCount; i++)
+    {
+        SpiceChar filename[512];
+        SpiceChar filetype[32];
+        SpiceChar source[256];
+        SpiceInt handle;
+        SpiceBoolean found;
 
-		kdata_c(i, "spk",
-				sizeof(filename), sizeof(filetype), sizeof(source),
-				filename, filetype, source, &handle, &found);
+        kdata_c(i, "spk",
+                sizeof(filename), sizeof(filetype), sizeof(source),
+                filename, filetype, source, &handle, &found);
 
-		// First check the coverage window of the target. No interval
-		// is required for ID 0 (the solar system barycenter) which is
-		// always at (0, 0, 0).
-		if (targetID != 0)
-		{
-			spkcov_c(filename, targetID, &targetCoverage);
-		}
-	}
-   
-	SpiceInt nIntervals = card_c(&targetCoverage) / 2;
-	if (nIntervals <= 0 && targetID != 0)
-	{
+        // First check the coverage window of the target. No interval
+        // is required for ID 0 (the solar system barycenter) which is
+        // always at (0, 0, 0).
+        if (targetID != 0)
+        {
+            spkcov_c(filename, targetID, &targetCoverage);
+        }
+    }
+
+    SpiceInt nIntervals = card_c(&targetCoverage) / 2;
+    if (nIntervals <= 0 && targetID != 0)
+    {
         clog << "Couldn't find object " << targetBodyName << " in SPICE kernel pool.\n";
         spiceErr = true;
-	    if (failed_c())
-		{
-			reset_c();
-		}
-		return false;
-	}
+        if (failed_c())
+        {
+            reset_c();
+        }
+        return false;
+    }
 
-	// TODO: need to consider the origin object as well as the target
-	if (useDefaultTimeInterval)
-	{
-		// Set the valid time interval for this orbit to the first interval
-		// in the coverage window for the target.
-		SpiceDouble targetBeginning = -1.0e50;
-		SpiceDouble targetEnding    = +1.0e50;
+    // TODO: need to consider the origin object as well as the target
+    if (useDefaultTimeInterval)
+    {
+        // Set the valid time interval for this orbit to the first interval
+        // in the coverage window for the target.
+        SpiceDouble targetBeginning = -1.0e50;
+        SpiceDouble targetEnding    = +1.0e50;
 
-		if (targetID == 0)
-		{
-			// Time range for solar system barycenter is infinite
-			validIntervalBegin = targetBeginning;
-			validIntervalEnd = targetEnding;
-		}
-		else
-		{
-			wnfetd_c(&targetCoverage, 0, &targetBeginning, &targetEnding);
+        if (targetID == 0)
+        {
+            // Time range for solar system barycenter is infinite
+            validIntervalBegin = targetBeginning;
+            validIntervalEnd = targetEnding;
+        }
+        else
+        {
+            wnfetd_c(&targetCoverage, 0, &targetBeginning, &targetEnding);
 
-			// SPICE times are seconds since J2000.0
-			validIntervalBegin = astro::secsToDays(targetBeginning) + astro::J2000;
-			validIntervalEnd = astro::secsToDays(targetEnding) + astro::J2000;
+            // SPICE times are seconds since J2000.0
+            validIntervalBegin = astro::secsToDays(targetBeginning) + astro::J2000;
+            validIntervalEnd = astro::secsToDays(targetEnding) + astro::J2000;
 
             // Reduce interval by a millisecond at each end; otherwise, rounding error
             // can cause us to get SPICE errors when computing states right at the edge
             // of the valid window.
             validIntervalBegin += MILLISEC;
             validIntervalEnd -= MILLISEC;
-		}
-	}
-	else
-	{
+        }
+    }
+    else
+    {
         // Reduce valid interval by a millisecond at each end.
         validIntervalBegin += MILLISEC;
         validIntervalEnd -= MILLISEC;
 
-		SpiceDouble beginningSecondsJ2000 = astro::daysToSecs(validIntervalBegin - astro::J2000);
-		SpiceDouble endingSecondsJ2000    = astro::daysToSecs(validIntervalEnd - astro::J2000);
+        SpiceDouble beginningSecondsJ2000 = astro::daysToSecs(validIntervalBegin - astro::J2000);
+        SpiceDouble endingSecondsJ2000    = astro::daysToSecs(validIntervalEnd - astro::J2000);
 
-		// A time interval was specified--make sure that it's covered in the SPICE kernel.
-		if (targetID != 0 &&
-			!wnincd_c(beginningSecondsJ2000, endingSecondsJ2000, &targetCoverage))
-		{
-			clog << "Specified time interval for target " << targetBodyName << " not available.\n";
-			return false;
-		}
-	}
+        // A time interval was specified--make sure that it's covered in the SPICE kernel.
+        if (targetID != 0 &&
+            !wnincd_c(beginningSecondsJ2000, endingSecondsJ2000, &targetCoverage))
+        {
+            clog << "Specified time interval for target " << targetBodyName << " not available.\n";
+            return false;
+        }
+    }
 
     // Test getting the position of the object to make sure that there's
     // adequate data in the kernel to compute the position of the target
