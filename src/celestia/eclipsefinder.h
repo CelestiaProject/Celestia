@@ -1,6 +1,6 @@
 // eclipsefinder.h by Christophe Teyssier <chris@teyssier.org>
 // adapted form wineclipses.h by Kendrix <kendrix@wanadoo.fr>
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Compute Solar Eclipses for our Solar System planets
@@ -22,7 +22,7 @@ class Eclipse
 public:
     Eclipse(int Y, int M, int D);
     Eclipse(double JD);
-    
+
     enum Type {
         Solar = 0,
         Moon  = 1
@@ -40,10 +40,10 @@ public:
 class EclipseFinder
 {
  public:
-    EclipseFinder(CelestiaCore* core, 
-                  const std::string& strPlaneteToFindOn_, 
+    EclipseFinder(CelestiaCore* core,
+                  const std::string& strPlaneteToFindOn_,
                   Eclipse::Type type_,
-                  double from, 
+                  double from,
                   double to )
                    :appCore(core),
                     strPlaneteToFindOn(strPlaneteToFindOn_),
@@ -51,19 +51,19 @@ class EclipseFinder
                     JDfrom(from),
                     JDto(to),
                     toProcess(true) {};
-       
+
     const std::vector<Eclipse>& getEclipses() { if (toProcess) CalculateEclipses(); return Eclipses_; };
-    
+
  private:
     CelestiaCore* appCore;
     std::vector<Eclipse> Eclipses_;
 
-    std::string strPlaneteToFindOn;   
+    std::string strPlaneteToFindOn;
     Eclipse::Type type;
-    double JDfrom, JDto;  
-    
+    double JDfrom, JDto;
+
     bool toProcess;
-    
+
     int CalculateEclipses();
     bool testEclipse(const Body& receiver, const Body& caster, double now) const;
     double findEclipseSpan(const Body& receiver, const Body& caster, double now, double dt) const;

@@ -63,11 +63,11 @@ static void longLatLabel(const string& labelText,
     Vector3d pos(cos(phi) * cos(theta) * semiAxes.x(),
                  sin(phi) * semiAxes.y(),
                  -cos(phi) * sin(theta) * semiAxes.z());
-    
+
     float nearDist = renderer->getNearPlaneDistance();
-    
+
     pos = pos * (1.0 + labelOffset);
-    
+
     double boundingRadius = semiAxes.maxCoeff();
 
     // Draw the label only if it isn't obscured by the body ellipsoid
@@ -77,7 +77,7 @@ static void longLatLabel(const string& labelText,
         // Compute the position of the label
         Vector3d labelPos = bodyCenter +
                             bodyOrientation.conjugate() * pos * (1.0 + labelOffset);
-        
+
         // Calculate the intersection of the eye-to-label ray with the plane perpendicular to
         // the view normal that touches the front of the objects bounding sphere
         double planetZ = viewNormal.dot(bodyCenter) - boundingRadius;
@@ -85,7 +85,7 @@ static void longLatLabel(const string& labelText,
             planetZ = -nearDist * 1.001;
         double z = viewNormal.dot(labelPos);
         labelPos *= planetZ / z;
-        
+
         renderer->addObjectAnnotation(NULL, labelText,
                                       Renderer::PlanetographicGridLabelColor,
                                       labelPos.cast<float>());
@@ -113,7 +113,7 @@ PlanetographicGrid::render(Renderer* renderer,
     Vector3f semiAxes = body.getSemiAxes();
     Vector3d posd = pos.cast<double>();
     Vector3d viewRayOrigin = q * -pos.cast<double>();
-    
+
     // Calculate the view normal; this is used for placement of the long/lat
     // label text.
     Vector3f vn  = renderer->getCameraOrientation().conjugate() * -Vector3f::UnitZ();
@@ -146,7 +146,7 @@ PlanetographicGrid::render(Renderer* renderer,
         latitudeStep = 30.0f;
         longitudeStep = 30.0f;
     }
-    
+
     for (float latitude = -90.0f + latitudeStep; latitude < 90.0f; latitude += latitudeStep)
     {
         float phi = degToRad(latitude);
@@ -167,7 +167,7 @@ PlanetographicGrid::render(Renderer* renderer,
         glDrawArrays(GL_LINE_LOOP, 0, circleSubdivisions);
         glPopMatrix();
         glLineWidth(1.0f);
-        
+
         if (showCoordinateLabels)
         {
             if (latitude != 0.0f && abs(latitude) < 90.0f)
@@ -241,7 +241,7 @@ PlanetographicGrid::render(Renderer* renderer,
                     break;
                 }
 
-                sprintf(buf, "%d%c", showLongitude, ew);       
+                sprintf(buf, "%d%c", showLongitude, ew);
                 longLatLabel(buf, -longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             }
         }

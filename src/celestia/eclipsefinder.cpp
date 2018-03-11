@@ -1,6 +1,6 @@
 // eclipsefinder.cpp by Christophe Teyssier <chris@teyssier.org>
 // adapted form wineclipses.cpp by Kendrix <kendrix@wanadoo.fr>
-// 
+//
 // Copyright (C) 2001-2009, the Celestia Development Team
 //
 // Compute Solar Eclipses for our Solar System planets
@@ -118,17 +118,17 @@ double EclipseFinder::findEclipseSpan(const Body& receiver, const Body& caster,
 int EclipseFinder::CalculateEclipses()
 {
     Simulation* sim = appCore->getSimulation();
-    
+
     Eclipse* eclipse;
     double* JDback = NULL;
-    
+
     int nIDplanetetofindon = 0;
     int nSattelites = 0;
 
     const SolarSystem* sys = sim->getNearestSolarSystem();
-    
+
     toProcess = false;
-    
+
     if ((!sys))
     {
         eclipse = new Eclipse(0.);

@@ -176,7 +176,7 @@ astro::Nutation_IAU2000B(double T)
     double F  = arcsecToRad(93.27209062
                             + 1739527262.8478 * T
                             - 12.7512         * T2
-                            - 0.001037        * T3 
+                            - 0.001037        * T3
                             + 0.00000417      * T4);
 
     // Mean elongation of the Moon from the Sun

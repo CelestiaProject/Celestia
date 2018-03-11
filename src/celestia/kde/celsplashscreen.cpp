@@ -24,7 +24,7 @@
 #include <X11/Xlib.h>
 
 CelSplashScreen::CelSplashScreen(const QString& filename, QWidget* _parent):
-    QWidget(0, 0, WStyle_Customize | WX11BypassWM), 
+    QWidget(0, 0, WStyle_Customize | WX11BypassWM),
     parent(_parent)
 {
     setPixmap(filename);
@@ -63,8 +63,8 @@ void CelSplashScreen::update(const string& _message) {
 void CelSplashScreen::finish( QWidget *mainWin )
 {
     if ( mainWin ) {
-	extern void qt_wait_for_window_manager( QWidget *mainWin );
-	qt_wait_for_window_manager( mainWin );
+    extern void qt_wait_for_window_manager( QWidget *mainWin );
+    qt_wait_for_window_manager( mainWin );
     }
     close();
 }
@@ -118,7 +118,7 @@ void CelSplashScreen::setPixmap( const QString &filename )
     } else {
         pixmap = _pixmap;
     }
-    
+
     QPainter painter( &pixmap, this );
     version.draw(&painter);
     for(std::vector<TextItem>::const_iterator i = extraText.begin(); i != extraText.end();  ++i)

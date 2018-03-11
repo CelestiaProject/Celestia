@@ -316,7 +316,7 @@ Atmosphere::computeInscatterTable() const
                     float distanceToViewer = stepLength * m;
                     float rx2 = x.squaredNorm();
                     float rx = sqrt(rx2);
-                    
+
                     // Compute the transmittance along the path to the viewer
                     Vector3f viewPathTransmittance = transmittance(r, mu, distanceToViewer, *this);
 
@@ -437,7 +437,7 @@ void SetDefaultParameters(ParameterSet& params)
     params["RayleighRed"]         = rayleighCoeff.x() * km;
     params["RayleighGreen"]       = rayleighCoeff.y() * km;
     params["RayleighBlue"]        = rayleighCoeff.z() * km;
-    
+
     params["MieScaleHeight"]      = 1.2;
     params["Mie"]                 = 2.1e-6f * km;
 
@@ -902,7 +902,7 @@ static void WriteTransmittanceTableDDS(ostream& out, Vector3f* transmittanceTabl
     //dds.setMipMapLevels();
 
     WriteDDSHeader(out, dds);
-    
+
     unsigned int sampleCount = ViewAngleSamples * HeightSamples;
     for (unsigned int i = 0; i < sampleCount; ++i)
     {
@@ -963,11 +963,11 @@ int main(int argc, char* argv[])
 
     cout << "Generating inscatter table (" << SunAngleSamples << "x"
          << ViewAngleSamples << "x" << HeightSamples << ")...\n";
-        
+
     Vector4f* inscatterTable = atmosphere.computeInscatterTable();
 
     ByteSwapRequired = !IsLittleEndian();
-    
+
 #if 0
     // Write tables in a single file
     ofstream out(OutputFileName.c_str(), ostream::binary);

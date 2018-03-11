@@ -110,8 +110,8 @@ void CelxLua::initRenderFlagMap()
     RenderFlagMap["cloudmaps"] = Renderer::ShowCloudMaps;
     RenderFlagMap["constellations"] = Renderer::ShowDiagrams;
     RenderFlagMap["galaxies"] = Renderer::ShowGalaxies;
-	RenderFlagMap["globulars"] = Renderer::ShowGlobulars;	    
-	RenderFlagMap["planets"] = Renderer::ShowPlanets;
+    RenderFlagMap["globulars"] = Renderer::ShowGlobulars;
+    RenderFlagMap["planets"] = Renderer::ShowPlanets;
     RenderFlagMap["stars"] = Renderer::ShowStars;
     RenderFlagMap["nightmaps"] = Renderer::ShowNightMaps;
     RenderFlagMap["eclipseshadows"] = Renderer::ShowEclipseShadows;
@@ -146,7 +146,7 @@ void CelxLua::initLabelFlagMap()
     LabelFlagMap["constellations"] = Renderer::ConstellationLabels;
     LabelFlagMap["stars"] = Renderer::StarLabels;
     LabelFlagMap["galaxies"] = Renderer::GalaxyLabels;
-	LabelFlagMap["globulars"] = Renderer::GlobularLabels;	
+    LabelFlagMap["globulars"] = Renderer::GlobularLabels;
     LabelFlagMap["locations"] = Renderer::LocationLabels;
     LabelFlagMap["nebulae"] = Renderer::NebulaLabels;
     LabelFlagMap["openclusters"] = Renderer::OpenClusterLabels;
@@ -231,7 +231,7 @@ void CelxLua::initLabelColorMap()
     LabelColorMap["spacecraft"]     = &Renderer::SpacecraftLabelColor;
     LabelColorMap["locations"]      = &Renderer::LocationLabelColor;
     LabelColorMap["galaxies"]       = &Renderer::GalaxyLabelColor;
-	LabelColorMap["globulars"]      = &Renderer::GlobularLabelColor;	
+    LabelColorMap["globulars"]      = &Renderer::GlobularLabelColor;
     LabelColorMap["nebulae"]        = &Renderer::NebulaLabelColor;
     LabelColorMap["openclusters"]   = &Renderer::OpenClusterLabelColor;
     LabelColorMap["constellations"] = &Renderer::ConstellationLabelColor;
@@ -481,7 +481,6 @@ void* Celx_CheckUserData(lua_State* l, int index, int id)
     else
         return NULL;
 }
-
 
 // Return the CelestiaCore object stored in the globals table
 static CelestiaCore* getAppCore(lua_State* l, FatalErrors fatalErrors = NoErrors)
@@ -797,7 +796,7 @@ bool LuaState::charEntered(const char* c_p)
         {
             result = (lua_toboolean(costate, -1) != 0);
         }
-		lua_pop(costate, 1);
+        lua_pop(costate, 1);
     }
 
 #if LUA_VER < 0x050100
@@ -978,7 +977,7 @@ int LuaState::loadScript(istream& in, const string& streamname)
 
 #if LUA_VER >= 0x050200
     int status = lua_load(state, readStreamChunk, &info, streamname.c_str(),
-			  NULL);
+                          NULL);
 #else
     int status = lua_load(state, readStreamChunk, &info, streamname.c_str());
 #endif
@@ -1219,8 +1218,8 @@ void Celx_CheckArgs(lua_State* l,
 
 static ObserverFrame::CoordinateSystem parseCoordSys(const string& name)
 {
-	// 'planetographic' is a deprecated name for bodyfixed, but maintained here
-	// for compatibility with older scripts.
+    // 'planetographic' is a deprecated name for bodyfixed, but maintained here
+    // for compatibility with older scripts.
 
     if (compareIgnoringCase(name, "universal") == 0)
         return ObserverFrame::Universal;
@@ -1378,7 +1377,7 @@ bool Celx_SafeGetBoolean(lua_State* l, int index, FatalErrors fatalErrors = AllE
             return defaultValue;
         }
     }
-    
+
     if (!lua_isboolean(l, index))
     {
         if (fatalErrors & WrongType)
@@ -1390,7 +1389,7 @@ bool Celx_SafeGetBoolean(lua_State* l, int index, FatalErrors fatalErrors = AllE
             return defaultValue;
         }
     }
-    
+
     return lua_toboolean(l, index) != 0;
 }
 
@@ -1953,7 +1952,7 @@ static int celestia_showconstellations(lua_State* l)
                  iter != asterisms->end(); iter++)
             {
                 Asterism* ast = *iter;
-  		          if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
+                if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
                     ast->setActive(true);
             }
             lua_pop(l,1);
@@ -2002,7 +2001,7 @@ static int celestia_hideconstellations(lua_State* l)
                  iter != asterisms->end(); iter++)
             {
                 Asterism* ast = *iter;
-  		          if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
+                if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
                     ast->setActive(false);
             }
             lua_pop(l,1);
@@ -2056,7 +2055,7 @@ static int celestia_setconstellationcolor(lua_State* l)
                  iter != asterisms->end(); iter++)
             {
                 Asterism* ast = *iter;
-  		          if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
+                if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
                     ast->setOverrideColor(constellationColor);
             }
             lua_pop(l,1);
@@ -2449,7 +2448,7 @@ static int celestia_mark(lua_State* l)
         MarkerRepresentation markerRep(MarkerRepresentation::Diamond);
         markerRep.setColor(Color(0.0f, 1.0f, 0.0f));
         markerRep.setSize(10.0f);
-        
+
         sim->getUniverse()->markObject(*sel, markerRep, 1);
     }
     else
@@ -2659,7 +2658,7 @@ static int celestia_tdbtoutc(lua_State* l)
 static int celestia_getsystemtime(lua_State* l)
 {
     Celx_CheckArgs(l, 1, 1, "No argument expected to function celestia:getsystemtime");
-    
+
     astro::Date d = astro::Date::systemDate();
     lua_pushnumber(l, astro::UTCtoTDB(d));
 
@@ -2981,7 +2980,7 @@ static int celestia_getstarcolor(lua_State* l)
     else
     {
         const ColorTemperatureTable* starColor = renderer->getStarColorTable();
-		
+
             if (starColor == GetStarColorTable(ColorTable_Enhanced))
             {
                 lua_pushstring(l, "enhanced");
@@ -3623,11 +3622,11 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setstardistancelimit", celestia_setstardistancelimit);
     Celx_RegisterMethod(l, "getstarstyle", celestia_getstarstyle);
     Celx_RegisterMethod(l, "setstarstyle", celestia_setstarstyle);
-	
-	// New CELX command for Star Color
+
+    // New CELX command for Star Color
     Celx_RegisterMethod(l, "getstarcolor", celestia_getstarcolor);
     Celx_RegisterMethod(l, "setstarcolor", celestia_setstarcolor);
-	
+
     Celx_RegisterMethod(l, "gettextureresolution", celestia_gettextureresolution);
     Celx_RegisterMethod(l, "settextureresolution", celestia_settextureresolution);
     Celx_RegisterMethod(l, "tojulianday", celestia_tojulianday);
@@ -3681,7 +3680,7 @@ bool LuaState::init(CelestiaCore* appCore)
     openLuaLibrary(state, LUA_STRLIBNAME, luaopen_string);
     // Make the package library, except the loadlib function, available
     // for celx regardless of script system access policy.
-		allowLuaPackageAccess();
+    allowLuaPackageAccess();
 #else
     lua_baselibopen(state);
     lua_mathlibopen(state);
@@ -3809,7 +3808,7 @@ static int font_render(lua_State* l)
 
     const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to font:render must be a string");
     TextureFont* font = this_font(l);
-	font->render(s);
+    font->render(s);
 
     return 0;
 }
@@ -4015,8 +4014,8 @@ static int celestia_log(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:log");
 
     const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:log must be a string");
-	clog << s << "\n"; clog.flush();
-	return 0;
+    clog << s << "\n"; clog.flush();
+    return 0;
 }
 
 static int celestia_getparamstring(lua_State* l)
@@ -4053,8 +4052,8 @@ static int celestia_loadfont(lua_State* l)
     string s = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:loadfont() must be a string");
     TextureFont* font = LoadTextureFont(s);
     if (font == NULL) return 0;
-	font->buildTexture();
-	font_new(l, font);
+    font->buildTexture();
+    font_new(l, font);
     return 1;
 }
 
@@ -4076,7 +4075,7 @@ static int celestia_getfont(lua_State* l)
 
 TextureFont* getTitleFont(CelestiaCore* appCore)
 {
-	return appCore->titleFont;
+    return appCore->titleFont;
 }
 
 static int celestia_gettitlefont(lua_State* l)
@@ -4084,9 +4083,9 @@ static int celestia_gettitlefont(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected to function celestia:getTitleFont");
 
     CelestiaCore* appCore = getAppCore(l, AllErrors);
-	TextureFont* font = getTitleFont(appCore);
+    TextureFont* font = getTitleFont(appCore);
     if (font == NULL) return 0;
-	font_new(l, font);
+    font_new(l, font);
     return 1;
 }
 
@@ -4366,7 +4365,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y)
         return false;
 
     lua_pushlightuserdata(costate, obj);
-	lua_gettable(costate, LUA_REGISTRYINDEX);
+    lua_gettable(costate, LUA_REGISTRYINDEX);
     if (!lua_istable(costate, -1))
     {
         lua_pop(costate, 1);
@@ -4410,7 +4409,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y, int 
         return false;
 
     lua_pushlightuserdata(costate, obj);
-	lua_gettable(costate, LUA_REGISTRYINDEX);
+    lua_gettable(costate, LUA_REGISTRYINDEX);
     if (!lua_istable(costate, -1))
     {
         lua_pop(costate, 1);
@@ -4419,7 +4418,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y, int 
     bool handled = false;
 
     lua_pushstring(costate, method);
-	lua_gettable(costate, -2);
+    lua_gettable(costate, -2);
     if (lua_isfunction(costate, -1))
     {
         lua_pushvalue(costate, -2);          // push the Lua object onto the stack
@@ -4555,9 +4554,9 @@ void CelxLua::registerMethod(const char* name, lua_CFunction fn)
 
 void CelxLua::registerValue(const char* name, float n)
 {
-	lua_pushstring(m_lua, name);
-	lua_pushnumber(m_lua, n);
-	lua_settable(m_lua, -3);
+    lua_pushstring(m_lua, name);
+    lua_pushnumber(m_lua, n);
+    lua_settable(m_lua, -3);
 }
 
 
@@ -4683,7 +4682,7 @@ CelestiaCore* CelxLua::appCore(FatalErrors fatalErrors)
 {
     push("celestia-appcore");
     lua_gettable(m_lua, LUA_REGISTRYINDEX);
-    
+
     if (!lua_islightuserdata(m_lua, -1))
     {
         if (fatalErrors == NoErrors)
@@ -4696,10 +4695,10 @@ CelestiaCore* CelxLua::appCore(FatalErrors fatalErrors)
             lua_error(m_lua);
         }
     }
-    
+
     CelestiaCore* appCore = static_cast<CelestiaCore*>(lua_touserdata(m_lua, -1));
     lua_pop(m_lua, 1);
-    
+
     return appCore;
 }
 
@@ -4710,7 +4709,7 @@ LuaState* CelxLua::getLuaStateObject()
     int stackSize = lua_gettop(m_lua);
     lua_pushstring(m_lua, "celestia-luastate");
     lua_gettable(m_lua, LUA_REGISTRYINDEX);
-    
+
     if (!lua_islightuserdata(m_lua, -1))
     {
         Celx_DoError(m_lua, "Internal Error: Invalid table entry for LuaState-pointer");

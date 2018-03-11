@@ -73,7 +73,7 @@ class Galaxy : public DeepSkyObject
 
     virtual unsigned int getRenderMask() const;
     virtual unsigned int getLabelMask() const;
-    
+
     virtual const char* getObjTypeName() const;
 
  public:

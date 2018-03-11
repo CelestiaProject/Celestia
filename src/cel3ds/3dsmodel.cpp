@@ -1,5 +1,5 @@
 // 3dsmodel.cpp
-// 
+//
 // Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or

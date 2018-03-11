@@ -1,5 +1,5 @@
 // wintourguide.h
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Space 'tour guide' dialog for Windows.

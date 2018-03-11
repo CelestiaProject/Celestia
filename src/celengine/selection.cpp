@@ -1,5 +1,5 @@
 // selection.cpp
-// 
+//
 // Copyright (C) 2001-2009, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
@@ -48,7 +48,7 @@ UniversalCoord Selection::getPosition(double t) const
     {
     case Type_Body:
         return body()->getPosition(t);
-        
+
     case Type_Star:
         return star()->getPosition(t);
 
@@ -59,7 +59,7 @@ UniversalCoord Selection::getPosition(double t) const
             Vector3f p = deepsky()->getPosition().cast<float>();
             return UniversalCoord::CreateLy(p.cast<double>());
         }
-        
+
     case Type_Location:
         {
             Body* body = location()->getParentBody();
@@ -87,7 +87,7 @@ Vector3d Selection::getVelocity(double t) const
     {
     case Type_Body:
         return body()->getVelocity(t);
-        
+
     case Type_Star:
         return star()->getVelocity(t);
 
@@ -95,10 +95,10 @@ Vector3d Selection::getVelocity(double t) const
         return Vector3d::Zero();
 
     case Type_Location:
-		{
-			// For now, just use differentiation for location velocities.
+        {
+            // For now, just use differentiation for location velocities.
             return getPosition(t).offsetFromKm(getPosition(t - VELOCITY_DIFF_DELTA)) / VELOCITY_DIFF_DELTA;
-		}
+        }
 
     default:
         return Vector3d::Zero();
@@ -123,7 +123,7 @@ string Selection::getName(bool i18n) const
             sprintf(buf, "#%d", deepsky()->getCatalogNumber());
             return string(buf);
         }
-        
+
     case Type_Body:
         {
             string name = body()->getName(i18n);
@@ -191,7 +191,7 @@ Selection Selection::parent() const
 
     case Type_Star:
         return Selection(star()->getOrbitBarycenter());
-        
+
     case Type_DeepSky:
         // Currently no hierarchy for stars and deep sky objects.
         return Selection();

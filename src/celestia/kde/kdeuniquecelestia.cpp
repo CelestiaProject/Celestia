@@ -50,7 +50,7 @@ KdeUniqueCelestia::KdeUniqueCelestia() {
         QFileInfo d(args->getOption("dir"));
         if (d.exists() && d.isDir() && d.isReadable() && d.isExecutable())
             dir = std::string(d.absFilePath().utf8());
-        else 
+        else
             std::cerr << i18n("Directory %1 does not exist, using default %2")
                     .arg(args->getOption("dir"))
                     .arg(CONFIG_DATA_DIR)  << std::endl;
@@ -60,9 +60,9 @@ KdeUniqueCelestia::KdeUniqueCelestia() {
         QCStringList dirs = args->getOptionList("extrasdir");
         for (QCStringList::Iterator i = dirs.begin(); i != dirs.end(); ++i) {
             QFileInfo d(*i);
-            if (d.exists() && d.isDir() && d.isReadable() && d.isExecutable()) 
+            if (d.exists() && d.isDir() && d.isReadable() && d.isExecutable())
                 validDirs.push_back(std::string(d.absFilePath().utf8()));
-            else 
+            else
                 std::cerr << i18n("Extras directory %1 does not exist").arg(*i) << std::endl;
         }
     }
@@ -77,7 +77,7 @@ KdeUniqueCelestia::KdeUniqueCelestia() {
 
     setMainWidget(app);
     app->show();
-    
+
 }
 
 int KdeUniqueCelestia::newInstance() {

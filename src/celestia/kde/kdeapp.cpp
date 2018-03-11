@@ -156,7 +156,7 @@ KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> ext
     if ( (dir.length() > 1 ? chdir(dir.c_str()):chdir(CONFIG_DATA_DIR)) == -1)
     {
         ::std::cout << "Cannot chdir to '" << CONFIG_DATA_DIR << "', probably due to improper installation" << ::std::endl;
-	exit(1);
+        exit(1);
     }
     glWidget = new KdeGlWidget( this, "kdeglwidget", appCore);
     string* altConfig = config.length() > 0 ? &config : NULL;
@@ -208,7 +208,7 @@ glWidget->makeCurrent();
 
 
 GLenum glewErr = glewInit();
-   { 
+   {
      if (GLEW_OK != glewErr)
 
     {
@@ -542,20 +542,20 @@ void KdeApp::initActions()
     if (KGlobal::config()->hasKey("TimeZoneBias"))
         isLocal = (KGlobal::config()->readNumEntry("TimeZoneBias") != 0);
 
-    if (KGlobal::config()->hasKey("StarStyle")) 
+    if (KGlobal::config()->hasKey("StarStyle"))
     {
         int starStyle = KGlobal::config()->readNumEntry("StarStyle");
         if (starStyle >= 0 && starStyle < Renderer::StarStyleCount)
             appCore->getRenderer()->setStarStyle((Renderer::StarStyle)starStyle);
     }
 
-    if (KGlobal::config()->hasKey("TextureResolution")) 
+    if (KGlobal::config()->hasKey("TextureResolution"))
     {
         int textureResolution = KGlobal::config()->readNumEntry("TextureResolution");
         appCore->getRenderer()->setResolution(textureResolution);
     }
 
-    if (KGlobal::config()->hasKey("DateFormat")) 
+    if (KGlobal::config()->hasKey("DateFormat"))
     {
         astro::Date::Format dateFormat = (astro::Date::Format) KGlobal::config()->readNumEntry("DateFormat");
         appCore->setDateFormat(dateFormat);
@@ -1389,13 +1389,13 @@ void KdeApp::slotDisplayLocalTime() {
 }
 
 void KdeApp::slotWireframeMode() {
-	static bool mode = false;
-	mode = !mode;
-	renderer->setRenderMode(mode ? GL_LINE : GL_FILL);
+    static bool mode = false;
+    mode = !mode;
+    renderer->setRenderMode(mode ? GL_LINE : GL_FILL);
 }
 
 void KdeApp::slotCenterCO() {
-	appCore->charEntered('C');
+    appCore->charEntered('C');
 }
 
 void KdeApp::slotSetRenderPathBasic() {
@@ -1510,7 +1510,7 @@ void KdeApp::slotGoTo() {
     bool ok;
     QString _url = KInputDialog::getText(i18n("Go to URL"), i18n("Enter URL"), "", &ok, this);
     if (ok) {
-        KURL url(_url);        
+        KURL url(_url);
         appCore->addToHistory();
         appCore->goToUrl(url.url().latin1());
     }

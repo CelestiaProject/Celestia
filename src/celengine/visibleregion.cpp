@@ -30,7 +30,7 @@ using namespace Eigen;
  *  visible. The following are assumed:
  *     - target is a point
  *     - the body is an ellipsoid
- *  
+ *
  *  This reference mark is useful in a few situations. When the
  *  body is a planet or moon and target is the sun, the outline of
  *  the visible region is the terminator. If target is a satellite,
@@ -224,7 +224,7 @@ VisibleRegion::render(Renderer* /* renderer */,
     {
         double theta = (double) i / (double) (nSections) * 2.0 * PI;
         Vector3d w = cos(theta) * uAxis + sin(theta) * vAxis;
-        
+
         Vector3d toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
         toCenter *= maxSemiAxis * scale;
         glVertex3dv(toCenter.data());

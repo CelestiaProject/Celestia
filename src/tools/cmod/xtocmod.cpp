@@ -13,7 +13,7 @@ static IDirect3D9* g_d3d = NULL;
 static IDirect3DDevice9* g_d3dDev = NULL;
 static HWND g_mainWindow = NULL;
 
-char* D3DErrorString(HRESULT);    
+char* D3DErrorString(HRESULT);
 void ShowD3DErrorMessage(char* info, HRESULT hr);
 
 
@@ -50,7 +50,7 @@ struct VertexAttribute
 char* AttribFormatNames[] =
 { "f1", "f2", "f3", "f4", "ub4" };
 
-char* AttribNames[] = { 
+char* AttribNames[] = {
     "position",
     "color0",
     "color1",
@@ -176,7 +176,7 @@ template<class T> int DumpTriStrip(DWORD nTris,
 {
     meshfile << "tristrip ";
     meshfile << materialIndex << ' ' << (nTris + 2) << '\n';
-            
+
     DWORD indexCount = nTris + 2;
 
     for (DWORD j = 0; j < indexCount; j++)
@@ -201,7 +201,7 @@ template<class T> void DumpTriStripAsFan(DWORD nTris,
 {
     meshfile << "trifan ";
     meshfile << materialIndex << ' ' << (nTris / 2 + 3) << '\n';
-            
+
     DWORD indexCount = nTris + 2;
 
     T anchor = indices[anchorOffset];
@@ -260,7 +260,7 @@ bool StripifyMeshSubset(ID3DXMesh* mesh,
 
     cout << "Converted to " << numStrips << " strips\n";
     cout << "Strip buffer size: " << strips->GetBufferSize() << '\n';
-    if (numStrips != strips->GetBufferSize() / 4) 
+    if (numStrips != strips->GetBufferSize() / 4)
     {
         cout << "Strip count is incorrect!\n";
         return false;
@@ -398,7 +398,7 @@ bool DumpMeshVertices(ID3DXMesh* mesh,
             {
                 char* chardata = vertexData + i * stride + vertexMap[attr].offset;
                 float* floatdata = reinterpret_cast<float*>(chardata);
-                                                            
+
                 switch (vertexMap[attr].format)
                 {
                 case VertexAttribute::Float1:
@@ -587,10 +587,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     wc.lpszClassName = "xtocmod";
     if (RegisterClass(&wc) == 0)
     {
-	MessageBox(NULL,
+        MessageBox(NULL,
                    "Failed to register the window class.", "Fatal Error",
                    MB_OK | MB_ICONERROR);
-	return NULL;
+        return NULL;
     }
 
     DWORD windowStyle = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
@@ -635,7 +635,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     presentParams.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
     presentParams.Windowed = TRUE;
 #endif
-    
+
     HRESULT hr = g_d3d->CreateDevice(D3DADAPTER_DEFAULT,
                                      D3DDEVTYPE_HAL,
                                      g_mainWindow,
@@ -657,7 +657,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     ID3DXBuffer* materialBuf = NULL;
     ID3DXBuffer* effects = NULL;
     DWORD numMaterials;
-    
+
     hr = D3DXLoadMeshFromX(inputFilename.c_str(),
                            0,
                            g_d3dDev,
@@ -733,7 +733,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         ShowD3DErrorMessage("Optimize failed: ", hr);
         return 1;
     }
-    
+
     // Attribute table
     DWORD attribTableSize = 0;
     hr = optMesh->GetAttributeTable(NULL, &attribTableSize);
@@ -763,7 +763,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     if (!DumpMeshVertices(optMesh, vertexMap, stride, meshfile))
         return 1;
-    
+
     // output the indices
     for (DWORD attr = 0; attr < attribTableSize; attr++)
     {
@@ -804,7 +804,7 @@ int main(int argc, char* argv[])
     ID3DXBuffer* adjacency = NULL;
     ID3DXBuffer* materials = NULL;
     ID3DXBuffer* effects = NULL;
-    
+
     return 0;
 }
 
@@ -886,7 +886,7 @@ char* D3DErrorString(HRESULT hr)
 void ShowD3DErrorMessage(char* info, HRESULT hr)
 {
     char buf[1024];
-    
+
     sprintf(buf, "%s - %s", info, D3DErrorString(hr));
     MessageBox(g_mainWindow,
                buf, "Fatal Error",

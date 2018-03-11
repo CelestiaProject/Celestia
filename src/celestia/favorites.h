@@ -23,7 +23,7 @@ struct FavoritesEntry
 
     std::string name;
     std::string selectionName;
-    
+
     UniversalCoord position;
     Eigen::Quaternionf orientation;
     double jd;

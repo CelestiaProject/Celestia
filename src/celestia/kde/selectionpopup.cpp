@@ -225,29 +225,29 @@ void SelectionPopup::process(int id)
         }
         return;
     }
-    if (actionId >=25 && actionId < 31 && sel.body() != NULL) 
+    if (actionId >=25 && actionId < 31 && sel.body() != NULL)
     {
 
         switch(actionId)
         {
         case 25:
-		appCore->toggleReferenceMark("body axes");
+        appCore->toggleReferenceMark("body axes");
             break;
         case 26:
-		appCore->toggleReferenceMark("frame axes");
+        appCore->toggleReferenceMark("frame axes");
             break;
         case 27:
-		appCore->toggleReferenceMark("sun direction");
+        appCore->toggleReferenceMark("sun direction");
             break;
         case 28:
-		appCore->toggleReferenceMark("velocity vector");
+        appCore->toggleReferenceMark("velocity vector");
             break;
-	case 29:
-		appCore->toggleReferenceMark("planetographic grid");
-	    break;
-	case 30:
-		appCore->toggleReferenceMark("terminator");
-	    break;
+    case 29:
+        appCore->toggleReferenceMark("planetographic grid");
+        break;
+    case 30:
+        appCore->toggleReferenceMark("terminator");
+        break;
         }
 
     }

@@ -26,14 +26,14 @@ class SpiceOrbit : public CachingOrbit
                double _boundingRadius,
                double _beginning,
                double _ending);
-	SpiceOrbit(const std::string& _targetBodyName,
-			   const std::string& _originName,
-			   double _period,
-			   double _boundingRadius);
+    SpiceOrbit(const std::string& _targetBodyName,
+               const std::string& _originName,
+               double _period,
+               double _boundingRadius);
     virtual ~SpiceOrbit();
 
     bool init(const std::string& path,
-			  const std::list<std::string>* requiredKernels);
+              const std::list<std::string>* requiredKernels);
 
     virtual bool isPeriodic() const;
     virtual double getPeriod() const;
@@ -62,7 +62,7 @@ class SpiceOrbit : public CachingOrbit
     double validIntervalBegin;
     double validIntervalEnd;
 
-	bool useDefaultTimeInterval;
+    bool useDefaultTimeInterval;
 };
 
 #endif // _CELENGINE_SPICEORBIT_H_

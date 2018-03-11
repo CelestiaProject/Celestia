@@ -47,10 +47,10 @@ class RenderContext
 
     void setPointScale(float);
     float getPointScale() const;
-    
+
     void setCameraOrientation(const Eigen::Quaternionf& q);
     Eigen::Quaternionf getCameraOrientation() const;
-    
+
  private:
     const cmod::Material* material;
     bool locked;
@@ -113,15 +113,15 @@ class GLSL_RenderContext : public RenderContext
 {
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    
+
     GLSL_RenderContext(const LightingState& ls, float _objRadius, const Eigen::Quaternionf& orientation);
     GLSL_RenderContext(const LightingState& ls, const Eigen::Vector3f& _objScale, const Eigen::Quaternionf& orientation);
     virtual ~GLSL_RenderContext();
-    
+
     virtual void makeCurrent(const cmod::Material&);
     virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
                                  const void* vertexData);
-                 
+
     virtual void setLunarLambert(float);
     virtual void setAtmosphere(const Atmosphere*);
 
@@ -129,7 +129,7 @@ class GLSL_RenderContext : public RenderContext
      void initLightingEnvironment();
      void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
      void setShadowParameters(CelestiaGLProgram& prog);
-     
+
  private:
     const LightingState& lightingState;
     const Atmosphere* atmosphere;
@@ -137,10 +137,10 @@ class GLSL_RenderContext : public RenderContext
     float objRadius;
     Eigen::Vector3f objScale;
     Eigen::Quaternionf objOrientation;
-    
+
     // extended material properties
     float lunarLambert;
-    
+
     ShaderProperties shaderProps;
 };
 
@@ -150,7 +150,7 @@ class GLSLUnlit_RenderContext : public RenderContext
  public:
     GLSLUnlit_RenderContext(float _objRadius);
     virtual ~GLSLUnlit_RenderContext();
-    
+
     virtual void makeCurrent(const cmod::Material&);
     virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
                                  const void* vertexData);
@@ -158,11 +158,11 @@ class GLSLUnlit_RenderContext : public RenderContext
  private:
     void initLightingEnvironment();
     void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
-     
+
  private:
     cmod::Material::BlendMode blendMode;
     float objRadius;
-    
+
     ShaderProperties shaderProps;
 };
 

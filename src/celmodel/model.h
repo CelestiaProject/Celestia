@@ -80,7 +80,7 @@ class Model
      */
     bool pick(const Eigen::Vector3d& rayOrigin,
               const Eigen::Vector3d& rayDirection,
-              double& distance) const;    
+              double& distance) const;
 
     void transform(const Eigen::Vector3f& translation, float scale);
 

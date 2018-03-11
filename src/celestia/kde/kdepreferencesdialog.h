@@ -33,7 +33,7 @@ class KdePreferencesDialog : public KDialogBase {
 Q_OBJECT
 
 public:
-    KdePreferencesDialog( QWidget* parent, CelestiaCore* core );   
+    KdePreferencesDialog( QWidget* parent, CelestiaCore* core );
     ~KdePreferencesDialog();
 
 public slots:
@@ -55,7 +55,7 @@ public slots:
 protected:
     CelestiaCore* appCore;
     KdeApp* parent;
-    
+
     KKeyChooser* keyChooser;
 
     int savedRendererFlags;
@@ -88,10 +88,10 @@ protected:
     QComboBox *renderPathCombo;
     QLabel* renderPathLabel;
     QLabel* ambientLabel, *faintestLabel, *minFeatureSizeLabel;
-    
+
     void setTime(double d);
     double getTime() const;
 
     void setRenderPathLabel();
-};        
+};
 

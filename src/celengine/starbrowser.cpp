@@ -1,5 +1,5 @@
 // starbrowser.cpp
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Star browser tool for Celestia.
@@ -36,7 +36,7 @@ struct CloserStarPredicate
         Vector3f v0 = p0 * 1.0e6f - pos;
         Vector3f v1 = p1 * 1.0e6f - pos;
 
-        return (v0.squaredNorm() < v1.squaredNorm());                               
+        return (v0.squaredNorm() < v1.squaredNorm());
     }
 };
 

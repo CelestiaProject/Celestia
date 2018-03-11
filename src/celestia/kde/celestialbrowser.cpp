@@ -126,7 +126,7 @@ void CelestialBrowser::slotRefresh()
 
         if (starClass == "Bary") continue;
 
-	float dist = ucPos.offsetFromLy(star->getPosition()).norm();
+        float dist = ucPos.offsetFromLy(star->getPosition()).norm();
         CelListViewItem *starItem = new CelListViewItem(listStars, stardb->getStarName(*star), dist, _("ly"),
                 astro::absToAppMag(star->getAbsoluteMagnitude(), dist),
                 star->getAbsoluteMagnitude(), starClass);
@@ -143,28 +143,28 @@ void CelestialBrowser::slotRefresh()
     delete(stars);
 }
 
-void CelestialBrowser::addPlanetarySystem(CelListViewItem* parentItem, const PlanetarySystem* system, const Eigen::Vector3d* parentBodyPos) 
+void CelestialBrowser::addPlanetarySystem(CelListViewItem* parentItem, const PlanetarySystem* system, const Eigen::Vector3d* parentBodyPos)
 {
     if (parentItem == NULL || system == NULL) return;
-    for ( int i = 0; i < system->getSystemSize(); i++ ) 
+    for ( int i = 0; i < system->getSystemSize(); i++ )
     {
         const Body* body = system->getBody(i);
         if (body->getClassification() & (Body::Barycenter | Body::Invisible)) continue;
         Vector3d bodyPos = (body->getAstrocentricPosition(appSim->getTime()));
         CelListViewItem* item = NULL;
-        if (parentBodyPos == NULL) 
+        if (parentBodyPos == NULL)
         {
             double bodyDist = bodyPos.norm();
             item = new CelListViewItem(parentItem, body->getName(true),
                                        bodyDist / KM_PER_AU, _("au"),
                                        0, 0, getClassification(body->getClassification()));
-        } 
-        else 
+        }
+        else
         {
             Vector3d bodyVec(parentBodyPos->x() - bodyPos.x(), parentBodyPos->y() - bodyPos.y(), parentBodyPos->z() - bodyPos.z());
             double bodyDist = bodyVec.norm();
             item = new CelListViewItem(parentItem, body->getName(true),
-                                       bodyDist, "km", 
+                                       bodyDist, "km",
                                        0, 0, getClassification(body->getClassification()));
         }
         addPlanetarySystem(item, body->getSatellites(), &bodyPos);

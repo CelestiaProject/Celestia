@@ -237,7 +237,7 @@ template <typename T> Vector3d SampledOrbit<T>::computePosition(double jd) const
                 Vector3d v32((double) s3.x - (double) s2.x,
                              (double) s3.y - (double) s2.y,
                              (double) s3.z - (double) s2.z);
-                
+
                 // Estimate velocities by averaging the differences at adjacent spans
                 // (except at the end spans, where we just use a single velocity.)
                 Vector3d v0;
@@ -250,7 +250,7 @@ template <typename T> Vector3d SampledOrbit<T>::computePosition(double jd) const
                 {
                     v0 = v21;
                 }
-                
+
                 Vector3d v1;
                 if (n < (int) samples.size() - 1)
                 {
@@ -260,7 +260,7 @@ template <typename T> Vector3d SampledOrbit<T>::computePosition(double jd) const
                 else
                 {
                     v1 = v21;
-                }                
+                }
 
                 pos = cubicInterpolate(p0, v0, p1, v1, t);
             }
@@ -349,7 +349,7 @@ template <typename T> Vector3d SampledOrbit<T>::computeVelocity(double jd) const
                 Vector3d v32((double) s3.x - (double) s2.x,
                              (double) s3.y - (double) s2.y,
                              (double) s3.z - (double) s2.z);
-                
+
                 // Estimate velocities by averaging the differences at adjacent spans
                 // (except at the end spans, where we just use a single velocity.)
                 Vector3d v0;
@@ -362,7 +362,7 @@ template <typename T> Vector3d SampledOrbit<T>::computeVelocity(double jd) const
                 {
                     v0 = v21;
                 }
-                
+
                 Vector3d v1;
                 if (n < (int) samples.size() - 1)
                 {
@@ -372,7 +372,7 @@ template <typename T> Vector3d SampledOrbit<T>::computeVelocity(double jd) const
                 else
                 {
                     v1 = v21;
-                }                
+                }
 
                 vel = cubicInterpolateVelocity(p0, v0, p1, v1, t);
                 vel *= 1.0 / h;
@@ -686,7 +686,7 @@ static bool SkipComments(istream& in)
         {
             done = true;
         }
-        else 
+        else
         {
             if (inComment)
             {
@@ -739,7 +739,7 @@ template <typename T> SampledOrbit<T>* LoadSampledOrbit(const string& filename, 
         return NULL;
 
     SampledOrbit<T>* orbit = NULL;
-    
+
     orbit = new SampledOrbit<T>(interpolation);
 
     double lastSampleTime = -numeric_limits<double>::infinity();
@@ -794,7 +794,7 @@ template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const string& fi
         return NULL;
 
     SampledOrbitXYZV<T>* orbit = NULL;
-    
+
     orbit = new SampledOrbitXYZV<T>(interpolation);
 
     double lastSampleTime = -numeric_limits<double>::infinity();

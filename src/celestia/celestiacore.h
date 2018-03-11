@@ -1,5 +1,5 @@
 // celestiacore.h
-// 
+//
 // Copyright (C) 2001-2009, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
@@ -100,7 +100,7 @@ class ProgressNotifier
 public:
     ProgressNotifier() {};
     virtual ~ProgressNotifier() {};
-    
+
     virtual void update(const std::string&) = 0;
 };
 
@@ -168,7 +168,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         ForbiddenCursor     = 15,
         WhatsThisCursor     = 16,
     };
-    
+
     enum {
         Joy_XAxis           = 0,
         Joy_YAxis           = 1,
@@ -210,7 +210,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         Key_F10             = 20,
         Key_F11             = 21,
         Key_F12             = 22,
-		Key_NumPadDecimal   = 23,
+        Key_NumPadDecimal   = 23,
         Key_NumPad0         = 24,
         Key_NumPad1         = 25,
         Key_NumPad2         = 26,
@@ -221,7 +221,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         Key_NumPad7         = 31,
         Key_NumPad8         = 32,
         Key_NumPad9         = 33,
-		Key_BackTab         = 127,
+        Key_BackTab         = 127,
         KeyCount            = 128,
     };
 
@@ -243,7 +243,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         KbNormal         = 0,
         KbAutoComplete   = 1,
         KbPassToScript   = 2,
-    };        
+    };
 
     enum
     {
@@ -299,7 +299,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     Renderer* getRenderer() const;
     void showText(std::string s,
                   int horig = 0, int vorig = 0,
-                  int hoff = 0, int voff = 0, 
+                  int hoff = 0, int voff = 0,
                   double duration = 1.0e9);
     int getTextWidth(string s) const;
 
@@ -347,7 +347,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void addWatcher(CelestiaWatcher*);
     void removeWatcher(CelestiaWatcher*);
-    
+
     void setFaintest(float);
     void setFaintestAutoMag();
 
@@ -394,13 +394,13 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         virtual void setCursorShape(CursorShape) = 0;
         virtual CursorShape getCursorShape() const = 0;
     };
-    
+
     void setCursorHandler(CursorHandler*);
     CursorHandler* getCursorHandler() const;
 
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
     bool referenceMarkEnabled(const std::string& refMark, Selection sel = Selection()) const;
-    
+
  private:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
@@ -478,7 +478,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     ScriptState scriptState;
 
     int timeZoneBias;              // Diff in secs between local time and GMT
-    std:: string timeZoneName;	   // Name of the current time zone
+    std:: string timeZoneName;     // Name of the current time zone
 
     // Frame rate counter variables
     bool showFPSCounter;
@@ -516,7 +516,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::vector<CelestiaWatcher*> watchers;
     CursorHandler* cursorHandler;
     CursorShape defaultCursorShape;
-    
+
     std::vector<Url*> history;
     std::vector<Url*>::size_type historyCurrent;
     std::string startURL;
@@ -540,7 +540,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     friend TextureFont* getTitleFont(CelestiaCore*);
 #endif
 
-	//Audio support by Victor, modified by Vincent & Alexell
+    //Audio support by Victor, modified by Vincent & Alexell
 //    FMOD::System       *sysaudio;
 //    FMOD::Sound        *soundSources[MAX_CHANNELS];
 //    FMOD::Channel      *channels[MAX_CHANNELS];
@@ -548,7 +548,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 //    unsigned int        version;
 //
 //    void stopSounds();
-//	//Added by Vincent:
+//    //Added by Vincent:
 //    void pauseSounds();
 //    //void resumeSounds();
 //    bool pause[7];

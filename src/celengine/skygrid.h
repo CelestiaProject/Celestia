@@ -38,7 +38,7 @@ public:
         IncreasingCounterclockwise,
         IncreasingClockwise,
     };
-    
+
     SkyGrid();
     ~SkyGrid();
 
@@ -88,13 +88,13 @@ public:
     {
         m_longitudeUnits = longitudeUnits;
     }
-    
+
     //! Get the direction of increasing longitude
     LongitudeDirection longitudeDirection() const
     {
         return m_longitudeDirection;
     }
-    
+
     //! Set the direction of increasing longitude (clockwise or counterclockwise)
     void setLongitudeDirection(LongitudeDirection longitudeDirection)
     {

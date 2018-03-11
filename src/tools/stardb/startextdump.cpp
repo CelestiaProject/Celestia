@@ -173,8 +173,8 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut,
         uint16 stellarClass  = readUshort(in);
         uint8  parallaxError = readUbyte(in);
 
-	// Compute distance based on parallax
-	double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
+        // Compute distance based on parallax
+        double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
         out << catalogNum << ' ';
         out << setprecision(8);
 

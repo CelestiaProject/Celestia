@@ -67,7 +67,7 @@ public:
     StarPredicate(Criterion _criterion, const UniversalCoord& _observerPos);
 
     bool operator()(const Star* star0, const Star* star1) const;
-    
+
 private:
     Criterion criterion;
     Vector3f pos;
@@ -386,7 +386,7 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
                               unsigned int nStars)
 {
     const StarDatabase& stardb = *universe->getStarCatalog();
-    
+
     observerPos = _observerPos;
     now = _now;
 
@@ -523,7 +523,7 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     // Additional filtering controls
     QGroupBox* filterGroup = new QGroupBox(_("Filter"));
     QGridLayout* filterGroupLayout = new QGridLayout();
-    
+
     withPlanetsFilterBox = new QCheckBox(_("With Planets"));
     connect(withPlanetsFilterBox, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
     filterGroupLayout->addWidget(withPlanetsFilterBox, 0, 0);
@@ -597,7 +597,7 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     colorSwatch = new ColorSwatchWidget(QColor("cyan"));
     colorSwatch->setToolTip(_("Click to select marker color"));
     markGroupLayout->addWidget(colorSwatch, 1, 2);
-    
+
     labelMarkerBox = new QCheckBox(_("Label"));
     markGroupLayout->addWidget(labelMarkerBox, 1, 3);
 
@@ -696,7 +696,7 @@ void CelestialBrowser::slotMarkSelected()
     Color color((float) markerColor.redF(),
                 (float) markerColor.greenF(),
                 (float) markerColor.blueF());
-    
+
     Universe* universe = appCore->getSimulation()->getUniverse();
     string label;
 

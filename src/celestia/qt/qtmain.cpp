@@ -24,7 +24,7 @@
 #include <QBitmap>
 #include <vector>
 #include "qtappwin.h"
-#include <qtextcodec.h> 
+#include <qtextcodec.h>
 
 using namespace std;
 
@@ -55,14 +55,14 @@ void loadModules(QSplashScreen* psplash)
             ++i;
         }
         psplash->showMessage(_("Loading data files: ") + QString::number(i) + "%" + "\n\n",
-								Qt::AlignHCenter | Qt::AlignBottom,
-								Qt::white);
+                             Qt::AlignHCenter | Qt::AlignBottom,
+                             Qt::white);
     }
 }
 /////////////////////////////////////////
 
 int main(int argc, char *argv[])
-{  
+{
     QApplication app(argc, argv);
 
     Q_INIT_RESOURCE(icons);
@@ -81,12 +81,12 @@ int main(int argc, char *argv[])
     splash.show(); // Enable command
 
     // Gettext integration
-    setlocale(LC_ALL, ""); 
-    setlocale(LC_NUMERIC, "C"); 
+    setlocale(LC_ALL, "");
+    setlocale(LC_NUMERIC, "C");
     bindtextdomain("celestia","locale");
-    bind_textdomain_codeset("celestia", "UTF-8"); 
+    bind_textdomain_codeset("celestia", "UTF-8");
     bindtextdomain("celestia_constellations","locale");
-    bind_textdomain_codeset("celestia_constellations", "UTF-8"); 
+    bind_textdomain_codeset("celestia_constellations", "UTF-8");
     textdomain("celestia");
 
     // By default, QString converts the const char * data into Unicode Latin-1 characters.
@@ -96,18 +96,18 @@ int main(int argc, char *argv[])
 
     CelestiaAppWindow window;
 
-	loadModules(&splash);
-	
+    loadModules(&splash);
+
     // Connect the splash screen to the main window so that it
     // can receive progress notifications as Celestia files required
     // for startup are loaded.
-	// Disable command
+    // Disable command
     //QObject::connect(&window, SIGNAL(progressUpdate(const QString&, int, const QColor&)),
     //                 &splash, SLOT(showMessage(const QString&, int, const QColor&)));
 
     window.init(configFileName, extrasDirectories);
     window.show();
-	
+
     splash.finish(&window);
 
     // Set the main window to be the cel url handler

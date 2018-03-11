@@ -1,5 +1,5 @@
 // plane.h
-// 
+//
 // Copyright (C) 2000-2008, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -70,7 +70,7 @@ template<class T> T Plane<T>::distanceToSegment(const Point3<T>& origin,
 {
     T u = (direction * normal);
     T dist;
-    
+
     // Avoid divide by zero; near-zero values shouldn't cause problems
     if (u == 0)
     {
@@ -94,7 +94,7 @@ template<class T> T Plane<T>::distanceToSegment(const Point3<T>& origin,
             dist = 0.0;
         }
     }
-    
+
     return dist;
 }
 

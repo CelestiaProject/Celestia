@@ -92,7 +92,7 @@ class FloatShaderParameter
     FloatShaderParameter(GLhandleARB _obj, const char* name);
 
     FloatShaderParameter& operator=(float);
-    
+
  private:
     int slot;
 };

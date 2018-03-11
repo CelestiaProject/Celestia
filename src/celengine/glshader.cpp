@@ -38,7 +38,7 @@ GLShader::compile(const vector<string>& source)
 {
     if (source.empty())
         return ShaderStatus_EmptyProgram;
-    
+
     // Convert vector of shader source strings to an array for OpenGL
     const char** sourceStrings = new const char*[source.size()];
     for (unsigned int i = 0; i < source.size(); i++)
@@ -50,7 +50,7 @@ GLShader::compile(const vector<string>& source)
 
     // Actually compile the shader
     glCompileShaderARB(id);
-    
+
     GLint compileSuccess;
     glGetObjectParameterivARB(id, GL_OBJECT_COMPILE_STATUS_ARB,
                                    &compileSuccess);
@@ -235,7 +235,7 @@ GLShaderLoader::CreateFragmentShader(const vector<string>& source,
 GLShaderStatus
 GLShaderLoader::CreateVertexShader(const string& source,
                                    GLVertexShader** vs)
-                                        
+
 {
     vector<string> v;
     v.push_back(source);
@@ -338,11 +338,11 @@ GetInfoLog(GLhandleARB obj)
     char* log = new char[logLength];
     if (log == NULL)
         return string();
-    
+
     glGetInfoLogARB(obj, logLength, &charsWritten, log);
-    
+
     string s(log, charsWritten);
     delete[] log;
-    
+
     return s;
 }

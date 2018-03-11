@@ -207,7 +207,7 @@ SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
         item->nChildren += orbitingStars->size();
     if (sys != NULL)
         item->nChildren += sys->getSystemSize();
-    
+
     if (item->nChildren != 0)
     {
         int childIndex = 0;
@@ -252,15 +252,15 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
     vector<Body*> asteroids;
     vector<Body*> spacecraft;
     vector<Body*> minorMoons;
-	vector<Body*> surfaceFeatures;
-	vector<Body*> components;
+    vector<Body*> surfaceFeatures;
+    vector<Body*> components;
     vector<Body*> other;
     vector<Body*> normal;
 
     bool groupAsteroids = true;
     bool groupSpacecraft = true;
-	bool groupComponents = true;
-	bool groupSurfaceFeatures = true;
+    bool groupComponents = true;
+    bool groupSurfaceFeatures = true;
     if (parent.body())
     {
         // Don't put asteroid moons in the asteroid group; make them
@@ -301,18 +301,18 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
             else
                 normal.push_back(body);
             break;
-		case Body::Component:
-			if (groupComponents)
-				components.push_back(body);
-			else
-				normal.push_back(body);
-			break;
-		case Body::SurfaceFeature:
-			if (groupSurfaceFeatures)
-				surfaceFeatures.push_back(body);
-			else
-				normal.push_back(body);
-			break;
+        case Body::Component:
+            if (groupComponents)
+                components.push_back(body);
+            else
+                normal.push_back(body);
+            break;
+        case Body::SurfaceFeature:
+            if (groupSurfaceFeatures)
+                surfaceFeatures.push_back(body);
+            else
+                normal.push_back(body);
+            break;
         default:
             other.push_back(body);
             break;
@@ -331,10 +331,10 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
         item->nChildren++;
     if (!minorMoons.empty())
         item->nChildren++;
-	if (!surfaceFeatures.empty())
-		item->nChildren++;
-	if (!components.empty())
-		item->nChildren++;
+    if (!surfaceFeatures.empty())
+        item->nChildren++;
+    if (!components.empty())
+        item->nChildren++;
     if (!other.empty())
         item->nChildren++;
 
@@ -386,21 +386,21 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
                 childIndex++;
             }
 
-			if (!surfaceFeatures.empty())
-			{
+            if (!surfaceFeatures.empty())
+            {
                 item->children[childIndex] = createGroupTreeItem(Body::SurfaceFeature,
                                                                  surfaceFeatures,
                                                                  item, childIndex);
                 childIndex++;
-			}
+            }
 
-			if (!components.empty())
-			{
+            if (!components.empty())
+            {
                 item->children[childIndex] = createGroupTreeItem(Body::Component,
                                                                  components,
                                                                  item, childIndex);
                 childIndex++;
-			}
+            }
 
             if (!other.empty())
             {
@@ -526,10 +526,10 @@ static QString objectTypeName(const Selection& sel)
             return _("Spacecraft");
         else if (classification == Body::Invisible)
             return _("Reference point");
-		else if (classification == Body::Component)
-			return _("Component");
-		else if (classification == Body::SurfaceFeature)
-			return _("Surface feature");
+        else if (classification == Body::Component)
+            return _("Component");
+        else if (classification == Body::SurfaceFeature)
+            return _("Surface feature");
     }
 
     return _("Unknown");
@@ -550,10 +550,10 @@ static QString classificationName(int classification)
         return _("Reference points");
     else if (classification == Body::MinorMoon)
         return _("Minor moons");
-	else if (classification == Body::Component)
-		return _("Components");
-	else if (classification == Body::SurfaceFeature)
-		return _("Surface features");
+    else if (classification == Body::Component)
+        return _("Components");
+    else if (classification == Body::SurfaceFeature)
+        return _("Surface features");
     else
         return _("Other objects");
 }
@@ -696,7 +696,7 @@ SolarSystemBrowser::~SolarSystemBrowser()
 void SolarSystemBrowser::slotRefreshTree()
 {
     Simulation* sim = appCore->getSimulation();
-    
+
     // Update the browser with the solar system closest to the active observer
     SolarSystem* solarSys = sim->getUniverse()->getNearestSolarSystem(sim->getActiveObserver()->getPosition());
 
@@ -732,7 +732,7 @@ void SolarSystemBrowser::slotRefreshTree()
             treeView->setExpanded(secondary, true);
         }
     }
-    
+
 }
 
 
@@ -762,7 +762,7 @@ void SolarSystemBrowser::slotMarkSelected()
     Color color((float) markerColor.redF(),
                 (float) markerColor.greenF(),
                 (float) markerColor.blueF());
-    
+
     Universe* universe = appCore->getSimulation()->getUniverse();
     string label;
 

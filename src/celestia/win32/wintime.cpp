@@ -30,12 +30,12 @@ public:
     void init(HWND _hDlg);
     double getTime() const;
     void setTime(const double _tdb);
-    
+
     void updateControls();
-    
+
     LRESULT command(WPARAM wParam, LPARAM lParam);
     LRESULT notify(int id, const NMHDR& nmhdr);
-    
+
 private:
     HWND hDlg;
     CelestiaCore* appCore;
@@ -43,7 +43,7 @@ private:
     bool useLocalTime;
     bool useUTCOffset;
     int localTimeZoneBiasInSeconds;
-    
+
     void getLocalTimeZoneInfo();
 };
 
@@ -83,7 +83,7 @@ void
 SetTimeDialog::init(HWND _hDlg)
 {
     hDlg = _hDlg;
-    
+
     SetWindowLongPtr(hDlg, DWLP_USER, reinterpret_cast<LPARAM>(this));
     getLocalTimeZoneInfo();
 
@@ -97,7 +97,7 @@ SetTimeDialog::init(HWND _hDlg)
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_ADDSTRING, 0, (LPARAM) _("Time Zone Name"));
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_ADDSTRING, 0, (LPARAM) _("UTC Offset"));
     bind_textdomain_codeset("celestia", "UTF8");
-    
+
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_SETCURSEL, useLocalTime ? 1 : 0, 0);
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_SETCURSEL, useUTCOffset ? 1 : 0, 0);
 
@@ -158,9 +158,9 @@ SetTimeDialog::updateControls()
 
     if (useLocalTime)
         tztdb += localTimeZoneBiasInSeconds / 86400.0;
-        
+
     astro::Date newTime = astro::TDBtoUTC(tztdb);
-    
+
     sysTime.wYear = newTime.year;
     sysTime.wMonth = newTime.month;
     sysTime.wDay = newTime.day;
@@ -207,17 +207,17 @@ SetTimeDialog::command(WPARAM wParam, LPARAM lParam)
             appCore->setDateFormat((astro::Date::Format) (useLocalTime && useUTCOffset ? 2 : 1));
             EndDialog(hDlg, 0);
             return TRUE;
-            
+
         case IDCANCEL:
             EndDialog(hDlg, 0);
             return TRUE;
-    
+
         case IDC_SETCURRENTTIME:
             // Set time to the current system time
             setTime(astro::UTCtoTDB((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1)));
             updateControls();
             return TRUE;
-            
+
         case IDC_COMBOBOX_TIMEZONE:
             if (HIWORD(wParam) == CBN_SELCHANGE)
             {
@@ -226,7 +226,7 @@ SetTimeDialog::command(WPARAM wParam, LPARAM lParam)
                 EnableWindow (GetDlgItem (hDlg, IDC_COMBOBOX_DATE_FORMAT), useLocalTime);
                 updateControls();
             }
-            return TRUE;          
+            return TRUE;
 
         case IDC_COMBOBOX_DATE_FORMAT:
             if (HIWORD(wParam) == CBN_SELCHANGE)
@@ -235,7 +235,7 @@ SetTimeDialog::command(WPARAM wParam, LPARAM lParam)
                 useUTCOffset = (selection == 1);
                 updateControls();
             }
-            return TRUE;  
+            return TRUE;
 
         case IDC_JDPICKER:
             if (HIWORD(wParam) == EN_KILLFOCUS)
@@ -257,7 +257,7 @@ LRESULT
 SetTimeDialog::notify(int id, const NMHDR& hdr)
 {
     astro::Date newTime(tdb);
-    
+
     if (hdr.code == DTN_DATETIMECHANGE)
     {
         LPNMDATETIMECHANGE change = (LPNMDATETIMECHANGE) &hdr;
@@ -275,7 +275,7 @@ SetTimeDialog::notify(int id, const NMHDR& hdr)
                 newTime.hour = sysTime.wHour;
                 newTime.minute = sysTime.wMinute;
                 newTime.seconds = sysTime.wSecond + (double) sysTime.wMilliseconds / 1000.0;
-                
+
                 tdb = astro::UTCtoTDB(newTime);
                 if (useLocalTime)
                     tdb -= localTimeZoneBiasInSeconds / 86400.0;
@@ -284,12 +284,12 @@ SetTimeDialog::notify(int id, const NMHDR& hdr)
             }
         }
     }
-        
+
     return TRUE;
 }
 
 
-static BOOL APIENTRY 
+static BOOL APIENTRY
 SetTimeProc(HWND hDlg,
             UINT message,
             WPARAM wParam,
@@ -311,7 +311,7 @@ SetTimeProc(HWND hDlg,
 
     case WM_COMMAND:
         return timeDialog->command(wParam, lParam);
-        
+
     case WM_NOTIFY:
         return timeDialog->notify((int) wParam, *reinterpret_cast<NMHDR*>(lParam));
     }
@@ -326,8 +326,8 @@ ShowSetTimeDialog(HINSTANCE appInstance,
                   CelestiaCore* appCore)
 {
     SetTimeDialog* timeDialog = new SetTimeDialog(appCore);
-    
+
     DialogBoxParam(appInstance, MAKEINTRESOURCE(IDD_SETTIME), appWindow, (DLGPROC)SetTimeProc, reinterpret_cast<LPARAM>(timeDialog));
-    
+
     delete timeDialog;
 }

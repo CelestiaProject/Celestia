@@ -29,9 +29,9 @@ public:
     int close();
     bool createBitmap();
     void updateWindow();
-    
+
     void setMessage(const std::string& msg);
-    
+
 private:
     HWND hwnd;
     char* className;

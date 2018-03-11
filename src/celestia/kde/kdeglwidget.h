@@ -43,7 +43,7 @@ public:
 
     void setCursorShape(CelestiaCore::CursorShape);
     CelestiaCore::CursorShape getCursorShape() const;
-    
+
 protected:
 
     void initializeGL();

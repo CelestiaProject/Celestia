@@ -78,7 +78,7 @@ Orbit* TrajectoryInfo::load(const string& filename)
         }
     }
     else
-    {   
+    {
         switch (precision)
         {
         case TrajectoryPrecisionSingle:

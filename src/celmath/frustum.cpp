@@ -1,5 +1,5 @@
 // frustum.cpp
-// 
+//
 // Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -129,7 +129,7 @@ Frustum::Aspect Frustum::testCapsule(const Capsulef& capsule) const
     int nPlanes = infinite ? 5 : 6;
     int intersections = 0;
     float r2 = capsule.radius * capsule.radius;
-    
+
     // TODO: Unnecessary after Eigen conversion of Capsule class
     Vector3f capsuleOrigin(capsule.origin.x, capsule.origin.y, capsule.origin.z);
     Vector3f capsuleAxis(capsule.axis.x, capsule.axis.y, capsule.axis.z);

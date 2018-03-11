@@ -1,5 +1,5 @@
 // frame.cpp
-// 
+//
 // Reference frame base class.
 //
 // Copyright (C) 2003-2009, the Celestia Development Team
@@ -57,11 +57,11 @@ static UniversalCoord rotate(const UniversalCoord& uc, const Quaterniond& q)
 {
     Matrix3d r = q.toRotationMatrix();
     UniversalCoord uc1;
-    
+
     uc1.x = uc.x * BigFix(r(0, 0)) + uc.y * BigFix(r(1, 0)) + uc.z * BigFix(r(2, 0));
     uc1.y = uc.x * BigFix(r(0, 1)) + uc.y * BigFix(r(1, 1)) + uc.z * BigFix(r(2, 1));
     uc1.z = uc.x * BigFix(r(0, 2)) + uc.y * BigFix(r(1, 2)) + uc.z * BigFix(r(2, 2));
-    
+
     return uc1;
 }
 
@@ -152,7 +152,7 @@ ReferenceFrame::convertToAstrocentric(const Vector3d& p, double tjd) const
         // bad if the center object is a galaxy
         // what about locations?
         return Vector3d::Zero();
-    }    
+    }
 }
 
 
@@ -175,11 +175,11 @@ ReferenceFrame::getAngularVelocity(double tjd) const
     if (std::abs(dq.w()) > 0.99999999)
         return Vector3d::Zero();
     else
-        return dq.vec().normalized() * 	(2.0 * acos(dq.w()) / ANGULAR_VELOCITY_DIFF_DELTA);
+        return dq.vec().normalized() *     (2.0 * acos(dq.w()) / ANGULAR_VELOCITY_DIFF_DELTA);
 #ifdef CELVEC
     Vector3d v(dq.x, dq.y, dq.z);
-	v.normalize();
-	return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);
+    v.normalize();
+    return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);
 #endif
 }
 
@@ -216,7 +216,7 @@ getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth,
         if (orbitFrameDepth > maxDepth)
             return orbitFrameDepth;
     }
-        
+
     if (body->getBodyFrame(0.0) != NULL && frameType == ReferenceFrame::OrientationFrame)
     {
         bodyFrameDepth = body->getBodyFrame(0.0)->nestingDepth(depth + 1, maxDepth, frameType);
@@ -238,7 +238,7 @@ J2000EclipticFrame::J2000EclipticFrame(Selection center) :
 bool
 J2000EclipticFrame::isInertial() const
 {
-	return true;
+    return true;
 }
 
 
@@ -269,7 +269,7 @@ J2000EquatorFrame::getOrientation(double /* tjd */) const
 bool
 J2000EquatorFrame::isInertial() const
 {
-	return true;
+    return true;
 }
 
 
@@ -318,11 +318,11 @@ BodyFixedFrame::getOrientation(double tjd) const
 Vector3d
 BodyFixedFrame::getAngularVelocity(double tjd) const
 {
-	switch (fixObject.getType())
-	{
-	case Selection::Type_Body:
+    switch (fixObject.getType())
+    {
+    case Selection::Type_Body:
         return fixObject.body()->getAngularVelocity(tjd);
-	case Selection::Type_Star:
+    case Selection::Type_Star:
         return fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd);
     case Selection::Type_Location:
         if (fixObject.location()->getParentBody())
@@ -331,14 +331,14 @@ BodyFixedFrame::getAngularVelocity(double tjd) const
             return Vector3d::Zero();
     default:
         return Vector3d::Zero();
-	}
+    }
 }
 
 
 bool
 BodyFixedFrame::isInertial() const
 {
-	return false;
+    return false;
 }
 
 
@@ -403,12 +403,12 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
 Vector3d
 BodyMeanEquatorFrame::getAngularVelocity(double tjd) const
 {
-	if (isFrozen)
-	{
+    if (isFrozen)
+    {
         return Vector3d::Zero();
-	}
-	else
-	{
+    }
+    else
+    {
         if (equatorObject.body() != NULL)
         {
             return equatorObject.body()->getBodyFrame(tjd)->getAngularVelocity(tjd);
@@ -417,32 +417,32 @@ BodyMeanEquatorFrame::getAngularVelocity(double tjd) const
         {
             return Vector3d::Zero();
         }
-	}
+    }
 }
 
 
 bool
 BodyMeanEquatorFrame::isInertial() const
 {
-	if (isFrozen)
-	{
-		return true;
-	}
-	else
-	{
-		// Although the mean equator of an object may vary slightly due to precession,
-		// treat it as an inertial frame as long as the body frame of the object is
-		// also inertial.
-		if (equatorObject.body() != NULL)
-		{
+    if (isFrozen)
+    {
+        return true;
+    }
+    else
+    {
+        // Although the mean equator of an object may vary slightly due to precession,
+        // treat it as an inertial frame as long as the body frame of the object is
+        // also inertial.
+        if (equatorObject.body() != NULL)
+        {
             // TIMELINE-TODO: isInertial must take a time argument.
-			return equatorObject.body()->getBodyFrame(0.0)->isInertial();
-		}
+            return equatorObject.body()->getBodyFrame(0.0)->isInertial();
+        }
         else
         {
             return true;
         }
-	}
+    }
 }
 
 
@@ -471,9 +471,9 @@ CachingFrame::CachingFrame(Selection _center) :
     ReferenceFrame(_center),
     lastTime(-1.0e50),
     lastOrientation(Quaterniond::Identity()),
-	lastAngularVelocity(0.0, 0.0, 0.0),
-	orientationCacheValid(false),
-	angularVelocityCacheValid(false)
+    lastAngularVelocity(0.0, 0.0, 0.0),
+    orientationCacheValid(false),
+    angularVelocityCacheValid(false)
 {
 }
 
@@ -481,39 +481,39 @@ CachingFrame::CachingFrame(Selection _center) :
 Quaterniond
 CachingFrame::getOrientation(double tjd) const
 {
-	if (tjd != lastTime)
-	{
-		lastTime = tjd;
-		lastOrientation = computeOrientation(tjd);
-		orientationCacheValid = true;
-		angularVelocityCacheValid = false;
-	}
-	else if (!orientationCacheValid)
-	{
-		lastOrientation = computeOrientation(tjd);
-		orientationCacheValid = true;
-	}
+    if (tjd != lastTime)
+    {
+        lastTime = tjd;
+        lastOrientation = computeOrientation(tjd);
+        orientationCacheValid = true;
+        angularVelocityCacheValid = false;
+    }
+    else if (!orientationCacheValid)
+    {
+        lastOrientation = computeOrientation(tjd);
+        orientationCacheValid = true;
+    }
 
-	return lastOrientation;
+    return lastOrientation;
 }
 
 
 Vector3d CachingFrame::getAngularVelocity(double tjd) const
 {
-	if (tjd != lastTime)
-	{
-		lastTime = tjd;
-		lastAngularVelocity = computeAngularVelocity(tjd);
-		orientationCacheValid = false;
-		angularVelocityCacheValid = true;
-	}
-	else if (!angularVelocityCacheValid)
-	{
-		lastAngularVelocity = computeAngularVelocity(tjd);
-		angularVelocityCacheValid = true;
-	}
+    if (tjd != lastTime)
+    {
+        lastTime = tjd;
+        lastAngularVelocity = computeAngularVelocity(tjd);
+        orientationCacheValid = false;
+        angularVelocityCacheValid = true;
+    }
+    else if (!angularVelocityCacheValid)
+    {
+        lastAngularVelocity = computeAngularVelocity(tjd);
+        angularVelocityCacheValid = true;
+    }
 
-	return lastAngularVelocity;
+    return lastAngularVelocity;
 }
 
 
@@ -525,10 +525,10 @@ Vector3d CachingFrame::computeAngularVelocity(double tjd) const
 {
     Quaterniond q0 = getOrientation(tjd);
 
-	// Call computeOrientation() instead of getOrientation() so that we
-	// don't affect the cached value. 
-	// TODO: check the valid ranges of the frame to make sure that
-	// jd+dt is still in range.
+    // Call computeOrientation() instead of getOrientation() so that we
+    // don't affect the cached value.
+    // TODO: check the valid ranges of the frame to make sure that
+    // jd+dt is still in range.
     Quaterniond q1 = computeOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
 
     Quaterniond dq = q0.conjugate() * q1;
@@ -639,7 +639,7 @@ TwoVectorFrame::computeOrientation(double tjd) const
         }
 
         // The axes are the rows of a rotation matrix. The getOrientation
-        // method must return the quaternion representation of the 
+        // method must return the quaternion representation of the
         // orientation, so convert the rotation matrix to a quaternion now.
         Quatd q = Quatd::matrixToQuaternion(Mat3d(v[0], v[1], v[2]));
 #endif
@@ -679,10 +679,10 @@ TwoVectorFrame::computeOrientation(double tjd) const
 bool
 TwoVectorFrame::isInertial() const
 {
-	// Although it's possible to specify an inertial two-vector frame, we won't
-	// bother trying to distinguish these cases: all two-vector frames will be
-	// treated as non-inertial.
-	return true;
+    // Although it's possible to specify an inertial two-vector frame, we won't
+    // bother trying to distinguish these cases: all two-vector frames will be
+    // treated as non-inertial.
+    return true;
 }
 
 
@@ -735,7 +735,7 @@ FrameVector::operator=(const FrameVector& fv)
     frame = fv.frame;
     if (frame != NULL)
         frame->addRef();
-    
+
     return *this;
 }
 

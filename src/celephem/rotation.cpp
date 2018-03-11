@@ -51,8 +51,8 @@ RotationModel::angularVelocityAtTime(double tdb) const
     return dq.vec().normalized() * (2.0 * acos(dq.w()) / dt);
 #ifdef CELVEC
     Vector3d v(dq.x, dq.y, dq.z);
-	v.normalize();
-	return v * (2.0 * acos(dq.w) / dt);
+    v.normalize();
+    return v * (2.0 * acos(dq.w) / dt);
 #endif
 }
 
@@ -89,7 +89,7 @@ CachingRotationModel::spin(double tjd) const
         lastSpin = computeSpin(tjd);
         spinCacheValid = true;
     }
-    
+
     return lastSpin;
 }
 
@@ -110,8 +110,8 @@ CachingRotationModel::equatorOrientationAtTime(double tjd) const
         lastEquator = computeEquatorOrientation(tjd);
         equatorCacheValid = true;
     }
-    
-    return lastEquator;    
+
+    return lastEquator;
 }
 
 
@@ -131,8 +131,8 @@ CachingRotationModel::angularVelocityAtTime(double tjd) const
         lastAngularVelocity = computeAngularVelocity(tjd);
         angularVelocityCacheValid = true;
     }
-    
-    return lastAngularVelocity;    
+
+    return lastAngularVelocity;
 }
 
 
@@ -141,21 +141,21 @@ CachingRotationModel::computeAngularVelocity(double tjd) const
 {
     double dt = chooseDiffTimeDelta(*this);
     Quaterniond q0 = orientationAtTime(tjd);
-    
+
     // Call computeSpin/computeEquatorOrientation instead of orientationAtTime
     // in order to avoid affecting the cache.
     Quaterniond spin = computeSpin(tjd + dt);
     Quaterniond equator = computeEquatorOrientation(tjd + dt);
     Quaterniond q1 = spin * equator;
     Quaterniond dq = q1.conjugate() * q0;
-    
+
     if (std::abs(dq.w()) > 0.99999999)
         return Vector3d::Zero();
-    
+
     return dq.vec().normalized() * (2.0 * acos(dq.w()) / dt);
 #ifdef CELVEC
-	Vec3d v(dq.x, dq.y, dq.z);
-	v.normalize();
+    Vec3d v(dq.x, dq.y, dq.z);
+    v.normalize();
     return v * (2.0 * acos(dq.w) / dt);
 #endif
 }
@@ -235,7 +235,7 @@ UniformRotationModel::spin(double tjd) const
     // planet texture maps where zero deg long. is in the middle of
     // the texture.
     remainder += 0.5;
-    
+
     return YRotation(-remainder * 2 * PI - offset);
 }
 
@@ -251,7 +251,7 @@ Vector3d
 UniformRotationModel::angularVelocityAtTime(double tdb) const
 {
     Vector3d v = equatorOrientationAtTime(tdb).conjugate() * Vector3d::UnitY();;
-	return v * (2.0 * PI / period);
+    return v * (2.0 * PI / period);
 }
 
 
@@ -304,7 +304,7 @@ PrecessingRotationModel::spin(double tjd) const
     // planet texture maps where zero deg long. is in the middle of
     // the texture.
     remainder += 0.5;
-    
+
     return YRotation(-remainder * 2 * PI - offset);
 }
 

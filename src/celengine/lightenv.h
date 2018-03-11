@@ -94,7 +94,7 @@ public:
 
     Eigen::Vector3f eyeDir_obj;
     Eigen::Vector3f eyePos_obj;
-    
+
     Eigen::Vector3f ambientColor;
 };
 

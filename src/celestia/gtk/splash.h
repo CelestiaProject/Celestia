@@ -22,27 +22,27 @@ typedef struct _SplashData SplashData;
  * from the core. */
 class GtkSplashProgressNotifier : public ProgressNotifier
 {
-	public:
-		GtkSplashProgressNotifier(SplashData* _splash);
-		virtual ~GtkSplashProgressNotifier();
+    public:
+        GtkSplashProgressNotifier(SplashData* _splash);
+        virtual ~GtkSplashProgressNotifier();
 
-		virtual void update(const string& filename);
+        virtual void update(const string& filename);
 
-	private:
-		SplashData* splash;
+    private:
+        SplashData* splash;
 };
 
 /* Struct holds all information relevant to the splash screen. */
 struct _SplashData {
-	AppData* app;
-	
-	GtkWidget* splash;
-	GtkWidget* label;
+    AppData* app;
 
-	GtkSplashProgressNotifier* notifier;
+    GtkWidget* splash;
+    GtkWidget* label;
 
-	gboolean hasARGB;
-	gboolean redraw;
+    GtkSplashProgressNotifier* notifier;
+
+    gboolean hasARGB;
+    gboolean redraw;
 };
 
 

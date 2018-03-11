@@ -148,7 +148,7 @@ istream& operator>>(istream& in, QuotedString& qs)
     }
 
     string s;
-    
+
     in >> c;
     while (in && c != '"')
     {
@@ -392,7 +392,7 @@ bool convertSpkToXyzv(const Configuration& config,
         Vec3d pTest = getStateVector(targetID, tmid, config.frameName, observerID).position;
         Vec3d pInterp = cubicInterpolate(lastState.position,
                                          lastState.velocity * dt,
-                                         s1.position, 
+                                         s1.position,
                                          s1.velocity * dt,
                                          0.5);
         nTests++;
@@ -445,7 +445,7 @@ bool convertSpkToXyzv(const Configuration& config,
                 positionError = (pInterp - pTest).length();
             }
         }
-    
+
         t = t + dt;
         lastState = s1;
 
@@ -547,7 +547,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    
+
     Configuration config;
     if (!readConfig(configFile, config))
     {

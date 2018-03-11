@@ -17,12 +17,12 @@
 int rotation_new(lua_State* l, const Quatd& qd)
 {
     CelxLua celx(l);
-    
+
     Quatd* q = reinterpret_cast<Quatd*>(lua_newuserdata(l, sizeof(Quatd)));
     *q = qd;
-    
+
     celx.setClass(Celx_Rotation);
-    
+
     return 1;
 }
 
@@ -44,7 +44,7 @@ static Quatd* this_rotation(lua_State* l)
     {
         celx.doError("Bad rotation object!");
     }
-    
+
     return q;
 }
 
@@ -251,9 +251,9 @@ static int rotation_tostring(lua_State* l)
 void CreateRotationMetaTable(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     celx.createClassMetatable(Celx_Rotation);
-    
+
     celx.registerMethod("real", rotation_real);
     celx.registerMethod("imag", rotation_imag);
     celx.registerMethod("transform", rotation_transform);
@@ -264,7 +264,7 @@ void CreateRotationMetaTable(lua_State* l)
     celx.registerMethod("__mul", rotation_mult);
     celx.registerMethod("__index", rotation_get);
     celx.registerMethod("__newindex", rotation_set);
-    
+
     lua_pop(l, 1); // remove metatable from stack
 }
 

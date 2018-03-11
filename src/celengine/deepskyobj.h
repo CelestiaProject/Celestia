@@ -43,10 +43,10 @@ class DeepSkyObject
 
     Eigen::Vector3d getPosition() const;
     void setPosition(const Eigen::Vector3d&);
-    
-	static void hsv2rgb( float*, float*, float*, float, float, float);
-    
-	virtual const char* getType() const = 0;
+
+    static void hsv2rgb( float*, float*, float*, float, float, float);
+
+    virtual const char* getType() const = 0;
     virtual void setType(const std::string&) = 0;
     virtual size_t getDescription(char* buf, size_t bufLength) const;
 
@@ -62,11 +62,11 @@ class DeepSkyObject
 
     /*! Return the radius of the object. This radius will be displayed in the UI and
      *  should match the conventional astronomical definition of the object size.
-     */    
+     */
     float getRadius() const { return radius; }
     void setRadius(float r);
     virtual float getHalfMassRadius() const { return radius; }
-    
+
     float getAbsoluteMagnitude() const;
     void setAbsoluteMagnitude(float);
 
@@ -77,9 +77,9 @@ class DeepSkyObject
     void setVisible(bool _visible) { visible = _visible; }
     bool isClickable() const { return clickable; }
     void setClickable(bool _clickable) { clickable = _clickable; }
-    
 
-	virtual const char* getObjTypeName() const = 0;
+
+    virtual const char* getObjTypeName() const = 0;
 
     virtual bool pick(const Ray3d& ray,
                       double& distanceToPicker,
@@ -106,7 +106,7 @@ class DeepSkyObject
     float        radius;
     float        absMag;
     std::string* infoURL;
-    
+
     bool visible : 1;
     bool clickable : 1;
 };

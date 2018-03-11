@@ -38,7 +38,7 @@ BookmarkItem::type() const
 }
 
 
-BookmarkItem* 
+BookmarkItem*
 BookmarkItem::parent() const
 {
     return m_parent;
@@ -60,7 +60,7 @@ BookmarkItem::title() const
 }
 
 
-void 
+void
 BookmarkItem::setTitle(const QString& title)
 {
     m_title = title;
@@ -95,7 +95,7 @@ BookmarkItem::description() const
 }
 
 
-void 
+void
 BookmarkItem::setDescription(const QString& description)
 {
     m_description = description;
@@ -196,7 +196,7 @@ void
 BookmarkItem::removeChildren(int index, int count)
 {
     Q_ASSERT(index + count <= m_children.size());
-    for (int i = 1; i < count; i++)  // (if i = 0: critical error) 
+    for (int i = 1; i < count; i++)  // (if i = 0: critical error)
     {
         m_children[index + i]->setParent(NULL);
         //m_children[index + i]->setPosition(0);
@@ -237,7 +237,7 @@ BookmarkTreeModel::~BookmarkTreeModel()
 {
     delete m_root;
 }
-    
+
 
 const BookmarkItem*
 BookmarkTreeModel::getItem(const QModelIndex& index) const
@@ -246,7 +246,7 @@ BookmarkTreeModel::getItem(const QModelIndex& index) const
 }
 
 
-BookmarkItem* 
+BookmarkItem*
 BookmarkTreeModel::getItem(const QModelIndex& index)
 {
     return static_cast<BookmarkItem*>(index.internalPointer());
@@ -263,16 +263,16 @@ BookmarkTreeModel::itemIndex(BookmarkItem* item)
 }
 
 
-QModelIndex 
+QModelIndex
 BookmarkTreeModel::index(int row, int column, const QModelIndex& parent) const
 {
     const BookmarkItem* parentFolder = NULL;
-    
+
     if (!parent.isValid())
         parentFolder = m_root;
     else
         parentFolder = getItem(parent);
-    
+
     Q_ASSERT(parentFolder->type() == BookmarkItem::Folder);
     Q_ASSERT(row < (int) parentFolder->childCount());
 
@@ -285,7 +285,7 @@ BookmarkTreeModel::parent(const QModelIndex& index) const
 {
     if (!index.isValid())
         return QModelIndex();
-    
+
     const BookmarkItem* item = getItem(index);
     BookmarkItem* parentFolder = item->parent();
     if (parentFolder == m_root)
@@ -295,7 +295,7 @@ BookmarkTreeModel::parent(const QModelIndex& index) const
 }
 
 
-int 
+int
 BookmarkTreeModel::rowCount(const QModelIndex& parent) const
 {
     if (parent.column() > 0)
@@ -318,12 +318,12 @@ BookmarkTreeModel::columnCount(const QModelIndex& parent) const
 }
 
 
-QVariant 
+QVariant
 BookmarkTreeModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    
+
     const BookmarkItem* item = getItem(index);
 
     switch (role)
@@ -445,7 +445,7 @@ BookmarkTreeModel::supportedDropActions() const
 }
 
 
-bool 
+bool
 BookmarkTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent)
 {
     if (action == Qt::IgnoreAction)
@@ -466,7 +466,7 @@ BookmarkTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, in
     if (stream.readRawData(reinterpret_cast<char*>(&item), sizeof(item)) != sizeof(item))
         return false;
 
-    BookmarkItem* parentFolder = NULL;       
+    BookmarkItem* parentFolder = NULL;
     if (!parent.isValid())
         parentFolder = m_root;
     else
@@ -497,7 +497,7 @@ BookmarkTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, in
 bool
 BookmarkTreeModel::removeRows(int row, int count, const QModelIndex& parent)
 {
-    BookmarkItem* parentFolder = NULL;       
+    BookmarkItem* parentFolder = NULL;
     if (!parent.isValid())
         parentFolder = m_root;
     else
@@ -590,7 +590,7 @@ BookmarkManager::initializeBookmarks()
 {
     m_root = new BookmarkItem(BookmarkItem::Folder, NULL);
     m_root->setTitle("root");
-    
+
     BookmarkItem* menuBookmarks = new BookmarkItem(BookmarkItem::Folder, m_root);
     menuBookmarks->setTitle(_("Bookmarks Menu"));
     menuBookmarks->setDescription(_("Add bookmarks to this folder to see them in the bookmarks menu."));
@@ -636,7 +636,7 @@ BookmarkManager::populateBookmarkMenu(QMenu* menu)
     // the main menu.
     BookmarkItem* bookmarksMenuFolder = m_root->child(0);
     Q_ASSERT(bookmarksMenuFolder != NULL);
-    
+
     if (bookmarksMenuFolder != NULL)
         appendBookmarkMenuItems(menu, bookmarksMenuFolder);
 }
@@ -681,7 +681,7 @@ BookmarkManager::appendBookmarkMenuItems(QMenu* menu, const BookmarkItem* item)
             menu->addSeparator();
             break;
         }
-    }   
+    }
 }
 
 
@@ -731,7 +731,7 @@ BookmarkToolBar::BookmarkToolBar(BookmarkManager* manager, QWidget* parent) :
     setObjectName("bookmark-toolbar");
     setFloatable(true);
     setMovable(true);
-    setToolButtonStyle(Qt::ToolButtonTextBesideIcon);        
+    setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 }
 
 
@@ -739,7 +739,7 @@ void
 BookmarkToolBar::rebuild()
 {
     clear();
-    
+
     // Toolbar bookmarks
     BookmarkItem* rootItem = m_manager->toolBarRootItem();
     if (rootItem != NULL)
@@ -759,7 +759,7 @@ BookmarkToolBar::rebuild()
                         addAction(menuAction);
                     }
                     break;
-                    
+
                 case BookmarkItem::Bookmark:
                     {
                         QAction* action = new QAction(child->title(), this);
@@ -771,12 +771,12 @@ BookmarkToolBar::rebuild()
                         addAction(action);
                     }
                     break;
-                    
+
                 case BookmarkItem::Separator:
                     addSeparator();
                     break;
             }
-        }   
+        }
     }
 }
 
@@ -797,7 +797,7 @@ public:
         BookmarkItem::Type type = static_cast<BookmarkItem::Type>(sourceModel()->data(index, BookmarkTreeModel::TypeRole).toInt());
         return type == BookmarkItem::Folder;
     }
-    
+
     int columnCount(const QModelIndex& parent) const
     {
         return qMin(QSortFilterProxyModel::columnCount(parent), 1);
@@ -823,7 +823,7 @@ AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
 
     // User is only allowed to create a new bookmark in a folder
     // Filter out non-folders in the "create in" combo box
-    QTreeView* view = new QTreeView(this); 
+    QTreeView* view = new QTreeView(this);
     m_filterModel = new OnlyFoldersProxyModel(this);
     m_filterModel->setSourceModel(model);
 
@@ -836,10 +836,10 @@ AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
     createInCombo->setModel(m_filterModel);
     view->show();
     createInCombo->setView(view);
-    
+
     timeSourceCombo->addItem(_("Current simulation time"),       (int) Url::UseUrlTime);
     timeSourceCombo->addItem(_("Simulation time at activation"), (int) Url::UseSimulationTime);
-    timeSourceCombo->addItem(_("System time at activation"),     (int) Url::UseSystemTime);    
+    timeSourceCombo->addItem(_("System time at activation"),     (int) Url::UseSystemTime);
     timeSourceCombo->setCurrentIndex(m_lastTimeSourceIndex);
 
     // Initialize to first index
@@ -858,14 +858,14 @@ AddBookmarkDialog::accept()
     {
         // Preserve the last used time source index
         m_lastTimeSourceIndex = timeSourceCombo->currentIndex();
-        
+
         QVariant itemData = timeSourceCombo->itemData(timeSourceCombo->currentIndex());
         Url::TimeSource timeSource = (Url::TimeSource) itemData.toInt();
         Q_ASSERT(timeSource >= 0 && timeSource < Url::TimeSourceCount);
-        
+
         // Get the URL string
         Url url(m_appState, Url::CurrentVersion, timeSource);
-        
+
         BookmarkItem* folder = m_manager->model()->getItem(index);
         BookmarkItem* newItem = new BookmarkItem(BookmarkItem::Bookmark, folder);
         newItem->setTitle(bookmarkNameEdit->text());
@@ -890,7 +890,7 @@ NewBookmarkFolderDialog::NewBookmarkFolderDialog(BookmarkManager* manager) :
 
     // User is only allowed to create a new bookmark in a folder
     // Filter out non-folders in the "create in" combo box
-    QTreeView* view = new QTreeView(this); 
+    QTreeView* view = new QTreeView(this);
     m_filterModel = new OnlyFoldersProxyModel(this);
     m_filterModel->setSourceModel(model);
 
@@ -936,12 +936,12 @@ OrganizeBookmarksDialog::OrganizeBookmarksDialog(BookmarkManager* manager) :
 
     treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     treeView->setUniformRowHeights(true);
-    
+
     treeView->setDragEnabled(true);
     treeView->setAcceptDrops(true);
     treeView->setDragDropMode(QAbstractItemView::InternalMove);
     treeView->setDropIndicatorShown(true);
-    
+
     treeView->header()->show();
     treeView->setModel(manager->model());
     treeView->resizeColumnToContents(0);
@@ -966,7 +966,7 @@ void
 OrganizeBookmarksDialog::on_newFolderButton_clicked()
 {
     QModelIndex index = treeView->currentIndex();
-    
+
     if (index.isValid())
     {
         BookmarkItem* item = m_manager->model()->getItem(index);
@@ -1008,7 +1008,7 @@ void
 OrganizeBookmarksDialog::on_newSeparatorButton_clicked()
 {
     QModelIndex index = treeView->currentIndex();
-    
+
     if (index.isValid())
     {
         BookmarkItem* item = m_manager->model()->getItem(index);

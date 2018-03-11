@@ -460,7 +460,7 @@ ImageTexture::ImageTexture(Image& img,
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
     }
-    
+
     if (mipMapMode == AutoMipMaps)
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 

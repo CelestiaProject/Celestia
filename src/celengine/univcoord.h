@@ -111,7 +111,7 @@ class UniversalCoord
 
     /** Get the offset in light years of this coordinate from a point (also with
       * units of light years.) The difference is calculated at high precision and
-      * the reduced to single precision. 
+      * the reduced to single precision.
       *
       * This method is only here to help in porting older code; it shouldn't be
       * necessary to use it in new code, where the use of the rather the rather

@@ -30,7 +30,7 @@ static int glu_LookAt(lua_State* l)
     float ux = (float)celx.safeGetNumber(7, WrongType, "argument 4 to gl.Frustum must be a number", 0.0);
     float uy = (float)celx.safeGetNumber(8, WrongType, "argument 5 to gl.Frustum must be a number", 0.0);
     float uz = (float)celx.safeGetNumber(9, WrongType, "argument 6 to gl.Frustum must be a number", 0.0);
-	gluLookAt(ix,iy,iz,cx,cy,cz,ux,uy,uz);
+    gluLookAt(ix,iy,iz,cx,cy,cz,ux,uy,uz);
     return 0;
 }
 
@@ -44,7 +44,7 @@ static int gl_Frustum(lua_State* l)
     float t = (float)celx.safeGetNumber(4, WrongType, "argument 4 to gl.Frustum must be a number", 0.0);
     float n = (float)celx.safeGetNumber(5, WrongType, "argument 5 to gl.Frustum must be a number", 0.0);
     float f = (float)celx.safeGetNumber(6, WrongType, "argument 6 to gl.Frustum must be a number", 0.0);
-	glFrustum(ll,r,b,t,n,f);
+    glFrustum(ll,r,b,t,n,f);
     return 0;
 }
 
@@ -58,7 +58,7 @@ static int gl_Ortho(lua_State* l)
     float t = (float)celx.safeGetNumber(4, WrongType, "argument 4 to gl.Ortho must be a number", 0.0);
     float n = (float)celx.safeGetNumber(5, WrongType, "argument 5 to gl.Ortho must be a number", 0.0);
     float f = (float)celx.safeGetNumber(6, WrongType, "argument 6 to gl.Ortho must be a number", 0.0);
-	glOrtho(ll,r,b,t,n,f);
+    glOrtho(ll,r,b,t,n,f);
     return 0;
 }
 
@@ -70,7 +70,7 @@ static int glu_Ortho2D(lua_State* l)
     float r = (float)celx.safeGetNumber(2, WrongType, "argument 2 to gl.Ortho must be a number", 0.0);
     float b = (float)celx.safeGetNumber(3, WrongType, "argument 3 to gl.Ortho must be a number", 0.0);
     float t = (float)celx.safeGetNumber(4, WrongType, "argument 4 to gl.Ortho must be a number", 0.0);
-	gluOrtho2D(ll,r,b,t);
+    gluOrtho2D(ll,r,b,t);
     return 0;
 }
 
@@ -80,7 +80,7 @@ static int gl_TexCoord(lua_State* l)
     celx.checkArgs(2, 2, "Two arguments expected for gl.TexCoord()");
     float x = (float)celx.safeGetNumber(1, WrongType, "argument 1 to gl.TexCoord must be a number", 0.0);
     float y = (float)celx.safeGetNumber(2, WrongType, "argument 2 to gl.TexCoord must be a number", 0.0);
-	glTexCoord2f(x,y);
+    glTexCoord2f(x,y);
     return 0;
 }
 
@@ -88,7 +88,7 @@ static int gl_TexParameter(lua_State* l)
 {
     CelxLua celx(l);
     celx.checkArgs(3, 3, "Three arguments expected for gl.TexParameter()");
-    
+
     // TODO: Need to ensure that these values are integers, or better yet use
     // names.
     float x = (float)celx.safeGetNumber(1, WrongType, "argument 1 to gl.TexParameter must be a number", 0.0);
@@ -104,7 +104,7 @@ static int gl_Vertex(lua_State* l)
     celx.checkArgs(2, 2, "Two arguments expected for gl.Vertex()");
     float x = (float)celx.safeGetNumber(1, WrongType, "argument 1 to gl.Vertex must be a number", 0.0);
     float y = (float)celx.safeGetNumber(2, WrongType, "argument 2 to gl.Vertex must be a number", 0.0);
-	glVertex2f(x,y);
+    glVertex2f(x,y);
     return 0;
 }
 
@@ -116,8 +116,8 @@ static int gl_Color(lua_State* l)
     float g = (float)celx.safeGetNumber(2, WrongType, "argument 2 to gl.Color must be a number", 0.0);
     float b = (float)celx.safeGetNumber(3, WrongType, "argument 3 to gl.Color must be a number", 0.0);
     float a = (float)celx.safeGetNumber(4, WrongType, "argument 4 to gl.Color must be a number", 0.0);
-	glColor4f(r,g,b,a);
-    //	glColor4f(0.8f, 0.5f, 0.5f, 1.0f);
+    glColor4f(r,g,b,a);
+    //    glColor4f(0.8f, 0.5f, 0.5f, 1.0f);
     return 0;
 }
 
@@ -136,7 +136,7 @@ static int gl_Translate(lua_State* l)
     celx.checkArgs(2, 2, "Two arguments expected for gl.Translate()");
     float x = (float)celx.safeGetNumber(1, WrongType, "argument 1 to gl.Translate must be a number", 0.0);
     float y = (float)celx.safeGetNumber(2, WrongType, "argument 2 to gl.Translate must be a number", 0.0);
-	glTranslatef(x,y,0.0f);
+    glTranslatef(x,y,0.0f);
     return 0;
 }
 
@@ -146,7 +146,7 @@ static int gl_BlendFunc(lua_State* l)
     celx.checkArgs(2, 2, "Two arguments expected for gl.BlendFunc()");
     int i = (int)celx.safeGetNumber(1, WrongType, "argument 1 to gl.BlendFunc must be a number", 0.0);
     int j = (int)celx.safeGetNumber(2, WrongType, "argument 2 to gl.BlendFunc must be a number", 0.0);
-	glBlendFunc(i,j);
+    glBlendFunc(i,j);
     return 0;
 }
 
@@ -155,7 +155,7 @@ static int gl_Begin(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "One argument expected for gl.Begin()");
     int i = (int)celx.safeGetNumber(1, WrongType, "argument 1 to gl.Begin must be a number", 0.0);
-	glBegin(i);
+    glBegin(i);
     return 0;
 }
 
@@ -172,7 +172,7 @@ static int gl_Enable(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "One argument expected for gl.Enable()");
     int i = (int)celx.safeGetNumber(1, WrongType, "argument 1 to gl.Enable must be a number", 0.0);
-	glEnable(i);
+    glEnable(i);
     return 0;
 }
 
@@ -181,7 +181,7 @@ static int gl_Disable(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "One argument expected for gl.Disable()");
     int i = (int)celx.safeGetNumber(1, WrongType, "argument 1 to gl.Disable must be a number", 0.0);
-	glDisable(i);
+    glDisable(i);
     return 0;
 }
 
@@ -190,7 +190,7 @@ static int gl_MatrixMode(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "One argument expected for gl.MatrixMode()");
     int i = (int) celx.safeGetNumber(1, WrongType, "argument 1 to gl.MatrixMode must be a number", 0.0);
-	glMatrixMode(i);
+    glMatrixMode(i);
     return 0;
 }
 
@@ -222,7 +222,7 @@ void LoadLuaGraphicsLibrary(lua_State* l)
 {
     CelxLua celx(l);
     lua_newtable(l);
-    
+
     celx.registerMethod("Frustum", gl_Frustum);
     celx.registerMethod("Ortho", gl_Ortho);
     celx.registerMethod("Color", gl_Color);
@@ -240,7 +240,7 @@ void LoadLuaGraphicsLibrary(lua_State* l)
     celx.registerMethod("PopMatrix", gl_PopMatrix);
     celx.registerMethod("LoadIdentity", gl_LoadIdentity);
     celx.registerMethod("PushMatrix", gl_PushMatrix);
-    
+
     celx.registerValue("QUADS", GL_QUADS);
     celx.registerValue("LIGHTING", GL_LIGHTING);
     celx.registerValue("POINTS", GL_POINTS);
@@ -259,7 +259,7 @@ void LoadLuaGraphicsLibrary(lua_State* l)
     celx.registerValue("SRC_ALPHA", GL_SRC_ALPHA);
     celx.registerValue("ONE_MINUS_SRC_ALPHA", GL_ONE_MINUS_SRC_ALPHA);
     lua_setglobal(l, "gl");
-    
+
     lua_newtable(l);
     celx.registerMethod("LookAt", glu_LookAt);
     celx.registerMethod("Ortho2D", glu_Ortho2D);

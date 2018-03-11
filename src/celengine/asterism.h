@@ -1,7 +1,7 @@
 // asterism.h
 //
 // Copyright (C) 2001-2008, the Celestia Development Team
-// Original version by Chris Laurel <claurel@gmail.com> 
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,13 +28,13 @@ class Asterism
     int getChainCount() const;
     const Chain& getChain(int) const;
 
-	bool getActive() const;
-	void setActive(bool _active);
+    bool getActive() const;
+    void setActive(bool _active);
 
     Color getOverrideColor() const;
-	void setOverrideColor(Color c);
-	void unsetOverrideColor();
-	bool isColorOverridden() const;
+    void setOverrideColor(Color c);
+    void unsetOverrideColor();
+    bool isColorOverridden() const;
 
     void addChain(Chain&);
 
@@ -43,8 +43,8 @@ class Asterism
     std::string i18nName;
     std::vector<Chain*> chains;
 
-	bool active;
-	bool useOverrideColor;
+    bool active;
+    bool useOverrideColor;
     Color color;
 };
 

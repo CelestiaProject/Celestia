@@ -27,7 +27,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                        const Eigen::Quaternionf& planetOrientation,
                        const Frustum& frustum,
                        const GLContext& context);
-                       
+
 void renderGeometry_GLSL(Geometry* geometry,
                          const RenderInfo& ri,
                          ResourceHandle texOverride,
@@ -37,7 +37,7 @@ void renderGeometry_GLSL(Geometry* geometry,
                          int renderFlags,
                          const Eigen::Quaternionf& planetOrientation,
                          double tsec);
-                      
+
 void renderClouds_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
                        Atmosphere* atmosphere,
@@ -50,7 +50,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        const Eigen::Quaternionf& planetOrientation,
                        const Frustum& frustum,
                        const GLContext& context);
-                       
+
 void renderAtmosphere_GLSL(const RenderInfo& ri,
                            const LightingState& ls,
                            Atmosphere* atmosphere,
@@ -58,7 +58,7 @@ void renderAtmosphere_GLSL(const RenderInfo& ri,
                            const Eigen::Quaternionf& planetOrientation,
                            const Frustum& frustum,
                            const GLContext& context);
-                           
+
 void renderRings_GLSL(RingSystem& rings,
                       RenderInfo& ri,
                       const LightingState& ls,
@@ -124,6 +124,5 @@ private:
 
 
 #endif // _CELENGINE_RENDERGLSL_H_
-                       
 
 

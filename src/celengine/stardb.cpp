@@ -238,7 +238,7 @@ uint32 StarDatabase::findCatalogNumberByName(const string& name) const
         if (catalogNumber != Star::InvalidCatalogNumber)
             return catalogNumber;
     }
-    
+
     if (parseCelestiaCatalogNumber(name, &catalogNumber))
     {
         return catalogNumber;
@@ -351,7 +351,7 @@ static void catalogNumberToString(uint32 catalogNumber, char* buf, unsigned int 
         buf[0] = '\0';
     }
 
-	if (catalogNumber <= StarDatabase::MAX_HIPPARCOS_NUMBER)
+    if (catalogNumber <= StarDatabase::MAX_HIPPARCOS_NUMBER)
     {
         sprintf(buf, "HIP %d", catalogNumber);
     }
@@ -701,7 +701,7 @@ bool StarDatabase::loadBinary(istream& in)
         star.setDetails(details);
         star.setCatalogNumber(catNo);
         unsortedStars.add(star);
-        
+
         nStars++;
     }
 
@@ -710,7 +710,7 @@ bool StarDatabase::loadBinary(istream& in)
 
     DPRINTF(0, "StarDatabase::read: nStars = %d\n", nStarsInFile);
     clog << nStars << _(" stars in binary database\n");
-    
+
     // Create the temporary list of stars sorted by catalog number; this
     // will be used to lookup stars during file loading. After loading is
     // complete, the stars are sorted into an octree and this list gets
@@ -721,12 +721,12 @@ bool StarDatabase::loadBinary(istream& in)
         binFileCatalogNumberIndex = new Star*[binFileStarCount];
         for (unsigned int i = 0; i < binFileStarCount; i++)
         {
-            binFileCatalogNumberIndex[i] = &unsortedStars[i];    
+            binFileCatalogNumberIndex[i] = &unsortedStars[i];
         }
         sort(binFileCatalogNumberIndex, binFileCatalogNumberIndex + binFileStarCount,
              PtrCatalogNumberOrderingPredicate());
     }
-        
+
     return true;
 }
 
@@ -734,14 +734,14 @@ bool StarDatabase::loadBinary(istream& in)
 void StarDatabase::finish()
 {
     clog << _("Total star count: ") << nStars << endl;
-    
+
     buildOctree();
     buildIndexes();
 
     // Delete the temporary indices used only during loading
     delete[] binFileCatalogNumberIndex;
     stcFileCatalogNumberIndex.clear();
-    
+
     // Resolve all barycenters; this can't be done before star sorting. There's
     // still a bug here: final orbital radii aren't available until after
     // the barycenters have been resolved, and these are required when building
@@ -818,12 +818,12 @@ bool StarDatabase::createStar(Star* star,
             }
         }
     }
-    
+
     bool modifyExistingDetails = false;
     if (disposition == ModifyStar)
     {
         StarDetails* existingDetails = star->getDetails();
-        
+
         // If we're modifying an existing star and it already has a
         // customized details record, we'll just modify that.
         if (!existingDetails->shared())
@@ -842,7 +842,7 @@ bool StarDatabase::createStar(Star* star,
                     existingDetails->setRotationModel(details->getRotationModel());
                 existingDetails->setVisibility(details->getVisibility());
             }
-            
+
             details = existingDetails;
         }
         else if (details == NULL)
@@ -850,7 +850,7 @@ bool StarDatabase::createStar(Star* star,
             details = existingDetails;
         }
     }
-    
+
     string modelName;
     string textureName;
     bool hasTexture = starData->getString("Texture", textureName);
@@ -866,7 +866,7 @@ bool StarDatabase::createStar(Star* star,
 
     double radius;
     bool hasRadius = starData->getLength("Radius", radius);
-    
+
     double temperature = 0.0;
     bool hasTemperature = starData->getNumber("Temperature", temperature);
     // disallow unphysical temperature values
@@ -921,7 +921,7 @@ bool StarDatabase::createStar(Star* star,
             details->setRadius((float) radius);
             details->addKnowledge(StarDetails::KnowRadius);
         }
-        
+
         if (hasTemperature)
         {
             details->setTemperature((float) temperature);
@@ -991,7 +991,7 @@ bool StarDatabase::createStar(Star* star,
                     {
                         hasBarycenter = true;
                         barycenterPosition = barycenter->getPosition();
-                    }                    
+                    }
                 }
 
                 if (!hasBarycenter)
@@ -1022,7 +1022,7 @@ bool StarDatabase::createStar(Star* star,
         double ra = 0.0;
         double dec = 0.0;
         double distance = 0.0;
-        
+
         if (disposition == ModifyStar)
         {
             Vector3f pos = star->getPosition();
@@ -1039,7 +1039,7 @@ bool StarDatabase::createStar(Star* star,
                 dec = radToDeg(std::asin(v.z()));
             }
         }
-        
+
         bool modifyPosition = false;
         if (starData->getAngle("RA", ra, DEG_PER_HRA, 1.0))
         {
@@ -1180,7 +1180,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
         bool isStar = true;
-        
+
         // Parse the disposition--either Add, Replace, or Modify. The disposition
         // may be omitted. The default value is Add.
         StcDisposition disposition = AddStar;
@@ -1202,7 +1202,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                 tokenizer.nextToken();
             }
         }
-        
+
         // Parse the object type--either Star or Barycenter. The object type
         // may be omitted. The default is Star.
         if (tokenizer.getTokenType() == Tokenizer::TokenName)
@@ -1244,7 +1244,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                 firstName = objName.substr(0, next);
             }
         }
-        
+
         Star* star = NULL;
 
         switch (disposition)
@@ -1270,7 +1270,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                     catalogNumber = findCatalogNumberByName(firstName);
                 }
             }
-                
+
             if (catalogNumber == Star::InvalidCatalogNumber)
             {
                 catalogNumber = nextAutoCatalogNumber--;
@@ -1280,22 +1280,22 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                 star = findWhileLoading(catalogNumber);
             }
             break;
-                
+
         case ModifyStar:
             // If no catalog number was specified, try looking up the star by name
             if (catalogNumber == Star::InvalidCatalogNumber && !firstName.empty())
             {
                 catalogNumber = findCatalogNumberByName(firstName);
             }
-                
+
             if (catalogNumber != Star::InvalidCatalogNumber)
             {
                 star = findWhileLoading(catalogNumber);
             }
-                
+
             break;
         }
-        
+
         bool isNewStar = star == NULL;
 
         tokenizer.pushBack();
@@ -1306,7 +1306,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
             clog << "Error reading star." << endl;
             return false;
         }
-        
+
         if (starDataValue->getType() != Value::HashType)
         {
             DPRINTF(0, "Bad star definition.\n");
@@ -1317,7 +1317,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
 
         if (isNewStar)
             star = new Star();
-        
+
         bool ok = false;
         if (isNewStar && disposition == ModifyStar)
         {
@@ -1336,7 +1336,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                 unsortedStars.add(*star);
                 nStars++;
                 delete star;
-                
+
                 // Add the new star to the temporary (load time) index.
                 stcFileCatalogNumberIndex[catalogNumber] = &unsortedStars[unsortedStars.size() - 1];
             }
@@ -1394,7 +1394,7 @@ void StarDatabase::buildOctree()
     {
         root->insertObject(unsortedStars[i], STAR_OCTREE_ROOT_SIZE);
     }
-    
+
     DPRINTF(1, "Spatially sorting stars for improved locality of reference . . .\n");
     Star* sortedStars    = new Star[nStars];
     Star* firstStar      = sortedStars;
@@ -1459,23 +1459,23 @@ Star* StarDatabase::findWhileLoading(uint32 catalogNumber) const
     {
         Star refStar;
         refStar.setCatalogNumber(catalogNumber);
-        
+
         Star** star   = lower_bound(binFileCatalogNumberIndex,
                                     binFileCatalogNumberIndex + binFileStarCount,
                                     &refStar,
                                     PtrCatalogNumberOrderingPredicate());
-        
+
         if (star != binFileCatalogNumberIndex + binFileStarCount && (*star)->getCatalogNumber() == catalogNumber)
             return *star;
     }
-    
+
     // Next check for stars loaded from an stc file
     map<uint32, Star*>::const_iterator iter = stcFileCatalogNumberIndex.find(catalogNumber);
     if (iter != stcFileCatalogNumberIndex.end())
     {
         return iter->second;
     }
-    
+
     // Star not found
     return NULL;
 }

@@ -1,5 +1,5 @@
 // 3dsmodel.h
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -95,7 +95,7 @@ class M3DTriangleMesh
     void addMeshMaterialGroup(M3DMeshMaterialGroup* matGroup);
     M3DMeshMaterialGroup* getMeshMaterialGroup(uint32) const;
     uint32 getMeshMaterialGroupCount() const;
-    
+
  private:
     std::vector<Eigen::Vector3f> points;
     std::vector<Eigen::Vector2f> texCoords;

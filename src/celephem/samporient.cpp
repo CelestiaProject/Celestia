@@ -40,7 +40,7 @@ typedef vector<OrientationSample, aligned_allocator<OrientationSample> > Orienta
  * time stamped quaternion keys. Each record in the file has the form:
  *
  *   <time> <qw> <qx> <qy> <qz>
- *  
+ *
  * Where (qw qx qy qz) is a unit quaternion representing a rotation of
  *   theta = acos(qw)*2 radians about the axis (qx, qy, qz)*sin(theta/2).
  * The time values are Julian days in Barycentric Dynamical Time. The records

@@ -36,10 +36,10 @@ class Color
     inline float blue() const;
     inline float alpha() const;
     inline void get(unsigned char*) const;
-    
+
     inline Eigen::Vector3f toVector3() const;
     inline Eigen::Vector4f toVector4() const;
- 
+
     friend bool operator==(Color, Color);
     friend bool operator!=(Color, Color);
     friend Color operator*(Color, Color);

@@ -461,7 +461,7 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
                     SubclassNames[subclass],
                     LumClassNames[lumClass]);
         }
-        
+
         // Use the same properties for an unknown subclass as for subclass 5
         if (subclass == StellarClass::Subclass_Unknown)
         {
@@ -1067,8 +1067,8 @@ Star::getVelocity(double t) const
     const Orbit* orbit = getOrbit();
     if (!orbit)
     {
-		// The star doesn't have a defined orbit, so the velocity is just
-		// zero. (This will change when stellar proper motion is implemented.)
+        // The star doesn't have a defined orbit, so the velocity is just
+        // zero. (This will change when stellar proper motion is implemented.)
         return Vector3d::Zero();
     }
     else
@@ -1077,13 +1077,13 @@ Star::getVelocity(double t) const
 
         if (barycenter == NULL)
         {
-			// Star orbit is defined around a fixed point, so the total velocity
-			// is just the star's orbit velocity.
+            // Star orbit is defined around a fixed point, so the total velocity
+            // is just the star's orbit velocity.
             return orbit->velocityAtTime(t);
         }
         else
         {
-			// Sum the star's orbital velocity and the velocity of the barycenter.
+            // Sum the star's orbital velocity and the velocity of the barycenter.
             return barycenter->getVelocity(t) + orbit->velocityAtTime(t);
         }
     }

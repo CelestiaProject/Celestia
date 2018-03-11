@@ -83,7 +83,7 @@ template<class T> class Ellipsoid
         v = Vector3<T>(v.x / axes.x, v.y / axes.y, v.z / axes.z);
         return v * v <= (T) 1.0;
     }
- 
+
  public:
     Eigen::Matrix<T, 3, 1> center;
     Eigen::Matrix<T, 3, 1> axes;

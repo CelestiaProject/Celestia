@@ -1,5 +1,5 @@
 // winviewoptsdlg.cpp
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // View Options dialog for Windows.
@@ -158,15 +158,15 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_LABELGALAXIES:
             renderer->setLabelMode(labelMode ^ Renderer::GalaxyLabels);
             break;
-		    case IDC_LABELGLOBULARS:
-			      renderer->setLabelMode(labelMode ^ Renderer::GlobularLabels);
-			      break;
-		    case IDC_LABELNEBULAE:
-			      renderer->setLabelMode(labelMode ^ Renderer::NebulaLabels);
-			      break;
-		    case IDC_LABELOPENCLUSTERS:
-			      renderer->setLabelMode(labelMode ^ Renderer::OpenClusterLabels);
-			      break;
+        case IDC_LABELGLOBULARS:
+            renderer->setLabelMode(labelMode ^ Renderer::GlobularLabels);
+            break;
+        case IDC_LABELNEBULAE:
+            renderer->setLabelMode(labelMode ^ Renderer::NebulaLabels);
+            break;
+        case IDC_LABELOPENCLUSTERS:
+            renderer->setLabelMode(labelMode ^ Renderer::OpenClusterLabels);
+            break;
         case IDC_LABELPLANETS:
             renderer->setLabelMode(labelMode ^ Renderer::PlanetLabels);
             break;
@@ -243,7 +243,7 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
                     HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FILTER_DISTANCE);
                     float logDistanceLimit = (float) HIWORD(wParam) /
                         (float) DistanceSliderRange;
-                    float distanceLimit = (float) pow(MaxDistanceLimit, 
+                    float distanceLimit = (float) pow(MaxDistanceLimit,
                                                  logDistanceLimit);
                     sprintf(val, "%d", (int) distanceLimit);
                     SetWindowText(hwnd, val);
@@ -355,9 +355,9 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     SendDlgItemMessage(hDlg, IDC_LABELCONSTELLATIONSLATIN, BM_SETCHECK,
                        ((labelMode & Renderer::I18nConstellationLabels) == 0) ? BST_CHECKED : BST_UNCHECKED, 0);
     dlgCheck(hDlg, IDC_LABELGALAXIES,   labelMode, Renderer::GalaxyLabels);
-	  dlgCheck(hDlg, IDC_LABELGLOBULARS, labelMode, Renderer::GlobularLabels);
-	  dlgCheck(hDlg, IDC_LABELNEBULAE,    labelMode, Renderer::NebulaLabels);
-	  dlgCheck(hDlg, IDC_LABELOPENCLUSTERS, labelMode, Renderer::OpenClusterLabels);
+    dlgCheck(hDlg, IDC_LABELGLOBULARS, labelMode, Renderer::GlobularLabels);
+    dlgCheck(hDlg, IDC_LABELNEBULAE,    labelMode, Renderer::NebulaLabels);
+    dlgCheck(hDlg, IDC_LABELOPENCLUSTERS, labelMode, Renderer::OpenClusterLabels);
     dlgCheck(hDlg, IDC_LABELSTARS,      labelMode, Renderer::StarLabels);
     dlgCheck(hDlg, IDC_LABELPLANETS,    labelMode, Renderer::PlanetLabels);
     dlgCheck(hDlg, IDC_LABELDWARFPLANETS,    labelMode, Renderer::DwarfPlanetLabels);
@@ -376,7 +376,7 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
                        (WPARAM)TRUE,
                        (LPARAM) MAKELONG(0, DistanceSliderRange));
     float distanceLimit = appCore->getRenderer()->getDistanceLimit();
-    float logDistanceLimit = (float) (log(distanceLimit) / 
+    float logDistanceLimit = (float) (log(distanceLimit) /
                                       log(MaxDistanceLimit));
     SendDlgItemMessage(hDlg,
                        IDC_SLIDER_FILTER_DISTANCE,

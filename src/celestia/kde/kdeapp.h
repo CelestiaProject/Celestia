@@ -199,7 +199,7 @@ public slots:
 
     void slotCelestialBrowser();
     void slotEclipseFinder();
-    
+
     void slotDisplayLocalTime();
     void slotWireframeMode();
     void slotGrabImage();
@@ -267,7 +267,7 @@ private slots:
     void slotOk();
     void slotApply();
     void slotCancel();
-    
+
 private:
     CelestiaCore* appCore;
     QLineEdit *altEdit, *longEdit, *latEdit, *objEdit;

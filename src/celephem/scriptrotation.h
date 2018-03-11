@@ -1,5 +1,5 @@
 // scriptrotation.h
-// 
+//
 // Copyright (C) 2006, Chris Laurel <claurel@shatters.net>
 //
 // Interface for a Celestia rotation model implemented via a Lua script.

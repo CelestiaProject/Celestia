@@ -63,7 +63,7 @@ class Simulation
     Selection findObjectFromPath(std::string s, bool i18n = false);
     std::vector<std::string> getObjectCompletion(std::string s, bool withLocations = false);
     void gotoSelection(double gotoTime,
-                       const Eigen::Vector3f& up, 
+                       const Eigen::Vector3f& up,
                        ObserverFrame::CoordinateSystem upFrame);
     void gotoSelection(double gotoTime, double distance,
                        const Eigen::Vector3f& up,
@@ -113,7 +113,7 @@ class Simulation
     void setObserverMode(Observer::ObserverMode);
     Observer::ObserverMode getObserverMode() const;
 
-    void setFrame(ObserverFrame::CoordinateSystem, const Selection& refObject, const Selection& targetObject); 
+    void setFrame(ObserverFrame::CoordinateSystem, const Selection& refObject, const Selection& targetObject);
     void setFrame(ObserverFrame::CoordinateSystem, const Selection& refObject);
     const ObserverFrame* getFrame() const;
 

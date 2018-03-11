@@ -168,14 +168,14 @@ astro::EquatorialPrecessionAngles_P03(double T)
     double T3 = T2 * T;
     double T4 = T3 * T;
     double T5 = T4 * T;
-    
+
     prec.zetaA =  (     2.650545
                    + 2306.083227 * T
                    +    0.2988499 * T2
                    +    0.01801828 * T3
                    -    0.000005971 * T4
                    -    0.0000003173 * T5);
-    prec.zA =     ( -    2.650545 
+    prec.zA =     ( -    2.650545
                     + 2306.077181 * T
                     +    1.0927348 * T2
                     +    0.01826837 * T3
@@ -186,7 +186,7 @@ astro::EquatorialPrecessionAngles_P03(double T)
                    -     0.04182264 * T3
                    -     0.000007089 * T4
                    -     0.0000001274 * T5);
-    
+
     return prec;
 }
 
@@ -203,7 +203,7 @@ astro::EclipticPrecession_P03(double T)
     double T3 = T2 * T;
     double T4 = T3 * T;
     double T5 = T4 * T;
-    
+
     pole.PA = (  4.199094 * T
               + 0.1939873 * T2
               - 0.00022466 * T3
@@ -214,7 +214,7 @@ astro::EclipticPrecession_P03(double T)
               + 0.00052413 * T3
               - 0.00000646 * T4
               - 0.0000000172 * T5);
-    
+
     return pole;
 }
 
@@ -230,7 +230,7 @@ astro::EclipticPrecessionAngles_P03(double T)
     double T3 = T2 * T;
     double T4 = T3 * T;
     double T5 = T4 * T;
-    
+
     ecl.piA = ( 46.998973 * T
                - 0.0334926 * T2
                - 0.00012559 * T3
@@ -242,7 +242,7 @@ astro::EclipticPrecessionAngles_P03(double T)
                 -   0.0005371 * T3
                 -   0.00004797 * T4
                 +   0.000000072 * T5);
-    
+
     return ecl;
 }
 
@@ -261,7 +261,7 @@ astro::PrecObliquity_P03(double T)
     double T3 = T2 * T;
     double T4 = T3 * T;
     double T5 = T4 * T;
-    
+
     prec.epsA = (eps0
                 - 46.836769 * T
                 -  0.0001831 * T2
@@ -280,7 +280,7 @@ astro::PrecObliquity_P03(double T)
                 +  0.000170663 * T4
                 -  0.0000000560 * T5);
 #endif
-    
+
     return prec;
 }
 
@@ -295,23 +295,23 @@ astro::PrecObliquity_P03(double T)
 int main(int argc, char* argv[])
 {
     double step = 10.0;
-    
+
     for (int i = -100; i <= 100; i++)
     {
         // Get time in Julian centuries from J2000
         double T = (double) i * step / 100;
-        
+
         astro::EclipticPole ecl = astro::EclipticPrecession_P03LP(T);
         astro::EclipticPole eclP03 = astro::EclipticPrecession_P03(T);
         astro::EclipticAngles eclAnglesP03 = astro::EclipticPrecessionAngles_P03(T);
-        
+
         //clog << ecl.PA - eclP03.PA << ", " << ecl.QA - eclP03.QA << endl;
         ecl = eclP03;
         Vec3d v(0.0, 0.0, 0.0);
         v.x =  ecl.PA * 2.0 * PI / 1296000;
         v.y = -ecl.QA * 2.0 * PI / 1296000;
         v.z = sqrt(1.0 - v.x * v.x - v.y * v.y);
-        
+
         Quatd eclRotation = Quatd::vecToVecRotation(Vec3d(0.0, 0.0, 1.0), v);
         Quatd eclRotation2 = Quatd::zrotation(-degToRad(eclAnglesP03.PiA / 3600.0)) *
                              Quatd::xrotation(degToRad(eclAnglesP03.piA / 3600.0)) *
@@ -326,43 +326,43 @@ int main(int argc, char* argv[])
             double Q = eclP03.QA * 2.0 * PI / 1296000;
             double piA = asin(sqrt(P * P + Q * Q));
             double PiA = atan2(P, Q);
-            
+
             // Calculate the rotation from the J2000 ecliptic to the ecliptic
             // of date.
             eclRotation3 = Quatd::zrotation(-PiA) *
                            Quatd::xrotation(piA) *
                            Quatd::zrotation(PiA);
-            
+
             piA = radToDeg(piA) * 3600;
             PiA = radToDeg(PiA) * 3600;
             clog << "Pi: " << PiA << ", " << eclAnglesP03.PiA << endl;
             clog << "pi: " << piA << ", " << eclAnglesP03.piA << endl;
         }
-        
+
         astro::PrecessionAngles prec = astro::PrecObliquity_P03LP(T);
         Quatd p03lpRot = Quatd::xrotation(degToRad(prec.epsA / 3600.0)) *
                          Quatd::zrotation(-degToRad(prec.pA / 3600.0));
         p03lpRot = p03lpRot * ~eclRotation3;
-                
+
         astro::PrecessionAngles prec2 = astro::PrecObliquity_P03(T);
         //clog << prec.epsA - prec2.epsA << ", " << prec.pA - prec2.pA << endl;
-        
+
         astro::EquatorialPrecessionAngles precP03 = astro::EquatorialPrecessionAngles_P03(T);
         Quatd p03Rot = Quatd::zrotation(-degToRad(precP03.zA / 3600.0)) *
                        Quatd::yrotation( degToRad(precP03.thetaA / 3600.0)) *
                        Quatd::zrotation(-degToRad(precP03.zetaA / 3600.0));
         p03Rot = p03Rot * Quatd::xrotation(degToRad(eps0 / 3600.0));
-        
+
         Vec3d xaxis(0, 0, 1);
         Vec3d v0 = xaxis * p03lpRot.toMatrix3();
         Vec3d v1 = xaxis * p03Rot.toMatrix3();
-        
+
         // Show the angle between the J2000 ecliptic pole and the ecliptic
         // pole at T centuries from J2000
         double theta0 = acos(xaxis * v0);
         double theta1 = acos(xaxis * v1);
-        
-        clog << T * 100 << ": " 
+
+        clog << T * 100 << ": "
             << radToDeg(acos(v0 * v1)) * 3600 << ", "
             << radToDeg(theta0) << ", "
             << radToDeg(theta1) << ", "

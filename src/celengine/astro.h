@@ -67,7 +67,7 @@ namespace astro
         const char* toCStr(Format format = Locale) const;
 
         operator double() const;
-        
+
         static Date systemDate();
 
 
@@ -171,7 +171,7 @@ namespace astro
 
     double secondsToJulianDate(double);
     double julianDateToSeconds(double);
-    
+
     bool isLengthUnit(string unitName);
     bool isTimeUnit(string unitName);
     bool isAngleUnit(string unitName);

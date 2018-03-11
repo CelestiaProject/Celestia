@@ -22,13 +22,13 @@ using namespace Eigen;
 int frame_new(lua_State* l, const ObserverFrame& f)
 {
     CelxLua celx(l);
-    
-	// Use placement new to put the new frame in the userdata block.
-	void* block = lua_newuserdata(l, sizeof(ObserverFrame));
-	new (block) ObserverFrame(f);
-    
+
+    // Use placement new to put the new frame in the userdata block.
+    void* block = lua_newuserdata(l, sizeof(ObserverFrame));
+    new (block) ObserverFrame(f);
+
     celx.setClass(Celx_Frame);
-    
+
     return 1;
 }
 
@@ -36,7 +36,7 @@ int frame_new(lua_State* l, const ObserverFrame& f)
 ObserverFrame* to_frame(lua_State* l, int index)
 {
     CelxLua celx(l);
-    
+
     return static_cast<ObserverFrame*>(celx.checkUserData(index, Celx_Frame));
 }
 
@@ -44,13 +44,13 @@ ObserverFrame* to_frame(lua_State* l, int index)
 static ObserverFrame* this_frame(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     ObserverFrame* f = to_frame(l, 1);
     if (f == NULL)
     {
         celx.doError("Bad frame object!");
     }
-    
+
     return f;
 }
 
@@ -59,16 +59,16 @@ static ObserverFrame* this_frame(lua_State* l)
 static int frame_from(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     celx.checkArgs(2, 3, "Two or three arguments required for frame:from");
-    
+
     ObserverFrame* frame = this_frame(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
-    
+
     UniversalCoord* uc = NULL;
     Quatd* q = NULL;
     double jd = 0.0;
-    
+
     if (celx.isType(2, Celx_Position))
     {
         uc = celx.toPosition(2);
@@ -81,9 +81,9 @@ static int frame_from(lua_State* l)
     {
         celx.doError("Position or rotation expected as second argument to frame:from()");
     }
-    
+
     jd = celx.safeGetNumber(3, WrongType, "Second arg to frame:from must be a number", appCore->getSimulation()->getTime());
-    
+
     if (uc != NULL)
     {
         UniversalCoord uc1 = frame->convertToUniversal(*uc, jd);
@@ -94,7 +94,7 @@ static int frame_from(lua_State* l)
         Quatd q1 = fromEigen(frame->convertToUniversal(toEigen(*q), jd));
         celx.newRotation(q1);
     }
-    
+
     return 1;
 }
 
@@ -104,14 +104,14 @@ static int frame_to(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 3, "Two or three arguments required for frame:to");
-    
+
     ObserverFrame* frame = this_frame(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
-    
+
     UniversalCoord* uc = NULL;
     Quatd* q = NULL;
     double jd = 0.0;
-    
+
     if (celx.isType(2, Celx_Position))
     {
         uc = celx.toPosition(2);
@@ -120,14 +120,14 @@ static int frame_to(lua_State* l)
     {
         q = celx.toRotation(2);
     }
-    
+
     if (uc == NULL && q == NULL)
     {
         celx.doError("Position or rotation expected as second argument to frame:to()");
     }
-    
+
     jd = celx.safeGetNumber(3, WrongType, "Second arg to frame:to must be a number", appCore->getSimulation()->getTime());
-    
+
     if (uc != NULL)
     {
         UniversalCoord uc1 = frame->convertFromUniversal(*uc, jd);
@@ -138,7 +138,7 @@ static int frame_to(lua_State* l)
         Quaterniond q1 = frame->convertFromUniversal(toEigen(*q), jd);
         celx.newRotation(fromEigen(q1));
     }
-    
+
     return 1;
 }
 
@@ -147,7 +147,7 @@ static int frame_getrefobject(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(1, 1, "No arguments expected for frame:getrefobject()");
-    
+
     ObserverFrame* frame = this_frame(l);
     if (frame->getRefObject().getType() == Selection::Type_Nil)
     {
@@ -157,7 +157,7 @@ static int frame_getrefobject(lua_State* l)
     {
         celx.newObject(frame->getRefObject());
     }
-    
+
     return 1;
 }
 
@@ -166,7 +166,7 @@ static int frame_gettargetobject(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(1, 1, "No arguments expected for frame:gettarget()");
-    
+
     ObserverFrame* frame = this_frame(l);
     if (frame->getTargetObject().getType() == Selection::Type_Nil)
     {
@@ -184,7 +184,7 @@ static int frame_getcoordinatesystem(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(1, 1, "No arguments expected for frame:getcoordinatesystem()");
-    
+
     ObserverFrame* frame = this_frame(l);
     string coordsys;
     switch (frame->getCoordinateSystem())
@@ -206,19 +206,19 @@ static int frame_getcoordinatesystem(lua_State* l)
         default:
             coordsys = "invalid";
     }
-    
+
     celx.push(coordsys.c_str());
-    
+
     return 1;
 }
 
 static int frame_tostring(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     // TODO: print out the actual information about the frame
     celx.push("[Frame]");
-    
+
     return 1;
 }
 
@@ -227,29 +227,29 @@ static int frame_tostring(lua_State* l)
 */
 static int frame_gc(lua_State* l)
 {
-	ObserverFrame* frame = this_frame(l);
-    
-	// Explicitly call the destructor since the object was created with placement new
-	frame->~ObserverFrame();
-    
-	return 0;
+    ObserverFrame* frame = this_frame(l);
+
+    // Explicitly call the destructor since the object was created with placement new
+    frame->~ObserverFrame();
+
+    return 0;
 }
 
 
 void CreateFrameMetaTable(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     celx.createClassMetatable(Celx_Frame);
-    
+
     celx.registerMethod("__tostring", frame_tostring);
-	celx.registerMethod("__gc", frame_gc);
+    celx.registerMethod("__gc", frame_gc);
     celx.registerMethod("to", frame_to);
     celx.registerMethod("from", frame_from);
     celx.registerMethod("getcoordinatesystem", frame_getcoordinatesystem);
     celx.registerMethod("getrefobject", frame_getrefobject);
     celx.registerMethod("gettargetobject", frame_gettargetobject);
-    
+
     lua_pop(l, 1); // remove metatable from stack
 }
 

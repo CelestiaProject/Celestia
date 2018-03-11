@@ -92,7 +92,7 @@ void Overlay::endText()
     if (textBlock > 0)
     {
         textBlock--;
-		xoffset = 0.0f;
+        xoffset = 0.0f;
         glPopMatrix();
     }
 }
@@ -184,7 +184,7 @@ void Overlay::oprintf(const char* format, ...)
     char buf[1024];
     vsprintf(buf, format, args);
     print(buf);
-    
+
     va_end(args);
 }
 

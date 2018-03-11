@@ -57,7 +57,7 @@ DestinationList* ReadDestinationList(istream& in)
 
         Hash* destParams = destValue->getHash();
         Destination* dest = new Destination();
-        
+
         if (!destParams->getString("Name", dest->name))
         {
             DPRINTF(1, "Skipping unnamed destination\n");

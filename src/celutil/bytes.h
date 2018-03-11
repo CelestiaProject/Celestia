@@ -1,5 +1,5 @@
 // bytes.h
-// 
+//
 // Copyright (C) 2001, Colin Walters <walters@verbum.org>
 //
 // This program is free software; you can redistribute it and/or
@@ -63,7 +63,7 @@ inline double bswap_double(double d)
 
 #define LE_TO_CPU_INT16(ret, val) (ret = bswap_16(val))
 
-#define	LE_TO_CPU_INT32(ret, val) (ret = bswap_32(val))
+#define LE_TO_CPU_INT32(ret, val) (ret = bswap_32(val))
 
 #define LE_TO_CPU_FLOAT(ret, val) SWAP_FLOAT(ret, val)
 
@@ -81,7 +81,7 @@ inline double bswap_double(double d)
 
 #define BE_TO_CPU_INT16(ret, val) (ret = bswap_16(val))
 
-#define	BE_TO_CPU_INT32(ret, val) (ret = bswap_32(val))
+#define BE_TO_CPU_INT32(ret, val) (ret = bswap_32(val))
 
 #define BE_TO_CPU_FLOAT(ret, val) SWAP_FLOAT(ret, val)
 

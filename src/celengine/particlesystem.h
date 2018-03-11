@@ -34,7 +34,7 @@ struct ParticleVertex
         color[Color::Blue]  = _color[Color::Blue];
         color[Color::Alpha] = _color[Color::Alpha];
     }
-    
+
     Eigen::Vector3f position;
     Eigen::Vector2f texCoord;
     unsigned char color[4];
@@ -48,45 +48,45 @@ public:
 
     ParticleEmitter();
     ~ParticleEmitter();
-    
+
     void render(double tsec, RenderContext& rc, ParticleVertex* particleBuffer, unsigned int bufferCapacity) const;
-    
+
     void setAcceleration(const Eigen::Vector3f& acceleration);
     void createMaterial();
-    
+
     void setLifespan(double startTime, double endTime);
     void setRotationRateRange(float minRate, float maxRate);
     void setBlendMode(cmod::Material::BlendMode blendMode);
-    
+
 private:
     double m_startTime;
     double m_endTime;
 
 public:
     ResourceHandle m_texture;
-    
+
     float m_rate;
     float m_lifetime;
-    
+
     Color m_startColor;
     float m_startSize;
-    
+
     Color m_endColor;
     float m_endSize;
-    
+
     VectorGenerator* m_positionGenerator;
     VectorGenerator* m_velocityGenerator;
-    
+
 private:
     Eigen::Vector3f m_acceleration;
     bool m_nonZeroAcceleration;
-    
+
     float m_minRotationRate;
     float m_rotationRateVariance;
     bool m_rotationEnabled;
-    
+
     cmod::Material::BlendMode m_blendMode;
-    
+
     cmod::Material m_material;
 };
 
@@ -96,20 +96,20 @@ class ParticleSystem : public Geometry
  public:
     ParticleSystem();
     virtual ~ParticleSystem();
-    
+
     virtual void render(RenderContext& rc, double t = 0.0);
     virtual bool pick(const Ray3d& r, double& distance) const;
     virtual bool isOpaque() const;
-    
+
     void addEmitter(ParticleEmitter* emitter);
-        
+
  public:
     std::list<ParticleEmitter*> m_emitterList;
 
     cmod::Mesh::VertexDescription* m_vertexDesc;
     ParticleVertex* m_vertexData;
     unsigned int m_particleCapacity;
-    unsigned int m_particleCount;    
+    unsigned int m_particleCount;
 };
 
 
@@ -134,9 +134,9 @@ class ConstantGenerator : public VectorGenerator
 {
 public:
     ConstantGenerator(const Eigen::Vector3f& value) : m_value(value) {}
-    
+
     virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const;
-    
+
 private:
     Eigen::Vector3f m_value;
 };
@@ -152,9 +152,9 @@ public:
         m_semiAxes(axes * 0.5f)
     {
     }
-    
+
     virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const;
-    
+
 private:
     Eigen::Vector3f m_center;
     Eigen::Vector3f m_semiAxes;
@@ -172,9 +172,9 @@ public:
         m_direction(p1 - p0)
     {
     }
-    
+
     virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const;
-    
+
 private:
     Eigen::Vector3f m_origin;
     Eigen::Vector3f m_direction;
@@ -192,9 +192,9 @@ public:
         m_semiAxes(semiAxes)
     {
     }
-    
+
     virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const;
-    
+
 private:
     Eigen::Vector3f m_center;
     Eigen::Vector3f m_semiAxes;
@@ -214,9 +214,9 @@ public:
         m_lengthVariance(maxLength - minLength)
     {
     }
-    
+
     virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const;
-    
+
 private:
     float m_cosMinAngle;
     float m_cosAngleVariance;

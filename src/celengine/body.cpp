@@ -116,7 +116,7 @@ void Body::setDefaultProperties()
  */
 const vector<string>& Body::getNames() const
 {
-    return names; 
+    return names;
 }
 
 
@@ -125,7 +125,7 @@ const vector<string>& Body::getNames() const
  */
 string Body::getName(bool i18n) const
 {
-    if (!i18n) 
+    if (!i18n)
         return names[0];
     else
         return names[localizedNameIndex];
@@ -511,13 +511,13 @@ Vector3d Body::getVelocity(double tdb) const
     Vector3d v = phase->orbit()->velocityAtTime(tdb);
     v = orbitFrame->getOrientation(tdb).conjugate() * v + orbitFrame->getCenter().getVelocity(tdb);
 
-	if (!orbitFrame->isInertial())
-	{
+    if (!orbitFrame->isInertial())
+    {
         Vector3d r = Selection(const_cast<Body*>(this)).getPosition(tdb).offsetFromKm(orbitFrame->getCenter().getPosition(tdb));
         v += orbitFrame->getAngularVelocity(tdb).cross(r);
     }
 
-	return v;
+    return v;
 }
 
 
@@ -531,10 +531,10 @@ Vector3d Body::getAngularVelocity(double tdb) const
 
     ReferenceFrame* bodyFrame = phase->bodyFrame();
     v = bodyFrame->getOrientation(tdb).conjugate() * v;
-	if (!bodyFrame->isInertial())
-	{
+    if (!bodyFrame->isInertial())
+    {
         v += bodyFrame->getAngularVelocity(tdb);
-	}
+    }
 
     return v;
 }
@@ -573,7 +573,7 @@ Quaterniond Body::getEclipticToFrame(double tdb) const
 }
 
 
-/*! Get a rotation that converts from the ecliptic frame to the body's 
+/*! Get a rotation that converts from the ecliptic frame to the body's
  *  mean equatorial frame.
  */
 Quaterniond Body::getEclipticToEquatorial(double tdb) const
@@ -609,7 +609,7 @@ Quaterniond Body::getEquatorialToBodyFixed(double tdb) const
 Matrix4d Body::getBodyFixedToAstrocentric(double tdb) const
 {
     //return getEquatorialToBodyFixed(tdb).toMatrix4() * getLocalToAstrocentric(tdb);
-	Matrix4d m = Eigen::Transform<double, 3, Affine>(getEquatorialToBodyFixed(tdb)).matrix();
+    Matrix4d m = Eigen::Transform<double, 3, Affine>(getEquatorialToBodyFixed(tdb)).matrix();
     return m * getLocalToAstrocentric(tdb);
 }
 
@@ -693,7 +693,7 @@ float Body::getLuminosity(float sunLuminosity,
     double incidentEnergy = satIrradiance * circleArea(radius * 1000);
 
     double reflectedEnergy = incidentEnergy * albedo;
-    
+
     // Compute the luminosity (i.e. power relative to solar power)
     return (float) (reflectedEnergy / astro::SOLAR_POWER);
 }
@@ -884,7 +884,7 @@ Location* Body::findLocation(const string& name, bool i18n) const
 
 // Compute the positions of locations on an irregular object using ray-mesh
 // intersections.  This is not automatically done when a location is added
-// because it would force the loading of all meshes for objects with 
+// because it would force the loading of all meshes for objects with
 // defined locations; on-demand (i.e. when the object becomes visible to
 // a user) loading of meshes is preferred.
 void Body::computeLocations()
@@ -1129,7 +1129,7 @@ PlanetarySystem::~PlanetarySystem()
 void PlanetarySystem::addAlias(Body* body, const string& alias)
 {
     assert(body->getSystem() == this);
-    
+
     objectIndex.insert(make_pair(alias, body));
 }
 
@@ -1141,7 +1141,7 @@ void PlanetarySystem::addAlias(Body* body, const string& alias)
 void PlanetarySystem::removeAlias(const Body* body, const string& alias)
 {
     assert(body->getSystem() == this);
-    
+
     ObjectIndex::iterator iter = objectIndex.find(alias);
     if (iter != objectIndex.end())
     {
@@ -1173,13 +1173,13 @@ void PlanetarySystem::addBodyToNameIndex(Body* body)
 void PlanetarySystem::removeBodyFromNameIndex(const Body* body)
 {
     assert(body->getSystem() == this);
-    
+
     // Erase the object from the object indices
     const vector<string>& names = body->getNames();
     for (vector<string>::const_iterator iter = names.begin(); iter != names.end(); iter++)
     {
         removeAlias(body, *iter);
-    } 
+    }
 }
 
 
@@ -1194,7 +1194,7 @@ void PlanetarySystem::removeBody(Body* body)
             break;
         }
     }
-    
+
     removeBodyFromNameIndex(body);
 }
 
@@ -1217,7 +1217,7 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
 
 
 /*! Find a body with the specified name within a planetary system.
- * 
+ *
  *  deepSearch: if true, recursively search the systems of child objects
  *  i18n: if true, allow matching of localized body names. When responding
  *    to a user query, this flag should be true. In other cases--such
@@ -1230,7 +1230,7 @@ Body* PlanetarySystem::find(const string& _name, bool deepSearch, bool i18n) con
     if (firstMatch != objectIndex.end())
     {
         Body* matchedBody = firstMatch->second;
-        
+
         if (i18n)
         {
             return matchedBody;
@@ -1293,13 +1293,13 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
          iter != objectIndex.end(); iter++)
     {
         const string& alias = iter->first;
-        
+
         if (UTF8StringCompare(alias, _name, _name_length) == 0)
         {
             completion.push_back(alias);
         }
     }
-    
+
     // Scan child objects
     if (deepSearch)
     {
@@ -1313,7 +1313,7 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
             }
         }
     }
-    
+
     return completion;
 }
 

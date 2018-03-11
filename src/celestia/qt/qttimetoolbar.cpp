@@ -63,7 +63,7 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
 
     connect(slowTimeAction, SIGNAL(triggered()), this, SLOT(slotSlower()));
     addAction(slowTimeAction);
-    
+
     connect(halfTimeAction, SIGNAL(triggered()), this, SLOT(slotHalfTime()));
     addAction(halfTimeAction);
 

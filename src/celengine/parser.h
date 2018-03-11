@@ -66,7 +66,7 @@ class AssociativeArray
 
     HashIterator begin();
     HashIterator end();
-    
+
  private:
     map<string, Value*> assoc;
 };
@@ -97,7 +97,7 @@ public:
 
     double getNumber() const;
     string getString() const;
-	ValueArray* getArray() const;
+    ValueArray* getArray() const;
     Hash* getHash() const;
     bool getBoolean() const;
 
@@ -107,7 +107,7 @@ private:
     union {
         string* s;
         double d;
-		ValueArray* a;
+        ValueArray* a;
         Hash* h;
     } data;
 };
@@ -122,9 +122,9 @@ public:
 
 private:
     Tokenizer* tokenizer;
-    
+
     bool readUnits(const std::string&, Hash*);
-	ValueArray* readArray();
+    ValueArray* readArray();
     Hash* readHash();
 };
 

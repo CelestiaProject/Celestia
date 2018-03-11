@@ -64,7 +64,7 @@ public:
     DSOPredicate(Criterion _criterion, const Vector3d& _observerPos);
 
     bool operator()(const DeepSkyObject* dso0, const DeepSkyObject* dso1) const;
-    
+
 private:
     Criterion criterion;
     Vector3d pos;
@@ -311,11 +311,11 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
                              unsigned int nDSOs)
 {
     const DSODatabase& dsodb = *universe->getDSOCatalog();
-    
+
     observerPos = _observerPos.offsetFromKm(UniversalCoord::Zero()) * astro::kilometersToLightYears(1.0);
-    
+
     typedef multiset<DeepSkyObject*, DSOPredicate> DSOSet;
-    
+
     DSOPredicate pred(criterion, observerPos);
 
     // Apply the filter
@@ -451,7 +451,7 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
     // Additional filtering controls
     QGroupBox* filterGroup = new QGroupBox(_("Filter"));
     QHBoxLayout* filterGroupLayout = new QHBoxLayout();
-    
+
     filterGroupLayout->addWidget(new QLabel(_("Type")));
     objectTypeFilterBox = new QLineEdit();
     connect(objectTypeFilterBox, SIGNAL(editingFinished()), this, SLOT(slotRefreshTable()));
@@ -600,7 +600,7 @@ void DeepSkyBrowser::slotMarkSelected()
     Color color((float) markerColor.redF(),
                 (float) markerColor.greenF(),
                 (float) markerColor.blueF());
-    
+
     Universe* universe = appCore->getSimulation()->getUniverse();
     string label;
 
@@ -620,7 +620,7 @@ void DeepSkyBrowser::slotMarkSelected()
                         label = ReplaceGreekLetterAbbr(label);
                     }
 
-                    universe->markObject(Selection(dso), 
+                    universe->markObject(Selection(dso),
                                          MarkerRepresentation(markerSymbol, size, color, label),
                                          1);
                 }

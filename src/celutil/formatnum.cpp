@@ -1,5 +1,5 @@
 // formatnum.cpp
-// 
+//
 // Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -103,7 +103,7 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
             --i;
             --j;
         }
-        
+
         const char *g = grouping;
         bool does_grouping = *g != 0;
         while (i >= 0)

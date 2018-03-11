@@ -22,7 +22,7 @@ int vector_new(lua_State* l, const Vec3d& v)
     Vec3d* v3 = reinterpret_cast<Vec3d*>(lua_newuserdata(l, sizeof(Vec3d)));
     *v3 = v;
     celx.setClass(Celx_Vec3);
-    
+
     return 1;
 }
 
@@ -42,7 +42,7 @@ static Vec3d* this_vector(lua_State* l)
     {
         celx.doError("Bad vector object!");
     }
-    
+
     return v3;
 }
 
@@ -127,7 +127,7 @@ static int vector_getx(lua_State* l)
     lua_Number x;
     x = static_cast<lua_Number>(v3->x);
     lua_pushnumber(l, x);
-    
+
     return 1;
 }
 
@@ -140,7 +140,7 @@ static int vector_gety(lua_State* l)
     lua_Number y;
     y = static_cast<lua_Number>(v3->y);
     lua_pushnumber(l, y);
-    
+
     return 1;
 }
 
@@ -153,7 +153,7 @@ static int vector_getz(lua_State* l)
     lua_Number z;
     z = static_cast<lua_Number>(v3->z);
     lua_pushnumber(l, z);
-    
+
     return 1;
 }
 
@@ -188,7 +188,7 @@ static int vector_add(lua_State* l)
     Vec3d* v1 = NULL;
     Vec3d* v2 = NULL;
     UniversalCoord* p = NULL;
-    
+
     if (celx.isType(1, Celx_Vec3) && celx.isType(2, Celx_Vec3))
     {
         v1 = celx.toVector(1);
@@ -270,7 +270,7 @@ static int vector_cross(lua_State* l)
         celx.doError("Bad vector multiplication!");
     }
     return 1;
-    
+
 }
 
 static int vector_tostring(lua_State* l)
@@ -284,7 +284,7 @@ void CreateVectorMetaTable(lua_State* l)
     CelxLua celx(l);
 
     celx.createClassMetatable(Celx_Vec3);
-    
+
     celx.registerMethod("__tostring", vector_tostring);
     celx.registerMethod("__add", vector_add);
     celx.registerMethod("__sub", vector_sub);
@@ -297,7 +297,7 @@ void CreateVectorMetaTable(lua_State* l)
     celx.registerMethod("getz", vector_getz);
     celx.registerMethod("normalize", vector_normalize);
     celx.registerMethod("length", vector_length);
-    
+
     lua_pop(l, 1); // remove metatable from stack
 }
 

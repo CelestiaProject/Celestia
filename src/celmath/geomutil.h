@@ -44,7 +44,7 @@ ZRotation(T radians)
  *  from the observer to the target, with the y-axis pointing in direction
  *  of the component of 'up' that is orthogonal to the z-axis.
  */
-template<class T> Eigen::Quaternion<T> 
+template<class T> Eigen::Quaternion<T>
 LookAt(Eigen::Matrix<T, 3, 1> from, Eigen::Matrix<T, 3, 1> to, Eigen::Matrix<T, 3, 1> up)
 {
     Eigen::Matrix<T, 3, 1> n = to - from;

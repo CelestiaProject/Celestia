@@ -86,39 +86,39 @@ char* StellarClass::str(char* buf, unsigned int buflen) const
     }
     else if (st == StellarClass::NormalStar)
     {
-	s0[0] = "OBAFGKMRSNWW?LTC"[(unsigned int) getSpectralClass()];
+        s0[0] = "OBAFGKMRSNWW?LTC"[(unsigned int) getSpectralClass()];
         s0[1] = '\0';
-	s1[0] = "0123456789"[getSubclass()];
+        s1[0] = "0123456789"[getSubclass()];
         s1[1] = '\0';
-	switch (getLuminosityClass())
+        switch (getLuminosityClass())
         {
-	case StellarClass::Lum_Ia0:
-	    s2 = " I-a0";
-	    break;
-	case StellarClass::Lum_Ia:
-	    s2 = " I-a";
-	    break;
-	case StellarClass::Lum_Ib:
-	    s2 = " I-b";
-	    break;
-	case StellarClass::Lum_II:
-	    s2 = " II";
-	    break;
-	case StellarClass::Lum_III:
-	    s2 = " III";
-	    break;
-	case StellarClass::Lum_IV:
-	    s2 = " IV";
-	    break;
-	case StellarClass::Lum_V:
-	    s2 = " V";
-	    break;
-	case StellarClass::Lum_VI:
-	    s2 = " VI";
-	    break;
+        case StellarClass::Lum_Ia0:
+            s2 = " I-a0";
+            break;
+        case StellarClass::Lum_Ia:
+            s2 = " I-a";
+            break;
+        case StellarClass::Lum_Ib:
+            s2 = " I-b";
+            break;
+        case StellarClass::Lum_II:
+            s2 = " II";
+            break;
+        case StellarClass::Lum_III:
+            s2 = " III";
+            break;
+        case StellarClass::Lum_IV:
+            s2 = " IV";
+            break;
+        case StellarClass::Lum_V:
+            s2 = " V";
+            break;
+        case StellarClass::Lum_VI:
+            s2 = " VI";
+            break;
 
         default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
-	}
+        }
     }
     else
     {
@@ -149,9 +149,9 @@ uint16
 StellarClass::pack() const
 {
     return (((uint16) starType << 12) |
-	    (((uint16) specClass & 0xf) << 8) |
-	    ((uint16) subclass << 4) |
-	    ((uint16) lumClass));
+           (((uint16) specClass & 0xf) << 8) |
+           ((uint16) subclass << 4) |
+           ((uint16) lumClass));
 }
 
 

@@ -1,5 +1,5 @@
 // winlocations.cpp
-// 
+//
 // Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
 //
 // Miscellaneous utilities for Locations UI implementation.
@@ -61,7 +61,7 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
     {
         Observer* obs = dlg->appCore->getSimulation()->getActiveObserver();
         uint32 locationFilter = obs->getLocationFilter();
-        
+
         switch (LOWORD(wParam))
         {
         case IDC_SHOW_CITIES:
@@ -136,20 +136,20 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
         {
             WORD sbValue = LOWORD(wParam);
             LRESULT sliderPos;
-            
+
             if (sbValue == SB_THUMBTRACK)
                 sliderPos = HIWORD(wParam);
-            else                            
+            else
                 sliderPos = SendMessage(GetDlgItem(hDlg, IDC_SLIDER_FEATURE_SIZE), TBM_GETPOS, 0, 0);
-                
+
             char val[16];
             HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FEATURE_SIZE);
             float featureSize = (float) sliderPos / (float) FeatureSizeSliderRange;
             featureSize = MinFeatureSize + (MaxFeatureSize - MinFeatureSize) * featureSize;
             sprintf(val, "%d", (int) featureSize);
             SetWindowText(hwnd, val);
-            
-            dlg->appCore->getRenderer()->setMinimumFeatureSize(featureSize);					
+
+            dlg->appCore->getRenderer()->setMinimumFeatureSize(featureSize);
         }
     }
 
@@ -213,7 +213,7 @@ void LocationsDialog::SetControls(HWND hDlg)
                        TBM_SETPOS,
                        (WPARAM) TRUE,
                        (LPARAM) sliderPos);
-    
+
     char val[16];
     HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FEATURE_SIZE);
     sprintf(val, "%d", (int) featureSize);

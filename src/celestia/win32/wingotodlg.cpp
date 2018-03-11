@@ -1,5 +1,5 @@
 // wingotodlg.cpp
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Goto object dialog for Windows.
@@ -22,7 +22,7 @@ using namespace std;
 static bool GetDialogFloat(HWND hDlg, int id, float& f)
 {
     char buf[128];
-    
+
     if (GetDlgItemText(hDlg, id, buf, sizeof buf) > 0 &&
         sscanf(buf, " %f", &f) == 1)
         return true;
@@ -93,13 +93,13 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
 
             Simulation* sim = gotoDlg->appCore->getSimulation();
             Selection sel;
-            if (len > 0) 
+            if (len > 0)
             {
                 int wlen = MultiByteToWideChar(CP_ACP, 0, buf, -1, wbuff, sizeof(wbuff));
                 WideCharToMultiByte(CP_UTF8, 0, wbuff, wlen, out, sizeof(out), NULL, NULL);
                 sel = sim->findObjectFromPath(string(out), true);
             }
-            
+
             if (!sel.empty())
             {
                 sim->setSelection(sel);
@@ -113,7 +113,7 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                         distance = astro::AUtoKilometers(distance);
                     else if (IsDlgButtonChecked(hDlg, IDC_RADIO_RADII) == BST_CHECKED)
                         distance = distance * (float) sel.radius();
-                    
+
                     distance += (float) sel.radius();
                 }
 
