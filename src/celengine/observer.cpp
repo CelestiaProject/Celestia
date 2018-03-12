@@ -426,7 +426,7 @@ void Observer::update(double dt, double timeScale)
                 UniversalCoord origin = centerObj.getPosition(simTime);
 
                 Vector3d v0 = ufrom.offsetFromKm(origin);
-                Vector3d v1 = uto.offsetFromKm(origin);
+                //Vector3d v1 = uto.offsetFromKm(origin);
 
                 if (jv.norm() == 0.0)
                 {
@@ -629,7 +629,7 @@ void Observer::computeGotoParameters(const Selection& destination,
     }
 
     UniversalCoord targetPosition = destination.getPosition(getTime());
-    Vector3d v = targetPosition.offsetFromKm(getPosition()).normalized();
+    //Vector3d v = targetPosition.offsetFromKm(getPosition()).normalized();
 
     jparams.traj = Linear;
     jparams.duration = gotoTime;
@@ -694,7 +694,7 @@ void Observer::computeGotoParametersGC(const Selection& destination,
     setFrame(frame->getCoordinateSystem(), destination);
 
     UniversalCoord targetPosition = destination.getPosition(getTime());
-    Vector3d v = targetPosition.offsetFromKm(getPosition()).normalized();
+    //Vector3d v = targetPosition.offsetFromKm(getPosition()).normalized();
 
     jparams.traj = GreatCircle;
     jparams.duration = gotoTime;
@@ -791,7 +791,7 @@ void Observer::computeCenterCOParameters(const Selection& destination,
 
     Selection centerObj = frame->getRefObject();
     UniversalCoord centerPos = centerObj.getPosition(getTime());
-    UniversalCoord targetPosition = destination.getPosition(getTime());
+    //UniversalCoord targetPosition = destination.getPosition(getTime());
 
     Quaterniond q;
     q.setFromTwoVectors(v, w);

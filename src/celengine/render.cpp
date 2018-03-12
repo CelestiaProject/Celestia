@@ -8033,8 +8033,10 @@ void Renderer::renderCometTail(const Body& body,
 {
     Vector3f cometPoints[MaxCometTailPoints];
     Vector3d pos0 = body.getOrbit(now)->positionAtTime(now);
+#if 0
     Vector3d pos1 = body.getOrbit(now)->positionAtTime(now - 0.01);
     Vector3d vd = pos1 - pos0;
+#endif
     double t = now;
 
     float distanceFromSun, irradiance_max = 0.0f;
