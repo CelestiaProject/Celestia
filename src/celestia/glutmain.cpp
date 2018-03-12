@@ -155,8 +155,7 @@ static void MouseButton(int button, int state, int x, int y)
     lastY = y;
 }
 
-
-static void KeyPress(unsigned char c, int x, int y)
+static void KeyPress(unsigned char c, int /*x*/, int /*y*/)
 {
     // Ctrl-Q exits
     if (c == '\021')
@@ -167,7 +166,7 @@ static void KeyPress(unsigned char c, int x, int y)
 }
 
 
-static void KeyUp(unsigned char c, int x, int y)
+static void KeyUp(unsigned char c, int /*x*/, int /*y*/)
 {
     appCore->keyUp((int) c);
 }
@@ -237,13 +236,13 @@ static void HandleSpecialKey(int key, bool down)
 }
 
 
-static void SpecialKeyPress(int key, int x, int y)
+static void SpecialKeyPress(int key, int /*x*/, int /*y*/)
 {
     HandleSpecialKey(key, true);
 }
 
 
-static void SpecialKeyUp(int key, int x, int y)
+static void SpecialKeyUp(int key, int /*x*/, int /*y*/)
 {
     HandleSpecialKey(key, false);
 }
