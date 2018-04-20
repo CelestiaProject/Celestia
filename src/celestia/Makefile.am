@@ -1,7 +1,7 @@
 SUBDIRS = 
 
 bin_PROGRAMS = celestia
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include
+AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include
 
 DEFS = -DCONFIG_DATA_DIR='"$(PKGDATADIR)"' -DLOCALEDIR='"$(datadir)/locale"' @DEFS@
 
@@ -79,4 +79,4 @@ noinst_DATA = ../../celestia
 CLEANFILES = ../../celestia
 
 ../../celestia: celestia
-	(cd ../..; ln -s src/celestia/celestia)
+	(cd ../..; ln -sf src/celestia/celestia)

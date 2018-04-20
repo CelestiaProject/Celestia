@@ -6,7 +6,7 @@ msgstr ""
 "PO-Revision-Date: \n"
 "Last-Translator: Hleb Valoshka <375gnu@gmail.com>\n"
 "Language-Team: belarusian <i18n@mova.org>\n"
-"Language: \n"
+"Language: belarusian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -28,7 +28,7 @@ msgstr "STD"
 
 #: src/celengine/dsodb.cpp:387
 msgid "Loaded "
-msgstr "Загружаны"
+msgstr "Загружана "
 
 #: src/celengine/dsodb.cpp:387
 msgid " deep space objects"
@@ -110,7 +110,7 @@ msgstr " прымітываў, "
 
 #: src/celengine/meshmanager.cpp:165
 msgid " materials "
-msgstr " матар'ялаў"
+msgstr " матар'ялаў "
 
 #: src/celengine/meshmanager.cpp:166
 msgid " unique)\n"
@@ -739,7 +739,7 @@ msgstr "Трымаць "
 
 #: src/celestia/celestiacore.cpp:3592
 msgid "Follow "
-msgstr "Ісьці ўсьлед "
+msgstr "Ідзём за аб'ектам: "
 
 #: src/celestia/celestiacore.cpp:3597
 msgid "Sync Orbit "
