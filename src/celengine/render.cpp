@@ -7662,7 +7662,7 @@ void Renderer::renderPlanet(Body& body,
 
 
         // Add ring shadow records for each light
-        if (body.getRings() && ShowRingShadows)
+        if (body.getRings() && (renderFlags & ShowRingShadows) != 0)
         {
             for (unsigned int li = 0; li < lights.nLights; li++)
             {
