@@ -91,17 +91,17 @@ class CachingRotationModel : public RotationModel
 
     CachingRotationModel();
     virtual ~CachingRotationModel();
-    
+
     Eigen::Quaterniond spin(double tjd) const;
     Eigen::Quaterniond equatorOrientationAtTime(double tjd) const;
     Eigen::Vector3d angularVelocityAtTime(double tjd) const;
-    
+
     virtual Eigen::Quaterniond computeEquatorOrientation(double tjd) const = 0;
     virtual Eigen::Quaterniond computeSpin(double tjd) const = 0;
     virtual Eigen::Vector3d computeAngularVelocity(double tjd) const;
     virtual double getPeriod() const = 0;
     virtual bool isPeriodic() const = 0;
-    
+
 private:
     mutable Eigen::Quaterniond lastSpin;
     mutable Eigen::Quaterniond lastEquator;

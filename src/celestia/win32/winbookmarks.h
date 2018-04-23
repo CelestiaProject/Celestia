@@ -1,5 +1,5 @@
 // winbookmarks.h
-// 
+//
 // Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
 //
 // Miscellaneous utilities for Locations UI implementation.

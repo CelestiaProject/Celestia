@@ -27,58 +27,58 @@ void dialogEclipseFinder(AppData* app);
 /* Date selection data type */
 typedef struct _selDate selDate;
 struct _selDate {
-	int year;
-	int month;
-	int day;
+    int year;
+    int month;
+    int day;
 };
 
 typedef struct _EclipseData EclipseData;
 struct _EclipseData {
-	AppData* app;
-	
-	/* Start Time */
-	selDate* d1;
+    AppData* app;
 
-	/* End Time */
-	selDate* d2;
+    /* Start Time */
+    selDate* d1;
 
-	bool bSolar;
-	char body[7];
-	GtkTreeSelection* sel;
+    /* End Time */
+    selDate* d2;
 
-	GtkWidget *eclipseList;
-	GtkListStore *eclipseListStore;
+    bool bSolar;
+    char body[7];
+    GtkTreeSelection* sel;
 
-	GtkDialog* window;
+    GtkWidget *eclipseList;
+    GtkListStore *eclipseListStore;
+
+    GtkDialog* window;
 };
 
 
 const char * const eclipseTitles[] =
 {
-	"Planet",
-	"Satellite",
-	"Date",
-	"Start",
-	"End",
-	NULL
+    "Planet",
+    "Satellite",
+    "Date",
+    "Start",
+    "End",
+    NULL
 };
 
 const char * const eclipseTypeTitles[] =
 {
-	"solar",
-	"moon",
-	NULL
+    "solar",
+    "moon",
+    NULL
 };
 
 const char * const eclipsePlanetTitles[] =
 {
-	"Earth",
-	"Jupiter",
-	"Saturn",
-	"Uranus",
-	"Neptune",
-	"Pluto",
-	NULL
+    "Earth",
+    "Jupiter",
+    "Saturn",
+    "Uranus",
+    "Neptune",
+    "Pluto",
+    NULL
 };
 
 #endif /* GTK_DIALOG_ECLIPSE_H */

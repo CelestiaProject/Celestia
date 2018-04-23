@@ -18,7 +18,7 @@ class Execution
 {
  public:
     Execution(CommandSequence&, ExecutionEnvironment&);
-    
+
     bool tick(double);
     void reset(CommandSequence&);
 

@@ -61,11 +61,11 @@ public:
         Celx_String,
         Celx_Nil,
     };
-    
+
     CelxValue() : type(Celx_Nil) {}
     CelxValue(double d) : type(Celx_Number), value_number(d) {}
     CelxValue(const char* s) : type(Celx_String), value_cstring(s) {}
-    
+
     void push(lua_State* l) const
     {
         switch (type)
@@ -92,9 +92,9 @@ class CelxLua
 public:
     CelxLua(lua_State* l);
     ~CelxLua();
-    
+
     bool isType(int index, int type) const;
-    
+
     void setClass(int id);
     void pushClassName(int id);
     void* checkUserData(int index, int id);
@@ -103,10 +103,10 @@ public:
     void createClassMetatable(int id);
     void registerMethod(const char* name, lua_CFunction fn);
     void registerValue(const char* name, float value);
-    
+
     void setTable(const char* field, lua_Number value);
     void setTable(const char* field, const char* value);
-        
+
     void newFrame(const ObserverFrame& f);
     void newVector(const Vec3d& v);
     void newVector(const Eigen::Vector3d& v);
@@ -121,12 +121,12 @@ public:
     UniversalCoord* toPosition(int n);
     Selection* toObject(int n);
     ObserverFrame* toFrame(int n);
-    
+
     void push(const CelxValue& v1);
     void push(const CelxValue& v1, const CelxValue& v2);
-    
+
     CelestiaCore* appCore(FatalErrors fatalErrors = NoErrors);
-    
+
     lua_Number safeGetNumber(int index,
                              FatalErrors fatalErrors = AllErrors,
                              const char* errorMessage = "Numeric argument expected",
@@ -138,10 +138,10 @@ public:
                         FatalErrors fatalErrors = AllErrors,
                         const char* errorMsg = "Boolean argument expected",
                         bool defaultValue = false);
-    
+
     LuaState* getLuaStateObject();
 
-    
+
     // String to flag mappings
     typedef std::map<std::string, uint32> FlagMap;
     typedef std::map<std::string, Color*> ColorMap;
@@ -155,7 +155,7 @@ public:
     static void initOrbitVisibilityMap();
     static void initLabelColorMap();
     static void initLineColorMap();
-    
+
     static FlagMap RenderFlagMap;
     static FlagMap LabelFlagMap;
     static FlagMap LocationFlagMap;
@@ -165,9 +165,9 @@ public:
     static ColorMap LineColorMap;
     static ColorMap LabelColorMap;
     static bool mapsInitialized;
-    
+
     static const char* ClassNames[];
-    
+
 private:
     lua_State* m_lua;
 };

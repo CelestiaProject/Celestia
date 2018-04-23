@@ -273,7 +273,7 @@ Vector3d Orbit::velocityAtTime(double tdb) const
 {
     Vector3d p0 = positionAtTime(tdb);
     Vector3d p1 = positionAtTime(tdb + ORBITAL_VELOCITY_DIFF_DELTA);
-	return (p1 - p0) * (1.0 / ORBITAL_VELOCITY_DIFF_DELTA);
+    return (p1 - p0) * (1.0 / ORBITAL_VELOCITY_DIFF_DELTA);
 }
 
 
@@ -366,10 +366,10 @@ Vector3d EllipticalOrbit::velocityAtE(double E) const
     if (eccentricity < 1.0)
     {
         double a = pericenterDistance / (1.0 - eccentricity);
-		double b = a * sqrt(1 - square(eccentricity));
+        double b = a * sqrt(1 - square(eccentricity));
         double sinE = sin(E);
         double cosE = cos(E);
-        
+
         double meanMotion = 2.0 * PI / period;
         double edot = meanMotion / (1 - eccentricity * cosE);
 
@@ -435,9 +435,9 @@ double EllipticalOrbit::getBoundingRadius() const
 
 
 CachingOrbit::CachingOrbit() :
-	lastTime(-1.0e30),
-	positionCacheValid(false),
-	velocityCacheValid(false)
+    lastTime(-1.0e30),
+    positionCacheValid(false),
+    velocityCacheValid(false)
 {
 }
 
@@ -453,14 +453,14 @@ Vector3d CachingOrbit::positionAtTime(double jd) const
     {
         lastTime = jd;
         lastPosition = computePosition(jd);
-		positionCacheValid = true;
-		velocityCacheValid = false;
+        positionCacheValid = true;
+        velocityCacheValid = false;
     }
-	else if (!positionCacheValid)
-	{
-		lastPosition = computePosition(jd);
-		positionCacheValid = true;
-	}
+    else if (!positionCacheValid)
+    {
+        lastPosition = computePosition(jd);
+        positionCacheValid = true;
+    }
 
     return lastPosition;
 }
@@ -468,20 +468,20 @@ Vector3d CachingOrbit::positionAtTime(double jd) const
 
 Vector3d CachingOrbit::velocityAtTime(double jd) const
 {
-	if (jd != lastTime)
-	{
-		lastVelocity = computeVelocity(jd);
-		lastTime = jd;  // must be set *after* call to computeVelocity
-		positionCacheValid = false;
-		velocityCacheValid = true;
-	}
-	else if (!velocityCacheValid)
-	{
-		lastVelocity = computeVelocity(jd);
-		velocityCacheValid = true;
-	}
+    if (jd != lastTime)
+    {
+        lastVelocity = computeVelocity(jd);
+        lastTime = jd;  // must be set *after* call to computeVelocity
+        positionCacheValid = false;
+        velocityCacheValid = true;
+    }
+    else if (!velocityCacheValid)
+    {
+        lastVelocity = computeVelocity(jd);
+        velocityCacheValid = true;
+    }
 
-	return lastVelocity;
+    return lastVelocity;
 }
 
 
@@ -491,16 +491,16 @@ Vector3d CachingOrbit::velocityAtTime(double jd) const
  */
 Vector3d CachingOrbit::computeVelocity(double jd) const
 {
-	// Compute the velocity by differentiating.
+    // Compute the velocity by differentiating.
     Vector3d p0 = positionAtTime(jd);
 
-	// Call computePosition() instead of positionAtTime() so that we
-	// don't affect the cached value. 
-	// TODO: check the valid ranges of the orbit to make sure that
-	// jd+dt is still in range.
+    // Call computePosition() instead of positionAtTime() so that we
+    // don't affect the cached value.
+    // TODO: check the valid ranges of the orbit to make sure that
+    // jd+dt is still in range.
     Vector3d p1 = computePosition(jd + ORBITAL_VELOCITY_DIFF_DELTA);
 
-	return (p1 - p0) * (1.0 / ORBITAL_VELOCITY_DIFF_DELTA);
+    return (p1 - p0) * (1.0 / ORBITAL_VELOCITY_DIFF_DELTA);
 }
 
 

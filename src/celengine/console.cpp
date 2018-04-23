@@ -207,7 +207,7 @@ void Console::printf(const char* format, ...)
     char buf[1024];
     vsprintf(buf, format, args);
     print(buf);
-    
+
     va_end(args);
 }
 #endif

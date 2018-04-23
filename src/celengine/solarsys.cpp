@@ -368,7 +368,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     }
     bodyFrame->addRef();
 
-    // Use planet units (AU for semimajor axis) if the center of the orbit 
+    // Use planet units (AU for semimajor axis) if the center of the orbit
     // reference frame is a star.
     bool usePlanetUnits = orbitFrame->getCenter().star() != NULL;
 
@@ -497,7 +497,7 @@ static bool CreateTimeline(Body* body,
         defaultOrbitFrame = parentFrameTree->getDefaultReferenceFrame();
         defaultBodyFrame = parentFrameTree->getDefaultReferenceFrame();
     }
-    
+
     // If there's an explicit timeline definition, parse that. Otherwise, we'll do
     // things the old way.
     Value* value = planetData->getValue("Timeline");
@@ -643,7 +643,7 @@ static bool CreateTimeline(Body* body,
         // for nearly all natural satellites in the solar system.)
         rotationModel = CreateDefaultRotationModel(syncRotationPeriod);
     }
-    
+
     if (ParseDate(planetData, "Beginning", beginning))
         overrideOldTimeline = true;
     if (ParseDate(planetData, "Ending", ending))
@@ -730,7 +730,7 @@ static Body* CreateBody(const string& name,
         body = new Body(system, name);
         // If the body doesn't exist, always treat the disposition as 'Add'
         disposition = AddObject;
-        
+
         // Set the default classification for new objects based on the body type.
         // This may be overridden by the Class property.
         if (bodyType == SurfaceObject)
@@ -1009,7 +1009,7 @@ static Body* CreateBody(const string& name,
             }
         }
     }
-    
+
     bool clickable = true;
     if (planetData->getBoolean("Clickable", clickable))
     {
@@ -1131,7 +1131,7 @@ bool LoadSolarSystemObjects(istream& in,
             sscError(tokenizer, "object name expected");
             return false;
         }
-        
+
         // The name list is a string with zero more names. Multiple names are
         // delimited by colons.
         string nameList = tokenizer.getStringValue().c_str();
@@ -1160,7 +1160,7 @@ bool LoadSolarSystemObjects(istream& in,
 
         Selection parent = universe.findPath(parentName, NULL, 0);
         PlanetarySystem* parentSystem = NULL;
-        
+
         vector<string> names;
         // Iterate through the string for names delimited
         // by ':', and insert them into the name list.
@@ -1193,7 +1193,7 @@ bool LoadSolarSystemObjects(istream& in,
             bodyType = ReferencePoint;
         else if (itemType == "SurfaceObject")
             bodyType = SurfaceObject;
-        
+
         if (bodyType != UnknownBodyType)
         {
             //bool orbitsPlanet = false;
@@ -1249,7 +1249,7 @@ bool LoadSolarSystemObjects(istream& in,
                     body = CreateReferencePoint(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition);
                 else
                     body = CreateBody(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition, bodyType);
-                
+
                 if (body != NULL && disposition == AddObject)
                 {
                     vector<string>::const_iterator iter = names.begin();
@@ -1302,7 +1302,7 @@ bool LoadSolarSystemObjects(istream& in,
 }
 
 
-SolarSystem::SolarSystem(Star* _star) : 
+SolarSystem::SolarSystem(Star* _star) :
     star(_star),
     planets(NULL),
     frameTree(NULL)

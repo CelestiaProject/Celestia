@@ -28,7 +28,7 @@ public slots:
     void slotWithPlanets(bool);
     void slotRefresh();
     void slotRightClickOnStar(QListViewItem*, const QPoint&,int );
-    
+
 private:
     KdeApp *parent;
     CelestiaCore *appCore;
@@ -36,7 +36,7 @@ private:
     StarBrowser sbrowser;
     Selection browserSel;
     void addPlanetarySystem(CelListViewItem* parentItem, const PlanetarySystem* system, const Eigen::Vector3d* parentBodyPos = NULL);
-    
+
     QString getClassification(int c) const;
 
 };

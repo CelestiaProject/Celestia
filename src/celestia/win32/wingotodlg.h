@@ -1,5 +1,5 @@
 // wingotodlg.h
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Goto object dialog for Windows.

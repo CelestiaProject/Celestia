@@ -39,7 +39,7 @@ void GLContext::init(const vector<string>& ignoreExt)
     if (extensionsString != NULL)
     {
         char* next = extensionsString;
-        
+
         while (*next != '\0')
         {
             while (*next != '\0' && *next != ' ')

@@ -64,7 +64,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         double startTime = 0.0;
         double endTime = 0.0;
         sel.body()->getLifespan(startTime, endTime);
-        
+
         if (startTime > -1.0e9 || endTime < 1.0e9)
         {
             addSeparator();
@@ -95,7 +95,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     {
         std::string name = ReplaceGreekLetterAbbr(sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true));
         addAction(boldTextItem(QString::fromUtf8(name.c_str())));
-        
+
         // Add some text items giving additional information about
         // the star.
         double distance = astro::kilometersToLightYears(v.norm());
@@ -159,14 +159,14 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     connect(infoAction, SIGNAL(triggered()), this, SLOT(slotInfo()));
     addAction(infoAction);
 
-	if (sel.body() != NULL)
-	{
-		QAction* setVisibilityAction = new QAction(_("Visible"), this);
-		setVisibilityAction->setCheckable(true);
-		setVisibilityAction->setChecked(sel.body()->isVisible());
-		connect(setVisibilityAction, SIGNAL(toggled(bool)), this, SLOT(slotToggleVisibility(bool)));
-		addAction(setVisibilityAction);
-	}
+    if (sel.body() != NULL)
+    {
+        QAction* setVisibilityAction = new QAction(_("Visible"), this);
+        setVisibilityAction->setCheckable(true);
+        setVisibilityAction->setChecked(sel.body()->isVisible());
+        connect(setVisibilityAction, SIGNAL(toggled(bool)), this, SLOT(slotToggleVisibility(bool)));
+        addAction(setVisibilityAction);
+    }
 
     // Marker submenu
     QMenu* markMenu = createMarkMenu();
@@ -246,7 +246,7 @@ QMenu* SelectionPopup::createMarkMenu()
         gettext_noop("Circle"),
         gettext_noop("Disk"),
     };
-        
+
     QMenu* markMenu = new QMenu(_("&Mark"));
     for (int i = 0; i < (int) (sizeof(MARKER_NAMES) / sizeof(MARKER_NAMES[0])); i++)
     {
@@ -349,10 +349,10 @@ QMenu* SelectionPopup::createAlternateSurfacesMenu()
                 surfacesMenu->addAction(act);
                 connect(act, SIGNAL(triggered()), this, SLOT(slotSelectAlternateSurface()));
             }
-            
+
             addMenu(surfacesMenu);
         }
-        
+
         delete altSurfaces;
     }
 
@@ -399,7 +399,7 @@ QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
                     }
                     menu = new QMenu(title, this);
                 }
-                
+
                 QAction* act = new QAction(QString::fromUtf8(body->getName(true).c_str()), menu);
                 act->setData(i);
                 connect(act, SIGNAL(triggered()), this, SLOT(slotSelectChildObject()));
@@ -414,7 +414,7 @@ QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
 
 void SelectionPopup::addObjectMenus(PlanetarySystem* sys)
 {
-	setStyleSheet("QMenu { menu-scrollable: 1; }"); //popupmenu with scrollbar
+    setStyleSheet("QMenu { menu-scrollable: 1; }"); //popupmenu with scrollbar
     QMenu* planetsMenu = createObjectMenu(sys, Body::Planet);
     if (planetsMenu != NULL)
         addMenu(planetsMenu);
@@ -522,7 +522,7 @@ void SelectionPopup::slotSelectChildObject()
                     if (solarSys)
                         sys = solarSys->getPlanets();
                 }
-            }   
+            }
 
             if (sys != NULL)
             {
@@ -629,6 +629,6 @@ void SelectionPopup::slotInfo()
 
 void SelectionPopup::slotToggleVisibility(bool visible)
 {
-	assert(selection.body() != NULL);
-	selection.body()->setVisible(visible);	
+    assert(selection.body() != NULL);
+    selection.body()->setVisible(visible);
 }

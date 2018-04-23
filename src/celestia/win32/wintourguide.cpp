@@ -1,5 +1,5 @@
 // wintourguide.cpp
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Space 'tour guide' dialog for Windows.
@@ -45,8 +45,8 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
 
             HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_TOURGUIDE);
             const DestinationList* destinations = guide->appCore->getDestinations();
-			Destination* dest = (*destinations)[0];
-			guide->selectedDest = dest;
+            Destination* dest = (*destinations)[0];
+            guide->selectedDest = dest;
             if (hwnd != NULL && destinations != NULL)
             {
                 for (DestinationList::const_iterator iter = destinations->begin();

@@ -43,7 +43,7 @@ const TimelinePhase* phase;
 int phase_new(lua_State* l, const TimelinePhase& phase)
 {
     CelxLua celx(l);
-    
+
     // Use placement new to put the new phase reference in the userdata block.
     void* block = lua_newuserdata(l, sizeof(PhaseReference));
     new (block) PhaseReference(phase);
@@ -57,7 +57,7 @@ int phase_new(lua_State* l, const TimelinePhase& phase)
 static const TimelinePhase* to_phase(lua_State* l, int index)
 {
     CelxLua celx(l);
-    
+
     PhaseReference* ref = static_cast<PhaseReference*>(celx.checkUserData(index, Celx_Phase));
     return ref == NULL ? NULL : ref->phase;
 }
@@ -66,7 +66,7 @@ static const TimelinePhase* to_phase(lua_State* l, int index)
 static const TimelinePhase* this_phase(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     const TimelinePhase* phase = to_phase(l, 1);
     if (phase == NULL)
     {
@@ -94,10 +94,10 @@ static const TimelinePhase* this_phase(lua_State* l)
 static int phase_timespan(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     celx.checkArgs(1, 1, "No arguments allowed for to phase:timespan");
-        
-	const TimelinePhase* phase = this_phase(l);
+
+    const TimelinePhase* phase = this_phase(l);
     celx.push(phase->startTime(), phase->endTime());
     //lua_pushnumber(l, phase->startTime());
     //lua_pushnumber(l, phase->endTime());
@@ -113,13 +113,13 @@ static int phase_timespan(lua_State* l)
 static int phase_orbitframe(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     celx.checkArgs(1, 1, "No arguments allowed for to phase:orbitframe");
-        
-	const TimelinePhase* phase = this_phase(l);
+
+    const TimelinePhase* phase = this_phase(l);
     const ReferenceFrame* f = phase->orbitFrame();
     celx.newFrame(ObserverFrame(*f));
-    
+
     return 1;
 }
 
@@ -131,13 +131,13 @@ static int phase_orbitframe(lua_State* l)
 static int phase_bodyframe(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     celx.checkArgs(1, 1, "No arguments allowed for to phase:bodyframe");
-        
-	const TimelinePhase* phase = this_phase(l);
+
+    const TimelinePhase* phase = this_phase(l);
     const ReferenceFrame* f = phase->bodyFrame();
     celx.newFrame(ObserverFrame(*f));
-    
+
     return 1;
 }
 
@@ -151,7 +151,7 @@ static int phase_bodyframe(lua_State* l)
 static int phase_getposition(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     celx.checkArgs(2, 2, "One argument required for phase:getposition");
 
     const TimelinePhase* phase = this_phase(l);
@@ -176,7 +176,7 @@ static int phase_getposition(lua_State* l)
 static int phase_getorientation(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     celx.checkArgs(2, 2, "One argument required for phase:getorientation");
 
     const TimelinePhase* phase = this_phase(l);
@@ -203,13 +203,13 @@ static int phase_tostring(lua_State* l)
 }
 
 
-/*! __gc metamethod 
+/*! __gc metamethod
  * Garbage collection for phases.
  */
 static int phase_gc(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     PhaseReference* ref = static_cast<PhaseReference*>(celx.checkUserData(1, Celx_Phase));
     if (ref == NULL)
     {
@@ -228,7 +228,7 @@ static int phase_gc(lua_State* l)
 void CreatePhaseMetaTable(lua_State* l)
 {
     CelxLua celx(l);
-    
+
     celx.createClassMetatable(Celx_Phase);
 
     celx.registerMethod("__tostring", phase_tostring);

@@ -1,5 +1,5 @@
 // quaternion.h
-// 
+//
 // Copyright (C) 2000-2006, Chris Laurel <claurel@shatters.net>
 //
 // Template-ized quaternion math library.
@@ -62,7 +62,7 @@ public:
     static Quat<T> yrotation(T);
     static Quat<T> zrotation(T);
 
-	static Quat<T> lookAt(const Point3<T>& from, const Point3<T>& to, const Vector3<T>& up);
+    static Quat<T> lookAt(const Point3<T>& from, const Point3<T>& to, const Vector3<T>& up);
 
     T w, x, y, z;
 };
@@ -158,7 +158,7 @@ template<class T> Quat<T>& Quat<T>::operator*=(Quat<T> q)
                           w * q.x + x * q.w + y * q.z - z * q.y,
                           w * q.y + y * q.w + z * q.x - x * q.z,
                           w * q.z + z * q.w + x * q.y - y * q.x);
-                          
+
     return *this;
 }
 
@@ -447,7 +447,7 @@ template<class T> T Quat<T>::normalize()
 template<class T> void Quat<T>::setAxisAngle(Vector3<T> axis, T angle)
 {
     T s, c;
-    
+
     Math<T>::sincos(angle * (T) 0.5, s, c);
     x = s * axis.x;
     y = s * axis.y;
@@ -740,7 +740,7 @@ template<class T> Quat<T> Quat<T>::zrotation(T angle)
  *  from the observer to the target, with the y-axis pointing in direction
  *  of the component of 'up' that is orthogonal to the z-axis.
  */
-template<class T> Quat<T> 
+template<class T> Quat<T>
 Quat<T>::lookAt(const Point3<T>& from, const Point3<T>& to, const Vector3<T>& up)
 {
     Vector3<T> n = to - from;

@@ -22,14 +22,14 @@ template<class T> class Ray3
     Ray3(const Eigen::Matrix<T, 3, 1>& origin, const Eigen::Matrix<T, 3, 1>& direction);
     // Compatibility
     Ray3(const Point3<T>&, const Vector3<T>&);
- 
+
     Eigen::Matrix<T, 3, 1> point(T) const;
 
     Ray3<T> transform(const Eigen::Matrix<T, 3, 3>& m) const
     {
         return Ray3<T>(m * origin, m * direction);
     }
-   
+
  public:
     Eigen::Matrix<T, 3, 1> origin;
     Eigen::Matrix<T, 3, 1> direction;

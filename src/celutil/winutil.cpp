@@ -1,5 +1,5 @@
 // winutil.h
-// 
+//
 // Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -11,10 +11,10 @@
 
 void SetMouseCursor(LPCTSTR lpCursor)
 {
-	HCURSOR hNewCrsr;
-	
-	if (hNewCrsr = LoadCursor(NULL, lpCursor))
-	    SetCursor(hNewCrsr);
+    HCURSOR hNewCrsr;
+
+    if (hNewCrsr = LoadCursor(NULL, lpCursor))
+        SetCursor(hNewCrsr);
 }
 
 void CenterWindow(HWND hParent, HWND hWnd)
@@ -40,15 +40,15 @@ void CenterWindow(HWND hParent, HWND hWnd)
 void RemoveButtonDefaultStyle(HWND hWnd)
 {
     SetWindowLong(hWnd, GWL_STYLE,
-		::GetWindowLong(hWnd, GWL_STYLE) & ~BS_DEFPUSHBUTTON);
-	InvalidateRect(hWnd, NULL, TRUE);
+        ::GetWindowLong(hWnd, GWL_STYLE) & ~BS_DEFPUSHBUTTON);
+    InvalidateRect(hWnd, NULL, TRUE);
 }
 
 void AddButtonDefaultStyle(HWND hWnd)
 {
     SetWindowLong(hWnd, GWL_STYLE,
         ::GetWindowLong(hWnd, GWL_STYLE) | BS_DEFPUSHBUTTON);
-	InvalidateRect(hWnd, NULL, TRUE);
+    InvalidateRect(hWnd, NULL, TRUE);
 }
 
 const char* CurrentCP()

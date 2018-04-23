@@ -521,7 +521,7 @@ Mesh::getBoundingBox() const
         // primitives, point sprite vertices have a non-zero size.
         int pointSizeOffset = (int) vertexDesc.getAttribute(PointSize).offset -
             (int) vertexDesc.getAttribute(Position).offset;
-        
+
         for (unsigned int i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
         {
             Vector3f center = Map<Vector3f>(reinterpret_cast<float*>(vdata));

@@ -496,21 +496,21 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
         // Retain that body
         Body* closestBody = pickInfo.closestBody;
 
-	    // Check if there is a satellite in front of the primary body that is
-	    // sufficiently close to the pickRay
+        // Check if there is a satellite in front of the primary body that is
+        // sufficiently close to the pickRay
         traverseFrameTree(solarSystem.getFrameTree(), when, ApproxPlanetPickTraversal, (void*) &pickInfo);
 
         if (pickInfo.closestBody == closestBody)
-	        return  Selection(closestBody);
+            return  Selection(closestBody);
         // Nothing else around, select the body and return
 
         // Are we close enough to the satellite and is it in front of the body?
-    	if ((pickInfo.sinAngle2Closest <= sinTol2) &&
+        if ((pickInfo.sinAngle2Closest <= sinTol2) &&
             (pickInfo.closestDistance > pickInfo.closestApproxDistance))
             return Selection(pickInfo.closestBody);
             // Yes, select the satellite
-	    else
-	        return  Selection(closestBody);
+        else
+            return  Selection(closestBody);
            //  No, select the primary body
     }
 

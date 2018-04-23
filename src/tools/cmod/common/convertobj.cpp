@@ -98,7 +98,7 @@ WavefrontLoader::load()
     int currentMaterialIndex = -1;
 
     m_model = new Model();
-    
+
     while (getline(m_in, line))
     {
         m_lineNumber++;

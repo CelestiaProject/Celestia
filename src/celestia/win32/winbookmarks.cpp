@@ -1,5 +1,5 @@
 // winbookmarks.cpp
-// 
+//
 // Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
 //
 // Miscellaneous utilities for Locations UI implementation.
@@ -37,17 +37,17 @@ HTREEITEM PopulateBookmarksTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
     HICON hIcon;
     HTREEITEM hParent=NULL, hParentItem;
 
-    //Create a masked image list large enough to hold the icons. 
+    //Create a masked image list large enough to hold the icons.
     himlIcons = ImageList_Create(16, 16, ILC_COLOR32, 3, 0);
- 
+
     // Load the icon resources, and add the icons to the image list.
-    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CLOSEDFOLDER)); 
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CLOSEDFOLDER));
     ImageList_AddIcon(himlIcons, hIcon);
-    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_OPENFOLDER)); 
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_OPENFOLDER));
     ImageList_AddIcon(himlIcons, hIcon);
-    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_ROOTFOLDER)); 
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_ROOTFOLDER));
     ImageList_AddIcon(himlIcons, hIcon);
-    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_BOOKMARK)); 
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_BOOKMARK));
     ImageList_AddIcon(himlIcons, hIcon);
 
     // Associate the image list with the tree-view control.
@@ -144,15 +144,15 @@ HTREEITEM PopulateBookmarkFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
     HIMAGELIST himlIcons;
     HICON hIcon;
 
-    //Create a masked image list large enough to hold the icons. 
+    //Create a masked image list large enough to hold the icons.
     himlIcons = ImageList_Create(16, 16, ILC_COLOR32, 3, 0);
- 
+
     // Load the icon resources, and add the icons to the image list.
-    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CLOSEDFOLDER)); 
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CLOSEDFOLDER));
     ImageList_AddIcon(himlIcons, hIcon);
-    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_OPENFOLDER)); 
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_OPENFOLDER));
     ImageList_AddIcon(himlIcons, hIcon);
-    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_ROOTFOLDER)); 
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_ROOTFOLDER));
     ImageList_AddIcon(himlIcons, hIcon);
 
     // Associate the image list with the tree-view control.
@@ -468,7 +468,7 @@ void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
                     {
                         // If not found in favorites, add it.
                         // We want all folders to appear before root items so this
-                        // new folder must be inserted after the last item of the 
+                        // new folder must be inserted after the last item of the
                         // last folder.
                         // Locate position of last folder.
                         FavoritesList::iterator folderIter = favorites->begin();
@@ -484,7 +484,7 @@ void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
                         folderIter++;
                         while (folderIter != favorites->end() && (*folderIter)->parentFolder != "")
                             folderIter++;
-                        
+
                         //Insert item
                         appCore->addFavoriteFolder(name, &folderIter);
                     }
@@ -594,7 +594,7 @@ void RenameBookmarkInFavorites(HWND hTree, char* newName, CelestiaCore* appCore)
     if (!hItem)
         return;
 
-    // Get the item text 
+    // Get the item text
     tvItem.hItem = hItem;
     tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
     tvItem.pszText = itemName;
@@ -605,7 +605,7 @@ void RenameBookmarkInFavorites(HWND hTree, char* newName, CelestiaCore* appCore)
     FavoritesEntry* fav = reinterpret_cast<FavoritesEntry*>(tvItem.lParam);
     if (fav == NULL)
         return;
-    
+
     tvItem.hItem = hItem;
     tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
     tvItem.pszText = newName;
@@ -661,7 +661,7 @@ void MoveBookmarkInFavorites(HWND hTree, CelestiaCore* appCore)
     if (TreeView_GetItem(hTree, &tvItem))
     {
         draggedFav = reinterpret_cast<FavoritesEntry*>(tvItem.lParam);
-            
+
         // Get the dragged item folder
         if (hDragItemFolder = TreeView_GetParent(hTree, hDragItem))
         {
@@ -691,7 +691,7 @@ void MoveBookmarkInFavorites(HWND hTree, CelestiaCore* appCore)
                         if (hDropItem = TreeView_InsertItem(hTree, &tvis))
                         {
                             TreeView_Expand(hTree, hDropTargetItem, TVE_EXPAND);
-                                
+
                             // Make the dropped item selected
                             TreeView_SelectItem(hTree, hDropItem);
 
@@ -861,8 +861,8 @@ void DragDropAutoScroll(HWND hTree)
 
 /*
 /////////////////////////////////////////////////////////////////////////////
-//	This function returns the handle of the tree item specified using standard
-//	path notation.
+//    This function returns the handle of the tree item specified using standard
+//    path notation.
 /////////////////////////////////////////////////////////////////////////////
 HTREEITEM GetTreeViewItemHandle(HWND hTree, char* path, HTREEITEM hParent)
 {
@@ -878,7 +878,7 @@ HTREEITEM GetTreeViewItemHandle(HWND hTree, char* path, HTREEITEM hParent)
     strcpy(pathBuf, path);
 
     if (cP = strchr(pathBuf, '/'))
-	    *cP = '\0';
+        *cP = '\0';
 
     hItem = NULL;
     itemName[0] = '\0';
@@ -888,8 +888,8 @@ HTREEITEM GetTreeViewItemHandle(HWND hTree, char* path, HTREEITEM hParent)
     Item.hItem = hParent;
     if (TreeView_GetItem(hTree, &Item))
     {
-	    while (strcmp(pathBuf, itemName))
-	    {
+        while (strcmp(pathBuf, itemName))
+        {
             Item.hItem = TreeView_GetNextSibling(hTree, Item.hItem);
             if (!Item.hItem)
                 break;

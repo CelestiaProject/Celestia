@@ -25,12 +25,12 @@ KBookmarkManager* KCelBookmarkManager::self() {
     {
         QString bookmarksFile = locateLocal("data", QString::fromLatin1("celestia/bookmarks.xml"));
         QFile local(bookmarksFile);
-        if (!local.exists()) { 
+        if (!local.exists()) {
             QString bookmarksFileDefault = locate("data", QString::fromLatin1("celestia/bookmarks.xml"));
             copy(bookmarksFileDefault, bookmarksFile);
             QString faviconsDefault = locate("data", QString::fromLatin1("celestia/favicons/"));
             QDir faviconsDir(faviconsDefault, "*.png");
-            QStringList iconsList = faviconsDir.entryList();                                                            
+            QStringList iconsList = faviconsDir.entryList();
             QString faviconsDest = locateLocal("cache", "favicons/");
             for ( QStringList::Iterator i = iconsList.begin(); i != iconsList.end(); ++i ) {
                 copy(faviconsDefault + *i, faviconsDest + *i);

@@ -50,7 +50,7 @@ using namespace std;
  *  This process is well-suited to a simulation where the time steps are
  *  relatively uniform. But, we cannot rely on a uniform time step in Celestia.
  *  The user may skip ahead instantly to times in the distance past or future,
- *  change the time rate to over a billion times normal, or reverse time. 
+ *  change the time rate to over a billion times normal, or reverse time.
  *  Numerical integration of particle positions is completely impractical.
  *
  *  Instead, Celestia uses 'stateless' particle systems. From the particle
@@ -94,26 +94,26 @@ public:
         previous(0)
     {
     }
-    
+
     LCGRandomGenerator(uint64 seed) :
         previous(seed)
     {
     }
-    
+
     uint64 randUint64()
     {
         previous = (A * previous + C) & M;
         return previous;
     }
-    
+
     /*! Return a random integer between -2^31 and 2^31 - 1
      */
     int32 randInt32()
     {
         return (int32) (randUint64() >> 16);
     }
-    
-    /*! Return a random integer between 0 and 2^32 - 1                           
+
+    /*! Return a random integer between 0 and 2^32 - 1
      */
     uint32 randUint32()
     {
@@ -131,7 +131,7 @@ public:
         randBits = (randBits & 0x007fffff) | 0x3f800000;
         return *reinterpret_cast<float*>(&randBits) - 1.0f;
     }
-    
+
     /*! Generate a random floating point value in [ -1, 1 )
      *  This function directly manipulates the bits of a floating
      *  point number, and will not work properly on a system that
@@ -143,7 +143,7 @@ public:
         randBits = (randBits & 0x007fffff) | 0x40000000;
         return *reinterpret_cast<float*>(&randBits) - 3.0f;
     }
-    
+
 private:
     uint64 previous;
 };
@@ -182,7 +182,7 @@ EllipsoidSurfaceGenerator::generate(LCGRandomGenerator& gen) const
     float sinPhi = std::sqrt(1.0f - cosPhi * cosPhi);
     if (cosPhi < 0.0f)
         sinPhi = -sinPhi;
-    
+
     float s = std::sin(theta);
     float c = std::cos(theta);
     return Vector3f(sinPhi * c * m_semiAxes.x(), sinPhi * s * m_semiAxes.y(), cosPhi * m_semiAxes.z()) + m_center;
@@ -197,11 +197,11 @@ ConeGenerator::generate(LCGRandomGenerator& gen) const
     float sinPhi = std::sqrt(1.0f - cosPhi * cosPhi);
     if (cosPhi < 0.0f)
         sinPhi = -sinPhi;
-    
+
     float s = std::sin(theta);
     float c = std::cos(theta);
     return Vector3f(sinPhi * c, sinPhi * s, cosPhi) * (m_minLength + gen.randFloat() * m_lengthVariance);
-}    
+}
 
 
 
@@ -291,7 +291,7 @@ ParticleEmitter::setBlendMode(cmod::Material::BlendMode blendMode)
 }
 
 
-static const uint64 scrambleMask = (uint64(0xcccccccc) << 32) | 0xcccccccc; 
+static const uint64 scrambleMask = (uint64(0xcccccccc) << 32) | 0xcccccccc;
 
 void
 ParticleEmitter::render(double tsec,
@@ -310,7 +310,7 @@ ParticleEmitter::render(double tsec,
         if (t > m_endTime + m_lifetime)
             return;
     }
-    
+
     // If a start time is specified, set t to be relative to the start time.
     // Return immediately if we haven't reached the start time yet.
     if (startBounded)
@@ -319,7 +319,7 @@ ParticleEmitter::render(double tsec,
         if (t < 0.0)
             return;
     }
-    
+
     Matrix3f modelViewMatrix = rc.getCameraOrientation().conjugate().toRotationMatrix();
 
     rc.setMaterial(&m_material);
@@ -330,13 +330,13 @@ ParticleEmitter::render(double tsec,
     Vector3f v3 = modelViewMatrix * Vector3f(-1.0f,  1.0f, 0.0f);
 
     glDisable(GL_LIGHTING);
-    
+
     Texture* texture = NULL;
     if (m_texture != InvalidResource)
     {
         texture = GetTextureManager()->find(m_texture);
     }
-    
+
     if (texture != NULL)
     {
         glEnable(GL_TEXTURE_2D);
@@ -346,50 +346,50 @@ ParticleEmitter::render(double tsec,
     {
         glDisable(GL_TEXTURE_2D);
     }
-    
+
     // Use premultiplied alpha
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    
-    glDepthMask(GL_FALSE);    
-    
+
+    glDepthMask(GL_FALSE);
+
     double emissionInterval = 1.0 / m_rate;
     double dserial = std::fmod(t * m_rate, (double) (1 << 31));
     int serial = (int) (dserial);
     double age = (dserial - serial) * emissionInterval;
     float invLifetime = (float) (1.0 / m_lifetime);
-    
+
     double maxAge = m_lifetime;
     if (startBounded)
     {
         maxAge = std::min((double) m_lifetime, t);
     }
-    
+
     if (endBounded && tsec > m_endTime)
     {
         int skipParticles = (int) ((tsec - m_endTime) * m_rate);
         serial -= skipParticles;
         age += skipParticles * emissionInterval;
     }
-    
+
     Vec4f startColor(m_startColor.red(), m_startColor.green(), m_startColor.blue(), m_startColor.alpha());
     Vec4f endColor(m_endColor.red(), m_endColor.green(), m_endColor.blue(), m_endColor.alpha());
-    
+
     unsigned int particleCount = 0;
-    
+
     while (age < maxAge)
     {
         // When the particle buffer is full, render the particles and flush it
         if (particleCount == particleBufferCapacity)
         {
-            glDrawArrays(GL_QUADS, 0, particleCount * 4);            
+            glDrawArrays(GL_QUADS, 0, particleCount * 4);
             particleCount = 0;
         }
-        
+
         float alpha = (float) age * invLifetime;
         float beta = 1.0f - alpha;
         float size = alpha * m_endSize + beta * m_startSize;
-        
+
         // Scramble the random number generator seed so that we don't end up with
         // artifacts from using regularly incrementing values.
         //
@@ -406,12 +406,12 @@ ParticleEmitter::render(double tsec,
         color[Color::Green] = (unsigned char) ((alpha * endColor.y + beta * startColor.y) * 255.99f);
         color[Color::Blue]  = (unsigned char) ((alpha * endColor.z + beta * startColor.z) * 255.99f);
         color[Color::Alpha] = (unsigned char) ((alpha * endColor.w + beta * startColor.w) * 255.99f);
-        
+
         Vector3f v = m_velocityGenerator->generate(gen);
         Vector3f center = m_positionGenerator->generate(gen) + v * (float) age;
         if (m_nonZeroAcceleration)
             center += m_acceleration * (float) (age * age);
-        
+
         if (!m_rotationEnabled)
         {
             particleBuffer[particleCount * 4 + 0].set(center + v0 * size, Vector2f(0.0f, 1.0f), color);
@@ -425,19 +425,19 @@ ParticleEmitter::render(double tsec,
             float rotation = rotationRate * (float) age;
             float c = std::cos(rotation);
             float s = std::sin(rotation);
-            
+
             particleBuffer[particleCount * 4 + 0].set(center + (modelViewMatrix * Vector3f(-c + s, -s - c, 0.0f)) * size, Vector2f(0.0f, 1.0f), color);
             particleBuffer[particleCount * 4 + 1].set(center + (modelViewMatrix * Vector3f( c + s,  s - c, 0.0f)) * size, Vector2f(1.0f, 1.0f), color);
             particleBuffer[particleCount * 4 + 2].set(center + (modelViewMatrix * Vector3f( c - s,  s + c, 0.0f)) * size, Vector2f(1.0f, 0.0f), color);
             particleBuffer[particleCount * 4 + 3].set(center + (modelViewMatrix * Vector3f(-c - s, -s + c, 0.0f)) * size, Vector2f(0.0f, 0.0f), color);
         }
-        
+
         ++particleCount;
-        
+
         age += emissionInterval;
         serial--;
     }
-    
+
     // Render any remaining particles in the buffer
     if (particleCount > 0)
     {
@@ -454,7 +454,7 @@ ParticleEmitter::createMaterial()
     m_material.blend = m_blendMode;
     m_material.opacity = 0.99f;
     m_material.maps[0] = new CelestiaTextureResource(m_texture);
-}    
+}
 
 
 #define STRUCT_OFFSET(s, memberName) ((uint32) (reinterpret_cast<char*>(&(s).memberName) - reinterpret_cast<char*>(&(s))))
@@ -467,7 +467,7 @@ ParticleSystem::ParticleSystem() :
 {
     m_particleCapacity = 1000;
     m_vertexData = new ParticleVertex[m_particleCapacity * 4];
-    
+
     // Create the vertex description; currently, it is the same for all
     // particle systems.
     ParticleVertex temp;
@@ -485,8 +485,8 @@ ParticleSystem::~ParticleSystem()
          iter != m_emitterList.end(); iter++)
     {
         delete (*iter);
-    }    
-    
+    }
+
     delete[] m_vertexData;
     delete m_vertexDesc;
 }
@@ -496,13 +496,13 @@ void
 ParticleSystem::render(RenderContext& rc, double tsec)
 {
     rc.setVertexArrays(*m_vertexDesc, m_vertexData);
-    
+
     for (list<ParticleEmitter*>::const_iterator iter = m_emitterList.begin();
          iter != m_emitterList.end(); iter++)
     {
         (*iter)->render(tsec, rc, m_vertexData, m_particleCapacity);
     }
-        
+
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
 }

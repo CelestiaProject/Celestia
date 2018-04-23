@@ -1,5 +1,5 @@
 // winssbrowser.h
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Solar system browser tool for Windows.
@@ -25,47 +25,47 @@ using namespace std;
 
 HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
                         HTREEITEM parent)
-{ 
-    TVITEM tvi; 
-    TVINSERTSTRUCT tvins; 
-    static HTREEITEM hPrev = (HTREEITEM) TVI_FIRST; 
+{
+    TVITEM tvi;
+    TVINSERTSTRUCT tvins;
+    static HTREEITEM hPrev = (HTREEITEM) TVI_FIRST;
 
-#if 0 
-    tvi.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM; 
+#if 0
+    tvi.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM;
 #endif
     tvi.mask = TVIF_TEXT | TVIF_PARAM;
- 
-    // Set the text of the item. 
-    tvi.pszText = lpszItem; 
-    tvi.cchTextMax = lstrlen(lpszItem); 
 
-    // Save the heading level in the item's application-defined 
-    // data area. 
-    tvi.lParam = (LPARAM) data; 
- 
-    tvins.item = tvi; 
-    tvins.hInsertAfter = hPrev; 
+    // Set the text of the item.
+    tvi.pszText = lpszItem;
+    tvi.cchTextMax = lstrlen(lpszItem);
+
+    // Save the heading level in the item's application-defined
+    // data area.
+    tvi.lParam = (LPARAM) data;
+
+    tvins.item = tvi;
+    tvins.hInsertAfter = hPrev;
     tvins.hParent = parent;
- 
-    // Add the item to the tree view control. 
-    hPrev = (HTREEITEM) SendMessage(hwndTV, TVM_INSERTITEM, 0, 
-                                    (LPARAM) (LPTVINSERTSTRUCT) &tvins); 
- 
-#if 0 
-    // The new item is a child item. Give the parent item a 
-    // closed folder bitmap to indicate it now has child items. 
+
+    // Add the item to the tree view control.
+    hPrev = (HTREEITEM) SendMessage(hwndTV, TVM_INSERTITEM, 0,
+                                    (LPARAM) (LPTVINSERTSTRUCT) &tvins);
+
+#if 0
+    // The new item is a child item. Give the parent item a
+    // closed folder bitmap to indicate it now has child items.
     if (nLevel > 1)
-    { 
-        hti = TreeView_GetParent(hwndTV, hPrev); 
-        tvi.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE; 
-        tvi.hItem = hti; 
-        // tvi.iImage = g_nClosed; 
-        // tvi.iSelectedImage = g_nClosed; 
-        TreeView_SetItem(hwndTV, &tvi); 
+    {
+        hti = TreeView_GetParent(hwndTV, hPrev);
+        tvi.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+        tvi.hItem = hti;
+        // tvi.iImage = g_nClosed;
+        // tvi.iSelectedImage = g_nClosed;
+        TreeView_SetItem(hwndTV, &tvi);
     }
-#endif 
- 
-    return hPrev; 
+#endif
+
+    return hPrev;
 }
 
 
@@ -77,7 +77,7 @@ void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int lev
         if (world != NULL && world->getClassification() != Body::Invisible && !world->getName().empty())
         {
             HTREEITEM item;
-            item = AddItemToTree(treeView, 
+            item = AddItemToTree(treeView,
                                  const_cast<char*>(UTF8ToCurrentCP(world->getName(true)).c_str()),
                                  level,
                                  static_cast<void*>(world),
@@ -119,7 +119,7 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
                 if (planets != NULL)
                     AddPlanetarySystemToTree(planets, hwnd, 2, rootItem);
 
-                SendMessage(hwnd, TVM_EXPAND, TVE_EXPAND, (LPARAM) rootItem); 
+                SendMessage(hwnd, TVM_EXPAND, TVE_EXPAND, (LPARAM) rootItem);
             }
         }
         return(TRUE);
@@ -156,7 +156,7 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
     case WM_NOTIFY:
         {
             LPNMHDR hdr = (LPNMHDR) lParam;
-            
+
             if (hdr->code == TVN_SELCHANGED)
             {
                 LPNMTREEVIEW nm = (LPNMTREEVIEW) lParam;

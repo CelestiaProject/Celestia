@@ -59,7 +59,7 @@ SetTimeDialog::SetTimeDialog(double currentTimeTDB,
 
     bool useLocalTime = appCore->getTimeZoneBias() != 0;
     timeZoneBox->setCurrentIndex(useLocalTime ? 1 : 0);
-    
+
     timeZoneBox->setToolTip(_("Select Time Zone"));
     timeLayout->addWidget(timeZoneBox, 0, 1, 1, 5);
     connect(timeZoneBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(slotTimeZoneChanged()));

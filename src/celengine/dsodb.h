@@ -80,7 +80,7 @@ private:
     DeepSkyObject**  catalogNumberIndex;
     DSOOctree*       octreeRoot;
     uint32           nextAutoCatalogNumber;
-    
+
     double           avgAbsMag;
 };
 

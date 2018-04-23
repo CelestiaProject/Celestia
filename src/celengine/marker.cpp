@@ -121,11 +121,11 @@ MarkerRepresentation::operator=(const MarkerRepresentation& rep)
     m_size = rep.m_size;
     m_color = rep.m_color;
     m_label = rep.m_label;
-    
+
     return *this;
 }
-    
-   
+
+
 void MarkerRepresentation::setColor(Color color)
 {
     m_color = color;
@@ -260,9 +260,9 @@ void MarkerRepresentation::render(float size) const
     case Circle:
         glBegin(GL_LINE_LOOP);
         DrawCircle(s);
-        glEnd();    
+        glEnd();
         break;
-            
+
     case Disk:
         glBegin(GL_POLYGON);
         DrawCircle(s);

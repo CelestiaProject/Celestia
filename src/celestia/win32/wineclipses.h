@@ -1,5 +1,5 @@
 // wineclipses.h by Kendrix <kendrix@wanadoo.fr>
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Compute Solar Eclipses for our Solar System planets

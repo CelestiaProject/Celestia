@@ -18,7 +18,7 @@
 using namespace std;
 
 
-/*! A Timeline is a list of TimelinePhases that covers a continuous 
+/*! A Timeline is a list of TimelinePhases that covers a continuous
  *  interval of time.
  */
 
@@ -57,7 +57,7 @@ Timeline::appendPhase(TimelinePhase* phase)
 
     return true;
 }
-                      
+
 
 const TimelinePhase*
 Timeline::findPhase(double t) const

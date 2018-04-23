@@ -87,11 +87,11 @@ int CompareHDNameEnt(const void *a, const void *b)
     int hdb = ((HDNameEnt *) b)->HD;
 
     if (hda <  hdb)
-	return -1;
+        return -1;
     else if (hda > hdb)
-	return 1;
+        return 1;
     else
-	return 0;
+        return 0;
 }
 
 
@@ -130,7 +130,7 @@ unsigned short PackSpectralType(char *spectralType)
       case 'K':
         letter = SPECTRAL_K;
         break;
-      case 'M':      
+      case 'M':
         letter = SPECTRAL_M;
         break;
       case 'R':
@@ -143,17 +143,17 @@ unsigned short PackSpectralType(char *spectralType)
         letter = SPECTRAL_S;
         break;
       case 'W':
-	i++;
-	if (spectralType[i] == 'C')
- 	    letter = SPECTRAL_WC;
-	else if (spectralType[i] == 'N')
-	    letter = SPECTRAL_WN;
-	else
-	    i--;
-	break;
+        i++;
+        if (spectralType[i] == 'C')
+            letter = SPECTRAL_WC;
+        else if (spectralType[i] == 'N')
+            letter = SPECTRAL_WN;
+        else
+            i--;
+        break;
       case 'D':
         letter = SPECTRAL_WHITE_DWARF;
-	break;
+        break;
       default:
         letter = SPECTRAL_UNKNOWN;
         break;
@@ -168,8 +168,7 @@ unsigned short PackSpectralType(char *spectralType)
     else
         number = 0;
 
-    if (luminosity != LUM_VI)
-    {
+    if (luminosity != LUM_VI) {
         i++;
         luminosity = LUM_V;
         while (i < 13 && spectralType[i] != '\0') {
@@ -215,42 +214,40 @@ HDNameEnt *ReadCommonNames(FILE *fp)
 
     hdNames = (HDNameEnt *) malloc(sizeof(HDNameEnt) * 3000);
     if (hdNames == NULL)
-	return NULL;
+        return NULL;
 
     for (i = 0; ; i++) {
-	char *name1, *name2, len;
-	if (fgets(buf, 256, fp) == NULL)
-	    break;
+        char *name1, *name2, len;
+        if (fgets(buf, 256, fp) == NULL)
+            break;
 
-	/* Strip trailing newline */
-	len = strlen(buf);
-	if (len > 0 && buf[len - 1] == '\n')
-	    buf[len - 1] = '\0';
+        /* Strip trailing newline */
+        len = strlen(buf);
+        if (len > 0 && buf[len - 1] == '\n')
+            buf[len - 1] = '\0';
 
-	name1 = index(buf, ':');
-	if (name1 == NULL)
-	    break;
-	name1[0] = '\0';
-	name1++;
-	name2 = index(name1, ':');
-	if (name2 == NULL)
-	    break;
-	name2[0] = '\0';
-	name2++;
-	
-	{
-	    int hd;
-	    if (sscanf(buf, "%d", &hd) != 1)
-		break;
-	    hdNames[i].HD = hd;
-	    if (name1[0] != '\0') {
-	        hdNames[i].commonName = (char *) malloc(strlen(name1) + 1);
-		strcpy(hdNames[i].commonName, name1);
-	    } else if (name2[0] != '\0') {
-		hdNames[i].commonName = (char *) malloc(strlen(name2) + 1);
-		strcpy(hdNames[i].commonName, name2);
-	    }		
-	}
+        name1 = index(buf, ':');
+        if (name1 == NULL)
+           break;
+        name1[0] = '\0';
+        name1++;
+        name2 = index(name1, ':');
+        if (name2 == NULL)
+            break;
+        name2[0] = '\0';
+        name2++;
+
+        int hd;
+        if (sscanf(buf, "%d", &hd) != 1)
+            break;
+        hdNames[i].HD = hd;
+        if (name1[0] != '\0') {
+            hdNames[i].commonName = (char *) malloc(strlen(name1) + 1);
+            strcpy(hdNames[i].commonName, name1);
+        } else if (name2[0] != '\0') {
+            hdNames[i].commonName = (char *) malloc(strlen(name2) + 1);
+            strcpy(hdNames[i].commonName, name2);
+        }
     }
 
     nHDNames = i;
@@ -267,12 +264,12 @@ char *LookupName(int HD)
 
     key.HD = HD;
     found = (HDNameEnt *) bsearch((void *) &key, (void *) hdNames,
-				  nHDNames, sizeof(HDNameEnt),
-				  CompareHDNameEnt);
+                  nHDNames, sizeof(HDNameEnt),
+                  CompareHDNameEnt);
     if (found == NULL)
-	return NULL;
+        return NULL;
     else
-	return found->commonName;
+        return found->commonName;
 }
 
 
@@ -310,70 +307,67 @@ Star *ReadHipparcosCatalog(FILE *fp)
     stars = (Star *) malloc(maxStars * sizeof(Star));
     if (stars == NULL) {
         fprintf(stderr, "Unable to allocate memory for stars.\n");
-	return NULL;
+        return NULL;
     }
 
     for (i = 0; ; i++) {
-	int hh, mm, deg;
-	float seconds;
-	float parallaxError;
-	char degSign;
-	
-	if (fgets(buf, HIPPARCOS_RECORD_LENGTH, fp) == NULL)
-	    break;
-	sscanf(buf + 2, "%d", &stars[i].HIP);
-	if (sscanf(buf + 390, "%d", &stars[i].HD) != 1)
-	    stars[i].HD = ID_NONE;
-	sscanf(buf + 41, "%f", &stars[i].appMag);
-	sscanf(buf + 79, "%f", &stars[i].parallax);
-	sscanf(buf + 17, "%d %d %f", &hh, &mm, &seconds);
-	stars[i].RA = hh + (float) mm / 60.0f + (float) seconds / 3600.0f;
-	sscanf(buf + 29, "%c%d %d %f", &degSign, &deg, &mm, &seconds);
-	stars[i].dec = deg + (float) mm / 60.0f + (float) seconds / 3600.0f;
-	if (degSign == '-')
-	    stars[i].dec = -stars[i].dec;
-	sscanf(buf + 435, "%12s", &stars[i].spectral);
-	sscanf(buf + 119, "%f", &parallaxError);
-	if (stars[i].parallax <= 0 || parallaxError / stars[i].parallax > 1)
-        {
-	    stars[i].parallaxError = (unsigned char) 255;
-	}
-	else
-        {
-	    stars[i].parallaxError =
-		(unsigned char) (parallaxError / stars[i].parallax * 200);
-	}
+        int hh, mm, deg;
+        float seconds;
+        float parallaxError;
+        char degSign;
 
-	if (/* stars[i].appMag < 4.0f */
+        if (fgets(buf, HIPPARCOS_RECORD_LENGTH, fp) == NULL)
+            break;
+        sscanf(buf + 2, "%d", &stars[i].HIP);
+        if (sscanf(buf + 390, "%d", &stars[i].HD) != 1)
+            stars[i].HD = ID_NONE;
+        sscanf(buf + 41, "%f", &stars[i].appMag);
+        sscanf(buf + 79, "%f", &stars[i].parallax);
+        sscanf(buf + 17, "%d %d %f", &hh, &mm, &seconds);
+        stars[i].RA = hh + (float) mm / 60.0f + (float) seconds / 3600.0f;
+        sscanf(buf + 29, "%c%d %d %f", &degSign, &deg, &mm, &seconds);
+        stars[i].dec = deg + (float) mm / 60.0f + (float) seconds / 3600.0f;
+        if (degSign == '-')
+            stars[i].dec = -stars[i].dec;
+        sscanf(buf + 435, "%12s", &stars[i].spectral);
+        sscanf(buf + 119, "%f", &parallaxError);
+        if (stars[i].parallax <= 0 || parallaxError / stars[i].parallax > 1) {
+            stars[i].parallaxError = (unsigned char) 255;
+        } else {
+            stars[i].parallaxError =
+            (unsigned char) (parallaxError / stars[i].parallax * 200);
+        }
+
+        if (/* stars[i].appMag < 4.0f */
             stars[i].parallax > 0 && 3260 / stars[i].parallax < 20) {
-	    nBright++;
+            nBright++;
 #if 0
-	    if (parallaxError / stars[i].parallax > 0.25f ||
-		parallaxError / stars[i].parallax < 0.0f) {
+            if (parallaxError / stars[i].parallax > 0.25f ||
+                parallaxError / stars[i].parallax < 0.0f) {
 #endif
-	    if (0) {
-		char *name = LookupName(stars[i].HD);
+            if (0) {
+                char *name = LookupName(stars[i].HD);
 
-		if (name == NULL) {
-		    if (stars[i].HD != ID_NONE) {
-			sprintf(nameBuf, "HD%d", stars[i].HD);
-			name = nameBuf;
-		    } else {
-			sprintf(nameBuf, "HIP%d", stars[i].HIP);
-			name = nameBuf;
-		    }
-		}
-		printf("%-20s %5.2f %6.2f %3d%% %12s %5.2f %5.2f\n",
-		       name,
-		       stars[i].appMag,
-		       3260.0f / stars[i].parallax,
-		       (int) (100.0f * parallaxError / stars[i].parallax),
-		       stars[i].spectral,
-		       stars[i].RA, stars[i].dec);
-	    } else {
-		nGood++;
-	    }
-	}
+                if (name == NULL) {
+                    if (stars[i].HD != ID_NONE) {
+                        sprintf(nameBuf, "HD%d", stars[i].HD);
+                        name = nameBuf;
+                    } else {
+                        sprintf(nameBuf, "HIP%d", stars[i].HIP);
+                        name = nameBuf;
+                    }
+                }
+                printf("%-20s %5.2f %6.2f %3d%% %12s %5.2f %5.2f\n",
+                       name,
+                       stars[i].appMag,
+                       3260.0f / stars[i].parallax,
+                       (int) (100.0f * parallaxError / stars[i].parallax),
+                       stars[i].spectral,
+                       stars[i].RA, stars[i].dec);
+            } else {
+                nGood++;
+            }
+        }
     }
 
     nStars = i;
@@ -389,57 +383,53 @@ int main(int argc, char *argv[])
 
     fp = fopen(COMMON_NAMES_DB, "r");
     if (fp == NULL) {
-	fprintf(stderr, "Error opening %s\n", COMMON_NAMES_DB);
-	return 1;
+        fprintf(stderr, "Error opening %s\n", COMMON_NAMES_DB);
+        return 1;
     }
     hdNames = ReadCommonNames(fp);
     fclose(fp);
     fp = NULL;
     if (hdNames == NULL) {
-	fprintf(stderr, "Error reading names file.\n");
-	return 1;
+        fprintf(stderr, "Error reading names file.\n");
+        return 1;
     }
 
     fp = fopen(HIPPARCOS_MAIN_DB, "r");
     if (fp == NULL) {
-	fprintf(stderr, "Error opening %s\n", HIPPARCOS_MAIN_DB);
-	return 1;
+        fprintf(stderr, "Error opening %s\n", HIPPARCOS_MAIN_DB);
+        return 1;
     }
     Stars = ReadHipparcosCatalog(fp);
     fclose(fp);
     if (Stars == NULL) {
-	fprintf(stderr, "Error reading HIPPARCOS database.");
-	return 1;
+        fprintf(stderr, "Error reading HIPPARCOS database.");
+        return 1;
     }
 #if 0
     {
-	int i;
+    int i;
 
-	for (i = 0; i < nStars; i++) {
-	    if (Stars[i].spectral[0] == 'O') {
-		char *name = LookupName(Stars[i].HD);
-		if (name != NULL)
-		    printf("%s ", name);
-		printf("%6d %6.3f %6.3f %s\n",
-		       Stars[i].HD, Stars[i].RA, Stars[i].dec, Stars[i].spectral);
-	    }
-	}
+    for (i = 0; i < nStars; i++) {
+        if (Stars[i].spectral[0] == 'O') {
+        char *name = LookupName(Stars[i].HD);
+        if (name != NULL)
+            printf("%s ", name);
+        printf("%6d %6.3f %6.3f %s\n",
+               Stars[i].HD, Stars[i].RA, Stars[i].dec, Stars[i].spectral);
+        }
+    }
     }
 #endif
 
-    {
-        int i;
+    FILE *fp = fopen("out", "wb");
+    if (fp == NULL) {
+        fprintf(stderr, "Error opening output file.\n");
+        exit(1);
+    }
 
-        FILE *fp = fopen("out", "wb");
-        if (fp == NULL) {
-	   fprintf(stderr, "Error opening output file.\n");
-           exit(1);
-        }
-
-	BINWRITE(fp, nStars);
-        for (i = 0; i < nStars; i++)
-           WriteStar(fp, &Stars[i]);
-        
+    BINWRITE(fp, nStars);
+    for (int i = 0; i < nStars; i++)
+        WriteStar(fp, &Stars[i]);
         fclose(fp);
     }
     printf("Stars in catalog = %d\n", nStars);

@@ -34,7 +34,7 @@ class ParticleSystemLoader
     const std::string& getErrorMessage() const;
     void setTexturePath(const std::string&);
     const std::string& getTexturePath() const;
-    
+
     static ParticleSystemLoader* OpenParticleSystemFile(std::istream& in);
 
  private:
@@ -44,7 +44,7 @@ class ParticleSystemLoader
     Tokenizer m_tokenizer;
     Parser m_parser;
     std::string m_errorMessage;
-    std::string m_texPath;   
+    std::string m_texPath;
 };
 
 

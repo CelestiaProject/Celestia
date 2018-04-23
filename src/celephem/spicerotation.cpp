@@ -27,7 +27,7 @@ static const double MILLISEC = astro::secsToDays(0.001);
 static const Quaterniond Rx90 = XRotation(PI / 2.0);
 static const Quaterniond Ry180 = YRotation(PI);
 
-/*! Create a new rotation model based on a SPICE frame. The 
+/*! Create a new rotation model based on a SPICE frame. The
  *  orientation of the rotation model is the orientation of the
  *  named SPICE frame relative to the base frame orientation.
  *  The rotation is valid during a time range between beginning
@@ -46,12 +46,12 @@ SpiceRotation::SpiceRotation(const std::string& frameName,
     m_spiceErr(false),
     m_validIntervalBegin(beginning),
     m_validIntervalEnd(ending),
-	m_useDefaultTimeInterval(false)
+    m_useDefaultTimeInterval(false)
 {
 }
 
 
-/*! Create a new rotation model based on a SPICE frame. The 
+/*! Create a new rotation model based on a SPICE frame. The
  *  orientation of the rotation model is the orientation of the
  *  named SPICE frame relative to the base frame orientation.
  *  The rotation is valid during a time range between beginning
@@ -60,15 +60,15 @@ SpiceRotation::SpiceRotation(const std::string& frameName,
  *  models.
  */
 SpiceRotation::SpiceRotation(const std::string& frameName,
-	                         const std::string& baseFrameName,
+                             const std::string& baseFrameName,
                              double period) :
-	m_frameName(frameName),
-	m_baseFrameName(baseFrameName),
-	m_period(period),
-	m_spiceErr(false),
+    m_frameName(frameName),
+    m_baseFrameName(baseFrameName),
+    m_period(period),
+    m_spiceErr(false),
     m_validIntervalBegin(-numeric_limits<double>::infinity()),
     m_validIntervalEnd(numeric_limits<double>::infinity()),
-	m_useDefaultTimeInterval(true)
+    m_useDefaultTimeInterval(true)
 {
 }
 
@@ -109,9 +109,9 @@ SpiceRotation::init(const string& path,
         for (list<string>::const_iterator iter = requiredKernels->begin(); iter != requiredKernels->end(); iter++)
         {
             string filepath = path + string("/data/") + *iter;
-	        if (!LoadSpiceKernel(filepath))
-            {    
-		        m_spiceErr = true;
+            if (!LoadSpiceKernel(filepath))
+            {
+                m_spiceErr = true;
                 break;
             }
         }
@@ -181,7 +181,7 @@ SpiceRotation::computeSpin(double jd) const
         };
 
         // ...but Celestia's rotations are reversed, thus the extra
-        // call to conjugate() 
+        // call to conjugate()
         Quaterniond q = Quaterniond(Map<Matrix3d>(matrixData)).conjugate();
 
         // Transform into Celestia's coordinate system

@@ -89,7 +89,7 @@ bool WriteCrossIndex(istream& in, ostream& out)
 
     // Write the version
     writeShort(out, 0x0100);
-    
+
     unsigned int record = 0;
     while (!in.eof())
     {

@@ -1,5 +1,5 @@
 // formatnum.h
-// 
+//
 // Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -20,12 +20,12 @@ public:
     double getValue() const;
     double getRoundedValue() const;
 
-    enum 
+    enum
     {
         GroupThousands    = 0x1,
         SignificantDigits = 0x2,
     };
-    
+
     friend std::ostream& operator<<(std::ostream& out, const FormattedNumber& num);
 
 private:

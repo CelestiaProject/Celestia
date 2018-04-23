@@ -33,11 +33,11 @@ using namespace std;
 
 /**
  * Returns the default units scale for orbits.
- * 
+ *
  * If the usePlanetUnits flag is set, this returns a distance scale of AU and a
  * time scale of years. Otherwise the distace scale is kilometers and the time
  * scale is days.
- * 
+ *
  * @param[in] usePlanetUnits Controls whether to return planet units or satellite units.
  * @param[out] distanceScale The default distance scale in kilometers.
  * @param[out] timeScale The default time scale in days.
@@ -60,10 +60,10 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale, double& timeScale)
 
 /**
  * Returns the default distance scale for orbits.
- * 
+ *
  * If the usePlanetUnits flag is set, this returns AU, otherwise it returns
  * kilometers.
- * 
+ *
  * @param[in] usePlanetUnits Controls whether to return planet units or satellite units.
  * @param[out] distanceScale The default distance scale in kilometers.
  */
@@ -98,7 +98,7 @@ ParseDate(Hash* hash, const string& name, double& jd)
 
 /*!
  * Create a new Keplerian orbit from an ssc property table:
- * 
+ *
  * \code EllipticalOrbit
  * {
  *     # One of the following is required to specify orbit size:
@@ -107,7 +107,7 @@ ParseDate(Hash* hash, const string& name, double& jd)
  *
  *     # Required
  *     Period <number>
- *     
+ *
  *     Eccentricity <number>   (default: 0.0)
  *     Inclination <degrees>   (default: 0.0)
  *     AscendingNode <degrees> (default: 0.0)
@@ -128,7 +128,7 @@ ParseDate(Hash* hash, const string& name, double& jd)
  *     SemiMajorAxis or PericenterDistance is in AU
  * Otherwise:
  *     Period is in Julian days
- *     SemiMajorAxis or PericenterDistance is in kilometers.    
+ *     SemiMajorAxis or PericenterDistance is in kilometers.
  */
 static EllipticalOrbit*
 CreateEllipticalOrbit(Hash* orbitData,
@@ -136,7 +136,7 @@ CreateEllipticalOrbit(Hash* orbitData,
 {
 
     // default units for planets are AU and years, otherwise km and days
-    
+
     double distanceScale;
     double timeScale;
     GetDefaultUnits(usePlanetUnits, distanceScale, timeScale);
@@ -153,23 +153,23 @@ CreateEllipticalOrbit(Hash* orbitData,
             return NULL;
         }
     }
-    
+
     double period = 0.0;
     if (!orbitData->getTime("Period", period, 1.0, timeScale))
     {
         clog << "Period missing!  Skipping planet . . .\n";
         return NULL;
     }
-    
+
     double eccentricity = 0.0;
     orbitData->getNumber("Eccentricity", eccentricity);
 
     double inclination = 0.0;
     orbitData->getAngle("Inclination", inclination);
-    
+
     double ascendingNode = 0.0;
     orbitData->getAngle("AscendingNode", ascendingNode);
-    
+
     double argOfPericenter = 0.0;
     if (!orbitData->getAngle("ArgOfPericenter", argOfPericenter))
     {
@@ -266,13 +266,13 @@ CreateSampledTrajectory(Hash* trajData, const string& path)
 
 
 /** Create a new FixedPosition trajectory.
- * 
+ *
  * A FixedPosition is a property list with one of the following 3-vector properties:
- * 
+ *
  * - \c Rectangular
  * - \c Planetographic
  * - \c Planetocentric
- * 
+ *
  * Planetographic and planetocentric coordinates are given in the order longitude,
  * latitude, altitude. Units of altitude are kilometers. Planetographic and
  * and planetocentric coordinates are only practical when the coordinate system
@@ -283,10 +283,10 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
 {
     double distanceScale;
     GetDefaultUnits(usePlanetUnits, distanceScale);
-    
+
     Vector3d position = Vector3d::Zero();
 
-    Vector3d v = Vector3d::Zero();    
+    Vector3d v = Vector3d::Zero();
     if (trajData->getLengthVector("Rectangular", v, 1.0, distanceScale))
     {
         // Convert to Celestia's coordinate system
@@ -330,41 +330,41 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
  */
 static bool
 ParseStringList(Hash* table,
-				const string& propertyName,
-				list<string>& stringList)
+                const string& propertyName,
+                list<string>& stringList)
 {
-	Value* v = table->getValue(propertyName);
-	if (v == NULL)
-		return NULL;
+    Value* v = table->getValue(propertyName);
+    if (v == NULL)
+        return NULL;
 
-	// Check for a single string first.
-	if (v->getType() == Value::StringType)
-	{
-		stringList.push_back(v->getString());
-		return true;
-	}
-	else if (v->getType() == Value::ArrayType)
-	{
-		ValueArray* array = v->getArray();
-		ValueArray::const_iterator iter;
+    // Check for a single string first.
+    if (v->getType() == Value::StringType)
+    {
+        stringList.push_back(v->getString());
+        return true;
+    }
+    else if (v->getType() == Value::ArrayType)
+    {
+        ValueArray* array = v->getArray();
+        ValueArray::const_iterator iter;
 
-		// Verify that all array entries are strings
-		for (iter = array->begin(); iter != array->end(); iter++)
-		{
-			if ((*iter)->getType() != Value::StringType)
-				return false;
-		}
+        // Verify that all array entries are strings
+        for (iter = array->begin(); iter != array->end(); iter++)
+        {
+            if ((*iter)->getType() != Value::StringType)
+                return false;
+        }
 
-		// Add strings to stringList
-		for (iter = array->begin(); iter != array->end(); iter++)
-			 stringList.push_back((*iter)->getString());
+        // Add strings to stringList
+        for (iter = array->begin(); iter != array->end(); iter++)
+             stringList.push_back((*iter)->getString());
 
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 
@@ -384,7 +384,7 @@ ParseStringList(Hash* table,
  *      Ending <number>                # optional
  *  } \endcode
  *
- *  The Kernel property specifies one or more SPK files that must be loaded. Any 
+ *  The Kernel property specifies one or more SPK files that must be loaded. Any
  *  already loaded kernels will also be used if they contain trajectories for
  *  the target or origin.
  *  Target and origin are strings that give NAIF IDs for the target and origin
@@ -406,22 +406,22 @@ CreateSpiceOrbit(Hash* orbitData,
 {
     string targetBodyName;
     string originName;
-	list<string> kernelList;
+    list<string> kernelList;
     double distanceScale;
     double timeScale;
-    
+
     GetDefaultUnits(usePlanetUnits, distanceScale, timeScale);
-    
-	if (orbitData->getValue("Kernel") != NULL)
-	{
-		// Kernel list is optional; a SPICE orbit may rely on kernels already loaded into
-		// the kernel pool.
-		if (!ParseStringList(orbitData, "Kernel", kernelList))
-		{
-			clog << "Kernel list for SPICE orbit is neither a string nor array of strings\n";
-			return NULL;
-		}
-	}
+
+    if (orbitData->getValue("Kernel") != NULL)
+    {
+        // Kernel list is optional; a SPICE orbit may rely on kernels already loaded into
+        // the kernel pool.
+        if (!ParseStringList(orbitData, "Kernel", kernelList))
+        {
+            clog << "Kernel list for SPICE orbit is neither a string nor array of strings\n";
+            return NULL;
+        }
+    }
 
     if (!orbitData->getString("Target", targetBodyName))
     {
@@ -449,55 +449,55 @@ CreateSpiceOrbit(Hash* orbitData,
     double period = 0.0;
     orbitData->getTime("Period", period, 1.0, timeScale);
 
-	// Either a complete time interval must be specified with Beginning/Ending, or
-	// else neither field can be present.
-	Value* beginningDate = orbitData->getValue("Beginning");
-	Value* endingDate = orbitData->getValue("Ending");
-	if (beginningDate != NULL && endingDate == NULL)
-	{
-		clog << "Beginning specified for SPICE orbit, but ending is missing.\n";
-		return NULL;
-	}
+    // Either a complete time interval must be specified with Beginning/Ending, or
+    // else neither field can be present.
+    Value* beginningDate = orbitData->getValue("Beginning");
+    Value* endingDate = orbitData->getValue("Ending");
+    if (beginningDate != NULL && endingDate == NULL)
+    {
+        clog << "Beginning specified for SPICE orbit, but ending is missing.\n";
+        return NULL;
+    }
 
-	if (endingDate != NULL && beginningDate == NULL)
-	{
-		clog << "Ending specified for SPICE orbit, but beginning is missing.\n";
-		return NULL;
-	}
+    if (endingDate != NULL && beginningDate == NULL)
+    {
+        clog << "Ending specified for SPICE orbit, but beginning is missing.\n";
+        return NULL;
+    }
 
-	SpiceOrbit* orbit = NULL;
-	if (beginningDate != NULL && endingDate != NULL)
-	{
-		double beginningTDBJD = 0.0;
-		if (!ParseDate(orbitData, "Beginning", beginningTDBJD))
-		{
-			clog << "Invalid beginning date specified for SPICE orbit.\n";
-			return NULL;
-		}
+    SpiceOrbit* orbit = NULL;
+    if (beginningDate != NULL && endingDate != NULL)
+    {
+        double beginningTDBJD = 0.0;
+        if (!ParseDate(orbitData, "Beginning", beginningTDBJD))
+        {
+            clog << "Invalid beginning date specified for SPICE orbit.\n";
+            return NULL;
+        }
 
-		double endingTDBJD = 0.0;
-		if (!ParseDate(orbitData, "Ending", endingTDBJD))
-		{
-			clog << "Invalid ending date specified for SPICE orbit.\n";
-			return NULL;
-		}
-	
-		orbit = new SpiceOrbit(targetBodyName,
-							   originName,
-							   period,
-							   boundingRadius,
-							   beginningTDBJD,
-							   endingTDBJD);
-	}
-	else
-	{
-		// No time interval given; we'll use whatever coverage window is given
-		// in the SPICE kernel.
-		orbit = new SpiceOrbit(targetBodyName,
-							   originName,
-							   period,
-							   boundingRadius);
-	}
+        double endingTDBJD = 0.0;
+        if (!ParseDate(orbitData, "Ending", endingTDBJD))
+        {
+            clog << "Invalid ending date specified for SPICE orbit.\n";
+            return NULL;
+        }
+
+        orbit = new SpiceOrbit(targetBodyName,
+                               originName,
+                               period,
+                               boundingRadius,
+                               beginningTDBJD,
+                               endingTDBJD);
+    }
+    else
+    {
+        // No time interval given; we'll use whatever coverage window is given
+        // in the SPICE kernel.
+        orbit = new SpiceOrbit(targetBodyName,
+                               originName,
+                               period,
+                               boundingRadius);
+    }
 
     if (!orbit->init(path, &kernelList))
     {
@@ -524,7 +524,7 @@ CreateSpiceOrbit(Hash* orbitData,
  *  } \endcode
  *
  *  The Kernel property specifies one or more SPICE kernel files that must be
- *  loaded in order for the frame to be defined over the required range. Any 
+ *  loaded in order for the frame to be defined over the required range. Any
  *  already loaded kernels will be used if they contain information relevant
  *  for defining the frame.
  *  Frame and base name are strings that give SPICE names for the frames. The
@@ -545,18 +545,18 @@ CreateSpiceRotation(Hash* rotationData,
 {
     string frameName;
     string baseFrameName = "eclipj2000";
-	list<string> kernelList;
+    list<string> kernelList;
 
-	if (rotationData->getValue("Kernel") != NULL)
-	{
-		// Kernel list is optional; a SPICE rotation may rely on kernels already loaded into
-		// the kernel pool.
-		if (!ParseStringList(rotationData, "Kernel", kernelList))
-		{
-			clog << "Kernel list for SPICE rotation is neither a string nor array of strings\n";
-			return NULL;
-		}
-	}
+    if (rotationData->getValue("Kernel") != NULL)
+    {
+        // Kernel list is optional; a SPICE rotation may rely on kernels already loaded into
+        // the kernel pool.
+        if (!ParseStringList(rotationData, "Kernel", kernelList))
+        {
+            clog << "Kernel list for SPICE rotation is neither a string nor array of strings\n";
+            return NULL;
+        }
+    }
 
     if (!rotationData->getString("Frame", frameName))
     {
@@ -572,52 +572,52 @@ CreateSpiceRotation(Hash* rotationData,
     double period = 0.0;
     rotationData->getTime("Period", period, 1.0, 1.0 / HOURS_PER_DAY);
 
-	// Either a complete time interval must be specified with Beginning/Ending, or
-	// else neither field can be present.
-	Value* beginningDate = rotationData->getValue("Beginning");
-	Value* endingDate = rotationData->getValue("Ending");
-	if (beginningDate != NULL && endingDate == NULL)
-	{
-		clog << "Beginning specified for SPICE rotation, but ending is missing.\n";
-		return NULL;
-	}
+    // Either a complete time interval must be specified with Beginning/Ending, or
+    // else neither field can be present.
+    Value* beginningDate = rotationData->getValue("Beginning");
+    Value* endingDate = rotationData->getValue("Ending");
+    if (beginningDate != NULL && endingDate == NULL)
+    {
+        clog << "Beginning specified for SPICE rotation, but ending is missing.\n";
+        return NULL;
+    }
 
-	if (endingDate != NULL && beginningDate == NULL)
-	{
-		clog << "Ending specified for SPICE rotation, but beginning is missing.\n";
-		return NULL;
-	}
+    if (endingDate != NULL && beginningDate == NULL)
+    {
+        clog << "Ending specified for SPICE rotation, but beginning is missing.\n";
+        return NULL;
+    }
 
-	SpiceRotation* rotation = NULL;
-	if (beginningDate != NULL && endingDate != NULL)
-	{
-		double beginningTDBJD = 0.0;
-		if (!ParseDate(rotationData, "Beginning", beginningTDBJD))
-		{
-			clog << "Invalid beginning date specified for SPICE rotation.\n";
-			return NULL;
-		}
+    SpiceRotation* rotation = NULL;
+    if (beginningDate != NULL && endingDate != NULL)
+    {
+        double beginningTDBJD = 0.0;
+        if (!ParseDate(rotationData, "Beginning", beginningTDBJD))
+        {
+            clog << "Invalid beginning date specified for SPICE rotation.\n";
+            return NULL;
+        }
 
-		double endingTDBJD = 0.0;
-		if (!ParseDate(rotationData, "Ending", endingTDBJD))
-		{
-			clog << "Invalid ending date specified for SPICE rotation.\n";
-			return NULL;
-		}
-	
-		rotation = new SpiceRotation(frameName,
-				  			         baseFrameName,
-							         period,
-							         beginningTDBJD,
-							         endingTDBJD);
-	}
-	else
-	{
-		// No time interval given; rotation is valid at any time.
-		rotation = new SpiceRotation(frameName,
+        double endingTDBJD = 0.0;
+        if (!ParseDate(rotationData, "Ending", endingTDBJD))
+        {
+            clog << "Invalid ending date specified for SPICE rotation.\n";
+            return NULL;
+        }
+
+        rotation = new SpiceRotation(frameName,
+                                     baseFrameName,
+                                     period,
+                                     beginningTDBJD,
+                                     endingTDBJD);
+    }
+    else
+    {
+        // No time interval given; rotation is valid at any time.
+        rotation = new SpiceRotation(frameName,
                                      baseFrameName,
                                      period);
-	}
+    }
 
     if (!rotation->init(path, &kernelList))
     {
@@ -807,7 +807,7 @@ CreateOrbit(const Selection& centralObject,
             fixedPosition = Vector3d(fixedPosition.x(),
                                      fixedPosition.z(),
                                      -fixedPosition.y());
-            
+
             return new FixedOrbit(fixedPosition);
         }
         else if (fixedPositionValue->getType() == Value::HashType)
@@ -942,19 +942,19 @@ CreateFixedAttitudeRotationModel(Hash* rotationData)
     {
         heading = degToRad(heading);
     }
-    
+
     double tilt = 0.0;
     if (rotationData->getAngle("Tilt", tilt))
     {
         tilt = degToRad(tilt);
     }
-    
+
     double roll = 0.0;
     if (rotationData->getAngle("Roll", roll))
     {
         roll = degToRad(roll);
     }
-    
+
     Quaterniond q = YRotation(-PI - heading) *
                     XRotation(-tilt) *
                     ZRotation(-roll);
@@ -1189,7 +1189,7 @@ CreateRotationModel(Hash* planetData,
             return CreateFixedRotationModel(fixedRotationValue->getHash());
         }
     }
-    
+
     Value* fixedAttitudeValue = planetData->getValue("FixedAttitude");
     if (fixedAttitudeValue != NULL)
     {
@@ -1673,7 +1673,7 @@ CreateJ2000EclipticFrame(const Universe& universe,
                          const Selection& defaultCenter)
 {
     Selection center = getFrameCenter(universe, frameData, defaultCenter);
-    
+
     if (center.empty())
         return NULL;
     else
@@ -1687,7 +1687,7 @@ CreateJ2000EquatorFrame(const Universe& universe,
                         const Selection& defaultCenter)
 {
     Selection center = getFrameCenter(universe, frameData, defaultCenter);
-    
+
     if (center.empty())
         return NULL;
     else
@@ -1707,8 +1707,8 @@ CreateTopocentricFrame(const Selection& center,
     BodyMeanEquatorFrame* eqFrame = new BodyMeanEquatorFrame(target, target);
     FrameVector north = FrameVector::createConstantVector(Vector3d::UnitY(), eqFrame);
     FrameVector up = FrameVector::createRelativePositionVector(observer, target);
-    
-    return new TwoVectorFrame(center, up, -2, north, -3);    
+
+    return new TwoVectorFrame(center, up, -2, north, -3);
 }
 
 
@@ -1722,15 +1722,15 @@ CreateTopocentricFrame(const Selection& center,
  * \code TwoVector
  * {
  *    Center <center>
- *    Primary   
+ *    Primary
  *    {
  *       Axis "z"
  *       RelativePosition { Target <target> Observer <observer> }
  *    }
- *    Secondary   
+ *    Secondary
  *    {
  *       Axis "x"
- *       ConstantVector   
+ *       ConstantVector
  *       {
  *          Vector [ 0 0 1]
  *          Frame { BodyFixed { Center <target> } }
@@ -1777,7 +1777,7 @@ CreateTopocentricFrame(const Universe& universe,
 
        observer = center;
        target = center.parent();
-    }  
+    }
     else
     {
         // When no center is provided, use the default observer as the center. This

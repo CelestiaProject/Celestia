@@ -1,5 +1,5 @@
 // winstarbrowser.cpp
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Star browser tool for Windows.
@@ -91,7 +91,7 @@ struct CloserStarPredicate
     {
         return ((pos - star0->getPosition()).squaredNorm() <
                 (pos - star1->getPosition()).squaredNorm());
-                               
+
     }
 };
 
@@ -263,7 +263,7 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
     default:
         return false;
     }
-            
+
     bool succeeded = InitStarBrowserLVItems(listView, *stars);
     delete stars;
 
@@ -351,7 +351,7 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
             nm->item.pszText = const_cast<char*>(starNameString.c_str());
         }
         break;
-            
+
     case 1:
         {
             Vector3d r = star->getPosition(tdb).offsetFromKm(browser->ucPos);
@@ -369,7 +369,7 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
             nm->item.pszText = callbackScratch;
         }
         break;
-            
+
     case 3:
         sprintf(callbackScratch, "%.2f", star->getAbsoluteMagnitude());
         nm->item.pszText = callbackScratch;
@@ -434,7 +434,7 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
                 (WPARAM)TRUE, (LPARAM)MAKELONG(MinListStars, MaxListStars));
             SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_SETPOS,
                 (WPARAM)TRUE, (LPARAM)DefaultListStars);
-            
+
             return(TRUE);
         }
 

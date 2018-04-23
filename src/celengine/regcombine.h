@@ -1,5 +1,5 @@
 // regcombine.h
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Some functions for setting up the nVidia register combiners

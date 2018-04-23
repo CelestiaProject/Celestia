@@ -369,14 +369,14 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
 
     string tilePrefix = "tx_";
     texParams->getString("TilePrefix", tilePrefix);
-	
-    // if absolute directory notation for ImageDirectory used, 
-	// don't prepend the current add-on path.
-	string directory = imageDirectory + "/";
-	if (directory.substr(0,1) != "/" && directory.substr(1,1) !=":") 
+
+    // if absolute directory notation for ImageDirectory used,
+    // don't prepend the current add-on path.
+    string directory = imageDirectory + "/";
+    if (directory.substr(0,1) != "/" && directory.substr(1,1) !=":")
     {
-		directory = path + "/" + directory;
-	}					
+        directory = path + "/" + directory;
+    }
     return new VirtualTexture(directory,
                               (unsigned int) baseSplit,
                               (unsigned int) tileSize,

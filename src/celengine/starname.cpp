@@ -104,14 +104,14 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
     {
         uint32 catalogNumber = Star::InvalidCatalogNumber;
 
-	in >> catalogNumber;
-	if (in.eof())
-	    break;
-	if (in.bad())
+        in >> catalogNumber;
+        if (in.eof())
+            break;
+        if (in.bad())
         {
-	    failed = true;
-	    break;
-	}
+            failed = true;
+            break;
+        }
 
         // in.get(); // skip a space (or colon);
 
@@ -126,7 +126,7 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
         // Iterate through the string for names delimited
         // by ':', and insert them into the star database. Note that
         // db->add() will skip empty names.
-        string::size_type startPos = 0; 
+        string::size_type startPos = 0;
         while (startPos != string::npos)
         {
             ++startPos;

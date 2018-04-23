@@ -71,9 +71,9 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
         config = new CelestiaConfig();
 
 #ifdef CELX
-    config->configParams = configParams;  
-    configParams->getString("LuaHook", config->luaHook);    
-    config->luaHook = WordExp(config->luaHook);             
+    config->configParams = configParams;
+    configParams->getString("LuaHook", config->luaHook);
+    config->luaHook = WordExp(config->luaHook);
 #endif
 
     config->faintestVisible = 6.0f;
@@ -199,8 +199,8 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
             }
         }
     }
-	    
-	Value* dsoCatalogsVal = configParams->getValue("DeepSkyCatalogs");
+
+    Value* dsoCatalogsVal = configParams->getValue("DeepSkyCatalogs");
     if (dsoCatalogsVal != NULL)
     {
         if (dsoCatalogsVal->getType() != Value::ArrayType)
@@ -294,7 +294,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
             }
         }
     }
-    
+
     Value* starTexValue = configParams->getValue("StarTextures");
     if (starTexValue != NULL)
     {
@@ -322,24 +322,24 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
             starTexTable->getString("L", starTexNames[StellarClass::Spectral_L]);
             starTexTable->getString("T", starTexNames[StellarClass::Spectral_T]);
             starTexTable->getString("C", starTexNames[StellarClass::Spectral_C]);
-            
+
             // One texture for all white dwarf types; not sure if this needs to be
             // changed. White dwarfs vary widely in temperature, so texture choice
             // should probably be based on that instead of spectral type.
             starTexTable->getString("WD", starTexNames[StellarClass::Spectral_D]);
-            
+
             string neutronStarTexName;
             if (starTexTable->getString("NeutronStar", neutronStarTexName))
             {
                 config->starTextures.neutronStarTex.setTexture(neutronStarTexName, "textures");
             }
-            
+
             string defaultTexName;
             if (starTexTable->getString("Default", defaultTexName))
             {
                 config->starTextures.defaultTex.setTexture(defaultTexName, "textures");
             }
-            
+
             for (unsigned int i = 0; i < (unsigned int) StellarClass::Spectral_Count; i++)
             {
                 if (starTexNames[i] != "")
@@ -365,10 +365,10 @@ float
 CelestiaConfig::getFloatValue(const string& name)
 {
     assert(params != NULL);
-    
+
     double x = 0.0;
     params->getNumber(name, x);
-    
+
     return (float) x;
 }
 
@@ -377,7 +377,7 @@ const string
 CelestiaConfig::getStringValue(const string& name)
 {
     assert(params != NULL);
-    
+
     Value* v = params->getValue(name);
     if (v == NULL || v->getType() != Value::StringType)
         return string("");

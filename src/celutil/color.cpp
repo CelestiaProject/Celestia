@@ -72,7 +72,7 @@ Color::Color(const Color& color, float alpha)
 
 
 /*! Parse a color string and return true if it was a valid color, otherwise
- *  false.  Accetable inputs are HTML/X11 style #xxxxxx colors (where x is 
+ *  false.  Accetable inputs are HTML/X11 style #xxxxxx colors (where x is
  *  hexadecimal digit) or one of a list of named colors.
  */
 bool Color::parse(const char* s, Color& c)
@@ -96,7 +96,7 @@ bool Color::parse(const char* s, Color& c)
             if (!isxdigit(s[i]))
                 return false;
         }
-        
+
         unsigned int n;
         sscanf(s, "%x", &n);
         if (length == 3)
@@ -138,13 +138,13 @@ void Color::buildX11ColorMap()
 {
     x11Colors["aliceblue"]            = Color((unsigned char)240, (unsigned char)248, (unsigned char)255);
     x11Colors["antiquewhite"]         = Color((unsigned char)250, (unsigned char)235, (unsigned char)215);
-    x11Colors["aqua"]                 = Color((unsigned char)0,   (unsigned char)255, (unsigned char)255);  
-    x11Colors["aquamarine"]           = Color((unsigned char)127, (unsigned char)255, (unsigned char)212);  
+    x11Colors["aqua"]                 = Color((unsigned char)0,   (unsigned char)255, (unsigned char)255);
+    x11Colors["aquamarine"]           = Color((unsigned char)127, (unsigned char)255, (unsigned char)212);
     x11Colors["azure"]                = Color((unsigned char)240, (unsigned char)255, (unsigned char)255);
     x11Colors["beige"]                = Color((unsigned char)245, (unsigned char)245, (unsigned char)220);
     x11Colors["bisque"]               = Color((unsigned char)255, (unsigned char)228, (unsigned char)196);
     x11Colors["black"]                = Color((unsigned char)0,   (unsigned char)0,   (unsigned char)0);
-    x11Colors["blanchedalmond"]       = Color((unsigned char)255, (unsigned char)235, (unsigned char)205);  
+    x11Colors["blanchedalmond"]       = Color((unsigned char)255, (unsigned char)235, (unsigned char)205);
     x11Colors["blue"]                 = Color((unsigned char)0,   (unsigned char)0,   (unsigned char)255);
     x11Colors["blueviolet"]           = Color((unsigned char)138, (unsigned char)43,  (unsigned char)226);
     x11Colors["brown"]                = Color((unsigned char)165, (unsigned char)42,  (unsigned char)42);
@@ -153,7 +153,7 @@ void Color::buildX11ColorMap()
     x11Colors["chartreuse"]           = Color((unsigned char)127, (unsigned char)255, (unsigned char)0);
     x11Colors["chocolate"]            = Color((unsigned char)210, (unsigned char)105, (unsigned char)30);
     x11Colors["coral"]                = Color((unsigned char)255, (unsigned char)127, (unsigned char)80);
-    x11Colors["cornflowerblue"]       = Color((unsigned char)100, (unsigned char)149, (unsigned char)237);  
+    x11Colors["cornflowerblue"]       = Color((unsigned char)100, (unsigned char)149, (unsigned char)237);
     x11Colors["cornsilk"]             = Color((unsigned char)255, (unsigned char)248, (unsigned char)220);
     x11Colors["crimson"]              = Color((unsigned char)220, (unsigned char)20,  (unsigned char)60);
     x11Colors["cyan"]                 = Color((unsigned char)0,   (unsigned char)255, (unsigned char)255);
@@ -171,24 +171,24 @@ void Color::buildX11ColorMap()
     x11Colors["darksalmon"]           = Color((unsigned char)233, (unsigned char)150, (unsigned char)122);
     x11Colors["darkseagreen"]         = Color((unsigned char)143, (unsigned char)188, (unsigned char)143);
     x11Colors["darkslateblue"]        = Color((unsigned char)72,  (unsigned char)61,  (unsigned char)139);
-    x11Colors["darkslategray"]        = Color((unsigned char)47,  (unsigned char)79,  (unsigned char)79); 
-    x11Colors["darkturquoise"]        = Color((unsigned char)0,   (unsigned char)206, (unsigned char)209);  
+    x11Colors["darkslategray"]        = Color((unsigned char)47,  (unsigned char)79,  (unsigned char)79);
+    x11Colors["darkturquoise"]        = Color((unsigned char)0,   (unsigned char)206, (unsigned char)209);
     x11Colors["darkviolet"]           = Color((unsigned char)148, (unsigned char)0,   (unsigned char)211);
     x11Colors["deeppink"]             = Color((unsigned char)255, (unsigned char)20,  (unsigned char)147);
     x11Colors["deepskyblue"]          = Color((unsigned char)0,   (unsigned char)191, (unsigned char)255);
     x11Colors["dimgray"]              = Color((unsigned char)105, (unsigned char)105, (unsigned char)105);
     x11Colors["dodgerblue"]           = Color((unsigned char)30,  (unsigned char)144, (unsigned char)255);
     x11Colors["firebrick"]            = Color((unsigned char)178, (unsigned char)34,  (unsigned char)34);
-    x11Colors["floralwhite"]          = Color((unsigned char)255, (unsigned char)250, (unsigned char)240);  
+    x11Colors["floralwhite"]          = Color((unsigned char)255, (unsigned char)250, (unsigned char)240);
     x11Colors["forestgreen"]          = Color((unsigned char)34,  (unsigned char)139, (unsigned char)34);
     x11Colors["fuchsia"]              = Color((unsigned char)255, (unsigned char)0,   (unsigned char)255);
     x11Colors["gainsboro"]            = Color((unsigned char)220, (unsigned char)220, (unsigned char)220);
-    x11Colors["ghostwhite"]           = Color((unsigned char)248, (unsigned char)248, (unsigned char)255); 
+    x11Colors["ghostwhite"]           = Color((unsigned char)248, (unsigned char)248, (unsigned char)255);
     x11Colors["gold"]                 = Color((unsigned char)255, (unsigned char)215, (unsigned char)0);
     x11Colors["goldenrod"]            = Color((unsigned char)218, (unsigned char)165, (unsigned char)32);
     x11Colors["gray"]                 = Color((unsigned char)128, (unsigned char)128, (unsigned char)128);
     x11Colors["green"]                = Color((unsigned char)0,   (unsigned char)128, (unsigned char)0);
-    x11Colors["greenyellow"]          = Color((unsigned char)173, (unsigned char)255, (unsigned char)47); 
+    x11Colors["greenyellow"]          = Color((unsigned char)173, (unsigned char)255, (unsigned char)47);
     x11Colors["honeydew"]             = Color((unsigned char)240, (unsigned char)255, (unsigned char)240);
     x11Colors["hotpink"]              = Color((unsigned char)255, (unsigned char)105, (unsigned char)180);
     x11Colors["indianred"]            = Color((unsigned char)205, (unsigned char)92,  (unsigned char)92);
@@ -196,13 +196,13 @@ void Color::buildX11ColorMap()
     x11Colors["ivory"]                = Color((unsigned char)255, (unsigned char)255, (unsigned char)240);
     x11Colors["khaki"]                = Color((unsigned char)240, (unsigned char)230, (unsigned char)140);
     x11Colors["lavender"]             = Color((unsigned char)230, (unsigned char)230, (unsigned char)250);
-    x11Colors["lavenderblush"]        = Color((unsigned char)255, (unsigned char)240, (unsigned char)245 ); 
+    x11Colors["lavenderblush"]        = Color((unsigned char)255, (unsigned char)240, (unsigned char)245 );
     x11Colors["lawngreen"]            = Color((unsigned char)124, (unsigned char)252, (unsigned char)0);
-    x11Colors["lemonchiffon"]         = Color((unsigned char)255, (unsigned char)250, (unsigned char)205);  
+    x11Colors["lemonchiffon"]         = Color((unsigned char)255, (unsigned char)250, (unsigned char)205);
     x11Colors["lightblue"]            = Color((unsigned char)173, (unsigned char)216, (unsigned char)230);
     x11Colors["lightcoral"]           = Color((unsigned char)240, (unsigned char)128, (unsigned char)128);
     x11Colors["lightcyan"]            = Color((unsigned char)224, (unsigned char)255, (unsigned char)255);
-    x11Colors["lightgoldenrodyellow"] = Color((unsigned char)250, (unsigned char)250, (unsigned char)210);  
+    x11Colors["lightgoldenrodyellow"] = Color((unsigned char)250, (unsigned char)250, (unsigned char)210);
     x11Colors["lightgreen"]           = Color((unsigned char)144, (unsigned char)238, (unsigned char)144);
     x11Colors["lightgrey"]            = Color((unsigned char)211, (unsigned char)211, (unsigned char)211);
     x11Colors["lightpink"]            = Color((unsigned char)255, (unsigned char)182, (unsigned char)193);
@@ -232,16 +232,16 @@ void Color::buildX11ColorMap()
     x11Colors["moccasin"]             = Color((unsigned char)255, (unsigned char)228, (unsigned char)181);
     x11Colors["navajowhite"]          = Color((unsigned char)255, (unsigned char)222, (unsigned char)173);
     x11Colors["navy"]                 = Color((unsigned char)0,   (unsigned char)0,   (unsigned char)128);
-    x11Colors["oldlace"]              = Color((unsigned char)253, (unsigned char)245, (unsigned char)230);  
+    x11Colors["oldlace"]              = Color((unsigned char)253, (unsigned char)245, (unsigned char)230);
     x11Colors["olive"]                = Color((unsigned char)128, (unsigned char)128, (unsigned char)0);
-    x11Colors["olivedrab"]            = Color((unsigned char)107, (unsigned char)142, (unsigned char)35);  
+    x11Colors["olivedrab"]            = Color((unsigned char)107, (unsigned char)142, (unsigned char)35);
     x11Colors["orange"]               = Color((unsigned char)255, (unsigned char)165, (unsigned char)0);
     x11Colors["orangered"]            = Color((unsigned char)255, (unsigned char)69,  (unsigned char)0);
     x11Colors["orchid"]               = Color((unsigned char)218, (unsigned char)112, (unsigned char)214);
-    x11Colors["palegoldenrod"]        = Color((unsigned char)238, (unsigned char)232, (unsigned char)170); 
+    x11Colors["palegoldenrod"]        = Color((unsigned char)238, (unsigned char)232, (unsigned char)170);
     x11Colors["palegreen"]            = Color((unsigned char)152, (unsigned char)251, (unsigned char)152);
-    x11Colors["paleturquoise"]        = Color((unsigned char)175, (unsigned char)238, (unsigned char)238); 
-    x11Colors["palevioletred"]        = Color((unsigned char)219, (unsigned char)112, (unsigned char)147); 
+    x11Colors["paleturquoise"]        = Color((unsigned char)175, (unsigned char)238, (unsigned char)238);
+    x11Colors["palevioletred"]        = Color((unsigned char)219, (unsigned char)112, (unsigned char)147);
     x11Colors["papayawhip"]           = Color((unsigned char)255, (unsigned char)239, (unsigned char)213);
     x11Colors["peachpuff"]            = Color((unsigned char)255, (unsigned char)218, (unsigned char)185);
     x11Colors["peru"]                 = Color((unsigned char)205, (unsigned char)133, (unsigned char)63);

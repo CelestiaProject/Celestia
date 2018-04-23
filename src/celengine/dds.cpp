@@ -65,7 +65,7 @@ struct DDSurfaceDesc
 
     DDPixelFormat format;
     DDSCaps caps;
-    
+
     uint32 textureStage;
 };
 

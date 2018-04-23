@@ -35,8 +35,8 @@ public:
         Circle    = 10,
         Disk      = 11,
         Crosshair = 12,
-    };    
-    
+    };
+
     MarkerRepresentation(Symbol symbol = MarkerRepresentation::Diamond,
                          float size = 10.0f,
                          Color color = Color::White,
@@ -47,11 +47,11 @@ public:
         m_label(label)
     {
     }
-    
+
     MarkerRepresentation(const MarkerRepresentation& rep);
-    
+
     MarkerRepresentation& operator=(const MarkerRepresentation& rep);
-    
+
     Symbol symbol() const { return m_symbol; }
     Color color() const { return m_color; }
     void setColor(Color);
@@ -59,9 +59,9 @@ public:
     void setSize(float size);
     string label() const { return m_label; }
     void setLabel(const std::string&);
-        
+
     void render(float size) const;
-    
+
 private:
     Symbol m_symbol;
     float m_size;

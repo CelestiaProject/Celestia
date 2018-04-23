@@ -59,7 +59,7 @@ bool AVICapture::start(const string& filename,
     // Compute the width of a row in bytes; pad so that rows are aligned on
     // 4 byte boundaries.
     int rowBytes = (width * 3 + 3) & ~0x3;
-    image = new unsigned char[rowBytes * height]; 
+    image = new unsigned char[rowBytes * height];
 
     HRESULT hr = AVIFileOpenA(&aviFile,
                               filename.c_str(),
@@ -92,7 +92,7 @@ bool AVICapture::start(const string& filename,
     AVICOMPRESSOPTIONS* arrOptions[1] = { &options };
     ZeroMemory(&options, sizeof options);
 
-    if (!AVISaveOptions(NULL, 0, 1, &aviStream, 
+    if (!AVISaveOptions(NULL, 0, 1, &aviStream,
                         (LPAVICOMPRESSOPTIONS*) &arrOptions))
     {
         // The user either clicked on cancel or there was an error

@@ -79,7 +79,7 @@ class Texture
      *  shader tricks to be used correctly.
      */
     unsigned int getFormatOptions() const;
-    
+
     //! Set the format options.
     void setFormatOptions(unsigned int opts);
 

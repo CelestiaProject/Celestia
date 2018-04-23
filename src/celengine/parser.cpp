@@ -131,7 +131,7 @@ ValueArray* Parser::readArray()
         return NULL;
     }
 
-	ValueArray* array = new ValueArray();
+    ValueArray* array = new ValueArray();
 
     Value* v = readValue();
     while (v != NULL)
@@ -139,7 +139,7 @@ ValueArray* Parser::readArray()
         array->insert(array->end(), v);
         v = readValue();
     }
-    
+
     tok = tokenizer->nextToken();
     if (tok != Tokenizer::TokenEndArray)
     {
@@ -173,7 +173,7 @@ Hash* Parser::readHash()
             return NULL;
         }
         string name = tokenizer->getNameValue();
-        
+
 #ifndef USE_POSTFIX_UNITS
         readUnits(name, hash);
 #endif
@@ -186,7 +186,7 @@ Hash* Parser::readHash()
         }
 
         hash->addValue(name, *value);
-        
+
 #ifdef USE_POSTFIX_UNITS
         readUnits(name, hash);
 #endif
@@ -221,10 +221,10 @@ bool Parser::readUnits(const string& propertyName, Hash* hash)
             tokenizer->pushBack();
             return false;
         }
-       
+
         string unit = tokenizer->getNameValue();
         Value* value = new Value(unit);
-        
+
         if (astro::isLengthUnit(unit))
         {
             string keyName(propertyName + "%Length");
@@ -245,10 +245,10 @@ bool Parser::readUnits(const string& propertyName, Hash* hash)
             delete value;
             return false;
         }
-        
+
         tok = tokenizer->nextToken();
     }
-    
+
     return true;
 }
 
@@ -278,7 +278,7 @@ Value* Parser::readValue()
     case Tokenizer::TokenBeginArray:
         tokenizer->pushBack();
         {
-			ValueArray* array = readArray();
+            ValueArray* array = readArray();
             if (array == NULL)
                 return NULL;
             else
@@ -418,7 +418,7 @@ bool AssociativeArray::getVector(const string& key, Vec3d& val) const
     if (v == NULL || v->getType() != Value::ArrayType)
         return false;
 
-	ValueArray* arr = v->getArray();
+    ValueArray* arr = v->getArray();
     if (arr->size() != 3)
         return false;
 
@@ -442,7 +442,7 @@ bool AssociativeArray::getVector(const string& key, Vector3d& val) const
     if (v == NULL || v->getType() != Value::ArrayType)
         return false;
 
-	ValueArray* arr = v->getArray();
+    ValueArray* arr = v->getArray();
     if (arr->size() != 3)
         return false;
 
@@ -493,7 +493,7 @@ bool AssociativeArray::getRotation(const string& key, Quatf& val) const
     if (v == NULL || v->getType() != Value::ArrayType)
         return false;
 
-	ValueArray* arr = v->getArray();
+    ValueArray* arr = v->getArray();
     if (arr->size() != 4)
         return false;
 
@@ -512,7 +512,7 @@ bool AssociativeArray::getRotation(const string& key, Quatf& val) const
                (float) y->getNumber(),
                (float) z->getNumber());
     axis.normalize();
-    
+
     double ang = w->getNumber();
     double angScale = 1.0;
     getAngleScale(key, angScale);
@@ -526,10 +526,10 @@ bool AssociativeArray::getRotation(const string& key, Quatf& val) const
 
 /**
  * Retrieves a quaternion, scaled to an associated angle unit.
- * 
+ *
  * The quaternion is specified in the catalog file in axis-angle format as follows:
  * \verbatim {PropertyName} [ angle axisX axisY axisZ ] \endverbatim
- * 
+ *
  * @param[in] key Hash key for the rotation.
  * @param[out] val A quaternion representing the value if present, unaffected if not.
  * @return True if the key exists in the hash, false otherwise.
@@ -540,7 +540,7 @@ bool AssociativeArray::getRotation(const string& key, Eigen::Quaternionf& val) c
     if (v == NULL || v->getType() != Value::ArrayType)
         return false;
 
-	ValueArray* arr = v->getArray();
+    ValueArray* arr = v->getArray();
     if (arr->size() != 4)
         return false;
 
@@ -596,7 +596,7 @@ AssociativeArray::getAngle(const string& key, double& val, double outputScale, d
 {
     if (!getNumber(key, val))
         return false;
-    
+
     double angleScale;
     if(getAngleScale(key, angleScale))
     {
@@ -606,24 +606,24 @@ AssociativeArray::getAngle(const string& key, double& val, double outputScale, d
     {
         angleScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
     }
-    
+
     val *= angleScale;
-    
+
     return true;
 }
 
 
-/** @copydoc AssociativeArray::getAngle() */ 
+/** @copydoc AssociativeArray::getAngle() */
 bool
 AssociativeArray::getAngle(const string& key, float& val, double outputScale, double defaultScale) const
 {
     double dval;
-    
+
     if (!getAngle(key, dval, outputScale, defaultScale))
         return false;
-        
+
     val = ((float) dval);
-    
+
     return true;
 }
 
@@ -641,7 +641,7 @@ AssociativeArray::getLength(const string& key, double& val, double outputScale, 
 {
     if(!getNumber(key, val))
         return false;
-    
+
     double lengthScale;
     if(getLengthScale(key, lengthScale))
     {
@@ -651,9 +651,9 @@ AssociativeArray::getLength(const string& key, double& val, double outputScale, 
     {
         lengthScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
     }
-    
+
     val *= lengthScale;
-    
+
     return true;
 }
 
@@ -662,12 +662,12 @@ AssociativeArray::getLength(const string& key, double& val, double outputScale, 
 bool AssociativeArray::getLength(const string& key, float& val, double outputScale, double defaultScale) const
 {
     double dval;
-    
+
     if (!getLength(key, dval, outputScale, defaultScale))
         return false;
-    
+
     val = ((float) dval);
-    
+
     return true;
 }
 
@@ -684,7 +684,7 @@ bool AssociativeArray::getTime(const string& key, double& val, double outputScal
 {
     if(!getNumber(key, val))
         return false;
-    
+
     double timeScale;
     if(getTimeScale(key, timeScale))
     {
@@ -694,9 +694,9 @@ bool AssociativeArray::getTime(const string& key, double& val, double outputScal
     {
         timeScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
     }
-    
+
     val *= timeScale;
-    
+
     return true;
 }
 
@@ -705,12 +705,12 @@ bool AssociativeArray::getTime(const string& key, double& val, double outputScal
 bool AssociativeArray::getTime(const string& key, float& val, double outputScale, double defaultScale) const
 {
     double dval;
-    
+
     if(!getLength(key, dval, outputScale, defaultScale))
         return false;
-    
+
     val = ((float) dval);
-    
+
     return true;
 }
 
@@ -727,7 +727,7 @@ bool AssociativeArray::getLengthVector(const string& key, Eigen::Vector3d& val, 
 {
     if(!getVector(key, val))
         return false;
-    
+
     double lengthScale;
     if(getLengthScale(key, lengthScale))
     {
@@ -737,9 +737,9 @@ bool AssociativeArray::getLengthVector(const string& key, Eigen::Vector3d& val, 
     {
         lengthScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
     }
-    
+
     val *= lengthScale;
-    
+
     return true;
 }
 
@@ -748,12 +748,12 @@ bool AssociativeArray::getLengthVector(const string& key, Eigen::Vector3d& val, 
 bool AssociativeArray::getLengthVector(const string& key, Eigen::Vector3f& val, double outputScale, double defaultScale) const
 {
     Vector3d vecVal;
-    
+
     if(!getLengthVector(key, vecVal, outputScale, defaultScale))
         return false;
-        
+
     val = vecVal.cast<float>();
-    
+
     return true;
 }
 
@@ -768,18 +768,18 @@ bool AssociativeArray::getSphericalTuple(const string& key, Vector3d& val) const
 {
     if(!getVector(key, val))
         return false;
-    
+
     double angleScale;
     if(getAngleScale(key, angleScale))
     {
         val[0] *= angleScale;
         val[1] *= angleScale;
     }
-    
+
     double lengthScale = 1.0;
     getLengthScale(key, lengthScale);
     val[2] *= lengthScale;
-    
+
     return true;
 }
 
@@ -788,12 +788,12 @@ bool AssociativeArray::getSphericalTuple(const string& key, Vector3d& val) const
 bool AssociativeArray::getSphericalTuple(const string& key, Vector3f& val) const
 {
     Vector3d vecVal;
-    
+
     if(!getSphericalTuple(key, vecVal))
         return false;
-    
+
     val = vecVal.cast<float>();
-    
+
     return true;
 }
 
@@ -808,10 +808,10 @@ bool AssociativeArray::getAngleScale(const string& key, double& scale) const
 {
     string unitKey(key + "%Angle");
     string unit;
-    
+
     if (!getString(unitKey, unit))
         return false;
-    
+
     return astro::getAngleScale(unit, scale);
 }
 
@@ -822,7 +822,7 @@ bool AssociativeArray::getAngleScale(const string& key, float& scale) const
     double dscale;
     if (!getAngleScale(key, dscale))
         return false;
-    
+
     scale = ((float) dscale);
     return true;
 }
@@ -838,10 +838,10 @@ bool AssociativeArray::getLengthScale(const string& key, double& scale) const
 {
     string unitKey(key + "%Length");
     string unit;
-    
+
     if (!getString(unitKey, unit))
         return false;
-    
+
     return astro::getLengthScale(unit, scale);
 }
 
@@ -852,7 +852,7 @@ bool AssociativeArray::getLengthScale(const string& key, float& scale) const
     double dscale;
     if (!getLengthScale(key, dscale))
         return false;
-    
+
     scale = ((float) dscale);
     return true;
 }
@@ -868,10 +868,10 @@ bool AssociativeArray::getTimeScale(const string& key, double& scale) const
 {
     string unitKey(key + "%Time");
     string unit;
-    
+
     if (!getString(unitKey, unit))
         return false;
-    
+
     return astro::getTimeScale(unit, scale);
 }
 
@@ -882,7 +882,7 @@ bool AssociativeArray::getTimeScale(const string& key, float& scale) const
     double dscale;
     if (!getTimeScale(key, dscale))
         return false;
-    
+
     scale = ((float) dscale);
     return true;
 }

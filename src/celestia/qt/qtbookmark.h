@@ -64,7 +64,7 @@ public:
 
     bool isRoot() const;
     int position() const;
-    int childPosition(const BookmarkItem* child) const; 
+    int childPosition(const BookmarkItem* child) const;
 
     BookmarkItem* clone(BookmarkItem* withParent = NULL) const;
 
@@ -88,7 +88,7 @@ private:
 class BookmarkTreeModel : public QAbstractItemModel
 {
 public:
-    BookmarkTreeModel();  
+    BookmarkTreeModel();
     ~BookmarkTreeModel();
 
     enum {
@@ -98,10 +98,10 @@ public:
 
     QModelIndex index(int row, int /* column */, const QModelIndex& parent) const;
     QModelIndex parent(const QModelIndex& index) const;
-    
+
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
     int columnCount(const QModelIndex& /* parent */) const;
-    QVariant data(const QModelIndex& index, int role) const;   
+    QVariant data(const QModelIndex& index, int role) const;
     QVariant headerData(int /* section */, Qt::Orientation /* orientation */, int /* role */) const   ;
     Qt::ItemFlags flags(const QModelIndex& index) const;
 
@@ -144,7 +144,7 @@ public:
     void appendBookmarkMenuItems(QMenu* menu, const BookmarkItem* item);
 
     BookmarkTreeModel* model() const;
-    
+
     BookmarkItem* menuRootItem() const;
     BookmarkItem* toolBarRootItem() const;
 
@@ -163,12 +163,12 @@ private:
 class BookmarkToolBar : public QToolBar
 {
     Q_OBJECT
-    
+
 public:
     BookmarkToolBar(BookmarkManager *manager, QWidget* parent);
-    
+
     void rebuild();
-    
+
 private:
     BookmarkManager* m_manager;
 };
@@ -192,7 +192,7 @@ private:
     QSortFilterProxyModel* m_filterModel;
     const CelestiaState& m_appState;
     QImage m_iconImage;
-    
+
     static int m_lastTimeSourceIndex;
 };
 

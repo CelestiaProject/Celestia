@@ -21,7 +21,7 @@ class GLContext
     GLContext();
     virtual ~GLContext();
 
-    enum GLRenderPath 
+    enum GLRenderPath
     {
         GLPath_Basic             = 0,
         GLPath_Multitexture      = 1,
@@ -42,7 +42,7 @@ class GLContext
     };
 
     void init(const std::vector<std::string>& ignoreExt);
-    
+
     GLRenderPath getRenderPath() const { return renderPath; };
     bool setRenderPath(GLRenderPath);
     bool renderPathSupported(GLRenderPath) const;

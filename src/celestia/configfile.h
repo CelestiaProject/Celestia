@@ -23,7 +23,7 @@ public:
     std::string starNamesFile;
     std::vector<std::string> solarSystemFiles;
     std::vector<std::string> starCatalogFiles;
-	std::vector<std::string> dsoCatalogFiles;
+    std::vector<std::string> dsoCatalogFiles;
     std::vector<std::string> extrasDirs;
     std::string deepSkyCatalog;
     std::string asterismsFile;
@@ -55,7 +55,7 @@ public:
     std::string HDCrossIndexFile;
     std::string SAOCrossIndexFile;
     std::string GlieseCrossIndexFile;
-    
+
     StarDetails::StarTextureSet starTextures;
 
     // Renderer detail options
@@ -69,9 +69,9 @@ public:
     bool hdr;
 
     unsigned int consoleLogRows;
-    
+
     Hash* params;
-    
+
     float getFloatValue(const std::string& name);
     const std::string getStringValue(const std::string& name);
 };

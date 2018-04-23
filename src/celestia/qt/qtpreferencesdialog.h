@@ -115,5 +115,5 @@ private slots:
 protected:
     CelestiaCore* appCore;
     Ui_preferencesDialog ui;
-};        
+};
 

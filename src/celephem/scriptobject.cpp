@@ -1,5 +1,5 @@
 // scriptobject.cpp
-// 
+//
 // Copyright (C) 2006, Chris Laurel <claurel@shatters.net>
 //
 // Helper functions for Celestia's interface to Lua scripts.

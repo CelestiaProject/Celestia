@@ -136,7 +136,7 @@ public:
 
 private:
     QWidget* parent;
-};    
+};
 
 
 CelestiaAppWindow::CelestiaAppWindow( QWidget* parent ) : // Leserg
@@ -171,19 +171,19 @@ CelestiaAppWindow::~CelestiaAppWindow()
 void CelestiaAppWindow::init(const QString& qConfigFileName,
                              const QStringList& qExtrasDirectories)
 {
-	QString celestia_data_dir = QString::fromLocal8Bit(::getenv("CELESTIA_DATA_DIR"));
-	
-	if (celestia_data_dir.isEmpty()) {
-		QString celestia_data_dir = CONFIG_DATA_DIR;
-		QDir::setCurrent(celestia_data_dir);
-	} else if (QDir(celestia_data_dir).isReadable()) {
-		QDir::setCurrent(celestia_data_dir);
-	} else {
-		QMessageBox::critical(0, "Celestia",
-			_("Celestia is unable to run because the data directroy was not "
-			  "found, probably due to improper installation."));
-			exit(1);
-	}
+    QString celestia_data_dir = QString::fromLocal8Bit(::getenv("CELESTIA_DATA_DIR"));
+
+    if (celestia_data_dir.isEmpty()) {
+        QString celestia_data_dir = CONFIG_DATA_DIR;
+        QDir::setCurrent(celestia_data_dir);
+    } else if (QDir(celestia_data_dir).isReadable()) {
+        QDir::setCurrent(celestia_data_dir);
+    } else {
+        QMessageBox::critical(0, "Celestia",
+            _("Celestia is unable to run because the data directroy was not "
+              "found, probably due to improper installation."));
+            exit(1);
+    }
 
     // Get the config file name
     string configFileName;
@@ -231,27 +231,27 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     initAppDataDirectory();
 
     m_appCore = new CelestiaCore();
-    
+
     AppProgressNotifier* progress = new AppProgressNotifier(this);
     alerter = new AppAlerter(this);
     m_appCore->setAlerter(alerter);
 
-	setWindowIcon(QIcon(":/icons/celestia.png"));
+    setWindowIcon(QIcon(":/icons/celestia.png"));
 
     m_appCore->initSimulation(&configFileName,
                             &extrasDirectories,
                             progress);
     delete progress;
 
-	// Enable antialiasing if requested in the config file.
-	// TODO: Make this settable via the GUI
-	QGLFormat glformat = QGLFormat::defaultFormat();
-	if (m_appCore->getConfig()->aaSamples > 1)
-	{
-		glformat.setSampleBuffers(true);
-		glformat.setSamples(m_appCore->getConfig()->aaSamples);
-		QGLFormat::setDefaultFormat(glformat);
-	}
+    // Enable antialiasing if requested in the config file.
+    // TODO: Make this settable via the GUI
+    QGLFormat glformat = QGLFormat::defaultFormat();
+    if (m_appCore->getConfig()->aaSamples > 1)
+    {
+        glformat.setSampleBuffers(true);
+        glformat.setSamples(m_appCore->getConfig()->aaSamples);
+        QGLFormat::setDefaultFormat(glformat);
+    }
 
     glWidget = new CelestiaGlWidget(NULL, "Celestia", m_appCore);
     glWidget->makeCurrent();
@@ -366,15 +366,15 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     populateBookmarkMenu();
     connect(m_bookmarkManager, SIGNAL(bookmarkTriggered(const QString&)),
             this, SLOT(slotBookmarkTriggered(const QString&)));
-    
+
     m_bookmarkToolBar = new BookmarkToolBar(m_bookmarkManager, this);
-    m_bookmarkToolBar->setObjectName("bookmark-toolbar");    
+    m_bookmarkToolBar->setObjectName("bookmark-toolbar");
     m_bookmarkToolBar->rebuild();
     addToolBar(Qt::TopToolBarArea, m_bookmarkToolBar);
 
     // Read saved window preferences
     readSettings();
-    
+
     // Build the view menu
     // Add dockable panels and toolbars to the view menu
     viewMenu->addAction(timeToolBar->toggleViewAction());
@@ -385,18 +385,18 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     viewMenu->addAction(infoPanel->toggleViewAction());
     viewMenu->addAction(eventFinder->toggleViewAction());
     viewMenu->addSeparator();
-    
+
     QAction* fullScreenAction = new QAction(_("Full screen"), this);
     fullScreenAction->setCheckable(true);
     fullScreenAction->setShortcut(QString(_("Shift+F11")));
 
     // Set the full screen check state only after reading settings
     fullScreenAction->setChecked(isFullScreen());
-    
+
     connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(slotToggleFullScreen()));
     viewMenu->addAction(fullScreenAction);
-    
-    
+
+
     // We use a timer with a null timeout value
     // to add m_appCore->tick to Qt's event loop
     QTimer *t = new QTimer(dynamic_cast<QObject *>(this));
@@ -471,14 +471,14 @@ void CelestiaAppWindow::initAppDataDirectory()
 void CelestiaAppWindow::readSettings()
 {
     QDesktopWidget desktop;
-    
+
     QSettings settings;
 
     settings.beginGroup("MainWindow");
-    
+
     QSize windowSize = settings.value("Size", DEFAULT_MAIN_WINDOW_SIZE).toSize();
     QPoint windowPosition = settings.value("Pos", DEFAULT_MAIN_WINDOW_POSITION).toPoint();
-    
+
     // Make sure that the saved size fits on screen; it's possible for the previous saved
     // position to be off-screen if the monitor settings have changed.
     bool onScreen = false;
@@ -488,20 +488,20 @@ void CelestiaAppWindow::readSettings()
         if (screenGeometry.contains(windowPosition))
             onScreen = true;
     }
-    
+
     if (!onScreen)
     {
         windowPosition = DEFAULT_MAIN_WINDOW_POSITION;
         windowSize = DEFAULT_MAIN_WINDOW_SIZE;
     }
-    
+
     resize(windowSize);
     move(windowPosition);
     if (settings.contains("State"))
         restoreState(settings.value("State").toByteArray(), CELESTIA_MAIN_WINDOW_VERSION);
     if (settings.value("Fullscreen", false).toBool())
         showFullScreen();
-    
+
     settings.endGroup();
 
     // Render settings read in qtglwidget
@@ -708,12 +708,12 @@ void CelestiaAppWindow::slotCaptureVideo()
 
         QComboBox* resolutionCombo = new QComboBox(&videoInfoDialog);
         layout->addWidget(new QLabel(_("Resolution:"), &videoInfoDialog), 0, 0);
-        layout->addWidget(resolutionCombo, 0, 1);        
+        layout->addWidget(resolutionCombo, 0, 1);
         for (unsigned int i = 0; i < sizeof(videoSizes) / sizeof(videoSizes[0]); i++)
         {
             resolutionCombo->addItem(QString("%1 x %2").arg(videoSizes[i][0]).arg(videoSizes[i][1]), QSize(videoSizes[i][0], videoSizes[i][1]));
         }
-        
+
         QComboBox* frameRateCombo = new QComboBox(&videoInfoDialog);
         layout->addWidget(new QLabel(_("Frame rate:"), &videoInfoDialog), 1, 0);
         layout->addWidget(frameRateCombo, 1, 1);
@@ -770,7 +770,7 @@ void CelestiaAppWindow::slotCopyURL()
 {
     CelestiaState appState;
     appState.captureState(m_appCore);
-    
+
     Url url(appState, 3);
     QApplication::clipboard()->setText(url.getAsString().c_str());
     m_appCore->flash(QString(_("Copied URL")).toUtf8().data());
@@ -798,7 +798,7 @@ void CelestiaAppWindow::handleCelUrl(const QUrl& url)
         m_appCore->goToUrl(urlText.toUtf8().data());
     }
 }
- 
+
 
 void CelestiaAppWindow::selectSun()
 {
@@ -970,13 +970,13 @@ void CelestiaAppWindow::slotAddBookmark()
     {
         defaultTitle = sel.location()->getName().c_str();
     }
-    
+
     if (defaultTitle.isEmpty())
         defaultTitle = _("New bookmark");
 
     CelestiaState appState;
     appState.captureState(m_appCore);
-    
+
     // Capture the current frame buffer to use as a bookmark icon.
     QImage grabbedImage = glWidget->grabFrameBuffer();
     int width = grabbedImage.width();
@@ -1017,7 +1017,7 @@ void CelestiaAppWindow::slotManual()
 {
     QString MANUAL_FILE = "CelestiaGuide.html";
     QDesktopServices::openUrl(QUrl(QUrl::fromLocalFile(QDir::toNativeSeparators(QApplication::applicationDirPath()) + QDir::toNativeSeparators(QDir::separator()) + "help" + QDir::toNativeSeparators(QDir::separator()) + MANUAL_FILE)));
-//	QMessageBox::information(
+//    QMessageBox::information(
 //         QApplication::activeWindow(),
 //         QApplication::applicationName(),
 //         QDir::toNativeSeparators(QApplication::applicationDirPath()) + QDir::toNativeSeparators(QDir::separator()) + "help" + QDir::toNativeSeparators(QDir::separator()) + MANUAL_FILE
@@ -1043,7 +1043,7 @@ void CelestiaAppWindow::slotShowAbout()
     "https://github.com/CelestiaProject/Celestia</a><br>"
     "</html>");
 
-	QMessageBox::about(this, "Celestia", _(aboutText));
+    QMessageBox::about(this, "Celestia", _(aboutText));
 }
 
 
@@ -1102,7 +1102,7 @@ void CelestiaAppWindow::slotShowGLInfo()
     }
 
     QDialog glInfo(this);
-    
+
     QVBoxLayout* layout = new QVBoxLayout(&glInfo);
     QTextEdit* textEdit = new QTextEdit(infoText, &glInfo);
     layout->addWidget(textEdit);
@@ -1180,7 +1180,7 @@ void CelestiaAppWindow::createMenus()
     connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
     fileMenu->addAction(quitAct);
 
-    
+
 
     /****** Navigation menu ******/
     navMenu = menuBar()->addMenu(_("&Navigation"));
@@ -1351,7 +1351,7 @@ void CelestiaAppWindow::createMenus()
       m_appCore->setTimeZoneBias(-timezone + 3600 * daylight);
 #endif
     m_appCore->setTimeZoneName("temp");
-	
+
     // If LocalTime is set to false, set the time zone bias to zero.
     if (settings.contains("LocalTime"))
     {
@@ -1365,18 +1365,18 @@ void CelestiaAppWindow::createMenus()
         m_appCore->setTimeZoneName(settings.value("TimeZoneName").toString().toUtf8().data());
     }
 
-	/****** Help Menu ******/
+    /****** Help Menu ******/
     helpMenu = menuBar()->addMenu(_("&Help"));
 
-	QAction* helpManualAct = new QAction(QIcon(":/icons/book.png"), _("Manual Celestia"), this);
+    QAction* helpManualAct = new QAction(QIcon(":/icons/book.png"), _("Manual Celestia"), this);
     connect(helpManualAct, SIGNAL(triggered()), this, SLOT(slotManual()));
     helpMenu->addAction(helpManualAct);
     helpMenu->addSeparator();
-	
+
     QAction* glInfoAct = new QAction(QIcon(":/icons/report_GL.png"), _("OpenGL Info"), this);
     connect(glInfoAct, SIGNAL(triggered()), this, SLOT(slotShowGLInfo()));
     helpMenu->addAction(glInfoAct);
-	
+
     QAction* aboutAct = new QAction(QIcon(":/icons/about.png"), _("About Celestia"), this);
     connect(aboutAct, SIGNAL(triggered()), this, SLOT(slotShowAbout()));
     helpMenu->addAction(aboutAct);
@@ -1392,15 +1392,15 @@ void CelestiaAppWindow::createMenus()
 void CelestiaAppWindow::populateBookmarkMenu()
 {
     bookmarkMenu->clear();
-    
+
     QAction* addBookmarkAction = new QAction(QIcon(":/icons/bookmark-add.png"), _("Add Bookmark..."), bookmarkMenu);
     bookmarkMenu->addAction(addBookmarkAction);
     connect(addBookmarkAction, SIGNAL(triggered()), this, SLOT(slotAddBookmark()));
-    
+
     QAction* organizeBookmarksAction = new QAction(QIcon(":/icons/application-bookmark.png"), _("Organize Bookmarks..."), bookmarkMenu);
     bookmarkMenu->addAction(organizeBookmarksAction);
     connect(organizeBookmarksAction, SIGNAL(triggered()), this, SLOT(slotOrganizeBookmarks()));
-   
+
     bookmarkMenu->addSeparator();
 
     m_bookmarkManager->populateBookmarkMenu(bookmarkMenu);
@@ -1437,7 +1437,7 @@ QMenu* CelestiaAppWindow::buildScriptsMenu()
         return NULL;
 
     QMenu* menu = new QMenu(_("Scripts"));
-    
+
     for (vector<ScriptMenuItem>::const_iterator iter = scripts->begin();
          iter != scripts->end(); iter++)
     {

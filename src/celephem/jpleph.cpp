@@ -56,7 +56,7 @@ static double readDouble(istream& in)
 JPLEphRecord::~JPLEphRecord()
 {
     if (coeffs != NULL)
-	delete coeffs;
+    delete coeffs;
 }
 
 
@@ -115,7 +115,7 @@ Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
     if (tjd < startDate)
         tjd = startDate;
     else if (tjd > endDate)
-	tjd = endDate;
+    tjd = endDate;
 
     // recNo is always >= 0:
     unsigned int recNo = (unsigned int) ((tjd - startDate) / daysPerInterval);
@@ -136,17 +136,17 @@ Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
     // nGranules is unsigned int so it will be compared against FFFFFFFF:
     if (coeffInfo[planet].nGranules == (unsigned int) -1)
     {
-    	coeffs = rec->coeffs + coeffInfo[planet].offset;
-    	u = 2.0 * (tjd - rec->t0) / daysPerInterval - 1.0;
+        coeffs = rec->coeffs + coeffInfo[planet].offset;
+        u = 2.0 * (tjd - rec->t0) / daysPerInterval - 1.0;
     }
     else
     {
-	double daysPerGranule = daysPerInterval / coeffInfo[planet].nGranules;
-	int granule = (int) ((tjd - rec->t0) / daysPerGranule);
-	double granuleStartDate = rec->t0 + daysPerGranule * (double) granule;
-	coeffs = rec->coeffs + coeffInfo[planet].offset +
+    double daysPerGranule = daysPerInterval / coeffInfo[planet].nGranules;
+    int granule = (int) ((tjd - rec->t0) / daysPerGranule);
+    double granuleStartDate = rec->t0 + daysPerGranule * (double) granule;
+    coeffs = rec->coeffs + coeffInfo[planet].offset +
             granule * coeffInfo[planet].nCoeffs * 3;
-	u = 2.0 * (tjd - granuleStartDate) / daysPerGranule - 1.0;
+    u = 2.0 * (tjd - granuleStartDate) / daysPerGranule - 1.0;
     }
 
     // Evaluate the Chebyshev polynomials
@@ -155,11 +155,11 @@ Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
     unsigned int nCoeffs = coeffInfo[planet].nCoeffs;
     for (int i = 0; i < 3; i++)
     {
-    	cc[0] = 1.0;
-    	cc[1] = u;
-    	sum[i] = coeffs[i * nCoeffs] + coeffs[i * nCoeffs + 1] * u;
-    	for (unsigned int j = 2; j < nCoeffs; j++)
-    	{
+        cc[0] = 1.0;
+        cc[1] = u;
+        sum[i] = coeffs[i * nCoeffs] + coeffs[i * nCoeffs + 1] * u;
+        for (unsigned int j = 2; j < nCoeffs; j++)
+        {
             cc[j] = 2.0 * u * cc[j - 1] - cc[j - 2];
             sum[i] += coeffs[i * nCoeffs + j] * cc[j];
         }
@@ -255,25 +255,25 @@ JPLEphemeris* JPLEphemeris::load(istream& in)
     }
 
     unsigned int nRecords = (unsigned int) ((eph->endDate - eph->startDate) /
-					    eph->daysPerInterval);
+                        eph->daysPerInterval);
     eph->records.resize(nRecords);
     for (i = 0; i < nRecords; i++)
     {
-    	eph->records[i].t0 = readDouble(in);
-    	eph->records[i].t1 = readDouble(in);
+        eph->records[i].t0 = readDouble(in);
+        eph->records[i].t1 = readDouble(in);
 
-    	// Allocate coefficient array for this record; the first two
-    	// 'coefficients' are actually the start and end time (t0 and t1)
-    	eph->records[i].coeffs = new double[eph->recordSize - 2];
-    	for (unsigned int j = 0; j < eph->recordSize - 2; j++)
-    	    eph->records[i].coeffs[j] = readDouble(in);
+        // Allocate coefficient array for this record; the first two
+        // 'coefficients' are actually the start and end time (t0 and t1)
+        eph->records[i].coeffs = new double[eph->recordSize - 2];
+        for (unsigned int j = 0; j < eph->recordSize - 2; j++)
+            eph->records[i].coeffs[j] = readDouble(in);
 
-    	// Make sure that we read this record successfully
-    	if (!in.good())
-    	{
-    	    delete eph;
-    	    return NULL;
-    	}
+        // Make sure that we read this record successfully
+        if (!in.good())
+        {
+            delete eph;
+            return NULL;
+        }
     }
 
     return eph;

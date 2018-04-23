@@ -1,5 +1,5 @@
 // unixdirectory.cpp
-// 
+//
 // Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -105,9 +105,9 @@ bool IsDirectory(const std::string& filename)
     return S_ISDIR(buf.st_mode);
 }
 
-std::string WordExp(const std::string& filename) 
+std::string WordExp(const std::string& filename)
 {
-#ifndef WORDEXP_PROBLEM   
+#ifndef WORDEXP_PROBLEM
     wordexp_t result;
     std::string expanded;
 

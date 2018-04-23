@@ -1,5 +1,5 @@
 // frame.h
-// 
+//
 // Copyright (C) 2003-2009, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
@@ -31,7 +31,7 @@ class ReferenceFrame
 
     int addRef() const;
     int release() const;
-    
+
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
     Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const;
@@ -39,13 +39,13 @@ class ReferenceFrame
 
     Eigen::Vector3d convertFromAstrocentric(const Eigen::Vector3d& p, double tjd) const;
     Eigen::Vector3d convertToAstrocentric(const Eigen::Vector3d& p, double tjd) const;
-    
+
     Selection getCenter() const;
 
     virtual Eigen::Quaterniond getOrientation(double tjd) const = 0;
     virtual Eigen::Vector3d getAngularVelocity(double tdb) const;
 
-	virtual bool isInertial() const = 0;
+    virtual bool isInertial() const = 0;
 
     enum FrameType
     {
@@ -85,8 +85,8 @@ class CachingFrame : public ReferenceFrame
     mutable double lastTime;
     mutable Eigen::Quaterniond lastOrientation;
     mutable Eigen::Vector3d lastAngularVelocity;
-	mutable bool orientationCacheValid;
-	mutable bool angularVelocityCacheValid;
+    mutable bool orientationCacheValid;
+    mutable bool angularVelocityCacheValid;
 };
 
 
@@ -102,7 +102,7 @@ class J2000EclipticFrame : public ReferenceFrame
         return Eigen::Quaterniond::Identity();
     }
 
-	virtual bool isInertial() const;
+    virtual bool isInertial() const;
 
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth,
@@ -117,7 +117,7 @@ class J2000EquatorFrame : public ReferenceFrame
     J2000EquatorFrame(Selection center);
     virtual ~J2000EquatorFrame() {};
     Eigen::Quaterniond getOrientation(double tjd) const;
-	virtual bool isInertial() const;
+    virtual bool isInertial() const;
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth,
                                       FrameType frameType) const;
@@ -137,7 +137,7 @@ class BodyFixedFrame : public ReferenceFrame
     virtual ~BodyFixedFrame() {};
     Eigen::Quaterniond getOrientation(double tjd) const;
     virtual Eigen::Vector3d getAngularVelocity(double tjd) const;
-	virtual bool isInertial() const;
+    virtual bool isInertial() const;
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth,
                                       FrameType frameType) const;
@@ -155,7 +155,7 @@ class BodyMeanEquatorFrame : public ReferenceFrame
     virtual ~BodyMeanEquatorFrame() {};
     Eigen::Quaterniond getOrientation(double tjd) const;
     virtual Eigen::Vector3d getAngularVelocity(double tjd) const;
-	virtual bool isInertial() const;
+    virtual bool isInertial() const;
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth,
                                       FrameType frameType) const;
@@ -193,7 +193,7 @@ class FrameVector
         RelativeVelocity,
         ConstantVector,
     };
-    
+
     static FrameVector createRelativePositionVector(const Selection& _observer,
                                                     const Selection& _target);
     static FrameVector createRelativeVelocityVector(const Selection& _observer,
@@ -229,7 +229,7 @@ class TwoVectorFrame : public CachingFrame
      *  the primary and secondary vectors:
      *  1 = x, 2 = y, 3 = z, -1 = -x, -2 = -y, -3 = -z
      */
-    TwoVectorFrame(Selection center, 
+    TwoVectorFrame(Selection center,
                    const FrameVector& prim,
                    int primAxis,
                    const FrameVector& sec,
@@ -237,7 +237,7 @@ class TwoVectorFrame : public CachingFrame
     virtual ~TwoVectorFrame() {};
 
     Eigen::Quaterniond computeOrientation(double tjd) const;
-	virtual bool isInertial() const;
+    virtual bool isInertial() const;
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth,
                                       FrameType frameType) const;

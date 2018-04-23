@@ -32,11 +32,11 @@ static void RenderArrow(float shaftLength,
 {
     float sintab[MaxArrowSections];
     float costab[MaxArrowSections];
-	
+
     unsigned int i;
 
     nSections = min(MaxArrowSections, nSections);
-	
+
     // Initialize the trig tables
     for (i = 0; i < nSections; i++)
     {
@@ -44,7 +44,7 @@ static void RenderArrow(float shaftLength,
         sintab[i] = (float) sin(theta);
         costab[i] = (float) cos(theta);
     }
-	
+
     // Render the circle at the botton of the arrow shaft
     glBegin(GL_TRIANGLE_FAN);
     glVertex3f(0.0f, 0.0f, 0.0f);
@@ -54,7 +54,7 @@ static void RenderArrow(float shaftLength,
         glVertex3f(shaftRadius * costab[n], shaftRadius * sintab[n], 0.0f);
     }
     glEnd();
-	
+
     // Render the arrow shaft
     glBegin(GL_QUAD_STRIP);
     for (i = 0; i <= nSections; i++)
@@ -64,17 +64,17 @@ static void RenderArrow(float shaftLength,
         glVertex3f(shaftRadius * costab[n], shaftRadius * sintab[n], 0.0f);
     }
     glEnd();
-	
+
     // Render the annulus
     glBegin(GL_QUAD_STRIP);
     for (i = 0; i <= nSections; i++)
     {
         unsigned int n = i % nSections;
-        glVertex3f(headRadius * costab[n],  headRadius * sintab[n], shaftLength);		
+        glVertex3f(headRadius * costab[n],  headRadius * sintab[n], shaftLength);
         glVertex3f(shaftRadius * costab[n], shaftRadius * sintab[n], shaftLength);
     }
     glEnd();
-	
+
     // Render the head of the arrow
     glBegin(GL_TRIANGLE_FAN);
     glVertex3f(0.0f, 0.0f, shaftLength + headLength);
@@ -201,7 +201,7 @@ ArrowReferenceMark::render(Renderer* /* renderer */,
     float shaftRadius = 0.010f;
     float headRadius = 0.025f;
     unsigned int nSections = 30;
-	
+
     glColor4f(color.red(), color.green(), color.blue(), opacity);
     RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
 
@@ -278,13 +278,13 @@ AxesReferenceMark::render(Renderer* /* renderer */,
     glPushMatrix();
     glRotate(q.cast<float>());
     glScalef(size, size, size);
-	
+
     glDisable(GL_LIGHTING);
 
 #if 0
     // Simple line axes
     glBegin(GL_LINES);
-	
+
     glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
     glVertex3f(0.0f, 0.0f, 0.0f);
     glVertex3f(-1.0f, 0.0f, 0.0f);
@@ -296,7 +296,7 @@ AxesReferenceMark::render(Renderer* /* renderer */,
     glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
     glVertex3f(0.0f, 0.0f, 0.0f);
     glVertex3f(0.0f, 1.0f, 0.0f);
-	
+
     glEnd();
 #endif
 
@@ -306,7 +306,7 @@ AxesReferenceMark::render(Renderer* /* renderer */,
     float headRadius = 0.025f;
     unsigned int nSections = 30;
     float labelScale = 0.1f;
-	
+
     // x-axis
     glPushMatrix();
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
@@ -336,7 +336,7 @@ AxesReferenceMark::render(Renderer* /* renderer */,
     glScalef(labelScale, labelScale, labelScale);
     RenderZ();
     glPopMatrix();
-	
+
     glPopMatrix();
 
     glDisable(GL_DEPTH_TEST);

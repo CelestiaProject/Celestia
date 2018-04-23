@@ -1,6 +1,6 @@
 // wineclipses.cpp by Kendrix <kendrix@wanadoo.fr>
 // modified by Chris Laurel
-// 
+//
 // Compute Solar Eclipses for our Solar System planets
 //
 // This program is free software; you can redistribute it and/or
@@ -119,10 +119,10 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
             nm->item.pszText = callbackScratch;
         }
         break;
-            
+
     case 1:
         {
-            if (!strcmp(eclipse->planete.c_str(),"None")) 
+            if (!strcmp(eclipse->planete.c_str(),"None"))
             {
                 sprintf(callbackScratch,"");
                 nm->item.pszText = callbackScratch;
@@ -150,7 +150,7 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
             bind_textdomain_codeset("celestia", "UTF8");
         }
         break;
-            
+
     case 3:
         {
             astro::Date startDate(eclipse->startTime);
@@ -167,7 +167,7 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
 
     case 4:
         {
-            if (!strcmp(eclipse->planete.c_str(),"None")) 
+            if (!strcmp(eclipse->planete.c_str(),"None"))
             {
                 sprintf(callbackScratch,"");
                 nm->item.pszText = callbackScratch;
@@ -297,7 +297,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                                 LPARAM lParam)
 {
     //EclipseFinderDialog* eclipseFinderDlg = reinterpret_cast<EclipseFinderDialog*>(GetWindowLong(hDlg, DWL_USER));
-	EclipseFinderDialog* eclipseFinderDlg = reinterpret_cast<EclipseFinderDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
+    EclipseFinderDialog* eclipseFinderDlg = reinterpret_cast<EclipseFinderDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
@@ -307,7 +307,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             if (efd == NULL)
                 return EndDialog(hDlg, 0);
             //SetWindowLong(hDlg, DWL_USER, lParam);
-			SetWindowLongPtr(hDlg, DWLP_USER, lParam);
+            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
             HWND hwnd = GetDlgItem(hDlg, IDC_ECLIPSES_LIST);
             InitEclipseFinderColumns(hwnd);
             SendDlgItemMessage(hDlg, IDC_ECLIPSES_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
@@ -331,8 +331,8 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             // Subclass the ListView to intercept WM_LBUTTONUP messages
             HWND hCtrl;
             if (hCtrl = GetDlgItem(hDlg, IDC_ECLIPSES_LIST))
-				oldListViewProc = (WNDPROC)SetWindowLongPtr(hCtrl, GWLP_WNDPROC, (LPARAM)EclipseListViewProc);
-			    //oldListViewProc = (WNDPROC) SetWindowLong(hCtrl, GWL_WNDPROC, (DWORD) EclipseListViewProc);
+                oldListViewProc = (WNDPROC)SetWindowLongPtr(hCtrl, GWLP_WNDPROC, (LPARAM)EclipseListViewProc);
+                //oldListViewProc = (WNDPROC) SetWindowLong(hCtrl, GWL_WNDPROC, (DWORD) EclipseListViewProc);
         }
         return(TRUE);
 
@@ -402,7 +402,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                 sim->update(0.0);
 
                 double distance = target.radius() * 4.0;
-                sim->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance), 
+                sim->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance),
                                   YRotation(-PI / 2) * XRotation(-PI / 2),
                                   2.5);
             }
@@ -460,7 +460,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                             Eclipse* eclipse = reinterpret_cast<Eclipse*>(nm->lParam);
                             if (eclipse != NULL)
                             {
-                                eclipseFinderDlg->TimetoSet_ = 
+                                eclipseFinderDlg->TimetoSet_ =
                                     (eclipse->startTime + eclipse->endTime) / 2.0f;
                                 eclipseFinderDlg->BodytoSet_ = eclipse->body;
                             }

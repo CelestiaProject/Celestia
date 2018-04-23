@@ -62,7 +62,7 @@ FeatureNameEntry FeatureNames[] =
     { "Landing Site", Location::LandingSite },
     { "Crater", Location::Crater },
 };
- 
+
 
 Location::Location() :
     parent(NULL),
@@ -93,7 +93,7 @@ string Location::getName(bool i18n) const
 void Location::setName(const string& _name)
 {
     name = _name;
-    i18nName = _(_name.c_str()); 
+    i18nName = _(_name.c_str());
     if (name == i18nName) i18nName = "";
 }
 
@@ -190,7 +190,7 @@ void Location::setParentBody(Body* _parent)
 }
 
 
-/*! Get the position of the location relative to its body in 
+/*! Get the position of the location relative to its body in
  *  the J2000 ecliptic coordinate system.
  */
 Vector3d Location::getPlanetocentricPosition(double t) const

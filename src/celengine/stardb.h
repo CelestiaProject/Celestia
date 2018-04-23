@@ -42,17 +42,17 @@ public:
         m_elementCount(0)
     {
     }
-    
+
     ~BlockArray()
     {
         clear();
     }
-    
+
     unsigned int size() const
     {
         return m_elementCount;
     }
-    
+
     /*! Append an item to the BlockArray. */
     void add(T& element)
     {
@@ -62,13 +62,13 @@ public:
             T* newBlock = new T[m_blockSize];
             m_blocks.push_back(newBlock);
         }
-        
+
         unsigned int elementIndex = m_elementCount % m_blockSize;
         m_blocks.back()[elementIndex] = element;
-        
+
         ++m_elementCount;
     }
-    
+
     void clear()
     {
         for (typename std::vector<T*>::const_iterator iter = m_blocks.begin(); iter != m_blocks.end(); ++iter)
@@ -78,7 +78,7 @@ public:
         m_elementCount = 0;
         m_blocks.clear();
     }
-    
+
     T& operator[](int index)
     {
         unsigned int blockNumber = index / m_blockSize;
@@ -92,7 +92,7 @@ public:
         unsigned int elementNumber = index % m_blockSize;
         return m_blocks[blockNumber][elementNumber];
     }
-    
+
 private:
     unsigned int m_blockSize;
     unsigned int m_elementCount;
@@ -101,7 +101,7 @@ private:
 
 
 class StarDatabase
-{        
+{
  public:
     StarDatabase();
     ~StarDatabase();
@@ -133,7 +133,7 @@ class StarDatabase
 
     StarNameDatabase* getNameDatabase() const;
     void setNameDatabase(StarNameDatabase*);
-    
+
     bool load(std::istream&, const std::string& resourcePath);
     bool loadBinary(std::istream&);
 
@@ -151,10 +151,10 @@ class StarDatabase
         ReplaceStar,
         ModifyStar,
     };
-    
-	// Not exact, but any star with a catalog number greater than this is assumed to not be
-	// a HIPPARCOS stars.
-	static const uint32 MAX_HIPPARCOS_NUMBER = 999999;
+
+    // Not exact, but any star with a catalog number greater than this is assumed to not be
+    // a HIPPARCOS stars.
+    static const uint32 MAX_HIPPARCOS_NUMBER = 999999;
 
     struct CrossIndexEntry
     {
@@ -191,7 +191,7 @@ private:
     Star* findWhileLoading(uint32 catalogNumber) const;
 
     int nStars;
-        
+
     Star*             stars;
     StarNameDatabase* namesDB;
     Star**            catalogNumberIndex;
@@ -207,7 +207,7 @@ private:
     Star** binFileCatalogNumberIndex;
     unsigned int binFileStarCount;
     // Catalog number -> star mapping for stars loaded from stc files
-    std::map<uint32, Star*> stcFileCatalogNumberIndex;    
+    std::map<uint32, Star*> stcFileCatalogNumberIndex;
 
     struct BarycenterUsage
     {

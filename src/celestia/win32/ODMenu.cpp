@@ -151,12 +151,12 @@ void ODMenu::SetMenuItemOwnerDrawn(HMENU hMenu, UINT item, UINT type)
 {
     //Set menu item type to owner-drawn and set itemdata to sequence number.
     MENUITEMINFO miInfo;
-  
+
     miInfo.cbSize = sizeof(MENUITEMINFO);
     miInfo.fMask = MIIM_TYPE | MIIM_DATA;
     miInfo.fType = type | MFT_OWNERDRAW;
     miInfo.dwItemData = m_seqNumber++;
-    
+
     SetMenuItemInfo(hMenu, item, TRUE, &miInfo);
 }
 
@@ -465,10 +465,10 @@ void ODMenu::DrawTransparentBitmap(HDC hDC, HBITMAP hBitmap, short xStart,
             {
                 col = GetPixel(hdcTemp, x, y);
                 r = GetRValue(col);
-				g = GetGValue(col);
-				b = GetBValue(col);
+                g = GetGValue(col);
+                b = GetBValue(col);
                 avgcol = (r + g + b) / 3;
-				factor = avgcol / 255.0;
+                factor = avgcol / 255.0;
                 SetPixel(hdcTemp, x, y, LightenColor(discol, factor));
             }
         }
@@ -515,25 +515,25 @@ void ODMenu::DrawCheckMark(HDC hDC, short x, short y, bool bNarrow)
 
     //Draw the check mark
     MoveToEx(hDC, x, y + 2, NULL);
-	LineTo(hDC, x, y + 5 - dp);
-	
-	MoveToEx(hDC, x + 1, y + 3, NULL);
-	LineTo(hDC, x + 1, y + 6 - dp);
-	
-	MoveToEx(hDC, x + 2, y + 4, NULL);
-	LineTo(hDC, x + 2, y + 7 - dp);
-	
-	MoveToEx(hDC, x + 3, y + 3, NULL);
-	LineTo(hDC, x + 3, y + 6 - dp);
-	
-	MoveToEx(hDC, x + 4, y + 2, NULL);
-	LineTo(hDC, x + 4, y + 5 - dp);
-	
-	MoveToEx(hDC, x + 5, y + 1, NULL);
-	LineTo(hDC, x + 5, y + 4 - dp);
-	
-	MoveToEx(hDC, x + 6, y, NULL);
-	LineTo(hDC, x + 6, y + 3 - dp);
+    LineTo(hDC, x, y + 5 - dp);
+
+    MoveToEx(hDC, x + 1, y + 3, NULL);
+    LineTo(hDC, x + 1, y + 6 - dp);
+
+    MoveToEx(hDC, x + 2, y + 4, NULL);
+    LineTo(hDC, x + 2, y + 7 - dp);
+
+    MoveToEx(hDC, x + 3, y + 3, NULL);
+    LineTo(hDC, x + 3, y + 6 - dp);
+
+    MoveToEx(hDC, x + 4, y + 2, NULL);
+    LineTo(hDC, x + 4, y + 5 - dp);
+
+    MoveToEx(hDC, x + 5, y + 1, NULL);
+    LineTo(hDC, x + 5, y + 4 - dp);
+
+    MoveToEx(hDC, x + 6, y, NULL);
+    LineTo(hDC, x + 6, y + 3 - dp);
 
     //Restore original DC pen
     SelectObject(hDC, hOldPen);
@@ -541,35 +541,35 @@ void ODMenu::DrawCheckMark(HDC hDC, short x, short y, bool bNarrow)
 
 COLORREF ODMenu::LightenColor(COLORREF col, double factor)
 {
-	if(factor > 0.0 && factor <= 1.0)
+    if(factor > 0.0 && factor <= 1.0)
     {
-		BYTE red, green, blue, lightred, lightgreen, lightblue;
-		red = GetRValue(col);
-		green = GetGValue(col);
-		blue = GetBValue(col);
-		lightred = (BYTE)((factor*(255 - red)) + red);
-		lightgreen = (BYTE)((factor*(255 - green)) + green);
-		lightblue = (BYTE)((factor*(255 - blue)) + blue);
-		col = RGB(lightred, lightgreen, lightblue);
-	}
+        BYTE red, green, blue, lightred, lightgreen, lightblue;
+        red = GetRValue(col);
+        green = GetGValue(col);
+        blue = GetBValue(col);
+        lightred = (BYTE)((factor*(255 - red)) + red);
+        lightgreen = (BYTE)((factor*(255 - green)) + green);
+        lightblue = (BYTE)((factor*(255 - blue)) + blue);
+        col = RGB(lightred, lightgreen, lightblue);
+    }
 
-	return col;
+    return col;
 }
 
 COLORREF ODMenu::DarkenColor(COLORREF col, double factor)
 {
-	if(factor > 0.0 && factor <= 1.0)
+    if(factor > 0.0 && factor <= 1.0)
     {
-		BYTE red, green, blue, lightred, lightgreen, lightblue;
-		red = GetRValue(col);
-		green = GetGValue(col);
-		blue = GetBValue(col);
-		lightred = (BYTE)(red - (factor*red));
-		lightgreen = (BYTE)(green - (factor*green));
-		lightblue = (BYTE)(blue - (factor*blue));
-		col = RGB(lightred, lightgreen, lightblue);
-	}
-	return col;
+        BYTE red, green, blue, lightred, lightgreen, lightblue;
+        red = GetRValue(col);
+        green = GetGValue(col);
+        blue = GetBValue(col);
+        lightred = (BYTE)(red - (factor*red));
+        lightgreen = (BYTE)(green - (factor*green));
+        lightblue = (BYTE)(blue - (factor*blue));
+        col = RGB(lightred, lightgreen, lightblue);
+    }
+    return col;
 }
 
 COLORREF ODMenu::AverageColor(COLORREF col1, COLORREF col2, double weight)
@@ -578,8 +578,8 @@ COLORREF ODMenu::AverageColor(COLORREF col1, COLORREF col2, double weight)
 
     if (weight <= 0.0)
         return col1;
-	else if (weight > 1.0)
-		return col2;
+    else if (weight > 1.0)
+        return col2;
 
     avgRed   = (BYTE) (GetRValue(col1) * weight + GetRValue(col2) * (1.0 - weight));
     avgGreen = (BYTE) (GetGValue(col1) * weight + GetGValue(col2) * (1.0 - weight));
@@ -594,7 +594,7 @@ double ODMenu::GetColorIntensity(COLORREF col)
 
     red = GetRValue(col);
     green = GetGValue(col);
-	blue = GetBValue(col);
+    blue = GetBValue(col);
 
     //denominator of 765 is (255*3)
     return (double)red/765.0 + (double)green/765.0 + (double)blue/765.0;
@@ -663,16 +663,16 @@ void ODMenu::DrawItem(HWND hWnd, LPARAM lParam)
     //Draw based on type of item
     if(item.displayText.length() > 0)
     {
-        // Set the appropriate foreground and background colors. 
+        // Set the appropriate foreground and background colors.
         if(item.topMost)
         {
             if(lpdis->itemState & ODS_SELECTED)
-            { 
+            {
                 clrPrevText = SetTextColor(lpdis->hDC, m_clrHighlightItemText);
                 clrPrevBkgnd = SetBkColor(lpdis->hDC, m_clrHighlightItemBackground);
             }
             else
-            { 
+            {
                 clrPrevText = SetTextColor(lpdis->hDC, m_clrItemText);
                 clrPrevBkgnd = SetBkColor(lpdis->hDC, GetSysColor(COLOR_MENU));
             }
@@ -690,7 +690,7 @@ void ODMenu::DrawItem(HWND hWnd, LPARAM lParam)
                 clrPrevBkgnd = SetBkColor(lpdis->hDC, m_clrHighlightItemBackground);
             }
             else
-            { 
+            {
                 clrPrevText = SetTextColor(lpdis->hDC, m_clrItemText);
                 clrPrevBkgnd = SetBkColor(lpdis->hDC, m_clrItemBackground);
             }
@@ -710,7 +710,7 @@ void ODMenu::DrawItem(HWND hWnd, LPARAM lParam)
     }
     else if(item.dwType & MFT_SEPARATOR)
     {
-		//Fill menu space with menu background, first.
+        //Fill menu space with menu background, first.
         RECT rect;
         memcpy(&rect, &lpdis->rcItem, sizeof(RECT));
         rect.left += (m_iconWidth + 2*m_iconBarMargin);

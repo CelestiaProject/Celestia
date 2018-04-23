@@ -30,7 +30,7 @@ class EclipseFinderWatcher
 {
 public:
     virtual ~EclipseFinderWatcher() {};
-    
+
     enum Status
     {
         ContinueOperation = 0,
@@ -50,16 +50,16 @@ Q_OBJECT
     ~EventFinder();
 
     EclipseFinderWatcher::Status eclipseFinderProgressUpdate(double t);
-    
+
  public slots:
     void slotFindEclipses();
-	void slotContextMenu(const QPoint&);
+    void slotContextMenu(const QPoint&);
 
-	void slotSetEclipseTime();
-	void slotViewNearEclipsed();
-	void slotViewEclipsedSurface();
-	void slotViewOccluderSurface();
-	void slotViewBehindOccluder();
+    void slotSetEclipseTime();
+    void slotViewNearEclipsed();
+    void slotViewEclipsedSurface();
+    void slotViewOccluderSurface();
+    void slotViewBehindOccluder();
 
  private:
     CelestiaCore* appCore;
@@ -75,15 +75,15 @@ Q_OBJECT
 
     EventTableModel* model;
     QTreeView* eventTable;
-	QMenu* contextMenu;
+    QMenu* contextMenu;
 
     QProgressDialog* progress;
     double searchSpan;
     double lastProgressUpdate;
 
-	QTime searchTimer;
+    QTime searchTimer;
 
-	const EclipseRecord* activeEclipse;
+    const EclipseRecord* activeEclipse;
 };
 
 #endif // _QTEVENTFINDER_H_

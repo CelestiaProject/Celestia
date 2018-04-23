@@ -61,13 +61,13 @@ MemoryPool::allocate(unsigned int size)
 {
     if (size > m_blockSize)
         return NULL;
-    
+
     // See if the current block has enough room
     if (m_blockOffset + size > m_blockSize)
     {
         m_currentBlock++;
     }
-    
+
     // See if we need to allocate a new block
     if (m_currentBlock == m_blockList.end())
     {
@@ -78,13 +78,13 @@ MemoryPool::allocate(unsigned int size)
         m_currentBlock = m_blockList.insert(m_currentBlock, block);
         m_blockOffset = 0;
     }
-    
+
     void* memory = m_currentBlock->m_memory + m_blockOffset;
-    
+
     // Advance
     unsigned int padSize = (size + m_alignment - 1) & ~(m_alignment - 1);
     m_blockOffset += padSize;
-    
+
     return memory;
 }
 

@@ -96,7 +96,7 @@ static const int DEG_MIN_SEC_SPACING[]  =
     200*MSEC,
     100*MSEC
 };
-    
+
 
 // Alternate spacing tables
 #if 0
@@ -107,7 +107,7 @@ static const int HOUR_MIN_SEC_SPACING[] =
     2*HR,   1*HR,  30*MIN, 10*MIN,  5*MIN,
     1*MIN, 30*SEC, 10*SEC,  5*SEC,  1*SEC,
     500*MSEC, 100*MSEC
-}; 
+};
 
 static const int DEG_MIN_SEC_SPACING[]  =
 {
@@ -124,10 +124,10 @@ static const int HOUR_MIN_SEC_STEPS[] =
     2*HR,   1*HR,  30*MIN, 10*MIN,  5*MIN, 2*MIN+30*SEC,
     1*MIN, 30*SEC, 10*SEC,  5*SEC, 2*SEC+500*MSEC, 1*SEC,
     500*MSEC, 200*MSEC, 100*MSEC, 50*MSEC, 20*MSEC, 10*MSEC
-}; 
+};
 
 static const int DEG_MIN_SEC_STEPS[]  =
-{ 
+{
     30*DEG, 10*DEG,  5*DEG, 2*DEG+30*MIN, 1*DEG, 30*MIN,
     10*MIN,  5*MIN, 2*MIN+30*SEC, 1*MIN, 30*SEC, 10*SEC,
     5*SEC, 2*SEC+500*MSEC, 1*SEC, 500*MSEC, 200*MSEC, 100*MSEC,
@@ -233,7 +233,7 @@ template<typename T> static bool planeCircleIntersection(const Matrix<T, 3, 1>& 
     T a = u.dot(planeNormal);
     T b = v.dot(planeNormal);
     T c = center.dot(planeNormal);
-    
+
     // The solution is +-acos((-ac +- sqrt(a^2+b^2-c^2))/(a^2+b^2))
     T s = a * a + b * b;
     if (s == 0.0)
@@ -241,14 +241,14 @@ template<typename T> static bool planeCircleIntersection(const Matrix<T, 3, 1>& 
         // No solution; plane containing circle is parallel to test plane
         return false;
     }
-    
+
     if (s - c * c <= 0)
     {
         // One or no solutions; no need to distinguish between these
         // cases for our purposes.
         return false;
     }
-    
+
     // No need to actually call acos to get the solution, since we're just
     // going to plug it into sin and cos anyhow.
     T r = b * std::sqrt(s - c * c);
@@ -256,22 +256,22 @@ template<typename T> static bool planeCircleIntersection(const Matrix<T, 3, 1>& 
     T cosTheta1 = (-a * c - r) / s;
     T sinTheta0 = std::sqrt(1 - cosTheta0 * cosTheta0);
     T sinTheta1 = std::sqrt(1 - cosTheta1 * cosTheta1);
-    
+
     *sol0 = center + cosTheta0 * u + sinTheta0 * v;
     *sol1 = center + cosTheta1 * u + sinTheta1 * v;
-    
+
     // Check that we've chosen a solution that produces a point on the
     // plane. If not, we need to use the -acos solution.
     if (std::abs(sol0->dot(planeNormal)) > 1.0e-8)
     {
         *sol0 = center + cosTheta0 * u - sinTheta0 * v;
     }
-    
+
     if (std::abs(sol1->dot(planeNormal)) > 1.0e-8)
     {
         *sol1 = center + cosTheta1 * u - sinTheta1 * v;
     }
-    
+
     return true;
 }
 
@@ -332,7 +332,7 @@ SkyGrid::longitudeLabel(int longitude, int longitudeStep) const
     // eastward from due north.
     if (m_longitudeDirection == IncreasingClockwise)
         longitude = (totalUnits - longitude) % totalUnits;
-    
+
     out << longitude / baseUnit << baseUnitSymbol;
     if (longitudeStep % baseUnit != 0)
     {
@@ -351,7 +351,7 @@ SkyGrid::longitudeLabel(int longitude, int longitudeStep) const
 
 
 // Compute the angular step between parallels
-int 
+int
 SkyGrid::parallelSpacing(double idealSpacing) const
 {
     // We want to use parallels and meridian spacings that are nice multiples of hours, degrees,
@@ -367,7 +367,7 @@ SkyGrid::parallelSpacing(double idealSpacing) const
             break;
         spacing = DEG_MIN_SEC_SPACING[i];
     }
-    
+
     return spacing;
 }
 
@@ -423,7 +423,7 @@ SkyGrid::render(Renderer& renderer,
     double diag = sqrt(1.0 + square(h) + square(h * viewAspectRatio));
     double cosHalfFov = 1.0 / diag;
     double halfFov = acos(cosHalfFov);
-    
+
     float polarCrossSize = (float) (POLAR_CROSS_SIZE * halfFov);
 
     // We want to avoid drawing more of the grid than we have to. The following code
@@ -458,7 +458,7 @@ SkyGrid::render(Renderer& renderer,
     // Compute the minimum longitude range containing the corners; slightly
     // tricky because of the wrapping at PI/-PI.
     double minTheta = thetaC0;
-    double maxTheta = thetaC1;   
+    double maxTheta = thetaC1;
     double maxDiff = 0.0;
     updateAngleRange(thetaC0, thetaC1, &maxDiff, &minTheta, &maxTheta);
     updateAngleRange(thetaC0, thetaC2, &maxDiff, &minTheta, &maxTheta);
@@ -478,7 +478,7 @@ SkyGrid::render(Renderer& renderer,
             std::swap(minTheta, maxTheta);
     }
     maxTheta = minTheta + maxDiff;
-    
+
     // Calculate the normals to the view frustum planes; we'll use these to
     // when computing intersection points with the parallels and meridians of the
     // grid. Coordinate labels will be drawn at the intersection points.
@@ -487,7 +487,7 @@ SkyGrid::render(Renderer& renderer,
     frustumNormal[1] = Vector3d( 0, -1, -h);
     frustumNormal[2] = Vector3d( 1,  0, -w);
     frustumNormal[3] = Vector3d(-1,  0, -w);
-    
+
     {
         for (int i = 0; i < 4; i++)
         {
@@ -505,7 +505,7 @@ SkyGrid::render(Renderer& renderer,
         centerDec = -PI / 2.0;
     else
         centerDec = PI / 2.0;
-    
+
     double minDec = centerDec - halfFov;
     double maxDec = centerDec + halfFov;
 
@@ -586,7 +586,7 @@ SkyGrid::render(Renderer& renderer,
             glVertex3f(x, z, -y);  // convert to Celestia coords
         }
         glEnd();
-        
+
         // Place labels at the intersections of the view frustum planes
         // and the parallels.
         Vector3d center(0.0, 0.0, sinPhi);
@@ -616,20 +616,20 @@ SkyGrid::render(Renderer& renderer,
                 glColor(m_lineColor);
                 glEnd();
 #endif
-                
+
                 Matrix3f m = observer.getOrientationf().toRotationMatrix();
                 p0 = orientationf.conjugate() * p0;
                 p1 = orientationf.conjugate() * p1;
-                
+
                 if ((m * p0).z() < 0.0)
                 {
                     renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p0, hAlign, vAlign);
                 }
-                
+
                 if ((m * p1).z() < 0.0)
                 {
                     renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p1, hAlign, vAlign);
-                }                
+                }
             }
         }
     }
@@ -662,7 +662,7 @@ SkyGrid::render(Renderer& renderer,
             glVertex3f(x, z, -y);  // convert to Celestia coords
         }
         glEnd();
-        
+
         // Place labels at the intersections of the view frustum planes
         // and the meridians.
         Vector3d center(0.0, 0.0, 0.0);
@@ -696,20 +696,20 @@ SkyGrid::render(Renderer& renderer,
                 Matrix3f m = observer.getOrientationf().toRotationMatrix();
                 p0 = orientationf.conjugate() * p0;
                 p1 = orientationf.conjugate() * p1;
-                
+
                 if ((m * p0).z() < 0.0 && axis0.dot(isect0) >= cosMaxMeridianAngle)
                 {
                     renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p0, hAlign, vAlign);
                 }
-                
+
                 if ((m * p1).z() < 0.0 && axis0.dot(isect1) >= cosMaxMeridianAngle)
                 {
                     renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p1, hAlign, vAlign);
-                }               
+                }
             }
-        }        
+        }
     }
-    
+
     // Draw crosses indicating the north and south poles
     glBegin(GL_LINES);
     glVertex3f(-polarCrossSize, 1.0f,  0.0f);
@@ -721,6 +721,6 @@ SkyGrid::render(Renderer& renderer,
     glVertex3f(0.0f, -1.0f, -polarCrossSize);
     glVertex3f(0.0f, -1.0f,  polarCrossSize);
     glEnd();
-    
+
     glPopMatrix();
 }

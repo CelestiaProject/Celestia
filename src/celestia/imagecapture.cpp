@@ -1,5 +1,5 @@
 // imagecapture.cpp
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -116,7 +116,7 @@ void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
     fwrite((void*) data, 1, length, fp);
 }
 
-                           
+
 bool CaptureGLBufferToPNG(const string& filename,
                            int x, int y,
                            int width, int height)

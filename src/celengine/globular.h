@@ -3,9 +3,9 @@
 // Copyright (C) 2008, Celestia Development Team
 // Initial implementation by Dr. Fridger Schrempp <fridger.schrempp@desy.de>
 //
-// Simulation of globular clusters, theoretical framework by  
+// Simulation of globular clusters, theoretical framework by
 // Ivan King, Astron. J. 67 (1962) 471; ibid. 71 (1966) 64
-// 
+//
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,23 +36,23 @@ class Globular : public DeepSkyObject
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
- 	Globular();
+    Globular();
     virtual const char* getType() const;
     virtual void setType(const std::string&);
     virtual size_t getDescription(char* buf, size_t bufLength) const;
     virtual std::string getCustomTmpName() const;
     virtual void setCustomTmpName(const std::string&);
-    float getDetail() const;	
+    float getDetail() const;
     void  setDetail(float);
     float getCoreRadius() const;
     void  setCoreRadius(const float);
-	void  setConcentration(const float);	
-	float getConcentration() const;
-	float getHalfMassRadius() const;
+    void  setConcentration(const float);
+    float getConcentration() const;
+    float getHalfMassRadius() const;
     unsigned int cSlot(float) const;
-    
+
     virtual float getBoundingSphereRadius() const { return tidalRadius; }
-    
+
     virtual bool pick(const Ray3d& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const;
@@ -63,25 +63,25 @@ class Globular : public DeepSkyObject
                         float brightness,
                         float pixelSize);
     virtual void renderGlobularPointSprites(const GLContext& context,
-                                          const Vec3f& offset,
-                                          const Quatf& viewerOrientation,
-                                          float brightness,
-                                          float pixelSize);
-	GlobularForm* getForm() const;
+                                            const Vec3f& offset,
+                                            const Quatf& viewerOrientation,
+                                            float brightness,
+                                            float pixelSize);
+    GlobularForm* getForm() const;
 
     virtual unsigned int getRenderMask() const;
     virtual unsigned int getLabelMask() const;
     virtual const char* getObjTypeName() const;
-    
+
  private:
     void recomputeTidalRadius();
-    
+
  private:
-    float detail; 
-    std::string* customTmpName;     
-    GlobularForm* form;    
- 	float r_c;
-    float c;  
+    float detail;
+    std::string* customTmpName;
+    GlobularForm* form;
+    float r_c;
+    float c;
     float tidalRadius;
 };
 

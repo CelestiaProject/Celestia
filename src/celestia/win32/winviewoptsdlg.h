@@ -1,5 +1,5 @@
 // winviewoptsdlg.h
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // View Options dialog for Windows.

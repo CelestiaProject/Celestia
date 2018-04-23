@@ -45,12 +45,12 @@ class Atmosphere
     Color upperColor;
     Color skyColor;
     Color sunsetColor;
-        
+
     float cloudHeight;
     float cloudSpeed;
     MultiResTexture cloudTexture;
     MultiResTexture cloudNormalMap;
-    
+
     float mieCoeff;
     float mieScaleHeight;
     float miePhaseAsymmetry;

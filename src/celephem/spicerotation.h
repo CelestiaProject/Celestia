@@ -26,13 +26,13 @@ class SpiceRotation : public CachingRotationModel
                   double period,
                   double beginning,
                   double ending);
-	SpiceRotation(const std::string& frameName,
-			      const std::string& baseFrameName,
-			      double period);
+    SpiceRotation(const std::string& frameName,
+                  const std::string& baseFrameName,
+                  double period);
     virtual ~SpiceRotation();
 
     bool init(const std::string& path,
-			  const std::list<std::string>* requiredKernels);
+              const std::list<std::string>* requiredKernels);
 
     bool isPeriodic() const;
     double getPeriod() const;
@@ -52,7 +52,7 @@ class SpiceRotation : public CachingRotationModel
     bool m_spiceErr;
     double m_validIntervalBegin;
     double m_validIntervalEnd;
-	bool m_useDefaultTimeInterval;
+    bool m_useDefaultTimeInterval;
 };
 
 #endif // _CELENGINE_SPICEROTATION_H_

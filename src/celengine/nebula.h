@@ -40,7 +40,7 @@ class Nebula : public DeepSkyObject
 
     void setGeometry(ResourceHandle);
     ResourceHandle getGeometry() const;
-    
+
     virtual const char* getObjTypeName() const;
 
  public:

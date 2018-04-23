@@ -1,6 +1,6 @@
 /*
 
-Disclaimer:	IMPORTANT:  This Apple software is supplied to you by Apple Computer, Inc.
+Disclaimer:    IMPORTANT:  This Apple software is supplied to you by Apple Computer, Inc.
                 ("Apple") in consideration of your agreement to the following terms, and your
                 use, installation, modification or redistribution of this Apple software
                 constitutes acceptance of these terms.  If you do not agree with these terms,
@@ -37,7 +37,7 @@ Disclaimer:	IMPORTANT:  This Apple software is supplied to you by Apple Computer
 
 */
 
-// Note that this is modified Apple source code, and not in its entireity (some classes are, some aren't), 
+// Note that this is modified Apple source code, and not in its entireity (some classes are, some aren't),
 // but we might as well leave it in here, even though it doesn't sound like we have to.
 // -bob
 
@@ -51,54 +51,54 @@ class CGFrame : public CGRect
 {
 public:
 
-	CGFrame(float x0, float y0, float w, float h)
-	{
-		*this = CGRectMake(x0,y0,w,h);
-	}
-	
-	explicit CGFrame(float w = 0, float h = 0)
-	{
-		*this = CGRectMake(0,0,w,h);
-	}
-	
-	CGFrame(const Rect& rect)
-	{
-		origin.x = rect.left, size.width = rect.right - rect.left;
-		origin.y = rect.top, size.height = rect.bottom - rect.top;
-	}
-	
-	CGFrame(const CGRect& copy)
-	{
-		origin = copy.origin;
-		size = copy.size;
-	}
-	
-	CGFrame(const CGSize& size)
-	{
-		origin.x = origin.y = 0;
-		this->size = size;
-	}
-	
-	CGFrame(float x, float y, const CGSize& size)
-	{
-		*this = CGRectMake(x, y, size.width, size.height);
-	}
-	
-	CGFrame(const CGPoint& pos, const CGSize& size)
-	{
-		*this = CGRectMake(pos.x, pos.y, size.width, size.height);
-	}	
-	
-	void Offset(float dx, float dy)
-	{
-		origin.x += dx, origin.y += dy;
-	}
-	
-	void Inset(float dx, float dy)
-	{
-		origin.x += dx, origin.y += dy;
-		size.width -= dx*2, size.height -= dy*2;
-	}
+    CGFrame(float x0, float y0, float w, float h)
+    {
+        *this = CGRectMake(x0,y0,w,h);
+    }
+
+    explicit CGFrame(float w = 0, float h = 0)
+    {
+        *this = CGRectMake(0,0,w,h);
+    }
+
+    CGFrame(const Rect& rect)
+    {
+        origin.x = rect.left, size.width = rect.right - rect.left;
+        origin.y = rect.top, size.height = rect.bottom - rect.top;
+    }
+
+    CGFrame(const CGRect& copy)
+    {
+        origin = copy.origin;
+        size = copy.size;
+    }
+
+    CGFrame(const CGSize& size)
+    {
+        origin.x = origin.y = 0;
+        this->size = size;
+    }
+
+    CGFrame(float x, float y, const CGSize& size)
+    {
+        *this = CGRectMake(x, y, size.width, size.height);
+    }
+
+    CGFrame(const CGPoint& pos, const CGSize& size)
+    {
+        *this = CGRectMake(pos.x, pos.y, size.width, size.height);
+    }
+
+    void Offset(float dx, float dy)
+    {
+        origin.x += dx, origin.y += dy;
+    }
+
+    void Inset(float dx, float dy)
+    {
+        origin.x += dx, origin.y += dy;
+        size.width -= dx*2, size.height -= dy*2;
+    }
 };
 
 class MemoryBuffer
@@ -146,8 +146,8 @@ class Datafile
 {
     int ref_count;
     FILE* file;
-    
-public:        
+
+public:
     MemoryBuffer* data_buffer;
     unsigned long data_size;
 
@@ -165,13 +165,13 @@ public:
         ++ref_count;
         return this;
     }
-    
+
     void Release()
     {
-        if (--ref_count==0) 
+        if (--ref_count==0)
             delete this;
     }
-    
+
     int Open(const char* path)
     {
         file = fopen(path,"r");
@@ -191,7 +191,7 @@ public:
         //DPRINTF(0,"Datafile::Open() - Successfully opened '%s' %d bytes\n", path, data_size);
         return 1;
     }
-    
+
     int Read()
     {
         if ((file == NULL) || (data_buffer == NULL) || (data_size == 0)) {
@@ -199,18 +199,18 @@ public:
             Reset();
             return 0;
         }
-        
-        fseek(file, 0, SEEK_SET);        
+
+        fseek(file, 0, SEEK_SET);
         if (fread((void*)data_buffer->data, 1, data_size, file) != data_size) {
             DPRINTF(0,"Datafile::Read() - Didn't read to finish?");
             Reset();
             return 0;
         }
-        
+
         //DPRINTF(0,"Datafile::Read() - Successfully read all %d bytes into buffer\n",data_size);
         return 1;
     }
-    
+
     void Close()
     {
         if (file) {
@@ -218,7 +218,7 @@ public:
             file = NULL;
         }
     }
-    
+
     void Reset()
     {
         Close();
@@ -231,176 +231,176 @@ public:
 
 class CGBuffer
 {
-	Datafile file;
-	CGImageRef image_ref;
-	CGContextRef context_ref;
+    Datafile file;
+    CGImageRef image_ref;
+    CGContextRef context_ref;
 
-	int ref_count;
+    int ref_count;
 
-	void Init()
-	{
-		ref_count = 1;
-		buffer = NULL;
-		image_ref = NULL;
-		context_ref = NULL;
-		image_finished = false;
-	}
+    void Init()
+    {
+        ref_count = 1;
+        buffer = NULL;
+        image_ref = NULL;
+        context_ref = NULL;
+        image_finished = false;
+    }
 
-	bool CreateCGContext()
-	{
-		if (context_ref)
-		{
-			CGContextRelease(context_ref);
-			context_ref = NULL;
-		}
+    bool CreateCGContext()
+    {
+        if (context_ref)
+        {
+            CGContextRelease(context_ref);
+            context_ref = NULL;
+        }
 
-		if (buffer)
-		{
-			buffer->Release();
-			buffer = NULL;
-		}
+        if (buffer)
+        {
+            buffer->Release();
+            buffer = NULL;
+        }
 
-		size_t buffer_rowbytes = (size_t)(image_size.width * ((image_depth == 8) ? 1 : 4)); //CGImageGetBytesPerRow(image_ref);
-	
-		buffer = MemoryBuffer::Create(buffer_rowbytes * (size_t)image_size.height); 
+        size_t buffer_rowbytes = (size_t)(image_size.width * ((image_depth == 8) ? 1 : 4)); //CGImageGetBytesPerRow(image_ref);
 
-		if (!buffer)
-			return false;
+        buffer = MemoryBuffer::Create(buffer_rowbytes * (size_t)image_size.height);
 
-		CGColorSpaceRef colorspace_ref = (image_depth == 8) ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
-		
-		if (!colorspace_ref)
-			return false;
-		
-		CGImageAlphaInfo alpha_info = (image_depth == 8) ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast; //kCGImageAlphaLast; //RGBA format
+        if (!buffer)
+            return false;
 
-		context_ref = CGBitmapContextCreate(buffer->data, (size_t)image_size.width, (size_t)image_size.height, 8, buffer_rowbytes, colorspace_ref, alpha_info);
+        CGColorSpaceRef colorspace_ref = (image_depth == 8) ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
 
-		if (context_ref)
-		{
-			CGContextSetFillColorSpace(context_ref, colorspace_ref);
-			CGContextSetStrokeColorSpace(context_ref, colorspace_ref);
-                        // move down, and flip vertically 
+        if (!colorspace_ref)
+            return false;
+
+        CGImageAlphaInfo alpha_info = (image_depth == 8) ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast; //kCGImageAlphaLast; //RGBA format
+
+        context_ref = CGBitmapContextCreate(buffer->data, (size_t)image_size.width, (size_t)image_size.height, 8, buffer_rowbytes, colorspace_ref, alpha_info);
+
+        if (context_ref)
+        {
+            CGContextSetFillColorSpace(context_ref, colorspace_ref);
+            CGContextSetStrokeColorSpace(context_ref, colorspace_ref);
+                        // move down, and flip vertically
                         // to turn postscript style coordinates to "screen style"
-			CGContextTranslateCTM(context_ref, 0.0, image_size.height);
-			CGContextScaleCTM(context_ref, 1.0, -1.0);
-		}
-		
-		CGColorSpaceRelease(colorspace_ref);
-		colorspace_ref = NULL;
+            CGContextTranslateCTM(context_ref, 0.0, image_size.height);
+            CGContextScaleCTM(context_ref, 1.0, -1.0);
+        }
 
-		return !!context_ref;
-	}
+        CGColorSpaceRelease(colorspace_ref);
+        colorspace_ref = NULL;
 
-	void RenderCGImage(const CGRect& dst_rect)
-	{
-		if (!context_ref || !image_ref)
-			return;
-			
-		CGContextDrawImage(context_ref, dst_rect, image_ref);
-	}
-	
+        return !!context_ref;
+    }
+
+    void RenderCGImage(const CGRect& dst_rect)
+    {
+        if (!context_ref || !image_ref)
+            return;
+
+        CGContextDrawImage(context_ref, dst_rect, image_ref);
+    }
+
 public:
 
-	MemoryBuffer* buffer;
-	CGSize image_size;
-	size_t image_depth;
-	bool image_finished;
-	
-	CGBuffer(const char* path)
-	{
-		Init();
-		Open(path);
-	}
+    MemoryBuffer* buffer;
+    CGSize image_size;
+    size_t image_depth;
+    bool image_finished;
+
+    CGBuffer(const char* path)
+    {
+        Init();
+        Open(path);
+    }
 
         ~CGBuffer()
-	{
-		Reset();
-	}
+    {
+        Reset();
+    }
 
-	CGBuffer* Retain()
-	{
-		++ref_count;
-		return this;
-	}
+    CGBuffer* Retain()
+    {
+        ++ref_count;
+        return this;
+    }
 
-	void Release()
-	{
-		if (--ref_count == 0)
-			delete this;
-	}
+    void Release()
+    {
+        if (--ref_count == 0)
+            delete this;
+    }
 
-	bool Open(const char* path)
-	{
-		file.Reset();
-		return file.Open(path);
-	}
+    bool Open(const char* path)
+    {
+        file.Reset();
+        return file.Open(path);
+    }
 
-	bool LoadJPEG()
-	{
-		if (!file.Read())
-			return false;
+    bool LoadJPEG()
+    {
+        if (!file.Read())
+            return false;
 
-		file.Close();
+        file.Close();
 
-		CGDataProviderRef src_provider_ref = CGDataProviderCreateWithData(this, file.data_buffer->data, file.data_size, NULL);
+        CGDataProviderRef src_provider_ref = CGDataProviderCreateWithData(this, file.data_buffer->data, file.data_size, NULL);
 
-		if (!src_provider_ref)
-			return false;
+        if (!src_provider_ref)
+            return false;
 
-		image_ref = CGImageCreateWithJPEGDataProvider(src_provider_ref, NULL, true, kCGRenderingIntentDefault);
+        image_ref = CGImageCreateWithJPEGDataProvider(src_provider_ref, NULL, true, kCGRenderingIntentDefault);
 
-		CGDataProviderRelease(src_provider_ref);
-		src_provider_ref = NULL;
+        CGDataProviderRelease(src_provider_ref);
+        src_provider_ref = NULL;
 
-		if (!image_ref)
-			return false;
+        if (!image_ref)
+            return false;
 
-		image_size = CGSizeMake(CGImageGetWidth(image_ref), CGImageGetHeight(image_ref));
-		image_depth = CGImageGetBitsPerPixel(image_ref);
-		
-		return !!image_ref;
-	}
+        image_size = CGSizeMake(CGImageGetWidth(image_ref), CGImageGetHeight(image_ref));
+        image_depth = CGImageGetBitsPerPixel(image_ref);
 
-	bool Render()
-	{
-		if (!image_ref)
-			return false;
-		
-		if (!CreateCGContext())
-			return false;
-	
-		RenderCGImage(CGFrame(image_size));
-		
-		CGContextRelease(context_ref);
-		context_ref = NULL;
+        return !!image_ref;
+    }
 
-		CGImageRelease(image_ref);
-		image_ref = NULL;
-		
-		file.Reset();
+    bool Render()
+    {
+        if (!image_ref)
+            return false;
 
-		return true;
-	}
-	
-	void Reset()
-	{
-		if (buffer)
-		{
-			buffer->Release();
-			buffer = NULL;
-		}
+        if (!CreateCGContext())
+            return false;
 
-		if (image_ref)
-		{
-			CGImageRelease(image_ref);
-			image_ref = NULL;
-		}
-		
-		if (context_ref)
-		{
-			CGContextRelease(context_ref);
-			context_ref = NULL;
-		}
-	}
+        RenderCGImage(CGFrame(image_size));
+
+        CGContextRelease(context_ref);
+        context_ref = NULL;
+
+        CGImageRelease(image_ref);
+        image_ref = NULL;
+
+        file.Reset();
+
+        return true;
+    }
+
+    void Reset()
+    {
+        if (buffer)
+        {
+            buffer->Release();
+            buffer = NULL;
+        }
+
+        if (image_ref)
+        {
+            CGImageRelease(image_ref);
+            image_ref = NULL;
+        }
+
+        if (context_ref)
+        {
+            CGContextRelease(context_ref);
+            context_ref = NULL;
+        }
+    }
 };

@@ -1,5 +1,5 @@
 // scriptrotation.cpp
-// 
+//
 // Copyright (C) 2006, Chris Laurel <claurel@shatters.net>
 //
 // Interface for a Celestia rotation model implemented via a Lua script.
@@ -96,7 +96,7 @@ ScriptedRotation::initialize(const std::string& moduleName,
 
     if (lua_isfunction(luaState, -1) == 0)
     {
-        // No function with the requested name; pop whatever value we 
+        // No function with the requested name; pop whatever value we
         // did receive along with the table of arguments.
         lua_pop(luaState, 1);
         clog << "No Lua function named " << funcName << " found.\n";
@@ -198,7 +198,7 @@ ScriptedRotation::spin(double tjd) const
         {
             // The script rotation object disappeared. OOPS.
         }
-    
+
         // Pop the script rotation object
         lua_pop(luaState, 1);
     }

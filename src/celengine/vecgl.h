@@ -114,13 +114,13 @@ inline void glLightColor(GLenum light, GLenum which, const Vec4f& color)
 
 inline void glLightColor(GLenum light, GLenum which, const Color& color)
 {
-	Eigen::Vector4f v(color.red(), color.green(), color.blue(), color.alpha());
+    Eigen::Vector4f v(color.red(), color.green(), color.blue(), color.alpha());
     glLightfv(light, which, v.data());
 }
 
 inline void glAmbientLightColor(const Color& color)
 {
-	Eigen::Vector4f v(color.red(), color.green(), color.blue(), color.alpha());
+    Eigen::Vector4f v(color.red(), color.green(), color.blue(), color.alpha());
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, v.data());
 }
 
@@ -155,14 +155,14 @@ inline void glTranslate(const Eigen::Vector3d& offset)
 inline void glRotate(const Eigen::Quaternionf& q)
 {
     Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
-	m.topLeftCorner(3, 3) = q.toRotationMatrix();
+    m.topLeftCorner(3, 3) = q.toRotationMatrix();
     glMultMatrixf(m.data());
 }
 
 inline void glRotate(const Eigen::Quaterniond& q)
 {
     Eigen::Matrix4d m = Eigen::Matrix4d::Identity();
-	m.topLeftCorner(3, 3) = q.toRotationMatrix();
+    m.topLeftCorner(3, 3) = q.toRotationMatrix();
     glMultMatrixd(m.data());
 }
 

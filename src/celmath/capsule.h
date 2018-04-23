@@ -2,7 +2,7 @@
 //
 // Implementation of a capsule bounding volume. A capsule is a sphere
 // swept along a line, parameterized in this class as a starting point,
-// an axis, and a radius. 
+// an axis, and a radius.
 //
 // Copyright (C) 2007, Chris Laurel <claurel@shatters.net>
 //
@@ -22,7 +22,7 @@ template<class T> class Capsule
     Capsule();
     Capsule(const Vector3<T>& _axis, T _radius);
     Capsule(const Point3<T>& _origin, const Vector3<T>& _axis, T _radius);
- 
+
  public:
     Point3<T> origin;
     Vector3<T> axis;
@@ -40,15 +40,15 @@ template<class T> Capsule<T>::Capsule() :
 
 
 template<class T> Capsule<T>::Capsule(const Vector3<T>& _axis,
-				      T _radius) :
+                                      T _radius) :
     origin(0, 0, 0), axis(_axis), radius(_radius)
 {
 }
 
 
 template<class T> Capsule<T>::Capsule(const Point3<T>& _origin,
-				      const Vector3<T>& _axis,
-				      T _radius) :
+                                      const Vector3<T>& _axis,
+                                      T _radius) :
     origin(_origin), axis(_axis), radius(_radius)
 {
 }

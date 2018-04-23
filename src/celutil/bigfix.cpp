@@ -67,22 +67,22 @@ BigFix::BigFix(double d)
     // then inverting the converted value.
     if (d < 0)
     {
-	isNegative = true;
-	d = -d;
+        isNegative = true;
+        d = -d;
     }
-    
+
     // Need to break the number into 32-bit chunks because a 64-bit
     // integer has more bits of precision than a double.
     double e = floor(d * (1.0 / WORD3_FACTOR));
     if (e < POW2_31)
     {
-	uint32 w3 = (uint32) e;
-	d -= w3 * WORD3_FACTOR;
-	uint32 w2 = (uint32) (d * (1.0 / WORD2_FACTOR));
-	d -= w2 * WORD2_FACTOR;
-	uint32 w1 = (uint32) (d * (1.0 / WORD1_FACTOR));
-	d -= w1 * WORD1_FACTOR;
-	uint32 w0 = (uint32) (d * (1.0 / WORD0_FACTOR));
+        uint32 w3 = (uint32) e;
+        d -= w3 * WORD3_FACTOR;
+        uint32 w2 = (uint32) (d * (1.0 / WORD2_FACTOR));
+        d -= w2 * WORD2_FACTOR;
+        uint32 w1 = (uint32) (d * (1.0 / WORD1_FACTOR));
+        d -= w1 * WORD1_FACTOR;
+        uint32 w0 = (uint32) (d * (1.0 / WORD0_FACTOR));
 
         hi = ((uint64) w3 << 32) | w2;
         lo = ((uint64) w1 << 32) | w0;
@@ -266,7 +266,7 @@ BigFix operator*(const BigFix& a, const BigFix& b)
 
 int BigFix::sign() const
 {
-    
+
     if (hi == 0 && lo == 0)
         return 0;
     else if (hi > INT64_MAX)

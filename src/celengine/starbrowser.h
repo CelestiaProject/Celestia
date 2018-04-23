@@ -1,5 +1,5 @@
 // starbrowser.h
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Star browser tool for celestia.

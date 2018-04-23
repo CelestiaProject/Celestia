@@ -79,7 +79,7 @@ class ShaderProperties
      EmissiveModel         = 8,
      ParticleModel         = 9,
  };
- 
+
  enum
  {
      VolumetricScatteringEffect      = 0x0001,
@@ -89,7 +89,7 @@ class ShaderProperties
 
  public:
     unsigned short nLights;
-    unsigned short texUsage;    
+    unsigned short texUsage;
     unsigned short lightModel;
 
     // Eight bits per light, up to four lights
@@ -99,16 +99,16 @@ class ShaderProperties
     //   Bit  3,   on for self shadowing
     //   Bit  4,   on for cloud shadows
     uint32 shadowCounts;
-    
+
     // Effects that may be applied with any light model
     unsigned short effects;
-    
+
  private:
     enum
     {
         ShadowBitsPerLight = 4,
     };
-    
+
     enum
     {
         EclipseShadowMask = 0x3,
@@ -119,7 +119,7 @@ class ShaderProperties
         AnyRingShadowMask    = 0x04040404,
         AnySelfShadowMask    = 0x08080808,
         AnyCloudShadowMask   = 0x10101010,
-    }; 
+    };
 };
 
 
@@ -149,7 +149,7 @@ class CelestiaGLProgram
     ~CelestiaGLProgram();
 
     void use() const { program->use(); }
-    
+
     void setLightParameters(const LightingState& ls,
                             Color materialDiffuse,
                             Color materialSpecular,
@@ -164,7 +164,7 @@ class CelestiaGLProgram
     void setAtmosphereParameters(const Atmosphere& atmosphere,
                                  float atmPlanetRadius,
                                  float objRadius);
-    
+
  public:
     CelestiaGLProgramLight lights[MaxShaderLights];
     Vec3ShaderParameter fragLightColor[MaxShaderLights];
@@ -183,7 +183,7 @@ class CelestiaGLProgram
     FloatShaderParameter ringRadius;
     Vec4ShaderParameter ringPlane;
     Vec3ShaderParameter ringCenter;
-    
+
     // Mix of Lambertian and "lunar" (Lommel-Seeliger) photometric models.
     // 0 = pure Lambertian, 1 = L-S
     FloatShaderParameter lunarLambert;
@@ -195,7 +195,7 @@ class CelestiaGLProgram
     // Height of cloud layer above planet, in units of object radius
     FloatShaderParameter cloudHeight;
     FloatShaderParameter shadowTextureOffset;
-    
+
     // Parameters for atmospheric scattering; all distances are normalized for
     // a unit sphere.
     FloatShaderParameter mieCoeff;
@@ -204,21 +204,21 @@ class CelestiaGLProgram
     // A value of 0 is isotropic, negative values a primarily backscattering,
     // positive values are forward scattering.
     FloatShaderParameter miePhaseAsymmetry;
-    
+
     // Rayleigh scattering terms. There are three scattering coefficients: red,
-    // green, and blue light. To simulate Rayleigh scattering, the coefficients 
+    // green, and blue light. To simulate Rayleigh scattering, the coefficients
     // should be in ratios that fit 1/wavelength^4, but other values may be used
     // to simulate different types of wavelength dependent scattering.
     Vec3ShaderParameter rayleighCoeff;
     FloatShaderParameter rayleighScaleHeight;
-    
+
     // Precomputed sum and inverse sum of Rayleigh and Mie scattering coefficients
     Vec3ShaderParameter scatterCoeffSum;
     Vec3ShaderParameter invScatterCoeffSum;
     // Precomputed sum of absorption and scattering coefficients--identical to
     // scatterCoeffSum when there is no absorption.
     Vec3ShaderParameter extinctionCoeff;
-    
+
     // Radius of sphere for atmosphere--should be significantly larger than
     // scale height. Three components:
     //    x = radius
@@ -230,7 +230,7 @@ class CelestiaGLProgram
     FloatShaderParameter pointScale;
 
     CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderEclipseShadows];
-    
+
  private:
     void initParameters();
     void initSamplers();
@@ -254,13 +254,13 @@ class ShaderManager
 
  private:
     CelestiaGLProgram* buildProgram(const ShaderProperties&);
-    
+
     GLVertexShader* buildVertexShader(const ShaderProperties&);
     GLFragmentShader* buildFragmentShader(const ShaderProperties&);
-    
+
     GLVertexShader* buildRingsVertexShader(const ShaderProperties&);
     GLFragmentShader* buildRingsFragmentShader(const ShaderProperties&);
-    
+
     GLVertexShader* buildAtmosphereVertexShader(const ShaderProperties&);
     GLFragmentShader* buildAtmosphereFragmentShader(const ShaderProperties&);
 

@@ -48,78 +48,76 @@ int main(int argc, char *argv[])
 
     for (;;)
     {
-	unsigned int catalogNumber;
-	char sep;
+        unsigned int catalogNumber;
+        char sep;
 
-	cin >> catalogNumber;
-	if (cin.eof())
+        cin >> catalogNumber;
+        if (cin.eof())
         {
-	    break;
-	}
-	else if (cin.bad())
-	{
-	    cerr << "Error reading names file.\n";
-	    break;
-	}
-
-	cin >> sep;
-	if (sep != ':')
+            break;
+        }
+        else if (cin.bad())
         {
-	    cerr < "Missing ':' in names file.\n";
-	    break;
-	}
+            cerr << "Error reading names file.\n";
+            break;
+        }
 
-	// Get the rest of the line
-	getline(cin, s);
-
-	int nextSep = s.find_first_of(':');
-	if (nextSep == string::npos)
+        cin >> sep;
+        if (sep != ':')
         {
-	    cerr << "Missing ':' in names file.\n";
-	    break;
-	}
+            cerr < "Missing ':' in names file.\n";
+            break;
+        }
 
-	string common, designation;
-	string conAbbr;
-	string conName;
-	string bayerLetter;
-	
-	if (nextSep != 0)
-	    common = s.substr(0, nextSep);
-	designation = s.substr(nextSep + 1, string::npos);
+        // Get the rest of the line
+        getline(cin, s);
 
-	if (designation != "")
+        int nextSep = s.find_first_of(':');
+        if (nextSep == string::npos)
         {
-	    nextSep = designation.find_last_of(' ');
-	    if (nextSep != string::npos)
-	    {
-		bayerLetter = designation.substr(0, nextSep);
-		conAbbr = designation.substr(nextSep + 1, string::npos);
-	    }
-	}
+            cerr << "Missing ':' in names file.\n";
+            break;
+        }
 
-	Constellation *constel;
-	for (int i = 0; i < 88; i++)
+        string common, designation;
+        string conAbbr;
+        string conName;
+        string bayerLetter;
+
+        if (nextSep != 0)
+            common = s.substr(0, nextSep);
+        designation = s.substr(nextSep + 1, string::npos);
+
+        if (designation != "")
         {
-	    constel = Constellation::getConstellation(i);
-	    if (constel == NULL)
-   	    {
-		cerr << "Error getting constellation " << i << '\n';
-		break;
-  	    }
-	    if (constel->getAbbreviation() == conAbbr)
- 	    {
-		conName = constel->getName();
-		break;
-	    }
-	}
+            nextSep = designation.find_last_of(' ');
+            if (nextSep != string::npos)
+            {
+                bayerLetter = designation.substr(0, nextSep);
+                conAbbr = designation.substr(nextSep + 1, string::npos);
+            }
+        }
 
-	if (constel != NULL && bayerLetter != "")
+        Constellation *constel;
+        for (int i = 0; i < 88; i++)
         {
-	    StarName sn(common, bayerLetter, constel);
-	    cout << sn.getDesignation() << ' ' << constel->getAbbreviation() << '\n';
-	}
+            constel = Constellation::getConstellation(i);
+            if (constel == NULL)
+            {
+                cerr << "Error getting constellation " << i << '\n';
+                break;
+            }
+            if (constel->getAbbreviation() == conAbbr)
+            {
+                conName = constel->getName();
+                break;
+            }
+        }
 
-	
+        if (constel != NULL && bayerLetter != "")
+        {
+            StarName sn(common, bayerLetter, constel);
+            cout << sn.getDesignation() << ' ' << constel->getAbbreviation() << '\n';
+        }
     }
 }

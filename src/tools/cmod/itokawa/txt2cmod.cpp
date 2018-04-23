@@ -23,7 +23,7 @@
 // ...
 //
 // face and vertex ids are 1-based
-// vertex positions are floating point values 
+// vertex positions are floating point values
 //
 // The resulting cmod file should be processed by cmodfix to generate
 // normals and convert to the binary cmod format. I use this command line:
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     cout << "position f3\n";
     cout << "end_vertexdesc\n";
     cout << "\n";
-    
+
     // Get the vertex count
     unsigned int vertexCount;
     cin >> vertexCount;

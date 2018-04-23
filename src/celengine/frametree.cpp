@@ -30,7 +30,7 @@
  * parents.
  *
  * The FrameTree hiearchy is designed for fast visibility culling. There are
- * two values stored in each node for this purpose: the bounding sphere 
+ * two values stored in each node for this purpose: the bounding sphere
  * radius, and the maximum child object radius. The bounding sphere is large
  * enough to contain the orbits of all child objects, as well as the child
  * objects themselves. Change tracking is performed whenever the frame tree

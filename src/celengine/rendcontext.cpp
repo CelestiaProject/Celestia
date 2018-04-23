@@ -319,7 +319,7 @@ FixedFunctionRenderContext::makeCurrent(const Material& m)
                 glMaterialfv(GL_FRONT, GL_SHININESS, &m.specularPower);
                 specularOn = true;
             }
-            
+
             {
                 float matEmissive[4] = { m.emissive.red(),
                                          m.emissive.green(),
@@ -836,7 +836,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             glDepthMask(disableDepthWriteOnBlend ? GL_FALSE : GL_TRUE);
-            break;                
+            break;
         default:
             glDisable(GL_BLEND);
             glDepthMask(GL_TRUE);
@@ -1002,7 +1002,7 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             glDepthMask(GL_FALSE);
-            break;                
+            break;
         default:
             glDisable(GL_BLEND);
             glDepthMask(GL_TRUE);
