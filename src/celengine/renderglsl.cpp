@@ -773,7 +773,7 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
     int lightIndex = 0;
     Vector3f viewDir = -ls.lights[lightIndex].direction_obj;
     Vector3f upDir = viewDir.unitOrthogonal();
-    Vector3f rightDir = upDir.cross(viewDir);
+    /*Vector3f rightDir = */upDir.cross(viewDir);
 
 
     glUseProgramObjectARB(0);

@@ -116,8 +116,9 @@ void indent()
         cout << "  ";
 }
 
-void logChunk(uint16 chunkType/*, int chunkSize*/)
+void logChunk(uint16 /*chunkType*/ /*, int chunkSize*/)
 {
+#if 0
     const char* name = NULL;
 
     switch (chunkType)
@@ -193,7 +194,7 @@ void logChunk(uint16 chunkType/*, int chunkSize*/)
     default:
         break;
     }
-#if 0
+
     indent();
 
     if (name == NULL)

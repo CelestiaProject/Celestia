@@ -703,24 +703,21 @@ CommandCapture::CommandCapture(const std::string& _type,
 void CommandCapture::process(ExecutionEnvironment&)
 {
 #ifndef TARGET_OS_MAC
-    bool success = false;
-
-
     // Get the dimensions of the current viewport
     int viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
 
     if (compareIgnoringCase(type, "jpeg") == 0)
     {
-        success = CaptureGLBufferToJPEG(filename,
-                                        viewport[0], viewport[1],
-                                        viewport[2], viewport[3]);
+        CaptureGLBufferToJPEG(filename,
+                              viewport[0], viewport[1],
+                              viewport[2], viewport[3]);
     }
     if (compareIgnoringCase(type, "png") == 0)
     {
-        success = CaptureGLBufferToPNG(filename,
-                                       viewport[0], viewport[1],
-                                       viewport[2], viewport[3]);
+        CaptureGLBufferToPNG(filename,
+                             viewport[0], viewport[1],
+                             viewport[2], viewport[3]);
     }
 #endif
 }
