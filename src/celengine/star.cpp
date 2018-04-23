@@ -761,7 +761,7 @@ StarDetails::StarDetails() :
     bolometricCorrection(0.0f),
     knowledge(0u),
     visible(true),
-    texture(texture),
+    texture(texture), // warning: ‘StarDetails::texture’ is initialized with itself [-Winit-self]
     geometry(InvalidResource),
     orbit(NULL),
     orbitalRadius(0.0f),

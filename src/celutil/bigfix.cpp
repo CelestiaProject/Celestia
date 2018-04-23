@@ -416,11 +416,10 @@ std::string BigFix::toString()
 
     // Conversion using code from the original BigFix class.
     std::string encoded("");
-    int bits, c, char_count, started, i, j;
+    int bits, c, char_count, i, j;
 
     char_count = 0;
     bits = 0;
-    started = 0;
 
     // Find first significant (non null) byte
     i = 16;
