@@ -64,7 +64,7 @@ public:
         SpectralType
     };
 
-    StarPredicate(Criterion _criterion, const UniversalCoord& _observerPos);
+    StarPredicate(Criterion _criterion, const UniversalCoord& _observerPos, const Universe* _universe);
 
     bool operator()(const Star* star0, const Star* star1) const;
 
@@ -72,6 +72,7 @@ private:
     Criterion criterion;
     Vector3f pos;
     UniversalCoord ucPos;
+    const Universe* universe;
 };
 
 
@@ -246,9 +247,11 @@ int StarTableModel::columnCount(const QModelIndex&) const
 
 
 StarPredicate::StarPredicate(Criterion _criterion,
-                             const UniversalCoord& _observerPos) :
+                             const UniversalCoord& _observerPos,
+                             const Universe *_universe) :
     criterion(_criterion),
-    ucPos(_observerPos)
+    ucPos(_observerPos),
+    universe(_universe)
 {
     pos = ucPos.toLy().cast<float>();
 }
@@ -285,7 +288,7 @@ bool StarPredicate::operator()(const Star* star0, const Star* star1) const
         return strcmp(star0->getSpectralType(), star1->getSpectralType()) < 0;
 
     case Alphabetical:
-        return false;  // TODO
+        return strcmp(universe->getStarCatalog()->getStarName(*star0, true).c_str(), universe->getStarCatalog()->getStarName(*star1, true).c_str()) < 0;
 
     default:
         return false;
@@ -368,7 +371,7 @@ void StarTableModel::sort(int column, Qt::SortOrder order)
         break;
     }
 
-    StarPredicate pred(criterion, observerPos);
+    StarPredicate pred(criterion, observerPos, universe);
 
     std::sort(stars.begin(), stars.end(), pred);
 
@@ -391,7 +394,7 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
     now = _now;
 
     typedef multiset<Star*, StarPredicate> StarSet;
-    StarPredicate pred(criterion, observerPos);
+    StarPredicate pred(criterion, observerPos, universe);
 
     // Apply the filter
     vector<Star*> filteredStars;

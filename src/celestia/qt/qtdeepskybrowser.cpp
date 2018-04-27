@@ -61,13 +61,14 @@ public:
         ObjectType
     };
 
-    DSOPredicate(Criterion _criterion, const Vector3d& _observerPos);
+    DSOPredicate(Criterion _criterion, const Vector3d& _observerPos, const Universe* _universe);
 
     bool operator()(const DeepSkyObject* dso0, const DeepSkyObject* dso1) const;
 
 private:
     Criterion criterion;
     Vector3d pos;
+    const Universe *universe;
 };
 
 
@@ -211,9 +212,11 @@ int DSOTableModel::columnCount(const QModelIndex&) const
 
 
 DSOPredicate::DSOPredicate(Criterion _criterion,
-                           const Vector3d& _observerPos) :
+                           const Vector3d& _observerPos,
+                           const Universe* _universe) :
     criterion(_criterion),
-    pos(_observerPos)
+    pos(_observerPos),
+    universe(_universe)
 {
 }
 
@@ -241,7 +244,7 @@ bool DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* ds
         return strcmp(dso0->getType(), dso1->getType()) < 0;
 
     case Alphabetical:
-        return false;  // TODO
+        return strcmp(universe->getDSOCatalog()->getDSOName(dso0, true).c_str(), universe->getDSOCatalog()->getDSOName(dso1, true).c_str()) > 0;
 
     default:
         return false;
@@ -294,7 +297,7 @@ void DSOTableModel::sort(int column, Qt::SortOrder order)
         break;
     }
 
-    DSOPredicate pred(criterion, observerPos);
+    DSOPredicate pred(criterion, observerPos, universe);
 
     std::sort(dsos.begin(), dsos.end(), pred);
 
@@ -316,7 +319,7 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
 
     typedef multiset<DeepSkyObject*, DSOPredicate> DSOSet;
 
-    DSOPredicate pred(criterion, observerPos);
+    DSOPredicate pred(criterion, observerPos, universe);
 
     // Apply the filter
     vector<DeepSkyObject*> filteredDSOs;
