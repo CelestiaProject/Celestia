@@ -94,7 +94,6 @@ CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, Cele
     currentCursor = CelestiaCore::CrossCursor;
     setMouseTracking(true);
 
-    lastX = lastY = 0;
     cursorVisible = true;
 }
 
@@ -226,61 +225,36 @@ void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
 
     if ((m->buttons() & (LeftButton | RightButton)) != 0)
     {
-        appCore->mouseMove(x - lastX, y - lastY, buttons);
-
-        // Infinite mouse: allow the user to rotate and zoom continuously, i.e.,
-        // without being stopped when the pointer reaches the window borders.
-        QPoint pt;
-        pt.setX(lastX);
-        pt.setY(lastY);
-        pt = mapToGlobal(pt);
-
-        // First mouse drag event.
-        // Hide the cursor and set its position to the center of the window.
         if (cursorVisible)
         {
             // Hide the cursor.
             setCursor(QCursor(Qt::BlankCursor));
             cursorVisible = false;
 
-            // Save the cursor position.
-            saveCursorPos = pt;
+            // Save the cursor position
+            QPoint pt;
+            pt.setX(x);
+            pt.setY(y);
 
-            // Compute the center point of the OpenGL Widget.
-            QPoint center;
-            center.setX(width() / 2);
-            center.setY(height() / 2);
-
-            // Set the cursor position to the center of the OpenGL Widget.
-            x = center.rx() + (x - lastX);
-            y = center.ry() + (y - lastY);
-            lastX = (int) center.rx();
-            lastY = (int) center.ry();
-
-            center = mapToGlobal(center);
-            QCursor::setPos(center);
+            // Store a local and global location
+            saveLocalCursorPos = pt;
+            pt = mapToGlobal(pt);
+            saveGlobalCursorPos = pt;
         }
-        else
-        {
-            if (x - lastX != 0 || y - lastY != 0)
-                QCursor::setPos(pt);
-        }
+
+        // Calculate mouse delta from local coordinate then move it back to the saved location
+        appCore->mouseMove(x - saveLocalCursorPos.rx(), y - saveLocalCursorPos.ry(), buttons);
+        QCursor::setPos(saveGlobalCursorPos);
     }
     else
     {
         appCore->mouseMove(x, y);
-
-        lastX = x;
-        lastY = y;
     }
 }
 
 
 void CelestiaGlWidget::mousePressEvent( QMouseEvent* m )
 {
-    lastX = (int) m->x();
-    lastY = (int) m->y();
-
     if (m->button() == LeftButton)
         appCore->mouseButtonDown(m->x(), m->y(), CelestiaCore::LeftButton);
     else if (m->button() == MidButton)
@@ -299,14 +273,12 @@ void CelestiaGlWidget::mouseReleaseEvent( QMouseEvent* m )
             // Restore the cursor position and make it visible again.
             setCursor(QCursor(Qt::CrossCursor));
             cursorVisible = true;
-            QCursor::setPos(saveCursorPos);
+            QCursor::setPos(saveGlobalCursorPos);
         }
         appCore->mouseButtonUp(m->x(), m->y(), CelestiaCore::LeftButton);
     }
     else if (m->button() == MidButton)
     {
-        lastX = (int) m->x();
-        lastY = (int) m->y();
         appCore->mouseButtonUp(m->x(), m->y(), CelestiaCore::MiddleButton);
     }
     else if (m->button() == RightButton)
@@ -316,7 +288,7 @@ void CelestiaGlWidget::mouseReleaseEvent( QMouseEvent* m )
             // Restore the cursor position and make it visible again.
             setCursor(QCursor(Qt::CrossCursor));
             cursorVisible = true;
-            QCursor::setPos(saveCursorPos);
+            QCursor::setPos(saveGlobalCursorPos);
         }
         appCore->mouseButtonUp(m->x(), m->y(), CelestiaCore::RightButton);
     }

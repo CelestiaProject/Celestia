@@ -61,7 +61,8 @@ private:
     int lastX;
     int lastY;
     bool cursorVisible;
-    QPoint saveCursorPos;
+    QPoint saveGlobalCursorPos;
+    QPoint saveLocalCursorPos;
     CelestiaCore::CursorShape currentCursor;
 
     //KActionCollection* actionColl;
