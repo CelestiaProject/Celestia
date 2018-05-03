@@ -643,7 +643,6 @@ int SolarSystemTreeModel::columnCount(const QModelIndex&) const
     return 2;
 }
 
-
 void SolarSystemTreeModel::sort(int /* column */, Qt::SortOrder /* order */)
 {
 }
