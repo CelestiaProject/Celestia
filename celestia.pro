@@ -599,7 +599,7 @@ unix {
 
     CONFIG += link_pkgconfig
 
-    LUALIST = lua51 lua
+    LUALIST = lua52 lua51 lua
     for(libpc, LUALIST):system(pkg-config --exists $${libpc}):LUAPC = $${libpc}
     isEmpty (LUAPC) {error("No shared Lua library found!")}
 
