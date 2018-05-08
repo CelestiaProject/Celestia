@@ -6,6 +6,6 @@ while 1 do
     index = math.floor(nstars * math.random())
     star = celestia:getstar(index)
     celestia:select(star)
-    obs:goto(star, 10)
+    obs:gotoobject(star, 10)
     wait(10)
 end
