@@ -1,7 +1,7 @@
-function goto(o, t)
+function gotoobject(o, t)
     local obs = celestia:getobserver()
     obs:follow(o)
-    obs:goto(o, t)
+    obs:gotoobject(o, t)
         while (obs:travelling()) do
         wait(0)
     end
@@ -11,7 +11,7 @@ function visit(o)
     local i, v
     celestia:select(o)
     celestia:flash(o:type() .. " - " .. o:name())
-    goto(o, 3)
+    gotoobject(o, 3)
     wait(0.5)
     local children = o:getchildren()
     for i, v in ipairs(children) do
