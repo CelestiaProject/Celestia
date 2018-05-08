@@ -1,3 +1,5 @@
+-- Title: Toggle Galactic Grid
+
 t = {} -- create table
 t.equatorialgrid = 	false
 t.galacticgrid = 	not celestia:getrenderflags().galacticgrid
