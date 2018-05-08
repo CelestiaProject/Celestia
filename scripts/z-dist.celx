@@ -20,7 +20,7 @@ end
 
 function rgb2hex(r,g,b)
    -- Converts color code from RGB to Hex
-   local hex = string.format("#%.2x%.2x%.2x", r,g,b)
+   local hex = string.format("#%.2x%.2x%.2x", math.floor(r), math.floor(g), math.floor(b))
    return hex
 end
 
