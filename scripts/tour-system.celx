@@ -1,3 +1,5 @@
+-- Title: Tour around Solar system objects
+
 function gotoobject(o, t)
     local obs = celestia:getobserver()
     obs:follow(o)
