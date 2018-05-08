@@ -1,3 +1,5 @@
+-- Title: Toggle Horizontal Grid
+
 t = {} -- create table
 t.equatorialgrid = 	false
 t.galacticgrid = 	false
