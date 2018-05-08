@@ -1365,7 +1365,7 @@ void CelestiaAppWindow::createMenus()
     /****** Help Menu ******/
     helpMenu = menuBar()->addMenu(_("&Help"));
 
-    QAction* helpManualAct = new QAction(QIcon(":/icons/book.png"), _("Manual Celestia"), this);
+    QAction* helpManualAct = new QAction(QIcon(":/icons/book.png"), _("Celestia Manual"), this);
     connect(helpManualAct, SIGNAL(triggered()), this, SLOT(slotManual()));
     helpMenu->addAction(helpManualAct);
     helpMenu->addSeparator();
