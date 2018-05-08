@@ -1,3 +1,5 @@
+-- Title: Mark all D stars
+
 function mark_spectraltype(x)
     local obs = celestia:getobserver()
     local nstars = celestia:getstarcount()
