@@ -80,6 +80,7 @@ static int frame_from(lua_State* l)
     if (uc == NULL && q == NULL)
     {
         celx.doError("Position or rotation expected as second argument to frame:from()");
+        return 0;
     }
 
     jd = celx.safeGetNumber(3, WrongType, "Second arg to frame:from must be a number", appCore->getSimulation()->getTime());
@@ -124,6 +125,7 @@ static int frame_to(lua_State* l)
     if (uc == NULL && q == NULL)
     {
         celx.doError("Position or rotation expected as second argument to frame:to()");
+        return 0;
     }
 
     jd = celx.safeGetNumber(3, WrongType, "Second arg to frame:to must be a number", appCore->getSimulation()->getTime());

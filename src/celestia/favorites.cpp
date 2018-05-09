@@ -36,7 +36,7 @@ FavoritesList* ReadFavoritesList(istream& in)
             return NULL;
         }
 
-        FavoritesEntry* fav = new FavoritesEntry();
+        FavoritesEntry* fav = new FavoritesEntry(); // FIXME: check
         fav->name = tokenizer.getStringValue();
 
         Value* favParamsValue = parser.readValue();
@@ -47,6 +47,7 @@ FavoritesList* ReadFavoritesList(istream& in)
             delete favorites;
             if (favParamsValue != NULL)
                 delete favParamsValue;
+            delete fav;
             return NULL;
         }
 

@@ -39,6 +39,10 @@ Eclipse::Eclipse(double JD) :
     date = new astro::Date(JD);
 }
 
+Eclipse::~Eclipse()
+{
+    delete date;
+}
 
 // TODO: share this constant and function with render.cpp
 static const float MinRelativeOccluderRadius = 0.005f;
@@ -216,7 +220,7 @@ int EclipseFinder::CalculateEclipses()
         JDfrom += 1.0 / 24.0;
     }
     if (JDback)
-        delete JDback;
+        delete[] JDback;
     if (Eclipses_.empty())
     {
         eclipse = new Eclipse(0.);

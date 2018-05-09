@@ -578,6 +578,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
         if (strncmp(header, CROSSINDEX_FILE_HEADER, headerLength))
         {
             cerr << _("Bad header for cross index\n");
+            delete[] header;
             return false;
         }
         delete[] header;
@@ -639,8 +640,10 @@ bool StarDatabase::loadBinary(istream& in)
         int headerLength = strlen(FILE_HEADER);
         char* header = new char[headerLength];
         in.read(header, headerLength);
-        if (strncmp(header, FILE_HEADER, headerLength))
+        if (strncmp(header, FILE_HEADER, headerLength)) {
+            delete[] header;
             return false;
+        }
         delete[] header;
     }
 
@@ -896,8 +899,12 @@ bool StarDatabase::createStar(Star* star,
         // If the star definition has extended information, clone the
         // star details so we can customize it without affecting other
         // stars of the same spectral type.
+        bool free_details = false;
         if (!modifyExistingDetails)
+        {
             details = new StarDetails(*details);
+            free_details = true;
+        }
 
         if (hasTexture)
         {
@@ -997,6 +1004,9 @@ bool StarDatabase::createStar(Star* star,
                 if (!hasBarycenter)
                 {
                     cerr << _("Barycenter ") << barycenterName << _(" does not exist.\n");
+                    delete rm;
+                    if (free_details)
+                        delete details;
                     return false;
                 }
             }
