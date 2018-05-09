@@ -563,6 +563,7 @@ static void checkTimeslice(lua_State* l, lua_Debug* /*ar*/)
     {
         lua_pushstring(l, "Internal Error: Invalid value in checkTimeslice");
         lua_error(l);
+        return;
     }
 
     if (luastate->timesliceExpired())
@@ -1439,6 +1440,7 @@ static CelScriptWrapper* this_celscript(lua_State* l)
     if (script == NULL)
     {
         Celx_DoError(l, "Bad CEL-script object!");
+        return NULL;
     }
     return *script;
 }
@@ -2050,6 +2052,13 @@ static int celestia_setconstellationcolor(lua_State* l)
             if (lua_isstring(l, -1))
             {
                 constellation = lua_tostring(l, -1);
+                for (AsterismList::const_iterator iter = asterisms->begin();
+                     iter != asterisms->end(); iter++)
+                {
+                    Asterism* ast = *iter;
+                    if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
+                        ast->setOverrideColor(constellationColor);
+                }
             }
             else
             {
@@ -3163,6 +3172,7 @@ static int celestia_newrotation(lua_State* l)
         if (v == NULL)
         {
             Celx_DoError(l, "newrotation: first argument must be a vector");
+            return 0;
         }
         double angle = Celx_SafeGetNumber(l, 3, AllErrors, "second argument to celestia:newrotation must be a number");
         Quatd q;
@@ -3211,6 +3221,7 @@ static int celestia_newframe(lua_State* l)
         if (ref == NULL || target == NULL)
         {
             Celx_DoError(l, "newframe: two objects required for lock frame");
+            return 0;
         }
 
         frame_new(l, ObserverFrame(coordSys, *ref, *target));
@@ -3222,6 +3233,7 @@ static int celestia_newframe(lua_State* l)
         if (ref == NULL)
         {
             Celx_DoError(l, "newframe: one object argument required for frame");
+            return 0;
         }
 
         frame_new(l, ObserverFrame(coordSys, *ref));

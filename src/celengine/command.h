@@ -677,7 +677,7 @@ class RepeatCommand : public Command
     RepeatCommand(CommandSequence* _body, int _repeatCount);
     ~RepeatCommand();
     void process(ExecutionEnvironment&, double t, double dt) = 0;
-    double getDuration();
+    double getDuration() const;
 
  private:
     CommandSequence* body;

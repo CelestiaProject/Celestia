@@ -116,6 +116,8 @@ LODSphereMesh::~LODSphereMesh()
 {
     if (vertices != NULL)
         delete[] vertices;
+    if (indices != NULL)
+        delete[] indices;
 }
 
 

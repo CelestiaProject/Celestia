@@ -14,6 +14,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <iostream>
 #include "bigfix.h"
 
 
@@ -86,10 +87,17 @@ BigFix::BigFix(double d)
 
         hi = ((uint64) w3 << 32) | w2;
         lo = ((uint64) w1 << 32) | w0;
-    }
 
-    if (isNegative)
-        negate128(hi, lo);
+      if (isNegative)
+          negate128(hi, lo);
+    }
+    else
+    {
+      // Not a good idea but at least they are initialized
+      // if too big (>= 2**63) value is passed
+      std::cerr << "Too big value " << d <<" passed to BigFix::BigFix()\n";
+      hi = lo = 0;
+    }
 }
 
 

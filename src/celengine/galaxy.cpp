@@ -530,6 +530,7 @@ GalacticForm* buildGalacticForms(const std::string& filename)
     if (img == NULL)
     {
         cout<<"\nThe galaxy template *** "<<filename<<" *** could not be loaded!\n\n";
+        delete galacticPoints;
         return NULL;
     }
     width  = img->getWidth();

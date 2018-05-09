@@ -108,6 +108,7 @@ public:
 
     Observer();
     Observer(const Observer& o);
+    ~Observer();
 
     Observer& operator=(const Observer& o);
 

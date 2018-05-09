@@ -162,6 +162,7 @@ static int position_vectorto(lua_State* l)
     if (uc2 == NULL)
     {
         celx.doError("Argument to position:vectorto must be a position");
+        return 0;
     }
 
     celx.newVector(fromEigen(uc2->offsetFromUly(*uc)));
@@ -182,12 +183,14 @@ static int position_orientationto(lua_State* l)
     if (target == NULL)
     {
         celx.doError("First argument to position:orientationto must be a position");
+        return 1;
     }
 
     Vec3d* upd = celx.toVector(3);
     if (upd == NULL)
     {
         celx.doError("Second argument to position:orientationto must be a vector");
+        return 1;
     }
 
     Vec3d src2target = fromEigen(target->offsetFromKm(*src));
@@ -222,6 +225,7 @@ static int position_distanceto(lua_State* l)
     if (uc2 == NULL)
     {
         celx.doError("Position expected as argument to position:distanceto");
+        return 0;
     }
 
     lua_pushnumber(l, uc2->offsetFromKm(*uc).norm());

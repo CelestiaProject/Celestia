@@ -68,6 +68,8 @@ SphereMesh::~SphereMesh()
         delete[] texCoords;
     if (indices != NULL)
         delete[] indices;
+    if (tangents != NULL)
+        delete[] tangents;
 }
 
 
