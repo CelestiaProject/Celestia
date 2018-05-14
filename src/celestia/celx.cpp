@@ -515,7 +515,11 @@ LuaState::LuaState() :
     ioMode(NoIO),
     eventHandlerEnabled(false)
 {
+#if LUA_VER >= 0x050100
     state = luaL_newstate();
+#else
+    state = lua_open();
+#endif
     timer = CreateTimer();
     screenshotCount = 0;
 }
@@ -3678,6 +3682,9 @@ bool LuaState::init(CelestiaCore* appCore)
     openLuaLibrary(state, LUA_MATHLIBNAME, luaopen_math);
     openLuaLibrary(state, LUA_TABLIBNAME, luaopen_table);
     openLuaLibrary(state, LUA_STRLIBNAME, luaopen_string);
+#if LUA_VER >= 0x050200
+    openLuaLibrary(state, LUA_COLIBNAME, luaopen_coroutine);
+#endif
     // Make the package library, except the loadlib function, available
     // for celx regardless of script system access policy.
     allowLuaPackageAccess();

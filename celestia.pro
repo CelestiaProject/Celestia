@@ -602,9 +602,13 @@ unix {
 
     CONFIG += link_pkgconfig
 
-    LUALIST = lua52 lua51 lua
+    LUALIST = lua53 lua52 lua51 lua
     for(libpc, LUALIST):system(pkg-config --exists $${libpc}):LUAPC = $${libpc}
     isEmpty (LUAPC) {error("No shared Lua library found!")}
+
+    equals(LUAPC, "lua53"): DEFINES += LUA_VER=0x050300
+    equals(LUAPC, "lua52"): DEFINES += LUA_VER=0x050200
+    equals(LUAPC, "lua51"): DEFINES += LUA_VER=0x050100
 
     PKGCONFIG += glu $$LUAPC libpng theora
     INCLUDEPATH += /usr/local/cspice/include
@@ -671,7 +675,7 @@ macx {
     LIBS += macosx/lib/cspice.a
 }
 
-DEFINES += CELX LUA_VER=0x050200
+DEFINES += CELX
 
 # QMAKE_CXXFLAGS += -ffast-math
 
