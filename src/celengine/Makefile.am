@@ -1,7 +1,10 @@
 noinst_LIBRARIES = libcelengine.a
 noinst_HEADERS = $(wildcard *.h)
 
-AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/curveplot/include
+AM_CPPFLAGS = -I$(top_srcdir)/src \
+	      -I$(top_srcdir)/thirdparty/Eigen \
+	      -I$(top_srcdir)/thirdparty/curveplot/include \
+	      -I$(top_srcdir)/thirdparty/glew/include
 
 libcelengine_a_CXXFLAGS = $(LUA_CFLAGS) $(SPICE_CFLAGS) $(GLEW_CFLAGS)
 
@@ -75,4 +78,5 @@ libcelengine_a_SOURCES = \
 	vertexprog.cpp \
 	virtualtex.cpp \
 	visibleregion.cpp \
+	../../thirdparty/glew/src/glew.c \
 	../../thirdparty/curveplot/src/curveplot.cpp

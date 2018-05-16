@@ -14,7 +14,8 @@ endif
 
 if ENABLE_GTK
 SUBDIRS += gtk
-celestiaGTKLIBS = $(GTK_LIBS) gtk/libgtkgui.a
+celestiaGTKLIBS = gtk/libgtkgui.a
+LIBS += $(GTK_LIBS)
 endif
 
 if ENABLE_QT
