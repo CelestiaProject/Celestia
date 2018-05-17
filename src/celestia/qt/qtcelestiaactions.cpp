@@ -12,12 +12,12 @@
 
 #include <QAction>
 #include <QMenu>
-#include "celestia/celestiacore.h"
+#include "celestia/CelestiaCoreApplication.h"
 #include "qtcelestiaactions.h"
 
 
 CelestiaActions::CelestiaActions(QObject* parent,
-                                 CelestiaCore* _appCore) :
+                                 CelestiaCoreApplication* _appCore) :
     QObject(parent),
 
     equatorialGridAction(NULL),
@@ -240,6 +240,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
 
     lightTimeDelayAction = new QAction(_("Light Time Delay"), this);
     lightTimeDelayAction->setCheckable(true);
+    //lightTimeDelayAction->setShortcut(QString(_("-")));
     lightTimeDelayAction->setToolTip("Subtract one-way light travel time to selected object");
     connect(lightTimeDelayAction, SIGNAL(triggered()), this, SLOT(slotSetLightTimeDelay()));
 
@@ -428,9 +429,23 @@ void CelestiaActions::slotAdjustLimitingMagnitude()
 
 void CelestiaActions::slotSetLightTimeDelay()
 {
-    // TODO: CelestiaCore class should offer an API for enabling/disabling light
-    // time delay.
-    appCore->charEntered('-');
+    appCore->addToHistory();
+
+    if (appCore->setLightTravelDelay(!appCore->getLightDelayActive()))
+    {
+        if (appCore->getLightDelayActive())
+        {
+            appCore->flash(_("Light travel delay included"),2.0);
+        }
+        else
+        {
+            appCore->flash(_("Light travel delay switched off"),2.0);
+        }
+    }
+    else
+    {
+        appCore->flash(_("Light travel delay ignored"));
+    }
 }
 
 

@@ -16,7 +16,7 @@
 #include <QMenu>
 #include <celengine/selection.h>
 
-class CelestiaCore;
+class CelestiaCoreApplication;
 
 class SelectionPopup : public QMenu
 {
@@ -24,7 +24,7 @@ Q_OBJECT
 
  public:
     SelectionPopup(const Selection& sel,
-                   CelestiaCore* _appCore,
+                   CelestiaCoreApplication* _appCore,
                    QWidget* parent);
     ~SelectionPopup();
 
@@ -65,7 +65,7 @@ Q_OBJECT
 
  private:
     Selection selection;
-    CelestiaCore* appCore;
+    CelestiaCoreApplication* appCore;
     QAction* centerAction;
     QAction* gotoAction;
 };

@@ -355,6 +355,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void singleView(View* av = NULL);
     void deleteView(View* v = NULL);
     void setActiveView(View* v = NULL);
+
     bool getFramesVisible() const;
     void setFramesVisible(bool);
     bool getActiveFrameVisible() const;
@@ -401,7 +402,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
     bool referenceMarkEnabled(const std::string& refMark, Selection sel = Selection()) const;
 
- private:
+ protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
     void fatalError(const std::string&);
@@ -409,7 +410,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool initLuaHook(ProgressNotifier*);
 #endif // CELX
 
- private:
+ protected:
     CelestiaConfig* config;
 
     Universe* universe;

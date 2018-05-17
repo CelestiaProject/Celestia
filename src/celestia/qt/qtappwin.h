@@ -13,7 +13,7 @@
 #ifndef _QTAPPWIN_H_
 #define _QTAPPWIN_H_
 
-#include <celestia/celestiacore.h>
+#include <celestia/CelestiaCoreApplication.h>
 #include <QMainWindow>
 
 
@@ -67,6 +67,7 @@ class CelestiaAppWindow : public QMainWindow
     void centerSelection();
     void gotoSelection();
     void selectSun();
+    void follow();
 
     void slotPreferences();
 
@@ -78,6 +79,8 @@ class CelestiaAppWindow : public QMainWindow
     void slotToggleFramesVisible();
     void slotToggleActiveFrameVisible();
     void slotToggleSyncTime();
+    
+    void slotToggleStarStyle();
 
     void slotShowObjectInfo(Selection& sel);
 
@@ -108,6 +111,8 @@ class CelestiaAppWindow : public QMainWindow
     QMenu* buildScriptsMenu();
     void populateBookmarkMenu();
 
+    //bool event(QEvent*);
+    //void keyPressEvent(QKeyEvent*);
     void closeEvent(QCloseEvent* event);
 
  private:
@@ -115,7 +120,7 @@ class CelestiaAppWindow : public QMainWindow
     QDockWidget* toolsDock;
     CelestialBrowser* celestialBrowser;
 
-    CelestiaCore* m_appCore;
+    CelestiaCoreApplication* m_appCore;
 
     CelestiaActions* actions;
 

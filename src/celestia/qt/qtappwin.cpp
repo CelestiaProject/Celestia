@@ -230,7 +230,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     initAppDataDirectory();
 
-    m_appCore = new CelestiaCore();
+    m_appCore = new CelestiaCoreApplication();
 
     AppProgressNotifier* progress = new AppProgressNotifier(this);
     alerter = new AppAlerter(this);
@@ -388,7 +388,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     QAction* fullScreenAction = new QAction(_("Full screen"), this);
     fullScreenAction->setCheckable(true);
-    fullScreenAction->setShortcut(QString(_("Shift+F11")));
+    fullScreenAction->setShortcut(QString("Shift+F11"));
 
     // Set the full screen check state only after reading settings
     fullScreenAction->setChecked(isFullScreen());
@@ -802,21 +802,27 @@ void CelestiaAppWindow::handleCelUrl(const QUrl& url)
 
 void CelestiaAppWindow::selectSun()
 {
-    m_appCore->charEntered("h");
+    m_appCore->selectStar(0);
 }
 
 
 void CelestiaAppWindow::centerSelection()
 {
-    m_appCore->charEntered("c");
+    m_appCore->centerSelection();
 }
 
 
 void CelestiaAppWindow::gotoSelection()
 {
-    m_appCore->charEntered("g");
+    m_appCore->gotoSelection(5);
 }
 
+void CelestiaAppWindow::follow()
+{
+    m_appCore->addToHistory();
+    m_appCore->flash(_("Follow"));
+    m_appCore->getSimulation()->follow();
+}
 
 void CelestiaAppWindow::slotPreferences()
 {
@@ -836,27 +842,27 @@ void CelestiaAppWindow::slotPreferences()
 
 void CelestiaAppWindow::slotSplitViewVertically()
 {
-    m_appCore->charEntered('\025');
+    m_appCore->splitView(View::VerticalSplit);
 }
 
 void CelestiaAppWindow::slotSplitViewHorizontally()
 {
-    m_appCore->charEntered('\022');
+    m_appCore->splitView(View::HorizontalSplit);
 }
 
 void CelestiaAppWindow::slotCycleView()
 {
-    m_appCore->charEntered('\011');
+    m_appCore->cycleView();
 }
 
 void CelestiaAppWindow::slotSingleView()
 {
-    m_appCore->charEntered('\004');
+    m_appCore->singleView();
 }
 
 void CelestiaAppWindow::slotDeleteView()
 {
-    m_appCore->charEntered(127);
+    m_appCore->deleteView();
 }
 
 void CelestiaAppWindow::slotToggleFramesVisible()
@@ -874,6 +880,24 @@ void CelestiaAppWindow::slotToggleSyncTime()
     m_appCore->getSimulation()->setSyncTime(!m_appCore->getSimulation()->getSyncTime());
 }
 
+void CelestiaAppWindow::slotToggleStarStyle() {
+    m_appCore->setStarStyle((Renderer::StarStyle) (((int) m_appCore->getStarStyle() + 1) %
+                                                      (int) Renderer::StarStyleCount));
+    switch (m_appCore->getStarStyle())
+    {
+    case Renderer::FuzzyPointStars:
+        m_appCore->flash(_("Star style: fuzzy points"));
+        break;
+    case Renderer::PointStars:
+        m_appCore->flash(_("Star style: points"));
+        break;
+    case Renderer::ScaledDiscStars:
+        m_appCore->flash(_("Star style: scaled discs"));
+        break;
+    default:
+        break;
+    }
+}
 
 void CelestiaAppWindow::slotShowObjectInfo(Selection& sel)
 {
@@ -1120,6 +1144,7 @@ void CelestiaAppWindow::slotShowGLInfo()
 
 void CelestiaAppWindow::createActions()
 {
+
 }
 
 void CelestiaAppWindow::createMenus()
@@ -1129,7 +1154,7 @@ void CelestiaAppWindow::createMenus()
 
     QAction* grabImageAction = new QAction(QIcon(":/icons/grab-image.png"),
                                            _("&Grab image"), this);
-    grabImageAction->setShortcut(QString(_("F10")));
+    grabImageAction->setShortcut(QString("F10"));
     connect(grabImageAction, SIGNAL(triggered()), this, SLOT(slotGrabImage()));
     fileMenu->addAction(grabImageAction);
 
@@ -1139,12 +1164,12 @@ void CelestiaAppWindow::createMenus()
 #if defined(TARGET_OS_MAC) || (!defined(_WIN32) && !defined(THEORA))
     captureVideoAction->setEnabled(false);
 #endif
-    captureVideoAction->setShortcut(QString(_("Shift+F10")));
+    captureVideoAction->setShortcut(QString("Shift+F10"));
     connect(captureVideoAction, SIGNAL(triggered()), this, SLOT(slotCaptureVideo()));
     fileMenu->addAction(captureVideoAction);
 
     QAction* copyImageAction = new QAction(QIcon(":/icons/picture_copy.png"), _("&Copy image"), this);
-    copyImageAction->setShortcut(QString(_("Ctrl+Shift+C")));
+    copyImageAction->setShortcut(QString("Ctrl+Shift+C"));
     connect(copyImageAction, SIGNAL(triggered()), this, SLOT(slotCopyImage()));
     fileMenu->addAction(copyImageAction);
 
@@ -1176,7 +1201,7 @@ void CelestiaAppWindow::createMenus()
     fileMenu->addAction(prefAct);
 
     QAction* quitAct = new QAction(QIcon(":/icons/exit.png"), _("E&xit"), this);
-    quitAct->setShortcut(QString(_("Ctrl+Q")));
+    quitAct->setShortcut(QString("Ctrl+Q"));
     connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
     fileMenu->addAction(quitAct);
 
@@ -1186,17 +1211,29 @@ void CelestiaAppWindow::createMenus()
     navMenu = menuBar()->addMenu(_("&Navigation"));
 
     QAction* sunAct = new QAction(QIcon(":/icons/select_sol.png"), _("Select Sun"), this);
+    sunAct->setShortcut(QString("h"));
+    sunAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(sunAct, SIGNAL(triggered()), this, SLOT(selectSun()));
     navMenu->addAction(sunAct);
 
     QAction* centerAct = new QAction(QIcon(":/icons/center-obj.png"), _("Center Selection"), this);
+    centerAct->setShortcut(QString("c"));
+    centerAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(centerAct, SIGNAL(triggered()), this, SLOT(centerSelection()));
     navMenu->addAction(centerAct);
 
     QAction* gotoAct = new QAction(QIcon(":/icons/go-jump.png"), _("Goto Selection"), this);
+    gotoAct->setShortcut(QString("g"));
+    gotoAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(gotoAct, SIGNAL(triggered()), this, SLOT(gotoSelection()));
     navMenu->addAction(gotoAct);
 
+
+    QAction* followAct = new QAction(_("Follow"), this);
+    followAct->setShortcut(QString("f"));
+    followAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    connect(followAct, &QAction::triggered, this, &CelestiaAppWindow::follow);
+    navMenu->addAction(followAct);
 
     /****** Time menu ******/
     timeMenu = menuBar()->addMenu(_("&Time"));
@@ -1237,6 +1274,11 @@ void CelestiaAppWindow::createMenus()
     starStyleMenu->addAction(actions->fuzzyPointStarAction);
     starStyleMenu->addAction(actions->scaledDiscStarAction);
 
+    QAction *toggleStarStyleAction = new QAction(QString(_("Toggle star style")), this);
+    toggleStarStyleAction->setShortcut(QString("Ctrl+S"));
+    connect(toggleStarStyleAction, &QAction::triggered, this, &CelestiaAppWindow::slotToggleStarStyle);
+    starStyleMenu->addAction(toggleStarStyleAction);
+
     displayMenu->addSeparator();
 
     QMenu* textureResolutionMenu = displayMenu->addMenu(_("Texture &Resolution"));
@@ -1256,31 +1298,32 @@ void CelestiaAppWindow::createMenus()
 
     QAction* splitViewVertAction = new QAction(QIcon(":/icons/split-vert.png"),
                                                _("Split view vertically"), this);
-    splitViewVertAction->setShortcut(QString(_("Ctrl+R")));
+    splitViewVertAction->setShortcut(QString("Ctrl+R"));
     connect(splitViewVertAction, SIGNAL(triggered()), this, SLOT(slotSplitViewVertically()));
     multiviewMenu->addAction(splitViewVertAction);
 
     QAction* splitViewHorizAction = new QAction(QIcon(":/icons/split-horiz.png"),
                                                 _("Split view horizontally"), this);
-    splitViewHorizAction->setShortcut(QString(_("Ctrl+U")));
+    splitViewHorizAction->setShortcut(QString("Ctrl+U"));
     connect(splitViewHorizAction, SIGNAL(triggered()), this, SLOT(slotSplitViewHorizontally()));
     multiviewMenu->addAction(splitViewHorizAction);
 
     QAction* cycleViewAction = new QAction(QIcon(":/icons/split-cycle.png"),
                                            _("Cycle views"), this);
-    cycleViewAction->setShortcut(QString(_("Tab")));
+    cycleViewAction->setShortcut(QString("Tab"));
+    cycleViewAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(cycleViewAction, SIGNAL(triggered()), this, SLOT(slotCycleView()));
     multiviewMenu->addAction(cycleViewAction);
 
     QAction* singleViewAction = new QAction(QIcon(":/icons/split-single.png"),
                                             _("Single view"), this);
-    singleViewAction->setShortcut(QString(_("Ctrl+D")));
+    singleViewAction->setShortcut(QString("Ctrl+D"));
     connect(singleViewAction, SIGNAL(triggered()), this, SLOT(slotSingleView()));
     multiviewMenu->addAction(singleViewAction);
 
     QAction* deleteViewAction = new QAction(QIcon(":/icons/split-delete.png"),
                                             _("Delete view"), this);
-    deleteViewAction->setShortcut(QString(_("Delete")));
+    deleteViewAction->setShortcut(QString("Delete"));
     connect(deleteViewAction, SIGNAL(triggered()), this, SLOT(slotDeleteView()));
     multiviewMenu->addAction(deleteViewAction);
 
@@ -1405,7 +1448,6 @@ void CelestiaAppWindow::populateBookmarkMenu()
 
     m_bookmarkManager->populateBookmarkMenu(bookmarkMenu);
 }
-
 
 void CelestiaAppWindow::closeEvent(QCloseEvent* event)
 {

@@ -12,7 +12,7 @@
 
 #include <cassert>
 #include <sstream>
-#include <celestia/celestiacore.h>
+#include <celestia/CelestiaCoreApplication.h>
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
 #include "qtselectionpopup.h"
@@ -45,7 +45,7 @@ static QAction* italicTextItem(const QString& s)
 
 
 SelectionPopup::SelectionPopup(const Selection& sel,
-                               CelestiaCore* _appCore,
+                               CelestiaCoreApplication* _appCore,
                                QWidget* parent) :
     QMenu(parent),
     selection(sel),
@@ -460,28 +460,32 @@ void SelectionPopup::slotSelect()
 void SelectionPopup::slotCenterSelection()
 {
     appCore->getSimulation()->setSelection(selection);
-    appCore->charEntered("c");
+    appCore->centerSelection();
 }
 
 
 void SelectionPopup::slotGotoSelection()
 {
     appCore->getSimulation()->setSelection(selection);
-    appCore->charEntered("g");
+    appCore->gotoSelection(5);
 }
 
 
 void SelectionPopup::slotFollowSelection()
 {
+    appCore->addToHistory();
     appCore->getSimulation()->setSelection(selection);
-    appCore->charEntered("f");
+    appCore->getSimulation()->follow();
+    appCore->flash(_("Follow"));
 }
 
 
 void SelectionPopup::slotSyncOrbitSelection()
 {
     appCore->getSimulation()->setSelection(selection);
-    appCore->charEntered("y");
+    appCore->flash(_("Sync Orbit"));
+    appCore->addToHistory();
+    appCore->getSimulation()->geosynchronousFollow();
 }
 
 

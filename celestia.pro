@@ -309,6 +309,7 @@ SPICE_HEADERS = \
 #### App sources ####
 
 APP_SOURCES = \
+    src/celestia/CelestiaCoreApplication.cpp \
     src/celestia/celestiacore.cpp \
     src/celestia/configfile.cpp \
     src/celestia/destination.cpp \
@@ -329,6 +330,7 @@ APP_SOURCES = \
         src/celestia/celx_vector.cpp
 
 APP_HEADERS = \
+    src/celestia/CelestiaCoreApplication.h \
     src/celestia/celestiacore.h \
     src/celestia/configfile.h \
     src/celestia/destination.h \

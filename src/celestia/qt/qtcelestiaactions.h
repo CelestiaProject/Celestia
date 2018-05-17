@@ -18,7 +18,7 @@
 
 class QMenu;
 class QAction;
-class CelestiaCore;
+class CelestiaCoreApplication;
 
 
 class CelestiaActions : public QObject, public RendererWatcher
@@ -26,7 +26,7 @@ class CelestiaActions : public QObject, public RendererWatcher
 Q_OBJECT
 
  public:
-    CelestiaActions(QObject *parent, CelestiaCore* appCore);
+    CelestiaActions(QObject *parent, CelestiaCoreApplication* appCore);
     ~CelestiaActions();
 
     virtual void notifyRenderSettingsChanged(const Renderer* renderer);
@@ -116,7 +116,7 @@ Q_OBJECT
     QAction* decreaseLimitingMagAction;
 
  private:
-    CelestiaCore* appCore;
+    CelestiaCoreApplication* appCore;
 };
 
 #endif // _CELESTIAACTIONS_H_

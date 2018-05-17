@@ -2282,7 +2282,6 @@ void CelestiaCore::setLightTravelDelay(double distanceKm)
     sim->setTime(sim->getTime() - lt);
 }
 
-
 bool CelestiaCore::getAltAzimuthMode() const
 {
     return altAzimuthMode;
@@ -2530,7 +2529,6 @@ void CelestiaCore::tick()
     sim->update(dt);
 //    sysaudio->update();
 }
-
 
 void CelestiaCore::draw()
 {
