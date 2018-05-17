@@ -123,7 +123,7 @@ favorite text editing program.
 ## Contributions
 | **`Authors`** | **`Contributors`** | **`Documentation`** | **`Other`** |
 |-----------------|---------------------|------------------|-------------------|
-| Chris Laurel, Clint Weisbrod, Fridger Schrempp, Bob Ippolito, Christophe Teyssier, Hank Ramsey, Grant Hutchison, Pat Suwalski, Toti , Da Woon Jung, Vincent Giangiulio, Andrew Tribick | Deon Ramsey, Christopher ANDRE, Colin Walters, Peter Chapman, James Holmes, Harald Schmidt, Sergey Leonov, Alexell, Dmitry Brant, Janus | Frank Gregorio, Hitoshi Suzuki, Christophe Teyssier, Diego Rodriguez, Don Goyette, Harald Schmidt | Creators of scientific data base, texture maps, 3D models and used librarys, you can see in full README.|
+| Chris Laurel, Clint Weisbrod, Fridger Schrempp, Bob Ippolito, Christophe Teyssier, Hank Ramsey, Grant Hutchison, Pat Suwalski, Toti , Da Woon Jung, Vincent Giangiulio, Andrew Tribick | Deon Ramsey, Christopher ANDRE, Colin Walters, Peter Chapman, James Holmes, Harald Schmidt, Sergey Leonov, Alexell, Dmitry Brant, Janus, Pirogronian, Hleb Valoshka | Frank Gregorio, Hitoshi Suzuki, Christophe Teyssier, Diego Rodriguez, Don Goyette, Harald Schmidt | Creators of scientific data base, texture maps, 3D models and used librarys, you can see in full README.|
 
 ### Contributing
 
