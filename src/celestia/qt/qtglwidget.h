@@ -18,7 +18,8 @@
 
 #include <QGLWidget>
 
-#include "celestia/celestiacore.h"
+//#include "celestia/celestiacore.h"
+#include "celestia/CelestiaCoreApplication.h"
 #include "celengine/simulation.h"
 #include <celengine/starbrowser.h>
 #include <string>
@@ -33,13 +34,13 @@ class CelestiaGlWidget : public QGLWidget, public CelestiaCore::CursorHandler
     Q_OBJECT
 
 public:
-    CelestiaGlWidget(QWidget* parent, const char* name, CelestiaCore* core);
+    CelestiaGlWidget(QWidget* parent, const char* name, CelestiaCoreApplication* core);
     ~CelestiaGlWidget();
 
     void setCursorShape(CelestiaCore::CursorShape);
     CelestiaCore::CursorShape getCursorShape() const;
 
-protected:
+//protected:
     void initializeGL();
     void paintGL();
     void resizeGL( int w, int h );
@@ -55,7 +56,7 @@ protected:
 
 private:
 
-    CelestiaCore* appCore;
+    CelestiaCoreApplication* appCore;
     Renderer* appRenderer;
     Simulation* appSim;
     int lastX;

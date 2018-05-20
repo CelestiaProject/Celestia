@@ -13,7 +13,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celestiacore.h"
+//#include "celestiacore.h"
+#include "CelestiaCoreApplication.h"
 #include "favorites.h"
 #include "url.h"
 #include <celengine/astro.h>
@@ -380,7 +381,8 @@ CelestiaCore::CelestiaCore() :
     showViewFrames(true),
     resizeSplit(0),
     screenDpi(96),
-    distanceToScreen(400)
+    distanceToScreen(400),
+    audioMan(NULL)
 {
     /* Get a renderer here so it may be queried for capabilities of the
        underlying engine even before rendering is enabled. It's initRenderer()
@@ -638,7 +640,7 @@ void CelestiaCore::runScript(const string& filename)
         if (celxScript == NULL)
         {
             celxScript = new LuaState();
-            celxScript->init(this);
+            celxScript->init(((CelestiaCoreApplication*)this));
         }
 
         int status = celxScript->loadScript(scriptfile, localeFilename);
@@ -1666,7 +1668,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         if (sim->getPauseState() == true)
         {
 
-            //pauseSounds();
+            resumeSounds();
 
             if (scriptState == ScriptPaused)
                 scriptState = ScriptRunning;
@@ -1686,7 +1688,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 #endif
             {
 
-//                pauseSounds();
+                pauseSounds();
 
                 if (scriptState == ScriptRunning)
                     scriptState = ScriptPaused;
@@ -5292,7 +5294,7 @@ class LuaPathFinder : public EnumFilesHandler
 bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
 {
     luaHook = new LuaState();
-    luaHook->init(this);
+    luaHook->init(((CelestiaCoreApplication*)this));
 
     string LuaPath = "?.lua;celxx/?.lua;";
 
@@ -5391,7 +5393,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
     else
     {
         luaSandbox = new LuaState();
-        luaSandbox->init(this);
+        luaSandbox->init(((CelestiaCoreApplication*)this));
 
         // Allow access to functions in package because we need 'require'
         // But, loadlib is prohibited.

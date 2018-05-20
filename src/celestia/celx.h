@@ -31,7 +31,7 @@ extern "C" {
 #include <celutil/timer.h>
 #include <celengine/observer.h>
 
-class CelestiaCore;
+class CelestiaCoreApplication;
 class View;
 
 class LuaState
@@ -44,7 +44,7 @@ public:
 
     int loadScript(std::istream&, const std::string& streamname);
     int loadScript(const std::string&);
-    bool init(CelestiaCore*);
+    bool init(CelestiaCoreApplication*);
 
     std::string getErrorMessage();
 
@@ -94,7 +94,7 @@ private:
     bool eventHandlerEnabled;
 };
 
-View* getViewByObserver(CelestiaCore*, Observer*);
-void getObservers(CelestiaCore*, std::vector<Observer*>&);
+View* getViewByObserver(CelestiaCoreApplication*, Observer*);
+void getObservers(CelestiaCoreApplication*, std::vector<Observer*>&);
 
 #endif // _CELESTIA_CELX_H_

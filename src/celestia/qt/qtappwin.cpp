@@ -59,6 +59,8 @@
 #include "celestia/url.h"
 #include "qtbookmark.h"
 
+#include "QtAudioManager.h"
+
 #if defined(_WIN32)
 #include "celestia/avicapture.h"
 
@@ -266,6 +268,8 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     m_appCore->setCursorHandler(glWidget);
     m_appCore->setContextMenuCallback(ContextMenu);
     MainWindowInstance = this; // TODO: Fix context menu callback
+
+    m_appCore->setAudioManager(new QtAudioManager);
 
     setCentralWidget(glWidget);
 

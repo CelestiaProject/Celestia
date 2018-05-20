@@ -8,6 +8,7 @@ RCC_DIR = rcc
 
 QT += opengl
 QT += xml
+QT += multimedia
 
 unix {
     !exists(config.h):system(touch config.h)
@@ -339,6 +340,7 @@ APP_HEADERS = \
     src/celestia/imagecapture.h \
     src/celestia/scriptmenu.h \
     src/celestia/url.h \
+    src/celestia/AbstractAudioManager.h \
     src/celestia/celx.h \
         src/celestia/celx_celestia.h \
         src/celestia/celx_internal.h \
@@ -375,7 +377,8 @@ QTAPP_SOURCES = \
     src/celestia/qt/qtinfopanel.cpp \
     src/celestia/qt/qteventfinder.cpp \
     src/celestia/qt/qtsettimedialog.cpp \
-    src/celestia/qt/xbel.cpp
+    src/celestia/qt/xbel.cpp \
+    src/celestia/qt/QtAudioManager.cpp
 
 QTAPP_HEADERS = \
     src/celestia/qt/qtappwin.h \
@@ -392,7 +395,8 @@ QTAPP_HEADERS = \
     src/celestia/qt/qtinfopanel.h \
     src/celestia/qt/qteventfinder.h \
     src/celestia/qt/qtsettimedialog.h \
-    src/celestia/qt/xbel.h
+    src/celestia/qt/xbel.h \
+    src/celestia/qt/QtAudioManager.h
 
 # Third party libraries
 
@@ -604,7 +608,8 @@ unix {
 
     CONFIG += link_pkgconfig
 
-    LUALIST = lua53 lua52 lua51 lua
+    LUALIST = lua lua51 lua52 lua53
+
     for(libpc, LUALIST):system(pkg-config --exists $${libpc}):LUAPC = $${libpc}
     isEmpty (LUAPC) {error("No shared Lua library found!")}
 
