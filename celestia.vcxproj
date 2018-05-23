@@ -80,13 +80,13 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LIBINTL_STATIC;CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>legacy_stdio_definitions.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;winmm.lib;vfw32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;winmm.lib;vfw32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>.\windows\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -102,13 +102,13 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LIBINTL_STATIC;CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;comctl32.lib;winmm.lib;vfw32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice64.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;comctl32.lib;winmm.lib;vfw32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>.\windows\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -124,14 +124,14 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LIBINTL_STATIC;CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;EIGEN_NO_DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>legacy_stdio_definitions.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;winmm.lib;vfw32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;winmm.lib;vfw32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>.\windows\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -149,14 +149,14 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LIBINTL_STATIC;CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;EIGEN_NO_DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;comctl32.lib;winmm.lib;vfw32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice64.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;comctl32.lib;winmm.lib;vfw32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>.\windows\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>

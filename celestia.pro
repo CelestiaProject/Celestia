@@ -553,7 +553,6 @@ release {
 
 win32 {
     INCLUDEPATH += \
-        windows/inc/fmod \
         windows/inc/libintl \
         windows/inc/libz \
         windows/inc/libpng \
@@ -567,7 +566,6 @@ win32 {
 	
    !contains(QMAKE_TARGET.arch, x86_64) {
     LIBS += -L$$PWD/windows/lib/x86 \
-        -lfmod_vc \
         -lzlib \
         -llibpng \
         -llibjpeg \
@@ -578,7 +576,6 @@ win32 {
 }
 else{
     LIBS += -L$$PWD/windows/lib/x64 \
-        -lfmod64_vc \
         -lzlib \
         -llibpng \
         -llibjpeg \
