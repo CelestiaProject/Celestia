@@ -3,67 +3,50 @@
 -- First patch for audio support in Celestia by Victor (vhpgomes).
 -- Patch modification by Vincent (added pause/resume parameters).
 -- Patch modification by Alexell (added pan parameter and adapted for FMOD library).
+-- Rewritten by Pirogronian (added virtual common interface and basic implementation in Qt)
 -- First patch information: https://celestiaproject.net/forum/viewtopic.php?t=8624
 --
---  This command accepts 6 arguments:
+--  This command accepts 5 arguments:
 --  
---  celestia:play ( int [channel], float [volume], float [pan], int [loop], str [filename], int [nopause] )
+--  celestia:play ( int [channel], float [volume], bool [loop], bool [nopause], str [filename] )
 --  
 --  channel - specifies the channel that'll be affected by this call.
---            If not given, will assume the default value of 0, You can provide any number between 0 and 7.
---            Any number out of this range will cause the script to fail.
+--            If not given, will assume the default value of 0, You can provide any number.
 --
 --  volume  - specifies the new volume of this channel. If not given, the volume of the channel will remain unchanged.
 --            It starts with the volume 1.0. You can specify any number between 0.0 (minimum, mute) and 1.0 (maximum).
 --            If the number given is negative, the value is ignored, and the volume remains unchanged.
 --            If the number is bigger than 1.0, the volume will be set to the maximum volume, 1.0.
 --
---  pan     - specifies the pan for the channel.
---            If not given, the sound will be centered (default value of 0).
---            The level relationship between the left and right channels must be specified in the range
---            from -1.0 to 1.0. The value -1.0 is only the left channel. The value 0.0 is centered.
---            Value 1.0 is just the right channel.
 --
 --  loop    - specifies if the sound file will be played in looping or not.
 --            If not given, the looping mode of the channel will remain unchanged.
---            It starts with looping off. The value 1 turns the looping on. Any other value turns the looping off.
+--            It starts with looping off. The value true turns the looping on.
+--
+--  nopause - parameter that allows a particular sound channel to be paused or not paused on any channel when the spacebar is pressed.
+--            Value false - allow pause by spacebar, value true - disallow.
 --
 --  filename- name of the file that will be played. If only the file name is specified, then the subfolder "sounds" is searched.
 --            I.e. in this case the path is relative to the directory "Celestia\sounds". 
 --            If the file is located in a different folder, you must specify the full path to it.
---
---  nopause - parameter that allows a particular sound channel to be paused or not paused on any channel when the spacebar is pressed.
---            Value 0 - allow pause by spacebar, value 1 - disallow.
 --  ------------------------------------------------------------------------------------------------------
 
 celestia:print ( "Welcome!\n\nYou start an audio playback script.", 5.0, -1, -1, 3, 5 )
 wait (5)
 
-celestia:play ( 0, 1, 0, -1, "music.mp3", 1 )
+celestia:play ( 0, 1, true, true, "music.mp3")
 
 wait (2)
 celestia:print ( "Background music playing (channel 0).", 5.0, -1, -1, 3, 3 )
 wait (8)
 
-celestia:play ( 1, 1, 0, 0, "comment.mp3" )
+celestia:play ( 1, 1, false, false, "comment.mp3" )
 
 wait (2)
 celestia:print ( "Voice comments (channel 1).", 5.0, -1, -1, 3, 3 )
 wait (5)
 
---Set the channel 0 panorama to the left speaker
-celestia:play ( 0, 1, -1 )
--- Wait for 5 seconds
-wait (5)
--- ... and set the channel 0 panorama to the right speaker
-celestia:play ( 0, 1, 1 )
--- Wait for 5 seconds
-wait (5)
---  ... and set the channel 0 panorama to the center
-celestia:play ( 0, 1, 0 )
-wait (2)
-
-celestia:print ( "Simultaneously, you can play 8 channels (0-7).", 5.0, -1, -1, 3, 3 )
+celestia:print ( "Simultaneously, you can play ony number of channels.", 5.0, -1, -1, 3, 3 )
 wait (7)
 celestia:print ( "Now smoothly reduce the volume of the channel 0.", 8.0, -1, -1, 3, 3 )
 
@@ -80,8 +63,8 @@ celestia:play ( 0, 0.1 )
 wait (2)
 
 -- Before the script ends, you need to stop the playback of the running channels (filename = "").
-celestia:play ( 0, -1, 0, 0, "" )
-celestia:play ( 1, -1, 0, 0, "" )
+celestia:play ( 0, -1, false, false, "" )
+celestia:play ( 1, -1, false, false, "" )
 
 celestia:print ( "End of script...", 8.0, -1, -1, 3, 5 )
 wait (8)

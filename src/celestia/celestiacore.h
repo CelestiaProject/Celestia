@@ -82,9 +82,7 @@
 #include "celx.h"
 #endif
 
-//#include "fmod.hpp"
-//#include "fmod_errors.h"
-#define MAX_CHANNELS    8
+#include "AbstractAudioManager.h"
 
 class Url;
 
@@ -478,6 +476,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     };
     ScriptState scriptState;
 
+    AbstractAudioManager *audioMan;
+
     int timeZoneBias;              // Diff in secs between local time and GMT
     std:: string timeZoneName;     // Name of the current time zone
 
@@ -541,23 +541,48 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     friend TextureFont* getTitleFont(CelestiaCore*);
 #endif
 
-    //Audio support by Victor, modified by Vincent & Alexell
-//    FMOD::System       *sysaudio;
-//    FMOD::Sound        *soundSources[MAX_CHANNELS];
-//    FMOD::Channel      *channels[MAX_CHANNELS];
-//    FMOD_RESULT         result;
-//    unsigned int        version;
-//
-//    void stopSounds();
-//    //Added by Vincent:
-//    void pauseSounds();
-//    //void resumeSounds();
-//    bool pause[7];
-//
-// public:
-//    void playSoundFile(int, float, float, int, const std::string&, int);
+    public:
+// Sound support by Pirogronian
+    void setAudioManager(AbstractAudioManager *aamp) { audioMan = aamp; }
+    AbstractAudioManager *getAudioManager() { return audioMan; }
 
- public:
+    void playSoundFile(int channel, double volume, bool loop, const char *fname, bool nopause) {
+        cout << "playAudioFile(" << channel << ", " << volume << ", " <<  loop << ", " << fname << ", " << nopause << ")\n";
+        AbstractAudioManager *man = getAudioManager();
+        if (man == NULL) {
+            cout << _("playSoundFile(): no audio manager.") << '\n';
+            return;
+        }
+        man->playChannel(channel, volume, loop, fname, nopause);
+    }
+
+    void stopSounds() {
+        AbstractAudioManager *man = getAudioManager();
+        if (man == NULL) {
+            cout << _("StopSounds(): no audio manager.") << '\n';
+            return;
+        }
+        man->stopAll();
+    }
+
+    void pauseSounds() {
+        AbstractAudioManager *man = getAudioManager();
+        if (man == NULL) {
+            cout << _("PauseSounds(): no audio manager.") << '\n';
+            return;
+        }
+        man->pauseAll();
+    }
+
+    void resumeSounds() {
+        AbstractAudioManager *man = getAudioManager();
+        if (man == NULL) {
+            cout << _("ResumeSounds(): no audio manager.") << '\n';
+            return;
+        }
+        man->resumeAll();
+    }
+
     void setScriptImage(double, float, float, float, const std::string&, int);
 
 };

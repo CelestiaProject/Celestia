@@ -81,7 +81,7 @@ const Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
 const unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
 
 
-CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, CelestiaCore* core) :
+CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, CelestiaCoreApplication* core) :
     QGLWidget(parent)
 {
     setFocusPolicy(Qt::ClickFocus);
