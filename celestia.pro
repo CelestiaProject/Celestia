@@ -608,9 +608,11 @@ unix {
 
     CONFIG += link_pkgconfig
 
-    LUALIST = lua lua51 lua52 lua53
+    if(system(pkg-config --exists lua)):LUAPC = "lua"
+    if(system(pkg-config --exists lua51)):LUAPC = "lua51"
+    if(system(pkg-config --exists lua52)):LUAPC = "lua52"
+    if(system(pkg-config --exists lua53)):LUAPC = "lua53"
 
-    for(libpc, LUALIST):system(pkg-config --exists $${libpc}):LUAPC = $${libpc}
     isEmpty (LUAPC) {error("No shared Lua library found!")}
 
     equals(LUAPC, "lua53"): DEFINES += LUA_VER=0x050300
