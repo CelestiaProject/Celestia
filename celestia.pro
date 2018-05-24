@@ -589,6 +589,7 @@ else{
 
     # Disable the regrettable min and max macros in windows.h
     DEFINES += NOMINMAX
+    DEFINES += LUA_VER=0x050100
 
 }
 
@@ -636,6 +637,7 @@ macx {
     LIBS += -L$$FRAMEWORKPATH
     DEFINES += PNG_SUPPORT
     DEFINES += TARGET_OS_MAC __AIFF__
+    DEFINES += LUA_VER=0x050100
 
     FRAMEWORKS.files = $$FRAMEWORKPATH/liblua.dylib $$FRAMEWORKPATH/libpng.dylib
     FRAMEWORKS.path = Contents/Frameworks
