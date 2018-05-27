@@ -1,4 +1,5 @@
 // qtcelestiaactions.cpp
+// Renamed to QtCelestiaOptions.cpp 27.05.2018 by Pirogronian
 //
 // Copyright (C) 2008, Celestia Development Team
 // celestia-developers@lists.sourceforge.net
@@ -13,11 +14,11 @@
 #include <QAction>
 #include <QMenu>
 #include "celestia/qt/QtCelestiaCoreApplication.h"
-#include "qtcelestiaactions.h"
+#include "QtCelestiaOptions.h"
 
 using namespace CelestiaQt;
 
-CelestiaActions::CelestiaActions(QObject* parent,
+CelestiaOptions::CelestiaOptions(QObject* parent,
                                  QtCelestiaCoreApplication* _appCore) :
     QObject(parent),
 
@@ -251,13 +252,13 @@ CelestiaActions::CelestiaActions(QObject* parent,
 }
 
 
-CelestiaActions::~CelestiaActions()
+CelestiaOptions::~CelestiaOptions()
 {
     appCore->getRenderer()->removeWatcher(this);
 }
 
 
-void CelestiaActions::syncWithRenderer(const Renderer* renderer)
+void CelestiaOptions::syncWithRenderer(const Renderer* renderer)
 {
     int renderFlags = renderer->getRenderFlags();
     int labelMode = renderer->getLabelMode();
@@ -331,19 +332,19 @@ void CelestiaActions::syncWithRenderer(const Renderer* renderer)
 }
 
 
-void CelestiaActions::syncWithAppCore()
+void CelestiaOptions::syncWithAppCore()
 {
     lightTimeDelayAction->setChecked(appCore->getLightDelayActive());
 }
 
 
-void CelestiaActions::notifyRenderSettingsChanged(const Renderer* renderer)
+void CelestiaOptions::notifyRenderSettingsChanged(const Renderer* renderer)
 {
     syncWithRenderer(renderer);
 }
 
 
-void CelestiaActions::slotToggleRenderFlag()
+void CelestiaOptions::slotToggleRenderFlag()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
@@ -354,7 +355,7 @@ void CelestiaActions::slotToggleRenderFlag()
 }
 
 
-void CelestiaActions::slotToggleLabel()
+void CelestiaOptions::slotToggleLabel()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
@@ -365,7 +366,7 @@ void CelestiaActions::slotToggleLabel()
 }
 
 
-void CelestiaActions::slotToggleOrbit()
+void CelestiaOptions::slotToggleOrbit()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
@@ -376,7 +377,7 @@ void CelestiaActions::slotToggleOrbit()
 }
 
 
-void CelestiaActions::slotSetStarStyle()
+void CelestiaOptions::slotSetStarStyle()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
@@ -387,7 +388,7 @@ void CelestiaActions::slotSetStarStyle()
 }
 
 
-void CelestiaActions::slotSetTextureResolution()
+void CelestiaOptions::slotSetTextureResolution()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
@@ -398,7 +399,7 @@ void CelestiaActions::slotSetTextureResolution()
 }
 
 
-void CelestiaActions::slotAdjustLimitingMagnitude()
+void CelestiaOptions::slotAdjustLimitingMagnitude()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
@@ -430,7 +431,7 @@ void CelestiaActions::slotAdjustLimitingMagnitude()
 
 // Convenience method to create a checkable action for a menu and set the data
 // to the specified integer value.
-QAction* CelestiaActions::createCheckableAction(const QString& text, QMenu* menu, int data)
+QAction* CelestiaOptions::createCheckableAction(const QString& text, QMenu* menu, int data)
 {
     QAction* act = new QAction(text, menu);
     act->setCheckable(true);
@@ -443,7 +444,7 @@ QAction* CelestiaActions::createCheckableAction(const QString& text, QMenu* menu
 
 // Convenience method to create a checkable action and set the data
 // to the specified integer value.
-QAction* CelestiaActions::createCheckableAction(const QString& text, int data)
+QAction* CelestiaOptions::createCheckableAction(const QString& text, int data)
 {
     QAction* act = new QAction(text, this);
     act->setCheckable(true);

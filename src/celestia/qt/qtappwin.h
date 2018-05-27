@@ -23,7 +23,7 @@ class CelestiaGlWidget;
 class CelestialBrowser;
 class InfoPanel;
 class EventFinder;
-class CelestiaActions;
+class CelestiaOptions;
 
 
 class PreferencesDialog;
@@ -111,7 +111,7 @@ class CelestiaAppWindow : public QMainWindow
 
     QtCelestiaCoreApplication* m_appCore;
 
-    CelestiaActions* actions;
+    CelestiaOptions* options;
 
     QMenu* fileMenu;
     QMenu* navMenu;

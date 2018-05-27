@@ -50,7 +50,7 @@
 #include "qtdeepskybrowser.h"
 #include "qtselectionpopup.h"
 #include "qttimetoolbar.h"
-#include "qtcelestiaactions.h"
+#include "QtCelestiaOptions.h"
 #include "qtinfopanel.h"
 #include "qteventfinder.h"
 #include "qtsettimedialog.h"
@@ -147,7 +147,7 @@ CelestiaAppWindow::CelestiaAppWindow( QWidget* parent ) : // Leserg
     glWidget(NULL),
     celestialBrowser(NULL),
     m_appCore(NULL),
-    actions(NULL),
+    options(NULL),
     fileMenu(NULL),
     navMenu(NULL),
     timeMenu(NULL),
@@ -276,7 +276,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     setWindowTitle("Celestia");
 
-    actions = new CelestiaActions(this, m_appCore);
+    options = new CelestiaOptions(this, m_appCore);
 
     createMenus();
 
@@ -347,16 +347,16 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     guidesToolBar->setMovable(true);
     guidesToolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
 
-    guidesToolBar->addAction(actions->equatorialGridAction);
-    guidesToolBar->addAction(actions->galacticGridAction);
-    guidesToolBar->addAction(actions->eclipticGridAction);
-    guidesToolBar->addAction(actions->horizonGridAction);
-    guidesToolBar->addAction(actions->eclipticAction);
-    guidesToolBar->addAction(actions->markersAction);
-    guidesToolBar->addAction(actions->constellationsAction);
-    guidesToolBar->addAction(actions->boundariesAction);
-    guidesToolBar->addAction(actions->orbitsAction);
-    guidesToolBar->addAction(actions->labelsAction);
+    guidesToolBar->addAction(options->equatorialGridAction);
+    guidesToolBar->addAction(options->galacticGridAction);
+    guidesToolBar->addAction(options->eclipticGridAction);
+    guidesToolBar->addAction(options->horizonGridAction);
+    guidesToolBar->addAction(options->eclipticAction);
+    guidesToolBar->addAction(options->markersAction);
+    guidesToolBar->addAction(options->constellationsAction);
+    guidesToolBar->addAction(options->boundariesAction);
+    guidesToolBar->addAction(options->orbitsAction);
+    guidesToolBar->addAction(options->labelsAction);
 
     addToolBar(Qt::TopToolBarArea, guidesToolBar);
 
@@ -1180,37 +1180,37 @@ void CelestiaAppWindow::createMenus()
     connect(setTimeAct, SIGNAL(triggered()), this, SLOT(slotShowTimeDialog()));
     timeMenu->addAction(setTimeAct);
 
-    timeMenu->addAction(actions->lightTimeDelayAction);
+    timeMenu->addAction(options->lightTimeDelayAction);
 
 
     /****** Display menu ******/
     displayMenu = menuBar()->addMenu(_("&Display"));
-    displayMenu->addAction(actions->atmospheresAction);
-    displayMenu->addAction(actions->cloudsAction);
-    displayMenu->addAction(actions->cometTailsAction);
-    displayMenu->addAction(actions->nightSideLightsAction);
+    displayMenu->addAction(options->atmospheresAction);
+    displayMenu->addAction(options->cloudsAction);
+    displayMenu->addAction(options->cometTailsAction);
+    displayMenu->addAction(options->nightSideLightsAction);
 
     QMenu* deepSkyMenu = displayMenu->addMenu(_("Dee&p Sky Objects"));
-    deepSkyMenu->addAction(actions->galaxiesAction);
-    deepSkyMenu->addAction(actions->globularsAction);
-    deepSkyMenu->addAction(actions->openClustersAction);
-    deepSkyMenu->addAction(actions->nebulaeAction);
+    deepSkyMenu->addAction(options->galaxiesAction);
+    deepSkyMenu->addAction(options->globularsAction);
+    deepSkyMenu->addAction(options->openClustersAction);
+    deepSkyMenu->addAction(options->nebulaeAction);
 
     QMenu* shadowMenu = displayMenu->addMenu(_("&Shadows"));
-    shadowMenu->addAction(actions->ringShadowsAction);
-    shadowMenu->addAction(actions->eclipseShadowsAction);
-    shadowMenu->addAction(actions->cloudShadowsAction);
+    shadowMenu->addAction(options->ringShadowsAction);
+    shadowMenu->addAction(options->eclipseShadowsAction);
+    shadowMenu->addAction(options->cloudShadowsAction);
 
     displayMenu->addSeparator();
 
-    displayMenu->addAction(actions->increaseLimitingMagAction);
-    displayMenu->addAction(actions->decreaseLimitingMagAction);
-    displayMenu->addAction(actions->autoMagAction);
+    displayMenu->addAction(options->increaseLimitingMagAction);
+    displayMenu->addAction(options->decreaseLimitingMagAction);
+    displayMenu->addAction(options->autoMagAction);
 
     QMenu* starStyleMenu = displayMenu->addMenu(_("Star St&yle"));
-    starStyleMenu->addAction(actions->pointStarAction);
-    starStyleMenu->addAction(actions->fuzzyPointStarAction);
-    starStyleMenu->addAction(actions->scaledDiscStarAction);
+    starStyleMenu->addAction(options->pointStarAction);
+    starStyleMenu->addAction(options->fuzzyPointStarAction);
+    starStyleMenu->addAction(options->scaledDiscStarAction);
 
     QAction *toggleStarStyleAction = new QAction(QString(_("Toggle star style")), this);
     toggleStarStyleAction->setShortcut(QString("Ctrl+S"));
@@ -1220,9 +1220,9 @@ void CelestiaAppWindow::createMenus()
     displayMenu->addSeparator();
 
     QMenu* textureResolutionMenu = displayMenu->addMenu(_("Texture &Resolution"));
-    textureResolutionMenu->addAction(actions->lowResAction);
-    textureResolutionMenu->addAction(actions->mediumResAction);
-    textureResolutionMenu->addAction(actions->highResAction);
+    textureResolutionMenu->addAction(options->lowResAction);
+    textureResolutionMenu->addAction(options->mediumResAction);
+    textureResolutionMenu->addAction(options->highResAction);
 
 
     /****** Bookmark menu ******/
@@ -1272,7 +1272,7 @@ void CelestiaAppWindow::createMenus()
     connect(framesVisibleAction, SIGNAL(triggered()), this, SLOT(slotToggleFramesVisible()));
     multiviewMenu->addAction(framesVisibleAction);
 
-    // The toggle actions below shall have their settings saved:
+    // The toggle options below shall have their settings saved:
     bool check;
     QSettings settings;
     settings.beginGroup("Preferences");
