@@ -18,7 +18,9 @@
 
 class QMenu;
 class QAction;
-class CelestiaCoreApplication;
+namespace CelestiaQt {
+    class QtCelestiaCoreApplication;
+}
 
 
 class CelestiaActions : public QObject, public RendererWatcher
@@ -26,7 +28,7 @@ class CelestiaActions : public QObject, public RendererWatcher
 Q_OBJECT
 
  public:
-    CelestiaActions(QObject *parent, CelestiaCoreApplication* appCore);
+    CelestiaActions(QObject *parent, CelestiaQt::QtCelestiaCoreApplication* appCore);
     ~CelestiaActions();
 
     virtual void notifyRenderSettingsChanged(const Renderer* renderer);
@@ -38,7 +40,7 @@ Q_OBJECT
     void slotSetStarStyle();
     void slotSetTextureResolution();
     void slotAdjustLimitingMagnitude();
-    void slotSetLightTimeDelay();
+//    void slotSetLightTimeDelay();
 
  private:
     void syncWithRenderer(const Renderer* renderer);
@@ -116,7 +118,7 @@ Q_OBJECT
     QAction* decreaseLimitingMagAction;
 
  private:
-    CelestiaCoreApplication* appCore;
+    CelestiaQt::QtCelestiaCoreApplication* appCore;
 };
 
 #endif // _CELESTIAACTIONS_H_

@@ -27,6 +27,7 @@
 #include <qtextcodec.h>
 
 using namespace std;
+using namespace CelestiaQt;
 
 extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 //static const char *description = "Celestia";

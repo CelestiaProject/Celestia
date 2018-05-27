@@ -59,6 +59,9 @@
 #define TIMERATE_PRINTF_FORMAT "%'.12g"
 #endif
 
+#define dputs(m) \
+    printf(__FILE__": %i: %s\n", __LINE__, m)
+
 using namespace Eigen;
 using namespace std;
 

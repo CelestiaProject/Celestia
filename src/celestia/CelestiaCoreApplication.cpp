@@ -54,7 +54,7 @@ void CelestiaCoreApplication::cycleView()
     if (!showActiveViewFrame)  flashFrameStart = currentTime;
 }
 
-bool CelestiaCoreApplication::setLightTravelDelay(bool on) {
+bool CelestiaCoreApplication::setLightTravelDelayActive(bool on) {
     if (sim->getSelection().body() &&
         (sim->getTargetSpeed() < 0.99 * astro::speedOfLight))
     {

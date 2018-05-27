@@ -78,6 +78,7 @@
 #define daylight 8
 #define tzname "tzname"
 using namespace std;
+using namespace CelestiaQt;
 
 
 QString DEFAULT_CONFIG_FILE = "celestia.cfg";
@@ -232,7 +233,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     initAppDataDirectory();
 
-    m_appCore = new CelestiaCoreApplication();
+    m_appCore = new QtCelestiaCoreApplication();
 
     AppProgressNotifier* progress = new AppProgressNotifier(this);
     alerter = new AppAlerter(this);
@@ -803,31 +804,6 @@ void CelestiaAppWindow::handleCelUrl(const QUrl& url)
     }
 }
 
-
-void CelestiaAppWindow::selectSun()
-{
-    m_appCore->selectStar(0);
-}
-
-
-void CelestiaAppWindow::centerSelection()
-{
-    m_appCore->centerSelection();
-}
-
-
-void CelestiaAppWindow::gotoSelection()
-{
-    m_appCore->gotoSelection(5);
-}
-
-void CelestiaAppWindow::follow()
-{
-    m_appCore->addToHistory();
-    m_appCore->flash(_("Follow"));
-    m_appCore->getSimulation()->follow();
-}
-
 void CelestiaAppWindow::slotPreferences()
 {
     PreferencesDialog dlg(this, m_appCore);
@@ -844,31 +820,6 @@ void CelestiaAppWindow::slotPreferences()
 #endif
 }
 
-void CelestiaAppWindow::slotSplitViewVertically()
-{
-    m_appCore->splitView(View::VerticalSplit);
-}
-
-void CelestiaAppWindow::slotSplitViewHorizontally()
-{
-    m_appCore->splitView(View::HorizontalSplit);
-}
-
-void CelestiaAppWindow::slotCycleView()
-{
-    m_appCore->cycleView();
-}
-
-void CelestiaAppWindow::slotSingleView()
-{
-    m_appCore->singleView();
-}
-
-void CelestiaAppWindow::slotDeleteView()
-{
-    m_appCore->deleteView();
-}
-
 void CelestiaAppWindow::slotToggleFramesVisible()
 {
     m_appCore->setFramesVisible(!m_appCore->getFramesVisible());
@@ -882,25 +833,6 @@ void CelestiaAppWindow::slotToggleActiveFrameVisible()
 void CelestiaAppWindow::slotToggleSyncTime()
 {
     m_appCore->getSimulation()->setSyncTime(!m_appCore->getSimulation()->getSyncTime());
-}
-
-void CelestiaAppWindow::slotToggleStarStyle() {
-    m_appCore->setStarStyle((Renderer::StarStyle) (((int) m_appCore->getStarStyle() + 1) %
-                                                      (int) Renderer::StarStyleCount));
-    switch (m_appCore->getStarStyle())
-    {
-    case Renderer::FuzzyPointStars:
-        m_appCore->flash(_("Star style: fuzzy points"));
-        break;
-    case Renderer::PointStars:
-        m_appCore->flash(_("Star style: points"));
-        break;
-    case Renderer::ScaledDiscStars:
-        m_appCore->flash(_("Star style: scaled discs"));
-        break;
-    default:
-        break;
-    }
 }
 
 void CelestiaAppWindow::slotShowObjectInfo(Selection& sel)
@@ -1215,28 +1147,30 @@ void CelestiaAppWindow::createMenus()
     navMenu = menuBar()->addMenu(_("&Navigation"));
 
     QAction* sunAct = new QAction(QIcon(":/icons/select_sol.png"), _("Select Sun"), this);
-    sunAct->setShortcut(QString("h"));
+    sunAct->setShortcut(Qt::Key_H);
     sunAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    connect(sunAct, SIGNAL(triggered()), this, SLOT(selectSun()));
+    connect(sunAct, &QAction::triggered, m_appCore, &QtCelestiaCoreApplication::selectSol);
     navMenu->addAction(sunAct);
 
     QAction* centerAct = new QAction(QIcon(":/icons/center-obj.png"), _("Center Selection"), this);
-    centerAct->setShortcut(QString("c"));
+    centerAct->setShortcut(Qt::Key_C);
     centerAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    connect(centerAct, SIGNAL(triggered()), this, SLOT(centerSelection()));
+    //connect(centerAct, SIGNAL(triggered()), this, SLOT(centerSelection()));
+    connect(centerAct, &QAction::triggered, m_appCore, &QtCelestiaCoreApplication::centerSelection);
     navMenu->addAction(centerAct);
 
     QAction* gotoAct = new QAction(QIcon(":/icons/go-jump.png"), _("Goto Selection"), this);
-    gotoAct->setShortcut(QString("g"));
+    gotoAct->setShortcut(Qt::Key_G);
     gotoAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    connect(gotoAct, SIGNAL(triggered()), this, SLOT(gotoSelection()));
+    //connect(gotoAct, SIGNAL(triggered()), this, SLOT(gotoSelection()));
+    connect(gotoAct, &QAction::triggered, m_appCore, &QtCelestiaCoreApplication::gotoSelection);
     navMenu->addAction(gotoAct);
 
 
     QAction* followAct = new QAction(_("Follow"), this);
-    followAct->setShortcut(QString("f"));
+    followAct->setShortcut(Qt::Key_F);
     followAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    connect(followAct, &QAction::triggered, this, &CelestiaAppWindow::follow);
+    connect(followAct, &QAction::triggered, m_appCore, &QtCelestiaCoreApplication::followObject);
     navMenu->addAction(followAct);
 
     /****** Time menu ******/
@@ -1280,7 +1214,7 @@ void CelestiaAppWindow::createMenus()
 
     QAction *toggleStarStyleAction = new QAction(QString(_("Toggle star style")), this);
     toggleStarStyleAction->setShortcut(QString("Ctrl+S"));
-    connect(toggleStarStyleAction, &QAction::triggered, this, &CelestiaAppWindow::slotToggleStarStyle);
+    connect(toggleStarStyleAction, &QAction::triggered, m_appCore, &QtCelestiaCoreApplication::toggleStarStyle);
     starStyleMenu->addAction(toggleStarStyleAction);
 
     displayMenu->addSeparator();
@@ -1303,32 +1237,32 @@ void CelestiaAppWindow::createMenus()
     QAction* splitViewVertAction = new QAction(QIcon(":/icons/split-vert.png"),
                                                _("Split view vertically"), this);
     splitViewVertAction->setShortcut(QString("Ctrl+R"));
-    connect(splitViewVertAction, SIGNAL(triggered()), this, SLOT(slotSplitViewVertically()));
+    connect(splitViewVertAction, &QAction::triggered, m_appCore, &QtCelestiaCoreApplication::splitViewVertically);
     multiviewMenu->addAction(splitViewVertAction);
 
     QAction* splitViewHorizAction = new QAction(QIcon(":/icons/split-horiz.png"),
                                                 _("Split view horizontally"), this);
     splitViewHorizAction->setShortcut(QString("Ctrl+U"));
-    connect(splitViewHorizAction, SIGNAL(triggered()), this, SLOT(slotSplitViewHorizontally()));
+    connect(splitViewHorizAction, &QAction::triggered, m_appCore, &QtCelestiaCoreApplication::splitViewHorizontally);
     multiviewMenu->addAction(splitViewHorizAction);
 
     QAction* cycleViewAction = new QAction(QIcon(":/icons/split-cycle.png"),
                                            _("Cycle views"), this);
     cycleViewAction->setShortcut(QString("Tab"));
     cycleViewAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    connect(cycleViewAction, SIGNAL(triggered()), this, SLOT(slotCycleView()));
+    connect(cycleViewAction, &QAction::triggered, m_appCore, &QtCelestiaCoreApplication::cycleView);
     multiviewMenu->addAction(cycleViewAction);
 
     QAction* singleViewAction = new QAction(QIcon(":/icons/split-single.png"),
                                             _("Single view"), this);
     singleViewAction->setShortcut(QString("Ctrl+D"));
-    connect(singleViewAction, SIGNAL(triggered()), this, SLOT(slotSingleView()));
+    connect(singleViewAction, &QAction::triggered, m_appCore, &QtCelestiaCoreApplication::singleView);
     multiviewMenu->addAction(singleViewAction);
 
     QAction* deleteViewAction = new QAction(QIcon(":/icons/split-delete.png"),
                                             _("Delete view"), this);
     deleteViewAction->setShortcut(QString("Delete"));
-    connect(deleteViewAction, SIGNAL(triggered()), this, SLOT(slotDeleteView()));
+    connect(deleteViewAction, &QAction::triggered, m_appCore, &QtCelestiaCoreApplication::deleteView);
     multiviewMenu->addAction(deleteViewAction);
 
     multiviewMenu->addSeparator();

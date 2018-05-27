@@ -13,9 +13,8 @@
 #ifndef _QTAPPWIN_H_
 #define _QTAPPWIN_H_
 
-#include <celestia/CelestiaCoreApplication.h>
+#include <celestia/qt/QtCelestiaCoreApplication.h>
 #include <QMainWindow>
-
 
 class QMenu;
 class QCloseEvent;
@@ -31,6 +30,8 @@ class PreferencesDialog;
 class BookmarkManager;
 class BookmarkToolBar;
 class QUrl;
+
+namespace CelestiaQt {
 
 class CelestiaAppWindow : public QMainWindow
 {
@@ -64,23 +65,11 @@ class CelestiaAppWindow : public QMainWindow
     void slotCopyURL();
     void slotPasteURL();
 
-    void centerSelection();
-    void gotoSelection();
-    void selectSun();
-    void follow();
-
     void slotPreferences();
 
-    void slotSplitViewVertically();
-    void slotSplitViewHorizontally();
-    void slotCycleView();
-    void slotSingleView();
-    void slotDeleteView();
     void slotToggleFramesVisible();
     void slotToggleActiveFrameVisible();
     void slotToggleSyncTime();
-    
-    void slotToggleStarStyle();
 
     void slotShowObjectInfo(Selection& sel);
 
@@ -120,7 +109,7 @@ class CelestiaAppWindow : public QMainWindow
     QDockWidget* toolsDock;
     CelestialBrowser* celestialBrowser;
 
-    CelestiaCoreApplication* m_appCore;
+    QtCelestiaCoreApplication* m_appCore;
 
     CelestiaActions* actions;
 
@@ -144,5 +133,6 @@ class CelestiaAppWindow : public QMainWindow
     QString m_dataDirPath;
 };
 
+}
 
 #endif // _QTAPPWIN_H_

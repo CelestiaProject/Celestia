@@ -12,12 +12,13 @@
 
 #include <QAction>
 #include <QMenu>
-#include "celestia/CelestiaCoreApplication.h"
+#include "celestia/qt/QtCelestiaCoreApplication.h"
 #include "qtcelestiaactions.h"
 
+using namespace CelestiaQt;
 
 CelestiaActions::CelestiaActions(QObject* parent,
-                                 CelestiaCoreApplication* _appCore) :
+                                 QtCelestiaCoreApplication* _appCore) :
     QObject(parent),
 
     equatorialGridAction(NULL),
@@ -66,7 +67,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     equatorialGridAction = new QAction(_("Eq"), this);
     equatorialGridAction->setToolTip(_("Equatorial coordinate grid"));
     equatorialGridAction->setCheckable(true);
-    equatorialGridAction->setData(Renderer::ShowCelestialSphere);
+//    equatorialGridAction->setData(Renderer::ShowCelestialSphere);
 
     galacticGridAction = new QAction(_("Ga"), this);
     galacticGridAction->setToolTip(_("Galactic coordinate grid"));
@@ -108,15 +109,15 @@ CelestiaActions::CelestiaActions(QObject* parent,
     orbitsAction->setCheckable(true);
     orbitsAction->setData(Renderer::ShowOrbits);
 
-    connect(equatorialGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(galacticGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(eclipticGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(horizonGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(eclipticAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(markersAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(constellationsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(boundariesAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(orbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(equatorialGridAction, &QAction::triggered, &(appCore->showCelestialSphereFlag), &RenderFlag::toggle);
+    connect(galacticGridAction, &QAction::triggered, &(appCore->showGalacticGridFlag), &RenderFlag::toggle);
+    connect(eclipticGridAction, &QAction::triggered, &(appCore->showEclipticGridFlag), &RenderFlag::toggle);
+    connect(horizonGridAction, &QAction::triggered, &(appCore->showHorizonGridFlag), &RenderFlag::toggle);
+    connect(eclipticAction, &QAction::triggered, &(appCore->showEclipticFlag), &RenderFlag::toggle);
+    connect(markersAction, &QAction::triggered, &(appCore->showMarkersFlag), &RenderFlag::toggle);
+    connect(constellationsAction, &QAction::triggered, &(appCore->showDiagramsFlag), &RenderFlag::toggle);
+    connect(boundariesAction, &QAction::triggered, &(appCore->showBoundariesFlag), &RenderFlag::toggle);
+    connect(orbitsAction, &QAction::triggered, &(appCore->showOrbitsFlag), &RenderFlag::toggle);
 
     // Orbit actions
     QMenu* orbitsMenu = new QMenu();
@@ -242,7 +243,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     lightTimeDelayAction->setCheckable(true);
     //lightTimeDelayAction->setShortcut(QString(_("-")));
     lightTimeDelayAction->setToolTip("Subtract one-way light travel time to selected object");
-    connect(lightTimeDelayAction, SIGNAL(triggered()), this, SLOT(slotSetLightTimeDelay()));
+    connect(lightTimeDelayAction, &QAction::triggered, appCore, &QtCelestiaCoreApplication::toggleLightTravelDelay);
 
     syncWithRenderer(appCore->getRenderer());
     syncWithAppCore();
@@ -348,7 +349,7 @@ void CelestiaActions::slotToggleRenderFlag()
     if (act != NULL)
     {
         int renderFlag = act->data().toInt();
-        appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() ^ renderFlag);
+        appCore->setRenderFlags(appCore->getRenderer()->getRenderFlags() ^ renderFlag);
     }
 }
 
@@ -381,7 +382,7 @@ void CelestiaActions::slotSetStarStyle()
     if (act != NULL)
     {
         Renderer::StarStyle starStyle = (Renderer::StarStyle) act->data().toInt();
-        appCore->getRenderer()->setStarStyle(starStyle);
+        appCore->setStarStyle(starStyle);
     }
 }
 
@@ -392,7 +393,7 @@ void CelestiaActions::slotSetTextureResolution()
     if (act != NULL)
     {
         int textureResolution = act->data().toInt();
-        appCore->getRenderer()->setResolution(textureResolution);
+        appCore->setTextureResolution(textureResolution);
     }
 }
 
@@ -423,28 +424,6 @@ void CelestiaActions::slotAdjustLimitingMagnitude()
         }
 
         appCore->flash(notification.toUtf8().data());
-    }
-}
-
-
-void CelestiaActions::slotSetLightTimeDelay()
-{
-    appCore->addToHistory();
-
-    if (appCore->setLightTravelDelay(!appCore->getLightDelayActive()))
-    {
-        if (appCore->getLightDelayActive())
-        {
-            appCore->flash(_("Light travel delay included"),2.0);
-        }
-        else
-        {
-            appCore->flash(_("Light travel delay switched off"),2.0);
-        }
-    }
-    else
-    {
-        appCore->flash(_("Light travel delay ignored"));
     }
 }
 

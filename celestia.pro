@@ -378,7 +378,8 @@ QTAPP_SOURCES = \
     src/celestia/qt/qteventfinder.cpp \
     src/celestia/qt/qtsettimedialog.cpp \
     src/celestia/qt/xbel.cpp \
-    src/celestia/qt/QtAudioManager.cpp
+    src/celestia/qt/QtAudioManager.cpp \
+    src/celestia/qt/QtCelestiaCoreApplication.cpp
 
 QTAPP_HEADERS = \
     src/celestia/qt/qtappwin.h \
@@ -396,7 +397,8 @@ QTAPP_HEADERS = \
     src/celestia/qt/qteventfinder.h \
     src/celestia/qt/qtsettimedialog.h \
     src/celestia/qt/xbel.h \
-    src/celestia/qt/QtAudioManager.h
+    src/celestia/qt/QtAudioManager.h \
+    src/celestia/qt/QtCelestiaCoreApplication.h
 
 # Third party libraries
 
@@ -587,7 +589,7 @@ else{
         -lvfw32\
         -llibintl
 }
-	LIBS +=opengl32.lib -lglu32 -luser32
+    LIBS +=opengl32.lib -lglu32 -luser32
 		
     SOURCES += src/celestia/avicapture.cpp
     HEADERS += src/celestia/avicapture.h
