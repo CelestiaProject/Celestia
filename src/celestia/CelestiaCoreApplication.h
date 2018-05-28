@@ -13,8 +13,8 @@ public:
     void setAutoMessagesOn() { autoMessages = true; }
     void setAutoMessagesOff() { autoMessages = false; }
     bool getAutoMessages() { return autoMessages; }
-    void aflash(const char *n) {
-        if (getAutoMessages())  flash(n);
+    void aflash(const char *n, double d = 1) {
+        if (getAutoMessages())  flash(n, d);
     }
 
     class RenderFlag {
@@ -39,13 +39,13 @@ public:
         void flashOff() { if (offMsg) core->aflash(offMsg); }
 
         void setOn() {
-            core->getRenderer()->setRenderFlags(core->getRenderer()->getRenderFlags() | flag);
+            core->setRenderFlags(core->getRenderFlags() | flag);
             core->notifyWatchers(RenderFlagsChanged);
             flashOn();
         }
 
         void setOff() {
-            core->getRenderer()->setRenderFlags(core->getRenderer()->getRenderFlags() & ~flag);
+            core->setRenderFlags(core->getRenderFlags() & ~flag);
             core->notifyWatchers(RenderFlagsChanged);
             flashOff();
         }
@@ -58,11 +58,11 @@ public:
         }
 
         void toggle() {
-            core->getRenderer()->setRenderFlags(core->getRenderer()->getRenderFlags() ^ flag);
+            core->setRenderFlags(core->getRenderFlags() ^ flag);
             core->notifyWatchers(RenderFlagsChanged);
         }
 
-        bool isSet() { return core->getRenderer()->getRenderFlags() & flag; }
+        bool isSet() { return core->getRenderFlags() & flag; }
     };
 
     // Text enter mode functions
@@ -86,6 +86,12 @@ public:
     void centerSelection() {
         addToHistory();
         getSimulation()->centerSelection();
+    }
+
+    void followObject() {
+        addToHistory();
+        aflash(_("Follow"));
+        getSimulation()->follow();
     }
 
     // goto functions
@@ -148,15 +154,71 @@ public:
     RenderFlag showEclipticFlag;
     RenderFlag showTintedIlluminationFlag;
 
+    int getRenderFlags() {
+        return getRenderer()->getRenderFlags();
+    }
+    
+    void setRenderFlags(int flags) {
+        getRenderer()->setRenderFlags(flags);
+    }
+    
     Renderer::StarStyle getStarStyle() { return getRenderer()->getStarStyle(); }
         void setStarStyle(Renderer::StarStyle style) {
         getRenderer()->setStarStyle(style);
         notifyWatchers(RenderFlagsChanged);
     }
-       // View related functions
-       void cycleView();
 
-    bool setLightTravelDelay(bool);
+    void toggleStarStyle() {
+        setStarStyle((Renderer::StarStyle) (((int) getStarStyle() + 1) %
+                                                      (int) Renderer::StarStyleCount));
+        switch (getStarStyle())
+        {
+        case Renderer::FuzzyPointStars:
+            aflash(_("Star style: fuzzy points"));
+            break;
+        case Renderer::PointStars:
+            aflash(_("Star style: points"));
+            break;
+        case Renderer::ScaledDiscStars:
+            aflash(_("Star style: scaled discs"));
+            break;
+        default:
+            break;
+        }
+    }
+    
+    int getTextureResolution() {
+        return getRenderer()->getResolution();
+    }
+    
+    void setTextureResolution(int res) {
+        getRenderer()->setResolution(res);
+    }
+
+    // View related functions
+    void cycleView();
+
+    bool setLightTravelDelayActive(bool);
+
+    void toggleLightTravelDelay() {
+        addToHistory();
+
+        if (setLightTravelDelayActive(!getLightDelayActive()))
+        {
+            if (getLightDelayActive())
+            {
+                aflash(_("Light travel delay included"),2.0);
+            }
+            else
+            {
+                aflash(_("Light travel delay switched off"),2.0);
+            }
+        }
+        else
+        {
+            aflash(_("Light travel delay ignored"));
+        }
+    }
 };
 
 #endif

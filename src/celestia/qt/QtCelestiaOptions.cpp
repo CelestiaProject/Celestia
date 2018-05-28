@@ -1,4 +1,5 @@
 // qtcelestiaactions.cpp
+// Renamed to QtCelestiaOptions.cpp 27.05.2018 by Pirogronian
 //
 // Copyright (C) 2008, Celestia Development Team
 // celestia-developers@lists.sourceforge.net
@@ -12,12 +13,13 @@
 
 #include <QAction>
 #include <QMenu>
-#include "celestia/CelestiaCoreApplication.h"
-#include "qtcelestiaactions.h"
+#include "celestia/qt/QtCelestiaCoreApplication.h"
+#include "QtCelestiaOptions.h"
 
+using namespace CelestiaQt;
 
-CelestiaActions::CelestiaActions(QObject* parent,
-                                 CelestiaCoreApplication* _appCore) :
+CelestiaOptions::CelestiaOptions(QObject* parent,
+                                 QtCelestiaCoreApplication* _appCore) :
     QObject(parent),
 
     equatorialGridAction(NULL),
@@ -66,7 +68,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     equatorialGridAction = new QAction(_("Eq"), this);
     equatorialGridAction->setToolTip(_("Equatorial coordinate grid"));
     equatorialGridAction->setCheckable(true);
-    equatorialGridAction->setData(Renderer::ShowCelestialSphere);
+//    equatorialGridAction->setData(Renderer::ShowCelestialSphere);
 
     galacticGridAction = new QAction(_("Ga"), this);
     galacticGridAction->setToolTip(_("Galactic coordinate grid"));
@@ -108,15 +110,15 @@ CelestiaActions::CelestiaActions(QObject* parent,
     orbitsAction->setCheckable(true);
     orbitsAction->setData(Renderer::ShowOrbits);
 
-    connect(equatorialGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(galacticGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(eclipticGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(horizonGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(eclipticAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(markersAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(constellationsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(boundariesAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(orbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(equatorialGridAction, &QAction::triggered, &(appCore->showCelestialSphereFlag), &RenderFlag::toggle);
+    connect(galacticGridAction, &QAction::triggered, &(appCore->showGalacticGridFlag), &RenderFlag::toggle);
+    connect(eclipticGridAction, &QAction::triggered, &(appCore->showEclipticGridFlag), &RenderFlag::toggle);
+    connect(horizonGridAction, &QAction::triggered, &(appCore->showHorizonGridFlag), &RenderFlag::toggle);
+    connect(eclipticAction, &QAction::triggered, &(appCore->showEclipticFlag), &RenderFlag::toggle);
+    connect(markersAction, &QAction::triggered, &(appCore->showMarkersFlag), &RenderFlag::toggle);
+    connect(constellationsAction, &QAction::triggered, &(appCore->showDiagramsFlag), &RenderFlag::toggle);
+    connect(boundariesAction, &QAction::triggered, &(appCore->showBoundariesFlag), &RenderFlag::toggle);
+    connect(orbitsAction, &QAction::triggered, &(appCore->showOrbitsFlag), &RenderFlag::toggle);
 
     // Orbit actions
     QMenu* orbitsMenu = new QMenu();
@@ -242,7 +244,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     lightTimeDelayAction->setCheckable(true);
     //lightTimeDelayAction->setShortcut(QString(_("-")));
     lightTimeDelayAction->setToolTip("Subtract one-way light travel time to selected object");
-    connect(lightTimeDelayAction, SIGNAL(triggered()), this, SLOT(slotSetLightTimeDelay()));
+    connect(lightTimeDelayAction, &QAction::triggered, appCore, &QtCelestiaCoreApplication::toggleLightTravelDelay);
 
     syncWithRenderer(appCore->getRenderer());
     syncWithAppCore();
@@ -250,13 +252,13 @@ CelestiaActions::CelestiaActions(QObject* parent,
 }
 
 
-CelestiaActions::~CelestiaActions()
+CelestiaOptions::~CelestiaOptions()
 {
     appCore->getRenderer()->removeWatcher(this);
 }
 
 
-void CelestiaActions::syncWithRenderer(const Renderer* renderer)
+void CelestiaOptions::syncWithRenderer(const Renderer* renderer)
 {
     int renderFlags = renderer->getRenderFlags();
     int labelMode = renderer->getLabelMode();
@@ -330,30 +332,30 @@ void CelestiaActions::syncWithRenderer(const Renderer* renderer)
 }
 
 
-void CelestiaActions::syncWithAppCore()
+void CelestiaOptions::syncWithAppCore()
 {
     lightTimeDelayAction->setChecked(appCore->getLightDelayActive());
 }
 
 
-void CelestiaActions::notifyRenderSettingsChanged(const Renderer* renderer)
+void CelestiaOptions::notifyRenderSettingsChanged(const Renderer* renderer)
 {
     syncWithRenderer(renderer);
 }
 
 
-void CelestiaActions::slotToggleRenderFlag()
+void CelestiaOptions::slotToggleRenderFlag()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
     {
         int renderFlag = act->data().toInt();
-        appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() ^ renderFlag);
+        appCore->setRenderFlags(appCore->getRenderer()->getRenderFlags() ^ renderFlag);
     }
 }
 
 
-void CelestiaActions::slotToggleLabel()
+void CelestiaOptions::slotToggleLabel()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
@@ -364,7 +366,7 @@ void CelestiaActions::slotToggleLabel()
 }
 
 
-void CelestiaActions::slotToggleOrbit()
+void CelestiaOptions::slotToggleOrbit()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
@@ -375,29 +377,29 @@ void CelestiaActions::slotToggleOrbit()
 }
 
 
-void CelestiaActions::slotSetStarStyle()
+void CelestiaOptions::slotSetStarStyle()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
     {
         Renderer::StarStyle starStyle = (Renderer::StarStyle) act->data().toInt();
-        appCore->getRenderer()->setStarStyle(starStyle);
+        appCore->setStarStyle(starStyle);
     }
 }
 
 
-void CelestiaActions::slotSetTextureResolution()
+void CelestiaOptions::slotSetTextureResolution()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
     {
         int textureResolution = act->data().toInt();
-        appCore->getRenderer()->setResolution(textureResolution);
+        appCore->setTextureResolution(textureResolution);
     }
 }
 
 
-void CelestiaActions::slotAdjustLimitingMagnitude()
+void CelestiaOptions::slotAdjustLimitingMagnitude()
 {
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != NULL)
@@ -427,31 +429,9 @@ void CelestiaActions::slotAdjustLimitingMagnitude()
 }
 
 
-void CelestiaActions::slotSetLightTimeDelay()
-{
-    appCore->addToHistory();
-
-    if (appCore->setLightTravelDelay(!appCore->getLightDelayActive()))
-    {
-        if (appCore->getLightDelayActive())
-        {
-            appCore->flash(_("Light travel delay included"),2.0);
-        }
-        else
-        {
-            appCore->flash(_("Light travel delay switched off"),2.0);
-        }
-    }
-    else
-    {
-        appCore->flash(_("Light travel delay ignored"));
-    }
-}
-
-
 // Convenience method to create a checkable action for a menu and set the data
 // to the specified integer value.
-QAction* CelestiaActions::createCheckableAction(const QString& text, QMenu* menu, int data)
+QAction* CelestiaOptions::createCheckableAction(const QString& text, QMenu* menu, int data)
 {
     QAction* act = new QAction(text, menu);
     act->setCheckable(true);
@@ -464,7 +444,7 @@ QAction* CelestiaActions::createCheckableAction(const QString& text, QMenu* menu
 
 // Convenience method to create a checkable action and set the data
 // to the specified integer value.
-QAction* CelestiaActions::createCheckableAction(const QString& text, int data)
+QAction* CelestiaOptions::createCheckableAction(const QString& text, int data)
 {
     QAction* act = new QAction(text, this);
     act->setCheckable(true);

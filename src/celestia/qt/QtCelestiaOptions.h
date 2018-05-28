@@ -1,4 +1,5 @@
 // qtcelestiaactions.h
+// renamed to QtCelestiaOptions.h 27.05.2018 by Pirogronian
 //
 // Copyright (C) 2008, Celestia Development Team
 // celestia-developers@lists.sourceforge.net
@@ -10,24 +11,26 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELESTIAACTIONS_H_
-#define _CELESTIAACTIONS_H_
+#ifndef _CELESTIA__CELESTIA_OPTIONS_H_
+#define _CELESTIA__CELESTIA_OPTIONS_H_
 
 #include <QObject>
 #include "celengine/render.h"
 
 class QMenu;
 class QAction;
-class CelestiaCoreApplication;
+namespace CelestiaQt {
+    class QtCelestiaCoreApplication;
+}
 
 
-class CelestiaActions : public QObject, public RendererWatcher
+class CelestiaOptions : public QObject, public RendererWatcher
 {
 Q_OBJECT
 
  public:
-    CelestiaActions(QObject *parent, CelestiaCoreApplication* appCore);
-    ~CelestiaActions();
+    CelestiaOptions(QObject *parent, CelestiaQt::QtCelestiaCoreApplication* appCore);
+    ~CelestiaOptions();
 
     virtual void notifyRenderSettingsChanged(const Renderer* renderer);
 
@@ -38,7 +41,7 @@ Q_OBJECT
     void slotSetStarStyle();
     void slotSetTextureResolution();
     void slotAdjustLimitingMagnitude();
-    void slotSetLightTimeDelay();
+//    void slotSetLightTimeDelay();
 
  private:
     void syncWithRenderer(const Renderer* renderer);
@@ -116,7 +119,7 @@ Q_OBJECT
     QAction* decreaseLimitingMagAction;
 
  private:
-    CelestiaCoreApplication* appCore;
+    CelestiaQt::QtCelestiaCoreApplication* appCore;
 };
 
 #endif // _CELESTIAACTIONS_H_
