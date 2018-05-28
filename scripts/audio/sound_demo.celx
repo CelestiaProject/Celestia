@@ -1,10 +1,8 @@
 --  ------------------------------------------------------------------------------------------------------
 -- This file demonstrates the 'celestia:play' command 
 -- First patch for audio support in Celestia by Victor (vhpgomes).
--- Patch modification by Vincent (added pause/resume parameters).
--- Patch modification by Alexell (added pan parameter and adapted for FMOD library).
 -- Rewritten by Pirogronian (added virtual common interface and basic implementation in Qt)
--- First patch information: https://celestiaproject.net/forum/viewtopic.php?t=8624
+-- First patch information: https://celestia.space/forum/viewtopic.php?t=8624
 --
 --  This command accepts 5 arguments:
 --  
@@ -13,9 +11,8 @@
 --  channel - specifies the channel that'll be affected by this call.
 --            If not given, will assume the default value of 0, You can provide any number.
 --
---  volume  - specifies the new volume of this channel. If not given, the volume of the channel will remain unchanged.
+--  volume  - specifies the new volume of this channel. Required.
 --            It starts with the volume 1.0. You can specify any number between 0.0 (minimum, mute) and 1.0 (maximum).
---            If the number given is negative, the value is ignored, and the volume remains unchanged.
 --            If the number is bigger than 1.0, the volume will be set to the maximum volume, 1.0.
 --
 --

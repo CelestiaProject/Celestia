@@ -691,7 +691,7 @@ class RepeatCommand : public Command
 class CommandPlay : public InstantaneousCommand
 {
  public:
-    CommandPlay(int, float, int, const std::string&, int);
+    CommandPlay(int, float, bool, const std::string&, bool);
     void process(ExecutionEnvironment&);
 
  private:

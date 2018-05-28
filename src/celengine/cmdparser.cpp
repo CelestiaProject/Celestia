@@ -779,18 +779,19 @@ Command* CommandParser::parseCommand()
     //Audio support by Victor, modified by Vincent & Alexell
     else if(commandName == "play")
     {
-        int channel, loop, nopause;
+        int channel;
         float volume;
+		bool loop, nopause;
         string filename;
         if(!paramList->getNumber("channel", channel))
             channel = 0;
         if(!paramList->getNumber("volume", volume))
-            volume = -1;
-        if(!paramList->getNumber("loop", loop))
-            loop = -1;
+            volume = 1;
+        if(!paramList->getBoolean("loop", loop))
+            loop = 0;
         if(!paramList->getString("filename", filename))
             filename = "-";
-        if(!paramList->getNumber("nopause", nopause))
+        if(!paramList->getBoolean("nopause", nopause))
             nopause = 0;
 
         cmd = new CommandPlay(channel, volume, loop, filename.c_str(), nopause);

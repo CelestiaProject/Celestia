@@ -13,7 +13,9 @@ void QtAudioManager::createChannel(int id, double vol, bool looped, QString fn, 
     if (QDir::isRelativePath(fn)) {
         QDir fpath = QDir::current();
         fpath.cd("sounds");
-        if (!fpath.exists(fn)) { fpath.cd(CONFIG_DATA_DIR); fpath.cd("sounds"); }
+		#ifdef Q_OS_LINUX
+			if (!fpath.exists(fn)) { fpath.cd(CONFIG_DATA_DIR); fpath.cd("sounds"); }
+		#endif
         if (!fpath.exists(fn)) {
             cout << "Cannot play \'" << fn.toUtf8().data() << "\'No file found.\n";
             return;

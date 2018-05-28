@@ -997,8 +997,8 @@ double RepeatCommand::getDuration()
 }
 
 //Audio support by Victor, modified by Vincent, Leserg & Alexell
-CommandPlay::CommandPlay(int _channel, float _volume, int _loop, 
-                          const std::string& _filename, int _nopause) :
+CommandPlay::CommandPlay(int _channel, float _volume, bool _loop, 
+                          const std::string& _filename, bool _nopause) :
    channel(_channel),
    volume(_volume),
    loop(_loop),

@@ -1,10 +1,8 @@
 #  --------------------------------------------------------------------------------------------------
 # This file demonstrates the 'play' command
 # First patch for audio support in Celestia by Victor (vhpgomes).
-# Patch modification by Vincent (added pause/resume parameters).
-# Patch modification by Alexell (added pan parameter and adapted for FMOD library).
-# Rewrite by Pirogronian.
-# First patch information: https://celestiaproject.net/forum/viewtopic.php?t=8624
+# Rewritten by Pirogronian (added virtual common interface and basic implementation in Qt)
+# First patch information: https://celestia.space/forum/viewtopic.php?t=8624
 #
 #  This command accepts 5 arguments:
 #
@@ -14,9 +12,8 @@
 #            If not given, will assume the default value of 0, You can provide any number between 0 and 7.
 #            Any number out of this range will cause the script to fail.
 #
-#  volume  - specifies the new volume of this channel. If not given, the volume of the channel will remain unchanged.
+#  volume  - specifies the new volume of this channel. If not given, the volume of the channel will be set to 1.0.
 #            It starts with the volume 1.0. You can specify any number between 0.0 (minimum, mute) and 1.0 (maximum).
-#            If the number given is negative, the value is ignored, and the volume remains unchanged.
 #            If the number is bigger than 1.0, the volume will be set to the maximum volume, 1.0.
 #
 #  loop    - specifies if the sound file will loop or not.
@@ -34,7 +31,7 @@
 print { origin "bottomleft" row -5 column 3 duration 5 text "Welcome!\n\nYou start an audio playback script." }
 wait { duration 5 }
 
-play { channel 0 volume 1 loop false nopause true filename "music.mp3" }
+play { channel 0 volume 1 loop true nopause true filename "music.mp3" }
 
 #Since we used the default values for some parameters, we could use the abbreviated version of the command:
 #play { channel 0 filename nopause "music.ogg" }
