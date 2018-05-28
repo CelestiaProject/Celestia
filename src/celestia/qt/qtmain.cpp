@@ -22,6 +22,9 @@
 #include <QDesktopServices>
 #include <QPixmap>
 #include <QBitmap>
+#include <QTranslator>
+#include <QLocale>
+#include <QLibraryInfo>
 #include <vector>
 #include "qtappwin.h"
 #include <qtextcodec.h>
@@ -65,6 +68,15 @@ void loadModules(QSplashScreen* psplash)
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(),
+                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    app.installTranslator(&qtTranslator);
+
+    QTranslator celestiaTranslator;
+    celestiaTranslator.load("celestia_" + QLocale::system().name());
+    app.installTranslator(&celestiaTranslator);
 
     Q_INIT_RESOURCE(icons);
 
