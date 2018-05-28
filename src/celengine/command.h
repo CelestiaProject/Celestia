@@ -691,15 +691,14 @@ class RepeatCommand : public Command
 class CommandPlay : public InstantaneousCommand
 {
  public:
-    CommandPlay(int, const std::string&, float, float, int, int);
+    CommandPlay(int, float, int, const std::string&, int);
     void process(ExecutionEnvironment&);
 
  private:
     int channel;
-    std::string filename;
     float volume;
-    float pan;
     int loop;
+	std::string filename;
     int nopause;
 };
 

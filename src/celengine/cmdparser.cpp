@@ -780,22 +780,20 @@ Command* CommandParser::parseCommand()
     else if(commandName == "play")
     {
         int channel, loop, nopause;
-        float volume, pan;
+        float volume;
         string filename;
         if(!paramList->getNumber("channel", channel))
             channel = 0;
-        if(!paramList->getString("filename", filename))
-            filename = "\a";
         if(!paramList->getNumber("volume", volume))
             volume = -1;
-        if(!paramList->getNumber("pan", pan))
-            pan = 0;
         if(!paramList->getNumber("loop", loop))
             loop = -1;
+        if(!paramList->getString("filename", filename))
+            filename = "-";
         if(!paramList->getNumber("nopause", nopause))
             nopause = 0;
 
-//        cmd = new CommandPlay(channel, filename, volume, pan, loop, nopause);
+        cmd = new CommandPlay(channel, volume, loop, filename.c_str(), nopause);
     }
 //SCRIPT IMAGE START: Author Vincent
     else if (commandName == "overlay")
