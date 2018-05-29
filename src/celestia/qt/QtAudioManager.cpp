@@ -17,12 +17,18 @@ void QtAudioManager::createChannel(int id, double vol, bool looped, QString fn, 
 			if (!fpath.exists(fn)) { fpath.cd(CONFIG_DATA_DIR); fpath.cd("sounds"); }
 		#endif
         if (!fpath.exists(fn)) {
-            cout << "Cannot play \'" << fn.toUtf8().data() << "\'No file found.\n";
+//            cout << "Cannot play \'" << fn.toUtf8().data() << "\'No file found.\n";
+            cout << "Cannot play relative\'" << fpath.path().toUtf8().data() << "/" << fn.toUtf8().data() << "\': No file found.\n";
             return;
         }
         QUrl url = QUrl::fromLocalFile(fpath.filePath(fn));
         path = url.url(QUrl::NormalizePathSegments);
     } else {
+        QDir fpath = QDir::fromNativeSeparators(fn);
+        if (!fpath.exists(fn)) {
+            cout << "Cannot play absolute \'" << fpath.path().toUtf8().data() << "/" << fn.toUtf8().data() << "\': No file found.\n";
+            return;
+        }
         QUrl url = QUrl::fromLocalFile(fn);
         path = url.url(QUrl::NormalizePathSegments);
     }
@@ -66,6 +72,7 @@ void QtAudioManager::playAll() {
 }
 
 void QtAudioManager::pauseAll() {
+    cout << "pauseAll()\n";
     for (ChannelsContainer::iterator it = _channels.begin(); it != _channels.end(); it++) {
         if (!getChannelNoPause(it.key())) {
             (*it)->pause();

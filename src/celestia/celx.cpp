@@ -3544,7 +3544,7 @@ static int celestia_overlay(lua_State* l)
     const char* filename = Celx_SafeGetString(l, 6, AllErrors, "Fifth argument to celestia:overlay must be a string (filename)");
     int fitscreen = Celx_SafeGetNumber(l, 7, WrongType, "Sixth argument to celestia:overlay must be a number (fitscreen)", 0);
 
-        appCore->setScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
+    appCore->setScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
 
     return 0;
 }
