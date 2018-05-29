@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     app.installTranslator(&qtTranslator);
 
     QTranslator celestiaTranslator;
-    celestiaTranslator.load("celestia_" + QLocale::system().name());
+    celestiaTranslator.load("locale/celestia_" + QLocale::system().name());
     app.installTranslator(&celestiaTranslator);
 
     Q_INIT_RESOURCE(icons);
