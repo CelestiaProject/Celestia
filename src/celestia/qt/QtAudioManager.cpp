@@ -41,7 +41,11 @@ void QtAudioManager::createChannel(int id, double vol, bool looped, QString fn, 
     setChannelLoop(id, looped);
     setChannelFile(id, path);
     setChannelNoPause(id, nopause);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
     connect(player, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error), this, &QtAudioManager::logError);
+#else
+    connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(logError(QMediaPlayer::Error)));
+#endif
 }
 
 void QtAudioManager::playChannel(int channel, double vol, bool looped, const char *f, bool nopause) {
