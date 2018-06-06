@@ -1264,11 +1264,11 @@ bool LoadSolarSystemObjects(istream& in,
         }
         else if (itemType == "AltSurface")
         {
-            Surface* surface = new Surface();
+            Surface* surface = new Surface(); // FIXME: check
             surface->color = Color(1.0f, 1.0f, 1.0f);
             surface->hazeColor = Color(0.0f, 0.0f, 0.0f, 0.0f);
             FillinSurface(objectData, surface, directory);
-            if (surface != NULL && parent.body() != NULL)
+            if (parent.body() != NULL)
                 parent.body()->addAlternateSurface(primaryName, surface);
             else
                 sscError(tokenizer, _("bad alternate surface"));
@@ -1309,6 +1309,12 @@ SolarSystem::SolarSystem(Star* _star) :
 {
     planets = new PlanetarySystem(star);
     frameTree = new FrameTree(star);
+}
+
+SolarSystem::~SolarSystem()
+{
+    delete planets;
+    delete frameTree;
 }
 
 

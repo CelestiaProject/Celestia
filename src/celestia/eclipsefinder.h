@@ -22,6 +22,7 @@ class Eclipse
 public:
     Eclipse(int Y, int M, int D);
     Eclipse(double JD);
+    ~Eclipse();
 
     enum Type {
         Solar = 0,

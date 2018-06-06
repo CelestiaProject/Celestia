@@ -629,7 +629,8 @@ Image* LoadJPEGImage(const string& filename, int)
 void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
     FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
-    fread((void*) data, 1, length, fp);
+    if (fread((void*) data, 1, length, fp) != length)
+        cerr << "Error reading PNG data";
 }
 #endif
 
@@ -655,8 +656,9 @@ Image* LoadPNGImage(const string& filename)
         return NULL;
     }
 
-    fread(header, 1, sizeof(header), fp);
-    if (png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
+    size_t elements_read;
+    elements_read = fread(header, 1, sizeof(header), fp);
+    if (elements_read == 0 || png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
     {
         clog << _("Error: ") << filename << _(" is not a PNG file.\n");
         fclose(fp);
@@ -874,6 +876,8 @@ static Image* LoadBMPImage(ifstream& in)
     if (img == NULL)
     {
         delete[] pixels;
+        if (palette != NULL)
+            delete[] palette;
         return NULL;
     }
 

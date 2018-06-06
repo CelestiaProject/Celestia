@@ -734,7 +734,8 @@ private:
 };
 
 
-ModelLoader::ModelLoader()
+ModelLoader::ModelLoader() :
+   textureLoader(NULL)
 {
 }
 
@@ -1291,6 +1292,7 @@ AsciiModelLoader::load()
     Model* model = new Model();
     bool seenMeshes = false;
 
+    // FIXME: modern C++ uses exceptions
     if (model == NULL)
     {
         reportError("Unable to allocate memory for model");
@@ -1346,6 +1348,7 @@ AsciiModelLoader::load()
         else
         {
             reportError("Block name expected");
+            delete model;
             return NULL;
         }
     }
@@ -2142,7 +2145,7 @@ BinaryModelLoader::loadMesh()
             if (index >= vertexCount)
             {
                 reportError("Index out of range");
-                delete indices;
+                delete[] indices;
                 delete mesh;
                 return NULL;
             }

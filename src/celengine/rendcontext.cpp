@@ -779,7 +779,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     // a planet mesh. See SourceForge bug #1855894 for more details.
     bool disableDepthWriteOnBlend = true;
 
-    if (shaderProps.hasScattering())
+    if (atmosphere != NULL && shaderProps.hasScattering())
     {
         prog->setAtmosphereParameters(*atmosphere, objRadius, objRadius);
         disableDepthWriteOnBlend = false;

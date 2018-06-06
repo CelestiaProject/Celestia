@@ -101,8 +101,7 @@ Directory* OpenDirectory(const std::string& dirname)
 bool IsDirectory(const std::string& filename)
 {
     struct stat buf;
-    stat(filename.c_str(), &buf);
-    return S_ISDIR(buf.st_mode);
+    return stat(filename.c_str(), &buf) == 0 ? S_ISDIR(buf.st_mode) : false;
 }
 
 std::string WordExp(const std::string& filename)

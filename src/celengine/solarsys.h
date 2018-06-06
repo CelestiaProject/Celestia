@@ -22,6 +22,7 @@ class SolarSystem
 {
  public:
     SolarSystem(Star*);
+    ~SolarSystem();
 
     Star* getStar() const;
     Eigen::Vector3f getCenter() const;

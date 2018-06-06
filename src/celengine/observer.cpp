@@ -103,6 +103,10 @@ Observer::Observer(const Observer& o) :
     updateUniversal();
 }
 
+Observer::~Observer()
+{
+    delete frame;
+}
 
 Observer& Observer::operator=(const Observer& o)
 {

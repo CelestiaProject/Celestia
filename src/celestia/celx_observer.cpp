@@ -90,6 +90,7 @@ static int observer_setposition(lua_State* l)
     if (uc == NULL)
     {
         celx.doError("Argument to observer:setposition must be a position");
+        return 0;
     }
     o->setPosition(*uc);
     return 0;
@@ -106,6 +107,7 @@ static int observer_setorientation(lua_State* l)
     if (q == NULL)
     {
         celx.doError("Argument to observer:setorientation must be a rotation");
+        return 0;
     }
     o->setOrientation(toEigen(*q));
     return 0;
@@ -133,6 +135,7 @@ static int observer_rotate(lua_State* l)
     if (q == NULL)
     {
         celx.doError("Argument to observer:setpos must be a rotation");
+        return 0;
     }
     Quatf qf((float) q->w, (float) q->x, (float) q->y, (float) q->z);
     o->rotate(toEigen(qf));
@@ -150,6 +153,7 @@ static int observer_orbit(lua_State* l)
     if (q == NULL)
     {
         celx.doError("Argument for observer:orbit must be a rotation");
+        return 0;
     }
     Quatf qf((float) q->w, (float) q->x, (float) q->y, (float) q->z);
     o->orbit(Selection(), toEigen(qf));
@@ -174,6 +178,7 @@ static int observer_lookat(lua_State* l)
         if (to == NULL)
         {
             celx.doError("Argument 1 (of 2) to observer:lookat must be of type position");
+            return 0;
         }
     }
     else
@@ -187,6 +192,7 @@ static int observer_lookat(lua_State* l)
             if (to == NULL || from == NULL)
             {
                 celx.doError("Argument 1 and 2 (of 3) to observer:lookat must be of type position");
+                return 0;
             }
         }
     }
@@ -194,6 +200,7 @@ static int observer_lookat(lua_State* l)
     if (upd == NULL)
     {
         celx.doError("Last argument to observer:lookat must be of type vector");
+        return 0;
     }
     Vector3d nd;
     if (from == NULL)
@@ -320,6 +327,7 @@ static int observer_goto(lua_State* l)
     if (sel == NULL && uc == NULL)
     {
         celx.doError("First arg to observer:goto must be object or position");
+        return 0;
     }
 
     double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:goto must be a number", 5.0);
@@ -352,6 +360,7 @@ static int observer_gotolonglat(lua_State* l)
     if (sel == NULL)
     {
         celx.doError("First arg to observer:gotolonglat must be an object");
+        return 0;
     }
     double defaultDistance = sel->radius() * 5.0;
 
@@ -369,6 +378,7 @@ static int observer_gotolonglat(lua_State* l)
         if (uparg == NULL)
         {
             celx.doError("Sixth argument to observer:gotolonglat must be a vector");
+            return 0;
         }
         up = toEigen(*uparg).cast<float>();
     }
@@ -412,6 +422,7 @@ static int observer_gotodistance(lua_State* l)
     if (sel == NULL)
     {
         celx.doError("First arg to observer:gotodistance must be object");
+        return 0;
     }
 
     double distance = celx.safeGetNumber(3, WrongType, "Second arg to observer:gotodistance must be a number", 20000);
@@ -424,6 +435,7 @@ static int observer_gotodistance(lua_State* l)
         if (up_arg == NULL)
         {
             celx.doError("Fourth arg to observer:gotodistance must be a vector");
+            return 0;
         }
 
         up = toEigen(*up_arg).cast<float>();
@@ -444,6 +456,7 @@ static int observer_gotosurface(lua_State* l)
     if (sel == NULL)
     {
         celx.doError("First arg to observer:gotosurface must be object");
+        return 0;
     }
 
     double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:gotosurface must be a number", 5.0);
@@ -465,6 +478,7 @@ static int observer_center(lua_State* l)
     if (sel == NULL)
     {
         celx.doError("First argument to observer:center must be an object");
+        return 0;
     }
     double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:center must be a number", 5.0);
 
@@ -483,6 +497,7 @@ static int observer_centerorbit(lua_State* l)
     if (sel == NULL)
     {
         celx.doError("First argument to observer:centerorbit must be an object");
+        return 0;
     }
     double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:centerorbit must be a number", 5.0);
 
@@ -512,6 +527,7 @@ static int observer_follow(lua_State* l)
     if (sel == NULL)
     {
         celx.doError("First argument to observer:follow must be an object");
+        return 0;
     }
     o->follow(*sel);
 
@@ -528,6 +544,7 @@ static int observer_synchronous(lua_State* l)
     if (sel == NULL)
     {
         celx.doError("First argument to observer:synchronous must be an object");
+        return 0;
     }
     o->geosynchronousFollow(*sel);
 
@@ -544,6 +561,7 @@ static int observer_lock(lua_State* l)
     if (sel == NULL)
     {
         celx.doError("First argument to observer:phaseLock must be an object");
+        return 0;
     }
     o->phaseLock(*sel);
 
@@ -560,6 +578,7 @@ static int observer_chase(lua_State* l)
     if (sel == NULL)
     {
         celx.doError("First argument to observer:chase must be an object");
+        return 0;
     }
     o->chase(*sel);
 
@@ -585,6 +604,7 @@ static int observer_track(lua_State* l)
         if (sel == NULL)
         {
             celx.doError("First argument to observer:center must be an object");
+            return 0;
         }
         o->setTrackedObject(*sel);
     }

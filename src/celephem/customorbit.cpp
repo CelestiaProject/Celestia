@@ -215,7 +215,7 @@ static void EclipticToEquatorial(double t, double fEclLat, double fEclLon,
     double eps;
     double deps, dpsi;
 
-    t = (astro::J2000 - 2415020.0) / 36525.0;
+//    t = (astro::J2000 - 2415020.0) / 36525.0;
     t = 0;
     eps = Obliquity(t);        // mean obliquity for date
     Nutation(t, deps, dpsi);

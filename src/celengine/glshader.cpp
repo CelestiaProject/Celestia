@@ -196,6 +196,7 @@ GLShaderLoader::CreateVertexShader(const vector<string>& source,
             *g_shaderLogFile << "Error compiling vertex shader:\n";
             *g_shaderLogFile << GetInfoLog(shader->getID());
         }
+        delete shader;
         return status;
     }
 
@@ -223,6 +224,7 @@ GLShaderLoader::CreateFragmentShader(const vector<string>& source,
             *g_shaderLogFile << "Error compiling fragment shader:\n";
             *g_shaderLogFile << GetInfoLog(shader->getID());
         }
+        delete shader;
         return status;
     }
 

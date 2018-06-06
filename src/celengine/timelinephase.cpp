@@ -76,7 +76,10 @@ int TimelinePhase::release() const
     --refCount;
     assert(refCount >= 0);
     if (refCount <= 0)
+    {
         delete this;
+        return 0;
+    }
 
     return refCount;
 }

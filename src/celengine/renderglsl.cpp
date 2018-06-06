@@ -261,15 +261,18 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         }
     }
 
-    if (shadprop.texUsage & ShaderProperties::CloudShadowTexture)
+    if (atmosphere != NULL)
     {
-        prog->shadowTextureOffset = cloudTexOffset;
-        prog->cloudHeight = 1.0f + atmosphere->cloudHeight / radius;
-    }
+        if (shadprop.texUsage & ShaderProperties::CloudShadowTexture)
+        {
+            prog->shadowTextureOffset = cloudTexOffset;
+            prog->cloudHeight = 1.0f + atmosphere->cloudHeight / radius;
+        }
 
-    if (shadprop.hasScattering())
-    {
-        prog->setAtmosphereParameters(*atmosphere, radius, radius);
+        if (shadprop.hasScattering())
+        {
+            prog->setAtmosphereParameters(*atmosphere, radius, radius);
+        }
     }
 
     if (shadprop.hasEclipseShadows() != 0)
@@ -487,11 +490,14 @@ void renderClouds_GLSL(const RenderInfo& ri,
                                   ri.ambientColor.blue());
     prog->textureOffset = texOffset;
 
-    float cloudRadius = radius + atmosphere->cloudHeight;
-
-    if (shadprop.hasScattering())
+    if (atmosphere != NULL)
     {
-        prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius);
+        float cloudRadius = radius + atmosphere->cloudHeight;
+
+        if (shadprop.hasScattering())
+        {
+            prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius);
+        }
     }
 
 #if 0

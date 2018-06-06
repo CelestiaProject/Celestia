@@ -138,6 +138,7 @@ static int rotation_transform(lua_State* l)
     if (v == NULL)
     {
         celx.doError("Argument to rotation:transform() must be a vector");
+        return 0;
     }
     vector_new(l, *v * q->toMatrix3());
     return 1;
@@ -154,6 +155,7 @@ static int rotation_setaxisangle(lua_State* l)
     if (v == NULL)
     {
         celx.doError("setaxisangle: first argument must be a vector");
+        return 0;
     }
     double angle = celx.safeGetNumber(3, AllErrors, "second argument to rotation:setaxisangle must be a number");
     q->setAxisAngle(*v, angle);
@@ -171,6 +173,7 @@ static int rotation_slerp(lua_State* l)
     if (q2 == NULL)
     {
         celx.doError("slerp: first argument must be a rotation");
+        return 0;
     }
     double t = celx.safeGetNumber(3, AllErrors, "second argument to rotation:slerp must be a number");
     rotation_new(l, Quatd::slerp(*q1, *q2, t));

@@ -431,6 +431,8 @@ CelestiaCore::~CelestiaCore()
 #endif
 
     delete execEnv;
+    delete timer;
+    delete renderer;
 
 }
 
@@ -3476,6 +3478,7 @@ void CelestiaCore::renderOverlay()
 
     int fontHeight = font->getHeight();
     int emWidth = font->getWidth("M");
+    assert(emWidth > 0);
 
     overlay->begin();
 
@@ -3574,13 +3577,9 @@ void CelestiaCore::renderOverlay()
                 lt = v.norm() / (86400.0 * astro::speedOfLight);
             }
         }
-        else
-        {
-            lt = 0.0;
-        }
 
         double tdb = sim->getTime() + lt;
-        astro::Date d = timeZoneBias != 0?astro::TDBtoLocal(tdb):astro::TDBtoUTC(tdb);
+        astro::Date d = timeZoneBias != 0 ? astro::TDBtoLocal(tdb) : astro::TDBtoUTC(tdb);
         const char* dateStr = d.toCStr(dateFormat);
         int dateWidth = (font->getWidth(dateStr)/(emWidth * 3) + 2) * emWidth * 3;
         if (dateWidth > dateStrWidth) dateStrWidth = dateWidth;
@@ -4609,13 +4608,15 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         {
             cerr << _("Error opening ") << cfg.starDatabaseFile << '\n';
             delete starDB;
+            delete starNameDB;
             return false;
         }
 
         if (!starDB->loadBinary(starFile))
         {
-            delete starDB;
             cerr << _("Error reading stars file\n");
+            delete starDB;
+            delete starNameDB;
             return false;
         }
     }
@@ -5232,7 +5233,10 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
     // create a private context.
     if (config->scriptSystemAccessPolicy == "allow")
     {
-        SetScriptedObjectContext(luaHook->getState());
+        if (luaHook)
+        {
+            SetScriptedObjectContext(luaHook->getState());
+        }
     }
     else
     {
@@ -5249,6 +5253,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
         {
             delete luaSandbox;
             luaSandbox = NULL;
+            return false;
         }
 
         SetScriptedObjectContext(luaSandbox->getState());

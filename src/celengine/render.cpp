@@ -670,6 +670,8 @@ Renderer::~Renderer()
         delete starVertexBuffer;
     if (pointStarVertexBuffer != NULL)
         delete pointStarVertexBuffer;
+    if (glareVertexBuffer != NULL)
+        delete glareVertexBuffer;
     delete[] skyVertices;
     delete[] skyIndices;
     delete[] skyContour;
