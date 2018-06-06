@@ -547,7 +547,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     AbstractAudioManager *getAudioManager() { return audioMan; }
 
     void playSoundFile(int channel, double volume, bool loop, const char *fname, bool nopause) {
-        cout << "playAudioFile(" << channel << ", " << volume << ", " <<  loop << ", " << fname << ", " << nopause << ")\n";
+        cout << "playAudioFile(" << channel << ", " << volume << ", " <<  loop << ", " << nopause << ", " << fname << ")\n";
         AbstractAudioManager *man = getAudioManager();
         if (man == NULL) {
             cout << _("playSoundFile(): no audio manager.") << '\n';

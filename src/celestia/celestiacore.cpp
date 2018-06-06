@@ -1663,6 +1663,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         }
         else
         {
+            pauseSounds();
             sim->setPauseState(true);
 
             // If there's a script running then pause it.  This has the
