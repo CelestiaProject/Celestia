@@ -29,6 +29,10 @@
 #include "qtappwin.h"
 #include <qtextcodec.h>
 
+#ifndef SPLASH_DIR
+#define SPLASH_DIR
+#endif
+
 using namespace std;
 using namespace CelestiaQt;
 
@@ -85,7 +89,7 @@ int main(int argc, char *argv[])
 
     ParseCommandLine();
 
-    QPixmap pixmap("splash.png");
+    QPixmap pixmap(SPLASH_DIR "splash.png");
     QSplashScreen splash(pixmap);
     splash.setMask(pixmap.mask());
 

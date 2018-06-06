@@ -729,6 +729,7 @@ unix {
     WORKDIR =$$DATADIR/$${TARGET}
 
     DEFINES += CONFIG_DATA_DIR=\\\"$${WORKDIR}\\\"
+    DEFINES += SPLASH_DIR=\\\"$${WORKDIR}/splash/\\\"
 
     #MAKE INSTALL
 
@@ -786,7 +787,10 @@ unix {
     icon128.path = /usr/share/icons/hicolor/128x128/apps
     icon128.files += src/celestia/qt/data/celestia.png
 
+    splash.path = $$WORKDIR/splash
+    splash.files = splash.png
+
     INSTALLS += target data textures lores_textures hires_textures \
     flares models shaders fonts scripts locale extras extras-standard \
-    configuration desktop icon128
+    configuration desktop icon128 splash
 }
