@@ -612,6 +612,7 @@ unix {
     equals(LUAPC, "lua51"): DEFINES += LUA_VER=0x050100
 
     PKGCONFIG += glu $$LUAPC libpng libjpeg theora
+    LIBS += -Wl,-Bstatic -lfmt -Wl,-Bdynamic
 }
 unix:config_spice {
     INCLUDEPATH += /usr/local/cspice/include
