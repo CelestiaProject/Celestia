@@ -147,8 +147,7 @@ Image::Image(int fmt, int w, int h, int mips) :
     width(w),
     height(h),
     mipLevels(mips),
-    format(fmt),
-    pixels(NULL)
+    format(fmt)
 {
     components = formatComponents(fmt);
     assert(components != 0);
@@ -164,8 +163,7 @@ Image::Image(int fmt, int w, int h, int mips) :
 
 Image::~Image()
 {
-    if (pixels != NULL)
-        delete[] pixels;
+    delete[] pixels;
 }
 
 
@@ -222,11 +220,11 @@ unsigned char* Image::getPixelRow(int mip, int row)
     /*int w = max(width >> mip, 1); Unused*/
     int h = max(height >> mip, 1);
     if (mip >= mipLevels || row >= h)
-        return NULL;
+        return nullptr;
 
     // Row addressing of compressed textures is not allowed
     if (isCompressed())
-        return NULL;
+        return nullptr;
 
     return getMipLevel(mip) + row * pitch;
 }
@@ -241,7 +239,7 @@ unsigned char* Image::getPixelRow(int row)
 unsigned char* Image::getMipLevel(int mip)
 {
     if (mip >= mipLevels)
-        return NULL;
+        return nullptr;
 
     int offset = 0;
     for (int i = 0; i < mip; i++)
@@ -255,8 +253,8 @@ int Image::getMipLevelSize(int mip) const
 {
     if (mip >= mipLevels)
         return 0;
-    else
-        return calcMipLevelSize(format, width, height, mip);
+
+    return calcMipLevelSize(format, width, height, mip);
 }
 
 
@@ -300,11 +298,11 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
     // Can't do anything with compressed input; there are probably some other
     // formats that should be rejected as well . . .
     if (isCompressed())
-        return NULL;
+        return nullptr;
 
-    Image* normalMap = new Image(GL_RGBA, width, height);
-    if (normalMap == NULL)
-        return NULL;
+    auto* normalMap = new Image(GL_RGBA, width, height);
+    if (!normalMap)
+        return nullptr;
 
     unsigned char* nmPixels = normalMap->getPixels();
     int nmPitch = normalMap->getPitch();
@@ -343,14 +341,14 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
                 }
             }
 
-            int h00 = (int) pixels[i0 * pitch + j0 * components];
-            int h10 = (int) pixels[i0 * pitch + j1 * components];
-            int h01 = (int) pixels[i1 * pitch + j0 * components];
+            auto h00 = (int) pixels[i0 * pitch + j0 * components];
+            auto h10 = (int) pixels[i0 * pitch + j1 * components];
+            auto h01 = (int) pixels[i1 * pitch + j0 * components];
 
             float dx = (float) (h10 - h00) * (1.0f / 255.0f) * scale;
             float dy = (float) (h01 - h00) * (1.0f / 255.0f) * scale;
 
-            float mag = (float) sqrt(dx * dx + dy * dy + 1.0f);
+            auto mag = (float) sqrt(dx * dx + dy * dy + 1.0f);
             float rmag = 1.0f / mag;
 
             int n = i * nmPitch + j * 4;
@@ -368,7 +366,7 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
 Image* LoadImageFromFile(const string& filename)
 {
     ContentType type = DetermineFileType(filename);
-    Image* img = NULL;
+    Image* img = nullptr;
 
     clog << _("Loading image from file ") << filename << '\n';
 
@@ -407,12 +405,12 @@ struct my_error_mgr
     jmp_buf setjmp_buffer;      // for return to caller
 };
 
-typedef struct my_error_mgr *my_error_ptr;
+using my_error_ptr = struct my_error_mgr *;
 
 METHODDEF(void) my_error_exit(j_common_ptr cinfo)
 {
     // cinfo->err really points to a my_error_mgr struct, so coerce pointer
-    my_error_ptr myerr = (my_error_ptr) cinfo->err;
+    auto myerr = (my_error_ptr) cinfo->err;
 
     // Always display the message.
     // We could postpone this until after returning, if we chose.
@@ -424,10 +422,10 @@ METHODDEF(void) my_error_exit(j_common_ptr cinfo)
 #endif // JPEG_SUPPORT
 
 
-Image* LoadJPEGImage(const string& filename, int)
+Image* LoadJPEGImage(const string& filename, int /*unused*/)
 {
 #ifdef JPEG_SUPPORT
-    Image* img = NULL;
+    Image* img = nullptr;
 
     // This struct contains the JPEG decompression parameters and pointers to
     // working space (which is allocated as needed by the JPEG library).
@@ -449,8 +447,8 @@ Image* LoadJPEGImage(const string& filename, int)
 
     FILE *in;
     in = fopen(filename.c_str(), "rb");
-    if (in == NULL)
-        return NULL;
+    if (!in)
+        return nullptr;
 
     // Step 1: allocate and initialize JPEG decompression object
     // We set up the normal JPEG error routines, then override error_exit.
@@ -463,10 +461,9 @@ Image* LoadJPEGImage(const string& filename, int)
         // We need to clean up the JPEG object, close the input file, and return.
         jpeg_destroy_decompress(&cinfo);
         fclose(in);
-        if (img != NULL)
-            delete img;
+        delete img;
 
-        return NULL;
+        return nullptr;
     }
 
     // Now we can initialize the JPEG decompression object.
@@ -556,17 +553,17 @@ Image* LoadJPEGImage(const string& filename, int)
 
 #elif defined(TARGET_OS_MAC)
 
-    Image* img = NULL;
+    Image* img = nullptr;
     CGBuffer* cgJpegImage;
     size_t img_w, img_h, img_d;
 
     cgJpegImage = new CGBuffer(filename.c_str());
-    if (cgJpegImage == NULL) {
+    if (cgJpegImage == nullptr) {
         char tempcwd[2048];
         getcwd(tempcwd, sizeof(tempcwd));
         DPRINTF(0, "CGBuffer :: Error opening JPEG image file %s/%s\n", tempcwd, filename.c_str());
         delete cgJpegImage;
-        return NULL;
+        return nullptr;
     }
 
     if (!cgJpegImage->LoadJPEG()) {
@@ -574,7 +571,7 @@ Image* LoadJPEGImage(const string& filename, int)
         getcwd(tempcwd, sizeof(tempcwd));
         DPRINTF(0, "CGBuffer :: Error loading JPEG image file %s/%s\n", tempcwd, filename.c_str());
         delete cgJpegImage;
-        return NULL;
+        return nullptr;
     }
 
     cgJpegImage->Render();
@@ -591,10 +588,10 @@ Image* LoadJPEGImage(const string& filename, int)
     int format = (img_d == 1) ? GL_LUMINANCE : GL_RGB;
 #endif
     img = new Image(format, img_w, img_h);
-    if (img == NULL || img->getPixels() == NULL) {
+    if (img == nullptr || img->getPixels() == nullptr) {
         DPRINTF(0, "Could not create image\n");
         delete cgJpegImage;
-        return NULL;
+        return nullptr;
     }
     // following code flips image and skips alpha byte if no alpha support
     unsigned char* bout = (unsigned char*) img->getPixels();
@@ -620,7 +617,7 @@ Image* LoadJPEGImage(const string& filename, int)
     return img;
 
 #else
-    return NULL;
+    return nullptr;
 #endif // JPEG_SUPPORT
 }
 
@@ -628,7 +625,7 @@ Image* LoadJPEGImage(const string& filename, int)
 #ifdef PNG_SUPPORT
 void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-    FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
+    auto* fp = (FILE*) png_get_io_ptr(png_ptr);
     if (fread((void*) data, 1, length, fp) != length)
         cerr << "Error reading PNG data";
 }
@@ -638,22 +635,22 @@ void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 Image* LoadPNGImage(const string& filename)
 {
 #ifndef PNG_SUPPORT
-    return NULL;
+    return nullptr;
 #else
     char header[8];
     png_structp png_ptr;
     png_infop info_ptr;
     png_uint_32 width, height;
     int bit_depth, color_type, interlace_type;
-    FILE* fp = NULL;
-    Image* img = NULL;
-    png_bytep* row_pointers = NULL;
+    FILE* fp = nullptr;
+    Image* img = nullptr;
+    png_bytep* row_pointers = nullptr;
 
     fp = fopen(filename.c_str(), "rb");
-    if (fp == NULL)
+    if (fp == nullptr)
     {
         clog << _("Error opening image file ") << filename << '\n';
-        return NULL;
+        return nullptr;
     }
 
     size_t elements_read;
@@ -662,33 +659,32 @@ Image* LoadPNGImage(const string& filename)
     {
         clog << _("Error: ") << filename << _(" is not a PNG file.\n");
         fclose(fp);
-        return NULL;
+        return nullptr;
     }
 
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
-                                     NULL, NULL, NULL);
-    if (png_ptr == NULL)
+                                     nullptr, nullptr, nullptr);
+    if (png_ptr == nullptr)
     {
         fclose(fp);
-        return NULL;
+        return nullptr;
     }
 
     info_ptr = png_create_info_struct(png_ptr);
-    if (info_ptr == NULL)
+    if (info_ptr == nullptr)
     {
         fclose(fp);
-        png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
-        return NULL;
+        png_destroy_read_struct(&png_ptr, (png_infopp) nullptr, (png_infopp) nullptr);
+        return nullptr;
     }
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
         fclose(fp);
-        if (img != NULL)
-            delete img;
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
+        delete img;
+        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) nullptr);
         clog << _("Error reading PNG image file ") << filename << '\n';
-        return NULL;
+        return nullptr;
     }
 
     // png_init_io(png_ptr, fp);
@@ -700,7 +696,7 @@ Image* LoadPNGImage(const string& filename)
     png_get_IHDR(png_ptr, info_ptr,
                  &width, &height, &bit_depth,
                  &color_type, &interlace_type,
-                 NULL, NULL);
+                 nullptr, nullptr);
 
     GLenum glformat = GL_RGB;
     switch (color_type)
@@ -724,11 +720,11 @@ Image* LoadPNGImage(const string& filename)
     }
 
     img = new Image(glformat, width, height);
-    if (img == NULL)
+    if (img == nullptr)
     {
         fclose(fp);
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-        return NULL;
+        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) nullptr);
+        return nullptr;
     }
 
     // TODO: consider using paletted textures if they're available
@@ -762,8 +758,8 @@ Image* LoadPNGImage(const string& filename)
 
     delete[] row_pointers;
 
-    png_read_end(png_ptr, NULL);
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+    png_read_end(png_ptr, nullptr);
+    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
 
     fclose(fp);
 
@@ -828,7 +824,7 @@ static Image* LoadBMPImage(ifstream& in)
     fileHeader.offset = readInt(in);
 
     if (fileHeader.b != 'B' || fileHeader.m != 'M')
-        return NULL;
+        return nullptr;
 
     imageHeader.size = readInt(in);
     imageHeader.width = readInt(in);
@@ -843,16 +839,16 @@ static Image* LoadBMPImage(ifstream& in)
     imageHeader.colorsImportant = readInt(in);
 
     if (imageHeader.width <= 0 || imageHeader.height <= 0)
-        return NULL;
+        return nullptr;
 
     // We currently don't support compressed BMPs
     if (imageHeader.compression != 0)
-        return NULL;
+        return nullptr;
     // We don't handle 1-, 2-, or 4-bpp images
     if (imageHeader.bpp != 8 && imageHeader.bpp != 24 && imageHeader.bpp != 32)
-        return NULL;
+        return nullptr;
 
-    unsigned char* palette = NULL;
+    unsigned char* palette = nullptr;
     if (imageHeader.bpp == 8)
     {
         printf("Reading %d color palette\n", imageHeader.colorsUsed);
@@ -872,13 +868,12 @@ static Image* LoadBMPImage(ifstream& in)
 
     // check for truncated file
 
-    Image* img = new Image(GL_RGB, imageHeader.width, imageHeader.height);
-    if (img == NULL)
+    auto* img = new Image(GL_RGB, imageHeader.width, imageHeader.height);
+    if (!img)
     {
         delete[] pixels;
-        if (palette != NULL)
-            delete[] palette;
-        return NULL;
+        delete[] palette;
+        return nullptr;
     }
 
     // Copy the image and perform any necessary conversions
@@ -890,42 +885,34 @@ static Image* LoadBMPImage(ifstream& in)
         switch (imageHeader.bpp)
         {
         case 8:
+            for (int x = 0; x < imageHeader.width; x++)
             {
-                for (int x = 0; x < imageHeader.width; x++)
-                {
-                    unsigned char* color = palette + (*src << 2);
-                    dst[0] = color[2];
-                    dst[1] = color[1];
-                    dst[2] = color[0];
-                    src++;
-                    dst += 3;
-                }
+                unsigned char* color = palette + (*src << 2);
+                dst[0] = color[2];
+                dst[1] = color[1];
+                dst[2] = color[0];
+                src++;
+                dst += 3;
             }
             break;
-
         case 24:
+            for (int x = 0; x < imageHeader.width; x++)
             {
-                for (int x = 0; x < imageHeader.width; x++)
-                {
-                    dst[0] = src[2];
-                    dst[1] = src[1];
-                    dst[2] = src[0];
-                    src += 3;
-                    dst += 3;
-                }
+                dst[0] = src[2];
+                dst[1] = src[1];
+                dst[2] = src[0];
+                src += 3;
+                dst += 3;
             }
             break;
-
         case 32:
+            for (int x = 0; x < imageHeader.width; x++)
             {
-                for (int x = 0; x < imageHeader.width; x++)
-                {
-                    dst[0] = src[2];
-                    dst[1] = src[1];
-                    dst[2] = src[0];
-                    src += 4;
-                    dst += 3;
-                }
+                dst[0] = src[2];
+                dst[1] = src[1];
+                dst[2] = src[0];
+                src += 4;
+                dst += 3;
             }
             break;
         }
@@ -939,7 +926,7 @@ static Image* LoadBMPImage(ifstream& in)
 
 Image* LoadBMPImage(const string& filename)
 {
-    ifstream bmpFile(filename.c_str(), ios::in | ios::binary);
+    ifstream bmpFile(filename, ios::in | ios::binary);
 
     if (bmpFile.good())
     {
@@ -947,8 +934,6 @@ Image* LoadBMPImage(const string& filename)
         bmpFile.close();
         return img;
     }
-    else
-    {
-        return NULL;
-    }
+
+    return nullptr;
 }

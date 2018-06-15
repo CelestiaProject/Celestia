@@ -140,11 +140,8 @@ findStars(const StarDatabase& stardb, Pred pred, int nStars)
 
     // Move the best matching stars into the vector
     finalStars->reserve(nStars);
-    for (typename StarSet::const_iterator iter = firstStars.begin();
-         iter != firstStars.end(); iter++)
-    {
-        finalStars->insert(finalStars->end(), *iter);
-    }
+    for (const auto& star : firstStars)
+        finalStars->insert(finalStars->end(), star);
 
     return finalStars;
 }
@@ -187,8 +184,8 @@ StarBrowser::listStars(unsigned int nStars)
     case StarsWithPlanets:
         {
             SolarSystemCatalog* solarSystems = univ->getSolarSystemCatalog();
-            if (solarSystems == NULL)
-                return NULL;
+            if (!solarSystems)
+                return nullptr;
             SolarSystemPredicate solarSysPred;
             solarSysPred.pos = pos;
             solarSysPred.solarSystems = solarSystems;
@@ -207,7 +204,7 @@ StarBrowser::listStars(unsigned int nStars)
         break;
     }
 
-    return NULL;  // keep compiler happy
+    return nullptr;  // keep compiler happy
 }
 
 
@@ -247,7 +244,7 @@ StarBrowser::StarBrowser(Simulation* _appSim, int pred) :
 StarBrowser::StarBrowser() :
     pos(Vector3f::Zero()),
     ucPos(UniversalCoord::Zero()),
-    appSim(NULL),
+    appSim(nullptr),
     predicate(NearestStars)
 {
 }

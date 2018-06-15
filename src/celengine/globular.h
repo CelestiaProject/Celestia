@@ -74,15 +74,20 @@ class Globular : public DeepSkyObject
     virtual const char* getObjTypeName() const;
 
  private:
+   // Reference values ( = data base averages) of core radius, King concentration
+   // and mu25 isophote radius:
+
+    static constexpr float R_c_ref = 0.83f, C_ref = 2.1f, R_mu25 = 40.32f;
+
     void recomputeTidalRadius();
 
  private:
-    float detail;
-    std::string* customTmpName;
-    GlobularForm* form;
-    float r_c;
-    float c;
-    float tidalRadius;
+    float detail{ 1.0f };
+    std::string* customTmpName{ nullptr };
+    GlobularForm* form{ nullptr };
+    float r_c{ R_c_ref };
+    float c{ C_ref };
+    float tidalRadius{ 0.0f };
 };
 
 #endif // _GLOBULAR_H_

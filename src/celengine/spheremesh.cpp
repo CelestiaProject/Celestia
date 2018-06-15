@@ -21,14 +21,12 @@
 using namespace Eigen;
 
 
-SphereMesh::SphereMesh(float radius, int _nRings, int _nSlices) :
-    vertices(NULL), normals(NULL), texCoords(NULL), indices(NULL)
+SphereMesh::SphereMesh(float radius, int _nRings, int _nSlices)
 {
     createSphere(radius, _nRings, _nSlices);
 }
 
-SphereMesh::SphereMesh(const Vector3f& size, int _nRings, int _nSlices) :
-    vertices(NULL), normals(NULL), texCoords(NULL), indices(NULL)
+SphereMesh::SphereMesh(const Vector3f& size, int _nRings, int _nSlices)
 {
     createSphere(1.0f, _nRings, _nSlices);
     scale(size);
@@ -36,8 +34,7 @@ SphereMesh::SphereMesh(const Vector3f& size, int _nRings, int _nSlices) :
 
 SphereMesh::SphereMesh(const Vector3f& size,
                        const DisplacementMap& dispmap,
-                       float height) :
-    vertices(NULL), normals(NULL), texCoords(NULL), indices(NULL)
+                       float height)
 {
     createSphere(1.0f, dispmap.getHeight(), dispmap.getWidth());
     scale(size);
@@ -60,16 +57,11 @@ SphereMesh::SphereMesh(const Vector3f& size,
 
 SphereMesh::~SphereMesh()
 {
-    if (vertices != NULL)
-        delete[] vertices;
-    if (normals != NULL)
-        delete[] normals;
-    if (texCoords != NULL)
-        delete[] texCoords;
-    if (indices != NULL)
-        delete[] indices;
-    if (tangents != NULL)
-        delete[] tangents;
+    delete[] vertices;
+    delete[] normals;
+    delete[] texCoords;
+    delete[] indices;
+    delete[] tangents;
 }
 
 
@@ -93,9 +85,9 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
         {
             float theta = (float) j / (float) nSlices * (float) PI * 2;
             int n = i * (nSlices + 1) + j;
-            float x = (float) (cos(phi) * cos(theta));
-            float y = (float) sin(phi);
-            float z = (float) (cos(phi) * sin(theta));
+            auto x = (float) (std::cos(phi) * std::cos(theta));
+            auto y = (float) std::sin(phi);
+            auto z = (float) (std::cos(phi) * std::sin(theta));
             vertices[n * 3]      = x * radius;
             vertices[n * 3 + 1]  = y * radius;
             vertices[n * 3 + 2]  = z * radius;
@@ -106,9 +98,9 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
             texCoords[n * 2 + 1] = 1.0f - (float) i / (float) (nRings - 1);
 
             // Compute the tangent--required for bump mapping
-            float tx = (float) (sin(phi) * sin(theta));
-            float ty = (float) -cos(phi);
-            float tz = (float) (sin(phi) * cos(theta));
+            auto tx = (float) (std::sin(phi) * std::sin(theta));
+            auto ty = (float) -std::cos(phi);
+            auto tz = (float) (std::sin(phi) * std::cos(theta));
             tangents[n * 3]      = tx;
             tangents[n * 3 + 1]  = ty;
             tangents[n * 3 + 2]  = tz;
@@ -169,7 +161,7 @@ void SphereMesh::generateNormals()
         }
     }
 
-    int* faceCounts = new int[nVertices];
+    auto* faceCounts = new int[nVertices];
     for (i = 0; i < nVertices; i++)
     {
         faceCounts[i] = 0;
@@ -237,7 +229,7 @@ void SphereMesh::generateNormals()
             float nx = normals[i * 3] * s;
             float ny = normals[i * 3 + 1] * s;
             float nz = normals[i * 3 + 2] * s;
-            float length = (float) sqrt(nx * nx + ny * ny + nz * nz);
+            auto length = (float) std::sqrt(nx * nx + ny * ny + nz * nz);
             if (length > 0)
             {
                 length = 1 / length;
@@ -285,7 +277,7 @@ void SphereMesh::scale(const Vector3f& s)
     }
 
     // Modify the normals
-    if (normals != NULL)
+    if (normals != nullptr)
     {
         // TODO: Make a fast special case for uniform scale factors, where
         // renormalization is not required.
@@ -365,7 +357,7 @@ Mesh* SphereMesh::convertToMesh() const
 
     // Copy the vertex data from the separate position, normal, and texture coordinate
     // arrays into a single array.
-    char* vertexData = new char[stride * nVertices];
+    auto* vertexData = new char[stride * nVertices];
 
     int i;
     for (i = 0; i < nVertices; i++)

@@ -28,7 +28,7 @@ class VisibleRegion : public ReferenceMark
 {
 public:
     VisibleRegion(const Body& body, const Selection& target);
-    ~VisibleRegion();
+    ~VisibleRegion() = default;
 
     void render(Renderer* renderer,
                 const Eigen::Vector3f& pos,

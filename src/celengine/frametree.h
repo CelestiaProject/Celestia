@@ -30,7 +30,7 @@ public:
     ~FrameTree();
 
     /*! Return the star that this tree is associated with; it will be
-     *  NULL for frame trees associated with solar system bodies.
+     *  nullptr for frame trees associated with solar system bodies.
      */
     Star* getStar() const
     {
@@ -50,7 +50,7 @@ public:
 
     bool isRoot() const
     {
-        return bodyParent == NULL;
+        return bodyParent == nullptr;
     }
 
     bool updateRequired() const

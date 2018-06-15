@@ -99,8 +99,8 @@ namespace arbvp
 class VertexProcessor
 {
  public:
-    VertexProcessor();
-    virtual ~VertexProcessor();
+    VertexProcessor() = default;
+    virtual ~VertexProcessor() = default;
 
     virtual void enable() = 0;
     virtual void disable() = 0;

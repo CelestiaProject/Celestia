@@ -19,14 +19,14 @@
 using namespace std;
 
 
-static TrajectoryManager* trajectoryManager = NULL;
+static TrajectoryManager* trajectoryManager = nullptr;
 
 static const char UniqueSuffixChar = '!';
 
 
 TrajectoryManager* GetTrajectoryManager()
 {
-    if (trajectoryManager == NULL)
+    if (trajectoryManager == nullptr)
         trajectoryManager = new TrajectoryManager("data");
     return trajectoryManager;
 }
@@ -43,7 +43,7 @@ string TrajectoryInfo::resolve(const string& baseDir)
     if (!path.empty())
     {
         string filename = path + "/data/" + source;
-        ifstream in(filename.c_str());
+        ifstream in(filename);
         if (in.good())
             return filename + uniquifyingSuffix;
     }
@@ -60,7 +60,7 @@ Orbit* TrajectoryInfo::load(const string& filename)
 
     DPRINTF(1, "Loading trajectory: %s\n", strippedFilename.c_str());
 
-    Orbit* sampTrajectory = NULL;
+    Orbit* sampTrajectory = nullptr;
 
     if (filetype == Content_CelestiaXYZVTrajectory)
     {

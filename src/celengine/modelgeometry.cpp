@@ -44,15 +44,12 @@ static bool isVBOSupported()
 class ModelOpenGLData
 {
 public:
-    ModelOpenGLData()
-    {
-    }
+    ModelOpenGLData() = default;
 
     ~ModelOpenGLData()
     {
-        for (vector<GLuint>::iterator iter = vbos.begin(); iter != vbos.end(); ++iter)
+        for (auto vboId : vbos)
         {
-            GLuint vboId = *iter;
             if (vboId != 0)
             {
                 glDeleteBuffersARB(1, &vboId);
@@ -68,9 +65,7 @@ public:
   * The ModelGeoemtry takes ownership of the model.
   */
 ModelGeometry::ModelGeometry(Model* model) :
-    m_model(model),
-    m_vbInitialized(false),
-    m_glData(NULL)
+    m_model(model)
 {
     m_glData = new ModelOpenGLData();
 }
@@ -149,7 +144,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
         {
             // Bind the vertex buffer object.
             glBindBufferARB(GL_ARRAY_BUFFER_ARB, vboId);
-            rc.setVertexArrays(mesh->getVertexDescription(), NULL);
+            rc.setVertexArrays(mesh->getVertexDescription(), nullptr);
         }
         else
         {
@@ -163,7 +158,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             const Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
 
             // Set up the material
-            const Material* material = NULL;
+            const Material* material = nullptr;
             unsigned int materialIndex = group->materialIndex;
             if (materialIndex != lastMaterial && materialIndex < materialCount)
             {
@@ -208,11 +203,8 @@ void
 ModelGeometry::loadTextures()
 {
 #if 0
-    for (vector<const Material*>::const_iterator iter = materials.begin();
-         iter != materials.end(); iter++)
+    for (const auto m : materials)
     {
-        const Mesh::Material* m = *iter;
-
         if (m->maps[Mesh::DiffuseMap] != InvalidResource)
             GetTextureManager()->find(m->maps[Mesh::DiffuseMap]);
         if (m->maps[Mesh::NormalMap] != InvalidResource)
@@ -230,19 +222,8 @@ string
 CelestiaTextureResource::source() const
 {
     if (m_textureHandle == InvalidResource)
-    {
         return "";
-    }
-    else
-    {
-        const TextureInfo* t = GetTextureManager()->getResourceInfo(textureHandle());
-        if (!t)
-        {
-            return "";
-        }
-        else
-        {
-            return t->source;
-        }
-    }
+
+    const TextureInfo* t = GetTextureManager()->getResourceInfo(textureHandle());
+    return t ? t->source : "";
 }

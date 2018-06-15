@@ -24,7 +24,7 @@ class WavefrontLoader
 {
 public:
     WavefrontLoader(std::istream& in);
-    ~WavefrontLoader();
+    ~WavefrontLoader() = default;
 
     cmod::Model* load();
     std::string errorMessage() const

@@ -34,6 +34,7 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include <utility>
 
 
 
@@ -45,7 +46,7 @@ using namespace std;
 static Model* LoadCelestiaMesh(const string& filename);
 static Model* Convert3DSModel(const M3DScene& scene, const string& texPath);
 
-static GeometryManager* geometryManager = NULL;
+static GeometryManager* geometryManager = nullptr;
 
 static const char UniqueSuffixChar = '!';
 
@@ -53,12 +54,12 @@ static const char UniqueSuffixChar = '!';
 class CelestiaTextureLoader : public cmod::TextureLoader
 {
 public:
-    CelestiaTextureLoader(const std::string& texturePath) :
-        m_texturePath(texturePath)
+    CelestiaTextureLoader(std::string texturePath) :
+        m_texturePath(std::move(texturePath))
     {
     }
 
-    ~CelestiaTextureLoader() {}
+    ~CelestiaTextureLoader() = default;
 
     Material::TextureResource* loadTexture(const std::string& name)
     {
@@ -73,7 +74,7 @@ private:
 
 GeometryManager* GetGeometryManager()
 {
-    if (geometryManager == NULL)
+    if (geometryManager == nullptr)
         geometryManager = new GeometryManager("models");
     return geometryManager;
 }
@@ -90,7 +91,7 @@ string GeometryInfo::resolve(const string& baseDir)
     if (!path.empty())
     {
         string filename = path + "/models/" + source;
-        ifstream in(filename.c_str());
+        ifstream in(filename);
         if (in.good())
         {
             resolvedToPath = true;
@@ -109,13 +110,13 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
     string filename(resolvedFilename, 0, uniquifyingSuffixStart);
 
     clog << _("Loading model: ") << filename << '\n';
-    Model* model = NULL;
+    Model* model = nullptr;
     ContentType fileType = DetermineFileType(filename);
 
     if (fileType == Content_3DStudio)
     {
         M3DScene* scene = Read3DSFile(filename);
-        if (scene != NULL)
+        if (scene != nullptr)
         {
             if (resolvedToPath)
                 model = Convert3DSModel(*scene, path);
@@ -132,13 +133,13 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
     }
     else if (fileType == Content_CelestiaModel)
     {
-        ifstream in(filename.c_str(), ios::binary);
+        ifstream in(filename, ios::binary);
         if (in.good())
         {
             CelestiaTextureLoader textureLoader(path);
 
             model = LoadModel(in, &textureLoader);
-            if (model != NULL)
+            if (model != nullptr)
             {
                 if (isNormalized)
                     model->normalize(center);
@@ -150,7 +151,7 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
     else if (fileType == Content_CelestiaMesh)
     {
         model = LoadCelestiaMesh(filename);
-        if (model != NULL)
+        if (model != nullptr)
         {
             if (isNormalized)
                 model->normalize(center);
@@ -161,7 +162,7 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
 #if PARTICLE_SYSTEM
     else if (fileType == Content_CelestiaParticleSystem)
     {
-        ifstream in(filename.c_str());
+        ifstream in(filename);
         if (in.good())
         {
             return LoadParticleSystem(in, path);
@@ -170,7 +171,7 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
 #endif
 
     // Condition the model for optimal rendering
-    if (model != NULL)
+    if (model != nullptr)
     {
         // Many models tend to have a lot of duplicate materials; eliminate
         // them, since unnecessarily setting material parameters can adversely
@@ -199,7 +200,7 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
     else
     {
         clog << _("Error loading model '") << filename << "'\n";
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -223,8 +224,8 @@ static float NoiseDisplacementFunc(float u, float v, void* info)
     float y = (float) sin(phi);
     float z = (float) (cos(phi) * sin(theta));
 
-    // assert(info != NULL);
-    NoiseMeshParameters* params = (NoiseMeshParameters*) info;
+    // assert(info != nullptr);
+    auto* params = (NoiseMeshParameters*) info;
 
     Vector3f p = Vector3f(x, y, z) + params->offset;
     return fractalsum(p, params->octaves) * params->featureHeight;
@@ -234,11 +235,11 @@ static float NoiseDisplacementFunc(float u, float v, void* info)
 // TODO: The Celestia mesh format is deprecated
 Model* LoadCelestiaMesh(const string& filename)
 {
-    ifstream meshFile(filename.c_str(), ios::in);
+    ifstream meshFile(filename, ios::in);
     if (!meshFile.good())
     {
         DPRINTF(0, "Error opening mesh file: %s\n", filename.c_str());
-        return NULL;
+        return nullptr;
     }
 
     Tokenizer tokenizer(&meshFile);
@@ -247,7 +248,7 @@ Model* LoadCelestiaMesh(const string& filename)
     if (tokenizer.nextToken() != Tokenizer::TokenName)
     {
         DPRINTF(0, "Mesh file %s is invalid.\n", filename.c_str());
-        return NULL;
+        return nullptr;
     }
 
     if (tokenizer.getStringValue() != "SphereDisplacementMesh")
@@ -255,26 +256,26 @@ Model* LoadCelestiaMesh(const string& filename)
         DPRINTF(0, "%s: Unrecognized mesh type %s.\n",
                 filename.c_str(),
                 tokenizer.getStringValue().c_str());
-        return NULL;
+        return nullptr;
     }
 
     Value* meshDefValue = parser.readValue();
-    if (meshDefValue == NULL)
+    if (meshDefValue == nullptr)
     {
         DPRINTF(0, "%s: Bad mesh file.\n", filename.c_str());
-        return NULL;
+        return nullptr;
     }
 
     if (meshDefValue->getType() != Value::HashType)
     {
         DPRINTF(0, "%s: Bad mesh file.\n", filename.c_str());
         delete meshDefValue;
-        return NULL;
+        return nullptr;
     }
 
     Hash* meshDef = meshDefValue->getHash();
 
-    NoiseMeshParameters params;
+    NoiseMeshParameters params{};
 
     params.size = Vector3f::Ones();
     params.offset = Vector3f::Constant(10.0f);
@@ -297,7 +298,7 @@ Model* LoadCelestiaMesh(const string& filename)
                                             (int) params.rings, (int) params.slices,
                                             NoiseDisplacementFunc,
                                             (void*) &params);
-    if (sphereMesh != NULL)
+    if (sphereMesh != nullptr)
     {
         Mesh* mesh = sphereMesh->convertToMesh();
         model->addMesh(mesh);
@@ -349,13 +350,13 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
 
     Vector3f* faceNormals = new Vector3f[nFaces];
     Vector3f* vertexNormals = new Vector3f[nFaces * 3];
-    int* faceCounts = new int[nVertices];
-    int** vertexFaces = new int*[nVertices];
+    auto* faceCounts = new int[nVertices];
+    auto** vertexFaces = new int*[nVertices];
 
     for (int i = 0; i < nVertices; i++)
     {
         faceCounts[i] = 0;
-        vertexFaces[i] = NULL;
+        vertexFaces[i] = nullptr;
     }
 
     // generate face normals
@@ -444,7 +445,7 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
 
     // Create the vertex data
     unsigned int floatsPerVertex = vertexSize / sizeof(float);
-    float* vertexData = new float[nFaces * 3 * floatsPerVertex];
+    auto* vertexData = new float[nFaces * 3 * floatsPerVertex];
 
     for (int i = 0; i < nFaces; i++)
     {
@@ -509,17 +510,15 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
     }
 
     // clean up
-    if (faceNormals != NULL)
-        delete[] faceNormals;
-    if (vertexNormals != NULL)
-        delete[] vertexNormals;
-    if (faceCounts != NULL)
-        delete[] faceCounts;
-    if (vertexFaces != NULL)
+    delete[] faceNormals;
+    delete[] vertexNormals;
+    delete[] faceCounts;
+
+    if (vertexFaces != nullptr)
     {
         for (int i = 0; i < nVertices; i++)
         {
-            if (vertexFaces[i] != NULL)
+            if (vertexFaces[i] != nullptr)
                 delete[] vertexFaces[i];
         }
         delete[] vertexFaces;
@@ -532,7 +531,7 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
 static Material::Color
 toMaterialColor(Color c)
 {
-    return Material::Color(c.red(), c.green(), c.blue());
+    return {c.red(), c.green(), c.blue()};
 }
 
 
@@ -578,12 +577,12 @@ Convert3DSModel(const M3DScene& scene, const string& texPath)
     for (uint32 i = 0; i < scene.getModelCount(); i++)
     {
         M3DModel* model3ds = scene.getModel(i);
-        if (model3ds != NULL)
+        if (model3ds)
         {
             for (unsigned int j = 0; j < model3ds->getTriMeshCount(); j++)
             {
                 M3DTriangleMesh* mesh = model3ds->getTriMesh(j);
-                if (mesh != NULL)
+                if (mesh)
                 {
                     Mesh* newMesh = ConvertTriangleMesh(*mesh, scene);
                     model->addMesh(newMesh);

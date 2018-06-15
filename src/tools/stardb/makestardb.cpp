@@ -223,14 +223,14 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    ifstream inputFile(inputFilename.c_str(), ios::in);
+    ifstream inputFile(inputFilename, ios::in);
     if (!inputFile.good())
     {
         cerr << "Error opening input file " << inputFilename << '\n';
         return 1;
     }
 
-    ofstream stardbFile(outputFilename.c_str(), ios::out | ios::binary);
+    ofstream stardbFile(outputFilename, ios::out | ios::binary);
     if (!stardbFile.good())
     {
         cerr << "Error opening star database file " << outputFilename << '\n';

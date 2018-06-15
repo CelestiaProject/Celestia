@@ -39,14 +39,10 @@ double FormattedNumber::getRoundedValue() const
     if (flags & SignificantDigits)
     {
         if (value == 0.0)
-        {
             return 0.0;
-        }
-        else
-        {
-            double m = pow(10.0, floor(log10(fabs(value))) - precision + 1);
-            return floor(value / m + 0.5) * m;
-        }
+
+        double m = pow(10.0, floor(log10(fabs(value))) - precision + 1);
+        return floor(value / m + 0.5) * m;
     }
     else
     {
@@ -94,7 +90,7 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
         int j = sizeof(obuf) - 1;
         int i = strlen(buf);
         int digitCount = 0;
-        if (decimalPosition != NULL)
+        if (decimalPosition != nullptr)
         {
             int len = strlen(decimalPosition);
             j -= len;

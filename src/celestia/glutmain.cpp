@@ -15,7 +15,7 @@
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
-#include <time.h>
+#include <ctime>
 #include <unistd.h>
 #include <GL/glew.h>
 #ifndef MACOSX
@@ -41,7 +41,7 @@ using namespace std;
 
 char AppName[] = "Celestia";
 
-static CelestiaCore* appCore = NULL;
+static CelestiaCore* appCore = nullptr;
 
 //static bool fullscreen = false;
 static bool ready = false;
@@ -72,7 +72,7 @@ static void Resize(int w, int h)
  * Definition of GLUT callback functions
  */
 
-static void Display(void)
+static void Display()
 {
     if (ready)
     {
@@ -81,7 +81,7 @@ static void Display(void)
     }
 }
 
-static void Idle(void)
+static void Idle()
 {
     if (glutGetWindow() != mainWindow)
         glutSetWindow(mainWindow);
@@ -481,7 +481,7 @@ int main(int argc, char* argv[])
     }
 
     appCore = new CelestiaCore();
-    if (appCore == NULL)
+    if (appCore == nullptr)
     {
         cerr << "Out of memory.\n";
         return 1;
@@ -517,7 +517,7 @@ int main(int argc, char* argv[])
     appCore->initRenderer();
 
     // Set the simulation starting time to the current system time
-    time_t curtime=time(NULL);
+    time_t curtime=time(nullptr);
     appCore->start((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
     #ifdef MACOSX
     /* localtime in Darwin is is reentrant only

@@ -33,7 +33,7 @@ class Simulation
     ~Simulation();
 
     double getTime() const; // Julian date
-    void setTime(double t);
+    void setTime(double jd);
 
     double getRealTime() const;
     double getArrivalTime() const;
@@ -121,21 +121,21 @@ class Simulation
     SolarSystem* getSolarSystem(const Star* star);
 
  private:
-    double realTime;
-    double timeScale;
-    double storedTimeScale;
-    bool syncTime;
+    double realTime{ 0.0 };
+    double timeScale{ 1.0 };
+    double storedTimeScale{ 1.0 };
+    bool syncTime{ true };
 
     Universe* universe;
 
-    SolarSystem* closestSolarSystem;
+    SolarSystem* closestSolarSystem{ nullptr };
     Selection selection;
 
     Observer* activeObserver;
     std::vector<Observer*> observers;
 
-    float faintestVisible;
-    bool pauseState;
+    float faintestVisible{ 5.0f };
+    bool pauseState{ false };
 };
 
 #endif // _CELENGINE_SIMULATION_H_

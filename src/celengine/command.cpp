@@ -17,7 +17,9 @@
 #include <celestia/celx_internal.h>
 #include <celutil/util.h>
 #include <iostream>
+#include <utility>
 #include "eigenport.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -29,11 +31,7 @@ CommandWait::CommandWait(double _duration) : TimedCommand(_duration)
 {
 }
 
-CommandWait::~CommandWait()
-{
-}
-
-void CommandWait::process(ExecutionEnvironment&, double, double)
+void CommandWait::process(ExecutionEnvironment& /*unused*/, double /*unused*/, double /*unused*/)
 {
 }
 
@@ -41,11 +39,7 @@ void CommandWait::process(ExecutionEnvironment&, double, double)
 ////////////////
 // Select command: select a body
 
-CommandSelect::CommandSelect(string _target) : target(_target)
-{
-}
-
-CommandSelect::~CommandSelect()
+CommandSelect::CommandSelect(string _target) : target(std::move(_target))
 {
 }
 
@@ -65,10 +59,6 @@ CommandGoto::CommandGoto(double t,
                          Vec3f _up,
                          ObserverFrame::CoordinateSystem _upFrame) :
     gotoTime(t), distance(dist), up(_up), upFrame(_upFrame)
-{
-}
-
-CommandGoto::~CommandGoto()
 {
 }
 
@@ -97,10 +87,6 @@ CommandGotoLongLat::CommandGotoLongLat(double t,
 {
 }
 
-CommandGotoLongLat::~CommandGotoLongLat()
-{
-}
-
 void CommandGotoLongLat::process(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->getSelection();
@@ -121,10 +107,6 @@ CommandGotoLocation::CommandGotoLocation(double t,
 {
 }
 
-CommandGotoLocation::~CommandGotoLocation()
-{
-}
-
 void CommandGotoLocation::process(ExecutionEnvironment& env)
 {
     Quatd toOrientation = Quatd(rotation.w, rotation.x, rotation.y, rotation.z);
@@ -135,8 +117,8 @@ void CommandGotoLocation::process(ExecutionEnvironment& env)
 /////////////////////////////
 // SetUrl
 
-CommandSetUrl::CommandSetUrl(const std::string& _url) :
-    url(_url)
+CommandSetUrl::CommandSetUrl(std::string _url) :
+    url(std::move(_url))
 {
 }
 
@@ -153,10 +135,6 @@ CommandCenter::CommandCenter(double t) : centerTime(t)
 {
 }
 
-CommandCenter::~CommandCenter()
-{
-}
-
 void CommandCenter::process(ExecutionEnvironment& env)
 {
     env.getSimulation()->centerSelection(centerTime);
@@ -165,10 +143,6 @@ void CommandCenter::process(ExecutionEnvironment& env)
 
 ////////////////
 // Follow command: follow the selected body
-
-CommandFollow::CommandFollow()
-{
-}
 
 void CommandFollow::process(ExecutionEnvironment& env)
 {
@@ -180,10 +154,6 @@ void CommandFollow::process(ExecutionEnvironment& env)
 // Synchronous command: maintain the current position relative to the
 // surface of the currently selected object.
 
-CommandSynchronous::CommandSynchronous()
-{
-}
-
 void CommandSynchronous::process(ExecutionEnvironment& env)
 {
     env.getSimulation()->geosynchronousFollow();
@@ -192,10 +162,6 @@ void CommandSynchronous::process(ExecutionEnvironment& env)
 
 ////////////////
 // Chase command:
-
-CommandChase::CommandChase()
-{
-}
 
 void CommandChase::process(ExecutionEnvironment& env)
 {
@@ -206,10 +172,6 @@ void CommandChase::process(ExecutionEnvironment& env)
 ////////////////
 // Track command:
 
-CommandTrack::CommandTrack()
-{
-}
-
 void CommandTrack::process(ExecutionEnvironment& env)
 {
     env.getSimulation()->setTrackedObject(env.getSimulation()->getSelection());
@@ -218,10 +180,6 @@ void CommandTrack::process(ExecutionEnvironment& env)
 
 ////////////////
 // Lock command:
-
-CommandLock::CommandLock()
-{
-}
 
 void CommandLock::process(ExecutionEnvironment& env)
 {
@@ -234,9 +192,9 @@ void CommandLock::process(ExecutionEnvironment& env)
 // Setframe command
 
 CommandSetFrame::CommandSetFrame(ObserverFrame::CoordinateSystem _coordSys,
-                                 const string& refName,
-                                 const string& targetName) :
-    coordSys(_coordSys), refObjectName(refName), targetObjectName(targetName)
+                                 string refName,
+                                 string targetName) :
+    coordSys(_coordSys), refObjectName(std::move(refName)), targetObjectName(std::move(targetName))
 {
 }
 
@@ -253,8 +211,8 @@ void CommandSetFrame::process(ExecutionEnvironment& env)
 ////////////////
 // SetSurface command: select an alternate surface to show
 
-CommandSetSurface::CommandSetSurface(const string& _surfaceName) :
-    surfaceName(_surfaceName)
+CommandSetSurface::CommandSetSurface(string _surfaceName) :
+    surfaceName(std::move(_surfaceName))
 {
 }
 
@@ -267,10 +225,6 @@ void CommandSetSurface::process(ExecutionEnvironment& env)
 ////////////////
 // Cancel command: stop all motion, set the coordinate system to absolute,
 //                 and cancel any tracking
-
-CommandCancel::CommandCancel()
-{
-}
 
 void CommandCancel::process(ExecutionEnvironment& env)
 {
@@ -286,7 +240,7 @@ void CommandCancel::process(ExecutionEnvironment& env)
 CommandPrint::CommandPrint(string _text,
                            int horig, int vorig, int hoff, int voff,
                            double _duration
-                           ) : text(_text),
+                           ) : text(std::move(_text)),
                                hOrigin(horig), vOrigin(vorig),
                                hOffset(hoff), vOffset(voff),
                                duration(_duration)
@@ -302,11 +256,7 @@ void CommandPrint::process(ExecutionEnvironment& env)
 ////////////////
 // Clear screen command: clear the console of all text
 
-CommandClearScreen::CommandClearScreen()
-{
-}
-
-void CommandClearScreen::process(ExecutionEnvironment&)
+void CommandClearScreen::process(ExecutionEnvironment& /*unused*/)
 {
 }
 
@@ -314,11 +264,7 @@ void CommandClearScreen::process(ExecutionEnvironment&)
 ////////////////
 // Exit command: quit the program
 
-CommandExit::CommandExit()
-{
-}
-
-void CommandExit::process(ExecutionEnvironment&)
+void CommandExit::process(ExecutionEnvironment& /*unused*/)
 {
     exit(0);
 }
@@ -359,7 +305,7 @@ CommandChangeDistance::CommandChangeDistance(double _duration, double _rate) :
 {
 }
 
-void CommandChangeDistance::process(ExecutionEnvironment& env, double, double dt)
+void CommandChangeDistance::process(ExecutionEnvironment& env, double /*unused*/, double dt)
 {
     env.getSimulation()->changeOrbitDistance((float) (rate * dt));
 }
@@ -374,7 +320,7 @@ CommandOrbit::CommandOrbit(double _duration, const Vec3f& axis, float rate) :
 {
 }
 
-void CommandOrbit::process(ExecutionEnvironment& env, double, double dt)
+void CommandOrbit::process(ExecutionEnvironment& env, double /*unused*/, double dt)
 {
     float v = spin.length();
     if (v != 0.0f)
@@ -392,7 +338,7 @@ CommandRotate::CommandRotate(double _duration, const Vec3f& axis, float rate) :
 {
 }
 
-void CommandRotate::process(ExecutionEnvironment& env, double, double dt)
+void CommandRotate::process(ExecutionEnvironment& env, double /*unused*/, double dt)
 {
     float v = spin.length();
     if (v != 0.0f)
@@ -410,7 +356,7 @@ CommandMove::CommandMove(double _duration, const Vec3d& _velocity) :
 {
 }
 
-void CommandMove::process(ExecutionEnvironment& env, double, double dt)
+void CommandMove::process(ExecutionEnvironment& env, double /*unused*/, double dt)
 {
     Eigen::Vector3d velocityKm = toEigen(velocity) * dt * astro::microLightYearsToKilometers(1.0);
     env.getSimulation()->setObserverPosition(env.getSimulation()->getObserver().getPosition().offsetKm(velocityKm));
@@ -448,10 +394,6 @@ void CommandSetOrientation::process(ExecutionEnvironment& env)
 ////////////////
 // Look back command: reverse observer orientation
 
-CommandLookBack::CommandLookBack()
-{
-}
-
 void CommandLookBack::process(ExecutionEnvironment& env)
 {
   env.getSimulation()->reverseObserverOrientation();
@@ -468,7 +410,7 @@ CommandRenderFlags::CommandRenderFlags(int _setFlags, int _clearFlags) :
 void CommandRenderFlags::process(ExecutionEnvironment& env)
 {
     Renderer* r = env.getRenderer();
-    if (r != NULL)
+    if (r != nullptr)
     {
         r->setRenderFlags(r->getRenderFlags() | setFlags);
         r->setRenderFlags(r->getRenderFlags() & ~clearFlags);
@@ -487,7 +429,7 @@ CommandLabels::CommandLabels(int _setFlags, int _clearFlags) :
 void CommandLabels::process(ExecutionEnvironment& env)
 {
     Renderer* r = env.getRenderer();
-    if (r != NULL)
+    if (r != nullptr)
     {
         r->setLabelMode(r->getLabelMode() | setFlags);
         r->setLabelMode(r->getLabelMode() & ~clearFlags);
@@ -506,7 +448,7 @@ CommandOrbitFlags::CommandOrbitFlags(int _setFlags, int _clearFlags) :
 void CommandOrbitFlags::process(ExecutionEnvironment& env)
 {
     Renderer* r = env.getRenderer();
-    if (r != NULL)
+    if (r != nullptr)
     {
         r->setOrbitMask(r->getOrbitMask() | setFlags);
         r->setOrbitMask(r->getOrbitMask() & ~clearFlags);
@@ -538,7 +480,7 @@ CommandSetFaintestAutoMag45deg::CommandSetFaintestAutoMag45deg(double mag) :
 void CommandSetFaintestAutoMag45deg::process(ExecutionEnvironment& env)
 {
     Renderer* r = env.getRenderer();
-    if (r != NULL)
+    if (r != nullptr)
         r->setFaintestAM45deg((float) magnitude);
 }
 
@@ -553,7 +495,7 @@ CommandSetAmbientLight::CommandSetAmbientLight(float level) :
 void CommandSetAmbientLight::process(ExecutionEnvironment& env)
 {
     Renderer* r = env.getRenderer();
-    if (r != NULL)
+    if (r != nullptr)
         r->setAmbientLightLevel(lightLevel);
 }
 
@@ -574,8 +516,8 @@ void CommandSetGalaxyLightGain::process(ExecutionEnvironment& /* env */)
 ////////////////
 // Set command
 
-CommandSet::CommandSet(const std::string& _name, double _value) :
-    name(_name), value(_value)
+CommandSet::CommandSet(std::string _name, double _value) :
+    name(std::move(_name)), value(_value)
 {
 }
 
@@ -583,22 +525,22 @@ void CommandSet::process(ExecutionEnvironment& env)
 {
     if (compareIgnoringCase(name, "MinOrbitSize") == 0)
     {
-        if (env.getRenderer() != NULL)
+        if (env.getRenderer() != nullptr)
             env.getRenderer()->setMinimumOrbitSize((float) value);
     }
     else if (compareIgnoringCase(name, "AmbientLightLevel") == 0)
     {
-        if (env.getRenderer() != NULL)
+        if (env.getRenderer() != nullptr)
             env.getRenderer()->setAmbientLightLevel((float) value);
     }
     else if (compareIgnoringCase(name, "FOV") == 0)
     {
-        if (env.getRenderer() != NULL)
+        if (env.getRenderer() != nullptr)
             env.getSimulation()->getActiveObserver()->setFOV(degToRad((float) value));
     }
     else if (compareIgnoringCase(name, "StarDistanceLimit") == 0)
     {
-        if (env.getRenderer() != NULL)
+        if (env.getRenderer() != nullptr)
             env.getRenderer()->setDistanceLimit((float) value);
     }
     else if (compareIgnoringCase(name, "StarStyle") == 0)
@@ -606,7 +548,7 @@ void CommandSet::process(ExecutionEnvironment& env)
         // The cast from double to an enum requires an intermediate cast to int
         // Probably shouldn't be doing this at all, but other alternatives
         // are more trouble than they're worth.
-        if (env.getRenderer() != NULL)
+        if (env.getRenderer() != nullptr)
             env.getRenderer()->setStarStyle((Renderer::StarStyle) (int) value);
     }
 }
@@ -615,10 +557,10 @@ void CommandSet::process(ExecutionEnvironment& env)
 ////////////////
 // Mark object command
 
-CommandMark::CommandMark(const string& _target,
+CommandMark::CommandMark(string _target,
                          MarkerRepresentation _rep,
                          bool _occludable) :
-    target(_target),
+    target(std::move(_target)),
     rep(_rep),
     occludable(_occludable)
 {
@@ -630,7 +572,7 @@ void CommandMark::process(ExecutionEnvironment& env)
     if (sel.empty())
         return;
 
-    if (env.getSimulation()->getUniverse() != NULL)
+    if (env.getSimulation()->getUniverse() != nullptr)
     {
 
         env.getSimulation()->getUniverse()->markObject(sel, rep, 1, occludable);
@@ -642,8 +584,8 @@ void CommandMark::process(ExecutionEnvironment& env)
 ////////////////
 // Unmark object command
 
-CommandUnmark::CommandUnmark(const string& _target) :
-    target(_target)
+CommandUnmark::CommandUnmark(string _target) :
+    target(std::move(_target))
 {
 }
 
@@ -653,7 +595,7 @@ void CommandUnmark::process(ExecutionEnvironment& env)
     if (sel.empty())
         return;
 
-    if (env.getSimulation()->getUniverse() != NULL)
+    if (env.getSimulation()->getUniverse() != nullptr)
         env.getSimulation()->getUniverse()->unmarkObject(sel, 1);
 }
 
@@ -662,13 +604,9 @@ void CommandUnmark::process(ExecutionEnvironment& env)
 ///////////////
 // Unmarkall command - clear all current markers
 
-CommandUnmarkAll::CommandUnmarkAll()
-{
-}
-
 void CommandUnmarkAll::process(ExecutionEnvironment& env)
 {
-    if (env.getSimulation()->getUniverse() != NULL)
+    if (env.getSimulation()->getUniverse() != nullptr)
         env.getSimulation()->getUniverse()->unmarkAll();
 }
 
@@ -676,18 +614,18 @@ void CommandUnmarkAll::process(ExecutionEnvironment& env)
 ////////////////
 // Preload textures command
 
-CommandPreloadTextures::CommandPreloadTextures(const string& _name) :
-    name(_name)
+CommandPreloadTextures::CommandPreloadTextures(string _name) :
+    name(std::move(_name))
 {
 }
 
 void CommandPreloadTextures::process(ExecutionEnvironment& env)
 {
     Selection target = env.getSimulation()->findObjectFromPath(name);
-    if (target.body() == NULL)
+    if (target.body() == nullptr)
         return;
 
-    if (env.getRenderer() != NULL)
+    if (env.getRenderer() != nullptr)
         env.getRenderer()->loadTextures(target.body());
 }
 
@@ -695,12 +633,12 @@ void CommandPreloadTextures::process(ExecutionEnvironment& env)
 ////////////////
 // Capture command
 
-CommandCapture::CommandCapture(const std::string& _type,
-    const std::string& _filename) : type(_type), filename(_filename)
+CommandCapture::CommandCapture(std::string _type,
+    std::string _filename) : type(std::move(_type)), filename(std::move(_filename))
 {
 }
 
-void CommandCapture::process(ExecutionEnvironment&)
+void CommandCapture::process(ExecutionEnvironment& /*unused*/)
 {
 #ifndef TARGET_OS_MAC
     // Get the dimensions of the current viewport
@@ -713,7 +651,7 @@ void CommandCapture::process(ExecutionEnvironment&)
                               viewport[0], viewport[1],
                               viewport[2], viewport[3]);
     }
-    if (compareIgnoringCase(type, "png") == 0)
+    else if (compareIgnoringCase(type, "png") == 0)
     {
         CaptureGLBufferToPNG(filename,
                              viewport[0], viewport[1],
@@ -733,7 +671,7 @@ CommandSetTextureResolution::CommandSetTextureResolution(unsigned int _res) :
 
 void CommandSetTextureResolution::process(ExecutionEnvironment& env)
 {
-    if (env.getRenderer() != NULL)
+    if (env.getRenderer() != nullptr)
     {
         env.getRenderer()->setResolution(res);
         env.getCelestiaCore()->notifyWatchers(CelestiaCore::RenderFlagsChanged);
@@ -753,7 +691,7 @@ void CommandRenderPath::process(ExecutionEnvironment& env)
 {
     GLContext* context = env.getRenderer()->getGLContext();
 
-    if (context != NULL)
+    if (context != nullptr)
     {
         context->setRenderPath(path);
         env.getCelestiaCore()->notifyWatchers(CelestiaCore::RenderFlagsChanged);
@@ -764,9 +702,9 @@ void CommandRenderPath::process(ExecutionEnvironment& env)
 ////////////////
 // SplitView command
 
-CommandSplitView::CommandSplitView(unsigned int _view, const string& _splitType, double _splitPos) :
+CommandSplitView::CommandSplitView(unsigned int _view, string _splitType, double _splitPos) :
     view(_view),
-    splitType(_splitType),
+    splitType(std::move(_splitType)),
     splitPos(_splitPos)
 {
 }
@@ -811,10 +749,6 @@ void CommandDeleteView::process(ExecutionEnvironment& env)
 ////////////////
 // SingleView command
 
-CommandSingleView::CommandSingleView()
-{
-}
-
 void CommandSingleView::process(ExecutionEnvironment& env)
 {
     View* view = getViewByObserver(env.getCelestiaCore(), env.getSimulation()->getActiveObserver());
@@ -847,8 +781,8 @@ void CommandSetActiveView::process(ExecutionEnvironment& env)
 ////////////////
 // SetRadius command
 
-CommandSetRadius::CommandSetRadius(const string& _object, double _radius) :
-    object(_object),
+CommandSetRadius::CommandSetRadius(string _object, double _radius) :
+    object(std::move(_object)),
     radius(_radius)
 {
 }
@@ -856,7 +790,7 @@ CommandSetRadius::CommandSetRadius(const string& _object, double _radius) :
 void CommandSetRadius::process(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->findObjectFromPath(object);
-    if (sel.body() != NULL)
+    if (sel.body() != nullptr)
     {
         Body* body = sel.body();
         float iradius = body->getRadius();
@@ -865,7 +799,7 @@ void CommandSetRadius::process(ExecutionEnvironment& env)
             body->setSemiAxes(body->getSemiAxes() * ((float) radius / iradius));
         }
 
-        if (body->getRings() != NULL)
+        if (body->getRings() != nullptr)
         {
             RingSystem rings(0.0f, 0.0f);
             rings = *body->getRings();
@@ -882,8 +816,8 @@ void CommandSetRadius::process(ExecutionEnvironment& env)
 ////////////////
 // SetLineColor command
 
-CommandSetLineColor::CommandSetLineColor(const string& _item, Color _color) :
-    item(_item),
+CommandSetLineColor::CommandSetLineColor(string _item, Color _color) :
+    item(std::move(_item)),
     color(_color)
 {
 }
@@ -904,8 +838,8 @@ void CommandSetLineColor::process(ExecutionEnvironment& /* env */)
 ////////////////
 // SetLabelColor command
 
-CommandSetLabelColor::CommandSetLabelColor(const string& _item, Color _color) :
-    item(_item),
+CommandSetLabelColor::CommandSetLabelColor(string _item, Color _color) :
+    item(std::move(_item)),
     color(_color)
 {
 }
@@ -942,33 +876,30 @@ void CommandSetTextColor::process(ExecutionEnvironment& env)
 
 RepeatCommand::RepeatCommand(CommandSequence* _body, int _repeatCount) :
     body(_body),
-    bodyDuration(0.0),
-    repeatCount(_repeatCount),
-    execution(NULL)
+    repeatCount(_repeatCount)
 {
-    for (CommandSequence::const_iterator iter = body->begin();
-         iter != body->end(); iter++)
+    for (const auto b : *body)
     {
-        bodyDuration += (*iter)->getDuration();
+        bodyDuration += b->getDuration();
     }
 }
 
 RepeatCommand::~RepeatCommand()
 {
-    if (execution != NULL)
-        delete execution;
+
+    delete execution;
     // delete body;
 }
 
 void RepeatCommand::process(ExecutionEnvironment& env, double t, double dt)
 {
     double t0 = t - dt;
-    int loop0 = (int) (t0 / bodyDuration);
-    int loop1 = (int) (t / bodyDuration);
+    auto loop0 = (int) (t0 / bodyDuration);
+    auto loop1 = (int) (t / bodyDuration);
 
     // TODO: This is bogus . . . should not be storing a reference to an
     // execution environment.
-    if (execution == NULL)
+    if (execution == nullptr)
         execution = new Execution(*body, env);
 
     if (loop0 == loop1)
@@ -996,13 +927,15 @@ double RepeatCommand::getDuration() const
     return bodyDuration * repeatCount;
 }
 
-//Audio support by Victor, modified by Vincent, Leserg & Alexell
+///////////////
+// Play command
+
 CommandPlay::CommandPlay(int _channel, float _volume, bool _loop, 
-                          const std::string& _filename, bool _nopause) :
+                          std::string _filename, bool _nopause) :
    channel(_channel),
    volume(_volume),
    loop(_loop),
-   filename(_filename),
+   filename(std::move(_filename)),
    nopause(_nopause)
 {
 }
@@ -1012,15 +945,15 @@ void CommandPlay::process(ExecutionEnvironment& env)
    env.getCelestiaCore()->playSoundFile(channel, volume, loop, filename.c_str(), nopause);
 }
 
-// SCRIPT IMAGE START: Author Vincent
+///////////////
 // ScriptImage command
 CommandScriptImage::CommandScriptImage(double _duration, float _xoffset,
-                         float _yoffset, float _alpha, const std::string& _filename, int _fitscreen) :
+                         float _yoffset, float _alpha, std::string _filename, int _fitscreen) :
     duration(_duration),
     xoffset(_xoffset),
     yoffset(_yoffset),
     alpha(_alpha),
-    filename(_filename),
+    filename(std::move(_filename)),
     fitscreen(_fitscreen)
 {
 }
@@ -1040,124 +973,88 @@ void CommandVerbosity::process(ExecutionEnvironment& env)
 {
     env.getCelestiaCore()->setHudDetail(level);
 }
-// SCRIPT IMAGE END
 
 
-//====================================================
-// Add on by Javier Nieto from www.astrohenares.org
-//====================================================
-CommandConstellations::CommandConstellations()
-{
-    numConstellations = 0;
-    all = 0;
-    none = 0;
-}
+///////////////
+//
 
 void CommandConstellations::process(ExecutionEnvironment& env)
 {
     Universe* u = env.getSimulation()->getUniverse();
-    if (u != NULL)
+    if (!u)
+        return;
+
+    AsterismList& asterisms = *u->getAsterisms();
+    for (const auto ast : asterisms)
     {
-        AsterismList* asterisms = u->getAsterisms();
-        for (AsterismList::const_iterator iter = asterisms->begin();
-             iter != asterisms->end(); iter++)
+        if (flags.none)
         {
-            Asterism* ast = *iter;
-            if (none)
-            {
-                ast->setActive(0);
-            }
-            else if (all)
-            {
-                ast->setActive(1);
-            }
-            else
-            {
-                for (int i = 0; i < numConstellations; i++)
-                {
-                    if (compareIgnoringCase(constellation[i],ast->getName(false)) == 0)
-                    {
-                        ast->setActive(active[i] != 0);
-                        break;
-                    }
-                }
-            }
+            ast->setActive(0);
+        }
+        else if (flags.all)
+        {
+            ast->setActive(1);
+        }
+        else
+        {
+            auto name = ast->getName(false);
+            auto it = std::find_if(constellations.begin(), constellations.end(),
+                                   [&name](Cons& c){ return compareIgnoringCase(c.name, name) == 0; });
+
+            if (it != constellations.end())
+                ast->setActive(it->active != 0);
         }
     }
 }
 
 void CommandConstellations::setValues(string cons, int act)
 {
-    int found = 0;
-    for (unsigned int j = 0; j < cons.size(); j++)
-    {
-        if(cons[j] == '_')
-            cons[j] = ' ';
-    }
-
     // ignore all above 99 constellations
-    if (numConstellations == MAX_CONSTELLATIONS)
+    if (constellations.size() == MAX_CONSTELLATIONS)
         return;
 
-    for (int i = 0; i < numConstellations; i++)
-    {
-        if (compareIgnoringCase(constellation[i], cons) == 0 )
-        {
-            active[i]=act;
-            found=1;
-            break;
-        }
-    }
+    std::replace(cons.begin(), cons.end(), '_', ' ');
 
-    if (!found)
-    {
-        constellation[numConstellations]=cons;
-        active[numConstellations]=act;
-        numConstellations++;
-    }
-}
+    auto it = std::find_if(constellations.begin(), constellations.end(),
+                                   [&cons](Cons& c){ return compareIgnoringCase(c.name, cons) == 0; });
 
-
-CommandConstellationColor::CommandConstellationColor()
-{
-    numConstellations=0;
-    all=0;
-    none=0;
-    unset=0;
+    if (it != constellations.end())
+        it->active = act;
+    else
+        constellations.push_back({cons, act}); // If not found then add a new constellation
 }
 
 
 void CommandConstellationColor::process(ExecutionEnvironment& env)
 {
     Universe* u = env.getSimulation()->getUniverse();
-    if (u != NULL)
+    if (!u)
+        return;
+
+    AsterismList& asterisms = *u->getAsterisms();
+    for (const auto ast : asterisms)
     {
-        AsterismList* asterisms = u->getAsterisms();
-        for (AsterismList::const_iterator iter = asterisms->begin();
-             iter != asterisms->end(); iter++)
+        if (flags.none)
         {
-            Asterism* ast = *iter;
-            if (none)
+            ast->unsetOverrideColor();
+        }
+        else if (flags.all)
+        {
+            ast->setOverrideColor(rgb);
+        }
+        else
+        {
+            auto name = ast->getName(false);
+            //std::vector<std::string>::iterator it;
+            auto it = std::find_if(constellations.begin(), constellations.end(),
+                                   [&name](string& c){ return compareIgnoringCase(c, name) == 0; });
+
+            if (it != constellations.end())
             {
-                ast->unsetOverrideColor();
-            }
-            else if (all)
-            {
-                ast->setOverrideColor(rgb);
-            }
-            else
-            {
-                for(int i = 0; i < numConstellations; i++)
-                {
-                    if (compareIgnoringCase(constellation[i],ast->getName(false)) ==0 )
-                    {
-                        if(unset)
-                            ast->unsetOverrideColor();
-                        else
-                            ast->setOverrideColor(rgb);
-                        break;
-                    }
-                }
+                if (flags.unset)
+                    ast->unsetOverrideColor();
+                else
+                    ast->setOverrideColor(rgb);
             }
         }
     }
@@ -1167,43 +1064,27 @@ void CommandConstellationColor::process(ExecutionEnvironment& env)
 void CommandConstellationColor::setColor(float r, float g, float b)
 {
     rgb = Color(r, g, b);
-    unset = 0;
+    flags.unset = false;
 }
 
 
 void CommandConstellationColor::unsetColor()
 {
-    unset = 1;
+    flags.unset = true;
 }
-
 
 void CommandConstellationColor::setConstellations(string cons)
 {
-    int found=0;
-    for (unsigned int j = 0; j < cons.size(); j++)
-    {
-        if (cons[j] == '_')
-            cons[j] = ' ';
-    }
-
     // ignore all above 99 constellations
-    if (numConstellations == MAX_CONSTELLATIONS)
-        return;
+    if (constellations.size() == MAX_CONSTELLATIONS)
+       return;
 
-    for (int i=0; i<numConstellations; i++)
-    {
-        if (compareIgnoringCase(constellation[i], cons) == 0)
-        {
-            found=1;
-            break;
-        }
-    }
+    std::replace(cons.begin(), cons.end(), '_', ' ');
 
-    if (!found)
-    {
-        constellation[numConstellations]=cons;
-        numConstellations++;
-    }
+    // If not found then add a new constellation
+    if (std::none_of(constellations.begin(), constellations.end(),
+                     [&cons](string& c){ return compareIgnoringCase(c, cons) == 0; }))
+        constellations.push_back(cons);
 }
 
 

@@ -16,9 +16,9 @@ class UnixTimer : public Timer
 {
 public:
     UnixTimer();
-    ~UnixTimer();
-    double getTime() const;
-    void reset();
+    ~UnixTimer() override = default;
+    double getTime() const override;
+    void reset() override;
 
 private:
     double start;
@@ -30,21 +30,17 @@ UnixTimer::UnixTimer()
     reset();
 }
 
-UnixTimer::~UnixTimer()
-{
-}
-
 double UnixTimer::getTime() const
 {
     struct timeval t;
-    gettimeofday(&t, NULL);
+    gettimeofday(&t, nullptr);
     return (double) t.tv_sec + (double) t.tv_usec / 1000000.0 - start;
 }
 
 void UnixTimer::reset()
 {
     struct timeval t;
-    gettimeofday(&t, NULL);
+    gettimeofday(&t, nullptr);
     start = (double) t.tv_sec + (double) t.tv_usec / 1000000.0;
 }
 

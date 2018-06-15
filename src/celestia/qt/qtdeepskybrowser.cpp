@@ -44,7 +44,7 @@ public:
     bool operator()(const DeepSkyObject* dso) const;
 
     unsigned int objectTypeMask;
-    bool typeFilterEnabled;
+    bool typeFilterEnabled{false};
     QRegExp typeFilter;
 };
 
@@ -76,7 +76,7 @@ class DSOTableModel : public QAbstractTableModel
 {
 public:
     DSOTableModel(const Universe* _universe);
-    virtual ~DSOTableModel();
+    virtual ~DSOTableModel() = default;
 
     // Methods from QAbstractTableModel
     Qt::ItemFlags flags(const QModelIndex& index) const;
@@ -122,15 +122,10 @@ DSOTableModel::DSOTableModel(const Universe* _universe) :
 }
 
 
-DSOTableModel::~DSOTableModel()
-{
-}
-
-
 /****** Virtual methods from QAbstractTableModel *******/
 
 // Override QAbstractTableModel::flags()
-Qt::ItemFlags DSOTableModel::flags(const QModelIndex&) const
+Qt::ItemFlags DSOTableModel::flags(const QModelIndex& /*unused*/) const
 {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
@@ -159,9 +154,7 @@ QVariant DSOTableModel::data(const QModelIndex& index, int role) const
             return QVariant(QString::fromUtf8(dsoNameString.c_str()));
         }
     case DistanceColumn:
-        {
-            return QString("%L1").arg((observerPos - dso->getPosition()).norm(), 0, 'g', 4);
-        }
+        return QString("%L1").arg((observerPos - dso->getPosition()).norm(), 0, 'g', 4);
     case AppMagColumn:
         {
             double distance = (observerPos - dso->getPosition()).norm();
@@ -198,14 +191,14 @@ QVariant DSOTableModel::headerData(int section, Qt::Orientation /* orientation *
 
 
 // Override QAbstractDataModel::rowCount()
-int DSOTableModel::rowCount(const QModelIndex&) const
+int DSOTableModel::rowCount(const QModelIndex& /*unused*/) const
 {
     return (int) dsos.size();
 }
 
 
 // Override QAbstractDataModel::columnCount()
-int DSOTableModel::columnCount(const QModelIndex&) const
+int DSOTableModel::columnCount(const QModelIndex& /*unused*/) const
 {
     return 4;
 }
@@ -253,8 +246,8 @@ bool DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* ds
 
 
 DSOFilterPredicate::DSOFilterPredicate() :
-    objectTypeMask(Renderer::ShowGalaxies),
-    typeFilterEnabled(false)
+    objectTypeMask(Renderer::ShowGalaxies)
+
 {
 }
 
@@ -374,10 +367,9 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
 
     // Move the best matching DSOs into the vector
     dsos.reserve(nDSOs);
-    for (DSOSet::const_iterator iter = firstDSOs.begin();
-         iter != firstDSOs.end(); iter++)
+    for (const auto& dso : firstDSOs)
     {
-        dsos.push_back(*iter);
+        dsos.push_back(dso);
     }
 
     beginInsertRows(QModelIndex(), 0, dsos.size());
@@ -387,23 +379,20 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
 
 DeepSkyObject* DSOTableModel::itemAtRow(unsigned int row)
 {
-    if (row >= dsos.size())
-        return NULL;
-    else
-        return dsos[row];
+    return row >= dsos.size() ? nullptr : dsos[row];
 }
 
 
 DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
     QWidget(parent),
     appCore(_appCore),
-    dsoModel(NULL),
-    treeView(NULL),
-    searchResultLabel(NULL),
-    globularsButton(NULL),
-    galaxiesButton(NULL),
-    nebulaeButton(NULL),
-    openClustersButton(NULL)
+    dsoModel(nullptr),
+    treeView(nullptr),
+    searchResultLabel(nullptr),
+    globularsButton(nullptr),
+    galaxiesButton(nullptr),
+    nebulaeButton(nullptr),
+    openClustersButton(nullptr)
 {
     treeView = new QTreeView();
     treeView->setRootIsDecorated(false);
@@ -529,11 +518,6 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
 }
 
 
-DeepSkyBrowser::~DeepSkyBrowser()
-{
-}
-
-
 /******* Slots ********/
 
 void DeepSkyBrowser::slotRefreshTable()
@@ -613,7 +597,7 @@ void DeepSkyBrowser::slotMarkSelected()
         if (sm->isRowSelected(row, QModelIndex()))
         {
             DeepSkyObject* dso = dsoModel->itemAtRow((unsigned int) row);
-            if (dso != NULL)
+            if (dso != nullptr)
             {
                 if (convertOK)
                 {

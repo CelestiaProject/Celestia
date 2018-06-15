@@ -28,7 +28,7 @@ uint32 StarNameDatabase::findCatalogNumberByName(const string& name) const
         string prefix(name, 0, pos);
         string conName(name, pos + 1, string::npos);
         Constellation* con  = Constellation::getConstellation(conName);
-        if (con != NULL)
+        if (con != nullptr)
         {
             char digit  = ' ';
             int len     = prefix.length();
@@ -144,7 +144,7 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
     if (failed)
     {
         delete db;
-        return NULL;
+        return nullptr;
     }
     else
     {

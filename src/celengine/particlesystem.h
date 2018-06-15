@@ -49,7 +49,7 @@ public:
     ParticleEmitter();
     ~ParticleEmitter();
 
-    void render(double tsec, RenderContext& rc, ParticleVertex* particleBuffer, unsigned int bufferCapacity) const;
+    void render(double tsec, RenderContext& rc, ParticleVertex* particleBuffer, unsigned int particleBufferCapacity) const;
 
     void setAcceleration(const Eigen::Vector3f& acceleration);
     void createMaterial();
@@ -97,7 +97,7 @@ class ParticleSystem : public Geometry
     ParticleSystem();
     virtual ~ParticleSystem();
 
-    virtual void render(RenderContext& rc, double t = 0.0);
+    virtual void render(RenderContext& rc, double tsec = 0.0);
     virtual bool pick(const Ray3d& r, double& distance) const;
     virtual bool isOpaque() const;
 
@@ -121,8 +121,8 @@ class LCGRandomGenerator;
 class VectorGenerator
 {
 public:
-    VectorGenerator() {};
-    virtual ~VectorGenerator() {};
+    VectorGenerator() = default;
+    virtual ~VectorGenerator() = default;
     virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const = 0;
 };
 

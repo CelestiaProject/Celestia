@@ -19,7 +19,7 @@ class OpenCluster : public DeepSkyObject
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    OpenCluster();
+    OpenCluster() = default;
 
     virtual const char* getType() const;
     virtual void setType(const std::string&);

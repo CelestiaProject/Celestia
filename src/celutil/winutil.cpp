@@ -13,7 +13,7 @@ void SetMouseCursor(LPCTSTR lpCursor)
 {
     HCURSOR hNewCrsr;
 
-    if (hNewCrsr = LoadCursor(NULL, lpCursor))
+    if (hNewCrsr = LoadCursor(nullptr, lpCursor))
         SetCursor(hNewCrsr);
 }
 
@@ -41,14 +41,14 @@ void RemoveButtonDefaultStyle(HWND hWnd)
 {
     SetWindowLong(hWnd, GWL_STYLE,
         ::GetWindowLong(hWnd, GWL_STYLE) & ~BS_DEFPUSHBUTTON);
-    InvalidateRect(hWnd, NULL, TRUE);
+    InvalidateRect(hWnd, nullptr, TRUE);
 }
 
 void AddButtonDefaultStyle(HWND hWnd)
 {
     SetWindowLong(hWnd, GWL_STYLE,
         ::GetWindowLong(hWnd, GWL_STYLE) | BS_DEFPUSHBUTTON);
-    InvalidateRect(hWnd, NULL, TRUE);
+    InvalidateRect(hWnd, nullptr, TRUE);
 }
 
 const char* CurrentCP()
@@ -68,7 +68,7 @@ string UTF8ToCurrentCP(const string& str)
     LPWSTR wout = new wchar_t[str.length() + 1];
     LPSTR out = new char[str.length() + 1];
     int wlength = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wout, str.length() + 1);
-    WideCharToMultiByte(CP_ACP, 0, wout, -1, out, str.length() + 1, NULL, NULL);
+    WideCharToMultiByte(CP_ACP, 0, wout, -1, out, str.length() + 1, nullptr, nullptr);
     localeStr = out;
     delete [] wout;
     delete [] out;

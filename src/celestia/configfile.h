@@ -76,6 +76,6 @@ public:
     const std::string getStringValue(const std::string& name);
 };
 
-CelestiaConfig* ReadCelestiaConfig(std::string filename, CelestiaConfig* config = NULL);
+CelestiaConfig* ReadCelestiaConfig(const std::string& filename, CelestiaConfig* config = nullptr);
 
 #endif // _CONFIGFILE_H_

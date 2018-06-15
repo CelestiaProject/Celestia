@@ -23,7 +23,7 @@ Q_OBJECT
 
 public:
     PreferencesDialog(QWidget* parent, CelestiaCore* core);
-    ~PreferencesDialog();
+    ~PreferencesDialog() = default;
 
 private slots:
     void on_starsCheck_stateChanged(int state);

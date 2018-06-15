@@ -22,10 +22,7 @@ static const string TitleTag("Title:");
 class ScriptScanner : public EnumFilesHandler
 {
 public:
-    ScriptScanner() :
-        menuItems(NULL)
-    {
-    }
+    ScriptScanner() = default;
 
     bool process(const string& filename)
     {
@@ -41,7 +38,7 @@ public:
             // Scan the script file for metainformation. At the moment,
             // the only thing searched for is the script title, which must
             // appear on the first line after the string 'Title:'
-            ifstream in(filepath.c_str());
+            ifstream in(filepath);
             if (in.good())
             {
                 ScriptMenuItem item;
@@ -82,7 +79,7 @@ public:
         return true;
     }
 
-    vector<ScriptMenuItem>* menuItems;
+    vector<ScriptMenuItem>* menuItems{ nullptr };
 };
 
 
@@ -91,8 +88,8 @@ std::vector<ScriptMenuItem>*
 ScanScriptsDirectory(string scriptsDir, bool deep)
 {
     vector<ScriptMenuItem>* scripts = new vector<ScriptMenuItem>;
-    if (scripts == NULL)
-        return NULL;
+    if (scripts == nullptr)
+        return nullptr;
 
     Directory* dir = OpenDirectory(scriptsDir);
 

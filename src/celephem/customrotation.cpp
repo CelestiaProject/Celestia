@@ -49,10 +49,10 @@ public:
     {
     }
 
-    virtual ~IAURotationModel() {}
+    ~IAURotationModel() override = default;
 
-    bool isPeriodic() const { return true; }
-    double getPeriod() const { return period; }
+    bool isPeriodic() const override { return true; }
+    double getPeriod() const override { return period; }
 
     virtual Quaterniond computeSpin(double t) const
     {
@@ -112,13 +112,9 @@ private:
 class EarthRotationModel : public CachingRotationModel
 {
 public:
-    EarthRotationModel()
-    {
-    }
+    EarthRotationModel() = default;
 
-    ~EarthRotationModel()
-    {
-    }
+    ~EarthRotationModel() override = default;
 
     Quaterniond computeSpin(double tjd) const
     {
@@ -166,12 +162,12 @@ public:
         return XRotation(PI / 2.0) * q * XRotation(-PI / 2.0);
     }
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 23.9344694 / 24.0;
     }
 
-    bool isPeriodic() const
+    bool isPeriodic() const override
     {
         return true;
     }
@@ -210,7 +206,7 @@ public:
             setFlipped(true);
     }
 
-    void pole(double d, double& ra, double &dec) const
+    void pole(double d, double& ra, double &dec) const override
     {
         double T = d / 36525.0;
         clamp_centuries(T);
@@ -218,7 +214,7 @@ public:
         dec = poleDec + poleDecRate * T;
     }
 
-    double meridian(double d) const
+    double meridian(double d) const override
     {
         return meridianAtEpoch + rotationRate * d;
     }
@@ -238,7 +234,7 @@ class IAUNeptuneRotationModel : public IAURotationModel
 public:
     IAUNeptuneRotationModel() : IAURotationModel(360.0 / 536.3128492) {}
 
-    void pole(double d, double& ra, double &dec) const
+    void pole(double d, double& ra, double &dec) const override
     {
         double T = d / 36525.0;
         double N = degToRad(357.85 + 52.316 * T);
@@ -246,7 +242,7 @@ public:
         dec = 43.46 - 0.51 * cos(N);
     }
 
-    double meridian(double d) const
+    double meridian(double d) const override
     {
         double T = d / 36525.0;
         double N = degToRad(357.85 + 52.316 * T);
@@ -281,7 +277,7 @@ public:
         E[13] = degToRad( 25.053 + 12.9590088 * d);
     }
 
-    void pole(double d, double& ra, double& dec) const
+    void pole(double d, double& ra, double& dec) const override
     {
         double T = d / 36525.0;
         clamp_centuries(T);
@@ -313,7 +309,7 @@ public:
 
     }
 
-    double meridian(double d) const
+    double meridian(double d) const override
     {
         double E[14];
         calcArgs(d, E);
@@ -352,7 +348,7 @@ class IAUPhobosRotationModel : public IAURotationModel
 public:
     IAUPhobosRotationModel() : IAURotationModel(360.0 / 1128.8445850) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double M1 = degToRad(169.51 - 0.04357640 * t);
@@ -361,7 +357,7 @@ public:
         dec =  52.90 - 0.061 * T - 1.08 * cos(M1);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         // Note: negative coefficient of T^2 term for meridian angle indicates faster
         // rotation as Phobos's orbit evolves inward toward Mars
@@ -378,7 +374,7 @@ class IAUDeimosRotationModel : public IAURotationModel
 public:
     IAUDeimosRotationModel() : IAURotationModel(360.0 / 285.1618970) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double M3 = degToRad(53.47 - 0.0181510 * t);
@@ -387,7 +383,7 @@ public:
         dec =  53.52 - 0.061 * T - 1.78 * cos(M3);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         // Note: positive coefficient of T^2 term for meridian angle indicates slowing
         // rotation as Deimos's orbit evolves outward from Mars
@@ -405,7 +401,7 @@ class IAUAmaltheaRotationModel : public IAURotationModel
 public:
     IAUAmaltheaRotationModel() : IAURotationModel(360.0 / 722.6314560) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double J1 = degToRad(73.32 + 91472.9 * T);
@@ -414,7 +410,7 @@ public:
         dec = 64.49 + 0.003 * T - 0.36 * cos(J1);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double J1 = degToRad(73.32 + 91472.9 * T);
@@ -428,7 +424,7 @@ class IAUThebeRotationModel : public IAURotationModel
 public:
     IAUThebeRotationModel() : IAURotationModel(360.0 / 533.7004100) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double J2 = degToRad(24.62 + 45137.2 * T);
@@ -437,7 +433,7 @@ public:
         dec = 64.49 + 0.003 * T - 0.91 * cos(J2) + 0.01 * cos(2.0 * J2);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double J2 = degToRad(24.62 + 45137.2 * T);
@@ -451,7 +447,7 @@ class IAUIoRotationModel : public IAURotationModel
 public:
     IAUIoRotationModel() : IAURotationModel(360.0 / 203.4889538) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double J3 = degToRad(283.90 + 4850.7 * T);
@@ -461,7 +457,7 @@ public:
         dec = 64.49 + 0.003 * T + 0.040 * cos(J3) + 0.011 * cos(J4);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double J3 = degToRad(283.90 + 4850.7 * T);
@@ -476,7 +472,7 @@ class IAUEuropaRotationModel : public IAURotationModel
 public:
     IAUEuropaRotationModel() : IAURotationModel(360.0 / 101.3747235) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double J4 = degToRad(355.80 + 1191.3 * T);
@@ -488,7 +484,7 @@ public:
         dec = 64.49 + 0.003 * T + 0.486 * cos(J4) + 0.026 * cos(J5) + 0.007 * cos(J6) + 0.002 * cos(J7);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double J4 = degToRad(355.80 + 1191.3 * T);
@@ -505,7 +501,7 @@ class IAUGanymedeRotationModel : public IAURotationModel
 public:
     IAUGanymedeRotationModel() : IAURotationModel(360.0 / 50.3176081) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double J4 = degToRad(355.80 + 1191.3 * T);
@@ -516,7 +512,7 @@ public:
         dec = 64.49 + 0.003 * T - 0.016 * cos(J4) + 0.186 * cos(J5) + 0.039 * cos(J6);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double J4 = degToRad(355.80 + 1191.3 * T);
@@ -532,7 +528,7 @@ class IAUCallistoRotationModel : public IAURotationModel
 public:
     IAUCallistoRotationModel() : IAURotationModel(360.0 / 21.5710715) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double J5 = degToRad(119.90 + 262.1 * T);
@@ -543,7 +539,7 @@ public:
         dec = 64.49 + 0.003 * T - 0.029 * cos(J5) + 0.254 * cos(J6) - 0.004 * cos(J8);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double J5 = degToRad(119.90 + 262.1 * T);
@@ -574,7 +570,7 @@ class IAUMimasRotationModel : public IAURotationModel
 public:
     IAUMimasRotationModel() : IAURotationModel(360.0 / 381.9945550) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double S3 = degToRad(177.40 - 36505.5 * T);
@@ -583,7 +579,7 @@ public:
         dec = 83.52 - 0.004 * T - 1.53 * cos(S3);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double S3 = degToRad(177.40 - 36505.5 * T);
@@ -598,7 +594,7 @@ class IAUEnceladusRotationModel : public IAURotationModel
 public:
     IAUEnceladusRotationModel() : IAURotationModel(360.0 / 262.7318996) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         clamp_centuries(T);
@@ -606,7 +602,7 @@ public:
         dec = 83.52 - 0.004 * T;
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         return 2.82 + 262.7318996 * t;
     }
@@ -618,7 +614,7 @@ class IAUTethysRotationModel : public IAURotationModel
 public:
     IAUTethysRotationModel() : IAURotationModel(360.0 / 190.6979085) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double S4 = degToRad(300.00 - 7225.9 * T);
@@ -627,7 +623,7 @@ public:
         dec = 83.52 - 0.004 * T - 1.09 * cos(S4);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double S4 = degToRad(300.00 - 7225.9 * T);
@@ -642,7 +638,7 @@ class IAUTelestoRotationModel : public IAURotationModel
 public:
     IAUTelestoRotationModel() : IAURotationModel(360.0 / 190.6979330) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         clamp_centuries(T);
@@ -650,7 +646,7 @@ public:
         dec = 84.06 - 0.004 * T;
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         return 56.88 + 190.6979330 * t;
     }
@@ -662,7 +658,7 @@ class IAUCalypsoRotationModel : public IAURotationModel
 public:
     IAUCalypsoRotationModel() : IAURotationModel(360.0 / 190.6742373) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double S5 = degToRad(53.59 - 8968.6 * T);
@@ -671,7 +667,7 @@ public:
         dec = 83.43 - 0.004 * T - 1.572 * cos(S5) + 0.095 * cos(2.0 * S5);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double S5 = degToRad(53.59 - 8968.6 * T);
@@ -685,7 +681,7 @@ class IAUDioneRotationModel : public IAURotationModel
 public:
     IAUDioneRotationModel() : IAURotationModel(360.0 / 131.5349316) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         clamp_centuries(T);
@@ -693,7 +689,7 @@ public:
         dec = 83.52 - 0.004 * T;
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         return 357.00 + 131.5349316 * t;
     }
@@ -705,7 +701,7 @@ class IAUHeleneRotationModel : public IAURotationModel
 public:
     IAUHeleneRotationModel() : IAURotationModel(360.0 / 131.6174056) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double S6 = degToRad(143.38 - 10553.5 * T);
@@ -714,7 +710,7 @@ public:
         dec = 83.52 - 0.004 * T - 0.187 * cos(S6) + 0.095 * cos(2.0 * S6);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double S6 = degToRad(143.38 - 10553.5 * T);
@@ -728,7 +724,7 @@ class IAURheaRotationModel : public IAURotationModel
 public:
     IAURheaRotationModel() : IAURotationModel(360.0 / 79.6900478) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double S7 = degToRad(345.20 - 1016.3 * T);
@@ -737,7 +733,7 @@ public:
         dec = 83.55 - 0.004 * T - 0.35 * cos(S7);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double S7 = degToRad(345.20 - 1016.3 * T);
@@ -751,7 +747,7 @@ class IAUTitanRotationModel : public IAURotationModel
 public:
     IAUTitanRotationModel() : IAURotationModel(360.0 / 22.5769768) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double S8 = degToRad(29.80 - 52.1 * T);
@@ -760,7 +756,7 @@ public:
         dec = 83.94 - 0.004 * T - 0.30 * cos(S8);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double S8 = degToRad(29.80 - 52.1 * T);
@@ -774,7 +770,7 @@ class IAUIapetusRotationModel : public IAURotationModel
 public:
     IAUIapetusRotationModel() : IAURotationModel(360.0 / 4.5379572) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         clamp_centuries(T);
@@ -782,7 +778,7 @@ public:
         dec = 75.03 - 1.142 * T;
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         return 350.20 + 4.5379572 * t;
     }
@@ -794,7 +790,7 @@ class IAUPhoebeRotationModel : public IAURotationModel
 public:
     IAUPhoebeRotationModel() : IAURotationModel(360.0 / 22.5769768) {}
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         clamp_centuries(T);
@@ -802,7 +798,7 @@ public:
         dec = 68.70 - 1.143 * T;
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         return 304.70 + 930.8338720 * t;
     }
@@ -814,7 +810,7 @@ class IAUMirandaRotationModel : public IAURotationModel
 public:
     IAUMirandaRotationModel() : IAURotationModel(360.0 / 254.6906892) { setFlipped(true); }
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double U11 = degToRad(102.23 - 2024.22 * T);
@@ -822,7 +818,7 @@ public:
         dec = -15.08 + 4.25 * cos(U11) - 0.02 * cos(2.0 * U11);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double U11 = degToRad(102.23 - 2024.22 * T);
@@ -839,7 +835,7 @@ class IAUArielRotationModel : public IAURotationModel
 public:
     IAUArielRotationModel() : IAURotationModel(360.0 / 142.8356681) { setFlipped(true); }
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double U13 = degToRad(304.01 - 51.94 * T);
@@ -847,7 +843,7 @@ public:
         dec = -15.10 + 0.28 * cos(U13);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double U12 = degToRad(316.41 + 2863.96 * T);
@@ -862,7 +858,7 @@ class IAUUmbrielRotationModel : public IAURotationModel
 public:
     IAUUmbrielRotationModel() : IAURotationModel(360.0 / 86.8688923) { setFlipped(true); }
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double U14 = degToRad(308.71 - 93.17 * T);
@@ -870,7 +866,7 @@ public:
         dec = -15.10 + 0.20 * cos(U14);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double U12 = degToRad(316.41 + 2863.96 * T);
@@ -885,7 +881,7 @@ class IAUTitaniaRotationModel : public IAURotationModel
 public:
     IAUTitaniaRotationModel() : IAURotationModel(360.0 / 41.351431) { setFlipped(true); }
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double U15 = degToRad(340.82 - 75.32 * T);
@@ -893,7 +889,7 @@ public:
         dec = -15.10 + 0.28 * cos(U15);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double U15 = degToRad(340.82 - 75.32 * T);
@@ -907,7 +903,7 @@ class IAUOberonRotationModel : public IAURotationModel
 public:
     IAUOberonRotationModel() : IAURotationModel(360.0 / 26.7394932) { setFlipped(true); }
 
-    void pole(double t, double& ra, double& dec) const
+    void pole(double t, double& ra, double& dec) const override
     {
         double T = t / 36525.0;
         double U16 = degToRad(259.14 - 504.81 * T);
@@ -915,7 +911,7 @@ public:
         dec = -15.10 + 0.16 * cos(U16);
     }
 
-    double meridian(double t) const
+    double meridian(double t) const override
     {
         double T = t / 36525.0;
         double U16 = degToRad(259.14 - 504.81 * T);
@@ -1018,7 +1014,7 @@ GetCustomRotationModel(const std::string& name)
     if (CustomRotationModels.count(name) > 0)
         return CustomRotationModels[name];
     else
-        return NULL;
+        return nullptr;
 }
 
 

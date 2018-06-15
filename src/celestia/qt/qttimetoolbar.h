@@ -24,8 +24,8 @@ Q_OBJECT
  public:
     TimeToolBar(CelestiaCore* _appCore,
                 const QString& title,
-                QWidget* parent = NULL);
-    ~TimeToolBar();
+                QWidget* parent = nullptr);
+    ~TimeToolBar() = default;
 
  public slots:
     void slotPauseTime();

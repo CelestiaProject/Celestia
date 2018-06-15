@@ -28,17 +28,8 @@ static int pmod(int n, int m)
 
 Console::Console(int _nRows, int _nColumns) :
     ostream(&sbuf),
-    text(NULL),
     nRows(_nRows),
-    nColumns(_nColumns),
-    row(0),
-    column(0),
-    windowRow(0),
-    windowHeight(10),
-    xscale(1),
-    yscale(1),
-    font(NULL),
-    autoScroll(true)
+    nColumns(_nColumns)
 {
     sbuf.setConsole(this);
     text = new wchar_t[(nColumns + 1) * nRows];
@@ -49,8 +40,7 @@ Console::Console(int _nRows, int _nColumns) :
 
 Console::~Console()
 {
-    if (text != NULL)
-        delete[] text;
+    delete[] text;
 }
 
 
@@ -61,8 +51,8 @@ Console::~Console()
  */
 bool Console::setRowCount(int _nRows)
 {
-    wchar_t* newText = new wchar_t[(nColumns + 1) * _nRows];
-    if (newText == NULL)
+    auto* newText = new wchar_t[(nColumns + 1) * _nRows];
+    if (newText == nullptr)
         return false;
 
     for (int i = 0; i < _nRows; i++)
@@ -109,7 +99,7 @@ void Console::end()
 
 void Console::render(int rowHeight)
 {
-    if (font == NULL)
+    if (font == nullptr)
         return;
 
     glEnable(GL_TEXTURE_2D);
@@ -146,9 +136,7 @@ void Console::setScale(int w, int h)
 void Console::setFont(TextureFont* f)
 {
     if (f != font)
-    {
         font = f;
-    }
 }
 
 
@@ -265,7 +253,7 @@ void ConsoleStreamBuf::setConsole(Console* c)
 
 int ConsoleStreamBuf::overflow(int c)
 {
-    if (console != NULL)
+    if (console != nullptr)
     {
         switch (decodeState)
         {

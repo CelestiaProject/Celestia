@@ -74,7 +74,7 @@ Frustum::testSphere(const Eigen::Vector3f& center, float radius) const
         float distanceToPlane = planes[i].signedDistance(center);
         if (distanceToPlane < -radius)
             return Outside;
-        else if (distanceToPlane <= radius)
+        if (distanceToPlane <= radius)
             intersections |= (1 << i);
     }
 
@@ -98,7 +98,7 @@ Frustum::testSphere(const Eigen::Vector3d& center, double radius) const
         double distanceToPlane = planes[i].cast<double>().signedDistance(center);
         if (distanceToPlane < -radius)
             return Outside;
-        else if (distanceToPlane <= radius)
+        if (distanceToPlane <= radius)
             intersections |= (1 << i);
     }
 
@@ -147,14 +147,14 @@ Frustum::Aspect Frustum::testCapsule(const Capsulef& capsule) const
             {
                 if (signedDist0 < -capsule.radius)
                     return Outside;
-                else if (signedDist0 < capsule.radius)
+                if (signedDist0 < capsule.radius)
                     intersections |= (1 << i);
             }
             else
             {
                 if (signedDist1 < -capsule.radius)
                     return Outside;
-                else if (signedDist1 < capsule.radius)
+                if (signedDist1 < capsule.radius)
                     intersections |= (1 << i);
             }
         }

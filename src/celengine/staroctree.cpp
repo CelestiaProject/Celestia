@@ -37,7 +37,7 @@ bool starAbsoluteMagnitudePredicate(const Star& star, const float absMag)
 }
 
 
-bool starOrbitStraddlesNodesPredicate(const Vector3f& cellCenterPos, const Star& star, const float)
+bool starOrbitStraddlesNodesPredicate(const Vector3f& cellCenterPos, const Star& star, const float /*unused*/)
 {
     //checks if this star's orbit straddles child nodes
     float orbitalRadius    = star.getOrbitalRadius();
@@ -129,7 +129,7 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
     if (minDistance <= 0 || astro::absToAppMag(exclusionFactor, minDistance) <= limitingFactor)
     {
         // Recurse into the child nodes
-        if (_children != NULL)
+        if (_children != nullptr)
         {
             for (int i=0; i<8; ++i)
             {
@@ -179,7 +179,7 @@ void StarOctree::processCloseObjects(StarHandler&    processor,
     }
 
     // Recurse into the child nodes
-    if (_children != NULL)
+    if (_children != nullptr)
     {
         for (int i = 0; i < 8; ++i)
         {

@@ -14,7 +14,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdio>
-#include <assert.h>
+#include <cassert>
 #include "stardb.h"
 
 using namespace std;
@@ -36,29 +36,26 @@ class HipparcosStar
 public:
     HipparcosStar();
 
-    void write(ostream&);
+    void write(ostream& /*out*/);
 
-    uint32 HIPCatalogNumber;
-    uint32 HDCatalogNumber;
-    float ascension;
-    float declination;
-    float parallax;
-    float appMag;
-    StellarClass stellarClass;
+    uint32 HIPCatalogNumber{};
+    uint32 HDCatalogNumber{};
+    float ascension{0.0f};
+    float declination{0.0f};
+    float parallax{0.0f};
+    float appMag{0.0f};
+    StellarClass stellarClass{};
 
-    uint32 CCDMIdentifier;
-    uint8 starsWithCCDM;
-    uint8 nComponents;
-    uint8 parallaxError;
+    uint32 CCDMIdentifier{};
+    uint8 starsWithCCDM{};
+    uint8 nComponents{};
+    uint8 parallaxError{};
 };
 
 HipparcosStar::HipparcosStar() :
     HIPCatalogNumber(NullCatalogNumber),
     HDCatalogNumber(NullCatalogNumber),
-    ascension(0.0f),
-    declination(0.0f),
-    parallax(0.0f),
-    appMag(0.0f),
+
     CCDMIdentifier(NullCCDMIdentifier),
     starsWithCCDM(0),
     nComponents(1),
@@ -96,7 +93,7 @@ bool operator<(const HipparcosStar& a, const HipparcosStar& b)
 
 struct HIPCatalogComparePredicate
 {
-    HIPCatalogComparePredicate() : dummy(0)
+    HIPCatalogComparePredicate()
     {
     }
 
@@ -110,7 +107,7 @@ struct HIPCatalogComparePredicate
         return star0->HIPCatalogNumber < hip;
     }
 
-    int dummy;
+    int dummy{0};
 };
 
 
@@ -128,28 +125,21 @@ public:
     HipparcosComponent();
 
     HipparcosStar* star;
-    char componentID;
-    char refComponentID;
-    float ascension;
-    float declination;
-    float appMag;
-    float bMag;
-    float vMag;
-    bool hasBV;
-    float positionAngle;
-    float separation;
+    char componentID{'A'};
+    char refComponentID{'A'};
+    float ascension{};
+    float declination{};
+    float appMag{0.0f};
+    float bMag{0.0f};
+    float vMag{0.0f};
+    bool hasBV{false};
+    float positionAngle{0.0f};
+    float separation{0.0f};
 };
 
 HipparcosComponent::HipparcosComponent() :
-    star(NULL),
-    componentID('A'),
-    refComponentID('A'),
-    appMag(0.0f),
-    bMag(0.0f),
-    vMag(0.0f),
-    hasBV(false),
-    positionAngle(0.0f),
-    separation(0.0f)
+    star(nullptr)
+
 {
 }
 
@@ -171,12 +161,12 @@ HipparcosStar* findStar(uint32 hip)
                                                         starIndex.end(),
                                                         hip, pred);
     if (iter == starIndex.end())
-        return NULL;
+        return nullptr;
     HipparcosStar* star = *iter;
     if (star->HIPCatalogNumber == hip)
         return star;
-    else
-        return NULL;
+
+        return nullptr;
 }
 
 
@@ -284,7 +274,7 @@ StellarClass ParseStellarClass(char *starType)
                     lum = StellarClass::Lum_Ib;
                 }
                 break;
-            } else if (starType[i] == 'V') {
+            } if (starType[i] == 'V') {
                 if (starType[i + 1] == 'I')
                     lum = StellarClass::Lum_VI;
                 else
@@ -427,7 +417,7 @@ bool ReadComponentRecord(istream& in)
     }
 
     component.star = findStar(hip);
-    if (component.star == NULL)
+    if (component.star == nullptr)
     {
         cout << "Nonexistent HIP catalog number for component.\n";
         return false;
@@ -695,7 +685,7 @@ int main(int argc, char* argv[])
 
     // Read star records from the primary HIPPARCOS catalog
     {
-        ifstream mainDatabase(MainDatabaseFile.c_str(), ios::in | ios::binary);
+        ifstream mainDatabase(MainDatabaseFile, ios::in | ios::binary);
         if (!mainDatabase.good())
         {
             cout << "Error opening " << MainDatabaseFile << '\n';
@@ -735,7 +725,7 @@ int main(int argc, char* argv[])
 
     // Read component records
     {
-        ifstream componentDatabase(ComponentDatabaseFile.c_str(),
+        ifstream componentDatabase(ComponentDatabaseFile,
                                    ios::in | ios::binary);
         if (!componentDatabase.good())
         {

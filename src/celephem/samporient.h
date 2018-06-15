@@ -13,6 +13,6 @@
 #include "rotation.h"
 #include <string>
 
-extern RotationModel* LoadSampledOrientation(const std::string& name);
+extern RotationModel* LoadSampledOrientation(const std::string& filename);
 
 #endif // _CELENGINE_SAMPORIENT_H_

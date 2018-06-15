@@ -63,21 +63,21 @@ template <typename T> bool operator<(const SampleXYZV<T>& a, const SampleXYZV<T>
 template <typename T> class SampledOrbit : public CachingOrbit
 {
 public:
-    SampledOrbit(TrajectoryInterpolation);
-    virtual ~SampledOrbit();
+    SampledOrbit(TrajectoryInterpolation /*_interpolation*/);
+    ~SampledOrbit() override = default;
 
     void addSample(double t, double x, double y, double z);
     void setPeriod();
 
-    double getPeriod() const;
-    double getBoundingRadius() const;
+    double getPeriod() const override;
+    double getBoundingRadius() const override;
     Vector3d computePosition(double jd) const;
     Vector3d computeVelocity(double jd) const;
 
-    bool isPeriodic() const;
-    void getValidRange(double& begin, double& end) const;
+    bool isPeriodic() const override;
+    void getValidRange(double& begin, double& end) const override;
 
-    virtual void sample(double startTime, double endTime, OrbitSampleProc& proc) const;
+    void sample(double startTime, double endTime, OrbitSampleProc& proc) const override;
 
 private:
     vector<Sample<T> > samples;
@@ -94,11 +94,6 @@ template <typename T> SampledOrbit<T>::SampledOrbit(TrajectoryInterpolation _int
     period(1.0),
     lastSample(0),
     interpolation(_interpolation)
-{
-}
-
-
-template <typename T> SampledOrbit<T>::~SampledOrbit()
 {
 }
 
@@ -320,7 +315,7 @@ template <typename T> Vector3d SampledOrbit<T>::computeVelocity(double jd) const
                 double dt = (s1.t - s0.t);
                 return (Vector3d(s1.x, s1.y, s1.z) - Vector3d(s0.x, s0.y, s0.z)) * (1.0 / dt);
             }
-            else if (interpolation == TrajectoryInterpolationCubic)
+            if (interpolation == TrajectoryInterpolationCubic)
             {
                 Sample<T> s0, s1, s2, s3;
                 if (n > 1)
@@ -433,21 +428,21 @@ template <typename T> void SampledOrbit<T>::sample(double /* startTime */, doubl
 template <typename T> class SampledOrbitXYZV : public CachingOrbit
 {
 public:
-    SampledOrbitXYZV(TrajectoryInterpolation);
-    virtual ~SampledOrbitXYZV();
+    SampledOrbitXYZV(TrajectoryInterpolation /*_interpolation*/);
+    ~SampledOrbitXYZV() override = default;
 
     void addSample(double t, const Vector3d& position, const Vector3d& velocity);
     void setPeriod();
 
-    double getPeriod() const;
-    double getBoundingRadius() const;
+    double getPeriod() const override;
+    double getBoundingRadius() const override;
     Vector3d computePosition(double jd) const;
     Vector3d computeVelocity(double jd) const;
 
-    bool isPeriodic() const;
-    void getValidRange(double& begin, double& end) const;
+    bool isPeriodic() const override;
+    void getValidRange(double& begin, double& end) const override;
 
-    virtual void sample(double startTime, double endTime, OrbitSampleProc& proc) const;
+    void sample(double startTime, double endTime, OrbitSampleProc& proc) const override;
 
 private:
     vector<SampleXYZV<T> > samples;
@@ -464,11 +459,6 @@ template <typename T> SampledOrbitXYZV<T>::SampledOrbitXYZV(TrajectoryInterpolat
     period(1.0),
     lastSample(0),
     interpolation(_interpolation)
-{
-}
-
-
-template <typename T> SampledOrbitXYZV<T>::~SampledOrbitXYZV()
 {
 }
 
@@ -495,8 +485,8 @@ template <typename T> double SampledOrbitXYZV<T>::getPeriod() const
 {
     if (samples.empty())
         return 0.0;
-    else
-        return samples[samples.size() - 1].t - samples[0].t;
+
+    return samples[samples.size() - 1].t - samples[0].t;
 }
 
 
@@ -661,12 +651,11 @@ template <typename T> Vector3d SampledOrbitXYZV<T>::computeVelocity(double jd) c
 template <typename T> void SampledOrbitXYZV<T>::sample(double /* startTime */, double /* endTime */,
                                                        OrbitSampleProc& proc) const
 {
-    for (typename vector<SampleXYZV<T> >::const_iterator iter = samples.begin();
-         iter != samples.end(); iter++)
+    for (const auto& sample : samples)
     {
-        proc.sample(iter->t,
-                    Vector3d(iter->position.x(), iter->position.z(), -iter->position.y()),
-                    Vector3d(iter->velocity.x(), iter->velocity.z(), -iter->velocity.y()));
+        proc.sample(sample.t,
+                    Vector3d(sample.position.x(), sample.position.z(), -sample.position.y()),
+                    Vector3d(sample.velocity.x(), sample.velocity.z(), -sample.velocity.y()));
     }
 }
 
@@ -699,7 +688,7 @@ static bool SkipComments(istream& in)
                 {
                     inComment = true;
                 }
-                else if (!isspace(c))
+                else if (isspace(c) == 0)
                 {
                     in.unget();
                     done = true;
@@ -729,16 +718,16 @@ static bool SkipComments(istream& in)
 // with a #; data is read start fromt the first non-whitespace character outside
 // of a comment.
 
-template <typename T> SampledOrbit<T>* LoadSampledOrbit(const string& filename, TrajectoryInterpolation interpolation, T)
+template <typename T> SampledOrbit<T>* LoadSampledOrbit(const string& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
-    ifstream in(filename.c_str());
+    ifstream in(filename);
     if (!in.good())
-        return NULL;
+        return nullptr;
 
     if (!SkipComments(in))
-        return NULL;
+        return nullptr;
 
-    SampledOrbit<T>* orbit = NULL;
+    SampledOrbit<T>* orbit = nullptr;
 
     orbit = new SampledOrbit<T>(interpolation);
 
@@ -784,16 +773,16 @@ template <typename T> SampledOrbit<T>* LoadSampledOrbit(const string& filename, 
 // with a #; data is read start fromt the first non-whitespace character outside
 // of a comment.
 
-template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const string& filename, TrajectoryInterpolation interpolation, T)
+template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const string& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
-    ifstream in(filename.c_str());
+    ifstream in(filename);
     if (!in.good())
-        return NULL;
+        return nullptr;
 
     if (!SkipComments(in))
-        return NULL;
+        return nullptr;
 
-    SampledOrbitXYZV<T>* orbit = NULL;
+    SampledOrbitXYZV<T>* orbit = nullptr;
 
     orbit = new SampledOrbitXYZV<T>(interpolation);
 

@@ -27,7 +27,7 @@ bool dsoAbsoluteMagnitudePredicate(DeepSkyObject* const & _dso, const float absM
 }
 
 
-bool dsoStraddlesNodesPredicate(const Vector3d& cellCenterPos, DeepSkyObject* const & _dso, const float)
+bool dsoStraddlesNodesPredicate(const Vector3d& cellCenterPos, DeepSkyObject* const & _dso, const float /*unused*/)
 {
     //checks if this dso's radius straddles child nodes
     float dsoRadius    = _dso->getBoundingSphereRadius();
@@ -126,7 +126,7 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
     if (minDistance <= 0.0 || astro::absToAppMag((double) exclusionFactor, minDistance) <= limitingFactor)
     {
         // Recurse into the child nodes
-        if (_children != NULL)
+        if (_children != nullptr)
         {
             for (int i = 0; i < 8; ++i)
             {
@@ -176,7 +176,7 @@ void DSOOctree::processCloseObjects(DSOHandler&    processor,
     }
 
     // Recurse into the child nodes
-    if (_children != NULL)
+    if (_children != nullptr)
     {
         for (int i = 0; i < 8; ++i)
         {

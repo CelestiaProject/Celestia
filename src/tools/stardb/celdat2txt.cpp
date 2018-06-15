@@ -912,7 +912,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    ifstream stardbFile(inputFilename.c_str(), ios::in | ios::binary);
+    ifstream stardbFile(inputFilename, ios::in | ios::binary);
     if (!stardbFile.good())
     {
         cerr << "Error opening star database file " << inputFilename << '\n';
@@ -923,7 +923,7 @@ int main(int argc, char* argv[])
     ostream* out = &cout;
     if (!outputFilename.empty())
     {
-        out = new ofstream(outputFilename.c_str(), ios::out);
+        out = new ofstream(outputFilename, ios::out);
         if (!out->good())
         {
             cerr << "Error opening output file " << outputFilename << '\n';

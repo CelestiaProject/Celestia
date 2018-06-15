@@ -9,9 +9,9 @@
 
 using namespace std;
 
-static IDirect3D9* g_d3d = NULL;
-static IDirect3DDevice9* g_d3dDev = NULL;
-static HWND g_mainWindow = NULL;
+static IDirect3D9* g_d3d = nullptr;
+static IDirect3DDevice9* g_d3dDev = nullptr;
+static HWND g_mainWindow = nullptr;
 
 char* D3DErrorString(HRESULT);
 void ShowD3DErrorMessage(char* info, HRESULT hr);
@@ -97,11 +97,11 @@ bool operator==(const D3DXMATERIAL& mat0, const D3DXMATERIAL& mat1)
     // Compare the texture filenames for equality, safely handling
     // null filenames.
     bool sameTex;
-    if (mat0.pTextureFilename == NULL)
+    if (mat0.pTextureFilename == nullptr)
     {
-        sameTex = (mat1.pTextureFilename == NULL);
+        sameTex = (mat1.pTextureFilename == nullptr);
     }
-    else if (mat1.pTextureFilename == NULL)
+    else if (mat1.pTextureFilename == nullptr)
     {
         sameTex = false;
     }
@@ -127,7 +127,7 @@ ostream& operator<<(ostream& o, const D3DCOLORVALUE& c)
 
 static void render()
 {
-    g_d3dDev->Clear(0, NULL,
+    g_d3dDev->Clear(0, nullptr,
                     D3DCLEAR_TARGET,
                     D3DCOLOR_ARGB(255, 0, 0, 192),  // color
                     0.0f,                           // z
@@ -240,9 +240,9 @@ bool StripifyMeshSubset(ID3DXMesh* mesh,
     // TODO: Detect when a tri fan should be used instead of a tri list
 
     // Convert to tri strips
-    IDirect3DIndexBuffer9* indices = NULL;
+    IDirect3DIndexBuffer9* indices = nullptr;
     DWORD numIndices = 0;
-    ID3DXBuffer* strips = NULL;
+    ID3DXBuffer* strips = nullptr;
     DWORD numStrips = 0;
     HRESULT hr;
     hr = D3DXConvertMeshSubsetToStrips(mesh,
@@ -285,7 +285,7 @@ bool StripifyMeshSubset(ID3DXMesh* mesh,
         }
     }
 
-    void* indexData = NULL;
+    void* indexData = nullptr;
     hr = indices->Lock(0, 0, &indexData, D3DLOCK_READONLY);
     if (FAILED(hr))
     {
@@ -370,7 +370,7 @@ bool DumpMeshVertices(ID3DXMesh* mesh,
                       DWORD stride,
                       ostream& meshfile)
 {
-    IDirect3DVertexBuffer9* vb = NULL;
+    IDirect3DVertexBuffer9* vb = nullptr;
     HRESULT hr = mesh->GetVertexBuffer(&vb);
     if (FAILED(hr))
     {
@@ -378,9 +378,9 @@ bool DumpMeshVertices(ID3DXMesh* mesh,
         return false;
     }
 
-    char* vertexData = NULL;
+    char* vertexData = nullptr;
     hr = vb->Lock(0, 0, reinterpret_cast<void**>(&vertexData), D3DLOCK_READONLY);
-    if (FAILED(hr) || vertexData == NULL)
+    if (FAILED(hr) || vertexData == nullptr)
     {
         ShowD3DErrorMessage("Locking vertex buffer", hr);
         return false;
@@ -553,10 +553,10 @@ static LRESULT CALLBACK MainWindowProc(HWND hWnd,
         break;
 
     case WM_PAINT:
-        if (g_d3dDev != NULL)
+        if (g_d3dDev != nullptr)
         {
             //render();
-            //g_d3dDev->Present(NULL, NULL, NULL, NULL);
+            //g_d3dDev->Present(nullptr, nullptr, nullptr, nullptr);
         }
         break;
 
@@ -580,17 +580,17 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = hInstance;
-    wc.hIcon = NULL;
-    wc.hCursor = LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW));
+    wc.hIcon = nullptr;
+    wc.hCursor = LoadCursor(nullptr, MAKEINTRESOURCE(IDC_ARROW));
     wc.hbrBackground = (HBRUSH) GetStockObject(WHITE_BRUSH);
-    wc.lpszMenuName = NULL;
+    wc.lpszMenuName = nullptr;
     wc.lpszClassName = "xtocmod";
     if (RegisterClass(&wc) == 0)
     {
-        MessageBox(NULL,
+        MessageBox(nullptr,
                    "Failed to register the window class.", "Fatal Error",
                    MB_OK | MB_ICONERROR);
-        return NULL;
+        return nullptr;
     }
 
     DWORD windowStyle = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
@@ -601,13 +601,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                                 CW_USEDEFAULT,
                                 CW_USEDEFAULT,
                                 300, 300,
-                                NULL,
-                                NULL,
+                                nullptr,
+                                nullptr,
                                 hInstance,
-                                NULL);
-    if (g_mainWindow == NULL)
+                                nullptr);
+    if (g_mainWindow == nullptr)
     {
-        MessageBox(NULL,
+        MessageBox(nullptr,
                    "Error creating application window.", "Fatal Error",
                    MB_OK | MB_ICONERROR);
     }
@@ -618,7 +618,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     // Initialize D3D
     g_d3d = Direct3DCreate9(D3D_SDK_VERSION);
-    if (g_d3d == NULL)
+    if (g_d3d == nullptr)
     {
         ShowD3DErrorMessage("Initializing D3D", 0);
         return 1;
@@ -652,10 +652,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     string outputFilename(inputFilename, 0, inputFilename.rfind('.'));
     outputFilename += ".cmod";
 
-    ID3DXMesh* mesh = NULL;
-    ID3DXBuffer* adjacency = NULL;
-    ID3DXBuffer* materialBuf = NULL;
-    ID3DXBuffer* effects = NULL;
+    ID3DXMesh* mesh = nullptr;
+    ID3DXBuffer* adjacency = nullptr;
+    ID3DXBuffer* materialBuf = nullptr;
+    ID3DXBuffer* effects = nullptr;
     DWORD numMaterials;
 
     hr = D3DXLoadMeshFromX(inputFilename.c_str(),
@@ -681,7 +681,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     cout << "adjacency buffer size: " << adjacency->GetBufferSize() << '\n';
 
-    ofstream meshfile(outputFilename.c_str());
+    ofstream meshfile(outputFilename);
 
     // Output the header
     meshfile << "#celmodel__ascii\n\n";
@@ -717,8 +717,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     DumpVertexDescription(vertexMap, meshfile);
 
-    ID3DXMesh* optMesh = NULL;
-    ID3DXBuffer* vertexRemap = NULL;
+    ID3DXMesh* optMesh = nullptr;
+    ID3DXBuffer* vertexRemap = nullptr;
     DWORD* faceRemap = new DWORD[numFaces];
     DWORD* optAdjacency = new DWORD[numFaces * 3];
     hr = mesh->Optimize(D3DXMESHOPT_COMPACT | D3DXMESHOPT_STRIPREORDER,
@@ -736,14 +736,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     // Attribute table
     DWORD attribTableSize = 0;
-    hr = optMesh->GetAttributeTable(NULL, &attribTableSize);
+    hr = optMesh->GetAttributeTable(nullptr, &attribTableSize);
     if (FAILED(hr))
     {
         ShowD3DErrorMessage("Querying attribute table size", hr);
         return 1;
     }
 
-    D3DXATTRIBUTERANGE* attribTable = NULL;
+    D3DXATTRIBUTERANGE* attribTable = nullptr;
     if (attribTableSize > 0)
     {
         attribTable = new D3DXATTRIBUTERANGE[attribTableSize];
@@ -772,17 +772,17 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     meshfile << "\nend_mesh\n";
 
 #if 0
-    IDirect3DIndexBuffer9* indices = NULL;
+    IDirect3DIndexBuffer9* indices = nullptr;
     hr = mesh->GetIndexBuffer(&indices);
 #endif
 
 #if 0
     // No message loop required for this app
     MSG msg;
-    GetMessage(&msg, NULL, 0u, 0u);
+    GetMessage(&msg, nullptr, 0u, 0u);
     while (msg.message != WM_QUIT)
     {
-        GetMessage(&msg, NULL, 0u, 0u);
+        GetMessage(&msg, nullptr, 0u, 0u);
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
@@ -800,10 +800,10 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    ID3DXMesh* mesh = NULL;
-    ID3DXBuffer* adjacency = NULL;
-    ID3DXBuffer* materials = NULL;
-    ID3DXBuffer* effects = NULL;
+    ID3DXMesh* mesh = nullptr;
+    ID3DXBuffer* adjacency = nullptr;
+    ID3DXBuffer* materials = nullptr;
+    ID3DXBuffer* effects = nullptr;
 
     return 0;
 }

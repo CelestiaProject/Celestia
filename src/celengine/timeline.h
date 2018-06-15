@@ -23,7 +23,7 @@ class TimelinePhase;
 class Timeline
 {
 public:
-    Timeline();
+    Timeline() = default;
     ~Timeline();
 
     const TimelinePhase* findPhase(double t) const;

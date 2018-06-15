@@ -11036,14 +11036,14 @@ class VSOP87Orbit : public CachingOrbit
         boundingRadius(_boundingRadius)
     {
     };
-    virtual ~VSOP87Orbit() {};
+    ~VSOP87Orbit() override = default;
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return period;
     }
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return boundingRadius;
     }
@@ -11100,11 +11100,11 @@ class VSOP87Orbit : public CachingOrbit
     /** Custom implementation of sample() for VSOP87 orbits. The default
       * implementation runs too slowly and produces too many samples.
       */
-    void sample(double startTime, double endTime, OrbitSampleProc& proc) const
+    void sample(double startTime, double endTime, OrbitSampleProc& proc) const override
     {
         double span = getPeriod();
 
-        AdaptiveSamplingParameters samplingParams;
+        AdaptiveSamplingParameters samplingParams{};
         samplingParams.tolerance = 1.0; // kilometers
 
         // startStep, minStep, and maxStep are all set to identical values,
@@ -11146,19 +11146,19 @@ class VSOP87OrbitRect : public CachingOrbit
         boundingRadius(_boundingRadius)
     {
     };
-    virtual ~VSOP87OrbitRect() {};
+    ~VSOP87OrbitRect() override = default;
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return period;
     }
 
-    virtual bool isPeriodic() const
+    bool isPeriodic() const override
     {
         return period != 0.0;
     }
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return boundingRadius;
     }
@@ -11305,5 +11305,5 @@ Orbit* CreateVSOP87Orbit(const string& name)
                               astro::SolarMass);
     }
 
-    return NULL;
+    return nullptr;
 }

@@ -13,7 +13,7 @@
 #ifdef TARGET_OS_MAC
 #include <Carbon/Carbon.h>
 #endif
-#include <time.h>
+#include <ctime>
 
 #include <QIcon>
 #include <QHBoxLayout>
@@ -94,7 +94,7 @@ static const int CELESTIA_MAIN_WINDOW_VERSION = 12;
 
 // Terrible hack required because context menu callback doesn't retain
 // any state.
-static CelestiaAppWindow* MainWindowInstance = NULL;
+static CelestiaAppWindow* MainWindowInstance = nullptr;
 static void ContextMenu(float x, float y, Selection sel);
 
 
@@ -128,9 +128,7 @@ public:
     {
     }
 
-    ~AppAlerter()
-    {
-    }
+    ~AppAlerter() = default;
 
     void fatalError(const string& msg)
     {
@@ -144,22 +142,22 @@ private:
 
 CelestiaAppWindow::CelestiaAppWindow( QWidget* parent ) : // Leserg
     QMainWindow( parent ),  // Leserg
-    glWidget(NULL),
-    celestialBrowser(NULL),
-    m_appCore(NULL),
-    options(NULL),
-    fileMenu(NULL),
-    navMenu(NULL),
-    timeMenu(NULL),
-    bookmarkMenu(NULL),
-    viewMenu(NULL),
-    helpMenu(NULL),
-    infoPanel(NULL),
-    eventFinder(NULL),
-    alerter(NULL),
-    m_preferencesDialog(NULL),
-    m_bookmarkManager(NULL),
-    m_bookmarkToolBar(NULL)
+    glWidget(nullptr),
+    celestialBrowser(nullptr),
+    m_appCore(nullptr),
+    options(nullptr),
+    fileMenu(nullptr),
+    navMenu(nullptr),
+    timeMenu(nullptr),
+    bookmarkMenu(nullptr),
+    viewMenu(nullptr),
+    helpMenu(nullptr),
+    infoPanel(nullptr),
+    eventFinder(nullptr),
+    alerter(nullptr),
+    m_preferencesDialog(nullptr),
+    m_bookmarkManager(nullptr),
+    m_bookmarkToolBar(nullptr)
 {
     setObjectName("celestia-mainwin");
 }
@@ -197,11 +195,8 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     // Translate extras directories from QString -> std::string
     vector<string> extrasDirectories;
-    for (QStringList::const_iterator iter = qExtrasDirectories.begin();
-         iter != qExtrasDirectories.end(); iter++)
-    {
-        extrasDirectories.push_back(iter->toUtf8().data());
-    }
+    for (const auto& dir : qExtrasDirectories)
+        extrasDirectories.push_back(dir.toUtf8().data());
 
 #ifdef TARGET_OS_MAC
     static short domains[] = { kUserDomain, kLocalDomain, kNetworkDomain };
@@ -235,7 +230,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     m_appCore = new QtCelestiaCoreApplication();
 
-    AppProgressNotifier* progress = new AppProgressNotifier(this);
+    auto* progress = new AppProgressNotifier(this);
     alerter = new AppAlerter(this);
     m_appCore->setAlerter(alerter);
 
@@ -256,7 +251,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
         QGLFormat::setDefaultFormat(glformat);
     }
 
-    glWidget = new CelestiaGlWidget(NULL, "Celestia", m_appCore);
+    glWidget = new CelestiaGlWidget(nullptr, "Celestia", m_appCore);
     glWidget->makeCurrent();
 
     GLenum glewErr = glewInit();
@@ -289,21 +284,21 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
                                Qt::RightDockWidgetArea);
 
     // Create the various browser widgets
-    celestialBrowser = new CelestialBrowser(m_appCore, NULL);
+    celestialBrowser = new CelestialBrowser(m_appCore, nullptr);
     celestialBrowser->setObjectName("celestia-browser");
     connect(celestialBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
             this,
             SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
 
-    QWidget* deepSkyBrowser = new DeepSkyBrowser(m_appCore, NULL);
+    QWidget* deepSkyBrowser = new DeepSkyBrowser(m_appCore, nullptr);
     deepSkyBrowser->setObjectName("deepsky-browser");
     connect(deepSkyBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
             this,
             SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
 
-    SolarSystemBrowser* solarSystemBrowser = new SolarSystemBrowser(m_appCore, NULL);
+    SolarSystemBrowser* solarSystemBrowser = new SolarSystemBrowser(m_appCore, nullptr);
     solarSystemBrowser->setObjectName("ssys-browser");
     connect(solarSystemBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
@@ -809,7 +804,7 @@ void CelestiaAppWindow::slotPreferences()
     PreferencesDialog dlg(this, m_appCore);
     dlg.exec();
 #if 0
-    if (m_preferencesDialog == NULL)
+    if (m_preferencesDialog == nullptr)
     {
         m_preferencesDialog = new PreferencesDialog(this, m_appCore);
     }
@@ -880,7 +875,7 @@ void CelestiaAppWindow::slotOpenScriptDialog()
 void CelestiaAppWindow::slotOpenScript()
 {
     QAction* action = qobject_cast<QAction*>(sender());
-    if (action != NULL)
+    if (action != nullptr)
     {
         m_appCore->cancelScript();
         m_appCore->runScript(action->data().toString().toUtf8().data());
@@ -912,21 +907,21 @@ void CelestiaAppWindow::slotAddBookmark()
     Selection sel = m_appCore->getSimulation()->getSelection();
     QString defaultTitle;
 
-    if (sel.body() != NULL)
+    if (sel.body() != nullptr)
     {
         defaultTitle = QString::fromUtf8(sel.body()->getName(true).c_str());
     }
-    else if (sel.star() != NULL)
+    else if (sel.star() != nullptr)
     {
         Universe* universe = m_appCore->getSimulation()->getUniverse();
         defaultTitle = QString::fromUtf8(ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*sel.star(), true)).c_str());
     }
-    else if (sel.deepsky() != NULL)
+    else if (sel.deepsky() != nullptr)
     {
         Universe* universe = m_appCore->getSimulation()->getUniverse();
         defaultTitle = QString::fromUtf8(ReplaceGreekLetterAbbr(universe->getDSOCatalog()->getDSOName(sel.deepsky(), true)).c_str());
     }
-    else if (sel.location() != NULL)
+    else if (sel.location() != nullptr)
     {
         defaultTitle = sel.location()->getName().c_str();
     }
@@ -1016,16 +1011,16 @@ void CelestiaAppWindow::slotShowGLInfo()
 
     // Get the version string
     out << _("<b>OpenGL version: </b>");
-    const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-    if (version != NULL)
+    const auto* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    if (version != nullptr)
         out << version;
     else
         out << "???";
     out << "<br>\n";
 
     out << _("<b>Renderer: </b>");
-    const char* glrenderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-    if (glrenderer != NULL)
+    const auto* glrenderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    if (glrenderer != nullptr)
         out << glrenderer;
     out << "<br>\n";
 
@@ -1033,11 +1028,11 @@ void CelestiaAppWindow::slotShowGLInfo()
     // GL_SHADING_LANGUAGE_VERSION_ARB seems to be missing in the Mac OS X OpenGL
     // headers even though ARB_shading_language_100 is defined.
 #ifdef GL_SHADING_LANGUAGE_VERSION
-    const char* glslversion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+    const auto* glslversion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
 #else
     const char* glslversion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION_ARB));
 #endif
-    if (glslversion != NULL)
+    if (glslversion != nullptr)
     {
         out << _("<b>GLSL Version: </b>") << glslversion << "<br>\n";
     }
@@ -1051,8 +1046,8 @@ void CelestiaAppWindow::slotShowGLInfo()
 
     // Show all supported extensions
     out << _("<b>Extensions:</b><br>\n");
-    const char *extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
-    if (extensions != NULL)
+    const auto *extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+    if (extensions != nullptr)
     {
         QStringList extList = QString(extensions).split(" ");
         foreach(QString s, extList)
@@ -1126,7 +1121,7 @@ void CelestiaAppWindow::createMenus()
     fileMenu->addAction(openScriptAction);
 
     QMenu* scriptsMenu = buildScriptsMenu();
-    if (scriptsMenu != NULL)
+    if (scriptsMenu != nullptr)
         fileMenu->addMenu(scriptsMenu);
 
     fileMenu->addSeparator();
@@ -1320,7 +1315,7 @@ void CelestiaAppWindow::createMenus()
     m_appCore->getSimulation()->setSyncTime(check);
 
     // Set up the default time zone name and offset from UTC
-    time_t curtime = time(NULL);
+    time_t curtime = time(nullptr);
     m_appCore->start(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
     localtime(&curtime); // Only doing this to set timezone as a side effect
 
@@ -1414,15 +1409,14 @@ QMenu* CelestiaAppWindow::buildScriptsMenu()
 {
     vector<ScriptMenuItem>* scripts = ScanScriptsDirectory("scripts", false);
     if (scripts->empty())
-        return NULL;
+        return nullptr;
 
     QMenu* menu = new QMenu(_("Scripts"));
 
-    for (vector<ScriptMenuItem>::const_iterator iter = scripts->begin();
-         iter != scripts->end(); iter++)
+    for (const auto& script : *scripts)
     {
-        QAction* act = new QAction(iter->title.c_str(), this);
-        act->setData(iter->filename.c_str());
+        QAction* act = new QAction(script.title.c_str(), this);
+        act->setData(script.filename.c_str());
         connect(act, SIGNAL(triggered()), this, SLOT(slotOpenScript()));
         menu->addAction(act);
     }

@@ -49,42 +49,42 @@ ContentType DetermineFileType(const string& filename)
         compareIgnoringCase(JPGExt, ext) == 0 ||
         compareIgnoringCase(JFIFExt, ext) == 0)
         return Content_JPEG;
-    else if (compareIgnoringCase(BMPExt, ext) == 0)
+    if (compareIgnoringCase(BMPExt, ext) == 0)
         return Content_BMP;
-    else if (compareIgnoringCase(TargaExt, ext) == 0)
+    if (compareIgnoringCase(TargaExt, ext) == 0)
         return Content_Targa;
-    else if (compareIgnoringCase(PNGExt, ext) == 0)
+    if (compareIgnoringCase(PNGExt, ext) == 0)
         return Content_PNG;
-    else if (compareIgnoringCase(ThreeDSExt, ext) == 0)
+    if (compareIgnoringCase(ThreeDSExt, ext) == 0)
         return Content_3DStudio;
-    else if (compareIgnoringCase(CelestiaTextureExt, ext) == 0)
+    if (compareIgnoringCase(CelestiaTextureExt, ext) == 0)
         return Content_CelestiaTexture;
-    else if (compareIgnoringCase(CelestiaMeshExt, ext) == 0)
+    if (compareIgnoringCase(CelestiaMeshExt, ext) == 0)
         return Content_CelestiaMesh;
-    else if (compareIgnoringCase(CelestiaCatalogExt, ext) == 0)
+    if (compareIgnoringCase(CelestiaCatalogExt, ext) == 0)
         return Content_CelestiaCatalog;
-    else if (compareIgnoringCase(CelestiaStarCatalogExt, ext) == 0)
+    if (compareIgnoringCase(CelestiaStarCatalogExt, ext) == 0)
         return Content_CelestiaStarCatalog;
-    else if (compareIgnoringCase(CelestiaDeepSkyCatalogExt, ext) == 0)
+    if (compareIgnoringCase(CelestiaDeepSkyCatalogExt, ext) == 0)
         return Content_CelestiaDeepSkyCatalog;
-    else if (compareIgnoringCase(AVIExt, ext) == 0)
+    if (compareIgnoringCase(AVIExt, ext) == 0)
         return Content_AVI;
-    else if (compareIgnoringCase(DDSExt, ext) == 0)
+    if (compareIgnoringCase(DDSExt, ext) == 0)
         return Content_DDS;
-    else if (compareIgnoringCase(CelestiaLegacyScriptExt, ext) == 0)
+    if (compareIgnoringCase(CelestiaLegacyScriptExt, ext) == 0)
         return Content_CelestiaLegacyScript;
-    else if (compareIgnoringCase(CelestiaScriptExt, ext) == 0 ||
+    if (compareIgnoringCase(CelestiaScriptExt, ext) == 0 ||
              compareIgnoringCase(CelestiaScriptExt2, ext) == 0)
         return Content_CelestiaScript;
-    else if (compareIgnoringCase(CelestiaModelExt, ext) == 0)
+    if (compareIgnoringCase(CelestiaModelExt, ext) == 0)
         return Content_CelestiaModel;
-    else if (compareIgnoringCase(CelestiaParticleSystemExt, ext) == 0)
+    if (compareIgnoringCase(CelestiaParticleSystemExt, ext) == 0)
         return Content_CelestiaParticleSystem;
-    else if (compareIgnoringCase(DXT5NormalMapExt, ext) == 0)
+    if (compareIgnoringCase(DXT5NormalMapExt, ext) == 0)
         return Content_DXT5NormalMap;
-    else if (compareIgnoringCase(CelestiaXYZTrajectoryExt, ext) == 0)
+    if (compareIgnoringCase(CelestiaXYZTrajectoryExt, ext) == 0)
         return Content_CelestiaXYZTrajectory;
-    else if (compareIgnoringCase(CelestiaXYZVTrajectoryExt, ext) == 0)
+    if (compareIgnoringCase(CelestiaXYZVTrajectoryExt, ext) == 0)
         return Content_CelestiaXYZVTrajectory;
     else
         return Content_Unknown;

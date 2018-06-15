@@ -57,7 +57,7 @@ GLShader::compile(const string& source)
     if (logLength > 0)
     {
         GLsizei charsWritten = 0;
-        char* log = new char[logLength];
+        auto* log = new char[logLength];
         glGetInfoLogARB(m_id, logLength, &charsWritten, log);
 
         m_log = string(log, charsWritten);
@@ -69,8 +69,8 @@ GLShader::compile(const string& source)
 
 
 GLShaderProgram::GLShaderProgram() :
-    m_vertexShader(NULL),
-    m_fragmentShader(NULL),
+    m_vertexShader(nullptr),
+    m_fragmentShader(nullptr),
     m_id(0),
     m_linked(false)
 {
@@ -100,7 +100,7 @@ GLShaderProgram::~GLShaderProgram()
 bool
 GLShaderProgram::addVertexShader(GLVertexShader* shader)
 {
-    if (shader == NULL || m_vertexShader != NULL)
+    if (shader == nullptr || m_vertexShader != nullptr)
     {
         return false;
     }
@@ -121,7 +121,7 @@ GLShaderProgram::addVertexShader(GLVertexShader* shader)
 bool
 GLShaderProgram::addFragmentShader(GLFragmentShader* shader)
 {
-    if (shader == NULL || m_fragmentShader != NULL)
+    if (shader == nullptr || m_fragmentShader != nullptr)
     {
         return false;
     }
@@ -162,7 +162,7 @@ GLShaderProgram::link()
     if (logLength > 0)
     {
         GLsizei charsWritten = 0;
-        char* log = new char[logLength];
+        auto* log = new char[logLength];
         glGetInfoLogARB(m_id, logLength, &charsWritten, log);
 
         m_log = string(log, charsWritten);
@@ -189,10 +189,7 @@ GLShaderProgram::bind() const
         glUseProgramObjectARB(m_id);
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 

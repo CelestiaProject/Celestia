@@ -50,6 +50,7 @@
 #undef max
 #endif
 #include <sstream>
+#include <utility>
 
 #include "celx.h"
 #include "CelestiaCoreApplication.h"
@@ -246,9 +247,9 @@ void CelxLua::initLineColorMap()
 {
     LineColorMap["starorbits"]       = &Renderer::StarOrbitColor;
     LineColorMap["planetorbits"]     = &Renderer::PlanetOrbitColor;
-    LineColorMap["dwarfplanetorbits"]     = &Renderer::DwarfPlanetOrbitColor;
+    LineColorMap["dwarfplanetorbits"]= &Renderer::DwarfPlanetOrbitColor;
     LineColorMap["moonorbits"]       = &Renderer::MoonOrbitColor;
-    LineColorMap["minormoonorbits"]       = &Renderer::MinorMoonOrbitColor;
+    LineColorMap["minormoonorbits"]  = &Renderer::MinorMoonOrbitColor;
     LineColorMap["asteroidorbits"]   = &Renderer::AsteroidOrbitColor;
     LineColorMap["cometorbits"]      = &Renderer::CometOrbitColor;
     LineColorMap["spacecraftorbits"] = &Renderer::SpacecraftOrbitColor;
@@ -258,7 +259,7 @@ void CelxLua::initLineColorMap()
     LineColorMap["galacticgrid"]     = &Renderer::GalacticGridColor;
     LineColorMap["eclipticgrid"]     = &Renderer::EclipticGridColor;
     LineColorMap["horizontalgrid"]   = &Renderer::HorizonGridColor;
-    LineColorMap["planetographicgrid"]   = &Renderer::PlanetographicGridColor;
+    LineColorMap["planetographicgrid"] = &Renderer::PlanetographicGridColor;
     LineColorMap["planetequator"]    = &Renderer::PlanetEquatorColor;
     LineColorMap["ecliptic"]         = &Renderer::EclipticColor;
     LineColorMap["selectioncursor"]  = &Renderer::SelectionCursorColor;
@@ -323,15 +324,11 @@ class CelScriptWrapper : public ExecutionEnvironment
 {
  public:
     CelScriptWrapper(CelestiaCore& appCore, istream& scriptfile):
-        script(NULL),
-        core(appCore),
-        cmdSequence(NULL),
-        tickTime(0.0),
-        errorMessage("")
+        core(appCore)
     {
         CommandParser parser(scriptfile);
         cmdSequence = parser.parse();
-        if (cmdSequence != NULL)
+        if (cmdSequence != nullptr)
         {
             script = new Execution(*cmdSequence, *this);
         }
@@ -347,10 +344,8 @@ class CelScriptWrapper : public ExecutionEnvironment
 
     virtual ~CelScriptWrapper()
     {
-        if (script != NULL)
-            delete script;
-        if (cmdSequence != NULL)
-            delete cmdSequence;
+        delete script;
+        delete cmdSequence;
     }
 
     string getErrorMessage() const
@@ -390,14 +385,14 @@ class CelScriptWrapper : public ExecutionEnvironment
     void showText(string s, int horig, int vorig, int hoff, int voff,
                   double duration)
     {
-        core.showText(s, horig, vorig, hoff, voff, duration);
+        core.showText(std::move(s), horig, vorig, hoff, voff, duration);
     }
 
  private:
-    Execution* script;
+    Execution* script{ nullptr };
     CelestiaCore& core;
-    CommandSequence* cmdSequence;
-    double tickTime;
+    CommandSequence* cmdSequence{ nullptr };
+    double tickTime { 0.0 };
     string errorMessage;
 };
 
@@ -463,13 +458,8 @@ static bool Celx_istype(lua_State* l, int index, int id)
     }
 
     const char* classname = lua_tostring(l, -1);
-    if (classname != NULL && strcmp(classname, CelxLua::ClassNames[id]) == 0)
-    {
-        lua_pop(l, 1);
-        return true;
-    }
     lua_pop(l, 1);
-    return false;
+    return classname != nullptr && strcmp(classname, CelxLua::ClassNames[id]) == 0;
 }
 
 // Verify that an object at location index on the stack is of the
@@ -478,8 +468,8 @@ void* Celx_CheckUserData(lua_State* l, int index, int id)
 {
     if (Celx_istype(l, index, id))
         return lua_touserdata(l, index);
-    else
-        return NULL;
+
+    return nullptr;
 }
 
 // Return the CelestiaCore object stored in the globals table
@@ -491,12 +481,10 @@ static CelestiaCore* getAppCore(lua_State* l, FatalErrors fatalErrors = NoErrors
     if (!lua_islightuserdata(l, -1))
     {
         if (fatalErrors == NoErrors)
-            return NULL;
-        else
-        {
-            lua_pushstring(l, "internal error: invalid appCore");
-            lua_error(l);
-        }
+            return nullptr;
+
+        lua_pushstring(l, "internal error: invalid appCore");
+        lua_error(l);
     }
 
     CelestiaCore* appCore = static_cast<CelestiaCore*>(lua_touserdata(l, -1));
@@ -506,14 +494,7 @@ static CelestiaCore* getAppCore(lua_State* l, FatalErrors fatalErrors = NoErrors
 
 
 LuaState::LuaState() :
-    timeout(MaxTimeslice),
-    state(NULL),
-    costate(NULL),
-    alive(false),
-    timer(NULL),
-    scriptAwakenTime(0.0),
-    ioMode(NoIO),
-    eventHandlerEnabled(false)
+    timeout(MaxTimeslice)
 {
 #if LUA_VER >= 0x050100
     state = luaL_newstate();
@@ -527,10 +508,10 @@ LuaState::LuaState() :
 LuaState::~LuaState()
 {
     delete timer;
-    if (state != NULL)
+    if (state != nullptr)
         lua_close(state);
 #if 0
-    if (costate != NULL)
+    if (costate != nullptr)
         lua_close(costate);
 #endif
 }
@@ -559,7 +540,7 @@ static void checkTimeslice(lua_State* l, lua_Debug* /*ar*/)
         lua_error(l);
     }
     LuaState* luastate = static_cast<LuaState*>(lua_touserdata(l, -1));
-    if (luastate == NULL)
+    if (luastate == nullptr)
     {
         lua_pushstring(l, "Internal Error: Invalid value in checkTimeslice");
         lua_error(l);
@@ -573,7 +554,6 @@ static void checkTimeslice(lua_State* l, lua_Debug* /*ar*/)
         lua_pushstring(l, errormsg);
         lua_error(l);
     }
-    return;
 }
 
 
@@ -584,7 +564,7 @@ void LuaState::cleanup()
     {
         // Restore renderflags:
         CelestiaCore* appCore = getAppCore(costate, NoErrors);
-        if (appCore != NULL)
+        if (appCore != nullptr)
         {
             lua_pushstring(state, "celestia-savedrenderflags");
             lua_gettable(state, LUA_REGISTRYINDEX);
@@ -602,14 +582,11 @@ void LuaState::cleanup()
     }
     lua_getglobal(costate, CleanupCallback);
     if (lua_isnil(costate, -1))
-    {
         return;
-    }
+
     timeout = getTime() + 1.0;
     if (lua_pcall(costate, 0, 0, 0) != 0)
-    {
         cerr << "Error while executing cleanup-callback: " << lua_tostring(costate, -1) << "\n";
-    }
 }
 
 
@@ -622,27 +599,24 @@ bool LuaState::createThread()
         assert(0);
         return false;
     }
-    else
-    {
-        costate = lua_newthread(state);
-        if (costate == NULL)
-            return false;
-        lua_sethook(costate, checkTimeslice, LUA_MASKCOUNT, 1000);
-        lua_pushvalue(state, -2);
-        lua_xmove(state, costate, 1);  /* move function from L to NL */
-        alive = true;
-        return true;
-    }
+
+    costate = lua_newthread(state);
+    if (costate == nullptr)
+        return false;
+
+    lua_sethook(costate, checkTimeslice, LUA_MASKCOUNT, 1000);
+    lua_pushvalue(state, -2);
+    lua_xmove(state, costate, 1);  // move function from L to NL/
+    alive = true;
+    return true;
 }
 
 
 string LuaState::getErrorMessage()
 {
-    if (lua_gettop(state) > 0)
-    {
-        if (lua_isstring(state, -1))
-            return lua_tostring(state, -1);
-    }
+    if (lua_gettop(state) > 0 && lua_isstring(state, -1))
+        return lua_tostring(state, -1);
+
     return "";
 }
 
@@ -655,10 +629,8 @@ bool LuaState::timesliceExpired()
         lua_sethook(costate, checkTimeslice, LUA_MASKCOUNT, 1);
         return true;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
 
@@ -670,7 +642,7 @@ static int resumeLuaThread(lua_State *L, lua_State *co, int narg)
     //   luaL_error(L, "too many arguments to resume");
     lua_xmove(L, co, narg);
 #if LUA_VER >= 0x050200
-    status = lua_resume(co, NULL, narg);
+    status = lua_resume(co, nullptr, narg);
 #else
     status = lua_resume(co, narg);
 #endif
@@ -686,11 +658,9 @@ static int resumeLuaThread(lua_State *L, lua_State *co, int narg)
         lua_xmove(co, L, nres);  // move yielded values
         return nres;
     }
-    else
-    {
-        lua_xmove(co, L, 1);  // move error message
-        return -1;            // error flag
-    }
+
+    lua_xmove(co, L, 1);  // move error message
+    return -1;            // error flag
 }
 
 
@@ -707,20 +677,20 @@ struct ReadChunkInfo
     istream* in;
 };
 
-static const char* readStreamChunk(lua_State*, void* udata, size_t* size)
+static const char* readStreamChunk(lua_State* /*unused*/, void* udata, size_t* size)
 {
-    assert(udata != NULL);
-    if (udata == NULL)
-        return NULL;
+    assert(udata != nullptr);
+    if (udata == nullptr)
+        return nullptr;
 
-    ReadChunkInfo* info = reinterpret_cast<ReadChunkInfo*>(udata);
-    assert(info->buf != NULL);
-    assert(info->in != NULL);
+    auto* info = reinterpret_cast<ReadChunkInfo*>(udata);
+    assert(info->buf != nullptr);
+    assert(info->in != nullptr);
 
     if (!info->in->good())
     {
         *size = 0;
-        return NULL;
+        return nullptr;
     }
 
     info->in->read(info->buf, info->bufSize);
@@ -728,9 +698,9 @@ static const char* readStreamChunk(lua_State*, void* udata, size_t* size)
 
     *size = (size_t) nread;
     if (nread == 0)
-        return NULL;
-    else
-        return info->buf;
+        return nullptr;
+
+    return info->buf;
 }
 
 
@@ -741,7 +711,7 @@ bool LuaState::charEntered(const char* c_p)
     if (ioMode == Asking && getTime() > timeout)
     {
         int stackTop = lua_gettop(costate);
-        if (strcmp(c_p, "y") == 0)
+        if (c_p[0] == 'y')
         {
 #if LUA_VER >= 0x050100
             openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
@@ -757,7 +727,7 @@ bool LuaState::charEntered(const char* c_p)
             ioMode = IODenied;
         }
         CelestiaCore* appCore = getAppCore(costate, NoErrors);
-        if (appCore == NULL)
+        if (appCore == nullptr)
         {
             cerr << "ERROR: appCore not found\n";
             return true;
@@ -816,10 +786,8 @@ bool LuaState::charEntered(const char* c_p)
 bool LuaState::handleKeyEvent(const char* key)
 {
     CelestiaCore* appCore = getAppCore(costate, NoErrors);
-    if (appCore == NULL)
-    {
+    if (appCore == nullptr)
         return false;
-    }
 
     // get the registered event table
     getField(costate, LUA_REGISTRYINDEX, EventHandlers);
@@ -865,10 +833,8 @@ bool LuaState::handleKeyEvent(const char* key)
 bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
 {
     CelestiaCore* appCore = getAppCore(costate, NoErrors);
-    if (appCore == NULL)
-    {
+    if (appCore == nullptr)
         return false;
-    }
 
     // get the registered event table
     getField(costate, LUA_REGISTRYINDEX, EventHandlers);
@@ -923,10 +889,8 @@ bool LuaState::handleTickEvent(double dt)
         return true;
 
     CelestiaCore* appCore = getAppCore(costate, NoErrors);
-    if (appCore == NULL)
-    {
+    if (appCore == nullptr)
         return false;
-    }
 
     // get the registered event table
     getField(costate, LUA_REGISTRYINDEX, EventHandlers);
@@ -985,7 +949,7 @@ int LuaState::loadScript(istream& in, const string& streamname)
 
 #if LUA_VER >= 0x050200
     int status = lua_load(state, readStreamChunk, &info, streamname.c_str(),
-                          NULL);
+                          nullptr);
 #else
     int status = lua_load(state, readStreamChunk, &info, streamname.c_str());
 #endif
@@ -1005,14 +969,14 @@ int LuaState::loadScript(const string& s)
 // Resume a thread; if the thread completes, the status is set to !alive
 int LuaState::resume()
 {
-    assert(costate != NULL);
-    if (costate == NULL)
-        return false;
+    assert(costate != nullptr);
+    if (costate == nullptr)
+        return 0;
 
     lua_State* co = lua_tothread(state, -1);
-    //assert(co == costate); // co can be NULL after error (top stack is errorstring)
+    //assert(co == costate); // co can be nullptr after error (top stack is errorstring)
     if (co != costate)
-        return false;
+        return 0;
 
     timeout = getTime() + MaxTimeslice;
     int nArgs = resumeLuaThread(state, co, 0);
@@ -1021,7 +985,7 @@ int LuaState::resume()
         alive = false;
 
         const char* errorMessage = lua_tostring(state, -1);
-        if (errorMessage == NULL)
+        if (errorMessage == nullptr)
             errorMessage = "Unknown script error";
 
 #if LUA_VER < 0x050100
@@ -1037,7 +1001,7 @@ int LuaState::resume()
         {
             cout << "Error: " << errorMessage << '\n';
             CelestiaCore* appCore = getAppCore(co);
-            if (appCore != NULL)
+            if (appCore != nullptr)
             {
                 appCore->fatalError(errorMessage);
             }
@@ -1045,25 +1009,21 @@ int LuaState::resume()
 
         return 1; // just the error string
     }
-    else
+
+    if (ioMode == Asking)
     {
-        if (ioMode == Asking)
-        {
-            // timeout now is used to first only display warning, and 1s
-            // later allow response to avoid accidental activation
-            timeout = getTime() + 1.0;
-        }
+        // timeout now is used to first only display warning, and 1s
+        // later allow response to avoid accidental activation
+        timeout = getTime() + 1.0;
+    }
 
 #if LUA_VER >= 0x050100
         // The thread status is zero if it has terminated normally
         if (lua_status(co) == 0)
-        {
             alive = false;
-        }
 #endif
 
-        return nArgs; // arguments from yield
-    }
+    return nArgs; // arguments from yield
 }
 
 
@@ -1103,7 +1063,7 @@ bool LuaState::tick(double dt)
     if (ioMode == Asking)
     {
         CelestiaCore* appCore = getAppCore(costate, NoErrors);
-        if (appCore == NULL)
+        if (appCore == nullptr)
         {
             cerr << "ERROR: appCore not found\n";
             return true;
@@ -1150,29 +1110,24 @@ bool LuaState::tick(double dt)
         return false;
 
     int nArgs = resume();
-    if (!isAlive())
-    {
-        // The script is complete
+    if (!isAlive()) // The script is complete
         return true;
-    }
+
+    // The script has returned control to us, but it is not completed.
+    lua_State* state = getState();
+
+    // The values on the stack indicate what event will wake up the
+    // script.  For now, we just support wait()
+    double delay;
+    if (nArgs == 1 && lua_isnumber(state, -1))
+        delay = lua_tonumber(state, -1);
     else
-    {
-        // The script has returned control to us, but it is not completed.
-        lua_State* state = getState();
+        delay = 0.0;
+    scriptAwakenTime = getTime() + delay;
 
-        // The values on the stack indicate what event will wake up the
-        // script.  For now, we just support wait()
-        double delay;
-        if (nArgs == 1 && lua_isnumber(state, -1))
-            delay = lua_tonumber(state, -1);
-        else
-            delay = 0.0;
-        scriptAwakenTime = getTime() + delay;
-
-        // Clean up the stack
-        lua_pop(state, nArgs);
-        return false;
-    }
+    // Clean up the stack
+    lua_pop(state, nArgs);
+    return false;
 }
 
 
@@ -1230,22 +1185,22 @@ static ObserverFrame::CoordinateSystem parseCoordSys(const string& name)
 
     if (compareIgnoringCase(name, "universal") == 0)
         return ObserverFrame::Universal;
-    else if (compareIgnoringCase(name, "ecliptic") == 0)
+    if (compareIgnoringCase(name, "ecliptic") == 0)
         return ObserverFrame::Ecliptical;
-    else if (compareIgnoringCase(name, "equatorial") == 0)
+    if (compareIgnoringCase(name, "equatorial") == 0)
         return ObserverFrame::Equatorial;
-    else if (compareIgnoringCase(name, "bodyfixed") == 0)
+    if (compareIgnoringCase(name, "bodyfixed") == 0)
         return ObserverFrame::BodyFixed;
-    else if (compareIgnoringCase(name, "planetographic") == 0)
+    if (compareIgnoringCase(name, "planetographic") == 0)
         return ObserverFrame::BodyFixed;
-    else if (compareIgnoringCase(name, "observer") == 0)
+    if (compareIgnoringCase(name, "observer") == 0)
         return ObserverFrame::ObserverLocal;
-    else if (compareIgnoringCase(name, "lock") == 0)
+    if (compareIgnoringCase(name, "lock") == 0)
         return ObserverFrame::PhaseLock;
-    else if (compareIgnoringCase(name, "chase") == 0)
+    if (compareIgnoringCase(name, "chase") == 0)
         return ObserverFrame::Chase;
-    else
-        return ObserverFrame::Universal;
+
+    return ObserverFrame::Universal;
 }
 
 
@@ -1259,33 +1214,37 @@ LuaState* getLuaStateObject(lua_State* l)
     if (!lua_islightuserdata(l, -1))
     {
         Celx_DoError(l, "Internal Error: Invalid table entry for LuaState-pointer");
+        return 0;
     }
+
     LuaState* luastate_ptr = static_cast<LuaState*>(lua_touserdata(l, -1));
-    if (luastate_ptr == NULL)
+    if (luastate_ptr == nullptr)
     {
         Celx_DoError(l, "Internal Error: Invalid LuaState-pointer");
+        return 0;
     }
+
     lua_settop(l, stackSize);
     return luastate_ptr;
 }
 
 
-// Map the observer to its View. Return NULL if no view exists
+// Map the observer to its View. Return nullptr if no view exists
 // for this observer (anymore).
 View* getViewByObserver(CelestiaCore* appCore, Observer* obs)
 {
-    for (list<View*>::iterator i = appCore->views.begin(); i != appCore->views.end(); i++)
-        if ((*i)->observer == obs)
-            return *i;
-    return NULL;
+    for (const auto view : appCore->views)
+        if (view->observer == obs)
+            return view;
+    return nullptr;
 }
 
 // Fill list with all Observers
 void getObservers(CelestiaCore* appCore, vector<Observer*>& observerList)
 {
-    for (list<View*>::iterator i = appCore->views.begin(); i != appCore->views.end(); i++)
-        if ((*i)->type == View::ViewWindow)
-            observerList.push_back((*i)->observer);
+    for (const auto view : appCore->views)
+        if (view->type == View::ViewWindow)
+            observerList.push_back(view->observer);
 }
 
 
@@ -1298,30 +1257,23 @@ static const char* Celx_SafeGetString(lua_State* l,
                                       FatalErrors fatalErrors = AllErrors,
                                       const char* errorMsg = "String argument expected")
 {
-    if (l == NULL)
+    if (l == nullptr)
     {
         cerr << "Error: LuaState invalid in Celx_SafeGetString\n";
-        cout << "Error: LuaState invalid in Celx_SafeGetString\n";
-        return NULL;
+        return nullptr;
     }
     int argc = lua_gettop(l);
     if (index < 1 || index > argc)
     {
         if (fatalErrors & WrongArgc)
-        {
             Celx_DoError(l, errorMsg);
-        }
-        else
-            return NULL;
+        return nullptr;
     }
     if (!lua_isstring(l, index))
     {
         if (fatalErrors & WrongType)
-        {
             Celx_DoError(l, errorMsg);
-        }
-        else
-            return NULL;
+        return nullptr;
     }
     return lua_tostring(l, index);
 }
@@ -1332,10 +1284,9 @@ lua_Number Celx_SafeGetNumber(lua_State* l, int index, FatalErrors fatalErrors =
                               const char* errorMsg = "Numeric argument expected",
                               lua_Number defaultValue = 0.0)
 {
-    if (l == NULL)
+    if (l == nullptr)
     {
         cerr << "Error: LuaState invalid in Celx_SafeGetNumber\n";
-        cout << "Error: LuaState invalid in Celx_SafeGetNumber\n";
         return 0.0;
     }
     int argc = lua_gettop(l);
@@ -1344,18 +1295,18 @@ lua_Number Celx_SafeGetNumber(lua_State* l, int index, FatalErrors fatalErrors =
         if (fatalErrors & WrongArgc)
         {
             Celx_DoError(l, errorMsg);
+            return 0;
         }
-        else
-            return defaultValue;
+        return defaultValue;
     }
     if (!lua_isnumber(l, index))
     {
         if (fatalErrors & WrongType)
         {
             Celx_DoError(l, errorMsg);
+            return 0;
         }
-        else
-            return defaultValue;
+        return defaultValue;
     }
     return lua_tonumber(l, index);
 }
@@ -1366,11 +1317,10 @@ bool Celx_SafeGetBoolean(lua_State* l, int index, FatalErrors fatalErrors = AllE
                               const char* errorMsg = "Boolean argument expected",
                               bool defaultValue = false)
 {
-    if (l == NULL)
+    if (l == nullptr)
     {
         cerr << "Error: LuaState invalid in Celx_SafeGetBoolean\n";
-        cout << "Error: LuaState invalid in Celx_SafeGetBoolean\n";
-        return 0.0;
+        return false;
     }
     int argc = lua_gettop(l);
     if (index < 1 || index > argc)
@@ -1378,11 +1328,9 @@ bool Celx_SafeGetBoolean(lua_State* l, int index, FatalErrors fatalErrors = AllE
         if (fatalErrors & WrongArgc)
         {
             Celx_DoError(l, errorMsg);
+            return 0;
         }
-        else
-        {
-            return defaultValue;
-        }
+        return defaultValue;
     }
 
     if (!lua_isboolean(l, index))
@@ -1390,11 +1338,9 @@ bool Celx_SafeGetBoolean(lua_State* l, int index, FatalErrors fatalErrors = AllE
         if (fatalErrors & WrongType)
         {
             Celx_DoError(l, errorMsg);
+            return 0;
         }
-        else
-        {
-            return defaultValue;
-        }
+        return defaultValue;
     }
 
     return lua_toboolean(l, index) != 0;
@@ -1438,11 +1384,11 @@ static int celscript_from_string(lua_State* l, string& script_text)
 
 static CelScriptWrapper* this_celscript(lua_State* l)
 {
-    CelScriptWrapper** script = static_cast<CelScriptWrapper**>(Celx_CheckUserData(l, 1, Celx_CelScript));
-    if (script == NULL)
+    auto** script = static_cast<CelScriptWrapper**>(Celx_CheckUserData(l, 1, Celx_CelScript));
+    if (script == nullptr)
     {
         Celx_DoError(l, "Bad CEL-script object!");
-        return NULL;
+        return nullptr;
     }
     return *script;
 }
@@ -1496,17 +1442,14 @@ static int celestia_new(lua_State* l, CelestiaCoreApplication* appCore)
 
 static CelestiaCoreApplication* to_celestia(lua_State* l, int index)
 {
-    CelestiaCoreApplication** appCore = static_cast<CelestiaCoreApplication**>(Celx_CheckUserData(l, index, Celx_Celestia));
-    if (appCore == NULL)
-        return NULL;
-    else
-        return *appCore;
+    auto** appCore = static_cast<CelestiaCoreApplication**>(Celx_CheckUserData(l, index, Celx_Celestia));
+    return appCore ? *appCore : nullptr;
 }
 
 static CelestiaCoreApplication* this_celestia(lua_State* l)
 {
     CelestiaCoreApplication* appCore = to_celestia(l, 1);
-    if (appCore == NULL)
+    if (appCore == nullptr)
     {
         Celx_DoError(l, "Bad celestia object!");
     }
@@ -1523,9 +1466,7 @@ static int celestia_flash(lua_State* l)
     const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:flash must be a string");
     double duration = Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:flash must be a number", 1.5);
     if (duration < 0.0)
-    {
         duration = 1.5;
-    }
 
     appCore->flash(s, duration);
 
@@ -1545,9 +1486,7 @@ static int celestia_print(lua_State* l)
     int voff = (int)Celx_SafeGetNumber(l, 7, WrongType, "Sixth argument to celestia:print must be a number", 5.0);
 
     if (duration < 0.0)
-    {
         duration = 1.5;
-    }
 
     appCore->showText(s, horig, vorig, hoff, voff, duration);
 
@@ -1580,15 +1519,13 @@ static int celestia_setaltazimuthmode(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:setaltazimuthmode");
     bool enable = false;
-    if (lua_isboolean(l, -1))
-     {
-        enable = lua_toboolean(l, -1) != 0;
-    }
-    else
+    if (!lua_isboolean(l, -1))
     {
         Celx_DoError(l, "Argument for celestia:setaltazimuthmode must be a boolean");
+        return 0;
     }
 
+    enable = lua_toboolean(l, -1) != 0;
     CelestiaCore* appCore = this_celestia(l);
     appCore->setAltAzimuthMode(enable);
     lua_pop(l, 1);
@@ -1649,6 +1586,7 @@ static int celestia_setrenderflags(lua_State* l)
     if (!lua_istable(l, 2))
     {
         Celx_DoError(l, "Argument to celestia:setrenderflags() must be a table");
+        return 0;
     }
 
     int renderFlags = appCore->getRenderer()->getRenderFlags();
@@ -1664,6 +1602,7 @@ static int celestia_setrenderflags(lua_State* l)
         else
         {
             Celx_DoError(l, "Keys in table-argument to celestia:setrenderflags() must be strings");
+            return 0;
         }
         if (lua_isboolean(l, -1))
         {
@@ -1672,6 +1611,7 @@ static int celestia_setrenderflags(lua_State* l)
         else
         {
             Celx_DoError(l, "Values in table-argument to celestia:setrenderflags() must be boolean");
+            return 0;
         }
         if (key == "lightdelay")
         {
@@ -1681,13 +1621,9 @@ static int celestia_setrenderflags(lua_State* l)
         {
             int flag = CelxLua::RenderFlagMap[key];
             if (value)
-            {
                 renderFlags |= flag;
-            }
             else
-            {
                 renderFlags &= ~flag;
-            }
         }
         else
         {
@@ -1706,15 +1642,13 @@ static int celestia_getrenderflags(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getrenderflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    CelxLua::FlagMap::const_iterator it = CelxLua::RenderFlagMap.begin();
     const int renderFlags = appCore->getRenderer()->getRenderFlags();
-    while (it != CelxLua::RenderFlagMap.end())
+    for (const auto& rfm : CelxLua::RenderFlagMap)
     {
-        string key = it->first;
+        string key = rfm.first;
         lua_pushstring(l, key.c_str());
-        lua_pushboolean(l, (it->second & renderFlags) != 0);
+        lua_pushboolean(l, (rfm.second & renderFlags) != 0);
         lua_settable(l,-3);
-        it++;
     }
     lua_pushstring(l, "lightdelay");
     lua_pushboolean(l, appCore->getLightDelayActive());
@@ -1784,6 +1718,7 @@ static int celestia_setlabelflags(lua_State* l)
     if (!lua_istable(l, 2))
     {
         Celx_DoError(l, "Argument to celestia:setlabelflags() must be a table");
+        return 0;
     }
 
     int labelFlags = appCore->getRenderer()->getLabelMode();
@@ -1799,6 +1734,7 @@ static int celestia_setlabelflags(lua_State* l)
         else
         {
             Celx_DoError(l, "Keys in table-argument to celestia:setlabelflags() must be strings");
+            return 0;
         }
         if (lua_isboolean(l, -1))
         {
@@ -1807,6 +1743,7 @@ static int celestia_setlabelflags(lua_State* l)
         else
         {
             Celx_DoError(l, "Values in table-argument to celestia:setlabelflags() must be boolean");
+            return 0;
         }
         if (CelxLua::LabelFlagMap.count(key) == 0)
         {
@@ -1837,15 +1774,13 @@ static int celestia_getlabelflags(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getlabelflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    CelxLua::FlagMap::const_iterator it = CelxLua::LabelFlagMap.begin();
     const int labelFlags = appCore->getRenderer()->getLabelMode();
-    while (it != CelxLua::LabelFlagMap.end())
+    for (const auto& lfm : CelxLua::LabelFlagMap)
     {
-        string key = it->first;
+        string key = lfm.first;
         lua_pushstring(l, key.c_str());
-        lua_pushboolean(l, (it->second & labelFlags) != 0);
+        lua_pushboolean(l, (lfm.second & labelFlags) != 0);
         lua_settable(l,-3);
-        it++;
     }
     return 1;
 }
@@ -1857,6 +1792,7 @@ static int celestia_setorbitflags(lua_State* l)
     if (!lua_istable(l, 2))
     {
         Celx_DoError(l, "Argument to celestia:setorbitflags() must be a table");
+        return 0;
     }
 
     int orbitFlags = appCore->getRenderer()->getOrbitMask();
@@ -1872,6 +1808,7 @@ static int celestia_setorbitflags(lua_State* l)
         else
         {
             Celx_DoError(l, "Keys in table-argument to celestia:setorbitflags() must be strings");
+            return 0;
         }
         if (lua_isboolean(l, -1))
         {
@@ -1880,6 +1817,7 @@ static int celestia_setorbitflags(lua_State* l)
         else
         {
             Celx_DoError(l, "Values in table-argument to celestia:setorbitflags() must be boolean");
+            return 0;
         }
         if (CelxLua::BodyTypeMap.count(key) == 0)
         {
@@ -1908,15 +1846,13 @@ static int celestia_getorbitflags(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getorbitflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    CelxLua::FlagMap::const_iterator it = CelxLua::BodyTypeMap.begin();
     const int orbitFlags = appCore->getRenderer()->getOrbitMask();
-    while (it != CelxLua::BodyTypeMap.end())
+    for (const auto& btm : CelxLua::BodyTypeMap)
     {
-        string key = it->first;
+        string key = btm.first;
         lua_pushstring(l, key.c_str());
-        lua_pushboolean(l, (it->second & orbitFlags) != 0);
+        lua_pushboolean(l, (btm.second & orbitFlags) != 0);
         lua_settable(l,-3);
-        it++;
     }
     return 1;
 }
@@ -1931,16 +1867,13 @@ static int celestia_showconstellations(lua_State* l)
 
     if (lua_type(l, 2) == LUA_TNONE) // No argument passed
     {
-        for (AsterismList::const_iterator iter = asterisms->begin();
-             iter != asterisms->end(); iter++)
-        {
-            Asterism* ast = *iter;
+        for (const auto ast : *asterisms)
             ast->setActive(true);
-        }
     }
     else if (!lua_istable(l, 2))
     {
         Celx_DoError(l, "Argument to celestia:showconstellations() must be a table");
+        return 0;
     }
     else
     {
@@ -1955,11 +1888,10 @@ static int celestia_showconstellations(lua_State* l)
             else
             {
                 Celx_DoError(l, "Values in table-argument to celestia:showconstellations() must be strings");
+                return 0;
             }
-            for (AsterismList::const_iterator iter = asterisms->begin();
-                 iter != asterisms->end(); iter++)
+            for (const auto ast : *asterisms)
             {
-                Asterism* ast = *iter;
                 if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
                     ast->setActive(true);
             }
@@ -1980,16 +1912,13 @@ static int celestia_hideconstellations(lua_State* l)
 
     if (lua_type(l, 2) == LUA_TNONE) // No argument passed
     {
-        for (AsterismList::const_iterator iter = asterisms->begin();
-             iter != asterisms->end(); iter++)
-        {
-            Asterism* ast = *iter;
+        for (const auto ast : *asterisms)
             ast->setActive(false);
-        }
     }
     else if (!lua_istable(l, 2))
     {
         Celx_DoError(l, "Argument to celestia:hideconstellations() must be a table");
+        return 0;
     }
     else
     {
@@ -2004,11 +1933,10 @@ static int celestia_hideconstellations(lua_State* l)
             else
             {
                 Celx_DoError(l, "Values in table-argument to celestia:hideconstellations() must be strings");
+                return 0;
             }
-            for (AsterismList::const_iterator iter = asterisms->begin();
-                 iter != asterisms->end(); iter++)
+            for (const auto ast : *asterisms)
             {
-                Asterism* ast = *iter;
                 if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
                     ast->setActive(false);
             }
@@ -2034,45 +1962,35 @@ static int celestia_setconstellationcolor(lua_State* l)
 
     if (lua_type(l, 5) == LUA_TNONE) // Fourth argument omited
     {
-        for (AsterismList::const_iterator iter = asterisms->begin();
-             iter != asterisms->end(); iter++)
-        {
-            Asterism* ast = *iter;
+        for (const auto ast : *asterisms)
             ast->setOverrideColor(constellationColor);
-        }
     }
     else if (!lua_istable(l, 5))
     {
         Celx_DoError(l, "Fourth argument to celestia:setconstellationcolor() must be a table");
+        return 0;
     }
     else
     {
         lua_pushnil(l);
         while (lua_next(l, -2) != 0)
         {
-            const char* constellation = NULL;
+            const char* constellation = nullptr;
             if (lua_isstring(l, -1))
             {
                 constellation = lua_tostring(l, -1);
-                for (AsterismList::const_iterator iter = asterisms->begin();
-                     iter != asterisms->end(); iter++)
-                {
-                    Asterism* ast = *iter;
+                for (const auto ast : *asterisms)
                     if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
                         ast->setOverrideColor(constellationColor);
-                }
             }
             else
             {
                 Celx_DoError(l, "Values in table-argument to celestia:setconstellationcolor() must be strings");
+                return 0;
             }
-            for (AsterismList::const_iterator iter = asterisms->begin();
-                 iter != asterisms->end(); iter++)
-            {
-                Asterism* ast = *iter;
+            for (const auto& ast : *asterisms)
                 if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
                     ast->setOverrideColor(constellationColor);
-            }
             lua_pop(l,1);
         }
     }
@@ -2087,6 +2005,7 @@ static int celestia_setoverlayelements(lua_State* l)
     if (!lua_istable(l, 2))
     {
         Celx_DoError(l, "Argument to celestia:setoverlayelements() must be a table");
+        return 0;
     }
 
     int overlayElements = appCore->getOverlayElements();
@@ -2102,6 +2021,7 @@ static int celestia_setoverlayelements(lua_State* l)
         else
         {
             Celx_DoError(l, "Keys in table-argument to celestia:setoverlayelements() must be strings");
+            return 0;
         }
         if (lua_isboolean(l, -1))
         {
@@ -2110,6 +2030,7 @@ static int celestia_setoverlayelements(lua_State* l)
         else
         {
             Celx_DoError(l, "Values in table-argument to celestia:setoverlayelements() must be boolean");
+            return 0;
         }
         if (CelxLua::OverlayElementMap.count(key) == 0)
         {
@@ -2138,15 +2059,13 @@ static int celestia_getoverlayelements(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getoverlayelements()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    CelxLua::FlagMap::const_iterator it = CelxLua::OverlayElementMap.begin();
     const int overlayElements = appCore->getOverlayElements();
-    while (it != CelxLua::OverlayElementMap.end())
+    for (const auto& oem : CelxLua::OverlayElementMap)
     {
-        string key = it->first;
+        string key = oem.first;
         lua_pushstring(l, key.c_str());
-        lua_pushboolean(l, (it->second & overlayElements) != 0);
+        lua_pushboolean(l, (oem.second & overlayElements) != 0);
         lua_settable(l,-3);
-        it++;
     }
     return 1;
 }
@@ -2191,9 +2110,10 @@ static int celestia_setlabelcolor(lua_State* l)
     if (!lua_isstring(l, 2))
     {
         Celx_DoError(l, "First argument to celestia:setlabelstyle() must be a string");
+        return 0;
     }
 
-    Color* color = NULL;
+    Color* color = nullptr;
     string key;
     key = lua_tostring(l, 2);
     if (CelxLua::LabelColorMap.count(key) == 0)
@@ -2212,7 +2132,7 @@ static int celestia_setlabelcolor(lua_State* l)
     // opacity currently not settable
     double opacity = 1.0;
 
-    if (color != NULL)
+    if (color != nullptr)
     {
         *color = Color((float) red, (float) green, (float) blue, (float) opacity);
     }
@@ -2226,21 +2146,19 @@ static int celestia_getlabelcolor(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:getlabelcolor()");
     string key = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getlabelcolor() must be a string");
 
-    Color* labelColor = NULL;
+    Color* labelColor = nullptr;
     if (CelxLua::LabelColorMap.count(key) == 0)
     {
         cerr << "Unknown label style: " << key << "\n";
         return 0;
     }
-    else
-    {
-        labelColor = CelxLua::LabelColorMap[key];
-        lua_pushnumber(l, labelColor->red());
-        lua_pushnumber(l, labelColor->green());
-        lua_pushnumber(l, labelColor->blue());
 
-        return 3;
-    }
+    labelColor = CelxLua::LabelColorMap[key];
+    lua_pushnumber(l, labelColor->red());
+    lua_pushnumber(l, labelColor->green());
+    lua_pushnumber(l, labelColor->blue());
+
+    return 3;
 }
 
 
@@ -2250,9 +2168,10 @@ static int celestia_setlinecolor(lua_State* l)
     if (!lua_isstring(l, 2))
     {
         Celx_DoError(l, "First argument to celestia:setlinecolor() must be a string");
+        return 0;
     }
 
-    Color* color = NULL;
+    Color* color = nullptr;
     string key;
     key = lua_tostring(l, 2);
     if (CelxLua::LineColorMap.count(key) == 0)
@@ -2271,7 +2190,7 @@ static int celestia_setlinecolor(lua_State* l)
     // opacity currently not settable
     double opacity = 1.0;
 
-    if (color != NULL)
+    if (color != nullptr)
     {
         *color = Color((float) red, (float) green, (float) blue, (float) opacity);
     }
@@ -2285,21 +2204,19 @@ static int celestia_getlinecolor(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:getlinecolor()");
     string key = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getlinecolor() must be a string");
 
-    Color* lineColor = NULL;
     if (CelxLua::LineColorMap.count(key) == 0)
     {
         cerr << "Unknown line style: " << key << "\n";
         return 0;
     }
-    else
-    {
-        lineColor = CelxLua::LineColorMap[key];
-        lua_pushnumber(l, lineColor->red());
-        lua_pushnumber(l, lineColor->green());
-        lua_pushnumber(l, lineColor->blue());
 
-        return 3;
-    }
+    Color* lineColor = nullptr;
+    lineColor = CelxLua::LineColorMap[key];
+    lua_pushnumber(l, lineColor->red());
+    lua_pushnumber(l, lineColor->green());
+    lua_pushnumber(l, lineColor->blue());
+
+    return 3;
 }
 
 
@@ -2380,7 +2297,7 @@ static int celestia_getobserver(lua_State* l)
 
     CelestiaCore* appCore = this_celestia(l);
     Observer* o = appCore->getSimulation()->getActiveObserver();
-    if (o == NULL)
+    if (o == nullptr)
         lua_pushnil(l);
     else
         observer_new(l, o);
@@ -2421,6 +2338,7 @@ static int celestia_find(lua_State* l)
     if (!lua_isstring(l, 2))
     {
         Celx_DoError(l, "Argument to find must be a string");
+        return 0;
     }
 
     CelestiaCore* appCore = this_celestia(l);
@@ -2442,7 +2360,7 @@ static int celestia_select(lua_State* l)
 
     // If the argument is an object, set the selection; if it's anything else
     // clear the selection.
-    if (sel != NULL)
+    if (sel != nullptr)
         sim->setSelection(*sel);
     else
         sim->setSelection(Selection());
@@ -2458,7 +2376,7 @@ static int celestia_mark(lua_State* l)
     Simulation* sim = appCore->getSimulation();
     Selection* sel = to_object(l, 2);
 
-    if (sel != NULL)
+    if (sel != nullptr)
     {
         MarkerRepresentation markerRep(MarkerRepresentation::Diamond);
         markerRep.setColor(Color(0.0f, 1.0f, 0.0f));
@@ -2482,7 +2400,7 @@ static int celestia_unmark(lua_State* l)
     Simulation* sim = appCore->getSimulation();
     Selection* sel = to_object(l, 2);
 
-    if (sel != NULL)
+    if (sel != nullptr)
     {
         sim->getUniverse()->unmarkObject(*sel, 1);
     }
@@ -2708,13 +2626,13 @@ static int celestia_getstarcount(lua_State* l)
 static int celestia_stars_iter(lua_State* l)
 {
     CelestiaCore* appCore = to_celestia(l, lua_upvalueindex(1));
-    if (appCore == NULL)
+    if (appCore == nullptr)
     {
         Celx_DoError(l, "Bad celestia object!");
         return 0;
     }
 
-    uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
+    auto i = (uint32_t) lua_tonumber(l, lua_upvalueindex(2));
     Universe* u = appCore->getSimulation()->getUniverse();
 
     if (i < u->getStarCatalog()->size())
@@ -2724,18 +2642,16 @@ static int celestia_stars_iter(lua_State* l)
         lua_replace(l, lua_upvalueindex(2));
 
         Star* star = u->getStarCatalog()->getStar(i);
-        if (star == NULL)
+        if (star == nullptr)
             lua_pushnil(l);
         else
             object_new(l, Selection(star));
 
         return 1;
     }
-    else
-    {
-        // Return nil when we've enumerated all the stars
-        return 0;
-    }
+
+    // Return nil when we've enumerated all the stars
+    return 0;
 }
 
 
@@ -2767,13 +2683,13 @@ static int celestia_getdsocount(lua_State* l)
 static int celestia_dsos_iter(lua_State* l)
 {
     CelestiaCore* appCore = to_celestia(l, lua_upvalueindex(1));
-    if (appCore == NULL)
+    if (appCore == nullptr)
     {
         Celx_DoError(l, "Bad celestia object!");
         return 0;
     }
 
-    uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
+    auto i = (uint32_t) lua_tonumber(l, lua_upvalueindex(2));
     Universe* u = appCore->getSimulation()->getUniverse();
 
     if (i < u->getDSOCatalog()->size())
@@ -2783,18 +2699,16 @@ static int celestia_dsos_iter(lua_State* l)
         lua_replace(l, lua_upvalueindex(2));
 
         DeepSkyObject* dso = u->getDSOCatalog()->getDSO(i);
-        if (dso == NULL)
+        if (dso == nullptr)
             lua_pushnil(l);
         else
             object_new(l, Selection(dso));
 
         return 1;
     }
-    else
-    {
-        // Return nil when we've enumerated all the DSOs
-        return 0;
-    }
+
+    // Return nil when we've enumerated all the DSOs
+    return 0;
 }
 
 
@@ -2821,7 +2735,7 @@ static int celestia_setambient(lua_State* l)
     if (ambientLightLevel < 0.0)
         ambientLightLevel = 0.0;
 
-    if (renderer != NULL)
+    if (renderer != nullptr)
         renderer->setAmbientLightLevel((float)ambientLightLevel);
     appCore->notifyWatchers(CelestiaCore::AmbientLightChanged);
 
@@ -2834,14 +2748,13 @@ static int celestia_getambient(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
-    if (renderer == NULL)
+    if (renderer == nullptr)
     {
-        Celx_DoError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
     }
-    else
-    {
-        lua_pushnumber(l, renderer->getAmbientLightLevel());
-    }
+
+    lua_pushnumber(l, renderer->getAmbientLightLevel());
     return 1;
 }
 
@@ -2852,15 +2765,14 @@ static int celestia_setminorbitsize(lua_State* l)
 
     double orbitSize = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setminorbitsize() must be a number");
     Renderer* renderer = appCore->getRenderer();
-    if (renderer == NULL)
+    if (renderer == nullptr)
     {
-        Celx_DoError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
     }
-    else
-    {
-        orbitSize = max(0.0, orbitSize);
-        renderer->setMinimumOrbitSize((float)orbitSize);
-    }
+
+    orbitSize = max(0.0, orbitSize);
+    renderer->setMinimumOrbitSize((float)orbitSize);
     return 0;
 }
 
@@ -2870,14 +2782,13 @@ static int celestia_getminorbitsize(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
-    if (renderer == NULL)
+    if (renderer == nullptr)
     {
-        Celx_DoError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
     }
-    else
-    {
-        lua_pushnumber(l, renderer->getMinimumOrbitSize());
-    }
+
+    lua_pushnumber(l, renderer->getMinimumOrbitSize());
     return 1;
 }
 
@@ -2888,14 +2799,13 @@ static int celestia_setstardistancelimit(lua_State* l)
 
     double distanceLimit = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setstardistancelimit() must be a number");
     Renderer* renderer = appCore->getRenderer();
-    if (renderer == NULL)
+    if (renderer == nullptr)
     {
-        Celx_DoError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
     }
-    else
-    {
-        renderer->setDistanceLimit((float)distanceLimit);
-    }
+
+    renderer->setDistanceLimit((float)distanceLimit);
     return 0;
 }
 
@@ -2905,14 +2815,13 @@ static int celestia_getstardistancelimit(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
-    if (renderer == NULL)
+    if (renderer == nullptr)
     {
-        Celx_DoError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
     }
-    else
-    {
-        lua_pushnumber(l, renderer->getDistanceLimit());
-    }
+
+    lua_pushnumber(l, renderer->getDistanceLimit());
     return 1;
 }
 
@@ -2922,25 +2831,24 @@ static int celestia_getstarstyle(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
-    if (renderer == NULL)
+    if (renderer == nullptr)
     {
-        Celx_DoError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
     }
-    else
+
+    Renderer::StarStyle starStyle = renderer->getStarStyle();
+    switch (starStyle)
     {
-        Renderer::StarStyle starStyle = renderer->getStarStyle();
-        switch (starStyle)
-        {
-        case Renderer::FuzzyPointStars:
-            lua_pushstring(l, "fuzzy"); break;
-        case Renderer::PointStars:
-            lua_pushstring(l, "point"); break;
-        case Renderer::ScaledDiscStars:
-            lua_pushstring(l, "disc"); break;
-        default:
-            lua_pushstring(l, "invalid starstyle");
-        };
-    }
+    case Renderer::FuzzyPointStars:
+        lua_pushstring(l, "fuzzy"); break;
+    case Renderer::PointStars:
+        lua_pushstring(l, "point"); break;
+    case Renderer::ScaledDiscStars:
+        lua_pushstring(l, "disc"); break;
+    default:
+        lua_pushstring(l, "invalid starstyle");
+    };
     return 1;
 }
 
@@ -2951,31 +2859,22 @@ static int celestia_setstarstyle(lua_State* l)
 
     string starStyle = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarstyle must be a string");
     Renderer* renderer = appCore->getRenderer();
-    if (renderer == NULL)
+    if (renderer == nullptr)
     {
-        Celx_DoError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
     }
-    else
-    {
-        if (starStyle == "fuzzy")
-        {
-            renderer->setStarStyle(Renderer::FuzzyPointStars);
-        }
-        else if (starStyle == "point")
-        {
-            renderer->setStarStyle(Renderer::PointStars);
-        }
-        else if (starStyle == "disc")
-        {
-            renderer->setStarStyle(Renderer::ScaledDiscStars);
-        }
-        else
-        {
-            Celx_DoError(l, "Invalid starstyle");
-        }
-        appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
-    }
+    if (starStyle == "fuzzy")
+        renderer->setStarStyle(Renderer::FuzzyPointStars);
+    else if (starStyle == "point")
+        renderer->setStarStyle(Renderer::PointStars);
+    else if (starStyle == "disc")
+        renderer->setStarStyle(Renderer::ScaledDiscStars);
+    else
+       Celx_DoError(l, "Invalid starstyle");
+
+    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
     return 0;
 }
 
@@ -2988,27 +2887,20 @@ static int celestia_getstarcolor(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
-    if (renderer == NULL)
+    if (renderer == nullptr)
     {
-        Celx_DoError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
     }
-    else
-    {
-        const ColorTemperatureTable* starColor = renderer->getStarColorTable();
 
-            if (starColor == GetStarColorTable(ColorTable_Enhanced))
-            {
-                lua_pushstring(l, "enhanced");
-            }
-            else if (starColor == GetStarColorTable(ColorTable_Blackbody_D65))
-            {
-                lua_pushstring(l, "blackbody_d65");
-            }
-            else
-            {
-                lua_pushstring(l, "invalid starcolor");
-            }
-     }
+    const ColorTemperatureTable* starColor = renderer->getStarColorTable();
+    if (starColor == GetStarColorTable(ColorTable_Enhanced))
+        lua_pushstring(l, "enhanced");
+    else if (starColor == GetStarColorTable(ColorTable_Blackbody_D65))
+        lua_pushstring(l, "blackbody_d65");
+    else
+        lua_pushstring(l, "invalid starcolor");
+
     return 1;
 }
 
@@ -3019,27 +2911,20 @@ static int celestia_setstarcolor(lua_State* l)
 
     string starColor = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarcolor must be a string");
     Renderer* renderer = appCore->getRenderer();
-    if (renderer == NULL)
+    if (renderer == nullptr)
     {
-        Celx_DoError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
     }
-    else
-    {
-        if (starColor == "blackbody_d65")
-        {
-            renderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
-        }
-        else if (starColor == "enhanced")
-        {
-            renderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
-        }
-        else
-        {
-            Celx_DoError(l, "Invalid starcolor");
-        }
-        appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
-    }
+    if (starColor == "blackbody_d65")
+        renderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+    else if (starColor == "enhanced")
+        renderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+    else
+        Celx_DoError(l, "Invalid starcolor");
+    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
+
     return 0;
 }
 
@@ -3051,10 +2936,13 @@ static int celestia_gettextureresolution(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
-    if (renderer == NULL)
-        Celx_DoError(l, "Internal Error: renderer is NULL!");
-    else
-        lua_pushnumber(l, renderer->getResolution());
+    if (renderer == nullptr)
+    {
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
+    }
+
+    lua_pushnumber(l, renderer->getResolution());
 
     return 1;
 }
@@ -3066,13 +2954,14 @@ static int celestia_settextureresolution(lua_State* l)
 
     unsigned int textureRes = (unsigned int) Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settextureresolution must be a number");
     Renderer* renderer = appCore->getRenderer();
-    if (renderer == NULL)
-        Celx_DoError(l, "Internal Error: renderer is NULL!");
-    else
+    if (renderer == nullptr)
     {
-        renderer->setResolution(textureRes);
-        appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
     }
+
+    renderer->setResolution(textureRes);
+    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -3084,8 +2973,8 @@ static int celestia_getstar(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     double starIndex = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:getstar must be a number");
     Universe* u = appCore->getSimulation()->getUniverse();
-    Star* star = u->getStarCatalog()->getStar((uint32) starIndex);
-    if (star == NULL)
+    Star* star = u->getStarCatalog()->getStar((uint32_t) starIndex);
+    if (star == nullptr)
         lua_pushnil(l);
     else
         object_new(l, Selection(star));
@@ -3100,8 +2989,8 @@ static int celestia_getdso(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     double dsoIndex = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:getdso must be a number");
     Universe* u = appCore->getSimulation()->getUniverse();
-    DeepSkyObject* dso = u->getDSOCatalog()->getDSO((uint32) dsoIndex);
-    if (dso == NULL)
+    DeepSkyObject* dso = u->getDSOCatalog()->getDSO((uint32_t) dsoIndex);
+    if (dso == nullptr)
         lua_pushnil(l);
     else
         object_new(l, Selection(dso));
@@ -3144,6 +3033,7 @@ static int celestia_newposition(lua_State* l)
         else
         {
             Celx_DoError(l, "Arguments to celestia:newposition must be either numbers or strings");
+            return 0;
         }
     }
 
@@ -3171,7 +3061,7 @@ static int celestia_newrotation(lua_State* l)
     else
     {
         Vec3d* v = to_vector(l, 2);
-        if (v == NULL)
+        if (v == nullptr)
         {
             Celx_DoError(l, "newrotation: first argument must be a vector");
             return 0;
@@ -3205,8 +3095,8 @@ static int celestia_newframe(lua_State* l)
 
     const char* coordsysName = Celx_SafeGetString(l, 2, AllErrors, "newframe: first argument must be a string");
     ObserverFrame::CoordinateSystem coordSys = parseCoordSys(coordsysName);
-    Selection* ref = NULL;
-    Selection* target = NULL;
+    Selection* ref = nullptr;
+    Selection* target = nullptr;
 
     if (coordSys == ObserverFrame::Universal)
     {
@@ -3220,7 +3110,7 @@ static int celestia_newframe(lua_State* l)
             target = to_object(l, 4);
         }
 
-        if (ref == NULL || target == NULL)
+        if (ref == nullptr || target == nullptr)
         {
             Celx_DoError(l, "newframe: two objects required for lock frame");
             return 0;
@@ -3232,7 +3122,7 @@ static int celestia_newframe(lua_State* l)
     {
         if (argc >= 3)
             ref = to_object(l, 3);
-        if (ref == NULL)
+        if (ref == nullptr)
         {
             Celx_DoError(l, "newframe: one object argument required for frame");
             return 0;
@@ -3252,6 +3142,7 @@ static int celestia_requestkeyboard(lua_State* l)
     if (!lua_isboolean(l, 2))
     {
         Celx_DoError(l, "First argument for celestia:requestkeyboard must be a boolean");
+        return 0;
     }
 
     int mode = appCore->getTextEnterMode();
@@ -3285,11 +3176,13 @@ static int celestia_registereventhandler(lua_State* l)
     if (!lua_isstring(l, 2))
     {
         Celx_DoError(l, "First argument for celestia:registereventhandler must be a string");
+        return 0;
     }
 
     if (!lua_isfunction(l, 3) && !lua_isnil(l, 3))
     {
         Celx_DoError(l, "Second argument for celestia:registereventhandler must be a function or nil");
+        return 0;
     }
 
     lua_pushstring(l, EventHandlers);
@@ -3299,6 +3192,7 @@ static int celestia_registereventhandler(lua_State* l)
         // This should never happen--the table should be created when a new Celestia Lua
         // state is initialized.
         Celx_DoError(l, "Event handler table not created");
+        return 0;
     }
 
     lua_pushvalue(l, 2);
@@ -3317,6 +3211,7 @@ static int celestia_geteventhandler(lua_State* l)
     if (!lua_isstring(l, 2))
     {
         Celx_DoError(l, "Argument to celestia:geteventhandler must be a string");
+        return 0;
     }
 
     lua_pushstring(l, EventHandlers);
@@ -3326,6 +3221,7 @@ static int celestia_geteventhandler(lua_State* l)
         // This should never happen--the table should be created when a new Celestia Lua
         // state is initialized.
         Celx_DoError(l, "Event handler table not created");
+        return 0;
     }
 
     lua_pushvalue(l, 2);
@@ -3343,12 +3239,12 @@ static int celestia_takescreenshot(lua_State* l)
     double timeToTimeout = luastate->timeout - luastate->getTime();
 
     const char* filetype = Celx_SafeGetString(l, 2, WrongType, "First argument to celestia:takescreenshot must be a string");
-    if (filetype == NULL)
+    if (filetype == nullptr)
         filetype = "png";
 
     // Let the script safely contribute one part of the filename:
     const char* fileid_ptr = Celx_SafeGetString(l, 3, WrongType, "Second argument to celestia:takescreenshot must be a string");
-    if (fileid_ptr == NULL)
+    if (fileid_ptr == nullptr)
         fileid_ptr = "";
     string fileid(fileid_ptr);
 
@@ -3495,7 +3391,7 @@ static int celestia_seturl(lua_State* l)
 
     string url = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:seturl must be a string");
     Observer* obs = to_observer(l, 3);
-    if (obs == NULL)
+    if (obs == nullptr)
         obs = appCore->getSimulation()->getActiveObserver();
     View* view = getViewByObserver(appCore, obs);
     appCore->setActiveView(view);
@@ -3511,7 +3407,7 @@ static int celestia_geturl(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     Observer* obs = to_observer(l, 2);
-    if (obs == NULL)
+    if (obs == nullptr)
         obs = appCore->getSimulation()->getActiveObserver();
     View* view = getViewByObserver(appCore, obs);
     appCore->setActiveView(view);
@@ -3526,15 +3422,14 @@ static int celestia_geturl(lua_State* l)
 }
 
 
-//Audio support by Victor, modified by Vincent & Alexell & Pirogronian
 static int celestia_play(lua_State* l)
 {
     Celx_CheckArgs(l, 3, 7, "Two to Five arguments expected to function celestia:play");
     CelestiaCoreApplication* appCore = this_celestia(l);
-    int channel = (int)Celx_SafeGetNumber(l, 2, AllErrors, "First argument to celestia:play must be a number (channel)");
-    float volume = (float)Celx_SafeGetNumber(l, 3, AllErrors, "Second argument to celestia:play must be a number (volume)");
-    bool loop = (bool)Celx_SafeGetBoolean(l, 4, WrongType, "Third argument to celestia:play must be a boolean (loop)");
-    bool nopause = (bool)Celx_SafeGetBoolean(l, 5, WrongType, "Fourth argument to celestia:play must be false or true (nopause)");
+    auto channel = (int)Celx_SafeGetNumber(l, 2, AllErrors, "First argument to celestia:play must be a number (channel)");
+    auto volume = (float)Celx_SafeGetNumber(l, 3, AllErrors, "Second argument to celestia:play must be a number (volume)");
+    auto loop = (bool)Celx_SafeGetBoolean(l, 4, WrongType, "Third argument to celestia:play must be a boolean (loop)");
+    auto nopause = (bool)Celx_SafeGetBoolean(l, 5, WrongType, "Fourth argument to celestia:play must be false or true (nopause)");
     const char* filename = Celx_SafeGetString(l, 6, WrongType, "Fifth argument to celestia:play must be a string (filename)");
 
     if(!filename)
@@ -3570,7 +3465,7 @@ static int celestia_verbosity(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     int level = Celx_SafeGetNumber(l, 2, WrongType, "First argument to celestia:verbosity must be a number (level)", 2.0);
 
-        appCore->setHudDetail(level);
+    appCore->setHudDetail(level);
 
     return 0;
 }
@@ -3792,20 +3687,18 @@ static TextureFont* to_font(lua_State* l, int index)
     TextureFont** f = static_cast<TextureFont**>(lua_touserdata(l, index));
 
     // Check if pointer is valid
-    if (f != NULL )
+    if (f != nullptr )
     {
             return *f;
     }
-    return NULL;
+    return nullptr;
 }
 
 static TextureFont* this_font(lua_State* l)
 {
     TextureFont* f = to_font(l, 1);
-    if (f == NULL)
-    {
+    if (f == nullptr)
         Celx_DoError(l, "Bad font object!");
-    }
 
     return f;
 }
@@ -3887,21 +3780,14 @@ static Image* to_image(lua_State* l, int index)
 {
     Image** image = static_cast<Image**>(lua_touserdata(l, index));
 
-    // Check if pointer is valid
-    if (image != NULL )
-    {
-            return *image;
-    }
-    return NULL;
+    return image != nullptr ? *image : nullptr;
 }
 
 static Image* this_image(lua_State* l)
 {
     Image* image = to_image(l,1);
-    if (image == NULL)
-    {
+    if (image == nullptr)
         Celx_DoError(l, "Bad image object!");
-    }
 
     return image;
 }
@@ -3959,21 +3845,14 @@ static Texture* to_texture(lua_State* l, int index)
 {
     Texture** texture = static_cast<Texture**>(lua_touserdata(l, index));
 
-    // Check if pointer is valid
-    if (texture != NULL )
-    {
-            return *texture;
-    }
-    return NULL;
+    return texture != nullptr ? *texture : nullptr;
 }
 
 static Texture* this_texture(lua_State* l)
 {
     Texture* texture = to_texture(l,1);
-    if (texture == NULL)
-    {
+    if (texture == nullptr)
         Celx_DoError(l, "Bad texture object!");
-    }
 
     return texture;
 }
@@ -4059,7 +3938,7 @@ static int celestia_loadtexture(lua_State* l)
     if (base_dir[0] == '@') base_dir = base_dir.substr(1);
     base_dir = base_dir.substr(0, base_dir.rfind('/')) + '/';
     Texture* t = LoadTextureFromFile(base_dir + s);
-    if (t == NULL) return 0;
+    if (t == nullptr) return 0;
     texture_new(l, t);
     return 1;
 }
@@ -4069,7 +3948,7 @@ static int celestia_loadfont(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "Need one argument for celestia:loadtexture()");
     string s = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:loadfont() must be a string");
     TextureFont* font = LoadTextureFont(s);
-    if (font == NULL) return 0;
+    if (font == nullptr) return 0;
     font->buildTexture();
     font_new(l, font);
     return 1;
@@ -4077,7 +3956,7 @@ static int celestia_loadfont(lua_State* l)
 
 TextureFont* getFont(CelestiaCore* appCore)
 {
-       return appCore->font;
+    return appCore->font;
 }
 
 static int celestia_getfont(lua_State* l)
@@ -4085,9 +3964,10 @@ static int celestia_getfont(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected to function celestia:getTitleFont");
 
     CelestiaCore* appCore = getAppCore(l, AllErrors);
-       TextureFont* font = getFont(appCore);
-    if (font == NULL) return 0;
-       font_new(l, font);
+    TextureFont* font = getFont(appCore);
+    if (font == nullptr)
+        return 0;
+    font_new(l, font);
     return 1;
 }
 
@@ -4102,7 +3982,8 @@ static int celestia_gettitlefont(lua_State* l)
 
     CelestiaCore* appCore = getAppCore(l, AllErrors);
     TextureFont* font = getTitleFont(appCore);
-    if (font == NULL) return 0;
+    if (font == nullptr)
+        return 0;
     font_new(l, font);
     return 1;
 }
@@ -4115,7 +3996,9 @@ static int celestia_settimeslice(lua_State* l)
     if (!lua_isnumber(l, 2) && !lua_isnil(l, 2))
     {
         Celx_DoError(l, "Argument for celestia:settimeslice must be a number");
+        return 0;
     }
+
     double timeslice = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settimeslice must be a number");
     if (timeslice == 0.0)
         timeslice = 0.1;
@@ -4138,7 +4021,7 @@ static int celestia_setluahook(lua_State* l)
     }
 
     LuaState* luastate = getLuaStateObject(l);
-    if (luastate != NULL)
+    if (luastate != nullptr)
     {
         luastate->setLuaHookEventHandlerEnabled(lua_istable(l, 2));
     }
@@ -4197,10 +4080,10 @@ cout << "loading lua lib\n"; cout.flush();
  const char *init=lua_tostring(L,2);
 
  void *lib=dlopen(path,RTLD_NOW);
- if (lib!=NULL)
+ if (lib!=nullptr)
  {
   lua_CFunction f=(lua_CFunction) dlsym(lib,init);
-  if (f!=NULL)
+  if (f!=nullptr)
   {
    lua_pushlightuserdata(L,lib);
    lua_pushcclosure(L,f,1);
@@ -4210,8 +4093,8 @@ cout << "loading lua lib\n"; cout.flush();
  /* else return appropriate error messages */
  lua_pushnil(L);
  lua_pushstring(L,dlerror());
- lua_pushstring(L,(lib!=NULL) ? "init" : "open");
- if (lib!=NULL) dlclose(lib);
+ lua_pushstring(L,(lib!=nullptr) ? "init" : "open");
+ if (lib!=nullptr) dlclose(lib);
  return 3;
 }
 #endif
@@ -4515,12 +4398,6 @@ m_lua(l)
 {
 }
 
-
-CelxLua::~CelxLua()
-{
-}
-
-
 bool CelxLua::isType(int index, int type) const
 {
     return Celx_istype(m_lua, index, type);
@@ -4704,14 +4581,10 @@ CelestiaCore* CelxLua::appCore(FatalErrors fatalErrors)
     if (!lua_islightuserdata(m_lua, -1))
     {
         if (fatalErrors == NoErrors)
-        {
-            return NULL;
-        }
-        else
-        {
-            lua_pushstring(m_lua, "internal error: invalid appCore");
-            lua_error(m_lua);
-        }
+            return nullptr;
+
+        lua_pushstring(m_lua, "internal error: invalid appCore");
+        lua_error(m_lua);
     }
 
     CelestiaCore* appCore = static_cast<CelestiaCore*>(lua_touserdata(m_lua, -1));
@@ -4731,12 +4604,16 @@ LuaState* CelxLua::getLuaStateObject()
     if (!lua_islightuserdata(m_lua, -1))
     {
         Celx_DoError(m_lua, "Internal Error: Invalid table entry for LuaState-pointer");
+        return 0;
     }
+
     LuaState* luastate_ptr = static_cast<LuaState*>(lua_touserdata(m_lua, -1));
-    if (luastate_ptr == NULL)
+    if (luastate_ptr == nullptr)
     {
         Celx_DoError(m_lua, "Internal Error: Invalid LuaState-pointer");
+        return 0;
     }
+
     lua_settop(m_lua, stackSize);
     return luastate_ptr;
 }

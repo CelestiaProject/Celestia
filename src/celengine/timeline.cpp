@@ -22,17 +22,11 @@ using namespace std;
  *  interval of time.
  */
 
-Timeline::Timeline()
-{
-}
-
-
 Timeline::~Timeline()
 {
-    for (vector<TimelinePhase*>::iterator iter = phases.begin(); iter != phases.end(); iter++)
+    for (auto phase : phases)
     {
         // Remove the phase from whatever phase tree contains it.
-        TimelinePhase* phase = *iter;
         phase->getFrameTree()->removeChild(phase);
 
         phase->release();
@@ -71,10 +65,10 @@ Timeline::findPhase(double t) const
     }
     else
     {
-        for (vector<TimelinePhase*>::const_iterator iter = phases.begin(); iter != phases.end(); iter++)
+        for (const auto phase : phases)
         {
-            if (t < (*iter)->endTime())
-                return *iter;
+            if (t < phase->endTime())
+                return phase;
         }
 
         // Time is greater than the end time of the final phase. Just return the final phase.
@@ -136,7 +130,7 @@ Timeline::markChanged()
     }
     else
     {
-        for (vector<TimelinePhase*>::iterator iter = phases.begin(); iter != phases.end(); iter++)
-            (*iter)->getFrameTree()->markChanged();
+        for (const auto phase : phases)
+            phase->getFrameTree()->markChanged();
     }
 }

@@ -17,7 +17,7 @@ using namespace std;
 static const string GetInfoLog(GLhandleARB obj);
 
 
-ostream* g_shaderLogFile = NULL;
+ostream* g_shaderLogFile = nullptr;
 
 
 GLShader::GLShader(GLhandleARB _id) :
@@ -40,12 +40,12 @@ GLShader::compile(const vector<string>& source)
         return ShaderStatus_EmptyProgram;
 
     // Convert vector of shader source strings to an array for OpenGL
-    const char** sourceStrings = new const char*[source.size()];
+    const auto** sourceStrings = new const char*[source.size()];
     for (unsigned int i = 0; i < source.size(); i++)
         sourceStrings[i] = source[i].c_str();
 
     // Copy shader source to OpenGL
-    glShaderSourceARB(id, source.size(), sourceStrings, NULL);
+    glShaderSourceARB(id, source.size(), sourceStrings, nullptr);
     delete[] sourceStrings;
 
     // Actually compile the shader
@@ -164,7 +164,7 @@ GLProgram::link()
                                    &linkSuccess);
     if (linkSuccess == GL_FALSE)
     {
-        if (g_shaderLogFile != NULL)
+        if (g_shaderLogFile != nullptr)
         {
             *g_shaderLogFile << "Error linking shader program:\n";
             *g_shaderLogFile << GetInfoLog(getID());
@@ -184,14 +184,14 @@ GLShaderLoader::CreateVertexShader(const vector<string>& source,
 {
     GLhandleARB vsid = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
 
-    GLVertexShader* shader = new GLVertexShader(vsid);
+    auto* shader = new GLVertexShader(vsid);
     if (!shader)
         return ShaderStatus_OutOfMemory;
 
     GLShaderStatus status = shader->compile(source);
     if (status != ShaderStatus_OK)
     {
-        if (g_shaderLogFile != NULL)
+        if (g_shaderLogFile != nullptr)
         {
             *g_shaderLogFile << "Error compiling vertex shader:\n";
             *g_shaderLogFile << GetInfoLog(shader->getID());
@@ -212,14 +212,14 @@ GLShaderLoader::CreateFragmentShader(const vector<string>& source,
 {
     GLhandleARB fsid = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
-    GLFragmentShader* shader = new GLFragmentShader(fsid);
+    auto* shader = new GLFragmentShader(fsid);
     if (!shader)
         return ShaderStatus_OutOfMemory;
 
     GLShaderStatus status = shader->compile(source);
     if (status != ShaderStatus_OK)
     {
-        if (g_shaderLogFile != NULL)
+        if (g_shaderLogFile != nullptr)
         {
             *g_shaderLogFile << "Error compiling fragment shader:\n";
             *g_shaderLogFile << GetInfoLog(shader->getID());
@@ -262,7 +262,7 @@ GLShaderLoader::CreateProgram(const GLVertexShader& vs,
 {
     GLhandleARB progid = glCreateProgramObjectARB();
 
-    GLProgram* prog = new GLProgram(progid);
+    auto* prog = new GLProgram(progid);
     if (!prog)
         return ShaderStatus_OutOfMemory;
 
@@ -280,12 +280,12 @@ GLShaderLoader::CreateProgram(const vector<string>& vsSource,
                               const vector<string>& fsSource,
                               GLProgram** progOut)
 {
-    GLVertexShader* vs = NULL;
+    GLVertexShader* vs = nullptr;
     GLShaderStatus status = CreateVertexShader(vsSource, &vs);
     if (status != ShaderStatus_OK)
         return status;
 
-    GLFragmentShader* fs = NULL;
+    GLFragmentShader* fs = nullptr;
     status = CreateFragmentShader(fsSource, &fs);
     if (status != ShaderStatus_OK)
     {
@@ -293,7 +293,7 @@ GLShaderLoader::CreateProgram(const vector<string>& vsSource,
         return status;
     }
 
-    GLProgram* prog = NULL;
+    GLProgram* prog = nullptr;
     status = CreateProgram(*vs, *fs, &prog);
     if (status != ShaderStatus_OK)
     {
@@ -337,8 +337,8 @@ GetInfoLog(GLhandleARB obj)
     if (logLength <= 0)
         return string();
 
-    char* log = new char[logLength];
-    if (log == NULL)
+    auto* log = new char[logLength];
+    if (!log)
         return string();
 
     glGetInfoLogARB(obj, logLength, &charsWritten, log);

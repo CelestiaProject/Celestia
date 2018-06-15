@@ -42,7 +42,7 @@
 
 #include "qtglwidget.h"
 
-#include <math.h>
+#include <cmath>
 #include <vector>
 
 using namespace Qt;
@@ -99,15 +99,6 @@ CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, Cele
 
 
 /*!
-  Release allocated resources
-*/
-
-CelestiaGlWidget::~CelestiaGlWidget()
-{
-}
-
-
-/*!
   Paint the box. The actual openGL commands for drawing the box are
   performed here.
 */
@@ -128,10 +119,10 @@ static GLContext::GLRenderPath getBestAvailableRenderPath(const GLContext& glc)
         GLContext::GLPath_Basic,
     };
 
-    for (unsigned i = 0; i < sizeof(renderPaths) / sizeof(renderPaths[0]); i++)
+    for (auto renderPath : renderPaths)
     {
-        if (glc.renderPathSupported(renderPaths[i]))
-            return renderPaths[i];
+        if (glc.renderPathSupported(renderPath))
+            return renderPath;
     }
 
     // No supported render path? Something has gone very wrong...
@@ -430,10 +421,8 @@ bool CelestiaGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
             appCore->keyUp(k);
         return (k < 'A' || k > 'Z');
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
 

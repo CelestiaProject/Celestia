@@ -47,7 +47,7 @@ struct JPLEphCoeffInfo
 
 struct JPLEphRecord
 {
-    JPLEphRecord() : coeffs(NULL) {};
+    JPLEphRecord() : coeffs(nullptr) {};
     ~JPLEphRecord();
 
     double t0;
@@ -59,10 +59,10 @@ struct JPLEphRecord
 class JPLEphemeris
 {
 private:
-    JPLEphemeris();
+    JPLEphemeris() = default;
 
 public:
-    ~JPLEphemeris();
+    ~JPLEphemeris() = default;
 
     Eigen::Vector3d getPlanetPosition(JPLEphemItem, double t) const;
 

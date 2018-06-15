@@ -125,8 +125,8 @@ class Mesh
     class PrimitiveGroup
     {
     public:
-        PrimitiveGroup();
-        ~PrimitiveGroup();
+        PrimitiveGroup() = default;
+        ~PrimitiveGroup() = default;
 
         unsigned int getPrimitiveCount() const;
 
@@ -139,15 +139,15 @@ class Mesh
     class PickResult
     {
     public:
-        PickResult();
+        PickResult() = default;
 
-        Mesh* mesh;
-        PrimitiveGroup* group;
-        unsigned int primitiveIndex;
-        double distance;
+        Mesh* mesh{ nullptr };
+        PrimitiveGroup* group{ nullptr };
+        unsigned int primitiveIndex{ 0 };
+        double distance{ -1.0 };
     };
 
-    Mesh();
+    Mesh() = default;
     ~Mesh();
 
     void setVertices(unsigned int _nVertices, void* vertexData);
@@ -197,11 +197,11 @@ class Mesh
     void recomputeBoundingBox();
 
  private:
-    VertexDescription vertexDesc;
+    VertexDescription vertexDesc{ 0, 0, nullptr };
 
-    unsigned int nVertices;
-    void* vertices;
-    mutable BufferResource* vbResource;
+    unsigned int nVertices{ 0 };
+    void* vertices{ nullptr };
+    mutable BufferResource* vbResource{ nullptr };
 
     std::vector<PrimitiveGroup*> groups;
 

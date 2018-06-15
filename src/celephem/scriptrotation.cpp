@@ -18,23 +18,6 @@ using namespace Eigen;
 using namespace std;
 
 
-ScriptedRotation::ScriptedRotation() :
-    luaState(NULL),
-    period(0.0),
-    validRangeBegin(0.0),
-    validRangeEnd(0.0),
-    lastTime(-1.0e50),
-    lastOrientation(Quaterniond::Identity()),
-    cacheable(true) // non-cacheable rotations not yet supported
-{
-}
-
-
-ScriptedRotation::~ScriptedRotation()
-{
-}
-
-
 /*! Initialize the script rotation
  *  moduleName is the name of a module that contains the rotation factory
  *  function. The module will be loaded with Lua's require function before
@@ -62,11 +45,11 @@ ScriptedRotation::initialize(const std::string& moduleName,
                              const std::string& funcName,
                              Hash* parameters)
 {
-    if (parameters == NULL)
+    if (parameters == nullptr)
         return false;
 
     luaState = GetScriptedObjectContext();
-    if (luaState == NULL)
+    if (luaState == nullptr)
     {
         clog << "ScriptedRotations are currently disabled.\n";
         return false;
@@ -211,13 +194,9 @@ double
 ScriptedRotation::getPeriod() const
 {
     if (period == 0.0)
-    {
         return validRangeEnd - validRangeBegin;
-    }
-    else
-    {
-        return period;
-    }
+
+    return period;
 }
 
 

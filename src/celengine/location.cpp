@@ -64,22 +64,9 @@ FeatureNameEntry FeatureNames[] =
 };
 
 
-Location::Location() :
-    parent(NULL),
-    position(Vector3f::Zero()),
-    size(0.0f),
-    importance(-1.0f),
-    featureType(Other),
-    overrideLabelColor(false),
-    labelColor(1.0f, 1.0f, 1.0f),
-    infoURL(NULL)
-{
-}
-
 Location::~Location()
 {
-    if (infoURL != NULL)
-        delete infoURL;
+    delete infoURL;
 }
 
 
@@ -195,27 +182,18 @@ void Location::setParentBody(Body* _parent)
  */
 Vector3d Location::getPlanetocentricPosition(double t) const
 {
-    if (parent == NULL)
-    {
+    if (parent == nullptr)
         return position.cast<double>();
-    }
-    else
-    {
-        Quaterniond q = parent->getEclipticToBodyFixed(t);
-        return q.conjugate() * position.cast<double>();
-    }
+
+    Quaterniond q = parent->getEclipticToBodyFixed(t);
+    return q.conjugate() * position.cast<double>();
 }
 
 
 Vector3d Location::getHeliocentricPosition(double t) const
 {
-    if (parent == NULL)
-    {
+    if (parent == nullptr)
         return position.cast<double>();
-    }
-    else
-    {
-        return parent->getAstrocentricPosition(t) + getPlanetocentricPosition(t);
-    }
 
+    return parent->getAstrocentricPosition(t) + getPlanetocentricPosition(t);
 }

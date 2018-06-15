@@ -41,11 +41,11 @@ struct RenderInfo
 #else
                    color(1.0f, 1.0f, 1.0f),
 #endif
-                   baseTex(NULL),
-                   bumpTex(NULL),
-                   nightTex(NULL),
-                   glossTex(NULL),
-                   overlayTex(NULL),
+                   baseTex(nullptr),
+                   bumpTex(nullptr),
+                   nightTex(nullptr),
+                   glossTex(nullptr),
+                   overlayTex(nullptr),
                    hazeColor(0.0f, 0.0f, 0.0f),
                    specularColor(0.0f, 0.0f, 0.0f),
                    specularPower(0.0f),

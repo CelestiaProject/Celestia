@@ -34,7 +34,7 @@ Q_OBJECT
 
  public:
     CelestialBrowser(CelestiaCore* _appCore, QWidget* parent);
-    ~CelestialBrowser();
+    ~CelestialBrowser() = default;
 
  public slots:
     void slotUncheckMultipleFilterBox();

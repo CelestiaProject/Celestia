@@ -99,20 +99,20 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
 {
     // Validate the time range.
     if (endTime <= startTime)
-        return NULL;
+        return nullptr;
 
     // Get the frame tree to add the new phase to. Verify that the reference frame
     // center is either a star or solar system body.
-    FrameTree* frameTree = NULL;
+    FrameTree* frameTree = nullptr;
     Selection center = orbitFrame.getCenter();
-    if (center.body() != NULL)
+    if (center.body() != nullptr)
     {
         frameTree = center.body()->getOrCreateFrameTree();
     }
-    else if (center.star() != NULL)
+    else if (center.star() != nullptr)
     {
         SolarSystem* solarSystem = universe.getSolarSystem(center.star());
-        if (solarSystem == NULL)
+        if (solarSystem == nullptr)
         {
             // No solar system defined for this star yet, so we need
             // to create it.
@@ -123,7 +123,7 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
     else
     {
         // Frame center is not a star or body.
-        return NULL;
+        return nullptr;
     }
 
     TimelinePhase* phase = new TimelinePhase(body,

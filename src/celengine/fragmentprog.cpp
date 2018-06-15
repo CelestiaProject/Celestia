@@ -29,38 +29,38 @@ unsigned int fp::texSpecularAlpha    = 0;
 class FragmentProcessorNV : public FragmentProcessor
 {
  public:
-    FragmentProcessorNV();
-    virtual ~FragmentProcessorNV();
+    FragmentProcessorNV() = default;
+    ~FragmentProcessorNV() override = default;
 
-    virtual void enable();
-    virtual void disable();
-    virtual void use(unsigned int);
-    virtual void parameter(fp::Parameter, float, float, float, float);
-    virtual void parameter(fp::Parameter, const float*);
+    void enable() override;
+    void disable() override;
+    void use(unsigned int /*prog*/) override;
+    void parameter(fp::Parameter /*param*/, float /*x*/, float /*y*/, float /*z*/, float /*w*/) override;
+    void parameter(fp::Parameter /*param*/, const float* /*fv*/) override;
 };
 
 class FragmentProcessorARB : public FragmentProcessor
 {
  public:
-    FragmentProcessorARB();
-    virtual ~FragmentProcessorARB();
+    FragmentProcessorARB() = default;
+    ~FragmentProcessorARB() override = default;
 
-    virtual void enable();
-    virtual void disable();
-    virtual void use(unsigned int);
-    virtual void parameter(fp::Parameter, float, float, float, float);
-    virtual void parameter(fp::Parameter, const float*);
+    void enable() override;
+    void disable() override;
+    void use(unsigned int /*unused*/) override;
+    void parameter(fp::Parameter /*unused*/, float /*unused*/, float /*unused*/, float /*unused*/, float /*unused*/) override;
+    void parameter(fp::Parameter /*unused*/, const float* /*unused*/) override;
 };
 
 
 
 static string* ReadTextFromFile(const string& filename)
 {
-    ifstream textFile(filename.c_str(), ios::in);
+    ifstream textFile(filename, ios::in);
     if (!textFile.good())
-        return NULL;
+        return nullptr;
 
-    string* s = new string();
+    auto* s = new string();
 
     char c;
     while (textFile.get(c))
@@ -92,7 +92,7 @@ static bool LoadNvFragmentProgram(const string& filename, unsigned int& id)
     cout << _("Loading NV fragment program: ") << filename << '\n';
 
     string* source = ReadTextFromFile(filename);
-    if (source == NULL)
+    if (source == nullptr)
     {
         cout << _("Error loading NV fragment program: ") << filename << '\n';
         return false;
@@ -124,19 +124,19 @@ FragmentProcessor* fp::initNV()
 {
     cout << _("Initializing NV fragment programs . . .\n");
     if (!LoadNvFragmentProgram("shaders/shadow_on_rings_nv.fp", sphereShadowOnRings))
-        return NULL;
+        return nullptr;
     if (!LoadNvFragmentProgram("shaders/eclipse1_nv.fp", eclipseShadow1))
-        return NULL;
+        return nullptr;
     if (!LoadNvFragmentProgram("shaders/eclipse2_nv.fp", eclipseShadow2))
-        return NULL;
+        return nullptr;
     if (!LoadNvFragmentProgram("shaders/diffuse_nv.fp", texDiffuse))
-        return NULL;
+        return nullptr;
     if (!LoadNvFragmentProgram("shaders/bumpdiffuse_nv.fp", texDiffuseBump))
-        return NULL;
+        return nullptr;
     if (!LoadNvFragmentProgram("shaders/texphong_nv.fp", texSpecular))
-        return NULL;
+        return nullptr;
     if (!LoadNvFragmentProgram("shaders/texphong_alpha_nv.fp", texSpecularAlpha))
-        return NULL;
+        return nullptr;
 
     cout << _("All NV fragment programs loaded successfully.\n");
 
@@ -151,14 +151,6 @@ FragmentProcessor* fp::initARB()
     return new FragmentProcessorARB();
 }
 
-
-FragmentProcessor::FragmentProcessor()
-{
-}
-
-FragmentProcessor::~FragmentProcessor()
-{
-}
 
 void FragmentProcessor::parameter(fp::Parameter param, const Eigen::Vector3f& v)
 {
@@ -178,14 +170,6 @@ void FragmentProcessor::parameter(fp::Parameter param, const Color& c)
 
 
 // FragmentProcessorNV implementation
-
-FragmentProcessorNV::FragmentProcessorNV()
-{
-}
-
-FragmentProcessorNV::~FragmentProcessorNV()
-{
-}
 
 void FragmentProcessorNV::enable()
 {
@@ -216,14 +200,6 @@ void FragmentProcessorNV::parameter(fp::Parameter param, const float* fv)
 
 
 // FragmentProcessorARB implementation
-
-FragmentProcessorARB::FragmentProcessorARB()
-{
-}
-
-FragmentProcessorARB::~FragmentProcessorARB()
-{
-}
 
 void FragmentProcessorARB::enable()
 {

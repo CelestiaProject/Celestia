@@ -22,45 +22,45 @@ CelestiaOptions::CelestiaOptions(QObject* parent,
                                  QtCelestiaCoreApplication* _appCore) :
     QObject(parent),
 
-    equatorialGridAction(NULL),
-    galacticGridAction(NULL),
-    eclipticGridAction(NULL),
-    horizonGridAction(NULL),
-    eclipticAction(NULL),
-    markersAction(NULL),
-    constellationsAction(NULL),
-    boundariesAction(NULL),
-    orbitsAction(NULL),
+    equatorialGridAction(nullptr),
+    galacticGridAction(nullptr),
+    eclipticGridAction(nullptr),
+    horizonGridAction(nullptr),
+    eclipticAction(nullptr),
+    markersAction(nullptr),
+    constellationsAction(nullptr),
+    boundariesAction(nullptr),
+    orbitsAction(nullptr),
 
-    galaxiesAction(NULL),
-    globularsAction(NULL),
-    openClustersAction(NULL),
-    nebulaeAction(NULL),
+    galaxiesAction(nullptr),
+    globularsAction(nullptr),
+    openClustersAction(nullptr),
+    nebulaeAction(nullptr),
 
-    labelGalaxiesAction(NULL),
-    labelGlobularsAction(NULL),
-    labelOpenClustersAction(NULL),
-    labelNebulaeAction(NULL),
-    labelStarsAction(NULL),
-    labelPlanetsAction(NULL),
-    labelDwarfPlanetsAction(NULL),
-    labelMoonsAction(NULL),
-    labelMinorMoonsAction(NULL),
-    labelAsteroidsAction(NULL),
-    labelCometsAction(NULL),
-    labelSpacecraftAction(NULL),
-    labelLocationsAction(NULL),
+    labelGalaxiesAction(nullptr),
+    labelGlobularsAction(nullptr),
+    labelOpenClustersAction(nullptr),
+    labelNebulaeAction(nullptr),
+    labelStarsAction(nullptr),
+    labelPlanetsAction(nullptr),
+    labelDwarfPlanetsAction(nullptr),
+    labelMoonsAction(nullptr),
+    labelMinorMoonsAction(nullptr),
+    labelAsteroidsAction(nullptr),
+    labelCometsAction(nullptr),
+    labelSpacecraftAction(nullptr),
+    labelLocationsAction(nullptr),
 
-    starOrbitsAction(NULL),
-    planetOrbitsAction(NULL),
-    dwarfPlanetOrbitsAction(NULL),
-    moonOrbitsAction(NULL),
-    minorMoonOrbitsAction(NULL),
-    asteroidOrbitsAction(NULL),
-    cometOrbitsAction(NULL),
-    spacecraftOrbitsAction(NULL),
+    starOrbitsAction(nullptr),
+    planetOrbitsAction(nullptr),
+    dwarfPlanetOrbitsAction(nullptr),
+    moonOrbitsAction(nullptr),
+    minorMoonOrbitsAction(nullptr),
+    asteroidOrbitsAction(nullptr),
+    cometOrbitsAction(nullptr),
+    spacecraftOrbitsAction(nullptr),
 
-    labelsAction(NULL),
+    labelsAction(nullptr),
 
     appCore(_appCore)
 {
@@ -347,7 +347,7 @@ void CelestiaOptions::notifyRenderSettingsChanged(const Renderer* renderer)
 void CelestiaOptions::slotToggleRenderFlag()
 {
     QAction* act = qobject_cast<QAction*>(sender());
-    if (act != NULL)
+    if (act != nullptr)
     {
         int renderFlag = act->data().toInt();
         appCore->setRenderFlags(appCore->getRenderer()->getRenderFlags() ^ renderFlag);
@@ -358,7 +358,7 @@ void CelestiaOptions::slotToggleRenderFlag()
 void CelestiaOptions::slotToggleLabel()
 {
     QAction* act = qobject_cast<QAction*>(sender());
-    if (act != NULL)
+    if (act != nullptr)
     {
         int label = act->data().toInt();
         appCore->getRenderer()->setLabelMode(appCore->getRenderer()->getLabelMode() ^ label);
@@ -369,7 +369,7 @@ void CelestiaOptions::slotToggleLabel()
 void CelestiaOptions::slotToggleOrbit()
 {
     QAction* act = qobject_cast<QAction*>(sender());
-    if (act != NULL)
+    if (act != nullptr)
     {
         int orbit = act->data().toInt();
         appCore->getRenderer()->setOrbitMask(appCore->getRenderer()->getOrbitMask() ^ orbit);
@@ -380,7 +380,7 @@ void CelestiaOptions::slotToggleOrbit()
 void CelestiaOptions::slotSetStarStyle()
 {
     QAction* act = qobject_cast<QAction*>(sender());
-    if (act != NULL)
+    if (act != nullptr)
     {
         Renderer::StarStyle starStyle = (Renderer::StarStyle) act->data().toInt();
         appCore->setStarStyle(starStyle);
@@ -391,7 +391,7 @@ void CelestiaOptions::slotSetStarStyle()
 void CelestiaOptions::slotSetTextureResolution()
 {
     QAction* act = qobject_cast<QAction*>(sender());
-    if (act != NULL)
+    if (act != nullptr)
     {
         int textureResolution = act->data().toInt();
         appCore->setTextureResolution(textureResolution);
@@ -402,7 +402,7 @@ void CelestiaOptions::slotSetTextureResolution()
 void CelestiaOptions::slotAdjustLimitingMagnitude()
 {
     QAction* act = qobject_cast<QAction*>(sender());
-    if (act != NULL)
+    if (act != nullptr)
     {
         Renderer* renderer = appCore->getRenderer();
         float change = (float) act->data().toDouble();

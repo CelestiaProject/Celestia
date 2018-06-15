@@ -55,7 +55,7 @@ struct PtrCatalogNumberOrderingPredicate
 {
     int unused;
 
-    PtrCatalogNumberOrderingPredicate() {};
+    PtrCatalogNumberOrderingPredicate() = default;;
 
     bool operator()(const DeepSkyObject* const & dso0, const DeepSkyObject* const & dso1) const
     {
@@ -64,26 +64,10 @@ struct PtrCatalogNumberOrderingPredicate
 };
 
 
-DSODatabase::DSODatabase():
-    nDSOs                (0),
-    capacity             (0),
-    DSOs                 (NULL),
-    namesDB              (NULL),
-    catalogNumberIndex   (NULL),
-    octreeRoot           (NULL),
-    nextAutoCatalogNumber(0xfffffffe),
-    avgAbsMag            (0)
-{
-}
-
-
 DSODatabase::~DSODatabase()
 {
-    if (DSOs != NULL)
-        delete [] DSOs;
-
-    if (catalogNumberIndex != NULL)
-        delete [] catalogNumberIndex;
+    delete [] DSOs;
+    delete [] catalogNumberIndex;
 }
 
 
@@ -100,23 +84,23 @@ DeepSkyObject* DSODatabase::find(const uint32 catalogNumber) const
     if (dso != catalogNumberIndex + nDSOs && (*dso)->getCatalogNumber() == catalogNumber)
         return *dso;
     else
-        return NULL;
+        return nullptr;
 }
 
 
 DeepSkyObject* DSODatabase::find(const string& name) const
 {
     if (name.empty())
-        return NULL;
+        return nullptr;
 
-    if (namesDB != NULL)
+    if (namesDB != nullptr)
     {
         uint32 catalogNumber   = namesDB->findCatalogNumberByName(name);
         if (catalogNumber != DeepSkyObject::InvalidCatalogNumber)
             return find(catalogNumber);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -125,7 +109,7 @@ vector<string> DSODatabase::getCompletion(const string& name) const
     vector<string> completion;
 
     // only named DSOs are supported by completion.
-    if (!name.empty() && namesDB != NULL)
+    if (!name.empty() && namesDB != nullptr)
         return namesDB->getCompletion(name);
     else
         return completion;
@@ -136,7 +120,7 @@ string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) cons
 {
     uint32 catalogNumber    = dso->getCatalogNumber();
 
-    if (namesDB != NULL)
+    if (namesDB != nullptr)
     {
         DSONameDatabase::NumberIndex::const_iterator iter   = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
@@ -273,7 +257,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
         objName = tokenizer.getStringValue();
 
         Value* objParamsValue    = parser.readValue();
-        if (objParamsValue == NULL ||
+        if (objParamsValue == nullptr ||
             objParamsValue->getType() != Value::HashType)
         {
             DPRINTF(0, "Error parsing deep sky catalog entry %s\n", objName.c_str());
@@ -281,9 +265,9 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
         }
 
         Hash* objParams    = objParamsValue->getHash();
-        assert(objParams != NULL);
+        assert(objParams != nullptr);
 
-        DeepSkyObject* obj = NULL;
+        DeepSkyObject* obj = nullptr;
         if (compareIgnoringCase(objType, "Galaxy") == 0)
             obj = new Galaxy();
         else if (compareIgnoringCase(objType, "Globular") == 0)
@@ -293,7 +277,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
         else if (compareIgnoringCase(objType, "OpenCluster") == 0)
             obj = new OpenCluster();
 
-        if (obj != NULL && obj->load(objParams, resourcePath))
+        if (obj != nullptr && obj->load(objParams, resourcePath))
         {
             delete objParamsValue;
 
@@ -311,13 +295,13 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
                     capacity   = 100;
 
                 DeepSkyObject** newDSOs   = new DeepSkyObject*[capacity];
-                if (newDSOs == NULL)
+                if (newDSOs == nullptr)
                 {
                     DPRINTF(0, "Out of memory!");
                     return false;
                 }
 
-                if (DSOs != NULL)
+                if (DSOs != nullptr)
                 {
                     copy(DSOs, DSOs + nDSOs, newDSOs);
                     delete[] DSOs;
@@ -329,7 +313,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
 
             obj->setCatalogNumber(objCatalogNumber);
 
-            if (namesDB != NULL && !objName.empty())
+            if (namesDB != nullptr && !objName.empty())
             {
                 // List of names will replace any that already exist for
                 // this DSO.
@@ -448,7 +432,7 @@ void DSODatabase::calcAvgAbsMag()
 void DSODatabase::buildIndexes()
 {
     // This should only be called once for the database
-    // assert(catalogNumberIndexes[0] == NULL);
+    // assert(catalogNumberIndexes[0] == nullptr);
 
     DPRINTF(1, "Building catalog number indexes . . .\n");
 

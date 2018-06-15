@@ -18,9 +18,9 @@ struct Blob
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    Eigen::Vector4f        position;
-    unsigned int   colorIndex;
-    float          brightness;
+    Eigen::Vector4f position;
+    unsigned int    colorIndex;
+    float           brightness;
 };
 
 class GalacticForm;
@@ -30,7 +30,7 @@ class Galaxy : public DeepSkyObject
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    Galaxy();
+    Galaxy() = default;
     virtual const char* getType() const;
     virtual void setType(const std::string&);
     virtual size_t getDescription(char* buf, size_t bufLength) const;
@@ -97,11 +97,11 @@ class Galaxy : public DeepSkyObject
     };
 
  private:
-    float detail;
-    std::string* customTmpName;
+    float detail{ 1.0f };
+    std::string* customTmpName{ nullptr };
     //    float brightness;
     GalaxyType type;
-    GalacticForm* form;
+    GalacticForm* form{ nullptr };
 
     static float lightGain;
 };

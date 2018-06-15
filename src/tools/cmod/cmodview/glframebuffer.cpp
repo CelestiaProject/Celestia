@@ -70,7 +70,7 @@ GLFrameBufferObject::generateColorTexture()
 
     // Set the texture dimensions
     // Do we need to set GL_DEPTH_COMPONENT24 here?
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
     // Unbind the texture
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -101,7 +101,7 @@ GLFrameBufferObject::generateDepthTexture()
 
     // Set the texture dimensions
     // Do we need to set GL_DEPTH_COMPONENT24 here?
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
 
     // Unbind the texture
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -186,10 +186,7 @@ GLFrameBufferObject::bind()
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId);
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 

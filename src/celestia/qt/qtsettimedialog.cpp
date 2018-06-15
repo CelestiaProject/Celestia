@@ -36,14 +36,14 @@ SetTimeDialog::SetTimeDialog(double currentTimeTDB,
                              CelestiaCore* _appCore) :
     QDialog(parent),
     appCore(_appCore),
-    timeZoneBox(NULL),
-    yearSpin(NULL),
-    monthSpin(NULL),
-    daySpin(NULL),
-    hourSpin(NULL),
-    minSpin(NULL),
-    secSpin(NULL),
-    julianDateSpin(NULL)
+    timeZoneBox(nullptr),
+    yearSpin(nullptr),
+    monthSpin(nullptr),
+    daySpin(nullptr),
+    hourSpin(nullptr),
+    minSpin(nullptr),
+    secSpin(nullptr),
+    julianDateSpin(nullptr)
 {
     QVBoxLayout* layout = new QVBoxLayout();
 
@@ -156,10 +156,6 @@ SetTimeDialog::SetTimeDialog(double currentTimeTDB,
     setLayout(layout);
 }
 
-
-SetTimeDialog::~SetTimeDialog()
-{
-}
 
 void SetTimeDialog::slotSetSimulationTime()
 {

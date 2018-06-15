@@ -24,12 +24,6 @@ using namespace Eigen;
 using namespace std;
 
 
-Nebula::Nebula() :
-    geometry(InvalidResource)
-{
-}
-
-
 const char* Nebula::getType() const
 {
     return "Nebula";
@@ -88,15 +82,15 @@ bool Nebula::load(AssociativeArray* params, const string& resPath)
 
 
 void Nebula::render(const GLContext& glcontext,
-                    const Vector3f&,
-                    const Quaternionf&,
-                    float,
+                    const Vector3f& /*unused*/,
+                    const Quaternionf& /*unused*/,
+                    float /*unused*/,
                     float pixelSize)
 {
-    Geometry* g = NULL;
+    Geometry* g = nullptr;
     if (geometry != InvalidResource)
         g = GetGeometryManager()->find(geometry);
-    if (g == NULL)
+    if (g == nullptr)
         return;
 
     glDisable(GL_BLEND);

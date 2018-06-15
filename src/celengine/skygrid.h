@@ -39,8 +39,8 @@ public:
         IncreasingClockwise,
     };
 
-    SkyGrid();
-    ~SkyGrid();
+    SkyGrid() = default;
+    ~SkyGrid() = default;
 
     void render(Renderer& renderer,
                 const Observer& observer,
@@ -108,11 +108,11 @@ private:
     int meridianSpacing(double idealSpacing) const;
 
 private:
-    Eigen::Quaterniond m_orientation;
-    Color m_lineColor;
-    Color m_labelColor;
-    LongitudeUnits m_longitudeUnits;
-    LongitudeDirection m_longitudeDirection;
+    Eigen::Quaterniond m_orientation{ Eigen::Quaterniond::Identity() };
+    Color m_lineColor{ Color::White };
+    Color m_labelColor{ Color::White };
+    LongitudeUnits m_longitudeUnits{ LongitudeHours };
+    LongitudeDirection m_longitudeDirection{ IncreasingCounterclockwise };
 };
 
 #endif // _CELENGINE_PLANETGRID_H_

@@ -25,7 +25,7 @@ class ParticleSystemLoader
 {
  public:
     ParticleSystemLoader(std::istream&);
-    ~ParticleSystemLoader();
+    ~ParticleSystemLoader() = default;
 
     ParticleSystem* load();
     VectorGenerator* parseGenerator(Hash* params);

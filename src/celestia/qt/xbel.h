@@ -31,9 +31,9 @@ private:
      void readXbel(BookmarkItem* root);
      void readTitle(BookmarkItem *item);
      void readDescription(BookmarkItem *item);
-     void readSeparator(BookmarkItem *item);
-     void readFolder(BookmarkItem *item);
-     void readBookmark(BookmarkItem *item);
+     void readSeparator(BookmarkItem *parent);
+     void readFolder(BookmarkItem *parent);
+     void readBookmark(BookmarkItem *parent);
 
      void skipUnknownElement();
 };

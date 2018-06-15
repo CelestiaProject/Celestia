@@ -24,7 +24,7 @@ class DisplacementMap
     int getHeight() const { return height; };
     inline float getDisplacement(int x, int y) const;
     inline void setDisplacement(int x, int y, float d);
-    void generate(DisplacementMapFunc func, void* info = NULL);
+    void generate(DisplacementMapFunc func, void* info = nullptr);
     void clear();
 
  private:

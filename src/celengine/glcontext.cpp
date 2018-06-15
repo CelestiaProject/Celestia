@@ -15,28 +15,15 @@
 using namespace std;
 
 
-static VertexProcessor* vpNV = NULL;
-static VertexProcessor* vpARB = NULL;
-static FragmentProcessor* fpNV = NULL;
-
-
-GLContext::GLContext() :
-    renderPath(GLPath_Basic),
-    vertexPath(VPath_Basic),
-    vertexProc(NULL),
-    maxSimultaneousTextures(1)
-{
-}
-
-GLContext::~GLContext()
-{
-}
+static VertexProcessor* vpNV = nullptr;
+static VertexProcessor* vpARB = nullptr;
+static FragmentProcessor* fpNV = nullptr;
 
 
 void GLContext::init(const vector<string>& ignoreExt)
 {
-    char* extensionsString = (char*) glGetString(GL_EXTENSIONS);
-    if (extensionsString != NULL)
+    auto* extensionsString = (char*) glGetString(GL_EXTENSIONS);
+    if (extensionsString != nullptr)
     {
         char* next = extensionsString;
 
@@ -48,18 +35,8 @@ void GLContext::init(const vector<string>& ignoreExt)
             string ext(extensionsString, next - extensionsString);
 
             // scan the ignore list
-            bool shouldIgnore = false;
-            for (vector<string>::const_iterator iter = ignoreExt.begin();
-                 iter != ignoreExt.end(); iter++)
-            {
-                if (*iter == ext)
-                {
-                    shouldIgnore = true;
-                    break;
-                }
-            }
-
-            if (!shouldIgnore)
+            auto iter = std::find(ignoreExt.begin(), ignoreExt.end(), ext);
+            if (iter == ignoreExt.end())
                 extensions.insert(extensions.end(), ext);
 
             if (*next == '\0')
@@ -69,7 +46,7 @@ void GLContext::init(const vector<string>& ignoreExt)
         }
     }
 
-    if (GLEW_ARB_multitexture && glActiveTextureARB != NULL)
+    if (GLEW_ARB_multitexture && glActiveTextureARB != nullptr)
     {
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,
                       (GLint*) &maxSimultaneousTextures);
@@ -78,14 +55,14 @@ void GLContext::init(const vector<string>& ignoreExt)
     if (GLEW_ARB_vertex_program && glGenProgramsARB)
     {
         DPRINTF(1, "Renderer: ARB vertex programs supported.\n");
-        if (vpARB == NULL)
+        if (vpARB == nullptr)
             vpARB = vp::initARB();
         vertexProc = vpARB;
     }
     else if (GLEW_NV_vertex_program && glGenProgramsNV)
     {
         DPRINTF(1, "Renderer: nVidia vertex programs supported.\n");
-        if (vpNV == NULL)
+        if (vpNV == nullptr)
             vpNV = vp::initNV();
         vertexProc = vpNV;
     }
@@ -93,7 +70,7 @@ void GLContext::init(const vector<string>& ignoreExt)
     if (GLEW_NV_fragment_program && glGenProgramsNV)
     {
         DPRINTF(1, "Renderer: nVidia fragment programs supported.\n");
-        if (fpNV == NULL)
+        if (fpNV == nullptr)
             fpNV = fp::initNV();
         fragmentProc = fpNV;
     }
@@ -155,7 +132,7 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
     case GLPath_DOT3_ARBVP:
         return GLEW_ARB_texture_env_dot3 &&
                GLEW_ARB_vertex_program &&
-               vertexProc != NULL;
+               vertexProc != nullptr;
 
     case GLPath_NvCombiner_NvVP:
         // If ARB_vertex_program is supported, don't report support for
@@ -163,19 +140,19 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
         return GLEW_NV_register_combiners &&
                GLEW_NV_vertex_program &&
                !GLEW_ARB_vertex_program &&
-               vertexProc != NULL;
+               vertexProc != nullptr;
 
     case GLPath_NvCombiner_ARBVP:
         return GLEW_NV_register_combiners &&
                GLEW_ARB_vertex_program &&
-               vertexProc != NULL;
+               vertexProc != nullptr;
 
     case GLPath_ARBFP_ARBVP:
         return false;
         /*
         return GLEW_ARB_vertex_program &&
                GLEW_ARB_fragment_program &&
-               vertexProc != NULL;
+               vertexProc != nullptr;
         */
 
     case GLPath_GLSL:
@@ -226,7 +203,7 @@ GLContext::VertexPath GLContext::getVertexPath() const
 
 VertexProcessor* GLContext::getVertexProcessor() const
 {
-    return vertexPath == VPath_Basic ? NULL : vertexProc;
+    return vertexPath == VPath_Basic ? nullptr : vertexProc;
 }
 
 
@@ -235,5 +212,5 @@ FragmentProcessor* GLContext::getFragmentProcessor() const
     if (renderPath == GLPath_NV30 /* || renderPath == GLPath_ARGFP_ARBVP */ )
         return fragmentProc;
     else
-        return NULL;
+        return nullptr;
 }

@@ -27,8 +27,8 @@ public:
         RenderFlag(
             int f,
             CelestiaCoreApplication *c,
-            const char *on = NULL,
-            const char *off = NULL) :
+            const char *on = nullptr,
+            const char *off = nullptr) :
                 flag(f),
                 core(c),
                 onMsg(on),

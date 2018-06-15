@@ -47,7 +47,7 @@ public:
     };
 
     PlanetographicGrid(const Body& _body);
-    ~PlanetographicGrid();
+    ~PlanetographicGrid() = default;
 
     void render(Renderer* renderer,
                 const Eigen::Vector3f& pos,
@@ -63,11 +63,11 @@ private:
 private:
     const Body& body;
 
-    float minLongitudeStep;
-    float minLatitudeStep;
+    float minLongitudeStep{ 10.0f };
+    float minLatitudeStep{ 10.0f };
 
-    LongitudeConvention longitudeConvention;
-    NorthDirection northDirection;
+    LongitudeConvention longitudeConvention{ Westward };
+    NorthDirection northDirection{ NorthNormal };
 
     static unsigned int circleSubdivisions;
     static float* xyCircle;

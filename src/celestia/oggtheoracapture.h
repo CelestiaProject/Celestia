@@ -41,7 +41,7 @@ private:
     int video_r; // 45000 <= video_r <= 2000000 (45Kbps - 2000Kbps)
     int video_q; // 0-63 aka 0-10 * 6.3
 
-    bool        capturing;
+    bool       capturing;
     int        video_frame_count;
     int        video_bytesout;
 
@@ -49,10 +49,10 @@ private:
     // but according the standards it's incorrect (generates values 0-255,
     // instead of clamped to 16-240).
 
-    int        rowStride;
+    int            rowStride;
     unsigned char  *pixels;
     unsigned char  *yuvframe[2];
-    yuv_buffer    yuv;
+    yuv_buffer     yuv;
     FILE           *outfile;
     ogg_stream_state to; /* take physical pages, weld into a logical
                 stream of packets */

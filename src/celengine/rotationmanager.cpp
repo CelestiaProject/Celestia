@@ -17,12 +17,12 @@
 using namespace std;
 
 
-static RotationModelManager* rotationModelManager = NULL;
+static RotationModelManager* rotationModelManager = nullptr;
 
 
 RotationModelManager* GetRotationModelManager()
 {
-    if (rotationModelManager == NULL)
+    if (rotationModelManager == nullptr)
         rotationModelManager = new RotationModelManager("data");
     return rotationModelManager;
 }
@@ -33,7 +33,7 @@ string RotationModelInfo::resolve(const string& baseDir)
     if (!path.empty())
     {
         string filename = path + "/data/" + source;
-        ifstream in(filename.c_str());
+        ifstream in(filename);
         if (in.good())
             return filename;
     }

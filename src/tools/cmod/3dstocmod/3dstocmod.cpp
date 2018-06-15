@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 
     cerr << "Reading...\n";
     M3DScene* scene = Read3DSFile(inputFileName);
-    if (scene == NULL)
+    if (scene == nullptr)
     {
         cerr << "Error reading 3DS file '" << inputFileName << "'\n";
         return 1;
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     }
 
     // Automatically uniquify vertices
-    for (unsigned int i = 0; newModel->getMesh(i) != NULL; i++)
+    for (unsigned int i = 0; newModel->getMesh(i) != nullptr; i++)
     {
         Mesh* mesh = newModel->getMesh(i);
         UniquifyVertices(*mesh);

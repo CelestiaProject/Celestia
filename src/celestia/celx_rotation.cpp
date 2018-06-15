@@ -40,7 +40,7 @@ static Quatd* this_rotation(lua_State* l)
     CelxLua celx(l);
 
     Quatd* q = to_rotation(l, 1);
-    if (q == NULL)
+    if (q == nullptr)
     {
         celx.doError("Bad rotation object!");
     }
@@ -56,7 +56,7 @@ static int rotation_add(lua_State* l)
     celx.checkArgs(2, 2, "Need two operands for add");
     Quatd* q1 = to_rotation(l, 1);
     Quatd* q2 = to_rotation(l, 2);
-    if (q1 == NULL || q2 == NULL)
+    if (q1 == nullptr || q2 == nullptr)
     {
         celx.doError("Addition only defined for two rotations");
     }
@@ -74,9 +74,9 @@ static int rotation_mult(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 2, "Need two operands for multiplication");
-    Quatd* r1 = NULL;
-    Quatd* r2 = NULL;
-    //Vec3d* v = NULL;
+    Quatd* r1 = nullptr;
+    Quatd* r2 = nullptr;
+    //Vec3d* v = nullptr;
     lua_Number s = 0.0;
     if (celx.isType(1, Celx_Rotation) && celx.isType(2, Celx_Rotation))
     {
@@ -135,7 +135,7 @@ static int rotation_transform(lua_State* l)
     celx.checkArgs(2, 2, "One argument expected for rotation:transform()");
     Quatd* q = this_rotation(l);
     Vec3d* v = to_vector(l, 2);
-    if (v == NULL)
+    if (v == nullptr)
     {
         celx.doError("Argument to rotation:transform() must be a vector");
         return 0;
@@ -152,7 +152,7 @@ static int rotation_setaxisangle(lua_State* l)
     celx.checkArgs(3, 3, "Two arguments expected for rotation:setaxisangle()");
     Quatd* q = this_rotation(l);
     Vec3d* v = to_vector(l, 2);
-    if (v == NULL)
+    if (v == nullptr)
     {
         celx.doError("setaxisangle: first argument must be a vector");
         return 0;
@@ -170,7 +170,7 @@ static int rotation_slerp(lua_State* l)
     celx.checkArgs(3, 3, "Two arguments expected for rotation:slerp()");
     Quatd* q1 = this_rotation(l);
     Quatd* q2 = to_rotation(l, 2);
-    if (q2 == NULL)
+    if (q2 == nullptr)
     {
         celx.doError("slerp: first argument must be a rotation");
         return 0;
@@ -199,16 +199,15 @@ static int rotation_get(lua_State* l)
         value = real(*q3);
     else
     {
-        if (lua_getmetatable(l, 1))
-        {
-            lua_pushvalue(l, 2);
-            lua_rawget(l, -2);
-            return 1;
-        }
-        else
+        if (!lua_getmetatable(l, 1))
         {
             celx.doError("Internal error: couldn't get metatable");
+            return 0;
         }
+
+        lua_pushvalue(l, 2);
+        lua_rawget(l, -2);
+        return 1;
     }
     lua_pushnumber(l, (lua_Number)value);
     return 1;

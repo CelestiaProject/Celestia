@@ -9,6 +9,8 @@
 
 #include "3dsmodel.h"
 
+#include <utility>
+
 using namespace Eigen;
 using namespace std;
 
@@ -23,15 +25,6 @@ M3DColor::M3DColor(float _red, float _green, float _blue) :
 {
 }
 
-
-M3DMaterial::M3DMaterial() :
-    ambient(0, 0, 0),
-    diffuse(0, 0, 0),
-    specular(0, 0, 0),
-    shininess(1.0f)
-{
-}
-
 string M3DMaterial::getName() const
 {
     return name;
@@ -39,7 +32,7 @@ string M3DMaterial::getName() const
 
 void M3DMaterial::setName(string _name)
 {
-    name = _name;
+    name = std::move(_name);
 }
 
 M3DColor M3DMaterial::getDiffuseColor() const
@@ -108,10 +101,6 @@ M3DTriangleMesh::M3DTriangleMesh()
     matrix = Matrix4f::Identity();
 }
 
-M3DTriangleMesh::~M3DTriangleMesh()
-{
-}
-
 Matrix4f M3DTriangleMesh::getMatrix() const
 {
     return matrix;
@@ -174,10 +163,7 @@ void M3DTriangleMesh::addFace(uint16 v0, uint16 v1, uint16 v2)
 
 uint32 M3DTriangleMesh::getSmoothingGroups(uint16 face) const
 {
-    if (face < smoothingGroups.size())
-        return smoothingGroups[face];
-    else
-        return 0;
+    return face < smoothingGroups.size() ? smoothingGroups[face] : 0;
 }
 
 void M3DTriangleMesh::addSmoothingGroups(uint32 smGroups)
@@ -206,24 +192,15 @@ uint32 M3DTriangleMesh::getMeshMaterialGroupCount() const
 }
 
 
-
-M3DModel::M3DModel()
-{
-}
-
 M3DModel::~M3DModel()
 {
-    for (unsigned int i = 0; i < triMeshes.size(); i++)
-        if (triMeshes[i] != NULL)
-            delete triMeshes[i];
+    for (auto triMesh : triMeshes)
+        delete triMesh;
 }
 
 M3DTriangleMesh* M3DModel::getTriMesh(uint32 n)
 {
-    if (n < triMeshes.size())
-        return triMeshes[n];
-    else
-        return NULL;
+    return n < triMeshes.size() ? triMeshes[n] : nullptr;
 }
 
 uint32 M3DModel::getTriMeshCount()
@@ -236,7 +213,7 @@ void M3DModel::addTriMesh(M3DTriangleMesh* triMesh)
     triMeshes.insert(triMeshes.end(), triMesh);
 }
 
-void M3DModel::setName(const string _name)
+void M3DModel::setName(const string& _name)
 {
     name = _name;
 }
@@ -247,27 +224,17 @@ const string M3DModel::getName() const
 }
 
 
-M3DScene::M3DScene()
-{
-}
-
 M3DScene::~M3DScene()
 {
-    unsigned int i;
-    for (i = 0; i < models.size(); i++)
-        if (models[i] != NULL)
-            delete models[i];
-    for (i = 0; i < materials.size(); i++)
-        if (materials[i] != NULL)
-            delete materials[i];
+    for (auto model : models)
+        delete model;
+    for (auto material : materials)
+        delete material;
 }
 
 M3DModel* M3DScene::getModel(uint32 n) const
 {
-    if (n < models.size())
-        return models[n];
-    else
-        return NULL;
+    return n < models.size() ? models[n] : nullptr;
 }
 
 uint32 M3DScene::getModelCount() const
@@ -282,10 +249,7 @@ void M3DScene::addModel(M3DModel* model)
 
 M3DMaterial* M3DScene::getMaterial(uint32 n) const
 {
-    if (n < materials.size())
-        return materials[n];
-    else
-        return NULL;
+    return n < materials.size() ? materials[n] : nullptr;
 }
 
 uint32 M3DScene::getMaterialCount() const

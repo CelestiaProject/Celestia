@@ -284,7 +284,7 @@ double EllipticalOrbit::eccentricAnomaly(double M) const
         // Circular orbit
         return M;
     }
-    else if (eccentricity < 0.2)
+    if (eccentricity < 0.2)
     {
         // Low eccentricity, so use the standard iteration technique
         Solution sol = solve_iteration_fixed(SolveKeplerFunc1(eccentricity, M), M, 5);
@@ -432,21 +432,6 @@ double EllipticalOrbit::getBoundingRadius() const
 }
 
 
-
-
-CachingOrbit::CachingOrbit() :
-    lastTime(-1.0e30),
-    positionCacheValid(false),
-    velocityCacheValid(false)
-{
-}
-
-
-CachingOrbit::~CachingOrbit()
-{
-}
-
-
 Vector3d CachingOrbit::positionAtTime(double jd) const
 {
     if (jd != lastTime)
@@ -564,14 +549,14 @@ static EllipticalOrbit* StateVectorToOrbit(const Vector3d& position,
 
 MixedOrbit::MixedOrbit(Orbit* orbit, double t0, double t1, double mass) :
     primary(orbit),
-    afterApprox(NULL),
-    beforeApprox(NULL),
+    afterApprox(nullptr),
+    beforeApprox(nullptr),
     begin(t0),
     end(t1),
     boundingRadius(0.0)
 {
     assert(t1 > t0);
-    assert(orbit != NULL);
+    assert(orbit != nullptr);
 
     double dt = 1.0 / 1440.0; // 1 minute
     Vector3d p0 = orbit->positionAtTime(t0);
@@ -590,12 +575,9 @@ MixedOrbit::MixedOrbit(Orbit* orbit, double t0, double t1, double mass) :
 
 MixedOrbit::~MixedOrbit()
 {
-    if (primary != NULL)
-        delete primary;
-    if (beforeApprox != NULL)
-        delete beforeApprox;
-    if (afterApprox != NULL)
-        delete afterApprox;
+    delete primary;
+    delete beforeApprox;
+    delete afterApprox;
 }
 
 
@@ -653,12 +635,6 @@ FixedOrbit::FixedOrbit(const Vector3d& pos) :
 {
 }
 
-
-FixedOrbit::~FixedOrbit()
-{
-}
-
-
 Vector3d
 FixedOrbit::positionAtTime(double /*tjd*/) const
 {
@@ -688,7 +664,7 @@ FixedOrbit::getBoundingRadius() const
 
 
 void
-FixedOrbit::sample(double /* startTime */, double /* endTime */, OrbitSampleProc&) const
+FixedOrbit::sample(double /* startTime */, double /* endTime */, OrbitSampleProc& /*proc*/) const
 {
     // Don't add any samples. This will prevent a fixed trajectory from
     // every being drawn when orbit visualization is enabled.
@@ -701,11 +677,6 @@ SynchronousOrbit::SynchronousOrbit(const Body& _body,
                                    const Vector3d& _position) :
     body(_body),
     position(_position)
-{
-}
-
-
-SynchronousOrbit::~SynchronousOrbit()
 {
 }
 
@@ -728,7 +699,7 @@ double SynchronousOrbit::getBoundingRadius() const
 }
 
 
-void SynchronousOrbit::sample(double /* startTime */, double /* endTime */, OrbitSampleProc&) const
+void SynchronousOrbit::sample(double /* startTime */, double /* endTime */, OrbitSampleProc& /*proc*/) const
 {
     // Empty method--we never want to show a synchronous orbit.
 }

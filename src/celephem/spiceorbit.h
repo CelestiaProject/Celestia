@@ -20,17 +20,17 @@
 class SpiceOrbit : public CachingOrbit
 {
  public:
-    SpiceOrbit(const std::string& _targetBodyName,
-               const std::string& _originName,
+    SpiceOrbit(std::string  _targetBodyName,
+               std::string  _originName,
                double _period,
                double _boundingRadius,
                double _beginning,
                double _ending);
-    SpiceOrbit(const std::string& _targetBodyName,
-               const std::string& _originName,
+    SpiceOrbit(std::string  _targetBodyName,
+               std::string  _originName,
                double _period,
                double _boundingRadius);
-    virtual ~SpiceOrbit();
+    virtual ~SpiceOrbit() = default;
 
     bool init(const std::string& path,
               const std::list<std::string>* requiredKernels);

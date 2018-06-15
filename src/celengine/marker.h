@@ -23,7 +23,7 @@ public:
     enum Symbol
     {
         Diamond    = 0,
-        Triangle     = 1,
+        Triangle   = 1,
         Square     = 2,
         FilledSquare = 3,
         Plus       = 4,
@@ -32,9 +32,9 @@ public:
         RightArrow = 7,
         UpArrow    = 8,
         DownArrow  = 9,
-        Circle    = 10,
-        Disk      = 11,
-        Crosshair = 12,
+        Circle     = 10,
+        Disk       = 11,
+        Crosshair  = 12,
     };
 
     MarkerRepresentation(Symbol symbol = MarkerRepresentation::Diamond,
@@ -87,8 +87,8 @@ enum MarkerSizing
 class Marker
 {
  public:
-    Marker(const Selection&);
-    ~Marker();
+    Marker(const Selection& s) : m_object(s) {};
+    ~Marker() = default;
 
     UniversalCoord position(double jd) const;
     Selection object() const;
@@ -108,10 +108,10 @@ class Marker
 
  private:
     Selection m_object;
-    int m_priority;
-    MarkerRepresentation m_representation;
-    bool m_occludable : 1;
-    MarkerSizing m_sizing : 2;
+    int m_priority{ 0 };
+    MarkerRepresentation m_representation{ MarkerRepresentation::Diamond };
+    bool m_occludable { true };
+    MarkerSizing m_sizing { ConstantSize };
 };
 
 typedef std::vector<Marker> MarkerList;

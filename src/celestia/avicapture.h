@@ -40,15 +40,15 @@ class AVICapture : public MovieCapture
     void cleanup();
 
  private:
-    int width;
-    int height;
-    float frameRate;
-    int frameCounter;
-    bool capturing;
-    PAVIFILE aviFile;
-    PAVISTREAM aviStream;
-    PAVISTREAM compAviStream;
-    unsigned char* image;
+    int width{ -1 };
+    int height{ -1 };
+    float frameRate{ 30.0f };
+    int frameCounter{ 0 };
+    bool capturing{ false };
+    PAVIFILE aviFile{ nullptr };
+    PAVISTREAM aviStream{ nullptr };
+    PAVISTREAM compAviStream{ nullptr };
+    unsigned char* image{ nullptr };
 };
 
 #endif // _AVICAPTURE_H_

@@ -12,25 +12,14 @@
 
 using namespace cmod;
 
-Material::Material() :
-    diffuse(0.0f, 0.0f, 0.0f),
-    emissive(0.0f, 0.0f, 0.0f),
-    specular(0.0f, 0.0f, 0.0f),
-    specularPower(1.0f),
-    opacity(1.0f),
-    blend(NormalBlend)
+Material::Material()
 {
-    for (int i = 0; i < TextureSemanticMax; ++i)
-    {
-        maps[i] = 0;
-    }
+  maps.fill(nullptr);
 }
 
 
 Material::~Material()
 {
-    for (int i = 0; i < TextureSemanticMax; ++i)
-    {
-        delete maps[i];
-    }
+    for (const auto map : maps)
+        delete map;
 }

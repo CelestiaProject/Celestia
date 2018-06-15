@@ -21,6 +21,7 @@
 #include <cassert>
 #include <sstream>
 #include <iomanip>
+#include <utility>
 #include "celestiacore.h"
 #include "celutil/util.h"
 #include "celengine/astro.h"
@@ -33,21 +34,6 @@ const unsigned int Url::CurrentVersion = 3;
 
 
 const string getEncodedObjectName(const Selection& sel, const CelestiaCore* appCore);
-
-CelestiaState::CelestiaState() :
-    coordSys(ObserverFrame::Universal),
-    observerPosition(0.0, 0.0, 0.0),
-    observerOrientation(Quaternionf::Identity()),
-    fieldOfView(45.0f),
-    tdb(0.0),
-    timeScale(1.0f),
-    pauseState(false),
-    lightTimeDelay(false),
-    labelMode(0),
-    renderFlags(0)
-{
-}
-
 
 void
 CelestiaState::captureState(CelestiaCore* appCore)
@@ -162,11 +148,8 @@ bool CelestiaState::loadState(std::map<std::string, std::string> params)
 #endif
 
 
-Url::Url()
-{};
-
-Url::Url(const std::string& str, CelestiaCore *core):
-    urlStr(str),
+Url::Url(std::string  str, CelestiaCore *core):
+    urlStr(std::move(str)),
     appCore(core),
     pauseState(false),
     timeSource(UseUrlTime),
@@ -194,9 +177,9 @@ Url::Url(const std::string& str, CelestiaCore *core):
         version = 1;
     }
 
-    pos = urlStr.find("/", 6);
+    pos = urlStr.find('/', 6);
     if (pos == std::string::npos)
-        pos = urlStr.find("?", 6);
+        pos = urlStr.find('?', 6);
 
     if (pos == std::string::npos)
         modeStr = urlStr.substr(6);
@@ -244,8 +227,8 @@ Url::Url(const std::string& str, CelestiaCore *core):
     int nb = nbBodies, i=1;
     while (nb != 0 && endPrevious != std::string::npos) {
         std::string bodyName="";
-        pos = urlStr.find("/", endPrevious + 1);
-        if (pos == std::string::npos) pos = urlStr.find("?", endPrevious + 1);
+        pos = urlStr.find('/', endPrevious + 1);
+        if (pos == std::string::npos) pos = urlStr.find('?', endPrevious + 1);
         if (pos == std::string::npos) bodyName = urlStr.substr(endPrevious + 1);
         else bodyName = urlStr.substr(endPrevious + 1, pos - endPrevious - 1);
         endPrevious = pos;
@@ -276,7 +259,7 @@ Url::Url(const std::string& str, CelestiaCore *core):
     fromString = true;
 
     std::string time="";
-    pos = urlStr.find("?", endPrevious + 1);
+    pos = urlStr.find('?', endPrevious + 1);
     if (pos == std::string::npos)
         time = urlStr.substr(endPrevious + 1);
     else time = urlStr.substr(endPrevious + 1, pos - endPrevious -1);
@@ -398,7 +381,7 @@ Url::Url(const CelestiaState& appState, unsigned int _version, TimeSource _timeS
 {
     ostringstream u;
 
-    appCore = NULL;
+    appCore = nullptr;
 
     assert(_version >= 3);
     version = _version;
@@ -677,8 +660,8 @@ std::map<std::string, std::string> Url::parseUrlParams(const std::string& url) c
     pos = url.find("?");
     while (pos != std::string::npos) {
         startName = pos + 1;
-        startValue = url.find("=", startName);
-        pos = url.find("&", pos + 1);
+        startValue = url.find('=', startName);
+        pos = url.find('&', pos + 1);
         if (startValue != std::string::npos) {
              startValue++;
              if (pos != std::string::npos)
@@ -720,26 +703,26 @@ static std::string getBodyName(Universe* universe, Body* body)
 {
     std::string name = body->getName();
     PlanetarySystem* parentSystem = body->getSystem();
-    const Body* parentBody = NULL;
+    const Body* parentBody = nullptr;
 
-    if (parentSystem != NULL)
+    if (parentSystem != nullptr)
         parentBody = parentSystem->getPrimaryBody();
     else
         assert(0);
         // TODO: Figure out why the line below was added.
         //parentBody = body->getOrbitBarycenter();
 
-    while (parentBody != NULL)
+    while (parentBody != nullptr)
     {
         name = parentBody->getName() + ":" + name;
         parentSystem = parentBody->getSystem();
-        if (parentSystem == NULL)
-            parentBody = NULL;
+        if (parentSystem == nullptr)
+            parentBody = nullptr;
         else
             parentBody = parentSystem->getPrimaryBody();
     }
 
-    if (body->getSystem()->getStar() != NULL)
+    if (body->getSystem()->getStar() != nullptr)
     {
         name = universe->getStarCatalog()->getStarName(*(body->getSystem()->getStar())) + ":" + name;
     }
@@ -852,11 +835,6 @@ void Url::goTo()
 }
 
 
-Url::~Url()
-{
-}
-
-
 std::string Url::decodeString(const std::string& str)
 {
     std::string::size_type a=0, b;
@@ -871,7 +849,7 @@ std::string Url::decodeString(const std::string& str)
         sscanf(c_code.c_str(), "%02x", &c);
         out += (char) c;
         a = b + 3;
-        b = str.find("%", a);
+        b = str.find('%', a);
     }
     out += str.substr(a);
 
@@ -883,9 +861,9 @@ string Url::encodeString(const string& str)
 {
     ostringstream enc;
 
-    for (string::const_iterator iter = str.begin(); iter != str.end(); iter++)
+    for (const auto _ch : str)
     {
-        int ch = (unsigned char) *iter;
+        int ch = (unsigned char) _ch;
         bool encode = false;
         if (ch <= 32 || ch >= 128)
         {
@@ -916,7 +894,7 @@ string Url::encodeString(const string& str)
         }
         else
         {
-            enc << *iter;
+            enc << _ch;
         }
     }
 
@@ -956,7 +934,7 @@ getEncodedObjectName(const Selection& selection, const CelestiaCore* appCore)
             name = selection.location()->getName();
             {
                 Body* parentBody = selection.location()->getParentBody();
-                if (parentBody != NULL)
+                if (parentBody != nullptr)
                     name = getBodyName(universe, parentBody) + ":" + name;
             }
             break;

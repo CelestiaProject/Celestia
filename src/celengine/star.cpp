@@ -43,11 +43,11 @@ struct SpectralTypeInfo
 };
 
 
-static StarDetails** normalStarDetails = NULL;
-static StarDetails** whiteDwarfDetails = NULL;
-static StarDetails*  neutronStarDetails = NULL;
-static StarDetails*  blackHoleDetails = NULL;
-static StarDetails*  barycenterDetails = NULL;
+static StarDetails** normalStarDetails = nullptr;
+static StarDetails** whiteDwarfDetails = nullptr;
+static StarDetails*  neutronStarDetails = nullptr;
+static StarDetails*  blackHoleDetails = nullptr;
+static StarDetails*  barycenterDetails = nullptr;
 
 static string DEFAULT_INFO_URL("");
 
@@ -398,7 +398,7 @@ StarDetails::GetStarDetails(const StellarClass& sc)
     case StellarClass::BlackHole:
         return GetBlackHoleDetails();
     default:
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -409,7 +409,7 @@ StarDetails::CreateStandardStarType(const std::string& specTypeName,
                                     float _rotationPeriod)
 
 {
-    StarDetails* details = new StarDetails();
+    auto* details = new StarDetails();
 
     details->setTemperature(_temperature);
     details->setSpectralType(specTypeName);
@@ -429,20 +429,20 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
                                   unsigned int subclass,
                                   StellarClass::LuminosityClass lumClass)
 {
-    if (normalStarDetails == NULL)
+    if (normalStarDetails == nullptr)
     {
         unsigned int nTypes = StellarClass::Spectral_Count * 11 *
             StellarClass::Lum_Count;
         normalStarDetails = new StarDetails*[nTypes];
         for (unsigned int i = 0; i < nTypes; i++)
-            normalStarDetails[i] = NULL;
+            normalStarDetails[i] = nullptr;
     }
 
     if (subclass > StellarClass::Subclass_Unknown)
         subclass = StellarClass::Subclass_Unknown;
 
     uint index = subclass + (specClass + lumClass * StellarClass::Spectral_Count) * 11;
-    if (normalStarDetails[index] == NULL)
+    if (normalStarDetails[index] == nullptr)
     {
         char name[16];
         if ((lumClass == StellarClass::Lum_VI) &&
@@ -641,20 +641,20 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
     unsigned int scIndex = static_cast<unsigned int>(specClass) -
         StellarClass::FirstWDClass;
 
-    if (whiteDwarfDetails == NULL)
+    if (whiteDwarfDetails == nullptr)
     {
         unsigned int nTypes =
             StellarClass::WDClassCount * StellarClass::SubclassCount;
         whiteDwarfDetails = new StarDetails*[nTypes];
         for (unsigned int i = 0; i < nTypes; i++)
-            whiteDwarfDetails[i] = NULL;
+            whiteDwarfDetails[i] = nullptr;
     }
 
     if (subclass > StellarClass::Subclass_Unknown)
         subclass = StellarClass::Subclass_Unknown;
 
     uint index = subclass + (scIndex * StellarClass::SubclassCount);
-    if (whiteDwarfDetails[index] == NULL)
+    if (whiteDwarfDetails[index] == nullptr)
     {
         char name[16];
         sprintf(name, "%s%s",
@@ -695,7 +695,7 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
 StarDetails*
 StarDetails::GetNeutronStarDetails()
 {
-    if (neutronStarDetails == NULL)
+    if (neutronStarDetails == nullptr)
     {
         // The default neutron star has a rotation period of one second,
         // surface temperature of five million K.
@@ -716,7 +716,7 @@ StarDetails::GetNeutronStarDetails()
 StarDetails*
 StarDetails::GetBlackHoleDetails()
 {
-    if (blackHoleDetails == NULL)
+    if (blackHoleDetails == nullptr)
     {
         // Default black hole parameters are based on a one solar mass
         // black hole.
@@ -736,7 +736,7 @@ StarDetails*
 StarDetails::GetBarycenterDetails()
 {
 
-    if (barycenterDetails == NULL)
+    if (barycenterDetails == nullptr)
     {
         barycenterDetails = CreateStandardStarType("Bary", 1.0f, 1.0f);
         barycenterDetails->setRadius(0.001f);
@@ -756,21 +756,7 @@ StarDetails::SetStarTextures(const StarTextureSet& _starTextures)
 
 
 StarDetails::StarDetails() :
-    radius(0.0f),
-    temperature(0.0f),
-    bolometricCorrection(0.0f),
-    knowledge(0u),
-    visible(true),
-    texture(texture), // warning: ‘StarDetails::texture’ is initialized with itself [-Winit-self]
-    geometry(InvalidResource),
-    orbit(NULL),
-    orbitalRadius(0.0f),
-    barycenter(NULL),
-    rotationModel(NULL),
-    semiAxes(1.0f, 1.0f, 1.0f),
-    infoURL(NULL),
-    orbitingStars(NULL),
-    isShared(true)
+    texture(texture) // warning: ‘StarDetails::texture’ is initialized with itself [-Winit-self]
 {
     spectralType[0] = '\0';
 }
@@ -789,13 +775,13 @@ StarDetails::StarDetails(const StarDetails& sd) :
     barycenter(sd.barycenter),
     rotationModel(sd.rotationModel),
     semiAxes(sd.semiAxes),
-    infoURL(NULL),
-    orbitingStars(NULL),
+    infoURL(nullptr),
+    orbitingStars(nullptr),
     isShared(false)
 {
     assert(sd.isShared);
     memcpy(spectralType, sd.spectralType, sizeof(spectralType));
-    if (sd.infoURL != NULL)
+    if (sd.infoURL != nullptr)
         infoURL = new string(*sd.infoURL);
 }
 
@@ -813,10 +799,7 @@ StarDetails::~StarDetails()
 const std::string&
 StarDetails::getInfoURL() const
 {
-    if (infoURL != NULL)
-        return *infoURL;
-    else
-        return DEFAULT_INFO_URL;
+    return infoURL ? *infoURL : DEFAULT_INFO_URL;
 }
 
 
@@ -896,7 +879,7 @@ StarDetails::setOrbitBarycenter(Star* bc)
 void
 StarDetails::setOrbitalRadius(float r)
 {
-    if (orbit != NULL)
+    if (orbit != nullptr)
         orbitalRadius = r;
 }
 
@@ -904,14 +887,14 @@ StarDetails::setOrbitalRadius(float r)
 void
 StarDetails::computeOrbitalRadius()
 {
-    if (orbit == NULL)
+    if (orbit == nullptr)
     {
         orbitalRadius = 0.0f;
     }
     else
     {
         orbitalRadius = (float) astro::kilometersToLightYears(orbit->getBoundingRadius());
-        if (barycenter != NULL)
+        if (barycenter != nullptr)
             orbitalRadius += barycenter->getOrbitalRadius();
     }
 }
@@ -941,7 +924,7 @@ StarDetails::setInfoURL(const string& _infoURL)
         // Save space in the common case--no InfoURL--by not
         // allocating a string.
         delete infoURL;
-        infoURL = NULL;
+        infoURL = nullptr;
     }
     else
     {
@@ -982,7 +965,7 @@ float Star::getRadius() const
     // visual magnitude of the star.
     float solarBMag = SOLAR_BOLOMETRIC_MAG;
     float bmag = getBolometricMagnitude();
-    float boloLum = (float) exp((solarBMag - bmag) / LN_MAG);
+    auto boloLum = (float) exp((solarBMag - bmag) / LN_MAG);
 
     // Use the Stefan-Boltzmann law to estimate the radius of a
     // star from surface temperature and luminosity
@@ -1010,7 +993,7 @@ void
 StarDetails::addOrbitingStar(Star* star)
 {
     assert(!shared());
-    if (orbitingStars == NULL)
+    if (orbitingStars == nullptr)
         orbitingStars = new vector<Star*>();
     orbitingStars->push_back(star);
 }
@@ -1022,7 +1005,7 @@ UniversalCoord
 Star::getPosition(double t) const
 {
     const Orbit* orbit = getOrbit();
-    if (!orbit)
+    if (orbit == nullptr)
     {
         return UniversalCoord::CreateLy(position.cast<double>());
     }
@@ -1030,7 +1013,7 @@ Star::getPosition(double t) const
     {
         const Star* barycenter = getOrbitBarycenter();
 
-        if (barycenter == NULL)
+        if (barycenter == nullptr)
         {
             UniversalCoord barycenterPos = UniversalCoord::CreateLy(position.cast<double>());
             return UniversalCoord(barycenterPos).offsetKm(orbit->positionAtTime(t));
@@ -1048,7 +1031,7 @@ Star::getOrbitBarycenterPosition(double t) const
 {
     const Star* barycenter = getOrbitBarycenter();
 
-    if (barycenter == NULL)
+    if (barycenter == nullptr)
     {
         return UniversalCoord::CreateLy(position.cast<double>());
     }
@@ -1065,7 +1048,7 @@ Vector3d
 Star::getVelocity(double t) const
 {
     const Orbit* orbit = getOrbit();
-    if (!orbit)
+    if (orbit == nullptr)
     {
         // The star doesn't have a defined orbit, so the velocity is just
         // zero. (This will change when stellar proper motion is implemented.)
@@ -1075,7 +1058,7 @@ Star::getVelocity(double t) const
     {
         const Star* barycenter = getOrbitBarycenter();
 
-        if (barycenter == NULL)
+        if (barycenter == nullptr)
         {
             // Star orbit is defined around a fixed point, so the total velocity
             // is just the star's orbit velocity.

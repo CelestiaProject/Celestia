@@ -280,38 +280,38 @@ public:
     void convertFrameCoordinates(const ObserverFrame* newFrame);
 
  private:
-    double         simTime;
+    double              simTime{ 0.0 };
 
     // Position, orientation, and velocity in the observer's reference frame
-    UniversalCoord      position;
-    Eigen::Quaterniond  orientation;
-    Eigen::Vector3d     velocity;
-    Eigen::Vector3d     angularVelocity;
+    UniversalCoord      position{ 0.0, 0.0, 0.0 };
+    Eigen::Quaterniond  orientation{ Eigen::Quaternionf::Identity() };
+    Eigen::Vector3d     velocity{ 0.0, 0.0, 0.0 };
+    Eigen::Vector3d     angularVelocity{ 0.0, 0.0, 0.0 };
 
     // Position and orientation in universal coordinates, derived from the
     // equivalent quantities in the observer reference frame.
-    UniversalCoord positionUniv;
+    UniversalCoord      positionUniv;
     Eigen::Quaterniond  orientationUniv;
 
-    ObserverFrame* frame;
+    ObserverFrame*      frame{ nullptr };
 
-    double          realTime;
+    double              realTime{ 0.0 };
 
-    double          targetSpeed;
-    Eigen::Vector3d targetVelocity;
-    Eigen::Vector3d initialVelocity;
-    double          beginAccelTime;
+    double          	targetSpeed{ 0.0 };
+    Eigen::Vector3d 	targetVelocity{ 0.0, 0.0, 0.0 };
+    Eigen::Vector3d 	initialVelocity{ 0.0, 0.0, 0.0 };
+    double          	beginAccelTime{ 0.0 };
 
-    ObserverMode     observerMode;
-    JourneyParams    journey;
-    Selection        trackObject;
+    ObserverMode     	observerMode{ Free };
+    JourneyParams    	journey;
+    Selection        	trackObject;
 
-    Eigen::Quaterniond trackingOrientation;   // orientation prior to selecting tracking
+    Eigen::Quaterniond 	trackingOrientation{ Eigen::Quaternionf::Identity() };   // orientation prior to selecting tracking
 
-    float fov;
-    bool reverseFlag;
+    float fov{ (float) (PI / 4.0) };
+    bool reverseFlag{ false };
 
-    uint32 locationFilter;
+    uint32 locationFilter{ ~0u };
     std::string displayedSurface;
 };
 

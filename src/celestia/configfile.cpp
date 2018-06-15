@@ -27,14 +27,14 @@ static unsigned int getUint(Hash* params,
     double value = 0.0;
     if (params->getNumber(paramName, value))
         return (unsigned int) value;
-    else
-        return defaultValue;
+
+    return defaultValue;
 }
 
 
-CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
+CelestiaConfig* ReadCelestiaConfig(const string& filename, CelestiaConfig *config)
 {
-    ifstream configFile(filename.c_str());
+    ifstream configFile(filename);
     if (!configFile.good())
     {
         DPRINTF(0, "Error opening config file '%s'.\n", filename.c_str());
@@ -59,7 +59,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     }
 
     Value* configParamsValue = parser.readValue();
-    if (configParamsValue == NULL || configParamsValue->getType() != Value::HashType)
+    if (configParamsValue == nullptr || configParamsValue->getType() != Value::HashType)
     {
         DPRINTF(0, "%s: Bad configuration file.\n", filename.c_str());
         return config;
@@ -67,7 +67,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
 
     Hash* configParams = configParamsValue->getHash();
 
-    if (config == NULL)
+    if (config == nullptr)
         config = new CelestiaConfig();
 
 #ifdef CELX
@@ -139,7 +139,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     config->consoleLogRows = getUint(configParams, "LogSize", 200);
 
     Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs");
-    if (solarSystemsVal != NULL)
+    if (solarSystemsVal != nullptr)
     {
         if (solarSystemsVal->getType() != Value::ArrayType)
         {
@@ -148,12 +148,11 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
         else
         {
             Array* solarSystems = solarSystemsVal->getArray();
-            // assert(solarSystems != NULL);
+            // assert(solarSystems != nullptr);
 
-            for (Array::iterator iter = solarSystems->begin(); iter != solarSystems->end(); iter++)
+            for (const auto catalogNameVal : *solarSystems)
             {
-                Value* catalogNameVal = *iter;
-                // assert(catalogNameVal != NULL);
+                // assert(catalogNameVal != nullptr);
                 if (catalogNameVal->getType() == Value::StringType)
                 {
                     config->solarSystemFiles.insert(config->solarSystemFiles.end(),
@@ -169,7 +168,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     }
 
     Value* starCatalogsVal = configParams->getValue("StarCatalogs");
-    if (starCatalogsVal != NULL)
+    if (starCatalogsVal != nullptr)
     {
         if (starCatalogsVal->getType() != Value::ArrayType)
         {
@@ -179,13 +178,11 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
         else
         {
             Array* starCatalogs = starCatalogsVal->getArray();
-            assert(starCatalogs != NULL);
+            assert(starCatalogs != nullptr);
 
-            for (Array::iterator iter = starCatalogs->begin();
-                 iter != starCatalogs->end(); iter++)
+            for (const auto catalogNameVal : *starCatalogs)
             {
-                Value* catalogNameVal = *iter;
-                assert(catalogNameVal != NULL);
+                assert(catalogNameVal != nullptr);
 
                 if (catalogNameVal->getType() == Value::StringType)
                 {
@@ -201,7 +198,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     }
 
     Value* dsoCatalogsVal = configParams->getValue("DeepSkyCatalogs");
-    if (dsoCatalogsVal != NULL)
+    if (dsoCatalogsVal != nullptr)
     {
         if (dsoCatalogsVal->getType() != Value::ArrayType)
         {
@@ -211,13 +208,11 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
         else
         {
             Array* dsoCatalogs = dsoCatalogsVal->getArray();
-            assert(dsoCatalogs != NULL);
+            assert(dsoCatalogs != nullptr);
 
-            for (Array::iterator iter = dsoCatalogs->begin();
-                 iter != dsoCatalogs->end(); iter++)
+            for (const auto catalogNameVal : *dsoCatalogs)
             {
-                Value* catalogNameVal = *iter;
-                assert(catalogNameVal != NULL);
+                assert(catalogNameVal != nullptr);
 
                 if (catalogNameVal->getType() == Value::StringType)
                 {
@@ -233,17 +228,15 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     }
 
     Value* extrasDirsVal = configParams->getValue("ExtrasDirectories");
-    if (extrasDirsVal != NULL)
+    if (extrasDirsVal != nullptr)
     {
         if (extrasDirsVal->getType() == Value::ArrayType)
         {
             Array* extrasDirs = extrasDirsVal->getArray();
-            assert(extrasDirs != NULL);
+            assert(extrasDirs != nullptr);
 
-            for (Array::iterator iter = extrasDirs->begin();
-                 iter != extrasDirs->end(); iter++)
+            for (const auto dirNameVal : *extrasDirs)
             {
-                Value* dirNameVal = *iter;
                 if (dirNameVal->getType() == Value::StringType)
                 {
                     config->extrasDirs.insert(config->extrasDirs.end(),
@@ -268,7 +261,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     }
 
     Value* ignoreExtVal = configParams->getValue("IgnoreGLExtensions");
-    if (ignoreExtVal != NULL)
+    if (ignoreExtVal != nullptr)
     {
         if (ignoreExtVal->getType() != Value::ArrayType)
         {
@@ -279,10 +272,8 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
         {
             Array* ignoreExt = ignoreExtVal->getArray();
 
-            for (Array::iterator iter = ignoreExt->begin();
-                 iter != ignoreExt->end(); iter++)
+            for (const auto extVal : *ignoreExt)
             {
-                Value* extVal = *iter;
                 if (extVal->getType() == Value::StringType)
                 {
                     config->ignoreGLExtensions.push_back(extVal->getString());
@@ -296,7 +287,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     }
 
     Value* starTexValue = configParams->getValue("StarTextures");
-    if (starTexValue != NULL)
+    if (starTexValue != nullptr)
     {
         if (starTexValue->getType() != Value::HashType)
         {
@@ -364,7 +355,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
 float
 CelestiaConfig::getFloatValue(const string& name)
 {
-    assert(params != NULL);
+    assert(params != nullptr);
 
     double x = 0.0;
     params->getNumber(name, x);
@@ -376,10 +367,10 @@ CelestiaConfig::getFloatValue(const string& name)
 const string
 CelestiaConfig::getStringValue(const string& name)
 {
-    assert(params != NULL);
+    assert(params != nullptr);
 
     Value* v = params->getValue(name);
-    if (v == NULL || v->getType() != Value::StringType)
+    if (v == nullptr || v->getType() != Value::StringType)
         return string("");
 
     return v->getString();

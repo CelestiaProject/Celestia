@@ -230,11 +230,6 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 }
 
 
-PreferencesDialog::~PreferencesDialog()
-{
-}
-
-
 static void setRenderFlag(CelestiaCore* appCore,
                           int flag,
                           int state)

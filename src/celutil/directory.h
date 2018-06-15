@@ -16,8 +16,8 @@
 class EnumFilesHandler
 {
  public:
-    EnumFilesHandler();
-    virtual ~EnumFilesHandler() {};
+    EnumFilesHandler() = default;
+    virtual ~EnumFilesHandler() = default;
 
     void pushDir(const std::string&);
     void popDir();
@@ -32,8 +32,8 @@ class EnumFilesHandler
 class Directory
 {
  public:
-    Directory() {};
-    virtual ~Directory() {};
+    Directory() = default;
+    virtual ~Directory() = default;
 
     virtual bool nextFile(std::string&) = 0;
 

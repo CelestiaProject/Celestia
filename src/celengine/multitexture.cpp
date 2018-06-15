@@ -64,7 +64,7 @@ Texture* MultiResTexture::find(unsigned int resolution)
     TextureManager* texMan = GetTextureManager();
 
     Texture* res = texMan->find(tex[resolution]);
-    if (res != NULL)
+    if (res != nullptr)
         return res;
 
     // Preferred resolution isn't available; try the second choice
@@ -90,7 +90,7 @@ Texture* MultiResTexture::find(unsigned int resolution)
 
     tex[resolution] = tex[secondChoice];
     res = texMan->find(tex[resolution]);
-    if (res != NULL)
+    if (res != nullptr)
         return res;
 
     tex[resolution] = tex[lastResort];

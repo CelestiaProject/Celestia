@@ -138,7 +138,7 @@ public:
     char* data;
     kern_return_t err = vm_allocate((vm_map_t) mach_task_self(), (vm_address_t*) &data, size, TRUE);
 
-    return (err == KERN_SUCCESS) ? new MemoryBuffer(data, size) : NULL;
+    return (err == KERN_SUCCESS) ? new MemoryBuffer(data, size) : nullptr;
   }
 };
 
@@ -151,7 +151,7 @@ public:
     MemoryBuffer* data_buffer;
     unsigned long data_size;
 
-    Datafile() : ref_count(1), file(NULL), data_buffer(NULL), data_size(0)
+    Datafile() : ref_count(1), file(nullptr), data_buffer(nullptr), data_size(0)
     {
     }
 
@@ -194,7 +194,7 @@ public:
 
     int Read()
     {
-        if ((file == NULL) || (data_buffer == NULL) || (data_size == 0)) {
+        if ((file == nullptr) || (data_buffer == nullptr) || (data_size == 0)) {
             DPRINTF(0,"Datafile::Read() - No file open, file of zero size, or no valid MemoryBuffer\n");
             Reset();
             return 0;
@@ -215,7 +215,7 @@ public:
     {
         if (file) {
             fclose(file);
-            file = NULL;
+            file = nullptr;
         }
     }
 
@@ -224,7 +224,7 @@ public:
         Close();
         if (data_buffer) {
             data_buffer->Release();
-            data_buffer = NULL;
+            data_buffer = nullptr;
         }
     }
 };
@@ -240,9 +240,9 @@ class CGBuffer
     void Init()
     {
         ref_count = 1;
-        buffer = NULL;
-        image_ref = NULL;
-        context_ref = NULL;
+        buffer = nullptr;
+        image_ref = nullptr;
+        context_ref = nullptr;
         image_finished = false;
     }
 
@@ -251,13 +251,13 @@ class CGBuffer
         if (context_ref)
         {
             CGContextRelease(context_ref);
-            context_ref = NULL;
+            context_ref = nullptr;
         }
 
         if (buffer)
         {
             buffer->Release();
-            buffer = NULL;
+            buffer = nullptr;
         }
 
         size_t buffer_rowbytes = (size_t)(image_size.width * ((image_depth == 8) ? 1 : 4)); //CGImageGetBytesPerRow(image_ref);
@@ -287,7 +287,7 @@ class CGBuffer
         }
 
         CGColorSpaceRelease(colorspace_ref);
-        colorspace_ref = NULL;
+        colorspace_ref = nullptr;
 
         return !!context_ref;
     }
@@ -343,15 +343,15 @@ public:
 
         file.Close();
 
-        CGDataProviderRef src_provider_ref = CGDataProviderCreateWithData(this, file.data_buffer->data, file.data_size, NULL);
+        CGDataProviderRef src_provider_ref = CGDataProviderCreateWithData(this, file.data_buffer->data, file.data_size, nullptr);
 
         if (!src_provider_ref)
             return false;
 
-        image_ref = CGImageCreateWithJPEGDataProvider(src_provider_ref, NULL, true, kCGRenderingIntentDefault);
+        image_ref = CGImageCreateWithJPEGDataProvider(src_provider_ref, nullptr, true, kCGRenderingIntentDefault);
 
         CGDataProviderRelease(src_provider_ref);
-        src_provider_ref = NULL;
+        src_provider_ref = nullptr;
 
         if (!image_ref)
             return false;
@@ -373,10 +373,10 @@ public:
         RenderCGImage(CGFrame(image_size));
 
         CGContextRelease(context_ref);
-        context_ref = NULL;
+        context_ref = nullptr;
 
         CGImageRelease(image_ref);
-        image_ref = NULL;
+        image_ref = nullptr;
 
         file.Reset();
 
@@ -388,19 +388,19 @@ public:
         if (buffer)
         {
             buffer->Release();
-            buffer = NULL;
+            buffer = nullptr;
         }
 
         if (image_ref)
         {
             CGImageRelease(image_ref);
-            image_ref = NULL;
+            image_ref = nullptr;
         }
 
         if (context_ref)
         {
             CGContextRelease(context_ref);
-            context_ref = NULL;
+            context_ref = nullptr;
         }
     }
 };

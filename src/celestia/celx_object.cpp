@@ -28,27 +28,27 @@ static MarkerRepresentation::Symbol parseMarkerSymbol(const string& name)
 {
     if (compareIgnoringCase(name, "diamond") == 0)
         return MarkerRepresentation::Diamond;
-    else if (compareIgnoringCase(name, "triangle") == 0)
+    if (compareIgnoringCase(name, "triangle") == 0)
         return MarkerRepresentation::Triangle;
-    else if (compareIgnoringCase(name, "square") == 0)
+    if (compareIgnoringCase(name, "square") == 0)
         return MarkerRepresentation::Square;
-    else if (compareIgnoringCase(name, "filledsquare") == 0)
+    if (compareIgnoringCase(name, "filledsquare") == 0)
         return MarkerRepresentation::FilledSquare;
-    else if (compareIgnoringCase(name, "plus") == 0)
+    if (compareIgnoringCase(name, "plus") == 0)
         return MarkerRepresentation::Plus;
-    else if (compareIgnoringCase(name, "x") == 0)
+    if (compareIgnoringCase(name, "x") == 0)
         return MarkerRepresentation::X;
-    else if (compareIgnoringCase(name, "leftarrow") == 0)
+    if (compareIgnoringCase(name, "leftarrow") == 0)
         return MarkerRepresentation::LeftArrow;
-    else if (compareIgnoringCase(name, "rightarrow") == 0)
+    if (compareIgnoringCase(name, "rightarrow") == 0)
         return MarkerRepresentation::RightArrow;
-    else if (compareIgnoringCase(name, "uparrow") == 0)
+    if (compareIgnoringCase(name, "uparrow") == 0)
         return MarkerRepresentation::UpArrow;
-    else if (compareIgnoringCase(name, "downarrow") == 0)
+    if (compareIgnoringCase(name, "downarrow") == 0)
         return MarkerRepresentation::DownArrow;
-    else if (compareIgnoringCase(name, "circle") == 0)
+    if (compareIgnoringCase(name, "circle") == 0)
         return MarkerRepresentation::Circle;
-    else if (compareIgnoringCase(name, "disk") == 0)
+    if (compareIgnoringCase(name, "disk") == 0)
         return MarkerRepresentation::Disk;
     else
         return MarkerRepresentation::Diamond;
@@ -80,7 +80,7 @@ static Selection* this_object(lua_State* l)
     CelxLua celx(l);
 
     Selection* sel = to_object(l, 1);
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("Bad position object!");
     }
@@ -118,11 +118,11 @@ static int object_setvisible(lua_State* l)
 
     Selection* sel = this_object(l);
     bool visible = celx.safeGetBoolean(2, AllErrors, "Argument to object:setvisible() must be a boolean");
-    if (sel->body() != NULL)
+    if (sel->body() != nullptr)
     {
         sel->body()->setVisible(visible);
     }
-    else if (sel->deepsky() != NULL)
+    else if (sel->deepsky() != nullptr)
     {
         sel->deepsky()->setVisible(visible);
     }
@@ -142,7 +142,7 @@ static int object_setorbitcolor(lua_State* l)
     float b = (float) celx.safeGetNumber(4, WrongType, "Argument 3 to object:setorbitcolor() must be a number", 0.0);
     Color orbitColor(r, g, b);
 
-    if (sel->body() != NULL)
+    if (sel->body() != nullptr)
     {
         sel->body()->setOrbitColor(orbitColor);
     }
@@ -158,7 +158,7 @@ static int object_orbitcoloroverridden(lua_State* l)
 
     bool isOverridden = false;
     Selection* sel = this_object(l);
-    if (sel->body() != NULL)
+    if (sel->body() != nullptr)
     {
         isOverridden = sel->body()->isOrbitColorOverridden();
     }
@@ -177,7 +177,7 @@ static int object_setorbitcoloroverridden(lua_State* l)
     Selection* sel = this_object(l);
     bool override = celx.safeGetBoolean(2, AllErrors, "Argument to object:setorbitcoloroverridden() must be a boolean");
 
-    if (sel->body() != NULL)
+    if (sel->body() != nullptr)
     {
         sel->body()->setOrbitColorOverridden(override);
     }
@@ -194,7 +194,7 @@ static int object_orbitvisibility(lua_State* l)
     Body::VisibilityPolicy visibility = Body::UseClassVisibility;
 
     Selection* sel = this_object(l);
-    if (sel->body() != NULL)
+    if (sel->body() != nullptr)
     {
         visibility = sel->body()->getOrbitVisibility();
     }
@@ -234,7 +234,7 @@ static int object_setorbitvisibility(lua_State* l)
     {
         Body::VisibilityPolicy visibility = static_cast<Body::VisibilityPolicy>(CelxLua::OrbitVisibilityMap[key]);
 
-        if (sel->body() != NULL)
+        if (sel->body() != nullptr)
         {
             sel->body()->setOrbitVisibility(visibility);
         }
@@ -278,14 +278,14 @@ static int object_addreferencemark(lua_State* l)
     lua_gettable(l, 2);
     const char* rmcolorstring = celx.safeGetString(3, NoErrors, "");
     Color rmcolor(0.0f, 1.0f, 0.0f);
-    if (rmcolorstring != NULL)
+    if (rmcolorstring != nullptr)
         Color::parse(rmcolorstring, rmcolor);
     lua_settop(l, 2);
 
     lua_pushstring(l, "tag");
     lua_gettable(l, 2);
     const char* rmtag = celx.safeGetString(3, NoErrors, "");
-    if (rmtag == NULL)
+    if (rmtag == nullptr)
         rmtag = rmtype;
     lua_settop(l, 2);
 
@@ -294,7 +294,7 @@ static int object_addreferencemark(lua_State* l)
     Selection* rmtarget = to_object(l, 3);
     lua_settop(l, 2);
 
-    if (rmtype != NULL)
+    if (rmtype != nullptr)
     {
         body->removeReferenceMark(rmtype);
 
@@ -321,7 +321,7 @@ static int object_addreferencemark(lua_State* l)
             SunDirectionArrow* arrow = new SunDirectionArrow(*body);
             arrow->setTag(rmtag);
             arrow->setSize(rmsize);
-            if (rmcolorstring != NULL)
+            if (rmcolorstring != nullptr)
                 arrow->setColor(rmcolor);
             body->addReferenceMark(arrow);
         }
@@ -330,7 +330,7 @@ static int object_addreferencemark(lua_State* l)
             VelocityVectorArrow* arrow = new VelocityVectorArrow(*body);
             arrow->setTag(rmtag);
             arrow->setSize(rmsize);
-            if (rmcolorstring != NULL)
+            if (rmcolorstring != nullptr)
                 arrow->setColor(rmcolor);
             body->addReferenceMark(arrow);
         }
@@ -339,26 +339,26 @@ static int object_addreferencemark(lua_State* l)
             SpinVectorArrow* arrow = new SpinVectorArrow(*body);
             arrow->setTag(rmtag);
             arrow->setSize(rmsize);
-            if (rmcolorstring != NULL)
+            if (rmcolorstring != nullptr)
                 arrow->setColor(rmcolor);
             body->addReferenceMark(arrow);
         }
-        else if (compareIgnoringCase(rmtype, "body to body direction") == 0 && rmtarget != NULL)
+        else if (compareIgnoringCase(rmtype, "body to body direction") == 0 && rmtarget != nullptr)
         {
             BodyToBodyDirectionArrow* arrow = new BodyToBodyDirectionArrow(*body, *rmtarget);
             arrow->setTag(rmtag);
             arrow->setSize(rmsize);
-            if (rmcolorstring != NULL)
+            if (rmcolorstring != nullptr)
                 arrow->setColor(rmcolor);
             body->addReferenceMark(arrow);
         }
-        else if (compareIgnoringCase(rmtype, "visible region") == 0 && rmtarget != NULL)
+        else if (compareIgnoringCase(rmtype, "visible region") == 0 && rmtarget != nullptr)
         {
             VisibleRegion* region = new VisibleRegion(*body, *rmtarget);
             region->setTag(rmtag);
             if (rmopacity >= 0.0f)
                 region->setOpacity(rmopacity);
-            if (rmcolorstring != NULL)
+            if (rmcolorstring != nullptr)
                 region->setColor(rmcolor);
             body->addReferenceMark(region);
         }
@@ -412,7 +412,7 @@ static int object_setradius(lua_State* l)
     celx.checkArgs(2, 2, "One argument expected to object:setradius()");
 
     Selection* sel = this_object(l);
-    if (sel->body() != NULL)
+    if (sel->body() != nullptr)
     {
         Body* body = sel->body();
         float iradius = body->getRadius();
@@ -422,7 +422,7 @@ static int object_setradius(lua_State* l)
             body->setSemiAxes(body->getSemiAxes() * ((float) radius / iradius));
         }
 
-        if (body->getRings() != NULL)
+        if (body->getRings() != nullptr)
         {
             RingSystem rings(0.0f, 0.0f);
             rings = *body->getRings();
@@ -551,7 +551,7 @@ static int object_spectraltype(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to function object:spectraltype");
 
     Selection* sel = this_object(l);
-    if (sel->star() != NULL)
+    if (sel->star() != nullptr)
     {
         char buf[16];
         strncpy(buf, sel->star()->getSpectralType(), sizeof buf);
@@ -574,7 +574,7 @@ static int object_getinfo(lua_State* l)
     lua_newtable(l);
 
     Selection* sel = this_object(l);
-    if (sel->star() != NULL)
+    if (sel->star() != nullptr)
     {
         Star* star = sel->star();
         celx.setTable("type", "star");
@@ -590,10 +590,10 @@ static int object_getinfo(lua_State* l)
         celx.setTable("bolometricMagnitude", (lua_Number)star->getBolometricMagnitude());
 
         const Orbit* orbit = star->getOrbit();
-        if (orbit != NULL)
+        if (orbit != nullptr)
             celx.setTable("orbitPeriod", orbit->getPeriod());
 
-        if (star->getOrbitBarycenter() != NULL)
+        if (star->getOrbitBarycenter() != nullptr)
         {
             Selection parent((Star*)(star->getOrbitBarycenter()));
             lua_pushstring(l, "parent");
@@ -601,7 +601,7 @@ static int object_getinfo(lua_State* l)
             lua_settable(l, -3);
         }
     }
-    else if (sel->body() != NULL)
+    else if (sel->body() != nullptr)
     {
         Body* body = sel->body();
         const char* tname = "unknown";
@@ -642,7 +642,7 @@ static int object_getinfo(lua_State* l)
         // TODO: atmosphere, surfaces ?
 
         PlanetarySystem* system = body->getSystem();
-        if (system->getPrimaryBody() != NULL)
+        if (system->getPrimaryBody() != nullptr)
         {
             Selection parent(system->getPrimaryBody());
             lua_pushstring(l, "parent");
@@ -658,7 +658,7 @@ static int object_getinfo(lua_State* l)
         }
 
         lua_pushstring(l, "hasRings");
-        lua_pushboolean(l, body->getRings() != NULL);
+        lua_pushboolean(l, body->getRings() != nullptr);
         lua_settable(l, -3);
 
         // TIMELINE-TODO: The code to retrieve orbital and rotation periods only works
@@ -671,14 +671,14 @@ static int object_getinfo(lua_State* l)
         const Orbit* orbit = body->getOrbit(0.0);
         celx.setTable("orbitPeriod", orbit->getPeriod());
         Atmosphere* atmosphere = body->getAtmosphere();
-        if (atmosphere != NULL)
+        if (atmosphere != nullptr)
         {
             celx.setTable("atmosphereHeight", (double)atmosphere->height);
             celx.setTable("atmosphereCloudHeight", (double)atmosphere->cloudHeight);
             celx.setTable("atmosphereCloudSpeed", (double)atmosphere->cloudSpeed);
         }
     }
-    else if (sel->deepsky() != NULL)
+    else if (sel->deepsky() != nullptr)
     {
         DeepSkyObject* deepsky = sel->deepsky();
         const char* objTypeName = deepsky->getObjTypeName();
@@ -694,7 +694,7 @@ static int object_getinfo(lua_State* l)
         celx.setTable("absoluteMagnitude", (lua_Number)deepsky->getAbsoluteMagnitude());
         celx.setTable("radius", (lua_Number)deepsky->getRadius());
     }
-    else if (sel->location() != NULL)
+    else if (sel->location() != nullptr)
     {
         celx.setTable("type", "location");
         Location* location = sel->location();
@@ -705,19 +705,15 @@ static int object_getinfo(lua_State* l)
 
         uint32 featureType = location->getFeatureType();
         string featureName("Unknown");
-        for (CelxLua::FlagMap::const_iterator it = CelxLua::LocationFlagMap.begin();
-             it != CelxLua::LocationFlagMap.end(); it++)
-        {
-            if (it->second == featureType)
-            {
-                featureName = it->first;
-                break;
-            }
-        }
+        auto iter = std::find_if(CelxLua::LocationFlagMap.begin(),
+                                 CelxLua::LocationFlagMap.end(),
+                                 [&featureType](auto& it){ return it.second == featureType; });
+        if (iter != CelxLua::LocationFlagMap.end())
+            featureName = iter->first;
         celx.setTable("featureType", featureName.c_str());
 
         Body* parent = location->getParentBody();
-        if (parent != NULL)
+        if (parent != nullptr)
         {
             Selection selection(parent);
             lua_pushstring(l, "parent");
@@ -738,7 +734,7 @@ static int object_absmag(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to function object:absmag");
 
     Selection* sel = this_object(l);
-    if (sel->star() != NULL)
+    if (sel->star() != nullptr)
         lua_pushnumber(l, sel->star()->getAbsoluteMagnitude());
     else
         lua_pushnil(l);
@@ -756,12 +752,12 @@ static int object_mark(lua_State* l)
 
     Color markColor(0.0f, 1.0f, 0.0f);
     const char* colorString = celx.safeGetString(2, WrongType, "First argument to object:mark must be a string");
-    if (colorString != NULL)
+    if (colorString != nullptr)
         Color::parse(colorString, markColor);
 
     MarkerRepresentation::Symbol markSymbol = MarkerRepresentation::Diamond;
     const char* markerString = celx.safeGetString(3, WrongType, "Second argument to object:mark must be a string");
-    if (markerString != NULL)
+    if (markerString != nullptr)
         markSymbol = parseMarkerSymbol(markerString);
 
     float markSize = (float)celx.safeGetNumber(4, WrongType, "Third arg to object:mark must be a number", 10.0);
@@ -780,7 +776,7 @@ static int object_mark(lua_State* l)
     markColorAlpha = Color(markColor, markAlpha);
 
     const char* markLabel = celx.safeGetString(6, WrongType, "Fifth argument to object:mark must be a string");
-    if (markLabel == NULL)
+    if (markLabel == nullptr)
         markLabel = "";
 
     bool occludable = celx.safeGetBoolean(7, WrongType, "Sixth argument to object:mark must be a boolean", true);
@@ -838,7 +834,7 @@ static int object_getchildren(lua_State* l)
     Simulation* sim = appCore->getSimulation();
 
     lua_newtable(l);
-    if (sel->star() != NULL)
+    if (sel->star() != nullptr)
     {
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star()->getCatalogNumber());
@@ -854,10 +850,10 @@ static int object_getchildren(lua_State* l)
             }
         }
     }
-    else if (sel->body() != NULL)
+    else if (sel->body() != nullptr)
     {
         const PlanetarySystem* satellites = sel->body()->getSatellites();
-        if (satellites != NULL && satellites->getSystemSize() != 0)
+        if (satellites != nullptr && satellites->getSystemSize() != 0)
         {
             for (int i = 0; i < satellites->getSystemSize(); i++)
             {
@@ -881,7 +877,7 @@ static int object_preloadtexture(lua_State* l)
     Renderer* renderer = appCore->getRenderer();
     Selection* sel = this_object(l);
 
-    if (sel->body() != NULL && renderer != NULL)
+    if (sel->body() != nullptr && renderer != nullptr)
     {
         LuaState* luastate = celx.getLuaStateObject();
         // make sure we don't timeout because of texture-loading:
@@ -928,7 +924,7 @@ static int object_catalognumber(lua_State* l)
     bool validCatalog = false;
     bool useHIPPARCOS = false;
     StarDatabase::Catalog catalog = StarDatabase::HenryDraper;
-    if (catalogName != NULL)
+    if (catalogName != nullptr)
     {
         if (compareIgnoringCase(catalogName, "HD") == 0)
         {
@@ -948,7 +944,7 @@ static int object_catalognumber(lua_State* l)
     }
 
     uint32 catalogNumber = Star::InvalidCatalogNumber;
-    if (sel->star() != NULL && validCatalog)
+    if (sel->star() != nullptr && validCatalog)
     {
         uint32 internalNumber = sel->star()->getCatalogNumber();
 
@@ -980,7 +976,7 @@ static int object_locations_iter(lua_State* l)
 {
     CelxLua celx(l);
     Selection* sel = to_object(l, lua_upvalueindex(1));
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("Bad object!");
         return 0;
@@ -989,32 +985,30 @@ static int object_locations_iter(lua_State* l)
     // Get the current counter value
     uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
 
-    vector<Location*>* locations = NULL;
-    if (sel->body() != NULL)
+    vector<Location*>* locations = nullptr;
+    if (sel->body() != nullptr)
     {
         locations = sel->body()->getLocations();
     }
 
-    if (locations != NULL && i < locations->size())
+    if (locations != nullptr && i < locations->size())
     {
         // Increment the counter
         lua_pushnumber(l, i + 1);
         lua_replace(l, lua_upvalueindex(2));
 
         Location* loc = locations->at(i);
-        if (loc == NULL)
+        if (loc == nullptr)
             lua_pushnil(l);
         else
             object_new(l, Selection(loc));
 
         return 1;
     }
-    else
-    {
-        // Return nil when we've enumerated all the locations (or if
-        // there were no locations associated with the object.)
-        return 0;
-    }
+
+    // Return nil when we've enumerated all the locations (or if
+    // there were no locations associated with the object.)
+    return 0;
 }
 
 
@@ -1120,7 +1114,7 @@ static int object_orbitframe(lua_State* l)
     double t = celx.safeGetNumber(2, WrongType, "Time expected as argument to object:orbitframe",
                                   appCore->getSimulation()->getTime());
 
-    if (sel->body() == NULL)
+    if (sel->body() == nullptr)
     {
         // The default universal frame
         celx.newFrame(ObserverFrame());
@@ -1161,7 +1155,7 @@ static int object_bodyframe(lua_State* l)
     double t = celx.safeGetNumber(2, WrongType, "Time expected as argument to object:orbitframe",
                                   appCore->getSimulation()->getTime());
 
-    if (sel->body() == NULL)
+    if (sel->body() == nullptr)
     {
         // The default universal frame
         celx.newFrame(ObserverFrame());
@@ -1203,7 +1197,7 @@ static int object_getphase(lua_State* l)
     double t = celx.safeGetNumber(2, WrongType, "Time expected as argument to object:getphase",
                                   appCore->getSimulation()->getTime());
 
-    if (sel->body() == NULL)
+    if (sel->body() == nullptr)
     {
         lua_pushnil(l);
     }
@@ -1230,7 +1224,7 @@ static int object_phases_iter(lua_State* l)
 {
     CelxLua celx(l);
     Selection* sel = to_object(l, lua_upvalueindex(1));
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("Bad object!");
         return 0;
@@ -1239,13 +1233,13 @@ static int object_phases_iter(lua_State* l)
     // Get the current counter value
     uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
 
-    const Timeline* timeline = NULL;
-    if (sel->body() != NULL)
+    const Timeline* timeline = nullptr;
+    if (sel->body() != nullptr)
     {
         timeline = sel->body()->getTimeline();
     }
 
-    if (timeline != NULL && i < timeline->phaseCount())
+    if (timeline != nullptr && i < timeline->phaseCount())
     {
         // Increment the counter
         lua_pushnumber(l, i + 1);
@@ -1256,12 +1250,10 @@ static int object_phases_iter(lua_State* l)
 
         return 1;
     }
-    else
-    {
-        // Return nil when we've enumerated all the phases (or if
-        // if the object wasn't a solar system body.)
-        return 0;
-    }
+
+    // Return nil when we've enumerated all the phases (or if
+    // if the object wasn't a solar system body.)
+    return 0;
 }
 
 
@@ -1351,11 +1343,11 @@ static int object_setatmosphere(lua_State* l)
     Selection* sel = this_object(l);
     //CelestiaCore* appCore = getAppCore(l, AllErrors);
 
-    if (sel->body() != NULL)
+    if (sel->body() != nullptr)
     {
         Body* body = sel->body();
         Atmosphere* atmosphere = body->getAtmosphere();
-        if (atmosphere != NULL)
+        if (atmosphere != nullptr)
         {
             float r = (float) celx.safeGetNumber(2, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
             float g = (float) celx.safeGetNumber(3, AllErrors, "Arguments to observer:setatmosphere() must be numbers");

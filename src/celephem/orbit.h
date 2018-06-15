@@ -18,7 +18,7 @@ class OrbitSampleProc;
 class Orbit
 {
  public:
-    virtual ~Orbit() {};
+    virtual ~Orbit() = default;
 
     /*! Return the position in the orbit's reference frame at the specified
      * time (TDB). Units are kilometers.
@@ -52,7 +52,7 @@ class Orbit
         double maxStep;
     };
 
-    void adaptiveSample(double startTime, double endTime, OrbitSampleProc& proc, const AdaptiveSamplingParameters& samplingParameters) const;
+    void adaptiveSample(double startTime, double endTime, OrbitSampleProc& proc, const AdaptiveSamplingParameters& samplingParams) const;
 };
 
 
@@ -61,7 +61,7 @@ class EllipticalOrbit : public Orbit
  public:
     EllipticalOrbit(double, double, double, double, double, double, double,
                     double _epoch = 2451545.0);
-    virtual ~EllipticalOrbit() {};
+    virtual ~EllipticalOrbit() = default;
 
     // Compute the orbit for a specified Julian date
     virtual Eigen::Vector3d positionAtTime(double) const;
@@ -90,7 +90,7 @@ class EllipticalOrbit : public Orbit
 class OrbitSampleProc
 {
  public:
-    virtual ~OrbitSampleProc() {};
+    virtual ~OrbitSampleProc() = default;
 
     virtual void sample(double t, const Eigen::Vector3d& position, const Eigen::Vector3d& velocity) = 0;
 };
@@ -107,8 +107,8 @@ class OrbitSampleProc
 class CachingOrbit : public Orbit
 {
  public:
-    CachingOrbit();
-    virtual ~CachingOrbit();
+    CachingOrbit() = default;
+    virtual ~CachingOrbit() = default;
 
     virtual Eigen::Vector3d computePosition(double jd) const = 0;
     virtual Eigen::Vector3d computeVelocity(double jd) const;
@@ -121,9 +121,9 @@ class CachingOrbit : public Orbit
  private:
     mutable Eigen::Vector3d lastPosition;
     mutable Eigen::Vector3d lastVelocity;
-    mutable double lastTime;
-    mutable bool positionCacheValid;
-    mutable bool velocityCacheValid;
+    mutable double lastTime{ -1.0e30 };
+    mutable bool positionCacheValid{ false };
+    mutable bool velocityCacheValid{ false };
 };
 
 
@@ -167,7 +167,7 @@ class SynchronousOrbit : public Orbit
 {
  public:
     SynchronousOrbit(const Body& _body, const Eigen::Vector3d& _position);
-    virtual ~SynchronousOrbit();
+    virtual ~SynchronousOrbit() = default;
 
     virtual Eigen::Vector3d positionAtTime(double jd) const;
     virtual double getPeriod() const;
@@ -187,7 +187,7 @@ class FixedOrbit : public Orbit
 {
  public:
     FixedOrbit(const Eigen::Vector3d& pos);
-    virtual ~FixedOrbit();
+    virtual ~FixedOrbit() = default;
 
     virtual Eigen::Vector3d positionAtTime(double) const;
     //virtual Vec3d velocityAtTime(double) const;

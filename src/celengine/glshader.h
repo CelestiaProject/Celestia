@@ -89,7 +89,7 @@ class FloatShaderParameter
 {
  public:
     FloatShaderParameter();
-    FloatShaderParameter(GLhandleARB _obj, const char* name);
+    FloatShaderParameter(GLhandleARB obj, const char* name);
 
     FloatShaderParameter& operator=(float);
 
@@ -102,7 +102,7 @@ class Vec3ShaderParameter
 {
  public:
     Vec3ShaderParameter();
-    Vec3ShaderParameter(GLhandleARB _obj, const char* name);
+    Vec3ShaderParameter(GLhandleARB obj, const char* name);
 
     Vec3ShaderParameter& operator=(const Eigen::Vector3f&);
 
@@ -115,7 +115,7 @@ class Vec4ShaderParameter
 {
  public:
     Vec4ShaderParameter();
-    Vec4ShaderParameter(GLhandleARB _obj, const char* name);
+    Vec4ShaderParameter(GLhandleARB obj, const char* name);
 
     Vec4ShaderParameter& operator=(const Eigen::Vector4f&);
 
@@ -143,8 +143,8 @@ class GLShaderLoader
     static GLShaderStatus CreateProgram(const std::vector<std::string>& vs,
                                         const std::vector<std::string>& fs,
                                         GLProgram**);
-    static GLShaderStatus CreateProgram(const std::string& vs,
-                                        const std::string& fs,
+    static GLShaderStatus CreateProgram(const std::string& vsSource,
+                                        const std::string& fsSource,
                                         GLProgram**);
 };
 

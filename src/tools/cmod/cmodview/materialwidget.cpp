@@ -44,7 +44,7 @@ static void copyMaterial(Material& dest, const Material& src)
         if (dest.maps[i])
         {
             delete dest.maps[i];
-            dest.maps[i] = NULL;
+            dest.maps[i] = nullptr;
         }
 
         if (src.maps[i])
@@ -146,11 +146,6 @@ MaterialWidget::MaterialWidget(QWidget* parent) :
     setMaterial(Material());
 
     this->setLayout(layout);
-}
-
-
-MaterialWidget::~MaterialWidget()
-{
 }
 
 

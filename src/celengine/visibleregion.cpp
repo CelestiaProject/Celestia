@@ -50,11 +50,6 @@ VisibleRegion::VisibleRegion(const Body& body, const Selection& target) :
 }
 
 
-VisibleRegion::~VisibleRegion()
-{
-}
-
-
 Color
 VisibleRegion::color() const
 {
@@ -145,7 +140,7 @@ VisibleRegion::render(Renderer* /* renderer */,
 {
     // Don't render anything if the current time is not within the
     // target object's time window.
-    if (m_target.body() != NULL)
+    if (m_target.body() != nullptr)
     {
         if (!m_target.body()->extant(tdb))
             return;
@@ -162,7 +157,7 @@ VisibleRegion::render(Renderer* /* renderer */,
     opacity = min(opacity, 1.0f) * m_opacity;
 
     // Base the amount of subdivision on the apparent size
-    unsigned int nSections = (unsigned int) (30.0f + discSizeInPixels * 0.5f);
+    auto nSections = (unsigned int) (30.0f + discSizeInPixels * 0.5f);
     nSections = min(nSections, 360u);
 
     Quaterniond q = m_body.getEclipticToBodyFixed(tdb);

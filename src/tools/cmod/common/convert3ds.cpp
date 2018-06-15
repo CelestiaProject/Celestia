@@ -64,7 +64,7 @@ Convert3DSMesh(Model& model,
         vertexSize += 2;
     }
 
-    float* vertices = new float[mesh3ds.getVertexCount() * vertexSize];
+    auto* vertices = new float[mesh3ds.getVertexCount() * vertexSize];
 
     // Build the vertex list
     for (int i = 0; i < mesh3ds.getVertexCount(); ++i)
@@ -184,13 +184,13 @@ Convert3DSModel(const M3DScene& scene)
     for (unsigned int i = 0; i < scene.getModelCount(); i++)
     {
         M3DModel* model3ds = scene.getModel(i);
-        if (model3ds != NULL)
+        if (model3ds != nullptr)
         {
             for (unsigned int j = 0; j < model3ds->getTriMeshCount(); j++)
             {
                 M3DTriangleMesh* mesh = model3ds->getTriMesh(j);
 
-                if (mesh != NULL && mesh->getFaceCount() > 0)
+                if (mesh != nullptr && mesh->getFaceCount() > 0)
                 {
                     Convert3DSMesh(*model, *mesh, scene, model3ds->getName());
                 }

@@ -73,14 +73,14 @@ public:
 
     LightingState() :
         nLights(0),
-        shadowingRingSystem(NULL),
+        shadowingRingSystem(nullptr),
         eyeDir_obj(-Eigen::Vector3f::UnitZ()),
         eyePos_obj(-Eigen::Vector3f::UnitZ())
     {
-        shadows[0] = NULL;
+        shadows[0] = nullptr;
         for (unsigned int i = 0; i < MaxLights; ++i)
         {
-            ringShadows[i].ringSystem = NULL;
+            ringShadows[i].ringSystem = nullptr;
         }
     };
 
@@ -88,7 +88,7 @@ public:
     DirectionalLight lights[MaxLights];
     EclipseShadowVector* shadows[MaxLights];
     RingShadow ringShadows[MaxLights];
-    RingSystem* shadowingRingSystem; // NULL when there are no ring shadows
+    RingSystem* shadowingRingSystem; // nullptr when there are no ring shadows
     Eigen::Vector3f ringPlaneNormal;
     Eigen::Vector3f ringCenter;
 

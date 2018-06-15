@@ -24,7 +24,7 @@ template<class T> T clamp(T x)
 {
     if (x < 0)
         return 0;
-    else if (x > 1)
+    if (x > 1)
         return 1;
     else
         return x;
@@ -93,42 +93,36 @@ bool Color::parse(const char* s, Color& c)
         // Verify that the string contains only hex digits
         for (int i = 0; i < length; i++)
         {
-            if (!isxdigit(s[i]))
+            if (isxdigit(s[i]) == 0)
                 return false;
         }
 
         unsigned int n;
         sscanf(s, "%x", &n);
-        if (length == 3)
+        switch(length)
         {
+        case 3:
             c = Color((unsigned char) ((n >> 8) * 17),
                       (unsigned char) (((n & 0x0f0) >> 4) * 17),
                       (unsigned char) ((n & 0x00f) * 17));
             return true;
-        }
-        else if (length == 6)
-        {
+        case 6:
             c = Color((unsigned char) (n >> 16),
                       (unsigned char) ((n & 0x00ff00) >> 8),
                       (unsigned char) (n & 0x0000ff));
             return true;
-        }
-        else
-        {
+        default:
             return false;
         }
     }
     else
     {
-       if (x11Colors.find(s) != x11Colors.end())
-       {
-           c = x11Colors.find(s)->second;
-           return true;
-       }
-       else
-       {
-           return false;
-       }
+        if (x11Colors.find(s) != x11Colors.end())
+        {
+            c = x11Colors.find(s)->second;
+            return true;
+        }
+        return false;
     }
 }
 

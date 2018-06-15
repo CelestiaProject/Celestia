@@ -199,10 +199,10 @@ getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth,
         return depth;
 
     Body* body = sel.body();
-    if (sel.location() != NULL)
+    if (sel.location() != nullptr)
         body = sel.location()->getParentBody();
 
-    if (body == NULL)
+    if (body == nullptr)
     {
         return depth;
     }
@@ -210,14 +210,14 @@ getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth,
     unsigned int orbitFrameDepth = depth;
     unsigned int bodyFrameDepth = depth;
     // TODO: need to check /all/ orbit frames of body
-    if (body->getOrbitFrame(0.0) != NULL && frameType == ReferenceFrame::PositionFrame)
+    if (body->getOrbitFrame(0.0) != nullptr && frameType == ReferenceFrame::PositionFrame)
     {
         orbitFrameDepth = body->getOrbitFrame(0.0)->nestingDepth(depth + 1, maxDepth, frameType);
         if (orbitFrameDepth > maxDepth)
             return orbitFrameDepth;
     }
 
-    if (body->getBodyFrame(0.0) != NULL && frameType == ReferenceFrame::OrientationFrame)
+    if (body->getBodyFrame(0.0) != nullptr && frameType == ReferenceFrame::OrientationFrame)
     {
         bodyFrameDepth = body->getBodyFrame(0.0)->nestingDepth(depth + 1, maxDepth, frameType);
     }
@@ -409,7 +409,7 @@ BodyMeanEquatorFrame::getAngularVelocity(double tjd) const
     }
     else
     {
-        if (equatorObject.body() != NULL)
+        if (equatorObject.body() != nullptr)
         {
             return equatorObject.body()->getBodyFrame(tjd)->getAngularVelocity(tjd);
         }
@@ -433,7 +433,7 @@ BodyMeanEquatorFrame::isInertial() const
         // Although the mean equator of an object may vary slightly due to precession,
         // treat it as an inertial frame as long as the body frame of the object is
         // also inertial.
-        if (equatorObject.body() != NULL)
+        if (equatorObject.body() != nullptr)
         {
             // TIMELINE-TODO: isInertial must take a time argument.
             return equatorObject.body()->getBodyFrame(0.0)->isInertial();
@@ -716,7 +716,7 @@ FrameVector::FrameVector(const FrameVector& fv) :
     vec(fv.vec),
     frame(fv.frame)
 {
-    if (frame != NULL)
+    if (frame != nullptr)
         frame->addRef();
 }
 
@@ -730,10 +730,10 @@ FrameVector::operator=(const FrameVector& fv)
     target = fv.target;
     vec = fv.vec;
 
-    if (frame != NULL)
+    if (frame != nullptr)
         frame->release();
     frame = fv.frame;
-    if (frame != NULL)
+    if (frame != nullptr)
         frame->addRef();
 
     return *this;
@@ -746,14 +746,14 @@ FrameVector::FrameVector(FrameVectorType t) :
     observer(),
     target(),
     vec(0.0, 0.0, 0.0),
-    frame(NULL)
+    frame(nullptr)
 {
 }
 
 
 FrameVector::~FrameVector()
 {
-    if (frame != NULL)
+    if (frame != nullptr)
         frame->release();
 }
 
@@ -789,7 +789,7 @@ FrameVector::createConstantVector(const Vector3d& _vec,
     FrameVector fv(ConstantVector);
     fv.vec = _vec;
     fv.frame = _frame;
-    if (fv.frame != NULL)
+    if (fv.frame != nullptr)
         fv.frame->addRef();
     return fv;
 }
@@ -815,7 +815,7 @@ FrameVector::direction(double tjd) const
         break;
 
     case ConstantVector:
-        if (frame == NULL)
+        if (frame == nullptr)
             v = vec;
         else
             v = frame->getOrientation(tjd).conjugate() * vec;

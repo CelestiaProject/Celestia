@@ -82,10 +82,7 @@ ShaderProperties::usesShadows() const
 bool
 ShaderProperties::usesFragmentLighting() const
 {
-    if ((texUsage & NormalTexture) != 0 || lightModel == PerPixelSpecularModel)
-        return true;
-    else
-        return false;
+    return (texUsage & NormalTexture) != 0 || lightModel == PerPixelSpecularModel;
 }
 
 
@@ -265,22 +262,22 @@ bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 {
     if (p0.texUsage < p1.texUsage)
         return true;
-    else if (p1.texUsage < p0.texUsage)
+    if (p1.texUsage < p0.texUsage)
         return false;
 
     if (p0.nLights < p1.nLights)
         return true;
-    else if (p1.nLights < p0.nLights)
+    if (p1.nLights < p0.nLights)
         return false;
 
     if (p0.shadowCounts < p1.shadowCounts)
         return true;
-    else if (p1.shadowCounts < p0.shadowCounts)
+    if (p1.shadowCounts < p0.shadowCounts)
         return false;
 
     if (p0.effects < p1.effects)
         return true;
-    else if (p1.effects < p0.effects)
+    if (p1.effects < p0.effects)
         return false;
 
     return (p0.lightModel < p1.lightModel);
@@ -292,7 +289,7 @@ ShaderManager::ShaderManager()
 #if defined(_DEBUG) || defined(DEBUG) || 1
     // Only write to shader log file if this is a debug build
 
-    if (g_shaderLogFile == NULL)
+    if (g_shaderLogFile == nullptr)
 #ifdef _WIN32
         g_shaderLogFile = new ofstream("shaders.log");
 #else
@@ -300,11 +297,6 @@ ShaderManager::ShaderManager()
 #endif
 
 #endif
-}
-
-
-ShaderManager::~ShaderManager()
-{
 }
 
 
@@ -410,8 +402,8 @@ IndexedParameter(const char* name, unsigned int index0, unsigned int index1)
 class Sh_ExpressionContents
 {
 protected:
-    Sh_ExpressionContents() : m_refCount(0) {}
-    virtual ~Sh_ExpressionContents() {};
+    Sh_ExpressionContents()  {}
+    virtual ~Sh_ExpressionContents() = default;;
 
 public:
     virtual string toString() const = 0;
@@ -438,7 +430,7 @@ public:
     }
 
 private:
-    mutable int m_refCount;
+    mutable int m_refCount{0};
 };
 
 
@@ -446,14 +438,14 @@ class Sh_ConstantExpression : public Sh_ExpressionContents
 {
 public:
     Sh_ConstantExpression(float value) : m_value(value) {}
-    virtual string toString() const
+    string toString() const override
     {
         char buf[32];
         sprintf(buf, "%f", m_value);
         return string(buf);
     }
 
-    virtual int precedence() const { return 100; }
+    int precedence() const override { return 100; }
 
 private:
     float m_value;
@@ -525,12 +517,12 @@ class Sh_VariableExpression : public Sh_ExpressionContents
 {
 public:
     Sh_VariableExpression(const string& name) : m_name(name) {}
-    virtual string toString() const
+    string toString() const override
     {
         return m_name;
     }
 
-    virtual int precedence() const { return 100; }
+    int precedence() const override { return 100; }
 
 private:
     const string m_name;
@@ -545,12 +537,12 @@ public:
     {
     }
 
-    virtual string toString() const
+    string toString() const override
     {
         return m_expr.toStringPrecedence(precedence()) + "." + m_components;
     }
 
-    int precedence() const { return 99; }
+    int precedence() const override { return 99; }
 
 private:
     const Sh_Expression m_expr;
@@ -566,7 +558,7 @@ public:
         m_left(left),
         m_right(right) {};
 
-    virtual string toString() const
+    string toString() const override
     {
         return left().toStringPrecedence(precedence()) + op() + right().toStringPrecedence(precedence());
     }
@@ -574,7 +566,7 @@ public:
     const Sh_Expression& left() const { return m_left; }
     const Sh_Expression& right() const { return m_right; }
     string op() const { return m_op; }
-    int precedence() const { return m_precedence; }
+    int precedence() const override { return m_precedence; }
 
 private:
     string m_op;
@@ -642,12 +634,12 @@ public:
     Sh_UnaryFunctionExpression(const string& name, const Sh_Expression& arg0) :
         m_name(name), m_arg0(arg0) {}
 
-    virtual string toString() const
+    string toString() const override
     {
         return m_name + "(" + m_arg0.toString() + ")";
     }
 
-    virtual int precedence() const { return 100; }
+    int precedence() const override { return 100; }
 
 private:
     string m_name;
@@ -660,12 +652,12 @@ public:
     Sh_BinaryFunctionExpression(const string& name, const Sh_Expression& arg0, const Sh_Expression& arg1) :
         m_name(name), m_arg0(arg0), m_arg1(arg1) {}
 
-    virtual string toString() const
+    string toString() const override
     {
         return m_name + "(" + m_arg0.toString() + ", " + m_arg1.toString() + ")";
     }
 
-    virtual int precedence() const { return 100; }
+    int precedence() const override { return 100; }
 
 private:
     string m_name;
@@ -679,12 +671,12 @@ public:
     Sh_TernaryFunctionExpression(const string& name, const Sh_Expression& arg0, const Sh_Expression& arg1, const Sh_Expression& arg2) :
         m_name(name), m_arg0(arg0), m_arg1(arg1), m_arg2(arg2) {}
 
-    virtual string toString() const
+    string toString() const override
     {
         return m_name + "(" + m_arg0.toString() + ", " + m_arg1.toString() + ", " + m_arg2.toString() + ")";
     }
 
-    virtual int precedence() const { return 100; }
+    int precedence() const override { return 100; }
 
 private:
     string m_name;
@@ -1146,7 +1138,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         }
     }
 
-    if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
+    if (((props.texUsage & ShaderProperties::NightTexture) != 0) && VSComputesColorSum(props))
     {
         source += "totalLight += NL * " + LightProperty(i, "brightness") + ";\n";
     }
@@ -1257,7 +1249,7 @@ ShadowsForLightSource(const ShaderProperties& props, unsigned int light)
 
 
 static string
-ScatteringPhaseFunctions(const ShaderProperties&)
+ScatteringPhaseFunctions(const ShaderProperties& /*unused*/)
 {
     string source;
 
@@ -1843,7 +1835,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         nTexCoords++;
     }
 
-    if (props.hasEclipseShadows() != 0)
+    if (props.hasEclipseShadows())
     {
         source += "position_obj = gl_Vertex.xyz;\n";
     }
@@ -1854,19 +1846,16 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     source += "gl_Position = ftransform();\n";
     source += "}\n";
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Vertex shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source);
         *g_shaderLogFile << '\n';
     }
 
-    GLVertexShader* vs = NULL;
+    GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    if (status != ShaderStatus_OK)
-        return NULL;
-    else
-        return vs;
+    return status == ShaderStatus_OK ? vs : nullptr;
 }
 
 
@@ -2280,19 +2269,16 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     source += "}\n";
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Fragment shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source);
         *g_shaderLogFile << '\n';
     }
 
-    GLFragmentShader* fs = NULL;
+    GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    if (status != ShaderStatus_OK)
-        return NULL;
-    else
-        return fs;
+    return status == ShaderStatus_OK ? fs : nullptr;
 }
 
 
@@ -2343,17 +2329,17 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += "gl_Position = ftransform();\n";
     source += "}\n";
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Vertex shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source);
         *g_shaderLogFile << '\n';
     }
 
-    GLVertexShader* vs = NULL;
+    GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
     if (status != ShaderStatus_OK)
-        return NULL;
+        return nullptr;
     else
         return vs;
 }
@@ -2436,19 +2422,16 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 
     source += "}\n";
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Fragment shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source);
         *g_shaderLogFile << '\n';
     }
 
-    GLFragmentShader* fs = NULL;
+    GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    if (status != ShaderStatus_OK)
-        return NULL;
-    else
-        return fs;
+    return status == ShaderStatus_OK ? fs : nullptr;
 }
 #endif
 
@@ -2475,7 +2458,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
         source += "diffTexCoord = " + TexCoord2D(0) + ";\n";
 
     source += "position_obj = gl_Vertex.xyz;\n";
-    if (props.hasEclipseShadows() != 0)
+    if (props.hasEclipseShadows())
     {
         for (unsigned int i = 0; i < props.nLights; i++)
         {
@@ -2487,19 +2470,16 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += "gl_Position = ftransform();\n";
     source += "}\n";
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Vertex shader source (rings):\n";
         DumpShaderSource(*g_shaderLogFile, source);
         *g_shaderLogFile << '\n';
     }
 
-    GLVertexShader* vs = NULL;
+    GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    if (status != ShaderStatus_OK)
-        return NULL;
-    else
-        return vs;
+    return status == ShaderStatus_OK ? vs : nullptr;
 }
 
 
@@ -2605,19 +2585,16 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 
     source += "}\n";
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Fragment shader source (rings):\n";
         DumpShaderSource(*g_shaderLogFile, source);
         *g_shaderLogFile << '\n';
     }
 
-    GLFragmentShader* fs = NULL;
+    GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    if (status != ShaderStatus_OK)
-        return NULL;
-    else
-        return fs;
+    return status == ShaderStatus_OK ? fs : nullptr;
 }
 
 
@@ -2650,19 +2627,16 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
     source += "gl_Position = ftransform();\n";
     source += "}\n";
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Vertex shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source);
         *g_shaderLogFile << '\n';
     }
 
-    GLVertexShader* vs = NULL;
+    GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    if (status != ShaderStatus_OK)
-        return NULL;
-    else
-        return vs;
+    return status == ShaderStatus_OK ? vs : nullptr;
 }
 
 
@@ -2709,19 +2683,16 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
     source += "    gl_FragColor = vec4(color, dot(scatterEx, vec3(0.333, 0.333, 0.333)));\n";
     source += "}\n";
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Fragment shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source);
         *g_shaderLogFile << '\n';
     }
 
-    GLFragmentShader* fs = NULL;
+    GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    if (status != ShaderStatus_OK)
-        return NULL;
-    else
-        return fs;
+    return status == ShaderStatus_OK ? fs : nullptr;
 }
 
 
@@ -2781,19 +2752,16 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     source += "}\n";
     // End of main()
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Vertex shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source);
         *g_shaderLogFile << '\n';
     }
 
-    GLVertexShader* vs = NULL;
+    GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    if (status != ShaderStatus_OK)
-        return NULL;
-    else
-        return vs;
+    return status == ShaderStatus_OK ? vs : nullptr;
 }
 
 
@@ -2838,19 +2806,16 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
     source += "}\n";
     // End of main()
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Fragment shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source);
         *g_shaderLogFile << '\n';
     }
 
-    GLFragmentShader* fs = NULL;
+    GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    if (status != ShaderStatus_OK)
-        return NULL;
-    else
-        return fs;
+    return status != ShaderStatus_OK ? nullptr : fs;
 }
 
 
@@ -2926,19 +2891,16 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     source << "}\n";
     // End of main()
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Vertex shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source.str());
         *g_shaderLogFile << endl;
     }
 
-    GLVertexShader* vs = NULL;
+    GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source.str(), &vs);
-    if (status != ShaderStatus_OK)
-        return NULL;
-    else
-        return vs;
+    return status == ShaderStatus_OK ? vs : nullptr;
 }
 
 
@@ -2995,30 +2957,27 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
     source << "}\n";
     // End of main()
 
-    if (g_shaderLogFile != NULL)
+    if (g_shaderLogFile != nullptr)
     {
         *g_shaderLogFile << "Fragment shader source:\n";
         DumpShaderSource(*g_shaderLogFile, source.str());
         *g_shaderLogFile << '\n';
     }
 
-    GLFragmentShader* fs = NULL;
+    GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source.str(), &fs);
-    if (status != ShaderStatus_OK)
-        return NULL;
-    else
-        return fs;
+    return status == ShaderStatus_OK ? fs : nullptr;
 }
 
 
 CelestiaGLProgram*
 ShaderManager::buildProgram(const ShaderProperties& props)
 {
-    GLProgram* prog = NULL;
+    GLProgram* prog = nullptr;
     GLShaderStatus status;
 
-    GLVertexShader* vs = NULL;
-    GLFragmentShader* fs = NULL;
+    GLVertexShader* vs = nullptr;
+    GLFragmentShader* fs = nullptr;
 
     if (props.lightModel == ShaderProperties::RingIllumModel)
     {
@@ -3046,7 +3005,7 @@ ShaderManager::buildProgram(const ShaderProperties& props)
         fs = buildFragmentShader(props);
     }
 
-    if (vs != NULL && fs != NULL)
+    if (vs != nullptr && fs != nullptr)
     {
         status = GLShaderLoader::CreateProgram(*vs, *fs, &prog);
         if (status == ShaderStatus_OK)
@@ -3084,7 +3043,7 @@ ShaderManager::buildProgram(const ShaderProperties& props)
                                                &prog);
         if (status != ShaderStatus_OK)
         {
-            if (g_shaderLogFile != NULL)
+            if (g_shaderLogFile != nullptr)
                 *g_shaderLogFile << "Failed to create error shader!\n";
         }
         else
@@ -3093,10 +3052,10 @@ ShaderManager::buildProgram(const ShaderProperties& props)
         }
     }
 
-    if (prog == NULL)
-        return NULL;
-    else
-        return new CelestiaGLProgram(*prog, props);
+    if (prog == nullptr)
+        return nullptr;
+
+    return new CelestiaGLProgram(*prog, props);
 }
 
 
@@ -3380,7 +3339,7 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
          li < min(ls.nLights, MaxShaderLights);
          li++)
     {
-        if (ls.shadows[li] != NULL)
+        if (ls.shadows[li] != nullptr)
         {
             unsigned int nShadows = min((size_t) MaxShaderEclipseShadows, ls.shadows[li]->size());
 

@@ -71,14 +71,7 @@ static ResourceHandle
 GetTextureHandle(Material::TextureResource* texResource)
 {
     CelestiaTextureResource* t = reinterpret_cast<CelestiaTextureResource*>(texResource);
-    if (t)
-    {
-        return t->textureHandle();
-    }
-    else
-    {
-        return InvalidResource;
-    }
+    return t ? t->textureHandle() : InvalidResource;
 }
 
 
@@ -97,7 +90,7 @@ RenderContext::RenderContext() :
 
 RenderContext::RenderContext(const Material* _material)
 {
-    if (_material == NULL)
+    if (_material == nullptr)
         material = &defaultMaterial;
     else
         material = _material;
@@ -116,7 +109,7 @@ RenderContext::setMaterial(const Material* newMaterial)
 {
     if (!locked)
     {
-        if (newMaterial == NULL)
+        if (newMaterial == nullptr)
             newMaterial = &defaultMaterial;
 
         if (renderPass == PrimaryPass)
@@ -202,19 +195,13 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 
 
 FixedFunctionRenderContext::FixedFunctionRenderContext() :
-    RenderContext(),
-    blendMode(Material::InvalidBlend),
-    specularOn(false),
-    lightingEnabled(true)
+    RenderContext()
 {
 }
 
 
 FixedFunctionRenderContext::FixedFunctionRenderContext(const Material* _material) :
-    RenderContext(_material),
-    blendMode(Material::InvalidBlend),
-    specularOn(false),
-    lightingEnabled(true)
+    RenderContext(_material)
 {
 }
 
@@ -233,7 +220,7 @@ FixedFunctionRenderContext::makeCurrent(const Material& m)
 {
     if (getRenderPass() == PrimaryPass)
     {
-        Texture* t = NULL;
+        Texture* t = nullptr;
 
         ResourceHandle diffuseMap = GetTextureHandle(getMaterial()->maps[Material::DiffuseMap]);
 
@@ -242,7 +229,7 @@ FixedFunctionRenderContext::makeCurrent(const Material& m)
             t = GetTextureManager()->find(diffuseMap);
         }
 
-        if (t == NULL)
+        if (t == nullptr)
         {
             glDisable(GL_TEXTURE_2D);
         }
@@ -255,7 +242,7 @@ FixedFunctionRenderContext::makeCurrent(const Material& m)
         Material::BlendMode newBlendMode = Material::InvalidBlend;
         if (m.opacity != 1.0f ||
             m.blend == Material::AdditiveBlend ||
-            (t != NULL && t->hasAlpha()))
+            (t != nullptr && t->hasAlpha()))
         {
             newBlendMode = m.blend;
         }
@@ -357,14 +344,14 @@ FixedFunctionRenderContext::makeCurrent(const Material& m)
     }
     else if (getRenderPass() == EmissivePass)
     {
-        Texture* t = NULL;
+        Texture* t = nullptr;
         ResourceHandle emissiveMap = GetTextureHandle(m.maps[Material::EmissiveMap]);
         if (emissiveMap != InvalidResource && useTexCoords)
         {
             t = GetTextureManager()->find(emissiveMap);
         }
 
-        if (t == NULL)
+        if (t == nullptr)
         {
             glDisable(GL_TEXTURE_2D);
         }
@@ -393,7 +380,7 @@ FixedFunctionRenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
         useNormals = useNormalsNow;
         useColors = useColorsNow;
         useTexCoords = useTexCoordsNow;
-        if (getMaterial() != NULL)
+        if (getMaterial() != nullptr)
             makeCurrent(*getMaterial());
     }
 
@@ -504,7 +491,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
                         const void* vertexData)
 {
     const Mesh::VertexAttribute& tangent  = desc.getAttribute(Mesh::Tangent);
-    const char* vertices = reinterpret_cast<const char*>(vertexData);
+    const auto* vertices = reinterpret_cast<const char*>(vertexData);
 
     switch (tangent.format)
     {
@@ -545,12 +532,9 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 
 GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius, const Quaternionf& orientation) :
     lightingState(ls),
-    atmosphere(NULL),
-    blendMode(Material::InvalidBlend),
     objRadius(_objRadius),
     objScale(Vector3f::Constant(_objRadius)),
-    objOrientation(orientation),
-    lunarLambert(0.0f)
+    objOrientation(orientation)
 {
     initLightingEnvironment();
 }
@@ -558,12 +542,9 @@ GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius
 
 GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, const Eigen::Vector3f& _objScale, const Quaternionf& orientation) :
     lightingState(ls),
-    atmosphere(NULL),
-    blendMode(Material::InvalidBlend),
     objRadius(_objScale.maxCoeff()),
     objScale(_objScale),
-    objOrientation(orientation),
-    lunarLambert(0.0f)
+    objOrientation(orientation)
 {
     initLightingEnvironment();
 }
@@ -606,14 +587,14 @@ GLSL_RenderContext::initLightingEnvironment()
 void
 GLSL_RenderContext::makeCurrent(const Material& m)
 {
-    Texture* textures[4] = { NULL, NULL, NULL, NULL };
+    Texture* textures[4] = { nullptr, nullptr, nullptr, nullptr };
     unsigned int nTextures = 0;
 
     // Set up the textures used by this object
-    Texture* baseTex = NULL;
-    Texture* bumpTex = NULL;
-    Texture* specTex = NULL;
-    Texture* emissiveTex = NULL;
+    Texture* baseTex = nullptr;
+    Texture* bumpTex = nullptr;
+    Texture* specTex = nullptr;
+    Texture* emissiveTex = nullptr;
 
     shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
 
@@ -645,7 +626,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     if (diffuseMap != InvalidResource && (useTexCoords || usePointSize))
     {
         baseTex = GetTextureManager()->find(diffuseMap);
-        if (baseTex != NULL)
+        if (baseTex != nullptr)
         {
             shaderProps.texUsage |= ShaderProperties::DiffuseTexture;
             textures[nTextures++] = baseTex;
@@ -655,7 +636,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     if (normalMap != InvalidResource)
     {
         bumpTex = GetTextureManager()->find(normalMap);
-        if (bumpTex != NULL)
+        if (bumpTex != nullptr)
         {
             shaderProps.texUsage |= ShaderProperties::NormalTexture;
             if (bumpTex->getFormatOptions() & Texture::DXT5NormalMap)
@@ -670,9 +651,9 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     {
         shaderProps.lightModel = ShaderProperties::PerPixelSpecularModel;
         specTex = GetTextureManager()->find(specularMap);
-        if (specTex == NULL)
+        if (specTex == nullptr)
         {
-            if (baseTex != NULL)
+            if (baseTex != nullptr)
                 shaderProps.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
         }
         else
@@ -685,7 +666,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     if (emissiveMap != InvalidResource)
     {
         emissiveTex = GetTextureManager()->find(emissiveMap);
-        if (emissiveTex != NULL)
+        if (emissiveTex != nullptr)
         {
             shaderProps.texUsage |= ShaderProperties::EmissiveTexture;
             textures[nTextures++] = emissiveTex;
@@ -695,7 +676,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     if (lightingState.shadowingRingSystem)
     {
         Texture* ringsTex = lightingState.shadowingRingSystem->texture.find(medres);
-        if (ringsTex != NULL)
+        if (ringsTex != nullptr)
         {
             glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
             ringsTex->bind();
@@ -729,7 +710,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     if (useColors)
         shaderProps.texUsage |= ShaderProperties::VertexColors;
 
-    if (atmosphere != NULL)
+    if (atmosphere != nullptr)
     {
         // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
         if (atmosphere->mieScaleHeight > 0.0f)
@@ -738,7 +719,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
 
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shaderProps);
-    if (prog == NULL)
+    if (prog == nullptr)
         return;
 
     prog->use();
@@ -779,7 +760,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     // a planet mesh. See SourceForge bug #1855894 for more details.
     bool disableDepthWriteOnBlend = true;
 
-    if (atmosphere != NULL && shaderProps.hasScattering())
+    if (atmosphere != nullptr && shaderProps.hasScattering())
     {
         prog->setAtmosphereParameters(*atmosphere, objRadius, objRadius);
         disableDepthWriteOnBlend = false;
@@ -812,7 +793,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     Material::BlendMode newBlendMode = Material::InvalidBlend;
     if (m.opacity != 1.0f ||
         m.blend == Material::AdditiveBlend ||
-        (baseTex != NULL && baseTex->hasAlpha()))
+        (baseTex != nullptr && baseTex->hasAlpha()))
     {
         newBlendMode = m.blend;
     }
@@ -871,7 +852,7 @@ GLSL_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
         useNormals = useNormalsNow;
         useColors = useColorsNow;
         useTexCoords = useTexCoordsNow;
-        if (getMaterial() != NULL)
+        if (getMaterial() != nullptr)
             makeCurrent(*getMaterial());
     }
 }
@@ -924,11 +905,11 @@ GLSLUnlit_RenderContext::initLightingEnvironment()
 void
 GLSLUnlit_RenderContext::makeCurrent(const Material& m)
 {
-    Texture* textures[4] = { NULL, NULL, NULL, NULL };
+    Texture* textures[4] = { nullptr, nullptr, nullptr, nullptr };
     unsigned int nTextures = 0;
 
     // Set up the textures used by this object
-    Texture* baseTex = NULL;
+    Texture* baseTex = nullptr;
 
     shaderProps.lightModel = ShaderProperties::EmissiveModel;
     shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
@@ -937,7 +918,7 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
     if (diffuseMap != InvalidResource && (useTexCoords || usePointSize))
     {
         baseTex = GetTextureManager()->find(diffuseMap);
-        if (baseTex != NULL)
+        if (baseTex != nullptr)
         {
             shaderProps.texUsage |= ShaderProperties::DiffuseTexture;
             textures[nTextures++] = baseTex;
@@ -951,7 +932,7 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
 
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shaderProps);
-    if (prog == NULL)
+    if (prog == nullptr)
         return;
 
     prog->use();
@@ -978,7 +959,7 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
     Material::BlendMode newBlendMode = Material::InvalidBlend;
     if (m.opacity != 1.0f ||
         m.blend == Material::AdditiveBlend ||
-        (baseTex != NULL && baseTex->hasAlpha()))
+        (baseTex != nullptr && baseTex->hasAlpha()))
     {
         newBlendMode = m.blend;
     }
@@ -1037,7 +1018,7 @@ GLSLUnlit_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
         useNormals = useNormalsNow;
         useColors = useColorsNow;
         useTexCoords = useTexCoordsNow;
-        if (getMaterial() != NULL)
+        if (getMaterial() != nullptr)
             makeCurrent(*getMaterial());
     }
 }

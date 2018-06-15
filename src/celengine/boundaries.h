@@ -29,7 +29,7 @@ class ConstellationBoundaries
     void render();
 
  private:
-    Chain* currentChain;
+    Chain* currentChain{nullptr};
     std::vector<Chain*> chains;
 };
 

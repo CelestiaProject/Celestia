@@ -34,7 +34,7 @@ Q_OBJECT
 
  public:
     DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent);
-    ~DeepSkyBrowser();
+    ~DeepSkyBrowser() = default;
 
  public slots:
     void slotRefreshTable();

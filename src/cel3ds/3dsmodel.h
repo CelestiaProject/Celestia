@@ -29,7 +29,7 @@ class M3DColor
 class M3DMaterial
 {
  public:
-    M3DMaterial();
+    M3DMaterial() = default;
 
     std::string getName() const;
     void setName(std::string);
@@ -49,11 +49,11 @@ class M3DMaterial
  private:
     std::string name;
     std::string texmap;
-    M3DColor ambient;
-    M3DColor diffuse;
-    M3DColor specular;
-    float shininess;
-    float opacity;
+    M3DColor ambient{ 0, 0, 0 };
+    M3DColor diffuse{ 0, 0, 0 };
+    M3DColor specular{ 0, 0, 0 };
+    float shininess{ 1.0f };
+    float opacity{};
 };
 
 
@@ -71,7 +71,7 @@ class M3DTriangleMesh
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     M3DTriangleMesh();
-    ~M3DTriangleMesh();
+    ~M3DTriangleMesh() = default;
 
     Eigen::Matrix4f getMatrix() const;
     void setMatrix(const Eigen::Matrix4f&);
@@ -109,13 +109,13 @@ class M3DTriangleMesh
 class M3DModel
 {
  public:
-    M3DModel();
+    M3DModel() = default;
     ~M3DModel();
 
     M3DTriangleMesh* getTriMesh(uint32);
     uint32 getTriMeshCount();
     void addTriMesh(M3DTriangleMesh*);
-    void setName(const std::string);
+    void setName(const std::string&);
     const std::string getName() const;
 
  private:
@@ -127,7 +127,7 @@ class M3DModel
 class M3DScene
 {
  public:
-    M3DScene();
+    M3DScene() = default;
     ~M3DScene();
 
     M3DModel* getModel(uint32) const;

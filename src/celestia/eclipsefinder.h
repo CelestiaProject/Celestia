@@ -30,7 +30,7 @@ public:
     };
 
 public:
-    Body* body;
+    Body* body{ nullptr };
     std::string planete;
     std::string sattelite;
     astro::Date* date;

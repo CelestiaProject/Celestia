@@ -13,6 +13,7 @@
 #include <cmath>
 #include <cassert>
 #include <cstdio>
+#include <utility>
 #include "celutil/debug.h"
 #include "celutil/directory.h"
 #include "celutil/filetype.h"
@@ -52,14 +53,14 @@ static inline uint lodOffset(uint lod)
 #endif
 
 
-VirtualTexture::VirtualTexture(const string& _tilePath,
+VirtualTexture::VirtualTexture(string  _tilePath,
                                unsigned int _baseSplit,
                                unsigned int _tileSize,
-                               const string& _tilePrefix,
+                               string  _tilePrefix,
                                const string& _tileType) :
     Texture(_tileSize << (_baseSplit + 1), _tileSize << _baseSplit),
-    tilePath(_tilePath),
-    tilePrefix(_tilePrefix),
+    tilePath(std::move(_tilePath)),
+    tilePrefix(std::move(_tilePrefix)),
     baseSplit(_baseSplit),
     tileSize(_tileSize),
     ticks(0),
@@ -73,11 +74,6 @@ VirtualTexture::VirtualTexture(const string& _tilePath,
 
     if (DetermineFileType(tileExt) == Content_DXT5NormalMap)
         setFormatOptions(Texture::DXT5NormalMap);
-}
-
-
-VirtualTexture::~VirtualTexture()
-{
 }
 
 
@@ -96,74 +92,61 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
     {
         return TextureTile(0);
     }
-    else
+
+    TileQuadtreeNode* node = tileTree[u >> lod];
+    Tile* tile = node->tile;
+    uint tileLOD = 0;
+
+    for (int n = 0; n < lod; n++)
     {
-        TileQuadtreeNode* node = tileTree[u >> lod];
-        Tile* tile = node->tile;
-        uint tileLOD = 0;
+        uint mask = 1 << (lod - n - 1);
+        uint child = (((v & mask) << 1) | (u & mask)) >> (lod - n - 1);
+        //int child = (((v << 1) | u) >> (lod - n - 1)) & 3;
+        if (!node->children[child])
+            break;
 
-        for (int n = 0; n < lod; n++)
+        node = node->children[child];
+        if (node->tile != nullptr)
         {
-            uint mask = 1 << (lod - n - 1);
-            uint child = (((v & mask) << 1) | (u & mask)) >> (lod - n - 1);
-            //int child = (((v << 1) | u) >> (lod - n - 1)) & 3;
-            if (node->children[child] == NULL)
-            {
-                break;
-            }
-            else
-            {
-                node = node->children[child];
-                if (node->tile != NULL)
-                {
-                    tile = node->tile;
-                    tileLOD = n + 1;
-                }
-            }
-        }
-
-        // No tile was found at all--not even the base texture was found
-        if (tile == NULL)
-        {
-            return TextureTile(0);
-        }
-
-        // Make the tile resident.
-        uint tileU = u >> (lod - tileLOD);
-        uint tileV = v >> (lod - tileLOD);
-        makeResident(tile, tileLOD, tileU, tileV);
-
-        // It's possible that we failed to make the tile resident, either
-        // because the texture file was bad, or there was an unresolvable
-        // out of memory situation.  In that case there is nothing else to
-        // do but return a texture tile with a null texture name.
-        if (tile->tex == NULL)
-        {
-            return TextureTile(0);
-        }
-        else
-        {
-            // Set up the texture subrect to be the entire texture
-            float texU = 0.0f;
-            float texV = 0.0f;
-            float texDU = 1.0f;
-            float texDV = 1.0f;
-
-            // If the tile came from a lower LOD than the requested one,
-            // we'll only use a subsection of it.
-            uint lodDiff = lod - tileLOD;
-            texDU = texDV = 1.0f / (float) (1 << lodDiff);
-            texU = (u & ((1 << lodDiff) - 1)) * texDU;
-            texV = (v & ((1 << lodDiff) - 1)) * texDV;
-
-#if 0
-            cout << "Tile: " << tile->tex->getName() << ", " <<
-                texU << ", " << texV << ", " << texDU << ", " << texDV << '\n';
-#endif
-            return TextureTile(tile->tex->getName(),
-                               texU, texV, texDU, texDV);
+            tile = node->tile;
+            tileLOD = n + 1;
         }
     }
+
+    // No tile was found at all--not even the base texture was found
+    if (!tile)
+        return TextureTile(0);
+
+    // Make the tile resident.
+    uint tileU = u >> (lod - tileLOD);
+    uint tileV = v >> (lod - tileLOD);
+    makeResident(tile, tileLOD, tileU, tileV);
+
+    // It's possible that we failed to make the tile resident, either
+    // because the texture file was bad, or there was an unresolvable
+    // out of memory situation.  In that case there is nothing else to
+    // do but return a texture tile with a null texture name.
+    if (!tile->tex)
+        return TextureTile(0);
+
+    // Set up the texture subrect to be the entire texture
+    float texU = 0.0f;
+    float texV = 0.0f;
+    float texDU = 1.0f;
+    float texDV = 1.0f;
+
+    // If the tile came from a lower LOD than the requested one,
+    // we'll only use a subsection of it.
+    uint lodDiff = lod - tileLOD;
+    texDU = texDV = 1.0f / (float) (1 << lodDiff);
+    texU = (u & ((1 << lodDiff) - 1)) * texDU;
+    texV = (v & ((1 << lodDiff) - 1)) * texDV;
+
+#if 0
+    cout << "Tile: " << tile->tex->getName() << ", " <<
+        texU << ", " << texV << ", " << texDU << ", " << texDV << '\n';
+#endif
+    return TextureTile(tile->tex->getName(), texU, texV, texDU, texDV);
 }
 
 
@@ -225,10 +208,10 @@ ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
 
     string pathname = tilePath + filename + tileExt;
     Image* img = LoadImageFromFile(pathname);
-    if (img == NULL)
-        return NULL;
+    if (img == nullptr)
+        return nullptr;
 
-    ImageTexture* tex = NULL;
+    ImageTexture* tex = nullptr;
 
     // Only use mip maps for the LOD 0; for higher LODs, the function of mip
     // mapping is built into the texture.
@@ -250,11 +233,11 @@ ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
 
 void VirtualTexture::makeResident(Tile* tile, uint lod, uint u, uint v)
 {
-    if (tile->tex == NULL && !tile->loadFailed)
+    if (tile->tex == nullptr && !tile->loadFailed)
     {
         // Potentially evict other tiles in order to make this one fit
         tile->tex = loadTileTexture(lod, u, v);
-        if (tile->tex == NULL)
+        if (tile->tex == nullptr)
         {
             // cout << "Texture load failed!\n";
             tile->loadFailed = true;
@@ -280,7 +263,7 @@ void VirtualTexture::populateTileTree()
         if (IsDirectory(tilePath + filename))
         {
             Directory* dir = OpenDirectory(tilePath + filename);
-            if (dir != NULL)
+            if (dir)
             {
                 maxLevel = i + baseSplit;
                 int uLimit = 2 << maxLevel;
@@ -317,7 +300,7 @@ void VirtualTexture::addTileToTree(Tile* tile, uint lod, uint u, uint v)
     {
         uint mask = 1 << (lod - i - 1);
         uint child = (((v & mask) << 1) | (u & mask)) >> (lod - i - 1);
-        if (node->children[child] == NULL)
+        if (!node->children[child])
             node->children[child] = new TileQuadtreeNode();
         node = node->children[child];
     }
@@ -326,7 +309,7 @@ void VirtualTexture::addTileToTree(Tile* tile, uint lod, uint u, uint v)
 #endif
 
     // Verify that the tile doesn't already exist
-    if (node->tile == NULL)
+    if (!node->tile)
         node->tile = tile;
 }
 
@@ -338,7 +321,7 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
     if (!texParams->getString("ImageDirectory", imageDirectory))
     {
         DPRINTF(0, "ImageDirectory missing in virtual texture.\n");
-        return NULL;
+        return nullptr;
     }
 
     double baseSplit = 0.0;
@@ -346,14 +329,14 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
         baseSplit < 0.0 || baseSplit != floor(baseSplit))
     {
         DPRINTF(0, "BaseSplit in virtual texture missing or has bad value\n");
-        return NULL;
+        return nullptr;
     }
 
     double tileSize = 0.0;
     if (!texParams->getNumber("TileSize", tileSize))
     {
         DPRINTF(0, "TileSize is missing from virtual texture\n");
-        return NULL;
+        return nullptr;
     }
 
     if (tileSize != floor(tileSize) ||
@@ -361,7 +344,7 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
         !isPow2((int) tileSize))
     {
         DPRINTF(0, "Virtual texture tile size must be a power of two >= 64\n");
-        return NULL;
+        return nullptr;
     }
 
     string tileType = "dds";
@@ -391,18 +374,18 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const string& path)
     Parser parser(&tokenizer);
 
     if (tokenizer.nextToken() != Tokenizer::TokenName)
-        return NULL;
+        return nullptr;
 
     string virtTexString = tokenizer.getNameValue();
     if (virtTexString != "VirtualTexture")
-        return NULL;
+        return nullptr;
 
     Value* texParamsValue = parser.readValue();
-    if (texParamsValue == NULL || texParamsValue->getType() != Value::HashType)
+    if (texParamsValue == nullptr || texParamsValue->getType() != Value::HashType)
     {
         DPRINTF(0, "Error parsing virtual texture\n");
         delete texParamsValue;
-        return NULL;
+        return nullptr;
     }
 
     Hash* texParams = texParamsValue->getHash();
@@ -416,12 +399,12 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const string& path)
 
 VirtualTexture* LoadVirtualTexture(const string& filename)
 {
-    ifstream in(filename.c_str(), ios::in);
+    ifstream in(filename, ios::in);
 
     if (!in.good())
     {
         //DPRINTF(0, "Error opening virtual texture file: %s\n", filename.c_str());
-        return NULL;
+        return nullptr;
     }
 
     // Strip off every character including and after the final slash to get

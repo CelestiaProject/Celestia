@@ -199,7 +199,7 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut,
         out << '\n';
 
         // Dump HD catalog cross reference
-        if (hdOut != NULL && HDCatalogNum != ~0)
+        if (hdOut != nullptr && HDCatalogNum != ~0)
             *hdOut << HDCatalogNum << ' ' << catalogNum << '\n';
     }
 
@@ -333,17 +333,17 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    ifstream stardbFile(inputFilename.c_str(), ios::in | ios::binary);
+    ifstream stardbFile(inputFilename, ios::in | ios::binary);
     if (!stardbFile.good())
     {
         cerr << "Error opening star database file " << inputFilename << '\n';
         return 1;
     }
 
-    ofstream* hdOut = NULL;
+    ofstream* hdOut = nullptr;
     if (!hdFilename.empty())
     {
-        hdOut = new ofstream(hdFilename.c_str(), ios::out);
+        hdOut = new ofstream(hdFilename, ios::out);
         if (!hdOut->good())
         {
             cerr << "Error opening HD catalog output file " << hdFilename << '\n';
@@ -355,7 +355,7 @@ int main(int argc, char* argv[])
     ostream* out = &cout;
     if (!outputFilename.empty())
     {
-        out = new ofstream(outputFilename.c_str(), ios::out);
+        out = new ofstream(outputFilename, ios::out);
         if (!out->good())
         {
             cerr << "Error opening output file " << outputFilename << '\n';

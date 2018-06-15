@@ -55,7 +55,7 @@ bool CaptureGLBufferToJPEG(const string& filename,
 {
     int rowStride = (width * 3 + 3) & ~0x3;
     int imageSize = height * rowStride;
-    unsigned char* pixels = new unsigned char[imageSize];
+    auto* pixels = new unsigned char[imageSize];
 
     glReadBuffer(GL_BACK);
     glReadPixels(x, y, width, height,
@@ -66,7 +66,7 @@ bool CaptureGLBufferToJPEG(const string& filename,
 
     FILE* out;
     out = fopen(filename.c_str(), "wb");
-    if (out == NULL)
+    if (out == nullptr)
     {
         DPRINTF(0, "Can't open screen capture file '%s'\n", filename.c_str());
         delete[] pixels;
@@ -112,7 +112,7 @@ bool CaptureGLBufferToJPEG(const string& filename,
 
 void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-    FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
+    auto* fp = (FILE*) png_get_io_ptr(png_ptr);
     fwrite((void*) data, 1, length, fp);
 }
 
@@ -123,7 +123,7 @@ bool CaptureGLBufferToPNG(const string& filename,
 {
     int rowStride = (width * 3 + 3) & ~0x3;
     int imageSize = height * rowStride;
-    unsigned char* pixels = new unsigned char[imageSize];
+    auto* pixels = new unsigned char[imageSize];
 
     glReadBuffer(GL_BACK);
     glReadPixels(x, y, width, height,
@@ -134,14 +134,14 @@ bool CaptureGLBufferToPNG(const string& filename,
 
     FILE* out;
     out = fopen(filename.c_str(), "wb");
-    if (out == NULL)
+    if (out == nullptr)
     {
         DPRINTF(0, "Can't open screen capture file '%s'\n", filename.c_str());
         delete[] pixels;
         return false;
     }
 
-    png_bytep* row_pointers = new png_bytep[height];
+    auto* row_pointers = new png_bytep[height];
     for (int i = 0; i < height; i++)
         row_pointers[i] = (png_bytep) &pixels[rowStride * (height - i - 1)];
 
@@ -149,9 +149,9 @@ bool CaptureGLBufferToPNG(const string& filename,
     png_infop info_ptr;
 
     png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-                                      NULL, NULL, NULL);
+                                      nullptr, nullptr, nullptr);
 
-    if (png_ptr == NULL)
+    if (png_ptr == nullptr)
     {
         DPRINTF(0, "Screen capture: error allocating png_ptr\n");
         fclose(out);
@@ -161,13 +161,13 @@ bool CaptureGLBufferToPNG(const string& filename,
     }
 
     info_ptr = png_create_info_struct(png_ptr);
-    if (info_ptr == NULL)
+    if (info_ptr == nullptr)
     {
         DPRINTF(0, "Screen capture: error allocating info_ptr\n");
         fclose(out);
         delete[] pixels;
         delete[] row_pointers;
-        png_destroy_write_struct(&png_ptr, (png_infopp) NULL);
+        png_destroy_write_struct(&png_ptr, (png_infopp) nullptr);
         return false;
     }
 
@@ -182,7 +182,7 @@ bool CaptureGLBufferToPNG(const string& filename,
     }
 
     // png_init_io(png_ptr, out);
-    png_set_write_fn(png_ptr, (void*) out, PNGWriteData, NULL);
+    png_set_write_fn(png_ptr, (void*) out, PNGWriteData, nullptr);
 
     png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
     png_set_IHDR(png_ptr, info_ptr,

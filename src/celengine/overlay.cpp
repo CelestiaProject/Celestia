@@ -19,23 +19,10 @@ using namespace std;
 
 
 Overlay::Overlay() :
-    ostream(&sbuf),
-    windowWidth(1),
-    windowHeight(1),
-    font(NULL),
-    useTexture(false),
-    fontChanged(false),
-    textBlock(0),
-    xoffset(0.0f),
-    yoffset(0.0f)
+    ostream(&sbuf)
 {
     sbuf.setOverlay(this);
 }
-
-Overlay::~Overlay()
-{
-}
-
 
 void Overlay::begin()
 {
@@ -100,7 +87,7 @@ void Overlay::endText()
 
 void Overlay::print(wchar_t c)
 {
-    if (font != NULL)
+    if (font != nullptr)
     {
         if (!useTexture || fontChanged)
         {
@@ -132,7 +119,7 @@ void Overlay::print(wchar_t c)
 
 void Overlay::print(char c)
 {
-    if (font != NULL)
+    if (font != nullptr)
     {
         if (!useTexture || fontChanged)
         {
@@ -216,11 +203,9 @@ void Overlay::rect(float x, float y, float w, float h, bool fill)
 //
 // OverlayStreamBuf implementation
 //
-OverlayStreamBuf::OverlayStreamBuf() :
-    overlay(NULL),
-    decodeState(UTF8DecodeStart)
+OverlayStreamBuf::OverlayStreamBuf()
 {
-    setbuf(0, 0);
+    setbuf(nullptr, 0);
 };
 
 
@@ -232,7 +217,7 @@ void OverlayStreamBuf::setOverlay(Overlay* o)
 
 int OverlayStreamBuf::overflow(int c)
 {
-    if (overlay != NULL)
+    if (overlay != nullptr)
     {
         switch (decodeState)
         {

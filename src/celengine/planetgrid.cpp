@@ -24,26 +24,17 @@ using namespace Eigen;
 
 
 unsigned int PlanetographicGrid::circleSubdivisions = 100;
-float* PlanetographicGrid::xyCircle = NULL;
-float* PlanetographicGrid::xzCircle = NULL;
+float* PlanetographicGrid::xyCircle = nullptr;
+float* PlanetographicGrid::xzCircle = nullptr;
 
 
 PlanetographicGrid::PlanetographicGrid(const Body& _body) :
-    body(_body),
-    minLongitudeStep(10.0f),
-    minLatitudeStep(10.0f),
-    longitudeConvention(Westward),
-    northDirection(NorthNormal)
+    body(_body)
 {
-    if (xyCircle == NULL)
+    if (xyCircle == nullptr)
         InitializeGeometry();
     setTag("planetographic grid");
     setIAULongLatConvention();
-}
-
-
-PlanetographicGrid::~PlanetographicGrid()
-{
 }
 
 
@@ -86,7 +77,7 @@ static void longLatLabel(const string& labelText,
         double z = viewNormal.dot(labelPos);
         labelPos *= planetZ / z;
 
-        renderer->addObjectAnnotation(NULL, labelText,
+        renderer->addObjectAnnotation(nullptr, labelText,
                                       Renderer::PlanetographicGridLabelColor,
                                       labelPos.cast<float>());
     }
@@ -150,7 +141,7 @@ PlanetographicGrid::render(Renderer* renderer,
     for (float latitude = -90.0f + latitudeStep; latitude < 90.0f; latitude += latitudeStep)
     {
         float phi = degToRad(latitude);
-        float r = (float) cos(phi);
+        auto r = (float) std::cos(phi);
 
         if (latitude == 0.0f)
         {
@@ -162,7 +153,7 @@ PlanetographicGrid::render(Renderer* renderer,
             glColor(Renderer::PlanetographicGridColor);
         }
         glPushMatrix();
-        glTranslatef(0.0f, (float) sin(phi), 0.0f);
+        glTranslatef(0.0f, (float) std::sin(phi), 0.0f);
         glScalef(r, r, r);
         glDrawArrays(GL_LINE_LOOP, 0, circleSubdivisions);
         glPopMatrix();
@@ -304,11 +295,11 @@ PlanetographicGrid::InitializeGeometry()
     for (unsigned int i = 0; i < circleSubdivisions; i++)
     {
         float theta = (float) (2.0 * PI) * (float) i / (float) circleSubdivisions;
-        xyCircle[i * 3 + 0] = (float) cos(theta);
-        xyCircle[i * 3 + 1] = (float) sin(theta);
+        xyCircle[i * 3 + 0] = (float) std::cos(theta);
+        xyCircle[i * 3 + 1] = (float) std::sin(theta);
         xyCircle[i * 3 + 2] = 0.0f;
-        xzCircle[i * 3 + 0] = (float) cos(theta);
+        xzCircle[i * 3 + 0] = (float) std::cos(theta);
         xzCircle[i * 3 + 1] = 0.0f;
-        xzCircle[i * 3 + 2] = (float) sin(theta);
+        xzCircle[i * 3 + 2] = (float) std::sin(theta);
     }
 }

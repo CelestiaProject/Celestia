@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 
 
 
-static void CommandLineError(const char*)
+static void CommandLineError(const char* /*unused*/)
 {
 }
 

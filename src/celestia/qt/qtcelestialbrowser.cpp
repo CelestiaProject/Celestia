@@ -42,11 +42,11 @@ public:
     StarFilterPredicate();
     bool operator()(const Star* star) const;
 
-    bool planetsFilterEnabled;
-    bool multipleFilterEnabled;
-    bool barycentersFilterEnabled;
-    bool omitBarycenters;
-    bool spectralTypeFilterEnabled;
+    bool planetsFilterEnabled{false};
+    bool multipleFilterEnabled{false};
+    bool barycentersFilterEnabled{false};
+    bool omitBarycenters{true};
+    bool spectralTypeFilterEnabled{false};
     QRegExp spectralTypeFilter;
     SolarSystemCatalog* solarSystems;
 };
@@ -79,8 +79,8 @@ private:
 class StarTableModel : public QAbstractTableModel
 {
 public:
-    StarTableModel(const Universe* _universe);
-    virtual ~StarTableModel();
+    StarTableModel(const Universe* _universe) : universe(_universe) {};
+    virtual ~StarTableModel() = default;
 
     // Methods from QAbstractTableModel
     Qt::ItemFlags flags(const QModelIndex& index) const;
@@ -116,29 +116,16 @@ public:
 
 private:
     const Universe* universe;
-    UniversalCoord observerPos;
-    double now;
+    UniversalCoord observerPos{ 0.0, 0.0, 0.0 };
+    double now{ astro::J2000 };
     vector<Star*> stars;
 };
-
-
-StarTableModel::StarTableModel(const Universe* _universe) :
-    universe(_universe),
-    observerPos(0.0, 0.0, 0.0),
-    now(astro::J2000)
-{
-}
-
-
-StarTableModel::~StarTableModel()
-{
-}
 
 
 /****** Virtual methods from QAbstractTableModel *******/
 
 // Override QAbstractTableModel::flags()
-Qt::ItemFlags StarTableModel::flags(const QModelIndex&) const
+Qt::ItemFlags StarTableModel::flags(const QModelIndex& /*unused*/) const
 {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
@@ -233,14 +220,14 @@ QVariant StarTableModel::headerData(int section, Qt::Orientation /* orientation 
 
 
 // Override QAbstractDataModel::rowCount()
-int StarTableModel::rowCount(const QModelIndex&) const
+int StarTableModel::rowCount(const QModelIndex& /*unused*/) const
 {
     return (int) stars.size();
 }
 
 
 // Override QAbstractDataModel::columnCount()
-int StarTableModel::columnCount(const QModelIndex&) const
+int StarTableModel::columnCount(const QModelIndex& /*unused*/) const
 {
     return 5;
 }
@@ -297,12 +284,8 @@ bool StarPredicate::operator()(const Star* star0, const Star* star1) const
 
 
 StarFilterPredicate::StarFilterPredicate() :
-    planetsFilterEnabled(false),
-    multipleFilterEnabled(false),
-    barycentersFilterEnabled(false),
-    omitBarycenters(true),
-    spectralTypeFilterEnabled(false),
-    solarSystems(NULL)
+
+    solarSystems(nullptr)
 {
 }
 
@@ -317,7 +300,7 @@ bool StarFilterPredicate::operator()(const Star* star) const
 
     if (planetsFilterEnabled)
     {
-        if (solarSystems == NULL)
+        if (solarSystems == nullptr)
             return true;
 
         SolarSystemCatalog::iterator iter = solarSystems->find(star->getCatalogNumber());
@@ -449,10 +432,9 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
 
     // Move the best matching stars into the vector
     stars.reserve(nStars);
-    for (StarSet::const_iterator iter = firstStars.begin();
-         iter != firstStars.end(); iter++)
+    for (const auto& star : firstStars)
     {
-        stars.push_back(*iter);
+        stars.push_back(star);
     }
 
     beginInsertRows(QModelIndex(), 0, stars.size());
@@ -472,11 +454,11 @@ Selection StarTableModel::itemAtRow(unsigned int row)
 CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     QWidget(parent),
     appCore(_appCore),
-    starModel(NULL),
-    treeView(NULL),
-    searchResultLabel(NULL),
-    closestButton(NULL),
-    brightestButton(NULL)
+    starModel(nullptr),
+    treeView(nullptr),
+    searchResultLabel(nullptr),
+    closestButton(nullptr),
+    brightestButton(nullptr)
 {
     treeView = new QTreeView();
     treeView->setRootIsDecorated(false);
@@ -614,11 +596,6 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
 }
 
 
-CelestialBrowser::~CelestialBrowser()
-{
-}
-
-
 /******* Slots ********/
 void CelestialBrowser::slotUncheckMultipleFilterBox()
 {
@@ -714,7 +691,7 @@ void CelestialBrowser::slotMarkSelected()
                 {
                     if (labelMarker)
                     {
-                        if (sel.star() != NULL)
+                        if (sel.star() != nullptr)
                             label = universe->getStarCatalog()->getStarName(*sel.star());
                         label = ReplaceGreekLetterAbbr(label);
                     }

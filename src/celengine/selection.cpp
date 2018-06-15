@@ -63,7 +63,7 @@ UniversalCoord Selection::getPosition(double t) const
     case Type_Location:
         {
             Body* body = location()->getParentBody();
-            if (body != NULL)
+            if (body != nullptr)
             {
                 return body->getPosition(t).offsetKm(location()->getPlanetocentricPosition(t));
             }
@@ -128,10 +128,10 @@ string Selection::getName(bool i18n) const
         {
             string name = body()->getName(i18n);
             PlanetarySystem* system = body()->getSystem();
-            while (system != NULL)
+            while (system != nullptr)
             {
                 Body* parent = system->getPrimaryBody();
-                if (parent != NULL)
+                if (parent != nullptr)
                 {
                     name = parent->getName(i18n) + '/' + name;
                     system = parent->getSystem();
@@ -139,20 +139,20 @@ string Selection::getName(bool i18n) const
                 else
                 {
                     const Star* parentStar = system->getStar();
-                    if (parentStar != NULL)
+                    if (parentStar != nullptr)
                     {
                         char buf[20];
                         sprintf(buf, "#%d", parentStar->getCatalogNumber());
                         name = string(buf) + '/' + name;
                     }
-                    system = NULL;
+                    system = nullptr;
                 }
             }
             return name;
         }
 
     case Type_Location:
-        if (location()->getParentBody() == NULL)
+        if (location()->getParentBody() == nullptr)
         {
             return location()->getName(i18n);
         }
@@ -178,7 +178,7 @@ Selection Selection::parent() const
     case Type_Body:
         if (body()->getSystem())
         {
-            if (body()->getSystem()->getPrimaryBody() != NULL)
+            if (body()->getSystem()->getPrimaryBody() != nullptr)
                 return Selection(body()->getSystem()->getPrimaryBody());
             else
                 return Selection(body()->getSystem()->getStar());

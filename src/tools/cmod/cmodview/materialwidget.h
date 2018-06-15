@@ -22,7 +22,7 @@ class MaterialWidget : public QWidget
 Q_OBJECT
 public:
     MaterialWidget(QWidget* parent);
-    ~MaterialWidget();
+    ~MaterialWidget() = default;
 
     const cmod::Material& material() const
     {

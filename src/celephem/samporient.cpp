@@ -75,8 +75,8 @@ bool operator<(const OrientationSample& a, const OrientationSample& b)
 class SampledOrientation : public RotationModel
 {
 public:
-    SampledOrientation();
-    virtual ~SampledOrientation();
+    SampledOrientation() = default;
+    ~SampledOrientation() override = default;
 
     /*! Add another quaternion key to the sampled orientation. The keys
      *  should have monotonically increasing time values.
@@ -88,17 +88,17 @@ public:
      */
     virtual Eigen::Quaterniond spin(double tjd) const;
 
-    virtual bool isPeriodic() const;
-    virtual double getPeriod() const;
+    bool isPeriodic() const override;
+    double getPeriod() const override;
 
-    virtual void getValidRange(double& begin, double& end) const;
+    void getValidRange(double& begin, double& end) const override;
 
 private:
     Quaternionf getOrientation(double tjd) const;
 
 private:
     OrientationSampleVector samples;
-    mutable int lastSample;
+    mutable int lastSample{0};
 
     enum InterpolationType
     {
@@ -106,20 +106,8 @@ private:
         Cubic = 1,
     };
 
-    InterpolationType interpolation;
+    InterpolationType interpolation{Linear};
 };
-
-
-SampledOrientation::SampledOrientation() :
-    lastSample(0),
-    interpolation(Linear)
-{
-}
-
-
-SampledOrientation::~SampledOrientation()
-{
-}
 
 
 void
@@ -205,7 +193,7 @@ SampledOrientation::getOrientation(double tjd) const
                 OrientationSample s0 = samples[n - 1];
                 OrientationSample s1 = samples[n];
 
-                float t = (float) ((tjd - s0.t) / (s1.t - s0.t));
+                auto t = (float) ((tjd - s0.t) / (s1.t - s0.t));
                 orientation = s0.q.slerp(t, s1.q);
             }
             else if (interpolation == Cubic)
@@ -231,11 +219,11 @@ SampledOrientation::getOrientation(double tjd) const
 
 RotationModel* LoadSampledOrientation(const string& filename)
 {
-    ifstream in(filename.c_str());
+    ifstream in(filename);
     if (!in.good())
-        return NULL;
+        return nullptr;
 
-    SampledOrientation* sampOrientation = new SampledOrientation();
+    auto* sampOrientation = new SampledOrientation();
     int nSamples = 0;
     while (in.good())
     {

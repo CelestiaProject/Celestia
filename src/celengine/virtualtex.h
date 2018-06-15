@@ -18,12 +18,12 @@
 class VirtualTexture : public Texture
 {
  public:
-    VirtualTexture(const std::string& _tilePath,
+    VirtualTexture(std::string _tilePath,
                    unsigned int _baseSplit,
                    unsigned int _tileSize,
-                   const std::string& tilePrefix,
-                   const std::string& tileType);
-    ~VirtualTexture();
+                   std::string _tilePrefix,
+                   const std::string& _tileType);
+    ~VirtualTexture() = default;
 
     virtual const TextureTile getTile(int lod, int u, int v);
     virtual void bind();
@@ -37,28 +37,22 @@ class VirtualTexture : public Texture
  private:
     struct Tile
     {
-        Tile() : lastUsed(0), tex(NULL), loadFailed(false) {};
-        unsigned int lastUsed;
-        ImageTexture* tex;
-        bool loadFailed;
+        Tile() = default;
+        unsigned int lastUsed{ 0 };
+        ImageTexture* tex{ nullptr };
+        bool loadFailed{ false };
     };
 
     struct TileQuadtreeNode
     {
-        TileQuadtreeNode() :
-            tile(NULL)
-        {
-            for (int i = 0; i < 4; i++)
-                children[i] = NULL;
-        };
-
-        Tile* tile;
-        TileQuadtreeNode* children[4];
+        TileQuadtreeNode() = default;
+        Tile* tile{ nullptr };
+        TileQuadtreeNode* children[4]{ nullptr, nullptr, nullptr, nullptr};
     };
 
     void populateTileTree();
-    void addTileToTree(Tile* tile, uint lod, uint v, uint u);
-    void makeResident(Tile* tile, uint lod, uint v, uint u);
+    void addTileToTree(Tile* tile, uint lod, uint u, uint v);
+    void makeResident(Tile* tile, uint lod, uint u, uint v);
     ImageTexture* loadTileTexture(uint lod, uint u, uint v);
 
     Tile* tiles;

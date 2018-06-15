@@ -18,9 +18,9 @@ public:
     static Constellation *getConstellation(unsigned int);
     static Constellation *getConstellation(const std::string&);
 
-    std::string getName();
-    std::string getGenitive();
-    std::string getAbbreviation();
+    const std::string getName() const;
+    const std::string getGenitive() const;
+    const std::string getAbbreviation() const;
 
 private:
     Constellation(const char *_name, const char *_genitive, const char *_abbrev);

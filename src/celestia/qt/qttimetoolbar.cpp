@@ -84,11 +84,6 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
 }
 
 
-TimeToolBar::~TimeToolBar()
-{
-}
-
-
 void TimeToolBar::slotPauseTime()
 {
     appCore->getSimulation()->setPauseState(!appCore->getSimulation()->getPauseState());

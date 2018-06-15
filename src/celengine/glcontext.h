@@ -18,8 +18,8 @@
 class GLContext
 {
  public:
-    GLContext();
-    virtual ~GLContext();
+    GLContext() = default;
+    virtual ~GLContext() = default;
 
     enum GLRenderPath
     {
@@ -60,12 +60,13 @@ class GLContext
     FragmentProcessor* getFragmentProcessor() const;
 
  private:
-    GLRenderPath renderPath;
-    VertexPath vertexPath;
-    VertexProcessor* vertexProc;
-    FragmentProcessor* fragmentProc;
 
-    int maxSimultaneousTextures;
+    GLRenderPath renderPath{ GLPath_Basic };
+    VertexPath vertexPath{ VPath_Basic };
+    VertexProcessor* vertexProc{ nullptr };
+    FragmentProcessor* fragmentProc{ nullptr };
+
+    int maxSimultaneousTextures { 1 };
     std::vector<std::string> extensions;
 };
 

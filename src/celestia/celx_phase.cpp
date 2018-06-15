@@ -59,7 +59,7 @@ static const TimelinePhase* to_phase(lua_State* l, int index)
     CelxLua celx(l);
 
     PhaseReference* ref = static_cast<PhaseReference*>(celx.checkUserData(index, Celx_Phase));
-    return ref == NULL ? NULL : ref->phase;
+    return ref == nullptr ? nullptr : ref->phase;
 }
 
 
@@ -68,7 +68,7 @@ static const TimelinePhase* this_phase(lua_State* l)
     CelxLua celx(l);
 
     const TimelinePhase* phase = to_phase(l, 1);
-    if (phase == NULL)
+    if (phase == nullptr)
     {
         celx.doError("Bad phase object!");
     }
@@ -211,7 +211,7 @@ static int phase_gc(lua_State* l)
     CelxLua celx(l);
 
     PhaseReference* ref = static_cast<PhaseReference*>(celx.checkUserData(1, Celx_Phase));
-    if (ref == NULL)
+    if (ref == nullptr)
     {
         celx.doError("Bad phase object during garbage collection!");
     }

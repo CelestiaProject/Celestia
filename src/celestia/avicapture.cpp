@@ -17,16 +17,7 @@
 using namespace std;
 
 
-AVICapture::AVICapture() :
-    width(-1),
-    height(-1),
-    frameRate(30.0f),
-    frameCounter(0),
-    capturing(false),
-    aviFile(NULL),
-    aviStream(NULL),
-    compAviStream(NULL),
-    image(NULL)
+AVICapture::AVICapture()
 {
     AVIFileInit();
 }
@@ -64,7 +55,7 @@ bool AVICapture::start(const string& filename,
     HRESULT hr = AVIFileOpenA(&aviFile,
                               filename.c_str(),
                               OF_WRITE | OF_CREATE,
-                              NULL);
+                              nullptr);
     if (hr != AVIERR_OK)
     {
         DPRINTF(0, "Erroring creating avi file for capture.\n");
@@ -92,7 +83,7 @@ bool AVICapture::start(const string& filename,
     AVICOMPRESSOPTIONS* arrOptions[1] = { &options };
     ZeroMemory(&options, sizeof options);
 
-    if (!AVISaveOptions(NULL, 0, 1, &aviStream,
+    if (!AVISaveOptions(nullptr, 0, 1, &aviStream,
                         (LPAVICOMPRESSOPTIONS*) &arrOptions))
     {
         // The user either clicked on cancel or there was an error
@@ -100,7 +91,7 @@ bool AVICapture::start(const string& filename,
         return false;
     }
 
-    hr = AVIMakeCompressedStream(&compAviStream, aviStream, &options, NULL);
+    hr = AVIMakeCompressedStream(&compAviStream, aviStream, &options, nullptr);
     if (hr != AVIERR_OK)
     {
         DPRINTF(0, "Error %08x creating compressed AVI stream.\n", hr);
@@ -189,25 +180,25 @@ bool AVICapture::captureFrame()
 
 void AVICapture::cleanup()
 {
-    if (aviStream != NULL)
+    if (aviStream != nullptr)
     {
         AVIStreamRelease(aviStream);
-        aviStream = NULL;
+        aviStream = nullptr;
     }
-    if (compAviStream != NULL)
+    if (compAviStream != nullptr)
     {
         AVIStreamRelease(compAviStream);
-        compAviStream = NULL;
+        compAviStream = nullptr;
     }
-    if (aviFile != NULL)
+    if (aviFile != nullptr)
     {
         AVIFileRelease(aviFile);
-        aviFile = NULL;
+        aviFile = nullptr;
     }
-    if (image != NULL)
+    if (image != nullptr)
     {
         delete[] image;
-        image = NULL;
+        image = nullptr;
     }
 }
 

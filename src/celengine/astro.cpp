@@ -12,7 +12,8 @@
 #include <cmath>
 #include <iomanip>
 #include <cstdio>
-#include <time.h>
+#include <utility>
+#include <ctime>
 #include <celutil/basictypes.h>
 #include <celmath/mathlib.h>
 #include "celestia.h"
@@ -300,7 +301,7 @@ void astro::decimalToHourMinSec(double angle, int& hours, int& minutes, double& 
 // Compute the fraction of a sphere which is illuminated and visible
 // to a viewer.  The source of illumination is assumed to be at (0, 0, 0)
 float astro::sphereIlluminationFraction(Point3d,
-                                        Point3d)
+                                        Point3d /*unused*/)
 {
     return 1.0f;
 }
@@ -671,7 +672,7 @@ bool astro::parseDate(const string& s, astro::Date& date)
 astro::Date
 astro::Date::systemDate()
 {
-    time_t t = time(NULL);
+    time_t t = time(nullptr);
     struct tm *gmt = gmtime(&t);
     astro::Date d;
     d.year = gmt->tm_year + 1900;
@@ -685,7 +686,7 @@ astro::Date::systemDate()
 }
 
 
-ostream& operator<<(ostream& s, const astro::Date d)
+ostream& operator<<(ostream& s, const astro::Date& d)
 {
     s << d.toCStr();
     return s;
@@ -710,7 +711,7 @@ astro::TAItoUTC(double tai)
             dAT = LeapSeconds[i].seconds;
             break;
         }
-        else if (tai - secsToDays(LeapSeconds[i - 1].seconds) >= LeapSeconds[i].t)
+        if (tai - secsToDays(LeapSeconds[i - 1].seconds) >= LeapSeconds[i].t)
         {
             dAT = LeapSeconds[i].seconds;
             extraSecs = LeapSeconds[i].seconds - LeapSeconds[i - 1].seconds;
@@ -823,7 +824,7 @@ astro::TDBtoLocal(double tdb)
     {
         time_t time = (int) astro::julianDateToSeconds(jdutc - 2440587.5);
         struct tm *localt = localtime(&time);
-        if (localt != NULL)
+        if (localt != nullptr)
         {
             astro::Date d;
             d.year = localt->tm_year + 1900;
@@ -909,7 +910,7 @@ astro::TAItoJDUTC(double tai)
 
 
 // Get scale of given length unit in kilometers
-bool astro::getLengthScale(string unitName, double& scale)
+bool astro::getLengthScale(const string& unitName, double& scale)
 {
     unsigned int nUnits = sizeof(lengthUnits) / sizeof(lengthUnits[0]);
     bool foundMatch = false;
@@ -928,40 +929,34 @@ bool astro::getLengthScale(string unitName, double& scale)
 
 
 // Get scale of given time unit in days
-bool astro::getTimeScale(string unitName, double& scale)
+bool astro::getTimeScale(const string& unitName, double& scale)
 {
-    unsigned int nUnits = sizeof(timeUnits) / sizeof(timeUnits[0]);
-    bool foundMatch = false;
-    for(unsigned int i = 0; i < nUnits; i++)
+    for (const auto& timeUnit : timeUnits)
     {
-        if (timeUnits[i].name == unitName)
+        if (timeUnit.name == unitName)
         {
-            foundMatch = true;
-            scale = timeUnits[i].conversion;
-            break;
+            scale = timeUnit.conversion;
+            return true;
         }
     }
 
-    return foundMatch;
+    return false;
 }
 
 
 // Get scale of given angle unit in degrees
-bool astro::getAngleScale(string unitName, double& scale)
+bool astro::getAngleScale(const string& unitName, double& scale)
 {
-    unsigned int nUnits = sizeof(angleUnits) / sizeof(angleUnits[0]);
-    bool foundMatch = false;
-    for (unsigned int i = 0; i < nUnits; i++)
+    for (const auto& angleUnit : angleUnits)
     {
-        if (angleUnits[i].name == unitName)
+        if (angleUnit.name == unitName)
         {
-            foundMatch = true;
-            scale = angleUnits[i].conversion;
-            break;
+            scale = angleUnit.conversion;
+            return true;
         }
     }
 
-    return foundMatch;
+    return false;
 }
 
 
@@ -969,7 +964,7 @@ bool astro::getAngleScale(string unitName, double& scale)
 bool astro::isLengthUnit(string unitName)
 {
     double dummy;
-    return getLengthScale(unitName, dummy);
+    return getLengthScale(std::move(unitName), dummy);
 }
 
 
@@ -977,7 +972,7 @@ bool astro::isLengthUnit(string unitName)
 bool astro::isTimeUnit(string unitName)
 {
     double dummy;
-    return getTimeScale(unitName, dummy);
+    return getTimeScale(std::move(unitName), dummy);
 }
 
 
@@ -985,5 +980,5 @@ bool astro::isTimeUnit(string unitName)
 bool astro::isAngleUnit(string unitName)
 {
     double dummy;
-    return getAngleScale(unitName, dummy);
+    return getAngleScale(std::move(unitName), dummy);
 }

@@ -224,10 +224,7 @@ static int getCompressedInternalFormat(int format)
 
 static int getCompressedBlockSize(int format)
 {
-    if (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT)
-        return 8;
-    else
-        return 16;
+    return format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
 }
 
 
@@ -348,17 +345,9 @@ static int CalcMipLevelCount(int w, int h)
 
 
 Texture::Texture(int w, int h, int d) :
-    alpha(false),
-    compressed(false),
     width(w),
     height(h),
-    depth(d),
-    formatOptions(0)
-{
-}
-
-
-Texture::~Texture()
+    depth(d)
 {
 }
 
@@ -369,25 +358,25 @@ int Texture::getLODCount() const
 }
 
 
-int Texture::getUTileCount(int) const
+int Texture::getUTileCount(int /*unused*/) const
 {
     return 1;
 }
 
 
-int Texture::getVTileCount(int) const
+int Texture::getVTileCount(int /*unused*/) const
 {
     return 1;
 }
 
 
-int Texture::getWTileCount(int) const
+int Texture::getWTileCount(int /*unused*/) const
 {
     return 1;
 }
 
 
-void Texture::setBorderColor(Color)
+void Texture::setBorderColor(Color /*unused*/)
 {
 }
 
@@ -514,8 +503,8 @@ const TextureTile ImageTexture::getTile(int lod, int u, int v)
 {
     if (lod != 0 || u != 0 || v != 0)
         return TextureTile(0);
-    else
-        return TextureTile(glName);
+
+    return TextureTile(glName);
 }
 
 
@@ -538,7 +527,7 @@ TiledTexture::TiledTexture(Image& img,
     Texture(img.getWidth(), img.getHeight()),
     uSplit(_uSplit),
     vSplit(_vSplit),
-    glNames(NULL)
+    glNames(nullptr)
 {
     glNames = new uint[uSplit * vSplit];
     {
@@ -577,7 +566,7 @@ TiledTexture::TiledTexture(Image& img,
     Image* tile = new Image(img.getFormat(),
                             tileWidth, tileHeight,
                             tileMipLevelCount);
-    if (tile == NULL)
+    if (tile == nullptr)
         return;
 
     for (int v = 0; v < vSplit; v++)
@@ -694,7 +683,7 @@ TiledTexture::TiledTexture(Image& img,
 
 TiledTexture::~TiledTexture()
 {
-    if (glNames != NULL)
+    if (glNames != nullptr)
     {
         for (int i = 0; i < uSplit * vSplit; i++)
         {
@@ -724,13 +713,13 @@ void TiledTexture::setBorderColor(Color borderColor)
 }
 
 
-int TiledTexture::getUTileCount(int) const
+int TiledTexture::getUTileCount(int /*lod*/) const
 {
     return uSplit;
 }
 
 
-int TiledTexture::getVTileCount(int) const
+int TiledTexture::getVTileCount(int /*lod*/) const
 {
     return vSplit;
 }
@@ -740,10 +729,8 @@ const TextureTile TiledTexture::getTile(int lod, int u, int v)
 {
     if (lod != 0 || u >= uSplit || u < 0 || v >= vSplit || v < 0)
         return TextureTile(0);
-    else
-    {
-        return TextureTile(glNames[v * uSplit + u]);
-    }
+
+    return TextureTile(glNames[v * uSplit + u]);
 }
 
 
@@ -792,7 +779,7 @@ CubeMap::CubeMap(Image* faces[]) :
 
     for (i = 0; i < 6; i++)
     {
-        GLenum targetFace = (GLenum) ((int) GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + i);
+        auto targetFace = (GLenum) ((int) GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + i);
         Image* face = faces[i];
 
         if (mipmap)
@@ -836,8 +823,8 @@ const TextureTile CubeMap::getTile(int lod, int u, int v)
 {
     if (lod != 0 || u != 0 || v != 0)
         return TextureTile(0);
-    else
-        return TextureTile(glName);
+
+    return TextureTile(glName);
 }
 
 
@@ -856,8 +843,8 @@ Texture* CreateProceduralTexture(int width, int height,
                                  Texture::MipMapMode mipMode)
 {
     Image* img = new Image(format, width, height);
-    if (img == NULL)
-        return NULL;
+    if (img == nullptr)
+        return nullptr;
 
     for (int y = 0; y < height; y++)
     {
@@ -883,8 +870,8 @@ Texture* CreateProceduralTexture(int width, int height,
                                  Texture::MipMapMode mipMode)
 {
     Image* img = new Image(format, width, height);
-    if (img == NULL)
-        return NULL;
+    if (img == nullptr)
+        return nullptr;
 
     for (int y = 0; y < height; y++)
     {
@@ -948,9 +935,9 @@ extern Texture* CreateProceduralCubeMap(int size, int format,
     int i = 0;
     for (i = 0; i < 6; i++)
     {
-        faces[i] = NULL;
+        faces[i] = nullptr;
         faces[i] = new Image(format, size, size);
-        if (faces[i] == NULL)
+        if (faces[i] == nullptr)
             failed = true;
     }
 
@@ -978,7 +965,7 @@ extern Texture* CreateProceduralCubeMap(int size, int format,
     // Clean up the images
     for (i = 0; i < 6; i++)
     {
-        if (faces[i] != NULL)
+        if (faces[i] != nullptr)
             delete faces[i];
     }
 
@@ -1006,7 +993,7 @@ static Texture* CreateTextureFromImage(Image& img,
     if (!isPow2(img.getWidth()) || !isPow2(img.getHeight()))
     {
         clog << "Texture has non-power of two dimensions.\n";
-        return NULL;
+        return nullptr;
     }
 #endif
 
@@ -1021,7 +1008,7 @@ static Texture* CreateTextureFromImage(Image& img,
     }
 
     bool splittingAllowed = true;
-    Texture* tex = NULL;
+    Texture* tex = nullptr;
 
     int maxDim = GetTextureCaps().maxTextureSize;
     if ((img.getWidth() > maxDim || img.getHeight() > maxDim) &&
@@ -1059,8 +1046,8 @@ Texture* LoadTextureFromFile(const string& filename,
     // All other texture types are handled by first loading an image, then
     // creating a texture from that image.
     Image* img = LoadImageFromFile(filename);
-    if (img == NULL)
-        return NULL;
+    if (img == nullptr)
+        return nullptr;
 
     Texture* tex = CreateTextureFromImage(*img, addressMode, mipMode);
 
@@ -1088,13 +1075,13 @@ Texture* LoadHeightMapFromFile(const string& filename,
                                Texture::AddressMode addressMode)
 {
     Image* img = LoadImageFromFile(filename);
-    if (img == NULL)
-        return NULL;
+    if (img == nullptr)
+        return nullptr;
     Image* normalMap = img->computeNormalMap(height,
                                              addressMode == Texture::Wrap);
     delete img;
-    if (normalMap == NULL)
-        return NULL;
+    if (normalMap == nullptr)
+        return nullptr;
 
     Texture* tex = CreateTextureFromImage(*normalMap, addressMode,
                                           Texture::DefaultMipMaps);

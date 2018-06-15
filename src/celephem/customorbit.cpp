@@ -38,7 +38,7 @@ static const double SaturnRadius = 60330.0;
 static const double BoundingRadiusSlack = 1.2;
 
 static bool jplephInitialized = false;
-static JPLEphemeris* jpleph = NULL;
+static JPLEphemeris* jpleph = nullptr;
 
 
 double gPlanetElements[8][9];
@@ -384,7 +384,7 @@ void ComputeGalileanElements(double t,
 class MercuryOrbit : public CachingOrbit
 {
  public:
-    virtual ~MercuryOrbit() {};
+    ~MercuryOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -435,12 +435,12 @@ class MercuryOrbit : public CachingOrbit
                     -sin(eclLong) * sin(eclLat) * distance);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 87.9522;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 6.98e+7 * BoundingRadiusSlack;
     };
@@ -449,7 +449,7 @@ class MercuryOrbit : public CachingOrbit
 class VenusOrbit : public CachingOrbit
 {
  public:
-    virtual ~VenusOrbit() {};
+    ~VenusOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -508,12 +508,12 @@ class VenusOrbit : public CachingOrbit
                     -sin(eclLong) * sin(eclLat) * distance);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 224.7018;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 1.089e+8 * BoundingRadiusSlack;
     };
@@ -522,7 +522,7 @@ class VenusOrbit : public CachingOrbit
 class EarthOrbit : public CachingOrbit
 {
  public:
-    virtual ~EarthOrbit() {};
+    ~EarthOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -575,12 +575,12 @@ class EarthOrbit : public CachingOrbit
                         sin(eclLong) * distance);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 365.25;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 1.52e+8 * BoundingRadiusSlack;
     };
@@ -590,7 +590,7 @@ class EarthOrbit : public CachingOrbit
 class LunarOrbit : public CachingOrbit
 {
  public:
-    virtual ~LunarOrbit() {};
+    ~LunarOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -746,12 +746,12 @@ class LunarOrbit : public CachingOrbit
 #endif
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 27.321661;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 405504 * BoundingRadiusSlack;
     };
@@ -761,7 +761,7 @@ class LunarOrbit : public CachingOrbit
 class MarsOrbit : public CachingOrbit
 {
  public:
-    virtual ~MarsOrbit() {};
+    ~MarsOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -831,12 +831,12 @@ class MarsOrbit : public CachingOrbit
                     -sin(eclLong) * sin(eclLat) * distance);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 689.998725;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 2.49e+8 * BoundingRadiusSlack;
     };
@@ -845,7 +845,7 @@ class MarsOrbit : public CachingOrbit
 class JupiterOrbit : public CachingOrbit
 {
  public:
-    virtual ~JupiterOrbit() {};
+    ~JupiterOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -942,12 +942,12 @@ class JupiterOrbit : public CachingOrbit
                     -sin(eclLong) * sin(eclLat) * distance);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 4332.66855;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 8.16e+8 * BoundingRadiusSlack;
     };
@@ -956,7 +956,7 @@ class JupiterOrbit : public CachingOrbit
 class SaturnOrbit : public CachingOrbit
 {
  public:
-    virtual ~SaturnOrbit() {};
+    ~SaturnOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -1080,12 +1080,12 @@ class SaturnOrbit : public CachingOrbit
                     -sin(eclLong) * sin(eclLat) * distance);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 10759.42493;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 1.50e+9 * BoundingRadiusSlack;
     };
@@ -1094,7 +1094,7 @@ class SaturnOrbit : public CachingOrbit
 class UranusOrbit : public CachingOrbit
 {
  public:
-    virtual ~UranusOrbit() {};
+    ~UranusOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -1173,12 +1173,12 @@ class UranusOrbit : public CachingOrbit
                     -sin(eclLong) * sin(eclLat) * distance);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 30686.07698;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 3.01e+9 * BoundingRadiusSlack;
     };
@@ -1187,7 +1187,7 @@ class UranusOrbit : public CachingOrbit
 class NeptuneOrbit : public CachingOrbit
 {
  public:
-    virtual ~NeptuneOrbit() {};
+    ~NeptuneOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -1256,12 +1256,12 @@ class NeptuneOrbit : public CachingOrbit
                     -sin(eclLong) * sin(eclLat) * distance);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 60190.64325;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 4.54e+9 * BoundingRadiusSlack;
     };
@@ -1270,7 +1270,7 @@ class NeptuneOrbit : public CachingOrbit
 class PlutoOrbit : public CachingOrbit
 {
  public:
-    virtual ~PlutoOrbit() {};
+    ~PlutoOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -1301,12 +1301,12 @@ class PlutoOrbit : public CachingOrbit
                     -sin(eclLong) * sin(eclLat) * distance);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 90779.235;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 7.38e+9 * BoundingRadiusSlack;
     };
@@ -1334,7 +1334,7 @@ static Vector3d ellipsePosition(double a, double e, double M)
 class PhobosOrbit : public CachingOrbit
 {
  public:
-    virtual ~PhobosOrbit() {};
+    ~PhobosOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -1388,12 +1388,12 @@ class PhobosOrbit : public CachingOrbit
         return RMars_eq * (RLaplacian * (Rorbit * p));
     }
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 0.319;
     }
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 9380 * BoundingRadiusSlack;
     }
@@ -1403,7 +1403,7 @@ class PhobosOrbit : public CachingOrbit
 class DeimosOrbit : public CachingOrbit
 {
  public:
-    virtual ~DeimosOrbit() {};
+    ~DeimosOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -1527,12 +1527,12 @@ class DeimosOrbit : public CachingOrbit
     }
 #endif
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 1.262441;
     }
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 23462 * BoundingRadiusSlack;
     }
@@ -1545,7 +1545,7 @@ static const double JupAscendingNode = degToRad(22.203);
 class IoOrbit : public CachingOrbit
 {
  public:
-    virtual ~IoOrbit() {};
+    ~IoOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -1612,12 +1612,12 @@ class IoOrbit : public CachingOrbit
                     -sin(L) * sin(B) * R);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 1.769138;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 423329 * BoundingRadiusSlack;
     };
@@ -1626,7 +1626,7 @@ class IoOrbit : public CachingOrbit
 class EuropaOrbit : public CachingOrbit
 {
  public:
-    virtual ~EuropaOrbit() {};
+    ~EuropaOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -1704,12 +1704,12 @@ class EuropaOrbit : public CachingOrbit
                     -sin(L) * sin(B) * R);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 3.5511810791;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 678000 * BoundingRadiusSlack;
     };
@@ -1718,7 +1718,7 @@ class EuropaOrbit : public CachingOrbit
 class GanymedeOrbit : public CachingOrbit
 {
  public:
-    virtual ~GanymedeOrbit() {};
+    ~GanymedeOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -1799,12 +1799,12 @@ class GanymedeOrbit : public CachingOrbit
                     -sin(L) * sin(B) * R);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 7.154553;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 1070000 * BoundingRadiusSlack;
     };
@@ -1813,7 +1813,7 @@ class GanymedeOrbit : public CachingOrbit
 class CallistoOrbit : public CachingOrbit
 {
  public:
-    virtual ~CallistoOrbit() {};
+    ~CallistoOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -1939,12 +1939,12 @@ class CallistoOrbit : public CachingOrbit
                     -sin(L) * sin(B) * R);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 16.689018;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 1890000 * BoundingRadiusSlack;
     };
@@ -2048,7 +2048,7 @@ static void OuterSaturnMoonParams(double a, double e, double i,
 class MimasOrbit : public CachingOrbit
 {
  public:
-    virtual ~MimasOrbit() {};
+    ~MimasOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -2075,12 +2075,12 @@ class MimasOrbit : public CachingOrbit
         return SaturnMoonPosition(lam, gam, Om, r);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 0.9424218;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 189000 * BoundingRadiusSlack;
     };
@@ -2090,7 +2090,7 @@ class MimasOrbit : public CachingOrbit
 class EnceladusOrbit : public CachingOrbit
 {
  public:
-    virtual ~EnceladusOrbit() {};
+    ~EnceladusOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -2116,12 +2116,12 @@ class EnceladusOrbit : public CachingOrbit
         return SaturnMoonPosition(lam, gam, Om, r);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 1.370218;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 239000 * BoundingRadiusSlack;
     };
@@ -2131,7 +2131,7 @@ class EnceladusOrbit : public CachingOrbit
 class TethysOrbit : public CachingOrbit
 {
  public:
-    virtual ~TethysOrbit() {};
+    ~TethysOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -2153,12 +2153,12 @@ class TethysOrbit : public CachingOrbit
         return SaturnMoonPosition(lam, gam, Om, r);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 1.887802;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 295000 * BoundingRadiusSlack;
     };
@@ -2168,7 +2168,7 @@ class TethysOrbit : public CachingOrbit
 class DioneOrbit : public CachingOrbit
 {
  public:
-    virtual ~DioneOrbit() {};
+    ~DioneOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -2195,12 +2195,12 @@ class DioneOrbit : public CachingOrbit
         return SaturnMoonPosition(lam, gam, Om, r);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 2.736915;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 378000 * BoundingRadiusSlack;
     };
@@ -2210,7 +2210,7 @@ class DioneOrbit : public CachingOrbit
 class RheaOrbit : public CachingOrbit
 {
  public:
-    virtual ~RheaOrbit() {};
+    ~RheaOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -2244,12 +2244,12 @@ class RheaOrbit : public CachingOrbit
         return SaturnMoonPosition(lam, gam, w, r);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 4.517500;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 528000 * BoundingRadiusSlack;
     };
@@ -2259,7 +2259,7 @@ class RheaOrbit : public CachingOrbit
 class TitanOrbit : public CachingOrbit
 {
  public:
-    virtual ~TitanOrbit() {};
+    ~TitanOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -2312,12 +2312,12 @@ class TitanOrbit : public CachingOrbit
         return SaturnMoonPosition(lam, gam, w, r);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 15.94544758;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 1260000 * BoundingRadiusSlack;
     };
@@ -2327,7 +2327,7 @@ class TitanOrbit : public CachingOrbit
 class HyperionOrbit : public CachingOrbit
 {
  public:
-    virtual ~HyperionOrbit() {};
+    ~HyperionOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -2395,12 +2395,12 @@ class HyperionOrbit : public CachingOrbit
         return SaturnMoonPosition(lam, gam, w, r);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 21.276609;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 1640000 * BoundingRadiusSlack;
     };
@@ -2410,7 +2410,7 @@ class HyperionOrbit : public CachingOrbit
 class IapetusOrbit : public CachingOrbit
 {
  public:
-    virtual ~IapetusOrbit() {};
+    ~IapetusOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -2487,12 +2487,12 @@ class IapetusOrbit : public CachingOrbit
         return SaturnMoonPosition(lam, gam, w, r);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 79.330183;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 3660000 * BoundingRadiusSlack;
     };
@@ -2502,7 +2502,7 @@ class IapetusOrbit : public CachingOrbit
 class PhoebeOrbit : public CachingOrbit
 {
  public:
-    virtual ~PhoebeOrbit() {};
+    ~PhoebeOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -2523,12 +2523,12 @@ class PhoebeOrbit : public CachingOrbit
         return SaturnMoonPosition(lam, gam, w, r);
     };
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 548.2122790;
     };
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 15100000 * BoundingRadiusSlack;
     };
@@ -2568,14 +2568,14 @@ class UranianSatelliteOrbit : public CachingOrbit
     {
     };
 
-    virtual ~UranianSatelliteOrbit() {};
+    ~UranianSatelliteOrbit() override = default;
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 2 * PI / n;
     }
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         // Not quite correct, but should work since e is pretty low
         // for most of the Uranian moons.
@@ -2732,7 +2732,7 @@ static UranianSatelliteOrbit* CreateUranianSatelliteOrbit(int n)
 class TritonOrbit : public CachingOrbit
 {
  public:
-    virtual ~TritonOrbit() {};
+    ~TritonOrbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -2778,12 +2778,12 @@ class TritonOrbit : public CachingOrbit
         return Vector3d(p.x(), p.z(), -p.y());
     }
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return 5.877;
     }
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 354800 * BoundingRadiusSlack;
     }
@@ -2993,7 +2993,7 @@ class HTC20Orbit : public CachingOrbit
     {
     }
 
-    virtual ~HTC20Orbit() {};
+    ~HTC20Orbit() override = default;
 
     Vector3d computePosition(double jd) const
     {
@@ -3016,12 +3016,12 @@ class HTC20Orbit : public CachingOrbit
         return Vector3d(pos.x(), pos.z(), -pos.y())  * astro::AUtoKilometers(1.0);
     }
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return period;
     }
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return 354800 * BoundingRadiusSlack;
     }
@@ -3067,14 +3067,14 @@ class JPLEphOrbit : public CachingOrbit
     {
     };
 
-    virtual ~JPLEphOrbit() {};
+    ~JPLEphOrbit() override = default;
 
-    double getPeriod() const
+    double getPeriod() const override
     {
         return period;
     }
 
-    double getBoundingRadius() const
+    double getBoundingRadius() const override
     {
         return boundingRadius;
     }
@@ -3133,8 +3133,8 @@ static Orbit* CreateJPLEphOrbit(JPLEphemItem target,
                                 double period,
                                 double boundingRadius)
 {
-    if (jpleph == NULL)
-        return NULL;
+    if (jpleph == nullptr)
+        return nullptr;
 
     Orbit* o = new JPLEphOrbit(*jpleph, target, center, period, boundingRadius);
     return new MixedOrbit(o,
@@ -3159,7 +3159,7 @@ Orbit* GetCustomOrbit(const string& name)
         ifstream in("data/jpleph.dat", ios::in | ios::binary);
         if (in.good())
             jpleph = JPLEphemeris::load(in);
-        if (jpleph != NULL)
+        if (jpleph != nullptr)
         {
             clog << "Loaded DE" << jpleph->getDENumber() <<
                 " ephemeris. Valid from JD" <<

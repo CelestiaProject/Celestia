@@ -136,21 +136,6 @@ static const int DEG_MIN_SEC_STEPS[]  =
 #endif
 
 
-SkyGrid::SkyGrid() :
-    m_orientation(Quaterniond::Identity()),
-    m_lineColor(Color::White),
-    m_labelColor(Color::White),
-    m_longitudeUnits(LongitudeHours),
-    m_longitudeDirection(IncreasingCounterclockwise)
-{
-}
-
-
-SkyGrid::~SkyGrid()
-{
-}
-
-
 static Vector3d
 toStandardCoords(const Vector3d& v)
 {
@@ -206,10 +191,7 @@ getCoordLabelHAlign(int planeIndex)
 static Renderer::LabelVerticalAlignment
 getCoordLabelVAlign(int planeIndex)
 {
-    if (planeIndex == 1)
-        return Renderer::VerticalAlignTop;
-    else
-        return Renderer::VerticalAlignBottom;
+    return planeIndex == 1 ? Renderer::VerticalAlignTop : Renderer::VerticalAlignBottom;
 }
 
 
@@ -424,7 +406,7 @@ SkyGrid::render(Renderer& renderer,
     double cosHalfFov = 1.0 / diag;
     double halfFov = acos(cosHalfFov);
 
-    float polarCrossSize = (float) (POLAR_CROSS_SIZE * halfFov);
+    auto polarCrossSize = (float) (POLAR_CROSS_SIZE * halfFov);
 
     // We want to avoid drawing more of the grid than we have to. The following code
     // determines the region of the grid intersected by the view frustum. We're
@@ -580,9 +562,9 @@ SkyGrid::render(Renderer& renderer,
         for (int j = 0; j <= ARC_SUBDIVISIONS; j++)
         {
             double theta = theta0 + j * arcStep;
-            float x = (float) (cosPhi * std::cos(theta));
-            float y = (float) (cosPhi * std::sin(theta));
-            float z = (float) sinPhi;
+            auto x = (float) (cosPhi * std::cos(theta));
+            auto y = (float) (cosPhi * std::sin(theta));
+            auto z = (float) sinPhi;
             glVertex3f(x, z, -y);  // convert to Celestia coords
         }
         glEnd();
@@ -623,12 +605,12 @@ SkyGrid::render(Renderer& renderer,
 
                 if ((m * p0).z() < 0.0)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p0, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(nullptr, labelText, m_labelColor, p0, hAlign, vAlign);
                 }
 
                 if ((m * p1).z() < 0.0)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p1, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(nullptr, labelText, m_labelColor, p1, hAlign, vAlign);
                 }
             }
         }
@@ -656,9 +638,9 @@ SkyGrid::render(Renderer& renderer,
         for (int j = 0; j <= ARC_SUBDIVISIONS; j++)
         {
             double phi = phi0 + j * arcStep;
-            float x = (float) (cos(phi) * cosTheta);
-            float y = (float) (cos(phi) * sinTheta);
-            float z = (float) sin(phi);
+            auto x = (float) (cos(phi) * cosTheta);
+            auto y = (float) (cos(phi) * sinTheta);
+            auto z = (float) sin(phi);
             glVertex3f(x, z, -y);  // convert to Celestia coords
         }
         glEnd();
@@ -699,12 +681,12 @@ SkyGrid::render(Renderer& renderer,
 
                 if ((m * p0).z() < 0.0 && axis0.dot(isect0) >= cosMaxMeridianAngle)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p0, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(nullptr, labelText, m_labelColor, p0, hAlign, vAlign);
                 }
 
                 if ((m * p1).z() < 0.0 && axis0.dot(isect1) >= cosMaxMeridianAngle)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p1, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(nullptr, labelText, m_labelColor, p1, hAlign, vAlign);
                 }
             }
         }

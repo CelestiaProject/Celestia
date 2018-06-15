@@ -61,7 +61,7 @@ void usage()
 struct Vertex
 {
     Vertex() :
-        index(0), attributes(NULL) {};
+        index(0), attributes(nullptr) {};
 
     Vertex(uint32 _index, const void* _attributes) :
         index(_index), attributes(_attributes) {};
@@ -99,15 +99,15 @@ public:
     {
     }
 
-    bool compare(const Vertex& a, const Vertex& b) const
+    bool compare(const Vertex& a, const Vertex& b) const override
     {
-        const char* s0 = reinterpret_cast<const char*>(a.attributes);
-        const char* s1 = reinterpret_cast<const char*>(b.attributes);
+        const auto* s0 = reinterpret_cast<const char*>(a.attributes);
+        const auto* s1 = reinterpret_cast<const char*>(b.attributes);
         for (int i = 0; i < vertexSize; i++)
         {
             if (s0[i] < s1[i])
                 return true;
-            else if (s0[i] > s1[i])
+            if (s0[i] > s1[i])
                 return false;
         }
 
@@ -122,11 +122,9 @@ private:
 class PointOrderingPredicate : public VertexComparator
 {
 public:
-    PointOrderingPredicate()
-    {
-    }
+    PointOrderingPredicate() = default;
 
-    bool compare(const Vertex& a, const Vertex& b) const
+    bool compare(const Vertex& a, const Vertex& b) const override
     {
         const Vector3f* p0 = reinterpret_cast<const Vector3f*>(a.attributes);
         const Vector3f* p1 = reinterpret_cast<const Vector3f*>(b.attributes);
@@ -135,7 +133,7 @@ public:
         {
             return true;
         }
-        else if (p0->x() > p1->x())
+        if (p0->x() > p1->x())
         {
             return false;
         }
@@ -143,7 +141,7 @@ public:
         {
             if (p0->y() < p1->y())
                 return true;
-            else if (p0->y() > p1->y())
+            if (p0->y() > p1->y())
                 return false;
             else
                 return p0->z() < p1->z();
@@ -167,10 +165,10 @@ public:
     {
     }
 
-    bool compare(const Vertex& a, const Vertex& b) const
+    bool compare(const Vertex& a, const Vertex& b) const override
     {
-        const char* adata = reinterpret_cast<const char*>(a.attributes);
-        const char* bdata = reinterpret_cast<const char*>(b.attributes);
+        const auto* adata = reinterpret_cast<const char*>(a.attributes);
+        const auto* bdata = reinterpret_cast<const char*>(b.attributes);
         const Vector3f* p0 = reinterpret_cast<const Vector3f*>(adata + posOffset);
         const Vector3f* p1 = reinterpret_cast<const Vector3f*>(bdata + posOffset);
         const Vector2f* tc0 = reinterpret_cast<const Vector2f*>(adata + texCoordOffset);
@@ -179,7 +177,7 @@ public:
         {
             return true;
         }
-        else if (p0->x() > p1->x())
+        if (p0->x() > p1->x())
         {
             return false;
         }
@@ -189,7 +187,7 @@ public:
             {
                 return true;
             }
-            else if (p0->y() > p1->y())
+            if (p0->y() > p1->y())
             {
                 return false;
             }
@@ -199,7 +197,7 @@ public:
                 {
                     return true;
                 }
-                else if (p0->z() > p1->z())
+                if (p0->z() > p1->z())
                 {
                     return false;
                 }
@@ -207,7 +205,7 @@ public:
                 {
                     if (tc0->x() < tc1->x())
                         return true;
-                    else if (tc0->x() > tc1->x())
+                    if (tc0->x() > tc1->x())
                         return false;
                     else
                         return tc0->y() < tc1->y();
@@ -239,10 +237,10 @@ public:
     {
     }
 
-    bool compare(const Vertex& a, const Vertex& b) const
+    bool compare(const Vertex& a, const Vertex& b) const override
     {
-        const char* adata = reinterpret_cast<const char*>(a.attributes);
-        const char* bdata = reinterpret_cast<const char*>(b.attributes);
+        const auto* adata = reinterpret_cast<const char*>(a.attributes);
+        const auto* bdata = reinterpret_cast<const char*>(b.attributes);
         const Vector3f* p0 = reinterpret_cast<const Vector3f*>(adata + posOffset);
         const Vector3f* p1 = reinterpret_cast<const Vector3f*>(bdata + posOffset);
 
@@ -271,10 +269,10 @@ public:
     {
     }
 
-    bool compare(const Vertex& a, const Vertex& b) const
+    bool compare(const Vertex& a, const Vertex& b) const override
     {
-        const char* adata = reinterpret_cast<const char*>(a.attributes);
-        const char* bdata = reinterpret_cast<const char*>(b.attributes);
+        const auto* adata = reinterpret_cast<const char*>(a.attributes);
+        const auto* bdata = reinterpret_cast<const char*>(b.attributes);
         const Vector3f* p0 = reinterpret_cast<const Vector3f*>(adata + posOffset);
         const Vector3f* p1 = reinterpret_cast<const Vector3f*>(bdata + posOffset);
         const Vector2f* tc0 = reinterpret_cast<const Vector2f*>(adata + texCoordOffset);
@@ -297,8 +295,8 @@ private:
 
 bool equal(const Vertex& a, const Vertex& b, uint32 vertexSize)
 {
-    const char* s0 = reinterpret_cast<const char*>(a.attributes);
-    const char* s1 = reinterpret_cast<const char*>(b.attributes);
+    const auto* s0 = reinterpret_cast<const char*>(a.attributes);
+    const auto* s1 = reinterpret_cast<const char*>(b.attributes);
 
     for (uint32 i = 0; i < vertexSize; i++)
     {
@@ -335,7 +333,7 @@ bool operator<(const Mesh::VertexAttribute& a,
     {
         return true;
     }
-    else if (b.semantic < a.semantic)
+    if (b.semantic < a.semantic)
     {
         return false;
     }
@@ -343,7 +341,7 @@ bool operator<(const Mesh::VertexAttribute& a,
     {
         if (a.format < b.format)
             return true;
-        else if (b.format < a.format)
+        if (b.format < a.format)
             return false;
         else
             return a.offset < b.offset;
@@ -372,12 +370,12 @@ bool operator<(const Mesh::VertexDescription& a,
 {
     if (a.stride < b.stride)
         return true;
-    else if (b.stride < a.stride)
+    if (b.stride < a.stride)
         return false;
 
     if (a.nAttributes < b.nAttributes)
         return true;
-    else if (b.nAttributes < b.nAttributes)
+    if (b.nAttributes < b.nAttributes)
         return false;
 
     for (uint32 i = 0; i < a.nAttributes; i++)
@@ -396,9 +394,7 @@ class MeshVertexDescComparator :
     public std::binary_function<const Mesh*, const Mesh*, bool>
 {
 public:
-    MeshVertexDescComparator()
-    {
-    }
+    MeshVertexDescComparator() = default;
 
     bool operator()(const Mesh* a, const Mesh* b) const
     {
@@ -420,7 +416,7 @@ bool uniquifyVertices(Mesh& mesh)
         return false;
 
     const char* vertexData = reinterpret_cast<const char*>(mesh.getVertexData());
-    if (vertexData == NULL)
+    if (vertexData == nullptr)
         return false;
 
     // Initialize the array of vertices
@@ -448,7 +444,7 @@ bool uniquifyVertices(Mesh& mesh)
 
     // Build the vertex map and the uniquified vertex data
     vector<uint32> vertexMap(nVertices);
-    char* newVertexData = new char[uniqueVertexCount * desc.stride];
+    auto* newVertexData = new char[uniqueVertexCount * desc.stride];
     const char* oldVertexData = reinterpret_cast<const char*>(mesh.getVertexData());
     uint32 j = 0;
     for (i = 0; i < nVertices; i++)
@@ -535,7 +531,7 @@ copyVertex(void* newVertexData,
 {
     const char* oldVertex = reinterpret_cast<const char*>(oldVertexData) +
         oldDesc.stride * oldIndex;
-    char* newVertex = reinterpret_cast<char*>(newVertexData);
+    auto* newVertex = reinterpret_cast<char*>(newVertexData);
 
     for (uint32 i = 0; i < newDesc.nAttributes; i++)
     {
@@ -660,20 +656,20 @@ generateNormals(Mesh& mesh,
                 bool weld)
 {
     uint32 nVertices = mesh.getVertexCount();
-    float cosSmoothAngle = (float) cos(smoothAngle);
+    auto cosSmoothAngle = (float) cos(smoothAngle);
 
     const Mesh::VertexDescription& desc = mesh.getVertexDescription();
 
     if (desc.getAttribute(Mesh::Position).format != Mesh::Float3)
     {
         cerr << "Vertex position must be a float3\n";
-        return NULL;
+        return nullptr;
     }
     uint32 posOffset = desc.getAttribute(Mesh::Position).offset;
 
     uint32 nFaces = 0;
     uint32 i;
-    for (i = 0; mesh.getGroup(i) != NULL; i++)
+    for (i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
 
@@ -683,7 +679,7 @@ generateNormals(Mesh& mesh,
             if (group->nIndices < 3 || group->nIndices % 3 != 0)
             {
                 cerr << "Triangle list has invalid number of indices\n";
-                return NULL;
+                return nullptr;
             }
             nFaces += group->nIndices / 3;
             break;
@@ -693,14 +689,14 @@ generateNormals(Mesh& mesh,
             if (group->nIndices < 3)
             {
                 cerr << "Error: tri strip or fan has less than three indices\n";
-                return NULL;
+                return nullptr;
             }
             nFaces += group->nIndices - 2;
             break;
 
         default:
             cerr << "Cannot generate normals for non-triangle primitives\n";
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -709,7 +705,7 @@ generateNormals(Mesh& mesh,
     vector<Face> faces(nFaces);
 
     uint32 f = 0;
-    for (i = 0; mesh.getGroup(i) != NULL; i++)
+    for (i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
 
@@ -794,7 +790,7 @@ generateNormals(Mesh& mesh,
     for (i = 0; i < nVertices; i++)
     {
         faceCounts[i] = 0;
-        vertexFaces[i] = NULL;
+        vertexFaces[i] = nullptr;
     }
 
     // If we're welding vertices before generating normals, find identical
@@ -951,7 +947,7 @@ generateNormals(Mesh& mesh,
     delete[] faceCounts;
     for (i = 0; i < nVertices; i++)
     {
-        if (vertexFaces[i] != NULL)
+        if (vertexFaces[i] != nullptr)
             delete[] vertexFaces[i];
     }
     delete[] vertexFaces;
@@ -972,32 +968,32 @@ generateTangents(Mesh& mesh,
     if (desc.getAttribute(Mesh::Position).format != Mesh::Float3)
     {
         cerr << "Vertex position must be a float3\n";
-        return NULL;
+        return nullptr;
     }
 
     if (desc.getAttribute(Mesh::Normal).format != Mesh::Float3)
     {
         cerr << "float3 format vertex normal required\n";
-        return NULL;
+        return nullptr;
     }
 
     if (desc.getAttribute(Mesh::Texture0).format == Mesh::InvalidFormat)
     {
         cerr << "Texture coordinates must be present in mesh to generate tangents\n";
-        return NULL;
+        return nullptr;
     }
 
     if (desc.getAttribute(Mesh::Texture0).format != Mesh::Float2)
     {
         cerr << "Texture coordinate must be a float2\n";
-        return NULL;
+        return nullptr;
     }
 
     // Count the number of faces in the mesh.
     // (All geometry should already converted to triangle lists)
     uint32 i;
     uint32 nFaces = 0;
-    for (i = 0; mesh.getGroup(i) != NULL; i++)
+    for (i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
         if (group->prim == Mesh::TriList)
@@ -1008,7 +1004,7 @@ generateTangents(Mesh& mesh,
         else
         {
             cerr << "Mesh should contain just triangle lists\n";
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -1017,7 +1013,7 @@ generateTangents(Mesh& mesh,
     vector<Face> faces(nFaces);
 
     uint32 f = 0;
-    for (i = 0; mesh.getGroup(i) != NULL; i++)
+    for (i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
 
@@ -1073,7 +1069,7 @@ generateTangents(Mesh& mesh,
     for (i = 0; i < nVertices; i++)
     {
         faceCounts[i] = 0;
-        vertexFaces[i] = NULL;
+        vertexFaces[i] = nullptr;
     }
 
     // If we're welding vertices before generating normals, find identical
@@ -1228,7 +1224,7 @@ generateTangents(Mesh& mesh,
     delete[] faceCounts;
     for (i = 0; i < nVertices; i++)
     {
-        if (vertexFaces[i] != NULL)
+        if (vertexFaces[i] != nullptr)
             delete[] vertexFaces[i];
     }
     delete[] vertexFaces;
@@ -1260,7 +1256,7 @@ mergeModelMeshes(const Model& model)
 {
     vector<Mesh*> meshes;
 
-    for (uint32 i = 0; model.getMesh(i) != NULL; i++)
+    for (uint32 i = 0; model.getMesh(i) != nullptr; i++)
     {
         meshes.push_back(model.getMesh(i));
     }
@@ -1271,7 +1267,7 @@ mergeModelMeshes(const Model& model)
     Model* newModel = new Model();
 
     // Copy materials into the new model
-    for (uint32 i = 0; model.getMaterial(i) != NULL; i++)
+    for (uint32 i = 0; model.getMaterial(i) != nullptr; i++)
     {
         newModel->addMaterial(model.getMaterial(i));
     }
@@ -1318,7 +1314,7 @@ mergeModelMeshes(const Model& model)
                    mesh->getVertexData(),
                    mesh->getVertexCount() * desc.stride);
 
-            for (uint32 k = 0; mesh->getGroup(k) != NULL; k++)
+            for (uint32 k = 0; mesh->getGroup(k) != nullptr; k++)
             {
                 addGroupWithOffset(*mergedMesh, *mesh->getGroup(k),
                                    vertexCount);
@@ -1351,14 +1347,14 @@ convertToStrips(Mesh& mesh)
 
     // Verify that the mesh contains just tri strips
     uint32 i;
-    for (i = 0; mesh.getGroup(i) != NULL; i++)
+    for (i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         if (mesh.getGroup(i)->prim != Mesh::TriList)
             return true;
     }
 
     // Convert the existing groups to triangle strips
-    for (i = 0; mesh.getGroup(i) != NULL; i++)
+    for (i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
 
@@ -1370,14 +1366,14 @@ convertToStrips(Mesh& mesh)
             indices[j] = (unsigned short) group->indices[j];
         }
 
-        PrimitiveGroup* strips = NULL;
+        PrimitiveGroup* strips = nullptr;
         unsigned short nGroups;
         bool r = GenerateStrips(indices,
                                 group->nIndices,
                                 &strips,
                                 &nGroups,
                                 false);
-        if (!r || strips == NULL)
+        if (!r || strips == nullptr)
         {
             cerr << "Generate tri strips failed\n";
             return false;
@@ -1530,10 +1526,10 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    Model* model = NULL;
+    Model* model = nullptr;
     if (!inputFilename.empty())
     {
-        ifstream in(inputFilename.c_str(), ios::in | ios::binary);
+        ifstream in(inputFilename, ios::in | ios::binary);
         if (!in.good())
         {
             cerr << "Error opening " << inputFilename << "\n";
@@ -1546,7 +1542,7 @@ int main(int argc, char* argv[])
         model = LoadModel(cin);
     }
 
-    if (model == NULL)
+    if (model == nullptr)
         return 1;
 
     if (genNormals || genTangents)
@@ -1555,23 +1551,23 @@ int main(int argc, char* argv[])
         uint32 i;
 
         // Copy materials
-        for (i = 0; model->getMaterial(i) != NULL; i++)
+        for (i = 0; model->getMaterial(i) != nullptr; i++)
         {
             newModel->addMaterial(model->getMaterial(i));
         }
 
         // Generate normals and/or tangents for each model in the mesh
-        for (i = 0; model->getMesh(i) != NULL; i++)
+        for (i = 0; model->getMesh(i) != nullptr; i++)
         {
             Mesh* mesh = model->getMesh(i);
-            Mesh* newMesh = NULL;
+            Mesh* newMesh = nullptr;
 
             if (genNormals)
             {
                 newMesh = generateNormals(*mesh,
                                           degToRad(smoothAngle),
                                           weldVertices);
-                if (newMesh == NULL)
+                if (newMesh == nullptr)
                 {
                     cerr << "Error generating normals!\n";
                     return 1;
@@ -1583,7 +1579,7 @@ int main(int argc, char* argv[])
             if (genTangents)
             {
                 newMesh = generateTangents(*mesh, weldVertices);
-                if (newMesh == NULL)
+                if (newMesh == nullptr)
                 {
                     cerr << "Error generating tangents!\n";
                     return 1;
@@ -1606,7 +1602,7 @@ int main(int argc, char* argv[])
 
     if (uniquify)
     {
-        for (uint32 i = 0; model->getMesh(i) != NULL; i++)
+        for (uint32 i = 0; model->getMesh(i) != nullptr; i++)
         {
             Mesh* mesh = model->getMesh(i);
             uniquifyVertices(*mesh);
@@ -1617,7 +1613,7 @@ int main(int argc, char* argv[])
     if (stripify)
     {
         SetCacheSize(vertexCacheSize);
-        for (uint32 i = 0; model->getMesh(i) != NULL; i++)
+        for (uint32 i = 0; model->getMesh(i) != nullptr; i++)
         {
             Mesh* mesh = model->getMesh(i);
             convertToStrips(*mesh);
@@ -1639,7 +1635,7 @@ int main(int argc, char* argv[])
         {
             openMode |= ios::binary;
         }
-        ofstream out(outputFilename.c_str(), openMode);
+        ofstream out(outputFilename, openMode);
         //ios::out | (outputBinary ? ios::binary : 0));
 
         if (!out.good())

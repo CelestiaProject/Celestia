@@ -23,7 +23,7 @@ namespace CelestiaQt {
         Q_OBJECT
 
     public: 
-        QtCelestiaCoreApplication(QObject *p = NULL);
+        QtCelestiaCoreApplication(QObject *p = nullptr);
 
         CelestiaQt::RenderFlag showStarsFlag;
         CelestiaQt::RenderFlag showPlanetsFlag;

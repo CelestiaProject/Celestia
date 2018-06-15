@@ -29,13 +29,7 @@ using namespace Eigen;
 using namespace std;
 
 
-Universe::Universe() :
-    starCatalog(NULL),
-    dsoCatalog(NULL),
-    solarSystemCatalog(NULL),
-    asterisms(NULL),
-    boundaries(NULL),
-    markers(NULL)
+Universe::Universe()
 {
     markers = new MarkerList();
 }
@@ -100,23 +94,23 @@ void Universe::setBoundaries(ConstellationBoundaries* _boundaries)
     boundaries = _boundaries;
 }
 
-// Return the planetary system of a star, or NULL if it has no planets.
+// Return the planetary system of a star, or nullptr if it has no planets.
 SolarSystem* Universe::getSolarSystem(const Star* star) const
 {
-    if (star == NULL)
-        return NULL;
+    if (star == nullptr)
+        return nullptr;
 
     uint32 starNum = star->getCatalogNumber();
-    SolarSystemCatalog::iterator iter = solarSystemCatalog->find(starNum);
-    if (iter == solarSystemCatalog->end())
-        return NULL;
-    else
+    auto iter = solarSystemCatalog->find(starNum);
+    if (iter != solarSystemCatalog->end())
         return iter->second;
+
+    return nullptr;
 }
 
 
 // A more general version of the method above--return the solar system
-// that contains an object, or NULL if there is no solar sytstem.
+// that contains an object, or nullptr if there is no solar sytstem.
 SolarSystem* Universe::getSolarSystem(const Selection& sel) const
 {
     switch (sel.getType())
@@ -127,22 +121,22 @@ SolarSystem* Universe::getSolarSystem(const Selection& sel) const
     case Selection::Type_Body:
         {
             PlanetarySystem* system = sel.body()->getSystem();
-            while (system != NULL)
+            while (system != nullptr)
             {
                 Body* parent = system->getPrimaryBody();
-                if (parent != NULL)
+                if (parent != nullptr)
                     system = parent->getSystem();
                 else
                     return getSolarSystem(Selection(system->getStar()));
             }
-            return NULL;
+            return nullptr;
         }
 
     case Selection::Type_Location:
         return getSolarSystem(Selection(sel.location()->getParentBody()));
 
     default:
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -152,7 +146,7 @@ SolarSystem* Universe::getSolarSystem(const Selection& sel) const
 SolarSystem* Universe::createSolarSystem(Star* star) const
 {
     SolarSystem* solarSystem = getSolarSystem(star);
-    if (solarSystem != NULL)
+    if (solarSystem != nullptr)
         return solarSystem;
 
     solarSystem = new SolarSystem(star);
@@ -176,24 +170,17 @@ void Universe::markObject(const Selection& sel,
                           bool occludable,
                           MarkerSizing sizing)
 {
-    for (MarkerList::iterator iter = markers->begin();
-         iter != markers->end(); iter++)
+    auto iter = std::find_if(markers->begin(), markers->end(),
+                             [&sel](Marker& m) { return m.object() == sel; });
+    if (iter != markers->end())
     {
-        if (iter->object() == sel)
-        {
-            // Handle the case when the object is already marked.  If the
-            // priority is higher than the existing marker, replace it.
-            // Otherwise, do nothing.
-            if (priority > iter->priority())
-            {
-                markers->erase(iter);
-                break;
-            }
-            else
-            {
-                return;
-            }
-        }
+        // Handle the case when the object is already marked.  If the
+        // priority is higher than the existing marker, replace it.
+        // Otherwise, do nothing.
+        if (priority > iter->priority())
+            markers->erase(iter);
+        else
+            return;
     }
 
     Marker marker(sel);
@@ -207,16 +194,10 @@ void Universe::markObject(const Selection& sel,
 
 void Universe::unmarkObject(const Selection& sel, int priority)
 {
-    for (MarkerList::iterator iter = markers->begin();
-         iter != markers->end(); iter++)
-    {
-        if (iter->object() == sel)
-        {
-            if (priority >= iter->priority())
-                markers->erase(iter);
-            break;
-        }
-    }
+    auto iter = std::find_if(markers->begin(), markers->end(),
+                            [&sel](Marker& m) { return m.object() == sel; });
+    if (iter != markers->end() && priority >= iter->priority())
+        markers->erase(iter);
 }
 
 
@@ -228,12 +209,10 @@ void Universe::unmarkAll()
 
 bool Universe::isMarked(const Selection& sel, int priority) const
 {
-    for (MarkerList::iterator iter = markers->begin();
-         iter != markers->end(); iter++)
-    {
-        if (iter->object() == sel)
-            return iter->priority() >= priority;
-    }
+    auto iter = std::find_if(markers->begin(), markers->end(),
+                             [&sel](Marker& m) { return m.object() == sel; });
+    if (iter != markers->end())
+        return iter->priority() >= priority;
 
     return false;
 }
@@ -243,7 +222,7 @@ class ClosestStarFinder : public StarHandler
 {
 public:
     ClosestStarFinder(float _maxDistance, const Universe* _universe);
-    ~ClosestStarFinder() {};
+    ~ClosestStarFinder() = default;
     void process(const Star& star, float distance, float appMag);
 
 public:
@@ -258,13 +237,13 @@ ClosestStarFinder::ClosestStarFinder(float _maxDistance,
                                      const Universe* _universe) :
     maxDistance(_maxDistance),
     closestDistance(_maxDistance),
-    closestStar(NULL),
+    closestStar(nullptr),
     universe(_universe),
     withPlanets(false)
 {
 }
 
-void ClosestStarFinder::process(const Star& star, float distance, float)
+void ClosestStarFinder::process(const Star& star, float distance, float /*unused*/)
 {
     if (distance < closestDistance)
     {
@@ -281,7 +260,7 @@ class NearStarFinder : public StarHandler
 {
 public:
     NearStarFinder(float _maxDistance, vector<const Star*>& nearStars);
-    ~NearStarFinder() {};
+    ~NearStarFinder() = default;
     void process(const Star& star, float distance, float appMag);
 
 private:
@@ -296,7 +275,7 @@ NearStarFinder::NearStarFinder(float _maxDistance,
 {
 }
 
-void NearStarFinder::process(const Star& star, float distance, float)
+void NearStarFinder::process(const Star& star, float distance, float /*unused*/)
 {
     if (distance < maxDistance)
         nearStars.push_back(&star);
@@ -318,7 +297,7 @@ struct PlanetPickInfo
 
 static bool ApproxPlanetPickTraversal(Body* body, void* info)
 {
-    PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
+    auto* pickInfo = (PlanetPickInfo*) info;
 
     // Reject invisible bodies and bodies that don't exist at the current time
     if (!body->isVisible() || !body->extant(pickInfo->jd) || !body->isClickable())
@@ -356,7 +335,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
 // Perform an intersection test between the pick ray and a body
 static bool ExactPlanetPickTraversal(Body* body, void* info)
 {
-    PlanetPickInfo* pickInfo = reinterpret_cast<PlanetPickInfo*>(info);
+    auto* pickInfo = reinterpret_cast<PlanetPickInfo*>(info);
     Vector3d bpos = body->getAstrocentricPosition(pickInfo->jd);
     float radius = body->getRadius();
     double distance = -1.0;
@@ -394,7 +373,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
 
             Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
             float scaleFactor = body->getGeometryScale();
-            if (geometry != NULL && geometry->isNormalized())
+            if (geometry != nullptr && geometry->isNormalized())
                 scaleFactor = radius;
 
             // The mesh vertices are normalized, then multiplied by a scale
@@ -404,7 +383,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             r.origin *= is;
             r.direction *= is;
 
-            if (geometry != NULL)
+            if (geometry != nullptr)
             {
                 if (!geometry->pick(r, distance))
                     distance = -1.0;
@@ -451,7 +430,7 @@ static bool traverseFrameTree(FrameTree* frameTree,
             if (!func(body, info))
                 return false;
 
-            if (body->getFrameTree() != NULL)
+            if (body->getFrameTree() != nullptr)
             {
                 if (!traverseFrameTree(body->getFrameTree(), tdb, func, info))
                     return false;
@@ -474,7 +453,7 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
     PlanetPickInfo pickInfo;
 
     Star* star = solarSystem.getStar();
-    assert(star != NULL);
+    assert(star != nullptr);
 
     // Transform the pick ray origin into astrocentric coordinates
     Vector3d astrocentricOrigin = origin.offsetFromKm(star->getPosition(when));
@@ -483,7 +462,7 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
     pickInfo.sinAngle2Closest = 1.0;
     pickInfo.closestDistance = 1.0e50;
     pickInfo.closestApproxDistance = 1.0e50;
-    pickInfo.closestBody = NULL;
+    pickInfo.closestBody = nullptr;
     pickInfo.jd = when;
     pickInfo.atanTolerance = (float) atan(tolerance);
 
@@ -491,7 +470,7 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
     // Select the closest planet|moon intersected.
     traverseFrameTree(solarSystem.getFrameTree(), when, ExactPlanetPickTraversal, (void*) &pickInfo);
 
-    if (pickInfo.closestBody != NULL)
+    if (pickInfo.closestBody != nullptr)
     {
         // Retain that body
         Body* closestBody = pickInfo.closestBody;
@@ -534,9 +513,9 @@ class StarPicker : public StarHandler
 {
 public:
     StarPicker(const Vector3f&, const Vector3f&, double, float);
-    ~StarPicker() {};
+    ~StarPicker() = default;
 
-    void process(const Star&, float, float);
+    void process(const Star& /*star*/, float /*unused*/, float /*unused*/);
 
 public:
     const Star* pickedStar;
@@ -550,7 +529,7 @@ StarPicker::StarPicker(const Vector3f& _pickOrigin,
                        const Vector3f& _pickRay,
                        double _when,
                        float angle) :
-    pickedStar(NULL),
+    pickedStar(nullptr),
     pickOrigin(_pickOrigin),
     pickRay(_pickRay),
     sinAngle2Closest(std::max(sin(angle / 2.0), ANGULAR_RES)),
@@ -558,7 +537,7 @@ StarPicker::StarPicker(const Vector3f& _pickOrigin,
 {
 }
 
-void StarPicker::process(const Star& star, float, float)
+void StarPicker::process(const Star& star, float /*unused*/, float /*unused*/)
 {
     Vector3f relativeStarPos = star.getPosition() - pickOrigin;
     Vector3f starDir = relativeStarPos.normalized();
@@ -592,7 +571,7 @@ void StarPicker::process(const Star& star, float, float)
     {
         sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
         pickedStar = &star;
-        if (pickedStar->getOrbitBarycenter() != NULL)
+        if (pickedStar->getOrbitBarycenter() != nullptr)
             pickedStar = pickedStar->getOrbitBarycenter();
     }
 }
@@ -606,8 +585,8 @@ public:
                     double t,
                     float _maxDistance,
                     float angle);
-    ~CloseStarPicker() {};
-    void process(const Star& star, float distance, float appMag);
+    ~CloseStarPicker() = default;
+    void process(const Star& star, float lowPrecDistance, float appMag);
 
 public:
     UniversalCoord pickOrigin;
@@ -629,7 +608,7 @@ CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
     pickDir(dir),
     now(t),
     maxDistance(_maxDistance),
-    closestStar(NULL),
+    closestStar(nullptr),
     closestDistance(0.0f),
     sinAngle2Closest(std::max(sin(angle/2.0), ANGULAR_RES))
 {
@@ -637,7 +616,7 @@ CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
 
 void CloseStarPicker::process(const Star& star,
                               float lowPrecDistance,
-                              float)
+                              float /*unused*/)
 {
     if (lowPrecDistance > maxDistance)
         return;
@@ -652,7 +631,7 @@ void CloseStarPicker::process(const Star& star,
     {
         if (distance > 0.0f)
         {
-            if (closestStar == NULL || distance < closestDistance)
+            if (closestStar == nullptr || distance < closestDistance)
             {
                 closestStar = &star;
                 closestDistance = starDir.norm();
@@ -672,7 +651,7 @@ void CloseStarPicker::process(const Star& star,
         double sinAngle2 = sMd.norm() / 2.0;
 
         if (sinAngle2 <= sinAngle2Closest &&
-            (closestStar == NULL || distance < closestDistance))
+            (closestStar == nullptr || distance < closestDistance))
         {
             closestStar = &star;
             closestDistance = distance;
@@ -698,7 +677,7 @@ Selection Universe::pickStar(const UniversalCoord& origin,
     // over 100k stars.
     CloseStarPicker closePicker(origin, direction, when, 1.0f, tolerance);
     starCatalog->findCloseStars(closePicker, o, 1.0f);
-    if (closePicker.closestStar != NULL)
+    if (closePicker.closestStar != nullptr)
         return Selection(const_cast<Star*>(closePicker.closestStar));
 
     // Find visible stars expects an orientation, but we just have a direction
@@ -713,7 +692,7 @@ Selection Universe::pickStar(const UniversalCoord& origin,
                                   rotation.conjugate(),
                                   tolerance, 1.0f,
                                   faintestMag);
-    if (picker.pickedStar != NULL)
+    if (picker.pickedStar != nullptr)
         return Selection(const_cast<Star*>(picker.pickedStar));
     else
         return Selection();
@@ -724,7 +703,7 @@ class DSOPicker : public DSOHandler
 {
 public:
     DSOPicker(const Vector3d& pickOrigin, const Vector3d& pickDir, int renderFlags, float angle);
-    ~DSOPicker() {};
+    ~DSOPicker() = default;
 
     void process(DeepSkyObject* const &, double, float);
 
@@ -745,13 +724,13 @@ DSOPicker::DSOPicker(const Vector3d& pickOrigin,
     pickOrigin      (pickOrigin),
     pickDir         (pickDir),
     renderFlags     (renderFlags),
-    pickedDSO       (NULL),
+    pickedDSO       (nullptr),
     sinAngle2Closest(std::max(sin(angle / 2.0), ANGULAR_RES))
 {
 }
 
 
-void DSOPicker::process(DeepSkyObject* const & dso, double, float)
+void DSOPicker::process(DeepSkyObject* const & dso, double /*unused*/, float /*unused*/)
 {
     if (!(dso->getRenderMask() & renderFlags) || !dso->isVisible() || !dso->isClickable())
         return;
@@ -787,7 +766,7 @@ public:
                    int    renderFlags,
                    double maxDistance,
                    float);
-    ~CloseDSOPicker() {};
+    ~CloseDSOPicker() = default;
 
     void process(DeepSkyObject* const & dso, double distance, float appMag);
 
@@ -806,12 +785,12 @@ CloseDSOPicker::CloseDSOPicker(const Vector3d& pos,
                                const Vector3d& dir,
                                int    renderFlags,
                                double maxDistance,
-                               float) :
+                               float /*unused*/) :
     pickOrigin     (pos),
     pickDir        (dir),
     renderFlags    (renderFlags),
     maxDistance    (maxDistance),
-    closestDSO     (NULL),
+    closestDSO     (nullptr),
     largestCosAngle(-2.0)
 {
 }
@@ -819,7 +798,7 @@ CloseDSOPicker::CloseDSOPicker(const Vector3d& pos,
 
 void CloseDSOPicker::process(DeepSkyObject* const & dso,
                              double distance,
-                             float)
+                             float /*unused*/)
 {
     if (distance > maxDistance || !(dso->getRenderMask() & renderFlags) || !dso->isVisible() || !dso->isClickable())
         return;
@@ -851,7 +830,7 @@ Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
     CloseDSOPicker closePicker(orig, dir, renderFlags, 1e9, tolerance);
 
     dsoCatalog->findCloseDSOs(closePicker, orig, 1e9);
-    if (closePicker.closestDSO != NULL)
+    if (closePicker.closestDSO != nullptr)
     {
         return Selection(const_cast<DeepSkyObject*>(closePicker.closestDSO));
     }
@@ -866,7 +845,7 @@ Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
                                 tolerance,
                                 1.0f,
                                 faintestMag);
-    if (picker.pickedDSO != NULL)
+    if (picker.pickedDSO != nullptr)
         return Selection(const_cast<DeepSkyObject*>(picker.pickedDSO));
     else
         return Selection();
@@ -886,11 +865,10 @@ Selection Universe::pick(const UniversalCoord& origin,
     {
         closeStars.clear();
         getNearStars(origin, 1.0f, closeStars);
-        for (vector<const Star*>::const_iterator iter = closeStars.begin();
-            iter != closeStars.end(); iter++)
+        for (const auto star : closeStars)
         {
-            SolarSystem* solarSystem = getSolarSystem(*iter);
-            if (solarSystem != NULL)
+            SolarSystem* solarSystem = getSolarSystem(star);
+            if (solarSystem != nullptr)
             {
                 sel = pickPlanet(*solarSystem,
                                 origin, direction,
@@ -927,10 +905,10 @@ Selection Universe::findChildObject(const Selection& sel,
     case Selection::Type_Star:
         {
             SolarSystem* sys = getSolarSystem(sel.star());
-            if (sys != NULL)
+            if (sys != nullptr)
             {
                 PlanetarySystem* planets = sys->getPlanets();
-                if (planets != NULL)
+                if (planets != nullptr)
                     return Selection(planets->find(name, false, i18n));
             }
         }
@@ -940,16 +918,16 @@ Selection Universe::findChildObject(const Selection& sel,
         {
             // First, search for a satellite
             PlanetarySystem* sats = sel.body()->getSatellites();
-            if (sats != NULL)
+            if (sats != nullptr)
             {
                 Body* body = sats->find(name, false, i18n);
-                if (body != NULL)
+                if (body != nullptr)
                     return Selection(body);
             }
 
             // If a satellite wasn't found, check this object's locations
             Location* loc = sel.body()->findLocation(name, i18n);
-            if (loc != NULL)
+            if (loc != nullptr)
                 return Selection(loc);
         }
         break;
@@ -978,7 +956,7 @@ Selection Universe::findObjectInContext(const Selection& sel,
                                         const string& name,
                                         bool i18n) const
 {
-    Body* contextBody = NULL;
+    Body* contextBody = nullptr;
 
     switch (sel.getType())
     {
@@ -996,22 +974,22 @@ Selection Universe::findObjectInContext(const Selection& sel,
 
     // First, search for bodies...
     SolarSystem* sys = getSolarSystem(sel);
-    if (sys != NULL)
+    if (sys != nullptr)
     {
         PlanetarySystem* planets = sys->getPlanets();
-        if (planets != NULL)
+        if (planets != nullptr)
         {
             Body* body = planets->find(name, true, i18n);
-            if (body != NULL)
+            if (body != nullptr)
                 return Selection(body);
         }
     }
 
     // ...and then locations.
-    if (contextBody != NULL)
+    if (contextBody != nullptr)
     {
         Location* loc = contextBody->findLocation(name, i18n);
-        if (loc != NULL)
+        if (loc != nullptr)
             return Selection(loc);
     }
 
@@ -1030,17 +1008,17 @@ Selection Universe::find(const string& s,
                          int nContexts,
                          bool i18n) const
 {
-    if (starCatalog != NULL)
+    if (starCatalog != nullptr)
     {
     Star* star = starCatalog->find(s);
-    if (star != NULL)
+    if (star != nullptr)
         return Selection(star);
     }
 
-    if (dsoCatalog != NULL)
+    if (dsoCatalog != nullptr)
     {
         DeepSkyObject* dso = dsoCatalog->find(s);
-        if (dso != NULL)
+        if (dso != nullptr)
             return Selection(dso);
     }
 
@@ -1110,22 +1088,21 @@ vector<string> Universe::getCompletion(const string& s,
         if (withLocations && contexts[i].getType() == Selection::Type_Body)
         {
             vector<Location*>* locations = contexts[i].body()->getLocations();
-            if (locations != NULL)
+            if (locations != nullptr)
             {
-                for (vector<Location*>::const_iterator iter = locations->begin();
-                     iter != locations->end(); iter++)
+                for (const auto location : *locations)
                 {
-                    if (!UTF8StringCompare(s, (*iter)->getName(true), s_length))
-                        completion.push_back((*iter)->getName(true));
+                    if (!UTF8StringCompare(s, location->getName(true), s_length))
+                        completion.push_back(location->getName(true));
                 }
             }
         }
 
         SolarSystem* sys = getSolarSystem(contexts[i]);
-        if (sys != NULL)
+        if (sys != nullptr)
         {
             PlanetarySystem* planets = sys->getPlanets();
-            if (planets != NULL)
+            if (planets != nullptr)
             {
                 vector<string> bodies = planets->getCompletion(s);
                 completion.insert(completion.end(),
@@ -1135,14 +1112,14 @@ vector<string> Universe::getCompletion(const string& s,
     }
 
     // Deep sky objects:
-    if (dsoCatalog != NULL)
+    if (dsoCatalog != nullptr)
     {
         vector<string> dsos  = dsoCatalog->getCompletion(s);
         completion.insert(completion.end(), dsos.begin(), dsos.end());
     }
 
     // and finally stars;
-    if (starCatalog != NULL)
+    if (starCatalog != nullptr)
     {
         vector<string> stars  = starCatalog->getCompletion(s);
         completion.insert(completion.end(), stars.begin(), stars.end());
@@ -1178,21 +1155,20 @@ vector<string> Universe::getCompletionPath(const string& s,
         return completion;
     }
 
-    PlanetarySystem* worlds = NULL;
+    PlanetarySystem* worlds = nullptr;
     if (sel.getType() == Selection::Type_Body)
     {
         worlds = sel.body()->getSatellites();
         vector<Location*>* locations = sel.body()->getLocations();
-        if (locations != NULL && withLocations)
+        if (locations != nullptr && withLocations)
         {
             string search = s.substr(pos + 1);
-            for (vector<Location*>::const_iterator iter = locations->begin();
-                 iter != locations->end(); iter++)
+            for (const auto location : *locations)
             {
-                if (!UTF8StringCompare(search, (*iter)->getName(true),
+                if (!UTF8StringCompare(search, location->getName(true),
                                        search.length()))
                 {
-                    locationCompletion.push_back((*iter)->getName(true));
+                    locationCompletion.push_back(location->getName(true));
                 }
             }
         }
@@ -1200,11 +1176,11 @@ vector<string> Universe::getCompletionPath(const string& s,
     else if (sel.getType() == Selection::Type_Star)
     {
         SolarSystem* ssys = getSolarSystem(sel.star());
-        if (ssys != NULL)
+        if (ssys != nullptr)
             worlds = ssys->getPlanets();
     }
 
-    if (worlds != NULL)
+    if (worlds != nullptr)
         completion = worlds->getCompletion(s.substr(pos + 1), false);
 
     completion.insert(completion.end(), locationCompletion.begin(), locationCompletion.end());
@@ -1213,7 +1189,7 @@ vector<string> Universe::getCompletionPath(const string& s,
 }
 
 
-// Return the closest solar system to position, or NULL if there are no planets
+// Return the closest solar system to position, or nullptr if there are no planets
 // with in one light year.
 SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position) const
 {

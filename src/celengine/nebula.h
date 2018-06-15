@@ -19,7 +19,7 @@ class Nebula : public DeepSkyObject
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    Nebula();
+    Nebula() = default;
 
     virtual const char* getType() const;
     virtual void setType(const std::string&);
@@ -57,7 +57,7 @@ class Nebula : public DeepSkyObject
     };
 
  private:
-    ResourceHandle geometry;
+    ResourceHandle geometry{ InvalidResource };
 };
 
 #endif // CELENGINE_NEBULA_H_

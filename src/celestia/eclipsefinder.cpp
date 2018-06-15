@@ -27,14 +27,12 @@ using namespace std;
 
 
 
-Eclipse::Eclipse(int Y, int M, int D) :
-    body(NULL)
+Eclipse::Eclipse(int Y, int M, int D)
 {
     date = new astro::Date(Y, M, D);
 }
 
-Eclipse::Eclipse(double JD) :
-    body(NULL)
+Eclipse::Eclipse(double JD)
 {
     date = new astro::Date(JD);
 }
@@ -69,7 +67,7 @@ bool EclipseFinder::testEclipse(const Body& receiver, const Body& caster,
         Vector3d posCaster = caster.getAstrocentricPosition(now);
 
         const Star* sun = receiver.getSystem()->getStar();
-        assert(sun != NULL);
+        assert(sun != nullptr);
         double distToSun = posReceiver.norm();
         float appSunRadius = (float) (sun->getRadius() / distToSun);
 
@@ -124,7 +122,7 @@ int EclipseFinder::CalculateEclipses()
     Simulation* sim = appCore->getSimulation();
 
     Eclipse* eclipse;
-    double* JDback = NULL;
+    double* JDback = nullptr;
 
     int nIDplanetetofindon = 0;
     int nSattelites = 0;
@@ -141,7 +139,7 @@ int EclipseFinder::CalculateEclipses()
         delete eclipse;
         return 1;
     }
-    else if (sys->getStar()->getCatalogNumber() != 0)
+    if (sys->getStar()->getCatalogNumber() != 0)
     {
         eclipse = new Eclipse(0.);
         eclipse->planete = "None";
@@ -156,7 +154,7 @@ int EclipseFinder::CalculateEclipses()
     for (int i = 0; i < nbPlanets; ++i)
     {
         Body* planete = system->getBody(i);
-        if (planete != NULL)
+        if (planete != nullptr)
             if (strPlaneteToFindOn == planete->getName())
             {
                 nIDplanetetofindon = i;
@@ -179,8 +177,8 @@ int EclipseFinder::CalculateEclipses()
         {
             for (int j = 0; j < nSattelites; ++j)
             {
-                Body* caster = NULL;
-                Body* receiver = NULL;
+                Body* caster = nullptr;
+                Body* receiver = nullptr;
                 bool test = false;
 
                 if (satellites->getBody(j)->getClassification() != Body::Spacecraft)
@@ -219,8 +217,7 @@ int EclipseFinder::CalculateEclipses()
         }
         JDfrom += 1.0 / 24.0;
     }
-    if (JDback)
-        delete[] JDback;
+    delete[] JDback;
     if (Eclipses_.empty())
     {
         eclipse = new Eclipse(0.);

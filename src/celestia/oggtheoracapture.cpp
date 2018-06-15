@@ -73,12 +73,12 @@ using namespace std;
 
 #include "oggtheoracapture.h"
 
-//  {"video-rate-target",required_argument,NULL,'V'},
-//  {"video-quality",required_argument,NULL,'v'},
-//  {"aspect-numerator",optional_argument,NULL,'s'},
-//  {"aspect-denominator",optional_argument,NULL,'S'},
-//  {"framerate-numerator",optional_argument,NULL,'f'},
-//  {"framerate-denominator",optional_argument,NULL,'F'},
+//  {"video-rate-target",required_argument,nullptr,'V'},
+//  {"video-quality",required_argument,nullptr,'v'},
+//  {"aspect-numerator",optional_argument,nullptr,'s'},
+//  {"aspect-denominator",optional_argument,nullptr,'S'},
+//  {"framerate-numerator",optional_argument,nullptr,'f'},
+//  {"framerate-denominator",optional_argument,nullptr,'F'},
 
 
 OggTheoraCapture::OggTheoraCapture():
@@ -98,11 +98,11 @@ OggTheoraCapture::OggTheoraCapture():
     video_frame_count(0),
     video_bytesout(0),
     rowStride(0),
-    pixels(NULL),
-    outfile(NULL)
+    pixels(nullptr),
+    outfile(nullptr)
 {
-    yuvframe[0] = NULL;
-    yuvframe[1] = NULL;
+    yuvframe[0] = nullptr;
+    yuvframe[1] = nullptr;
     // Just being anal
     memset(&yuv, 0, sizeof(yuv));
     memset(&to, 0, sizeof(to));
@@ -161,9 +161,9 @@ bool OggTheoraCapture::start(const std::string& filename,
     }
     /* Set up Ogg output stream */
 #ifdef _WIN32
-    std::srand(std::time(NULL));
+    std::srand(std::time(nullptr));
 #else
-    std::srand(time(NULL));
+    std::srand(time(nullptr));
 #endif
 
     ogg_stream_init(&to,std::rand());
@@ -474,7 +474,7 @@ void OggTheoraCapture::cleanup()
         //ogg_stream_destroy(&to); /* Documentation says to do this however we are seeing a double free libogg 1.1.2 */
 
         std::fclose(outfile);
-        outfile = NULL;
+        outfile = nullptr;
         delete [] yuvframe[0];
         delete [] yuvframe[1];
         delete [] pixels;

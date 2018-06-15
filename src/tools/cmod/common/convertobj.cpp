@@ -24,12 +24,7 @@ using namespace std;
 WavefrontLoader::WavefrontLoader(istream& in) :
     m_in(in),
     m_lineNumber(0),
-    m_model(NULL)
-{
-}
-
-
-WavefrontLoader::~WavefrontLoader()
+    m_model(nullptr)
 {
 }
 
@@ -62,29 +57,18 @@ int convertIndex(int index, unsigned int maxValue)
     if (index > 0)
     {
         if (index <= (int) maxValue)
-        {
             return index - 1;
-        }
-        else
-        {
-            return -1;
-        }
+        return -1;
+
     }
-    else if (index < 0)
+    if (index < 0)
     {
         if (-index <= (int) maxValue)
-        {
             return (int) maxValue + index;
-        }
-        else
-        {
-            return -1;
-        }
-    }
-    else
-    {
         return -1;
+
     }
+    return -1;
 }
 
 
@@ -119,7 +103,7 @@ WavefrontLoader::load()
                 if (sscanf(line.c_str() + pos, "%f %f %f", &v.x(), &v.y(), &v.z()) != 3)
                 {
                     reportError("Bad vertex");
-                    return NULL;
+                    return nullptr;
                 }
                 m_vertices.push_back(v);
             }
@@ -129,7 +113,7 @@ WavefrontLoader::load()
                 if (sscanf(line.c_str() + pos, "%f %f %f", &v.x(), &v.y(), &v.z()) != 3)
                 {
                     reportError("Bad normal");
-                    return NULL;
+                    return nullptr;
                 }
                 m_normals.push_back(v);
             }
@@ -139,7 +123,7 @@ WavefrontLoader::load()
                 if (sscanf(line.c_str() + pos, "%f %f", &v.x(), &v.y()) != 2)
                 {
                     reportError("Bad texture coordinate");
-                    return NULL;
+                    return nullptr;
                 }
                 m_texCoords.push_back(v);
             }
@@ -192,7 +176,7 @@ WavefrontLoader::load()
                         else
                         {
                             reportError("Bad vertex in face");
-                            return NULL;
+                            return nullptr;
                         }
 
                         faceVertices.push_back(vertex);
@@ -203,7 +187,7 @@ WavefrontLoader::load()
                             if (faceVertices[vertexCount - 1].type() != faceVertices[vertexCount - 2].type())
                             {
                                 reportError("Vertices in face have mismatched type");
-                                return NULL;
+                                return nullptr;
                             }
                         }
                     }
@@ -212,7 +196,7 @@ WavefrontLoader::load()
                 if (faceVertices.size() < 3)
                 {
                     reportError("Face has less than three vertices");
-                    return NULL;
+                    return nullptr;
                 }
 
                 ObjVertex::VertexType faceVertexType = faceVertices.front().type();
@@ -248,7 +232,7 @@ WavefrontLoader::load()
                     else
                     {
                         reportError("Face has bad vertex index");
-                        return NULL;
+                        return nullptr;
                     }
 
                     if (vertex.hasNormal())
@@ -316,7 +300,7 @@ WavefrontLoader::reportError(const string& message)
     m_errorMessage = os.str();
 
     delete m_model;
-    m_model = NULL;
+    m_model = nullptr;
 }
 
 
@@ -363,7 +347,7 @@ WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int verte
         offset += 8;
     }
 
-    float* vertexDataCopy = new float[m_vertexData.size()];
+    auto* vertexDataCopy = new float[m_vertexData.size()];
     copy(m_vertexData.begin(), m_vertexData.end(), vertexDataCopy);
 
     // Create the Celestia mesh

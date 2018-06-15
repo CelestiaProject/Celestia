@@ -21,14 +21,14 @@ class ColorSwatchWidget : public QLabel
 Q_OBJECT
 
  public:
-    ColorSwatchWidget(const QColor& c, QWidget* parent = NULL);
-    ~ColorSwatchWidget();
+    ColorSwatchWidget(const QColor& c, QWidget* parent = nullptr);
+    ~ColorSwatchWidget() = default;
 
     QColor color() const;
     void setColor(QColor c);
 
  protected:
-    virtual void mouseReleaseEvent(QMouseEvent* m );
+    virtual void mouseReleaseEvent(QMouseEvent* m);
 
  private:
     QColor m_color;

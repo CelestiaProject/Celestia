@@ -26,7 +26,7 @@ Q_OBJECT
     SelectionPopup(const Selection& sel,
                    CelestiaCoreApplication* _appCore,
                    QWidget* parent);
-    ~SelectionPopup();
+    ~SelectionPopup() = default;
 
  public slots:
     void slotSelect();

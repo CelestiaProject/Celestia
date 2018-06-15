@@ -38,8 +38,8 @@ public:
 class ModelLoader
 {
  public:
-    ModelLoader();
-    virtual ~ModelLoader();
+    ModelLoader() = default;
+    virtual ~ModelLoader() = default;
 
     virtual Model* load() = 0;
 
@@ -54,7 +54,7 @@ class ModelLoader
 
  private:
     std::string errorMessage;
-    TextureLoader* textureLoader;
+    TextureLoader* textureLoader{ nullptr };
 };
 
 
@@ -68,7 +68,7 @@ class ModelWriter
 
 
 
-Model* LoadModel(std::istream& in, TextureLoader* textureLoader = NULL);
+Model* LoadModel(std::istream& in, TextureLoader* textureLoader = nullptr);
 
 bool SaveModelAscii(const Model* model, std::ostream& out);
 bool SaveModelBinary(const Model* model, std::ostream& out);

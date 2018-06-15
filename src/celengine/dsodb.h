@@ -29,7 +29,7 @@ extern const float DSO_OCTREE_ROOT_SIZE;
 class DSODatabase
 {
  public:
-    DSODatabase();
+    DSODatabase() = default;
     ~DSODatabase();
 
 
@@ -41,14 +41,14 @@ class DSODatabase
 
     std::vector<std::string> getCompletion(const std::string&) const;
 
-    void findVisibleDSOs(DSOHandler&    dsoHandler,
+    void findVisibleDSOs(DSOHandler& dsoHandler,
                          const Eigen::Vector3d& obsPosition,
                          const Eigen::Quaternionf& obsOrientation,
                          float fovY,
                          float aspectRatio,
                          float limitingMag) const;
 
-    void findCloseDSOs(DSOHandler&    dsoHandler,
+    void findCloseDSOs(DSOHandler& dsoHandler,
                        const Eigen::Vector3d& obsPosition,
                        float radius) const;
 
@@ -73,15 +73,15 @@ private:
     void buildOctree();
     void calcAvgAbsMag();
 
-    int              nDSOs;
-    int              capacity;
-    DeepSkyObject**  DSOs;
-    DSONameDatabase* namesDB;
-    DeepSkyObject**  catalogNumberIndex;
-    DSOOctree*       octreeRoot;
-    uint32           nextAutoCatalogNumber;
+    int              nDSOs{ 0 };
+    int              capacity{ 0 };
+    DeepSkyObject**  DSOs{ nullptr };
+    DSONameDatabase* namesDB{ nullptr };
+    DeepSkyObject**  catalogNumberIndex{ nullptr };
+    DSOOctree*       octreeRoot{ nullptr };
+    uint32           nextAutoCatalogNumber{ 0xfffffffe };
 
-    double           avgAbsMag;
+    double           avgAbsMag{ 0.0 };
 };
 
 
