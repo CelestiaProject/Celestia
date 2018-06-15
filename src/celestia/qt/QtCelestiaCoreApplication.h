@@ -5,8 +5,6 @@
 #include <src/celestia/CelestiaCoreApplication.h>
 
 namespace CelestiaQt {
-    Q_NAMESPACE
-
     class RenderFlag : public QObject {
         Q_OBJECT
 
