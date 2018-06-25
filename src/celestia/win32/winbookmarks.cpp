@@ -567,12 +567,11 @@ void DeleteBookmarkFromFavorites(HWND hTree, CelestiaCore* appCore)
     {
         if (*iter == fav)
         {
-            favorites->erase(iter);
+            iter = favorites->erase(iter);
         }
         else if (fav->isFolder && (*iter)->parentFolder == itemName)
         {
-            favorites->erase(iter);
-            // delete *iter;
+            iter = favorites->erase(iter);
         }
         else
         {

@@ -27,3 +27,5 @@ stamp-h1
 .dirstamp
 build
 Celestia_QT
+/*.opendb
+/*.db
