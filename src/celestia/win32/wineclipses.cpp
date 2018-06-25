@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <set>
 #include <cassert>
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <commctrl.h>
 #include "celestia/eclipsefinder.h"

@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <iostream>
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "directory.h"
 

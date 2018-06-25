@@ -12,6 +12,9 @@
 #include <GL/glew.h>
 //#define WGL_WGLEXT_PROTOTYPES 1
 #include "wglext.h"
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #include <cstdio>
 #include <vector>

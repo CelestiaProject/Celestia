@@ -10,6 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include "wintime.h"
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <winuser.h>
 #include <commctrl.h>
