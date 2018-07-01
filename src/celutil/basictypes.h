@@ -20,7 +20,7 @@ typedef unsigned short uint16;
 typedef char           int8;
 typedef unsigned char  uint8;
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && (_MSC_VER < 1600)    // VC before 2010 has no stdint.h
 // MS Visual C++ does not include stdint.h
 typedef __int64          int64;
 typedef unsigned __int64 uint64;
