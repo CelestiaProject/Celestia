@@ -35,7 +35,7 @@ class SolarSystem
     FrameTree* frameTree;
 };
 
-typedef std::map<uint32, SolarSystem*> SolarSystemCatalog;
+typedef std::map<uint32_t, SolarSystem*> SolarSystemCatalog;
 
 class Universe;
 

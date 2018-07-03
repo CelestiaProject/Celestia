@@ -27,8 +27,8 @@ static string OrbitalDatabase("hip_dm_o.dat");
 static const int HipStarRecordLength = 451;
 static const int HipComponentRecordLength = 239;
 
-static uint32 NullCCDMIdentifier = 0xffffffff;
-static uint32 NullCatalogNumber = 0xffffffff;
+static uint32_t NullCCDMIdentifier = 0xffffffff;
+static uint32_t NullCatalogNumber = 0xffffffff;
 
 
 class HipparcosStar
@@ -38,18 +38,18 @@ public:
 
     void write(ostream& /*out*/);
 
-    uint32 HIPCatalogNumber{};
-    uint32 HDCatalogNumber{};
+    uint32_t HIPCatalogNumber{};
+    uint32_t HDCatalogNumber{};
     float ascension{0.0f};
     float declination{0.0f};
     float parallax{0.0f};
     float appMag{0.0f};
     StellarClass stellarClass{};
 
-    uint32 CCDMIdentifier{};
-    uint8 starsWithCCDM{};
-    uint8 nComponents{};
-    uint8 parallaxError{};
+    uint32_t CCDMIdentifier{};
+    uint8_t starsWithCCDM{};
+    uint8_t nComponents{};
+    uint8_t parallaxError{};
 };
 
 HipparcosStar::HipparcosStar() :
@@ -102,7 +102,7 @@ struct HIPCatalogComparePredicate
         return star0->HIPCatalogNumber < star1->HIPCatalogNumber;
     }
 
-    bool operator()(const HipparcosStar* star0, uint32 hip)
+    bool operator()(const HipparcosStar* star0, uint32_t hip)
     {
         return star0->HIPCatalogNumber < hip;
     }
@@ -149,11 +149,11 @@ vector<HipparcosStar> companions;
 vector<HipparcosComponent> components;
 vector<HipparcosStar*> starIndex;
 
-typedef map<uint32, MultistarSystem*> MultistarSystemCatalog;
+typedef map<uint32_t, MultistarSystem*> MultistarSystemCatalog;
 MultistarSystemCatalog starSystems;
 
 
-HipparcosStar* findStar(uint32 hip)
+HipparcosStar* findStar(uint32_t hip)
 {
     HIPCatalogComparePredicate pred;
 
@@ -382,18 +382,18 @@ bool ReadStarRecord(istream& in)
 
         int n = 1;
         sscanf(buf + 340, "%d", &n);
-        star.starsWithCCDM = (uint8) n;
+        star.starsWithCCDM = (uint8_t) n;
         sscanf(buf + 343, "%d", &n);
-        star.nComponents = (uint8) n;
+        star.nComponents = (uint8_t) n;
     }
 
     float parallaxError = 0.0f;
     if (sscanf(buf + 119, "%f", &parallaxError) != 0)
     {
         if (star.parallax < 0.0f || parallaxError / star.parallax > 1.0f)
-            star.parallaxError = (int8) 255;
+            star.parallaxError = (int8_t) 255;
         else
-            star.parallaxError = (int8) (parallaxError / star.parallax * 200);
+            star.parallaxError = (int8_t) (parallaxError / star.parallax * 200);
     }
 
     stars.insert(stars.end(), star);
@@ -409,7 +409,7 @@ bool ReadComponentRecord(istream& in)
 
     in.read(buf, HipComponentRecordLength);
 
-    uint32 hip;
+    uint32_t hip;
     if (sscanf(buf + 42, "%ud", &hip) != 1)
     {
         cout << "Missing HIP catalog number for component.\n";

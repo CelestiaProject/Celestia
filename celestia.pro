@@ -68,7 +68,6 @@ UTIL_SOURCES = \
     src/celutil/timer.cpp
 
 UTIL_HEADERS = \
-    src/celutil/basictypes.h \
     src/celutil/bigfix.h \
     src/celutil/bytes.h \
     src/celutil/color.h \

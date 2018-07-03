@@ -23,7 +23,7 @@ class StarNameDatabase: public NameDatabase<Star>
     StarNameDatabase() {};
 
 
-    uint32 findCatalogNumberByName(const std::string&) const;
+    uint32_t findCatalogNumberByName(const std::string&) const;
 
     static StarNameDatabase* readNames(std::istream&);
 };

@@ -277,45 +277,45 @@ void TextureFont::rebuildGlyphLookupTable()
 }
 
 
-static uint32 readUint32(istream& in, bool swap)
+static uint32_t readUint32(istream& in, bool swap)
 {
-    uint32 x;
+    uint32_t x;
     in.read(reinterpret_cast<char*>(&x), sizeof x);
     return swap ? bswap_32(x) : x;
 }
 
-static uint16 readUint16(istream& in, bool swap)
+static uint16_t readUint16(istream& in, bool swap)
 {
-    uint16 x;
+    uint16_t x;
     in.read(reinterpret_cast<char*>(&x), sizeof x);
     return swap ? bswap_16(x) : x;
 }
 
-static uint8 readUint8(istream& in)
+static uint8_t readUint8(istream& in)
 {
-    uint8 x;
+    uint8_t x;
     in.read(reinterpret_cast<char*>(&x), sizeof x);
     return x;
 }
 
 /* Not currently used
-static int32 readInt32(istream& in, bool swap)
+static int32_t readInt32(istream& in, bool swap)
 {
-    int32 x;
+    int32_t x;
     in.read(reinterpret_cast<char*>(&x), sizeof x);
-    return swap ? static_cast<int32>(bswap_32(static_cast<uint32>(x))) : x;
+    return swap ? static_cast<int32_t>(bswap_32(static_cast<uint32_t>(x))) : x;
 }*/
 
-static int16 readInt16(istream& in, bool swap)
+static int16_t readInt16(istream& in, bool swap)
 {
-    int16 x;
+    int16_t x;
     in.read(reinterpret_cast<char*>(&x), sizeof x);
-    return swap ? static_cast<int16>(bswap_16(static_cast<uint16>(x))) : x;
+    return swap ? static_cast<int16_t>(bswap_16(static_cast<uint16_t>(x))) : x;
 }
 
-static int8 readInt8(istream& in)
+static int8_t readInt8(istream& in)
 {
-    int8 x;
+    int8_t x;
     in.read(reinterpret_cast<char*>(&x), sizeof x);
     return x;
 }
@@ -332,7 +332,7 @@ TextureFont* TextureFont::load(istream& in)
         return nullptr;
     }
 
-    uint32 endiannessTest = 0;
+    uint32_t endiannessTest = 0;
     in.read(reinterpret_cast<char*>(&endiannessTest), sizeof endiannessTest);
     if (!in.good())
     {
@@ -377,7 +377,7 @@ TextureFont* TextureFont::load(istream& in)
 
     for (unsigned int i = 0; i < nGlyphs; i++)
     {
-        uint16 __id = readUint16(in, byteSwap);
+        uint16_t __id = readUint16(in, byteSwap);
         TextureFont::Glyph glyph(__id);
 
         glyph.width = readUint8(in);

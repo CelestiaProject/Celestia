@@ -141,18 +141,18 @@ string StellarClass::str() const
 }
 
 
-uint16
+uint16_t
 StellarClass::pack() const
 {
-    return (((uint16) starType << 12) |
-           (((uint16) specClass & 0xf) << 8) |
-           ((uint16) subclass << 4) |
-           ((uint16) lumClass));
+    return (((uint16_t) starType << 12) |
+           (((uint16_t) specClass & 0xf) << 8) |
+           ((uint16_t) subclass << 4) |
+           ((uint16_t) lumClass));
 }
 
 
 bool
-StellarClass::unpack(uint16 st)
+StellarClass::unpack(uint16_t st)
 {
     starType = static_cast<StellarClass::StarType>(st >> 12);
 
@@ -233,7 +233,7 @@ enum ParseState
 StellarClass
 StellarClass::parse(const string& st)
 {
-    uint32 i = 0;
+    uint32_t i = 0;
     ParseState state = BeginState;
     StellarClass::StarType starType = StellarClass::NormalStar;
     StellarClass::SpectralClass specClass = StellarClass::Spectral_Unknown;

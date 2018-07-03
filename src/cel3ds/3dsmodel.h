@@ -12,7 +12,6 @@
 
 #include <vector>
 #include <string>
-#include <celutil/basictypes.h>
 #include <Eigen/Core>
 
 class M3DColor
@@ -61,7 +60,7 @@ class M3DMeshMaterialGroup
 {
 public:
     std::string materialName;
-    std::vector<uint16> faces;
+    std::vector<uint16_t> faces;
 };
 
 
@@ -76,31 +75,31 @@ class M3DTriangleMesh
     Eigen::Matrix4f getMatrix() const;
     void setMatrix(const Eigen::Matrix4f&);
 
-    Eigen::Vector3f getVertex(uint16) const;
-    uint16 getVertexCount() const;
+    Eigen::Vector3f getVertex(uint16_t) const;
+    uint16_t getVertexCount() const;
     void addVertex(const Eigen::Vector3f&);
 
-    Eigen::Vector2f getTexCoord(uint16) const;
-    uint16 getTexCoordCount() const;
+    Eigen::Vector2f getTexCoord(uint16_t) const;
+    uint16_t getTexCoordCount() const;
     void addTexCoord(const Eigen::Vector2f&);
 
-    void getFace(uint16, uint16&, uint16&, uint16&) const;
-    uint16 getFaceCount() const;
-    void addFace(uint16, uint16, uint16);
+    void getFace(uint16_t, uint16_t&, uint16_t&, uint16_t&) const;
+    uint16_t getFaceCount() const;
+    void addFace(uint16_t, uint16_t, uint16_t);
 
-    void addSmoothingGroups(uint32);
-    uint32 getSmoothingGroups(uint16) const;
-    uint16 getSmoothingGroupCount() const;
+    void addSmoothingGroups(uint32_t);
+    uint32_t getSmoothingGroups(uint16_t) const;
+    uint16_t getSmoothingGroupCount() const;
 
     void addMeshMaterialGroup(M3DMeshMaterialGroup* matGroup);
-    M3DMeshMaterialGroup* getMeshMaterialGroup(uint32) const;
-    uint32 getMeshMaterialGroupCount() const;
+    M3DMeshMaterialGroup* getMeshMaterialGroup(uint32_t) const;
+    uint32_t getMeshMaterialGroupCount() const;
 
  private:
     std::vector<Eigen::Vector3f> points;
     std::vector<Eigen::Vector2f> texCoords;
-    std::vector<uint16> faces;
-    std::vector<uint32> smoothingGroups;
+    std::vector<uint16_t> faces;
+    std::vector<uint32_t> smoothingGroups;
     std::vector<M3DMeshMaterialGroup*> meshMaterialGroups;
     Eigen::Matrix4f matrix;
 };
@@ -112,8 +111,8 @@ class M3DModel
     M3DModel() = default;
     ~M3DModel();
 
-    M3DTriangleMesh* getTriMesh(uint32);
-    uint32 getTriMeshCount();
+    M3DTriangleMesh* getTriMesh(uint32_t);
+    uint32_t getTriMeshCount();
     void addTriMesh(M3DTriangleMesh*);
     void setName(const std::string&);
     const std::string getName() const;
@@ -130,12 +129,12 @@ class M3DScene
     M3DScene() = default;
     ~M3DScene();
 
-    M3DModel* getModel(uint32) const;
-    uint32 getModelCount() const;
+    M3DModel* getModel(uint32_t) const;
+    uint32_t getModelCount() const;
     void addModel(M3DModel*);
 
-    M3DMaterial* getMaterial(uint32) const;
-    uint32 getMaterialCount() const;
+    M3DMaterial* getMaterial(uint32_t) const;
+    uint32_t getMaterialCount() const;
     void addMaterial(M3DMaterial*);
 
     M3DColor getBackgroundColor() const;

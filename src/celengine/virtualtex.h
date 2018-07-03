@@ -11,7 +11,6 @@
 #define _CELENGINE_VIRTUALTEX_H_
 
 #include <string>
-#include "celutil/basictypes.h"
 #include <celengine/texture.h>
 
 
@@ -51,9 +50,9 @@ class VirtualTexture : public Texture
     };
 
     void populateTileTree();
-    void addTileToTree(Tile* tile, uint lod, uint u, uint v);
-    void makeResident(Tile* tile, uint lod, uint u, uint v);
-    ImageTexture* loadTileTexture(uint lod, uint u, uint v);
+    void addTileToTree(Tile* tile, unsigned int lod, unsigned int u, unsigned int v);
+    void makeResident(Tile* tile, unsigned int lod, unsigned int u, unsigned int v);
+    ImageTexture* loadTileTexture(unsigned int lod, unsigned int u, unsigned int v);
 
     Tile* tiles;
     Tile* findTile(unsigned int lod,

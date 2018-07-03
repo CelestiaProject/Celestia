@@ -538,19 +538,16 @@ bool parseCommandLine(int argc, char* argv[])
 }
 
 
-using uint32 = unsigned int;
-using uint16 = unsigned short;
-
 union Uint16
 {
     char bytes[2];
-    uint16 u;
+    uint16_t u;
 };
 
 union Uint32
 {
     char bytes[4];
-    uint32 u;
+    uint32_t u;
 };
 
 union Float
@@ -562,19 +559,19 @@ union Float
 union FloatInt
 {
     float f;
-    uint32 u;
+    uint32_t u;
 };
 
 
 // Convert a single precision floating point value to half precision
-uint16 floatToHalf(float f)
+uint16_t floatToHalf(float f)
 {
     FloatInt fi;
     fi.f = f;
 
-    uint16 half = 0;
+    uint16_t half = 0;
 
-    auto signBit = uint16((fi.u & 0x80000000) >> 16);
+    auto signBit = uint16_t((fi.u & 0x80000000) >> 16);
 
     if (f > 65504.0f)
     {
@@ -588,7 +585,7 @@ uint16 floatToHalf(float f)
     }
 
     int exponent = int((fi.u >> 23) & 0xff) - 127 + 15;
-    uint32 significand = fi.u & 0x007fffff;
+    uint32_t significand = fi.u & 0x007fffff;
 
     if (exponent < -9)
     {
@@ -613,7 +610,7 @@ uint16 floatToHalf(float f)
             // NaN - preserve bits, but make sure that we don't
             // make the significand zero, as that would indicate
             // an infinity, not a NaN
-            auto nanBits = uint16(significand >> 13);
+            auto nanBits = uint16_t(significand >> 13);
             if (nanBits == 0)
             {
                 nanBits = 1;
@@ -639,14 +636,14 @@ struct DDSPixelFormat
 {
     DDSPixelFormat() = default;
 
-    uint32 dwSize{0};
-    uint32 dwFlags{0};
-    uint32 dwFourCC{0};
-    uint32 dwRGBBitCount{0};
-    uint32 dwRBitMask{0};
-    uint32 dwGBitMask{0};
-    uint32 dwBBitMask{0};
-    uint32 dwABitMask{0};
+    uint32_t dwSize{0};
+    uint32_t dwFlags{0};
+    uint32_t dwFourCC{0};
+    uint32_t dwRGBBitCount{0};
+    uint32_t dwRBitMask{0};
+    uint32_t dwGBitMask{0};
+    uint32_t dwBBitMask{0};
+    uint32_t dwABitMask{0};
 };
 
 
@@ -661,77 +658,77 @@ struct DDSHeader
         }
     }
 
-    static const uint32 CAPS_COMPLEX = 0x000008;
-    static const uint32 CAPS_MIPMAP  = 0x400000;
-    static const uint32 CAPS_TEXTURE = 0x001000;
+    static const uint32_t CAPS_COMPLEX = 0x000008;
+    static const uint32_t CAPS_MIPMAP  = 0x400000;
+    static const uint32_t CAPS_TEXTURE = 0x001000;
 
-    static const uint32 CAPS2_VOLUME = 0x200000;
-    static const uint32 CAPS2_CUBEMAP = 0x00000200;
-    static const uint32 CAPS2_CUBEMAP_POSITIVEX = 0x00000400;
-    static const uint32 CAPS2_CUBEMAP_NEGATIVEX = 0x00000800;
-    static const uint32 CAPS2_CUBEMAP_POSITIVEY = 0x00001000;
-    static const uint32 CAPS2_CUBEMAP_NEGATIVEY = 0x00002000;
-    static const uint32 CAPS2_CUBEMAP_POSITIVEZ = 0x00004000;
-    static const uint32 CAPS2_CUBEMAP_NEGATIVEZ = 0x00008000;
+    static const uint32_t CAPS2_VOLUME = 0x200000;
+    static const uint32_t CAPS2_CUBEMAP = 0x00000200;
+    static const uint32_t CAPS2_CUBEMAP_POSITIVEX = 0x00000400;
+    static const uint32_t CAPS2_CUBEMAP_NEGATIVEX = 0x00000800;
+    static const uint32_t CAPS2_CUBEMAP_POSITIVEY = 0x00001000;
+    static const uint32_t CAPS2_CUBEMAP_NEGATIVEY = 0x00002000;
+    static const uint32_t CAPS2_CUBEMAP_POSITIVEZ = 0x00004000;
+    static const uint32_t CAPS2_CUBEMAP_NEGATIVEZ = 0x00008000;
 
-    static const uint32 DDSD_CAPS      = 0x1;
-    static const uint32 DDSD_HEIGHT    = 0x2;
-    static const uint32 DDSD_WIDTH     = 0x4;
-    static const uint32 DDSD_PITCH     = 0x8;
-    static const uint32 DDSD_PIXELFORMAT = 0x1000;
-    static const uint32 DDSD_MIPMAPCOUNT = 0x20000;
-    static const uint32 DDSD_LINEARSIZE  = 0x80000;
-    static const uint32 DDSD_DEPTH       = 0x800000;
+    static const uint32_t DDSD_CAPS      = 0x1;
+    static const uint32_t DDSD_HEIGHT    = 0x2;
+    static const uint32_t DDSD_WIDTH     = 0x4;
+    static const uint32_t DDSD_PITCH     = 0x8;
+    static const uint32_t DDSD_PIXELFORMAT = 0x1000;
+    static const uint32_t DDSD_MIPMAPCOUNT = 0x20000;
+    static const uint32_t DDSD_LINEARSIZE  = 0x80000;
+    static const uint32_t DDSD_DEPTH       = 0x800000;
 
-    static const uint32 D3DFMT_A16B16G16R16 =   36;
-    static const uint32 D3DFMT_A16B16G16R16F = 113;
-    static const uint32 D3DFMT_DXT1 = 0x31545844;
-    static const uint32 D3DFMT_DXT3 = 0x33545844;
-    static const uint32 D3DFMT_DXT5 = 0x35545844;
+    static const uint32_t D3DFMT_A16B16G16R16 =   36;
+    static const uint32_t D3DFMT_A16B16G16R16F = 113;
+    static const uint32_t D3DFMT_DXT1 = 0x31545844;
+    static const uint32_t D3DFMT_DXT3 = 0x33545844;
+    static const uint32_t D3DFMT_DXT5 = 0x35545844;
 
-    static const uint32 FOURCC      = 0x04;
+    static const uint32_t FOURCC      = 0x04;
 
-    uint32          dwSize{sizeof(DDSHeader)};
-    uint32          dwFlags{DDSD_PIXELFORMAT};
-    uint32          dwHeight{0};
-    uint32          dwWidth{0};
-    uint32          dwLinearSize{0};
-    uint32          dwDepth{0};
-    uint32          dwMipMapCount{0};
-    uint32          dwReserved1[11];
+    uint32_t          dwSize{sizeof(DDSHeader)};
+    uint32_t          dwFlags{DDSD_PIXELFORMAT};
+    uint32_t          dwHeight{0};
+    uint32_t          dwWidth{0};
+    uint32_t          dwLinearSize{0};
+    uint32_t          dwDepth{0};
+    uint32_t          dwMipMapCount{0};
+    uint32_t          dwReserved1[11];
     DDSPixelFormat  ddpf;
-    uint32          dwCaps{0};
-    uint32          dwCaps2{0};
-    uint32          dwCaps3{0};
-    uint32          dwCaps4{0};
-    uint32          dwReserved2{0};
+    uint32_t          dwCaps{0};
+    uint32_t          dwCaps2{0};
+    uint32_t          dwCaps3{0};
+    uint32_t          dwCaps4{0};
+    uint32_t          dwReserved2{0};
 
     void setTexture()
     {
         dwCaps |= CAPS_TEXTURE;
     }
 
-    void setFourCC(uint32 fcc)
+    void setFourCC(uint32_t fcc)
     {
         dwFlags |= FOURCC;
         ddpf.dwFourCC = fcc;
     }
 
-    void setMipMapLevels(uint32 levels)
+    void setMipMapLevels(uint32_t levels)
     {
         dwCaps |= (CAPS_COMPLEX | CAPS_MIPMAP);
         dwFlags |= DDSD_MIPMAPCOUNT;
         dwMipMapCount = levels;
     }
 
-    void setDimensions(uint32 width, uint32 height)
+    void setDimensions(uint32_t width, uint32_t height)
     {
         dwFlags |= (DDSD_WIDTH | DDSD_HEIGHT);
         dwWidth = width;
         dwHeight = height;
     }
 
-    void setVolumeDimensions(uint32 width, uint32 height, uint32 depth)
+    void setVolumeDimensions(uint32_t width, uint32_t height, uint32_t depth)
     {
         dwCaps |= CAPS_COMPLEX;
         dwFlags |= (DDSD_WIDTH | DDSD_HEIGHT | DDSD_DEPTH);
@@ -744,18 +741,18 @@ struct DDSHeader
 static bool ByteSwapRequired = false;
 static bool IsLittleEndian()
 {
-    Uint32 endiannessTest;
+    Uint32_t endiannessTest;
     endiannessTest.u = 0x01020304;
     return endiannessTest.bytes[0] == 0x04;
 }
 
 
 // Write out a 16-bit unsigned integer in little-endian order
-static void WriteUint16(ostream& out, uint16 u)
+static void WriteUint16(ostream& out, uint16_t u)
 {
     static_assert(sizeof(u) == 2, "");
 
-    Uint16 ub;
+    Uint16_t ub;
     ub.u = u;
     if (ByteSwapRequired)
     {
@@ -767,11 +764,11 @@ static void WriteUint16(ostream& out, uint16 u)
 
 
 // Write out a 32-bit unsigned integer in little-endian order
-static void WriteUint32(ostream& out, uint32 u)
+static void WriteUint32(ostream& out, uint32_t u)
 {
     static_assert(sizeof(u) == 4, "");
 
-    Uint32 ub;
+    Uint32_t ub;
     ub.u = u;
     if (ByteSwapRequired)
     {

@@ -40,7 +40,6 @@ CELUTIL_SOURCES = \
     ../../../celutil/debug.cpp
 
 CELUTIL_HEADERS = \
-    ../../../celutil/basictypes.h \
     ../../../celutil/bytes.h \
     ../../../celutil/debug.h
     

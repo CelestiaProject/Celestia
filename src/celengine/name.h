@@ -17,7 +17,6 @@
 #include <iostream>
 #include <map>
 #include <vector>
-#include <celutil/basictypes.h>
 #include <celutil/debug.h>
 #include <celutil/util.h>
 #include <celutil/utf8.h>
@@ -27,24 +26,24 @@
 template <class OBJ> class NameDatabase
 {
  public:
-    typedef std::map<std::string, uint32, CompareIgnoringCasePredicate> NameIndex;
-    typedef std::multimap<uint32, std::string> NumberIndex;
+    typedef std::map<std::string, uint32_t, CompareIgnoringCasePredicate> NameIndex;
+    typedef std::multimap<uint32_t, std::string> NumberIndex;
 
  public:
     NameDatabase() {};
 
 
-    uint32 getNameCount() const;
+    uint32_t getNameCount() const;
 
-    void add(const uint32, const std::string&);
+    void add(const uint32_t, const std::string&);
 
     // delete all names associated with the specified catalog number
-    void erase(const uint32);
+    void erase(const uint32_t);
 
-    uint32      getCatalogNumberByName(const std::string&) const;
-    std::string getNameByCatalogNumber(const uint32)       const;
+    uint32_t      getCatalogNumberByName(const std::string&) const;
+    std::string getNameByCatalogNumber(const uint32_t)       const;
 
-    NumberIndex::const_iterator getFirstNameIter(const uint32 catalogNumber) const;
+    NumberIndex::const_iterator getFirstNameIter(const uint32_t catalogNumber) const;
     NumberIndex::const_iterator getFinalNameIter() const;
 
     std::vector<std::string> getCompletion(const std::string& name) const;
@@ -57,19 +56,19 @@ template <class OBJ> class NameDatabase
 
 
 template <class OBJ>
-uint32 NameDatabase<OBJ>::getNameCount() const
+uint32_t NameDatabase<OBJ>::getNameCount() const
 {
     return nameIndex.size();
 }
 
 
 template <class OBJ>
-void NameDatabase<OBJ>::add(const uint32 catalogNumber, const std::string& name)
+void NameDatabase<OBJ>::add(const uint32_t catalogNumber, const std::string& name)
 {
     if (name.length() != 0)
     {
 #ifdef DEBUG
-        uint32 tmp;
+        uint32_t tmp;
         if ((tmp = getCatalogNumberByName(name)) != OBJ::InvalidCatalogNumber)
             DPRINTF(2,"Duplicated name '%s' on object with catalog numbers: %d and %d\n", name.c_str(), tmp, catalogNumber);
 #endif
@@ -83,14 +82,14 @@ void NameDatabase<OBJ>::add(const uint32 catalogNumber, const std::string& name)
 
 
 template <class OBJ>
-void NameDatabase<OBJ>::erase(const uint32 catalogNumber)
+void NameDatabase<OBJ>::erase(const uint32_t catalogNumber)
 {
     numberIndex.erase(catalogNumber);
 }
 
 
 template <class OBJ>
-uint32 NameDatabase<OBJ>::getCatalogNumberByName(const std::string& name) const
+uint32_t NameDatabase<OBJ>::getCatalogNumberByName(const std::string& name) const
 {
     NameIndex::const_iterator iter = nameIndex.find(name);
 
@@ -110,7 +109,7 @@ uint32 NameDatabase<OBJ>::getCatalogNumberByName(const std::string& name) const
 // (not certain whether or not this behavior is in the STL spec.
 // but it works on the implementations I've tried so far.)
 template <class OBJ>
-std::string NameDatabase<OBJ>::getNameByCatalogNumber(const uint32 catalogNumber) const
+std::string NameDatabase<OBJ>::getNameByCatalogNumber(const uint32_t catalogNumber) const
 {
    if (catalogNumber == OBJ::InvalidCatalogNumber)
         return "";
@@ -131,9 +130,9 @@ std::string NameDatabase<OBJ>::getNameByCatalogNumber(const uint32 catalogNumber
 // (not certain whether or not this behavior is in the STL spec.
 // but it works on the implementations I've tried so far.)
 template <class OBJ>
-NameDatabase<OBJ>::NumberIndex::const_iterator NameDatabase<OBJ>::getFirstNameIter(const uint32 catalogNumber) const
+NameDatabase<OBJ>::NumberIndex::const_iterator NameDatabase<OBJ>::getFirstNameIter(const uint32_t catalogNumber) const
 {
-    NumberIndex::const_iterator iter   = numberIndex.lower_bound(catalogNumber);
+    NumberIndex::const_iterator iter = numberIndex.lower_bound(catalogNumber);
 
     if (iter == numberIndex.end() || iter->first != catalogNumber)
         return getFinalNameIter();

@@ -100,7 +100,7 @@ SolarSystem* Universe::getSolarSystem(const Star* star) const
     if (star == nullptr)
         return nullptr;
 
-    uint32 starNum = star->getCatalogNumber();
+    uint32_t starNum = star->getCatalogNumber();
     auto iter = solarSystemCatalog->find(starNum);
     if (iter != solarSystemCatalog->end())
         return iter->second;

@@ -557,13 +557,13 @@ void Observer::setDisplayedSurface(const string& surf)
 }
 
 
-uint32 Observer::getLocationFilter() const
+uint32_t Observer::getLocationFilter() const
 {
     return locationFilter;
 }
 
 
-void Observer::setLocationFilter(uint32 _locationFilter)
+void Observer::setLocationFilter(uint32_t _locationFilter)
 {
     locationFilter = _locationFilter;
 }

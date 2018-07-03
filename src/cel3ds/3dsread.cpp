@@ -28,26 +28,26 @@ static int read3DSChunk(ifstream& in,
 static int logIndent = 0;
 
 
-static int32 readInt(ifstream& in)
+static int32_t readInt(ifstream& in)
 {
-    int32 ret;
-    in.read((char *) &ret, sizeof(int32));
+    int32_t ret;
+    in.read((char *) &ret, sizeof(int32_t));
     LE_TO_CPU_INT32(ret, ret);
     return ret;
 }
 
-static int16 readShort(ifstream& in)
+static int16_t readShort(ifstream& in)
 {
-    int16 ret;
-    in.read((char *) &ret, sizeof(int16));
+    int16_t ret;
+    in.read((char *) &ret, sizeof(int16_t));
     LE_TO_CPU_INT16(ret, ret);
     return ret;
 }
 
-static uint16 readUshort(ifstream& in)
+static uint16_t readUshort(ifstream& in)
 {
-    uint16 ret;
-    in.read((char *) &ret, sizeof(uint16));
+    uint16_t ret;
+    in.read((char *) &ret, sizeof(uint16_t));
     LE_TO_CPU_INT16(ret, ret);
     return ret;
 }
@@ -113,7 +113,7 @@ void indent()
         cout << "  ";
 }
 
-void logChunk(uint16 /*chunkType*/ /*, int chunkSize*/)
+void logChunk(uint16_t /*chunkType*/ /*, int chunkSize*/)
 {
 #if 0
     const char* name = nullptr;
@@ -214,7 +214,7 @@ int read3DSChunk(ifstream& in,
                  void* obj)
 {
     unsigned short chunkType = readUshort(in);
-    int32 chunkSize = readInt(in);
+    int32_t chunkSize = readInt(in);
     int contentSize = chunkSize - 6;
 
     //logChunk(chunkType/*, chunkSize*/);
@@ -320,7 +320,7 @@ bool stubProcessChunk(/* ifstream& in,
 
 void readPointArray(ifstream& in, M3DTriangleMesh* triMesh)
 {
-    uint16 nPoints = readUshort(in);
+    uint16_t nPoints = readUshort(in);
 
     for (int i = 0; i < (int) nPoints; i++)
     {
@@ -334,7 +334,7 @@ void readPointArray(ifstream& in, M3DTriangleMesh* triMesh)
 
 void readTextureCoordArray(ifstream& in, M3DTriangleMesh* triMesh)
 {
-    uint16 nPoints = readUshort(in);
+    uint16_t nPoints = readUshort(in);
 
     for (int i = 0; i < (int) nPoints; i++)
     {
@@ -351,7 +351,7 @@ bool processFaceArrayChunk(ifstream& in,
                            void* obj)
 {
     auto* triMesh = (M3DTriangleMesh*) obj;
-    uint16 nFaces;
+    uint16_t nFaces;
     M3DMeshMaterialGroup* matGroup;
 
     switch (chunkType)
@@ -362,9 +362,9 @@ bool processFaceArrayChunk(ifstream& in,
         matGroup->materialName = readString(in);
         nFaces = readUshort(in);
 
-        for (uint16 i = 0; i < nFaces; i++)
+        for (uint16_t i = 0; i < nFaces; i++)
         {
-            uint16 faceIndex = readUshort(in);
+            uint16_t faceIndex = readUshort(in);
             matGroup->faces.push_back(faceIndex);
         }
 
@@ -374,9 +374,9 @@ bool processFaceArrayChunk(ifstream& in,
     case M3DCHUNK_MESH_SMOOTH_GROUP:
         nFaces = triMesh->getFaceCount();
 
-        for (uint16 i = 0; i < nFaces; i++)
+        for (uint16_t i = 0; i < nFaces; i++)
         {
-            uint32 groups = (uint32) readInt(in);
+            auto groups = (uint32_t) readInt(in);
             triMesh->addSmoothingGroups(groups);
         }
         return true;
@@ -387,14 +387,14 @@ bool processFaceArrayChunk(ifstream& in,
 
 void readFaceArray(ifstream& in, M3DTriangleMesh* triMesh, int contentSize)
 {
-    uint16 nFaces = readUshort(in);
+    uint16_t nFaces = readUshort(in);
 
     for (int i = 0; i < (int) nFaces; i++)
     {
-        uint16 v0 = readUshort(in);
-        uint16 v1 = readUshort(in);
-        uint16 v2 = readUshort(in);
-        /*uint16 flags = */ readUshort(in);
+        uint16_t v0 = readUshort(in);
+        uint16_t v1 = readUshort(in);
+        uint16_t v2 = readUshort(in);
+        /*uint16_t flags = */ readUshort(in);
         triMesh->addFace(v0, v1, v2);
     }
 
@@ -630,7 +630,7 @@ M3DScene* Read3DSFile(ifstream& in)
         return nullptr;
     }
 
-    int32 chunkSize = readInt(in);
+   int32_t chunkSize = readInt(in);
     if (in.bad())
     {
         DPRINTF(0, "Read3DSFile: Error reading 3DS file.\n");

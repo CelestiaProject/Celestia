@@ -10,7 +10,6 @@
 #ifndef _VERTEXBUF_H_
 #define _VERTEXBUF_H_
 
-#include <celutil/basictypes.h>
 #include <celutil/color.h>
 #include <celmath/vecmath.h>
 #include <celmath/aabox.h>
@@ -44,7 +43,7 @@ class VertexBuffer
     };
 
  public:
-    VertexList(uint32 _parts, uint32 initialVertexPoolSize = 0);
+    VertexList(uint32_t _parts, uint32_t initialVertexPoolSize = 0);
     ~VertexList();
 
     void addVertex(const Vertex& v);
@@ -58,11 +57,11 @@ class VertexBuffer
     void transform(Vec3f translation, float scale);
 
  private:
-    uint32 parts;
-    uint32 vertexSize;
+    uint32_t parts;
+    uint32_t vertexSize;
 
-    uint32 nVertices;
-    uint32 maxVertices;
+    uint32_t nVertices;
+    uint32_t maxVertices;
     VertexPart* vertices;
 
     Color diffuseColor;

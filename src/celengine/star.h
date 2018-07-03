@@ -11,7 +11,6 @@
 #ifndef _CELENGINE_STAR_H_
 #define _CELENGINE_STAR_H_
 
-#include <celutil/basictypes.h>
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
 #include <celengine/univcoord.h>
@@ -77,10 +76,10 @@ class StarDetails
         KnowRotation = 0x2,
         KnowTexture  = 0x4,
     };
-    inline uint32 getKnowledge() const;
-    inline bool getKnowledge(uint32) const;
-    void setKnowledge(uint32);
-    void addKnowledge(uint32);
+    inline uint32_t getKnowledge() const;
+    inline bool getKnowledge(uint32_t) const;
+    void setKnowledge(uint32_t);
+    void addKnowledge(uint32_t);
 
  private:
     void addOrbitingStar(Star*);
@@ -90,7 +89,7 @@ class StarDetails
     float temperature{ 0.0f };
     float bolometricCorrection{ 0.0f };
 
-    uint32 knowledge{ 0 };
+    uint32_t knowledge{ 0 };
     bool visible{ true };
     char spectralType[8];
 
@@ -176,14 +175,14 @@ StarDetails::getOrbitalRadius() const
     return orbitalRadius;
 }
 
-uint32
+uint32_t
 StarDetails::getKnowledge() const
 {
     return knowledge;
 }
 
 bool
-StarDetails::getKnowledge(uint32 knowledgeFlags) const
+StarDetails::getKnowledge(uint32_t knowledgeFlags) const
 {
     return ((knowledge & knowledgeFlags) == knowledgeFlags);
 }
@@ -232,7 +231,7 @@ public:
     inline Star();
     ~Star();
 
-    inline uint32 getCatalogNumber() const
+    inline uint32_t getCatalogNumber() const
     {
         return catalogNumber;
     }
@@ -261,7 +260,7 @@ public:
 
     Eigen::Vector3d getVelocity(double t) const;
 
-    void setCatalogNumber(uint32);
+    void setCatalogNumber(uint32_t);
     void setPosition(float, float, float);
     void setPosition(const Eigen::Vector3f& positionLy);
     void setAbsoluteMagnitude(float);
@@ -288,7 +287,7 @@ public:
     inline float getOrbitalRadius() const;
     inline Star* getOrbitBarycenter() const;
     inline bool getVisibility() const;
-    inline uint32 getKnowledge() const;
+    inline uint32_t getKnowledge() const;
     inline const RotationModel* getRotationModel() const;
     inline Eigen::Vector3f getEllipsoidSemiAxes() const;
     const std::string& getInfoURL() const;
@@ -299,7 +298,7 @@ public:
     };
 
 private:
-    uint32 catalogNumber;
+    uint32_t catalogNumber;
     Eigen::Vector3f position;
     float absMag;
     StarDetails* details;

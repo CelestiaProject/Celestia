@@ -11,7 +11,6 @@
 #define _CELENGINE_LOCATION_H_
 
 #include <string>
-#include <celutil/basictypes.h>
 #include <celutil/color.h>
 #include <Eigen/Core>
 
@@ -35,8 +34,8 @@ class Location
     float getImportance() const;
     void setImportance(float);
 
-    uint32 getFeatureType() const;
-    void setFeatureType(uint32);
+    uint32_t getFeatureType() const;
+    void setFeatureType(uint32_t);
 
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
@@ -53,7 +52,7 @@ class Location
     Eigen::Vector3d getPlanetocentricPosition(double) const;
     Eigen::Vector3d getHeliocentricPosition(double) const;
 
-    static uint32 parseFeatureType(const std::string&);
+    static uint32_t parseFeatureType(const std::string&);
 
     enum FeatureType
     {
@@ -98,7 +97,7 @@ class Location
     Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
     float size{ 0.0f };
     float importance{ -1.0f };
-    uint32 featureType{ Other };
+    uint32_t featureType{ Other };
     bool overrideLabelColor{ false };
     Color labelColor{ 1.0f, 1.0f, 1.0f };
     std::string* infoURL{ nullptr };

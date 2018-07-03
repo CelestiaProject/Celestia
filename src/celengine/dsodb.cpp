@@ -71,7 +71,7 @@ DSODatabase::~DSODatabase()
 }
 
 
-DeepSkyObject* DSODatabase::find(const uint32 catalogNumber) const
+DeepSkyObject* DSODatabase::find(const uint32_t catalogNumber) const
 {
     Galaxy refDSO;  //terrible hack !!
     refDSO.setCatalogNumber(catalogNumber);
@@ -95,7 +95,7 @@ DeepSkyObject* DSODatabase::find(const string& name) const
 
     if (namesDB != nullptr)
     {
-        uint32 catalogNumber   = namesDB->findCatalogNumberByName(name);
+        uint32_t catalogNumber   = namesDB->findCatalogNumberByName(name);
         if (catalogNumber != DeepSkyObject::InvalidCatalogNumber)
             return find(catalogNumber);
     }
@@ -118,7 +118,7 @@ vector<string> DSODatabase::getCompletion(const string& name) const
 
 string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) const
 {
-    uint32 catalogNumber    = dso->getCatalogNumber();
+    uint32_t catalogNumber    = dso->getCatalogNumber();
 
     if (namesDB != nullptr)
     {
@@ -236,11 +236,11 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
         objType = tokenizer.getNameValue();
 
         bool   autoGenCatalogNumber   = true;
-        uint32 objCatalogNumber       = DeepSkyObject::InvalidCatalogNumber;
+        uint32_t objCatalogNumber       = DeepSkyObject::InvalidCatalogNumber;
         if (tokenizer.getTokenType() == Tokenizer::TokenNumber)
         {
             autoGenCatalogNumber   = false;
-            objCatalogNumber       = (uint32) tokenizer.getNumberValue();
+            objCatalogNumber       = (uint32_t) tokenizer.getNumberValue();
             tokenizer.nextToken();
         }
 
@@ -411,7 +411,7 @@ void DSODatabase::buildOctree()
 
 void DSODatabase::calcAvgAbsMag()
 {
-    uint32 nDSOeff = size();
+    uint32_t nDSOeff = size();
     for (int i = 0; i < nDSOs; ++i)
     {
         double DSOmag = DSOs[i]->getAbsoluteMagnitude();

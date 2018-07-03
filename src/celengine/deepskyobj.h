@@ -13,7 +13,6 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <celutil/basictypes.h>
 #include <celmath/ray.h>
 #include <celengine/glcontext.h>
 #include <celengine/parser.h>
@@ -35,11 +34,11 @@ class DeepSkyObject
     DeepSkyObject() = default;
     virtual ~DeepSkyObject() = default;
 
-    inline uint32 getCatalogNumber() const
+    inline uint32_t getCatalogNumber() const
     {
         return catalogNumber;
     }
-    void setCatalogNumber(uint32);
+    void setCatalogNumber(uint32_t);
 
     Eigen::Vector3d getPosition() const;
     void setPosition(const Eigen::Vector3d&);
@@ -100,7 +99,7 @@ class DeepSkyObject
     };
 
  private:
-    uint32       catalogNumber{ InvalidCatalogNumber };
+    uint32_t     catalogNumber{ InvalidCatalogNumber };
     Eigen::Vector3d position{ 0, 0, 0 };
     Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
     float        radius{ 1 };

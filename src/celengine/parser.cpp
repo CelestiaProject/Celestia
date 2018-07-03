@@ -362,14 +362,14 @@ bool AssociativeArray::getNumber(const string& key, int& val) const
     return true;
 }
 
-bool AssociativeArray::getNumber(const string& key, uint32& val) const
+bool AssociativeArray::getNumber(const string& key, uint32_t& val) const
 {
     double ival;
 
     if (!getNumber(key, ival))
         return false;
 
-    val = (uint32) ival;
+    val = (uint32_t) ival;
     return true;
 }
 

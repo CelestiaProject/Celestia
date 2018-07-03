@@ -10,7 +10,6 @@
 #ifndef _SURFACE_H_
 #define _SURFACE_H_
 
-#include <celutil/basictypes.h>
 #include <celutil/color.h>
 #include <celutil/reshandle.h>
 #include "multitexture.h"
@@ -47,7 +46,7 @@ class Surface
         ApplyOverlay         = 0x200,
     };
 
-    uint32 appearanceFlags;
+    uint32_t appearanceFlags;
     Color color;
     Color hazeColor;
     Color specularColor;

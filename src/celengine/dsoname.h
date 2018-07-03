@@ -23,7 +23,7 @@ class DSONameDatabase: public NameDatabase<DeepSkyObject>
     DSONameDatabase() {};
 
 
-    uint32 findCatalogNumberByName(const std::string&) const;
+    uint32_t findCatalogNumberByName(const std::string&) const;
 };
 
 #endif  // _DSONAME_H_

@@ -45,7 +45,7 @@ struct XrefEntryPredicate
 };
 
 
-Star* CatalogCrossReference::lookup(uint32 catalogNumber) const
+Star* CatalogCrossReference::lookup(uint32_t catalogNumber) const
 {
     Entry e;
     e.catalogNumber = catalogNumber;
@@ -64,7 +64,7 @@ Star* CatalogCrossReference::lookup(uint32 catalogNumber) const
 
 Star* CatalogCrossReference::lookup(const string& name) const
 {
-    uint32 catalogNumber = parse(name);
+    uint32_t catalogNumber = parse(name);
     if (catalogNumber == InvalidCatalogNumber)
         return nullptr;
 
@@ -72,7 +72,7 @@ Star* CatalogCrossReference::lookup(const string& name) const
 }
 
 
-uint32 CatalogCrossReference::parse(const string& name) const
+uint32_t CatalogCrossReference::parse(const string& name) const
 {
     if (compareIgnoringCase(name, prefix, prefix.length()) != 0)
         return InvalidCatalogNumber;
@@ -107,7 +107,7 @@ uint32 CatalogCrossReference::parse(const string& name) const
 }
 
 
-void CatalogCrossReference::addEntry(uint32 catalogNumber, Star* star)
+void CatalogCrossReference::addEntry(uint32_t catalogNumber, Star* star)
 {
     Entry e;
     e.catalogNumber = catalogNumber;
@@ -129,12 +129,12 @@ void CatalogCrossReference::reserve(size_t n)
 }
 
 
-static uint32 readUint32(istream& in)
+static uint32_t readUint32(istream& in)
 {
     unsigned char b[4];
     in.read(reinterpret_cast<char*>(b), 4);
-    return ((uint32) b[3] << 24) + ((uint32) b[2] << 16)
-           + ((uint32) b[1] << 8) + (uint32) b[0];
+    return ((uint32_t) b[3] << 24) + ((uint32_t) b[2] << 16)
+           + ((uint32_t) b[1] << 8) + (uint32_t) b[0];
 }
 
 
@@ -143,7 +143,7 @@ CatalogCrossReference* ReadCatalogCrossReference(istream& in,
 {
     auto* xref = new CatalogCrossReference();
 
-    uint32 nEntries = readUint32(in);
+    uint32_t nEntries = readUint32(in);
     if (!in.good())
     {
         delete xref;
@@ -152,10 +152,10 @@ CatalogCrossReference* ReadCatalogCrossReference(istream& in,
 
     xref->reserve(nEntries);
 
-    for (uint32 i = 0; i < nEntries; i++)
+    for (uint32_t i = 0; i < nEntries; i++)
     {
-        uint32 catNo1 = readUint32(in);
-        uint32 catNo2 = readUint32(in);
+        uint32_t catNo1 = readUint32(in);
+        uint32_t catNo2 = readUint32(in);
         Star* star = stardb.find(catNo2);
         if (star != nullptr)
             xref->addEntry(catNo1, star);

@@ -9,7 +9,6 @@
 // of the License, or (at your option) any later version.
 
 #include "modelfile.h"
-#include <celutil/basictypes.h>
 #include <celutil/bytes.h>
 #include <cstring>
 #include <cassert>
@@ -1634,12 +1633,12 @@ BinaryModelLoader::reportError(const string& msg)
 
 
 // Read a big-endian 32-bit unsigned integer
-static int32 readUint(istream& in)
+static uint32_t readUint(istream& in)
 {
-    int32 ret;
-    in.read((char*) &ret, sizeof(int32));
+    int32_t ret;
+    in.read((char*) &ret, sizeof(int32_t));
     LE_TO_CPU_INT32(ret, ret);
-    return (uint32) ret;
+    return (uint32_t) ret;
 }
 
 
@@ -1652,10 +1651,10 @@ static float readFloat(istream& in)
 }
 
 
-static int16 readInt16(istream& in)
+static int16_t readInt16(istream& in)
 {
-    int16 ret;
-    in.read((char *) &ret, sizeof(int16));
+    int16_t ret;
+    in.read((char *) &ret, sizeof(int16_t));
     LE_TO_CPU_INT16(ret, ret);
     return ret;
 }
@@ -1701,8 +1700,8 @@ static bool readTypeString(istream& in, string& s)
     if (readType(in) != CMOD_String)
         return false;
 
-    uint16 len;
-    in.read((char*) &len, sizeof(uint16));
+    uint16_t len;
+    in.read((char*) &len, sizeof(uint16_t));
     LE_TO_CPU_INT16(len, len);
 
     if (len == 0)
@@ -1748,8 +1747,8 @@ static bool ignoreValue(istream& in)
         break;
     case CMOD_String:
         {
-            uint16 len;
-            in.read((char*) &len, sizeof(uint16));
+            uint16_t len;
+            in.read((char*) &len, sizeof(uint16_t));
             LE_TO_CPU_INT16(len, len);
             size = len;
         }
@@ -1892,7 +1891,7 @@ BinaryModelLoader::loadMaterial()
 
         case CMOD_Blend:
             {
-                int16 blendMode = readInt16(in);
+                int16_t blendMode = readInt16(in);
                 if (blendMode < 0 || blendMode >= Material::BlendMax)
                 {
                     reportError("Bad blend mode");
@@ -1905,7 +1904,7 @@ BinaryModelLoader::loadMaterial()
 
         case CMOD_Texture:
             {
-                int16 texType = readInt16(in);
+                int16_t texType = readInt16(in);
                 if (texType < 0 || texType >= Material::TextureSemanticMax)
                 {
                     reportError("Bad texture type");
@@ -1973,7 +1972,7 @@ BinaryModelLoader::loadVertexDescription()
 
     for (;;)
     {
-        int16 tok = readInt16(in);
+        int16_t tok = readInt16(in);
 
         if (tok == CMOD_EndVertexDesc)
         {
@@ -1981,7 +1980,7 @@ BinaryModelLoader::loadVertexDescription()
         }
         if (tok >= 0 && tok < Mesh::SemanticMax)
         {
-            int16 fmt = readInt16(in);
+            int16_t fmt = readInt16(in);
             if (fmt < 0 || fmt >= Mesh::FormatMax)
             {
                 reportError("Invalid vertex attribute type");
@@ -2051,7 +2050,7 @@ BinaryModelLoader::loadMesh()
 
     for (;;)
     {
-        int16 tok = readInt16(in);
+        int16_t tok = readInt16(in);
 
         if (tok == CMOD_EndMesh)
         {
@@ -2069,7 +2068,7 @@ BinaryModelLoader::loadMesh()
         unsigned int materialIndex = readUint(in);
         unsigned int indexCount = readUint(in);
 
-        uint32* indices = new uint32[indexCount];
+        auto* indices = new uint32_t[indexCount];
         if (indices == nullptr)
         {
             reportError("Not enough memory to hold indices");
@@ -2079,7 +2078,7 @@ BinaryModelLoader::loadMesh()
 
         for (unsigned int i = 0; i < indexCount; i++)
         {
-            uint32 index = readUint(in);
+            uint32_t index = readUint(in);
             if (index >= vertexCount)
             {
                 reportError("Index out of range");
@@ -2171,10 +2170,10 @@ BinaryModelWriter::BinaryModelWriter(ostream& _out) :
 }
 
 // Utility functions for writing binary values to a file
-static void writeUint32(ostream& out, uint32 val)
+static void writeUint32(ostream& out, uint32_t val)
 {
     LE_TO_CPU_INT32(val, val);
-    out.write(reinterpret_cast<char*>(&val), sizeof(uint32));
+    out.write(reinterpret_cast<char*>(&val), sizeof(uint32_t));
 }
 
 static void writeFloat(ostream& out, float val)
@@ -2183,20 +2182,20 @@ static void writeFloat(ostream& out, float val)
     out.write(reinterpret_cast<char*>(&val), sizeof(float));
 }
 
-static void writeInt16(ostream& out, int16 val)
+static void writeInt16(ostream& out, int16_t val)
 {
     LE_TO_CPU_INT16(val, val);
-    out.write(reinterpret_cast<char*>(&val), sizeof(int16));
+    out.write(reinterpret_cast<char*>(&val), sizeof(int16_t));
 }
 
 static void writeToken(ostream& out, ModelFileToken val)
 {
-    writeInt16(out, static_cast<int16>(val));
+    writeInt16(out, static_cast<int16_t>(val));
 }
 
 static void writeType(ostream& out, ModelFileType val)
 {
-    writeInt16(out, static_cast<int16>(val));
+    writeInt16(out, static_cast<int16_t>(val));
 }
 
 
@@ -2219,7 +2218,7 @@ static void writeTypeColor(ostream& out, const Material::Color& c)
 static void writeTypeString(ostream& out, const string& s)
 {
     writeType(out, CMOD_String);
-    writeInt16(out, static_cast<int16>(s.length()));
+    writeInt16(out, static_cast<int16_t>(s.length()));
     out.write(s.c_str(), s.length());
 }
 
@@ -2242,7 +2241,7 @@ BinaryModelWriter::write(const Model& model)
 void
 BinaryModelWriter::writeGroup(const Mesh::PrimitiveGroup& group)
 {
-    writeInt16(out, static_cast<int16>(group.prim));
+    writeInt16(out, static_cast<int16_t>(group.prim));
     writeUint32(out, group.materialIndex);
     writeUint32(out, group.nIndices);
 
@@ -2329,8 +2328,8 @@ BinaryModelWriter::writeVertexDescription(const Mesh::VertexDescription& desc)
 
     for (unsigned int attr = 0; attr < desc.nAttributes; attr++)
     {
-        writeInt16(out, static_cast<int16>(desc.attributes[attr].semantic));
-        writeInt16(out, static_cast<int16>(desc.attributes[attr].format));
+        writeInt16(out, static_cast<int16_t>(desc.attributes[attr].semantic));
+        writeInt16(out, static_cast<int16_t>(desc.attributes[attr].format));
     }
 
     writeToken(out, CMOD_EndVertexDesc);
@@ -2375,7 +2374,7 @@ BinaryModelWriter::writeMaterial(const Material& material)
     if (material.blend != DefaultBlend)
     {
         writeToken(out, CMOD_Blend);
-        writeInt16(out, (int16) material.blend);
+        writeInt16(out, (int16_t) material.blend);
     }
 
     for (int i = 0; i < Material::TextureSemanticMax; i++)
@@ -2386,7 +2385,7 @@ BinaryModelWriter::writeMaterial(const Material& material)
             if (!texSource.empty())
             {
                 writeToken(out, CMOD_Texture);
-                writeInt16(out, (int16) i);
+                writeInt16(out, (int16_t) i);
                 writeTypeString(out, texSource);
             }
         }

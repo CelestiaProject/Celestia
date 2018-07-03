@@ -13,7 +13,6 @@
 #include <fstream>
 #include <iomanip>
 #include <string>
-#include <celutil/basictypes.h>
 #include <celutil/bytes.h>
 
 using namespace std;
@@ -68,14 +67,14 @@ bool parseCommandLine(int argc, char* argv[])
 }
 
 
-static void writeUint(ostream& out, uint32 n)
+static void writeUint(ostream& out, uint32_t n)
 {
     LE_TO_CPU_INT32(n, n);
     out.write(reinterpret_cast<char*>(&n), sizeof n);
 }
 
 
-static void writeShort(ostream& out, int16 n)
+static void writeShort(ostream& out, int16_t n)
 {
     LE_TO_CPU_INT16(n, n);
     out.write(reinterpret_cast<char*>(&n), sizeof n);
@@ -107,8 +106,8 @@ bool WriteCrossIndex(istream& in, ostream& out)
             return false;
         }
 
-        writeUint(out, (uint32) catalogNumber);
-        writeUint(out, (uint32) celCatalogNumber);
+        writeUint(out, (uint32_t) catalogNumber);
+        writeUint(out, (uint32_t) celCatalogNumber);
 
         record++;
     }

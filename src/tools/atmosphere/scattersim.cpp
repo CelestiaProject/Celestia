@@ -15,7 +15,6 @@
 #include <cmath>
 #include <algorithm>
 #include <map>
-#include <celutil/basictypes.h>
 #include <celmath/vecmath.h>
 #include <celmath/mathlib.h>
 #include <celmath/ray.h>
@@ -103,14 +102,14 @@ Color operator*(const Color& a, const Vec3d& v)
 }
 
 
-static uint8 floatToByte(float f)
+static uint8_t floatToByte(float f)
 {
     if (f <= 0.0f)
         return 0;
     if (f >= 1.0f)
         return 255;
     else
-        return (uint8) (f * 255.99f);
+        return (uint8_t)_t (f * 255.99f);
 }
 
 
@@ -316,7 +315,7 @@ public:
         height(h),
         pixels(nullptr)
     {
-        pixels = new uint8[width * height * 3];
+        pixels = new uint8_t[_twidth * height * 3];
     }
 
     ~RGBImage()
@@ -331,9 +330,9 @@ public:
                    unsigned int h)
     {
 
-        uint8 r = floatToByte(color.r);
-        uint8 g = floatToByte(color.g);
-        uint8 b = floatToByte(color.b);
+        uint8_t r = floatToByte(color.r);
+        uint8_t g = floatToByte(color.g);
+        uint8_t b = floatToByte(color.b);
         for (unsigned int i = y; i < y + h; i++)
         {
             for (unsigned int j = x; j < x + w; j++)

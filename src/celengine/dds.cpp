@@ -21,42 +21,42 @@ using namespace std;
 
 struct DDPixelFormat
 {
-    uint32 size;
-    uint32 flags;
-    uint32 fourCC;
-    uint32 bpp;
-    uint32 redMask;
-    uint32 greenMask;
-    uint32 blueMask;
-    uint32 alphaMask;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t fourCC;
+    uint32_t bpp;
+    uint32_t redMask;
+    uint32_t greenMask;
+    uint32_t blueMask;
+    uint32_t alphaMask;
 };
 
 struct DDSCaps
 {
-    uint32 caps;
-    uint32 caps2;
-    uint32 caps3;
-    uint32 caps4;
+    uint32_t caps;
+    uint32_t caps2;
+    uint32_t caps3;
+    uint32_t caps4;
 };
 
 struct DDColorKey
 {
-    uint32 lowVal;
-    uint32 highVal;
+    uint32_t lowVal;
+    uint32_t highVal;
 };
 
 struct DDSurfaceDesc
 {
-    uint32 size;
-    uint32 flags;
-    uint32 height;
-    uint32 width;
-    uint32 pitch;
-    uint32 depth;
-    uint32 mipMapLevels;
-    uint32 alphaBitDepth;
-    uint32 reserved;
-    uint32 surface;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t height;
+    uint32_t width;
+    uint32_t pitch;
+    uint32_t depth;
+    uint32_t mipMapLevels;
+    uint32_t alphaBitDepth;
+    uint32_t reserved;
+    uint32_t surface;
 
     DDColorKey ckDestOverlay;
     DDColorKey ckDestBlt;
@@ -66,16 +66,16 @@ struct DDSurfaceDesc
     DDPixelFormat format;
     DDSCaps caps;
 
-    uint32 textureStage;
+    uint32_t textureStage;
 };
 
 
-static uint32 FourCC(const char* s)
+static uint32_t FourCC(const char* s)
 {
-    return (((uint32) s[3] << 24) |
-            ((uint32) s[2] << 16) |
-            ((uint32) s[1] << 8) |
-            (uint32) s[0]);
+    return (((uint32_t) s[3] << 24) |
+            ((uint32_t) s[2] << 16) |
+            ((uint32_t) s[1] << 8) |
+            (uint32_t) s[0]);
 }
 
 

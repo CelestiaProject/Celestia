@@ -146,8 +146,8 @@ public:
     const std::string& getDisplayedSurface() const;
     void setDisplayedSurface(const std::string&);
 
-    uint32 getLocationFilter() const;
-    void setLocationFilter(uint32);
+    uint32_t getLocationFilter() const;
+    void setLocationFilter(uint32_t);
 
     void gotoSelection(const Selection&,
                        double gotoTime,
@@ -311,7 +311,7 @@ public:
     float fov{ (float) (PI / 4.0) };
     bool reverseFlag{ false };
 
-    uint32 locationFilter{ ~0u };
+    uint32_t locationFilter{ ~0u };
     std::string displayedSurface;
 };
 

@@ -84,8 +84,8 @@ Convert3DSMesh(Model& model,
     }
 
     Mesh::VertexAttribute attributes[8];
-    uint32 nAttributes = 0;
-    uint32 offset = 0;
+    uint32_t nAttributes = 0;
+    uint32_t offset = 0;
 
     // Position attribute is always present
     attributes[nAttributes] = Mesh::VertexAttribute(Mesh::Position, Mesh::Float3, 0);
@@ -111,11 +111,11 @@ Convert3DSMesh(Model& model,
         // No material groups in the 3DS file. This is allowed. We'll create a single
         // primitive group with the default material.
         unsigned int faceCount = mesh3ds.getFaceCount();
-        uint32* indices = new uint32[faceCount * 3];
+        auto* indices = new uint32_t[faceCount * 3];
 
         for (unsigned int i = 0; i < faceCount; i++)
         {
-            uint16 v0 = 0, v1 = 0, v2 = 0;
+            uint16_t v0 = 0, v1 = 0, v2 = 0;
             mesh3ds.getFace(i, v0, v1, v2);
             indices[i * 3 + 0] = v0;
             indices[i * 3 + 1] = v1;
@@ -128,17 +128,17 @@ Convert3DSMesh(Model& model,
     {
         // We have at least one material group. Create a cmod primitive group for
         // each material group in th 3ds mesh.
-        for (uint32 groupIndex = 0; groupIndex < mesh3ds.getMeshMaterialGroupCount(); ++groupIndex)
+        for (uint32_t groupIndex = 0; groupIndex < mesh3ds.getMeshMaterialGroupCount(); ++groupIndex)
         {
             M3DMeshMaterialGroup* matGroup = mesh3ds.getMeshMaterialGroup(groupIndex);
 
-            uint32 nMatGroupFaces = matGroup->faces.size();
-            uint32* indices = new uint32[nMatGroupFaces * 3];
+            uint32_t nMatGroupFaces = matGroup->faces.size();
+            auto* indices = new uint32_t[nMatGroupFaces * 3];
 
             for (unsigned int i = 0; i < nMatGroupFaces; i++)
             {
-                uint16 v0 = 0, v1 = 0, v2 = 0;
-                uint16 faceIndex = matGroup->faces[i];
+                uint16_t v0 = 0, v1 = 0, v2 = 0;
+                uint16_t faceIndex = matGroup->faces[i];
                 mesh3ds.getFace(faceIndex, v0, v1, v2);
                 indices[i * 3 + 0] = v0;
                 indices[i * 3 + 1] = v1;

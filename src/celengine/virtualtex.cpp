@@ -46,7 +46,7 @@ static bool isPow2(int x)
 #if 0
 // Useful if we want to use a packed quadtree to store tiles instead of
 // the currently implemented tree structure.
-static inline uint lodOffset(uint lod)
+static inline unsigned int lodOffset(unsigned int lod)
 {
     return ((1 << (lod << 1)) - 1) & 0xaaaaaaaa;
 }
@@ -95,12 +95,12 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
 
     TileQuadtreeNode* node = tileTree[u >> lod];
     Tile* tile = node->tile;
-    uint tileLOD = 0;
+    unsigned int tileLOD = 0;
 
     for (int n = 0; n < lod; n++)
     {
-        uint mask = 1 << (lod - n - 1);
-        uint child = (((v & mask) << 1) | (u & mask)) >> (lod - n - 1);
+        unsigned int mask = 1 << (lod - n - 1);
+        unsigned int child = (((v & mask) << 1) | (u & mask)) >> (lod - n - 1);
         //int child = (((v << 1) | u) >> (lod - n - 1)) & 3;
         if (!node->children[child])
             break;
@@ -118,8 +118,8 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
         return TextureTile(0);
 
     // Make the tile resident.
-    uint tileU = u >> (lod - tileLOD);
-    uint tileV = v >> (lod - tileLOD);
+    unsigned int tileU = u >> (lod - tileLOD);
+    unsigned int tileV = v >> (lod - tileLOD);
     makeResident(tile, tileLOD, tileU, tileV);
 
     // It's possible that we failed to make the tile resident, either
@@ -137,7 +137,7 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
 
     // If the tile came from a lower LOD than the requested one,
     // we'll only use a subsection of it.
-    uint lodDiff = lod - tileLOD;
+    unsigned int lodDiff = lod - tileLOD;
     texDU = texDV = 1.0f / (float) (1 << lodDiff);
     texU = (u & ((1 << lodDiff) - 1)) * texDU;
     texV = (v & ((1 << lodDiff) - 1)) * texDV;
@@ -188,7 +188,7 @@ void VirtualTexture::endUsage()
 
 
 #if 0
-uint VirtualTexture::tileIndex(unsigned int lod,
+unsigned int VirtualTexture::tileIndex(unsigned int lod,
                                unsigned int u, unsigned int v)
 {
     unsigned int lodBase = lodOffset(lod + baseSplit) - lodOffset(baseSplit);
@@ -197,7 +197,7 @@ uint VirtualTexture::tileIndex(unsigned int lod,
 #endif
 
 
-ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
+ImageTexture* VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, unsigned int v)
 {
     lod >>= baseSplit;
 
@@ -231,7 +231,7 @@ ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
 }
 
 
-void VirtualTexture::makeResident(Tile* tile, uint lod, uint u, uint v)
+void VirtualTexture::makeResident(Tile* tile, unsigned int lod, unsigned int u, unsigned int v)
 {
     if (tile->tex == nullptr && !tile->loadFailed)
     {
@@ -249,7 +249,7 @@ void VirtualTexture::makeResident(Tile* tile, uint lod, uint u, uint v)
 void VirtualTexture::populateTileTree()
 {
     // Count the number of resolution levels present
-    uint maxLevel = 0;
+    unsigned int maxLevel = 0;
 
     // Crash potential if the tile prefix contains a %, so disallow it
     string pattern;
@@ -292,14 +292,14 @@ void VirtualTexture::populateTileTree()
 }
 
 
-void VirtualTexture::addTileToTree(Tile* tile, uint lod, uint u, uint v)
+void VirtualTexture::addTileToTree(Tile* tile, unsigned int lod, unsigned int u, unsigned int v)
 {
     TileQuadtreeNode* node = tileTree[u >> lod];
 
-    for (uint i = 0; i < lod; i++)
+    for (unsigned int i = 0; i < lod; i++)
     {
-        uint mask = 1 << (lod - i - 1);
-        uint child = (((v & mask) << 1) | (u & mask)) >> (lod - i - 1);
+        unsigned int mask = 1 << (lod - i - 1);
+        unsigned int child = (((v & mask) << 1) | (u & mask)) >> (lod - i - 1);
         if (!node->children[child])
             node->children[child] = new TileQuadtreeNode();
         node = node->children[child];

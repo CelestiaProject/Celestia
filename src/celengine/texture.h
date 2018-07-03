@@ -11,7 +11,6 @@
 #define _CELENGINE_TEXTURE_H_
 
 #include <string>
-#include <celutil/basictypes.h>
 #include <celutil/color.h>
 #include <celengine/image.h>
 
