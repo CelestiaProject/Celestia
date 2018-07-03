@@ -13,7 +13,6 @@
 #define _CMODOPS_H_
 
 #include <celmodel/model.h>
-#include <celutil/basictypes.h>
 #include <Eigen/Core>
 #include <vector>
 
@@ -23,10 +22,10 @@ struct Vertex
     Vertex() :
         index(0), attributes(nullptr) {};
 
-    Vertex(uint32 _index, const void* _attributes) :
+    Vertex(uint32_t _index, const void* _attributes) :
         index(_index), attributes(_attributes) {};
 
-    uint32 index;
+    uint32_t index;
     const void* attributes;
 };
 
@@ -34,8 +33,8 @@ struct Vertex
 struct Face
 {
     Eigen::Vector3f normal;
-    uint32 i[3];    // vertex attribute indices
-    uint32 vi[3];   // vertex point indices -- same as above unless welding
+    uint32_t i[3];    // vertex attribute indices
+    uint32_t vi[3];   // vertex point indices -- same as above unless welding
 };
 
 
@@ -63,19 +62,19 @@ JoinVertices(std::vector<Face>& faces,
     // Must have a position
     assert(desc.getAttribute(cmod::Mesh::Position).format == cmod::Mesh::Float3);
 
-    uint32 posOffset = desc.getAttribute(cmod::Mesh::Position).offset;
+    uint32_t posOffset = desc.getAttribute(cmod::Mesh::Position).offset;
     const char* vertexPoints = reinterpret_cast<const char*>(vertexData) +
         posOffset;
-    uint32 nVertices = faces.size() * 3;
+    uint32_t nVertices = faces.size() * 3;
 
     // Initialize the array of vertices
     std::vector<Vertex> vertices(nVertices);
-    uint32 f;
+    uint32_t f;
     for (f = 0; f < faces.size(); f++)
     {
-        for (uint32 j = 0; j < 3; j++)
+        for (uint32_t j = 0; j < 3; j++)
         {
-            uint32 index = faces[f].i[j];
+            uint32_t index = faces[f].i[j];
             vertices[f * 3 + j] = Vertex(index,
                                          vertexPoints + desc.stride * index);
 
@@ -86,10 +85,10 @@ JoinVertices(std::vector<Face>& faces,
     sort(vertices.begin(), vertices.end(), orderingPredicate);
 
     // Build the vertex merge map
-    std::vector<uint32> mergeMap(nVertices);
-    uint32 lastUnique = 0;
-    uint32 uniqueCount = 0;
-    for (uint32 i = 0; i < nVertices; i++)
+    std::vector<uint32_t> mergeMap(nVertices);
+    uint32_t lastUnique = 0;
+    uint32_t uniqueCount = 0;
+    for (uint32_t i = 0; i < nVertices; i++)
     {
         if (i == 0 || !equivalencePredicate(vertices[i - 1], vertices[i]))
         {
@@ -103,7 +102,7 @@ JoinVertices(std::vector<Face>& faces,
     // Remap the vertex indices
     for (f = 0; f < faces.size(); f++)
     {
-        for (uint32 k= 0; k < 3; k++)
+        for (uint32_t k= 0; k < 3; k++)
         {
             faces[f].vi[k] = mergeMap[faces[f].i[k]];
         }

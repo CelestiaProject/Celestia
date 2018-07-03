@@ -13,7 +13,6 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <celutil/basictypes.h>
 #include <celutil/bytes.h>
 #include <celengine/astro.h>
 #include <celengine/stellarclass.h>
@@ -38,9 +37,9 @@ void Usage()
 }
 
 
-static uint32 readUint(istream& in)
+static uint32_t readUint(istream& in)
 {
-    uint32 n;
+    uint32_t n;
     in.read(reinterpret_cast<char*>(&n), sizeof n);
     LE_TO_CPU_INT32(n, n);
     return n;
@@ -54,31 +53,31 @@ static float readFloat(istream& in)
     return f;
 }
 
-static int16 readShort(istream& in)
+static int16_t readShort(istream& in)
 {
-    int16 n;
+    int16_t n;
     in.read(reinterpret_cast<char*>(&n), sizeof n);
     LE_TO_CPU_INT16(n, n);
     return n;
 }
 
-static uint16 readUshort(istream& in)
+static uint16_t readUshort(istream& in)
 {
-    uint16 n;
+    uint16_t n;
     in.read(reinterpret_cast<char*>(&n), sizeof n);
     LE_TO_CPU_INT16(n, n);
     return n;
 }
 
-static uint8 readUbyte(istream& in)
+static uint8_t readUbyte(istream& in)
 {
-    uint8 n;
+    uint8_t n;
     in.read((char*) &n, 1);
     return n;
 }
 
 
-void printStellarClass(uint16 sc, ostream& out)
+void printStellarClass(uint16_t sc, ostream& out)
 {
     StellarClass::StarType st = (StellarClass::StarType) (sc >> 12);
 
@@ -147,7 +146,7 @@ void printStellarClass(uint16 sc, ostream& out)
 bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut,
                          bool spherical)
 {
-    uint32 nStarsInFile = readUint(in);
+    uint32_t nStarsInFile = readUint(in);
     if (!in.good())
     {
         cerr << "Error reading count of stars from database.\n";
@@ -156,7 +155,7 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut,
 
     out << nStarsInFile << '\n';
 
-    for (uint32 i = 0; i < nStarsInFile; i++)
+    for (uint32_t i = 0; i < nStarsInFile; i++)
     {
         if (!in.good())
         {
@@ -164,14 +163,14 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut,
             return false;
         }
 
-        uint32 catalogNum    = readUint(in);
-        uint32 HDCatalogNum  = readUint(in);
+        uint32_t catalogNum    = readUint(in);
+        uint32_t HDCatalogNum  = readUint(in);
         float  RA            = readFloat(in);
         float  dec           = readFloat(in);
         float  parallax      = readFloat(in);
-        int16  appMag        = readShort(in);
-        uint16 stellarClass  = readUshort(in);
-        uint8  parallaxError = readUbyte(in);
+        int16_t  appMag        = readShort(in);
+        uint16_t stellarClass  = readUshort(in);
+        uint8_t  parallaxError = readUbyte(in);
 
         // Compute distance based on parallax
         double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
@@ -217,7 +216,7 @@ bool DumpStarDatabase(istream& in, ostream& out, ostream* hdOut)
         return false;
     }
 
-    uint16 version = readUshort(in);
+    uint16_t version = readUshort(in);
     if (version != 0x0100)
     {
         cerr << "Unsupported file version " << (version >> 8) << '.' <<
@@ -225,7 +224,7 @@ bool DumpStarDatabase(istream& in, ostream& out, ostream* hdOut)
         return false;
     }
 
-    uint32 nStarsInFile = readUint(in);
+    uint32_t nStarsInFile = readUint(in);
     if (!in.good())
     {
         cerr << "Error reading count of stars from database.\n";
@@ -234,7 +233,7 @@ bool DumpStarDatabase(istream& in, ostream& out, ostream* hdOut)
 
     out << nStarsInFile << '\n';
 
-    for (uint32 i = 0; i < nStarsInFile; i++)
+    for (uint32_t i = 0; i < nStarsInFile; i++)
     {
         if (!in.good())
         {
@@ -242,12 +241,12 @@ bool DumpStarDatabase(istream& in, ostream& out, ostream* hdOut)
             return false;
         }
 
-        uint32 catalogNum    = readUint(in);
-        float  x             = readFloat(in);
-        float  y             = readFloat(in);
-        float  z             = readFloat(in);
-        int16  absMag        = readShort(in);
-        uint16 stellarClass  = readUshort(in);
+        uint32_t catalogNum   = readUint(in);
+        float x               = readFloat(in);
+        float y               = readFloat(in);
+        float z               = readFloat(in);
+        int16_t  absMag       = readShort(in);
+        uint16_t stellarClass = readUshort(in);
 
         out << catalogNum << ' ';
         out << setprecision(7);

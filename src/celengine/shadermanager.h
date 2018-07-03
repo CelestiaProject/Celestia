@@ -98,7 +98,7 @@ class ShaderProperties
     //   Bit  2,   on if there are ring shadows
     //   Bit  3,   on for self shadowing
     //   Bit  4,   on for cloud shadows
-    uint32 shadowCounts;
+    uint32_t shadowCounts;
 
     // Effects that may be applied with any light model
     unsigned short effects;

@@ -177,8 +177,8 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
         {
         case NameColumn:
             {
-                uint32 hipCatNo = star->getCatalogNumber();
-                uint32 hdCatNo   = universe->getStarCatalog()->crossIndex(StarDatabase::HenryDraper, hipCatNo);
+                uint32_t hipCatNo = star->getCatalogNumber();
+                uint32_t hdCatNo  = universe->getStarCatalog()->crossIndex(StarDatabase::HenryDraper, hipCatNo);
                 if (hdCatNo != Star::InvalidCatalogNumber)
                     return QString("HD %1").arg(hdCatNo);
                 else

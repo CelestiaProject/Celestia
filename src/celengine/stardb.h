@@ -107,12 +107,12 @@ class StarDatabase
     ~StarDatabase();
 
 
-    inline Star*  getStar(const uint32) const;
-    inline uint32 size() const;
+    inline Star*  getStar(const uint32_t) const;
+    inline uint32_t size() const;
 
-    Star* find(uint32 catalogNumber) const;
+    Star* find(uint32_t catalogNumber) const;
     Star* find(const std::string&) const;
-    uint32 findCatalogNumberByName(const std::string&) const;
+    uint32_t findCatalogNumberByName(const std::string&) const;
 
     std::vector<std::string> getCompletion(const std::string&) const;
 
@@ -154,12 +154,12 @@ class StarDatabase
 
     // Not exact, but any star with a catalog number greater than this is assumed to not be
     // a HIPPARCOS stars.
-    static const uint32 MAX_HIPPARCOS_NUMBER = 999999;
+    static const uint32_t MAX_HIPPARCOS_NUMBER = 999999;
 
     struct CrossIndexEntry
     {
-        uint32 catalogNumber;
-        uint32 celCatalogNumber;
+        uint32_t catalogNumber;
+        uint32_t celCatalogNumber;
 
         bool operator<(const CrossIndexEntry&) const;
     };
@@ -167,9 +167,9 @@ class StarDatabase
     typedef std::vector<CrossIndexEntry> CrossIndex;
 
     bool   loadCrossIndex  (const Catalog, std::istream&);
-    uint32 searchCrossIndexForCatalogNumber(const Catalog, const uint32 number) const;
-    Star*  searchCrossIndex(const Catalog, const uint32 number) const;
-    uint32 crossIndex      (const Catalog, const uint32 number) const;
+    uint32_t searchCrossIndexForCatalogNumber(const Catalog, const uint32_t number) const;
+    Star*  searchCrossIndex(const Catalog, const uint32_t number) const;
+    uint32_t crossIndex      (const Catalog, const uint32_t number) const;
 
     void finish();
 
@@ -181,14 +181,14 @@ class StarDatabase
 private:
     bool createStar(Star* star,
                     StcDisposition disposition,
-                    uint32 catalogNumber,
+                    uint32_t catalogNumber,
                     Hash* starData,
                     const std::string& path,
                     const bool isBarycenter);
 
     void buildOctree();
     void buildIndexes();
-    Star* findWhileLoading(uint32 catalogNumber) const;
+    Star* findWhileLoading(uint32_t catalogNumber) const;
 
     int nStars{ 0 };
 
@@ -196,7 +196,7 @@ private:
     StarNameDatabase* namesDB{ nullptr };
     Star**            catalogNumberIndex;
     StarOctree*       octreeRoot{ nullptr };
-    uint32            nextAutoCatalogNumber{ 0xfffffffe };
+    uint32_t            nextAutoCatalogNumber{ 0xfffffffe };
 
     std::vector<CrossIndex*> crossIndexes;
 
@@ -207,23 +207,23 @@ private:
     Star** binFileCatalogNumberIndex{ nullptr };
     unsigned int binFileStarCount{ 0 };
     // Catalog number -> star mapping for stars loaded from stc files
-    std::map<uint32, Star*> stcFileCatalogNumberIndex;
+    std::map<uint32_t, Star*> stcFileCatalogNumberIndex;
 
     struct BarycenterUsage
     {
-        uint32 catNo;
-        uint32 barycenterCatNo;
+        uint32_t catNo;
+        uint32_t barycenterCatNo;
     };
     std::vector<BarycenterUsage> barycenters;
 };
 
 
-Star* StarDatabase::getStar(const uint32 n) const
+Star* StarDatabase::getStar(const uint32_t n) const
 {
     return stars + n;
 }
 
-uint32 StarDatabase::size() const
+uint32_t StarDatabase::size() const
 {
     return nStars;
 }

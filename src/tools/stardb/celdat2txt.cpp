@@ -20,7 +20,6 @@
 #include <cassert>
 #include <stdio.h>
 #include <math.h>       /* All mathematics */
-#include <celutil/basictypes.h>
 #include <celutil/bytes.h>
 #include <celengine/astro.h>
 #include <celengine/stellarclass.h>
@@ -86,9 +85,9 @@ void Usage()
     cerr << "    --index (or -x)     : dump new HD or SAO binary x-ref catalogs to text\n\n";
 }
 
-static uint32 readUint(istream& in)
+static uint32_t readUint(istream& in)
 {
-    uint32 n;
+    uint32_t n;
     in.read(reinterpret_cast<char*>(&n), sizeof n);
     LE_TO_CPU_INT32(n, n);
     return n;
@@ -102,30 +101,30 @@ static float readFloat(istream& in)
     return f;
 }
 
-static int16 readShort(istream& in)
+static int16_t readShort(istream& in)
 {
-    int16 n;
+    int16_t n;
     in.read(reinterpret_cast<char*>(&n), sizeof n);
     LE_TO_CPU_INT16(n, n);
     return n;
 }
 
-static uint16 readUshort(istream& in)
+static uint16_t readUshort(istream& in)
 {
-    uint16 n;
+    uint16_t n;
     in.read(reinterpret_cast<char*>(&n), sizeof n);
     LE_TO_CPU_INT16(n, n);
     return n;
 }
 
-static uint8 readUbyte(istream& in)
+static uint8_t readUbyte(istream& in)
 {
-    uint8 n;
+    uint8_t n;
     in.read((char*) &n, 1);
     return n;
 }
 
-void printStellarClass(uint16 sc, ostream& out)
+void printStellarClass(uint16_t sc, ostream& out)
 {
     StellarClass::StarType st = (StellarClass::StarType) (sc >> 12);
     if (st == StellarClass::WhiteDwarf)
@@ -209,7 +208,7 @@ bool DumpxRefDatabase(istream& in, ostream& out)
     }
 
     // Verify the version
-    uint16 version = readUshort(in);
+    uint16_t version = readUshort(in);
     if (version != 0x0100)
     {
         cerr << "Bad version for cross index\n";
@@ -217,7 +216,7 @@ bool DumpxRefDatabase(istream& in, ostream& out)
     }
 
 
-    uint32 record = 0;
+    uint32_t record = 0;
     for (;;)
     {
         if (!in.good())
@@ -226,10 +225,10 @@ bool DumpxRefDatabase(istream& in, ostream& out)
             return false;
         }
 
-        uint32 catalogNum    = readUint(in);    //HD or SAO number
+        uint32_t catalogNum    = readUint(in);    //HD or SAO number
         if (in.eof())
             break;
-        uint32 celcatalogNum = readUint(in);    //HIP number
+        uint32_t celcatalogNum = readUint(in);    //HIP number
 
         out << catalogNum << ' ';
         out << celcatalogNum << '\n';
@@ -312,7 +311,7 @@ C
 
 bool DumpStarDatabase(istream& in, ostream& out)
 {
-    uint32 hi;         // HI catalog number
+    uint32_t hi;         // HI catalog number
     double rafrh;
     double rafrm;
     double rah;        // right ascension hh
@@ -324,7 +323,7 @@ bool DumpStarDatabase(istream& in, ostream& out)
     double ded;        // declination degrees
     double dem;        // declination minutes
     double des;        // declination seconds
-    uint16 sc;         // stellar class
+    uint16_t sc;         // stellar class
     double ly;         // light years
     char buf[256];     // character buffer
 
@@ -337,7 +336,7 @@ bool DumpStarDatabase(istream& in, ostream& out)
         return false;
     }
 
-    uint16 version = readUshort(in);
+    uint16_t version = readUshort(in);
     if (version != 0x0100)
     {
         cerr << "Unsupported file version " << (version >> 8) << '.' <<
@@ -345,7 +344,7 @@ bool DumpStarDatabase(istream& in, ostream& out)
         return false;
     }
 
-    uint32 nStarsInFile = readUint(in);
+    uint32_t nStarsInFile = readUint(in);
     if (!in.good())
     {
         cerr << "Error reading count of stars from database.\n";
@@ -357,7 +356,7 @@ bool DumpStarDatabase(istream& in, ostream& out)
     printf("\n\nStart converting %d", nStarsInFile);
     printf(" records.\n");
 
-    for (uint32 i = 0; i < nStarsInFile; i++)
+    for (uint32_t i = 0; i < nStarsInFile; i++)
     {
         if (!in.good())
         {
@@ -367,12 +366,12 @@ bool DumpStarDatabase(istream& in, ostream& out)
         if (i % 5000 == 0)
             printf(".");
 
-        uint32 catalogNum    = readUint(in);
-        float  x             = readFloat(in);
-        float  y             = readFloat(in);
-        float  z             = readFloat(in);
-        int16  absMag        = readShort(in);
-        uint16 stellarClass  = readUshort(in);
+        uint32_t catalogNum    = readUint(in);
+        float  x               = readFloat(in);
+        float  y               = readFloat(in);
+        float  z               = readFloat(in);
+        int16_t  absMag        = readShort(in);
+        uint16_t stellarClass  = readUshort(in);
         double pi = 3.14159265358979323846;
 
         //distance = sqrt(x^2 + y^2 + z^2) in ly
@@ -461,7 +460,7 @@ bool DumpStarDatabase(istream& in, ostream& out)
 
 bool Convert2csv(istream& in, ostream& out,bool all)
 {
-    uint32 hi;        // HI catalog number
+    uint32_t hi;        // HI catalog number
     double rafrh;
     double rafrm;
     double rah;       // right ascension hh
@@ -473,7 +472,7 @@ bool Convert2csv(istream& in, ostream& out,bool all)
     double ded;       // declination degrees
     double dem;       // declination minutes
     double des;       // declination seconds
-    uint16 sc;        // stellar class
+    uint16_t sc;        // stellar class
     double ly;        // light years
     char buf[256];    // character buffer
 
@@ -486,7 +485,7 @@ bool Convert2csv(istream& in, ostream& out,bool all)
         return false;
     }
 
-    uint16 version = readUshort(in);
+    uint16_t version = readUshort(in);
     if (version != 0x0100)
     {
         cerr << "Unsupported file version " << (version >> 8) << '.' <<
@@ -494,7 +493,7 @@ bool Convert2csv(istream& in, ostream& out,bool all)
         return false;
     }
 
-    uint32 nStarsInFile = readUint(in);
+    uint32_t nStarsInFile = readUint(in);
     if (!in.good())
     {
         cerr << "Error reading count of stars from database.\n";
@@ -542,7 +541,7 @@ bool Convert2csv(istream& in, ostream& out,bool all)
         out << HEADER_NEW;
         //HEADER_NEW = "HIP number;RAdeg;DECdeg;RA(hms);DEC(dms);Distance(LY);Parallax;AppMag;AbsMag;StellarClass\n"
 
-    for (uint32 i = 0; i < nStarsInFile; i++)
+    for (uint32_t i = 0; i < nStarsInFile; i++)
     {
         if (!in.good())
         {
@@ -552,12 +551,12 @@ bool Convert2csv(istream& in, ostream& out,bool all)
         if (i % 5000 == 0)
             printf(".");
 
-        uint32 catalogNum   = readUint(in);
-        float  x            = readFloat(in);
-        float  y            = readFloat(in);
-        float  z            = readFloat(in);
-        int16  absMag       = readShort(in);
-        uint16 stellarClass = readUshort(in);
+        uint32_t catalogNum   = readUint(in);
+        float  x              = readFloat(in);
+        float  y              = readFloat(in);
+        float  z              = readFloat(in);
+        int16_t  absMag       = readShort(in);
+        uint16_t stellarClass = readUshort(in);
 
         double pi = 3.14159265358979323846;
         double distance = sqrt(pow(x,2)+pow(y,2)+pow(z,2));
@@ -659,7 +658,7 @@ bool Convert2csv(istream& in, ostream& out,bool all)
 
 bool Const2csv(istream& in, ostream& out)
 {
-    uint32 hi;        // HI catalog number
+    uint32_t hi;        // HI catalog number
     double rafrh;
     double rafrm;
     double rah;       // right ascension hh
@@ -671,7 +670,7 @@ bool Const2csv(istream& in, ostream& out)
     double ded;       // declination degrees
     double dem;       // declination minutes
     double des;       // declination seconds
-    uint16 sc;        // stellar class
+    uint16_t sc;        // stellar class
     double ly;        // light years
     char buf[256];    // character buffer
 
@@ -683,7 +682,7 @@ bool Const2csv(istream& in, ostream& out)
         return false;
     }
 
-    uint16 version = readUshort(in);
+    uint16_t version = readUshort(in);
     if (version != 0x0100)
     {
         cerr << "Unsupported file version " << (version >> 8) << '.' <<
@@ -691,7 +690,7 @@ bool Const2csv(istream& in, ostream& out)
         return false;
     }
 
-    uint32 nStarsInFile = readUint(in);
+    uint32_t nStarsInFile = readUint(in);
     if (!in.good())
     {
         cerr << "Error reading count of stars from database.\n";
@@ -735,7 +734,7 @@ bool Const2csv(istream& in, ostream& out)
     out << buf;
 
     // calculate data for each star
-    for (uint32 i = 0; i < nStarsInFile; i++)
+    for (uint32_t i = 0; i < nStarsInFile; i++)
     {
         if (!in.good())
         {
@@ -745,12 +744,12 @@ bool Const2csv(istream& in, ostream& out)
         if (i % 5000 == 0)
              printf(".");
         // read stardb.dat
-        uint32 catalogNum   = readUint(in);
-        float  x            = readFloat(in);
-        float  y            = readFloat(in);
-        float  z            = readFloat(in);
-        int16  absMag       = readShort(in);
-        uint16 stellarClass = readUshort(in);
+        uint32_t catalogNum   = readUint(in);
+        float  x              = readFloat(in);
+        float  y              = readFloat(in);
+        float  z              = readFloat(in);
+        int16_t  absMag       = readShort(in);
+        uint16_t stellarClass = readUshort(in);
 
         double pi = 3.14159265358979323846;
         double distance = sqrt(pow(x,2)+pow(y,2)+pow(z,2));

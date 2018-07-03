@@ -441,7 +441,7 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
     if (subclass > StellarClass::Subclass_Unknown)
         subclass = StellarClass::Subclass_Unknown;
 
-    uint index = subclass + (specClass + lumClass * StellarClass::Spectral_Count) * 11;
+    unsigned int index = subclass + (specClass + lumClass * StellarClass::Spectral_Count) * 11;
     if (normalStarDetails[index] == nullptr)
     {
         char name[16];
@@ -653,7 +653,7 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
     if (subclass > StellarClass::Subclass_Unknown)
         subclass = StellarClass::Subclass_Unknown;
 
-    uint index = subclass + (scIndex * StellarClass::SubclassCount);
+    unsigned int index = subclass + (scIndex * StellarClass::SubclassCount);
     if (whiteDwarfDetails[index] == nullptr)
     {
         char name[16];
@@ -826,14 +826,14 @@ StarDetails::setSpectralType(const std::string& s)
 
 
 void
-StarDetails::setKnowledge(uint32 _knowledge)
+StarDetails::setKnowledge(uint32_t _knowledge)
 {
     knowledge = _knowledge;
 }
 
 
 void
-StarDetails::addKnowledge(uint32 _knowledge)
+StarDetails::addKnowledge(uint32_t _knowledge)
 {
     knowledge |= _knowledge;
 }
@@ -1097,7 +1097,7 @@ Star::getInfoURL() const
 }
 
 
-void Star::setCatalogNumber(uint32 n)
+void Star::setCatalogNumber(uint32_t n)
 {
     catalogNumber = n;
 }

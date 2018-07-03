@@ -14,7 +14,6 @@
 
 #define PI 3.1415926535898
 
-#include "basictypes.h"
 #include "stellarclass.h"
 #include "star.h"
 
@@ -26,10 +25,10 @@ int main(int argc, char *argv[])
     float brightest = 100000;
 
     while (nStars < MAX_STARS) {
-        uint32 catNo = 0;
+        uint32_t catNo = 0;
         float RA = 0, dec = 0, parallax = 0;
-        int16 appMag;
-        uint16 stellarClass;
+        int16_t appMag;
+        uint16_t stellarClass;
 
         cin.read((void *) &catNo, sizeof catNo);
         cin.read((void *) &RA, sizeof RA);

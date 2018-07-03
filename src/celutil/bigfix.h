@@ -16,7 +16,7 @@
 #define _CELUTIL_BIGFIX64_H_
 
 #include <string>
-#include "basictypes.h"
+#include <limits>
 
 /*! 64.64 signed fixed point numbers.
  */
@@ -25,7 +25,7 @@ class BigFix
 {
  public:
     BigFix();
-    BigFix(uint64);
+    BigFix(uint64_t);
     BigFix(double);
     BigFix(const std::string&);
 
@@ -54,20 +54,20 @@ class BigFix
  private:
     bool isNegative() const
     {
-        return hi > INT64_MAX;
+        return hi > std::numeric_limits<int64_t>::max();
     }
 
-    static void negate128(uint64& hi, uint64& lo);
+    static void negate128(uint64_t& hi, uint64_t& lo);
 
  private:
-    uint64 hi;
-    uint64 lo;
+    uint64_t hi;
+    uint64_t lo;
 };
 
 
 // Compute the additive inverse of a 128-bit twos complement value
 // represented by two 64-bit values.
-inline void BigFix::negate128(uint64& hi, uint64& lo)
+inline void BigFix::negate128(uint64_t& hi, uint64_t& lo)
 {
     // For a twos-complement number, -n = ~n + 1
     hi = ~hi;

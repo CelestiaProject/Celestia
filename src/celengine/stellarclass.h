@@ -12,7 +12,6 @@
 
 #include <iostream>
 #include <string>
-#include <celutil/basictypes.h>
 #include <celutil/color.h>
 
 
@@ -104,8 +103,8 @@ public:
 
     friend bool operator<(const StellarClass& sc0, const StellarClass& sc1);
 
-    uint16 pack() const;
-    bool unpack(uint16);
+    uint16_t pack() const;
+    bool unpack(uint16_t);
 
 private:
     StarType starType;

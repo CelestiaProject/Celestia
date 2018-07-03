@@ -178,7 +178,7 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
         // impact rendering performance. Ideally uniquification of materials
         // would be performed just once when the model was created, but
         // that's not the case.
-        uint32 originalMaterialCount = model->getMaterialCount();
+        uint32_t originalMaterialCount = model->getMaterialCount();
         model->uniquifyMaterials();
 
         // Sort the submeshes roughly by opacity.  This will eliminate a
@@ -324,8 +324,8 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
     // Create the attribute set. Always include positions and normals, texture coords
     // are optional.
     Mesh::VertexAttribute attributes[8];
-    uint32 nAttributes = 0;
-    uint32 offset = 0;
+    uint32_t nAttributes = 0;
+    uint32_t offset = 0;
 
     // Position attribute are required
     attributes[nAttributes] = Mesh::VertexAttribute(Mesh::Position, Mesh::Float3, 0);
@@ -344,7 +344,7 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
         offset += 8;
     }
 
-    uint32 vertexSize = offset;
+    uint32_t vertexSize = offset;
 
     // bool smooth = (mesh.getSmoothingGroupCount() == nFaces);
 
@@ -362,7 +362,7 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
     // generate face normals
     for (int i = 0; i < nFaces; i++)
     {
-        uint16 v0, v1, v2;
+        uint16_t v0, v1, v2;
         mesh.getFace(i, v0, v1, v2);
 
         faceCounts[v0]++;
@@ -397,7 +397,7 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
 
         for (int i = 0; i < nFaces; i++)
         {
-            uint16 v0, v1, v2;
+            uint16_t v0, v1, v2;
             mesh.getFace(i, v0, v1, v2);
             vertexFaces[v0][faceCounts[v0]--] = i;
             vertexFaces[v1][faceCounts[v1]--] = i;
@@ -407,9 +407,9 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
         // average face normals to compute the vertex normals
         for (int i = 0; i < nFaces; i++)
         {
-            uint16 v0, v1, v2;
+            uint16_t v0, v1, v2;
             mesh.getFace(i, v0, v1, v2);
-            // uint32 smoothingGroups = mesh.getSmoothingGroups(i);
+            // uint32_t smoothingGroups = mesh.getSmoothingGroups(i);
 
             Vector3f v = Vector3f::Zero();
             for (int j = 1; j <= vertexFaces[v0][0]; j++)
@@ -449,7 +449,7 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
 
     for (int i = 0; i < nFaces; i++)
     {
-        uint16 triVert[3];
+        uint16_t triVert[3];
         mesh.getFace(i, triVert[0], triVert[1], triVert[2]);
 
         for (unsigned int j = 0; j < 3; j++)
@@ -478,26 +478,26 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
     newMesh->setVertexDescription(Mesh::VertexDescription(vertexSize, nAttributes, attributes));
     newMesh->setVertices(nFaces * 3, vertexData);
 
-    for (uint32 i = 0; i < mesh.getMeshMaterialGroupCount(); ++i)
+    for (uint32_t i = 0; i < mesh.getMeshMaterialGroupCount(); ++i)
     {
         M3DMeshMaterialGroup* matGroup = mesh.getMeshMaterialGroup(i);
 
         // Vertex lists are not indexed, so the conversion to an indexed format is
         // trivial (although much space is wasted storing unnecessary indices.)
-        uint32 nMatGroupFaces = matGroup->faces.size();
+        uint32_t nMatGroupFaces = matGroup->faces.size();
 
-        uint32* indices = new uint32[nMatGroupFaces * 3];
-        for (uint32 j = 0; j < nMatGroupFaces; ++j)
+        auto indices = new uint32_t[nMatGroupFaces * 3];
+        for (uint32_t j = 0; j < nMatGroupFaces; ++j)
         {
-            uint16 faceIndex = matGroup->faces[j];
+            uint16_t faceIndex = matGroup->faces[j];
             indices[j * 3 + 0] = faceIndex * 3 + 0;
             indices[j * 3 + 1] = faceIndex * 3 + 1;
             indices[j * 3 + 2] = faceIndex * 3 + 2;
         }
 
         // Lookup the material index
-        uint32 materialIndex = 0;
-        for (uint32 j = 0; j < scene.getMaterialCount(); ++j)
+        uint32_t materialIndex = 0;
+        for (uint32_t j = 0; j < scene.getMaterialCount(); ++j)
         {
             if (matGroup->materialName == scene.getMaterial(j)->getName())
             {
@@ -541,7 +541,7 @@ Convert3DSModel(const M3DScene& scene, const string& texPath)
     Model* model = new Model();
 
     // Convert the materials
-    for (uint32 i = 0; i < scene.getMaterialCount(); i++)
+    for (uint32_t i = 0; i < scene.getMaterialCount(); i++)
     {
         M3DMaterial* material = scene.getMaterial(i);
         Material* newMaterial = new Material();
@@ -574,7 +574,7 @@ Convert3DSModel(const M3DScene& scene, const string& texPath)
 
     // Convert all models in the scene. Some confusing terminology: a 3ds 'scene' is the same
     // as a Celestia model, and a 3ds 'model' is the same as a Celestia mesh.
-    for (uint32 i = 0; i < scene.getModelCount(); i++)
+    for (uint32_t i = 0; i < scene.getModelCount(); i++)
     {
         M3DModel* model3ds = scene.getModel(i);
         if (model3ds)

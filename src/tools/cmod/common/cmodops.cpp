@@ -11,7 +11,6 @@
 
 #include "cmodops.h"
 #include <celmodel/modelfile.h>
-#include <celutil/basictypes.h>
 #include <celmath/mathlib.h>
 #include <Eigen/Core>
 #include <algorithm>
@@ -102,8 +101,8 @@ private:
 class PointTexCoordOrderingPredicate : public VertexComparator
 {
 public:
-    PointTexCoordOrderingPredicate(uint32 _posOffset,
-                                   uint32 _texCoordOffset,
+    PointTexCoordOrderingPredicate(uint32_t _posOffset,
+                                   uint32_t _texCoordOffset,
                                    bool _wrap) :
         posOffset(_posOffset),
         texCoordOffset(_texCoordOffset),
@@ -161,8 +160,8 @@ public:
     }
 
 private:
-    uint32 posOffset;
-    uint32 texCoordOffset;
+    uint32_t posOffset;
+    uint32_t texCoordOffset;
     bool wrap;
 };
 
@@ -176,7 +175,7 @@ bool approxEqual(float x, float y, float prec)
 class PointEquivalencePredicate : public VertexComparator
 {
 public:
-    PointEquivalencePredicate(uint32 _posOffset,
+    PointEquivalencePredicate(uint32_t _posOffset,
                               float _tolerance) :
         posOffset(_posOffset),
         tolerance(_tolerance)
@@ -196,7 +195,7 @@ public:
     }
 
 private:
-    uint32 posOffset;
+    uint32_t posOffset;
     float tolerance;
 };
 
@@ -204,8 +203,8 @@ private:
 class PointTexCoordEquivalencePredicate : public VertexComparator
 {
 public:
-    PointTexCoordEquivalencePredicate(uint32 _posOffset,
-                                      uint32 _texCoordOffset,
+    PointTexCoordEquivalencePredicate(uint32_t _posOffset,
+                                      uint32_t _texCoordOffset,
                                       bool _wrap,
                                       float _tolerance) :
         posOffset(_posOffset),
@@ -232,19 +231,19 @@ public:
     }
 
 private:
-    uint32 posOffset;
-    uint32 texCoordOffset;
+    uint32_t posOffset;
+    uint32_t texCoordOffset;
     bool wrap;
     float tolerance;
 };
 
 
-bool equal(const Vertex& a, const Vertex& b, uint32 vertexSize)
+bool equal(const Vertex& a, const Vertex& b, uint32_t vertexSize)
 {
     const auto* s0 = reinterpret_cast<const char*>(a.attributes);
     const auto* s1 = reinterpret_cast<const char*>(b.attributes);
 
-    for (uint32 i = 0; i < vertexSize; i++)
+    for (uint32_t i = 0; i < vertexSize; i++)
     {
         if (s0[i] != s1[i])
             return false;
@@ -301,7 +300,7 @@ bool operator==(const Mesh::VertexDescription& a,
     if (a.stride != b.stride || a.nAttributes != b.nAttributes)
         return false;
 
-    for (uint32 i = 0; i < a.nAttributes; i++)
+    for (uint32_t i = 0; i < a.nAttributes; i++)
     {
         if (!(a.attributes[i] == b.attributes[i]))
             return false;
@@ -324,7 +323,7 @@ bool operator<(const Mesh::VertexDescription& a,
     if (b.nAttributes < b.nAttributes)
         return false;
 
-    for (uint32 i = 0; i < a.nAttributes; i++)
+    for (uint32_t i = 0; i < a.nAttributes; i++)
     {
         if (a.attributes[i] < b.attributes[i])
             return true;
@@ -356,7 +355,7 @@ private:
 bool
 UniquifyVertices(Mesh& mesh)
 {
-    uint32 nVertices = mesh.getVertexCount();
+    uint32_t nVertices = mesh.getVertexCount();
     const Mesh::VertexDescription& desc = mesh.getVertexDescription();
 
     if (nVertices == 0)
@@ -368,7 +367,7 @@ UniquifyVertices(Mesh& mesh)
 
     // Initialize the array of vertices
     vector<Vertex> vertices(nVertices);
-    uint32 i;
+    uint32_t i;
     for (i = 0; i < nVertices; i++)
     {
         vertices[i] = Vertex(i, vertexData + i * desc.stride);
@@ -378,7 +377,7 @@ UniquifyVertices(Mesh& mesh)
     sort(vertices.begin(), vertices.end(), FullComparator(desc.stride));
 
     // Count the number of unique vertices
-    uint32 uniqueVertexCount = 0;
+    uint32_t uniqueVertexCount = 0;
     for (i = 0; i < nVertices; i++)
     {
         if (i == 0 || !equal(vertices[i - 1], vertices[i], desc.stride))
@@ -390,10 +389,10 @@ UniquifyVertices(Mesh& mesh)
         return true;
 
     // Build the vertex map and the uniquified vertex data
-    vector<uint32> vertexMap(nVertices);
+    vector<uint32_t> vertexMap(nVertices);
     auto* newVertexData = new char[uniqueVertexCount * desc.stride];
     const char* oldVertexData = reinterpret_cast<const char*>(mesh.getVertexData());
-    uint32 j = 0;
+    uint32_t j = 0;
     for (i = 0; i < nVertices; i++)
     {
         if (i == 0 || !equal(vertices[i - 1], vertices[i], desc.stride))
@@ -420,8 +419,8 @@ UniquifyVertices(Mesh& mesh)
 Vector3f
 getVertex(const void* vertexData,
           int positionOffset,
-          uint32 stride,
-          uint32 index)
+          uint32_t stride,
+          uint32_t index)
 {
     const float* fdata = reinterpret_cast<const float*>(reinterpret_cast<const char*>(vertexData) + stride * index + positionOffset);
 
@@ -432,8 +431,8 @@ getVertex(const void* vertexData,
 Vector2f
 getTexCoord(const void* vertexData,
             int texCoordOffset,
-            uint32 stride,
-            uint32 index)
+            uint32_t stride,
+            uint32_t index)
 {
     const float* fdata = reinterpret_cast<const float*>(reinterpret_cast<const char*>(vertexData) + stride * index + texCoordOffset);
 
@@ -443,17 +442,17 @@ getTexCoord(const void* vertexData,
 
 Vector3f
 averageFaceVectors(const vector<Face>& faces,
-                   uint32 thisFace,
-                   uint32* vertexFaces,
-                   uint32 vertexFaceCount,
+                   uint32_t thisFace,
+                   uint32*_t vertexFaces,
+                   uint32_t vertexFaceCount,
                    float cosSmoothingAngle)
 {
     const Face& face = faces[thisFace];
 
     Vector3f v = Vector3f(0, 0, 0);
-    for (uint32 i = 0; i < vertexFaceCount; i++)
+    for (uint32_t i = 0; i < vertexFaceCount; i++)
     {
-        uint32 f = vertexFaces[i];
+        uint32_t f = vertexFaces[i];
         float cosAngle = face.normal.dot(faces[f].normal);
         if (f == thisFace || cosAngle > cosSmoothingAngle)
             v += faces[f].normal;
@@ -473,14 +472,14 @@ copyVertex(void* newVertexData,
            const Mesh::VertexDescription& newDesc,
            const void* oldVertexData,
            const Mesh::VertexDescription& oldDesc,
-           uint32 oldIndex,
-           const uint32 fromOffsets[])
+           uint32_t oldIndex,
+           const uint32_t fromOffsets[])
 {
     const char* oldVertex = reinterpret_cast<const char*>(oldVertexData) +
         oldDesc.stride * oldIndex;
     auto* newVertex = reinterpret_cast<char*>(newVertexData);
 
-    for (uint32 i = 0; i < newDesc.nAttributes; i++)
+    for (uint32_t i = 0; i < newDesc.nAttributes; i++)
     {
         if (fromOffsets[i] != ~0u)
         {
@@ -498,11 +497,11 @@ augmentVertexDescription(Mesh::VertexDescription& desc,
                          Mesh::VertexAttributeFormat format)
 {
     Mesh::VertexAttribute* attributes = new Mesh::VertexAttribute[desc.nAttributes + 1];
-    uint32 stride = 0;
-    uint32 nAttributes = 0;
+    uint32_t stride = 0;
+    uint32_t nAttributes = 0;
     bool foundMatch = false;
 
-    for (uint32 i = 0; i < desc.nAttributes; i++)
+    for (uint32_t i = 0; i < desc.nAttributes; i++)
     {
         if (semantic == desc.attributes[i].semantic &&
             format != desc.attributes[i].format)
@@ -551,7 +550,7 @@ augmentVertexDescription(Mesh::VertexDescription& desc,
 cmod::Mesh*
 GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weldTolerance)
 {
-    uint32 nVertices = mesh.getVertexCount();
+    uint32_t nVertices = mesh.getVertexCount();
     float cosSmoothAngle = (float) cos(smoothAngle);
 
     const Mesh::VertexDescription& desc = mesh.getVertexDescription();
@@ -561,10 +560,10 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
         cerr << "Vertex position must be a float3\n";
         return nullptr;
     }
-    uint32 posOffset = desc.getAttribute(Mesh::Position).offset;
+    uint32_t posOffset = desc.getAttribute(Mesh::Position).offset;
 
-    uint32 nFaces = 0;
-    uint32 i;
+    uint32_t nFaces = 0;
+    uint32_t i;
     for (i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
@@ -600,7 +599,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     // and fans into triangle lists.
     vector<Face> faces(nFaces);
 
-    uint32 f = 0;
+    uint32_t f = 0;
     for (i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
@@ -609,7 +608,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
         {
         case Mesh::TriList:
             {
-                for (uint32 j = 0; j < group->nIndices / 3; j++)
+                for (uint32_t j = 0; j < group->nIndices / 3; j++)
                 {
                     assert(f < nFaces);
                     faces[f].i[0] = group->indices[j * 3];
@@ -622,7 +621,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
 
         case Mesh::TriStrip:
             {
-                for (uint32 j = 2; j < group->nIndices; j++)
+                for (uint32_t j = 2; j < group->nIndices; j++)
                 {
                     assert(f < nFaces);
                     if (j % 2 == 0)
@@ -644,7 +643,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
 
         case Mesh::TriFan:
             {
-                for (uint32 j = 2; j < group->nIndices; j++)
+                for (uint32_t j = 2; j < group->nIndices; j++)
                 {
                     assert(f < nFaces);
                     faces[f].i[0] = group->indices[0];
@@ -679,8 +678,8 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     }
 
     // For each vertex, create a list of faces that contain it
-    uint32* faceCounts = new uint32[nVertices];
-    uint32** vertexFaces = new uint32*[nVertices];
+    uint32*_t faceCounts = new uint32[nVertices];_t
+    uint32**_t vertexFaces = new uint32*[nVertices];_t
 
     // Initialize the lists
     for (i = 0; i < nVertices; i++)
@@ -722,7 +721,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     {
         if (faceCounts[i] > 0)
         {
-            vertexFaces[i] = new uint32[faceCounts[i] + 1];
+            vertexFaces[i] = new uint32[faceCounts[i]_t + 1];
             vertexFaces[i][0] = faceCounts[i];
         }
     }
@@ -741,7 +740,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     for (f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
-        for (uint32 j = 0; j < 3; j++)
+        for (uint32_t j = 0; j < 3; j++)
         {
             vertexNormals[f * 3 + j] =
                 averageFaceVectors(faces, f,
@@ -761,8 +760,8 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     // mesh.  In order to do this, we need the old offset of each attribute
     // in the new vertex description.  The fromOffsets array will contain
     // this mapping.
-    uint32 normalOffset = 0;
-    uint32 fromOffsets[16];
+    uint32_t normalOffset = 0;
+    uint32_t fromOffsets[16];
     for (i = 0; i < newDesc.nAttributes; i++)
     {
         fromOffsets[i] = ~0;
@@ -773,7 +772,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
         }
         else
         {
-            for (uint32 j = 0; j < desc.nAttributes; j++)
+            for (uint32_t j = 0; j < desc.nAttributes; j++)
             {
                 if (desc.attributes[j].semantic == newDesc.attributes[i].semantic)
                 {
@@ -792,7 +791,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     {
         Face& face = faces[f];
 
-        for (uint32 j = 0; j < 3; j++)
+        for (uint32_t j = 0; j < 3; j++)
         {
             char* newVertex = reinterpret_cast<char*>(newVertexData) +
                 (f * 3 + j) * newDesc.stride;
@@ -811,14 +810,14 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     newMesh->setVertices(nFaces * 3, newVertexData);
 
     // Create a trivial index list
-    uint32* indices = new uint32[nFaces * 3];
+    uint32*_t indices = new uint32[nFaces_t * 3];
     for (i = 0; i < nFaces * 3; i++)
     {
         indices[i] = i;
     }
 
-    uint32 firstIndex = 0;
-    for (uint32 groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
+    uint32_t firstIndex = 0;
+    for (uint32_t groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(groupIndex);
         unsigned int faceCount = 0;
@@ -857,7 +856,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
 Mesh*
 GenerateTangents(const Mesh& mesh, bool weld)
 {
-    uint32 nVertices = mesh.getVertexCount();
+    uint32_t nVertices = mesh.getVertexCount();
 
     // In order to generate tangents, we require positions, normals, and
     // 2D texture coordinates in the vertex description.
@@ -888,8 +887,8 @@ GenerateTangents(const Mesh& mesh, bool weld)
 
     // Count the number of faces in the mesh.
     // (All geometry should already converted to triangle lists)
-    uint32 i;
-    uint32 nFaces = 0;
+    uint32_t i;
+    uint32_t nFaces = 0;
     for (i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
@@ -909,7 +908,7 @@ GenerateTangents(const Mesh& mesh, bool weld)
     // and fans into triangle lists.
     vector<Face> faces(nFaces);
 
-    uint32 f = 0;
+    uint32_t f = 0;
     for (i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
@@ -918,7 +917,7 @@ GenerateTangents(const Mesh& mesh, bool weld)
         {
         case Mesh::TriList:
             {
-                for (uint32 j = 0; j < group->nIndices / 3; j++)
+                for (uint32_t j = 0; j < group->nIndices / 3; j++)
                 {
                     assert(f < nFaces);
                     faces[f].i[0] = group->indices[j * 3];
@@ -934,8 +933,8 @@ GenerateTangents(const Mesh& mesh, bool weld)
         }
     }
 
-    uint32 posOffset = desc.getAttribute(Mesh::Position).offset;
-    uint32 texCoordOffset = desc.getAttribute(Mesh::Texture0).offset;
+    uint32_t posOffset = desc.getAttribute(Mesh::Position).offset;
+    uint32_t texCoordOffset = desc.getAttribute(Mesh::Texture0).offset;
 
     const void* vertexData = mesh.getVertexData();
 
@@ -961,8 +960,8 @@ GenerateTangents(const Mesh& mesh, bool weld)
     }
 
     // For each vertex, create a list of faces that contain it
-    uint32* faceCounts = new uint32[nVertices];
-    uint32** vertexFaces = new uint32*[nVertices];
+    uint32*_t faceCounts = new uint32[nVertices];_t
+    uint32**_t vertexFaces = new uint32*[nVertices];_t
 
     // Initialize the lists
     for (i = 0; i < nVertices; i++)
@@ -1004,7 +1003,7 @@ GenerateTangents(const Mesh& mesh, bool weld)
     {
         if (faceCounts[i] > 0)
         {
-            vertexFaces[i] = new uint32[faceCounts[i] + 1];
+            vertexFaces[i] = new uint32[faceCounts[i]_t + 1];
             vertexFaces[i][0] = faceCounts[i];
         }
     }
@@ -1023,7 +1022,7 @@ GenerateTangents(const Mesh& mesh, bool weld)
     for (f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
-        for (uint32 j = 0; j < 3; j++)
+        for (uint32_t j = 0; j < 3; j++)
         {
             vertexTangents[f * 3 + j] =
                 averageFaceVectors(faces, f,
@@ -1041,8 +1040,8 @@ GenerateTangents(const Mesh& mesh, bool weld)
     // mesh.  In order to do this, we need the old offset of each attribute
     // in the new vertex description.  The fromOffsets array will contain
     // this mapping.
-    uint32 tangentOffset = 0;
-    uint32 fromOffsets[16];
+    uint32_t tangentOffset = 0;
+    uint32_t fromOffsets[16];
     for (i = 0; i < newDesc.nAttributes; i++)
     {
         fromOffsets[i] = ~0;
@@ -1053,7 +1052,7 @@ GenerateTangents(const Mesh& mesh, bool weld)
         }
         else
         {
-            for (uint32 j = 0; j < desc.nAttributes; j++)
+            for (uint32_t j = 0; j < desc.nAttributes; j++)
             {
                 if (desc.attributes[j].semantic == newDesc.attributes[i].semantic)
                 {
@@ -1072,7 +1071,7 @@ GenerateTangents(const Mesh& mesh, bool weld)
     {
         Face& face = faces[f];
 
-        for (uint32 j = 0; j < 3; j++)
+        for (uint32_t j = 0; j < 3; j++)
         {
             char* newVertex = reinterpret_cast<char*>(newVertexData) +
                 (f * 3 + j) * newDesc.stride;
@@ -1091,12 +1090,12 @@ GenerateTangents(const Mesh& mesh, bool weld)
     newMesh->setVertices(nFaces * 3, newVertexData);
 
     // Create a trivial index list
-    uint32* indices = new uint32[nFaces * 3];
+    uint32*_t indices = new uint32[nFaces_t * 3];
     for (i = 0; i < nFaces * 3; i++)
         indices[i] = i;
 
-    uint32 firstIndex = 0;
-    for (uint32 groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
+    uint32_t firstIndex = 0;
+    for (uint32_t groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
     {
         const Mesh::PrimitiveGroup* group = mesh.getGroup(groupIndex);
         unsigned int faceCount = 0;
@@ -1135,13 +1134,13 @@ GenerateTangents(const Mesh& mesh, bool weld)
 void
 addGroupWithOffset(Mesh& mesh,
                    const Mesh::PrimitiveGroup& group,
-                   uint32 offset)
+                   uint32_t offset)
 {
     if (group.nIndices == 0)
         return;
 
-    uint32* newIndices = new uint32[group.nIndices];
-    for (uint32 i = 0; i < group.nIndices; i++)
+    uint32*_t newIndices = new uint32[group.nIndices];_t
+    for (uint32_t i = 0; i < group.nIndices; i++)
         newIndices[i] = group.indices[i] + offset;
 
     mesh.addGroup(group.prim, group.materialIndex,
@@ -1155,7 +1154,7 @@ MergeModelMeshes(const Model& model)
 {
     vector<Mesh*> meshes;
 
-    for (uint32 i = 0; model.getMesh(i) != nullptr; i++)
+    for (uint32_t i = 0; model.getMesh(i) != nullptr; i++)
     {
         meshes.push_back(model.getMesh(i));
     }
@@ -1166,19 +1165,19 @@ MergeModelMeshes(const Model& model)
     Model* newModel = new Model();
 
     // Copy materials into the new model
-    for (uint32 i = 0; model.getMaterial(i) != nullptr; i++)
+    for (uint32_t i = 0; model.getMaterial(i) != nullptr; i++)
     {
         newModel->addMaterial(model.getMaterial(i));
     }
 
-    uint32 meshIndex = 0;
+    uint32_t meshIndex = 0;
     while (meshIndex < meshes.size())
     {
         const Mesh::VertexDescription& desc =
             meshes[meshIndex]->getVertexDescription();
 
         // Count the number of matching meshes
-        uint32 nMatchingMeshes;
+        uint32_t nMatchingMeshes;
         for (nMatchingMeshes = 1;
              meshIndex + nMatchingMeshes < meshes.size();
              nMatchingMeshes++)
@@ -1190,8 +1189,8 @@ MergeModelMeshes(const Model& model)
         }
 
         // Count the number of vertices in all matching meshes
-        uint32 totalVertices = 0;
-        uint32 j;
+        uint32_t totalVertices = 0;
+        uint32_t j;
         for (j = meshIndex; j < meshIndex + nMatchingMeshes; j++)
         {
             totalVertices += meshes[j]->getVertexCount();
@@ -1205,7 +1204,7 @@ MergeModelMeshes(const Model& model)
         mergedMesh->setVertices(totalVertices, vertexData);
 
         // Copy the vertex data and reindex and add primitive groups
-        uint32 vertexCount = 0;
+        uint32_t vertexCount = 0;
         for (j = meshIndex; j < meshIndex + nMatchingMeshes; j++)
         {
             const Mesh* mesh = meshes[j];
@@ -1213,7 +1212,7 @@ MergeModelMeshes(const Model& model)
                    mesh->getVertexData(),
                    mesh->getVertexCount() * desc.stride);
 
-            for (uint32 k = 0; mesh->getGroup(k) != nullptr; k++)
+            for (uint32_t k = 0; mesh->getGroup(k) != nullptr; k++)
             {
                 addGroupWithOffset(*mergedMesh, *mesh->getGroup(k),
                                    vertexCount);
@@ -1311,7 +1310,7 @@ convertToStrips(Mesh& mesh)
     }
 
     // Verify that the mesh contains just tri strips
-    uint32 i;
+    uint32_t i;
     for (i = 0; mesh.getGroup(i) != nullptr; i++)
     {
         if (mesh.getGroup(i)->prim != Mesh::TriList)
@@ -1325,7 +1324,7 @@ convertToStrips(Mesh& mesh)
 
         // Convert the vertex indices to shorts for the TriStrip library
         unsigned short* indices = new unsigned short[group->nIndices];
-        uint32 j;
+        uint32_t j;
         for (j = 0; j < group->nIndices; j++)
         {
             indices[j] = (unsigned short) group->indices[j];
@@ -1371,8 +1370,8 @@ convertToStrips(Mesh& mesh)
                 newGroup->prim = prim;
                 newGroup->materialIndex = group->materialIndex;
                 newGroup->nIndices = strips[j].numIndices;
-                newGroup->indices = new uint32[newGroup->nIndices];
-                for (uint32 k = 0; k < newGroup->nIndices; k++)
+                newGroup->indices = new uint32[newGroup->nIndices];_t
+                for (uint32_t k = 0; k < newGroup->nIndices; k++)
                     newGroup->indices[k] = strips[j].indices[k];
 
                 groups.push_back(newGroup);
@@ -1399,7 +1398,7 @@ convertToStrips(Mesh& mesh)
     if (genNormals || genTangents)
     {
         Model* newModel = new Model();
-        uint32 i;
+        uint32_t i;
 
         // Copy materials
         for (i = 0; model->getMaterial(i) != nullptr; i++)
@@ -1453,7 +1452,7 @@ convertToStrips(Mesh& mesh)
 
     if (uniquify)
     {
-        for (uint32 i = 0; model->getMesh(i) != nullptr; i++)
+        for (uint32_t i = 0; model->getMesh(i) != nullptr; i++)
         {
             Mesh* mesh = model->getMesh(i);
             uniquifyVertices(*mesh);
@@ -1464,7 +1463,7 @@ convertToStrips(Mesh& mesh)
     if (stripify)
     {
         SetCacheSize(vertexCacheSize);
-        for (uint32 i = 0; model->getMesh(i) != nullptr; i++)
+        for (uint32_t i = 0; model->getMesh(i) != nullptr; i++)
         {
             Mesh* mesh = model->getMesh(i);
             convertToStrips(*mesh);

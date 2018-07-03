@@ -25,11 +25,11 @@ class CatalogCrossReference
     std::string getPrefix() const;
     void setPrefix(const std::string&);
 
-    uint32 parse(const std::string&) const;
-    Star* lookup(uint32) const;
+    uint32_t parse(const std::string&) const;
+    Star* lookup(uint32_t) const;
     Star* lookup(const std::string&) const;
 
-    void addEntry(uint32 catalogNumber, Star* star);
+    void addEntry(uint32_t catalogNumber, Star* star);
     void sortEntries();
     void reserve(size_t);
 
@@ -41,7 +41,7 @@ class CatalogCrossReference
     class Entry
     {
     public:
-        uint32 catalogNumber;
+        uint32_t catalogNumber;
         Star* star;
     };
 

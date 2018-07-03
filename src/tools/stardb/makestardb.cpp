@@ -14,7 +14,6 @@
 #include <iomanip>
 #include <cctype>
 #include <cassert>
-#include <celutil/basictypes.h>
 #include <celutil/bytes.h>
 #include <celengine/astro.h>
 #include <celengine/star.h>
@@ -82,7 +81,7 @@ bool parseCommandLine(int argc, char* argv[])
 }
 
 
-static void writeUint(ostream& out, uint32 n)
+static void writeUint(ostream& out, uint32_t n)
 {
     LE_TO_CPU_INT32(n, n);
     out.write(reinterpret_cast<char*>(&n), sizeof n);
@@ -94,13 +93,13 @@ static void writeFloat(ostream& out, float f)
     out.write(reinterpret_cast<char*>(&f), sizeof f);
 }
 
-static void writeUshort(ostream& out, uint16 n)
+static void writeUshort(ostream& out, uint16_t n)
 {
     LE_TO_CPU_INT16(n, n);
     out.write(reinterpret_cast<char*>(&n), sizeof n);
 }
 
-static void writeShort(ostream& out, int16 n)
+static void writeShort(ostream& out, int16_t n)
 {
     LE_TO_CPU_INT16(n, n);
     out.write(reinterpret_cast<char*>(&n), sizeof n);
@@ -207,7 +206,7 @@ bool WriteStarDatabase(istream& in, ostream& out, bool sphericalCoords)
         writeFloat(out, x);
         writeFloat(out, y);
         writeFloat(out, z);
-        writeShort(out, (int16) (absMag * 256.0f));
+        writeShort(out, (int16_t) (absMag * 256.0f));
         writeUshort(out, sc.pack());
     }
 

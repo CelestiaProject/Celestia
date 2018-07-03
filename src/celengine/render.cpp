@@ -199,7 +199,7 @@ static const int MinSkySlices = 30;
 // Size at which the orbit cache will be flushed of old orbit paths
 static const unsigned int OrbitCacheCullThreshold = 200;
 // Age in frames at which unused orbit paths may be eliminated from the cache
-static const uint32 OrbitCacheRetireAge = 16;
+static const uint32_t OrbitCacheRetireAge = 16;
 
 Color Renderer::StarLabelColor          (0.471f, 0.356f, 0.682f);
 Color Renderer::PlanetLabelColor        (0.407f, 0.333f, 0.964f);
@@ -633,7 +633,7 @@ Renderer::Renderer() :
     pointStarVertexBuffer = new PointStarVertexBuffer(2048);
     glareVertexBuffer = new PointStarVertexBuffer(2048);
     skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
-    skyIndices = new uint32[(MaxSkySlices + 1) * 2 * MaxSkyRings];
+    skyIndices = new uint32_t[(MaxSkySlices + 1) * 2 * MaxSkyRings];
     skyContour = new SkyContourPoint[MaxSkySlices + 1];
     colorTemp = GetStarColorTable(ColorTable_Blackbody_D65);
 #ifdef DEBUG_HDR_FILE
@@ -856,8 +856,8 @@ static void RectToSphericalMapEval(float x, float y, float z,
     // Pack texture coordinates in red/green and blue/alpha
     // u = red + green/256
     // v = blue* + alpha/256
-    uint16 rg = (uint16) (u * 65535.99);
-    uint16 ba = (uint16) (v * 65535.99);
+    uint16_t rg = (uint16_t) (u * 65535.99);
+    uint16_t ba = (uint16_t) (v * 65535.99);
     pixel[0] = rg >> 8;
     pixel[1] = rg & 0xff;
     pixel[2] = ba >> 8;
@@ -6549,7 +6549,7 @@ void Renderer::renderLocations(const Body& body,
                     double z = viewNormal.dot(labelPos);
                     labelPos *= planetZ / z;
 
-                    uint32 featureType = location.getFeatureType();
+                    uint32_t featureType = location.getFeatureType();
                     MarkerRepresentation* locationMarker = nullptr;
                     if (featureType & Location::City)
                         locationMarker = &cityRep;

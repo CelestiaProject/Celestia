@@ -16,7 +16,7 @@
 using namespace std;
 
 
-uint32 StarNameDatabase::findCatalogNumberByName(const string& name) const
+uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
 {
     string priName   = name;
     string altName;
@@ -70,7 +70,7 @@ uint32 StarNameDatabase::findCatalogNumberByName(const string& name) const
         }
     }
 
-    uint32 catalogNumber   = getCatalogNumberByName(priName);
+    uint32_t catalogNumber   = getCatalogNumberByName(priName);
     if (catalogNumber != Star::InvalidCatalogNumber)
         return catalogNumber;
 
@@ -102,7 +102,7 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
 
     while (!failed)
     {
-        uint32 catalogNumber = Star::InvalidCatalogNumber;
+        uint32_t catalogNumber = Star::InvalidCatalogNumber;
 
         in >> catalogNumber;
         if (in.eof())

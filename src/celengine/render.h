@@ -682,7 +682,7 @@ class Renderer
 
     bool useNewStarRendering;
 
-    uint32 frameCount;
+    uint32_t frameCount;
 
     int currentIntervalIndex;
 
@@ -701,29 +701,29 @@ class Renderer
     struct OrbitSection
     {
         Capsuled boundingVolume;
-        uint32 firstSample;
+        uint32_t firstSample;
     };
 
     struct CachedOrbit
     {
         std::vector<OrbitSample> trajectory;
         std::vector<OrbitSection> sections;
-        uint32 lastUsed;
+        uint32_t lastUsed;
     };
 #endif
 
  private:
     typedef std::map<const Orbit*, CurvePlot*> OrbitCache;
     OrbitCache orbitCache;
-    uint32 lastOrbitCacheFlush;
+    uint32_t lastOrbitCacheFlush;
 
     float minOrbitSize;
     float distanceLimit;
     float minFeatureSize;
-    uint32 locationFilter;
+    uint32_t locationFilter;
 
     SkyVertex* skyVertices;
-    uint32* skyIndices;
+    uint32_t* skyIndices;
     SkyContourPoint* skyContour;
 
     const ColorTemperatureTable* colorTemp;

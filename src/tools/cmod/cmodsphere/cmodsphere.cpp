@@ -11,8 +11,6 @@
 using namespace std;
 
 
-using uint32 = unsigned int;
-
 // TODO: these shouldn't be hardcoded
 static int latSamples = 1440;
 static int longSamples = 2880;
@@ -22,18 +20,18 @@ const float pi = 3.14159265;
 static float* samples = nullptr;
 
 // Read a big-endian 32-bit unsigned integer
-static uint32 readUint(istream& in)
+static uint32_t readUint(istream& in)
 {
-    uint32 ret;
-    in.read((char*) &ret, sizeof(uint32));
-    return (uint32) ret;
+    uint32_t ret;
+    in.read((char*) &ret, sizeof(uint32_t));
+    return (uint32_t) ret;
 }
 
 
 static float readFloat(istream& in)
 {
-    uint32 i = readUint(in);
-    uint32 n = ((i & 0xff) << 24) | ((i & 0xff00) << 8) | ((i & 0xff0000) >> 8) | ((i & 0xff000000) >> 24);
+    uint32_t i = readUint(in);
+    uint32_t n = ((i & 0xff) << 24) | ((i & 0xff00) << 8) | ((i & 0xff0000) >> 8) | ((i & 0xff000000) >> 24);
     return *((float*) &n);
 }
 

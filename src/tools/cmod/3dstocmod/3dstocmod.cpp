@@ -79,10 +79,10 @@ int main(int argc, char* argv[])
 
 #if 0
     // Print information about primitive groups
-    for (uint32 i = 0; model->getMesh(i); i++)
+    for (uint32_t i = 0; model->getMesh(i); i++)
     {
         const Mesh* mesh = model->getMesh(i);
-        for (uint32 j = 0; mesh->getGroup(j); j++)
+        for (uint32_t j = 0; mesh->getGroup(j); j++)
         {
             const Mesh::PrimitiveGroup* group = mesh->getGroup(j);
         }

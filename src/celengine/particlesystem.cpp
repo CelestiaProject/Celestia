@@ -22,8 +22,6 @@
 #include "rendcontext.h"
 #include "texmanager.h"
 
-#include <celutil/basictypes.h>
-
 using namespace cmod;
 using namespace Eigen;
 using namespace std;
@@ -80,9 +78,9 @@ using namespace std;
  */
 
 // Same values as rand48()
-static const uint64 A = ((uint64) 0x5deece66ul << 4) | 0xd;
-static const uint64 C = 0xb;
-static const uint64 M = ((uint64) 1 << 48) - 1;
+static const uint64_t A = ((uint64_t) 0x5deece66ul << 4) | 0xd;
+static const uint64_t C = 0xb;
+static const uint64_t M = ((uint64_t) 1 << 48) - 1;
 
 /*! Linear congruential random number generator that emulates
  *  rand48()
@@ -92,12 +90,12 @@ class LCGRandomGenerator
 public:
     LCGRandomGenerator() : previous(0) = default;
 
-    LCGRandomGenerator(uint64 seed) :
+    LCGRandomGenerator(uint64_t seed) :
         previous(seed)
     {
     }
 
-    uint64 randUint64()
+    uint64_t randUint64()
     {
         previous = (A * previous + C) & M;
         return previous;
@@ -105,16 +103,16 @@ public:
 
     /*! Return a random integer between -2^31 and 2^31 - 1
      */
-    int32 randInt32()
+    int32_t randInt32()
     {
-        return (int32) (randUint64() >> 16);
+        return (int32_t) (randUint64() >> 16);
     }
 
     /*! Return a random integer between 0 and 2^32 - 1
      */
-    uint32 randUint32()
+    uint32_t randUint32()
     {
-        return (uint32) (randUint64() >> 16);
+        return (uint32_t) (randUint64() >> 16);
     }
 
     /*! Generate a random floating point value in [ 0, 1 )
@@ -124,7 +122,7 @@ public:
      */
     float randFloat()
     {
-        uint32 randBits = randInt32();
+        uint32_t randBits = randInt32();
         randBits = (randBits & 0x007fffff) | 0x3f800000;
         return *reinterpret_cast<float*>(&randBits) - 1.0f;
     }
@@ -136,13 +134,13 @@ public:
      */
     float randSfloat()
     {
-        uint32 randBits = (uint32) (randUint64() >> 16);
+        uint32_t randBits = (uint32_t) (randUint64() >> 16);
         randBits = (randBits & 0x007fffff) | 0x40000000;
         return *reinterpret_cast<float*>(&randBits) - 3.0f;
     }
 
 private:
-    uint64 previous;
+    uint64_t previous;
 };
 
 
@@ -288,7 +286,7 @@ ParticleEmitter::setBlendMode(cmod::Material::BlendMode blendMode)
 }
 
 
-static const uint64 scrambleMask = (uint64(0xcccccccc) << 32) | 0xcccccccc;
+static const uint64_t scrambleMask = (uint64_t(0xcccccccc) << 32) | 0xcccccccc;
 
 void
 ParticleEmitter::render(double tsec,
@@ -394,7 +392,7 @@ ParticleEmitter::render(double tsec,
         // the first particle is drawn. This would entail further restrictions,
         // such as no 'branching' (variable number of calls to LCG::generate()) in
         // particle state calculation.
-        LCGRandomGenerator gen(uint64(serial) * uint64(0x128ef719) ^ scrambleMask);
+        LCGRandomGenerator gen(uint64_t(serial) * uint64_t(0x128ef719) ^ scrambleMask);
 
         // Calculate the color of the particle
         // TODO: switch to using a lookup table for color and opacity
@@ -454,7 +452,7 @@ ParticleEmitter::createMaterial()
 }
 
 
-#define STRUCT_OFFSET(s, memberName) ((uint32) (reinterpret_cast<char*>(&(s).memberName) - reinterpret_cast<char*>(&(s))))
+#define STRUCT_OFFSET(s, memberName) ((uint32_t) (reinterpret_cast<char*>(&(s).memberName) - reinterpret_cast<char*>(&(s))))
 
 ParticleSystem::ParticleSystem() :
     m_vertexDesc(nullptr),

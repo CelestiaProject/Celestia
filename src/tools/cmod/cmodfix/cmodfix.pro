@@ -24,7 +24,6 @@ CELUTIL_SOURCES = \
 
 CELUTIL_HEADERS = \
     ../../../celutil/debug.h \
-    ../../../celutil/basictypes.h \
     ../../../celutil/bytes.h
 
 CELMATH_HEADERS = \

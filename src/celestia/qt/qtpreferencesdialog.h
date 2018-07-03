@@ -13,7 +13,6 @@
 
 #include <QDialog>
 #include "ui_preferences.h"
-#include <celutil/basictypes.h>
 
 class CelestiaCore;
 

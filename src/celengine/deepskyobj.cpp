@@ -27,7 +27,7 @@ using namespace Eigen;
 using namespace std;
 
 
-void DeepSkyObject::setCatalogNumber(uint32 n)
+void DeepSkyObject::setCatalogNumber(uint32_t n)
 {
     catalogNumber = n;
 }

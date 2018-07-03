@@ -11,7 +11,6 @@
 #define _CELENGINE_IMAGE_H_
 
 #include <string>
-#include <celutil/basictypes.h>
 
 // The image class supports multiple GL formats, including compressed ones.
 // Mipmaps may be stored within an image as well.  The mipmaps are stored in

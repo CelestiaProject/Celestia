@@ -267,8 +267,8 @@ static void LoadMipmapSet(Image& img, GLenum target)
 
     for (int mip = 0; mip < img.getMipLevelCount(); mip++)
     {
-        uint mipWidth  = max((uint) img.getWidth() >> mip, 1u);
-        uint mipHeight = max((uint) img.getHeight() >> mip, 1u);
+        unsigned int mipWidth  = max((uint) img.getWidth() >> mip, 1u);
+        unsigned int mipHeight = max((uint) img.getHeight() >> mip, 1u);
 
         if (img.isCompressed())
         {
@@ -599,10 +599,10 @@ TiledTexture::TiledTexture(Image& img,
                         int blockSize = getCompressedBlockSize(img.getFormat());
                         unsigned char* imgMip =
                             img.getMipLevel(min(mip, mipLevelCount));
-                        uint mipWidth  = max((uint) img.getWidth() >> mip, 1u);
+                        unsigned int mipWidth  = max((uint) img.getWidth() >> mip, 1u);
                         unsigned char* tileMip = tile->getMipLevel(mip);
-                        uint tileMipWidth  = max((uint) tile->getWidth() >> mip, 1u);
-                        uint tileMipHeight = max((uint) tile->getHeight() >> mip, 1u);
+                        unsigned int tileMipWidth  = max((uint) tile->getWidth() >> mip, 1u);
+                        unsigned int tileMipHeight = max((uint) tile->getHeight() >> mip, 1u);
                         int uBlocks = max(tileMipWidth / 4, 1u);
                         int vBlocks = max(tileMipHeight / 4, 1u);
                         int destBytesPerRow = uBlocks * blockSize;

@@ -15,7 +15,6 @@
 #include <cstdio>
 #include <cassert>
 #include <celutil/bytes.h>
-#include <celutil/basictypes.h>
 #include "jpleph.h"
 
 using namespace Eigen;
@@ -34,12 +33,12 @@ static const int LabelSize = 84;
 
 
 // Read a big-endian 32-bit unsigned integer
-static int32 readUint(istream& in)
+static int32_t readUint(istream& in)
 {
-    int32 ret;
-    in.read((char*) &ret, sizeof(int32));
+    int32_t ret;
+    in.read((char*) &ret, sizeof(int32_t));
     BE_TO_CPU_INT32(ret, ret);
-    return (uint32) ret;
+    return (uint32_t) ret;
 }
 
 // Read a big-endian 64-bit IEEE double--if the native double format isn't

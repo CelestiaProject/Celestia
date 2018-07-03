@@ -322,9 +322,9 @@ class Body
         VelocityVector =   0x10,
     };
 
-    bool referenceMarkVisible(uint32) const;
-    uint32 getVisibleReferenceMarks() const;
-    void setVisibleReferenceMarks(uint32);
+    bool referenceMarkVisible(uint32_t) const;
+    uint32_t getVisibleReferenceMarks() const;
+    void setVisibleReferenceMarks(uint32_t);
     void addReferenceMark(ReferenceMark* refMark);
     void removeReferenceMark(const std::string& tag);
     ReferenceMark* findReferenceMark(const std::string& tag) const;

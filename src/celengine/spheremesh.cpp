@@ -14,7 +14,6 @@
 
 #include "spheremesh.h"
 #include <celmath/mathlib.h>
-#include <celutil/basictypes.h>
 #include <GL/glew.h>
 #include <cmath>
 
@@ -345,7 +344,7 @@ void SphereMesh::displace(DisplacementMapFunc func, void* info)
 
 Mesh* SphereMesh::convertToMesh() const
 {
-    uint32 stride = 32;
+    uint32_t stride = 32;
     Mesh::VertexAttribute attributes[3];
     attributes[0] = Mesh::VertexAttribute(Mesh::Position, Mesh::Float3, 0);
     attributes[1] = Mesh::VertexAttribute(Mesh::Normal, Mesh::Float3, 12);
@@ -359,8 +358,7 @@ Mesh* SphereMesh::convertToMesh() const
     // arrays into a single array.
     auto* vertexData = new char[stride * nVertices];
 
-    int i;
-    for (i = 0; i < nVertices; i++)
+    for (int i = 0; i < nVertices; i++)
     {
         float* vertex = reinterpret_cast<float*>(vertexData + stride * i);
         vertex[0] = vertices[i * 3];
@@ -375,9 +373,9 @@ Mesh* SphereMesh::convertToMesh() const
 
     mesh->setVertices(nVertices, vertexData);
 
-    for (i = 0; i < nRings - 1; i++)
+    for (int i = 0; i < nRings - 1; i++)
     {
-        uint32* indexData = new uint32[(nSlices + 1) * 2];
+        auto* indexData = new uint32_t[(nSlices + 1) * 2];
         for (int j = 0; j <= nSlices; j++)
         {
             indexData[j * 2 + 0] = i * (nSlices + 1) + j;

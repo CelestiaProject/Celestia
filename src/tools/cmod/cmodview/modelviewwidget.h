@@ -116,7 +116,7 @@ private:
 };
 
 
-inline uint qHash(const ShaderKey& key)
+inline unsigned int qHash(const ShaderKey& key)
 {
     return qHash(key.hash());
 }

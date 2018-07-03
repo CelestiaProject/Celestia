@@ -703,7 +703,7 @@ static int object_getinfo(lua_State* l)
         celx.setTable("importance", (lua_Number)location->getImportance());
         celx.setTable("infoURL", location->getInfoURL().c_str());
 
-        uint32 featureType = location->getFeatureType();
+        uint32_t featureType = location->getFeatureType();
         string featureName("Unknown");
         auto iter = std::find_if(CelxLua::LocationFlagMap.begin(),
                                  CelxLua::LocationFlagMap.end(),
@@ -943,10 +943,10 @@ static int object_catalognumber(lua_State* l)
         }
     }
 
-    uint32 catalogNumber = Star::InvalidCatalogNumber;
+    uint32_t catalogNumber = Star::InvalidCatalogNumber;
     if (sel->star() != nullptr && validCatalog)
     {
-        uint32 internalNumber = sel->star()->getCatalogNumber();
+        uint32_t internalNumber = sel->star()->getCatalogNumber();
 
         if (useHIPPARCOS)
         {
@@ -983,7 +983,7 @@ static int object_locations_iter(lua_State* l)
     }
 
     // Get the current counter value
-    uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
+    uint32_t i = (uint32_t) lua_tonumber(l, lua_upvalueindex(2));
 
     vector<Location*>* locations = nullptr;
     if (sel->body() != nullptr)
@@ -1231,7 +1231,7 @@ static int object_phases_iter(lua_State* l)
     }
 
     // Get the current counter value
-    uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
+    uint32_t i = (uint32_t) lua_tonumber(l, lua_upvalueindex(2));
 
     const Timeline* timeline = nullptr;
     if (sel->body() != nullptr)

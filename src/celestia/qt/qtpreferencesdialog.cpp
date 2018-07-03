@@ -47,15 +47,15 @@ static void SetComboBoxValue(QComboBox* combo, const QVariant& value)
 }
 
 
-static uint32 FilterOtherLocations = ~(Location::City |
-                                       Location::Observatory |
-                                       Location::LandingSite |
-                                       Location::Mons |
-                                       Location::Mare |
-                                       Location::Crater |
-                                       Location::Vallis |
-                                       Location::Terra |
-                                       Location::EruptiveCenter);
+static uint32_t FilterOtherLocations = ~(Location::City |
+                                         Location::Observatory |
+                                         Location::LandingSite |
+                                         Location::Mons |
+                                         Location::Mare |
+                                         Location::Crater |
+                                         Location::Vallis |
+                                         Location::Terra |
+                                         Location::EruptiveCenter);
 
 
 PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :

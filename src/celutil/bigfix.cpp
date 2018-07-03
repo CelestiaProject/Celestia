@@ -29,22 +29,6 @@ static const double WORD3_FACTOR = POW2_32;
 
 
 /*** Constructors ***/
-
-/*
-// Compute the additive inverse of a 128-bit twos complement value
-// represented by two 64-bit values.
-inline void negate128(uint64& hi, uint64& lo)
-{
-    // For a twos-complement number, -n = ~n + 1
-    hi = ~hi;
-    lo = ~lo;
-    lo++;
-    if (lo == 0)
-        hi++;
-}
-*/
-
-
 // Create a BigFix initialized to zero
 BigFix::BigFix()
 {
@@ -53,7 +37,7 @@ BigFix::BigFix()
 }
 
 
-BigFix::BigFix(uint64 i)
+BigFix::BigFix(uint64_t i)
 {
     hi = i;
     lo = 0;
@@ -77,16 +61,16 @@ BigFix::BigFix(double d)
     double e = floor(d * (1.0 / WORD3_FACTOR));
     if (e < POW2_31)
     {
-        auto w3 = (uint32) e;
+        auto w3 = (uint32_t) e;
         d -= w3 * WORD3_FACTOR;
-        auto w2 = (uint32) (d * (1.0 / WORD2_FACTOR));
+        auto w2 = (uint32_t) (d * (1.0 / WORD2_FACTOR));
         d -= w2 * WORD2_FACTOR;
-        auto w1 = (uint32) (d * (1.0 / WORD1_FACTOR));
+        auto w1 = (uint32_t) (d * (1.0 / WORD1_FACTOR));
         d -= w1 * WORD1_FACTOR;
-        auto w0 = (uint32) (d * (1.0 / WORD0_FACTOR));
+        auto w0 = (uint32_t) (d * (1.0 / WORD0_FACTOR));
 
-        hi = ((uint64) w3 << 32) | w2;
-        lo = ((uint64) w1 << 32) | w0;
+        hi = ((uint64_t) w3 << 32) | w2;
+        lo = ((uint64_t) w1 << 32) | w0;
 
       if (isNegative)
           negate128(hi, lo);
@@ -106,8 +90,8 @@ BigFix::operator double() const
     // Handle negative values by inverting them before conversion,
     // then inverting the converted value.
     int sign = 1;
-    uint64 l = lo;
-    uint64 h = hi;
+    uint64_t l = lo;
+    uint64_t h = hi;
 
     if (isNegative())
     {
@@ -117,10 +101,10 @@ BigFix::operator double() const
 
     // Need to break the number into 32-bit chunks because a 64-bit
     // integer has more bits of precision than a double.
-    uint32 w0 = l & 0xffffffff;
-    uint32 w1 = l >> 32;
-    uint32 w2 = h & 0xffffffff;
-    uint32 w3 = h >> 32;
+    uint32_t w0 = l & 0xffffffff;
+    uint32_t w1 = l >> 32;
+    uint32_t w2 = h & 0xffffffff;
+    uint32_t w3 = h >> 32;
     double d;
 
     d = (w0 * WORD0_FACTOR +
@@ -172,10 +156,10 @@ BigFix operator*(BigFix f, double d)
 {
     // Need to break the number into 32-bit chunks because a 64-bit
     // integer has more bits of precision than a double.
-    uint32 w0 = f.lo & 0xffffffff;
-    uint32 w1 = f.lo >> 32;
-    uint32 w2 = f.hi & 0xffffffff;
-    uint32 w3 = f.hi >> 32;
+    uint32_t w0 = f.lo & 0xffffffff;
+    uint32_t w1 = f.lo >> 32;
+    uint32_t w2 = f.hi & 0xffffffff;
+    uint32_t w3 = f.hi >> 32;
 
     return BigFix(w0 * d * WORD0_FACTOR) +
            BigFix(w1 * d * WORD1_FACTOR) +
@@ -192,25 +176,25 @@ BigFix operator*(const BigFix& a, const BigFix& b)
 {
     // Multiply two fixed point values together using partial products.
 
-    uint64 ah = a.hi;
-    uint64 al = a.lo;
+    uint64_t ah = a.hi;
+    uint64_t al = a.lo;
     if (a.isNegative())
         BigFix::negate128(ah, al);
 
-    uint64 bh = b.hi;
-    uint64 bl = b.lo;
+    uint64_t bh = b.hi;
+    uint64_t bl = b.lo;
     if (b.isNegative())
         BigFix::negate128(bh, bl);
 
     // Break the values down into 32-bit words so that the partial products
     // will fit into 64-bit words.
-    uint64 aw[4];
+    uint64_t aw[4];
     aw[0] = al & 0xffffffff;
     aw[1] = al >> 32;
     aw[2] = ah & 0xffffffff;
     aw[3] = ah >> 32;
 
-    uint64 bw[4];
+    uint64_t bw[4];
     bw[0] = bl & 0xffffffff;
     bw[1] = bl >> 32;
     bw[2] = bh & 0xffffffff;
@@ -219,34 +203,30 @@ BigFix operator*(const BigFix& a, const BigFix& b)
     // Set the high and low non-zero words; this will
     // speed up multiplicatoin of integers and values
     // less than one.
-    unsigned int hiworda = ah == 0 ? 1 : 3;
-    unsigned int loworda = al == 0 ? 2 : 0;
-    unsigned int hiwordb = bh == 0 ? 1 : 3;
-    unsigned int lowordb = bl == 0 ? 2 : 0;
+    uint32_t hiworda = ah == 0 ? 1 : 3;
+    uint32_t loworda = al == 0 ? 2 : 0;
+    uint32_t hiwordb = bh == 0 ? 1 : 3;
+    uint32_t lowordb = bl == 0 ? 2 : 0;
 
-    uint32 result[8];
+    uint32_t result[8] = {0};
 
-    unsigned int i;
-    for (i = 0; i < 8; i++)
-        result[i] = 0;
-
-    for (i = lowordb; i <= hiwordb; i++)
+    for (uint32_t i = lowordb; i <= hiwordb; i++)
     {
-        uint32 carry = 0;
+        uint32_t carry = 0;
 
         unsigned int j;
         for (j = loworda; j <= hiworda; j++)
         {
-            uint64 partialProd = aw[j] * bw[i];
+            uint64_t partialProd = aw[j] * bw[i];
 
             // This sum will never overflow. Let N = 2^32;
             // the max value of the partial product is (N-1)^2.
             // The max values of result[i + j] and carry are
             // N-1. Thus the max value of the sum is
             // (N-1)^2 + 2(N-1) = (N^2 - 2N + 1) + 2(N-1) = N^2-1
-            uint64 q = (uint64) result[i + j] + partialProd + (uint64) carry;
-            carry = (uint32) (q >> 32);
-            result[i + j] = (uint32) (q & 0xffffffff);
+            uint64_t q = (uint64_t) result[i + j] + partialProd + (uint64_t) carry;
+            carry = (uint32_t) (q >> 32);
+            result[i + j] = (uint32_t) (q & 0xffffffff);
         }
 
         result[i + j] = carry;
@@ -255,8 +235,8 @@ BigFix operator*(const BigFix& a, const BigFix& b)
     // TODO: check for overflow
     // (as simple as result[0] != 0 || result[1] != 0 || highbit(result[2]))
     BigFix c;
-    c.lo = (uint64) result[2] + ((uint64) result[3] << 32);
-    c.hi = (uint64) result[4] + ((uint64) result[5] << 32);
+    c.lo = (uint64_t) result[2] + ((uint64_t) result[3] << 32);
+    c.hi = (uint64_t) result[4] + ((uint64_t) result[5] << 32);
 
     bool resultNegative = a.isNegative() != b.isNegative();
     return resultNegative ?  -c : c;
@@ -268,10 +248,7 @@ int BigFix::sign() const
 
     if (hi == 0 && lo == 0)
         return 0;
-    if (hi > INT64_MAX)
-        return -1;
-    else
-        return 1;
+    return isNegative() ? -1 : 1;
 }
 
 
@@ -279,10 +256,10 @@ int BigFix::sign() const
 void BigFix::dump()
 {
     printf("%08x %08x %08x %08x",
-           (uint32) (hi >> 32),
-           (uint32) (hi & 0xffffffff),
-           (uint32) (lo >> 32),
-           (uint32) (lo & 0xffffffff));
+           (uint32_t) (hi >> 32),
+           (uint32_t) (hi & 0xffffffff),
+           (uint32_t) (lo >> 32),
+           (uint32_t) (lo & 0xffffffff));
 }
 
 
@@ -314,7 +291,7 @@ static unsigned char alphabet[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 BigFix::BigFix(const std::string& val)
 {
     static char inalphabet[256] = {0}, decoder[256] = {0};
-    int i, bits, c, char_count;
+    int i, bits, char_count;
 
     for (i = (sizeof alphabet) - 1; i >= 0 ; i--)
     {
@@ -322,23 +299,20 @@ BigFix::BigFix(const std::string& val)
         decoder[alphabet[i]] = i;
     }
 
-    uint16 n[8];
+    uint16_t n[8] = {0};
 
     // Code from original BigFix class to convert base64 string into
     // array of 8 16-bit values.
-    for (i = 0; i < 8 ; i++)
-        n[i] = 0;
-
     char_count = 0;
     bits = 0;
 
     i = 0;
 
-    for (char c : val)
+    for (unsigned char c : val)
     {
         if (c == '=')
             break;
-        if (c > 255 || (inalphabet[c] == 0))
+        if (!inalphabet[c])
             continue;
         bits += decoder[c];
         char_count++;
@@ -383,14 +357,14 @@ BigFix::BigFix(const std::string& val)
         n[i/2] >>= 8;
 
     // Now, convert the 8 16-bit values to a 2 64-bit values
-    lo = ((uint64) n[0] |
-          ((uint64) n[1] << 16) |
-          ((uint64) n[2] << 32) |
-          ((uint64) n[3] << 48));
-    hi = ((uint64) n[4] |
-          ((uint64) n[5] << 16) |
-          ((uint64) n[6] << 32) |
-          ((uint64) n[7] << 48));
+    lo = ((uint64_t) n[0] |
+          ((uint64_t) n[1] << 16) |
+          ((uint64_t) n[2] << 32) |
+          ((uint64_t) n[3] << 48));
+    hi = ((uint64_t) n[4] |
+          ((uint64_t) n[5] << 16) |
+          ((uint64_t) n[6] << 32) |
+          ((uint64_t) n[7] << 48));
 }
 
 
@@ -400,7 +374,7 @@ std::string BigFix::toString()
     // is copied from that class, so first we'll convert from two
     // 64-bit words to 8 16-bit words so that the old code can work
     // as-is.
-    unsigned short n[8];
+    uint16_t n[8];
 
     n[0] = lo & 0xffff;
     n[1] = (lo >> 16) & 0xffff;
@@ -414,7 +388,7 @@ std::string BigFix::toString()
 
     // Conversion using code from the original BigFix class.
     std::string encoded;
-    int bits, c, char_count, i, j;
+    int bits, c, char_count, i;
 
     char_count = 0;
     bits = 0;
@@ -432,13 +406,11 @@ std::string BigFix::toString()
         return encoded;
 
     // Then we encode starting by the LSB (i+1 bytes to encode)
-    j = 0;
-    while (j <= i)
+    for (auto j = 0; j <= i; j++)
     {
         c = n[j/2];
         if ( (j & 1) != 0 ) c >>= 8;
         c &= 0xff;
-        j++;
         bits += c;
         char_count++;
         if (char_count == 3)

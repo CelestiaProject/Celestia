@@ -13,7 +13,6 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <celutil/basictypes.h>
 
 
 class TextureFont
