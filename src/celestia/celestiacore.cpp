@@ -298,17 +298,16 @@ CelestiaCore::CelestiaCore() :
        underlying engine even before rendering is enabled. It's initRenderer()
        routine will be called much later. */
     renderer = new Renderer();
-    timer = CreateTimer();
+    timer = new Timer();
 
     execEnv = new CoreExecutionEnvironment(*this);
 
-    int i;
-    for (i = 0; i < KeyCount; i++)
+    for (int i = 0; i < KeyCount; i++)
     {
         keysPressed[i] = false;
         shiftKeysPressed[i] = false;
     }
-    for (i = 0; i < JoyButtonCount; i++)
+    for (int i = 0; i < JoyButtonCount; i++)
         joyButtonsPressed[i] = false;
 
     clog.rdbuf(console.rdbuf());

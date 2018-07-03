@@ -501,7 +501,7 @@ LuaState::LuaState() :
 #else
     state = lua_open();
 #endif
-    timer = CreateTimer();
+    timer = new Timer();
     screenshotCount = 0;
 }
 

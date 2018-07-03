@@ -34,7 +34,8 @@ UTIL_SOURCES = \
     src/celutil/filetype.cpp \
     src/celutil/formatnum.cpp \
     src/celutil/utf8.cpp \
-    src/celutil/util.cpp
+    src/celutil/util.cpp \
+    src/celutil/timer.cpp
 
 UTIL_HEADERS = \
     src/celutil/basictypes.h \
@@ -53,17 +54,13 @@ UTIL_HEADERS = \
     src/celutil/watcher.h
 
 win32 {
-    UTIL_SOURCES += \
-        src/celutil/windirectory.cpp \
-        src/celutil/wintimer.cpp
+    UTIL_SOURCES += src/celutil/windirectory.cpp
 
     UTIL_HEADERS += src/celutil/winutil.h
 }
 
 unix {
-    UTIL_SOURCES += \
-        src/celutil/unixdirectory.cpp \
-        src/celutil/unixtimer.cpp
+    UTIL_SOURCES += src/celutil/unixdirectory.cpp
 }
 
 #### Math library ####
