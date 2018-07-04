@@ -741,7 +741,7 @@ bool LuaState::charEntered(const char* c_p)
     if (ioMode == Asking && getTime() > timeout)
     {
         int stackTop = lua_gettop(costate);
-        if (strcmp(c_p, "y") == 0)
+        if (strcmp(c_p, "y") == 0 || strcmp(c_p, "Y") == 0)
         {
 #if LUA_VER >= 0x050100
             openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
