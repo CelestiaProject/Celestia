@@ -3694,6 +3694,7 @@ bool LuaState::init(CelestiaCoreApplication* appCore)
     openLuaLibrary(state, LUA_STRLIBNAME, luaopen_string);
 #if LUA_VER >= 0x050200
     openLuaLibrary(state, LUA_COLIBNAME, luaopen_coroutine);
+    openLuaLibrary(state, LUA_COLIBNAME, luaopen_io);
 #endif
     // Make the package library, except the loadlib function, available
     // for celx regardless of script system access policy.
