@@ -10,7 +10,6 @@
 // of the License, or (at your option) any later version.
 
 #include "celestia/celestiacore.h"
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 

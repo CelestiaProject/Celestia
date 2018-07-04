@@ -20,7 +20,6 @@
 #include <cassert>
 #include <process.h>
 #include <time.h>
-//#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <commctrl.h>
 #include <mmsystem.h>

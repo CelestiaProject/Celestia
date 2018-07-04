@@ -8,7 +8,6 @@
 // of the License, or (at your option) any later version.
 
 #ifdef _MSC_VER
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 #include <stdio.h>
@@ -23,7 +22,7 @@
 static int debugVerbosity = 0;
 
 #if defined(DEBUG) || defined(_DEBUG)
-void DebugPrint(int level, const char *format, ...)
+void DebugPrint(int level, char *format, ...)
 {
     va_list args;
     va_start(args, format);

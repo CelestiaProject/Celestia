@@ -12,7 +12,6 @@
 #ifndef _CELESTIA_WINHYPERLINKS_H_
 #define _CELESTIA_WINHYPERLINKS_H_
 
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 // The following preprocessor command is included to avoid compiling for
