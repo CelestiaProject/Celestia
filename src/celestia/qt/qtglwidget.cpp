@@ -445,7 +445,17 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
     if (e->modifiers() & ControlModifier)
         modifiers |= CelestiaCore::ControlKey;
 
-    switch (e->key())
+    int ch = e->key();
+    if ((ch >= 'B' && ch <= 'Y'))
+    {
+        if (e->modifiers().testFlag(Qt::ControlModifier))
+            appCore->charEntered(e->text().toUtf8().data(), modifiers);   // [Ctrl+ch]
+        else if (e->modifiers().testFlag(Qt::ShiftModifier))
+            appCore->charEntered(static_cast<char>(ch));        // toupper(ch)
+        else
+            appCore->charEntered(static_cast<char>(tolower(ch)));
+    }
+    else switch (e->key())
     {
     case Key_Escape:
         appCore->charEntered('\033');
@@ -453,6 +463,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
     case Key_Backtab:
         appCore->charEntered(CelestiaCore::Key_BackTab);
         break;
+#if 0
     // Support for Cyrillic keyboard
     case VK_B:
 //      if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))
@@ -696,6 +707,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         else
             appCore->charEntered('X');
         break;
+#endif
 
     case 1102:
 //        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))
