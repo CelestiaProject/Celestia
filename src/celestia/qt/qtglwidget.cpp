@@ -465,6 +465,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         appCore->charEntered(CelestiaCore::Key_BackTab);
         break;
 
+    // Support for Cyrillic keyboard
     case 1102:
 //        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))
 //        appCore->charEntered(e->text().toUtf8().data(), modifiers);
