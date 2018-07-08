@@ -317,8 +317,7 @@
     <message>
         <location filename="../src/celestia/qt/preferences.ui" line="605"/>
         <source>Volcanoes</source>
-        <translation>Vulkane
-</translation>
+        <translation>Vulkane</translation>
     </message>
     <message>
         <location filename="../src/celestia/qt/preferences.ui" line="612"/>
