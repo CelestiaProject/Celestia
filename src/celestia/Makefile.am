@@ -61,11 +61,6 @@ celestia_CXXFLAGS = $(LUA_CFLAGS) $(SPICE_CFLAGS) $(THEORA_CFLAGS) -Wl,--no-as-n
 celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GLUTSOURCES) $(THEORASOURCES)
 
 celestia_LDADD = \
-	$(celestiaKDELIBS) \
-	$(celestiaGTKLIBS) \
-	$(celestiaQTLIBS) \
-	$(LUA_LIBS) \
-	$(THEORA_LIBS) \
 	../celengine/libcelengine.a \
 	../celephem/libcelephem.a \
 	../celmodel/libcelmodel.a \
@@ -73,7 +68,13 @@ celestia_LDADD = \
 	../cel3ds/libcel3ds.a \
 	../celmath/libcelmath.a \
 	../celutil/libcelutil.a \
-	$(SPICE_LIBS)
+	$(celestiaKDELIBS) \
+	$(celestiaGTKLIBS) \
+	$(celestiaQTLIBS) \
+	$(LUA_LIBS) \
+	$(THEORA_LIBS) \
+	$(SPICE_LIBS)\
+	$(GL_LIBS)
 
 noinst_HEADERS = $(wildcard *.h)
 noinst_DATA = ../../celestia
