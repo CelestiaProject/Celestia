@@ -1975,10 +1975,9 @@ static int celestia_setconstellationcolor(lua_State* l)
         lua_pushnil(l);
         while (lua_next(l, -2) != 0)
         {
-            const char* constellation = nullptr;
             if (lua_isstring(l, -1))
             {
-                constellation = lua_tostring(l, -1);
+                const char* constellation = lua_tostring(l, -1);
                 for (const auto ast : *asterisms)
                     if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
                         ast->setOverrideColor(constellationColor);
@@ -1988,9 +1987,6 @@ static int celestia_setconstellationcolor(lua_State* l)
                 Celx_DoError(l, "Values in table-argument to celestia:setconstellationcolor() must be strings");
                 return 0;
             }
-            for (const auto& ast : *asterisms)
-                if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
-                    ast->setOverrideColor(constellationColor);
             lua_pop(l,1);
         }
     }
