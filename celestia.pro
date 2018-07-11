@@ -12,6 +12,8 @@ QT += xml
 load(configure)
 qtCompileTest(spice)
 qtCompileTest(byteswap)
+qtCompileTest(eigen)
+qtCompileTest(glew)
 
 unix {
     !exists(config.h):system(touch config.h)
@@ -414,12 +416,18 @@ CURVEPLOT_SOURCES = \
 CURVEPLOT_HEADERS = \
     thirdparty/curveplot/include/curveplot.h
 
-THIRDPARTY_SOURCES = $$GLEW_SOURCES $$CURVEPLOT_SOURCES
-THIRDPARTY_HEADERS = $$GLEW_HEADERS $$CURVEPLOT_HEADERS
+THIRDPARTY_SOURCES = $$CURVEPLOT_SOURCES
+THIRDPARTY_HEADERS = $$CURVEPLOT_HEADERS
+
+!config_glew {
+    THIRDPARTY_SOURCES += $$GLEW_SOURCES
+    THIRDPARTY_HEADERS += $$GLEW_HEADERS
+    INCLUDEPATH += thirdparty/glew/include
+    DEFINES += GLEW_STATIC
+}
 
 #### common definitions
 DEFINES += CELX
-DEFINES += GLEW_STATIC
 
 # SPICE support
 config_spice {
@@ -474,8 +482,10 @@ INCLUDEPATH += .
 INCLUDEPATH += src
 
 # Third party libraries
-INCLUDEPATH += thirdparty/glew/include
-INCLUDEPATH += thirdparty/Eigen
+!config_eigen {
+    INCLUDEPATH += thirdparty/Eigen
+}
+
 INCLUDEPATH += thirdparty/curveplot/include
 
 
@@ -615,6 +625,12 @@ unix {
 unix:config_spice {
     INCLUDEPATH += /usr/local/cspice/include
     LIBS += /usr/local/cspice/lib/cspice.a
+}
+unix:config_eigen {
+    PKGCONFIG += eigen3
+}
+unix:config_glew {
+    PKGCONFIG += glew
 }
 
 macx {
