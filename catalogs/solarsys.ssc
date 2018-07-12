@@ -723,7 +723,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		4.0
 
 	EllipticalOrbit
@@ -746,7 +746,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		10
 
 	EllipticalOrbit
@@ -791,7 +791,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		18
 
 	EllipticalOrbit
@@ -814,7 +814,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		43
 
 	EllipticalOrbit
@@ -868,7 +868,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.5
 
 	EllipticalOrbit
@@ -892,7 +892,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		0.5
 
 	EllipticalOrbit
@@ -916,7 +916,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -970,7 +970,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1025,7 +1025,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1076,7 +1076,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1100,7 +1100,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1124,7 +1124,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.5
 
 	EllipticalOrbit
@@ -1147,7 +1147,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.0
 
 	EllipticalOrbit
@@ -1171,7 +1171,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.2
 
 	EllipticalOrbit
@@ -1194,7 +1194,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3.4
 
 	EllipticalOrbit
@@ -1217,7 +1217,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1240,7 +1240,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1264,7 +1264,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.0
 
 	EllipticalOrbit
@@ -1287,7 +1287,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.6
 
 	EllipticalOrbit
@@ -1310,7 +1310,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		14
 
 	EllipticalOrbit
@@ -1333,7 +1333,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.0
 
 	EllipticalOrbit
@@ -1356,7 +1356,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1380,7 +1380,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1404,7 +1404,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1427,7 +1427,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.5
 
 	EllipticalOrbit
@@ -1450,7 +1450,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.9
 
 	EllipticalOrbit
@@ -1473,7 +1473,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.9
 
 	EllipticalOrbit
@@ -1496,7 +1496,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1520,7 +1520,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.6
 
 	EllipticalOrbit
@@ -1543,7 +1543,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1597,7 +1597,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.5
 
 	EllipticalOrbit
@@ -1620,7 +1620,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.0
 
 	EllipticalOrbit
@@ -1675,7 +1675,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.5
 
 	EllipticalOrbit
@@ -1698,7 +1698,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.5
 
 	EllipticalOrbit
@@ -1721,7 +1721,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		0.5
 
 	EllipticalOrbit
@@ -1745,7 +1745,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		23
 
 	EllipticalOrbit
@@ -1768,7 +1768,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1819,7 +1819,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.0
 
 	EllipticalOrbit
@@ -1843,7 +1843,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1867,7 +1867,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1891,7 +1891,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.6
 
 	EllipticalOrbit
@@ -1914,7 +1914,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.5
 
 	EllipticalOrbit
@@ -1938,7 +1938,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		30
 
 	EllipticalOrbit
@@ -1961,7 +1961,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -1985,7 +1985,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -2008,7 +2008,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.7
 
 	EllipticalOrbit
@@ -2031,7 +2031,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -2055,7 +2055,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		19
 
 	EllipticalOrbit
@@ -2078,7 +2078,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.0
 
 	EllipticalOrbit
@@ -2102,7 +2102,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.0
 
 	EllipticalOrbit
@@ -2125,7 +2125,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		4.3
 
 	EllipticalOrbit
@@ -2148,7 +2148,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -2172,7 +2172,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.0
 
 	EllipticalOrbit
@@ -2560,7 +2560,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
 	Class "minormoon"
 	Texture "asteroid.jpg"
-	Mesh    "asteroid.cms"
+	Mesh    "asteroid.cmod"
 	Radius 3.5
 
 	EllipticalOrbit
@@ -2737,7 +2737,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 {
 	Class "minormoon"
 	Texture	"asteroid.jpg"
-	Mesh    "asteroid.cms"
+	Mesh    "asteroid.cmod"
 	Radius 0.24
 
 	EllipticalOrbit
@@ -2790,7 +2790,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.6
 
 	EllipticalOrbit
@@ -2813,7 +2813,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 {
 	Class "minormoon"
 	Texture "asteroid.jpg"
-	Mesh    "asteroid.cms"
+	Mesh    "asteroid.cmod"
 	Radius 1.1
 
 	EllipticalOrbit
@@ -2834,7 +2834,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.2
 
 	EllipticalOrbit
@@ -2970,7 +2970,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		1.75
 
 	EllipticalOrbit
@@ -3197,7 +3197,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		7
 
 	EllipticalOrbit
@@ -3220,7 +3220,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		5
 
 	EllipticalOrbit
@@ -3278,7 +3278,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		9.5
 
 	EllipticalOrbit
@@ -3301,7 +3301,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3.2
 
 	EllipticalOrbit
@@ -3324,7 +3324,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		13
 
 	EllipticalOrbit
@@ -3347,7 +3347,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3371,7 +3371,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3395,7 +3395,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		4.3
 
 	EllipticalOrbit
@@ -3418,7 +3418,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3442,7 +3442,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3.5
 
 	EllipticalOrbit
@@ -3466,7 +3466,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		16
 
 	EllipticalOrbit
@@ -3489,7 +3489,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		6.5
 
 	EllipticalOrbit
@@ -3512,7 +3512,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3536,7 +3536,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		4
 
 	EllipticalOrbit
@@ -3560,7 +3560,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3584,7 +3584,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.8
 
 	EllipticalOrbit
@@ -3607,7 +3607,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3631,7 +3631,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.5
 
 	EllipticalOrbit
@@ -3655,7 +3655,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3679,7 +3679,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3703,7 +3703,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3.3
 
 	EllipticalOrbit
@@ -3727,7 +3727,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2
 
 	EllipticalOrbit
@@ -3751,7 +3751,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.8
 
 	EllipticalOrbit
@@ -3774,7 +3774,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3798,7 +3798,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.5
 
 	EllipticalOrbit
@@ -3822,7 +3822,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3.5
 
 	EllipticalOrbit
@@ -3846,7 +3846,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.5
 
 	EllipticalOrbit
@@ -3870,7 +3870,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2.8
 
 	EllipticalOrbit
@@ -3893,7 +3893,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3917,7 +3917,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3941,7 +3941,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3.5
 
 	EllipticalOrbit
@@ -3965,7 +3965,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -3989,7 +3989,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		2
 
 	EllipticalOrbit
@@ -4013,7 +4013,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -4037,7 +4037,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -4061,7 +4061,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		8
 
 	EllipticalOrbit
@@ -4084,7 +4084,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		3
 
 	EllipticalOrbit
@@ -4313,7 +4313,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		36
 
 	EllipticalOrbit
@@ -4336,7 +4336,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture "asteroid.jpg"
-	Mesh    "asteroid.cms"
+	Mesh    "asteroid.cmod"
 	Radius 5
 
 	EllipticalOrbit
@@ -4381,7 +4381,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture "asteroid.jpg"
-	Mesh    "asteroid.cms"
+	Mesh    "asteroid.cmod"
 	Radius 10
 
 	EllipticalOrbit
@@ -4404,7 +4404,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		81
 
 	EllipticalOrbit
@@ -4427,7 +4427,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 {
 	Class "minormoon"
 	Texture "asteroid.jpg"
-	Mesh    "asteroid.cms"
+	Mesh    "asteroid.cmod"
 	Radius 5
 
 	EllipticalOrbit
@@ -4640,7 +4640,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		6
 
 	EllipticalOrbit
@@ -4663,7 +4663,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		49
 
 	EllipticalOrbit
@@ -4686,7 +4686,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		10
 
 	EllipticalOrbit
@@ -4709,7 +4709,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		5
 
 	EllipticalOrbit
@@ -4732,7 +4732,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		95
 
 	EllipticalOrbit
@@ -4755,7 +4755,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		5.5
 
 	EllipticalOrbit
@@ -4778,7 +4778,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		15
 
 	EllipticalOrbit
@@ -4801,7 +4801,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		15
 
 	EllipticalOrbit
@@ -4824,7 +4824,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		6
 
 	EllipticalOrbit
@@ -5113,7 +5113,7 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 
 "Nereid:Neptune II" "Sol/Neptune"
 {
-	Mesh "asteroid.cms"
+	Mesh "asteroid.cmod"
 	Texture "asteroid.jpg"
 	Radius   170
 
@@ -5142,7 +5142,7 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		24
 
 	EllipticalOrbit
@@ -5165,7 +5165,7 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		24
 
 	EllipticalOrbit
@@ -5188,7 +5188,7 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		24
 
 	EllipticalOrbit
@@ -5211,7 +5211,7 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		14
 
 	EllipticalOrbit
@@ -5234,7 +5234,7 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	Mesh		"asteroid.cmod"
 	Radius		30
 
 	EllipticalOrbit
