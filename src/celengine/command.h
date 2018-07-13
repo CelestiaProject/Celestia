@@ -714,4 +714,13 @@ class CommandVerbosity : public InstantaneousCommand
 };
 
 
+class CommandSetWindowBordersVisible : public InstantaneousCommand
+{
+ public:
+    CommandSetWindowBordersVisible(bool _visible) : visible(_visible) {};
+    void process(ExecutionEnvironment&);
+
+ private:
+    bool visible;
+};
 #endif // _COMMAND_H_

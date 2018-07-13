@@ -800,7 +800,6 @@ Command* CommandParser::parseCommand()
 
         cmd = new CommandScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
     }
-
     else if (commandName == "verbosity")
     {
         int level;
@@ -809,6 +808,14 @@ Command* CommandParser::parseCommand()
             level = 2;
 
         cmd = new CommandVerbosity(level);
+    }
+    else if (commandName == "setwindowbordersvisible")
+    {
+        bool visible;
+        if (!paramList->getBoolean("visible", visible))
+             visible = true;
+
+        cmd = new CommandSetWindowBordersVisible(visible);
     }
     else
     {

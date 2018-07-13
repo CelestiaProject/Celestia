@@ -1187,3 +1187,11 @@ void CommandConstellationColor::setConstellations(string cons)
         numConstellations++;
     }
 }
+
+
+///////////////
+// SetWindowBordersVisible command
+void CommandSetWindowBordersVisible::process(ExecutionEnvironment& env)
+{
+    env.getCelestiaCore()->setFramesVisible(visible);
+}

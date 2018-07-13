@@ -1,0 +1,19 @@
+{
+splitview { }
+
+wait { duration 2 }
+
+print { origin "bottomleft" row -5 column 2 duration 5 text "Hiding frames..." }
+
+setwindowbordersvisible { visible false }
+
+wait { duration 5 }
+
+print { origin "bottomleft" row -5 column 2 duration 5 text "Showing frames..." }
+
+setwindowbordersvisible { }
+
+wait { duration 5 }
+
+deleteview { }
+}
