@@ -698,12 +698,11 @@ class CommandPlay : public InstantaneousCommand
     int channel;
     float volume;
     int loop;
-	std::string filename;
+    std::string filename;
     int nopause;
 };
 
 
-//SCRIPT IMAGE START: Author Vincent
 class CommandScriptImage : public InstantaneousCommand
 {
  public:
@@ -729,8 +728,15 @@ class CommandVerbosity : public InstantaneousCommand
  private:
     int level;
 };
-//SCRIPT IMAGE END
 
 
+class CommandSetWindowBordersVisible : public InstantaneousCommand
+{
+ public:
+    CommandSetWindowBordersVisible(bool _visible) : visible(_visible) {};
+    void process(ExecutionEnvironment&);
 
+ private:
+    bool visible;
+};
 #endif // _COMMAND_H_

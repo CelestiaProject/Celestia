@@ -776,12 +776,11 @@ Command* CommandParser::parseCommand()
         Color color((float) colorv.x, (float) colorv.y, (float) colorv.z);
         cmd = new CommandSetTextColor(color);
     }
-    //Audio support by Victor, modified by Vincent & Alexell
-    else if(commandName == "play")
+    else if (commandName == "play")
     {
         int channel;
         float volume;
-		bool loop, nopause;
+        bool loop, nopause;
         string filename;
         if(!paramList->getNumber("channel", channel))
             channel = 0;
@@ -796,7 +795,6 @@ Command* CommandParser::parseCommand()
 
         cmd = new CommandPlay(channel, volume, loop, filename.c_str(), nopause);
     }
-//SCRIPT IMAGE START: Author Vincent
     else if (commandName == "overlay")
     {
         double duration;
@@ -821,7 +819,6 @@ Command* CommandParser::parseCommand()
 
         cmd = new CommandScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
     }
-
     else if (commandName == "verbosity")
     {
         int level;
@@ -831,8 +828,14 @@ Command* CommandParser::parseCommand()
 
         cmd = new CommandVerbosity(level);
     }
-//SCRIPT IMAGE END
+    else if (commandName == "setwindowbordersvisible")
+    {
+        bool visible;
+        if (!paramList->getBoolean("visible", visible))
+             visible = true;
 
+        cmd = new CommandSetWindowBordersVisible(visible);
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");
