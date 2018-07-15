@@ -8,7 +8,6 @@ RCC_DIR = obj/rcc
 UI_DIR = obj/ui
 
 QT += opengl
-QT += xml
 QT += multimedia
 
 unix {
