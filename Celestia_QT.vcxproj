@@ -315,6 +315,14 @@
     </QtUic>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qtappwin.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qtappwin.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\cel3ds\3dsmodel.cpp" />
     <ClCompile Include="src\cel3ds\3dsread.cpp" />
     <ClCompile Include="src\celestia\CelestiaCoreApplication.cpp" />
@@ -561,8 +569,24 @@
     <ClInclude Include="src\celmath\plane.h" />
     <ClInclude Include="src\celengine\planetgrid.h" />
     <ClInclude Include="src\celephem\precession.h" />
-    <QtMoc Include="src\celestia\qt\qtappwin.h">
-    </QtMoc>
+    <CustomBuild Include="src\celestia\qt\qtappwin.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing qtappwin.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DGLEW_STATIC -DUSE_SPICE -DEIGEN_NO_DEBUG -DNDEBUG -DNO_DEBUG -D_CRT_SECURE_NO_WARNINGS -DNOMINMAX -DLUA_VER=0x050100 -DCELX -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_MULTIMEDIA_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_UNICODE "-I.\GeneratedFiles\$(ConfigurationName)\." "-I.\GeneratedFiles" "-I." "-I.\src" "-I.\thirdparty\glew\include" "-I.\thirdparty\Eigen" "-I.\thirdparty\curveplot\include" "-I.\windows\inc\libintl" "-I.\windows\inc\libz" "-I.\windows\inc\libpng" "-I.\windows\inc\libjpeg" "-I.\windows\inc\lua" "-I.\windows\inc\spice" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing qtappwin.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DGLEW_STATIC -DUSE_SPICE -DEIGEN_NO_DEBUG -DNDEBUG -DNO_DEBUG -D_CRT_SECURE_NO_WARNINGS -DNOMINMAX -DLUA_VER=0x050100 -DCELX -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_MULTIMEDIA_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_UNICODE "-I.\GeneratedFiles\$(ConfigurationName)\." "-I.\GeneratedFiles" "-I." "-I.\src" "-I.\thirdparty\glew\include" "-I.\thirdparty\Eigen" "-I.\thirdparty\curveplot\include" "-I.\windows\inc\libintl" "-I.\windows\inc\libz" "-I.\windows\inc\libpng" "-I.\windows\inc\libjpeg" "-I.\windows\inc\lua" "-I.\windows\inc\spice" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing qtappwin.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DGLEW_STATIC -DUSE_SPICE -DEIGEN_NO_DEBUG -DNDEBUG -DNO_DEBUG -D_CRT_SECURE_NO_WARNINGS -DNOMINMAX -DLUA_VER=0x050100 -DCELX -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_MULTIMEDIA_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I.\GeneratedFiles\$(ConfigurationName)\." "-I.\GeneratedFiles" "-I." "-I.\src" "-I.\thirdparty\glew\include" "-I.\thirdparty\Eigen" "-I.\thirdparty\curveplot\include" "-I.\windows\inc\libintl" "-I.\windows\inc\libz" "-I.\windows\inc\libpng" "-I.\windows\inc\libjpeg" "-I.\windows\inc\lua" "-I.\windows\inc\spice" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing qtappwin.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DGLEW_STATIC -DUSE_SPICE -DEIGEN_NO_DEBUG -DNDEBUG -DNO_DEBUG -D_CRT_SECURE_NO_WARNINGS -DNOMINMAX -DLUA_VER=0x050100 -DCELX -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_MULTIMEDIA_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I.\GeneratedFiles\$(ConfigurationName)\." "-I.\GeneratedFiles" "-I." "-I.\src" "-I.\thirdparty\glew\include" "-I.\thirdparty\Eigen" "-I.\thirdparty\curveplot\include" "-I.\windows\inc\libintl" "-I.\windows\inc\libz" "-I.\windows\inc\libpng" "-I.\windows\inc\libjpeg" "-I.\windows\inc\lua" "-I.\windows\inc\spice" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore"</Command>
+    </CustomBuild>
     <QtMoc Include="src\celestia\qt\qtbookmark.h">
     </QtMoc>
     <QtMoc Include="src\celestia\qt\qtcelestialbrowser.h">

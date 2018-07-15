@@ -55,967 +55,841 @@
       <Extensions>ts;xlf</Extensions>
       <ParseFiles>false</ParseFiles>
     </Filter>
+    <Filter Include="Source Files\celengine">
+      <UniqueIdentifier>{5d3f6b4e-56eb-4fb2-a8bf-f65f5a3b9653}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cel3ds">
+      <UniqueIdentifier>{65bee7d5-b7bf-4a11-a5e7-80f96a52d962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\celephem">
+      <UniqueIdentifier>{c30be2f7-9a22-46ca-937a-ee138a94b050}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\celestia">
+      <UniqueIdentifier>{ddea5e37-877a-4611-9c6d-b809741dc163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\qt">
+      <UniqueIdentifier>{49134854-7296-4e55-aeda-a00c23b4c883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\celmath">
+      <UniqueIdentifier>{32b9c9ce-4085-47e3-8425-7beb88edc7bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\celmodel">
+      <UniqueIdentifier>{b36a5c47-3047-4ca1-bb3d-bb63bccebdac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\celtxf">
+      <UniqueIdentifier>{6feb10cc-3f7c-40e9-ab95-ca6de0c849bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\celutil">
+      <UniqueIdentifier>{b84e9d29-0b64-4e64-89b3-d5b0154ab78e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdparty">
+      <UniqueIdentifier>{3970ee59-ddb3-4f00-9f23-2e99293f3e6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdparty\curveplot">
+      <UniqueIdentifier>{6ae5bec5-f7bb-4869-b43d-a1f422bef84a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdparty\glew">
+      <UniqueIdentifier>{363f3c31-e554-47a1-b59e-f75887b0b044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cel3ds">
+      <UniqueIdentifier>{96dc7a48-0150-4e18-b2ad-80a8b47412bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\celengine">
+      <UniqueIdentifier>{df794eba-f16d-4c24-bcc8-195407594579}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\celephem">
+      <UniqueIdentifier>{e4a5599e-88dd-44ca-a90b-0b1669d70a9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\celestia">
+      <UniqueIdentifier>{206a2bc6-102b-4b0d-b40e-4de0ef474e5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\qt">
+      <UniqueIdentifier>{e5d04692-a2e7-4930-85bf-cd959caaa332}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\celmath">
+      <UniqueIdentifier>{3a4711f3-37f9-46eb-b6d7-ea9976df21ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\celmodel">
+      <UniqueIdentifier>{42e39a02-8085-4446-bbb2-2904ec3772c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\celtxf">
+      <UniqueIdentifier>{254434b1-c273-4697-bb3b-10f3d0068a19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\celutil">
+      <UniqueIdentifier>{72d296fc-8373-408f-8ff1-00a41431c2e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdparty">
+      <UniqueIdentifier>{ada59407-633f-4c90-8540-3849429e6b3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{c61828d0-b939-4fdc-b359-1a4c3f6b0597}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{8a3b03e3-7600-490c-9642-2812af747b82}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cel3ds\3dsmodel.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\cel3ds</Filter>
     </ClCompile>
     <ClCompile Include="src\cel3ds\3dsread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\CelestiaCoreApplication.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\QtAudioManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\QtCelestiaCoreApplication.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\QtCelestiaOptions.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\cel3ds</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\asterism.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\astro.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\avicapture.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\axisarrow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celutil\bigfix.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\body.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\boundaries.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\catalogxref.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\celestiacore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\celx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\celx_celestia.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\celx_frame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\celx_gl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\celx_object.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\celx_observer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\celx_phase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\celx_position.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\celx_rotation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\celx_vector.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\cmdparser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celutil\color.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\command.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\configfile.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\console.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\constellation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="thirdparty\curveplot\src\curveplot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celephem\customorbit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celephem\customrotation.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\dds.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celutil\debug.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\deepskyobj.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\destination.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celutil\directory.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\dispmap.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\dsodb.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\dsoname.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\dsooctree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\eclipsefinder.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
     <ClCompile Include="src\celengine\execution.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celengine</Filter>
     </ClCompile>
-    <ClCompile Include="src\celestia\favorites.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\celephem\customorbit.cpp">
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
-    <ClCompile Include="src\celutil\filetype.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celutil\formatnum.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\fragmentprog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\frame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\frametree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celmath\frustum.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\galaxy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\glcontext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="thirdparty\glew\src\glew.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\globular.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\glshader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\imagecapture.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\celephem\customrotation.cpp">
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\jpleph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\location.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\lodspheremesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\marker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celmodel\material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celmodel\mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\meshmanager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celmodel\model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celmodel\modelfile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\modelgeometry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\multitexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\nebula.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\nutation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\observer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\opencluster.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\orbit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\overlay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\parseobject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\parser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celmath\perlin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\planetgrid.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\precession.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtappwin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtbookmark.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtcelestialbrowser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtcolorswatchwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtdeepskybrowser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qteventfinder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtglwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtinfopanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtpreferencesdialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtselectionpopup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtsettimedialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qtsolarsystembrowser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\qt\qttimetoolbar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\regcombine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\rendcontext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\render.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\renderglsl.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\rotation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\rotationmanager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\samporbit.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\samporient.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\scriptmenu.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\scriptobject.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\scriptorbit.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\scriptrotation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\selection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\shadermanager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\simulation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\skygrid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\solarsys.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\spheremesh.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\spiceinterface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\spiceorbit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celephem\spicerotation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\star.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\starcolors.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\stardb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\starname.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\staroctree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\stellarclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\texmanager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celtxf\texturefont.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\timeline.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\timelinephase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\tokenizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\trajmanager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\univcoord.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\universe.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celestia\url.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celutil\utf8.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celutil\util.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\vertexprog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\virtualtex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\celengine\visibleregion.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
     <ClCompile Include="src\celephem\vsop87.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\celephem</Filter>
     </ClCompile>
-    <ClCompile Include="src\celutil\windirectory.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\celestia\avicapture.cpp">
+      <Filter>Source Files\celestia</Filter>
     </ClCompile>
-    <ClCompile Include="src\celutil\wintimer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\celestia\celestiacore.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\CelestiaCoreApplication.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\celx.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\celx_vector.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\celx_celestia.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\celx_frame.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\celx_gl.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\celx_object.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\celx_observer.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\celx_phase.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\celx_position.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\celx_rotation.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\configfile.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\destination.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\eclipsefinder.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\favorites.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\imagecapture.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\scriptmenu.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\url.cpp">
+      <Filter>Source Files\celestia</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtappwin.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\QtAudioManager.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtbookmark.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\QtCelestiaCoreApplication.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtcelestialbrowser.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\QtCelestiaOptions.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtcolorswatchwidget.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtdeepskybrowser.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qteventfinder.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtglwidget.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtinfopanel.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtmain.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtpreferencesdialog.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtselectionpopup.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtsettimedialog.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qtsolarsystembrowser.cpp">
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celestia\qt\qttimetoolbar.cpp">
+      <Filter>Source Files\qt</Filter>
     </ClCompile>
     <ClCompile Include="src\celestia\qt\xbel.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\qt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celmath\frustum.cpp">
+      <Filter>Source Files\celmath</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celmath\perlin.cpp">
+      <Filter>Source Files\celmath</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celmodel\material.cpp">
+      <Filter>Source Files\celmodel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celmodel\mesh.cpp">
+      <Filter>Source Files\celmodel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celmodel\model.cpp">
+      <Filter>Source Files\celmodel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celmodel\modelfile.cpp">
+      <Filter>Source Files\celmodel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celtxf\texturefont.cpp">
+      <Filter>Source Files\celtxf</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celutil\bigfix.cpp">
+      <Filter>Source Files\celutil</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celutil\color.cpp">
+      <Filter>Source Files\celutil</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celutil\debug.cpp">
+      <Filter>Source Files\celutil</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celutil\directory.cpp">
+      <Filter>Source Files\celutil</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celutil\filetype.cpp">
+      <Filter>Source Files\celutil</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celutil\formatnum.cpp">
+      <Filter>Source Files\celutil</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celutil\utf8.cpp">
+      <Filter>Source Files\celutil</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celutil\util.cpp">
+      <Filter>Source Files\celutil</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celutil\windirectory.cpp">
+      <Filter>Source Files\celutil</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celutil\wintimer.cpp">
+      <Filter>Source Files\celutil</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\curveplot\src\curveplot.cpp">
+      <Filter>Source Files\thirdparty\curveplot</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\glew\src\glew.c">
+      <Filter>Source Files\thirdparty\glew</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\fragmentprog.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\frame.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\frametree.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\galaxy.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\glcontext.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\globular.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\glshader.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\image.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\location.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\lodspheremesh.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\marker.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\meshmanager.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\modelgeometry.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\multitexture.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\observer.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\nebula.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\opencluster.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\overlay.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\parseobject.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\parser.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\planetgrid.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\regcombine.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\spheremesh.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\rendcontext.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\render.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\renderglsl.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\rotationmanager.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\selection.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\shadermanager.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\simulation.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\skygrid.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\solarsys.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celephem\spicerotation.cpp">
+      <Filter>Source Files\celephem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\star.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\starcolors.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\stardb.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\starname.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\staroctree.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\stellarclass.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\texmanager.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\texture.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\timeline.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\timelinephase.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\tokenizer.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\trajmanager.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\univcoord.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\universe.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\vertexprog.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\virtualtex.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\celengine\visibleregion.cpp">
+      <Filter>Source Files\celengine</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qtappwin.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qtappwin.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cel3ds\3dschunk.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cel3ds</Filter>
     </ClInclude>
     <ClInclude Include="src\cel3ds\3dsmodel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cel3ds</Filter>
     </ClInclude>
     <ClInclude Include="src\cel3ds\3dsread.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\AbstractAudioManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\CelestiaCoreApplication.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <QtMoc Include="src\celestia\qt\QtAudioManager.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\QtCelestiaCoreApplication.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\QtCelestiaOptions.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <ClInclude Include="src\celmath\aabox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\asterism.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\astro.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\atmosphere.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\avicapture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\axisarrow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\basictypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\bigfix.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\body.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\boundaries.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\bytes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\capsule.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\catalogxref.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\celestia.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celestiacore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celx_celestia.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celx_frame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celx_gl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celx_internal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celx_object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celx_observer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celx_phase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celx_position.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celx_rotation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\celx_vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\cmdparser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\command.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\configfile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\console.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\constellation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="thirdparty\curveplot\include\curveplot.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\cel3ds</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\customorbit.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\customrotation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\debug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\deepskyobj.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\destination.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\directory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\dispmap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\distance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\dsodb.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\dsoname.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\dsooctree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\eclipsefinder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\ellipsoid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\execenv.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\execution.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\favorites.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\filetype.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\formatnum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\fragmentprog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\frame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\frametree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\frustum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\galaxy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\geometry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\geomutil.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\glcontext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="thirdparty\glew\include\GL\glew.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\globular.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\glshader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="thirdparty\glew\include\GL\glxew.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\imagecapture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\intersect.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\jpleph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\lightenv.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\location.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\lodspheremesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\marker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmodel\material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\mathlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmodel\mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\meshmanager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmodel\model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmodel\modelfile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\modelgeometry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\multitexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\nebula.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\nutation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\observer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\octree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\opencluster.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\orbit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\overlay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\parseobject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\parser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\perlin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\plane.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\planetgrid.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\precession.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <QtMoc Include="src\celestia\qt\qtappwin.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\qtbookmark.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\qtcelestialbrowser.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\qtcolorswatchwidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\qtdeepskybrowser.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\qteventfinder.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\qtglwidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <ClInclude Include="src\celestia\qt\qtinfopanel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <QtMoc Include="src\celestia\qt\qtpreferencesdialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\qtselectionpopup.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\qtsettimedialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\qtsolarsystembrowser.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="src\celestia\qt\qttimetoolbar.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <ClInclude Include="src\celmath\quaternion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\ray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\referencemark.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\regcombine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\rendcontext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\render.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\renderglsl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\renderinfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\reshandle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\resmanager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\rotation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\rotationmanager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\samporbit.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\samporient.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\scriptmenu.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\scriptobject.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\scriptorbit.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\scriptrotation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\selection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\shadermanager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\simulation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\skygrid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\solarsys.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\solve.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\sphere.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\spheremesh.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\spiceinterface.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\spiceorbit.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\spicerotation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\star.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\starcolors.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\stardb.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\starname.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\staroctree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\stellarclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\surface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\texmanager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celtxf\texturefont.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\timeline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\timelinephase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\tokenizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\trajmanager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\univcoord.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\universe.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celestia\url.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\utf8.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celutil\util.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\vecgl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celmath\vecmath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\vertexprog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\virtualtex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\visibleregion.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
     <ClInclude Include="src\celephem\vsop87.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\celephem</Filter>
     </ClInclude>
-    <ClInclude Include="src\celutil\watcher.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\celestia\AbstractAudioManager.h">
+      <Filter>Header Files\celestia</Filter>
     </ClInclude>
-    <ClInclude Include="thirdparty\glew\include\GL\wglew.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\celestia\avicapture.h">
+      <Filter>Header Files\celestia</Filter>
     </ClInclude>
-    <ClInclude Include="src\celutil\winutil.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\celestia\celestiacore.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <QtMoc Include="src\celestia\qt\QtAudioManager.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtbookmark.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\QtCelestiaCoreApplication.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtcelestialbrowser.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <ClInclude Include="src\celestia\qt\qtinfopanel.h">
+      <Filter>Header Files\qt</Filter>
     </ClInclude>
     <ClInclude Include="src\celestia\qt\xbel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\qt</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\curveplot\include\curveplot.h">
+      <Filter>Header Files\thirdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glew\include\GL\glew.h">
+      <Filter>Header Files\thirdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glew\include\GL\glxew.h">
+      <Filter>Header Files\thirdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\glew\include\GL\wglew.h">
+      <Filter>Header Files\thirdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\asterism.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\astro.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\atmosphere.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\axisarrow.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\body.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\boundaries.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\catalogxref.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\celestia.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\cmdparser.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\command.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\console.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\constellation.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\deepskyobj.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\dispmap.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\dsodb.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\dsoname.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\dsooctree.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\eclipsefinder.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\execenv.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\execution.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\fragmentprog.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\frame.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\frametree.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\galaxy.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\geometry.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\glcontext.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\globular.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\glshader.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\image.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\lightenv.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\location.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\lodspheremesh.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\marker.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\meshmanager.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\modelgeometry.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\multitexture.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\nebula.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\observer.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\octree.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\opencluster.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\overlay.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\parseobject.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\parser.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\planetgrid.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\referencemark.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\regcombine.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\rendcontext.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\render.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\renderglsl.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\renderinfo.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\rotationmanager.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\selection.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\shadermanager.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\simulation.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\skygrid.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\solarsys.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\spheremesh.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\star.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\starcolors.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\stardb.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\starname.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\staroctree.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\stellarclass.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\surface.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\texmanager.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\texture.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\timeline.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\timelinephase.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\tokenizer.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\trajmanager.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\univcoord.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\universe.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\vecgl.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\vertexprog.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\virtualtex.h">
+      <Filter>Header Files\celengine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celengine\visibleregion.h">
+      <Filter>Header Files\celengine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <ClInclude Include="ui_addbookmark.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
@@ -1027,6 +901,165 @@
     </ClInclude>
     <ClInclude Include="ui_preferences.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\CelestiaCoreApplication.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\celx.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\celx_celestia.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\celx_frame.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\celx_gl.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\celx_internal.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\celx_object.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\celx_observer.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\celx_phase.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\celx_position.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\celx_rotation.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\celx_vector.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\configfile.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\destination.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\favorites.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\imagecapture.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\scriptmenu.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celestia\url.h">
+      <Filter>Header Files\celestia</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\aabox.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\capsule.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\distance.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\ellipsoid.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\frustum.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\geomutil.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\intersect.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\mathlib.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\perlin.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\plane.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\quaternion.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\ray.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\solve.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\sphere.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmath\vecmath.h">
+      <Filter>Header Files\celmath</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmodel\material.h">
+      <Filter>Header Files\celmodel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmodel\mesh.h">
+      <Filter>Header Files\celmodel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmodel\model.h">
+      <Filter>Header Files\celmodel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celmodel\modelfile.h">
+      <Filter>Header Files\celmodel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celtxf\texturefont.h">
+      <Filter>Header Files\celtxf</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\basictypes.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\bigfix.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\bytes.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\color.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\debug.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\directory.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\filetype.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\formatnum.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\reshandle.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\resmanager.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\timer.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\utf8.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\util.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\watcher.h">
+      <Filter>Header Files\celutil</Filter>
+    </ClInclude>
+    <ClInclude Include="src\celutil\winutil.h">
+      <Filter>Header Files\celutil</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1229,5 +1262,42 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="src\celestia\qt\celestia.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="src\celestia\qt\QtCelestiaOptions.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtcolorswatchwidget.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtdeepskybrowser.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qteventfinder.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtglwidget.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtpreferencesdialog.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtselectionpopup.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtsettimedialog.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtsolarsystembrowser.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qttimetoolbar.h">
+      <Filter>Header Files\qt</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="src\celestia\qt\qtappwin.h">
+      <Filter>Header Files\qt</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>
