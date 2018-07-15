@@ -5,6 +5,8 @@ Release/
 *~
 Makefile
 Makefile.in
+Makefile.Debug
+Makefile.Release
 macros/
 .deps
 *.o
@@ -27,3 +29,7 @@ stamp-h1
 .dirstamp
 build
 Celestia_QT
+obj/*
+GeneratedFiles/*
+*.db
+*.opendb
