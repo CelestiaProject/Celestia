@@ -3,8 +3,9 @@ TARGET = Celestia_QT
 VERSION = 1.7.0
 DESTDIR = .
 OBJECTS_DIR = obj
-MOC_DIR = moc
-RCC_DIR = rcc
+MOC_DIR = obj/moc
+RCC_DIR = obj/rcc
+UI_DIR = obj/ui
 
 QT += opengl
 QT += xml
