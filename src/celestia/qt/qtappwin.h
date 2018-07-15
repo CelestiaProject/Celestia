@@ -16,6 +16,8 @@
 #include <celestia/qt/QtCelestiaCoreApplication.h>
 #include <QMainWindow>
 
+#include "qttimetoolbar.h"
+
 class QMenu;
 class QCloseEvent;
 class QDockWidget;
@@ -108,6 +110,8 @@ class CelestiaAppWindow : public QMainWindow
     CelestiaGlWidget* glWidget;
     QDockWidget* toolsDock;
     CelestialBrowser* celestialBrowser;
+    TimeToolBar* timeToolBar;
+    QToolBar* guidesToolBar;
 
     QtCelestiaCoreApplication* m_appCore;
 
