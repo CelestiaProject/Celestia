@@ -3487,8 +3487,8 @@ void CelestiaCore::renderOverlay()
     {
         glEnable(GL_TEXTURE_2D);
             {
-            float xSize = (scriptImage->getWidth());
-            float ySize = (scriptImage->getHeight());
+            float xSize = static_cast<float>((scriptImage->getWidth()));
+            float ySize = static_cast<float>((scriptImage->getHeight()));
 
             float left = (width*(1 + imageXoffset) - xSize)/2; // center overlay image horizontally if imageXoffset = 0
             float bottom = (height*(1 + imageYoffset) - ySize)/2; // center overlay image vertically if imageYoffset = 0
@@ -3498,8 +3498,8 @@ void CelestiaCore::renderOverlay()
 // Boux's code - start
                float coeffx = xSize/width; // compute overlay pict width/view window width ratio
                float coeffy = ySize/height; // compute overlay pict height/view window height ratio
-               xSize = int (xSize/coeffx); // compute new overlay picture width size to fit viewport
-               ySize = int (ySize/coeffy); // compute new overlay picture height to fit viewport
+               xSize = static_cast<float>(int (xSize/coeffx)); // compute new overlay picture width size to fit viewport
+               ySize = static_cast<float>(int (ySize/coeffy)); // compute new overlay picture height to fit viewport
 
                left = (width - xSize)/2; // almost useless, just to be sure overlay pict is perfectly centered in viewport
                bottom = 0; // overlay pict locked at bottom of screen

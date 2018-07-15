@@ -62,7 +62,7 @@ public:
             core->notifyWatchers(RenderFlagsChanged);
         }
 
-        bool isSet() { return core->getRenderFlags() & flag; }
+        bool isSet() { return (core->getRenderFlags() & flag) != 0; }
     };
 
     // Text enter mode functions
