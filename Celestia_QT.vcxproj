@@ -1,0 +1,743 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{78BEB8EB-2E2D-30BF-8E44-82ED9B11C980}</ProjectGuid>
+    <RootNamespace>Celestia_QT</RootNamespace>
+    <Keyword>Qt4VSv1.0</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <PlatformToolset>v140_xp</PlatformToolset>
+    <OutputDirectory>release\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>obj\</IntermediateDirectory>
+    <PrimaryOutput>Celestia_QT</PrimaryOutput>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <PlatformToolset>v140</PlatformToolset>
+    <OutputDirectory>release\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>obj\</IntermediateDirectory>
+    <PrimaryOutput>Celestia_QT</PrimaryOutput>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <PlatformToolset>v140_xp</PlatformToolset>
+    <OutputDirectory>debug\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>obj\</IntermediateDirectory>
+    <PrimaryOutput>Celestia_QT</PrimaryOutput>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <PlatformToolset>v140</PlatformToolset>
+    <OutputDirectory>debug\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>obj\</IntermediateDirectory>
+    <PrimaryOutput>Celestia_QT</PrimaryOutput>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">
+    <QtMsBuild>$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
+    <Import Project="$(QtMsBuild)\qt.props" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)bin/$(Configuration)/$(Platform)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)obj/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)obj/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)bin/$(Configuration)/$(Platform)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)obj/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)obj/$(Configuration)/$(Platform)/$(ProjectName)/</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(ProjectDir)bin/$(Configuration)/$(Platform)/</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(ProjectDir)bin/$(Configuration)/$(Platform)/</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;src;thirdparty\glew\include;thirdparty\Eigen;thirdparty\curveplot\include;windows\inc\libintl;windows\inc\libz;windows\inc\libpng;windows\inc\libjpeg;windows\inc\lua;windows\inc\spice;$(QTDIR)\include;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtMultimedia;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib.lib;libpng.lib;libjpeg.lib;lua51.lib;cspice.lib;libintl.lib;vfw32.lib;opengl32.lib;glu32.lib;user32.lib;qtmain.lib;Qt5OpenGL.lib;Qt5Widgets.lib;Qt5Multimedia.lib;Qt5Gui.lib;Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;.\windows\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <LinkIncremental>false</LinkIncremental>
+      <SubSystem>Windows</SubSystem>
+      <Version>1.7</Version>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_XML_LIB;QT_NETWORK_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <QtMoc>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
+      <Define>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</Define>
+      <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
+      <InputFile>%(FullPath)</InputFile>
+      <DynamicSource>output</DynamicSource>
+      <IncludePath>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;src;thirdparty\glew\include;thirdparty\Eigen;thirdparty\curveplot\include;windows\inc\libintl;windows\inc\libz;windows\inc\libpng;windows\inc\libjpeg;windows\inc\lua;windows\inc\spice;$(QTDIR)\include;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtMultimedia;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;%(AdditionalIncludeDirectories)</IncludePath>
+    </QtMoc>
+    <QtRcc>
+      <InitFuncName>icons</InitFuncName>
+      <OutputFile>.\GeneratedFiles\qrc_%(Filename).cpp</OutputFile>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <Compression>default</Compression>
+      <InputFile>%(FullPath)</InputFile>
+    </QtRcc>
+    <QtUic>
+      <InputFile>%(FullPath)</InputFile>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <OutputFile>.\GeneratedFiles\ui_%(Filename).h</OutputFile>
+      <QTDIR>$(QTDIR)</QTDIR>
+    </QtUic>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;src;thirdparty\glew\include;thirdparty\Eigen;thirdparty\curveplot\include;windows\inc\libintl;windows\inc\libz;windows\inc\libpng;windows\inc\libjpeg;windows\inc\lua;windows\inc\spice;$(QTDIR)\include;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtMultimedia;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib.lib;libpng.lib;libjpeg.lib;lua51.lib;cspice64.lib;libintl.lib;vfw32.lib;opengl32.lib;glu32.lib;user32.lib;qtmain.lib;Qt5OpenGL.lib;Qt5Widgets.lib;Qt5Multimedia.lib;Qt5Gui.lib;Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;.\windows\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <LinkIncremental>false</LinkIncremental>
+      <SubSystem>Windows</SubSystem>
+      <Version>1.7</Version>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_XML_LIB;QT_NETWORK_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <QtMoc>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
+      <Define>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</Define>
+      <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
+      <InputFile>%(FullPath)</InputFile>
+      <DynamicSource>output</DynamicSource>
+      <IncludePath>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;src;thirdparty\glew\include;thirdparty\Eigen;thirdparty\curveplot\include;windows\inc\libintl;windows\inc\libz;windows\inc\libpng;windows\inc\libjpeg;windows\inc\lua;windows\inc\spice;$(QTDIR)\include;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtMultimedia;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;%(AdditionalIncludeDirectories)</IncludePath>
+    </QtMoc>
+    <QtRcc>
+      <InitFuncName>icons</InitFuncName>
+      <OutputFile>.\GeneratedFiles\qrc_%(Filename).cpp</OutputFile>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <Compression>default</Compression>
+      <InputFile>%(FullPath)</InputFile>
+    </QtRcc>
+    <QtUic>
+      <InputFile>%(FullPath)</InputFile>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <OutputFile>.\GeneratedFiles\ui_%(Filename).h</OutputFile>
+      <QTDIR>$(QTDIR)</QTDIR>
+    </QtUic>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;src;thirdparty\glew\include;thirdparty\Eigen;thirdparty\curveplot\include;windows\inc\libintl;windows\inc\libz;windows\inc\libpng;windows\inc\libjpeg;windows\inc\lua;windows\inc\spice;$(QTDIR)\include;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtMultimedia;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib.lib;libpng.lib;libjpeg.lib;lua51.lib;cspice.lib;libintl.lib;vfw32.lib;opengl32.lib;glu32.lib;user32.lib;qtmaind.lib;Qt5OpenGLd.lib;Qt5Widgetsd.lib;Qt5Multimediad.lib;Qt5Guid.lib;Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;.\windows\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <SubSystem>Windows</SubSystem>
+      <Version>1.7</Version>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_XML_LIB;QT_NETWORK_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <QtRcc>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <Compression>default</Compression>
+      <InitFuncName>icons</InitFuncName>
+      <OutputFile>.\GeneratedFiles\qrc_%(Filename).cpp</OutputFile>
+      <InputFile>%(FullPath)</InputFile>
+    </QtRcc>
+    <QtMoc>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
+      <Define>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</Define>
+      <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
+      <InputFile>%(FullPath)</InputFile>
+      <DynamicSource>output</DynamicSource>
+      <IncludePath>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;src;thirdparty\glew\include;thirdparty\Eigen;thirdparty\curveplot\include;windows\inc\libintl;windows\inc\libz;windows\inc\libpng;windows\inc\libjpeg;windows\inc\lua;windows\inc\spice;$(QTDIR)\include;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtMultimedia;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;%(AdditionalIncludeDirectories)</IncludePath>
+    </QtMoc>
+    <QtUic>
+      <InputFile>%(FullPath)</InputFile>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <OutputFile>.\GeneratedFiles\ui_%(Filename).h</OutputFile>
+      <QTDIR>$(QTDIR)</QTDIR>
+    </QtUic>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;src;thirdparty\glew\include;thirdparty\Eigen;thirdparty\curveplot\include;windows\inc\libintl;windows\inc\libz;windows\inc\libpng;windows\inc\libjpeg;windows\inc\lua;windows\inc\spice;$(QTDIR)\include;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtMultimedia;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib.lib;libpng.lib;libjpeg.lib;lua51.lib;cspice64.lib;libintl.lib;vfw32.lib;opengl32.lib;glu32.lib;user32.lib;qtmaind.lib;Qt5OpenGLd.lib;Qt5Widgetsd.lib;Qt5Multimediad.lib;Qt5Guid.lib;Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;.\windows\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <SubSystem>Windows</SubSystem>
+      <Version>1.7</Version>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_XML_LIB;QT_NETWORK_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <QtRcc>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <Compression>default</Compression>
+      <InitFuncName>icons</InitFuncName>
+      <OutputFile>.\GeneratedFiles\qrc_%(Filename).cpp</OutputFile>
+      <InputFile>%(FullPath)</InputFile>
+    </QtRcc>
+    <QtMoc>
+      <QTDIR>$(QTDIR)</QTDIR>
+      <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
+      <Define>_WINDOWS;UNICODE;WIN32;GLEW_STATIC;USE_SPICE;EIGEN_NO_DEBUG;EIGEN_NO_DEBUG;NDEBUG;NO_DEBUG;_CRT_SECURE_NO_WARNINGS;NOMINMAX;LUA_VER=0x050100;CELX;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</Define>
+      <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
+      <InputFile>%(FullPath)</InputFile>
+      <DynamicSource>output</DynamicSource>
+      <IncludePath>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;.;src;thirdparty\glew\include;thirdparty\Eigen;thirdparty\curveplot\include;windows\inc\libintl;windows\inc\libz;windows\inc\libpng;windows\inc\libjpeg;windows\inc\lua;windows\inc\spice;$(QTDIR)\include;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtMultimedia;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;%(AdditionalIncludeDirectories)</IncludePath>
+    </QtMoc>
+    <QtUic>
+      <InputFile>%(FullPath)</InputFile>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <OutputFile>.\GeneratedFiles\ui_%(Filename).h</OutputFile>
+      <QTDIR>$(QTDIR)</QTDIR>
+    </QtUic>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\cel3ds\3dsmodel.cpp" />
+    <ClCompile Include="src\cel3ds\3dsread.cpp" />
+    <ClCompile Include="src\celestia\CelestiaCoreApplication.cpp" />
+    <ClCompile Include="src\celestia\qt\QtAudioManager.cpp" />
+    <ClCompile Include="src\celestia\qt\QtCelestiaCoreApplication.cpp" />
+    <ClCompile Include="src\celestia\qt\QtCelestiaOptions.cpp" />
+    <ClCompile Include="src\celengine\asterism.cpp" />
+    <ClCompile Include="src\celengine\astro.cpp" />
+    <ClCompile Include="src\celestia\avicapture.cpp" />
+    <ClCompile Include="src\celengine\axisarrow.cpp" />
+    <ClCompile Include="src\celutil\bigfix.cpp" />
+    <ClCompile Include="src\celengine\body.cpp" />
+    <ClCompile Include="src\celengine\boundaries.cpp" />
+    <ClCompile Include="src\celengine\catalogxref.cpp" />
+    <ClCompile Include="src\celestia\celestiacore.cpp" />
+    <ClCompile Include="src\celestia\celx.cpp" />
+    <ClCompile Include="src\celestia\celx_celestia.cpp" />
+    <ClCompile Include="src\celestia\celx_frame.cpp" />
+    <ClCompile Include="src\celestia\celx_gl.cpp" />
+    <ClCompile Include="src\celestia\celx_object.cpp" />
+    <ClCompile Include="src\celestia\celx_observer.cpp" />
+    <ClCompile Include="src\celestia\celx_phase.cpp" />
+    <ClCompile Include="src\celestia\celx_position.cpp" />
+    <ClCompile Include="src\celestia\celx_rotation.cpp" />
+    <ClCompile Include="src\celestia\celx_vector.cpp" />
+    <ClCompile Include="src\celengine\cmdparser.cpp" />
+    <ClCompile Include="src\celutil\color.cpp" />
+    <ClCompile Include="src\celengine\command.cpp" />
+    <ClCompile Include="src\celestia\configfile.cpp" />
+    <ClCompile Include="src\celengine\console.cpp" />
+    <ClCompile Include="src\celengine\constellation.cpp" />
+    <ClCompile Include="thirdparty\curveplot\src\curveplot.cpp" />
+    <ClCompile Include="src\celephem\customorbit.cpp" />
+    <ClCompile Include="src\celephem\customrotation.cpp" />
+    <ClCompile Include="src\celengine\dds.cpp" />
+    <ClCompile Include="src\celutil\debug.cpp" />
+    <ClCompile Include="src\celengine\deepskyobj.cpp" />
+    <ClCompile Include="src\celestia\destination.cpp" />
+    <ClCompile Include="src\celutil\directory.cpp" />
+    <ClCompile Include="src\celengine\dispmap.cpp" />
+    <ClCompile Include="src\celengine\dsodb.cpp" />
+    <ClCompile Include="src\celengine\dsoname.cpp" />
+    <ClCompile Include="src\celengine\dsooctree.cpp" />
+    <ClCompile Include="src\celestia\eclipsefinder.cpp" />
+    <ClCompile Include="src\celengine\execution.cpp" />
+    <ClCompile Include="src\celestia\favorites.cpp" />
+    <ClCompile Include="src\celutil\filetype.cpp" />
+    <ClCompile Include="src\celutil\formatnum.cpp" />
+    <ClCompile Include="src\celengine\fragmentprog.cpp" />
+    <ClCompile Include="src\celengine\frame.cpp" />
+    <ClCompile Include="src\celengine\frametree.cpp" />
+    <ClCompile Include="src\celmath\frustum.cpp" />
+    <ClCompile Include="src\celengine\galaxy.cpp" />
+    <ClCompile Include="src\celengine\glcontext.cpp" />
+    <ClCompile Include="thirdparty\glew\src\glew.c" />
+    <ClCompile Include="src\celengine\globular.cpp" />
+    <ClCompile Include="src\celengine\glshader.cpp" />
+    <ClCompile Include="src\celengine\image.cpp" />
+    <ClCompile Include="src\celestia\imagecapture.cpp" />
+    <ClCompile Include="src\celephem\jpleph.cpp" />
+    <ClCompile Include="src\celengine\location.cpp" />
+    <ClCompile Include="src\celengine\lodspheremesh.cpp" />
+    <ClCompile Include="src\celengine\marker.cpp" />
+    <ClCompile Include="src\celmodel\material.cpp" />
+    <ClCompile Include="src\celmodel\mesh.cpp" />
+    <ClCompile Include="src\celengine\meshmanager.cpp" />
+    <ClCompile Include="src\celmodel\model.cpp" />
+    <ClCompile Include="src\celmodel\modelfile.cpp" />
+    <ClCompile Include="src\celengine\modelgeometry.cpp" />
+    <ClCompile Include="src\celengine\multitexture.cpp" />
+    <ClCompile Include="src\celengine\nebula.cpp" />
+    <ClCompile Include="src\celephem\nutation.cpp" />
+    <ClCompile Include="src\celengine\observer.cpp" />
+    <ClCompile Include="src\celengine\opencluster.cpp" />
+    <ClCompile Include="src\celephem\orbit.cpp" />
+    <ClCompile Include="src\celengine\overlay.cpp" />
+    <ClCompile Include="src\celengine\parseobject.cpp" />
+    <ClCompile Include="src\celengine\parser.cpp" />
+    <ClCompile Include="src\celmath\perlin.cpp" />
+    <ClCompile Include="src\celengine\planetgrid.cpp" />
+    <ClCompile Include="src\celephem\precession.cpp" />
+    <ClCompile Include="src\celestia\qt\qtappwin.cpp" />
+    <ClCompile Include="src\celestia\qt\qtbookmark.cpp" />
+    <ClCompile Include="src\celestia\qt\qtcelestialbrowser.cpp" />
+    <ClCompile Include="src\celestia\qt\qtcolorswatchwidget.cpp" />
+    <ClCompile Include="src\celestia\qt\qtdeepskybrowser.cpp" />
+    <ClCompile Include="src\celestia\qt\qteventfinder.cpp" />
+    <ClCompile Include="src\celestia\qt\qtglwidget.cpp" />
+    <ClCompile Include="src\celestia\qt\qtinfopanel.cpp" />
+    <ClCompile Include="src\celestia\qt\qtmain.cpp" />
+    <ClCompile Include="src\celestia\qt\qtpreferencesdialog.cpp" />
+    <ClCompile Include="src\celestia\qt\qtselectionpopup.cpp" />
+    <ClCompile Include="src\celestia\qt\qtsettimedialog.cpp" />
+    <ClCompile Include="src\celestia\qt\qtsolarsystembrowser.cpp" />
+    <ClCompile Include="src\celestia\qt\qttimetoolbar.cpp" />
+    <ClCompile Include="src\celengine\regcombine.cpp" />
+    <ClCompile Include="src\celengine\rendcontext.cpp" />
+    <ClCompile Include="src\celengine\render.cpp" />
+    <ClCompile Include="src\celengine\renderglsl.cpp" />
+    <ClCompile Include="src\celephem\rotation.cpp" />
+    <ClCompile Include="src\celengine\rotationmanager.cpp" />
+    <ClCompile Include="src\celephem\samporbit.cpp" />
+    <ClCompile Include="src\celephem\samporient.cpp" />
+    <ClCompile Include="src\celestia\scriptmenu.cpp" />
+    <ClCompile Include="src\celephem\scriptobject.cpp" />
+    <ClCompile Include="src\celephem\scriptorbit.cpp" />
+    <ClCompile Include="src\celephem\scriptrotation.cpp" />
+    <ClCompile Include="src\celengine\selection.cpp" />
+    <ClCompile Include="src\celengine\shadermanager.cpp" />
+    <ClCompile Include="src\celengine\simulation.cpp" />
+    <ClCompile Include="src\celengine\skygrid.cpp" />
+    <ClCompile Include="src\celengine\solarsys.cpp" />
+    <ClCompile Include="src\celengine\spheremesh.cpp" />
+    <ClCompile Include="src\celephem\spiceinterface.cpp" />
+    <ClCompile Include="src\celephem\spiceorbit.cpp" />
+    <ClCompile Include="src\celephem\spicerotation.cpp" />
+    <ClCompile Include="src\celengine\star.cpp" />
+    <ClCompile Include="src\celengine\starcolors.cpp" />
+    <ClCompile Include="src\celengine\stardb.cpp" />
+    <ClCompile Include="src\celengine\starname.cpp" />
+    <ClCompile Include="src\celengine\staroctree.cpp" />
+    <ClCompile Include="src\celengine\stellarclass.cpp" />
+    <ClCompile Include="src\celengine\texmanager.cpp" />
+    <ClCompile Include="src\celengine\texture.cpp" />
+    <ClCompile Include="src\celtxf\texturefont.cpp" />
+    <ClCompile Include="src\celengine\timeline.cpp" />
+    <ClCompile Include="src\celengine\timelinephase.cpp" />
+    <ClCompile Include="src\celengine\tokenizer.cpp" />
+    <ClCompile Include="src\celengine\trajmanager.cpp" />
+    <ClCompile Include="src\celengine\univcoord.cpp" />
+    <ClCompile Include="src\celengine\universe.cpp" />
+    <ClCompile Include="src\celestia\url.cpp" />
+    <ClCompile Include="src\celutil\utf8.cpp" />
+    <ClCompile Include="src\celutil\util.cpp" />
+    <ClCompile Include="src\celengine\vertexprog.cpp" />
+    <ClCompile Include="src\celengine\virtualtex.cpp" />
+    <ClCompile Include="src\celengine\visibleregion.cpp" />
+    <ClCompile Include="src\celephem\vsop87.cpp" />
+    <ClCompile Include="src\celutil\windirectory.cpp" />
+    <ClCompile Include="src\celutil\wintimer.cpp" />
+    <ClCompile Include="src\celestia\qt\xbel.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\cel3ds\3dschunk.h" />
+    <ClInclude Include="src\cel3ds\3dsmodel.h" />
+    <ClInclude Include="src\cel3ds\3dsread.h" />
+    <ClInclude Include="src\celestia\AbstractAudioManager.h" />
+    <ClInclude Include="src\celestia\CelestiaCoreApplication.h" />
+    <QtMoc Include="src\celestia\qt\QtAudioManager.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\QtCelestiaCoreApplication.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\QtCelestiaOptions.h">
+    </QtMoc>
+    <ClInclude Include="src\celmath\aabox.h" />
+    <ClInclude Include="src\celengine\asterism.h" />
+    <ClInclude Include="src\celengine\astro.h" />
+    <ClInclude Include="src\celengine\atmosphere.h" />
+    <ClInclude Include="src\celestia\avicapture.h" />
+    <ClInclude Include="src\celengine\axisarrow.h" />
+    <ClInclude Include="src\celutil\basictypes.h" />
+    <ClInclude Include="src\celutil\bigfix.h" />
+    <ClInclude Include="src\celengine\body.h" />
+    <ClInclude Include="src\celengine\boundaries.h" />
+    <ClInclude Include="src\celutil\bytes.h" />
+    <ClInclude Include="src\celmath\capsule.h" />
+    <ClInclude Include="src\celengine\catalogxref.h" />
+    <ClInclude Include="src\celengine\celestia.h" />
+    <ClInclude Include="src\celestia\celestiacore.h" />
+    <ClInclude Include="src\celestia\celx.h" />
+    <ClInclude Include="src\celestia\celx_celestia.h" />
+    <ClInclude Include="src\celestia\celx_frame.h" />
+    <ClInclude Include="src\celestia\celx_gl.h" />
+    <ClInclude Include="src\celestia\celx_internal.h" />
+    <ClInclude Include="src\celestia\celx_object.h" />
+    <ClInclude Include="src\celestia\celx_observer.h" />
+    <ClInclude Include="src\celestia\celx_phase.h" />
+    <ClInclude Include="src\celestia\celx_position.h" />
+    <ClInclude Include="src\celestia\celx_rotation.h" />
+    <ClInclude Include="src\celestia\celx_vector.h" />
+    <ClInclude Include="src\celengine\cmdparser.h" />
+    <ClInclude Include="src\celutil\color.h" />
+    <ClInclude Include="src\celengine\command.h" />
+    <ClInclude Include="src\celestia\configfile.h" />
+    <ClInclude Include="src\celengine\console.h" />
+    <ClInclude Include="src\celengine\constellation.h" />
+    <ClInclude Include="thirdparty\curveplot\include\curveplot.h" />
+    <ClInclude Include="src\celephem\customorbit.h" />
+    <ClInclude Include="src\celephem\customrotation.h" />
+    <ClInclude Include="src\celutil\debug.h" />
+    <ClInclude Include="src\celengine\deepskyobj.h" />
+    <ClInclude Include="src\celestia\destination.h" />
+    <ClInclude Include="src\celutil\directory.h" />
+    <ClInclude Include="src\celengine\dispmap.h" />
+    <ClInclude Include="src\celmath\distance.h" />
+    <ClInclude Include="src\celengine\dsodb.h" />
+    <ClInclude Include="src\celengine\dsoname.h" />
+    <ClInclude Include="src\celengine\dsooctree.h" />
+    <ClInclude Include="src\celestia\eclipsefinder.h" />
+    <ClInclude Include="src\celmath\ellipsoid.h" />
+    <ClInclude Include="src\celengine\execenv.h" />
+    <ClInclude Include="src\celengine\execution.h" />
+    <ClInclude Include="src\celestia\favorites.h" />
+    <ClInclude Include="src\celutil\filetype.h" />
+    <ClInclude Include="src\celutil\formatnum.h" />
+    <ClInclude Include="src\celengine\fragmentprog.h" />
+    <ClInclude Include="src\celengine\frame.h" />
+    <ClInclude Include="src\celengine\frametree.h" />
+    <ClInclude Include="src\celmath\frustum.h" />
+    <ClInclude Include="src\celengine\galaxy.h" />
+    <ClInclude Include="src\celengine\geometry.h" />
+    <ClInclude Include="src\celmath\geomutil.h" />
+    <ClInclude Include="src\celengine\glcontext.h" />
+    <ClInclude Include="thirdparty\glew\include\GL\glew.h" />
+    <ClInclude Include="src\celengine\globular.h" />
+    <ClInclude Include="src\celengine\glshader.h" />
+    <ClInclude Include="thirdparty\glew\include\GL\glxew.h" />
+    <ClInclude Include="src\celengine\image.h" />
+    <ClInclude Include="src\celestia\imagecapture.h" />
+    <ClInclude Include="src\celmath\intersect.h" />
+    <ClInclude Include="src\celephem\jpleph.h" />
+    <ClInclude Include="src\celengine\lightenv.h" />
+    <ClInclude Include="src\celengine\location.h" />
+    <ClInclude Include="src\celengine\lodspheremesh.h" />
+    <ClInclude Include="src\celengine\marker.h" />
+    <ClInclude Include="src\celmodel\material.h" />
+    <ClInclude Include="src\celmath\mathlib.h" />
+    <ClInclude Include="src\celmodel\mesh.h" />
+    <ClInclude Include="src\celengine\meshmanager.h" />
+    <ClInclude Include="src\celmodel\model.h" />
+    <ClInclude Include="src\celmodel\modelfile.h" />
+    <ClInclude Include="src\celengine\modelgeometry.h" />
+    <ClInclude Include="src\celengine\multitexture.h" />
+    <ClInclude Include="src\celengine\nebula.h" />
+    <ClInclude Include="src\celephem\nutation.h" />
+    <ClInclude Include="src\celengine\observer.h" />
+    <ClInclude Include="src\celengine\octree.h" />
+    <ClInclude Include="src\celengine\opencluster.h" />
+    <ClInclude Include="src\celephem\orbit.h" />
+    <ClInclude Include="src\celengine\overlay.h" />
+    <ClInclude Include="src\celengine\parseobject.h" />
+    <ClInclude Include="src\celengine\parser.h" />
+    <ClInclude Include="src\celmath\perlin.h" />
+    <ClInclude Include="src\celmath\plane.h" />
+    <ClInclude Include="src\celengine\planetgrid.h" />
+    <ClInclude Include="src\celephem\precession.h" />
+    <QtMoc Include="src\celestia\qt\qtappwin.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtbookmark.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtcelestialbrowser.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtcolorswatchwidget.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtdeepskybrowser.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qteventfinder.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtglwidget.h">
+    </QtMoc>
+    <ClInclude Include="src\celestia\qt\qtinfopanel.h" />
+    <QtMoc Include="src\celestia\qt\qtpreferencesdialog.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtselectionpopup.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtsettimedialog.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qtsolarsystembrowser.h">
+    </QtMoc>
+    <QtMoc Include="src\celestia\qt\qttimetoolbar.h">
+    </QtMoc>
+    <ClInclude Include="src\celmath\quaternion.h" />
+    <ClInclude Include="src\celmath\ray.h" />
+    <ClInclude Include="src\celengine\referencemark.h" />
+    <ClInclude Include="src\celengine\regcombine.h" />
+    <ClInclude Include="src\celengine\rendcontext.h" />
+    <ClInclude Include="src\celengine\render.h" />
+    <ClInclude Include="src\celengine\renderglsl.h" />
+    <ClInclude Include="src\celengine\renderinfo.h" />
+    <ClInclude Include="src\celutil\reshandle.h" />
+    <ClInclude Include="src\celutil\resmanager.h" />
+    <ClInclude Include="src\celephem\rotation.h" />
+    <ClInclude Include="src\celengine\rotationmanager.h" />
+    <ClInclude Include="src\celephem\samporbit.h" />
+    <ClInclude Include="src\celephem\samporient.h" />
+    <ClInclude Include="src\celestia\scriptmenu.h" />
+    <ClInclude Include="src\celephem\scriptobject.h" />
+    <ClInclude Include="src\celephem\scriptorbit.h" />
+    <ClInclude Include="src\celephem\scriptrotation.h" />
+    <ClInclude Include="src\celengine\selection.h" />
+    <ClInclude Include="src\celengine\shadermanager.h" />
+    <ClInclude Include="src\celengine\simulation.h" />
+    <ClInclude Include="src\celengine\skygrid.h" />
+    <ClInclude Include="src\celengine\solarsys.h" />
+    <ClInclude Include="src\celmath\solve.h" />
+    <ClInclude Include="src\celmath\sphere.h" />
+    <ClInclude Include="src\celengine\spheremesh.h" />
+    <ClInclude Include="src\celephem\spiceinterface.h" />
+    <ClInclude Include="src\celephem\spiceorbit.h" />
+    <ClInclude Include="src\celephem\spicerotation.h" />
+    <ClInclude Include="src\celengine\star.h" />
+    <ClInclude Include="src\celengine\starcolors.h" />
+    <ClInclude Include="src\celengine\stardb.h" />
+    <ClInclude Include="src\celengine\starname.h" />
+    <ClInclude Include="src\celengine\staroctree.h" />
+    <ClInclude Include="src\celengine\stellarclass.h" />
+    <ClInclude Include="src\celengine\surface.h" />
+    <ClInclude Include="src\celengine\texmanager.h" />
+    <ClInclude Include="src\celengine\texture.h" />
+    <ClInclude Include="src\celtxf\texturefont.h" />
+    <ClInclude Include="src\celengine\timeline.h" />
+    <ClInclude Include="src\celengine\timelinephase.h" />
+    <ClInclude Include="src\celutil\timer.h" />
+    <ClInclude Include="src\celengine\tokenizer.h" />
+    <ClInclude Include="src\celengine\trajmanager.h" />
+    <ClInclude Include="src\celengine\univcoord.h" />
+    <ClInclude Include="src\celengine\universe.h" />
+    <ClInclude Include="src\celestia\url.h" />
+    <ClInclude Include="src\celutil\utf8.h" />
+    <ClInclude Include="src\celutil\util.h" />
+    <ClInclude Include="src\celengine\vecgl.h" />
+    <ClInclude Include="src\celmath\vecmath.h" />
+    <ClInclude Include="src\celengine\vertexprog.h" />
+    <ClInclude Include="src\celengine\virtualtex.h" />
+    <ClInclude Include="src\celengine\visibleregion.h" />
+    <ClInclude Include="src\celephem\vsop87.h" />
+    <ClInclude Include="src\celutil\watcher.h" />
+    <ClInclude Include="thirdparty\glew\include\GL\wglew.h" />
+    <ClInclude Include="src\celutil\winutil.h" />
+    <ClInclude Include="src\celestia\qt\xbel.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ui_addbookmark.h" />
+    <ClInclude Include="ui_newbookmarkfolder.h" />
+    <ClInclude Include="ui_organizebookmarks.h" />
+    <ClInclude Include="ui_preferences.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ts\celestia_ar.ts" />
+    <None Include="ts\celestia_be.ts" />
+    <None Include="ts\celestia_bg.ts" />
+    <None Include="ts\celestia_de.ts" />
+    <None Include="ts\celestia_el.ts" />
+    <None Include="ts\celestia_es.ts" />
+    <None Include="ts\celestia_fr.ts" />
+    <None Include="ts\celestia_gl.ts" />
+    <None Include="ts\celestia_hu.ts" />
+    <None Include="ts\celestia_it.ts" />
+    <None Include="ts\celestia_ja.ts" />
+    <None Include="ts\celestia_ko.ts" />
+    <None Include="ts\celestia_lt.ts" />
+    <None Include="ts\celestia_lv.ts" />
+    <None Include="ts\celestia_nl.ts" />
+    <None Include="ts\celestia_no.ts" />
+    <None Include="ts\celestia_pl.ts" />
+    <None Include="ts\celestia_pt.ts" />
+    <None Include="ts\celestia_pt_BR.ts" />
+    <None Include="ts\celestia_ro.ts" />
+    <None Include="ts\celestia_ru.ts" />
+    <None Include="ts\celestia_sk.ts" />
+    <None Include="ts\celestia_sv.ts" />
+    <None Include="ts\celestia_tr.ts" />
+    <None Include="ts\celestia_uk.ts" />
+    <None Include="ts\celestia_zh_CN.ts" />
+    <None Include="ts\celestia_zh_TW.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="src\celestia\qt\addbookmark.ui">
+    </QtUic>
+    <QtUic Include="src\celestia\qt\newbookmarkfolder.ui">
+    </QtUic>
+    <QtUic Include="src\celestia\qt\organizebookmarks.ui">
+    </QtUic>
+    <QtUic Include="src\celestia\qt\preferences.ui">
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\celestia\qt\data\about.png" />
+    <None Include="src\celestia\qt\data\application-bookmark.png" />
+    <None Include="src\celestia\qt\data\book.png" />
+    <None Include="src\celestia\qt\data\bookmark-add.png" />
+    <None Include="src\celestia\qt\data\capture-video.png" />
+    <None Include="src\celestia\qt\data\celestia.png" />
+    <None Include="src\celestia\qt\data\center-obj.png" />
+    <None Include="src\celestia\qt\data\clip_copy.png" />
+    <None Include="src\celestia\qt\data\clip_paste.png" />
+    <None Include="src\celestia\qt\data\exit.png" />
+    <None Include="src\celestia\qt\data\full_screen.png" />
+    <None Include="src\celestia\qt\data\go-jump.png" />
+    <None Include="src\celestia\qt\data\grab-image.png" />
+    <QtRcc Include="src\celestia\qt\icons.qrc">
+    </QtRcc>
+    <None Include="src\celestia\qt\data\picture_copy.png" />
+    <None Include="src\celestia\qt\data\preferences.png" />
+    <None Include="src\celestia\qt\data\report_GL.png" />
+    <None Include="src\celestia\qt\data\script2.png" />
+    <None Include="src\celestia\qt\data\select_sol.png" />
+    <None Include="src\celestia\qt\data\set-time.png" />
+    <None Include="src\celestia\qt\data\split-cycle.png" />
+    <None Include="src\celestia\qt\data\split-delete.png" />
+    <None Include="src\celestia\qt\data\split-horiz.png" />
+    <None Include="src\celestia\qt\data\split-single.png" />
+    <None Include="src\celestia\qt\data\split-vert.png" />
+    <None Include="src\celestia\qt\data\time-currenttime.png" />
+    <None Include="src\celestia\qt\data\time-double.png" />
+    <None Include="src\celestia\qt\data\time-faster.png" />
+    <None Include="src\celestia\qt\data\time-half.png" />
+    <None Include="src\celestia\qt\data\time-pause.png" />
+    <None Include="src\celestia\qt\data\time-realtime.png" />
+    <None Include="src\celestia\qt\data\time-reverse.png" />
+    <None Include="src\celestia\qt\data\time-slower.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="src\celestia\qt\celestia.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" Qt5Version_x0020_Win32="msvc2015" Qt5Version_x0020_x64="msvc2015_64" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
