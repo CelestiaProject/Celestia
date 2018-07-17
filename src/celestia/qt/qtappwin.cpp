@@ -395,7 +395,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     QAction* fullScreenAction = new QAction(_("Full screen"), this);
     fullScreenAction->setCheckable(true);
-    fullScreenAction->setShortcut(QString("F11"));
+    fullScreenAction->setShortcut(QString("Shift+F11"));
 
     // Set the full screen check state only after reading settings
     fullScreenAction->setChecked(isFullScreen());
