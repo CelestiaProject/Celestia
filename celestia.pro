@@ -6,6 +6,10 @@ OBJECTS_DIR = obj
 MOC_DIR = moc
 RCC_DIR = rcc
 
+GIT_COMMIT = $$system(git --git-dir=$PWD/.git log --pretty=format:"%h" -1)
+DEFINES += GIT_COMMIT=\\\"$$GIT_COMMIT\\\"
+
+
 QT += opengl
 QT += xml
 

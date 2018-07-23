@@ -1027,7 +1027,7 @@ void CelestiaAppWindow::slotShowAbout()
 {
     static const char* aboutText =
     gettext_noop("<html>"
-    "<p><b>Celestia 1.7.0 (Qt5 beta version)</b></p>"
+    "<p><b>Celestia 1.7.0 (Qt5 beta version, git commit %1)</b></p>"
     "<p>Copyright (C) 2001-2017 by the Celestia Development Team. Celestia "
     "is free software. You can redistribute it and/or modify it under the "
     "terms of the GNU General Public License version 2.</p>"
@@ -1041,7 +1041,7 @@ void CelestiaAppWindow::slotShowAbout()
     "https://github.com/CelestiaProject/Celestia</a><br>"
     "</html>");
 
-    QMessageBox::about(this, "Celestia", _(aboutText));
+    QMessageBox::about(this, "Celestia", QString(_(aboutText)).arg(GIT_COMMIT));
 }
 
 
