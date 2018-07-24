@@ -127,50 +127,76 @@ namespace astro
     float absMagToLum(float mag);
     float appMagToLum(float mag, float lyrs);
 
-    template<class T> T absToAppMag(T absMag, T lyrs)
+    template<class T> constexpr T absToAppMag(T absMag, T lyrs)
     {
         return (T) (absMag - 5 + 5 * log10(lyrs / LY_PER_PARSEC));
     }
 
-    template<class T> T appToAbsMag(T appMag, T lyrs)
+    template<class T> constexpr T appToAbsMag(T appMag, T lyrs)
     {
         return (T) (appMag + 5 - 5 * log10(lyrs / LY_PER_PARSEC));
     }
 
     // Distance conversions
-    float lightYearsToParsecs(float);
-    double lightYearsToParsecs(double);
-    float parsecsToLightYears(float);
-    double parsecsToLightYears(double);
-    float lightYearsToKilometers(float);
-    double lightYearsToKilometers(double);
-    float kilometersToLightYears(float);
-    double kilometersToLightYears(double);
-    float lightYearsToAU(float);
-    double lightYearsToAU(double);
-
-    // TODO: templatize the rest of the conversion functions
-    template<class T> T AUtoLightYears(T au)
+    template<class T> constexpr T lightYearsToParsecs(T ly)
+    {
+        return ly / (T) LY_PER_PARSEC;
+    }
+    template<class T> constexpr T parsecsToLightYears(T pc)
+    {
+        return pc * (T) LY_PER_PARSEC;
+    }
+    template<class T> constexpr T lightYearsToKilometers(T ly)
+    {
+        return ly * (T) KM_PER_LY;
+    }
+    template<class T> constexpr T kilometersToLightYears(T km)
+    {
+        return km / (T) KM_PER_LY;
+    }
+    template<class T> constexpr T lightYearsToAU(T ly)
+    {
+        return ly * (T) AU_PER_LY;
+    }
+    template<class T> constexpr T AUtoLightYears(T au)
     {
         return au / (T) AU_PER_LY;
     }
+    template<class T> constexpr T AUtoKilometers(T au)
+    {
+        return au * (T) KM_PER_AU;
+    }
+    template<class T> constexpr T kilometersToAU(T km)
+    {
+        return km / (T) KM_PER_AU;
+    }
 
-    float AUtoKilometers(float);
-    double AUtoKilometers(double);
-    float kilometersToAU(float);
-    double kilometersToAU(double);
+    template<class T> constexpr T microLightYearsToKilometers(T ly)
+    {
+        return ly * ((T) KM_PER_LY * 1e-6);
+    }
+    template<class T> constexpr T kilometersToMicroLightYears(T km)
+    {
+        return km / ((T) KM_PER_LY * 1e-6);
+    }
+    template<class T> constexpr T microLightYearsToAU(T ly)
+    {
+        return ly * ((T) AU_PER_LY * 1e-6);
+    }
+    template<class T> constexpr T AUtoMicroLightYears(T au)
+    {
+        return au / ((T) AU_PER_LY * 1e-6);
+    }
 
-    float microLightYearsToKilometers(float);
-    double microLightYearsToKilometers(double);
-    float kilometersToMicroLightYears(float);
-    double kilometersToMicroLightYears(double);
-    float microLightYearsToAU(float);
-    double microLightYearsToAU(double);
-    float AUtoMicroLightYears(float);
-    double AUtoMicroLightYears(double);
 
-    double secondsToJulianDate(double);
-    double julianDateToSeconds(double);
+    constexpr double secondsToJulianDate(double sec)
+    {
+        return sec / SECONDS_PER_DAY;
+    }
+    constexpr double julianDateToSeconds(double jd)
+    {
+        return jd * SECONDS_PER_DAY;
+    }
 
     bool isLengthUnit(string unitName);
     bool isTimeUnit(string unitName);

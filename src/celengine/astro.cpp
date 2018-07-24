@@ -36,12 +36,12 @@ const double astro::EarthMass = 5.976e24;
 const double astro::LunarMass = 7.354e22;
 
 const double astro::SOLAR_IRRADIANCE  = 1367.6;        // Watts / m^2
-const double astro::SOLAR_POWER       =    3.8462e26;  // Watts
+const double astro::SOLAR_POWER       = 3.8462e26;  // Watts
 
 // Angle between J2000 mean equator and the ecliptic plane.
 // 23 deg 26' 21".448 (Seidelmann, _Explanatory Supplement to the
 // Astronomical Almanac_ (1992), eqn 3.222-1.
-const double astro::J2000Obliquity = degToRad(23.4392911);
+constexpr double astro::J2000Obliquity = degToRad(23.4392911);
 
 static const Quaterniond ECLIPTIC_TO_EQUATORIAL_ROTATION = XRotation(-astro::J2000Obliquity);
 static const Matrix3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toRotationMatrix();
@@ -188,86 +188,6 @@ float astro::appMagToLum(float mag, float lyrs)
     return absMagToLum(appToAbsMag(mag, lyrs));
 }
 
-float astro::lightYearsToParsecs(float ly)
-{
-    return ly / (float) LY_PER_PARSEC;
-}
-
-double astro::lightYearsToParsecs(double ly)
-{
-    return ly / (double) LY_PER_PARSEC;
-}
-
-float astro::parsecsToLightYears(float pc)
-{
-    return pc * (float) LY_PER_PARSEC;
-}
-
-double astro::parsecsToLightYears(double pc)
-{
-    return pc * (double) LY_PER_PARSEC;
-}
-
-float astro::lightYearsToKilometers(float ly)
-{
-    return ly * (float) KM_PER_LY;
-}
-
-double astro::lightYearsToKilometers(double ly)
-{
-    return ly * KM_PER_LY;
-}
-
-float astro::kilometersToLightYears(float km)
-{
-    return km / (float) KM_PER_LY;
-}
-
-double astro::kilometersToLightYears(double km)
-{
-    return km / KM_PER_LY;
-}
-
-float astro::lightYearsToAU(float ly)
-{
-    return ly * (float) AU_PER_LY;
-}
-
-double astro::lightYearsToAU(double ly)
-{
-    return ly * AU_PER_LY;
-}
-
-float astro::AUtoKilometers(float au)
-{
-    return au * (float) KM_PER_AU;
-}
-
-double astro::AUtoKilometers(double au)
-{
-    return au * (double) KM_PER_AU;
-}
-
-float astro::kilometersToAU(float km)
-{
-    return km / (float) KM_PER_AU;
-}
-
-double astro::kilometersToAU(double km)
-{
-    return km / KM_PER_AU;
-}
-
-double astro::secondsToJulianDate(double sec)
-{
-    return sec / SECONDS_PER_DAY;
-}
-
-double astro::julianDateToSeconds(double jd)
-{
-    return jd * SECONDS_PER_DAY;
-}
-
 void astro::decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds)
 {
     double A, B, C;
@@ -299,52 +219,11 @@ void astro::decimalToHourMinSec(double angle, int& hours, int& minutes, double& 
 
 // Compute the fraction of a sphere which is illuminated and visible
 // to a viewer.  The source of illumination is assumed to be at (0, 0, 0)
-float astro::sphereIlluminationFraction(Point3d,
-                                        Point3d /*unused*/)
+float astro::sphereIlluminationFraction(Point3d /*spherePos*/,
+                                        Point3d /*viewerPos*/)
 {
     return 1.0f;
 }
-
-float astro::microLightYearsToKilometers(float ly)
-{
-    return ly * ((float) KM_PER_LY * 1e-6f);
-}
-
-double astro::microLightYearsToKilometers(double ly)
-{
-    return ly * (KM_PER_LY * 1e-6);
-}
-
-float astro::kilometersToMicroLightYears(float km)
-{
-    return km / ((float) KM_PER_LY * 1e-6f);
-}
-
-double astro::kilometersToMicroLightYears(double km)
-{
-    return km / (KM_PER_LY * 1e-6);
-}
-
-float astro::microLightYearsToAU(float ly)
-{
-    return ly * (float) AU_PER_LY * 1e-6f;
-}
-
-double astro::microLightYearsToAU(double ly)
-{
-    return ly * AU_PER_LY * 1e-6;
-}
-
-float astro::AUtoMicroLightYears(float au)
-{
-    return au / ((float) AU_PER_LY * 1e-6f);
-}
-
-double astro::AUtoMicroLightYears(double au)
-{
-    return au / (AU_PER_LY * 1e-6);
-}
-
 
 // Convert equatorial coordinates to Cartesian celestial (or ecliptical)
 // coordinates.
@@ -421,7 +300,6 @@ void astro::anomaly(double meanAnomaly, double eccentricity,
 double astro::meanEclipticObliquity(double jd)
 {
     double t, de;
-
     jd -= 2451545.0;
     t = jd / 36525;
     de = (46.815 * t + 0.0006 * t * t - 0.00181 * t * t * t) / 3600;
