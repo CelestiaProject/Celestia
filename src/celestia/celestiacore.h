@@ -344,10 +344,11 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
     bool referenceMarkEnabled(const std::string& refMark, Selection sel = Selection()) const;
 
- private:
+    void fatalError(const std::string&, bool visual = true);
+
+ protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
-    void fatalError(const std::string&);
 #ifdef CELX
     bool initLuaHook(ProgressNotifier*);
 #endif // CELX

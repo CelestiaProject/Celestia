@@ -1039,8 +1039,7 @@ int LuaState::resume()
             CelestiaCore* appCore = getAppCore(co);
             if (appCore != NULL)
             {
-                CelestiaCore::Alerter* alerter = appCore->getAlerter();
-                alerter->fatalError(errorMessage);
+                appCore->fatalError(errorMessage);
             }
         }
 
@@ -3726,11 +3725,10 @@ bool LuaState::init(CelestiaCore* appCore)
     lua_pushstring(state, "luainit.celx"); // parameter
     if (lua_pcall(state, 1, 0, 0) != 0) // execute it
     {
-        CelestiaCore::Alerter* alerter = appCore->getAlerter();
         // copy string?!
         const char* errorMessage = lua_tostring(state, -1);
         cout << errorMessage << '\n'; cout.flush();
-        alerter->fatalError(errorMessage);
+        appCore->fatalError(errorMessage);
         return false;
     }
 #endif
