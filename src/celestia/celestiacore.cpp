@@ -585,10 +585,7 @@ void CelestiaCore::runScript(const string& filename)
         ifstream scriptfile(localeFilename.c_str());
         if (!scriptfile.good())
         {
-            if (alerter != NULL)
-                alerter->fatalError(_("Error opening script file."));
-            else
-                flash(_("Error opening script file."));
+            fatalError(_("Error opening script file."));
         }
         else
         {
@@ -600,10 +597,7 @@ void CelestiaCore::runScript(const string& filename)
                 const char* errorMsg = "";
                 if (errors->size() > 0)
                     errorMsg = (*errors)[0].c_str();
-                if (alerter != NULL)
-                    alerter->fatalError(errorMsg);
-                else
-                    flash(errorMsg);
+                fatalError(errorMsg);
             }
             else
             {
@@ -620,10 +614,7 @@ void CelestiaCore::runScript(const string& filename)
         {
             char errMsg[1024];
             sprintf(errMsg, _("Error opening script '%s'"), localeFilename.c_str());
-            if (alerter != NULL)
-                alerter->fatalError(errMsg);
-            else
-                flash(errMsg);
+            fatalError(errMsg);
         }
 
         if (celxScript == NULL)
@@ -638,10 +629,7 @@ void CelestiaCore::runScript(const string& filename)
             string errMsg = celxScript->getErrorMessage();
             if (errMsg.empty())
                 errMsg = _("Unknown error opening script");
-            if (alerter != NULL)
-                alerter->fatalError(errMsg);
-            else
-                flash(errMsg);
+            fatalError(errMsg);
         }
         else
         {
@@ -649,11 +637,7 @@ void CelestiaCore::runScript(const string& filename)
             // script and Celestia's event loop
             if (!celxScript->createThread())
             {
-                const char* errMsg = _("Script coroutine initialization failed");
-                if (alerter != NULL)
-                    alerter->fatalError(errMsg);
-                else
-                    flash(errMsg);
+                fatalError(_("Script coroutine initialization failed"));
             }
             else
             {
@@ -664,10 +648,7 @@ void CelestiaCore::runScript(const string& filename)
 #endif
     else
     {
-        if (alerter != NULL)
-            alerter->fatalError(_("Invalid filetype"));
-        else
-            flash(_("Invalid filetype"));
+        fatalError(_("Invalid filetype"));
     }
 }
 
@@ -4213,7 +4194,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
         ifstream license("License.txt");
         if (!license.good())
         {
-            fatalError(_("License file 'License.txt' is missing!"));
+            fatalError(_("License file 'License.txt' is missing!"), false);
             return false;
         }
     }
@@ -4234,7 +4215,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
 
     if (config == NULL)
     {
-        fatalError(_("Error reading configuration file."));
+        fatalError(_("Error reading configuration file."), false);
         return false;
     }
 
@@ -4245,7 +4226,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
 #ifdef USE_SPICE
     if (!InitializeSpice())
     {
-        fatalError(_("Initialization of SPICE library failed."));
+        fatalError(_("Initialization of SPICE library failed."), false);
         return false;
     }
 #endif
@@ -4292,7 +4273,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
 
     if (!readStars(*config, progressNotifier))
     {
-        fatalError(_("Cannot read star database."));
+        fatalError(_("Cannot read star database."), false);
         return false;
     }
 
@@ -4495,7 +4476,7 @@ bool CelestiaCore::initRenderer()
     // Prepare the scene for rendering.
     if (!renderer->init(context, (int) width, (int) height, detailOptions))
     {
-        fatalError(_("Failed to initialize renderer"));
+        fatalError(_("Failed to initialize renderer"), false);
         return false;
     }
 
@@ -4690,14 +4671,16 @@ void CelestiaCore::setFaintestAutoMag()
     sim->setFaintestVisible(faintestMag);
 }
 
-void CelestiaCore::fatalError(const string& msg)
+void CelestiaCore::fatalError(const string& msg, bool visual)
 {
     if (alerter == NULL)
-        cout << msg;
+        if (visual)
+            flash(msg);
+        else
+            cerr << msg;
     else
         alerter->fatalError(msg);
 }
-
 
 void CelestiaCore::setAlerter(Alerter* a)
 {
@@ -5177,10 +5160,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
         {
             char errMsg[1024];
             sprintf(errMsg, "Error opening LuaHook '%s'",  filename.c_str());
-            if (alerter != NULL)
-                alerter->fatalError(errMsg);
-            else
-                flash(errMsg);
+            fatalError(errMsg);
         }
 
         if (progressNotifier)
@@ -5199,10 +5179,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
         string errMsg = luaHook->getErrorMessage();
         if (errMsg.empty())
             errMsg = "Unknown error loading hook script";
-        if (alerter != NULL)
-            alerter->fatalError(errMsg);
-        else
-            flash(errMsg);
+        fatalError(errMsg);
         delete luaHook;
         luaHook = NULL;
     }
@@ -5214,10 +5191,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
         {
             const char* errMsg = "Script coroutine initialization failed";
             cout << "hook thread failed\n";
-            if (alerter != NULL)
-                alerter->fatalError(errMsg);
-            else
-                flash(errMsg);
+            fatalError(errMsg);
             delete luaHook;
             luaHook = NULL;
         }
