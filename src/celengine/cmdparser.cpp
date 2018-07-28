@@ -22,6 +22,7 @@
 #include <celestia/celx_internal.h>
 #include <algorithm>
 #include <cstdio>
+#include <Eigen/Geometry>
 
 // Older gcc versions used <strstream> instead of <sstream>.
 // This has been corrected in GCC 3.2, but name clashing must
@@ -224,12 +225,20 @@ Command* CommandParser::parseCommand()
         if (paramList->getString("upframe", frameString))
             upFrame = parseCoordinateSystem(frameString);
 
+#ifdef __CELVEC__
         Vec3d up(0, 1, 0);
+#else
+        Eigen::Vector3d up(Eigen::Vector3d::UnitY());
+#endif
         paramList->getVector("up", up);
 
         cmd = new CommandGoto(t,
                               distance,
+#ifdef __CELVEC__
                               Vec3f((float) up.x, (float) up.y, (float) up.z),
+#else
+                              up.cast<float>(),
+#endif
                               upFrame);
     }
     else if (commandName == "gotolonglat")
@@ -238,7 +247,11 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("time", t);
         double distance = 5.0;
         paramList->getNumber("distance", distance);
+#ifdef __CELVEC__
         Vec3d up(0, 1, 0);
+#else
+        Eigen::Vector3d up(Eigen::Vector3d::UnitY());
+#endif
         paramList->getVector("up", up);
         double longitude;
         paramList->getNumber("longitude", longitude);
@@ -249,13 +262,21 @@ Command* CommandParser::parseCommand()
                                      distance,
                                      (float) degToRad(longitude),
                                      (float) degToRad(latitude),
+#ifdef __CELVEC__
                                      Vec3f((float) up.x, (float) up.y, (float) up.z));
+#else
+                                     up.cast<float>());
+#endif
     }
     else if (commandName == "gotoloc")
     {
         double t = 1.0;
         paramList->getNumber("time", t);
+#ifdef __CELVEC__
         Vec3d pos(0, 1, 0);
+#else
+        Eigen::Vector3d pos(Eigen::Vector3d::UnitY());
+#endif
         if (paramList->getVector("position", pos))
         {
             pos = pos * astro::kilometersToMicroLightYears(1.0);
@@ -266,11 +287,18 @@ Command* CommandParser::parseCommand()
             double zrot = 0.0;
             paramList->getNumber("zrot", zrot);
             zrot = degToRad(zrot);
+#ifdef __CELVEC__
             Quatf rotation = Quatf::xrotation((float) degToRad(xrot)) *
                 Quatf::yrotation((float) degToRad(yrot)) *
                 Quatf::zrotation((float) degToRad(zrot));
             cmd = new CommandGotoLocation(t, Point3d(0.0, 0.0, 0.0) + pos,
                                           rotation);
+#else
+            auto rotation = Eigen::Quaterniond(Eigen::AngleAxisd(degToRad(xrot), Eigen::Vector3d::UnitX()) *
+                                               Eigen::AngleAxisd(degToRad(yrot), Eigen::Vector3d::UnitY()) *
+                                               Eigen::AngleAxisd(degToRad(zrot), Eigen::Vector3d::UnitZ()));
+            cmd = new CommandGotoLocation(t, pos, rotation);
+#endif
         }
         else
         {
@@ -283,9 +311,15 @@ Command* CommandParser::parseCommand()
             paramList->getNumber("ox", ox);
             paramList->getNumber("oy", oy);
             paramList->getNumber("oz", oz);
+#ifdef __CELVEC__
             Quatf orientation((float)ow, (float)ox, (float)oy, (float)oz);
             cmd = new CommandGotoLocation(t, Point3d((double)BigFix(x), (double)BigFix(y), (double)BigFix(z)),
                                           orientation);
+#else
+            Eigen::Quaterniond orientation(ow, ox, oy, oz);
+            cmd = new CommandGotoLocation(t, Eigen::Vector3d((double)BigFix(x), (double)BigFix(y), (double)BigFix(z)),
+                                          orientation);
+#endif
         }
     }
     else if (commandName == "seturl")
@@ -434,29 +468,49 @@ Command* CommandParser::parseCommand()
     {
         double rate = 0.0;
         double duration = 1.0;
+#ifdef __CELVEC__
         Vec3d axis;
+#else
+        Eigen::Vector3d axis(Eigen::Vector3d::Zero());
+#endif
         paramList->getNumber("duration", duration);
         paramList->getNumber("rate", rate);
         paramList->getVector("axis", axis);
         cmd = new CommandOrbit(duration,
+#ifdef __CELVEC__
                                Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
+#else
+                               axis.cast<float>(),
+#endif
                                (float) degToRad(rate));
     }
     else if (commandName == "rotate")
     {
         double rate = 0.0;
         double duration = 1.0;
+#ifdef __CELVEC__
         Vec3d axis;
+#else
+        Eigen::Vector3d axis(Eigen::Vector3d::Zero());
+#endif
         paramList->getNumber("duration", duration);
         paramList->getNumber("rate", rate);
         paramList->getVector("axis", axis);
         cmd = new CommandRotate(duration,
+#ifdef __CELVEC__
                                 Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
+#else
+                                axis.cast<float>(),
+#endif
                                 (float) degToRad(rate));
     }
     else if (commandName == "move")
     {
+#ifdef __CELVEC__
         Vec3d velocity;
+#else
+        Eigen::Vector3d velocity(Eigen::Vector3d::Zero());
+#endif
         double duration;
         paramList->getNumber("duration", duration);
         paramList->getVector("velocity", velocity);
@@ -488,13 +542,23 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "setorientation")
     {
+#ifdef __CELVEC__
         Vec3d axis;
+#else
+        Eigen::Vector3d axis(Eigen::Vector3d::Zero());
+#endif
         double angle;
         if (paramList->getNumber("angle", angle))
         {
             paramList->getVector("axis", axis);
+#ifdef __CELVEC__
             cmd = new CommandSetOrientation(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
                                             (float) degToRad(angle));
+#else
+            auto orientation = Eigen::Quaternionf(Eigen::AngleAxisf((float) degToRad(angle),
+                                                                    axis.cast<float>().normalized()));
+            cmd = new CommandSetOrientation(orientation);
+#endif
         }
         else
         {
@@ -503,11 +567,16 @@ Command* CommandParser::parseCommand()
             paramList->getNumber("ox", ox);
             paramList->getNumber("oy", oy);
             paramList->getNumber("oz", oz);
+#ifdef __CELVEC__
             Quatf orientation((float)ow, (float)ox, (float)oy, (float)oz);
             Vec3f axis;
             float angle;
             orientation.getAxisAngle(axis, angle);
             cmd = new CommandSetOrientation(axis, angle);
+#else
+            Eigen::Quaternionf orientation(ow, ox, oy, oz);
+            cmd = new CommandSetOrientation(orientation);
+#endif
         }
     }
     else if (commandName == "lookback")
