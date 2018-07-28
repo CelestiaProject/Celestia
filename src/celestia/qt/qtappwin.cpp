@@ -907,7 +907,10 @@ void CelestiaAppWindow::slotToggleFullScreen()
         // Switch to window
         menuBar()->setFixedHeight(menuBar()->sizeHint().height());
         setWindowState(Qt::WindowNoState);
-        readSettings();
+        QSettings settings;
+        settings.beginGroup("MainWindow");
+        settings.setValue("Fullscreen", false);
+        readSettings();     // restore last windowed settings
     }
     else
     {
