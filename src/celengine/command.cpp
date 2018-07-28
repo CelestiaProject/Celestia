@@ -17,9 +17,13 @@
 #include <celestia/celx_internal.h>
 #include <celutil/util.h>
 #include <iostream>
+#include <Eigen/Geometry>
+#ifdef __CELVEC__
 #include "eigenport.h"
+#endif
 
 using namespace std;
+using namespace Eigen;
 
 
 ////////////////
@@ -62,7 +66,11 @@ void CommandSelect::process(ExecutionEnvironment& env)
 
 CommandGoto::CommandGoto(double t,
                          double dist,
+#ifdef __CELVEC__
                          Vec3f _up,
+#else
+                         Eigen::Vector3f _up,
+#endif
                          ObserverFrame::CoordinateSystem _upFrame) :
     gotoTime(t), distance(dist), up(_up), upFrame(_upFrame)
 {
@@ -77,7 +85,11 @@ void CommandGoto::process(ExecutionEnvironment& env)
     Selection sel = env.getSimulation()->getSelection();
     env.getSimulation()->gotoSelection(gotoTime,
                                        sel.radius() * distance,
+#ifdef __CELVEC__
                                        toEigen(up), upFrame);
+#else
+                                       up, upFrame);
+#endif
 }
 
 
@@ -88,7 +100,11 @@ CommandGotoLongLat::CommandGotoLongLat(double t,
                                        double dist,
                                        float _longitude,
                                        float _latitude,
+#ifdef __CELVEC__
                                        Vec3f _up) :
+#else
+                                       Eigen::Vector3f _up) :
+#endif
     gotoTime(t),
     distance(dist),
     longitude(_longitude),
@@ -107,7 +123,11 @@ void CommandGotoLongLat::process(ExecutionEnvironment& env)
     env.getSimulation()->gotoSelectionLongLat(gotoTime,
                                               sel.radius() * distance,
                                               longitude, latitude,
+#ifdef __CELVEC__
                                               toEigen(up));
+#else
+                                              up);
+#endif
 }
 
 
@@ -115,21 +135,27 @@ void CommandGotoLongLat::process(ExecutionEnvironment& env)
 // GotoLocation
 
 CommandGotoLocation::CommandGotoLocation(double t,
+#ifdef __CELVEC__
                                          const Point3d& _translation,
                                          const Quatf& _rotation) :
+#else
+                                         const Eigen::Vector3d& _translation,
+                                         const Eigen::Quaterniond& _rotation) :
+#endif
     gotoTime(t), translation(_translation), rotation(_rotation)
-{
-}
-
-CommandGotoLocation::~CommandGotoLocation()
 {
 }
 
 void CommandGotoLocation::process(ExecutionEnvironment& env)
 {
+#ifdef __CELVEC__
     Quatd toOrientation = Quatd(rotation.w, rotation.x, rotation.y, rotation.z);
     UniversalCoord toPosition = UniversalCoord::CreateUly(toEigen(translation));
     env.getSimulation()->gotoLocation(toPosition, toEigen(toOrientation), gotoTime);
+#else
+    UniversalCoord toPosition = UniversalCoord::CreateUly(translation);
+    env.getSimulation()->gotoLocation(toPosition, rotation, gotoTime);
+#endif
 }
 
 /////////////////////////////
@@ -366,9 +392,13 @@ void CommandChangeDistance::process(ExecutionEnvironment& env, double, double dt
 
 
 ////////////////
-// Oribt command: rotate about the selected object
+// Orbit command: rotate about the selected object
 
+#ifdef __CELVEC__
 CommandOrbit::CommandOrbit(double _duration, const Vec3f& axis, float rate) :
+#else
+CommandOrbit::CommandOrbit(double _duration, const Eigen::Vector3f& axis, float rate) :
+#endif
     TimedCommand(_duration),
     spin(axis * rate)
 {
@@ -376,17 +406,29 @@ CommandOrbit::CommandOrbit(double _duration, const Vec3f& axis, float rate) :
 
 void CommandOrbit::process(ExecutionEnvironment& env, double, double dt)
 {
+#ifdef __CELVEC__
     float v = spin.length();
+#else
+    float v = spin.norm();
+#endif
     if (v != 0.0f)
     {
+#ifdef __CELVEC__
         Quatf q;
         q.setAxisAngle(spin / v, (float) (v * dt));
         env.getSimulation()->orbit(toEigen(q));
+#else
+       auto q = Quaternionf(AngleAxisf((float) (v * dt), (spin / v).normalized()));
+       env.getSimulation()->orbit(q);
+#endif
     }
 }
 
-
+#ifdef __CELVEC__
 CommandRotate::CommandRotate(double _duration, const Vec3f& axis, float rate) :
+#else
+CommandRotate::CommandRotate(double _duration, const Eigen::Vector3f& axis, float rate) :
+#endif
     TimedCommand(_duration),
     spin(axis * rate)
 {
@@ -394,17 +436,30 @@ CommandRotate::CommandRotate(double _duration, const Vec3f& axis, float rate) :
 
 void CommandRotate::process(ExecutionEnvironment& env, double, double dt)
 {
+#ifdef __CELVEC__
     float v = spin.length();
+#else
+    float v = spin.norm();
+#endif
     if (v != 0.0f)
     {
+#ifdef __CELVEC__
         Quatf q;
         q.setAxisAngle(spin / v, (float) (v * dt));
         env.getSimulation()->rotate(toEigen(q));
+#else
+       auto q = Quaternionf(AngleAxisf((float) (v * dt), (spin / v).normalized()));
+       env.getSimulation()->rotate(q);
+#endif
     }
 }
 
 
+#ifdef __CELVEC__
 CommandMove::CommandMove(double _duration, const Vec3d& _velocity) :
+#else
+CommandMove::CommandMove(double _duration, const Eigen::Vector3d& _velocity) :
+#endif
     TimedCommand(_duration),
     velocity(_velocity)
 {
@@ -412,7 +467,11 @@ CommandMove::CommandMove(double _duration, const Vec3d& _velocity) :
 
 void CommandMove::process(ExecutionEnvironment& env, double, double dt)
 {
+#ifdef __CELVEC__
     Eigen::Vector3d velocityKm = toEigen(velocity) * dt * astro::microLightYearsToKilometers(1.0);
+#else
+   Eigen::Vector3d velocityKm = velocity * dt * astro::microLightYearsToKilometers(1.0);
+#endif
     env.getSimulation()->setObserverPosition(env.getSimulation()->getObserver().getPosition().offsetKm(velocityKm));
 }
 
@@ -433,16 +492,25 @@ void CommandSetPosition::process(ExecutionEnvironment& env)
 ////////////////
 // Set orientation command: set the orientation of the camera
 
+#ifdef __CELVEC__
 CommandSetOrientation::CommandSetOrientation(const Vec3f& _axis, float _angle) :
     axis(_axis), angle(_angle)
+#else
+CommandSetOrientation::CommandSetOrientation(const Quaternionf& _orientation) :
+    orientation(_orientation)
+#endif
 {
 }
 
 void CommandSetOrientation::process(ExecutionEnvironment& env)
 {
+#ifdef __CELVEC__
     Quatf q(1);
     q.setAxisAngle(axis, angle);
     env.getSimulation()->setObserverOrientation(toEigen(q));
+#else
+    env.getSimulation()->setObserverOrientation(orientation);
+#endif
 }
 
 ////////////////
@@ -997,7 +1065,7 @@ double RepeatCommand::getDuration() const
 }
 
 //Audio support by Victor, modified by Vincent, Leserg & Alexell
-CommandPlay::CommandPlay(int _channel, float _volume, bool _loop, 
+CommandPlay::CommandPlay(int _channel, float _volume, bool _loop,
                           const std::string& _filename, bool _nopause) :
    channel(_channel),
    volume(_volume),
