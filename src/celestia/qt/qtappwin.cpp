@@ -507,7 +507,7 @@ void CelestiaAppWindow::readSettings()
     if (settings.contains("State"))
         restoreState(settings.value("State").toByteArray(), CELESTIA_MAIN_WINDOW_VERSION);
     if (settings.value("Fullscreen", false).toBool())
-        slotToggleFullScreen();
+        showFullScreen();
 
     settings.endGroup();
 
