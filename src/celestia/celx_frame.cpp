@@ -14,7 +14,10 @@
 #include "celx_frame.h"
 #include "celestiacore.h"
 #include <celengine/observer.h>
+#include <Eigen/Geometry>
+#ifdef __CELVEC__
 #include <celengine/eigenport.h>
+#endif
 
 using namespace Eigen;
 
@@ -66,7 +69,11 @@ static int frame_from(lua_State* l)
     CelestiaCore* appCore = celx.appCore(AllErrors);
 
     UniversalCoord* uc = NULL;
+#ifdef __CELVEC__
     Quatd* q = NULL;
+#else
+    Quaterniond* q = nullptr;
+#endif
     double jd = 0.0;
 
     if (celx.isType(2, Celx_Position))
@@ -92,7 +99,11 @@ static int frame_from(lua_State* l)
     }
     else
     {
+#ifdef __CELVEC__
         Quatd q1 = fromEigen(frame->convertToUniversal(toEigen(*q), jd));
+#else
+        Quaterniond q1 = frame->convertToUniversal(*q, jd);
+#endif
         celx.newRotation(q1);
     }
 
@@ -110,7 +121,11 @@ static int frame_to(lua_State* l)
     CelestiaCore* appCore = celx.appCore(AllErrors);
 
     UniversalCoord* uc = NULL;
+#ifdef __CELVEC__
     Quatd* q = NULL;
+#else
+    Quaterniond* q = nullptr;
+#endif
     double jd = 0.0;
 
     if (celx.isType(2, Celx_Position))
@@ -137,8 +152,13 @@ static int frame_to(lua_State* l)
     }
     else
     {
+#ifdef __CELVEC__
         Quaterniond q1 = frame->convertFromUniversal(toEigen(*q), jd);
         celx.newRotation(fromEigen(q1));
+#else
+        Quaterniond q1 = frame->convertFromUniversal(*q, jd);
+        celx.newRotation(q1);
+#endif
     }
 
     return 1;

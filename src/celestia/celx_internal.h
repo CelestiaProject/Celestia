@@ -116,8 +116,13 @@ public:
     void newObject(const Selection& sel);
     void newPhase(const TimelinePhase& phase);
 
+#ifdef __CELVEC__
     Vec3d* toVector(int n);
     Quatd* toRotation(int n);
+#else
+    Eigen::Vector3d* toVector(int n);
+    Eigen::Quaterniond* toRotation(int n);
+#endif
     UniversalCoord* toPosition(int n);
     Selection* toObject(int n);
     ObserverFrame* toFrame(int n);
