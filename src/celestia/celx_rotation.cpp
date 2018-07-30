@@ -13,12 +13,24 @@
 #include "celx_internal.h"
 #include "celx_vector.h"
 
+#ifndef __CELVEC__
+using namespace Eigen;
+#endif
 
+#ifdef __CELVEC__
 int rotation_new(lua_State* l, const Quatd& qd)
+#else
+int rotation_new(lua_State* l, const Quaterniond& qd)
+#endif
 {
     CelxLua celx(l);
 
+#ifdef __CELVEC__
     Quatd* q = reinterpret_cast<Quatd*>(lua_newuserdata(l, sizeof(Quatd)));
+#else
+    auto q = reinterpret_cast<Quaterniond*>(lua_newuserdata(l, sizeof(Quaterniond)));
+#endif
+
     *q = qd;
 
     celx.setClass(Celx_Rotation);
@@ -26,20 +38,31 @@ int rotation_new(lua_State* l, const Quatd& qd)
     return 1;
 }
 
-
+#ifdef __CELVEC__
 Quatd* to_rotation(lua_State* l, int index)
+#else
+Quaterniond* to_rotation(lua_State* l, int index)
+#endif
 {
     CelxLua celx(l);
 
+#ifdef __CELVEC__
     return static_cast<Quatd*>(celx.checkUserData(index, Celx_Rotation));
+#else
+    return static_cast<Quaterniond*>(celx.checkUserData(index, Celx_Rotation));
+#endif
 }
 
-
+#ifdef __CELVEC__
 static Quatd* this_rotation(lua_State* l)
+#else
+static Quaterniond* this_rotation(lua_State* l)
+#endif
 {
     CelxLua celx(l);
 
-    Quatd* q = to_rotation(l, 1);
+    auto q = to_rotation(l, 1);
+
     if (q == nullptr)
     {
         celx.doError("Bad rotation object!");
@@ -54,15 +77,22 @@ static int rotation_add(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 2, "Need two operands for add");
-    Quatd* q1 = to_rotation(l, 1);
-    Quatd* q2 = to_rotation(l, 2);
+    auto q1 = to_rotation(l, 1);
+    auto q2 = to_rotation(l, 2);
     if (q1 == nullptr || q2 == nullptr)
     {
         celx.doError("Addition only defined for two rotations");
     }
     else
     {
-        Quatd result = *q1 + *q2;
+#ifdef __CELVEC__
+        auto result = *q1 + *q2;
+#else
+        Quaterniond result(q1->w() + q2->w(),
+                           q1->x() + q2->x(),
+                           q1->y() + q2->y(),
+                           q1->z() + q2->z());
+#endif
         rotation_new(l, result);
     }
     return 1;
@@ -74,9 +104,13 @@ static int rotation_mult(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 2, "Need two operands for multiplication");
+#ifdef __CELVEC__
     Quatd* r1 = nullptr;
     Quatd* r2 = nullptr;
-    //Vec3d* v = nullptr;
+#else
+    Quaterniond* r1 = nullptr;
+    Quaterniond* r2 = nullptr;
+#endif
     lua_Number s = 0.0;
     if (celx.isType(1, Celx_Rotation) && celx.isType(2, Celx_Rotation))
     {
@@ -89,14 +123,24 @@ static int rotation_mult(lua_State* l)
         {
             r1 = to_rotation(l, 1);
             s = lua_tonumber(l, 2);
+#ifdef __CELVEC__
             rotation_new(l, *r1 * s);
+#else
+            Quaterniond r(r1->w() * s, r1->x() * s, r1->y() * s, r1->x() * s);
+            rotation_new(l, r);
+#endif
         }
     else
         if (lua_isnumber(l, 1) && celx.isType(2, Celx_Rotation))
         {
             s = lua_tonumber(l, 1);
             r1 = to_rotation(l, 2);
+#ifdef __CELVEC__
             rotation_new(l, *r1 * s);
+#else
+            Quaterniond r(r1->w() * s, r1->x() * s, r1->y() * s, r1->x() * s);
+            rotation_new(l, r);
+#endif
         }
     else
     {
@@ -111,8 +155,12 @@ static int rotation_imag(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(1, 1, "No arguments expected for rotation_imag");
-    Quatd* q = this_rotation(l);
+    auto q = this_rotation(l);
+#ifdef __CELVEC__
     vector_new(l, imag(*q));
+#else
+    vector_new(l, q->vec());
+#endif
     return 1;
 }
 
@@ -122,8 +170,12 @@ static int rotation_real(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(1, 1, "No arguments expected for rotation_real");
-    Quatd* q = this_rotation(l);
+    auto q = this_rotation(l);
+#ifdef __CELVEC__
     lua_pushnumber(l, real(*q));
+#else
+    lua_pushnumber(l, q->w());
+#endif
     return 1;
 }
 
@@ -133,14 +185,19 @@ static int rotation_transform(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 2, "One argument expected for rotation:transform()");
-    Quatd* q = this_rotation(l);
-    Vec3d* v = to_vector(l, 2);
+    auto q = this_rotation(l);
+    auto v = to_vector(l, 2);
     if (v == nullptr)
     {
         celx.doError("Argument to rotation:transform() must be a vector");
         return 0;
     }
+#ifdef __CELVEC__
     vector_new(l, *v * q->toMatrix3());
+#else
+    // XXX or transpose() instead of .adjoint()?
+    vector_new(l, q->toRotationMatrix().adjoint() * (*v));
+#endif
     return 1;
 }
 
@@ -150,15 +207,19 @@ static int rotation_setaxisangle(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(3, 3, "Two arguments expected for rotation:setaxisangle()");
-    Quatd* q = this_rotation(l);
-    Vec3d* v = to_vector(l, 2);
+    auto q = this_rotation(l);
+    auto v = to_vector(l, 2);
     if (v == nullptr)
     {
         celx.doError("setaxisangle: first argument must be a vector");
         return 0;
     }
     double angle = celx.safeGetNumber(3, AllErrors, "second argument to rotation:setaxisangle must be a number");
+#ifdef __CELVEC__
     q->setAxisAngle(*v, angle);
+#else
+    *q = Quaterniond(AngleAxisd(angle, v->normalized()));
+#endif
     return 0;
 }
 
@@ -168,15 +229,19 @@ static int rotation_slerp(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(3, 3, "Two arguments expected for rotation:slerp()");
-    Quatd* q1 = this_rotation(l);
-    Quatd* q2 = to_rotation(l, 2);
+    auto q1 = this_rotation(l);
+    auto q2 = to_rotation(l, 2);
     if (q2 == nullptr)
     {
         celx.doError("slerp: first argument must be a rotation");
         return 0;
     }
     double t = celx.safeGetNumber(3, AllErrors, "second argument to rotation:slerp must be a number");
+#ifdef __CELVEC__
     rotation_new(l, Quatd::slerp(*q1, *q2, t));
+#else
+    rotation_new(l, q1->slerp(t, *q2));
+#endif
     return 1;
 }
 
@@ -186,17 +251,33 @@ static int rotation_get(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 2, "Invalid access of rotation-component");
-    Quatd* q3 = this_rotation(l);
+    auto q3 = this_rotation(l);
     string key = celx.safeGetString(2, AllErrors, "Invalid key in rotation-access");
     double value = 0.0;
     if (key == "x")
+#ifdef __CELVEC__
         value = imag(*q3).x;
+#else
+        value = q3->x();
+#endif
     else if (key == "y")
+#ifdef __CELVEC__
         value = imag(*q3).y;
+#else
+        value = q3->y();
+#endif
     else if (key == "z")
+#ifdef __CELVEC__
         value = imag(*q3).z;
+#else
+        value = q3->z();
+#endif
     else if (key == "w")
+#ifdef __CELVEC__
         value = real(*q3);
+#else
+        value = q3->w();
+#endif
     else
     {
         if (!lua_getmetatable(l, 1))
@@ -219,24 +300,45 @@ static int rotation_set(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(3, 3, "Invalid access of rotation-component");
-    Quatd* q3 = this_rotation(l);
+    auto q3 = this_rotation(l);
     string key = celx.safeGetString(2, AllErrors, "Invalid key in rotation-access");
     double value = celx.safeGetNumber(3, AllErrors, "Rotation components must be numbers");
+#ifdef __CELVEC__
     Vec3d v = imag(*q3);
     double w = real(*q3);
+#else
+    Vector3d v = q3->vec();
+    double w = q3->w();
+#endif
     if (key == "x")
+#ifdef __CELVEC__
         v.x = value;
+#else
+        v.x() = value;
+#endif
     else if (key == "y")
+#ifdef __CELVEC__
         v.y = value;
+#else
+        v.y() = value;
+#endif
     else if (key == "z")
+#ifdef __CELVEC__
         v.z = value;
+#else
+        v.z() = value;
+#endif
     else if (key == "w")
         w = value;
     else
     {
         celx.doError("Invalid key in rotation-access");
     }
+#ifdef __CELVEC__
     *q3 = Quatd(w, v);
+#else
+    *q3 = Quaterniond(w, v.x(), v.y(), v.z());
+#endif
     return 0;
 }
 

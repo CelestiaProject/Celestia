@@ -39,7 +39,9 @@
 #include "celx_celestia.h"
 #include "celx_gl.h"
 
+#ifdef __CELVEC__
 #include <celengine/eigenport.h>
+#endif
 
 
 // Older gcc versions used <strstream> instead of <sstream>.
@@ -3004,7 +3006,11 @@ static int celestia_newvector(lua_State* l)
     double y = Celx_SafeGetNumber(l, 3, AllErrors, "Second arg to celestia:newvector must be a number");
     double z = Celx_SafeGetNumber(l, 4, AllErrors, "Third arg to celestia:newvector must be a number");
 
+#ifdef __CELVEC__
     vector_new(l, Vec3d(x,y,z));
+#else
+    vector_new(l, Vector3d(x,y,z));
+#endif
 
     return 1;
 }
@@ -3051,20 +3057,28 @@ static int celestia_newrotation(lua_State* l)
         double x = Celx_SafeGetNumber(l, 3, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
         double y = Celx_SafeGetNumber(l, 4, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
         double z = Celx_SafeGetNumber(l, 5, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
+#ifdef __CELVEC__
         Quatd q(w, x, y, z);
+#else
+        Quaterniond q(w, x, y, z);
+#endif
         rotation_new(l, q);
     }
     else
     {
-        Vec3d* v = to_vector(l, 2);
+        auto v = to_vector(l, 2);
         if (v == nullptr)
         {
             Celx_DoError(l, "newrotation: first argument must be a vector");
             return 0;
         }
         double angle = Celx_SafeGetNumber(l, 3, AllErrors, "second argument to celestia:newrotation must be a number");
+#ifdef __CELVEC__
         Quatd q;
         q.setAxisAngle(*v, angle);
+#else
+        Quaterniond q(AngleAxisd(angle, v->normalized()));
+#endif
         rotation_new(l, q);
     }
     return 1;
@@ -4471,6 +4485,7 @@ bool CelxLua::safeGetBoolean(int index,
 }
 
 
+#ifdef __CELVEC__
 void CelxLua::newVector(const Vec3d& v)
 {
     vector_new(m_lua, v);
@@ -4481,7 +4496,12 @@ void CelxLua::newVector(const Vector3d& v)
 {
     vector_new(m_lua, fromEigen(v));
 }
-
+#else
+void CelxLua::newVector(const Vector3d& v)
+{
+    vector_new(m_lua, v);
+}
+#endif
 
 void CelxLua::newPosition(const UniversalCoord& uc)
 {
@@ -4489,7 +4509,11 @@ void CelxLua::newPosition(const UniversalCoord& uc)
 }
 
 
+#ifdef __CELVEC__
 void CelxLua::newRotation(const Quatd& q)
+#else
+void CelxLua::newRotation(const Quaterniond& q)
+#endif
 {
     rotation_new(m_lua, q);
 }
@@ -4509,12 +4533,20 @@ void CelxLua::newPhase(const TimelinePhase& phase)
     phase_new(m_lua, phase);
 }
 
+#ifdef __CELVEC__
 Vec3d* CelxLua::toVector(int n)
+#else
+Vector3d* CelxLua::toVector(int n)
+#endif
 {
     return to_vector(m_lua, n);
 }
 
+#ifdef __CELVEC__
 Quatd* CelxLua::toRotation(int n)
+#else
+Quaterniond* CelxLua::toRotation(int n)
+#endif
 {
     return to_rotation(m_lua, n);
 }

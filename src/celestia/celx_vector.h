@@ -12,10 +12,19 @@
 #ifndef _CELX_VECTOR_H_
 #define _CELX_VECTOR_H_
 
+#ifndef __CELVEC__
+#include <Eigen/Geometry>
+#endif
+
 struct lua_State;
 
 extern void CreateVectorMetaTable(lua_State* l);
+#ifdef __CELVEC__
 extern int vector_new(lua_State* l, const Vec3d& v);
 extern Vec3d* to_vector(lua_State* l, int index);
+#else
+extern int vector_new(lua_State* l, const Eigen::Vector3d& v);
+extern Eigen::Vector3d* to_vector(lua_State* l, int index);
+#endif
 
 #endif // _CELX_VECTOR_H_
