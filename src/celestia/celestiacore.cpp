@@ -28,7 +28,6 @@
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
 #include <celengine/visibleregion.h>
-#include <celengine/eigenport.h>
 #include <celmath/geomutil.h>
 #include <celutil/util.h>
 #include <celutil/filetype.h>
@@ -36,6 +35,7 @@
 #include <celutil/formatnum.h>
 #include <celutil/debug.h>
 #include <celutil/utf8.h>
+#include <Eigen/Geometry>
 #include <GL/glew.h>
 #include <cstdio>
 #include <iostream>
