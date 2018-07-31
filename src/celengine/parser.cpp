@@ -572,12 +572,12 @@ bool AssociativeArray::getRotation(const string& key, Eigen::Quaternionf& val) c
 
 bool AssociativeArray::getColor(const string& key, Color& val) const
 {
-    Vec3d vecVal;
+    Vector3d vecVal;
 
     if (!getVector(key, vecVal))
         return false;
 
-    val = Color((float) vecVal.x, (float) vecVal.y, (float) vecVal.z);
+    val = Color((float) vecVal.x(), (float) vecVal.y(), (float) vecVal.z());
 
     return true;
 }

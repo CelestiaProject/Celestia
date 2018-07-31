@@ -79,7 +79,10 @@ std::ofstream hdrlog;
 #include <cassert>
 #include <sstream>
 #include <iomanip>
+#ifdef __CELVEC__
 #include "eigenport.h"
+#else
+#endif
 
 using namespace cmod;
 using namespace Eigen;
@@ -2939,7 +2942,11 @@ void Renderer::draw(const Observer& observer,
     setupSecondaryLightSources(secondaryIlluminators, lightSourceList);
 
 #ifdef USE_HDR
+#ifdef __CELVEC__
     Mat3f viewMat = conjugate(observer.getOrientationf()).toMatrix3();
+#else
+    Matrix3f viewMat = observer.getOrientationf().conjugate().toRotationMatrix();
+#endif
     float maxSpan = (float) sqrt(square((float) windowWidth) +
                                  square((float) windowHeight));
     float nearZcoeff = (float) cos(degToRad(fov / 2)) *
@@ -2951,7 +2958,11 @@ void Renderer::draw(const Observer& observer,
     for (vector<RenderListEntry>::iterator iter = renderList.begin();
          iter != renderList.end(); iter++)
     {
+#ifdef __CELVEC__
         Point3f center = iter->position * viewMat;
+#else
+        Vector3f center = iter->position * viewMat;
+#endif
 
         bool convex = true;
         float radius = 1.0f;
@@ -3000,7 +3011,11 @@ void Renderer::draw(const Observer& observer,
         // Test the object's bounding sphere against the view frustum
         if (frustum.testSphere(center, cullRadius) != Frustum::Outside)
         {
+#ifdef __CELVEC__
             float nearZ = center.distanceFromOrigin() - radius;
+#else
+            float nearZ = center.norm() - radius;
+#endif
             nearZ = -nearZ * nearZcoeff;
 
             if (nearZ > -MinNearPlaneDistance)
@@ -3010,21 +3025,28 @@ void Renderer::draw(const Observer& observer,
 
             if (!convex)
             {
+#ifdef __CELVEC__
                 iter->farZ = center.z - radius;
+#else
+                iter->farZ = center.z() - radius;
+#endif
                 if (iter->farZ / iter->nearZ > MaxFarNearRatio * 0.5f)
                     iter->nearZ = iter->farZ / (MaxFarNearRatio * 0.5f);
             }
             else
             {
                 // Make the far plane as close as possible
+#ifdef __CELVEC__
                 float d = center.distanceFromOrigin();
-
+#else
+                float d = center.norm();
+#endif
                 // Account for ellipsoidal objects
                 float eradius = radius;
                 if (iter->body != NULL)
                 {
-                    Vec3f semiAxes = iter->body->getSemiAxes();
-                    float minSemiAxis = min(semiAxes.x, min(semiAxes.y, semiAxes.z));
+                    Vector3f semiAxes = iter->body->getSemiAxes();
+                    float minSemiAxis = min(semiAxes.x(), min(semiAxes.y(), semiAxes.z()));
                     eradius *= minSemiAxis / radius;
                 }
 
@@ -3556,17 +3578,27 @@ void Renderer::draw(const Observer& observer,
         {
             const Body *body = closestBody->body;
             double scale = astro::microLightYearsToKilometers(1.0);
+#ifdef __CELVEC__
             Point3d posBody = body->getAstrocentricPosition(now);
             Point3d posStar;
             Point3d posEye = astrocentricPosition(observer.getPosition(), *brightestStar, now);
+#else
+            Vector3d posBody = body->getAstrocentricPosition(now);
+            Vector3d posStar;
+            Vector3d posEye = astrocentricPosition(observer.getPosition(), *brightestStar, now);
+#endif
 
             if (body->getSystem() &&
                 body->getSystem()->getStar() &&
                 body->getSystem()->getStar() != brightestStar)
             {
                 UniversalCoord center = body->getSystem()->getStar()->getPosition(now);
+#ifdef __CELVEC__
                 Vec3d v = brightestStar->getPosition(now) - center;
                 posStar = Point3d(v.x, v.y, v.z);
+#else
+                posStar = brightestStar->getPosition(now) - center;
+#endif
             }
             else
             {
@@ -6977,12 +7009,18 @@ void Renderer::renderObject(const Vector3f& pos,
     // Compute the inverse model/view matrix
     // TODO: This code uses the old vector classes, but will be eliminated when the new planet rendering code
     // is adopted. The new planet renderer doesn't require the inverse transformed view frustum.
-#if 0
+#ifndef __CELVEC__
+/*
     Transform3f invModelView = cameraOrientation.conjugate() *
                                Translation3f(-pos) *
                                obj.orientation *
                                Scaling3f(1.0f / radius);
-#endif
+*/
+    Affine3f invModelView = obj.orientation *
+                            Translation3f(-pos / obj.radius) *
+                            cameraOrientation.conjugate();
+    Matrix4f invMV = invModelView.matrix();
+#else
     Mat4f planetMat_old(Vec4f(planetMat.col(0).x(), planetMat.col(0).y(), planetMat.col(0).z(), planetMat.col(0).w()),
                         Vec4f(planetMat.col(1).x(), planetMat.col(1).y(), planetMat.col(1).z(), planetMat.col(1).w()),
                         Vec4f(planetMat.col(2).x(), planetMat.col(2).y(), planetMat.col(2).z(), planetMat.col(2).w()),
@@ -6991,6 +7029,7 @@ void Renderer::renderObject(const Vector3f& pos,
     Mat4f invMV = (fromEigen(cameraOrientation).toMatrix4() *
                    Mat4f::translation(Point3f(-pos.x() / radius, -pos.y() / radius, -pos.z() / radius)) *
                    planetMat_old);
+#endif
 
     // The sphere rendering code uses the view frustum to determine which
     // patches are visible. In order to avoid rendering patches that can't
@@ -8768,15 +8807,26 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                             // Not rejected. Compute the plane tangent to
                             // the primary at the viewer-to-primary
                             // intersection point.
+#ifdef __CELVEC__
                             Vec3d primaryVec(primarySphere.center.x(),
                                              primarySphere.center.y(),
                                              primarySphere.center.z());
                             double distToPrimary = primaryVec.length();
                             Planed primaryTangentPlane(primaryVec, primaryVec * (primaryVec * (1.0 - primarySphere.radius / distToPrimary)));
+#else
+                            Vector3d primaryVec = primarySphere.center;
+                            double distToPrimary = primaryVec.norm();
+                            Hyperplane<double, 3> primaryTangentPlane(primaryVec,
+                                                                      primaryVec.dot(primaryVec * (1.0 - primarySphere.radius / distToPrimary)));
+#endif
 
                             // Compute the intersection of the viewer-to-labeled
                             // object ray with the tangent plane.
+#ifdef __CELVEC__
                             float u = (float) (primaryTangentPlane.d / (primaryTangentPlane.normal * Vec3d(pos.x(), pos.y(), pos.z())));
+#else
+                            float u = (float) (primaryTangentPlane.offset() / primaryTangentPlane.normal().dot(pos.cast<double>()));
+#endif
 
                             // If the intersection point is closer to the viewer
                             // than the label, then project the label onto the

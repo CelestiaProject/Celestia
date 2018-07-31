@@ -13,12 +13,17 @@
 #include <iostream>
 #include <algorithm>
 #include <celmath/mathlib.h>
+#ifdef __CELVEC__
 #include <celmath/vecmath.h>
+#endif
 #include <GL/glew.h>
 #include "vecgl.h"
 #include "lodspheremesh.h"
 
 using namespace std;
+#ifndef __CELVEC__
+using namespace Eigen;
+#endif
 
 //#define SHOW_PATCH_VISIBILITY
 //#define SHOW_FRUSTUM
@@ -44,6 +49,24 @@ static int MaxVertexSize = 3 + 3 + 3 + MAX_SPHERE_MESH_TEXTURES * 2;
 #ifdef SHOW_PATCH_VISIBILITY
 static const int MaxPatchesShown = 4096;
 static int visiblePatches[MaxPatchesShown];
+#endif
+
+#ifndef __CELVEC__
+// TODO: figure out how to use std eigen's methods instead
+static Vector3f intersect3(const Frustum::PlaneType& p0,
+                           const Frustum::PlaneType& p1,
+                           const Frustum::PlaneType& p2)
+{
+    Matrix3f m;
+    m.row(0) = p0.normal();
+    m.row(1) = p1.normal();
+    m.row(2) = p2.normal();
+    float d = m.determinant();
+
+    return (p0.offset() * p1.normal().cross(p2.normal()) +
+            p1.offset() * p2.normal().cross(p0.normal()) +
+            p2.offset() * p0.normal().cross(p1.normal())) * (1.0f / d);
+}
 #endif
 
 
@@ -121,12 +144,21 @@ LODSphereMesh::~LODSphereMesh()
 }
 
 
+#ifdef __CELVEC__
 static Point3f spherePoint(int theta, int phi)
 {
     return Point3f(cosPhi[phi] * cosTheta[theta],
                    sinPhi[phi],
                    cosPhi[phi] * sinTheta[theta]);
 }
+#else
+static Vector3f spherePoint(int theta, int phi)
+{
+    return Vector3f(cosPhi[phi] * cosTheta[theta],
+                    sinPhi[phi],
+                    cosPhi[phi] * sinTheta[theta]);
+}
+#endif
 
 
 void LODSphereMesh::render(const GLContext& context,
@@ -354,6 +386,7 @@ void LODSphereMesh::render(const GLContext& context,
 
         // Compute the vertices of the view frustum.  These will be used for
         // culling patches.
+#ifdef __CELVEC__
         ri.fp[0] = Planef::intersection(frustum.getPlane(Frustum::Near),
                                         frustum.getPlane(Frustum::Top),
                                         frustum.getPlane(Frustum::Left));
@@ -378,7 +411,32 @@ void LODSphereMesh::render(const GLContext& context,
         ri.fp[7] = Planef::intersection(frustum.getPlane(Frustum::Far),
                                         frustum.getPlane(Frustum::Bottom),
                                         frustum.getPlane(Frustum::Right));
-
+#else
+        ri.fp[0] = intersect3(frustum.plane(Frustum::Near),
+                              frustum.plane(Frustum::Top),
+                              frustum.plane(Frustum::Left));
+        ri.fp[1] = intersect3(frustum.plane(Frustum::Near),
+                              frustum.plane(Frustum::Top),
+                              frustum.plane(Frustum::Right));
+        ri.fp[2] = intersect3(frustum.plane(Frustum::Near),
+                              frustum.plane(Frustum::Bottom),
+                              frustum.plane(Frustum::Left));
+        ri.fp[3] = intersect3(frustum.plane(Frustum::Near),
+                              frustum.plane(Frustum::Bottom),
+                              frustum.plane(Frustum::Right));
+        ri.fp[4] = intersect3(frustum.plane(Frustum::Far),
+                              frustum.plane(Frustum::Top),
+                              frustum.plane(Frustum::Left));
+        ri.fp[5] = intersect3(frustum.plane(Frustum::Far),
+                              frustum.plane(Frustum::Top),
+                              frustum.plane(Frustum::Right));
+        ri.fp[6] = intersect3(frustum.plane(Frustum::Far),
+                              frustum.plane(Frustum::Bottom),
+                              frustum.plane(Frustum::Left));
+        ri.fp[7] = intersect3(frustum.plane(Frustum::Far),
+                              frustum.plane(Frustum::Bottom),
+                              frustum.plane(Frustum::Right));
+#endif
 
 
 #ifdef SHOW_PATCH_VISIBILITY
@@ -544,6 +602,7 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
     // the rest of the sphere.  If the view frustum lies entirely
     // on the side of the plane that does not contain the sphere
     // patch, we cull the patch.
+#ifdef __CELVEC__
     Point3f p0 = spherePoint(theta0, phi0);
     Point3f p1 = spherePoint(theta0 + thetaExtent, phi0);
     Point3f p2 = spherePoint(theta0 + thetaExtent,
@@ -561,12 +620,36 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
     assert(normal.length() != 0.0f);
     normal.normalize();
     Planef separatingPlane(normal, p0);
+#else
+    Vector3f p0 = spherePoint(theta0, phi0);
+    Vector3f p1 = spherePoint(theta0 + thetaExtent, phi0);
+    Vector3f p2 = spherePoint(theta0 + thetaExtent,
+                             phi0 + phiExtent);
+    Vector3f p3 = spherePoint(theta0, phi0 + phiExtent);
+    Vector3f v0 = p1 - p0;
+    Vector3f v2 = p3 - p2;
+    Vector3f normal;
+
+    if (v0.squaredNorm() > v2.squaredNorm())
+        normal = (p0 - p3).cross(v0);
+    else
+        normal = (p2 - p1).cross(v2);
+
+    // If the normal is near zero length, something's going wrong
+    assert(normal.norm() != 0.0f);
+    normal.normalize();
+    Frustum::PlaneType separatingPlane(normal, p0);
+#endif
 
     bool outside = true;
 #if 1
     for (int k = 0; k < 8; k++)
     {
+#ifdef __CELVEC__
         if (separatingPlane.distanceTo(ri.fp[k]) > 0.0f)
+#else
+        if (separatingPlane.absDistance(ri.fp[k]) > 0.0f)
+#endif
         {
             outside = false;
             break;
@@ -587,15 +670,28 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
                                       phi0 + phiExtent / 2);
 #else
     // . . . or is the average of the points better?
+#ifdef __CELVEC__
     Point3f patchCenter = Point3f(p0.x + p1.x + p2.x + p3.x,
                                   p0.y + p1.y + p2.y + p3.y,
                                   p0.z + p1.z + p2.z + p3.z) * 0.25f;
+#else
+    Vector3f patchCenter = Vector3f(p0.x() + p1.x() + p2.x() + p3.x(),
+                                    p0.y() + p1.y() + p2.y() + p3.y(),
+                                    p0.z() + p1.z() + p2.z() + p3.z()) * 0.25f;
+#endif
 #endif
     float boundingRadius = 0.0f;
+#ifdef __CELVEC__
     boundingRadius = max(boundingRadius, patchCenter.distanceTo(p0));
     boundingRadius = max(boundingRadius, patchCenter.distanceTo(p1));
     boundingRadius = max(boundingRadius, patchCenter.distanceTo(p2));
     boundingRadius = max(boundingRadius, patchCenter.distanceTo(p3));
+#else
+    boundingRadius = max(boundingRadius, (patchCenter - p0).norm()); // patchCenter.distanceTo(p0)
+    boundingRadius = max(boundingRadius, (patchCenter - p1).norm());
+    boundingRadius = max(boundingRadius, (patchCenter - p2).norm());
+    boundingRadius = max(boundingRadius, (patchCenter - p3).norm());
+#endif
     if (ri.frustum.testSphere(patchCenter, boundingRadius) == Frustum::Outside)
         outside = true;
 

@@ -21,7 +21,9 @@
 #include <celengine/cmdparser.h>
 #include <celengine/execenv.h>
 #include <celengine/execution.h>
+#ifdef __CELVEC__
 #include <celmath/vecmath.h>
+#endif
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
 #include "imagecapture.h"
