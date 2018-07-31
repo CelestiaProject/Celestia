@@ -40,7 +40,7 @@ static int parseRenderFlags(string /*s*/);
 static int parseLabelFlags(string /*s*/);
 static int parseOrbitFlags(string /*s*/);
 static int parseConstellations(CommandConstellations* cmd, string s, int act);
-int parseConstellationColor(CommandConstellationColor* cmd, string s, Vec3d *col, int act);
+int parseConstellationColor(CommandConstellationColor* cmd, string s, Eigen::Vector3d *col, int act);
 
 CommandParser::CommandParser(istream& in)
 {
@@ -639,7 +639,7 @@ Command* CommandParser::parseCommand()
         string s;
         CommandConstellationColor *cmdconcol= new CommandConstellationColor();
 
-        Vec3d colorv(1.0f, 0.0f, 0.0f);
+        Eigen::Vector3d colorv(1.0f, 0.0f, 0.0f);
         paramList->getVector("color", colorv);
 
         if (paramList->getString("set", s))
@@ -697,11 +697,11 @@ Command* CommandParser::parseCommand()
         paramList->getString("object", object);
         double size = 10.0f;
         paramList->getNumber("size", size);
-        Vec3d colorv(1.0f, 0.0f, 0.0f);
+        Eigen::Vector3d colorv(1.0f, 0.0f, 0.0f);
         paramList->getVector("color", colorv);
         double alpha = 0.9f;
         paramList->getNumber("alpha", alpha);
-        Color color((float) colorv.x, (float) colorv.y, (float) colorv.z, (float) alpha);
+        Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z(), (float) alpha);
 
         MarkerRepresentation rep(MarkerRepresentation::Diamond);
         string symbolString;
@@ -819,25 +819,25 @@ Command* CommandParser::parseCommand()
     {
         string item;
         paramList->getString("item", item);
-        Vec3d colorv(1.0f, 0.0f, 0.0f);
+        Eigen::Vector3d colorv(1.0f, 0.0f, 0.0f);
         paramList->getVector("color", colorv);
-        Color color((float) colorv.x, (float) colorv.y, (float) colorv.z);
+        Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z());
         cmd = new CommandSetLineColor(item, color);
     }
     else if (commandName == "setlabelcolor")
     {
         string item;
         paramList->getString("item", item);
-        Vec3d colorv(1.0f, 0.0f, 0.0f);
+        Eigen::Vector3d colorv(1.0f, 0.0f, 0.0f);
         paramList->getVector("color", colorv);
-        Color color((float) colorv.x, (float) colorv.y, (float) colorv.z);
+        Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z());
         cmd = new CommandSetLabelColor(item, color);
     }
     else if (commandName == "settextcolor")
     {
-        Vec3d colorv(1.0f, 1.0f, 1.0f);
+        Eigen::Vector3d colorv(1.0f, 1.0f, 1.0f);
         paramList->getVector("color", colorv);
-        Color color((float) colorv.x, (float) colorv.y, (float) colorv.z);
+        Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z());
         cmd = new CommandSetTextColor(color);
     }
     else if (commandName == "overlay")
@@ -1015,7 +1015,8 @@ int parseConstellations(CommandConstellations* cmd, string s, int act)
     return flags;
 }
 
-int parseConstellationColor(CommandConstellationColor* cmd, string s, Vec3d *col, int act)
+
+int parseConstellationColor(CommandConstellationColor* cmd, string s, Eigen::Vector3d *col, int act)
 {
     istringstream in(s);
 
@@ -1025,7 +1026,7 @@ int parseConstellationColor(CommandConstellationColor* cmd, string s, Vec3d *col
     if(!act)
         cmd->unsetColor();
     else
-        cmd->setColor((float)col->x, (float)col->y, (float)col->z);
+        cmd->setColor((float)col->x(), (float)col->y(), (float)col->z());
 
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)

@@ -28,7 +28,9 @@
 #include <algorithm>
 #include <cstdio>
 #include <cassert>
+#ifdef __CELVEC__
 #include "eigenport.h"
+#endif
 
 using namespace Eigen;
 using namespace std;
@@ -276,11 +278,17 @@ bool Globular::pick(const Ray3d& ray,
      * that blobs are considered points when globulars are built, but have size
      * when they are drawn.
      */
+#ifdef __CELVEC__
     Vec3d ellipsoidAxes(getRadius() * (form->scale.x + RADIUS_CORRECTION),
                         getRadius() * (form->scale.y + RADIUS_CORRECTION),
                         getRadius() * (form->scale.z + RADIUS_CORRECTION));
+#else
+    Vector3d ellipsoidAxes(getRadius() * (form->scale.x() + RADIUS_CORRECTION),
+                           getRadius() * (form->scale.y() + RADIUS_CORRECTION),
+                           getRadius() * (form->scale.z() + RADIUS_CORRECTION));
+#endif
 
-    Eigen::Vector3d p = getPosition();
+    Vector3d p = getPosition();
     return testIntersection(Ray3d(ray.origin - p, ray.direction).transform(getOrientation().cast<double>().toRotationMatrix()),
                             Ellipsoidd(ellipsoidAxes),
                             distanceToPicker,
@@ -323,20 +331,34 @@ void Globular::render(const GLContext& context,
                     float brightness,
                     float pixelSize)
 {
+#ifdef __CELVEC__
     renderGlobularPointSprites(context, fromEigen(offset), fromEigen(viewerOrientation), brightness, pixelSize);
+#else
+    renderGlobularPointSprites(context, offset, viewerOrientation, brightness, pixelSize);
+#endif
 }
 
 
 void Globular::renderGlobularPointSprites(const GLContext& /*unused*/,
+#ifdef __CELVEC__
                                       const Vec3f& offset,
                                       const Quatf& viewerOrientation,
+#else
+
+                                      const Vector3f& offset,
+                                      const Quaternionf& viewerOrientation,
+#endif
                                       float brightness,
                                       float pixelSize)
 {
     if (form == nullptr)
         return;
 
+#ifdef __CELVEC__
     float distanceToDSO = offset.length() - getRadius();
+#else
+    float distanceToDSO = offset.norm() - getRadius();
+#endif
     if (distanceToDSO < 0)
         distanceToDSO = 0;
 
@@ -387,6 +409,7 @@ void Globular::renderGlobularPointSprites(const GLContext& /*unused*/,
     glEnable (GL_TEXTURE_2D);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+#ifdef __CELVEC__
     Mat3f viewMat = viewerOrientation.toMatrix3();
     Vec3f v0 = Vec3f(-1, -1, 0) * viewMat;
     Vec3f v1 = Vec3f( 1, -1, 0) * viewMat;
@@ -397,6 +420,17 @@ void Globular::renderGlobularPointSprites(const GLContext& /*unused*/,
     Mat3f m =
         Mat3f::scaling(form->scale) * fromEigen(getOrientation()).toMatrix3() *
         Mat3f::scaling(tidalSize);
+#else
+    // XXX or transpose() instead of .adjoint()?
+    Matrix3f viewMat = viewerOrientation.toRotationMatrix();
+    Vector3f v0 = viewMat.adjoint() * Vector3f(-1, -1, 0);
+    Vector3f v1 = viewMat.adjoint() * Vector3f( 1, -1, 0);
+    Vector3f v2 = viewMat.adjoint() * Vector3f( 1,  1, 0);
+    Vector3f v3 = viewMat.adjoint() * Vector3f(-1,  1, 0);
+
+    float tidalSize = 2 * tidalRadius;
+    Matrix3f m = Scaling(form->scale) * getOrientation().toRotationMatrix() * Scaling(tidalSize);
+#endif
 
     vector<GBlob>* points = form->gblobs;
     unsigned int nPoints =
@@ -443,7 +477,11 @@ void Globular::renderGlobularPointSprites(const GLContext& /*unused*/,
     for (unsigned int i = 0; i < nPoints; ++i)
     {
         GBlob         b  = (*points)[i];
+#ifdef __CELVEC__
         Point3f       p  = b.position * m;
+#else
+        Vector3f      p  = m * b.position;
+#endif
         float    eta_2d  = b.radius_2d;
 
         /*! Note that the [axis,angle] input in globulars.dsc transforms the
@@ -465,7 +503,11 @@ void Globular::renderGlobularPointSprites(const GLContext& /*unused*/,
                    break;
         }
 
+#ifdef __CELVEC__
         float obsDistanceToStarRatio = (p + offset).distanceFromOrigin() / clipDistance;
+#else
+        float obsDistanceToStarRatio = (p + offset).norm() / clipDistance;
+#endif
         float saveSize = starSize;
 
         if (obsDistanceToStarRatio < 1.0f)
@@ -585,7 +627,11 @@ GlobularForm* buildGlobularForms(float c)
             float sthetu2 = sin(theta) * sqrt(1.0f - u * u);
 
             // x,y,z points within -0.5..+0.5, as required for consistency:
+#ifdef __CELVEC__
             b.position = 0.5f * Point3f(eta * sqrt(1.0f - u * u) * cos(theta), eta * sthetu2 , eta * u);
+#else
+            b.position = 0.5f * Vector3f(eta * sqrt(1.0f - u * u) * cos(theta), eta * sthetu2 , eta * u);
+#endif
 
             /*
              * Note: 2d projection in x-z plane, according to Celestia's
@@ -612,7 +658,11 @@ GlobularForm* buildGlobularForms(float c)
 
     auto* globularForm   = new GlobularForm();
     globularForm->gblobs = globularPoints;
+#ifdef __CELVEC__
     globularForm->scale  = Vec3f(1.0f, 1.0f, 1.0f);
+#else
+    globularForm->scale  = Vector3f(1.0f, 1.0f, 1.0f);
+#endif
 
     return globularForm;
 }

@@ -15,12 +15,17 @@
 #ifndef _GLOBULAR_H_
 #define _GLOBULAR_H_
 
+#include <Eigen/Geometry>
 #include <celengine/deepskyobj.h>
 
 
 struct GBlob
 {
+#ifdef __CELVEC__
     Point3f        position;
+#else
+    Eigen::Vector3f position;
+#endif
     unsigned int   colorIndex;
     float          radius_2d;
 };
@@ -28,7 +33,11 @@ struct GBlob
 struct GlobularForm
 {
     std::vector<GBlob>* gblobs;
+#ifdef __CELVEC__
     Vec3f scale;
+#else
+    Eigen::Vector3f scale;
+#endif
 };
 
 class Globular : public DeepSkyObject
@@ -63,8 +72,13 @@ class Globular : public DeepSkyObject
                         float brightness,
                         float pixelSize);
     virtual void renderGlobularPointSprites(const GLContext& context,
+#ifdef __CELVEC__
                                             const Vec3f& offset,
                                             const Quatf& viewerOrientation,
+#else
+                                            const Eigen::Vector3f& offset,
+                                            const Eigen::Quaternionf& viewerOrientation,
+#endif
                                             float brightness,
                                             float pixelSize);
     GlobularForm* getForm() const;
