@@ -21,7 +21,6 @@
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/intersect.h>
-#include "eigenport.h"
 
 using namespace Eigen;
 using namespace std;

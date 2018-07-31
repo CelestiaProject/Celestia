@@ -16,7 +16,6 @@
 #include "trajmanager.h"
 #include "rotationmanager.h"
 #include "universe.h"
-#include "eigenport.h"
 #include <celephem/customorbit.h>
 #include <celephem/customrotation.h>
 #include <celephem/spiceorbit.h>
