@@ -604,7 +604,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
             return false;
         }
 
-        xindex->insert(xindex->end(), ent);
+        xindex->push_back(ent);
 
         record++;
     }

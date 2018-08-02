@@ -141,7 +141,7 @@ findStars(const StarDatabase& stardb, Pred pred, int nStars)
     // Move the best matching stars into the vector
     finalStars->reserve(nStars);
     for (const auto& star : firstStars)
-        finalStars->insert(finalStars->end(), star);
+        finalStars->push_back(star);
 
     return finalStars;
 }

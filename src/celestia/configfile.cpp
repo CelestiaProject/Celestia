@@ -155,8 +155,7 @@ CelestiaConfig* ReadCelestiaConfig(const string& filename, CelestiaConfig *confi
                 // assert(catalogNameVal != nullptr);
                 if (catalogNameVal->getType() == Value::StringType)
                 {
-                    config->solarSystemFiles.insert(config->solarSystemFiles.end(),
-                                                    WordExp(catalogNameVal->getString()));
+                    config->solarSystemFiles.push_back(WordExp(catalogNameVal->getString()));
                 }
                 else
                 {
@@ -239,8 +238,7 @@ CelestiaConfig* ReadCelestiaConfig(const string& filename, CelestiaConfig *confi
             {
                 if (dirNameVal->getType() == Value::StringType)
                 {
-                    config->extrasDirs.insert(config->extrasDirs.end(),
-                                              WordExp(dirNameVal->getString()));
+                    config->extrasDirs.push_back(WordExp(dirNameVal->getString()));
                 }
                 else
                 {
@@ -251,8 +249,7 @@ CelestiaConfig* ReadCelestiaConfig(const string& filename, CelestiaConfig *confi
         }
         else if (extrasDirsVal->getType() == Value::StringType)
         {
-            config->extrasDirs.insert(config->extrasDirs.end(),
-                                      WordExp(extrasDirsVal->getString()));
+            config->extrasDirs.push_back(WordExp(extrasDirsVal->getString()));
         }
         else
         {

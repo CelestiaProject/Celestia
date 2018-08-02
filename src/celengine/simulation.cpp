@@ -22,7 +22,7 @@ Simulation::Simulation(Universe* _universe) :
     universe(_universe)
 {
     activeObserver = new Observer();
-    observers.insert(observers.end(), activeObserver);
+    observers.push_back(activeObserver);
 }
 
 
@@ -172,7 +172,7 @@ Observer& Simulation::getObserver()
 Observer* Simulation::addObserver()
 {
     Observer* o = new Observer();
-    observers.insert(observers.end(), o);
+    observers.push_back(o);
     return o;
 }
 

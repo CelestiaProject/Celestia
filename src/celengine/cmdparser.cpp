@@ -84,7 +84,7 @@ CommandSequence* CommandParser::parse()
         }
         else
         {
-            seq->insert(seq->end(), cmd);
+            seq->push_back(cmd);
         }
 
         ttype = tokenizer->nextToken();
@@ -110,7 +110,7 @@ const vector<string>* CommandParser::getErrors() const
 
 void CommandParser::error(const string errMsg)
 {
-    errorList.insert(errorList.end(), errMsg);
+    errorList.push_back(errMsg);
 }
 
 

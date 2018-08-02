@@ -136,7 +136,7 @@ ValueArray* Parser::readArray()
     Value* v = readValue();
     while (v != nullptr)
     {
-        array->insert(array->end(), v);
+        array->push_back(v);
         v = readValue();
     }
 

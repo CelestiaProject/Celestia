@@ -805,9 +805,7 @@ vector<string>* Body::getAlternateSurfaceNames() const
     if (altSurfaces)
     {
         for (const auto& s : *altSurfaces)
-        {
-            names->insert(names->end(), s.first);
-        }
+            names->push_back(s.first);
     }
 
     return names;
@@ -822,7 +820,7 @@ void Body::addLocation(Location* loc)
 
     if (!locations)
         locations = new vector<Location*>();
-    locations->insert(locations->end(), loc);
+    locations->push_back(loc);
     loc->setParentBody(this);
 }
 
@@ -1111,7 +1109,7 @@ void PlanetarySystem::removeAlias(const Body* body, const string& alias)
 
 void PlanetarySystem::addBody(Body* body)
 {
-    satellites.insert(satellites.end(), body);
+    satellites.push_back(body);
     addBodyToNameIndex(body);
 }
 

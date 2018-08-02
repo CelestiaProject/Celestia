@@ -46,7 +46,7 @@ const Asterism::Chain& Asterism::getChain(int index) const
 
 void Asterism::addChain(Asterism::Chain& chain)
 {
-    chains.insert(chains.end(), &chain);
+    chains.push_back(&chain);
 }
 
 
@@ -156,7 +156,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
             }
         }
 
-        asterisms->insert(asterisms->end(), ast);
+        asterisms->push_back(ast);
 
         delete chainsValue;
     }

@@ -37,7 +37,7 @@ void GLContext::init(const vector<string>& ignoreExt)
             // scan the ignore list
             auto iter = std::find(ignoreExt.begin(), ignoreExt.end(), ext);
             if (iter == ignoreExt.end())
-                extensions.insert(extensions.end(), ext);
+                extensions.push_back(ext);
 
             if (*next == '\0')
                 break;

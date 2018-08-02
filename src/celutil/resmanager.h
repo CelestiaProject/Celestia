@@ -74,7 +74,7 @@ template<class T> class ResourceManager
         else
         {
             ResourceHandle h = handles.size();
-            resources.insert(resources.end(), info);
+            resources.push_back(info);
             handles.insert(ResourceHandleMapValue(info, h));
             return h;
         }

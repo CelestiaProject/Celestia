@@ -9083,7 +9083,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
                 }
 
                 p.color = Color(starColor, alpha);
-                glareParticles->insert(glareParticles->end(), p);
+                glareParticles->push_back(p);
                 ++nBright;
             }
         }
@@ -9331,7 +9331,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             rle.discSizeInPixels = discSizeInPixels;
             rle.appMag = appMag;
             rle.isOpaque = true;
-            renderList->insert(renderList->end(), rle);
+            renderList->push_back(rle);
         }
     }
 }
@@ -10594,7 +10594,7 @@ void Renderer::markSettingsChanged()
 void Renderer::addWatcher(RendererWatcher* watcher)
 {
     assert(watcher != nullptr);
-    watchers.insert(watchers.end(), watcher);
+    watchers.push_back(watcher);
 }
 
 

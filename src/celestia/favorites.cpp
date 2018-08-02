@@ -58,7 +58,7 @@ FavoritesList* ReadFavoritesList(istream& in)
             fav->isFolder = false;
         if(fav->isFolder)
         {
-            favorites->insert(favorites->end(), fav);
+            favorites->push_back(fav);
             continue;
         }
 
@@ -106,7 +106,7 @@ FavoritesList* ReadFavoritesList(istream& in)
         else
             fav->coordSys = ObserverFrame::Universal;
 
-        favorites->insert(favorites->end(), fav);
+        favorites->push_back(fav);
     }
 
     return favorites;

@@ -135,7 +135,7 @@ int EclipseFinder::CalculateEclipses()
     {
         eclipse = new Eclipse(0.);
         eclipse->planete = "None";
-        Eclipses_.insert(Eclipses_.end(), *eclipse);
+        Eclipses_.push_back(*eclipse);
         delete eclipse;
         return 1;
     }
@@ -143,7 +143,7 @@ int EclipseFinder::CalculateEclipses()
     {
         eclipse = new Eclipse(0.);
         eclipse->planete = "None";
-        Eclipses_.insert(Eclipses_.end(), *eclipse);
+        Eclipses_.push_back(*eclipse);
         delete eclipse;
         return 1;
     }
@@ -210,7 +210,7 @@ int EclipseFinder::CalculateEclipses()
                     eclipse->body = receiver;
                     eclipse->planete = planete->getName();
                     eclipse->sattelite = satellites->getBody(j)->getName();
-                    Eclipses_.insert(Eclipses_.end(), *eclipse);
+                    Eclipses_.push_back(*eclipse);
                     delete eclipse;
                 }
             }
@@ -222,7 +222,7 @@ int EclipseFinder::CalculateEclipses()
     {
         eclipse = new Eclipse(0.);
         eclipse->planete = "None";
-        Eclipses_.insert(Eclipses_.end(), *eclipse);
+        Eclipses_.push_back(*eclipse);
         delete eclipse;
     }
     return 0;

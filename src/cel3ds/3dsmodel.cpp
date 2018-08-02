@@ -156,9 +156,9 @@ uint16_t M3DTriangleMesh::getFaceCount() const
 
 void M3DTriangleMesh::addFace(uint16_t v0, uint16_t v1, uint16_t v2)
 {
-    faces.insert(faces.end(), v0);
-    faces.insert(faces.end(), v1);
-    faces.insert(faces.end(), v2);
+    faces.push_back(v0);
+    faces.push_back(v1);
+    faces.push_back(v2);
 }
 
 uint32_t M3DTriangleMesh::getSmoothingGroups(uint16_t face) const
@@ -168,7 +168,7 @@ uint32_t M3DTriangleMesh::getSmoothingGroups(uint16_t face) const
 
 void M3DTriangleMesh::addSmoothingGroups(uint32_t smGroups)
 {
-    smoothingGroups.insert(smoothingGroups.end(), smGroups);
+    smoothingGroups.push_back(smGroups);
 }
 
 uint16_t M3DTriangleMesh::getSmoothingGroupCount() const
@@ -210,7 +210,7 @@ uint32_t M3DModel::getTriMeshCount()
 
 void M3DModel::addTriMesh(M3DTriangleMesh* triMesh)
 {
-    triMeshes.insert(triMeshes.end(), triMesh);
+    triMeshes.push_back(triMesh);
 }
 
 void M3DModel::setName(const string& _name)
@@ -244,7 +244,7 @@ uint32_t M3DScene::getModelCount() const
 
 void M3DScene::addModel(M3DModel* model)
 {
-    models.insert(models.end(), model);
+    models.push_back(model);
 }
 
 M3DMaterial* M3DScene::getMaterial(uint32_t n) const
@@ -259,7 +259,7 @@ uint32_t M3DScene::getMaterialCount() const
 
 void M3DScene::addMaterial(M3DMaterial* material)
 {
-    materials.insert(materials.end(), material);
+    materials.push_back(material);
 }
 
 M3DColor M3DScene::getBackgroundColor() const
