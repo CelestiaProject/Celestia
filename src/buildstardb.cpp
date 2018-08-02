@@ -786,7 +786,7 @@ bool ReadStarRecord(istream& in)
         cout << "Huge BTmag error for HIP " << star.HIPCatalogNumber << " from Line " << lineno << " ." << endl;
     }
 
-    stars.insert(stars.end(), star);
+    stars.push_back(star);
 
     return true;
 }
@@ -873,7 +873,7 @@ bool ReadComponentRecord(istream& in)
         }
     }
 
-    components.insert(components.end(), component);
+    components.push_back(component);
 
     return true;
 };
@@ -985,7 +985,7 @@ void CreateCompanionList()
                 star.CCDMIdentifier = comp.star->CCDMIdentifier;
                 star.parallaxError = comp.star->parallaxError;
 
-                companions.insert(companions.end(), star);
+                companions.push_back(star);
             }
         }
     }
@@ -1116,7 +1116,7 @@ int main(int argc, char* argv[])
         cout << "Read " << stars.size() << " stars from main database.\n";
         cout << "Adding the Sun...\n";
     }
-    stars.insert(stars.end(), TheSun());
+    stars.push_back(TheSun());
 
     if (verbose>=0)
         cout << "Sorting stars...\n";
@@ -1124,7 +1124,7 @@ int main(int argc, char* argv[])
         starIndex.reserve(stars.size());
         for (const auto& star : stars)
         {
-            starIndex.insert(starIndex.end(), &star);
+            starIndex.push_back(&star);
         }
 
         HIPCatalogComparePredicate pred;

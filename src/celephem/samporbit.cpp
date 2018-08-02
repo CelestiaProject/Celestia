@@ -109,7 +109,7 @@ template <typename T> void SampledOrbit<T>::addSample(double t, double x, double
     samp.y = (T) y;
     samp.z = (T) z;
     samp.t = t;
-    samples.insert(samples.end(), samp);
+    samples.push_back(samp);
 }
 
 template <typename T> double SampledOrbit<T>::getPeriod() const

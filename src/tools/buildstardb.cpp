@@ -396,7 +396,7 @@ bool ReadStarRecord(istream& in)
             star.parallaxError = (int8_t) (parallaxError / star.parallax * 200);
     }
 
-    stars.insert(stars.end(), star);
+    stars.push_back(star);
 
     return true;
 }
@@ -483,7 +483,7 @@ bool ReadComponentRecord(istream& in)
         }
     }
 
-    components.insert(components.end(), component);
+    components.push_back(component);
 
     return true;
 };
@@ -653,7 +653,7 @@ void CreateCompanionList()
                 star.CCDMIdentifier = iter->star->CCDMIdentifier;
                 star.parallaxError = iter->star->parallaxError;
 
-                companions.insert(companions.end(), star);
+                companions.push_back(star);
             }
         }
     }
@@ -703,7 +703,7 @@ int main(int argc, char* argv[])
     cout << "Read " << stars.size() << " stars from main database.\n";
 
     cout << "Adding the Sun...\n";
-    stars.insert(stars.end(), TheSun());
+    stars.push_back(TheSun());
 
     cout << "Sorting stars...\n";
     {
@@ -711,7 +711,7 @@ int main(int argc, char* argv[])
         for (vector<HipparcosStar>::iterator iter = stars.begin();
              iter != stars.end(); iter++)
         {
-            starIndex.insert(starIndex.end(), iter);
+            starIndex.push_back(iter);
         }
 
         HIPCatalogComparePredicate pred;

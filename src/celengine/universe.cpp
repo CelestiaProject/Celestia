@@ -188,7 +188,7 @@ void Universe::markObject(const Selection& sel,
     marker.setPriority(priority);
     marker.setOccludable(occludable);
     marker.setSizing(sizing);
-    markers->insert(markers->end(), marker);
+    markers->push_back(marker);
 }
 
 

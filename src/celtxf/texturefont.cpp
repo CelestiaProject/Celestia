@@ -204,7 +204,7 @@ void TextureFont::bind()
 
 void TextureFont::addGlyph(const TextureFont::Glyph& g)
 {
-    glyphs.insert(glyphs.end(), g);
+    glyphs.push_back(g);
     if (g.width > maxWidth)
         maxWidth = g.width;
 }

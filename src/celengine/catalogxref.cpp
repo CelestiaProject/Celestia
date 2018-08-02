@@ -113,7 +113,7 @@ void CatalogCrossReference::addEntry(uint32_t catalogNumber, Star* star)
     e.catalogNumber = catalogNumber;
     e.star = star;
 
-    entries.insert(entries.end(), e);
+    entries.push_back(e);
 }
 
 void CatalogCrossReference::sortEntries()

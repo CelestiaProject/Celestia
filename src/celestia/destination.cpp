@@ -70,7 +70,7 @@ DestinationList* ReadDestinationList(istream& in)
                     dest->distance = astro::AUtoLightYears(dest->distance);
             }
 
-            destinations->insert(destinations->end(), dest);
+            destinations->push_back(dest);
         }
 
         delete destValue;

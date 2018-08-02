@@ -43,9 +43,9 @@ void ConstellationBoundaries::moveto(float ra, float dec)
     Vector3f v = astro::equatorialToEclipticCartesian(ra, dec, BoundariesDrawDistance);
     if (currentChain->size() > 1)
     {
-        chains.insert(chains.end(), currentChain);
+        chains.push_back(currentChain);
         currentChain = new Chain();
-        currentChain->insert(currentChain->end(), v);
+        currentChain->push_back(v);
     }
     else
     {

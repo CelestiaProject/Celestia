@@ -2629,8 +2629,8 @@ void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
     view->parent = split;
     view->zoom = av->zoom;
 
-    views.insert(views.end(), split);
-    views.insert(views.end(), view);
+    views.push_back(split);
+    views.push_back(view);
 
     setFOVFromZoom();
 }
@@ -4301,7 +4301,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
     sim->setFaintestVisible(config->faintestVisible);
 
     View* view = new View(View::ViewWindow, sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f);
-    views.insert(views.end(), view);
+    views.push_back(view);
     activeView = views.begin();
 
     if (!compareIgnoringCase(getConfig()->cursor, "inverting crosshair"))
@@ -4759,7 +4759,7 @@ CelestiaConfig* CelestiaCore::getConfig() const
 void CelestiaCore::addWatcher(CelestiaWatcher* watcher)
 {
     assert(watcher != nullptr);
-    watchers.insert(watchers.end(), watcher);
+    watchers.push_back(watcher);
 }
 
 void CelestiaCore::removeWatcher(CelestiaWatcher* watcher)
