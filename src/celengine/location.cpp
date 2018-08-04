@@ -16,13 +16,13 @@ using namespace Eigen;
 using namespace std;
 
 
-static map<string, uint32_t> FeatureNameToFlag;
+static map<string, Location::FeatureType> FeatureNameToFlag;
 static bool featureTableInitialized = false;
 
 struct FeatureNameEntry
 {
     const char* name;
-    uint32_t flag;
+    Location::FeatureType flag;
 };
 
 FeatureNameEntry FeatureNames[] =
@@ -132,13 +132,13 @@ void Location::setInfoURL(const string&)
 }
 
 
-uint32_t Location::getFeatureType() const
+Location::FeatureType Location::getFeatureType() const
 {
     return featureType;
 }
 
 
-void Location::setFeatureType(uint32_t _featureType)
+void Location::setFeatureType(Location::FeatureType _featureType)
 {
     featureType = _featureType;
 }
@@ -155,13 +155,13 @@ static void initFeatureTypeTable()
 }
 
 
-uint32_t Location::parseFeatureType(const string& s)
+Location::FeatureType Location::parseFeatureType(const string& s)
 {
     if (!featureTableInitialized)
         initFeatureTypeTable();
 
-    int flag = FeatureNameToFlag[s];
-    return flag != 0 ? flag : (uint32_t) Other;
+    auto flag = (uint32_t)FeatureNameToFlag[s];
+    return flag != 0 ? (Location::FeatureType)flag : Other;
 }
 
 

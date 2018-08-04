@@ -34,9 +34,6 @@ class Location
     float getImportance() const;
     void setImportance(float);
 
-    uint32_t getFeatureType() const;
-    void setFeatureType(uint32_t);
-
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
 
@@ -51,8 +48,6 @@ class Location
 
     Eigen::Vector3d getPlanetocentricPosition(double) const;
     Eigen::Vector3d getHeliocentricPosition(double) const;
-
-    static uint32_t parseFeatureType(const std::string&);
 
     enum FeatureType
     {
@@ -90,6 +85,11 @@ class Location
         Other          = 0x80000000,
     };
 
+    static FeatureType parseFeatureType(const std::string&);
+
+    FeatureType getFeatureType() const;
+    void setFeatureType(FeatureType);
+
  private:
     Body* parent{ nullptr };
     std::string name;
@@ -97,7 +97,7 @@ class Location
     Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
     float size{ 0.0f };
     float importance{ -1.0f };
-    uint32_t featureType{ Other };
+    FeatureType featureType{ Other };
     bool overrideLabelColor{ false };
     Color labelColor{ 1.0f, 1.0f, 1.0f };
     std::string* infoURL{ nullptr };
