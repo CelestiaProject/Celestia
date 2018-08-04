@@ -10,6 +10,12 @@ QT += opengl
 QT += xml
 QT += multimedia
 
+load(configure)
+qtCompileTest(spice)
+qtCompileTest(byteswap)
+qtCompileTest(eigen)
+qtCompileTest(glew)
+
 unix {
     !exists(config.h):system(touch config.h)
     QMAKE_DISTCLEAN += config.h
@@ -349,15 +355,15 @@ APP_SOURCES = \
     src/celestia/scriptmenu.cpp \
     src/celestia/url.cpp \
     src/celestia/celx.cpp \
-        src/celestia/celx_celestia.cpp \
-        src/celestia/celx_frame.cpp \
-        src/celestia/celx_gl.cpp \
-        src/celestia/celx_object.cpp \
-        src/celestia/celx_observer.cpp \
-        src/celestia/celx_phase.cpp \
-        src/celestia/celx_position.cpp \
-        src/celestia/celx_rotation.cpp \
-        src/celestia/celx_vector.cpp
+    src/celestia/celx_celestia.cpp \
+    src/celestia/celx_frame.cpp \
+    src/celestia/celx_gl.cpp \
+    src/celestia/celx_object.cpp \
+    src/celestia/celx_observer.cpp \
+    src/celestia/celx_phase.cpp \
+    src/celestia/celx_position.cpp \
+    src/celestia/celx_rotation.cpp \
+    src/celestia/celx_vector.cpp
 
 APP_HEADERS = \
     src/celestia/CelestiaCoreApplication.h \
@@ -371,16 +377,16 @@ APP_HEADERS = \
     src/celestia/url.h \
     src/celestia/AbstractAudioManager.h \
     src/celestia/celx.h \
-        src/celestia/celx_celestia.h \
-        src/celestia/celx_internal.h \
-        src/celestia/celx_frame.h \
-        src/celestia/celx_gl.h \
-        src/celestia/celx_object.h \
-        src/celestia/celx_observer.h \
-        src/celestia/celx_phase.h \
-        src/celestia/celx_position.h \
-        src/celestia/celx_rotation.h \
-        src/celestia/celx_vector.h
+    src/celestia/celx_celestia.h \
+    src/celestia/celx_internal.h \
+    src/celestia/celx_frame.h \
+    src/celestia/celx_gl.h \
+    src/celestia/celx_object.h \
+    src/celestia/celx_observer.h \
+    src/celestia/celx_phase.h \
+    src/celestia/celx_position.h \
+    src/celestia/celx_rotation.h \
+    src/celestia/celx_vector.h
 
 macx {
     APP_SOURCES -= src/celestia/imagecapture.cpp
@@ -447,16 +453,30 @@ CURVEPLOT_SOURCES = \
 CURVEPLOT_HEADERS = \
     thirdparty/curveplot/include/curveplot.h
 
-THIRDPARTY_SOURCES = $$GLEW_SOURCES $$CURVEPLOT_SOURCES
-THIRDPARTY_HEADERS = $$GLEW_HEADERS $$CURVEPLOT_HEADERS
+THIRDPARTY_SOURCES = $$CURVEPLOT_SOURCES
+THIRDPARTY_HEADERS = $$CURVEPLOT_HEADERS
 
-DEFINES += GLEW_STATIC
+!config_glew {
+    THIRDPARTY_SOURCES += $$GLEW_SOURCES
+    THIRDPARTY_HEADERS += $$GLEW_HEADERS
+    INCLUDEPATH += thirdparty/glew/include
+    DEFINES += GLEW_STATIC
+}
+
+#### common definitions
+DEFINES += CELX
 
 # SPICE support
-EPHEM_SOURCES += $$SPICE_SOURCES
-EPHEM_HEADERS += $$SPICE_HEADERS
-DEFINES += USE_SPICE
+config_spice {
+    EPHEM_SOURCES += $$SPICE_SOURCES
+    EPHEM_HEADERS += $$SPICE_HEADERS
+    DEFINES += USE_SPICE
+}
 
+# byteswap.h
+config_byteswap {
+    DEFINES += HAVE_BYTESWAP_H
+}
 
 SOURCES = \
     $$UTIL_SOURCES \
@@ -499,13 +519,12 @@ INCLUDEPATH += .
 INCLUDEPATH += src
 
 # Third party libraries
-INCLUDEPATH += thirdparty/glew/include
-INCLUDEPATH += thirdparty/Eigen
+!config_eigen {
+    INCLUDEPATH += thirdparty/Eigen
+}
+
 INCLUDEPATH += thirdparty/curveplot/include
 
-release {
-    DEFINES += EIGEN_NO_DEBUG
-}
 
 CATALOG_SOURCE = data
 CATALOG_FILES = \
@@ -590,33 +609,27 @@ win32 {
         windows/inc/libjpeg \
         windows/inc/lua \
         windows/inc/spice
-	
-	#CONFIG += staticlib
-	#CONFIG += /MT
-	#QMAKE_CXXFLAGS += /MT
-	
-   !contains(QMAKE_TARGET.arch, x86_64) {
-    LIBS += -L$$PWD/windows/lib/x86 \
+
+    #CONFIG += staticlib
+    #CONFIG += /MT
+    #QMAKE_CXXFLAGS += /MT
+
+    LIBS += opengl32.lib \
+        -lglu32 \
+        -luser32 \
         -lzlib \
         -llibpng \
         -llibjpeg \
         -llua51 \
-        -lcspice \
-        -lvfw32\
+        -lvfw32 \
         -llibintl
-}
-else{
-    LIBS += -L$$PWD/windows/lib/x64 \
-        -lzlib \
-        -llibpng \
-        -llibjpeg \
-        -llua51 \
-        -lcspice64 \
-        -lvfw32\
-        -llibintl
-}
-    LIBS +=opengl32.lib -lglu32 -luser32
-		
+
+    !contains(QMAKE_TARGET.arch, x86_64) {
+        LIBS += -L$$PWD/windows/lib/x86 -lcspice
+    } else{
+        LIBS += -L$$PWD/windows/lib/x64 -lcspice64
+    }
+
     SOURCES += src/celestia/avicapture.cpp
     HEADERS += src/celestia/avicapture.h
 
@@ -648,9 +661,17 @@ unix {
     equals(LUAPC, "lua52"): DEFINES += LUA_VER=0x050200
     equals(LUAPC, "lua51"): DEFINES += LUA_VER=0x050100
 
-    PKGCONFIG += glu $$LUAPC libpng theora
+    PKGCONFIG += glu $$LUAPC libpng libjpeg theora
+}
+unix:config_spice {
     INCLUDEPATH += /usr/local/cspice/include
-    LIBS += -ljpeg /usr/local/cspice/lib/cspice.a
+    LIBS += /usr/local/cspice/lib/cspice.a
+}
+unix:config_eigen {
+    PKGCONFIG += eigen3
+}
+unix:config_glew {
+    PKGCONFIG += glew
 }
 
 macx {
@@ -710,13 +731,10 @@ macx {
         FONTS \
         SHADERS \
         EPHEMERIDES
-
+}
+macx:config_spice {
     LIBS += macosx/lib/cspice.a
 }
-
-DEFINES += CELX
-
-# QMAKE_CXXFLAGS += -ffast-math
 
 unix {
 
@@ -733,29 +751,29 @@ unix {
 
     #MAKE INSTALL
 
-    target.path =$$BINDIR
+    target.path           = $$BINDIR
 
-    data.path   = $$WORKDIR/data
-    data.files  = $$CATALOG_SOURCE/*
-    flares.path     = $$WORKDIR/textures
-    flares.files   += textures/*.jpg textures/*.png
-    textures.path   = $$WORKDIR/textures/medres
-    textures.files += $$TEXTURE_SOURCE/*.jpg $$TEXTURE_SOURCE/*.png
-    lores_textures.path  =  $$WORKDIR/textures/lores
+    data.path             = $$WORKDIR/data
+    data.files            = $$CATALOG_SOURCE/*
+    flares.path           = $$WORKDIR/textures
+    flares.files         += textures/*.jpg textures/*.png
+    textures.path         = $$WORKDIR/textures/medres
+    textures.files       += $$TEXTURE_SOURCE/*.jpg $$TEXTURE_SOURCE/*.png
+    lores_textures.path   = $$WORKDIR/textures/lores
     lores_textures.files += $$LORES_TEXTURE_SOURCE/*.jpg \
                             $$LORES_TEXTURE_SOURCE/*.png
-    hires_textures.path  =  $$WORKDIR/textures/hires
-    hires_textures.files =  $$HIRES_TEXTURE_SOURCE/*.jpg
-    models.path    = $$WORKDIR/models
-    models.files  += $$MODEL_SOURCE/*.cmod $$MODEL_SOURCE/*.png
-    shaders.path   = $$WORKDIR/shaders
-    shaders.files += $$SHADER_SOURCE/*.vp $$SHADER_SOURCE/*.fp
-    fonts.path     = $$WORKDIR/fonts
-    fonts.files    = $$FONT_SOURCE/*.txf
-    scripts.path   = $$WORKDIR/scripts
-    scripts.files  = scripts/*.celx
-    configuration.path = $$WORKDIR
-    configuration.files += $$CONFIGURATION_FILES \
+    hires_textures.path   = $$WORKDIR/textures/hires
+    hires_textures.files  = $$HIRES_TEXTURE_SOURCE/*.jpg
+    models.path           = $$WORKDIR/models
+    models.files         += $$MODEL_SOURCE/*.cmod $$MODEL_SOURCE/*.png
+    shaders.path          = $$WORKDIR/shaders
+    shaders.files        += $$SHADER_SOURCE/*.vp $$SHADER_SOURCE/*.fp
+    fonts.path            = $$WORKDIR/fonts
+    fonts.files           = $$FONT_SOURCE/*.txf
+    scripts.path          = $$WORKDIR/scripts
+    scripts.files         = scripts/*.celx
+    configuration.path    = $$WORKDIR
+    configuration.files  += $$CONFIGURATION_FILES \
                            $$CONFIGURATION_SOURCE/guide.cel \
                            $$CONFIGURATION_SOURCE/demo.cel \
                            $$CONFIGURATION_SOURCE/controls.txt \
@@ -764,31 +782,30 @@ unix {
                            $$CONFIGURATION_SOURCE/ChangeLog \
                            $$CONFIGURATION_SOURCE/AUTHORS
 
-    locale.path = $$WORKDIR/locale
-    locale.files = locale/*
+    locale.path           = $$WORKDIR/locale
+    locale.files          = locale/*
 
-    extras.path = $$WORKDIR/extras
-    extras.files = extras/*
-    extras-standard.path = $$WORKDIR/extras-standard
+    extras.path           = $$WORKDIR/extras
+    extras.files          = extras/*
+    extras-standard.path  = $$WORKDIR/extras-standard
     extras-standard.files = extras-standard/*
 
-    #system(sh src/celestia/qt/data/$${TARGET}.desktop.sh $${PREFIX} >src/celestia/qt/data/$${TARGET}.desktop)
-    desktop_file.target = src/celestia/qt/data/$${TARGET}.desktop
-    desktop_file.commands = sh src/celestia/qt/data/celestia.desktop.sh $${PREFIX} >$$desktop_file.target
-    desktop_file.depends += src/celestia/qt/data/celestia.desktop.sh
-    QMAKE_EXTRA_TARGETS += desktop_file
-    PRE_TARGETDEPS += $$desktop_file.target
-    QMAKE_CLEAN += src/celestia/qt/data/celestia.desktop
+    desktop_file.target   = $${TARGET}.desktop
+    desktop_file.commands = sh $$PWD/src/celestia/qt/data/celestia.desktop.sh $${PREFIX} >$$desktop_file.target
+    desktop_file.depends += $$PWD/src/celestia/qt/data/celestia.desktop.sh
+    QMAKE_EXTRA_TARGETS  += desktop_file
+    PRE_TARGETDEPS       += $$desktop_file.target
+    QMAKE_CLEAN          += $$desktop_file.target
 
-    desktop.path = /usr/share/applications
-    desktop.files += src/celestia/qt/data/celestia.desktop
-    desktop.CONFIG += no_check_exist
+    desktop.path          = /usr/share/applications
+    desktop.files        += $$desktop_file.target
+    desktop.CONFIG       += no_check_exist
 
-    icon128.path = /usr/share/icons/hicolor/128x128/apps
-    icon128.files += src/celestia/qt/data/celestia.png
+    icon128.path          = /usr/share/icons/hicolor/128x128/apps
+    icon128.files        += src/celestia/qt/data/celestia.png
 
-    splash.path = $$WORKDIR/splash
-    splash.files = splash.png
+    splash.path           = $$WORKDIR/splash
+    splash.files          = splash.png
 
     INSTALLS += target data textures lores_textures hires_textures \
     flares models shaders fonts scripts locale extras extras-standard \
