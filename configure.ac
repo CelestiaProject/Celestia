@@ -213,7 +213,7 @@ AC_CHECK_HEADERS(GL/gl.h, ,
                  [AC_MSG_ERROR([No gl.h found. See INSTALL file for help.])])
 
 dnl Check for OpenGL. Taken partly from the plib sources.
-AC_CHECK_LIB(GL, glNewList, GL_LIBS="-lGL")
+AC_CHECK_LIB(GL, glNewList, GL_LIBS="-lGL -lGLEW")
 AC_SUBST(GL_LIBS)
 
 if (test "x$ac_cv_lib_GL_glNewList" = "xno"); then
