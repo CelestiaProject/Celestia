@@ -919,6 +919,9 @@ bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
 // Returns true if a handler is registered for the tick event
 bool LuaState::handleTickEvent(double dt)
 {
+    if (!costate)
+        return true;
+
     CelestiaCore* appCore = getAppCore(costate, NoErrors);
     if (appCore == NULL)
     {
