@@ -3424,7 +3424,7 @@ static int celestia_requestsystemaccess(lua_State* l)
 static int celestia_getscriptpath(lua_State* l)
 {
     // ignore possible argument for future extensions
-    Celx_CheckArgs(l, 1, 1, "No argument expected for celestia:requestsystemaccess()");
+    Celx_CheckArgs(l, 1, 1, "No argument expected for celestia:getscriptpath()");
     this_celestia(l);
     lua_pushstring(l, "celestia-scriptpath");
     lua_gettable(l, LUA_REGISTRYINDEX);
