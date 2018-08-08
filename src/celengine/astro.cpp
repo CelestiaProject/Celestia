@@ -41,7 +41,7 @@ const double astro::SOLAR_POWER       = 3.8462e26;  // Watts
 // Angle between J2000 mean equator and the ecliptic plane.
 // 23 deg 26' 21".448 (Seidelmann, _Explanatory Supplement to the
 // Astronomical Almanac_ (1992), eqn 3.222-1.
-constexpr double astro::J2000Obliquity = degToRad(23.4392911);
+const double astro::J2000Obliquity = degToRad(23.4392911);
 
 static const Quaterniond ECLIPTIC_TO_EQUATORIAL_ROTATION = XRotation(-astro::J2000Obliquity);
 static const Matrix3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toRotationMatrix();

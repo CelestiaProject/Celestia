@@ -73,7 +73,7 @@ static void InitTrigArrays()
 }
 
 
-static constexpr float getSphereLOD(float discSizeInPixels)
+static float getSphereLOD(float discSizeInPixels)
 {
     if (discSizeInPixels < 10)
         return -3.0f;
