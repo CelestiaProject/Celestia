@@ -276,7 +276,7 @@ uint32_t StarDatabase::crossIndex(const Catalog catalog, const uint32_t celCatal
     // A simple linear search.  We could store cross indices sorted by
     // both catalog numbers and trade memory for speed
     auto iter = std::find_if(xindex->begin(), xindex->end(),
-                             [celCatalogNumber](auto& o){ return celCatalogNumber == o.celCatalogNumber; });
+                             [celCatalogNumber](CrossIndexEntry& o){ return celCatalogNumber == o.celCatalogNumber; });
     if (iter != xindex->end())
         return iter->catalogNumber;
 

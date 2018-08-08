@@ -15,12 +15,14 @@
 
 #define PI 3.14159265358979323846
 
+#define CONSTEXPR /**/
+
 // TODO: All of the functions in the 'Math' class should be
 // moved to the celmath namespace.
 namespace celmath
 {
     /** Return the natural logarithm of 2 */
-    template<class T> constexpr T Ln2()
+    template<class T> CONSTEXPR T Ln2()
     {
         return (T) 0.693147180559945;
     }
@@ -52,32 +54,32 @@ typedef Math<float> Mathf;
 typedef Math<double> Mathd;
 
 
-template<class T> constexpr T degToRad(T d)
+template<class T> CONSTEXPR T degToRad(T d)
 {
     return d / 180 * static_cast<T>(PI);
 }
 
-template<class T> constexpr T radToDeg(T r)
+template<class T> CONSTEXPR T radToDeg(T r)
 {
     return r * 180 / static_cast<T>(PI);
 }
 
-template<class T> constexpr T abs(T x)
+template<class T> CONSTEXPR T abs(T x)
 {
     return (x < 0) ? -x : x;
 }
 
-template<class T> constexpr T square(T x)
+template<class T> CONSTEXPR T square(T x)
 {
     return x * x;
 }
 
-template<class T> constexpr T cube(T x)
+template<class T> CONSTEXPR T cube(T x)
 {
     return x * x * x;
 }
 
-template<class T> constexpr T clamp(T x)
+template<class T> CONSTEXPR T clamp(T x)
 {
     if (x < 0)
         return 0;
@@ -87,7 +89,7 @@ template<class T> constexpr T clamp(T x)
         return x;
 }
 
-template<class T> constexpr T sign(T x)
+template<class T> CONSTEXPR T sign(T x)
 {
     if (x < 0)
         return -1;
@@ -108,12 +110,12 @@ template<class T> T pfmod(T x, T y)
         return x - quotient * y;
 }
 
-template<class T> constexpr T circleArea(T r)
+template<class T> CONSTEXPR T circleArea(T r)
 {
     return (T) PI * r * r;
 }
 
-template<class T> constexpr T sphereArea(T r)
+template<class T> CONSTEXPR T sphereArea(T r)
 {
     return 4 * (T) PI * r * r;
 }

@@ -145,7 +145,7 @@ void Galaxy::setType(const string& typeStr)
 {
     type = Galaxy::Irr;
     auto iter = std::find_if(begin(GalaxyTypeNames), end(GalaxyTypeNames),
-                             [typeStr](auto& g) { return g.name == typeStr; });
+                             [typeStr](GalaxyTypeName& g) { return g.name == typeStr; });
     if (iter != end(GalaxyTypeNames))
         type = iter->type;
 
