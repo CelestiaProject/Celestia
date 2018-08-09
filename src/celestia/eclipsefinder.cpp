@@ -116,7 +116,7 @@ double EclipseFinder::findEclipseSpan(const Body& receiver, const Body& caster,
 }
 
 
-int EclipseFinder::CalculateEclipses()
+int EclipseFinder::CalculateEclipses() // XXX: this function is very fragile and should be rewritten
 {
     Simulation* sim = appCore->getSimulation();
 

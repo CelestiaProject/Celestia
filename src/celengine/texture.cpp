@@ -547,8 +547,6 @@ TiledTexture::TiledTexture(Image& img,
     Image* tile = new Image(img.getFormat(),
                             tileWidth, tileHeight,
                             tileMipLevelCount);
-    if (tile == nullptr)
-        return;
 
     for (int v = 0; v < vSplit; v++)
     {
@@ -824,8 +822,6 @@ Texture* CreateProceduralTexture(int width, int height,
                                  Texture::MipMapMode mipMode)
 {
     Image* img = new Image(format, width, height);
-    if (img == nullptr)
-        return nullptr;
 
     for (int y = 0; y < height; y++)
     {
@@ -851,8 +847,6 @@ Texture* CreateProceduralTexture(int width, int height,
                                  Texture::MipMapMode mipMode)
 {
     Image* img = new Image(format, width, height);
-    if (img == nullptr)
-        return nullptr;
 
     for (int y = 0; y < height; y++)
     {
@@ -911,32 +905,21 @@ extern Texture* CreateProceduralCubeMap(int size, int format,
                                         ProceduralTexEval func)
 {
     Image* faces[6];
-    bool failed = false;
 
-    int i = 0;
-    for (i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
     {
-        faces[i] = nullptr;
         faces[i] = new Image(format, size, size);
-        if (faces[i] == nullptr)
-            failed = true;
-    }
 
-    if (!failed)
-    {
-        for (int i = 0; i < 6; i++)
+        Image* face = faces[i];
+        for (int y = 0; y < size; y++)
         {
-            Image* face = faces[i];
-            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
             {
-                for (int x = 0; x < size; x++)
-                {
-                    float s = ((float) x + 0.5f) / (float) size * 2 - 1;
-                    float t = ((float) y + 0.5f) / (float) size * 2 - 1;
-                    Vector3f v = cubeVector(i, s, t);
-                    func(v.x(), v.y(), v.z(),
-                         face->getPixelRow(y) + x * face->getComponents());
-                }
+                float s = ((float) x + 0.5f) / (float) size * 2 - 1;
+                float t = ((float) y + 0.5f) / (float) size * 2 - 1;
+                Vector3f v = cubeVector(i, s, t);
+                func(v.x(), v.y(), v.z(),
+                     face->getPixelRow(y) + x * face->getComponents());
             }
         }
     }
@@ -944,10 +927,9 @@ extern Texture* CreateProceduralCubeMap(int size, int format,
     Texture* tex = new CubeMap(faces);
 
     // Clean up the images
-    for (i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
     {
-        if (faces[i] != nullptr)
-            delete faces[i];
+        delete faces[i];
     }
 
     return tex;

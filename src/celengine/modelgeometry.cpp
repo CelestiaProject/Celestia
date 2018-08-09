@@ -122,7 +122,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
         Mesh* mesh = m_model->getMesh(meshIndex);
         GLuint vboId = 0;
 
-        if (m_glData && meshIndex < m_glData->vbos.size())
+        if (meshIndex < m_glData->vbos.size())
         {
             vboId = m_glData->vbos[meshIndex];
         }

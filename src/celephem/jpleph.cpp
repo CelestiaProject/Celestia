@@ -170,8 +170,6 @@ JPLEphemeris* JPLEphemeris::load(istream& in)
         return nullptr;
 
     eph = new JPLEphemeris();
-    if (eph == nullptr)
-        return nullptr;
 
     // Read the start time, end time, and time interval
     eph->startDate = readDouble(in);

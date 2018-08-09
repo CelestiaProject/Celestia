@@ -302,8 +302,6 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
         return nullptr;
 
     auto* normalMap = new Image(GL_RGBA, width, height);
-    if (!normalMap)
-        return nullptr;
 
     unsigned char* nmPixels = normalMap->getPixels();
     int nmPitch = normalMap->getPitch();
@@ -721,12 +719,6 @@ Image* LoadPNGImage(const string& filename)
     }
 
     img = new Image(glformat, width, height);
-    if (img == nullptr)
-    {
-        fclose(fp);
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) nullptr);
-        return nullptr;
-    }
 
     // TODO: consider using paletted textures if they're available
     if (color_type == PNG_COLOR_TYPE_PALETTE)
@@ -870,12 +862,6 @@ static Image* LoadBMPImage(ifstream& in)
     // check for truncated file
 
     auto* img = new Image(GL_RGB, imageHeader.width, imageHeader.height);
-    if (!img)
-    {
-        delete[] pixels;
-        delete[] palette;
-        return nullptr;
-    }
 
     // Copy the image and perform any necessary conversions
     for (int y = 0; y < imageHeader.height; y++)
@@ -920,6 +906,7 @@ static Image* LoadBMPImage(ifstream& in)
     }
 
     delete[] pixels;
+    delete palette;
 
     return img;
 }

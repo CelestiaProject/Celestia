@@ -287,28 +287,23 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
                 // assumption here is that there will be small numbers of
                 // DSOs in text files added to a big collection loaded from
                 // a binary file.
-                capacity    = (int) (capacity * 1.05);
+                capacity = (int) (capacity * 1.05);
 
                 // 100 DSOs seems like a reasonable minimum
                 if (capacity < 100)
-                    capacity   = 100;
+                    capacity = 100;
 
-                DeepSkyObject** newDSOs   = new DeepSkyObject*[capacity];
-                if (newDSOs == nullptr)
-                {
-                    DPRINTF(0, "Out of memory!");
-                    return false;
-                }
+                DeepSkyObject** newDSOs = new DeepSkyObject*[capacity];
 
                 if (DSOs != nullptr)
                 {
                     copy(DSOs, DSOs + nDSOs, newDSOs);
                     delete[] DSOs;
                 }
-                DSOs   = newDSOs;
+                DSOs = newDSOs;
             }
 
-            DSOs[nDSOs++]    = obj;
+            DSOs[nDSOs++] = obj;
 
             obj->setCatalogNumber(objCatalogNumber);
 
@@ -328,7 +323,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
                     string::size_type length  = string::npos;
                     if (next != string::npos)
                     {
-                        length   = next - startPos;
+                        length = next - startPos;
                         ++next;
                     }
                     string DSOName = objName.substr(startPos, length);

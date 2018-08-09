@@ -334,21 +334,22 @@ static int position_addvector(lua_State* l)
 
     celx.checkArgs(2, 2, "One argument expected to position:addvector()");
     UniversalCoord* uc = this_position(l);
+    if (uc == nullptr)
+        return 0;
+
     auto v3d = celx.toVector(2);
     if (v3d == nullptr)
     {
         celx.doError("Vector expected as argument to position:addvector");
+        return 0;
     }
-    else
-        if (uc != nullptr && v3d != nullptr)
-        {
+
 #ifdef __CELVEC__
-            UniversalCoord ucnew = uc->offsetUly(toEigen(*v3d));
+    UniversalCoord ucnew = uc->offsetUly(toEigen(*v3d));
 #else
-            UniversalCoord ucnew = uc->offsetUly(*v3d);
+    UniversalCoord ucnew = uc->offsetUly(*v3d);
 #endif
-            position_new(l, ucnew);
-        }
+    position_new(l, ucnew);
     return 1;
 }
 

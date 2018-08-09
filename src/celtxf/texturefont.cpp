@@ -415,12 +415,6 @@ TextureFont* TextureFont::load(istream& in)
     if (format == TxfByte)
     {
         auto* fontImage = new unsigned char[texWidth * texHeight];
-        if (fontImage == nullptr)
-        {
-            DPRINTF(0, "Not enough memory for font bitmap.\n");
-            delete font;
-            return nullptr;
-        }
 
         DPRINTF(1, "Reading %d x %d 8-bit font image.\n", texWidth, texHeight);
 
@@ -440,16 +434,6 @@ TextureFont* TextureFont::load(istream& in)
         int rowBytes = (texWidth + 7) >> 3;
         auto* fontBits = new unsigned char[rowBytes * texHeight];
         auto* fontImage = new unsigned char[texWidth * texHeight];
-        if (fontImage == nullptr || fontBits == nullptr)
-        {
-            DPRINTF(0, "Not enough memory for font bitmap.\n");
-            delete font;
-
-                delete[] fontBits;
-
-                delete[] fontImage;
-            return nullptr;
-        }
 
         DPRINTF(1, "Reading %d x %d 1-bit font image.\n", texWidth, texHeight);
 
@@ -458,6 +442,7 @@ TextureFont* TextureFont::load(istream& in)
         {
             DPRINTF(0, "Missing bitmap data in font stream.\n");
             delete font;
+            delete[] fontImage;
             return nullptr;
         }
 

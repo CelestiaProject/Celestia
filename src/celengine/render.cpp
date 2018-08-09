@@ -5770,7 +5770,7 @@ void Renderer::renderCometTail(const Body& body,
         }
         else
         {
-            v0 = v1 = cometPoints[i] - cometPoints[i - 1];
+            v0 = cometPoints[i] - cometPoints[i - 1];
             sectionLength = v0.norm();
             v0.normalize();
             v1 = v0;

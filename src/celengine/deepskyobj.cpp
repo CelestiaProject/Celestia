@@ -73,18 +73,12 @@ string DeepSkyObject::getDescription() const
 
 string DeepSkyObject::getInfoURL() const
 {
-    if (infoURL == nullptr)
-        return "";
-    else
-        return *infoURL;
+    return infoURL;
 }
 
 void DeepSkyObject::setInfoURL(const string& s)
 {
-    if (infoURL == nullptr)
-        infoURL = new string(s);
-    else
-        *infoURL = s;
+    infoURL = s;
 }
 
 

@@ -61,6 +61,7 @@ Body::~Body()
             delete s.second;
         delete altSurfaces;
     }
+    delete locations;
 }
 
 

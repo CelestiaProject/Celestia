@@ -655,13 +655,10 @@ CreateScriptedOrbit(Hash* orbitData,
     orbitData->addValue("AddonPath", *pathValue);
 
     ScriptedOrbit* scriptedOrbit = new ScriptedOrbit();
-    if (scriptedOrbit != nullptr)
+    if (!scriptedOrbit->initialize(moduleName, funcName, orbitData))
     {
-        if (!scriptedOrbit->initialize(moduleName, funcName, orbitData))
-        {
-            delete scriptedOrbit;
-            scriptedOrbit = nullptr;
-        }
+        delete scriptedOrbit;
+        scriptedOrbit = nullptr;
     }
 
     return scriptedOrbit;
@@ -1030,13 +1027,10 @@ CreateScriptedRotation(Hash* rotationData,
     rotationData->addValue("AddonPath", *pathValue);
 
     ScriptedRotation* scriptedRotation = new ScriptedRotation();
-    if (scriptedRotation != nullptr)
+    if (!scriptedRotation->initialize(moduleName, funcName, rotationData))
     {
-        if (!scriptedRotation->initialize(moduleName, funcName, rotationData))
-        {
-            delete scriptedRotation;
-            scriptedRotation = nullptr;
-        }
+         delete scriptedRotation;
+         scriptedRotation = nullptr;
     }
 
     return scriptedRotation;

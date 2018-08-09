@@ -575,8 +575,6 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
     }
 
     CrossIndex* xindex = new CrossIndex();
-    if (xindex == nullptr)
-        return false;
 
     unsigned int record = 0;
     for (;;)

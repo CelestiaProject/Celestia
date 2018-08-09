@@ -19,7 +19,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-const float DSO_DEFAULT_ABS_MAGNITUDE = -1000.0f;
+constexpr const float DSO_DEFAULT_ABS_MAGNITUDE = -1000.0f;
 
 class Nebula;
 class Galaxy;
@@ -100,11 +100,11 @@ class DeepSkyObject
 
  private:
     uint32_t     catalogNumber{ InvalidCatalogNumber };
-    Eigen::Vector3d position{ 0, 0, 0 };
+    Eigen::Vector3d position{ Eigen::Vector3d::Zero() };
     Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
     float        radius{ 1 };
     float        absMag{ DSO_DEFAULT_ABS_MAGNITUDE } ;
-    std::string* infoURL{ nullptr };
+    std::string infoURL;
 
     bool visible { true };
     bool clickable { true };

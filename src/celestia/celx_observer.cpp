@@ -380,7 +380,7 @@ static int observer_goto(lua_State* l)
     double startInter = celx.safeGetNumber(4, WrongType, "Third arg to observer:goto must be a number", 0.25);
     double endInter = celx.safeGetNumber(5, WrongType, "Fourth arg to observer:goto must be a number", 0.75);
     if (startInter < 0 || startInter > 1) startInter = 0.25;
-    if (endInter < 0 || endInter > 1) startInter = 0.75;
+    if (endInter < 0 || endInter > 1) endInter = 0.75;
 
     // The first argument may be either an object or a position
     if (sel != nullptr)

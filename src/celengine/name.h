@@ -111,13 +111,15 @@ uint32_t NameDatabase<OBJ>::getCatalogNumberByName(const std::string& name) cons
 template <class OBJ>
 std::string NameDatabase<OBJ>::getNameByCatalogNumber(const uint32_t catalogNumber) const
 {
-   if (catalogNumber == OBJ::InvalidCatalogNumber)
+    if (catalogNumber == OBJ::InvalidCatalogNumber)
         return "";
 
-   NumberIndex::const_iterator iter   = numberIndex.lower_bound(catalogNumber);
+    NumberIndex::const_iterator iter = numberIndex.lower_bound(catalogNumber);
 
-   if (iter != numberIndex.end() && iter->first == catalogNumber)
-       return iter->second;
+    if (iter != numberIndex.end() && iter->first == catalogNumber)
+        return iter->second;
+
+    return "";
 }
 
 

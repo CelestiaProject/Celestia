@@ -299,12 +299,9 @@ Model* LoadCelestiaMesh(const string& filename)
                                             (int) params.rings, (int) params.slices,
                                             NoiseDisplacementFunc,
                                             (void*) &params);
-    if (sphereMesh != nullptr)
-    {
-        Mesh* mesh = sphereMesh->convertToMesh();
-        model->addMesh(mesh);
-        delete sphereMesh;
-    }
+    Mesh* mesh = sphereMesh->convertToMesh();
+    model->addMesh(mesh);
+    delete sphereMesh;
 
     return model;
 }
@@ -514,16 +511,11 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
     delete[] faceNormals;
     delete[] vertexNormals;
     delete[] faceCounts;
-
-    if (vertexFaces != nullptr)
+    for (int i = 0; i < nVertices; i++)
     {
-        for (int i = 0; i < nVertices; i++)
-        {
-            if (vertexFaces[i] != nullptr)
-                delete[] vertexFaces[i];
-        }
-        delete[] vertexFaces;
+        delete[] vertexFaces[i];
     }
+    delete[] vertexFaces;
 
     return newMesh;
 }

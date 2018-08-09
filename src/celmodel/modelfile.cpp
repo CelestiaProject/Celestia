@@ -1061,11 +1061,6 @@ AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
     vertexCount = (unsigned int) num;
     unsigned int vertexDataSize = vertexDesc.stride * vertexCount;
     auto* vertexData = new char[vertexDataSize];
-    if (vertexData == nullptr)
-    {
-        reportError("Not enough memory to hold vertex data");
-        return nullptr;
-    }
 
     unsigned int offset = 0;
     double data[4];
@@ -1197,12 +1192,6 @@ AsciiModelLoader::loadMesh()
         unsigned int indexCount = (unsigned int) tok.currentToken().integerValue();
 
         auto* indices = new Mesh::index32[indexCount];
-        if (indices == nullptr)
-        {
-            reportError("Not enough memory to hold indices");
-            delete mesh;
-            return nullptr;
-        }
 
         for (unsigned int i = 0; i < indexCount; i++)
         {
@@ -1238,13 +1227,6 @@ AsciiModelLoader::load()
 {
     auto* model = new Model();
     bool seenMeshes = false;
-
-    // FIXME: modern C++ uses exceptions
-    if (model == nullptr)
-    {
-        reportError("Unable to allocate memory for model");
-        return nullptr;
-    }
 
     // Parse material and mesh definitions
     for (Token token = tok.nextToken(); token.type() != Token::End; token = tok.nextToken())
@@ -1769,12 +1751,6 @@ BinaryModelLoader::load()
     auto* model = new Model();
     bool seenMeshes = false;
 
-    if (model == nullptr)
-    {
-        reportError("Unable to allocate memory for model");
-        return nullptr;
-    }
-
     // Parse material and mesh definitions
     for (;;)
     {
@@ -2068,12 +2044,6 @@ BinaryModelLoader::loadMesh()
         unsigned int indexCount = readUint(in);
 
         auto* indices = new uint32_t[indexCount];
-        if (indices == nullptr)
-        {
-            reportError("Not enough memory to hold indices");
-            delete mesh;
-            return nullptr;
-        }
 
         for (unsigned int i = 0; i < indexCount; i++)
         {
@@ -2109,11 +2079,6 @@ BinaryModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
     vertexCount = readUint(in);
     unsigned int vertexDataSize = vertexDesc.stride * vertexCount;
     auto* vertexData = new char[vertexDataSize];
-    if (vertexData == nullptr)
-    {
-        reportError("Not enough memory to hold vertex data");
-        return nullptr;
-    }
 
     unsigned int offset = 0;
 

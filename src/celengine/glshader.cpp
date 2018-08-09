@@ -183,8 +183,6 @@ GLShaderLoader::CreateVertexShader(const vector<string>& source,
     GLuint vsid = glCreateShader(GL_VERTEX_SHADER);
 
     auto* shader = new GLVertexShader(vsid);
-    if (!shader)
-        return ShaderStatus_OutOfMemory;
 
     GLShaderStatus status = shader->compile(source);
     if (status != ShaderStatus_OK)
@@ -211,8 +209,6 @@ GLShaderLoader::CreateFragmentShader(const vector<string>& source,
     GLuint fsid = glCreateShader(GL_FRAGMENT_SHADER);
 
     auto* shader = new GLFragmentShader(fsid);
-    if (!shader)
-        return ShaderStatus_OutOfMemory;
 
     GLShaderStatus status = shader->compile(source);
     if (status != ShaderStatus_OK)
@@ -261,8 +257,6 @@ GLShaderLoader::CreateProgram(const GLVertexShader& vs,
     GLuint progid = glCreateProgram();
 
     auto* prog = new GLProgram(progid);
-    if (!prog)
-        return ShaderStatus_OutOfMemory;
 
     prog->attach(vs);
     prog->attach(fs);
@@ -335,8 +329,6 @@ GetInfoLog(GLuint obj)
         return string();
 
     auto* log = new char[logLength];
-    if (!log)
-        return string();
 
     glGetShaderInfoLog(obj, logLength, &charsWritten, log);
 

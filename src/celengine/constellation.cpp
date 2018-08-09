@@ -172,15 +172,13 @@ const string Constellation::getAbbreviation() const
 void Constellation::initialize()
 {
     int nConstellations = sizeof(constellationInfo) / sizeof(constellationInfo[0]);
+    // XXX: replace with std::array or std::vector
     constellations = new Constellation* [nConstellations];
 
-    if (constellations != nullptr)
+    for (int i = 0; i < nConstellations; i++)
     {
-        for (int i = 0; i < nConstellations; i++)
-        {
-            constellations[i] = new Constellation(constellationInfo[i].name,
-                                                  constellationInfo[i].gen,
-                                                  constellationInfo[i].abbr);
-        }
+        constellations[i] = new Constellation(constellationInfo[i].name,
+                                              constellationInfo[i].gen,
+                                              constellationInfo[i].abbr);
     }
 }

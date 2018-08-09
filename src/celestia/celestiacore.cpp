@@ -4280,9 +4280,6 @@ bool CelestiaCore::initRenderer()
                              Renderer::ShowAutoMag);
 
     GLContext* context = new GLContext();
-    assert(context != nullptr);
-    if (context == nullptr)
-        return false;
 
     context->init(config->ignoreGLExtensions);
     // Choose the render path, starting with the least desirable

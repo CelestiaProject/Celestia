@@ -88,8 +88,6 @@ std::vector<ScriptMenuItem>*
 ScanScriptsDirectory(string scriptsDir, bool deep)
 {
     vector<ScriptMenuItem>* scripts = new vector<ScriptMenuItem>;
-    if (scripts == nullptr)
-        return nullptr;
 
     Directory* dir = OpenDirectory(scriptsDir);
 

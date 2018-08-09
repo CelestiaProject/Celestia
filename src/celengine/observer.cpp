@@ -853,12 +853,9 @@ void Observer::convertFrameCoordinates(const ObserverFrame* newFrame)
 void Observer::setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj, const Selection& targetObj)
 {
     ObserverFrame* newFrame = new ObserverFrame(cs, refObj, targetObj);
-    if (newFrame != nullptr)
-    {
-        convertFrameCoordinates(newFrame);
-        delete frame;
-        frame = newFrame;
-    }
+    convertFrameCoordinates(newFrame);
+    delete frame;
+    frame = newFrame;
 }
 
 

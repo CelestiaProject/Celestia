@@ -445,7 +445,7 @@ BookmarkTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, in
 
     QByteArray encodedData = data->data("application/celestia.text.list");
     QDataStream stream(&encodedData, QIODevice::ReadOnly);
-    BookmarkItem* item = nullptr;
+    BookmarkItem item;
 
     // Read the pointer (ugh) from the encoded mime data. Bail out now
     // if the data was incomplete for some reason.
@@ -470,7 +470,7 @@ BookmarkTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, in
     // is inserted in the new position, then the old item is removed. Bad things
     // happen when the item appears in two separate places, so we'll insert a copy
     // of the old data into the new position.
-    BookmarkItem* clone = item->clone(parentFolder);
+    BookmarkItem* clone = item.clone(parentFolder);
 
     beginInsertRows(parent, row, row);
     parentFolder->insert(clone, row);
@@ -517,7 +517,7 @@ BookmarkTreeModel::mimeData(const QModelIndexList& indexes) const
 
     const BookmarkItem* item = getItem(indexes.at(0));
     QDataStream stream(&encodedData, QIODevice::WriteOnly);
-    stream.writeRawData(reinterpret_cast<const char*>(&item), sizeof(item));
+    stream.writeRawData(reinterpret_cast<const char*>(&item), sizeof(*item));
     mimeData->setData("application/celestia.text.list", encodedData);
 
     return mimeData;
@@ -666,6 +666,9 @@ BookmarkManager::appendBookmarkMenuItems(QMenu* menu, const BookmarkItem* item)
         case BookmarkItem::Separator:
             menu->addSeparator();
             break;
+
+        default:
+            break;
         }
     }
 }
@@ -760,6 +763,9 @@ BookmarkToolBar::rebuild()
 
                 case BookmarkItem::Separator:
                     addSeparator();
+                    break;
+
+                default:
                     break;
             }
         }

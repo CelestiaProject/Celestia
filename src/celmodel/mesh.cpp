@@ -65,6 +65,9 @@ Mesh::VertexDescription::VertexDescription(const VertexDescription& desc) :
 Mesh::VertexDescription&
 Mesh::VertexDescription::operator=(const Mesh::VertexDescription& desc)
 {
+    if (this == &desc)
+        return *this;
+
     if (nAttributes < desc.nAttributes)
     {
         delete[] attributes;

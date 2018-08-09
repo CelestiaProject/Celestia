@@ -204,7 +204,7 @@ static void Nutation(double t, double &deps, double& dpsi)
     deps = degToRad(deps/3600);
 }
 
-static void EclipticToEquatorial(double t, double fEclLat, double fEclLon,
+static void EclipticToEquatorial(double fEclLat, double fEclLon,
                                  double& RA, double& dec)
 {
     // Parameter t represents the Julian centuries elapsed since 1900.
@@ -214,6 +214,7 @@ static void EclipticToEquatorial(double t, double fEclLat, double fEclLon,
     double sx, cx, sy, cy, ty;
     double eps;
     double deps, dpsi;
+    double t;
 
 //    t = (astro::J2000 - 2415020.0) / 36525.0;
     t = 0;
@@ -721,7 +722,7 @@ class LunarOrbit : public CachingOrbit
 
 #if 1
         // Finally convert eclLat, eclLon to RA, Dec.
-        EclipticToEquatorial(t, eclLat, eclLon, RA, dec);
+        EclipticToEquatorial(eclLat, eclLon, RA, dec);
 
         // RA and Dec are referred to the equinox of date; we want to use
         // the J2000 equinox instead.  A better idea would be to directly

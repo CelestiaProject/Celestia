@@ -35,10 +35,13 @@ public:
     {
         Bookmark,
         Folder,
-        Separator
+        Separator,
+        None
     };
 
     static const int ICON_SIZE = 24;
+
+    BookmarkItem() : m_type(None), m_parent(nullptr) {};
 
     BookmarkItem(Type type, BookmarkItem* parent);
 

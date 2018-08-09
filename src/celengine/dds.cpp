@@ -198,9 +198,6 @@ Image* LoadDDSImage(const string& filename)
                            (int) ddsd.width,
                            (int) ddsd.height,
                            max(ddsd.mipMapLevels, 1u));
-    if (img == nullptr)
-        return nullptr;
-
     in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize());
     if (!in.eof() && !in.good())
     {
