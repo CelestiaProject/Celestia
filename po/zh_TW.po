@@ -1,3 +1,10 @@
+msgid "Please wait..."
+msgstr ""
+
+#, fuzzy
+msgid "Coordinate grids"
+msgstr "格子"
+
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Chris Laurel
 # This file is distributed under the same license as the PACKAGE package.
@@ -7,29 +14,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2018-05-28 20:13+0300\n"
+"POT-Creation-Date: 2018-08-07 19:53+0300\n"
 "PO-Revision-Date: 2018-05-28 21:03+0300\n"
+"Last-Translator: Alexell <alexell@alexell.ru>\n"
 "Language-Team: \n"
+"Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.7\n"
-"Last-Translator: Alexell <alexell@alexell.ru>\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"Language: zh_TW\n"
 
-#, fuzzy
-msgid "Coordinate grids"
-msgstr "格子"
-
-msgid "Please wait..."
-msgstr ""
-
-#: src/celengine/astro.cpp:851 src/celengine/astro.cpp:827
+#: src/celengine/astro.cpp:853 src/celengine/astro.cpp:827
+#: src/celengine/astro.cpp:851
 msgid "DST"
 msgstr "日光節約時間"
 
-#: src/celengine/astro.cpp:851 src/celengine/astro.cpp:827
+#: src/celengine/astro.cpp:853 src/celengine/astro.cpp:827
+#: src/celengine/astro.cpp:851
 msgid "STD"
 msgstr "標準時間"
 
@@ -71,7 +73,7 @@ msgid "Galaxy (Hubble type: %s)"
 msgstr "星系 (哈伯分類:%s)"
 
 #: src/celengine/globular.cpp:258 src/celengine/globular.cpp:255
-#, c-format
+#, c-format, qt-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
 msgstr "球狀星團 (核半徑: %4.2f', King 聚度: %4.2f)"
 
@@ -83,19 +85,19 @@ msgstr "從檔案讀取影像"
 msgid ": unrecognized or unsupported image file type.\n"
 msgstr ":無法辨識或未支援的影像格式。\n"
 
-#: src/celengine/image.cpp:654
+#: src/celengine/image.cpp:655 src/celengine/image.cpp:654
 msgid "Error opening image file "
 msgstr "影像檔案開啟失敗"
 
-#: src/celengine/image.cpp:661
+#: src/celengine/image.cpp:663 src/celengine/image.cpp:661
 msgid " is not a PNG file.\n"
 msgstr " 並不是一個PNG檔案。\n"
 
-#: src/celengine/image.cpp:661
+#: src/celengine/image.cpp:663 src/celengine/image.cpp:661
 msgid "Error: "
 msgstr "錯誤:"
 
-#: src/celengine/image.cpp:688
+#: src/celengine/image.cpp:690 src/celengine/image.cpp:688
 msgid "Error reading PNG image file "
 msgstr "讀取PNG影像檔發生錯誤"
 
@@ -175,63 +177,78 @@ msgstr "' 找不到。\n"
 msgid "Bad header for cross index\n"
 msgstr "錯誤的跨索引標頭\n"
 
-#: src/celengine/stardb.cpp:593 src/celengine/stardb.cpp:592
+#: src/celengine/stardb.cpp:594 src/celengine/stardb.cpp:592
+#: src/celengine/stardb.cpp:593
 msgid "Bad version for cross index\n"
 msgstr "錯誤的跨索引版本\n"
 
-#: src/celengine/stardb.cpp:615 src/celengine/stardb.cpp:614
+#: src/celengine/stardb.cpp:616 src/celengine/stardb.cpp:614
+#: src/celengine/stardb.cpp:615
 msgid "Loading cross index failed at record "
 msgstr "載入跨索引失敗，於紀錄 "
 
-#: src/celengine/stardb.cpp:697 src/celengine/stardb.cpp:696
+#: src/celengine/stardb.cpp:700 src/celengine/stardb.cpp:696
+#: src/celengine/stardb.cpp:697
 msgid "Bad spectral type in star database, star #"
 msgstr "恆星資料庫內的光譜類型錯誤，恆星 #"
 
-#: src/celengine/stardb.cpp:712 src/celengine/stardb.cpp:711
+#: src/celengine/stardb.cpp:715 src/celengine/stardb.cpp:711
+#: src/celengine/stardb.cpp:712
 msgid " stars in binary database\n"
 msgstr " 個恆星在雙星資料庫裡\n"
 
-#: src/celengine/stardb.cpp:736 src/celengine/stardb.cpp:735
+#: src/celengine/stardb.cpp:739 src/celengine/stardb.cpp:735
+#: src/celengine/stardb.cpp:736
 msgid "Total star count: "
 msgstr "全部恆星數: "
 
-#: src/celengine/stardb.cpp:770 src/celengine/stardb.cpp:769
+#: src/celengine/stardb.cpp:773 src/celengine/stardb.cpp:769
+#: src/celengine/stardb.cpp:770
 msgid "Error in .stc file (line "
 msgstr " .stc檔案內有錯誤 (行號:"
 
-#: src/celengine/stardb.cpp:807 src/celengine/stardb.cpp:806
+#: src/celengine/stardb.cpp:810 src/celengine/stardb.cpp:806
+#: src/celengine/stardb.cpp:807
 msgid "Invalid star: bad spectral type.\n"
 msgstr "無效的恆星內容:錯誤的光譜型。\n"
 
-#: src/celengine/stardb.cpp:816 src/celengine/stardb.cpp:815
+#: src/celengine/stardb.cpp:819 src/celengine/stardb.cpp:815
+#: src/celengine/stardb.cpp:816
 msgid "Invalid star: missing spectral type.\n"
 msgstr "無效的恆星內容:遺漏光譜型。\n"
 
-#: src/celengine/stardb.cpp:999 src/celengine/stardb.cpp:962
+#: src/celengine/stardb.cpp:1006 src/celengine/stardb.cpp:962
+#: src/celengine/stardb.cpp:999
 msgid " does not exist.\n"
 msgstr " 不存在。\n"
 
-#: src/celengine/stardb.cpp:999 src/celengine/stardb.cpp:962
+#: src/celengine/stardb.cpp:1006 src/celengine/stardb.cpp:962
+#: src/celengine/stardb.cpp:999
 msgid "Barycenter "
 msgstr "質心 "
 
-#: src/celengine/stardb.cpp:1052 src/celengine/stardb.cpp:1008
+#: src/celengine/stardb.cpp:1062 src/celengine/stardb.cpp:1008
+#: src/celengine/stardb.cpp:1052
 msgid "Invalid star: missing right ascension\n"
 msgstr "無效的恆星內容:遺漏赤經\n"
 
-#: src/celengine/stardb.cpp:1065 src/celengine/stardb.cpp:1021
+#: src/celengine/stardb.cpp:1075 src/celengine/stardb.cpp:1021
+#: src/celengine/stardb.cpp:1065
 msgid "Invalid star: missing declination.\n"
 msgstr "無效的恆星內容:遺漏赤緯。\n"
 
-#: src/celengine/stardb.cpp:1078 src/celengine/stardb.cpp:1034
+#: src/celengine/stardb.cpp:1088 src/celengine/stardb.cpp:1034
+#: src/celengine/stardb.cpp:1078
 msgid "Invalid star: missing distance.\n"
 msgstr "無效的恆星內容:遺漏距離。\n"
 
-#: src/celengine/stardb.cpp:1110 src/celengine/stardb.cpp:1070
+#: src/celengine/stardb.cpp:1120 src/celengine/stardb.cpp:1070
+#: src/celengine/stardb.cpp:1110
 msgid "Invalid star: missing magnitude.\n"
 msgstr "無效的恆星內容:遺漏星等。\n"
 
-#: src/celengine/stardb.cpp:1127 src/celengine/stardb.cpp:1087
+#: src/celengine/stardb.cpp:1137 src/celengine/stardb.cpp:1087
+#: src/celengine/stardb.cpp:1127
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
@@ -290,30 +307,34 @@ msgid "All ARB vertex programs loaded successfully.\n"
 msgstr "所有的 ARB 頂點程式均已成功載入。\n"
 
 #: src/celestia/CelestiaCoreApplication.cpp:22
-#: src/celestia/celestiacore.cpp:1553 src/celestia/celestiacore.cpp:1534
+#: src/celestia/celestiacore.cpp:1536 src/celestia/celestiacore.cpp:1534
+#: src/celestia/celestiacore.cpp:1553 src/celestia/celestiacore.cpp:1555
 #: src/celestia/celestiacore.cpp:1564
 msgid "Comet tails disabled"
 msgstr "彗尾已關閉"
 
 #: src/celestia/CelestiaCoreApplication.cpp:22
-#: src/celestia/celestiacore.cpp:1550 src/celestia/celestiacore.cpp:1531
+#: src/celestia/celestiacore.cpp:1533 src/celestia/celestiacore.cpp:1531
+#: src/celestia/celestiacore.cpp:1550 src/celestia/celestiacore.cpp:1552
 #: src/celestia/celestiacore.cpp:1561
 msgid "Comet tails enabled"
 msgstr "彗尾已開啟動"
 
 #: src/celestia/CelestiaCoreApplication.cpp:23
-#: src/celestia/celestiacore.cpp:1451 src/celestia/celestiacore.cpp:1430
+#: src/celestia/celestiacore.cpp:1434 src/celestia/celestiacore.cpp:1430
+#: src/celestia/celestiacore.cpp:1451 src/celestia/celestiacore.cpp:1453
 #: src/celestia/celestiacore.cpp:1462
 msgid "Markers disabled"
 msgstr "標記已關閉"
 
 #: src/celestia/CelestiaCoreApplication.cpp:23
-#: src/celestia/celestiacore.cpp:1448 src/celestia/celestiacore.cpp:1427
+#: src/celestia/celestiacore.cpp:1431 src/celestia/celestiacore.cpp:1427
+#: src/celestia/celestiacore.cpp:1448 src/celestia/celestiacore.cpp:1450
 #: src/celestia/celestiacore.cpp:1459
 msgid "Markers enabled"
 msgstr "標記已開啟"
 
-#: src/celestia/CelestiaCoreApplication.h:74 src/celestia/celestiacore.cpp:1651
+#: src/celestia/CelestiaCoreApplication.h:74 src/celestia/celestiacore.cpp:1634
 #: src/celestia/win32/res/resource_strings.cpp:91
 #: src/celestia/win32/res/resource_strings.cpp:105
 #: src/celestia/win32/res/resource_strings.cpp:109
@@ -324,7 +345,8 @@ msgstr "標記已開啟"
 #: src/celestia/win32/res/resource_strings.cpp:217
 #: src/celestia/win32/res/resource_strings.cpp:221
 #: src/celestia/win32/res/resource_strings.cpp:227
-#: src/celestia/celestiacore.cpp:1623 src/celestia/celestiacore.cpp:1662
+#: src/celestia/celestiacore.cpp:1623 src/celestia/celestiacore.cpp:1651
+#: src/celestia/celestiacore.cpp:1653 src/celestia/celestiacore.cpp:1662
 #: src/celestia/res/resource_strings.cpp:88
 #: src/celestia/res/resource_strings.cpp:102
 #: src/celestia/res/resource_strings.cpp:106
@@ -338,528 +360,635 @@ msgstr "標記已開啟"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/celestia/CelestiaCoreApplication.h:93 src/celestia/celestiacore.cpp:1931
-#: src/celestia/qt/qtappwin.cpp:1170 src/celestia/qt/qtselectionpopup.cpp:479
-#: src/celestia/celestiacore.cpp:1899 src/celestia/celestiacore.cpp:1945
+#: src/celestia/CelestiaCoreApplication.h:93 src/celestia/celestiacore.cpp:1915
+#: src/celestia/qt/qtappwin.cpp:1172 src/celestia/qt/qtselectionpopup.cpp:479
+#: src/celestia/celestiacore.cpp:1899 src/celestia/celestiacore.cpp:1931
+#: src/celestia/celestiacore.cpp:1933 src/celestia/celestiacore.cpp:1945
+#: src/celestia/qt/qtappwin.cpp:1170
 msgid "Follow"
 msgstr "跟隨天體"
 
 #: src/celestia/CelestiaCoreApplication.h:108
-#: src/celestia/celestiacore.cpp:1461 src/celestia/celestiacore.cpp:1440
+#: src/celestia/celestiacore.cpp:1444 src/celestia/celestiacore.cpp:1440
+#: src/celestia/celestiacore.cpp:1461 src/celestia/celestiacore.cpp:1463
 #: src/celestia/celestiacore.cpp:1472
 msgid "Goto surface"
 msgstr "前往表面"
 
 #: src/celestia/CelestiaCoreApplication.h:119
-#: src/celestia/celestiacore.cpp:1472 src/celestia/celestiacore.cpp:1453
+#: src/celestia/celestiacore.cpp:1455 src/celestia/celestiacore.cpp:1453
+#: src/celestia/celestiacore.cpp:1472 src/celestia/celestiacore.cpp:1474
 #: src/celestia/celestiacore.cpp:1483
 msgid "Alt-azimuth mode enabled"
 msgstr "經緯儀模式啟動"
 
 #: src/celestia/CelestiaCoreApplication.h:123
-#: src/celestia/celestiacore.cpp:1475 src/celestia/celestiacore.cpp:1456
+#: src/celestia/celestiacore.cpp:1458 src/celestia/celestiacore.cpp:1456
+#: src/celestia/celestiacore.cpp:1475 src/celestia/celestiacore.cpp:1477
 #: src/celestia/celestiacore.cpp:1486
 msgid "Alt-azimuth mode disabled"
 msgstr "經緯儀模式關閉"
 
 #: src/celestia/CelestiaCoreApplication.h:177
-#: src/celestia/celestiacore.cpp:1531 src/celestia/celestiacore.cpp:1512
+#: src/celestia/celestiacore.cpp:1514 src/celestia/celestiacore.cpp:1512
+#: src/celestia/celestiacore.cpp:1531 src/celestia/celestiacore.cpp:1533
 #: src/celestia/celestiacore.cpp:1542
 msgid "Star style: fuzzy points"
 msgstr "恆星樣式:模糊的點"
 
 #: src/celestia/CelestiaCoreApplication.h:180
-#: src/celestia/celestiacore.cpp:1534 src/celestia/celestiacore.cpp:1515
+#: src/celestia/celestiacore.cpp:1517 src/celestia/celestiacore.cpp:1515
+#: src/celestia/celestiacore.cpp:1534 src/celestia/celestiacore.cpp:1536
 #: src/celestia/celestiacore.cpp:1545
 msgid "Star style: points"
 msgstr "恆星樣式:點"
 
 #: src/celestia/CelestiaCoreApplication.h:183
-#: src/celestia/celestiacore.cpp:1537 src/celestia/celestiacore.cpp:1518
+#: src/celestia/celestiacore.cpp:1520 src/celestia/celestiacore.cpp:1518
+#: src/celestia/celestiacore.cpp:1537 src/celestia/celestiacore.cpp:1539
 #: src/celestia/celestiacore.cpp:1548
 msgid "Star style: scaled discs"
 msgstr "恆星樣式:按比例的盤面"
 
 #: src/celestia/CelestiaCoreApplication.h:210
-#: src/celestia/celestiacore.cpp:1803 src/celestia/celestiacore.cpp:1771
+#: src/celestia/celestiacore.cpp:1787 src/celestia/celestiacore.cpp:1771
+#: src/celestia/celestiacore.cpp:1803 src/celestia/celestiacore.cpp:1805
 #: src/celestia/celestiacore.cpp:1817
 msgid "Light travel delay included"
 msgstr "包括光旅行延遲"
 
 #: src/celestia/CelestiaCoreApplication.h:214
-#: src/celestia/celestiacore.cpp:1808 src/celestia/celestiacore.cpp:1776
+#: src/celestia/celestiacore.cpp:1792 src/celestia/celestiacore.cpp:1776
+#: src/celestia/celestiacore.cpp:1808 src/celestia/celestiacore.cpp:1810
 #: src/celestia/celestiacore.cpp:1822
 msgid "Light travel delay switched off"
 msgstr "關閉光旅行延遲"
 
 #: src/celestia/CelestiaCoreApplication.h:219
-#: src/celestia/celestiacore.cpp:1814 src/celestia/celestiacore.cpp:1782
+#: src/celestia/celestiacore.cpp:1798 src/celestia/celestiacore.cpp:1782
+#: src/celestia/celestiacore.cpp:1814 src/celestia/celestiacore.cpp:1816
 #: src/celestia/celestiacore.cpp:1828
 msgid "Light travel delay ignored"
 msgstr "忽略光旅行延遲"
 
-#: src/celestia/celestiacore.cpp:449 src/celestia/celestiacore.cpp:420
-#: src/celestia/celestiacore.cpp:459
+#: src/celestia/celestiacore.cpp:451 src/celestia/celestiacore.cpp:420
+#: src/celestia/celestiacore.cpp:449 src/celestia/celestiacore.cpp:459
 msgid "Error reading favorites file."
 msgstr "讀取我的最愛檔案時發生錯誤。"
 
-#: src/celestia/celestiacore.cpp:539 src/celestia/celestiacore.cpp:516
-#: src/celestia/celestiacore.cpp:549
+#: src/celestia/celestiacore.cpp:541 src/celestia/celestiacore.cpp:516
+#: src/celestia/celestiacore.cpp:539 src/celestia/celestiacore.cpp:549
 msgid "Orientation: "
 msgstr "方位:"
 
-#: src/celestia/celestiacore.cpp:587 src/celestia/celestiacore.cpp:589
-#: src/celestia/celestiacore.cpp:563 src/celestia/celestiacore.cpp:565
+#: src/celestia/celestiacore.cpp:588 src/celestia/celestiacore.cpp:563
+#: src/celestia/celestiacore.cpp:565 src/celestia/celestiacore.cpp:587
+#: src/celestia/celestiacore.cpp:589 src/celestia/celestiacore.cpp:591
 #: src/celestia/celestiacore.cpp:598 src/celestia/celestiacore.cpp:600
 msgid "Error opening script file."
 msgstr "開啟腳本檔案時發生錯誤。"
 
-#: src/celestia/celestiacore.cpp:620 src/celestia/celestiacore.cpp:596
+#: src/celestia/celestiacore.cpp:616 src/celestia/celestiacore.cpp:596
+#: src/celestia/celestiacore.cpp:620 src/celestia/celestiacore.cpp:622
 #: src/celestia/celestiacore.cpp:631
 #, c-format
 msgid "Error opening script '%s'"
 msgstr "開啟腳本 '%s' 時發生錯誤"
 
-#: src/celestia/celestiacore.cpp:638 src/celestia/celestiacore.cpp:614
+#: src/celestia/celestiacore.cpp:631 src/celestia/celestiacore.cpp:614
+#: src/celestia/celestiacore.cpp:638 src/celestia/celestiacore.cpp:640
 #: src/celestia/celestiacore.cpp:649
 msgid "Unknown error opening script"
 msgstr "開啟腳本時發生未知的錯誤"
 
-#: src/celestia/celestiacore.cpp:650 src/celestia/celestiacore.cpp:626
+#: src/celestia/celestiacore.cpp:640 src/celestia/celestiacore.cpp:626
+#: src/celestia/celestiacore.cpp:650 src/celestia/celestiacore.cpp:652
 #: src/celestia/celestiacore.cpp:661
 msgid "Script coroutine initialization failed"
 msgstr "腳本的子函式初始化失敗"
 
-#: src/celestia/celestiacore.cpp:666 src/celestia/celestiacore.cpp:668
-#: src/celestia/celestiacore.cpp:642 src/celestia/celestiacore.cpp:644
+#: src/celestia/celestiacore.cpp:651 src/celestia/celestiacore.cpp:642
+#: src/celestia/celestiacore.cpp:644 src/celestia/celestiacore.cpp:666
+#: src/celestia/celestiacore.cpp:668 src/celestia/celestiacore.cpp:670
 #: src/celestia/celestiacore.cpp:677 src/celestia/celestiacore.cpp:679
 msgid "Invalid filetype"
 msgstr "無效的檔案型態"
 
-#: src/celestia/celestiacore.cpp:1014 src/celestia/celestiacore.cpp:1829
-#: src/celestia/celestiacore.cpp:1847 src/celestia/celestiacore.cpp:2106
-#: src/celestia/celestiacore.cpp:2137 src/celestia/celestiacore.cpp:992
+#: src/celestia/celestiacore.cpp:997 src/celestia/celestiacore.cpp:1813
+#: src/celestia/celestiacore.cpp:1831 src/celestia/celestiacore.cpp:2090
+#: src/celestia/celestiacore.cpp:2121 src/celestia/celestiacore.cpp:992
+#: src/celestia/celestiacore.cpp:1014 src/celestia/celestiacore.cpp:1016
 #: src/celestia/celestiacore.cpp:1025 src/celestia/celestiacore.cpp:1797
-#: src/celestia/celestiacore.cpp:1815 src/celestia/celestiacore.cpp:1843
-#: src/celestia/celestiacore.cpp:1861 src/celestia/celestiacore.cpp:2056
-#: src/celestia/celestiacore.cpp:2087 src/celestia/celestiacore.cpp:2122
-#: src/celestia/celestiacore.cpp:2153
+#: src/celestia/celestiacore.cpp:1815 src/celestia/celestiacore.cpp:1829
+#: src/celestia/celestiacore.cpp:1843 src/celestia/celestiacore.cpp:1847
+#: src/celestia/celestiacore.cpp:1849 src/celestia/celestiacore.cpp:1861
+#: src/celestia/celestiacore.cpp:2056 src/celestia/celestiacore.cpp:2087
+#: src/celestia/celestiacore.cpp:2106 src/celestia/celestiacore.cpp:2108
+#: src/celestia/celestiacore.cpp:2122 src/celestia/celestiacore.cpp:2137
+#: src/celestia/celestiacore.cpp:2139 src/celestia/celestiacore.cpp:2153
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "極限星等:%.2f"
 
-#: src/celestia/celestiacore.cpp:1568 src/celestia/celestiacore.cpp:1549
+#: src/celestia/celestiacore.cpp:1551 src/celestia/celestiacore.cpp:1549
+#: src/celestia/celestiacore.cpp:1568 src/celestia/celestiacore.cpp:1570
 #: src/celestia/celestiacore.cpp:1579
 msgid "Render path: Basic"
 msgstr "成像路徑:基本"
 
-#: src/celestia/celestiacore.cpp:1571 src/celestia/celestiacore.cpp:1552
+#: src/celestia/celestiacore.cpp:1554 src/celestia/celestiacore.cpp:1552
+#: src/celestia/celestiacore.cpp:1571 src/celestia/celestiacore.cpp:1573
 #: src/celestia/celestiacore.cpp:1582
 msgid "Render path: Multitexture"
 msgstr "成像路徑:多重紋理"
 
-#: src/celestia/celestiacore.cpp:1574 src/celestia/celestiacore.cpp:1555
+#: src/celestia/celestiacore.cpp:1557 src/celestia/celestiacore.cpp:1555
+#: src/celestia/celestiacore.cpp:1574 src/celestia/celestiacore.cpp:1576
 #: src/celestia/celestiacore.cpp:1585
 msgid "Render path: NVIDIA combiners"
 msgstr "成像路徑:NVIDIA combiners"
 
-#: src/celestia/celestiacore.cpp:1577 src/celestia/celestiacore.cpp:1558
+#: src/celestia/celestiacore.cpp:1560 src/celestia/celestiacore.cpp:1558
+#: src/celestia/celestiacore.cpp:1577 src/celestia/celestiacore.cpp:1579
 #: src/celestia/celestiacore.cpp:1588
 msgid "Render path: OpenGL vertex program"
 msgstr "成像路徑:OpenGL 頂點程式"
 
-#: src/celestia/celestiacore.cpp:1580 src/celestia/celestiacore.cpp:1561
+#: src/celestia/celestiacore.cpp:1563 src/celestia/celestiacore.cpp:1561
+#: src/celestia/celestiacore.cpp:1580 src/celestia/celestiacore.cpp:1582
 #: src/celestia/celestiacore.cpp:1591
 msgid "Render path: NVIDIA vertex program and combiners"
 msgstr "成像路徑:NVIDIA combiners"
 
-#: src/celestia/celestiacore.cpp:1583 src/celestia/celestiacore.cpp:1564
+#: src/celestia/celestiacore.cpp:1566 src/celestia/celestiacore.cpp:1564
+#: src/celestia/celestiacore.cpp:1583 src/celestia/celestiacore.cpp:1585
 #: src/celestia/celestiacore.cpp:1594
 msgid "Render path: OpenGL vertex program/NVIDIA combiners"
 msgstr "成像路徑:OpenGL 頂點程式/NVIDIA combiners"
 
-#: src/celestia/celestiacore.cpp:1586 src/celestia/celestiacore.cpp:1567
+#: src/celestia/celestiacore.cpp:1569 src/celestia/celestiacore.cpp:1567
+#: src/celestia/celestiacore.cpp:1586 src/celestia/celestiacore.cpp:1588
 #: src/celestia/celestiacore.cpp:1597
 msgid "Render path: OpenGL 1.5 vertex/fragment program"
 msgstr "成像路徑:OpenGL 1.5 頂點/片段程式"
 
-#: src/celestia/celestiacore.cpp:1589 src/celestia/celestiacore.cpp:1570
+#: src/celestia/celestiacore.cpp:1572 src/celestia/celestiacore.cpp:1570
+#: src/celestia/celestiacore.cpp:1589 src/celestia/celestiacore.cpp:1591
 #: src/celestia/celestiacore.cpp:1600
 msgid "Render path: NVIDIA GeForce FX"
 msgstr "成像路徑:NVIDIA GeForce FX"
 
-#: src/celestia/celestiacore.cpp:1592 src/celestia/celestiacore.cpp:1573
+#: src/celestia/celestiacore.cpp:1575 src/celestia/celestiacore.cpp:1573
+#: src/celestia/celestiacore.cpp:1592 src/celestia/celestiacore.cpp:1594
 #: src/celestia/celestiacore.cpp:1603
 msgid "Render path: OpenGL 2.0"
 msgstr "成像路徑:OpenGL 2.0"
 
-#: src/celestia/celestiacore.cpp:1610 src/celestia/celestiacore.cpp:1621
+#: src/celestia/celestiacore.cpp:1593 src/celestia/celestiacore.cpp:1610
+#: src/celestia/celestiacore.cpp:1612 src/celestia/celestiacore.cpp:1621
 #, fuzzy
 msgid "Anti-aliasing enabled"
 msgstr "經緯儀模式啟動"
 
-#: src/celestia/celestiacore.cpp:1615 src/celestia/celestiacore.cpp:1626
+#: src/celestia/celestiacore.cpp:1598 src/celestia/celestiacore.cpp:1615
+#: src/celestia/celestiacore.cpp:1617 src/celestia/celestiacore.cpp:1626
 #, fuzzy
 msgid "Anti-aliasing disabled"
 msgstr "經緯儀模式關閉"
 
-#: src/celestia/celestiacore.cpp:1624 src/celestia/celestiacore.cpp:1596
+#: src/celestia/celestiacore.cpp:1607 src/celestia/celestiacore.cpp:1596
+#: src/celestia/celestiacore.cpp:1624 src/celestia/celestiacore.cpp:1626
 #: src/celestia/celestiacore.cpp:1635
 msgid "Auto-magnitude enabled"
 msgstr "自動調整星等已開啟"
 
-#: src/celestia/celestiacore.cpp:1629 src/celestia/celestiacore.cpp:1601
+#: src/celestia/celestiacore.cpp:1612 src/celestia/celestiacore.cpp:1601
+#: src/celestia/celestiacore.cpp:1629 src/celestia/celestiacore.cpp:1631
 #: src/celestia/celestiacore.cpp:1640
 msgid "Auto-magnitude disabled"
 msgstr "自動調整星等已關閉"
 
-#: src/celestia/celestiacore.cpp:1690 src/celestia/celestiacore.cpp:1659
+#: src/celestia/celestiacore.cpp:1674 src/celestia/celestiacore.cpp:1659
+#: src/celestia/celestiacore.cpp:1690 src/celestia/celestiacore.cpp:1692
 #: src/celestia/celestiacore.cpp:1704
 msgid "Time and script are paused"
 msgstr "時間與腳本已暫停"
 
-#: src/celestia/celestiacore.cpp:1692 src/celestia/celestiacore.cpp:1661
+#: src/celestia/celestiacore.cpp:1676 src/celestia/celestiacore.cpp:1661
+#: src/celestia/celestiacore.cpp:1692 src/celestia/celestiacore.cpp:1694
 #: src/celestia/celestiacore.cpp:1706
 msgid "Time is paused"
 msgstr "時間已暫停"
 
-#: src/celestia/celestiacore.cpp:1696 src/celestia/celestiacore.cpp:1665
+#: src/celestia/celestiacore.cpp:1680 src/celestia/celestiacore.cpp:1665
+#: src/celestia/celestiacore.cpp:1696 src/celestia/celestiacore.cpp:1698
 #: src/celestia/celestiacore.cpp:1710
 msgid "Resume"
 msgstr "回復"
 
-#: src/celestia/celestiacore.cpp:1730 src/celestia/celestiacore.cpp:1744
+#: src/celestia/celestiacore.cpp:1714 src/celestia/celestiacore.cpp:1730
+#: src/celestia/celestiacore.cpp:1732 src/celestia/celestiacore.cpp:1744
 msgid "Star color: Blackbody D65"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1736 src/celestia/celestiacore.cpp:1750
+#: src/celestia/celestiacore.cpp:1720 src/celestia/celestiacore.cpp:1736
+#: src/celestia/celestiacore.cpp:1738 src/celestia/celestiacore.cpp:1750
 #, fuzzy
 msgid "Star color: Enhanced"
 msgstr "全部恆星數: "
 
-#: src/celestia/celestiacore.cpp:1773 src/celestia/celestiacore.cpp:1740
+#: src/celestia/celestiacore.cpp:1757 src/celestia/celestiacore.cpp:1740
+#: src/celestia/celestiacore.cpp:1773 src/celestia/celestiacore.cpp:1775
 #: src/celestia/celestiacore.cpp:1787
 #, c-format
 msgid "Light travel time:  %.4f yr "
 msgstr "光旅行時間:%.4f 年 "
 
-#: src/celestia/celestiacore.cpp:1782 src/celestia/celestiacore.cpp:1749
+#: src/celestia/celestiacore.cpp:1766 src/celestia/celestiacore.cpp:1749
+#: src/celestia/celestiacore.cpp:1782 src/celestia/celestiacore.cpp:1784
 #: src/celestia/celestiacore.cpp:1796
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "光旅行時間:%d 分 %.1f 秒 "
 
-#: src/celestia/celestiacore.cpp:1786 src/celestia/celestiacore.cpp:1752
+#: src/celestia/celestiacore.cpp:1770 src/celestia/celestiacore.cpp:1752
+#: src/celestia/celestiacore.cpp:1786 src/celestia/celestiacore.cpp:1788
 #: src/celestia/celestiacore.cpp:1800
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "光旅行時間:%d 小時 %d 分 %.1f 秒 "
 
-#: src/celestia/celestiacore.cpp:1859 src/celestia/celestiacore.cpp:1827
+#: src/celestia/celestiacore.cpp:1843 src/celestia/celestiacore.cpp:1827
+#: src/celestia/celestiacore.cpp:1859 src/celestia/celestiacore.cpp:1861
 #: src/celestia/celestiacore.cpp:1873
 msgid "Using normal surface textures."
 msgstr "使用一般表面紋理"
 
-#: src/celestia/celestiacore.cpp:1864 src/celestia/celestiacore.cpp:1832
+#: src/celestia/celestiacore.cpp:1848 src/celestia/celestiacore.cpp:1832
+#: src/celestia/celestiacore.cpp:1864 src/celestia/celestiacore.cpp:1866
 #: src/celestia/celestiacore.cpp:1878
 msgid "Using limit of knowledge surface textures."
 msgstr "使用知識的界限表面紋理。"
 
-#: src/celestia/celestiacore.cpp:1956 src/celestia/celestiacore.cpp:1924
+#: src/celestia/celestiacore.cpp:1940 src/celestia/celestiacore.cpp:1924
+#: src/celestia/celestiacore.cpp:1956 src/celestia/celestiacore.cpp:1958
 #: src/celestia/celestiacore.cpp:1970
 msgid "Time: Forward"
 msgstr "時間:前進"
 
-#: src/celestia/celestiacore.cpp:1958 src/celestia/celestiacore.cpp:1926
+#: src/celestia/celestiacore.cpp:1942 src/celestia/celestiacore.cpp:1926
+#: src/celestia/celestiacore.cpp:1958 src/celestia/celestiacore.cpp:1960
 #: src/celestia/celestiacore.cpp:1972
 msgid "Time: Backward"
 msgstr "時間:後退"
 
-#: src/celestia/celestiacore.cpp:1971 src/celestia/celestiacore.cpp:1987
-#: src/celestia/celestiacore.cpp:1939 src/celestia/celestiacore.cpp:1955
-#: src/celestia/celestiacore.cpp:1985 src/celestia/celestiacore.cpp:2001
+#: src/celestia/celestiacore.cpp:1955 src/celestia/celestiacore.cpp:1971
+#: src/celestia/celestiacore.cpp:1939 src/celestia/celestiacore.cpp:1973
+#: src/celestia/celestiacore.cpp:1985 src/celestia/celestiacore.cpp:1987
+#: src/celestia/celestiacore.cpp:1989 src/celestia/celestiacore.cpp:2001
 msgid "Time rate"
 msgstr "時間速率"
 
-#: src/celestia/celestiacore.cpp:2027 src/celestia/celestiacore.cpp:2041
+#: src/celestia/celestiacore.cpp:2011 src/celestia/celestiacore.cpp:2027
+#: src/celestia/celestiacore.cpp:2029 src/celestia/celestiacore.cpp:2041
 #, fuzzy
 msgid "Low res textures"
 msgstr "紋理"
 
-#: src/celestia/celestiacore.cpp:2030 src/celestia/celestiacore.cpp:2044
+#: src/celestia/celestiacore.cpp:2014 src/celestia/celestiacore.cpp:2030
+#: src/celestia/celestiacore.cpp:2032 src/celestia/celestiacore.cpp:2044
 #, fuzzy
 msgid "Medium res textures"
 msgstr "紋理"
 
-#: src/celestia/celestiacore.cpp:2033 src/celestia/celestiacore.cpp:2047
+#: src/celestia/celestiacore.cpp:2017 src/celestia/celestiacore.cpp:2033
+#: src/celestia/celestiacore.cpp:2035 src/celestia/celestiacore.cpp:2047
 #, fuzzy
 msgid "High res textures"
 msgstr "紋理"
 
-#: src/celestia/celestiacore.cpp:2080 src/celestia/qt/qtselectionpopup.cpp:486
-#: src/celestia/celestiacore.cpp:2028 src/celestia/celestiacore.cpp:2094
+#: src/celestia/celestiacore.cpp:2064 src/celestia/qt/qtselectionpopup.cpp:486
+#: src/celestia/celestiacore.cpp:2028 src/celestia/celestiacore.cpp:2080
+#: src/celestia/celestiacore.cpp:2082 src/celestia/celestiacore.cpp:2094
 msgid "Sync Orbit"
 msgstr "同步軌道"
 
-#: src/celestia/celestiacore.cpp:2086 src/celestia/celestiacore.cpp:2034
+#: src/celestia/celestiacore.cpp:2070 src/celestia/celestiacore.cpp:2034
+#: src/celestia/celestiacore.cpp:2086 src/celestia/celestiacore.cpp:2088
 #: src/celestia/celestiacore.cpp:2100
 msgid "Lock"
 msgstr "鎖定"
 
-#: src/celestia/celestiacore.cpp:2092 src/celestia/celestiacore.cpp:2040
+#: src/celestia/celestiacore.cpp:2076 src/celestia/celestiacore.cpp:2040
+#: src/celestia/celestiacore.cpp:2092 src/celestia/celestiacore.cpp:2094
 #: src/celestia/celestiacore.cpp:2106
 msgid "Chase"
 msgstr "追逐"
 
-#: src/celestia/celestiacore.cpp:2117 src/celestia/celestiacore.cpp:2148
+#: src/celestia/celestiacore.cpp:2101 src/celestia/celestiacore.cpp:2132
 #: src/celestia/celestiacore.cpp:2067 src/celestia/celestiacore.cpp:2098
-#: src/celestia/celestiacore.cpp:2133 src/celestia/celestiacore.cpp:2164
+#: src/celestia/celestiacore.cpp:2117 src/celestia/celestiacore.cpp:2119
+#: src/celestia/celestiacore.cpp:2133 src/celestia/celestiacore.cpp:2148
+#: src/celestia/celestiacore.cpp:2150 src/celestia/celestiacore.cpp:2164
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "45 度時自動調整星等限制:%.2f"
 
-#: src/celestia/celestiacore.cpp:2167 src/celestia/celestiacore.cpp:2182
+#: src/celestia/celestiacore.cpp:2151 src/celestia/celestiacore.cpp:2166
 #: src/celestia/celestiacore.cpp:2117 src/celestia/celestiacore.cpp:2132
-#: src/celestia/celestiacore.cpp:2183 src/celestia/celestiacore.cpp:2198
+#: src/celestia/celestiacore.cpp:2167 src/celestia/celestiacore.cpp:2169
+#: src/celestia/celestiacore.cpp:2182 src/celestia/celestiacore.cpp:2183
+#: src/celestia/celestiacore.cpp:2184 src/celestia/celestiacore.cpp:2198
 #, c-format
 msgid "Ambient light level:  %.2f"
 msgstr "環境光線等級:%.2f"
 
-#: src/celestia/celestiacore.cpp:2193 src/celestia/celestiacore.cpp:2205
+#: src/celestia/celestiacore.cpp:2177 src/celestia/celestiacore.cpp:2189
 #: src/celestia/celestiacore.cpp:2143 src/celestia/celestiacore.cpp:2155
+#: src/celestia/celestiacore.cpp:2193 src/celestia/celestiacore.cpp:2195
+#: src/celestia/celestiacore.cpp:2205 src/celestia/celestiacore.cpp:2207
 #: src/celestia/celestiacore.cpp:2209 src/celestia/celestiacore.cpp:2221
 msgid "Light gain"
 msgstr "增光"
 
-#: src/celestia/celestiacore.cpp:2226 src/celestia/celestiacore.cpp:2175
+#: src/celestia/celestiacore.cpp:2210 src/celestia/celestiacore.cpp:2175
+#: src/celestia/celestiacore.cpp:2226 src/celestia/celestiacore.cpp:2228
 #: src/celestia/celestiacore.cpp:2241
 msgid "Bloom enabled"
 msgstr "彗尾已啟動"
 
-#: src/celestia/celestiacore.cpp:2228 src/celestia/celestiacore.cpp:2177
+#: src/celestia/celestiacore.cpp:2212 src/celestia/celestiacore.cpp:2177
+#: src/celestia/celestiacore.cpp:2228 src/celestia/celestiacore.cpp:2230
 #: src/celestia/celestiacore.cpp:2243
 msgid "Bloom disabled"
 msgstr "彗尾已關閉"
 
-#: src/celestia/celestiacore.cpp:2235 src/celestia/celestiacore.cpp:2244
+#: src/celestia/celestiacore.cpp:2219 src/celestia/celestiacore.cpp:2228
 #: src/celestia/celestiacore.cpp:2183 src/celestia/celestiacore.cpp:2191
+#: src/celestia/celestiacore.cpp:2235 src/celestia/celestiacore.cpp:2237
+#: src/celestia/celestiacore.cpp:2244 src/celestia/celestiacore.cpp:2246
 #: src/celestia/celestiacore.cpp:2249 src/celestia/celestiacore.cpp:2257
 msgid "Exposure"
 msgstr "曝光"
 
-#: src/celestia/celestiacore.cpp:2598 src/celestia/celestiacore.cpp:2539
+#: src/celestia/celestiacore.cpp:2582 src/celestia/celestiacore.cpp:2539
+#: src/celestia/celestiacore.cpp:2598 src/celestia/celestiacore.cpp:2600
 #: src/celestia/celestiacore.cpp:2611
 msgid "GL error: "
 msgstr "GL 錯誤:"
 
-#: src/celestia/celestiacore.cpp:2698 src/celestia/celestiacore.cpp:2639
+#: src/celestia/celestiacore.cpp:2682 src/celestia/celestiacore.cpp:2639
+#: src/celestia/celestiacore.cpp:2698 src/celestia/celestiacore.cpp:2700
 #: src/celestia/celestiacore.cpp:2711
 msgid "View too small to be split"
 msgstr "檢視過小無法分離"
 
-#: src/celestia/celestiacore.cpp:2701 src/celestia/celestiacore.cpp:2642
+#: src/celestia/celestiacore.cpp:2685 src/celestia/celestiacore.cpp:2642
+#: src/celestia/celestiacore.cpp:2701 src/celestia/celestiacore.cpp:2703
 #: src/celestia/celestiacore.cpp:2714
 msgid "Added view"
 msgstr "已新增檢視"
 
-#: src/celestia/celestiacore.cpp:2957 src/celestia/kde/celestialbrowser.cpp:130
+#: src/celestia/celestiacore.cpp:2941 src/celestia/kde/celestialbrowser.cpp:130
 #: src/celestia/kde/selectionpopup.cpp:79 src/celestia/celestiacore.cpp:2898
+#: src/celestia/celestiacore.cpp:2957 src/celestia/celestiacore.cpp:2959
 #: src/celestia/celestiacore.cpp:2970 src/celestia/kde/celestialbrowser.cpp:133
 msgid "ly"
 msgstr "光年"
 
-#: src/celestia/celestiacore.cpp:2961 src/celestia/kde/celestialbrowser.cpp:159
+#: src/celestia/celestiacore.cpp:2945 src/celestia/kde/celestialbrowser.cpp:159
 #: src/celestia/kde/selectionpopup.cpp:81
 #: src/celestia/win32/res/resource_strings.cpp:135
-#: src/celestia/celestiacore.cpp:2902 src/celestia/celestiacore.cpp:2974
+#: src/celestia/celestiacore.cpp:2902 src/celestia/celestiacore.cpp:2961
+#: src/celestia/celestiacore.cpp:2963 src/celestia/celestiacore.cpp:2974
 #: src/celestia/kde/celestialbrowser.cpp:162
 #: src/celestia/res/resource_strings.cpp:132
 msgid "au"
 msgstr "天文單位"
 
-#: src/celestia/celestiacore.cpp:2988 src/celestia/celestiacore.cpp:2923
+#: src/celestia/celestiacore.cpp:2972 src/celestia/celestiacore.cpp:2923
+#: src/celestia/celestiacore.cpp:2988 src/celestia/celestiacore.cpp:2990
 #: src/celestia/celestiacore.cpp:3001
 msgid " days"
 msgstr " 日"
 
-#: src/celestia/celestiacore.cpp:2990 src/celestia/celestiacore.cpp:2925
+#: src/celestia/celestiacore.cpp:2974 src/celestia/celestiacore.cpp:2925
+#: src/celestia/celestiacore.cpp:2990 src/celestia/celestiacore.cpp:2992
 #: src/celestia/celestiacore.cpp:3003
 msgid " hours"
 msgstr " 時"
 
-#: src/celestia/celestiacore.cpp:2992 src/celestia/celestiacore.cpp:2927
+#: src/celestia/celestiacore.cpp:2976 src/celestia/celestiacore.cpp:2927
+#: src/celestia/celestiacore.cpp:2992 src/celestia/celestiacore.cpp:2994
 #: src/celestia/celestiacore.cpp:3005
 msgid " minutes"
 msgstr " 分"
 
-#: src/celestia/celestiacore.cpp:2994 src/celestia/celestiacore.cpp:2929
+#: src/celestia/celestiacore.cpp:2978 src/celestia/celestiacore.cpp:2929
+#: src/celestia/celestiacore.cpp:2994 src/celestia/celestiacore.cpp:2996
 #: src/celestia/celestiacore.cpp:3007
 msgid " seconds"
 msgstr " 秒"
 
-#: src/celestia/celestiacore.cpp:3059 src/celestia/celestiacore.cpp:2994
+#: src/celestia/celestiacore.cpp:3043 src/celestia/celestiacore.cpp:2994
+#: src/celestia/celestiacore.cpp:3059 src/celestia/celestiacore.cpp:3061
 #: src/celestia/celestiacore.cpp:3072
 msgid "Apparent diameter: "
 msgstr "視直徑:"
 
-#: src/celestia/celestiacore.cpp:3074 src/celestia/celestiacore.cpp:3009
+#: src/celestia/celestiacore.cpp:3058 src/celestia/celestiacore.cpp:3009
+#: src/celestia/celestiacore.cpp:3074 src/celestia/celestiacore.cpp:3076
 #: src/celestia/celestiacore.cpp:3087
 msgid "Apparent magnitude: "
 msgstr "視星等:"
 
-#: src/celestia/celestiacore.cpp:3078 src/celestia/celestiacore.cpp:3013
+#: src/celestia/celestiacore.cpp:3062 src/celestia/celestiacore.cpp:3013
+#: src/celestia/celestiacore.cpp:3078 src/celestia/celestiacore.cpp:3080
 #: src/celestia/celestiacore.cpp:3091
 msgid "Absolute magnitude: "
 msgstr "絕對星等:"
 
-#: src/celestia/celestiacore.cpp:3100 src/celestia/celestiacore.cpp:3035
+#: src/celestia/celestiacore.cpp:3084 src/celestia/celestiacore.cpp:3035
+#: src/celestia/celestiacore.cpp:3100 src/celestia/celestiacore.cpp:3102
 #: src/celestia/celestiacore.cpp:3113
 msgid "RA: "
 msgstr "赤經:"
 
-#: src/celestia/celestiacore.cpp:3104 src/celestia/celestiacore.cpp:3039
+#: src/celestia/celestiacore.cpp:3088 src/celestia/celestiacore.cpp:3039
+#: src/celestia/celestiacore.cpp:3104 src/celestia/celestiacore.cpp:3106
 #: src/celestia/celestiacore.cpp:3117
 msgid "Dec: "
 msgstr "赤緯:"
 
-#: src/celestia/celestiacore.cpp:3168 src/celestia/kde/kdeapp.cpp:1635
+#: src/celestia/celestiacore.cpp:3152 src/celestia/kde/kdeapp.cpp:1635
 #: src/celestia/qt/qtinfopanel.cpp:127 src/celestia/qt/qtinfopanel.cpp:222
 #: src/celestia/win32/res/resource_strings.cpp:133
-#: src/celestia/celestiacore.cpp:3103 src/celestia/celestiacore.cpp:3181
+#: src/celestia/celestiacore.cpp:3103 src/celestia/celestiacore.cpp:3168
+#: src/celestia/celestiacore.cpp:3170 src/celestia/celestiacore.cpp:3181
 #: src/celestia/kde/kdeapp.cpp:1619 src/celestia/res/resource_strings.cpp:130
 msgid "km"
 msgstr "公里"
 
-#: src/celestia/celestiacore.cpp:3195 src/celestia/celestiacore.cpp:3269
-#: src/celestia/celestiacore.cpp:3299 src/celestia/celestiacore.cpp:3394
+#: src/celestia/celestiacore.cpp:3179 src/celestia/celestiacore.cpp:3253
+#: src/celestia/celestiacore.cpp:3283 src/celestia/celestiacore.cpp:3378
 #: src/celestia/kde/selectionpopup.cpp:87
 #: src/celestia/qt/qtselectionpopup.cpp:115 src/celestia/celestiacore.cpp:3132
+#: src/celestia/celestiacore.cpp:3195 src/celestia/celestiacore.cpp:3197
 #: src/celestia/celestiacore.cpp:3206 src/celestia/celestiacore.cpp:3208
-#: src/celestia/celestiacore.cpp:3238 src/celestia/celestiacore.cpp:3282
+#: src/celestia/celestiacore.cpp:3238 src/celestia/celestiacore.cpp:3269
+#: src/celestia/celestiacore.cpp:3271 src/celestia/celestiacore.cpp:3282
+#: src/celestia/celestiacore.cpp:3299 src/celestia/celestiacore.cpp:3301
 #: src/celestia/celestiacore.cpp:3312 src/celestia/celestiacore.cpp:3339
+#: src/celestia/celestiacore.cpp:3394 src/celestia/celestiacore.cpp:3396
 #: src/celestia/celestiacore.cpp:3407
 msgid "Distance: "
 msgstr "距離:"
 
-#: src/celestia/celestiacore.cpp:3201 src/celestia/celestiacore.cpp:3138
+#: src/celestia/celestiacore.cpp:3185 src/celestia/celestiacore.cpp:3138
+#: src/celestia/celestiacore.cpp:3201 src/celestia/celestiacore.cpp:3203
 #: src/celestia/celestiacore.cpp:3214
 msgid "Star system barycenter\n"
 msgstr "恆星系統質心\n"
 
-#: src/celestia/celestiacore.cpp:3205 src/celestia/celestiacore.cpp:3142
+#: src/celestia/celestiacore.cpp:3189 src/celestia/celestiacore.cpp:3142
+#: src/celestia/celestiacore.cpp:3205 src/celestia/celestiacore.cpp:3207
 #: src/celestia/celestiacore.cpp:3218
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "絕對星等(視星等):%.2f(%.2f)\n"
 
-#: src/celestia/celestiacore.cpp:3211 src/celestia/celestiacore.cpp:3148
+#: src/celestia/celestiacore.cpp:3195 src/celestia/celestiacore.cpp:3148
+#: src/celestia/celestiacore.cpp:3211 src/celestia/celestiacore.cpp:3213
 #: src/celestia/celestiacore.cpp:3224
 msgid "Luminosity: "
 msgstr "光度:"
 
-#: src/celestia/celestiacore.cpp:3211 src/celestia/celestiacore.cpp:3148
+#: src/celestia/celestiacore.cpp:3195 src/celestia/celestiacore.cpp:3148
+#: src/celestia/celestiacore.cpp:3211 src/celestia/celestiacore.cpp:3213
 #: src/celestia/celestiacore.cpp:3224
 msgid "x Sun"
 msgstr "x 太陽"
 
-#: src/celestia/celestiacore.cpp:3212 src/celestia/kde/selectionpopup.cpp:97
+#: src/celestia/celestiacore.cpp:3196 src/celestia/kde/selectionpopup.cpp:97
 #: src/celestia/qt/qtselectionpopup.cpp:124 src/celestia/celestiacore.cpp:3149
+#: src/celestia/celestiacore.cpp:3212 src/celestia/celestiacore.cpp:3214
 #: src/celestia/celestiacore.cpp:3225
 msgid "Class: "
 msgstr "類別:"
 
-#: src/celestia/celestiacore.cpp:3214 src/celestia/celestiacore.cpp:3151
+#: src/celestia/celestiacore.cpp:3198 src/celestia/celestiacore.cpp:3151
+#: src/celestia/celestiacore.cpp:3214 src/celestia/celestiacore.cpp:3216
 #: src/celestia/celestiacore.cpp:3227
 msgid "Neutron star"
 msgstr "中子星"
 
-#: src/celestia/celestiacore.cpp:3216 src/celestia/celestiacore.cpp:3153
+#: src/celestia/celestiacore.cpp:3200 src/celestia/celestiacore.cpp:3153
+#: src/celestia/celestiacore.cpp:3216 src/celestia/celestiacore.cpp:3218
 #: src/celestia/celestiacore.cpp:3229
 msgid "Black hole"
 msgstr "黑洞"
 
-#: src/celestia/celestiacore.cpp:3226 src/celestia/celestiacore.cpp:3163
+#: src/celestia/celestiacore.cpp:3210 src/celestia/celestiacore.cpp:3163
+#: src/celestia/celestiacore.cpp:3226 src/celestia/celestiacore.cpp:3228
 #: src/celestia/celestiacore.cpp:3239
 msgid "Surface temp: "
 msgstr "表面溫度:"
 
-#: src/celestia/celestiacore.cpp:3229 src/celestia/celestiacore.cpp:3278
-#: src/celestia/celestiacore.cpp:3309 src/celestia/kde/selectionpopup.cpp:105
+#: src/celestia/celestiacore.cpp:3213 src/celestia/celestiacore.cpp:3262
+#: src/celestia/celestiacore.cpp:3293 src/celestia/kde/selectionpopup.cpp:105
 #: src/celestia/celestiacore.cpp:3166 src/celestia/celestiacore.cpp:3215
+#: src/celestia/celestiacore.cpp:3229 src/celestia/celestiacore.cpp:3231
 #: src/celestia/celestiacore.cpp:3242 src/celestia/celestiacore.cpp:3248
-#: src/celestia/celestiacore.cpp:3291 src/celestia/celestiacore.cpp:3322
+#: src/celestia/celestiacore.cpp:3278 src/celestia/celestiacore.cpp:3280
+#: src/celestia/celestiacore.cpp:3291 src/celestia/celestiacore.cpp:3309
+#: src/celestia/celestiacore.cpp:3311 src/celestia/celestiacore.cpp:3322
 msgid "Radius: "
 msgstr "半徑:"
 
-#: src/celestia/celestiacore.cpp:3232 src/celestia/kde/selectionpopup.cpp:106
-#: src/celestia/celestiacore.cpp:3169 src/celestia/celestiacore.cpp:3245
+#: src/celestia/celestiacore.cpp:3216 src/celestia/kde/selectionpopup.cpp:106
+#: src/celestia/celestiacore.cpp:3169 src/celestia/celestiacore.cpp:3232
+#: src/celestia/celestiacore.cpp:3234 src/celestia/celestiacore.cpp:3245
 msgid "Rsun"
 msgstr "太陽半徑"
 
-#: src/celestia/celestiacore.cpp:3242 src/celestia/celestiacore.cpp:3360
-#: src/celestia/celestiacore.cpp:3179 src/celestia/celestiacore.cpp:3255
-#: src/celestia/celestiacore.cpp:3300 src/celestia/celestiacore.cpp:3373
+#: src/celestia/celestiacore.cpp:3226 src/celestia/celestiacore.cpp:3344
+#: src/celestia/celestiacore.cpp:3179 src/celestia/celestiacore.cpp:3242
+#: src/celestia/celestiacore.cpp:3244 src/celestia/celestiacore.cpp:3255
+#: src/celestia/celestiacore.cpp:3300 src/celestia/celestiacore.cpp:3360
+#: src/celestia/celestiacore.cpp:3362 src/celestia/celestiacore.cpp:3373
 msgid "Rotation period: "
 msgstr "自轉週期:"
 
-#: src/celestia/celestiacore.cpp:3256 src/celestia/celestiacore.cpp:3193
+#: src/celestia/celestiacore.cpp:3240 src/celestia/celestiacore.cpp:3193
+#: src/celestia/celestiacore.cpp:3256 src/celestia/celestiacore.cpp:3258
 #: src/celestia/celestiacore.cpp:3269
 msgid "Planetary companions present\n"
 msgstr "呈現行星的伴星\n"
 
-#: src/celestia/celestiacore.cpp:3274 src/celestia/celestiacore.cpp:3211
+#: src/celestia/celestiacore.cpp:3258 src/celestia/celestiacore.cpp:3211
+#: src/celestia/celestiacore.cpp:3274 src/celestia/celestiacore.cpp:3276
 #: src/celestia/celestiacore.cpp:3287
 msgid "Distance from center: "
 msgstr "與中心距離:"
 
-#: src/celestia/celestiacore.cpp:3352 src/celestia/celestiacore.cpp:3292
+#: src/celestia/celestiacore.cpp:3336 src/celestia/celestiacore.cpp:3292
+#: src/celestia/celestiacore.cpp:3352 src/celestia/celestiacore.cpp:3354
 #: src/celestia/celestiacore.cpp:3365
 #, c-format
 msgid "Phase angle: %.1f%s\n"
 msgstr "相位角: %.1f%s\n"
 
-#: src/celestia/celestiacore.cpp:3600 src/celestia/celestiacore.cpp:3485
+#: src/celestia/celestiacore.cpp:3581 src/celestia/celestiacore.cpp:3485
+#: src/celestia/celestiacore.cpp:3599 src/celestia/celestiacore.cpp:3600
 #: src/celestia/celestiacore.cpp:3613
 msgid "  LT"
 msgstr "  本地時間"
 
-#: src/celestia/celestiacore.cpp:3609 src/celestia/qt/qttimetoolbar.cpp:38
+#: src/celestia/celestiacore.cpp:3590 src/celestia/qt/qttimetoolbar.cpp:38
 #: src/celestia/qt/qttimetoolbar.cpp:53 src/celestia/celestiacore.cpp:3494
+#: src/celestia/celestiacore.cpp:3608 src/celestia/celestiacore.cpp:3609
 #: src/celestia/celestiacore.cpp:3622
 msgid "Real time"
 msgstr "即時"
 
-#: src/celestia/celestiacore.cpp:3611 src/celestia/celestiacore.cpp:3496
+#: src/celestia/celestiacore.cpp:3592 src/celestia/celestiacore.cpp:3496
+#: src/celestia/celestiacore.cpp:3610 src/celestia/celestiacore.cpp:3611
 #: src/celestia/celestiacore.cpp:3624
 msgid "-Real time"
 msgstr "-即時"
 
-#: src/celestia/celestiacore.cpp:3615 src/celestia/celestiacore.cpp:3500
+#: src/celestia/celestiacore.cpp:3596 src/celestia/celestiacore.cpp:3500
+#: src/celestia/celestiacore.cpp:3614 src/celestia/celestiacore.cpp:3615
 #: src/celestia/celestiacore.cpp:3628
 msgid "Time stopped"
 msgstr "時間已停止"
 
-#: src/celestia/celestiacore.cpp:3620 src/celestia/celestiacore.cpp:3505
+#: src/celestia/celestiacore.cpp:3601 src/celestia/celestiacore.cpp:3505
+#: src/celestia/celestiacore.cpp:3619 src/celestia/celestiacore.cpp:3620
 #: src/celestia/celestiacore.cpp:3633
 msgid " faster"
 msgstr " 增快"
 
-#: src/celestia/celestiacore.cpp:3625 src/celestia/celestiacore.cpp:3510
+#: src/celestia/celestiacore.cpp:3606 src/celestia/celestiacore.cpp:3510
+#: src/celestia/celestiacore.cpp:3624 src/celestia/celestiacore.cpp:3625
 #: src/celestia/celestiacore.cpp:3638
 msgid " slower"
 msgstr " 減慢"
 
-#: src/celestia/celestiacore.cpp:3631 src/celestia/celestiacore.cpp:3516
+#: src/celestia/celestiacore.cpp:3612 src/celestia/celestiacore.cpp:3516
+#: src/celestia/celestiacore.cpp:3630 src/celestia/celestiacore.cpp:3631
 #: src/celestia/celestiacore.cpp:3644
 msgid " (Paused)"
 msgstr " (已暫停)"
 
-#: src/celestia/celestiacore.cpp:3649 src/celestia/celestiacore.cpp:3534
+#: src/celestia/celestiacore.cpp:3630 src/celestia/celestiacore.cpp:3534
+#: src/celestia/celestiacore.cpp:3648 src/celestia/celestiacore.cpp:3649
 #: src/celestia/celestiacore.cpp:3662
 msgid "FPS: "
 msgstr "每秒影格速率:"
 
-#: src/celestia/celestiacore.cpp:3651 src/celestia/celestiacore.cpp:3536
+#: src/celestia/celestiacore.cpp:3632 src/celestia/celestiacore.cpp:3536
+#: src/celestia/celestiacore.cpp:3650 src/celestia/celestiacore.cpp:3651
 #: src/celestia/celestiacore.cpp:3664
 msgid ""
 "\n"
@@ -868,220 +997,262 @@ msgstr ""
 "\n"
 "速度:"
 
-#: src/celestia/celestiacore.cpp:3655 src/celestia/celestiacore.cpp:3540
+#: src/celestia/celestiacore.cpp:3636 src/celestia/celestiacore.cpp:3540
+#: src/celestia/celestiacore.cpp:3654 src/celestia/celestiacore.cpp:3655
 #: src/celestia/celestiacore.cpp:3668
 msgid " m/s"
 msgstr "m/s"
 
-#: src/celestia/celestiacore.cpp:3657 src/celestia/celestiacore.cpp:3542
+#: src/celestia/celestiacore.cpp:3638 src/celestia/celestiacore.cpp:3542
+#: src/celestia/celestiacore.cpp:3656 src/celestia/celestiacore.cpp:3657
 #: src/celestia/celestiacore.cpp:3670
 msgid " km/s"
 msgstr "km/s"
 
-#: src/celestia/celestiacore.cpp:3661 src/celestia/celestiacore.cpp:3546
+#: src/celestia/celestiacore.cpp:3642 src/celestia/celestiacore.cpp:3546
+#: src/celestia/celestiacore.cpp:3660 src/celestia/celestiacore.cpp:3661
 #: src/celestia/celestiacore.cpp:3674
 msgid " AU/s"
 msgstr "天文單位"
 
-#: src/celestia/celestiacore.cpp:3663 src/celestia/celestiacore.cpp:3548
+#: src/celestia/celestiacore.cpp:3644 src/celestia/celestiacore.cpp:3548
+#: src/celestia/celestiacore.cpp:3662 src/celestia/celestiacore.cpp:3663
 #: src/celestia/celestiacore.cpp:3676
 msgid " ly/s"
 msgstr " ly/s"
 
-#: src/celestia/celestiacore.cpp:3680 src/celestia/celestiacore.cpp:3565
+#: src/celestia/celestiacore.cpp:3661 src/celestia/celestiacore.cpp:3565
+#: src/celestia/celestiacore.cpp:3679 src/celestia/celestiacore.cpp:3680
 #: src/celestia/celestiacore.cpp:3693
 msgid "Travelling "
 msgstr "旅行中 "
 
-#: src/celestia/celestiacore.cpp:3693 src/celestia/celestiacore.cpp:3578
+#: src/celestia/celestiacore.cpp:3674 src/celestia/celestiacore.cpp:3578
+#: src/celestia/celestiacore.cpp:3692 src/celestia/celestiacore.cpp:3693
 #: src/celestia/celestiacore.cpp:3706
 msgid "Track "
 msgstr "追蹤 "
 
-#: src/celestia/celestiacore.cpp:3707 src/celestia/celestiacore.cpp:3592
+#: src/celestia/celestiacore.cpp:3688 src/celestia/celestiacore.cpp:3592
+#: src/celestia/celestiacore.cpp:3706 src/celestia/celestiacore.cpp:3707
 #: src/celestia/celestiacore.cpp:3720
 msgid "Follow "
 msgstr "跟隨 "
 
-#: src/celestia/celestiacore.cpp:3712 src/celestia/celestiacore.cpp:3597
+#: src/celestia/celestiacore.cpp:3693 src/celestia/celestiacore.cpp:3597
+#: src/celestia/celestiacore.cpp:3711 src/celestia/celestiacore.cpp:3712
 #: src/celestia/celestiacore.cpp:3725
 #, fuzzy
 msgid "Sync Orbit "
 msgstr "同步軌道"
 
-#: src/celestia/celestiacore.cpp:3717 src/celestia/celestiacore.cpp:3602
+#: src/celestia/celestiacore.cpp:3698 src/celestia/celestiacore.cpp:3602
+#: src/celestia/celestiacore.cpp:3716 src/celestia/celestiacore.cpp:3717
 #: src/celestia/celestiacore.cpp:3730
 #, fuzzy
 msgid "Lock "
 msgstr "鎖定"
 
-#: src/celestia/celestiacore.cpp:3726 src/celestia/celestiacore.cpp:3611
+#: src/celestia/celestiacore.cpp:3707 src/celestia/celestiacore.cpp:3611
+#: src/celestia/celestiacore.cpp:3725 src/celestia/celestiacore.cpp:3726
 #: src/celestia/celestiacore.cpp:3739
 #, fuzzy
 msgid "Chase "
 msgstr "追逐"
 
-#: src/celestia/celestiacore.cpp:3742 src/celestia/celestiacore.cpp:3627
+#: src/celestia/celestiacore.cpp:3723 src/celestia/celestiacore.cpp:3627
+#: src/celestia/celestiacore.cpp:3741 src/celestia/celestiacore.cpp:3742
 #: src/celestia/celestiacore.cpp:3755
 msgid "FOV: "
 msgstr "視場:"
 
-#: src/celestia/celestiacore.cpp:3772 src/celestia/celestiacore.cpp:3775
+#: src/celestia/celestiacore.cpp:3753 src/celestia/celestiacore.cpp:3756
 #: src/celestia/celestiacore.cpp:3657 src/celestia/celestiacore.cpp:3660
+#: src/celestia/celestiacore.cpp:3771 src/celestia/celestiacore.cpp:3772
+#: src/celestia/celestiacore.cpp:3774 src/celestia/celestiacore.cpp:3775
 #: src/celestia/celestiacore.cpp:3785 src/celestia/celestiacore.cpp:3788
 msgid "Sun"
 msgstr "太陽"
 
-#: src/celestia/celestiacore.cpp:3950 src/celestia/celestiacore.cpp:3834
+#: src/celestia/celestiacore.cpp:3931 src/celestia/celestiacore.cpp:3834
+#: src/celestia/celestiacore.cpp:3949 src/celestia/celestiacore.cpp:3950
 #: src/celestia/celestiacore.cpp:3963
 msgid "Target name: "
 msgstr "目標名稱:"
 
-#: src/celestia/celestiacore.cpp:4033 src/celestia/celestiacore.cpp:3916
+#: src/celestia/celestiacore.cpp:4014 src/celestia/celestiacore.cpp:3916
+#: src/celestia/celestiacore.cpp:4032 src/celestia/celestiacore.cpp:4033
 #: src/celestia/celestiacore.cpp:4046
 msgid " at "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:4034 src/celestia/celestiacore.cpp:3917
+#: src/celestia/celestiacore.cpp:4015 src/celestia/celestiacore.cpp:3917
+#: src/celestia/celestiacore.cpp:4033 src/celestia/celestiacore.cpp:4034
 #: src/celestia/celestiacore.cpp:4047
 msgid " fps"
 msgstr " 幅/秒"
 
-#: src/celestia/celestiacore.cpp:4036 src/celestia/kde/videocapturedlg.cpp:283
-#: src/celestia/celestiacore.cpp:3919 src/celestia/celestiacore.cpp:4049
+#: src/celestia/celestiacore.cpp:4017 src/celestia/kde/videocapturedlg.cpp:283
+#: src/celestia/celestiacore.cpp:3919 src/celestia/celestiacore.cpp:4035
+#: src/celestia/celestiacore.cpp:4036 src/celestia/celestiacore.cpp:4049
 msgid "  Recording"
 msgstr "  錄影中"
 
-#: src/celestia/celestiacore.cpp:4038 src/celestia/kde/videocapturedlg.cpp:66
+#: src/celestia/celestiacore.cpp:4019 src/celestia/kde/videocapturedlg.cpp:66
 #: src/celestia/kde/videocapturedlg.cpp:283 src/celestia/celestiacore.cpp:3921
+#: src/celestia/celestiacore.cpp:4037 src/celestia/celestiacore.cpp:4038
 #: src/celestia/celestiacore.cpp:4051
 msgid "  Paused"
 msgstr " 已暫停"
 
-#: src/celestia/celestiacore.cpp:4061 src/celestia/celestiacore.cpp:3940
+#: src/celestia/celestiacore.cpp:4042 src/celestia/celestiacore.cpp:3940
+#: src/celestia/celestiacore.cpp:4060 src/celestia/celestiacore.cpp:4061
 #: src/celestia/celestiacore.cpp:4074
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 開始/暫停   F12 停止"
 
-#: src/celestia/celestiacore.cpp:4071 src/celestia/celestiacore.cpp:4074
+#: src/celestia/celestiacore.cpp:4052 src/celestia/celestiacore.cpp:4055
 #: src/celestia/celestiacore.cpp:3949 src/celestia/celestiacore.cpp:3952
+#: src/celestia/celestiacore.cpp:4070 src/celestia/celestiacore.cpp:4071
+#: src/celestia/celestiacore.cpp:4073 src/celestia/celestiacore.cpp:4074
 #: src/celestia/celestiacore.cpp:4084 src/celestia/celestiacore.cpp:4087
 msgid "Edit Mode"
 msgstr "編輯模式"
 
-#: src/celestia/celestiacore.cpp:4140 src/celestia/celestiacore.cpp:4018
+#: src/celestia/celestiacore.cpp:4121 src/celestia/celestiacore.cpp:4018
+#: src/celestia/celestiacore.cpp:4139 src/celestia/celestiacore.cpp:4140
 #: src/celestia/celestiacore.cpp:4153
 msgid "Loading solar system catalog: "
 msgstr "載入太陽系目錄:"
 
-#: src/celestia/celestiacore.cpp:4181 src/celestia/celestiacore.cpp:4059
+#: src/celestia/celestiacore.cpp:4162 src/celestia/celestiacore.cpp:4059
+#: src/celestia/celestiacore.cpp:4180 src/celestia/celestiacore.cpp:4181
 #: src/celestia/celestiacore.cpp:4194
 msgid "Loading "
 msgstr "載入中 "
 
-#: src/celestia/celestiacore.cpp:4216 src/celestia/celestiacore.cpp:4094
+#: src/celestia/celestiacore.cpp:4197 src/celestia/celestiacore.cpp:4094
+#: src/celestia/celestiacore.cpp:4215 src/celestia/celestiacore.cpp:4216
 #: src/celestia/celestiacore.cpp:4229
 msgid "License file 'License.txt' is missing!"
 msgstr "授權檔 'License.txt' 不見了。"
 
-#: src/celestia/celestiacore.cpp:4237 src/celestia/celestiacore.cpp:4115
+#: src/celestia/celestiacore.cpp:4218 src/celestia/celestiacore.cpp:4115
+#: src/celestia/celestiacore.cpp:4236 src/celestia/celestiacore.cpp:4237
 #: src/celestia/celestiacore.cpp:4250
 msgid "Error reading configuration file."
 msgstr "讀取設定檔時發生錯誤。"
 
-#: src/celestia/celestiacore.cpp:4248 src/celestia/celestiacore.cpp:4126
+#: src/celestia/celestiacore.cpp:4229 src/celestia/celestiacore.cpp:4126
+#: src/celestia/celestiacore.cpp:4247 src/celestia/celestiacore.cpp:4248
 #: src/celestia/celestiacore.cpp:4261
 msgid "Initialization of SPICE library failed."
 msgstr "初始化 SPICE 函式庫時失敗。"
 
-#: src/celestia/celestiacore.cpp:4295 src/celestia/celestiacore.cpp:4173
+#: src/celestia/celestiacore.cpp:4276 src/celestia/celestiacore.cpp:4173
+#: src/celestia/celestiacore.cpp:4294 src/celestia/celestiacore.cpp:4295
 #: src/celestia/celestiacore.cpp:4308
 msgid "Cannot read star database."
 msgstr "無法讀取星體資料庫。"
 
-#: src/celestia/celestiacore.cpp:4317 src/celestia/celestiacore.cpp:4195
+#: src/celestia/celestiacore.cpp:4298 src/celestia/celestiacore.cpp:4195
+#: src/celestia/celestiacore.cpp:4316 src/celestia/celestiacore.cpp:4317
 #: src/celestia/celestiacore.cpp:4330
 msgid "Error opening deepsky catalog file."
 msgstr "開啟深空目錄時發生錯誤 "
 
-#: src/celestia/celestiacore.cpp:4369 src/celestia/celestiacore.cpp:4247
+#: src/celestia/celestiacore.cpp:4350 src/celestia/celestiacore.cpp:4247
+#: src/celestia/celestiacore.cpp:4368 src/celestia/celestiacore.cpp:4369
 #: src/celestia/celestiacore.cpp:4382
 msgid "Error opening solar system catalog.\n"
 msgstr "開啟太陽系目錄時發生錯誤。\n"
 
-#: src/celestia/celestiacore.cpp:4402 src/celestia/celestiacore.cpp:4280
+#: src/celestia/celestiacore.cpp:4383 src/celestia/celestiacore.cpp:4280
+#: src/celestia/celestiacore.cpp:4401 src/celestia/celestiacore.cpp:4402
 #: src/celestia/celestiacore.cpp:4415
 msgid "Error opening asterisms file."
 msgstr "開啟星群檔時發生錯誤。"
 
-#: src/celestia/celestiacore.cpp:4417 src/celestia/celestiacore.cpp:4295
+#: src/celestia/celestiacore.cpp:4398 src/celestia/celestiacore.cpp:4295
+#: src/celestia/celestiacore.cpp:4416 src/celestia/celestiacore.cpp:4417
 #: src/celestia/celestiacore.cpp:4430
 msgid "Error opening constellation boundaries files."
 msgstr "開啟星座邊界檔時發生錯誤。"
 
-#: src/celestia/celestiacore.cpp:4484 src/celestia/celestiacore.cpp:4362
+#: src/celestia/celestiacore.cpp:4465 src/celestia/celestiacore.cpp:4362
+#: src/celestia/celestiacore.cpp:4483 src/celestia/celestiacore.cpp:4484
 #: src/celestia/celestiacore.cpp:4497
 msgid "render path: "
 msgstr "成像路徑:"
 
-#: src/celestia/celestiacore.cpp:4498 src/celestia/celestiacore.cpp:4373
+#: src/celestia/celestiacore.cpp:4479 src/celestia/celestiacore.cpp:4373
+#: src/celestia/celestiacore.cpp:4497 src/celestia/celestiacore.cpp:4498
 #: src/celestia/celestiacore.cpp:4511
 msgid "Failed to initialize renderer"
 msgstr "初始化成像器失敗。"
 
-#: src/celestia/celestiacore.cpp:4514 src/celestia/celestiacore.cpp:4389
+#: src/celestia/celestiacore.cpp:4495 src/celestia/celestiacore.cpp:4389
+#: src/celestia/celestiacore.cpp:4513 src/celestia/celestiacore.cpp:4514
 #: src/celestia/celestiacore.cpp:4527
 msgid "Error loading font; text will not be visible.\n"
 msgstr "載入字型時發生錯誤；將無法看到文字。\n"
 
-#: src/celestia/celestiacore.cpp:4571 src/celestia/celestiacore.cpp:4446
+#: src/celestia/celestiacore.cpp:4552 src/celestia/celestiacore.cpp:4446
+#: src/celestia/celestiacore.cpp:4570 src/celestia/celestiacore.cpp:4571
 #: src/celestia/celestiacore.cpp:4584
 msgid "Error reading cross index "
 msgstr "讀取跨索引時發生錯誤 "
 
-#: src/celestia/celestiacore.cpp:4573 src/celestia/celestiacore.cpp:4448
+#: src/celestia/celestiacore.cpp:4554 src/celestia/celestiacore.cpp:4448
+#: src/celestia/celestiacore.cpp:4572 src/celestia/celestiacore.cpp:4573
 #: src/celestia/celestiacore.cpp:4586
 msgid "Loaded cross index "
 msgstr "已載入跨索引"
 
-#: src/celestia/celestiacore.cpp:4587 src/celestia/celestiacore.cpp:4609
+#: src/celestia/celestiacore.cpp:4568 src/celestia/celestiacore.cpp:4590
 #: src/celestia/celestiacore.cpp:4462 src/celestia/celestiacore.cpp:4484
-#: src/celestia/celestiacore.cpp:4600 src/celestia/celestiacore.cpp:4622
+#: src/celestia/celestiacore.cpp:4586 src/celestia/celestiacore.cpp:4587
+#: src/celestia/celestiacore.cpp:4600 src/celestia/celestiacore.cpp:4608
+#: src/celestia/celestiacore.cpp:4609 src/celestia/celestiacore.cpp:4622
 msgid "Error opening "
 msgstr "發生錯誤於開啟 "
 
-#: src/celestia/celestiacore.cpp:4594 src/celestia/celestiacore.cpp:4469
+#: src/celestia/celestiacore.cpp:4575 src/celestia/celestiacore.cpp:4469
+#: src/celestia/celestiacore.cpp:4593 src/celestia/celestiacore.cpp:4594
 #: src/celestia/celestiacore.cpp:4607
 msgid "Error reading star names file\n"
 msgstr "讀取星體名稱檔時發生錯誤\n"
 
-#: src/celestia/celestiacore.cpp:4617 src/celestia/celestiacore.cpp:4492
+#: src/celestia/celestiacore.cpp:4598 src/celestia/celestiacore.cpp:4492
+#: src/celestia/celestiacore.cpp:4616 src/celestia/celestiacore.cpp:4617
 #: src/celestia/celestiacore.cpp:4630
 msgid "Error reading stars file\n"
 msgstr "讀取星體檔時發生錯誤\n"
 
-#: src/celestia/celestiacore.cpp:4644 src/celestia/celestiacore.cpp:4519
+#: src/celestia/celestiacore.cpp:4627 src/celestia/celestiacore.cpp:4519
+#: src/celestia/celestiacore.cpp:4644 src/celestia/celestiacore.cpp:4645
 #: src/celestia/celestiacore.cpp:4657
 msgid "Error opening star catalog "
 msgstr "開啟星體目錄時發生錯誤 "
 
-#: src/celestia/celestiacore.h:553
+#: src/celestia/celestiacore.h:502 src/celestia/celestiacore.h:553
 msgid "playSoundFile(): no audio manager."
 msgstr ""
 
-#: src/celestia/celestiacore.h:562
+#: src/celestia/celestiacore.h:511 src/celestia/celestiacore.h:562
 msgid "StopSounds(): no audio manager."
 msgstr ""
 
-#: src/celestia/celestiacore.h:571
+#: src/celestia/celestiacore.h:520 src/celestia/celestiacore.h:571
 msgid "PauseSounds(): no audio manager."
 msgstr ""
 
-#: src/celestia/celestiacore.h:580
+#: src/celestia/celestiacore.h:529 src/celestia/celestiacore.h:580
 msgid "ResumeSounds(): no audio manager."
 msgstr ""
 
-#: src/celestia/celx.cpp:1123 src/celestia/celx.cpp:1105
+#: src/celestia/celx.cpp:1126 src/celestia/celx.cpp:1105
+#: src/celestia/celx.cpp:1123 src/celestia/celx.cpp:1124
 msgid ""
 "WARNING:\n"
 "\n"
@@ -1093,7 +1264,8 @@ msgid ""
 "y = yes, ESC = cancel script, any other key = no"
 msgstr ""
 
-#: src/celestia/celx.cpp:1134 src/celestia/celx.cpp:1116
+#: src/celestia/celx.cpp:1137 src/celestia/celx.cpp:1116
+#: src/celestia/celx.cpp:1134 src/celestia/celx.cpp:1135
 msgid ""
 "WARNING:\n"
 "\n"
@@ -1104,26 +1276,27 @@ msgid ""
 msgstr ""
 
 #: src/celestia/kde/celestialbrowser.cpp:31 src/celestia/kde/kdeapp.cpp:521
-#: src/celestia/qt/qtappwin.cpp:286 testrc.cpp:306
+#: src/celestia/qt/qtappwin.cpp:286 testrc.cpp:84
 #: src/celestia/kde/celestialbrowser.cpp:29 src/celestia/kde/kdeapp.cpp:505
 #: src/celestia/kde/rc.cpp:30 src/celestia/qt/qtappwin.cpp:281 testrc.cpp:90
+#: testrc.cpp:306 testrc.cpp:387
 #, no-c-format
 msgid "Celestial Browser"
 msgstr "天球瀏覽"
 
 #: src/celestia/kde/celestialbrowser.cpp:179
 #: src/celestia/qt/qtsolarsystembrowser.cpp:516
-#: src/celestia/win32/wineclipses.cpp:59 testrc.cpp:348
+#: src/celestia/win32/wineclipses.cpp:59 testrc.cpp:126
 #: src/celestia/kde/celestialbrowser.cpp:182 src/celestia/kde/rc.cpp:73
-#: src/celestia/wineclipses.cpp:58 testrc.cpp:6
+#: src/celestia/wineclipses.cpp:58 testrc.cpp:6 testrc.cpp:348 testrc.cpp:429
 #, no-c-format
 msgid "Planet"
 msgstr "行星"
 
 #: src/celestia/kde/celestialbrowser.cpp:182
-#: src/celestia/qt/qtsolarsystembrowser.cpp:520 testrc.cpp:351 data/data.cpp:4
+#: src/celestia/qt/qtsolarsystembrowser.cpp:520 testrc.cpp:129 data/data.cpp:4
 #: src/celestia/kde/celestialbrowser.cpp:185 src/celestia/kde/rc.cpp:76
-#: testrc.cpp:9
+#: testrc.cpp:9 testrc.cpp:351 testrc.cpp:432
 #, no-c-format
 msgid "Moon"
 msgstr "月球"
@@ -1148,12 +1321,13 @@ msgstr "彗星"
 #: src/celestia/qt/qtsolarsystembrowser.cpp:526
 #: src/celestia/qt/qtsolarsystembrowser.cpp:546
 #: src/celestia/win32/res/resource_strings.cpp:179
-#: src/celestia/win32/winmain.cpp:1533 testrc.cpp:90 testrc.cpp:156
+#: src/celestia/win32/winmain.cpp:1533 testrc.cpp:282 testrc.cpp:348
 #: src/celestia/kde/celestialbrowser.cpp:194
 #: src/celestia/qt/qtcelestiaactions.cpp:130
 #: src/celestia/qt/qtcelestiaactions.cpp:157
 #: src/celestia/res/resource_strings.cpp:176 src/celestia/winmain.cpp:1518
-#: testrc.cpp:294 testrc.cpp:360
+#: testrc.cpp:90 testrc.cpp:126 testrc.cpp:156 testrc.cpp:192 testrc.cpp:294
+#: testrc.cpp:360
 msgid "Spacecraft"
 msgstr "太空船"
 
@@ -1184,10 +1358,10 @@ msgid "-"
 msgstr ""
 
 #: src/celestia/kde/eclipsefinderdlg.cpp:24 src/celestia/kde/kdeapp.cpp:522
-#: src/celestia/win32/res/resource_strings.cpp:229 testrc.cpp:345
+#: src/celestia/win32/res/resource_strings.cpp:229 testrc.cpp:123
 #: src/celestia/kde/eclipsefinderdlg.cpp:21 src/celestia/kde/kdeapp.cpp:506
 #: src/celestia/kde/rc.cpp:70 src/celestia/res/resource_strings.cpp:225
-#: testrc.cpp:3
+#: testrc.cpp:3 testrc.cpp:345 testrc.cpp:426
 #, no-c-format
 msgid "Eclipse Finder"
 msgstr "食相尋找器"
@@ -1696,8 +1870,9 @@ msgstr "點尺寸範圍:"
 msgid "Supported Extensions:"
 msgstr "支援的延伸功能:"
 
-#: src/celestia/kde/kdeapp.cpp:1021 src/celestia/qt/qtappwin.cpp:1357
-#: src/celestia/kde/kdeapp.cpp:1005 src/celestia/qt/qtappwin.cpp:1376
+#: src/celestia/kde/kdeapp.cpp:1021 src/celestia/qt/qtappwin.cpp:1359
+#: src/celestia/kde/kdeapp.cpp:1005 src/celestia/qt/qtappwin.cpp:1357
+#: src/celestia/qt/qtappwin.cpp:1376
 #, fuzzy
 msgid "OpenGL Info"
 msgstr "OpenGL 資訊"
@@ -1777,13 +1952,14 @@ msgstr "顯示"
 #: src/celestia/qt/QtCelestiaOptions.cpp:125
 #: src/celestia/qt/QtCelestiaOptions.cpp:152 src/celestia/qt/qtappwin.cpp:315
 #: src/celestia/win32/res/resource_strings.cpp:154
-#: src/celestia/win32/res/resource_strings.cpp:172 testrc.cpp:12 testrc.cpp:69
-#: testrc.cpp:135 src/celestia/qt/qtappwin.cpp:310
+#: src/celestia/win32/res/resource_strings.cpp:172 testrc.cpp:204
+#: testrc.cpp:261 testrc.cpp:327 src/celestia/qt/qtappwin.cpp:310
 #: src/celestia/qt/qtcelestiaactions.cpp:123
 #: src/celestia/qt/qtcelestiaactions.cpp:150
 #: src/celestia/res/resource_strings.cpp:151
-#: src/celestia/res/resource_strings.cpp:169 testrc.cpp:216 testrc.cpp:273
-#: testrc.cpp:339
+#: src/celestia/res/resource_strings.cpp:169 testrc.cpp:12 testrc.cpp:48
+#: testrc.cpp:69 testrc.cpp:105 testrc.cpp:135 testrc.cpp:171 testrc.cpp:216
+#: testrc.cpp:273 testrc.cpp:339
 msgid "Stars"
 msgstr "星體"
 
@@ -1798,13 +1974,14 @@ msgstr "星體"
 #: src/celestia/win32/res/resource_strings.cpp:155
 #: src/celestia/win32/res/resource_strings.cpp:173
 #: src/celestia/win32/winmain.cpp:1531 src/celestia/win32/winmain.cpp:1566
-#: src/celestia/win32/winmain.cpp:1683 testrc.cpp:15 testrc.cpp:72
-#: testrc.cpp:138 src/celestia/qt/qtcelestiaactions.cpp:124
+#: src/celestia/win32/winmain.cpp:1683 testrc.cpp:207 testrc.cpp:264
+#: testrc.cpp:330 src/celestia/qt/qtcelestiaactions.cpp:124
 #: src/celestia/qt/qtcelestiaactions.cpp:151
 #: src/celestia/res/resource_strings.cpp:152
 #: src/celestia/res/resource_strings.cpp:170 src/celestia/winmain.cpp:1516
-#: src/celestia/winmain.cpp:1551 src/celestia/winmain.cpp:1668 testrc.cpp:219
-#: testrc.cpp:276 testrc.cpp:342
+#: src/celestia/winmain.cpp:1551 src/celestia/winmain.cpp:1668 testrc.cpp:15
+#: testrc.cpp:51 testrc.cpp:72 testrc.cpp:108 testrc.cpp:138 testrc.cpp:174
+#: testrc.cpp:219 testrc.cpp:276 testrc.cpp:342
 msgid "Planets"
 msgstr "行星"
 
@@ -1814,12 +1991,13 @@ msgstr "行星"
 #: src/celestia/qt/QtCelestiaOptions.cpp:184
 #: src/celestia/qt/qtdeepskybrowser.cpp:437
 #: src/celestia/win32/res/resource_strings.cpp:150
-#: src/celestia/win32/res/resource_strings.cpp:181 testrc.cpp:18 testrc.cpp:159
-#: src/celestia/qt/qtcelestiaactions.cpp:158
+#: src/celestia/win32/res/resource_strings.cpp:181 testrc.cpp:210
+#: testrc.cpp:351 src/celestia/qt/qtcelestiaactions.cpp:158
 #: src/celestia/qt/qtcelestiaactions.cpp:182
 #: src/celestia/qt/qtdeepskybrowser.cpp:434
 #: src/celestia/res/resource_strings.cpp:147
-#: src/celestia/res/resource_strings.cpp:178 testrc.cpp:222 testrc.cpp:363
+#: src/celestia/res/resource_strings.cpp:178 testrc.cpp:18 testrc.cpp:54
+#: testrc.cpp:159 testrc.cpp:195 testrc.cpp:222 testrc.cpp:363
 msgid "Galaxies"
 msgstr "星系"
 
@@ -1829,12 +2007,13 @@ msgstr "星系"
 #: src/celestia/qt/QtCelestiaOptions.cpp:188
 #: src/celestia/qt/qtdeepskybrowser.cpp:441
 #: src/celestia/win32/res/resource_strings.cpp:153
-#: src/celestia/win32/res/resource_strings.cpp:184 testrc.cpp:21 testrc.cpp:162
-#: src/celestia/qt/qtcelestiaactions.cpp:161
+#: src/celestia/win32/res/resource_strings.cpp:184 testrc.cpp:213
+#: testrc.cpp:354 src/celestia/qt/qtcelestiaactions.cpp:161
 #: src/celestia/qt/qtcelestiaactions.cpp:186
 #: src/celestia/qt/qtdeepskybrowser.cpp:438
 #: src/celestia/res/resource_strings.cpp:150
-#: src/celestia/res/resource_strings.cpp:181 testrc.cpp:225 testrc.cpp:366
+#: src/celestia/res/resource_strings.cpp:181 testrc.cpp:21 testrc.cpp:57
+#: testrc.cpp:162 testrc.cpp:198 testrc.cpp:225 testrc.cpp:366
 msgid "Nebulae"
 msgstr "星雲"
 
@@ -1853,17 +2032,19 @@ msgstr "疏散星團"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:98
 #: src/celestia/qt/QtCelestiaOptions.cpp:200
-#: src/celestia/win32/res/resource_strings.cpp:156 testrc.cpp:33
+#: src/celestia/win32/res/resource_strings.cpp:156 testrc.cpp:225
 #: src/celestia/qt/qtcelestiaactions.cpp:198
-#: src/celestia/res/resource_strings.cpp:153 testrc.cpp:237
+#: src/celestia/res/resource_strings.cpp:153 testrc.cpp:33 testrc.cpp:69
+#: testrc.cpp:237
 msgid "Atmospheres"
 msgstr "大氣壓"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:102
 #: src/celestia/qt/QtCelestiaOptions.cpp:195
-#: src/celestia/win32/res/resource_strings.cpp:157 testrc.cpp:36
+#: src/celestia/win32/res/resource_strings.cpp:157 testrc.cpp:228
 #: src/celestia/qt/qtcelestiaactions.cpp:193
-#: src/celestia/res/resource_strings.cpp:154 testrc.cpp:240
+#: src/celestia/res/resource_strings.cpp:154 testrc.cpp:36 testrc.cpp:72
+#: testrc.cpp:240
 msgid "Clouds"
 msgstr "雲層"
 
@@ -1902,9 +2083,10 @@ msgstr "彗尾"
 #: src/celestia/kde/kdepreferencesdialog.cpp:122
 #: src/celestia/kde/kdepreferencesdialog.cpp:165
 #: src/celestia/qt/QtCelestiaOptions.cpp:109
-#: src/celestia/win32/res/resource_strings.cpp:163 testrc.cpp:60
+#: src/celestia/win32/res/resource_strings.cpp:163 testrc.cpp:252
 #: src/celestia/qt/qtcelestiaactions.cpp:107
-#: src/celestia/res/resource_strings.cpp:161 testrc.cpp:264
+#: src/celestia/res/resource_strings.cpp:161 testrc.cpp:60 testrc.cpp:96
+#: testrc.cpp:264
 msgid "Orbits"
 msgstr "軌道"
 
@@ -1924,10 +2106,11 @@ msgstr "赤道標線"
 #: src/celestia/kde/kdepreferencesdialog.cpp:207
 #: src/celestia/qt/QtCelestiaOptions.cpp:99
 #: src/celestia/qt/QtCelestiaOptions.cpp:165
-#: src/celestia/win32/res/resource_strings.cpp:185 testrc.cpp:108
-#: testrc.cpp:171 src/celestia/qt/qtcelestiaactions.cpp:97
+#: src/celestia/win32/res/resource_strings.cpp:185 testrc.cpp:300
+#: testrc.cpp:363 src/celestia/qt/qtcelestiaactions.cpp:97
 #: src/celestia/qt/qtcelestiaactions.cpp:163
-#: src/celestia/res/resource_strings.cpp:182 testrc.cpp:312 testrc.cpp:375
+#: src/celestia/res/resource_strings.cpp:182 testrc.cpp:108 testrc.cpp:144
+#: testrc.cpp:171 testrc.cpp:207 testrc.cpp:312 testrc.cpp:375
 msgid "Constellations"
 msgstr "星座"
 
@@ -1935,11 +2118,12 @@ msgstr "星座"
 #: src/celestia/qt/QtCelestiaOptions.cpp:94
 #: src/celestia/qt/qtcelestialbrowser.cpp:557
 #: src/celestia/qt/qtdeepskybrowser.cpp:472
-#: src/celestia/win32/res/resource_strings.cpp:164 testrc.cpp:123
+#: src/celestia/win32/res/resource_strings.cpp:164 testrc.cpp:315
 #: src/celestia/qt/qtcelestiaactions.cpp:92
 #: src/celestia/qt/qtcelestialbrowser.cpp:554
 #: src/celestia/qt/qtdeepskybrowser.cpp:469
-#: src/celestia/res/resource_strings.cpp:160 testrc.cpp:327
+#: src/celestia/res/resource_strings.cpp:160 testrc.cpp:123 testrc.cpp:159
+#: testrc.cpp:327
 msgid "Markers"
 msgstr "標記"
 
@@ -1963,11 +2147,12 @@ msgstr "軌道 / 標籤"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:167
 #: src/celestia/qt/QtCelestiaOptions.cpp:149
-#: src/celestia/win32/res/resource_strings.cpp:188 testrc.cpp:129
-#: testrc.cpp:132 testrc.cpp:468 src/celestia/kde/rc.cpp:12
+#: src/celestia/win32/res/resource_strings.cpp:188 testrc.cpp:66 testrc.cpp:321
+#: testrc.cpp:324 src/celestia/kde/rc.cpp:12
 #: src/celestia/qt/qtcelestiaactions.cpp:147
-#: src/celestia/res/resource_strings.cpp:185 testrc.cpp:72 testrc.cpp:333
-#: testrc.cpp:336
+#: src/celestia/res/resource_strings.cpp:185 testrc.cpp:72 testrc.cpp:129
+#: testrc.cpp:132 testrc.cpp:165 testrc.cpp:168 testrc.cpp:333 testrc.cpp:336
+#: testrc.cpp:369 testrc.cpp:468
 #, no-c-format
 msgid "Labels"
 msgstr "標籤"
@@ -1979,11 +2164,12 @@ msgstr "標籤"
 #: src/celestia/qt/qtselectionpopup.cpp:385
 #: src/celestia/qt/qtsolarsystembrowser.cpp:544
 #: src/celestia/win32/res/resource_strings.cpp:175
-#: src/celestia/win32/winmain.cpp:1529 testrc.cpp:78 testrc.cpp:144
+#: src/celestia/win32/winmain.cpp:1529 testrc.cpp:270 testrc.cpp:336
 #: src/celestia/qt/qtcelestiaactions.cpp:126
 #: src/celestia/qt/qtcelestiaactions.cpp:153
 #: src/celestia/res/resource_strings.cpp:172 src/celestia/winmain.cpp:1514
-#: testrc.cpp:282 testrc.cpp:348
+#: testrc.cpp:78 testrc.cpp:114 testrc.cpp:144 testrc.cpp:180 testrc.cpp:282
+#: testrc.cpp:348
 msgid "Moons"
 msgstr "衛星"
 
@@ -1993,11 +2179,12 @@ msgstr "衛星"
 #: src/celestia/qt/QtCelestiaOptions.cpp:158
 #: src/celestia/qt/qtselectionpopup.cpp:391
 #: src/celestia/win32/res/resource_strings.cpp:178
-#: src/celestia/win32/winmain.cpp:1525 testrc.cpp:87 testrc.cpp:153
+#: src/celestia/win32/winmain.cpp:1525 testrc.cpp:279 testrc.cpp:345
 #: src/celestia/qt/qtcelestiaactions.cpp:129
 #: src/celestia/qt/qtcelestiaactions.cpp:156
 #: src/celestia/res/resource_strings.cpp:175 src/celestia/winmain.cpp:1510
-#: testrc.cpp:291 testrc.cpp:357
+#: testrc.cpp:87 testrc.cpp:123 testrc.cpp:153 testrc.cpp:189 testrc.cpp:291
+#: testrc.cpp:357
 msgid "Comets"
 msgstr "彗星"
 
@@ -2011,11 +2198,12 @@ msgstr "以拉丁文顯示星座"
 #: src/celestia/qt/QtCelestiaOptions.cpp:157
 #: src/celestia/qt/qtselectionpopup.cpp:388
 #: src/celestia/win32/res/resource_strings.cpp:177
-#: src/celestia/win32/winmain.cpp:1523 testrc.cpp:84 testrc.cpp:150
+#: src/celestia/win32/winmain.cpp:1523 testrc.cpp:276 testrc.cpp:342
 #: src/celestia/qt/qtcelestiaactions.cpp:128
 #: src/celestia/qt/qtcelestiaactions.cpp:155
 #: src/celestia/res/resource_strings.cpp:174 src/celestia/winmain.cpp:1508
-#: testrc.cpp:288 testrc.cpp:354
+#: testrc.cpp:84 testrc.cpp:120 testrc.cpp:150 testrc.cpp:186 testrc.cpp:288
+#: testrc.cpp:354
 msgid "Asteroids"
 msgstr "小行星"
 
@@ -2026,9 +2214,10 @@ msgstr "太空船"
 #: src/celestia/kde/kdepreferencesdialog.cpp:250
 #: src/celestia/kde/kdepreferencesdialog.cpp:312
 #: src/celestia/qt/QtCelestiaOptions.cpp:164
-#: src/celestia/win32/res/resource_strings.cpp:198 testrc.cpp:174
+#: src/celestia/win32/res/resource_strings.cpp:198 testrc.cpp:366
 #: src/celestia/qt/qtcelestiaactions.cpp:162
-#: src/celestia/res/resource_strings.cpp:195 testrc.cpp:378
+#: src/celestia/res/resource_strings.cpp:195 testrc.cpp:174 testrc.cpp:210
+#: testrc.cpp:378
 msgid "Locations"
 msgstr "位置"
 
@@ -2079,20 +2268,23 @@ msgid "Resolution: "
 msgstr "解析度: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:292
-#: src/celestia/qt/QtCelestiaOptions.cpp:215 testrc.cpp:225
-#: src/celestia/qt/qtcelestiaactions.cpp:213 testrc.cpp:429
+#: src/celestia/qt/QtCelestiaOptions.cpp:215 testrc.cpp:417
+#: src/celestia/qt/qtcelestiaactions.cpp:213 testrc.cpp:225 testrc.cpp:261
+#: testrc.cpp:429
 msgid "Low"
 msgstr "低"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:293
-#: src/celestia/qt/QtCelestiaOptions.cpp:216 testrc.cpp:228
-#: src/celestia/qt/qtcelestiaactions.cpp:214 testrc.cpp:432
+#: src/celestia/qt/QtCelestiaOptions.cpp:216 testrc.cpp:420
+#: src/celestia/qt/qtcelestiaactions.cpp:214 testrc.cpp:228 testrc.cpp:264
+#: testrc.cpp:432
 msgid "Medium"
 msgstr "中"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:294
-#: src/celestia/qt/QtCelestiaOptions.cpp:217 testrc.cpp:231
-#: src/celestia/qt/qtcelestiaactions.cpp:215 testrc.cpp:435
+#: src/celestia/qt/QtCelestiaOptions.cpp:217 testrc.cpp:423
+#: src/celestia/qt/qtcelestiaactions.cpp:215 testrc.cpp:231 testrc.cpp:267
+#: testrc.cpp:435
 msgid "High"
 msgstr "高"
 
@@ -2109,14 +2301,16 @@ msgid "Viewing Distance (cm): "
 msgstr "檢視距離(公分):"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:318
-#: src/celestia/win32/res/resource_strings.cpp:199 testrc.cpp:183
-#: src/celestia/res/resource_strings.cpp:196 testrc.cpp:387
+#: src/celestia/win32/res/resource_strings.cpp:199 testrc.cpp:375
+#: src/celestia/res/resource_strings.cpp:196 testrc.cpp:183 testrc.cpp:219
+#: testrc.cpp:387
 msgid "Cities"
 msgstr "城市"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:322
-#: src/celestia/win32/res/resource_strings.cpp:200 testrc.cpp:192
-#: src/celestia/res/resource_strings.cpp:197 testrc.cpp:396
+#: src/celestia/win32/res/resource_strings.cpp:200 testrc.cpp:384
+#: src/celestia/res/resource_strings.cpp:197 testrc.cpp:192 testrc.cpp:228
+#: testrc.cpp:396
 msgid "Observatories"
 msgstr "天文臺"
 
@@ -2127,8 +2321,9 @@ msgid "Landing Sites"
 msgstr "著陸點(Landing Sites)"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:330
-#: src/celestia/win32/res/resource_strings.cpp:204 testrc.cpp:195
-#: src/celestia/res/resource_strings.cpp:201 testrc.cpp:399
+#: src/celestia/win32/res/resource_strings.cpp:204 testrc.cpp:387
+#: src/celestia/res/resource_strings.cpp:201 testrc.cpp:195 testrc.cpp:231
+#: testrc.cpp:399
 msgid "Craters"
 msgstr "隕坑(Craters)"
 
@@ -2201,8 +2396,8 @@ msgstr "本地時間只支援 1902 年到 2037 年。\n"
 msgid "Julian Date: "
 msgstr "儒略日: "
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:456 testrc.cpp:483
-#: src/celestia/kde/rc.cpp:27 testrc.cpp:87
+#: src/celestia/kde/kdepreferencesdialog.cpp:456 testrc.cpp:81
+#: src/celestia/kde/rc.cpp:27 testrc.cpp:87 testrc.cpp:384 testrc.cpp:483
 #, no-c-format
 msgid "Now"
 msgstr "現在"
@@ -2280,15 +2475,18 @@ msgid "<b>OpenGL 2.0 Shading Language</b>"
 msgstr "<b>OpenGL 2.0 Shading 語言</b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:44
+#, qt-format
 msgid ""
 "File %1 does not exist, using default configuration file %2/celestia.cfg"
 msgstr "檔案 %1 不存在。將改用預設設定檔 %2/celestia.cfg"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:54
+#, qt-format
 msgid "Directory %1 does not exist, using default %2"
 msgstr "目錄 %1 不存在，改用預設的 %2"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:66
+#, qt-format
 msgid "Extras directory %1 does not exist"
 msgstr "外加功能目錄 %1 不存在"
 
@@ -2521,27 +2719,32 @@ msgstr "繞行天體"
 
 #: src/celestia/kde/videocapturedlg.cpp:64
 #: src/celestia/kde/videocapturedlg.cpp:276
+#, qt-format
 msgid "Duration: %1"
 msgstr "期間: %1"
 
 #: src/celestia/kde/videocapturedlg.cpp:65
 #: src/celestia/kde/videocapturedlg.cpp:278
+#, qt-format
 msgid "Size: %1 MB"
 msgstr "大小:%1 MB"
 
 #: src/celestia/kde/videocapturedlg.cpp:95
+#, qt-format
 msgid "Current size: %1 x %2"
 msgstr "目前大小:%1 x %2"
 
 #: src/celestia/kde/videocapturedlg.cpp:101
 #: src/celestia/kde/videocapturedlg.cpp:133
 #: src/celestia/kde/videocapturedlg.cpp:185
+#, qt-format
 msgid "Current width: %1 x %2"
 msgstr "目前寬度:%1 x %2"
 
 #: src/celestia/kde/videocapturedlg.cpp:106
 #: src/celestia/kde/videocapturedlg.cpp:138
 #: src/celestia/kde/videocapturedlg.cpp:190
+#, qt-format
 msgid "Current height: %1 x %2"
 msgstr "目前高度:%1 x %2"
 
@@ -2625,8 +2828,9 @@ msgstr "水平分割檢視"
 msgid "Ecl"
 msgstr ""
 
-#: src/celestia/qt/QtCelestiaOptions.cpp:89 testrc.cpp:126
-#: src/celestia/qt/qtcelestiaactions.cpp:87 testrc.cpp:330
+#: src/celestia/qt/QtCelestiaOptions.cpp:89 testrc.cpp:318
+#: src/celestia/qt/qtcelestiaactions.cpp:87 testrc.cpp:126 testrc.cpp:162
+#: testrc.cpp:330
 #, fuzzy
 msgid "Ecliptic line"
 msgstr "黃道"
@@ -2688,8 +2892,9 @@ msgstr "10x 快轉(&F)\tL"
 msgid "Globulars"
 msgstr "球狀星團"
 
-#: src/celestia/qt/QtCelestiaOptions.cpp:162 testrc.cpp:24 testrc.cpp:165
-#: src/celestia/qt/qtcelestiaactions.cpp:160 testrc.cpp:228 testrc.cpp:369
+#: src/celestia/qt/QtCelestiaOptions.cpp:162 testrc.cpp:216 testrc.cpp:357
+#: src/celestia/qt/qtcelestiaactions.cpp:160 testrc.cpp:24 testrc.cpp:60
+#: testrc.cpp:165 testrc.cpp:201 testrc.cpp:228 testrc.cpp:369
 #, fuzzy
 msgid "Open clusters"
 msgstr "疏散星團"
@@ -2717,8 +2922,9 @@ msgstr "讓更多星體可見\t]"
 msgid "Fewer Stars Visible"
 msgstr "讓較少星體可見\t]"
 
-#: src/celestia/qt/QtCelestiaOptions.cpp:236 testrc.cpp:249
-#: src/celestia/qt/qtcelestiaactions.cpp:234 testrc.cpp:453
+#: src/celestia/qt/QtCelestiaOptions.cpp:236 testrc.cpp:441
+#: src/celestia/qt/qtcelestiaactions.cpp:234 testrc.cpp:249 testrc.cpp:285
+#: testrc.cpp:453
 #, fuzzy
 msgid "Points"
 msgstr "點(&P)"
@@ -2743,13 +2949,13 @@ msgstr "關閉光旅行延遲"
 
 #: src/celestia/qt/QtCelestiaOptions.cpp:417
 #: src/celestia/qt/qtcelestiaactions.cpp:414
-#, fuzzy
+#, fuzzy, qt-format
 msgid "Auto magnitude limit at 45 degrees: %L1"
 msgstr "45 度時自動調整星等限制:%.2f"
 
 #: src/celestia/qt/QtCelestiaOptions.cpp:424
 #: src/celestia/qt/qtcelestiaactions.cpp:421
-#, fuzzy
+#, fuzzy, qt-format
 msgid "Magnitude limit: %L1"
 msgstr "極限星等:%.2f"
 
@@ -2766,6 +2972,7 @@ msgid ""
 msgstr ""
 
 #: src/celestia/qt/qtappwin.cpp:266 src/celestia/qt/qtappwin.cpp:263
+#, qt-format
 msgid ""
 "Celestia was unable to initialize OpenGL extensions (error %1). Graphics "
 "quality will be reduced."
@@ -2793,15 +3000,15 @@ msgstr "天球瀏覽"
 msgid "Event Finder"
 msgstr "食相尋找器"
 
-#: src/celestia/qt/qtappwin.cpp:337 testrc.cpp:264 testrc.cpp:474
+#: src/celestia/qt/qtappwin.cpp:337 testrc.cpp:72 testrc.cpp:456
 #: src/celestia/kde/rc.cpp:18 src/celestia/qt/qtappwin.cpp:332 testrc.cpp:78
-#: testrc.cpp:468
+#: testrc.cpp:264 testrc.cpp:300 testrc.cpp:375 testrc.cpp:468 testrc.cpp:474
 #, no-c-format
 msgid "Time"
 msgstr "時間"
 
-#: src/celestia/qt/qtappwin.cpp:344 testrc.cpp:57
-#: src/celestia/qt/qtappwin.cpp:339 testrc.cpp:261
+#: src/celestia/qt/qtappwin.cpp:344 testrc.cpp:249
+#: src/celestia/qt/qtappwin.cpp:339 testrc.cpp:57 testrc.cpp:93 testrc.cpp:261
 msgid "Guides"
 msgstr ""
 
@@ -2811,7 +3018,7 @@ msgid "Full screen"
 msgstr "全螢幕"
 
 #: src/celestia/qt/qtappwin.cpp:580 src/celestia/qt/qtappwin.cpp:575
-#, fuzzy
+#, fuzzy, qt-format
 msgid "Bookmarks file %1 does not exist."
 msgstr "外加功能目錄 %1 不存在"
 
@@ -2890,245 +3097,287 @@ msgstr ""
 msgid "New bookmark"
 msgstr "在本選單中建立新的書籤資料夾"
 
-#: src/celestia/qt/qtappwin.cpp:991 src/celestia/qt/qtappwin.cpp:1031
+#: src/celestia/qt/qtappwin.cpp:991
+#, qt-format
 msgid ""
-"<html><p><b>Celestia 1.7.0 (Qt5 beta version)</b></p><p>Copyright (C) "
-"2001-2017 by the Celestia Development Team. Celestia is free software. You "
-"can redistribute it and/or modify it under the terms of the GNU General "
-"Public License version 2.</p><b>Celestia on the web</b><br>Main site: <a "
-"href=\"https://celestiaproject.net/celestia/\">https://celestiaproject.net/"
-"celestia/</a><br>Forum: <a href=\"https://celestiaproject.net/forum/"
-"\">https://celestiaproject.net/forum/</a><br>GitHub project: <a href="
-"\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a><br></html>"
+"<html><p><b>Celestia 1.7.0 (Qt5 beta version, git commit %1)</b></"
+"p><p>Copyright (C) 2001-2018 by the Celestia Development Team. Celestia is "
+"free software. You can redistribute it and/or modify it under the terms of "
+"the GNU General Public License version&nbsp;2.</p><b>Celestia on the web</"
+"b><br>Main site: <a href=\"https://celestia.space/\">https://celestia.space/"
+"</a><br>Forum: <a href=\"https://celestia.space/forum/\">https://celestia."
+"space/forum/</a><br>GitHub project: <a href=\"https://github.com/"
+"CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</"
+"a><br></html>"
 msgstr ""
 
-#: src/celestia/qt/qtappwin.cpp:1018 src/celestia/qt/qtappwin.cpp:1058
+#: src/celestia/qt/qtappwin.cpp:1020 src/celestia/qt/qtappwin.cpp:1018
+#: src/celestia/qt/qtappwin.cpp:1058
 #, fuzzy
 msgid "<b>OpenGL version: </b>"
 msgstr "<b>OpenGL 2.0 Shading 語言</b>"
 
-#: src/celestia/qt/qtappwin.cpp:1026 src/celestia/qt/qtappwin.cpp:1066
+#: src/celestia/qt/qtappwin.cpp:1028 src/celestia/qt/qtappwin.cpp:1026
+#: src/celestia/qt/qtappwin.cpp:1066
 #, fuzzy
 msgid "<b>Renderer: </b>"
 msgstr "<b>未延伸 OpenGL 1.1</b>"
 
-#: src/celestia/qt/qtappwin.cpp:1042 src/celestia/qt/qtappwin.cpp:1082
+#: src/celestia/qt/qtappwin.cpp:1044 src/celestia/qt/qtappwin.cpp:1042
+#: src/celestia/qt/qtappwin.cpp:1082
 #, fuzzy
 msgid "<b>GLSL Version: </b>"
 msgstr "GLSL 版本:"
 
-#: src/celestia/qt/qtappwin.cpp:1048 src/celestia/qt/qtappwin.cpp:1088
+#: src/celestia/qt/qtappwin.cpp:1050 src/celestia/qt/qtappwin.cpp:1048
+#: src/celestia/qt/qtappwin.cpp:1088
 msgid "<b>Maximum texture size: </b>"
 msgstr ""
 
-#: src/celestia/qt/qtappwin.cpp:1053 src/celestia/qt/qtappwin.cpp:1093
+#: src/celestia/qt/qtappwin.cpp:1055 src/celestia/qt/qtappwin.cpp:1053
+#: src/celestia/qt/qtappwin.cpp:1093
 #, fuzzy
 msgid "<b>Extensions:</b><br>\n"
 msgstr "<b>未延伸 OpenGL 1.1</b>"
 
-#: src/celestia/qt/qtappwin.cpp:1089
+#: src/celestia/qt/qtappwin.cpp:1091
 #: src/celestia/win32/res/resource_strings.cpp:1
-#: src/celestia/qt/qtappwin.cpp:1128 src/celestia/res/resource_strings.cpp:1
+#: src/celestia/qt/qtappwin.cpp:1089 src/celestia/qt/qtappwin.cpp:1128
+#: src/celestia/res/resource_strings.cpp:1
 msgid "&File"
 msgstr "檔案(&F)"
 
-#: src/celestia/qt/qtappwin.cpp:1092 src/celestia/qt/qtappwin.cpp:1131
+#: src/celestia/qt/qtappwin.cpp:1094 src/celestia/qt/qtappwin.cpp:1092
+#: src/celestia/qt/qtappwin.cpp:1131
 #, fuzzy
 msgid "&Grab image"
 msgstr "抓取圖像"
 
-#: src/celestia/qt/qtappwin.cpp:1098 src/celestia/qt/qtappwin.cpp:1137
+#: src/celestia/qt/qtappwin.cpp:1100 src/celestia/qt/qtappwin.cpp:1098
+#: src/celestia/qt/qtappwin.cpp:1137
 #, fuzzy
 msgid "Capture &video"
 msgstr "抓取影像"
 
-#: src/celestia/qt/qtappwin.cpp:1107 src/celestia/qt/qtappwin.cpp:1146
+#: src/celestia/qt/qtappwin.cpp:1109 src/celestia/qt/qtappwin.cpp:1107
+#: src/celestia/qt/qtappwin.cpp:1146
 #, fuzzy
 msgid "&Copy image"
 msgstr "複製網址"
 
-#: src/celestia/qt/qtappwin.cpp:1112 src/celestia/qt/qtappwin.cpp:1151
+#: src/celestia/qt/qtappwin.cpp:1114 src/celestia/qt/qtappwin.cpp:1112
+#: src/celestia/qt/qtappwin.cpp:1151
 #, fuzzy
 msgid "Copy &URL"
 msgstr "複製網址"
 
-#: src/celestia/qt/qtappwin.cpp:1117 src/celestia/qt/qtappwin.cpp:1156
+#: src/celestia/qt/qtappwin.cpp:1119 src/celestia/qt/qtappwin.cpp:1117
+#: src/celestia/qt/qtappwin.cpp:1156
 #, fuzzy
 msgid "&Paste URL"
 msgstr "已複製網址"
 
-#: src/celestia/qt/qtappwin.cpp:1124
+#: src/celestia/qt/qtappwin.cpp:1126
 #: src/celestia/win32/res/resource_strings.cpp:2
-#: src/celestia/qt/qtappwin.cpp:1163 src/celestia/res/resource_strings.cpp:2
+#: src/celestia/qt/qtappwin.cpp:1124 src/celestia/qt/qtappwin.cpp:1163
+#: src/celestia/res/resource_strings.cpp:2
 msgid "&Open Script..."
 msgstr "開啟腳本(&O)..."
 
-#: src/celestia/qt/qtappwin.cpp:1135 src/celestia/qt/qtappwin.cpp:1174
+#: src/celestia/qt/qtappwin.cpp:1137 src/celestia/qt/qtappwin.cpp:1135
+#: src/celestia/qt/qtappwin.cpp:1174
 #, fuzzy
 msgid "&Preferences..."
 msgstr "Celestia 偏好設定"
 
-#: src/celestia/qt/qtappwin.cpp:1139
+#: src/celestia/qt/qtappwin.cpp:1141
 #: src/celestia/win32/res/resource_strings.cpp:7
-#: src/celestia/qt/qtappwin.cpp:1178 src/celestia/res/resource_strings.cpp:7
+#: src/celestia/qt/qtappwin.cpp:1139 src/celestia/qt/qtappwin.cpp:1178
+#: src/celestia/res/resource_strings.cpp:7
 msgid "E&xit"
 msgstr "離開(&X)"
 
-#: src/celestia/qt/qtappwin.cpp:1147
-#: src/celestia/win32/res/resource_strings.cpp:8 testrc.cpp:459
-#: src/celestia/kde/rc.cpp:3 src/celestia/qt/qtappwin.cpp:1186
-#: src/celestia/res/resource_strings.cpp:8 testrc.cpp:63
+#: src/celestia/qt/qtappwin.cpp:1149
+#: src/celestia/win32/res/resource_strings.cpp:8 testrc.cpp:57
+#: src/celestia/kde/rc.cpp:3 src/celestia/qt/qtappwin.cpp:1147
+#: src/celestia/qt/qtappwin.cpp:1186 src/celestia/res/resource_strings.cpp:8
+#: testrc.cpp:63 testrc.cpp:360 testrc.cpp:459
 #, no-c-format
 msgid "&Navigation"
 msgstr "導覽(&N)"
 
-#: src/celestia/qt/qtappwin.cpp:1149 src/celestia/qt/qtappwin.cpp:1188
+#: src/celestia/qt/qtappwin.cpp:1151 src/celestia/qt/qtappwin.cpp:1149
+#: src/celestia/qt/qtappwin.cpp:1188
 #, fuzzy
 msgid "Select Sun"
 msgstr "選取(&S)"
 
-#: src/celestia/qt/qtappwin.cpp:1155 src/celestia/qt/qtappwin.cpp:1192
+#: src/celestia/qt/qtappwin.cpp:1157 src/celestia/qt/qtappwin.cpp:1155
+#: src/celestia/qt/qtappwin.cpp:1192
 #, fuzzy
 msgid "Center Selection"
 msgstr "選取星體置中(&C)\tC"
 
-#: src/celestia/qt/qtappwin.cpp:1162 src/celestia/qt/qtappwin.cpp:1196
+#: src/celestia/qt/qtappwin.cpp:1164 src/celestia/qt/qtappwin.cpp:1162
+#: src/celestia/qt/qtappwin.cpp:1196
 #, fuzzy
 msgid "Goto Selection"
 msgstr ""
 "\n"
 "選擇區:"
 
-#: src/celestia/qt/qtappwin.cpp:1177
+#: src/celestia/qt/qtappwin.cpp:1179
 #: src/celestia/win32/res/resource_strings.cpp:21
-#: src/celestia/qt/qtappwin.cpp:1202 src/celestia/res/resource_strings.cpp:21
+#: src/celestia/qt/qtappwin.cpp:1177 src/celestia/qt/qtappwin.cpp:1202
+#: src/celestia/res/resource_strings.cpp:21
 msgid "&Time"
 msgstr "時間(&T)"
 
-#: src/celestia/qt/qtappwin.cpp:1179 src/celestia/qt/qtappwin.cpp:1204
+#: src/celestia/qt/qtappwin.cpp:1181 src/celestia/qt/qtappwin.cpp:1179
+#: src/celestia/qt/qtappwin.cpp:1204
 #, fuzzy
 msgid "Set &time"
 msgstr "設定時間..."
 
-#: src/celestia/qt/qtappwin.cpp:1187 src/celestia/qt/qtappwin.cpp:1212
+#: src/celestia/qt/qtappwin.cpp:1189 src/celestia/qt/qtappwin.cpp:1187
+#: src/celestia/qt/qtappwin.cpp:1212
 #, fuzzy
 msgid "&Display"
 msgstr "顯示"
 
-#: src/celestia/qt/qtappwin.cpp:1193 src/celestia/qt/qtappwin.cpp:1218
+#: src/celestia/qt/qtappwin.cpp:1195 src/celestia/qt/qtappwin.cpp:1193
+#: src/celestia/qt/qtappwin.cpp:1218
 #, fuzzy
 msgid "Dee&p Sky Objects"
 msgstr "已標記星體"
 
-#: src/celestia/qt/qtappwin.cpp:1199 src/celestia/qt/qtappwin.cpp:1224
+#: src/celestia/qt/qtappwin.cpp:1201 src/celestia/qt/qtappwin.cpp:1199
+#: src/celestia/qt/qtappwin.cpp:1224
 #, fuzzy
 msgid "&Shadows"
 msgstr "顯示雲影"
 
-#: src/celestia/qt/qtappwin.cpp:1210
+#: src/celestia/qt/qtappwin.cpp:1212
 #: src/celestia/win32/res/resource_strings.cpp:37
-#: src/celestia/qt/qtappwin.cpp:1235 src/celestia/res/resource_strings.cpp:37
+#: src/celestia/qt/qtappwin.cpp:1210 src/celestia/qt/qtappwin.cpp:1235
+#: src/celestia/res/resource_strings.cpp:37
 msgid "Star St&yle"
 msgstr "恆星樣式(&Y)"
 
-#: src/celestia/qt/qtappwin.cpp:1215
+#: src/celestia/qt/qtappwin.cpp:1217 src/celestia/qt/qtappwin.cpp:1215
 #, fuzzy
 msgid "Toggle star style"
 msgstr "恆星樣式:點"
 
-#: src/celestia/qt/qtappwin.cpp:1222 src/celestia/qt/qtappwin.cpp:1242
+#: src/celestia/qt/qtappwin.cpp:1224 src/celestia/qt/qtappwin.cpp:1222
+#: src/celestia/qt/qtappwin.cpp:1242
 #, fuzzy
 msgid "Texture &Resolution"
 msgstr "紋理解析度"
 
-#: src/celestia/qt/qtappwin.cpp:1229
+#: src/celestia/qt/qtappwin.cpp:1231
 #: src/celestia/win32/res/resource_strings.cpp:60
-#: src/celestia/qt/qtappwin.cpp:1249 src/celestia/res/resource_strings.cpp:57
+#: src/celestia/qt/qtappwin.cpp:1229 src/celestia/qt/qtappwin.cpp:1249
+#: src/celestia/res/resource_strings.cpp:57
 msgid "&Bookmarks"
 msgstr "書籤(&B)"
 
-#: src/celestia/qt/qtappwin.cpp:1232
+#: src/celestia/qt/qtappwin.cpp:1234
 #: src/celestia/win32/res/resource_strings.cpp:53
-#: src/celestia/qt/qtappwin.cpp:1252 src/celestia/res/resource_strings.cpp:50
+#: src/celestia/qt/qtappwin.cpp:1232 src/celestia/qt/qtappwin.cpp:1252
+#: src/celestia/res/resource_strings.cpp:50
 msgid "&View"
 msgstr "檢視(&V)"
 
-#: src/celestia/qt/qtappwin.cpp:1235 src/celestia/qt/qtappwin.cpp:1255
+#: src/celestia/qt/qtappwin.cpp:1237 src/celestia/qt/qtappwin.cpp:1235
+#: src/celestia/qt/qtappwin.cpp:1255
 #, fuzzy
 msgid "&MultiView"
 msgstr "多重檢視"
 
-#: src/celestia/qt/qtappwin.cpp:1238 src/celestia/qt/qtappwin.cpp:1258
+#: src/celestia/qt/qtappwin.cpp:1240 src/celestia/qt/qtappwin.cpp:1238
+#: src/celestia/qt/qtappwin.cpp:1258
 #, fuzzy
 msgid "Split view vertically"
 msgstr "垂直分割檢視"
 
-#: src/celestia/qt/qtappwin.cpp:1244 src/celestia/qt/qtappwin.cpp:1264
+#: src/celestia/qt/qtappwin.cpp:1246 src/celestia/qt/qtappwin.cpp:1244
+#: src/celestia/qt/qtappwin.cpp:1264
 #, fuzzy
 msgid "Split view horizontally"
 msgstr "水平分割檢視"
 
-#: src/celestia/qt/qtappwin.cpp:1250 src/celestia/qt/qtappwin.cpp:1270
+#: src/celestia/qt/qtappwin.cpp:1252 src/celestia/qt/qtappwin.cpp:1250
+#: src/celestia/qt/qtappwin.cpp:1270
 #, fuzzy
 msgid "Cycle views"
 msgstr "循環檢視"
 
-#: src/celestia/qt/qtappwin.cpp:1257 src/celestia/qt/qtappwin.cpp:1276
+#: src/celestia/qt/qtappwin.cpp:1259 src/celestia/qt/qtappwin.cpp:1257
+#: src/celestia/qt/qtappwin.cpp:1276
 #, fuzzy
 msgid "Single view"
 msgstr "單一檢視"
 
-#: src/celestia/qt/qtappwin.cpp:1263 src/celestia/qt/qtappwin.cpp:1282
+#: src/celestia/qt/qtappwin.cpp:1265 src/celestia/qt/qtappwin.cpp:1263
+#: src/celestia/qt/qtappwin.cpp:1282
 #, fuzzy
 msgid "Delete view"
 msgstr "刪除檢視"
 
-#: src/celestia/qt/qtappwin.cpp:1270 src/celestia/qt/qtappwin.cpp:1289
+#: src/celestia/qt/qtappwin.cpp:1272 src/celestia/qt/qtappwin.cpp:1270
+#: src/celestia/qt/qtappwin.cpp:1289
 #, fuzzy
 msgid "Frames visible"
 msgstr "影格檢視"
 
-#: src/celestia/qt/qtappwin.cpp:1290 src/celestia/qt/qtappwin.cpp:1309
+#: src/celestia/qt/qtappwin.cpp:1292 src/celestia/qt/qtappwin.cpp:1290
+#: src/celestia/qt/qtappwin.cpp:1309
 #, fuzzy
 msgid "Active frame visible"
 msgstr "作用中影格檢視"
 
-#: src/celestia/qt/qtappwin.cpp:1306 src/celestia/qt/qtappwin.cpp:1325
+#: src/celestia/qt/qtappwin.cpp:1308 src/celestia/qt/qtappwin.cpp:1306
+#: src/celestia/qt/qtappwin.cpp:1325
 #, fuzzy
 msgid "Synchronize time"
 msgstr "同步時間"
 
-#: src/celestia/qt/qtappwin.cpp:1350
+#: src/celestia/qt/qtappwin.cpp:1352
 #: src/celestia/win32/res/resource_strings.cpp:63
-#: src/celestia/qt/qtappwin.cpp:1369 src/celestia/res/resource_strings.cpp:60
+#: src/celestia/qt/qtappwin.cpp:1350 src/celestia/qt/qtappwin.cpp:1369
+#: src/celestia/res/resource_strings.cpp:60
 msgid "&Help"
 msgstr "說明(&H)"
 
-#: src/celestia/qt/qtappwin.cpp:1352
+#: src/celestia/qt/qtappwin.cpp:1354 src/celestia/qt/qtappwin.cpp:1352
 #, fuzzy
 msgid "Celestia Manual"
 msgstr "Celestia 偏好設定"
 
-#: src/celestia/qt/qtappwin.cpp:1361
+#: src/celestia/qt/qtappwin.cpp:1363
 #: src/celestia/win32/res/resource_strings.cpp:70
-#: src/celestia/qt/qtappwin.cpp:1380 src/celestia/res/resource_strings.cpp:67
+#: src/celestia/qt/qtappwin.cpp:1361 src/celestia/qt/qtappwin.cpp:1380
+#: src/celestia/res/resource_strings.cpp:67
 msgid "About Celestia"
 msgstr "關於 Celestia"
 
-#: src/celestia/qt/qtappwin.cpp:1377 src/celestia/qt/qtappwin.cpp:1396
+#: src/celestia/qt/qtappwin.cpp:1379 src/celestia/qt/qtappwin.cpp:1377
+#: src/celestia/qt/qtappwin.cpp:1396
 #, fuzzy
 msgid "Add Bookmark..."
 msgstr "加入書籤(&A)"
 
-#: src/celestia/qt/qtappwin.cpp:1381 src/celestia/qt/qtappwin.cpp:1400
+#: src/celestia/qt/qtappwin.cpp:1383 src/celestia/qt/qtappwin.cpp:1381
+#: src/celestia/qt/qtappwin.cpp:1400
 #, fuzzy
 msgid "Organize Bookmarks..."
 msgstr "組織書籤(&O)..."
 
-#: src/celestia/qt/qtappwin.cpp:1419
+#: src/celestia/qt/qtappwin.cpp:1421
 #: src/celestia/win32/res/resource_strings.cpp:3
-#: src/celestia/qt/qtappwin.cpp:1439 src/celestia/res/resource_strings.cpp:3
+#: src/celestia/qt/qtappwin.cpp:1419 src/celestia/qt/qtappwin.cpp:1439
+#: src/celestia/res/resource_strings.cpp:3
 msgid "Scripts"
 msgstr "腳本"
 
@@ -3178,8 +3427,8 @@ msgstr "設定模擬時間"
 msgid "System time at activation"
 msgstr "時間"
 
-#: src/celestia/qt/qtbookmark.cpp:887 testrc.cpp:273 testrc.cpp:282
-#: testrc.cpp:186 testrc.cpp:195
+#: src/celestia/qt/qtbookmark.cpp:887 testrc.cpp:186 testrc.cpp:462
+#: testrc.cpp:3 testrc.cpp:30 testrc.cpp:195 testrc.cpp:273 testrc.cpp:282
 #, fuzzy
 msgid "New Folder"
 msgstr "新資料夾..."
@@ -3188,11 +3437,11 @@ msgstr "新資料夾..."
 #: src/celestia/qt/qtdeepskybrowser.cpp:187
 #: src/celestia/qt/qtsolarsystembrowser.cpp:618
 #: src/celestia/win32/res/resource_strings.cpp:107
-#: src/celestia/win32/winstarbrowser.cpp:61 testrc.cpp:309
+#: src/celestia/win32/winstarbrowser.cpp:61 testrc.cpp:87
 #: src/celestia/kde/rc.cpp:34 src/celestia/qt/qtcelestialbrowser.cpp:219
 #: src/celestia/qt/qtdeepskybrowser.cpp:186
 #: src/celestia/res/resource_strings.cpp:104 src/celestia/winstarbrowser.cpp:70
-#: testrc.cpp:93
+#: testrc.cpp:93 testrc.cpp:309 testrc.cpp:390
 #, no-c-format
 msgid "Name"
 msgstr "名稱"
@@ -3224,11 +3473,11 @@ msgstr "絕對星等"
 #: src/celestia/qt/qtdeepskybrowser.cpp:193
 #: src/celestia/qt/qtdeepskybrowser.cpp:458
 #: src/celestia/qt/qtsolarsystembrowser.cpp:620
-#: src/celestia/win32/winstarbrowser.cpp:72 testrc.cpp:321
+#: src/celestia/win32/winstarbrowser.cpp:72 testrc.cpp:99
 #: src/celestia/kde/rc.cpp:46 src/celestia/qt/qtcelestialbrowser.cpp:227
 #: src/celestia/qt/qtdeepskybrowser.cpp:192
 #: src/celestia/qt/qtdeepskybrowser.cpp:455 src/celestia/winstarbrowser.cpp:79
-#: testrc.cpp:105
+#: testrc.cpp:105 testrc.cpp:321 testrc.cpp:402
 #, no-c-format
 msgid "Type"
 msgstr "類型"
@@ -3253,9 +3502,9 @@ msgstr "星體"
 msgid "Filter"
 msgstr "過濾恆星"
 
-#: src/celestia/qt/qtcelestialbrowser.cpp:530 testrc.cpp:324
+#: src/celestia/qt/qtcelestialbrowser.cpp:530 testrc.cpp:102
 #: src/celestia/kde/rc.cpp:49 src/celestia/qt/qtcelestialbrowser.cpp:527
-#: testrc.cpp:108
+#: testrc.cpp:108 testrc.cpp:324 testrc.cpp:405
 #, no-c-format
 msgid "With Planets"
 msgstr "包含行星"
@@ -3279,10 +3528,11 @@ msgstr "恆星資料庫內的光譜類型錯誤，恆星 #"
 
 #: src/celestia/qt/qtcelestialbrowser.cpp:552
 #: src/celestia/qt/qtdeepskybrowser.cpp:467
-#: src/celestia/qt/qtsolarsystembrowser.cpp:674 testrc.cpp:342
+#: src/celestia/qt/qtsolarsystembrowser.cpp:674 testrc.cpp:120
 #: src/celestia/kde/rc.cpp:67 src/celestia/qt/qtcelestialbrowser.cpp:549
 #: src/celestia/qt/qtdeepskybrowser.cpp:464
-#: src/celestia/qt/qtsolarsystembrowser.cpp:675 testrc.cpp:126
+#: src/celestia/qt/qtsolarsystembrowser.cpp:675 testrc.cpp:126 testrc.cpp:342
+#: testrc.cpp:423
 #, no-c-format
 msgid "Refresh"
 msgstr "重新整理"
@@ -3350,7 +3600,7 @@ msgstr "標記特徵"
 #: src/celestia/qt/qtdeepskybrowser.cpp:576
 #: src/celestia/qt/qtcelestialbrowser.cpp:670
 #: src/celestia/qt/qtdeepskybrowser.cpp:573
-#, fuzzy
+#, fuzzy, qt-format
 msgid "%1 objects found"
 msgstr "天體"
 
@@ -3399,43 +3649,43 @@ msgid "Search range"
 msgstr "點尺寸範圍:"
 
 #: src/celestia/qt/qteventfinder.cpp:602 src/celestia/win32/wineclipses.cpp:319
-#: testrc.cpp:372 data/data.cpp:3 src/celestia/kde/rc.cpp:97
-#: src/celestia/wineclipses.cpp:316 testrc.cpp:30
+#: testrc.cpp:150 data/data.cpp:3 src/celestia/kde/rc.cpp:97
+#: src/celestia/wineclipses.cpp:316 testrc.cpp:30 testrc.cpp:372 testrc.cpp:453
 #, no-c-format
 msgid "Earth"
 msgstr "地球"
 
 #: src/celestia/qt/qteventfinder.cpp:603 src/celestia/win32/wineclipses.cpp:320
-#: testrc.cpp:375 data/data.cpp:8 src/celestia/kde/rc.cpp:100
-#: src/celestia/wineclipses.cpp:317 testrc.cpp:33
+#: testrc.cpp:153 data/data.cpp:8 src/celestia/kde/rc.cpp:100
+#: src/celestia/wineclipses.cpp:317 testrc.cpp:33 testrc.cpp:375 testrc.cpp:456
 #, no-c-format
 msgid "Jupiter"
 msgstr "木星"
 
 #: src/celestia/qt/qteventfinder.cpp:604 src/celestia/win32/wineclipses.cpp:321
-#: testrc.cpp:378 data/data.cpp:14 src/celestia/kde/rc.cpp:103
-#: src/celestia/wineclipses.cpp:318 testrc.cpp:36
+#: testrc.cpp:156 data/data.cpp:14 src/celestia/kde/rc.cpp:103
+#: src/celestia/wineclipses.cpp:318 testrc.cpp:36 testrc.cpp:378 testrc.cpp:459
 #, no-c-format
 msgid "Saturn"
 msgstr "土星"
 
 #: src/celestia/qt/qteventfinder.cpp:605 src/celestia/win32/wineclipses.cpp:322
-#: testrc.cpp:381 data/data.cpp:28 src/celestia/kde/rc.cpp:106
-#: src/celestia/wineclipses.cpp:319 testrc.cpp:39
+#: testrc.cpp:159 data/data.cpp:28 src/celestia/kde/rc.cpp:106
+#: src/celestia/wineclipses.cpp:319 testrc.cpp:39 testrc.cpp:381 testrc.cpp:462
 #, no-c-format
 msgid "Uranus"
 msgstr "天王星"
 
 #: src/celestia/qt/qteventfinder.cpp:606 src/celestia/win32/wineclipses.cpp:323
-#: testrc.cpp:384 data/data.cpp:34 src/celestia/kde/rc.cpp:109
-#: src/celestia/wineclipses.cpp:320 testrc.cpp:42
+#: testrc.cpp:162 data/data.cpp:34 src/celestia/kde/rc.cpp:109
+#: src/celestia/wineclipses.cpp:320 testrc.cpp:42 testrc.cpp:384 testrc.cpp:465
 #, no-c-format
 msgid "Neptune"
 msgstr "海王星"
 
 #: src/celestia/qt/qteventfinder.cpp:607 src/celestia/win32/wineclipses.cpp:324
-#: testrc.cpp:387 data/data.cpp:40 src/celestia/kde/rc.cpp:112
-#: src/celestia/wineclipses.cpp:321 testrc.cpp:45
+#: testrc.cpp:165 data/data.cpp:40 src/celestia/kde/rc.cpp:112
+#: src/celestia/wineclipses.cpp:321 testrc.cpp:45 testrc.cpp:387 testrc.cpp:468
 #, no-c-format
 msgid "Pluto"
 msgstr "冥王星"
@@ -3446,7 +3696,7 @@ msgid "Find eclipses"
 msgstr "月食"
 
 #: src/celestia/qt/qteventfinder.cpp:675
-#, fuzzy
+#, fuzzy, qt-format
 msgid "%1 is not a valid object"
 msgstr "選取星體(&O)..."
 
@@ -3465,17 +3715,17 @@ msgid "Set time to mid-eclipse"
 msgstr "設定為現在"
 
 #: src/celestia/qt/qteventfinder.cpp:735
-#, fuzzy
+#, fuzzy, qt-format
 msgid "Near %1"
 msgstr "大小:%1 MB"
 
 #: src/celestia/qt/qteventfinder.cpp:739 src/celestia/qt/qteventfinder.cpp:743
-#, fuzzy
+#, fuzzy, qt-format
 msgid "From surface of %1"
 msgstr "從檔案讀取影像"
 
 #: src/celestia/qt/qteventfinder.cpp:747
-#, fuzzy
+#, fuzzy, qt-format
 msgid "Behind %1"
 msgstr "大小:%1 MB"
 
@@ -3589,7 +3839,8 @@ msgstr "自轉週期:"
 msgid "days<br>\n"
 msgstr " 日"
 
-#: src/celestia/qt/qtmain.cpp:58 src/celestia/qt/qtmain.cpp:57
+#: src/celestia/qt/qtmain.cpp:65 src/celestia/qt/qtmain.cpp:57
+#: src/celestia/qt/qtmain.cpp:58 src/celestia/qt/qtmain.cpp:61
 #, fuzzy
 msgid "Loading data files: "
 msgstr "載入中 "
@@ -3688,7 +3939,7 @@ msgid "Show S&pin Vector"
 msgstr "顯示速度向量"
 
 #: src/celestia/qt/qtselectionpopup.cpp:306
-#, fuzzy
+#, fuzzy, qt-format
 msgid "Show &Direction to %1"
 msgstr "顯示太陽方向"
 
@@ -3818,8 +4069,9 @@ msgstr "小行星"
 msgid "Reference points"
 msgstr "參考標記(&R)"
 
-#: src/celestia/qt/qtsolarsystembrowser.cpp:552 testrc.cpp:81 testrc.cpp:147
-#: testrc.cpp:285 testrc.cpp:351
+#: src/celestia/qt/qtsolarsystembrowser.cpp:552 testrc.cpp:273 testrc.cpp:339
+#: testrc.cpp:81 testrc.cpp:117 testrc.cpp:147 testrc.cpp:183 testrc.cpp:285
+#: testrc.cpp:351
 #, fuzzy
 msgid "Minor moons"
 msgstr "小行星衛星 (二重小行星)"
@@ -3878,8 +4130,8 @@ msgstr "設為目前的時間"
 msgid "Not an XBEL version 1.0 file."
 msgstr ""
 
-#: src/celestia/url.cpp:654 testrc.cpp:408 src/celestia/kde/rc.cpp:133
-#: src/celestia/url.cpp:653 testrc.cpp:132
+#: src/celestia/url.cpp:654 testrc.cpp:6 src/celestia/kde/rc.cpp:133
+#: src/celestia/url.cpp:653 testrc.cpp:132 testrc.cpp:309 testrc.cpp:408
 #, no-c-format
 msgid "Settings"
 msgstr "設定"
@@ -4376,9 +4628,9 @@ msgstr "太陽系星體"
 msgid "Star Browser"
 msgstr "恆星瀏覽器"
 
-#: src/celestia/win32/res/resource_strings.cpp:119 testrc.cpp:333
+#: src/celestia/win32/res/resource_strings.cpp:119 testrc.cpp:111
 #: src/celestia/kde/rc.cpp:58 src/celestia/res/resource_strings.cpp:116
-#: testrc.cpp:117
+#: testrc.cpp:117 testrc.cpp:333 testrc.cpp:414
 #, no-c-format
 msgid "Nearest"
 msgstr "最接近"
@@ -4483,28 +4735,33 @@ msgstr "檢視選項"
 msgid "Ecliptic Line"
 msgstr "黃道"
 
-#: src/celestia/win32/res/resource_strings.cpp:166 testrc.cpp:93
-#: src/celestia/res/resource_strings.cpp:163 testrc.cpp:297
+#: src/celestia/win32/res/resource_strings.cpp:166 testrc.cpp:285
+#: src/celestia/res/resource_strings.cpp:163 testrc.cpp:93 testrc.cpp:129
+#: testrc.cpp:297
 msgid "Grids"
 msgstr "格子"
 
-#: src/celestia/win32/res/resource_strings.cpp:167 testrc.cpp:96
-#: src/celestia/res/resource_strings.cpp:164 testrc.cpp:300
+#: src/celestia/win32/res/resource_strings.cpp:167 testrc.cpp:288
+#: src/celestia/res/resource_strings.cpp:164 testrc.cpp:96 testrc.cpp:132
+#: testrc.cpp:300
 msgid "Equatorial"
 msgstr "赤道"
 
-#: src/celestia/win32/res/resource_strings.cpp:168 testrc.cpp:105
-#: src/celestia/res/resource_strings.cpp:165 testrc.cpp:309
+#: src/celestia/win32/res/resource_strings.cpp:168 testrc.cpp:297
+#: src/celestia/res/resource_strings.cpp:165 testrc.cpp:105 testrc.cpp:141
+#: testrc.cpp:309
 msgid "Horizontal"
 msgstr "水平分割檢視"
 
-#: src/celestia/win32/res/resource_strings.cpp:169 testrc.cpp:102
-#: src/celestia/res/resource_strings.cpp:166 testrc.cpp:306
+#: src/celestia/win32/res/resource_strings.cpp:169 testrc.cpp:294
+#: src/celestia/res/resource_strings.cpp:166 testrc.cpp:102 testrc.cpp:138
+#: testrc.cpp:306
 msgid "Galactic"
 msgstr "銀河"
 
-#: src/celestia/win32/res/resource_strings.cpp:170 testrc.cpp:99
-#: src/celestia/res/resource_strings.cpp:167 testrc.cpp:303
+#: src/celestia/win32/res/resource_strings.cpp:170 testrc.cpp:291
+#: src/celestia/res/resource_strings.cpp:167 testrc.cpp:99 testrc.cpp:135
+#: testrc.cpp:303
 msgid "Ecliptic"
 msgstr "黃道"
 
@@ -4513,13 +4770,15 @@ msgstr "黃道"
 msgid "DSO Labels"
 msgstr "DSO 標籤"
 
-#: src/celestia/win32/res/resource_strings.cpp:186 testrc.cpp:111
-#: src/celestia/res/resource_strings.cpp:183 testrc.cpp:315
+#: src/celestia/win32/res/resource_strings.cpp:186 testrc.cpp:303
+#: src/celestia/res/resource_strings.cpp:183 testrc.cpp:111 testrc.cpp:147
+#: testrc.cpp:315
 msgid "Diagrams"
 msgstr "圖形"
 
-#: src/celestia/win32/res/resource_strings.cpp:187 testrc.cpp:114
-#: src/celestia/res/resource_strings.cpp:184 testrc.cpp:318
+#: src/celestia/win32/res/resource_strings.cpp:187 testrc.cpp:306
+#: src/celestia/res/resource_strings.cpp:184 testrc.cpp:114 testrc.cpp:150
+#: testrc.cpp:318
 msgid "Boundaries"
 msgstr "邊界"
 
@@ -4558,13 +4817,15 @@ msgstr "峽谷(Valles)"
 msgid "Terrae (Land masses)"
 msgstr "高地(Terrae)"
 
-#: src/celestia/win32/res/resource_strings.cpp:207 testrc.cpp:189
-#: src/celestia/res/resource_strings.cpp:204 testrc.cpp:393
+#: src/celestia/win32/res/resource_strings.cpp:207 testrc.cpp:381
+#: src/celestia/res/resource_strings.cpp:204 testrc.cpp:189 testrc.cpp:225
+#: testrc.cpp:393
 msgid "Volcanoes"
 msgstr "火山"
 
-#: src/celestia/win32/res/resource_strings.cpp:208 testrc.cpp:210
-#: src/celestia/res/resource_strings.cpp:205 testrc.cpp:414
+#: src/celestia/win32/res/resource_strings.cpp:208 testrc.cpp:402
+#: src/celestia/res/resource_strings.cpp:205 testrc.cpp:210 testrc.cpp:246
+#: testrc.cpp:414
 msgid "Other features"
 msgstr "其他特徵"
 
@@ -4598,8 +4859,8 @@ msgstr "新增書籤資料夾"
 msgid "Folder Name"
 msgstr "資料夾名稱"
 
-#: src/celestia/win32/res/resource_strings.cpp:219 testrc.cpp:270
-#: src/celestia/res/resource_strings.cpp:215 testrc.cpp:183
+#: src/celestia/win32/res/resource_strings.cpp:219 testrc.cpp:183
+#: src/celestia/res/resource_strings.cpp:215 testrc.cpp:27 testrc.cpp:270
 msgid "Organize Bookmarks"
 msgstr "組織書籤"
 
@@ -4633,44 +4894,44 @@ msgstr "計算"
 msgid "Set Date and Go to Planet"
 msgstr "設定日期並前往行星"
 
-#: src/celestia/win32/res/resource_strings.cpp:232 testrc.cpp:402
+#: src/celestia/win32/res/resource_strings.cpp:232 testrc.cpp:180
 #: src/celestia/kde/rc.cpp:127 src/celestia/res/resource_strings.cpp:228
-#: testrc.cpp:60
+#: testrc.cpp:60 testrc.cpp:402 testrc.cpp:483
 #, fuzzy, no-c-format
 msgid "Close"
 msgstr "關閉"
 
-#: src/celestia/win32/res/resource_strings.cpp:233 testrc.cpp:399
+#: src/celestia/win32/res/resource_strings.cpp:233 testrc.cpp:177
 #: src/celestia/kde/rc.cpp:124 src/celestia/res/resource_strings.cpp:229
-#: testrc.cpp:57
+#: testrc.cpp:57 testrc.cpp:399 testrc.cpp:480
 #, no-c-format
 msgid "From:"
 msgstr "從:"
 
-#: src/celestia/win32/res/resource_strings.cpp:234 testrc.cpp:396
+#: src/celestia/win32/res/resource_strings.cpp:234 testrc.cpp:174
 #: src/celestia/kde/rc.cpp:121 src/celestia/res/resource_strings.cpp:230
-#: testrc.cpp:54
+#: testrc.cpp:54 testrc.cpp:396 testrc.cpp:477
 #, no-c-format
 msgid "To:"
 msgstr ""
 
-#: src/celestia/win32/res/resource_strings.cpp:235 testrc.cpp:369
+#: src/celestia/win32/res/resource_strings.cpp:235 testrc.cpp:147
 #: src/celestia/kde/rc.cpp:94 src/celestia/res/resource_strings.cpp:231
-#: testrc.cpp:27
+#: testrc.cpp:27 testrc.cpp:369 testrc.cpp:450
 #, no-c-format
 msgid "On:"
 msgstr ""
 
-#: src/celestia/win32/res/resource_strings.cpp:236 testrc.cpp:363
+#: src/celestia/win32/res/resource_strings.cpp:236 testrc.cpp:141
 #: src/celestia/kde/rc.cpp:88 src/celestia/res/resource_strings.cpp:232
-#: testrc.cpp:21
+#: testrc.cpp:21 testrc.cpp:363 testrc.cpp:444
 #, no-c-format
 msgid "Search parameters"
 msgstr "搜尋參數"
 
-#: src/celestia/win32/res/resource_strings.cpp:237 testrc.cpp:366
+#: src/celestia/win32/res/resource_strings.cpp:237 testrc.cpp:144
 #: src/celestia/kde/rc.cpp:91 src/celestia/res/resource_strings.cpp:233
-#: testrc.cpp:24
+#: testrc.cpp:24 testrc.cpp:366 testrc.cpp:447
 #, no-c-format
 msgid "Solar Eclipses"
 msgstr "日食"
@@ -4750,14 +5011,16 @@ msgstr "9"
 msgid "Satellite"
 msgstr "衛星"
 
-#: src/celestia/win32/wineclipses.cpp:63 testrc.cpp:354
+#: src/celestia/win32/wineclipses.cpp:63 testrc.cpp:132
 #: src/celestia/kde/rc.cpp:79 src/celestia/wineclipses.cpp:62 testrc.cpp:12
+#: testrc.cpp:354 testrc.cpp:435
 #, no-c-format
 msgid "Date"
 msgstr "日期"
 
-#: src/celestia/win32/wineclipses.cpp:65 testrc.cpp:357
+#: src/celestia/win32/wineclipses.cpp:65 testrc.cpp:135
 #: src/celestia/kde/rc.cpp:82 src/celestia/wineclipses.cpp:64 testrc.cpp:15
+#: testrc.cpp:357 testrc.cpp:438
 #, no-c-format
 msgid "Start"
 msgstr "開始"
@@ -4819,338 +5082,86 @@ msgstr "時區名稱"
 msgid "UTC Offset"
 msgstr "與世界協調時間的差異"
 
-#: testrc.cpp:3 testrc.cpp:207
-#, fuzzy
-msgid "Preferences"
-msgstr "Celestia 偏好設定"
-
-#: testrc.cpp:6 testrc.cpp:9 testrc.cpp:465 src/celestia/kde/rc.cpp:9
-#: testrc.cpp:69 testrc.cpp:210 testrc.cpp:213
-#, no-c-format
-msgid "Objects"
-msgstr "天體"
-
-#: testrc.cpp:27 testrc.cpp:168 testrc.cpp:231 testrc.cpp:372
-#, fuzzy
-msgid "Globular clusters"
-msgstr "顯示球狀星團"
-
-#: testrc.cpp:30 testrc.cpp:234
-#, fuzzy
-msgid "Features"
-msgstr "顯示特徵"
-
-#: testrc.cpp:39 testrc.cpp:243
-#, fuzzy
-msgid "Cloud shadows"
-msgstr "雲層陰影"
-
-#: testrc.cpp:42 testrc.cpp:246
-#, fuzzy
-msgid "Eclipse shadows"
-msgstr "日月食陰影"
-
-#: testrc.cpp:45 testrc.cpp:249
-#, fuzzy
-msgid "Ring shadows"
-msgstr "環狀陰影"
-
-#: testrc.cpp:48 testrc.cpp:252
-#, fuzzy
-msgid "Nightside lights"
-msgstr "夜視光"
-
-#: testrc.cpp:51 testrc.cpp:255
-#, fuzzy
-msgid "Comet tails"
-msgstr "彗尾"
-
-#: testrc.cpp:54 testrc.cpp:258
-#, fuzzy
-msgid "Limit of knowledge textures"
-msgstr "使用知識的界限表面紋理。"
-
-#: testrc.cpp:63 testrc.cpp:267
-#, fuzzy
-msgid "Show orbits"
-msgstr "顯示軌道"
-
-#: testrc.cpp:66 testrc.cpp:270
-#, fuzzy
-msgid "Partial trajectories"
-msgstr "部份軌道"
-
-#: testrc.cpp:75 testrc.cpp:141 testrc.cpp:279 testrc.cpp:345
-#, fuzzy
-msgid "Dwarf planets"
-msgstr "矮行星"
-
-#: testrc.cpp:117 testrc.cpp:321
-#, fuzzy
-msgid "Latin names"
-msgstr "拉丁文名"
-
-#: testrc.cpp:120 testrc.cpp:324
-msgid "Miscellaneous"
-msgstr ""
-
-#: testrc.cpp:177 testrc.cpp:381
-#, fuzzy
-msgid "Show locations"
-msgstr "顯示城市位置"
-
-#: testrc.cpp:180 testrc.cpp:384
-#, fuzzy
-msgid "Location types:"
-msgstr "顯示地點標籤"
-
-#: testrc.cpp:186 testrc.cpp:390
-#, fuzzy
-msgid "Landing sites"
-msgstr "著陸點(Landing Sites)"
-
-#: testrc.cpp:198 testrc.cpp:402
-#, fuzzy
-msgid "Montes (mountains)"
-msgstr "山(Montes)"
-
-#: testrc.cpp:201 testrc.cpp:405
-#, fuzzy
-msgid "Terrae (land masses)"
-msgstr "高地(Terrae)"
-
-#: testrc.cpp:204 testrc.cpp:408
-#, fuzzy
-msgid "Valles (valleys)"
-msgstr "峽谷(Valles)"
-
-#: testrc.cpp:207 testrc.cpp:411
-#, fuzzy
-msgid "Maria (seas)"
-msgstr "海(Maria)"
-
-#: testrc.cpp:213 testrc.cpp:417
-#, fuzzy
-msgid "Minimum labelled feature size:"
-msgstr "最小已標記特徵的尺寸"
-
-#: testrc.cpp:216 testrc.cpp:420
-msgid "000; "
-msgstr ""
-
-#: testrc.cpp:219 testrc.cpp:423
-#, fuzzy
-msgid "Render"
-msgstr "成像(&R)"
-
-#: testrc.cpp:222 testrc.cpp:426
-#, fuzzy
-msgid "Texture resolution"
-msgstr "紋理解析度"
-
-#: testrc.cpp:234 testrc.cpp:438
-#, fuzzy
-msgid "Ambient light"
-msgstr "環境光線"
-
-#: testrc.cpp:237 testrc.cpp:441
-msgid "Tinted illumination"
-msgstr ""
-
-#: testrc.cpp:240 testrc.cpp:444
-#, fuzzy
-msgid "Render path"
-msgstr "成像路徑:"
-
-#: testrc.cpp:243 testrc.cpp:447
-#, fuzzy
-msgid "Antialiased lines"
-msgstr "平滑軌道線"
-
-#: testrc.cpp:246 testrc.cpp:450
-#, fuzzy
-msgid "Star style"
-msgstr "恆星樣式:點"
-
-#: testrc.cpp:252 testrc.cpp:456
-#, fuzzy
-msgid "Fuzzy points"
-msgstr "模糊點(&U)"
-
-#: testrc.cpp:255 testrc.cpp:459
-#, fuzzy
-msgid "Scaled discs"
-msgstr "按比例的盤面(&D)"
-
-#: testrc.cpp:258 testrc.cpp:462
-#, fuzzy
-msgid "Auto-magnitude"
-msgstr "自動調整星等\tCtrl+Y"
-
-#: testrc.cpp:261 testrc.cpp:465
-#, fuzzy
-msgid "Star colors"
-msgstr "恆星樣式(&Y)"
-
-#: testrc.cpp:267 testrc.cpp:471
-#, fuzzy
-msgid "Date display format:"
-msgstr "顯示"
-
-#: testrc.cpp:276 testrc.cpp:189
-#, fuzzy
-msgid "New Separator"
-msgstr "新資料夾..."
-
-#: testrc.cpp:279 testrc.cpp:192
-msgid "Remove Item"
-msgstr ""
-
-#: testrc.cpp:285 testrc.cpp:198
-#, fuzzy
-msgid "Name:"
-msgstr "名稱"
-
-#: testrc.cpp:288 testrc.cpp:300 testrc.cpp:201 testrc.cpp:480
-#, fuzzy
-msgid "Create in:"
-msgstr "建立於 >>"
-
-#: testrc.cpp:291 testrc.cpp:204
-msgid "Description:"
-msgstr ""
-
-#: testrc.cpp:294 testrc.cpp:474
-#, fuzzy
-msgid "Bookmark Location"
-msgstr "顯示地點標籤"
-
-#: testrc.cpp:297 testrc.cpp:477
-#, fuzzy
-msgid "Bookmark name:"
-msgstr "目標名稱:"
-
-#: testrc.cpp:303 testrc.cpp:483
-#, fuzzy
-msgid "Time source:"
-msgstr "時間已暫停"
-
-#: testrc.cpp:312 src/celestia/kde/rc.cpp:37 testrc.cpp:96
-#, no-c-format
-msgid "Dist."
-msgstr "距離"
-
-#: testrc.cpp:315 src/celestia/kde/rc.cpp:40 testrc.cpp:99
-#, fuzzy, no-c-format
-msgid "App. Mag."
-msgstr "視星等"
-
-#: testrc.cpp:318 src/celestia/kde/rc.cpp:43 testrc.cpp:102
-#, fuzzy, no-c-format
-msgid "Abs. Mag."
-msgstr "絕對星等"
-
-#: testrc.cpp:327 src/celestia/kde/rc.cpp:52 testrc.cpp:111
-#, no-c-format
-msgid "Brightest (Abs.)"
-msgstr "最亮 (絕對星等)"
-
-#: testrc.cpp:330 src/celestia/kde/rc.cpp:55 testrc.cpp:114
-#, no-c-format
-msgid "Brightest (App.)"
-msgstr "最亮 (視星等)"
-
-#: testrc.cpp:336 src/celestia/kde/rc.cpp:61 testrc.cpp:120
-#, no-c-format
-msgid "&Close"
-msgstr "關閉"
-
-#: testrc.cpp:339 src/celestia/kde/rc.cpp:64 testrc.cpp:123
-#, no-c-format
-msgid "Alt+C"
-msgstr "Alt+C"
-
-#: testrc.cpp:360 src/celestia/kde/rc.cpp:85 testrc.cpp:18
-#, no-c-format
-msgid "End"
-msgstr "結束"
-
-#: testrc.cpp:390 src/celestia/kde/rc.cpp:115 testrc.cpp:48
-#, no-c-format
-msgid "Moon Eclipses"
-msgstr "月食"
-
-#: testrc.cpp:393 src/celestia/kde/rc.cpp:118 testrc.cpp:51
-#, no-c-format
-msgid "Search"
-msgstr "搜尋"
-
-#: testrc.cpp:405 src/celestia/kde/rc.cpp:130 testrc.cpp:129
+#: testrc.cpp:3 src/celestia/kde/rc.cpp:130 testrc.cpp:129 testrc.cpp:306
+#: testrc.cpp:405
 #, no-c-format
 msgid "Video Capture"
 msgstr "錄製影片"
 
-#: testrc.cpp:411 src/celestia/kde/rc.cpp:136 testrc.cpp:135
+#: testrc.cpp:9 src/celestia/kde/rc.cpp:136 testrc.cpp:135 testrc.cpp:312
+#: testrc.cpp:411
 #, no-c-format
 msgid "Save As:"
 msgstr "另存新檔"
 
-#: testrc.cpp:414 src/celestia/kde/rc.cpp:139 testrc.cpp:138
+#: testrc.cpp:12 src/celestia/kde/rc.cpp:139 testrc.cpp:138 testrc.cpp:315
+#: testrc.cpp:414
 #, no-c-format
 msgid "*.ogg"
 msgstr "*.ogg"
 
-#: testrc.cpp:417 src/celestia/kde/rc.cpp:142 testrc.cpp:141
+#: testrc.cpp:15 src/celestia/kde/rc.cpp:142 testrc.cpp:141 testrc.cpp:318
+#: testrc.cpp:417
 #, no-c-format
 msgid "Aspect Ratio:"
 msgstr "螢幕畫面長寬比"
 
-#: testrc.cpp:420 src/celestia/kde/rc.cpp:145 testrc.cpp:144
+#: testrc.cpp:18 src/celestia/kde/rc.cpp:145 testrc.cpp:144 testrc.cpp:321
+#: testrc.cpp:420
 #, no-c-format
 msgid "Current"
 msgstr "Current 目前的"
 
-#: testrc.cpp:423 src/celestia/kde/rc.cpp:148 testrc.cpp:147
+#: testrc.cpp:21 src/celestia/kde/rc.cpp:148 testrc.cpp:147 testrc.cpp:324
+#: testrc.cpp:423
 #, no-c-format
 msgid "11:9"
 msgstr "11:9"
 
-#: testrc.cpp:426 src/celestia/kde/rc.cpp:151 testrc.cpp:150
+#: testrc.cpp:24 src/celestia/kde/rc.cpp:151 testrc.cpp:150 testrc.cpp:327
+#: testrc.cpp:426
 #, no-c-format
 msgid "4:3"
 msgstr "4:3"
 
-#: testrc.cpp:429 src/celestia/kde/rc.cpp:154 testrc.cpp:153
+#: testrc.cpp:27 src/celestia/kde/rc.cpp:154 testrc.cpp:153 testrc.cpp:330
+#: testrc.cpp:429
 #, no-c-format
 msgid "16:9"
 msgstr "16:9"
 
-#: testrc.cpp:432 src/celestia/kde/rc.cpp:157 testrc.cpp:156
+#: testrc.cpp:30 src/celestia/kde/rc.cpp:157 testrc.cpp:156 testrc.cpp:333
+#: testrc.cpp:432
 #, no-c-format
 msgid "Image Size:"
 msgstr "影像大小:"
 
-#: testrc.cpp:435 src/celestia/kde/rc.cpp:160 testrc.cpp:159
+#: testrc.cpp:33 src/celestia/kde/rc.cpp:160 testrc.cpp:159 testrc.cpp:336
+#: testrc.cpp:435
 #, no-c-format
 msgid "Frame Rate:"
 msgstr "畫面速度:"
 
-#: testrc.cpp:438 src/celestia/kde/rc.cpp:163 testrc.cpp:162
+#: testrc.cpp:36 src/celestia/kde/rc.cpp:163 testrc.cpp:162 testrc.cpp:339
+#: testrc.cpp:438
 #, no-c-format
 msgid "Video Quality:"
 msgstr "影像品質"
 
-#: testrc.cpp:441 src/celestia/kde/rc.cpp:166 testrc.cpp:165
+#: testrc.cpp:39 src/celestia/kde/rc.cpp:166 testrc.cpp:165 testrc.cpp:342
+#: testrc.cpp:441
 #, no-c-format
 msgid "Play Video when capture is done"
 msgstr "影片錄製完成後進行播放"
 
-#: testrc.cpp:444 src/celestia/kde/rc.cpp:169 testrc.cpp:168
+#: testrc.cpp:42 src/celestia/kde/rc.cpp:169 testrc.cpp:168 testrc.cpp:345
+#: testrc.cpp:444
 #, no-c-format
 msgid "Usage"
 msgstr "使用"
 
-#: testrc.cpp:447 src/celestia/kde/rc.cpp:172 testrc.cpp:171
+#: testrc.cpp:45 src/celestia/kde/rc.cpp:172 testrc.cpp:171 testrc.cpp:348
+#: testrc.cpp:447
 #, no-c-format
 msgid ""
 "<p>Press <b>F11</b> to start/pause recording<br>\n"
@@ -5164,35 +5175,321 @@ msgstr ""
 "\n"
 "<p>請注意, 在錄影結束前無法調整視窗的大小</p>"
 
-#: testrc.cpp:453 src/celestia/kde/rc.cpp:178 testrc.cpp:177
+#: testrc.cpp:51 src/celestia/kde/rc.cpp:178 testrc.cpp:177 testrc.cpp:354
+#: testrc.cpp:453
 #, no-c-format
 msgid "&OK"
 msgstr "確定"
 
-#: testrc.cpp:456 src/celestia/kde/rc.cpp:182 testrc.cpp:180
+#: testrc.cpp:54 src/celestia/kde/rc.cpp:182 testrc.cpp:180 testrc.cpp:357
+#: testrc.cpp:456
 #, fuzzy, no-c-format
 msgid "&Cancel"
 msgstr "取消"
 
-#: testrc.cpp:462 src/celestia/kde/rc.cpp:6 testrc.cpp:66
+#: testrc.cpp:60 src/celestia/kde/rc.cpp:6 testrc.cpp:66 testrc.cpp:363
+#: testrc.cpp:462
 #, no-c-format
 msgid "Options"
 msgstr "選項"
 
-#: testrc.cpp:471 src/celestia/kde/rc.cpp:15 testrc.cpp:75
+#: testrc.cpp:63 testrc.cpp:198 testrc.cpp:201 src/celestia/kde/rc.cpp:9
+#: testrc.cpp:6 testrc.cpp:9 testrc.cpp:42 testrc.cpp:45 testrc.cpp:69
+#: testrc.cpp:210 testrc.cpp:213 testrc.cpp:366 testrc.cpp:465
+#, no-c-format
+msgid "Objects"
+msgstr "天體"
+
+#: testrc.cpp:69 src/celestia/kde/rc.cpp:15 testrc.cpp:75 testrc.cpp:372
+#: testrc.cpp:471
 #, no-c-format
 msgid "OpenGL Render Path"
 msgstr "OpenGL 描繪路徑"
 
-#: testrc.cpp:477 src/celestia/kde/rc.cpp:21 testrc.cpp:81
+#: testrc.cpp:75 src/celestia/kde/rc.cpp:21 testrc.cpp:81 testrc.cpp:378
+#: testrc.cpp:477
 #, no-c-format
 msgid "MultiView"
 msgstr "多重檢視"
 
-#: testrc.cpp:480 src/celestia/kde/rc.cpp:24 testrc.cpp:84
+#: testrc.cpp:78 src/celestia/kde/rc.cpp:24 testrc.cpp:84 testrc.cpp:381
+#: testrc.cpp:480
 #, no-c-format
 msgid "Main Toolbar"
 msgstr "主工具列"
+
+#: testrc.cpp:90 src/celestia/kde/rc.cpp:37 testrc.cpp:96 testrc.cpp:312
+#: testrc.cpp:393
+#, no-c-format
+msgid "Dist."
+msgstr "距離"
+
+#: testrc.cpp:93 src/celestia/kde/rc.cpp:40 testrc.cpp:99 testrc.cpp:315
+#: testrc.cpp:396
+#, fuzzy, no-c-format
+msgid "App. Mag."
+msgstr "視星等"
+
+#: testrc.cpp:96 src/celestia/kde/rc.cpp:43 testrc.cpp:102 testrc.cpp:318
+#: testrc.cpp:399
+#, fuzzy, no-c-format
+msgid "Abs. Mag."
+msgstr "絕對星等"
+
+#: testrc.cpp:105 src/celestia/kde/rc.cpp:52 testrc.cpp:111 testrc.cpp:327
+#: testrc.cpp:408
+#, no-c-format
+msgid "Brightest (Abs.)"
+msgstr "最亮 (絕對星等)"
+
+#: testrc.cpp:108 src/celestia/kde/rc.cpp:55 testrc.cpp:114 testrc.cpp:330
+#: testrc.cpp:411
+#, no-c-format
+msgid "Brightest (App.)"
+msgstr "最亮 (視星等)"
+
+#: testrc.cpp:114 src/celestia/kde/rc.cpp:61 testrc.cpp:120 testrc.cpp:336
+#: testrc.cpp:417
+#, no-c-format
+msgid "&Close"
+msgstr "關閉"
+
+#: testrc.cpp:117 src/celestia/kde/rc.cpp:64 testrc.cpp:123 testrc.cpp:339
+#: testrc.cpp:420
+#, no-c-format
+msgid "Alt+C"
+msgstr "Alt+C"
+
+#: testrc.cpp:138 src/celestia/kde/rc.cpp:85 testrc.cpp:18 testrc.cpp:360
+#: testrc.cpp:441
+#, no-c-format
+msgid "End"
+msgstr "結束"
+
+#: testrc.cpp:168 src/celestia/kde/rc.cpp:115 testrc.cpp:48 testrc.cpp:390
+#: testrc.cpp:471
+#, no-c-format
+msgid "Moon Eclipses"
+msgstr "月食"
+
+#: testrc.cpp:171 src/celestia/kde/rc.cpp:118 testrc.cpp:51 testrc.cpp:393
+#: testrc.cpp:474
+#, no-c-format
+msgid "Search"
+msgstr "搜尋"
+
+#: testrc.cpp:189 testrc.cpp:33 testrc.cpp:276
+#, fuzzy
+msgid "New Separator"
+msgstr "新資料夾..."
+
+#: testrc.cpp:192 testrc.cpp:36 testrc.cpp:279
+msgid "Remove Item"
+msgstr ""
+
+#: testrc.cpp:195 testrc.cpp:3 testrc.cpp:39 testrc.cpp:207
+#, fuzzy
+msgid "Preferences"
+msgstr "Celestia 偏好設定"
+
+#: testrc.cpp:219 testrc.cpp:360 testrc.cpp:27 testrc.cpp:63 testrc.cpp:168
+#: testrc.cpp:204 testrc.cpp:231 testrc.cpp:372
+#, fuzzy
+msgid "Globular clusters"
+msgstr "顯示球狀星團"
+
+#: testrc.cpp:222 testrc.cpp:30 testrc.cpp:66 testrc.cpp:234
+#, fuzzy
+msgid "Features"
+msgstr "顯示特徵"
+
+#: testrc.cpp:231 testrc.cpp:39 testrc.cpp:75 testrc.cpp:243
+#, fuzzy
+msgid "Cloud shadows"
+msgstr "雲層陰影"
+
+#: testrc.cpp:234 testrc.cpp:42 testrc.cpp:78 testrc.cpp:246
+#, fuzzy
+msgid "Eclipse shadows"
+msgstr "日月食陰影"
+
+#: testrc.cpp:237 testrc.cpp:45 testrc.cpp:81 testrc.cpp:249
+#, fuzzy
+msgid "Ring shadows"
+msgstr "環狀陰影"
+
+#: testrc.cpp:240 testrc.cpp:48 testrc.cpp:84 testrc.cpp:252
+#, fuzzy
+msgid "Nightside lights"
+msgstr "夜視光"
+
+#: testrc.cpp:243 testrc.cpp:51 testrc.cpp:87 testrc.cpp:255
+#, fuzzy
+msgid "Comet tails"
+msgstr "彗尾"
+
+#: testrc.cpp:246 testrc.cpp:54 testrc.cpp:90 testrc.cpp:258
+#, fuzzy
+msgid "Limit of knowledge textures"
+msgstr "使用知識的界限表面紋理。"
+
+#: testrc.cpp:255 testrc.cpp:63 testrc.cpp:99 testrc.cpp:267
+#, fuzzy
+msgid "Show orbits"
+msgstr "顯示軌道"
+
+#: testrc.cpp:258 testrc.cpp:66 testrc.cpp:102 testrc.cpp:270
+#, fuzzy
+msgid "Partial trajectories"
+msgstr "部份軌道"
+
+#: testrc.cpp:267 testrc.cpp:333 testrc.cpp:75 testrc.cpp:111 testrc.cpp:141
+#: testrc.cpp:177 testrc.cpp:279 testrc.cpp:345
+#, fuzzy
+msgid "Dwarf planets"
+msgstr "矮行星"
+
+#: testrc.cpp:309 testrc.cpp:117 testrc.cpp:153 testrc.cpp:321
+#, fuzzy
+msgid "Latin names"
+msgstr "拉丁文名"
+
+#: testrc.cpp:312 testrc.cpp:120 testrc.cpp:156 testrc.cpp:324
+msgid "Miscellaneous"
+msgstr ""
+
+#: testrc.cpp:369 testrc.cpp:177 testrc.cpp:213 testrc.cpp:381
+#, fuzzy
+msgid "Show locations"
+msgstr "顯示城市位置"
+
+#: testrc.cpp:372 testrc.cpp:180 testrc.cpp:216 testrc.cpp:384
+#, fuzzy
+msgid "Location types:"
+msgstr "顯示地點標籤"
+
+#: testrc.cpp:378 testrc.cpp:186 testrc.cpp:222 testrc.cpp:390
+#, fuzzy
+msgid "Landing sites"
+msgstr "著陸點(Landing Sites)"
+
+#: testrc.cpp:390 testrc.cpp:198 testrc.cpp:234 testrc.cpp:402
+#, fuzzy
+msgid "Montes (mountains)"
+msgstr "山(Montes)"
+
+#: testrc.cpp:393 testrc.cpp:201 testrc.cpp:237 testrc.cpp:405
+#, fuzzy
+msgid "Terrae (land masses)"
+msgstr "高地(Terrae)"
+
+#: testrc.cpp:396 testrc.cpp:204 testrc.cpp:240 testrc.cpp:408
+#, fuzzy
+msgid "Valles (valleys)"
+msgstr "峽谷(Valles)"
+
+#: testrc.cpp:399 testrc.cpp:207 testrc.cpp:243 testrc.cpp:411
+#, fuzzy
+msgid "Maria (seas)"
+msgstr "海(Maria)"
+
+#: testrc.cpp:405 testrc.cpp:213 testrc.cpp:249 testrc.cpp:417
+#, fuzzy
+msgid "Minimum labelled feature size:"
+msgstr "最小已標記特徵的尺寸"
+
+#: testrc.cpp:408 testrc.cpp:216 testrc.cpp:252 testrc.cpp:420
+msgid "000; "
+msgstr ""
+
+#: testrc.cpp:411 testrc.cpp:219 testrc.cpp:255 testrc.cpp:423
+#, fuzzy
+msgid "Render"
+msgstr "成像(&R)"
+
+#: testrc.cpp:414 testrc.cpp:222 testrc.cpp:258 testrc.cpp:426
+#, fuzzy
+msgid "Texture resolution"
+msgstr "紋理解析度"
+
+#: testrc.cpp:426 testrc.cpp:234 testrc.cpp:270 testrc.cpp:438
+#, fuzzy
+msgid "Ambient light"
+msgstr "環境光線"
+
+#: testrc.cpp:429 testrc.cpp:237 testrc.cpp:273 testrc.cpp:441
+msgid "Tinted illumination"
+msgstr ""
+
+#: testrc.cpp:432 testrc.cpp:240 testrc.cpp:276 testrc.cpp:444
+#, fuzzy
+msgid "Render path"
+msgstr "成像路徑:"
+
+#: testrc.cpp:435 testrc.cpp:243 testrc.cpp:279 testrc.cpp:447
+#, fuzzy
+msgid "Antialiased lines"
+msgstr "平滑軌道線"
+
+#: testrc.cpp:438 testrc.cpp:246 testrc.cpp:282 testrc.cpp:450
+#, fuzzy
+msgid "Star style"
+msgstr "恆星樣式:點"
+
+#: testrc.cpp:444 testrc.cpp:252 testrc.cpp:288 testrc.cpp:456
+#, fuzzy
+msgid "Fuzzy points"
+msgstr "模糊點(&U)"
+
+#: testrc.cpp:447 testrc.cpp:255 testrc.cpp:291 testrc.cpp:459
+#, fuzzy
+msgid "Scaled discs"
+msgstr "按比例的盤面(&D)"
+
+#: testrc.cpp:450 testrc.cpp:258 testrc.cpp:294 testrc.cpp:462
+#, fuzzy
+msgid "Auto-magnitude"
+msgstr "自動調整星等\tCtrl+Y"
+
+#: testrc.cpp:453 testrc.cpp:261 testrc.cpp:297 testrc.cpp:465
+#, fuzzy
+msgid "Star colors"
+msgstr "恆星樣式(&Y)"
+
+#: testrc.cpp:459 testrc.cpp:267 testrc.cpp:303 testrc.cpp:471
+#, fuzzy
+msgid "Date display format:"
+msgstr "顯示"
+
+#: testrc.cpp:465 testrc.cpp:6 testrc.cpp:198 testrc.cpp:285
+#, fuzzy
+msgid "Name:"
+msgstr "名稱"
+
+#: testrc.cpp:468 testrc.cpp:480 testrc.cpp:9 testrc.cpp:21 testrc.cpp:201
+#: testrc.cpp:288 testrc.cpp:300
+#, fuzzy
+msgid "Create in:"
+msgstr "建立於 >>"
+
+#: testrc.cpp:471 testrc.cpp:12 testrc.cpp:204 testrc.cpp:291
+msgid "Description:"
+msgstr ""
+
+#: testrc.cpp:474 testrc.cpp:15 testrc.cpp:294
+#, fuzzy
+msgid "Bookmark Location"
+msgstr "顯示地點標籤"
+
+#: testrc.cpp:477 testrc.cpp:18 testrc.cpp:297
+#, fuzzy
+msgid "Bookmark name:"
+msgstr "目標名稱:"
+
+#: testrc.cpp:483 testrc.cpp:24 testrc.cpp:303
+#, fuzzy
+msgid "Time source:"
+msgstr "時間已暫停"
 
 #: data/data.cpp:1
 msgid "Mercury"
