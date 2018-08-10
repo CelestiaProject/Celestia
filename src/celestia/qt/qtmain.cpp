@@ -22,7 +22,7 @@
 #include <QDesktopServices>
 #include <QPixmap>
 #include <QBitmap>
-#include <QTranslator>
+#include "qtgettext.h"
 #include <QLocale>
 #include <QLibraryInfo>
 #include <vector>
@@ -78,8 +78,7 @@ int main(int argc, char *argv[])
                       QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     app.installTranslator(&qtTranslator);
 
-    QTranslator celestiaTranslator;
-    celestiaTranslator.load("locale/celestia_" + QLocale::system().name());
+    CelestiaQTranslator celestiaTranslator;
     app.installTranslator(&celestiaTranslator);
 
     Q_INIT_RESOURCE(icons);
@@ -100,9 +99,9 @@ int main(int argc, char *argv[])
     // Gettext integration
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
-    bindtextdomain("celestia","locale");
+    bindtextdomain("celestia", LOCALEDIR);
     bind_textdomain_codeset("celestia", "UTF-8");
-    bindtextdomain("celestia_constellations","locale");
+    bindtextdomain("celestia_constellations", LOCALEDIR);
     bind_textdomain_codeset("celestia_constellations", "UTF-8");
     textdomain("celestia");
 

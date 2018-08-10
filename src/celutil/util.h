@@ -24,6 +24,8 @@
 // gettext / libintl setup
 #ifndef _ /* unless somebody already took care of this */
 #define _(string) gettext (string)
+#endif
+#ifndef gettext_noop
 #define  gettext_noop(string) string
 #endif
 
