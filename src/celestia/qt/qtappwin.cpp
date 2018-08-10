@@ -1048,7 +1048,9 @@ void CelestiaAppWindow::slotShowGLInfo()
     QTextStream out(&infoText, QIODevice::WriteOnly);
 
     // Get the version string
-    out << _("<b>OpenGL version: </b>");
+    // QTextStream::operator<<(const char *string) assumes that the string has
+    // ISO-8859-1 encoding, so we need to convert in to QString
+    out << QString(_("<b>OpenGL version: </b>"));
     const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
     if (version != nullptr)
         out << version;
@@ -1056,7 +1058,7 @@ void CelestiaAppWindow::slotShowGLInfo()
         out << "???";
     out << "<br>\n";
 
-    out << _("<b>Renderer: </b>");
+    out << QString(_("<b>Renderer: </b>"));
     const char* glrenderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
     if (glrenderer != nullptr)
         out << glrenderer;
@@ -1072,18 +1074,18 @@ void CelestiaAppWindow::slotShowGLInfo()
 #endif
     if (glslversion != nullptr)
     {
-        out << _("<b>GLSL Version: </b>") << glslversion << "<br>\n";
+        out << QString(_("<b>GLSL Version: </b>")) << glslversion << "<br>\n";
     }
 
     // texture size
     GLint maxTextureSize = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    out << _("<b>Maximum texture size: </b>") << maxTextureSize << "<br>\n";
+    out << QString(_("<b>Maximum texture size: </b>")) << maxTextureSize << "<br>\n";
 
     out << "<br>\n";
 
     // Show all supported extensions
-    out << _("<b>Extensions:</b><br>\n");
+    out << QString(_("<b>Extensions:</b><br>\n"));
     const char *extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
     if (extensions != nullptr)
     {
