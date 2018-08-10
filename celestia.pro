@@ -602,6 +602,7 @@ win32 {
     # Disable the regrettable min and max macros in windows.h
     DEFINES += NOMINMAX
     DEFINES += LUA_VER=0x050100
+    DEFINES += LOCALEDIR=\\\"locale\\\"
 
 }
 
@@ -658,6 +659,8 @@ macx {
     DEFINES += PNG_SUPPORT
     DEFINES += TARGET_OS_MAC __AIFF__
     DEFINES += LUA_VER=0x050100
+    # FIXME!
+    DEFINES += LOCALEDIR=\\\"locale\\\"
 
     FRAMEWORKS.files = $$FRAMEWORKPATH/liblua.dylib $$FRAMEWORKPATH/libpng.dylib
     FRAMEWORKS.path = Contents/Frameworks
@@ -701,12 +704,14 @@ unix {
 
     isEmpty(PREFIX) { PREFIX = /usr/local }
 
-    BINDIR = $$PREFIX/bin
-    DATADIR =$$PREFIX/share
-    WORKDIR =$$DATADIR/$${TARGET}
+    BINDIR    = $$PREFIX/bin
+    DATADIR   = $$PREFIX/share
+    WORKDIR   = $$DATADIR/$${TARGET}
+    LOCALEDIR = $$DATADIR/locale
 
     DEFINES += CONFIG_DATA_DIR=\\\"$${WORKDIR}\\\"
     DEFINES += SPLASH_DIR=\\\"$${WORKDIR}/splash/\\\"
+    DEFINES += LOCALEDIR=\\\"$${LOCALEDIR}\\\"
 
     #MAKE INSTALL
 
