@@ -1,0 +1,8 @@
+{
+    timerate { rate 0.0 }
+    time { jd 2451545 }
+
+    select { object "Sol/Mars" }
+
+    move { duration 5.0 velocity [543 -543 123] }
+}

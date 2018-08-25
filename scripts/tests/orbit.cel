@@ -1,0 +1,8 @@
+{
+    timerate { rate 0.0 }
+    time { jd 2451545 }
+
+    select { object "Sol/Mars" }
+    goto { }
+    orbit { axis [0.5 -0.5 0.5] rate 5 duration 10}
+}
