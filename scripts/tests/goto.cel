@@ -1,0 +1,17 @@
+{
+    timerate { rate 0.0 }
+    time { jd 2451545 }
+
+    select { object "Sol/Mars" }
+    goto {}
+
+    wait { duration 5.0 }
+
+    select { object "Sol/Mars" }
+    goto { up [ 0.5 0.5 0.5 ] }
+
+    wait { duration 5.0 }
+
+    select { object "Sol/Earth" }
+    gotolonglat { up [ 0.5 0.5 0.5 ] longitude 52.357715 latitude 30.983344 }
+}

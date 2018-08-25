@@ -1,0 +1,22 @@
+{
+    timerate { rate 0.0 }
+    time { jd 2451545 }
+
+    select { object "Sol/Earth" }
+
+    setorientation {
+        ow 0.090610
+        ox -0.494683
+        oy 0.860207
+        oz -0.084397
+    }
+
+    wait { duration 5.0 }
+
+# this shows different result because the original code
+# does not normalize axises
+    setorientation {
+        angle 10.0
+        axis [0.5 -0.5 0.5]
+    }
+}

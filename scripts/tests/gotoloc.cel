@@ -1,0 +1,23 @@
+{
+    timerate  { rate 0.0 }
+    time      { jd 2451545 }
+
+    select    { object "Sol/Mars" }
+    center    { }
+    follow    { }
+    gotoloc   { time 2
+                position [0 106378.1 0]
+                xrot 90
+                yrot 0
+                zrot 0 }
+    wait      { duration 5 }
+
+    gotoloc   { time 2
+                x "wJjebddBM3XLDA"
+                y "Z2/b0Q34Pw"
+                z "GShiyVOKuxUI"
+                ow 0.954531
+                ox 0.112769
+                oy -0.272262
+                oz -0.045019 }
+}
