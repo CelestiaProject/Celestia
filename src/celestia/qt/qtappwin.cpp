@@ -57,13 +57,13 @@
 //#include "qtvideocapturedialog.h"
 #include "celestia/scriptmenu.h"
 #include "celestia/url.h"
+#include "celutil/localtime.h"
 #include "qtbookmark.h"
 
 #include "QtAudioManager.h"
 
 #if defined(_WIN32)
 #include "celestia/avicapture.h"
-
 // TODO: Add Mac support
 #elif !defined(TARGET_OS_MAC)
 #ifdef THEORA
@@ -74,9 +74,7 @@
 #ifndef CONFIG_DATA_DIR
 #define CONFIG_DATA_DIR "./"
 #endif
-#define timezone 1
-#define daylight 8
-#define tzname "tzname"
+
 using namespace std;
 using namespace CelestiaQt;
 
@@ -1322,16 +1320,13 @@ void CelestiaAppWindow::createMenus()
     // Set up the default time zone name and offset from UTC
     time_t curtime = time(NULL);
     m_appCore->start(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
-    localtime(&curtime); // Only doing this to set timezone as a side effect
 
-#ifdef TARGET_OS_MAC
-    CFTimeZoneRef tz = CFTimeZoneCopyDefault();
-    m_appCore->setTimeZoneBias(-CFTimeZoneGetSecondsFromGMT(tz, CFAbsoluteTimeGetCurrent())+3600*daylight);
-    CFRelease(tz);
-#else
-      m_appCore->setTimeZoneBias(-timezone + 3600 * daylight);
-#endif
-    m_appCore->setTimeZoneName("temp");
+    struct tm result;
+    if (localtime_r(&curtime, &result))
+    {
+        m_appCore->setTimeZoneBias(result.tm_gmtoff);
+        m_appCore->setTimeZoneName(result.tm_zone);
+    }
 
     // If LocalTime is set to false, set the time zone bias to zero.
     if (settings.contains("LocalTime"))
