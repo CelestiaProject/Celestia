@@ -31,7 +31,7 @@ Q_OBJECT
     SetTimeDialog(double currentTimeTDB,
                   QWidget* parent,
                   CelestiaCore* _appCore);
-    ~SetTimeDialog();
+    ~SetTimeDialog() = default;
 
  public slots:
     void slotSetSimulationTime();

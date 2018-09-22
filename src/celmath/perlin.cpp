@@ -1,6 +1,6 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cmath>
 
 #include "mathlib.h"
 #include "perlin.h"
@@ -15,17 +15,17 @@ float bias(float a, float b)
 
 float gain(float a, float b)
 {
-    float p = (float) (log(1.0 - b) / log(0.5));
+    auto p = (float) (log(1.0 - b) / log(0.5));
 
     if (a < 0.001f)
         return 0.0f;
-    else if (a > 0.999f)
+    if (a > 0.999f)
         return 1.0f;
 
     if (a < 0.5f)
         return (float) pow(2 * a, p) / 2;
-    else
-        return 1.0f - (float) pow(2.0 * (1.0 - a), (double) p) / 2;
+
+    return 1.0f - (float) pow(2.0 * (1.0 - a), (double) p) / 2;
 }
 
 float noise(float vec[], int len)
@@ -43,7 +43,7 @@ float noise(float vec[], int len)
 }
 
 
-float turbulence(float v[], float freq)
+float turbulence(const float v[], float freq)
 {
     float t, vec[3];
 
@@ -90,7 +90,7 @@ float turbulence(const Vector3f& p, float freq)
 }
 
 
-float fractalsum(float v[], float freq)
+float fractalsum(const float v[], float freq)
 {
     float t;
     float vec[3];
@@ -155,7 +155,7 @@ static float g1[B + B + 2];
 
 static bool initialized = false;
 
-static void init(void);
+static void init();
 
 #define s_curve(t) ( t * t * (3.0f - 2.0f * t) )
 
@@ -184,7 +184,7 @@ float noise1(float arg)
     return Mathf::lerp(s_curve(rx0), u, v);
 }
 
-float noise2(float vec[2])
+float noise2(const float vec[2])
 {
     int bx0, bx1, by0, by1, b00, b10, b01, b11;
     float rx0, rx1, ry0, ry1, *q, sx, sy, a, b, t, u, v;
@@ -220,7 +220,7 @@ float noise2(float vec[2])
     return Mathf::lerp(sy, a, b);
 }
 
-float noise3(float vec[3])
+float noise3(const float vec[3])
 {
     if (!initialized)
         init();
@@ -272,14 +272,14 @@ float noise3(float vec[3])
 
 static void normalize2(float v[2])
 {
-    float s = (float) sqrt(v[0] * v[0] + v[1] * v[1]);
+    auto s = (float) sqrt(v[0] * v[0] + v[1] * v[1]);
     v[0] = v[0] / s;
     v[1] = v[1] / s;
 }
 
 static void normalize3(float v[3])
 {
-    float s = (float) sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    auto s = (float) sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     v[0] = v[0] / s;
     v[1] = v[1] / s;
     v[2] = v[2] / s;

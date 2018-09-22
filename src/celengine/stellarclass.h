@@ -115,7 +115,7 @@ private:
 };
 
 
-std::ostream& operator<<(std::ostream& s, const StellarClass& sc);
+std::ostream& operator<<(std::ostream& os, const StellarClass& sc);
 
 // A rough ordering of stellar classes, from 'early' to 'late' . . .
 // Useful for organizing a list of stars by spectral class.

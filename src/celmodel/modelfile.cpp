@@ -46,26 +46,10 @@ public:
         Invalid
     };
 
-    Token() :
-        m_type(Invalid),
-        m_numberValue(0.0)
-    {
-    }
+    Token() = default;
+    Token(const Token& other) = default;
 
-    Token(const Token& other) :
-        m_type(other.m_type),
-        m_numberValue(other.m_numberValue),
-        m_stringValue(other.m_stringValue)
-    {
-    }
-
-    Token& operator=(const Token& other)
-    {
-        m_type = other.m_type;
-        m_numberValue = other.m_numberValue;
-        m_stringValue = other.m_stringValue;
-        return *this;
-    }
+    Token& operator=(const Token& other) = default;
 
     bool operator==(const Token& other) const
     {
@@ -96,9 +80,7 @@ public:
         return !(*this == other);
     }
 
-    ~Token()
-    {
-    }
+    ~Token() = default;
 
     TokenType type() const
     {
@@ -134,13 +116,9 @@ public:
     {
         assert(type() == Number);
         if (type() == Number)
-        {
             return m_numberValue;
-        }
-        else
-        {
-            return 0.0;
-        }
+
+        return 0.0;
     }
 
     int integerValue() const
@@ -149,25 +127,17 @@ public:
         //assert(std::floor(m_numberValue) == m_numberValue);
 
         if (type() == Number)
-        {
             return (int) m_numberValue;
-        }
-        else
-        {
-            return 0;
-        }
+
+        return 0;
     }
 
     std::string stringValue() const
     {
         if (type() == Name || type() == String)
-        {
             return m_stringValue;
-        }
-        else
-        {
-            return string();
-        }
+
+       return string();
     }
 
 public:
@@ -203,8 +173,8 @@ public:
     }
 
 private:
-    TokenType m_type;
-    double m_numberValue;
+    TokenType m_type{Invalid};
+    double m_numberValue{0.0};
     string m_stringValue;
 };
 
@@ -214,7 +184,6 @@ class TokenStream
 public:
     TokenStream(istream* in) :
         m_in(in),
-        m_currentToken(),
         m_pushedBack(false),
         m_lineNumber(1),
         m_parseError(false),
@@ -224,7 +193,7 @@ public:
 
     bool issep(char c)
     {
-        return !isdigit(c) && !isalpha(c) && c != '.';
+        return (isdigit(c) == 0) && (isalpha(c) == 0) && c != '.';
     }
 
     void syntaxError(const std::string& message)
@@ -249,9 +218,7 @@ public:
     {
         int c = (int) m_in->get();
         if (c == '\n')
-        {
             m_lineNumber++;
-        }
 
         return c;
     }
@@ -340,11 +307,11 @@ Token TokenStream::nextToken()
         switch (state)
         {
         case StartState:
-            if (isspace(m_nextChar))
+            if (isspace(m_nextChar) != 0)
             {
                 state = StartState;
             }
-            else if (isdigit(m_nextChar))
+            else if (isdigit(m_nextChar) != 0)
             {
                 state = NumberState;
                 integerValue = m_nextChar - (int) '0';
@@ -367,7 +334,7 @@ Token TokenStream::nextToken()
                 sign = +1;
                 integerValue = 0;
             }
-            else if (isalpha(m_nextChar) || m_nextChar == '_')
+            else if ((isalpha(m_nextChar) != 0) || m_nextChar == '_')
             {
                 state = NameState;
                 textValue += (char) m_nextChar;
@@ -391,7 +358,7 @@ Token TokenStream::nextToken()
             break;
 
         case NameState:
-            if (isalpha(m_nextChar) || isdigit(m_nextChar) || m_nextChar == '_')
+            if ((isalpha(m_nextChar) != 0) || (isdigit(m_nextChar) != 0) || m_nextChar == '_')
             {
                 state = NameState;
                 textValue += (char) m_nextChar;
@@ -454,7 +421,7 @@ Token TokenStream::nextToken()
             break;
 
         case NumberState:
-            if (isdigit(m_nextChar))
+            if (isdigit(m_nextChar) != 0)
             {
                 state = NumberState;
                 integerValue = integerValue * 10 + m_nextChar - (int) '0';
@@ -479,7 +446,7 @@ Token TokenStream::nextToken()
             break;
 
         case FractionState:
-            if (isdigit(m_nextChar))
+            if (isdigit(m_nextChar) != 0)
             {
                 state = FractionState;
                 fractionValue = fractionValue * 10 + m_nextChar - (int) '0';
@@ -501,7 +468,7 @@ Token TokenStream::nextToken()
             break;
 
         case ExponentFirstState:
-            if (isdigit(m_nextChar))
+            if (isdigit(m_nextChar) != 0)
             {
                 state = ExponentState;
                 exponentValue = (int) m_nextChar - (int) '0';
@@ -523,7 +490,7 @@ Token TokenStream::nextToken()
             break;
 
         case ExponentState:
-            if (isdigit(m_nextChar))
+            if (isdigit(m_nextChar) != 0)
             {
                 state = ExponentState;
                 exponentValue = exponentValue * 10 + (int) m_nextChar - (int) '0';
@@ -541,7 +508,7 @@ Token TokenStream::nextToken()
             break;
 
         case DotState:
-            if (isdigit(m_nextChar))
+            if (isdigit(m_nextChar) != 0)
             {
                 state = FractionState;
                 fractionValue = fractionValue * 10 + (int) m_nextChar - (int) '0';
@@ -644,10 +611,10 @@ class AsciiModelLoader : public ModelLoader
 {
 public:
     AsciiModelLoader(istream& _in);
-    ~AsciiModelLoader();
+    ~AsciiModelLoader() override = default;
 
-    virtual Model* load();
-    virtual void reportError(const string&);
+    Model* load() override;
+    void reportError(const string& /*msg*/) override;
 
     Material*               loadMaterial();
     Mesh::VertexDescription* loadVertexDescription();
@@ -673,16 +640,16 @@ static Token EndMaterialToken = Token::NameToken("end_material");
 class AsciiModelWriter : public ModelWriter
 {
 public:
-    AsciiModelWriter(ostream&);
-    ~AsciiModelWriter();
+    AsciiModelWriter(ostream& /*_out*/);
+    ~AsciiModelWriter() override = default;
 
-    virtual bool write(const Model&);
+    bool write(const Model& /*model*/) override;
 
 private:
-    void writeMesh(const Mesh&);
-    void writeMaterial(const Material&);
-    void writeGroup(const Mesh::PrimitiveGroup&);
-    void writeVertexDescription(const Mesh::VertexDescription&);
+    void writeMesh(const Mesh& /*mesh*/);
+    void writeMaterial(const Material& /*material*/);
+    void writeGroup(const Mesh::PrimitiveGroup& /*group*/);
+    void writeVertexDescription(const Mesh::VertexDescription& /*desc*/);
     void writeVertices(const void* vertexData,
                        unsigned int nVertices,
                        unsigned int stride,
@@ -696,10 +663,10 @@ class BinaryModelLoader : public ModelLoader
 {
 public:
     BinaryModelLoader(istream& _in);
-    ~BinaryModelLoader();
+    ~BinaryModelLoader() override = default;
 
-    virtual Model* load();
-    virtual void reportError(const string&);
+    Model* load() override;
+    void reportError(const string& /*msg*/) override;
 
     Material*                loadMaterial();
     Mesh::VertexDescription* loadVertexDescription();
@@ -715,16 +682,16 @@ private:
 class BinaryModelWriter : public ModelWriter
 {
 public:
-    BinaryModelWriter(ostream&);
-    ~BinaryModelWriter();
+    BinaryModelWriter(ostream& /*_out*/);
+    ~BinaryModelWriter() override = default;
 
-    virtual bool write(const Model&);
+    bool write(const Model& /*model*/) override;
 
 private:
-    void writeMesh(const Mesh&);
-    void writeMaterial(const Material&);
-    void writeGroup(const Mesh::PrimitiveGroup&);
-    void writeVertexDescription(const Mesh::VertexDescription&);
+    void writeMesh(const Mesh& /*mesh*/);
+    void writeMaterial(const Material& /*material*/);
+    void writeGroup(const Mesh::PrimitiveGroup& /*group*/);
+    void writeVertexDescription(const Mesh::VertexDescription& /*desc*/);
     void writeVertices(const void* vertexData,
                        unsigned int nVertices,
                        unsigned int stride,
@@ -732,17 +699,6 @@ private:
 
     ostream& out;
 };
-
-
-ModelLoader::ModelLoader() :
-   textureLoader(NULL)
-{
-}
-
-
-ModelLoader::~ModelLoader()
-{
-}
 
 
 void
@@ -776,13 +732,13 @@ ModelLoader::getTextureLoader() const
 Model* cmod::LoadModel(istream& in, TextureLoader* textureLoader)
 {
     ModelLoader* loader = ModelLoader::OpenModel(in);
-    if (loader == NULL)
-        return NULL;
+    if (loader == nullptr)
+        return nullptr;
 
     loader->setTextureLoader(textureLoader);
 
     Model* model = loader->load();
-    if (model == NULL)
+    if (model == nullptr)
     {
         cerr << "Error in model file: " << loader->getErrorMessage() << '\n';
     }
@@ -804,14 +760,14 @@ ModelLoader::OpenModel(istream& in)
     {
         return new AsciiModelLoader(in);
     }
-    else if (strcmp(header, CEL_MODEL_HEADER_BINARY) == 0)
+    if (strcmp(header, CEL_MODEL_HEADER_BINARY) == 0)
     {
         return new BinaryModelLoader(in);
     }
     else
     {
         cerr << "Model file has invalid header.\n";
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -819,7 +775,7 @@ ModelLoader::OpenModel(istream& in)
 bool
 cmod::SaveModelAscii(const Model* model, std::ostream& out)
 {
-    if (model == NULL)
+    if (model == nullptr)
         return false;
 
     AsciiModelWriter(out).write(*model);
@@ -831,7 +787,7 @@ cmod::SaveModelAscii(const Model* model, std::ostream& out)
 bool
 cmod::SaveModelBinary(const Model* model, std::ostream& out)
 {
-    if (model == NULL)
+    if (model == nullptr)
         return false;
 
     BinaryModelWriter(out).write(*model);
@@ -842,11 +798,6 @@ cmod::SaveModelBinary(const Model* model, std::ostream& out)
 
 AsciiModelLoader::AsciiModelLoader(istream& _in) :
     tok(&_in)
-{
-}
-
-
-AsciiModelLoader::~AsciiModelLoader()
 {
 }
 
@@ -866,10 +817,10 @@ AsciiModelLoader::loadMaterial()
     if (tok.nextToken() != MaterialToken)
     {
         reportError("Material definition expected");
-        return NULL;
+        return nullptr;
     }
 
-    Material* material = new Material();
+    auto* material = new Material();
 
     material->diffuse = DefaultDiffuse;
     material->specular = DefaultSpecular;
@@ -889,12 +840,12 @@ AsciiModelLoader::loadMaterial()
             {
                 reportError("Texture name expected");
                 delete material;
-                return NULL;
+                return nullptr;
             }
 
             string textureName = t.stringValue();
 
-            Material::TextureResource* tex = NULL;
+            Material::TextureResource* tex = nullptr;
             if (getTextureLoader())
             {
                 tex = getTextureLoader()->loadTexture(textureName);
@@ -926,7 +877,7 @@ AsciiModelLoader::loadMaterial()
             {
                 reportError("Bad blend mode in material");
                 delete material;
-                return NULL;
+                return nullptr;
             }
 
             material->blend = blendMode;
@@ -949,7 +900,7 @@ AsciiModelLoader::loadMaterial()
                 {
                     reportError("Bad property value in material");
                     delete material;
-                    return NULL;
+                    return nullptr;
                 }
                 data[i] = t.numberValue();
             }
@@ -986,12 +937,10 @@ AsciiModelLoader::loadMaterial()
     if (tok.currentToken().type() != Token::Name)
     {
         delete material;
-        return NULL;
+        return nullptr;
     }
-    else
-    {
-        return material;
-    }
+
+    return material;
 }
 
 
@@ -1001,13 +950,13 @@ AsciiModelLoader::loadVertexDescription()
     if (tok.nextToken() != VertexDescToken)
     {
         reportError("Vertex description expected");
-        return NULL;
+        return nullptr;
     }
 
     int maxAttributes = 16;
     int nAttributes = 0;
     unsigned int offset = 0;
-    Mesh::VertexAttribute* attributes = new Mesh::VertexAttribute[maxAttributes];
+    auto* attributes = new Mesh::VertexAttribute[maxAttributes];
 
     while (tok.nextToken().isName() && tok.currentToken() != EndVertexDescToken)
     {
@@ -1021,7 +970,7 @@ AsciiModelLoader::loadVertexDescription()
             // will ever exceed it.
             reportError("Attribute limit exceeded in vertex description");
             delete[] attributes;
-            return NULL;
+            return nullptr;
         }
 
         semanticName = tok.currentToken().stringValue();
@@ -1036,7 +985,7 @@ AsciiModelLoader::loadVertexDescription()
         {
             reportError("Invalid vertex description");
             delete[] attributes;
-            return NULL;
+            return nullptr;
         }
 
         Mesh::VertexAttributeSemantic semantic =
@@ -1046,7 +995,7 @@ AsciiModelLoader::loadVertexDescription()
             reportError(string("Invalid vertex attribute semantic '") +
                         semanticName + "'");
             delete[] attributes;
-            return NULL;
+            return nullptr;
         }
 
         Mesh::VertexAttributeFormat format =
@@ -1056,7 +1005,7 @@ AsciiModelLoader::loadVertexDescription()
             reportError(string("Invalid vertex attribute format '") +
                         formatName + "'");
             delete[] attributes;
-            return NULL;
+            return nullptr;
         }
 
         attributes[nAttributes].semantic = semantic;
@@ -1071,17 +1020,17 @@ AsciiModelLoader::loadVertexDescription()
     {
         reportError("Invalid vertex description");
         delete[] attributes;
-        return NULL;
+        return nullptr;
     }
 
     if (nAttributes == 0)
     {
         reportError("Vertex definitition cannot be empty");
         delete[] attributes;
-        return NULL;
+        return nullptr;
     }
 
-    Mesh::VertexDescription *vertexDesc =
+    auto *vertexDesc =
         new Mesh::VertexDescription(offset, nAttributes, attributes);
     delete[] attributes;
     return vertexDesc;
@@ -1095,29 +1044,29 @@ AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
     if (tok.nextToken() != VerticesToken)
     {
         reportError("Vertex data expected");
-        return NULL;
+        return nullptr;
     }
 
     if (tok.nextToken().type() != Token::Number)
     {
         reportError("Vertex count expected");
-        return NULL;
+        return nullptr;
     }
 
     double num = tok.currentToken().numberValue();
     if (num != floor(num) || num <= 0.0)
     {
         reportError("Bad vertex count for mesh");
-        return NULL;
+        return nullptr;
     }
 
     vertexCount = (unsigned int) num;
     unsigned int vertexDataSize = vertexDesc.stride * vertexCount;
-    char* vertexData = new char[vertexDataSize];
-    if (vertexData == NULL)
+    auto* vertexData = new char[vertexDataSize];
+    if (vertexData == nullptr)
     {
         reportError("Not enough memory to hold vertex data");
-        return NULL;
+        return nullptr;
     }
 
     unsigned int offset = 0;
@@ -1148,7 +1097,7 @@ AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
             default:
                 assert(0);
                 delete[] vertexData;
-                return NULL;
+                return nullptr;
             }
 
             for (int j = 0; j < readCount; j++)
@@ -1192,22 +1141,22 @@ AsciiModelLoader::loadMesh()
     if (tok.nextToken() != MeshToken)
     {
         reportError("Mesh definition expected");
-        return NULL;
+        return nullptr;
     }
 
     Mesh::VertexDescription* vertexDesc = loadVertexDescription();
-    if (vertexDesc == NULL)
-        return NULL;
+    if (vertexDesc == nullptr)
+        return nullptr;
 
     unsigned int vertexCount = 0;
     char* vertexData = loadVertices(*vertexDesc, vertexCount);
-    if (vertexData == NULL)
+    if (vertexData == nullptr)
     {
         delete vertexDesc;
-        return NULL;
+        return nullptr;
     }
 
-    Mesh* mesh = new Mesh();
+    auto* mesh = new Mesh();
     mesh->setVertexDescription(*vertexDesc);
     mesh->setVertices(vertexCount, vertexData);
     delete vertexDesc;
@@ -1220,14 +1169,14 @@ AsciiModelLoader::loadMesh()
         {
             reportError("Bad primitive group type: " + tok.currentToken().stringValue());
             delete mesh;
-            return NULL;
+            return nullptr;
         }
 
         if (!tok.nextToken().isInteger())
         {
             reportError("Material index expected in primitive group");
             delete mesh;
-            return NULL;
+            return nullptr;
         }
 
         unsigned int materialIndex;
@@ -1244,17 +1193,17 @@ AsciiModelLoader::loadMesh()
         {
             reportError("Index count expected in primitive group");
             delete mesh;
-            return NULL;
+            return nullptr;
         }
 
         unsigned int indexCount = (unsigned int) tok.currentToken().integerValue();
 
-        Mesh::index32* indices = new Mesh::index32[indexCount];
-        if (indices == NULL)
+        auto* indices = new Mesh::index32[indexCount];
+        if (indices == nullptr)
         {
             reportError("Not enough memory to hold indices");
             delete mesh;
-            return NULL;
+            return nullptr;
         }
 
         for (unsigned int i = 0; i < indexCount; i++)
@@ -1264,7 +1213,7 @@ AsciiModelLoader::loadMesh()
                 reportError("Incomplete index list in primitive group");
                 delete indices;
                 delete mesh;
-                return NULL;
+                return nullptr;
             }
 
             unsigned int index = (unsigned int) tok.currentToken().integerValue();
@@ -1273,7 +1222,7 @@ AsciiModelLoader::loadMesh()
                 reportError("Index out of range");
                 delete indices;
                 delete mesh;
-                return NULL;
+                return nullptr;
             }
 
             indices[i] = index;
@@ -1289,14 +1238,14 @@ AsciiModelLoader::loadMesh()
 Model*
 AsciiModelLoader::load()
 {
-    Model* model = new Model();
+    auto* model = new Model();
     bool seenMeshes = false;
 
     // FIXME: modern C++ uses exceptions
-    if (model == NULL)
+    if (model == nullptr)
     {
         reportError("Unable to allocate memory for model");
-        return NULL;
+        return nullptr;
     }
 
     // Parse material and mesh definitions
@@ -1313,14 +1262,14 @@ AsciiModelLoader::load()
                 {
                     reportError("Materials must be defined before meshes");
                     delete model;
-                    return NULL;
+                    return nullptr;
                 }
 
                 Material* material = loadMaterial();
-                if (material == NULL)
+                if (material == nullptr)
                 {
                     delete model;
-                    return NULL;
+                    return nullptr;
                 }
 
                 model->addMaterial(material);
@@ -1330,10 +1279,10 @@ AsciiModelLoader::load()
                 seenMeshes = true;
 
                 Mesh* mesh = loadMesh();
-                if (mesh == NULL)
+                if (mesh == nullptr)
                 {
                     delete model;
-                    return NULL;
+                    return nullptr;
                 }
 
                 model->addMesh(mesh);
@@ -1342,14 +1291,14 @@ AsciiModelLoader::load()
             {
                 reportError(string("Error: Unknown block type ") + name);
                 delete model;
-                return NULL;
+                return nullptr;
             }
         }
         else
         {
             reportError("Block name expected");
             delete model;
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -1363,24 +1312,18 @@ AsciiModelWriter::AsciiModelWriter(ostream& _out) :
 {
 }
 
-
-AsciiModelWriter::~AsciiModelWriter()
-{
-}
-
-
 bool
 AsciiModelWriter::write(const Model& model)
 {
     out << CEL_MODEL_HEADER_ASCII << "\n\n";
 
-    for (unsigned int matIndex = 0; model.getMaterial(matIndex); matIndex++)
+    for (unsigned int matIndex = 0; model.getMaterial(matIndex) != nullptr; matIndex++)
     {
         writeMaterial(*model.getMaterial(matIndex));
         out << '\n';
     }
 
-    for (unsigned int meshIndex = 0; model.getMesh(meshIndex); meshIndex++)
+    for (unsigned int meshIndex = 0; model.getMesh(meshIndex) != nullptr; meshIndex++)
     {
         writeMesh(*model.getMesh(meshIndex));
         out << '\n';
@@ -1448,7 +1391,7 @@ AsciiModelWriter::writeMesh(const Mesh& mesh)
                   mesh.getVertexDescription());
     out << '\n';
 
-    for (unsigned int groupIndex = 0; mesh.getGroup(groupIndex); groupIndex++)
+    for (unsigned int groupIndex = 0; mesh.getGroup(groupIndex) != nullptr; groupIndex++)
     {
         writeGroup(*mesh.getGroup(groupIndex));
         out << '\n';
@@ -1464,7 +1407,7 @@ AsciiModelWriter::writeVertices(const void* vertexData,
                                 unsigned int stride,
                                 const Mesh::VertexDescription& desc)
 {
-    const unsigned char* vertex = reinterpret_cast<const unsigned char*>(vertexData);
+    const auto* vertex = reinterpret_cast<const unsigned char*>(vertexData);
 
     out << "vertices " << nVertices << '\n';
     for (unsigned int i = 0; i < nVertices; i++, vertex += stride)
@@ -1472,7 +1415,7 @@ AsciiModelWriter::writeVertices(const void* vertexData,
         for (unsigned int attr = 0; attr < desc.nAttributes; attr++)
         {
             const unsigned char* ubdata = vertex + desc.attributes[attr].offset;
-            const float* fdata = reinterpret_cast<const float*>(ubdata);
+            const auto* fdata = reinterpret_cast<const float*>(ubdata);
 
             switch (desc.attributes[attr].format)
             {
@@ -1640,7 +1583,7 @@ AsciiModelWriter::writeMaterial(const Material& material)
     for (int i = 0; i < Material::TextureSemanticMax; i++)
     {
         string texSource;
-        if (material.maps[i])
+        if (material.maps[i] != nullptr)
         {
             texSource = material.maps[i]->source();
         }
@@ -1677,11 +1620,6 @@ AsciiModelWriter::writeMaterial(const Material& material)
 
 BinaryModelLoader::BinaryModelLoader(istream& _in) :
     in(_in)
-{
-}
-
-
-BinaryModelLoader::~BinaryModelLoader()
 {
 }
 
@@ -1773,7 +1711,7 @@ static bool readTypeString(istream& in, string& s)
     }
     else
     {
-        char* buf = new char[len];
+        auto* buf = new char[len];
         in.read(buf, len);
         s = string(buf, len);
         delete[] buf;
@@ -1830,13 +1768,13 @@ static bool ignoreValue(istream& in)
 Model*
 BinaryModelLoader::load()
 {
-    Model* model = new Model();
+    auto* model = new Model();
     bool seenMeshes = false;
 
-    if (model == NULL)
+    if (model == nullptr)
     {
         reportError("Unable to allocate memory for model");
-        return NULL;
+        return nullptr;
     }
 
     // Parse material and mesh definitions
@@ -1848,20 +1786,20 @@ BinaryModelLoader::load()
         {
             break;
         }
-        else if (tok == CMOD_Material)
+        if (tok == CMOD_Material)
         {
             if (seenMeshes)
             {
                 reportError("Materials must be defined before meshes");
                 delete model;
-                return NULL;
+                return nullptr;
             }
 
             Material* material = loadMaterial();
-            if (material == NULL)
+            if (material == nullptr)
             {
                 delete model;
-                return NULL;
+                return nullptr;
             }
 
             model->addMaterial(material);
@@ -1871,10 +1809,10 @@ BinaryModelLoader::load()
             seenMeshes = true;
 
             Mesh* mesh = loadMesh();
-            if (mesh == NULL)
+            if (mesh == nullptr)
             {
                 delete model;
-                return NULL;
+                return nullptr;
             }
 
             model->addMesh(mesh);
@@ -1883,7 +1821,7 @@ BinaryModelLoader::load()
         {
             reportError("Error: Unknown block type in model");
             delete model;
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -1894,7 +1832,7 @@ BinaryModelLoader::load()
 Material*
 BinaryModelLoader::loadMaterial()
 {
-    Material* material = new Material();
+    auto* material = new Material();
 
     material->diffuse = DefaultDiffuse;
     material->specular = DefaultSpecular;
@@ -1912,7 +1850,7 @@ BinaryModelLoader::loadMaterial()
             {
                 reportError("Incorrect type for diffuse color");
                 delete material;
-                return NULL;
+                return nullptr;
             }
             break;
 
@@ -1921,7 +1859,7 @@ BinaryModelLoader::loadMaterial()
             {
                 reportError("Incorrect type for specular color");
                 delete material;
-                return NULL;
+                return nullptr;
             }
             break;
 
@@ -1930,7 +1868,7 @@ BinaryModelLoader::loadMaterial()
             {
                 reportError("Incorrect type for emissive color");
                 delete material;
-                return NULL;
+                return nullptr;
             }
             break;
 
@@ -1939,7 +1877,7 @@ BinaryModelLoader::loadMaterial()
             {
                 reportError("Float expected for specularPower");
                 delete material;
-                return NULL;
+                return nullptr;
             }
             break;
 
@@ -1948,7 +1886,7 @@ BinaryModelLoader::loadMaterial()
             {
                 reportError("Float expected for opacity");
                 delete material;
-                return NULL;
+                return nullptr;
             }
             break;
 
@@ -1959,7 +1897,7 @@ BinaryModelLoader::loadMaterial()
                 {
                     reportError("Bad blend mode");
                     delete material;
-                    return NULL;
+                    return nullptr;
                 }
                 material->blend = (Material::BlendMode) blendMode;
             }
@@ -1972,7 +1910,7 @@ BinaryModelLoader::loadMaterial()
                 {
                     reportError("Bad texture type");
                     delete material;
-                    return NULL;
+                    return nullptr;
                 }
 
                 string texfile;
@@ -1980,18 +1918,18 @@ BinaryModelLoader::loadMaterial()
                 {
                     reportError("String expected for texture filename");
                     delete material;
-                    return NULL;
+                    return nullptr;
                 }
 
                 if (texfile.empty())
                 {
                     reportError("Zero length texture name in material definition");
                     delete material;
-                    return NULL;
+                    return nullptr;
                 }
 
-                Material::TextureResource* tex = NULL;
-                if (getTextureLoader())
+                Material::TextureResource* tex = nullptr;
+                if (getTextureLoader() != nullptr)
                 {
                     tex = getTextureLoader()->loadTexture(texfile);
                 }
@@ -2012,7 +1950,7 @@ BinaryModelLoader::loadMaterial()
             if (!ignoreValue(in))
             {
                 delete material;
-                return NULL;
+                return nullptr;
             }
         } // switch
     } // for
@@ -2025,13 +1963,13 @@ BinaryModelLoader::loadVertexDescription()
     if (readToken(in) != CMOD_VertexDesc)
     {
         reportError("Vertex description expected");
-        return NULL;
+        return nullptr;
     }
 
     int maxAttributes = 16;
     int nAttributes = 0;
     unsigned int offset = 0;
-    Mesh::VertexAttribute* attributes = new Mesh::VertexAttribute[maxAttributes];
+    auto* attributes = new Mesh::VertexAttribute[maxAttributes];
 
     for (;;)
     {
@@ -2041,22 +1979,22 @@ BinaryModelLoader::loadVertexDescription()
         {
             break;
         }
-        else if (tok >= 0 && tok < Mesh::SemanticMax)
+        if (tok >= 0 && tok < Mesh::SemanticMax)
         {
             int16 fmt = readInt16(in);
             if (fmt < 0 || fmt >= Mesh::FormatMax)
             {
                 reportError("Invalid vertex attribute type");
                 delete[] attributes;
-                return NULL;
+                return nullptr;
             }
-            else
-            {
+
+
                 if (nAttributes == maxAttributes)
                 {
                     reportError("Too many attributes in vertex description");
                     delete[] attributes;
-                    return NULL;
+                    return nullptr;
                 }
 
                 attributes[nAttributes].semantic =
@@ -2067,13 +2005,13 @@ BinaryModelLoader::loadVertexDescription()
 
                 offset += Mesh::getVertexAttributeSize(attributes[nAttributes].format);
                 nAttributes++;
-            }
+
         }
         else
         {
             reportError("Invalid semantic in vertex description");
             delete[] attributes;
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -2081,10 +2019,10 @@ BinaryModelLoader::loadVertexDescription()
     {
         reportError("Vertex definitition cannot be empty");
         delete[] attributes;
-        return NULL;
+        return nullptr;
     }
 
-    Mesh::VertexDescription *vertexDesc =
+    auto *vertexDesc =
         new Mesh::VertexDescription(offset, nAttributes, attributes);
     delete[] attributes;
     return vertexDesc;
@@ -2095,18 +2033,18 @@ Mesh*
 BinaryModelLoader::loadMesh()
 {
     Mesh::VertexDescription* vertexDesc = loadVertexDescription();
-    if (vertexDesc == NULL)
-        return NULL;
+    if (vertexDesc == nullptr)
+        return nullptr;
 
     unsigned int vertexCount = 0;
     char* vertexData = loadVertices(*vertexDesc, vertexCount);
-    if (vertexData == NULL)
+    if (vertexData == nullptr)
     {
         delete vertexDesc;
-        return NULL;
+        return nullptr;
     }
 
-    Mesh* mesh = new Mesh();
+    auto* mesh = new Mesh();
     mesh->setVertexDescription(*vertexDesc);
     mesh->setVertices(vertexCount, vertexData);
     delete vertexDesc;
@@ -2119,11 +2057,11 @@ BinaryModelLoader::loadMesh()
         {
             break;
         }
-        else if (tok < 0 || tok >= Mesh::PrimitiveTypeMax)
+        if (tok < 0 || tok >= Mesh::PrimitiveTypeMax)
         {
             reportError("Bad primitive group type");
             delete mesh;
-            return NULL;
+            return nullptr;
         }
 
         Mesh::PrimitiveGroupType type =
@@ -2132,11 +2070,11 @@ BinaryModelLoader::loadMesh()
         unsigned int indexCount = readUint(in);
 
         uint32* indices = new uint32[indexCount];
-        if (indices == NULL)
+        if (indices == nullptr)
         {
             reportError("Not enough memory to hold indices");
             delete mesh;
-            return NULL;
+            return nullptr;
         }
 
         for (unsigned int i = 0; i < indexCount; i++)
@@ -2147,7 +2085,7 @@ BinaryModelLoader::loadMesh()
                 reportError("Index out of range");
                 delete[] indices;
                 delete mesh;
-                return NULL;
+                return nullptr;
             }
 
             indices[i] = index;
@@ -2167,16 +2105,16 @@ BinaryModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
     if (readToken(in) != CMOD_Vertices)
     {
         reportError("Vertex data expected");
-        return NULL;
+        return nullptr;
     }
 
     vertexCount = readUint(in);
     unsigned int vertexDataSize = vertexDesc.stride * vertexCount;
-    char* vertexData = new char[vertexDataSize];
-    if (vertexData == NULL)
+    auto* vertexData = new char[vertexDataSize];
+    if (vertexData == nullptr)
     {
         reportError("Not enough memory to hold vertex data");
-        return NULL;
+        return nullptr;
     }
 
     unsigned int offset = 0;
@@ -2215,7 +2153,7 @@ BinaryModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
             default:
                 assert(0);
                 delete[] vertexData;
-                return NULL;
+                return nullptr;
             }
         }
     }
@@ -2231,12 +2169,6 @@ BinaryModelWriter::BinaryModelWriter(ostream& _out) :
     out(_out)
 {
 }
-
-
-BinaryModelWriter::~BinaryModelWriter()
-{
-}
-
 
 // Utility functions for writing binary values to a file
 static void writeUint32(ostream& out, uint32 val)
@@ -2297,10 +2229,10 @@ BinaryModelWriter::write(const Model& model)
 {
     out << CEL_MODEL_HEADER_BINARY;
 
-    for (unsigned int matIndex = 0; model.getMaterial(matIndex); matIndex++)
+    for (unsigned int matIndex = 0; model.getMaterial(matIndex) != nullptr; matIndex++)
         writeMaterial(*model.getMaterial(matIndex));
 
-    for (unsigned int meshIndex = 0; model.getMesh(meshIndex); meshIndex++)
+    for (unsigned int meshIndex = 0; model.getMesh(meshIndex) != nullptr; meshIndex++)
         writeMesh(*model.getMesh(meshIndex));
 
     return true;
@@ -2333,7 +2265,7 @@ BinaryModelWriter::writeMesh(const Mesh& mesh)
                   mesh.getVertexStride(),
                   mesh.getVertexDescription());
 
-    for (unsigned int groupIndex = 0; mesh.getGroup(groupIndex); groupIndex++)
+    for (unsigned int groupIndex = 0; mesh.getGroup(groupIndex) != nullptr; groupIndex++)
         writeGroup(*mesh.getGroup(groupIndex));
 
     writeToken(out, CMOD_EndMesh);
@@ -2346,7 +2278,7 @@ BinaryModelWriter::writeVertices(const void* vertexData,
                                  unsigned int stride,
                                  const Mesh::VertexDescription& desc)
 {
-    const char* vertex = reinterpret_cast<const char*>(vertexData);
+    const auto* vertex = reinterpret_cast<const char*>(vertexData);
 
     writeToken(out, CMOD_Vertices);
     writeUint32(out, nVertices);
@@ -2356,7 +2288,7 @@ BinaryModelWriter::writeVertices(const void* vertexData,
         for (unsigned int attr = 0; attr < desc.nAttributes; attr++)
         {
             const char* cdata = vertex + desc.attributes[attr].offset;
-            const float* fdata = reinterpret_cast<const float*>(cdata);
+            const auto* fdata = reinterpret_cast<const float*>(cdata);
 
             switch (desc.attributes[attr].format)
             {

@@ -49,7 +49,7 @@ static QString BookmarkIconData(const QIcon& icon)
 BookmarkItem*
 XbelReader::read()
 {
-    BookmarkItem* rootItem = new BookmarkItem(BookmarkItem::Folder, NULL);
+    BookmarkItem* rootItem = new BookmarkItem(BookmarkItem::Folder, nullptr);
 
     while (!atEnd())
     {
@@ -68,7 +68,7 @@ XbelReader::read()
     if (error() != NoError)
     {
         delete rootItem;
-        rootItem = NULL;
+        rootItem = nullptr;
     }
 
     return rootItem;
@@ -102,7 +102,7 @@ XbelReader::readXbel(BookmarkItem* root)
 void
 XbelReader::readFolder(BookmarkItem* parent)
 {
-    BookmarkItem* folder = new BookmarkItem(BookmarkItem::Folder, parent);
+    auto* folder = new BookmarkItem(BookmarkItem::Folder, parent);
     folder->setFolded(attributes().value(QLatin1String("folded")) == QLatin1String("yes"));
 
     while (!atEnd())
@@ -135,11 +135,11 @@ XbelReader::readFolder(BookmarkItem* parent)
 void
 XbelReader::readBookmark(BookmarkItem* parent)
 {
-    BookmarkItem* item = new BookmarkItem(BookmarkItem::Bookmark, parent);
+    auto* item = new BookmarkItem(BookmarkItem::Bookmark, parent);
     item->setUrl(attributes().value(QLatin1String("href")).toString());
 
     QString iconData = attributes().value("icon").toString();
-    if (iconData != NULL && !iconData.isEmpty())
+    if (iconData != nullptr && !iconData.isEmpty())
     {
         item->setIcon(CreateBookmarkIcon(iconData));
     }
@@ -171,7 +171,7 @@ XbelReader::readBookmark(BookmarkItem* parent)
 void
 XbelReader::readSeparator(BookmarkItem* parent)
 {
-    BookmarkItem* separator = new BookmarkItem(BookmarkItem::Separator, parent);
+    auto* separator = new BookmarkItem(BookmarkItem::Separator, parent);
     parent->append(separator);
     readNext();
 }

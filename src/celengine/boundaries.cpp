@@ -21,20 +21,16 @@ using namespace std;
 static const float BoundariesDrawDistance = 10000.0f;
 
 
-ConstellationBoundaries::ConstellationBoundaries() :
-    currentChain(NULL)
+ConstellationBoundaries::ConstellationBoundaries()
 {
     currentChain = new Chain();
-    currentChain->insert(currentChain->end(), Vector3f::Zero());
+    currentChain->push_back(Vector3f::Zero());
 }
 
 ConstellationBoundaries::~ConstellationBoundaries()
 {
-    for (vector<Chain*>::iterator iter = chains.begin();
-         iter != chains.end(); iter++)
-    {
-        delete *iter;
-    }
+    for (const auto chain : chains)
+        delete chain;
 
     delete currentChain;
 }
@@ -42,7 +38,7 @@ ConstellationBoundaries::~ConstellationBoundaries()
 
 void ConstellationBoundaries::moveto(float ra, float dec)
 {
-    assert(currentChain != NULL);
+    assert(currentChain != nullptr);
 
     Vector3f v = astro::equatorialToEclipticCartesian(ra, dec, BoundariesDrawDistance);
     if (currentChain->size() > 1)
@@ -66,15 +62,12 @@ void ConstellationBoundaries::lineto(float ra, float dec)
 
 void ConstellationBoundaries::render()
 {
-    for (vector<Chain*>::iterator iter = chains.begin();
-         iter != chains.end(); iter++)
+    for (const auto chain : chains)
     {
-        Chain* chain = *iter;
         glBegin(GL_LINE_STRIP);
-        for (Chain::iterator citer = chain->begin(); citer != chain->end();
-             citer++)
+        for (const auto& c : *chain)
         {
-            glVertex3fv(citer->data());
+            glVertex3fv(c.data());
         }
         glEnd();
     }
@@ -83,7 +76,7 @@ void ConstellationBoundaries::render()
 
 ConstellationBoundaries* ReadBoundaries(istream& in)
 {
-    ConstellationBoundaries* boundaries = new ConstellationBoundaries();
+    auto* boundaries = new ConstellationBoundaries();
     string lastCon;
     int conCount = 0;
     int ptCount = 0;

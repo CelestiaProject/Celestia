@@ -55,23 +55,7 @@ static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
  *  updates due to an active goto operation.
  */
 
-Observer::Observer() :
-    simTime(0.0),
-    position(0.0, 0.0, 0.0),
-    orientation(Quaternionf::Identity()),
-    velocity(0.0, 0.0, 0.0),
-    angularVelocity(0.0, 0.0, 0.0),
-    frame(NULL),
-    realTime(0.0),
-    targetSpeed(0.0),
-    targetVelocity(0.0, 0.0, 0.0),
-    initialVelocity(0.0, 0.0, 0.0),
-    beginAccelTime(0.0),
-    observerMode(Free),
-    trackingOrientation(Quaternionf::Identity()),
-    fov((float) (PI / 4.0)),
-    reverseFlag(false),
-    locationFilter(~0u)
+Observer::Observer()
 {
     frame = new ObserverFrame();
     updateUniversal();
@@ -85,7 +69,7 @@ Observer::Observer(const Observer& o) :
     orientation(o.orientation),
     velocity(o.velocity),
     angularVelocity(o.angularVelocity),
-    frame(NULL),
+    frame(nullptr),
     realTime(o.realTime),
     targetSpeed(o.targetSpeed),
     targetVelocity(o.targetVelocity),
@@ -115,7 +99,7 @@ Observer& Observer::operator=(const Observer& o)
     orientation = o.orientation;
     velocity = o.velocity;
     angularVelocity = o.angularVelocity;
-    frame = NULL;
+    frame = nullptr;
     realTime = o.realTime;
     targetSpeed = o.targetSpeed;
     targetVelocity = o.targetVelocity;
@@ -298,8 +282,8 @@ double Observer::getArrivalTime() const
 {
     if (observerMode != Travelling)
         return realTime;
-    else
-        return journey.startTime + journey.duration;
+
+    return journey.startTime + journey.duration;
 }
 
 
@@ -375,12 +359,12 @@ void Observer::update(double dt, double timeScale)
             else if (journey.traj == GreatCircle)
             {
                 Selection centerObj = frame->getRefObject();
-                if (centerObj.body() != NULL)
+                if (centerObj.body() != nullptr)
                 {
                     Body* body = centerObj.body();
                     if (body->getSystem())
                     {
-                        if (body->getSystem()->getPrimaryBody() != NULL)
+                        if (body->getSystem()->getPrimaryBody() != nullptr)
                             centerObj = Selection(body->getSystem()->getPrimaryBody());
                         else
                             centerObj = Selection(body->getSystem()->getStar());
@@ -869,7 +853,7 @@ void Observer::convertFrameCoordinates(const ObserverFrame* newFrame)
 void Observer::setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj, const Selection& targetObj)
 {
     ObserverFrame* newFrame = new ObserverFrame(cs, refObj, targetObj);
-    if (newFrame != NULL)
+    if (newFrame != nullptr)
     {
         convertFrameCoordinates(newFrame);
         delete frame;
@@ -894,11 +878,11 @@ void Observer::setFrame(const ObserverFrame& f)
 {
     if (frame != &f)
     {
-        ObserverFrame* newFrame = new ObserverFrame(f);
+        auto* newFrame = new ObserverFrame(f);
 
-        if (newFrame != NULL)
+        if (newFrame != nullptr)
         {
-            if (frame != NULL)
+            if (frame != nullptr)
             {
                 convertFrameCoordinates(newFrame);
                 delete frame;
@@ -1089,7 +1073,7 @@ static double getPreferredDistance(const Selection& selection)
         if (selection.body()->getClassification() == Body::Invisible)
         {
             double r = selection.body()->getRadius();
-            if (selection.body()->getFrameTree() != NULL)
+            if (selection.body()->getFrameTree() != nullptr)
                 r = selection.body()->getFrameTree()->boundingSphereRadius();
             return min(astro::lightYearsToKilometers(0.1), r * 5.0);
         }
@@ -1112,21 +1096,17 @@ static double getPreferredDistance(const Selection& selection)
             // for reference points in solar systems.
             double maxOrbitRadius = 0.0;
             const vector<Star*>* orbitingStars = selection.star()->getOrbitingStars();
-            if (orbitingStars != NULL)
+            if (orbitingStars != nullptr)
             {
-                for (vector<Star*>::const_iterator iter = orbitingStars->begin();
-                     iter != orbitingStars->end(); iter++)
+                for (const auto star : *orbitingStars)
                 {
-                    Orbit* orbit = (*iter)->getOrbit();
-                    if (orbit != NULL)
+                    Orbit* orbit = star->getOrbit();
+                    if (orbit != nullptr)
                         maxOrbitRadius = max(orbit->getBoundingRadius(), maxOrbitRadius);
                 }
             }
 
-            if (maxOrbitRadius == 0.0)
-                return astro::AUtoKilometers(1.0);
-            else
-                return maxOrbitRadius * 5.0;
+            return maxOrbitRadius == 0.0 ? astro::AUtoKilometers(1.0) : maxOrbitRadius * 5.0;
         }
 
     case Selection::Type_Location:
@@ -1204,7 +1184,7 @@ void Observer::gotoSelectionGC(const Selection& selection,
         Vector3d viewVec = pos.offsetFromKm(getPosition());
         double orbitDistance = getOrbitDistance(selection, viewVec.norm());
 
-        if (selection.location() != NULL)
+        if (selection.location() != nullptr)
         {
             Selection parent = selection.parent();
             double maintainDist = getPreferredDistance(parent);
@@ -1404,9 +1384,9 @@ void Observer::follow(const Selection& selection)
 
 void Observer::geosynchronousFollow(const Selection& selection)
 {
-    if (selection.body() != NULL ||
-        selection.location() != NULL ||
-        selection.star() != NULL)
+    if (selection.body() != nullptr ||
+        selection.location() != nullptr ||
+        selection.star() != nullptr)
     {
         setFrame(ObserverFrame::BodyFixed, selection);
     }
@@ -1419,7 +1399,7 @@ void Observer::phaseLock(const Selection& selection)
 
     if (selection != refObject)
     {
-        if (refObject.body() != NULL || refObject.star() != NULL)
+        if (refObject.body() != nullptr || refObject.star() != nullptr)
         {
             setFrame(ObserverFrame::PhaseLock, refObject, selection);
         }
@@ -1428,7 +1408,7 @@ void Observer::phaseLock(const Selection& selection)
     {
         // Selection and reference object are identical, so the frame is undefined.
         // We'll instead use the object's star as the target object.
-        if (selection.body() != NULL)
+        if (selection.body() != nullptr)
         {
             setFrame(ObserverFrame::PhaseLock, selection, Selection(selection.body()->getSystem()->getStar()));
         }
@@ -1438,7 +1418,7 @@ void Observer::phaseLock(const Selection& selection)
 
 void Observer::chase(const Selection& selection)
 {
-    if (selection.body() != NULL || selection.star() != NULL)
+    if (selection.body() != nullptr || selection.star() != nullptr)
     {
         setFrame(ObserverFrame::Chase, selection);
     }
@@ -1481,7 +1461,7 @@ void Observer::updateUniversal()
  */
 ObserverFrame::ObserverFrame() :
     coordSys(Universal),
-    frame(NULL)
+    frame(nullptr)
 {
     frame = createFrame(Universal, Selection(), Selection());
     frame->addRef();
@@ -1496,7 +1476,7 @@ ObserverFrame::ObserverFrame(CoordinateSystem _coordSys,
                              const Selection& _refObject,
                              const Selection& _targetObject) :
     coordSys(_coordSys),
-    frame(NULL),
+    frame(nullptr),
     targetObject(_targetObject)
 {
     frame = createFrame(_coordSys, _refObject, _targetObject);
@@ -1541,7 +1521,7 @@ ObserverFrame& ObserverFrame::operator=(const ObserverFrame& f)
 
 ObserverFrame::~ObserverFrame()
 {
-    if (frame != NULL)
+    if (frame != nullptr)
         frame->release();
 }
 

@@ -60,7 +60,7 @@ class CommandWait : public TimedCommand
 {
  public:
     CommandWait(double _duration);
-    ~CommandWait();
+    ~CommandWait() = default;
     void process(ExecutionEnvironment&, double t, double dt);
 };
 
@@ -69,7 +69,7 @@ class CommandSelect : public InstantaneousCommand
 {
  public:
     CommandSelect(std::string _target);
-    ~CommandSelect();
+    ~CommandSelect() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -82,7 +82,7 @@ class CommandGoto : public InstantaneousCommand
  public:
     CommandGoto(double t, double dist,
                 Vec3f _up, ObserverFrame::CoordinateSystem _upFrame);
-    ~CommandGoto();
+    ~CommandGoto() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -100,7 +100,7 @@ class CommandGotoLongLat : public InstantaneousCommand
                        double dist,
                        float _longitude, float _latitude,
                        Vec3f _up);
-    ~CommandGotoLongLat();
+    ~CommandGotoLongLat() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -117,7 +117,7 @@ class CommandGotoLocation : public InstantaneousCommand
  public:
     CommandGotoLocation(double t,
                         const Point3d& translation, const Quatf& rotation);
-    ~CommandGotoLocation();
+    ~CommandGotoLocation() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -129,7 +129,7 @@ class CommandGotoLocation : public InstantaneousCommand
 class CommandSetUrl : public InstantaneousCommand
 {
  public:
-    CommandSetUrl(const std::string& _url);
+    CommandSetUrl(std::string  _url);
     void process(ExecutionEnvironment&);
 
  private:
@@ -141,7 +141,7 @@ class CommandCenter : public InstantaneousCommand
 {
  public:
     CommandCenter(double t);
-    ~CommandCenter();
+    ~CommandCenter() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -152,7 +152,7 @@ class CommandCenter : public InstantaneousCommand
 class CommandFollow : public InstantaneousCommand
 {
  public:
-    CommandFollow();
+    CommandFollow() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -163,7 +163,7 @@ class CommandFollow : public InstantaneousCommand
 class CommandSynchronous : public InstantaneousCommand
 {
  public:
-    CommandSynchronous();
+    CommandSynchronous() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -174,7 +174,7 @@ class CommandSynchronous : public InstantaneousCommand
 class CommandLock : public InstantaneousCommand
 {
  public:
-    CommandLock();
+    CommandLock() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -185,7 +185,7 @@ class CommandLock : public InstantaneousCommand
 class CommandChase : public InstantaneousCommand
 {
  public:
-    CommandChase();
+    CommandChase() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -196,7 +196,7 @@ class CommandChase : public InstantaneousCommand
 class CommandTrack : public InstantaneousCommand
 {
  public:
-    CommandTrack();
+    CommandTrack() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -208,7 +208,7 @@ class CommandSetFrame : public InstantaneousCommand
 {
  public:
     CommandSetFrame(ObserverFrame::CoordinateSystem,
-                    const std::string&, const std::string&);
+                    std::string, std::string);
     void process(ExecutionEnvironment&);
 
  private:
@@ -221,7 +221,7 @@ class CommandSetFrame : public InstantaneousCommand
 class CommandSetSurface : public InstantaneousCommand
 {
  public:
-    CommandSetSurface(const std::string&);
+    CommandSetSurface(std::string);
     void process(ExecutionEnvironment&);
 
  private:
@@ -232,7 +232,7 @@ class CommandSetSurface : public InstantaneousCommand
 class CommandCancel : public InstantaneousCommand
 {
  public:
-    CommandCancel();
+    CommandCancel() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -243,7 +243,7 @@ class CommandCancel : public InstantaneousCommand
 class CommandExit : public InstantaneousCommand
 {
  public:
-    CommandExit();
+    CommandExit() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -255,7 +255,7 @@ class CommandPrint : public InstantaneousCommand
 {
  public:
     CommandPrint(std::string, int horig, int vorig, int hoff, int voff,
-                 double duration);
+                 double _duration);
     void process(ExecutionEnvironment&);
 
  private:
@@ -271,7 +271,7 @@ class CommandPrint : public InstantaneousCommand
 class CommandClearScreen : public InstantaneousCommand
 {
  public:
-    CommandClearScreen();
+    CommandClearScreen() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -304,7 +304,7 @@ class CommandSetTimeRate : public InstantaneousCommand
 class CommandChangeDistance : public TimedCommand
 {
  public:
-    CommandChangeDistance(double duration, double rate);
+    CommandChangeDistance(double _duration, double _rate);
     void process(ExecutionEnvironment&, double t, double dt);
 
  private:
@@ -370,7 +370,7 @@ class CommandSetOrientation : public InstantaneousCommand
 class CommandLookBack : public InstantaneousCommand
 {
  public:
-    CommandLookBack();
+    CommandLookBack() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -392,32 +392,50 @@ class CommandRenderFlags : public InstantaneousCommand
 
 class CommandConstellations : public InstantaneousCommand
 {
+    struct Flags
+    {
+        bool none:1;
+        bool all:1;
+    };
+
  public:
-    CommandConstellations();
+    CommandConstellations() = default;
     void process(ExecutionEnvironment&);
     void setValues(string cons, int act);
-    std::string constellation[MAX_CONSTELLATIONS];
-    int active[MAX_CONSTELLATIONS];
-    int numConstellations;
-    int all;
-    int none;
+
+    Flags flags { false, false };
+
+ private:
+    struct Cons
+    {
+       std::string name;
+       int active;
+    };
+    std::vector<Cons> constellations;
 };
 
 
 class CommandConstellationColor : public InstantaneousCommand
 {
+    struct Flags
+    {
+        bool none:1;
+        bool all:1;
+        bool unset:1;
+    };
+
  public:
-    CommandConstellationColor();
+    CommandConstellationColor() = default;
     void process(ExecutionEnvironment&);
     void setConstellations(string cons);
     void setColor(float r, float g, float b);
     void unsetColor();
-    std::string constellation[MAX_CONSTELLATIONS];
+
+    Flags flags { false, false, false};
+
+ private:
+    std::vector<std::string> constellations;
     Color rgb;
-    int unset;
-    int numConstellations;
-    int all;
-    int none;
 };
 
 
@@ -490,7 +508,7 @@ class CommandSetGalaxyLightGain : public InstantaneousCommand
 class CommandSet : public InstantaneousCommand
 {
  public:
-    CommandSet(const std::string&, double);
+    CommandSet(std::string, double);
     void process(ExecutionEnvironment&);
 
  private:
@@ -502,7 +520,7 @@ class CommandSet : public InstantaneousCommand
 class CommandPreloadTextures : public InstantaneousCommand
 {
  public:
-    CommandPreloadTextures(const std::string&);
+    CommandPreloadTextures(std::string);
     void process(ExecutionEnvironment&);
 
  private:
@@ -513,7 +531,7 @@ class CommandPreloadTextures : public InstantaneousCommand
 class CommandMark : public InstantaneousCommand
 {
  public:
-    CommandMark(const std::string&, MarkerRepresentation, bool);
+    CommandMark(std::string, MarkerRepresentation, bool);
     void process(ExecutionEnvironment&);
 
  private:
@@ -526,7 +544,7 @@ class CommandMark : public InstantaneousCommand
 class CommandUnmark : public InstantaneousCommand
 {
  public:
-    CommandUnmark(const std::string&);
+    CommandUnmark(std::string);
     void process(ExecutionEnvironment&);
 
  private:
@@ -537,7 +555,7 @@ class CommandUnmark : public InstantaneousCommand
 class CommandUnmarkAll : public InstantaneousCommand
 {
  public:
-    CommandUnmarkAll();
+    CommandUnmarkAll() = default;
     void process(ExecutionEnvironment&);
 
  private:
@@ -548,7 +566,7 @@ class CommandUnmarkAll : public InstantaneousCommand
 class CommandCapture : public InstantaneousCommand
 {
  public:
-    CommandCapture(const std::string&, const std::string&);
+    CommandCapture(std::string, std::string);
     void process(ExecutionEnvironment&);
 
  private:
@@ -582,7 +600,7 @@ class CommandRenderPath : public InstantaneousCommand
 class CommandSplitView : public InstantaneousCommand
 {
  public:
-    CommandSplitView(unsigned int, const std::string&, double);
+    CommandSplitView(unsigned int, std::string, double);
     void process(ExecutionEnvironment&);
 
  private:
@@ -606,7 +624,7 @@ class CommandDeleteView : public InstantaneousCommand
 class CommandSingleView : public InstantaneousCommand
 {
  public:
-    CommandSingleView();
+    CommandSingleView() = default;
     void process(ExecutionEnvironment&);
 };
 
@@ -625,7 +643,7 @@ class CommandSetActiveView : public InstantaneousCommand
 class CommandSetRadius : public InstantaneousCommand
 {
  public:
-    CommandSetRadius(const std::string&, double);
+    CommandSetRadius(std::string, double);
     void process(ExecutionEnvironment&);
 
  private:
@@ -637,7 +655,7 @@ class CommandSetRadius : public InstantaneousCommand
 class CommandSetLineColor : public InstantaneousCommand
 {
  public:
-    CommandSetLineColor(const std::string&, Color);
+    CommandSetLineColor(std::string, Color);
     void process(ExecutionEnvironment&);
 
  private:
@@ -649,7 +667,7 @@ class CommandSetLineColor : public InstantaneousCommand
 class CommandSetLabelColor : public InstantaneousCommand
 {
  public:
-    CommandSetLabelColor(const std::string&, Color);
+    CommandSetLabelColor(std::string, Color);
     void process(ExecutionEnvironment&);
 
  private:
@@ -681,17 +699,17 @@ class RepeatCommand : public Command
 
  private:
     CommandSequence* body;
-    double bodyDuration;
+    double bodyDuration{ 0.0 };
     int repeatCount;
-    Execution* execution;
+    Execution* execution{ nullptr };
 };
 
 
 class CommandScriptImage : public InstantaneousCommand
 {
  public:
-    CommandScriptImage(double duration, float xoffset, float yoffset,
-                                            float alpha, const std::string&, int fitscreen);
+    CommandScriptImage(double _duration, float _xoffset, float _yoffset,
+                                         float _alpha, std::string, int _fitscreen);
     void process(ExecutionEnvironment&);
 
  private:
@@ -706,7 +724,7 @@ class CommandScriptImage : public InstantaneousCommand
 class CommandVerbosity : public InstantaneousCommand
 {
  public:
-    CommandVerbosity(int level);
+    CommandVerbosity(int _level);
     void process(ExecutionEnvironment&);
 
  private:

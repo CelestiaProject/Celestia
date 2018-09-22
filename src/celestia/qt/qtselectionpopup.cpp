@@ -24,7 +24,7 @@ using namespace std;
 
 static QAction* boldTextItem(const QString& s)
 {
-    QAction* act = new QAction(s, NULL);
+    QAction* act = new QAction(s, nullptr);
     QFont boldFont = act->font();
     boldFont.setBold(true);
     act->setFont(boldFont);
@@ -35,7 +35,7 @@ static QAction* boldTextItem(const QString& s)
 
 static QAction* italicTextItem(const QString& s)
 {
-    QAction* act = new QAction(s, NULL);
+    QAction* act = new QAction(s, nullptr);
     QFont italicFont = act->font();
     italicFont.setItalic(true);
     act->setFont(italicFont);
@@ -50,13 +50,13 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     QMenu(parent),
     selection(sel),
     appCore(_appCore),
-    centerAction(NULL),
-    gotoAction(NULL)
+    centerAction(nullptr),
+    gotoAction(nullptr)
 {
     Simulation* sim = appCore->getSimulation();
     Vector3d v = sel.getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
 
-    if (sel.body() != NULL)
+    if (sel.body() != nullptr)
     {
         addAction(boldTextItem(QString::fromUtf8(sel.body()->getName(true).c_str())));
 
@@ -91,7 +91,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         }
 
     }
-    else if (sel.star() != NULL)
+    else if (sel.star() != nullptr)
     {
         std::string name = ReplaceGreekLetterAbbr(sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true));
         addAction(boldTextItem(QString::fromUtf8(name.c_str())));
@@ -125,7 +125,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
         setlocale(LC_NUMERIC, "C");
     }
-    else if (sel.deepsky() != NULL)
+    else if (sel.deepsky() != nullptr)
     {
         addAction(boldTextItem(QString::fromUtf8(sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky(), true).c_str())));
     }
@@ -148,7 +148,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     connect(followAction, SIGNAL(triggered()), this, SLOT(slotFollowSelection()));
     addAction(followAction);
 
-    if (sel.star() == NULL && sel.deepsky() == NULL)
+    if (sel.star() == nullptr && sel.deepsky() == nullptr)
     {
         QAction* syncOrbitAction = new QAction(_("S&ynch Orbit"), this);
         connect(syncOrbitAction, SIGNAL(triggered()), this, SLOT(slotSyncOrbitSelection()));
@@ -159,7 +159,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     connect(infoAction, SIGNAL(triggered()), this, SLOT(slotInfo()));
     addAction(infoAction);
 
-    if (sel.body() != NULL)
+    if (sel.body() != nullptr)
     {
         QAction* setVisibilityAction = new QAction(_("Visible"), this);
         setVisibilityAction->setCheckable(true);
@@ -173,25 +173,25 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     addMenu(markMenu);
 
     // Reference vector submenu
-    if (selection.body() != NULL)
+    if (selection.body() != nullptr)
     {
         QMenu* refVecMenu = createReferenceVectorMenu();
         addMenu(refVecMenu);
     }
 
-    if (selection.body() != NULL)
+    if (selection.body() != nullptr)
     {
         // Alternate surface submenu
         QMenu* surfacesMenu = createAlternateSurfacesMenu();
-        if (surfacesMenu != NULL)
+        if (surfacesMenu != nullptr)
             addMenu(surfacesMenu);
 
         // Child object menus
         PlanetarySystem* sys = selection.body()->getSatellites();
-        if (sys != NULL)
+        if (sys != nullptr)
             addObjectMenus(sys);
     }
-    else if (selection.star() != NULL)
+    else if (selection.star() != nullptr)
     {
         // Child object menus for star
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
@@ -202,16 +202,11 @@ SelectionPopup::SelectionPopup(const Selection& sel,
             if (solarSys)
             {
                 PlanetarySystem* sys = solarSys->getPlanets();
-                if (sys != NULL)
+                if (sys != nullptr)
                     addObjectMenus(sys);
             }
         }
     }
-}
-
-
-SelectionPopup::~SelectionPopup()
-{
 }
 
 
@@ -262,7 +257,7 @@ QMenu* SelectionPopup::createMarkMenu()
 
 QMenu* SelectionPopup::createReferenceVectorMenu()
 {
-    assert(selection.body() != NULL);
+    assert(selection.body() != nullptr);
 
     Body* body = selection.body();
     QMenu* refVecMenu = new QMenu(_("&Reference Marks"));
@@ -298,7 +293,7 @@ QMenu* SelectionPopup::createReferenceVectorMenu()
     refVecMenu->addAction(spinVectorAction);
 
     Selection center = body->getOrbitFrame(appCore->getSimulation()->getTime())->getCenter();
-    if (center.body() != NULL)
+    if (center.body() != nullptr)
     {
         // Only show the frame center menu item if the selection orbits another
         // a non-stellar object. If it orbits a star, this is generally identical
@@ -328,9 +323,9 @@ QMenu* SelectionPopup::createReferenceVectorMenu()
 
 QMenu* SelectionPopup::createAlternateSurfacesMenu()
 {
-    QMenu* surfacesMenu = NULL;
+    QMenu* surfacesMenu = nullptr;
     std::vector<std::string>* altSurfaces = selection.body()->getAlternateSurfaceNames();
-    if (altSurfaces != NULL)
+    if (altSurfaces != nullptr)
     {
         if (!altSurfaces->empty())
         {
@@ -340,10 +335,9 @@ QMenu* SelectionPopup::createAlternateSurfacesMenu()
             surfacesMenu->addAction(normalAct);
             connect(normalAct, SIGNAL(triggered()), this, SLOT(slotSelectAlternateSurface()));
 
-            for (std::vector<std::string>::const_iterator i = altSurfaces->begin();
-                 i < altSurfaces->end(); i++)
+            for (const auto& surface : *altSurfaces)
             {
-                QString surfaceName((*i).c_str());
+                QString surfaceName(surface.c_str());
                 QAction* act = new QAction(surfaceName, surfacesMenu);
                 act->setData(surfaceName);
                 surfacesMenu->addAction(act);
@@ -363,9 +357,9 @@ QMenu* SelectionPopup::createAlternateSurfacesMenu()
 QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
                                         unsigned int classification)
 {
-    QMenu* menu = NULL;
+    QMenu* menu = nullptr;
 
-    if (sys != NULL)
+    if (sys != nullptr)
     {
         int nObjects = sys->getSystemSize();
         for (int i = 0; i < nObjects; i++)
@@ -373,7 +367,7 @@ QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
             Body* body = sys->getBody(i);
             if ((body->getClassification() & classification) != 0)
             {
-                if (menu == NULL)
+                if (menu == nullptr)
                 {
                     QString title;
                     switch (classification)
@@ -416,23 +410,23 @@ void SelectionPopup::addObjectMenus(PlanetarySystem* sys)
 {
     setStyleSheet("QMenu { menu-scrollable: 1; }"); //popupmenu with scrollbar
     QMenu* planetsMenu = createObjectMenu(sys, Body::Planet);
-    if (planetsMenu != NULL)
+    if (planetsMenu != nullptr)
         addMenu(planetsMenu);
 
     QMenu* moonsMenu = createObjectMenu(sys, Body::Moon);
-    if (moonsMenu != NULL)
+    if (moonsMenu != nullptr)
         addMenu(moonsMenu);
 
     QMenu* asteroidsMenu = createObjectMenu(sys, Body::Asteroid);
-    if (asteroidsMenu != NULL)
+    if (asteroidsMenu != nullptr)
         addMenu(asteroidsMenu);
 
     QMenu* cometsMenu = createObjectMenu(sys, Body::Comet);
-    if (cometsMenu != NULL)
+    if (cometsMenu != nullptr)
         addMenu(cometsMenu);
 
     QMenu* spacecraftMenu = createObjectMenu(sys, Body::Spacecraft);
-    if (spacecraftMenu != NULL)
+    if (spacecraftMenu != nullptr)
         addMenu(spacecraftMenu);
 }
 
@@ -507,8 +501,8 @@ void SelectionPopup::slotSelectChildObject()
         if (convertOK)
         {
             Simulation* sim = appCore->getSimulation();
-            PlanetarySystem* sys = NULL;
-            if (selection.body() != NULL)
+            PlanetarySystem* sys = nullptr;
+            if (selection.body() != nullptr)
             {
                 sys = selection.body()->getSatellites();
             }
@@ -524,7 +518,7 @@ void SelectionPopup::slotSelectChildObject()
                 }
             }
 
-            if (sys != NULL)
+            if (sys != nullptr)
             {
                 if (childIndex >= 0 && childIndex < sys->getSystemSize())
                     sim->setSelection(Selection(sys->getBody(childIndex)));
@@ -603,7 +597,7 @@ void SelectionPopup::slotToggleTerminator()
 
 void SelectionPopup::slotGotoStartDate()
 {
-    assert(selection.body() != NULL);
+    assert(selection.body() != nullptr);
     double startDate = 0.0;
     double endDate = 0.0;
     selection.body()->getLifespan(startDate, endDate);
@@ -613,7 +607,7 @@ void SelectionPopup::slotGotoStartDate()
 
 void SelectionPopup::slotGotoEndDate()
 {
-    assert(selection.body() != NULL);
+    assert(selection.body() != nullptr);
     double startDate = 0.0;
     double endDate = 0.0;
     selection.body()->getLifespan(startDate, endDate);
@@ -629,6 +623,6 @@ void SelectionPopup::slotInfo()
 
 void SelectionPopup::slotToggleVisibility(bool visible)
 {
-    assert(selection.body() != NULL);
+    assert(selection.body() != nullptr);
     selection.body()->setVisible(visible);
 }

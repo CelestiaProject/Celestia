@@ -23,7 +23,7 @@ bool UTF8Decode(const std::string& str, int pos, wchar_t& ch);
 bool UTF8Decode(const char* str, int pos, int length, wchar_t& ch);
 int UTF8Encode(wchar_t ch, char* s);
 int UTF8StringCompare(const std::string& s0, const std::string& s1);
-int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t length);
+int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n);
 
 class UTF8StringOrderingPredicate
 {
@@ -41,13 +41,13 @@ inline int UTF8EncodedSize(wchar_t ch)
 {
     if (ch < 0x80)
         return 1;
-    else if (ch < 0x800)
+    if (ch < 0x800)
         return 2;
-    else if (ch < 0x10000)
+    if (ch < 0x10000)
         return 3;
-    else if (ch < 0x200000)
+    if (ch < 0x200000)
         return 4;
-    else if (ch < 0x4000000)
+    if (ch < 0x4000000)
         return 5;
     else
         return 6;
@@ -55,22 +55,20 @@ inline int UTF8EncodedSize(wchar_t ch)
 
 inline int UTF8EncodedSizeFromFirstByte(unsigned int ch)
 {
-    int charlen = 1;
-
     if (ch < 0x80)
-        charlen = 1;
-    else if ((ch & 0xe0) == 0xc0)
-        charlen = 2;
-    else if ((ch & 0xf0) == 0xe0)
-        charlen = 3;
-    else if ((ch & 0xf8) == 0xf0)
-        charlen = 4;
-    else if ((ch & 0xfc) == 0xf8)
-        charlen = 5;
-    else if ((ch & 0xfe) == 0xfc)
-        charlen = 6;
-
-    return charlen;
+        return 1;
+    if ((ch & 0xe0) == 0xc0)
+        return 2;
+    if ((ch & 0xf0) == 0xe0)
+        return 3;
+    if ((ch & 0xf8) == 0xf0)
+        return 4;
+    if ((ch & 0xfc) == 0xf8)
+        return 5;
+    if ((ch & 0xfe) == 0xfc)
+        return 6;
+    else
+        return 1;
 }
 
 std::string ReplaceGreekLetterAbbr(const std::string&);

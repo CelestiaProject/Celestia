@@ -17,7 +17,7 @@
 using namespace std;
 
 
-static TextureManager* textureManager = NULL;
+static TextureManager* textureManager = nullptr;
 
 static const char *directories[]=
 {
@@ -29,7 +29,7 @@ static const char *directories[]=
 
 TextureManager* GetTextureManager()
 {
-    if (textureManager == NULL)
+    if (textureManager == nullptr)
         textureManager = new TextureManager("textures");
     return textureManager;
 }
@@ -41,31 +41,31 @@ static string resolveWildcard(const string& filename)
 
     string pngfile = base + "png";
     {
-        ifstream in(pngfile.c_str());
+        ifstream in(pngfile);
         if (in.good())
             return pngfile;
     }
     string jpgfile = base + "jpg";
     {
-        ifstream in(jpgfile.c_str());
+        ifstream in(jpgfile);
         if (in.good())
             return jpgfile;
     }
     string ddsfile = base + "dds";
     {
-        ifstream in(ddsfile.c_str());
+        ifstream in(ddsfile);
         if (in.good())
             return ddsfile;
     }
     string dxt5file = base + "dxt5nm";
     {
-        ifstream in(dxt5file.c_str());
+        ifstream in(dxt5file);
         if (in.good())
             return dxt5file;
     }
     string ctxfile = base + "ctx";
     {
-        ifstream in(ctxfile.c_str());
+        ifstream in(ctxfile);
         if (in.good())
             return ctxfile;
     }
@@ -92,7 +92,7 @@ string TextureInfo::resolve(const string& baseDir)
         }
         else
         {
-            ifstream in(filename.c_str());
+            ifstream in(filename);
             if (in.good())
                 return filename;
         }
@@ -107,10 +107,8 @@ string TextureInfo::resolve(const string& baseDir)
         else
             return matched;
     }
-    else
-    {
-        return filename;
-    }
+
+    return filename;
 }
 
 
@@ -136,14 +134,9 @@ Texture* TextureInfo::load(const string& name)
 
         return LoadTextureFromFile(name, addressMode, mipMode);
     }
-    else
-    {
-        DPRINTF(0, "Loading bump map: %s\n", name.c_str());
-        // cout << "Loading texture: " << name << '\n';
 
-        return LoadHeightMapFromFile(name, bumpHeight, addressMode);
-    }
+    DPRINTF(0, "Loading bump map: %s\n", name.c_str());
+    // cout << "Loading texture: " << name << '\n';
 
-    return NULL;
+    return LoadHeightMapFromFile(name, bumpHeight, addressMode);
 }
-

@@ -28,11 +28,11 @@ typedef map<string, Value*>::const_iterator HashIterator;
 class AssociativeArray
 {
  public:
-    AssociativeArray();
+    AssociativeArray() = default;
     ~AssociativeArray();
 
-    Value* getValue(string) const;
-    void addValue(string, Value&);
+    Value* getValue(const std::string&) const;
+    void addValue(const std::string&, Value&);
 
     bool getNumber(const std::string&, double&) const;
     bool getNumber(const std::string&, float&) const;
@@ -87,7 +87,7 @@ public:
     };
 
     Value(double);
-    Value(string);
+    Value(const string&);
     Value(ValueArray*);
     Value(Hash*);
     Value(bool);

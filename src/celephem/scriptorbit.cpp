@@ -18,21 +18,6 @@ using namespace Eigen;
 using namespace std;
 
 
-ScriptedOrbit::ScriptedOrbit() :
-    luaState(NULL),
-    boundingRadius(1.0),
-    period(0.0),
-    validRangeBegin(0.0),
-    validRangeEnd(0.0)
-{
-}
-
-
-ScriptedOrbit::~ScriptedOrbit()
-{
-}
-
-
 /*! Initialize the script orbit.
  *  moduleName is the name of a module that contains the orbit factory
  *  function. The module will be loaded with Lua's require function before
@@ -62,11 +47,11 @@ ScriptedOrbit::initialize(const std::string& moduleName,
                           const std::string& funcName,
                           Hash* parameters)
 {
-    if (parameters == NULL)
+    if (parameters == nullptr)
         return false;
 
     luaState = GetScriptedObjectContext();
-    if (luaState == NULL)
+    if (luaState == nullptr)
     {
         clog << "ScriptedOrbits are currently disabled.\n";
         return false;
@@ -226,13 +211,9 @@ double
 ScriptedOrbit::getPeriod() const
 {
     if (period == 0.0)
-    {
         return validRangeEnd - validRangeBegin;
-    }
-    else
-    {
-        return period;
-    }
+
+    return period;
 }
 
 

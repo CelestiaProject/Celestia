@@ -66,7 +66,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     float radius = semiAxes.maxCoeff();
 
     Texture* textures[MAX_SPHERE_MESH_TEXTURES] =
-        { NULL, NULL, NULL, NULL, NULL, NULL };
+        { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     unsigned int nTextures = 0;
 
     glDisable(GL_LIGHTING);
@@ -75,13 +75,13 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     shadprop.nLights = min(ls.nLights, MaxShaderLights);
 
     // Set up the textures used by this object
-    if (ri.baseTex != NULL)
+    if (ri.baseTex != nullptr)
     {
         shadprop.texUsage = ShaderProperties::DiffuseTexture;
         textures[nTextures++] = ri.baseTex;
     }
 
-    if (ri.bumpTex != NULL)
+    if (ri.bumpTex != nullptr)
     {
         shadprop.texUsage |= ShaderProperties::NormalTexture;
         textures[nTextures++] = ri.bumpTex;
@@ -92,7 +92,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     if (ri.specularColor != Color::Black)
     {
         shadprop.lightModel = ShaderProperties::PerPixelSpecularModel;
-        if (ri.glossTex == NULL)
+        if (ri.glossTex == nullptr)
         {
             shadprop.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
         }
@@ -108,21 +108,21 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         shadprop.lightModel = ShaderProperties::LunarLambertModel;
     }
 
-    if (ri.nightTex != NULL)
+    if (ri.nightTex != nullptr)
     {
         shadprop.texUsage |= ShaderProperties::NightTexture;
         textures[nTextures++] = ri.nightTex;
     }
 
-    if (ri.overlayTex != NULL)
+    if (ri.overlayTex != nullptr)
     {
         shadprop.texUsage |= ShaderProperties::OverlayTexture;
         textures[nTextures++] = ri.overlayTex;
     }
 
-    if (atmosphere != NULL)
+    if (atmosphere != nullptr)
     {
-        if (renderFlags & Renderer::ShowAtmospheres)
+        if ((renderFlags & Renderer::ShowAtmospheres) != 0)
         {
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
             // ... but don't show atmospheres when there are no light sources.
@@ -133,7 +133,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         if ((renderFlags & Renderer::ShowCloudMaps) != 0 &&
             (renderFlags & Renderer::ShowCloudShadows) != 0)
         {
-            Texture* cloudTex = NULL;
+            Texture* cloudTex = nullptr;
             if (atmosphere->cloudTexture.tex[textureRes] != InvalidResource)
                 cloudTex = atmosphere->cloudTexture.find(textureRes);
 
@@ -142,7 +142,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             bool allowCloudShadows = true;
             for (unsigned int i = 0; i < nTextures; i++)
             {
-                if (textures[i] != NULL &&
+                if (textures[i] != nullptr &&
                     (textures[i]->getLODCount() > 1 ||
                      textures[i]->getUTileCount(0) > 1 ||
                      textures[i]->getVTileCount(0) > 1))
@@ -152,7 +152,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             }
 
             // Split cloud shadows can't cast shadows
-            if (cloudTex != NULL)
+            if (cloudTex != nullptr)
             {
                 if (cloudTex->getLODCount() > 1 ||
                     cloudTex->getUTileCount(0) > 1 ||
@@ -162,7 +162,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                 }
             }
 
-            if (cloudTex != NULL && allowCloudShadows && atmosphere->cloudShadowDepth > 0.0f)
+            if (cloudTex != nullptr && allowCloudShadows && atmosphere->cloudShadowDepth > 0.0f)
             {
                 shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
                 textures[nTextures++] = cloudTex;
@@ -200,7 +200,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     if (ls.shadowingRingSystem)
     {
         Texture* ringsTex = ls.shadowingRingSystem->texture.find(textureRes);
-        if (ringsTex != NULL)
+        if (ringsTex != nullptr)
         {
             glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
             ringsTex->bind();
@@ -229,7 +229,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
-    if (prog == NULL)
+    if (prog == nullptr)
         return;
 
     prog->use();
@@ -245,7 +245,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     if (shadprop.lightModel == ShaderProperties::LunarLambertModel)
         prog->lunarLambert = ri.lunarLambert;
 
-    if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
+    if ((shadprop.texUsage & ShaderProperties::RingShadowTexture) != 0)
     {
         float ringWidth = ls.shadowingRingSystem->outerRadius - ls.shadowingRingSystem->innerRadius;
         prog->ringRadius = ls.shadowingRingSystem->innerRadius / radius;
@@ -261,9 +261,9 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         }
     }
 
-    if (atmosphere != NULL)
+    if (atmosphere != nullptr)
     {
-        if (shadprop.texUsage & ShaderProperties::CloudShadowTexture)
+        if ((shadprop.texUsage & ShaderProperties::CloudShadowTexture) != 0)
         {
             prog->shadowTextureOffset = cloudTexOffset;
             prog->cloudHeight = 1.0f + atmosphere->cloudHeight / radius;
@@ -281,7 +281,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     glColor(ri.color);
 
     unsigned int attributes = LODSphereMesh::Normals;
-    if (ri.bumpTex != NULL)
+    if (ri.bumpTex != nullptr)
         attributes |= LODSphereMesh::Tangents;
     g_lodSphere->render(context,
                         attributes,
@@ -310,7 +310,7 @@ void renderGeometry_GLSL(Geometry* geometry,
 
     GLSL_RenderContext rc(ls, geometryScale, planetOrientation);
 
-    if (renderFlags & Renderer::ShowAtmospheres)
+    if ((renderFlags & Renderer::ShowAtmospheres) != 0)
     {
         rc.setAtmosphere(atmosphere);
     }
@@ -335,7 +335,7 @@ void renderGeometry_GLSL(Geometry* geometry,
         rc.setMaterial(&m);
         rc.lock();
         geometry->render(rc, tsec);
-        m.maps[Material::DiffuseMap] = NULL; // prevent Material destructor from deleting the texture resource
+        m.maps[Material::DiffuseMap] = nullptr; // prevent Material destructor from deleting the texture resource
     }
     else
     {
@@ -378,7 +378,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
         rc.setMaterial(&m);
         rc.lock();
         geometry->render(rc, tsec);
-        m.maps[Material::DiffuseMap] = NULL; // prevent Material destructor from deleting the texture resource
+        m.maps[Material::DiffuseMap] = nullptr; // prevent Material destructor from deleting the texture resource
     }
     else
     {
@@ -406,7 +406,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
     float radius = semiAxes.maxCoeff();
 
     Texture* textures[MAX_SPHERE_MESH_TEXTURES] =
-        { NULL, NULL, NULL, NULL, NULL, NULL };
+        { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     unsigned int nTextures = 0;
 
     glDisable(GL_LIGHTING);
@@ -415,13 +415,13 @@ void renderClouds_GLSL(const RenderInfo& ri,
     shadprop.nLights = ls.nLights;
 
     // Set up the textures used by this object
-    if (cloudTex != NULL)
+    if (cloudTex != nullptr)
     {
         shadprop.texUsage = ShaderProperties::DiffuseTexture;
         textures[nTextures++] = cloudTex;
     }
 
-    if (cloudNormalMap != NULL)
+    if (cloudNormalMap != nullptr)
     {
         shadprop.texUsage |= ShaderProperties::NormalTexture;
         textures[nTextures++] = cloudNormalMap;
@@ -430,10 +430,10 @@ void renderClouds_GLSL(const RenderInfo& ri,
     }
 
 #if 0
-    if (rings != NULL && (renderFlags & Renderer::ShowRingShadows) != 0)
+    if (rings != nullptr && (renderFlags & Renderer::ShowRingShadows) != 0)
     {
         Texture* ringsTex = rings->texture.find(textureRes);
-        if (ringsTex != NULL)
+        if (ringsTex != nullptr)
         {
             glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
             ringsTex->bind();
@@ -452,9 +452,9 @@ void renderClouds_GLSL(const RenderInfo& ri,
     }
 #endif
 
-    if (atmosphere != NULL)
+    if (atmosphere != nullptr)
     {
-        if (renderFlags & Renderer::ShowAtmospheres)
+        if ((renderFlags & Renderer::ShowAtmospheres) != 0)
         {
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
             // ... but don't show atmospheres when there are no light sources.
@@ -479,7 +479,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
-    if (prog == NULL)
+    if (prog == nullptr)
         return;
 
     prog->use();
@@ -490,7 +490,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                                   ri.ambientColor.blue());
     prog->textureOffset = texOffset;
 
-    if (atmosphere != NULL)
+    if (atmosphere != nullptr)
     {
         float cloudRadius = radius + atmosphere->cloudHeight;
 
@@ -513,7 +513,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
         prog->setEclipseShadowParameters(ls, semiAxes, planetOrientation);
 
     unsigned int attributes = LODSphereMesh::Normals;
-    if (cloudNormalMap != NULL)
+    if (cloudNormalMap != nullptr)
         attributes |= LODSphereMesh::Tangents;
     g_lodSphere->render(context,
                         attributes,
@@ -552,7 +552,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
 
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
-    if (prog == NULL)
+    if (prog == nullptr)
         return;
 
     prog->use();
@@ -583,7 +583,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
                         LODSphereMesh::Normals,
                         frustum,
                         ri.pixWidth,
-                        NULL);
+                        nullptr);
 
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
@@ -611,8 +611,8 @@ static void renderRingSystem(float innerRadius,
     {
         float t = (float) i / (float) nSections;
         float theta = beginAngle + t * angle;
-        float s = (float) sin(theta);
-        float c = (float) cos(theta);
+        auto s = (float) sin(theta);
+        auto c = (float) cos(theta);
         glTexCoord2f(0, 0.5f);
         glVertex3f(c * innerRadius, 0, s * innerRadius);
         glTexCoord2f(1, 0.5f);
@@ -649,14 +649,14 @@ void renderRings_GLSL(RingSystem& rings,
                 shadprop.setEclipseShadowCountForLight(li, 1);
         }
 
-        if (ringsTex)
+        if (ringsTex != nullptr)
             shadprop.texUsage = ShaderProperties::DiffuseTexture;
     }
 
 
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
-    if (prog == NULL)
+    if (prog == nullptr)
         return;
 
     prog->use();
@@ -730,7 +730,7 @@ void renderRings_GLSL(RingSystem& rings,
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    if (ringsTex != NULL)
+    if (ringsTex != nullptr)
         ringsTex->bind();
     else
         glDisable(GL_TEXTURE_2D);
@@ -853,7 +853,7 @@ FramebufferObject::generateColorTexture()
 
     // Set the texture dimensions
     // Do we need to set GL_DEPTH_COMPONENT24 here?
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
     // Unbind the texture
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -877,7 +877,7 @@ FramebufferObject::generateDepthTexture()
 
     // Set the texture dimensions
     // Do we need to set GL_DEPTH_COMPONENT24 here?
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
 
     // Unbind the texture
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -962,10 +962,8 @@ FramebufferObject::bind()
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId);
         return true;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
 

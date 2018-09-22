@@ -175,9 +175,9 @@ namespace astro
     bool isLengthUnit(string unitName);
     bool isTimeUnit(string unitName);
     bool isAngleUnit(string unitName);
-    bool getLengthScale(string unitName, double& scale);
-    bool getTimeScale(string unitName, double& scale);
-    bool getAngleScale(string unitName, double& scale);
+    bool getLengthScale(const string& unitName, double& scale);
+    bool getTimeScale(const string& unitName, double& scale);
+    bool getAngleScale(const string& unitName, double& scale);
 
     void decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds);
     double degMinSecToDecimal(int degrees, int minutes, double seconds);
@@ -215,7 +215,7 @@ namespace astro
 
 // Convert a date structure to a Julian date
 
-std::ostream& operator<<(std::ostream& s, const astro::Date);
+std::ostream& operator<<(std::ostream& s, const astro::Date&);
 
 #endif // _CELENGINE_ASTRO_H_
 

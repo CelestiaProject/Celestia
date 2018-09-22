@@ -98,27 +98,26 @@ SafeGetLuaNumber(lua_State* state,
 void
 SetLuaVariables(lua_State* state, Hash* parameters)
 {
-    for (HashIterator iter = parameters->begin(); iter != parameters->end();
-         iter++)
+    for (const auto& param : *parameters)
     {
-        size_t percentPos = iter->first.find('%');
+        size_t percentPos = param.first.find('%');
         if (percentPos == string::npos)
         {
-            switch (iter->second->getType())
+            switch (param.second->getType())
             {
             case Value::NumberType:
-                lua_pushstring(state, iter->first.c_str());
-                lua_pushnumber(state, iter->second->getNumber());
+                lua_pushstring(state, param.first.c_str());
+                lua_pushnumber(state, param.second->getNumber());
                 lua_settable(state, -3);
                 break;
             case Value::StringType:
-                lua_pushstring(state, iter->first.c_str());
-                lua_pushstring(state, iter->second->getString().c_str());
+                lua_pushstring(state, param.first.c_str());
+                lua_pushstring(state, param.second->getString().c_str());
                 lua_settable(state, -3);
                 break;
             case Value::BooleanType:
-                lua_pushstring(state, iter->first.c_str());
-                lua_pushboolean(state, iter->second->getBoolean());
+                lua_pushstring(state, param.first.c_str());
+                lua_pushboolean(state, param.second->getBoolean());
                 lua_settable(state, -3);
                 break;
             default:

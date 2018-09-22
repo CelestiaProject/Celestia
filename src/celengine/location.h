@@ -20,7 +20,7 @@ class Body;
 class Location
 {
  public:
-    Location();
+    Location() = default;
     virtual ~Location();
 
     std::string getName(bool i18n = false) const;
@@ -92,16 +92,16 @@ class Location
     };
 
  private:
-    Body* parent;
+    Body* parent{ nullptr };
     std::string name;
     std::string i18nName;
-    Eigen::Vector3f position;
-    float size;
-    float importance;
-    uint32 featureType;
-    bool overrideLabelColor;
-    Color labelColor;
-    std::string* infoURL;
+    Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
+    float size{ 0.0f };
+    float importance{ -1.0f };
+    uint32 featureType{ Other };
+    bool overrideLabelColor{ false };
+    Color labelColor{ 1.0f, 1.0f, 1.0f };
+    std::string* infoURL{ nullptr };
 };
 
 #endif // _CELENGINE_LOCATION_H_

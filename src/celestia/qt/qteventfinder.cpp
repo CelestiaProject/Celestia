@@ -41,14 +41,10 @@ using namespace std;
 class EclipseRecord
 {
 public:
-    EclipseRecord() :
-        occulter(NULL),
-        receiver(NULL)
-    {
-    }
+    EclipseRecord() = default;
 
-    Body* occulter;
-    Body* receiver;
+    Body* occulter{ nullptr };
+    Body* receiver{ nullptr };
     double startTime;
     double endTime;
 };
@@ -136,7 +132,7 @@ bool QtEclipseFinder::testEclipse(const Body& receiver, const Body& occulter,
         Vector3d posOcculter = occulter.getAstrocentricPosition(now);
 
         const Star* sun = receiver.getSystem()->getStar();
-        assert(sun != NULL);
+        assert(sun != nullptr);
         double distToSun = posReceiver.norm();
         float appSunRadius = (float) (sun->getRadius() / distToSun);
 
@@ -253,7 +249,7 @@ void QtEclipseFinder::findEclipses(double startDate,
     PlanetarySystem* satellites = body->getSatellites();
 
     // See if there's anything that could test
-    if (satellites == NULL)
+    if (satellites == nullptr)
         return;
 
     // For each body, we'll need to store the time when the last eclipse ended
@@ -285,7 +281,7 @@ void QtEclipseFinder::findEclipses(double startDate,
 
     for (double t = startDate; t <= endDate; t += searchStep)
     {
-        if (watcher != NULL)
+        if (watcher != nullptr)
         {
             if (watcher->eclipseFinderProgressUpdate(t) == EclipseFinderWatcher::AbortOperation)
                 return;
@@ -293,8 +289,8 @@ void QtEclipseFinder::findEclipses(double startDate,
 
         for (unsigned int i = 0; i < testBodies.size(); i++)
         {
-            Body* occulter = NULL;
-            Body* receiver = NULL;
+            Body* occulter = nullptr;
+            Body* receiver = nullptr;
 
             if (eclipseTypeMask == SolarEclipse)
             {
@@ -374,8 +370,8 @@ struct EclipseDurationSortPredicate
 class EventTableModel : public QAbstractTableModel
 {
 public:
-    EventTableModel();
-    virtual ~EventTableModel();
+    EventTableModel() = default;
+    virtual ~EventTableModel() = default;
 
     // Methods from QAbstractTableModel
     Qt::ItemFlags flags(const QModelIndex& index) const;
@@ -392,7 +388,7 @@ public:
     enum
     {
         ReceiverColumn        = 0,
-        OcculterColumn          = 1,
+        OcculterColumn        = 1,
         StartTimeColumn       = 2,
         DurationColumn        = 3,
     };
@@ -402,17 +398,7 @@ private:
 };
 
 
-EventTableModel::EventTableModel()
-{
-}
-
-
-EventTableModel::~EventTableModel()
-{
-}
-
-
-Qt::ItemFlags EventTableModel::flags(const QModelIndex&) const
+Qt::ItemFlags EventTableModel::flags(const QModelIndex& /*unused*/) const
 {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
@@ -455,7 +441,7 @@ QVariant EventTableModel::data(const QModelIndex& index, int role) const
 }
 
 
-QVariant EventTableModel::headerData(int section, Qt::Orientation, int role) const
+QVariant EventTableModel::headerData(int section, Qt::Orientation /*unused*/, int role) const
 {
     if (role != Qt::DisplayRole)
         return QVariant();
@@ -476,13 +462,13 @@ QVariant EventTableModel::headerData(int section, Qt::Orientation, int role) con
 }
 
 
-int EventTableModel::rowCount(const QModelIndex&) const
+int EventTableModel::rowCount(const QModelIndex& /*unused*/) const
 {
     return (int) eclipses.size();
 }
 
 
-int EventTableModel::columnCount(const QModelIndex&) const
+int EventTableModel::columnCount(const QModelIndex& /*unused*/) const
 {
     return 4;
 }
@@ -527,7 +513,7 @@ const EclipseRecord* EventTableModel::eclipseAtIndex(const QModelIndex& index) c
     if (row >= 0 && row < (int) eclipses.size())
         return &eclipses[row];
     else
-        return NULL;
+        return nullptr;
 }
 
 
@@ -536,17 +522,17 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
                          QWidget* parent) :
     QDockWidget(title, parent),
     appCore(_appCore),
-    solarOnlyButton(NULL),
-    lunarOnlyButton(NULL),
-    allEclipsesButton(NULL),
-    startDateEdit(NULL),
-    endDateEdit(NULL),
-    planetSelect(NULL),
-    model(NULL),
-    eventTable(NULL),
-    contextMenu(NULL),
-    progress(NULL),
-    activeEclipse(NULL)
+    solarOnlyButton(nullptr),
+    lunarOnlyButton(nullptr),
+    allEclipsesButton(nullptr),
+    startDateEdit(nullptr),
+    endDateEdit(nullptr),
+    planetSelect(nullptr),
+    model(nullptr),
+    eventTable(nullptr),
+    contextMenu(nullptr),
+    progress(nullptr),
+    activeEclipse(nullptr)
 {
     QWidget* finderWidget = new QWidget(this);
 
@@ -628,14 +614,9 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
 }
 
 
-EventFinder::~EventFinder()
-{
-}
-
-
 EclipseFinderWatcher::Status EventFinder::eclipseFinderProgressUpdate(double t)
 {
-    if (progress != NULL)
+    if (progress != nullptr)
     {
         // Avoid processing events at every update, otherwise finding eclipse
         // can take a very long time.
@@ -650,10 +631,7 @@ EclipseFinderWatcher::Status EventFinder::eclipseFinderProgressUpdate(double t)
 
         return progress->wasCanceled() ? AbortOperation : ContinueOperation;
     }
-    else
-    {
-        return EclipseFinderWatcher::ContinueOperation;
-    }
+    return EclipseFinderWatcher::ContinueOperation;
 }
 
 
@@ -668,7 +646,7 @@ void EventFinder::slotFindEclipses()
     QString bodyName = QString("Sol/") + planetSelect->currentText();
     Selection obj = appCore->getSimulation()->findObjectFromPath(bodyName.toUtf8().data(), true);
 
-    if (obj.body() == NULL)
+    if (obj.body() == nullptr)
     {
         QMessageBox::critical(this,
                               _("Event Finder"),
@@ -707,7 +685,7 @@ void EventFinder::slotFindEclipses()
                         eclipseTypeMask,
                         eclipses);
     delete progress;
-    progress = NULL;
+    progress = nullptr;
 
     model->setEclipses(eclipses);
 
@@ -722,9 +700,9 @@ void EventFinder::slotContextMenu(const QPoint& pos)
     QModelIndex index = eventTable->indexAt(pos);
     activeEclipse = model->eclipseAtIndex(index);
 
-    if (activeEclipse != NULL)
+    if (activeEclipse != nullptr)
     {
-        if (contextMenu == NULL)
+        if (contextMenu == nullptr)
             contextMenu = new QMenu(this);
         contextMenu->clear();
 

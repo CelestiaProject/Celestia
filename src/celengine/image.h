@@ -56,7 +56,7 @@ class Image
     int components;
     int format;
     int size;
-    unsigned char* pixels;
+    unsigned char* pixels{ nullptr };
 };
 
 extern Image* LoadJPEGImage(const std::string& filename,

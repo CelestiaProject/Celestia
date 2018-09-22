@@ -12,8 +12,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <math.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstdio>
 #include <iostream>
 #include "bigfix.h"
 
@@ -77,13 +77,13 @@ BigFix::BigFix(double d)
     double e = floor(d * (1.0 / WORD3_FACTOR));
     if (e < POW2_31)
     {
-        uint32 w3 = (uint32) e;
+        auto w3 = (uint32) e;
         d -= w3 * WORD3_FACTOR;
-        uint32 w2 = (uint32) (d * (1.0 / WORD2_FACTOR));
+        auto w2 = (uint32) (d * (1.0 / WORD2_FACTOR));
         d -= w2 * WORD2_FACTOR;
-        uint32 w1 = (uint32) (d * (1.0 / WORD1_FACTOR));
+        auto w1 = (uint32) (d * (1.0 / WORD1_FACTOR));
         d -= w1 * WORD1_FACTOR;
-        uint32 w0 = (uint32) (d * (1.0 / WORD0_FACTOR));
+        auto w0 = (uint32) (d * (1.0 / WORD0_FACTOR));
 
         hi = ((uint64) w3 << 32) | w2;
         lo = ((uint64) w1 << 32) | w0;
@@ -154,15 +154,9 @@ bool operator<(const BigFix& a, const BigFix& b)
 {
     if (a.isNegative() == b.isNegative())
     {
-        if (a.hi == b.hi)
-            return a.lo < b.lo;
-        else
-            return a.hi < b.hi;
+        return a.hi == b.hi ? a.lo < b.lo : a.hi < b.hi;
     }
-    else
-    {
-        return a.isNegative();
-    }
+    return a.isNegative();
 }
 
 
@@ -265,10 +259,7 @@ BigFix operator*(const BigFix& a, const BigFix& b)
     c.hi = (uint64) result[4] + ((uint64) result[5] << 32);
 
     bool resultNegative = a.isNegative() != b.isNegative();
-    if (resultNegative)
-        return -c;
-    else
-        return c;
+    return resultNegative ?  -c : c;
 }
 
 
@@ -277,7 +268,7 @@ int BigFix::sign() const
 
     if (hi == 0 && lo == 0)
         return 0;
-    else if (hi > INT64_MAX)
+    if (hi > INT64_MAX)
         return -1;
     else
         return 1;
@@ -322,7 +313,7 @@ static unsigned char alphabet[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
 BigFix::BigFix(const std::string& val)
 {
-    static char inalphabet[256], decoder[256];
+    static char inalphabet[256] = {0}, decoder[256] = {0};
     int i, bits, c, char_count;
 
     for (i = (sizeof alphabet) - 1; i >= 0 ; i--)
@@ -343,12 +334,11 @@ BigFix::BigFix(const std::string& val)
 
     i = 0;
 
-    for (int j = 0; j < (int) val.length(); j++)
+    for (char c : val)
     {
-        c = val[j];
         if (c == '=')
             break;
-        if (c > 255 || !inalphabet[c])
+        if (c > 255 || (inalphabet[c] == 0))
             continue;
         bits += decoder[c];
         char_count++;
@@ -389,7 +379,7 @@ BigFix::BigFix(const std::string& val)
         break;
     }
 
-    if (i & 1)
+    if ((i & 1) != 0)
         n[i/2] >>= 8;
 
     // Now, convert the 8 16-bit values to a 2 64-bit values
@@ -423,7 +413,7 @@ std::string BigFix::toString()
     n[7] = (hi >> 48) & 0xffff;
 
     // Conversion using code from the original BigFix class.
-    std::string encoded("");
+    std::string encoded;
     int bits, c, char_count, i, j;
 
     char_count = 0;
@@ -434,7 +424,7 @@ std::string BigFix::toString()
     do {
         i--;
         c = n[i/2];
-        if (i & 1) c >>= 8;
+        if ((i & 1) != 0) c >>= 8;
         c &= 0xff;
     } while ((c == 0) && (i != 0));
 
@@ -446,7 +436,7 @@ std::string BigFix::toString()
     while (j <= i)
     {
         c = n[j/2];
-        if ( j & 1 ) c >>= 8;
+        if ( (j & 1) != 0 ) c >>= 8;
         c &= 0xff;
         j++;
         bits += c;

@@ -47,10 +47,7 @@ int compareIgnoringCase(const string& s1, const string& s2, int n)
         n--;
     }
 
-    if (n > 0)
-        return s2.size() - s1.size();
-    else
-        return 0;
+    return n > 0 ? s2.size() - s1.size() : 0;
 }
 
 

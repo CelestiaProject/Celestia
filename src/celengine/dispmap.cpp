@@ -11,15 +11,14 @@
 
 
 DisplacementMap::DisplacementMap(int w, int h) :
-    width(w), height(h), disp(NULL)
+    width(w), height(h), disp(nullptr)
 {
     disp = new float[width * height];
 }
 
 DisplacementMap::~DisplacementMap()
 {
-    if (disp != NULL)
-        delete[] disp;
+    delete[] disp;
 }
 
 

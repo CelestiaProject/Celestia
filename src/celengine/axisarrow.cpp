@@ -379,23 +379,19 @@ Vector3d
 SunDirectionArrow::getDirection(double tdb) const
 {
     const Body* b = &body;
-    Star* sun = NULL;
-    while (b != NULL)
+    Star* sun = nullptr;
+    while (b != nullptr)
     {
         Selection center = b->getOrbitFrame(tdb)->getCenter();
-        if (center.star() != NULL)
+        if (center.star() != nullptr)
             sun = center.star();
         b = center.body();
     }
 
-    if (sun != NULL)
-    {
+    if (sun != nullptr)
         return Selection(sun).getPosition(tdb).offsetFromKm(body.getPosition(tdb));
-    }
-    else
-    {
-        return Vector3d::Zero();
-    }
+
+    return Vector3d::Zero();
 }
 
 

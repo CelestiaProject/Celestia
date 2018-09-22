@@ -85,11 +85,11 @@ static uint32 FourCC(const char* s)
 
 Image* LoadDDSImage(const string& filename)
 {
-    ifstream in(filename.c_str(), ios::in | ios::binary);
+    ifstream in(filename, ios::in | ios::binary);
     if (!in.good())
     {
         DPRINTF(0, "Error opening DDS texture file %s.\n", filename.c_str());
-        return NULL;
+        return nullptr;
     }
 
     char header[4];
@@ -98,7 +98,7 @@ Image* LoadDDSImage(const string& filename)
         header[2] != 'S' || header[3] != ' ')
     {
         DPRINTF(0, "DDS texture file %s has bad header.\n", filename.c_str());
-        return NULL;
+        return nullptr;
     }
 
     DDSurfaceDesc ddsd;
@@ -178,7 +178,7 @@ Image* LoadDDSImage(const string& filename)
     {
         DPRINTF(0, "Unsupported format for DDS texture file %s.\n",
                 filename.c_str());
-        return NULL;
+        return nullptr;
     }
 
     // If we have a compressed format, give up if S3 texture compression
@@ -188,7 +188,7 @@ Image* LoadDDSImage(const string& filename)
         format == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
     {
         if (!GLEW_EXT_texture_compression_s3tc)
-            return NULL;
+            return nullptr;
     }
 
     // TODO: Verify that the reported texture size matches the amount of
@@ -198,8 +198,8 @@ Image* LoadDDSImage(const string& filename)
                            (int) ddsd.width,
                            (int) ddsd.height,
                            max(ddsd.mipMapLevels, 1u));
-    if (img == NULL)
-        return NULL;
+    if (img == nullptr)
+        return nullptr;
 
     in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize());
     if (!in.eof() && !in.good())
@@ -207,7 +207,7 @@ Image* LoadDDSImage(const string& filename)
         DPRINTF(0, "Failed reading data from DDS texture file %s.\n",
                 filename.c_str());
         delete img;
-        return NULL;
+        return nullptr;
     }
 
 #if 0

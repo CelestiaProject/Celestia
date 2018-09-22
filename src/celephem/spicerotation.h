@@ -29,7 +29,7 @@ class SpiceRotation : public CachingRotationModel
     SpiceRotation(const std::string& frameName,
                   const std::string& baseFrameName,
                   double period);
-    virtual ~SpiceRotation();
+    virtual ~SpiceRotation() = default;
 
     bool init(const std::string& path,
               const std::list<std::string>* requiredKernels);

@@ -70,17 +70,16 @@ public:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             return texId;
         }
-        else
-        {
-            QPixmap texturePixmap(fileName);
 
-            // Mipmaps and linear filtering enabled by default.
+
+        QPixmap texturePixmap(fileName);
+
+        // Mipmaps and linear filtering enabled by default.
 #if QT_VERSION >= 0x040600
-            return m_glWidget->bindTexture(texturePixmap, GL_TEXTURE_2D, GL_RGBA, QGLContext::MipmapBindOption | QGLContext::LinearFilteringBindOption);
+        return m_glWidget->bindTexture(texturePixmap, GL_TEXTURE_2D, GL_RGBA, QGLContext::MipmapBindOption | QGLContext::LinearFilteringBindOption);
 #else
-            return m_glWidget->bindTexture(texturePixmap, GL_TEXTURE_2D, GL_RGBA);
+        return m_glWidget->bindTexture(texturePixmap, GL_TEXTURE_2D, GL_RGBA);
 #endif
-        }
     }
 
 
@@ -190,7 +189,7 @@ ShaderKey::Create(const Material* material, const LightingEnvironment* lighting,
         }
     }
 
-    return ShaderKey(info);
+    return {info};
 }
 
 
@@ -240,13 +239,13 @@ Matrix4f shadowProjectionMatrix(float objectRadius)
 
 ModelViewWidget::ModelViewWidget(QWidget *parent) :
    QGLWidget(parent),
-   m_model(NULL),
+   m_model(nullptr),
    m_modelBoundingRadius(1.0),
    m_cameraPosition(Vector3d::Zero()),
    m_cameraOrientation(Quaterniond::Identity()),
    m_renderStyle(NormalStyle),
    m_renderPath(FixedFunctionPath),
-   m_materialLibrary(NULL),
+   m_materialLibrary(nullptr),
    m_lightOrientation(Quaterniond::Identity()),
    m_lightingEnabled(true),
    m_ambientLightEnabled(true),
@@ -271,17 +270,14 @@ ModelViewWidget::setModel(cmod::Model* model, const QString& modelDirPath)
         delete m_model;
     }
     m_model = model;
+    delete m_materialLibrary;
 
-    if (m_materialLibrary)
-    {
-        delete m_materialLibrary;
-    }
     m_materialLibrary = new MaterialLibrary(this, modelDirPath);
 
     m_selection.clear();
 
     // Load materials
-    if (m_model != NULL)
+    if (m_model != nullptr)
     {
         for (unsigned int i = 0; i < m_model->getMaterialCount(); ++i)
         {
@@ -315,7 +311,7 @@ void
 ModelViewWidget::resetCamera()
 {
     AlignedBox<float, 3> bbox;
-    if (m_model != NULL)
+    if (m_model != nullptr)
     {
         for (unsigned int i = 0; i < m_model->getMeshCount(); ++i)
         {
@@ -457,7 +453,7 @@ ModelViewWidget::select(const Vector2f& viewportPoint)
     }
 
     float aspectRatio = (float) size().width() / (float) size().height();
-    float fovRad = float(VIEWPORT_FOV * PI / 180.0f);
+    auto fovRad = float(VIEWPORT_FOV * PI / 180.0f);
     float h = (float) tan(fovRad / 2.0f);
     Vector3d direction(h * aspectRatio * viewportPoint.x(), h * viewportPoint.y(), -1.0f);
     direction.normalize();
@@ -509,13 +505,13 @@ ModelViewWidget::setMaterial(unsigned int index, const cmod::Material& material)
     modelMaterial->specularPower = material.specularPower;
 
     delete modelMaterial->maps[Material::DiffuseMap];
-    modelMaterial->maps[Material::DiffuseMap] = NULL;
+    modelMaterial->maps[Material::DiffuseMap] = nullptr;
     delete modelMaterial->maps[Material::SpecularMap];
-    modelMaterial->maps[Material::SpecularMap] = NULL;
+    modelMaterial->maps[Material::SpecularMap] = nullptr;
     delete modelMaterial->maps[Material::NormalMap];
-    modelMaterial->maps[Material::NormalMap] = NULL;
+    modelMaterial->maps[Material::NormalMap] = nullptr;
     delete modelMaterial->maps[Material::EmissiveMap];
-    modelMaterial->maps[Material::EmissiveMap] = NULL;
+    modelMaterial->maps[Material::EmissiveMap] = nullptr;
 
     if (material.maps[Material::DiffuseMap])
     {
@@ -562,7 +558,7 @@ ModelViewWidget::paintGL()
         Material defaultMaterial;
         defaultMaterial.diffuse = Material::Color(1.0f, 1.0f, 1.0f);
         LightingEnvironment lightingOff;
-        bindMaterial(&defaultMaterial, &lightingOff, NULL);
+        bindMaterial(&defaultMaterial, &lightingOff, nullptr);
         glEnable(GL_CULL_FACE);
 
         for (int lightIndex = 0; lightIndex < m_lightSources.size(); ++lightIndex)
@@ -891,8 +887,8 @@ ModelViewWidget::setShadows(bool enable)
         m_shadowsEnabled = enable;
         if (m_shadowsEnabled && m_shadowBuffers.size() < 2)
         {
-            GLFrameBufferObject* fb0 = new GLFrameBufferObject(ShadowBufferSize, ShadowBufferSize, GLFrameBufferObject::DepthAttachment);
-            GLFrameBufferObject* fb1 = new GLFrameBufferObject(ShadowBufferSize, ShadowBufferSize, GLFrameBufferObject::DepthAttachment);
+            auto* fb0 = new GLFrameBufferObject(ShadowBufferSize, ShadowBufferSize, GLFrameBufferObject::DepthAttachment);
+            auto* fb1 = new GLFrameBufferObject(ShadowBufferSize, ShadowBufferSize, GLFrameBufferObject::DepthAttachment);
             m_shadowBuffers << fb0 << fb1;
             if (!fb0->isValid() || !fb1->isValid())
             {
@@ -910,7 +906,7 @@ ModelViewWidget::bindMaterial(const Material* material,
                               const LightingEnvironment* lighting,
                               const Mesh::VertexDescription* vertexDesc)
 {
-    GLShaderProgram* shader = NULL;
+    GLShaderProgram* shader = nullptr;
 
     ShaderKey shaderKey;
     if (renderPath() == OpenGL2Path && !gl2Fail)
@@ -1177,7 +1173,7 @@ ModelViewWidget::renderModel(Model* model)
         }
     }
 
-    bindMaterial(&defaultMaterial, &lighting, NULL);
+    bindMaterial(&defaultMaterial, &lighting, nullptr);
 }
 
 
@@ -1200,7 +1196,7 @@ ModelViewWidget::renderSelection(Model* model)
         selectionMaterial.opacity = 0.5f;
 
         LightingEnvironment lightsOff;
-        bindMaterial(&selectionMaterial, &lightsOff, NULL);
+        bindMaterial(&selectionMaterial, &lightsOff, nullptr);
     }
 
     for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
@@ -1510,23 +1506,23 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
         /*** End fragment shader ***/
     }
 
-    GLShaderProgram* glShader = new GLShaderProgram();
-    GLVertexShader* vertexShader = new GLVertexShader();
+    auto* glShader = new GLShaderProgram();
+    auto* vertexShader = new GLVertexShader();
     if (!vertexShader->compile(vertexShaderSource.toAscii().data()))
     {
         qWarning("Vertex shader error: %s", vertexShader->log().c_str());
         std::cerr << vertexShaderSource.toAscii().data() << std::endl;
         delete glShader;
-        return NULL;
+        return nullptr;
     }
 
-    GLFragmentShader* fragmentShader = new GLFragmentShader();
+    auto* fragmentShader = new GLFragmentShader();
     if (!fragmentShader->compile(fragmentShaderSource.toAscii().data()))
     {
         qWarning("Fragment shader error: %s", fragmentShader->log().c_str());
         std::cerr << fragmentShaderSource.toAscii().data() << std::endl;
         delete glShader;
-        return NULL;
+        return nullptr;
     }
 
     glShader->addVertexShader(vertexShader);
@@ -1540,7 +1536,7 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
     {
         qWarning("Shader link error: %s", glShader->log().c_str());
         delete glShader;
-        return NULL;
+        return nullptr;
     }
 
     return glShader;

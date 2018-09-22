@@ -18,20 +18,11 @@
 using namespace std;
 
 
-Destination::Destination() :
-    name(""),
-    target(""),
-    distance(0.0),
-    description("")
-{
-}
-
-
 DestinationList* ReadDestinationList(istream& in)
 {
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
-    DestinationList* destinations = new DestinationList();
+    auto* destinations = new DestinationList();
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
@@ -40,19 +31,19 @@ DestinationList* ReadDestinationList(istream& in)
             DPRINTF(0, "Error parsing destinations file.\n");
             for_each(destinations->begin(), destinations->end(), deleteFunc<Destination*>());
             delete destinations;
-            return NULL;
+            return nullptr;
         }
         tokenizer.pushBack();
 
         Value* destValue = parser.readValue();
-        if (destValue == NULL || destValue->getType() != Value::HashType)
+        if (destValue == nullptr || destValue->getType() != Value::HashType)
         {
             DPRINTF(0, "Error parsing destination.\n");
             for_each(destinations->begin(), destinations->end(), deleteFunc<Destination*>());
             delete destinations;
-            if (destValue != NULL)
+            if (destValue != nullptr)
                 delete destValue;
-            return NULL;
+            return nullptr;
         }
 
         Hash* destParams = destValue->getHash();

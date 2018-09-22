@@ -18,27 +18,20 @@ using namespace Eigen;
 using namespace std;
 
 
-Model::Model() :
-    opaque(true),
-    normalized(false)
+Model::Model()
 {
-    for (int i = 0; i < Material::TextureSemanticMax; i++)
-    {
-        textureUsage[i] = false;
-    }
+    textureUsage.fill(false);
 }
 
 
 Model::~Model()
 {
-    for (vector<Mesh*>::iterator iter = meshes.begin(); iter != meshes.end(); iter++)
-    {
-        delete *iter;
-    }
+    for (const auto mesh : meshes)
+        delete mesh;
 }
 
 
-/*! Return the material with the specified index, or NULL if
+/*! Return the material with the specified index, or nullptr if
  *  the index is out of range. The returned material pointer
  *  is const.
  */
@@ -48,7 +41,7 @@ Model::getMaterial(unsigned int index) const
     if (index < materials.size())
         return materials[index];
     else
-        return NULL;
+        return nullptr;
 }
 
 
@@ -65,7 +58,7 @@ Model::addMaterial(const Material* m)
     // if it forces multipass rendering when it's not required.
     for (int i = 0; i < Material::TextureSemanticMax; i++)
     {
-        if (m->maps[i])
+        if (m->maps[i] != nullptr)
         {
             textureUsage[i] = true;
         }
@@ -88,11 +81,8 @@ Model::getVertexCount() const
 {
     unsigned int count = 0;
 
-    for (vector<Mesh*>::const_iterator iter = meshes.begin();
-         iter != meshes.end(); iter++)
-    {
-        count += (*iter)->getVertexCount();
-    }
+    for (const auto mesh : meshes)
+        count += mesh->getVertexCount();
 
     return count;
 }
@@ -103,11 +93,8 @@ Model::getPrimitiveCount() const
 {
     unsigned int count = 0;
 
-    for (vector<Mesh*>::const_iterator iter = meshes.begin();
-         iter != meshes.end(); iter++)
-    {
-        count += (*iter)->getPrimitiveCount();
-    }
+    for (const auto mesh : meshes)
+        count += mesh->getPrimitiveCount();
 
     return count;
 }
@@ -126,7 +113,7 @@ Model::getMesh(unsigned int index) const
     if (index < meshes.size())
         return meshes[index];
     else
-        return NULL;
+        return nullptr;
 }
 
 
@@ -147,16 +134,15 @@ Model::pick(const Eigen::Vector3d& rayOrigin,
     double closest = maxDistance;
     Mesh::PickResult closestResult;
 
-    for (vector<Mesh*>::const_iterator iter = meshes.begin();
-         iter != meshes.end(); iter++)
+    for (const auto mesh : meshes)
     {
         Mesh::PickResult result;
-        if ((*iter)->pick(rayOrigin, rayDirection, &result))
+        if (mesh->pick(rayOrigin, rayDirection, &result))
         {
             if (result.distance < closest)
             {
                 closestResult = result;
-                closestResult.mesh = *iter;
+                closestResult.mesh = mesh;
                 closest = result.distance;
             }
         }
@@ -164,17 +150,14 @@ Model::pick(const Eigen::Vector3d& rayOrigin,
 
     if (closest != maxDistance)
     {
-        if (result)
+        if (result != nullptr)
         {
             *result = closestResult;
         }
         return true;
     }
-    else
-    {
-        return false;
-    }
 
+    return false;
 }
 
 
@@ -199,8 +182,8 @@ Model::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, double& dis
 void
 Model::transform(const Vector3f& translation, float scale)
 {
-    for (vector<Mesh*>::const_iterator iter = meshes.begin(); iter != meshes.end(); iter++)
-        (*iter)->transform(translation, scale);
+    for (const auto mesh : meshes)
+        mesh->transform(translation, scale);
 }
 
 
@@ -209,8 +192,8 @@ Model::normalize(const Vector3f& centerOffset)
 {
     AlignedBox<float, 3> bbox;
 
-    for (vector<Mesh*>::const_iterator iter = meshes.begin(); iter != meshes.end(); iter++)
-        bbox.extend((*iter)->getBoundingBox());
+    for (const auto mesh : meshes)
+        bbox.extend(mesh->getBoundingBox());
 
     Vector3f center = (bbox.min() + bbox.max()) * 0.5f + centerOffset;
     Vector3f extents = bbox.max() - bbox.min();
@@ -227,12 +210,12 @@ operator<(const Material::Color& c0, const Material::Color& c1)
 {
     if (c0.red() < c1.red())
         return true;
-    else if (c0.red() > c1.red())
+    if (c0.red() > c1.red())
         return false;
 
     if (c0.green() < c1.green())
         return true;
-    else if (c0.green() > c1.green())
+    if (c0.green() > c1.green())
         return false;
 
     return c0.blue() < c1.blue();
@@ -251,7 +234,7 @@ operator<(const Material& m0, const Material& m1)
     // rendered after opaque ones.
     if (m0.opacity < m1.opacity)
         return true;
-    else if (m0.opacity > m1.opacity)
+    if (m0.opacity > m1.opacity)
         return false;
 
     // Reverse sense of comparison here--additive blending is 1, normal
@@ -259,34 +242,34 @@ operator<(const Material& m0, const Material& m1)
     // last.
     if (m0.blend > m1.blend)
         return true;
-    else if (m0.blend < m1.blend)
+    if (m0.blend < m1.blend)
         return false;
 
     if (m0.diffuse < m1.diffuse)
         return true;
-    else if (m1.diffuse < m0.diffuse)
+    if (m1.diffuse < m0.diffuse)
         return false;
 
     if (m0.emissive < m1.emissive)
         return true;
-    else if (m1.emissive < m0.emissive)
+    if (m1.emissive < m0.emissive)
         return false;
 
     if (m0.specular < m1.specular)
         return true;
-    else if (m1.specular < m0.specular)
+    if (m1.specular < m0.specular)
         return false;
 
     if (m0.specularPower < m1.specularPower)
         return true;
-    else if (m0.specularPower > m1.specularPower)
+    if (m0.specularPower > m1.specularPower)
         return false;
 
     for (unsigned int i = 0; i < Material::TextureSemanticMax; i++)
     {
         if (m0.maps[i] < m1.maps[i])
             return true;
-        else if (m0.maps[i] > m1.maps[i])
+        if (m0.maps[i] > m1.maps[i])
             return false;
     }
 
@@ -364,18 +347,11 @@ Model::uniquifyMaterials()
     // Remap all the material indices in the model. Even if no materials have
     // been eliminated we've still sorted them by opacity, which is useful
     // when reordering meshes so that translucent ones are rendered last.
-    for (vector<Mesh*>::iterator iter = meshes.begin();
-         iter != meshes.end(); iter++)
-    {
-        (*iter)->remapMaterials(materialMap);
-    }
+    for (const auto mesh : meshes)
+        mesh->remapMaterials(materialMap);
 
-    vector<unsigned int>::const_iterator dupIter;
-    for (dupIter = duplicateMaterials.begin();
-         dupIter != duplicateMaterials.end(); ++dupIter)
-    {
-        delete indexedMaterials[*dupIter].material;
-    }
+    for (const auto i : duplicateMaterials)
+        delete indexedMaterials[i].material;
 
     materials = uniqueMaterials;
 }
@@ -423,11 +399,6 @@ private:
 };
 
 
-Model::OpacityComparator::OpacityComparator()
-{
-}
-
-
 // Look at the material used by last primitive group in the mesh for the
 // opacity of the whole model.  This is a very crude way to check the opacity
 // of a mesh and misses many cases.
@@ -436,8 +407,8 @@ getMeshMaterialIndex(const Mesh& mesh)
 {
     if (mesh.getGroupCount() == 0)
         return 0;
-    else
-        return mesh.getGroup(mesh.getGroupCount() - 1)->materialIndex;
+
+    return mesh.getGroup(mesh.getGroupCount() - 1)->materialIndex;
 }
 
 
@@ -456,11 +427,8 @@ Model::sortMeshes(const MeshComparator& comparator)
 {
     // Sort submeshes by material; if materials have been uniquified,
     // then the submeshes will be ordered so that opaque ones are first.
-    for (vector<Mesh*>::const_iterator iter = meshes.begin();
-         iter != meshes.end(); iter++)
-    {
-        (*iter)->aggregateByMaterial();
-    }
+    for (const auto mesh : meshes)
+        mesh->aggregateByMaterial();
 
     // Sort the meshes so that completely opaque ones are first
     sort(meshes.begin(), meshes.end(), MeshComparatorAdapter(comparator));

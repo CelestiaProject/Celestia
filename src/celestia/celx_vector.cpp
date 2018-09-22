@@ -38,7 +38,7 @@ static Vec3d* this_vector(lua_State* l)
     CelxLua celx(l);
 
     Vec3d* v3 = to_vector(l, 1);
-    if (v3 == NULL)
+    if (v3 == nullptr)
     {
         celx.doError("Bad vector object!");
     }
@@ -54,7 +54,7 @@ static int vector_sub(lua_State* l)
     celx.checkArgs(2, 2, "Need two operands for sub");
     Vec3d* op1 = celx.toVector(1);
     Vec3d* op2 = celx.toVector(2);
-    if (op1 == NULL || op2 == NULL)
+    if (op1 == nullptr || op2 == nullptr)
     {
         celx.doError("Subtraction only defined for two vectors");
     }
@@ -82,16 +82,15 @@ static int vector_get(lua_State* l)
         value = v3->z;
     else
     {
-        if (lua_getmetatable(l, 1))
-        {
-            lua_pushvalue(l, 2);
-            lua_rawget(l, -2);
-            return 1;
-        }
-        else
+        if (!lua_getmetatable(l, 1))
         {
             celx.doError("Internal error: couldn't get metatable");
+            return 0;
         }
+
+        lua_pushvalue(l, 2);
+        lua_rawget(l, -2);
+        return 1;
     }
     lua_pushnumber(l, (lua_Number)value);
     return 1;
@@ -185,9 +184,9 @@ static int vector_add(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 2, "Need two operands for addition");
-    Vec3d* v1 = NULL;
-    Vec3d* v2 = NULL;
-    UniversalCoord* p = NULL;
+    Vec3d* v1 = nullptr;
+    Vec3d* v2 = nullptr;
+    UniversalCoord* p = nullptr;
 
     if (celx.isType(1, Celx_Vec3) && celx.isType(2, Celx_Vec3))
     {
@@ -214,9 +213,9 @@ static int vector_mult(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 2, "Need two operands for multiplication");
-    Vec3d* v1 = NULL;
-    Vec3d* v2 = NULL;
-    Quatd* q = NULL;
+    Vec3d* v1 = nullptr;
+    Vec3d* v2 = nullptr;
+    Quatd* q = nullptr;
     lua_Number s = 0.0;
     if (celx.isType(1, Celx_Vec3) && celx.isType(2, Celx_Vec3))
     {
@@ -257,8 +256,8 @@ static int vector_cross(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 2, "Need two operands for multiplication");
-    Vec3d* v1 = NULL;
-    Vec3d* v2 = NULL;
+    Vec3d* v1 = nullptr;
+    Vec3d* v2 = nullptr;
     if (celx.isType(1, Celx_Vec3) && celx.isType(2, Celx_Vec3))
     {
         v1 = celx.toVector(1);

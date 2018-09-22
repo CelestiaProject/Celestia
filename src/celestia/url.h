@@ -57,16 +57,16 @@ public:
         TimeSourceCount   = 3,
     };
 
-    Url();
+    Url() = default;
 
     // parses str
-    Url(const std::string& str, CelestiaCore *core);
+    Url(std::string  str, CelestiaCore *core);
     // current url of appCore
     Url(CelestiaCore* appCore, UrlType type = Absolute);
     Url(const CelestiaState& appState,
-        unsigned int version = CurrentVersion,
+        unsigned int _version = CurrentVersion,
         TimeSource _timeSource = UseUrlTime);
-    ~Url();
+    ~Url() = default;
 
     std::string getAsString() const;
     std::string getName() const;
@@ -140,7 +140,7 @@ class CelestiaState
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    CelestiaState();
+    CelestiaState() = default;
 
     bool loadState(std::map<std::string, std::string>& params);
     void saveState(std::map<std::string, std::string>& params);
@@ -148,24 +148,24 @@ public:
 
     // Observer frame, position, and orientation. For multiview, there needs
     // be one instance of these parameters per view saved.
-    ObserverFrame::CoordinateSystem coordSys;
+    ObserverFrame::CoordinateSystem coordSys{ ObserverFrame::Universal };
     string refBodyName;
     string targetBodyName;
     string trackedBodyName;
-    UniversalCoord observerPosition;
-    Eigen::Quaternionf observerOrientation;
-    float fieldOfView;
+    UniversalCoord observerPosition{ 0.0, 0.0, 0.0 };
+    Eigen::Quaternionf observerOrientation{ Eigen::Quaternionf::Identity() };
+    float fieldOfView{ 45.0f };
 
     // Time parameters
-    double tdb;
-    float timeScale;
-    bool pauseState;
-    bool lightTimeDelay;
+    double tdb{ 0.0 };
+    float timeScale{ 1.0f };
+    bool pauseState{ false };
+    bool lightTimeDelay{ false };
 
     string selectedBodyName;
 
-    int labelMode;
-    int renderFlags;
+    int labelMode{ 0 };
+    int renderFlags{ 0 };
 };
 
 #endif

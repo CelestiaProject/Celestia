@@ -14,9 +14,9 @@ class WindowsTimer : public Timer
 {
 public:
     WindowsTimer();
-    ~WindowsTimer();
-    double getTime() const;
-    void reset();
+    virtual ~WindowsTimer() = default;
+    double getTime() const override;
+    void reset() override;
 
 private:
     LARGE_INTEGER freq;
@@ -28,10 +28,6 @@ WindowsTimer::WindowsTimer()
 {
     QueryPerformanceFrequency(&freq);
     reset();
-}
-
-WindowsTimer::~WindowsTimer()
-{
 }
 
 double WindowsTimer::getTime() const

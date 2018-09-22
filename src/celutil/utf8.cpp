@@ -263,38 +263,38 @@ unsigned int* WGL4NormalizationTables[256] = {
     WGL4_Normalization_02,
     WGL4_Normalization_03,
     WGL4_Normalization_04,
-    NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, WGL4_Normalization_1e, NULL,
-    NULL, WGL4_Normalization_21, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, WGL4_Normalization_1e, nullptr,
+    nullptr, WGL4_Normalization_21, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 };
 
 
@@ -303,7 +303,7 @@ unsigned int* WGL4NormalizationTables[256] = {
 //! is true if a valid UTF-8 sequence was successfully decoded.
 bool UTF8Decode(const std::string& str, int pos, wchar_t& ch)
 {
-    unsigned int c0 = (unsigned int) str[pos];
+    auto c0 = (unsigned int) str[pos];
     int charlen = UTF8EncodedSizeFromFirstByte(c0);
 
     // Bad UTF-8 character that extends past end of string
@@ -365,7 +365,7 @@ bool UTF8Decode(const std::string& str, int pos, wchar_t& ch)
 //! is true if a valid UTF-8 sequence was successfully decoded.
 bool UTF8Decode(const char* str, int pos, int length, wchar_t& ch)
 {
-    unsigned int c0 = (unsigned int) str[pos];
+    auto c0 = (unsigned int) str[pos];
     int charlen = UTF8EncodedSizeFromFirstByte(c0);
 
     // Bad UTF-8 character that extends past end of string
@@ -433,7 +433,7 @@ int UTF8Encode(wchar_t ch, char* s)
         s[1] = '\0';
         return 1;
     }
-    else if (ch < 0x800)
+    if (ch < 0x800)
     {
         s[0] = (char) (0xc0 | ((ch & 0x7c0) >> 6));
         s[1] = (char) (0x80 | (ch & 0x3f));
@@ -488,7 +488,7 @@ int UTF8Length(const std::string& s)
     int count = 0;
     for (int i = 0; i < len; i++)
     {
-        unsigned int c = (unsigned int) ((unsigned char) s[i]);
+        auto c = (unsigned int) ((unsigned char) s[i]);
         if ((c < 0x80) || (c >= 0xc2 && c <= 0xf4))
             count++;
     }
@@ -504,7 +504,7 @@ inline wchar_t UTF8Normalize(wchar_t ch)
         return ch;
 
     unsigned int* normTable = WGL4NormalizationTables[page];
-    if (normTable == NULL)
+    if (normTable == nullptr)
         return ch;
 
     return (wchar_t) normTable[(unsigned int) ch & 0xff];
@@ -536,7 +536,7 @@ int UTF8StringCompare(const std::string& s0, const std::string& s1)
 
         if (ch0 < ch1)
             return -1;
-        else if (ch0 > ch1)
+        if (ch0 > ch1)
             return 1;
     }
 
@@ -547,7 +547,7 @@ int UTF8StringCompare(const std::string& s0, const std::string& s1)
     len1 = UTF8Length(s1);
     if (len0 > len1)
         return 1;
-    else if (len0 < len1)
+    if (len0 < len1)
         return -1;
     else
         return 0;
@@ -575,7 +575,7 @@ int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n)
 
         if (ch0 < ch1)
             return -1;
-        else if (ch0 > ch1)
+        if (ch0 > ch1)
             return 1;
 
         n--;
@@ -588,7 +588,7 @@ int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n)
     len1 = UTF8Length(s1);
     if (len0 > len1)
         return 1;
-    else if (len0 < len1)
+    if (len0 < len1)
         return -1;
     else
         return 0;
@@ -600,30 +600,16 @@ int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n)
 class UTF8StringIterator
 {
 public:
-    UTF8StringIterator(const std::string& _str);
-    UTF8StringIterator(const UTF8StringIterator& iter);
+    UTF8StringIterator(const std::string& _str) : str(_str) {};
+    UTF8StringIterator(const UTF8StringIterator& iter) = default;
 
     UTF8StringIterator& operator++();
     UTF8StringIterator& operator++(int);
 
 private:
     const std::string& str;
-    int position;
+    int position{ 0 };
 };
-
-
-UTF8StringIterator::UTF8StringIterator(const std::string& _str) :
-    str(_str),
-    position(0)
-{
-}
-
-
-UTF8StringIterator::UTF8StringIterator(const UTF8StringIterator& iter) :
-    str(iter.str),
-    position(iter.position)
-{
-}
 
 
 UTF8StringIterator& UTF8StringIterator::operator++()
@@ -701,11 +687,11 @@ static const char* canonicalAbbrevs[] =
     "RHO", "SIG", "TAU", "UPS", "PHI", "CHI", "PSI", "OME",
 };
 
-static std::string noAbbrev("");
+static std::string noAbbrev;
 
 // Greek alphabet crud . . . should probably moved to it's own module.
 
-Greek* Greek::instance = NULL;
+Greek* Greek::instance = nullptr;
 
 Greek::Greek()
 {
@@ -728,7 +714,7 @@ Greek::~Greek()
 
 const std::string& Greek::canonicalAbbreviation(const std::string& letter)
 {
-    if (instance == NULL)
+    if (instance == nullptr)
         instance = new Greek();
 
     int i;
@@ -832,7 +818,7 @@ ReplaceGreekLetterAbbr(char *dst, unsigned int dstSize, const char* src, unsigne
             {
                 unsigned int abbrevLength = j;
                 unsigned int srcIndex = j;
-                const char* superscript = NULL;
+                const char* superscript = nullptr;
                 if (src[abbrevLength] == '1')
                     superscript = UTF8_SUPERSCRIPT_1;
                 else if (src[abbrevLength] == '2')
@@ -846,7 +832,7 @@ ReplaceGreekLetterAbbr(char *dst, unsigned int dstSize, const char* src, unsigne
                 unsigned int requiredLength = (int) srcLength;
                 if (utfGreekLength > abbrevLength)
                     requiredLength += utfGreekLength - abbrevLength;
-                if (superscript != NULL)
+                if (superscript != nullptr)
                 {
                     requiredLength += strlen(superscript) - 1;
                     srcIndex++;
@@ -858,23 +844,23 @@ ReplaceGreekLetterAbbr(char *dst, unsigned int dstSize, const char* src, unsigne
 
                 unsigned int dstIndex = 0;
                 j = 0;
-                while (utfGreek[j])
+                while (utfGreek[j] != 0)
                 {
                     dst[dstIndex++] = utfGreek[j];
                     j++;
                 }
 
-                if (superscript != NULL)
+                if (superscript != nullptr)
                 {
                     j = 0;
-                    while (superscript[j])
+                    while (superscript[j] != 0)
                     {
                         dst[dstIndex++] = superscript[j];
                         j++;
                     }
                 }
 
-                while (src[srcIndex])
+                while (src[srcIndex] != 0)
                 {
                     dst[dstIndex++] = src[srcIndex++];
                 }
@@ -887,20 +873,14 @@ ReplaceGreekLetterAbbr(char *dst, unsigned int dstSize, const char* src, unsigne
 
     strncpy(dst, src, dstSize);
     if (dstSize > srcLength)
-    {
         return srcLength;
-    }
-    else
-    {
-        if (dstSize > 0)
-        {
-            dst[dstSize - 1] = '\0';
-            return dstSize - 1;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-}
 
+
+    if (dstSize > 0)
+    {
+        dst[dstSize - 1] = '\0';
+        return dstSize - 1;
+    }
+
+    return 0;
+}

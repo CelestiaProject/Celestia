@@ -35,9 +35,9 @@
 using namespace std;
 
 
-static int parseRenderFlags(string);
-static int parseLabelFlags(string);
-static int parseOrbitFlags(string);
+static int parseRenderFlags(string /*s*/);
+static int parseLabelFlags(string /*s*/);
+static int parseOrbitFlags(string /*s*/);
 static int parseConstellations(CommandConstellations* cmd, string s, int act);
 int parseConstellationColor(CommandConstellationColor* cmd, string s, Vec3d *col, int act);
 
@@ -68,7 +68,7 @@ CommandSequence* CommandParser::parse()
     {
         error("'{' expected at start of script.");
         delete seq;
-        return NULL;
+        return nullptr;
     }
 
     Tokenizer::TokenType ttype = tokenizer->nextToken();
@@ -76,16 +76,11 @@ CommandSequence* CommandParser::parse()
     {
         tokenizer->pushBack();
         Command* cmd = parseCommand();
-        if (cmd == NULL)
+        if (cmd == nullptr)
         {
-            for (CommandSequence::const_iterator iter = seq->begin();
-                 iter != seq->end();
-                 iter++)
-            {
-                delete *iter;
-            }
+            for_each(seq->begin(), seq->end(), deleteFunc<Command*>());;
             delete seq;
-            return NULL;
+            return nullptr;
         }
         else
         {
@@ -100,7 +95,7 @@ CommandSequence* CommandParser::parse()
         error("Missing '}' at end of script.");
         for_each(seq->begin(), seq->end(), deleteFunc<Command*>());;
         delete seq;
-        return NULL;
+        return nullptr;
     }
 
     return seq;
@@ -149,20 +144,20 @@ Command* CommandParser::parseCommand()
     if (tokenizer->nextToken() != Tokenizer::TokenName)
     {
         error("Invalid command name");
-        return NULL;
+        return nullptr;
     }
 
     string commandName = tokenizer->getStringValue();
 
     Value* paramListValue = parser->readValue();
-    if (paramListValue == NULL || paramListValue->getType() != Value::HashType)
+    if (paramListValue == nullptr || paramListValue->getType() != Value::HashType)
     {
         error("Bad parameter list");
-        return NULL;
+        return nullptr;
     }
 
     Hash* paramList = paramListValue->getHash();
-    Command* cmd = NULL;
+    Command* cmd = nullptr;
 
     if (commandName == "wait")
     {
@@ -820,7 +815,7 @@ Command* CommandParser::parseCommand()
     else
     {
         error("Unknown command name '" + commandName + "'");
-        cmd = NULL;
+        cmd = nullptr;
     }
 
     delete paramListValue;
@@ -931,11 +926,11 @@ int parseConstellations(CommandConstellations* cmd, string s, int act)
         {
             string name = tokenizer.getNameValue();
             if (compareIgnoringCase(name, "all") == 0 && act==1)
-                cmd->all=1;
+                cmd->flags.all = true;
             else if (compareIgnoringCase(name, "all") == 0 && act==0)
-                cmd->none=1;
+                cmd->flags.none = true;
             else
-                cmd->setValues(name,act);
+                cmd->setValues(name, act);
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
@@ -970,9 +965,9 @@ int parseConstellationColor(CommandConstellationColor* cmd, string s, Vec3d *col
         {
             string name = tokenizer.getNameValue();
             if (compareIgnoringCase(name, "all") == 0 && act==1)
-                cmd->all=1;
+                cmd->flags.all = true;
             else if (compareIgnoringCase(name, "all") == 0 && act==0)
-                cmd->none=1;
+                cmd->flags.none = true;
             else
                 cmd->setConstellations(name);
 

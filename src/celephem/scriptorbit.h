@@ -20,8 +20,8 @@ struct lua_State;
 class ScriptedOrbit : public CachingOrbit
 {
  public:
-    ScriptedOrbit();
-    ~ScriptedOrbit();
+    ScriptedOrbit() = default;
+    ~ScriptedOrbit() = default;
 
     bool initialize(const std::string& moduleName,
                     const std::string& funcName,
@@ -35,12 +35,12 @@ class ScriptedOrbit : public CachingOrbit
     virtual void getValidRange(double& begin, double& end) const;
 
  private:
-    lua_State* luaState;
+    lua_State* luaState{ nullptr };
     std::string luaOrbitObjectName;
-    double boundingRadius;
-    double period;
-    double validRangeBegin;
-    double validRangeEnd;
+    double boundingRadius{ 1.0 };
+    double period{ 0.0 };
+    double validRangeBegin{ 0.0 };
+    double validRangeEnd{ 0.0 };
 };
 
 #endif // _CELENGINE_SCRIPTORBIT_H_

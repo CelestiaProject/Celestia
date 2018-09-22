@@ -145,8 +145,8 @@ int GetClassificationId(const string& className)
     ClassificationTable::iterator iter = Classifications.find(className);
     if (iter == Classifications.end())
         return Body::Unknown;
-    else
-        return iter->second;
+
+    return iter->second;
 }
 
 
@@ -291,7 +291,7 @@ static Selection GetParentObject(PlanetarySystem* system)
 {
     Selection parent;
     Body* primary = system->getPrimaryBody();
-    if (primary != NULL)
+    if (primary != nullptr)
         parent = Selection(primary);
     else
         parent = Selection(system->getStar());
@@ -320,7 +320,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     if (!isFirstPhase && hasBeginning)
     {
         clog << "Error: Beginning can only be specified for initial phase of timeline.\n";
-        return NULL;
+        return nullptr;
     }
 
     // Ending is required for all phases except for the final one.
@@ -328,18 +328,18 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     if (!isLastPhase && !hasEnding)
     {
         clog << "Error: Ending is required for all timeline phases other than the final one.\n";
-        return NULL;
+        return nullptr;
     }
 
     // Get the orbit reference frame.
     ReferenceFrame* orbitFrame;
     Value* frameValue = phaseData->getValue("OrbitFrame");
-    if (frameValue != NULL)
+    if (frameValue != nullptr)
     {
         orbitFrame = CreateReferenceFrame(universe, frameValue, defaultOrbitFrame->getCenter(), body);
-        if (orbitFrame == NULL)
+        if (orbitFrame == nullptr)
         {
-            return NULL;
+            return nullptr;
         }
     }
     else
@@ -352,13 +352,13 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     // Get the body reference frame
     ReferenceFrame* bodyFrame;
     Value* bodyFrameValue = phaseData->getValue("BodyFrame");
-    if (bodyFrameValue != NULL)
+    if (bodyFrameValue != nullptr)
     {
         bodyFrame = CreateReferenceFrame(universe, bodyFrameValue, defaultBodyFrame->getCenter(), body);
-        if (bodyFrame == NULL)
+        if (bodyFrame == nullptr)
         {
             orbitFrame->release();
-            return NULL;
+            return nullptr;
         }
     }
     else
@@ -370,7 +370,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
 
     // Use planet units (AU for semimajor axis) if the center of the orbit
     // reference frame is a star.
-    bool usePlanetUnits = orbitFrame->getCenter().star() != NULL;
+    bool usePlanetUnits = orbitFrame->getCenter().star() != nullptr;
 
     // Get the orbit
     Orbit* orbit = CreateOrbit(orbitFrame->getCenter(), phaseData, path, usePlanetUnits);
@@ -379,7 +379,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
         clog << "Error: missing orbit in timeline phase.\n";
         bodyFrame->release();
         orbitFrame->release();
-        return NULL;
+        return nullptr;
     }
 
     // Get the rotation model
@@ -417,17 +417,17 @@ Timeline* CreateTimelineFromArray(Body* body,
                                   ReferenceFrame* defaultOrbitFrame,
                                   ReferenceFrame* defaultBodyFrame)
 {
-    Timeline* timeline = new Timeline();
+    auto* timeline = new Timeline();
     double previousEnding = -numeric_limits<double>::infinity();
 
     for (ValueArray::const_iterator iter = timelineArray->begin(); iter != timelineArray->end(); iter++)
     {
         Hash* phaseData = (*iter)->getHash();
-        if (phaseData == NULL)
+        if (phaseData == nullptr)
         {
             clog << "Error in timeline of '" << body->getName() << "': phase " << iter - timelineArray->begin() + 1 << " is not a property group.\n";
             delete timeline;
-            return NULL;
+            return nullptr;
         }
 
         bool isFirstPhase = iter == timelineArray->begin();
@@ -438,11 +438,11 @@ Timeline* CreateTimelineFromArray(Body* body,
                                                    defaultOrbitFrame,
                                                    defaultBodyFrame,
                                                    isFirstPhase, isLastPhase, previousEnding);
-        if (phase == NULL)
+        if (phase == nullptr)
         {
             clog << "Error in timeline of '" << body->getName() << "', phase " << iter - timelineArray->begin() + 1 << endl;
             delete timeline;
-            return NULL;
+            return nullptr;
         }
 
         previousEnding = phase->endTime();
@@ -462,7 +462,7 @@ static bool CreateTimeline(Body* body,
                            Disposition disposition,
                            BodyType bodyType)
 {
-    FrameTree* parentFrameTree = NULL;
+    FrameTree* parentFrameTree = nullptr;
     Selection parentObject = GetParentObject(system);
     bool orbitsPlanet = false;
     if (parentObject.body())
@@ -473,7 +473,7 @@ static bool CreateTimeline(Body* body,
     else if (parentObject.star())
     {
         SolarSystem* solarSystem = universe.getSolarSystem(parentObject.star());
-        if (solarSystem == NULL)
+        if (solarSystem == nullptr)
             solarSystem = universe.createSolarSystem(parentObject.star());
         parentFrameTree = solarSystem->getFrameTree();
     }
@@ -483,8 +483,8 @@ static bool CreateTimeline(Body* body,
         return false;
     }
 
-    ReferenceFrame* defaultOrbitFrame = NULL;
-    ReferenceFrame* defaultBodyFrame = NULL;
+    ReferenceFrame* defaultOrbitFrame = nullptr;
+    ReferenceFrame* defaultBodyFrame = nullptr;
     if (bodyType == SurfaceObject)
     {
         defaultOrbitFrame = new BodyFixedFrame(parentObject, parentObject);
@@ -501,7 +501,7 @@ static bool CreateTimeline(Body* body,
     // If there's an explicit timeline definition, parse that. Otherwise, we'll do
     // things the old way.
     Value* value = planetData->getValue("Timeline");
-    if (value != NULL)
+    if (value != nullptr)
     {
         if (value->getType() != Value::ArrayType)
         {
@@ -511,22 +511,19 @@ static bool CreateTimeline(Body* body,
 
         Timeline* timeline = CreateTimelineFromArray(body, universe, value->getArray(), path,
                                                      defaultOrbitFrame, defaultBodyFrame);
-        if (timeline == NULL)
-        {
+
+        if (!timeline)
             return false;
-        }
-        else
-        {
-            body->setTimeline(timeline);
-            return true;
-        }
+
+        body->setTimeline(timeline);
+        return true;
     }
 
     // Information required for the object timeline.
-    ReferenceFrame* orbitFrame   = NULL;
-    ReferenceFrame* bodyFrame    = NULL;
-    Orbit* orbit                 = NULL;
-    RotationModel* rotationModel = NULL;
+    ReferenceFrame* orbitFrame   = nullptr;
+    ReferenceFrame* bodyFrame    = nullptr;
+    Orbit* orbit                 = nullptr;
+    RotationModel* rotationModel = nullptr;
     double beginning             = -numeric_limits<double>::infinity();
     double ending                =  numeric_limits<double>::infinity();
 
@@ -558,10 +555,10 @@ static bool CreateTimeline(Body* body,
     // Get the object's orbit reference frame.
     bool newOrbitFrame = false;
     Value* frameValue = planetData->getValue("OrbitFrame");
-    if (frameValue != NULL)
+    if (frameValue != nullptr)
     {
         ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue, parentObject, body);
-        if (frame != NULL)
+        if (frame != nullptr)
         {
             orbitFrame = frame;
             newOrbitFrame = true;
@@ -572,10 +569,10 @@ static bool CreateTimeline(Body* body,
     // Get the object's body frame.
     bool newBodyFrame = false;
     Value* bodyFrameValue = planetData->getValue("BodyFrame");
-    if (bodyFrameValue != NULL)
+    if (bodyFrameValue != nullptr)
     {
         ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue, parentObject, body);
-        if (frame != NULL)
+        if (frame != nullptr)
         {
             bodyFrame = frame;
             newBodyFrame = true;
@@ -584,20 +581,17 @@ static bool CreateTimeline(Body* body,
     }
 
     // If no orbit or body frame was specified, use the default ones
-    if (orbitFrame == NULL)
+    if (orbitFrame == nullptr)
         orbitFrame = defaultOrbitFrame;
-    if (bodyFrame == NULL)
+    if (bodyFrame == nullptr)
         bodyFrame = defaultBodyFrame;
 
     // If the center of the is a star, orbital element units are
     // in AU; otherwise, use kilometers.
-    if (orbitFrame->getCenter().star() != NULL)
-        orbitsPlanet = false;
-    else
-        orbitsPlanet = true;
+    orbitsPlanet = orbitFrame->getCenter().star() == nullptr;
 
     Orbit* newOrbit = CreateOrbit(orbitFrame->getCenter(), planetData, path, !orbitsPlanet);
-    if (newOrbit == NULL && orbit == NULL)
+    if (newOrbit == nullptr && orbit == nullptr)
     {
         if (body->getTimeline() && disposition == ModifyObject)
         {
@@ -617,7 +611,7 @@ static bool CreateTimeline(Body* body,
     }
 
     // If a new orbit was given, override any old orbit
-    if (newOrbit != NULL)
+    if (newOrbit != nullptr)
     {
         orbit = newOrbit;
         overrideOldTimeline = true;
@@ -628,7 +622,7 @@ static bool CreateTimeline(Body* body,
     RotationModel* newRotationModel = CreateRotationModel(planetData, path, syncRotationPeriod);
 
     // If a new rotation model was given, override the old one
-    if (newRotationModel != NULL)
+    if (newRotationModel != nullptr)
     {
         rotationModel = newRotationModel;
         overrideOldTimeline = true;
@@ -636,7 +630,7 @@ static bool CreateTimeline(Body* body,
 
     // If there was no rotation model specified, nor a previous rotation model to
     // override, create the default one.
-    if (rotationModel == NULL)
+    if (rotationModel == nullptr)
     {
         // If no rotation model is provided, use a default rotation model--
         // a uniform rotation that's synchronous with the orbit (appropriate
@@ -673,14 +667,14 @@ static bool CreateTimeline(Body* body,
 
         // We've already checked that beginning < ending; nothing else should go
         // wrong during the creation of a TimelinePhase.
-        assert(phase != NULL);
-        if (phase == NULL)
+        assert(phase != nullptr);
+        if (phase == nullptr)
         {
             clog << "Internal error creating TimelinePhase.\n";
             return false;
         }
 
-        Timeline* timeline = new Timeline();
+        auto* timeline = new Timeline();
         timeline->appendPhase(phase);
 
         body->setTimeline(timeline);
@@ -718,14 +712,14 @@ static Body* CreateBody(const string& name,
                         Disposition disposition,
                         BodyType bodyType)
 {
-    Body* body = NULL;
+    Body* body = nullptr;
 
     if (disposition == ModifyObject || disposition == ReplaceObject)
     {
         body = existingBody;
     }
 
-    if (body == NULL)
+    if (body == nullptr)
     {
         body = new Body(system, name);
         // If the body doesn't exist, always treat the disposition as 'Add'
@@ -744,7 +738,7 @@ static Body* CreateBody(const string& name,
         // No valid timeline given; give up.
         if (body != existingBody)
             delete body;
-        return NULL;
+        return nullptr;
     }
 
     // Three values control the shape and size of an ellipsoidal object:
@@ -758,7 +752,7 @@ static Body* CreateBody(const string& name,
     // If the body also has a mesh, it is always scaled in x, y, and z by
     // the maximum semiaxis, never anisotropically.
 
-    double radius = (double) body->getRadius();
+    auto radius = (double) body->getRadius();
     bool radiusSpecified = false;
     if (planetData->getLength("Radius", radius))
     {
@@ -801,7 +795,7 @@ static Body* CreateBody(const string& name,
     if (classification == Body::Unknown)
     {
         // Try to guess the type
-        if (system->getPrimaryBody() != NULL)
+        if (system->getPrimaryBody() != nullptr)
         {
             if(radius > 0.1)
                 classification = Body::Moon;
@@ -899,7 +893,7 @@ static Body* CreateBody(const string& name,
     // Read the atmosphere
     {
         Value* atmosDataValue = planetData->getValue("Atmosphere");
-        if (atmosDataValue != NULL)
+        if (atmosDataValue != nullptr)
         {
             if (atmosDataValue->getType() != Value::HashType)
             {
@@ -908,13 +902,13 @@ static Body* CreateBody(const string& name,
             else
             {
                 Hash* atmosData = atmosDataValue->getHash();
-                assert(atmosData != NULL);
+                assert(atmosData != nullptr);
 
-                Atmosphere* atmosphere = NULL;
+                Atmosphere* atmosphere = nullptr;
                 if (disposition == ModifyObject)
                 {
                     atmosphere = body->getAtmosphere();
-                    if (atmosphere == NULL)
+                    if (atmosphere == nullptr)
                     {
                         Atmosphere atm;
                         body->setAtmosphere(atm);
@@ -976,7 +970,7 @@ static Body* CreateBody(const string& name,
     // Read the ring system
     {
         Value* ringsDataValue = planetData->getValue("Rings");
-        if (ringsDataValue != NULL)
+        if (ringsDataValue != nullptr)
         {
             if (ringsDataValue->getType() != Value::HashType)
             {
@@ -985,10 +979,10 @@ static Body* CreateBody(const string& name,
             else
             {
                 Hash* ringsData = ringsDataValue->getHash();
-                // ASSERT(ringsData != NULL);
+                // ASSERT(ringsData != nullptr);
 
                 RingSystem rings(0.0f, 0.0f);
-                if (body->getRings() != NULL)
+                if (body->getRings() != nullptr)
                     rings = *body->getRings();
 
                 double inner = 0.0, outer = 0.0;
@@ -1042,14 +1036,14 @@ static Body* CreateReferencePoint(const string& name,
                                   const string& path,
                                   Disposition disposition)
 {
-    Body* body = NULL;
+    Body* body = nullptr;
 
     if (disposition == ModifyObject || disposition == ReplaceObject)
     {
         body = existingBody;
     }
 
-    if (body == NULL)
+    if (body == nullptr)
     {
         body = new Body(system, name);
         // If the point doesn't exist, always treat the disposition as 'Add'
@@ -1067,7 +1061,7 @@ static Body* CreateReferencePoint(const string& name,
         // No valid timeline given; give up.
         if (body != existingBody)
             delete body;
-        return NULL;
+        return nullptr;
     }
 
     // Reference points can be marked visible; no geometry is shown, but the label and orbit
@@ -1144,7 +1138,7 @@ bool LoadSolarSystemObjects(istream& in,
         string parentName = tokenizer.getStringValue().c_str();
 
         Value* objectDataValue = parser.readValue();
-        if (objectDataValue == NULL)
+        if (objectDataValue == nullptr)
         {
             sscError(tokenizer, "bad object definition");
             return false;
@@ -1158,8 +1152,8 @@ bool LoadSolarSystemObjects(istream& in,
         }
         Hash* objectData = objectDataValue->getHash();
 
-        Selection parent = universe.findPath(parentName, NULL, 0);
-        PlanetarySystem* parentSystem = NULL;
+        Selection parent = universe.findPath(parentName, nullptr, 0);
+        PlanetarySystem* parentSystem = nullptr;
 
         vector<string> names;
         // Iterate through the string for names delimited
@@ -1197,10 +1191,10 @@ bool LoadSolarSystemObjects(istream& in,
         if (bodyType != UnknownBodyType)
         {
             //bool orbitsPlanet = false;
-            if (parent.star() != NULL)
+            if (parent.star() != nullptr)
             {
                 SolarSystem* solarSystem = universe.getSolarSystem(parent.star());
-                if (solarSystem == NULL)
+                if (solarSystem == nullptr)
                 {
                     // No solar system defined for this star yet, so we need
                     // to create it.
@@ -1208,11 +1202,11 @@ bool LoadSolarSystemObjects(istream& in,
                 }
                 parentSystem = solarSystem->getPlanets();
             }
-            else if (parent.body() != NULL)
+            else if (parent.body() != nullptr)
             {
                 // Parent is a planet or moon
                 parentSystem = parent.body()->getSatellites();
-                if (parentSystem == NULL)
+                if (parentSystem == nullptr)
                 {
                     // If the planet doesn't already have any satellites, we
                     // have to create a new planetary system for it.
@@ -1227,7 +1221,7 @@ bool LoadSolarSystemObjects(istream& in,
                 cerr << _("parent body '") << parentName << _("' of '") << primaryName << _("' not found.") << endl;
             }
 
-            if (parentSystem != NULL)
+            if (parentSystem != nullptr)
             {
                 Body* existingBody = parentSystem->find(primaryName);
                 if (existingBody)
@@ -1250,7 +1244,7 @@ bool LoadSolarSystemObjects(istream& in,
                 else
                     body = CreateBody(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition, bodyType);
 
-                if (body != NULL && disposition == AddObject)
+                if (body != nullptr && disposition == AddObject)
                 {
                     vector<string>::const_iterator iter = names.begin();
                     iter++;
@@ -1268,17 +1262,17 @@ bool LoadSolarSystemObjects(istream& in,
             surface->color = Color(1.0f, 1.0f, 1.0f);
             surface->hazeColor = Color(0.0f, 0.0f, 0.0f, 0.0f);
             FillinSurface(objectData, surface, directory);
-            if (parent.body() != NULL)
+            if (parent.body() != nullptr)
                 parent.body()->addAlternateSurface(primaryName, surface);
             else
                 sscError(tokenizer, _("bad alternate surface"));
         }
         else if (itemType == "Location")
         {
-            if (parent.body() != NULL)
+            if (parent.body() != nullptr)
             {
                 Location* location = CreateLocation(objectData, parent.body());
-                if (location != NULL)
+                if (location != nullptr)
                 {
                     location->setName(primaryName);
                     parent.body()->addLocation(location);
@@ -1304,8 +1298,8 @@ bool LoadSolarSystemObjects(istream& in,
 
 SolarSystem::SolarSystem(Star* _star) :
     star(_star),
-    planets(NULL),
-    frameTree(NULL)
+    planets(nullptr),
+    frameTree(nullptr)
 {
     planets = new PlanetarySystem(star);
     frameTree = new FrameTree(star);

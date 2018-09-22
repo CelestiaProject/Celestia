@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
     istream* inputFile = &cin;
     if (!inputFilename.empty())
     {
-        inputFile = new ifstream(inputFilename.c_str(), ios::in);
+        inputFile = new ifstream(inputFilename, ios::in);
         if (!inputFile->good())
         {
             cerr << "Error opening input file " << inputFilename << '\n';
@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
     ostream* outputFile = &cout;
     if (!outputFilename.empty())
     {
-        outputFile = new ofstream(outputFilename.c_str(), ios::out | ios::binary);
+        outputFile = new ofstream(outputFilename, ios::out | ios::binary);
         if (!outputFile->good())
         {
             cerr << "Error opening output file " << outputFilename << '\n';

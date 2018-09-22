@@ -31,8 +31,8 @@ public:
                 Texture** tex, int nTextures);
     void render(const GLContext&,
                 unsigned int attributes, const Frustum&, float pixWidth,
-                Texture* tex0 = NULL, Texture* tex1 = NULL,
-                Texture* tex2 = NULL, Texture* tex3 = NULL);
+                Texture* tex0 = nullptr, Texture* tex1 = nullptr,
+                Texture* tex2 = nullptr, Texture* tex3 = nullptr);
     void render(const GLContext&,
                 const Frustum&, float pixWidth,
                 Texture** tex, int nTextures);
@@ -75,7 +75,7 @@ public:
 
     void renderSection(int phi0, int theta0, int extent, const RenderInfo&);
 
-    float* vertices;
+    float* vertices{ nullptr };
 
     int maxVertices;
     int vertexSize;
@@ -83,12 +83,12 @@ public:
     int nIndices;
     unsigned short* indices;
 
-    int nTexturesUsed;
+    int nTexturesUsed{};
     Texture* textures[MAX_SPHERE_MESH_TEXTURES];
-    unsigned int subtextures[MAX_SPHERE_MESH_TEXTURES];
+    unsigned int subtextures[MAX_SPHERE_MESH_TEXTURES]{};
 
-    bool vertexBuffersInitialized;
-    bool useVertexBuffers;
+    bool vertexBuffersInitialized{ false };
+    bool useVertexBuffers{ false };
     int currentVB;
     unsigned int vertexBuffers[NUM_SPHERE_VERTEX_BUFFERS];
     GLuint indexBuffer;

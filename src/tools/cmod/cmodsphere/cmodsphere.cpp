@@ -11,7 +11,7 @@
 using namespace std;
 
 
-typedef unsigned int uint32;
+using uint32 = unsigned int;
 
 // TODO: these shouldn't be hardcoded
 static int latSamples = 1440;
@@ -19,7 +19,7 @@ static int longSamples = 2880;
 
 const float pi = 3.14159265;
 
-static float* samples = NULL;
+static float* samples = nullptr;
 
 // Read a big-endian 32-bit unsigned integer
 static uint32 readUint(istream& in)
@@ -75,7 +75,7 @@ inline float sample(float samples[],
 }
 
 
-inline float sampleBilinear(float samples[],
+inline float sampleBilinear(const float samples[],
                             unsigned int width,
                             unsigned int height,
                             float s,
@@ -125,7 +125,7 @@ void triangleSection(unsigned int subdiv,
 
             w.normalize();
 
-            if (samples != NULL)
+            if (samples != nullptr)
             {
                 float theta = (float) acos(w.y);
                 float phi = (float) atan2(-w.z, w.x);

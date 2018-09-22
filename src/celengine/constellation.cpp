@@ -112,32 +112,32 @@ static struct Constellation_s constellationInfo[] = {
     { "Vulpecula", "Vulpeculae", "Vul" }
 };
 
-static Constellation **constellations = NULL;
+static Constellation **constellations = nullptr;
 
 
-Constellation::Constellation(const char *_name, const char *_genitive, const char *_abbrev)
+Constellation::Constellation(const char *_name, const char *_genitive, const char *_abbrev) :
+    name(_name),
+    genitive(_genitive),
+    abbrev(_abbrev)
 {
-    name = string(_name);
-    genitive = string(_genitive);
-    abbrev = string(_abbrev);
 }
 
 Constellation* Constellation::getConstellation(unsigned int n)
 {
-    if (constellations == NULL)
+    if (constellations == nullptr)
         initialize();
 
-    if (constellations == NULL ||
+    if (constellations == nullptr ||
         n >= sizeof(constellationInfo) / sizeof(constellationInfo[0]))
-        return NULL;
-    else
-        return constellations[n];
+        return nullptr;
+
+    return constellations[n];
 }
 
 Constellation* Constellation::getConstellation(const string& name)
 {
-    if (constellations == NULL)
-    initialize();
+    if (constellations == nullptr)
+        initialize();
 
     for (unsigned int i = 0;
          i < sizeof(constellationInfo) / sizeof(constellationInfo[0]);
@@ -151,20 +151,20 @@ Constellation* Constellation::getConstellation(const string& name)
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
-string Constellation::getName()
+const string Constellation::getName() const
 {
     return name;
 }
 
-string Constellation::getGenitive()
+const string Constellation::getGenitive() const
 {
     return genitive;
 }
 
-string Constellation::getAbbreviation()
+const string Constellation::getAbbreviation() const
 {
     return abbrev;
 }
@@ -174,7 +174,7 @@ void Constellation::initialize()
     int nConstellations = sizeof(constellationInfo) / sizeof(constellationInfo[0]);
     constellations = new Constellation* [nConstellations];
 
-    if (constellations != NULL)
+    if (constellations != nullptr)
     {
         for (int i = 0; i < nConstellations; i++)
         {

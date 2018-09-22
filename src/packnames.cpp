@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
         {
             break;
         }
-        else if (cin.bad())
+        if (cin.bad())
         {
             cerr << "Error reading names file.\n";
             break;

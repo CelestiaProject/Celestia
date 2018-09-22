@@ -61,8 +61,8 @@ class ModelGeometry : public Geometry
 
  private:
     cmod::Model* m_model;
-    bool m_vbInitialized;
-    ModelOpenGLData* m_glData;
+    bool m_vbInitialized{ false };
+    ModelOpenGLData* m_glData{ nullptr };
 };
 
 #endif // !_CELENGINE_MODEL_H_

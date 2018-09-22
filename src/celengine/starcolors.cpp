@@ -470,8 +470,8 @@ Color StarColors_Blackbody_2deg_D65[401] =
 };
 
 
-static ColorTemperatureTable* enhanced = NULL;
-static ColorTemperatureTable* blackbodyD65 = NULL;
+static ColorTemperatureTable* enhanced = nullptr;
+static ColorTemperatureTable* blackbodyD65 = nullptr;
 
 ColorTemperatureTable*
 GetStarColorTable(ColorTableType ct)
@@ -479,7 +479,7 @@ GetStarColorTable(ColorTableType ct)
     switch (ct)
     {
     case ColorTable_Enhanced:
-        if (enhanced == NULL)
+        if (enhanced == nullptr)
         {
             enhanced = new ColorTemperatureTable(StarColors_Enhanced,
                                                  41, 40000.0f);
@@ -487,7 +487,7 @@ GetStarColorTable(ColorTableType ct)
         return enhanced;
 
     case ColorTable_Blackbody_D65:
-        if (blackbodyD65 == NULL)
+        if (blackbodyD65 == nullptr)
         {
             blackbodyD65 = new ColorTemperatureTable(StarColors_Blackbody_2deg_D65,
                                                      401, 40000.0f);
@@ -495,6 +495,6 @@ GetStarColorTable(ColorTableType ct)
         return blackbodyD65;
 
     default:
-        return NULL;
+        return nullptr;
     }
 }

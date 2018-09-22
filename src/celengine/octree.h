@@ -170,10 +170,10 @@ enum
 template <class OBJ, class PREC>
 inline DynamicOctree<OBJ, PREC>::DynamicOctree(const Eigen::Matrix<PREC, 3, 1>& cellCenterPos,
                                                const float                      exclusionFactor):
-    _children      (NULL),
+    _children      (nullptr),
     cellCenterPos  (cellCenterPos),
     exclusionFactor(exclusionFactor),
-    _objects       (NULL)
+    _objects       (nullptr)
 {
 }
 
@@ -181,7 +181,7 @@ inline DynamicOctree<OBJ, PREC>::DynamicOctree(const Eigen::Matrix<PREC, 3, 1>& 
 template <class OBJ, class PREC>
 inline DynamicOctree<OBJ, PREC>::~DynamicOctree()
 {
-    if (_children != NULL)
+    if (_children != nullptr)
     {
         for (int i = 0; i < 8; ++i)
         {
@@ -209,10 +209,10 @@ inline void DynamicOctree<OBJ, PREC>::insertObject(const OBJ& obj, const PREC sc
         // object into a child node.  This is done in order
         // to avoid having the octree degenerate into one object
         // per node.
-        if (_children == NULL)
+        if (_children == nullptr)
         {
             // Make sure that there's enough room left in this node
-            if (_objects != NULL && _objects->size() >= DynamicOctree<OBJ, PREC>::SPLIT_THRESHOLD)
+            if (_objects != nullptr && _objects->size() >= DynamicOctree<OBJ, PREC>::SPLIT_THRESHOLD)
                 split(scale * 0.5f);
             add(obj);
         }
@@ -227,7 +227,7 @@ inline void DynamicOctree<OBJ, PREC>::insertObject(const OBJ& obj, const PREC sc
 template <class OBJ, class PREC>
 inline void DynamicOctree<OBJ, PREC>::add(const OBJ& obj)
 {
-    if (_objects == NULL)
+    if (_objects == nullptr)
         _objects = new ObjectList;
 
     _objects->push_back(&obj);
@@ -292,7 +292,7 @@ inline void DynamicOctree<OBJ, PREC>::rebuildAndSort(StaticOctree<OBJ, PREC>*& _
 {
     OBJ* _firstObject = _sortedObjects;
 
-    if (_objects != NULL)
+    if (_objects != nullptr)
         for (typename ObjectList::const_iterator iter = _objects->begin(); iter != _objects->end(); ++iter)
         {
             *_sortedObjects++ = **iter;
@@ -301,7 +301,7 @@ inline void DynamicOctree<OBJ, PREC>::rebuildAndSort(StaticOctree<OBJ, PREC>*& _
     unsigned int nObjects  = (unsigned int) (_sortedObjects - _firstObject);
     _staticNode            = new StaticOctree<OBJ, PREC>(cellCenterPos, exclusionFactor, _firstObject, nObjects);
 
-    if (_children != NULL)
+    if (_children != nullptr)
     {
         _staticNode->_children    = new StaticOctree<OBJ, PREC>*[8];
 
@@ -321,7 +321,7 @@ inline StaticOctree<OBJ, PREC>::StaticOctree(const Eigen::Matrix<PREC, 3, 1>& ce
                                              const float         exclusionFactor,
                                              OBJ*                _firstObject,
                                              unsigned int        nObjects):
-    _children      (NULL),
+    _children      (nullptr),
     cellCenterPos  (cellCenterPos),
     exclusionFactor(exclusionFactor),
     _firstObject   (_firstObject),
@@ -333,7 +333,7 @@ inline StaticOctree<OBJ, PREC>::StaticOctree(const Eigen::Matrix<PREC, 3, 1>& ce
 template <class OBJ, class PREC>
 inline StaticOctree<OBJ, PREC>::~StaticOctree()
 {
-    if (_children != NULL)
+    if (_children != nullptr)
     {
         for (int i = 0; i < 8; ++i)
             delete _children[i];
@@ -349,7 +349,7 @@ inline int StaticOctree<OBJ, PREC>::countChildren() const
     int count    = 0;
 
     for (int i = 0; i < 8; ++i)
-        count    += _children != NULL ? 1 + _children[i]->countChildren() : 0;
+        count    += _children != nullptr ? 1 + _children[i]->countChildren() : 0;
 
     return count;
 }
@@ -360,7 +360,7 @@ inline int StaticOctree<OBJ, PREC>::countObjects() const
 {
     int count    = nObjects;
 
-    if (_children != NULL)
+    if (_children != nullptr)
         for (int i = 0; i < 8; ++i)
             count    += _children[i]->countObjects();
 
@@ -387,7 +387,7 @@ void StaticOctree<OBJ, PREC>::computeStatistics(std::vector<OctreeLevelStatistic
     stats[level].objectCount += nObjects;
     stats[level].size = 0.0;
 
-    if (_children != NULL)
+    if (_children != nullptr)
     {
         for (int i = 0; i < 8; i++)
             _children[i]->computeStatistics(stats, level + 1);

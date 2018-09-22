@@ -35,7 +35,7 @@ class PlanetarySystem
  public:
     PlanetarySystem(Body* _primary);
     PlanetarySystem(Star* _star);
-    ~PlanetarySystem();
+    ~PlanetarySystem() = default;
 
     Star* getStar() const { return star; };
     Body* getPrimaryBody() const { return primary; };
@@ -71,7 +71,7 @@ class PlanetarySystem
 
  private:
     Star* star;
-    Body* primary;
+    Body* primary{nullptr};
     std::vector<Body*> satellites;
     ObjectIndex objectIndex;  // index of bodies by name
 };
@@ -337,57 +337,57 @@ class Body
     void markUpdated();
 
  private:
-    void setName(const std::string& _name);
+    void setName(const std::string& name);
     void recomputeCullingRadius();
 
  private:
-    std::vector<std::string> names;
-    unsigned int localizedNameIndex;
+    std::vector<std::string> names{ 1 };
+    unsigned int localizedNameIndex{ 0 };
 
     // Parent in the name hierarchy
     PlanetarySystem* system;
     // Children in the name hierarchy
-    PlanetarySystem* satellites;
+    PlanetarySystem* satellites{ nullptr };
 
-    Timeline* timeline;
+    Timeline* timeline{ nullptr };
     // Children in the frame hierarchy
-    FrameTree* frameTree;
+    FrameTree* frameTree{ nullptr };
 
-    float radius;
-    Eigen::Vector3f semiAxes;
-    float mass;
-    float albedo;
-    Eigen::Quaternionf geometryOrientation;
+    float radius{ 1.0f };
+    Eigen::Vector3f semiAxes{ 1.0f, 1.0f, 1.0f };
+    float mass{ 0.0f };
+    float albedo{ 0.5f };
+    Eigen::Quaternionf geometryOrientation{ Eigen::Quaternionf::Identity() };
 
-    float cullingRadius;
+    float cullingRadius{ 0.0f };
 
-    ResourceHandle geometry;
-    float geometryScale;
-    Surface surface;
+    ResourceHandle geometry{ InvalidResource };
+    float geometryScale{ 1.0f };
+    Surface surface{ Color(1.0f, 1.0f, 1.0f) };
 
-    Atmosphere* atmosphere;
-    RingSystem* rings;
+    Atmosphere* atmosphere{ nullptr };
+    RingSystem* rings{ nullptr };
 
-    int classification;
+    int classification{ Unknown };
 
     std::string infoURL;
 
     typedef std::map<std::string, Surface*> AltSurfaceTable;
-    AltSurfaceTable *altSurfaces;
+    AltSurfaceTable *altSurfaces{ nullptr };
 
-    std::vector<Location*>* locations;
-    mutable bool locationsComputed;
+    std::vector<Location*>* locations{ nullptr };
+    mutable bool locationsComputed{ false };
 
-    std::list<ReferenceMark*>* referenceMarks;
+    std::list<ReferenceMark*>* referenceMarks{ nullptr };
 
     Color orbitColor;
 
-    unsigned int visible : 1;
-    unsigned int clickable : 1;
-    unsigned int visibleAsPoint : 1;
-    unsigned int overrideOrbitColor : 1;
+    bool visible{ true };
+    bool clickable{ true };
+    bool visibleAsPoint{ true };
+    bool overrideOrbitColor{ false };
     VisibilityPolicy orbitVisibility : 3;
-    bool secondaryIlluminator : 1;
+    bool secondaryIlluminator{ true };
 };
 
 #endif // _CELENGINE_BODY_H_

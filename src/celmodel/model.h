@@ -12,6 +12,8 @@
 #define _CELMODEL_MODEL_H_
 
 #include "mesh.h"
+#include <memory>
+#include <array>
 
 
 namespace cmod
@@ -48,7 +50,7 @@ class Model
      */
     unsigned int getPrimitiveCount() const;
 
-    /*! Return the mesh with the specified index, or NULL if the
+    /*! Return the mesh with the specified index, or nullptr if the
      *  index is out of range.
      */
     Mesh* getMesh(unsigned int index) const;
@@ -65,7 +67,7 @@ class Model
     /** Find the closest intersection between the ray (given
      *  by origin and direction) and the model. If the ray
      *  intersects the model, return true and fill in the
-     *  pick result record. If the result record is NULL, it
+     *  pick result record. If the result record is nullptr, it
      *  ignored, and the function just computes whether or
      *  not the ray intersected the model.
      */
@@ -114,7 +116,7 @@ class Model
     class MeshComparator
     {
      public:
-        virtual ~MeshComparator() {};
+        virtual ~MeshComparator() = default;
 
         virtual bool operator()(const Mesh&, const Mesh&) const = 0;
     };
@@ -141,8 +143,8 @@ class Model
     class OpacityComparator : public MeshComparator
     {
      public:
-        OpacityComparator();
-        virtual ~OpacityComparator() {};
+        OpacityComparator() = default;
+        virtual ~OpacityComparator() = default;
 
         virtual bool operator()(const Mesh&, const Mesh&) const;
 
@@ -154,9 +156,9 @@ class Model
     std::vector<const Material*> materials;
     std::vector<Mesh*> meshes;
 
-    bool textureUsage[Material::TextureSemanticMax];
-    bool opaque;
-    bool normalized;
+    std::array<bool, Material::TextureSemanticMax> textureUsage;
+    bool opaque{ true };
+    bool normalized{ false };
 };
 
 } // namespace

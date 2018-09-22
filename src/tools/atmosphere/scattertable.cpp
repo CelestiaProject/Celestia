@@ -81,9 +81,7 @@ static Vector3f RayleighScatteringCoeff(float n, float N)
 class Atmosphere
 {
 public:
-    Atmosphere()
-    {
-    }
+    Atmosphere() = default;
 
     float shellRadius() const
     {
@@ -115,7 +113,7 @@ static inline float sign(float x)
 {
     if (x < 0.0f)
         return -1.0f;
-    else if (x > 0.0f)
+    if (x > 0.0f)
         return 1.0f;
     else
         return 0.0f;
@@ -451,7 +449,7 @@ void SetDefaultParameters(ParameterSet& params)
 
 bool LoadParameterSet(ParameterSet& params, const string& filename)
 {
-    ifstream in(filename.c_str());
+    ifstream in(filename);
 
     if (!in.good())
     {
@@ -499,27 +497,19 @@ bool parseCommandLine(int argc, char* argv[])
             if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--scattersteps"))
             {
                 if (i == argc - 1)
-                {
                     return false;
-                }
-                else
-                {
-                    if (sscanf(argv[i + 1], " %u", &ScatteringIntegrationSteps) != 1)
-                        return false;
-                    i++;
-                }
+
+                if (sscanf(argv[i + 1], " %u", &ScatteringIntegrationSteps) != 1)
+                    return false;
+                i++;
             }
             else if (!strcmp(argv[i], "-o") || !strcmp(argv[i], "--output"))
             {
                 if (i == argc - 1)
-                {
                     return false;
-                }
-                else
-                {
-                    OutputFileName = string(argv[i + 1]);
-                    i++;
-                }
+
+                OutputFileName = string(argv[i + 1]);
+                i++;
             }
             else
             {
@@ -548,8 +538,8 @@ bool parseCommandLine(int argc, char* argv[])
 }
 
 
-typedef unsigned int uint32;
-typedef unsigned short uint16;
+using uint32 = unsigned int;
+using uint16 = unsigned short;
 
 union Uint16
 {
@@ -584,14 +574,14 @@ uint16 floatToHalf(float f)
 
     uint16 half = 0;
 
-    uint16 signBit = uint16((fi.u & 0x80000000) >> 16);
+    auto signBit = uint16((fi.u & 0x80000000) >> 16);
 
     if (f > 65504.0f)
     {
         // overflow
         return 0x7c00;
     }
-    else if (f < -65504.0f)
+    if (f < -65504.0f)
     {
         // overflow
         return 0xfc00;
@@ -605,7 +595,7 @@ uint16 floatToHalf(float f)
         // Value is too small even to represent as a subnormal
         return signBit;
     }
-    else if (exponent <= 0)
+    if (exponent <= 0)
     {
         // Convert to a subnormal
         return signBit + (significand >> (13 - exponent));
@@ -618,18 +608,18 @@ uint16 floatToHalf(float f)
             // Infinity
             return signBit + 0x7c00;
         }
-        else
-        {
+
+
             // NaN - preserve bits, but make sure that we don't
             // make the significand zero, as that would indicate
             // an infinity, not a NaN
-            uint16 nanBits = uint16(significand >> 13);
+            auto nanBits = uint16(significand >> 13);
             if (nanBits == 0)
             {
                 nanBits = 1;
             }
             return signBit + 0x7c00 + nanBits;
-        }
+
     }
     else if (exponent > 30)
     {
@@ -647,49 +637,27 @@ uint16 floatToHalf(float f)
 
 struct DDSPixelFormat
 {
-    DDSPixelFormat() :
-        dwSize(0),
-        dwFlags(0),
-        dwFourCC(0),
-        dwRGBBitCount(0),
-        dwRBitMask(0),
-        dwGBitMask(0),
-        dwBBitMask(0),
-        dwABitMask(0)
-    {
-    }
+    DDSPixelFormat() = default;
 
-    uint32 dwSize;
-    uint32 dwFlags;
-    uint32 dwFourCC;
-    uint32 dwRGBBitCount;
-    uint32 dwRBitMask;
-    uint32 dwGBitMask;
-    uint32 dwBBitMask;
-    uint32 dwABitMask;
+    uint32 dwSize{0};
+    uint32 dwFlags{0};
+    uint32 dwFourCC{0};
+    uint32 dwRGBBitCount{0};
+    uint32 dwRBitMask{0};
+    uint32 dwGBitMask{0};
+    uint32 dwBBitMask{0};
+    uint32 dwABitMask{0};
 };
 
 
 // Header for Microsoft DDS file format
 struct DDSHeader
 {
-    DDSHeader() :
-        dwSize(sizeof(DDSHeader)),
-        dwFlags(DDSD_PIXELFORMAT),
-        dwHeight(0),
-        dwWidth(0),
-        dwLinearSize(0),
-        dwDepth(0),
-        dwMipMapCount(0),
-        dwCaps(0),
-        dwCaps2(0),
-        dwCaps3(0),
-        dwCaps4(0),
-        dwReserved2(0)
+    DDSHeader()
     {
-        for (unsigned int i = 0; i < sizeof(dwReserved1) / sizeof(uint32); i++)
+        for (unsigned int & i : dwReserved1)
         {
-            dwReserved1[i] = 0;
+            i = 0;
         }
     }
 
@@ -723,20 +691,20 @@ struct DDSHeader
 
     static const uint32 FOURCC      = 0x04;
 
-    uint32          dwSize;
-    uint32          dwFlags;
-    uint32          dwHeight;
-    uint32          dwWidth;
-    uint32          dwLinearSize;
-    uint32          dwDepth;
-    uint32          dwMipMapCount;
+    uint32          dwSize{sizeof(DDSHeader)};
+    uint32          dwFlags{DDSD_PIXELFORMAT};
+    uint32          dwHeight{0};
+    uint32          dwWidth{0};
+    uint32          dwLinearSize{0};
+    uint32          dwDepth{0};
+    uint32          dwMipMapCount{0};
     uint32          dwReserved1[11];
     DDSPixelFormat  ddpf;
-    uint32          dwCaps;
-    uint32          dwCaps2;
-    uint32          dwCaps3;
-    uint32          dwCaps4;
-    uint32          dwReserved2;
+    uint32          dwCaps{0};
+    uint32          dwCaps2{0};
+    uint32          dwCaps3{0};
+    uint32          dwCaps4{0};
+    uint32          dwReserved2{0};
 
     void setTexture()
     {
@@ -785,7 +753,7 @@ static bool IsLittleEndian()
 // Write out a 16-bit unsigned integer in little-endian order
 static void WriteUint16(ostream& out, uint16 u)
 {
-    assert(sizeof(u) == 2);
+    static_assert(sizeof(u) == 2, "");
 
     Uint16 ub;
     ub.u = u;
@@ -801,7 +769,7 @@ static void WriteUint16(ostream& out, uint16 u)
 // Write out a 32-bit unsigned integer in little-endian order
 static void WriteUint32(ostream& out, uint32 u)
 {
-    assert(sizeof(u) == 4);
+    static_assert(sizeof(u) == 4, "");
 
     Uint32 ub;
     ub.u = u;
@@ -818,7 +786,7 @@ static void WriteUint32(ostream& out, uint32 u)
 // Write out a single precision floating point number
 static void WriteFloat(ostream& out, float f)
 {
-    assert(sizeof(f) == 4);
+    static_assert(sizeof(f) == 4, "");
 
     Float ub;
     ub.f = f;
@@ -849,9 +817,9 @@ void WriteDDSHeader(ostream& out, const DDSHeader& dds)
     WriteUint32(out, dds.dwLinearSize);
     WriteUint32(out, dds.dwDepth);
     WriteUint32(out, dds.dwMipMapCount);
-    for (unsigned int i = 0; i < sizeof(dds.dwReserved1) / sizeof(uint32); i++)
+    for (unsigned int i : dds.dwReserved1)
     {
-        WriteUint32(out, dds.dwReserved1[i]);
+        WriteUint32(out, i);
     }
 
     WriteUint32(out, dds.ddpf.dwSize);
@@ -970,7 +938,7 @@ int main(int argc, char* argv[])
 
 #if 0
     // Write tables in a single file
-    ofstream out(OutputFileName.c_str(), ostream::binary);
+    ofstream out(OutputFileName, ostream::binary);
 
     // Header
     out.write("atmscatr", 8);

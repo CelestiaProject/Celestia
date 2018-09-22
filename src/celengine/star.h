@@ -86,29 +86,29 @@ class StarDetails
     void addOrbitingStar(Star*);
 
  private:
-    float radius;
-    float temperature;
-    float bolometricCorrection;
+    float radius{ 0.0f };
+    float temperature{ 0.0f };
+    float bolometricCorrection{ 0.0f };
 
-    uint32 knowledge;
-    bool visible;
+    uint32 knowledge{ 0 };
+    bool visible{ true };
     char spectralType[8];
 
     MultiResTexture texture;
-    ResourceHandle geometry;
+    ResourceHandle geometry{ InvalidResource };
 
-    Orbit* orbit;
-    float orbitalRadius;
-    Star* barycenter;
+    Orbit* orbit{ nullptr };
+    float orbitalRadius{ 0.0f };
+    Star* barycenter{ nullptr };
 
-    const RotationModel* rotationModel;
+    const RotationModel* rotationModel{ nullptr };
 
-    Eigen::Vector3f semiAxes;
+    Eigen::Vector3f semiAxes{ 1.0f, 1.0f, 1.0f };
 
-    std::string* infoURL;
+    std::string* infoURL{ nullptr };
 
-    std::vector<Star*>* orbitingStars;
-    bool isShared;
+    std::vector<Star*>* orbitingStars{ nullptr };
+    bool isShared{ true };
 
  public:
     struct StarTextureSet
@@ -120,7 +120,7 @@ class StarDetails
 
  public:
     static StarDetails* GetStarDetails(const StellarClass&);
-    static StarDetails* CreateStandardStarType(const std::string& _specType,
+    static StarDetails* CreateStandardStarType(const std::string& specTypeName,
                                                float _temperature,
                                                float _rotationPeriod);
 
@@ -310,7 +310,7 @@ Star::Star() :
     catalogNumber(InvalidCatalogNumber),
     position(0, 0, 0),
     absMag(4.83f),
-    details(NULL)
+    details(nullptr)
 {
 }
 

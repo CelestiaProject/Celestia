@@ -86,12 +86,12 @@ public:
 
 private:
     lua_State* state;
-    lua_State* costate; // coroutine stack
-    bool alive;
+    lua_State* costate{ nullptr }; // coroutine stack
+    bool alive{ false };
     Timer* timer;
-    double scriptAwakenTime;
-    IOMode ioMode;
-    bool eventHandlerEnabled;
+    double scriptAwakenTime{ 0.0 };
+    IOMode ioMode{ NoIO };
+    bool eventHandlerEnabled{ false };
 };
 
 View* getViewByObserver(CelestiaCore*, Observer*);

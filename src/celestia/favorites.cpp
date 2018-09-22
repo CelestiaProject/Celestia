@@ -22,7 +22,7 @@ using namespace std;
 
 FavoritesList* ReadFavoritesList(istream& in)
 {
-    FavoritesList* favorites = new FavoritesList();
+    auto* favorites = new FavoritesList();
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
@@ -33,22 +33,22 @@ FavoritesList* ReadFavoritesList(istream& in)
             DPRINTF(0, "Error parsing favorites file.\n");
             for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
             delete favorites;
-            return NULL;
+            return nullptr;
         }
 
         FavoritesEntry* fav = new FavoritesEntry(); // FIXME: check
         fav->name = tokenizer.getStringValue();
 
         Value* favParamsValue = parser.readValue();
-        if (favParamsValue == NULL || favParamsValue->getType() != Value::HashType)
+        if (favParamsValue == nullptr || favParamsValue->getType() != Value::HashType)
         {
             DPRINTF(0, "Error parsing favorites entry %s\n", fav->name.c_str());
             for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
             delete favorites;
-            if (favParamsValue != NULL)
+            if (favParamsValue != nullptr)
                 delete favParamsValue;
             delete fav;
-            return NULL;
+            return nullptr;
         }
 
         Hash* favParams = favParamsValue->getHash();
@@ -115,11 +115,8 @@ FavoritesList* ReadFavoritesList(istream& in)
 
 void WriteFavoritesList(FavoritesList& favorites, ostream& out)
 {
-    for (FavoritesList::const_iterator iter = favorites.begin();
-         iter != favorites.end(); iter++)
+    for (const auto fav : favorites)
     {
-        FavoritesEntry* fav = *iter;
-
         AngleAxisf aa(fav->orientation);
         Vector3f axis = aa.axis();
         float angle = aa.angle();

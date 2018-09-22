@@ -28,8 +28,8 @@ static double chooseDiffTimeDelta(const RotationModel& rm)
 {
     if (rm.isPeriodic())
         return rm.getPeriod() / 10000.0;
-    else
-        return ANGULAR_VELOCITY_DIFF_DELTA;
+
+    return ANGULAR_VELOCITY_DIFF_DELTA;
 }
 
 /***** RotationModel *****/
@@ -64,11 +64,6 @@ CachingRotationModel::CachingRotationModel() :
     spinCacheValid(false),
     equatorCacheValid(false),
     angularVelocityCacheValid(false)
-{
-}
-
-
-CachingRotationModel::~CachingRotationModel()
 {
 }
 
@@ -169,13 +164,8 @@ ConstantOrientation::ConstantOrientation(const Quaterniond& q) :
 }
 
 
-ConstantOrientation::~ConstantOrientation()
-{
-}
-
-
 Quaterniond
-ConstantOrientation::spin(double) const
+ConstantOrientation::spin(double /*unused*/) const
 {
     return orientation;
 }
@@ -200,11 +190,6 @@ UniformRotationModel::UniformRotationModel(double _period,
     epoch(_epoch),
     inclination(_inclination),
     ascendingNode(_ascendingNode)
-{
-}
-
-
-UniformRotationModel::~UniformRotationModel()
 {
 }
 
@@ -241,7 +226,7 @@ UniformRotationModel::spin(double tjd) const
 
 
 Quaterniond
-UniformRotationModel::equatorOrientationAtTime(double) const
+UniformRotationModel::equatorOrientationAtTime(double /*unused*/) const
 {
     return XRotation((double) -inclination) * YRotation((double) -ascendingNode);
 }
@@ -269,11 +254,6 @@ PrecessingRotationModel::PrecessingRotationModel(double _period,
     inclination(_inclination),
     ascendingNode(_ascendingNode),
     precessionPeriod(_precPeriod)
-{
-}
-
-
-PrecessingRotationModel::~PrecessingRotationModel()
 {
 }
 

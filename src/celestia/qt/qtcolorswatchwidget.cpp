@@ -15,16 +15,11 @@
 
 
 ColorSwatchWidget::ColorSwatchWidget(const QColor& c, QWidget* parent) :
-    QLabel(NULL),
+    QLabel(nullptr),
     m_color(c)
 {
     setFrameStyle(QFrame::Sunken | QFrame::Panel);
     setColor(m_color);
-}
-
-
-ColorSwatchWidget::~ColorSwatchWidget()
-{
 }
 
 
@@ -42,7 +37,7 @@ void ColorSwatchWidget::setColor(QColor c)
 }
 
 
-void ColorSwatchWidget::mouseReleaseEvent(QMouseEvent*)
+void ColorSwatchWidget::mouseReleaseEvent(QMouseEvent* /*unused*/)
 {
     QColor c = QColorDialog::getColor(m_color, this);
     if (c.isValid())

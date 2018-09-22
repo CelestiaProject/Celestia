@@ -55,19 +55,7 @@ static double readDouble(istream& in)
 
 JPLEphRecord::~JPLEphRecord()
 {
-    if (coeffs != NULL)
     delete coeffs;
-}
-
-
-
-JPLEphemeris::JPLEphemeris()
-{
-}
-
-
-JPLEphemeris::~JPLEphemeris()
-{
 }
 
 
@@ -118,7 +106,7 @@ Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
     tjd = endDate;
 
     // recNo is always >= 0:
-    unsigned int recNo = (unsigned int) ((tjd - startDate) / daysPerInterval);
+    auto recNo = (unsigned int) ((tjd - startDate) / daysPerInterval);
     // Make sure we don't go past the end of the array if t == endDate
     if (recNo >= records.size())
         recNo = records.size() - 1;
@@ -131,7 +119,7 @@ Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
     // u is the normalized time (in [-1, 1]) for interpolating
     // coeffs is a pointer to the Chebyshev coefficients
     double u = 0.0;
-    double* coeffs = NULL;
+    double* coeffs = nullptr;
 
     // nGranules is unsigned int so it will be compared against FFFFFFFF:
     if (coeffInfo[planet].nGranules == (unsigned int) -1)
@@ -142,7 +130,7 @@ Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
     else
     {
     double daysPerGranule = daysPerInterval / coeffInfo[planet].nGranules;
-    int granule = (int) ((tjd - rec->t0) / daysPerGranule);
+    auto granule = (int) ((tjd - rec->t0) / daysPerGranule);
     double granuleStartDate = rec->t0 + daysPerGranule * (double) granule;
     coeffs = rec->coeffs + coeffInfo[planet].offset +
             granule * coeffInfo[planet].nCoeffs * 3;
@@ -171,21 +159,21 @@ Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
 
 JPLEphemeris* JPLEphemeris::load(istream& in)
 {
-    JPLEphemeris* eph = NULL;
+    JPLEphemeris* eph = nullptr;
 
     // Skip past three header labels
     in.ignore(LabelSize * 3);
     if (!in.good())
-        return NULL;
+        return nullptr;
 
     // Skip past the constant names
     in.ignore(NConstants * ConstantNameLength);
     if (!in.good())
-        return NULL;
+        return nullptr;
 
     eph = new JPLEphemeris();
-    if (eph == NULL)
-        return NULL;
+    if (eph == nullptr)
+        return nullptr;
 
     // Read the start time, end time, and time interval
     eph->startDate = readDouble(in);
@@ -194,7 +182,7 @@ JPLEphemeris* JPLEphemeris::load(istream& in)
     if (!in.good())
     {
         delete eph;
-        return NULL;
+        return nullptr;
     }
 
     // Number of constants with valid values; not useful for us
@@ -214,7 +202,7 @@ JPLEphemeris* JPLEphemeris::load(istream& in)
     if (!in.good())
     {
         delete eph;
-        return NULL;
+        return nullptr;
     }
 
     eph->DENum = readUint(in);
@@ -232,7 +220,7 @@ JPLEphemeris* JPLEphemeris::load(istream& in)
         break;
     default:
         delete eph;
-        return NULL;
+        return nullptr;
     }
 
     eph->librationCoeffInfo.offset        = readUint(in);
@@ -241,7 +229,7 @@ JPLEphemeris* JPLEphemeris::load(istream& in)
     if (!in.good())
     {
         delete eph;
-        return NULL;
+        return nullptr;
     }
 
     // Skip past the rest of the record
@@ -251,10 +239,10 @@ JPLEphemeris* JPLEphemeris::load(istream& in)
     if (!in.good())
     {
         delete eph;
-        return NULL;
+        return nullptr;
     }
 
-    unsigned int nRecords = (unsigned int) ((eph->endDate - eph->startDate) /
+    auto nRecords = (unsigned int) ((eph->endDate - eph->startDate) /
                         eph->daysPerInterval);
     eph->records.resize(nRecords);
     for (i = 0; i < nRecords; i++)
@@ -272,7 +260,7 @@ JPLEphemeris* JPLEphemeris::load(istream& in)
         if (!in.good())
         {
             delete eph;
-            return NULL;
+            return nullptr;
         }
     }
 

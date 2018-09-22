@@ -46,7 +46,7 @@ static ObserverFrame* this_frame(lua_State* l)
     CelxLua celx(l);
 
     ObserverFrame* f = to_frame(l, 1);
-    if (f == NULL)
+    if (f == nullptr)
     {
         celx.doError("Bad frame object!");
     }
@@ -65,8 +65,8 @@ static int frame_from(lua_State* l)
     ObserverFrame* frame = this_frame(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
 
-    UniversalCoord* uc = NULL;
-    Quatd* q = NULL;
+    UniversalCoord* uc = nullptr;
+    Quatd* q = nullptr;
     double jd = 0.0;
 
     if (celx.isType(2, Celx_Position))
@@ -77,7 +77,7 @@ static int frame_from(lua_State* l)
     {
         q = celx.toRotation(2);
     }
-    if (uc == NULL && q == NULL)
+    if (uc == nullptr && q == nullptr)
     {
         celx.doError("Position or rotation expected as second argument to frame:from()");
         return 0;
@@ -85,7 +85,7 @@ static int frame_from(lua_State* l)
 
     jd = celx.safeGetNumber(3, WrongType, "Second arg to frame:from must be a number", appCore->getSimulation()->getTime());
 
-    if (uc != NULL)
+    if (uc != nullptr)
     {
         UniversalCoord uc1 = frame->convertToUniversal(*uc, jd);
         celx.newPosition(uc1);
@@ -109,8 +109,8 @@ static int frame_to(lua_State* l)
     ObserverFrame* frame = this_frame(l);
     CelestiaCore* appCore = celx.appCore(AllErrors);
 
-    UniversalCoord* uc = NULL;
-    Quatd* q = NULL;
+    UniversalCoord* uc = nullptr;
+    Quatd* q = nullptr;
     double jd = 0.0;
 
     if (celx.isType(2, Celx_Position))
@@ -122,7 +122,7 @@ static int frame_to(lua_State* l)
         q = celx.toRotation(2);
     }
 
-    if (uc == NULL && q == NULL)
+    if (uc == nullptr && q == nullptr)
     {
         celx.doError("Position or rotation expected as second argument to frame:to()");
         return 0;
@@ -130,7 +130,7 @@ static int frame_to(lua_State* l)
 
     jd = celx.safeGetNumber(3, WrongType, "Second arg to frame:to must be a number", appCore->getSimulation()->getTime());
 
-    if (uc != NULL)
+    if (uc != nullptr)
     {
         UniversalCoord uc1 = frame->convertFromUniversal(*uc, jd);
         celx.newPosition(uc1);

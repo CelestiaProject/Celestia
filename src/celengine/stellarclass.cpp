@@ -61,7 +61,7 @@ Color StellarClass::getApparentColor(StellarClass::SpectralClass sc) const
 // got a completely broken implemtation of stringstreams to
 // deal with (*cough* gcc *cough*).
 //
-// Return the buffer if successful or NULL if not (the buffer wasn't
+// Return the buffer if successful or nullptr if not (the buffer wasn't
 // large enough.)
 char* StellarClass::str(char* buf, unsigned int buflen) const
 {
@@ -126,14 +126,10 @@ char* StellarClass::str(char* buf, unsigned int buflen) const
     }
 
     if (strlen(s0) + strlen(s1) + strlen(s2) >= buflen)
-    {
-        return NULL;
-    }
-    else
-    {
-        sprintf(buf, "%s%s%s", s0, s1, s2);
-        return buf;
-    }
+        return nullptr;
+
+    sprintf(buf, "%s%s%s", s0, s1, s2);
+    return buf;
 }
 
 
@@ -192,7 +188,7 @@ ostream& operator<<(ostream& os, const StellarClass& sc)
 {
     char buf[20];
     char *scString = sc.str(buf, sizeof buf);
-    assert(scString != NULL);
+    assert(scString != nullptr);
 
     os << scString;
 
@@ -597,5 +593,5 @@ StellarClass::parse(const string& st)
         }
     }
 
-    return StellarClass(starType, specClass, subclass, lumClass);
+    return {starType, specClass, subclass, lumClass};
 }

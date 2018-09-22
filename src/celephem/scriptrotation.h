@@ -21,8 +21,8 @@ class ScriptedRotation : public RotationModel
 {
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    ScriptedRotation();
-    ~ScriptedRotation();
+    ScriptedRotation() = default;
+    ~ScriptedRotation() = default;
 
     bool initialize(const std::string& moduleName,
                     const std::string& funcName,
@@ -35,17 +35,17 @@ class ScriptedRotation : public RotationModel
     virtual void getValidRange(double& begin, double& end) const;
 
  private:
-    lua_State* luaState;
+    lua_State* luaState{ nullptr };
     std::string luaRotationObjectName;
-    double period;
-    double validRangeBegin;
-    double validRangeEnd;
+    double period{ 0.0 };
+    double validRangeBegin{ 0.0 };
+    double validRangeEnd{ 0.0 };
 
     // Cached values
-    mutable double lastTime;
-    mutable Eigen::Quaterniond lastOrientation;
+    mutable double lastTime{ -1.0e50 };
+    mutable Eigen::Quaterniond lastOrientation{Eigen::Quaterniond::Identity()};
 
-    bool cacheable;
+    bool cacheable{ true }; // non-cacheable rotations not yet supported
 };
 
 #endif // _CELENGINE_SCRIPTROTATION_H_

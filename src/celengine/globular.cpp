@@ -42,7 +42,7 @@ static const float LumiShape = 3.0f, Lumi0 = exp(-LumiShape);
 // Reference values ( = data base averages) of core radius, King concentration
 // and mu25 isophote radius:
 
-static const float R_c_ref = 0.83f, C_ref = 2.1f, R_mu25 = 40.32f;
+//static const float R_c_ref = 0.83f, C_ref = 2.1f, R_mu25 = 40.32f;
 
 // min/max c-values of globular cluster data
 
@@ -56,11 +56,11 @@ static const float P1 = 65.0f, P2 = 0.75f;
 static const float RRatio_min = pow(10.0f, 1.7f);
 static float CBin, RRatio, XI, DiskSizeInPixels, Rr = 1.0f, Gg = 1.0f, Bb = 1.0f;
 
-static GlobularForm** globularForms = NULL;
-static Texture* globularTex = NULL;
-static Texture* centerTex[8] = {NULL};
+static GlobularForm** globularForms = nullptr;
+static Texture* globularTex = nullptr;
+static Texture* centerTex[8] = {nullptr};
 static void InitializeForms();
-static GlobularForm* buildGlobularForms(float);
+static GlobularForm* buildGlobularForms(float /*c*/);
 static bool formsInitialized = false;
 
 static bool decreasing (const GBlob& b1, const GBlob& b2)
@@ -78,7 +78,7 @@ static void GlobularTextureEval(float u, float v, float /*w*/, unsigned char *pi
     if (lumi <= 0.0f)
         lumi = 0.0f;
 
-    int pixVal = (int) (lumi * 255.99f);
+    auto pixVal = (int) (lumi * 255.99f);
 #ifdef HDR_COMPRESS
     pixel[0] = 127;
     pixel[1] = 127;
@@ -155,13 +155,7 @@ static void CenterCloudTexEval(float u, float v, float /*w*/, unsigned char *pix
     pixel[3] = (int) (relStarDensity(eta) * profile_2d * 255.99f);
 }
 
-Globular::Globular() :
-    detail (1.0f),
-    customTmpName (NULL),
-    form (NULL),
-    r_c (R_c_ref),
-    c (C_ref),
-    tidalRadius(0.0f)
+Globular::Globular()
 {
     recomputeTidalRadius();
 }
@@ -203,7 +197,7 @@ void Globular::setDetail(float d)
 
 string Globular::getCustomTmpName() const
 {
-    if (customTmpName == NULL)
+    if (customTmpName == nullptr)
         return "";
     else
         return *customTmpName;
@@ -211,7 +205,7 @@ string Globular::getCustomTmpName() const
 
 void Globular::setCustomTmpName(const string& tmpNameStr)
 {
-    if (customTmpName == NULL)
+    if (customTmpName == nullptr)
         customTmpName = new string(tmpNameStr);
     else
         *customTmpName = tmpNameStr;
@@ -333,13 +327,13 @@ void Globular::render(const GLContext& context,
 }
 
 
-void Globular::renderGlobularPointSprites(const GLContext&,
+void Globular::renderGlobularPointSprites(const GLContext& /*unused*/,
                                       const Vec3f& offset,
                                       const Quatf& viewerOrientation,
                                       float brightness,
                                       float pixelSize)
 {
-    if (form == NULL)
+    if (form == nullptr)
         return;
 
     float distanceToDSO = offset.length() - getRadius();
@@ -376,18 +370,18 @@ void Globular::renderGlobularPointSprites(const GLContext&,
     RRatio = pow(10.0f, CBin);
     XI = 1.0f / sqrt(1.0f + RRatio * RRatio);
 
-    if(centerTex[ic] == NULL)
+    if(centerTex[ic] == nullptr)
     {
         centerTex[ic] = CreateProceduralTexture( cntrTexWidth, cntrTexHeight, GL_RGBA, CenterCloudTexEval);
     }
-    assert(centerTex[ic] != NULL);
+    assert(centerTex[ic] != nullptr);
 
-    if (globularTex == NULL)
+    if (globularTex == nullptr)
     {
         globularTex = CreateProceduralTexture( starTexWidth, starTexHeight, GL_RGBA,
                                                GlobularTextureEval);
     }
-    assert(globularTex != NULL);
+    assert(globularTex != nullptr);
 
     glEnable (GL_BLEND);
     glEnable (GL_TEXTURE_2D);
@@ -524,7 +518,7 @@ void Globular::recomputeTidalRadius()
 
 GlobularForm* buildGlobularForms(float c)
 {
-    GBlob b;
+    GBlob b{};
     vector<GBlob>* globularPoints = new vector<GBlob>;
 
     float rRatio = pow(10.0f, c); //  = r_t / r_c
@@ -614,11 +608,11 @@ GlobularForm* buildGlobularForms(float c)
     }
 
     // Check for efficiency of sprite-star generation => close to 100 %!
-    //cout << "c =  "<< c <<"  i =  " << i - 1 <<"  k =  " << k - 1 <<                                                       "  Efficiency:  " << 100.0f * i / (float)k<<"%" << endl;
+    //cout << "c =  "<< c <<"  i =  " << i - 1 <<"  k =  " << k - 1 << "  Efficiency:  " << 100.0f * i / (float)k<<"%" << endl;
 
-    GlobularForm* globularForm  = new GlobularForm();
-    globularForm->gblobs        = globularPoints;
-    globularForm->scale         = Vec3f(1.0f, 1.0f, 1.0f);
+    auto* globularForm   = new GlobularForm();
+    globularForm->gblobs = globularPoints;
+    globularForm->scale  = Vec3f(1.0f, 1.0f, 1.0f);
 
     return globularForm;
 }

@@ -38,16 +38,11 @@ static void CalculateOsculatingElements(const Orbit& orbit,
 
 InfoPanel::InfoPanel(const QString& title, QWidget* parent) :
     QDockWidget(title, parent),
-    textBrowser(NULL)
+    textBrowser(nullptr)
 {
     textBrowser = new QTextBrowser(this);
     textBrowser->setOpenExternalLinks(true);
     setWidget(textBrowser);
-}
-
-
-InfoPanel::~InfoPanel()
-{
 }
 
 
@@ -60,15 +55,15 @@ void InfoPanel::buildInfoPage(Selection sel,
 
     pageHeader(stream);
 
-    if (sel.body() != NULL)
+    if (sel.body() != nullptr)
     {
         buildSolarSystemBodyPage(sel.body(), tdb, stream);
     }
-    else if (sel.star() != NULL)
+    else if (sel.star() != nullptr)
     {
         buildStarPage(sel.star(), universe, tdb, stream);
     }
-    else if (sel.deepsky() != NULL)
+    else if (sel.deepsky() != nullptr)
     {
         buildDSOPage(sel.deepsky(), universe, stream);
     }

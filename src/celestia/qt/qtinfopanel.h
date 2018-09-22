@@ -24,7 +24,7 @@ class InfoPanel : public QDockWidget
 {
  public:
     InfoPanel(const QString& title, QWidget* parent);
-    ~InfoPanel();
+    ~InfoPanel() = default;
 
     void buildInfoPage(Selection sel, Universe*, double tdb);
 

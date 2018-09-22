@@ -21,7 +21,7 @@
 struct Vertex
 {
     Vertex() :
-        index(0), attributes(NULL) {};
+        index(0), attributes(nullptr) {};
 
     Vertex(uint32 _index, const void* _attributes) :
         index(_index), attributes(_attributes) {};

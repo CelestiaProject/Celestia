@@ -19,8 +19,8 @@
 class CatalogCrossReference
 {
  public:
-    CatalogCrossReference();
-    ~CatalogCrossReference();
+    CatalogCrossReference() = default;
+    ~CatalogCrossReference() = default;
 
     std::string getPrefix() const;
     void setPrefix(const std::string&);

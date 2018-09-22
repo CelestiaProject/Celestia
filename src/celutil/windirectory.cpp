@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <iostream>
+#include <utility>
 #include <windows.h>
 #include "directory.h"
 
@@ -17,10 +18,10 @@ using namespace std;
 class WindowsDirectory : public Directory
 {
 public:
-    WindowsDirectory(const std::string&);
-    virtual ~WindowsDirectory();
+    WindowsDirectory(std::string  /*_dirname*/);
+    ~WindowsDirectory() override;
 
-    virtual bool nextFile(std::string&);
+    bool nextFile(std::string& /*filename*/) override;
 
     enum {
         DirGood = 0,
@@ -35,8 +36,8 @@ private:
 };
 
 
-WindowsDirectory::WindowsDirectory(const std::string& _dirname) :
-    dirname(_dirname),
+WindowsDirectory::WindowsDirectory(std::string  _dirname) :
+    dirname(std::move(_dirname)),
     status(DirGood),
     searchHandle(INVALID_HANDLE_VALUE)
 {
@@ -49,7 +50,7 @@ WindowsDirectory::~WindowsDirectory()
 {
     if (searchHandle != INVALID_HANDLE_VALUE)
         FindClose(searchHandle);
-    searchHandle = NULL;
+    searchHandle = nullptr;
 }
 
 
@@ -69,11 +70,9 @@ bool WindowsDirectory::nextFile(std::string& filename)
             status = DirBad;
             return false;
         }
-        else
-        {
-            filename = findData.cFileName;
-            return true;
-        }
+
+        filename = findData.cFileName;
+        return true;
     }
     else
     {
@@ -82,11 +81,9 @@ bool WindowsDirectory::nextFile(std::string& filename)
             filename = findData.cFileName;
             return true;
         }
-        else
-        {
-            status = DirBad;
-            return false;
-        }
+
+        status = DirBad;
+        return false;
     }
 }
 
@@ -102,8 +99,8 @@ bool IsDirectory(const std::string& filename)
     DWORD attr = GetFileAttributesA(const_cast<char*>(filename.c_str()));
     if (attr == 0xffffffff)
         return false;
-    else
-        return ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0);
+
+    return ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0);
 }
 
 std::string WordExp(const std::string& filename) {

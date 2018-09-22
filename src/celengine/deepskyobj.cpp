@@ -9,7 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include <stdio.h>
+#include <cstdio>
 #include "celestia.h"
 #include <cassert>
 #include "astro.h"
@@ -26,25 +26,6 @@
 using namespace Eigen;
 using namespace std;
 
-
-const float DSO_DEFAULT_ABS_MAGNITUDE = -1000.0f;
-
-
-DeepSkyObject::DeepSkyObject() :
-    catalogNumber(InvalidCatalogNumber),
-    position(0, 0, 0),
-    orientation(Quaternionf::Identity()),
-    radius(1),
-    absMag(DSO_DEFAULT_ABS_MAGNITUDE),
-    infoURL(NULL),
-    visible(true),
-    clickable(true)
-{
-}
-
-DeepSkyObject::~DeepSkyObject()
-{
-}
 
 void DeepSkyObject::setCatalogNumber(uint32 n)
 {
@@ -95,7 +76,7 @@ size_t DeepSkyObject::getDescription(char* buf, size_t bufLength) const
 
 string DeepSkyObject::getInfoURL() const
 {
-    if (infoURL == NULL)
+    if (infoURL == nullptr)
         return "";
     else
         return *infoURL;
@@ -103,7 +84,7 @@ string DeepSkyObject::getInfoURL() const
 
 void DeepSkyObject::setInfoURL(const string& s)
 {
-    if (infoURL == NULL)
+    if (infoURL == nullptr)
         infoURL = new string(s);
     else
         *infoURL = s;

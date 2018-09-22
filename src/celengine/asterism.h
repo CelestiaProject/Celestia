@@ -20,7 +20,7 @@ class Asterism
 {
  public:
     Asterism(std::string);
-    ~Asterism();
+    ~Asterism() = default;
 
     typedef std::vector<Eigen::Vector3f> Chain;
 
@@ -43,8 +43,8 @@ class Asterism
     std::string i18nName;
     std::vector<Chain*> chains;
 
-    bool active;
-    bool useOverrideColor;
+    bool active{ true };
+    bool useOverrideColor{ false };
     Color color;
 };
 

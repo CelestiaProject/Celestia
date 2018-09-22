@@ -91,7 +91,7 @@ class CelxLua
 {
 public:
     CelxLua(lua_State* l);
-    ~CelxLua();
+    ~CelxLua() = default;
 
     bool isType(int index, int type) const;
 
@@ -102,7 +102,7 @@ public:
     void checkArgs(int minArgs, int maxArgs, const char* errorMessage);
     void createClassMetatable(int id);
     void registerMethod(const char* name, lua_CFunction fn);
-    void registerValue(const char* name, float value);
+    void registerValue(const char* name, float n);
 
     void setTable(const char* field, lua_Number value);
     void setTable(const char* field, const char* value);
@@ -136,7 +136,7 @@ public:
                               const char* errorMessage = "String argument expected");
     bool safeGetBoolean(int index,
                         FatalErrors fatalErrors = AllErrors,
-                        const char* errorMsg = "Boolean argument expected",
+                        const char* errorMessage = "Boolean argument expected",
                         bool defaultValue = false);
 
     LuaState* getLuaStateObject();

@@ -22,7 +22,7 @@ Value::Value(double d)
     data.d = d;
 }
 
-Value::Value(string s)
+Value::Value(const string& s)
 {
     type = StringType;
     data.s = new string(s);
@@ -54,7 +54,7 @@ Value::~Value()
     }
     else if (type == ArrayType)
     {
-        if (data.a != NULL)
+        if (data.a != nullptr)
         {
             for (unsigned int i = 0; i < data.a->size(); i++)
                 delete (*data.a)[i];
@@ -63,7 +63,7 @@ Value::~Value()
     }
     else if (type == HashType)
     {
-        if (data.h != NULL)
+        if (data.h != nullptr)
         {
 #if 0
             Hash::iterator iter = data.h->begin();
@@ -128,13 +128,13 @@ ValueArray* Parser::readArray()
     if (tok != Tokenizer::TokenBeginArray)
     {
         tokenizer->pushBack();
-        return NULL;
+        return nullptr;
     }
 
-    ValueArray* array = new ValueArray();
+    auto* array = new ValueArray();
 
     Value* v = readValue();
-    while (v != NULL)
+    while (v != nullptr)
     {
         array->insert(array->end(), v);
         v = readValue();
@@ -145,7 +145,7 @@ ValueArray* Parser::readArray()
     {
         tokenizer->pushBack();
         delete array;
-        return NULL;
+        return nullptr;
     }
 
     return array;
@@ -158,10 +158,10 @@ Hash* Parser::readHash()
     if (tok != Tokenizer::TokenBeginGroup)
     {
         tokenizer->pushBack();
-        return NULL;
+        return nullptr;
     }
 
-    Hash* hash = new Hash();
+    auto* hash = new Hash();
 
     tok = tokenizer->nextToken();
     while (tok != Tokenizer::TokenEndGroup)
@@ -170,7 +170,7 @@ Hash* Parser::readHash()
         {
             tokenizer->pushBack();
             delete hash;
-            return NULL;
+            return nullptr;
         }
         string name = tokenizer->getNameValue();
 
@@ -179,10 +179,10 @@ Hash* Parser::readHash()
 #endif
 
         Value* value = readValue();
-        if (value == NULL)
+        if (value == nullptr)
         {
             delete hash;
-            return NULL;
+            return nullptr;
         }
 
         hash->addValue(name, *value);
@@ -272,15 +272,15 @@ Value* Parser::readValue()
         else
         {
             tokenizer->pushBack();
-            return NULL;
+            return nullptr;
         }
 
     case Tokenizer::TokenBeginArray:
         tokenizer->pushBack();
         {
             ValueArray* array = readArray();
-            if (array == NULL)
-                return NULL;
+            if (array == nullptr)
+                return nullptr;
             else
                 return new Value(array);
         }
@@ -289,22 +289,18 @@ Value* Parser::readValue()
         tokenizer->pushBack();
         {
             Hash* hash = readHash();
-            if (hash == NULL)
-                return NULL;
+            if (hash == nullptr)
+                return nullptr;
             else
                 return new Value(hash);
         }
 
     default:
         tokenizer->pushBack();
-        return NULL;
+        return nullptr;
     }
 }
 
-
-AssociativeArray::AssociativeArray()
-{
-}
 
 AssociativeArray::~AssociativeArray()
 {
@@ -316,20 +312,20 @@ AssociativeArray::~AssociativeArray()
         iter++;
     }
 #endif
-    for (map<string, Value*>::iterator iter = assoc.begin(); iter != assoc.end(); iter++)
-        delete iter->second;
+    for (const auto iter : assoc)
+        delete iter.second;
 }
 
-Value* AssociativeArray::getValue(string key) const
+Value* AssociativeArray::getValue(const string& key) const
 {
     map<string, Value*>::const_iterator iter = assoc.find(key);
     if (iter == assoc.end())
-        return NULL;
-    else
-        return iter->second;
+        return nullptr;
+
+    return iter->second;
 }
 
-void AssociativeArray::addValue(string key, Value& val)
+void AssociativeArray::addValue(const string& key, Value& val)
 {
     assoc.insert(map<string, Value*>::value_type(key, &val));
 }
@@ -337,11 +333,10 @@ void AssociativeArray::addValue(string key, Value& val)
 bool AssociativeArray::getNumber(const string& key, double& val) const
 {
     Value* v = getValue(key);
-    if (v == NULL || v->getType() != Value::NumberType)
+    if (v == nullptr || v->getType() != Value::NumberType)
         return false;
 
     val = v->getNumber();
-
     return true;
 }
 
@@ -350,14 +345,10 @@ bool AssociativeArray::getNumber(const string& key, float& val) const
     double dval;
 
     if (!getNumber(key, dval))
-    {
         return false;
-    }
-    else
-    {
-        val = (float) dval;
-        return true;
-    }
+
+    val = (float) dval;
+    return true;
 }
 
 bool AssociativeArray::getNumber(const string& key, int& val) const
@@ -365,14 +356,10 @@ bool AssociativeArray::getNumber(const string& key, int& val) const
     double ival;
 
     if (!getNumber(key, ival))
-    {
         return false;
-    }
-    else
-    {
-        val = (int) ival;
-        return true;
-    }
+
+    val = (int) ival;
+    return true;
 }
 
 bool AssociativeArray::getNumber(const string& key, uint32& val) const
@@ -380,42 +367,36 @@ bool AssociativeArray::getNumber(const string& key, uint32& val) const
     double ival;
 
     if (!getNumber(key, ival))
-    {
         return false;
-    }
-    else
-    {
-        val = (uint32) ival;
-        return true;
-    }
+
+    val = (uint32) ival;
+    return true;
 }
 
 bool AssociativeArray::getString(const string& key, string& val) const
 {
     Value* v = getValue(key);
-    if (v == NULL || v->getType() != Value::StringType)
+    if (v == nullptr || v->getType() != Value::StringType)
         return false;
 
     val = v->getString();
-
     return true;
 }
 
 bool AssociativeArray::getBoolean(const string& key, bool& val) const
 {
     Value* v = getValue(key);
-    if (v == NULL || v->getType() != Value::BooleanType)
+    if (v == nullptr || v->getType() != Value::BooleanType)
         return false;
 
     val = v->getBoolean();
-
     return true;
 }
 
 bool AssociativeArray::getVector(const string& key, Vec3d& val) const
 {
     Value* v = getValue(key);
-    if (v == NULL || v->getType() != Value::ArrayType)
+    if (v == nullptr || v->getType() != Value::ArrayType)
         return false;
 
     ValueArray* arr = v->getArray();
@@ -432,14 +413,13 @@ bool AssociativeArray::getVector(const string& key, Vec3d& val) const
         return false;
 
     val = Vec3d(x->getNumber(), y->getNumber(), z->getNumber());
-
     return true;
 }
 
 bool AssociativeArray::getVector(const string& key, Vector3d& val) const
 {
     Value* v = getValue(key);
-    if (v == NULL || v->getType() != Value::ArrayType)
+    if (v == nullptr || v->getType() != Value::ArrayType)
         return false;
 
     ValueArray* arr = v->getArray();
@@ -456,7 +436,6 @@ bool AssociativeArray::getVector(const string& key, Vector3d& val) const
         return false;
 
     val = Vector3d(x->getNumber(), y->getNumber(), z->getNumber());
-
     return true;
 }
 
@@ -468,7 +447,6 @@ bool AssociativeArray::getVector(const string& key, Vec3f& val) const
         return false;
 
     val = Vec3f((float) vecVal.x, (float) vecVal.y, (float) vecVal.z);
-
     return true;
 }
 
@@ -481,7 +459,6 @@ bool AssociativeArray::getVector(const string& key, Vector3f& val) const
         return false;
 
     val = vecVal.cast<float>();
-
     return true;
 }
 
@@ -490,7 +467,7 @@ bool AssociativeArray::getVector(const string& key, Vector3f& val) const
 bool AssociativeArray::getRotation(const string& key, Quatf& val) const
 {
     Value* v = getValue(key);
-    if (v == NULL || v->getType() != Value::ArrayType)
+    if (v == nullptr || v->getType() != Value::ArrayType)
         return false;
 
     ValueArray* arr = v->getArray();
@@ -537,7 +514,7 @@ bool AssociativeArray::getRotation(const string& key, Quatf& val) const
 bool AssociativeArray::getRotation(const string& key, Eigen::Quaternionf& val) const
 {
     Value* v = getValue(key);
-    if (v == NULL || v->getType() != Value::ArrayType)
+    if (v == nullptr || v->getType() != Value::ArrayType)
         return false;
 
     ValueArray* arr = v->getArray();
@@ -578,7 +555,6 @@ bool AssociativeArray::getColor(const string& key, Color& val) const
         return false;
 
     val = Color((float) vecVal.x, (float) vecVal.y, (float) vecVal.z);
-
     return true;
 }
 
@@ -753,7 +729,6 @@ bool AssociativeArray::getLengthVector(const string& key, Eigen::Vector3f& val, 
         return false;
 
     val = vecVal.cast<float>();
-
     return true;
 }
 
@@ -793,7 +768,6 @@ bool AssociativeArray::getSphericalTuple(const string& key, Vector3f& val) const
         return false;
 
     val = vecVal.cast<float>();
-
     return true;
 }
 

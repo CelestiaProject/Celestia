@@ -28,34 +28,8 @@ using namespace std;
 
 
 Body::Body(PlanetarySystem* _system, const string& _name) :
-    names(1),
-    localizedNameIndex(0),
     system(_system),
-    satellites(NULL),
-    timeline(NULL),
-    frameTree(NULL),
-    radius(1.0f),
-    semiAxes(1.0f, 1.0f, 1.0f),
-    mass(0.0f),
-    albedo(0.5f),
-    geometryOrientation(Quaternionf::Identity()),
-    cullingRadius(0.0f),
-    geometry(InvalidResource),
-    geometryScale(1.0f),
-    surface(Color(1.0f, 1.0f, 1.0f)),
-    atmosphere(NULL),
-    rings(NULL),
-    classification(Unknown),
-    altSurfaces(NULL),
-    locations(NULL),
-    locationsComputed(false),
-    referenceMarks(NULL),
-    visible(1),
-    clickable(1),
-    visibleAsPoint(1),
-    overrideOrbitColor(0),
-    orbitVisibility(UseClassVisibility),
-    secondaryIlluminator(true)
+    orbitVisibility(UseClassVisibility)
 {
     setName(_name);
     recomputeCullingRadius();
@@ -65,20 +39,19 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
 
 Body::~Body()
 {
-    if (system != NULL)
+    if (system)
         system->removeBody(this);
     // Remove from frame hierarchy
 
     // Clean up the reference mark list
-    if (referenceMarks != NULL)
+    if (referenceMarks)
     {
-        for (list<ReferenceMark*>::iterator iter = referenceMarks->begin(); iter != referenceMarks->end(); ++iter)
-            delete *iter;
+        for (const auto r : *referenceMarks)
+            delete r;
         delete referenceMarks;
     }
 
     delete timeline;
-
     delete satellites;
     delete frameTree;
 }
@@ -98,9 +71,9 @@ void Body::setDefaultProperties()
     geometry = InvalidResource;
     surface = Surface(Color::White);
     delete atmosphere;
-    atmosphere = NULL;
+    atmosphere = nullptr;
     delete rings;
-    rings = NULL;
+    rings = nullptr;
     classification = Unknown;
     visible = 1;
     clickable = 1;
@@ -193,7 +166,7 @@ FrameTree* Body::getFrameTree() const
 
 FrameTree* Body::getOrCreateFrameTree()
 {
-    if (frameTree == NULL)
+    if (!frameTree)
         frameTree = new FrameTree(this);
     return frameTree;
 }
@@ -218,14 +191,14 @@ void Body::setTimeline(Timeline* newTimeline)
 
 void Body::markChanged()
 {
-    if (timeline != NULL)
+    if (timeline)
         timeline->markChanged();
 }
 
 
 void Body::markUpdated()
 {
-    if (frameTree != NULL)
+    if (frameTree)
         frameTree->markUpdated();
 }
 
@@ -269,8 +242,8 @@ float Body::getBoundingRadius() const
 {
     if (geometry == InvalidResource)
         return radius;
-    else
-        return radius * 1.7320508f; // sqrt(3)
+
+    return radius * 1.7320508f; // sqrt(3)
 }
 
 
@@ -425,7 +398,7 @@ RingSystem* Body::getRings() const
 
 void Body::setRings(const RingSystem& _rings)
 {
-    if (rings == NULL)
+    if (!rings)
         rings = new RingSystem(_rings);
     else
         *rings = _rings;
@@ -445,7 +418,7 @@ Atmosphere* Body::getAtmosphere()
 
 void Body::setAtmosphere(const Atmosphere& _atmosphere)
 {
-    if (atmosphere == NULL)
+    if (!atmosphere)
         atmosphere = new Atmosphere();
     *atmosphere = _atmosphere;
     recomputeCullingRadius();
@@ -772,28 +745,23 @@ void Body::setClassification(int _classification)
  */
 int Body::getOrbitClassification() const
 {
-    if (classification != Invisible || frameTree == NULL)
-    {
+    if (classification != Invisible || !frameTree)
         return classification;
-    }
-    else
-    {
-        int orbitClass = frameTree->childClassMask();
-        if (orbitClass & Planet)
-            return Planet;
-        else if (orbitClass & DwarfPlanet)
-            return DwarfPlanet;
-        else if (orbitClass & Moon)
-            return Moon;
-        else if (orbitClass & MinorMoon)
-            return MinorMoon;
-        else if (orbitClass & Asteroid)
-            return Asteroid;
-        else if (orbitClass & Spacecraft)
-            return Spacecraft;
-        else
-            return Invisible;
-    }
+
+    int orbitClass = frameTree->childClassMask();
+    if ((orbitClass & Planet) != 0)
+        return Planet;
+    if ((orbitClass & DwarfPlanet) != 0)
+        return DwarfPlanet;
+    if ((orbitClass & Moon) != 0)
+        return Moon;
+    if ((orbitClass & MinorMoon) != 0)
+        return MinorMoon;
+    if ((orbitClass & Asteroid) != 0)
+        return Asteroid;
+    if ((orbitClass & Spacecraft) != 0)
+        return Spacecraft;
+    return Invisible;
 }
 
 
@@ -810,20 +778,20 @@ void Body::setInfoURL(const string& _infoURL)
 
 Surface* Body::getAlternateSurface(const string& name) const
 {
-    if (altSurfaces == NULL)
-        return NULL;
+    if (!altSurfaces)
+        return nullptr;
 
-    AltSurfaceTable::iterator iter = altSurfaces->find(name);
+    auto iter = altSurfaces->find(name);
     if (iter == altSurfaces->end())
-        return NULL;
-    else
-        return iter->second;
+        return nullptr;
+
+    return iter->second;
 }
 
 
 void Body::addAlternateSurface(const string& name, Surface* surface)
 {
-    if (altSurfaces == NULL)
+    if (!altSurfaces)
         altSurfaces = new AltSurfaceTable();
 
     //altSurfaces->insert(AltSurfaceTable::value_type(name, surface));
@@ -834,12 +802,11 @@ void Body::addAlternateSurface(const string& name, Surface* surface)
 vector<string>* Body::getAlternateSurfaceNames() const
 {
     vector<string>* names = new vector<string>();
-    if (altSurfaces != NULL)
+    if (altSurfaces)
     {
-        for (AltSurfaceTable::const_iterator iter = altSurfaces->begin();
-             iter != altSurfaces->end(); iter++)
+        for (const auto& s : *altSurfaces)
         {
-            names->insert(names->end(), iter->first);
+            names->insert(names->end(), s.first);
         }
     }
 
@@ -849,11 +816,11 @@ vector<string>* Body::getAlternateSurfaceNames() const
 
 void Body::addLocation(Location* loc)
 {
-    assert(loc != NULL);
-    if (loc == NULL)
+    assert(loc != nullptr);
+    if (!loc)
         return;
 
-    if (locations == NULL)
+    if (!locations)
         locations = new vector<Location*>();
     locations->insert(locations->end(), loc);
     loc->setParentBody(this);
@@ -868,17 +835,16 @@ vector<Location*>* Body::getLocations() const
 
 Location* Body::findLocation(const string& name, bool i18n) const
 {
-    if (locations == NULL)
-        return NULL;
+    if (!locations)
+        return nullptr;
 
-    for (vector<Location*>::const_iterator iter = locations->begin();
-         iter != locations->end(); iter++)
+    for (const auto location : *locations)
     {
-        if (!UTF8StringCompare(name, (*iter)->getName(i18n)))
-            return *iter;
+        if (!UTF8StringCompare(name, location->getName(i18n)))
+            return location;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -898,17 +864,16 @@ void Body::computeLocations()
     if (geometry == InvalidResource)
         return;
     Geometry* g = GetGeometryManager()->find(geometry);
-    if (g == NULL)
+    if (!g)
         return;
 
     // TODO: Implement separate radius and bounding radius so that this hack is
     // not necessary.
     double boundingRadius = 2.0;
 
-    for (vector<Location*>::const_iterator iter = locations->begin();
-         iter != locations->end(); iter++)
+    for (const auto location : *locations)
     {
-        Vector3f v = (*iter)->getPosition();
+        Vector3f v = location->getPosition();
         float alt = v.norm() - radius;
         if (alt != -radius)
             v.normalize();
@@ -919,7 +884,7 @@ void Body::computeLocations()
         if (g->pick(ray, t))
         {
             v *= (float) ((1.0 - t) * radius + alt);
-            (*iter)->setPosition(v);
+            location->setPosition(v);
         }
     }
 }
@@ -930,7 +895,7 @@ void Body::computeLocations()
 void
 Body::addReferenceMark(ReferenceMark* refMark)
 {
-    if (referenceMarks == NULL)
+    if (!referenceMarks)
         referenceMarks = new list<ReferenceMark*>();
     referenceMarks->push_back(refMark);
     recomputeCullingRadius();
@@ -942,10 +907,10 @@ Body::addReferenceMark(ReferenceMark* refMark)
 void
 Body::removeReferenceMark(const string& tag)
 {
-    if (referenceMarks != NULL)
+    if (referenceMarks)
     {
         ReferenceMark* refMark = findReferenceMark(tag);
-        if (refMark != NULL)
+        if (refMark)
         {
             referenceMarks->remove(refMark);
             delete refMark;
@@ -957,26 +922,26 @@ Body::removeReferenceMark(const string& tag)
 
 /*! Find the first reference mark with the specified tag. If the body has
  *  no reference marks with the specified tag, this method will return
- *  NULL.
+ *  nullptr.
  */
 ReferenceMark*
 Body::findReferenceMark(const string& tag) const
 {
-    if (referenceMarks != NULL)
+    if (referenceMarks)
     {
-        for (list<ReferenceMark*>::iterator iter = referenceMarks->begin(); iter != referenceMarks->end(); ++iter)
+        for (const auto rm : *referenceMarks)
         {
-            if ((*iter)->getTag() == tag)
-                return *iter;
+            if (rm->getTag() == tag)
+                return rm;
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 
 /*! Get the list of reference marks associated with this body. May return
- *  NULL if there are no reference marks.
+ *  nullptr if there are no reference marks.
  */
 const list<ReferenceMark*>*
 Body::getReferenceMarks() const
@@ -1064,21 +1029,20 @@ void Body::recomputeCullingRadius()
 {
     float r = getBoundingRadius();
 
-    if (rings != NULL)
+    if (rings)
         r = max(r, rings->outerRadius);
 
-    if (atmosphere != NULL)
+    if (atmosphere)
     {
         r = max(r, atmosphere->height);
         r = max(r, atmosphere->cloudHeight);
     }
 
-    if (referenceMarks != NULL)
+    if (referenceMarks)
     {
-        for (std::list<ReferenceMark*>::const_iterator iter = referenceMarks->begin();
-             iter != referenceMarks->end(); iter++)
+        for (const auto rm : *referenceMarks)
         {
-            r = max(r, (*iter)->boundingSphereRadius());
+            r = max(r, rm->boundingSphereRadius());
         }
     }
 
@@ -1102,22 +1066,16 @@ void Body::recomputeCullingRadius()
  */
 
 PlanetarySystem::PlanetarySystem(Body* _primary) :
-    star(NULL),
+    star(nullptr),
     primary(_primary)
 {
-    if (primary != NULL && primary->getSystem() != NULL)
+    if (primary && primary->getSystem())
         star = primary->getSystem()->getStar();
 }
 
 
 PlanetarySystem::PlanetarySystem(Star* _star) :
-    star(_star),
-    primary(NULL)
-{
-}
-
-
-PlanetarySystem::~PlanetarySystem()
+    star(_star)
 {
 }
 
@@ -1162,9 +1120,9 @@ void PlanetarySystem::addBody(Body* body)
 void PlanetarySystem::addBodyToNameIndex(Body* body)
 {
     const vector<string>& names = body->getNames();
-    for (vector<string>::const_iterator iter = names.begin(); iter != names.end(); iter++)
+    for (const auto& name : names)
     {
-        objectIndex.insert(make_pair(*iter, body));
+        objectIndex.insert(make_pair(name, body));
     }
 }
 
@@ -1176,24 +1134,18 @@ void PlanetarySystem::removeBodyFromNameIndex(const Body* body)
 
     // Erase the object from the object indices
     const vector<string>& names = body->getNames();
-    for (vector<string>::const_iterator iter = names.begin(); iter != names.end(); iter++)
+    for (const auto& name : names)
     {
-        removeAlias(body, *iter);
+        removeAlias(body, name);
     }
 }
 
 
 void PlanetarySystem::removeBody(Body* body)
 {
-    for (vector<Body*>::iterator iter = satellites.begin();
-         iter != satellites.end(); iter++)
-    {
-        if (*iter == body)
-        {
-            satellites.erase(iter);
-            break;
-        }
-    }
+    auto iter = std::find(satellites.begin(), satellites.end(), body);
+    if (iter != satellites.end())
+        satellites.erase(iter);
 
     removeBodyFromNameIndex(body);
 }
@@ -1201,15 +1153,9 @@ void PlanetarySystem::removeBody(Body* body)
 
 void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
 {
-    for (vector<Body*>::iterator iter = satellites.begin();
-         iter != satellites.end(); iter++)
-    {
-        if (*iter == oldBody)
-        {
-            *iter = newBody;
-            break;
-        }
-    }
+    auto iter = std::find(satellites.begin(), satellites.end(), oldBody);
+    if (iter != satellites.end())
+      *iter = newBody;
 
     removeBodyFromNameIndex(oldBody);
     addBodyToNameIndex(newBody);
@@ -1226,42 +1172,34 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
  */
 Body* PlanetarySystem::find(const string& _name, bool deepSearch, bool i18n) const
 {
-    ObjectIndex::const_iterator firstMatch = objectIndex.find(_name);
+    auto firstMatch = objectIndex.find(_name);
     if (firstMatch != objectIndex.end())
     {
         Body* matchedBody = firstMatch->second;
 
         if (i18n)
-        {
             return matchedBody;
-        }
-        else
-        {
-            // Ignore localized names
-            if (!matchedBody->hasLocalizedName() || _name != matchedBody->getLocalizedName())
-                return matchedBody;
-        }
+        // Ignore localized names
+        if (!matchedBody->hasLocalizedName() || _name != matchedBody->getLocalizedName())
+            return matchedBody;
     }
 
     if (deepSearch)
     {
-        for (vector<Body*>::const_iterator iter = satellites.begin();
-             iter != satellites.end(); iter++)
+        for (const auto sat : satellites)
         {
-            if (UTF8StringCompare((*iter)->getName(i18n), _name) == 0)
+            if (UTF8StringCompare(sat->getName(i18n), _name) == 0)
+                return sat;
+            if (sat->getSatellites())
             {
-                return *iter;
-            }
-            else if (deepSearch && (*iter)->getSatellites() != NULL)
-            {
-                Body* body = (*iter)->getSatellites()->find(_name, deepSearch, i18n);
-                if (body != NULL)
+                Body* body = sat->getSatellites()->find(_name, deepSearch, i18n);
+                if (body)
                     return body;
             }
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -1270,10 +1208,10 @@ bool PlanetarySystem::traverse(TraversalFunc func, void* info) const
     for (int i = 0; i < getSystemSize(); i++)
     {
         Body* body = getBody(i);
-        // assert(body != NULL);
+        // assert(body != nullptr);
         if (!func(body, info))
             return false;
-        if (body->getSatellites() != NULL)
+        if (body->getSatellites())
         {
             if (!body->getSatellites()->traverse(func, info))
                 return false;
@@ -1289,10 +1227,9 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
     int _name_length = UTF8Length(_name);
 
     // Search through all names in this planetary system.
-    for (ObjectIndex::const_iterator iter = objectIndex.begin();
-         iter != objectIndex.end(); iter++)
+    for (const auto& index : objectIndex)
     {
-        const string& alias = iter->first;
+        const string& alias = index.first;
 
         if (UTF8StringCompare(alias, _name, _name_length) == 0)
         {
@@ -1303,12 +1240,11 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
     // Scan child objects
     if (deepSearch)
     {
-        for (vector<Body*>::const_iterator iter = satellites.begin();
-             iter != satellites.end(); iter++)
+        for (const auto sat : satellites)
         {
-            if ((*iter)->getSatellites() != NULL)
+            if (sat->getSatellites())
             {
-                vector<string> bodies = (*iter)->getSatellites()->getCompletion(_name);
+                auto bodies = sat->getSatellites()->getCompletion(_name);
                 completion.insert(completion.end(), bodies.begin(), bodies.end());
             }
         }
@@ -1323,9 +1259,9 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
  */
 int PlanetarySystem::getOrder(const Body* body) const
 {
-    vector<Body*>::const_iterator iter = std::find(satellites.begin(), satellites.end(), body);
+    auto iter = std::find(satellites.begin(), satellites.end(), body);
     if (iter == satellites.end())
         return -1;
-    else
-        return iter - satellites.begin();
+
+    return iter - satellites.begin();
 }

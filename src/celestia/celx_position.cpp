@@ -42,7 +42,7 @@ static UniversalCoord* this_position(lua_State* l)
     CelxLua celx(l);
 
     UniversalCoord* uc = to_position(l, 1);
-    if (uc == NULL)
+    if (uc == nullptr)
     {
         celx.doError("Bad position object!");
     }
@@ -67,16 +67,15 @@ static int position_get(lua_State* l)
         value = uc->z;
     else
     {
-        if (lua_getmetatable(l, 1))
-        {
-            lua_pushvalue(l, 2);
-            lua_rawget(l, -2);
-            return 1;
-        }
-        else
+        if (!lua_getmetatable(l, 1))
         {
             celx.doError("Internal error: couldn't get metatable");
+            return 0;
         }
+
+        lua_pushvalue(l, 2);
+        lua_rawget(l, -2);
+        return 1;
     }
     lua_pushnumber(l, (lua_Number)value);
     return 1;
@@ -159,7 +158,7 @@ static int position_vectorto(lua_State* l)
     UniversalCoord* uc = this_position(l);
     UniversalCoord* uc2 = to_position(l, 2);
 
-    if (uc2 == NULL)
+    if (uc2 == nullptr)
     {
         celx.doError("Argument to position:vectorto must be a position");
         return 0;
@@ -180,14 +179,14 @@ static int position_orientationto(lua_State* l)
     UniversalCoord* src = this_position(l);
     UniversalCoord* target = to_position(l, 2);
 
-    if (target == NULL)
+    if (target == nullptr)
     {
         celx.doError("First argument to position:orientationto must be a position");
         return 1;
     }
 
     Vec3d* upd = celx.toVector(3);
-    if (upd == NULL)
+    if (upd == nullptr)
     {
         celx.doError("Second argument to position:orientationto must be a vector");
         return 1;
@@ -222,7 +221,7 @@ static int position_distanceto(lua_State* l)
 
     UniversalCoord* uc = this_position(l);
     UniversalCoord* uc2 = to_position(l, 2);
-    if (uc2 == NULL)
+    if (uc2 == nullptr)
     {
         celx.doError("Position expected as argument to position:distanceto");
         return 0;
@@ -239,9 +238,9 @@ static int position_add(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 2, "Need two operands for addition");
-    UniversalCoord* p1 = NULL;
-    UniversalCoord* p2 = NULL;
-    Vec3d* v2 = NULL;
+    UniversalCoord* p1 = nullptr;
+    UniversalCoord* p2 = nullptr;
+    Vec3d* v2 = nullptr;
 
     if (celx.isType(1, Celx_Position) && celx.isType(2, Celx_Position))
     {
@@ -270,9 +269,9 @@ static int position_sub(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(2, 2, "Need two operands for subtraction");
-    UniversalCoord* p1 = NULL;
-    UniversalCoord* p2 = NULL;
-    Vec3d* v2 = NULL;
+    UniversalCoord* p1 = nullptr;
+    UniversalCoord* p2 = nullptr;
+    Vec3d* v2 = nullptr;
 
     if (celx.isType(1, Celx_Position) && celx.isType(2, Celx_Position))
     {
@@ -302,12 +301,12 @@ static int position_addvector(lua_State* l)
     celx.checkArgs(2, 2, "One argument expected to position:addvector()");
     UniversalCoord* uc = this_position(l);
     Vec3d* v3d = celx.toVector(2);
-    if (v3d == NULL)
+    if (v3d == nullptr)
     {
         celx.doError("Vector expected as argument to position:addvector");
     }
     else
-        if (uc != NULL && v3d != NULL)
+        if (uc != nullptr && v3d != nullptr)
         {
             UniversalCoord ucnew = uc->offsetUly(toEigen(*v3d));
             position_new(l, ucnew);

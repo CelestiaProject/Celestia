@@ -44,7 +44,7 @@ public:
     Mesh* convertToMesh() const;
 
  private:
-    void createSphere(float radius, int nRings, int nSlices);
+    void createSphere(float radius, int _nRings, int _nSlices);
     void generateNormals();
     void scale(const Eigen::Vector3f&);
     void fixNormals();
@@ -54,12 +54,12 @@ public:
     int nRings;
     int nSlices;
     int nVertices;
-    float* vertices;
-    float* normals;
-    float* texCoords;
-    float* tangents;
+    float* vertices{ nullptr };
+    float* normals{ nullptr };
+    float* texCoords{ nullptr };
+    float* tangents{ nullptr };
     int nIndices;
-    unsigned short* indices;
+    unsigned short* indices{ nullptr };
 };
 
 #endif // _CELENGINE_SPHEREMESH_H_

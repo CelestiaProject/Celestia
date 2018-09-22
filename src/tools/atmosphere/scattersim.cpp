@@ -62,7 +62,7 @@ typedef map<string, double> ParameterSet;
 
 struct Color
 {
-    Color() : r(0.0f), g(0.0f), b(0.0f) {}
+    Color() = default;
     Color(float _r, float _g, float _b) : r(_r), g(_g), b(_b) {}
 
     Color exposure(float e) const
@@ -72,29 +72,29 @@ struct Color
         float f = 1.0f - (float) exp(-e * brightness);
         return Color(r * f, g * f, b * f);
 #endif
-        return Color((float) (1.0 - exp(-e * r)),
+        return {(float) (1.0 - exp(-e * r)),
                      (float) (1.0 - exp(-e * g)),
-                     (float) (1.0 - exp(-e * b)));
+                     (float) (1.0 - exp(-e * b))};
     }
 
-    float r, g, b;
+    float r{0.0f}, g{0.0f}, b{0.0f};
 };
 
 Color operator*(const Color& color, double d)
 {
-    return Color((float) (color.r * d),
+    return {(float) (color.r * d),
                  (float) (color.g * d),
-                 (float) (color.b * d));
+                 (float) (color.b * d)};
 }
 
 Color operator+(const Color& a, const Color& b)
 {
-    return Color(a.r + b.r, a.g + b.g, a.b + b.b);
+    return {a.r + b.r, a.g + b.g, a.b + b.b};
 }
 
 Color operator*(const Color& a, const Color& b)
 {
-    return Color(a.r * b.r, a.g * b.g, a.b * b.b);
+    return {a.r * b.r, a.g * b.g, a.b * b.b};
 }
 
 Color operator*(const Color& a, const Vec3d& v)
@@ -107,7 +107,7 @@ static uint8 floatToByte(float f)
 {
     if (f <= 0.0f)
         return 0;
-    else if (f >= 1.0f)
+    if (f >= 1.0f)
         return 255;
     else
         return (uint8) (f * 255.99f);
@@ -123,13 +123,7 @@ public:
         Spherical,
     };
 
-    Camera() :
-        fov(PI / 2.0),
-        front(1.0),
-        transform(Mat4d::identity()),
-        type(Planar)
-    {
-    }
+    Camera() = default;
 
     Ray3d getViewRay(double viewportX, double viewportY) const
     {
@@ -158,10 +152,10 @@ public:
         return viewRay * transform;
     }
 
-    double fov;
-    double front;
-    Mat4d transform;
-    CameraType type;
+    double fov{PI / 2.0};
+    double front{1.0};
+    Mat4d transform{Mat4d::identity()};
+    CameraType type{Planar};
 };
 
 
@@ -206,10 +200,10 @@ OpticalDepths sumOpticalDepths(OpticalDepths a, OpticalDepths b)
 }
 
 
-typedef double (*MiePhaseFunction)(double cosTheta, double asymmetry);
-double phaseHenyeyGreenstein_CS(double, double);
-double phaseHenyeyGreenstein(double, double);
-double phaseSchlick(double, double);
+using MiePhaseFunction = double (*)(double, double);
+double phaseHenyeyGreenstein_CS(double /*cosTheta*/, double /*g*/);
+double phaseHenyeyGreenstein(double /*cosTheta*/, double /*g*/);
+double phaseSchlick(double /*cosTheta*/, double /*k*/);
 
 class Atmosphere
 {
@@ -253,7 +247,7 @@ public:
 class LUT2
 {
 public:
-    LUT2(unsigned int w, unsigned int h);
+    LUT2(unsigned int _width, unsigned int _height);
 
     Vec3d getValue(unsigned int x, unsigned int y) const;
     void setValue(unsigned int x, unsigned int y, const Vec3d&);
@@ -271,7 +265,7 @@ private:
 class LUT3
 {
 public:
-    LUT3(unsigned int w, unsigned int h, unsigned int d);
+    LUT3(unsigned int _width, unsigned int _height, unsigned int _depth);
 
     Vec4d getValue(unsigned int x, unsigned int y, unsigned int z) const;
     void setValue(unsigned int x, unsigned int y, unsigned int z, const Vec4d&);
@@ -291,7 +285,7 @@ private:
 class Scene
 {
 public:
-    Scene() {};
+    Scene() = default;
 
     void setParameters(ParameterSet& params);
 
@@ -320,7 +314,7 @@ public:
     RGBImage(int w, int h) :
         width(w),
         height(h),
-        pixels(NULL)
+        pixels(nullptr)
     {
         pixels = new uint8[width * height * 3];
     }
@@ -392,7 +386,7 @@ void usage()
 
 static void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-    FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
+    auto* fp = (FILE*) png_get_io_ptr(png_ptr);
     fwrite((void*) data, 1, length, fp);
 }
 
@@ -404,13 +398,13 @@ bool WritePNG(const string& filename, const RGBImage& image)
 
     FILE* out;
     out = fopen(filename.c_str(), "wb");
-    if (out == NULL)
+    if (out == nullptr)
     {
         cerr << "Can't open screen capture file " << filename << "\n";
         return false;
     }
 
-    png_bytep* row_pointers = new png_bytep[image.height];
+    auto* row_pointers = new png_bytep[image.height];
     for (unsigned int i = 0; i < image.height; i++)
         row_pointers[i] = (png_bytep) &image.pixels[rowStride * (image.height - i - 1)];
 
@@ -418,9 +412,9 @@ bool WritePNG(const string& filename, const RGBImage& image)
     png_infop info_ptr;
 
     png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-                                      NULL, NULL, NULL);
+                                      nullptr, nullptr, nullptr);
 
-    if (png_ptr == NULL)
+    if (png_ptr == nullptr)
     {
         cerr << "Screen capture: error allocating png_ptr\n";
         fclose(out);
@@ -429,12 +423,12 @@ bool WritePNG(const string& filename, const RGBImage& image)
     }
 
     info_ptr = png_create_info_struct(png_ptr);
-    if (info_ptr == NULL)
+    if (info_ptr == nullptr)
     {
         cerr << "Screen capture: error allocating info_ptr\n";
         fclose(out);
         delete[] row_pointers;
-        png_destroy_write_struct(&png_ptr, (png_infopp) NULL);
+        png_destroy_write_struct(&png_ptr, (png_infopp) nullptr);
         return false;
     }
 
@@ -448,7 +442,7 @@ bool WritePNG(const string& filename, const RGBImage& image)
     }
 
     // png_init_io(png_ptr, out);
-    png_set_write_fn(png_ptr, (void*) out, PNGWriteData, NULL);
+    png_set_write_fn(png_ptr, (void*) out, PNGWriteData, nullptr);
 
     png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
     png_set_IHDR(png_ptr, info_ptr,
@@ -561,7 +555,7 @@ template<class T> T trilerp(double t, double u, double v,
 LUT2::LUT2(unsigned int _width, unsigned int _height) :
     width(_width),
     height(_height),
-    values(NULL)
+    values(nullptr)
 {
     values = new float[width * height * 3];
 }
@@ -591,8 +585,8 @@ LUT2::lookup(double x, double y) const
 {
     x = max(0.0, min(x, 0.999999));
     y = max(0.0, min(y, 0.999999));
-    unsigned int fx = (unsigned int) (x * (width - 1));
-    unsigned int fy = (unsigned int) (y * (height - 1));
+    auto fx = (unsigned int) (x * (width - 1));
+    auto fy = (unsigned int) (y * (height - 1));
     double t = x * (width - 1) - fx;
     double u = y * (height - 1) - fy;
 
@@ -608,7 +602,7 @@ LUT3::LUT3(unsigned int _width, unsigned int _height, unsigned int _depth) :
     width(_width),
     height(_height),
     depth(_depth),
-    values(NULL)
+    values(nullptr)
 {
     values = new float[width * height * depth * 4];
 }
@@ -641,9 +635,9 @@ LUT3::lookup(double x, double y, double z) const
     x = max(0.0, min(x, 0.999999));
     y = max(0.0, min(y, 0.999999));
     z = max(0.0, min(z, 0.999999));
-    unsigned int fx = (unsigned int) (x * (width - 1));
-    unsigned int fy = (unsigned int) (y * (height - 1));
-    unsigned int fz = (unsigned int) (z * (depth - 1));
+    auto fx = (unsigned int) (x * (width - 1));
+    auto fy = (unsigned int) (y * (height - 1));
+    auto fz = (unsigned int) (z * (depth - 1));
     double t = x * (width - 1) - fx;
     double u = y * (height - 1) - fy;
     double v = z * (depth - 1) - fz;
@@ -682,7 +676,7 @@ template<class T> bool raySphereIntersect(const Ray3<T>& ray,
     {
         return false;
     }
-    else if (sol0 < sol1)
+    if (sol0 < sol1)
     {
         dist0 = max(0.0, sol0);
         dist1 = sol1;
@@ -725,7 +719,7 @@ template<class T> bool raySphereIntersect2(const Ray3<T>& ray,
         dist1 = sol1;
         return true;
     }
-    else if (sol0 > sol1)
+    if (sol0 > sol1)
     {
         dist0 = sol1;
         dist1 = sol0;
@@ -1034,7 +1028,7 @@ double unpackSNorm(double un)
 LUT2*
 buildExtinctionLUT(const Scene& scene)
 {
-    LUT2* lut = new LUT2(ExtinctionLUTHeightSteps,
+    auto* lut = new LUT2(ExtinctionLUTHeightSteps,
                          ExtinctionLUTViewAngleSteps);
 
     Sphered planet = Sphered(scene.planet.radius);
@@ -1097,7 +1091,7 @@ lookupExtinction(const Scene& scene,
 LUT2*
 buildOpticalDepthLUT(const Scene& scene)
 {
-    LUT2* lut = new LUT2(ExtinctionLUTHeightSteps,
+    auto* lut = new LUT2(ExtinctionLUTHeightSteps,
                          ExtinctionLUTViewAngleSteps);
 
     Sphered planet = Sphered(scene.planet.radius);
@@ -1321,7 +1315,7 @@ Vec4d integrateInscatteringFactors_LUT(const Scene& scene,
 LUT3*
 buildScatteringLUT(const Scene& scene)
 {
-    LUT3* lut = new LUT3(ScatteringLUTHeightSteps,
+    auto* lut = new LUT3(ScatteringLUTHeightSteps,
                          ScatteringLUTViewAngleSteps,
                          ScatteringLUTLightAngleSteps);
 
@@ -1408,7 +1402,7 @@ Color getPlanetColor(const Scene& scene, const Point3d& p)
     int tx = (int) (8 + 8 * phi / PI);
     int ty = (int) (8 + 8 * theta / PI);
 
-    return ((tx ^ ty) & 0x1) ? scene.planetColor : scene.planetColor2;
+    return ((tx ^ ty) & 0x1) != 0 ? scene.planetColor : scene.planetColor2;
 }
 
 
@@ -1747,7 +1741,7 @@ void setSceneDefaults(ParameterSet& params)
 
 bool LoadParameterSet(ParameterSet& params, const string& filename)
 {
-    ifstream in(filename.c_str());
+    ifstream in(filename);
 
     if (!in.good())
     {
@@ -1862,41 +1856,29 @@ bool parseCommandLine(int argc, char* argv[])
             else if (!strcmp(argv[i], "-e") || !strcmp(argv[i], "--exposure"))
             {
                 if (i == argc - 1)
-                {
                     return false;
-                }
-                else
-                {
-                    if (sscanf(argv[i + 1], " %lf", &CameraExposure) != 1)
-                        return false;
-                    i++;
-                }
+
+                if (sscanf(argv[i + 1], " %lf", &CameraExposure) != 1)
+                    return false;
+                i++;
             }
             else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--scattersteps"))
             {
                 if (i == argc - 1)
-                {
                     return false;
-                }
-                else
-                {
-                    if (sscanf(argv[i + 1], " %u", &IntegrateScatterSteps) != 1)
-                        return false;
-                    i++;
-                }
+
+                if (sscanf(argv[i + 1], " %u", &IntegrateScatterSteps) != 1)
+                    return false;
+                i++;
             }
             else if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--depthsteps"))
             {
                 if (i == argc - 1)
-                {
                     return false;
-                }
-                else
-                {
-                    if (sscanf(argv[i + 1], " %u", &IntegrateDepthSteps) != 1)
-                        return false;
-                    i++;
-                }
+
+                if (sscanf(argv[i + 1], " %u", &IntegrateDepthSteps) != 1)
+                    return false;
+                i++;
             }
             else if (!strcmp(argv[i], "-w") || !strcmp(argv[i], "--width"))
             {
@@ -1904,37 +1886,27 @@ bool parseCommandLine(int argc, char* argv[])
                 {
                     return false;
                 }
-                else
-                {
-                    if (sscanf(argv[i + 1], " %u", &OutputImageWidth) != 1)
-                        return false;
-                    i++;
-                }
+
+                if (sscanf(argv[i + 1], " %u", &OutputImageWidth) != 1)
+                    return false;
+                i++;
             }
             else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--height"))
             {
                 if (i == argc - 1)
-                {
                     return false;
-                }
-                else
-                {
-                    if (sscanf(argv[i + 1], " %u", &OutputImageHeight) != 1)
-                        return false;
-                    i++;
-                }
+
+                if (sscanf(argv[i + 1], " %u", &OutputImageHeight) != 1)
+                    return false;
+                i++;
             }
             else if (!strcmp(argv[i], "-i") || !strcmp(argv[i], "--image"))
             {
                 if (i == argc - 1)
-                {
                     return false;
-                }
-                else
-                {
-                    outputImageName = string(argv[i + 1]);
-                    i++;
-                }
+
+                outputImageName = string(argv[i + 1]);
+                i++;
             }
             else
             {

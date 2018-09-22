@@ -20,7 +20,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-extern const float DSO_DEFAULT_ABS_MAGNITUDE;
+const float DSO_DEFAULT_ABS_MAGNITUDE = -1000.0f;
 
 class Nebula;
 class Galaxy;
@@ -32,8 +32,8 @@ class DeepSkyObject
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    DeepSkyObject();
-    virtual ~DeepSkyObject();
+    DeepSkyObject() = default;
+    virtual ~DeepSkyObject() = default;
 
     inline uint32 getCatalogNumber() const
     {
@@ -100,15 +100,15 @@ class DeepSkyObject
     };
 
  private:
-    uint32       catalogNumber;
-    Eigen::Vector3d position;
-    Eigen::Quaternionf orientation;
-    float        radius;
-    float        absMag;
-    std::string* infoURL;
+    uint32       catalogNumber{ InvalidCatalogNumber };
+    Eigen::Vector3d position{ 0, 0, 0 };
+    Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
+    float        radius{ 1 };
+    float        absMag{ DSO_DEFAULT_ABS_MAGNITUDE } ;
+    std::string* infoURL{ nullptr };
 
-    bool visible : 1;
-    bool clickable : 1;
+    bool visible { true };
+    bool clickable { true };
 };
 
 typedef std::vector<DeepSkyObject*> DeepSkyCatalog;

@@ -24,17 +24,10 @@ using namespace std;
 
 
 Asterism::Asterism(string _name) :
-    name(_name),
-    active(true),
-    useOverrideColor(false)
+    name(_name)
 {
     i18nName = dgettext("celestia_constellations", _name.c_str());
 }
-
-Asterism::~Asterism()
-{
-}
-
 
 string Asterism::getName(bool i18n) const
 {
@@ -113,7 +106,7 @@ bool Asterism::isColorOverridden() const
 
 AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
 {
-    AsterismList* asterisms = new AsterismList();
+    auto* asterisms = new AsterismList();
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
@@ -124,21 +117,21 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
             DPRINTF(0, "Error parsing asterism file.\n");
             for_each(asterisms->begin(), asterisms->end(), deleteFunc<Asterism*>());
             delete asterisms;
-            return NULL;
+            return nullptr;
         }
 
         string name = tokenizer.getStringValue();
         Asterism* ast = new Asterism(name);
 
         Value* chainsValue = parser.readValue();
-        if (chainsValue == NULL || chainsValue->getType() != Value::ArrayType)
+        if (chainsValue == nullptr || chainsValue->getType() != Value::ArrayType)
         {
             DPRINTF(0, "Error parsing asterism %s\n", name.c_str());
             for_each(asterisms->begin(), asterisms->end(), deleteFunc<Asterism*>());
             delete ast;
             delete asterisms;
             delete chainsValue;
-            return NULL;
+            return nullptr;
         }
 
         Array* chains = chainsValue->getArray();
@@ -149,12 +142,12 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
             {
                 Array* a = (*chains)[i]->getArray();
                 Asterism::Chain* chain = new Asterism::Chain();
-                for (Array::const_iterator iter = a->begin(); iter != a->end(); iter++)
+                for (const auto i : *a)
                 {
-                    if ((*iter)->getType() == Value::StringType)
+                    if (i->getType() == Value::StringType)
                     {
-                        Star* star = stardb.find((*iter)->getString());
-                        if (star != NULL)
+                        Star* star = stardb.find(i->getString());
+                        if (star != nullptr)
                             chain->push_back(star->getPosition());
                     }
                 }

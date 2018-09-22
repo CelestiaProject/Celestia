@@ -29,7 +29,7 @@ Q_OBJECT
 
  public:
     SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent);
-    ~SolarSystemBrowser();
+    ~SolarSystemBrowser() = default;
 
  public slots:
     void slotRefreshTree();
@@ -46,10 +46,10 @@ Q_OBJECT
  private:
     CelestiaCore* appCore;
 
-    SolarSystemTreeModel* solarSystemModel;
-    QTreeView* treeView;
+    SolarSystemTreeModel* solarSystemModel{};
+    QTreeView* treeView{};
 
-    QCheckBox* groupCheckBox;
+    QCheckBox* groupCheckBox{};
 };
 
 #endif // _QTSOLARSYSTEMBROWSER_H_

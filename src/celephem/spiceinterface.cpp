@@ -107,9 +107,7 @@ bool LoadSpiceKernel(const string& filepath)
 
         return false;
     }
-    else
-    {
-        clog << "Loaded SPK file " << filepath << "\n";
-        return true;
-    }
+
+     clog << "Loaded SPK file " << filepath << "\n";
+     return true;
 }

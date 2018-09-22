@@ -18,12 +18,12 @@ const quint32 TXF_ENDIANNESS_TEST = 0x12345678;
 
 
 MainWindow::MainWindow() :
-    m_scrollArea(NULL),
-    m_imageWidget(NULL),
-    m_fontCombo(NULL),
-    m_sizeCombo(NULL),
-    m_styleCombo(NULL),
-    m_saveAction(NULL)
+    m_scrollArea(nullptr),
+    m_imageWidget(nullptr),
+    m_fontCombo(nullptr),
+    m_sizeCombo(nullptr),
+    m_styleCombo(nullptr),
+    m_saveAction(nullptr)
 {
     QWidget *centralWidget = new QWidget();
 

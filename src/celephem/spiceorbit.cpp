@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <cstdio>
+#include <utility>
 #include "SpiceUsr.h"
 #include <celengine/astro.h>
 #include "spiceorbit.h"
@@ -25,14 +26,14 @@ static const double MILLISEC = astro::secsToDays(0.001);
 /*! Create a new SPICE orbit using with a valid interval specified
  *  by beginning and ending.
  */
-SpiceOrbit::SpiceOrbit(const std::string& _targetBodyName,
-                       const std::string& _originName,
+SpiceOrbit::SpiceOrbit(std::string  _targetBodyName,
+                       std::string  _originName,
                        double _period,
                        double _boundingRadius,
                        double _beginning,
                        double _ending) :
-    targetBodyName(_targetBodyName),
-    originName(_originName),
+    targetBodyName(std::move(_targetBodyName)),
+    originName(std::move(_originName)),
     period(_period),
     boundingRadius(_boundingRadius),
     spiceErr(false),
@@ -50,23 +51,18 @@ SpiceOrbit::SpiceOrbit(const std::string& _targetBodyName,
  *  other than the first coverage span is desired, the SPICE orbit must
  *  be constructed with an explicitly specified time range.
  */
-SpiceOrbit::SpiceOrbit(const std::string& _targetBodyName,
-                       const std::string& _originName,
+SpiceOrbit::SpiceOrbit(std::string  _targetBodyName,
+                       std::string  _originName,
                        double _period,
                        double _boundingRadius) :
-    targetBodyName(_targetBodyName),
-    originName(_originName),
+    targetBodyName(std::move(_targetBodyName)),
+    originName(std::move(_originName)),
     period(_period),
     boundingRadius(_boundingRadius),
     spiceErr(false),
     validIntervalBegin(0.0),
     validIntervalEnd(0.0),
     useDefaultTimeInterval(true)
-{
-}
-
-
-SpiceOrbit::~SpiceOrbit()
 {
 }
 
@@ -82,13 +78,9 @@ double
 SpiceOrbit::getPeriod() const
 {
     if (isPeriodic())
-    {
         return period;
-    }
-    else
-    {
-        return validIntervalEnd - validIntervalBegin;
-    }
+
+    return validIntervalEnd - validIntervalBegin;
 }
 
 
@@ -97,11 +89,11 @@ SpiceOrbit::init(const string& path,
                  const list<string>* requiredKernels)
 {
     // Load required kernel files
-    if (requiredKernels != NULL)
+    if (requiredKernels != nullptr)
     {
-        for (list<string>::const_iterator iter = requiredKernels->begin(); iter != requiredKernels->end(); iter++)
+        for (const auto& kernel : *requiredKernels)
         {
-            string filepath = path + string("/data/") + *iter;
+            string filepath = path + string("/data/") + kernel;
             if (!LoadSpiceKernel(filepath))
             {
                 spiceErr = true;

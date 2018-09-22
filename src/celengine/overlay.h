@@ -37,9 +37,9 @@ class OverlayStreamBuf : public std::streambuf
     };
 
  private:
-    Overlay* overlay;
+    Overlay* overlay{ nullptr };
 
-    UTF8DecodeState decodeState;
+    UTF8DecodeState decodeState{ UTF8DecodeStart };
     wchar_t decodedChar;
     unsigned int decodeShift;
 };
@@ -49,7 +49,7 @@ class Overlay : public std::ostream
 {
  public:
     Overlay();
-    ~Overlay();
+    ~Overlay() = default;
 
     void begin();
     void end();
@@ -73,15 +73,15 @@ class Overlay : public std::ostream
 #endif
 
  private:
-    int windowWidth;
-    int windowHeight;
-    TextureFont* font;
-    bool useTexture;
-    bool fontChanged;
-    int textBlock;
+    int windowWidth{ 1 };
+    int windowHeight{ 1 };
+    TextureFont* font{ nullptr };
+    bool useTexture{ false };
+    bool fontChanged{ false };
+    int textBlock{ 0 };
 
-    float xoffset;
-    float yoffset;
+    float xoffset{ 0.0f };
+    float yoffset{ 0.0f };
 
     OverlayStreamBuf sbuf;
 };

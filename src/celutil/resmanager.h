@@ -26,7 +26,7 @@ enum ResourceState {
 template<class T> class ResourceInfo
 {
  public:
-    ResourceInfo() : state(ResourceNotLoaded), resource(NULL) {};
+    ResourceInfo() : state(ResourceNotLoaded), resource(nullptr) {};
     virtual ~ResourceInfo() {};
 
     virtual std::string resolve(const std::string&) = 0;
@@ -84,7 +84,7 @@ template<class T> class ResourceManager
     {
         if (h >= (int) handles.size() || h < 0)
         {
-            return NULL;
+            return nullptr;
         }
         else
         {
@@ -101,7 +101,7 @@ template<class T> class ResourceManager
                 else
                 {
                     resources[h].resource = resources[h].load(resources[h].resolvedName);
-                    if (resources[h].resource == NULL)
+                    if (resources[h].resource == nullptr)
                     {
                         resources[h].state = ResourceLoadingFailed;
                     }
@@ -116,14 +116,14 @@ template<class T> class ResourceManager
             if (resources[h].state == ResourceLoaded)
                 return resources[h].resource;
             else
-                return NULL;
+                return nullptr;
         }
     }
 
     const T* getResourceInfo(ResourceHandle h)
     {
         if (h >= (int) handles.size() || h < 0)
-            return NULL;
+            return nullptr;
         else
             return &resources[h];
     }

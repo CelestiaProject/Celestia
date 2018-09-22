@@ -18,12 +18,12 @@
 class Destination
 {
  public:
-    Destination();
+    Destination() = default;
 
  public:
     std::string name;
     std::string target;
-    double distance;
+    double distance{ 0.0 };
     std::string description;
 };
 

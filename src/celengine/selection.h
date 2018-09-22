@@ -30,7 +30,7 @@ class Selection
     };
 
  public:
-    Selection() : type(Type_Nil), obj(NULL) {};
+    Selection() : type(Type_Nil), obj(nullptr) {};
     Selection(Star* star) : type(Type_Star), obj(star) { checkNull(); };
     Selection(Body* body) : type(Type_Body), obj(body) { checkNull(); };
     Selection(DeepSkyObject* deepsky) : type(Type_DeepSky), obj(deepsky) {checkNull(); };
@@ -49,22 +49,22 @@ class Selection
 
     Star* star() const
     {
-        return type == Type_Star ? static_cast<Star*>(obj) : NULL;
+        return type == Type_Star ? static_cast<Star*>(obj) : nullptr;
     }
 
     Body* body() const
     {
-        return type == Type_Body ? static_cast<Body*>(obj) : NULL;
+        return type == Type_Body ? static_cast<Body*>(obj) : nullptr;
     }
 
     DeepSkyObject* deepsky() const
     {
-        return type == Type_DeepSky ? static_cast<DeepSkyObject*>(obj) : NULL;
+        return type == Type_DeepSky ? static_cast<DeepSkyObject*>(obj) : nullptr;
     }
 
     Location* location() const
     {
-        return type == Type_Location ? static_cast<Location*>(obj) : NULL;
+        return type == Type_Location ? static_cast<Location*>(obj) : nullptr;
     }
 
     Type getType() const { return type; }
@@ -73,7 +73,7 @@ class Selection
     Type type;
     void* obj;
 
-    void checkNull() { if (obj == NULL) type = Type_Nil; }
+    void checkNull() { if (obj == nullptr) type = Type_Nil; }
 };
 
 

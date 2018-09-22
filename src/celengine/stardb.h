@@ -190,13 +190,13 @@ private:
     void buildIndexes();
     Star* findWhileLoading(uint32 catalogNumber) const;
 
-    int nStars;
+    int nStars{ 0 };
 
-    Star*             stars;
-    StarNameDatabase* namesDB;
+    Star*             stars{ nullptr };
+    StarNameDatabase* namesDB{ nullptr };
     Star**            catalogNumberIndex;
-    StarOctree*       octreeRoot;
-    uint32            nextAutoCatalogNumber;
+    StarOctree*       octreeRoot{ nullptr };
+    uint32            nextAutoCatalogNumber{ 0xfffffffe };
 
     std::vector<CrossIndex*> crossIndexes;
 
@@ -204,8 +204,8 @@ private:
     // not used after loading is complete.
     BlockArray<Star> unsortedStars;
     // List of stars loaded from binary file, sorted by catalog number
-    Star** binFileCatalogNumberIndex;
-    unsigned int binFileStarCount;
+    Star** binFileCatalogNumberIndex{ nullptr };
+    unsigned int binFileStarCount{ 0 };
     // Catalog number -> star mapping for stars loaded from stc files
     std::map<uint32, Star*> stcFileCatalogNumberIndex;
 

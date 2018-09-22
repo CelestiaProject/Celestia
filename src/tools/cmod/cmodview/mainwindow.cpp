@@ -27,12 +27,12 @@ static const int CMODVIEW_STATE_VERSION = 1;
 
 
 MainWindow::MainWindow() :
-    m_modelView(NULL),
-    m_materialWidget(NULL),
-    m_statusBarLabel(NULL),
-    m_saveAction(NULL),
-    m_saveAsAction(NULL),
-    m_gl2Action(NULL)
+    m_modelView(nullptr),
+    m_materialWidget(nullptr),
+    m_statusBarLabel(nullptr),
+    m_saveAction(nullptr),
+    m_saveAsAction(nullptr),
+    m_gl2Action(nullptr)
 {
     m_modelView = new ModelViewWidget(this);
     m_statusBarLabel = new QLabel(this);
@@ -237,10 +237,8 @@ MainWindow::eventFilter(QObject* obj, QEvent* e)
 
         return true;
     }
-    else
-    {
-        return QObject::eventFilter(obj, e);
-    }
+
+    return QObject::eventFilter(obj, e);
 }
 
 
@@ -371,14 +369,14 @@ MainWindow::openModel(const QString& fileName)
         if (info.suffix().toLower() == "3ds")
         {
             M3DScene* scene = Read3DSFile(fileNameStd);
-            if (scene == NULL)
+            if (scene == nullptr)
             {
                 QMessageBox::warning(this, "Load error", tr("Error reading 3DS file %1").arg(fileName));
                 return;
             }
 
             Model* model = Convert3DSModel(*scene);
-            if (model == NULL)
+            if (model == nullptr)
             {
                 QMessageBox::warning(this, "Load error", tr("Internal error converting 3DS file %1").arg(fileName));
                 return;
@@ -401,7 +399,7 @@ MainWindow::openModel(const QString& fileName)
             else
             {
                 // Automatically uniquify vertices
-                for (unsigned int i = 0; newModel->getMesh(i) != NULL; i++)
+                for (unsigned int i = 0; newModel->getMesh(i) != nullptr; i++)
                 {
                     Mesh* mesh = newModel->getMesh(i);
                     UniquifyVertices(*mesh);
@@ -412,8 +410,8 @@ MainWindow::openModel(const QString& fileName)
         }
         else if (info.suffix().toLower() == "obj")
         {
-            Model* model = NULL;
-            ifstream in(fileNameStd.c_str(), ios::in | ios::binary);
+            Model* model = nullptr;
+            ifstream in(fileNameStd, ios::in | ios::binary);
             if (!in.good())
             {
                 QMessageBox::warning(this, "Load error", tr("Error opening obj file %1").arg(fileName));
@@ -423,14 +421,14 @@ MainWindow::openModel(const QString& fileName)
             WavefrontLoader loader(in);
             model = loader.load();
 
-            if (model == NULL)
+            if (model == nullptr)
             {
                 QMessageBox::warning(this, "Load error", loader.errorMessage().c_str());
                 return;
             }
 
             // Automatically uniquify vertices
-            for (unsigned int i = 0; model->getMesh(i) != NULL; i++)
+            for (unsigned int i = 0; model->getMesh(i) != nullptr; i++)
             {
                 Mesh* mesh = model->getMesh(i);
                 UniquifyVertices(*mesh);
@@ -440,8 +438,8 @@ MainWindow::openModel(const QString& fileName)
         }
         else if (info.suffix().toLower() == "cmod")
         {
-            Model* model = NULL;
-            ifstream in(fileNameStd.c_str(), ios::in | ios::binary);
+            Model* model = nullptr;
+            ifstream in(fileNameStd, ios::in | ios::binary);
             if (!in.good())
             {
                 QMessageBox::warning(this, "Load error", tr("Error opening CMOD file %1").arg(fileName));
@@ -449,7 +447,7 @@ MainWindow::openModel(const QString& fileName)
             }
 
             model = LoadModel(in);
-            if (model == NULL)
+            if (model == nullptr)
             {
                 QMessageBox::warning(this, "Load error", tr("Error reading CMOD file %1").arg(fileName));
                 return;
@@ -492,7 +490,7 @@ MainWindow::saveModel(const QString& saveFileName)
 {
     string fileNameStd = string(saveFileName.toUtf8().data());
 
-    ofstream out(fileNameStd.c_str(), ios::out | ios::binary);
+    ofstream out(fileNameStd, ios::out | ios::binary);
     bool ok = false;
     if (out.good())
     {
@@ -647,18 +645,18 @@ MainWindow::generateTangents()
         Model* newModel = new Model();
 
         // Copy materials
-        for (unsigned int i = 0; model->getMaterial(i) != NULL; i++)
+        for (unsigned int i = 0; model->getMaterial(i) != nullptr; i++)
         {
             newModel->addMaterial(cloneMaterial(model->getMaterial(i)));
         }
 
-        for (unsigned int i = 0; model->getMesh(i) != NULL; i++)
+        for (unsigned int i = 0; model->getMesh(i) != nullptr; i++)
         {
             Mesh* mesh = model->getMesh(i);
-            Mesh* newMesh = NULL;
+            Mesh* newMesh = nullptr;
 
             newMesh = GenerateTangents(*mesh, weldVertices);
-            if (newMesh == NULL)
+            if (newMesh == nullptr)
             {
                 cerr << "Error generating normals!\n";
                 // TODO: Clone the mesh and add it to the model
@@ -685,7 +683,7 @@ MainWindow::uniquifyVertices()
         return;
     }
 
-    for (unsigned int i = 0; model->getMesh(i) != NULL; i++)
+    for (unsigned int i = 0; model->getMesh(i) != nullptr; i++)
     {
         Mesh* mesh = model->getMesh(i);
         UniquifyVertices(*mesh);

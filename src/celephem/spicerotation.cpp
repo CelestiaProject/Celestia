@@ -73,11 +73,6 @@ SpiceRotation::SpiceRotation(const std::string& frameName,
 }
 
 
-SpiceRotation::~SpiceRotation()
-{
-}
-
-
 bool
 SpiceRotation::isPeriodic() const
 {
@@ -89,13 +84,9 @@ double
 SpiceRotation::getPeriod() const
 {
     if (isPeriodic())
-    {
         return m_period;
-    }
-    else
-    {
-        return m_validIntervalEnd - m_validIntervalBegin;
-    }
+
+    return m_validIntervalEnd - m_validIntervalBegin;
 }
 
 
@@ -104,11 +95,11 @@ SpiceRotation::init(const string& path,
                     const list<string>* requiredKernels)
 {
     // Load required kernel files
-    if (requiredKernels != NULL)
+    if (requiredKernels != nullptr)
     {
-        for (list<string>::const_iterator iter = requiredKernels->begin(); iter != requiredKernels->end(); iter++)
+        for (const auto& kernel : requiredKernels)
         {
-            string filepath = path + string("/data/") + *iter;
+            string filepath = path + string("/data/") + kernel;
             if (!LoadSpiceKernel(filepath))
             {
                 m_spiceErr = true;

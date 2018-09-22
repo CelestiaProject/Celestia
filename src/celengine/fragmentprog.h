@@ -58,8 +58,8 @@ namespace fp
 class FragmentProcessor
 {
  public:
-    FragmentProcessor();
-    virtual ~FragmentProcessor();
+    FragmentProcessor() = default;
+    virtual ~FragmentProcessor() = default;
 
     virtual void enable() = 0;
     virtual void disable() = 0;

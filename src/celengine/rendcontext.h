@@ -23,7 +23,7 @@ class RenderContext
 
     RenderContext(const cmod::Material*);
     RenderContext();
-    virtual ~RenderContext() {};
+    virtual ~RenderContext() = default;
 
     virtual void makeCurrent(const cmod::Material&) = 0;
     virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
@@ -79,9 +79,9 @@ class FixedFunctionRenderContext : public RenderContext
     void setLighting(bool);
 
  private:
-    cmod::Material::BlendMode blendMode;
-    bool specularOn;
-    bool lightingEnabled;
+    cmod::Material::BlendMode blendMode{ cmod::Material::InvalidBlend };
+    bool specularOn{ false };
+    bool lightingEnabled{ true };
 };
 
 
@@ -132,14 +132,14 @@ class GLSL_RenderContext : public RenderContext
 
  private:
     const LightingState& lightingState;
-    const Atmosphere* atmosphere;
-    cmod::Material::BlendMode blendMode;
+    const Atmosphere* atmosphere{ nullptr };
+    cmod::Material::BlendMode blendMode{ cmod::Material::InvalidBlend };
     float objRadius;
     Eigen::Vector3f objScale;
     Eigen::Quaternionf objOrientation;
 
     // extended material properties
-    float lunarLambert;
+    float lunarLambert{ 0.0f };
 
     ShaderProperties shaderProps;
 };

@@ -203,17 +203,17 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CelestiaCore();
     ~CelestiaCore();
 
-    bool initSimulation(const std::string* = NULL,
-                        const std::vector<std::string>* extrasDirs = NULL,
-                        ProgressNotifier* progressNotifier = NULL);
+    bool initSimulation(const std::string* = nullptr,
+                        const std::vector<std::string>* extrasDirs = nullptr,
+                        ProgressNotifier* progressNotifier = nullptr);
     bool initRenderer();
     void start(double t);
-    void getLightTravelDelay(double distance, int&, int&, float&);
-    void setLightTravelDelay(double distance);
+    void getLightTravelDelay(double distanceKm, int&, int&, float&);
+    void setLightTravelDelay(double distanceKm);
 
     // URLs and history navigation
     void setStartURL(std::string url);
-    void goToUrl(const std::string& url);
+    void goToUrl(const std::string& urlStr);
     void addToHistory();
     void back();
     void forward();
@@ -249,8 +249,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void readFavoritesFile();
     void writeFavoritesFile();
     void activateFavorite(FavoritesEntry&);
-    void addFavorite(std::string, std::string, FavoritesList::iterator* iter=NULL);
-    void addFavoriteFolder(std::string, FavoritesList::iterator* iter=NULL);
+    void addFavorite(std::string, std::string, FavoritesList::iterator* iter=nullptr);
+    void addFavoriteFolder(std::string, FavoritesList::iterator* iter=nullptr);
     FavoritesList* getFavorites();
 
     bool viewUpdateRequired() const;
@@ -294,10 +294,10 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setFaintest(float);
     void setFaintestAutoMag();
 
-    void splitView(View::Type type, View* av = NULL, float splitPos = 0.5f);
-    void singleView(View* av = NULL);
-    void deleteView(View* v = NULL);
-    void setActiveView(View* v = NULL);
+    void splitView(View::Type type, View* av = nullptr, float splitPos = 0.5f);
+    void singleView(View* av = nullptr);
+    void deleteView(View* v = nullptr);
+    void setActiveView(View* v = nullptr);
     bool getFramesVisible() const;
     void setFramesVisible(bool);
     bool getActiveFrameVisible() const;
@@ -354,63 +354,63 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 #endif // CELX
 
  private:
-    CelestiaConfig* config;
+    CelestiaConfig* config{ nullptr };
 
-    Universe* universe;
+    Universe* universe{ nullptr };
 
-    FavoritesList* favorites;
-    DestinationList* destinations;
+    FavoritesList* favorites{ nullptr };
+    DestinationList* destinations{ nullptr };
 
-    Simulation* sim;
-    Renderer* renderer;
-    Overlay* overlay;
-    int width;
-    int height;
+    Simulation* sim{ nullptr };
+    Renderer* renderer{ nullptr };
+    Overlay* overlay{ nullptr };
+    int width{ 1 };
+    int height{ 1 };
 
-    TextureFont* font;
-    TextureFont* titleFont;
+    TextureFont* font{ nullptr };
+    TextureFont* titleFont{ nullptr };
 
     std::string messageText;
-    int messageHOrigin;
-    int messageVOrigin;
-    int messageHOffset;
-    int messageVOffset;
-    double messageStart;
-    double messageDuration;
-    Color textColor;
+    int messageHOrigin{ 0 };
+    int messageVOrigin{ 0 };
+    int messageHOffset{ 0 };
+    int messageVOffset{ 0 };
+    double messageStart{ 0.0 };
+    double messageDuration{ 0.0 };
+    Color textColor{ Color(1.0f, 1.0f, 1.0f) };
 
-    double imageStart;
-    double imageDuration;
-    float imageXoffset;
-    float imageYoffset;
-    float imageAlpha;
-    int imageFitscreen;
+    double imageStart{ 0.0 };
+    double imageDuration{ 0.0 };
+    float imageXoffset{ 0.0f };
+    float imageYoffset{ 0.0f };
+    float imageAlpha{ 0.0f };
+    int imageFitscreen{ 0 };
     std::string scriptImageFilename;
 
     std::string typedText;
     std::vector<std::string> typedTextCompletion;
-    int typedTextCompletionIdx;
-    int textEnterMode;
-    int hudDetail;
-    astro::Date::Format dateFormat;
-    int dateStrWidth;
-    int overlayElements;
-    bool wireframe;
-    bool editMode;
-    bool altAzimuthMode;
-    bool showConsole;
-    bool lightTravelFlag;
-    double flashFrameStart;
+    int typedTextCompletionIdx{ -1 };
+    int textEnterMode{ KbNormal };
+    int hudDetail{ 2 }; // def 1
+    astro::Date::Format dateFormat{ astro::Date::Locale };
+    int dateStrWidth{ 0 };
+    int overlayElements{ ShowTime | ShowVelocity | ShowSelection | ShowFrame };
+    bool wireframe{ false };
+    bool editMode{ false };
+    bool altAzimuthMode{ false };
+    bool showConsole{ false };
+    bool lightTravelFlag{ false };
+    double flashFrameStart{ 0.0 };
 
-    Timer* timer;
+    Timer* timer{ nullptr };
 
-    Execution* runningScript;
-    ExecutionEnvironment* execEnv;
+    Execution* runningScript{ nullptr };
+    ExecutionEnvironment* execEnv{ nullptr };
 
 #ifdef CELX
-    LuaState* celxScript;
-    LuaState* luaHook;     // Lua hook context
-    LuaState* luaSandbox;  // Safe Lua context for ssc scripts
+    LuaState* celxScript{ nullptr };
+    LuaState* luaHook{ nullptr };     // Lua hook context
+    LuaState* luaSandbox{ nullptr };  // Safe Lua context for ssc scripts
 #endif // CELX
 
     enum ScriptState
@@ -419,60 +419,60 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         ScriptRunning,
         ScriptPaused,
     };
-    ScriptState scriptState;
+    ScriptState scriptState{ ScriptCompleted };
 
-    int timeZoneBias;              // Diff in secs between local time and GMT
-    std:: string timeZoneName;     // Name of the current time zone
+    int timeZoneBias{ 0 };         // Diff in secs between local time and GMT
+    std::string timeZoneName;      // Name of the current time zone
 
     // Frame rate counter variables
-    bool showFPSCounter;
-    int nFrames;
-    double fps;
-    double fpsCounterStartTime;
+    bool showFPSCounter{ false };
+    int nFrames{ 0 };
+    double fps{ 0.0 };
+    double fpsCounterStartTime{ 0.0 };
 
     float oldFOV;
-    float mouseMotion;
-    double dollyMotion;
-    double dollyTime;
-    double zoomMotion;
-    double zoomTime;
+    float mouseMotion{ 0.0f };
+    double dollyMotion{ 0.0 };
+    double dollyTime{ 0.0 };
+    double zoomMotion{ 0.0 };
+    double zoomTime{ 0.0 };
 
-    double sysTime;
-    double currentTime;
+    double sysTime{ 0.0 };
+    double currentTime{ 0.0 };
 
-    bool viewChanged;
+    bool viewChanged{ true };
 
-    Eigen::Vector3f joystickRotation;
+    Eigen::Vector3f joystickRotation{ 0.0f, 0.0f, 0.0f };
     bool joyButtonsPressed[JoyButtonCount];
     bool keysPressed[KeyCount];
     bool shiftKeysPressed[KeyCount];
-    double KeyAccel;
+    double KeyAccel{ 1.0 };
 
-    MovieCapture* movieCapture;
-    bool recording;
+    MovieCapture* movieCapture{ nullptr };
+    bool recording{ false };
 
-    ContextMenuFunc contextMenuCallback;
+    ContextMenuFunc contextMenuCallback{ nullptr };
 
-    Texture* logoTexture;
-    Texture* scriptImage;
+    Texture* logoTexture{ nullptr };
+    Texture* scriptImage{ nullptr };
 
-    Alerter* alerter;
+    Alerter* alerter{ nullptr };
     std::vector<CelestiaWatcher*> watchers;
-    CursorHandler* cursorHandler;
-    CursorShape defaultCursorShape;
+    CursorHandler* cursorHandler{ nullptr };
+    CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
 
     std::vector<Url*> history;
-    std::vector<Url*>::size_type historyCurrent;
+    std::vector<Url*>::size_type historyCurrent{ 0 };
     std::string startURL;
 
     std::list<View*> views;
-    std::list<View*>::iterator activeView;
-    bool showActiveViewFrame;
-    bool showViewFrames;
-    View *resizeSplit;
+    std::list<View*>::iterator activeView{ views.begin() };
+    bool showActiveViewFrame{ false };
+    bool showViewFrames{ true };
+    View *resizeSplit{ nullptr };
 
-    int screenDpi;
-    int distanceToScreen;
+    int screenDpi{ 96 };
+    int distanceToScreen{ 400 };
 
     Selection lastSelection;
     string selectionNames;

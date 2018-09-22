@@ -42,11 +42,11 @@ Observer* to_observer(lua_State* l, int index)
     CelestiaCore* appCore = celx.appCore(AllErrors);
 
     // Check if pointer is still valid, i.e. is used by a view:
-    if (o != NULL && getViewByObserver(appCore, *o) != NULL)
+    if (o != nullptr && getViewByObserver(appCore, *o) != nullptr)
     {
         return *o;
     }
-    return NULL;
+    return nullptr;
 }
 
 static Observer* this_observer(lua_State* l)
@@ -54,7 +54,7 @@ static Observer* this_observer(lua_State* l)
     CelxLua celx(l);
 
     Observer* obs = to_observer(l, 1);
-    if (obs == NULL)
+    if (obs == nullptr)
     {
         celx.doError("Bad observer object (maybe tried to access a deleted view?)!");
     }
@@ -68,7 +68,7 @@ static int observer_isvalid(lua_State* l)
     CelxLua celx(l);
 
     celx.checkArgs(1, 1, "No arguments expected for observer:isvalid()");
-    lua_pushboolean(l, to_observer(l, 1) != NULL);
+    lua_pushboolean(l, to_observer(l, 1) != nullptr);
     return 1;
 }
 
@@ -87,7 +87,7 @@ static int observer_setposition(lua_State* l)
     Observer* o = this_observer(l);
 
     UniversalCoord* uc = celx.toPosition(2);
-    if (uc == NULL)
+    if (uc == nullptr)
     {
         celx.doError("Argument to observer:setposition must be a position");
         return 0;
@@ -104,7 +104,7 @@ static int observer_setorientation(lua_State* l)
     Observer* o = this_observer(l);
 
     Quatd* q = celx.toRotation(2);
-    if (q == NULL)
+    if (q == nullptr)
     {
         celx.doError("Argument to observer:setorientation must be a rotation");
         return 0;
@@ -132,7 +132,7 @@ static int observer_rotate(lua_State* l)
     Observer* o = this_observer(l);
 
     Quatd* q = celx.toRotation(2);
-    if (q == NULL)
+    if (q == nullptr)
     {
         celx.doError("Argument to observer:setpos must be a rotation");
         return 0;
@@ -150,7 +150,7 @@ static int observer_orbit(lua_State* l)
     Observer* o = this_observer(l);
 
     Quatd* q = celx.toRotation(2);
-    if (q == NULL)
+    if (q == nullptr)
     {
         celx.doError("Argument for observer:orbit must be a rotation");
         return 0;
@@ -168,14 +168,14 @@ static int observer_lookat(lua_State* l)
 
     Observer* o = this_observer(l);
 
-    UniversalCoord* from = NULL;
-    UniversalCoord* to = NULL;
-    Vec3d* upd = NULL;
+    UniversalCoord* from = nullptr;
+    UniversalCoord* to = nullptr;
+    Vec3d* upd = nullptr;
     if (argc == 3)
     {
         to = celx.toPosition(2);
         upd = celx.toVector(3);
-        if (to == NULL)
+        if (to == nullptr)
         {
             celx.doError("Argument 1 (of 2) to observer:lookat must be of type position");
             return 0;
@@ -189,7 +189,7 @@ static int observer_lookat(lua_State* l)
             to = celx.toPosition(3);
             upd = celx.toVector(4);
 
-            if (to == NULL || from == NULL)
+            if (to == nullptr || from == nullptr)
             {
                 celx.doError("Argument 1 and 2 (of 3) to observer:lookat must be of type position");
                 return 0;
@@ -197,13 +197,13 @@ static int observer_lookat(lua_State* l)
         }
     }
 
-    if (upd == NULL)
+    if (upd == nullptr)
     {
         celx.doError("Last argument to observer:lookat must be of type vector");
         return 0;
     }
     Vector3d nd;
-    if (from == NULL)
+    if (from == nullptr)
     {
         nd = to->offsetFromKm(o->getPosition());
     }
@@ -254,28 +254,28 @@ static int observer_gototable(lua_State* l)
     lua_pushstring(l, "from");
     lua_gettable(l, 2);
     UniversalCoord* from = celx.toPosition(3);
-    if (from != NULL)
+    if (from != nullptr)
         jparams.from = *from;
     lua_settop(l, 2);
 
     lua_pushstring(l, "to");
     lua_gettable(l, 2);
     UniversalCoord* to = celx.toPosition(3);
-    if (to != NULL)
+    if (to != nullptr)
         jparams.to = *to;
     lua_settop(l, 2);
 
     lua_pushstring(l, "initialOrientation");
     lua_gettable(l, 2);
     Quatd* rot1 = celx.toRotation(3);
-    if (rot1 != NULL)
+    if (rot1 != nullptr)
         jparams.initialOrientation = toEigen(*rot1);
     lua_settop(l, 2);
 
     lua_pushstring(l, "finalOrientation");
     lua_gettable(l, 2);
     Quatd* rot2 = celx.toRotation(3);
-    if (rot2 != NULL)
+    if (rot2 != nullptr)
         jparams.finalOrientation = toEigen(*rot2);
     lua_settop(l, 2);
 
@@ -324,7 +324,7 @@ static int observer_goto(lua_State* l)
 
     Selection* sel = celx.toObject(2);
     UniversalCoord* uc = celx.toPosition(2);
-    if (sel == NULL && uc == NULL)
+    if (sel == nullptr && uc == nullptr)
     {
         celx.doError("First arg to observer:goto must be object or position");
         return 0;
@@ -337,7 +337,7 @@ static int observer_goto(lua_State* l)
     if (endInter < 0 || endInter > 1) startInter = 0.75;
 
     // The first argument may be either an object or a position
-    if (sel != NULL)
+    if (sel != nullptr)
     {
         o->gotoSelection(*sel, travelTime, startInter, endInter, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
     }
@@ -357,7 +357,7 @@ static int observer_gotolonglat(lua_State* l)
     Observer* o = this_observer(l);
 
     Selection* sel = celx.toObject(2);
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("First arg to observer:gotolonglat must be an object");
         return 0;
@@ -375,7 +375,7 @@ static int observer_gotolonglat(lua_State* l)
     if (lua_gettop(l) >= 7)
     {
         Vec3d* uparg = celx.toVector(7);
-        if (uparg == NULL)
+        if (uparg == nullptr)
         {
             celx.doError("Sixth argument to observer:gotolonglat must be a vector");
             return 0;
@@ -400,7 +400,7 @@ static int observer_gotolocation(lua_State* l)
         travelTime = 0.0;
 
     UniversalCoord* uc = celx.toPosition(2);
-    if (uc != NULL)
+    if (uc != nullptr)
     {
         o->gotoLocation(*uc, o->getOrientation(), travelTime);
     }
@@ -419,7 +419,7 @@ static int observer_gotodistance(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = celx.toObject(2);
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("First arg to observer:gotodistance must be object");
         return 0;
@@ -432,7 +432,7 @@ static int observer_gotodistance(lua_State* l)
     if (lua_gettop(l) > 4)
     {
         Vec3d* up_arg = celx.toVector(5);
-        if (up_arg == NULL)
+        if (up_arg == nullptr)
         {
             celx.doError("Fourth arg to observer:gotodistance must be a vector");
             return 0;
@@ -453,7 +453,7 @@ static int observer_gotosurface(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = celx.toObject(2);
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("First arg to observer:gotosurface must be object");
         return 0;
@@ -475,7 +475,7 @@ static int observer_center(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = celx.toObject(2);
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("First argument to observer:center must be an object");
         return 0;
@@ -494,7 +494,7 @@ static int observer_centerorbit(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = celx.toObject(2);
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("First argument to observer:centerorbit must be an object");
         return 0;
@@ -524,7 +524,7 @@ static int observer_follow(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = celx.toObject(2);
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("First argument to observer:follow must be an object");
         return 0;
@@ -541,7 +541,7 @@ static int observer_synchronous(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = celx.toObject(2);
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("First argument to observer:synchronous must be an object");
         return 0;
@@ -558,7 +558,7 @@ static int observer_lock(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = celx.toObject(2);
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("First argument to observer:phaseLock must be an object");
         return 0;
@@ -575,7 +575,7 @@ static int observer_chase(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = celx.toObject(2);
-    if (sel == NULL)
+    if (sel == nullptr)
     {
         celx.doError("First argument to observer:chase must be an object");
         return 0;
@@ -601,7 +601,7 @@ static int observer_track(lua_State* l)
     {
         // Otherwise, turn on tracking and set the tracked object
         Selection* sel = celx.toObject(2);
-        if (sel == NULL)
+        if (sel == nullptr)
         {
             celx.doError("First argument to observer:center must be an object");
             return 0;
@@ -682,7 +682,7 @@ static int observer_setsurface(lua_State* l)
     Observer* obs = this_observer(l);
     const char* s = lua_tostring(l, 2);
 
-    if (s == NULL)
+    if (s == nullptr)
         obs->setDisplayedSurface("");
     else
         obs->setDisplayedSurface(s);
@@ -711,7 +711,7 @@ static int observer_setframe(lua_State* l)
 
     ObserverFrame* frame;
     frame = celx.toFrame(2);
-    if (frame != NULL)
+    if (frame != nullptr)
     {
         obs->setFrame(*frame);
     }

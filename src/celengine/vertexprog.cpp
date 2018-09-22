@@ -52,54 +52,54 @@ unsigned int vp::nightLights_2lightHDR = 0;
 class VertexProcessorNV : public VertexProcessor
 {
  public:
-    VertexProcessorNV();
-    virtual ~VertexProcessorNV();
+    VertexProcessorNV() = default;
+    ~VertexProcessorNV() override = default;
 
-    virtual void enable();
-    virtual void disable();
-    virtual void use(unsigned int);
-    virtual void parameter(vp::Parameter, float, float, float, float);
-    virtual void parameter(vp::Parameter, const float*);
+    void enable() override;
+    void disable() override;
+    void use(unsigned int /*prog*/) override;
+    void parameter(vp::Parameter /*param*/, float /*x*/, float /*y*/, float /*z*/, float /*w*/) override;
+    void parameter(vp::Parameter /*param*/, const float* /*fv*/) override;
 
-    virtual void enableAttribArray(unsigned int);
-    virtual void disableAttribArray(unsigned int);
-    virtual void attribArray(unsigned int index,
+    void enableAttribArray(unsigned int /*index*/) override;
+    void disableAttribArray(unsigned int /*index*/) override;
+    void attribArray(unsigned int index,
                              int size,
                              GLenum type,
                              unsigned int stride,
-                             const void* pointer);
+                             const void* ptr) override;
 };
 
 class VertexProcessorARB : public VertexProcessor
 {
  public:
-    VertexProcessorARB();
-    virtual ~VertexProcessorARB();
+    VertexProcessorARB() = default;
+    ~VertexProcessorARB() override = default;
 
-    virtual void enable();
-    virtual void disable();
-    virtual void use(unsigned int);
-    virtual void parameter(vp::Parameter, float, float, float, float);
-    virtual void parameter(vp::Parameter, const float*);
+    void enable() override;
+    void disable() override;
+    void use(unsigned int /*prog*/) override;
+    void parameter(vp::Parameter /*param*/, float /*x*/, float /*y*/, float /*z*/, float /*w*/) override;
+    void parameter(vp::Parameter /*param*/, const float* /*fv*/) override;
 
-    virtual void enableAttribArray(unsigned int);
-    virtual void disableAttribArray(unsigned int);
-    virtual void attribArray(unsigned int index,
+    void enableAttribArray(unsigned int /*index*/) override;
+    void disableAttribArray(unsigned int /*index*/) override;
+    void attribArray(unsigned int index,
                              int size,
                              GLenum type,
                              unsigned int stride,
-                             const void* pointer);
+                             const void* ptr) override;
 };
 
 
 
 static string* ReadTextFromFile(const string& filename)
 {
-    ifstream textFile(filename.c_str(), ios::in);
+    ifstream textFile(filename, ios::in);
     if (!textFile.good())
-        return NULL;
+        return nullptr;
 
-    string* s = new string();
+    auto* s = new string();
 
     char c;
     while (textFile.get(c))
@@ -114,7 +114,7 @@ static bool LoadNvVertexProgram(const string& filename, unsigned int& id)
     cout << _("Loading NV vertex program: ") << filename << '\n';
 
     string* source = ReadTextFromFile(filename);
-    if (source == NULL)
+    if (source == nullptr)
     {
         cout << _("Error loading NV vertex program: ") << filename << '\n';
         return false;
@@ -163,7 +163,7 @@ static bool LoadARBVertexProgram(const string& filename, unsigned int& id)
     cout << _("Loading ARB vertex program: ") << filename << '\n';
 
     string* source = ReadTextFromFile(filename);
-    if (source == NULL)
+    if (source == nullptr)
     {
         cout << _("Error loading ARB vertex program: ") << filename << '\n';
         return false;
@@ -188,8 +188,8 @@ static bool LoadARBVertexProgram(const string& filename, unsigned int& id)
         GLint errPos = 0;
         glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errPos);
 
-        const char* errMsg = (const char*) glGetString(GL_PROGRAM_ERROR_STRING_ARB);
-        if (errMsg == NULL)
+        const auto* errMsg = (const char*) glGetString(GL_PROGRAM_ERROR_STRING_ARB);
+        if (errMsg == nullptr)
             errMsg = "Unknown error";
 
         cout << _("Error in vertex program ") << filename <<
@@ -207,25 +207,25 @@ VertexProcessor* vp::initNV()
 {
     cout << _("Initializing NV vertex programs . . .\n");
     if (!LoadNvVertexProgram("shaders/diffuse.vp", diffuse))
-        return NULL;
+        return nullptr;
     if (!LoadNvVertexProgram("shaders/specular.vp", specular))
-        return NULL;
+        return nullptr;
     if (!LoadNvVertexProgram("shaders/haze.vp", diffuseHaze))
-        return NULL;
+        return nullptr;
     if (!LoadNvVertexProgram("shaders/bumpdiffuse.vp", diffuseBump))
-        return NULL;
+        return nullptr;
     if (!LoadNvVertexProgram("shaders/bumphaze.vp", diffuseBumpHaze))
-        return NULL;
+        return nullptr;
     if (!LoadNvVertexProgram("shaders/shadowtex.vp", shadowTexture))
-        return NULL;
+        return nullptr;
     if (!LoadNvVertexProgram("shaders/diffuse_texoff.vp", diffuseTexOffset))
-        return NULL;
+        return nullptr;
     if (!LoadNvVertexProgram("shaders/rings.vp", ringIllum))
-        return NULL;
+        return nullptr;
     if (!LoadNvVertexProgram("shaders/ringshadow.vp", ringShadow))
-        return NULL;
+        return nullptr;
     if (!LoadNvVertexProgram("shaders/night.vp", nightLights))
-        return NULL;
+        return nullptr;
     // if (!LoadNvVertexProgram("shaders/comet.vp", cometTail))
     //    return false;
 
@@ -252,63 +252,63 @@ VertexProcessor* vp::initARB()
 {
     cout << _("Initializing ARB vertex programs . . .\n");
     if (!LoadARBVertexProgram("shaders/diffuse_arb.vp", diffuse))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/specular_arb.vp", specular))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/haze_arb.vp", diffuseHaze))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/bumpdiffuse_arb.vp", diffuseBump))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/bumphaze_arb.vp", diffuseBumpHaze))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/shadowtex_arb.vp", shadowTexture))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/diffuse_texoff_arb.vp", diffuseTexOffset))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/rings_arb.vp", ringIllum))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/ringshadow_arb.vp", ringShadow))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/night_arb.vp", nightLights))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/glossmap_arb.vp", glossMap))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/diffuse2_arb.vp", diffuse_2light))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/haze2_arb.vp", diffuseHaze_2light))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/diffuse_texoff2_arb.vp", diffuseTexOffset_2light))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/specular2_arb.vp", specular_2light))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/night2_arb.vp", nightLights_2light))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/star_arb.vp", starDisc))
-        return NULL;
+        return nullptr;
 #ifdef HDR_COMPRESS
     if (!LoadARBVertexProgram("shaders/bumpdiffuse_arb_hdr.vp", diffuseBumpHDR))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/bumphaze_arb_hdr.vp", diffuseBumpHazeHDR))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/night_arb_hdr.vp", nightLightsHDR))
-        return NULL;
+        return nullptr;
     if (!LoadARBVertexProgram("shaders/night2_arb_hdr.vp", nightLights_2lightHDR))
-        return NULL;
+        return nullptr;
 #endif
 
     // Load vertex programs that are only required with fragment programs
     if (GLEW_NV_fragment_program || GLEW_ARB_fragment_program)
     {
         if (!LoadARBVertexProgram("shaders/multishadow_arb.vp", multiShadow))
-            return NULL;
+            return nullptr;
         if (!LoadARBVertexProgram("shaders/texphong_arb.vp", perFragmentSpecular))
-            return NULL;
+            return nullptr;
         if (!LoadARBVertexProgram("shaders/texphong_alpha_arb.vp", perFragmentSpecularAlpha))
-            return NULL;
+            return nullptr;
     }
 
     if (!LoadARBVertexProgram("shaders/ell_galaxy_arb.vp", ellipticalGalaxy))
-        return NULL;
+        return nullptr;
 
     cout << _("All ARB vertex programs loaded successfully.\n");
 
@@ -362,15 +362,6 @@ void arbvp::parameter(unsigned int param, const float* fv)
     glProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, param, fv);
 }
 
-
-VertexProcessor::VertexProcessor()
-{
-}
-
-VertexProcessor::~VertexProcessor()
-{
-}
-
 void VertexProcessor::parameter(vp::Parameter param, const Eigen::Vector3f& v)
 {
     parameter(param, v.x(), v.y(), v.z(), 0.0f);
@@ -414,14 +405,6 @@ static unsigned int parameterMappings[] =
     51, // DiffuseColor1,
     52, // SpecularColor1
 };
-
-VertexProcessorNV::VertexProcessorNV()
-{
-}
-
-VertexProcessorNV::~VertexProcessorNV()
-{
-}
 
 void VertexProcessorNV::enable()
 {
@@ -473,14 +456,6 @@ void VertexProcessorNV::attribArray(unsigned int index,
 
 
 // VertexProcessorARB implementation
-
-VertexProcessorARB::VertexProcessorARB()
-{
-}
-
-VertexProcessorARB::~VertexProcessorARB()
-{
-}
 
 void VertexProcessorARB::enable()
 {

@@ -42,9 +42,9 @@
  */
 FrameTree::FrameTree(Star* star) :
     starParent(star),
-    bodyParent(NULL),
+    bodyParent(nullptr),
     m_changed(true),
-    defaultFrame(NULL)
+    defaultFrame(nullptr)
 {
     // Default frame for a star is J2000 ecliptical, centered
     // on the star.
@@ -56,10 +56,10 @@ FrameTree::FrameTree(Star* star) :
 /*! Create a frame tree associated with a planet or other solar system body.
  */
 FrameTree::FrameTree(Body* body) :
-    starParent(NULL),
+    starParent(nullptr),
     bodyParent(body),
     m_changed(true),
-    defaultFrame(NULL)
+    defaultFrame(nullptr)
 {
     // Default frame for a solar system body is the mean equatorial frame of the body.
     defaultFrame = new BodyMeanEquatorFrame(Selection(body), Selection(body));
@@ -92,7 +92,7 @@ FrameTree::markChanged()
     if (!m_changed)
     {
         m_changed = true;
-        if (bodyParent != NULL)
+        if (bodyParent != nullptr)
             bodyParent->markChanged();
     }
 }
@@ -108,11 +108,8 @@ FrameTree::markUpdated()
     if (m_changed)
     {
         m_changed = false;
-        for (vector<TimelinePhase*>::iterator iter = children.begin();
-             iter != children.end(); iter++)
-        {
-            (*iter)->body()->markUpdated();
-        }
+        for (const auto child : children)
+            child->body()->markUpdated();
     }
 }
 
@@ -133,10 +130,8 @@ FrameTree::recomputeBoundingSphere()
         m_containsSecondaryIlluminators = false;
         m_childClassMask = 0;
 
-        for (vector<TimelinePhase*>::iterator iter = children.begin();
-             iter != children.end(); iter++)
+        for (const auto phase : children)
         {
-            TimelinePhase* phase = *iter;
             double bodyRadius = phase->body()->getRadius();
             double r = phase->body()->getCullingRadius() + phase->orbit()->getBoundingRadius();
             m_maxChildRadius = max(m_maxChildRadius, bodyRadius);
@@ -144,7 +139,7 @@ FrameTree::recomputeBoundingSphere()
             m_childClassMask |= phase->body()->getClassification();
 
             FrameTree* tree = phase->body()->getFrameTree();
-            if (tree != NULL)
+            if (tree != nullptr)
             {
                 tree->recomputeBoundingSphere();
                 r += tree->m_boundingSphereRadius;

@@ -34,7 +34,7 @@ class CelestiaGlWidget : public QGLWidget, public CelestiaCore::CursorHandler
 
 public:
     CelestiaGlWidget(QWidget* parent, const char* name, CelestiaCore* core);
-    ~CelestiaGlWidget();
+    ~CelestiaGlWidget() = default;
 
     void setCursorShape(CelestiaCore::CursorShape);
     CelestiaCore::CursorShape getCursorShape() const;

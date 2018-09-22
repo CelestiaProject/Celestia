@@ -59,7 +59,7 @@ struct CatalogNumberOrderingPredicate
 {
     int unused;
 
-    CatalogNumberOrderingPredicate() {};
+    CatalogNumberOrderingPredicate() = default;
 
     bool operator()(const Star& star0, const Star& star1) const
     {
@@ -72,7 +72,7 @@ struct CatalogNumberEquivalencePredicate
 {
     int unused;
 
-    CatalogNumberEquivalencePredicate() {};
+    CatalogNumberEquivalencePredicate() = default;
 
     bool operator()(const Star& star0, const Star& star1) const
     {
@@ -86,7 +86,7 @@ struct PtrCatalogNumberOrderingPredicate
 {
     int unused;
 
-    PtrCatalogNumberOrderingPredicate() {};
+    PtrCatalogNumberOrderingPredicate() = default;
 
     bool operator()(const Star* const & star0, const Star* const & star1) const
     {
@@ -179,14 +179,7 @@ bool StarDatabase::CrossIndexEntry::operator<(const StarDatabase::CrossIndexEntr
 }
 
 
-StarDatabase::StarDatabase():
-    nStars               (0),
-    stars                (NULL),
-    namesDB              (NULL),
-    octreeRoot           (NULL),
-    nextAutoCatalogNumber(0xfffffffe),
-    binFileCatalogNumberIndex(NULL),
-    binFileStarCount(0)
+StarDatabase::StarDatabase()
 {
     crossIndexes.resize(MaxCatalog);
 }
@@ -194,17 +187,11 @@ StarDatabase::StarDatabase():
 
 StarDatabase::~StarDatabase()
 {
-    if (stars != NULL)
-        delete [] stars;
+    delete [] stars;
+    delete [] catalogNumberIndex;
 
-    if (catalogNumberIndex != NULL)
-        delete [] catalogNumberIndex;
-
-    for (vector<CrossIndex*>::iterator iter = crossIndexes.begin(); iter != crossIndexes.end(); ++iter)
-    {
-        if (*iter != NULL)
-            delete *iter;
-    }
+    for (const auto index : crossIndexes)
+        delete index;
 }
 
 
@@ -221,7 +208,7 @@ Star* StarDatabase::find(uint32 catalogNumber) const
     if (star != catalogNumberIndex + nStars && (*star)->getCatalogNumber() == catalogNumber)
         return *star;
     else
-        return NULL;
+        return nullptr;
 }
 
 
@@ -232,7 +219,7 @@ uint32 StarDatabase::findCatalogNumberByName(const string& name) const
 
     uint32 catalogNumber = Star::InvalidCatalogNumber;
 
-    if (namesDB != NULL)
+    if (namesDB != nullptr)
     {
         catalogNumber = namesDB->findCatalogNumberByName(name);
         if (catalogNumber != Star::InvalidCatalogNumber)
@@ -273,7 +260,7 @@ Star* StarDatabase::find(const string& name) const
     if (catalogNumber != Star::InvalidCatalogNumber)
         return find(catalogNumber);
     else
-        return NULL;
+        return nullptr;
 }
 
 
@@ -283,16 +270,15 @@ uint32 StarDatabase::crossIndex(const Catalog catalog, const uint32 celCatalogNu
         return Star::InvalidCatalogNumber;
 
     CrossIndex* xindex = crossIndexes[catalog];
-    if (xindex == NULL)
+    if (xindex == nullptr)
         return Star::InvalidCatalogNumber;
 
     // A simple linear search.  We could store cross indices sorted by
     // both catalog numbers and trade memory for speed
-    for (CrossIndex::const_iterator iter = xindex->begin(); iter != xindex->end(); iter++)
-    {
-        if (celCatalogNumber == iter->celCatalogNumber)
-            return iter->catalogNumber;
-    }
+    auto iter = std::find_if(xindex->begin(), xindex->end(),
+                             [celCatalogNumber](auto& o){ return celCatalogNumber == o.celCatalogNumber; });
+    if (iter != xindex->end())
+        return iter->catalogNumber;
 
     return Star::InvalidCatalogNumber;
 }
@@ -306,7 +292,7 @@ uint32 StarDatabase::searchCrossIndexForCatalogNumber(const Catalog catalog, con
         return Star::InvalidCatalogNumber;
 
     CrossIndex* xindex = crossIndexes[catalog];
-    if (xindex == NULL)
+    if (xindex == nullptr)
         return Star::InvalidCatalogNumber;
 
     CrossIndexEntry xindexEnt;
@@ -327,7 +313,7 @@ Star* StarDatabase::searchCrossIndex(const Catalog catalog, const uint32 number)
     if (celCatalogNumber != Star::InvalidCatalogNumber)
         return find(celCatalogNumber);
     else
-        return NULL;
+        return nullptr;
 }
 
 
@@ -336,7 +322,7 @@ vector<string> StarDatabase::getCompletion(const string& name) const
     vector<string> completion;
 
     // only named stars are supported by completion.
-    if (!name.empty() && namesDB != NULL)
+    if (!name.empty() && namesDB != nullptr)
         return namesDB->getCompletion(name);
     else
         return completion;
@@ -384,7 +370,7 @@ string StarDatabase::getStarName(const Star& star, bool i18n) const
 {
     uint32 catalogNumber = star.getCatalogNumber();
 
-    if (namesDB != NULL)
+    if (namesDB != nullptr)
     {
         StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
@@ -417,7 +403,7 @@ void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int 
 
     uint32 catalogNumber = star.getCatalogNumber();
 
-    if (namesDB != NULL)
+    if (namesDB != nullptr)
     {
         StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
@@ -441,9 +427,9 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
     string starNames;
     char numString[32];
 
-    unsigned int catalogNumber    = star.getCatalogNumber();
+    unsigned int catalogNumber = star.getCatalogNumber();
 
-    StarNameDatabase::NumberIndex::const_iterator iter  = namesDB->getFirstNameIter(catalogNumber);
+    StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
 
     unsigned int count = 0;
     while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
@@ -567,7 +553,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
     if (static_cast<unsigned int>(catalog) >= crossIndexes.size())
         return false;
 
-    if (crossIndexes[catalog] != NULL)
+    if (crossIndexes[catalog] != nullptr)
         delete crossIndexes[catalog];
 
     // Verify that the star database file has a correct header
@@ -597,7 +583,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
     }
 
     CrossIndex* xindex = new CrossIndex();
-    if (xindex == NULL)
+    if (xindex == nullptr)
         return false;
 
     unsigned int record = 0;
@@ -690,12 +676,12 @@ bool StarDatabase::loadBinary(istream& in)
         star.setPosition(x, y, z);
         star.setAbsoluteMagnitude((float) absMag / 256.0f);
 
-        StarDetails* details = NULL;
+        StarDetails* details = nullptr;
         StellarClass sc;
         if (sc.unpack(spectralType))
             details = StarDetails::GetStarDetails(sc);
 
-        if (details == NULL)
+        if (details == nullptr)
         {
             cerr << _("Bad spectral type in star database, star #") << nStars << "\n";
             return false;
@@ -750,14 +736,13 @@ void StarDatabase::finish()
     // the barycenters have been resolved, and these are required when building
     // the octree.  This will only rarely cause a problem, but it still needs
     // to be addressed.
-    for (vector<BarycenterUsage>::const_iterator iter = barycenters.begin();
-         iter != barycenters.end(); iter++)
+    for (const auto& b : barycenters)
     {
-        Star* star = find(iter->catNo);
-        Star* barycenter = find(iter->barycenterCatNo);
-        assert(star != NULL);
-        assert(barycenter != NULL);
-        if (star != NULL && barycenter != NULL)
+        Star* star = find(b.catNo);
+        Star* barycenter = find(b.barycenterCatNo);
+        assert(star != nullptr);
+        assert(barycenter != nullptr);
+        if (star != nullptr && barycenter != nullptr)
         {
             star->setOrbitBarycenter(barycenter);
             barycenter->addOrbitingStar(star);
@@ -790,7 +775,7 @@ bool StarDatabase::createStar(Star* star,
                               const string& path,
                               bool isBarycenter)
 {
-    StarDetails* details = NULL;
+    StarDetails* details = nullptr;
     string spectralType;
 
     // Get the magnitude and spectral type; if the star is actually
@@ -805,7 +790,7 @@ bool StarDatabase::createStar(Star* star,
         {
             StellarClass sc = StellarClass::parse(spectralType);
             details = StarDetails::GetStarDetails(sc);
-            if (details == NULL)
+            if (details == nullptr)
             {
                 cerr << _("Invalid star: bad spectral type.\n");
                 return false;
@@ -832,7 +817,7 @@ bool StarDatabase::createStar(Star* star,
         if (!existingDetails->shared())
         {
             modifyExistingDetails = true;
-            if (details != NULL)
+            if (details != nullptr)
             {
                 // If the spectral type was modified, copy the new data
                 // to the custom details record.
@@ -848,7 +833,7 @@ bool StarDatabase::createStar(Star* star,
 
             details = existingDetails;
         }
-        else if (details == NULL)
+        else if (details == nullptr)
         {
             details = existingDetails;
         }
@@ -860,7 +845,7 @@ bool StarDatabase::createStar(Star* star,
     bool hasModel = starData->getString("Mesh", modelName);
 
     RotationModel* rm = CreateRotationModel(starData, path, 1.0);
-    bool hasRotationModel = (rm != NULL);
+    bool hasRotationModel = (rm != nullptr);
 
     Vector3d semiAxes = Vector3d::Ones();
     bool hasSemiAxes = starData->getLengthVector("SemiAxes", semiAxes);
@@ -888,7 +873,7 @@ bool StarDatabase::createStar(Star* star,
 
     if (hasTexture              ||
         hasModel                ||
-        orbit != NULL           ||
+        orbit != nullptr        ||
         hasSemiAxes             ||
         hasRadius               ||
         hasTemperature          ||
@@ -959,7 +944,7 @@ bool StarDatabase::createStar(Star* star,
             details->setInfoURL(infoURL);
         }
 
-        if (orbit != NULL)
+        if (orbit != nullptr)
         {
             details->setOrbit(orbit);
 
@@ -994,7 +979,7 @@ bool StarDatabase::createStar(Star* star,
                     // Even though we can't actually get the Star pointer for
                     // the barycenter, we can get the star information.
                     Star* barycenter = findWhileLoading(barycenterCatNo);
-                    if (barycenter != NULL)
+                    if (barycenter != nullptr)
                     {
                         hasBarycenter = true;
                         barycenterPosition = barycenter->getPosition();
@@ -1255,7 +1240,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
             }
         }
 
-        Star* star = NULL;
+        Star* star = nullptr;
 
         switch (disposition)
         {
@@ -1306,12 +1291,12 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
             break;
         }
 
-        bool isNewStar = star == NULL;
+        bool isNewStar = star == nullptr;
 
         tokenizer.pushBack();
 
         Value* starDataValue = parser.readValue();
-        if (starDataValue == NULL)
+        if (starDataValue == nullptr)
         {
             clog << "Error reading star." << endl;
             return false;
@@ -1351,7 +1336,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                 stcFileCatalogNumberIndex[catalogNumber] = &unsortedStars[unsortedStars.size() - 1];
             }
 
-            if (namesDB != NULL && !objName.empty())
+            if (namesDB != nullptr && !objName.empty())
             {
                 // List of namesDB will replace any that already exist for
                 // this star.
@@ -1393,7 +1378,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
 void StarDatabase::buildOctree()
 {
     // This should only be called once for the database
-    // ASSERT(octreeRoot == NULL);
+    // ASSERT(octreeRoot == nullptr);
 
     DPRINTF(1, "Sorting stars into octree . . .\n");
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
@@ -1417,13 +1402,14 @@ void StarDatabase::buildOctree()
 #ifdef PROFILE_OCTREE
     vector<OctreeLevelStatistics> stats;
     octreeRoot->computeStatistics(stats);
-    for (vector<OctreeLevelStatistics>::const_iterator iter = stats.begin(); iter != stats.end(); ++iter)
+    int level = 0;
+    for (const auto& stat : stats)
     {
-        int level = iter - stats.begin();
+        level++;
         clog << "Level " << level << ", "
              << STAR_OCTREE_ROOT_SIZE / pow(2.0, (double) level) << "ly, "
-             << iter->nodeCount << " nodes, "
-             << iter->objectCount << " stars\n";
+             << stat.nodeCount << " nodes, "
+             << stat.objectCount << " stars\n";
     }
 #endif
 
@@ -1439,7 +1425,7 @@ void StarDatabase::buildOctree()
 void StarDatabase::buildIndexes()
 {
     // This should only be called once for the database
-    // assert(catalogNumberIndexes[0] == NULL);
+    // assert(catalogNumberIndexes[0] == nullptr);
 
     DPRINTF(1, "Building catalog number indexes . . .\n");
 
@@ -1465,7 +1451,7 @@ void StarDatabase::buildIndexes()
 Star* StarDatabase::findWhileLoading(uint32 catalogNumber) const
 {
     // First check for stars loaded from the binary database
-    if (binFileCatalogNumberIndex != NULL)
+    if (binFileCatalogNumberIndex != nullptr)
     {
         Star refStar;
         refStar.setCatalogNumber(catalogNumber);
@@ -1487,6 +1473,6 @@ Star* StarDatabase::findWhileLoading(uint32 catalogNumber) const
     }
 
     // Star not found
-    return NULL;
+    return nullptr;
 }
 

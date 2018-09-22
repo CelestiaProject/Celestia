@@ -25,9 +25,9 @@ enum TrajectoryPrecision
     TrajectoryPrecisionDouble
 };
 
-extern Orbit* LoadSampledTrajectoryDoublePrec(const std::string& name, TrajectoryInterpolation interpolation);
-extern Orbit* LoadSampledTrajectorySinglePrec(const std::string& name, TrajectoryInterpolation interpolation);
-extern Orbit* LoadXYZVTrajectoryDoublePrec(const std::string& name, TrajectoryInterpolation interpolation);
-extern Orbit* LoadXYZVTrajectorySinglePrec(const std::string& name, TrajectoryInterpolation interpolation);
+extern Orbit* LoadSampledTrajectoryDoublePrec(const std::string& filename, TrajectoryInterpolation interpolation);
+extern Orbit* LoadSampledTrajectorySinglePrec(const std::string& filename, TrajectoryInterpolation interpolation);
+extern Orbit* LoadXYZVTrajectoryDoublePrec(const std::string& filename, TrajectoryInterpolation interpolation);
+extern Orbit* LoadXYZVTrajectorySinglePrec(const std::string& filename, TrajectoryInterpolation interpolation);
 
 #endif // _CELENGINE_SAMPORBIT_H_

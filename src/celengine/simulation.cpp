@@ -19,15 +19,7 @@ using namespace std;
 
 
 Simulation::Simulation(Universe* _universe) :
-    realTime(0.0),
-    timeScale(1.0),
-    storedTimeScale(1.0),
-    syncTime(true),
-    universe(_universe),
-    closestSolarSystem(NULL),
-    selection(),
-    faintestVisible(5.0f),
-    pauseState(false)
+    universe(_universe)
 {
     activeObserver = new Observer();
     observers.insert(observers.end(), activeObserver);
@@ -36,21 +28,15 @@ Simulation::Simulation(Universe* _universe) :
 
 Simulation::~Simulation()
 {
-    for (vector<Observer*>::iterator iter = observers.begin();
-         iter != observers.end(); iter++)
-    {
-        delete *iter;
-    }
+    for (const auto observer : observers)
+        delete observer;
 }
 
 
 static const Star* getSun(Body* body)
 {
     PlanetarySystem* system = body->getSystem();
-    if (system == NULL)
-        return NULL;
-    else
-        return system->getStar();
+    return system ? system->getStar() : nullptr;
 }
 
 
@@ -97,10 +83,9 @@ void Simulation::setTime(double jd)
 {
     if (syncTime)
     {
-        for (vector<Observer*>::iterator iter = observers.begin();
-             iter != observers.end(); iter++)
+        for (const auto observer : observers)
         {
-            (*iter)->setTime(jd);
+            observer->setTime(jd);
         }
     }
     else
@@ -128,10 +113,9 @@ void Simulation::update(double dt)
 {
     realTime += dt;
 
-    for (vector<Observer*>::iterator iter = observers.begin();
-         iter != observers.end(); iter++)
+    for (const auto observer : observers)
     {
-        (*iter)->update(dt, timeScale);
+        observer->update(dt, timeScale);
     }
 
     // Find the closest solar system
@@ -195,7 +179,7 @@ Observer* Simulation::addObserver()
 
 void Simulation::removeObserver(Observer* o)
 {
-    vector<Observer*>::iterator iter = find(observers.begin(), observers.end(), o);
+    auto iter = find(observers.begin(), observers.end(), o);
     if (iter != observers.end())
         observers.erase(iter);
 }
@@ -209,7 +193,7 @@ Observer* Simulation::getActiveObserver()
 
 void Simulation::setActiveObserver(Observer* o)
 {
-    vector<Observer*>::iterator iter= find(observers.begin(), observers.end(), o);
+    auto iter = find(observers.begin(), observers.end(), o);
     if (iter != observers.end())
         activeObserver = o;
 }
@@ -390,25 +374,25 @@ void Simulation::selectPlanet(int index)
         if (selection.getType() == Selection::Type_Body)
         {
             PlanetarySystem* system = selection.body()->getSystem();
-            if (system != NULL)
+            if (system != nullptr)
                 setSelection(system->getStar());
         }
     }
     else
     {
-        const Star* star = NULL;
+        const Star* star = nullptr;
         if (selection.getType() == Selection::Type_Star)
             star = selection.star();
         else if (selection.getType() == Selection::Type_Body)
             star = getSun(selection.body());
 
-        SolarSystem* solarSystem = NULL;
-        if (star != NULL)
+        SolarSystem* solarSystem = nullptr;
+        if (star != nullptr)
             solarSystem = universe->getSolarSystem(star);
         else
             solarSystem = closestSolarSystem;
 
-        if (solarSystem != NULL &&
+        if (solarSystem != nullptr &&
             index < solarSystem->getPlanets()->getSystemSize())
         {
             setSelection(Selection(solarSystem->getPlanets()->getBody(index)));
@@ -431,7 +415,7 @@ Selection Simulation::findObject(string s, bool i18n)
     if (!selection.empty())
         path[nPathEntries++] = selection;
 
-    if (closestSolarSystem != NULL)
+    if (closestSolarSystem != nullptr)
         path[nPathEntries++] = Selection(closestSolarSystem->getStar());
 
     return universe->find(s, path, nPathEntries, i18n);
@@ -449,7 +433,7 @@ Selection Simulation::findObjectFromPath(string s, bool i18n)
     if (!selection.empty())
         path[nPathEntries++] = selection;
 
-    if (closestSolarSystem != NULL)
+    if (closestSolarSystem != nullptr)
         path[nPathEntries++] = Selection(closestSolarSystem->getStar());
 
     return universe->findPath(s, path, nPathEntries, i18n);
@@ -472,7 +456,7 @@ vector<std::string> Simulation::getObjectCompletion(string s, bool withLocations
         }
     }
 
-    if (closestSolarSystem != NULL &&
+    if (closestSolarSystem != nullptr &&
         closestSolarSystem != universe->getSolarSystem(selection))
     {
         path[nPathEntries++] = Selection(closestSolarSystem->getStar());
@@ -489,7 +473,7 @@ double Simulation::getTimeScale() const
 
 void Simulation::setTimeScale(double _timeScale)
 {
-    if (pauseState == true)
+    if (pauseState)
     {
         storedTimeScale = _timeScale;
     }
@@ -519,7 +503,7 @@ void Simulation::setPauseState(bool state)
     if (pauseState == state) return;
 
     pauseState = state;
-    if (pauseState == true)
+    if (pauseState)
     {
         storedTimeScale = timeScale;
         timeScale = 0.0;
@@ -533,10 +517,9 @@ void Simulation::setPauseState(bool state)
 // Synchronize all observers to active observer time
 void Simulation::synchronizeTime()
 {
-    for (vector<Observer*>::iterator iter = observers.begin();
-         iter != observers.end(); iter++)
+    for (const auto observer : observers)
     {
-        (*iter)->setTime(activeObserver->getTime());
+        observer->setTime(activeObserver->getTime());
     }
 }
 

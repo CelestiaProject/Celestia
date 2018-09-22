@@ -29,10 +29,10 @@ static int maxDivisions = 16384;
 static int thetaDivisions = maxDivisions;
 static int phiDivisions = maxDivisions / 2;
 static int minStep = 128;
-static float* sinPhi = NULL;
-static float* cosPhi = NULL;
-static float* sinTheta = NULL;
-static float* cosTheta = NULL;
+static float* sinPhi = nullptr;
+static float* cosPhi = nullptr;
+static float* sinTheta = nullptr;
+static float* cosTheta = nullptr;
 
 // largest vertex:
 //     position   - 3 floats,
@@ -73,31 +73,28 @@ static void InitTrigArrays()
 }
 
 
-static float getSphereLOD(float discSizeInPixels)
+static constexpr float getSphereLOD(float discSizeInPixels)
 {
     if (discSizeInPixels < 10)
         return -3.0f;
-    else if (discSizeInPixels < 20)
+    if (discSizeInPixels < 20)
         return -2.0f;
-    else if (discSizeInPixels < 50)
+    if (discSizeInPixels < 50)
         return -1.0f;
-    else if (discSizeInPixels < 200)
+    if (discSizeInPixels < 200)
         return 0.0f;
-    else if (discSizeInPixels < 1200)
+    if (discSizeInPixels < 1200)
         return 1.0f;
-    else if (discSizeInPixels < 7200)
+    if (discSizeInPixels < 7200)
         return 2.0f;
-    else if (discSizeInPixels < 53200)
+    if (discSizeInPixels < 53200)
         return 3.0f;
-    else
-        return 4.0f;
+
+    return 4.0f;
 }
 
 
-LODSphereMesh::LODSphereMesh() :
-    vertices(NULL),
-    vertexBuffersInitialized(false),
-    useVertexBuffers(false)
+LODSphereMesh::LODSphereMesh()
 {
     if (!trigArraysInitialized)
         InitTrigArrays();
@@ -114,10 +111,8 @@ LODSphereMesh::LODSphereMesh() :
 
 LODSphereMesh::~LODSphereMesh()
 {
-    if (vertices != NULL)
-        delete[] vertices;
-    if (indices != NULL)
-        delete[] indices;
+    delete[] vertices;
+    delete[] indices;
 }
 
 
@@ -153,13 +148,13 @@ void LODSphereMesh::render(const GLContext& context,
     Texture* textures[MAX_SPHERE_MESH_TEXTURES];
     int nTextures = 0;
 
-    if (tex0 != NULL)
+    if (tex0 != nullptr)
         textures[nTextures++] = tex0;
-    if (tex1 != NULL)
+    if (tex1 != nullptr)
         textures[nTextures++] = tex1;
-    if (tex2 != NULL)
+    if (tex2 != nullptr)
         textures[nTextures++] = tex2;
-    if (tex3 != NULL)
+    if (tex3 != nullptr)
         textures[nTextures++] = tex3;
     render(context, attributes, frustum, pixWidth, textures, nTextures);
 }
@@ -204,7 +199,7 @@ void LODSphereMesh::render(const GLContext& context,
         phiExtent /= split;
     }
 
-    if (tex == NULL)
+    if (tex == nullptr)
         nTextures = 0;
 
 
@@ -263,15 +258,15 @@ void LODSphereMesh::render(const GLContext& context,
         vertexBuffersInitialized = true;
         if (GLEW_ARB_vertex_buffer_object)
         {
-            for (int i = 0; i < NUM_SPHERE_VERTEX_BUFFERS; i++)
+            for (unsigned int & vertexBuffer : vertexBuffers)
             {
                 GLuint vbname = 0;
                 glGenBuffersARB(1, &vbname);
-                vertexBuffers[i] = (unsigned int) vbname;
-                glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffers[i]);
+                vertexBuffer = (unsigned int) vbname;
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffer);
                 glBufferDataARB(GL_ARRAY_BUFFER_ARB,
                                      maxVertices * MaxVertexSize * sizeof(float),
-                                     NULL,
+                                     nullptr,
                                      GL_STREAM_DRAW_ARB);
             }
             glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
@@ -438,7 +433,7 @@ void LODSphereMesh::render(const GLContext& context,
     {
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
         glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-        vertices = NULL;
+        vertices = nullptr;
     }
 
 #ifdef SHOW_FRUSTUM
@@ -600,30 +595,27 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
         outside = true;
 
     if (outside)
-    {
         return 0;
-    }
-    else if (level == 1)
+
+    if (level == 1)
     {
         renderSection(phi0, theta0, thetaExtent, ri);
         return 1;
     }
-    else
+
+    int nRendered = 0;
+    for (int i = 0; i < 2; i++)
     {
-        int nRendered = 0;
-        for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 2; j++)
         {
-            for (int j = 0; j < 2; j++)
-            {
-                nRendered += renderPatches(phi0 + phiExtent / 2 * i,
-                                           theta0 + thetaExtent / 2 * j,
-                                           extent / 2,
-                                           level / 2,
-                                           ri);
-            }
+            nRendered += renderPatches(phi0 + phiExtent / 2 * i,
+                                       theta0 + thetaExtent / 2 * j,
+                                       extent / 2,
+                                       level / 2,
+                                       ri);
         }
-        return nRendered;
     }
+    return nRendered;
 }
 
 
@@ -642,10 +634,10 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     }
 #endif // SHOW_PATCH_VISIBILITY
 
-    GLsizei stride = (GLsizei) (vertexSize * sizeof(float));
+    auto stride = (GLsizei) (vertexSize * sizeof(float));
     int tangentOffset = 3;
     int texCoordOffset = ((ri.attributes & Tangents) != 0) ? 6 : 3;
-    float* vertexBase = useVertexBuffers ? (float*) NULL : vertices;
+    float* vertexBase = useVertexBuffers ? (float*) nullptr : vertices;
 
     glVertexPointer(3, GL_FLOAT, stride, vertexBase + 0);
     if ((ri.attributes & Normals) != 0)
@@ -683,17 +675,17 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
 
     if (useVertexBuffers)
     {
-        // Calling glBufferDataARB() with NULL before mapping the buffer
+        // Calling glBufferDataARB() with nullptr before mapping the buffer
         // is a hint to OpenGL that previous contents of vertex buffer will
         // be discarded and overwritten. It enables renaming in the driver,
         // hopefully resulting in performance gains.
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
                              maxVertices * vertexSize * sizeof(float),
-                             NULL,
+                             nullptr,
                              GL_STREAM_DRAW_ARB);
 
         vertices = reinterpret_cast<float*>(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
-        if (vertices == NULL)
+        if (vertices == nullptr)
             return;
     }
 
@@ -706,7 +698,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
         u0[tex] = 1.0f;
         v0[tex] = 1.0f;
 
-        if (textures[tex] != NULL)
+        if (textures[tex] != nullptr)
         {
             int uTexSplit = textures[tex]->getUTileCount(ri.texLOD[tex]);
             int vTexSplit = textures[tex]->getVTileCount(ri.texLOD[tex]);
@@ -807,7 +799,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
 
     if (useVertexBuffers)
     {
-        vertices = NULL;
+        vertices = nullptr;
         if (!glUnmapBufferARB(GL_ARRAY_BUFFER_ARB))
             return;
     }
@@ -816,7 +808,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     // int nRings = max(phiExtent / ri.step, 1); // buggy
     int nRings = phiExtent / ri.step;
     int nSlices = thetaExtent / ri.step;
-    unsigned short* indexBase = useVertexBuffers ? (unsigned short*) NULL : indices;
+    unsigned short* indexBase = useVertexBuffers ? (unsigned short*) nullptr : indices;
     for (int i = 0; i < nRings; i++)
     {
         glDrawElements(GL_QUAD_STRIP,

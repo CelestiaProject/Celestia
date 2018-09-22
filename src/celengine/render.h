@@ -108,7 +108,7 @@ class Renderer
     void shutdown() {};
     void resize(int, int);
 
-    float calcPixelSize(float fov, float windowHeight);
+    float calcPixelSize(float fovY, float windowHeight);
     void setFaintestAM45deg(float);
     float getFaintestAM45deg() const;
 
@@ -352,9 +352,9 @@ class Renderer
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         RenderProperties() :
-            surface(NULL),
-            atmosphere(NULL),
-            rings(NULL),
+            surface(nullptr),
+            atmosphere(nullptr),
+            rings(nullptr),
             radius(1.0f),
             geometryScale(1.0f),
             semiAxes(1.0f, 1.0f, 1.0f),
@@ -395,7 +395,7 @@ class Renderer
         std::string label;
 
         ObjectLabel() :
-            obj  (NULL),
+            obj  (nullptr),
             label("")
         {};
 

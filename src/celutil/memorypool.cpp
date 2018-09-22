@@ -45,14 +45,14 @@ MemoryPool::MemoryPool(unsigned int alignment, unsigned int blockSize) :
 
 MemoryPool::~MemoryPool()
 {
-    for (list<Block>::iterator iter = m_blockList.begin(); iter != m_blockList.end(); iter++)
-        delete iter->m_memory;
+    for (const auto& block : m_blockList)
+        delete block.m_memory;
 }
 
 
 /*! Allocate size bytes from the memory pool and return a pointer to
  *  the newly allocated memory. The pointer is valid until the next time
- *  freeAll() is called for the pool. Returns NULL if the requested size
+ *  freeAll() is called for the pool. Returns nullptr if the requested size
  *  is larger than the block size of the pool, or if a new block is
  *  required but cannot be allocated (out of memory.)
  */
@@ -60,7 +60,7 @@ void*
 MemoryPool::allocate(unsigned int size)
 {
     if (size > m_blockSize)
-        return NULL;
+        return nullptr;
 
     // See if the current block has enough room
     if (m_blockOffset + size > m_blockSize)
@@ -73,8 +73,8 @@ MemoryPool::allocate(unsigned int size)
     {
         Block block;
         block.m_memory = new char[m_blockSize];
-        if (block.m_memory == NULL)
-            return NULL;
+        if (block.m_memory == nullptr)
+            return nullptr;
         m_currentBlock = m_blockList.insert(m_currentBlock, block);
         m_blockOffset = 0;
     }
@@ -98,11 +98,10 @@ MemoryPool::freeAll()
 #ifdef DEBUG
     // Fill blocks with garbage after freeing to help catch invalid
     // memory errors in debug.
-    for (list<Block>::iterator iter = m_blockList.begin(); iter != m_blockList.end(); iter++)
+    for (const auto& block : m_blockList)
     {
-        unsigned int* p = reinterpret_cast<unsigned int*>(iter->m_memory);
-        for (unsigned int i = 0; i < m_blockSize / sizeof(unsigned int); i++)
-            p[i] = 0xdeaddead;
+        unsigned int* p = reinterpret_cast<unsigned int*>(block.m_memory);
+        std::fill_n(p, m_blockSize / sizeof(unsigned int), 0xdeaddead);
     }
 #endif
     m_currentBlock = m_blockList.begin();

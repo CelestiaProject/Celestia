@@ -48,7 +48,7 @@ class Texture
 {
  public:
     Texture(int w, int h, int d = 1);
-    virtual ~Texture();
+    virtual ~Texture() = default;
 
     virtual const TextureTile getTile(int lod, int u, int v) = 0;
     virtual void bind() = 0;
@@ -103,15 +103,15 @@ class Texture
     };
 
  protected:
-    bool alpha;
-    bool compressed;
+    bool alpha{ false };
+    bool compressed{ false };
 
  private:
     int width;
     int height;
     int depth;
 
-    unsigned int formatOptions;
+    unsigned int formatOptions{ 0 };
 };
 
 

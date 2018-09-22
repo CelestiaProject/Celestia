@@ -12,6 +12,8 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <wordexp.h>
+
+#include <utility>
 #include "directory.h"
 
 using namespace std;
@@ -28,10 +30,10 @@ using namespace std;
 class UnixDirectory : public Directory
 {
 public:
-    UnixDirectory(const std::string&);
-    virtual ~UnixDirectory();
+    UnixDirectory(std::string  /*_dirname*/);
+    ~UnixDirectory() override;
 
-    virtual bool nextFile(std::string&);
+    bool nextFile(std::string& /*filename*/) override;
 
     enum {
         DirGood = 0,
@@ -45,20 +47,20 @@ private:
 };
 
 
-UnixDirectory::UnixDirectory(const std::string& _dirname) :
-    dirname(_dirname),
+UnixDirectory::UnixDirectory(std::string  _dirname) :
+    dirname(std::move(_dirname)),
     status(DirGood),
-    dir(NULL)
+    dir(nullptr)
 {
 }
 
 
 UnixDirectory::~UnixDirectory()
 {
-    if (dir != NULL)
+    if (dir != nullptr)
     {
         closedir(dir);
-        dir = NULL;
+        dir = nullptr;
     }
 }
 
@@ -68,10 +70,10 @@ bool UnixDirectory::nextFile(std::string& filename)
     if (status != DirGood)
         return false;
 
-    if (dir == NULL)
+    if (dir == nullptr)
     {
         dir = opendir(dirname.c_str());
-        if (dir == NULL)
+        if (dir == nullptr)
         {
             status = DirBad;
             return false;
@@ -79,16 +81,14 @@ bool UnixDirectory::nextFile(std::string& filename)
     }
 
     struct dirent* ent = readdir(dir);
-    if (ent == NULL)
+    if (ent == nullptr)
     {
         status = DirBad;
         return false;
     }
-    else
-    {
-        filename = ent->d_name;
-        return true;
-    }
+
+    filename = ent->d_name;
+    return true;
 }
 
 

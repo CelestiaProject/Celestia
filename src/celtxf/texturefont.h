@@ -19,14 +19,14 @@
 class TextureFont
 {
  public:
-    TextureFont();
+    TextureFont() = default;
     ~TextureFont();
 
-    void render(wchar_t c) const;
-    void render(const std::string& str) const;
+    void render(wchar_t ch) const;
+    void render(const std::string& s) const;
 
-    void render(wchar_t c, float xoffset, float yoffset) const;
-    void render(const std::string& str, float xoffset, float yoffset) const;
+    void render(wchar_t ch, float xoffset, float yoffset) const;
+    void render(const std::string& s, float xoffset, float yoffset) const;
 
     int getWidth(const std::string&) const;
     int getWidth(int c) const;
@@ -41,7 +41,7 @@ class TextureFont
     short getAdvance(wchar_t c)
     {
         const Glyph* glyph = getGlyph(c);
-        if (glyph == NULL)
+        if (glyph == nullptr)
             glyph = getGlyph((wchar_t) '?');
         return glyph->advance;
     }
@@ -84,19 +84,19 @@ class TextureFont
     void rebuildGlyphLookupTable();
 
  private:
-    int maxAscent;
-    int maxDescent;
-    int maxWidth;
+    int maxAscent{ 0 };
+    int maxDescent{ 0 };
+    int maxWidth{ 0 };
 
-    int texWidth;
-    int texHeight;
-    unsigned char* fontImage;
-    unsigned int texName;
+    int texWidth{ 0 };
+    int texHeight{ 0 };
+    unsigned char* fontImage{ nullptr };
+    unsigned int texName{ 0 };
 
     std::vector<Glyph> glyphs;
 
-    const Glyph** glyphLookup;
-    unsigned int glyphLookupTableSize;
+    const Glyph** glyphLookup{ nullptr };
+    unsigned int glyphLookupTableSize{ 0 };
 
  public:
     static TextureFont* load(std::istream& in);

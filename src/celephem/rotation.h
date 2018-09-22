@@ -20,7 +20,7 @@
 class RotationModel
 {
  public:
-    virtual ~RotationModel() {};
+    virtual ~RotationModel() = default;
 
     /*! Return the orientation of an object in its reference frame at the
      * specified time (TDB). Some rotations can be decomposed into two parts:
@@ -90,7 +90,7 @@ class CachingRotationModel : public RotationModel
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     CachingRotationModel();
-    virtual ~CachingRotationModel();
+    virtual ~CachingRotationModel() = default;
 
     Eigen::Quaterniond spin(double tjd) const;
     Eigen::Quaterniond equatorOrientationAtTime(double tjd) const;
@@ -122,7 +122,7 @@ class ConstantOrientation : public RotationModel
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     ConstantOrientation(const Eigen::Quaterniond& q);
-    virtual ~ConstantOrientation();
+    virtual ~ConstantOrientation() = default;
 
     virtual Eigen::Quaterniond spin(double tjd) const;
     virtual Eigen::Vector3d angularVelocityAtTime(double tjd) const;
@@ -143,7 +143,7 @@ class UniformRotationModel : public RotationModel
                          double _epoch,
                          float _inclination,
                          float _ascendingNode);
-    virtual ~UniformRotationModel();
+    virtual ~UniformRotationModel() = default;
 
     virtual bool isPeriodic() const;
     virtual double getPeriod() const;
@@ -172,7 +172,7 @@ class PrecessingRotationModel : public RotationModel
                             float _inclination,
                             float _ascendingNode,
                             double _precPeriod);
-    virtual ~PrecessingRotationModel();
+    virtual ~PrecessingRotationModel() = default;
 
     virtual bool isPeriodic() const;
     virtual double getPeriod() const;

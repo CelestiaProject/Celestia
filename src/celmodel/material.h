@@ -13,6 +13,7 @@
 
 #include <Eigen/Core>
 #include <string>
+#include <array>
 
 
 namespace cmod
@@ -113,13 +114,13 @@ public:
         InvalidTextureSemantic = -1,
     };
 
-    Color diffuse;
-    Color emissive;
-    Color specular;
-    float specularPower;
-    float opacity;
-    BlendMode blend;
-    TextureResource* maps[TextureSemanticMax];
+    Color diffuse{ 0.0f, 0.0f, 0.0f };
+    Color emissive{ 0.0f, 0.0f, 0.0f };
+    Color specular{ 0.0f, 0.0f, 0.0f };
+    float specularPower{ 1.0f };
+    float opacity{ 1.0f };
+    BlendMode blend{ NormalBlend };
+    std::array<TextureResource*, TextureSemanticMax> maps;
 };
 
 } // namespace cmod

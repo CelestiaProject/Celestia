@@ -14,20 +14,6 @@
 using namespace std;
 
 
-Marker::Marker(const Selection& s) :
-    m_object(s),
-    m_priority(0),
-    m_representation(MarkerRepresentation::Diamond),
-    m_occludable(true),
-    m_sizing(ConstantSize)
-{
-}
-
-Marker::~Marker()
-{
-}
-
-
 UniversalCoord Marker::position(double jd) const
 {
     return m_object.getPosition(jd);

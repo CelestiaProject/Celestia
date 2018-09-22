@@ -90,10 +90,7 @@ static const uint64 M = ((uint64) 1 << 48) - 1;
 class LCGRandomGenerator
 {
 public:
-    LCGRandomGenerator() :
-        previous(0)
-    {
-    }
+    LCGRandomGenerator() : previous(0) = default;
 
     LCGRandomGenerator(uint64 seed) :
         previous(seed)
@@ -240,8 +237,8 @@ ParticleEmitter::ParticleEmitter() :
     m_startSize(1.0f),
     m_endColor(1.0f, 1.0f, 1.0f, 0.0f),
     m_endSize(1.0f),
-    m_positionGenerator(NULL),
-    m_velocityGenerator(NULL),
+    m_positionGenerator(nullptr),
+    m_velocityGenerator(nullptr),
     m_acceleration(0.0f, 0.0f, 0.0f),
     m_nonZeroAcceleration(false),
     m_minRotationRate(0.0f),
@@ -331,13 +328,13 @@ ParticleEmitter::render(double tsec,
 
     glDisable(GL_LIGHTING);
 
-    Texture* texture = NULL;
+    Texture* texture = nullptr;
     if (m_texture != InvalidResource)
     {
         texture = GetTextureManager()->find(m_texture);
     }
 
-    if (texture != NULL)
+    if (texture != nullptr)
     {
         glEnable(GL_TEXTURE_2D);
         texture->bind();
@@ -355,9 +352,9 @@ ParticleEmitter::render(double tsec,
 
     double emissionInterval = 1.0 / m_rate;
     double dserial = std::fmod(t * m_rate, (double) (1 << 31));
-    int serial = (int) (dserial);
+    auto serial = (int) (dserial);
     double age = (dserial - serial) * emissionInterval;
-    float invLifetime = (float) (1.0 / m_lifetime);
+    auto invLifetime = (float) (1.0 / m_lifetime);
 
     double maxAge = m_lifetime;
     if (startBounded)
@@ -367,7 +364,7 @@ ParticleEmitter::render(double tsec,
 
     if (endBounded && tsec > m_endTime)
     {
-        int skipParticles = (int) ((tsec - m_endTime) * m_rate);
+        auto skipParticles = (int) ((tsec - m_endTime) * m_rate);
         serial -= skipParticles;
         age += skipParticles * emissionInterval;
     }
@@ -460,8 +457,8 @@ ParticleEmitter::createMaterial()
 #define STRUCT_OFFSET(s, memberName) ((uint32) (reinterpret_cast<char*>(&(s).memberName) - reinterpret_cast<char*>(&(s))))
 
 ParticleSystem::ParticleSystem() :
-    m_vertexDesc(NULL),
-    m_vertexData(NULL),
+    m_vertexDesc(nullptr),
+    m_vertexData(nullptr),
     m_particleCapacity(0),
     m_particleCount(0)
 {
@@ -481,11 +478,8 @@ ParticleSystem::ParticleSystem() :
 
 ParticleSystem::~ParticleSystem()
 {
-    for (list<ParticleEmitter*>::const_iterator iter = m_emitterList.begin();
-         iter != m_emitterList.end(); iter++)
-    {
-        delete (*iter);
-    }
+    for (const auto emitter : m_emitterList)
+        delete emitter;
 
     delete[] m_vertexData;
     delete m_vertexDesc;
@@ -497,10 +491,9 @@ ParticleSystem::render(RenderContext& rc, double tsec)
 {
     rc.setVertexArrays(*m_vertexDesc, m_vertexData);
 
-    for (list<ParticleEmitter*>::const_iterator iter = m_emitterList.begin();
-         iter != m_emitterList.end(); iter++)
+    for (const auto emitter : m_emitterList)
     {
-        (*iter)->render(tsec, rc, m_vertexData, m_particleCapacity);
+        emitter->render(tsec, rc, m_vertexData, m_particleCapacity);
     }
 
     glEnable(GL_LIGHTING);

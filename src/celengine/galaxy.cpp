@@ -34,11 +34,11 @@ static const unsigned int GALAXY_POINTS  = 3500;
 
 static bool formsInitialized = false;
 
-static GalacticForm** spiralForms     = NULL;
-static GalacticForm** ellipticalForms = NULL;
-static GalacticForm*  irregularForm   = NULL;
+static GalacticForm** spiralForms     = nullptr;
+static GalacticForm** ellipticalForms = nullptr;
+static GalacticForm*  irregularForm   = nullptr;
 
-static Texture* galaxyTex = NULL;
+static Texture* galaxyTex = nullptr;
 
 static void InitializeForms();
 static GalacticForm* buildGalacticForms(const std::string& filename);
@@ -91,7 +91,7 @@ static void GalaxyTextureEval(float u, float v, float /*w*/, unsigned char *pixe
     if (r < 0)
         r = 0;
 
-    int pixVal = (int) (r * 255.99f);
+    auto pixVal = (int) (r * 255.99f);
 #ifdef HDR_COMPRESS
     pixel[0] = 127;
     pixel[1] = 127;
@@ -102,14 +102,6 @@ static void GalaxyTextureEval(float u, float v, float /*w*/, unsigned char *pixe
     pixel[2] = 255;//65;
 #endif
     pixel[3] = pixVal;
-}
-
-
-Galaxy::Galaxy() :
-    detail(1.0f),
-    customTmpName(NULL),
-    form(NULL)
-{
 }
 
 
@@ -127,7 +119,7 @@ void Galaxy::setDetail(float d)
 
 void Galaxy::setCustomTmpName(const string& tmpNameStr)
 {
-    if (customTmpName == NULL)
+    if (customTmpName == nullptr)
         customTmpName = new string(tmpNameStr);
     else
         *customTmpName = tmpNameStr;
@@ -136,7 +128,7 @@ void Galaxy::setCustomTmpName(const string& tmpNameStr)
 
 string Galaxy::getCustomTmpName() const
 {
-    if (customTmpName == NULL)
+    if (customTmpName == nullptr)
         return "";
     else
         return *customTmpName;
@@ -152,19 +144,15 @@ const char* Galaxy::getType() const
 void Galaxy::setType(const string& typeStr)
 {
     type = Galaxy::Irr;
-    for (int i = 0; i < (int) (sizeof(GalaxyTypeNames) / sizeof(GalaxyTypeNames[0])); ++i)
-    {
-        if (GalaxyTypeNames[i].name == typeStr)
-        {
-            type = GalaxyTypeNames[i].type;
-            break;
-        }
-    }
+    auto iter = std::find_if(begin(GalaxyTypeNames), end(GalaxyTypeNames),
+                             [typeStr](auto& g) { return g.name == typeStr; });
+    if (iter != end(GalaxyTypeNames))
+        type = iter->type;
 
     if (!formsInitialized)
         InitializeForms();
 
-    if (customTmpName != NULL)
+    if (customTmpName != nullptr)
     {
         form = buildGalacticForms("models/" + *customTmpName);
     }
@@ -190,7 +178,7 @@ void Galaxy::setType(const string& typeStr)
         case E6:
         case E7:
             form = ellipticalForms[type - E0];
-            //form = NULL;
+            //form = nullptr;
             break;
         case Irr:
             form = irregularForm;
@@ -269,7 +257,7 @@ void Galaxy::render(const GLContext& context,
                     float brightness,
                     float pixelSize)
 {
-    if (form == NULL)
+    if (form == nullptr)
     {
         //renderGalaxyEllipsoid(context, offset, viewerOrientation, brightness, pixelSize);
     }
@@ -285,13 +273,13 @@ inline void glVertex4(const Vector4f& v)
     glVertex3fv(v.data());
 }
 
-void Galaxy::renderGalaxyPointSprites(const GLContext&,
+void Galaxy::renderGalaxyPointSprites(const GLContext& /*unused*/,
                                       const Vector3f& offset,
                                       const Quaternionf& viewerOrientation,
                                       float brightness,
                                       float pixelSize)
 {
-    if (form == NULL)
+    if (form == nullptr)
         return;
 
     /* We'll first see if the galaxy's apparent size is big enough to
@@ -308,12 +296,12 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
     if (size < minimumFeatureSize)
         return;
 
-    if (galaxyTex == NULL)
+    if (galaxyTex == nullptr)
     {
         galaxyTex = CreateProceduralTexture(width, height, GL_RGBA,
                                             GalaxyTextureEval);
     }
-    assert(galaxyTex != NULL);
+    assert(galaxyTex != nullptr);
 
     glEnable(GL_TEXTURE_2D);
     galaxyTex->bind();
@@ -423,7 +411,7 @@ void Galaxy::renderGalaxyEllipsoid(const GLContext& context,
     nSlices = max(nSlices, 100u);
 
     VertexProcessor* vproc = context.getVertexProcessor();
-    if (vproc == NULL)
+    if (vproc == nullptr)
         return;
 
     //int e = min(max((int) type - (int) E0, 0), 7);
@@ -527,11 +515,11 @@ GalacticForm* buildGalacticForms(const std::string& filename)
     float h = 0.75f;
     Image* img;
     img = LoadPNGImage(filename);
-    if (img == NULL)
+    if (img == nullptr)
     {
         cout<<"\nThe galaxy template *** "<<filename<<" *** could not be loaded!\n\n";
         delete galacticPoints;
-        return NULL;
+        return nullptr;
     }
     width  = img->getWidth();
     height = img->getHeight();
@@ -603,9 +591,9 @@ GalacticForm* buildGalacticForms(const std::string& filename)
 
     random_shuffle( galacticPoints->begin() + kmin, galacticPoints->end());
 
-    GalacticForm* galacticForm  = new GalacticForm();
-    galacticForm->blobs         = galacticPoints;
-    galacticForm->scale         = Vector3f::Ones();
+    auto* galacticForm  = new GalacticForm();
+    galacticForm->blobs = galacticPoints;
+    galacticForm->scale = Vector3f::Ones();
 
     return galacticForm;
 }
@@ -688,8 +676,8 @@ void InitializeForms()
             {
                 b.position   = Vector4f(p.x, p.y, p.z, 1.0f);
                 b.brightness = 64u;
-                unsigned int rr =  (unsigned int) (r * 511);
-                b.colorIndex  = rr < 256? rr: 255;
+                auto rr      =  (unsigned int) (r * 511);
+                b.colorIndex = rr < 256 ? rr : 255;
                 irregularPoints->push_back(b);
                 ++ip;
             }

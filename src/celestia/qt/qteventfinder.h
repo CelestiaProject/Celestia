@@ -29,7 +29,7 @@ class EclipseRecord;
 class EclipseFinderWatcher
 {
 public:
-    virtual ~EclipseFinderWatcher() {};
+    virtual ~EclipseFinderWatcher() = default;
 
     enum Status
     {
@@ -47,7 +47,7 @@ Q_OBJECT
 
  public:
     EventFinder(CelestiaCore* _appCore, const QString& title, QWidget* parent);
-    ~EventFinder();
+    ~EventFinder() = default;
 
     EclipseFinderWatcher::Status eclipseFinderProgressUpdate(double t);
 

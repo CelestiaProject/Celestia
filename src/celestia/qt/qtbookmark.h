@@ -66,7 +66,7 @@ public:
     int position() const;
     int childPosition(const BookmarkItem* child) const;
 
-    BookmarkItem* clone(BookmarkItem* withParent = NULL) const;
+    BookmarkItem* clone(BookmarkItem* withParent = nullptr) const;
 
 private:
     void setParent(BookmarkItem* parent);
@@ -88,7 +88,7 @@ private:
 class BookmarkTreeModel : public QAbstractItemModel
 {
 public:
-    BookmarkTreeModel();
+    BookmarkTreeModel() = default;
     ~BookmarkTreeModel();
 
     enum {
@@ -124,7 +124,7 @@ public:
     void modifyItem(BookmarkItem* item);
 
 public:
-    BookmarkItem* m_root;
+    BookmarkItem* m_root{ nullptr };
 };
 
 

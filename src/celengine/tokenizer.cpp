@@ -417,7 +417,7 @@ string Tokenizer::getStringValue()
 
 int Tokenizer::readChar()
 {
-    int c = (int) in->get();
+    auto c = (int) in->get();
     if (c == '\n')
         lineNum++;
 

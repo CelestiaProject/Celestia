@@ -54,11 +54,11 @@ class Universe
 
 
     Selection find(const std::string& s,
-                   Selection* contexts = NULL,
+                   Selection* contexts = nullptr,
                    int nContexts = 0,
                    bool i18n = false) const;
     Selection findPath(const std::string& s,
-                       Selection* contexts = NULL,
+                       Selection* contexts = nullptr,
                        int nContexts = 0,
                        bool i18n = false) const;
     Selection findChildObject(const Selection& sel,
@@ -69,11 +69,11 @@ class Universe
                                   bool i18n = false) const;
 
     std::vector<std::string> getCompletion(const std::string& s,
-                                           Selection* contexts = NULL,
+                                           Selection* contexts = nullptr,
                                            int nContexts = 0,
                                            bool withLocations = false);
     std::vector<std::string> getCompletionPath(const std::string& s,
-                                               Selection* contexts = NULL,
+                                               Selection* contexts = nullptr,
                                                int nContexts = 0,
                                                bool withLocations = false);
 
@@ -118,11 +118,11 @@ class Universe
                                 float tolerance = 0.0f);
 
  private:
-    StarDatabase* starCatalog;
-    DSODatabase*             dsoCatalog;
-    SolarSystemCatalog* solarSystemCatalog;
-    std::vector<Asterism*>* asterisms;
-    ConstellationBoundaries* boundaries;
+    StarDatabase* starCatalog{nullptr};
+    DSODatabase* dsoCatalog{nullptr};
+    SolarSystemCatalog* solarSystemCatalog{nullptr};
+    std::vector<Asterism*>* asterisms{nullptr};
+    ConstellationBoundaries* boundaries{nullptr};
     MarkerList* markers;
 
     std::vector<const Star*> closeStars;

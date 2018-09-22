@@ -35,7 +35,7 @@ Mesh::VertexDescription::VertexDescription(unsigned int _stride,
                                            VertexAttribute* _attributes) :
             stride(_stride),
             nAttributes(_nAttributes),
-            attributes(NULL)
+            attributes(nullptr)
 {
     if (nAttributes != 0)
     {
@@ -50,7 +50,7 @@ Mesh::VertexDescription::VertexDescription(unsigned int _stride,
 Mesh::VertexDescription::VertexDescription(const VertexDescription& desc) :
     stride(desc.stride),
     nAttributes(desc.nAttributes),
-    attributes(NULL)
+    attributes(nullptr)
 {
     if (nAttributes != 0)
     {
@@ -67,8 +67,7 @@ Mesh::VertexDescription::operator=(const Mesh::VertexDescription& desc)
 {
     if (nAttributes < desc.nAttributes)
     {
-        if (attributes != NULL)
-            delete[] attributes;
+        delete[] attributes;
         attributes = new VertexAttribute[desc.nAttributes];
     }
 
@@ -125,21 +124,16 @@ Mesh::VertexDescription::buildSemanticMap()
 void
 Mesh::VertexDescription::clearSemanticMap()
 {
-    for (unsigned int i = 0; i < SemanticMax; i++)
-        semanticMap[i] = VertexAttribute();
+    for (auto& i : semanticMap)
+        i = VertexAttribute();
 }
 
 
-Mesh::PrimitiveGroup::PrimitiveGroup()
-{
-}
-
-
-Mesh::PrimitiveGroup::~PrimitiveGroup()
-{
+//Mesh::PrimitiveGroup::~PrimitiveGroup()
+//{
     // TODO: probably should free index list; need to sort out
     // ownership issues.
-}
+//}
 
 
 unsigned int
@@ -166,34 +160,15 @@ Mesh::PrimitiveGroup::getPrimitiveCount() const
 }
 
 
-Mesh::Mesh() :
-    vertexDesc(0, 0, NULL),
-    nVertices(0),
-    vertices(NULL),
-    vbResource(0)
-{
-}
-
-
 Mesh::~Mesh()
 {
-    for (vector<PrimitiveGroup*>::iterator iter = groups.begin();
-         iter != groups.end(); iter++)
-    {
-        delete *iter;
-    }
+    for (const auto group : groups)
+        delete group;
 
     // TODO: this is just to cast away void* and shut up GCC warnings;
     // should probably be static_cast<VertexList::VertexPart*>
-    if (vertices != NULL)
-    {
-        delete[] static_cast<char*>(vertices);
-    }
-
-    if (vbResource)
-    {
-        delete vbResource;
-    }
+    delete[] static_cast<char*>(vertices);
+    delete vbResource;
 }
 
 
@@ -201,16 +176,11 @@ void
 Mesh::setVertices(unsigned int _nVertices, void* vertexData)
 {
     if (vertexData == vertices)
-    {
         return;
-    }
 
     // TODO: this is just to cast away void* and shut up GCC warnings;
     // should probably be static_cast<VertexList::VertexPart*>
-    if (vertices != NULL)
-    {
-        delete[] static_cast<char*>(vertices);
-    }
+    delete[] static_cast<char*>(vertices);
 
     nVertices = _nVertices;
     vertices = vertexData;
@@ -239,9 +209,9 @@ const Mesh::PrimitiveGroup*
 Mesh::getGroup(unsigned int index) const
 {
     if (index >= groups.size())
-        return NULL;
-    else
-        return groups[index];
+        return nullptr;
+
+    return groups[index];
 }
 
 
@@ -249,9 +219,9 @@ Mesh::PrimitiveGroup*
 Mesh::getGroup(unsigned int index)
 {
     if (index >= groups.size())
-        return NULL;
-    else
-        return groups[index];
+        return nullptr;
+
+    return groups[index];
 }
 
 
@@ -269,7 +239,7 @@ Mesh::addGroup(PrimitiveGroupType prim,
                unsigned int nIndices,
                index32* indices)
 {
-    PrimitiveGroup* g = new PrimitiveGroup();
+    auto* g = new PrimitiveGroup();
     g->prim = prim;
     g->materialIndex = materialIndex;
     g->nIndices = nIndices;
@@ -289,11 +259,8 @@ Mesh::getGroupCount() const
 void
 Mesh::clearGroups()
 {
-    for (vector<PrimitiveGroup*>::iterator iter = groups.begin();
-         iter != groups.end(); iter++)
-    {
-        delete *iter;
-    }
+    for (const auto group : groups)
+        delete group;
 
     groups.clear();
 }
@@ -316,10 +283,8 @@ Mesh::setName(const string& _name)
 void
 Mesh::remapIndices(const vector<index32>& indexMap)
 {
-    for (vector<PrimitiveGroup*>::iterator iter = groups.begin();
-         iter != groups.end(); iter++)
+    for (auto group : groups)
     {
-        PrimitiveGroup* group = *iter;
         for (index32 i = 0; i < group->nIndices; i++)
         {
             group->indices[i] = indexMap[group->indices[i]];
@@ -331,11 +296,8 @@ Mesh::remapIndices(const vector<index32>& indexMap)
 void
 Mesh::remapMaterials(const vector<unsigned int>& materialMap)
 {
-    for (vector<PrimitiveGroup*>::iterator iter = groups.begin();
-         iter != groups.end(); iter++)
-    {
-        (*iter)->materialIndex = materialMap[(*iter)->materialIndex];
-    }
+    for (auto group : groups)
+        group->materialIndex = materialMap[group->materialIndex];
 }
 
 
@@ -374,14 +336,13 @@ Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, PickResult* 
     }
 
     unsigned int posOffset = vertexDesc.getAttribute(Position).offset;
-    char* vdata = reinterpret_cast<char*>(vertices);
+    auto* vdata = reinterpret_cast<char*>(vertices);
 
     // Iterate over all primitive groups in the mesh
-    for (vector<PrimitiveGroup*>::const_iterator iter = groups.begin();
-         iter != groups.end(); iter++)
+    for (const auto group : groups)
     {
-        Mesh::PrimitiveGroupType primType = (*iter)->prim;
-        index32 nIndices = (*iter)->nIndices;
+        Mesh::PrimitiveGroupType primType = group->prim;
+        index32 nIndices = group->nIndices;
 
         // Only attempt to compute the intersection of the ray with triangle
         // groups.
@@ -391,9 +352,9 @@ Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, PickResult* 
         {
             unsigned int primitiveIndex = 0;
             index32 index = 0;
-            index32 i0 = (*iter)->indices[0];
-            index32 i1 = (*iter)->indices[1];
-            index32 i2 = (*iter)->indices[2];
+            index32 i0 = group->indices[0];
+            index32 i1 = group->indices[1];
+            index32 i2 = group->indices[2];
 
             // Iterate over the triangles in the primitive group
             do
@@ -438,7 +399,7 @@ Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, PickResult* 
                                 closest = t;
                                 if (result)
                                 {
-                                    result->group = *iter;
+                                    result->group = group;
                                     result->primitiveIndex = primitiveIndex;
                                     result->distance = closest;
                                 }
@@ -453,9 +414,9 @@ Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, PickResult* 
                     index += 3;
                     if (index < nIndices)
                     {
-                        i0 = (*iter)->indices[index + 0];
-                        i1 = (*iter)->indices[index + 1];
-                        i2 = (*iter)->indices[index + 2];
+                        i0 = group->indices[index + 0];
+                        i1 = group->indices[index + 1];
+                        i2 = group->indices[index + 2];
                     }
                 }
                 else if (primType == TriStrip)
@@ -465,7 +426,7 @@ Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, PickResult* 
                     {
                         i0 = i1;
                         i1 = i2;
-                        i2 = (*iter)->indices[index];
+                        i2 = group->indices[index];
                         // TODO: alternate orientation of triangles in a strip
                     }
                 }
@@ -476,7 +437,7 @@ Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, PickResult* 
                     {
                         index += 1;
                         i1 = i2;
-                        i2 = (*iter)->indices[index];
+                        i2 = group->indices[index];
                     }
                 }
 
@@ -573,11 +534,8 @@ Mesh::getPrimitiveCount() const
 {
     unsigned int count = 0;
 
-    for (vector<PrimitiveGroup*>::const_iterator iter = groups.begin();
-         iter != groups.end(); iter++)
-    {
-        count += (*iter)->getPrimitiveCount();
-    }
+    for (const auto group : groups)
+        count += group->getPrimitiveCount();
 
     return count;
 }
@@ -589,17 +547,17 @@ Mesh::parsePrimitiveGroupType(const string& name)
 {
     if (name == "trilist")
         return TriList;
-    else if (name == "tristrip")
+    if (name == "tristrip")
         return TriStrip;
-    else if (name == "trifan")
+    if (name == "trifan")
         return TriFan;
-    else if (name == "linelist")
+    if (name == "linelist")
         return LineList;
-    else if (name == "linestrip")
+    if (name == "linestrip")
         return LineStrip;
-    else if (name == "points")
+    if (name == "points")
         return PointList;
-    else if (name == "sprites")
+    if (name == "sprites")
         return SpriteList;
     else
         return InvalidPrimitiveGroupType;
@@ -611,26 +569,25 @@ Mesh::parseVertexAttributeSemantic(const string& name)
 {
     if (name == "position")
         return Position;
-    else if (name == "normal")
+    if (name == "normal")
         return Normal;
-    else if (name == "color0")
+    if (name == "color0")
         return Color0;
-    else if (name == "color1")
+    if (name == "color1")
         return Color1;
-    else if (name == "tangent")
+    if (name == "tangent")
         return Tangent;
-    else if (name == "texcoord0")
+    if (name == "texcoord0")
         return Texture0;
-    else if (name == "texcoord1")
+    if (name == "texcoord1")
         return Texture1;
-    else if (name == "texcoord2")
+    if (name == "texcoord2")
         return Texture2;
-    else if (name == "texcoord3")
+    if (name == "texcoord3")
         return Texture3;
-    else if (name == "pointsize")
+    if (name == "pointsize")
         return PointSize;
-    else
-        return InvalidSemantic;
+    return InvalidSemantic;
 }
 
 
@@ -639,16 +596,15 @@ Mesh::parseVertexAttributeFormat(const string& name)
 {
     if (name == "f1")
         return Float1;
-    else if (name == "f2")
+    if (name == "f2")
         return Float2;
-    else if (name == "f3")
+    if (name == "f3")
         return Float3;
-    else if (name == "f4")
+    if (name == "f4")
         return Float4;
-    else if (name == "ub4")
+    if (name == "ub4")
         return UByte4;
-    else
-        return InvalidFormat;
+    return InvalidFormat;
 }
 
 
@@ -657,14 +613,13 @@ Mesh::parseTextureSemantic(const string& name)
 {
     if (name == "texture0")
         return Material::DiffuseMap;
-    else if (name == "normalmap")
+    if (name == "normalmap")
         return Material::NormalMap;
-    else if (name == "specularmap")
+    if (name == "specularmap")
         return Material::SpecularMap;
-    else if (name == "emissivemap")
+    if (name == "emissivemap")
         return Material::EmissiveMap;
-    else
-        return Material::InvalidTextureSemantic;
+    return Material::InvalidTextureSemantic;
 }
 
 
@@ -685,13 +640,4 @@ Mesh::getVertexAttributeSize(VertexAttributeFormat fmt)
     default:
         return 0;
     }
-}
-
-
-Mesh::PickResult::PickResult() :
-    mesh(NULL),
-    group(NULL),
-    primitiveIndex(0),
-    distance(-1.0)
-{
 }

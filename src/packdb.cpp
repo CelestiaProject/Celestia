@@ -7,9 +7,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 
 #define SPECTRAL_O 0
 #define SPECTRAL_B 1
@@ -88,14 +88,14 @@ int CompareHDNameEnt(const void *a, const void *b)
 
     if (hda <  hdb)
         return -1;
-    else if (hda > hdb)
+    if (hda > hdb)
         return 1;
     else
         return 0;
 }
 
 
-unsigned short PackSpectralType(char *spectralType)
+unsigned short PackSpectralType(const char *spectralType)
 {
     unsigned short packed = 0;
     unsigned short letter;
@@ -192,7 +192,7 @@ unsigned short PackSpectralType(char *spectralType)
                     luminosity = LUM_Ib;
                 }
                 break;
-            } else if (spectralType[i] == 'V') {
+            } if (spectralType[i] == 'V') {
                 if (spectralType[i + 1] == 'I')
                     luminosity = LUM_VI;
                 else
@@ -213,12 +213,12 @@ HDNameEnt *ReadCommonNames(FILE *fp)
     int i;
 
     hdNames = (HDNameEnt *) malloc(sizeof(HDNameEnt) * 3000);
-    if (hdNames == NULL)
-        return NULL;
+    if (hdNames == nullptr)
+        return nullptr;
 
     for (i = 0; ; i++) {
         char *name1, *name2, len;
-        if (fgets(buf, 256, fp) == NULL)
+        if (fgets(buf, 256, fp) == nullptr)
             break;
 
         /* Strip trailing newline */
@@ -227,12 +227,12 @@ HDNameEnt *ReadCommonNames(FILE *fp)
             buf[len - 1] = '\0';
 
         name1 = index(buf, ':');
-        if (name1 == NULL)
+        if (name1 == nullptr)
            break;
         name1[0] = '\0';
         name1++;
         name2 = index(name1, ':');
-        if (name2 == NULL)
+        if (name2 == nullptr)
             break;
         name2[0] = '\0';
         name2++;
@@ -266,9 +266,9 @@ char *LookupName(int HD)
     found = (HDNameEnt *) bsearch((void *) &key, (void *) hdNames,
                   nHDNames, sizeof(HDNameEnt),
                   CompareHDNameEnt);
-    if (found == NULL)
-        return NULL;
-    else
+    if (found == nullptr)
+        return nullptr;
+
         return found->commonName;
 }
 
@@ -276,7 +276,7 @@ char *LookupName(int HD)
 void WriteStar(FILE *fp, Star *star)
 {
     unsigned short spectralType = PackSpectralType(star->spectral);
-    short appMag = (short) (star->appMag * 256);
+    auto appMag = (short) (star->appMag * 256);
     unsigned int catalog_no;
 
     if (star->HD != ID_NONE)
@@ -305,9 +305,9 @@ Star *ReadHipparcosCatalog(FILE *fp)
 
     fprintf(stderr, "Attempting to allocate %d bytes\n", maxStars * sizeof(Star));
     stars = (Star *) malloc(maxStars * sizeof(Star));
-    if (stars == NULL) {
+    if (stars == nullptr) {
         fprintf(stderr, "Unable to allocate memory for stars.\n");
-        return NULL;
+        return nullptr;
     }
 
     for (i = 0; ; i++) {
@@ -316,7 +316,7 @@ Star *ReadHipparcosCatalog(FILE *fp)
         float parallaxError;
         char degSign;
 
-        if (fgets(buf, HIPPARCOS_RECORD_LENGTH, fp) == NULL)
+        if (fgets(buf, HIPPARCOS_RECORD_LENGTH, fp) == nullptr)
             break;
         sscanf(buf + 2, "%d", &stars[i].HIP);
         if (sscanf(buf + 390, "%d", &stars[i].HD) != 1)
@@ -348,7 +348,7 @@ Star *ReadHipparcosCatalog(FILE *fp)
             if (0) {
                 char *name = LookupName(stars[i].HD);
 
-                if (name == NULL) {
+                if (name == nullptr) {
                     if (stars[i].HD != ID_NONE) {
                         sprintf(nameBuf, "HD%d", stars[i].HD);
                         name = nameBuf;
@@ -382,26 +382,26 @@ int main(int argc, char *argv[])
     FILE *fp;
 
     fp = fopen(COMMON_NAMES_DB, "r");
-    if (fp == NULL) {
+    if (fp == nullptr) {
         fprintf(stderr, "Error opening %s\n", COMMON_NAMES_DB);
         return 1;
     }
     hdNames = ReadCommonNames(fp);
     fclose(fp);
-    fp = NULL;
-    if (hdNames == NULL) {
+    fp = nullptr;
+    if (hdNames == nullptr) {
         fprintf(stderr, "Error reading names file.\n");
         return 1;
     }
 
     fp = fopen(HIPPARCOS_MAIN_DB, "r");
-    if (fp == NULL) {
+    if (fp == nullptr) {
         fprintf(stderr, "Error opening %s\n", HIPPARCOS_MAIN_DB);
         return 1;
     }
     Stars = ReadHipparcosCatalog(fp);
     fclose(fp);
-    if (Stars == NULL) {
+    if (Stars == nullptr) {
         fprintf(stderr, "Error reading HIPPARCOS database.");
         return 1;
     }
@@ -422,7 +422,7 @@ int main(int argc, char *argv[])
 #endif
 
     FILE *fp = fopen("out", "wb");
-    if (fp == NULL) {
+    if (fp == nullptr) {
         fprintf(stderr, "Error opening output file.\n");
         exit(1);
     }

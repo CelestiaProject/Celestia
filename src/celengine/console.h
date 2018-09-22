@@ -22,7 +22,7 @@ class Console;
 class ConsoleStreamBuf : public std::streambuf
 {
  public:
-    ConsoleStreamBuf() : console(NULL) { setbuf(0, 0); };
+    ConsoleStreamBuf() : console(nullptr) { setbuf(0, 0); };
 
     void setConsole(Console*);
 
@@ -73,23 +73,23 @@ class Console : public std::ostream
     int getWidth() const;
 
  private:
-    wchar_t* text;
+    wchar_t* text{ nullptr };
     int nRows;
     int nColumns;
-    int row;
-    int column;
+    int row{ 0 };
+    int column{ 0 };
 
-    int windowRow;
+    int windowRow{ 0 };
 
-    int windowHeight;
+    int windowHeight{ 10 };
 
-    int xscale;
-    int yscale;
-    TextureFont* font;
+    int xscale{ 1 };
+    int yscale{ 1 };
+    TextureFont* font{ nullptr };
 
     ConsoleStreamBuf sbuf;
 
-    bool autoScroll;
+    bool autoScroll{ true };
 };
 
 #endif // _CELENGINE_CONSOLE_H_
