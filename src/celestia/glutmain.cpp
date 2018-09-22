@@ -29,6 +29,7 @@
 #include <celmath/quaternion.h>
 #include <celutil/util.h>
 #include <celutil/debug.h>
+#include <celutil/localtime.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include "celestiacore.h"
@@ -517,21 +518,14 @@ int main(int argc, char* argv[])
     appCore->initRenderer();
 
     // Set the simulation starting time to the current system time
-    time_t curtime=time(nullptr);
+    time_t curtime = time(nullptr);
     appCore->start((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
-    #ifdef MACOSX
-    /* localtime in Darwin is is reentrant only
-       equiv to Linux localtime_r()
-       should probably port !MACOSX code to use this too, available since
-       libc 5.2.5 according to manpage */
-    struct tm *temptime=localtime(&curtime);
-    appCore->setTimeZoneBias(temptime->tm_gmtoff);
-    appCore->setTimeZoneName(temptime->tm_zone);
-    #else
-    localtime(&curtime); // Only doing this to set timezone as a side effect
-    appCore->setTimeZoneBias(-timezone);
-    appCore->setTimeZoneName(tzname[daylight?0:1]);
-    #endif
+    struct tm result;
+    if (localtime_r(&curtime, &result))
+    {
+        appCore->setTimeZoneBias(result.tm_gmtoff);
+        appCore->setTimeZoneName(result.tm_zone);
+    }
 
     if (startfile == 1) {
         if (argv[argc - 1][0] == '-') {
