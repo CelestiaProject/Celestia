@@ -5387,17 +5387,6 @@ static void renderRings(RingSystem& rings,
         glDisable(GL_TEXTURE_2D);
     }
 
-    // Perform our own lighting for the rings.
-    // TODO: Don't forget about light source color (required when we
-    // paying attention to star color.)
-    if (vpath == GLContext::VPath_Basic)
-    {
-        glDisable(GL_LIGHTING);
-        Vector3f litColor = rings.color.toVector3();
-        litColor = litColor * ringIllumination + ri.ambientColor.toVector3();
-        glColor4f(litColor.x(), litColor.y(), litColor.z(), 1.0f);
-    }
-
     // This gets tricky . . .  we render the rings in two parts.  One
     // part is potentially shadowed by the planet, and we need to
     // render that part with the projected shadow texture enabled.
@@ -5552,7 +5541,7 @@ renderEclipseShadows(Geometry* geometry,
         // standard transformation pipeline isn't guaranteed, we have to
         // make sure to use the same transformation engine on subsequent
         // rendering passes as we did on the initial one.
-        if (context.getVertexPath() != GLContext::VPath_Basic && geometry == nullptr)
+        if (geometry == nullptr)
         {
             renderShadowedGeometryVertexShader(ri, viewFrustum,
                                                texGenS, texGenT,
@@ -6222,7 +6211,7 @@ void Renderer::renderObject(const Vector3f& pos,
     ri.hazeColor = obj.surface->hazeColor;
     ri.specularColor = obj.surface->specularColor;
     ri.specularPower = obj.surface->specularPower;
-    ri.useTexEnvCombine = context->getRenderPath() != GLContext::GLPath_Basic;
+    ri.useTexEnvCombine = true;
     ri.lunarLambert = obj.surface->lunarLambert;
 #ifdef USE_HDR
     ri.nightLightScale = obj.surface->nightLightRadiance * exposure * 1.e5f * .5f;
@@ -6672,7 +6661,6 @@ void Renderer::renderObject(const Vector3f& pos,
             ringsTex->bind();
 
             if (useClampToBorder &&
-                context->getVertexPath() != GLContext::VPath_Basic &&
                 context->getRenderPath() != GLContext::GLPath_GLSL)
             {
                 renderRingShadowsVS(geometry,

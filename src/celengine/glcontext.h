@@ -23,13 +23,11 @@ class GLContext
 
     enum GLRenderPath
     {
-        GLPath_Basic             = 0,
         GLPath_GLSL              = 8,
     };
 
     enum VertexPath
     {
-        VPath_Basic              = 0,
         VPath_ARB                = 2,
     };
 
@@ -43,7 +41,7 @@ class GLContext
     bool extensionSupported(const std::string&) const;
 
     int getMaxTextures() const { return maxSimultaneousTextures; };
-    bool hasMultitexture() const { return renderPath != GLPath_Basic; };
+    bool hasMultitexture() const { return true; };
     bool bumpMappingSupported() const;
 
     VertexPath getVertexPath() const;
@@ -53,8 +51,8 @@ class GLContext
 
  private:
 
-    GLRenderPath renderPath{ GLPath_Basic };
-    VertexPath vertexPath{ VPath_Basic };
+    GLRenderPath renderPath{ GLPath_GLSL };
+    VertexPath vertexPath{ VPath_ARB };
     VertexProcessor* vertexProc{ nullptr };
     FragmentProcessor* fragmentProc{ nullptr };
 

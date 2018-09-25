@@ -156,8 +156,6 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.featureSizeSlider->setValue(minimumFeatureSize);
     ui.featureSizeEdit->setText(QString::number(minimumFeatureSize));
 
-    if (glContext->renderPathSupported(GLContext::GLPath_Basic))
-        ui.renderPathBox->addItem(_("Basic"), GLContext::GLPath_Basic);
     if (glContext->renderPathSupported(GLContext::GLPath_GLSL))
         ui.renderPathBox->addItem(_("OpenGL 2.0"), GLContext::GLPath_GLSL);
 
