@@ -107,17 +107,7 @@ void Nebula::render(const GLContext& glcontext,
     }
     else
     {
-        FixedFunctionRenderContext rc;
-        rc.setLighting(false);
-        g->render(rc);
-
-        // Reset the material
-        float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-        float zero = 0.0f;
-        glColor4fv(black);
-        glMaterialfv(GL_FRONT, GL_EMISSION, black);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, black);
-        glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
+        assert(glcontext.getRenderPath() != GLContext::GLPath_GLSL);
     }
 
     glEnable(GL_BLEND);

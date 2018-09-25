@@ -28,7 +28,6 @@
 #include "spheremesh.h"
 #include "lodspheremesh.h"
 #include "geometry.h"
-#include "regcombine.h"
 #include "vertexprog.h"
 #include "texmanager.h"
 #include "meshmanager.h"

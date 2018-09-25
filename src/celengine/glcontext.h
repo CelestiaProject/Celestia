@@ -11,7 +11,6 @@
 #define _CELENGINE_GLCONTEXT_H_
 
 #include <celengine/vertexprog.h>
-#include <celengine/fragmentprog.h>
 #include <vector>
 #include <string>
 
@@ -47,14 +46,12 @@ class GLContext
     VertexPath getVertexPath() const;
 
     VertexProcessor* getVertexProcessor() const;
-    FragmentProcessor* getFragmentProcessor() const;
 
  private:
 
     GLRenderPath renderPath{ GLPath_GLSL };
     VertexPath vertexPath{ VPath_ARB };
     VertexProcessor* vertexProc{ nullptr };
-    FragmentProcessor* fragmentProc{ nullptr };
 
     int maxSimultaneousTextures { 1 };
     std::vector<std::string> extensions;

@@ -15,9 +15,7 @@
 using namespace std;
 
 
-static VertexProcessor* vpNV = nullptr;
 static VertexProcessor* vpARB = nullptr;
-static FragmentProcessor* fpNV = nullptr;
 
 
 void GLContext::init(const vector<string>& ignoreExt)
@@ -58,21 +56,6 @@ void GLContext::init(const vector<string>& ignoreExt)
         if (vpARB == nullptr)
             vpARB = vp::initARB();
         vertexProc = vpARB;
-    }
-    else if (GLEW_NV_vertex_program && glGenProgramsNV)
-    {
-        DPRINTF(1, "Renderer: nVidia vertex programs supported.\n");
-        if (vpNV == nullptr)
-            vpNV = vp::initNV();
-        vertexProc = vpNV;
-    }
-
-    if (GLEW_NV_fragment_program && glGenProgramsNV)
-    {
-        DPRINTF(1, "Renderer: nVidia fragment programs supported.\n");
-        if (fpNV == nullptr)
-            fpNV = fp::initNV();
-        fragmentProc = fpNV;
     }
 }
 
@@ -153,16 +136,4 @@ GLContext::VertexPath GLContext::getVertexPath() const
 VertexProcessor* GLContext::getVertexProcessor() const
 {
     return vertexProc;
-}
-
-
-FragmentProcessor* GLContext::getFragmentProcessor() const
-{
-/*
-    if (renderPath == GLPath_ARGFP_ARBVP)
-        return fragmentProc;
-    else
-        return nullptr;
-*/
-    return nullptr;
 }

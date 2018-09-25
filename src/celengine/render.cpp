@@ -52,7 +52,6 @@ std::ofstream hdrlog;
 #include "spheremesh.h"
 #include "lodspheremesh.h"
 #include "geometry.h"
-#include "regcombine.h"
 #include "vertexprog.h"
 #include "texmanager.h"
 #include "meshmanager.h"
@@ -470,8 +469,8 @@ void PointStarVertexBuffer::startSprites(const GLContext& _context)
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
 
-    glEnable(GL_POINT_SPRITE_ARB);
-    glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+    glEnable(GL_POINT_SPRITE);
+    glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
 
     useSprites = true;
 }
@@ -506,12 +505,12 @@ void PointStarVertexBuffer::render()
         unsigned int stride = sizeof(StarVertex);
         if (useSprites)
         {
-            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
             glEnable(GL_TEXTURE_2D);
         }
         else
         {
-            glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+            glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
             glDisable(GL_TEXTURE_2D);
             glPointSize(1.0f);
         }
@@ -544,7 +543,7 @@ void PointStarVertexBuffer::finish()
         vproc->disableAttribArray(6);
         vproc->disable();
 
-        glDisable(GL_POINT_SPRITE_ARB);
+        glDisable(GL_POINT_SPRITE);
     }
     else
     {
@@ -603,8 +602,6 @@ Renderer::Renderer() :
     pointStarVertexBuffer(nullptr),
     glareVertexBuffer(nullptr),
     useVertexPrograms(false),
-    useRescaleNormal(false),
-    usePointSprite(false),
     textureResolution(medres),
     useNewStarRendering(false),
     frameCount(0),
@@ -617,7 +614,6 @@ Renderer::Renderer() :
 #ifdef USE_HDR
     sceneTexture(0),
     blurFormat(GL_RGBA),
-    useBlendSubtract(true),
     useLuminanceAlpha(false),
     bloomEnabled(true),
     maxBodyMag(100.0f),
@@ -1078,14 +1074,8 @@ bool Renderer::init(GLContext* _context,
         // supported, which solves the problem much more elegantly than all
         // the mipmap level nonsense.
         // shadowTex->setMaxMipMapLevel(3);
-        Texture::AddressMode shadowTexAddress = Texture::EdgeClamp;
-        Texture::MipMapMode shadowTexMip = Texture::NoMipMaps;
-        useClampToBorder = (GLEW_ARB_texture_border_clamp == GL_TRUE);
-        if (useClampToBorder)
-        {
-            shadowTexAddress = Texture::BorderClamp;
-            shadowTexMip = Texture::DefaultMipMaps;
-        }
+        Texture::AddressMode shadowTexAddress = Texture::BorderClamp;
+        Texture::MipMapMode shadowTexMip = Texture::DefaultMipMaps;
 
         shadowTex = CreateProceduralTexture(detailOptions.shadowTextureSize,
                                             detailOptions.shadowTextureSize,
@@ -1130,13 +1120,10 @@ bool Renderer::init(GLContext* _context,
                                                           PenumbraFunctionEval,
                                                           Texture::EdgeClamp);
 
-        if (GLEW_ARB_texture_cube_map)
-        {
-            normalizationTex = CreateProceduralCubeMap(64, GL_RGB, IllumMapEval);
+         normalizationTex = CreateProceduralCubeMap(64, GL_RGB, IllumMapEval);
 #if ADVANCED_CLOUD_SHADOWS
-            rectToSphericalTexture = CreateProceduralCubeMap(128, GL_RGBA, RectToSphericalMapEval);
+         rectToSphericalTexture = CreateProceduralCubeMap(128, GL_RGBA, RectToSphericalMapEval);
 #endif
-        }
 
 #ifdef USE_HDR
         genSceneTexture();
@@ -1158,43 +1145,23 @@ bool Renderer::init(GLContext* _context,
     }
 
 #if 0
-    if (GLEW_ARB_multisample)
-    {
-        int nSamples = 0;
-        int sampleBuffers = 0;
-        int enabled = (int) glIsEnabled(GL_MULTISAMPLE_ARB);
-        glGetIntegerv(GL_SAMPLE_BUFFERS_ARB, &sampleBuffers);
-        glGetIntegerv(GL_SAMPLES_ARB, &nSamples);
-        clog << "AA samples: " << nSamples
-             << ", enabled=" << (int) enabled
-             << ", sample buffers=" << (sampleBuffers)
-             << "\n";
-        glEnable(GL_MULTISAMPLE_ARB);
-    }
+    int nSamples = 0;
+    int sampleBuffers = 0;
+    int enabled = (int) glIsEnabled(GL_MULTISAMPLE);
+    glGetIntegerv(GL_SAMPLE_BUFFERS, &sampleBuffers);
+    glGetIntegerv(GL_SAMPLES, &nSamples);
+    clog << "AA samples: " << nSamples
+         << ", enabled=" << (int) enabled
+         << ", sample buffers=" << (sampleBuffers)
+         << "\n";
+    glEnable(GL_MULTISAMPLE);
 #endif
 
-    if (GLEW_EXT_rescale_normal)
-    {
-        // We need this enabled because we use glScale, but only
-        // with uniform scale factors.
-        DPRINTF(1, "Renderer: EXT_rescale_normal supported.\n");
-        useRescaleNormal = true;
-        glEnable(GL_RESCALE_NORMAL_EXT);
-    }
+    glEnable(GL_RESCALE_NORMAL_EXT);
 
-    if (GLEW_ARB_point_sprite)
-    {
-        DPRINTF(1, "Renderer: point sprites supported.\n");
-        usePointSprite = true;
-    }
-
-    if (GLEW_EXT_separate_specular_color)
-    {
-        glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT, GL_SEPARATE_SPECULAR_COLOR_EXT);
-    }
+    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT, GL_SEPARATE_SPECULAR_COLOR_EXT);
 
 #ifdef USE_HDR
-    useBlendSubtract = GLEW_EXT_blend_subtract;
     Image        *testImg = new Image(GL_LUMINANCE_ALPHA, 1, 1);
     ImageTexture *testTex = new ImageTexture(*testImg,
                                              Texture::EdgeClamp,
@@ -2320,102 +2287,72 @@ void Renderer::renderToBlurTexture(int blurLevel)
     glViewport(0, 0, blurDrawWidth, blurDrawHeight);
     glBindTexture(GL_TEXTURE_2D, sceneTexture);
 
-    if (useBlendSubtract)
+    glBegin(GL_QUADS);
+    drawBlendedVertices(0.0f, 0.0f, 1.0f);
+    glEnd();
+    // Do not need to scale alpha so mask it off
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+    glEnable(GL_BLEND);
+    savedWScale = sceneTexWScale;
+    savedHScale = sceneTexHScale;
+
+    // Remove ldr part of image
     {
-        glBegin(GL_QUADS);
-        drawBlendedVertices(0.0f, 0.0f, 1.0f);
-        glEnd();
-        // Do not need to scale alpha so mask it off
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-        glEnable(GL_BLEND);
-        savedWScale = sceneTexWScale;
-        savedHScale = sceneTexHScale;
+    const GLfloat bias  = -0.5f;
+    glBlendFunc(GL_ONE, GL_ONE);
+    glBlendEquationEXT(GL_FUNC_REVERSE_SUBTRACT_EXT);
+    glColor4f(-bias, -bias, -bias, 0.0f);
 
-        // Remove ldr part of image
-        {
-            const GLfloat bias  = -0.5f;
-            glBlendFunc(GL_ONE, GL_ONE);
-            glBlendEquationEXT(GL_FUNC_REVERSE_SUBTRACT_EXT);
-            glColor4f(-bias, -bias, -bias, 0.0f);
+    glDisable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+    glVertex2f(0.0f, 0.0f);
+    glVertex2f(1.f,  0.0f);
+    glVertex2f(1.f,  1.f);
+    glVertex2f(0.0f, 1.f);
+    glEnd();
 
-            glDisable(GL_TEXTURE_2D);
-            glBegin(GL_QUADS);
-            glVertex2f(0.0f,           0.0f);
-            glVertex2f(1.f, 0.0f);
-            glVertex2f(1.f, 1.f);
-            glVertex2f(0.0f,           1.f);
-            glEnd();
-
-            glEnable(GL_TEXTURE_2D);
-            blurTextures[blurLevel]->bind();
-            glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
-                             blurTexWidth, blurTexHeight, 0);
-        }
-
-        // Scale back up hdr part
-        {
-            glBlendEquationEXT(GL_FUNC_ADD_EXT);
-            glBlendFunc(GL_DST_COLOR, GL_ONE);
-
-            glBegin(GL_QUADS);
-            drawBlendedVertices(0.f, 0.f, 1.f); //x2
-            drawBlendedVertices(0.f, 0.f, 1.f); //x2
-            glEnd();
-        }
-
-        glDisable(GL_BLEND);
-
-        if (!useLuminanceAlpha)
-        {
-            blurTempTexture->bind();
-            glCopyTexImage2D(GL_TEXTURE_2D, blurLevel, GL_LUMINANCE, 0, 0,
-                             blurTexWidth, blurTexHeight, 0);
-            // Erase color, replace with luminance image
-            glBegin(GL_QUADS);
-            glColor4f(0.f, 0.f, 0.f, 1.f);
-            glVertex2f(0.0f, 0.0f);
-            glVertex2f(1.0f, 0.0f);
-            glVertex2f(1.0f, 1.0f);
-            glVertex2f(0.0f, 1.0f);
-            glEnd();
-            glBegin(GL_QUADS);
-            drawBlendedVertices(0.f, 0.f, 1.f);
-            glEnd();
-        }
-
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        blurTextures[blurLevel]->bind();
-        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
-                         blurTexWidth, blurTexHeight, 0);
+    glEnable(GL_TEXTURE_2D);
+    blurTextures[blurLevel]->bind();
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
+                     blurTexWidth, blurTexHeight, 0);
     }
-    else
+
+    // Scale back up hdr part
     {
-        // GL_EXT_blend_subtract not supported
-        // Use compatible (but slow) glPixelTransfer instead
-        glBegin(GL_QUADS);
-        drawBlendedVertices(0.0f, 0.0f, 1.0f);
-        glEnd();
-        savedWScale = sceneTexWScale;
-        savedHScale = sceneTexHScale;
-        sceneTexWScale = blurWScale;
-        sceneTexHScale = blurHScale;
+    glBlendEquationEXT(GL_FUNC_ADD_EXT);
+    glBlendFunc(GL_DST_COLOR, GL_ONE);
 
-        blurTextures[blurLevel]->bind();
-        glPixelTransferf(GL_RED_SCALE,   8.f);
-        glPixelTransferf(GL_GREEN_SCALE, 8.f);
-        glPixelTransferf(GL_BLUE_SCALE,  8.f);
-        glPixelTransferf(GL_RED_BIAS,   -0.5f);
-        glPixelTransferf(GL_GREEN_BIAS, -0.5f);
-        glPixelTransferf(GL_BLUE_BIAS,  -0.5f);
-        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
-                         blurTexWidth, blurTexHeight, 0);
-        glPixelTransferf(GL_RED_SCALE,   1.f);
-        glPixelTransferf(GL_GREEN_SCALE, 1.f);
-        glPixelTransferf(GL_BLUE_SCALE,  1.f);
-        glPixelTransferf(GL_RED_BIAS,    0.f);
-        glPixelTransferf(GL_GREEN_BIAS,  0.f);
-        glPixelTransferf(GL_BLUE_BIAS,   0.f);
+    glBegin(GL_QUADS);
+    drawBlendedVertices(0.f, 0.f, 1.f); //x2
+    drawBlendedVertices(0.f, 0.f, 1.f); //x2
+    glEnd();
     }
+
+    glDisable(GL_BLEND);
+
+    if (!useLuminanceAlpha)
+    {
+        blurTempTexture->bind();
+        glCopyTexImage2D(GL_TEXTURE_2D, blurLevel, GL_LUMINANCE, 0, 0,
+                         blurTexWidth, blurTexHeight, 0);
+        // Erase color, replace with luminance image
+        glBegin(GL_QUADS);
+        glColor4f(0.f, 0.f, 0.f, 1.f);
+        glVertex2f(0.0f, 0.0f);
+        glVertex2f(1.0f, 0.0f);
+        glVertex2f(1.0f, 1.0f);
+        glVertex2f(0.0f, 1.0f);
+        glEnd();
+        glBegin(GL_QUADS);
+        drawBlendedVertices(0.f, 0.f, 1.f);
+        glEnd();
+    }
+
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    blurTextures[blurLevel]->bind();
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
+                     blurTexWidth, blurTexHeight, 0);
+// blending end
 
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -2744,7 +2681,7 @@ void Renderer::draw(const Observer& observer,
 
     locationFilter = observer.getLocationFilter();
 
-    if (usePointSprite && getGLContext()->getVertexProcessor() != nullptr)
+    if (getGLContext()->getVertexProcessor() != nullptr)
     {
         useNewStarRendering = true;
     }
@@ -3157,9 +3094,9 @@ void Renderer::draw(const Observer& observer,
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != nullptr)
     {
         // Disable multisample rendering when drawing point stars
-        bool toggleAA = (starStyle == Renderer::PointStars && glIsEnabled(GL_MULTISAMPLE_ARB));
+        bool toggleAA = (starStyle == Renderer::PointStars && glIsEnabled(GL_MULTISAMPLE));
         if (toggleAA)
-            glDisable(GL_MULTISAMPLE_ARB);
+            glDisable(GL_MULTISAMPLE);
 
         if (useNewStarRendering)
             renderPointStars(*universe.getStarCatalog(), faintestMag, observer);
@@ -3167,7 +3104,7 @@ void Renderer::draw(const Observer& observer,
             renderStars(*universe.getStarCatalog(), faintestMag, observer);
 
         if (toggleAA)
-            glEnable(GL_MULTISAMPLE_ARB);
+            glEnable(GL_MULTISAMPLE);
     }
 
 #ifdef USE_HDR
@@ -3907,30 +3844,6 @@ void Renderer::draw(const Observer& observer,
 }
 
 
-static void renderRingSystem(float innerRadius,
-                             float outerRadius,
-                             float beginAngle,
-                             float endAngle,
-                             unsigned int nSections)
-{
-    float angle = endAngle - beginAngle;
-
-    glBegin(GL_QUAD_STRIP);
-    for (unsigned int i = 0; i <= nSections; i++)
-    {
-        float t = (float) i / (float) nSections;
-        float theta = beginAngle + t * angle;
-        auto s = (float) sin(theta);
-        auto c = (float) cos(theta);
-        glTexCoord2f(0, 0.5f);
-        glVertex3f(c * innerRadius, 0, s * innerRadius);
-        glTexCoord2f(1, 0.5f);
-        glVertex3f(c * outerRadius, 0, s * outerRadius);
-    }
-    glEnd();
-}
-
-
 // If the an object occupies a pixel or less of screen space, we don't
 // render its mesh at all and just display a starlike point instead.
 // Switching between the particle and mesh renderings of an object is
@@ -4209,8 +4122,8 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         }
 #else
         // Disabled because of point size limits
-        glEnable(GL_POINT_SPRITE_ARB);
-        glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+        glEnable(GL_POINT_SPRITE);
+        glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
 
         gaussianDiscTex->bind();
         glColor(color, alpha);
@@ -4236,154 +4149,10 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             glEnd();
         }
 
-        glDisable(GL_POINT_SPRITE_ARB);
+        glDisable(GL_POINT_SPRITE);
         glDisable(GL_DEPTH_TEST);
 #endif // NO_MAX_POINT_SIZE
     }
-}
-
-
-static void renderBumpMappedMesh(const GLContext& context,
-                                 Texture& baseTexture,
-                                 Texture& bumpTexture,
-                                 const Vector3f& lightDirection,
-                                 const Quaternionf& orientation,
-                                 Color ambientColor,
-                                 const Frustum& frustum,
-                                 float lod)
-{
-    // We're doing our own per-pixel lighting, so disable GL's lighting
-    glDisable(GL_LIGHTING);
-
-    // Render the base texture on the first pass . . .  The color
-    // should have already been set up by the caller.
-    g_lodSphere->render(context,
-                        LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                        frustum, lod,
-                        &baseTexture);
-
-    // The 'default' light vector for the bump map is (0, 0, 1).  Determine
-    // a rotation transformation that will move the sun direction to
-    // this vector.
-    Quaternionf lightOrientation;
-    lightOrientation.setFromTwoVectors(Vector3f::UnitZ(), lightDirection);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_DST_COLOR, GL_ZERO);
-
-    // Set up the bump map with one directional light source
-    SetupCombinersBumpMap(bumpTexture, *normalizationTex, ambientColor);
-
-    // The second set texture coordinates will contain the light
-    // direction in tangent space.  We'll generate the texture coordinates
-    // from the surface normals using GL_NORMAL_MAP_EXT and then
-    // use the texture matrix to rotate them into tangent space.
-    // This method of generating tangent space light direction vectors
-    // isn't as general as transforming the light direction by an
-    // orthonormal basis for each mesh vertex, but it works well enough
-    // for spheres illuminated by directional light sources.
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-
-    // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
-    // mode is part of the cube map extension.
-    glEnable(GL_TEXTURE_GEN_R);
-    glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
-    glEnable(GL_TEXTURE_GEN_S);
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
-    glEnable(GL_TEXTURE_GEN_T);
-    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
-
-    // Set up the texture transformation--the light direction and the
-    // viewer orientation both need to be considered.
-    glMatrixMode(GL_TEXTURE);
-    glScalef(-1.0f, 1.0f, 1.0f);
-    glRotate(lightOrientation * orientation.conjugate());
-    glMatrixMode(GL_MODELVIEW);
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-
-    g_lodSphere->render(context,
-                        LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                        frustum, lod,
-                        &bumpTexture);
-
-    // Reset the second texture unit
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glMatrixMode(GL_TEXTURE);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glDisable(GL_TEXTURE_GEN_R);
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_GEN_T);
-
-    DisableCombiners();
-    glDisable(GL_BLEND);
-}
-
-
-static void renderSmoothMesh(const GLContext& context,
-                             Texture& baseTexture,
-                             const Vector3f& lightDirection,
-                             const Quaternionf& orientation,
-                             Color ambientColor,
-                             float lod,
-                             const Frustum& frustum,
-                             bool invert = false)
-{
-    Texture* textures[4];
-
-    // We're doing our own per-pixel lighting, so disable GL's lighting
-    glDisable(GL_LIGHTING);
-
-    // The 'default' light vector for the bump map is (0, 0, 1).  Determine
-    // a rotation transformation that will move the sun direction to
-    // this vector.
-    Quaternionf lightOrientation;
-    lightOrientation.setFromTwoVectors(Vector3f::UnitZ(), lightDirection);
-
-    SetupCombinersSmooth(baseTexture, *normalizationTex, ambientColor, invert);
-
-    // The second set texture coordinates will contain the light
-    // direction in tangent space.  We'll generate the texture coordinates
-    // from the surface normals using GL_NORMAL_MAP_EXT and then
-    // use the texture matrix to rotate them into tangent space.
-    // This method of generating tangent space light direction vectors
-    // isn't as general as transforming the light direction by an
-    // orthonormal basis for each mesh vertex, but it works well enough
-    // for spheres illuminated by directional light sources.
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-
-    // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
-    // mode is part of the cube map extension.
-    glEnable(GL_TEXTURE_GEN_R);
-    glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
-    glEnable(GL_TEXTURE_GEN_S);
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
-    glEnable(GL_TEXTURE_GEN_T);
-    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
-
-    // Set up the texture transformation--the light direction and the
-    // viewer orientation both need to be considered.
-    glMatrixMode(GL_TEXTURE);
-    glRotate(lightOrientation * orientation.conjugate());
-    glMatrixMode(GL_MODELVIEW);
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-
-    textures[0] = &baseTexture;
-    g_lodSphere->render(context,
-                        LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                        frustum, lod,
-                        textures, 1);
-
-    // Reset the second texture unit
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glMatrixMode(GL_TEXTURE);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glDisable(GL_TEXTURE_GEN_R);
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_GEN_T);
-
-    DisableCombiners();
 }
 
 
@@ -4820,35 +4589,6 @@ static void setupNightTextureCombine()
 }
 
 
-static void setupBumpTexenv()
-{
-    // Set up the texenv_combine extension to do DOT3 bump mapping.
-    // No support for ambient light yet.
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-
-    // The primary color contains the light direction in surface
-    // space, and texture0 is a normal map.  The lighting is
-    // calculated by computing the dot product.
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_DOT3_RGB_ARB);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-
-    // In the final stage, modulate the lighting value by the
-    // base texture color.
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PREVIOUS_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-    glEnable(GL_TEXTURE_2D);
-
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-}
-
-
 #if 0
 static void setupBumpTexenvAmbient(Color ambientColor)
 {
@@ -4864,15 +4604,15 @@ static void setupBumpTexenvAmbient(Color ambientColor)
     // The primary color contains the light direction in surface
     // space, and texture0 is a normal map.  The lighting is
     // calculated by computing the dot product.
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_DOT3_RGB_ARB);
+    glActiveTexture(GL_TEXTURE0);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_DOT3_RGB);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
 
     // Add in the ambient color
-    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTexture(GL_TEXTURE1);
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, texenvConst);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
@@ -4884,7 +4624,7 @@ static void setupBumpTexenvAmbient(Color ambientColor)
 
     // In the final stage, modulate the lighting value by the
     // base texture color.
-    glActiveTextureARB(GL_TEXTURE2_ARB);
+    glActiveTexture(GL_TEXTURE2);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PREVIOUS_EXT);
@@ -4893,137 +4633,9 @@ static void setupBumpTexenvAmbient(Color ambientColor)
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
     glEnable(GL_TEXTURE_2D);
 
-    glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTexture(GL_TEXTURE0);
 }
 #endif
-
-
-static void setupTexenvAmbient(Color ambientColor)
-{
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-
-    // The primary color contains the light direction in surface
-    // space, and texture0 is a normal map.  The lighting is
-    // calculated by computing the dot product.
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, ambientColor.toVector4().data());
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_CONSTANT_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-    glEnable(GL_TEXTURE_2D);
-}
-
-
-static void setupTexenvGlossMapAlpha()
-{
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_ALPHA);
-
-}
-
-
-static void setLightParameters_VP(VertexProcessor& vproc,
-                                  const LightingState& ls,
-                                  Color materialDiffuse,
-                                  Color materialSpecular)
-{
-    Vector3f diffuseColor = materialDiffuse.toVector3();
-#ifdef HDR_COMPRESS
-    Vector3f specularColor = materialSpecular.toVector3() * 0.5f;
-#else
-    Vector3f specularColor = materialSpecular.toVector3();
-#endif
-    for (unsigned int i = 0; i < ls.nLights; i++)
-    {
-        const DirectionalLight& light = ls.lights[i];
-
-        Vector3f lightColor = light.color.toVector3() * light.irradiance;
-        Vector3f diffuse = diffuseColor.cwiseProduct(lightColor);
-        Vector3f specular = specularColor.cwiseProduct(lightColor);
-
-        // Just handle two light sources for now
-        if (i == 0)
-        {
-            vproc.parameter(vp::LightDirection0, ls.lights[0].direction_obj);
-            vproc.parameter(vp::DiffuseColor0, diffuse);
-            vproc.parameter(vp::SpecularColor0, specular);
-        }
-        else if (i == 1)
-        {
-            vproc.parameter(vp::LightDirection1, ls.lights[1].direction_obj);
-            vproc.parameter(vp::DiffuseColor1, diffuse);
-            vproc.parameter(vp::SpecularColor1, specular);
-        }
-    }
-}
-
-
-static void renderModelDefault(Geometry* geometry,
-                               const RenderInfo& ri,
-                               bool lit,
-                               ResourceHandle texOverride)
-{
-    FixedFunctionRenderContext rc;
-    Material m;
-
-    rc.setLighting(lit);
-
-    if (ri.baseTex == nullptr)
-    {
-        glDisable(GL_TEXTURE_2D);
-    }
-    else
-    {
-        glEnable(GL_TEXTURE_2D);
-        ri.baseTex->bind();
-    }
-
-    glColor(ri.color);
-
-    if (ri.baseTex != nullptr)
-    {
-        m.diffuse = Material::Color(ri.color.red(), ri.color.green(), ri.color.blue());
-        m.specular = Material::Color(ri.specularColor.red(), ri.specularColor.green(), ri.specularColor.blue());
-        m.specularPower = ri.specularPower;
-
-        CelestiaTextureResource textureResource(texOverride);
-        m.maps[Material::DiffuseMap] = &textureResource;
-
-        rc.setMaterial(&m);
-        rc.lock();
-    }
-
-    geometry->render(rc);
-    if (geometry->usesTextureType(Material::EmissiveMap))
-    {
-        glDisable(GL_LIGHTING);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-        rc.setRenderPass(RenderContext::EmissivePass);
-        rc.setMaterial(nullptr);
-
-        geometry->render(rc);
-
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    }
-    m.maps[Material::DiffuseMap] = nullptr; // prevent Material destructor from deleting the texture resource
-
-    // Reset the material
-    float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    float zero = 0.0f;
-    glColor4fv(black);
-    glMaterialfv(GL_FRONT, GL_EMISSION, black);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, black);
-    glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
-}
 
 
 static void renderSphereDefault(const RenderInfo& ri,
@@ -5099,633 +4711,6 @@ static void renderSphereDefault(const RenderInfo& ri,
                             ri.overlayTex);
         glBlendFunc(GL_ONE, GL_ONE);
     }
-}
-
-
-static void renderShadowedGeometryDefault(Geometry* geometry,
-                                          const RenderInfo& ri,
-                                          const Frustum& frustum,
-                                          const Vector4f& texGenS,
-                                          const Vector4f& texGenT,
-                                          const Vector3f& lightDir,
-                                          bool useShadowMask,
-                                          const GLContext& context)
-{
-    glEnable(GL_TEXTURE_GEN_S);
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    glTexGenfv(GL_S, GL_OBJECT_PLANE, texGenS.data());
-    //texGenPlane(GL_S, GL_OBJECT_PLANE, sPlane);
-    glEnable(GL_TEXTURE_GEN_T);
-    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    glTexGenfv(GL_T, GL_OBJECT_PLANE, texGenT.data());
-
-    if (useShadowMask)
-    {
-        glActiveTextureARB(GL_TEXTURE1_ARB);
-        glEnable(GL_TEXTURE_GEN_S);
-        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-        glTexGenfv(GL_S, GL_OBJECT_PLANE,
-                    Vector4f(lightDir.x(), lightDir.y(), lightDir.z(), 0.5f).data());
-        glActiveTextureARB(GL_TEXTURE0_ARB);
-    }
-
-    glColor4f(1, 1, 1, 1);
-    glDisable(GL_LIGHTING);
-
-    if (geometry == nullptr)
-    {
-        g_lodSphere->render(context,
-                            LODSphereMesh::Normals | LODSphereMesh::Multipass,
-                            frustum, ri.pixWidth, nullptr);
-    }
-    else
-    {
-        FixedFunctionRenderContext rc;
-        geometry->render(rc);
-    }
-    glEnable(GL_LIGHTING);
-
-    if (useShadowMask)
-    {
-        glActiveTextureARB(GL_TEXTURE1_ARB);
-        glDisable(GL_TEXTURE_GEN_S);
-        glActiveTextureARB(GL_TEXTURE0_ARB);
-    }
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_GEN_T);
-}
-
-
-static void renderShadowedGeometryVertexShader(const RenderInfo& ri,
-                                               const Frustum& frustum,
-                                               const Vector4f& texGenS,
-                                               const Vector4f& texGenT,
-                                               const Vector3f& lightDir,
-                                               const GLContext& context)
-{
-    VertexProcessor* vproc = context.getVertexProcessor();
-    assert(vproc != nullptr);
-
-    vproc->enable();
-    vproc->parameter(vp::LightDirection0, lightDir);
-    vproc->parameter(vp::TexGen_S, texGenS);
-    vproc->parameter(vp::TexGen_T, texGenT);
-    vproc->use(vp::shadowTexture);
-
-    g_lodSphere->render(context,
-                        LODSphereMesh::Normals | LODSphereMesh::Multipass, frustum,
-                        ri.pixWidth, nullptr);
-
-    vproc->disable();
-}
-
-
-static void renderRings(RingSystem& rings,
-                        RenderInfo& ri,
-                        float planetRadius,
-                        float planetOblateness,
-                        unsigned int textureResolution,
-                        bool renderShadow,
-                        const GLContext& context,
-                        unsigned int nSections)
-{
-    float inner = rings.innerRadius / planetRadius;
-    float outer = rings.outerRadius / planetRadius;
-
-    // Ring Illumination:
-    // Since a ring system is composed of millions of individual
-    // particles, it's not at all realistic to model it as a flat
-    // Lambertian surface.  We'll approximate the llumination
-    // function by assuming that the ring system contains Lambertian
-    // particles, and that the brightness at some point in the ring
-    // system is proportional to the illuminated fraction of a
-    // particle there.  In fact, we'll simplify things further and
-    // set the illumination of the entire ring system to the same
-    // value, computing the illuminated fraction of a hypothetical
-    // particle located at the center of the planet.  This
-    // approximation breaks down when you get close to the planet.
-    float ringIllumination = 0.0f;
-    {
-        float illumFraction = (1.0f + ri.eyeDir_obj.dot(ri.sunDir_obj)) / 2.0f;
-        // Just use the illuminated fraction for now . . .
-        ringIllumination = illumFraction;
-    }
-
-    GLContext::VertexPath vpath = context.getVertexPath();
-    VertexProcessor* vproc = context.getVertexProcessor();
-    FragmentProcessor* fproc = context.getFragmentProcessor();
-
-    if (vproc != nullptr)
-    {
-        vproc->enable();
-        vproc->use(vp::ringIllum);
-        vproc->parameter(vp::LightDirection0, ri.sunDir_obj);
-        vproc->parameter(vp::DiffuseColor0, ri.sunColor * rings.color);
-        vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
-        vproc->parameter(vp::Constant0, Vector3f(0.0f, 0.5f, 1.0f));
-    }
-
-    // If we have multi-texture support, we'll use the second texture unit
-    // to render the shadow of the planet on the rings.  This is a bit of
-    // a hack, and assumes that the planet is ellipsoidal in shape,
-    // and only works for a planet illuminated by a single sun where the
-    // distance to the sun is very large relative to its diameter.
-    if (renderShadow)
-    {
-        glActiveTextureARB(GL_TEXTURE1_ARB);
-        glEnable(GL_TEXTURE_2D);
-        shadowTex->bind();
-
-        // Compute the projection vectors based on the sun direction.
-        // I'm being a little careless here--if the sun direction lies
-        // along the y-axis, this will fail.  It's unlikely that a
-        // planet would ever orbit underneath its sun (an orbital
-        // inclination of 90 degrees), but this should be made
-        // more robust anyway.
-        Vector3f axis = Vector3f::UnitY().cross(ri.sunDir_obj);
-        float cosAngle = Vector3f::UnitY().dot(ri.sunDir_obj);
-        axis.normalize();
-
-        float sScale = 1.0f;
-        float tScale = 1.0f;
-        if (fproc == nullptr)
-        {
-            // When fragment programs aren't used, we render shadows with circular
-            // textures.  We scale up the texture slightly to account for the
-            // padding pixels near the texture borders.
-            sScale *= ShadowTextureScale;
-            tScale *= ShadowTextureScale;
-        }
-
-        if (planetOblateness != 0.0f)
-        {
-            // For oblate planets, the size of the shadow volume will vary based
-            // on the light direction.
-
-            // A vertical slice of the planet is an ellipse
-            float a = 1.0f;                          // semimajor axis
-            float b = a * (1.0f - planetOblateness); // semiminor axis
-            float ecc2 = 1.0f - (b * b) / (a * a);   // square of eccentricity
-
-            // Calculate the radius of the ellipse at the incident angle of the
-            // light on the ring plane + 90 degrees.
-            float r = a * (float) sqrt((1.0f - ecc2) /
-                                       (1.0f - ecc2 * square(cosAngle)));
-
-            tScale *= a / r;
-        }
-
-        // The s axis is perpendicular to the shadow axis in the plane of the
-        // of the rings, and the t axis completes the orthonormal basis.
-        Vector3f sAxis = axis * 0.5f;
-        Vector3f tAxis = axis.cross(ri.sunDir_obj) * 0.5f * tScale;
-
-        Vector4f sPlane;
-        Vector4f tPlane;
-        sPlane.head(3) = sAxis;
-        sPlane[3] = 0.5f;
-        tPlane.head(3) = tAxis;
-        tPlane[3] = 0.5f;
-
-        if (vproc != nullptr)
-        {
-            vproc->parameter(vp::TexGen_S, sPlane);
-            vproc->parameter(vp::TexGen_T, tPlane);
-        }
-        else
-        {
-            glEnable(GL_TEXTURE_GEN_S);
-            glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-            glTexGenfv(GL_S, GL_EYE_PLANE, sPlane.data());
-            glEnable(GL_TEXTURE_GEN_T);
-            glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-            glTexGenfv(GL_T, GL_EYE_PLANE, tPlane.data());
-        }
-
-        glActiveTextureARB(GL_TEXTURE0_ARB);
-
-        if (fproc != nullptr)
-        {
-            float r0 = 0.24f;
-            float r1 = 0.25f;
-            float bias = 1.0f / (1.0f - r1 / r0);
-            float scale = -bias / r0;
-
-            fproc->enable();
-            fproc->use(fp::sphereShadowOnRings);
-            fproc->parameter(fp::ShadowParams0, scale, bias, 0.0f, 0.0f);
-            fproc->parameter(fp::AmbientColor, ri.ambientColor * ri.color);
-        }
-    }
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    Texture* ringsTex = rings.texture.find(textureResolution);
-
-    if (ringsTex != nullptr)
-    {
-        glEnable(GL_TEXTURE_2D);
-        ringsTex->bind();
-    }
-    else
-    {
-        glDisable(GL_TEXTURE_2D);
-    }
-
-    // This gets tricky . . .  we render the rings in two parts.  One
-    // part is potentially shadowed by the planet, and we need to
-    // render that part with the projected shadow texture enabled.
-    // The other part isn't shadowed, but will appear so if we don't
-    // first disable the shadow texture.  The problem is that the
-    // shadow texture will affect anything along the line between the
-    // sun and the planet, regardless of whether it's in front or
-    // behind the planet.
-
-    // Compute the angle of the sun projected on the ring plane
-    float sunAngle = std::atan2(ri.sunDir_obj.z(), ri.sunDir_obj.x());
-
-    // If there's a fragment program, it will handle the ambient term--make
-    // sure that we don't add it both in the fragment and vertex programs.
-    if (vproc != nullptr && fproc != nullptr)
-        glAmbientLightColor(Color::Black);
-
-    renderRingSystem(inner, outer,
-                     (float) (sunAngle + PI / 2),
-                     (float) (sunAngle + 3 * PI / 2),
-                     nSections / 2);
-    renderRingSystem(inner, outer,
-                     (float) (sunAngle +  3 * PI / 2),
-                     (float) (sunAngle + PI / 2),
-                     nSections / 2);
-
-    if (vproc != nullptr && fproc != nullptr)
-        glAmbientLightColor(ri.ambientColor * ri.color);
-
-    // Disable the second texture unit if it was used
-    if (renderShadow)
-    {
-        glActiveTextureARB(GL_TEXTURE1_ARB);
-        glDisable(GL_TEXTURE_2D);
-        glDisable(GL_TEXTURE_GEN_S);
-        glDisable(GL_TEXTURE_GEN_T);
-        glActiveTextureARB(GL_TEXTURE0_ARB);
-
-        if (fproc != nullptr)
-            fproc->disable();
-    }
-
-    // Render the unshadowed side
-    renderRingSystem(inner, outer,
-                     (float) (sunAngle - PI / 2),
-                     (float) (sunAngle + PI / 2),
-                     nSections / 2);
-    renderRingSystem(inner, outer,
-                     (float) (sunAngle + PI / 2),
-                     (float) (sunAngle - PI / 2),
-                     nSections / 2);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-    if (vproc != nullptr)
-        vproc->disable();
-}
-
-
-static void
-renderEclipseShadows(Geometry* geometry,
-                     LightingState::EclipseShadowVector& eclipseShadows,
-                     RenderInfo& ri,
-                     float planetRadius,
-                     Quaternionf& planetOrientation,
-                     Frustum& viewFrustum,
-                     const GLContext& context)
-{
-    Matrix3f planetTransform = planetOrientation.toRotationMatrix();
-
-    // Eclipse shadows on mesh objects are only supported in
-    // the OpenGL 2.0 path.
-    if (geometry != nullptr)
-        return;
-
-    for (auto& shadow : eclipseShadows)
-    {
-        // Determine which eclipse shadow texture to use.  This is only
-        // a very rough approximation to reality.  Since there are an
-        // infinite number of possible eclipse volumes, what we should be
-        // doing is generating the eclipse textures on the fly using
-        // render-to-texture.  But for now, we'll just choose from a fixed
-        // set of eclipse shadow textures based on the relative size of
-        // the umbra and penumbra.
-        Texture* eclipseTex = nullptr;
-        float umbra = shadow.umbraRadius / shadow.penumbraRadius;
-        if (umbra < 0.1f)
-            eclipseTex = eclipseShadowTextures[0];
-        else if (umbra < 0.35f)
-            eclipseTex = eclipseShadowTextures[1];
-        else if (umbra < 0.6f)
-            eclipseTex = eclipseShadowTextures[2];
-        else if (umbra < 0.9f)
-            eclipseTex = eclipseShadowTextures[3];
-        else
-            eclipseTex = shadowTex;
-
-        // Compute the transformation to use for generating texture
-        // coordinates from the object vertices.
-        Vector3f origin = planetTransform * shadow.origin;
-        Vector3f dir    = planetTransform * shadow.direction;
-        float scale = planetRadius / shadow.penumbraRadius;
-        Quaternionf shadowRotation;
-        shadowRotation.setFromTwoVectors(Vector3f::UnitY(), dir);
-        Matrix3f m = shadowRotation.toRotationMatrix();
-
-        Vector3f sAxis = m * Vector3f::UnitX() * (0.5f * scale);
-        Vector3f tAxis = m * Vector3f::UnitZ() * (0.5f * scale);
-
-        Vector4f texGenS;
-        Vector4f texGenT;
-        texGenS.head(3) = sAxis;
-        texGenT.head(3) = tAxis;
-        texGenS[3] = -origin.dot(sAxis) / planetRadius + 0.5f;
-        texGenT[3] = -origin.dot(tAxis) / planetRadius + 0.5f;
-
-        // TODO: Multiple eclipse shadows should be rendered in a single
-        // pass using multitexture.
-        if (eclipseTex != nullptr)
-            eclipseTex->bind();
-        // shadowMaskTexture->bind();
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-
-        // If the ambient light level is greater than zero, reduce the
-        // darkness of the shadows.
-        if (ri.useTexEnvCombine)
-        {
-            float color[4] = { ri.ambientColor.red(), ri.ambientColor.green(),
-                               ri.ambientColor.blue(), 1.0f };
-            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
-            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-            glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_CONSTANT_EXT);
-            glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-            glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-            glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-            glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
-
-            // The second texture unit has the shadow 'mask'
-            glActiveTextureARB(GL_TEXTURE1_ARB);
-            glEnable(GL_TEXTURE_2D);
-            shadowMaskTexture->bind();
-            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-            glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
-            glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PREVIOUS_EXT);
-            glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-            glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-            glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-            glActiveTextureARB(GL_TEXTURE0_ARB);
-        }
-
-        // Since invariance between nVidia's vertex programs and the
-        // standard transformation pipeline isn't guaranteed, we have to
-        // make sure to use the same transformation engine on subsequent
-        // rendering passes as we did on the initial one.
-        if (geometry == nullptr)
-        {
-            renderShadowedGeometryVertexShader(ri, viewFrustum,
-                                               texGenS, texGenT,
-                                               dir,
-                                               context);
-        }
-        else
-        {
-            renderShadowedGeometryDefault(geometry, ri, viewFrustum,
-                                          texGenS, texGenT,
-                                          dir,
-                                          ri.useTexEnvCombine,
-                                          context);
-        }
-
-        if (ri.useTexEnvCombine)
-        {
-            // Disable second texture unit
-            glActiveTextureARB(GL_TEXTURE1_ARB);
-            glDisable(GL_TEXTURE_2D);
-            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-            glActiveTextureARB(GL_TEXTURE0_ARB);
-
-            float color[4] = { 0, 0, 0, 0 };
-            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
-            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        }
-
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        glDisable(GL_BLEND);
-    }
-}
-
-
-static void
-renderEclipseShadows_Shaders(Geometry* geometry,
-                             LightingState::EclipseShadowVector& eclipseShadows,
-                             RenderInfo& ri,
-                             float planetRadius,
-                             const Quaternionf& planetOrientation,
-                             Frustum& viewFrustum,
-                             const GLContext& context)
-{
-    Matrix3f planetTransform = planetOrientation.toRotationMatrix();
-
-    // Eclipse shadows on mesh objects are only implemented in the GLSL path
-    if (geometry != nullptr)
-        return;
-
-    glEnable(GL_TEXTURE_2D);
-    penumbraFunctionTexture->bind();
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-
-    Vector4f texGenS[4];
-    Vector4f texGenT[4];
-    Vector4f shadowParams[4];
-
-    int n = 0;
-    for (const auto& shadow : eclipseShadows)
-    {
-        if (n >= 4)
-          break;
-
-        float R2 = 0.25f;
-        float umbra = shadow.umbraRadius / shadow.penumbraRadius;
-        umbra = umbra * umbra;
-        if (umbra < 0.0001f)
-            umbra = 0.0001f;
-        else if (umbra > 0.99f)
-            umbra = 0.99f;
-
-        float umbraRadius = R2 * umbra;
-        float penumbraRadius = R2;
-        float shadowBias = 1.0f / (1.0f - penumbraRadius / umbraRadius);
-        float shadowScale = -shadowBias / umbraRadius;
-
-        shadowParams[n][0] = shadowScale;
-        shadowParams[n][1] = shadowBias;
-        shadowParams[n][2] = 0.0f;
-        shadowParams[n][3] = 0.0f;
-
-        // Compute the transformation to use for generating texture
-        // coordinates from the object vertices.
-        Vector3f origin = planetTransform * shadow.origin;
-        Vector3f dir    = planetTransform * shadow.direction;
-        float scale = planetRadius / shadow.penumbraRadius;
-        Quaternionf shadowRotation;
-        shadowRotation.setFromTwoVectors(Vector3f::UnitY(), dir);
-        Matrix3f m = shadowRotation.toRotationMatrix();
-
-        Vector3f sAxis = m * Vector3f::UnitX() * (0.5f * scale);
-        Vector3f tAxis = m * Vector3f::UnitZ() * (0.5f * scale);
-
-        texGenS[n].head(3) = sAxis;
-        texGenT[n].head(3) = tAxis;
-        texGenS[n][3] = -origin.dot(sAxis) / planetRadius + 0.5f;
-        texGenT[n][3] = -origin.dot(tAxis) / planetRadius + 0.5f;
-
-        n++;
-    }
-
-
-    VertexProcessor* vproc = context.getVertexProcessor();
-    FragmentProcessor* fproc = context.getFragmentProcessor();
-
-    vproc->enable();
-    vproc->use(vp::multiShadow);
-
-    fproc->enable();
-    if (n == 1)
-        fproc->use(fp::eclipseShadow1);
-    else
-        fproc->use(fp::eclipseShadow2);
-
-    fproc->parameter(fp::ShadowParams0, shadowParams[0]);
-    vproc->parameter(vp::TexGen_S, texGenS[0]);
-    vproc->parameter(vp::TexGen_T, texGenT[0]);
-    if (n >= 2)
-    {
-        fproc->parameter(fp::ShadowParams1, shadowParams[1]);
-        vproc->parameter(vp::TexGen_S2, texGenS[1]);
-        vproc->parameter(vp::TexGen_T2, texGenT[1]);
-    }
-    if (n >= 3)
-    {
-        //fproc->parameter(fp::ShadowParams2, shadowParams[2]);
-        vproc->parameter(vp::TexGen_S3, texGenS[2]);
-        vproc->parameter(vp::TexGen_T3, texGenT[2]);
-    }
-    if (n >= 4)
-    {
-        //fproc->parameter(fp::ShadowParams3, shadowParams[3]);
-        vproc->parameter(vp::TexGen_S4, texGenS[3]);
-        vproc->parameter(vp::TexGen_T4, texGenT[3]);
-    }
-
-    //vproc->parameter(vp::LightDirection0, lightDir);
-
-    g_lodSphere->render(context,
-                        LODSphereMesh::Normals | LODSphereMesh::Multipass,
-                        viewFrustum,
-                        ri.pixWidth, nullptr);
-
-    vproc->disable();
-    fproc->disable();
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    glDisable(GL_BLEND);
-}
-
-
-static void
-renderRingShadowsVS(Geometry* /*geometry*/,           //TODO: Remove unused parameters??
-                    const RingSystem& rings,
-                    const Vector3f& /*sunDir*/,
-                    RenderInfo& ri,
-                    float planetRadius,
-                    float /*oblateness*/,
-                    Matrix4f& /*planetMat*/,
-                    Frustum& viewFrustum,
-                    const GLContext& context)
-{
-    // Compute the transformation to use for generating texture
-    // coordinates from the object vertices.
-    float ringWidth = rings.outerRadius - rings.innerRadius;
-    float s = ri.sunDir_obj.y();
-    float scale = (abs(s) < 0.001f) ? 1000.0f : 1.0f / s;
-
-    if (abs(s) > 1.0f - 1.0e-4f)
-    {
-        // Planet is illuminated almost directly from above, so
-        // no ring shadow will be cast on the planet.  Conveniently
-        // avoids some potential division by zero when ray-casting.
-        return;
-    }
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
-
-    // If the ambient light level is greater than zero, reduce the
-    // darkness of the shadows.
-    float color[4] = { ri.ambientColor.red(), ri.ambientColor.green(),
-                       ri.ambientColor.blue(), 1.0f };
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_CONSTANT_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
-
-    // Tweak the texture--set clamp to border and a border color with
-    // a zero alpha.  If a graphics card doesn't support clamp to border,
-    // it doesn't get to play.  It's possible to get reasonable behavior
-    // by turning off mipmaps and assuming transparent rows of pixels for
-    // the top and bottom of the ring textures . . . maybe later.
-    float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_ARB);
-
-    // Ring shadows look strange if they're always completely black.  Vary
-    // the darkness of the shadow based on the angle between the sun and the
-    // ring plane.  There's some justification for this--the larger the angle
-    // between the sun and the ring plane (normal), the more ring material
-    // there is to travel through.
-    //float alpha = (1.0f - abs(ri.sunDir_obj.y)) * 1.0f;
-    // ...but, images from Cassini are showing very dark ring shadows, so we'll
-    // go with that.
-    float alpha = 1.0f;
-
-    VertexProcessor* vproc = context.getVertexProcessor();
-    assert(vproc != nullptr);
-
-    vproc->enable();
-    vproc->use(vp::ringShadow);
-    vproc->parameter(vp::LightDirection0, ri.sunDir_obj);
-    vproc->parameter(vp::DiffuseColor0, 1, 1, 1, alpha); // color = white
-    vproc->parameter(vp::TexGen_S,
-                     rings.innerRadius / planetRadius,
-                     1.0f / (ringWidth / planetRadius),
-                     0.0f, 0.5f);
-    vproc->parameter(vp::TexGen_T, scale, 0, 0, 0);
-    g_lodSphere->render(context, LODSphereMesh::Multipass,
-                        viewFrustum, ri.pixWidth, nullptr);
-    vproc->disable();
-
-    // Restore the texture combiners
-    if (ri.useTexEnvCombine)
-    {
-        float color[4] = { 0, 0, 0, 0 };
-        glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    }
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    glDisable(GL_BLEND);
 }
 
 
@@ -6197,15 +5182,8 @@ void Renderer::renderObject(const Vector3f& pos,
         // problems on Savage4 cards.
 
         Vector3f lightColor = light.color.toVector3() * light.irradiance;
-        if (useRescaleNormal)
-        {
-            glLightColor(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
-            glLightColor(GL_LIGHT0 + i, GL_SPECULAR, lightColor);
-        }
-        else
-        {
-            glLightColor(GL_LIGHT0 + i, GL_DIFFUSE, lightColor * radius);
-        }
+        glLightColor(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
+        glLightColor(GL_LIGHT0 + i, GL_SPECULAR, lightColor);
         glEnable(GL_LIGHT0 + i);
     }
 
@@ -6360,16 +5338,16 @@ void Renderer::renderObject(const Vector3f& pos,
 
                 for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
                 {
-                    glActiveTextureARB(GL_TEXTURE0_ARB + i);
+                    glActiveTexture(GL_TEXTURE0 + i);
                     glDisable(GL_TEXTURE_2D);
                 }
-                glActiveTextureARB(GL_TEXTURE0_ARB);
+                glActiveTexture(GL_TEXTURE0);
                 glEnable(GL_TEXTURE_2D);
-                glUseProgramObjectARB(0);
+                glUseProgram(0);
             }
             else
             {
-                renderModelDefault(geometry, ri, lit, texOverride);
+                assert(context->getRenderPath() != GLContext::GLPath_GLSL);
             }
         }
     }
@@ -6386,12 +5364,7 @@ void Renderer::renderObject(const Vector3f& pos,
         }
         else
         {
-            renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y(),
-                        textureResolution,
-                        context->getMaxTextures() > 1 &&
-                        (renderFlags & ShowRingShadows) != 0 && lit,
-                        *context,
-                        detailOptions.ringSystemSections);
+            assert(context->getRenderPath() != GLContext::GLPath_GLSL);
         }
     }
 
@@ -6520,28 +5493,7 @@ void Renderer::renderObject(const Vector3f& pos,
                 }
                 else
                 {
-                    VertexProcessor* vproc = context->getVertexProcessor();
-                    if (vproc != nullptr)
-                    {
-                        vproc->enable();
-                        vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
-                        vproc->parameter(vp::TextureTranslation,
-                                         cloudTexOffset, 0.0f, 0.0f, 0.0f);
-                        if (ls.nLights > 1)
-                            vproc->use(vp::diffuseTexOffset_2light);
-                        else
-                            vproc->use(vp::diffuseTexOffset);
-                        setLightParameters_VP(*vproc, ls, ri.color, Color::Black);
-                    }
-
-                    g_lodSphere->render(*context,
-                                        LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                                        viewFrustum,
-                                        ri.pixWidth,
-                                        cloudTex);
-
-                    if (vproc != nullptr)
-                        vproc->disable();
+                    assert(context->getRenderPath() != GLContext::GLPath_GLSL);
                 }
             }
             else
@@ -6569,31 +5521,6 @@ void Renderer::renderObject(const Vector3f& pos,
         }
     }
 
-    // No separate shadow rendering pass required for GLSL path
-    if (ls.shadows[0] != nullptr &&
-        ls.shadows[0]->size() != 0 &&
-        (obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
-        context->getRenderPath() != GLContext::GLPath_GLSL)
-    {
-        if (context->getVertexProcessor() != nullptr &&
-            context->getFragmentProcessor() != nullptr)
-        {
-            renderEclipseShadows_Shaders(geometry,
-                                         *ls.shadows[0],
-                                         ri,
-                                         radius, obj.orientation, viewFrustum,
-                                         *context);
-        }
-        else
-        {
-            renderEclipseShadows(geometry,
-                                 *ls.shadows[0],
-                                 ri,
-                                 radius, obj.orientation, viewFrustum,
-                                 *context);
-        }
-    }
-
     if (obj.rings != nullptr &&
         (obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
         (renderFlags & ShowRingShadows) != 0)
@@ -6601,22 +5528,8 @@ void Renderer::renderObject(const Vector3f& pos,
         Texture* ringsTex = obj.rings->texture.find(textureResolution);
         if (ringsTex != nullptr)
         {
-            Vector3f sunDir = pos.normalized();
-
             glEnable(GL_TEXTURE_2D);
             ringsTex->bind();
-
-            if (useClampToBorder &&
-                context->getRenderPath() != GLContext::GLPath_GLSL)
-            {
-                renderRingShadowsVS(geometry,
-                                    *obj.rings,
-                                    sunDir,
-                                    ri,
-                                    radius, 1.0f - obj.semiAxes.y(),
-                                    planetMat, viewFrustum,
-                                    *context);
-            }
         }
     }
 
@@ -6633,12 +5546,7 @@ void Renderer::renderObject(const Vector3f& pos,
         }
         else
         {
-            renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y(),
-                        textureResolution,
-                        (context->hasMultitexture() &&
-                         (renderFlags & ShowRingShadows) != 0 && lit),
-                        *context,
-                        detailOptions.ringSystemSections);
+            assert(context->getRenderPath() != GLContext::GLPath_GLSL);
         }
     }
 
@@ -7320,7 +6228,7 @@ void Renderer::renderCometTail(const Body& body,
     glPushMatrix();
     glTranslate(pos);
 
-    // glActiveTextureARB(GL_TEXTURE0_ARB);
+    // glActiveTexture(GL_TEXTURE0);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glDepthMask(GL_FALSE);
