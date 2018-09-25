@@ -24,7 +24,6 @@ class GLContext
     enum GLRenderPath
     {
         GLPath_Basic             = 0,
-        GLPath_Multitexture      = 1,
         GLPath_GLSL              = 8,
     };
 
@@ -44,7 +43,7 @@ class GLContext
     bool extensionSupported(const std::string&) const;
 
     int getMaxTextures() const { return maxSimultaneousTextures; };
-    bool hasMultitexture() const { return renderPath >= GLPath_Multitexture; };
+    bool hasMultitexture() const { return renderPath != GLPath_Basic; };
     bool bumpMappingSupported() const;
 
     VertexPath getVertexPath() const;

@@ -1442,9 +1442,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 case GLContext::GLPath_Basic:
                     flash(_("Render path: Basic"));
                     break;
-                case GLContext::GLPath_Multitexture:
-                    flash(_("Render path: Multitexture"));
-                    break;
                 case GLContext::GLPath_GLSL:
                     flash(_("Render path: OpenGL 2.0"));
                     break;
@@ -4311,7 +4308,6 @@ bool CelestiaCore::initRenderer()
     context->init(config->ignoreGLExtensions);
     // Choose the render path, starting with the least desirable
     context->setRenderPath(GLContext::GLPath_Basic);
-    context->setRenderPath(GLContext::GLPath_Multitexture);
     context->setRenderPath(GLContext::GLPath_GLSL);
     cout << _("render path: ") << context->getRenderPath() << '\n';
 

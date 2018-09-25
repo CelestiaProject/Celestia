@@ -770,8 +770,6 @@ Command* CommandParser::parseCommand()
 
         if (compareIgnoringCase(path, "basic") == 0)
             glcpath = GLContext::GLPath_Basic;
-        else if (compareIgnoringCase(path, "multitexture") == 0)
-            glcpath = GLContext::GLPath_Multitexture;
         else if (compareIgnoringCase(path, "glsl") == 0)
             glcpath = GLContext::GLPath_GLSL;
 
