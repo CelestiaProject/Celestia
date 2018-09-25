@@ -25,10 +25,7 @@ class GLContext
     {
         GLPath_Basic             = 0,
         GLPath_Multitexture      = 1,
-        GLPath_NvCombiner        = 2,
         GLPath_DOT3_ARBVP        = 3,
-        GLPath_NvCombiner_NvVP   = 4,
-        GLPath_NvCombiner_ARBVP  = 5,
         GLPath_ARBFP_ARBVP       = 6,
         GLPath_NV30              = 7,
         GLPath_GLSL              = 8,

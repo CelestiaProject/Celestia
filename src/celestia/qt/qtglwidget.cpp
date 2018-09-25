@@ -110,7 +110,6 @@ static GLContext::GLRenderPath getBestAvailableRenderPath(const GLContext& glc)
 {
     const GLContext::GLRenderPath renderPaths[] = {
         GLContext::GLPath_GLSL,
-        GLContext::GLPath_NvCombiner_ARBVP,
         GLContext::GLPath_DOT3_ARBVP,
         GLContext::GLPath_Multitexture,
         GLContext::GLPath_Basic,

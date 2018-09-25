@@ -1445,17 +1445,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 case GLContext::GLPath_Multitexture:
                     flash(_("Render path: Multitexture"));
                     break;
-                case GLContext::GLPath_NvCombiner:
-                    flash(_("Render path: NVIDIA combiners"));
-                    break;
                 case GLContext::GLPath_DOT3_ARBVP:
                     flash(_("Render path: OpenGL vertex program"));
-                    break;
-                case GLContext::GLPath_NvCombiner_NvVP:
-                    flash(_("Render path: NVIDIA vertex program and combiners"));
-                    break;
-                case GLContext::GLPath_NvCombiner_ARBVP:
-                    flash(_("Render path: OpenGL vertex program/NVIDIA combiners"));
                     break;
                 case GLContext::GLPath_ARBFP_ARBVP:
                     flash(_("Render path: OpenGL 1.5 vertex/fragment program"));
@@ -4331,8 +4322,6 @@ bool CelestiaCore::initRenderer()
     context->setRenderPath(GLContext::GLPath_Basic);
     context->setRenderPath(GLContext::GLPath_Multitexture);
     context->setRenderPath(GLContext::GLPath_DOT3_ARBVP);
-    context->setRenderPath(GLContext::GLPath_NvCombiner_NvVP);
-    context->setRenderPath(GLContext::GLPath_NvCombiner_ARBVP);
     context->setRenderPath(GLContext::GLPath_GLSL);
     cout << _("render path: ") << context->getRenderPath() << '\n';
 

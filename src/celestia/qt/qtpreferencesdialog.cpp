@@ -160,14 +160,8 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
         ui.renderPathBox->addItem(_("Basic"), GLContext::GLPath_Basic);
     if (glContext->renderPathSupported(GLContext::GLPath_Multitexture))
         ui.renderPathBox->addItem(_("Multitexture"), GLContext::GLPath_Multitexture);
-    if (glContext->renderPathSupported(GLContext::GLPath_NvCombiner))
-        ui.renderPathBox->addItem(_("NVIDIA combiners"), GLContext::GLPath_NvCombiner);
     if (glContext->renderPathSupported(GLContext::GLPath_DOT3_ARBVP))
         ui.renderPathBox->addItem(_("OpenGL vertex program"), GLContext::GLPath_DOT3_ARBVP);
-    if (glContext->renderPathSupported(GLContext::GLPath_NvCombiner_NvVP))
-        ui.renderPathBox->addItem(_("NVIDIA vertex program and combiners"), GLContext::GLPath_NvCombiner_NvVP);
-    if (glContext->renderPathSupported(GLContext::GLPath_NvCombiner_ARBVP))
-        ui.renderPathBox->addItem(_("OpenGL vertex program/NVIDIA combiners"), GLContext::GLPath_NvCombiner_ARBVP);
     if (glContext->renderPathSupported(GLContext::GLPath_ARBFP_ARBVP))
         ui.renderPathBox->addItem(_("OpenGL 1.5 vertex/fragment program"), GLContext::GLPath_ARBFP_ARBVP);
     if (glContext->renderPathSupported(GLContext::GLPath_NV30))

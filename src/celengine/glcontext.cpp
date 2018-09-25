@@ -86,14 +86,9 @@ bool GLContext::setRenderPath(GLRenderPath path)
     {
     case GLPath_Basic:
     case GLPath_Multitexture:
-    case GLPath_NvCombiner:
         vertexPath = VPath_Basic;
         break;
-    case GLPath_NvCombiner_NvVP:
-        vertexPath = VPath_NV;
-        break;
     case GLPath_DOT3_ARBVP:
-    case GLPath_NvCombiner_ARBVP:
     case GLPath_ARBFP_ARBVP:
     case GLPath_NV30:
     case GLPath_GLSL:
@@ -120,30 +115,8 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
         return (maxSimultaneousTextures > 1 &&
                (GLEW_EXT_texture_env_combine || GLEW_ARB_texture_env_combine));
 
-    case GLPath_NvCombiner:
-        return false;
-        /*
-        // No longer supported; all recent NVIDIA drivers also support
-        // the vertex_program extension, so the combiners-only path
-        // isn't necessary.
-        return GLEW_NV_register_combiners;
-        */
-
     case GLPath_DOT3_ARBVP:
         return GLEW_ARB_texture_env_dot3 &&
-               GLEW_ARB_vertex_program &&
-               vertexProc != nullptr;
-
-    case GLPath_NvCombiner_NvVP:
-        // If ARB_vertex_program is supported, don't report support for
-        // this render path.
-        return GLEW_NV_register_combiners &&
-               GLEW_NV_vertex_program &&
-               !GLEW_ARB_vertex_program &&
-               vertexProc != nullptr;
-
-    case GLPath_NvCombiner_ARBVP:
-        return GLEW_NV_register_combiners &&
                GLEW_ARB_vertex_program &&
                vertexProc != nullptr;
 
