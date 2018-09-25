@@ -27,14 +27,12 @@ class GLContext
         GLPath_Multitexture      = 1,
         GLPath_DOT3_ARBVP        = 3,
         GLPath_ARBFP_ARBVP       = 6,
-        GLPath_NV30              = 7,
         GLPath_GLSL              = 8,
     };
 
     enum VertexPath
     {
         VPath_Basic              = 0,
-        VPath_NV                 = 1,
         VPath_ARB                = 2,
     };
 

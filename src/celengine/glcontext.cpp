@@ -90,7 +90,6 @@ bool GLContext::setRenderPath(GLRenderPath path)
         break;
     case GLPath_DOT3_ARBVP:
     case GLPath_ARBFP_ARBVP:
-    case GLPath_NV30:
     case GLPath_GLSL:
         vertexPath = VPath_ARB;
         break;
@@ -182,8 +181,11 @@ VertexProcessor* GLContext::getVertexProcessor() const
 
 FragmentProcessor* GLContext::getFragmentProcessor() const
 {
-    if (renderPath == GLPath_NV30 /* || renderPath == GLPath_ARGFP_ARBVP */ )
+/*
+    if (renderPath == GLPath_ARGFP_ARBVP)
         return fragmentProc;
     else
         return nullptr;
+*/
+    return nullptr;
 }

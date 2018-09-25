@@ -164,8 +164,6 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
         ui.renderPathBox->addItem(_("OpenGL vertex program"), GLContext::GLPath_DOT3_ARBVP);
     if (glContext->renderPathSupported(GLContext::GLPath_ARBFP_ARBVP))
         ui.renderPathBox->addItem(_("OpenGL 1.5 vertex/fragment program"), GLContext::GLPath_ARBFP_ARBVP);
-    if (glContext->renderPathSupported(GLContext::GLPath_NV30))
-        ui.renderPathBox->addItem(_("NVIDIA GeForce FX"), GLContext::GLPath_NV30);
     if (glContext->renderPathSupported(GLContext::GLPath_GLSL))
         ui.renderPathBox->addItem(_("OpenGL 2.0"), GLContext::GLPath_GLSL);
 
