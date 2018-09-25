@@ -88,7 +88,6 @@ bool GLContext::setRenderPath(GLRenderPath path)
     case GLPath_Multitexture:
         vertexPath = VPath_Basic;
         break;
-    case GLPath_DOT3_ARBVP:
     case GLPath_GLSL:
         vertexPath = VPath_ARB;
         break;
@@ -112,11 +111,6 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
     case GLPath_Multitexture:
         return (maxSimultaneousTextures > 1 &&
                (GLEW_EXT_texture_env_combine || GLEW_ARB_texture_env_combine));
-
-    case GLPath_DOT3_ARBVP:
-        return GLEW_ARB_texture_env_dot3 &&
-               GLEW_ARB_vertex_program &&
-               vertexProc != nullptr;
 
     case GLPath_GLSL:
         return GLEW_ARB_shader_objects &&

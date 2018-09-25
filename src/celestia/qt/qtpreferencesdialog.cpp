@@ -160,8 +160,6 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
         ui.renderPathBox->addItem(_("Basic"), GLContext::GLPath_Basic);
     if (glContext->renderPathSupported(GLContext::GLPath_Multitexture))
         ui.renderPathBox->addItem(_("Multitexture"), GLContext::GLPath_Multitexture);
-    if (glContext->renderPathSupported(GLContext::GLPath_DOT3_ARBVP))
-        ui.renderPathBox->addItem(_("OpenGL vertex program"), GLContext::GLPath_DOT3_ARBVP);
     if (glContext->renderPathSupported(GLContext::GLPath_GLSL))
         ui.renderPathBox->addItem(_("OpenGL 2.0"), GLContext::GLPath_GLSL);
 
