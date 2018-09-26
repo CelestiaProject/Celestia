@@ -192,8 +192,6 @@ static const Color compassColor(0.4f, 0.4f, 1.0f);
 
 static const float CoronaHeight = 0.2f;
 
-static bool buggyVertexProgramEmulation = true;
-
 static const int MaxSkyRings = 32;
 static const int MaxSkySlices = 180;
 static const int MinSkySlices = 30;
@@ -1193,58 +1191,6 @@ bool Renderer::init(GLContext* _context,
     if (GLEW_EXT_separate_specular_color)
     {
         glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT, GL_SEPARATE_SPECULAR_COLOR_EXT);
-    }
-
-    // Ugly renderer-specific bug workarounds follow . . .
-    auto* glRenderer = (char*) glGetString(GL_RENDERER);
-    if (glRenderer != nullptr)
-    {
-        // Fog is broken with vertex program emulation in most versions of
-        // the GF 1 and 2 drivers; we need to detect this and disable
-        // vertex programs which output fog coordinates
-        if (strstr(glRenderer, "GeForce3") != nullptr ||
-            strstr(glRenderer, "GeForce4") != nullptr)
-        {
-            buggyVertexProgramEmulation = false;
-        }
-
-        if (strstr(glRenderer, "Savage4") != nullptr ||
-            strstr(glRenderer, "ProSavage") != nullptr)
-        {
-            // S3 Savage4 drivers appear to rescale normals without reporting
-            // EXT_rescale_normal.  Lighting will be messed up unless
-            // we set the useRescaleNormal flag.
-            useRescaleNormal = true;
-        }
-#ifdef TARGET_OS_MAC
-        if (strstr(glRenderer, "ATI") != nullptr ||
-            strstr(glRenderer, "GMA 900") != nullptr)
-        {
-            // Some drivers on the Mac appear to limit point sprite size.
-            // This causes an abrupt size transition when going from billboards
-            // to sprites. Rather than incur overhead accounting for the size limit,
-            // do not use sprites on these renderers.
-            // Affected cards: ATI (various), etc
-            // Renderer strings are not unique.
-            usePointSprite = false;
-        }
-#endif
-    }
-
-    // More ugly hacks; according to Matt Craighead at NVIDIA, an NVIDIA
-    // OpenGL driver that reports version 1.3.1 or greater will have working
-    // fog in emulated vertex programs.
-    auto* glVersion = (char*) glGetString(GL_VERSION);
-    if (glVersion != nullptr)
-    {
-        int major = 0, minor = 0, extra = 0;
-        int nScanned = sscanf(glVersion, "%d.%d.%d", &major, &minor, &extra);
-
-        if (nScanned >= 2)
-        {
-            if (major > 1 || minor > 3 || (minor == 3 && extra >= 1))
-                buggyVertexProgramEmulation = false;
-        }
     }
 
 #ifdef USE_HDR
