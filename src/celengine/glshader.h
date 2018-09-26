@@ -30,14 +30,14 @@ enum GLShaderStatus
 class GLShader
 {
  protected:
-    GLShader(GLhandleARB _id);
+    GLShader(GLuint _id);
     virtual ~GLShader();
 
  public:
-    GLhandleARB getID() const;
+    GLuint getID() const;
 
  private:
-    GLhandleARB id;
+    GLuint id;
 
     GLShaderStatus compile(const std::vector<std::string>& source);
 
@@ -48,7 +48,7 @@ class GLShader
 class GLVertexShader : public GLShader
 {
  private:
-    GLVertexShader(GLhandleARB _id) : GLShader(_id) {};
+    GLVertexShader(GLuint _id) : GLShader(_id) {};
 
  friend class GLShaderLoader;
 };
@@ -57,7 +57,7 @@ class GLVertexShader : public GLShader
 class GLFragmentShader : public GLShader
 {
  private:
-    GLFragmentShader(GLhandleARB _id) : GLShader(_id) {};
+    GLFragmentShader(GLuint _id) : GLShader(_id) {};
 
  friend class GLShaderLoader;
 };
@@ -66,7 +66,7 @@ class GLFragmentShader : public GLShader
 class GLProgram
 {
  private:
-    GLProgram(GLhandleARB _id);
+    GLProgram(GLuint _id);
 
     void attach(const GLShader&);
 
@@ -76,10 +76,10 @@ class GLProgram
     GLShaderStatus link();
 
     void use() const;
-    GLhandleARB getID() const { return id; }
+    GLuint getID() const { return id; }
 
  private:
-    GLhandleARB id;
+    GLuint id;
 
  friend class GLShaderLoader;
 };
@@ -89,7 +89,7 @@ class FloatShaderParameter
 {
  public:
     FloatShaderParameter();
-    FloatShaderParameter(GLhandleARB obj, const char* name);
+    FloatShaderParameter(GLuint obj, const char* name);
 
     FloatShaderParameter& operator=(float);
 
@@ -102,7 +102,7 @@ class Vec3ShaderParameter
 {
  public:
     Vec3ShaderParameter();
-    Vec3ShaderParameter(GLhandleARB obj, const char* name);
+    Vec3ShaderParameter(GLuint obj, const char* name);
 
     Vec3ShaderParameter& operator=(const Eigen::Vector3f&);
 
@@ -115,7 +115,7 @@ class Vec4ShaderParameter
 {
  public:
     Vec4ShaderParameter();
-    Vec4ShaderParameter(GLhandleARB obj, const char* name);
+    Vec4ShaderParameter(GLuint obj, const char* name);
 
     Vec4ShaderParameter& operator=(const Eigen::Vector4f&);
 

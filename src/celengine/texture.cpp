@@ -91,13 +91,8 @@ static bool texCapsInitialized = false;
 
 struct TextureCaps
 {
-    bool compressionSupported;
-    bool clampToEdgeSupported;
-    bool clampToBorderSupported;
-    bool autoMipMapSupported;
     bool maxLevelSupported;
     GLint maxTextureSize;
-    bool nonPow2Supported;
     GLint preferredAnisotropy;
 };
 
@@ -132,18 +127,9 @@ static const TextureCaps& GetTextureCaps()
     if (!texCapsInitialized)
     {
         texCapsInitialized = true;
-        texCaps.compressionSupported = (GLEW_ARB_texture_compression == GL_TRUE);
 
-#ifdef GL_VERSION_1_2
-        texCaps.clampToEdgeSupported = true;
-#else
-        texCaps.clampToEdgeSupported = ExtensionSupported("GL_EXT_texture_edge_clamp");
-#endif // GL_VERSION_1_2
-        texCaps.clampToBorderSupported = (GLEW_ARB_texture_border_clamp == GL_TRUE);
-        texCaps.autoMipMapSupported = (GLEW_SGIS_generate_mipmap == GL_TRUE);
         texCaps.maxLevelSupported = testMaxLevel();
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texCaps.maxTextureSize);
-        texCaps.nonPow2Supported = (GLEW_ARB_texture_non_power_of_two == GL_TRUE);
 
         texCaps.preferredAnisotropy = 1;
         if (GLEW_EXT_texture_filter_anisotropic)
@@ -199,18 +185,18 @@ static int getCompressedInternalFormat(int format)
     {
     case GL_RGB:
     case GL_BGR_EXT:
-        return GL_COMPRESSED_RGB_ARB;
+        return GL_COMPRESSED_RGB;
     case GL_RGBA:
     case GL_BGRA_EXT:
-        return GL_COMPRESSED_RGBA_ARB;
+        return GL_COMPRESSED_RGBA;
     case GL_ALPHA:
-        return GL_COMPRESSED_ALPHA_ARB;
+        return GL_COMPRESSED_ALPHA;
     case GL_LUMINANCE:
-        return GL_COMPRESSED_LUMINANCE_ARB;
+        return GL_COMPRESSED_LUMINANCE;
     case GL_LUMINANCE_ALPHA:
-        return GL_COMPRESSED_LUMINANCE_ALPHA_ARB;
+        return GL_COMPRESSED_LUMINANCE_ALPHA;
     case GL_INTENSITY:
-        return GL_COMPRESSED_INTENSITY_ARB;
+        return GL_COMPRESSED_INTENSITY;
     case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
     case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
     case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
@@ -238,13 +224,10 @@ static GLenum GetGLTexAddressMode(Texture::AddressMode addressMode)
         return GL_REPEAT;
 
     case Texture::EdgeClamp:
-        return caps.clampToEdgeSupported ? GL_CLAMP_TO_EDGE : GL_CLAMP;
+        return GL_CLAMP_TO_EDGE;
 
     case Texture::BorderClamp:
-        if (caps.clampToBorderSupported)
-            return GL_CLAMP_TO_BORDER_ARB;
-        else
-            return caps.clampToEdgeSupported ? GL_CLAMP_TO_EDGE : GL_CLAMP;
+        return GL_CLAMP_TO_BORDER;
     }
 
     return 0;
@@ -272,13 +255,13 @@ static void LoadMipmapSet(Image& img, GLenum target)
 
         if (img.isCompressed())
         {
-            glCompressedTexImage2DARB(target,
-                                           mip,
-                                           internalFormat,
-                                           mipWidth, mipHeight,
-                                           0,
-                                           img.getMipLevelSize(mip),
-                                           img.getMipLevel(mip));
+            glCompressedTexImage2D(target,
+                                   mip,
+                                   internalFormat,
+                                   mipWidth, mipHeight,
+                                   0,
+                                   img.getMipLevelSize(mip),
+                                   img.getMipLevel(mip));
         }
         else
         {
@@ -302,13 +285,13 @@ static void LoadMiplessTexture(Image& img, GLenum target)
 
     if (img.isCompressed())
     {
-        glCompressedTexImage2DARB(target,
-                                       0,
-                                       internalFormat,
-                                       img.getWidth(), img.getHeight(),
-                                       0,
-                                       img.getMipLevelSize(0),
-                                       img.getMipLevel(0));
+        glCompressedTexImage2D(target,
+                               0,
+                               internalFormat,
+                               img.getWidth(), img.getHeight(),
+                               0,
+                               img.getMipLevelSize(0),
+                               img.getMipLevel(0));
     }
     else
     {
@@ -767,19 +750,19 @@ CubeMap::CubeMap(Image* faces[]) :
         mipmap = false;
 
     glGenTextures(1, (GLuint*) &glName);
-    glBindTexture(GL_TEXTURE_CUBE_MAP_ARB, glName);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, glName);
 
-    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_MIN_FILTER,
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     int internalFormat = getInternalFormat(format);
 
     for (i = 0; i < 6; i++)
     {
-        auto targetFace = (GLenum) ((int) GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + i);
+        auto targetFace = (GLenum) ((int) GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
         Image* face = faces[i];
 
         if (mipmap)
@@ -815,7 +798,7 @@ CubeMap::~CubeMap()
 
 void CubeMap::bind()
 {
-    glBindTexture(GL_TEXTURE_CUBE_MAP_ARB, glName);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, glName);
 }
 
 
@@ -831,7 +814,7 @@ const TextureTile CubeMap::getTile(int lod, int u, int v)
 void CubeMap::setBorderColor(Color borderColor)
 {
     bind();
-    SetBorderColor(borderColor, GL_TEXTURE_CUBE_MAP_ARB);
+    SetBorderColor(borderColor, GL_TEXTURE_CUBE_MAP);
 }
 
 
@@ -1001,11 +984,8 @@ static Texture* CreateTextureFromImage(Image& img,
     // automatic. gluBuildMipMaps may rescale the texture to a power of two
     // on some drivers even when the hardware supports non power of two textures,
     // whereas auto mipmap generation will properly deal with the dimensions.
-    if (GetTextureCaps().nonPow2Supported)
-    {
-        if (mipMode == Texture::DefaultMipMaps)
-            mipMode = Texture::AutoMipMaps;
-    }
+    if (mipMode == Texture::DefaultMipMaps)
+         mipMode = Texture::AutoMipMaps;
 
     bool splittingAllowed = true;
     Texture* tex = nullptr;

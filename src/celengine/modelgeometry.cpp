@@ -26,19 +26,6 @@ using namespace std;
 
 // VBO optimization is only worthwhile for large enough vertex lists
 static const unsigned int MinVBOSize = 4096;
-static bool VBOSupportTested = false;
-static bool VBOSupported = false;
-
-static bool isVBOSupported()
-{
-    if (!VBOSupportTested)
-    {
-        VBOSupportTested = true;
-        VBOSupported = (GLEW_ARB_vertex_buffer_object == GL_TRUE);
-    }
-
-    return VBOSupported;
-}
 
 
 class ModelOpenGLData
@@ -52,7 +39,7 @@ public:
         {
             if (vboId != 0)
             {
-                glDeleteBuffersARB(1, &vboId);
+                glDeleteBuffers(1, &vboId);
             }
         }
     }
@@ -98,7 +85,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
     // the possibility of deleting the original data.  We can always map
     // read-only later on for things like picking, but this could be a low
     // performance path.
-    if (!m_vbInitialized && isVBOSupported())
+    if (!m_vbInitialized)
     {
         m_vbInitialized = true;
 
@@ -110,15 +97,15 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             GLuint vboId = 0;
             if (mesh->getVertexCount() * vertexDesc.stride > MinVBOSize)
             {
-                glGenBuffersARB(1, &vboId);
+                glGenBuffers(1, &vboId);
                 if (vboId != 0)
                 {
-                    glBindBufferARB(GL_ARRAY_BUFFER_ARB, vboId);
-                    glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                    glBindBuffer(GL_ARRAY_BUFFER, vboId);
+                    glBufferData(GL_ARRAY_BUFFER,
                                     mesh->getVertexCount() * vertexDesc.stride,
                                     mesh->getVertexData(),
-                                    GL_STATIC_DRAW_ARB);
-                    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+                                    GL_STATIC_DRAW);
+                    glBindBuffer(GL_ARRAY_BUFFER, 0);
                 }
             }
 
@@ -143,7 +130,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
         if (vboId != 0)
         {
             // Bind the vertex buffer object.
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, vboId);
+            glBindBuffer(GL_ARRAY_BUFFER, vboId);
             rc.setVertexArrays(mesh->getVertexDescription(), nullptr);
         }
         else
@@ -172,7 +159,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
         // If we set a VBO, unbind it.
         if (vboId != 0)
         {
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
     }
 }

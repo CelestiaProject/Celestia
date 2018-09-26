@@ -596,7 +596,6 @@ class Renderer
     Texture *blurTempTexture;
     GLuint gaussianLists[4];
     GLint blurFormat;
-    bool useBlendSubtract;
     bool useLuminanceAlpha;
     bool bloomEnabled;
     float maxBodyMag;
@@ -674,9 +673,6 @@ class Renderer
 
     bool useCompressedTextures;
     bool useVertexPrograms;
-    bool useRescaleNormal;
-    bool usePointSprite;
-    bool useClampToBorder;
     unsigned int textureResolution;
     DetailOptions detailOptions;
 

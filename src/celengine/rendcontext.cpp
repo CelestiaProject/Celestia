@@ -175,10 +175,10 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 
     if (group.prim == Mesh::SpriteList)
     {
-        glEnable(GL_POINT_SPRITE_ARB);
-        glActiveTextureARB(GL_TEXTURE0_ARB);
-        glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
-        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+        glEnable(GL_POINT_SPRITE);
+        glActiveTexture(GL_TEXTURE0);
+        glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     }
 
     glDrawElements(GLPrimitiveModes[(int) group.prim],
@@ -188,8 +188,8 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 
     if (group.prim == Mesh::SpriteList)
     {
-        glDisable(GL_POINT_SPRITE_ARB);
-        glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+        glDisable(GL_POINT_SPRITE);
+        glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
     }
 }
 
@@ -496,8 +496,8 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
     switch (tangent.format)
     {
     case Mesh::Float3:
-        glEnableVertexAttribArrayARB(TangentAttributeIndex);
-        glVertexAttribPointerARB(TangentAttributeIndex,
+        glEnableVertexAttribArray(TangentAttributeIndex);
+        glVertexAttribPointer(TangentAttributeIndex,
                                       GLComponentCounts[(int) tangent.format],
                                       GLComponentTypes[(int) tangent.format],
                                       GL_FALSE,
@@ -505,7 +505,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
                                       vertices + tangent.offset);
         break;
     default:
-        glDisableVertexAttribArrayARB(TangentAttributeIndex);
+        glDisableVertexAttribArray(TangentAttributeIndex);
         break;
     }
 
@@ -513,8 +513,8 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
     switch (pointsize.format)
     {
     case Mesh::Float1:
-        glEnableVertexAttribArrayARB(PointSizeAttributeIndex);
-        glVertexAttribPointerARB(PointSizeAttributeIndex,
+        glEnableVertexAttribArray(PointSizeAttributeIndex);
+        glVertexAttribPointer(PointSizeAttributeIndex,
                                       GLComponentCounts[(int) pointsize.format],
                                       GLComponentTypes[(int) pointsize.format],
                                       GL_FALSE,
@@ -522,7 +522,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
                                       vertices + pointsize.offset);
         break;
     default:
-        glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
+        glDisableVertexAttribArray(PointSizeAttributeIndex);
         break;
     }
 }
@@ -556,8 +556,8 @@ GLSL_RenderContext::~GLSL_RenderContext()
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableVertexAttribArrayARB(TangentAttributeIndex);
-    glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
+    glDisableVertexAttribArray(TangentAttributeIndex);
+    glDisableVertexAttribArray(PointSizeAttributeIndex);
 }
 
 
@@ -678,7 +678,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
         Texture* ringsTex = lightingState.shadowingRingSystem->texture.find(medres);
         if (ringsTex != nullptr)
         {
-            glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+            glActiveTexture(GL_TEXTURE0 + nTextures);
             ringsTex->bind();
             textures[nTextures++] = ringsTex;
 
@@ -686,8 +686,8 @@ GLSL_RenderContext::makeCurrent(const Material& m)
             // a zero alpha.
             float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
             glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_ARB);
-            glActiveTextureARB(GL_TEXTURE0_ARB);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glActiveTexture(GL_TEXTURE0);
 
             shaderProps.texUsage |= ShaderProperties::RingShadowTexture;
             for (unsigned int lightIndex = 0; lightIndex < lightingState.nLights; lightIndex++)
@@ -726,7 +726,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
 
     for (unsigned int i = 0; i < nTextures; i++)
     {
-        glActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glActiveTexture(GL_TEXTURE0 + i);
         glEnable(GL_TEXTURE_2D);
         textures[i]->bind();
     }
@@ -888,8 +888,8 @@ GLSLUnlit_RenderContext::~GLSLUnlit_RenderContext()
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableVertexAttribArrayARB(TangentAttributeIndex);
-    glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
+    glDisableVertexAttribArray(TangentAttributeIndex);
+    glDisableVertexAttribArray(PointSizeAttributeIndex);
 }
 
 
@@ -939,7 +939,7 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
 
     for (unsigned int i = 0; i < nTextures; i++)
     {
-        glActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glActiveTexture(GL_TEXTURE0 + i);
         glEnable(GL_TEXTURE_2D);
         textures[i]->bind();
     }

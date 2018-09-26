@@ -14,19 +14,19 @@
 using namespace std;
 
 
-static const string GetInfoLog(GLhandleARB obj);
+static const string GetInfoLog(GLuint obj);
 
 
 ostream* g_shaderLogFile = nullptr;
 
 
-GLShader::GLShader(GLhandleARB _id) :
+GLShader::GLShader(GLuint _id) :
     id(_id)
 {
 }
 
 
-GLhandleARB
+GLuint
 GLShader::getID() const
 {
     return id;
@@ -45,16 +45,15 @@ GLShader::compile(const vector<string>& source)
         sourceStrings[i] = source[i].c_str();
 
     // Copy shader source to OpenGL
-    glShaderSourceARB(id, source.size(), sourceStrings, nullptr);
+    glShaderSource(id, source.size(), sourceStrings, nullptr);
     delete[] sourceStrings;
 
     // Actually compile the shader
-    glCompileShaderARB(id);
+    glCompileShader(id);
 
     GLint compileSuccess;
-    glGetObjectParameterivARB(id, GL_OBJECT_COMPILE_STATUS_ARB,
-                                   &compileSuccess);
-    if (compileSuccess == GL_FALSE)
+    glGetShaderiv(id, GL_COMPILE_STATUS, &compileSuccess);
+    if (compileSuccess != GL_TRUE)
         return ShaderStatus_CompileError;
 
     return ShaderStatus_OK;
@@ -63,7 +62,7 @@ GLShader::compile(const vector<string>& source)
 
 GLShader::~GLShader()
 {
-    glDeleteObjectARB(id);
+    glDeleteShader(id);
 }
 
 
@@ -75,16 +74,16 @@ FloatShaderParameter::FloatShaderParameter() :
 {
 }
 
-FloatShaderParameter::FloatShaderParameter(GLhandleARB obj, const char* name)
+FloatShaderParameter::FloatShaderParameter(GLuint obj, const char* name)
 {
-    slot = glGetUniformLocationARB(obj, name);
+    slot = glGetUniformLocation(obj, name);
 }
 
 FloatShaderParameter&
 FloatShaderParameter::operator=(float f)
 {
     if (slot != -1)
-        glUniform1fARB(slot, f);
+        glUniform1f(slot, f);
     return *this;
 }
 
@@ -94,16 +93,16 @@ Vec3ShaderParameter::Vec3ShaderParameter() :
 {
 }
 
-Vec3ShaderParameter::Vec3ShaderParameter(GLhandleARB obj, const char* name)
+Vec3ShaderParameter::Vec3ShaderParameter(GLuint obj, const char* name)
 {
-    slot = glGetUniformLocationARB(obj, name);
+    slot = glGetUniformLocation(obj, name);
 }
 
 Vec3ShaderParameter&
 Vec3ShaderParameter::operator=(const Eigen::Vector3f& v)
 {
     if (slot != -1)
-        glUniform3fvARB(slot, 1, v.data());
+        glUniform3fv(slot, 1, v.data());
     return *this;
 }
 
@@ -112,23 +111,23 @@ Vec4ShaderParameter::Vec4ShaderParameter() :
 {
 }
 
-Vec4ShaderParameter::Vec4ShaderParameter(GLhandleARB obj, const char* name)
+Vec4ShaderParameter::Vec4ShaderParameter(GLuint obj, const char* name)
 {
-    slot = glGetUniformLocationARB(obj, name);
+    slot = glGetUniformLocation(obj, name);
 }
 
 Vec4ShaderParameter&
 Vec4ShaderParameter::operator=(const Eigen::Vector4f& v)
 {
     if (slot != -1)
-        glUniform4fvARB(slot, 1, v.data());
+        glUniform4fv(slot, 1, v.data());
     return *this;
 }
 
 
 //************* GLProgram **************
 
-GLProgram::GLProgram(GLhandleARB _id) :
+GLProgram::GLProgram(GLuint _id) :
     id(_id)
 {
 }
@@ -136,33 +135,32 @@ GLProgram::GLProgram(GLhandleARB _id) :
 
 GLProgram::~GLProgram()
 {
-    glDeleteObjectARB(id);
+    glDeleteProgram(id);
 }
 
 
 void
 GLProgram::use() const
 {
-    glUseProgramObjectARB(id);
+    glUseProgram(id);
 }
 
 
 void
 GLProgram::attach(const GLShader& shader)
 {
-    glAttachObjectARB(id, shader.getID());
+    glAttachShader(id, shader.getID());
 }
 
 
 GLShaderStatus
 GLProgram::link()
 {
-    glLinkProgramARB(id);
+    glLinkProgram(id);
 
     GLint linkSuccess;
-    glGetObjectParameterivARB(id, GL_OBJECT_LINK_STATUS_ARB,
-                                   &linkSuccess);
-    if (linkSuccess == GL_FALSE)
+    glGetProgramiv(id, GL_LINK_STATUS, &linkSuccess);
+    if (linkSuccess != GL_TRUE)
     {
         if (g_shaderLogFile != nullptr)
         {
@@ -182,7 +180,7 @@ GLShaderStatus
 GLShaderLoader::CreateVertexShader(const vector<string>& source,
                                    GLVertexShader** vs)
 {
-    GLhandleARB vsid = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    GLuint vsid = glCreateShader(GL_VERTEX_SHADER);
 
     auto* shader = new GLVertexShader(vsid);
     if (!shader)
@@ -210,7 +208,7 @@ GLShaderStatus
 GLShaderLoader::CreateFragmentShader(const vector<string>& source,
                                      GLFragmentShader** fs)
 {
-    GLhandleARB fsid = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+    GLuint fsid = glCreateShader(GL_FRAGMENT_SHADER);
 
     auto* shader = new GLFragmentShader(fsid);
     if (!shader)
@@ -260,7 +258,7 @@ GLShaderLoader::CreateProgram(const GLVertexShader& vs,
                               const GLFragmentShader& fs,
                               GLProgram** progOut)
 {
-    GLhandleARB progid = glCreateProgramObjectARB();
+    GLuint progid = glCreateProgram();
 
     auto* prog = new GLProgram(progid);
     if (!prog)
@@ -327,13 +325,12 @@ GLShaderLoader::CreateProgram(const string& vsSource,
 
 
 const string
-GetInfoLog(GLhandleARB obj)
+GetInfoLog(GLuint obj)
 {
     GLint logLength = 0;
     GLsizei charsWritten = 0;
 
-    glGetObjectParameterivARB(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB,
-                                   &logLength);
+    glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &logLength);
     if (logLength <= 0)
         return string();
 
@@ -341,7 +338,7 @@ GetInfoLog(GLhandleARB obj)
     if (!log)
         return string();
 
-    glGetInfoLogARB(obj, logLength, &charsWritten, log);
+    glGetShaderInfoLog(obj, logLength, &charsWritten, log);
 
     string s(log, charsWritten);
     delete[] log;

@@ -44,11 +44,8 @@ void GLContext::init(const vector<string>& ignoreExt)
         }
     }
 
-    if (GLEW_ARB_multitexture && glActiveTextureARB != nullptr)
-    {
-        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,
-                      (GLint*) &maxSimultaneousTextures);
-    }
+    glGetIntegerv(GL_MAX_TEXTURE_UNITS,
+                  (GLint*) &maxSimultaneousTextures);
 
     if (GLEW_ARB_vertex_program && glGenProgramsARB)
     {
@@ -85,10 +82,7 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
     switch (path)
     {
     case GLPath_GLSL:
-        return GLEW_ARB_shader_objects &&
-               GLEW_ARB_shading_language_100 &&
-               GLEW_ARB_vertex_shader &&
-               GLEW_ARB_fragment_shader;
+        return GLEW_VERSION_2_0 != GL_FALSE;
 
     default:
         return false;

@@ -676,8 +676,7 @@ void actionHelpOpenGL(GtkAction*, AppData* app)
 
     char buf[100];
     GLint simTextures = 1;
-    if (glewIsExtensionSupported("GL_ARB_multitexture"))
-        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
+    glGetIntegerv(GL_MAX_TEXTURE_UNITS, &simTextures);
     sprintf(buf, "Max simultaneous textures: %d\n", simTextures);
     s += buf;
 
