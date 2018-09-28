@@ -1875,6 +1875,11 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 {
     string source = CommonHeader;
 
+    // Without GL_ARB_shader_texture_lod enabled one can use texture2DLod
+    // in vertext shaders only
+    if (GLEW_ARB_shader_texture_lod)
+        source += "#extension GL_ARB_shader_texture_lod : enable\n";
+
     string diffTexCoord("diffTexCoord");
     string specTexCoord("specTexCoord");
     string nightTexCoord("nightTexCoord");
