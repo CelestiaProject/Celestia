@@ -91,11 +91,6 @@ using namespace std;
 #define NEAR_DIST      0.5f
 #define FAR_DIST       1.0e9f
 
-// This should be in the GL headers, but where?
-#ifndef GL_COLOR_SUM_EXT
-#define GL_COLOR_SUM_EXT 0x8458
-#endif
-
 static const float  STAR_DISTANCE_LIMIT  = 1.0e6f;
 static const int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
 
@@ -382,7 +377,7 @@ void StarVertexBuffer::render()
 {
     if (nStars != 0)
     {
-        glDrawArrays(GL_QUADS, 0, nStars * 4);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, nStars * 4);
         nStars = 0;
     }
 }
