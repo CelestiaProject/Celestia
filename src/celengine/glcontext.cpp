@@ -82,7 +82,7 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
     switch (path)
     {
     case GLPath_GLSL:
-        return GLEW_VERSION_2_0 != GL_FALSE;
+        return GLEW_VERSION_2_1 != GL_FALSE;
 
     default:
         return false;

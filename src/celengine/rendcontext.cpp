@@ -53,11 +53,6 @@ static int GLComponentCounts[Mesh::FormatMax] =
 };
 
 
-enum {
-    TangentAttributeIndex = 6,
-    PointSizeAttributeIndex = 7,
-};
-
 
 static void
 setStandardVertexArrays(const Mesh::VertexDescription& desc,
@@ -496,8 +491,8 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
     switch (tangent.format)
     {
     case Mesh::Float3:
-        glEnableVertexAttribArray(TangentAttributeIndex);
-        glVertexAttribPointer(TangentAttributeIndex,
+        glEnableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::TangentAttributeIndex,
                                       GLComponentCounts[(int) tangent.format],
                                       GLComponentTypes[(int) tangent.format],
                                       GL_FALSE,
@@ -505,7 +500,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
                                       vertices + tangent.offset);
         break;
     default:
-        glDisableVertexAttribArray(TangentAttributeIndex);
+        glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
         break;
     }
 
@@ -513,8 +508,8 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
     switch (pointsize.format)
     {
     case Mesh::Float1:
-        glEnableVertexAttribArray(PointSizeAttributeIndex);
-        glVertexAttribPointer(PointSizeAttributeIndex,
+        glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
                                       GLComponentCounts[(int) pointsize.format],
                                       GLComponentTypes[(int) pointsize.format],
                                       GL_FALSE,
@@ -522,7 +517,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
                                       vertices + pointsize.offset);
         break;
     default:
-        glDisableVertexAttribArray(PointSizeAttributeIndex);
+        glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
         break;
     }
 }
@@ -556,8 +551,8 @@ GLSL_RenderContext::~GLSL_RenderContext()
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableVertexAttribArray(TangentAttributeIndex);
-    glDisableVertexAttribArray(PointSizeAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
 }
 
 
@@ -888,8 +883,8 @@ GLSLUnlit_RenderContext::~GLSLUnlit_RenderContext()
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableVertexAttribArray(TangentAttributeIndex);
-    glDisableVertexAttribArray(PointSizeAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
 }
 
 

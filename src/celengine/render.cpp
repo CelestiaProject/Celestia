@@ -62,6 +62,8 @@ std::ofstream hdrlog;
 #include "timelinephase.h"
 #include "skygrid.h"
 #include "modelgeometry.h"
+#include "curveplot.h"
+#include "shadermanager.h"
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -70,7 +72,6 @@ std::ofstream hdrlog;
 #include <celutil/utf8.h>
 #include <celutil/util.h>
 #include <celutil/timer.h>
-#include <celengine/curveplot.h>
 #include <GL/glew.h>
 #include <algorithm>
 #include <cstring>
@@ -268,7 +269,6 @@ double computeCosViewConeAngle(double verticalFOV, double width, double height)
     return 1.0 / diag;
 }
 
-
 // PointStarVertexBuffer is used when hardware supports point sprites.
 class PointStarVertexBuffer
 {
@@ -292,20 +292,17 @@ private:
     };
 
     unsigned int capacity;
-    unsigned int nStars;
-    StarVertex* vertices;
-    const GLContext* context;
-    bool useSprites;
-    Texture* texture;
+    unsigned int nStars{ 0 };
+    StarVertex* vertices{ nullptr };
+#ifdef VPROC
+    const GLContext* context{ nullptr };
+#endif
+    bool useSprites{ false };
+    Texture* texture{ nullptr };
 };
 
 PointStarVertexBuffer::PointStarVertexBuffer(unsigned int _capacity) :
-    capacity(_capacity),
-    nStars(0),
-    vertices(nullptr),
-    context(nullptr),
-    useSprites(false),
-    texture(nullptr)
+    capacity(_capacity)
 {
     vertices = new StarVertex[capacity];
 }
@@ -317,8 +314,21 @@ PointStarVertexBuffer::~PointStarVertexBuffer()
 
 void PointStarVertexBuffer::startSprites(const GLContext& _context)
 {
+#ifdef VPROC
     context = &_context;
     assert(context->getVertexProcessor() != nullptr || !useSprites); // vertex shaders required for new star rendering
+#else
+    ShaderProperties shadprop;
+    shadprop.staticShader = true;
+    shadprop.texUsage = ShaderProperties::PointSprite   |
+                        ShaderProperties::NormalTexture;
+    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
+    if (prog == nullptr)
+        return;
+#endif
+
+    prog->use();
+    prog->pointScale = 1.0f;
 
     unsigned int stride = sizeof(StarVertex);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -326,24 +336,35 @@ void PointStarVertexBuffer::startSprites(const GLContext& _context)
     glEnableClientState(GL_COLOR_ARRAY);
     glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
 
+#ifdef VPROC
     VertexProcessor* vproc = context->getVertexProcessor();
     vproc->enable();
     vproc->use(vp::starDisc);
     vproc->enableAttribArray(6);
     vproc->attribArray(6, 1, GL_FLOAT, stride, &vertices[0].size);
+#else
+    glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
+                          1, GL_FLOAT, GL_FALSE,
+                          stride, &vertices[0].size);
+#endif
 
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
 
     glEnable(GL_POINT_SPRITE);
+#ifdef VPROC
     glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
+#endif
 
     useSprites = true;
 }
 
 void PointStarVertexBuffer::startPoints(const GLContext& _context)
 {
+#ifdef VPROC
     context = &_context;
+#endif
 
     unsigned int stride = sizeof(StarVertex);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -385,8 +406,14 @@ void PointStarVertexBuffer::render()
 
         if (useSprites)
         {
+#ifdef VPROC
             VertexProcessor* vproc = context->getVertexProcessor();
             vproc->attribArray(6, 1, GL_FLOAT, stride, &vertices[0].size);
+#else
+            glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
+                                  1, GL_FLOAT, GL_FALSE,
+                                  stride, &vertices[0].size);
+#endif
         }
 
         if (texture != nullptr)
@@ -405,10 +432,14 @@ void PointStarVertexBuffer::finish()
 
     if (useSprites)
     {
+#ifdef VPROC
         VertexProcessor* vproc = context->getVertexProcessor();
         vproc->disableAttribArray(6);
         vproc->disable();
-
+#else
+        glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
+        glUseProgram(0);
+#endif
         glDisable(GL_POINT_SPRITE);
     }
     else

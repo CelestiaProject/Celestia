@@ -103,6 +103,8 @@ class ShaderProperties
     // Effects that may be applied with any light model
     unsigned short effects;
 
+    bool staticShader{ false };
+
  private:
     enum
     {
@@ -164,6 +166,12 @@ class CelestiaGLProgram
     void setAtmosphereParameters(const Atmosphere& atmosphere,
                                  float atmPlanetRadius,
                                  float objRadius);
+
+ enum
+ {
+    TangentAttributeIndex = 6,
+    PointSizeAttributeIndex = 7,
+ };
 
  public:
     CelestiaGLProgramLight lights[MaxShaderLights];
@@ -269,6 +277,9 @@ class ShaderManager
 
     GLVertexShader* buildParticleVertexShader(const ShaderProperties&);
     GLFragmentShader* buildParticleFragmentShader(const ShaderProperties&);
+
+    GLVertexShader* buildStaticVertexShader(const ShaderProperties&);
+    GLFragmentShader* buildStaticFragmentShader(const ShaderProperties&);
 
     std::map<ShaderProperties, CelestiaGLProgram*> shaders;
 };

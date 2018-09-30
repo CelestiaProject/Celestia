@@ -53,7 +53,7 @@ static const char* errorFragmentShaderSource =
     "}\n";
 
 
-static const string CommonHeader("#version 110\n");
+static const string CommonHeader("#version 120\n");
 
 ShaderManager&
 GetShaderManager()
@@ -2822,6 +2822,11 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
         source << "attribute float pointSize;\n";
     }
 
+    if (props.texUsage & ShaderProperties::PointSprite)
+    {
+        source << DeclareVarying("pointFade", Shader_Float);
+    }
+
     // Shadow parameters
     if (props.shadowCounts != 0)
     {
@@ -2896,6 +2901,11 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
         source << "uniform sampler2D diffTex;\n";
     }
 
+    if (props.texUsage & ShaderProperties::PointSprite)
+    {
+        source << DeclareVarying("pointFade", Shader_Float);
+    }
+
     if (props.usesShadows())
     {
         source << "uniform vec3 ambientColor;\n";
@@ -2949,6 +2959,95 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
     return status == ShaderStatus_OK ? fs : nullptr;
 }
 
+GLVertexShader*
+ShaderManager::buildStaticVertexShader(const ShaderProperties& props)
+{
+    ostringstream source;
+
+    source << CommonHeader << "// static shader\n";
+
+    if (props.texUsage & ShaderProperties::NormalTexture)
+    {
+        source << "uniform sampler2D normTex;\n";
+    }
+
+    if (props.texUsage & ShaderProperties::PointSprite)
+    {
+        source << DeclareUniform("pointScale", Shader_Float);
+        source << DeclareAttribute("pointSize", Shader_Float);
+    }
+
+    source << DeclareVarying("color", Shader_Vector4);
+
+    // Begin main()
+    source << "\nvoid main(void)\n";
+    source << "{\n";
+    // Optional point size
+    if (props.texUsage & ShaderProperties::PointSprite)
+        source << "    gl_PointSize = pointSize;\n";
+
+    source << "    color = gl_Color;\n";
+    source << "    gl_Position = ftransform();\n";
+
+    source << "}\n";
+    // End of main()
+
+    if (g_shaderLogFile != nullptr)
+    {
+        *g_shaderLogFile << "Vertex shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source.str());
+        *g_shaderLogFile << endl;
+    }
+
+    GLVertexShader* vs = nullptr;
+    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source.str(), &vs);
+    return status == ShaderStatus_OK ? vs : nullptr;
+}
+
+
+GLFragmentShader*
+ShaderManager::buildStaticFragmentShader(const ShaderProperties& props)
+{
+    ostringstream source;
+
+    source << CommonHeader;
+
+    if (props.texUsage & ShaderProperties::NormalTexture)
+    {
+        source << "uniform sampler2D normTex;\n";
+    }
+
+    source << DeclareVarying("color", Shader_Vector4);
+
+    // Begin main()
+    source << "\nvoid main(void)\n";
+    source << "{\n";
+
+    if (props.texUsage & ShaderProperties::NormalTexture)
+    {
+        source << "    gl_FragColor = texture2D(normTex, gl_PointCoord) * color;\n";
+    }
+    else
+    {
+        source << "    gl_FragColor = color;\n";
+    }
+
+    source << "}\n";
+    // End of main()
+
+    if (g_shaderLogFile != nullptr)
+    {
+        *g_shaderLogFile << "Fragment shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source.str());
+        *g_shaderLogFile << '\n';
+    }
+
+    GLFragmentShader* fs = nullptr;
+    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source.str(), &fs);
+    return status == ShaderStatus_OK ? fs : nullptr;
+}
+
+
 
 CelestiaGLProgram*
 ShaderManager::buildProgram(const ShaderProperties& props)
@@ -2959,7 +3058,12 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     GLVertexShader* vs = nullptr;
     GLFragmentShader* fs = nullptr;
 
-    if (props.lightModel == ShaderProperties::RingIllumModel)
+    if (props.staticShader)
+    {
+        vs = buildStaticVertexShader(props);
+        fs = buildStaticFragmentShader(props);
+    }
+    else if (props.lightModel == ShaderProperties::RingIllumModel)
     {
         vs = buildRingsVertexShader(props);
         fs = buildRingsFragmentShader(props);
