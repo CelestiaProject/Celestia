@@ -277,31 +277,7 @@ double computeCosViewConeAngle(double verticalFOV, double width, double height)
 }
 
 
-/**** Star vertex buffer classes ****/
-
-class StarVertexBuffer
-{
-public:
-    StarVertexBuffer(unsigned int _capacity);
-    ~StarVertexBuffer();
-    void start();
-    void render();
-    void finish();
-    void addStar(const Eigen::Vector3f&, const Color&, float);
-    void setBillboardOrientation(const Eigen::Quaternionf&);
-
-private:
-    unsigned int capacity;
-    unsigned int nStars;
-    Eigen::Vector3f* vertices;
-    float* texCoords;
-    unsigned char* colors;
-    Eigen::Vector3f v0, v1, v2, v3;
-};
-
-
-// PointStarVertexBuffer is used instead of StarVertexBuffer when the
-// hardware supports point sprites.
+// PointStarVertexBuffer is used when hardware supports point sprites.
 class PointStarVertexBuffer
 {
 public:
@@ -330,103 +306,6 @@ private:
     bool useSprites;
     Texture* texture;
 };
-
-
-StarVertexBuffer::StarVertexBuffer(unsigned int _capacity) :
-    capacity(_capacity),
-    vertices(nullptr),
-    texCoords(nullptr),
-    colors(nullptr)
-{
-    nStars = 0;
-    vertices = new Vector3f[capacity * 4];
-    texCoords = new float[capacity * 8];
-    colors = new unsigned char[capacity * 16];
-
-    // Fill the texture coordinate array now, since it will always have
-    // the same contents.
-    for (unsigned int i = 0; i < capacity; i++)
-    {
-        unsigned int n = i * 8;
-        texCoords[n    ] = 0; texCoords[n + 1] = 0;
-        texCoords[n + 2] = 1; texCoords[n + 3] = 0;
-        texCoords[n + 4] = 1; texCoords[n + 5] = 1;
-        texCoords[n + 6] = 0; texCoords[n + 7] = 1;
-    }
-}
-
-StarVertexBuffer::~StarVertexBuffer()
-{
-    delete[] vertices;
-    delete[] colors;
-    delete[] texCoords;
-}
-
-void StarVertexBuffer::start()
-{
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, 0, colors);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-    glDisableClientState(GL_NORMAL_ARRAY);
-}
-
-void StarVertexBuffer::render()
-{
-    if (nStars != 0)
-    {
-        glDrawArrays(GL_TRIANGLE_FAN, 0, nStars * 4);
-        nStars = 0;
-    }
-}
-
-void StarVertexBuffer::finish()
-{
-    render();
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-}
-
-void StarVertexBuffer::addStar(const Vector3f& pos,
-                               const Color& color,
-                               float size)
-{
-    if (nStars < capacity)
-    {
-        int n = nStars * 4;
-        vertices[n + 0]  = pos + v0 * size;
-        vertices[n + 1]  = pos + v1 * size;
-        vertices[n + 2]  = pos + v2 * size;
-        vertices[n + 3] = pos + v3 * size;
-
-        n = nStars * 16;
-        color.get(colors + n);
-        color.get(colors + n + 4);
-        color.get(colors + n + 8);
-        color.get(colors + n + 12);
-
-        nStars++;
-    }
-
-    if (nStars == capacity)
-    {
-        render();
-        nStars = 0;
-    }
-}
-
-void StarVertexBuffer::setBillboardOrientation(const Quaternionf& q)
-{
-    Matrix3f m = q.conjugate().toRotationMatrix();
-    v0 = m * Vector3f(-1, -1, 0);
-    v1 = m * Vector3f( 1, -1, 0);
-    v2 = m * Vector3f( 1,  1, 0);
-    v3 = m * Vector3f(-1,  1, 0);
-}
-
 
 PointStarVertexBuffer::PointStarVertexBuffer(unsigned int _capacity) :
     capacity(_capacity),
@@ -593,12 +472,10 @@ Renderer::Renderer() :
     saturationMagNight(1.0f),
     saturationMag(1.0f),
     starStyle(FuzzyPointStars),
-    starVertexBuffer(nullptr),
     pointStarVertexBuffer(nullptr),
     glareVertexBuffer(nullptr),
     useVertexPrograms(false),
     textureResolution(medres),
-    useNewStarRendering(false),
     frameCount(0),
     lastOrbitCacheFlush(0),
     minOrbitSize(MinOrbitSizeForLabel),
@@ -620,7 +497,6 @@ Renderer::Renderer() :
     settingsChanged(true),
     objectAnnotationSetOpen(false)
 {
-    starVertexBuffer = new StarVertexBuffer(2048);
     pointStarVertexBuffer = new PointStarVertexBuffer(2048);
     glareVertexBuffer = new PointStarVertexBuffer(2048);
     skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
@@ -654,7 +530,6 @@ Renderer::Renderer() :
 
 Renderer::~Renderer()
 {
-    delete starVertexBuffer;
     delete pointStarVertexBuffer;
     delete glareVertexBuffer;
     delete[] skyVertices;
@@ -2676,15 +2551,6 @@ void Renderer::draw(const Observer& observer,
 
     locationFilter = observer.getLocationFilter();
 
-    if (getGLContext()->getVertexProcessor() != nullptr)
-    {
-        useNewStarRendering = true;
-    }
-    else
-    {
-        useNewStarRendering = false;
-    }
-
     // Highlight the selected object
     highlightObject = sel;
 
@@ -3093,10 +2959,7 @@ void Renderer::draw(const Observer& observer,
         if (toggleAA)
             glDisable(GL_MULTISAMPLE);
 
-        if (useNewStarRendering)
-            renderPointStars(*universe.getStarCatalog(), faintestMag, observer);
-        else
-            renderStars(*universe.getStarCatalog(), faintestMag, observer);
+        renderPointStars(*universe.getStarCatalog(), faintestMag, observer);
 
         if (toggleAA)
             glEnable(GL_MULTISAMPLE);
@@ -3838,120 +3701,6 @@ void Renderer::draw(const Observer& observer,
 #endif
 }
 
-
-// If the an object occupies a pixel or less of screen space, we don't
-// render its mesh at all and just display a starlike point instead.
-// Switching between the particle and mesh renderings of an object is
-// jarring, however . . . so we'll blend in the particle view of the
-// object to smooth things out, making it dimmer as the disc size exceeds the
-// max disc size.
-void Renderer::renderObjectAsPoint_nosprite(const Vector3f& position,
-                                            float radius,
-                                            float appMag,
-                                            float _faintestMag,
-                                            float discSizeInPixels,
-                                            Color color,
-                                            const Quaternionf& cameraOrientation,
-                                            bool useHalos)
-{
-    float maxDiscSize = 1.0f;
-    float maxBlendDiscSize = maxDiscSize + 3.0f;
-    float discSize = 1.0f;
-
-    if (discSizeInPixels < maxBlendDiscSize || useHalos)
-    {
-        float fade = 1.0f;
-        if (discSizeInPixels > maxDiscSize)
-        {
-            fade = (maxBlendDiscSize - discSizeInPixels) /
-                (maxBlendDiscSize - maxDiscSize - 1.0f);
-            if (fade > 1)
-                fade = 1;
-        }
-
-#ifdef USE_HDR
-        float fieldCorr = 2.0f * FOV/(fov + FOV);
-        float satPoint = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
-#else
-        float satPoint = saturationMag;
-#endif
-        float a = (_faintestMag - appMag) * brightnessScale + brightnessBias;
-        if (starStyle == ScaledDiscStars && a > 1.0f)
-            discSize = min(discSize * (2.0f * a - 1.0f), maxDiscSize);
-        a = clamp(a) * fade;
-
-        // We scale up the particle by a factor of 1.6 (at fov = 45deg)
-        // so that it's more visible--the texture we use has fuzzy edges,
-        // and if we render it in just one pixel, it's likely to disappear.
-        Matrix3f m = cameraOrientation.conjugate().toRotationMatrix();
-        Vector3f center = position;
-
-        // Offset the glare sprite so that it lies in front of the object
-        Vector3f direction = center.normalized();
-
-        // Position the sprite on the the line between the viewer and the
-        // object, and on a plane normal to the view direction.
-        center = center + direction * (radius / (m * Vector3f::UnitZ()).dot(direction));
-
-        float centerZ = (m.transpose() * center).z();
-        float size = discSize * pixelSize * 1.6f * centerZ / corrFac;
-
-        Vector3f v0 = m * Vector3f(-1, -1, 0);
-        Vector3f v1 = m * Vector3f( 1, -1, 0);
-        Vector3f v2 = m * Vector3f( 1,  1, 0);
-        Vector3f v3 = m * Vector3f(-1,  1, 0);
-
-        glEnable(GL_DEPTH_TEST);
-
-        starTex->bind();
-        glColor(color, a);
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 1);
-        glVertex(center + (v0 * size));
-        glTexCoord2f(1, 1);
-        glVertex(center + (v1 * size));
-        glTexCoord2f(1, 0);
-        glVertex(center + (v2 * size));
-        glTexCoord2f(0, 0);
-        glVertex(center + (v3 * size));
-        glEnd();
-
-        // If the object is brighter than magnitude 1, add a halo around it to
-        // make it appear more brilliant.  This is a hack to compensate for the
-        // limited dynamic range of monitors.
-        if (useHalos && appMag < satPoint)
-        {
-            float dist = center.norm();
-            float s    = dist * 0.001f * (3 - (appMag - satPoint)) * 2;
-            if (s > size * 3)
-                size = s * 2.0f/(1.0f + FOV/fov);
-            else
-                size = size * 3;
-
-            float realSize = discSizeInPixels * pixelSize * dist;
-            if (size < realSize * 6)
-                size = realSize * 6;
-
-            a = GlareOpacity * clamp((appMag - satPoint) * -0.8f);
-            gaussianGlareTex->bind();
-            glColor(color, a);
-            glBegin(GL_QUADS);
-            glTexCoord2f(0, 1);
-            glVertex(center + (v0 * size));
-            glTexCoord2f(1, 1);
-            glVertex(center + (v1 * size));
-            glTexCoord2f(1, 0);
-            glVertex(center + (v2 * size));
-            glTexCoord2f(0, 0);
-            glVertex(center + (v3 * size));
-            glEnd();
-        }
-
-        glDisable(GL_DEPTH_TEST);
-    }
-}
-
-
 // If the an object occupies a pixel or less of screen space, we don't
 // render its mesh at all and just display a starlike point instead.
 // Switching between the particle and mesh renderings of an object is
@@ -4164,97 +3913,6 @@ struct LightIrradiancePredicate
         return (l0.irradiance > l1.irradiance);
     }
 };
-
-
-void renderAtmosphere(const Atmosphere& atmosphere,
-                      const Vector3f& center,
-                      float radius,
-                      const Vector3f& sunDirection,
-                      Color ambientColor,
-                      float fade,
-                      bool lit)
-{
-    if (atmosphere.height == 0.0f)
-        return;
-
-    glDepthMask(GL_FALSE);
-
-    Vector3f eyeVec = center;
-    double centerDist = eyeVec.norm();
-
-    Vector3f normal = eyeVec;
-    normal = normal / (float) centerDist;
-
-    float tangentLength = (float) sqrt(square(centerDist) - square(radius));
-    float atmRadius = tangentLength * radius / (float) centerDist;
-    float atmOffsetFromCenter = square(radius) / (float) centerDist;
-    Vector3f atmCenter = center - atmOffsetFromCenter * normal;
-
-    Vector3f uAxis, vAxis;
-    if (abs(normal.x()) < abs(normal.y()) && abs(normal.x()) < abs(normal.z()))
-    {
-        uAxis = Vector3f::UnitX().cross(normal);
-    }
-    else if (abs(eyeVec.y()) < abs(normal.z()))
-    {
-        uAxis = Vector3f::UnitY().cross(normal);
-    }
-    else
-    {
-        uAxis = Vector3f::UnitZ().cross(normal);
-    }
-    uAxis.normalize();
-    vAxis = uAxis.cross(normal);
-
-    float height = atmosphere.height / radius;
-
-    glBegin(GL_QUAD_STRIP);
-    int divisions = 180;
-    for (int i = 0; i <= divisions; i++)
-    {
-        float theta = (float) i / (float) divisions * 2 * (float) PI;
-        Vector3f v = (float) cos(theta) * uAxis + (float) sin(theta) * vAxis;
-        Vector3f base = atmCenter + v * atmRadius;
-        Vector3f toCenter = base - center;
-
-        float cosSunAngle = toCenter.dot(sunDirection) / radius;
-        float brightness = 1.0f;
-        float botColor[3];
-        float topColor[3];
-        botColor[0] = atmosphere.lowerColor.red();
-        botColor[1] = atmosphere.lowerColor.green();
-        botColor[2] = atmosphere.lowerColor.blue();
-        topColor[0] = atmosphere.upperColor.red();
-        topColor[1] = atmosphere.upperColor.green();
-        topColor[2] = atmosphere.upperColor.blue();
-
-        if (cosSunAngle < 0.2f && lit)
-        {
-            if (cosSunAngle < -0.2f)
-            {
-                brightness = 0;
-            }
-            else
-            {
-                float t = (0.2f + cosSunAngle) * 2.5f;
-                brightness = t;
-                botColor[0] = Mathf::lerp(t, 1.0f, botColor[0]);
-                botColor[1] = Mathf::lerp(t, 0.3f, botColor[1]);
-                botColor[2] = Mathf::lerp(t, 0.0f, botColor[2]);
-                topColor[0] = Mathf::lerp(t, 1.0f, topColor[0]);
-                topColor[1] = Mathf::lerp(t, 0.3f, topColor[1]);
-                topColor[2] = Mathf::lerp(t, 0.0f, topColor[2]);
-            }
-        }
-
-        glColor4f(botColor[0], botColor[1], botColor[2],
-                  0.85f * fade * brightness + ambientColor.red());
-        glVertex(base - toCenter * height * 0.05f);
-        glColor4f(topColor[0], topColor[1], topColor[2], 0.0f);
-        glVertex(base + toCenter * height);
-    }
-    glEnd();
-}
 
 
 template <typename T> static Matrix<T, 3, 1>
@@ -5988,28 +5646,14 @@ void Renderer::renderPlanet(Body& body,
 
     if (body.isVisibleAsPoint())
     {
-        if (useNewStarRendering)
-        {
-            renderObjectAsPoint(pos,
-                                body.getRadius(),
-                                appMag,
-                                faintestMag,
-                                discSizeInPixels,
-                                body.getSurface().color,
-                                cameraOrientation,
-                                false, false);
-        }
-        else
-        {
-            renderObjectAsPoint_nosprite(pos,
-                                 body.getRadius(),
-                                 appMag,
-                                 faintestMag,
-                                 discSizeInPixels,
-                                 body.getSurface().color,
-                                 cameraOrientation,
-                                 false);
-        }
+        renderObjectAsPoint(pos,
+                            body.getRadius(),
+                            appMag,
+                            faintestMag,
+                            discSizeInPixels,
+                            body.getSurface().color,
+                            cameraOrientation,
+                            false, false);
     }
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -6086,32 +5730,14 @@ void Renderer::renderStar(const Star& star,
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 #endif
 
-#ifndef USE_HDR
-    if (useNewStarRendering)
-    {
-#endif
-        renderObjectAsPoint(pos,
-                            star.getRadius(),
-                            appMag,
-                            faintestMag,
-                            discSizeInPixels,
-                            color,
-                            cameraOrientation,
-                            true, true);
-#ifndef USE_HDR
-    }
-    else
-    {
-        renderObjectAsPoint_nosprite(pos,
-                                     star.getRadius(),
-                                     appMag,
-                                     faintestPlanetMag,
-                                     discSizeInPixels,
-                                     color,
-                                     cameraOrientation,
-                                     true);
-    }
-#endif
+    renderObjectAsPoint(pos,
+                        star.getRadius(),
+                        appMag,
+                        faintestMag,
+                        discSizeInPixels,
+                        color,
+                        cameraOrientation,
+                        true, true);
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 #endif
@@ -7040,20 +6666,18 @@ class StarRenderer : public ObjectRenderer<Star, float>
  public:
     Vector3d obsPos;
 
-    vector<Renderer::Particle>*      glareParticles;
-    vector<RenderListEntry>*         renderList;
-    StarVertexBuffer*      starVertexBuffer;
-    PointStarVertexBuffer* pointStarVertexBuffer;
+    vector<Renderer::Particle>* glareParticles{ nullptr };
+    vector<RenderListEntry>*    renderList{ nullptr };
+    PointStarVertexBuffer*      pointStarVertexBuffer{ nullptr };
 
     const StarDatabase* starDB;
 
-    bool   useScaledDiscs{false};
-    GLenum starPrimitive;
-    float  maxDiscSize{1.0f};
+    bool   useScaledDiscs{ false };
+    float  maxDiscSize{ 1.0f };
 
-    float cosFOV{1.0f};
+    float cosFOV{ 1.0f };
 
-    const ColorTemperatureTable* colorTemp;
+    const ColorTemperatureTable* colorTemp{ nullptr };
 #ifdef DEBUG_HDR_ADAPT
     float minMag;
     float maxMag;
@@ -7068,11 +6692,7 @@ class StarRenderer : public ObjectRenderer<Star, float>
 
 
 StarRenderer::StarRenderer() :
-    ObjectRenderer<Star, float>(STAR_DISTANCE_LIMIT),
-    starVertexBuffer     (nullptr),
-    pointStarVertexBuffer(nullptr),
-
-    colorTemp            (nullptr)
+    ObjectRenderer<Star, float>(STAR_DISTANCE_LIMIT)
 {
 }
 
@@ -7209,18 +6829,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 #endif
             }
 
-            if (starPrimitive == GL_POINTS)
-            {
-                pointStarVertexBuffer->addStar(relPos,
-                                               Color(starColor, alpha),
-                                               pointSize);
-            }
-            else
-            {
-                starVertexBuffer->addStar(relPos,
-                                          Color(starColor, alpha),
-                                          pointSize * renderDistance);
-            }
+            pointStarVertexBuffer->addStar(relPos,
+                                           Color(starColor, alpha),
+                                           pointSize);
 
             ++nRendered;
 
@@ -7290,19 +6901,18 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
  public:
     Vector3d obsPos;
 
-    vector<RenderListEntry>*         renderList;
-    PointStarVertexBuffer* starVertexBuffer;
-    PointStarVertexBuffer* glareVertexBuffer;
+    vector<RenderListEntry>* renderList{ nullptr };
+    PointStarVertexBuffer*   starVertexBuffer{ nullptr };
+    PointStarVertexBuffer*   glareVertexBuffer{ nullptr };
 
     const StarDatabase* starDB;
 
-    bool   useScaledDiscs{false};
-    GLenum starPrimitive;
-    float  maxDiscSize{1.0f};
+    bool   useScaledDiscs{ false };
+    float  maxDiscSize{ 1.0f };
 
-    float cosFOV{1.0f};
+    float cosFOV{ 1.0f };
 
-    const ColorTemperatureTable* colorTemp;
+    const ColorTemperatureTable* colorTemp{ nullptr };
 #ifdef DEBUG_HDR_ADAPT
     float minMag;
     float maxMag;
@@ -7317,10 +6927,7 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
 
 
 PointStarRenderer::PointStarRenderer() :
-    ObjectRenderer<Star, float>(STAR_DISTANCE_LIMIT),
-    starVertexBuffer     (nullptr),
-
-    colorTemp            (nullptr)
+    ObjectRenderer<Star, float>(STAR_DISTANCE_LIMIT)
 {
 }
 
@@ -7512,121 +7119,6 @@ static double calcMaxFOV(double fovY_degrees, double aspectRatio)
 {
     double l = 1.0 / tan(degToRad(fovY_degrees / 2.0));
     return radToDeg(atan(sqrt(aspectRatio * aspectRatio + 1.0) / l)) * 2.0;
-}
-
-
-void Renderer::renderStars(const StarDatabase& starDB,
-                           float faintestMagNight,
-                           const Observer& observer)
-{
-    StarRenderer starRenderer;
-    Vector3d obsPos = observer.getPosition().toLy();
-
-
-    starRenderer.context          = context;
-    starRenderer.renderer         = this;
-    starRenderer.starDB           = &starDB;
-    starRenderer.observer         = &observer;
-    starRenderer.obsPos           = obsPos;
-    starRenderer.viewNormal       = observer.getOrientationf().conjugate() * -Vector3f::UnitZ();
-    starRenderer.glareParticles   = &glareParticles;
-    starRenderer.renderList       = &renderList;
-    starRenderer.starVertexBuffer = starVertexBuffer;
-    starRenderer.pointStarVertexBuffer = pointStarVertexBuffer;
-    starRenderer.fov              = fov;
-    starRenderer.cosFOV            = (float) cos(degToRad(calcMaxFOV(fov, (float) windowWidth / (float) windowHeight)) / 2.0f);
-
-    // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
-    starRenderer.size             = pixelSize * 1.6f / corrFac;
-    starRenderer.pixelSize        = pixelSize;
-    starRenderer.brightnessScale  = brightnessScale * corrFac;
-    starRenderer.brightnessBias   = brightnessBias;
-    starRenderer.faintestMag      = faintestMag;
-    starRenderer.faintestMagNight = faintestMagNight;
-    starRenderer.saturationMag    = saturationMag;
-#ifdef USE_HDR
-    starRenderer.exposure         = exposure + brightPlus;
-#endif
-#ifdef DEBUG_HDR_ADAPT
-    starRenderer.minMag = -100.f;
-    starRenderer.maxMag =  100.f;
-    starRenderer.minAlpha = 1.f;
-    starRenderer.maxAlpha = 0.f;
-    starRenderer.maxSize  = 0.f;
-    starRenderer.above    = 1.f;
-    starRenderer.countAboveN = 0L;
-    starRenderer.total       = 0L;
-#endif
-    starRenderer.distanceLimit    = distanceLimit;
-    starRenderer.labelMode        = labelMode;
-
-    // = 1.0 at startup
-    float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
-    starRenderer.labelThresholdMag = max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
-
-    if (starStyle == PointStars || useNewStarRendering)
-    {
-        starRenderer.starPrimitive = GL_POINTS;
-        //starRenderer.size          = 3.2f;
-    }
-    else
-    {
-        starRenderer.starPrimitive = GL_QUADS;
-    }
-
-    if (starStyle == ScaledDiscStars)
-    {
-        starRenderer.useScaledDiscs = true;
-        starRenderer.brightnessScale *= 2.0f;
-        starRenderer.maxDiscSize = starRenderer.size * MaxScaledDiscStarSize;
-    }
-
-    starRenderer.colorTemp = colorTemp;
-
-    glareParticles.clear();
-
-    starVertexBuffer->setBillboardOrientation(observer.getOrientationf());
-
-    glEnable(GL_TEXTURE_2D);
-
-    if (useNewStarRendering)
-        gaussianDiscTex->bind();
-    else
-        starTex->bind();
-    if (starRenderer.starPrimitive == GL_POINTS)
-    {
-        // Point primitives (either real points or point sprites)
-        if (starStyle == PointStars)
-            starRenderer.pointStarVertexBuffer->startPoints(*context);
-        else
-            starRenderer.pointStarVertexBuffer->startSprites(*context);
-    }
-    else
-    {
-        // Use quad primitives
-        starRenderer.starVertexBuffer->start();
-    }
-    starDB.findVisibleStars(starRenderer,
-                            obsPos.cast<float>(),
-                            observer.getOrientationf(),
-                            degToRad(fov),
-                            (float) windowWidth / (float) windowHeight,
-                            faintestMagNight);
-#ifdef DEBUG_HDR_ADAPT
-  HDR_LOG <<
-      "* minMag = "    << starRenderer.minMag << ", " <<
-      "maxMag = "      << starRenderer.maxMag << ", " <<
-      "percent above " << starRenderer.above << " = " <<
-      (100.0*(double)starRenderer.countAboveN/(double)starRenderer.total) << endl;
-#endif
-
-    if (starRenderer.starPrimitive == GL_POINTS)
-        starRenderer.pointStarVertexBuffer->finish();
-    else
-        starRenderer.starVertexBuffer->finish();
-
-    gaussianGlareTex->bind();
-    renderParticles(glareParticles, observer.getOrientationf());
 }
 
 

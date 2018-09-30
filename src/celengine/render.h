@@ -81,7 +81,6 @@ struct SecondaryIlluminator
 };
 
 
-class StarVertexBuffer;
 class PointStarVertexBuffer;
 
 class Renderer
@@ -651,7 +650,6 @@ class Renderer
     std::string displayedSurface;
 
     Eigen::Quaternionf m_cameraOrientation;
-    StarVertexBuffer* starVertexBuffer;
     PointStarVertexBuffer* pointStarVertexBuffer;
     PointStarVertexBuffer* glareVertexBuffer;
     std::vector<RenderListEntry> renderList;
@@ -675,8 +673,6 @@ class Renderer
     bool useVertexPrograms;
     unsigned int textureResolution;
     DetailOptions detailOptions;
-
-    bool useNewStarRendering;
 
     uint32_t frameCount;
 
