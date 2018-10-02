@@ -235,13 +235,6 @@ void LODSphereMesh::render(const GLContext& context,
         nTextures = 0;
 
 
-    // Need to have vertex programs enabled in order to make
-    // use of surface tangents.
-#ifdef VPROC
-    if (!context.getVertexProcessor())
-        attributes &= ~Tangents;
-#endif
-
     RenderInfo ri(step, attributes, frustum, context);
 
     // If one of the textures is split into subtextures, we may have to
@@ -366,14 +359,6 @@ void LODSphereMesh::render(const GLContext& context,
 
     glDisableClientState(GL_COLOR_ARRAY);
 
-#ifdef VPROC
-    if ((attributes & Tangents) != 0)
-    {
-        VertexProcessor* vproc = context.getVertexProcessor();
-        vproc->enableAttribArray(6);
-    }
-#endif
-
     if (split == 1)
     {
         renderSection(0, 0, thetaExtent, ri);
@@ -464,14 +449,6 @@ void LODSphereMesh::render(const GLContext& context,
     glDisableClientState(GL_VERTEX_ARRAY);
     if ((attributes & Normals) != 0)
         glDisableClientState(GL_NORMAL_ARRAY);
-
-#ifdef VPROC
-    if ((attributes & Tangents) != 0)
-    {
-        VertexProcessor* vproc = context.getVertexProcessor();
-        vproc->disableAttribArray(6);
-    }
-#endif
 
     for (i = 0; i < nTextures; i++)
     {
@@ -737,7 +714,6 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
 #endif // SHOW_PATCH_VISIBILITY
 
     auto stride = (GLsizei) (vertexSize * sizeof(float));
-    int tangentOffset = 3;
     int texCoordOffset = ((ri.attributes & Tangents) != 0) ? 6 : 3;
     float* vertexBase = useVertexBuffers ? (float*) nullptr : vertices;
 
@@ -751,14 +727,6 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
             glClientActiveTexture(GL_TEXTURE0 + tc);
         glTexCoordPointer(2, GL_FLOAT, stride,  vertexBase + (tc * 2) + texCoordOffset);
     }
-
-#ifdef VPROC
-    if ((ri.attributes & Tangents) != 0)
-    {
-        VertexProcessor* vproc = ri.context.getVertexProcessor();
-        vproc->attribArray(6, 3, GL_FLOAT, stride, vertexBase + tangentOffset);
-    }
-#endif
 
     // assert(ri.step >= minStep);
     // assert(phi0 + extent <= maxDivisions);

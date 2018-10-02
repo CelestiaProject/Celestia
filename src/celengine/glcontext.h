@@ -10,7 +10,6 @@
 #ifndef _CELENGINE_GLCONTEXT_H_
 #define _CELENGINE_GLCONTEXT_H_
 
-#include <celengine/vertexprog.h>
 #include <vector>
 #include <string>
 
@@ -25,13 +24,6 @@ class GLContext
         GLPath_GLSL              = 8,
     };
 
-#ifdef VPROC
-    enum VertexPath
-    {
-        VPath_ARB                = 2,
-    };
-#endif
-
     void init(const std::vector<std::string>& ignoreExt);
 
     GLRenderPath getRenderPath() const { return renderPath; };
@@ -45,18 +37,8 @@ class GLContext
     bool hasMultitexture() const { return true; };
     bool bumpMappingSupported() const;
 
-#ifdef VPROC
-    VertexPath getVertexPath() const;
-
-    VertexProcessor* getVertexProcessor() const;
-#endif
-
  private:
     GLRenderPath renderPath{ GLPath_GLSL };
-#ifdef VPROC
-    VertexPath vertexPath{ VPath_ARB };
-    VertexProcessor* vertexProc{ nullptr };
-#endif
 
     int maxSimultaneousTextures { 1 };
     std::vector<std::string> extensions;

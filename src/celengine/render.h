@@ -217,13 +217,6 @@ class Renderer
     bool getVideoSync() const;
     void setVideoSync(bool);
 
-    bool getFragmentShaderEnabled() const;
-    void setFragmentShaderEnabled(bool);
-    bool fragmentShaderSupported() const;
-    bool getVertexShaderEnabled() const;
-    void setVertexShaderEnabled(bool);
-    bool vertexShaderSupported() const;
-
 #ifdef USE_HDR
     bool getBloomEnabled();
     void setBloomEnabled(bool);
@@ -624,8 +617,6 @@ class Renderer
     int renderFlags;
     int orbitMask;
     float ambientLightLevel;
-    bool fragmentShaderEnabled;
-    bool vertexShaderEnabled;
     float brightnessBias;
 
     float brightnessScale;

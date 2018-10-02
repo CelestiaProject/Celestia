@@ -15,9 +15,6 @@
 using namespace std;
 
 
-static VertexProcessor* vpARB = nullptr;
-
-
 void GLContext::init(const vector<string>& ignoreExt)
 {
     auto* extensionsString = (char*) glGetString(GL_EXTENSIONS);
@@ -47,15 +44,6 @@ void GLContext::init(const vector<string>& ignoreExt)
     glGetIntegerv(GL_MAX_TEXTURE_UNITS,
                   (GLint*) &maxSimultaneousTextures);
 
-#ifdef VPROC
-    if (GLEW_ARB_vertex_program && glGenProgramsARB)
-    {
-        DPRINTF(1, "Renderer: ARB vertex programs supported.\n");
-        if (vpARB == nullptr)
-            vpARB = vp::initARB();
-        vertexProc = vpARB;
-    }
-#endif
 }
 
 
@@ -63,17 +51,6 @@ bool GLContext::setRenderPath(GLRenderPath path)
 {
     if (!renderPathSupported(path))
         return false;
-
-#ifdef VPROC
-    switch (path)
-    {
-    case GLPath_GLSL:
-        vertexPath = VPath_ARB;
-        break;
-    default:
-        return false;
-    }
-#endif
 
     renderPath = path;
 
@@ -123,17 +100,3 @@ bool GLContext::bumpMappingSupported() const
 {
     return true;
 }
-
-
-#ifdef VPROC
-GLContext::VertexPath GLContext::getVertexPath() const
-{
-    return vertexPath;
-}
-
-
-VertexProcessor* GLContext::getVertexProcessor() const
-{
-    return vertexProc;
-}
-#endif
