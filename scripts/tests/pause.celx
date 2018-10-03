@@ -1,0 +1,31 @@
+celestia:print("Toggle pause state", 2, -1, -1, 3, 5 )
+celestia:pause()
+wait(2)
+
+celestia:print("Toggle pause state", 2, -1, -1, 3, 5 )
+celestia:pause()
+wait(2)
+
+celestia:print("Pause", 2, -1, -1, 3, 5 )
+celestia:pause(true)
+wait(2)
+
+celestia:print("Resume", 2, -1, -1, 3, 5 )
+celestia:pause(false)
+wait(2)
+
+celestia:print("Pause", 2, -1, -1, 3, 5 )
+celestia:pause(true)
+wait(2)
+
+celestia:print("Resume", 2, -1, -1, 3, 5 )
+celestia:pause(false)
+wait(2)
+
+celestia:print("Toggle pause state", 2, -1, -1, 3, 5 )
+celestia:pause()
+wait(2)
+
+celestia:print("Resume", 2, -1, -1, 3, 5 )
+celestia:pause(false)
+wait(2)
