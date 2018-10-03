@@ -2536,6 +2536,38 @@ static int celestia_ispaused(lua_State* l)
     return 1;
 }
 
+static int celestia_pause(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 2, "No or one argument expected to function celestia:paused");
+
+    CelestiaCore* appCore = this_celestia(l);
+    bool cur_state = appCore->getSimulation()->getPauseState();
+    bool new_state;
+
+    if (lua_type(l, 2) != LUA_TNONE) // An argument passed
+    {
+        if (!lua_isboolean(l, -1))
+        {
+            Celx_DoError(l, "Value passed to celestia:paused must be boolean");
+            return 0;
+        }
+        // set pause state according to a passed value
+        new_state = lua_toboolean(l, -1);
+    }
+    else
+    {
+        // toggle the current pause state
+        new_state = !cur_state;
+    }
+
+    // set a new state
+    appCore->getSimulation()->setPauseState(new_state);
+    // and return the previous one
+    lua_pushboolean(l, cur_state);
+
+    return 1;
+}
+
 static int celestia_synchronizetime(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:synchronizetime");
@@ -3626,6 +3658,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "gettime", celestia_gettime);
     Celx_RegisterMethod(l, "settime", celestia_settime);
     Celx_RegisterMethod(l, "ispaused", celestia_ispaused);
+    Celx_RegisterMethod(l, "pause", celestia_pause);
     Celx_RegisterMethod(l, "synchronizetime", celestia_synchronizetime);
     Celx_RegisterMethod(l, "istimesynchronized", celestia_istimesynchronized);
     Celx_RegisterMethod(l, "gettimescale", celestia_gettimescale);
