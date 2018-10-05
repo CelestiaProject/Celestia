@@ -575,11 +575,7 @@ bool CelestiaAppWindow::loadBookmarks()
 {
     bool loadedBookmarks = false;
     QString bookmarksFilePath = QDir(m_dataDirPath).filePath(BOOKMARKS_FILE);
-    if (!QFile::exists(bookmarksFilePath))
-    {
-        QMessageBox::warning(this, _("No Bookmarks File"), QString(_("Bookmarks file %1 does not exist.")).arg(bookmarksFilePath));
-    }
-    else
+    if (QFile::exists(bookmarksFilePath))
     {
         QFile bookmarksFile(bookmarksFilePath);
         if (!bookmarksFile.open(QIODevice::ReadOnly))
