@@ -530,7 +530,7 @@ INCLUDEPATH += src
 INCLUDEPATH += thirdparty/curveplot/include
 
 
-CATALOG_SOURCE = data
+CATALOG_SOURCE = catalogs
 CATALOG_FILES = \
     $$CATALOG_SOURCE/stars.dat \
     $$CATALOG_SOURCE/starnames.dat \
@@ -710,7 +710,7 @@ macx {
 
     CONFIGURATION.path = Contents/Resources/CelestiaResources
     CONFIGURATION.files = $$CONFIGURATION_FILES
-    CATALOGS.path = Contents/Resources/CelestiaResources/data
+    CATALOGS.path = Contents/Resources/CelestiaResources/catalogs
     CATALOGS.files = $$CATALOG_FILES
     TEXTURES.path = Contents/Resources/CelestiaResources/textures/medres
     TEXTURES.files = $$TEXTURE_FILES
@@ -757,7 +757,7 @@ unix {
 
     target.path           = $$BINDIR
 
-    data.path             = $$WORKDIR/data
+    data.path             = $$WORKDIR/catalogs
     data.files            = $$CATALOG_SOURCE/*
     flares.path           = $$WORKDIR/textures
     flares.files         += textures/*.jpg textures/*.png
