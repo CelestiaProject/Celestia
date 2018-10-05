@@ -241,9 +241,13 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     setWindowIcon(QIcon(":/icons/celestia.png"));
 
-    m_appCore->initSimulation(&configFileName,
-                            &extrasDirectories,
-                            progress);
+    if (!m_appCore->initSimulation(&configFileName,
+                                   &extrasDirectories,
+                                   progress))
+    {
+         // Error message is shown by celestiacore so we silently exit here.
+         exit(1);
+    }
     delete progress;
 
     // Enable antialiasing if requested in the config file.
