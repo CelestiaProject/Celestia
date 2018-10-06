@@ -219,11 +219,13 @@ void astro::decimalToHourMinSec(double angle, int& hours, int& minutes, double& 
 
 // Compute the fraction of a sphere which is illuminated and visible
 // to a viewer.  The source of illumination is assumed to be at (0, 0, 0)
+#ifdef __CELVEC__
 float astro::sphereIlluminationFraction(Point3d /*spherePos*/,
                                         Point3d /*viewerPos*/)
 {
     return 1.0f;
 }
+#endif
 
 // Convert equatorial coordinates to Cartesian celestial (or ecliptical)
 // coordinates.

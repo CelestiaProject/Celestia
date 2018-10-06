@@ -14,7 +14,9 @@
 #include <Eigen/Geometry>
 
 // Compatibility
+#ifdef __CELVEC__
 #include <celmath/plane.h>
+#endif
 
 #include <celmath/capsule.h>
 
@@ -57,6 +59,7 @@ class Frustum
     Aspect testSphere(const Eigen::Vector3d& center, double radius) const;
     Aspect testCapsule(const Capsulef&) const;
 
+#ifdef __CELVEC__
     // Compatibility
     inline Planef getPlane(unsigned int which) const
     {
@@ -68,6 +71,7 @@ class Frustum
     Aspect test(const Point3f&) const;
     Aspect testSphere(const Point3f& center, float radius) const;
     Aspect testSphere(const Point3d& center, double radius) const;
+#endif
 
  private:
     void init(float, float, float, float);

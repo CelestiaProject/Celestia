@@ -13,13 +13,16 @@
 #ifndef _CELENGINE_VECGL_H_
 #define _CELENGINE_VECGL_H_
 
+#ifdef __CELVEC__
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
+#endif
 #include <celutil/color.h>
 #include <GL/glew.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#ifdef __CELVEC__
 inline void glVertex(const Point3f& p)
 {
     glVertex3fv(&p.x);
@@ -39,6 +42,8 @@ inline void glTexCoord(const Point2f& p)
 {
     glTexCoord2fv(&p.x);
 }
+#endif
+
 
 inline void glColor(const Color& c)
 {
@@ -51,6 +56,7 @@ inline void glColor(const Color& c, float a)
 }
 
 
+#ifdef __CELVEC__
 inline void glMatrix(const Mat4f& m)
 {
     Mat4f trans = m.transpose();
@@ -89,6 +95,7 @@ inline void glScale(const Vec3f& v)
 {
     glScalef(v.x, v.y, v.z);
 }
+#endif
 
 #if 0
 inline void glLightDirection(GLenum light, const Vec3f& dir)

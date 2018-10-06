@@ -10,7 +10,9 @@
 #ifndef _CELMATH_ELLIPSOID_H_
 #define _CELMATH_ELLIPSOID_H_
 
+#ifdef __CELVEC__
 #include "vecmath.h"
+#endif
 #include <Eigen/Core>
 
 template<class T> class Ellipsoid
@@ -55,6 +57,7 @@ template<class T> class Ellipsoid
     }
 
 
+#ifdef __CELVEC__
     /**** Compatibility with old Celestia vectors ****/
 
     /*! Created an ellipsoid with the specified semiaxes, centered
@@ -83,6 +86,7 @@ template<class T> class Ellipsoid
         v = Vector3<T>(v.x / axes.x, v.y / axes.y, v.z / axes.z);
         return v * v <= (T) 1.0;
     }
+#endif
 
  public:
     Eigen::Matrix<T, 3, 1> center;
