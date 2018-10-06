@@ -412,6 +412,7 @@ bool AssociativeArray::getBoolean(const string& key, bool& val) const
     return true;
 }
 
+#ifdef __CELVEC__
 bool AssociativeArray::getVector(const string& key, Vec3d& val) const
 {
     Value* v = getValue(key);
@@ -435,6 +436,7 @@ bool AssociativeArray::getVector(const string& key, Vec3d& val) const
 
     return true;
 }
+#endif
 
 bool AssociativeArray::getVector(const string& key, Vector3d& val) const
 {
@@ -460,6 +462,7 @@ bool AssociativeArray::getVector(const string& key, Vector3d& val) const
     return true;
 }
 
+#ifdef __CELVEC__
 bool AssociativeArray::getVector(const string& key, Vec3f& val) const
 {
     Vec3d vecVal;
@@ -471,6 +474,7 @@ bool AssociativeArray::getVector(const string& key, Vec3f& val) const
 
     return true;
 }
+#endif
 
 
 bool AssociativeArray::getVector(const string& key, Vector3f& val) const
@@ -486,6 +490,7 @@ bool AssociativeArray::getVector(const string& key, Vector3f& val) const
 }
 
 
+#ifdef __CELVEC__
 /** @copydoc AssociativeArray::getRotation() */
 bool AssociativeArray::getRotation(const string& key, Quatf& val) const
 {
@@ -522,6 +527,7 @@ bool AssociativeArray::getRotation(const string& key, Quatf& val) const
 
     return true;
 }
+#endif
 
 
 /**

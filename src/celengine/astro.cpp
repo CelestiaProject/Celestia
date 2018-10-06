@@ -299,11 +299,13 @@ void astro::decimalToHourMinSec(double angle, int& hours, int& minutes, double& 
 
 // Compute the fraction of a sphere which is illuminated and visible
 // to a viewer.  The source of illumination is assumed to be at (0, 0, 0)
+#ifdef __CELVEC__
 float astro::sphereIlluminationFraction(Point3d,
                                         Point3d)
 {
     return 1.0f;
 }
+#endif
 
 float astro::microLightYearsToKilometers(float ly)
 {

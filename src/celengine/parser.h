@@ -13,8 +13,11 @@
 
 #include <vector>
 #include <map>
+#include <celmath/mathlib.h>
+#ifdef __CELVEC__
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
+#endif
 #include <celutil/color.h>
 #include <celutil/basictypes.h>
 #include <celengine/tokenizer.h>
@@ -42,9 +45,11 @@ class AssociativeArray
     bool getBoolean(const std::string&, bool&) const;
     bool getVector(const std::string&, Eigen::Vector3d&) const;
     bool getVector(const std::string&, Eigen::Vector3f&) const;
+#ifdef __CELVEC__
     bool getVector(const std::string&, Vec3d&) const;
     bool getVector(const std::string&, Vec3f&) const;
     bool getRotation(const std::string&, Quatf&) const;
+#endif
     bool getRotation(const std::string&, Eigen::Quaternionf&) const;
     bool getColor(const std::string&, Color&) const;
     bool getAngle(const std::string&, double&, double = 1.0, double = 0.0) const;

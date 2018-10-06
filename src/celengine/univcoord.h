@@ -19,7 +19,7 @@
 #include "astro.h"
 #include <Eigen/Core>
 
-#define DEPRECATED_UNIVCOORD_METHODS 1
+#define DEPRECATED_UNIVCOORD_METHODS 0
 
 #if DEPRECATED_UNIVCOORD_METHODS
 #include <celmath/vecmath.h>
