@@ -18,8 +18,6 @@
 #include <celengine/texmanager.h>
 #include <celengine/frame.h>
 #include <celengine/observer.h>
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
 #include <Eigen/Core>
 #include <vector>
 

@@ -19,7 +19,6 @@
 #include <celengine/starbrowser.h>
 #include <celengine/stardb.h>
 #include <celengine/univcoord.h>
-#include <celmath/vecmath.h>
 #include <celutil/utf8.h>
 
 #include "dialog-star.h"

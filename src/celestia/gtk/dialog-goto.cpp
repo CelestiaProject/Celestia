@@ -14,7 +14,6 @@
 
 #include <celengine/selection.h>
 #include <celengine/simulation.h>
-#include <celmath/vecmath.h>
 
 #include "dialog-goto.h"
 #include "common.h"

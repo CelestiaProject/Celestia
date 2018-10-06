@@ -24,8 +24,6 @@
 #include <commctrl.h>
 #include <mmsystem.h>
 
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
 #include <celmath/mathlib.h>
 #include <celutil/debug.h>
 #include <celutil/util.h>

@@ -25,8 +25,6 @@
 #include <GLUT/glut.h>
 #endif
 #include <celengine/celestia.h>
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celutil/localtime.h>

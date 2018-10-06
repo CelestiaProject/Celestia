@@ -16,6 +16,7 @@
 #include <celestia/imagecapture.h>
 #include <celestia/celx_internal.h>
 #include <celutil/util.h>
+#include <celmath/mathlib.h>
 #include <iostream>
 #include <utility>
 #include <algorithm>

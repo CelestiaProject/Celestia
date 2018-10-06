@@ -28,9 +28,6 @@
 #  define G_DISABLE_ASSERT
 #endif
 
-#include "celmath/vecmath.h"
-#include "celmath/quaternion.h"
-#include "celmath/mathlib.h"
 #include "celengine/astro.h"
 #include "celutil/util.h"
 #include "celutil/filetype.h"

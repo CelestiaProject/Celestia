@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include "marker.h"
+#include <celmath/mathlib.h>
 #include <GL/glew.h>
 
 
