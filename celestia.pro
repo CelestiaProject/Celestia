@@ -358,6 +358,8 @@ APP_SOURCES = \
     src/celestia/imagecapture.cpp \
     src/celestia/scriptmenu.cpp \
     src/celestia/url.cpp \
+    src/celestia/lua_state.cpp \
+    src/celestia/celx_lua.cpp \
     src/celestia/celx.cpp \
     src/celestia/celx_celestia.cpp \
     src/celestia/celx_frame.cpp \
@@ -380,9 +382,10 @@ APP_HEADERS = \
     src/celestia/scriptmenu.h \
     src/celestia/url.h \
     src/celestia/AbstractAudioManager.h \
+    src/celestia/lua_state.h \
+    src/celestia/celx_lua.h \
     src/celestia/celx.h \
     src/celestia/celx_celestia.h \
-    src/celestia/celx_internal.h \
     src/celestia/celx_frame.h \
     src/celestia/celx_gl.h \
     src/celestia/celx_object.h \

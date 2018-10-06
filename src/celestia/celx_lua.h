@@ -1,5 +1,6 @@
-// celx_internal.h
-//
+#ifndef __CELESTIA_CELX__LUA__H__ 
+#define __CELESTIA_CELX__LUA__H__
+
 // Copyright (C) 2003-2008, the Celestia Development Team
 //
 // Lua script extensions for Celestia. Internals that should only
@@ -10,45 +11,47 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELX_INTERNAL_H_
-#define _CELX_INTERNAL_H_
+// Moved from celx_internal.h by Łukasz Buczyński 27.09.2018
 
+#include <lua.hpp>
+#include <cassert>
+#include <cstring>
+#include <cstdio>
+#include <ctime>
 #include <map>
-#include <string>
+#include <celengine/astro.h>
+#include <celengine/asterism.h>
+#include <celengine/celestia.h>
+#include <celengine/cmdparser.h>
+#include <celengine/execenv.h>
+#include <celengine/execution.h>
+#include <celmath/vecmath.h>
+#include <celengine/timeline.h>
+#include <celengine/timelinephase.h>
+#include "imagecapture.h"
+#include "url.h"
+
+#include "lua_state.h"
+#include "celx.h"
+#include "celx_vector.h"
+#include "celx_rotation.h"
+#include "celx_position.h"
+#include "celx_frame.h"
+#include "celx_phase.h"
+#include "celx_object.h"
+#include "celx_observer.h"
+#include "celx_celestia.h"
+#include "celx_gl.h"
+
+#include <celengine/eigenport.h>
+//#include <map>
+//#include <string>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
 class CelestiaCore;
 class TimelinePhase;
-
-enum
-{
-    Celx_Celestia = 0,
-    Celx_Observer = 1,
-    Celx_Object   = 2,
-    Celx_Vec3     = 3,
-    Celx_Matrix   = 4,
-    Celx_Rotation = 5,
-    Celx_Position = 6,
-    Celx_Frame    = 7,
-    Celx_CelScript= 8,
-    Celx_Font     = 9,
-    Celx_Image    = 10,
-    Celx_Texture  = 11,
-    Celx_Phase    = 12,
-};
-
-
-// select which type of error will be fatal (call lua_error) and
-// which will return a default value instead
-enum FatalErrors
-{
-    NoErrors   = 0,
-    WrongType  = 1,
-    WrongArgc  = 2,
-    AllErrors = WrongType | WrongArgc,
-};
-
+class LuaState;
 
 class CelxLua;
 
@@ -172,6 +175,4 @@ private:
     lua_State* m_lua;
 };
 
-
-
-#endif // _CELX_INTERNAL_H_
+#endif

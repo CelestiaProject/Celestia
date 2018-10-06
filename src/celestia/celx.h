@@ -1,100 +1,88 @@
-// celx.h
-//
-// Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
-//
-// Lua script extensions for Celestia
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+#ifndef __SRC__CELESTIA_CELX__H__ 
+#define __SRC__CELESTIA_CELX__H__ 
 
-#ifndef _CELESTIA_CELX_H_
-#define _CELESTIA_CELX_H_
+#include <lua.hpp>
 
-#include <iostream>
-#include <string>
-
-#ifndef LUA_VER
-#define LUA_VER 0x050000
-#endif
-
-#if LUA_VER >= 0x050100
-#include "lua.hpp"
-#else
-extern "C" {
-#include "lua.h"
-#include "lualib.h"
-}
-#endif
-
-#include <celutil/timer.h>
 #include <celengine/observer.h>
 
-class CelestiaCoreApplication;
-class View;
+class LuaState;
 
-class LuaState
+class CelestiaCore;
+
+class TextureFont;
+
+enum
 {
-public:
-    LuaState();
-    ~LuaState();
-
-    lua_State* getState() const;
-
-    int loadScript(std::istream&, const std::string& streamname);
-    int loadScript(const std::string&);
-    bool init(CelestiaCoreApplication*);
-
-    std::string getErrorMessage();
-
-    bool createThread();
-    int resume();
-    bool tick(double);
-    void cleanup();
-    bool isAlive() const;
-    bool timesliceExpired();
-    void requestIO();
-
-    bool charEntered(const char*);
-    double getTime() const;
-    int screenshotCount;
-    double timeout;
-
-    // Celx script event handlers
-    bool handleKeyEvent(const char* key);
-    bool handleMouseButtonEvent(float x, float y, int button, bool down);
-    bool handleTickEvent(double dt);
-
-    // Lua hook handling
-    void setLuaPath(const string& s);
-    void allowSystemAccess();
-    void allowLuaPackageAccess();
-    void setLuaHookEventHandlerEnabled(bool);
-    bool callLuaHook(void* obj, const char* method);
-    bool callLuaHook(void* obj, const char* method, const char* keyName);
-    bool callLuaHook(void* obj, const char* method, float x, float y);
-    bool callLuaHook(void* obj, const char* method, float x, float y, int b);
-    bool callLuaHook(void* obj, const char* method, double dt);
-
-    enum IOMode {
-        NoIO = 1,
-        Asking = 2,
-        IOAllowed = 4,
-        IODenied = 8
-    };
-
-private:
-    lua_State* state;
-    lua_State* costate; // coroutine stack
-    bool alive;
-    Timer* timer;
-    double scriptAwakenTime;
-    IOMode ioMode;
-    bool eventHandlerEnabled;
+    Celx_Celestia = 0,
+    Celx_Observer = 1,
+    Celx_Object   = 2,
+    Celx_Vec3     = 3,
+    Celx_Matrix   = 4,
+    Celx_Rotation = 5,
+    Celx_Position = 6,
+    Celx_Frame    = 7,
+    Celx_CelScript= 8,
+    Celx_Font     = 9,
+    Celx_Image    = 10,
+    Celx_Texture  = 11,
+    Celx_Phase    = 12,
 };
 
-View* getViewByObserver(CelestiaCoreApplication*, Observer*);
-void getObservers(CelestiaCoreApplication*, std::vector<Observer*>&);
 
-#endif // _CELESTIA_CELX_H_
+// select which type of error will be fatal (call lua_error) and
+// which will return a default value instead
+enum FatalErrors
+{
+    NoErrors   = 0,
+    WrongType  = 1,
+    WrongArgc  = 2,
+    AllErrors = WrongType | WrongArgc,
+};
+
+CelestiaCore* getAppCore(lua_State*, FatalErrors fatalErrors = NoErrors);
+
+void openLuaLibrary(lua_State*, const char*, lua_CFunction);
+
+void loadLuaLibs(lua_State*);
+
+bool Celx_istype(lua_State*, int, int);
+void Celx_SetClass(lua_State*, int);
+void* Celx_CheckUserData(lua_State*, int, int);
+void Celx_DoError(lua_State*, const char*);
+void Celx_CheckArgs(lua_State*, int, int, const char*);
+void Celx_CreateClassMetatable(lua_State* l, int id);
+void Celx_RegisterMethod(lua_State* l, const char* name, lua_CFunction fn);
+const char* Celx_SafeGetString(lua_State* l,
+                                      int index,
+                                      FatalErrors fatalErrors = AllErrors,
+                                      const char* errorMsg = "String argument expected");
+lua_Number Celx_SafeGetNumber(lua_State* l, int index, FatalErrors fatalErrors = AllErrors,
+                              const char* errorMsg = "Numeric argument expected",
+                              lua_Number defaultValue = 0.0);
+bool Celx_SafeGetBoolean(lua_State* l, int index, FatalErrors fatalErrors = AllErrors,
+                              const char* errorMsg = "Boolean argument expected",
+                              bool defaultValue = false);
+
+CelestiaCore* appCore(FatalErrors fatalErrors = NoErrors);
+
+void setTable(lua_State*, const char*, lua_Number);
+
+LuaState* getLuaStateObject(lua_State*);
+
+ObserverFrame::CoordinateSystem parseCoordSys(const string&);
+
+extern const char* CleanupCallback;
+extern const char* KbdCallback;
+
+extern const char* EventHandlers;
+extern const char* KeyHandler;
+extern const char* TickHandler;
+extern const char* MouseDownHandler;
+extern const char* MouseUpHandler;
+
+int celscript_from_string(lua_State* , string& );
+int texture_new(lua_State* , Texture* );
+int font_new(lua_State* , TextureFont* );
+void PushClass(lua_State* , int);
+
+#endif

@@ -10,7 +10,6 @@
 // of the License, or (at your option) any later version.
 
 #include "celx.h"
-#include "celx_internal.h"
 #include "celx_observer.h"
 //#include <celengine/body.h>
 //#include <celengine/timelinephase.h>

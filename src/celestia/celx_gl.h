@@ -12,7 +12,7 @@
 #ifndef _CELX_GL_H_
 #define _CELX_GL_H_
 
-struct lua_State;
+#include <lua.hpp>
 
 extern void LoadLuaGraphicsLibrary(lua_State* l);
 

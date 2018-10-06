@@ -12,6 +12,16 @@
 #ifndef _CELX_CELESTIA_H_
 #define _CELX_CELESTIA_H_
 
-struct lua_State;
+#include <lua.hpp>
+#include <string>
+#include <iostream>
+
+#include <celengine/observer.h>
+
+struct CelestiaCoreApplication;
+
+int celestia_new(lua_State*, CelestiaCoreApplication*);
+void CreateCelestiaMetaTable(lua_State* );
+void ExtendCelestiaMetaTable(lua_State*);
 
 #endif // _CELX_CELESTIA_H_

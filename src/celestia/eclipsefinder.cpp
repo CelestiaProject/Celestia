@@ -21,6 +21,7 @@
 #include "celmath/distance.h"
 #include <celengine/eigenport.h>
 
+
 using namespace Eigen;
 using namespace std;
 

@@ -19,7 +19,7 @@
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include <celestia/celx.h>
-#include <celestia/celx_internal.h>
+#include <celestia/celx_lua.h>
 #include <algorithm>
 #include <cstdio>
 

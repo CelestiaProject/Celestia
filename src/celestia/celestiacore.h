@@ -27,7 +27,7 @@
 #include "destination.h"
 #include "moviecapture.h"
 #ifdef CELX
-#include "celx.h"
+#include "celx_lua.h"
 #endif
 
 #include "AbstractAudioManager.h"
@@ -36,6 +36,8 @@ class Url;
 
 // class CelestiaWatcher;
 class CelestiaCore;
+
+class LuaState;
 
 // class astro::Date;
 

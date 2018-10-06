@@ -9,8 +9,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "celx_lua.h"
 #include "celx.h"
-#include "celx_internal.h"
 #include "celx_position.h"
 #include <celengine/eigenport.h>
 

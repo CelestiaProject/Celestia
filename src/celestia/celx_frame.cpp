@@ -10,7 +10,6 @@
 // of the License, or (at your option) any later version.
 
 #include "celx.h"
-#include "celx_internal.h"
 #include "celx_frame.h"
 #include "celestiacore.h"
 #include <celengine/observer.h>

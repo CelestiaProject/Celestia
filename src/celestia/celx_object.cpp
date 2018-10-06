@@ -11,7 +11,6 @@
 
 #include <cstring>
 #include "celx.h"
-#include "celx_internal.h"
 #include "celx_object.h"
 #include <celengine/body.h>
 #include <celengine/timelinephase.h>
