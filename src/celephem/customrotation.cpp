@@ -15,6 +15,7 @@
 #include "precession.h"
 #include <celengine/astro.h>
 #include <celmath/geomutil.h>
+#include <celmath/mathlib.h>
 #include <map>
 #include <string>
 

@@ -12,7 +12,6 @@
 
 #include <vector>
 #include <string>
-#include <celmath/vecmath.h>
 #include <celutil/color.h>
 #include <celengine/selection.h>
 

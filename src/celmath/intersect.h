@@ -15,6 +15,7 @@
 #include "ray.h"
 #include "sphere.h"
 #include "ellipsoid.h"
+#include "mathlib.h"
 #include <Eigen/Core>
 
 

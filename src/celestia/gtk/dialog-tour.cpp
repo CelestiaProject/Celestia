@@ -14,7 +14,6 @@
 #include <gtk/gtk.h>
 
 #include <celestia/destination.h>
-#include <celmath/vecmath.h>
 
 #include "dialog-tour.h"
 #include "common.h"

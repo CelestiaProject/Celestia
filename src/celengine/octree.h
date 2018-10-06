@@ -15,7 +15,6 @@
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <celmath/plane.h>
 #include <celengine/observer.h>
 #include <vector>
 
