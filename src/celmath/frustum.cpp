@@ -125,7 +125,7 @@ Frustum::Aspect Frustum::testSphere(const Point3d& center, double radius) const
 }
 #endif
 
-
+/*
 Frustum::Aspect Frustum::testCapsule(const Capsulef& capsule) const
 {
     int nPlanes = infinite ? 5 : 6;
@@ -169,7 +169,7 @@ Frustum::Aspect Frustum::testCapsule(const Capsulef& capsule) const
 
     return (intersections == 0) ? Inside : Intersect;
 }
-
+*/
 
 void
 Frustum::transform(const Matrix3f& m)
