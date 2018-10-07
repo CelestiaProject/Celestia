@@ -26,7 +26,6 @@ class GLContext
         GLPath_Basic             = 0,
         GLPath_Multitexture      = 1,
         GLPath_DOT3_ARBVP        = 3,
-        GLPath_ARBFP_ARBVP       = 6,
         GLPath_GLSL              = 8,
     };
 

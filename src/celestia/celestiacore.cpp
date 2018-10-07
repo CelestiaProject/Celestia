@@ -1448,9 +1448,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 case GLContext::GLPath_DOT3_ARBVP:
                     flash(_("Render path: OpenGL vertex program"));
                     break;
-                case GLContext::GLPath_ARBFP_ARBVP:
-                    flash(_("Render path: OpenGL 1.5 vertex/fragment program"));
-                    break;
                 case GLContext::GLPath_GLSL:
                     flash(_("Render path: OpenGL 2.0"));
                     break;

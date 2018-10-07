@@ -89,7 +89,6 @@ bool GLContext::setRenderPath(GLRenderPath path)
         vertexPath = VPath_Basic;
         break;
     case GLPath_DOT3_ARBVP:
-    case GLPath_ARBFP_ARBVP:
     case GLPath_GLSL:
         vertexPath = VPath_ARB;
         break;
@@ -118,14 +117,6 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
         return GLEW_ARB_texture_env_dot3 &&
                GLEW_ARB_vertex_program &&
                vertexProc != nullptr;
-
-    case GLPath_ARBFP_ARBVP:
-        return false;
-        /*
-        return GLEW_ARB_vertex_program &&
-               GLEW_ARB_fragment_program &&
-               vertexProc != nullptr;
-        */
 
     case GLPath_GLSL:
         return GLEW_ARB_shader_objects &&
