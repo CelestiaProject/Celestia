@@ -21,7 +21,7 @@
 #include <celengine/universe.h>
 #include <celengine/render.h>
 #include <celengine/simulation.h>
-#include <GL/glew.h>
+//#include <GL/glew.h>
 #include "configfile.h"
 #include "favorites.h"
 #include "destination.h"

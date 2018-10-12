@@ -23,6 +23,7 @@
 #include <QPaintDevice>
 #include <QMouseEvent>
 #include <QSettings>
+#include <QMessageBox>
 
 #ifndef DEBUG
 #  define G_DISABLE_ASSERT
@@ -82,7 +83,7 @@ const unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
 
 
 CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, CelestiaCoreApplication* core) :
-    QGLWidget(parent)
+    QOpenGLWidget(parent)
 {
     setFocusPolicy(Qt::ClickFocus);
 
@@ -147,6 +148,24 @@ static GLContext::GLRenderPath getBestAvailableRenderPath(const GLContext& glc)
 
 void CelestiaGlWidget::initializeGL()
 {
+    GLenum glewErr = glewInit();
+    if (glewErr != GLEW_OK)
+    {
+        QString rn;
+        switch(glewErr) {
+            case GL_INVALID_ENUM: rn = "Invalid enumeration"; break;
+            case GL_INVALID_VALUE: rn = "Invalid value"; break;
+            case GL_INVALID_OPERATION: rn = "Invalid operation"; break;
+            case GL_INVALID_FRAMEBUFFER_OPERATION: rn = "Invalid framebuffer operation"; break;
+            case GL_OUT_OF_MEMORY: rn = "Out of memory"; break;
+            case GLEW_ERROR_NO_GL_VERSION: rn = "No openGL version."; break;
+            case GLEW_ERROR_GL_VERSION_10_ONLY: rn = "Need OpenGL at least version 1.1"; break;
+            case GLEW_ERROR_GLX_VERSION_11_ONLY: rn = "Need GLX at least version 1.2"; break;
+            default: rn = "Unknown error";
+        }
+        QMessageBox::critical(0, "Celestia",
+                              QString(_("Celestia was unable to initialize OpenGL extensions (error %1 - %2). Graphics quality will be reduced.")).arg(glewErr).arg(rn));
+    }
     if (!appCore->initRenderer())
     {
         // cerr << "Failed to initialize renderer.\n";
