@@ -1412,7 +1412,8 @@ void CelestiaAppWindow::contextMenu(float x, float y, Selection sel)
 
 void CelestiaAppWindow::loadingProgressUpdate(const QString& s)
 {
-    emit progressUpdate(s, Qt::AlignLeft, Qt::white);
+    emit progressUpdate(QString(_("Loading data files: %1\n\n")).arg(s),
+                        Qt::AlignHCenter | Qt::AlignBottom, Qt::white);
 }
 
 

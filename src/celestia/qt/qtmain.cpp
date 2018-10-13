@@ -51,23 +51,6 @@ static bool skipSplashScreen = false;
 
 static bool ParseCommandLine();
 
-void loadModules(QSplashScreen* psplash)
-{
-    QTime time;
-    time.start();
-
-    for (int i = 0; i < 100; ) {
-        if (time.elapsed() > 40) {
-            time.start();
-            ++i;
-        }
-        psplash->showMessage(_("Loading data files: ") + QString::number(i) + "%" + "\n\n",
-                             Qt::AlignHCenter | Qt::AlignBottom,
-                             Qt::white);
-    }
-}
-/////////////////////////////////////////
-
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -91,9 +74,8 @@ int main(int argc, char *argv[])
     QSplashScreen splash(pixmap);
     splash.setMask(pixmap.mask());
 
-    // Disabled for now until issues with pixmap alpha channel
-    // are resolved
-    splash.show(); // Enable command
+    // TODO: resolve issues with pixmap alpha channel
+    splash.show();
 
     // Gettext integration
     setlocale(LC_ALL, "");
@@ -104,21 +86,13 @@ int main(int argc, char *argv[])
     bind_textdomain_codeset("celestia_constellations", "UTF-8");
     textdomain("celestia");
 
-    // By default, QString converts the const char * data into Unicode Latin-1 characters.
-    // We need to change this to UTF-8 for i18n purpose.
-    // NOTE: Do we really need this? setCodecForCStrings is gone in later versions of Qt5.
-    // QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-
     CelestiaAppWindow window;
-
-    loadModules(&splash);
 
     // Connect the splash screen to the main window so that it
     // can receive progress notifications as Celestia files required
     // for startup are loaded.
-    // Disable command
-    //QObject::connect(&window, SIGNAL(progressUpdate(const QString&, int, const QColor&)),
-    //                 &splash, SLOT(showMessage(const QString&, int, const QColor&)));
+    QObject::connect(&window, SIGNAL(progressUpdate(const QString&, int, const QColor&)),
+                     &splash, SLOT(showMessage(const QString&, int, const QColor&)));
 
     window.init(configFileName, extrasDirectories);
     window.show();
