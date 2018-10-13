@@ -1,6 +1,9 @@
 Celestia Install instructions for UNIX
 --------------------------------------
 
+!!!!! Don't use this file. It's outdated. Use README. !!!!!
+!!!!! This file will be updated after switch to CMAKE !!!!!
+
 You need to have the following components installed before Celestia
 will build: OpenGL (tested with Mesa 3.4), glu, libjpeg, and libpng.
 Should you have a package based installation (most Linux distributions these
