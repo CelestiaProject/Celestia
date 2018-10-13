@@ -528,11 +528,13 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
 }
 
 
+#if 0
 static Material::Color
 toMaterialColor(Color c)
 {
     return {c.red(), c.green(), c.blue()};
 }
+#endif
 
 
 static Model*

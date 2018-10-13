@@ -14,7 +14,7 @@
 #include <QColorDialog>
 
 
-ColorSwatchWidget::ColorSwatchWidget(const QColor& c, QWidget* parent) :
+ColorSwatchWidget::ColorSwatchWidget(const QColor& c, QWidget* /*parent*/) :
     QLabel(nullptr),
     m_color(c)
 {
@@ -43,4 +43,3 @@ void ColorSwatchWidget::mouseReleaseEvent(QMouseEvent* /*unused*/)
     if (c.isValid())
         setColor(c);
 }
-

@@ -32,7 +32,7 @@ class Model
 {
  public:
     Model();
-    ~Model();
+    virtual ~Model();
 
     const Material* getMaterial(unsigned int index) const;
     void setMaterial(unsigned int index, const Material* material);
