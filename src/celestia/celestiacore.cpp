@@ -88,18 +88,6 @@ static void warning(string s)
 }
 
 
-struct OverlayImage
-{
-    Texture* texture;
-    int xSize;
-    int ySize;
-    int left;
-    int bottom;
-};
-
-vector<OverlayImage> overlayImages;
-
-
 // Extremely basic implementation of an ExecutionEnvironment for
 // running scripts.
 class CoreExecutionEnvironment : public ExecutionEnvironment
@@ -3288,29 +3276,75 @@ static void showViewFrame(const View* v, int width, int height)
 }
 
 
-void CelestiaCore::setScriptImage(double duration, float xoffset,
-                                 float yoffset, float alpha, const string& filename, int fitscreen)
+void CelestiaCore::setScriptImage(float duration,
+                                  float xoffset,
+                                  float yoffset,
+                                  float alpha,
+                                  const string& filename,
+                                  bool fitscreen)
 {
-    imageStart = currentTime;
-    imageDuration = duration;
-    imageXoffset = xoffset;
-    imageYoffset = yoffset;
-    imageAlpha = alpha;
-    imageFitscreen = fitscreen;
-    if (scriptImageFilename != (string("images") + "/" + filename).c_str()) // Check if the image is already loaded
+    if (!image || !image->isNewImage(filename))
     {
-        delete scriptImage;
-        scriptImageFilename = (string("images") + "/" + filename).c_str();
-        scriptImage = LoadTextureFromFile(scriptImageFilename);
+        delete image;
+        image = new CelestiaCore::OverlayImage(filename);
     }
+    image->setStartTime((float) currentTime);
+    image->setDuration(duration);
+    image->setOffset(xoffset, yoffset);
+    image->setAlpha(alpha);
+    image->fitScreen(fitscreen);
+}
+
+
+CelestiaCore::OverlayImage::OverlayImage(string f)
+{
+    filename = std::move(f);
+    delete texture;
+    texture = LoadTextureFromFile(string("images/") + filename);
+}
+
+
+void CelestiaCore::OverlayImage::render(float curr_time, int width, int height)
+{
+    if (!texture || (curr_time >= start + duration))
+        return;
+
+    float xSize = texture->getWidth();
+    float ySize = texture->getHeight();
+
+    // center overlay image horizontally if offsetX = 0
+    float left = (width * (1 + offsetX) - xSize)/2;
+    // center overlay image vertically if offsetY = 0
+    float bottom = (height * (1 + offsetY) - ySize)/2;
+
+    if (fitscreen)
+    {
+        float coeffx = xSize / width;  // overlay pict width/view window width ratio
+        float coeffy = ySize / height; // overlay pict height/view window height ratio
+        xSize = xSize / coeffx;        // new overlay picture width size to fit viewport
+        ySize = ySize / coeffy;        // new overlay picture height to fit viewport
+
+        left = (width - xSize) / 2;    // to be sure overlay pict is centered in viewport
+        bottom = 0;                    // overlay pict locked at bottom of screen
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    texture->bind();
+
+    glBegin(GL_TRIANGLE_FAN);
+    glColor4f(1.0f, 1.0f, 1.0f, alpha);
+    glTexCoord2f(0.0f, 1.0f); glVertex2f(left, bottom);
+    glTexCoord2f(1.0f, 1.0f); glVertex2f(left + xSize, bottom);
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(left + xSize, bottom + ySize);
+    glTexCoord2f(0.0f, 0.0f); glVertex2f(left, bottom + ySize);
+    glEnd();
 }
 
 
 void CelestiaCore::renderOverlay()
 {
-
 #ifdef CELX
-    if (luaHook) luaHook->callLuaHook(this,"renderoverlay");
+    if (luaHook) luaHook->callLuaHook(this, "renderoverlay");
 #endif
     if (font == nullptr)
         return;
@@ -3323,41 +3357,15 @@ void CelestiaCore::renderOverlay()
 
     overlay->begin();
 
-    if (scriptImage != nullptr && currentTime < imageStart + imageDuration && (runningScript != nullptr || celxScript != nullptr))
+#ifdef CELX
+    if (runningScript || celxScript)
     {
-        glEnable(GL_TEXTURE_2D);
-        float xSize = (scriptImage->getWidth());
-        float ySize = (scriptImage->getHeight());
-
-        float left = (width*(1 + imageXoffset) - xSize)/2; // center overlay image horizontally if imageXoffset = 0
-        float bottom = (height*(1 + imageYoffset) - ySize)/2; // center overlay image vertically if imageYoffset = 0
-
-        if (imageFitscreen == 1)
-        {
-            float coeffx = xSize/width; // compute overlay pict width/view window width ratio
-            float coeffy = ySize/height; // compute overlay pict height/view window height ratio
-            xSize = int (xSize/coeffx); // compute new overlay picture width size to fit viewport
-            ySize = int (ySize/coeffy); // compute new overlay picture height to fit viewport
-
-            left = (width - xSize)/2; // almost useless, just to be sure overlay pict is perfectly centered in viewport
-            bottom = 0; // overlay pict locked at bottom of screen
-        }
-
-        scriptImage->bind();
-
-        glBegin(GL_QUADS);
-        glColor4f(1.0f, 1.0f, 1.0f, imageAlpha);
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex2i(int (left), int (bottom));
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex2i(int (left) + int (xSize), int (bottom));
-
-        glColor4f(1.0f, 1.0f, 1.0f, imageAlpha);
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex2i(int (left) + int (xSize), int (bottom) + int (ySize));
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex2i(int (left), int (bottom) + int (ySize));
-        glEnd();
+#else
+    if (runningScript)
+    {
+#endif
+        if (image)
+            image->render((float) currentTime, width, height);
     }
 
     if (views.size() > 1)

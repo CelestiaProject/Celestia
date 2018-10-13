@@ -834,12 +834,12 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "overlay")
     {
-        double duration;
+        float duration;
         float xoffset;
         float yoffset;
         float alpha;
         string filename;
-        int fitscreen;
+        bool fitscreen;
 
         if(!paramList->getNumber("duration", duration))
             duration = 3;
@@ -851,8 +851,14 @@ Command* CommandParser::parseCommand()
             alpha = 1;
         if(!paramList->getString("filename", filename))
             filename = "";
-        if(!paramList->getNumber("fitscreen", fitscreen))
-           fitscreen = 0;
+        if(!paramList->getBoolean("fitscreen", fitscreen))
+        {
+          int f;
+          if(!paramList->getNumber("fitscreen", f))
+             fitscreen = false;
+          else
+            fitscreen = (bool) f;
+        }
 
         cmd = new CommandScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
     }

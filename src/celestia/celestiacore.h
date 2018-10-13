@@ -190,14 +190,44 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     enum
     {
-        ShowNoElement   = 0x001,
-        ShowTime = 0x002,
+        ShowNoElement = 0x001,
+        ShowTime      = 0x002,
         ShowVelocity  = 0x004,
-        ShowSelection    = 0x008,
-        ShowFrame   = 0x010,
+        ShowSelection = 0x008,
+        ShowFrame     = 0x010,
     };
 
     typedef void (*ContextMenuFunc)(float, float, Selection);
+
+ private:
+    class OverlayImage
+    {
+     public:
+        OverlayImage(string);
+        ~OverlayImage() { delete texture; }
+        OverlayImage()               =default;
+        OverlayImage(OverlayImage&)  =delete;
+        OverlayImage(OverlayImage&&) =delete;
+
+        void render(float, int, int);
+        inline bool isNewImage(const string& f) { return filename != f; }
+
+        void setStartTime(float t) { start = t; }
+        void setDuration(float t) { duration = t; }
+        void setOffset(float x, float y) { offsetX = x; offsetY = y; }
+        void setAlpha(float t) { alpha = t; }
+        void fitScreen(bool t) { fitscreen = t; }
+
+     private:
+        float start{ 0.0f };
+        float duration{ 0.0f };
+        float offsetX{ 0.0f };
+        float offsetY{ 0.0f };
+        float alpha{ 0.0f };
+        bool  fitscreen{ false };
+        std::string filename;
+        Texture* texture{ nullptr };
+    };
 
  public:
     CelestiaCore();
@@ -346,6 +376,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void fatalError(const std::string&, bool visual = true);
 
+    void setScriptImage(float, float, float, float, const std::string&, bool);
+
  protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
@@ -379,13 +411,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     double messageDuration{ 0.0 };
     Color textColor{ Color(1.0f, 1.0f, 1.0f) };
 
-    double imageStart{ 0.0 };
-    double imageDuration{ 0.0 };
-    float imageXoffset{ 0.0f };
-    float imageYoffset{ 0.0f };
-    float imageAlpha{ 0.0f };
-    int imageFitscreen{ 0 };
-    std::string scriptImageFilename;
+    OverlayImage *image{ nullptr };
 
     std::string typedText;
     std::vector<std::string> typedTextCompletion;
@@ -454,7 +480,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     ContextMenuFunc contextMenuCallback{ nullptr };
 
     Texture* logoTexture{ nullptr };
-    Texture* scriptImage{ nullptr };
 
     Alerter* alerter{ nullptr };
     std::vector<CelestiaWatcher*> watchers;
@@ -483,9 +508,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     friend TextureFont* getFont(CelestiaCore*);
     friend TextureFont* getTitleFont(CelestiaCore*);
 #endif
-
- public:
-    void setScriptImage(double, float, float, float, const std::string&, int);
 };
 
 #endif // _CELESTIACORE_H_

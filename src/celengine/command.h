@@ -768,8 +768,8 @@ class RepeatCommand : public Command
 class CommandScriptImage : public InstantaneousCommand
 {
  public:
-    CommandScriptImage(double _duration, float _xoffset, float _yoffset,
-                                         float _alpha, std::string, int _fitscreen);
+    CommandScriptImage(float _duration, float _xoffset, float _yoffset,
+                       float _alpha, std::string, bool _fitscreen);
     void process(ExecutionEnvironment&);
 
  private:

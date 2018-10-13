@@ -3471,12 +3471,16 @@ static int celestia_overlay(lua_State* l)
     Celx_CheckArgs(l, 2, 7, "One to Six arguments expected to function celestia:overlay");
 
     CelestiaCore* appCore = this_celestia(l);
-    double duration = Celx_SafeGetNumber(l, 2, WrongType, "First argument to celestia:overlay must be a number (duration)", 3.0);
+    float duration = Celx_SafeGetNumber(l, 2, WrongType, "First argument to celestia:overlay must be a number (duration)", 3.0);
     float xoffset = Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:overlay must be a number (xoffset)", 0.0);
     float yoffset = Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:overlay must be a number (yoffset)", 0.0);
     float alpha = Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:overlay must be a number (alpha)", 1.0);
     const char* filename = Celx_SafeGetString(l, 6, AllErrors, "Fifth argument to celestia:overlay must be a string (filename)");
-    int fitscreen = Celx_SafeGetNumber(l, 7, WrongType, "Sixth argument to celestia:overlay must be a number (fitscreen)", 0);
+    bool fitscreen;
+    if (lua_isboolean(l, 7))
+        fitscreen = lua_toboolean(l, 7);
+    else
+        fitscreen = (bool) Celx_SafeGetNumber(l, 7, WrongType, "Sixth argument to celestia:overlay must be a number or a boolean(fitscreen)", 0);
 
     appCore->setScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
 

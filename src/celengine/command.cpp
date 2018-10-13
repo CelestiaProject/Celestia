@@ -1001,8 +1001,9 @@ double RepeatCommand::getDuration() const
 }
 
 // ScriptImage command
-CommandScriptImage::CommandScriptImage(double _duration, float _xoffset,
-                         float _yoffset, float _alpha, std::string _filename, int _fitscreen) :
+CommandScriptImage::CommandScriptImage(float _duration, float _xoffset,
+                                       float _yoffset, float _alpha,
+                                       std::string _filename, bool _fitscreen) :
     duration(_duration),
     xoffset(_xoffset),
     yoffset(_yoffset),
