@@ -47,16 +47,12 @@
 #include <cstring>
 #include <cassert>
 #include <ctime>
+#include <fmt/printf.h>
 
 #ifdef CELX
 #include <celephem/scriptobject.h>
 #endif
 
-#ifdef _WIN32
-#define TIMERATE_PRINTF_FORMAT "%.12g"
-#else
-#define TIMERATE_PRINTF_FORMAT "%'.12g"
-#endif
 
 using namespace Eigen;
 using namespace std;
@@ -1802,9 +1798,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 sim->setTimeScale(sim->getTimeScale() / CoarseTimeScaleFactor);
             else
                 sim->setTimeScale(sim->getTimeScale() / FineTimeScaleFactor);
-            char buf[128];
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, "%s: " TIMERATE_PRINTF_FORMAT,  _("Time rate"), sim->getTimeScale());
+            string buf = fmt::sprintf(_("Time rate: %.6g"),  sim->getTimeScale()); // XXX %'.12g
             setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
@@ -1818,9 +1813,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 sim->setTimeScale(sim->getTimeScale() * CoarseTimeScaleFactor);
             else
                 sim->setTimeScale(sim->getTimeScale() * FineTimeScaleFactor);
-            char buf[128];
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, "%s: " TIMERATE_PRINTF_FORMAT,  _("Time rate"), sim->getTimeScale());
+            string buf = fmt::sprintf(_("Time rate: %.6g"),  sim->getTimeScale()); // XXX %'.12g
             setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
@@ -3459,13 +3453,11 @@ void CelestiaCore::renderOverlay()
             }
             else if (abs(sim->getTimeScale()) > 1.0)
             {
-                overlay->oprintf(TIMERATE_PRINTF_FORMAT, sim->getTimeScale());
-                *overlay << UTF8_MULTIPLICATION_SIGN << _(" faster");
+                fmt::fprintf(*overlay, _("%.6g x faster"), sim->getTimeScale()); // XXX: %'.12g
             }
             else
             {
-                overlay->oprintf(TIMERATE_PRINTF_FORMAT, 1.0 / sim->getTimeScale());
-                *overlay << UTF8_MULTIPLICATION_SIGN << _(" slower");
+                fmt::fprintf(*overlay, _("%.6g x slower"), 1.0 / sim->getTimeScale()); // XXX: %'.12g
             }
 
             if (sim->getPauseState() == true)
