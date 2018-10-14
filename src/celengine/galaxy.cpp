@@ -22,7 +22,7 @@
 #include <cstring>
 #include <fstream>
 #include <algorithm>
-#include <cstdio>
+#include <fmt/printf.h>
 #include <cassert>
 
 using namespace Eigen;
@@ -188,9 +188,9 @@ void Galaxy::setType(const string& typeStr)
 }
 
 
-size_t Galaxy::getDescription(char* buf, size_t bufLength) const
+string Galaxy::getDescription() const
 {
-    return snprintf(buf, bufLength, _("Galaxy (Hubble type: %s)"), getType());
+    return fmt::sprintf(_("Galaxy (Hubble type: %s)"), getType());
 }
 
 

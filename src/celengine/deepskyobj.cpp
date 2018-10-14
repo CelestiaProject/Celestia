@@ -66,11 +66,9 @@ void DeepSkyObject::setAbsoluteMagnitude(float _absMag)
     absMag = _absMag;
 }
 
-size_t DeepSkyObject::getDescription(char* buf, size_t bufLength) const
+string DeepSkyObject::getDescription() const
 {
-    if (bufLength > 0)
-        buf[0] = '\0';
-    return 0;
+    return "";
 }
 
 string DeepSkyObject::getInfoURL() const

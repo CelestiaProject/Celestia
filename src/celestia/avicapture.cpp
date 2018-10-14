@@ -170,8 +170,8 @@ bool AVICapture::captureFrame()
         return false;
     }
 
-    // printf("Writing frame: %d  %d => %d bytes\n",
-    //        frameCounter, rowBytes * height, bytesWritten);
+    // fmt::printf("Writing frame: %d  %d => %d bytes\n",
+    //             frameCounter, rowBytes * height, bytesWritten);
     frameCounter++;
 
     return true;

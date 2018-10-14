@@ -11,7 +11,7 @@
 #include <cstring>
 #include <cmath>
 #include <cstdlib>
-#include <cstdio>
+#include <fmt/printf.h>
 #include <cassert>
 #include <algorithm>
 #include <celmath/mathlib.h>
@@ -328,17 +328,19 @@ vector<string> StarDatabase::getCompletion(const string& name) const
 }
 
 
+#if 0
 static void catalogNumberToString(uint32_t catalogNumber, char* buf, unsigned int bufSize)
 {
-    // Just return an empty string if there's any chance that the buffer is too small
-    if (bufSize < 20 && bufSize > 0)
-    {
-        buf[0] = '\0';
-    }
+    // TODO: implement using using fmt::write
+}
+#endif
 
+
+static string catalogNumberToString(uint32_t catalogNumber)
+{
     if (catalogNumber <= StarDatabase::MAX_HIPPARCOS_NUMBER)
     {
-        sprintf(buf, "HIP %d", catalogNumber);
+        return fmt::sprintf("HIP %d", catalogNumber);
     }
     else
     {
@@ -347,7 +349,7 @@ static void catalogNumberToString(uint32_t catalogNumber, char* buf, unsigned in
         uint32_t tyc2 = catalogNumber / 10000;
         catalogNumber -= tyc2 * 10000;
         uint32_t tyc1 = catalogNumber;
-        sprintf(buf, "TYC %d-%d-%d", tyc1, tyc2, tyc3);
+        return fmt::sprintf("TYC %d-%d-%d", tyc1, tyc2, tyc3);
     }
 }
 
@@ -381,16 +383,13 @@ string StarDatabase::getStarName(const Star& star, bool i18n) const
         }
     }
 
-    char buf[20];
     /*
       // Get the HD catalog name
       if (star.getCatalogNumber() != Star::InvalidCatalogNumber)
-      sprintf(buf, "HD %d", star.getCatalogNumber(Star::HDCatalog));
+      return fmt::sprintf("HD %d", star.getCatalogNumber(Star::HDCatalog));
       else
     */
-    catalogNumberToString(catalogNumber, buf, sizeof(buf));
-
-    return string(buf);
+    return catalogNumberToString(catalogNumber);
 }
 
 // A less convenient version of getStarName that writes to a char
@@ -417,26 +416,24 @@ void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int 
         }
     }
 
-    catalogNumberToString(catalogNumber, nameBuffer, bufferSize);
+    strncpy(nameBuffer, catalogNumberToString(catalogNumber).c_str(), bufferSize);
+    nameBuffer[bufferSize - 1] = '\0';
 }
 
 
 string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNames) const
 {
     string starNames;
-    char numString[32];
-
     unsigned int catalogNumber = star.getCatalogNumber();
-
     StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
 
     unsigned int count = 0;
     while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
     {
         if (count != 0)
-            starNames   += " / ";
+            starNames += " / ";
 
-        starNames   += ReplaceGreekLetterAbbr(iter->second.c_str());
+        starNames += ReplaceGreekLetterAbbr(iter->second.c_str());
         ++iter;
         ++count;
     }
@@ -447,7 +444,7 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
         if (hip <= Star::MaxTychoCatalogNumber)
         {
             if (count != 0)
-                starNames   += " / ";
+                starNames += " / ";
             if (hip >= 1000000)
             {
                 uint32_t h      = hip;
@@ -457,13 +454,11 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
                        h     -= tyc2 * 10000;
                 uint32_t tyc1   = h;
 
-                sprintf(numString, "TYC %u-%u-%u", tyc1, tyc2, tyc3);
-                starNames    += numString;
+                starNames += fmt::sprintf("TYC %u-%u-%u", tyc1, tyc2, tyc3);
             }
             else
             {
-                sprintf(numString, "HIP %u", hip);
-                starNames    += numString;
+                starNames += fmt::sprintf("HIP %u", hip);
             }
 
             ++count;
@@ -474,18 +469,16 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
     if (count < maxNames && hd != Star::InvalidCatalogNumber)
     {
         if (count != 0)
-            starNames   += " / ";
-        sprintf(numString, "HD %u", hd);
-        starNames   += numString;
+            starNames += " / ";
+        starNames += fmt::sprintf("HD %u", hd);
     }
 
     uint32_t sao   = crossIndex(StarDatabase::SAO, hip);
     if (count < maxNames && sao != Star::InvalidCatalogNumber)
     {
         if (count != 0)
-            starNames   += " / ";
-        sprintf(numString, "SAO %u", sao);
-        starNames   += numString;
+            starNames += " / ";
+        starNames += fmt::sprintf("SAO %u", sao);
     }
 
     return starNames;
@@ -598,7 +591,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
         LE_TO_CPU_INT32(ent.celCatalogNumber, ent.celCatalogNumber);
         if (in.fail())
         {
-            cerr << _("Loading cross index failed at record ") << record << '\n';
+            fmt::fprintf(cerr, _("Loading cross index failed at record %u\n"), record);
             delete xindex;
             return false;
         }
@@ -682,7 +675,7 @@ bool StarDatabase::loadBinary(istream& in)
 
         if (details == nullptr)
         {
-            cerr << _("Bad spectral type in star database, star #") << nStars << "\n";
+            fmt::fprintf(cerr, _("Bad spectral type in star database, star #%u\n"), nStars);
             return false;
         }
 
@@ -697,7 +690,7 @@ bool StarDatabase::loadBinary(istream& in)
         return false;
 
     DPRINTF(0, "StarDatabase::read: nStars = %d\n", nStarsInFile);
-    clog << nStars << _(" stars in binary database\n");
+    fmt::fprintf(clog, _("%d stars in binary database\n"), nStars);
 
     // Create the temporary list of stars sorted by catalog number; this
     // will be used to lookup stars during file loading. After loading is
@@ -721,7 +714,7 @@ bool StarDatabase::loadBinary(istream& in)
 
 void StarDatabase::finish()
 {
-    clog << _("Total star count: ") << nStars << endl;
+    fmt::fprintf(clog, _("Total star count: %d\n"), nStars);
 
     buildOctree();
     buildIndexes();
@@ -752,16 +745,10 @@ void StarDatabase::finish()
 }
 
 
-static void errorMessagePrelude(const Tokenizer& tok)
-{
-    cerr << _("Error in .stc file (line ") << tok.getLineNumber() << "): ";
-}
-
 static void stcError(const Tokenizer& tok,
                      const string& msg)
 {
-    errorMessagePrelude(tok);
-    cerr << msg << '\n';
+    fmt::fprintf(cerr,  _("Error in .stc file (line %i): %s\n"), tok.getLineNumber(), msg);
 }
 
 
@@ -987,7 +974,7 @@ bool StarDatabase::createStar(Star* star,
 
                 if (!hasBarycenter)
                 {
-                    cerr << _("Barycenter ") << barycenterName << _(" does not exist.\n");
+                    fmt::fprintf(cerr, _("Barycenter %s does not exist.\n"), barycenterName);
                     delete rm;
                     if (free_details)
                         delete details;
@@ -1297,7 +1284,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
         Value* starDataValue = parser.readValue();
         if (starDataValue == nullptr)
         {
-            clog << "Error reading star." << endl;
+            clog << "Error reading star.\n";
             return false;
         }
 
@@ -1315,7 +1302,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
         bool ok = false;
         if (isNewStar && disposition == ModifyStar)
         {
-            clog << "Modify requested for nonexistent star." << endl;
+            clog << "Modify requested for nonexistent star.\n";
         }
         else
         {
@@ -1405,10 +1392,12 @@ void StarDatabase::buildOctree()
     for (const auto& stat : stats)
     {
         level++;
-        clog << "Level " << level << ", "
-             << STAR_OCTREE_ROOT_SIZE / pow(2.0, (double) level) << "ly, "
-             << stat.nodeCount << " nodes, "
-             << stat.objectCount << " stars\n";
+        fmt::fprintf(clog,
+                     _("Level %i, %.5f ly, %i nodes, %i  stars\n"),
+                     level,
+                     STAR_OCTREE_ROOT_SIZE / pow(2.0, (double) level),
+                     stat.nodeCount,
+                     stat.objectCount;
     }
 #endif
 

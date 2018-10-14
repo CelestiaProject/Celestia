@@ -96,7 +96,6 @@ public:
     Color getApparentColor() const;
     Color getApparentColor(StellarClass::SpectralClass sc) const;
 
-    char* str(char* buf, unsigned int buflen) const;
     std::string str() const;
 
     static StellarClass parse(const std::string&);

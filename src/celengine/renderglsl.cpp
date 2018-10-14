@@ -11,8 +11,6 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include <cstdio>
-#include <cstring>
 #include <cassert>
 
 #ifndef _WIN32

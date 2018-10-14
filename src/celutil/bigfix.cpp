@@ -13,7 +13,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cmath>
-#include <cstdio>
+#include <fmt/printf.h>
 #include <iostream>
 #include "bigfix.h"
 
@@ -255,11 +255,11 @@ int BigFix::sign() const
 // For debugging
 void BigFix::dump()
 {
-    printf("%08x %08x %08x %08x",
-           (uint32_t) (hi >> 32),
-           (uint32_t) (hi & 0xffffffff),
-           (uint32_t) (lo >> 32),
-           (uint32_t) (lo & 0xffffffff));
+    fmt::printf("%08x %08x %08x %08x",
+                (uint32_t) (hi >> 32),
+                (uint32_t) (hi & 0xffffffff),
+                (uint32_t) (lo >> 32),
+                (uint32_t) (lo & 0xffffffff));
 }
 
 
@@ -277,10 +277,10 @@ int main(int argc, char* argv[])
     if (sscanf(argv[2], "%lf", &b) != 1)
         return 1;
 
-    printf("    sum:\n%f\n%f\n", a + b, (double) (BigFix(a) + BigFix(b)));
-    printf("   diff:\n%f\n%f\n", a - b, (double) (BigFix(a) - BigFix(b)));
-    printf("product:\n%f\n%f\n", a * b, (double) (BigFix(a) * BigFix(b)));
-    printf("     lt: %u %u\n", a < b, BigFix(a) < BigFix(b));
+    fmt::printf("    sum:\n%f\n%f\n", a + b, (double) (BigFix(a) + BigFix(b)));
+    fmt::printf("   diff:\n%f\n%f\n", a - b, (double) (BigFix(a) - BigFix(b)));
+    fmt::printf("product:\n%f\n%f\n", a * b, (double) (BigFix(a) * BigFix(b)));
+    fmt::printf("     lt: %u %u\n", a < b, BigFix(a) < BigFix(b));
 
     return 0;
 }

@@ -10,10 +10,9 @@
 
 #include "modelfile.h"
 #include <celutil/bytes.h>
-#include <cstring>
 #include <cassert>
 #include <cmath>
-#include <cstdio>
+#include <fmt/printf.h>
 
 
 using namespace cmod;
@@ -804,9 +803,9 @@ AsciiModelLoader::AsciiModelLoader(istream& _in) :
 void
 AsciiModelLoader::reportError(const string& msg)
 {
-    char buf[32];
-    sprintf(buf, " (line %d)", tok.getLineNumber());
-    ModelLoader::reportError(msg + string(buf));
+    string s;
+    s = fmt::sprintf("%s (line %d)", msg, tok.getLineNumber());
+    ModelLoader::reportError(s);
 }
 
 
@@ -1626,9 +1625,9 @@ BinaryModelLoader::BinaryModelLoader(istream& _in) :
 void
 BinaryModelLoader::reportError(const string& msg)
 {
-    char buf[32];
-    sprintf(buf, " (offset %d)", 0);
-    ModelLoader::reportError(msg + string(buf));
+    string s;
+    s = fmt::sprintf("%s (offset %d)", msg, 0);
+    ModelLoader::reportError(s);
 }
 
 

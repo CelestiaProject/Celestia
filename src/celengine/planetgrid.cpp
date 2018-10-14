@@ -18,7 +18,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <cmath>
-#include <cstdio>
+#include <fmt/printf.h>
 
 using namespace Eigen;
 
@@ -163,14 +163,13 @@ PlanetographicGrid::render(Renderer* renderer,
         {
             if (latitude != 0.0f && abs(latitude) < 90.0f)
             {
-                char buf[64];
-
                 char ns;
                 if (latitude < 0.0f)
                     ns = northDirection == NorthNormal ? 'S' : 'N';
                 else
                     ns = northDirection == NorthNormal ? 'N' : 'S';
-                sprintf(buf, "%d%c", (int) fabs((double) latitude), ns);
+                string buf;
+                buf = fmt::sprintf("%d%c", (int) fabs((double) latitude), ns);
                 longLatLabel(buf, 0.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
                 longLatLabel(buf, 180.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             }
@@ -210,8 +209,8 @@ PlanetographicGrid::render(Renderer* renderer,
                 break;
             }
 
-            char buf[64];
-            sprintf(buf, "%d%c", (int) showLongitude, ew);
+            string buf;
+            buf = fmt::sprintf("%d%c", (int) showLongitude, ew);
             longLatLabel(buf, longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             if (longitude > 0.0f && longitude < 180.0f)
             {
@@ -232,7 +231,7 @@ PlanetographicGrid::render(Renderer* renderer,
                     break;
                 }
 
-                sprintf(buf, "%d%c", showLongitude, ew);
+                buf = fmt::sprintf("%d%c", showLongitude, ew);
                 longLatLabel(buf, -longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             }
         }

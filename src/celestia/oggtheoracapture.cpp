@@ -60,14 +60,13 @@
 #endif
 
 #include <cstdlib>
-#include <cstdio>
 #include <cmath>
 #include <celutil/debug.h>
 #include <celutil/util.h>
 #include <GL/glew.h>
 #include <string>
-#include <cstring>
-#include "theora/theora.h"
+#include <fmt/printf.h>
+#include <theora/theora.h>
 
 using namespace std;
 
@@ -250,7 +249,7 @@ bool OggTheoraCapture::start(const std::string& filename,
     theora_encode_header(&td,&op);
     ogg_stream_packetin(&to,&op);
     if(ogg_stream_pageout(&to,&videopage) != 1){
-        cerr << _("Internal Ogg library error.") << endl;
+        cerr << _("Internal Ogg library error.\n");
         return false;
     }
     fwrite(videopage.header, 1, videopage.header_len, outfile);
@@ -270,7 +269,7 @@ bool OggTheoraCapture::start(const std::string& filename,
         if( result<0 )
         {
             /* can't get here */
-            cerr << _("Internal Ogg library error.")  << endl;
+            cerr << _("Internal Ogg library error.\n");
             return false;
         }
         if( result==0 )
@@ -305,13 +304,13 @@ bool OggTheoraCapture::start(const std::string& filename,
     yuv.uv_height=video_y/2;
     yuv.uv_stride=video_x/2;
 
-    printf(_("OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%d offset (%dx%d)\n"),
-           filename.c_str(),
-           (double)video_hzn/(double)video_hzd,
-           video_hzn,video_hzd,
-           video_q,
-           video_x,video_y,
-           frame_x_offset,frame_y_offset);
+    fmt::printf(_("OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%d offset (%dx%d)\n"),
+                filename.c_str(),
+                (double)video_hzn/(double)video_hzd,
+                video_hzn,video_hzd,
+                video_q,
+                video_x,video_y,
+                frame_x_offset,frame_y_offset);
 
     capturing = true;
     return true;
@@ -405,7 +404,7 @@ bool OggTheoraCapture::captureFrame()
     }
     video_frame_count += 1;
     //if ((video_frame_count % 10) == 0)
-    //    printf("Writing frame %d\n", video_frame_count);
+    //    fmt::printf("Writing frame %d\n", video_frame_count);
     unsigned char *temp = yuvframe[0];
     yuvframe[0] = yuvframe[1];
     yuvframe[1] = temp;
@@ -420,7 +419,7 @@ void OggTheoraCapture::cleanup()
 
     if(outfile)
     {
-        printf(_("OggTheoraCapture::cleanup() - wrote %d frames\n"), video_frame_count);
+        fmt::printf(_("OggTheoraCapture::cleanup() - wrote %d frames\n"), video_frame_count);
         if (video_frame_count > 0)
         {
             yuv.y= yuvframe[1];

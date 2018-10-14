@@ -9,7 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cstdio>
+#include <fmt/printf.h>
 
 #include "scriptobject.h"
 
@@ -48,11 +48,11 @@ GetScriptedObjectContext()
 string
 GenerateScriptObjectName()
 {
-    char buf[64];
-    sprintf(buf, "%s%u", ScriptedObjectNamePrefix, ScriptedObjectNameIndex);
+    string buf;
+    buf = fmt::sprintf("%s%u", ScriptedObjectNamePrefix, ScriptedObjectNameIndex);
     ScriptedObjectNameIndex++;
 
-    return string(buf);
+    return buf;
 }
 
 

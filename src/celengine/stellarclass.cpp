@@ -8,7 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cstring>
-#include <cstdio>
+#include <fmt/printf.h>
 #include <cassert>
 #include "celestia.h"
 #include "stellarclass.h"
@@ -58,12 +58,9 @@ Color StellarClass::getApparentColor(StellarClass::SpectralClass sc) const
 
 // The << method of converting the stellar class to a string is
 // preferred, but it's not always practical, especially when you've
-// got a completely broken implemtation of stringstreams to
+// got a completely broken implementation of stringstreams to
 // deal with (*cough* gcc *cough*).
-//
-// Return the buffer if successful or nullptr if not (the buffer wasn't
-// large enough.)
-char* StellarClass::str(char* buf, unsigned int buflen) const
+string StellarClass::str() const
 {
     StellarClass::StarType st = getStarType();
     char s0[3];
@@ -125,19 +122,7 @@ char* StellarClass::str(char* buf, unsigned int buflen) const
         strcpy(s0, "?");
     }
 
-    if (strlen(s0) + strlen(s1) + strlen(s2) >= buflen)
-        return nullptr;
-
-    sprintf(buf, "%s%s%s", s0, s1, s2);
-    return buf;
-}
-
-
-string StellarClass::str() const
-{
-    char buf[20];
-    str(buf, sizeof buf);
-    return string(buf);
+    return fmt::sprintf("%s%s%s", s0, s1, s2);
 }
 
 
@@ -186,11 +171,7 @@ StellarClass::unpack(uint16_t st)
 
 ostream& operator<<(ostream& os, const StellarClass& sc)
 {
-    char buf[20];
-    char *scString = sc.str(buf, sizeof buf);
-    assert(scString != nullptr);
-
-    os << scString;
+    os << sc.str();
 
     return os;
 }

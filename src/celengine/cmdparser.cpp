@@ -21,7 +21,6 @@
 #include <celestia/celx.h>
 #include <celestia/celx_internal.h>
 #include <algorithm>
-#include <cstdio>
 #include <Eigen/Geometry>
 
 // Older gcc versions used <strstream> instead of <sstream>.

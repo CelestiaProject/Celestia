@@ -15,6 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include <fmt/printf.h>
 
 using namespace std;
 
@@ -37,8 +38,8 @@ string TrajectoryInfo::resolve(const string& baseDir)
     // Ensure that trajectories with different interpolation or precision get resolved to different objects by
     // adding a 'uniquifying' suffix to the filename that encodes the properties other than filename which can
     // distinguish two trajectories. This suffix is stripped before the file is actually loaded.
-    char uniquifyingSuffix[32];
-    sprintf(uniquifyingSuffix, "%c%u%u", UniqueSuffixChar, (unsigned int) interpolation, (unsigned int) precision);
+    string uniquifyingSuffix;
+    uniquifyingSuffix = fmt::sprintf("%c%u%u", UniqueSuffixChar, (unsigned int) interpolation, (unsigned int) precision);
 
     if (!path.empty())
     {

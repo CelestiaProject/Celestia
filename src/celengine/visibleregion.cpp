@@ -18,7 +18,6 @@
 #include <celmath/intersect.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <cstdio>
 #include <cmath>
 
 using namespace Eigen;

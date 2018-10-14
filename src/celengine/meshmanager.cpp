@@ -35,7 +35,7 @@
 #include <fstream>
 #include <cassert>
 #include <utility>
-
+#include <fmt/printf.h>
 
 
 using namespace cmod;
@@ -85,8 +85,8 @@ string GeometryInfo::resolve(const string& baseDir)
     // Ensure that models with different centers get resolved to different objects by
     // adding a 'uniquifying' suffix to the filename that encodes the center value.
     // This suffix is stripped before the file is actually loaded.
-    char uniquifyingSuffix[128];
-    sprintf(uniquifyingSuffix, "%c%f,%f,%f,%f,%d", UniqueSuffixChar, center.x(), center.y(), center.z(), scale, (int) isNormalized);
+    string uniquifyingSuffix;
+    uniquifyingSuffix = fmt::sprintf("%c%f,%f,%f,%f,%d", UniqueSuffixChar, center.x(), center.y(), center.z(), scale, (int) isNormalized);
 
     if (!path.empty())
     {
@@ -109,7 +109,7 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
     string::size_type uniquifyingSuffixStart = resolvedFilename.rfind(UniqueSuffixChar);
     string filename(resolvedFilename, 0, uniquifyingSuffixStart);
 
-    clog << _("Loading model: ") << filename << '\n';
+    fmt::fprintf(clog, _("Loading model: %s\n"), filename);
     Model* model = nullptr;
     ContentType fileType = DetermineFileType(filename);
 
@@ -189,17 +189,18 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
         model->determineOpacity();
 
         // Display some statics for the model
-        clog << _("   Model statistics: ")
-             << model->getVertexCount() << _(" vertices, ")
-             << model->getPrimitiveCount() << _(" primitives, ")
-             << originalMaterialCount << _(" materials ")
-             << "(" << model->getMaterialCount() << _(" unique)\n");
+        fmt::fprintf(clog,
+                     _("   Model statistics: %u vertices, %u primitives, %u materials (%u unique)\n"),
+                     model->getVertexCount(),
+                     model->getPrimitiveCount(),
+                     originalMaterialCount,
+                     model->getMaterialCount());
 
         return new ModelGeometry(model);
     }
     else
     {
-        clog << _("Error loading model '") << filename << "'\n";
+        fmt::fprintf(clog, _("Error loading model '%s'\n"), filename);
         return nullptr;
     }
 }

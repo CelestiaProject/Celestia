@@ -11,8 +11,6 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
-#include <cstring>
-#include <cstdio>
 #include <ctime>
 #include <map>
 #include <celengine/astro.h>
@@ -26,6 +24,7 @@
 #endif
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
+#include <fmt/printf.h>
 #include "imagecapture.h"
 #include "url.h"
 
@@ -1038,11 +1037,10 @@ void Celx_DoError(lua_State* l, const char* errorMsg)
     lua_Debug debug;
     if (lua_getstack(l, 1, &debug))
     {
-        char buf[1024];
         if (lua_getinfo(l, "l", &debug))
         {
-            sprintf(buf, "In line %i: %s", debug.currentline, errorMsg);
-            lua_pushstring(l, buf);
+            string buf = fmt::sprintf("In line %i: %s", debug.currentline, errorMsg);
+            lua_pushstring(l, buf.c_str());
             lua_error(l);
         }
     }
@@ -3316,8 +3314,8 @@ static int celestia_takescreenshot(lua_State* l)
 
     luastate->screenshotCount++;
     bool success = false;
-    char filenamestem[48];
-    sprintf(filenamestem, "screenshot-%s%06i", fileid.c_str(), luastate->screenshotCount);
+    string filenamestem;
+    filenamestem = fmt::sprintf("screenshot-%s%06i", fileid, luastate->screenshotCount);
 
     // Get the dimensions of the current viewport
     GLint viewport[4];
@@ -3327,14 +3325,14 @@ static int celestia_takescreenshot(lua_State* l)
     if (strncmp(filetype, "jpg", 3) == 0)
     {
         string filepath = path + filenamestem + ".jpg";
-        success = CaptureGLBufferToJPEG(string(filepath),
+        success = CaptureGLBufferToJPEG(filepath,
                                        viewport[0], viewport[1],
                                        viewport[2], viewport[3]);
     }
     else
     {
         string filepath = path + filenamestem + ".png";
-        success = CaptureGLBufferToPNG(string(filepath),
+        success = CaptureGLBufferToPNG(filepath,
                                        viewport[0], viewport[1],
                                        viewport[2], viewport[3]);
     }

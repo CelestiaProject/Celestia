@@ -9,7 +9,6 @@
 
 #include <cstring>
 #include <cstdarg>
-#include <cstdio>
 #include <cassert>
 #include <algorithm>
 #include "celutil/utf8.h"
@@ -184,21 +183,6 @@ void Console::print(char* s)
         print(ch);
     }
 }
-
-
-#if 0
-void Console::printf(const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-
-    char buf[1024];
-    vsprintf(buf, format, args);
-    print(buf);
-
-    va_end(args);
-}
-#endif
 
 
 int Console::getRow() const

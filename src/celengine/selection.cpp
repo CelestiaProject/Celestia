@@ -8,7 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cstdio>
+#include <fmt/printf.h>
 #include <cassert>
 #include "astro.h"
 #include "selection.h"
@@ -112,16 +112,12 @@ string Selection::getName(bool i18n) const
     {
     case Type_Star:
         {
-            char buf[20];
-            sprintf(buf, "#%d", star()->getCatalogNumber());
-            return string(buf);
+            return fmt::sprintf("#%d", star()->getCatalogNumber());
         }
 
     case Type_DeepSky:
         {
-            char buf[20];
-            sprintf(buf, "#%d", deepsky()->getCatalogNumber());
-            return string(buf);
+            return fmt::sprintf("#%d", deepsky()->getCatalogNumber());
         }
 
     case Type_Body:
@@ -141,9 +137,9 @@ string Selection::getName(bool i18n) const
                     const Star* parentStar = system->getStar();
                     if (parentStar != nullptr)
                     {
-                        char buf[20];
-                        sprintf(buf, "#%d", parentStar->getCatalogNumber());
-                        name = string(buf) + '/' + name;
+                        string buf;
+                        buf = fmt::sprintf("#%d", parentStar->getCatalogNumber());
+                        name = buf + '/' + name;
                     }
                     system = nullptr;
                 }

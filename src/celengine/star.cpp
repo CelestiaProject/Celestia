@@ -9,9 +9,8 @@
 // of the License, or (at your option) any later version.
 
 #include <celmath/mathlib.h>
-#include <cstring>
 #include <cassert>
-#include <cstdio>
+#include <fmt/printf.h>
 #include "celestia.h"
 #include "astro.h"
 #include "star.h"
@@ -444,22 +443,22 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
     unsigned int index = subclass + (specClass + lumClass * StellarClass::Spectral_Count) * 11;
     if (normalStarDetails[index] == nullptr)
     {
-        char name[16];
+        string name;
         if ((lumClass == StellarClass::Lum_VI) &&
             (specClass >= StellarClass::Spectral_O) && (specClass <= StellarClass::Spectral_A))
         {
             // Hot subdwarfs are prefixed with "sd", while cool subdwarfs use
             // luminosity class VI, per recommendations in arXiv:0805.2567v1
-            sprintf(name, "sd%s%s",
-                    SpectralClassNames[specClass],
-                    SubclassNames[subclass]);
+            name = fmt::sprintf("sd%s%s",
+                                SpectralClassNames[specClass],
+                                SubclassNames[subclass]);
         }
         else
         {
-            sprintf(name, "%s%s%s",
-                    SpectralClassNames[specClass],
-                    SubclassNames[subclass],
-                    LumClassNames[lumClass]);
+            name = fmt::sprintf("%s%s%s",
+                                SpectralClassNames[specClass],
+                                SubclassNames[subclass],
+                                LumClassNames[lumClass]);
         }
 
         // Use the same properties for an unknown subclass as for subclass 5
@@ -656,10 +655,10 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
     unsigned int index = subclass + (scIndex * StellarClass::SubclassCount);
     if (whiteDwarfDetails[index] == nullptr)
     {
-        char name[16];
-        sprintf(name, "%s%s",
-                WDSpectralClassNames[scIndex],
-                SubclassNames[subclass]);
+        string name;
+        name = fmt::sprintf("%s%s",
+                            WDSpectralClassNames[scIndex],
+                            SubclassNames[subclass]);
 
         float temp;
         float bmagCorrection;

@@ -16,7 +16,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <cstdio>
+#include <fmt/printf.h>
 #include <cassert>
 #include <Eigen/Geometry>
 
@@ -323,32 +323,25 @@ ShaderManager::getShader(const ShaderProperties& props)
 static string
 LightProperty(unsigned int i, const char* property)
 {
-    char buf[64];
-
 #ifndef USE_GLSL_STRUCTS
-    sprintf(buf, "light%d_%s", i, property);
+    return fmt::sprintf("light%d_%s", i, property);
 #else
-    sprintf(buf, "lights[%d].%s", i, property);
+    return fmt::sprintf("lights[%d].%s", i, property);
 #endif
-    return string(buf);
 }
 
 
 static string
 FragLightProperty(unsigned int i, const char* property)
 {
-    char buf[64];
-    sprintf(buf, "light%s%d", property, i);
-    return string(buf);
+    return fmt::sprintf("light%s%d", property, i);
 }
 
 #if 0
 static string
 IndexedParameter(const char* name, unsigned int index)
 {
-    char buf[64];
-    sprintf(buf, "%s%d", name, index);
-    return string(buf);
+    return fmt::sprintf("%s%d", name, index);
 }
 #endif
 
@@ -385,17 +378,13 @@ ShaderTypeString(ShaderVariableType type)
 static string
 IndexedParameter(const char* name, unsigned int index0)
 {
-    char buf[64];
-    sprintf(buf, "%s%d", name, index0);
-    return string(buf);
+    return fmt::sprintf("%s%d", name, index0);
 }
 
 static string
 IndexedParameter(const char* name, unsigned int index0, unsigned int index1)
 {
-    char buf[64];
-    sprintf(buf, "%s%d_%d", name, index0, index1);
-    return string(buf);
+    return fmt::sprintf("%s%d_%d", name, index0, index1);
 }
 
 
@@ -440,9 +429,7 @@ public:
     Sh_ConstantExpression(float value) : m_value(value) {}
     string toString() const override
     {
-        char buf[32];
-        sprintf(buf, "%f", m_value);
-        return string(buf);
+        return fmt::sprintf("%f", m_value);
     }
 
     int precedence() const override { return 100; }
@@ -769,22 +756,22 @@ Sh_Expression sh_float(const string& name)
 
 Sh_Expression indexedUniform(const string& name, unsigned int index0)
 {
-    char buf[64];
-    sprintf(buf, "%s%u", name.c_str(), index0);
-    return new Sh_VariableExpression(string(buf));
+    string buf;
+    buf = fmt::sprintf("%s%u", name.c_str(), index0);
+    return new Sh_VariableExpression(buf);
 }
 
 Sh_Expression ringShadowTexCoord(unsigned int index)
 {
-    char buf[64];
-    sprintf(buf, "ringShadowTexCoord.%c", "xyzw"[index]);
-    return new Sh_VariableExpression(string(buf));
+    string buf;
+    buf = fmt::sprintf("ringShadowTexCoord.%c", "xyzw"[index]);
+    return new Sh_VariableExpression(buf);
 }
 
 Sh_Expression cloudShadowTexCoord(unsigned int index)
 {
-    char buf[64];
-    sprintf(buf, "cloudShadowTexCoord%d", index);
+    string buf;
+    buf = fmt::sprintf("cloudShadowTexCoord%d", index);
     return new Sh_VariableExpression(string(buf));
 }
 
@@ -838,18 +825,14 @@ string mulAssign(const string& variableName, const Sh_Expression& expr)
 static string
 RingShadowTexCoord(unsigned int index)
 {
-    char buf[64];
-    sprintf(buf, "ringShadowTexCoord.%c", "xyzw"[index]);
-    return string(buf);
+    return fmt::sprintf("ringShadowTexCoord.%c", "xyzw"[index]);
 }
 
 
 static string
 CloudShadowTexCoord(unsigned int index)
 {
-    char buf[64];
-    sprintf(buf, "cloudShadowTexCoord%d", index);
-    return string(buf);
+    return fmt::sprintf("cloudShadowTexCoord%d", index);
 }
 
 
@@ -931,9 +914,7 @@ static string
 SeparateDiffuse(unsigned int i)
 {
     // Used for packing multiple diffuse factors into the diffuse color.
-    char buf[32];
-    sprintf(buf, "diffFactors.%c", "xyzw"[i & 3]);
-    return string(buf);
+    return fmt::sprintf("diffFactors.%c", "xyzw"[i & 3]);
 }
 
 
@@ -941,9 +922,7 @@ static string
 SeparateSpecular(unsigned int i)
 {
     // Used for packing multiple specular factors into the specular color.
-    char buf[32];
-    sprintf(buf, "specFactors.%c", "xyzw"[i & 3]);
-    return string(buf);
+    return fmt::sprintf("specFactors.%c", "xyzw"[i & 3]);
 }
 
 
@@ -951,18 +930,14 @@ SeparateSpecular(unsigned int i)
 static string
 ShadowDepth(unsigned int i)
 {
-    char buf[32];
-    sprintf(buf, "shadowDepths.%c", "xyzw"[i & 3]);
-    return string(buf);
+    return fmt::sprintf("shadowDepths.%c", "xyzw"[i & 3]);
 }
 
 
 static string
 TexCoord2D(unsigned int i)
 {
-    char buf[64];
-    sprintf(buf, "gl_MultiTexCoord%d.st", i);
-    return string(buf);
+    return fmt::sprintf("gl_MultiTexCoord%d.st", i);
 }
 
 
@@ -970,27 +945,21 @@ TexCoord2D(unsigned int i)
 static string
 LightDir_tan(unsigned int i)
 {
-    char buf[32];
-    sprintf(buf, "lightDir_tan_%d", i);
-    return string(buf);
+    return fmt::sprintf("lightDir_tan_%d", i);
 }
 
 
 static string
 LightHalfVector(unsigned int i)
 {
-    char buf[32];
-    sprintf(buf, "lightHalfVec%d", i);
-    return string(buf);
+    return fmt::sprintf("lightHalfVec%d", i);
 }
 
 
 static string
 ScatteredColor(unsigned int i)
 {
-    char buf[32];
-    sprintf(buf, "scatteredColor%d", i);
-    return string(buf);
+    return fmt::sprintf("scatteredColor%d", i);
 }
 
 

@@ -26,8 +26,8 @@
 #include <cmath>
 #include <fstream>
 #include <algorithm>
-#include <cstdio>
 #include <cassert>
+#include <fmt/printf.h>
 #ifdef __CELVEC__
 #include "eigenport.h"
 #endif
@@ -236,6 +236,7 @@ float Globular::getConcentration() const
 {
     return c;
 }
+
 void Globular::setConcentration(const float conc)
 {
     c = conc;
@@ -248,12 +249,10 @@ void Globular::setConcentration(const float conc)
     recomputeTidalRadius();
 }
 
-
-size_t Globular::getDescription(char* buf, size_t bufLength) const
+string Globular::getDescription() const
 {
-    return snprintf(buf, bufLength, _("Globular (core radius: %4.2f', King concentration: %4.2f)"), r_c, c);
+   return fmt::sprintf(_("Globular (core radius: %4.2f', King concentration: %4.2f)"), r_c, c);
 }
-
 
 GlobularForm* Globular::getForm() const
 {
@@ -264,7 +263,6 @@ const char* Globular::getObjTypeName() const
 {
     return "globular";
 }
-
 
 static const float RADIUS_CORRECTION = 0.025f;
 bool Globular::pick(const Ray3d& ray,

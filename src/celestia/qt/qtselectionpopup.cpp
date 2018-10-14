@@ -15,6 +15,7 @@
 #include <celestia/celestiacore.h>
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
+#include <fmt/printf.h>
 #include "qtselectionpopup.h"
 #include "qtappwin.h"
 
@@ -99,29 +100,29 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         // Add some text items giving additional information about
         // the star.
         double distance = astro::kilometersToLightYears(v.norm());
-        char buff[50];
+        string buff;
 
         setlocale(LC_NUMERIC, "");
 
         if (abs(distance) >= astro::AUtoLightYears(1000.0f))
-            sprintf(buff, "%.3f %s", distance, ("ly"));
+            buff = fmt::sprintf("%.3f %s", distance, _("ly"));
         else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
-            sprintf(buff, "%.3f %s", astro::lightYearsToAU(distance), ("au"));
+            buff = fmt::sprintf("%.3f %s", astro::lightYearsToAU(distance), _("au"));
         else if (abs(distance) > astro::kilometersToLightYears(1.0f))
-            sprintf(buff, "%.3f km", astro::lightYearsToKilometers(distance));
+            buff = fmt::sprintf("%.3f km", astro::lightYearsToKilometers(distance));
         else
-            sprintf(buff, "%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
+            buff = fmt::sprintf("%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
 
-        addAction(italicTextItem(_("Distance: ") + QString::fromUtf8(buff)));
+        addAction(italicTextItem(_("Distance: ") + QString::fromUtf8(buff.c_str())));
 
-        sprintf(buff, "%.2f (%.2f)",
+        buff = fmt::sprintf("%.2f (%.2f)",
                 sel.star()->getAbsoluteMagnitude(),
                 astro::absToAppMag(sel.star()->getAbsoluteMagnitude(),
                                    (float) distance));
-        addAction(italicTextItem(_("Abs (app) mag: ") + QString::fromUtf8(buff)));
+        addAction(italicTextItem(_("Abs (app) mag: ") + QString::fromUtf8(buff.c_str())));
 
-        sprintf(buff, "%s", sel.star()->getSpectralType());
-        addAction(italicTextItem(_("Class: ") + QString::fromUtf8(buff)));
+        buff = fmt::sprintf("%s", sel.star()->getSpectralType());
+        addAction(italicTextItem(_("Class: ") + QString::fromUtf8(buff.c_str())));
 
         setlocale(LC_NUMERIC, "C");
     }

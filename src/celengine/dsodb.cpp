@@ -12,9 +12,9 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <cstdio>
 #include <cassert>
 #include <algorithm>
+#include <fmt/printf.h>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
 #include <celutil/bytes.h>
@@ -370,7 +370,7 @@ void DSODatabase::finish()
             DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
     }
     */
-    clog << _("Loaded ") << nDSOs << _(" deep space objects") << '\n';
+    fmt::fprintf(clog, _("Loaded %i deep space objects\n"), nDSOs);
 }
 
 

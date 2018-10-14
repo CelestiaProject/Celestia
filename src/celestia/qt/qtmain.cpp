@@ -28,6 +28,7 @@
 #include <vector>
 #include "qtappwin.h"
 #include <qtextcodec.h>
+#include <fmt/printf.h>
 
 #ifndef SPLASH_DIR
 #define SPLASH_DIR
@@ -184,10 +185,8 @@ bool ParseCommandLine()
         }
         else
         {
-            char* buf = new char[args.at(i).length() + 256];
-            sprintf(buf, "Invalid command line option '%s'", args.at(i).toUtf8().data());
-            CommandLineError(buf);
-            delete[] buf;
+            string buf = fmt::sprintf("Invalid command line option '%s'", args.at(i).toUtf8().data());
+            CommandLineError(buf.c_str());
             return false;
         }
 

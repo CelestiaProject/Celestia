@@ -16,6 +16,7 @@
 class FormattedNumber
 {
 public:
+    FormattedNumber() = default;
     FormattedNumber(double, unsigned int _precision, unsigned int _flags);
     double getValue() const;
     double getRoundedValue() const;

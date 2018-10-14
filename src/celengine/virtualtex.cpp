@@ -12,8 +12,8 @@
 #include <fstream>
 #include <cmath>
 #include <cassert>
-#include <cstdio>
 #include <utility>
+#include <fmt/printf.h>
 #include "celutil/debug.h"
 #include "celutil/directory.h"
 #include "celutil/filetype.h"
@@ -203,11 +203,10 @@ ImageTexture* VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, 
 
     assert(lod < (unsigned)MaxResolutionLevels);
 
-    char filename[64];
-    sprintf(filename, "level%d/%s%d_%d", lod, tilePrefix.c_str(), u, v);
+    string path;
+    path = fmt::sprintf("%slevel%d/%s%d_%d%s", tilePath, lod, tilePrefix.c_str(), u, v, tileExt);
 
-    string pathname = tilePath + filename + tileExt;
-    Image* img = LoadImageFromFile(pathname);
+    Image* img = LoadImageFromFile(path);
     if (img == nullptr)
         return nullptr;
 
@@ -258,11 +257,10 @@ void VirtualTexture::populateTileTree()
 
     for (int i = 0; i < MaxResolutionLevels; i++)
     {
-        char filename[32];
-        sprintf(filename, "level%d", i);
-        if (IsDirectory(tilePath + filename))
+        string path = fmt::sprintf("%slevel%d", tilePath, i);
+        if (IsDirectory(path))
         {
-            Directory* dir = OpenDirectory(tilePath + filename);
+            Directory* dir = OpenDirectory(path);
             if (dir)
             {
                 maxLevel = i + baseSplit;

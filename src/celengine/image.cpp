@@ -66,6 +66,7 @@ extern "C" {
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <fmt/printf.h>
 
 using namespace std;
 
@@ -368,7 +369,7 @@ Image* LoadImageFromFile(const string& filename)
     ContentType type = DetermineFileType(filename);
     Image* img = nullptr;
 
-    clog << _("Loading image from file ") << filename << '\n';
+    fmt::fprintf(clog, _("Loading image from file %s\n"), filename);
 
     switch (type)
     {
@@ -386,7 +387,7 @@ Image* LoadImageFromFile(const string& filename)
         img = LoadDDSImage(filename);
         break;
     default:
-        clog << filename << _(": unrecognized or unsupported image file type.\n");
+        fmt::printf(_("%s: unrecognized or unsupported image file type.\n"), filename);
         break;
     }
 
@@ -649,7 +650,7 @@ Image* LoadPNGImage(const string& filename)
     fp = fopen(filename.c_str(), "rb");
     if (fp == nullptr)
     {
-        clog << _("Error opening image file ") << filename << '\n';
+        fmt::fprintf(clog, _("Error opening image file %s\n"), filename);
         return nullptr;
     }
 
@@ -657,7 +658,7 @@ Image* LoadPNGImage(const string& filename)
     elements_read = fread(header, 1, sizeof(header), fp);
     if (elements_read == 0 || png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
     {
-        clog << _("Error: ") << filename << _(" is not a PNG file.\n");
+        fmt::fprintf(clog, _("Error: %s is not a PNG file.\n"), filename);
         fclose(fp);
         return nullptr;
     }
@@ -683,7 +684,7 @@ Image* LoadPNGImage(const string& filename)
         fclose(fp);
         delete img;
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) nullptr);
-        clog << _("Error reading PNG image file ") << filename << '\n';
+        fmt::fprintf(clog, _("Error reading PNG image file %s\n"), filename);
         return nullptr;
     }
 
@@ -851,7 +852,7 @@ static Image* LoadBMPImage(ifstream& in)
     unsigned char* palette = nullptr;
     if (imageHeader.bpp == 8)
     {
-        printf("Reading %d color palette\n", imageHeader.colorsUsed);
+        fmt::fprintf(cout, "Reading %d color palette\n", imageHeader.colorsUsed);
         palette = new unsigned char[imageHeader.colorsUsed * 4];
         in.read(reinterpret_cast<char*>(palette), imageHeader.colorsUsed * 4);
     }

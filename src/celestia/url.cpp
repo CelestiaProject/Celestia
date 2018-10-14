@@ -16,12 +16,11 @@
  ***************************************************************************/
 
 #include <string>
-#include <cstring>
-#include <cstdio>
 #include <cassert>
 #include <sstream>
 #include <iomanip>
 #include <utility>
+#include <fmt/printf.h>
 #include "celestiacore.h"
 #include "celutil/util.h"
 #include "celengine/astro.h"
@@ -309,13 +308,12 @@ Url::Url(CelestiaCore* core, UrlType type)
 
     double simTime = sim->getTime();
 
-    char date_str[50];
+    string date_str;
     date = astro::Date(simTime);
-    char buff[255];
 
     switch (type) {
     case Absolute:
-        snprintf(date_str, sizeof(date_str), "%04d-%02d-%02dT%02d:%02d:%08.5f",
+        date_str = fmt::sprintf("%04d-%02d-%02dT%02d:%02d:%08.5f",
             date.year, date.month, date.day, date.hour, date.minute, date.seconds);
 
         coord = sim->getObserver().getPosition();
@@ -324,13 +322,11 @@ Url::Url(CelestiaCore* core, UrlType type)
         urlStr += "&z=" +  coord.z.toString();
 
         orientation = sim->getObserver().getOrientationf();
-        sprintf(buff, "&ow=%f&ox=%f&oy=%f&oz=%f", orientation.w(), orientation.x(), orientation.y(), orientation.z());
-        urlStr += buff;
+        urlStr += fmt::sprintf("&ow=%f&ox=%f&oy=%f&oz=%f", orientation.w(), orientation.x(), orientation.y(), orientation.z());
         break;
     case Relative:
         sim->getSelectionLongLat(distance, longitude, latitude);
-        sprintf(buff, "dist=%f&long=%f&lat=%f", distance, longitude, latitude);
-        urlStr += std::string("/?") + buff;
+        urlStr += fmt::sprintf("/?dist=%f&long=%f&lat=%f", distance, longitude, latitude);
         break;
     case Settings:
         urlStr += std::string("/?");
@@ -352,23 +348,18 @@ Url::Url(CelestiaCore* core, UrlType type)
         timeScale = (float) sim->getTimeScale();
         pauseState = sim->getPauseState();
         lightTimeDelay = appCore->getLightDelayActive();
-        sprintf(buff, "&fov=%f&ts=%f&ltd=%c&p=%c&", fieldOfView,
-            timeScale, lightTimeDelay?'1':'0', pauseState?'1':'0');
-        urlStr += buff;
+        urlStr += fmt::sprintf("&fov=%f&ts=%f&ltd=%c&p=%c&", fieldOfView,
+                               timeScale, lightTimeDelay ? '1' : '0',
+                               pauseState ? '1' : '0');
     case Settings: // Intentional Fall-Through
         renderFlags = renderer->getRenderFlags();
         labelMode = renderer->getLabelMode();
-        sprintf(buff, "rf=%d&lm=%d", renderFlags, labelMode);
-        urlStr += buff;
+        urlStr += fmt::sprintf("rf=%d&lm=%d", renderFlags, labelMode);
         break;
     }
 
     // Append the Celestia URL version
-    {
-        char buf[32];
-        sprintf(buf, "&ver=%u", version);
-        urlStr += buf;
-    }
+    urlStr += fmt::sprintf("&ver=%u", version);
 
     evalName();
 }
@@ -426,9 +417,9 @@ Url::Url(const CelestiaState& appState, unsigned int _version, TimeSource _timeS
         }
     }
 
-    char date_str[50];
-    snprintf(date_str, sizeof(date_str), "%04d-%02d-%02dT%02d:%02d:%08.5f",
-             date.year, date.month, date.day, date.hour, date.minute, date.seconds);
+    string date_str;
+    date_str = fmt::sprintf("%04d-%02d-%02dT%02d:%02d:%08.5f",
+                            date.year, date.month, date.day, date.hour, date.minute, date.seconds);
     u << "/" << date_str;
 
     // observer position
@@ -614,7 +605,6 @@ std::string Url::getName() const
 
 void Url::evalName()
 {
-    char buff[50];
     double lo = longitude, la = latitude;
     char los = 'E';
     char las = 'N';
@@ -630,8 +620,7 @@ void Url::evalName()
         if (selectedStr != "") name = std::string(_(getBodyShortName(selectedStr).c_str())) + " ";
         if (lo < 0) { lo = -lo; los = 'W'; }
         if (la < 0) { la = -la; las = 'S'; }
-        sprintf(buff, "(%.1lf%c, %.1lf%c)", lo, los, la, las);
-        name += buff;
+        name += fmt::sprintf("(%.1lf%c, %.1lf%c)", lo, los, la, las);
         break;
     case Settings:
         name = _("Settings");

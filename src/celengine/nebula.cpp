@@ -18,7 +18,6 @@
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <algorithm>
-#include <cstdio>
 
 using namespace Eigen;
 using namespace std;
@@ -35,9 +34,9 @@ void Nebula::setType(const string& /*typeStr*/)
 }
 
 
-size_t Nebula::getDescription(char* buf, size_t bufLength) const
+string Nebula::getDescription() const
 {
-    return snprintf(buf, bufLength, _("Nebula"));
+    return _("Nebula");
 }
 
 

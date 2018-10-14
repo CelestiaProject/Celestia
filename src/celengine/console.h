@@ -59,9 +59,6 @@ class Console : public std::ostream
     void print(wchar_t);
     void print(char*);
     void newline();
-#if 0
-    void printf(const char*, ...);
-#endif
 
     int getRow() const;
     int getColumn() const;

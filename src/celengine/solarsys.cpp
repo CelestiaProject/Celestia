@@ -12,7 +12,6 @@
 
 #include <cassert>
 // #include <limits>
-#include <cstdio>
 
 #ifndef _WIN32
 #ifndef TARGET_OS_MAC
@@ -23,8 +22,8 @@
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
-#include <cstdio>
 #include <limits>
+#include <fmt/printf.h>
 #include "astro.h"
 #include "parser.h"
 #include "texmanager.h"
@@ -93,7 +92,7 @@ enum BodyType
 
 static void errorMessagePrelude(const Tokenizer& tok)
 {
-    cerr << _("Error in .ssc file (line ") << tok.getLineNumber() << "): ";
+    fmt::fprintf(cerr,_("Error in .ssc file (line %d): "), tok.getLineNumber());
 }
 
 static void sscError(const Tokenizer& tok,
@@ -1218,7 +1217,7 @@ bool LoadSolarSystemObjects(istream& in,
             else
             {
                 errorMessagePrelude(tokenizer);
-                cerr << _("parent body '") << parentName << _("' of '") << primaryName << _("' not found.") << endl;
+                fmt::fprintf(cerr, _("parent body '%s' of '%s' not found.\n"), parentName, primaryName);
             }
 
             if (parentSystem != nullptr)
@@ -1229,8 +1228,7 @@ bool LoadSolarSystemObjects(istream& in,
                     if (disposition == AddObject)
                     {
                         errorMessagePrelude(tokenizer);
-                        cerr << _("warning duplicate definition of ") <<
-                            parentName << " " <<  primaryName << '\n';
+                        fmt::fprintf(cerr, _("warning duplicate definition of %s %s\n"), parentName, primaryName);
                     }
                     else if (disposition == ReplaceObject)
                     {
@@ -1285,7 +1283,7 @@ bool LoadSolarSystemObjects(istream& in,
             else
             {
                 errorMessagePrelude(tokenizer);
-                cerr << _("parent body '") << parentName << _("' of '") << primaryName << _("' not found.\n");
+                fmt::fprintf(cerr, _("parent body '%s' of '%s' not found.\n"), parentName, primaryName);
             }
         }
         delete objectDataValue;

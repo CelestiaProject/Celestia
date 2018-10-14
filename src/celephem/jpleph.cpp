@@ -12,7 +12,6 @@
 
 #include <fstream>
 #include <iomanip>
-#include <cstdio>
 #include <cassert>
 #include <celutil/bytes.h>
 #include "jpleph.h"

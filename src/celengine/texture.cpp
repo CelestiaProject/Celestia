@@ -26,8 +26,8 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <cstdio>
 #include <cassert>
+#include <fmt/printf.h>
 
 #ifndef _WIN32
 #ifndef TARGET_OS_MAC
@@ -995,12 +995,12 @@ static Texture* CreateTextureFromImage(Image& img,
         // The texture is too large; we need to split it.
         int uSplit = max(1, img.getWidth() / maxDim);
         int vSplit = max(1, img.getHeight() / maxDim);
-        clog << _("Creating tiled texture. Width=") << img.getWidth() << _(", max=") << maxDim << "\n";
+        fmt::fprintf(clog, _("Creating tiled texture. Width=%i, max=%i\n"), img.getWidth(), maxDim);
         tex = new TiledTexture(img, uSplit, vSplit, mipMode);
     }
     else
     {
-        clog << _("Creating ordinary texture: ") << img.getWidth() << "x" << img.getHeight() << "\n";
+        fmt::fprintf(clog, _("Creating ordinary texture: %ix%i\n"), img.getWidth(), img.getHeight());
         // The image is small enough to fit in a single texture; or, splitting
         // was disallowed so we'll scale the large image down to fit in
         // an ordinary texture.

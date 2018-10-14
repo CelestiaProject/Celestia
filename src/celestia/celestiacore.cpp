@@ -37,7 +37,6 @@
 #include <celutil/utf8.h>
 #include <Eigen/Geometry>
 #include <GL/glew.h>
-#include <cstdio>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -52,6 +51,9 @@
 #ifdef CELX
 #include <celephem/scriptobject.h>
 #endif
+
+// TODO: proper gettext
+#define C_(a, b) (b)
 
 
 using namespace Eigen;
@@ -417,8 +419,8 @@ void showSelectionInfo(const Selection& sel)
 
     AngleAxisf aa(orientation);
 
-    cout << sel.getName() << '\n';
-    cout << _("Orientation: ") << '[' << aa.axis().x() << ',' << aa.axis().y() << ',' << aa.axis().z() << "], " << radToDeg(aa.angle()) << '\n';
+    fmt::printf(_("%s\nOrientation: [%d, %d, %d], %.1f\n"),
+                sel.getName(), aa.axis().x(), aa.axis().y(), aa.axis().z(), radToDeg(aa.angle()));
 }
 
 
@@ -473,9 +475,9 @@ void CelestiaCore::runScript(const string& filename)
             if (script == nullptr)
             {
                 const vector<string>* errors = parser.getErrors();
-                const char* errorMsg = "";
+                string errorMsg;
                 if (errors->size() > 0)
-                    errorMsg = (*errors)[0].c_str();
+                    errorMsg = (*errors)[0];
                 fatalError(errorMsg);
             }
             else
@@ -491,8 +493,8 @@ void CelestiaCore::runScript(const string& filename)
         ifstream scriptfile(localeFilename);
         if (!scriptfile.good())
         {
-            char errMsg[1024];
-            sprintf(errMsg, _("Error opening script '%s'"), localeFilename.c_str());
+            string errMsg;
+            errMsg = fmt::sprintf(_("Error opening script '%s'"), localeFilename);
             fatalError(errMsg);
         }
 
@@ -869,9 +871,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             if ((renderer->getRenderFlags() & Renderer::ShowAutoMag))
             {
                 setFaintestAutoMag();
-                char buf[128];
-                sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
-                flash(buf);
+                flash(fmt::sprintf(_("Magnitude limit: %.2f"), sim->getFaintestVisible()));
             }
         }
         else
@@ -1091,31 +1091,22 @@ void CelestiaCore::keyUp(int key, int)
 }
 
 #ifdef CELX
-static bool getKeyName(const char* c, int modifiers, char* keyName, unsigned int keyNameLength)
+static string getKeyName(const char* c, int modifiers)
 {
     unsigned int length = strlen(c);
 
     // Translate control characters
     if (length == 1 && c[0] >= '\001' && c[0] <= '\032')
     {
-        if (keyNameLength < 4)
-            return false;
-        sprintf(keyName, "C-%c", '\140' + c[0]);
-    }
-    else if (modifiers & CelestiaCore::ControlKey)
-    {
-        if (keyNameLength < length + 4)
-            return false;
-        sprintf(keyName, "C-%s", c);
-    }
-    else
-    {
-        if (keyNameLength < length + 1)
-            return false;
-        strcpy(keyName, c);
+        return fmt::sprintf("C-%c", '\140' + c[0]);
     }
 
-    return true;
+    if (modifiers & CelestiaCore::ControlKey)
+    {
+        return fmt::sprintf("C-%s", c);
+    }
+
+    return string(c);
 }
 #endif
 
@@ -1255,18 +1246,16 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     {
         if (c != '\033')
         {
-            char keyName[8];
-            getKeyName(c_p, modifiers, keyName, sizeof(keyName));
-            if (celxScript->handleKeyEvent(keyName))
+            string keyName = getKeyName(c_p, modifiers);
+            if (celxScript->handleKeyEvent(keyName.c_str()))
                 return;
         }
     }
 
     if (luaHook)
     {
-        char keyName[8];
-        getKeyName(c_p, modifiers, keyName, sizeof(keyName));
-        if (luaHook->callLuaHook(this, "charentered", keyName))
+        string keyName = getKeyName(c_p, modifiers);
+        if (luaHook->callLuaHook(this, "charentered", keyName.c_str()))
         {
             return;
         }
@@ -1598,12 +1587,12 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             Vector3d v = sim->getSelection().getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
             int hours, mins;
             float secs;
-            char buf[128];
+            string buf;
             if (v.norm() >= 86400.0 * astro::speedOfLight)
             {
                 // Light travel time in years, if >= 1day
-                sprintf(buf, _("Light travel time:  %.4f yr "), astro::kilometersToLightYears(v.norm()));
-                flash(buf, 2.0);
+                buf = fmt::sprintf(_("Light travel time:  %.4f yr"),
+                                   astro::kilometersToLightYears(v.norm()));
             }
             else
             {
@@ -1611,14 +1600,16 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 getLightTravelDelay(v.norm(), hours, mins, secs);
                 if (hours == 0)
                 {
-                    sprintf(buf, _("Light travel time:  %d min  %.1f s"), mins, secs);
+                    buf = fmt::sprintf(_("Light travel time:  %d min  %.1f s"),
+                                       mins, secs);
                 }
                 else
                 {
-                    sprintf(buf, _("Light travel time:  %d h  %d min  %.1f s"), hours, mins, secs);
+                    buf = fmt::sprintf(_("Light travel time:  %d h  %d min  %.1f s"),
+                                       hours, mins, secs);
                 }
-                flash(buf, 2.0);
             }
+            flash(buf, 2.0);
         }
         break;
 
@@ -1632,12 +1623,12 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             lightTravelFlag = !lightTravelFlag;
             if (lightTravelFlag)
             {
-                flash(_("Light travel delay included"),2.0);
+                flash(_("Light travel delay included"), 2.0);
                 setLightTravelDelay(v.norm());
             }
             else
             {
-                flash(_("Light travel delay switched off"),2.0);
+                flash(_("Light travel delay switched off"), 2.0);
                 setLightTravelDelay(-v.norm());
             }
         }
@@ -1656,9 +1647,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if((renderer->getRenderFlags() & Renderer::ShowAutoMag))
             {
                 setFaintestAutoMag();
-                char buf[128];
                 setlocale(LC_NUMERIC, "");
-                sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
+                string buf = fmt::sprintf(_("Magnitude limit: %.2f"), sim->getFaintestVisible());
                 setlocale(LC_NUMERIC, "C");
                 flash(buf);
             }
@@ -1674,9 +1664,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
             {
                 setFaintestAutoMag();
-                char buf[128];
                 setlocale(LC_NUMERIC, "");
-                sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
+                string buf = fmt::sprintf(_("Magnitude limit: %.2f"), sim->getFaintestVisible());
                 setlocale(LC_NUMERIC, "C");
                 flash(buf);
             }
@@ -1931,9 +1920,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             {
                 setFaintest(sim->getFaintestVisible() - 0.2f);
                 notifyWatchers(FaintestChanged);
-                char buf[128];
                 setlocale(LC_NUMERIC, "");
-                sprintf(buf, _("Magnitude limit: %.2f"),sim->getFaintestVisible());
+                string buf = fmt::sprintf(_("Magnitude limit:  %.2f"),
+                                          sim->getFaintestVisible());
                 setlocale(LC_NUMERIC, "C");
                 flash(buf);
             }
@@ -1942,9 +1931,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         {
             renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() - 0.1f);
             setFaintestAutoMag();
-            char buf[128];
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, _("Auto magnitude limit at 45 degrees:  %.2f"),renderer->getFaintestAM45deg());
+            string buf = fmt::sprintf(_("Auto magnitude limit at 45 degrees:  %.2f"),
+                                      renderer->getFaintestAM45deg());
             setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
@@ -1962,9 +1951,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             {
                 setFaintest(sim->getFaintestVisible() + 0.2f);
                 notifyWatchers(FaintestChanged);
-                char buf[128];
                 setlocale(LC_NUMERIC, "");
-                sprintf(buf, _("Magnitude limit: %.2f"),sim->getFaintestVisible());
+                string buf = fmt::sprintf(_("Magnitude limit:  %.2f"),
+                                          sim->getFaintestVisible());
                 setlocale(LC_NUMERIC, "C");
                 flash(buf);
             }
@@ -1973,9 +1962,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         {
             renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() + 0.1f);
             setFaintestAutoMag();
-            char buf[128];
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, _("Auto magnitude limit at 45 degrees:  %.2f"),renderer->getFaintestAM45deg());
+            string buf = fmt::sprintf(_("Auto magnitude limit at 45 degrees:  %.2f"),
+                                      renderer->getFaintestAM45deg());
             setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
@@ -1992,9 +1981,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             else
                 renderer->setAmbientLightLevel(0.0f);
             notifyWatchers(AmbientLightChanged);
-            char buf[128];
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, _("Ambient light level:  %.2f"),renderer->getAmbientLightLevel());
+            string buf = fmt::sprintf(_("Ambient light level:  %.2f"),
+                                      renderer->getAmbientLightLevel());
             setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
@@ -2007,9 +1996,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             else
                 renderer->setAmbientLightLevel(1.0f);
             notifyWatchers(AmbientLightChanged);
-            char buf[128];
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, _("Ambient light level:  %.2f"),renderer->getAmbientLightLevel());
+            string buf = fmt::sprintf(_("Ambient light level:  %.2f"),
+                                      renderer->getAmbientLightLevel());
             setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
@@ -2017,10 +2006,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '(':
         {
-            char buf[128];
             Galaxy::decreaseLightGain();
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, "%s:  %3.0f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
+            string buf = fmt::sprintf("%s:  %3.0f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
             setlocale(LC_NUMERIC, "C");
             flash(buf);
             notifyWatchers(GalaxyLightGainChanged);
@@ -2029,10 +2017,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case ')':
         {
-            char buf[128];
             Galaxy::increaseLightGain();
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, "%s:  %3.0f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
+            string buf = fmt::sprintf("%s:  %3.0f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
             setlocale(LC_NUMERIC, "C");
             flash(buf);
             notifyWatchers(GalaxyLightGainChanged);
@@ -2060,18 +2047,16 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '<':
         {
-            char buf[64];
             renderer->decreaseBrightness();
-            sprintf(buf, "%s:  %+3.2f", _("Exposure"), -renderer->getBrightness());
+            string buf = fmt::sprintf("%s:  %+3.2f", _("Exposure"), -renderer->getBrightness());
             flash(buf);
         }
         break;
 
     case '>':
         {
-            char buf[64];
             renderer->increaseBrightness();
-            sprintf(buf, "%s:  %+3.2f", _("Exposure"), -renderer->getBrightness());
+            string buf = fmt::sprintf("%s:  %+3.2f", _("Exposure"), -renderer->getBrightness());
             flash(buf);
         }
         break;
@@ -2766,18 +2751,18 @@ static FormattedNumber SigDigitNum(double v, int digits)
 }
 
 
-static void displayDistanceLy(Overlay& overlay, double distance)
+static string DistanceLyToStr(double distance)
 {
     const char* units = "";
 
     if (abs(distance) >= astro::parsecsToLightYears(1e+6))
     {
-        units = "Mpc";
+        units = _("Mpc");
         distance = astro::lightYearsToParsecs(distance) / 1e+6;
     }
     else if (abs(distance) >= 0.5 * astro::parsecsToLightYears(1e+3))
     {
-        units = "Kpc";
+        units = _("Kpc");
         distance = astro::lightYearsToParsecs(distance) / 1e+3;
     }
     else if (abs(distance) >= astro::AUtoLightYears(1000.0f))
@@ -2791,42 +2776,65 @@ static void displayDistanceLy(Overlay& overlay, double distance)
     }
     else if (abs(distance) > astro::kilometersToLightYears(1.0f))
     {
-        units = "km";
+        units = _("km");
         distance = astro::lightYearsToKilometers(distance);
     }
     else
     {
-        units = "m";
+        units = _("m");
         distance = astro::lightYearsToKilometers(distance) * 1000.0f;
     }
 
-    overlay << SigDigitNum(distance, 5) << ' ' << units;
+    return fmt::sprintf("%s %s", SigDigitNum(distance, 5), units);
 }
 
 
-static void displayDistanceKm(Overlay& overlay, double distance)
+static string DistanceKmToStr(double distance)
 {
-    displayDistanceLy(overlay, astro::kilometersToLightYears(distance));
+    return DistanceLyToStr(astro::kilometersToLightYears(distance));
 }
 
 
-static void displayDuration(Overlay& overlay, double days)
+static void displayRotationPeriod(Overlay& overlay, double days)
 {
+    FormattedNumber n;
+    const char *p;
+
     if (days > 1.0)
-        overlay << FormattedNumber(days, 3, FormattedNumber::GroupThousands) << _(" days");
+        n = FormattedNumber(days, 3, FormattedNumber::GroupThousands), p = _(" days");
     else if (days > 1.0 / 24.0)
-        overlay << FormattedNumber(days * 24.0, 3, FormattedNumber::GroupThousands) << _(" hours");
+        n = FormattedNumber(days * 24.0, 3, FormattedNumber::GroupThousands), p = _(" hours");
     else if (days > 1.0 / (24.0 * 60.0))
-        overlay << FormattedNumber(days * 24.0 * 60.0, 3, FormattedNumber::GroupThousands) << _(" minutes");
+        n = FormattedNumber(days * 24.0 * 60.0, 3, FormattedNumber::GroupThousands), p = _(" minutes");
     else
-        overlay << FormattedNumber(days * 24.0 * 60.0 * 60.0, 3, FormattedNumber::GroupThousands) << _(" seconds");
+        n = FormattedNumber(days * 24.0 * 60.0 * 60.0, 3, FormattedNumber::GroupThousands), p = _(" seconds");
+
+    fmt::fprintf(overlay, _("Rotation period: %s %s\n"), n, p);
 }
 
+static void displaySpeed(Overlay& overlay, float speed)
+{
+    FormattedNumber n;
+    const char *u;
+
+    if (speed < 1.0f)
+        n = SigDigitNum(speed * 1000.0f, 3), u = _("m/s");
+    else if (speed < 10000.0f)
+        n = SigDigitNum(speed, 3), u = _("km/s");
+    else if (speed < (float) astro::speedOfLight * 100.0f)
+        n = SigDigitNum(speed / astro::speedOfLight, 3), u = "c";
+    else if (speed < astro::AUtoKilometers(1000.0f))
+        n = SigDigitNum(astro::kilometersToAU(speed), 3), u = _("AU/s");
+    else
+        n = SigDigitNum(astro::kilometersToLightYears(speed), 3), u = _("ly/s");
+
+    fmt::fprintf(overlay, _("Speed: %s %s\n"), n, u);
+}
 
 // Display a positive angle as degrees, minutes, and seconds. If the angle is less than one
 // degree, only minutes and seconds are shown; if the angle is less than one minute, only
 // seconds are displayed.
-static void displayAngle(Overlay& overlay, double angle)
+static string angleToStr(double angle)
 {
     int degrees, minutes;
     double seconds;
@@ -2834,17 +2842,18 @@ static void displayAngle(Overlay& overlay, double angle)
 
     if (degrees > 0)
     {
-        overlay.oprintf("%d%s %02d' %.1f\"",
-                        degrees, UTF8_DEGREE_SIGN, abs(minutes), abs(seconds));
+        return fmt::sprintf("%d%s %02d' %.1f\"",
+                            degrees, UTF8_DEGREE_SIGN,
+                            abs(minutes), abs(seconds));
     }
-    else if (minutes > 0)
+
+    if (minutes > 0)
     {
-        overlay.oprintf("%02d' %.1f\"", abs(minutes), abs(seconds));
+        return fmt::sprintf("%02d' %.1f\"",
+                            abs(minutes), abs(seconds));
     }
-    else
-    {
-        overlay.oprintf("%.2f\"", abs(seconds));
-    }
+
+    return fmt::sprintf("%.2f\"", abs(seconds));
 }
 
 static void displayDeclination(Overlay& overlay, double angle)
@@ -2853,12 +2862,11 @@ static void displayDeclination(Overlay& overlay, double angle)
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
-    char sign = '+';
-    if (angle < 0.0)
-        sign = '-';
+    const char sign = angle < 0.0 ? '-' : '+';
 
-    overlay.oprintf("%c%d%s %02d' %.1f\"",
-                    sign, abs(degrees), UTF8_DEGREE_SIGN, abs(minutes), abs(seconds));
+    fmt::fprintf(overlay, "Dec: %c%d%s %02d' %.1f\"\n",
+                          sign, abs(degrees), UTF8_DEGREE_SIGN,
+                          abs(minutes), abs(seconds));
 }
 
 
@@ -2868,8 +2876,8 @@ static void displayRightAscension(Overlay& overlay, double angle)
     double seconds;
     astro::decimalToHourMinSec(angle, hours, minutes, seconds);
 
-    overlay.oprintf("%dh %02dm %.1fs",
-                        hours, abs(minutes), abs(seconds));
+    fmt::fprintf(overlay, "RA: %dh %02dm %.1fs\n",
+                          hours, abs(minutes), abs(seconds));
 }
 
 static void displayApparentDiameter(Overlay& overlay,
@@ -2884,9 +2892,8 @@ static void displayApparentDiameter(Overlay& overlay,
         // than one second--otherwise, it's probably not interesting data.
         if (arcSize < 160.0 && arcSize > 1.0 / 3600.0)
         {
-            overlay << _("Apparent diameter: ");
-            displayAngle(overlay, arcSize);
-            overlay << '\n';
+            fmt::fprintf(overlay, _("Apparent diameter: %s\n"),
+                                 angleToStr(arcSize));
         }
     }
 }
@@ -2895,18 +2902,15 @@ static void displayApparentMagnitude(Overlay& overlay,
                                      float absMag,
                                      double distance)
 {
-    float appMag = absMag;
     if (distance > 32.6167)
     {
-        appMag = astro::absToAppMag(absMag, (float) distance);
-        overlay << _("Apparent magnitude: ");
+        float appMag = astro::absToAppMag(absMag, (float) distance);
+        fmt::fprintf(overlay, _("Apparent magnitude: %.1f\n"), appMag);
     }
     else
     {
-        overlay << _("Absolute magnitude: ");
+        fmt::fprintf(overlay, _("Absolute magnitude: %.1f\n"), absMag);
     }
-
-    overlay.oprintf("%.1f\n", appMag);
 }
 
 
@@ -2922,16 +2926,9 @@ static void displayRADec(Overlay& overlay, const Vector3d& v)
     else
         theta = -PI / 2 - theta;
 
-    double ra = radToDeg(phi);
-    double dec = radToDeg(theta);
 
-    overlay << _("RA: ");
-    overlay << " ";
-    displayRightAscension(overlay, ra);
-    overlay << endl;
-    overlay << _("Dec: ");
-    displayDeclination(overlay, dec);
-    overlay << endl;
+    displayRightAscension(overlay, radToDeg(phi));
+    displayDeclination(overlay, radToDeg(theta));
 }
 
 
@@ -2989,12 +2986,10 @@ static void displayPlanetocentricCoords(Overlay& overlay,
         lat = abs(radToDeg(latitude));
     }
 
-    overlay.unsetf(ios::fixed);
-    overlay << setprecision(6);
-    overlay << lat << nsHemi << ' ' << lon << ewHemi;
     if (showAltitude)
-        overlay << ' ' << altitude << _("km") << endl;
-    overlay << endl;
+        fmt::fprintf(overlay, "%.6f%c %.6f%c", lat, nsHemi, lon, ewHemi);
+    else
+        fmt::fprintf(overlay, _("%.6f%c %.6f%c %f km"), lat, nsHemi, lon, ewHemi, altitude);
 }
 
 
@@ -3020,9 +3015,7 @@ static void displayStarInfo(Overlay& overlay,
                             const Universe& universe,
                             double distance)
 {
-    overlay << _("Distance: ");
-    displayDistanceLy(overlay, distance);
-    overlay << '\n';
+    fmt::fprintf(overlay, _("Distance: %s\n"), DistanceLyToStr(distance));
 
     if (!star.getVisibility())
     {
@@ -3030,50 +3023,53 @@ static void displayStarInfo(Overlay& overlay,
     }
     else
     {
-        overlay.oprintf(_("Abs (app) mag: %.2f (%.2f)\n"),
-                       star.getAbsoluteMagnitude(),
-                       astro::absToAppMag(star.getAbsoluteMagnitude(),
-                                          (float) distance));
+        fmt::fprintf(overlay, _("Abs (app) mag: %.2f (%.2f)\n"),
+                                star.getAbsoluteMagnitude(),
+                                astro::absToAppMag(star.getAbsoluteMagnitude(),
+                                                   float(distance)));
 
         if (star.getLuminosity() > 1.0e-10f)
-            overlay << _("Luminosity: ") << SigDigitNum(star.getLuminosity(), 3) << _("x Sun") << "\n";
-        overlay << _("Class: ");
-        if (star.getSpectralType()[0] == 'Q')
-            overlay << _("Neutron star");
-        else if (star.getSpectralType()[0] == 'X')
-            overlay << _("Black hole");
-        else
-            overlay << star.getSpectralType();
-        overlay << '\n';
+            fmt::fprintf(overlay, _("Luminosity: %sx Sun\n"), SigDigitNum(star.getLuminosity(), 3));
+
+        const char* star_class;
+        switch (star.getSpectralType()[0])
+        {
+        case 'Q':
+            star_class = _("Neutron star");
+            break;
+        case 'X':
+            star_class = _("Black hole");
+            break;
+        default:
+            star_class = star.getSpectralType();
+        };
+        fmt::fprintf(overlay, _("Class: %s\n"), star_class);
 
         displayApparentDiameter(overlay, star.getRadius(),
                                 astro::lightYearsToKilometers(distance));
 
         if (detail > 1)
         {
-            overlay << _("Surface temp: ") << SigDigitNum(star.getTemperature(), 3) << " K\n";
+            fmt::fprintf(overlay, _("Surface temp: %s K\n"), SigDigitNum(star.getTemperature(), 3));
             float solarRadii = star.getRadius() / 6.96e5f;
 
-            overlay << _("Radius: ");
             if (solarRadii > 0.01f)
             {
-                overlay << SigDigitNum(star.getRadius() / 696000.0f, 2) << " " << _("Rsun")
-                        << "  (" << SigDigitNum(star.getRadius(), 3) << " km" << ")\n";
+                fmt::fprintf(overlay, _("Radius: %s Rsun  (%s km)\n"),
+                             SigDigitNum(star.getRadius() / 696000.0f, 2),
+                             SigDigitNum(star.getRadius(), 3));
             }
             else
             {
-                overlay << SigDigitNum(star.getRadius(), 3) << " km\n";
+                fmt::fprintf(overlay, _("Radius: %s km\n"),
+                             SigDigitNum(star.getRadius(), 3));
             }
 
             if (star.getRotationModel()->isPeriodic())
             {
-                overlay << _("Rotation period: ");
                 float period = (float) star.getRotationModel()->getPeriod();
-                displayDuration(overlay, period);
-                overlay << '\n';
+                displayRotationPeriod(overlay, period);
             }
-
-
         }
     }
 
@@ -3088,24 +3084,20 @@ static void displayStarInfo(Overlay& overlay,
 
 static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double distance)
 {
-    char descBuf[128];
+    overlay << dso.getDescription() << '\n';
 
-    dso.getDescription(descBuf, sizeof(descBuf));
-    overlay << descBuf << '\n';
     if (distance >= 0)
     {
-        overlay << _("Distance: ");
-        displayDistanceLy(overlay, distance);
+        fmt::fprintf(overlay, _("Distance: %s\n"),
+                     DistanceLyToStr(distance));
     }
     else
     {
-        overlay << _("Distance from center: ");
-        displayDistanceLy(overlay, distance + dso.getRadius());
+        fmt::fprintf(overlay, _("Distance from center: %s\n"),
+                     DistanceLyToStr(distance + dso.getRadius()));
      }
-    overlay << '\n';
-    overlay << _("Radius: ");
-    displayDistanceLy(overlay, dso.getRadius());
-    overlay << '\n';
+    fmt::fprintf(overlay, _("Radius: %s\n"),
+                 DistanceLyToStr(dso.getRadius()));
 
     displayApparentDiameter(overlay, dso.getRadius(), distance);
     if (dso.getAbsoluteMagnitude() > DSO_DEFAULT_ABS_MAGNITUDE)
@@ -3124,19 +3116,15 @@ static void displayPlanetInfo(Overlay& overlay,
                               double distanceKm,
                               const Vector3d& viewVec)
 {
-    overlay << _("Distance: ");
     double distance = distanceKm - body.getRadius();
-    displayDistanceKm(overlay, distance);
-    overlay << '\n';
+    fmt::fprintf(overlay, _("Distance: %s\n"), DistanceKmToStr(distance));
 
     if (body.getClassification() == Body::Invisible)
     {
         return;
     }
 
-    overlay << _("Radius: ");
-    displayDistanceKm(overlay, body.getRadius());
-    overlay << '\n';
+    fmt::fprintf(overlay, _("Radius: %s\n"), DistanceKmToStr(body.getRadius()));
 
     displayApparentDiameter(overlay, body.getRadius(), distanceKm);
 
@@ -3177,7 +3165,7 @@ static void displayPlanetInfo(Overlay& overlay,
             sunVec.normalize();
             double cosPhaseAngle = sunVec.dot(viewVec.normalized());
             double phaseAngle = acos(cosPhaseAngle);
-            overlay.oprintf(_("Phase angle: %.1f%s\n"), radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
+            fmt::fprintf(overlay, _("Phase angle: %.1f%s\n"), radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
         }
     }
 
@@ -3185,9 +3173,7 @@ static void displayPlanetInfo(Overlay& overlay,
     {
         if (body.getRotationModel(t)->isPeriodic())
         {
-            overlay << _("Rotation period: ");
-            displayDuration(overlay, body.getRotationModel(t)->getPeriod());
-            overlay << '\n';
+            displayRotationPeriod(overlay, body.getRotationModel(t)->getPeriod());
         }
 
 /*
@@ -3204,9 +3190,7 @@ static void displayPlanetInfo(Overlay& overlay,
                 float planetTemp = sun->getTemperature() *
                     (float) (::pow(1.0 - body.getAlbedo(), 0.25) *
                              sqrt(sun->getRadius() / (2.0 * distFromSun)));
-                overlay << setprecision(0);
-                overlay << _("Temperature: ") << planetTemp << " K\n";
-                overlay << setprecision(3);
+                fmt::fprintf(overlay,_("Temperature: %.0f K\n"), planetTemp);
             }
         }
 */
@@ -3219,9 +3203,7 @@ static void displayLocationInfo(Overlay& overlay,
                                 Location& location,
                                 double distanceKm)
 {
-    overlay << _("Distance: ");
-    displayDistanceKm(overlay, distanceKm);
-    overlay << '\n';
+    fmt::fprintf(overlay, _("Distance: %s\n"), DistanceKmToStr(distanceKm));
 
     Body* body = location.getParentBody();
     if (body != nullptr)
@@ -3233,7 +3215,24 @@ static void displayLocationInfo(Overlay& overlay,
     }
 }
 
+static string getSelectionName(const Selection& sel, const Universe& univ)
+{
+    switch (sel.getType())
+    {
+    case Selection::Type_Body:
+        return sel.body()->getName(false);
+    case Selection::Type_DeepSky:
+        return univ.getDSOCatalog()->getDSOName(sel.deepsky(), false);
+    case Selection::Type_Star:
+        return ReplaceGreekLetterAbbr(univ.getStarCatalog()->getStarName(*sel.star(), true));
+    case Selection::Type_Location:
+        return sel.location()->getName(false);
+    default:
+        return "";
+    }
+}
 
+#if 0
 static void displaySelectionName(Overlay& overlay,
                                  const Selection& sel,
                                  const Universe& univ)
@@ -3241,7 +3240,7 @@ static void displaySelectionName(Overlay& overlay,
     switch (sel.getType())
     {
     case Selection::Type_Body:
-        overlay << sel.body()->getName(true).c_str();
+        overlay << sel.body()->getName(true);
         break;
     case Selection::Type_DeepSky:
         overlay << univ.getDSOCatalog()->getDSOName(sel.deepsky(), true);
@@ -3251,12 +3250,13 @@ static void displaySelectionName(Overlay& overlay,
         overlay << ReplaceGreekLetterAbbr(univ.getStarCatalog()->getStarName(*sel.star(), true));
         break;
     case Selection::Type_Location:
-        overlay << sel.location()->getName(true).c_str();
+        overlay << sel.location()->getName(true);
         break;
     default:
         break;
     }
 }
+#endif
 
 
 static void showViewFrame(const View* v, int width, int height)
@@ -3481,25 +3481,17 @@ void CelestiaCore::renderOverlay()
         overlay->beginText();
         *overlay << '\n';
         if (showFPSCounter)
-            *overlay << _("FPS: ") << SigDigitNum(fps, 3);
-        overlay->setf(ios::fixed);
-        *overlay << _("\nSpeed: ");
-
-        double speed = sim->getObserver().getVelocity().norm();
-        if (speed < 1.0f)
-            *overlay << SigDigitNum(speed * 1000.0f, 3) << _(" m/s");
-        else if (speed < 10000.0f)
-            *overlay << SigDigitNum(speed, 3) << _(" km/s");
-        else if (speed < (float) astro::speedOfLight * 100.0f)
-            *overlay << SigDigitNum(speed / astro::speedOfLight, 3) << 'c';
-        else if (speed < astro::AUtoKilometers(1000.0f))
-            *overlay << SigDigitNum(astro::kilometersToAU(speed), 3) << _(" AU/s");
+            fmt::fprintf(*overlay, _("FPS: %.1f\n"), fps);
         else
-            *overlay << SigDigitNum(astro::kilometersToLightYears(speed), 3) << _(" ly/s");
+            *overlay << '\n';
+
+        displaySpeed(*overlay, sim->getObserver().getVelocity().norm());
 
         overlay->endText();
         glPopMatrix();
     }
+
+    Universe *u = sim->getUniverse();
 
     if (hudDetail > 0 && (overlayElements & ShowFrame))
     {
@@ -3512,11 +3504,12 @@ void CelestiaCore::renderOverlay()
 
         if (sim->getObserverMode() == Observer::Travelling)
         {
-            *overlay << _("Travelling ");
             double timeLeft = sim->getArrivalTime() - sim->getRealTime();
             if (timeLeft >= 1)
-                *overlay << '(' << FormattedNumber(timeLeft, 0, FormattedNumber::GroupThousands) << ')';
-            *overlay << '\n';
+                fmt::fprintf(*overlay, _("Travelling (%s)\n"),
+                             FormattedNumber(timeLeft, 0, FormattedNumber::GroupThousands));
+            else
+                fmt::fprintf(*overlay, _("Travelling\n"));
         }
         else
         {
@@ -3525,11 +3518,13 @@ void CelestiaCore::renderOverlay()
 
         if (!sim->getTrackedObject().empty())
         {
-            *overlay << _("Track ");
-            displaySelectionName(*overlay, sim->getTrackedObject(),
-                                 *sim->getUniverse());
+            fmt::fprintf(*overlay, _("Track %s\n"),
+                         C_("Track", getSelectionName(sim->getTrackedObject(), *u)));
         }
-        *overlay << '\n';
+        else
+        {
+            *overlay << '\n';
+        }
 
         {
             //FrameOfReference frame = sim->getFrame();
@@ -3539,45 +3534,36 @@ void CelestiaCore::renderOverlay()
             switch (coordSys)
             {
             case ObserverFrame::Ecliptical:
-                *overlay << _("Follow ");
-                displaySelectionName(*overlay, refObject,
-                                     *sim->getUniverse());
+                fmt::fprintf(*overlay, _("Follow %s\n"),
+                             C_("Follow", getSelectionName(refObject, *u)));
                 break;
             case ObserverFrame::BodyFixed:
-                *overlay << _("Sync Orbit ");
-                displaySelectionName(*overlay, refObject,
-                                     *sim->getUniverse());
+                fmt::fprintf(*overlay, _("Sync Orbit %s\n"),
+                             C_("Sync", getSelectionName(refObject, *u)));
                 break;
             case ObserverFrame::PhaseLock:
-                *overlay << _("Lock ");
-                displaySelectionName(*overlay, refObject,
-                                     *sim->getUniverse());
-                *overlay << " -> ";
-                displaySelectionName(*overlay, sim->getFrame()->getTargetObject(),
-                                     *sim->getUniverse());
+                fmt::fprintf(*overlay, _("Lock %s -> %s\n"),
+                             C_("Lock", getSelectionName(refObject, *u)),
+                             C_("LockTo", getSelectionName(sim->getFrame()->getTargetObject(), *u)));
                 break;
 
             case ObserverFrame::Chase:
-                *overlay << _("Chase ");
-                displaySelectionName(*overlay, refObject,
-                                     *sim->getUniverse());
+                fmt::fprintf(*overlay, _("Chase %s\n"),
+                             C_("Chase", getSelectionName(refObject, *u)));
                 break;
 
             default:
+                *overlay << '\n';
                 break;
             }
-
-            *overlay << '\n';
         }
 
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
 
         // Field of view
         float fov = radToDeg(sim->getActiveObserver()->getFOV());
-        *overlay << _("FOV: ");
-        displayAngle(*overlay, fov);
-        overlay->oprintf(" (%.2f%s)\n", (*activeView)->zoom,
-                        UTF8_MULTIPLICATION_SIGN);
+        fmt::fprintf(*overlay, _("FOV: %s (%.2fx)\n"),
+                              angleToStr(fov), (*activeView)->zoom);
         overlay->endText();
         glPopMatrix();
     }
@@ -3846,7 +3832,7 @@ void CelestiaCore::renderOverlay()
         glColor4f(textColor.red(), textColor.green(), textColor.blue(), alpha);
         glTranslatef((float) x, (float) y, 0.0f);
         overlay->beginText();
-        *overlay << messageText.c_str();
+        *overlay << messageText;
         overlay->endText();
         glPopMatrix();
         overlay->setFont(font);
@@ -3865,12 +3851,10 @@ void CelestiaCore::renderOverlay()
         glTranslatef((float) ((width - movieWidth) / 2),
                      (float) ((height + movieHeight) / 2 + 2), 0.0f);
         overlay->beginText();
-        *overlay << movieWidth << 'x' << movieHeight << _(" at ") <<
-            movieCapture->getFrameRate() << _(" fps");
-        if (recording)
-            *overlay << _("  Recording");
-        else
-            *overlay << _("  Paused");
+        fmt::fprintf(*overlay, _("%dx%d at %f fps  %s"),
+                              movieWidth, movieHeight,
+                              movieCapture->getFrameRate(),
+                              recording ? _("Recording") : _("Paused"));
 
         overlay->endText();
         glPopMatrix();
@@ -3884,7 +3868,7 @@ void CelestiaCore::renderOverlay()
         auto min = (int) (sec / 60);
         sec -= min * 60.0f;
         overlay->beginText();
-        overlay->oprintf("%3d:%05.2f", min, sec);
+        fmt::fprintf(*overlay, "%3d:%05.2f", min, sec);
         overlay->endText();
         glPopMatrix();
 
@@ -3972,7 +3956,7 @@ class SolarSystemLoader : public EnumFilesHandler
         if (DetermineFileType(filename) == Content_CelestiaCatalog)
         {
             string fullname = getPath() + '/' + filename;
-            clog << _("Loading solar system catalog: ") << fullname << '\n';
+            fmt::fprintf(clog, _("Loading solar system catalog: %s\n"), fullname);
             if (notifier != nullptr)
                 notifier->update(filename);
 
@@ -4013,7 +3997,7 @@ public:
         if (DetermineFileType(filename) == contentType)
         {
             string fullname = getPath() + '/' + filename;
-            clog << _("Loading ") << typeDesc << " catalog: " << fullname << '\n';
+            fmt::fprintf(clog, _("Loading %s catalog: %s\n"), typeDesc, fullname);
             if (notifier)
                 notifier->update(filename);
 
@@ -4147,13 +4131,13 @@ bool CelestiaCore::initSimulation(const string* configFileName,
         ifstream dsoFile(file, ios::in);
         if (!dsoFile.good())
         {
-            cerr<< _("Error opening deepsky catalog file.") << '\n';
+            cerr << _("Error opening deepsky catalog file.\n");
             delete dsoDB;
             return false;
         }
         if (!dsoDB->load(dsoFile, ""))
         {
-            cerr << "Cannot read Deep Sky Objects database." << '\n';
+            cerr << _("Cannot read Deep Sky Objects database.\n");
             delete dsoDB;
             return false;
         }
@@ -4305,7 +4289,7 @@ bool CelestiaCore::initRenderer()
     context->init(config->ignoreGLExtensions);
     // Choose the render path, starting with the least desirable
     context->setRenderPath(GLContext::GLPath_GLSL);
-    cout << _("render path: ") << context->getRenderPath() << '\n';
+    fmt::printf(_("render path: %i\n"), context->getRenderPath());
 
     Renderer::DetailOptions detailOptions;
     detailOptions.ringSystemSections = config->ringSystemSections;
@@ -4389,9 +4373,9 @@ static void loadCrossIndex(StarDatabase* starDB,
         if (xrefFile.good())
         {
             if (!starDB->loadCrossIndex(catalog, xrefFile))
-                cerr << _("Error reading cross index ") << filename << '\n';
+                fmt::fprintf(cerr, _("Error reading cross index %s\n"), filename);
             else
-                clog << _("Loaded cross index ") << filename << '\n';
+                fmt::fprintf(clog, _("Loaded cross index %s\n"), filename);
         }
     }
 }
@@ -4405,7 +4389,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     ifstream starNamesFile(cfg.starNamesFile, ios::in);
     if (!starNamesFile.good())
     {
-        cerr << _("Error opening ") << cfg.starNamesFile << '\n';
+        fmt::fprintf(cerr, _("Error opening %s\n"), cfg.starNamesFile);
         return false;
     }
 
@@ -4427,7 +4411,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         ifstream starFile(cfg.starDatabaseFile, ios::in | ios::binary);
         if (!starFile.good())
         {
-            cerr << _("Error opening ") << cfg.starDatabaseFile << '\n';
+            fmt::fprintf(cerr, _("Error opening %s\n"), cfg.starDatabaseFile);
             delete starDB;
             delete starNameDB;
             return false;
@@ -4463,7 +4447,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
                 }
                 else
                 {
-                    cerr << _("Error opening star catalog ") << file << '\n';
+                    fmt::fprintf(cerr, _("Error opening star catalog %s\n"), file);
                 }
             }
         }
@@ -4993,8 +4977,8 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
         ifstream scriptfile(filename);
         if (!scriptfile.good())
         {
-            char errMsg[1024];
-            sprintf(errMsg, "Error opening LuaHook '%s'",  filename.c_str());
+            string errMsg;
+            errMsg = fmt::sprintf(_("Error opening LuaHook '%s'"),  filename);
             fatalError(errMsg);
         }
 
@@ -5010,10 +4994,10 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
 
     if (status != 0)
     {
-        cout << "lua hook load failed\n";
+        cerr << "lua hook load failed\n";
         string errMsg = luaHook->getErrorMessage();
         if (errMsg.empty())
-            errMsg = "Unknown error loading hook script";
+            errMsg = _("Unknown error loading hook script");
         fatalError(errMsg);
         delete luaHook;
         luaHook = nullptr;
@@ -5024,8 +5008,8 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
         // script and Celestia's event loop
         if (!luaHook->createThread())
         {
-            const char* errMsg = "Script coroutine initialization failed";
-            cout << "hook thread failed\n";
+            cerr << "hook thread failed\n";
+            string errMsg = _("Script coroutine initialization failed");
             fatalError(errMsg);
             delete luaHook;
             luaHook = nullptr;

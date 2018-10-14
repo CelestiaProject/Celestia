@@ -9,7 +9,6 @@
 
 #include <cstring>
 #include <cstdarg>
-#include <cstdio>
 #include <celutil/utf8.h>
 #include <GL/glew.h>
 #include "vecgl.h"
@@ -161,20 +160,6 @@ void Overlay::print(const char* s)
         print(ch);
     }
 }
-
-
-void Overlay::oprintf(const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-
-    char buf[1024];
-    vsprintf(buf, format, args);
-    print(buf);
-
-    va_end(args);
-}
-
 
 void Overlay::rect(float x, float y, float w, float h, bool fill)
 {

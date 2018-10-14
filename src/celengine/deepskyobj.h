@@ -47,7 +47,7 @@ class DeepSkyObject
 
     virtual const char* getType() const = 0;
     virtual void setType(const std::string&) = 0;
-    virtual size_t getDescription(char* buf, size_t bufLength) const;
+    virtual std::string getDescription() const;
 
     Eigen::Quaternionf getOrientation() const;
     void setOrientation(const Eigen::Quaternionf&);

@@ -48,7 +48,7 @@ class Globular : public DeepSkyObject
     Globular();
     virtual const char* getType() const;
     virtual void setType(const std::string&);
-    virtual size_t getDescription(char* buf, size_t bufLength) const;
+    virtual std::string getDescription() const;
     virtual std::string getCustomTmpName() const;
     virtual void setCustomTmpName(const std::string&);
     float getDetail() const;

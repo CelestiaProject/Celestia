@@ -17,7 +17,6 @@
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <algorithm>
-#include <cstdio>
 
 using namespace Eigen;
 using namespace std;
@@ -34,10 +33,12 @@ void OpenCluster::setType(const std::string& /*typeStr*/)
 }
 
 
-size_t OpenCluster::getDescription(char* buf, size_t bufLength) const
+string OpenCluster::getDescription() const
 {
-    return snprintf(buf, bufLength, _("Open cluster"));
+    return _("Open cluster");
 }
+
+
 
 const char* OpenCluster::getObjTypeName() const
 {

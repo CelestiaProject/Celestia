@@ -73,7 +73,6 @@ std::ofstream hdrlog;
 #include <celengine/curveplot.h>
 #include <GL/glew.h>
 #include <algorithm>
-#include <cstdio>
 #include <cstring>
 #include <cassert>
 #include <sstream>
