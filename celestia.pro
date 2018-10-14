@@ -168,6 +168,7 @@ ENGINE_SOURCES = \
     src/celengine/command.cpp \
     src/celengine/console.cpp \
     src/celengine/constellation.cpp \
+    src/celengine/curveplot.cpp \
     src/celengine/dds.cpp \
     src/celengine/deepskyobj.cpp \
     src/celengine/dispmap.cpp \
@@ -236,6 +237,7 @@ ENGINE_HEADERS = \
     src/celengine/command.h \
     src/celengine/console.h \
     src/celengine/constellation.h \
+    src/celengine/curveplot.h \
     src/celengine/deepskyobj.h \
     src/celengine/dispmap.h \
     src/celengine/dsodb.h \
@@ -406,14 +408,8 @@ GLEW_HEADERS = \
     thirdparty/glew/include/GL/glxew.h \
     thirdparty/glew/include/GL/wglew.h
 
-CURVEPLOT_SOURCES = \
-    thirdparty/curveplot/src/curveplot.cpp
-
-CURVEPLOT_HEADERS = \
-    thirdparty/curveplot/include/curveplot.h
-
-THIRDPARTY_SOURCES = $$CURVEPLOT_SOURCES
-THIRDPARTY_HEADERS = $$CURVEPLOT_HEADERS
+THIRDPARTY_SOURCES =
+THIRDPARTY_HEADERS =
 
 !config_glew {
     THIRDPARTY_SOURCES += $$GLEW_SOURCES
@@ -481,8 +477,6 @@ INCLUDEPATH += src
 !config_eigen {
     INCLUDEPATH += thirdparty/Eigen
 }
-
-INCLUDEPATH += thirdparty/curveplot/include
 
 
 CATALOG_SOURCE = data

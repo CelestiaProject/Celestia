@@ -70,7 +70,7 @@ std::ofstream hdrlog;
 #include <celutil/utf8.h>
 #include <celutil/util.h>
 #include <celutil/timer.h>
-#include <curveplot.h>
+#include <celengine/curveplot.h>
 #include <GL/glew.h>
 #include <algorithm>
 #include <cstdio>
