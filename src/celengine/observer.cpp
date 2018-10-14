@@ -880,15 +880,12 @@ void Observer::setFrame(const ObserverFrame& f)
     {
         auto* newFrame = new ObserverFrame(f);
 
-        if (newFrame != nullptr)
+        if (frame != nullptr)
         {
-            if (frame != nullptr)
-            {
-                convertFrameCoordinates(newFrame);
-                delete frame;
-            }
-            frame = newFrame;
+            convertFrameCoordinates(newFrame);
+            delete frame;
         }
+        frame = newFrame;
     }
 }
 
