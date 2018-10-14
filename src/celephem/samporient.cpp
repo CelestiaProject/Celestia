@@ -86,7 +86,7 @@ public:
     /*! The orientation of a sampled rotation model is entirely due
      *  to spin (i.e. there's no notion of an equatorial frame.)
      */
-    virtual Eigen::Quaterniond spin(double tjd) const;
+    Eigen::Quaterniond spin(double tjd) const override;
 
     bool isPeriodic() const override;
     double getPeriod() const override;

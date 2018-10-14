@@ -386,7 +386,7 @@ class MercuryOrbit : public CachingOrbit
  public:
     ~MercuryOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     const int p = 0;  //Planet 0
     vector<int> pList;
@@ -451,7 +451,7 @@ class VenusOrbit : public CachingOrbit
  public:
     ~VenusOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     const int p = 1;  //Planet 1
     vector<int> pList;
@@ -524,7 +524,7 @@ class EarthOrbit : public CachingOrbit
  public:
     ~EarthOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         double t, t2;
         double ls, ms;    // mean longitude and mean anomaly
@@ -592,7 +592,7 @@ class LunarOrbit : public CachingOrbit
  public:
     ~LunarOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         double jd19, t, t2;
         double ld, ms, md, de, f, n, hp;
@@ -763,7 +763,7 @@ class MarsOrbit : public CachingOrbit
  public:
     ~MarsOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     const int p = 2;  //Planet 2
     vector<int> pList;
@@ -847,7 +847,7 @@ class JupiterOrbit : public CachingOrbit
  public:
     ~JupiterOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     const int p = 3;  //Planet 3
     vector<int> pList(1, p);
@@ -958,7 +958,7 @@ class SaturnOrbit : public CachingOrbit
  public:
     ~SaturnOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     const int p = 4;  //Planet 4
     vector<int> pList(1, p);
@@ -1096,7 +1096,7 @@ class UranusOrbit : public CachingOrbit
  public:
     ~UranusOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     const int p = 5;  //Planet 5
     vector<int> pList(1, p);
@@ -1189,7 +1189,7 @@ class NeptuneOrbit : public CachingOrbit
  public:
     ~NeptuneOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     const int p = 6;  //Planet 6
     vector<int> pList(1, p);
@@ -1272,7 +1272,7 @@ class PlutoOrbit : public CachingOrbit
  public:
     ~PlutoOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     const int p = 7;  //Planet 7
     vector<int> pList(1, p);
@@ -1336,7 +1336,7 @@ class PhobosOrbit : public CachingOrbit
  public:
     ~PhobosOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         double epoch = 2433283.0 - 0.5; // 00:00 1 Jan 1950
         double a     = 9380.0;
@@ -1405,7 +1405,7 @@ class DeimosOrbit : public CachingOrbit
  public:
     ~DeimosOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         double epoch = 2433283.0 - 0.5;
         double a     = 23460.0;
@@ -1547,7 +1547,7 @@ class IoOrbit : public CachingOrbit
  public:
     ~IoOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
     double t;
@@ -1628,7 +1628,7 @@ class EuropaOrbit : public CachingOrbit
  public:
     ~EuropaOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     // Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
     double t;
@@ -1720,7 +1720,7 @@ class GanymedeOrbit : public CachingOrbit
  public:
     ~GanymedeOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
     double t;
@@ -1815,7 +1815,7 @@ class CallistoOrbit : public CachingOrbit
  public:
     ~CallistoOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
     //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
     double t;
@@ -2050,7 +2050,7 @@ class MimasOrbit : public CachingOrbit
  public:
     ~MimasOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2092,7 +2092,7 @@ class EnceladusOrbit : public CachingOrbit
  public:
     ~EnceladusOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2133,7 +2133,7 @@ class TethysOrbit : public CachingOrbit
  public:
     ~TethysOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2170,7 +2170,7 @@ class DioneOrbit : public CachingOrbit
  public:
     ~DioneOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2212,7 +2212,7 @@ class RheaOrbit : public CachingOrbit
  public:
     ~RheaOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2261,7 +2261,7 @@ class TitanOrbit : public CachingOrbit
  public:
     ~TitanOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2329,7 +2329,7 @@ class HyperionOrbit : public CachingOrbit
  public:
     ~HyperionOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2412,7 +2412,7 @@ class IapetusOrbit : public CachingOrbit
  public:
     ~IapetusOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2504,7 +2504,7 @@ class PhoebeOrbit : public CachingOrbit
  public:
     ~PhoebeOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         double t = jd - 2433282.5;
         double T = t / 365.25;
@@ -2582,7 +2582,7 @@ class UranianSatelliteOrbit : public CachingOrbit
         return a * BoundingRadiusSlack;
     }
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         double t = jd - 2444239.5;
         int i;
@@ -2734,7 +2734,7 @@ class TritonOrbit : public CachingOrbit
  public:
     ~TritonOrbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         double epoch = 2433282.5;
         double t = jd - epoch;
@@ -2995,7 +2995,7 @@ class HTC20Orbit : public CachingOrbit
 
     ~HTC20Orbit() override = default;
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         double t = jd - astro::J2000 - (4156.0 / 86400.0);
         Vector3d pos(0.0, 0.0, 0.0);
@@ -3079,7 +3079,7 @@ class JPLEphOrbit : public CachingOrbit
         return boundingRadius;
     }
 
-    Vector3d computePosition(double tjd) const
+    Vector3d computePosition(double tjd) const override
     {
         // Get the position relative to the Earth (for the Moon) or
         // the solar system barycenter.

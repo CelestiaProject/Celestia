@@ -65,10 +65,12 @@ static void InitializeForms();
 static GlobularForm* buildGlobularForms(float /*c*/);
 static bool formsInitialized = false;
 
+#if 0
 static bool decreasing (const GBlob& b1, const GBlob& b2)
 {
     return (b1.radius_2d > b2.radius_2d);
 }
+#endif
 
 static void GlobularTextureEval(float u, float v, float /*w*/, unsigned char *pixel)
 {

@@ -138,6 +138,7 @@ static inline Matrix4d cubicHermiteCoefficients(const Vector4d& p0,
 // Test a point to see if it lies within the frustum defined by
 // planes z=nearZ, z=farZ, and the four side planes with specified
 // normals.
+#if 0
 static inline bool frustumCull(const Vector4d& curvePoint,
                                double curveBoundingRadius,
                                double nearZ, double farZ,
@@ -150,6 +151,7 @@ static inline bool frustumCull(const Vector4d& curvePoint,
             curvePoint.dot(viewFrustumPlaneNormals[2]) < -curveBoundingRadius ||
             curvePoint.dot(viewFrustumPlaneNormals[3]) < -curveBoundingRadius);
 }
+#endif
 
 
 class HighPrec_VertexBuffer

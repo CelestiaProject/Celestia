@@ -1209,7 +1209,7 @@ AsciiModelLoader::loadMesh()
             if (!tok.nextToken().isInteger())
             {
                 reportError("Incomplete index list in primitive group");
-                delete indices;
+                delete[] indices;
                 delete mesh;
                 return nullptr;
             }
@@ -1218,7 +1218,7 @@ AsciiModelLoader::loadMesh()
             if (index >= vertexCount)
             {
                 reportError("Index out of range");
-                delete indices;
+                delete[] indices;
                 delete mesh;
                 return nullptr;
             }

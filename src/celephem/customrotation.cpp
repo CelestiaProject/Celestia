@@ -55,7 +55,7 @@ public:
     bool isPeriodic() const override { return true; }
     double getPeriod() const override { return period; }
 
-    virtual Quaterniond computeSpin(double t) const
+    Quaterniond computeSpin(double t) const override
     {
         // Time argument of IAU rotation models is actually day since J2000.0 TT, but
         // Celestia uses TDB. The difference should be so minute as to be irrelevant.
@@ -66,7 +66,7 @@ public:
             return YRotation(-degToRad(180.0 + meridian(t)));
     }
 
-    virtual Quaterniond computeEquatorOrientation(double t) const
+    Quaterniond computeEquatorOrientation(double t) const override
     {
         double poleRA = 0.0;
         double poleDec = 0.0;
@@ -117,7 +117,7 @@ public:
 
     ~EarthRotationModel() override = default;
 
-    Quaterniond computeSpin(double tjd) const
+    Quaterniond computeSpin(double tjd) const override
     {
         // TODO: Use a more accurate model for sidereal time
         double t = tjd - astro::J2000;
@@ -126,7 +126,7 @@ public:
         return YRotation(-theta);
     }
 
-    Quaterniond computeEquatorOrientation(double tjd) const
+    Quaterniond computeEquatorOrientation(double tjd) const override
     {
         double T = (tjd - astro::J2000) / 36525.0;
 

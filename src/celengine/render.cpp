@@ -104,8 +104,6 @@ static const float PLANETSHINE_PIXEL_SIZE_LIMIT      =   0.1f;
 // Distance from the Sun at which comet tails will start to fade out
 static const float COMET_TAIL_ATTEN_DIST_SOL = astro::AUtoKilometers(5.0f);
 
-static const int StarVertexListSize = 1024;
-
 // Fractional pixel offset used when rendering text as texture mapped
 // quads to ensure consistent mapping of texels to pixels.
 static const float PixelOffset = 0.125f;
@@ -169,11 +167,6 @@ static Texture* glareTex = nullptr;
 static Texture* shadowTex = nullptr;
 static Texture* gaussianDiscTex = nullptr;
 static Texture* gaussianGlareTex = nullptr;
-
-// Shadow textures are scaled down slightly to leave some extra blank pixels
-// near the border.  This keeps axis aligned streaks from appearing on hardware
-// that doesn't support clamp to border color.
-static const float ShadowTextureScale = 15.0f / 16.0f;
 
 static Texture* eclipseShadowTextures[4];
 static Texture* shadowMaskTexture = nullptr;

@@ -47,7 +47,7 @@ static string SAOCatalogPrefix("SAO ");
 static const float STAR_OCTREE_ROOT_SIZE  = 10000000.0f;
 
 static const float STAR_OCTREE_MAGNITUDE  = 6.0f;
-static const float STAR_EXTRA_ROOM        = 0.01f; // Reserve 1% capacity for extra stars
+//static const float STAR_EXTRA_ROOM        = 0.01f; // Reserve 1% capacity for extra stars
 
 const char* StarDatabase::FILE_HEADER            = "CELSTARS";
 const char* StarDatabase::CROSSINDEX_FILE_HEADER = "CELINDEX";

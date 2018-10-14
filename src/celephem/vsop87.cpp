@@ -11048,7 +11048,7 @@ class VSOP87Orbit : public CachingOrbit
         return boundingRadius;
     }
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         // t is Julian millenia since J2000.0
         double t = (jd - 2451545.0) / 365250.0;
@@ -11163,7 +11163,7 @@ class VSOP87OrbitRect : public CachingOrbit
         return boundingRadius;
     }
 
-    Vector3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const override
     {
         // t is Julian millenia since J2000.0
         double t = (jd - 2451545.0) / 365250.0;

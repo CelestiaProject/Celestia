@@ -64,9 +64,7 @@ static const int DragThreshold = 3;
 // Perhaps you'll want to put this stuff in configuration file.
 static const double CoarseTimeScaleFactor = 10.0;
 static const double FineTimeScaleFactor = 2.0;
-static const double fMinSlewRate = 3.0;
 static const double fMaxKeyAccel = 20.0;
-static const float fAltitudeThreshold = 4.0f;
 static const float RotationBraking = 10.0f;
 static const float RotationDecay = 2.0f;
 static const double MaximumTimeRate = 1.0e15;

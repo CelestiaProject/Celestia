@@ -595,6 +595,7 @@ int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n)
 }
 
 
+#if 0
 //! Currently incomplete, but could be a helpful class for dealing with
 //! UTF-8 streams
 class UTF8StringIterator
@@ -622,6 +623,7 @@ UTF8StringIterator& UTF8StringIterator::operator++(int)
 {
     return *this;
 }
+#endif
 
 
 static const char *greekAlphabet[] =

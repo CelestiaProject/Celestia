@@ -29,9 +29,9 @@ using namespace std;
 // Trajectories are sampled adaptively for rendering.  MaxSampleInterval
 // is the maximum time (in days) between samples.  The threshold angle
 // is the maximum angle allowed between path segments.
-static const double MinSampleInterval = 1.0 / 1440.0; // one minute
-static const double MaxSampleInterval = 50.0;
-static const double SampleThresholdAngle = 2.0;
+//static const double MinSampleInterval = 1.0 / 1440.0; // one minute
+//static const double MaxSampleInterval = 50.0;
+//static const double SampleThresholdAngle = 2.0;
 
 // Position-only sample
 template <typename T> struct Sample
@@ -71,8 +71,8 @@ public:
 
     double getPeriod() const override;
     double getBoundingRadius() const override;
-    Vector3d computePosition(double jd) const;
-    Vector3d computeVelocity(double jd) const;
+    Vector3d computePosition(double jd) const override;
+    Vector3d computeVelocity(double jd) const override;
 
     bool isPeriodic() const override;
     void getValidRange(double& begin, double& end) const override;
@@ -436,8 +436,8 @@ public:
 
     double getPeriod() const override;
     double getBoundingRadius() const override;
-    Vector3d computePosition(double jd) const;
-    Vector3d computeVelocity(double jd) const;
+    Vector3d computePosition(double jd) const override;
+    Vector3d computeVelocity(double jd) const override;
 
     bool isPeriodic() const override;
     void getValidRange(double& begin, double& end) const override;

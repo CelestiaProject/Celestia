@@ -410,7 +410,7 @@ void Observer::update(double dt, double timeScale)
                 Selection centerObj = frame->getRefObject();
 
                 UniversalCoord ufrom = frame->convertToUniversal(journey.from, simTime);
-                UniversalCoord uto   = frame->convertToUniversal(journey.to, simTime);
+                //UniversalCoord uto   = frame->convertToUniversal(journey.to, simTime);
                 UniversalCoord origin = centerObj.getPosition(simTime);
 
                 Vector3d v0 = ufrom.offsetFromKm(origin);
