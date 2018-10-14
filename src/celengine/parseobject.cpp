@@ -324,6 +324,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
 }
 
 
+#ifdef USE_SPICE
 /**
  * Parse a string list--either a single string or an array of strings is permitted.
  */
@@ -366,8 +367,6 @@ ParseStringList(Hash* table,
     }
 }
 
-
-#ifdef USE_SPICE
 
 /*! Create a new SPICE orbit. This is just a Celestia wrapper for a trajectory specified
  *  in a SPICE SPK file.
