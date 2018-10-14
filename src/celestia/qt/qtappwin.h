@@ -37,7 +37,7 @@ class CelestiaAppWindow : public QMainWindow
  Q_OBJECT
 
  public:
-    CelestiaAppWindow( QWidget* parent = 0 );
+    CelestiaAppWindow(QWidget* parent = nullptr);
     ~CelestiaAppWindow();
 
     void init(const QString& configFileName,

@@ -47,73 +47,73 @@ Q_OBJECT
     QAction* createCheckableAction(const QString& text, int data);
 
  public:
-    QAction* equatorialGridAction;
-    QAction* galacticGridAction;
-    QAction* eclipticGridAction;
-    QAction* horizonGridAction;
-    QAction* eclipticAction;
-    QAction* markersAction;
-    QAction* constellationsAction;
-    QAction* boundariesAction;
-    QAction* orbitsAction;
-    QAction* starsAction;
-    QAction* planetsAction;
-    QAction* galaxiesAction;
-    QAction* globularsAction;
-    QAction* openClustersAction;
-    QAction* nebulaeAction;
+    QAction* equatorialGridAction{ nullptr };
+    QAction* galacticGridAction{ nullptr };
+    QAction* eclipticGridAction{ nullptr };
+    QAction* horizonGridAction{ nullptr };
+    QAction* eclipticAction{ nullptr };
+    QAction* markersAction{ nullptr };
+    QAction* constellationsAction{ nullptr };
+    QAction* boundariesAction{ nullptr };
+    QAction* orbitsAction{ nullptr };
+    QAction* starsAction{ nullptr };
+    QAction* planetsAction{ nullptr };
+    QAction* galaxiesAction{ nullptr };
+    QAction* globularsAction{ nullptr };
+    QAction* openClustersAction{ nullptr };
+    QAction* nebulaeAction{ nullptr };
 
-    QAction* labelGalaxiesAction;
-    QAction* labelGlobularsAction;
-    QAction* labelOpenClustersAction;
-    QAction* labelNebulaeAction;
-    QAction* labelStarsAction;
-    QAction* labelPlanetsAction;
-    QAction* labelDwarfPlanetsAction;
-    QAction* labelMoonsAction;
-    QAction* labelMinorMoonsAction;
-    QAction* labelAsteroidsAction;
-    QAction* labelCometsAction;
-    QAction* labelSpacecraftAction;
-    QAction* labelLocationsAction;
-    QAction* labelConstellationsAction;
+    QAction* labelGalaxiesAction{ nullptr };
+    QAction* labelGlobularsAction{ nullptr };
+    QAction* labelOpenClustersAction{ nullptr };
+    QAction* labelNebulaeAction{ nullptr };
+    QAction* labelStarsAction{ nullptr };
+    QAction* labelPlanetsAction{ nullptr };
+    QAction* labelDwarfPlanetsAction{ nullptr };
+    QAction* labelMoonsAction{ nullptr };
+    QAction* labelMinorMoonsAction{ nullptr };
+    QAction* labelAsteroidsAction{ nullptr };
+    QAction* labelCometsAction{ nullptr };
+    QAction* labelSpacecraftAction{ nullptr };
+    QAction* labelLocationsAction{ nullptr };
+    QAction* labelConstellationsAction{ nullptr };
 
-    QAction* starOrbitsAction;
-    QAction* planetOrbitsAction;
-    QAction* dwarfPlanetOrbitsAction;
-    QAction* moonOrbitsAction;
-    QAction* minorMoonOrbitsAction;
-    QAction* asteroidOrbitsAction;
-    QAction* cometOrbitsAction;
-    QAction* spacecraftOrbitsAction;
+    QAction* starOrbitsAction{ nullptr };
+    QAction* planetOrbitsAction{ nullptr };
+    QAction* dwarfPlanetOrbitsAction{ nullptr };
+    QAction* moonOrbitsAction{ nullptr };
+    QAction* minorMoonOrbitsAction{ nullptr };
+    QAction* asteroidOrbitsAction{ nullptr };
+    QAction* cometOrbitsAction{ nullptr };
+    QAction* spacecraftOrbitsAction{ nullptr };
 
-    QAction* labelsAction;
+    QAction* labelsAction{ nullptr };
 
-    QAction* cloudsAction;
-    QAction* cometTailsAction;
-    QAction* atmospheresAction;
-    QAction* nightSideLightsAction;
-    QAction* ringShadowsAction;
-    QAction* eclipseShadowsAction;
-    QAction* cloudShadowsAction;
+    QAction* cloudsAction{ nullptr };
+    QAction* cometTailsAction{ nullptr };
+    QAction* atmospheresAction{ nullptr };
+    QAction* nightSideLightsAction{ nullptr };
+    QAction* ringShadowsAction{ nullptr };
+    QAction* eclipseShadowsAction{ nullptr };
+    QAction* cloudShadowsAction{ nullptr };
 
-    QAction* lightTimeDelayAction;
+    QAction* lightTimeDelayAction{ nullptr };
 
-    QAction* verbosityLowAction;
-    QAction* verbosityMediumAction;
-    QAction* verbosityHighAction;
+    QAction* verbosityLowAction{ nullptr };
+    QAction* verbosityMediumAction{ nullptr };
+    QAction* verbosityHighAction{ nullptr };
 
-    QAction* lowResAction;
-    QAction* mediumResAction;
-    QAction* highResAction;
+    QAction* lowResAction{ nullptr };
+    QAction* mediumResAction{ nullptr };
+    QAction* highResAction{ nullptr };
 
-    QAction* pointStarAction;
-    QAction* fuzzyPointStarAction;
-    QAction* scaledDiscStarAction;
+    QAction* pointStarAction{ nullptr };
+    QAction* fuzzyPointStarAction{ nullptr };
+    QAction* scaledDiscStarAction{ nullptr };
 
-    QAction* autoMagAction;
-    QAction* increaseLimitingMagAction;
-    QAction* decreaseLimitingMagAction;
+    QAction* autoMagAction{ nullptr };
+    QAction* increaseLimitingMagAction{ nullptr };
+    QAction* decreaseLimitingMagAction{ nullptr };
 
  private:
     CelestiaCore* appCore;

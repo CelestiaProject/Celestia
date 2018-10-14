@@ -19,47 +19,6 @@
 CelestiaActions::CelestiaActions(QObject* parent,
                                  CelestiaCore* _appCore) :
     QObject(parent),
-
-    equatorialGridAction(nullptr),
-    galacticGridAction(nullptr),
-    eclipticGridAction(nullptr),
-    horizonGridAction(nullptr),
-    eclipticAction(nullptr),
-    markersAction(nullptr),
-    constellationsAction(nullptr),
-    boundariesAction(nullptr),
-    orbitsAction(nullptr),
-
-    galaxiesAction(nullptr),
-    globularsAction(nullptr),
-    openClustersAction(nullptr),
-    nebulaeAction(nullptr),
-
-    labelGalaxiesAction(nullptr),
-    labelGlobularsAction(nullptr),
-    labelOpenClustersAction(nullptr),
-    labelNebulaeAction(nullptr),
-    labelStarsAction(nullptr),
-    labelPlanetsAction(nullptr),
-    labelDwarfPlanetsAction(nullptr),
-    labelMoonsAction(nullptr),
-    labelMinorMoonsAction(nullptr),
-    labelAsteroidsAction(nullptr),
-    labelCometsAction(nullptr),
-    labelSpacecraftAction(nullptr),
-    labelLocationsAction(nullptr),
-
-    starOrbitsAction(nullptr),
-    planetOrbitsAction(nullptr),
-    dwarfPlanetOrbitsAction(nullptr),
-    moonOrbitsAction(nullptr),
-    minorMoonOrbitsAction(nullptr),
-    asteroidOrbitsAction(nullptr),
-    cometOrbitsAction(nullptr),
-    spacecraftOrbitsAction(nullptr),
-
-    labelsAction(nullptr),
-
     appCore(_appCore)
 {
     // Create the render flags actions
@@ -108,35 +67,35 @@ CelestiaActions::CelestiaActions(QObject* parent,
     orbitsAction->setCheckable(true);
     orbitsAction->setData(Renderer::ShowOrbits);
 
-    connect(equatorialGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(galacticGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(eclipticGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(horizonGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(eclipticAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(markersAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(constellationsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(boundariesAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(orbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(equatorialGridAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(galacticGridAction,     SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(eclipticGridAction,     SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(horizonGridAction,      SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(eclipticAction,         SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(markersAction,          SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(constellationsAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(boundariesAction,       SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(orbitsAction,           SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
     // Orbit actions
     QMenu* orbitsMenu = new QMenu();
-    starOrbitsAction       = createCheckableAction(_("Stars"), orbitsMenu, Body::Stellar);
-    planetOrbitsAction     = createCheckableAction(_("Planets"), orbitsMenu, Body::Planet);
-    dwarfPlanetOrbitsAction     = createCheckableAction(_("Dwarf Planets"), orbitsMenu, Body::DwarfPlanet);
-    moonOrbitsAction       = createCheckableAction(_("Moons"), orbitsMenu, Body::Moon);
-    minorMoonOrbitsAction       = createCheckableAction(_("Minor Moons"), orbitsMenu, Body::MinorMoon);
-    asteroidOrbitsAction   = createCheckableAction(_("Asteroids"), orbitsMenu, Body::Asteroid);
-    cometOrbitsAction      = createCheckableAction(_("Comets"), orbitsMenu, Body::Comet);
-    spacecraftOrbitsAction = createCheckableAction(_("Spacecraft"), orbitsMenu, Body::Spacecraft);
+    starOrbitsAction        = createCheckableAction(_("Stars"),         orbitsMenu, Body::Stellar);
+    planetOrbitsAction      = createCheckableAction(_("Planets"),       orbitsMenu, Body::Planet);
+    dwarfPlanetOrbitsAction = createCheckableAction(_("Dwarf Planets"), orbitsMenu, Body::DwarfPlanet);
+    moonOrbitsAction        = createCheckableAction(_("Moons"),         orbitsMenu, Body::Moon);
+    minorMoonOrbitsAction   = createCheckableAction(_("Minor Moons"),   orbitsMenu, Body::MinorMoon);
+    asteroidOrbitsAction    = createCheckableAction(_("Asteroids"),     orbitsMenu, Body::Asteroid);
+    cometOrbitsAction       = createCheckableAction(_("Comets"),        orbitsMenu, Body::Comet);
+    spacecraftOrbitsAction  = createCheckableAction(_("Spacecraft"),    orbitsMenu, Body::Spacecraft);
 
-    connect(starOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
-    connect(planetOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
-    connect(dwarfPlanetOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
-    connect(moonOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
-    connect(minorMoonOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
-    connect(asteroidOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
-    connect(cometOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
-    connect(spacecraftOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
+    connect(starOrbitsAction,           SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
+    connect(planetOrbitsAction,         SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
+    connect(dwarfPlanetOrbitsAction,    SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
+    connect(moonOrbitsAction,           SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
+    connect(minorMoonOrbitsAction,      SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
+    connect(asteroidOrbitsAction,       SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
+    connect(cometOrbitsAction,          SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
+    connect(spacecraftOrbitsAction,     SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
 
     // The orbits action is checkable (controls visibility of all orbits)
     // and has a menu (for control over display of various orbits types.)
@@ -147,35 +106,35 @@ CelestiaActions::CelestiaActions(QObject* parent,
     labelsAction->setToolTip(_("Labels"));
 
     QMenu* labelsMenu = new QMenu();
-    labelStarsAction       = createCheckableAction(_("Stars"), labelsMenu, Renderer::StarLabels);
-    labelPlanetsAction     = createCheckableAction(_("Planets"), labelsMenu, Renderer::PlanetLabels);
-    labelDwarfPlanetsAction     = createCheckableAction(_("Dwarf Planets"), labelsMenu, Renderer::DwarfPlanetLabels);
-    labelMoonsAction       = createCheckableAction(_("Moons"), labelsMenu, Renderer::MoonLabels);
-    labelMinorMoonsAction       = createCheckableAction(_("Minor Moons"), labelsMenu, Renderer::MinorMoonLabels);
-    labelAsteroidsAction   = createCheckableAction(_("Asteroids"), labelsMenu, Renderer::AsteroidLabels);
-    labelCometsAction      = createCheckableAction(_("Comets"), labelsMenu, Renderer::CometLabels);
-    labelSpacecraftAction  = createCheckableAction(_("Spacecraft"), labelsMenu, Renderer::SpacecraftLabels);
-    labelGalaxiesAction    = createCheckableAction(_("Galaxies"), labelsMenu, Renderer::GalaxyLabels);
-    labelGlobularsAction   = createCheckableAction(_("Globulars"), labelsMenu, Renderer::GlobularLabels);
-    labelOpenClustersAction = createCheckableAction(_("Open clusters"), labelsMenu, Renderer::OpenClusterLabels);
-    labelNebulaeAction     = createCheckableAction(_("Nebulae"), labelsMenu, Renderer::NebulaLabels);
-    labelLocationsAction   = createCheckableAction(_("Locations"), labelsMenu, Renderer::LocationLabels);
-    labelConstellationsAction = createCheckableAction(_("Constellations"), labelsMenu, Renderer::ConstellationLabels);
+    labelStarsAction          = createCheckableAction(_("Stars"),           labelsMenu, Renderer::StarLabels);
+    labelPlanetsAction        = createCheckableAction(_("Planets"),         labelsMenu, Renderer::PlanetLabels);
+    labelDwarfPlanetsAction   = createCheckableAction(_("Dwarf Planets"),   labelsMenu, Renderer::DwarfPlanetLabels);
+    labelMoonsAction          = createCheckableAction(_("Moons"),           labelsMenu, Renderer::MoonLabels);
+    labelMinorMoonsAction     = createCheckableAction(_("Minor Moons"),     labelsMenu, Renderer::MinorMoonLabels);
+    labelAsteroidsAction      = createCheckableAction(_("Asteroids"),       labelsMenu, Renderer::AsteroidLabels);
+    labelCometsAction         = createCheckableAction(_("Comets"),          labelsMenu, Renderer::CometLabels);
+    labelSpacecraftAction     = createCheckableAction(_("Spacecraft"),      labelsMenu, Renderer::SpacecraftLabels);
+    labelGalaxiesAction       = createCheckableAction(_("Galaxies"),        labelsMenu, Renderer::GalaxyLabels);
+    labelGlobularsAction      = createCheckableAction(_("Globulars"),       labelsMenu, Renderer::GlobularLabels);
+    labelOpenClustersAction   = createCheckableAction(_("Open clusters"),   labelsMenu, Renderer::OpenClusterLabels);
+    labelNebulaeAction        = createCheckableAction(_("Nebulae"),         labelsMenu, Renderer::NebulaLabels);
+    labelLocationsAction      = createCheckableAction(_("Locations"),       labelsMenu, Renderer::LocationLabels);
+    labelConstellationsAction = createCheckableAction(_("Constellations"),  labelsMenu, Renderer::ConstellationLabels);
 
-    connect(labelGalaxiesAction, SIGNAL(triggered()),       this, SLOT(slotToggleLabel()));
-    connect(labelGlobularsAction, SIGNAL(triggered()),      this, SLOT(slotToggleLabel()));
-    connect(labelOpenClustersAction, SIGNAL(triggered()),   this, SLOT(slotToggleLabel()));
-    connect(labelNebulaeAction, SIGNAL(triggered()),        this, SLOT(slotToggleLabel()));
-    connect(labelStarsAction, SIGNAL(triggered()),          this, SLOT(slotToggleLabel()));
-    connect(labelPlanetsAction, SIGNAL(triggered()),        this, SLOT(slotToggleLabel()));
-    connect(labelDwarfPlanetsAction, SIGNAL(triggered()),   this, SLOT(slotToggleLabel()));
-    connect(labelMoonsAction, SIGNAL(triggered()),          this, SLOT(slotToggleLabel()));
-    connect(labelMinorMoonsAction, SIGNAL(triggered()),     this, SLOT(slotToggleLabel()));
-    connect(labelAsteroidsAction, SIGNAL(triggered()),      this, SLOT(slotToggleLabel()));
-    connect(labelCometsAction, SIGNAL(triggered()),         this, SLOT(slotToggleLabel()));
-    connect(labelSpacecraftAction, SIGNAL(triggered()),     this, SLOT(slotToggleLabel()));
-    connect(labelLocationsAction, SIGNAL(triggered()),      this, SLOT(slotToggleLabel()));
-    connect(labelConstellationsAction, SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelGalaxiesAction,        SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelGlobularsAction,       SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelOpenClustersAction,    SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelNebulaeAction,         SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelStarsAction,           SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelPlanetsAction,         SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelDwarfPlanetsAction,    SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelMoonsAction,           SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelMinorMoonsAction,      SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelAsteroidsAction,       SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelCometsAction,          SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelSpacecraftAction,      SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelLocationsAction,       SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelConstellationsAction,  SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
 
     labelsAction->setMenu(labelsMenu);
 
@@ -185,10 +144,10 @@ CelestiaActions::CelestiaActions(QObject* parent,
     openClustersAction = createCheckableAction(_("Open Clusters"),     Renderer::ShowOpenClusters);
     nebulaeAction      = createCheckableAction(_("Nebulae"),           Renderer::ShowNebulae);
     nebulaeAction->setShortcut(QString("^"));
-    connect(galaxiesAction,        SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(globularsAction,       SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(openClustersAction,    SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(nebulaeAction,         SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(galaxiesAction,     SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(globularsAction,    SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(openClustersAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(nebulaeAction,      SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
     cloudsAction          = createCheckableAction(_("Clouds"),            Renderer::ShowCloudMaps);
     //cloudsAction->setShortcut(QString("I"));
@@ -220,7 +179,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     autoMagAction        = createCheckableAction(_("Auto Magnitude"), Renderer::ShowAutoMag);
     autoMagAction->setShortcut(QKeySequence("Ctrl+Y"));
     autoMagAction->setToolTip(_("Faintest visible magnitude based on field of view"));
-    connect(autoMagAction,        SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(autoMagAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
     increaseLimitingMagAction = new QAction(_("More Stars Visible"), this);
     increaseLimitingMagAction->setData(0.1);
@@ -258,9 +217,9 @@ CelestiaActions::~CelestiaActions()
 void CelestiaActions::syncWithRenderer(const Renderer* renderer)
 {
     int renderFlags = renderer->getRenderFlags();
-    int labelMode = renderer->getLabelMode();
-    int orbitMask = renderer->getOrbitMask();
-    int textureRes = renderer->getResolution();
+    int labelMode   = renderer->getLabelMode();
+    int orbitMask   = renderer->getOrbitMask();
+    int textureRes  = renderer->getResolution();
     Renderer::StarStyle starStyle = renderer->getStarStyle();
 
     equatorialGridAction->setChecked(renderFlags & Renderer::ShowCelestialSphere);
