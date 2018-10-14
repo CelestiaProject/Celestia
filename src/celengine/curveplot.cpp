@@ -158,7 +158,7 @@ public:
     HighPrec_VertexBuffer() :
         currentPosition(0),
         capacity(4096),
-        data(NULL),
+        data(nullptr),
         vbobj(0),
         currentStripLength(0)
     {
@@ -170,14 +170,14 @@ public:
 #if USE_VERTEX_BUFFER
         if (vbobj)
         {
-            glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbobj);
+            glBindBuffer(GL_ARRAY_BUFFER, vbobj);
         }
 
         glEnableClientState(GL_VERTEX_ARRAY);
 
         mapBuffer();
 
-        Vector4f* vertexBase = vbobj ? (Vector4f*) NULL : data;
+        Vector4f* vertexBase = vbobj ? (Vector4f*) nullptr : data;
         glVertexPointer(3, GL_FLOAT, sizeof(Vector4f), vertexBase);
 
         stripLengths.clear();
@@ -194,7 +194,7 @@ public:
         if (vbobj)
         {
             glDisableClientState(GL_VERTEX_ARRAY);
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
 #endif
     }
@@ -304,12 +304,12 @@ public:
 #if USE_VERTEX_BUFFER
         if (!vbobj)
         {
-            glx::glGenBuffersARB(1, &vbobj);
-            glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbobj);
-            glx::glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                                 capacity * sizeof(Vector4f),
-                                 NULL,
-                                 GL_STREAM_DRAW_ARB);
+            glGenBuffers(1, &vbobj);
+            glBindBuffer(GL_ARRAY_BUFFER, vbobj);
+            glBufferData(GL_ARRAY_BUFFER,
+                         capacity * sizeof(Vector4f),
+                         nullptr,
+                         GL_STREAM_DRAW);
         }
 #endif
     }
@@ -318,16 +318,16 @@ public:
     {
         if (vbobj)
         {
-            // Calling glBufferDataARB() with NULL before mapping the buffer
+            // Calling glBufferData() with nullptr before mapping the buffer
             // is a hint to OpenGL that previous contents of vertex buffer will
             // be discarded and overwritten. It enables renaming in the driver,
             // hopefully resulting in performance gains.
-            glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                            capacity * sizeof(Vector4f),
-                            NULL,
-                            GL_STREAM_DRAW_ARB);
+            glBufferData(GL_ARRAY_BUFFER,
+                         capacity * sizeof(Vector4f),
+                         nullptr,
+                         GL_STREAM_DRAW);
 
-            data = reinterpret_cast<Vector4f*>(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
+            data = reinterpret_cast<Vector4f*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
         }
     }
 
@@ -336,8 +336,8 @@ public:
 #if USE_VERTEX_BUFFER
         if (vbobj)
         {
-            glUnmapBufferARB(GL_ARRAY_BUFFER_ARB);
-            data = NULL;
+            glUnmapBuffer(GL_ARRAY_BUFFER);
+            data = nullptr;
         }
 #endif
     }
