@@ -39,7 +39,7 @@ public:
     Eigen::Vector3d position;
     double t;
     Eigen::Vector3d velocity;
-    double boundingRadius;
+    double boundingRadius { 0.0 };
 };
 
 
