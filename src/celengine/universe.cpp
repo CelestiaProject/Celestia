@@ -881,12 +881,14 @@ Selection Universe::pick(const UniversalCoord& origin,
         }
     }
 
+    if (sel.empty() && (renderFlags & Renderer::ShowStars))
+    {
+        sel = pickStar(origin, direction, when, faintestMag, tolerance);
+    }
+
     if (sel.empty())
     {
-        if (renderFlags & Renderer::ShowStars)
-            sel = pickStar(origin, direction, when, faintestMag, tolerance);
-        else
-            sel = pickDeepSkyObject(origin, direction, renderFlags, faintestMag, tolerance);
+        sel = pickDeepSkyObject(origin, direction, renderFlags, faintestMag, tolerance);
     }
 
     return sel;
