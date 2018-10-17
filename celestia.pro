@@ -18,6 +18,7 @@ qtCompileTest(spice)
 qtCompileTest(byteswap)
 qtCompileTest(eigen)
 qtCompileTest(glew)
+qtCompileTest(fmt)
 
 unix {
     !exists(config.h):system(touch config.h)
@@ -408,6 +409,23 @@ GLEW_HEADERS = \
     thirdparty/glew/include/GL/glxew.h \
     thirdparty/glew/include/GL/wglew.h
 
+# libfmt formatting library
+
+FMT_SOURCES = \
+    thirdparty/fmt/src/format.cc \
+    thirdparty/fmt/src/posix.cc
+
+FMT_HEADERS = \
+    thirdparty/fmt/include/fmt/color.h      \
+    thirdparty/fmt/include/fmt/core.h       \
+    thirdparty/fmt/include/fmt/format.h     \
+    thirdparty/fmt/include/fmt/format-inl.h \
+    thirdparty/fmt/include/fmt/ostream.h    \
+    thirdparty/fmt/include/fmt/posix.h      \
+    thirdparty/fmt/include/fmt/printf.h     \
+    thirdparty/fmt/include/fmt/ranges.h     \
+    thirdparty/fmt/include/fmt/time.h
+
 THIRDPARTY_SOURCES =
 THIRDPARTY_HEADERS =
 
@@ -416,6 +434,12 @@ THIRDPARTY_HEADERS =
     THIRDPARTY_HEADERS += $$GLEW_HEADERS
     INCLUDEPATH += thirdparty/glew/include
     DEFINES += GLEW_STATIC
+}
+
+!config_fmt {
+    THIRDPARTY_SOURCES += $$FMT_SOURCES
+    THIRDPARTY_HEADERS += $$FMT_HEADERS
+    INCLUDEPATH += thirdparty/fmt/include
 }
 
 #### common definitions
@@ -612,6 +636,8 @@ unix {
     equals(LUAPC, "lua51"): DEFINES += LUA_VER=0x050100
 
     PKGCONFIG += glu $$LUAPC libpng libjpeg theora
+}
+unix:config_fmt {
     LIBS += -Wl,-Bstatic -lfmt -Wl,-Bdynamic
 }
 unix:config_spice {
