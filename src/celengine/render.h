@@ -350,25 +350,14 @@ class Renderer
     {
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        RenderProperties() :
-            surface(nullptr),
-            atmosphere(nullptr),
-            rings(nullptr),
-            radius(1.0f),
-            geometryScale(1.0f),
-            semiAxes(1.0f, 1.0f, 1.0f),
-            geometry(InvalidResource),
-            orientation(Eigen::Quaternionf::Identity())
-        {};
-
-        Surface* surface;
-        const Atmosphere* atmosphere;
-        RingSystem* rings;
-        float radius;
-        float geometryScale;
-        Eigen::Vector3f semiAxes;
-        ResourceHandle geometry;
-        Eigen::Quaternionf orientation;
+        Surface* surface{ nullptr };
+        const Atmosphere* atmosphere{ nullptr };
+        RingSystem* rings{ nullptr };
+        float radius{ 1.0f };
+        float geometryScale{ 1.0f };
+        Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
+        ResourceHandle geometry{ InvalidResource };
+        Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
         LightingState::EclipseShadowVector* eclipseShadows;
     };
 

@@ -661,7 +661,7 @@ GlobularForm* buildGlobularForms(float c)
 #ifdef __CELVEC__
     globularForm->scale  = Vec3f(1.0f, 1.0f, 1.0f);
 #else
-    globularForm->scale  = Vector3f(1.0f, 1.0f, 1.0f);
+    globularForm->scale  = Vector3f::Ones();
 #endif
 
     return globularForm;

@@ -102,7 +102,7 @@ class StarDetails
 
     const RotationModel* rotationModel{ nullptr };
 
-    Eigen::Vector3f semiAxes{ 1.0f, 1.0f, 1.0f };
+    Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
 
     std::string* infoURL{ nullptr };
 

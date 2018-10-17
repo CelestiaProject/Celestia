@@ -354,7 +354,7 @@ class Body
     FrameTree* frameTree{ nullptr };
 
     float radius{ 1.0f };
-    Eigen::Vector3f semiAxes{ 1.0f, 1.0f, 1.0f };
+    Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
     float mass{ 0.0f };
     float albedo{ 0.5f };
     Eigen::Quaternionf geometryOrientation{ Eigen::Quaternionf::Identity() };

@@ -826,7 +826,7 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "settextcolor")
     {
-        Eigen::Vector3d colorv(1.0f, 1.0f, 1.0f);
+        Eigen::Vector3d colorv(Eigen::Vector3d::Ones());
         paramList->getVector("color", colorv);
         Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z());
         cmd = new CommandSetTextColor(color);
