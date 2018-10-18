@@ -754,8 +754,7 @@ StarDetails::SetStarTextures(const StarTextureSet& _starTextures)
 }
 
 
-StarDetails::StarDetails() :
-    texture(texture) // warning: ‘StarDetails::texture’ is initialized with itself [-Winit-self]
+StarDetails::StarDetails()
 {
     spectralType[0] = '\0';
 }

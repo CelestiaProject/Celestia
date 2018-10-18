@@ -93,7 +93,7 @@ class StarDetails
     bool visible{ true };
     char spectralType[8];
 
-    MultiResTexture texture;
+    MultiResTexture texture{ InvalidResource };
     ResourceHandle geometry{ InvalidResource };
 
     Orbit* orbit{ nullptr };
