@@ -2799,13 +2799,13 @@ static void displayRotationPeriod(Overlay& overlay, double days)
     const char *p;
 
     if (days > 1.0)
-        n = FormattedNumber(days, 3, FormattedNumber::GroupThousands), p = _(" days");
+        n = FormattedNumber(days, 3, FormattedNumber::GroupThousands), p = _("days");
     else if (days > 1.0 / 24.0)
-        n = FormattedNumber(days * 24.0, 3, FormattedNumber::GroupThousands), p = _(" hours");
+        n = FormattedNumber(days * 24.0, 3, FormattedNumber::GroupThousands), p = _("hours");
     else if (days > 1.0 / (24.0 * 60.0))
-        n = FormattedNumber(days * 24.0 * 60.0, 3, FormattedNumber::GroupThousands), p = _(" minutes");
+        n = FormattedNumber(days * 24.0 * 60.0, 3, FormattedNumber::GroupThousands), p = _("minutes");
     else
-        n = FormattedNumber(days * 24.0 * 60.0 * 60.0, 3, FormattedNumber::GroupThousands), p = _(" seconds");
+        n = FormattedNumber(days * 24.0 * 60.0 * 60.0, 3, FormattedNumber::GroupThousands), p = _("seconds");
 
     fmt::fprintf(overlay, _("Rotation period: %s %s\n"), n, p);
 }
