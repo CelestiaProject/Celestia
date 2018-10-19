@@ -881,7 +881,7 @@ bool ReadComponentRecord(istream& in)
 
 void BuildMultistarSystemCatalog()
 {
-    for (const auto& star : stars)
+    for (auto star : stars)
     {
         if (star.CCDMIdentifier != NullCCDMIdentifier)
         {
@@ -1122,7 +1122,7 @@ int main(int argc, char* argv[])
         cout << "Sorting stars...\n";
     {
         starIndex.reserve(stars.size());
-        for (const auto& star : stars)
+        for (auto star : stars)
         {
             starIndex.push_back(&star);
         }
