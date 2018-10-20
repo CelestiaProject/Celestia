@@ -879,6 +879,36 @@ DumpShaderSource(ostream& out, const std::string& source)
 }
 
 
+inline void DumpVSSource(const std::string& source)
+{
+    if (g_shaderLogFile != nullptr)
+    {
+        *g_shaderLogFile << "Vertex shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
+}
+
+inline void DumpVSSource(std::ostringstream& source)
+{
+    DumpVSSource(source.str());
+}
+
+inline void DumpFSSource(const std::string& source)
+{
+    if (g_shaderLogFile != nullptr)
+    {
+        *g_shaderLogFile << "Fragment shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
+}
+
+inline void DumpFSSource(std::ostringstream& source)
+{
+    DumpFSSource(source.str());
+}
+
 static string
 DeclareLights(const ShaderProperties& props)
 {
@@ -1821,12 +1851,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     source += "gl_Position = ftransform();\n";
     source += "}\n";
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Vertex shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
+    DumpVSSource(source);
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
@@ -2249,12 +2274,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     source += "}\n";
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Fragment shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
+    DumpFSSource(source);
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
@@ -2309,19 +2329,11 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += "gl_Position = ftransform();\n";
     source += "}\n";
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Vertex shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
+    DumpVSSource(source);
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
-    if (status != ShaderStatus_OK)
-        return nullptr;
-    else
-        return vs;
+    return status == ShaderStatus_OK ? vs : nullptr;
 }
 
 
@@ -2402,12 +2414,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 
     source += "}\n";
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Fragment shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
+    DumpFSSource(source);
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
@@ -2450,12 +2457,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += "gl_Position = ftransform();\n";
     source += "}\n";
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Vertex shader source (rings):\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
+    DumpVSSource(source);
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
@@ -2565,12 +2567,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 
     source += "}\n";
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Fragment shader source (rings):\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
+    DumpFSSource(source);
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
@@ -2607,12 +2604,7 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
     source += "gl_Position = ftransform();\n";
     source += "}\n";
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Vertex shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
+    DumpVSSource(source);
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
@@ -2663,12 +2655,7 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
     source += "    gl_FragColor = vec4(color, dot(scatterEx, vec3(0.333, 0.333, 0.333)));\n";
     source += "}\n";
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Fragment shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
+    DumpFSSource(source);
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
@@ -2732,12 +2719,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     source += "}\n";
     // End of main()
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Vertex shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
+    DumpVSSource(source);
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
@@ -2786,16 +2768,11 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
     source += "}\n";
     // End of main()
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Fragment shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
+    DumpFSSource(source);
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
-    return status != ShaderStatus_OK ? nullptr : fs;
+    return status == ShaderStatus_OK ? fs : nullptr;
 }
 
 
@@ -2876,12 +2853,7 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     source << "}\n";
     // End of main()
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Vertex shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source.str());
-        *g_shaderLogFile << endl;
-    }
+    DumpVSSource(source);
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source.str(), &vs);
@@ -2947,12 +2919,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
     source << "}\n";
     // End of main()
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Fragment shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source.str());
-        *g_shaderLogFile << '\n';
-    }
+    DumpFSSource(source);
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source.str(), &fs);
@@ -2992,12 +2959,7 @@ ShaderManager::buildStaticVertexShader(const ShaderProperties& props)
     source << "}\n";
     // End of main()
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Vertex shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source.str());
-        *g_shaderLogFile << endl;
-    }
+    DumpVSSource(source);
 
     GLVertexShader* vs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source.str(), &vs);
@@ -3035,12 +2997,7 @@ ShaderManager::buildStaticFragmentShader(const ShaderProperties& props)
     source << "}\n";
     // End of main()
 
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Fragment shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source.str());
-        *g_shaderLogFile << '\n';
-    }
+    DumpFSSource(source);
 
     GLFragmentShader* fs = nullptr;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source.str(), &fs);
