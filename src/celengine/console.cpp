@@ -50,9 +50,10 @@ Console::~Console()
  */
 bool Console::setRowCount(int _nRows)
 {
+    if (_nRows == nRows)
+        return true;
+
     auto* newText = new wchar_t[(nColumns + 1) * _nRows];
-    if (newText == nullptr)
-        return false;
 
     for (int i = 0; i < _nRows; i++)
     {
