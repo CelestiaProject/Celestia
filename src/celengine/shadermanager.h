@@ -248,7 +248,7 @@ class ShaderManager
 {
  public:
     ShaderManager();
-    ~ShaderManager() = default;
+    ~ShaderManager();
 
     CelestiaGLProgram* getShader(const ShaderProperties&);
 

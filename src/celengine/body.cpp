@@ -54,6 +54,13 @@ Body::~Body()
     delete timeline;
     delete satellites;
     delete frameTree;
+
+    if(altSurfaces)
+    {
+        for (const auto s : *altSurfaces)
+            delete s.second;
+        delete altSurfaces;
+    }
 }
 
 

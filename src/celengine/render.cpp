@@ -547,6 +547,14 @@ Renderer::~Renderer()
     if (sceneTexture != 0)
         glDeleteTextures(1, &sceneTexture);
 #endif
+
+    delete shadowTex;
+    delete shadowMaskTexture;
+    delete penumbraFunctionTexture;
+    delete normalizationTex;
+
+    for(const auto tex : eclipseShadowTextures)
+        delete tex;
 }
 
 

@@ -202,10 +202,6 @@ ShaderProperties::hasShadowsForLight(unsigned int light) const
 }
 
 
-
-
-
-
 // Returns true if diffuse, specular, bump, and night textures all use the
 // same texture coordinate set.
 bool
@@ -299,6 +295,16 @@ ShaderManager::ShaderManager()
 #endif
 }
 
+
+ShaderManager::~ShaderManager()
+{
+    for(const auto& shader : shaders)
+    {
+        delete shader.second;
+    }
+
+    shaders.clear();
+}
 
 CelestiaGLProgram*
 ShaderManager::getShader(const ShaderProperties& props)
