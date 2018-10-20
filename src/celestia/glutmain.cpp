@@ -24,6 +24,7 @@
 #include <Carbon/Carbon.h>
 #include <GLUT/glut.h>
 #endif
+#include <fmt/printf.h>
 #include <celengine/celestia.h>
 #include <celutil/util.h>
 #include <celutil/debug.h>
@@ -511,6 +512,14 @@ int main(int argc, char* argv[])
     #ifdef MACOSX
     initMenus();
     #endif
+
+    GLenum glewErr = glewInit();
+    if (glewErr != GLEW_OK)
+    {
+        fmt::fprintf(std::cerr,
+                     _("Celestia was unable to initialize OpenGL extensions (error %i). Graphics quality will be reduced."),
+                     glewErr);
+    }
 
     // GL should be all set up, now initialize the renderer.
     appCore->initRenderer();
