@@ -4850,11 +4850,38 @@ void Renderer::renderObject(const Vector3f& pos,
                                obj.orientation *
                                Scaling3f(1.0f / radius);
 */
+#if 0
     Affine3f invModelView = cameraOrientation.conjugate() *
                             Translation3f(-pos) *
                             obj.orientation *
                             Scaling(1.0f / radius);
     Matrix4f invMV = invModelView.matrix();
+#else
+    // XXX: HACK! HACK! HACK!
+    // This code simply tries to emulate the old one.
+    //
+    // The problem is that original celestia's Matrix4 (aka Mat4) uses
+    // row-major memory layout, but Eigen by default uses column-major layout,
+    // so when later we call Frustum::transform using calculated here invMV
+    // we use a transposed matrix:
+    // void
+    // Frustum::transform(const Mat4f& m)
+    // {
+    //     Matrix4f m2 = Map<Matrix4f>(&m[0][0]);
+    //     transform(m2);
+    // }
+    // Because of that we apply a transpose() to invMV.
+    // Due to the same column-major vs row-major issue we swap col(3) with row(3).
+    //
+    // All that means that the planet rendering code implemented incorrectly.
+    // If `Affine3f invModelView` from above is used then planets dissappear
+    // when an observer gets closer to them.
+    Matrix4f ct = (Translation3f(-pos / radius) * cameraOrientation).matrix();
+    for (int i=0; i < 3; i++)
+        std::swap(ct(3, i), ct(i, 3));
+
+    Matrix4f invMV = (ct * planetMat.transpose()).transpose();
+#endif
 #else
     Mat4f planetMat_old(Vec4f(planetMat.col(0).x(), planetMat.col(0).y(), planetMat.col(0).z(), planetMat.col(0).w()),
                         Vec4f(planetMat.col(1).x(), planetMat.col(1).y(), planetMat.col(1).z(), planetMat.col(1).w()),
