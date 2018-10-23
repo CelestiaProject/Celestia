@@ -242,7 +242,7 @@ void* Celx_CheckUserData(lua_State* l, int index, int id)
 }
 
 // Return the CelestiaCore object stored in the globals table
-CelestiaCore* getAppCore(lua_State* l, FatalErrors fatalErrors)
+CelestiaCoreApplication* getAppCore(lua_State* l, FatalErrors fatalErrors)
 {
     lua_pushstring(l, "celestia-appcore");
     lua_gettable(l, LUA_REGISTRYINDEX);
@@ -258,7 +258,7 @@ CelestiaCore* getAppCore(lua_State* l, FatalErrors fatalErrors)
         }
     }
 
-    CelestiaCore* appCore = static_cast<CelestiaCore*>(lua_touserdata(l, -1));
+    CelestiaCoreApplication* appCore = static_cast<CelestiaCoreApplication*>(lua_touserdata(l, -1));
     lua_pop(l, 1);
     return appCore;
 }
@@ -880,9 +880,9 @@ void loadLuaLibs(lua_State* state)
 #endif
 #endif
 
-    CreateObjectMetaTable(state);
+//    CreateObjectMetaTable(state);
     CreateObserverMetaTable(state);
-    CreateCelestiaMetaTable(state);
+//    CreateCelestiaMetaTable(state);
     CreatePositionMetaTable(state);
     CreateVectorMetaTable(state);
     CreateRotationMetaTable(state);
@@ -892,8 +892,8 @@ void loadLuaLibs(lua_State* state)
     CreateFontMetaTable(state);
     CreateImageMetaTable(state);
     CreateTextureMetaTable(state);
-    ExtendCelestiaMetaTable(state);
-    ExtendObjectMetaTable(state);
+//    ExtendCelestiaMetaTable(state);
+//    ExtendObjectMetaTable(state);
 
     LoadLuaGraphicsLibrary(state);
 }

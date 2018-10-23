@@ -1,9 +1,11 @@
 
 // Moved from celx.cpp by Łukasz Buczyński 27.09.2018
 
+#define SOL_SAFE_USERTYPE 1
+
 #include "lua_state.h" 
 #include "celx.h"
-#include "celestiacore.h"
+#include "CelestiaCoreApplication.h"
 #include "celx_celestia.h"
 
 // Maximum timeslice a script may run without
@@ -48,11 +50,7 @@ LuaState::LuaState() :
     ioMode(NoIO),
     eventHandlerEnabled(false)
 {
-#if LUA_VER >= 0x050100
-    state = luaL_newstate();
-#else
-    state = lua_open();
-#endif
+    state = lua.lua_state();
     timer = CreateTimer();
     screenshotCount = 0;
 }
@@ -116,7 +114,7 @@ void LuaState::cleanup()
     if (ioMode == Asking)
     {
         // Restore renderflags:
-        CelestiaCore* appCore = getAppCore(costate, NoErrors);
+        CelestiaCoreApplication* appCore = getAppCore(costate, NoErrors);
         if (appCore != NULL)
         {
             lua_pushstring(state, "celestia-savedrenderflags");
@@ -289,7 +287,7 @@ bool LuaState::charEntered(const char* c_p)
         {
             ioMode = IODenied;
         }
-        CelestiaCore* appCore = getAppCore(costate, NoErrors);
+        CelestiaCoreApplication* appCore = getAppCore(costate, NoErrors);
         if (appCore == NULL)
         {
             cerr << "ERROR: appCore not found\n";
@@ -348,7 +346,7 @@ bool LuaState::charEntered(const char* c_p)
 // Returns true if a handler is registered for the key
 bool LuaState::handleKeyEvent(const char* key)
 {
-    CelestiaCore* appCore = getAppCore(costate, NoErrors);
+    CelestiaCoreApplication* appCore = getAppCore(costate, NoErrors);
     if (appCore == NULL)
     {
         return false;
@@ -397,7 +395,7 @@ bool LuaState::handleKeyEvent(const char* key)
 // Returns true if a handler is registered for the button event
 bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
 {
-    CelestiaCore* appCore = getAppCore(costate, NoErrors);
+    CelestiaCoreApplication* appCore = getAppCore(costate, NoErrors);
     if (appCore == NULL)
     {
         return false;
@@ -455,7 +453,7 @@ bool LuaState::handleTickEvent(double dt)
     if (!costate)
         return true;
 
-    CelestiaCore* appCore = getAppCore(costate, NoErrors);
+    CelestiaCoreApplication* appCore = getAppCore(costate, NoErrors);
     if (appCore == NULL)
     {
         return false;
@@ -522,6 +520,10 @@ int LuaState::loadScript(istream& in, const string& streamname)
 #else
     int status = lua_load(state, readStreamChunk, &info, streamname.c_str());
 #endif
+
+    if (streamname != "string")
+        scriptPath = streamname.c_str();
+
     if (status != 0)
         cout << "Error loading script: " << lua_tostring(state, -1) << '\n';
 
@@ -569,7 +571,7 @@ int LuaState::resume()
 #endif
         {
             cout << "Error: " << errorMessage << '\n';
-            CelestiaCore* appCore = getAppCore(co);
+            CelestiaCoreApplication* appCore = getAppCore(co);
             if (appCore != NULL)
             {
                 appCore->fatalError(errorMessage);
@@ -614,7 +616,7 @@ bool LuaState::tick(double dt)
 
     if (ioMode == Asking)
     {
-        CelestiaCore* appCore = getAppCore(costate, NoErrors);
+        CelestiaCoreApplication* appCore = getAppCore(costate, NoErrors);
         if (appCore == NULL)
         {
             cerr << "ERROR: appCore not found\n";
@@ -697,7 +699,7 @@ void LuaState::requestIO()
     // disable keyboard again.
     if (ioMode == NoIO)
     {
-        CelestiaCore* appCore = getAppCore(state, AllErrors);
+        CelestiaCoreApplication* appCore = getAppCore(state, AllErrors);
         string policy = appCore->getConfig()->scriptSystemAccessPolicy;
         if (policy == "allow")
         {
@@ -767,8 +769,10 @@ bool LuaState::init(CelestiaCoreApplication* appCore)
     loadLuaLibs(state);
 
     // Create the celestia object
-    celestia_new(state, appCore);
-    lua_setglobal(state, "celestia");
+    //celestia_new(state, appCore);
+    //lua_setglobal(state, "celestia");
+    LuaCelestia::registerInLua(lua);
+    lua["celestia"] = static_cast<LuaCelestia*>(appCore);
     // add reference to appCore in the registry
     lua_pushstring(state, "celestia-appcore");
     lua_pushlightuserdata(state, static_cast<void*>(appCore));

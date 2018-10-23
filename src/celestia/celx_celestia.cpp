@@ -13,6 +13,15 @@
 #include "celx.h"
 #include "celx_celestia.h"
 #include "CelestiaCoreApplication.h"
+#include "celx_object.h"
+#include "celx_vector.h"
+#include "celx_rotation.h"
+#include "celx_position.h"
+#include "celx_frame.h"
+#include "celx_phase.h"
+#include "celx_observer.h"
+#include "celx_gl.h"
+
 
 // Moved from celx.cpp by Łukasz Buczyński 27.09.2018
 
@@ -27,13 +36,18 @@ int celestia_new(lua_State* l, CelestiaCoreApplication* appCore)
     return 1;
 }
 
-static CelestiaCoreApplication* to_celestia(lua_State* l, int index)
+static LuaCelestia* to_celestia(lua_State* l, int index)
 {
-    CelestiaCoreApplication** appCore = static_cast<CelestiaCoreApplication**>(Celx_CheckUserData(l, index, Celx_Celestia));
+    /*CelestiaCoreApplication** appCore = static_cast<CelestiaCoreApplication**>(Celx_CheckUserData(l, index, Celx_Celestia));
+    CelestiaCoreApplication** appCore = static_cast<CelestiaCoreApplication**>(lua_touserdata(l, index));
     if (appCore == NULL)
         return NULL;
     else
-        return *appCore;
+        return *appCore;*/
+    sol::object o(l, index);
+    if (o.is<LuaCelestia*>())
+        return o.as<LuaCelestia*>();
+    else return NULL;
 }
 
 static CelestiaCoreApplication* this_celestia(lua_State* l)
@@ -2357,3 +2371,108 @@ void ExtendCelestiaMetaTable(lua_State* l)
     lua_pop(l, 1);
 }
 
+
+void LuaCelestia::registerInLua(sol::state &l)
+{
+    LuaObject::registerInLua(l);
+    
+    auto type = l.create_simple_usertype<LuaCelestia>();
+    type.set("__tostring", &celestia_tostring);
+    type.set("flash", &celestia_flash);
+    type.set("print", &celestia_print);
+    type.set("gettextwidth", celestia_gettextwidth);
+    type.set("show", &celestia_show);
+    type.set("setaltazimuthmode", &celestia_setaltazimuthmode);
+    type.set("getaltazimuthmode", &celestia_getaltazimuthmode);
+    type.set("hide", &celestia_hide);
+    type.set("getrenderflags", &celestia_getrenderflags);
+    type.set("setrenderflags", &celestia_setrenderflags);
+    type.set("getscreendimension", &celestia_getscreendimension);
+    type.set("showlabel", &celestia_showlabel);
+    type.set("hidelabel", &celestia_hidelabel);
+    type.set("getlabelflags", &celestia_getlabelflags);
+    type.set("setlabelflags", &celestia_setlabelflags);
+    type.set("getorbitflags", &celestia_getorbitflags);
+    type.set("setorbitflags", &celestia_setorbitflags);
+    type.set("showconstellations", &celestia_showconstellations);
+    type.set("hideconstellations", &celestia_hideconstellations);
+    type.set("setconstellationcolor", &celestia_setconstellationcolor);
+    type.set("setlabelcolor", &celestia_setlabelcolor);
+    type.set("getlabelcolor", &celestia_getlabelcolor);
+    type.set("setlinecolor",  &celestia_setlinecolor);
+    type.set("getlinecolor",  &celestia_getlinecolor);
+    type.set("settextcolor",  &celestia_settextcolor);
+    type.set("gettextcolor",  &celestia_gettextcolor);
+    type.set("getoverlayelements", &celestia_getoverlayelements);
+    type.set("setoverlayelements", &celestia_setoverlayelements);
+    type.set("getfaintestvisible", &celestia_getfaintestvisible);
+    type.set("setfaintestvisible", &celestia_setfaintestvisible);
+    type.set("getgalaxylightgain", &celestia_getgalaxylightgain);
+    type.set("setgalaxylightgain", &celestia_setgalaxylightgain);
+    type.set("setminfeaturesize", &celestia_setminfeaturesize);
+    type.set("getminfeaturesize", &celestia_getminfeaturesize);
+    type.set("getobserver", &celestia_getobserver);
+    type.set("getobservers", &celestia_getobservers);
+    type.set("getselection", &celestia_getselection);
+    type.set("find", &celestia_find);
+    type.set("select", &celestia_select);
+    type.set("mark", &celestia_mark);
+    type.set("unmark", &celestia_unmark);
+    type.set("unmarkall", &celestia_unmarkall);
+    type.set("gettime", &celestia_gettime);
+    type.set("settime", &celestia_settime);
+    type.set("ispaused", &celestia_ispaused);
+    type.set("synchronizetime", &celestia_synchronizetime);
+    type.set("istimesynchronized", &celestia_istimesynchronized);
+    type.set("gettimescale", &celestia_gettimescale);
+    type.set("settimescale", &celestia_settimescale);
+    type.set("getambient", &celestia_getambient);
+    type.set("setambient", &celestia_setambient);
+    type.set("getminorbitsize", &celestia_getminorbitsize);
+    type.set("setminorbitsize", &celestia_setminorbitsize);
+    type.set("getstardistancelimit", &celestia_getstardistancelimit);
+    type.set("setstardistancelimit", &celestia_setstardistancelimit);
+    type.set("getstarstyle", &celestia_getstarstyle);
+    type.set("setstarstyle", &celestia_setstarstyle);
+    type.set("getstarcolor", &celestia_getstarcolor);
+    type.set("setstarcolor", &celestia_setstarcolor);
+    type.set("gettextureresolution", &celestia_gettextureresolution);
+    type.set("settextureresolution", &celestia_settextureresolution);
+    type.set("tojulianday", &celestia_tojulianday);
+    type.set("fromjulianday", &celestia_fromjulianday);
+    type.set("utctotdb", &celestia_utctotdb);
+    type.set("tdbtoutc", &celestia_tdbtoutc);
+    type.set("getsystemtime", &celestia_getsystemtime);
+    type.set("getstarcount", &celestia_getstarcount);
+    type.set("getdsocount", &celestia_getdsocount);
+    type.set("getstar", &celestia_getstar);
+    type.set("getdso", &celestia_getdso);
+    type.set("newframe", &celestia_newframe);
+    type.set("newvector", &celestia_newvector);
+    type.set("newposition", &celestia_newposition);
+    type.set("newrotation", &celestia_newrotation);
+    type.set("getscripttime", &celestia_getscripttime);
+    type.set("requestkeyboard", &celestia_requestkeyboard);
+    type.set("createcelscript", celestia_createcelscript);
+    type.set("requestsystemaccess", &celestia_requestsystemaccess);
+    type.set("getscriptpath", &celestia_getscriptpath);
+    type.set("runscript", &celestia_runscript);
+    type.set("registereventhandler", &celestia_registereventhandler);
+    type.set("geteventhandler", &celestia_geteventhandler);
+    type.set("stars", &celestia_stars);
+    type.set("dsos", &celestia_dsos);
+    type.set("windowbordersvisible", &celestia_windowbordersvisible);
+    type.set("setwindowbordersvisible", &celestia_setwindowbordersvisible);
+    type.set("seturl", &celestia_seturl);
+    type.set("geturl", &celestia_geturl);
+    type.set("play", &celestia_play);
+    type.set("log", &celestia_log);
+    type.set("settimeslice", &celestia_settimeslice);
+    type.set("setluahook", &celestia_setluahook);
+    type.set("getparamstring", &celestia_getparamstring);
+    type.set("getfont", &celestia_getfont);
+    type.set("gettitlefont", &celestia_gettitlefont);
+    type.set("loadtexture", &celestia_loadtexture);
+    type.set("loadfont", &celestia_loadfont);
+    l.set_usertype("Celestia", type);
+}

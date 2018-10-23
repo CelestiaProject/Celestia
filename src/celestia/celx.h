@@ -7,7 +7,7 @@
 
 class LuaState;
 
-class CelestiaCore;
+class CelestiaCoreApplication;
 
 class TextureFont;
 
@@ -39,7 +39,7 @@ enum FatalErrors
     AllErrors = WrongType | WrongArgc,
 };
 
-CelestiaCore* getAppCore(lua_State*, FatalErrors fatalErrors = NoErrors);
+CelestiaCoreApplication* getAppCore(lua_State*, FatalErrors fatalErrors = NoErrors);
 
 void openLuaLibrary(lua_State*, const char*, lua_CFunction);
 
@@ -63,7 +63,7 @@ bool Celx_SafeGetBoolean(lua_State* l, int index, FatalErrors fatalErrors = AllE
                               const char* errorMsg = "Boolean argument expected",
                               bool defaultValue = false);
 
-CelestiaCore* appCore(FatalErrors fatalErrors = NoErrors);
+CelestiaCoreApplication* appCore(FatalErrors fatalErrors = NoErrors);
 
 void setTable(lua_State*, const char*, lua_Number);
 

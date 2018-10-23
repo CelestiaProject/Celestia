@@ -28,6 +28,8 @@ extern "C" {
 }
 #endif
 
+#include <sol.hpp>
+
 #include <celutil/timer.h>
 #include <celengine/observer.h>
 
@@ -87,8 +89,10 @@ public:
     };
 
 private:
+    sol::state lua;
     lua_State* state;
     lua_State* costate; // coroutine stack
+    std::string scriptPath;
     bool alive;
     Timer* timer;
     double scriptAwakenTime;

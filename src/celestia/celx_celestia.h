@@ -16,12 +16,19 @@
 #include <string>
 #include <iostream>
 
-#include <celengine/observer.h>
+#include "lua_registerable.h"
 
-struct CelestiaCoreApplication;
+#include <celengine/observer.h>
+#include <celestia/CelestiaCoreApplication.h>
 
 int celestia_new(lua_State*, CelestiaCoreApplication*);
 void CreateCelestiaMetaTable(lua_State* );
 void ExtendCelestiaMetaTable(lua_State*);
+
+class LuaCelestia : public CelestiaCoreApplication, public LuaRegisterable
+{
+public:
+    static void registerInLua(sol::state&);
+};
 
 #endif // _CELX_CELESTIA_H_

@@ -58,20 +58,18 @@ static MarkerRepresentation::Symbol parseMarkerSymbol(const string& name)
 // star, planet, or deep-sky object
 int object_new(lua_State* l, const Selection& sel)
 {
-    CelxLua celx(l);
-
-    Selection* ud = reinterpret_cast<Selection*>(lua_newuserdata(l, sizeof(Selection)));
-    *ud = sel;
-
-    celx.setClass(Celx_Object);
+    LuaObject o(sel);
+    sol::stack::push(l, o);
 
     return 1;
 }
 
-Selection* to_object(lua_State* l, int index)
+LuaObject* to_object(lua_State* l, int index)
 {
-    CelxLua celx(l);
-    return static_cast<Selection*>(celx.checkUserData(index, Celx_Object));
+    sol::object o(l, index);
+    if (o.is<LuaObject>())
+        return &o.as<LuaObject>();
+    else return NULL;
 }
 
 static Selection* this_object(lua_State* l)
@@ -1409,4 +1407,44 @@ void ExtendObjectMetaTable(lua_State* l)
         cout << "Metatable for " << CelxLua::ClassNames[Celx_Object] << " not found!\n";
     celx.registerMethod("setatmosphere", object_setatmosphere);
     lua_pop(l, 1);
+}
+
+LuaObject::LuaObject(const Selection &s) : Selection(s) {}
+
+void LuaObject::registerInLua(sol::state &l)
+{
+    auto type = l.create_simple_usertype<LuaObject>();
+    type.set("__tostring", object_tostring);
+    type.set("visible", object_visible);
+    type.set("setvisible", object_setvisible);
+    type.set("orbitcoloroverridden", object_orbitcoloroverridden);
+    type.set("setorbitcoloroverridden", object_setorbitcoloroverridden);
+    type.set("setorbitcolor", object_setorbitcolor);
+    type.set("orbitvisibility", object_orbitvisibility);
+    type.set("setorbitvisibility", object_setorbitvisibility);
+    type.set("addreferencemark", object_addreferencemark);
+    type.set("removereferencemark", object_removereferencemark);
+    type.set("radius", object_radius);
+    type.set("setradius", object_setradius);
+    type.set("type", object_type);
+    type.set("spectraltype", object_spectraltype);
+    type.set("getinfo", object_getinfo);
+    type.set("catalognumber", object_catalognumber);
+    type.set("absmag", object_absmag);
+    type.set("name", object_name);
+    type.set("localname", object_localname);
+    type.set("mark", object_mark);
+    type.set("unmark", object_unmark);
+    type.set("getposition", object_getposition);
+    type.set("getchildren", object_getchildren);
+    type.set("locations", object_locations);
+    type.set("bodyfixedframe", object_bodyfixedframe);
+    type.set("equatorialframe", object_equatorialframe);
+    type.set("orbitframe", object_orbitframe);
+    type.set("bodyframe", object_bodyframe);
+    type.set("getphase", object_getphase);
+    type.set("phases", object_phases);
+    type.set("preloadtexture", object_preloadtexture);
+    type.set("setatmosphere", object_setatmosphere);
+    l.set_usertype("Object", type);
 }

@@ -9,7 +9,6 @@ RCC_DIR = rcc
 GIT_COMMIT = $$system(git --git-dir=$PWD/.git log --pretty=format:"%h" -1)
 DEFINES += GIT_COMMIT=\\\"$$GIT_COMMIT\\\"
 
-
 QT += opengl
 QT += xml
 QT += multimedia
@@ -393,7 +392,8 @@ APP_HEADERS = \
     src/celestia/celx_phase.h \
     src/celestia/celx_position.h \
     src/celestia/celx_rotation.h \
-    src/celestia/celx_vector.h
+    src/celestia/celx_vector.h \
+    src/celestia/lua_registerable.h
 
 macx {
     APP_SOURCES -= src/celestia/imagecapture.cpp
@@ -460,6 +460,8 @@ CURVEPLOT_SOURCES = \
 CURVEPLOT_HEADERS = \
     thirdparty/curveplot/include/curveplot.h
 
+SOL_HEADER = thirdparty/Sol2/sol.hpp
+
 THIRDPARTY_SOURCES = $$CURVEPLOT_SOURCES
 THIRDPARTY_HEADERS = $$CURVEPLOT_HEADERS
 
@@ -469,6 +471,8 @@ THIRDPARTY_HEADERS = $$CURVEPLOT_HEADERS
     INCLUDEPATH += thirdparty/glew/include
     DEFINES += GLEW_STATIC
 }
+
+THIRDPARTY_HEADERS += $$SOL_HEADER
 
 #### common definitions
 DEFINES += CELX
@@ -532,6 +536,7 @@ INCLUDEPATH += src
 
 INCLUDEPATH += thirdparty/curveplot/include
 
+INCLUDEPATH += thirdparty/Sol2
 
 CATALOG_SOURCE = data
 CATALOG_FILES = \

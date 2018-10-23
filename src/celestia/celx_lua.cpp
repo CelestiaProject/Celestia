@@ -1,4 +1,14 @@
 
+#include "celx_vector.h"
+#include "celx_rotation.h"
+#include "celx_position.h"
+#include "celx_frame.h"
+#include "celx_phase.h"
+#include "celx_object.h"
+#include "celx_observer.h"
+#include "celx_gl.h"
+#include "celx_celestia.h"
+
 #include "celx_lua.h" 
 
 using namespace Eigen;

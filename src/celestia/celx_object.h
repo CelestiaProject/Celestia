@@ -12,12 +12,23 @@
 #ifndef _CELX_OBJECT_H_
 #define _CELX_OBJECT_H_
 
+#include <sol.hpp>
+#include "lua_registerable.h"
+#include <celengine/selection.h>
+
 struct lua_State;
 class Selection;
 
+class LuaObject : public Selection, public LuaRegisterable
+{
+public:
+    LuaObject(const Selection&);
+    static void registerInLua(sol::state&);
+};
+
 extern void CreateObjectMetaTable(lua_State* l);
 extern void ExtendObjectMetaTable(lua_State* l);
-extern Selection* to_object(lua_State* l, int index);
+extern LuaObject* to_object(lua_State* l, int index);
 extern int object_new(lua_State* l, const Selection& sel);
 
 #endif // _CELX_OBJECT_H_

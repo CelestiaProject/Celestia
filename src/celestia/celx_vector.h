@@ -12,6 +12,8 @@
 #ifndef _CELX_VECTOR_H_
 #define _CELX_VECTOR_H_
 
+#include <celengine/univcoord.h>
+
 struct lua_State;
 
 extern void CreateVectorMetaTable(lua_State* l);
