@@ -407,6 +407,18 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     QTimer *t = new QTimer(dynamic_cast<QObject *>(this));
     QObject::connect(t, SIGNAL(timeout()), SLOT(celestia_tick()));
     t->start(0);
+    
+    Audio3D::Manager::setDopplerFactor(2);
+    m_appCore->audio3dManager.setGlobalDistanceScale(0.0001);
+    Selection sel = m_appCore->getSimulation()->findObjectFromPath("moon");
+    cout << sel.getName() << endl;
+    AudioObject *o = m_appCore->audio3dManager.getAudioObject(sel);
+    o->setTone(AudioTone::standardTone(432));
+    //o->setPitch(100);
+    //o->setGain(100);
+    o->setMaxDistance(1000000);
+    o->setLooping(true);
+    o->play();
 }
 
 

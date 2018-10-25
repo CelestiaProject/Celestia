@@ -297,9 +297,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setFaintest(float);
     void setFaintestAutoMag();
 
-    void splitView(View::Type type, View* av = NULL, float splitPos = 0.5f);
-    void singleView(View* av = NULL);
-    void deleteView(View* v = NULL);
+    View *splitView(View::Type type, View* av = NULL, float splitPos = 0.5f);
+    View *singleView(View* av = NULL);
+    View *deleteView(View* v = NULL);
     void setActiveView(View* v = NULL);
 
     bool getFramesVisible() const;

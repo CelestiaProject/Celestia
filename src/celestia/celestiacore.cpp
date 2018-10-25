@@ -2654,7 +2654,7 @@ void CelestiaCore::setViewChanged()
 }
 
 
-void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
+View *CelestiaCore::splitView(View::Type type, View* av, float splitPos)
 {
     setViewChanged();
 
@@ -2673,14 +2673,14 @@ void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
         if (av->width < 0.2f) tooSmall = true;
         break;
     case View::ViewWindow:
-        return;
+        return NULL;
         break;
     }
 
     if (tooSmall)
     {
         flash(_("View too small to be split"));
-        return;
+        return NULL;
     }
     flash(_("Added view"));
 
@@ -2738,6 +2738,8 @@ void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
     views.insert(views.end(), view);
 
     setFOVFromZoom();
+    
+    return view;
 }
 
 void CelestiaCore::setFOVFromZoom()
@@ -2759,7 +2761,7 @@ void CelestiaCore::setZoomFromFOV()
         }
 }
 
-void CelestiaCore::singleView(View* av)
+View *CelestiaCore::singleView(View* av)
 {
     setViewChanged();
 
@@ -2791,6 +2793,8 @@ void CelestiaCore::singleView(View* av)
     activeView = views.begin();
     sim->setActiveObserver((*activeView)->observer);
     setFOVFromZoom();
+
+    return av;
 }
 
 void CelestiaCore::setActiveView(View* v)
@@ -2799,12 +2803,12 @@ void CelestiaCore::setActiveView(View* v)
     sim->setActiveObserver((*activeView)->observer);
 }
 
-void CelestiaCore::deleteView(View* v)
+View *CelestiaCore::deleteView(View* v)
 {
     if (v == NULL)
         v = (*activeView);
 
-    if (v->parent == 0) return;
+    if (v->parent == 0) return NULL;
 
     //Erase view and parent view from views
     list<View*>::iterator i = views.begin();
@@ -2852,6 +2856,8 @@ void CelestiaCore::deleteView(View* v)
     if (!showActiveViewFrame)
         flashFrameStart = currentTime;
     setFOVFromZoom();
+
+    return v;
 }
 
 bool CelestiaCore::getFramesVisible() const

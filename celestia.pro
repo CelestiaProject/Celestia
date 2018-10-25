@@ -189,10 +189,26 @@ EPHEM_HEADERS = \
     src/celephem/vsop87.h
 
 
+#### Audio3D
+
+AUDIO3D_SOURCES = \
+    src/audio3d/Audio3DManager.cpp \
+    src/audio3d/Audio3DError.cpp
+
+AUDIO3D_HEADERS = \
+    src/audio3d/Audio3DBuffer.h \
+    src/audio3d/Audio3DContext.h \
+    src/audio3d/Audio3DDevice.h \
+    src/audio3d/Audio3DError.h \
+    src/audio3d/Audio3DListener.h \
+    src/audio3d/Audio3DManager.h \
+    src/audio3d/Audio3DSource.h
+
 #### Celestia Engine ####
 
 ENGINE_SOURCES = \
     src/celengine/asterism.cpp \
+    src/celengine/audio.cpp \
     src/celengine/astro.cpp \
     src/celengine/axisarrow.cpp \
     src/celengine/body.cpp \
@@ -262,6 +278,7 @@ ENGINE_SOURCES = \
 ENGINE_HEADERS = \
     src/celengine/asterism.h \
     src/celengine/astro.h \
+    src/celengine/audio.h \
     src/celengine/atmosphere.h \
     src/celengine/axisarrow.h \
     src/celengine/body.h \
@@ -489,6 +506,7 @@ SOURCES = \
     $$TDS_SOURCES \
     $$MODEL_SOURCES \
     $$EPHEM_SOURCES \
+    $$AUDIO3D_SOURCES \
     $$ENGINE_SOURCES \
     $$APP_SOURCES \
     $$QTAPP_SOURCES \
@@ -501,6 +519,7 @@ HEADERS = \
     $$TDS_HEADERS \
     $$MODEL_HEADERS \
     $$EPHEM_HEADERS \
+    $$AUDIO3D_HEADERS \
     $$ENGINE_HEADERS \
     $$APP_HEADERS \
     $$QTAPP_HEADERS \
@@ -578,6 +597,9 @@ SHADER_SOURCE = shaders
 SHADER_FILES =
 FONT_SOURCE = fonts
 FONT_FILES =
+
+LIBS += -lopenal
+LIBS += -lalut
 
 # ## End package files
 macx {

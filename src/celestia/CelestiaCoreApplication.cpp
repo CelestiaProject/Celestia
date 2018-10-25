@@ -4,6 +4,7 @@
 using namespace Eigen;
 
 CelestiaCoreApplication::CelestiaCoreApplication() :
+    audio3dManager(0, NULL),
     showStarsFlag(Renderer::ShowStars, this),
     showPlanetsFlag(Renderer::ShowPlanets, this),
     showGalaxiesFlag(Renderer::ShowGalaxies, this),
@@ -33,6 +34,41 @@ CelestiaCoreApplication::CelestiaCoreApplication() :
     showTintedIlluminationFlag(Renderer::ShowTintedIllumination, this)
 {
     setAutoMessagesOn();
+}
+
+bool CelestiaCoreApplication::initSimulation(const string* configFileName,
+                                  const vector<string>* extrasDirs,
+                                  ProgressNotifier* progressNotifier)
+{
+    bool ret = CelestiaCore::initSimulation(configFileName, extrasDirs, progressNotifier);
+    if (!ret) return ret;
+    audio3dManager.addObserver(getSimulation()->getActiveObserver());
+
+    return true;
+}
+
+void CelestiaCoreApplication::tick() {
+    CelestiaCore::tick();
+    audio3dManager.update(getSimulation()->getTime());
+}
+
+void CelestiaCoreApplication::splitView(View::Type type, View* av, float splitPos) {
+    View *v = CelestiaCore::splitView(type, av, splitPos);
+    if (v != NULL) audio3dManager.addObserver(v->observer);
+}
+
+void CelestiaCoreApplication::singleView(View* av) {
+    View *v = CelestiaCore::singleView(av);
+    if (v != NULL)
+    {
+        audio3dManager.clearObservers();
+        audio3dManager.addObserver(v->observer);
+    }
+}
+
+void CelestiaCoreApplication::deleteView(View* av) {
+    View *v = CelestiaCore::deleteView(av);
+    if (v != NULL) audio3dManager.removeObserver(v->observer);
 }
 
 void CelestiaCoreApplication::gotoSelection(double gotoTime, const Eigen::Vector3f& up, ObserverFrame::CoordinateSystem upFrame) {

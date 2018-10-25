@@ -2,11 +2,14 @@
 #define __CELESTIA_CORE_APPLICATION__H__
 
 #include "celestiacore.h"
+#include <celengine/audio.h>
 
 class CelestiaCoreApplication : public CelestiaCore {
     bool autoMessages;
 
 public:
+
+    AudioManager audio3dManager;
 
     CelestiaCoreApplication();
 
@@ -64,6 +67,18 @@ public:
 
         bool isSet() { return core->getRenderFlags() & flag; }
     };
+
+    double getCurrentTime() { return currentTime; }
+
+    bool initSimulation(const std::string* = NULL,
+                        const std::vector<std::string>* extrasDirs = NULL,
+                        ProgressNotifier* progressNotifier = NULL);
+
+    void tick();
+
+    void splitView(View::Type type, View* av = NULL, float splitPos = 0.5f);
+    void singleView(View* av = NULL);
+    void deleteView(View* v = NULL);
 
     // Text enter mode functions
 
