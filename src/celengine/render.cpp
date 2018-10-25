@@ -2974,7 +2974,7 @@ void Renderer::draw(const Observer& observer,
             disableSmoothLines();
     }
 
-    if (renderFlags & ShowBoundaries)
+    if ((renderFlags & ShowBoundaries) && (universe.getBoundaries() != nullptr))
     {
         /* We'll linearly fade the boundaries as a function of the
            observer's distance to the origin of coordinates: */
@@ -2985,13 +2985,11 @@ void Renderer::draw(const Observer& observer,
             opacity = clamp((MaxAsterismLabelsConstDist - dist) /
                             (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
         }
-        glColor(BoundaryColor, opacity);
 
         glDisable(GL_TEXTURE_2D);
         if (renderFlags & ShowSmoothLines)
             enableSmoothLines();
-        if (universe.getBoundaries() != nullptr)
-            universe.getBoundaries()->render();
+        universe.getBoundaries()->render(Color(BoundaryColor, opacity));
         if (renderFlags & ShowSmoothLines)
             disableSmoothLines();
     }

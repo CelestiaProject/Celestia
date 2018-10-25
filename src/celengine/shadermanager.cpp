@@ -2944,7 +2944,10 @@ ShaderManager::buildStaticVertexShader(const ShaderProperties& props)
         source << DeclareAttribute("pointSize", Shader_Float);
     }
 
-    source << DeclareVarying("color", Shader_Vector4);
+    if (props.staticProps & ShaderProperties::UniformColor)
+        source << DeclareUniform("color", Shader_Vector4);
+    else
+        source << DeclareVarying("color", Shader_Vector4);
 
     // Begin main()
     source << "\nvoid main(void)\n";
@@ -2953,7 +2956,8 @@ ShaderManager::buildStaticVertexShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::PointSprite)
         source << "    gl_PointSize = pointSize;\n";
 
-    source << "    color = gl_Color;\n";
+    if (!(props.staticProps & ShaderProperties::UniformColor))
+        source << "    color = gl_Color;\n";
     source << "    gl_Position = ftransform();\n";
 
     source << "}\n";
@@ -2979,7 +2983,10 @@ ShaderManager::buildStaticFragmentShader(const ShaderProperties& props)
         source << "uniform sampler2D normTex;\n";
     }
 
-    source << DeclareVarying("color", Shader_Vector4);
+    if (props.staticProps & ShaderProperties::UniformColor)
+        source << DeclareUniform("color", Shader_Vector4);
+    else
+        source << DeclareVarying("color", Shader_Vector4);
 
     // Begin main()
     source << "\nvoid main(void)\n";
@@ -3221,6 +3228,12 @@ CelestiaGLProgram::initParameters()
     if ((props.texUsage & ShaderProperties::PointSprite) != 0)
     {
         pointScale           = floatParam("pointScale");
+    }
+
+    if (props.staticShader)
+    {
+        if (props.staticProps & ShaderProperties::UniformColor)
+            color            = vec4Param("color");
     }
 }
 

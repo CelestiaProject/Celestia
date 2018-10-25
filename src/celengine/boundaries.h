@@ -15,22 +15,39 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "celutil/color.h"
+#include "shadermanager.h"
+
 
 class ConstellationBoundaries
 {
+    using Chain = std::vector<Eigen::Vector3f>;
+
  public:
     ConstellationBoundaries();
     ~ConstellationBoundaries();
-
-    typedef std::vector<Eigen::Vector3f> Chain;
+    ConstellationBoundaries(const ConstellationBoundaries&)            = delete;
+    ConstellationBoundaries(ConstellationBoundaries&&)                 = delete;
+    ConstellationBoundaries& operator=(const ConstellationBoundaries&) = delete;
+    ConstellationBoundaries& operator=(ConstellationBoundaries&&)      = delete;
 
     void moveto(float ra, float dec);
     void lineto(float ra, float dec);
-    void render();
+    void render(Color color);
 
  private:
-    Chain* currentChain{nullptr};
+    void cleanup();
+    void prepare();
+
+    Chain* currentChain{ nullptr };
     std::vector<Chain*> chains;
+
+    GLuint  vboId{ 0 };
+    GLshort *vtx_buf{ nullptr };
+    GLsizei vtx_num{ 0 };
+    bool prepared{ false };
+
+    ShaderProperties shadprop;
 };
 
 ConstellationBoundaries* ReadBoundaries(std::istream&);

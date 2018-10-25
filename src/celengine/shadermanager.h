@@ -87,6 +87,11 @@ class ShaderProperties
      VolumetricEmissionEffect        = 0x0004,
  };
 
+ enum
+ {
+     UniformColor = 0x0001,
+ };
+
  public:
     unsigned short nLights;
     unsigned short texUsage;
@@ -104,6 +109,7 @@ class ShaderProperties
     unsigned short effects;
 
     bool staticShader{ false };
+    uint32_t staticProps{ 0 };
 
  private:
     enum
@@ -169,8 +175,9 @@ class CelestiaGLProgram
 
  enum
  {
-    TangentAttributeIndex = 6,
-    PointSizeAttributeIndex = 7,
+    VertexCoordAttributeIndex = 0,
+    TangentAttributeIndex     = 6,
+    PointSizeAttributeIndex   = 7,
  };
 
  public:
@@ -236,6 +243,9 @@ class CelestiaGLProgram
 
     // Scale factor for point sprites
     FloatShaderParameter pointScale;
+
+    // Color sent as a uniform
+    Vec4ShaderParameter color;
 
     CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderEclipseShadows];
 
