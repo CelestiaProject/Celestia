@@ -14,6 +14,10 @@ QMAKE_CXXFLAGS += -std=c++11
 QT += opengl
 QT += xml
 
+contains(DEFINES, TEST_MODEL) {
+    QT += testlib
+}
+
 load(configure)
 qtCompileTest(spice)
 qtCompileTest(byteswap)
