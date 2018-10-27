@@ -6598,8 +6598,8 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
 
     const StarDatabase* starDB;
 
-    bool   useScaledDiscs{ false };
-    float  maxDiscSize{ 1.0f };
+    bool  useScaledDiscs{ false };
+    float maxDiscSize{ 1.0f };
 
     float cosFOV{ 1.0f };
 
@@ -6686,8 +6686,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             // Recompute apparent magnitude using new distance computation
             appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
 
-            float f        = RenderDistance / distance;
-            starPos        = obsPos.cast<float>() + relPos * f;
+            starPos = obsPos.cast<float>() + relPos * (RenderDistance / distance);
 
             float radius = star.getRadius();
             discSizeInPixels = radius / astro::lightYearsToKilometers(distance) / pixelSize;
@@ -6839,6 +6838,8 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 #ifdef USE_HDR
     starRenderer.exposure          = exposure + brightPlus;
 #endif
+    starRenderer.distanceLimit     = distanceLimit;
+    starRenderer.labelMode         = labelMode;
 #ifdef DEBUG_HDR_ADAPT
     starRenderer.minMag = -100.f;
     starRenderer.maxMag =  100.f;
@@ -6849,14 +6850,12 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.countAboveN = 0L;
     starRenderer.total       = 0L;
 #endif
-    starRenderer.distanceLimit     = distanceLimit;
-    starRenderer.labelMode         = labelMode;
 
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
     starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
 
-    starRenderer.size          = BaseStarDiscSize;
+    starRenderer.size = BaseStarDiscSize;
     if (starStyle == ScaledDiscStars)
     {
         starRenderer.useScaledDiscs = true;
@@ -6931,12 +6930,11 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     if (distanceToDSO > distanceLimit)
         return;
 
-    Vector3d dsoPos = dso->getPosition();
-    Vector3f relPos = (dsoPos - obsPos).cast<float>();
+    Vector3f relPos = (dso->getPosition() - obsPos).cast<float>();
 
     Vector3f center = orientationMatrix.transpose() * relPos;
 
-    double enhance = 4.0, pc10 = 32.6167;
+    constexpr const double enhance = 4.0, pc10 = 32.6167;
 
     // The parameter 'enhance' adjusts the DSO brightness as viewed from "inside"
     // (e.g. MilkyWay as seen from Earth). It provides an enhanced apparent  core
@@ -7021,14 +7019,12 @@ void DSORenderer::process(DeepSkyObject* const & dso,
                             pixelSize);
                 glPopMatrix();
 
-    #if 1
                 if (dsoRadius < 1000.0)
                 {
                     glMatrixMode(GL_PROJECTION);
                     glPopMatrix();
                     glMatrixMode(GL_MODELVIEW);
                 }
-    #endif
             } // renderFlags check
 
             // Only render those labels that are in front of the camera:
@@ -7105,17 +7101,17 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 {
     DSORenderer dsoRenderer;
 
-    Vector3d obsPos    = observer.getPosition().toLy();
+    Vector3d obsPos     = observer.getPosition().toLy();
 
     DSODatabase* dsoDB  = universe.getDSOCatalog();
 
     dsoRenderer.context          = context;
     dsoRenderer.renderer         = this;
     dsoRenderer.dsoDB            = dsoDB;
-    dsoRenderer.orientationMatrix = observer.getOrientationf().conjugate().toRotationMatrix();
-    dsoRenderer.observer          = &observer;
-    dsoRenderer.obsPos            = obsPos;
-    dsoRenderer.viewNormal        = observer.getOrientationf().conjugate() * -Vector3f::UnitZ();
+    dsoRenderer.orientationMatrix= observer.getOrientationf().conjugate().toRotationMatrix();
+    dsoRenderer.observer         = &observer;
+    dsoRenderer.obsPos           = obsPos;
+    dsoRenderer.viewNormal       = observer.getOrientationf().conjugate() * -Vector3f::UnitZ();
     dsoRenderer.fov              = fov;
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
     dsoRenderer.size             = pixelSize * 1.6f / corrFac;
