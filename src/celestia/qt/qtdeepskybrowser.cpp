@@ -26,10 +26,8 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QRegExp>
-#include <cstring>
 #include <vector>
 #include <set>
-#include <algorithm>
 
 using namespace Eigen;
 using namespace std;
@@ -154,11 +152,11 @@ QVariant DSOTableModel::data(const QModelIndex& index, int role) const
             return QVariant(QString::fromUtf8(dsoNameString.c_str()));
         }
     case DistanceColumn:
-        return QString("%L1").arg((observerPos - dso->getPosition()).norm(), 0, 'g', 4);
+        return QString("%L1").arg((observerPos - dso->getPosition()).norm(), 0, 'g', 6);
     case AppMagColumn:
         {
             double distance = (observerPos - dso->getPosition()).norm();
-            return QString("%1").arg(astro::absToAppMag((double) dso->getAbsoluteMagnitude(), distance), 0, 'f', 2);
+            return QString("%L1").arg(astro::absToAppMag((double) dso->getAbsoluteMagnitude(), distance), 0, 'f', 2);
         }
     case TypeColumn:
         return QString(dso->getType());

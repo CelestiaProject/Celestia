@@ -27,10 +27,8 @@
 #include <QLineEdit>
 #include <QRegExp>
 #include <QFontMetrics>
-#include <cstring>
 #include <vector>
 #include <set>
-#include <algorithm>
 
 using namespace Eigen;
 using namespace std;
@@ -155,15 +153,17 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
         case DistanceColumn:
             {
                 double distance = star->getPosition(now).distanceFromLy(observerPos);
-                return QVariant(distance);
+                if (distance < 0.001)
+                    return QString("%L1").arg(distance, 0, 'g');
+                return QString("%L1").arg(distance, 2, 'f', 3);
             }
         case AppMagColumn:
             {
                 double distance = star->getPosition(now).distanceFromLy(observerPos);
-                return QString("%1").arg((double) star->getApparentMagnitude((float) distance), 0, 'f', 2);
+                return QString("%L1").arg((double) star->getApparentMagnitude((float) distance), 0, 'f', 2);
             }
         case AbsMagColumn:
-            return QString("%1").arg(star->getAbsoluteMagnitude(), 0, 'f', 2);
+            return QString("%L1").arg(star->getAbsoluteMagnitude(), 0, 'f', 2);
         case SpectralTypeColumn:
             return QString(star->getSpectralType());
         default:
