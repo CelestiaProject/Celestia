@@ -831,6 +831,10 @@ Command* CommandParser::parseCommand()
         Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z());
         cmd = new CommandSetTextColor(color);
     }
+    else if(commandName == "play")
+    {
+        cmd = new CommandWait(0);
+    }
     else if (commandName == "overlay")
     {
         float duration;

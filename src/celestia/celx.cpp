@@ -3498,6 +3498,12 @@ static int celestia_verbosity(lua_State* l)
 }
 
 
+static int celestia_play(lua_State*)
+{
+    return 0;
+}
+
+
 static void CreateCelestiaMetaTable(lua_State* l)
 {
     Celx_CreateClassMetatable(l, Celx_Celestia);
@@ -3597,6 +3603,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "geturl", celestia_geturl);
     Celx_RegisterMethod(l, "overlay", celestia_overlay);
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
+    // Dummy command for compatibility purpose
+    Celx_RegisterMethod(l, "play", celestia_play);
 
     lua_pop(l, 1);
 }
