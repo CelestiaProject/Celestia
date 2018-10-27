@@ -1295,10 +1295,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
     {
         Annotation a;
 
-        a.labelText[0] = '\0';
-        ReplaceGreekLetterAbbr(a.labelText, MaxLabelLength, labelText.c_str(), labelText.length());
-        a.labelText[MaxLabelLength - 1] = '\0';
-
+        a.labelText = ReplaceGreekLetterAbbr(labelText);
         a.markerRep = markerRep;
         a.color = color;
         a.position = Vector3f((float) winX, (float) winY, -depth);
@@ -1355,12 +1352,10 @@ void Renderer::addSortedAnnotation(const MarkerRepresentation* markerRep,
     {
         Annotation a;
 
-        a.labelText[0] = '\0';
         if (markerRep == nullptr)
         {
             //l.text = ReplaceGreekLetterAbbr(_(text.c_str()));
-            strncpy(a.labelText, labelText.c_str(), MaxLabelLength);
-            a.labelText[MaxLabelLength - 1] = '\0';
+            a.labelText = labelText;
         }
         a.markerRep = markerRep;
         a.color = color;
@@ -1450,12 +1445,7 @@ void Renderer::addObjectAnnotation(const MarkerRepresentation* markerRep,
 
             Annotation a;
 
-            a.labelText[0] = '\0';
-            if (!labelText.empty())
-            {
-                strncpy(a.labelText, labelText.c_str(), MaxLabelLength);
-                a.labelText[MaxLabelLength - 1] = '\0';
-            }
+            a.labelText = labelText;
             a.markerRep = markerRep;
             a.color = color;
             a.position = Vector3f((float) winX, (float) winY, -depth);
@@ -6756,12 +6746,10 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             starDir.normalize();
             if (starDir.dot(viewNormal) > cosFOV)
             {
-                char nameBuffer[Renderer::MaxLabelLength];
-                starDB->getStarName(star, nameBuffer, sizeof(nameBuffer), true);
                 float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
                 if (distr > 1.0f)
                     distr = 1.0f;
-                renderer->addBackgroundAnnotation(nullptr, nameBuffer,
+                renderer->addBackgroundAnnotation(nullptr, starDB->getStarName(star, true),
                                                   Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
                                                   relPos);
                 nLabelled++;
@@ -6995,12 +6983,10 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             starDir.normalize();
             if (starDir.dot(viewNormal) > cosFOV)
             {
-                char nameBuffer[Renderer::MaxLabelLength];
-                starDB->getStarName(star, nameBuffer, sizeof(nameBuffer), true);
                 float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
                 if (distr > 1.0f)
                     distr = 1.0f;
-                renderer->addBackgroundAnnotation(nullptr, nameBuffer,
+                renderer->addBackgroundAnnotation(nullptr, starDB->getStarName(star, true),
                                                   Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
                                                   relPos);
                 nLabelled++;
@@ -7830,7 +7816,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
             glPopMatrix();
         }
 
-        if (annotations[i].labelText[0] != '\0')
+        if (!annotations[i].labelText.empty())
         {
             glPushMatrix();
             int labelWidth = 0;
@@ -8070,7 +8056,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
             glPopMatrix();
         }
 
-        if (iter->labelText[0] != '\0')
+        if (!iter->labelText.empty())
         {
             if (iter->markerRep != nullptr)
                 labelHOffset += (int) iter->markerRep->size() / 2 + 3;

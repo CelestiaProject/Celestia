@@ -249,10 +249,9 @@ class Renderer
         VerticalAlignTop,
     };
 
-    static const int MaxLabelLength = 48;
     struct Annotation
     {
-        char labelText[MaxLabelLength];
+        std::string labelText;
         const MarkerRepresentation* markerRep;
         Color color;
         Eigen::Vector3f position;
