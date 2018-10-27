@@ -199,16 +199,6 @@ static void FillinSurface(Hash* surfaceData,
                           const std::string& path)
 {
     surfaceData->getColor("Color", surface->color);
-
-    // Haze is deprecated; used only in pre-OpenGL 2.0 render paths
-    Color hazeColor = surface->hazeColor;
-    float hazeDensity = hazeColor.alpha();
-    if (surfaceData->getColor("HazeColor", hazeColor) | surfaceData->getNumber("HazeDensity", hazeDensity))
-    {
-        surface->hazeColor = Color(hazeColor.red(), hazeColor.green(),
-                                   hazeColor.blue(), hazeDensity);
-    }
-
     surfaceData->getColor("SpecularColor", surface->specularColor);
     surfaceData->getNumber("SpecularPower", surface->specularPower);
 
@@ -861,7 +851,6 @@ static Body* CreateBody(const string& name,
     else
     {
         surface.color = Color(1.0f, 1.0f, 1.0f);
-        surface.hazeColor = Color(0.0f, 0.0f, 0.0f, 0.0f);
     }
     FillinSurface(planetData, &surface, path);
     body->setSurface(surface);
@@ -1256,9 +1245,8 @@ bool LoadSolarSystemObjects(istream& in,
         }
         else if (itemType == "AltSurface")
         {
-            Surface* surface = new Surface(); // FIXME: check
+            Surface* surface = new Surface();
             surface->color = Color(1.0f, 1.0f, 1.0f);
-            surface->hazeColor = Color(0.0f, 0.0f, 0.0f, 0.0f);
             FillinSurface(objectData, surface, directory);
             if (parent.body() != nullptr)
                 parent.body()->addAlternateSurface(primaryName, surface);

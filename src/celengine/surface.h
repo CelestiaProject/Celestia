@@ -48,7 +48,6 @@ class Surface
 
     uint32_t appearanceFlags;
     Color color;
-    Color hazeColor;
     Color specularColor;
     float specularPower;
     MultiResTexture baseTexture;    // surface colors

@@ -753,7 +753,7 @@ void CommandSetTextureResolution::process(ExecutionEnvironment& env)
 
 
 ////////////////
-// Set RenderPath command
+// Set RenderPath command. Left for compatibility.
 
 CommandRenderPath::CommandRenderPath(GLContext::GLRenderPath _path) :
     path(_path)
@@ -762,6 +762,7 @@ CommandRenderPath::CommandRenderPath(GLContext::GLRenderPath _path) :
 
 void CommandRenderPath::process(ExecutionEnvironment& env)
 {
+#if 0
     GLContext* context = env.getRenderer()->getGLContext();
 
     if (context != nullptr)
@@ -769,6 +770,7 @@ void CommandRenderPath::process(ExecutionEnvironment& env)
         context->setRenderPath(path);
         env.getCelestiaCore()->notifyWatchers(CelestiaCore::RenderFlagsChanged);
     }
+#endif
 }
 
 

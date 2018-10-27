@@ -4683,7 +4683,6 @@ void Renderer::renderObject(const Vector3f& pos,
     if (obj.surface->baseTexture.tex[textureResolution] != InvalidResource)
         ri.baseTex = obj.surface->baseTexture.find(textureResolution);
     if ((obj.surface->appearanceFlags & Surface::ApplyBumpMap) != 0 &&
-        context->bumpMappingSupported() &&
         obj.surface->bumpTexture.tex[textureResolution] != InvalidResource)
         ri.bumpTex = obj.surface->bumpTexture.find(textureResolution);
     if ((obj.surface->appearanceFlags & Surface::ApplyNightMap) != 0 &&
@@ -4738,7 +4737,6 @@ void Renderer::renderObject(const Vector3f& pos,
     }
 
     ri.ambientColor = ambientColor;
-    ri.hazeColor = obj.surface->hazeColor;
     ri.specularColor = obj.surface->specularColor;
     ri.specularPower = obj.surface->specularPower;
     ri.useTexEnvCombine = true;
@@ -4864,20 +4862,12 @@ void Renderer::renderObject(const Vector3f& pos,
         // A null model indicates that this body is a sphere
         if (lit)
         {
-            switch (context->getRenderPath())
-            {
-            case GLContext::GLPath_GLSL:
-                renderEllipsoid_GLSL(ri, ls,
-                                     const_cast<Atmosphere*>(obj.atmosphere), cloudTexOffset,
-                                     scaleFactors,
-                                     textureResolution,
-                                     renderFlags,
-                                     obj.orientation, viewFrustum, *context);
-                break;
-
-            default:
-                renderSphereDefault(ri, viewFrustum, true, *context);
-            }
+            renderEllipsoid_GLSL(ri, ls,
+                                 const_cast<Atmosphere*>(obj.atmosphere), cloudTexOffset,
+                                 scaleFactors,
+                                 textureResolution,
+                                 renderFlags,
+                                 obj.orientation, viewFrustum, *context);
         }
         else
         {
@@ -4890,61 +4880,47 @@ void Renderer::renderObject(const Vector3f& pos,
         {
             ResourceHandle texOverride = obj.surface->baseTexture.tex[textureResolution];
 
-            if (context->getRenderPath() == GLContext::GLPath_GLSL)
+            if (lit)
             {
-                if (lit)
-                {
-                    renderGeometry_GLSL(geometry,
-                                        ri,
-                                        texOverride,
-                                        ls,
-                                        obj.atmosphere,
-                                        geometryScale,
-                                        renderFlags,
-                                        obj.orientation,
-                                        astro::daysToSecs(now - astro::J2000));
-                }
-                else
-                {
-                    renderGeometry_GLSL_Unlit(geometry,
-                                              ri,
-                                              texOverride,
-                                              geometryScale,
-                                              renderFlags,
-                                              obj.orientation,
-                                              astro::daysToSecs(now - astro::J2000));
-                }
-
-                for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
-                {
-                    glActiveTexture(GL_TEXTURE0 + i);
-                    glDisable(GL_TEXTURE_2D);
-                }
-                glActiveTexture(GL_TEXTURE0);
-                glEnable(GL_TEXTURE_2D);
-                glUseProgram(0);
+                renderGeometry_GLSL(geometry,
+                                    ri,
+                                    texOverride,
+                                    ls,
+                                    obj.atmosphere,
+                                    geometryScale,
+                                    renderFlags,
+                                    obj.orientation,
+                                    astro::daysToSecs(now - astro::J2000));
             }
             else
             {
-                assert(context->getRenderPath() != GLContext::GLPath_GLSL);
+                renderGeometry_GLSL_Unlit(geometry,
+                                          ri,
+                                          texOverride,
+                                          geometryScale,
+                                          renderFlags,
+                                          obj.orientation,
+                                          astro::daysToSecs(now - astro::J2000));
             }
+
+            for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
+            {
+                glActiveTexture(GL_TEXTURE0 + i);
+                glDisable(GL_TEXTURE_2D);
+            }
+            glActiveTexture(GL_TEXTURE0);
+            glEnable(GL_TEXTURE_2D);
+            glUseProgram(0);
         }
     }
 
     if (obj.rings != nullptr && distance <= obj.rings->innerRadius)
     {
-        if (context->getRenderPath() == GLContext::GLPath_GLSL)
-        {
-            renderRings_GLSL(*obj.rings, ri, ls,
-                             radius, 1.0f - obj.semiAxes.y(),
-                             textureResolution,
-                             (renderFlags & ShowRingShadows) != 0 && lit,
-                             detailOptions.ringSystemSections);
-        }
-        else
-        {
-            assert(context->getRenderPath() != GLContext::GLPath_GLSL);
-        }
+        renderRings_GLSL(*obj.rings, ri, ls,
+                         radius, 1.0f - obj.semiAxes.y(),
+                         textureResolution,
+                         (renderFlags & ShowRingShadows) != 0 && lit,
+                         detailOptions.ringSystemSections);
     }
 
     if (obj.atmosphere != nullptr)
@@ -4972,8 +4948,7 @@ void Renderer::renderObject(const Vector3f& pos,
         {
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
             // TODO: convert old style atmopshere parameters
-            if (context->getRenderPath() == GLContext::GLPath_GLSL &&
-                atmosphere->mieScaleHeight > 0.0f)
+            if (atmosphere->mieScaleHeight > 0.0f)
             {
                 float atmScale = 1.0f + atmosphere->height / radius;
 
@@ -5056,24 +5031,17 @@ void Renderer::renderObject(const Vector3f& pos,
 
             if (lit)
             {
-                if (context->getRenderPath() == GLContext::GLPath_GLSL)
-                {
-                    renderClouds_GLSL(ri, ls,
-                                      atmosphere,
-                                      cloudTex,
-                                      cloudNormalMap,
-                                      cloudTexOffset,
-                                      scaleFactors,
-                                      textureResolution,
-                                      renderFlags,
-                                      obj.orientation,
-                                      viewFrustum,
-                                      *context);
-                }
-                else
-                {
-                    assert(context->getRenderPath() != GLContext::GLPath_GLSL);
-                }
+                renderClouds_GLSL(ri, ls,
+                                  atmosphere,
+                                  cloudTex,
+                                  cloudNormalMap,
+                                  cloudTexOffset,
+                                  scaleFactors,
+                                  textureResolution,
+                                  renderFlags,
+                                  obj.orientation,
+                                  viewFrustum,
+                                  *context);
             }
             else
             {
@@ -5115,18 +5083,11 @@ void Renderer::renderObject(const Vector3f& pos,
     if (obj.rings != nullptr && distance > obj.rings->innerRadius)
     {
         glDepthMask(GL_FALSE);
-        if (context->getRenderPath() == GLContext::GLPath_GLSL)
-        {
-            renderRings_GLSL(*obj.rings, ri, ls,
-                             radius, 1.0f - obj.semiAxes.y(),
-                             textureResolution,
-                             (renderFlags & ShowRingShadows) != 0 && lit,
-                             detailOptions.ringSystemSections);
-        }
-        else
-        {
-            assert(context->getRenderPath() != GLContext::GLPath_GLSL);
-        }
+        renderRings_GLSL(*obj.rings, ri, ls,
+                         radius, 1.0f - obj.semiAxes.y(),
+                         textureResolution,
+                         (renderFlags & ShowRingShadows) != 0 && lit,
+                         detailOptions.ringSystemSections);
     }
 
     // Disable all light sources other than the first
@@ -5237,7 +5198,7 @@ bool Renderer::testEclipse(const Body& receiver,
 
         // If the caster has a ring system, see if it casts a shadow on the receiver.
         // Ring shadows are only supported in the OpenGL 2.0 path.
-        if (caster.getRings() && context->getRenderPath() == GLContext::GLPath_GLSL)
+        if (caster.getRings())
         {
             bool shadowed = false;
 
@@ -7882,7 +7843,6 @@ void Renderer::loadTextures(Body* body)
     if (surface.baseTexture.tex[textureResolution] != InvalidResource)
         surface.baseTexture.find(textureResolution);
     if ((surface.appearanceFlags & Surface::ApplyBumpMap) != 0 &&
-        context->bumpMappingSupported() &&
         surface.bumpTexture.tex[textureResolution] != InvalidResource)
         surface.bumpTexture.find(textureResolution);
     if ((surface.appearanceFlags & Surface::ApplyNightMap) != 0 &&

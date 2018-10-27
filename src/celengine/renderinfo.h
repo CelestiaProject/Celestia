@@ -17,7 +17,6 @@ struct RenderInfo
     Texture* nightTex;
     Texture* glossTex;
     Texture* overlayTex;
-    Color hazeColor;
     Color specularColor;
     float specularPower;
     Eigen::Vector3f sunDir_eye;
@@ -46,7 +45,6 @@ struct RenderInfo
                    nightTex(nullptr),
                    glossTex(nullptr),
                    overlayTex(nullptr),
-                   hazeColor(0.0f, 0.0f, 0.0f),
                    specularColor(0.0f, 0.0f, 0.0f),
                    specularPower(0.0f),
                    sunDir_eye(Eigen::Vector3f::UnitZ()),

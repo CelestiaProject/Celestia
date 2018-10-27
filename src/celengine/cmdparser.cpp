@@ -763,6 +763,7 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "renderpath")
     {
+#if 0
         GLContext::GLRenderPath glcpath = GLContext::GLPath_GLSL;
         string path;
         paramList->getString("path", path);
@@ -771,6 +772,9 @@ Command* CommandParser::parseCommand()
             glcpath = GLContext::GLPath_GLSL;
 
         cmd = new CommandRenderPath(glcpath);
+#else
+        cmd = new CommandRenderPath(GLContext::GLPath_GLSL);
+#endif
     }
     else if (commandName == "splitview")
     {
