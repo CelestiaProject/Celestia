@@ -4722,8 +4722,6 @@ void Renderer::renderObject(const Vector3f& pos,
     glScale(scaleFactors);
 
     Matrix3f planetRotation = obj.orientation.toRotationMatrix();
-    Matrix4f planetMat = Matrix4f::Identity();
-    planetMat.topLeftCorner(3, 3) = planetRotation;
 
     ri.eyeDir_obj = -(planetRotation * pos).normalized();
     ri.eyePos_obj = -(planetRotation * (pos.cwiseQuotient(scaleFactors)));
@@ -4760,28 +4758,6 @@ void Renderer::renderObject(const Vector3f& pos,
 
         glLightDirection(GL_LIGHT0 + i, ls.lights[i].direction_obj);
 
-        // RANT ALERT!
-        // This sucks, but it's necessary.  glScale is used to scale a unit
-        // sphere up to planet size.  Since normals are transformed by the
-        // inverse transpose of the model matrix, this means they end up
-        // getting scaled by a factor of 1.0 / planet radius (in km).  This
-        // has terrible effects on lighting: the planet appears almost
-        // completely dark.  To get around this, the GL_rescale_normal
-        // extension was introduced and eventually incorporated into into the
-        // OpenGL 1.2 standard.  Of course, not everyone implemented this
-        // incredibly simple and essential little extension.  Microsoft is
-        // notorious for half-assed support of OpenGL, but 3dfx should have
-        // known better: no Voodoo 1/2/3 drivers seem to support this
-        // extension.  The following is an attempt to get around the problem by
-        // scaling the light brightness by the planet radius.  According to the
-        // OpenGL spec, this should work fine, as clamping of colors to [0, 1]
-        // occurs *after* lighting.  It works fine on my GeForce3 when I
-        // disable EXT_rescale_normal, but I'm not certain whether other
-        // drivers are as well behaved as nVidia's.
-        //
-        // Addendum: Unsurprisingly, using color values outside [0, 1] produces
-        // problems on Savage4 cards.
-
         Vector3f lightColor = light.color.toVector3() * light.irradiance;
         glLightColor(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
         glLightColor(GL_LIGHT0 + i, GL_SPECULAR, lightColor);
@@ -4798,39 +4774,14 @@ void Renderer::renderObject(const Vector3f& pos,
                                obj.orientation *
                                Scaling3f(1.0f / radius);
 */
-#if 0
-    Affine3f invModelView = cameraOrientation.conjugate() *
-                            Translation3f(-pos) *
-                            obj.orientation *
-                            Scaling(1.0f / radius);
+    Affine3f invModelView = obj.orientation *
+                            Translation3f(-pos / obj.radius) *
+                            cameraOrientation.conjugate();
     Matrix4f invMV = invModelView.matrix();
 #else
-    // XXX: HACK! HACK! HACK!
-    // This code simply tries to emulate the old one.
-    //
-    // The problem is that original celestia's Matrix4 (aka Mat4) uses
-    // row-major memory layout, but Eigen by default uses column-major layout,
-    // so when later we call Frustum::transform using calculated here invMV
-    // we use a transposed matrix:
-    // void
-    // Frustum::transform(const Mat4f& m)
-    // {
-    //     Matrix4f m2 = Map<Matrix4f>(&m[0][0]);
-    //     transform(m2);
-    // }
-    // Because of that we apply a transpose() to invMV.
-    // Due to the same column-major vs row-major issue we swap col(3) with row(3).
-    //
-    // All that means that the planet rendering code implemented incorrectly.
-    // If `Affine3f invModelView` from above is used then planets dissappear
-    // when an observer gets closer to them.
-    Matrix4f ct = (Translation3f(-pos / radius) * cameraOrientation).matrix();
-    for (int i=0; i < 3; i++)
-        std::swap(ct(3, i), ct(i, 3));
+    Matrix4f planetMat = Matrix4f::Identity();
+    planetMat.topLeftCorner(3, 3) = planetRotation;
 
-    Matrix4f invMV = (ct * planetMat.transpose()).transpose();
-#endif
-#else
     Mat4f planetMat_old(Vec4f(planetMat.col(0).x(), planetMat.col(0).y(), planetMat.col(0).z(), planetMat.col(0).w()),
                         Vec4f(planetMat.col(1).x(), planetMat.col(1).y(), planetMat.col(1).z(), planetMat.col(1).w()),
                         Vec4f(planetMat.col(2).x(), planetMat.col(2).y(), planetMat.col(2).z(), planetMat.col(2).w()),
