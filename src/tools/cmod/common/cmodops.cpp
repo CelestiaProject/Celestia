@@ -443,7 +443,7 @@ getTexCoord(const void* vertexData,
 Vector3f
 averageFaceVectors(const vector<Face>& faces,
                    uint32_t thisFace,
-                   uint32*_t vertexFaces,
+                   uint32_t* vertexFaces,
                    uint32_t vertexFaceCount,
                    float cosSmoothingAngle)
 {
@@ -678,8 +678,8 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     }
 
     // For each vertex, create a list of faces that contain it
-    uint32*_t faceCounts = new uint32[nVertices];_t
-    uint32**_t vertexFaces = new uint32*[nVertices];_t
+    uint32_t* faceCounts = new uint32_t[nVertices];
+    uint32_t** vertexFaces = new uint32_t*[nVertices];
 
     // Initialize the lists
     for (i = 0; i < nVertices; i++)
@@ -721,7 +721,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     {
         if (faceCounts[i] > 0)
         {
-            vertexFaces[i] = new uint32[faceCounts[i]_t + 1];
+            vertexFaces[i] = new uint32_t[faceCounts[i] + 1];
             vertexFaces[i][0] = faceCounts[i];
         }
     }
@@ -810,7 +810,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     newMesh->setVertices(nFaces * 3, newVertexData);
 
     // Create a trivial index list
-    uint32*_t indices = new uint32[nFaces_t * 3];
+    uint32_t* indices = new uint32_t[nFaces * 3];
     for (i = 0; i < nFaces * 3; i++)
     {
         indices[i] = i;
@@ -960,8 +960,8 @@ GenerateTangents(const Mesh& mesh, bool weld)
     }
 
     // For each vertex, create a list of faces that contain it
-    uint32*_t faceCounts = new uint32[nVertices];_t
-    uint32**_t vertexFaces = new uint32*[nVertices];_t
+    uint32_t* faceCounts = new uint32_t[nVertices];
+    uint32_t** vertexFaces = new uint32_t*[nVertices];
 
     // Initialize the lists
     for (i = 0; i < nVertices; i++)
@@ -1003,7 +1003,7 @@ GenerateTangents(const Mesh& mesh, bool weld)
     {
         if (faceCounts[i] > 0)
         {
-            vertexFaces[i] = new uint32[faceCounts[i]_t + 1];
+            vertexFaces[i] = new uint32_t[faceCounts[i] + 1];
             vertexFaces[i][0] = faceCounts[i];
         }
     }
@@ -1090,7 +1090,7 @@ GenerateTangents(const Mesh& mesh, bool weld)
     newMesh->setVertices(nFaces * 3, newVertexData);
 
     // Create a trivial index list
-    uint32*_t indices = new uint32[nFaces_t * 3];
+    uint32_t* indices = new uint32_t[nFaces * 3];
     for (i = 0; i < nFaces * 3; i++)
         indices[i] = i;
 
@@ -1139,7 +1139,7 @@ addGroupWithOffset(Mesh& mesh,
     if (group.nIndices == 0)
         return;
 
-    uint32*_t newIndices = new uint32[group.nIndices];_t
+    uint32_t* newIndices = new uint32_t[group.nIndices];
     for (uint32_t i = 0; i < group.nIndices; i++)
         newIndices[i] = group.indices[i] + offset;
 
@@ -1370,7 +1370,7 @@ convertToStrips(Mesh& mesh)
                 newGroup->prim = prim;
                 newGroup->materialIndex = group->materialIndex;
                 newGroup->nIndices = strips[j].numIndices;
-                newGroup->indices = new uint32[newGroup->nIndices];_t
+                newGroup->indices = new uint32_t[newGroup->nIndices];
                 for (uint32_t k = 0; k < newGroup->nIndices; k++)
                     newGroup->indices[k] = strips[j].indices[k];
 
