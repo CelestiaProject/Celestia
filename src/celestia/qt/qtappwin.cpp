@@ -688,7 +688,7 @@ void CelestiaAppWindow::slotCaptureVideo()
         layout->addWidget(resolutionCombo, 0, 1);
         for (unsigned int i = 0; i < sizeof(videoSizes) / sizeof(videoSizes[0]); i++)
         {
-            resolutionCombo->addItem(QString("%1 x %2").arg(videoSizes[i][0]).arg(videoSizes[i][1]), QSize(videoSizes[i][0], videoSizes[i][1]));
+            resolutionCombo->addItem(QString(_("%1 x %2")).arg(videoSizes[i][0]).arg(videoSizes[i][1]), QSize(videoSizes[i][0], videoSizes[i][1]));
         }
 
         QComboBox* frameRateCombo = new QComboBox(&videoInfoDialog);

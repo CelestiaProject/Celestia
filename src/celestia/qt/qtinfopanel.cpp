@@ -80,26 +80,19 @@ void InfoPanel::buildInfoPage(Selection sel,
 
 void InfoPanel::pageHeader(QTextStream& stream)
 {
-    stream << "<html><head><title>Info</title></head>\n";
-    stream << "<body>\n";
+    stream << "<html><head><title>Info</title></head><body>";
 }
 
 
 void InfoPanel::pageFooter(QTextStream& stream)
 {
-    stream << "</body></html>\n";
-}
-
-
-static QString boldText(const QString& s)
-{
-    return QString("<b>") + s + QString("</b>");
+    stream << "</body></html>";
 }
 
 
 static QString anchor(const QString& href, const QString& text)
 {
-    return QString("<a href=\"") + href + QString("\">") + text + QString("</a>");
+    return QString("<a href=\"%1\">%2</a>").arg(href, text);
 }
 
 
@@ -107,15 +100,15 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
                                          double t,
                                          QTextStream& stream)
 {
-    stream << "<h1>" <<QString::fromUtf8(body->getName(true).c_str()) << "</h1><br>\n";
+    stream << QString("<h1>%1</h1>").arg(QString::fromStdString(body->getName(true)));
 
     if (!body->getInfoURL().empty())
     {
-        const char* infoURL = body->getInfoURL().c_str();
-        stream << _("Web info: ") << anchor(infoURL, infoURL) << "<br>\n";
+        QString infoURL = QString::fromStdString(body->getInfoURL());
+        stream << QString(_("Web info: %1")).arg(anchor(infoURL, infoURL)) << "<br>\n";
     }
 
-    stream << "<br>\n";
+    stream << "<br>";
 
     bool isArtificial = body->getClassification() == Body::Spacecraft;
 
@@ -128,16 +121,14 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
     }
 
     if (body->isEllipsoid())
-        stream << boldText(_("Equatorial radius: "));
+        stream << QString(_("<b>Equatorial radius:</b> %L1 %2")).arg(radius).arg(units) << "<br>\n";
     else
-        stream << boldText(_("Size: "));
-
-    stream << radius << " " << units << "<br>";
+        stream << QString(_("<b>Size:</b> %L1 %2")).arg(radius).arg(units) << "<br>\n";
 
 #if 0
     if (body->getOblateness() != 0.0f && body->isEllipsoid())
     {
-        stream << boldText(_("Oblateness: ")) << body->getOblateness() << "<br>\n";
+        stream << QString(_("<b>Oblateness: ")) << body->getOblateness() << "<br>\n";
     }
 #endif
 
@@ -172,10 +163,10 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
             units = _("days");
         }
 
-        stream << boldText(_("Sidereal rotation period: ")) << rotPeriod << " " << units << "<br>\n";
+        stream << QString(_("<b>Sidereal rotation period:</b> %L1 %2")).arg(rotPeriod).arg(units) << "<br>\n";
         if (dayLength != 0.0)
         {
-            stream << boldText(_("Length of day: ")) << dayLength << " " << units << "<br>\n";
+            stream << QString(_("<b>Length of day:</b> %L1 %2")).arg(dayLength).arg(units) << "<br>\n";
         }
     }
 
@@ -201,10 +192,11 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
             orbitalPeriod /= 365.25;
         }
 
-        stream << "<br><big><b>" << QString(_("Orbit information")) << "</b></big><br>\n";
-        stream << QString(_("Osculating elements for")) << " " << QString::fromUtf8(astro::TDBtoUTC(t).toCStr()) << "<br>\n";
-        stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
-        stream << boldText(_("Period: ")) << orbitalPeriod << " " << units << "<br>\n";
+        stream << "<br><big><b>" << _("Orbit information") << "</b></big><br>\n";
+        stream << QString(_("Osculating elements for %1")).arg(QString::fromUtf8(astro::TDBtoUTC(t).toCStr())) << "<br>\n";
+        stream << "<br>\n";
+//        stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
+        stream << QString(_("<b>Period:</b> %L1 %2")).arg(orbitalPeriod).arg(units) << "<br>\n";
 
         double sma = elements.semimajorAxis;
         if (sma > 2.5e7)
@@ -217,18 +209,16 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
             units = _("km");
         }
 
-        stream << boldText(_("Semi-major axis: ")) << sma << " " << units << "<br>\n";
-        stream << boldText(_("Eccentricity: ")) << elements.eccentricity << "<br>\n";
-        stream << boldText(_("Inclination: ")) << radToDeg(elements.inclination) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(_("Pericenter distance: ")) << sma * (1 - elements.eccentricity) << " " << units << "<br>\n";
-        stream << boldText(_("Apocenter distance: ")) << sma * (1 + elements.eccentricity) << " " << units << "<br>\n";
+        stream << QString(_("<b>Semi-major axis:</b> %L1 %2")).arg(sma).arg(units) << "<br>\n";
+        stream << QString(_("<b>Eccentricity:</b> %L1")).arg(elements.eccentricity) << "<br>\n";
+        stream << QString(_("<b>Inclination:</b> %L1%2")).arg(radToDeg(elements.inclination)).arg(QString::fromUtf8(UTF8_DEGREE_SIGN)) << "<br>\n";
+        stream << QString(_("<b>Pericenter distance:</b> %L1 %2")).arg(sma * (1 - elements.eccentricity)).arg(units) << "<br>\n";
+        stream << QString(_("<b>Apocenter distance:</b> %L1 %2")).arg(sma * (1 + elements.eccentricity)).arg(units) << "<br>\n";
 
-#if 1
-        stream << boldText(_("Ascending node: ")) << radToDeg(elements.longAscendingNode) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(_("Argument of periapsis: ")) << radToDeg(elements.argPericenter) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(_("Mean anomaly: ")) << radToDeg(elements.meanAnomaly) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(_("Period (calculated): ")) << elements.period << " " << QString(_("days<br>\n"));
-#endif
+        stream << QString(_("<b>Ascending node:</b> %L1%2")).arg(radToDeg(elements.longAscendingNode)).arg(QString::fromUtf8(UTF8_DEGREE_SIGN)) << "<br>\n";
+        stream << QString(_("<b>Argument of periapsis:</b> %L1%2")).arg(radToDeg(elements.argPericenter)).arg(QString::fromUtf8(UTF8_DEGREE_SIGN)) << "<br>\n";
+        stream << QString(_("<b>Mean anomaly:</b> %L1%2")).arg(radToDeg(elements.meanAnomaly)).arg(QString::fromUtf8(UTF8_DEGREE_SIGN)) << "<br>\n";
+        stream << QString(_("<b>Period (calculated):</b> %L1 %2")).arg(elements.period).arg(_("days")) << "<br>\n";;
     }
 }
 
@@ -254,7 +244,7 @@ Vector3d rectToSpherical(const Vector3d& v)
 void InfoPanel::buildStarPage(const Star* star, const Universe* universe, double tdb, QTextStream& stream)
 {
     string name = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*star, true));
-    stream << "<h1>" << QString::fromUtf8(name.c_str()) << "</h1><br>\n";
+    stream << QString("<h1>%1</h1>").arg(QString::fromStdString(name));
 
     // Compute the star's position relative to the Solar System Barycenter. Note that
     // this will ignore the effect of parallax in the star's position.
@@ -268,13 +258,12 @@ void InfoPanel::buildStarPage(const Star* star, const Universe* universe, double
     int minutes = 0;
     double seconds = 0;
     astro::decimalToHourMinSec(radToDeg(sph.x()), hours, minutes, seconds);
-    stream << "RA: " << hours << "h " << abs(minutes) << "m " << abs(seconds) << "s<br>\n";
+    stream << QString(_("<b>RA:</b> %L1h %L2m %L3s")).arg(hours).arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 
     int degrees = 0;
     astro::decimalToDegMinSec(radToDeg(sph.y()), degrees, minutes, seconds);
-    stream << "Dec: " << degrees << QString::fromUtf8(UTF8_DEGREE_SIGN) << " " <<
-        abs(minutes) << "' " << abs(seconds) << "\"<br>\n";
-
+    stream << QString(_("<b>Dec:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(QString::fromUtf8(UTF8_DEGREE_SIGN))
+                                                        .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 }
 
 
@@ -283,7 +272,7 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
                              QTextStream& stream)
 {
     string name = universe->getDSOCatalog()->getDSOName(dso, true);
-    stream << "<h1>" << QString::fromUtf8(name.c_str()) << "</h1><br>\n";
+    stream << QString("<h1>%1</h1>").arg(QString::fromStdString(name));
 
     Vector3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(dso->getPosition()));
     Vector3d sph = rectToSpherical(eqPos);
@@ -292,22 +281,22 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
     int minutes = 0;
     double seconds = 0;
     astro::decimalToHourMinSec(radToDeg(sph.x()), hours, minutes, seconds);
-    stream << "RA: " << hours << "h " << abs(minutes) << "m " << abs(seconds) << "s<br>\n";
+    stream << QString(_("<b>RA:</b> %L1h %L2m %L3s")).arg(hours).arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 
     int degrees = 0;
     astro::decimalToDegMinSec(radToDeg(sph.y()), degrees, minutes, seconds);
-    stream << "Dec: " << degrees << QString::fromUtf8(UTF8_DEGREE_SIGN) << " " <<
-        abs(minutes) << "' " << abs(seconds) << "\"<br>\n";
+    stream << QString(_("<b>Dec:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(QString::fromUtf8(UTF8_DEGREE_SIGN))
+                                                        .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 
     Vector3d galPos = astro::equatorialToGalactic(eqPos);
     sph = rectToSpherical(galPos);
 
     astro::decimalToDegMinSec(radToDeg(sph.x()), degrees, minutes, seconds);
-    stream << "L: " << degrees << QString::fromUtf8(UTF8_DEGREE_SIGN) << " " <<
-        abs(minutes) << "' " << abs(seconds) << "\"<br>\n";
+    stream << QString(_("<b>L:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(QString::fromUtf8(UTF8_DEGREE_SIGN))
+                                                      .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
     astro::decimalToDegMinSec(radToDeg(sph.y()), degrees, minutes, seconds);
-    stream << "B: " << degrees << QString::fromUtf8(UTF8_DEGREE_SIGN) << " " <<
-        abs(minutes) << "' " << abs(seconds) << "\"<br>\n";
+    stream << QString(_("<b>B:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(QString::fromUtf8(UTF8_DEGREE_SIGN))
+                                                      .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 }
 
 
