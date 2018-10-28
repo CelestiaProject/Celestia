@@ -59,7 +59,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
     if (sel.body() != nullptr)
     {
-        addAction(boldTextItem(QString::fromUtf8(sel.body()->getName(true).c_str())));
+        addAction(boldTextItem(QString::fromStdString(sel.body()->getName(true))));
 
         // Start and end dates
         double startTime = 0.0;
@@ -95,7 +95,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     else if (sel.star() != nullptr)
     {
         std::string name = ReplaceGreekLetterAbbr(sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true));
-        addAction(boldTextItem(QString::fromUtf8(name.c_str())));
+        addAction(boldTextItem(QString::fromStdString(name)));
 
         // Add some text items giving additional information about
         // the star.
@@ -113,22 +113,22 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         else
             buff = fmt::sprintf("%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
 
-        addAction(italicTextItem(_("Distance: ") + QString::fromUtf8(buff.c_str())));
+        addAction(italicTextItem(_("Distance: ") + QString::fromStdString(buff)));
 
         buff = fmt::sprintf("%.2f (%.2f)",
                 sel.star()->getAbsoluteMagnitude(),
                 astro::absToAppMag(sel.star()->getAbsoluteMagnitude(),
                                    (float) distance));
-        addAction(italicTextItem(_("Abs (app) mag: ") + QString::fromUtf8(buff.c_str())));
+        addAction(italicTextItem(_("Abs (app) mag: ") + QString::fromStdString(buff)));
 
         buff = fmt::sprintf("%s", sel.star()->getSpectralType());
-        addAction(italicTextItem(_("Class: ") + QString::fromUtf8(buff.c_str())));
+        addAction(italicTextItem(_("Class: ") + QString::fromStdString(buff)));
 
         setlocale(LC_NUMERIC, "C");
     }
     else if (sel.deepsky() != nullptr)
     {
-        addAction(boldTextItem(QString::fromUtf8(sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky(), true).c_str())));
+        addAction(boldTextItem(QString::fromStdString(sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky(), true))));
     }
 
     addSeparator();
@@ -299,7 +299,7 @@ QMenu* SelectionPopup::createReferenceVectorMenu()
         // Only show the frame center menu item if the selection orbits another
         // a non-stellar object. If it orbits a star, this is generally identical
         // to the sun direction entry.
-        QAction* frameCenterAction = new QAction(QString(_("Show &Direction to %1")).arg(QString::fromUtf8(center.body()->getName(true).c_str())), refVecMenu);
+        QAction* frameCenterAction = new QAction(QString(_("Show &Direction to %1")).arg(QString::fromStdString(center.body()->getName(true))), refVecMenu);
         frameCenterAction->setCheckable(true);
         frameCenterAction->setChecked(appCore->referenceMarkEnabled("frame center direction", selection));
         connect(frameCenterAction, SIGNAL(triggered()), this, SLOT(slotToggleFrameCenterDirection()));
@@ -395,7 +395,7 @@ QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
                     menu = new QMenu(title, this);
                 }
 
-                QAction* act = new QAction(QString::fromUtf8(body->getName(true).c_str()), menu);
+                QAction* act = new QAction(QString::fromStdString(body->getName(true)), menu);
                 act->setData(i);
                 connect(act, SIGNAL(triggered()), this, SLOT(slotSelectChildObject()));
                 menu->addAction(act);

@@ -542,7 +542,7 @@ void CelestiaAppWindow::writeSettings()
     // time.
     bool useLocalTime = m_appCore->getTimeZoneBias() != 0;
     settings.setValue("LocalTime", useLocalTime);
-    settings.setValue("TimeZoneName", QString::fromUtf8(m_appCore->getTimeZoneName().c_str()));
+    settings.setValue("TimeZoneName", QString::fromStdString(m_appCore->getTimeZoneName()));
     settings.endGroup();
 }
 
@@ -931,17 +931,17 @@ void CelestiaAppWindow::slotAddBookmark()
 
     if (sel.body() != nullptr)
     {
-        defaultTitle = QString::fromUtf8(sel.body()->getName(true).c_str());
+        defaultTitle = QString::fromStdString(sel.body()->getName(true));
     }
     else if (sel.star() != nullptr)
     {
         Universe* universe = m_appCore->getSimulation()->getUniverse();
-        defaultTitle = QString::fromUtf8(ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*sel.star(), true)).c_str());
+        defaultTitle = QString::fromStdString(ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*sel.star(), true)));
     }
     else if (sel.deepsky() != nullptr)
     {
         Universe* universe = m_appCore->getSimulation()->getUniverse();
-        defaultTitle = QString::fromUtf8(ReplaceGreekLetterAbbr(universe->getDSOCatalog()->getDSOName(sel.deepsky(), true)).c_str());
+        defaultTitle = QString::fromStdString(ReplaceGreekLetterAbbr(universe->getDSOCatalog()->getDSOName(sel.deepsky(), true)));
     }
     else if (sel.location() != nullptr)
     {

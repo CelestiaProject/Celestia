@@ -861,7 +861,7 @@ AddBookmarkDialog::accept()
         BookmarkItem* folder = m_manager->model()->getItem(index);
         auto* newItem = new BookmarkItem(BookmarkItem::Bookmark, folder);
         newItem->setTitle(bookmarkNameEdit->text());
-        newItem->setUrl(QString::fromUtf8(url.getAsString().c_str()));
+        newItem->setUrl(QString::fromStdString(url.getAsString()));
         newItem->setIcon(QIcon(QPixmap::fromImage(m_iconImage.scaled(BookmarkItem::ICON_SIZE, BookmarkItem::ICON_SIZE,
                                                                      Qt::IgnoreAspectRatio,
                                                                      Qt::SmoothTransformation))));

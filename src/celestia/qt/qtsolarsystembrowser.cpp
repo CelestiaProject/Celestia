@@ -583,10 +583,10 @@ QVariant SolarSystemTreeModel::data(const QModelIndex& index, int role) const
         if (sel.star() != nullptr)
         {
             string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*sel.star(), true));
-            return QString::fromUtf8(starNameString.c_str());
+            return QString::fromStdString(starNameString);
         }
         if (sel.body() != nullptr)
-            return QString::fromUtf8((sel.body()->getName(true).c_str()));
+            return QString::fromStdString((sel.body()->getName(true)));
         else
             return QVariant();
 

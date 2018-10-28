@@ -149,7 +149,7 @@ QVariant DSOTableModel::data(const QModelIndex& index, int role) const
     case NameColumn:
         {
             string dsoNameString = ReplaceGreekLetterAbbr(universe->getDSOCatalog()->getDSOName(dso, true));
-            return QVariant(QString::fromUtf8(dsoNameString.c_str()));
+            return QString::fromStdString(dsoNameString);
         }
     case DistanceColumn:
         return QString("%L1").arg((observerPos - dso->getPosition()).norm(), 0, 'g', 6);
@@ -235,7 +235,7 @@ bool DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* ds
         return strcmp(dso0->getType(), dso1->getType()) < 0;
 
     case Alphabetical:
-        return strcmp(universe->getDSOCatalog()->getDSOName(dso0, true).c_str(), universe->getDSOCatalog()->getDSOName(dso1, true).c_str()) > 0;
+        return universe->getDSOCatalog()->getDSOName(dso0, true) > universe->getDSOCatalog()->getDSOName(dso1, true);
 
     default:
         return false;

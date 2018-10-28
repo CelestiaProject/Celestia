@@ -148,7 +148,7 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
         case NameColumn:
             {
                 string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*star));
-                return QVariant(QString::fromUtf8(starNameString.c_str()));
+                return QString::fromStdString(starNameString);
             }
         case DistanceColumn:
             {
