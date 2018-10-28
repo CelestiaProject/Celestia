@@ -391,7 +391,7 @@ SkyGrid::render(Renderer& renderer,
 {
     // 90 degree rotation about the x-axis used to transform coordinates
     // to Celestia's system.
-    Quaterniond xrot90 = XRotation(-PI / 2.0);//Quaterniond(AngleAxis<double>(-PI / 2.0, Vector3d::UnitX()));//Quatd::xrotation(-PI / 2.0);
+    Quaterniond xrot90 = XRotation(-PI / 2.0);
 
     double vfov = observer.getFOV();
     double viewAspectRatio = (double) windowWidth / (double) windowHeight;
@@ -470,14 +470,12 @@ SkyGrid::render(Renderer& renderer,
     frustumNormal[2] = Vector3d( 1,  0, -w);
     frustumNormal[3] = Vector3d(-1,  0, -w);
 
+    for (int i = 0; i < 4; i++)
     {
-        for (int i = 0; i < 4; i++)
-        {
-            frustumNormal[i] = toStandardCoords(r * frustumNormal[i].normalized());
-        }
+        frustumNormal[i] = toStandardCoords(r * frustumNormal[i].normalized());
     }
 
-    Vector3d viewCenter(0.0, 0.0, -1.0);
+    Vector3d viewCenter(-Vector3d::UnitZ());
     viewCenter = toStandardCoords(r * viewCenter);
 
     double centerDec;
@@ -576,8 +574,8 @@ SkyGrid::render(Renderer& renderer,
         Vector3d axis1(0.0, cosPhi, 0.0);
         for (int k = 0; k < 4; k += 2)
         {
-            Vector3d isect0(0.0, 0.0, 0.0);
-            Vector3d isect1(0.0, 0.0, 0.0);
+            Vector3d isect0(Vector3d::Zero());
+            Vector3d isect1(Vector3d::Zero());
             Renderer::LabelAlignment hAlign = getCoordLabelHAlign(k);
             Renderer::LabelVerticalAlignment vAlign = getCoordLabelVAlign(k);
 

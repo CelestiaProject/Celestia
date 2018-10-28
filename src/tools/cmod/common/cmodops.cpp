@@ -449,7 +449,7 @@ averageFaceVectors(const vector<Face>& faces,
 {
     const Face& face = faces[thisFace];
 
-    Vector3f v = Vector3f(0, 0, 0);
+    Vector3f v = Vector3f::Zero();
     for (uint32_t i = 0; i < vertexFaceCount; i++)
     {
         uint32_t f = vertexFaces[i];
@@ -459,7 +459,7 @@ averageFaceVectors(const vector<Face>& faces,
     }
 
     if (v.squaredNorm() == 0.0f)
-        v = Vector3f(1.0f, 0.0f, 0.0f);
+        v = Vector3f::UnitX();
     else
         v.normalize();
 
@@ -956,7 +956,7 @@ GenerateTangents(const Mesh& mesh, bool weld)
         if (a != 0.0f)
             face.normal = (t2 * (p1 - p0) - t1 * (p2 - p0)) * (1.0f / a);
         else
-            face.normal = Vector3f(0.0f, 0.0f, 0.0f);
+            face.normal = Vector3f::Zero();
     }
 
     // For each vertex, create a list of faces that contain it

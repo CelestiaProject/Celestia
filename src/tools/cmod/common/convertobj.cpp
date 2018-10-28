@@ -99,7 +99,7 @@ WavefrontLoader::load()
         {
             if (keyword == "v")
             {
-                Vector3f v(0.0f, 0.0f, 0.0f);
+                Vector3f v(Vector3f::Zero());
                 if (sscanf(line.c_str() + pos, "%f %f %f", &v.x(), &v.y(), &v.z()) != 3)
                 {
                     reportError("Bad vertex");
@@ -109,7 +109,7 @@ WavefrontLoader::load()
             }
             else if (keyword == "vn")
             {
-                Vector3f v(0.0f, 0.0f, 0.0f);
+                Vector3f v(Vector3f::Zero());
                 if (sscanf(line.c_str() + pos, "%f %f %f", &v.x(), &v.y(), &v.z()) != 3)
                 {
                     reportError("Bad normal");
@@ -119,7 +119,7 @@ WavefrontLoader::load()
             }
             else if (keyword == "vt")
             {
-                Vector2f v(0.0f, 0.0f);
+                Vector2f v(Vector2f::Zero());
                 if (sscanf(line.c_str() + pos, "%f %f", &v.x(), &v.y()) != 2)
                 {
                     reportError("Bad texture coordinate");

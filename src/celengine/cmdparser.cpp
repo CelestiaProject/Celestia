@@ -638,7 +638,7 @@ Command* CommandParser::parseCommand()
         string s;
         CommandConstellationColor *cmdconcol= new CommandConstellationColor();
 
-        Eigen::Vector3d colorv(1.0f, 0.0f, 0.0f);
+        Eigen::Vector3d colorv(Eigen::Vector3d::UnitX());
         paramList->getVector("color", colorv);
 
         if (paramList->getString("set", s))
@@ -696,7 +696,7 @@ Command* CommandParser::parseCommand()
         paramList->getString("object", object);
         double size = 10.0f;
         paramList->getNumber("size", size);
-        Eigen::Vector3d colorv(1.0f, 0.0f, 0.0f);
+        Eigen::Vector3d colorv(Eigen::Vector3d::UnitX());
         paramList->getVector("color", colorv);
         double alpha = 0.9f;
         paramList->getNumber("alpha", alpha);
@@ -814,7 +814,7 @@ Command* CommandParser::parseCommand()
     {
         string item;
         paramList->getString("item", item);
-        Eigen::Vector3d colorv(1.0f, 0.0f, 0.0f);
+        Eigen::Vector3d colorv(Eigen::Vector3d::UnitX());
         paramList->getVector("color", colorv);
         Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z());
         cmd = new CommandSetLineColor(item, color);
@@ -823,7 +823,7 @@ Command* CommandParser::parseCommand()
     {
         string item;
         paramList->getString("item", item);
-        Eigen::Vector3d colorv(1.0f, 0.0f, 0.0f);
+        Eigen::Vector3d colorv(Eigen::Vector3d::UnitX());
         paramList->getVector("color", colorv);
         Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z());
         cmd = new CommandSetLabelColor(item, color);

@@ -1057,7 +1057,7 @@ generateTangents(Mesh& mesh,
         if (a != 0.0f)
             face.normal = (t2 * (p1 - p0) - t1 * (p2 - p0)) * (1.0f / a);
         else
-            face.normal = Vector3f(0.0f, 0.0f, 0.0f);
+            face.normal = Vector3f::Zero();
     }
 
     // For each vertex, create a list of faces that contain it

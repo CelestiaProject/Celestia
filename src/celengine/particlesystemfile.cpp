@@ -91,7 +91,7 @@ ParticleSystemLoader::load()
 VectorGenerator*
 ParticleSystemLoader::parseGenerator(Hash* params)
 {
-    Vector3f constantValue(0.0f, 0.0f, 0.0f);
+    Vector3f constantValue(Vector3f::Zero());
     if (params->getVector("Constant", constantValue))
     {
         return new ConstantGenerator(constantValue);
@@ -109,8 +109,8 @@ ParticleSystemLoader::parseGenerator(Hash* params)
 
         Hash* boxParams = generatorValue->getHash();
 
-        Vector3f center(0.0f, 0.0f, 0.0f);
-        Vector3f size(0.0f, 0.0f, 0.0f);
+        Vector3f center(Vector3f::Zero());
+        Vector3f size(Vector3f::Zero());
         boxParams->getVector("Center", center);
         boxParams->getVector("Size", size);
 
@@ -128,8 +128,8 @@ ParticleSystemLoader::parseGenerator(Hash* params)
 
         Hash* lineParams = generatorValue->getHash();
 
-        Vector3f p0(0.0f, 0.0f, 0.0f);
-        Vector3f p1(0.0f, 0.0f, 0.0f);
+        Vector3f p0(Vector3f::Zero());
+        Vector3f p1(Vector3f::Zero());
         lineParams->getVector("Point1", p0);
         lineParams->getVector("Point2", p1);
 
@@ -147,7 +147,7 @@ ParticleSystemLoader::parseGenerator(Hash* params)
 
         Hash* ellipsoidSurfaceParams = generatorValue->getHash();
 
-        Vector3f center(0.0f, 0.0f, 0.0f);
+        Vector3f center(Vector3f::Zero());
         Vector3f size(2.0f, 2.0f, 2.0f);
         ellipsoidSurfaceParams->getVector("Center", center);
         ellipsoidSurfaceParams->getVector("Size", size);

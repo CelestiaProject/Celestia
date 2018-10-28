@@ -237,7 +237,7 @@ ParticleEmitter::ParticleEmitter() :
     m_endSize(1.0f),
     m_positionGenerator(nullptr),
     m_velocityGenerator(nullptr),
-    m_acceleration(0.0f, 0.0f, 0.0f),
+    m_acceleration(Vector3f::Zero()),
     m_nonZeroAcceleration(false),
     m_minRotationRate(0.0f),
     m_rotationRateVariance(0.0f),
