@@ -17,6 +17,7 @@
 #include "celengine/selection.h"
 
 class QAbstractItemModel;
+class QItemSelection;
 class QTreeView;
 class QRadioButton;
 class QComboBox;
@@ -25,6 +26,7 @@ class QLabel;
 class QLineEdit;
 class ColorSwatchWidget;
 class CelestiaCore;
+class InfoPanel;
 
 class DSOTableModel;
 
@@ -33,7 +35,7 @@ class DeepSkyBrowser : public QWidget
 Q_OBJECT
 
  public:
-    DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent);
+    DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* infoPanel);
     ~DeepSkyBrowser() = default;
 
  public slots:
@@ -41,6 +43,7 @@ Q_OBJECT
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
     void slotClearMarkers();
+    void slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel);
 
  signals:
     void selectionContextMenuRequested(const QPoint& pos, Selection& sel);
@@ -48,23 +51,25 @@ Q_OBJECT
  private:
     CelestiaCore* appCore;
 
-    DSOTableModel* dsoModel;
-    QTreeView* treeView;
+    DSOTableModel* dsoModel{nullptr};
+    QTreeView* treeView{nullptr};
 
-    QLabel* searchResultLabel;
+    QLabel* searchResultLabel{nullptr};
 
-    QRadioButton* globularsButton;
-    QRadioButton* galaxiesButton;
-    QRadioButton* nebulaeButton;
-    QRadioButton* openClustersButton;
+    QRadioButton* globularsButton{nullptr};
+    QRadioButton* galaxiesButton{nullptr};
+    QRadioButton* nebulaeButton{nullptr};
+    QRadioButton* openClustersButton{nullptr};
 
-    QLineEdit* objectTypeFilterBox;
+    QLineEdit* objectTypeFilterBox{nullptr};
 
-    QComboBox* markerSymbolBox;
-    QComboBox* markerSizeBox;
-    QCheckBox* labelMarkerBox;
+    QComboBox* markerSymbolBox{nullptr};
+    QComboBox* markerSizeBox{nullptr};
+    QCheckBox* labelMarkerBox{nullptr};
 
-    ColorSwatchWidget* colorSwatch;
+    ColorSwatchWidget* colorSwatch{nullptr};
+
+    InfoPanel* infoPanel{nullptr};
 };
 
 #endif // _QTDEEPSKYBROWSER_H_

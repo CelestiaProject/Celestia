@@ -19,14 +19,26 @@
 
 class QTextBrowser;
 class Universe;
+class QModelIndex;
+class Selection;
+class QItemSelection;
+class CelestiaCore;
+
+class ModelHelper
+{
+ public:
+    virtual Selection itemForInfoPanel(const QModelIndex&) = 0;
+};
 
 class InfoPanel : public QDockWidget
 {
  public:
-    InfoPanel(const QString& title, QWidget* parent);
+    InfoPanel(CelestiaCore* appCore, const QString& title, QWidget* parent);
     ~InfoPanel() = default;
 
     void buildInfoPage(Selection sel, Universe*, double tdb);
+
+    void updateHelper(ModelHelper*, const QItemSelection&, const QItemSelection&);
 
  private:
     void pageHeader(QTextStream&);
@@ -35,8 +47,10 @@ class InfoPanel : public QDockWidget
     void buildStarPage(const Star* star, const Universe* u, double tdb, QTextStream&);
     void buildDSOPage(const DeepSkyObject* dso, const Universe* u, QTextStream&);
 
+    CelestiaCore* appCore;
+
  public:
-    QTextBrowser* textBrowser;
+    QTextBrowser* textBrowser{nullptr};
 };
 
 #endif // _INFOPANEL_H_

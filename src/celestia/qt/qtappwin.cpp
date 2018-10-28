@@ -264,22 +264,29 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     toolsDock->setAllowedAreas(Qt::LeftDockWidgetArea |
                                Qt::RightDockWidgetArea);
 
+    // Info browser for a selected object
+    infoPanel = new InfoPanel(m_appCore, _("Info Browser"), this);
+    infoPanel->setObjectName("info-panel");
+    infoPanel->setAllowedAreas(Qt::LeftDockWidgetArea |
+                               Qt::RightDockWidgetArea);
+    infoPanel->setVisible(false);
+
     // Create the various browser widgets
-    celestialBrowser = new CelestialBrowser(m_appCore, nullptr);
+    celestialBrowser = new CelestialBrowser(m_appCore, nullptr, infoPanel);
     celestialBrowser->setObjectName("celestia-browser");
     connect(celestialBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
             this,
             SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
 
-    QWidget* deepSkyBrowser = new DeepSkyBrowser(m_appCore, nullptr);
+    QWidget* deepSkyBrowser = new DeepSkyBrowser(m_appCore, nullptr, infoPanel);
     deepSkyBrowser->setObjectName("deepsky-browser");
     connect(deepSkyBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
             this,
             SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
 
-    SolarSystemBrowser* solarSystemBrowser = new SolarSystemBrowser(m_appCore, nullptr);
+    SolarSystemBrowser* solarSystemBrowser = new SolarSystemBrowser(m_appCore, nullptr, infoPanel);
     solarSystemBrowser->setObjectName("ssys-browser");
     connect(solarSystemBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
@@ -294,12 +301,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     toolsDock->setWidget(tabWidget);
     addDockWidget(Qt::LeftDockWidgetArea, toolsDock);
 
-    infoPanel = new InfoPanel(_("Info Browser"), this);
-    infoPanel->setObjectName("info-panel");
-    infoPanel->setAllowedAreas(Qt::LeftDockWidgetArea |
-                               Qt::RightDockWidgetArea);
     addDockWidget(Qt::RightDockWidgetArea, infoPanel);
-    infoPanel->setVisible(false);
 
     eventFinder = new EventFinder(m_appCore, _("Event Finder"), this);
     eventFinder->setObjectName("event-finder");

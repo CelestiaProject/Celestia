@@ -13,6 +13,7 @@
 #include <celestia/celestiacore.h>
 #include "qtcelestialbrowser.h"
 #include "qtcolorswatchwidget.h"
+#include "qtinfopanel.h"
 #include <QAbstractItemModel>
 #include <QTreeView>
 #include <QPushButton>
@@ -74,19 +75,22 @@ private:
 };
 
 
-class StarTableModel : public QAbstractTableModel
+class StarTableModel : public QAbstractTableModel, public ModelHelper
 {
 public:
     StarTableModel(const Universe* _universe) : universe(_universe) {};
     virtual ~StarTableModel() = default;
 
     // Methods from QAbstractTableModel
-    Qt::ItemFlags flags(const QModelIndex& index) const;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    int rowCount(const QModelIndex& index) const;
-    int columnCount(const QModelIndex& index) const;
-    void sort(int column, Qt::SortOrder order);
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    int rowCount(const QModelIndex& index) const override;
+    int columnCount(const QModelIndex& index) const override;
+    void sort(int column, Qt::SortOrder order) override;
+
+    // Methods from ModelHelper
+    Selection itemForInfoPanel(const QModelIndex&) override;
 
     enum Predicate
     {
@@ -230,6 +234,13 @@ int StarTableModel::rowCount(const QModelIndex& /*unused*/) const
 int StarTableModel::columnCount(const QModelIndex& /*unused*/) const
 {
     return 5;
+}
+
+
+Selection StarTableModel::itemForInfoPanel(const QModelIndex& _index)
+{
+    Selection sel = itemAtRow((unsigned int) _index.row());
+    return sel;
 }
 
 
@@ -451,14 +462,10 @@ Selection StarTableModel::itemAtRow(unsigned int row)
 }
 
 
-CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
+CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* _infoPanel) :
     QWidget(parent),
     appCore(_appCore),
-    starModel(nullptr),
-    treeView(nullptr),
-    searchResultLabel(nullptr),
-    closestButton(nullptr),
-    brightestButton(nullptr)
+    infoPanel(_infoPanel)
 {
     treeView = new QTreeView();
     treeView->setRootIsDecorated(false);
@@ -481,6 +488,9 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(slotContextMenu(const QPoint&)));
+
+    connect(treeView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+            this, SLOT(slotSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(treeView);
@@ -713,4 +723,10 @@ void CelestialBrowser::slotMarkSelected()
 void CelestialBrowser::slotClearMarkers()
 {
     appCore->getSimulation()->getUniverse()->unmarkAll();
+}
+
+void CelestialBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel)
+{
+    if (infoPanel)
+        infoPanel->updateHelper(starModel, newSel, oldSel);
 }

@@ -13,7 +13,9 @@
 #include <celestia/celestiacore.h>
 #include "qtdeepskybrowser.h"
 #include "qtcolorswatchwidget.h"
+#include "qtinfopanel.h"
 #include <QAbstractItemModel>
+#include <QItemSelection>
 #include <QTreeView>
 #include <QPushButton>
 #include <QRadioButton>
@@ -70,19 +72,22 @@ private:
 };
 
 
-class DSOTableModel : public QAbstractTableModel
+class DSOTableModel : public QAbstractTableModel, public ModelHelper
 {
 public:
     DSOTableModel(const Universe* _universe);
     virtual ~DSOTableModel() = default;
 
     // Methods from QAbstractTableModel
-    Qt::ItemFlags flags(const QModelIndex& index) const;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    int rowCount(const QModelIndex& index) const;
-    int columnCount(const QModelIndex& index) const;
-    void sort(int column, Qt::SortOrder order);
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    int rowCount(const QModelIndex& index) const override;
+    int columnCount(const QModelIndex& index) const override;
+    void sort(int column, Qt::SortOrder order) override;
+
+    // Methods from ModelHelper
+    Selection itemForInfoPanel(const QModelIndex&) override;
 
     enum Predicate
     {
@@ -201,6 +206,12 @@ int DSOTableModel::columnCount(const QModelIndex& /*unused*/) const
     return 4;
 }
 
+
+Selection DSOTableModel::itemForInfoPanel(const QModelIndex& _index)
+{
+    Selection sel = itemAtRow((unsigned int) _index.row());
+    return sel;
+}
 
 DSOPredicate::DSOPredicate(Criterion _criterion,
                            const Vector3d& _observerPos,
@@ -381,16 +392,10 @@ DeepSkyObject* DSOTableModel::itemAtRow(unsigned int row)
 }
 
 
-DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
+DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* _infoPanel) :
     QWidget(parent),
     appCore(_appCore),
-    dsoModel(nullptr),
-    treeView(nullptr),
-    searchResultLabel(nullptr),
-    globularsButton(nullptr),
-    galaxiesButton(nullptr),
-    nebulaeButton(nullptr),
-    openClustersButton(nullptr)
+    infoPanel(_infoPanel)
 {
     treeView = new QTreeView();
     treeView->setRootIsDecorated(false);
@@ -406,6 +411,9 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(slotContextMenu(const QPoint&)));
+
+    connect(treeView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+            this, SLOT(slotSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(treeView);
@@ -622,4 +630,11 @@ void DeepSkyBrowser::slotMarkSelected()
 void DeepSkyBrowser::slotClearMarkers()
 {
     appCore->getSimulation()->getUniverse()->unmarkAll();
+}
+
+
+void DeepSkyBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel)
+{
+    if (infoPanel)
+        infoPanel->updateHelper(dsoModel, newSel, oldSel);
 }

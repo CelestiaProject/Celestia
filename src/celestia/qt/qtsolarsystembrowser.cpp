@@ -12,7 +12,9 @@
 
 #include <celestia/celestiacore.h>
 #include "qtsolarsystembrowser.h"
+#include "qtinfopanel.h"
 #include <QAbstractItemModel>
+#include <QItemSelection>
 #include <QTreeView>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -28,7 +30,7 @@
 using namespace std;
 
 
-class SolarSystemTreeModel : public QAbstractTableModel
+class SolarSystemTreeModel : public QAbstractTableModel, public ModelHelper
 {
 public:
     SolarSystemTreeModel(const Universe* _universe);
@@ -47,6 +49,9 @@ public:
     int columnCount(const QModelIndex& index) const override;
     void sort(int column, Qt::SortOrder order) override;
     QModelIndex sibling(int row, int column, const QModelIndex &index) const override;
+
+    // Methods from ModelHelper
+    Selection itemForInfoPanel(const QModelIndex&) override;
 
     enum
     {
@@ -653,11 +658,16 @@ void SolarSystemTreeModel::sort(int /* column */, Qt::SortOrder /* order */)
 }
 
 
-SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent) :
+Selection SolarSystemTreeModel::itemForInfoPanel(const QModelIndex& _index)
+{
+    return objectAtIndex(_index);
+}
+
+
+SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* _infoPanel) :
     QWidget(parent),
     appCore(_appCore),
-    solarSystemModel(nullptr),
-    treeView(nullptr)
+    infoPanel(_infoPanel)
 {
     treeView = new QTreeView();
     treeView->setRootIsDecorated(true);
@@ -675,6 +685,9 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent) 
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(slotContextMenu(const QPoint&)));
+
+    connect(treeView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+            this, SLOT(slotSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(treeView);
@@ -804,3 +817,10 @@ void SolarSystemBrowser::slotClearMarkers()
     appCore->getSimulation()->getUniverse()->unmarkAll();
 }
 #endif
+
+
+void SolarSystemBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel)
+{
+    if (infoPanel)
+        infoPanel->updateHelper(solarSystemModel, newSel, oldSel);
+}

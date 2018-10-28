@@ -19,7 +19,9 @@
 class QAbstractItemModel;
 class QTreeView;
 class QCheckBox;
+class QItemSelection;
 class CelestiaCore;
+class InfoPanel;
 
 class SolarSystemTreeModel;
 
@@ -28,7 +30,7 @@ class SolarSystemBrowser : public QWidget
 Q_OBJECT
 
  public:
-    SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent);
+    SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* infoPanel);
     ~SolarSystemBrowser() = default;
 
  public slots:
@@ -36,6 +38,7 @@ Q_OBJECT
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
     //void slotChooseMarkerColor();
+    void slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel);
 
  signals:
     void selectionContextMenuRequested(const QPoint& pos, Selection& sel);
@@ -46,10 +49,12 @@ Q_OBJECT
  private:
     CelestiaCore* appCore;
 
-    SolarSystemTreeModel* solarSystemModel{};
-    QTreeView* treeView{};
+    SolarSystemTreeModel* solarSystemModel{nullptr};
+    QTreeView* treeView{nullptr};
 
-    QCheckBox* groupCheckBox{};
+    QCheckBox* groupCheckBox{nullptr};
+
+    InfoPanel* infoPanel{nullptr};
 };
 
 #endif // _QTSOLARSYSTEMBROWSER_H_

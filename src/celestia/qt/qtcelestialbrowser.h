@@ -17,6 +17,7 @@
 #include "qtselectionpopup.h"
 
 class QAbstractItemModel;
+class QItemSelection;
 class QTreeView;
 class QRadioButton;
 class QComboBox;
@@ -25,6 +26,7 @@ class QLabel;
 class QLineEdit;
 class ColorSwatchWidget;
 class CelestiaCore;
+class InfoPanel;
 
 class StarTableModel;
 
@@ -33,7 +35,7 @@ class CelestialBrowser : public QWidget
 Q_OBJECT
 
  public:
-    CelestialBrowser(CelestiaCore* _appCore, QWidget* parent);
+    CelestialBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* infoPanel);
     ~CelestialBrowser() = default;
 
  public slots:
@@ -43,6 +45,7 @@ Q_OBJECT
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
     void slotClearMarkers();
+    void slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel);
 
  signals:
     void selectionContextMenuRequested(const QPoint& pos, Selection& sel);
@@ -50,24 +53,25 @@ Q_OBJECT
  private:
     CelestiaCore* appCore;
 
-    StarTableModel* starModel;
-    QTreeView* treeView;
+    StarTableModel* starModel{nullptr};
+    QTreeView* treeView{nullptr};
 
-    QLabel* searchResultLabel;
+    QLabel* searchResultLabel{nullptr};
 
-    QRadioButton* closestButton;
-    QRadioButton* brightestButton;
+    QRadioButton* closestButton{nullptr};
+    QRadioButton* brightestButton{nullptr};
 
-    QCheckBox* withPlanetsFilterBox;
-    QCheckBox* multipleFilterBox;
-    QCheckBox* barycentersFilterBox;
-    QLineEdit* spectralTypeFilterBox;
+    QCheckBox* withPlanetsFilterBox{nullptr};
+    QCheckBox* multipleFilterBox{nullptr};
+    QCheckBox* barycentersFilterBox{nullptr};
+    QLineEdit* spectralTypeFilterBox{nullptr};
 
-    QComboBox* markerSymbolBox;
-    QComboBox* markerSizeBox;
-    QCheckBox* labelMarkerBox;
+    QComboBox* markerSymbolBox{nullptr};
+    QComboBox* markerSizeBox{nullptr};
+    QCheckBox* labelMarkerBox{nullptr};
 
-    ColorSwatchWidget* colorSwatch;
+    ColorSwatchWidget* colorSwatch{nullptr};
+    InfoPanel* infoPanel{nullptr};
 };
 
 #endif // _QTCELESTIALBROWSER_H_

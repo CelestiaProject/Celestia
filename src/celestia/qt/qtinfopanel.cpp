@@ -10,10 +10,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celengine/astro.h"
-#include "celutil/utf8.h"
-#include "celengine/universe.h"
+
+#include <celestia/celestiacore.h>
+#include <celengine/astro.h>
+#include <celutil/utf8.h>
+#include <celengine/universe.h>
 #include <QTextBrowser>
+#include <QItemSelection>
 #include "qtinfopanel.h"
 
 using namespace Eigen;
@@ -36,9 +39,9 @@ static void CalculateOsculatingElements(const Orbit& orbit,
                                         OrbitalElements* elements);
 
 
-InfoPanel::InfoPanel(const QString& title, QWidget* parent) :
+InfoPanel::InfoPanel(CelestiaCore* _appCore, const QString& title, QWidget* parent) :
     QDockWidget(title, parent),
-    textBrowser(nullptr)
+    appCore(_appCore)
 {
     textBrowser = new QTextBrowser(this);
     textBrowser->setOpenExternalLinks(true);
@@ -69,7 +72,7 @@ void InfoPanel::buildInfoPage(Selection sel,
     }
     else
     {
-        stream << "Error: no object selected!\n";
+        stream << QString(_("Error: no object selected!\n"));
     }
 
     pageFooter(stream);
@@ -80,7 +83,7 @@ void InfoPanel::buildInfoPage(Selection sel,
 
 void InfoPanel::pageHeader(QTextStream& stream)
 {
-    stream << "<html><head><title>Info</title></head><body>";
+    stream << "<html><head><title>" << QString(_("Info")) << "</title></head><body>";
 }
 
 
@@ -192,7 +195,7 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
             orbitalPeriod /= 365.25;
         }
 
-        stream << "<br><big><b>" << _("Orbit information") << "</b></big><br>\n";
+        stream << "<br><big><b>" << QString(_("Orbit information")) << "</b></big><br>\n";
         stream << QString(_("Osculating elements for %1")).arg(QString::fromUtf8(astro::TDBtoUTC(t).toCStr())) << "<br>\n";
         stream << "<br>\n";
 //        stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
@@ -300,6 +303,19 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
 }
 
 
+void InfoPanel::updateHelper(ModelHelper* model, const QItemSelection& newSel, const QItemSelection& oldSel)
+{
+    if (!isVisible() || newSel == oldSel || newSel.indexes().length() == 0)
+        return;
+
+    Selection sel = model->itemForInfoPanel(newSel.indexes().at(0));
+    if (!sel.empty())
+    {
+        buildInfoPage(sel,
+                      appCore->getSimulation()->getUniverse(),
+                      appCore->getSimulation()->getTime());
+    }
+}
 
 
 static void StateVectorToElements(const Vector3d& position,
