@@ -1078,6 +1078,8 @@ void CelestiaAppWindow::slotShowGLInfo()
 
     QDialog glInfo(this);
 
+    glInfo.setWindowTitle(_("OpenGL Info"));
+
     QVBoxLayout* layout = new QVBoxLayout(&glInfo);
     QTextEdit* textEdit = new QTextEdit(infoText, &glInfo);
     layout->addWidget(textEdit);

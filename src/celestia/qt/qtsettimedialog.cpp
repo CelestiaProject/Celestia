@@ -45,6 +45,8 @@ SetTimeDialog::SetTimeDialog(double currentTimeTDB,
     secSpin(nullptr),
     julianDateSpin(nullptr)
 {
+    setWindowTitle(_("Set Time"));
+
     QVBoxLayout* layout = new QVBoxLayout();
 
     QGridLayout* timeLayout = new QGridLayout();
