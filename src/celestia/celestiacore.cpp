@@ -24,7 +24,9 @@
 #include <celengine/execution.h>
 #include <celengine/cmdparser.h>
 #include <celengine/multitexture.h>
+#ifdef USE_SPICE
 #include <celephem/spiceinterface.h>
+#endif
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
 #include <celengine/visibleregion.h>

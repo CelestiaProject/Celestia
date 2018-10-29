@@ -18,8 +18,10 @@
 #include "universe.h"
 #include <celephem/customorbit.h>
 #include <celephem/customrotation.h>
+#ifdef USE_SPICE
 #include <celephem/spiceorbit.h>
 #include <celephem/spicerotation.h>
+#endif
 #include <celephem/scriptorbit.h>
 #include <celephem/scriptrotation.h>
 #include <celmath/geomutil.h>
