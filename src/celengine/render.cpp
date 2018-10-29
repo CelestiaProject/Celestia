@@ -72,6 +72,15 @@ std::ofstream hdrlog;
 #include <celutil/util.h>
 #include <celutil/timer.h>
 #include <GL/glew.h>
+#ifdef VIDEO_SYNC
+#ifdef _WIN32
+#include <GL/wglew.h>
+#else
+#ifndef TARGET_OS_MAC
+#include <GL/glxew.h>
+#endif // TARGET_OS_MAC
+#endif //_WIN32
+#endif // VIDEO_SYNC
 #include <algorithm>
 #include <cstring>
 #include <cassert>

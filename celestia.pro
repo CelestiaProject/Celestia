@@ -621,7 +621,7 @@ win32 {
 unix {
     SOURCES += src/celestia/oggtheoracapture.cpp
     HEADERS += src/celestia/oggtheoracapture.h
-    DEFINES += THEORA
+    DEFINES += THEORA VIDEO_SYNC
 
     CONFIG += link_pkgconfig
 
