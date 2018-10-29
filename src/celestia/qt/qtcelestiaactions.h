@@ -39,6 +39,7 @@ Q_OBJECT
     void slotSetTextureResolution();
     void slotAdjustLimitingMagnitude();
     void slotSetLightTimeDelay();
+    void slotToggleVsync();
 
  private:
     void syncWithRenderer(const Renderer* renderer);
@@ -114,6 +115,8 @@ Q_OBJECT
     QAction* autoMagAction{ nullptr };
     QAction* increaseLimitingMagAction{ nullptr };
     QAction* decreaseLimitingMagAction{ nullptr };
+
+    QAction* toggleVSyncAction{ nullptr };
 
  private:
     CelestiaCore* appCore;

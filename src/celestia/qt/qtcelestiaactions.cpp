@@ -202,6 +202,12 @@ CelestiaActions::CelestiaActions(QObject* parent,
     lightTimeDelayAction->setToolTip("Subtract one-way light travel time to selected object");
     connect(lightTimeDelayAction, SIGNAL(triggered()), this, SLOT(slotSetLightTimeDelay()));
 
+    toggleVSyncAction    = createCheckableAction(_("Limit Frame Rate"), 0);
+//    toggleVSyncAction->setShortcut(QKeySequence("Ctrl+Y"));
+    toggleVSyncAction->setToolTip(_("Faintest visible magnitude based on field of view"));
+    connect(toggleVSyncAction,    SIGNAL(triggered()), this, SLOT(slotToggleVsync()));
+
+
     syncWithRenderer(appCore->getRenderer());
     syncWithAppCore();
     appCore->getRenderer()->addWatcher(this);
@@ -392,6 +398,10 @@ void CelestiaActions::slotSetLightTimeDelay()
     appCore->charEntered('-');
 }
 
+void CelestiaActions::slotToggleVsync()
+{
+     appCore->getRenderer()->setVideoSync(!appCore->getRenderer()->getVideoSync());
+}
 
 // Convenience method to create a checkable action for a menu and set the data
 // to the specified integer value.
