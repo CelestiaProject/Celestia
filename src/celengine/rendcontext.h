@@ -66,48 +66,6 @@ class RenderContext
 };
 
 
-class FixedFunctionRenderContext : public RenderContext
-{
- public:
-    FixedFunctionRenderContext(const cmod::Material*);
-    FixedFunctionRenderContext();
-    virtual ~FixedFunctionRenderContext();
-
-    virtual void makeCurrent(const cmod::Material&);
-    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
-                                 const void* vertexData);
-    void setLighting(bool);
-
- private:
-    cmod::Material::BlendMode blendMode{ cmod::Material::InvalidBlend };
-    bool specularOn{ false };
-    bool lightingEnabled{ true };
-};
-
-
-class VP_FP_RenderContext : public RenderContext
-{
- public:
-    VP_FP_RenderContext();
-    VP_FP_RenderContext(const cmod::Material*);
-
-    virtual void makeCurrent(const cmod::Material&);
-    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
-                                 const void* vertexData);
-};
-
-
-class VP_Combiner_RenderContext : public RenderContext
-{
- public:
-    VP_Combiner_RenderContext();
-    VP_Combiner_RenderContext(const cmod::Material*);
-
-    virtual void makeCurrent(const cmod::Material&);
-    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
-                                 const void* vertexData);
-};
-
 
 class GLSL_RenderContext : public RenderContext
 {
