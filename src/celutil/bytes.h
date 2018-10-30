@@ -16,11 +16,6 @@
 #endif /* TARGET_OS_MAC */
 #endif /* _WIN32 */
 
-#ifndef COMPILE_TYPE_ASSERT
-#define COMPILE_TIME_ASSERT(pred) \
-    switch(0){case 0: case pred:;}
-#endif
-
 /* Use the system byteswap.h definitions if we have them */
 #ifdef HAVE_BYTESWAP_H
 #include <byteswap.h>
@@ -38,7 +33,7 @@ static unsigned int bswap_32(unsigned int val) {
 
 inline double bswap_double(double d)
 {
-    COMPILE_TIME_ASSERT(sizeof(double) == 8)
+    static_assert(sizeof(double) == 8, "Size of double must be 8.");
 
     union DoubleBytes
     {

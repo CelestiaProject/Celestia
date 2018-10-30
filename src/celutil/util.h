@@ -16,11 +16,6 @@
 #include <iostream>
 #include <functional>
 
-#ifndef COMPILE_TYPE_ASSERT
-#define COMPILE_TIME_ASSERT(pred) \
-    switch(0){case 0: case pred:;}
-#endif
-
 // gettext / libintl setup
 #ifndef _ /* unless somebody already took care of this */
 #define _(string) gettext (string)
