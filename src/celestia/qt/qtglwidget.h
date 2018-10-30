@@ -58,8 +58,8 @@ private:
     CelestiaCore* appCore;
     Renderer* appRenderer;
     Simulation* appSim;
-    int lastX;
-    int lastY;
+    int lastX{ 0 };
+    int lastY{ 0 };
     bool cursorVisible;
     QPoint saveGlobalCursorPos;
     QPoint saveLocalCursorPos;

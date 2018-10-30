@@ -906,7 +906,7 @@ static Image* LoadBMPImage(ifstream& in)
     }
 
     delete[] pixels;
-    delete palette;
+    delete[] palette;
 
     return img;
 }

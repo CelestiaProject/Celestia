@@ -607,7 +607,7 @@ class Renderer
     double cosViewConeAngle;
     int screenDpi;
     float corrFac;
-    float pixelSize;
+    float pixelSize{ 1.0f };
     float faintestAutoMag45deg;
     TextureFont* font[FontCount];
 
@@ -618,9 +618,9 @@ class Renderer
     float ambientLightLevel;
     float brightnessBias;
 
-    float brightnessScale;
-    float faintestMag;
-    float faintestPlanetMag;
+    float brightnessScale{ 1.0f };
+    float faintestMag{ 0.0f };
+    float faintestPlanetMag{ 0.0f };
     float saturationMagNight;
     float saturationMag;
     StarStyle starStyle;
@@ -648,14 +648,13 @@ class Renderer
     double modelMatrix[16];
     double projMatrix[16];
 
-    bool useCompressedTextures;
-    bool useVertexPrograms;
+    bool useCompressedTextures{ false };
     unsigned int textureResolution;
     DetailOptions detailOptions;
 
     uint32_t frameCount;
 
-    int currentIntervalIndex;
+    int currentIntervalIndex{ 0 };
 
 
  public:
@@ -707,7 +706,7 @@ class Renderer
     // True if we're in between a begin/endObjectAnnotations
     bool objectAnnotationSetOpen;
 
-    double realTime;
+    double realTime{ true };
 
     // Location markers
  public:

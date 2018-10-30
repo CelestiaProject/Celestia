@@ -43,7 +43,7 @@ public:
 
 class EventFinder : public QDockWidget, EclipseFinderWatcher
 {
-Q_OBJECT
+    Q_OBJECT
 
  public:
     EventFinder(CelestiaCore* _appCore, const QString& title, QWidget* parent);
@@ -64,26 +64,26 @@ Q_OBJECT
  private:
     CelestiaCore* appCore;
 
-    QRadioButton* solarOnlyButton;
-    QRadioButton* lunarOnlyButton;
-    QRadioButton* allEclipsesButton;
+    QRadioButton* solarOnlyButton{ nullptr };
+    QRadioButton* lunarOnlyButton{ nullptr };
+    QRadioButton* allEclipsesButton{ nullptr };
 
-    QDateEdit* startDateEdit;
-    QDateEdit* endDateEdit;
+    QDateEdit* startDateEdit{ nullptr };
+    QDateEdit* endDateEdit{ nullptr };
 
-    QComboBox* planetSelect;
+    QComboBox* planetSelect{ nullptr };
 
-    EventTableModel* model;
-    QTreeView* eventTable;
-    QMenu* contextMenu;
+    EventTableModel* model{ nullptr };
+    QTreeView* eventTable{ nullptr };
+    QMenu* contextMenu{ nullptr };
 
-    QProgressDialog* progress;
-    double searchSpan;
-    double lastProgressUpdate;
+    QProgressDialog* progress{ nullptr };
+    double searchSpan{ 0.0 };
+    double lastProgressUpdate{ 0.0 };
 
     QTime searchTimer;
 
-    const EclipseRecord* activeEclipse;
+    const EclipseRecord* activeEclipse{ nullptr };
 };
 
 #endif // _QTEVENTFINDER_H_

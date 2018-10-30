@@ -85,21 +85,21 @@ public:
 
     float* vertices{ nullptr };
 
-    int maxVertices;
-    int vertexSize;
+    int maxVertices{ 0 };
+    int vertexSize{ 0 };
 
-    int nIndices;
-    unsigned short* indices;
+    int nIndices{ 0 };
+    unsigned short* indices{ nullptr };
 
-    int nTexturesUsed{};
-    Texture* textures[MAX_SPHERE_MESH_TEXTURES];
+    int nTexturesUsed{ 0 };
+    Texture* textures[MAX_SPHERE_MESH_TEXTURES]{};
     unsigned int subtextures[MAX_SPHERE_MESH_TEXTURES]{};
 
     bool vertexBuffersInitialized{ false };
     bool useVertexBuffers{ false };
-    int currentVB;
+    int currentVB{ 0 };
     unsigned int vertexBuffers[NUM_SPHERE_VERTEX_BUFFERS];
-    GLuint indexBuffer;
+    GLuint indexBuffer{ 0 };
 };
 
 #endif // CELENGINE_LODSPHEREMESH_H_

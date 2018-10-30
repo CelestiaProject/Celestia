@@ -96,24 +96,24 @@ private:
     Selection selected;
     Selection tracked;
 
-    ObserverFrame::CoordinateSystem mode;
-    int nbBodies;
-    float fieldOfView;
-    float timeScale;
-    int renderFlags;
-    int labelMode;
-    bool lightTimeDelay;
-    bool pauseState;
+    ObserverFrame::CoordinateSystem mode{ ObserverFrame::Universal };
+    int nbBodies{ 0 };
+    float fieldOfView{ 0.0f };
+    float timeScale{ 0.0f };
+    int renderFlags{ 0 };
+    int labelMode{ 0 };
+    bool lightTimeDelay{ false };
+    bool pauseState{ false };
 
     std::map<std::string, std::string> parseUrlParams(const std::string& url) const;
     std::string getCoordSysName(ObserverFrame::CoordinateSystem mode) const;
     std::string getBodyShortName(const std::string& body) const;
     std::string getEncodedObjectName(const Selection& selection);
 
-    bool fromString;
-    UrlType type;
-    TimeSource timeSource;
-    unsigned int version;
+    bool fromString{ false };
+    UrlType type{ Absolute };
+    TimeSource timeSource{ UseUrlTime };
+    unsigned int version{ 2 };
 
     void evalName();
 
@@ -123,7 +123,9 @@ private:
     Eigen::Quaternionf orientation;
 
     // Variables specific to Relative Urls
-    double distance, longitude, latitude;
+    double distance{ 0.0};
+    double longitude{ 0.0 };
+    double latitude{ 0.0 };
 };
 
 

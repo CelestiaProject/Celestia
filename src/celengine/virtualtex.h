@@ -54,7 +54,7 @@ class VirtualTexture : public Texture
     void makeResident(Tile* tile, unsigned int lod, unsigned int u, unsigned int v);
     ImageTexture* loadTileTexture(unsigned int lod, unsigned int u, unsigned int v);
 
-    Tile* tiles;
+    Tile* tiles{ nullptr };
     Tile* findTile(unsigned int lod,
                    unsigned int u, unsigned int v);
 
@@ -62,11 +62,11 @@ class VirtualTexture : public Texture
     std::string tilePath;
     std::string tileExt;
     std::string tilePrefix;
-    unsigned int baseSplit;
-    unsigned int tileSize;
-    unsigned int ticks;
-    unsigned int tilesRequested;
-    unsigned int nResolutionLevels;
+    unsigned int baseSplit{ 0 };
+    unsigned int tileSize{ 0 };
+    unsigned int ticks{ 0 };
+    unsigned int tilesRequested{ 0 };
+    unsigned int nResolutionLevels{ 0 };
 
     enum {
         TileNotLoaded  = -1,

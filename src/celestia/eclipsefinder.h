@@ -33,9 +33,9 @@ public:
     Body* body{ nullptr };
     std::string planete;
     std::string sattelite;
-    astro::Date* date;
-    double startTime;
-    double endTime;
+    astro::Date* date{ nullptr };
+    double startTime{ 0.0 };
+    double endTime{ 0.0 };
 };
 
 class EclipseFinder

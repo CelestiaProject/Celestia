@@ -760,7 +760,7 @@ CommandRenderPath::CommandRenderPath(GLContext::GLRenderPath _path) :
 {
 }
 
-void CommandRenderPath::process(ExecutionEnvironment& env)
+void CommandRenderPath::process(ExecutionEnvironment& /*env*/)
 {
 #if 0
     GLContext* context = env.getRenderer()->getGLContext();

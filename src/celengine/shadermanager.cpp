@@ -1313,28 +1313,25 @@ AtmosphericEffects(const ShaderProperties& props)
 
     bool hasAbsorption = true;
 
+    string scatter;
     if (hasAbsorption)
     {
         source += "    vec3 sunColor = exp(-extinctionCoeff * density * distSun);\n";
         source += "    vec3 ex = exp(-extinctionCoeff * density * distAtm);\n";
+
+        scatter = "(1.0 - exp(-scatterCoeffSum * density * distAtm))";
     }
+#if 0
     else
     {
         source += "    vec3 sunColor = exp(-scatterCoeffSum * density * distSun);\n";
         source += "    vec3 ex = exp(-scatterCoeffSum * density * distAtm);\n";
-    }
 
-    string scatter;
-    if (hasAbsorption)
-    {
-        scatter = "(1.0 - exp(-scatterCoeffSum * density * distAtm))";
-    }
-    else
-    {
         // If there's no absorption, the extinction coefficients are just the scattering coefficients,
         // so there's no need to recompute the scattering.
         scatter = "(1.0 - ex)";
     }
+#endif
 
     // If we're rendering the sky dome, compute the phase functions in the fragment shader
     // rather than the vertex shader in order to avoid artifacts from coarse tessellation.

@@ -135,24 +135,8 @@ private:
 };
 
 
-CelestiaAppWindow::CelestiaAppWindow( QWidget* parent ) :
-    QMainWindow( parent ),
-    glWidget(nullptr),
-    celestialBrowser(nullptr),
-    m_appCore(nullptr),
-    actions(nullptr),
-    fileMenu(nullptr),
-    navMenu(nullptr),
-    timeMenu(nullptr),
-    bookmarkMenu(nullptr),
-    viewMenu(nullptr),
-    helpMenu(nullptr),
-    infoPanel(nullptr),
-    eventFinder(nullptr),
-    alerter(nullptr),
-    m_preferencesDialog(nullptr),
-    m_bookmarkManager(nullptr),
-    m_bookmarkToolBar(nullptr)
+CelestiaAppWindow::CelestiaAppWindow(QWidget* parent) :
+    QMainWindow(parent)
 {
     setObjectName("celestia-mainwin");
 }

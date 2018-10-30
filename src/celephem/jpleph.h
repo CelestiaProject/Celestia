@@ -47,12 +47,12 @@ struct JPLEphCoeffInfo
 
 struct JPLEphRecord
 {
-    JPLEphRecord() : coeffs(nullptr) {};
+    JPLEphRecord() = default;
     ~JPLEphRecord();
 
-    double t0;
-    double t1;
-    double* coeffs;
+    double t0{ 0.0 };
+    double t1{ 0.0 };
+    double* coeffs{ nullptr };
 };
 
 

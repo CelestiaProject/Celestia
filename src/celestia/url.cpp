@@ -149,10 +149,7 @@ bool CelestiaState::loadState(std::map<std::string, std::string> params)
 
 Url::Url(std::string  str, CelestiaCore *core):
     urlStr(std::move(str)),
-    appCore(core),
-    pauseState(false),
-    timeSource(UseUrlTime),
-    version(2)
+    appCore(core)
 {
     std::string::size_type pos, endPrevious;
     std::vector<Selection> bodies;

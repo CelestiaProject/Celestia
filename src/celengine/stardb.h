@@ -194,7 +194,7 @@ private:
 
     Star*             stars{ nullptr };
     StarNameDatabase* namesDB{ nullptr };
-    Star**            catalogNumberIndex;
+    Star**            catalogNumberIndex{ nullptr };
     StarOctree*       octreeRoot{ nullptr };
     uint32_t            nextAutoCatalogNumber{ 0xfffffffe };
 

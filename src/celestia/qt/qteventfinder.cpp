@@ -521,18 +521,7 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
                          const QString& title,
                          QWidget* parent) :
     QDockWidget(title, parent),
-    appCore(_appCore),
-    solarOnlyButton(nullptr),
-    lunarOnlyButton(nullptr),
-    allEclipsesButton(nullptr),
-    startDateEdit(nullptr),
-    endDateEdit(nullptr),
-    planetSelect(nullptr),
-    model(nullptr),
-    eventTable(nullptr),
-    contextMenu(nullptr),
-    progress(nullptr),
-    activeEclipse(nullptr)
+    appCore(_appCore)
 {
     QWidget* finderWidget = new QWidget(this);
 

@@ -6500,54 +6500,46 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     void process(const OBJ& /*unused*/, PREC /*unused*/, float /*unused*/) {};
 
  public:
-    const Observer* observer;
+    const Observer* observer{ nullptr };
 
-    GLContext* context;
-    Renderer*  renderer;
+    GLContext* context{ nullptr };
+    Renderer*  renderer{ nullptr };
 
     Eigen::Vector3f viewNormal;
 
-    float fov;
-    float size;
-    float pixelSize;
-    float faintestMag;
-    float faintestMagNight;
-    float saturationMag;
+    float fov{ 0.0f };
+    float size{ 0.0f };
+    float pixelSize{ 0.0f };
+    float faintestMag{ 0.0f };
+    float faintestMagNight{ 0.0f };
+    float saturationMag{ 0.0f };
 #ifdef USE_HDR
-    float exposure;
+    float exposure{ 0.0f };
 #endif
-    float brightnessScale;
-    float brightnessBias;
-    float distanceLimit;
+    float brightnessScale{ 0.0f };
+    float brightnessBias{ 0.0f };
+    float distanceLimit{ 0.0f };
 
     // Objects brighter than labelThresholdMag will be labeled
-    float labelThresholdMag;
+    float labelThresholdMag{ 0.0f };
 
     // These are not fully used by this template's descendants
     // but we place them here just in case a more sophisticated
     // rendering scheme is implemented:
-    int nRendered;
-    int nClose;
-    int nBright;
-    int nProcessed;
-    int nLabelled;
+    int nRendered{ 0 };
+    int nClose{ 0 };
+    int nBright{ 0 };
+    int nProcessed{ 0 };
+    int nLabelled{ 0 };
 
-    int renderFlags;
-    int labelMode;
+    int renderFlags{ 0 };
+    int labelMode{ 0 };
 };
 
 
 template <class OBJ, class PREC>
 ObjectRenderer<OBJ, PREC>::ObjectRenderer(const PREC _distanceLimit) :
-    distanceLimit((float) _distanceLimit),
-#ifdef USE_HDR
-    exposure     (0.0f),
-#endif
-    nRendered    (0),
-    nClose       (0),
-    nBright      (0),
-    nProcessed   (0),
-    nLabelled    (0)
+    distanceLimit((float) _distanceLimit)
 {
 }
 
@@ -6566,7 +6558,7 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
     PointStarVertexBuffer*   starVertexBuffer{ nullptr };
     PointStarVertexBuffer*   glareVertexBuffer{ nullptr };
 
-    const StarDatabase* starDB;
+    const StarDatabase* starDB{ nullptr };
 
     bool  useScaledDiscs{ false };
     float maxDiscSize{ 1.0f };
@@ -6869,19 +6861,19 @@ class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
  public:
     DSORenderer();
 
-    void process(DeepSkyObject* const &, double, float);
+    void process(DeepSkyObject* const&, double, float);
 
  public:
     Vector3d     obsPos;
-    DSODatabase* dsoDB;
+    DSODatabase* dsoDB{ nullptr };
     Frustum      frustum{ degToRad(45.0f), 1.0f, 1.0f };
 
     Matrix3f orientationMatrix;
 
-    int wWidth;
-    int wHeight;
+    int wWidth{ 0 };
+    int wHeight{ 0 };
 
-    double avgAbsMag;
+    double avgAbsMag{ 0.0 };
 
     unsigned int dsosProcessed{ 0 };
 };

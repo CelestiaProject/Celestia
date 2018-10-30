@@ -22,7 +22,7 @@ class Console;
 class ConsoleStreamBuf : public std::streambuf
 {
  public:
-    ConsoleStreamBuf() : console(nullptr) { setbuf(0, 0); };
+    ConsoleStreamBuf() { setbuf(0, 0); };
 
     void setConsole(Console*);
 
@@ -34,10 +34,10 @@ class ConsoleStreamBuf : public std::streambuf
     };
 
  private:
-    Console* console;
-    UTF8DecodeState decodeState;
-    wchar_t decodedChar;
-    unsigned int decodeShift;
+    Console* console{ nullptr };
+    UTF8DecodeState decodeState{ UTF8DecodeStart };
+    wchar_t decodedChar{ 0 };
+    unsigned int decodeShift{ 0 };
 };
 
 

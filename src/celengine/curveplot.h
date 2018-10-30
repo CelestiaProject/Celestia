@@ -104,8 +104,8 @@ class CurvePlot
  private:
     std::deque<CurvePlotSample> m_samples;
  
-    double m_duration;
+    double m_duration{ 0.0 };
 
-    unsigned int m_lastUsed;
+    unsigned int m_lastUsed{ 0 };
 };
 

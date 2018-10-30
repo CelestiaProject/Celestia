@@ -39,8 +39,8 @@ class OverlayStreamBuf : public std::streambuf
     Overlay* overlay{ nullptr };
 
     UTF8DecodeState decodeState{ UTF8DecodeStart };
-    wchar_t decodedChar;
-    unsigned int decodeShift;
+    wchar_t decodedChar{ 0 };
+    unsigned int decodeShift{ 0 };
 };
 
 

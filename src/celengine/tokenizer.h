@@ -69,25 +69,25 @@ private:
 
     istream* in;
 
-    int nextChar;
-    TokenType tokenType;
-    bool haveValidNumber;
-    bool haveValidName;
-    bool haveValidString;
+    int nextChar { 0 };
+    TokenType tokenType{ TokenBegin };
+    bool haveValidNumber{ false };
+    bool haveValidName{ false };
+    bool haveValidString{ false };
 
-    unsigned int unicodeValue;
-    unsigned int unicodeEscapeDigits;
+    unsigned int unicodeValue{ 0 };
+    unsigned int unicodeEscapeDigits{ 0 };
 
-    bool pushedBack;
+    bool pushedBack{ false };
 
     int readChar();
     void syntaxError(const char*);
 
-    double numberValue;
+    double numberValue{ 0.0 };
 
     string textToken;
 
-    int lineNum;
+    int lineNum{ 1 };
 };
 
 #endif // _TOKENIZER_H_

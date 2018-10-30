@@ -164,7 +164,7 @@ static Location* CreateLocation(Hash* locationData,
 {
     Location* location = new Location();
 
-    Vector3d longlat(0.0, 0.0, 0.0);
+    Vector3d longlat(Vector3d::Zero());
     locationData->getSphericalTuple("LongLat", longlat);
 
     Vector3f position = body->planetocentricToCartesian(longlat).cast<float>();
@@ -457,7 +457,7 @@ static bool CreateTimeline(Body* body,
     if (parentObject.body())
     {
         parentFrameTree = parentObject.body()->getOrCreateFrameTree();
-        orbitsPlanet = true;
+        //orbitsPlanet = true;
     }
     else if (parentObject.star())
     {

@@ -71,14 +71,7 @@ GetTextureHandle(Material::TextureResource* texResource)
 
 
 RenderContext::RenderContext() :
-    material(&defaultMaterial),
-    locked(false),
-    renderPass(PrimaryPass),
-    pointScale(1.0f),
-    usePointSize(false),
-    useNormals(true),
-    useColors(false),
-    useTexCoords(true)
+    material(&defaultMaterial)
 {
 }
 

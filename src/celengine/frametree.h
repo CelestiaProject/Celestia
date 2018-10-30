@@ -94,11 +94,11 @@ private:
     Body* bodyParent;
     std::vector<TimelinePhase*> children;
 
-    double m_boundingSphereRadius;
-    double m_maxChildRadius;
-    bool m_containsSecondaryIlluminators;
-    bool m_changed;
-    int m_childClassMask;
+    double m_boundingSphereRadius{ 0.0 };
+    double m_maxChildRadius{ 0.0 };
+    bool m_containsSecondaryIlluminators{ false };
+    bool m_changed{ false };
+    int m_childClassMask{ 0 };
 
     ReferenceFrame* defaultFrame;
 };

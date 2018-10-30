@@ -22,13 +22,7 @@ static bool issep(char c)
 
 
 Tokenizer::Tokenizer(istream* _in) :
-    in(_in),
-    tokenType(TokenBegin),
-    haveValidNumber(false),
-    haveValidName(false),
-    haveValidString(false),
-    pushedBack(false),
-    lineNum(1)
+    in(_in)
 {
 }
 

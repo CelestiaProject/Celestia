@@ -443,6 +443,7 @@ TextureFont* TextureFont::load(istream& in)
             DPRINTF(0, "Missing bitmap data in font stream.\n");
             delete font;
             delete[] fontImage;
+            delete[] fontBits;
             return nullptr;
         }
 

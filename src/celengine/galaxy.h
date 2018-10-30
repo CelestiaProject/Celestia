@@ -30,7 +30,6 @@ class Galaxy : public DeepSkyObject
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    Galaxy() = default;
     virtual const char* getType() const;
     virtual void setType(const std::string&);
     virtual std::string getDescription() const;
@@ -100,7 +99,7 @@ class Galaxy : public DeepSkyObject
     float detail{ 1.0f };
     std::string* customTmpName{ nullptr };
     //    float brightness;
-    GalaxyType type;
+    GalaxyType type{ S0 };
     GalacticForm* form{ nullptr };
 
     static float lightGain;

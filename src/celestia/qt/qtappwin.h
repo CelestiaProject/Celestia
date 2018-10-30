@@ -111,30 +111,30 @@ class CelestiaAppWindow : public QMainWindow
     void closeEvent(QCloseEvent* event);
 
  private:
-    CelestiaGlWidget* glWidget;
-    QDockWidget* toolsDock;
-    CelestialBrowser* celestialBrowser;
+    CelestiaGlWidget* glWidget{ nullptr };
+    QDockWidget* toolsDock{ nullptr };
+    CelestialBrowser* celestialBrowser{ nullptr };
 
-    CelestiaCore* m_appCore;
+    CelestiaCore* m_appCore{ nullptr };
 
-    CelestiaActions* actions;
+    CelestiaActions* actions{ nullptr };
 
-    QMenu* fileMenu;
-    QMenu* navMenu;
-    QMenu* timeMenu;
-    QMenu* displayMenu;
-    QMenu* bookmarkMenu;
-    QMenu* viewMenu;
-    QMenu* helpMenu;
+    QMenu* fileMenu{ nullptr };
+    QMenu* navMenu{ nullptr };
+    QMenu* timeMenu{ nullptr };
+    QMenu* displayMenu{ nullptr };
+    QMenu* bookmarkMenu{ nullptr };
+    QMenu* viewMenu{ nullptr };
+    QMenu* helpMenu{ nullptr };
 
-    InfoPanel* infoPanel;
-    EventFinder* eventFinder;
+    InfoPanel* infoPanel{ nullptr };
+    EventFinder* eventFinder{ nullptr };
 
-    CelestiaCore::Alerter* alerter;
+    CelestiaCore::Alerter* alerter{ nullptr };
 
-    PreferencesDialog* m_preferencesDialog;
-    BookmarkManager* m_bookmarkManager;
-    BookmarkToolBar* m_bookmarkToolBar;
+    PreferencesDialog* m_preferencesDialog{ nullptr };
+    BookmarkManager* m_bookmarkManager{ nullptr };
+    BookmarkToolBar* m_bookmarkToolBar{ nullptr };
 
     QString m_dataDirPath;
 };

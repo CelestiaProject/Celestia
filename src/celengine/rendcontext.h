@@ -52,17 +52,17 @@ class RenderContext
     Eigen::Quaternionf getCameraOrientation() const;
 
  private:
-    const cmod::Material* material;
-    bool locked;
-    RenderPass renderPass;
-    float pointScale;
+    const cmod::Material* material{ nullptr };
+    bool locked{ false };
+    RenderPass renderPass{ PrimaryPass };
+    float pointScale{ 1.0f };
     Eigen::Quaternionf cameraOrientation;  // required for drawing billboards
 
  protected:
-    bool usePointSize;
-    bool useNormals;
-    bool useColors;
-    bool useTexCoords;
+    bool usePointSize{ false };
+    bool useNormals{ true };
+    bool useColors{ false };
+    bool useTexCoords{ true };
 };
 
 

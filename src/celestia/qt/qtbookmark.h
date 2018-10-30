@@ -41,7 +41,7 @@ public:
 
     static const int ICON_SIZE = 24;
 
-    BookmarkItem() : m_type(None), m_parent(nullptr) {};
+    BookmarkItem() = default;
 
     BookmarkItem(Type type, BookmarkItem* parent);
 
@@ -76,15 +76,15 @@ private:
     void reindex(int startIndex);
 
 private:
-    Type m_type;
-    BookmarkItem* m_parent;
+    Type m_type{ None };
+    BookmarkItem* m_parent{ nullptr };
     QString m_title;
     QString m_url;
-    bool m_folded;
+    bool m_folded{ false };
     QString m_description;
     QIcon m_icon;
     QList<BookmarkItem*> m_children;
-    int m_position; // position in parent's child list
+    int m_position{ 0 }; // position in parent's child list
 };
 
 
