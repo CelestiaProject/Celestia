@@ -40,6 +40,7 @@
 #include <QDesktopWidget>
 #include <QInputDialog>
 #include <QUrl>
+#include <QSurfaceFormat>
 #include <vector>
 #include <string>
 #include <cassert>
@@ -273,23 +274,16 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     // Enable antialiasing if requested in the config file.
     // TODO: Make this settable via the GUI
-    QGLFormat glformat = QGLFormat::defaultFormat();
+    QSurfaceFormat glformat = QSurfaceFormat::defaultFormat();
     if (m_appCore->getConfig()->aaSamples > 1)
     {
-        glformat.setSampleBuffers(true);
+        glformat.setRenderableType(QSurfaceFormat::OpenGL);
         glformat.setSamples(m_appCore->getConfig()->aaSamples);
-        QGLFormat::setDefaultFormat(glformat);
+        QSurfaceFormat::setDefaultFormat(glformat);
     }
 
     glWidget = new CelestiaGlWidget(nullptr, "Celestia", m_appCore);
     glWidget->makeCurrent();
-
-    GLenum glewErr = glewInit();
-    if (glewErr != GLEW_OK)
-    {
-        QMessageBox::critical(0, "Celestia",
-                              QString(_("Celestia was unable to initialize OpenGL extensions (error %1). Graphics quality will be reduced.")).arg(glewErr));
-    }
 
     m_appCore->setCursorHandler(glWidget);
     m_appCore->setContextMenuCallback(ContextMenu);
@@ -641,7 +635,7 @@ void CelestiaAppWindow::saveBookmarks()
 void CelestiaAppWindow::celestia_tick()
 {
     m_appCore->tick();
-    glWidget->updateGL();
+    glWidget->update();
 }
 
 
@@ -679,7 +673,7 @@ void CelestiaAppWindow::slotGrabImage()
         QFileInfo saveAsFile(saveAsName);
 
         //glWidget->repaint();
-        QImage grabbedImage = glWidget->grabFrameBuffer();
+        QImage grabbedImage = glWidget->grabFramebuffer();
         grabbedImage.save(saveAsName);
 
         settings.setValue("GrabImageDir", saveAsFile.absolutePath());
@@ -790,7 +784,7 @@ void CelestiaAppWindow::slotCaptureVideo()
 void CelestiaAppWindow::slotCopyImage()
 {
     //glWidget->repaint();
-    QImage grabbedImage = glWidget->grabFrameBuffer();
+    QImage grabbedImage = glWidget->grabFramebuffer();
     QApplication::clipboard()->setImage(grabbedImage);
     m_appCore->flash(QString(_("Captured screen shot to clipboard")).toStdString());
 }
@@ -1015,7 +1009,7 @@ void CelestiaAppWindow::slotAddBookmark()
     appState.captureState(m_appCore);
 
     // Capture the current frame buffer to use as a bookmark icon.
-    QImage grabbedImage = glWidget->grabFrameBuffer();
+    QImage grabbedImage = glWidget->grabFramebuffer();
     int width = grabbedImage.width();
     int height = grabbedImage.height();
 
