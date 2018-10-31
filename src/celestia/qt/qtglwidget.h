@@ -16,7 +16,7 @@
 
 #include <GL/glew.h>
 
-#include <QOpenGLWidget>
+#include <QGLWidget>
 
 #include "celestia/celestiacore.h"
 #include "celengine/simulation.h"
@@ -28,7 +28,7 @@
   *@author Christophe Teyssier
   */
 
-class CelestiaGlWidget : public QOpenGLWidget, public CelestiaCore::CursorHandler
+class CelestiaGlWidget : public QGLWidget, public CelestiaCore::CursorHandler
 {
     Q_OBJECT
 
