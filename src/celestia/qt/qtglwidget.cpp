@@ -23,6 +23,7 @@
 #include <QPaintDevice>
 #include <QMouseEvent>
 #include <QSettings>
+#include <QMessageBox>
 
 #ifndef DEBUG
 #  define G_DISABLE_ASSERT
@@ -61,7 +62,7 @@ const unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
 
 
 CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, CelestiaCore* core) :
-    QGLWidget(parent)
+    QOpenGLWidget(parent)
 {
     setFocusPolicy(Qt::ClickFocus);
 
@@ -112,6 +113,16 @@ static GLContext::GLRenderPath getBestAvailableRenderPath(const GLContext& /*glc
 
 void CelestiaGlWidget::initializeGL()
 {
+    GLenum glewErr = glewInit();
+
+    if (glewErr != GLEW_OK)
+    {
+        QString errMsg;
+        errMsg = QString(_("GLEW Error: %1\n")).arg(reinterpret_cast<const char*>(glewGetErrorString(glewErr)));
+        QMessageBox::critical(0, "Celestia", errMsg);
+        exit(1); // We need OpenGL 2.1 at least
+    }
+
     if (!appCore->initRenderer())
     {
         // cerr << "Failed to initialize renderer.\n";
