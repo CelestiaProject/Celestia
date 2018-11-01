@@ -7,8 +7,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <algorithm>
-
 #ifndef _WIN32
 #ifndef TARGET_OS_MAC
 #include <config.h>
@@ -31,7 +29,7 @@ Asterism::Asterism(string _name) :
 
 string Asterism::getName(bool i18n) const
 {
-    return i18n?i18nName:name;
+    return i18n ? i18nName : name;
 }
 
 int Asterism::getChainCount() const
@@ -136,23 +134,23 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
 
         Array* chains = chainsValue->getArray();
 
-        for (int i = 0; i < (int) chains->size(); i++)
+        for (const auto chain : *chains)
         {
-            if ((*chains)[i]->getType() == Value::ArrayType)
+            if (chain->getType() == Value::ArrayType)
             {
-                Array* a = (*chains)[i]->getArray();
-                Asterism::Chain* chain = new Asterism::Chain();
+                Array* a = chain->getArray();
+                Asterism::Chain* new_chain = new Asterism::Chain();
                 for (const auto i : *a)
                 {
                     if (i->getType() == Value::StringType)
                     {
                         Star* star = stardb.find(i->getString());
                         if (star != nullptr)
-                            chain->push_back(star->getPosition());
+                            new_chain->push_back(star->getPosition());
                     }
                 }
 
-                ast->addChain(*chain);
+                ast->addChain(*new_chain);
             }
         }
 
