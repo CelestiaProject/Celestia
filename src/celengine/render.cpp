@@ -1487,6 +1487,19 @@ static void disableSmoothLines()
 }
 
 
+inline void enableSmoothLines(int renderFlags)
+{
+    if ((renderFlags & Renderer::ShowSmoothLines) != 0)
+        enableSmoothLines();
+}
+
+
+inline void disableSmoothLines(int renderFlags)
+{
+    if ((renderFlags & Renderer::ShowSmoothLines) != 0)
+        disableSmoothLines();
+}
+
 class OrbitSampler : public OrbitSampleProc
 {
 public:
@@ -3533,10 +3546,7 @@ void Renderer::draw(const Observer& observer,
 #else
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
-                if ((renderFlags & ShowSmoothLines) != 0)
-                {
-                    enableSmoothLines();
-                }
+                enableSmoothLines(renderFlags);
 
                 // Scan through the list of orbits and render any that overlap this interval
                 for (const auto& orbit : orbitPathList)
@@ -3575,8 +3585,7 @@ void Renderer::draw(const Observer& observer,
                         orbitsSkipped++;
                 }
 
-                if ((renderFlags & ShowSmoothLines) != 0)
-                    disableSmoothLines();
+                disableSmoothLines(renderFlags);
                 glDepthMask(GL_FALSE);
             }
 
@@ -3591,12 +3600,10 @@ void Renderer::draw(const Observer& observer,
             }
 
             // Render annotations in this interval
-            if ((renderFlags & ShowSmoothLines) != 0)
-                enableSmoothLines();
+            enableSmoothLines(renderFlags);
             annotation = renderSortedAnnotations(annotation, -depthPartitions[interval].nearZ, -depthPartitions[interval].farZ, FontNormal);
             endObjectAnnotations();
-            if ((renderFlags & ShowSmoothLines) != 0)
-                disableSmoothLines();
+            disableSmoothLines(renderFlags);
             glDisable(GL_DEPTH_TEST);
         }
 #if 0
@@ -7111,8 +7118,7 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 
     // Render any line primitives with smooth lines
     // (mostly to make graticules look good.)
-    if ((renderFlags & ShowSmoothLines) != 0)
-        enableSmoothLines();
+    enableSmoothLines(renderFlags);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
@@ -7125,8 +7131,7 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 
     // clog << "DSOs processed: " << dsoRenderer.dsosProcessed << endl;
 
-    if ((renderFlags & ShowSmoothLines) != 0)
-        disableSmoothLines();
+    disableSmoothLines(renderFlags);
 }
 
 
@@ -7443,8 +7448,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
         return;
 
     // Enable line smoothing for rendering symbols
-    if ((renderFlags & ShowSmoothLines) != 0)
-        enableSmoothLines();
+    enableSmoothLines(renderFlags);
 
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
@@ -7550,8 +7554,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 #endif
 
-    if ((renderFlags & ShowSmoothLines) != 0)
-        disableSmoothLines();
+    disableSmoothLines(renderFlags);
 }
 
 
