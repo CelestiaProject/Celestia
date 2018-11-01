@@ -7,14 +7,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CONSTELLATION_H_
-#define _CONSTELLATION_H_
+#pragma once
 
 #include <string>
 
 class Constellation
 {
 public:
+    Constellation(const char *_name, const char *_genitive, const char *_abbrev);
+
     static Constellation *getConstellation(unsigned int);
     static Constellation *getConstellation(const std::string&);
 
@@ -23,14 +24,7 @@ public:
     const std::string getAbbreviation() const;
 
 private:
-    Constellation(const char *_name, const char *_genitive, const char *_abbrev);
-    static void initialize();
-
-    std::string name;
-    std::string genitive;
-    std::string abbrev;
+    const char* name;
+    const char* genitive;
+    const char* abbrev;
 };
-
-#endif // _CONSTELLATION_H_
-
-

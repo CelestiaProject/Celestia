@@ -7,112 +7,102 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <iostream>
 #include <celutil/util.h>
-#include "celestia.h"
 #include "constellation.h"
 
 using namespace std;
 
 
-struct Constellation_s {
-    const char *name;
-    const char *gen;
-    const char *abbr;
+static Constellation constellations[] = {
+    Constellation("Aries", "Arietis", "Ari"),
+    Constellation("Taurus", "Tauri", "Tau"),
+    Constellation("Gemini", "Geminorum", "Gem"),
+    Constellation("Cancer", "Cancri", "Cnc"),
+    Constellation("Leo", "Leonis", "Leo"),
+    Constellation("Virgo", "Virginis", "Vir"),
+    Constellation("Libra", "Librae", "Lib"),
+    Constellation("Scorpius", "Scorpii", "Sco"),
+    Constellation("Sagittarius", "Sagittarii", "Sgr"),
+    Constellation("Capricornus", "Capricorni", "Cap"),
+    Constellation("Aquarius", "Aquarii", "Aqr"),
+    Constellation("Pisces", "Piscium", "Psc"),
+    Constellation("Ursa Major", "Ursae Majoris", "UMa"),
+    Constellation("Ursa Minor", "Ursae Minoris", "UMi"),
+    Constellation("Bootes", "Bootis", "Boo"),
+    Constellation("Orion", "Orionis", "Ori"),
+    Constellation("Canis Major", "Canis Majoris", "CMa"),
+    Constellation("Canis Minor", "Canis Minoris", "CMi"),
+    Constellation("Lepus", "Leporis", "Lep"),
+    Constellation("Perseus", "Persei", "Per"),
+    Constellation("Andromeda", "Andromedae", "And"),
+    Constellation("Cassiopeia", "Cassiopeiae", "Cas"),
+    Constellation("Cepheus", "Cephei", "Cep"),
+    Constellation("Cetus", "Ceti", "Cet"),
+    Constellation("Pegasus", "Pegasi", "Peg"),
+    Constellation("Carina", "Carinae", "Car"),
+    Constellation("Puppis", "Puppis", "Pup"),
+    Constellation("Vela", "Velorum", "Vel"),
+    Constellation("Hercules", "Herculis", "Her"),
+    Constellation("Hydra", "Hydrae", "Hya"),
+    Constellation("Centaurus", "Centauri", "Cen"),
+    Constellation("Lupus", "Lupi", "Lup"),
+    Constellation("Ara", "Arae", "Ara"),
+    Constellation("Ophiuchus", "Ophiuchi", "Oph"),
+    Constellation("Serpens", "Serpentis", "Ser"),
+    Constellation("Aquila", "Aquilae", "Aql"),
+    Constellation("Auriga", "Aurigae", "Aur"),
+    Constellation("Corona Australis", "Coronae Australis", "CrA"),
+    Constellation("Corona Borealis", "Coronae Borealis", "CrB"),
+    Constellation("Corvus", "Corvi", "Crv"),
+    Constellation("Crater", "Crateris", "Crt"),
+    Constellation("Cygnus", "Cygni", "Cyg"),
+    Constellation("Delphinus", "Delphini", "Del"),
+    Constellation("Draco", "Draconis", "Dra"),
+    Constellation("Equuleus", "Equulei", "Equ"),
+    Constellation("Eridanus", "Eridani", "Eri"),
+    Constellation("Lyra", "Lyrae", "Lyr"),
+    Constellation("Piscis Austrinus", "Piscis Austrini", "PsA"),
+    Constellation("Sagitta", "Sagittae", "Sge"),
+    Constellation("Triangulum", "Trianguli", "Tri"),
+    Constellation("Antlia", "Antliae", "Ant"),
+    Constellation("Apus", "Apodis", "Aps"),
+    Constellation("Caelum", "Caeli", "Cae"),
+    Constellation("Camelopardalis", "Camelopardalis", "Cam"),
+    Constellation("Canes Venatici", "Canum Venaticorum", "CVn"),
+    Constellation("Chamaeleon", "Chamaeleontis", "Cha"),
+    Constellation("Circinus", "Circini", "Cir"),
+    Constellation("Columba", "Columbae", "Col"),
+    Constellation("Coma Berenices", "Comae Berenices", "Com"),
+    Constellation("Crux", "Crucis", "Cru"),
+    Constellation("Dorado", "Doradus", "Dor"),
+    Constellation("Fornax", "Fornacis", "For"),
+    Constellation("Grus", "Gruis", "Gru"),
+    Constellation("Horologium", "Horologii", "Hor"),
+    Constellation("Hydrus", "Hydri", "Hyi"),
+    Constellation("Indus", "Indi", "Ind"),
+    Constellation("Lacerta", "Lacertae", "Lac"),
+    Constellation("Leo Minor", "Leonis Minoris", "LMi"),
+    Constellation("Lynx", "Lyncis", "Lyn"),
+    Constellation("Microscopium", "Microscopii", "Mic"),
+    Constellation("Monoceros", "Monocerotis", "Mon"),
+    Constellation("Mensa", "Mensae", "Men"),
+    Constellation("Musca", "Muscae", "Mus"),
+    Constellation("Norma", "Normae", "Nor"),
+    Constellation("Octans", "Octantis", "Oct"),
+    Constellation("Pavo", "Pavonis", "Pav"),
+    Constellation("Phoenix", "Phoenicis", "Phe"),
+    Constellation("Pictor", "Pictoris", "Pic"),
+    Constellation("Pyxis", "Pyxidis", "Pyx"),
+    Constellation("Reticulum", "Reticuli", "Ret"),
+    Constellation("Sculptor", "Sculptoris", "Scl"),
+    Constellation("Scutum", "Scuti", "Sct"),
+    Constellation("Sextans", "Sextantis", "Sex"),
+    Constellation("Telescopium", "Telescopii", "Tel"),
+    Constellation("Triangulum Australe", "Trianguli Australis", "TrA"),
+    Constellation("Tucana", "Tucanae", "Tuc"),
+    Constellation("Volans", "Volantis", "Vol"),
+    Constellation("Vulpecula", "Vulpeculae", "Vul")
 };
-
-static struct Constellation_s constellationInfo[] = {
-    { "Aries", "Arietis", "Ari" },
-    { "Taurus", "Tauri", "Tau" },
-    { "Gemini", "Geminorum", "Gem" },
-    { "Cancer", "Cancri", "Cnc" },
-    { "Leo", "Leonis", "Leo" },
-    { "Virgo", "Virginis", "Vir" },
-    { "Libra", "Librae", "Lib" },
-    { "Scorpius", "Scorpii", "Sco" },
-    { "Sagittarius", "Sagittarii", "Sgr" },
-    { "Capricornus", "Capricorni", "Cap" },
-    { "Aquarius", "Aquarii", "Aqr" },
-    { "Pisces", "Piscium", "Psc" },
-    { "Ursa Major", "Ursae Majoris", "UMa" },
-    { "Ursa Minor", "Ursae Minoris", "UMi" },
-    { "Bootes", "Bootis", "Boo" },
-    { "Orion", "Orionis", "Ori" },
-    { "Canis Major", "Canis Majoris", "CMa" },
-    { "Canis Minor", "Canis Minoris", "CMi" },
-    { "Lepus", "Leporis", "Lep" },
-    { "Perseus", "Persei", "Per" },
-    { "Andromeda", "Andromedae", "And" },
-    { "Cassiopeia", "Cassiopeiae", "Cas" },
-    { "Cepheus", "Cephei", "Cep" },
-    { "Cetus", "Ceti", "Cet" },
-    { "Pegasus", "Pegasi", "Peg" },
-    { "Carina", "Carinae", "Car" },
-    { "Puppis", "Puppis", "Pup" },
-    { "Vela", "Velorum", "Vel" },
-    { "Hercules", "Herculis", "Her" },
-    { "Hydra", "Hydrae", "Hya" },
-    { "Centaurus", "Centauri", "Cen" },
-    { "Lupus", "Lupi", "Lup" },
-    { "Ara", "Arae", "Ara" },
-    { "Ophiuchus", "Ophiuchi", "Oph" },
-    { "Serpens", "Serpentis", "Ser" },
-    { "Aquila", "Aquilae", "Aql" },
-    { "Auriga", "Aurigae", "Aur" },
-    { "Corona Australis", "Coronae Australis", "CrA" },
-    { "Corona Borealis", "Coronae Borealis", "CrB" },
-    { "Corvus", "Corvi", "Crv" },
-    { "Crater", "Crateris", "Crt" },
-    { "Cygnus", "Cygni", "Cyg" },
-    { "Delphinus", "Delphini", "Del" },
-    { "Draco", "Draconis", "Dra" },
-    { "Equuleus", "Equulei", "Equ" },
-    { "Eridanus", "Eridani", "Eri" },
-    { "Lyra", "Lyrae", "Lyr" },
-    { "Piscis Austrinus", "Piscis Austrini", "PsA" },
-    { "Sagitta", "Sagittae", "Sge" },
-    { "Triangulum", "Trianguli", "Tri" },
-    { "Antlia", "Antliae", "Ant" },
-    { "Apus", "Apodis", "Aps" },
-    { "Caelum", "Caeli", "Cae" },
-    { "Camelopardalis", "Camelopardalis", "Cam" },
-    { "Canes Venatici", "Canum Venaticorum", "CVn" },
-    { "Chamaeleon", "Chamaeleontis", "Cha" },
-    { "Circinus", "Circini", "Cir" },
-    { "Columba", "Columbae", "Col" },
-    { "Coma Berenices", "Comae Berenices", "Com" },
-    { "Crux", "Crucis", "Cru" },
-    { "Dorado", "Doradus", "Dor" },
-    { "Fornax", "Fornacis", "For" },
-    { "Grus", "Gruis", "Gru" },
-    { "Horologium", "Horologii", "Hor" },
-    { "Hydrus", "Hydri", "Hyi" },
-    { "Indus", "Indi", "Ind" },
-    { "Lacerta", "Lacertae", "Lac" },
-    { "Leo Minor", "Leonis Minoris", "LMi" },
-    { "Lynx", "Lyncis", "Lyn" },
-    { "Microscopium", "Microscopii", "Mic" },
-    { "Monoceros", "Monocerotis", "Mon" },
-    { "Mensa", "Mensae", "Men" },
-    { "Musca", "Muscae", "Mus" },
-    { "Norma", "Normae", "Nor" },
-    { "Octans", "Octantis", "Oct" },
-    { "Pavo", "Pavonis", "Pav" },
-    { "Phoenix", "Phoenicis", "Phe" },
-    { "Pictor", "Pictoris", "Pic" },
-    { "Pyxis", "Pyxidis", "Pyx" },
-    { "Reticulum", "Reticuli", "Ret" },
-    { "Sculptor", "Sculptoris", "Scl" },
-    { "Scutum", "Scuti", "Sct" },
-    { "Sextans", "Sextantis", "Sex" },
-    { "Telescopium", "Telescopii", "Tel" },
-    { "Triangulum Australe", "Trianguli Australis", "TrA" },
-    { "Tucana", "Tucanae", "Tuc" },
-    { "Volans", "Volantis", "Vol" },
-    { "Vulpecula", "Vulpeculae", "Vul" }
-};
-
-static Constellation **constellations = nullptr;
 
 
 Constellation::Constellation(const char *_name, const char *_genitive, const char *_abbrev) :
@@ -124,30 +114,21 @@ Constellation::Constellation(const char *_name, const char *_genitive, const cha
 
 Constellation* Constellation::getConstellation(unsigned int n)
 {
-    if (constellations == nullptr)
-        initialize();
-
-    if (constellations == nullptr ||
-        n >= sizeof(constellationInfo) / sizeof(constellationInfo[0]))
+    if (n >= sizeof(constellations) / sizeof(constellations[0]))
         return nullptr;
 
-    return constellations[n];
+    return &constellations[n];
 }
 
 Constellation* Constellation::getConstellation(const string& name)
 {
-    if (constellations == nullptr)
-        initialize();
-
-    for (unsigned int i = 0;
-         i < sizeof(constellationInfo) / sizeof(constellationInfo[0]);
-         i++)
+    for (auto& cons: constellations)
     {
-        if (compareIgnoringCase(name, constellationInfo[i].abbr) == 0 ||
-            compareIgnoringCase(name, constellationInfo[i].gen) == 0 ||
-            compareIgnoringCase(name, constellationInfo[i].name) == 0)
+        if (compareIgnoringCase(name, cons.getAbbreviation()) == 0 ||
+            compareIgnoringCase(name, cons.getGenitive()) == 0     ||
+            compareIgnoringCase(name, cons.getName()) == 0)
         {
-            return constellations[i];
+            return &cons;
         }
     }
 
@@ -167,18 +148,4 @@ const string Constellation::getGenitive() const
 const string Constellation::getAbbreviation() const
 {
     return abbrev;
-}
-
-void Constellation::initialize()
-{
-    int nConstellations = sizeof(constellationInfo) / sizeof(constellationInfo[0]);
-    // XXX: replace with std::array or std::vector
-    constellations = new Constellation* [nConstellations];
-
-    for (int i = 0; i < nConstellations; i++)
-    {
-        constellations[i] = new Constellation(constellationInfo[i].name,
-                                              constellationInfo[i].gen,
-                                              constellationInfo[i].abbr);
-    }
 }
