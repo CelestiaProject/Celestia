@@ -5610,8 +5610,10 @@ void Renderer::renderStar(const Star& star,
         if (rp.geometry == InvalidResource)
             rp.atmosphere = &atmosphere;
         else
-#endif
+            rp.atmosphere = nullptr;
+#else
         rp.atmosphere = nullptr;
+#endif
 
         rp.orientation = star.getRotationModel()->orientationAtTime(now).cast<float>();
 
