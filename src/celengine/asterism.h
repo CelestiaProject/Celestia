@@ -14,8 +14,11 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <celengine/stardb.h>
 #include <celutil/color.h>
+#include "stardb.h"
+#include "shadermanager.h"
+
+class AsterismList;
 
 class Asterism
 {
@@ -44,15 +47,31 @@ class Asterism
     std::string i18nName;
     std::vector<Chain*> chains;
 
+    // total number of vertexes in the asterism
+    uint16_t vertex_count{ 0 };
+
     bool active{ true };
     bool useOverrideColor{ false };
     Color color;
+
+    friend class AsterismList;
 };
 
 class AsterismList : public std::vector<Asterism*>
 {
  public:
     void render(Color color);
+
+ private:
+    void cleanup();
+    void prepare();
+
+    GLuint  vboId{ 0 };
+    GLfloat *vtx_buf{ nullptr };
+    GLsizei vtx_num{ 0 };
+    bool prepared{ false };
+
+    ShaderProperties shadprop;
 };
 
 AsterismList* ReadAsterismList(std::istream&, const StarDatabase&);

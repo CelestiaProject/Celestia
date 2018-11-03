@@ -13,6 +13,7 @@
 #endif /* TARGET_OS_MAC */
 #endif /* _WIN32 */
 
+#include <cstring>
 #include <GL/glew.h>
 #include <celutil/util.h>
 #include <celutil/debug.h>
@@ -105,32 +106,125 @@ bool Asterism::isColorOverridden() const
 
 /*! Draw visible asterisms.
  */
-void  AsterismList::render(Color defaultColor)
+void AsterismList::render(Color defaultColor)
 {
+    if (vboId == 0)
+    {
+        if (!prepared)
+            prepare();
+
+        if (vtx_num == 0)
+            return;
+
+        glGenBuffers(1, &(vboId));
+        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        glBufferData(GL_ARRAY_BUFFER, vtx_num * 3 * sizeof(GLfloat), vtx_buf, GL_STATIC_DRAW);
+        cleanup();
+
+        shadprop.staticShader = true;
+        shadprop.staticProps  = ShaderProperties::UniformColor;
+    }
+    else
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+    }
+
+    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
+    if (prog == nullptr)
+        return;
+
+    prog->use();
+    prog->color = defaultColor.toVector4();
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE, 0, 0);
+    glDrawArrays(GL_LINES, 0, vtx_num);
+
+    ptrdiff_t offset = 0;
     float opacity = defaultColor.alpha();
+    for (const auto ast : *this)
+    {
+        if (!ast->getActive() || !ast->isColorOverridden())
+        {
+            offset += ast->vertex_count;
+            continue;
+        }
+
+        prog->color = Color(ast->getOverrideColor(), opacity).toVector4();
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, 0,
+                              (const void*)(offset*3*sizeof(GLfloat)));
+        glDrawArrays(GL_LINES, 0, ast->vertex_count);
+        offset += ast->vertex_count;
+    }
+
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glUseProgram(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+
+void AsterismList::prepare()
+{
+    if (prepared)
+        return;
+
+    // calculate required vertices number
+    vtx_num = 0;
+    for (const auto ast : *this)
+    {
+        uint16_t ast_vtx_num = 0;
+        for (int k = 0; k < ast->getChainCount(); k++)
+        {
+            // as we use GL_LINES we should double the number of vertices
+            // as we don't need closed figures we have only one copy of
+            // the 1st and last vertexes
+            auto s = (uint16_t) ast->getChain(k).size();
+            if (s > 1)
+                ast_vtx_num += 2 * s - 2;
+        }
+
+        ast->vertex_count = ast_vtx_num;
+        vtx_num += ast_vtx_num;
+    }
+
+    if (vtx_num == 0)
+        return;
+
+    vtx_buf = new GLfloat[vtx_num * 3];
+    GLfloat* ptr = vtx_buf;
 
     for (const auto ast : *this)
     {
-        if (!ast->getActive())
-            continue;
-
-        if (ast->isColorOverridden())
-            glColor(ast->getOverrideColor(), opacity);
-        else
-            glColor(defaultColor);
-
-        for (int i = 0; i < ast->getChainCount(); i++)
+        for (int k = 0; k < ast->getChainCount(); k++)
         {
-            const Asterism::Chain& chain = ast->getChain(i);
+            const auto& chain = ast->getChain(k);
 
-            glBegin(GL_LINE_STRIP);
-            for (const auto& c : chain)
-                glVertex3fv(c.data());
-            glEnd();
+            // skip empty (without starts or only with one star) chains
+            if (chain.size() <= 1)
+                continue;
+
+            memcpy(ptr, chain[0].data(), 3 * sizeof(float));
+            ptr += 3;
+            for (unsigned i = 1; i < chain.size() - 1; i++)
+            {
+                memcpy(ptr,     chain[i].data(), 3 * sizeof(float));
+                memcpy(ptr + 3, chain[i].data(), 3 * sizeof(float));
+                ptr += 6;
+            }
+            memcpy(ptr, chain[chain.size() - 1].data(), 3 * sizeof(float));
+            ptr += 3;
         }
     }
+
+    prepared = true;
 }
 
+void AsterismList::cleanup()
+{
+    delete[] vtx_buf;
+    // TODO: delete chains
+}
 
 
 AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
@@ -170,6 +264,10 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
             if (chain->getType() == Value::ArrayType)
             {
                 Array* a = chain->getArray();
+                // skip empty (without or only with a single star) chains
+                if (a->size() <= 1)
+                    continue;
+
                 Asterism::Chain* new_chain = new Asterism::Chain();
                 for (const auto i : *a)
                 {
