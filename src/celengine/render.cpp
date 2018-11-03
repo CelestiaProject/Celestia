@@ -1287,7 +1287,8 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                              const Vector3f& pos,
                              LabelAlignment halign,
                              LabelVerticalAlignment valign,
-                             float size)
+                             float size,
+                             bool special)
 {
     double winX, winY, winZ;
     GLint view[4] = { 0, 0, windowWidth, windowHeight };
@@ -1301,8 +1302,15 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                    &winX, &winY, &winZ) != GL_FALSE)
     {
         Annotation a;
-
-        a.labelText = ReplaceGreekLetterAbbr(labelText);
+        if (special)
+        {
+            if (markerRep == nullptr)
+                a.labelText = labelText;
+        }
+        else
+        {
+            a.labelText = ReplaceGreekLetterAbbr(labelText);
+        }
         a.markerRep = markerRep;
         a.color = color;
         a.position = Vector3f((float) winX, (float) winY, -depth);
@@ -1346,32 +1354,7 @@ void Renderer::addSortedAnnotation(const MarkerRepresentation* markerRep,
                                    LabelVerticalAlignment valign,
                                    float size)
 {
-    double winX, winY, winZ;
-    GLint view[4] = { 0, 0, windowWidth, windowHeight };
-    float depth = (float) (pos.x() * modelMatrix[2] +
-                           pos.y() * modelMatrix[6] +
-                           pos.z() * modelMatrix[10]);
-    if (gluProject(pos.x(), pos.y(), pos.z(),
-                   modelMatrix,
-                   projMatrix,
-                   view,
-                   &winX, &winY, &winZ) != GL_FALSE)
-    {
-        Annotation a;
-
-        if (markerRep == nullptr)
-        {
-            //l.text = ReplaceGreekLetterAbbr(_(text.c_str()));
-            a.labelText = labelText;
-        }
-        a.markerRep = markerRep;
-        a.color = color;
-        a.position = Vector3f((float) winX, (float) winY, -depth);
-        a.halign = halign;
-        a.valign = valign;
-        a.size = size;
-        depthSortedAnnotations.push_back(a);
-    }
+    addAnnotation(depthSortedAnnotations, markerRep, labelText, color, pos, halign, valign, size, true);
 }
 
 
@@ -1438,28 +1421,7 @@ void Renderer::addObjectAnnotation(const MarkerRepresentation* markerRep,
     assert(objectAnnotationSetOpen);
     if (objectAnnotationSetOpen)
     {
-        double winX, winY, winZ;
-        GLint view[4] = { 0, 0, windowWidth, windowHeight };
-        float depth = (float) (pos.x() * modelMatrix[2] +
-                               pos.y() * modelMatrix[6] +
-                               pos.z() * modelMatrix[10]);
-        if (gluProject(pos.x(), pos.y(), pos.z(),
-                       modelMatrix,
-                       projMatrix,
-                       view,
-                       &winX, &winY, &winZ) != GL_FALSE)
-        {
-
-            Annotation a;
-
-            a.labelText = labelText;
-            a.markerRep = markerRep;
-            a.color = color;
-            a.position = Vector3f((float) winX, (float) winY, -depth);
-            a.size = 0.0f;
-
-            objectAnnotations.push_back(a);
-        }
+        addAnnotation(objectAnnotations, markerRep, labelText, color, pos, AlignCenter, VerticalAlignCenter);
     }
 }
 

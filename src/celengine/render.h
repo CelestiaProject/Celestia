@@ -538,7 +538,8 @@ class Renderer
                        const Eigen::Vector3f& position,
                        LabelAlignment halign = AlignLeft,
                        LabelVerticalAlignment = VerticalAlignBottom,
-                       float size = 0.0f);
+                       float size = 0.0f,
+                       bool special = false);
     void renderAnnotations(const std::vector<Annotation>&, FontStyle fs);
     void renderBackgroundAnnotations(FontStyle fs);
     void renderForegroundAnnotations(FontStyle fs);
