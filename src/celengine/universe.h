@@ -18,11 +18,11 @@
 #include <celengine/deepskyobj.h>
 #include <celengine/marker.h>
 #include <celengine/selection.h>
+#include <celengine/asterism.h>
 #include <vector>
 
 
 class ConstellationBoundaries;
-class Asterism;
 
 class Universe
 {
@@ -39,8 +39,8 @@ class Universe
     DSODatabase* getDSOCatalog() const;
     void setDSOCatalog(DSODatabase*);
 
-    std::vector<Asterism*>* getAsterisms() const;
-    void setAsterisms(std::vector<Asterism*>*);
+    AsterismList* getAsterisms() const;
+    void setAsterisms(AsterismList*);
 
     ConstellationBoundaries* getBoundaries() const;
     void setBoundaries(ConstellationBoundaries*);
@@ -121,7 +121,7 @@ class Universe
     StarDatabase* starCatalog{nullptr};
     DSODatabase* dsoCatalog{nullptr};
     SolarSystemCatalog* solarSystemCatalog{nullptr};
-    std::vector<Asterism*>* asterisms{nullptr};
+    AsterismList* asterisms{nullptr};
     ConstellationBoundaries* boundaries{nullptr};
     MarkerList* markers;
 

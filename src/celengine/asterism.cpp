@@ -13,10 +13,12 @@
 #endif /* TARGET_OS_MAC */
 #endif /* _WIN32 */
 
+#include <GL/glew.h>
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include "asterism.h"
 #include "parser.h"
+#include "vecgl.h"
 
 using namespace std;
 
@@ -100,6 +102,35 @@ bool Asterism::isColorOverridden() const
 {
     return useOverrideColor;
 }
+
+/*! Draw visible asterisms.
+ */
+void  AsterismList::render(Color defaultColor)
+{
+    float opacity = defaultColor.alpha();
+
+    for (const auto ast : *this)
+    {
+        if (!ast->getActive())
+            continue;
+
+        if (ast->isColorOverridden())
+            glColor(ast->getOverrideColor(), opacity);
+        else
+            glColor(defaultColor);
+
+        for (int i = 0; i < ast->getChainCount(); i++)
+        {
+            const Asterism::Chain& chain = ast->getChain(i);
+
+            glBegin(GL_LINE_STRIP);
+            for (const auto& c : chain)
+                glVertex3fv(c.data());
+            glEnd();
+        }
+    }
+}
+
 
 
 AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)

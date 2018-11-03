@@ -5791,31 +5791,9 @@ void Renderer::renderAsterisms(const Universe& universe, float dist)
                         (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1);
     }
 
-    glColor(ConstellationColor, opacity);
     glDisable(GL_TEXTURE_2D);
     enableSmoothLines(renderFlags);
-
-    for (const auto ast : *universe.getAsterisms())
-    {
-        if (!ast->getActive())
-            continue;
-
-        if (ast->isColorOverridden())
-            glColor(ast->getOverrideColor(), opacity);
-        else
-            glColor(ConstellationColor, opacity);
-
-        for (int i = 0; i < ast->getChainCount(); i++)
-        {
-            const Asterism::Chain& chain = ast->getChain(i);
-
-            glBegin(GL_LINE_STRIP);
-            for (const auto& c : chain)
-                glVertex3fv(c.data());
-            glEnd();
-        }
-    }
-
+    universe.getAsterisms()->render(Color(ConstellationColor, opacity));
     disableSmoothLines(renderFlags);
 }
 

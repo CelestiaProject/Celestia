@@ -29,6 +29,7 @@ class RendererWatcher;
 class FrameTree;
 class ReferenceMark;
 class CurvePlot;
+class AsterismList;
 
 struct LightSource
 {
@@ -525,7 +526,7 @@ class Renderer
                      unsigned int lightIndex,
                      double now);
 
-    void labelConstellations(const std::vector<Asterism*>& asterisms,
+    void labelConstellations(const AsterismList& asterisms,
                              const Observer& observer);
     void renderParticles(const std::vector<Particle>& particles,
                          const Eigen::Quaternionf& orientation);

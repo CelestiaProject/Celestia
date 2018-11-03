@@ -15,6 +15,7 @@
 #include <vector>
 #include <iostream>
 #include <celengine/stardb.h>
+#include <celutil/color.h>
 
 class Asterism
 {
@@ -48,7 +49,11 @@ class Asterism
     Color color;
 };
 
-typedef std::vector<Asterism*> AsterismList;
+class AsterismList : public std::vector<Asterism*>
+{
+ public:
+    void render(Color color);
+};
 
 AsterismList* ReadAsterismList(std::istream&, const StarDatabase&);
 
