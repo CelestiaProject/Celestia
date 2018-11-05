@@ -365,11 +365,9 @@ int main(int argc, char* argv[])
     g_assert(app->renderer);
 
     /* Parse simulation arguments */
-    string cf;
+    string altConfig;
     if (configFile != NULL)
-        cf = string(configFile);
-
-    string* altConfig = (configFile != NULL) ? &cf : NULL;
+        altConfig = string(configFile);
 
     vector<string> configDirs;
     if (extrasDir != NULL)
@@ -384,7 +382,7 @@ int main(int argc, char* argv[])
     }
 
     /* Initialize the simulation */
-    if (!app->core->initSimulation(altConfig, &configDirs, ss->notifier))
+    if (!app->core->initSimulation(altConfig, configDirs, ss->notifier))
         return 1;
 
     app->simulation = app->core->getSimulation();

@@ -233,8 +233,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CelestiaCore();
     ~CelestiaCore();
 
-    bool initSimulation(const std::string* = nullptr,
-                        const std::vector<std::string>* extrasDirs = nullptr,
+    bool initSimulation(const std::string& configFileName = "",
+                        const std::vector<std::string>& extrasDirs = {},
                         ProgressNotifier* progressNotifier = nullptr);
     bool initRenderer();
     void start(double t);

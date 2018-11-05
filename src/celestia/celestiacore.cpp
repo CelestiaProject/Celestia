@@ -4020,8 +4020,8 @@ using StarLoader = CatalogLoader<StarDatabase>;
 using DeepSkyLoader = CatalogLoader<DSODatabase>;
 
 
-bool CelestiaCore::initSimulation(const string* configFileName,
-                                  const vector<string>* extrasDirs,
+bool CelestiaCore::initSimulation(const string& configFileName,
+                                  const vector<string>& extrasDirs,
                                   ProgressNotifier* progressNotifier)
 {
     // Say we're not ready to render yet.
@@ -4038,9 +4038,9 @@ bool CelestiaCore::initSimulation(const string* configFileName,
     }
 #endif
 
-    if (configFileName != nullptr)
+    if (!configFileName.empty())
     {
-        config = ReadCelestiaConfig(*configFileName);
+        config = ReadCelestiaConfig(configFileName);
     }
     else
     {
@@ -4072,14 +4072,14 @@ bool CelestiaCore::initSimulation(const string* configFileName,
     // Insert additional extras directories into the configuration. These
     // additional directories typically come from the command line. It may
     // be useful to permit other command line overrides of config file fields.
-    if (extrasDirs != nullptr)
+    if (!extrasDirs.empty())
     {
         // Only insert the additional extras directories that aren't also
         // listed in the configuration file. The additional directories are added
         // after the ones from the config file and the order in which they were
         // specified is preserved. This process in O(N*M), but the number of
         // additional extras directories should be small.
-        for (const auto& dir : *extrasDirs)
+        for (const auto& dir : extrasDirs)
         {
             if (find(config->extrasDirs.begin(), config->extrasDirs.end(), dir) ==
                 config->extrasDirs.end())
