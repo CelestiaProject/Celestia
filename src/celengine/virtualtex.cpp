@@ -86,7 +86,7 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
 
     lod += baseSplit;
 
-    if (lod < 0 || (uint) lod >= nResolutionLevels ||
+    if (lod < 0 || (unsigned int) lod >= nResolutionLevels ||
         u < 0 || u >= (2 << lod) ||
         v < 0 || v >= (1 << lod))
     {
@@ -277,7 +277,7 @@ void VirtualTexture::populateTileTree()
                         {
                             // Found a tile, so add it to the quadtree
                             Tile* tile = new Tile();
-                            addTileToTree(tile, maxLevel, (uint) u, (uint) v);
+                            addTileToTree(tile, maxLevel, (unsigned int) u, (unsigned int) v);
                         }
                     }
                 }
