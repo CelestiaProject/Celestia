@@ -176,7 +176,7 @@ struct AppPreferences
     int winY;
     int renderFlags;
     int labelMode;
-    int locationFilter;
+    Location::FeatureType locationFilter;
     int orbitMask;
     float visualMagnitude;
     float ambientLight;

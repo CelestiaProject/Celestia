@@ -15,46 +15,75 @@
 
 using namespace std;
 
-static map<string, uint32> FeatureNameToFlag;
+static map<string, Location::FeatureType> FeatureNameToFlag;
 static bool featureTableInitialized = false;
 
 struct FeatureNameEntry
 {
     const char* name;
-    uint32 flag;
+    Location::FeatureType flag;
 };
 
 FeatureNameEntry FeatureNames[] =
 {
     { "AA", Location::Crater },
-    { "VA", Location::Vallis },
-    { "MO", Location::Mons },
-    { "PM", Location::Planum },
-    { "CM", Location::Chasma },
-    { "PE", Location::Patera },
-    { "ME", Location::Mare },
-    { "RU", Location::Rupes },
-    { "TE", Location::Tessera },
-    { "RE", Location::Regio },
-    { "CH", Location::Chaos },
-    { "TA", Location::Terra },
+    { "AL", Location::Albedo },
+    { "AR", Location::Arcus },
     { "AS", Location::Astrum },
+    { "CA", Location::Catena },
+    { "CB", Location::Cavus },
+    { "CH", Location::Chaos },
+    { "CM", Location::Chasma },
+    { "CO", Location::Colles },
     { "CR", Location::Corona },
     { "DO", Location::Dorsum },
-    { "FO", Location::Fossa },
-    { "CA", Location::Catena },
-    { "MN", Location::Mensa },
-    { "RI", Location::Rima },
-    { "UN", Location::Undae },
-    { "TH", Location::Tholus },
-    { "RT", Location::Reticulum },
-    { "PL", Location::Planitia },
-    { "LI", Location::Linea },
-    { "FL", Location::Fluctus },
-    { "FR", Location::Farrum },
-    { "LF", Location::LandingSite },
     { "ER", Location::EruptiveCenter },
+    { "FA", Location::Facula },
+    { "FR", Location::Farrum },
+    { "FE", Location::Flexus },
+    { "FL", Location::Fluctus },
+    { "FM", Location::Flumen },
+    { "FO", Location::Fossa },
+    { "FR", Location::Farrum },
+    { "FT", Location::Fretum },
     { "IN", Location::Insula },
+    { "LA", Location::Labes },
+    { "LB", Location::Labyrinthus },
+    { "LU", Location::Lacuna },
+    { "LC", Location::Lacus },
+    { "LF", Location::LandingSite },
+    { "LG", Location::Large },
+    { "LE", Location::Lenticula },
+    { "LI", Location::Linea },
+    { "LN", Location::Lingula },
+    { "MA", Location::Macula },
+    { "ME", Location::Mare },
+    { "MN", Location::Mensa },
+    { "MO", Location::Mons },
+    { "OC", Location::Oceanus },
+    { "PA", Location::Palus },
+    { "PE", Location::Patera },
+    { "PL", Location::Planitia },
+    { "PM", Location::Planum },
+    { "PU", Location::Plume },
+    { "PR", Location::Promontorium },
+    { "RE", Location::Regio },
+    { "RI", Location::Rima },
+    { "RT", Location::Reticulum },
+    { "RU", Location::Rupes },
+    { "SA", Location::Saxum },
+    { "SF", Location::Satellite },
+    { "SC", Location::Scopulus },
+    { "SE", Location::Serpens },
+    { "SI", Location::Sinus },
+    { "SU", Location::Sulcus },
+    { "TA", Location::Terra },
+    { "TE", Location::Tessera },
+    { "TH", Location::Tholus },
+    { "UN", Location::Undae },
+    { "VA", Location::Vallis },
+    { "VS", Location::Vastitas },
+    { "VI", Location::Virga },
     { "XX", Location::Other },
     { "City", Location::City },
     { "Observatory", Location::Observatory },
@@ -144,13 +173,13 @@ void Location::setInfoURL(const string&)
 }
 
 
-uint32 Location::getFeatureType() const
+Location::FeatureType Location::getFeatureType() const
 {
     return featureType;
 }
 
 
-void Location::setFeatureType(uint32 _featureType)
+void Location::setFeatureType(Location::FeatureType _featureType)
 {
     featureType = _featureType;
 }
@@ -167,13 +196,13 @@ static void initFeatureTypeTable()
 }
 
 
-uint32 Location::parseFeatureType(const string& s)
+Location::FeatureType Location::parseFeatureType(const string& s)
 {
     if (!featureTableInitialized)
         initFeatureTypeTable();
 
-    int flag = FeatureNameToFlag[s];
-    return flag != 0 ? flag : (uint32) Other;
+    FeatureType flag = FeatureNameToFlag[s];
+    return flag != (FeatureType) 0 ? flag : Other;
 }
 
 

@@ -301,7 +301,7 @@ Renderer::Renderer() :
     minOrbitSize(MinOrbitSizeForLabel),
     distanceLimit(1.0e6f),
     minFeatureSize(MinFeatureSizeForLabel),
-    locationFilter(~0u),
+    locationFilter(~0ull),
     colorTemp(NULL),
 #ifdef USE_HDR
     sceneTexture(0),
@@ -6887,7 +6887,7 @@ void Renderer::renderLocations(const Body& body,
                     double z = viewNormal * labelPos;
                     labelPos *= planetZ / z;
                                         
-                    uint32 featureType = location.getFeatureType();
+                    Location::FeatureType featureType = location.getFeatureType();
                     MarkerRepresentation* locationMarker = NULL;
                     if (featureType & Location::City)
                         locationMarker = &cityRep;
