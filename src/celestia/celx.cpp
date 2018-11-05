@@ -73,7 +73,7 @@ const char* CelxLua::ClassNames[] =
 
 CelxLua::FlagMap CelxLua::RenderFlagMap;
 CelxLua::FlagMap CelxLua::LabelFlagMap;
-CelxLua::FlagMap CelxLua::LocationFlagMap;
+CelxLua::FlagMap64 CelxLua::LocationFlagMap;
 CelxLua::FlagMap CelxLua::BodyTypeMap;
 CelxLua::FlagMap CelxLua::OverlayElementMap;
 CelxLua::FlagMap CelxLua::OrbitVisibilityMap;
@@ -197,7 +197,35 @@ void CelxLua::initLocationFlagMap()
     LocationFlagMap["fluctus"] = Location::Fluctus;
     LocationFlagMap["farrum"] = Location::Farrum;
     LocationFlagMap["insula"] = Location::Insula;
+    LocationFlagMap["albedo"] = Location::Albedo;
+    LocationFlagMap["arcus"] = Location::Arcus;
+    LocationFlagMap["cavus"] = Location::Cavus;
+    LocationFlagMap["colles"] = Location::Colles;
+    LocationFlagMap["facula"] = Location::Facula;
+    LocationFlagMap["flexus"] = Location::Flexus;
+    LocationFlagMap["flumen"] = Location::Flumen;
+    LocationFlagMap["fretum"] = Location::Fretum;
+    LocationFlagMap["labes"] = Location::Labes;
+    LocationFlagMap["labyrinthus"] = Location::Labyrinthus;
+    LocationFlagMap["lacuna"] = Location::Lacuna;
+    LocationFlagMap["lacus"] = Location::Lacus;
+    LocationFlagMap["large"] = Location::Large;
+    LocationFlagMap["lenticula"] = Location::Lenticula;
+    LocationFlagMap["lingula"] = Location::Lingula;
+    LocationFlagMap["macula"] = Location::Macula;
+    LocationFlagMap["oceanus"] = Location::Oceanus;
+    LocationFlagMap["palus"] = Location::Palus;
+    LocationFlagMap["plume"] = Location::Plume;
+    LocationFlagMap["promontorium"] = Location::Promontorium;
+    LocationFlagMap["satellite"] = Location::Satellite;
+    LocationFlagMap["scopulus"] = Location::Scopulus;
+    LocationFlagMap["serpens"] = Location::Serpens;
+    LocationFlagMap["sinus"] = Location::Sinus;
+    LocationFlagMap["sulcus"] = Location::Sulcus;
+    LocationFlagMap["vastitas"] = Location::Vastitas;
+    LocationFlagMap["virga"] = Location::Virga;
     LocationFlagMap["other"] = Location::Other;
+    LocationFlagMap["saxum"] = Location::Saxum;
 }
 
 void CelxLua::initOverlayElementMap()

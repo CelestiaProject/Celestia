@@ -827,7 +827,7 @@ static int observer_setlocationflags(lua_State* l)
     }
     
     lua_pushnil(l);
-    int locationFlags = obs->getLocationFilter();
+    Location::FeatureType locationFlags = obs->getLocationFilter();
     while (lua_next(l, -2) != 0)
     {
         string key;
@@ -854,7 +854,7 @@ static int observer_setlocationflags(lua_State* l)
         }
         else
         {
-            int flag = CelxLua::LocationFlagMap[key];
+            Location::FeatureType flag = CelxLua::LocationFlagMap[key];
             if (value)
             {
                 locationFlags |= flag;
@@ -876,8 +876,8 @@ static int observer_getlocationflags(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected for observer:getlocationflags()");
     Observer* obs = this_observer(l);
     lua_newtable(l);
-    CelxLua::FlagMap::const_iterator it = CelxLua::LocationFlagMap.begin();
-    const int locationFlags = obs->getLocationFilter();
+    CelxLua::FlagMap64::const_iterator it = CelxLua::LocationFlagMap.begin();
+    const Location::FeatureType locationFlags = obs->getLocationFilter();
     while (it != CelxLua::LocationFlagMap.end())
     {
         string key = it->first;

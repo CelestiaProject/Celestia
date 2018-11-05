@@ -19,15 +19,15 @@ static const int FeatureSizeSliderRange = 100;
 static const float MinFeatureSize = 1.0f;
 static const float MaxFeatureSize = 100.0f;
 
-static const uint32 FilterOther = ~(Location::City |
-                                    Location::Observatory |
-                                    Location::LandingSite |
-                                    Location::Crater |
-                                    Location::Mons |
-                                    Location::Terra |
-                                    Location::EruptiveCenter |
-                                    Location::Vallis |
-                                    Location::Mare);
+static const Location::FeatureType FilterOther = ~(Location::City           |
+                                                   Location::Observatory    |
+                                                   Location::LandingSite    |
+                                                   Location::Crater         |
+                                                   Location::Mons           |
+                                                   Location::Terra          |
+                                                   Location::EruptiveCenter |
+                                                   Location::Vallis         |
+                                                   Location::Mare);
 
 static BOOL APIENTRY LocationsProc(HWND hDlg,
                                    UINT message,
@@ -60,8 +60,8 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
     case WM_COMMAND:
     {
         Observer* obs = dlg->appCore->getSimulation()->getActiveObserver();
-        uint32 locationFilter = obs->getLocationFilter();
         
+        Location::FeatureType locationFilter = obs->getLocationFilter();
         switch (LOWORD(wParam))
         {
         case IDC_SHOW_CITIES:
@@ -136,7 +136,7 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
         {
             WORD sbValue = LOWORD(wParam);
             LRESULT sliderPos;
-            
+
             if (sbValue == SB_THUMBTRACK)
                 sliderPos = HIWORD(wParam);
             else                            
@@ -172,7 +172,7 @@ LocationsDialog::LocationsDialog(HINSTANCE appInstance,
 }
 
 
-static void dlgCheck(HWND hDlg, WORD item, uint32 flags, uint32 f)
+static void dlgCheck(HWND hDlg, WORD item, uint64_t flags, uint64_t f)
 {
     SendDlgItemMessage(hDlg, item, BM_SETCHECK,
                        ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
@@ -182,7 +182,7 @@ static void dlgCheck(HWND hDlg, WORD item, uint32 flags, uint32 f)
 void LocationsDialog::SetControls(HWND hDlg)
 {
     Observer* obs = appCore->getSimulation()->getActiveObserver();
-    uint32 locFilter = obs->getLocationFilter();
+    Location::FeatureType locFilter = obs->getLocationFilter();
 
     dlgCheck(hDlg, IDC_SHOW_CITIES,        locFilter, Location::City);
     dlgCheck(hDlg, IDC_SHOW_OBSERVATORIES, locFilter, Location::Observatory);

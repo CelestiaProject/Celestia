@@ -19,6 +19,7 @@
 #define _CELENGINE_OBSERVER_H_
 
 #include <celengine/frame.h>
+#include <celengine/location.h>
 
 class ObserverFrame
 {
@@ -139,9 +140,9 @@ public:
 
     const std::string& getDisplayedSurface() const;
     void setDisplayedSurface(const std::string&);
-    
-    uint32 getLocationFilter() const;
-    void setLocationFilter(uint32);
+
+    Location::FeatureType getLocationFilter() const;
+    void setLocationFilter(Location::FeatureType);
 
     void gotoSelection(const Selection&,
                        double gotoTime,
@@ -304,7 +305,7 @@ public:
     float fov;
     bool reverseFlag;
 
-    uint32 locationFilter;
+    Location::FeatureType locationFilter;
     std::string displayedSurface;
 };
 

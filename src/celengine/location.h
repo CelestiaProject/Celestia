@@ -36,9 +36,6 @@ class Location
     float getImportance() const;
     void setImportance(float);
 
-    uint32 getFeatureType() const;
-    void setFeatureType(uint32);
-
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
 
@@ -54,43 +51,71 @@ class Location
     Point3d getPlanetocentricPosition(double) const;
     Point3d getHeliocentricPosition(double) const;
 
-    static uint32 parseFeatureType(const std::string&);
+    typedef uint64_t FeatureType;
+    static const FeatureType City           = 0x0000000000000001ull;
+    static const FeatureType Observatory    = 0x0000000000000002ull;
+    static const FeatureType LandingSite    = 0x0000000000000004ull;
+    static const FeatureType Crater         = 0x0000000000000008ull;
+    static const FeatureType Vallis         = 0x0000000000000010ull;
+    static const FeatureType Mons           = 0x0000000000000020ull;
+    static const FeatureType Planum         = 0x0000000000000040ull;
+    static const FeatureType Chasma         = 0x0000000000000080ull;
+    static const FeatureType Patera         = 0x0000000000000100ull;
+    static const FeatureType Mare           = 0x0000000000000200ull;
+    static const FeatureType Rupes          = 0x0000000000000400ull;
+    static const FeatureType Tessera        = 0x0000000000000800ull;
+    static const FeatureType Regio          = 0x0000000000001000ull;
+    static const FeatureType Chaos          = 0x0000000000002000ull;
+    static const FeatureType Terra          = 0x0000000000004000ull;
+    static const FeatureType Astrum         = 0x0000000000008000ull;
+    static const FeatureType Corona         = 0x0000000000010000ull;
+    static const FeatureType Dorsum         = 0x0000000000020000ull;
+    static const FeatureType Fossa          = 0x0000000000040000ull;
+    static const FeatureType Catena         = 0x0000000000080000ull;
+    static const FeatureType Mensa          = 0x0000000000100000ull;
+    static const FeatureType Rima           = 0x0000000000200000ull;
+    static const FeatureType Undae          = 0x0000000000400000ull;
+    static const FeatureType Tholus         = 0x0000000000800000ull; // Small domical mountain or hill
+    static const FeatureType Reticulum      = 0x0000000001000000ull;
+    static const FeatureType Planitia       = 0x0000000002000000ull;
+    static const FeatureType Linea          = 0x0000000004000000ull;
+    static const FeatureType Fluctus        = 0x0000000008000000ull;
+    static const FeatureType Farrum         = 0x0000000010000000ull;
+    static const FeatureType EruptiveCenter = 0x0000000020000000ull; // Active volcanic centers on Io
+    static const FeatureType Insula         = 0x0000000040000000ull; // Islands
+    static const FeatureType Albedo         = 0x0000000080000000ull;
+    static const FeatureType Arcus          = 0x0000000100000000ull;
+    static const FeatureType Cavus          = 0x0000000200000000ull;
+    static const FeatureType Colles         = 0x0000000400000000ull;
+    static const FeatureType Facula         = 0x0000000800000000ull;
+    static const FeatureType Flexus         = 0x0000001000000000ull;
+    static const FeatureType Flumen         = 0x0000002000000000ull;
+    static const FeatureType Fretum         = 0x0000004000000000ull;
+    static const FeatureType Labes          = 0x0000008000000000ull;
+    static const FeatureType Labyrinthus    = 0x0000010000000000ull;
+    static const FeatureType Lacuna         = 0x0000020000000000ull;
+    static const FeatureType Lacus          = 0x0000040000000000ull;
+    static const FeatureType Large          = 0x0000080000000000ull;
+    static const FeatureType Lenticula      = 0x0000100000000000ull;
+    static const FeatureType Lingula        = 0x0000200000000000ull;
+    static const FeatureType Macula         = 0x0000400000000000ull;
+    static const FeatureType Oceanus        = 0x0000800000000000ull;
+    static const FeatureType Palus          = 0x0001000000000000ull;
+    static const FeatureType Plume          = 0x0002000000000000ull;
+    static const FeatureType Promontorium   = 0x0004000000000000ull;
+    static const FeatureType Satellite      = 0x0008000000000000ull;
+    static const FeatureType Scopulus       = 0x0010000000000000ull;
+    static const FeatureType Serpens        = 0x0020000000000000ull;
+    static const FeatureType Sinus          = 0x0040000000000000ull;
+    static const FeatureType Sulcus         = 0x0080000000000000ull;
+    static const FeatureType Vastitas       = 0x0100000000000000ull;
+    static const FeatureType Virga          = 0x0200000000000000ull;
+    static const FeatureType Saxum          = 0x0400000000000000ull;
+    static const FeatureType Other          = 0x8000000000000000ull;
 
-    enum FeatureType
-    {
-        City           = 0x00000001,
-        Observatory    = 0x00000002,
-        LandingSite    = 0x00000004,
-        Crater         = 0x00000008,
-        Vallis         = 0x00000010,
-        Mons           = 0x00000020,
-        Planum         = 0x00000040,
-        Chasma         = 0x00000080,
-        Patera         = 0x00000100,
-        Mare           = 0x00000200,
-        Rupes          = 0x00000400,
-        Tessera        = 0x00000800,
-        Regio          = 0x00001000,
-        Chaos          = 0x00002000,
-        Terra          = 0x00004000,
-        Astrum         = 0x00008000,
-        Corona         = 0x00010000,
-        Dorsum         = 0x00020000,
-        Fossa          = 0x00040000,
-        Catena         = 0x00080000,
-        Mensa          = 0x00100000,
-        Rima           = 0x00200000,
-        Undae          = 0x00400000,
-        Tholus         = 0x00800000, // Small domical mountain or hill
-        Reticulum      = 0x01000000,
-        Planitia       = 0x02000000,
-        Linea          = 0x04000000,
-        Fluctus        = 0x08000000,
-        Farrum         = 0x10000000,
-        EruptiveCenter = 0x20000000, // Active volcanic centers on Io
-        Insula         = 0x40000000, // Islands
-        Other          = 0x80000000,
-    };
+    FeatureType getFeatureType() const;
+    void setFeatureType(FeatureType);
+    static FeatureType parseFeatureType(const std::string&);
 
  private:
     Body* parent;
@@ -99,7 +124,7 @@ class Location
     Vec3f position;
     float size;
     float importance;
-    uint32 featureType;
+    FeatureType featureType;
     bool overrideLabelColor;
     Color labelColor;
     std::string* infoURL;

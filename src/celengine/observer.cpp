@@ -70,7 +70,7 @@ Observer::Observer() :
     trackingOrientation(1.0f, 0.0f, 0.0f, 0.0f),
     fov((float) (PI / 4.0)),
     reverseFlag(false),
-    locationFilter(~0u)
+    locationFilter(~0ull)
 {
     frame = new ObserverFrame();
     updateUniversal();
@@ -530,13 +530,13 @@ void Observer::setDisplayedSurface(const string& surf)
 }
 
 
-uint32 Observer::getLocationFilter() const
+Location::FeatureType Observer::getLocationFilter() const
 {
     return locationFilter;
 }
 
 
-void Observer::setLocationFilter(uint32 _locationFilter)
+void Observer::setLocationFilter(Location::FeatureType _locationFilter)
 {
     locationFilter = _locationFilter;
 }

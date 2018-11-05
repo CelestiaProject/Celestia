@@ -704,9 +704,9 @@ static int object_getinfo(lua_State* l)
         celx.setTable("importance", (lua_Number)location->getImportance());
         celx.setTable("infoURL", location->getInfoURL().c_str());
         
-        uint32 featureType = location->getFeatureType();
+        Location::FeatureType featureType = location->getFeatureType();
         string featureName("Unknown");
-        for (CelxLua::FlagMap::const_iterator it = CelxLua::LocationFlagMap.begin();
+        for (CelxLua::FlagMap64::const_iterator it = CelxLua::LocationFlagMap.begin();
              it != CelxLua::LocationFlagMap.end(); it++)
         {
             if (it->second == featureType)

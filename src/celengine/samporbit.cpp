@@ -22,6 +22,7 @@
 #include <celengine/orbit.h>
 #include <celengine/samporbit.h>
 #include <celengine/xyzvbinary.h>
+#include <celutil/bytes.h>
 
 using namespace std;
 
