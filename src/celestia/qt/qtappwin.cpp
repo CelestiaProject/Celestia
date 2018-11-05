@@ -77,7 +77,6 @@
 using namespace std;
 
 
-QString DEFAULT_CONFIG_FILE = "celestia.cfg";
 QString BOOKMARKS_FILE = "bookmarks.xbel";
 
 const QSize DEFAULT_MAIN_WINDOW_SIZE(800, 600);
@@ -217,9 +216,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     // Get the config file name
     string configFileName;
-    if (qConfigFileName.isEmpty())
-        configFileName = DEFAULT_CONFIG_FILE.toStdString();
-    else
+    if (!qConfigFileName.isEmpty())
         configFileName = qConfigFileName.toStdString();
 
     // Translate extras directories from QString -> std::string
@@ -265,8 +262,8 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     setWindowIcon(QIcon(":/icons/celestia.png"));
 
-    if (!m_appCore->initSimulation(&configFileName,
-                                   &extrasDirectories,
+    if (!m_appCore->initSimulation(configFileName,
+                                   extrasDirectories,
                                    progress))
     {
          // Error message is shown by celestiacore so we silently exit here.

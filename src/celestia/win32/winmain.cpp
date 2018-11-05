@@ -3363,8 +3363,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (!skipSplashScreen)
         progressNotifier = new WinSplashProgressNotifier(s_splash);
 
-    string* altConfig = useAlternateConfigFile ? &configFileName : NULL;
-    bool initSucceeded = appCore->initSimulation(altConfig, &extrasDirectories, progressNotifier);
+    bool initSucceeded = appCore->initSimulation(configFileName, extrasDirectories, progressNotifier);
 
     delete progressNotifier;
 
