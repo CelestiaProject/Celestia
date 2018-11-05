@@ -170,7 +170,7 @@ struct AppPreferences
     int winY;
     int renderFlags;
     int labelMode;
-    int locationFilter;
+    uint64_t locationFilter;
     int orbitMask;
     float visualMagnitude;
     float ambientLight;

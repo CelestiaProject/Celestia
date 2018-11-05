@@ -690,7 +690,7 @@ class Renderer
     float minOrbitSize;
     float distanceLimit;
     float minFeatureSize;
-    uint32_t locationFilter;
+    uint64_t locationFilter;
 
     SkyVertex* skyVertices;
     uint32_t* skyIndices;

@@ -475,7 +475,7 @@ Renderer::Renderer() :
     minOrbitSize(MinOrbitSizeForLabel),
     distanceLimit(1.0e6f),
     minFeatureSize(MinFeatureSizeForLabel),
-    locationFilter(~0u),
+    locationFilter(~0ull),
     colorTemp(nullptr),
 #ifdef USE_HDR
     sceneTexture(0),
@@ -4329,6 +4329,7 @@ void Renderer::renderLocations(const Body& body,
                                const Quaterniond& bodyOrientation)
 {
     const vector<Location*>* locations = body.getLocations();
+
     if (locations == nullptr)
         return;
 
@@ -4352,7 +4353,8 @@ void Renderer::renderLocations(const Body& body,
     {
         const Location& location = *p_location;
 
-        if (location.getFeatureType() & locationFilter)
+        auto featureType = location.getFeatureType();
+        if ((featureType & locationFilter) != 0)
         {
             // Get the position of the location with respect to the planet center
             Vector3f ppos = location.getPosition();
@@ -4407,7 +4409,6 @@ void Renderer::renderLocations(const Body& body,
                     double z = viewNormal.dot(labelPos);
                     labelPos *= planetZ / z;
 
-                    uint32_t featureType = location.getFeatureType();
                     MarkerRepresentation* locationMarker = nullptr;
                     if (featureType & Location::City)
                         locationMarker = &cityRep;
@@ -6996,7 +6997,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
             //
             unsigned int labelMask = dso->getLabelMask();
 
-            if ((labelMask & labelMode))
+            if ((labelMask & labelMode) != 0)
             {
                 Color labelColor;
                 float appMagEff = 6.0f;

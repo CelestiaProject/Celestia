@@ -47,7 +47,7 @@ static void SetComboBoxValue(QComboBox* combo, const QVariant& value)
 }
 
 
-static uint32_t FilterOtherLocations = ~(Location::City |
+static uint64_t FilterOtherLocations = ~(Location::City |
                                          Location::Observatory |
                                          Location::LandingSite |
                                          Location::Mons |
@@ -72,7 +72,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     int renderFlags = renderer->getRenderFlags();
     int orbitMask = renderer->getOrbitMask();
-    int locationFlags = observer->getLocationFilter();
+    uint64_t locationFlags = observer->getLocationFilter();
     int labelMode = renderer->getLabelMode();
 
     ColorTableType colors;
@@ -140,17 +140,17 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.globularClusterLabelsCheck->setChecked(labelMode & Renderer::GlobularLabels);
     ui.constellationLabelsCheck->setChecked(labelMode & Renderer::ConstellationLabels);
 
-    ui.locationsCheck->setChecked(labelMode & Renderer::LocationLabels);
-    ui.citiesCheck->setChecked(locationFlags & Location::City);
-    ui.observatoriesCheck->setChecked(locationFlags & Location::Observatory);
-    ui.landingSitesCheck->setChecked(locationFlags & Location::LandingSite);
-    ui.montesCheck->setChecked(locationFlags & Location::Mons);
-    ui.mariaCheck->setChecked(locationFlags & Location::Mare);
-    ui.cratersCheck->setChecked(locationFlags & Location::Crater);
-    ui.vallesCheck->setChecked(locationFlags & Location::Vallis);
-    ui.terraeCheck->setChecked(locationFlags & Location::Terra);
-    ui.volcanoesCheck->setChecked(locationFlags & Location::EruptiveCenter);
-    ui.otherLocationsCheck->setChecked(locationFlags & FilterOtherLocations);
+    ui.locationsCheck->setChecked((labelMode & Renderer::LocationLabels) != 0);
+    ui.citiesCheck->setChecked((locationFlags & Location::City) != 0);
+    ui.observatoriesCheck->setChecked((locationFlags & Location::Observatory) != 0);
+    ui.landingSitesCheck->setChecked((locationFlags & Location::LandingSite) != 0);
+    ui.montesCheck->setChecked((locationFlags & Location::Mons) != 0);
+    ui.mariaCheck->setChecked((locationFlags & Location::Mare) != 0);
+    ui.cratersCheck->setChecked((locationFlags & Location::Crater) != 0);
+    ui.vallesCheck->setChecked((locationFlags & Location::Vallis) != 0);
+    ui.terraeCheck->setChecked((locationFlags & Location::Terra) != 0);
+    ui.volcanoesCheck->setChecked((locationFlags & Location::EruptiveCenter) != 0);
+    ui.otherLocationsCheck->setChecked((locationFlags & FilterOtherLocations) != 0);
 
     int minimumFeatureSize = (int)renderer->getMinimumFeatureSize();
     ui.featureSizeSlider->setValue(minimumFeatureSize);
@@ -237,12 +237,12 @@ static void setOrbitFlag(CelestiaCore* appCore,
 
 
 static void setLocationFlag(CelestiaCore* appCore,
-                            int flag,
+                            uint64_t flag,
                             int state)
 {
     bool isActive = (state == Qt::Checked);
     Observer* observer = appCore->getSimulation()->getActiveObserver();
-    int locationFilter = observer->getLocationFilter() & ~flag;
+    uint64_t locationFilter = observer->getLocationFilter() & ~flag;
     observer->setLocationFilter(locationFilter | (isActive ? flag : 0));
 }
 

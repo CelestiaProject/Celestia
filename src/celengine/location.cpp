@@ -28,34 +28,62 @@ struct FeatureNameEntry
 FeatureNameEntry FeatureNames[] =
 {
     { "AA", Location::Crater },
+    { "AL", Location::Albedo },
+    { "AR", Location::Arcus },
     { "AS", Location::Astrum },
     { "CA", Location::Catena },
+    { "CB", Location::Cavus },
     { "CH", Location::Chaos },
     { "CM", Location::Chasma },
+    { "CO", Location::Colles },
     { "CR", Location::Corona },
     { "DO", Location::Dorsum },
     { "ER", Location::EruptiveCenter },
+    { "FA", Location::Facula },
+    { "FR", Location::Farrum },
+    { "FE", Location::Flexus },
     { "FL", Location::Fluctus },
+    { "FM", Location::Flumen },
     { "FO", Location::Fossa },
     { "FR", Location::Farrum },
+    { "FT", Location::Fretum },
     { "IN", Location::Insula },
+    { "LA", Location::Labes },
+    { "LB", Location::Labyrinthus },
+    { "LU", Location::Lacuna },
+    { "LC", Location::Lacus },
     { "LF", Location::LandingSite },
+    { "LG", Location::Large },
+    { "LE", Location::Lenticula },
     { "LI", Location::Linea },
+    { "LN", Location::Lingula },
+    { "MA", Location::Macula },
     { "ME", Location::Mare },
     { "MN", Location::Mensa },
     { "MO", Location::Mons },
+    { "OC", Location::Oceanus },
+    { "PA", Location::Palus },
     { "PE", Location::Patera },
     { "PL", Location::Planitia },
     { "PM", Location::Planum },
+    { "PU", Location::Plume },
+    { "PR", Location::Promontorium },
     { "RE", Location::Regio },
     { "RI", Location::Rima },
     { "RT", Location::Reticulum },
     { "RU", Location::Rupes },
+    { "SF", Location::Satellite },
+    { "SC", Location::Scopulus },
+    { "SE", Location::Serpens },
+    { "SI", Location::Sinus },
+    { "SU", Location::Sulcus },
     { "TA", Location::Terra },
     { "TE", Location::Tessera },
     { "TH", Location::Tholus },
     { "UN", Location::Undae },
     { "VA", Location::Vallis },
+    { "VS", Location::Vastitas },
+    { "VI", Location::Virga },
     { "XX", Location::Other },
     { "City", Location::City },
     { "Observatory", Location::Observatory },
@@ -160,8 +188,8 @@ Location::FeatureType Location::parseFeatureType(const string& s)
     if (!featureTableInitialized)
         initFeatureTypeTable();
 
-    auto flag = (uint32_t)FeatureNameToFlag[s];
-    return flag != 0 ? (Location::FeatureType)flag : Other;
+    FeatureType flag = FeatureNameToFlag[s];
+    return flag != (FeatureType) 0 ? flag : Other;
 }
 
 

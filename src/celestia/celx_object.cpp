@@ -707,7 +707,7 @@ static int object_getinfo(lua_State* l)
         string featureName("Unknown");
         auto iter = std::find_if(CelxLua::LocationFlagMap.begin(),
                                  CelxLua::LocationFlagMap.end(),
-                                 [&featureType](pair<const string, uint32_t>& it){ return it.second == featureType; });
+                                 [&featureType](pair<const string, uint64_t>& it){ return it.second == featureType; });
         if (iter != CelxLua::LocationFlagMap.end())
             featureName = iter->first;
         celx.setTable("featureType", featureName.c_str());

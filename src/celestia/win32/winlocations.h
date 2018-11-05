@@ -30,7 +30,7 @@ class LocationsDialog : public CelestiaWatcher
     CelestiaCore* appCore;
     HWND parent;
     HWND hwnd;
-    int initialLocationFlags;
+    uint64_t initialLocationFlags;
     float initialFeatureSize;
 };
 

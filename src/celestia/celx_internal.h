@@ -152,7 +152,7 @@ public:
 
 
     // String to flag mappings
-    typedef std::map<std::string, uint32_t> FlagMap;
+    typedef std::map<std::string, uint64_t> FlagMap;
     typedef std::map<std::string, Color*> ColorMap;
 
     static void initMaps();
