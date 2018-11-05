@@ -4048,7 +4048,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
 
         string localConfigFile = WordExp("~/.celestia.cfg");
         if (localConfigFile != "")
-            ReadCelestiaConfig(localConfigFile.c_str(), config);
+            ReadCelestiaConfig(localConfigFile, config);
     }
 
     if (config == nullptr)

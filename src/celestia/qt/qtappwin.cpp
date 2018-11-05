@@ -168,9 +168,9 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     // Get the config file name
     string configFileName;
     if (qConfigFileName.isEmpty())
-        configFileName = DEFAULT_CONFIG_FILE.toUtf8().data();
+        configFileName = DEFAULT_CONFIG_FILE.toStdString();
     else
-        configFileName = qConfigFileName.toUtf8().data();
+        configFileName = qConfigFileName.toStdString();
 
     // Translate extras directories from QString -> std::string
     vector<string> extrasDirectories;
@@ -744,7 +744,7 @@ void CelestiaAppWindow::slotCopyImage()
     //glWidget->repaint();
     QImage grabbedImage = glWidget->grabFrameBuffer();
     QApplication::clipboard()->setImage(grabbedImage);
-    m_appCore->flash(QString(_("Captured screen shot to clipboard")).toUtf8().data());
+    m_appCore->flash(QString(_("Captured screen shot to clipboard")).toStdString());
 }
 
 
@@ -755,7 +755,7 @@ void CelestiaAppWindow::slotCopyURL()
 
     Url url(appState, 3);
     QApplication::clipboard()->setText(url.getAsString().c_str());
-    m_appCore->flash(QString(_("Copied URL")).toUtf8().data());
+    m_appCore->flash(QString(_("Copied URL")).toStdString());
 }
 
 
@@ -764,8 +764,8 @@ void CelestiaAppWindow::slotPasteURL()
     QString urlText = QApplication::clipboard()->text();
     if (!urlText.isEmpty())
     {
-        m_appCore->goToUrl(urlText.toUtf8().data());
-        m_appCore->flash(QString(_("Pasting URL")).toUtf8().data());
+        m_appCore->goToUrl(urlText.toStdString());
+        m_appCore->flash(QString(_("Pasting URL")).toStdString());
     }
 }
 
@@ -777,7 +777,7 @@ void CelestiaAppWindow::handleCelUrl(const QUrl& url)
     QString urlText = url.toString();
     if (!urlText.isEmpty())
     {
-        m_appCore->goToUrl(urlText.toUtf8().data());
+        m_appCore->goToUrl(urlText.toStdString());
     }
 }
 
@@ -889,7 +889,7 @@ void CelestiaAppWindow::slotOpenScriptDialog()
     if (!scriptFileName.isEmpty())
     {
         m_appCore->cancelScript();
-        m_appCore->runScript(scriptFileName.toUtf8().data());
+        m_appCore->runScript(scriptFileName.toStdString());
 
         QFileInfo scriptFile(scriptFileName);
         settings.setValue("OpenScriptDir", scriptFile.absolutePath());
@@ -905,7 +905,7 @@ void CelestiaAppWindow::slotOpenScript()
     if (action != nullptr)
     {
         m_appCore->cancelScript();
-        m_appCore->runScript(action->data().toString().toUtf8().data());
+        m_appCore->runScript(action->data().toString().toStdString());
     }
 }
 
@@ -1356,7 +1356,7 @@ void CelestiaAppWindow::createMenus()
 
     if (settings.contains("TimeZoneName"))
     {
-        m_appCore->setTimeZoneName(settings.value("TimeZoneName").toString().toUtf8().data());
+        m_appCore->setTimeZoneName(settings.value("TimeZoneName").toString().toStdString());
     }
 
     /****** Help Menu ******/

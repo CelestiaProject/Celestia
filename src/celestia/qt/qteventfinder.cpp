@@ -633,7 +633,7 @@ void EventFinder::slotFindEclipses()
         eclipseTypeMask = QtEclipseFinder::SolarEclipse | QtEclipseFinder::LunarEclipse;
 
     QString bodyName = QString("Sol/") + planetSelect->currentText();
-    Selection obj = appCore->getSimulation()->findObjectFromPath(bodyName.toUtf8().data(), true);
+    Selection obj = appCore->getSimulation()->findObjectFromPath(bodyName.toStdString(), true);
 
     if (obj.body() == nullptr)
     {
