@@ -457,6 +457,8 @@ void PreferencesDialog::on_boundariesCheck_stateChanged(int state)
 
 void PreferencesDialog::on_latinNamesCheck_stateChanged(int state)
 {
+    // "Latin Names" Checkbox has inverted meaning
+    state = state == Qt::Checked ? Qt::Unchecked : Qt::Checked;
     setLabelFlag(appCore, Renderer::I18nConstellationLabels, state);
 }
 
