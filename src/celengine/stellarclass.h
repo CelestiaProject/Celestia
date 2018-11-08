@@ -44,24 +44,25 @@ public:
         Spectral_Unknown = 12,
         Spectral_L     = 13,
         Spectral_T     = 14,
-        Spectral_C     = 15,
-        Spectral_DA    = 16, // white dwarf A (Balmer lines, no He I or metals)
-        Spectral_DB    = 17, // white dwarf B (He I lines, no H or metals)
-        Spectral_DC    = 18, // white dwarf C, continuous spectrum
-        Spectral_DO    = 19, // white dwarf O, He II strong, He I or H
-        Spectral_DQ    = 20, // white dwarf Q, carbon features
-        Spectral_DZ    = 21, // white dwarf Z, metal lines only, no H or He
-        Spectral_D     = 22, // generic white dwarf, no additional data
-        Spectral_DX    = 23,
-        Spectral_Count = 24,
+        Spectral_Y     = 15, // brown dwarf
+        Spectral_C     = 16,
+        Spectral_DA    = 17, // white dwarf A (Balmer lines, no He I or metals)
+        Spectral_DB    = 18, // white dwarf B (He I lines, no H or metals)
+        Spectral_DC    = 19, // white dwarf C, continuous spectrum
+        Spectral_DO    = 20, // white dwarf O, He II strong, He I or H
+        Spectral_DQ    = 21, // white dwarf Q, carbon features
+        Spectral_DZ    = 22, // white dwarf Z, metal lines only, no H or He
+        Spectral_D     = 23, // generic white dwarf, no additional data
+        Spectral_DX    = 24,
+        Spectral_Count = 25,
     };
 
     enum
     {
-        FirstWDClass = 16,
+        FirstWDClass = 17,
         WDClassCount = 8,
         SubclassCount = 11,
-        NormalClassCount = 16,
+        NormalClassCount = 17,
     };
 
     enum LuminosityClass

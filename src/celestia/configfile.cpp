@@ -314,6 +314,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
             starTexTable->getString("Unknown", starTexNames[StellarClass::Spectral_Unknown]);
             starTexTable->getString("L", starTexNames[StellarClass::Spectral_L]);
             starTexTable->getString("T", starTexNames[StellarClass::Spectral_T]);
+            starTexTable->getString("Y", starTexNames[StellarClass::Spectral_Y]);
             starTexTable->getString("C", starTexNames[StellarClass::Spectral_C]);
             
             // One texture for all white dwarf types; not sure if this needs to be

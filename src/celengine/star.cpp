@@ -123,6 +123,12 @@ static float tempT[10] =
     1425, 1350, 1275, 1200, 1140, 1080, 1020, 900, 750, 500
 };
 
+// For Y type we just extrapolate the L & T data
+static float tempY[10] =
+{
+    400, 350, 300, 250, 200, 150, 100, 50, 3, 3
+};
+
 // White dwarf temperaturs
 static float tempWD[10] =
 {
@@ -280,6 +286,13 @@ static float bmag_correctionT[10] =
     -8.9f, -9.6f, -10.8f, -11.9f, -13.1f, -14.4f, -16.1f, -17.9f, -19.6f, -21.7f,
 };
 
+// Bolometric correction for Brown dwarf Y is an extrapolation of the L & T data
+static float bmag_correctionY[10] =
+{
+    -23.9f, -26.2f, -28.8f, -31.5f, -34.5f, -37.6f, -41.0f, -44.6f, -48.4f, -52.5f,
+};
+
+
 // White dwarf data from Grant Hutchison; value for hypothetical
 // 0 subclass is just duplicated from subclass 1.
 static float bmag_correctionWD[10] =
@@ -367,7 +380,7 @@ const char* SubclassNames[11] = {
 
 const char* SpectralClassNames[StellarClass::NormalClassCount] = {
     "O", "B", "A", "F", "G", "K", "M", "R",
-    "S", "N", "WC", "WN", "?", "L", "T", "C",
+    "S", "N", "WC", "WN", "?", "L", "T", "Y", "C",
 };
 
 const char* WDSpectralClassNames[StellarClass::WDClassCount] = {
@@ -471,6 +484,9 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
             case StellarClass::Spectral_WC:
                 subclass = 9;
                 break;
+            case StellarClass::Spectral_Y:
+                subclass = 0;
+                break;
             default:
                 subclass = 5;
                 break;
@@ -548,6 +564,9 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
         case StellarClass::Spectral_T:
             temp = tempT[subclass];
             break;
+        case StellarClass::Spectral_Y:
+            temp = tempY[subclass];
+            break;
 
         default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
         }
@@ -610,6 +629,12 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
             // Assume that brown dwarfs are fast rotators like late M dwarfs
             period = 0.2f;
             bmagCorrection = bmag_correctionT[subclass];
+            break;
+
+        case StellarClass::Spectral_Y:
+            // Assume that brown dwarfs are fast rotators like late M dwarfs
+            period = 0.2f;
+            bmagCorrection = bmag_correctionY[subclass];
             break;
 
         default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
