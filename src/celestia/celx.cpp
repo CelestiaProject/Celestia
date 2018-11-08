@@ -232,6 +232,7 @@ void CelxLua::initLocationFlagMap()
     LocationFlagMap["vastitas"] = Location::Vastitas;
     LocationFlagMap["virga"] = Location::Virga;
     LocationFlagMap["other"] = Location::Other;
+    LocationFlagMap["saxum"] = Location::Saxum;
 }
 
 void CelxLua::initOverlayElementMap()

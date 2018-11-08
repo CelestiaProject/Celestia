@@ -72,6 +72,7 @@ FeatureNameEntry FeatureNames[] =
     { "RI", Location::Rima },
     { "RT", Location::Reticulum },
     { "RU", Location::Rupes },
+    { "SA", Location::Saxum },
     { "SF", Location::Satellite },
     { "SC", Location::Scopulus },
     { "SE", Location::Serpens },
