@@ -630,10 +630,12 @@ unix {
 
     CONFIG += link_pkgconfig
 
-    LUALIST = lua53 lua52 lua51 lua
+    LUALIST = lua lua51 lua52 lua53
     for(libpc, LUALIST):system(pkg-config --exists $${libpc}):LUAPC = $${libpc}
     isEmpty (LUAPC) {error("No shared Lua library found!")}
 
+    message("LUA version: " $${LUAPC})
+    
     equals(LUAPC, "lua53"): DEFINES += LUA_VER=0x050300
     equals(LUAPC, "lua52"): DEFINES += LUA_VER=0x050200
     equals(LUAPC, "lua51"): DEFINES += LUA_VER=0x050100
