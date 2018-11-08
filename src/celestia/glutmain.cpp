@@ -28,7 +28,6 @@
 #include <celengine/celestia.h>
 #include <celutil/util.h>
 #include <celutil/debug.h>
-#include <celutil/localtime.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include "celestiacore.h"
