@@ -424,6 +424,9 @@ class Renderer
                                 const Frustum& viewFrustum,
                                 const Selection& sel);
 
+    void renderAsterisms(const Universe&, float);
+    void renderBoundaries(const Universe&, float);
+
     void buildRenderLists(const Eigen::Vector3d& astrocentricObserverPos,
                           const Frustum& viewFrustum,
                           const Eigen::Vector3d& viewPlaneNormal,

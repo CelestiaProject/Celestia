@@ -2943,68 +2943,10 @@ void Renderer::draw(const Observer& observer,
 
     glTranslatef(-observerPosLY.x(), -observerPosLY.y(), -observerPosLY.z());
 
-    // Render asterisms
-    if ((renderFlags & ShowDiagrams) != 0 && universe.getAsterisms() != nullptr)
-    {
-        /* We'll linearly fade the lines as a function of the observer's
-           distance to the origin of coordinates: */
-        float opacity = 1.0f;
-        float dist = observerPosLY.norm() * 1.6e4f;
-        if (dist > MaxAsterismLinesConstDist)
-        {
-            opacity = clamp((MaxAsterismLinesConstDist - dist) /
-                            (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1);
-        }
 
-        glColor(ConstellationColor, opacity);
-        glDisable(GL_TEXTURE_2D);
-        if ((renderFlags & ShowSmoothLines) != 0)
-            enableSmoothLines();
-        AsterismList* asterisms = universe.getAsterisms();
-        for (const auto ast : *asterisms)
-        {
-            if (ast->getActive())
-            {
-                if (ast->isColorOverridden())
-                    glColor(ast->getOverrideColor(), opacity);
-                else
-                    glColor(ConstellationColor, opacity);
-
-                for (int i = 0; i < ast->getChainCount(); i++)
-                {
-                    const Asterism::Chain& chain = ast->getChain(i);
-
-                    glBegin(GL_LINE_STRIP);
-                    for (const auto& c : chain)
-                        glVertex3fv(c.data());
-                    glEnd();
-                }
-            }
-        }
-
-        if (renderFlags & ShowSmoothLines)
-            disableSmoothLines();
-    }
-
-    if ((renderFlags & ShowBoundaries) && (universe.getBoundaries() != nullptr))
-    {
-        /* We'll linearly fade the boundaries as a function of the
-           observer's distance to the origin of coordinates: */
-        float opacity = 1.0f;
-        float dist = observerPosLY.norm() * 1.6e4f;
-        if (dist > MaxAsterismLabelsConstDist)
-        {
-            opacity = clamp((MaxAsterismLabelsConstDist - dist) /
-                            (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
-        }
-
-        glDisable(GL_TEXTURE_2D);
-        if (renderFlags & ShowSmoothLines)
-            enableSmoothLines();
-        universe.getBoundaries()->render(Color(BoundaryColor, opacity));
-        if (renderFlags & ShowSmoothLines)
-            disableSmoothLines();
-    }
+    float dist = observerPosLY.norm() * 1.6e4f;
+    renderAsterisms(universe, dist);
+    renderBoundaries(universe, dist);
 
     // Render star and deep sky object labels
     renderBackgroundAnnotations(FontNormal);
@@ -5888,6 +5830,68 @@ void Renderer::renderReferenceMark(const ReferenceMark& refMark,
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+}
+
+
+void Renderer::renderAsterisms(const Universe& universe, float dist)
+{
+    if ((renderFlags & ShowDiagrams) == 0 || universe.getAsterisms() == nullptr)
+        return;
+
+    float opacity = 1.0f;
+    if (dist > MaxAsterismLinesConstDist)
+    {
+        opacity = clamp((MaxAsterismLinesConstDist - dist) /
+                        (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1);
+    }
+
+    glColor(ConstellationColor, opacity);
+    glDisable(GL_TEXTURE_2D);
+    enableSmoothLines(renderFlags);
+
+    for (const auto ast : *universe.getAsterisms())
+    {
+        if (!ast->getActive())
+            continue;
+
+        if (ast->isColorOverridden())
+            glColor(ast->getOverrideColor(), opacity);
+        else
+            glColor(ConstellationColor, opacity);
+
+        for (int i = 0; i < ast->getChainCount(); i++)
+        {
+            const Asterism::Chain& chain = ast->getChain(i);
+
+            glBegin(GL_LINE_STRIP);
+            for (const auto& c : chain)
+                glVertex3fv(c.data());
+            glEnd();
+        }
+    }
+
+    disableSmoothLines(renderFlags);
+}
+
+
+void Renderer::renderBoundaries(const Universe& universe, float dist)
+{
+    if ((renderFlags & ShowBoundaries) == 0 || universe.getBoundaries() == nullptr)
+        return;
+
+    /* We'll linearly fade the boundaries as a function of the
+       observer's distance to the origin of coordinates: */
+    float opacity = 1.0f;
+    if (dist > MaxAsterismLabelsConstDist)
+    {
+        opacity = clamp((MaxAsterismLabelsConstDist - dist) /
+                        (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
+    }
+
+    glDisable(GL_TEXTURE_2D);
+    enableSmoothLines(renderFlags);
+    universe.getBoundaries()->render(Color(BoundaryColor, opacity));
+    disableSmoothLines(renderFlags);
 }
 
 
