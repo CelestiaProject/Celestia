@@ -48,6 +48,8 @@ Color StellarClass::getApparentColor(StellarClass::SpectralClass sc) const
     case StellarClass::Spectral_L:
     case StellarClass::Spectral_T:
         return Color(0.75f, 0.2f, 0.2f);
+    case StellarClass::Spectral_Y:
+        return Color(0.5f, 0.175f, 0.125f);
     default:
         // TODO: Figure out reasonable colors for Wolf-Rayet stars,
         // white dwarfs, and other oddities
@@ -86,7 +88,7 @@ char* StellarClass::str(char* buf, unsigned int buflen) const
     }
     else if (st == StellarClass::NormalStar)
     {
-	s0[0] = "OBAFGKMRSNWW?LTC"[(unsigned int) getSpectralClass()];
+        s0[0] = "OBAFGKMRSNWW?LTYC"[(unsigned int) getSpectralClass()];
         s0[1] = '\0';
 	s1[0] = "0123456789"[getSubclass()];
         s1[1] = '\0';
@@ -372,6 +374,10 @@ StellarClass::parse(const string& st)
                 break;
             case 'T':
                 specClass = StellarClass::Spectral_T;
+                state = NormalStarSubclassState;
+                break;
+            case 'Y':
+                specClass = StellarClass::Spectral_Y;
                 state = NormalStarSubclassState;
                 break;
             case 'C':
