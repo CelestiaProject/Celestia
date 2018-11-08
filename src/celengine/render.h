@@ -371,13 +371,8 @@ class Renderer
 
     template <class OBJ> struct ObjectLabel
     {
-        OBJ*        obj;
+        OBJ*        obj{ nullptr };
         std::string label;
-
-        ObjectLabel() :
-            obj  (nullptr),
-            label("")
-        {};
 
         ObjectLabel(OBJ* _obj, const std::string& _label) :
             obj  (_obj),

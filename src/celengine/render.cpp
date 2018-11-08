@@ -164,8 +164,6 @@ static const float MaxSolarSystemSize = 1.0f;
 
 static bool commonDataInitialized = false;
 
-static const string EMPTY_STRING("");
-
 
 LODSphereMesh* g_lodSphere = nullptr;
 
@@ -2596,47 +2594,45 @@ void Renderer::draw(const Observer& observer,
         for (const auto sun : nearStars)
         {
             SolarSystem* solarSystem = universe.getSolarSystem(sun);
-            if (solarSystem != nullptr)
+            if (solarSystem == nullptr)
+                continue;
+
+            FrameTree* solarSysTree = solarSystem->getFrameTree();
+            if (solarSysTree == nullptr)
+                continue;
+
+            if (solarSysTree->updateRequired())
             {
-                FrameTree* solarSysTree = solarSystem->getFrameTree();
-                if (solarSysTree != nullptr)
-                {
-                    if (solarSysTree->updateRequired())
-                    {
-                        // Tree has changed, so we must recompute bounding spheres.
-                        solarSysTree->recomputeBoundingSphere();
-                        solarSysTree->markUpdated();
-                    }
+                // Tree has changed, so we must recompute bounding spheres.
+                solarSysTree->recomputeBoundingSphere();
+                solarSysTree->markUpdated();
+            }
 
-                    // Compute the position of the observer in astrocentric coordinates
-                    Vector3d astrocentricObserverPos = astrocentricPosition(observer.getPosition(), *sun, now);
+            // Compute the position of the observer in astrocentric coordinates
+            Vector3d astrocentricObserverPos = astrocentricPosition(observer.getPosition(), *sun, now);
 
-                    // Build render lists for bodies and orbits paths
-                    buildRenderLists(astrocentricObserverPos,
-                                     xfrustum,
-                                     observer.getOrientation().conjugate() * -Vector3d::UnitZ(),
-                                     Vector3d::Zero(),
-                                     solarSysTree,
-                                     observer,
-                                     now);
-                    if (renderFlags & ShowOrbits)
-                    {
-                        buildOrbitLists(astrocentricObserverPos,
-                                        observer.getOrientation(),
-                                        xfrustum,
-                                        solarSysTree,
-                                        now);
-                    }
-                }
+            // Build render lists for bodies and orbits paths
+            buildRenderLists(astrocentricObserverPos,
+                             xfrustum,
+                             observer.getOrientation().conjugate() * -Vector3d::UnitZ(),
+                             Vector3d::Zero(),
+                             solarSysTree,
+                             observer,
+                             now);
+            if (renderFlags & ShowOrbits)
+            {
+                buildOrbitLists(astrocentricObserverPos,
+                                observer.getOrientation(),
+                                xfrustum,
+                                solarSysTree,
+                                now);
             }
 
             addStarOrbitToRenderList(*sun, observer, now);
         }
 
-        if ((labelMode & (BodyLabelMask)) != 0)
-        {
+        if ((labelMode & BodyLabelMask) != 0)
             buildLabelLists(xfrustum, now);
-        }
 
         starTex->bind();
     }
@@ -2789,52 +2785,53 @@ void Renderer::draw(const Observer& observer,
     {
         for (const auto& render_item : renderList)
         {
-            if (render_item.renderableType == RenderListEntry::RenderableBody && render_item.body->getAtmosphere() != nullptr)
-            {
-                // Compute the density of the atmosphere, and from that
-                // the amount light scattering.  It's complicated by the
-                // possibility that the planet is oblate and a simple distance
-                // to sphere calculation will not suffice.
-                const Atmosphere* atmosphere = render_item.body->getAtmosphere();
-                float radius = render_item.body->getRadius();
-                Vector3f semiAxes = render_item.body->getSemiAxes() / radius;
+            if (render_item.renderableType != RenderListEntry::RenderableBody || render_item.body->getAtmosphere() == nullptr)
+                continue;
 
-                Vector3f recipSemiAxes = semiAxes.cwiseInverse();
-                Vector3f eyeVec = render_item.position / radius;
+            // Compute the density of the atmosphere, and from that
+            // the amount light scattering.  It's complicated by the
+            // possibility that the planet is oblate and a simple distance
+            // to sphere calculation will not suffice.
+            const Atmosphere* atmosphere = render_item.body->getAtmosphere();
+            if (atmosphere->height <= 0.0f)
+                continue;
 
-                // Compute the orientation of the planet before axial rotation
-                Quaterniond qd = render_item.body->getEclipticToEquatorial(now);
-                Quaternionf q = qd.cast<float>();
-                eyeVec = q * eyeVec;
+            float radius = render_item.body->getRadius();
+            Vector3f semiAxes = render_item.body->getSemiAxes() / radius;
 
-                // ellipDist is not the true distance from the surface unless
-                // the planet is spherical.  The quantity that we do compute
-                // is the distance to the surface along a line from the eye
-                // position to the center of the ellipsoid.
-                float ellipDist = (eyeVec.cwiseProduct(recipSemiAxes)).norm() - 1.0f;
-                if (ellipDist < atmosphere->height / radius &&
-                    atmosphere->height > 0.0f)
-                {
-                    float density = 1.0f - ellipDist /
-                        (atmosphere->height / radius);
-                    if (density > 1.0f)
-                        density = 1.0f;
+            Vector3f recipSemiAxes = semiAxes.cwiseInverse();
+            Vector3f eyeVec = render_item.position / radius;
 
-                    Vector3f sunDir = render_item.sun.normalized();
-                    Vector3f normal = -render_item.position.normalized();
+            // Compute the orientation of the planet before axial rotation
+            Quaterniond qd = render_item.body->getEclipticToEquatorial(now);
+            Quaternionf q = qd.cast<float>();
+            eyeVec = q * eyeVec;
+
+            // ellipDist is not the true distance from the surface unless
+            // the planet is spherical.  The quantity that we do compute
+            // is the distance to the surface along a line from the eye
+            // position to the center of the ellipsoid.
+            float ellipDist = (eyeVec.cwiseProduct(recipSemiAxes)).norm() - 1.0f;
+            if (ellipDist >= atmosphere->height / radius)
+                continue;
+
+            float density = 1.0f - ellipDist / (atmosphere->height / radius);
+            if (density > 1.0f)
+                density = 1.0f;
+
+            Vector3f sunDir = render_item.sun.normalized();
+            Vector3f normal = -render_item.position.normalized();
 #ifdef USE_HDR
-                    // Ignore magnitude of planet underneath when lighting atmosphere
-                    // Could be changed to simulate light pollution, etc
-                    maxBodyMag = maxBodyMagPrev;
-                    saturationMag = maxBodyMag;
+            // Ignore magnitude of planet underneath when lighting atmosphere
+            // Could be changed to simulate light pollution, etc
+            maxBodyMag = maxBodyMagPrev;
+            saturationMag = maxBodyMag;
 #endif
-                    float illumination = Math<float>::clamp(sunDir.dot(normal) + 0.2f);
+            float illumination = Math<float>::clamp(sunDir.dot(normal) + 0.2f);
 
-                    float lightness = illumination * density;
-                    faintestMag = faintestMag  - 15.0f * lightness;
-                    saturationMag = saturationMag - 15.0f * lightness;
-                }
-            }
+            float lightness = illumination * density;
+            faintestMag = faintestMag  - 15.0f * lightness;
+            saturationMag = saturationMag - 15.0f * lightness;
         }
     }
 
@@ -2890,20 +2887,13 @@ void Renderer::draw(const Observer& observer,
 
     glDisable(GL_LIGHTING);
     glDepthMask(GL_FALSE);
-    glEnable(GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
 
     // Render sky grids first--these will always be in the background
-    {
-        glDisable(GL_TEXTURE_2D);
-        if ((renderFlags & ShowSmoothLines) != 0)
-            enableSmoothLines();
-        renderSkyGrids(observer);
-        if ((renderFlags & ShowSmoothLines) != 0)
-            disableSmoothLines();
-        glEnable(GL_BLEND);
-        glEnable(GL_TEXTURE_2D);
-    }
+    enableSmoothLines(renderFlags);
+    renderSkyGrids(observer);
+    disableSmoothLines(renderFlags);
+    glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
 
     // Render deep sky objects
     if ((renderFlags & (ShowGalaxies |
@@ -2975,7 +2965,7 @@ void Renderer::draw(const Observer& observer,
 
     // Draw the selection cursor
     bool selectionVisible = false;
-    if (!sel.empty() && (renderFlags & ShowMarkers))
+    if (!sel.empty() && (renderFlags & ShowMarkers) != 0)
     {
         Vector3d offset = sel.getPosition(now).offsetFromKm(observer.getPosition());
 
@@ -3001,20 +2991,20 @@ void Renderer::draw(const Observer& observer,
             // both markers are drawn and cursor appears much brighter as a result.
             if (distance < astro::lightYearsToKilometers(1.0))
             {
-                addSortedAnnotation(&cursorRep, EMPTY_STRING, Color(SelectionCursorColor, 1.0f),
+                addSortedAnnotation(&cursorRep, "", Color(SelectionCursorColor, 1.0f),
                                     offset.cast<float>(),
                                     AlignLeft, VerticalAlignTop, symbolSize);
             }
             else
             {
-                addAnnotation(backgroundAnnotations, &cursorRep, EMPTY_STRING, Color(SelectionCursorColor, 1.0f),
+                addAnnotation(backgroundAnnotations, &cursorRep, "", Color(SelectionCursorColor, 1.0f),
                               offset.cast<float>(),
                               AlignLeft, VerticalAlignTop, symbolSize);
             }
 
             Color occludedCursorColor(SelectionCursorColor.red(), SelectionCursorColor.green() + 0.3f, SelectionCursorColor.blue());
             addAnnotation(foregroundAnnotations,
-                          &cursorRep, EMPTY_STRING, Color(occludedCursorColor, 0.4f),
+                          &cursorRep, "", Color(occludedCursorColor, 0.4f),
                           offset.cast<float>(),
                           AlignLeft, VerticalAlignTop, symbolSize);
         }
@@ -3028,7 +3018,7 @@ void Renderer::draw(const Observer& observer,
 
         // Remove objects from the render list that lie completely outside the
         // view frustum.
-	auto notCulled = renderList.begin();
+        auto notCulled = renderList.begin();
 #ifdef USE_HDR
         maxBodyMag = maxBodyMagPrev;
         float starMaxMag = maxBodyMagPrev;
@@ -3524,7 +3514,9 @@ void Renderer::draw(const Observer& observer,
 #endif
                     }
                     else
+                    {
                         orbitsSkipped++;
+                    }
                 }
 
                 disableSmoothLines(renderFlags);
@@ -3650,17 +3642,15 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         }
 
         alpha = (_faintestMag - appMag) * brightnessScale * 2.0f + brightnessBias;
+        if (alpha < 0.0f)
+            alpha = 0.0f;
 
         float pointSize = size;
         float glareSize = 0.0f;
         float glareAlpha = 0.0f;
         if (useScaledDiscs)
         {
-            if (alpha < 0.0f)
-            {
-                alpha = 0.0f;
-            }
-            else if (alpha > 1.0f)
+            if (alpha > 1.0f)
             {
                 float discScale = min(MaxScaledDiscStarSize, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
                 pointSize *= max(1.0f, discScale);
@@ -3678,11 +3668,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         }
         else
         {
-            if (alpha < 0.0f)
-            {
-                alpha = 0.0f;
-            }
-            else if (alpha > 1.0f)
+            if (alpha > 1.0f)
             {
                 float discScale = min(100.0f, satPoint - appMag + 2.0f);
                 glareAlpha = min(GlareOpacity, (discScale - 2.0f) / 4.0f);
@@ -3939,7 +3925,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     }
 
     Vector3f e = -eyeVec;
-    Vector3f e_ = e.cwiseProduct(recipSemiAxes);//(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
+    Vector3f e_ = e.cwiseProduct(recipSemiAxes);
     float ee = e_.dot(e_);
 
     // Compute the cosine of the altitude of the sun.  This is used to compute
@@ -3988,8 +3974,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     vAxis = uAxis.cross(normal);
 
     // Compute the contour of the ellipsoid
-    int i;
-    for (i = 0; i <= nSlices; i++)
+    for (int i = 0; i <= nSlices; i++)
     {
         // We want rays with an origin at the eye point and tangent to the the
         // ellipsoid.
@@ -4006,8 +3991,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 
         float skyCapDist = (float) sqrt(square(skyContour[i].eyeDist) +
                                         square(horizonHeight * radius));
-        skyContour[i].cosSkyCapAltitude = skyContour[i].eyeDist /
-            skyCapDist;
+        skyContour[i].cosSkyCapAltitude = skyContour[i].eyeDist / skyCapDist;
     }
 
 
@@ -4038,7 +4022,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 
     // Build the list of vertices
     SkyVertex* vtx = skyVertices;
-    for (i = 0; i <= nRings; i++)
+    for (int i = 0; i <= nRings; i++)
     {
         float h = min(1.0f, (float) i / (float) nHorizonRings);
         auto hh = (float) sqrt(h);
@@ -4107,7 +4091,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 
     // Create the index list
     int index = 0;
-    for (i = 0; i < nRings; i++)
+    for (int i = 0; i < nRings; i++)
     {
         int baseVertex = i * nSlices;
         for (int j = 0; j < nSlices; j++)
@@ -4125,7 +4109,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SkyVertex),
                    static_cast<void*>(&skyVertices[0].color));
 
-    for (i = 0; i < nRings; i++)
+    for (int i = 0; i < nRings; i++)
     {
         glDrawElements(GL_QUAD_STRIP,
                        (nSlices + 1) * 2,
@@ -4298,15 +4282,13 @@ void Renderer::renderLocations(const Body& body,
 
     Matrix3d bodyMatrix = bodyOrientation.conjugate().toRotationMatrix();
 
-    for (const auto p_location : *locations)
+    for (const auto location : *locations)
     {
-        const Location& location = *p_location;
-
-        auto featureType = location.getFeatureType();
+        auto featureType = location->getFeatureType();
         if ((featureType & locationFilter) != 0)
         {
             // Get the position of the location with respect to the planet center
-            Vector3f ppos = location.getPosition();
+            Vector3f ppos = location->getPosition();
 
             // Compute the bodycentric position of the location
             Vector3d locPos = ppos.cast<double>();
@@ -4318,9 +4300,9 @@ void Renderer::renderLocations(const Body& body,
             // Get the camera space label position
             Vector3d labelPos = bodyCenter + bodyMatrix * locPos;
 
-            float effSize = location.getImportance();
+            float effSize = location->getImportance();
             if (effSize < 0.0f)
-                effSize = location.getSize();
+                effSize = location->getSize();
 
             float pixSize = effSize / (float) (labelPos.norm() * pixelSize);
 
@@ -4370,9 +4352,9 @@ void Renderer::renderLocations(const Body& body,
                     else if (featureType & (Location::EruptiveCenter))
                         locationMarker = &genericLocationRep;
 
-                    Color labelColor = location.isLabelColorOverridden() ? location.getLabelColor() : LocationLabelColor;
+                    Color labelColor = location->isLabelColorOverridden() ? location->getLabelColor() : LocationLabelColor;
                     addObjectAnnotation(locationMarker,
-                                        location.getName(true),
+                                        location->getName(true),
                                         labelColor,
                                         labelPos.cast<float>());
                 }
@@ -5027,26 +5009,28 @@ void Renderer::renderObject(const Vector3f& pos,
         }
     }
 
-    if (obj.rings != nullptr &&
-        (obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
-        (renderFlags & ShowRingShadows) != 0)
+    if (obj.rings != nullptr)
     {
-        Texture* ringsTex = obj.rings->texture.find(textureResolution);
-        if (ringsTex != nullptr)
+        if ((obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
+            (renderFlags & ShowRingShadows) != 0)
         {
-            glEnable(GL_TEXTURE_2D);
-            ringsTex->bind();
+            Texture* ringsTex = obj.rings->texture.find(textureResolution);
+            if (ringsTex != nullptr)
+            {
+                glEnable(GL_TEXTURE_2D);
+                ringsTex->bind();
+            }
         }
-    }
 
-    if (obj.rings != nullptr && distance > obj.rings->innerRadius)
-    {
-        glDepthMask(GL_FALSE);
-        renderRings_GLSL(*obj.rings, ri, ls,
-                         radius, 1.0f - obj.semiAxes.y(),
-                         textureResolution,
-                         (renderFlags & ShowRingShadows) != 0 && lit,
-                         detailOptions.ringSystemSections);
+        if (distance > obj.rings->innerRadius)
+        {
+            glDepthMask(GL_FALSE);
+            renderRings_GLSL(*obj.rings, ri, ls,
+                             radius, 1.0f - obj.semiAxes.y(),
+                             textureResolution,
+                             (renderFlags & ShowRingShadows) != 0 && lit,
+                             detailOptions.ringSystemSections);
+        }
     }
 
     // Disable all light sources other than the first
@@ -7810,14 +7794,14 @@ void Renderer::renderMarkers(const MarkerList& markers,
                         boundingRadius = marker.object().radius();
                     offset *= (1.0 - boundingRadius * 1.01 / distance);
 
-                    addSortedAnnotation(&(marker.representation()), EMPTY_STRING, marker.representation().color(),
+                    addSortedAnnotation(&(marker.representation()), "", marker.representation().color(),
                                         offset.cast<float>(),
                                         AlignLeft, VerticalAlignTop, symbolSize);
                 }
                 else
                 {
                     addAnnotation(backgroundAnnotations,
-                                  &(marker.representation()), EMPTY_STRING, marker.representation().color(),
+                                  &(marker.representation()), "", marker.representation().color(),
                                   offset.cast<float>(),
                                   AlignLeft, VerticalAlignTop, symbolSize);
                 }
@@ -7825,7 +7809,7 @@ void Renderer::renderMarkers(const MarkerList& markers,
             else
             {
                 addAnnotation(foregroundAnnotations,
-                              &(marker.representation()), EMPTY_STRING, marker.representation().color(),
+                              &(marker.representation()), "", marker.representation().color(),
                               offset.cast<float>(),
                               AlignLeft, VerticalAlignTop, symbolSize);
             }
