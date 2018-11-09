@@ -120,7 +120,7 @@ static float tempL[10] =
 
 static float tempT[10] =
 {
-    1425, 1350, 1275, 1200, 1140, 1080, 1020, 900, 800, 750
+    1425, 1350, 1275, 1200, 1140, 1080, 1020, 900, 750, 500
 };
 
 // White dwarf temperaturs
@@ -277,7 +277,7 @@ static float bmag_correctionL[10] =
 
 static float bmag_correctionT[10] =
 {
-    -8.9f, -9.6f, -10.8f, -11.9f, -13.1f, -14.4f, -16.1f, -17.9f, -19.6f, -19.6f,
+    -8.9f, -9.6f, -10.8f, -11.9f, -13.1f, -14.4f, -16.1f, -17.9f, -19.6f, -21.7f,
 };
 
 // White dwarf data from Grant Hutchison; value for hypothetical
