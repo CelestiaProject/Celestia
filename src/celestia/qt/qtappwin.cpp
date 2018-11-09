@@ -38,6 +38,7 @@
 #include <QProcess>
 #include <QDesktopServices>
 #include <QDesktopWidget>
+#include <QInputDialog>
 #include <QUrl>
 #include <vector>
 #include <string>
@@ -91,6 +92,8 @@ static const int CELESTIA_MAIN_WINDOW_VERSION = 12;
 static CelestiaAppWindow* MainWindowInstance = nullptr;
 static void ContextMenu(float x, float y, Selection sel);
 
+static int fps_to_ms(int fps) { return fps ? 1000 / fps : 0; }
+static int ms_to_fps(int ms) { return ms ? 1000 / ms : 0; }
 
 // Progress notifier class receives update messages from CelestiaCore
 // at startup. This simple implementation just forwards messages on
@@ -138,6 +141,7 @@ CelestiaAppWindow::CelestiaAppWindow(QWidget* parent) :
     QMainWindow(parent)
 {
     setObjectName("celestia-mainwin");
+    timer = new QTimer(this);
 }
 
 
@@ -378,12 +382,9 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(slotToggleFullScreen()));
     viewMenu->addAction(fullScreenAction);
 
-
-    // We use a timer with a null timeout value
-    // to add m_appCore->tick to Qt's event loop
-    QTimer *t = new QTimer(dynamic_cast<QObject *>(this));
-    QObject::connect(t, SIGNAL(timeout()), SLOT(celestia_tick()));
-    t->start(0);
+    // We use a timer to add m_appCore->tick to Qt's event loop
+    QObject::connect(timer, SIGNAL(timeout()), SLOT(celestia_tick()));
+    timer->start();
 }
 
 
@@ -486,6 +487,8 @@ void CelestiaAppWindow::readSettings()
 
     settings.endGroup();
 
+    timer->setInterval(fps_to_ms(settings.value("fps", 0).toInt()));
+
     // Render settings read in qtglwidget
 }
 
@@ -548,6 +551,8 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("LocalTime", useLocalTime);
     settings.setValue("TimeZoneName", QString::fromStdString(m_appCore->getTimeZoneName()));
     settings.endGroup();
+
+    settings.setValue("fps", ms_to_fps(timer->interval()));
 }
 
 
@@ -1228,6 +1233,22 @@ void CelestiaAppWindow::createMenus()
     displayMenu->addAction(actions->toggleVSyncAction);
 #endif
 
+    QMenu *fpsMenu = new QMenu(_("FPS rate"), this);
+
+    std::array<int, 5> fps_array = { 0, 15, 30, 60, 120 };
+
+    for (auto ifps : fps_array) {
+        QAction *fps = new QAction(ifps == 0 ? _("Auto") : QString::number(ifps), this);
+        fps->setData(ifps);
+        connect(fps, &QAction::triggered, this, &CelestiaAppWindow::setFPS);
+        fpsMenu->addAction(fps);
+    }
+    QAction *fps = new QAction(_("Custom"), this);
+    fps->setShortcut(QString("Shift+F"));
+    connect(fps, &QAction::triggered, this, &CelestiaAppWindow::setCustomFPS);
+    fpsMenu->addAction(fps);
+    displayMenu->addMenu(fpsMenu);
+
     /****** Bookmark menu ******/
     bookmarkMenu = menuBar()->addMenu(_("&Bookmarks"));
 
@@ -1440,6 +1461,25 @@ void CelestiaAppWindow::closeEvent(QCloseEvent* event)
     saveBookmarks();
 
     event->accept();
+}
+
+void CelestiaAppWindow::setFPS(int fps)
+{
+    QAction *act = qobject_cast<QAction*>(sender());
+    if (act)
+    {
+        int f = act->data().toInt();
+        if (f > 0)
+        fps = f;
+    }
+    timer->setInterval(fps_to_ms(fps));
+}
+
+void CelestiaAppWindow::setCustomFPS()
+{
+    bool ok;
+    int fps = QInputDialog::getInt(this, _("Set custom FPS"), _("FPS value"), ms_to_fps(timer->interval()), 0, 2048, 1, &ok);
+    if (ok) setFPS(fps);
 }
 
 void CelestiaAppWindow::contextMenu(float x, float y, Selection sel)

@@ -56,6 +56,8 @@ class CelestiaAppWindow : public QMainWindow
     void celestia_tick();
     void slotShowSelectionContextMenu(const QPoint& pos, Selection& sel);
     void slotManual();
+    void setFPS(int fps = 0);
+    void setCustomFPS();
 
  private slots:
     void slotGrabImage();
@@ -137,6 +139,8 @@ class CelestiaAppWindow : public QMainWindow
     BookmarkToolBar* m_bookmarkToolBar{ nullptr };
 
     QString m_dataDirPath;
+
+    QTimer *timer;
 };
 
 
