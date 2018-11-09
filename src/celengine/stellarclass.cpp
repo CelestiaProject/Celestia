@@ -64,31 +64,20 @@ Color StellarClass::getApparentColor(StellarClass::SpectralClass sc) const
 // deal with (*cough* gcc *cough*).
 string StellarClass::str() const
 {
-    StellarClass::StarType st = getStarType();
-    char s0[3];
-    char s1[2];
+    char s0, s1;
     const char* s2 = "";
-    s0[0] = '\0';
-    s1[0] = '\0';
 
-    if (st == StellarClass::WhiteDwarf)
+    switch (getStarType())
     {
-        strcpy(s0, "WD");
-    }
-    else if (st == StellarClass::NeutronStar)
-    {
-        strcpy(s0, "Q");
-    }
-    else if (st == StellarClass::BlackHole)
-    {
-        strcpy(s0, "X");
-    }
-    else if (st == StellarClass::NormalStar)
-    {
-        s0[0] = "OBAFGKMRSNWW?LTYC"[(unsigned int) getSpectralClass()];
-        s0[1] = '\0';
-        s1[0] = "0123456789"[getSubclass()];
-        s1[1] = '\0';
+    case StellarClass::WhiteDwarf:
+        return "WD";
+    case StellarClass::NeutronStar:
+        return "Q";
+    case StellarClass::BlackHole:
+        return "X";
+    case StellarClass::NormalStar:
+        s0 = "OBAFGKMRSNWW?LTYC"[(unsigned int) getSpectralClass()];
+        s1 = "0123456789"[getSubclass()];
         switch (getLuminosityClass())
         {
         case StellarClass::Lum_Ia0:
@@ -115,16 +104,12 @@ string StellarClass::str() const
         case StellarClass::Lum_VI:
             s2 = " VI";
             break;
-
         default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
         }
-    }
-    else
-    {
-        strcpy(s0, "?");
+        return fmt::sprintf("%c%c%s", s0, s1, s2);
     }
 
-    return fmt::sprintf("%s%s%s", s0, s1, s2);
+    return "?";
 }
 
 
