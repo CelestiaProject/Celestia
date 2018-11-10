@@ -103,8 +103,16 @@ public:
 
     friend bool operator<(const StellarClass& sc0, const StellarClass& sc1);
 
-    uint16_t pack() const;
-    bool unpack(uint16_t);
+    // methods for StarDB Ver. 0x0100
+    uint16_t packV1() const;
+    bool unpackV1(uint16_t);
+
+    // methods for StarDB Ver. 0x0200
+    uint16_t packV2() const;
+    bool unpackV2(uint16_t);
+
+    /* [[deprecated]] */ inline uint16_t pack() const;
+    /* [[deprecated]] */ inline bool unpack(uint16_t);
 
 private:
     StarType starType;
@@ -158,6 +166,15 @@ unsigned int StellarClass::getSubclass() const
 StellarClass::LuminosityClass StellarClass::getLuminosityClass() const
 {
     return lumClass;
+}
+
+/* [[deprecated]] */ uint16_t StellarClass::pack() const
+{
+    return packV1();
+}
+/* [[deprecated]] */ bool StellarClass::unpack(uint16_t t)
+{
+    return unpackV1(t);
 }
 
 #endif // _STELLARCLASS_H_
