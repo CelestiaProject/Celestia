@@ -69,7 +69,8 @@ class StarDetails
     void setInfoURL(const std::string& _infoURL);
 
     bool shared() const;
-    
+    inline bool hasCorona() const;
+
     enum
     {
         KnowRadius   = 0x1,
@@ -223,6 +224,13 @@ StarDetails::getEllipsoidSemiAxes() const
     return semiAxes;
 }
 
+bool
+StarDetails::hasCorona() const
+{
+    // Y dwarves and T dwarves subclasses 5-9 don't have a corona
+    return spectralType[0] != 'Y' && (spectralType[0] != 'T' || spectralType[1] < '5');
+}
+
 
 
 class Star
@@ -275,6 +283,7 @@ public:
     inline const RotationModel* getRotationModel() const;
     inline Vec3f getEllipsoidSemiAxes() const;
     const std::string& getInfoURL() const;
+    inline bool hasCorona() const;
 
     enum {
         MaxTychoCatalogNumber = 0xf0000000,
@@ -378,6 +387,12 @@ const std::vector<Star*>*
 Star::getOrbitingStars() const
 {
     return details->orbitingStars;
+}
+
+bool
+Star::hasCorona() const
+{
+    return details->hasCorona();
 }
 
 #endif // _STAR_H_
