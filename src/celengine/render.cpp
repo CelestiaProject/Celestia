@@ -5496,17 +5496,22 @@ void Renderer::renderStar(const Star& star,
 
 #ifndef USE_HDR
         Atmosphere atmosphere;
-        Color atmColor(color.red() * 0.5f, color.green() * 0.5f, color.blue() * 0.5f);
-        atmosphere.height = radius * CoronaHeight;
-        atmosphere.lowerColor = atmColor;
-        atmosphere.upperColor = atmColor;
-        atmosphere.skyColor = atmColor;
 
         // Use atmosphere effect to give stars a fuzzy fringe
-        if (rp.geometry == InvalidResource)
+        if (star.hasCorona() && rp.geometry == InvalidResource)
+        {
+            Color atmColor(color.red() * 0.5f, color.green() * 0.5f, color.blue() * 0.5f);
+            atmosphere.height = radius * CoronaHeight;
+            atmosphere.lowerColor = atmColor;
+            atmosphere.upperColor = atmColor;
+            atmosphere.skyColor = atmColor;
+
             rp.atmosphere = &atmosphere;
+        }
         else
+        {
             rp.atmosphere = nullptr;
+        }
 #else
         rp.atmosphere = nullptr;
 #endif
