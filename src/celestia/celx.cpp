@@ -234,6 +234,10 @@ void CelxLua::initLocationFlagMap()
     LocationFlagMap["virga"] = Location::Virga;
     LocationFlagMap["other"] = Location::Other;
     LocationFlagMap["saxum"] = Location::Saxum;
+    LocationFlagMap["capital"] = Location::Capital;
+    LocationFlagMap["cosmodrome"] = Location::Cosmodrome;
+    LocationFlagMap["trench"] = Location::Trench;
+    LocationFlagMap["historical"] = Location::Historical;
 }
 
 void CelxLua::initOverlayElementMap()

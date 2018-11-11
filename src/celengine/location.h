@@ -51,9 +51,11 @@ class Location
 
     enum FeatureType : uint64_t
     {
+        // Custom locations, part I
         City           = 0x0000000000000001,
         Observatory    = 0x0000000000000002,
         LandingSite    = 0x0000000000000004,
+        // Standard locations
         Crater         = 0x0000000000000008,
         Vallis         = 0x0000000000000010,
         Mons           = 0x0000000000000020,
@@ -110,6 +112,11 @@ class Location
         Vastitas       = 0x0100000000000000,
         Virga          = 0x0200000000000000,
         Saxum          = 0x0400000000000000,
+        // Custom locations, part II
+        Capital        = 0x0800000000000000,
+        Cosmodrome     = 0x1000000000000000,
+        Trench         = 0x2000000000000000, // Tectonical trench
+        Historical     = 0x4000000000000000,
         Other          = 0x8000000000000000,
     };
 

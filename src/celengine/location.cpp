@@ -90,6 +90,10 @@ FeatureNameEntry FeatureNames[] =
     { "Observatory", Location::Observatory },
     { "Landing Site", Location::LandingSite },
     { "Crater", Location::Crater },
+    { "Capital", Location::Capital},
+    { "Cosmodrome", Location::Cosmodrome},
+    { "Trench", Location::Trench},
+    { "Historical", Location::Historical},
 };
 
 
