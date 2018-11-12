@@ -1310,7 +1310,6 @@ void resyncRenderActions(AppData* app)
             case Renderer::ShowAtmospheres: actionName = "RenderAtmospheres"; break;
             case Renderer::ShowSmoothLines: actionName = "RenderAA"; break;
             case Renderer::ShowEclipseShadows: actionName = "RenderEclipseShadows"; break;
-            case Renderer::ShowStarsAsPoints: actionName = NULL; break; /* Deprecated */
             case Renderer::ShowRingShadows: actionName = "RenderRingShadows"; break;
             case Renderer::ShowBoundaries: actionName = "RenderConstellationBoundaries"; break;
             case Renderer::ShowAutoMag: actionName = "RenderAutoMagnitude"; break;

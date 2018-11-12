@@ -1,0 +1,3 @@
+celestia:hide("planetrings")
+wait(5)
+celestia:show("planetrings")

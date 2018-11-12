@@ -4817,7 +4817,9 @@ void Renderer::renderObject(const Vector3f& pos,
         }
     }
 
-    if (obj.rings != nullptr && distance <= obj.rings->innerRadius)
+    if (obj.rings != nullptr &&
+        (renderFlags & ShowPlanetRings) != 0 &&
+        distance <= obj.rings->innerRadius)
     {
         renderRings_GLSL(*obj.rings, ri, ls,
                          radius, 1.0f - obj.semiAxes.y(),
@@ -4971,7 +4973,7 @@ void Renderer::renderObject(const Vector3f& pos,
         }
     }
 
-    if (obj.rings != nullptr)
+    if (obj.rings != nullptr && (renderFlags & ShowPlanetRings) != 0)
     {
         if ((obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
             (renderFlags & ShowRingShadows) != 0)
@@ -5242,7 +5244,9 @@ void Renderer::renderPlanet(Body& body,
 
 
         // Add ring shadow records for each light
-        if (body.getRings() && (renderFlags & ShowRingShadows) != 0)
+        if (body.getRings() &&
+            (renderFlags & ShowPlanetRings) != 0 &&
+            (renderFlags & ShowRingShadows) != 0)
         {
             for (unsigned int li = 0; li < lights.nLights; li++)
             {

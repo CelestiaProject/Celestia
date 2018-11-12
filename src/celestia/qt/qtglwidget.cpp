@@ -53,6 +53,7 @@ const int DEFAULT_RENDER_FLAGS =
           Renderer::ShowCloudMaps          |
           Renderer::ShowAtmospheres        |
           Renderer::ShowEclipseShadows     |
+          Renderer::ShowPlanetRings        |
           Renderer::ShowRingShadows        |
           Renderer::ShowCometTails         |
           Renderer::ShowNebulae            |
