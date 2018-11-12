@@ -280,6 +280,7 @@ void setDefaultRenderFlags(AppData* app)
                                   Renderer::ShowPlanets |
                                   Renderer::ShowSmoothLines |
                                   Renderer::ShowCometTails |
+                                  Renderer::ShowPlanetRings |
                                   Renderer::ShowRingShadows |
                                   Renderer::ShowCloudMaps |
                                   Renderer::ShowRingShadows |

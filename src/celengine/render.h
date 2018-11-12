@@ -156,7 +156,7 @@ class Renderer
         ShowAtmospheres     =   0x0100,
         ShowSmoothLines     =   0x0200,
         ShowEclipseShadows  =   0x0400,
-        ShowStarsAsPoints   =   0x0800,
+        ShowPlanetRings     =   0x0800,
         ShowRingShadows     =   0x1000,
         ShowBoundaries      =   0x2000,
         ShowAutoMag         =   0x4000,
@@ -190,6 +190,7 @@ class Renderer
                                           Renderer::ShowCloudMaps      |
                                           Renderer::ShowAtmospheres    |
                                           Renderer::ShowEclipseShadows |
+                                          Renderer::ShowPlanetRings    |
                                           Renderer::ShowRingShadows    |
                                           Renderer::ShowCometTails     |
                                           Renderer::ShowNebulae        |

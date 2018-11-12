@@ -119,6 +119,7 @@ void CelxLua::initRenderFlagMap()
     RenderFlagMap["stars"] = Renderer::ShowStars;
     RenderFlagMap["nightmaps"] = Renderer::ShowNightMaps;
     RenderFlagMap["eclipseshadows"] = Renderer::ShowEclipseShadows;
+    RenderFlagMap["planetrings"] = Renderer::ShowPlanetRings;
     RenderFlagMap["ringshadows"] = Renderer::ShowRingShadows;
     RenderFlagMap["comettails"] = Renderer::ShowCometTails;
     RenderFlagMap["boundaries"] = Renderer::ShowBoundaries;
