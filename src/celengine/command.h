@@ -801,4 +801,16 @@ class CommandSetWindowBordersVisible : public InstantaneousCommand
  private:
     bool visible;
 };
+
+
+class CommandSetRingsTexture : public InstantaneousCommand
+{
+ public:
+    CommandSetRingsTexture(std::string, std::string, std::string);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string object, textureName, path;
+};
+
 #endif // _COMMAND_H_

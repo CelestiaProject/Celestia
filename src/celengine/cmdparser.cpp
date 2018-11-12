@@ -886,6 +886,14 @@ Command* CommandParser::parseCommand()
 
         cmd = new CommandSetWindowBordersVisible(visible);
     }
+    else if (commandName == "setringstexture")
+    {
+        string object, texture, path;
+        paramList->getString("object", object);
+        paramList->getString("texture", texture);
+        paramList->getString("path", path);
+        cmd = new CommandSetRingsTexture(object, texture, path);
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");
