@@ -18,6 +18,7 @@
 #include <celengine/axisarrow.h>
 #include <celengine/visibleregion.h>
 #include <celengine/planetgrid.h>
+#include <celengine/multitexture.h>
 #include "celestiacore.h"
 
 using namespace Eigen;
@@ -1289,6 +1290,31 @@ static int object_phases(lua_State* l)
 }
 
 
+static int object_setringstexture(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 2, "One or two arguments are expected for object:setringstexture()");
+
+    Selection* sel = this_object(l);
+
+    if (sel->body() == nullptr || sel->body()->getRings() == nullptr)
+        return 0;
+
+    const char* textureName = celx.safeGetString(2);
+    if (*textureName == '\0')
+    {
+        celx.doError("Empty texture name passed to object:setringstexture()");
+        return 0;
+    }
+    const char* path = celx.safeGetString(3, WrongType);
+    if (path == nullptr)
+        path = "";
+
+    sel->body()->getRings()->texture = MultiResTexture(textureName, path);
+
+    return 0;
+}
+
 void CreateObjectMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -1326,6 +1352,7 @@ void CreateObjectMetaTable(lua_State* l)
     celx.registerMethod("getphase", object_getphase);
     celx.registerMethod("phases", object_phases);
     celx.registerMethod("preloadtexture", object_preloadtexture);
+    celx.registerMethod("setringstexture", object_setringstexture);
 
     lua_pop(l, 1); // pop metatable off the stack
 }

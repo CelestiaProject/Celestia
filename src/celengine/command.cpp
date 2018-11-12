@@ -15,6 +15,7 @@
 #include <celestia/celestiacore.h>
 #include <celestia/imagecapture.h>
 #include <celestia/celx_internal.h>
+#include <celengine/multitexture.h>
 #include <celutil/util.h>
 #include <celmath/mathlib.h>
 #include <iostream>
@@ -1150,4 +1151,27 @@ void CommandConstellationColor::setConstellations(string cons)
 void CommandSetWindowBordersVisible::process(ExecutionEnvironment& env)
 {
     env.getCelestiaCore()->setFramesVisible(visible);
+}
+
+
+///////////////
+// SetRingsTexture command
+CommandSetRingsTexture::CommandSetRingsTexture(string _object,
+                                               string _textureName,
+                                               string _path) :
+    object(std::move(_object)),
+    textureName(std::move(_textureName)),
+    path(std::move(_path))
+{
+}
+
+void CommandSetRingsTexture::process(ExecutionEnvironment& env)
+{
+    Selection sel = env.getSimulation()->findObjectFromPath(object);
+    if (sel.body() != nullptr &&
+        sel.body()->getRings() != nullptr &&
+        !textureName.empty())
+    {
+        sel.body()->getRings()->texture = MultiResTexture(textureName, path);
+    }
 }
