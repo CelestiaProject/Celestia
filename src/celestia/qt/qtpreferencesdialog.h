@@ -37,6 +37,7 @@ private slots:
     void on_cloudShadowsCheck_stateChanged(int state);
     void on_eclipseShadowsCheck_stateChanged(int state);
     void on_ringShadowsCheck_stateChanged(int state);
+    void on_planetRingsCheck_stateChanged(int state);
     void on_nightsideLightsCheck_stateChanged(int state);
     void on_cometTailsCheck_stateChanged(int state);
     void on_limitOfKnowledgeCheck_stateChanged(int state);

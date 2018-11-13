@@ -136,6 +136,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="planetRingsCheck">
+            <property name="text">
+             <string>Planet's rings</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="nightsideLightsCheck">
             <property name="text">
              <string>Nightside lights</string>

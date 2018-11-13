@@ -99,6 +99,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.cloudShadowsCheck->setChecked(renderFlags & Renderer::ShowCloudShadows);
     ui.eclipseShadowsCheck->setChecked(renderFlags & Renderer::ShowEclipseShadows);
     ui.ringShadowsCheck->setChecked(renderFlags & Renderer::ShowRingShadows);
+    ui.planetRingsCheck->setChecked(renderFlags & Renderer::ShowPlanetRings);
     ui.nightsideLightsCheck->setChecked(renderFlags & Renderer::ShowNightMaps);
     ui.cometTailsCheck->setChecked(renderFlags & Renderer::ShowCometTails);
     ui.limitOfKnowledgeCheck->setChecked(observer->getDisplayedSurface() == "limit of knowledge");
@@ -324,6 +325,12 @@ void PreferencesDialog::on_eclipseShadowsCheck_stateChanged(int state)
 void PreferencesDialog::on_ringShadowsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowRingShadows, state);
+}
+
+
+void PreferencesDialog::on_planetRingsCheck_stateChanged(int state)
+{
+    setRenderFlag(appCore, Renderer::ShowPlanetRings, state);
 }
 
 
