@@ -28,7 +28,7 @@ class ViewOptionsDialog : public CelestiaWatcher
     CelestiaCore* appCore;
     HWND parent;
     HWND hwnd;
-    int initialRenderFlags;
+    uint64_t initialRenderFlags;
     int initialLabelMode;
     int initialHudDetail;
 };

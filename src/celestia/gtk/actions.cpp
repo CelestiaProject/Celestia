@@ -60,7 +60,7 @@ static void captureImage(const char* filename, AppData* app);
 static void captureMovie(const char* filename, int aspect, float fps, float quality, AppData* app);
 #endif
 static void textInfoDialog(const char *txt, const char *title, AppData* app);
-static void setRenderFlag(AppData* a, int flag, gboolean state);
+static void setRenderFlag(AppData* a, uint64_t flag, gboolean state);
 static void setOrbitMask(AppData* a, int mask, gboolean state);
 static void setLabelMode(AppData* a, int mode, gboolean state);
 
@@ -1203,9 +1203,9 @@ static void textInfoDialog(const char *txt, const char *title, AppData* app)
 
 
 /* Calculates and sets the render-flag int */
-static void setRenderFlag(AppData* a, int flag, gboolean state)
+static void setRenderFlag(AppData* a, uint64_t flag, gboolean state)
 {
-    int rf = (a->renderer->getRenderFlags() & ~flag) | (state ? flag : 0);
+    uint64_t rf = (a->renderer->getRenderFlags() & ~flag) | (state ? flag : 0);
     a->renderer->setRenderFlags(rf);
 
     #ifdef GNOME
@@ -1289,7 +1289,7 @@ void resyncRenderActions(AppData* app)
     const char* actionName;
 
     /* Simply for readability */
-    int rf = app->renderer->getRenderFlags();
+    uint64_t rf = app->renderer->getRenderFlags();
 
     /* Unlike the other interfaces, which go through each menu item and set
      * the corresponding renderFlag, we go the other way and set the menu

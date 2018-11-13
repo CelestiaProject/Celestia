@@ -110,33 +110,39 @@ static const char* MouseUpHandler    = "mouseup";
 // Initialize various maps from named keywords to numeric flags used within celestia:
 void CelxLua::initRenderFlagMap()
 {
-    RenderFlagMap["orbits"] = Renderer::ShowOrbits;
-    RenderFlagMap["cloudmaps"] = Renderer::ShowCloudMaps;
-    RenderFlagMap["constellations"] = Renderer::ShowDiagrams;
-    RenderFlagMap["galaxies"] = Renderer::ShowGalaxies;
-    RenderFlagMap["globulars"] = Renderer::ShowGlobulars;
-    RenderFlagMap["planets"] = Renderer::ShowPlanets;
-    RenderFlagMap["stars"] = Renderer::ShowStars;
-    RenderFlagMap["nightmaps"] = Renderer::ShowNightMaps;
-    RenderFlagMap["eclipseshadows"] = Renderer::ShowEclipseShadows;
-    RenderFlagMap["planetrings"] = Renderer::ShowPlanetRings;
-    RenderFlagMap["ringshadows"] = Renderer::ShowRingShadows;
-    RenderFlagMap["comettails"] = Renderer::ShowCometTails;
-    RenderFlagMap["boundaries"] = Renderer::ShowBoundaries;
-    RenderFlagMap["markers"] = Renderer::ShowMarkers;
-    RenderFlagMap["automag"] = Renderer::ShowAutoMag;
-    RenderFlagMap["atmospheres"] = Renderer::ShowAtmospheres;
-    RenderFlagMap["grid"] = Renderer::ShowCelestialSphere;
-    RenderFlagMap["equatorialgrid"] = Renderer::ShowCelestialSphere;
-    RenderFlagMap["galacticgrid"] = Renderer::ShowGalacticGrid;
-    RenderFlagMap["eclipticgrid"] = Renderer::ShowEclipticGrid;
-    RenderFlagMap["horizontalgrid"] = Renderer::ShowHorizonGrid;
-    RenderFlagMap["smoothlines"] = Renderer::ShowSmoothLines;
+    RenderFlagMap["orbits"]              = Renderer::ShowOrbits;
+    RenderFlagMap["cloudmaps"]           = Renderer::ShowCloudMaps;
+    RenderFlagMap["constellations"]      = Renderer::ShowDiagrams;
+    RenderFlagMap["galaxies"]            = Renderer::ShowGalaxies;
+    RenderFlagMap["globulars"]           = Renderer::ShowGlobulars;
+    RenderFlagMap["planets"]             = Renderer::ShowPlanets;
+    RenderFlagMap["dwarfplanets"]        = Renderer::ShowDwarfPlanets;
+    RenderFlagMap["moons"]               = Renderer::ShowMoons;
+    RenderFlagMap["minormoons"]          = Renderer::ShowMinorMoons;
+    RenderFlagMap["asteroids"]           = Renderer::ShowAsteroids;
+    RenderFlagMap["comets"]              = Renderer::ShowComets;
+    RenderFlagMap["spasecrafts"]         = Renderer::ShowSpacecrafts;
+    RenderFlagMap["stars"]               = Renderer::ShowStars;
+    RenderFlagMap["nightmaps"]           = Renderer::ShowNightMaps;
+    RenderFlagMap["eclipseshadows"]      = Renderer::ShowEclipseShadows;
+    RenderFlagMap["planetrings"]         = Renderer::ShowPlanetRings;
+    RenderFlagMap["ringshadows"]         = Renderer::ShowRingShadows;
+    RenderFlagMap["comettails"]          = Renderer::ShowCometTails;
+    RenderFlagMap["boundaries"]          = Renderer::ShowBoundaries;
+    RenderFlagMap["markers"]             = Renderer::ShowMarkers;
+    RenderFlagMap["automag"]             = Renderer::ShowAutoMag;
+    RenderFlagMap["atmospheres"]         = Renderer::ShowAtmospheres;
+    RenderFlagMap["grid"]                = Renderer::ShowCelestialSphere;
+    RenderFlagMap["equatorialgrid"]      = Renderer::ShowCelestialSphere;
+    RenderFlagMap["galacticgrid"]        = Renderer::ShowGalacticGrid;
+    RenderFlagMap["eclipticgrid"]        = Renderer::ShowEclipticGrid;
+    RenderFlagMap["horizontalgrid"]      = Renderer::ShowHorizonGrid;
+    RenderFlagMap["smoothlines"]         = Renderer::ShowSmoothLines;
     RenderFlagMap["partialtrajectories"] = Renderer::ShowPartialTrajectories;
-    RenderFlagMap["nebulae"] = Renderer::ShowNebulae;
-    RenderFlagMap["openclusters"] = Renderer::ShowOpenClusters;
-    RenderFlagMap["cloudshadows"] = Renderer::ShowCloudShadows;
-    RenderFlagMap["ecliptic"] = Renderer::ShowEcliptic;
+    RenderFlagMap["nebulae"]             = Renderer::ShowNebulae;
+    RenderFlagMap["openclusters"]        = Renderer::ShowOpenClusters;
+    RenderFlagMap["cloudshadows"]        = Renderer::ShowCloudShadows;
+    RenderFlagMap["ecliptic"]            = Renderer::ShowEcliptic;
 }
 
 void CelxLua::initLabelFlagMap()
@@ -606,7 +612,7 @@ void LuaState::cleanup()
             lua_gettable(state, LUA_REGISTRYINDEX);
             if (lua_isuserdata(state, -1))
             {
-                int* savedrenderflags = static_cast<int*>(lua_touserdata(state, -1));
+                uint64_t* savedrenderflags = static_cast<uint64_t*>(lua_touserdata(state, -1));
                 appCore->getRenderer()->setRenderFlags(*savedrenderflags);
                 // now delete entry:
                 lua_pushstring(state, "celestia-savedrenderflags");
@@ -775,7 +781,7 @@ bool LuaState::charEntered(const char* c_p)
         lua_gettable(costate, LUA_REGISTRYINDEX);
         if (lua_isuserdata(costate, -1))
         {
-            int* savedrenderflags = static_cast<int*>(lua_touserdata(costate, -1));
+            uint64_t* savedrenderflags = static_cast<uint64_t*>(lua_touserdata(costate, -1));
             appCore->getRenderer()->setRenderFlags(*savedrenderflags);
             // now delete entry:
             lua_pushstring(costate, "celestia-savedrenderflags");
@@ -1108,7 +1114,7 @@ bool LuaState::tick(double dt)
         if (lua_isnil(state, -1))
         {
             lua_pushstring(state, "celestia-savedrenderflags");
-            int* savedrenderflags = static_cast<int*>(lua_newuserdata(state, sizeof(int)));
+            uint64_t* savedrenderflags = static_cast<uint64_t*>(lua_newuserdata(state, sizeof(int)));
             *savedrenderflags = appCore->getRenderer()->getRenderFlags();
             lua_settable(state, LUA_REGISTRYINDEX);
             appCore->getRenderer()->setRenderFlags(0);
@@ -1574,7 +1580,7 @@ static int celestia_show(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
-    int flags = 0;
+    uint64_t flags = 0;
     for (int i = 2; i <= argc; i++)
     {
         string renderFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:show() must be strings");
@@ -1597,7 +1603,7 @@ static int celestia_hide(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
-    int flags = 0;
+    uint64_t flags = 0;
     for (int i = 2; i <= argc; i++)
     {
         string renderFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:hide() must be strings");
@@ -1624,7 +1630,7 @@ static int celestia_setrenderflags(lua_State* l)
         return 0;
     }
 
-    int renderFlags = appCore->getRenderer()->getRenderFlags();
+    uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
     lua_pushnil(l);
     while (lua_next(l, -2) != 0)
     {
@@ -1654,7 +1660,7 @@ static int celestia_setrenderflags(lua_State* l)
         }
         else if (CelxLua::RenderFlagMap.count(key) > 0)
         {
-            int flag = CelxLua::RenderFlagMap[key];
+            uint64_t flag = CelxLua::RenderFlagMap[key];
             if (value)
                 renderFlags |= flag;
             else
@@ -1677,7 +1683,7 @@ static int celestia_getrenderflags(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getrenderflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    const int renderFlags = appCore->getRenderer()->getRenderFlags();
+    const uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
     for (const auto& rfm : CelxLua::RenderFlagMap)
     {
         string key = rfm.first;

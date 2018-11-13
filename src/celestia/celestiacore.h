@@ -71,7 +71,7 @@ class View
     float y;
     float width;
     float height;
-    int renderFlags;
+    uint64_t renderFlags;
     int labelMode;
     float zoom;
     float alternateZoom;

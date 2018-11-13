@@ -53,7 +53,7 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
     case WM_COMMAND:
     {
         Renderer* renderer = Dlg->appCore->getRenderer();
-        uint32 renderFlags = renderer->getRenderFlags();
+        uint64_t renderFlags = renderer->getRenderFlags();
         uint32 labelMode = renderer->getLabelMode();
         uint32 orbitMask = renderer->getOrbitMask();
 
@@ -293,7 +293,7 @@ static void dlgCheck(HWND hDlg, WORD item, uint32 flags, uint32 f)
 
 void ViewOptionsDialog::SetControls(HWND hDlg)
 {
-    int renderFlags = appCore->getRenderer()->getRenderFlags();
+    uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
     int labelMode = appCore->getRenderer()->getLabelMode();
     int hudDetail = appCore->getHudDetail();
     int orbitMask = appCore->getRenderer()->getOrbitMask();

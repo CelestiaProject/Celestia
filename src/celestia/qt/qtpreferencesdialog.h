@@ -27,6 +27,12 @@ public:
 private slots:
     void on_starsCheck_stateChanged(int state);
     void on_planetsCheck_stateChanged(int state);
+    void on_dwarfPlanetsCheck_stateChanged(int state);
+    void on_moonsCheck_stateChanged(int state);
+    void on_minorMoonsCheck_stateChanged(int state);
+    void on_asteroidsCheck_stateChanged(int state);
+    void on_cometsCheck_stateChanged(int state);
+    void on_spacecraftsCheck_stateChanged(int state);
     void on_galaxiesCheck_stateChanged(int state);
     void on_nebulaeCheck_stateChanged(int state);
     void on_openClustersCheck_stateChanged(int state);

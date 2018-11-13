@@ -441,12 +441,12 @@ class CommandLookBack : public InstantaneousCommand
 class CommandRenderFlags : public InstantaneousCommand
 {
  public:
-    CommandRenderFlags(int _setFlags, int _clearFlags);
+    CommandRenderFlags(uint64_t _setFlags, uint64_t _clearFlags);
     void process(ExecutionEnvironment&);
 
  private:
-    int setFlags;
-    int clearFlags;
+    uint64_t setFlags;
+    uint64_t clearFlags;
 };
 
 

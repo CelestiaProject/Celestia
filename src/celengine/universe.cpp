@@ -702,7 +702,7 @@ Selection Universe::pickStar(const UniversalCoord& origin,
 class DSOPicker : public DSOHandler
 {
 public:
-    DSOPicker(const Vector3d& pickOrigin, const Vector3d& pickDir, int renderFlags, float angle);
+    DSOPicker(const Vector3d& pickOrigin, const Vector3d& pickDir, uint64_t renderFlags, float angle);
     ~DSOPicker() = default;
 
     void process(DeepSkyObject* const &, double, float);
@@ -710,7 +710,7 @@ public:
 public:
     Vector3d pickOrigin;
     Vector3d pickDir;
-    int      renderFlags;
+    uint64_t renderFlags;
 
     const DeepSkyObject* pickedDSO;
     double  sinAngle2Closest;
@@ -718,8 +718,8 @@ public:
 
 
 DSOPicker::DSOPicker(const Vector3d& pickOrigin,
-                     const Vector3d&   pickDir,
-                     int   renderFlags,
+                     const Vector3d& pickDir,
+                     uint64_t renderFlags,
                      float angle) :
     pickOrigin      (pickOrigin),
     pickDir         (pickDir),
@@ -763,7 +763,7 @@ class CloseDSOPicker : public DSOHandler
 public:
     CloseDSOPicker(const  Vector3d& pos,
                    const  Vector3d& dir,
-                   int    renderFlags,
+                   uint64_t renderFlags,
                    double maxDistance,
                    float);
     ~CloseDSOPicker() = default;
@@ -773,7 +773,7 @@ public:
 public:
     Vector3d  pickOrigin;
     Vector3d  pickDir;
-    int       renderFlags;
+    uint64_t renderFlags;
     double    maxDistance;
 
     const DeepSkyObject* closestDSO;
@@ -783,7 +783,7 @@ public:
 
 CloseDSOPicker::CloseDSOPicker(const Vector3d& pos,
                                const Vector3d& dir,
-                               int    renderFlags,
+                               uint64_t renderFlags,
                                double maxDistance,
                                float /*unused*/) :
     pickOrigin     (pos),
@@ -820,7 +820,7 @@ void CloseDSOPicker::process(DeepSkyObject* const & dso,
 
 Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
                                       const Vector3f& direction,
-                                      int   renderFlags,
+                                      uint64_t renderFlags,
                                       float faintestMag,
                                       float tolerance)
 {
@@ -855,7 +855,7 @@ Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
 Selection Universe::pick(const UniversalCoord& origin,
                          const Vector3f& direction,
                          double when,
-                         int    renderFlags,
+                         uint64_t renderFlags,
                          float  faintestMag,
                          float  tolerance)
 {

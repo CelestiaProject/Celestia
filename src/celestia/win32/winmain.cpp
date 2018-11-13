@@ -168,7 +168,7 @@ struct AppPreferences
     int winHeight;
     int winX;
     int winY;
-    int renderFlags;
+    uint64_t renderFlags;
     int labelMode;
     uint64_t locationFilter;
     int orbitMask;
@@ -2258,7 +2258,7 @@ static void BuildScriptsMenu(HMENU menuBar, const string& scriptsDir)
 
 static void syncMenusWithRendererState()
 {
-    int renderFlags = appCore->getRenderer()->getRenderFlags();
+    uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
     int labelMode = appCore->getRenderer()->getLabelMode();
     float ambientLight = appCore->getRenderer()->getAmbientLightLevel();
     unsigned int textureRes = appCore->getRenderer()->getResolution();
@@ -2318,9 +2318,9 @@ static void syncMenusWithRendererState()
     }
 
     CheckMenuItem(menuBar, ID_RENDER_ANTIALIASING,
-        (renderFlags & Renderer::ShowSmoothLines)?MF_CHECKED:MF_UNCHECKED);
+        ((renderFlags & Renderer::ShowSmoothLines) != 0)? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_AUTOMAG,
-        (renderFlags & Renderer::ShowAutoMag)?MF_CHECKED:MF_UNCHECKED);
+        (((renderFlags & Renderer::ShowAutoMag) != 0) ? MF_CHECKED : MF_UNCHECKED);
 }
 
 
@@ -3916,7 +3916,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 charCode = CelestiaCore::Key_BackTab;
 
             Renderer* r = appCore->getRenderer();
-            int oldRenderFlags = r->getRenderFlags();
+            uint64_t oldRenderFlags = r->getRenderFlags();
             int oldLabelMode = r->getLabelMode();
 
             //  Convert charCode from current locale to UTF-8

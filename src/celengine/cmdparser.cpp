@@ -20,6 +20,7 @@
 #include <celengine/astro.h>
 #include <celestia/celx.h>
 #include <celestia/celx_internal.h>
+#include <celengine/render.h>
 #include <algorithm>
 #include <Eigen/Geometry>
 
@@ -35,7 +36,7 @@
 using namespace std;
 
 
-static int parseRenderFlags(string /*s*/);
+static uint64_t parseRenderFlags(string /*s*/);
 static int parseLabelFlags(string /*s*/);
 static int parseOrbitFlags(string /*s*/);
 static int parseConstellations(CommandConstellations* cmd, string s, int act);
@@ -584,8 +585,8 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "renderflags")
     {
-        int setFlags = 0;
-        int clearFlags = 0;
+        uint64_t setFlags = 0;
+        uint64_t clearFlags = 0;
         string s;
 
         if (paramList->getString("set", s))
@@ -906,12 +907,12 @@ Command* CommandParser::parseCommand()
 }
 
 
-int parseRenderFlags(string s)
+uint64_t parseRenderFlags(string s)
 {
     istringstream in(s);
 
     Tokenizer tokenizer(&in);
-    int flags = 0;
+    uint64_t flags = 0;
 
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
