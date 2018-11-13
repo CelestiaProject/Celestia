@@ -48,7 +48,7 @@ class Universe
     Selection pick(const UniversalCoord& origin,
                    const Eigen::Vector3f& direction,
                    double when,
-                   int   renderFlags,
+                   uint64_t renderFlags,
                    float faintestMag,
                    float tolerance = 0.0f);
 
@@ -113,7 +113,7 @@ class Universe
 
     Selection pickDeepSkyObject(const UniversalCoord& origin,
                                 const Eigen::Vector3f& direction,
-                                int   renderFlags,
+                                uint64_t renderFlags,
                                 float faintest,
                                 float tolerance = 0.0f);
 

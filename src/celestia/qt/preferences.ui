@@ -51,6 +51,48 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="dwarfPlanetsCheck">
+            <property name="text">
+             <string>Dwarf planets</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="moonsCheck">
+            <property name="text">
+             <string>Moons</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="minorMoonsCheck">
+            <property name="text">
+             <string>Minor moons</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="asteroidsCheck">
+            <property name="text">
+             <string>Asteroids</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cometsCheck">
+            <property name="text">
+             <string>Comets</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="spacecraftsCheck">
+            <property name="text">
+             <string>Spacecrafts</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="galaxiesCheck">
             <property name="text">
              <string>Galaxies</string>
@@ -276,7 +318,7 @@
             <item>
              <widget class="QCheckBox" name="spacecraftOrbitsCheck">
               <property name="text">
-               <string>Spacecraft</string>
+               <string>Spacecrafts</string>
               </property>
              </widget>
             </item>

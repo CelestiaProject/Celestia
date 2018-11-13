@@ -143,35 +143,43 @@ class Renderer
         BodyLabelMask       = (PlanetLabels | DwarfPlanetLabels | MoonLabels | MinorMoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
     };
 
-    enum {
-        ShowNothing         =   0x0000,
-        ShowStars           =   0x0001,
-        ShowPlanets         =   0x0002,
-        ShowGalaxies        =   0x0004,
-        ShowDiagrams        =   0x0008,
-        ShowCloudMaps       =   0x0010,
-        ShowOrbits          =   0x0020,
-        ShowCelestialSphere =   0x0040,
-        ShowNightMaps       =   0x0080,
-        ShowAtmospheres     =   0x0100,
-        ShowSmoothLines     =   0x0200,
-        ShowEclipseShadows  =   0x0400,
-        ShowPlanetRings     =   0x0800,
-        ShowRingShadows     =   0x1000,
-        ShowBoundaries      =   0x2000,
-        ShowAutoMag         =   0x4000,
-        ShowCometTails      =   0x8000,
-        ShowMarkers         =  0x10000,
-        ShowPartialTrajectories = 0x20000,
-        ShowNebulae         =  0x40000,
-        ShowOpenClusters    =  0x80000,
-        ShowGlobulars       =  0x100000,
-        ShowCloudShadows    =  0x200000,
-        ShowGalacticGrid    =  0x400000,
-        ShowEclipticGrid    =  0x800000,
-        ShowHorizonGrid     = 0x1000000,
-        ShowEcliptic        = 0x2000000,
-        ShowTintedIllumination = 0x4000000,
+    enum RenderFlags : uint64_t
+    {
+        ShowNothing             = 0x0000000000000000,
+        ShowStars               = 0x0000000000000001,
+        ShowPlanets             = 0x0000000000000002,
+        ShowGalaxies            = 0x0000000000000004,
+        ShowDiagrams            = 0x0000000000000008,
+        ShowCloudMaps           = 0x0000000000000010,
+        ShowOrbits              = 0x0000000000000020,
+        ShowCelestialSphere     = 0x0000000000000040,
+        ShowNightMaps           = 0x0000000000000080,
+        ShowAtmospheres         = 0x0000000000000100,
+        ShowSmoothLines         = 0x0000000000000200,
+        ShowEclipseShadows      = 0x0000000000000400,
+        ShowPlanetRings         = 0x0000000000000800,
+        ShowRingShadows         = 0x0000000000001000,
+        ShowBoundaries          = 0x0000000000002000,
+        ShowAutoMag             = 0x0000000000004000,
+        ShowCometTails          = 0x0000000000008000,
+        ShowMarkers             = 0x0000000000010000,
+        ShowPartialTrajectories = 0x0000000000020000,
+        ShowNebulae             = 0x0000000000040000,
+        ShowOpenClusters        = 0x0000000000080000,
+        ShowGlobulars           = 0x0000000000100000,
+        ShowCloudShadows        = 0x0000000000200000,
+        ShowGalacticGrid        = 0x0000000000400000,
+        ShowEclipticGrid        = 0x0000000000800000,
+        ShowHorizonGrid         = 0x0000000001000000,
+        ShowEcliptic            = 0x0000000002000000,
+        ShowTintedIllumination  = 0x0000000004000000,
+        ShowDwarfPlanets        = 0x0000000008000000,
+        ShowMoons               = 0x0000000010000000,
+        ShowMinorMoons          = 0x0000000020000000,
+        ShowAsteroids           = 0x0000000040000000,
+        ShowComets              = 0x0000000080000000,
+        ShowSpacecrafts         = 0x0000000100000000,
+        ShowFadingOrbits        = 0x0000000200000000,
     };
 
     enum StarStyle
@@ -183,23 +191,32 @@ class Renderer
     };
 
     // constants
-    static const int DefaultRenderFlags = Renderer::ShowStars          |
+    constexpr static const uint64_t DefaultRenderFlags =
+                                          Renderer::ShowStars          |
                                           Renderer::ShowPlanets        |
+                                          Renderer::ShowDwarfPlanets   |
+                                          Renderer::ShowMoons          |
+                                          Renderer::ShowMinorMoons     |
+                                          Renderer::ShowAsteroids      |
+                                          Renderer::ShowComets         |
+                                          Renderer::ShowSpacecrafts    |
                                           Renderer::ShowGalaxies       |
                                           Renderer::ShowGlobulars      |
                                           Renderer::ShowCloudMaps      |
+                                          Renderer::ShowNightMaps      |
                                           Renderer::ShowAtmospheres    |
                                           Renderer::ShowEclipseShadows |
                                           Renderer::ShowPlanetRings    |
                                           Renderer::ShowRingShadows    |
+                                          Renderer::ShowCloudShadows   |
                                           Renderer::ShowCometTails     |
                                           Renderer::ShowNebulae        |
                                           Renderer::ShowOpenClusters   |
                                           Renderer::ShowAutoMag        |
                                           Renderer::ShowSmoothLines;
 
-    int getRenderFlags() const;
-    void setRenderFlags(int);
+    uint64_t getRenderFlags() const;
+    void setRenderFlags(uint64_t);
     int getLabelMode() const;
     void setLabelMode(int);
     float getAmbientLightLevel() const;
@@ -567,6 +584,8 @@ class Renderer
                      float nearDist,
                      float farDist);
 
+    void updateBodyVisibilityMask();
+
 #ifdef USE_HDR
  private:
     int sceneTexWidth, sceneTexHeight;
@@ -614,7 +633,8 @@ class Renderer
 
     int renderMode;
     int labelMode;
-    int renderFlags;
+    uint64_t renderFlags;
+    int bodyVisibilityMask{ ~0 };
     int orbitMask;
     float ambientLightLevel;
     float brightnessBias;

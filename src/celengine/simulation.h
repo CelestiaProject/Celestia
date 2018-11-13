@@ -41,7 +41,7 @@ class Simulation
     void draw(Renderer&);
     void render(Renderer&, Observer&);
 
-    Selection pickObject(const Eigen::Vector3f& pickRay, int renderFlags, float tolerance = 0.0f);
+    Selection pickObject(const Eigen::Vector3f& pickRay, uint64_t renderFlags, float tolerance = 0.0f);
 
     Universe* getUniverse() const;
 

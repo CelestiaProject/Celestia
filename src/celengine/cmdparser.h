@@ -14,6 +14,7 @@
 
 #include <celengine/command.h>
 #include <celengine/parser.h>
+#include <celengine/render.h>
 #include <iostream>
 
 

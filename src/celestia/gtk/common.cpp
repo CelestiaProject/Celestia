@@ -274,18 +274,5 @@ void setSaneWinPosition(AppData* app, int x, int y)
 /* Sets default render flags. Exists because the defaults are a little lame. */
 void setDefaultRenderFlags(AppData* app)
 {
-    app->renderer->setRenderFlags(Renderer::ShowAtmospheres |
-                                  Renderer::ShowAutoMag |
-                                  Renderer::ShowStars |
-                                  Renderer::ShowPlanets |
-                                  Renderer::ShowSmoothLines |
-                                  Renderer::ShowCometTails |
-                                  Renderer::ShowPlanetRings |
-                                  Renderer::ShowRingShadows |
-                                  Renderer::ShowCloudMaps |
-                                  Renderer::ShowRingShadows |
-                                  Renderer::ShowEclipseShadows |
-                                  Renderer::ShowGalaxies |
-                                  Renderer::ShowNebulae |
-                                  Renderer::ShowNightMaps);
+    app->renderer->setRenderFlags(Renderer::DefaultRenderFlags);
 }

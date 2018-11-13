@@ -70,7 +70,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     GLContext* glContext = appCore->getRenderer()->getGLContext();
     GLContext::GLRenderPath renderPath = glContext->getRenderPath();
 
-    int renderFlags = renderer->getRenderFlags();
+    uint64_t renderFlags = renderer->getRenderFlags();
     int orbitMask = renderer->getOrbitMask();
     uint64_t locationFlags = observer->getLocationFilter();
     int labelMode = renderer->getLabelMode();
@@ -87,24 +87,30 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
         colors = ColorTable_Enhanced;
     }
 
-    ui.starsCheck->setChecked(renderFlags & Renderer::ShowStars);
-    ui.planetsCheck->setChecked(renderFlags & Renderer::ShowPlanets);
-    ui.galaxiesCheck->setChecked(renderFlags & Renderer::ShowGalaxies);
-    ui.nebulaeCheck->setChecked(renderFlags & Renderer::ShowNebulae);
-    ui.openClustersCheck->setChecked(renderFlags & Renderer::ShowOpenClusters);
-    ui.globularClustersCheck->setChecked(renderFlags & Renderer::ShowGlobulars);
+    ui.starsCheck->setChecked((renderFlags & Renderer::ShowStars) != 0);
+    ui.planetsCheck->setChecked((renderFlags & Renderer::ShowPlanets) != 0);
+    ui.dwarfPlanetsCheck->setChecked((renderFlags & Renderer::ShowDwarfPlanets) != 0);
+    ui.moonsCheck->setChecked((renderFlags & Renderer::ShowMoons) != 0);
+    ui.minorMoonsCheck->setChecked((renderFlags & Renderer::ShowMinorMoons) != 0);
+    ui.asteroidsCheck->setChecked((renderFlags & Renderer::ShowAsteroids) != 0);
+    ui.cometsCheck->setChecked((renderFlags & Renderer::ShowComets) != 0);
+    ui.spacecraftsCheck->setChecked((renderFlags & Renderer::ShowSpacecrafts) != 0);
+    ui.galaxiesCheck->setChecked((renderFlags & Renderer::ShowGalaxies) != 0);
+    ui.nebulaeCheck->setChecked((renderFlags & Renderer::ShowNebulae) != 0);
+    ui.openClustersCheck->setChecked((renderFlags & Renderer::ShowOpenClusters) != 0);
+    ui.globularClustersCheck->setChecked((renderFlags & Renderer::ShowGlobulars) != 0);
 
-    ui.atmospheresCheck->setChecked(renderFlags & Renderer::ShowAtmospheres);
-    ui.cloudsCheck->setChecked(renderFlags & Renderer::ShowCloudMaps);
-    ui.cloudShadowsCheck->setChecked(renderFlags & Renderer::ShowCloudShadows);
-    ui.eclipseShadowsCheck->setChecked(renderFlags & Renderer::ShowEclipseShadows);
-    ui.ringShadowsCheck->setChecked(renderFlags & Renderer::ShowRingShadows);
-    ui.planetRingsCheck->setChecked(renderFlags & Renderer::ShowPlanetRings);
-    ui.nightsideLightsCheck->setChecked(renderFlags & Renderer::ShowNightMaps);
-    ui.cometTailsCheck->setChecked(renderFlags & Renderer::ShowCometTails);
+    ui.atmospheresCheck->setChecked((renderFlags & Renderer::ShowAtmospheres) != 0);
+    ui.cloudsCheck->setChecked((renderFlags & Renderer::ShowCloudMaps) != 0);
+    ui.cloudShadowsCheck->setChecked((renderFlags & Renderer::ShowCloudShadows) != 0);
+    ui.eclipseShadowsCheck->setChecked((renderFlags & Renderer::ShowEclipseShadows) != 0);
+    ui.ringShadowsCheck->setChecked((renderFlags & Renderer::ShowRingShadows) != 0);
+    ui.planetRingsCheck->setChecked((renderFlags & Renderer::ShowPlanetRings) != 0);
+    ui.nightsideLightsCheck->setChecked((renderFlags & Renderer::ShowNightMaps) != 0);
+    ui.cometTailsCheck->setChecked((renderFlags & Renderer::ShowCometTails) != 0);
     ui.limitOfKnowledgeCheck->setChecked(observer->getDisplayedSurface() == "limit of knowledge");
 
-    ui.orbitsCheck->setChecked(renderFlags & Renderer::ShowOrbits);
+    ui.orbitsCheck->setChecked((renderFlags & Renderer::ShowOrbits) != 0 );
     ui.starOrbitsCheck->setChecked(orbitMask & Body::Stellar);
     ui.planetOrbitsCheck->setChecked(orbitMask & Body::Planet);
     ui.dwarfPlanetOrbitsCheck->setChecked(orbitMask & Body::DwarfPlanet);
@@ -113,19 +119,19 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.asteroidOrbitsCheck->setChecked(orbitMask & Body::Asteroid);
     ui.cometOrbitsCheck->setChecked(orbitMask & Body::Comet);
     ui.spacecraftOrbitsCheck->setChecked(orbitMask & Body::Spacecraft);
-    ui.partialTrajectoriesCheck->setChecked(renderFlags & Renderer::ShowPartialTrajectories);
+    ui.partialTrajectoriesCheck->setChecked((renderFlags & Renderer::ShowPartialTrajectories) != 0);
 
-    ui.equatorialGridCheck->setChecked(renderFlags & Renderer::ShowCelestialSphere);
-    ui.eclipticGridCheck->setChecked(renderFlags & Renderer::ShowEclipticGrid);
-    ui.galacticGridCheck->setChecked(renderFlags & Renderer::ShowGalacticGrid);
-    ui.horizontalGridCheck->setChecked(renderFlags & Renderer::ShowHorizonGrid);
+    ui.equatorialGridCheck->setChecked((renderFlags & Renderer::ShowCelestialSphere) != 0);
+    ui.eclipticGridCheck->setChecked((renderFlags & Renderer::ShowEclipticGrid) != 0);
+    ui.galacticGridCheck->setChecked((renderFlags & Renderer::ShowGalacticGrid) != 0);
+    ui.horizontalGridCheck->setChecked((renderFlags & Renderer::ShowHorizonGrid) != 0);
 
-    ui.diagramsCheck->setChecked(renderFlags & Renderer::ShowDiagrams);
-    ui.boundariesCheck->setChecked(renderFlags & Renderer::ShowBoundaries);
+    ui.diagramsCheck->setChecked((renderFlags & Renderer::ShowDiagrams) != 0);
+    ui.boundariesCheck->setChecked((renderFlags & Renderer::ShowBoundaries) != 0);
     ui.latinNamesCheck->setChecked(!(labelMode & Renderer::I18nConstellationLabels));
 
-    ui.markersCheck->setChecked(renderFlags & Renderer::ShowMarkers);
-    ui.eclipticLineCheck->setChecked(renderFlags & Renderer::ShowEcliptic);
+    ui.markersCheck->setChecked((renderFlags & Renderer::ShowMarkers) != 0);
+    ui.eclipticLineCheck->setChecked((renderFlags & Renderer::ShowEcliptic) != 0);
 
     ui.starLabelsCheck->setChecked(labelMode & Renderer::StarLabels);
     ui.planetLabelsCheck->setChecked(labelMode & Renderer::PlanetLabels);
@@ -216,12 +222,12 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
 
 static void setRenderFlag(CelestiaCore* appCore,
-                          int flag,
+                          uint64_t flag,
                           int state)
 {
     bool isActive = (state == Qt::Checked);
     Renderer* renderer = appCore->getRenderer();
-    int renderFlags = renderer->getRenderFlags() & ~flag;
+    uint64_t renderFlags = renderer->getRenderFlags() & ~flag;
     renderer->setRenderFlags(renderFlags | (isActive ? flag : 0));
 }
 
@@ -269,6 +275,42 @@ void PreferencesDialog::on_starsCheck_stateChanged(int state)
 void PreferencesDialog::on_planetsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowPlanets, state);
+}
+
+
+void PreferencesDialog::on_dwarfPlanetsCheck_stateChanged(int state)
+{
+    setRenderFlag(appCore, Renderer::ShowDwarfPlanets, state);
+}
+
+
+void PreferencesDialog::on_moonsCheck_stateChanged(int state)
+{
+    setRenderFlag(appCore, Renderer::ShowMoons, state);
+}
+
+
+void PreferencesDialog::on_minorMoonsCheck_stateChanged(int state)
+{
+    setRenderFlag(appCore, Renderer::ShowMinorMoons, state);
+}
+
+
+void PreferencesDialog::on_asteroidsCheck_stateChanged(int state)
+{
+    setRenderFlag(appCore, Renderer::ShowAsteroids, state);
+}
+
+
+void PreferencesDialog::on_cometsCheck_stateChanged(int state)
+{
+    setRenderFlag(appCore, Renderer::ShowComets, state);
+}
+
+
+void PreferencesDialog::on_spacecraftsCheck_stateChanged(int state)
+{
+    setRenderFlag(appCore, Renderer::ShowSpacecrafts, state);
 }
 
 

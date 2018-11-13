@@ -476,7 +476,7 @@ void CommandLookBack::process(ExecutionEnvironment& env)
 //////////////////
 // Set render flags command
 
-CommandRenderFlags::CommandRenderFlags(int _setFlags, int _clearFlags) :
+CommandRenderFlags::CommandRenderFlags(uint64_t _setFlags, uint64_t _clearFlags) :
     setFlags(_setFlags), clearFlags(_clearFlags)
 {
 }

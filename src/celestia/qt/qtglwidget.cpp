@@ -45,25 +45,6 @@
 using namespace Qt;
 
 
-const int DEFAULT_RENDER_FLAGS =
-          Renderer::ShowStars              |
-          Renderer::ShowPlanets            |
-          Renderer::ShowGalaxies           |
-          Renderer::ShowGlobulars          |
-          Renderer::ShowCloudMaps          |
-          Renderer::ShowAtmospheres        |
-          Renderer::ShowEclipseShadows     |
-          Renderer::ShowPlanetRings        |
-          Renderer::ShowRingShadows        |
-          Renderer::ShowCometTails         |
-          Renderer::ShowNebulae            |
-          Renderer::ShowOpenClusters       |
-          Renderer::ShowAutoMag            |
-          Renderer::ShowNightMaps          |
-          Renderer::ShowCloudShadows       |
-          Renderer::ShowTintedIllumination |
-          Renderer::ShowSmoothLines;
-
 const int DEFAULT_ORBIT_MASK = Body::Planet | Body::Moon | Body::Stellar;
 
 const int DEFAULT_LABEL_MODE = 2176;
@@ -141,7 +122,7 @@ void CelestiaGlWidget::initializeGL()
 
     // Read saved settings
     QSettings settings;
-    appRenderer->setRenderFlags(settings.value("RenderFlags", DEFAULT_RENDER_FLAGS).toInt());
+    appRenderer->setRenderFlags(settings.value("RenderFlags", static_cast<quint64>(Renderer::DefaultRenderFlags)).toULongLong());
     appRenderer->setOrbitMask(settings.value("OrbitMask", DEFAULT_ORBIT_MASK).toInt());
     appRenderer->setLabelMode(settings.value("LabelMode", DEFAULT_LABEL_MODE).toInt());
     appRenderer->setAmbientLightLevel((float) settings.value("AmbientLightLevel", DEFAULT_AMBIENT_LIGHT_LEVEL).toDouble());

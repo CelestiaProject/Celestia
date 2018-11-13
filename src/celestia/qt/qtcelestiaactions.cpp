@@ -25,47 +25,47 @@ CelestiaActions::CelestiaActions(QObject* parent,
     equatorialGridAction = new QAction(_("Eq"), this);
     equatorialGridAction->setToolTip(_("Equatorial coordinate grid"));
     equatorialGridAction->setCheckable(true);
-    equatorialGridAction->setData(Renderer::ShowCelestialSphere);
+    equatorialGridAction->setData(static_cast<quint64>(Renderer::ShowCelestialSphere));
 
     galacticGridAction = new QAction(_("Ga"), this);
     galacticGridAction->setToolTip(_("Galactic coordinate grid"));
     galacticGridAction->setCheckable(true);
-    galacticGridAction->setData(Renderer::ShowGalacticGrid);
+    galacticGridAction->setData(static_cast<quint64>(Renderer::ShowGalacticGrid));
 
     eclipticGridAction = new QAction(_("Ec"), this);
     eclipticGridAction->setToolTip(_("Ecliptic coordinate grid"));
     eclipticGridAction->setCheckable(true);
-    eclipticGridAction->setData(Renderer::ShowEclipticGrid);
+    eclipticGridAction->setData(static_cast<quint64>(Renderer::ShowEclipticGrid));
 
     horizonGridAction = new QAction(_("Hz"), this);
     horizonGridAction->setToolTip(_("Horizontal coordinate grid"));
     horizonGridAction->setCheckable(true);
-    horizonGridAction->setData(Renderer::ShowHorizonGrid);
+    horizonGridAction->setData(static_cast<quint64>(Renderer::ShowHorizonGrid));
 
     eclipticAction = new QAction(_("Ecl"), this);
     eclipticAction->setToolTip(_("Ecliptic line"));
     eclipticAction->setCheckable(true);
-    eclipticAction->setData(Renderer::ShowEcliptic);
+    eclipticAction->setData(static_cast<quint64>(Renderer::ShowEcliptic));
 
     markersAction = new QAction(_("M"), this);
     markersAction->setToolTip(_("Markers"));
     markersAction->setCheckable(true);
-    markersAction->setData(Renderer::ShowMarkers);
+    markersAction->setData(static_cast<quint64>(Renderer::ShowMarkers));
 
     constellationsAction = new QAction(_("C"), this);
     constellationsAction->setToolTip(_("Constellations"));
     constellationsAction->setCheckable(true);
-    constellationsAction->setData(Renderer::ShowDiagrams);
+    constellationsAction->setData(static_cast<quint64>(Renderer::ShowDiagrams));
 
     boundariesAction = new QAction(_("B"), this);
     boundariesAction->setToolTip(_("Constellation boundaries"));
     boundariesAction->setCheckable(true);
-    boundariesAction->setData(Renderer::ShowBoundaries);
+    boundariesAction->setData(static_cast<quint64>(Renderer::ShowBoundaries));
 
     orbitsAction = new QAction(_("O"), this);
     orbitsAction->setToolTip(_("Orbits"));
     orbitsAction->setCheckable(true);
-    orbitsAction->setData(Renderer::ShowOrbits);
+    orbitsAction->setData(static_cast<quint64>(Renderer::ShowOrbits));
 
     connect(equatorialGridAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(galacticGridAction,     SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
@@ -232,7 +232,7 @@ CelestiaActions::~CelestiaActions()
 
 void CelestiaActions::syncWithRenderer(const Renderer* renderer)
 {
-    int renderFlags = renderer->getRenderFlags();
+    auto renderFlags = renderer->getRenderFlags();
     int labelMode   = renderer->getLabelMode();
     int orbitMask   = renderer->getOrbitMask();
     int textureRes  = renderer->getResolution();
@@ -321,7 +321,7 @@ void CelestiaActions::slotToggleRenderFlag()
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != nullptr)
     {
-        int renderFlag = act->data().toInt();
+        uint64_t renderFlag = act->data().toULongLong();
         appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() ^ renderFlag);
     }
 }

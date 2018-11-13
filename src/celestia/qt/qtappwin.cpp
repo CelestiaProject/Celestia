@@ -562,7 +562,7 @@ void CelestiaAppWindow::writeSettings()
 
     // Renderer settings
     Renderer* renderer = m_appCore->getRenderer();
-    settings.setValue("RenderFlags", renderer->getRenderFlags());
+    settings.setValue("RenderFlags", static_cast<quint64>(renderer->getRenderFlags()));
     settings.setValue("OrbitMask", renderer->getOrbitMask());
     settings.setValue("LabelMode", renderer->getLabelMode());
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());

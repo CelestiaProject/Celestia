@@ -237,6 +237,19 @@ Color Renderer::EclipticColor           (0.5f,   0.1f,   0.1f);
 
 Color Renderer::SelectionCursorColor    (1.0f,   0.0f,   0.0f);
 
+// Solar system objects
+constexpr const uint64_t ShowSSO = Renderer::ShowPlanets      |
+                                   Renderer::ShowDwarfPlanets |
+                                   Renderer::ShowMoons        |
+                                   Renderer::ShowMinorMoons   |
+                                   Renderer::ShowAsteroids    |
+                                   Renderer::ShowComets       |
+                                   Renderer::ShowSpacecrafts;
+// Deep Sky Objects
+constexpr const uint64_t ShowDSO = Renderer::ShowGalaxies     |
+                                   Renderer::ShowGlobulars    |
+                                   Renderer::ShowNebulae      |
+                                   Renderer::ShowOpenClusters;
 
 #ifdef ENABLE_SELF_SHADOW
 static FramebufferObject* shadowFbo = nullptr;
@@ -458,7 +471,7 @@ Renderer::Renderer() :
     faintestAutoMag45deg(8.0f), //def. 7.0f
     renderMode(GL_FILL),
     labelMode(LocationLabels), //def. NoLabels
-    renderFlags(ShowStars | ShowPlanets),
+    renderFlags(DefaultRenderFlags),
     orbitMask(Body::Planet | Body::Moon | Body::Stellar),
     ambientLightLevel(0.1f),
     brightnessBias(0.0f),
@@ -1166,14 +1179,15 @@ void Renderer::setRenderMode(int _renderMode)
     markSettingsChanged();
 }
 
-int Renderer::getRenderFlags() const
+uint64_t Renderer::getRenderFlags() const
 {
     return renderFlags;
 }
 
-void Renderer::setRenderFlags(int _renderFlags)
+void Renderer::setRenderFlags(uint64_t _renderFlags)
 {
     renderFlags = _renderFlags;
+    updateBodyVisibilityMask();
     markSettingsChanged();
 }
 
@@ -1447,14 +1461,14 @@ static void disableSmoothLines()
 }
 
 
-inline void enableSmoothLines(int renderFlags)
+inline void enableSmoothLines(uint64_t renderFlags)
 {
     if ((renderFlags & Renderer::ShowSmoothLines) != 0)
         enableSmoothLines();
 }
 
 
-inline void disableSmoothLines(int renderFlags)
+inline void disableSmoothLines(uint64_t renderFlags)
 {
     if ((renderFlags & Renderer::ShowSmoothLines) != 0)
         disableSmoothLines();
@@ -1840,7 +1854,7 @@ setupLightSources(const vector<const Star*>& nearStars,
                   const UniversalCoord& observerPos,
                   double t,
                   vector<LightSource>& lightSources,
-                  int renderFlags)
+                  uint64_t renderFlags)
 {
     lightSources.clear();
 
@@ -2543,7 +2557,7 @@ void Renderer::draw(const Observer& observer,
     bool foundBrightestStar = false;
 #endif
 
-    if ((renderFlags & ShowPlanets) != 0)
+    if ((renderFlags & ShowSSO) != 0)
     {
         nearStars.clear();
         universe.getNearStars(observer.getPosition(), 1.0f, nearStars);
@@ -2858,11 +2872,7 @@ void Renderer::draw(const Observer& observer,
     glEnable(GL_TEXTURE_2D);
 
     // Render deep sky objects
-    if ((renderFlags & (ShowGalaxies |
-                        ShowGlobulars |
-                        ShowNebulae |
-                        ShowOpenClusters)) != 0 &&
-        universe.getDSOCatalog() != nullptr)
+    if ((renderFlags & ShowDSO) != 0 && universe.getDSOCatalog() != nullptr)
     {
         renderDeepSkyObjects(universe, observer, faintestMag);
     }
@@ -6027,8 +6037,9 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
             bool isLabeled = (body->getOrbitClassification() & labelClassMask) != 0;
             bool visible = body->isVisible();
+            bool classVisible = (bodyVisibilityMask & body->getClassification()) != 0;
 
-            if ((discSize > 1 || visibleAsPoint || isLabeled) && visible)
+            if ((discSize > 1 || visibleAsPoint || isLabeled) && visible && classVisible)
             {
                 RenderListEntry rle;
 
@@ -6131,7 +6142,6 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
                                  now);
             }
         } // end subtree traverse
-
     }
 }
 
@@ -6479,7 +6489,7 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     int nProcessed{ 0 };
     int nLabelled{ 0 };
 
-    int renderFlags{ 0 };
+    uint64_t renderFlags{ 0 };
     int labelMode{ 0 };
 };
 
@@ -7860,4 +7870,26 @@ void Renderer::notifyWatchers() const
     {
         watcher->notifyRenderSettingsChanged(this);
     }
+}
+
+void Renderer::updateBodyVisibilityMask()
+{
+    int flags = 0;
+
+    if ((renderFlags & Renderer::ShowPlanets) != 0)
+        flags |= Body::Planet;
+    if ((renderFlags & Renderer::ShowDwarfPlanets) != 0)
+        flags |= Body::DwarfPlanet;
+    if ((renderFlags & Renderer::ShowMoons) != 0)
+        flags |= Body::Moon;
+    if ((renderFlags & Renderer::ShowMinorMoons) != 0)
+        flags |= Body::MinorMoon;
+    if ((renderFlags & Renderer::ShowAsteroids) != 0)
+        flags |= Body::Asteroid;
+    if ((renderFlags & Renderer::ShowComets) != 0)
+        flags |= Body::Comet;
+    if ((renderFlags & Renderer::ShowSpacecrafts) != 0)
+        flags |= Body::Spacecraft;
+
+    bodyVisibilityMask = flags;
 }
