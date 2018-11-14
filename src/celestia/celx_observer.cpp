@@ -901,10 +901,11 @@ static int observer_setlocationflags(lua_State* l)
     if (!lua_istable(l, 2))
     {
         celx.doError("Argument to observer:setlocationflags() must be a table");
+        return 0;
     }
 
     lua_pushnil(l);
-    uint64_t locationFlags = obs->getLocationFilter();
+    auto locationFlags = obs->getLocationFilter();
     while (lua_next(l, -2) != 0)
     {
         string key;
@@ -916,6 +917,7 @@ static int observer_setlocationflags(lua_State* l)
         else
         {
             celx.doError("Keys in table-argument to observer:setlocationflags() must be strings");
+            return 0;
         }
         if (lua_isboolean(l, -1))
         {
@@ -924,6 +926,7 @@ static int observer_setlocationflags(lua_State* l)
         else
         {
             celx.doError("Values in table-argument to observer:setlocationflags() must be boolean");
+            return 0;
         }
         if (CelxLua::LocationFlagMap.count(key) == 0)
         {
@@ -931,7 +934,7 @@ static int observer_setlocationflags(lua_State* l)
         }
         else
         {
-            uint64_t flag = CelxLua::LocationFlagMap[key];
+            const auto flag = CelxLua::LocationFlagMap[key];
             if (value)
             {
                 locationFlags |= flag;
