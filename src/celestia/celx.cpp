@@ -78,9 +78,9 @@ const char* CelxLua::ClassNames[] =
     "class_phase",
 };
 
-CelxLua::FlagMap CelxLua::RenderFlagMap;
+CelxLua::FlagMap64 CelxLua::RenderFlagMap;
 CelxLua::FlagMap CelxLua::LabelFlagMap;
-CelxLua::FlagMap CelxLua::LocationFlagMap;
+CelxLua::FlagMap64 CelxLua::LocationFlagMap;
 CelxLua::FlagMap CelxLua::BodyTypeMap;
 CelxLua::FlagMap CelxLua::OverlayElementMap;
 CelxLua::FlagMap CelxLua::OrbitVisibilityMap;

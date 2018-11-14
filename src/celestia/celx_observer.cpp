@@ -953,15 +953,12 @@ static int observer_getlocationflags(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected for observer:getlocationflags()");
     Observer* obs = this_observer(l);
     lua_newtable(l);
-    CelxLua::FlagMap::const_iterator it = CelxLua::LocationFlagMap.begin();
-    const uint64_t locationFlags = obs->getLocationFilter();
-    while (it != CelxLua::LocationFlagMap.end())
+    const auto locationFlags = obs->getLocationFilter();
+    for (const auto& it : CelxLua::LocationFlagMap)
     {
-        string key = it->first;
-        lua_pushstring(l, key.c_str());
-        lua_pushboolean(l, (it->second & locationFlags) != 0);
-        lua_settable(l,-3);
-        it++;
+        lua_pushstring(l, it.first.c_str());
+        lua_pushboolean(l, (it.second & locationFlags) != 0);
+        lua_settable(l, -3);
     }
     return 1;
 }
