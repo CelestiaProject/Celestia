@@ -5019,12 +5019,10 @@ bool Renderer::testEclipse(const Body& receiver,
     LightingState::EclipseShadowVector& shadows = *lightingState.shadows[lightIndex];
     bool isReceiverShadowed = false;
 
-    // Ignore situations where the shadow casting body is much smaller than
-    // the receiver, as these shadows aren't likely to be relevant.  Also,
-    // ignore eclipses where the caster is not an ellipsoid, since we can't
+    // 15.11.2018: Eclipsing body size compared to eclipsed body is now always relevant.
+    // Ignore eclipses where the caster is not an ellipsoid, since we can't
     // generate correct shadows in this case.
-    if (caster.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
-        caster.hasVisibleGeometry() &&
+    if (caster.hasVisibleGeometry() &&
         caster.extant(now) &&
         caster.isEllipsoid())
     {
