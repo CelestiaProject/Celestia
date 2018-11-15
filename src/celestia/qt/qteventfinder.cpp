@@ -238,9 +238,6 @@ double QtEclipseFinder::findEclipseEnd(const Body& receiver, const Body& occulte
 }
 
 
-
-
-
 void QtEclipseFinder::findEclipses(double startDate,
                                    double endDate,
                                    int eclipseTypeMask,
@@ -307,16 +304,40 @@ void QtEclipseFinder::findEclipses(double startDate,
             // of previous one.
             if (t > previousEclipseEndTimes[i])
             {
-                if (testEclipse(*receiver, *occulter, t))
+                if (eclipseTypeMask & SolarEclipse)
                 {
-                    EclipseRecord eclipse;
-                    eclipse.startTime = findEclipseStart(*receiver, *occulter, t, searchStep, durationPrecision);
-                    eclipse.endTime = findEclipseEnd(*receiver, *occulter, t, searchStep, durationPrecision);
-                    eclipse.receiver = receiver;
-                    eclipse.occulter = occulter;
-                    eclipses.push_back(eclipse);
+                    occulter = testBodies[i];
+                    receiver = body;
 
-                    previousEclipseEndTimes[i] = eclipse.endTime;
+                    if (testEclipse(*receiver, *occulter, t))
+                    {
+                        EclipseRecord eclipse;
+                        eclipse.startTime = findEclipseStart(*receiver, *occulter, t, searchStep, durationPrecision);
+                        eclipse.endTime = findEclipseEnd(*receiver, *occulter, t, searchStep, durationPrecision);
+                        eclipse.receiver = receiver;
+                        eclipse.occulter = occulter;
+                        eclipses.push_back(eclipse);
+
+                        previousEclipseEndTimes[i] = eclipse.endTime;
+                    }
+                }
+
+                if (eclipseTypeMask & LunarEclipse)
+                {
+                    occulter = body;
+                    receiver = testBodies[i];
+
+                    if (testEclipse(*receiver, *occulter, t))
+                    {
+                        EclipseRecord eclipse;
+                        eclipse.startTime = findEclipseStart(*receiver, *occulter, t, searchStep, durationPrecision);
+                        eclipse.endTime = findEclipseEnd(*receiver, *occulter, t, searchStep, durationPrecision);
+                        eclipse.receiver = receiver;
+                        eclipse.occulter = occulter;
+                        eclipses.push_back(eclipse);
+
+                        previousEclipseEndTimes[i] = eclipse.endTime;
+                    }
                 }
             }
         }
@@ -673,6 +694,7 @@ void EventFinder::slotFindEclipses()
     finder.findEclipses(startTimeTDB, endTimeTDB,
                         eclipseTypeMask,
                         eclipses);
+
     delete progress;
     progress = nullptr;
 
