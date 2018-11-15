@@ -56,7 +56,8 @@ class CelestiaAppWindow : public QMainWindow
     void celestia_tick();
     void slotShowSelectionContextMenu(const QPoint& pos, Selection& sel);
     void slotManual();
-    void setFPS(int fps = 0);
+    void setCheckedFPS();
+    void setFPS(int);
     void setCustomFPS();
 
  private slots:
