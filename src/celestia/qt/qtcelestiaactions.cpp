@@ -172,6 +172,11 @@ CelestiaActions::CelestiaActions(QObject* parent,
     lowResAction          = createCheckableAction(_("Low"),    lores);
     mediumResAction       = createCheckableAction(_("Medium"), medres);
     highResAction         = createCheckableAction(_("High"),   hires);
+    QActionGroup *texResGroup = new QActionGroup(this);
+    texResGroup->addAction(lowResAction);
+    texResGroup->addAction(mediumResAction);
+    texResGroup->addAction(highResAction);
+    texResGroup->setExclusive(true);
     connect(lowResAction,    SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(mediumResAction, SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(highResAction,   SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
@@ -193,6 +198,11 @@ CelestiaActions::CelestiaActions(QObject* parent,
     pointStarAction      = createCheckableAction(_("Points"),         Renderer::PointStars);
     fuzzyPointStarAction = createCheckableAction(_("Fuzzy Points"),   Renderer::FuzzyPointStars);
     scaledDiscStarAction = createCheckableAction(_("Scaled Discs"),   Renderer::ScaledDiscStars);
+    QActionGroup *starStyleGroup = new QActionGroup(this);
+    starStyleGroup->addAction(pointStarAction);
+    starStyleGroup->addAction(fuzzyPointStarAction);
+    starStyleGroup->addAction(scaledDiscStarAction);
+    starStyleGroup->setExclusive(true);
     connect(pointStarAction,      SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
     connect(fuzzyPointStarAction, SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
     connect(scaledDiscStarAction, SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
