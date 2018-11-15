@@ -52,6 +52,12 @@
         <menuitem action='RenderNightLights'/>
         <menuitem action='RenderOpenClusters'/>
         <menuitem action='RenderPlanets'/>
+        <menuitem action='RenderDwarfPlanets'/>
+        <menuitem action='RenderMoons'/>
+        <menuitem action='RenderMinorMoons'/>
+        <menuitem action='RenderAsteroids'/>
+        <menuitem action='RenderComets'/>
+        <menuitem action='RenderSpacecrafts'/>
         <menuitem action='RenderRingShadows'/>
         <menuitem action='RenderStars'/>
       </menu>
@@ -69,9 +75,11 @@
         <menuitem action='LabelGlobulars'/>
         <menuitem action='LabelLocations'/>
         <menuitem action='LabelMoons'/>
+        <menuitem action='LabelMinorMoons'/>
         <menuitem action='LabelNebulae'/>
         <menuitem action='LabelOpenClusters'/>
         <menuitem action='LabelPlanets'/>
+        <menuitem action='LabelDwarfPlanets'/>
         <menuitem action='LabelSpacecraft'/>
         <menuitem action='LabelStars'/>
       </menu>

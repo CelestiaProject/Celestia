@@ -22,7 +22,7 @@
 
 /* Definitions: Helpers */
 static void getFlag(GKeyFile* file, int *flags, int setting, const gchar* section, const gchar* key, int* errors);
-
+static void getFlag64(GKeyFile* file, uint64_t *flags, uint64_t setting, const gchar* section, const gchar* key, int* errors);
 
 /* ENTRY: Initializes and reads into memory the preferences */
 void initSettingsFile(AppData* app)
@@ -88,7 +88,8 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 {
     GError* e;
     float ambientLight, visualMagnitude, galaxyLightGain;
-    int errors, verbosity, starStyle, textureResolution, distanceLimit, rf, om, lm;
+    int errors, verbosity, starStyle, textureResolution, distanceLimit, om, lm;
+    uint64_t rf;
 
     /* See comment in applySettingsFilePrefs() */
     e = NULL;
@@ -140,29 +141,35 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
     /* Render Flags */
     errors = 0;
     rf = Renderer::ShowNothing;
-    getFlag(file, &rf, Renderer::ShowStars, "RenderFlags", "stars", &errors);
-    getFlag(file, &rf, Renderer::ShowPlanets, "RenderFlags", "planets", &errors);
-    getFlag(file, &rf, Renderer::ShowGalaxies, "RenderFlags", "galaxies", &errors);
-    getFlag(file, &rf, Renderer::ShowDiagrams, "RenderFlags", "diagrams", &errors);
-    getFlag(file, &rf, Renderer::ShowCloudMaps, "RenderFlags", "cloudMaps", &errors);
-    getFlag(file, &rf, Renderer::ShowOrbits, "RenderFlags", "orbits", &errors);
-    getFlag(file, &rf, Renderer::ShowCelestialSphere, "RenderFlags", "celestialSphere", &errors);
-    getFlag(file, &rf, Renderer::ShowNightMaps, "RenderFlags", "nightMaps", &errors);
-    getFlag(file, &rf, Renderer::ShowAtmospheres, "RenderFlags", "atmospheres", &errors);
-    getFlag(file, &rf, Renderer::ShowSmoothLines, "RenderFlags", "smoothLines", &errors);
-    getFlag(file, &rf, Renderer::ShowEclipseShadows, "RenderFlags", "eclipseShadows", &errors);
-    getFlag(file, &rf, Renderer::ShowRingShadows, "RenderFlags", "ringShadows", &errors);
-    getFlag(file, &rf, Renderer::ShowBoundaries, "RenderFlags", "boundaries", &errors);
-    getFlag(file, &rf, Renderer::ShowAutoMag, "RenderFlags", "autoMag", &errors);
-    getFlag(file, &rf, Renderer::ShowCometTails, "RenderFlags", "cometTails", &errors);
-    getFlag(file, &rf, Renderer::ShowMarkers, "RenderFlags", "markers", &errors);
-    getFlag(file, &rf, Renderer::ShowPartialTrajectories, "RenderFlags", "partialTrajectories", &errors);
-    getFlag(file, &rf, Renderer::ShowNebulae, "RenderFlags", "nebulae", &errors);
-    getFlag(file, &rf, Renderer::ShowOpenClusters, "RenderFlags", "openClusters", &errors);
-    getFlag(file, &rf, Renderer::ShowGlobulars, "RenderFlags", "globulars", &errors);
-    getFlag(file, &rf, Renderer::ShowGalacticGrid, "RenderFlags", "gridGalactic", &errors);
-    getFlag(file, &rf, Renderer::ShowEclipticGrid, "RenderFlags", "gridEcliptic", &errors);
-    getFlag(file, &rf, Renderer::ShowHorizonGrid, "RenderFlags", "gridHorizontal", &errors);
+    getFlag64(file, &rf, Renderer::ShowStars, "RenderFlags", "stars", &errors);
+    getFlag64(file, &rf, Renderer::ShowPlanets, "RenderFlags", "planets", &errors);
+    getFlag64(file, &rf, Renderer::ShowDwarfPlanets, "RenderFlags", "dwarfPlanets", &errors);
+    getFlag64(file, &rf, Renderer::ShowMoons, "RenderFlags", "moons", &errors);
+    getFlag64(file, &rf, Renderer::ShowMinorMoons, "RenderFlags", "minorMoons", &errors);
+    getFlag64(file, &rf, Renderer::ShowAsteroids, "RenderFlags", "asteroids", &errors);
+    getFlag64(file, &rf, Renderer::ShowComets, "RenderFlags", "comets", &errors);
+    getFlag64(file, &rf, Renderer::ShowSpacecrafts, "RenderFlags", "spacecrafts", &errors);
+    getFlag64(file, &rf, Renderer::ShowGalaxies, "RenderFlags", "galaxies", &errors);
+    getFlag64(file, &rf, Renderer::ShowDiagrams, "RenderFlags", "diagrams", &errors);
+    getFlag64(file, &rf, Renderer::ShowCloudMaps, "RenderFlags", "cloudMaps", &errors);
+    getFlag64(file, &rf, Renderer::ShowOrbits, "RenderFlags", "orbits", &errors);
+    getFlag64(file, &rf, Renderer::ShowCelestialSphere, "RenderFlags", "celestialSphere", &errors);
+    getFlag64(file, &rf, Renderer::ShowNightMaps, "RenderFlags", "nightMaps", &errors);
+    getFlag64(file, &rf, Renderer::ShowAtmospheres, "RenderFlags", "atmospheres", &errors);
+    getFlag64(file, &rf, Renderer::ShowSmoothLines, "RenderFlags", "smoothLines", &errors);
+    getFlag64(file, &rf, Renderer::ShowEclipseShadows, "RenderFlags", "eclipseShadows", &errors);
+    getFlag64(file, &rf, Renderer::ShowRingShadows, "RenderFlags", "ringShadows", &errors);
+    getFlag64(file, &rf, Renderer::ShowBoundaries, "RenderFlags", "boundaries", &errors);
+    getFlag64(file, &rf, Renderer::ShowAutoMag, "RenderFlags", "autoMag", &errors);
+    getFlag64(file, &rf, Renderer::ShowCometTails, "RenderFlags", "cometTails", &errors);
+    getFlag64(file, &rf, Renderer::ShowMarkers, "RenderFlags", "markers", &errors);
+    getFlag64(file, &rf, Renderer::ShowPartialTrajectories, "RenderFlags", "partialTrajectories", &errors);
+    getFlag64(file, &rf, Renderer::ShowNebulae, "RenderFlags", "nebulae", &errors);
+    getFlag64(file, &rf, Renderer::ShowOpenClusters, "RenderFlags", "openClusters", &errors);
+    getFlag64(file, &rf, Renderer::ShowGlobulars, "RenderFlags", "globulars", &errors);
+    getFlag64(file, &rf, Renderer::ShowGalacticGrid, "RenderFlags", "gridGalactic", &errors);
+    getFlag64(file, &rf, Renderer::ShowEclipticGrid, "RenderFlags", "gridEcliptic", &errors);
+    getFlag64(file, &rf, Renderer::ShowHorizonGrid, "RenderFlags", "gridHorizontal", &errors);
 
     /* If any flag is missing, use defaults for all. */
     if (errors > 0)
@@ -191,7 +198,9 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 
     getFlag(file, &lm, Renderer::StarLabels, "LabelMode", "star", &errors);
     getFlag(file, &lm, Renderer::PlanetLabels, "LabelMode", "planet", &errors);
+    getFlag(file, &lm, Renderer::DwarfPlanetLabels, "LabelMode", "dwarfplanet", &errors);
     getFlag(file, &lm, Renderer::MoonLabels, "LabelMode", "moon", &errors);
+    getFlag(file, &lm, Renderer::MinorMoonLabels, "LabelMode", "minormoon", &errors);
     getFlag(file, &lm, Renderer::ConstellationLabels, "LabelMode", "constellation", &errors);
     getFlag(file, &lm, Renderer::GalaxyLabels, "LabelMode", "galaxy", &errors);
     getFlag(file, &lm, Renderer::AsteroidLabels, "LabelMode", "asteroid", &errors);
@@ -212,7 +221,8 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 /* ENTRY: Saves settings to file */
 void saveSettingsFile(AppData* app)
 {
-    int rf, om, lm;
+    int om, lm;
+    uint64_t rf;
     GKeyFile* file = app->settingsFile;
     char* fn = g_build_filename(g_get_home_dir(), CELESTIARC, NULL);
     FILE* outfile;
@@ -244,29 +254,35 @@ void saveSettingsFile(AppData* app)
     g_key_file_set_boolean(file, "Window", "fullScreen", app->fullScreen);
 
     rf = app->renderer->getRenderFlags();
-    g_key_file_set_boolean(file, "RenderFlags", "stars", rf & Renderer::ShowStars);
-    g_key_file_set_boolean(file, "RenderFlags", "planets", rf & Renderer::ShowPlanets);
-    g_key_file_set_boolean(file, "RenderFlags", "galaxies", rf & Renderer::ShowGalaxies);
-    g_key_file_set_boolean(file, "RenderFlags", "diagrams", rf & Renderer::ShowDiagrams);
-    g_key_file_set_boolean(file, "RenderFlags", "cloudMaps", rf & Renderer::ShowCloudMaps);
-    g_key_file_set_boolean(file, "RenderFlags", "orbits", rf & Renderer::ShowOrbits);
-    g_key_file_set_boolean(file, "RenderFlags", "celestialSphere", rf & Renderer::ShowCelestialSphere);
-    g_key_file_set_boolean(file, "RenderFlags", "nightMaps", rf & Renderer::ShowNightMaps);
-    g_key_file_set_boolean(file, "RenderFlags", "atmospheres", rf & Renderer::ShowAtmospheres);
-    g_key_file_set_boolean(file, "RenderFlags", "smoothLines", rf & Renderer::ShowSmoothLines);
-    g_key_file_set_boolean(file, "RenderFlags", "eclipseShadows", rf & Renderer::ShowEclipseShadows);
-    g_key_file_set_boolean(file, "RenderFlags", "ringShadows", rf & Renderer::ShowRingShadows);
-    g_key_file_set_boolean(file, "RenderFlags", "boundaries", rf & Renderer::ShowBoundaries);
-    g_key_file_set_boolean(file, "RenderFlags", "autoMag", rf & Renderer::ShowAutoMag);
-    g_key_file_set_boolean(file, "RenderFlags", "cometTails", rf & Renderer::ShowCometTails);
-    g_key_file_set_boolean(file, "RenderFlags", "markers", rf & Renderer::ShowMarkers);
-    g_key_file_set_boolean(file, "RenderFlags", "partialTrajectories", rf & Renderer::ShowPartialTrajectories);
-    g_key_file_set_boolean(file, "RenderFlags", "nebulae", rf & Renderer::ShowNebulae);
-    g_key_file_set_boolean(file, "RenderFlags", "openClusters", rf & Renderer::ShowOpenClusters);
-    g_key_file_set_boolean(file, "RenderFlags", "globulars", rf & Renderer::ShowGlobulars);
-    g_key_file_set_boolean(file, "RenderFlags", "gridGalactic", rf & Renderer::ShowGalacticGrid);
-    g_key_file_set_boolean(file, "RenderFlags", "gridEcliptic", rf & Renderer::ShowEclipticGrid);
-    g_key_file_set_boolean(file, "RenderFlags", "gridHorizontal", rf & Renderer::ShowHorizonGrid);
+    g_key_file_set_boolean(file, "RenderFlags", "stars", (rf & Renderer::ShowStars) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "planets", (rf & Renderer::ShowPlanets) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "dwarfPlanets", (rf & Renderer::ShowDwarfPlanets) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "moons", (rf & Renderer::ShowMoons) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "minorMoons", (rf & Renderer::ShowMinorMoons) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "asteroids", (rf & Renderer::ShowAsteroids) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "comets", (rf & Renderer::ShowComets) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "spacecrafts", (rf & Renderer::ShowSpacecrafts) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "galaxies", (rf & Renderer::ShowGalaxies) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "diagrams", (rf & Renderer::ShowDiagrams) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "cloudMaps", (rf & Renderer::ShowCloudMaps) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "orbits", (rf & Renderer::ShowOrbits) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "celestialSphere", (rf & Renderer::ShowCelestialSphere) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "nightMaps", (rf & Renderer::ShowNightMaps) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "atmospheres", (rf & Renderer::ShowAtmospheres) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "smoothLines", (rf & Renderer::ShowSmoothLines) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "eclipseShadows", (rf & Renderer::ShowEclipseShadows) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "ringShadows", (rf & Renderer::ShowRingShadows) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "boundaries", (rf & Renderer::ShowBoundaries) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "autoMag", (rf & Renderer::ShowAutoMag) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "cometTails", (rf & Renderer::ShowCometTails) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "markers", (rf & Renderer::ShowMarkers) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "partialTrajectories", (rf & Renderer::ShowPartialTrajectories) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "nebulae", (rf & Renderer::ShowNebulae) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "openClusters", (rf & Renderer::ShowOpenClusters) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "globulars", (rf & Renderer::ShowGlobulars) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "gridGalactic", (rf & Renderer::ShowGalacticGrid) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "gridEcliptic", (rf & Renderer::ShowEclipticGrid) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "gridHorizontal", (rf & Renderer::ShowHorizonGrid) != 0);
 
     om = app->renderer->getOrbitMask();
     g_key_file_set_boolean(file, "OrbitMask", "planet", om & Body::Planet);
@@ -280,7 +296,9 @@ void saveSettingsFile(AppData* app)
     lm = app->renderer->getLabelMode();
     g_key_file_set_boolean(file, "LabelMode", "star", lm & Renderer::StarLabels);
     g_key_file_set_boolean(file, "LabelMode", "planet", lm & Renderer::PlanetLabels);
+    g_key_file_set_boolean(file, "LabelMode", "dwarfplanet", lm & Renderer::DwarfPlanetLabels);
     g_key_file_set_boolean(file, "LabelMode", "moon", lm & Renderer::MoonLabels);
+    g_key_file_set_boolean(file, "LabelMode", "minormoon", lm & Renderer::MinorMoonLabels);
     g_key_file_set_boolean(file, "LabelMode", "constellation", lm & Renderer::ConstellationLabels);
     g_key_file_set_boolean(file, "LabelMode", "galaxy", lm & Renderer::GalaxyLabels);
     g_key_file_set_boolean(file, "LabelMode", "asteroid", lm & Renderer::AsteroidLabels);
@@ -310,6 +328,17 @@ void saveSettingsFile(AppData* app)
 
 /* HELPER: gets an or-group flag and handles error checking */
 static void getFlag(GKeyFile* file, int *flags, int setting, const gchar* section, const gchar* key, int* errors)
+{
+    GError* e = NULL;
+
+    *flags |= setting * g_key_file_get_boolean(file, section, key, &e);
+
+    if (e != NULL)
+        *errors += 1;
+}
+
+
+static void getFlag64(GKeyFile* file, uint64_t *flags, uint64_t setting, const gchar* section, const gchar* key, int* errors)
 {
     GError* e = NULL;
 
