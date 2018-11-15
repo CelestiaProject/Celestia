@@ -90,6 +90,12 @@ void actionRenderNightLights(GtkToggleAction*, AppData*);
 void actionRenderOpenClusters(GtkToggleAction*, AppData*);
 void actionRenderOrbits(GtkToggleAction*, AppData*);
 void actionRenderPlanets(GtkToggleAction*, AppData*);
+void actionRenderDwarfPlanets(GtkToggleAction*, AppData*);
+void actionRenderMoons(GtkToggleAction*, AppData*);
+void actionRenderMinorMoons(GtkToggleAction*, AppData*);
+void actionRenderAsteroids(GtkToggleAction*, AppData*);
+void actionRenderComets(GtkToggleAction*, AppData*);
+void actionRenderSpacecrafts(GtkToggleAction*, AppData*);
 void actionRenderRingShadows(GtkToggleAction*, AppData*);
 void actionRenderStars(GtkToggleAction*, AppData*);
 
@@ -108,9 +114,11 @@ void actionLabelGalaxies(GtkToggleAction*, AppData*);
 void actionLabelGlobulars(GtkToggleAction*, AppData*);
 void actionLabelLocations(GtkToggleAction*, AppData*);
 void actionLabelMoons(GtkToggleAction*, AppData*);
+void actionLabelMinorMoons(GtkToggleAction*, AppData*);
 void actionLabelNebulae(GtkToggleAction*, AppData*);
 void actionLabelOpenClusters(GtkToggleAction*, AppData*);
 void actionLabelPlanets(GtkToggleAction*, AppData*);
+void actionLabelDwarfPlanets(GtkToggleAction*, AppData*);
 void actionLabelSpacecraft(GtkToggleAction*, AppData*);
 void actionLabelStars(GtkToggleAction*, AppData*);
 

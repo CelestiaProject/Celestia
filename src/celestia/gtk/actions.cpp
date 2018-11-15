@@ -888,6 +888,42 @@ void actionRenderPlanets(GtkToggleAction* action, AppData* app)
 }
 
 
+void actionRenderDwarfPlanets(GtkToggleAction* action, AppData* app)
+{
+    setRenderFlag(app, Renderer::ShowDwarfPlanets, gtk_toggle_action_get_active(action));
+}
+
+
+void actionRenderMoons(GtkToggleAction* action, AppData* app)
+{
+    setRenderFlag(app, Renderer::ShowMoons, gtk_toggle_action_get_active(action));
+}
+
+
+void actionRenderMinorMoons(GtkToggleAction* action, AppData* app)
+{
+    setRenderFlag(app, Renderer::ShowMinorMoons, gtk_toggle_action_get_active(action));
+}
+
+
+void actionRenderAsteroids(GtkToggleAction* action, AppData* app)
+{
+    setRenderFlag(app, Renderer::ShowAsteroids, gtk_toggle_action_get_active(action));
+}
+
+
+void actionRenderComets(GtkToggleAction* action, AppData* app)
+{
+    setRenderFlag(app, Renderer::ShowComets, gtk_toggle_action_get_active(action));
+}
+
+
+void actionRenderSpacecrafts(GtkToggleAction* action, AppData* app)
+{
+    setRenderFlag(app, Renderer::ShowSpacecrafts, gtk_toggle_action_get_active(action));
+}
+
+
 void actionRenderRingShadows(GtkToggleAction* action, AppData* app)
 {
     setRenderFlag(app, Renderer::ShowRingShadows, gtk_toggle_action_get_active(action));
@@ -972,6 +1008,12 @@ void actionLabelMoons(GtkToggleAction* action, AppData* app)
 }
 
 
+void actionLabelMinorMoons(GtkToggleAction* action, AppData* app)
+{
+    setLabelMode(app, Renderer::MinorMoonLabels, gtk_toggle_action_get_active(action));
+}
+
+
 void actionLabelNebulae(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::NebulaLabels, gtk_toggle_action_get_active(action));
@@ -987,6 +1029,12 @@ void actionLabelOpenClusters(GtkToggleAction* action, AppData* app)
 void actionLabelPlanets(GtkToggleAction* action, AppData* app)
 {
     setLabelMode(app, Renderer::PlanetLabels, gtk_toggle_action_get_active(action));
+}
+
+
+void actionLabelDwarfPlanets(GtkToggleAction* action, AppData* app)
+{
+    setLabelMode(app, Renderer::DwarfPlanetLabels, gtk_toggle_action_get_active(action));
 }
 
 
@@ -1256,7 +1304,9 @@ void resyncLabelActions(AppData* app)
         {
             case Renderer::StarLabels: actionName = "LabelStars"; break;
             case Renderer::PlanetLabels: actionName = "LabelPlanets"; break;
+            case Renderer::DwarfPlanetLabels: actionName = "LabelDwarfPlanets"; break;
             case Renderer::MoonLabels: actionName = "LabelMoons"; break;
+            case Renderer::MinorMoonLabels: actionName = "LabelMinorMoons"; break;
             case Renderer::ConstellationLabels: actionName = "LabelConstellations"; break;
             case Renderer::GalaxyLabels: actionName = "LabelGalaxies"; break;
             case Renderer::AsteroidLabels: actionName = "LabelAsteroids"; break;
@@ -1301,6 +1351,12 @@ void resyncRenderActions(AppData* app)
         {
             case Renderer::ShowStars: actionName = "RenderStars"; break;
             case Renderer::ShowPlanets: actionName = "RenderPlanets"; break;
+            case Renderer::ShowDwarfPlanets: actionName = "RenderDwarfPlanets"; break;
+            case Renderer::ShowMoons: actionName = "RenderMoons"; break;
+            case Renderer::ShowMinorMoons: actionName = "RenderMinorMoons"; break;
+            case Renderer::ShowAsteroids: actionName = "RenderAsteroids"; break;
+            case Renderer::ShowComets: actionName = "RenderComets"; break;
+            case Renderer::ShowSpacecrafts: actionName = "RenderSpacecrafts"; break;
             case Renderer::ShowGalaxies: actionName = "RenderGalaxies"; break;
             case Renderer::ShowDiagrams: actionName = "RenderConstellations"; break;
             case Renderer::ShowCloudMaps: actionName = "RenderClouds"; break;
