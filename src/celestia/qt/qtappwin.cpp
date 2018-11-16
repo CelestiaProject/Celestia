@@ -136,6 +136,53 @@ private:
     QWidget* parent;
 };
 
+class FPSActionGroup
+{
+    QActionGroup *m_actionGroup;
+    std::map<int, QAction*> m_actions;
+    QAction *m_customAction;
+    int m_lastFPS;
+public:
+    FPSActionGroup(QObject *p = nullptr);
+
+    std::map<int, QAction*> &actions() { return m_actions; }
+    QAction *customAction() { return m_customAction; }
+    int lastFPS() { return m_lastFPS; }
+    void updateFPS(int);
+};
+
+FPSActionGroup::FPSActionGroup(QObject *p)
+{
+    QAction *fps;
+    std::array<int, 5> fps_array = { 0, 15, 30, 60, 120 };
+
+    m_actionGroup = new QActionGroup(p);
+    for (auto ifps : fps_array)
+    {
+        fps = new QAction(ifps == 0 ? _("Auto") : QString::number(ifps), p);
+        fps->setCheckable(true);
+        fps->setData(ifps);
+        m_actions[ifps] = fps;
+        m_actionGroup->addAction(fps);
+    }
+    m_customAction = new QAction(_("Custom"), p);
+    m_customAction->setCheckable(true);
+    m_customAction->setShortcut(QString("Shift+F"));
+    m_actionGroup->addAction(m_customAction);
+    m_actionGroup->setExclusive(true);
+}
+
+void FPSActionGroup::updateFPS(int fps)
+{
+    if (fps < 0 )
+        fps = 0;
+    if (m_actions.count(fps))
+        m_actions.at(fps)->setChecked(true);
+    else
+        m_customAction->setChecked(true);
+    m_lastFPS = fps;
+}
+
 CelestiaAppWindow::CelestiaAppWindow(QWidget* parent) :
     QMainWindow(parent)
 {
@@ -486,7 +533,7 @@ void CelestiaAppWindow::readSettings()
 
     settings.endGroup();
 
-    timer->setInterval(fps_to_ms(settings.value("fps", 0).toInt()));
+    setFPS(settings.value("fps", 0).toInt());
 
     // Render settings read in qtglwidget
 }
@@ -1229,25 +1276,14 @@ void CelestiaAppWindow::createMenus()
 
     QMenu *fpsMenu = new QMenu(_("&FPS control"), this);
 
-    std::array<int, 5> fps_array = { 0, 15, 30, 60, 120 };
-    QActionGroup *fpsg = new QActionGroup(this);
-    QAction *fps;
-    for (auto ifps : fps_array)
+    fpsActions = new FPSActionGroup(this);
+    for (const auto &a : fpsActions->actions())
     {
-        fps = new QAction(ifps == 0 ? _("Auto") : QString::number(ifps), this);
-        fps->setCheckable(true);
-        fps->setData(ifps);
-        fpsg->addAction(fps);
-        QObject::connect(fps, &QAction::triggered, this, &CelestiaAppWindow::setCheckedFPS);
-        fpsMenu->addAction(fps);
+        QObject::connect(a.second, &QAction::triggered, this, &CelestiaAppWindow::setCheckedFPS);
+        fpsMenu->addAction(a.second);
     }
-    fps = new QAction(_("Custom"), this);
-    fps->setCheckable(true);
-    fps->setShortcut(QString("Shift+F"));
-    fpsg->addAction(fps);
-    fpsg->setExclusive(true);
-    QObject::connect(fps, &QAction::triggered, this, &CelestiaAppWindow::setCustomFPS);
-    fpsMenu->addAction(fps);
+    QObject::connect(fpsActions->customAction(), &QAction::triggered, this, &CelestiaAppWindow::setCustomFPS);
+    fpsMenu->addAction(fpsActions->customAction());
 #ifdef VIDEO_SYNC
     fpsMenu->addSeparator();
     fpsMenu->addAction(actions->toggleVSyncAction);
@@ -1474,20 +1510,28 @@ void CelestiaAppWindow::setCheckedFPS()
     if (act)
     {
         int fps = act->data().toInt();
-        timer->setInterval(fps_to_ms(fps));
+        setFPS(fps);
     }
 }
 
 void CelestiaAppWindow::setFPS(int fps)
 {
     timer->setInterval(fps_to_ms(fps));
+    fpsActions->updateFPS(fps);
 }
 
 void CelestiaAppWindow::setCustomFPS()
 {
     bool ok;
-    int fps = QInputDialog::getInt(this, _("Set custom FPS"), _("FPS value"), ms_to_fps(timer->interval()), 0, 2048, 1, &ok);
-    if (ok)  setFPS(fps);
+    int fps = QInputDialog::getInt(this,
+                                   _("Set custom FPS"),
+                                   _("FPS value"),
+                                   ms_to_fps(timer->interval()),
+                                   0, 2048, 1, &ok);
+    if (ok)
+        setFPS(fps);
+    else
+        fpsActions->updateFPS(fpsActions->lastFPS());
 }
 
 void CelestiaAppWindow::contextMenu(float x, float y, Selection sel)
