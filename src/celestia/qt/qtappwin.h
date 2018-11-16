@@ -25,7 +25,7 @@ class CelestialBrowser;
 class InfoPanel;
 class EventFinder;
 class CelestiaActions;
-
+class FPSActionGroup;
 
 class PreferencesDialog;
 class BookmarkManager;
@@ -121,6 +121,8 @@ class CelestiaAppWindow : public QMainWindow
     CelestiaCore* m_appCore{ nullptr };
 
     CelestiaActions* actions{ nullptr };
+
+    FPSActionGroup *fpsActions;
 
     QMenu* fileMenu{ nullptr };
     QMenu* navMenu{ nullptr };
