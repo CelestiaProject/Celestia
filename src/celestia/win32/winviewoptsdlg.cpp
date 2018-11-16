@@ -134,6 +134,24 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_SHOWPLANETS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanets);
             break;
+        case IDC_SHOWDWARFPLANETS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowDwarfPlanets);
+            break;
+        case IDC_SHOWMOONS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowMoons);
+            break;
+        case IDC_SHOWMINORMOONS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowMinorMoons);
+            break;
+        case IDC_SHOWASTEROIDS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowAsteroids);
+            break;
+        case IDC_SHOWCOMETS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowComets);
+            break;
+        case IDC_SHOWSPACECRAFTS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowSpacecrafts);
+            break;
         case IDC_SHOWSTARS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowStars);
             break;
@@ -331,15 +349,27 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowNightMaps)? BST_CHECKED:BST_UNCHECKED, 0);
     dlgCheck(hDlg, IDC_SHOWORBITS,       renderFlags, Renderer::ShowOrbits);
     dlgCheck(hDlg, IDC_PLANETORBITS,     orbitMask,   Body::Planet);
-    dlgCheck(hDlg, IDC_DWARFPLANETORBITS,     orbitMask,   Body::DwarfPlanet);
+    dlgCheck(hDlg, IDC_DWARFPLANETORBITS,orbitMask,   Body::DwarfPlanet);
     dlgCheck(hDlg, IDC_MOONORBITS,       orbitMask,   Body::Moon);
-    dlgCheck(hDlg, IDC_MINORMOONORBITS,       orbitMask,   Body::MinorMoon);
+    dlgCheck(hDlg, IDC_MINORMOONORBITS,  orbitMask,   Body::MinorMoon);
     dlgCheck(hDlg, IDC_ASTEROIDORBITS,   orbitMask,   Body::Asteroid);
     dlgCheck(hDlg, IDC_COMETORBITS,      orbitMask,   Body::Comet);
     dlgCheck(hDlg, IDC_SPACECRAFTORBITS, orbitMask,   Body::Spacecraft);
     dlgCheck(hDlg, IDC_STARORBITS,       orbitMask,   Body::Stellar);
     SendDlgItemMessage(hDlg, IDC_SHOWPLANETS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowPlanets)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowPlanets) != 0 ? BST_CHECKED : BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWDWARFPLANETS, BM_SETCHECK,
+        ((renderFlags ^ Renderer::ShowDwarfPlanets) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWMOONS, BM_SETCHECK,
+        ((renderFlags ^ Renderer::ShowMoons) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWMINORMOONS, BM_SETCHECK,
+        ((renderFlags ^ Renderer::ShowMinorMoons) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWASTEROIDS, BM_SETCHECK,
+        ((renderFlags ^ Renderer::ShowAsteroids) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWCOMETS, BM_SETCHECK,
+        ((renderFlags ^ Renderer::ShowComets) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWSPACECRAFTS, BM_SETCHECK,
+        ((renderFlags ^ Renderer::ShowSpacecrafts) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWSTARS, BM_SETCHECK,
         (renderFlags & Renderer::ShowStars)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCONSTELLATIONBORDERS, BM_SETCHECK,

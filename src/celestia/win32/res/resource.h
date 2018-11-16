@@ -262,6 +262,13 @@
 #define ID_STARCOLOR_ENABLED            40090
 #define ID_BOOKMARKS_FIRSTBOOKMARK      41000
 #define ID_FIRST_SCRIPT                 42000
+#define IDC_SHOWDWARFPLANETS             1157
+#define IDC_SHOWMOONS                    1158
+#define IDC_SHOWMINORMOONS               1159
+#define IDC_SHOWASTEROIDS                1160
+#define IDC_SHOWCOMETS                   1161
+#define IDC_SHOWSPACECRAFTS              1162
+
 
 // Next default values for new objects
 //
@@ -269,7 +276,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         40091
-#define _APS_NEXT_CONTROL_VALUE         1157
+#define _APS_NEXT_CONTROL_VALUE         1163
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
