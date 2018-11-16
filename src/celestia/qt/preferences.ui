@@ -538,7 +538,7 @@
           <item>
            <widget class="QCheckBox" name="spacecraftLabelsCheck">
             <property name="text">
-             <string>Spacecraft</string>
+             <string>Spacecrafts</string>
             </property>
            </widget>
           </item>
