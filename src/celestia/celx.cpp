@@ -3537,6 +3537,23 @@ static int celestia_play(lua_State*)
 }
 
 
+static int celestia_from_ssc(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "Function celestia:from_ssc requires exactly one argument");
+    CelestiaCore* appCore = this_celestia(l);
+    const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:from_ssc must be a string");
+    if (s == nullptr)
+    {
+        lua_pushboolean(l, false);
+        return 1;
+    }
+    istringstream in(s);
+    bool ret = LoadSolarSystemObjects(in, *appCore->getSimulation()->getUniverse(), "");
+
+    lua_pushboolean(l, ret);
+    return 1;
+}
+
 static void CreateCelestiaMetaTable(lua_State* l)
 {
     Celx_CreateClassMetatable(l, Celx_Celestia);
@@ -3638,6 +3655,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
     // Dummy command for compatibility purpose
     Celx_RegisterMethod(l, "play", celestia_play);
+
+    Celx_RegisterMethod(l, "from_ssc", celestia_from_ssc);
 
     lua_pop(l, 1);
 }
