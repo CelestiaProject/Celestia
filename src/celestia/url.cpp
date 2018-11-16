@@ -29,7 +29,13 @@
 using namespace Eigen;
 using namespace std;
 
-const unsigned int Url::CurrentVersion = 3;
+const unsigned int Url::CurrentVersion = 4;
+constexpr const uint64_t NewRenderFlags = Renderer::ShowDwarfPlanets |
+                                          Renderer::ShowMoons        |
+                                          Renderer::ShowMinorMoons   |
+                                          Renderer::ShowAsteroids    |
+                                          Renderer::ShowComets       |
+                                          Renderer::ShowSpacecrafts;
 
 
 const string getEncodedObjectName(const Selection& sel, const CelestiaCore* appCore);
@@ -268,6 +274,8 @@ Url::Url(std::string  str, CelestiaCore *core):
         initVersion2(params, time);
         break;
     case 3:
+    case 4:
+        // Version 4 has only render flags defined as uint64_t
         initVersion3(params, time);
         break;
     default:
@@ -282,7 +290,6 @@ Url::Url(std::string  str, CelestiaCore *core):
 Url::Url(CelestiaCore* core, UrlType type)
 {
     appCore = core;
-    version = 2;
     timeSource = UseUrlTime;
 
     Simulation *sim = appCore->getSimulation();
@@ -351,7 +358,10 @@ Url::Url(CelestiaCore* core, UrlType type)
     case Settings: // Intentional Fall-Through
         renderFlags = renderer->getRenderFlags();
         labelMode = renderer->getLabelMode();
-        urlStr += fmt::sprintf("rf=%d&lm=%d", renderFlags, labelMode);
+        if (version >= 4)
+            urlStr += fmt::sprintf("rf=%lu&lm=%d", renderFlags, labelMode);
+        else
+            urlStr += fmt::sprintf("rf=%d&lm=%d", (int) (renderFlags & 0xffffffff), labelMode);
         break;
     }
 
@@ -438,7 +448,10 @@ Url::Url(const CelestiaState& appState, unsigned int _version, TimeSource _timeS
     u << "&ltd=" << (lightTimeDelay ? 1 : 0);
     u << "&p=" << (pauseState ? 1 : 0);
 
-    u << "&rf=" << renderFlags;
+    if (_version >= 4)
+        u << "&rf=" << renderFlags;
+    else
+        u << "&rf=" << (int) (renderFlags & 0xffffffff);
     u << "&lm=" << labelMode;
 
     // Append the url settings: time source and version
@@ -520,7 +533,12 @@ void Url::initVersion2(std::map<std::string, std::string>& params,
     }
 
     if (params["rf"] != "") {
-        sscanf(params["rf"].c_str(), "%d", &renderFlags);
+        int rf;
+        sscanf(params["rf"].c_str(), "%d", &rf);
+        renderFlags = (uint64_t) rf;
+        // older celestia versions didn't know about new renderer flags
+        if ((renderFlags & Renderer::ShowPlanets) != 0)
+            renderFlags |= NewRenderFlags;
     }
     if (params["lm"] != "") {
         sscanf(params["lm"].c_str(), "%d", &labelMode);
@@ -574,7 +592,21 @@ void Url::initVersion3(std::map<std::string, std::string>& params,
 
     // Render settings
     if (params["rf"] != "")
-        sscanf(params["rf"].c_str(), "%d", &renderFlags);
+    {
+        if (version == 4)
+        {
+            sscanf(params["rf"].c_str(), "%lu", &renderFlags);
+        }
+        else
+        {
+            int rf;
+            sscanf(params["rf"].c_str(), "%d", &rf);
+            renderFlags = (uint64_t) rf;
+            // older celestia versions didn't know about new renderer flags
+            if ((renderFlags & Renderer::ShowPlanets) != 0)
+                renderFlags |= NewRenderFlags;
+        }
+    }
     if (params["lm"] != "")
         sscanf(params["lm"].c_str(), "%d", &labelMode);
 

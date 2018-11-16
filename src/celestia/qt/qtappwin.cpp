@@ -803,7 +803,7 @@ void CelestiaAppWindow::slotCopyURL()
     CelestiaState appState;
     appState.captureState(m_appCore);
 
-    Url url(appState, 3);
+    Url url(appState, Url::CurrentVersion);
     QApplication::clipboard()->setText(url.getAsString().c_str());
     m_appCore->flash(QString(_("Copied URL")).toStdString());
 }

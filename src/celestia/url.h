@@ -100,7 +100,7 @@ private:
     int nbBodies{ 0 };
     float fieldOfView{ 0.0f };
     float timeScale{ 0.0f };
-    int renderFlags{ 0 };
+    uint64_t renderFlags{ 0 };
     int labelMode{ 0 };
     bool lightTimeDelay{ false };
     bool pauseState{ false };
@@ -113,7 +113,7 @@ private:
     bool fromString{ false };
     UrlType type{ Absolute };
     TimeSource timeSource{ UseUrlTime };
-    unsigned int version{ 2 };
+    unsigned int version{ 4 };
 
     void evalName();
 
@@ -167,7 +167,7 @@ public:
     string selectedBodyName;
 
     int labelMode{ 0 };
-    int renderFlags{ 0 };
+    uint64_t renderFlags{ 0 };
 };
 
 #endif
