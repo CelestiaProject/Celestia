@@ -1175,3 +1175,20 @@ void CommandSetRingsTexture::process(ExecutionEnvironment& env)
         sel.body()->getRings()->texture = MultiResTexture(textureName, path);
     }
 }
+
+
+///////////////
+// FromSSC command
+CommandFromSSC::CommandFromSSC(string _fragment) :
+    fragment(_fragment)
+{
+}
+
+void CommandFromSSC::process(ExecutionEnvironment& env)
+{
+    Universe* u = env.getSimulation()->getUniverse();
+    if (u == nullptr)
+        return;
+    istringstream in(fragment);
+    LoadSolarSystemObjects(in, *u, "");
+}
