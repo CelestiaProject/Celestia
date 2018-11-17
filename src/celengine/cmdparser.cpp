@@ -895,6 +895,12 @@ Command* CommandParser::parseCommand()
         paramList->getString("path", path);
         cmd = new CommandSetRingsTexture(object, texture, path);
     }
+    else if (commandName == "from_ssc")
+    {
+        string fragment;
+        paramList->getString("fragment", fragment);
+        cmd = new CommandFromSSC(fragment);
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");

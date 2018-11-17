@@ -813,4 +813,15 @@ class CommandSetRingsTexture : public InstantaneousCommand
     std::string object, textureName, path;
 };
 
+
+class CommandFromSSC : public InstantaneousCommand
+{
+ public:
+    CommandFromSSC(std::string);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string fragment;
+};
+
 #endif // _COMMAND_H_
