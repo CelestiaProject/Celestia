@@ -216,7 +216,7 @@ class Body
     void setAlbedo(float);
     int getClassification() const;
     void setClassification(int);
-    std::string getInfoURL() const;
+    const std::string& getInfoURL() const;
     void setInfoURL(const std::string&);
 
     PlanetarySystem* getSatellites() const;
