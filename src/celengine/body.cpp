@@ -773,7 +773,7 @@ int Body::getOrbitClassification() const
 }
 
 
-string Body::getInfoURL() const
+const string& Body::getInfoURL() const
 {
     return infoURL;
 }
