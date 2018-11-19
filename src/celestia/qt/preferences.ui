@@ -884,37 +884,41 @@
               </property>
              </spacer>
             </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="renderPathGroupBox">
+           <property name="title">
+            <string>Render path</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_13">
             <item>
-             <widget class="QGroupBox" name="renderPathGroupBox">
-              <property name="title">
-               <string>Render path</string>
+             <widget class="QComboBox" name="renderPathBox">
+              <property name="enabled">
+               <bool>false</bool>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_13">
-               <item>
-                <widget class="QComboBox" name="renderPathBox"/>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="antialiasLinesCheck">
-                 <property name="text">
-                  <string>Antialiased lines</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_13">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
              </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="antialiasLinesCheck">
+              <property name="text">
+               <string>Antialiased lines</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_13">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -1039,29 +1043,29 @@
       </layout>
      </widget>
     </widget>
-  </item>
-  <item>
-    <widget class="QDialogButtonBox" name="buttonBox" >
-      <property name="standardButtons" >
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
       <set>QDialogButtonBox::Ok</set>
-      </property>
+     </property>
     </widget>
-  </item>
+   </item>
   </layout>
  </widget>
  <resources/>
-  <connections>
+ <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
    <receiver>preferencesDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>407</x>
      <y>471</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>8</x>
      <y>445</y>
     </hint>
