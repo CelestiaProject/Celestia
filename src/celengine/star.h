@@ -105,7 +105,7 @@ class StarDetails
 
     Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
 
-    std::string* infoURL{ nullptr };
+    std::string infoURL;
 
     std::vector<Star*>* orbitingStars{ nullptr };
     bool isShared{ true };

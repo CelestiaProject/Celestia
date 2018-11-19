@@ -48,8 +48,6 @@ static StarDetails*  neutronStarDetails = nullptr;
 static StarDetails*  blackHoleDetails = nullptr;
 static StarDetails*  barycenterDetails = nullptr;
 
-static string DEFAULT_INFO_URL("");
-
 StarDetails::StarTextureSet StarDetails::starTextures;
 
 // Star temperature data from Lang's _Astrophysical Data: Planets and Stars_
@@ -798,21 +796,18 @@ StarDetails::StarDetails(const StarDetails& sd) :
     barycenter(sd.barycenter),
     rotationModel(sd.rotationModel),
     semiAxes(sd.semiAxes),
-    infoURL(nullptr),
+    infoURL(sd.infoURL),
     orbitingStars(nullptr),
     isShared(false)
 {
     assert(sd.isShared);
     memcpy(spectralType, sd.spectralType, sizeof(spectralType));
-    if (sd.infoURL != nullptr)
-        infoURL = new string(*sd.infoURL);
 }
 
 
 StarDetails::~StarDetails()
 {
     delete orbitingStars;
-    delete infoURL;
 }
 
 
@@ -822,7 +817,7 @@ StarDetails::~StarDetails()
 const std::string&
 StarDetails::getInfoURL() const
 {
-    return infoURL ? *infoURL : DEFAULT_INFO_URL;
+    return infoURL;
 }
 
 
@@ -942,22 +937,7 @@ StarDetails::setRotationModel(const RotationModel* rm)
 void
 StarDetails::setInfoURL(const string& _infoURL)
 {
-    if (_infoURL.empty())
-    {
-        // Save space in the common case--no InfoURL--by not
-        // allocating a string.
-        delete infoURL;
-        infoURL = nullptr;
-    }
-    else
-    {
-        // Allocate the new string before freeing the old one, so we don't crash
-        // in the event the caller does something like:
-        // star->setInfoURL(star->getInfoURL());
-        string* oldURL = infoURL;
-        infoURL = new string(_infoURL);
-        delete oldURL;
-    }
+    infoURL = _infoURL;
 }
 
 
