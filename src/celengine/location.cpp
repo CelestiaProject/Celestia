@@ -97,12 +97,6 @@ FeatureNameEntry FeatureNames[] =
 };
 
 
-Location::~Location()
-{
-    delete infoURL;
-}
-
-
 string Location::getName(bool i18n) const
 {
     if (!i18n || i18nName == "") return name;
