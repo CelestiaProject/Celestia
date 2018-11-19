@@ -19,9 +19,6 @@ class Body;
 class Location
 {
  public:
-    Location() = default;
-    virtual ~Location();
-
     std::string getName(bool i18n = false) const;
     void setName(const std::string&);
 
@@ -135,7 +132,7 @@ class Location
     FeatureType featureType{ Other };
     bool overrideLabelColor{ false };
     Color labelColor{ 1.0f, 1.0f, 1.0f };
-    std::string* infoURL{ nullptr };
+    std::string infoURL;
 };
 
 #endif // _CELENGINE_LOCATION_H_
