@@ -25,6 +25,36 @@ using namespace Eigen;
 using namespace std;
 
 
+static const char* bodyTypeName(int cl)
+{
+    switch (cl)
+    {
+    case Body::Planet:
+        return "planet";
+    case Body::DwarfPlanet:
+        return "dwarfplanet";
+    case Body::Moon:
+        return "moon";
+    case Body::MinorMoon:
+        return  "minormoon";
+    case Body::Asteroid:
+        return "asteroid";
+    case Body::Comet:
+        return "comet";
+    case Body::Spacecraft:
+        return "spacecraft";
+    case Body::Invisible:
+        return "invisible";
+    case Body::SurfaceFeature:
+        return "surfacefeature";
+    case Body::Component:
+        return "component";
+    case Body::Diffuse:
+        return "diffuse";
+    }
+    return "unknown";
+}
+
 static MarkerRepresentation::Symbol parseMarkerSymbol(const string& name)
 {
     if (compareIgnoringCase(name, "diamond") == 0)
@@ -447,41 +477,21 @@ static int object_type(lua_State* l)
     const char* tname = "unknown";
     switch (sel->getType())
     {
-        case Selection::Type_Body:
-        {
-            int cl = sel->body()->getClassification();
-            switch (cl)
-            {
-                case Body::Planet : tname = "planet"; break;
-                case Body::DwarfPlanet : tname = "dwarfplanet"; break;
-                case Body::Moon : tname = "moon"; break;
-                case Body::MinorMoon : tname = "minormoon"; break;
-                case Body::Asteroid : tname = "asteroid"; break;
-                case Body::Comet : tname = "comet"; break;
-                case Body::Spacecraft : tname = "spacecraft"; break;
-                case Body::Invisible : tname = "invisible"; break;
-                case Body::SurfaceFeature : tname = "surfacefeature"; break;
-                case Body::Component : tname = "component"; break;
-                case Body::Diffuse : tname = "diffuse"; break;
-            }
-        }
-            break;
-
-        case Selection::Type_Star:
-            tname = "star";
-            break;
-
-        case Selection::Type_DeepSky:
-            tname = sel->deepsky()->getObjTypeName();
-            break;
-
-        case Selection::Type_Location:
-            tname = "location";
-            break;
-
-        case Selection::Type_Nil:
-            tname = "null";
-            break;
+    case Selection::Type_Body:
+        tname = bodyTypeName(sel->body()->getClassification());
+        break;
+    case Selection::Type_Star:
+        tname = "star";
+        break;
+    case Selection::Type_DeepSky:
+        tname = sel->deepsky()->getObjTypeName();
+        break;
+    case Selection::Type_Location:
+        tname = "location";
+        break;
+    case Selection::Type_Nil:
+        tname = "null";
+        break;
     }
 
     lua_pushstring(l, tname);
@@ -605,21 +615,7 @@ static int object_getinfo(lua_State* l)
     else if (sel->body() != nullptr)
     {
         Body* body = sel->body();
-        const char* tname = "unknown";
-        switch (body->getClassification())
-        {
-            case Body::Planet : tname = "planet"; break;
-            case Body::DwarfPlanet : tname = "dwarfplanet"; break;
-            case Body::Moon : tname = "moon"; break;
-            case Body::MinorMoon : tname = "minormoon"; break;
-            case Body::Asteroid : tname = "asteroid"; break;
-            case Body::Comet : tname = "comet"; break;
-            case Body::Spacecraft : tname = "spacecraft"; break;
-            case Body::Invisible : tname = "invisible"; break;
-            case Body::SurfaceFeature : tname = "surfacefeature"; break;
-            case Body::Component : tname = "component"; break;
-            case Body::Diffuse : tname = "diffuse"; break;
-        }
+        const char* tname = bodyTypeName(body->getClassification());
 
         celx.setTable("type", tname);
         celx.setTable("name", body->getName().c_str());
