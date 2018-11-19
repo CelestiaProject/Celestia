@@ -58,6 +58,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="dwarfCandidatesCheck">
+            <property name="text">
+             <string>Dwarf planet candidates</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="moonsCheck">
             <property name="text">
              <string>Moons</string>
@@ -288,6 +295,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="dwarfCandidateOrbitsCheck">
+              <property name="text">
+               <string>Dwarf planet candidates</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QCheckBox" name="moonOrbitsCheck">
               <property name="text">
                <string>Moons</string>
@@ -504,6 +518,13 @@
            <widget class="QCheckBox" name="dwarfPlanetLabelsCheck">
             <property name="text">
              <string>Dwarf planets</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="dwarfCandidateLabelsCheck">
+            <property name="text">
+             <string>Dwarf planet candidates</string>
             </property>
            </widget>
           </item>

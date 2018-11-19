@@ -140,8 +140,17 @@ class Renderer
         DwarfPlanetLabels   = 0x1000,
         MinorMoonLabels     = 0x2000,
         GlobularLabels      = 0x4000,
-        BodyLabelMask       = (PlanetLabels | DwarfPlanetLabels | MoonLabels | MinorMoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
+        DwarfCandidateLabels = 0x8000,
     };
+
+    constexpr static const int BodyLabelMask = PlanetLabels         |
+                                               DwarfPlanetLabels    |
+                                               DwarfCandidateLabels |
+                                               MoonLabels           |
+                                               MinorMoonLabels      |
+                                               AsteroidLabels       |
+                                               SpacecraftLabels     |
+                                               CometLabels;
 
     enum RenderFlags : uint64_t
     {
@@ -179,7 +188,8 @@ class Renderer
         ShowAsteroids           = 0x0000000040000000,
         ShowComets              = 0x0000000080000000,
         ShowSpacecrafts         = 0x0000000100000000,
-        ShowFadingOrbits        = 0x0000000200000000,
+        ShowDwarfCandidates     = 0x0000000200000000,
+        ShowFadingOrbits        = 0x0000010000000000,
     };
 
     enum StarStyle
@@ -195,6 +205,7 @@ class Renderer
                                           Renderer::ShowStars          |
                                           Renderer::ShowPlanets        |
                                           Renderer::ShowDwarfPlanets   |
+                                          Renderer::ShowDwarfCandidates|
                                           Renderer::ShowMoons          |
                                           Renderer::ShowMinorMoons     |
                                           Renderer::ShowAsteroids      |
@@ -748,6 +759,7 @@ class Renderer
     static Color StarLabelColor;
     static Color PlanetLabelColor;
     static Color DwarfPlanetLabelColor;
+    static Color DwarfCandidateLabelColor;
     static Color MoonLabelColor;
     static Color MinorMoonLabelColor;
     static Color AsteroidLabelColor;
@@ -768,6 +780,7 @@ class Renderer
     static Color StarOrbitColor;
     static Color PlanetOrbitColor;
     static Color DwarfPlanetOrbitColor;
+    static Color DwarfCandidateOrbitColor;
     static Color MoonOrbitColor;
     static Color MinorMoonOrbitColor;
     static Color AsteroidOrbitColor;

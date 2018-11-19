@@ -173,6 +173,7 @@ class Body
         MinorMoon      =  0x1000,
         Diffuse        =  0x2000,
         Unknown        = 0x10000,
+        DwarfCandidate = 0x20000,
     };
 
     enum VisibilityPolicy

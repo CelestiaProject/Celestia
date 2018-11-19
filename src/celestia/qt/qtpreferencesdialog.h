@@ -28,6 +28,7 @@ private slots:
     void on_starsCheck_stateChanged(int state);
     void on_planetsCheck_stateChanged(int state);
     void on_dwarfPlanetsCheck_stateChanged(int state);
+    void on_dwarfCandidatesCheck_stateChanged(int state);
     void on_moonsCheck_stateChanged(int state);
     void on_minorMoonsCheck_stateChanged(int state);
     void on_asteroidsCheck_stateChanged(int state);
@@ -52,6 +53,7 @@ private slots:
     void on_starOrbitsCheck_stateChanged(int state);
     void on_planetOrbitsCheck_stateChanged(int state);
     void on_dwarfPlanetOrbitsCheck_stateChanged(int state);
+    void on_dwarfCandidateOrbitsCheck_stateChanged(int state);
     void on_moonOrbitsCheck_stateChanged(int state);
     void on_minorMoonOrbitsCheck_stateChanged(int state);
     void on_asteroidOrbitsCheck_stateChanged(int state);
@@ -74,6 +76,7 @@ private slots:
     void on_starLabelsCheck_stateChanged(int state);
     void on_planetLabelsCheck_stateChanged(int state);
     void on_dwarfPlanetLabelsCheck_stateChanged(int state);
+    void on_dwarfCandidateLabelsCheck_stateChanged(int state);
     void on_moonLabelsCheck_stateChanged(int state);
     void on_minorMoonLabelsCheck_stateChanged(int state);
     void on_asteroidLabelsCheck_stateChanged(int state);

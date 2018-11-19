@@ -71,6 +71,7 @@ Q_OBJECT
     QAction* labelStarsAction{ nullptr };
     QAction* labelPlanetsAction{ nullptr };
     QAction* labelDwarfPlanetsAction{ nullptr };
+    QAction* labelDwarfCandidatesAction{ nullptr };
     QAction* labelMoonsAction{ nullptr };
     QAction* labelMinorMoonsAction{ nullptr };
     QAction* labelAsteroidsAction{ nullptr };
@@ -82,6 +83,7 @@ Q_OBJECT
     QAction* starOrbitsAction{ nullptr };
     QAction* planetOrbitsAction{ nullptr };
     QAction* dwarfPlanetOrbitsAction{ nullptr };
+    QAction* dwarfCandidateOrbitsAction{ nullptr };
     QAction* moonOrbitsAction{ nullptr };
     QAction* minorMoonOrbitsAction{ nullptr };
     QAction* asteroidOrbitsAction{ nullptr };

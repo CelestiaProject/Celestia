@@ -86,7 +86,7 @@ class QtEclipseFinder
 // TODO: share this constant and function with render.cpp
 static const float MinRelativeOccluderRadius = 0.005f;
 
-static const int EclipseObjectMask = Body::Planet | Body::Moon | Body::DwarfPlanet | Body::Asteroid;
+static const int EclipseObjectMask = Body::Planet | Body::Moon | Body::DwarfPlanet | Body::DwarfCandidate | Body::Asteroid;
 
 
 // Functions to convert between Qt dates and Celestia dates.

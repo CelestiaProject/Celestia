@@ -33,6 +33,8 @@ static const char* bodyTypeName(int cl)
         return "planet";
     case Body::DwarfPlanet:
         return "dwarfplanet";
+    case Body::DwarfCandidate:
+        return "dwarfcandidate";
     case Body::Moon:
         return "moon";
     case Body::MinorMoon:

@@ -117,6 +117,7 @@ void CelxLua::initRenderFlagMap()
     RenderFlagMap["globulars"]           = Renderer::ShowGlobulars;
     RenderFlagMap["planets"]             = Renderer::ShowPlanets;
     RenderFlagMap["dwarfplanets"]        = Renderer::ShowDwarfPlanets;
+    RenderFlagMap["dwarfcandidates"]     = Renderer::ShowDwarfCandidates;
     RenderFlagMap["moons"]               = Renderer::ShowMoons;
     RenderFlagMap["minormoons"]          = Renderer::ShowMinorMoons;
     RenderFlagMap["asteroids"]           = Renderer::ShowAsteroids;
@@ -149,6 +150,7 @@ void CelxLua::initLabelFlagMap()
 {
     LabelFlagMap["planets"] = Renderer::PlanetLabels;
     LabelFlagMap["dwarfplanets"] = Renderer::DwarfPlanetLabels;
+    LabelFlagMap["dwarfcandidates"] = Renderer::DwarfCandidateLabels;
     LabelFlagMap["moons"] = Renderer::MoonLabels;
     LabelFlagMap["minormoons"] = Renderer::MinorMoonLabels;
     LabelFlagMap["spacecraft"] = Renderer::SpacecraftLabels;
@@ -168,6 +170,7 @@ void CelxLua::initBodyTypeMap()
 {
     BodyTypeMap["Planet"] = Body::Planet;
     BodyTypeMap["DwarfPlanet"] = Body::DwarfPlanet;
+    BodyTypeMap["DwarfCandidate"] = Body::DwarfCandidate;
     BodyTypeMap["Moon"] = Body::Moon;
     BodyTypeMap["MinorMoon"] = Body::MinorMoon;
     BodyTypeMap["Asteroid"] = Body::Asteroid;
@@ -267,6 +270,7 @@ void CelxLua::initLabelColorMap()
     LabelColorMap["stars"]          = &Renderer::StarLabelColor;
     LabelColorMap["planets"]        = &Renderer::PlanetLabelColor;
     LabelColorMap["dwarfplanets"]   = &Renderer::DwarfPlanetLabelColor;
+    LabelColorMap["dwarfcandidates"]= &Renderer::DwarfCandidateLabelColor;
     LabelColorMap["moons"]          = &Renderer::MoonLabelColor;
     LabelColorMap["minormoons"]     = &Renderer::MinorMoonLabelColor;
     LabelColorMap["asteroids"]      = &Renderer::AsteroidLabelColor;
@@ -290,6 +294,7 @@ void CelxLua::initLineColorMap()
     LineColorMap["starorbits"]       = &Renderer::StarOrbitColor;
     LineColorMap["planetorbits"]     = &Renderer::PlanetOrbitColor;
     LineColorMap["dwarfplanetorbits"]= &Renderer::DwarfPlanetOrbitColor;
+    LineColorMap["dwarfcandidateorbits"]= &Renderer::DwarfCandidateOrbitColor;
     LineColorMap["moonorbits"]       = &Renderer::MoonOrbitColor;
     LineColorMap["minormoonorbits"]  = &Renderer::MinorMoonOrbitColor;
     LineColorMap["asteroidorbits"]   = &Renderer::AsteroidOrbitColor;

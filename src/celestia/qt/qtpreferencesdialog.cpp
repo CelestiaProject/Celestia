@@ -90,6 +90,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.starsCheck->setChecked((renderFlags & Renderer::ShowStars) != 0);
     ui.planetsCheck->setChecked((renderFlags & Renderer::ShowPlanets) != 0);
     ui.dwarfPlanetsCheck->setChecked((renderFlags & Renderer::ShowDwarfPlanets) != 0);
+    ui.dwarfCandidatesCheck->setChecked((renderFlags & Renderer::ShowDwarfCandidates) != 0);
     ui.moonsCheck->setChecked((renderFlags & Renderer::ShowMoons) != 0);
     ui.minorMoonsCheck->setChecked((renderFlags & Renderer::ShowMinorMoons) != 0);
     ui.asteroidsCheck->setChecked((renderFlags & Renderer::ShowAsteroids) != 0);
@@ -114,6 +115,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.starOrbitsCheck->setChecked(orbitMask & Body::Stellar);
     ui.planetOrbitsCheck->setChecked(orbitMask & Body::Planet);
     ui.dwarfPlanetOrbitsCheck->setChecked(orbitMask & Body::DwarfPlanet);
+    ui.dwarfCandidateOrbitsCheck->setChecked(orbitMask & Body::DwarfCandidate);
     ui.moonOrbitsCheck->setChecked(orbitMask & Body::Moon);
     ui.minorMoonOrbitsCheck->setChecked(orbitMask & Body::MinorMoon);
     ui.asteroidOrbitsCheck->setChecked(orbitMask & Body::Asteroid);
@@ -136,6 +138,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.starLabelsCheck->setChecked(labelMode & Renderer::StarLabels);
     ui.planetLabelsCheck->setChecked(labelMode & Renderer::PlanetLabels);
     ui.dwarfPlanetLabelsCheck->setChecked(labelMode & Renderer::DwarfPlanetLabels);
+    ui.dwarfCandidateLabelsCheck->setChecked(labelMode & Renderer::DwarfCandidateLabels);
     ui.moonLabelsCheck->setChecked(labelMode & Renderer::MoonLabels);
     ui.minorMoonLabelsCheck->setChecked(labelMode & Renderer::MinorMoonLabels);
     ui.asteroidLabelsCheck->setChecked(labelMode & Renderer::AsteroidLabels);
@@ -284,6 +287,13 @@ void PreferencesDialog::on_dwarfPlanetsCheck_stateChanged(int state)
 }
 
 
+
+void PreferencesDialog::on_dwarfCandidatesCheck_stateChanged(int state)
+{
+    setRenderFlag(appCore, Renderer::ShowDwarfCandidates, state);
+}
+
+
 void PreferencesDialog::on_moonsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowMoons, state);
@@ -428,6 +438,12 @@ void PreferencesDialog::on_dwarfPlanetOrbitsCheck_stateChanged(int state)
 }
 
 
+void PreferencesDialog::on_dwarfCandidateOrbitsCheck_stateChanged(int state)
+{
+    setOrbitFlag(appCore, Body::DwarfCandidate, state);
+}
+
+
 void PreferencesDialog::on_moonOrbitsCheck_stateChanged(int state)
 {
     setOrbitFlag(appCore, Body::Moon, state);
@@ -544,6 +560,12 @@ void PreferencesDialog::on_planetLabelsCheck_stateChanged(int state)
 void PreferencesDialog::on_dwarfPlanetLabelsCheck_stateChanged(int state)
 {
     setLabelFlag(appCore, Renderer::DwarfPlanetLabels, state);
+}
+
+
+void PreferencesDialog::on_dwarfCandidateLabelsCheck_stateChanged(int state)
+{
+    setLabelFlag(appCore, Renderer::DwarfCandidateLabels, state);
 }
 
 

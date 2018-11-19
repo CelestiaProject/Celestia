@@ -116,6 +116,7 @@ static const int CLASSES_SECONDARY_ILLUMINATOR = Body::Planet      |
                                                  Body::Moon        |
                                                  Body::MinorMoon   |
                                                  Body::DwarfPlanet |
+                                                 Body::DwarfCandidate |
                                                  Body::Asteroid    |
                                                  Body::Comet;
 
@@ -126,6 +127,7 @@ void InitializeClassifications()
 {
     Classifications["planet"]         = Body::Planet;
     Classifications["dwarfplanet"]    = Body::DwarfPlanet;
+    Classifications["dwarfcandidate"] = Body::DwarfCandidate;
     Classifications["moon"]           = Body::Moon;
     Classifications["minormoon"]      = Body::MinorMoon;
     Classifications["comet"]          = Body::Comet;

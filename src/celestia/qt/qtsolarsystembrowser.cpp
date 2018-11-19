@@ -272,6 +272,7 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
         {
         case Body::Planet:
         case Body::DwarfPlanet:
+        case Body::DwarfCandidate:
         case Body::Invisible:
         case Body::Moon:
             normal.push_back(body);
@@ -512,6 +513,8 @@ static QString objectTypeName(const Selection& sel)
             return _("Planet");
         case Body::DwarfPlanet:
             return _("Dwarf planet");
+        case Body::DwarfCandidate:
+            return _("Dwarf planet candidate");
         case Body::Moon:
             return _("Moon");
         case Body::MinorMoon:
