@@ -17,6 +17,7 @@
 #include <string>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include "celx.h"
 
 class CelestiaCore;
 class TimelinePhase;
@@ -182,6 +183,23 @@ private:
     lua_State* m_lua;
 };
 
-
+void Celx_SetClass(lua_State*, int);
+void Celx_CreateClassMetatable(lua_State*, int);
+void Celx_RegisterMethod(lua_State*, const char*, lua_CFunction);
+bool Celx_istype(lua_State*, int index, int);
+void* Celx_CheckUserData(lua_State*, int, int);
+CelestiaCore* getAppCore(lua_State*, FatalErrors fatalErrors = NoErrors);
+void Celx_DoError(lua_State*, const char*);
+void Celx_CheckArgs(lua_State*, int, int, const char*);
+const char* Celx_SafeGetString(lua_State*,
+                                      int,
+                                      FatalErrors fatalErrors = AllErrors,
+                                      const char* errorMsg = "String argument expected");
+lua_Number Celx_SafeGetNumber(lua_State* l, int index, FatalErrors fatalErrors = AllErrors,
+                              const char* errorMsg = "Numeric argument expected",
+                              lua_Number defaultValue = 0.0);
+bool Celx_SafeGetBoolean(lua_State* l, int index, FatalErrors fatalErrors = AllErrors,
+                              const char* errorMsg = "Boolean argument expected",
+                              bool defaultValue = false);
 
 #endif // _CELX_INTERNAL_H_

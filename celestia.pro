@@ -329,6 +329,7 @@ APP_SOURCES = \
     src/celestia/celx_celestia.cpp \
     src/celestia/celx_frame.cpp \
     src/celestia/celx_gl.cpp \
+    src/celestia/celx_misc.cpp \
     src/celestia/celx_object.cpp \
     src/celestia/celx_observer.cpp \
     src/celestia/celx_phase.cpp \
@@ -350,6 +351,7 @@ APP_HEADERS = \
     src/celestia/celx_internal.h \
     src/celestia/celx_frame.h \
     src/celestia/celx_gl.h \
+    src/celestia/celx_misc.h \
     src/celestia/celx_object.h \
     src/celestia/celx_observer.h \
     src/celestia/celx_phase.h \
