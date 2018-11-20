@@ -53,7 +53,7 @@ FeatureNameEntry FeatureNames[] =
     { "LU", Location::Lacuna },
     { "LC", Location::Lacus },
     { "LF", Location::LandingSite },
-    { "LG", Location::Large },
+    { "LG", Location::LargeRinged },
     { "LE", Location::Lenticula },
     { "LI", Location::Linea },
     { "LN", Location::Lingula },
@@ -92,7 +92,8 @@ FeatureNameEntry FeatureNames[] =
     { "Crater", Location::Crater },
     { "Capital", Location::Capital},
     { "Cosmodrome", Location::Cosmodrome},
-    { "Trench", Location::Trench},
+    { "Ring", Location::Ring},
+    { "RG", Location::Ring},
     { "Historical", Location::Historical},
 };
 
