@@ -93,7 +93,7 @@ class Location
         Labyrinthus    = 0x0000010000000000,
         Lacuna         = 0x0000020000000000,
         Lacus          = 0x0000040000000000,
-        Large          = 0x0000080000000000,
+        LargeRinged    = 0x0000080000000000,
         Lenticula      = 0x0000100000000000,
         Lingula        = 0x0000200000000000,
         Macula         = 0x0000400000000000,
@@ -112,7 +112,7 @@ class Location
         // Custom locations, part II
         Capital        = 0x0800000000000000,
         Cosmodrome     = 0x1000000000000000,
-        Trench         = 0x2000000000000000, // Tectonical trench
+        Ring           = 0x2000000000000000,
         Historical     = 0x4000000000000000,
         Other          = 0x8000000000000000,
     };
