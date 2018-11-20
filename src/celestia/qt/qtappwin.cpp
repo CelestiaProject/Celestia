@@ -167,7 +167,7 @@ FPSActionGroup::FPSActionGroup(QObject *p)
     }
     m_customAction = new QAction(_("Custom"), p);
     m_customAction->setCheckable(true);
-    m_customAction->setShortcut(QString("Shift+F"));
+    m_customAction->setShortcut(QString("Ctrl+`"));
     m_actionGroup->addAction(m_customAction);
     m_actionGroup->setExclusive(true);
 }
