@@ -13,6 +13,7 @@
 #include <celestia/celestiacore.h>
 #include "qtsolarsystembrowser.h"
 #include "qtinfopanel.h"
+#include "qtcolorswatchwidget.h"
 #include <QAbstractItemModel>
 #include <QItemSelection>
 #include <QTreeView>
@@ -21,6 +22,7 @@
 #include <QHBoxLayout>
 #include <QGroupBox>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QLabel>
 #include <vector>
 #ifdef TEST_MODEL
@@ -700,6 +702,62 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, 
     connect(groupCheckBox, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
     layout->addWidget(groupCheckBox);
 
+
+    // Controls for marking selected objects
+    QGroupBox* markGroup = new QGroupBox(_("Markers"));
+    QGridLayout* markGroupLayout = new QGridLayout();
+
+    QPushButton* markSelectedButton = new QPushButton(_("Mark Selected"));
+    connect(markSelectedButton, SIGNAL(clicked()), this, SLOT(slotMarkSelected()));
+    markSelectedButton->setToolTip(_("Mark bodies selected in list view"));
+    markGroupLayout->addWidget(markSelectedButton, 0, 0, 1, 2);
+
+    QPushButton* clearMarkersButton = new QPushButton(_("Clear Markers"));
+    connect(clearMarkersButton, SIGNAL(clicked()), this, SLOT(slotClearMarkers()));
+    clearMarkersButton->setToolTip(_("Remove all existing markers"));
+    markGroupLayout->addWidget(clearMarkersButton, 0, 2, 1, 2);
+
+    markerSymbolBox = new QComboBox();
+    markerSymbolBox->setEditable(false);
+    markerSymbolBox->addItem(_("None"));
+    markerSymbolBox->addItem(_("Diamond"), (int) MarkerRepresentation::Diamond);
+    markerSymbolBox->addItem(_("Triangle"), (int) MarkerRepresentation::Triangle);
+    markerSymbolBox->addItem(_("Square"), (int) MarkerRepresentation::Square);
+    markerSymbolBox->addItem(_("Plus"), (int) MarkerRepresentation::Plus);
+    markerSymbolBox->addItem(_("X"), (int) MarkerRepresentation::X);
+    markerSymbolBox->addItem(_("Circle"), (int) MarkerRepresentation::Circle);
+    markerSymbolBox->addItem(_("Left Arrow"), (int) MarkerRepresentation::LeftArrow);
+    markerSymbolBox->addItem(_("Right Arrow"), (int) MarkerRepresentation::RightArrow);
+    markerSymbolBox->addItem(_("Up Arrow"), (int) MarkerRepresentation::UpArrow);
+    markerSymbolBox->addItem(_("Down Arrow"), (int) MarkerRepresentation::DownArrow);
+    markerSymbolBox->setCurrentIndex(1);
+    markerSymbolBox->setToolTip(_("Select marker symbol"));
+    markGroupLayout->addWidget(markerSymbolBox, 1, 0);
+
+    markerSizeBox = new QComboBox();
+    markerSizeBox->setEditable(true);
+    markerSizeBox->addItem("3", 3.0);
+    markerSizeBox->addItem("5", 5.0);
+    markerSizeBox->addItem("10", 10.0);
+    markerSizeBox->addItem("20", 20.0);
+    markerSizeBox->addItem("50", 50.0);
+    markerSizeBox->addItem("100", 100.0);
+    markerSizeBox->addItem("200", 200.0);
+    markerSizeBox->setCurrentIndex(3);
+    markerSizeBox->setToolTip(_("Select marker size"));
+    markGroupLayout->addWidget(markerSizeBox, 1, 1);
+
+    colorSwatch = new ColorSwatchWidget(QColor("cyan"));
+    colorSwatch->setToolTip(_("Click to select marker color"));
+    markGroupLayout->addWidget(colorSwatch, 1, 2);
+
+    labelMarkerBox = new QCheckBox(_("Label"));
+    markGroupLayout->addWidget(labelMarkerBox, 1, 3);
+
+    markGroup->setLayout(markGroupLayout);
+    layout->addWidget(markGroup);
+    // End marking group
+
     slotRefreshTree();
 
     setLayout(layout);
@@ -765,14 +823,15 @@ void SolarSystemBrowser::slotContextMenu(const QPoint& pos)
 
 void SolarSystemBrowser::slotMarkSelected()
 {
-#if 0
     QItemSelectionModel* sm = treeView->selectionModel();
     QModelIndexList rows = sm->selectedRows();
 
     bool labelMarker = labelMarkerBox->checkState() == Qt::Checked;
     bool convertOK = false;
     QVariant markerData = markerSymbolBox->itemData(markerSymbolBox->currentIndex());
-    Marker::Symbol markerSymbol = (Marker::Symbol) markerData.toInt(&convertOK);
+    MarkerRepresentation::Symbol markerSymbol = (MarkerRepresentation::Symbol) markerData.toInt(&convertOK);
+    QVariant markerSize = markerSizeBox->itemData(markerSizeBox->currentIndex());
+    float size = (float) markerSize.toInt(&convertOK);
     QColor markerColor = colorSwatch->color();
     Color color((float) markerColor.redF(),
                 (float) markerColor.greenF(),
@@ -781,42 +840,39 @@ void SolarSystemBrowser::slotMarkSelected()
     Universe* universe = appCore->getSimulation()->getUniverse();
     string label;
 
-    for (QModelIndexList::const_iterator iter = rows.begin();
-         iter != rows.end(); iter++)
+    for (const auto& index : rows)
     {
-        Selection sel = solarSystemModel->objectAtIndex(*iter);
-        if (!sel.empty())
-        {
-            if (convertOK)
-            {
-#if 0
-                if (labelMarker)
-                {
-                    label = universe->getDSOCatalog()->getDSOName(dso);
-                    label = ReplaceGreekLetterAbbr(label);
-                }
-#endif
+        Selection sel = solarSystemModel->objectAtIndex(index);
+        if (sel.empty())
+            continue;
 
-                universe->markObject(sel, 10.0f,
-                                     color,
-                                     markerSymbol, 1, label);
-            }
-            else
+        if (convertOK)
+        {
+            if (labelMarker)
             {
-                universe->unmarkObject(sel, 1);
+                if (sel.body() != nullptr)
+                    label = sel.body()->getName(true);
+                else if (sel.star() != nullptr)
+                    label = universe->getStarCatalog()->getStarName(*sel.star());
+
+                label = ReplaceGreekLetterAbbr(label);
             }
+            universe->markObject(sel,
+                                 MarkerRepresentation(markerSymbol, size, color, label),
+                                 1);
+        }
+        else
+        {
+            universe->unmarkObject(sel, 1);
         }
     }
-#endif
 }
 
 
-#if 0
 void SolarSystemBrowser::slotClearMarkers()
 {
     appCore->getSimulation()->getUniverse()->unmarkAll();
 }
-#endif
 
 
 void SolarSystemBrowser::slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel)

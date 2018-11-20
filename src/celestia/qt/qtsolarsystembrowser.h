@@ -19,7 +19,9 @@
 class QAbstractItemModel;
 class QTreeView;
 class QCheckBox;
+class QComboBox;
 class QItemSelection;
+class ColorSwatchWidget;
 class CelestiaCore;
 class InfoPanel;
 
@@ -38,6 +40,7 @@ Q_OBJECT
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
     //void slotChooseMarkerColor();
+    void slotClearMarkers();
     void slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel);
 
  signals:
@@ -53,6 +56,12 @@ Q_OBJECT
     QTreeView* treeView{nullptr};
 
     QCheckBox* groupCheckBox{nullptr};
+
+    QComboBox* markerSymbolBox{nullptr};
+    QComboBox* markerSizeBox{nullptr};
+    QCheckBox* labelMarkerBox{nullptr};
+
+    ColorSwatchWidget* colorSwatch{nullptr};
 
     InfoPanel* infoPanel{nullptr};
 };
