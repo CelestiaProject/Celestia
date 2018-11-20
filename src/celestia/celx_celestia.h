@@ -14,4 +14,10 @@
 
 struct lua_State;
 
+int celestia_new(lua_State*, CelestiaCore*);
+CelestiaCore* to_celestia(lua_State*, int);
+CelestiaCore* this_celestia(lua_State*);
+void CreateCelestiaMetaTable(lua_State*);
+void ExtendCelestiaMetaTable(lua_State*);
+
 #endif // _CELX_CELESTIA_H_
