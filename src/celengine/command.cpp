@@ -1178,17 +1178,31 @@ void CommandSetRingsTexture::process(ExecutionEnvironment& env)
 
 
 ///////////////
-// FromSSC command
-CommandFromSSC::CommandFromSSC(string _fragment) :
-    fragment(_fragment)
+// LoadFragment command
+CommandLoadFragment::CommandLoadFragment(string _type, string _fragment, string _dir) :
+    type(std::move(_type)),
+    fragment(std::move(_fragment)),
+    dir(std::move(_dir))
 {
 }
 
-void CommandFromSSC::process(ExecutionEnvironment& env)
+void CommandLoadFragment::process(ExecutionEnvironment& env)
 {
     Universe* u = env.getSimulation()->getUniverse();
     if (u == nullptr)
         return;
+
     istringstream in(fragment);
-    LoadSolarSystemObjects(in, *u, "");
+    if (compareIgnoringCase(type, "ssc") == 0)
+    {
+        LoadSolarSystemObjects(in, *u, dir);
+    }
+    else if (compareIgnoringCase(type, "stc") == 0)
+    {
+        u->getStarCatalog()->load(in, dir);
+    }
+    else if (compareIgnoringCase(type, "dsc") == 0)
+    {
+        u->getDSOCatalog()->load(in, dir);
+    }
 }

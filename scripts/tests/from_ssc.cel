@@ -1,3 +1,0 @@
-{
-   from_ssc { fragment "Modify \"433 Eros:Eros:1898 DQ\" \"Sol\" {UniformRotation {Period 0.01}}" }
-}
