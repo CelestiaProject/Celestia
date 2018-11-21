@@ -57,8 +57,8 @@ public:
 
     enum
     {
-        NameColumn        = 0,
-        TypeColumn        = 1,
+        NameColumn = 0,
+        TypeColumn = 1,
     };
 
     void buildModel(Star* star, bool _groupByClass);
@@ -122,6 +122,7 @@ SolarSystemTreeModel::SolarSystemTreeModel(const Universe* _universe) :
 // Call createTreeItem() to build the parallel tree structure
 void SolarSystemTreeModel::buildModel(Star* star, bool _groupByClass)
 {
+    beginResetModel();
     groupByClass = _groupByClass;
 
     if (rootItem != nullptr)
@@ -137,7 +138,6 @@ void SolarSystemTreeModel::buildModel(Star* star, bool _groupByClass)
         rootItem->children[0] = createTreeItem(Selection(star), rootItem, 0);
     }
 
-    beginResetModel();
     endResetModel();
 }
 
