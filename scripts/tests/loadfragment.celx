@@ -1,0 +1,15 @@
+ssc = [[
+Modify "433 Eros:Eros:1898 DQ" "Sol"
+{
+    UniformRotation
+    {
+        Period 0.01
+    }
+}
+]]
+
+if (celestia:loadfragment("ssc", ssc)) then
+    print("okay")
+else
+    print("not okay")
+end

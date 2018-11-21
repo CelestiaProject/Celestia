@@ -814,14 +814,14 @@ class CommandSetRingsTexture : public InstantaneousCommand
 };
 
 
-class CommandFromSSC : public InstantaneousCommand
+class CommandLoadFragment : public InstantaneousCommand
 {
  public:
-    CommandFromSSC(std::string);
+    CommandLoadFragment(std::string, std::string, std::string);
     void process(ExecutionEnvironment&);
 
  private:
-    std::string fragment;
+    std::string type, fragment, dir;
 };
 
 #endif // _COMMAND_H_

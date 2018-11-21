@@ -2116,18 +2116,36 @@ static int celestia_play(lua_State*)
 }
 
 
-static int celestia_from_ssc(lua_State* l)
+static int celestia_loadfragment(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "Function celestia:from_ssc requires exactly one argument");
+    Celx_CheckArgs(l, 3, 4, "Function celestia:from_ssc requires two or three arguments");
     CelestiaCore* appCore = this_celestia(l);
-    const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:from_ssc must be a string");
-    if (s == nullptr)
+    const char* type = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:loadfragment must be a string");
+    const char* frag = Celx_SafeGetString(l, 3, AllErrors, "Second argument to celestia:loadfragment must be a string");
+    if (type == nullptr || frag == nullptr)
     {
         lua_pushboolean(l, false);
         return 1;
     }
-    istringstream in(s);
-    bool ret = LoadSolarSystemObjects(in, *appCore->getSimulation()->getUniverse(), "");
+    const char* dir = Celx_SafeGetString(l, 3, WrongType, "Third argument to celestia:loadfragment must be a string");
+    if (dir == nullptr)
+        dir = "";
+
+    bool ret = false;
+    Universe *u = appCore->getSimulation()->getUniverse();
+    istringstream in(frag);
+    if (compareIgnoringCase(type, "ssc") == 0)
+    {
+        ret = LoadSolarSystemObjects(in, *u, dir);
+    }
+    else if (compareIgnoringCase(type, "stc") == 0)
+    {
+        ret = u->getStarCatalog()->load(in, dir);
+    }
+    else if (compareIgnoringCase(type, "dsc") == 0)
+    {
+        ret = u->getDSOCatalog()->load(in, dir);
+    }
 
     lua_pushboolean(l, ret);
     return 1;
@@ -2235,7 +2253,7 @@ void CreateCelestiaMetaTable(lua_State* l)
     // Dummy command for compatibility purpose
     Celx_RegisterMethod(l, "play", celestia_play);
 
-    Celx_RegisterMethod(l, "from_ssc", celestia_from_ssc);
+    Celx_RegisterMethod(l, "loadfragment", celestia_loadfragment);
 
     lua_pop(l, 1);
 }

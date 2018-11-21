@@ -895,11 +895,13 @@ Command* CommandParser::parseCommand()
         paramList->getString("path", path);
         cmd = new CommandSetRingsTexture(object, texture, path);
     }
-    else if (commandName == "from_ssc")
+    else if (commandName == "loadfragment")
     {
-        string fragment;
+        string type, fragment, dir;
+        paramList->getString("type", type);
         paramList->getString("fragment", fragment);
-        cmd = new CommandFromSSC(fragment);
+        paramList->getString("dir", dir);
+        cmd = new CommandLoadFragment(type, fragment, dir);
     }
     else
     {
