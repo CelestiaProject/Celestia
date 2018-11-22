@@ -151,6 +151,8 @@ void CelestiaGlWidget::initializeGL()
     appRenderer->getGLContext()->setRenderPath(usePath);
 
     appCore->setScreenDpi(logicalDpiY());
+
+    appRenderer->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
 }
 
 
