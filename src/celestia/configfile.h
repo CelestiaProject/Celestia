@@ -74,6 +74,8 @@ public:
 
     float getFloatValue(const std::string& name);
     const std::string getStringValue(const std::string& name);
+
+    float SolarSystemMaxDistance;
 };
 
 CelestiaConfig* ReadCelestiaConfig(const std::string& filename, CelestiaConfig* config = nullptr);
