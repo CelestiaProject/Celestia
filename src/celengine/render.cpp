@@ -154,12 +154,6 @@ static const float MaxAsterismLinesConstDist   = 600.0f;
 static const float MaxAsterismLabelsDist = 20.0f;
 static const float MaxAsterismLinesDist  = 6.52e4f;
 
-// Maximum size of a solar system in light years. Features beyond this distance
-// will not necessarily be rendered correctly. This limit is used for
-// visibility culling of solar systems.
-static const float MaxSolarSystemSize = 1.0f;
-
-
 // Static meshes and textures used by all instances of Simulation
 
 static bool commonDataInitialized = false;
@@ -2560,7 +2554,7 @@ void Renderer::draw(const Observer& observer,
     if ((renderFlags & ShowSSO) != 0)
     {
         nearStars.clear();
-        universe.getNearStars(observer.getPosition(), MaxSolarSystemSize, nearStars);
+        universe.getNearStars(observer.getPosition(), SolarSystemMaxDistance, nearStars);
 
         // Set up direct light sources (i.e. just stars at the moment)
         setupLightSources(nearStars, observer.getPosition(), now, lightSourceList, renderFlags);
@@ -6523,6 +6517,7 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
     float cosFOV{ 1.0f };
 
     const ColorTemperatureTable* colorTemp{ nullptr };
+    float SolarSystemMaxDistance;
 #ifdef DEBUG_HDR_ADAPT
     float minMag;
     float maxMag;
@@ -6632,7 +6627,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         // Stars closer than the maximum solar system size are actually
         // added to the render list and depth sorted, since they may occlude
         // planets.
-        if (distance > MaxSolarSystemSize)
+        if (distance > SolarSystemMaxDistance)
         {
 #ifdef USE_HDR
             float satPoint = saturationMag;
@@ -6759,6 +6754,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 #endif
     starRenderer.distanceLimit     = distanceLimit;
     starRenderer.labelMode         = labelMode;
+    starRenderer.SolarSystemMaxDistance = SolarSystemMaxDistance;
 #ifdef DEBUG_HDR_ADAPT
     starRenderer.minMag = -100.f;
     starRenderer.maxMag =  100.f;
@@ -7892,4 +7888,10 @@ void Renderer::updateBodyVisibilityMask()
         flags |= Body::Spacecraft;
 
     bodyVisibilityMask = flags;
+}
+
+void  Renderer::setSolarSystemMaxDistance(float t)
+{
+    if (t >= 1.0f && t <= 10.0f)
+        SolarSystemMaxDistance = t;
 }

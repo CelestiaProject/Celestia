@@ -235,6 +235,7 @@ class Renderer
     void setStarColorTable(const ColorTemperatureTable*);
     bool getVideoSync() const;
     void setVideoSync(bool);
+    void setSolarSystemMaxDistance(float);
 
 #ifdef USE_HDR
     bool getBloomEnabled();
@@ -728,6 +729,12 @@ class Renderer
     bool objectAnnotationSetOpen;
 
     double realTime{ true };
+
+   // Maximum size of a solar system in light years. Features beyond this distance
+   // will not necessarily be rendered correctly. This limit is used for
+   // visibility culling of solar systems.
+   float SolarSystemMaxDistance{ 1.0f };
+
 
     // Location markers
  public:

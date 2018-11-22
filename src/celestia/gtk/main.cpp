@@ -390,6 +390,8 @@ int main(int argc, char* argv[])
     app->simulation = app->core->getSimulation();
     g_assert(app->simulation);
 
+    app->renderer->setSolarSystemMaxDistance(app->getConfig()->SolarSystemMaxDistance);
+
     #ifdef GNOME
     /* Create the main window (GNOME) */
     app->mainWindow = gnome_app_new("Celestia", "Celestia");

@@ -3380,6 +3380,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (!initSucceeded)
         return 1;
 
+    appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
+
     if (startURL != "")
         appCore->setStartURL(startURL);
 

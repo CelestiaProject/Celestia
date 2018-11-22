@@ -523,6 +523,8 @@ int main(int argc, char* argv[])
     // GL should be all set up, now initialize the renderer.
     appCore->initRenderer();
 
+    appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
+
     // Set the simulation starting time to the current system time
     time_t curtime = time(nullptr);
     appCore->start((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
