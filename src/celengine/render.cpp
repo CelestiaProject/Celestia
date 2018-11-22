@@ -2560,7 +2560,7 @@ void Renderer::draw(const Observer& observer,
     if ((renderFlags & ShowSSO) != 0)
     {
         nearStars.clear();
-        universe.getNearStars(observer.getPosition(), 1.0f, nearStars);
+        universe.getNearStars(observer.getPosition(), MaxSolarSystemSize, nearStars);
 
         // Set up direct light sources (i.e. just stars at the moment)
         setupLightSources(nearStars, observer.getPosition(), now, lightSourceList, renderFlags);
