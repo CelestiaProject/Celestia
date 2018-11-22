@@ -175,9 +175,9 @@ void Universe::markObject(const Selection& sel,
     if (iter != markers->end())
     {
         // Handle the case when the object is already marked.  If the
-        // priority is higher than the existing marker, replace it.
+        // priority is higher or equal to the existing marker, replace it.
         // Otherwise, do nothing.
-        if (priority > iter->priority())
+        if (priority >= iter->priority())
             markers->erase(iter);
         else
             return;
