@@ -857,6 +857,8 @@ void SolarSystemBrowser::slotMarkSelected()
 
                 label = ReplaceGreekLetterAbbr(label);
             }
+            // FIXME: unmark is required to change the marker representation
+            universe->unmarkObject(sel, 1);
             universe->markObject(sel,
                                  MarkerRepresentation(markerSymbol, size, color, label),
                                  1);
