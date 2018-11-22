@@ -419,7 +419,7 @@ void showSelectionInfo(const Selection& sel)
 
     AngleAxisf aa(orientation);
 
-    fmt::printf(_("%s\nOrientation: [%d, %d, %d], %.1f\n"),
+    fmt::printf(_("%s\nOrientation: [%f, %f, %f], %.1f\n"),
                 sel.getName(), aa.axis().x(), aa.axis().y(), aa.axis().z(), radToDeg(aa.angle()));
 }
 
