@@ -1207,6 +1207,6 @@ Universe::getNearStars(const UniversalCoord& position,
                        vector<const Star*>& nearStars) const
 {
     Vector3f pos = position.toLy().cast<float>();
-    NearStarFinder finder(1.0f, nearStars);
+    NearStarFinder finder(maxDistance, nearStars);
     starCatalog->findCloseStars(finder, pos, maxDistance);
 }
