@@ -106,6 +106,10 @@ CelestiaConfig* ReadCelestiaConfig(const string& filename, CelestiaConfig *confi
     configParams->getString("LogoTexture", config->logoTextureFile);
     configParams->getString("Cursor", config->cursor);
 
+    float maxDist = 1.0;
+    configParams->getNumber("SolarSystemMaxDistance", maxDist);
+    config->SolarSystemMaxDistance = min(max(maxDist, 1.0f), 10.0f);
+
     double aaSamples = 1;
     configParams->getNumber("AntialiasingSamples", aaSamples);
     config->aaSamples = (unsigned int) aaSamples;
