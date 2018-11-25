@@ -72,9 +72,12 @@ Then do the following actions in Celestia's source directory:
 mkdir build && cd build
 qmake -qt=5 PREFIX=/opt/celestia -o Makefile ../celestia.pro
 make
+sudo make install
 
 You can speedup build passing option -jN to make where N is a number of
 your CPU cores.
+
+An executable binary will be installed to /opt/celestia/bin/Celestia_QT.
 
 GETTING STARTED
 ---------------
