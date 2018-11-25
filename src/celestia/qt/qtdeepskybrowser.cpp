@@ -614,8 +614,9 @@ void DeepSkyBrowser::slotMarkSelected()
                     }
 
                     // FIXME: unmark is required to change the marker representation
+                    Selection sel = Selection(dso);
                     universe->unmarkObject(sel, 1);
-                    universe->markObject(Selection(dso),
+                    universe->markObject(sel,
                                          MarkerRepresentation(markerSymbol, size, color, label),
                                          1);
                 }
