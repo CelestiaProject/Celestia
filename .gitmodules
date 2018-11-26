@@ -1,0 +1,10 @@
+[submodule "thirdparty/Eigen"]
+	path = thirdparty/Eigen
+	url = https://github.com/eigenteam/eigen-git-mirror
+	branch = branches/3.3
+[submodule "thirdparty/fmt"]
+	path = thirdparty/fmt
+	url = https://github.com/fmtlib/fmt
+[submodule "thirdparty/Spice"]
+	path = thirdparty/Spice
+	url = https://github.com/OpenSpace/Spice
