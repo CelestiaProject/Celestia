@@ -761,7 +761,9 @@ unix {
     fonts.path            = $$WORKDIR/fonts
     fonts.files           = $$FONT_SOURCE/*.txf
     scripts.path          = $$WORKDIR/scripts
-    scripts.files         = scripts/*.celx
+    scripts.files         = scripts/*.celx scripts/*.cel
+    images.path           = $$WORKDIR/images
+    images.files          = images/*
     configuration.path    = $$WORKDIR
     configuration.files  += $$CONFIGURATION_FILES \
                            $$CONFIGURATION_SOURCE/guide.cel \
@@ -799,5 +801,5 @@ unix {
 
     INSTALLS += target data textures lores_textures hires_textures \
     flares models shaders fonts scripts locale extras extras-standard \
-    configuration desktop icon128 splash
+    configuration desktop icon128 splash images
 }
