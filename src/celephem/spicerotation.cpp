@@ -97,7 +97,7 @@ SpiceRotation::init(const string& path,
     // Load required kernel files
     if (requiredKernels != nullptr)
     {
-        for (const auto& kernel : requiredKernels)
+        for (const auto& kernel : *requiredKernels)
         {
             string filepath = path + string("/data/") + kernel;
             if (!LoadSpiceKernel(filepath))
