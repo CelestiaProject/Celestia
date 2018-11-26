@@ -632,15 +632,17 @@ unix {
 
     CONFIG += link_pkgconfig
 
-    LUALIST = lua lua51 lua52 lua53
+    LUALIST = lua lua5.1 lua51 lua5.2 lua52 lua5.3 lua53
     for(libpc, LUALIST):system(pkg-config --exists $${libpc}):LUAPC = $${libpc}
     isEmpty (LUAPC) {error("No shared Lua library found!")}
 
     message("LUA version: " $${LUAPC})
     
-    equals(LUAPC, "lua53"): DEFINES += LUA_VER=0x050300
-    equals(LUAPC, "lua52"): DEFINES += LUA_VER=0x050200
-    equals(LUAPC, "lua51"): DEFINES += LUA_VER=0x050100
+    LUA_VER = 0x050000
+    system(pkg-config --atleast-version 5.1 $$LUAPC):LUA_VER = 0x050100
+    system(pkg-config --atleast-version 5.2 $$LUAPC):LUA_VER = 0x050200
+    system(pkg-config --atleast-version 5.3 $$LUAPC):LUA_VER = 0x050300
+    DEFINES += LUA_VER=$$LUA_VER
 
     PKGCONFIG += glu $$LUAPC libpng libjpeg theora
 }
