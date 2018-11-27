@@ -55,6 +55,7 @@
 #include "qtinfopanel.h"
 #include "qteventfinder.h"
 #include "qtsettimedialog.h"
+#include "qtgotoobjectdialog.h"
 //#include "qtvideocapturedialog.h"
 #include "celestia/scriptmenu.h"
 #include "celestia/url.h"
@@ -850,6 +851,13 @@ void CelestiaAppWindow::gotoSelection()
 }
 
 
+void CelestiaAppWindow::gotoObject()
+{
+    GoToObjectDialog dlg(this, m_appCore);
+    dlg.exec();
+}
+
+
 void CelestiaAppWindow::slotPreferences()
 {
     PreferencesDialog dlg(this, m_appCore);
@@ -1210,8 +1218,6 @@ void CelestiaAppWindow::createMenus()
     connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
     fileMenu->addAction(quitAct);
 
-
-
     /****** Navigation menu ******/
     navMenu = menuBar()->addMenu(_("&Navigation"));
 
@@ -1227,6 +1233,9 @@ void CelestiaAppWindow::createMenus()
     connect(gotoAct, SIGNAL(triggered()), this, SLOT(gotoSelection()));
     navMenu->addAction(gotoAct);
 
+    QAction* gotoObjAct = new QAction(QIcon(":/icons/go-jump.png"), _("Goto Object..."), this);
+    connect(gotoObjAct, SIGNAL(triggered()), this, SLOT(gotoObject()));
+    navMenu->addAction(gotoObjAct);
 
     /****** Time menu ******/
     timeMenu = menuBar()->addMenu(_("&Time"));

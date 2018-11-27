@@ -383,6 +383,7 @@ QTAPP_SOURCES = \
     src/celestia/qt/qtinfopanel.cpp \
     src/celestia/qt/qteventfinder.cpp \
     src/celestia/qt/qtsettimedialog.cpp \
+    src/celestia/qt/qtgotoobjectdialog.cpp \
     src/celestia/qt/xbel.cpp
 
 QTAPP_HEADERS = \
@@ -400,6 +401,7 @@ QTAPP_HEADERS = \
     src/celestia/qt/qtinfopanel.h \
     src/celestia/qt/qteventfinder.h \
     src/celestia/qt/qtsettimedialog.h \
+    src/celestia/qt/qtgotoobjectdialog.h \
     src/celestia/qt/xbel.h
 
 # Third party libraries
@@ -493,7 +495,8 @@ FORMS = \
     src/celestia/qt/addbookmark.ui \
     src/celestia/qt/newbookmarkfolder.ui \
     src/celestia/qt/organizebookmarks.ui \
-    src/celestia/qt/preferences.ui
+    src/celestia/qt/preferences.ui \
+    src/celestia/qt/gotoobjectdialog.ui
 
 
 UI_HEADERS_DIR = src/celestia/qt/ui
