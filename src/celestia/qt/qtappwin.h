@@ -69,6 +69,7 @@ class CelestiaAppWindow : public QMainWindow
 
     void centerSelection();
     void gotoSelection();
+    void gotoObject();
     void selectSun();
 
     void slotPreferences();
