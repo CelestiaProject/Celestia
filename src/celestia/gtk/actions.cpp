@@ -1343,9 +1343,9 @@ void resyncRenderActions(AppData* app)
 
     /* Unlike the other interfaces, which go through each menu item and set
      * the corresponding renderFlag, we go the other way and set the menu
-     * based on the renderFlag. Last one is ShowEcliptic. */
+     * based on the renderFlag. Last one is ShowFadingOrbits. */
 
-    for (int i = Renderer::ShowStars; i <= Renderer::ShowEcliptic; i *= 2)
+    for (uint64_t i = Renderer::ShowStars; i <= Renderer::ShowFadingOrbits; i *= 2)
     {
         switch (i)
         {
