@@ -55,7 +55,7 @@ static double E75 = 1875.;
 double ARAD,DRAD,A,D,E,RAH,RA,DEC,RAL,RAU,DECL,DECD;
 double Ein ;
 char buf[BUFSIZ], *p;
-char *dEin = "1991.25";
+char dEin[] = "1991.25";
 int StringLength(char []);
 
 double *RA1, *DEC1, *EPOCH1, *EPOCH2, *RA2, *DEC2;
@@ -317,7 +317,7 @@ bool DumpStarDatabase(istream& in, ostream& out)
     double rah;        // right ascension hh
     double ram;        // right ascension mm
     double ras;        // right ascension ss
-    char *sign;
+    char   sign;
     double defrh;
     double defrm;
     double ded;        // declination degrees
@@ -417,13 +417,13 @@ bool DumpStarDatabase(istream& in, ostream& out)
         des=defrm*60;
         if (de < 0.0)
         {
-            sign = "-";
+            sign = '-';
             ded = -ded;
             dem = -dem;
             des = -des;
         }
         else if (de > 0.0)
-            sign= "+";
+            sign= '+';
 
         // write HIP number
         sprintf(buf,"%d  ",hi);
@@ -433,7 +433,7 @@ bool DumpStarDatabase(istream& in, ostream& out)
         sprintf(buf,"%.9f ",ra);   // ra in degrees
         out << std::setfill (' ') << std::setw(14) << buf;
 
-        sprintf(buf,"%s",sign);     // +/-sign
+        sprintf(buf,"%c",sign);     // +/-sign
         out << buf;
         double abs_de = abs(de);
         sprintf(buf,"%.9f ",abs_de);    //de in degrees
@@ -466,7 +466,7 @@ bool Convert2csv(istream& in, ostream& out,bool all)
     double rah;       // right ascension hh
     double ram;       // right ascension mm
     double ras;       // right ascension ss
-    char *sign;
+    char   sign;
     double defrh;
     double defrm;
     double ded;       // declination degrees
@@ -588,13 +588,13 @@ bool Convert2csv(istream& in, ostream& out,bool all)
         des=defrm*60;
         if (de < 0.0)
         {
-            sign="-";
+            sign='-';
             ded=-ded;
             dem=-dem;
             des=-des;
         }
         else if (de >= 0.0)
-            sign= "+";
+            sign= '+';
 
         // write HIP number
         sprintf(buf,"%d;",hi);
@@ -621,7 +621,7 @@ bool Convert2csv(istream& in, ostream& out,bool all)
         sprintf(buf,"%.2f;",ras);
         out << buf;
 
-        sprintf(buf,"%s",sign);     // +/-sign
+        sprintf(buf,"%c",sign);     // +/-sign
         out << buf;
         sprintf(buf,"%.f:",ded);     //de in degrees
         out << std::setfill ('0') << std::setw(3) << buf;
@@ -664,7 +664,7 @@ bool Const2csv(istream& in, ostream& out)
     double rah;       // right ascension hh
     double ram;       // right ascension mm
     double ras;       // right ascension ss
-    char *sign;
+    char   sign;
     double defrh;
     double defrm;
     double ded;       // declination degrees
@@ -779,12 +779,12 @@ bool Const2csv(istream& in, ostream& out)
         des=defrm*60;
         if (de < 0.0)
         {
-            sign="-";
+            sign='-';
             ded=-ded;
             dem=-dem;
             des=-des;
         }
-        else sign= "+";
+        else sign= '+';
         RA2c = ra * 24.0 / 360.0;   // to be used for constellation
         DE2c = de;
         //Determine Constellation
