@@ -185,12 +185,12 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut,
         }
         else
         {
-            Point3d pos = astro::equatorialToCelestialCart((double) RA, (double) dec, distance);
+            Eigen::Vector3d pos = astro::equatorialToCelestialCart((double) RA, (double) dec, distance);
             float absMag = (float) (appMag / 256.0 + 5 -
                                     5 * log10(distance / 3.26));
-            out << (float) pos.x << ' ' <<
-                   (float) pos.y << ' ' <<
-                   (float) pos.z << ' ';
+            out << (float) pos.x() << ' ' <<
+                   (float) pos.y() << ' ' <<
+                   (float) pos.z() << ' ';
             out << setprecision(5);
             out << absMag << ' ';
         }
