@@ -161,13 +161,13 @@ bool WriteStarDatabase(istream& in, ostream& out, bool sphericalCoords)
                 return false;
             }
 
-            Point3d pos =
+            Eigen::Vector3d pos =
                 astro::equatorialToCelestialCart((double) RA * 24.0 / 360.0,
                                                  (double) dec,
                                                  (double) distance);
-            x = (float) pos.x;
-            y = (float) pos.y;
-            z = (float) pos.z;
+            x = (float) pos.x();
+            y = (float) pos.y();
+            z = (float) pos.z();
             absMag = (float) (appMag + 5 - 5 * log10(distance / 3.26));
         }
         else
