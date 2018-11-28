@@ -508,7 +508,7 @@ bool Convert2csv(istream& in, ostream& out,bool all)
         printf("  Enter a year. and 2 digits. Leave empty for Epoch J1991.25\n");
         printf("  as been used for RA and DEC in the Hipparcos table.\n\n");
         printf("  CONSTELLATIONS derived from POSITION for Epoch(JJJJ.nn): ");
-        gets(buf);
+        std::cin >> buf;
         len = StringLength(buf);
         printf("%d", len);
         if (len > 4)
@@ -703,7 +703,7 @@ bool Const2csv(istream& in, ostream& out)
     printf("  Enter a year. and 2 digits. Leave empty is Epoch J1991.25\n");
     printf("  as been used for RA and DEC in the Hipparcos table.\n\n");
     printf("  CONSTELLATIONS derived from POSITION for Epoch(JJJJ.nn): ") ;
-    gets(buf);
+    std::cin >> buf;
     len = StringLength(buf);
 
     if (len > 4)
