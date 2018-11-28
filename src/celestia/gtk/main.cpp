@@ -390,7 +390,7 @@ int main(int argc, char* argv[])
     app->simulation = app->core->getSimulation();
     g_assert(app->simulation);
 
-    app->renderer->setSolarSystemMaxDistance(app->getConfig()->SolarSystemMaxDistance);
+    app->renderer->setSolarSystemMaxDistance(app->core->getConfig()->SolarSystemMaxDistance);
 
     #ifdef GNOME
     /* Create the main window (GNOME) */
