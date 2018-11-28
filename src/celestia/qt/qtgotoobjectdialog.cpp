@@ -1,7 +1,6 @@
 #include <QPushButton>
 #include <QLocale>
 #include "qtgotoobjectdialog.h"
-#include "ui_gotoobjectdialog.h"
 #include <celestia/celestiacore.h>
 
 using namespace Eigen;
