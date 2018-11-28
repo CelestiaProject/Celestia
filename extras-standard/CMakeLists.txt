@@ -1,0 +1,5 @@
+add_subdirectory(cassini)
+add_subdirectory(galileo)
+add_subdirectory(hubble)
+add_subdirectory(iss)
+add_subdirectory(mir)
