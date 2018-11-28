@@ -1,0 +1,3 @@
+file(GLOB FONTS_SOURCES *.txf)
+
+install(FILES ${FONTS_SOURCES} DESTINATION "${DATADIR}/fonts")
