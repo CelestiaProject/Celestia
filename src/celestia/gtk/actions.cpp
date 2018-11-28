@@ -731,7 +731,7 @@ void actionHelpAbout(GtkAction*, AppData* app)
                          "license", readFromFile("COPYING"),
                          "logo", logo,
                          NULL);
-    gdk_pixbuf_unref(logo);
+    g_object_unref(logo);
 }
 
 
