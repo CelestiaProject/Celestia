@@ -1,3 +1,3 @@
 file(GLOB LOCALE_SOURCES "controls_*.txt" "*.cel")
 
-install(FILES ${LOCALE_SOURCES} DESTINATION "${DATADIR}")
+install(FILES ${LOCALE_SOURCES} DESTINATION "${DATADIR}/locale")
