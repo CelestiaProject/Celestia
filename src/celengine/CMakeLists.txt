@@ -161,4 +161,3 @@ set_target_properties(celengine PROPERTIES
 add_dependencies(celengine cel3ds celmath celmodel)
 target_link_libraries(celengine cel3ds celmath celmodel)
 #install(TARGETS celengine LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(TARGETS celengine ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

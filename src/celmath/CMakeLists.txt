@@ -23,4 +23,3 @@ set_target_properties(celmath PROPERTIES
 )
 ]]#
 #install(TARGETS celmath LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(TARGETS celmath ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
