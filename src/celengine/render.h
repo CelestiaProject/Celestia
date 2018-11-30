@@ -213,6 +213,7 @@ class Renderer
                                           Renderer::ShowNebulae        |
                                           Renderer::ShowOpenClusters   |
                                           Renderer::ShowAutoMag        |
+                                          Renderer::ShowFadingOrbits   |
                                           Renderer::ShowSmoothLines;
 
     uint64_t getRenderFlags() const;

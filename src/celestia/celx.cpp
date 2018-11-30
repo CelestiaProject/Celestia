@@ -112,6 +112,7 @@ const char* MouseUpHandler    = "mouseup";
 void CelxLua::initRenderFlagMap()
 {
     RenderFlagMap["orbits"]              = Renderer::ShowOrbits;
+    RenderFlagMap["fadingorbits"]        = Renderer::ShowFadingOrbits;
     RenderFlagMap["cloudmaps"]           = Renderer::ShowCloudMaps;
     RenderFlagMap["constellations"]      = Renderer::ShowDiagrams;
     RenderFlagMap["galaxies"]            = Renderer::ShowGalaxies;

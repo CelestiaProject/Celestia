@@ -1777,7 +1777,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         double windowStart = windowEnd - period * OrbitPeriodsShown;
         double windowDuration = windowEnd - windowStart;
 
-        if (LinearFadeFraction == 0.0f)
+        if (LinearFadeFraction == 0.0f || (renderFlags & ShowFadingOrbits) == 0)
         {
             cachedOrbit->render(modelview,
                                 nearZ, farZ, viewFrustumPlaneNormals,
