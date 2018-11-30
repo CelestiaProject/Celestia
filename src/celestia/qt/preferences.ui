@@ -244,6 +244,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="fadingOrbitsCheck">
+              <property name="text">
+               <string>Fading orbits</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QCheckBox" name="partialTrajectoriesCheck">
               <property name="text">
                <string>Partial trajectories</string>
