@@ -4131,15 +4131,11 @@ bool CelestiaCore::initSimulation(const string* configFileName,
         ifstream dsoFile(file, ios::in);
         if (!dsoFile.good())
         {
-            cerr << _("Error opening deepsky catalog file.\n");
-            delete dsoDB;
-            return false;
+            warning(_("Error opening deepsky catalog file.\n"));
         }
         if (!dsoDB->load(dsoFile, ""))
         {
-            cerr << _("Cannot read Deep Sky Objects database.\n");
-            delete dsoDB;
-            return false;
+            warning(_("Cannot read Deep Sky Objects database.\n"));
         }
     }
 
