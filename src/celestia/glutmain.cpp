@@ -488,6 +488,7 @@ int main(int argc, char* argv[])
 
     if (!appCore->initSimulation())
     {
+        cerr << "Error initializing simulation.\n";
         return 1;
     }
 
