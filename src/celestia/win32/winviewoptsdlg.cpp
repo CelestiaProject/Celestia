@@ -107,6 +107,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_SHOWORBITS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowOrbits);
             break;
+        case IDC_SHOWFADINGORBITS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowFadingOrbits);
+            break;
         case IDC_PLANETORBITS:
             renderer->setOrbitMask(orbitMask ^ Body::Planet);
             break;
@@ -348,8 +351,8 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowOpenClusters)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWNIGHTSIDELIGHTS, BM_SETCHECK,
         (renderFlags & Renderer::ShowNightMaps)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWORBITS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowOrbits) != 0 ? BST_CHECKED : BST_UNCHECKED, 0);
+    dlgCheck(hDlg, IDC_SHOWORBITS,       renderFlags, Renderer::ShowOrbits);
+    dlgCheck(hDlg, IDC_SHOWFADINGORBITS, renderFlags, Renderer::ShowFadingOrbits);
     dlgCheck(hDlg, IDC_PLANETORBITS,     orbitMask,   Body::Planet);
     dlgCheck(hDlg, IDC_DWARFPLANETORBITS,orbitMask,   Body::DwarfPlanet);
     dlgCheck(hDlg, IDC_MOONORBITS,       orbitMask,   Body::Moon);

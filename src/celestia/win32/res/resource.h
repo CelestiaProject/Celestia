@@ -268,6 +268,7 @@
 #define IDC_SHOWASTEROIDS                1160
 #define IDC_SHOWCOMETS                   1161
 #define IDC_SHOWSPACECRAFTS              1162
+#define IDC_SHOWFADINGORBITS             1163
 
 
 // Next default values for new objects
@@ -276,7 +277,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         40091
-#define _APS_NEXT_CONTROL_VALUE         1163
+#define _APS_NEXT_CONTROL_VALUE         1164
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

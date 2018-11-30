@@ -89,6 +89,7 @@ void actionRenderNebulae(GtkToggleAction*, AppData*);
 void actionRenderNightLights(GtkToggleAction*, AppData*);
 void actionRenderOpenClusters(GtkToggleAction*, AppData*);
 void actionRenderOrbits(GtkToggleAction*, AppData*);
+void actionRenderFadingOrbits(GtkToggleAction*, AppData*);
 void actionRenderPlanets(GtkToggleAction*, AppData*);
 void actionRenderDwarfPlanets(GtkToggleAction*, AppData*);
 void actionRenderMoons(GtkToggleAction*, AppData*);
