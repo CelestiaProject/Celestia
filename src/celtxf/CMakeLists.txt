@@ -13,4 +13,3 @@ set_target_properties(celtxf PROPERTIES
 )
 ]]#
 #install(TARGETS celtxf LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(TARGETS celtxf ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

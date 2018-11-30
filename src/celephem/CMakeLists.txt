@@ -54,4 +54,3 @@ set_target_properties(celephem PROPERTIES
 )
 ]]#
 #install(TARGETS celephem LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(TARGETS celephem ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

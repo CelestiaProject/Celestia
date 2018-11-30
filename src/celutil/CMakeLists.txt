@@ -47,4 +47,3 @@ set_target_properties(celutil PROPERTIES
 )
 ]]#
 #install(TARGETS celutil LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(TARGETS celutil ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
