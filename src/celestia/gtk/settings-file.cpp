@@ -153,6 +153,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
     getFlag64(file, &rf, Renderer::ShowDiagrams, "RenderFlags", "diagrams", &errors);
     getFlag64(file, &rf, Renderer::ShowCloudMaps, "RenderFlags", "cloudMaps", &errors);
     getFlag64(file, &rf, Renderer::ShowOrbits, "RenderFlags", "orbits", &errors);
+    getFlag64(file, &rf, Renderer::ShowFadingOrbits, "RenderFlags", "fadingorbits", &errors);
     getFlag64(file, &rf, Renderer::ShowCelestialSphere, "RenderFlags", "celestialSphere", &errors);
     getFlag64(file, &rf, Renderer::ShowNightMaps, "RenderFlags", "nightMaps", &errors);
     getFlag64(file, &rf, Renderer::ShowAtmospheres, "RenderFlags", "atmospheres", &errors);
@@ -266,6 +267,7 @@ void saveSettingsFile(AppData* app)
     g_key_file_set_boolean(file, "RenderFlags", "diagrams", (rf & Renderer::ShowDiagrams) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "cloudMaps", (rf & Renderer::ShowCloudMaps) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "orbits", (rf & Renderer::ShowOrbits) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "fadingorbits", (rf & Renderer::ShowFadingOrbits) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "celestialSphere", (rf & Renderer::ShowCelestialSphere) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "nightMaps", (rf & Renderer::ShowNightMaps) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "atmospheres", (rf & Renderer::ShowAtmospheres) != 0);

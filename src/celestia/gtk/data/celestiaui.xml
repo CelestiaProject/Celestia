@@ -85,6 +85,7 @@
       </menu>
       <menu action='ShowOrbitsMenu'>
         <menuitem action='RenderOrbits'/>
+        <menuitem action='RenderFadingOrbits'/>
         <separator/>
         <menuitem action='OrbitAsteroids'/>
         <menuitem action='OrbitComets'/>

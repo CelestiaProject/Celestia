@@ -149,6 +149,7 @@ static const GtkToggleActionEntry actionsRenderFlags[] = {
     { "RenderNightLights", NULL, "Night Side Lights", "<control>L", NULL, G_CALLBACK(actionRenderNightLights), FALSE },
     { "RenderOpenClusters", NULL, "Open Clusters", NULL, NULL, G_CALLBACK(actionRenderOpenClusters), FALSE },
     { "RenderOrbits", NULL, "Orbits", "O", NULL, G_CALLBACK(actionRenderOrbits), FALSE },
+    { "RenderFadingOrbits", NULL, "Fading Orbits", NULL, NULL, G_CALLBACK(actionRenderFadingOrbits), FALSE },
     { "RenderPlanets", NULL, "Planets", NULL, NULL, G_CALLBACK(actionRenderPlanets), FALSE },
     { "RenderDwarfPlanets", NULL, "Dwarf Planets", NULL, NULL, G_CALLBACK(actionRenderDwarfPlanets), FALSE },
     { "RenderMoons", NULL, "Moons", NULL, NULL, G_CALLBACK(actionRenderMoons), FALSE },
