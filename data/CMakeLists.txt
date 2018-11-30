@@ -23,7 +23,9 @@ set(DATA_SOURCES
   comets.ssc
   earth_locs.ssc
   eros_locs.ssc
+  galaxies.dsc
   gaspra_locs.ssc
+  globulars.dsc
   ida_locs.ssc
   itokawa_locs.ssc
   jupitermoons_locs.ssc

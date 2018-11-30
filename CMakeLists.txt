@@ -235,7 +235,7 @@ set(BASE_DATA_SOURCES
   celestia.cfg
   controls.txt
 )
-install(FILES ${BASE_CEL_SOURCES} DESTINATION ${DATADIR})
+install(FILES ${BASE_DATA_SOURCES} DESTINATION ${DATADIR})
 
 add_subdirectory(src)
 add_subdirectory(po)
