@@ -110,7 +110,8 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.cometTailsCheck->setChecked((renderFlags & Renderer::ShowCometTails) != 0);
     ui.limitOfKnowledgeCheck->setChecked(observer->getDisplayedSurface() == "limit of knowledge");
 
-    ui.orbitsCheck->setChecked((renderFlags & Renderer::ShowOrbits) != 0 );
+    ui.orbitsCheck->setChecked((renderFlags & Renderer::ShowOrbits) != 0);
+    ui.fadingOrbitsCheck->setChecked((renderFlags & Renderer::ShowFadingOrbits) != 0);
     ui.starOrbitsCheck->setChecked(orbitMask & Body::Stellar);
     ui.planetOrbitsCheck->setChecked(orbitMask & Body::Planet);
     ui.dwarfPlanetOrbitsCheck->setChecked(orbitMask & Body::DwarfPlanet);
@@ -407,6 +408,12 @@ void PreferencesDialog::on_limitOfKnowledgeCheck_stateChanged(int state)
 void PreferencesDialog::on_orbitsCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, Renderer::ShowOrbits, state);
+}
+
+
+void PreferencesDialog::on_fadingOrbitsCheck_stateChanged(int state)
+{
+    setRenderFlag(appCore, Renderer::ShowFadingOrbits, state);
 }
 
 

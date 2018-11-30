@@ -49,6 +49,7 @@ private slots:
     void on_limitOfKnowledgeCheck_stateChanged(int state);
 
     void on_orbitsCheck_stateChanged(int state);
+    void on_fadingOrbitsCheck_stateChanged(int state);
     void on_starOrbitsCheck_stateChanged(int state);
     void on_planetOrbitsCheck_stateChanged(int state);
     void on_dwarfPlanetOrbitsCheck_stateChanged(int state);
