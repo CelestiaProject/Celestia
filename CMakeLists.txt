@@ -236,6 +236,7 @@ set(BASE_DATA_SOURCES
   controls.txt
 )
 install(FILES ${BASE_DATA_SOURCES} DESTINATION ${DATADIR})
+install(FILES "splash.png" DESTINATION "${DATADIR}/splash")
 
 add_subdirectory(src)
 add_subdirectory(po)
@@ -244,6 +245,7 @@ add_subdirectory(data)
 add_subdirectory(extras)
 add_subdirectory(extras-standard)
 add_subdirectory(fonts)
+add_subdirectory(images)
 add_subdirectory(locale)
 add_subdirectory(models)
 add_subdirectory(scripts)
