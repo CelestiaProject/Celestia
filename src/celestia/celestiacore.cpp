@@ -4117,11 +4117,11 @@ bool CelestiaCore::initSimulation(const string& configFileName,
         ifstream dsoFile(file, ios::in);
         if (!dsoFile.good())
         {
-            warning(_("Error opening deepsky catalog file.\n"));
+            warning(fmt::sprintf(_("Error opening deepsky catalog file %s.\n"), file));
         }
         if (!dsoDB->load(dsoFile, ""))
         {
-            warning(_("Cannot read Deep Sky Objects database.\n"));
+            warning(fmt::sprintf(_("Cannot read Deep Sky Objects database %s.\n"), file));
         }
     }
 
@@ -4162,7 +4162,7 @@ bool CelestiaCore::initSimulation(const string& configFileName,
             ifstream solarSysFile(file, ios::in);
             if (!solarSysFile.good())
             {
-                warning(_("Error opening solar system catalog.\n"));
+                warning(fmt::sprintf(_("Error opening solar system catalog %s.\n"), file));
             }
             else
             {
@@ -4194,7 +4194,8 @@ bool CelestiaCore::initSimulation(const string& configFileName,
         ifstream asterismsFile(config->asterismsFile, ios::in);
         if (!asterismsFile.good())
         {
-            warning(_("Error opening asterisms file."));
+            warning(fmt::sprintf(_("Error opening asterisms file %s.\n"),
+                                 config->asterismsFile));
         }
         else
         {
@@ -4209,7 +4210,8 @@ bool CelestiaCore::initSimulation(const string& configFileName,
         ifstream boundariesFile(config->boundariesFile, ios::in);
         if (!boundariesFile.good())
         {
-            warning(_("Error opening constellation boundaries files."));
+            warning(fmt::sprintf(_("Error opening constellation boundaries file %s.\n"),
+                                 config->boundariesFile));
         }
         else
         {
