@@ -4024,20 +4024,6 @@ bool CelestiaCore::initSimulation(const string& configFileName,
                                   const vector<string>& extrasDirs,
                                   ProgressNotifier* progressNotifier)
 {
-    // Say we're not ready to render yet.
-    // bReady = false;
-#ifdef REQUIRE_LICENSE_FILE
-    // Check for the presence of the license file--don't run unless it's there.
-    {
-        ifstream license("License.txt");
-        if (!license.good())
-        {
-            fatalError(_("License file 'License.txt' is missing!"), false);
-            return false;
-        }
-    }
-#endif
-
     if (!configFileName.empty())
     {
         config = ReadCelestiaConfig(configFileName);
@@ -4282,7 +4268,7 @@ bool CelestiaCore::initRenderer()
     context->init(config->ignoreGLExtensions);
     // Choose the render path, starting with the least desirable
     context->setRenderPath(GLContext::GLPath_GLSL);
-    fmt::printf(_("render path: %i\n"), context->getRenderPath());
+    //fmt::printf(_("render path: %i\n"), context->getRenderPath());
 
     Renderer::DetailOptions detailOptions;
     detailOptions.ringSystemSections = config->ringSystemSections;
