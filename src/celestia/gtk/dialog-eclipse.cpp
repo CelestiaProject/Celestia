@@ -30,8 +30,8 @@ static void showCalPopup(GtkToggleButton *button, EclipseData *ed);
 static gint eclipseGoto(GtkButton*, EclipseData* ed);
 static gint eclipse2Click(GtkWidget*, GdkEventButton* event, EclipseData* ed);
 static void eclipseCompute(GtkButton* button, EclipseData* ed);
-static void eclipseBodySelect(GtkMenuShell* menu, EclipseData* ed);
-static void eclipseTypeSelect(GtkMenuShell* menu, EclipseData* ed);
+static void eclipseBodySelect(GtkComboBox* comboBox, EclipseData* ed);
+static void eclipseTypeSelect(GtkComboBox* comboBox, EclipseData* ed);
 static void listEclipseSelect(GtkTreeSelection* sel, EclipseData* ed);
 static void eclipseDestroy(GtkWidget* w, gint, EclipseData* ed);
 
@@ -62,13 +62,12 @@ void dialogEclipseFinder(AppData* app)
                                                         NULL));
     gtk_window_set_modal(GTK_WINDOW(ed->window), FALSE);
 
-    GtkWidget *mainbox = gtk_vbox_new(FALSE, CELSPACING);
+    GtkWidget *mainbox = gtk_dialog_get_content_area(GTK_DIALOG(ed->window));
     gtk_container_set_border_width(GTK_CONTAINER(mainbox), CELSPACING);
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(ed->window)->vbox), mainbox, TRUE, TRUE, 0);
 
-    GtkWidget *scrolled_win = gtk_scrolled_window_new (NULL, NULL);
+    GtkWidget *scrolled_win = gtk_scrolled_window_new(NULL, NULL);
 
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_win),
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_win),
                                    GTK_POLICY_AUTOMATIC,
                                    GTK_POLICY_ALWAYS);
     gtk_box_pack_start(GTK_BOX(mainbox), scrolled_win, TRUE, TRUE, 0);
@@ -101,7 +100,7 @@ void dialogEclipseFinder(AppData* app)
     /* Add the columns */
     for (int i=0; i<5; i++) {
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes (eclipseTitles[i], renderer, "text", i, NULL);
+        column = gtk_tree_view_column_new_with_attributes(eclipseTitles[i], renderer, "text", i, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(ed->eclipseList), column);
     }
 
@@ -119,13 +118,13 @@ void dialogEclipseFinder(AppData* app)
     label = gtk_label_new("Find");
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-    GtkWidget* menuTypeBox = gtk_option_menu_new();
+    GtkWidget *menuTypeBox = gtk_combo_box_text_new();
     gtk_box_pack_start(GTK_BOX(hbox), menuTypeBox, FALSE, FALSE, 0);
 
     label = gtk_label_new("eclipse on");
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-    GtkWidget* menuBodyBox = gtk_option_menu_new();
+    GtkWidget* menuBodyBox = gtk_combo_box_text_new();
     gtk_box_pack_start(GTK_BOX(hbox), menuBodyBox, FALSE, FALSE, 0);
 
     gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
@@ -166,45 +165,37 @@ void dialogEclipseFinder(AppData* app)
 
     /* Common Buttons */
     hbox = gtk_hbox_new(TRUE, CELSPACING);
-    if (buttonMake(hbox, "Compute", (GtkSignalFunc)eclipseCompute, ed))
+    if (buttonMake(hbox, "Compute", (GCallback)eclipseCompute, ed))
         return;
-    if (buttonMake(hbox, "Set Date and Go to Planet", (GtkSignalFunc)eclipseGoto, ed))
+    if (buttonMake(hbox, "Set Date and Go to Planet", (GCallback)eclipseGoto, ed))
         return;
     gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
 
     /* Set up the drop-down boxes */
-    GtkWidget *item;
-
-    GtkWidget* menuType = gtk_menu_new();
     for (int i = 0; eclipseTypeTitles[i] != NULL; i++)
     {
-        item = gtk_menu_item_new_with_label(eclipseTypeTitles[i]);
-        gtk_menu_append(GTK_MENU(menuType), item);
-        gtk_widget_show(item);
+        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(menuTypeBox), eclipseTypeTitles[i]);
     }
-    gtk_option_menu_set_menu(GTK_OPTION_MENU(menuTypeBox), menuType);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(menuTypeBox), 0);
 
-    GtkWidget* menuBody = gtk_menu_new();
     for (int i = 0; eclipsePlanetTitles[i] != NULL; i++)
     {
-        item = gtk_menu_item_new_with_label(eclipsePlanetTitles[i]);
-        gtk_menu_append(GTK_MENU(menuBody), item);
-        gtk_widget_show(item);
+        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(menuBodyBox), eclipsePlanetTitles[i]);
     }
-    gtk_option_menu_set_menu(GTK_OPTION_MENU(menuBodyBox), menuBody);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(menuBodyBox), 0);
 
     /* Hook up all the signals */
-    g_signal_connect(GTK_OBJECT(menuType), "selection-done", G_CALLBACK(eclipseTypeSelect), ed);
-    g_signal_connect(GTK_OBJECT(menuBody), "selection-done", G_CALLBACK(eclipseBodySelect), ed);
+    g_signal_connect(G_OBJECT(menuTypeBox), "changed", G_CALLBACK(eclipseTypeSelect), ed);
+    g_signal_connect(G_OBJECT(menuBodyBox), "changed", G_CALLBACK(eclipseBodySelect), ed);
 
     /* Double-click handler */
-    g_signal_connect(GTK_OBJECT(ed->eclipseList), "button-press-event", G_CALLBACK(eclipse2Click), ed);
+    g_signal_connect(G_OBJECT(ed->eclipseList), "button-press-event", G_CALLBACK(eclipse2Click), ed);
 
-    g_signal_connect(GTK_OBJECT(date1Button), "toggled", G_CALLBACK(showCalPopup), ed);
-    g_signal_connect(GTK_OBJECT(date2Button), "toggled", G_CALLBACK(showCalPopup), ed);
+    g_signal_connect(G_OBJECT(date1Button), "toggled", G_CALLBACK(showCalPopup), ed);
+    g_signal_connect(G_OBJECT(date2Button), "toggled", G_CALLBACK(showCalPopup), ed);
     g_signal_connect(ed->window, "response", G_CALLBACK(eclipseDestroy), ed);
 
-    gtk_widget_set_usize(GTK_WIDGET(ed->window), 400, 400); /* Absolute Size, urghhh */
+    gtk_widget_set_size_request(GTK_WIDGET(ed->window), -1, 400); /* Absolute Size, urghhh */
     gtk_widget_show_all(GTK_WIDGET(ed->window));
 }
 
@@ -261,7 +252,7 @@ static void showCalPopup(GtkToggleButton *button, EclipseData *ed)
             gtk_widget_show(calendar);
 
             int x, y, i, j;
-            gdk_window_get_origin(GDK_WINDOW(GTK_WIDGET(button)->window), &x, &y);
+            gdk_window_get_origin(gtk_widget_get_window(GTK_WIDGET(button)), &x, &y);
             gtk_widget_translate_coordinates(GTK_WIDGET(button), GTK_WIDGET(ed->window), 10, 10, &i, &j);
 
             gtk_window_move(GTK_WINDOW(calwindow), x + i, y + j);
@@ -270,7 +261,7 @@ static void showCalPopup(GtkToggleButton *button, EclipseData *ed)
 
             gtk_window_present(GTK_WINDOW(calwindow));
 
-            g_object_set_data_full(G_OBJECT (button), "calendar",
+            g_object_set_data_full(G_OBJECT(button), "calendar",
                                    calwindow, (GDestroyNotify)gtk_widget_destroy);
         }
     }
@@ -280,7 +271,7 @@ static void showCalPopup(GtkToggleButton *button, EclipseData *ed)
         if (calwindow)
         {
             /* Destroys the calendar */
-            g_object_set_data(G_OBJECT (button), "calendar", NULL);
+            g_object_set_data(G_OBJECT(button), "calendar", NULL);
             calwindow = NULL;
         }
     }
@@ -361,7 +352,7 @@ static void eclipseCompute(GtkButton* button, EclipseData* ed)
     GtkTreeIter iter;
 
     /* Set the cursor to a watch and force redraw */
-    gdk_window_set_cursor(GTK_WIDGET(button)->window, gdk_cursor_new(GDK_WATCH));
+    gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(button)), gdk_cursor_new(GDK_WATCH));
     gtk_main_iteration();
 
     /* Clear the listbox */
@@ -427,17 +418,14 @@ static void eclipseCompute(GtkButton* button, EclipseData* ed)
     }
 
     /* Set the cursor back */
-    gdk_window_set_cursor(GTK_WIDGET(button)->window, gdk_cursor_new(GDK_LEFT_PTR));
+    gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(button)), gdk_cursor_new(GDK_LEFT_PTR));
 }
 
 
 /* CALLBACK: When Eclipse Body is selected */
-static void eclipseBodySelect(GtkMenuShell* menu, EclipseData* ed)
+static void eclipseBodySelect(GtkComboBox* comboBox, EclipseData* ed)
 {
-    GtkWidget* item = gtk_menu_get_active(GTK_MENU(menu));
-
-    GList* list = gtk_container_children(GTK_CONTAINER(menu));
-    int itemIndex = g_list_index(list, item);
+    int itemIndex = gtk_combo_box_get_active(comboBox);
 
     /* Set string according to body array */
     ed->body = eclipsePlanetTitles[itemIndex];
@@ -445,12 +433,9 @@ static void eclipseBodySelect(GtkMenuShell* menu, EclipseData* ed)
 
 
 /* CALLBACK: When Eclipse Type (Solar:Moon) is selected */
-static void eclipseTypeSelect(GtkMenuShell* menu, EclipseData* ed)
+static void eclipseTypeSelect(GtkComboBox* comboBox, EclipseData* ed)
 {
-    GtkWidget* item = gtk_menu_get_active(GTK_MENU(menu));
-
-    GList* list = gtk_container_children(GTK_CONTAINER(menu));
-    int itemIndex = g_list_index(list, item);
+    int itemIndex = gtk_combo_box_get_active(comboBox);
 
     /* Solar eclipse */
     if (itemIndex == 0)

@@ -81,19 +81,21 @@ SplashData* splashStart(AppData* app, gboolean showSplash)
     ss->label = gtk_label_new(NULL);
     gtk_misc_set_alignment(GTK_MISC(ss->label), 1, 1);
     gtk_label_set_justify(GTK_LABEL(ss->label), GTK_JUSTIFY_RIGHT);
-    gtk_widget_modify_fg(ss->label, GTK_STATE_NORMAL, &ss->label->style->white);
+    gtk_widget_modify_fg(ss->label, GTK_STATE_NORMAL, &gtk_widget_get_style(ss->label)->white);
 
     gtk_widget_show_all(ss->splash);
 
     /* Size allocations available after showing splash. */
-    gtk_widget_set_size_request(ss->label, i->allocation.width - 80,
-                                           i->allocation.height / 2);
-    gtk_fixed_put(GTK_FIXED(gf), ss->label, 40, i->allocation.height / 2 - 40);
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(GTK_WIDGET(i), &allocation);
+    gtk_widget_set_size_request(ss->label, allocation.width - 80,
+                                           allocation.height / 2);
+    gtk_fixed_put(GTK_FIXED(gf), ss->label, 40, allocation.height / 2 - 40);
     gtk_widget_show(ss->label);
 
     g_signal_connect (ss->splash, "expose_event",
-              G_CALLBACK (splashExpose),
-                ss);
+                      G_CALLBACK (splashExpose),
+                      ss);
 
     while (gtk_events_pending()) gtk_main_iteration();
 
@@ -139,11 +141,13 @@ static gboolean splashExpose(GtkWidget* win, GdkEventExpose *event, SplashData* 
      * operation is quite expensive. */
     if (ss->redraw != TRUE) return FALSE;
 
+    GdkWindow *ww = gtk_widget_get_window(win);
+
     if (ss->hasARGB)
     {
         #ifdef CAIRO
         /* Use cairo for true transparent windows */
-        cairo_t *cr = gdk_cairo_create(win->window);
+        cairo_t *cr = gdk_cairo_create(ww);
 
         cairo_rectangle(cr, event->area.x,
                     event->area.y,
@@ -167,14 +171,17 @@ static gboolean splashExpose(GtkWidget* win, GdkEventExpose *event, SplashData* 
         GdkPixbuf* bg;
         int x, y, w, h;
 
-        gdk_window_get_root_origin(win->window, &x, &y);
-        gdk_drawable_get_size(win->window, &w, &h);
+        gdk_window_get_root_origin(ww, &x, &y);
+        w = gdk_window_get_width(ww);
+        h = gdk_window_get_height(ww);
 
         bg = gdk_pixbuf_get_from_drawable(NULL,
                                           gtk_widget_get_root_window(win),
                                           NULL, x, y, 0, 0, w, h);
-        gdk_draw_pixbuf(win->window, NULL, bg, 0, 0, 0, 0, w, h,
-                        GDK_RGB_DITHER_NONE, 0, 0);
+        cairo_t *cr = gdk_cairo_create(ww);
+        gdk_cairo_set_source_pixbuf(cr, bg, x, y);
+        cairo_paint(cr);
+        cairo_destroy(cr);
         g_object_unref(bg);
     }
 

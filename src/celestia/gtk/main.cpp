@@ -296,7 +296,7 @@ static void initRealize(GtkWidget* widget, AppData* app)
     app->core->setTimeZoneName("UTC");
 
     /* Set the cursor to a crosshair */
-    gdk_window_set_cursor(widget->window, gdk_cursor_new(GDK_CROSSHAIR));
+    gdk_window_set_cursor(gtk_widget_get_window(widget), gdk_cursor_new(GDK_CROSSHAIR));
 }
 
 
@@ -426,7 +426,7 @@ int main(int argc, char* argv[])
     GtkWidget* mainBox = GTK_WIDGET(gtk_vbox_new(FALSE, 0));
     gtk_container_set_border_width(GTK_CONTAINER(mainBox), 0);
 
-    g_signal_connect(GTK_OBJECT(app->mainWindow), "destroy",
+    g_signal_connect(G_OBJECT(app->mainWindow), "destroy",
                      G_CALLBACK(actionQuit), app);
 
     /* Initialize the OpenGL widget */
@@ -491,7 +491,7 @@ int main(int argc, char* argv[])
     initGLCallbacks(app);
 
     /* Handler than completes initialization when the glArea is realized */
-    g_signal_connect(GTK_OBJECT(app->glArea), "realize",
+    g_signal_connect(G_OBJECT(app->glArea), "realize",
                      G_CALLBACK(initRealize), app);
 
     /* Create the main menu bar */
@@ -517,7 +517,7 @@ int main(int argc, char* argv[])
     gtk_window_set_default_icon_from_file("celestia-logo.png", NULL);
 
     /* Set focus to glArea widget */
-    GTK_WIDGET_SET_FLAGS(app->glArea, GTK_CAN_FOCUS);
+    gtk_widget_set_can_focus(GTK_WIDGET(app->glArea), true);
     gtk_widget_grab_focus(GTK_WIDGET(app->glArea));
 
     /* Initialize the Watcher */

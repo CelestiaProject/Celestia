@@ -50,15 +50,14 @@ void dialogSolarBrowser(AppData* app)
     app->simulation->setSelection(Selection((Star *) NULL));
 
     /* Solar System Browser */
-    GtkWidget *mainbox = gtk_vbox_new(FALSE, CELSPACING);
+    GtkWidget *mainbox = gtk_dialog_get_content_area(GTK_DIALOG(browser));
     gtk_container_set_border_width(GTK_CONTAINER(mainbox), CELSPACING);
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(browser)->vbox), mainbox, TRUE, TRUE, 0);
 
-    GtkWidget *scrolled_win = gtk_scrolled_window_new (NULL, NULL);
+    GtkWidget *scrolled_win = gtk_scrolled_window_new(NULL, NULL);
 
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
-                                    GTK_POLICY_AUTOMATIC,
-                                    GTK_POLICY_ALWAYS);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_win),
+                                   GTK_POLICY_AUTOMATIC,
+                                   GTK_POLICY_ALWAYS);
     gtk_box_pack_start(GTK_BOX(mainbox), scrolled_win, TRUE, TRUE, 0);
 
     /* Set the tree store to have 2 visible cols, two hidden. The hidden ones
@@ -74,7 +73,7 @@ void dialogSolarBrowser(AppData* app)
 
     for (int i = 0; i < 2; i++) {
         renderer = gtk_cell_renderer_text_new();
-        column = gtk_tree_view_column_new_with_attributes (ssTitles[i], renderer, "text", i, NULL);
+        column = gtk_tree_view_column_new_with_attributes(ssTitles[i], renderer, "text", i, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(solarTree), column);
         gtk_tree_view_column_set_min_width(column, 200);
     }
@@ -86,15 +85,15 @@ void dialogSolarBrowser(AppData* app)
 
     /* Common Buttons */
     GtkWidget *hbox = gtk_hbox_new(TRUE, CELSPACING);
-    if (buttonMake(hbox, "Center", (GtkSignalFunc)actionCenterSelection, app))
+    if (buttonMake(hbox, "Center", (GCallback)actionCenterSelection, app))
         return;
-    if (buttonMake(hbox, "Go To", (GtkSignalFunc)actionGotoSelection, app))
+    if (buttonMake(hbox, "Go To", (GCallback)actionGotoSelection, app))
         return;
     gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
 
     g_signal_connect(browser, "response", G_CALLBACK(gtk_widget_destroy), browser);
 
-    gtk_widget_set_usize(browser, 500, 400); /* Absolute Size, urghhh */
+    gtk_widget_set_size_request(browser, -1, 400); /* Absolute Size, urghhh */
     gtk_widget_show_all(browser);
 }
 

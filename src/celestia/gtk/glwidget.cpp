@@ -40,21 +40,21 @@ static bool handleSpecialKey(int key, int state, bool down, AppData* app);
 /* ENTRY: Initialize/Bind all glArea Callbacks */
 void initGLCallbacks(AppData* app)
 {
-    g_signal_connect(GTK_OBJECT(app->glArea), "expose_event",
+    g_signal_connect(G_OBJECT(app->glArea), "expose_event",
                      G_CALLBACK(glarea_expose), app);
-    g_signal_connect(GTK_OBJECT(app->glArea), "configure_event",
+    g_signal_connect(G_OBJECT(app->glArea), "configure_event",
                      G_CALLBACK(glarea_configure), app);
-    g_signal_connect(GTK_OBJECT(app->glArea), "button_press_event",
+    g_signal_connect(G_OBJECT(app->glArea), "button_press_event",
                      G_CALLBACK(glarea_button_press), app);
-    g_signal_connect(GTK_OBJECT(app->glArea), "button_release_event",
+    g_signal_connect(G_OBJECT(app->glArea), "button_release_event",
                      G_CALLBACK(glarea_button_release), app);
-    g_signal_connect(GTK_OBJECT(app->glArea), "scroll_event",
+    g_signal_connect(G_OBJECT(app->glArea), "scroll_event",
                      G_CALLBACK(glarea_mouse_scroll), app);
-    g_signal_connect(GTK_OBJECT(app->glArea), "motion_notify_event",
+    g_signal_connect(G_OBJECT(app->glArea), "motion_notify_event",
                      G_CALLBACK(glarea_motion_notify), app);
-    g_signal_connect(GTK_OBJECT(app->glArea), "key_press_event",
+    g_signal_connect(G_OBJECT(app->glArea), "key_press_event",
                      G_CALLBACK(glarea_key_press), app);
-    g_signal_connect(GTK_OBJECT(app->glArea), "key_release_event",
+    g_signal_connect(G_OBJECT(app->glArea), "key_release_event",
                      G_CALLBACK(glarea_key_release), app);
 
     /* Main call to execute redraw during GTK main loop */
@@ -80,7 +80,9 @@ static gint glarea_configure(GtkWidget* widget, GdkEventConfigure*, AppData* app
     if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
         return FALSE;
 
-    app->core->resize(widget->allocation.width, widget->allocation.height);
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(GTK_WIDGET(widget), &allocation);
+    app->core->resize(allocation.width, allocation.height);
 
     /* GConf changes only saved upon exit, since caused a lot of CPU activity
      * while saving intermediate steps. */
@@ -178,30 +180,28 @@ static gint glarea_button_release(GtkWidget*, GdkEventButton* event, AppData* ap
 /* CALLBACK: GL Function for event "key_press_event" */
 static gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, AppData* app)
 {
-    gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_press_event");
-
     switch (event->keyval)
     {
-        case GDK_Escape:
+        case GDK_KEY_Escape:
             app->core->charEntered('\033');
             break;
-        case GDK_BackSpace:
+        case GDK_KEY_BackSpace:
             app->core->charEntered('\b');
             break;
-        case GDK_Tab:
+        case GDK_KEY_Tab:
             /* Tab has to be handled specially because keyDown and keyUp
              * do not trigger auto-completion. */
             app->core->charEntered(event->keyval);
             break;
-        case GDK_ISO_Left_Tab:
+        case GDK_KEY_ISO_Left_Tab:
             /* This is what Celestia calls BackTab */
             app->core->charEntered(CelestiaCore::Key_BackTab);
             break;
         /* Temporary until galaxy brightness added as GtkAction */
-        case GDK_bracketleft:
+        case GDK_KEY_bracketleft:
             app->core->charEntered('(');
             break;
-        case GDK_bracketright:
+        case GDK_KEY_bracketright:
             app->core->charEntered(')');
             break;
         default:
@@ -233,7 +233,6 @@ static gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, AppData* app
 /* CALLBACK: GL Function for event "key_release_event" */
 static gint glarea_key_release(GtkWidget* widget, GdkEventKey* event, AppData* app)
 {
-    gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_release_event");
     return handleSpecialKey(event->keyval, event->state, false, app);
 }
 
@@ -267,100 +266,100 @@ static bool handleSpecialKey(int key, int state, bool down, AppData* app)
 
     switch (key)
     {
-        case GDK_Up:
+        case GDK_KEY_Up:
             k = CelestiaCore::Key_Up;
             break;
-        case GDK_Down:
+        case GDK_KEY_Down:
             k = CelestiaCore::Key_Down;
             break;
-        case GDK_Left:
+        case GDK_KEY_Left:
             k = CelestiaCore::Key_Left;
             break;
-        case GDK_Right:
+        case GDK_KEY_Right:
             k = CelestiaCore::Key_Right;
             break;
-        case GDK_Home:
+        case GDK_KEY_Home:
             k = CelestiaCore::Key_Home;
             break;
-        case GDK_End:
+        case GDK_KEY_End:
             k = CelestiaCore::Key_End;
             break;
-        case GDK_F1:
+        case GDK_KEY_F1:
             k = CelestiaCore::Key_F1;
             break;
-        case GDK_F2:
+        case GDK_KEY_F2:
             k = CelestiaCore::Key_F2;
             break;
-        case GDK_F3:
+        case GDK_KEY_F3:
             k = CelestiaCore::Key_F3;
             break;
-        case GDK_F4:
+        case GDK_KEY_F4:
             k = CelestiaCore::Key_F4;
             break;
-        case GDK_F5:
+        case GDK_KEY_F5:
             k = CelestiaCore::Key_F5;
             break;
-        case GDK_F6:
+        case GDK_KEY_F6:
             k = CelestiaCore::Key_F6;
             break;
-        case GDK_F7:
+        case GDK_KEY_F7:
             k = CelestiaCore::Key_F7;
             break;
-        case GDK_F10:
+        case GDK_KEY_F10:
             if (down) actionCaptureImage(NULL, app);
             break;
-        case GDK_F11:
+        case GDK_KEY_F11:
             k = CelestiaCore::Key_F11;
             break;
-        case GDK_F12:
+        case GDK_KEY_F12:
             k = CelestiaCore::Key_F12;
             break;
-        case GDK_KP_Insert:
-        case GDK_KP_0:
+        case GDK_KEY_KP_Insert:
+        case GDK_KEY_KP_0:
             k = CelestiaCore::Key_NumPad0;
             break;
-        case GDK_KP_End:
-        case GDK_KP_1:
+        case GDK_KEY_KP_End:
+        case GDK_KEY_KP_1:
             k = CelestiaCore::Key_NumPad1;
             break;
-        case  GDK_KP_Down:
-        case GDK_KP_2:
+        case  GDK_KEY_KP_Down:
+        case GDK_KEY_KP_2:
             k = CelestiaCore::Key_NumPad2;
             break;
-        case GDK_KP_Next:
-        case GDK_KP_3:
+        case GDK_KEY_KP_Next:
+        case GDK_KEY_KP_3:
             k = CelestiaCore::Key_NumPad3;
             break;
-        case GDK_KP_Left:
-        case GDK_KP_4:
+        case GDK_KEY_KP_Left:
+        case GDK_KEY_KP_4:
             k = CelestiaCore::Key_NumPad4;
             break;
-        case GDK_KP_Begin:
-        case GDK_KP_5:
+        case GDK_KEY_KP_Begin:
+        case GDK_KEY_KP_5:
             k = CelestiaCore::Key_NumPad5;
             break;
-        case GDK_KP_Right:
-        case GDK_KP_6:
+        case GDK_KEY_KP_Right:
+        case GDK_KEY_KP_6:
             k = CelestiaCore::Key_NumPad6;
             break;
-        case GDK_KP_Home:
-        case GDK_KP_7:
+        case GDK_KEY_KP_Home:
+        case GDK_KEY_KP_7:
             k = CelestiaCore::Key_NumPad7;
             break;
-        case GDK_KP_Up:
-        case GDK_KP_8:
+        case GDK_KEY_KP_Up:
+        case GDK_KEY_KP_8:
             k = CelestiaCore::Key_NumPad8;
             break;
-        case GDK_KP_Prior:
-        case GDK_KP_9:
+        case GDK_KEY_KP_Prior:
+        case GDK_KEY_KP_9:
             k = CelestiaCore::Key_NumPad9;
             break;
-        case GDK_A:
-        case GDK_a:
+        case GDK_KEY_A:
+        case GDK_KEY_a:
             k = 'A';
             break;
-        case GDK_Z:
-        case GDK_z:
+        case GDK_KEY_Z:
+        case GDK_KEY_z:
             k = 'Z';
             break;
     }
