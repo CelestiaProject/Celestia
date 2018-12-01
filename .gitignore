@@ -15,3 +15,6 @@ build
 build-cmake
 cmake-build
 .qmake.stash
+src/celestia/win32/res/resource_strings.cpp
+src/celestia/qt/rc.cpp
+data/*.cpp
