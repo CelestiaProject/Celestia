@@ -27,8 +27,6 @@ using namespace std;
 // #define USE_GLSL_STRUCTS
 #define POINT_FADE 0
 
-ShaderManager g_ShaderManager;
-
 enum ShaderVariableType
 {
     Shader_Float,
@@ -58,6 +56,8 @@ static const string CommonHeader("#version 120\n");
 ShaderManager&
 GetShaderManager()
 {
+    static ShaderManager g_ShaderManager;
+
     return g_ShaderManager;
 }
 
