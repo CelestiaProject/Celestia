@@ -30,13 +30,13 @@ using namespace Eigen;
 using namespace std;
 
 
-static string HDCatalogPrefix("HD ");
-static string HIPPARCOSCatalogPrefix("HIP ");
-static string GlieseCatalogPrefix("Gliese ");
-static string RossCatalogPrefix("Ross ");
-static string LacailleCatalogPrefix("Lacaille ");
-static string TychoCatalogPrefix("TYC ");
-static string SAOCatalogPrefix("SAO ");
+constexpr const char HDCatalogPrefix[]        = "HD ";
+constexpr const char HIPPARCOSCatalogPrefix[] = "HIP ";
+constexpr const char GlieseCatalogPrefix[]    = "Gliese ";
+constexpr const char RossCatalogPrefix[]      = "Ross ";
+constexpr const char LacailleCatalogPrefix[]  = "Lacaille ";
+constexpr const char TychoCatalogPrefix[]     = "TYC ";
+constexpr const char SAOCatalogPrefix[]       = "SAO ";
 
 // The size of the root star octree node is also the maximum distance
 // distance from the Sun at which any star may be located. The current
@@ -137,11 +137,11 @@ static bool parseHDCatalogNumber(const string& name,
 static bool parseTychoCatalogNumber(const string& name,
                                     uint32_t* catalogNumber)
 {
-    if (compareIgnoringCase(name, TychoCatalogPrefix, TychoCatalogPrefix.length()) == 0)
+    int len = strlen(TychoCatalogPrefix);
+    if (compareIgnoringCase(name, TychoCatalogPrefix, len) == 0)
     {
         unsigned int tyc1 = 0, tyc2 = 0, tyc3 = 0;
-        if (sscanf(string(name, TychoCatalogPrefix.length(),
-                   string::npos).c_str(),
+        if (sscanf(string(name, len, string::npos).c_str(),
                    " %u-%u-%u", &tyc1, &tyc2, &tyc3) == 3)
         {
             *catalogNumber = (uint32_t) (tyc3 * 1000000000 + tyc2 * 10000 + tyc1);
