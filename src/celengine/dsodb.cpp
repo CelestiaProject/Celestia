@@ -41,13 +41,13 @@ using namespace std;
 
 
 // 100 Gly - on the order of the current size of the universe
-const float DSO_OCTREE_ROOT_SIZE   = 1.0e11f;
+constexpr const float DSO_OCTREE_ROOT_SIZE   = 1.0e11f;
 
-static const float DSO_OCTREE_MAGNITUDE   = 8.0f;
-//static const float DSO_EXTRA_ROOM         = 0.01f; // Reserve 1% capacity for extra DSOs
-                                                   // (useful as a complement of binary loaded DSOs)
+constexpr const float DSO_OCTREE_MAGNITUDE   = 8.0f;
+//constexpr const float DSO_EXTRA_ROOM         = 0.01f; // Reserve 1% capacity for extra DSOs
+                                                      // (useful as a complement of binary loaded DSOs)
 
-const char* DSODatabase::FILE_HEADER      = "CEL_DSOs";
+constexpr char FILE_HEADER[]                 = "CEL_DSOs";
 
 // Used to sort DSO pointers by catalog number
 struct PtrCatalogNumberOrderingPredicate

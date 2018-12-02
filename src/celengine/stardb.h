@@ -175,9 +175,6 @@ class StarDatabase
 
     static StarDatabase* read(std::istream&);
 
-    static const char* FILE_HEADER;
-    static const char* CROSSINDEX_FILE_HEADER;
-
 private:
     bool createStar(Star* star,
                     StcDisposition disposition,
