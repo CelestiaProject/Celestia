@@ -44,13 +44,13 @@ constexpr const char SAOCatalogPrefix[]       = "SAO ";
 // local group of galaxies. A larger value should be OK, but the
 // performance implications for octree traversal still need to be
 // investigated.
-static const float STAR_OCTREE_ROOT_SIZE  = 10000000.0f;
+constexpr const float STAR_OCTREE_ROOT_SIZE   = 10000000.0f;
 
-static const float STAR_OCTREE_MAGNITUDE  = 6.0f;
-//static const float STAR_EXTRA_ROOM        = 0.01f; // Reserve 1% capacity for extra stars
+constexpr const float STAR_OCTREE_MAGNITUDE   = 6.0f;
+//constexpr const float STAR_EXTRA_ROOM        = 0.01f; // Reserve 1% capacity for extra stars
 
-const char* StarDatabase::FILE_HEADER            = "CELSTARS";
-const char* StarDatabase::CROSSINDEX_FILE_HEADER = "CELINDEX";
+constexpr const char FILE_HEADER[]            = "CELSTARS";
+constexpr const char CROSSINDEX_FILE_HEADER[] = "CELINDEX";
 
 
 // Used to sort stars by catalog number

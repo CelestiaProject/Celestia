@@ -64,8 +64,6 @@ class DSODatabase
 
     static DSODatabase* read(std::istream&);
 
-    static const char* FILE_HEADER;
-
     double getAverageAbsoluteMagnitude() const;
 
 private:
