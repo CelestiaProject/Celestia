@@ -1,0 +1,28 @@
+dist: xenial
+language: cpp
+
+notifications:
+  email: false
+
+os:
+- linux
+
+before_script:
+- qmake -qt=5 PREFIX=/opt/celestia -o Makefile celestia.pro
+
+script:
+- make -j $(nproc || echo 4)
+
+addons:
+  apt:
+    packages:
+    - libeigen3-dev
+    - libglew-dev
+    - liblua5.3-dev
+    - libtheora-dev
+    - libjpeg-dev
+    - libpng-dev
+    - libglu1-mesa-dev
+    - libqt5opengl5-dev
+    - qtbase5-dev
+    - qtbase5-dev-tools
