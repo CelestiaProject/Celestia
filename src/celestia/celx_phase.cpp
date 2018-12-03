@@ -13,6 +13,8 @@
 #include "celx_internal.h"
 #include "celx_phase.h"
 #include <celengine/timelinephase.h>
+#include <celephem/orbit.h>
+#include <celephem/rotation.h>
 #ifdef __CELVEC__
 #include <celengine/eigenport.h>
 #endif

@@ -18,6 +18,7 @@
 #ifndef _CELENGINE_OBSERVER_H_
 #define _CELENGINE_OBSERVER_H_
 
+#include <celmath/mathlib.h>
 #include <celengine/frame.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>

@@ -15,6 +15,7 @@
 
 #include <QMenu>
 #include <celengine/selection.h>
+#include <celengine/body.h>
 
 class CelestiaCore;
 

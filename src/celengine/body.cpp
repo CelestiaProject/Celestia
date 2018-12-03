@@ -22,6 +22,7 @@
 #include "timelinephase.h"
 #include "frametree.h"
 #include "referencemark.h"
+#include "selection.h"
 
 using namespace Eigen;
 using namespace std;
@@ -1270,4 +1271,10 @@ int PlanetarySystem::getOrder(const Body* body) const
         return -1;
 
     return iter - satellites.begin();
+}
+
+Selection Body::toSelection()
+{
+//    std::cout << "Body::toSelection()\n";
+    return Selection(this);
 }

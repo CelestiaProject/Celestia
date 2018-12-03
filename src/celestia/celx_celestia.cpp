@@ -11,6 +11,8 @@
 
 #include "celtxf/texturefont.h"
 #include <fmt/printf.h>
+#include <celengine/category.h>
+#include <celengine/texture.h>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_celestia.h"
@@ -21,6 +23,7 @@
 #include "celx_position.h"
 #include "celx_rotation.h"
 #include "celx_vector.h"
+#include "celx_category.h"
 #include "url.h"
 #include "imagecapture.h"
 #include "celestiacore.h"
@@ -2387,19 +2390,97 @@ static int celestia_setluahook(lua_State* l)
     return 0;
 }
 
+static int celestia_newcategory(lua_State *l)
+{
+    CelxLua celx(l);
+    const char *name = celx.safeGetString(2);
+    if (name == nullptr)
+        return celx.push();
+    UserCategory *c = UserCategory::createRoot(name);
+    if (c == nullptr)
+        return celx.push();
+    return celx.pushClass(c);
+}
+
+static int celestia_findcategory(lua_State *l)
+{
+    CelxLua celx(l);
+    const char *name = celx.safeGetString(2);
+    if (name == nullptr)
+        return celx.push();
+    UserCategory *c = UserCategory::find(name);
+    if (c == nullptr)
+        return celx.push();
+    return celx.pushClass(c);
+}
+
+static int celestia_deletecategory(lua_State *l)
+{
+    CelxLua celx(l);
+
+    bool ret;
+    if (celx.isString(2))
+    {
+        const char *n = celx.safeGetString(2);
+        if (n == nullptr)
+        {
+            celx.doError("String expected");
+            return 0;
+        }
+        ret = UserCategory::deleteCategory(n);
+    }
+    else
+    {
+        UserCategory *c = *celx.safeGetClass<UserCategory*>(2);
+        if (c == nullptr)
+        {
+            celx.doError("Userdata expected");
+            return 0;
+        }
+        ret = UserCategory::deleteCategory(c);
+    }
+    return celx.push(ret);
+}
+
+static int celestia_getcategories(lua_State *l)
+{
+    CelxLua celx(l);
+
+    UserCategory::CategoryMap map = UserCategory::getAll();
+
+    return celx.pushIterable<UserCategory*>(map);
+}
+
+static int celestia_getrootcategories(lua_State *l)
+{
+    CelxLua celx(l);
+
+    UserCategory::CategorySet set = UserCategory::getRoots();
+
+    return celx.pushIterable<UserCategory*>(set);
+}
+
 void ExtendCelestiaMetaTable(lua_State* l)
 {
-    PushClass(l, Celx_Celestia);
+    CelxLua celx(l);
+
+    celx.pushClassName(Celx_Celestia);
     lua_rawget(l, LUA_REGISTRYINDEX);
     if (lua_type(l, -1) != LUA_TTABLE)
         cout << "Metatable for " << CelxLua::ClassNames[Celx_Celestia] << " not found!\n";
-    Celx_RegisterMethod(l, "log", celestia_log);
-    Celx_RegisterMethod(l, "settimeslice", celestia_settimeslice);
-    Celx_RegisterMethod(l, "setluahook", celestia_setluahook);
-    Celx_RegisterMethod(l, "getparamstring", celestia_getparamstring);
-    Celx_RegisterMethod(l, "getfont", celestia_getfont);
-    Celx_RegisterMethod(l, "gettitlefont", celestia_gettitlefont);
-    Celx_RegisterMethod(l, "loadtexture", celestia_loadtexture);
-    Celx_RegisterMethod(l, "loadfont", celestia_loadfont);
-    lua_pop(l, 1);
+    celx.registerMethod("log", celestia_log);
+    celx.registerMethod("settimeslice", celestia_settimeslice);
+    celx.registerMethod("setluahook", celestia_setluahook);
+    celx.registerMethod("getparamstring", celestia_getparamstring);
+    celx.registerMethod("getfont", celestia_getfont);
+    celx.registerMethod("gettitlefont", celestia_gettitlefont);
+    celx.registerMethod("loadtexture", celestia_loadtexture);
+    celx.registerMethod("loadfont", celestia_loadfont);
+    celx.registerMethod("loadfont", celestia_loadfont);
+    celx.registerMethod("newcategory", celestia_newcategory);
+    celx.registerMethod("findcategory", celestia_findcategory);
+    celx.registerMethod("deletecategory", celestia_deletecategory);
+    celx.registerMethod("getcategories", celestia_getcategories);
+    celx.registerMethod("getrootcategories", celestia_getrootcategories);
+    celx.pop(1);
 }

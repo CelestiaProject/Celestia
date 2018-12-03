@@ -15,6 +15,11 @@
 struct lua_State;
 class Selection;
 
+int inline celxClassId(const Selection)
+{
+    return Celx_Object;
+}
+
 extern void CreateObjectMetaTable(lua_State* l);
 extern void ExtendObjectMetaTable(lua_State* l);
 extern Selection* to_object(lua_State* l, int index);

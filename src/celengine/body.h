@@ -10,6 +10,7 @@
 #ifndef _CELENGINE_BODY_H_
 #define _CELENGINE_BODY_H_
 
+#include <celengine/catentry.h>
 #include <celengine/surface.h>
 #include <celengine/star.h>
 #include <celengine/location.h>
@@ -24,6 +25,7 @@
 #include <map>
 #include <list>
 
+class Selection;
 class ReferenceFrame;
 class Body;
 class FrameTree;
@@ -103,7 +105,7 @@ class RingSystem
 };
 
 
-class Body
+class Body : public CatEntry
 {
  public:
      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -182,6 +184,7 @@ class Body
         AlwaysVisible      = 2,
     };
 
+    virtual Selection toSelection();
     void setDefaultProperties();
 
     PlanetarySystem* getSystem() const;

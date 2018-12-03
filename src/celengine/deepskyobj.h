@@ -14,10 +14,13 @@
 #include <string>
 #include <iostream>
 #include <celmath/ray.h>
+#include <celengine/catentry.h>
 #include <celengine/glcontext.h>
 #include <celengine/parser.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+
+class Selection;
 
 constexpr const float DSO_DEFAULT_ABS_MAGNITUDE = -1000.0f;
 
@@ -26,11 +29,12 @@ class Galaxy;
 class Globular;
 class OpenCluster;
 
-class DeepSkyObject
+class DeepSkyObject : public CatEntry
 {
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+    virtual Selection toSelection();
     DeepSkyObject() = default;
     virtual ~DeepSkyObject() = default;
 
