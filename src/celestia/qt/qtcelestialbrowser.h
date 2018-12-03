@@ -14,6 +14,7 @@
 #define _QTCELESTIALBROWSER_H_
 
 #include <QWidget>
+#include <celengine/body.h>
 #include "qtselectionpopup.h"
 
 class QAbstractItemModel;

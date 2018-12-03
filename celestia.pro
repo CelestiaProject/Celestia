@@ -170,6 +170,7 @@ ENGINE_SOURCES = \
     src/celengine/body.cpp \
     src/celengine/boundaries.cpp \
     src/celengine/catalogxref.cpp \
+    src/celengine/category.cpp \
     src/celengine/cmdparser.cpp \
     src/celengine/command.cpp \
     src/celengine/console.cpp \
@@ -196,6 +197,7 @@ ENGINE_SOURCES = \
     src/celengine/modelgeometry.cpp \
     src/celengine/multitexture.cpp \
     src/celengine/nebula.cpp \
+    src/celengine/catentry.cpp \
     src/celengine/observer.cpp \
     src/celengine/opencluster.cpp \
     src/celengine/overlay.cpp \
@@ -237,6 +239,7 @@ ENGINE_HEADERS = \
     src/celengine/body.h \
     src/celengine/boundaries.h \
     src/celengine/catalogxref.h \
+    src/celengine/category.h \
     src/celengine/celestia.h \
     src/celengine/cmdparser.h \
     src/celengine/command.h \
@@ -266,6 +269,7 @@ ENGINE_HEADERS = \
     src/celengine/modelgeometry.h \
     src/celengine/multitexture.h \
     src/celengine/nebula.h \
+    src/celengine/catentry.h \
     src/celengine/observer.h \
     src/celengine/octree.h \
     src/celengine/opencluster.h \
@@ -326,6 +330,7 @@ APP_SOURCES = \
     src/celestia/scriptmenu.cpp \
     src/celestia/url.cpp \
     src/celestia/celx.cpp \
+    src/celestia/celx_category.cpp \
     src/celestia/celx_celestia.cpp \
     src/celestia/celx_frame.cpp \
     src/celestia/celx_gl.cpp \
@@ -349,6 +354,7 @@ APP_HEADERS = \
     src/celestia/celx.h \
     src/celestia/celx_celestia.h \
     src/celestia/celx_internal.h \
+    src/celestia/celx_category.h \
     src/celestia/celx_frame.h \
     src/celestia/celx_gl.h \
     src/celestia/celx_misc.h \

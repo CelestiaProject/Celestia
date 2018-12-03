@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <celmath/mathlib.h>
+#include <celengine/selection.h>
 #include <cassert>
 #include <fmt/printf.h>
 #include "celestia.h"
@@ -1172,4 +1173,10 @@ Star::addOrbitingStar(Star* star)
     if (details->shared())
         details = new StarDetails(*details);
     details->addOrbitingStar(star);
+}
+
+Selection Star::toSelection()
+{
+//    std::cout << "Star::toSelection()\n";
+    return Selection(this);
 }

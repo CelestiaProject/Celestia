@@ -13,6 +13,10 @@
 #include "astro.h"
 #include "selection.h"
 #include "frametree.h"
+#include <celengine/star.h>
+#include <celengine/body.h>
+#include <celengine/location.h>
+#include <celengine/deepskyobj.h>
 
 using namespace Eigen;
 using namespace std;

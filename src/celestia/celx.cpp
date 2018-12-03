@@ -40,6 +40,7 @@
 #include "celx_observer.h"
 #include "celx_celestia.h"
 #include "celx_gl.h"
+#include "celx_category.h"
 
 #ifdef __CELVEC__
 #include <celengine/eigenport.h>
@@ -77,6 +78,7 @@ const char* CelxLua::ClassNames[] =
     "class_image",
     "class_texture",
     "class_phase",
+    "class_category"
 };
 
 CelxLua::FlagMap64 CelxLua::RenderFlagMap;
@@ -1493,6 +1495,7 @@ static void loadLuaLibs(lua_State* state)
     CreateFontMetaTable(state);
     CreateImageMetaTable(state);
     CreateTextureMetaTable(state);
+    CreateCategoryMetaTable(state);
     ExtendCelestiaMetaTable(state);
     ExtendObjectMetaTable(state);
 
@@ -1753,6 +1756,23 @@ bool LuaState::callLuaHook(void* obj, const char* method, double dt)
 
 
 /**** Implementation of Celx LuaState wrapper ****/
+
+bool CelxLua::isValid(int i) const
+{
+    int argc = lua_gettop(m_lua);
+    return i > 0 && i <= argc;
+}
+
+bool CelxLua::safeIsValid(int i, FatalErrors errors, const char *msg)
+{
+    if (!isValid(i))
+    {
+        if (errors & WrongArgc)
+            doError(msg);
+        return false;
+    }
+    return true;
+}
 
 CelxLua::CelxLua(lua_State* l) :
 m_lua(l)

@@ -11,12 +11,14 @@
 #define _CELENGINE_SELECTION_H_
 
 #include <string>
-#include <celengine/star.h>
-#include <celengine/body.h>
-#include <celengine/deepskyobj.h>
-#include <celengine/location.h>
 #include <celengine/univcoord.h>
 #include <Eigen/Core>
+
+class CatEntry;
+class Star;
+class Body;
+class Location;
+class DeepSkyObject;
 
 class Selection
 {
@@ -27,10 +29,12 @@ class Selection
         Type_Body,
         Type_DeepSky,
         Type_Location,
+        Type_Generic
     };
 
- public:
+public:
     Selection() : type(Type_Nil), obj(nullptr) {};
+    Selection(CatEntry *cat) : type(Type_Generic), obj(cat) { checkNull(); };
     Selection(Star* star) : type(Type_Star), obj(star) { checkNull(); };
     Selection(Body* body) : type(Type_Body), obj(body) { checkNull(); };
     Selection(DeepSkyObject* deepsky) : type(Type_DeepSky), obj(deepsky) {checkNull(); };
@@ -67,6 +71,11 @@ class Selection
         return type == Type_Location ? static_cast<Location*>(obj) : nullptr;
     }
 
+    CatEntry *catEntry() const
+    {
+        return type != Type_Nil ? static_cast<CatEntry*>(obj) : nullptr;
+    }
+
     Type getType() const { return type; }
 
     // private:
@@ -86,5 +95,10 @@ inline bool operator!=(const Selection& s0, const Selection& s1)
 {
     return s0.type != s1.type || s0.obj != s1.obj;
 }
+
+/*inline bool operator<(const Selection& s0, const Selection& s1)
+{
+    return s0.type < s1.type || s0.obj < s1.obj;
+}*/
 
 #endif // _CELENGINE_SELECTION_H_

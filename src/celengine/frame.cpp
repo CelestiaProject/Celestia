@@ -11,6 +11,10 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+#include <celengine/star.h>
+#include <celengine/body.h>
+#include <celengine/deepskyobj.h>
+#include <celengine/location.h>
 #include <celengine/frame.h>
 
 using namespace Eigen;

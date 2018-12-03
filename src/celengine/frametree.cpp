@@ -16,7 +16,10 @@
 #include "celengine/timeline.h"
 #include "celengine/timelinephase.h"
 #include "celengine/frame.h"
-
+#include <celengine/body.h>
+#include <celengine/star.h>
+#include <celengine/location.h>
+#include <celengine/deepskyobj.h>
 
 /* A FrameTree is hierarchy of solar system bodies organized according to
  * the relationship of their reference frames. An object will appear in as

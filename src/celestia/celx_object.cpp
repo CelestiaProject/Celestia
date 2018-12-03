@@ -13,6 +13,7 @@
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_object.h"
+#include "celx_category.h"
 #include <celengine/body.h>
 #include <celengine/timelinephase.h>
 #include <celengine/axisarrow.h>
@@ -1408,21 +1409,87 @@ static int object_setatmosphere(lua_State* l)
             atmosphere->rayleighScaleHeight = b;
 
             body->setAtmosphere(*atmosphere);
-            cout << "set atmosphere\n";
         }
     }
 
     return 0;
 }
 
-void ExtendObjectMetaTable(lua_State* l)
+#define checkEmpty(c,s) \
+    if (s->empty()) \
+    { \
+        c.doError("Selection object is empty!"); \
+        return 0; \
+    }
+
+static int object_getcategories(lua_State *l)
 {
     CelxLua celx(l);
 
+    Selection *s = celx.getThis<Selection>();
+    checkEmpty(celx, s);
+    CatEntry::CategorySet *set = s->catEntry()->getCategories();
+    return celx.pushIterable<UserCategory*>(set);
+}
+
+static int object_addtocategory(lua_State *l)
+{
+    CelxLua celx(l);
+
+    Selection *s = celx.getThis<Selection>();
+    checkEmpty(celx, s);
+    bool ret;
+    if (celx.isUserData(2))
+    {
+        UserCategory *c = *celx.getUserData<UserCategory*>(2);
+        if (c == nullptr)
+            return celx.push(false);
+        ret = s->catEntry()->addToCategory(c);
+    }
+    else
+    {
+        const char *n = celx.safeGetString(2, AllErrors, "Argument to object:addtocategory() must be string or userdata");
+        if (n == nullptr)
+            return celx.push(false);
+        ret = s->catEntry()->addToCategory(n);
+    }
+    return celx.push(ret);
+}
+
+static int object_removefromcategory(lua_State *l)
+{
+    CelxLua celx(l);
+
+    Selection *s = celx.getThis<Selection>();
+    checkEmpty(celx, s);
+    bool ret;
+    if (celx.isUserData(2))
+    {
+        UserCategory *c = *celx.getUserData<UserCategory*>(2);
+        if (c == nullptr)
+            return celx.push(false);
+        ret = s->catEntry()->removeFromCategory(c);
+    }
+    else
+    {
+        const char *n = celx.safeGetString(2, AllErrors, "Argument to object:addtocategory() must be string or userdata");
+        if (n == nullptr)
+            return celx.push(false);
+        ret = s->catEntry()->removeFromCategory(n);
+    }
+    return celx.push(ret);
+}
+
+void ExtendObjectMetaTable(lua_State* l)
+{
+    CelxLua celx(l);
     celx.pushClassName(Celx_Object);
     lua_rawget(l, LUA_REGISTRYINDEX);
     if (lua_type(l, -1) != LUA_TTABLE)
         cout << "Metatable for " << CelxLua::ClassNames[Celx_Object] << " not found!\n";
     celx.registerMethod("setatmosphere", object_setatmosphere);
-    lua_pop(l, 1);
+    celx.registerMethod("getcategories", object_getcategories);
+    celx.registerMethod("addtocategory", object_addtocategory);
+    celx.registerMethod("removefromcategory", object_removefromcategory);
+    celx.pop(1);
 }

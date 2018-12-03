@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #ifndef LUA_VER
 #define LUA_VER 0x050000

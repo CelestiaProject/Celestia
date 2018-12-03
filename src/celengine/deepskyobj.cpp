@@ -18,6 +18,7 @@
 #include "globular.h"
 #include "nebula.h"
 #include "opencluster.h"
+#include <celengine/selection.h>
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/intersect.h>
@@ -223,4 +224,10 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
     }
 
     return true;
+}
+
+Selection DeepSkyObject::toSelection()
+{
+//    std::cout << "DeepSkyObject::toSelection()\n";
+    return Selection(this);
 }
