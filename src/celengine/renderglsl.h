@@ -16,6 +16,7 @@
 #include <celengine/lightenv.h>
 #include <Eigen/Geometry>
 
+class Renderer;
 
 void renderEllipsoid_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
@@ -26,7 +27,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                        uint64_t renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
                        const Frustum& frustum,
-                       const GLContext& context);
+                       const GLContext& context,
+                       const Renderer* renderer);
 
 void renderGeometry_GLSL(Geometry* geometry,
                          const RenderInfo& ri,
@@ -36,7 +38,8 @@ void renderGeometry_GLSL(Geometry* geometry,
                          float geometryScale,
                          uint64_t renderFlags,
                          const Eigen::Quaternionf& planetOrientation,
-                         double tsec);
+                         double tsec,
+                         const Renderer* renderer);
 
 void renderClouds_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
@@ -49,7 +52,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        uint64_t renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
                        const Frustum& frustum,
-                       const GLContext& context);
+                       const GLContext& context,
+                       const Renderer* renderer);
 
 void renderAtmosphere_GLSL(const RenderInfo& ri,
                            const LightingState& ls,
@@ -57,7 +61,8 @@ void renderAtmosphere_GLSL(const RenderInfo& ri,
                            float radius,
                            const Eigen::Quaternionf& planetOrientation,
                            const Frustum& frustum,
-                           const GLContext& context);
+                           const GLContext& context,
+                           const Renderer* renderer);
 
 void renderRings_GLSL(RingSystem& rings,
                       RenderInfo& ri,
@@ -66,7 +71,8 @@ void renderRings_GLSL(RingSystem& rings,
                       float planetOblateness,
                       unsigned int textureResolution,
                       bool renderShadow,
-                      unsigned int nSections);
+                      unsigned int nSections,
+                      const Renderer* renderer);
 
 void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                const RenderInfo& ri,
@@ -74,7 +80,8 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                float geometryScale,
                                uint64_t renderFlags,
                                const Eigen::Quaternionf& planetOrientation,
-                               double tsec);
+                               double tsec,
+                               const Renderer* renderer);
 
 
 class FramebufferObject

@@ -305,6 +305,8 @@ class Renderer
                              LabelVerticalAlignment valign = VerticalAlignBottom,
                              float size = 0.0f);
 
+   ShaderManager& getShaderManager() const { return *shaderManager; }
+
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
     void beginObjectAnnotations();
@@ -622,6 +624,7 @@ class Renderer
 
  private:
     GLContext* context;
+    ShaderManager* shaderManager{ nullptr };
 
     int windowWidth;
     int windowHeight;

@@ -15,6 +15,7 @@
 #include <celmodel/mesh.h>
 #include <Eigen/Geometry>
 
+class Renderer;
 
 class RenderContext
 {
@@ -22,7 +23,7 @@ class RenderContext
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     RenderContext(const cmod::Material*);
-    RenderContext();
+    RenderContext(const Renderer*);
     virtual ~RenderContext() = default;
 
     virtual void makeCurrent(const cmod::Material&) = 0;
@@ -59,6 +60,7 @@ class RenderContext
     Eigen::Quaternionf cameraOrientation;  // required for drawing billboards
 
  protected:
+    const Renderer* renderer { nullptr };
     bool usePointSize{ false };
     bool useNormals{ true };
     bool useColors{ false };
@@ -72,16 +74,16 @@ class GLSL_RenderContext : public RenderContext
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    GLSL_RenderContext(const LightingState& ls, float _objRadius, const Eigen::Quaternionf& orientation);
-    GLSL_RenderContext(const LightingState& ls, const Eigen::Vector3f& _objScale, const Eigen::Quaternionf& orientation);
-    virtual ~GLSL_RenderContext();
+    GLSL_RenderContext(const Renderer* r, const LightingState& ls, float _objRadius, const Eigen::Quaternionf& orientation);
+    GLSL_RenderContext(const Renderer* r, const LightingState& ls, const Eigen::Vector3f& _objScale, const Eigen::Quaternionf& orientation);
+    ~GLSL_RenderContext() override;
 
-    virtual void makeCurrent(const cmod::Material&);
-    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
-                                 const void* vertexData);
+    void makeCurrent(const cmod::Material&) override;
+    void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
+                         const void* vertexData) override;
 
-    virtual void setLunarLambert(float);
-    virtual void setAtmosphere(const Atmosphere*);
+    void setLunarLambert(float);
+    void setAtmosphere(const Atmosphere*);
 
  private:
      void initLightingEnvironment();
@@ -106,12 +108,12 @@ class GLSL_RenderContext : public RenderContext
 class GLSLUnlit_RenderContext : public RenderContext
 {
  public:
-    GLSLUnlit_RenderContext(float _objRadius);
-    virtual ~GLSLUnlit_RenderContext();
+    GLSLUnlit_RenderContext(const Renderer* r, float _objRadius);
+    ~GLSLUnlit_RenderContext() override;
 
-    virtual void makeCurrent(const cmod::Material&);
-    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
-                                 const void* vertexData);
+    void makeCurrent(const cmod::Material&) override;
+    void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
+                         const void* vertexData) override;
 
  private:
     void initLightingEnvironment();
@@ -126,4 +128,3 @@ class GLSLUnlit_RenderContext : public RenderContext
 
 
 #endif // _CELENGINE_RENDCONTEXT_H_
-

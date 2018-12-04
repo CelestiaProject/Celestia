@@ -21,6 +21,7 @@
 #include <Eigen/Geometry>
 
 class Selection;
+class Renderer;
 
 constexpr const float DSO_DEFAULT_ABS_MAGNITUDE = -1000.0f;
 
@@ -92,7 +93,8 @@ class DeepSkyObject : public CatEntry
                         const Eigen::Vector3f& offset,
                         const Eigen::Quaternionf& viewerOrientation,
                         float brightness,
-                        float pixelSize) = 0;
+                        float pixelSize,
+                        const Renderer*) = 0;
 
     virtual unsigned int getRenderMask() const { return 0; }
     virtual unsigned int getLabelMask() const { return 0; }

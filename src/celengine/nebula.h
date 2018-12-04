@@ -13,7 +13,6 @@
 #include <celutil/reshandle.h>
 #include <celengine/deepskyobj.h>
 
-
 class Nebula : public DeepSkyObject
 {
  public:
@@ -33,7 +32,8 @@ class Nebula : public DeepSkyObject
                         const Eigen::Vector3f& offset,
                         const Eigen::Quaternionf& viewerOrientation,
                         float brightness,
-                        float pixelSize);
+                        float pixelSize,
+                        const Renderer* renderer);
 
     virtual unsigned int getRenderMask() const;
     virtual unsigned int getLabelMask() const;

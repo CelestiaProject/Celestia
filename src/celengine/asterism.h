@@ -18,6 +18,7 @@
 #include "stardb.h"
 #include "shadermanager.h"
 
+class Renderer;
 class AsterismList;
 
 class Asterism
@@ -60,7 +61,7 @@ class Asterism
 class AsterismList : public std::vector<Asterism*>
 {
  public:
-    void render(Color color);
+    void render(const Color& color, const Renderer& renderer);
 
  private:
     void cleanup();

@@ -325,21 +325,21 @@ bool Globular::load(AssociativeArray* params, const string& resPath)
 }
 
 
-void Globular::render(const GLContext& context,
-                    const Vector3f& offset,
-                    const Quaternionf& viewerOrientation,
-                    float brightness,
-                    float pixelSize)
+void Globular::render(const Vector3f& offset,
+                      const Quaternionf& viewerOrientation,
+                      float brightness,
+                      float pixelSize,
+                      const Renderer* /* unused */)
 {
 #ifdef __CELVEC__
-    renderGlobularPointSprites(context, fromEigen(offset), fromEigen(viewerOrientation), brightness, pixelSize);
+    renderGlobularPointSprites(fromEigen(offset), fromEigen(viewerOrientation), brightness, pixelSize);
 #else
-    renderGlobularPointSprites(context, offset, viewerOrientation, brightness, pixelSize);
+    renderGlobularPointSprites(offset, viewerOrientation, brightness, pixelSize);
 #endif
 }
 
 
-void Globular::renderGlobularPointSprites(const GLContext& /*unused*/,
+void Globular::renderGlobularPointSprites(
 #ifdef __CELVEC__
                                       const Vec3f& offset,
                                       const Quatf& viewerOrientation,

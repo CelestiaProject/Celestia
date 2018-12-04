@@ -294,6 +294,4 @@ class ShaderManager
     std::map<ShaderProperties, CelestiaGLProgram*> shaders;
 };
 
-extern ShaderManager& GetShaderManager();
-
 #endif // _CELENGINE_SHADERMANAGER_H_
