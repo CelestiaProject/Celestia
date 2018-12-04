@@ -17,7 +17,7 @@
 using namespace std;
 
 
-static const string TitleTag("Title:");
+static const char TitleTag[] = "Title:";
 
 class ScriptScanner : public EnumFilesHandler
 {
@@ -60,7 +60,7 @@ public:
 
                 // Skip spaces after the Title: tag
                 if (titlePos != string::npos)
-                    titlePos = firstLine.find_first_not_of(" ", titlePos + TitleTag.length());
+                    titlePos = firstLine.find_first_not_of(" ", titlePos + (sizeof(TitleTag) - 1));
 
                 if (titlePos != string::npos)
                 {

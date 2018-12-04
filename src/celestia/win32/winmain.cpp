@@ -149,7 +149,7 @@ static const WPARAM ID_GOTO_URL = 62000;
 HWND hBookmarkTree;
 char bookmarkName[33];
 
-static const string ScriptsDirectory = "scripts";
+static const char ScriptsDirectory[] = "scripts";
 static vector<ScriptMenuItem>* ScriptMenuItems = NULL;
 
 

@@ -15,28 +15,28 @@
 using namespace std;
 
 
-static const string JPEGExt(".jpeg");
-static const string JPGExt(".jpg");
-static const string JFIFExt(".jif");
-static const string BMPExt(".bmp");
-static const string TargaExt(".tga");
-static const string PNGExt(".png");
-static const string ThreeDSExt(".3ds");
-static const string CelestiaTextureExt(".ctx");
-static const string CelestiaMeshExt(".cms");
-static const string CelestiaCatalogExt(".ssc");
-static const string CelestiaStarCatalogExt(".stc");
-static const string CelestiaDeepSkyCatalogExt(".dsc");
-static const string AVIExt(".avi");
-static const string DDSExt(".dds");
-static const string DXT5NormalMapExt(".dxt5nm");
-static const string CelestiaLegacyScriptExt(".cel");
-static const string CelestiaScriptExt(".clx");
-static const string CelestiaScriptExt2(".celx");
-static const string CelestiaModelExt(".cmod");
-static const string CelestiaParticleSystemExt(".cpart");
-static const string CelestiaXYZTrajectoryExt(".xyz");
-static const string CelestiaXYZVTrajectoryExt(".xyzv");
+static const char JPEGExt[] = ".jpeg";
+static const char JPGExt[] = ".jpg";
+static const char JFIFExt[] = ".jif";
+static const char BMPExt[] = ".bmp";
+static const char TargaExt[] = ".tga";
+static const char PNGExt[] = ".png";
+static const char ThreeDSExt[] = ".3ds";
+static const char CelestiaTextureExt[] = ".ctx";
+static const char CelestiaMeshExt[] = ".cms";
+static const char CelestiaCatalogExt[] = ".ssc";
+static const char CelestiaStarCatalogExt[] = ".stc";
+static const char CelestiaDeepSkyCatalogExt[] = ".dsc";
+static const char AVIExt[] = ".avi";
+static const char DDSExt[] = ".dds";
+static const char DXT5NormalMapExt[] = ".dxt5nm";
+static const char CelestiaLegacyScriptExt[] = ".cel";
+static const char CelestiaScriptExt[] = ".clx";
+static const char CelestiaScriptExt2[] = ".celx";
+static const char CelestiaModelExt[] = ".cmod";
+static const char CelestiaParticleSystemExt[] = ".cpart";
+static const char CelestiaXYZTrajectoryExt[] = ".xyz";
+static const char CelestiaXYZVTrajectoryExt[] = ".xyzv";
 
 ContentType DetermineFileType(const string& filename)
 {
