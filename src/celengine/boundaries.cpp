@@ -13,6 +13,7 @@
 #include <GL/glew.h>
 #include "boundaries.h"
 #include "astro.h"
+#include "render.h"
 
 using namespace Eigen;
 using namespace std;
@@ -71,7 +72,7 @@ void ConstellationBoundaries::lineto(float ra, float dec)
 }
 
 
-void ConstellationBoundaries::render(Color color)
+void ConstellationBoundaries::render(const Color& color, const Renderer& renderer)
 {
     if (vboId == 0)
     {
@@ -88,7 +89,7 @@ void ConstellationBoundaries::render(Color color)
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
     }
 
-    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
+    CelestiaGLProgram* prog = renderer.getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
 

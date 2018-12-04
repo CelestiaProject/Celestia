@@ -20,6 +20,7 @@
 #include "asterism.h"
 #include "parser.h"
 #include "vecgl.h"
+#include "render.h"
 
 using namespace std;
 
@@ -106,7 +107,7 @@ bool Asterism::isColorOverridden() const
 
 /*! Draw visible asterisms.
  */
-void AsterismList::render(Color defaultColor)
+void AsterismList::render(const Color& defaultColor, const Renderer& renderer)
 {
     if (vboId == 0)
     {
@@ -129,7 +130,7 @@ void AsterismList::render(Color defaultColor)
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
     }
 
-    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
+    CelestiaGLProgram* prog = renderer.getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
 

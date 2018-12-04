@@ -255,7 +255,8 @@ void Galaxy::render(const GLContext& context,
                     const Vector3f& offset,
                     const Quaternionf& viewerOrientation,
                     float brightness,
-                    float pixelSize)
+                    float pixelSize,
+                    const Renderer* /* unused */)
 {
     if (form == nullptr)
     {

@@ -15,6 +15,7 @@
 #include "body.h"
 #include <GL/glew.h>
 #include "vecgl.h"
+#include "render.h"
 
 using namespace cmod;
 using namespace Eigen;
@@ -70,8 +71,9 @@ GetTextureHandle(Material::TextureResource* texResource)
 }
 
 
-RenderContext::RenderContext() :
-    material(&defaultMaterial)
+RenderContext::RenderContext(const Renderer* _renderer) :
+    material(&defaultMaterial),
+    renderer(_renderer)
 {
 }
 
@@ -295,7 +297,11 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 
 /***** GLSL render context ******/
 
-GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius, const Quaternionf& orientation) :
+GLSL_RenderContext::GLSL_RenderContext(const Renderer* renderer,
+                                       const LightingState& ls,
+                                       float _objRadius,
+                                       const Quaternionf& orientation) :
+    RenderContext(renderer),
     lightingState(ls),
     objRadius(_objRadius),
     objScale(Vector3f::Constant(_objRadius)),
@@ -305,7 +311,11 @@ GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius
 }
 
 
-GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, const Eigen::Vector3f& _objScale, const Quaternionf& orientation) :
+GLSL_RenderContext::GLSL_RenderContext(const Renderer* renderer,
+                                       const LightingState& ls,
+                                       const Eigen::Vector3f& _objScale,
+                                       const Quaternionf& orientation) :
+    RenderContext(renderer),
     lightingState(ls),
     objRadius(_objScale.maxCoeff()),
     objScale(_objScale),
@@ -483,7 +493,8 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     }
 
     // Get a shader for the current rendering configuration
-    CelestiaGLProgram* prog = GetShaderManager().getShader(shaderProps);
+    assert(renderer != nullptr);
+    CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shaderProps);
     if (prog == nullptr)
         return;
 
@@ -639,7 +650,8 @@ GLSL_RenderContext::setLunarLambert(float l)
 
 /***** GLSL-Unlit render context ******/
 
-GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(float _objRadius) :
+GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(const Renderer* renderer, float _objRadius) :
+    RenderContext(renderer),
     blendMode(Material::InvalidBlend),
     objRadius(_objRadius)
 {
@@ -696,7 +708,8 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
         shaderProps.texUsage |= ShaderProperties::VertexColors;
 
     // Get a shader for the current rendering configuration
-    CelestiaGLProgram* prog = GetShaderManager().getShader(shaderProps);
+    assert(renderer != nullptr);
+    CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shaderProps);
     if (prog == nullptr)
         return;
 

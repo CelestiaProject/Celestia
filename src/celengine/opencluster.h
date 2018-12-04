@@ -33,7 +33,8 @@ class OpenCluster : public DeepSkyObject
                         const Eigen::Vector3f& offset,
                         const Eigen::Quaternionf& viewerOrientation,
                         float brightness,
-                        float pixelSize);
+                        float pixelSize,
+                        const Renderer* r = nullptr);
 
     virtual unsigned int getRenderMask() const;
     virtual unsigned int getLabelMask() const;

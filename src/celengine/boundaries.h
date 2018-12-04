@@ -18,6 +18,7 @@
 #include "celutil/color.h"
 #include "shadermanager.h"
 
+class Renderer;
 
 class ConstellationBoundaries
 {
@@ -33,7 +34,7 @@ class ConstellationBoundaries
 
     void moveto(float ra, float dec);
     void lineto(float ra, float dec);
-    void render(Color color);
+    void render(const Color& color, const Renderer& renderer);
 
  private:
     void cleanup();

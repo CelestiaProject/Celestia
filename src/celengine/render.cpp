@@ -286,7 +286,7 @@ double computeCosViewConeAngle(double verticalFOV, double width, double height)
 class PointStarVertexBuffer
 {
 public:
-    PointStarVertexBuffer(unsigned int _capacity);
+    PointStarVertexBuffer(const Renderer& _renderer, unsigned int _capacity);
     ~PointStarVertexBuffer();
     void startPoints();
     void startSprites();
@@ -304,6 +304,7 @@ private:
         float pad;
     };
 
+    const Renderer& renderer;
     unsigned int capacity;
     unsigned int nStars{ 0 };
     StarVertex* vertices{ nullptr };
@@ -311,7 +312,9 @@ private:
     Texture* texture{ nullptr };
 };
 
-PointStarVertexBuffer::PointStarVertexBuffer(unsigned int _capacity) :
+PointStarVertexBuffer::PointStarVertexBuffer(const Renderer& _renderer,
+                                             unsigned int _capacity) :
+    renderer(_renderer),
     capacity(_capacity)
 {
     vertices = new StarVertex[capacity];
@@ -328,7 +331,7 @@ void PointStarVertexBuffer::startSprites()
     shadprop.staticShader = true;
     shadprop.texUsage = ShaderProperties::PointSprite   |
                         ShaderProperties::NormalTexture;
-    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
+    CelestiaGLProgram* prog = renderer.getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
 
@@ -496,8 +499,8 @@ Renderer::Renderer() :
     settingsChanged(true),
     objectAnnotationSetOpen(false)
 {
-    pointStarVertexBuffer = new PointStarVertexBuffer(2048);
-    glareVertexBuffer = new PointStarVertexBuffer(2048);
+    pointStarVertexBuffer = new PointStarVertexBuffer(*this, 2048);
+    glareVertexBuffer = new PointStarVertexBuffer(*this, 2048);
     skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
     skyIndices = new uint32_t[(MaxSkySlices + 1) * 2 * MaxSkyRings];
     skyContour = new SkyContourPoint[MaxSkySlices + 1];
@@ -524,6 +527,8 @@ Renderer::Renderer() :
     {
         font[i] = nullptr;
     }
+
+    shaderManager = new ShaderManager();
 }
 
 
@@ -562,6 +567,8 @@ Renderer::~Renderer()
 
     for(const auto tex : eclipseShadowTextures)
         delete tex;
+
+    delete shaderManager;
 }
 
 
@@ -4774,7 +4781,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                  scaleFactors,
                                  textureResolution,
                                  renderFlags,
-                                 obj.orientation, viewFrustum, *context);
+                                 obj.orientation, viewFrustum, *context, this);
         }
         else
         {
@@ -4797,7 +4804,8 @@ void Renderer::renderObject(const Vector3f& pos,
                                     geometryScale,
                                     renderFlags,
                                     obj.orientation,
-                                    astro::daysToSecs(now - astro::J2000));
+                                    astro::daysToSecs(now - astro::J2000),
+                                    this);
             }
             else
             {
@@ -4807,7 +4815,8 @@ void Renderer::renderObject(const Vector3f& pos,
                                           geometryScale,
                                           renderFlags,
                                           obj.orientation,
-                                          astro::daysToSecs(now - astro::J2000));
+                                          astro::daysToSecs(now - astro::J2000),
+                                          this);
             }
 
             for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
@@ -4829,7 +4838,8 @@ void Renderer::renderObject(const Vector3f& pos,
                          radius, 1.0f - obj.semiAxes.y(),
                          textureResolution,
                          (renderFlags & ShowRingShadows) != 0 && lit,
-                         detailOptions.ringSystemSections);
+                         detailOptions.ringSystemSections,
+                         this);
     }
 
     if (obj.atmosphere != nullptr)
@@ -4866,7 +4876,8 @@ void Renderer::renderObject(const Vector3f& pos,
                                       radius * atmScale,
                                       obj.orientation,
                                       viewFrustum,
-                                      *context);
+                                      *context,
+                                      this);
             }
             else
             {
@@ -4950,7 +4961,8 @@ void Renderer::renderObject(const Vector3f& pos,
                                   renderFlags,
                                   obj.orientation,
                                   viewFrustum,
-                                  *context);
+                                  *context,
+                                  this);
             }
             else
             {
@@ -4997,7 +5009,8 @@ void Renderer::renderObject(const Vector3f& pos,
                              radius, 1.0f - obj.semiAxes.y(),
                              textureResolution,
                              (renderFlags & ShowRingShadows) != 0 && lit,
-                             detailOptions.ringSystemSections);
+                             detailOptions.ringSystemSections,
+                             this);
         }
     }
 
@@ -5806,7 +5819,7 @@ void Renderer::renderAsterisms(const Universe& universe, float dist)
 
     glDisable(GL_TEXTURE_2D);
     enableSmoothLines(renderFlags);
-    universe.getAsterisms()->render(Color(ConstellationColor, opacity));
+    universe.getAsterisms()->render(Color(ConstellationColor, opacity), *this);
     disableSmoothLines(renderFlags);
 }
 
@@ -5827,7 +5840,7 @@ void Renderer::renderBoundaries(const Universe& universe, float dist)
 
     glDisable(GL_TEXTURE_2D);
     enableSmoothLines(renderFlags);
-    universe.getBoundaries()->render(Color(BoundaryColor, opacity));
+    universe.getBoundaries()->render(Color(BoundaryColor, opacity), *this);
     disableSmoothLines(renderFlags);
 }
 
@@ -6931,7 +6944,8 @@ void DSORenderer::process(DeepSkyObject* const & dso,
                             relPos,
                             observer->getOrientationf(),
                             (float) brightness,
-                            pixelSize);
+                            pixelSize,
+                            renderer);
                 glPopMatrix();
 
                 if (dsoRadius < 1000.0)
