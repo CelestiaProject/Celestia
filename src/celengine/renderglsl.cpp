@@ -57,7 +57,6 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                        uint64_t renderFlags,
                        const Quaternionf& planetOrientation,
                        const Frustum& frustum,
-                       const GLContext& context,
                        const Renderer* renderer)
 {
     float radius = semiAxes.maxCoeff();
@@ -280,8 +279,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     unsigned int attributes = LODSphereMesh::Normals;
     if (ri.bumpTex != nullptr)
         attributes |= LODSphereMesh::Tangents;
-    g_lodSphere->render(context,
-                        attributes,
+    g_lodSphere->render(attributes,
                         frustum, ri.pixWidth,
                         textures[0], textures[1], textures[2], textures[3]);
 
@@ -400,7 +398,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        uint64_t renderFlags,
                        const Quaternionf& planetOrientation,
                        const Frustum& frustum,
-                       const GLContext& context,
                        const Renderer* renderer)
 {
     float radius = semiAxes.maxCoeff();
@@ -515,8 +512,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
     unsigned int attributes = LODSphereMesh::Normals;
     if (cloudNormalMap != nullptr)
         attributes |= LODSphereMesh::Tangents;
-    g_lodSphere->render(context,
-                        attributes,
+    g_lodSphere->render(attributes,
                         frustum, ri.pixWidth,
                         textures[0], textures[1], textures[2], textures[3]);
 
@@ -534,7 +530,6 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
                       float radius,
                       const Quaternionf& /*planetOrientation*/,
                       const Frustum& frustum,
-                      const GLContext& context,
                       const Renderer* renderer)
 {
     // Currently, we just skip rendering an atmosphere when there are no
@@ -580,8 +575,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     glDepthMask(GL_FALSE);
     glBlendFunc(GL_ONE, GL_SRC_ALPHA);
 
-    g_lodSphere->render(context,
-                        LODSphereMesh::Normals,
+    g_lodSphere->render(LODSphereMesh::Normals,
                         frustum,
                         ri.pixWidth,
                         nullptr);
