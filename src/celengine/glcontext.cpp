@@ -88,15 +88,3 @@ GLContext::GLRenderPath GLContext::nextRenderPath()
 #endif
     return GLPath_GLSL;
 }
-
-
-bool GLContext::extensionSupported(const string& ext) const
-{
-    return (find(extensions.begin(), extensions.end(), ext) != extensions.end());
-}
-
-
-bool GLContext::bumpMappingSupported() const
-{
-    return true;
-}

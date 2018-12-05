@@ -16,12 +16,9 @@
 class GLContext
 {
  public:
-    GLContext() = default;
-    virtual ~GLContext() = default;
-
     enum GLRenderPath
     {
-        GLPath_GLSL              = 8,
+        GLPath_GLSL = 8,
     };
 
     void init(const std::vector<std::string>& ignoreExt);
@@ -31,11 +28,7 @@ class GLContext
     bool renderPathSupported(GLRenderPath) const;
     GLRenderPath nextRenderPath();
 
-    bool extensionSupported(const std::string&) const;
-
     int getMaxTextures() const { return maxSimultaneousTextures; };
-    bool hasMultitexture() const { return true; };
-    bool bumpMappingSupported() const;
 
  private:
     GLRenderPath renderPath{ GLPath_GLSL };
