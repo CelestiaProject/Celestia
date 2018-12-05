@@ -251,8 +251,7 @@ bool Galaxy::load(AssociativeArray* params, const string& resPath)
 }
 
 
-void Galaxy::render(const GLContext& context,
-                    const Vector3f& offset,
+void Galaxy::render(const Vector3f& offset,
                     const Quaternionf& viewerOrientation,
                     float brightness,
                     float pixelSize,
@@ -260,11 +259,11 @@ void Galaxy::render(const GLContext& context,
 {
     if (form == nullptr)
     {
-        //renderGalaxyEllipsoid(context, offset, viewerOrientation, brightness, pixelSize);
+        //renderGalaxyEllipsoid(offset, viewerOrientation, brightness, pixelSize);
     }
     else
     {
-        renderGalaxyPointSprites(context, offset, viewerOrientation, brightness, pixelSize);
+        renderGalaxyPointSprites(offset, viewerOrientation, brightness, pixelSize);
     }
 }
 
@@ -274,8 +273,7 @@ inline void glVertex4(const Vector4f& v)
     glVertex3fv(v.data());
 }
 
-void Galaxy::renderGalaxyPointSprites(const GLContext& /*unused*/,
-                                      const Vector3f& offset,
+void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
                                       const Quaternionf& viewerOrientation,
                                       float brightness,
                                       float pixelSize)
@@ -399,8 +397,7 @@ void Galaxy::renderGalaxyPointSprites(const GLContext& /*unused*/,
 
 
 #if 0
-void Galaxy::renderGalaxyEllipsoid(const GLContext& context,
-                                   const Vec3f& offset,
+void Galaxy::renderGalaxyEllipsoid(const Vec3f& offset,
                                    const Quatf&,
                                    float,
                                    float pixelSize)

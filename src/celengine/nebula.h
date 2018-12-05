@@ -28,8 +28,7 @@ class Nebula : public DeepSkyObject
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const;
     virtual bool load(AssociativeArray*, const std::string&);
-    virtual void render(const GLContext& context,
-                        const Eigen::Vector3f& offset,
+    virtual void render(const Eigen::Vector3f& offset,
                         const Eigen::Quaternionf& viewerOrientation,
                         float brightness,
                         float pixelSize,

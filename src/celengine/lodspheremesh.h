@@ -30,15 +30,12 @@ public:
     LODSphereMesh();
     ~LODSphereMesh();
 
-    void render(const GLContext&,
-                unsigned int attributes, const Frustum&, float pixWidth,
+    void render(unsigned int attributes, const Frustum&, float pixWidth,
                 Texture** tex, int nTextures);
-    void render(const GLContext&,
-                unsigned int attributes, const Frustum&, float pixWidth,
+    void render(unsigned int attributes, const Frustum&, float pixWidth,
                 Texture* tex0 = nullptr, Texture* tex1 = nullptr,
                 Texture* tex2 = nullptr, Texture* tex3 = nullptr);
-    void render(const GLContext&,
-                const Frustum&, float pixWidth,
+    void render(const Frustum&, float pixWidth,
                 Texture** tex, int nTextures);
 
     enum {
@@ -56,12 +53,10 @@ public:
     {
         RenderInfo(int _step,
                    unsigned int _attr,
-                   const Frustum& _frustum,
-                   const GLContext& _context) :
+                   const Frustum& _frustum) :
             step(_step),
             attributes(_attr),
-            frustum(_frustum),
-            context(_context)
+            frustum(_frustum)
         {};
 
         int step;
@@ -73,7 +68,6 @@ public:
         Eigen::Vector3f fp[8];    // frustum points, for culling
 #endif
         int texLOD[MAX_SPHERE_MESH_TEXTURES];
-        const GLContext& context;
     };
 
     int renderPatches(int phi0, int theta0,

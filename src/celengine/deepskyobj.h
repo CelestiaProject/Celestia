@@ -89,8 +89,7 @@ class DeepSkyObject : public CatEntry
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const = 0;
     virtual bool load(AssociativeArray*, const std::string& resPath);
-    virtual void render(const GLContext& context,
-                        const Eigen::Vector3f& offset,
+    virtual void render(const Eigen::Vector3f& offset,
                         const Eigen::Quaternionf& viewerOrientation,
                         float brightness,
                         float pixelSize,

@@ -27,7 +27,6 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                        uint64_t renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
                        const Frustum& frustum,
-                       const GLContext& context,
                        const Renderer* renderer);
 
 void renderGeometry_GLSL(Geometry* geometry,
@@ -52,7 +51,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        uint64_t renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
                        const Frustum& frustum,
-                       const GLContext& context,
                        const Renderer* renderer);
 
 void renderAtmosphere_GLSL(const RenderInfo& ri,
@@ -61,7 +59,6 @@ void renderAtmosphere_GLSL(const RenderInfo& ri,
                            float radius,
                            const Eigen::Quaternionf& planetOrientation,
                            const Frustum& frustum,
-                           const GLContext& context,
                            const Renderer* renderer);
 
 void renderRings_GLSL(RingSystem& rings,

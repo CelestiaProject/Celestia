@@ -156,20 +156,16 @@ static Vector3f spherePoint(int theta, int phi)
 #endif
 
 
-void LODSphereMesh::render(const GLContext& context,
-                           const Frustum& frustum,
+void LODSphereMesh::render(const Frustum& frustum,
                            float pixWidth,
                            Texture** tex,
                            int nTextures)
 {
-    render(context,
-           Normals | TexCoords0, frustum, pixWidth, tex,
-           nTextures);
+    render(Normals | TexCoords0, frustum, pixWidth, tex, nTextures);
 }
 
 
-void LODSphereMesh::render(const GLContext& context,
-                           unsigned int attributes,
+void LODSphereMesh::render(unsigned int attributes,
                            const Frustum& frustum,
                            float pixWidth,
                            Texture* tex0,
@@ -188,12 +184,11 @@ void LODSphereMesh::render(const GLContext& context,
         textures[nTextures++] = tex2;
     if (tex3 != nullptr)
         textures[nTextures++] = tex3;
-    render(context, attributes, frustum, pixWidth, textures, nTextures);
+    render(attributes, frustum, pixWidth, textures, nTextures);
 }
 
 
-void LODSphereMesh::render(const GLContext& context,
-                           unsigned int attributes,
+void LODSphereMesh::render(unsigned int attributes,
                            const Frustum& frustum,
                            float pixWidth,
                            Texture** tex,
@@ -235,7 +230,7 @@ void LODSphereMesh::render(const GLContext& context,
         nTextures = 0;
 
 
-    RenderInfo ri(step, attributes, frustum, context);
+    RenderInfo ri(step, attributes, frustum);
 
     // If one of the textures is split into subtextures, we may have to
     // use extra patches, since there can be at most one subtexture per patch.

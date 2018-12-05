@@ -458,7 +458,6 @@ void PointStarVertexBuffer::setTexture(Texture* _texture)
 
 
 Renderer::Renderer() :
-    context(0),
     windowWidth(0),
     windowHeight(0),
     fov(FOV),
@@ -4156,8 +4155,7 @@ static void setupBumpTexenvAmbient(Color ambientColor)
 
 static void renderSphereDefault(const RenderInfo& ri,
                                 const Frustum& frustum,
-                                bool lit,
-                                const GLContext& context)
+                                bool lit)
 {
     if (lit)
         glEnable(GL_LIGHTING);
@@ -4176,8 +4174,7 @@ static void renderSphereDefault(const RenderInfo& ri,
 
     glColor(ri.color);
 
-    g_lodSphere->render(context,
-                        LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+    g_lodSphere->render(LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
                         frustum, ri.pixWidth,
                         ri.baseTex);
     if (ri.nightTex != nullptr && ri.useTexEnvCombine)
@@ -4205,8 +4202,7 @@ static void renderSphereDefault(const RenderInfo& ri,
         glBlendFunc(GL_ONE, GL_ONE);
 #endif
         glAmbientLightColor(Color::Black); // Disable ambient light
-        g_lodSphere->render(context,
-                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+        g_lodSphere->render(LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
                             frustum, ri.pixWidth,
                             ri.nightTex);
         glAmbientLightColor(ri.ambientColor);
@@ -4221,8 +4217,7 @@ static void renderSphereDefault(const RenderInfo& ri,
         ri.overlayTex->bind();
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        g_lodSphere->render(context,
-                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+        g_lodSphere->render(LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
                             frustum, ri.pixWidth,
                             ri.overlayTex);
         glBlendFunc(GL_ONE, GL_ONE);
@@ -4781,11 +4776,11 @@ void Renderer::renderObject(const Vector3f& pos,
                                  scaleFactors,
                                  textureResolution,
                                  renderFlags,
-                                 obj.orientation, viewFrustum, *context, this);
+                                 obj.orientation, viewFrustum, this);
         }
         else
         {
-            renderSphereDefault(ri, viewFrustum, false, *context);
+            renderSphereDefault(ri, viewFrustum, false);
         }
     }
     else
@@ -4876,7 +4871,6 @@ void Renderer::renderObject(const Vector3f& pos,
                                       radius * atmScale,
                                       obj.orientation,
                                       viewFrustum,
-                                      *context,
                                       this);
             }
             else
@@ -4961,14 +4955,12 @@ void Renderer::renderObject(const Vector3f& pos,
                                   renderFlags,
                                   obj.orientation,
                                   viewFrustum,
-                                  *context,
                                   this);
             }
             else
             {
                 glDisable(GL_LIGHTING);
-                g_lodSphere->render(*context,
-                                    LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                g_lodSphere->render(LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
                                     viewFrustum,
                                     ri.pixWidth,
                                     cloudTex);
@@ -6940,8 +6932,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
                 glPushMatrix();
                 glTranslate(relPos);
 
-                dso->render(*context,
-                            relPos,
+                dso->render(relPos,
                             observer->getOrientationf(),
                             (float) brightness,
                             pixelSize,
