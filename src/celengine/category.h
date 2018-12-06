@@ -1,6 +1,5 @@
 #pragma once
 
-#include <set>
 #include <unordered_set>
 #include <map>
 #include "selection.h"
@@ -17,16 +16,16 @@ public:
     };
 
     typedef std::unordered_set<Selection, Hasher> ObjectSet;
-    typedef std::set<UserCategory*> CategorySet;
+    typedef std::unordered_set<UserCategory*> CategorySet;
     typedef std::map<const std::string, UserCategory*> CategoryMap;
 
 private:
-    std::string   m_name;
-    ObjectSet      m_objlist;
-    CategorySet      m_catlist;
+    std::string m_name;
+    ObjectSet m_objlist;
+    CategorySet m_catlist;
     UserCategory *m_parent;
 
-    UserCategory(const std::string, UserCategory *parent = nullptr);
+    UserCategory(const std::string&, UserCategory *parent = nullptr);
     ~UserCategory();
 public:
     const std::string &name() const { return m_name; }
@@ -44,10 +43,10 @@ public:
 private:
     bool _addObject(Selection);
     bool _removeObject(Selection);
-    void _insertChild(UserCategory *);
-    bool removeChild(UserCategory *);
+    void _insertChild(UserCategory*);
+    bool removeChild(UserCategory*);
     void setParent(UserCategory*);
-    static bool _deleteCategory(UserCategory *);
+    static bool _deleteCategory(UserCategory*);
     void cleanup();
 
     static CategoryMap m_allcats;

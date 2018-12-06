@@ -2395,7 +2395,10 @@ static int celestia_newcategory(lua_State *l)
     CelxLua celx(l);
     const char *name = celx.safeGetString(2);
     if (name == nullptr)
-        return celx.push();
+    {
+        celx.doError("Argument of celestia:newcategory must be a string.");
+        return 0;
+    }
     UserCategory *c = UserCategory::createRoot(name);
     if (c == nullptr)
         return celx.push();
@@ -2407,7 +2410,10 @@ static int celestia_findcategory(lua_State *l)
     CelxLua celx(l);
     const char *name = celx.safeGetString(2);
     if (name == nullptr)
-        return celx.push();
+    {
+        celx.doError("Argument of celestia:fndcategory must be a string.");
+        return 0;
+    }
     UserCategory *c = UserCategory::find(name);
     if (c == nullptr)
         return celx.push();
@@ -2424,7 +2430,7 @@ static int celestia_deletecategory(lua_State *l)
         const char *n = celx.safeGetString(2);
         if (n == nullptr)
         {
-            celx.doError("String expected");
+            celx.doError("Argument of celestia:deletecategory() must be a string or userdata.");
             return 0;
         }
         ret = UserCategory::deleteCategory(n);
@@ -2434,7 +2440,7 @@ static int celestia_deletecategory(lua_State *l)
         UserCategory *c = *celx.safeGetClass<UserCategory*>(2);
         if (c == nullptr)
         {
-            celx.doError("Userdata expected");
+            celx.doError("Argument of celestia:deletecategory() must be a string or userdata.");
             return 0;
         }
         ret = UserCategory::deleteCategory(c);

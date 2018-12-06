@@ -31,6 +31,11 @@ static int category_createchild(lua_State *l)
 
     UserCategory *c = *celx.getThis<UserCategory*>();
     const char *n = celx.safeGetString(2);
+    if (n == nullptr)
+    {
+        celx.doError("Argument of category:createchild must be a string!");
+        return 0;
+    }
     UserCategory *cc = c->createChild(n);
     if (cc == nullptr)
         return celx.push();
@@ -41,9 +46,24 @@ static int category_deletechild(lua_State *l)
 {
     CelxLua celx(l);
 
+    bool ret;
     UserCategory *c = *celx.getThis<UserCategory*>();
-    const char *n = celx.safeGetString(2);
-    return celx.push(c->deleteChild(n));
+    if (celx.isString(2))
+    {
+        const char *n = celx.safeGetString(2);
+        if (n == nullptr)
+        {
+            celx.doError("Argument of category:createchild must be a string or userdata!");
+            return 0;
+        }
+        ret = c->deleteChild(n);
+    }
+    else
+    {
+        UserCategory *cc = *celx.safeGetClass<UserCategory*>(2);
+        ret = c->deleteChild(cc);
+    }
+    return celx.push(ret);
 }
 
 static int category_getchildren(lua_State *l)
