@@ -34,6 +34,8 @@ public:
     UserCategory *createChild(const std::string&);
     bool deleteChild(UserCategory*);
     bool deleteChild(const std::string&);
+    bool hasChild(const std::string&) const;
+    bool hasChild(UserCategory*) const;
 
     bool addObject(Selection);
     bool removeObject(Selection);

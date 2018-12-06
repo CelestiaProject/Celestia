@@ -74,6 +74,19 @@ bool UserCategory::deleteChild(const std::string &s)
     return deleteChild(c);
 }
 
+bool UserCategory::hasChild(UserCategory *c) const
+{
+    return m_catlist.count(c) > 0;
+}
+
+bool UserCategory::hasChild(const std::string &n) const
+{
+    UserCategory *c = find(n);
+    if (c == nullptr)
+        return false;
+    return hasChild(c);
+}
+
 void UserCategory::cleanup()
 {
     DPRINTF(1, "UserCategory::cleanup()\n");
@@ -116,7 +129,7 @@ UserCategory *UserCategory::createRoot(const std::string &n)
 
 UserCategory *UserCategory::find(const std::string &s)
 {
-    if (m_allcats.count(s) > 0)
+    if (m_allcats.count(s) == 0)
         return nullptr;
     DPRINTF(1, "UserCategory::find(%s): exists\n", s.c_str());
     return m_allcats.find(s)->second;
