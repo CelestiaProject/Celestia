@@ -33,7 +33,7 @@ class CatalogCrossReference
     void sortEntries();
     void reserve(size_t);
 
-    enum {
+    enum : uint32_t {
         InvalidCatalogNumber = 0xffffffff,
     };
 

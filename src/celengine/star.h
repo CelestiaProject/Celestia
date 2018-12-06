@@ -305,7 +305,7 @@ public:
     const std::string& getInfoURL() const;
     inline bool hasCorona() const;
 
-    enum {
+    enum : uint32_t {
         MaxTychoCatalogNumber = 0xf0000000,
         InvalidCatalogNumber = 0xffffffff,
     };
