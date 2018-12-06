@@ -72,7 +72,7 @@ string DeepSkyObject::getDescription() const
     return "";
 }
 
-string DeepSkyObject::getInfoURL() const
+const string& DeepSkyObject::getInfoURL() const
 {
     return infoURL;
 }

@@ -150,9 +150,9 @@ void Location::setImportance(float _importance)
 }
 
 
-string Location::getInfoURL() const
+const string& Location::getInfoURL() const
 {
-    return "";
+    return infoURL;
 }
 
 

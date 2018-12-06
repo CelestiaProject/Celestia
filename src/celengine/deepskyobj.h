@@ -73,7 +73,7 @@ class DeepSkyObject : public CatEntry
     float getAbsoluteMagnitude() const;
     void setAbsoluteMagnitude(float);
 
-    std::string getInfoURL() const;
+    const std::string& getInfoURL() const;
     void setInfoURL(const std::string&);
 
     bool isVisible() const { return visible; }
