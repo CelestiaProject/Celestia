@@ -97,7 +97,7 @@ class DeepSkyObject : public CatEntry
     virtual unsigned int getRenderMask() const { return 0; }
     virtual unsigned int getLabelMask() const { return 0; }
 
-    enum
+    enum : uint32_t
     {
         InvalidCatalogNumber = 0xffffffff
     };
