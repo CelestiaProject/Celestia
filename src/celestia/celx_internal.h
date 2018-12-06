@@ -298,13 +298,12 @@ public:
     {
         if (!safeIsValid(index))
             return nullptr;
-        if (!isUserData(index))
-        {
-            if (errors & WrongType)
-                doError(errorMessage);
-            return nullptr;
-        }
-        return reinterpret_cast<T*>(lua_touserdata(m_lua, index));
+        if (isUserData(index))
+            return reinterpret_cast<T*>(lua_touserdata(m_lua, index));
+
+        if (errors & WrongType)
+            doError(errorMessage);
+        return nullptr;
     }
 
     template<typename T> T *safeGetClass(int i,

@@ -1,12 +1,12 @@
 #include <iostream>
+#include <celutil/debug.h>
 #include <celengine/catentry.h>
 #include "category.h"
 
-UserCategory::UserCategory(
-    std::string n, 
-    UserCategory *p) : 
+UserCategory::UserCategory(const std::string &n, UserCategory *p) :
         m_name(n), 
         m_parent(p) {}
+
 UserCategory::~UserCategory() { cleanup(); }
 
 void UserCategory::setParent(UserCategory *c)
@@ -16,9 +16,7 @@ void UserCategory::setParent(UserCategory *c)
 
 bool UserCategory::_addObject(Selection s)
 {
-    if (s.empty())
-        return false;
-    if (m_objlist.count(s))
+    if (s.empty() || m_objlist.count(s) == 0)
         return false;
     m_objlist.insert(s);
     return true;
@@ -36,9 +34,7 @@ bool UserCategory::addObject(Selection s)
 
 bool UserCategory::removeObject(Selection s)
 {
-    if (s.empty())
-        return false;
-    if (!m_objlist.count(s))
+    if (s.empty() || m_objlist.count(s) == 0)
         return false;
     if (!_removeObject(s))
         return false;
@@ -62,7 +58,7 @@ UserCategory *UserCategory::createChild(const std::string &s)
 
 bool UserCategory::deleteChild(UserCategory *c)
 {
-    if (!m_catlist.count(c))
+    if (m_catlist.count(c) == 0)
         return false;
     m_catlist.erase(c);
     m_allcats.erase(c->name());
@@ -80,17 +76,19 @@ bool UserCategory::deleteChild(const std::string &s)
 
 void UserCategory::cleanup()
 {
-//    std::cout << "UserCategory::cleanup()\n" << "Objects: " << m_objlist.size() << std::endl << "Categories: " << m_catlist.size() << std::endl;
+    DPRINTF(1, "UserCategory::cleanup()\n");
+    DPRINTF(1, "  Objects: %i\n", m_objlist.size());
+    DPRINTF(1, "  Categories: %i\n", m_catlist.size());
     while(!m_objlist.empty())
     {
         auto it = m_objlist.begin();
-//        std::cout << "Removing object: " << it->getName() << std::endl;
+        DPRINTF(1, "Removing object: %s\n", it->getName());
         removeObject(*it);
     }
     while(!m_catlist.empty())
     {
         auto it = m_catlist.begin();
-//        std::cout << "Removing category: " << (*it)->name() << std::endl;
+        DPRINTF(1, "Removing category: %s\n", (*it)->name());
         deleteChild(*it);
     }
 }
@@ -100,7 +98,7 @@ UserCategory::CategorySet UserCategory::m_roots;
 
 UserCategory *UserCategory::newCategory(const std::string &s, UserCategory *p)
 {
-    if (m_allcats.count(s))
+    if (m_allcats.count(s) > 0)
         return nullptr;
     UserCategory *c = new UserCategory(s, p);
     m_allcats.insert(std::pair<const std::string, UserCategory*>(s, c));
@@ -118,10 +116,10 @@ UserCategory *UserCategory::createRoot(const std::string &n)
 
 UserCategory *UserCategory::find(const std::string &s)
 {
-    if (!m_allcats.count(s))
+    if (m_allcats.count(s) > 0)
         return nullptr;
-//    std::cout << "UserCategory::find(" << s << "): exists\n";
-    return (*m_allcats.find(s)).second;
+    DPRINTF(1, "UserCategory::find(%s): exists\n", s.c_str());
+    return m_allcats.find(s)->second;
 }
 
 bool UserCategory::deleteCategory(const std::string &n)

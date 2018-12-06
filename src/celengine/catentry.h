@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <set>
+#include <unordered_set>
 #include <celengine/selection.h>
 
 class UserCategory;
@@ -9,7 +9,7 @@ class UserCategory;
 class CatEntry
 {
 public:
-    typedef std::set<UserCategory*> CategorySet;
+    typedef std::unordered_set<UserCategory*> CategorySet;
 
 private:
     CategorySet *m_cats { nullptr };
