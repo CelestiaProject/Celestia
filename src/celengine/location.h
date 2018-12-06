@@ -35,7 +35,7 @@ public:
     float getImportance() const;
     void setImportance(float);
 
-    std::string getInfoURL() const;
+    const std::string& getInfoURL() const;
     void setInfoURL(const std::string&);
 
     bool isLabelColorOverridden() const { return overrideLabelColor; }
