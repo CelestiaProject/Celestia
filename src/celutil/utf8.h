@@ -11,6 +11,7 @@
 #define _CELUTIL_UTF8_
 
 #include <string>
+#include <wchar.h>
 
 #define UTF8_DEGREE_SIGN         "\302\260"
 #define UTF8_MULTIPLICATION_SIGN "\303\227"
@@ -43,14 +44,18 @@ inline int UTF8EncodedSize(wchar_t ch)
         return 1;
     if (ch < 0x800)
         return 2;
+#if WCHAR_MAX > 0xFFFFu
     if (ch < 0x10000)
+#endif
         return 3;
+#if WCHAR_MAX > 0xFFFFu
     if (ch < 0x200000)
         return 4;
     if (ch < 0x4000000)
         return 5;
     else
         return 6;
+#endif
 }
 
 inline int UTF8EncodedSizeFromFirstByte(unsigned int ch)
