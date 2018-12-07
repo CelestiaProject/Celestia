@@ -19,6 +19,8 @@ set(CELESTIA_SOURCES
 )
 
 set(CELX_SOURCES
+  celx_category.cpp
+  celx_category.h
   celx_celestia.cpp
   celx_celestia.h
   celx.cpp

@@ -12,6 +12,10 @@ set(CELENGINE_SOURCES
   boundaries.h
   catalogxref.cpp
   catalogxref.h
+  category.cpp
+  category.h
+  catentry.cpp
+  catentry.h
   celestia.h
   cmdparser.cpp
   cmdparser.h
