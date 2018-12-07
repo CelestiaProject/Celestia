@@ -440,15 +440,18 @@ int UTF8Encode(wchar_t ch, char* s)
         s[2] = '\0';
         return 2;
     }
-    else if (ch < 0x10000)
+#if WCHAR_MAX > 0xFFFFu
+    if (ch < 0x10000)
     {
+#endif
         s[0] = (char) (0xe0 | ((ch & 0xf000) >> 12));
         s[1] = (char) (0x80 | ((ch & 0x0fc0) >> 6));
         s[2] = (char) (0x80 | ((ch & 0x003f)));
         s[3] = '\0';
         return 3;
+#if WCHAR_MAX > 0xFFFFu
     }
-    else if (ch < 0x200000)
+    if (ch < 0x200000)
     {
         s[0] = (char) (0xf0 | ((ch & 0x1c0000) >> 18));
         s[1] = (char) (0x80 | ((ch & 0x03f000) >> 12));
@@ -457,7 +460,7 @@ int UTF8Encode(wchar_t ch, char* s)
         s[4] = '\0';
         return 4;
     }
-    else if (ch < 0x4000000)
+    if (ch < 0x4000000)
     {
         s[0] = (char) (0xf8 | ((ch & 0x3000000) >> 24));
         s[1] = (char) (0x80 | ((ch & 0x0fc0000) >> 18));
@@ -478,6 +481,7 @@ int UTF8Encode(wchar_t ch, char* s)
         s[6] = '\0';
         return 6;
     }
+#endif
 }
 
 
