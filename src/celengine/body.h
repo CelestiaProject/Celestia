@@ -111,7 +111,7 @@ class Body : public CatEntry
      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
      Body(PlanetarySystem*, const std::string& name);
-    ~Body();
+     virtual ~Body();
 
     // Object class enumeration:
     // All of these values must be powers of two so that they can
