@@ -493,6 +493,8 @@ static int object_type(lua_State* l)
     case Selection::Type_Nil:
         tname = "null";
         break;
+    default:
+        break;
     }
 
     lua_pushstring(l, tname);

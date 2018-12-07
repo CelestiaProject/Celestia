@@ -239,7 +239,7 @@ class Star : public CatEntry
 {
 public:
     Star() = default;
-    ~Star();
+    virtual ~Star();
 
     virtual Selection toSelection();
 
