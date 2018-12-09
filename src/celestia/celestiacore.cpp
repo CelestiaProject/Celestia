@@ -3172,30 +3172,25 @@ static void displayPlanetInfo(Overlay& overlay,
     if (detail > 1)
     {
         if (body.getRotationModel(t)->isPeriodic())
-        {
             displayRotationPeriod(overlay, body.getRotationModel(t)->getPeriod());
-        }
 
-/*
- * Equilibrium temperature calculation disabled; it's too simplistic to be very useful,
- * it's not a fundamental piece of information like distance or size.
- *
-        PlanetarySystem* system = body.getSystem();
-        if (system != nullptr)
+        if (body.getName() != "Earth")
         {
-            const Star* sun = system->getStar();
-            if (sun != nullptr)
-            {
-                double distFromSun = body.getAstrocentricPosition(t).norm();
-                float planetTemp = sun->getTemperature() *
-                    (float) (::pow(1.0 - body.getAlbedo(), 0.25) *
-                             sqrt(sun->getRadius() / (2.0 * distFromSun)));
-                fmt::fprintf(overlay,_("Temperature: %.0f K\n"), planetTemp);
-            }
+            if (body.getMass() > 0)
+                fmt::fprintf(overlay, _("Mass: %.2f Me\n"), body.getMass());
         }
-*/
-    }
 
+        float density = body.getDensity();
+        if (density > 0)
+        {
+            fmt::fprintf(overlay, _("Density: %.2f x 1000 kg/m^3\n"), density / 1000.0);
+        }
+
+
+        float planetTemp = body.getTemperature(t);
+        if (planetTemp > 0)
+            fmt::fprintf(overlay, _("Temperature: %.0f K\n"), planetTemp);
+    }
 }
 
 

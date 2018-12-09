@@ -828,14 +828,37 @@ static Body* CreateBody(const string& name,
         body->setInfoURL(infoURL);
     }
 
-    double albedo = 0.5;
-    if (planetData->getNumber("Albedo", albedo))
-        body->setAlbedo((float) albedo);
+    double t;
+    if (planetData->getNumber("Albedo", t))
+    {
+        fmt::fprintf(cerr, "Deprecated parameter Albedo used in %s definition.\nUse GeomAlbedo instead.", name);
+        body->setGeomAlbedo((float) t);
+    }
+
+    if (planetData->getNumber("GeomAlbedo", t))
+        body->setGeomAlbedo((float) t);
+
+    if (planetData->getNumber("BondAlbedo", t))
+    {
+        if (t >= 0.0 && t <= 1.0)
+            body->setBondAlbedo((float) t);
+        else
+            fmt::fprintf(cerr, "Incorrect BondAlbedo value: %lf", t);
+    }
+
+    if (planetData->getNumber("Temperature", t))
+        body->setTemperature((float) t);
+
+    if (planetData->getNumber("TempDiscrepancy", t))
+        body->setTempDiscrepancy((float) t);
+
 
     // TODO - add mass units
-    double mass = 0.0;
-    if (planetData->getNumber("Mass", mass))
-        body->setMass((float) mass);
+    if (planetData->getNumber("Mass", t))
+        body->setMass((float) t);
+
+    if (planetData->getNumber("Density", t))
+       body->setDensity((float) t);
 
     Quaternionf orientation = Quaternionf::Identity();
     if (planetData->getRotation("Orientation", orientation))
@@ -856,7 +879,7 @@ static Body* CreateBody(const string& name,
     body->setSurface(surface);
 
     {
-        string geometry("");
+        string geometry;
         if (planetData->getString("Mesh", geometry))
         {
             Vector3f geometryCenter(Vector3f::Zero());

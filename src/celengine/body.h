@@ -215,8 +215,21 @@ class Body : public CatEntry
 
     float getMass() const;
     void setMass(float);
-    float getAlbedo() const;
-    void setAlbedo(float);
+    float getDensity() const;
+    void setDensity(float);
+
+    // Albedo functions and temperature
+    /* [[deprecated]] */ float getAlbedo() const;
+    /* [[deprecated]] */ void setAlbedo(float);
+    float getGeomAlbedo() const;
+    void setGeomAlbedo(float);
+    float getBondAlbedo() const;
+    void setBondAlbedo(float);
+    float getTemperature(double t = 0) const;
+    void setTemperature(float);
+    float getTempDiscrepancy() const;
+    void setTempDiscrepancy(float);
+
     int getClassification() const;
     void setClassification(int);
     const std::string& getInfoURL() const;
@@ -359,7 +372,12 @@ class Body : public CatEntry
     float radius{ 1.0f };
     Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
     float mass{ 0.0f };
-    float albedo{ 0.5f };
+    float density{ 0.0f };
+    float geomAlbedo{ 0.5f };
+    float bondAlbedo{ 0.5f };
+    float temperature{ 0.0f };
+    float tempDiscrepancy{ 0.0f };
+
     Eigen::Quaternionf geometryOrientation{ Eigen::Quaternionf::Identity() };
 
     float cullingRadius{ 0.0f };
