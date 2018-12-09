@@ -75,7 +75,11 @@ void Body::setDefaultProperties()
     radius = 1.0f;
     semiAxes = Vector3f::Ones();
     mass = 0.0f;
-    albedo = 0.5f;
+    density = 0.0f;
+    bondAlbedo = 0.5f;
+    geomAlbedo = 0.5f;
+    temperature = 0.0f;
+    tempDiscrepancy = 0.0f;
     geometryOrientation = Quaternionf::Identity();
     geometry = InvalidResource;
     surface = Surface(Color::White);
@@ -278,15 +282,102 @@ void Body::setMass(float _mass)
 }
 
 
+float Body::getDensity() const
+{
+    if (density > 0)
+        return density;
+
+    if (radius == 0 || !isSphere())
+        return 0;
+
+    // assume that we have a spherical body
+    // @mass unit is mass of Earth
+    // @astro::EarthMass unit is kg
+    // @radius unit km
+    // so we divide density by 1e9 to have kg/m^3
+    double volume = 4.0 / 3.0 * PI * ::pow(radius, 3);
+    return (float) mass * astro::EarthMass / 1e9 / volume;
+}
+
+
+void Body::setDensity(float _density)
+{
+    density = _density;
+}
+
+
 float Body::getAlbedo() const
 {
-    return albedo;
+    return getGeomAlbedo();
 }
 
 
 void Body::setAlbedo(float _albedo)
 {
-    albedo = _albedo;
+    setGeomAlbedo(_albedo);
+}
+
+
+float Body::getGeomAlbedo() const
+{
+    return geomAlbedo;
+}
+
+
+void Body::setGeomAlbedo(float _geomAlbedo)
+{
+    geomAlbedo = _geomAlbedo;
+}
+
+
+float Body::getBondAlbedo() const
+{
+    return bondAlbedo;
+}
+
+
+void Body::setBondAlbedo(float _bondAlbedo)
+{
+    bondAlbedo = _bondAlbedo;
+}
+
+
+float Body::getTemperature(double time) const
+{
+    if (temperature > 0)
+        return temperature;
+
+    const PlanetarySystem* system = getSystem();
+    if (system == nullptr)
+        return 0;
+
+    const Star* sun = system->getStar();
+    if (sun == nullptr)
+        return 0;
+
+    double distFromSun = getAstrocentricPosition(time).norm();
+    return getTempDiscrepancy() +
+           sun->getTemperature() *
+           (float) (::pow(1.0 - getBondAlbedo(), 0.25) *
+           sqrt(sun->getRadius() / (2.0 * distFromSun)));
+}
+
+
+void Body::setTemperature(float _temperature)
+{
+    temperature = _temperature;
+}
+
+
+float Body::getTempDiscrepancy() const
+{
+    return tempDiscrepancy;
+}
+
+
+void Body::setTempDiscrepancy(float _tempDiscrepancy)
+{
+    tempDiscrepancy = _tempDiscrepancy;
 }
 
 
@@ -674,7 +765,7 @@ float Body::getLuminosity(float sunLuminosity,
     // Compute the total energy hitting the planet
     double incidentEnergy = satIrradiance * circleArea(radius * 1000);
 
-    double reflectedEnergy = incidentEnergy * albedo;
+    double reflectedEnergy = incidentEnergy * geomAlbedo;
 
     // Compute the luminosity (i.e. power relative to solar power)
     return (float) (reflectedEnergy / astro::SOLAR_POWER);
