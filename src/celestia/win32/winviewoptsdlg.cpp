@@ -54,8 +54,8 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
     {
         Renderer* renderer = Dlg->appCore->getRenderer();
         uint64_t renderFlags = renderer->getRenderFlags();
-        uint32 labelMode = renderer->getLabelMode();
-        uint32 orbitMask = renderer->getOrbitMask();
+        uint32_t labelMode = renderer->getLabelMode();
+        uint32_t orbitMask = renderer->getOrbitMask();
 
         switch (LOWORD(wParam))
         {
@@ -303,7 +303,7 @@ ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
 }
 
 
-static void dlgCheck(HWND hDlg, WORD item, uint32 flags, uint32 f)
+static void dlgCheck(HWND hDlg, WORD item, uint32_t flags, uint32_t f)
 {
     SendDlgItemMessage(hDlg, item, BM_SETCHECK,
                        ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);

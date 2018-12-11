@@ -269,7 +269,7 @@ SetTimeDialog::notify(int id, const NMHDR& hdr)
                 SYSTEMTIME sysDate;
                 DateTime_GetSystemtime(GetDlgItem(hDlg, IDC_TIMEPICKER), &sysTime);
                 DateTime_GetSystemtime(GetDlgItem(hDlg, IDC_DATEPICKER), &sysDate);
-                newTime.year = (int16) sysDate.wYear;
+                newTime.year = (int16_t) sysDate.wYear;
                 newTime.month = sysDate.wMonth;
                 newTime.day = sysDate.wDay;
                 newTime.hour = sysTime.wHour;

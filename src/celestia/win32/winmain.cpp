@@ -180,9 +180,9 @@ struct AppPreferences
     int hudDetail;
     int fullScreenMode;
     int starsColor;
-    uint32 lastVersion;
+    uint32_t lastVersion;
     string altSurfaceName;
-    uint32 textureResolution;
+    uint32_t textureResolution;
     Renderer::StarStyle starStyle;
     GLContext::GLRenderPath renderPath;
     bool renderPathSet;
@@ -2320,7 +2320,7 @@ static void syncMenusWithRendererState()
     CheckMenuItem(menuBar, ID_RENDER_ANTIALIASING,
         ((renderFlags & Renderer::ShowSmoothLines) != 0)? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_AUTOMAG,
-        (((renderFlags & Renderer::ShowAutoMag) != 0) ? MF_CHECKED : MF_UNCHECKED);
+        ((renderFlags & Renderer::ShowAutoMag) != 0) ? MF_CHECKED : MF_UNCHECKED);
 }
 
 
