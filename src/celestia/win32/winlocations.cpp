@@ -97,7 +97,7 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
         case IDC_LABELFEATURES:
             {
                 Renderer* renderer = dlg->appCore->getRenderer();
-                uint32 labelMode = renderer->getLabelMode();
+                uint32_t labelMode = renderer->getLabelMode();
                 renderer->setLabelMode(labelMode ^ Renderer::LocationLabels);
                 break;
             }
@@ -195,7 +195,7 @@ void LocationsDialog::SetControls(HWND hDlg)
     dlgCheck(hDlg, IDC_SHOW_VOLCANOES,        locFilter, Location::EruptiveCenter);
     dlgCheck(hDlg, IDC_SHOW_OTHERS,        locFilter, Location::Other);
 
-    uint32 labelMode = appCore->getRenderer()->getLabelMode();
+    uint32_t labelMode = appCore->getRenderer()->getLabelMode();
     dlgCheck(hDlg, IDC_LABELFEATURES,     labelMode, Renderer::LocationLabels);
 
     // Set up feature size slider
