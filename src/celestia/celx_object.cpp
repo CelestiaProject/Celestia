@@ -1314,6 +1314,60 @@ static int object_setringstexture(lua_State* l)
     return 0;
 }
 
+
+static int object_getmass(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "No arguments are expected for object:getmass()");
+
+    Selection* sel = this_object(l);
+
+    if (sel->body() == nullptr)
+        return 0;
+
+    return celx.push(sel->body()->getMass());
+}
+
+
+static int object_getdensity(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "No arguments are expected for object:getdensity()");
+
+    Selection* sel = this_object(l);
+
+    if (sel->body() == nullptr)
+        return 0;
+
+    return celx.push(sel->body()->getDensity());
+}
+
+
+static int object_gettemperature(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "No arguments are expected for object:getdensity()");
+
+    Selection* sel = this_object(l);
+
+    float temp = 0;
+    if (sel->body() != nullptr)
+    {
+        CelestiaCore* appCore = celx.appCore(AllErrors);
+        double time = appCore->getSimulation()->getTime();
+        temp = sel->body()->getTemperature(time);
+    }
+    else if (sel->star() != nullptr)
+    {
+        temp = sel->star()->getTemperature();
+    }
+
+    if (temp > 0)
+        return celx.push(temp);
+
+    return 0;
+}
+
 void CreateObjectMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -1352,6 +1406,9 @@ void CreateObjectMetaTable(lua_State* l)
     celx.registerMethod("phases", object_phases);
     celx.registerMethod("preloadtexture", object_preloadtexture);
     celx.registerMethod("setringstexture", object_setringstexture);
+    celx.registerMethod("gettemperature", object_gettemperature);
+    celx.registerMethod("getmass", object_getmass);
+    celx.registerMethod("getdensity", object_getdensity);
 
     lua_pop(l, 1); // pop metatable off the stack
 }
