@@ -117,6 +117,11 @@ public:
         return 1;
     }
 #endif
+    int push(float a)
+    {
+        lua_pushnumber(m_lua, a);
+        return 1;
+    }
     int push(double a)
     {
         lua_pushvalue(m_lua, a);
