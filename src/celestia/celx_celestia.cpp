@@ -2286,8 +2286,10 @@ static int celestia_getparamstring(lua_State* l)
 
 static int celestia_loadtexture(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "Need one argument for celestia:loadtexture()");
-    string s = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:loadtexture() must be a string");
+    CelxLua celx(l);
+
+    celx.checkArgs(2, 2, "Need one argument for celestia:loadtexture()");
+    string s = celx.safeGetString(2, AllErrors, "Argument to celestia:loadtexture() must be a string");
     lua_Debug ar;
     lua_getstack(l, 1, &ar);
     lua_getinfo(l, "S", &ar);
@@ -2296,19 +2298,19 @@ static int celestia_loadtexture(lua_State* l)
     base_dir = base_dir.substr(0, base_dir.rfind('/')) + '/';
     Texture* t = LoadTextureFromFile(base_dir + s);
     if (t == nullptr) return 0;
-    texture_new(l, t);
-    return 1;
+    return celx.pushClass(t);
 }
 
 static int celestia_loadfont(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "Need one argument for celestia:loadtexture()");
-    string s = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:loadfont() must be a string");
+    CelxLua celx(l);
+
+    celx.checkArgs(2, 2, "Need one argument for celestia:loadtexture()");
+    string s = celx.safeGetString(2, AllErrors, "Argument to celestia:loadfont() must be a string");
     TextureFont* font = LoadTextureFont(s);
     if (font == nullptr) return 0;
     font->buildTexture();
-    font_new(l, font);
-    return 1;
+    return celx.pushClass(font);
 }
 
 TextureFont* getFont(CelestiaCore* appCore)
@@ -2318,14 +2320,15 @@ TextureFont* getFont(CelestiaCore* appCore)
 
 static int celestia_getfont(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected to function celestia:getTitleFont");
+    CelxLua celx(l);
+
+    celx.checkArgs(1, 1, "No arguments expected to function celestia:getTitleFont");
 
     CelestiaCore* appCore = getAppCore(l, AllErrors);
     TextureFont* font = getFont(appCore);
     if (font == nullptr)
         return 0;
-    font_new(l, font);
-    return 1;
+    return celx.pushClass(font);
 }
 
 TextureFont* getTitleFont(CelestiaCore* appCore)
@@ -2335,14 +2338,15 @@ TextureFont* getTitleFont(CelestiaCore* appCore)
 
 static int celestia_gettitlefont(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected to function celestia:getTitleFont");
+    CelxLua celx(l);
+
+    celx.checkArgs(1, 1, "No arguments expected to function celestia:getTitleFont");
 
     CelestiaCore* appCore = getAppCore(l, AllErrors);
     TextureFont* font = getTitleFont(appCore);
     if (font == nullptr)
         return 0;
-    font_new(l, font);
-    return 1;
+    return celx.pushClass(font);
 }
 
 static int celestia_settimeslice(lua_State* l)

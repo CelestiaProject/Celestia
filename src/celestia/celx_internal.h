@@ -138,7 +138,8 @@ public:
     template <typename T> T *newUserData(T a)
     {
         T *p = newUserData<T>();
-        *p = a;
+        if (p != nullptr)
+            *p = a;
         return p;
     }
     template <typename T> T *newUserDataArray(int n)
@@ -311,7 +312,7 @@ public:
                                          const char *msg = "Celx class expected")
     {
         T *a = safeGetUserData<T>(i, fatalErrors, msg);
-        if (isType(i, celxClassId(*a)))
+        if (a != nullptr && isType(i, celxClassId(*a)))
             return a;
 
         if (fatalErrors & WrongType)
