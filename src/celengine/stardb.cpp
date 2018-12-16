@@ -1305,6 +1305,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
         else
         {
             ok = createStar(star, disposition, catalogNumber, starData, resourcePath, !isStar);
+            star->loadCategories(starData);
         }
         delete starDataValue;
 

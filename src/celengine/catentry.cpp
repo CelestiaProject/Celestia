@@ -4,7 +4,6 @@
 
 Selection CatEntry::toSelection()
 {
-    //std::cout << "CatEntry::toSelection()\n";
     return Selection(this);
 }
 
@@ -23,11 +22,16 @@ bool CatEntry::addToCategory(UserCategory *c)
     return c->_addObject(toSelection());
 }
 
-bool CatEntry::addToCategory(const std::string &s)
+bool CatEntry::addToCategory(const std::string &s, bool create)
 {
     UserCategory *c = UserCategory::find(s);
     if (c == nullptr)
-        return false;
+    {
+        if (!create)
+            return false;
+        else
+            c = UserCategory::newCategory(s);
+    }
     return addToCategory(c);
 }
 
@@ -72,4 +76,31 @@ bool CatEntry::isInCategory(const std::string &s) const
     if (c == nullptr)
         return false;
     return isInCategory(c);
+}
+
+bool CatEntry::loadCategories(Hash *hash)
+{
+    std::string cn;
+    if (hash->getString("Category", cn))
+    {
+        if (cn.empty())
+            return false;
+        addToCategory(cn, true);
+        return true;
+    }
+    Value *a = hash->getValue("Category");
+    if (a == nullptr)
+        return false;
+    ValueArray *v = a->getArray();
+    if (v == nullptr)
+        return false;
+    bool ret = false;
+    for (auto it : *v)
+    {
+        cn = it->getString();
+        if (cn.empty())
+            ret = true;
+        addToCategory(cn, true);
+    }
+    return ret;
 }

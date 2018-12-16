@@ -16,7 +16,7 @@ void UserCategory::setParent(UserCategory *c)
 
 bool UserCategory::_addObject(Selection s)
 {
-    if (s.empty() || m_objlist.count(s) == 0)
+    if (s.empty() || m_objlist.count(s) > 0)
         return false;
     m_objlist.insert(s);
     return true;
