@@ -1,4 +1,6 @@
 
+#include <fmt/printf.h>
+#include "celx_misc.h"
 #include "celx_internal.h"
 #include <celengine/cmdparser.h>
 #include <celengine/execenv.h>
@@ -86,38 +88,32 @@ class CelScriptWrapper : public ExecutionEnvironment
 
 // ==================== Celscript-object ====================
 
+
+int celxClassId(CelScriptWrapper*)
+{
+    return Celx_CelScript;
+}
+
 // create a CelScriptWrapper from a string:
 int celscript_from_string(lua_State* l, string& script_text)
 {
+    CelxLua celx(l);
     istringstream scriptfile(script_text);
 
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    CelestiaCore* appCore = celx.appCore(AllErrors);
     CelScriptWrapper* celscript = new CelScriptWrapper(*appCore, scriptfile);
     if (celscript->getErrorMessage() != "")
     {
         string error = celscript->getErrorMessage();
         delete celscript;
-        Celx_DoError(l, error.c_str());
+        celx.doError(error.c_str());
     }
     else
     {
-        CelScriptWrapper** ud = reinterpret_cast<CelScriptWrapper**>(lua_newuserdata(l, sizeof(CelScriptWrapper*)));
-        *ud = celscript;
-        Celx_SetClass(l, Celx_CelScript);
+        celx.pushClass(celscript);
     }
 
     return 1;
-}
-
-static CelScriptWrapper* this_celscript(lua_State* l)
-{
-    auto** script = static_cast<CelScriptWrapper**>(Celx_CheckUserData(l, 1, Celx_CelScript));
-    if (script == nullptr)
-    {
-        Celx_DoError(l, "Bad CEL-script object!");
-        return nullptr;
-    }
-    return *script;
 }
 
 static int celscript_tostring(lua_State* l)
@@ -129,16 +125,18 @@ static int celscript_tostring(lua_State* l)
 
 static int celscript_tick(lua_State* l)
 {
-    CelScriptWrapper* script = this_celscript(l);
-    LuaState* stateObject = getLuaStateObject(l);
+    CelxLua celx(l);
+    auto script = *celx.getThis<CelScriptWrapper*>();
+    LuaState* stateObject = celx.getLuaStateObject();
     double t = stateObject->getTime();
-    lua_pushboolean(l, !(script->tick(t)) );
-    return 1;
+    return celx.push(!(script->tick(t)));
 }
 
 static int celscript_gc(lua_State* l)
 {
-    CelScriptWrapper* script = this_celscript(l);
+    CelxLua celx(l);
+
+    auto script = *celx.getThis<CelScriptWrapper*>();
     delete script;
     return 0;
 }
@@ -146,64 +144,37 @@ static int celscript_gc(lua_State* l)
 
 void CreateCelscriptMetaTable(lua_State* l)
 {
-    Celx_CreateClassMetatable(l, Celx_CelScript);
+    CelxLua celx(l);
+    celx.createClassMetatable(Celx_CelScript);
 
-    Celx_RegisterMethod(l, "__tostring", celscript_tostring);
-    Celx_RegisterMethod(l, "tick", celscript_tick);
-    Celx_RegisterMethod(l, "__gc", celscript_gc);
+    celx.registerMethod("__tostring", celscript_tostring);
+    celx.registerMethod("tick", celscript_tick);
+    celx.registerMethod("__gc", celscript_gc);
 
-    lua_pop(l, 1); // remove metatable from stack
+    celx.pop(1); // remove metatable from stack
 }
 
 // ==================== Font Object ====================
 
-int font_new(lua_State* l, TextureFont* f)
-{
-    TextureFont** ud = static_cast<TextureFont**>(lua_newuserdata(l, sizeof(TextureFont*)));
-    *ud = f;
-
-    Celx_SetClass(l, Celx_Font);
-
-    return 1;
-}
-
-static TextureFont* to_font(lua_State* l, int index)
-{
-    TextureFont** f = static_cast<TextureFont**>(lua_touserdata(l, index));
-
-    // Check if pointer is valid
-    if (f != nullptr )
-    {
-            return *f;
-    }
-    return nullptr;
-}
-
-static TextureFont* this_font(lua_State* l)
-{
-    TextureFont* f = to_font(l, 1);
-    if (f == nullptr)
-        Celx_DoError(l, "Bad font object!");
-
-    return f;
-}
-
-
 static int font_bind(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for font:bind()");
+    CelxLua celx(l);
 
-    TextureFont* font = this_font(l);
+    celx.checkArgs(1, 1, "No arguments expected for font:bind()");
+
+    auto font = *celx.getThis<TextureFont*>();
     font->bind();
     return 0;
 }
 
 static int font_render(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "One argument required for font:render");
+    CelxLua celx(l);
 
-    const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to font:render must be a string");
-    TextureFont* font = this_font(l);
+    celx.checkArgs(2, 2, "One argument required for font:render");
+
+    const char* s = celx.safeGetString(2, AllErrors, "First argument to font:render must be a string");
+    auto font = *celx.getThis<TextureFont*>();
     font->render(s);
 
     return 0;
@@ -211,41 +182,44 @@ static int font_render(lua_State* l)
 
 static int font_getwidth(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "One argument expected for font:getwidth");
-    const char* s = Celx_SafeGetString(l, 2, AllErrors, "Argument to font:getwidth must be a string");
-    TextureFont* font = this_font(l);
-    lua_pushnumber(l, font->getWidth(s));
-    return 1;
+    CelxLua celx(l);
+
+    celx.checkArgs(2, 2, "One argument expected for font:getwidth");
+    const char* s = celx.safeGetString(2, AllErrors, "Argument to font:getwidth must be a string");
+    auto font = *celx.getThis<TextureFont*>();
+    return celx.push(font->getWidth(s));
 }
 
 static int font_getheight(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for font:getheight()");
+    CelxLua celx(l);
 
-    TextureFont* font = this_font(l);
+    celx.checkArgs(1, 1, "No arguments expected for font:getheight()");
+
+    auto font = *celx.getThis<TextureFont*>();
     lua_pushnumber(l, font->getHeight());
     return 1;
 }
 
 static int font_tostring(lua_State* l)
 {
-    // TODO: print out the actual information about the font
-    lua_pushstring(l, "[Font]");
-
-    return 1;
+    CelxLua celx(l);
+    return celx.push("[Font]");
 }
 
 void CreateFontMetaTable(lua_State* l)
 {
-    Celx_CreateClassMetatable(l, Celx_Font);
+    CelxLua celx(l);
 
-    Celx_RegisterMethod(l, "__tostring", font_tostring);
-    Celx_RegisterMethod(l, "bind", font_bind);
-    Celx_RegisterMethod(l, "render", font_render);
-    Celx_RegisterMethod(l, "getwidth", font_getwidth);
-    Celx_RegisterMethod(l, "getheight", font_getheight);
+    celx.createClassMetatable(Celx_Font);
 
-    lua_pop(l, 1); // remove metatable from stack
+    celx.registerMethod("__tostring", font_tostring);
+    celx.registerMethod("bind", font_bind);
+    celx.registerMethod("render", font_render);
+    celx.registerMethod("getwidth", font_getwidth);
+    celx.registerMethod("getheight", font_getheight);
+
+    celx.pop(1); // remove metatable from stack
 }
 
 // ==================== Image =============================================
@@ -261,132 +235,105 @@ static int image_new(lua_State* l, Image* i)
 }
 #endif
 
-static Image* to_image(lua_State* l, int index)
+int celxClassId(Image*)
 {
-    Image** image = static_cast<Image**>(lua_touserdata(l, index));
-
-    return image != nullptr ? *image : nullptr;
-}
-
-static Image* this_image(lua_State* l)
-{
-    Image* image = to_image(l,1);
-    if (image == nullptr)
-        Celx_DoError(l, "Bad image object!");
-
-    return image;
+    return Celx_Image;
 }
 
 static int image_getheight(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for image:getheight()");
+    CelxLua celx(l);
 
-    Image* image = this_image(l);
-    lua_pushnumber(l, image->getHeight());
-    return 1;
+    celx.checkArgs(1, 1, "No arguments expected for image:getheight()");
+
+    auto image = *celx.getThis<Image*>();
+    return celx.push(image->getHeight());
 }
 
 static int image_getwidth(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for image:getwidth()");
+    CelxLua celx(l);
 
-    Image* image = this_image(l);
-    lua_pushnumber(l, image->getWidth());
-    return 1;
+    celx.checkArgs(1, 1, "No arguments expected for image:getwidth()");
+
+    auto* image = *celx.getThis<Image*>();
+    return celx.push(image->getWidth());
 }
 
 static int image_tostring(lua_State* l)
 {
-    // TODO: print out the actual information about the image
-    lua_pushstring(l, "[Image]");
-
-    return 1;
+    CelxLua celx(l);
+    auto image = *celx.getThis<Image*>();
+    std::string s = fmt::sprintf("[Image:%dx%d]", image->getWidth(), image->getHeight());
+    return celx.push(s.c_str());
 }
 
 void CreateImageMetaTable(lua_State* l)
 {
-    Celx_CreateClassMetatable(l, Celx_Image);
+    CelxLua celx(l);
 
-    Celx_RegisterMethod(l, "__tostring", image_tostring);
-    Celx_RegisterMethod(l, "getheight", image_getheight);
-    Celx_RegisterMethod(l, "getwidth", image_getwidth);
+    celx.createClassMetatable(Celx_Image);
 
-    lua_pop(l, 1); // remove metatable from stack
+    celx.registerMethod("__tostring", image_tostring);
+    celx.registerMethod("getheight", image_getheight);
+    celx.registerMethod("getwidth", image_getwidth);
+
+    celx.pop(1); // remove metatable from stack
 }
 
 // ==================== Texture ============================================
 
-int texture_new(lua_State* l, Texture* t)
-{
-    Texture** ud = static_cast<Texture**>(lua_newuserdata(l, sizeof(Texture*)));
-    *ud = t;
-
-    Celx_SetClass(l, Celx_Texture);
-
-    return 1;
-}
-
-static Texture* to_texture(lua_State* l, int index)
-{
-    Texture** texture = static_cast<Texture**>(lua_touserdata(l, index));
-
-    return texture != nullptr ? *texture : nullptr;
-}
-
-static Texture* this_texture(lua_State* l)
-{
-    Texture* texture = to_texture(l,1);
-    if (texture == nullptr)
-        Celx_DoError(l, "Bad texture object!");
-
-    return texture;
-}
-
 static int texture_bind(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for texture:bind()");
+    CelxLua celx(l);
 
-    Texture* texture = this_texture(l);
+    celx.checkArgs(1, 1, "No arguments expected for texture:bind()");
+
+    auto texture = *celx.getThis<Texture*>();
     texture->bind();
     return 0;
 }
 
 static int texture_getheight(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for texture:getheight()");
+    CelxLua celx(l);
 
-    Texture* texture = this_texture(l);
-    lua_pushnumber(l, texture->getHeight());
-    return 1;
+    celx.checkArgs(1, 1, "No arguments expected for texture:getheight()");
+
+    auto texture = *celx.getThis<Texture*>();
+    return celx.push(texture->getHeight());
 }
 
 static int texture_getwidth(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for texture:getwidth()");
+    CelxLua celx(l);
 
-    Texture* texture = this_texture(l);
-    lua_pushnumber(l, texture->getWidth());
-    return 1;
+    celx.checkArgs(1, 1, "No arguments expected for texture:getwidth()");
+
+    auto texture = *celx.getThis<Texture*>();
+    return celx.push(texture->getWidth());
 }
 
 static int texture_tostring(lua_State* l)
 {
-    // TODO: print out the actual information about the texture
-    lua_pushstring(l, "[Texture]");
+    CelxLua celx(l);
 
-    return 1;
+    auto tex = *celx.getThis<Texture*>();
+    std::string s = fmt::sprintf("[Texture:%dx%d]", tex->getWidth(), tex->getHeight());
+    return celx.push(s.c_str());
 }
 
 void CreateTextureMetaTable(lua_State* l)
 {
-    Celx_CreateClassMetatable(l, Celx_Texture);
+    CelxLua celx(l);
+    celx.createClassMetatable(Celx_Texture);
 
-    Celx_RegisterMethod(l, "__tostring", texture_tostring);
-    Celx_RegisterMethod(l, "getheight", texture_getheight);
-    Celx_RegisterMethod(l, "getwidth", texture_getwidth);
-    Celx_RegisterMethod(l, "bind", texture_bind);
+    celx.registerMethod("__tostring", texture_tostring);
+    celx.registerMethod("getheight", texture_getheight);
+    celx.registerMethod("getwidth", texture_getwidth);
+    celx.registerMethod("bind", texture_bind);
 
-    lua_pop(l, 1); // remove metatable from stack
+    celx.pop(1); // remove metatable from stack
 }
 
 
