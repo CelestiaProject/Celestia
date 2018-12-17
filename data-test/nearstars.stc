@@ -1,0 +1,10 @@
+
+Modify 71683 # ALF Cen A
+{
+	Category [ "Nearby stars" "Centaur group" ]
+}
+
+Modify 71681 # ALF cen B
+{
+	Category "Nearby stars"
+}
