@@ -21,7 +21,7 @@
 #include <celengine/parser.h>
 
 
-static const unsigned int MAX_DSO_NAMES = 10;
+constexpr const unsigned int MAX_DSO_NAMES = 10;
 
 // 100 Gly - on the order of the current size of the universe
 constexpr const float DSO_OCTREE_ROOT_SIZE = 1.0e11f;
