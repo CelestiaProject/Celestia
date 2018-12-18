@@ -1403,10 +1403,10 @@ void CelestiaAppWindow::createMenus()
     m_appCore->getSimulation()->setSyncTime(check);
 
     // Set up the default time zone name and offset from UTC
-#ifndef _WIN32
     time_t curtime = time(nullptr);
     m_appCore->start(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
 
+#ifndef _WIN32
     struct tm result;
     if (localtime_r(&curtime, &result))
     {
