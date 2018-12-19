@@ -2475,6 +2475,28 @@ static int celestia_getrootcategories(lua_State *l)
     return celx.pushIterable<UserCategory*>(set);
 }
 
+static int celestia_bindtextdomain(lua_State *l)
+{
+    CelxLua celx(l);
+
+    const char *domain = celx.safeGetString(2, AllErrors, "First argument of celestia:bindtranslationdomain must be domain name string.");
+    if (domain == nullptr || *dir == '\0')
+    {
+        celx.doError("Domain name string must not be empty.");
+        return 0;
+    }
+    const char *dir = celx.safeGetString(3, AllErrors, "Second argument of celestia:bindtranslationdomain must be directory name string.");
+    if (dir == nullptr || *dir == '\0')
+    {
+        celx.doError("Directory name srting must not be empty.");
+        return 0;
+    }
+    const char *newdir = bindtextdomain(domain, dir);
+    if (newdir == nullptr)
+        return 0;
+    return celx.push(newdir);
+}
+
 void ExtendCelestiaMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -2497,5 +2519,6 @@ void ExtendCelestiaMetaTable(lua_State* l)
     celx.registerMethod("deletecategory", celestia_deletecategory);
     celx.registerMethod("getcategories", celestia_getcategories);
     celx.registerMethod("getrootcategories", celestia_getrootcategories);
+    celx.registerMethod("bindtranslationdomain", celestia_bindtextdomain);
     celx.pop(1);
 }
