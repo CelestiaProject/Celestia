@@ -2501,7 +2501,6 @@ static int celestia_newtranslation(lua_State *l)
     return celx.pushClass(tr);
 }
 
-
 void ExtendCelestiaMetaTable(lua_State* l)
 {
     CelxLua celx(l);
