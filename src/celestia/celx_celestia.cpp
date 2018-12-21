@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <celutil/translatable.h>
 #include "celtxf/texturefont.h"
 #include <fmt/printf.h>
 #include <celengine/category.h>
@@ -24,6 +25,7 @@
 #include "celx_rotation.h"
 #include "celx_vector.h"
 #include "celx_category.h"
+#include "celx_translation.h"
 #include "url.h"
 #include "imagecapture.h"
 #include "celestiacore.h"
@@ -2475,6 +2477,31 @@ static int celestia_getrootcategories(lua_State *l)
     return celx.pushIterable<UserCategory*>(set);
 }
 
+static int celestia_bindtextdomain(lua_State *l)
+{
+    CelxLua celx(l);
+
+    const char *domain = celx.safeGetNonEmptyString(2, AllErrors, "First argument of celestia:bindtranslationdomain must be domain name string.");
+    const char *dir = celx.safeGetNonEmptyString(3, AllErrors, "Second argument of celestia:bindtranslationdomain must be directory name string.");
+    const char *newdir = bindtextdomain(domain, dir);
+    if (newdir == nullptr)
+        return 0;
+    return celx.push(newdir);
+}
+
+static int celestia_newtranslation(lua_State *l)
+{
+    CelxLua celx(l);
+    const char *em1 = "First argument of celestia:newtranslation must be non-empty string.";
+    const char *t = celx.safeGetNonEmptyString(2, AllErrors, em1);
+    const char *d = celx.getString(3);
+    if (d != nullptr && *d != '\0')
+        d = Translatable::store(d);
+    Translatable tr(t, d);
+    return celx.pushClass(tr);
+}
+
+
 void ExtendCelestiaMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -2497,5 +2524,7 @@ void ExtendCelestiaMetaTable(lua_State* l)
     celx.registerMethod("deletecategory", celestia_deletecategory);
     celx.registerMethod("getcategories", celestia_getcategories);
     celx.registerMethod("getrootcategories", celestia_getrootcategories);
+    celx.registerMethod("bindtranslationdomain", celestia_bindtextdomain);
+    celx.registerMethod("newtranslation", celestia_newtranslation);
     celx.pop(1);
 }

@@ -41,6 +41,7 @@
 #include "celx_celestia.h"
 #include "celx_gl.h"
 #include "celx_category.h"
+#include "celx_translation.h"
 
 #ifdef __CELVEC__
 #include <celengine/eigenport.h>
@@ -78,7 +79,8 @@ const char* CelxLua::ClassNames[] =
     "class_image",
     "class_texture",
     "class_phase",
-    "class_category"
+    "class_category",
+    "class_translation"
 };
 
 CelxLua::FlagMap64 CelxLua::RenderFlagMap;
@@ -1497,6 +1499,7 @@ static void loadLuaLibs(lua_State* state)
     CreateImageMetaTable(state);
     CreateTextureMetaTable(state);
     CreateCategoryMetaTable(state);
+    CreateTranslationMetaTable(state);
     ExtendCelestiaMetaTable(state);
     ExtendObjectMetaTable(state);
 
@@ -1869,6 +1872,18 @@ const char* CelxLua::safeGetString(int index,
     return Celx_SafeGetString(m_lua, index, fatalErrors, errorMessage);
 }
 
+const char *CelxLua::safeGetNonEmptyString(int index,
+                                        FatalErrors fatalErrors,
+                                        const char *errorMessage)
+{
+    const char *s = safeGetString(index, fatalErrors, errorMessage);
+    if (s == nullptr || *s == '\0')
+    {
+        doError(errorMessage);
+        return nullptr;
+    }
+    return s;
+}
 
 bool CelxLua::safeGetBoolean(int index,
                              FatalErrors fatalErrors,

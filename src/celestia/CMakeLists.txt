@@ -42,6 +42,8 @@ set(CELX_SOURCES
   celx_position.h
   celx_rotation.cpp
   celx_rotation.h
+  celx_translation.h
+  celx_translation.cpp
   celx_vector.cpp
   celx_vector.h
 )

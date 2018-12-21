@@ -41,7 +41,8 @@ UTIL_SOURCES = \
     src/celutil/formatnum.cpp \
     src/celutil/utf8.cpp \
     src/celutil/util.cpp \
-    src/celutil/timer.cpp
+    src/celutil/timer.cpp \
+    src/celutil/translatable.cpp
 
 UTIL_HEADERS = \
     src/celutil/bigfix.h \
@@ -56,7 +57,8 @@ UTIL_HEADERS = \
     src/celutil/timer.h \
     src/celutil/utf8.h \
     src/celutil/util.h \
-    src/celutil/watcher.h
+    src/celutil/watcher.h \
+    src/celutil/translatable.h
 
 win32 {
     UTIL_SOURCES += src/celutil/windirectory.cpp
@@ -340,6 +342,7 @@ APP_SOURCES = \
     src/celestia/celx_phase.cpp \
     src/celestia/celx_position.cpp \
     src/celestia/celx_rotation.cpp \
+    src/celestia/celx_translation.cpp \
     src/celestia/celx_vector.cpp
 
 APP_HEADERS = \
@@ -363,6 +366,7 @@ APP_HEADERS = \
     src/celestia/celx_phase.h \
     src/celestia/celx_position.h \
     src/celestia/celx_rotation.h \
+    src/celestia/celx_translation.h \
     src/celestia/celx_vector.h
 
 macx {

@@ -18,6 +18,8 @@ set(CELUTIL_SOURCES
   resmanager.h
   timer.cpp
   timer.h
+  translatable.h
+  translatable.cpp
   utf8.cpp
   utf8.h
   util.cpp

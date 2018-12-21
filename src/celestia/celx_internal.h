@@ -38,7 +38,8 @@ enum
     Celx_Image    = 10,
     Celx_Texture  = 11,
     Celx_Phase    = 12,
-    Celx_Category = 13
+    Celx_Category = 13,
+    Celx_Translation = 14
 };
 
 
@@ -110,11 +111,13 @@ public:
         lua_pushboolean(m_lua, a);
         return 1;
     }
+#if LUA_VER >= 0x050300
     int push(int a)
     {
         lua_pushinteger(m_lua, a);
         return 1;
     }
+#endif
     int push(double a)
     {
         lua_pushvalue(m_lua, a);
@@ -139,7 +142,7 @@ public:
     {
         T *p = newUserData<T>();
         if (p != nullptr)
-            *p = a;
+            new (p) T(a);
         return p;
     }
     template <typename T> T *newUserDataArray(int n)
@@ -206,7 +209,9 @@ public:
     /**** type check methods ****/
 
     bool isType(int index, int type) const;
+#if LUA_VER >= 0x050300
     bool isInteger(int n = 0) const { return lua_isinteger(m_lua, n); }
+#endif
     bool isNumber(int n = 0) const { return lua_isnumber(m_lua, n); }
     bool isBoolean(int n = 0) const { return lua_isboolean(m_lua, n); }
     bool isString(int n = 0) const { return lua_isstring(m_lua, n); }
@@ -215,7 +220,9 @@ public:
 
     /**** get methods ****/
 
+#if LUA_VER >= 0x050300
     int getInt(int n = 0) const { return lua_tointeger(m_lua, n); }
+#endif
     double getNumber(int n = 0) const { return lua_tonumber(m_lua, n); }
     bool getBoolean(int n = 0) const { return lua_toboolean(m_lua, n); }
     const char *getString(int n = 0) const { return lua_tostring(m_lua, n); }
@@ -288,6 +295,9 @@ public:
     const char* safeGetString(int index,
                               FatalErrors fatalErrors = AllErrors,
                               const char* errorMessage = "String argument expected");
+    const char *safeGetNonEmptyString(int index,
+                            FatalErrors fatalErrors = AllErrors,
+                            const char *errorMessage = "Non empty string argument expected");
     bool safeGetBoolean(int index,
                         FatalErrors fatalErrors = AllErrors,
                         const char* errorMessage = "Boolean argument expected",
