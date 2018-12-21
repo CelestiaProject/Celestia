@@ -1869,6 +1869,18 @@ const char* CelxLua::safeGetString(int index,
     return Celx_SafeGetString(m_lua, index, fatalErrors, errorMessage);
 }
 
+const char *CelxLua::safeGetNonEmptyString(int index,
+                                        FatalErrors fatalErrors,
+                                        const char *errorMessage)
+{
+    const char *s = safeGetString(index, fatalErrors, errorMessage);
+    if (s == nullptr || *s == '\0')
+    {
+        doError(errorMessage);
+        return nullptr;
+    }
+    return s;
+}
 
 bool CelxLua::safeGetBoolean(int index,
                              FatalErrors fatalErrors,
