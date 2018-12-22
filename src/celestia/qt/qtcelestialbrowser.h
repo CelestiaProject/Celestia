@@ -45,6 +45,7 @@ Q_OBJECT
     void slotRefreshTable();
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
+    void slotUnmarkSelected();
     void slotClearMarkers();
     void slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel);
 

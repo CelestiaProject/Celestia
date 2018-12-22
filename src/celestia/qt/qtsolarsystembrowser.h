@@ -39,6 +39,7 @@ Q_OBJECT
     void slotRefreshTree();
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
+    void slotUnmarkSelected();
     //void slotChooseMarkerColor();
     void slotClearMarkers();
     void slotSelectionChanged(const QItemSelection& newSel, const QItemSelection& oldSel);

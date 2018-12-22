@@ -173,6 +173,13 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     QMenu* markMenu = createMarkMenu();
     addMenu(markMenu);
 
+    if (appCore->getSimulation()->getUniverse()->isMarked(selection, 1))
+    {
+        QAction *action = new QAction(_("&Unmark"), this);
+        connect(action, &QAction::triggered, this, &SelectionPopup::slotUnmark);
+        addAction(action);
+    }
+
     // Reference vector submenu
     if (selection.body() != nullptr)
     {
@@ -254,7 +261,6 @@ QMenu* SelectionPopup::createMarkMenu()
 
     return markMenu;
 }
-
 
 QMenu* SelectionPopup::createReferenceVectorMenu()
 {
@@ -549,6 +555,15 @@ void SelectionPopup::slotMark()
     }
 }
 
+void SelectionPopup::slotUnmark()
+{
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action)
+    {
+        Simulation* sim = appCore->getSimulation();
+        sim->getUniverse()->unmarkObject(selection, 1);
+    }
+}
 
 void SelectionPopup::slotToggleBodyAxes()
 {

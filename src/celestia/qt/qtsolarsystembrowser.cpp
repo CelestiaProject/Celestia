@@ -712,10 +712,15 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, 
     markSelectedButton->setToolTip(_("Mark bodies selected in list view"));
     markGroupLayout->addWidget(markSelectedButton, 0, 0, 1, 2);
 
+    QPushButton* unmarkSelectedButton = new QPushButton(_("Unmark Selected"));
+    unmarkSelectedButton->setToolTip(_("Unmark stars selected in list view"));
+    connect(unmarkSelectedButton, &QPushButton::clicked, this, &SolarSystemBrowser::slotUnmarkSelected);
+    markGroupLayout->addWidget(unmarkSelectedButton, 0, 2, 1, 2);
+
     QPushButton* clearMarkersButton = new QPushButton(_("Clear Markers"));
     connect(clearMarkersButton, SIGNAL(clicked()), this, SLOT(slotClearMarkers()));
     clearMarkersButton->setToolTip(_("Remove all existing markers"));
-    markGroupLayout->addWidget(clearMarkersButton, 0, 2, 1, 2);
+    markGroupLayout->addWidget(clearMarkersButton, 0, 5, 1, 2);
 
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
@@ -870,6 +875,18 @@ void SolarSystemBrowser::slotMarkSelected()
     }
 }
 
+void SolarSystemBrowser::slotUnmarkSelected()
+{
+    QModelIndexList rows = treeView->selectionModel()->selectedRows();
+    Universe* universe = appCore->getSimulation()->getUniverse();
+
+    for (const auto &index : rows)
+    {
+        Selection sel = solarSystemModel->objectAtIndex(index);
+        if (!sel.empty())
+            universe->unmarkObject(sel, 1);
+    } // for
+}
 
 void SolarSystemBrowser::slotClearMarkers()
 {
