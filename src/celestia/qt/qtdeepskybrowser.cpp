@@ -78,6 +78,8 @@ public:
     DSOTableModel(const Universe* _universe);
     virtual ~DSOTableModel() = default;
 
+    Selection objectAtIndex(const QModelIndex&) const;
+
     // Methods from QAbstractTableModel
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -109,7 +111,7 @@ public:
                   DSOPredicate::Criterion criterion,
                   unsigned int nDSOs);
 
-    DeepSkyObject* itemAtRow(unsigned int row);
+    DeepSkyObject* itemAtRow(unsigned int row) const;
 
 private:
     const Universe* universe;
@@ -124,6 +126,10 @@ DSOTableModel::DSOTableModel(const Universe* _universe) :
 {
 }
 
+Selection DSOTableModel::objectAtIndex(const QModelIndex& _index) const
+{
+    return itemAtRow((unsigned int) _index.row());
+}
 
 /****** Virtual methods from QAbstractTableModel *******/
 
@@ -386,7 +392,7 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
 }
 
 
-DeepSkyObject* DSOTableModel::itemAtRow(unsigned int row)
+DeepSkyObject* DSOTableModel::itemAtRow(unsigned int row) const
 {
     return row >= dsos.size() ? nullptr : dsos[row];
 }
@@ -472,10 +478,15 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPane
     connect(markSelectedButton, SIGNAL(clicked()), this, SLOT(slotMarkSelected()));
     markGroupLayout->addWidget(markSelectedButton, 0, 0, 1, 2);
 
+    QPushButton* unmarkSelectedButton = new QPushButton(_("Unmark Selected"));
+    unmarkSelectedButton->setToolTip(_("Unmark DSOs selected in list view"));
+    connect(unmarkSelectedButton, &QPushButton::clicked, this, &DeepSkyBrowser::slotUnmarkSelected);
+    markGroupLayout->addWidget(unmarkSelectedButton, 0, 2, 1, 2);
+
     QPushButton* clearMarkersButton = new QPushButton(_("Clear Markers"));
     connect(clearMarkersButton, SIGNAL(clicked()), this, SLOT(slotClearMarkers()));
     clearMarkersButton->setToolTip(_("Remove all existing markers"));
-    markGroupLayout->addWidget(clearMarkersButton, 0, 2, 1, 2);
+    markGroupLayout->addWidget(clearMarkersButton, 0, 5, 1, 2);
 
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
@@ -629,6 +640,18 @@ void DeepSkyBrowser::slotMarkSelected()
     } // for
 }
 
+void DeepSkyBrowser::slotUnmarkSelected()
+{
+    QModelIndexList rows = treeView->selectionModel()->selectedRows();
+    Universe* universe = appCore->getSimulation()->getUniverse();
+
+    for (const auto &index : rows)
+    {
+        Selection sel = dsoModel->objectAtIndex(index);
+        if (!sel.empty())
+            universe->unmarkObject(sel, 1);
+    } // for
+}
 
 void DeepSkyBrowser::slotClearMarkers()
 {

@@ -81,6 +81,8 @@ public:
     StarTableModel(const Universe* _universe) : universe(_universe) {};
     virtual ~StarTableModel() = default;
 
+    Selection objectAtIndex(const QModelIndex& index) const;
+
     // Methods from QAbstractTableModel
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -114,7 +116,7 @@ public:
                   StarPredicate::Criterion criterion,
                   unsigned int nStars);
 
-    Selection itemAtRow(unsigned int row);
+    Selection itemAtRow(unsigned int row) const;
 
 private:
     const Universe* universe;
@@ -122,6 +124,11 @@ private:
     double now{ astro::J2000 };
     vector<Star*> stars;
 };
+
+Selection StarTableModel::objectAtIndex(const QModelIndex& _index) const
+{
+    return itemAtRow((unsigned int) _index.row());
+}
 
 
 /****** Virtual methods from QAbstractTableModel *******/
@@ -453,7 +460,7 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
 }
 
 
-Selection StarTableModel::itemAtRow(unsigned int row)
+Selection StarTableModel::itemAtRow(unsigned int row) const
 {
     if (row >= stars.size())
         return Selection();
@@ -554,10 +561,15 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent, Info
     markSelectedButton->setToolTip(_("Mark stars selected in list view"));
     markGroupLayout->addWidget(markSelectedButton, 0, 0, 1, 2);
 
+    QPushButton* unmarkSelectedButton = new QPushButton(_("Unmark Selected"));
+    unmarkSelectedButton->setToolTip(_("Unmark stars selected in list view"));
+    connect(unmarkSelectedButton, &QPushButton::clicked, this, &CelestialBrowser::slotUnmarkSelected);
+    markGroupLayout->addWidget(unmarkSelectedButton, 0, 2, 1, 2);
+
     QPushButton* clearMarkersButton = new QPushButton(_("Clear Markers"));
     connect(clearMarkersButton, SIGNAL(clicked()), this, SLOT(slotClearMarkers()));
     clearMarkersButton->setToolTip(_("Remove all existing markers"));
-    markGroupLayout->addWidget(clearMarkersButton, 0, 2, 1, 2);
+    markGroupLayout->addWidget(clearMarkersButton, 0, 5, 1, 2);
 
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
@@ -721,6 +733,18 @@ void CelestialBrowser::slotMarkSelected()
     }
 }
 
+void CelestialBrowser::slotUnmarkSelected()
+{
+    QModelIndexList rows = treeView->selectionModel()->selectedRows();
+    Universe* universe = appCore->getSimulation()->getUniverse();
+
+    for (const auto &index : rows)
+    {
+        Selection sel = starModel->objectAtIndex(index);
+        if (!sel.empty())
+            universe->unmarkObject(sel, 1);
+    } // for
+}
 
 void CelestialBrowser::slotClearMarkers()
 {
