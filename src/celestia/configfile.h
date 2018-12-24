@@ -82,6 +82,9 @@ public:
     std::string projectionMode;
     std::string viewportEffect;
     std::string warpMeshFile;
+
+    std::string x264EncoderOptions;
+    std::string ffvhEncoderOptions;
 };
 
 CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig* config = nullptr);

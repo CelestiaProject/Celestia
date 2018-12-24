@@ -97,6 +97,8 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     configParams->getString("ProjectionMode", config->projectionMode);
     configParams->getString("ViewportEffect", config->viewportEffect);
     configParams->getString("WarpMeshFile", config->warpMeshFile);
+    configParams->getString("X264EncoderOptions", config->x264EncoderOptions);
+    configParams->getString("FFVHEncoderOptions", config->ffvhEncoderOptions);
 
     float maxDist = 1.0;
     configParams->getNumber("SolarSystemMaxDistance", maxDist);
