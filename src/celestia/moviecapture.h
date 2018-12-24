@@ -11,8 +11,9 @@
 #define _MOVIECAPTURE_H_
 
 #include <string>
+#include <vector>
 #include <celengine/render.h>
-
+#include <celcompat/filesystem.h>
 
 class MovieCapture
 {
@@ -20,7 +21,7 @@ class MovieCapture
     MovieCapture(const Renderer *r) : renderer(r) {};
     virtual ~MovieCapture() {};
 
-    virtual bool start(const std::string& filename,
+    virtual bool start(const fs::path& filename,
                        int width, int height,
                        float fps) = 0;
     virtual bool end() = 0;
