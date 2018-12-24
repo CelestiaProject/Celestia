@@ -22,7 +22,10 @@ steps:
     sudo apt update
     sudo apt install -y libeigen3-dev \
                         libepoxy-dev \
-                        libtheora-dev \
+                        libavcodec-dev \
+                        libavformat-dev \
+                        libavutil-dev \
+                        libswscale-dev \
                         libjpeg-dev \
                         libpng-dev \
                         libglu1-mesa-dev \
@@ -41,7 +44,7 @@ steps:
 - script: |
     brew install pkg-config \
                  eigen \
-                 theora \
+                 ffmpeg \
                  gtk+ \
                  gtkglext \
                  cspice \
@@ -62,7 +65,7 @@ steps:
 - script: |
     mkdir build
     cd build
-    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON -DENABLE_GTK=ON ..
+    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON -DENABLE_GTK=ON -DENABLE_FFMPEG=ON ..
     make -j $(nproc || echo 4)
     CTEST_OUTPUT_ON_FAILURE=1 ctest
   workingDirectory: "$(system.defaultworkingdirectory)"
