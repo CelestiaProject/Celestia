@@ -25,7 +25,7 @@ static const char CelestiaMeshExt[] = ".cms";
 static const char CelestiaCatalogExt[] = ".ssc";
 static const char CelestiaStarCatalogExt[] = ".stc";
 static const char CelestiaDeepSkyCatalogExt[] = ".dsc";
-static const char MKVExt[] = ".mkv";
+static const char AVIExt[] = ".avi";
 static const char DDSExt[] = ".dds";
 static const char DXT5NormalMapExt[] = ".dxt5nm";
 static const char CelestiaLegacyScriptExt[] = ".cel";
@@ -64,8 +64,8 @@ ContentType DetermineFileType(const fs::path& filename)
         return Content_CelestiaStarCatalog;
     if (compareIgnoringCase(CelestiaDeepSkyCatalogExt, ext) == 0)
         return Content_CelestiaDeepSkyCatalog;
-    if (compareIgnoringCase(MKVExt, ext) == 0)
-        return Content_MKV;
+    if (compareIgnoringCase(AVIExt, ext) == 0)
+        return Content_AVI;
     if (compareIgnoringCase(DDSExt, ext) == 0)
         return Content_DDS;
     if (compareIgnoringCase(CelestiaLegacyScriptExt, ext) == 0)

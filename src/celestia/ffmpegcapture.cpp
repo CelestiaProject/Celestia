@@ -5,6 +5,7 @@
 #define __STDC_CONSTANT_MACROS
 extern "C"
 {
+#include <libavcodec/avcodec.h>
 #include <libavutil/timestamp.h>
 #include <libavutil/pixdesc.h>
 #include <libavutil/opt.h>
@@ -16,7 +17,11 @@ extern "C"
 #include <vector>
 #include <fmt/format.h>
 
+#include <celengine/pixelformat.h>
+#include <celengine/render.h>
+
 using namespace std;
+using namespace celestia;
 
 // a wrapper around a single output AVStream
 class FFMPEGCapturePrivate
@@ -41,7 +46,7 @@ class FFMPEGCapturePrivate
     AVFrame         *tmpfr    { nullptr };
     AVCodecContext  *enc      { nullptr };
     AVFormatContext *oc       { nullptr };
-    AVCodec         *vc       { nullptr };
+    const AVCodec   *vc       { nullptr };
     AVPacket        *pkt      { nullptr };
     SwsContext      *swsc     { nullptr };
 
@@ -231,7 +236,7 @@ bool FFMPEGCapturePrivate::addStream(int width, int height, float fps)
         return false;
     }
 
-    enc->codec_id = oc->oformat->video_codec = vc_id;
+    enc->codec_id = vc_id;
 
     enc->bit_rate = bit_rate;
 #if 0
@@ -448,7 +453,9 @@ bool FFMPEGCapturePrivate::writeVideoFrame(bool finalize)
         frame->pts = nextPts++;
     }
 
+#if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58, 133, 100))
     av_init_packet(pkt);
+#endif
 
     // encode the image
     if (avcodec_send_frame(enc, frame) < 0)
