@@ -2,11 +2,13 @@ trigger:
 - main
 
 strategy:
- matrix:
-   Linux:
-     imageName: 'ubuntu-latest'
-   Mac:
-     imageName: 'macos-latest'
+  matrix:
+    Linux:
+      imageName: 'ubuntu-latest'
+    Mac:
+      imageName: 'macos-latest'
+    Win:
+      imageName: 'windows-latest'
 
 pool:
   vmImage: $(imageName)
@@ -17,12 +19,17 @@ steps:
 
 - bash:  echo "##vso[task.setvariable variable=shellopts]errexit"
   displayName: "Force exit on error (bash)"
+  condition: not( eq( variables['Agent.OS'], 'Windows_NT' ) )
 
 - script: |
     sudo apt update
     sudo apt install -y libeigen3-dev \
                         libepoxy-dev \
                         libtheora-dev \
+                        libavcodec-dev \
+                        libavformat-dev \
+                        libavutil-dev \
+                        libswscale-dev \
                         libjpeg-dev \
                         libpng-dev \
                         libglu1-mesa-dev \
@@ -35,13 +42,14 @@ steps:
                         libsdl2-dev \
                         libluajit-5.1-dev \
                         libfmt-dev
-  displayName: 'Install Linux dependencies'
+  displayName: 'Install GNU/Linux dependencies'
   condition: eq( variables['Agent.OS'], 'Linux' )
 
 - script: |
     brew install pkg-config \
                  eigen \
                  theora \
+                 ffmpeg \
                  gtk+ \
                  gtkglext \
                  cspice \
@@ -59,11 +67,38 @@ steps:
   displayName: 'Install macOS dependencies'
   condition: eq( variables['Agent.OS'], 'Darwin' )
 
+
+# Cache/restore the vcpkg's build artifacts.
+- task: Cache@2
+  inputs:
+    key: vcpkg
+    path: 'c:/vcpkg/installed'
+  displayName: "Cache vcpkg's artifacts"
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+
+- script: |
+    vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice ffmpeg
+  displayName: 'Install Windows dependencies'
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+
 - script: |
     mkdir build
     cd build
-    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON -DENABLE_GTK=ON ..
+    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON -DENABLE_GTK=ON -DENABLE_FFMPEG=ON -DENABLE_DATA=OFF ..
     make -j $(nproc || echo 4)
     CTEST_OUTPUT_ON_FAILURE=1 ctest
   workingDirectory: "$(system.defaultworkingdirectory)"
-  displayName: "Build and test"
+  displayName: "Build and test on GNU/Linux and macOS"
+  condition: not( eq( variables['Agent.OS'], 'Windows_NT' ) )
+
+- script: |
+    mkdir build
+    cd build
+    @rem cmake -DCMAKE_FIND_DEBUG_MODE=ON -DCMAKE_GENERATOR_PLATFORM=WIN32 -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=OFF -DENABLE_FFMPEG=ON -DENABLE_WIN=ON -DENABLE_DATA=OFF ..
+    @rem cmake --build . --config RelWithDebInfo -- /maxcpucount:4 /nologo
+    set CTEST_OUTPUT_ON_FAILURE=1
+    @rem copy src\celestia\RelWithDebInfo\*.dll test\unit\RelWithDebInfo\
+    @rem ctest -C RelWithDebInfo
+  workingDirectory: "$(system.defaultworkingdirectory)"
+  displayName: "Build and test on Windows"
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
