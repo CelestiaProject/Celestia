@@ -10,16 +10,15 @@
 #ifndef _MOVIECAPTURE_H_
 #define _MOVIECAPTURE_H_
 
-#include <string>
-#include <vector>
-#include <celengine/render.h>
 #include <celcompat/filesystem.h>
+
+class Renderer;
 
 class MovieCapture
 {
  public:
     MovieCapture(const Renderer *r) : renderer(r) {};
-    virtual ~MovieCapture() {};
+    virtual ~MovieCapture() = default;
 
     virtual bool start(const fs::path& filename,
                        int width, int height,

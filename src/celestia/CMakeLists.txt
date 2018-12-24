@@ -13,6 +13,7 @@ set(CELESTIA_SOURCES
   favorites.h
   helper.cpp
   helper.h
+  moviecapture.h
   scriptmenu.cpp
   scriptmenu.h
   url.cpp
@@ -21,11 +22,15 @@ set(CELESTIA_SOURCES
   view.h
 )
 
-if(ENABLE_FFMPEG)
+if(WIN32)
+  list(APPEND CELESTIA_SOURCES
+    avicapture.cpp
+    avicapture.h
+  )
+elseif(ENABLE_FFMPEG)
   list(APPEND CELESTIA_SOURCES
     ffmpegcapture.cpp
     ffmpegcapture.h
-    moviecapture.h
   )
 endif()
 

@@ -29,7 +29,6 @@
 
 #include <celengine/glsupport.h>
 
-#include <celcompat/charconv.h>
 #include <celmath/mathlib.h>
 #include <celutil/array_view.h>
 #include <celutil/debug.h>
@@ -42,7 +41,7 @@
 #include <celscript/legacy/cmdparser.h>
 
 #include "celestia/celestiacore.h"
-#include "celestia/ffmpegcapture.h"
+#include "celestia/avicapture.h"
 #include "celestia/helper.h"
 #include "celestia/scriptmenu.h"
 #include "celestia/url.h"
@@ -140,22 +139,9 @@ static int MovieSizes[8][2] = {
 
 static float MovieFramerates[5] = { 15.0f, 24.0f, 25.0f, 29.97f, 30.0f };
 
-struct MovieCodec
-{
-    AVCodecID   codecId;
-    const char *codecDesc;
-};
-
-static MovieCodec MovieCodecs[2] =
-{
-    { AV_CODEC_ID_FFVHUFF, N_("Lossless")      },
-    { AV_CODEC_ID_H264,    N_("Lossy (H.264)") }
-};
-
 static int movieSize = 1;
 static int movieFramerate = 1;
-static int movieCodec = 1;
-static int64_t movieBitrate = 400000;
+
 
 astro::Date newTime(0.0);
 
@@ -444,17 +430,9 @@ static void ShowLocalTime(CelestiaCore* appCore)
 static bool BeginMovieCapture(const Renderer* renderer,
                               const std::string& filename,
                               int width, int height,
-                              float framerate,
-                              AVCodecID codec,
-                              int64_t bitrate)
+                              float framerate)
 {
-    auto* movieCapture = new FFMPEGCapture(renderer);
-    movieCapture->setVideoCodec(codec);
-    movieCapture->setBitRate(bitrate);
-    if (vc == AV_CODEC_ID_H264)
-        movieCapture->setEncoderOptions(appCore->getConfig()->x264EncoderOptions);
-    else
-        movieCapture->setEncoderOptions(appCore->getConfig()->ffvhEncoderOptions);
+    MovieCapture* movieCapture = new AVICapture(renderer);
 
     bool success = movieCapture->start(filename, width, height, framerate);
     if (success)
@@ -688,36 +666,25 @@ UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
             HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_SIZE);
             int nSizes = sizeof MovieSizes / sizeof MovieSizes[0];
 
-            for (int i = 0; i < nSizes; i++)
+            int i;
+            for (i = 0; i < nSizes; i++)
             {
-                sprintf(buf, _("%d x %d"), MovieSizes[i][0], MovieSizes[i][1]);
+                sprintf(buf, "%d x %d", MovieSizes[i][0], MovieSizes[i][1]);
                 SendMessage(hwnd, CB_INSERTSTRING, -1,
                             reinterpret_cast<LPARAM>(buf));
+
             }
             SendMessage(hwnd, CB_SETCURSEL, movieSize, 0);
 
             hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_FRAMERATE);
             int nFramerates = sizeof MovieFramerates / sizeof MovieFramerates[0];
-            for (int i = 0; i < nFramerates; i++)
+            for (i = 0; i < nFramerates; i++)
             {
                 sprintf(buf, "%.2f", MovieFramerates[i]);
                 SendMessage(hwnd, CB_INSERTSTRING, -1,
                             reinterpret_cast<LPARAM>(buf));
             }
             SendMessage(hwnd, CB_SETCURSEL, movieFramerate, 0);
-
-            hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_CODEC);
-            int nCodecs = sizeof MovieCodecs / sizeof MovieCodecs[0];
-            for (int i = 0; i < nCodecs; i++)
-            {
-                SendMessage(hwnd, CB_INSERTSTRING,
-                            reinterpret_cast<WPARAM>(MovieCodecs[i].codecId),
-                            reinterpret_cast<LPARAM>(_(MovieCodecs[i].codecDesc)));
-            }
-            SendMessage(hwnd, CB_SETCURSEL, movieCodec, 0);
-
-            hwnd = GetDlgItem(hDlg, IDC_EDIT_MOVIE_BITRATE);
-            SetWindowText(hwnd, "400000");
         }
         return TRUE;
 
@@ -743,34 +710,6 @@ UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
                     movieFramerate = item;
             }
             return TRUE;
-        }
-        else if (LOWORD(wParam) == IDC_COMBO_MOVIE_CODEC)
-        {
-            if (HIWORD(wParam) == CBN_SELCHANGE)
-            {
-                HWND hwnd = reinterpret_cast<HWND>(lParam);
-                int item = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
-                if (item != CB_ERR)
-                    movieCodec = item;
-            }
-        }
-        else if (LOWORD(wParam) == IDOK IDC_EDIT_MOVIE_BITRATE)
-        {
-            char buf[24], out[24];
-            wchar_t wbuff[48];
-            int len = GetDlgItemText(hDlg, IDC_EDIT_MOVIE_BITRATE, buf, sizeof(buf));
-            if (len > 0)
-            {
-                int wlen = MultiByteToWideChar(CP_ACP, 0, buf, -1, wbuff, sizeof(wbuff));
-                WideCharToMultiByte(CP_UTF8, 0, wbuff, wlen, out, sizeof(out), NULL, NULL);
-
-            }
-            auto result = std::from_chars(out, out+wlen, movieBitrate);
-            if (result.ec != std::errc())
-                movieBitrate = 400000;
-            EndDialog(hDlg, 0);
-            return TRUE;
-
         }
     }
 
@@ -2765,7 +2704,7 @@ static void HandleCaptureMovie(HWND hWnd)
     ZeroMemory(&Ofn, sizeof(OPENFILENAME));
     Ofn.lStructSize = sizeof(OPENFILENAME);
     Ofn.hwndOwner = hWnd;
-    Ofn.lpstrFilter = "Matroska (*.mkv)\0*.mkv\0";
+    Ofn.lpstrFilter = "Microsoft AVI\0*.avi\0";
     Ofn.lpstrFile= szFile;
     Ofn.nMaxFile = sizeof(szFile);
     Ofn.lpstrFileTitle = szFileTitle;
@@ -2793,7 +2732,7 @@ static void HandleCaptureMovie(HWND hWnd)
         bool success = false;
 
         DWORD nFileType=0;
-        char defaultExtensions[][4] = { "mkv" };
+        char defaultExtensions[][4] = { "avi" };
         if (Ofn.nFileExtension == 0)
         {
             // If no extension was specified, use the selection of filter to
@@ -2815,7 +2754,7 @@ static void HandleCaptureMovie(HWND hWnd)
         {
             switch (DetermineFileType(Ofn.lpstrFile))
             {
-            case Content_MKV:
+            case Content_AVI:
                 nFileType = 1;
                 break;
             default:
@@ -2835,9 +2774,7 @@ static void HandleCaptureMovie(HWND hWnd)
                                         string(Ofn.lpstrFile),
                                         MovieSizes[movieSize][0],
                                         MovieSizes[movieSize][1],
-                                        MovieFramerates[movieFramerate],
-                                        MovieCodecs[movieCodec],
-                                        movieBitrate);
+                                        MovieFramerates[movieFramerate]);
         }
 
         if (!success)
