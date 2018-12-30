@@ -1,11 +1,15 @@
 #include <iostream>
+#include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celengine/catentry.h>
 #include "category.h"
 
-UserCategory::UserCategory(const std::string &n, UserCategory *p) :
+UserCategory::UserCategory(const std::string &n, UserCategory *p, const std::string &domain) :
         m_name(n), 
-        m_parent(p) {}
+        m_parent(p)
+{
+    m_i18n = dgettext(m_name.c_str(), domain.c_str());
+}
 
 UserCategory::~UserCategory() { cleanup(); }
 
@@ -47,9 +51,9 @@ bool UserCategory::_removeObject(Selection s)
     return true;
 }
 
-UserCategory *UserCategory::createChild(const std::string &s)
+UserCategory *UserCategory::createChild(const std::string &s, const std::string &domain)
 {
-    UserCategory *c = newCategory(s, this);
+    UserCategory *c = newCategory(s, this, domain);
     if (c == nullptr)
         return nullptr;
     m_catlist.insert(c);
@@ -109,11 +113,11 @@ void UserCategory::cleanup()
 UserCategory::CategoryMap UserCategory::m_allcats;
 UserCategory::CategorySet UserCategory::m_roots;
 
-UserCategory *UserCategory::newCategory(const std::string &s, UserCategory *p)
+UserCategory *UserCategory::newCategory(const std::string &s, UserCategory *p, const std::string &domain)
 {
     if (m_allcats.count(s) > 0)
         return nullptr;
-    UserCategory *c = new UserCategory(s, p);
+    UserCategory *c = new UserCategory(s, p, domain);
     m_allcats.insert(std::pair<const std::string, UserCategory*>(s, c));
     if (p == nullptr)
         m_roots.insert(c);
@@ -122,9 +126,9 @@ UserCategory *UserCategory::newCategory(const std::string &s, UserCategory *p)
     return c;
 }
 
-UserCategory *UserCategory::createRoot(const std::string &n)
+UserCategory *UserCategory::createRoot(const std::string &n, const std::string &domain)
 {
-    return newCategory(n, nullptr);
+    return newCategory(n, nullptr, domain);
 }
 
 UserCategory *UserCategory::find(const std::string &s)

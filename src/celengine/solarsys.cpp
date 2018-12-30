@@ -1100,6 +1100,8 @@ bool LoadSolarSystemObjects(istream& in,
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
+    bindtextdomain(directory.c_str(), directory.c_str()); // domain name is the same as resource path
+
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
         // Read the disposition; if none is specified, the default is Add.
@@ -1255,7 +1257,7 @@ bool LoadSolarSystemObjects(istream& in,
                     body = CreateBody(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition, bodyType);
 
                 if (body != nullptr)
-                    body->loadCategories(objectData);
+                    body->loadCategories(objectData, directory);
                 if (body != nullptr && disposition == AddObject)
                 {
                     vector<string>::const_iterator iter = names.begin();
@@ -1283,7 +1285,7 @@ bool LoadSolarSystemObjects(istream& in,
             if (parent.body() != nullptr)
             {
                 Location* location = CreateLocation(objectData, parent.body());
-                location->loadCategories(objectData);
+                location->loadCategories(objectData, directory);
                 if (location != nullptr)
                 {
                     location->setName(primaryName);

@@ -1,4 +1,5 @@
 
+#include <celutil/util.h>
 #include "catentry.h"
 #include "category.h"
 
@@ -22,7 +23,7 @@ bool CatEntry::addToCategory(UserCategory *c)
     return c->_addObject(toSelection());
 }
 
-bool CatEntry::addToCategory(const std::string &s, bool create)
+bool CatEntry::addToCategory(const std::string &s, bool create, const std::string &d)
 {
     UserCategory *c = UserCategory::find(s);
     if (c == nullptr)
@@ -30,7 +31,7 @@ bool CatEntry::addToCategory(const std::string &s, bool create)
         if (!create)
             return false;
         else
-            c = UserCategory::newCategory(s);
+            c = UserCategory::newCategory(s, nullptr, d);
     }
     return addToCategory(c);
 }
@@ -78,14 +79,14 @@ bool CatEntry::isInCategory(const std::string &s) const
     return isInCategory(c);
 }
 
-bool CatEntry::loadCategories(Hash *hash)
+bool CatEntry::loadCategories(Hash *hash, const std::string &domain)
 {
     std::string cn;
     if (hash->getString("Category", cn))
     {
         if (cn.empty())
             return false;
-        addToCategory(cn, true);
+        addToCategory(cn, true, domain);
         return true;
     }
     Value *a = hash->getValue("Category");
@@ -100,7 +101,7 @@ bool CatEntry::loadCategories(Hash *hash)
         cn = it->getString();
         if (cn.empty())
             ret = true;
-        addToCategory(cn, true);
+        addToCategory(cn, true, domain);
     }
     return ret;
 }

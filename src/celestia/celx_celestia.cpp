@@ -2400,12 +2400,15 @@ static int celestia_newcategory(lua_State *l)
 
     const char *emsg = "Argument of celestia:newcategory must be a string!";
     const char *name = celx.safeGetString(2, AllErrors, emsg);
+    const char *domain = "";
     if (name == nullptr)
     {
         celx.doError(emsg);
         return 0;
     }
-    UserCategory *c = UserCategory::createRoot(name);
+    if (celx.isString(2))
+        domain = celx.getString(2);
+    UserCategory *c = UserCategory::createRoot(name, domain);
     if (c == nullptr)
         return 0;
     return celx.pushClass(c);
