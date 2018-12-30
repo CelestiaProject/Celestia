@@ -20,13 +20,13 @@ protected:
 public:
     virtual Selection toSelection();
     bool addToCategory(UserCategory*);
-    bool addToCategory(const std::string&, bool = false);
+    bool addToCategory(const std::string&, bool = false, const std::string &domain = "");
     bool removeFromCategory(UserCategory*);
     bool removeFromCategory(const std::string&);
     bool isInCategory(UserCategory*) const;
     bool isInCategory(const std::string&) const;
     int categoriesCount() const { return m_cats == nullptr ? 0 : m_cats->size(); }
     CategorySet *getCategories() const { return m_cats; };
-    bool loadCategories(Hash*);
+    bool loadCategories(Hash*, const std::string &domain = "");
     friend UserCategory;
 };

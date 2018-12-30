@@ -21,17 +21,18 @@ public:
 
 private:
     std::string m_name;
+    std::string m_i18n;
     ObjectSet m_objlist;
     CategorySet m_catlist;
     UserCategory *m_parent;
 
-    UserCategory(const std::string&, UserCategory *parent = nullptr);
+    UserCategory(const std::string&, UserCategory *parent = nullptr, const std::string &domain = "");
     ~UserCategory();
 public:
-    const std::string &name() const { return m_name; }
+    const std::string &name(bool i18n = false) const { return i18n ? m_i18n : m_name; }
     UserCategory *parent() const { return m_parent;}
 
-    UserCategory *createChild(const std::string&);
+    UserCategory *createChild(const std::string&, const std::string &domain = "");
     bool deleteChild(UserCategory*);
     bool deleteChild(const std::string&);
     bool hasChild(const std::string&) const;
@@ -54,12 +55,12 @@ private:
     static CategoryMap m_allcats;
     static CategorySet m_roots;
 public:
-    static UserCategory *newCategory(const std::string&, UserCategory* parent = nullptr);
+    static UserCategory *newCategory(const std::string&, UserCategory* parent = nullptr, const std::string &domain = "");
     static UserCategory *find(const std::string&);
 
     static const CategoryMap &getAll() { return m_allcats; }
     static const CategorySet &getRoots() { return m_roots; }
-    static UserCategory *createRoot(const std::string&);
+    static UserCategory *createRoot(const std::string&, const std::string &domain = "");
     static bool deleteCategory(const std::string&);
     static bool deleteCategory(UserCategory*);
     friend CatEntry;

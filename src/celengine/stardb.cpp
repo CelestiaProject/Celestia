@@ -1156,6 +1156,8 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
+    bindtextdomain(resourcePath.c_str(), resourcePath.c_str()); // domain name is the same as resource path
+
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
         bool isStar = true;
@@ -1305,7 +1307,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
         else
         {
             ok = createStar(star, disposition, catalogNumber, starData, resourcePath, !isStar);
-            star->loadCategories(starData);
+            star->loadCategories(starData, resourcePath);
         }
         delete starDataValue;
 

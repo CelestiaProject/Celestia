@@ -25,8 +25,11 @@ static int category_getname(lua_State *l)
 {
     CelxLua celx(l);
 
+    bool i18n = false;
     UserCategory *c = *celx.getThis<UserCategory*>();
-    const char *n = c->name().c_str();
+    if (celx.isBoolean(2))
+        i18n = celx.getBoolean(2);
+    const char *n = c->name(i18n).c_str();
     return celx.push(n);
 }
 
@@ -42,7 +45,10 @@ static int category_createchild(lua_State *l)
         celx.doError(emsg);
         return 0;
     }
-    UserCategory *cc = c->createChild(n);
+    const char *d = "";
+    if (celx.isString(3))
+        d = celx.getString(3);
+    UserCategory *cc = c->createChild(n, d);
     if (cc == nullptr)
         return celx.push();
     return celx.pushClass(cc);

@@ -219,6 +219,8 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
     Tokenizer tokenizer(&in);
     Parser    parser(&tokenizer);
 
+    bindtextdomain(resourcePath.c_str(), resourcePath.c_str()); // domain name is the same as resource path
+
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
         string objType;
@@ -275,7 +277,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
 
         if (obj != nullptr && obj->load(objParams, resourcePath))
         {
-            obj->loadCategories(objParams);
+            obj->loadCategories(objParams, resourcePath);
             delete objParamsValue;
 
             // Ensure that the DSO array is large enough
