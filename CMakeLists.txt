@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-if(POLICY CMP0072)
-  cmake_policy(SET CMP0072 NEW)
+set(LEGACY_OPENGL_LIBS OFF CACHE BOOL "Use legacy OpenGL libraries instead of glvnd library (Default: off)")
+
+if (POLICY CMP0072)
+  if (LEGACY_OPENGL_LIBS)
+    cmake_policy(SET CMP0072 OLD)
+  else()
+    cmake_policy(SET CMP0072 NEW)
+  endif()
 endif()
 
 project(celestia)
