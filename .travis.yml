@@ -1,5 +1,10 @@
 dist: xenial
 language: cpp
+sudo: true
+
+git:
+  depth: 1
+  quiet: true
 
 notifications:
   email: false
@@ -7,7 +12,13 @@ notifications:
 os:
 - linux
 
+env:
+- LUA=5.1
+- LUA=5.2
+- LUA=5.3
+
 before_script:
+- sudo apt install -y liblua${LUA}-dev
 - qmake -qt=5 PREFIX=/opt/celestia -o Makefile celestia.pro
 
 script:
@@ -18,11 +29,9 @@ addons:
     packages:
     - libeigen3-dev
     - libglew-dev
-    - liblua5.3-dev
     - libtheora-dev
     - libjpeg-dev
     - libpng-dev
     - libglu1-mesa-dev
-    - libqt5opengl5-dev
     - qtbase5-dev
     - qtbase5-dev-tools
