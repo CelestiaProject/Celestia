@@ -32,6 +32,10 @@ extern "C" {
 #include <celutil/timer.h>
 #include <celengine/observer.h>
 
+#if LUA_VER < 0x050300
+int lua_isinteger(lua_State *L, int index);
+#endif
+
 class CelestiaCore;
 class View;
 

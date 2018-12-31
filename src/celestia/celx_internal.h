@@ -110,13 +110,11 @@ public:
         lua_pushboolean(m_lua, a);
         return 1;
     }
-#if LUA_VER >= 0x050300
     int push(int a)
     {
         lua_pushinteger(m_lua, a);
         return 1;
     }
-#endif
     int push(float a)
     {
         lua_pushnumber(m_lua, a);
@@ -213,9 +211,7 @@ public:
     /**** type check methods ****/
 
     bool isType(int index, int type) const;
-#if LUA_VER >= 0x050300
     bool isInteger(int n = 0) const { return lua_isinteger(m_lua, n); }
-#endif
     bool isNumber(int n = 0) const { return lua_isnumber(m_lua, n); }
     bool isBoolean(int n = 0) const { return lua_isboolean(m_lua, n); }
     bool isString(int n = 0) const { return lua_isstring(m_lua, n); }
@@ -224,9 +220,7 @@ public:
 
     /**** get methods ****/
 
-#if LUA_VER >= 0x050300
     int getInt(int n = 0) const { return lua_tointeger(m_lua, n); }
-#endif
     double getNumber(int n = 0) const { return lua_tonumber(m_lua, n); }
     bool getBoolean(int n = 0) const { return lua_toboolean(m_lua, n); }
     const char *getString(int n = 0) const { return lua_tostring(m_lua, n); }

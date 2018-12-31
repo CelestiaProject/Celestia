@@ -110,6 +110,19 @@ const char* MouseDownHandler  = "mousedown";
 const char* MouseUpHandler    = "mouseup";
 
 
+#if LUA_VER < 0x050300
+int lua_isinteger(lua_State *L, int index)
+{
+    if (lua_type(L, index) == LUA_TNUMBER)
+    {
+        if (lua_tonumber(L, index) == lua_tointeger(L, index))
+            return 1;
+    }
+    return 0;
+}
+#endif
+
+
 // Initialize various maps from named keywords to numeric flags used within celestia:
 void CelxLua::initRenderFlagMap()
 {
