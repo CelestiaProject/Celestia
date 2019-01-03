@@ -277,7 +277,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
 
         if (obj != nullptr && obj->load(objParams, resourcePath))
         {
-            obj->loadCategories(objParams, resourcePath);
+            obj->loadCategories(objParams, DataDisposition::Add, resourcePath);
             delete objParamsValue;
 
             // Ensure that the DSO array is large enough

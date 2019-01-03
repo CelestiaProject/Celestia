@@ -14,14 +14,24 @@
 #define _CELENGINE_PARSEOBJECT_H_
 
 #include <string>
-#include "astro.h"
-#include "body.h"
+#include <celephem/orbit.h>
+#include <celephem/rotation.h>
 #include "parser.h"
 
+class Body;
+class Star;
 class ReferenceFrame;
 class TwoVectorFrame;
 class Universe;
 class Selection;
+
+enum class DataDisposition
+{
+    Add,
+    Modify,
+    Replace
+};
+
 
 bool ParseDate(Hash* hash, const string& name, double& jd);
 

@@ -18,7 +18,7 @@
 #include <celengine/starname.h>
 #include <celengine/star.h>
 #include <celengine/staroctree.h>
-#include <celengine/parser.h>
+#include <celengine/parseobject.h>
 
 
 static const unsigned int MAX_STAR_NAMES = 10;
@@ -145,13 +145,6 @@ class StarDatabase
         MaxCatalog  = 3,
     };
 
-    enum StcDisposition
-    {
-        AddStar,
-        ReplaceStar,
-        ModifyStar,
-    };
-
     // Not exact, but any star with a catalog number greater than this is assumed to not be
     // a HIPPARCOS stars.
     static const uint32_t MAX_HIPPARCOS_NUMBER = 999999;
@@ -177,7 +170,7 @@ class StarDatabase
 
 private:
     bool createStar(Star* star,
-                    StcDisposition disposition,
+                    DataDisposition disposition,
                     uint32_t catalogNumber,
                     Hash* starData,
                     const std::string& path,
