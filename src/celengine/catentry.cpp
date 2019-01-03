@@ -1,5 +1,6 @@
 
 #include <celutil/util.h>
+#include "parseobject.h"
 #include "catentry.h"
 #include "category.h"
 
@@ -64,6 +65,18 @@ bool CatEntry::removeFromCategory(const std::string &s)
     return removeFromCategory(c);
 }
 
+bool CatEntry::clearCategories()
+{
+    bool ret = true;
+    while(m_cats != nullptr)
+    {
+        UserCategory *c = *(m_cats->begin());
+        if (!removeFromCategory(c))
+            ret = false;
+    }
+    return ret;
+}
+
 bool CatEntry::isInCategory(UserCategory *c) const
 {
     if (m_cats == nullptr)
@@ -79,15 +92,16 @@ bool CatEntry::isInCategory(const std::string &s) const
     return isInCategory(c);
 }
 
-bool CatEntry::loadCategories(Hash *hash, const std::string &domain)
+bool CatEntry::loadCategories(Hash *hash, DataDisposition disposition, const std::string &domain)
 {
+    if (disposition == DataDisposition::Replace)
+        clearCategories();
     std::string cn;
     if (hash->getString("Category", cn))
     {
         if (cn.empty())
             return false;
-        addToCategory(cn, true, domain);
-        return true;
+        return addToCategory(cn, true, domain);
     }
     Value *a = hash->getValue("Category");
     if (a == nullptr)
@@ -95,13 +109,12 @@ bool CatEntry::loadCategories(Hash *hash, const std::string &domain)
     ValueArray *v = a->getArray();
     if (v == nullptr)
         return false;
-    bool ret = false;
+    bool ret = true;
     for (auto it : *v)
     {
         cn = it->getString();
-        if (cn.empty())
-            ret = true;
-        addToCategory(cn, true, domain);
+        if (!addToCategory(cn, true, domain));
+            ret = false;
     }
     return ret;
 }

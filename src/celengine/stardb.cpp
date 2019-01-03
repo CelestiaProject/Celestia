@@ -753,7 +753,7 @@ static void stcError(const Tokenizer& tok,
 /*! Load star data from a property list into a star instance.
  */
 bool StarDatabase::createStar(Star* star,
-                              StcDisposition disposition,
+                              DataDisposition disposition,
                               uint32_t catalogNumber,
                               Hash* starData,
                               const string& path,
@@ -783,7 +783,7 @@ bool StarDatabase::createStar(Star* star,
         else
         {
             // Spectral type is required for new stars
-            if (disposition != ModifyStar)
+            if (disposition != DataDisposition::Modify)
             {
                 cerr << _("Invalid star: missing spectral type.\n");
                 return false;
@@ -792,7 +792,7 @@ bool StarDatabase::createStar(Star* star,
     }
 
     bool modifyExistingDetails = false;
-    if (disposition == ModifyStar)
+    if (disposition == DataDisposition::Modify)
     {
         StarDetails* existingDetails = star->getDetails();
 
@@ -987,7 +987,7 @@ bool StarDatabase::createStar(Star* star,
 
     if (!modifyExistingDetails)
         star->setDetails(details);
-    if (disposition != ModifyStar)
+    if (disposition != DataDisposition::Modify)
         star->setCatalogNumber(catalogNumber);
 
     // Compute the position in rectangular coordinates.  If a star has an
@@ -1002,7 +1002,7 @@ bool StarDatabase::createStar(Star* star,
         double dec = 0.0;
         double distance = 0.0;
 
-        if (disposition == ModifyStar)
+        if (disposition == DataDisposition::Modify)
         {
             Vector3f pos = star->getPosition();
 
@@ -1026,7 +1026,7 @@ bool StarDatabase::createStar(Star* star,
         }
         else
         {
-            if (disposition != ModifyStar)
+            if (disposition != DataDisposition::Modify)
             {
                 cerr << _("Invalid star: missing right ascension\n");
                 return false;
@@ -1039,7 +1039,7 @@ bool StarDatabase::createStar(Star* star,
         }
         else
         {
-            if (disposition != ModifyStar)
+            if (disposition != DataDisposition::Modify)
             {
                 cerr << _("Invalid star: missing declination.\n");
                 return false;
@@ -1052,7 +1052,7 @@ bool StarDatabase::createStar(Star* star,
         }
         else
         {
-            if (disposition != ModifyStar)
+            if (disposition != DataDisposition::Modify)
             {
                 cerr << _("Invalid star: missing distance.\n");
                 return false;
@@ -1084,7 +1084,7 @@ bool StarDatabase::createStar(Star* star,
         {
             if (!starData->getNumber("AppMag", magnitude))
             {
-                if (disposition != ModifyStar)
+                if (disposition != DataDisposition::Modify)
                 {
                     clog << _("Invalid star: missing magnitude.\n");
                     return false;
@@ -1164,22 +1164,22 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
 
         // Parse the disposition--either Add, Replace, or Modify. The disposition
         // may be omitted. The default value is Add.
-        StcDisposition disposition = AddStar;
+        DataDisposition disposition = DataDisposition::Add;
         if (tokenizer.getTokenType() == Tokenizer::TokenName)
         {
             if (tokenizer.getNameValue() == "Modify")
             {
-                disposition = ModifyStar;
+                disposition = DataDisposition::Modify;
                 tokenizer.nextToken();
             }
             else if (tokenizer.getNameValue() == "Replace")
             {
-                disposition = ReplaceStar;
+                disposition = DataDisposition::Replace;
                 tokenizer.nextToken();
             }
             else if (tokenizer.getNameValue() == "Add")
             {
-                disposition = AddStar;
+                disposition = DataDisposition::Add;
                 tokenizer.nextToken();
             }
         }
@@ -1230,7 +1230,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
 
         switch (disposition)
         {
-        case AddStar:
+        case DataDisposition::Add:
             // Automatically generate a catalog number for the star if one isn't
             // supplied.
             if (catalogNumber == Star::InvalidCatalogNumber)
@@ -1243,7 +1243,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
             }
             break;
 
-        case ReplaceStar:
+        case DataDisposition::Replace:
             if (catalogNumber == Star::InvalidCatalogNumber)
             {
                 if (!firstName.empty())
@@ -1262,7 +1262,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
             }
             break;
 
-        case ModifyStar:
+        case DataDisposition::Modify:
             // If no catalog number was specified, try looking up the star by name
             if (catalogNumber == Star::InvalidCatalogNumber && !firstName.empty())
             {
@@ -1300,14 +1300,14 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
             star = new Star();
 
         bool ok = false;
-        if (isNewStar && disposition == ModifyStar)
+        if (isNewStar && disposition == DataDisposition::Modify)
         {
             clog << "Modify requested for nonexistent star.\n";
         }
         else
         {
             ok = createStar(star, disposition, catalogNumber, starData, resourcePath, !isStar);
-            star->loadCategories(starData, resourcePath);
+            star->loadCategories(starData, disposition, resourcePath);
         }
         delete starDataValue;
 

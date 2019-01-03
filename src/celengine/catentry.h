@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_set>
 #include <celengine/selection.h>
-#include <celengine/parser.h>
+#include <celengine/parseobject.h>
 
 class UserCategory;
 
@@ -23,10 +23,11 @@ public:
     bool addToCategory(const std::string&, bool = false, const std::string &domain = "");
     bool removeFromCategory(UserCategory*);
     bool removeFromCategory(const std::string&);
+    bool clearCategories();
     bool isInCategory(UserCategory*) const;
     bool isInCategory(const std::string&) const;
     int categoriesCount() const { return m_cats == nullptr ? 0 : m_cats->size(); }
     CategorySet *getCategories() const { return m_cats; };
-    bool loadCategories(Hash*, const std::string &domain = "");
+    bool loadCategories(Hash*, DataDisposition = DataDisposition::Add, const std::string &domain = "");
     friend UserCategory;
 };
