@@ -9,7 +9,7 @@
 
 
 #include <QTranslator>
-#include "libintl.h"
+#include <celutil/util.h>
 
 class CelestiaQTranslator : public QTranslator
 {
