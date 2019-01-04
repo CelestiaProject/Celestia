@@ -2634,7 +2634,7 @@ void Renderer::draw(const Observer& observer,
 #ifdef __CELVEC__
         Point3f center = render_item.position * viewMat;
 #else
-        Vector3f center = render_item.position * viewMat;
+        Vector3f center = viewMat * render_item.position;
 #endif
 
         bool convex = true;
