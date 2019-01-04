@@ -113,7 +113,7 @@ bool CatEntry::loadCategories(Hash *hash, DataDisposition disposition, const std
     for (auto it : *v)
     {
         cn = it->getString();
-        if (!addToCategory(cn, true, domain));
+        if (!addToCategory(cn, true, domain))
             ret = false;
     }
     return ret;
