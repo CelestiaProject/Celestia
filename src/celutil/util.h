@@ -21,12 +21,24 @@
 #define _(string) gettext (string)
 #endif
 #ifndef gettext_noop
-#define  gettext_noop(string) string
+#define gettext_noop(string) string
 #endif
 
 #ifdef _WIN32
 
 #include "libintl.h"
+
+// POSIX provides an extension to printf family to reorder their arguments,
+// so GNU GetText provides own replacement for them on windows platform
+#ifdef fprintf
+#undef fprintf
+#endif
+#ifdef printf
+#undef printf
+#endif
+#ifdef sprintf
+#undef sprintf
+#endif
 
 #elif defined(TARGET_OS_MAC)
 
