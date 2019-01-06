@@ -35,3 +35,4 @@ addons:
     - libglu1-mesa-dev
     - qtbase5-dev
     - qtbase5-dev-tools
+    - libqt5opengl5-dev
