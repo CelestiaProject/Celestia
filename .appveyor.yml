@@ -1,0 +1,65 @@
+version: 1.7.0-dev-{build}
+
+only_commits:
+  files:
+  - src/
+
+pull_requests:
+  do_not_increment_build_number: true
+
+# Start builds on tags only (GitHub and BitBucket)
+skip_non_tags: true
+
+# Do not build feature branch with open Pull Requests
+skip_branch_with_pr: true
+
+# Build worker image (VM template)
+image: Visual Studio 2015
+
+# clone directory
+clone_folder: c:\projects\celestia
+
+# set clone depth
+clone_depth: 1
+
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+platform:
+- x86
+
+environment:
+  Qt5_DIR: 'C:\Qt\5.10\msvc2015'
+  PATH: '%Qt5_DIR%\bin;%PATH%'
+
+# scripts that run after cloning repository
+init:
+- call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %platform%
+
+install:
+- vcpkg install libpng:x86-windows
+- vcpkg install gettext:x86-windows
+- vcpkg install libjpeg-turbo:x86-windows
+- vcpkg install lua:x86-windows
+- vcpkg install fmt:x86-windows
+- vcpkg install glew:x86-windows
+- vcpkg install eigen3:x86-windows
+- cd c:\tools\vcpkg
+- vcpkg integrate install
+- cd %APPVEYOR_BUILD_FOLDER%
+
+build_script:
+- cmd: >-
+    mkdir build
+
+    cd build
+
+    cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+
+    cmake --build . --  /maxcpucount:4
+
+on_failure:
+- type "c:\projects\celestia\build\CMakeFiles\CMakeOutput.log"
+- type "c:\projects\celestia\build\CMakeFiles\CMakeError.log"
+
+# build cache to preserve files/folders between builds
+cache:
+- c:\tools\vcpkg\installed\
