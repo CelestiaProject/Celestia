@@ -29,19 +29,10 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type." FORCE)
 endif()
 
-#string(REPLACE " -fpermissive" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-#string(REPLACE "-O3" "-O2" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-add_compile_options(-fPIC)
-
-#temporary
-add_compile_options(-g)
-
-
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  set(APPLE true)
+if(NOT MSVC)
+  add_compile_options(-fPIC)
 endif()
 
 if(UNIX AND (NOT APPLE) AND (NOT CYGWIN))
@@ -50,7 +41,7 @@ endif()
 
 # Theora supported on Unix-like systems only, but not on OSX
 if(NOT _UNIX)
-  set(ENABLE_THEORA OFF CACHE)
+  set(ENABLE_THEORA OFF)
 endif()
 
 # _USE_MATH_DEFINES enables use of math constants like M_PI,
@@ -61,10 +52,18 @@ add_definitions(-D_USE_MATH_DEFINES)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
 
+# Use our cmake files
+list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 include(GNUInstallDirs)
 include(CheckIncludeFiles)
-include(cmake/rpath.cmake)
-include(cmake/cotire.cmake)
+include(rpath)
+if (NOT MSVC)
+  include(cotire)
+else()
+  macro(cotire _target)
+  endmacro()
+endif()
 
 #
 # NLS (Gettext) support
@@ -74,18 +73,27 @@ if(ENABLE_NLS)
   if(NOT GETTEXT_FOUND)
     message(WARNING "Gettext is not found, traslations won't be created.")
   endif()
-  include(cmake/FixGettext.cmake)
+  include(FixGettext)
+
+  include(FindIntl)
+  find_package(Intl REQUIRED)
+  include_directories(${Intl_INCLUDE_DIRS})
+  link_libraries(${Intl_LIBRARIES})
 endif()
 
 if(_UNIX)
   find_package(PkgConfig)
 endif()
 
-if(ENABLE_THEORA)
+if(_UNIX AND ENABLE_THEORA)
   pkg_search_module(THEORA theora REQUIRED)
   include_directories(${THEORA_INCLUDE_DIRS})
   link_libraries(${THEORA_LIBRARIES})
   add_definitions(-DTHEORA)
+endif()
+
+if (WIN32)
+  link_libraries("vfw32" "comctl32" "winmm")
 endif()
 
 find_package(OpenGL REQUIRED)
@@ -94,7 +102,7 @@ link_libraries(${OPENGL_LIBRARIES})
 
 find_package(GLEW)
 if(GLEW_FOUND)
-  #link_libraries(GLEW::GLEW)
+  link_libraries(GLEW::GLEW)
   include_directories(${GLEW_INCLUDE_DIRS})
   link_libraries(${GLEW_LIBRARIES})
   find_package(OpenGL)
@@ -203,14 +211,27 @@ if(ENABLE_SPICE)
   add_definitions(-DUSE_SPICE)
 endif()
 
+if(WIN32)
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+  add_definitions(-DNOMINMAX -DWIN32_LEAN_AND_MEAN)
+  add_definitions(-DWINVER=0x0601 -D_WIN32_WINNT=0x0601)
+endif()
+
 set(DATADIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
 set(FULL_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${PROJECT_NAME}")
 
-execute_process(
-  COMMAND git log --pretty=format:"%h" -1
-  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-  OUTPUT_VARIABLE GIT_COMMIT
-)
+if (NOT GIT_COMMIT)
+  find_program(GIT_FOUND git)
+  if (GIT_FOUND)
+    execute_process(
+      COMMAND git log --pretty=format:"%h" -1
+      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+      OUTPUT_VARIABLE GIT_COMMIT
+    )
+  else()
+    set(GIT_COMMIT "unknown")
+  endif()
+endif()
 
 add_definitions(
   -DVERSION="${VERSION}"
