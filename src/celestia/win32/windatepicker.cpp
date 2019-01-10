@@ -11,7 +11,6 @@
 
 #include <windows.h>
 #include <commctrl.h>
-#include "celutil/basictypes.h"
 #include "celengine/astro.h"
 #include "celutil/util.h"
 #include "celutil/winutil.h"

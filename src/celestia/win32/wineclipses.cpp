@@ -221,10 +221,10 @@ struct EclipseFinderSortInfo
     int         subItem;
     string      planete;
     string      sattelite;
-    int32       Year;
-    int8        Month;
-    int8        Day;
-    int8        Hour;
+    int32_t     Year;
+    int8_t      Month;
+    int8_t      Day;
+    int8_t      Hour;
 };
 
 
