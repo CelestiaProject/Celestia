@@ -38,7 +38,11 @@ set(WIN32_HEADERS
   winviewoptsdlg.h
 )
 
-add_executable(celestia-win WIN32 ${WIN32_SOURCES})
+add_library(resources OBJECT res/celestia.rc)
+target_include_directories(resources PRIVATE "${CMAKE_SOURCE_DIR}/src/celestia/win32/res")
+set(RESOURCES $<TARGET_OBJECTS:resources>)
+
+add_executable(celestia-win WIN32 ${WIN32_SOURCES} ${RESOURCES})
 cotire(celestia-win)
 target_link_libraries(celestia-win ${CELESTIA_LIBS})
 install(TARGETS celestia-win RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
