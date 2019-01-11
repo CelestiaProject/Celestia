@@ -54,7 +54,7 @@ class BigFix
  private:
     bool isNegative() const
     {
-        return hi > std::numeric_limits<int64_t>::max();
+        return hi > static_cast<uint64_t>(std::numeric_limits<int64_t>::max());
     }
 
     static void negate128(uint64_t& hi, uint64_t& lo);
