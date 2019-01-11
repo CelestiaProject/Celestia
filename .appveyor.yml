@@ -55,6 +55,8 @@ build_script:
 
     cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 
+    type CMakeCache.txt
+
     cmake --build . --  /maxcpucount:4 /nologo
 
 on_failure:
