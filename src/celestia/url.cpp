@@ -595,7 +595,7 @@ void Url::initVersion3(std::map<std::string, std::string>& params,
     {
         if (version == 4)
         {
-            sscanf(params["rf"].c_str(), "%lu", &renderFlags);
+            sscanf(params["rf"].c_str(), "%I64u", &renderFlags);
         }
         else
         {
