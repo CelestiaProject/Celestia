@@ -23,6 +23,8 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <mmsystem.h>
+#include <commdlg.h>
+#include <shellapi.h>
 
 #include <celmath/mathlib.h>
 #include <celutil/debug.h>
