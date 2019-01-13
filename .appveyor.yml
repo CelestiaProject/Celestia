@@ -9,7 +9,7 @@ pull_requests:
   do_not_increment_build_number: true
 
 # Start builds on tags only (GitHub and BitBucket)
-skip_non_tags: true
+skip_non_tags: false
 
 # Do not build feature branch with open Pull Requests
 skip_branch_with_pr: true
@@ -55,11 +55,12 @@ build_script:
 
     cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 
-    cmake --build . --  /maxcpucount:4 /nologo
+    cmake --build . --config Release -- /maxcpucount:4 /nologo
 
 on_failure:
 - type "c:\projects\celestia\build\CMakeFiles\CMakeOutput.log"
 - type "c:\projects\celestia\build\CMakeFiles\CMakeError.log"
+- type "c:\projects\celestia\build\CMakeCache.txt"
 
 # build cache to preserve files/folders between builds
 cache: c:\tools\vcpkg\installed\
