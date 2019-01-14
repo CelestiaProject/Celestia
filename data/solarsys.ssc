@@ -66,7 +66,7 @@
 "Mercury" "Sol"
 {
 	Texture "mercury.*"
-	Color	[ 1.0 0.794 0.580 ]
+	Color    [ 1.0 0.794 0.580 ]
 	Radius 2440
 
 	CustomOrbit "vsop87-mercury"
@@ -94,15 +94,15 @@
 	#    MeridianAngle 329.548
 	# }
 
-	GeomAlbedo		0.141380
-	BondAlbedo		0.088
+	GeomAlbedo      0.141380
+	BondAlbedo      0.088
 }
 
 "Venus" "Sol"
 {
 	Texture "venussurface.*"
 	# BumpMap "venusbump.*"
-	Color	[ 1.0 0.907 0.823 ]
+	Color    [ 1.0 0.907 0.823 ]
 	HazeColor [ 0.5 0.35 0.2 ]
 	HazeDensity 0.35
 	Radius 6052
@@ -143,9 +143,9 @@
 	    MeridianAngle  19.80
 	}
 
-	GeomAlbedo		0.672604
-	BondAlbedo		0.760
-	TempDiscrepancy	507.5
+	GeomAlbedo      0.672604
+	BondAlbedo      0.760
+	TempDiscrepancy 507.5
 }
 
 "Earth" "Sol"
@@ -154,7 +154,7 @@
 	NightTexture "earthnight.*"
 	
 	# SpecularTexture "earth-spec.*"
-	Color	[ 0.856 0.910 1.0 ]
+	Color    [ 0.856 0.910 1.0 ]
 	SpecularColor [ 0.8 0.8 0.85 ]
 	SpecularPower 25.0
 	HazeColor [ 1 1 1 ]
@@ -208,9 +208,9 @@
 	#    MeridianAngle 280.147
 	# }
 
-	GeomAlbedo		0.449576
-	BondAlbedo		0.306
-	TempDiscrepancy	33.5
+	GeomAlbedo      0.449576
+	BondAlbedo      0.306
+	TempDiscrepancy 33.5
 }
 
 
@@ -251,8 +251,8 @@
 
 	LunarLambert 1.0
 
-	GeomAlbedo		0.136
-	BondAlbedo		0.11
+	GeomAlbedo      0.136
+	BondAlbedo      0.11
 }
 
 
@@ -263,7 +263,7 @@
 	BumpMap "marsbump.*"
 	BumpHeight 2.5
 	
-	Color	[ 1.0 0.576 0.297 ]
+	Color    [ 1.0 0.576 0.297 ]
 	HazeColor [ 1 1 1 ]
 	HazeDensity 0.45
 	Radius 3396 # equatorial
@@ -311,9 +311,9 @@
 	#    MeridianAngle 176.630
 	# }
 
-	GeomAlbedo		0.174821
-	BondAlbedo		0.290
-	TempDiscrepancy	2
+	GeomAlbedo      0.174821
+	BondAlbedo      0.290
+	TempDiscrepancy 2
 }
 
 
@@ -386,7 +386,7 @@
 "Jupiter" "Sol"
 {
 	Texture "jupiter.*"
-	Color	[ 1.0 0.908 0.720 ]
+	Color    [ 1.0 0.908 0.720 ]
 	HazeColor [ 0.4 0.45 0.5 ]
 	HazeDensity 0.3
 
@@ -432,9 +432,9 @@
 	# MeridianAngle	305.38   # correct System III prime meridian
 	}
 
-	GeomAlbedo		0.510901
-	BondAlbedo		0.503
-	TempDiscrepancy	62.5 	# for 1 bar level
+	GeomAlbedo      0.510901
+	BondAlbedo      0.503
+	TempDiscrepancy 62.5     # for 1 bar level
 }
 
 
@@ -636,7 +636,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 "Saturn" "Sol"
 {
 	Texture "saturn.*"
-	Color	[ 1.0 0.735 0.486 ]
+	Color    [ 1.0 0.735 0.486 ]
 	HazeColor [ 0.0 0.0 1 ]
 	HazeDensity 0.25
 	Radius 60268 # equatorial
@@ -672,9 +672,9 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	    MeridianAngle  358.93       # correct System III prime meridian
 	}
 
-	GeomAlbedo		0.499740
-	BondAlbedo		0.342
-	TempDiscrepancy	52.5 	# for 1 bar level
+	GeomAlbedo      0.499740
+	BondAlbedo      0.342
+	TempDiscrepancy 52.5      # for 1 bar level
 
 	Rings {
 		Inner   74500  # includes some ringlets inside edge of C ring at 74660
@@ -864,9 +864,9 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	#    MeridianAngle   2.82
 	# }
 
-	GeomAlbedo		1.375
-	BondAlbedo		0.81
-	TempDiscrepancy	15.35
+	GeomAlbedo      1.375
+	BondAlbedo      0.81
+	TempDiscrepancy 15.35
 }
 
 "Tethys:Saturn III" "Sol/Saturn"
@@ -1120,7 +1120,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 "Uranus" "Sol"
 {
 	Texture "uranus.*"
-	Color	[ 0.606 0.948 1.0 ]
+	Color    [ 0.606 0.948 1.0 ]
 	HazeColor [ 0.5 0.8 1.0 ]
 	HazeDensity 0.2
 	Radius 25559 # equatorial
@@ -1157,9 +1157,9 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	    MeridianAngle 331.13  # correct System III prime meridian
 	}
 
-	GeomAlbedo		0.437118
-	BondAlbedo		0.300
-	TempDiscrepancy	17.8 	# for 1 bar level
+	GeomAlbedo      0.437118
+	BondAlbedo      0.300
+	TempDiscrepancy 17.8     # for 1 bar level
 
 	Rings {
 		Inner  41837
@@ -1363,7 +1363,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 "Neptune" "Sol"
 {
 	Texture "neptune.*"
-	Color	[ 0.523 0.848 1.0 ]
+	Color    [ 0.523 0.848 1.0 ]
 	HazeColor [ 0.6 1 0.75 ]
 	HazeDensity 0.35
 	Radius 24766 # equatorial
@@ -1399,9 +1399,9 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	    MeridianAngle  228.66 # correct System III prime meridian
 	}
 
-	GeomAlbedo		0.409338
-	BondAlbedo		0.290
-	TempDiscrepancy	25.1 	# for 1 bar level
+	GeomAlbedo      0.409338
+	BondAlbedo      0.290
+	TempDiscrepancy 25.1     # for 1 bar level
 
 	Rings {
 		Inner  53150
