@@ -354,7 +354,7 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
     // if absolute directory notation for ImageDirectory used,
     // don't prepend the current add-on path.
     string directory = imageDirectory + "/";
-    if (directory.substr(0,1) != "/" && directory.substr(1,1) !=":")
+    if (directory[0] != '/' && directory[1] != ':')
     {
         directory = path + "/" + directory;
     }
@@ -407,10 +407,8 @@ VirtualTexture* LoadVirtualTexture(const string& filename)
 
     // Strip off every character including and after the final slash to get
     // the pathname.
-    string path = ".";
     string::size_type pos = filename.rfind('/');
-    if (pos != string::npos)
-        path = string(filename, 0, pos);
+    string path = pos != string::npos ? filename.substr(0, pos) : ".";
 
     return LoadVirtualTexture(in, path);
 }

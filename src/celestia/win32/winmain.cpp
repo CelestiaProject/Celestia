@@ -3989,7 +3989,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 {
                     string urlString(urlChars, cd->cbData);
 
-                    if (!urlString.substr(0,4).compare("cel:"))
+                    if (!urlString.compare(0, 6, "cel://"))
                     {
                         appCore->flash(_("Loading URL"));
                         appCore->goToUrl(urlString);

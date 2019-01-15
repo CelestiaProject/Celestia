@@ -55,8 +55,8 @@ namespace astro
     class Date
     {
     public:
-        Date();
-        Date(int Y, int M, int D);
+        Date() = default;
+        Date(int Y, int M, int D) : year(Y), month(M), day(D) {};
         Date(double);
 
         enum Format
@@ -74,15 +74,15 @@ namespace astro
 
 
     public:
-        int year;
-        int month;
-        int day;
-        int hour;
-        int minute;
-        int wday;           // week day, 0 Sunday to 6 Saturday
-        int utc_offset;     // offset from utc in seconds
-        std::string tzname; // timezone name
-        double seconds;
+        int year{ 0 };
+        int month{ 0 };
+        int day{ 0 };
+        int hour{ 0 };
+        int minute{ 0 };
+        int wday{ 0 };               // week day, 0 Sunday to 6 Saturday
+        int utc_offset{ 0 };         // offset from utc in seconds
+        std::string tzname{ "UTC" }; // timezone name
+        double seconds{ 0 };
     };
 
     bool parseDate(const std::string&, Date&);
@@ -248,4 +248,3 @@ namespace astro
 std::ostream& operator<<(std::ostream& s, const astro::Date&);
 
 #endif // _CELENGINE_ASTRO_H_
-

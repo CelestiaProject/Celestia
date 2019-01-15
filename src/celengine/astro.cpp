@@ -345,33 +345,6 @@ Vector3d astro::equatorialToGalactic(const Vector3d& v)
 }
 
 
-
-astro::Date::Date()
-{
-    year = 0;
-    month = 0;
-    day = 0;
-    hour = 0;
-    minute = 0;
-    seconds = 0.0;
-    wday = 0;
-    utc_offset = 0;
-    tzname = "UTC";
-}
-
-astro::Date::Date(int Y, int M, int D)
-{
-    year = Y;
-    month = M;
-    day = D;
-    hour = 0;
-    minute = 0;
-    seconds = 0.0;
-    wday = 0;
-    utc_offset = 0;
-    tzname = "UTC";
-}
-
 astro::Date::Date(double jd)
 {
     auto a = (int64_t) floor(jd + 0.5);
@@ -406,8 +379,6 @@ astro::Date::Date(double jd)
     minute = (int) dminute;
 
     seconds = (dminute - minute) * 60;
-    utc_offset = 0;
-    tzname = "UTC";
 }
 
 const char* astro::Date::toCStr(Format format) const

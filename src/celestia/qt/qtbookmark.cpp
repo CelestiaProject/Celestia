@@ -829,9 +829,9 @@ AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
     view->show();
     createInCombo->setView(view);
 
-    timeSourceCombo->addItem(_("Current simulation time"),       (int) Url::UseUrlTime);
-    timeSourceCombo->addItem(_("Simulation time at activation"), (int) Url::UseSimulationTime);
-    timeSourceCombo->addItem(_("System time at activation"),     (int) Url::UseSystemTime);
+    timeSourceCombo->addItem(_("Current simulation time"),       (int) Url::TimeSource::UseUrlTime);
+    timeSourceCombo->addItem(_("Simulation time at activation"), (int) Url::TimeSource::UseSimulationTime);
+    timeSourceCombo->addItem(_("System time at activation"),     (int) Url::TimeSource::UseSystemTime);
     timeSourceCombo->setCurrentIndex(m_lastTimeSourceIndex);
 
     // Initialize to first index
@@ -853,7 +853,7 @@ AddBookmarkDialog::accept()
 
         QVariant itemData = timeSourceCombo->itemData(timeSourceCombo->currentIndex());
         Url::TimeSource timeSource = (Url::TimeSource) itemData.toInt();
-        Q_ASSERT(timeSource >= 0 && timeSource < Url::TimeSourceCount);
+        Q_ASSERT(int(timeSource) >= 0 && timeSource < Url::TimeSource::TimeSourceCount);
 
         // Get the URL string
         Url url(m_appState, Url::CurrentVersion, timeSource);

@@ -20,7 +20,7 @@
 #include <string>
 #include <map>
 #include "celestiacore.h"
-#include "celengine/astro.h"
+#include <celengine/astro.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -33,7 +33,9 @@ class Url
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    enum UrlType
+    using ParamsMap = std::map<std::string, std::string>;
+
+    enum class UrlType
     {
         Absolute = 0,
         Relative = 1,
@@ -49,7 +51,7 @@ public:
      *  - UseSystemTime means that the simulation time will be set to whatever the
      *    current system time is when the URL is activated.
      */
-    enum TimeSource
+    enum class TimeSource
     {
         UseUrlTime        = 0,
         UseSimulationTime = 1,
@@ -60,33 +62,37 @@ public:
     Url() = default;
 
     // parses str
-    Url(std::string  str, CelestiaCore *core);
+    Url(std::string str, CelestiaCore *core);
     // current url of appCore
-    Url(CelestiaCore* appCore, UrlType type = Absolute);
+    Url(CelestiaCore* appCore, UrlType type = UrlType::Absolute);
     Url(const CelestiaState& appState,
-        unsigned int _version = CurrentVersion,
-        TimeSource _timeSource = UseUrlTime);
+        unsigned _version = CurrentVersion,
+        TimeSource _timeSource = TimeSource::UseUrlTime);
     ~Url() = default;
 
     std::string getAsString() const;
+    std::string toString() const;
     std::string getName() const;
     void goTo();
 
-    static const unsigned int CurrentVersion;
+    constexpr static unsigned CurrentVersion{ 4 };
 
     static std::string decodeString(const std::string& str);
     static std::string encodeString(const std::string& str);
 
 private:
-    void initVersion2(std::map<std::string, std::string>& params, const std::string& timeString);
-    void initVersion3(std::map<std::string, std::string>& params, const std::string& timeString);
+    void initVersion2(ParamsMap& params, const std::string& timeString);
+    void initVersion3(ParamsMap& params, const std::string& timeString);
+
+    void initDatePos(ParamsMap& params, const std::string& timeString);
+    void initSimCommon(ParamsMap& params);
+    void initRenderFlags(ParamsMap& params);
 
 private:
     std::string urlStr;
     std::string name;
     std::string modeStr;
-    std::string body1;
-    std::string body2;
+    std::array<std::string, 2> bodies;
     std::string selectedStr;
     std::string trackedStr;
 
@@ -97,23 +103,21 @@ private:
     Selection tracked;
 
     ObserverFrame::CoordinateSystem mode{ ObserverFrame::Universal };
-    int nbBodies{ 0 };
-    float fieldOfView{ 0.0f };
-    float timeScale{ 0.0f };
-    uint64_t renderFlags{ 0 };
-    int labelMode{ 0 };
-    bool lightTimeDelay{ false };
-    bool pauseState{ false };
+    int        nbBodies{ -1 };
+    float      fieldOfView{ 0.0f };
+    float      timeScale{ 0.0f };
+    uint64_t   renderFlags{ 0 };
+    int        labelMode{ 0 };
+    bool       lightTimeDelay{ false };
+    bool       pauseState{ false };
+    UrlType    type{ UrlType::Absolute };
+    TimeSource timeSource{ TimeSource::UseUrlTime };
+    unsigned   version{ CurrentVersion };
 
-    std::map<std::string, std::string> parseUrlParams(const std::string& url) const;
+    ParamsMap parseUrlParams(const std::string& url) const;
     std::string getCoordSysName(ObserverFrame::CoordinateSystem mode) const;
     std::string getBodyShortName(const std::string& body) const;
     std::string getEncodedObjectName(const Selection& selection);
-
-    bool fromString{ false };
-    UrlType type{ Absolute };
-    TimeSource timeSource{ UseUrlTime };
-    unsigned int version{ 4 };
 
     void evalName();
 
@@ -144,8 +148,8 @@ public:
 
     CelestiaState() = default;
 
-    bool loadState(std::map<std::string, std::string>& params);
-    void saveState(std::map<std::string, std::string>& params);
+    bool loadState(Url::ParamsMap& params);
+    void saveState(Url::ParamsMap& params);
     void captureState(CelestiaCore* appCore);
 
     // Observer frame, position, and orientation. For multiview, there needs
@@ -160,13 +164,13 @@ public:
 
     // Time parameters
     double tdb{ 0.0 };
-    float timeScale{ 1.0f };
-    bool pauseState{ false };
-    bool lightTimeDelay{ false };
+    float  timeScale{ 1.0f };
+    bool   pauseState{ false };
+    bool   lightTimeDelay{ false };
 
-    string selectedBodyName;
+    std::string selectedBodyName;
 
-    int labelMode{ 0 };
+    int      labelMode{ 0 };
     uint64_t renderFlags{ 0 };
 };
 

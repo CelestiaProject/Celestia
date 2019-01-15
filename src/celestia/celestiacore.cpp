@@ -2096,12 +2096,12 @@ void CelestiaCore::setAltAzimuthMode(bool enable)
 
 void CelestiaCore::start(double t)
 {
-    if (config->initScriptFile != "")
+    if (!config->initScriptFile.empty())
     {
         // using the KdeAlerter in runScript would create an infinite loop,
         // break it here by resetting config->initScriptFile:
         string filename = config->initScriptFile;
-        config->initScriptFile = "";
+        config->initScriptFile.clear();
         runScript(filename);
     }
 
@@ -2111,16 +2111,16 @@ void CelestiaCore::start(double t)
 
     sysTime = timer->getTime();
 
-    if (startURL != "")
+    if (!startURL.empty())
         goToUrl(startURL);
 }
 
-void CelestiaCore::setStartURL(string url)
+void CelestiaCore::setStartURL(string& url)
 {
-    if (!url.substr(0,4).compare("cel:"))
+    if (url.compare(0, 6, "cel://") == 0)
     {
         startURL = url;
-        config->initScriptFile = "";
+        config->initScriptFile.clear();
     }
     else
     {
