@@ -2229,7 +2229,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
                 if (props.nLights == 0)
                 {
-                    source += "0.0f\n";
+                    source += "0.0f;\n";
                 }
                 else
                 {
