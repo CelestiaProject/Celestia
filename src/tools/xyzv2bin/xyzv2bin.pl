@@ -67,7 +67,7 @@ while($line = <INFILE>)
 seek OUTFILE, 0, 0;
 
 # print the header once again to save actual number or records
-$header = pack "Z8vslq", ($MAGIC, $byte_order, $digits, $reserved, $count);
+$header = pack "Z8sslq", ($MAGIC, $byte_order, $digits, $reserved, $count);
 print OUTFILE $header;
 
 close OUTFILE;
