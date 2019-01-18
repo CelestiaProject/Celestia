@@ -196,6 +196,7 @@ ENGINE_SOURCES = \
     src/celengine/meshmanager.cpp \
     src/celengine/modelgeometry.cpp \
     src/celengine/multitexture.cpp \
+    src/celengine/name.cpp \
     src/celengine/nebula.cpp \
     src/celengine/catentry.cpp \
     src/celengine/observer.cpp \
