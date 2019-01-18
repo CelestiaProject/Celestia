@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 struct XYZVBinaryHeader
 {
     char magic[8];
