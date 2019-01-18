@@ -122,7 +122,7 @@ public:
     }
     int push(double a)
     {
-        lua_pushvalue(m_lua, a);
+        lua_pushnumber(m_lua, a);
         return 1;
     }
     int push(const char *a)
@@ -211,18 +211,18 @@ public:
     /**** type check methods ****/
 
     bool isType(int index, int type) const;
-    bool isInteger(int n = 0) const { return lua_isinteger(m_lua, n); }
-    bool isNumber(int n = 0) const { return lua_isnumber(m_lua, n); }
-    bool isBoolean(int n = 0) const { return lua_isboolean(m_lua, n); }
-    bool isString(int n = 0) const { return lua_isstring(m_lua, n); }
-    bool isUserData(int n = 0) const { return lua_isuserdata(m_lua, n); }
+    bool isInteger(int n = 0) const { return lua_isinteger(m_lua, n) == 1; }
+    bool isNumber(int n = 0) const { return lua_isnumber(m_lua, n) == 1; }
+    bool isBoolean(int n = 0) const { return lua_isboolean(m_lua, n) == 1; }
+    bool isString(int n = 0) const { return lua_isstring(m_lua, n) == 1; }
+    bool isUserData(int n = 0) const { return lua_isuserdata(m_lua, n) == 1; }
     bool isValid(int) const;
 
     /**** get methods ****/
 
-    int getInt(int n = 0) const { return lua_tointeger(m_lua, n); }
+    lua_Integer getInt(int n = 0) const { return lua_tointeger(m_lua, n); }
     double getNumber(int n = 0) const { return lua_tonumber(m_lua, n); }
-    bool getBoolean(int n = 0) const { return lua_toboolean(m_lua, n); }
+    bool getBoolean(int n = 0) const { return lua_toboolean(m_lua, n) == 1; }
     const char *getString(int n = 0) const { return lua_tostring(m_lua, n); }
     template<typename T> T *getUserData(int n = 0) const
     {
