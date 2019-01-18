@@ -30,7 +30,7 @@ msgstr "La Machine pneumatique"
 
 #: data/constellations.cpp:3
 msgid "Apus"
-msgstr "L'Oiseau de Paradis"
+msgstr "L’Oiseau de Paradis"
 
 #: data/constellations.cpp:4
 msgid "Aquarius"
@@ -38,11 +38,11 @@ msgstr "Le Verseau"
 
 #: data/constellations.cpp:5
 msgid "Aquila"
-msgstr "L'Aigle"
+msgstr "L’Aigle"
 
 #: data/constellations.cpp:6
 msgid "Ara"
-msgstr "L'Autel"
+msgstr "L’Autel"
 
 #: data/constellations.cpp:7
 msgid "Aries"
@@ -158,11 +158,11 @@ msgstr "Le Dragon"
 
 #: data/constellations.cpp:35
 msgid "Equuleus"
-msgstr "Le petit Cheval"
+msgstr "Le Petit Cheval"
 
 #: data/constellations.cpp:36
 msgid "Eridanus"
-msgstr "L'Éridan"
+msgstr "L’Éridan"
 
 #: data/constellations.cpp:37
 msgid "Fornax"
@@ -182,19 +182,19 @@ msgstr "Hercule"
 
 #: data/constellations.cpp:41
 msgid "Horologium"
-msgstr "L'Horloge"
+msgstr "L’Horloge"
 
 #: data/constellations.cpp:42
 msgid "Hydra"
-msgstr "L'Hydre femelle"
+msgstr "L’Hydre femelle"
 
 #: data/constellations.cpp:43
 msgid "Hydrus"
-msgstr "L'Hydre mâle"
+msgstr "L’Hydre mâle"
 
 #: data/constellations.cpp:44
 msgid "Indus"
-msgstr "L'Oiseau indien"
+msgstr "L’Oiseau indien"
 
 #: data/constellations.cpp:45
 msgid "Lacerta"
@@ -206,7 +206,7 @@ msgstr "Le Lion"
 
 #: data/constellations.cpp:47
 msgid "Leo Minor"
-msgstr "Le petit Lyon"
+msgstr "Le Petit Lyon"
 
 #: data/constellations.cpp:48
 msgid "Lepus"
@@ -250,7 +250,7 @@ msgstr "La Règle"
 
 #: data/constellations.cpp:58
 msgid "Octans"
-msgstr "L'Octant"
+msgstr "L’Octant"
 
 #: data/constellations.cpp:59
 msgid "Ophiuchus"
@@ -318,15 +318,15 @@ msgstr "Le Sculpteur"
 
 #: data/constellations.cpp:75
 msgid "Scutum"
-msgstr "L'Écu"
+msgstr "L’Écu"
 
 #: data/constellations.cpp:76
 msgid "Serpens Caput"
-msgstr "La tête du Serpent"
+msgstr "La Tête du Serpent"
 
 #: data/constellations.cpp:77
 msgid "Serpens Cauda"
-msgstr "La queue du Serpent"
+msgstr "La Queue du Serpent"
 
 #: data/constellations.cpp:78
 msgid "Sextans"
