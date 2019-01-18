@@ -3408,7 +3408,7 @@ msgstr "Réglage"
 #: ../src/celestia/kde/kdepreferencesdialog.cpp:393
 msgid "Local Time is only supported for dates between 1902 and 2037.\n"
 msgstr ""
-"L'heure locale n’est supportée que pour les dates comprises entre 1902 et "
+"L’heure locale n’est supportée que pour les dates comprises entre 1902 et "
 "2037.\n"
 
 #: ../src/celestia/kde/kdepreferencesdialog.cpp:438
