@@ -17,7 +17,7 @@
 #include <celengine/deepskyobj.h>
 
 
-class DSONameDatabase: public NameDatabase<DeepSkyObject>
+class DSONameDatabase: public NameDatabase
 {
  public:
     DSONameDatabase() {};

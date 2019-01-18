@@ -17,7 +17,7 @@
 #include <celengine/star.h>
 
 
-class StarNameDatabase: public NameDatabase<Star>
+class StarNameDatabase: public NameDatabase
 {
  public:
     StarNameDatabase() {};

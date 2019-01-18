@@ -69,6 +69,7 @@ set(CELENGINE_SOURCES
   modelgeometry.h
   multitexture.cpp
   multitexture.h
+  name.cpp
   name.h
   nebula.cpp
   nebula.h
