@@ -16,6 +16,15 @@
 #endif /* TARGET_OS_MAC */
 #endif /* _WIN32 */
 
+#ifndef __BYTE_ORDER__
+# ifdef WIN32
+// FIXME: we assume that windows runs on LE hw only
+# define __BYTE_ORDER__ 1234
+# else
+# error "Unknown system or compiler"
+# endif
+#endif
+
 /* Use the system byteswap.h definitions if we have them */
 #ifdef HAVE_BYTESWAP_H
 #include <byteswap.h>

@@ -15,6 +15,7 @@
 #include "xyzvbinary.h"
 #include <celengine/astro.h>
 #include <celmath/mathlib.h>
+#include <celutil/bytes.h>
 #include <celutil/util.h> // intl.h
 #include <cmath>
 #include <string>
@@ -822,15 +823,6 @@ template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const string& fi
 
 /* Load a binary xyzv sampled trajectory file.
  */
-#ifndef __BYTE_ORDER__
-# ifdef WIN32
-// FIXME: we assume that windows runs on LE hw only
-# define __BYTE_ORDER__ 1234
-# else
-# error "Unknown system or compiler"
-# endif
-#endif
-
 template <typename T> SampledOrbitXYZV<T>*
 LoadSampledOrbitXYZVBinary(const string& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
