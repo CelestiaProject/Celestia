@@ -5961,7 +5961,7 @@ msgstr "Critères de recherche d’étoiles"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:127
 msgid "Maximum Stars Displayed in List"
-msgstr "Nombre maximum d'étoiles à afficher"
+msgstr "Nombre maximum d’étoiles à afficher"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:128
 msgid "Tour Guide"
