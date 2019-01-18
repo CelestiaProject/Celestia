@@ -9,7 +9,7 @@
 **Copyright (c) 2001-2017, Celestia Development Team**  
 **Celestia web site: https://celestia.space**  
 **Celestia WikiBook: https://en.wikibooks.org/wiki/Celestia**  
-**Celestia forums: http://celestia.space/forum/**  
+**Celestia forums: https://celestia.space/forum/**  
 ## License
 
 This program is free software; you can redistribute it and/or modify it under
