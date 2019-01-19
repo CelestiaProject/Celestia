@@ -169,7 +169,7 @@ public:
         CelxLua celx(l);
 
         T *c = celx.getUserData<T>(CelxLua::localIndex(1));
-        int i = celx.getNumber(CelxLua::localIndex(2));
+        int i = static_cast<int>(celx.getNumber(CelxLua::localIndex(2)));
         if (i < 0)
             return 0;
         T ret = c[i];

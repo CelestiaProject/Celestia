@@ -106,9 +106,9 @@ LRESULT CALLBACK _HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                     SendMessage(hWnd, WM_SETFONT, (WPARAM)hFont, FALSE);
                     InvalidateRect(hWnd, NULL, FALSE);
                     SetCapture(hWnd);
-                    HCURSOR hCursor = LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND));
+                    HCURSOR hCursor = LoadCursor(NULL, IDC_HAND);
                     if (NULL == hCursor)
-                        hCursor = LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW));
+                        hCursor = LoadCursor(NULL, IDC_ARROW);
                     SetCursor(hCursor);
                 }
             }

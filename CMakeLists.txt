@@ -32,7 +32,14 @@ endif()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 if(NOT MSVC)
+  # Qt requires -fPIC, so build all code with it
   add_compile_options(-fPIC)
+else()
+  # Disabled warnings
+  # C4244: implicit type conversion to a smaller type
+  # C4503: type truncation
+  # C4800: forcing value to bool
+  add_compile_options("/wd4244" "/wd4503" "/wd4800")
 endif()
 
 if(UNIX AND (NOT APPLE) AND (NOT CYGWIN))
