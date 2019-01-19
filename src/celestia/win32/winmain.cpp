@@ -78,7 +78,7 @@ static int currentScreenMode = 0;
 static int newScreenMode = 0;
 
 // The last fullscreen mode set; saved and restored from the registry
-static int lastFullScreenMode = 0;
+static unsigned int  lastFullScreenMode = 0;
 // A fullscreen mode guaranteed to work
 static int fallbackFullScreenMode = 0;
 static RECT windowRect;
@@ -2430,7 +2430,18 @@ static bool SetRegistryInt(HKEY key, LPCTSTR value, int intVal)
                              0,
                              REG_DWORD,
                              reinterpret_cast<CONST BYTE*>(&intVal),
-                             sizeof(DWORD));
+                             sizeof(intVal));
+    return err == ERROR_SUCCESS;
+}
+
+static bool SetRegistryInt64(HKEY key, LPCTSTR value, uint64_t intVal)
+{
+    LONG err = RegSetValueEx(key,
+                             value,
+                             0,
+                             REG_DWORD,
+                             reinterpret_cast<CONST BYTE*>(&intVal),
+                             sizeof(intVal));
     return err == ERROR_SUCCESS;
 }
 
@@ -2562,9 +2573,9 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "Height", prefs.winHeight);
     SetRegistryInt(key, "XPos", prefs.winX);
     SetRegistryInt(key, "YPos", prefs.winY);
-    SetRegistryInt(key, "RenderFlags", prefs.renderFlags);
+    SetRegistryInt64(key, "RenderFlags", prefs.renderFlags);
     SetRegistryInt(key, "LabelMode", prefs.labelMode);
-    SetRegistryInt(key, "LocationFilter", prefs.locationFilter);
+    SetRegistryInt64(key, "LocationFilter", prefs.locationFilter);
     SetRegistryInt(key, "OrbitMask", prefs.orbitMask);
     SetRegistryBin(key, "VisualMagnitude", &prefs.visualMagnitude, sizeof(prefs.visualMagnitude));
     SetRegistryBin(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
@@ -3393,7 +3404,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (appCore->getConfig() != NULL)
     {
         if (!compareIgnoringCase(appCore->getConfig()->cursor, "arrow"))
-            hDefaultCursor = LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW));
+            hDefaultCursor = LoadCursor(NULL, IDC_ARROW);
         else if (!compareIgnoringCase(appCore->getConfig()->cursor, "inverting crosshair"))
             hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR));
         else

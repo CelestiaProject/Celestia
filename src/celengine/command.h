@@ -132,6 +132,8 @@ class CommandGotoLongLat : public InstantaneousCommand
 class CommandGotoLocation : public InstantaneousCommand
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+
     CommandGotoLocation(double t,
 #ifdef __CELVEC__
                         const Point3d& translation, const Quatf& rotation);
@@ -411,6 +413,8 @@ class CommandSetPosition : public InstantaneousCommand
 class CommandSetOrientation : public InstantaneousCommand
 {
  public:
+     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+
 #ifdef __CELVEC__
     CommandSetOrientation(const Vec3f&, float);
 #else
