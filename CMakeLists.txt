@@ -88,6 +88,11 @@ if(ENABLE_NLS)
   link_libraries(${Intl_LIBRARIES})
 endif()
 
+if(ENABLE_SPICE)
+  include(FindCspice)
+  find_package(Cspice REQUIRED)
+endif()
+
 if(_UNIX)
   find_package(PkgConfig)
 endif()
