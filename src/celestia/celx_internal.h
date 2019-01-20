@@ -18,6 +18,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <celutil/color.h>
+#include <celengine/parser.h>
 #include "celx.h"
 
 class CelestiaCore;
@@ -215,6 +216,7 @@ public:
     bool isNumber(int n = 0) const { return lua_isnumber(m_lua, n) == 1; }
     bool isBoolean(int n = 0) const { return lua_isboolean(m_lua, n) == 1; }
     bool isString(int n = 0) const { return lua_isstring(m_lua, n) == 1; }
+    bool isTable(int n = 0) const { return lua_istable(m_lua, n) == 1; }
     bool isUserData(int n = 0) const { return lua_isuserdata(m_lua, n) == 1; }
     bool isValid(int) const;
 
@@ -224,6 +226,7 @@ public:
     double getNumber(int n = 0) const { return lua_tonumber(m_lua, n); }
     bool getBoolean(int n = 0) const { return lua_toboolean(m_lua, n) == 1; }
     const char *getString(int n = 0) const { return lua_tostring(m_lua, n); }
+    Value *getValue(int n = 0);
     template<typename T> T *getUserData(int n = 0) const
     {
         return static_cast<T*>(lua_touserdata(m_lua, n));
