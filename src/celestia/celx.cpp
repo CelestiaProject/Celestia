@@ -1798,6 +1798,60 @@ bool CelxLua::isType(int index, int type) const
     return Celx_istype(m_lua, index, type);
 }
 
+Value *CelxLua::getValue(int index)
+{
+    Value *v = nullptr;
+    if (isInteger(index))
+        v = new Value((double)getInt(index));
+    else if (isNumber(index))
+        v = new Value(getNumber(index));
+    else if (isBoolean(index))
+        v = new Value(getBoolean(index));
+    else if (isString(index))
+        v = new Value(getString(index));
+    else if (isTable(index))
+    {
+        ::Array *array = new ::Array;
+        Hash *hash = new Hash;
+        push();
+        while(lua_next(m_lua, index) != 0)
+        {
+            if (isInteger(-2))
+            {
+                if (hash != nullptr)
+                {
+                    delete hash;
+                    hash = nullptr;
+                }
+                if (array != nullptr)
+                {
+                    array->push_back(getValue(-1));
+                }
+            }
+            else if (isString(-2))
+            {
+                if (array != nullptr)
+                {
+                    delete array;
+                    array = nullptr;
+                }
+                if (hash != nullptr)
+                {
+                    hash->addValue(getString(-2), *getValue(-1));
+                }
+            }
+            pop(1);
+            if (array == nullptr && hash == nullptr)
+                break;
+        }
+        pop(1);
+        if (hash != nullptr)
+            v = new Value(hash);
+        else if (array != nullptr)
+            v = new Value(array);
+    }
+    return v;
+}
 
 void CelxLua::setClass(int id)
 {
