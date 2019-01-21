@@ -180,7 +180,6 @@ ENGINE_SOURCES = \
     src/celengine/deepskyobj.cpp \
     src/celengine/dispmap.cpp \
     src/celengine/dsodb.cpp \
-    src/celengine/dsoname.cpp \
     src/celengine/dsooctree.cpp \
     src/celengine/execution.cpp \
     src/celengine/frame.cpp \
@@ -218,7 +217,6 @@ ENGINE_SOURCES = \
     src/celengine/star.cpp \
     src/celengine/starcolors.cpp \
     src/celengine/stardb.cpp \
-    src/celengine/starname.cpp \
     src/celengine/staroctree.cpp \
     src/celengine/stellarclass.cpp \
     src/celengine/texmanager.cpp \
@@ -250,7 +248,6 @@ ENGINE_HEADERS = \
     src/celengine/deepskyobj.h \
     src/celengine/dispmap.h \
     src/celengine/dsodb.h \
-    src/celengine/dsoname.h \
     src/celengine/dsooctree.h \
     src/celengine/execenv.h \
     src/celengine/execution.h \
@@ -293,7 +290,6 @@ ENGINE_HEADERS = \
     src/celengine/star.h \
     src/celengine/starcolors.h \
     src/celengine/stardb.h \
-    src/celengine/starname.h \
     src/celengine/staroctree.h \
     src/celengine/stellarclass.h \
     src/celengine/surface.h \

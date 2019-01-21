@@ -34,8 +34,6 @@ set(CELENGINE_SOURCES
   dispmap.h
   dsodb.cpp
   dsodb.h
-  dsoname.cpp
-  dsoname.h
   dsooctree.cpp
   dsooctree.h
   execenv.h
@@ -120,8 +118,6 @@ set(CELENGINE_SOURCES
   star.h
   stardb.cpp
   stardb.h
-  starname.cpp
-  starname.h
   staroctree.cpp
   staroctree.h
   stellarclass.cpp
