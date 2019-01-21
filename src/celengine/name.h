@@ -50,6 +50,9 @@ class NameDatabase
 
     std::vector<std::string> getCompletion(const std::string& name) const;
 
+    uint32_t findCatalogNumberByName(const std::string&) const;
+    bool loadNames(std::istream&);
+
  protected:
     NameIndex   nameIndex;
     NumberIndex numberIndex;

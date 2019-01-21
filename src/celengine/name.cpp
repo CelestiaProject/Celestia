@@ -1,6 +1,8 @@
 
 #include "name.h"
 
+#include <celengine/constellation.h>
+
 uint32_t NameDatabase::getNameCount() const
 {
     return nameIndex.size();
@@ -95,4 +97,136 @@ std::vector<std::string> NameDatabase::getCompletion(const std::string& name) co
         }
     }
     return completion;
+}
+
+//
+// Author: Toti <root@totibox>, (C) 2005
+//
+
+
+uint32_t NameDatabase::findCatalogNumberByName(const std::string& name) const
+{
+    std::string priName   = name;
+    std::string altName;
+
+    // See if the name is a Bayer or Flamsteed designation
+    std::string::size_type pos  = name.find(' ');
+    if (pos != 0 && pos != std::string::npos && pos < name.length() - 1)
+    {
+        std::string prefix(name, 0, pos);
+        std::string conName(name, pos + 1, std::string::npos);
+        Constellation* con  = Constellation::getConstellation(conName);
+        if (con != nullptr)
+        {
+            char digit  = ' ';
+            int len     = prefix.length();
+
+            // If the first character of the prefix is a letter
+            // and the last character is a digit, we may have
+            // something like 'Alpha2 Cen' . . . Extract the digit
+            // before trying to match a Greek letter.
+            if (len > 2 && isalpha(prefix[0]) && isdigit(prefix[len - 1]))
+            {
+                --len;
+                digit   = prefix[len];
+            }
+
+            // We have a valid constellation as the last part
+            // of the name.  Next, we see if the first part of
+            // the name is a greek letter.
+            const std::string& letter = Greek::canonicalAbbreviation(std::string(prefix, 0, len));
+            if (letter != "")
+            {
+                // Matched . . . this is a Bayer designation
+                if (digit == ' ')
+                {
+                    priName  = letter + ' ' + con->getAbbreviation();
+                    // If 'let con' doesn't match, try using
+                    // 'let1 con' instead.
+                    altName  = letter + '1' + ' ' + con->getAbbreviation();
+                }
+                else
+                {
+                    priName  = letter + digit + ' ' + con->getAbbreviation();
+                }
+            }
+            else
+            {
+                // Something other than a Bayer designation
+                priName  = prefix + ' ' + con->getAbbreviation();
+            }
+        }
+    }
+
+    uint32_t catalogNumber   = getCatalogNumberByName(priName);
+    if (catalogNumber != InvalidCatalogNumber)
+        return catalogNumber;
+
+    priName        += " A";  // try by appending an A
+    catalogNumber   = getCatalogNumberByName(priName);
+    if (catalogNumber != InvalidCatalogNumber)
+        return catalogNumber;
+
+    // If the first search failed, try using the alternate name
+    if (altName.length() != 0)
+    {
+        catalogNumber   = getCatalogNumberByName(altName);
+        if (catalogNumber == InvalidCatalogNumber)
+        {
+            altName        += " A";
+            catalogNumber   = getCatalogNumberByName(altName);
+        }   // Intentional fallthrough.
+    }
+
+    return catalogNumber;
+}
+
+
+bool NameDatabase::loadNames(std::istream& in)
+{
+    bool failed = false;
+    std::string s;
+
+    while (!failed)
+    {
+        uint32_t catalogNumber = InvalidCatalogNumber;
+
+        in >> catalogNumber;
+        if (in.eof())
+            break;
+        if (in.bad())
+        {
+            failed = true;
+            break;
+        }
+
+        // in.get(); // skip a space (or colon);
+
+        std::string name;
+        getline(in, name);
+        if (in.bad())
+        {
+            failed = true;
+            break;
+        }
+
+        // Iterate through the string for names delimited
+        // by ':', and insert them into the star database. Note that
+        // db->add() will skip empty names.
+        std::string::size_type startPos = 0;
+        while (startPos != std::string::npos)
+        {
+            ++startPos;
+            std::string::size_type next = name.find(':', startPos);
+            std::string::size_type length = std::string::npos;
+
+            if (next != std::string::npos)
+                length = next - startPos;
+
+            add(catalogNumber, name.substr(startPos, length));
+            startPos = next;
+        }
+    }
+
+    return !failed;
 }
