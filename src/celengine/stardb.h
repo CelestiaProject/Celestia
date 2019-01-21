@@ -15,7 +15,7 @@
 #include <vector>
 #include <map>
 #include <celengine/constellation.h>
-#include <celengine/starname.h>
+#include <celengine/name.h>
 #include <celengine/star.h>
 #include <celengine/staroctree.h>
 #include <celengine/parseobject.h>
@@ -131,8 +131,8 @@ class StarDatabase
     void getStarName(const Star& star, char* nameBuffer, unsigned int bufferSize, bool i18n = false) const;
     std::string getStarNameList(const Star&, const unsigned int maxNames = MAX_STAR_NAMES) const;
 
-    StarNameDatabase* getNameDatabase() const;
-    void setNameDatabase(StarNameDatabase*);
+    NameDatabase* getNameDatabase() const;
+    void setNameDatabase(NameDatabase*);
 
     bool load(std::istream&, const std::string& resourcePath);
     bool loadBinary(std::istream&);
@@ -183,7 +183,7 @@ private:
     int nStars{ 0 };
 
     Star*             stars{ nullptr };
-    StarNameDatabase* namesDB{ nullptr };
+    NameDatabase* namesDB{ nullptr };
     Star**            catalogNumberIndex{ nullptr };
     StarOctree*       octreeRoot{ nullptr };
     uint32_t            nextAutoCatalogNumber{ 0xfffffffe };

@@ -118,7 +118,7 @@ string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) cons
 
     if (namesDB != nullptr)
     {
-        DSONameDatabase::NumberIndex::const_iterator iter   = namesDB->getFirstNameIter(catalogNumber);
+        NameDatabase::NumberIndex::const_iterator iter   = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
             if (i18n && iter->second != _(iter->second.c_str()))
@@ -138,7 +138,7 @@ string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsig
 
     unsigned int catalogNumber   = dso->getCatalogNumber();
 
-    DSONameDatabase::NumberIndex::const_iterator iter  = namesDB->getFirstNameIter(catalogNumber);
+    NameDatabase::NumberIndex::const_iterator iter  = namesDB->getFirstNameIter(catalogNumber);
 
     unsigned int count = 0;
     while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
@@ -146,7 +146,7 @@ string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsig
         if (count != 0)
             dsoNames   += " / ";
 
-        dsoNames   += iter->second;
+        dsoNames   += ReplaceGreekLetterAbbr(iter->second);
         ++iter;
         ++count;
     }
@@ -202,13 +202,13 @@ void DSODatabase::findCloseDSOs(DSOHandler&     dsoHandler,
 }
 
 
-DSONameDatabase* DSODatabase::getNameDatabase() const
+NameDatabase* DSODatabase::getNameDatabase() const
 {
     return namesDB;
 }
 
 
-void DSODatabase::setNameDatabase(DSONameDatabase* _namesDB)
+void DSODatabase::setNameDatabase(NameDatabase* _namesDB)
 {
     namesDB    = _namesDB;
 }

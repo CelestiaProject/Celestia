@@ -15,7 +15,7 @@
 
 #include <iostream>
 #include <vector>
-#include <celengine/dsoname.h>
+#include <celengine/name.h>
 #include <celengine/deepskyobj.h>
 #include <celengine/dsooctree.h>
 #include <celengine/parser.h>
@@ -56,8 +56,8 @@ class DSODatabase
     std::string getDSOName    (const DeepSkyObject* const &, bool i18n = false) const;
     std::string getDSONameList(const DeepSkyObject* const &, const unsigned int maxNames = MAX_DSO_NAMES) const;
 
-    DSONameDatabase* getNameDatabase() const;
-    void setNameDatabase(DSONameDatabase*);
+    NameDatabase* getNameDatabase() const;
+    void setNameDatabase(NameDatabase*);
 
     bool load(std::istream&, const std::string& resourcePath);
     bool loadBinary(std::istream&);
@@ -75,7 +75,7 @@ private:
     int              nDSOs{ 0 };
     int              capacity{ 0 };
     DeepSkyObject**  DSOs{ nullptr };
-    DSONameDatabase* namesDB{ nullptr };
+    NameDatabase* namesDB{ nullptr };
     DeepSkyObject**  catalogNumberIndex{ nullptr };
     DSOOctree*       octreeRoot{ nullptr };
     uint32_t         nextAutoCatalogNumber{ 0xfffffffe };

@@ -4098,7 +4098,7 @@ bool CelestiaCore::initSimulation(const string& configFileName,
 
     /***** Load the deep sky catalogs *****/
 
-    DSONameDatabase* dsoNameDB  = new DSONameDatabase;
+    NameDatabase* dsoNameDB  = new NameDatabase;
     DSODatabase*     dsoDB      = new DSODatabase;
     dsoDB->setNameDatabase(dsoNameDB);
 
@@ -4369,9 +4369,10 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         return false;
     }
 
-    StarNameDatabase* starNameDB = StarNameDatabase::readNames(starNamesFile);
-    if (starNameDB == nullptr)
+    NameDatabase* starNameDB = new NameDatabase;
+    if (!starNameDB->loadNames(starNamesFile))
     {
+        delete starNameDB;
         cerr << _("Error reading star names file\n");
         return false;
     }

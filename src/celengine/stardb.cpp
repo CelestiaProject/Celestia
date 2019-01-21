@@ -221,7 +221,7 @@ uint32_t StarDatabase::findCatalogNumberByName(const string& name) const
     if (namesDB != nullptr)
     {
         catalogNumber = namesDB->findCatalogNumberByName(name);
-        if (catalogNumber != Star::InvalidCatalogNumber)
+        if (catalogNumber != NameDatabase::InvalidCatalogNumber)
             return catalogNumber;
     }
 
@@ -373,7 +373,7 @@ string StarDatabase::getStarName(const Star& star, bool i18n) const
 
     if (namesDB != nullptr)
     {
-        StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
+        NameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
             if (i18n && iter->second != _(iter->second.c_str()))
@@ -403,7 +403,7 @@ void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int 
 
     if (namesDB != nullptr)
     {
-        StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
+        NameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
             if (i18n && iter->second != _(iter->second.c_str()))
@@ -425,7 +425,7 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
 {
     string starNames;
     unsigned int catalogNumber = star.getCatalogNumber();
-    StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
+    NameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
 
     unsigned int count = 0;
     while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
@@ -528,13 +528,13 @@ void StarDatabase::findCloseStars(StarHandler& starHandler,
 }
 
 
-StarNameDatabase* StarDatabase::getNameDatabase() const
+NameDatabase* StarDatabase::getNameDatabase() const
 {
     return namesDB;
 }
 
 
-void StarDatabase::setNameDatabase(StarNameDatabase* _namesDB)
+void StarDatabase::setNameDatabase(NameDatabase* _namesDB)
 {
     namesDB    = _namesDB;
 }
