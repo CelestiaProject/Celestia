@@ -41,11 +41,12 @@ if(NOT MSVC)
   add_compile_options(-fPIC)
 else()
   # Disabled warnings
-  # C4244: implicit type conversion to a smaller type
-  # C4503: type truncation
+  # C4244, C4267, C4503: implicit type conversion to a smaller type
   # C4786: long names in templates
   # C4800: forcing value to bool
-  add_compile_options("/wd4244" "/wd4503" "/wd4786" "/wd4800")
+  # Additional options
+  # bigobj: generate more object sections than allowed by default
+  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/bigobj")
 endif()
 
 if(UNIX AND (NOT APPLE) AND (NOT CYGWIN))
