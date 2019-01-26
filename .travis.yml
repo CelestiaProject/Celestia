@@ -19,9 +19,11 @@ env:
 
 before_script:
 - sudo apt install -y liblua${LUA}-dev
-- qmake -qt=5 PREFIX=/opt/celestia -o Makefile celestia.pro
+- mkdir build
+- cd build
 
 script:
+- cmake ..
 - make -j $(nproc || echo 4)
 
 addons:
