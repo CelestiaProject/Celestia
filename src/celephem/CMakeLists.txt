@@ -46,7 +46,7 @@ endif()
 
 add_library(celephem STATIC ${CELEPHEM_SOURCES})
 if(ENABLE_SPICE)
-  target_link_libraries(celephem CSPICE::CSPICE CSPICE::CSUPPORT)
+  target_link_libraries(celephem CSPICE::CSPICE)
 endif()
 cotire(celephem)
 #[[

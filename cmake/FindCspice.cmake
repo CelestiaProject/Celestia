@@ -31,12 +31,6 @@ find_library(CSPICE_LIBRARY
              DOC "cspice libraries")
 mark_as_advanced(CSPICE_LIBRARY)
 
-# Find CSPICE's csupport libraries
-find_library(CSPICE_CSUPPORT_LIBRARY
-             NAMES "csupport" "libcsupport" "csupport.a"
-             DOC "cspice's csupport libraries")
-mark_as_advanced(CSPICE_CSUPPORT_LIBRARY)
-
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(CSPICE
                                   FOUND_VAR CSPICE_FOUND
                                   REQUIRED_VARS CSPICE_INCLUDE_DIR CSPICE_LIBRARY
@@ -56,15 +50,5 @@ if(CSPICE_FOUND)
       INTERFACE_INCLUDE_DIRECTORIES "${CSPICE_INCLUDE_DIRS}")
     set_target_properties(CSPICE::CSPICE PROPERTIES
       IMPORTED_LOCATION "${CSPICE_LIBRARY}")
-  endif()
-
-  if(NOT TARGET CSPICE::CSUPPORT)
-    add_library(CSPICE::CSUPPORT UNKNOWN IMPORTED)
-    if(CSPICE_CSUPPORT_LIBRARY)
-      set_target_properties(CSPICE::CSUPPORT PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${CSPICE_INCLUDE_DIRS}")
-      set_target_properties(CSPICE::CSUPPORT PROPERTIES
-        IMPORTED_LOCATION "${CSPICE_CSUPPORT_LIBRARY}")
-    endif()
   endif()
 endif()
