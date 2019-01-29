@@ -1,13 +1,13 @@
 ***************************************************************************
-*                             Celestia Fork                               *
+*                             Celestia                                    *
 *                                                                         *
 *  A real-time space simulation that lets you experience our universe in  *
 *  three dimensions.                                                      *
 *                                                                         *
-*  Copyright (c) 2001-2018, Celestia Development Team                     *
+*  Copyright (c) 2001-2019, Celestia Development Team                     *
 *                                                                         *
 *-------------------------------------------------------------------------*
-*  Celestia web site: http://www.shatters.net/celestia/                   *
+*  Celestia web site: https://celestia.space                              *
 *                                                                         *
 *  Celestia documentation:                                                *
 *    http://celestiamotherlode.net/catalog/documentation.html             *
@@ -20,7 +20,6 @@
 CONTENTS
 --------
   License
-  Installing in Unix and Linux
   Getting Started
   Mouse, Keyboard & Joystick Controls
   Star & Solar System Browser
@@ -30,7 +29,7 @@ CONTENTS
   Celestia Resources
   Contributions
   Acknowledgements
- 
+
 
 LICENSE
 -------
@@ -49,35 +48,6 @@ COPYING).  If not, request a copy from:
   Boston, MA  02111-1307
   USA
 
-
-INSTALLING IN UNIX AND LINUX
-----------------------------
-Currently only QT5 based backend is available. To build it you need QT5
-developer libraries.
-
-On Debian based systems the following packages should be installed:
- * qtbase5-dev-tools
- * qtbase5-dev
- * libqt5opengl5-dev
- * qtchooser
- * libglu1-mesa-dev
- * libpng-dev
- * libjpeg-dev
- * libtheora-dev
- * Either one of liblua5.3-dev, liblua5.2-dev or liblua5.1-dev
-
-Optional packages are libeigen3-dev and libglew-dev.
-
-Then do the following actions in Celestia's source directory:
-mkdir build && cd build
-qmake -qt=5 PREFIX=/opt/celestia -o Makefile ../celestia.pro
-make
-sudo make install
-
-You can speedup build passing option -jN to make where N is a number of
-your CPU cores.
-
-An executable binary will be installed to /opt/celestia/bin/Celestia_QT.
 
 GETTING STARTED
 ---------------
@@ -104,7 +74,7 @@ zoom through space toward the selected star.  If you press G again, you'll
 approach the star even closer.
 
 Press H to select our Sun, and then G to go back to our Sun.  Right click on
-the sun to bring up a menu of planets and other objects in the solar system. 
+the sun to bring up a menu of planets and other objects in the solar system.
 After selecting a planet from the menu, hit G again to travel toward it.  Once
 there, hold down the right mouse button and drag to orbit the planet.
 
@@ -114,7 +84,7 @@ the Tour Guide window.  Choose a destination from the list, click the Goto
 button, and you're off.
 
 That covers the very basics.  For a more in-depth look at Celestia and the
-controls available to you, download the "Celestia User's Guide" (written by 
+controls available to you, download the "Celestia User's Guide" (written by
 Frank Gregorio), available in several languages, from:
   http://celestiamotherlode.net/catalog/documentation.html
 This web page also includes links to the Celestia README file translated into
@@ -130,7 +100,7 @@ list.
 STAR & SOLAR SYSTEM BROWSER
 -------------------------------------------
 The Navigation menu contains 'Solar System Browser' and 'Star Browser'
-options.  
+options.
 
 STAR BROWSER
 
@@ -146,10 +116,10 @@ To buttons to tour the stars visible from any night sky in the galaxy.
 
 SOLAR SYSTEM BROWSER
 
-The Solar System Browser displays a window with a tree view of all the objects 
+The Solar System Browser displays a window with a tree view of all the objects
 in the nearest solar system (if there is one within a light year of your current
-position.)  Clicking on the name of any object in the window will select it.  
-You can then use the Center or Go To buttons to display that object in the main 
+position.)  Clicking on the name of any object in the window will select it.
+You can then use the Center or Go To buttons to display that object in the main
 Celestia window.
 
 
@@ -158,24 +128,24 @@ SELECTING OBJECTS BY NAME
 Celestia provides several ways to select an object by name...
   1. Choose 'Select Object' from the Navigation menu, type in the object
      name, and click OK.
- 
+
   2. Press Enter, type in the entire object name, and press Enter again.
- 
+
   3. Press Enter, type in the first few characters of the object name,
      press the Tab key to move through the displayed listing until the
      object is highlighted, then press Enter again.
- 
+
 You can use common names, Bayer designations or catalog numbers for stars.
-Celestia currently supports the HIP, HD and SAO catalogs. Catalog numbers must 
+Celestia currently supports the HIP, HD and SAO catalogs. Catalog numbers must
 be entered with a space between the prefix and the catalog number.
 
 
 KNOWN ISSUES
 ------------
 For up-to-the-minute answers to some common problems encountered when running
-Celestia, please view either the FAQ in the Help menu or take a look at the 
-"Celestia User's FAQ" located on the Celestia User's Forum: 
-http://www.shatters.net/forum/
+Celestia, please view either the FAQ in the Help menu or take a look at the
+"Celestia User's FAQ" located on the Celestia User's Forum:
+https://celestia.space/forum/
 
 
 USER MODIFIABLE ELEMENTS
@@ -200,7 +170,7 @@ favorite text editing program.
 CELESTIA RESOURCES
 ------------------
 Celestia Web Site:
-  https://github.com/CelestiaFork/celestia
+  https://celestia.space
 
 Celestia User Forums:
   https://celestia.space/forum/
@@ -208,8 +178,8 @@ Celestia User Forums:
 Selden's List of Resources for Celestia :
   http://www.lepp.cornell.edu/~seb/celestia/
 
-Celestia WikiBook: 
-  http://en.wikibooks.org/wiki/Celestia      
+Celestia WikiBook:
+  http://en.wikibooks.org/wiki/Celestia
 
 Celestial Matters Website and Forums:
   http://www.celestialmatters.org/
@@ -218,14 +188,17 @@ Celestial Matters Website and Forums:
 Celestia Motherlode:
   http://www.celestiamotherlode.net/
 
-Celestia Fork Source Code (SourceForge.net):
-  https://github.com/CelestiaFork/celestia
+Celestia Cource Repository:
+  https://github.com/CelestiaProject/Celestia
+
+Celestia Binary Repository:
+  https://bintray.com/celestia
 
 Celestia Bug Tracking (SourceForge.net):
-  https://github.com/CelestiaFork/celestia/issues
+  https://github.com/CelestiaProject/celestia/issues
 
 Celestia Feature Requests (SourceForge.net):
-  https://github.com/CelestiaFork/celestia/issues
+  https://github.com/CelestiaProject/celestia/issues
 
 
 CONTRIBUTIONS
@@ -241,7 +214,7 @@ Authors
   Hank Ramsey         <hramsey@users.sourceforge.net>
   Grant Hutchison     <grant.celestia@xemaps.com>
   Pat Suwalski        <pat@suwalski.net>
-  Toti 
+  Toti
   Da Woon Jung        <dirkpitt2050@users.sf.net>
   Vincent Giangiulio  <vince.gian@free.fr>
   Andrew Tribick
@@ -270,28 +243,26 @@ Scientific Data Base
 --------------------
 
 # Grant Hutchison
-    Supplied the correct orientations for the major planets, their moons, and a 
+    Supplied the correct orientations for the major planets, their moons, and a
     number of asteroids and also worked on these data files:
-	Solarsys.ssc, nearstars.stc, extrasolar.ssc, extrasolar.stc, earth_locs.ssc
+        Solarsys.ssc, nearstars.stc, extrasolar.ssc, extrasolar.stc, earth_locs.ssc
 
 # Fridger Schrempp
     Complete NGC/IC galaxy database + local group galaxies (galaxies.dsc)
-    
-	Data base on globular clusters (globulars.dsc)
-    
-	Data base on visual and spectroscopic binaries (visualbins.stc, 
-    
-	spectbins.stc)
-    
-	World-capitals.ssc
+        Data base on globular clusters (globulars.dsc)
+
+        Data base on visual and spectroscopic binaries (visualbins.stc,
+        spectbins.stc)
+
+        World-capitals.ssc
 
     Asterisms.dat
 
 # Andrew Tribick
     Significant update of the star.dat base based on new HIP Reduction of the
-    Raw data, Floor van Leeuwen, 2007. 
-    
-	CHARM2 stellar radii (charm2.stc)
+    Raw data, Floor van Leeuwen, 2007.
+
+       CHARM2 stellar radii (charm2.stc)
 
 
 Texture maps
@@ -303,59 +274,50 @@ Texture maps
   in gaps. The model of the Galileo spacecraft is also from David Seal's site
   (though it was converted from Inventor to 3DS format.)
 
-# The Mars, Neptune, and Uranus textures and Mars bump maps are all from James 
-  Hastings-Trew's collection. His maps may be found here: 
-    http://gw.marketingden.com/planets/planets.html
+# The Mars, Neptune, and Uranus textures and Mars bump maps are all from James
+  Hastings-Trew's collection.
 
 # Grant Hutchison
 
-   Saturn's rings were built by Grant Hutchison from Cassini imaging, with
-   transparency information derived from stellar transit data obtained from:
-     http://pds-rings.arc.nasa.gov/ringocc/ringocc.html
+   Saturn's rings were built by Grant Hutchison from Cassini imaging.
 
-   The Eros map is a shaded relief generated from the NEAR laser rangefinder 
-   shape model at:
-     http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape
+   The Eros map is a shaded relief generated from the NEAR laser rangefinder.
 
 # Jens Meyer
 
    Dione and Rhea are USGS maps colored and modified by Jens Meyer.
 
-   The Moon map is based on data from PDS Map-A-Planet at
-   http://pdsmaps.wr.usgs.gov/maps.html with colors from Mark Robinson at
-   http://www.earth.northwestern.edu/research/robinson/MOON/clem_color.html.
+   The Moon map is based on data from PDS Map-A-Planet at with colors from
+   Mark Robinson.
 
-# Fridger Schrempp 
+# Fridger Schrempp
 
    'Available data' Pluto and Charon textures using maps created by Marc Buie
-   at Lowell Observatory.  Buie's maps were generated from photometric data 
+   at Lowell Observatory.  Buie's maps were generated from photometric data
    gathered during six years of mutual occultations of Pluto and Charon.
 
-   Titan's cloud texture in natural colors and its surface map at near-infrared 
-   wavelength. They are based on resources available from the imaging site 
-   (Ciclops) of the Cassini mission  
-   (http://ciclops.lpl.arizona.edu/index.php)
+   Titan's cloud texture in natural colors and its surface map at near-infrared
+   wavelength. They are based on resources available from the imaging site
+   (Ciclops) of the Cassini mission http://ciclops.org/
 
    The Phoebe base texture was created from the cylindrical map published by
-   the Cassini imaging team 
+   the Cassini imaging team
    (http://photojournal.jpl.nasa.gov/catalog/PIA07775)
-  
-   The Tethys textures are based on the Oct 2008 Ciclops map 
+
+   The Tethys textures are based on the Oct 2008 Ciclops map
    (http://photojournal.jpl.nasa.gov/catalog/PIA11116)
-  
+
    The Iapetus texture was created from the Oct 2008 Ciclops map
    (http://photojournal.jpl.nasa.gov/catalog/PIA11116)
 
    The Lunar topography and bump maps, using Clementine laser altimeter data,
-   merged in the polar regions with topographic data  from Clementine 750 nm 
-   oblique and nadir images 
-   (ftp://ftpflag.wr.usgs.gov/dist/pigpen/moon/usgs/topo/global/)
+   merged in the polar regions with topographic data  from Clementine 750 nm
+   oblique and nadir images.
 
    The Mercury map was created from a combination of Mariner 10 imaging
-   with recent MESSENGER WAC images from the first two flybys, as collected 
-   and reprojected by Steve Albers: 
-   See http://laps.noaa.gov/albers/sos/sos.html.
-    
+   with recent MESSENGER WAC images from the first two flybys, as collected
+   and reprojected by Steve Albers.
+
 # Phil Stooke
 
    Proteus, Janus, Prometheus and Epimetheus maps are from Phil Stooke.
@@ -363,20 +325,17 @@ Texture maps
    The Ida and Gaspra photomosaic maps are by Phil Stooke.
 
 # Venus's clouds and the textures for Ganymede, Callisto and Saturn are from
-  Bj�rn J�nsson. His site at http://www.mmedia.is/~bjj/ is an excellent
-  resource for solar system rendering.
+  Björn Jónsson.
 
 # Venus's surface is a copyright-free NASA image, prepared from Magellan radar
-  data. The original is available at 
+  data. The original is available at
     http://www.solarviews.com/cap/venus/venmap.htm
 
 # The Earth texture was created by NASA using data from the MODIS instrument
-  aboard the Terra satellite.  Further information is available from:
-    http://earthobservatory.nasa.gov/Newsroom/BlueMarble/
+  aboard the Terra satellite.
 
-# Steve Albers 
-   The Io and Europa maps are by Steve Albers. His planetary maps are at:
-   http://laps.noaa.gov/albers/sos/sos.html
+# Steve Albers
+   The Io and Europa maps are by Steve Albers.
 
 # The textures for the Uranian satellites were created by Ivan Rivera from JPL
   data. His Celestia page is: http://bruckner.homelinux.net/celestia.html
@@ -390,12 +349,12 @@ Texture maps
 
 # The asteroid.jpg texture was created by Paul Roberts.
 
-# The textures for the five classes of extrasolar giant planet were created by 
+# The textures for the five classes of extrasolar giant planet were created by
   Andrew Tribick.
 
 # CICLOPS
 
-  The map of Enceladus is derived from the December 2008 CICLOPS map: 
+  The map of Enceladus is derived from the December 2008 CICLOPS map:
   http://ciclops.org/view/5447/Map_of_Enceladus_December_2008
 
 
@@ -419,22 +378,16 @@ Texture maps
 
 # 3D asteroid models of Toutatis, Kleopatra, Geographos, 1998 KY26, Bacchus,
   Castalia and Golevka are courtesy of Scott Hudson, Washington State
-  University.  His site is:
-    http://www.eecs.wsu.edu/~hudson/Research/Asteroids/models.html
+  University.
 
 # 3D models of Phobos, Deimos, Amalthea, Janus, Epimetheus, Prometheus, Pandora,
   Hyperion, Larissa, Proteus, Vesta, Ida, Gaspra and Halley are derived from
-  Phil Stooke's Cartography of Non-Spherical Worlds at:
-    http://publish.uwo.ca/~pjstooke/plancart.htm
-  and optical shape model dataset at:
-  http://pdssbn.astro.umd.edu/SBNast/holdings/EAR-A-5-DDR-STOOKE-SHAPE-MODELS-
-  V1.0.html
+  Phil Stooke's Cartography of Non-Spherical Worlds.
 
-# The 3D model of Eros was prepared from the NEAR laser rangefinder shape model
-  at: http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape
+# The 3D model of Eros was prepared from the NEAR laser rangefinder shape model.
 
-# The Phoebe mesh was designed by Jerry Gardner aka Jestr, jestr@ntlworld.com, 
-  based on Phoebe's bumpy topography display from Cassini, 
+# The Phoebe mesh was designed by Jerry Gardner aka Jestr, jestr@ntlworld.com,
+  based on Phoebe's bumpy topography display from Cassini,
   http://photojournal.jpl.nasa.gov/catalog/PIA06070
 
 
@@ -443,11 +396,11 @@ Libraries
 
 # This software is based in part on the work of the Independent JPEG Group.
 
-# Some versions of Celestia may use the SPICE system for spacecraft and 
+# Some versions of Celestia may use the SPICE system for spacecraft and
   planetary information, developed by Caltech/JPL under contract to NASA.
 
 # Many cylindrical projections of photographs were performed by Fridger
-  Schrempp with Matthew Arcus 'mmps' software, 
+  Schrempp with Matthew Arcus 'mmps' software,
     http://www.users.globalnet.co.uk/~arcus/mmps/
 
 # The lower resolution textures were all converted from their higher resolution
@@ -455,8 +408,8 @@ Libraries
 
 # The star database (stars.dat) was derived from the ESA's HIPPARCOS data set.
 
-# Constellation boundaries are drawn from Davenhall & Leggett's "Catalogue of 
-  Constellation Boundary Data": 
+# Constellation boundaries are drawn from Davenhall & Leggett's "Catalogue of
+  Constellation Boundary Data":
     http://cdsweb.u-strasbg.fr/viz-bin/ftp-index?/ftp/cats/VI/49
 
 
