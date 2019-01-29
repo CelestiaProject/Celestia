@@ -1,58 +1,58 @@
+Basic installation instructions
+-------------------------------
+
+Install from you OS repository or from the official bintray repository
+https://bintray.com/celestia.
+
+https://bintray.com/celestia/celestia-builds/celestia-dev contains
+official development snapshots.
+
+To build from sources please follow instructions below.
+
 Celestia Install instructions for UNIX
 --------------------------------------
 
-!!!!! Don't use this file. It's outdated. Use README. !!!!!
-!!!!! This file will be updated after switch to CMAKE !!!!!
+First you need a C++ compiler able to compile C++11 code (GCC 4.8.1 or later,
+Clang 3.3 or later), CMake, GNU Make or Ninja.
 
-You need to have the following components installed before Celestia
-will build: OpenGL (tested with Mesa 3.4), glu, libjpeg, and libpng.
-Should you have a package based installation (most Linux distributions these
-days are), you will also need to install the devel packages for your OpenGL,
-glu and glibc packages.
+Then you need to have the following devel components installed before Celestia
+will build: OpenGL, glu, glew, theora, libjpeg, and libpng. Optional packages
+are fmtlib, Eigen3, Qt5, Gtk2 and glut.
+
+For example on modern Debian-derived system you need to install the following
+packages: libglew-dev, libjpeg-dev, libpng-dev, libtheora-dev, libgl1-mesa-dev,
+libglu1-mesa-dev. Them you may want to install libeigen3-dev, libfmt-dev;
+qtbase5-dev, qtbase5-dev-tools and libqt5opengl5-dev if you want to build with
+Qt5 interface; libgtk2.0-dev and libgtkglext1-dev to build with legacy Gtk2
+interface; or freeglut3-dev to build with glut interface.
 
 OK, assuming you've collected all the necessary libraries, here's
 what you need to do to build and run Celestia:
 
-	./configure --with-INTERFACE                   [*]
+  mkdir build
+  cd build
+	cmake .. -DENABLE_INTERFACE=ON [*]
 	make
-	make install
+	sudo make install
 
-[*] INTERFACE must be replaced with one of "kde", "gtk", "gnome", or "glut".
+[*] INTERFACE must be replaced with one of "QT", "GTK", or "GLUT".
 
-Four interfaces are available for Celestia:
-- glut: minimal interface, barebone Celestia core with no toolbar or menu...
+Three interfaces are available for Celestia on Unix-like systems:
+- GLUT: minimal interface, barebone Celestia core with no toolbar or menu...
+       Disabled by default.
 - GTK: A full interface with minimal dependencies, adds a menu, a configuration
-       dialog some other utilities.
-- Gnome: The full GTK interface plus a few Gnome integration goodies, such as
-         preference saving in GConf. This looks and works very much like the
-         Windows interface.
-- KDE3: brings contextual menus, toolbars, KDE integration,
-        internationalization, bookmarks...
+       dialog some other utilities. Legacy interface, may lack some new
+       features. Disabled by default.
+- QT: A full interface with minimal dependencies, adds a menu, a configuration
+      dialog some other utilities, bookmarks... A preferred option. Enabled by
+      default, No need to pass -DENABLE_QT=ON.
 
-To build the KDE interface (requires various kde-devel packages):
-	configure --with-kde
-
-To build the Gnome interface (requires gnome-devel and all GTK requirements):
-	configure --with-gnome
-
-To build the GTK interface (requires gtkglext and gtkglext-devel):
-	configure --with-gtk
-
-To build the GLUT interface (requires glut and glut-devel):
-	configure --with-glut
-
-At the end of the configure output shows which interface has been selected, you
-should check it is correct before running make.
-
-Starting with version 1.3.1, Lua is the new scripting engine for Celestia, 
+Starting with version 1.3.1, Lua is the new scripting engine for Celestia,
 the old homegrown scripting engine is still available. By default Lua support
-will NOT be compiled in, to enable it you need to download the Lua library
-from:
-	http://www.lua.org/
-Version 5.0 or newer is required.
-
-Once Lua has been installed on your system, you need to run:
-	configure --with-lua=/path/to/lua
+is enabled, it can be disabled passing -DENABLE_CELX=OFF to cmake.
+Versions 5.1, 5.2 or 5.3 of Lua library is required. On Debian-based systems
+either one of liblua5.3-dev, liblua5.2-dev or liblua5.1-dev should be installed
+to have Lua support.
 
 To check wether your Celestia has been compiled with Lua support, go to File
 -> Open. If you have '*.cel *.celx' in the filter box, then Lua is available
@@ -65,27 +65,94 @@ by the build process. For instance, to build under SUSE Linux, you will also
 need to have the gtk-devel package installed.
 
 Celestia will be installed into /usr/local by default, with data files landing
-in /usr/local/share/celestia , but you may specify a new location with the
---prefix option to configure:
-
-	configure --prefix=/home/my_directory
-
-All the other usual configure parameters apply; you may see which options
-are available using 'configure --help'
-
-If while running configure you see an error reporting that gl.h,
-is missing, you either don't have OpenGL installed on your system,
-or you don't have the corresponding devel package installed.  If for
-instance you have Mesa installed, you will also have to install the
-mesa-devel package (or something named similarly).  Missing glu.h or glut.h
-means that you don't have GLU, GLUT, or their devel pacakges installed.
+in /usr/local/share/celestia, but you may specify a new location with the
+following option to cmake: -DCMAKE_INSTALL_PREFIX=/another/path.
 
 
-Chris Laurel                &      Deon Ramsey
-claurel@.shatters.net              dramsey@users.sourceforge.net
 
-Updated 2003-06-10 by
-Christophe Teyssier
-chris@teyssier.org
+Celestia Install instructions for Windows
+-----------------------------------------
 
-Updated 2004-04-28 by pat@suwalski.net
+Currently to build on Windows you need a Visual Studio 2015 or later, CMake
+and vcpkg (*).
+
+Install required packages:
+
+  vcpkg install libpng libjpeg-turbo gettext lua fmt glew eigen3
+
+Install optional packages:
+
+  vcpkg install qt5
+
+Configure and build 32-bit version:
+
+  md build32
+  cd build32
+  cmake -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+  cmake --build . --  /maxcpucount:N /nologo
+
+Configure and build 64-bit version:
+
+  md build64
+  cd build64
+  cmake -DCMAKE_GENERATOR_PLATFORM=x64 -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+  cmake --build . --  /maxcpucount:N /nologo
+
+Instead of N in /maxcpucount pass a number of CPU cores you want to use during
+a build.
+
+If you have Qt5 installed using official Qt installer, then pass parameter
+CMAKE_PREFIX_PATH to cmake call used to configure Celestia, e.g.
+
+  cmake -DCMAKE_PREFIX_PATH=C:\Qt\5.10.1\msvc2015 ..
+
+Not supported yet:
+- automatic installation using cmake
+- building using GNU toolchain (Mingw32), currently Work-In-Progress
+- using Ninja instead of MSBuild
+
+Notes:
+ * vcpkg installation instructions are located on
+   https://github.com/Microsoft/vcpkg
+
+
+
+Celestia Install instructions for OS X
+--------------------------------------
+
+Currently not supported as nobody in the Team has access to an OS X system.
+
+
+
+Supported CMake parameters
+--------------------------
+
+List of supported parameters (passed as -DPARAMETER=VALUE):
+
+| Parameter            | TYPE | Default | Description
++----------------------+------+---------+--------------------------------------
+| CMAKE_INSTALL_PREFIX | path | *       | Prefix where to install Celestia
+| CMAKE_PREFIX_PATH    | path |         | Additional path to look for libraries
+| LEGACY_OPENGL_LIBS   | bool | **OFF   | Use OpenGL libraries not GLvnd
+| ENABLE_CELX          | bool | ON      | Enable Lua scripting support
+| ENABLE_SPICE         | bool | OFF     | Enable NAIF kernels support
+| ENABLE_NLS           | bool | ON      | Enable interface translation
+| ENABLE_GLUT          | bool | OFF     | Build simple Glut frontend
+| ENABLE_GTK           | bool | **OFF   | Build legacy GTK2 frontend
+| ENABLE_QT            | bool | ON      | Build Qt frontend
+| ENABLE_WIN           | bool | ***ON   | Build Windows native frontend
+| ENABLE_THEORA        | bool | **ON    | Support video capture to OGG Theora
+
+Notes:
+ * /usr/local on Unix-like systems, c:\Program Files or c:\Program Files (x86)
+   on Windows depending on OS type (32 or 64 bit) and build configuration.
+ ** Ignored on Windows systems.
+ *** Ignored on Unix-like systems.
+
+Parameters of type "bool" accept ON or OFF value. Parameters of type "path"
+accept any directory.
+
+On Windows systems two additonal options are supported:
+- CMAKE_GENERATOR_PLATFORM - can be set to x64 on 64-bit Windows to build
+  64-bit Celestia. To build 32-bit Celestia it should be omitted.
+- CMAKE_TOOLCHAIN_FILE - location of vcpkg.cmake if vcpkg is used.
