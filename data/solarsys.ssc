@@ -1539,7 +1539,7 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 }
 
 ReferencePoint "Pluto-Charon" "Sol"
-{
+{   Class "dwarfplanet"
     CustomOrbit "pluto"
 
     # Make the orbit and label visible
