@@ -8,4 +8,7 @@ set(CASSINI_SOURCES
   models/huygens.3ds
 )
 
-install(FILES ${CASSINI_SOURCES} DESTINATION "${DATADIR}/extras-standard/cassini")
+foreach ( file ${CASSINI_SOURCES} )
+    get_filename_component( dir ${file} DIRECTORY )
+    install( FILES ${file} DESTINATION "${DATADIR}/extras-standard/cassini/${dir}" )
+  endforeach()

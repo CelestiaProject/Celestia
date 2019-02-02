@@ -3,4 +3,7 @@ set(MIR_SOURCES
   mir.ssc
 )
 
-install(FILES ${EXTRA_MIR_SOURCES} DESTINATION "${DATADIR}/extras-standard/mir")
+foreach ( file ${MIR_SOURCES} )
+    get_filename_component( dir ${file} DIRECTORY )
+    install( FILES ${file} DESTINATION "${DATADIR}/extras-standard/mir/${dir}" )
+  endforeach()

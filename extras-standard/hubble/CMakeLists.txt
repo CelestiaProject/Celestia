@@ -3,4 +3,7 @@ set(HUBBLE_SOURCES
   models/hubble.cmod
 )
 
-install(FILES ${HUBBLE_SOURCES} DESTINATION "${DATADIR}/extras-standard/hubble")
+foreach ( file ${HUBBLE_SOURCES} )
+    get_filename_component( dir ${file} DIRECTORY )
+    install( FILES ${file} DESTINATION "${DATADIR}/extras-standard/hubble/${dir}" )
+  endforeach()

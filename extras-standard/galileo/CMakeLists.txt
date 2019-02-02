@@ -5,4 +5,7 @@ set(GALILEO_SOURCES
   models/galileo.3ds
 )
 
-install(FILES ${GALILEO_SOURCES} DESTINATION "${DATADIR}/extras-standard/galileo")
+foreach ( file ${GALILEO_SOURCES} )
+    get_filename_component( dir ${file} DIRECTORY )
+    install( FILES ${file} DESTINATION "${DATADIR}/extras-standard/galileo/${dir}" )
+  endforeach()

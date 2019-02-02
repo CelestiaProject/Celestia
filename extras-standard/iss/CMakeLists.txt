@@ -38,5 +38,8 @@ set(ISS_SOURCES
   textures/medres/issusaf.jpg
   models/iss.cmod
 )
+foreach ( file ${ISS_SOURCES} )
+    get_filename_component( dir ${file} DIRECTORY )
+    install( FILES ${file} DESTINATION "${DATADIR}/extras-standard/iss/${dir}" )
+  endforeach()
 
-install(FILES ${ISS_SOURCES} DESTINATION "${DATADIR}/extras-standard/iss")
