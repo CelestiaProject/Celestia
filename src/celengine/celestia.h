@@ -10,20 +10,6 @@
 #ifndef _CELESTIA_H_
 #define _CELESTIA_H_
 
-#ifdef _MSC_VER
-
-#define BROKEN_FRIEND_TEMPLATES
-
-
-#endif // _MSC_VER
-
-
-#define HAVE_SSTREAM
-#ifdef __GNUC__
-#undef HAVE_SSTREAM
-#define NONSTANDARD_STRING_COMPARE
-#endif // __GNUC__
-
 #include <config.h>
 
 #endif // _CELESTIA_H_
