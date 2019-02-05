@@ -14,10 +14,6 @@
 
 #define BROKEN_FRIEND_TEMPLATES
 
-#if _MSC_VER >= 1000
-// Make VC shut up about long variable names from templates
-#pragma warning(disable : 4786)
-#endif // _MSC_VER
 
 #endif // _MSC_VER
 
