@@ -13,7 +13,7 @@
 #include <config.h>
 
 #ifndef __BYTE_ORDER__
-# ifdef WIN32
+# ifdef _WIN32
 // FIXME: we assume that windows runs on LE hw only
 # define __BYTE_ORDER__ 1234
 # else
