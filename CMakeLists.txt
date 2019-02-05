@@ -38,8 +38,9 @@ else()
   # Disabled warnings
   # C4244: implicit type conversion to a smaller type
   # C4503: type truncation
+  # C4786: long names in templates
   # C4800: forcing value to bool
-  add_compile_options("/wd4244" "/wd4503" "/wd4800")
+  add_compile_options("/wd4244" "/wd4503" "/wd4786" "/wd4800")
 endif()
 
 if(UNIX AND (NOT APPLE) AND (NOT CYGWIN))
