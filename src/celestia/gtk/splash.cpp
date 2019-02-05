@@ -10,10 +10,7 @@
  *  $Id: splash.cpp,v 1.4 2006-07-24 17:31:24 christey Exp $
  */
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif /* HAVE_CONFIG_H */
-
 #include <gtk/gtk.h>
 
 #ifdef CAIRO

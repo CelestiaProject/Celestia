@@ -16,6 +16,7 @@
 #include <cstdio>
 #include <cassert>
 #include <unistd.h>
+#include <config.h>
 #include "celengine/stardb.h"
 
 using namespace std;
@@ -27,9 +28,6 @@ static string TychoDatabaseFile("tyc_main.dat");
 static string ComponentDatabaseFile("h_dm_com.dat");
 static string OrbitalDatabase("hip_dm_o.dat");
 #else
-#ifndef MACOSX_PB
-#include <config.h>
-#endif /*MACOSX_PB*/
 static string MainDatabaseFile(HIP_DATA_DIR "/hip_main.dat");
 static string TychoDatabaseFile(HIP_DATA_DIR "/tyc_main.dat");
 static string ComponentDatabaseFile(HIP_DATA_DIR "/h_dm_com.dat");

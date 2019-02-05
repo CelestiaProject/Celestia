@@ -10,10 +10,7 @@
  *  $Id: actions.cpp,v 1.17 2008-01-25 01:05:14 suwalski Exp $
  */
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif /* HAVE_CONFIG_H */
-
 #include <GL/glew.h>
 #include <cstring>
 #include <fstream>

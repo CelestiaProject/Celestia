@@ -28,13 +28,6 @@
 #define NONSTANDARD_STRING_COMPARE
 #endif // __GNUC__
 
-#ifndef _WIN32
-#ifndef TARGET_OS_MAC
 #include <config.h>
-#endif /* TARGET_OS_MAC */
-#endif /* _WIN32 */
-
-
 
 #endif // _CELESTIA_H_
-

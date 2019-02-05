@@ -36,12 +36,7 @@ std::ofstream hdrlog;
 
 // #define ENABLE_SELF_SHADOW
 
-#ifndef _WIN32
-#ifndef TARGET_OS_MAC
 #include <config.h>
-#endif
-#endif /* _WIN32 */
-
 #include "render.h"
 #include "boundaries.h"
 #include "asterism.h"

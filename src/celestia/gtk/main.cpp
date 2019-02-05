@@ -10,10 +10,7 @@
  *  $Id: main.cpp,v 1.9 2008-01-21 04:55:19 suwalski Exp $
  */
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif /* HAVE_CONFIG_H */
-
 #include <iostream>
 #include <fstream>
 #include <cstdlib>

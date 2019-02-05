@@ -10,13 +10,7 @@
 #include <cassert>
 #include <cstring>
 #include <fstream>
-
-#ifndef _WIN32
-#ifndef TARGET_OS_MAC
 #include <config.h>
-#endif /* TARGET_OS_MAC */
-#endif /* _WIN32 */
-
 #include <celutil/debug.h>
 #include <celutil/bytes.h>
 #include <celutil/utf8.h>

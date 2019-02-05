@@ -29,11 +29,7 @@
 #include <cassert>
 #include <fmt/printf.h>
 
-#ifndef _WIN32
-#ifndef TARGET_OS_MAC
 #include <config.h>
-#endif /* ! TARGET_OS_MAC */
-#endif /* ! _WIN32 */
 
 #include <celutil/filetype.h>
 #include <celutil/debug.h>
