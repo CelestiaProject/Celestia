@@ -11,14 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
-// #include <limits>
-
-#ifndef _WIN32
-#ifndef TARGET_OS_MAC
 #include <config.h>
-#endif /* ! TARGET_OS_MAC */
-#endif /* ! _WIN32 */
-
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>

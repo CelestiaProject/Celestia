@@ -12,13 +12,7 @@
 
 #include <algorithm>
 #include <cassert>
-
-#ifndef _WIN32
-#ifndef TARGET_OS_MAC
 #include <config.h>
-#endif
-#endif /* _WIN32 */
-
 #include "render.h"
 #include "astro.h"
 #include "glshader.h"

@@ -23,12 +23,7 @@
 #endif
 #endif
 
-#ifndef _WIN32
-#ifndef TARGET_OS_MAC
 #include <config.h>
-#endif /* ! TARGET_OS_MAC */
-#endif /* ! _WIN32 */
-
 #include "image.h"
 
 #ifdef JPEG_SUPPORT

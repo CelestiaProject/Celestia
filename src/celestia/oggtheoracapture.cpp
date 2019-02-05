@@ -57,9 +57,7 @@
 # define _FILE_OFFSET_BITS 64
 #endif
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include <config.h>
 
 #ifndef _REENTRANT
 # define _REENTRANT

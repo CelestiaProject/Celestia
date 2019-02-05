@@ -7,12 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _WIN32
-#ifndef TARGET_OS_MAC
 #include <config.h>
-#endif /* TARGET_OS_MAC */
-#endif /* _WIN32 */
-
 #include <cstring>
 #include <GL/glew.h>
 #include <celutil/util.h>
