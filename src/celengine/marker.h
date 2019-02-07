@@ -14,6 +14,7 @@
 #include <string>
 #include <celutil/color.h>
 #include <celengine/selection.h>
+#include <celutil/debug.h>
 
 
 class MarkerRepresentation
