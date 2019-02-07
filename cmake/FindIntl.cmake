@@ -31,6 +31,19 @@
 
 
 # Written by Roger Leigh <rleigh@codelibre.net>
+# brew support is by Alexis Hildebrandt <https://github.com/afh>
+
+# Append custom gettext path to CMAKE_PREFIX_PATH
+# if installed via Mac Hombrew
+if(APPLE)
+  find_program(HOMEBREW_PROG brew)
+  if(EXISTS ${HOMEBREW_PROG})
+    execute_process(COMMAND ${HOMEBREW_PROG} --prefix gettext
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
+                    OUTPUT_VARIABLE HOMEBREW_GETTEXT_PREFIX)
+    list(APPEND CMAKE_PREFIX_PATH "${HOMEBREW_GETTEXT_PREFIX}")
+  endif()
+endif()
 
 # Find include directory
 find_path(Intl_INCLUDE_DIR
