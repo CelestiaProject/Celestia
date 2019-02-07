@@ -260,6 +260,14 @@ add_definitions(
   -DGIT_COMMIT=${GIT_COMMIT}
 )
 
+if(APPLE)
+  # TARGET_OS_MAC should be replaced with __APPLE__
+  add_definitions(-DTARGET_OS_MAC)
+  # Dirty hack to prevent AIFF.h inclusion which provides `struct Marker`
+  # conflicting with out `class Marker`.
+  add_definitions(-D__AIFF__)
+endif()
+
 string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type_lc)
 if(NOT "${build_type_lc}" STREQUAL "debug")
   add_definitions(-DNO_DEBUG -DEIGEN_NO_DEBUG)

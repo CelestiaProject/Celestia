@@ -3,6 +3,13 @@ if(NOT ENABLE_QT)
   return()
 endif()
 
+if(APPLE AND EXISTS /usr/local/opt/qt5)
+  # Homebrew installs Qt5 (up to at least 5.9.1) in
+  # /usr/local/qt5, ensure it can be found by CMake since
+  # it is not in the default /usr/local prefix.
+  list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
+endif()
+
 set(QT_LIBS Widgets OpenGL)
 find_package(Qt5 COMPONENTS ${QT_LIBS} CONFIG REQUIRED)
 
@@ -54,7 +61,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 qt5_add_resources(RC_SRC "icons.qrc")
 
-if (WIN32)
+if(WIN32)
   set (RES celestia.rc)
 endif()
 
@@ -62,4 +69,8 @@ add_executable(celestia-qt WIN32 ${QT_SOURCES} ${RC_SRC} ${RES})
 cotire(celestia-qt)
 qt5_use_modules(celestia-qt ${QT_LIBS})
 target_link_libraries(celestia-qt ${CELESTIA_LIBS})
+if(APPLE)
+  set_property(TARGET celestia-qt APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreFoundation")
+  set_property(TARGET celestia-qt APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreServices")
+endif()
 install(TARGETS celestia-qt RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

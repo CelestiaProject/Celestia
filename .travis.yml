@@ -11,15 +11,25 @@ notifications:
 
 os:
 - linux
+- osx
 
 env:
 - LUA=5.1
 - LUA=5.2
 - LUA=5.3
 
+matrix:
+  exclude:
+  - os: osx
+    env: LUA=5.1
+  - os: osx
+    env: LUA=5.2
+  allow_failures:
+  - os: osx
+
 before_script:
-- sudo apt install -y liblua${LUA}-dev
-- git submodule update --init
+- if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt install -y liblua${LUA}-dev; fi
+- if [ "$TRAVIS_OS_NAME" == "osx" ] ; then brew link gettext --force; fi
 - mkdir build
 - cd build
 
@@ -39,3 +49,13 @@ addons:
     - qtbase5-dev
     - qtbase5-dev-tools
     - libqt5opengl5-dev
+  homebrew:
+    packages:
+    - cspice
+    - fmt
+    - freeglut
+    - gettext
+    - glew
+    - libpng
+    - lua
+    - qt5
