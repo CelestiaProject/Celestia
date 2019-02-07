@@ -7,54 +7,31 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef TARGET_OS_MAC
-#define JPEG_SUPPORT
-#define PNG_SUPPORT
-#endif
-
-#ifdef TARGET_OS_MAC
-#include <unistd.h>
-#include "CGBuffer.h"
-#ifndef PNG_SUPPORT
-#include <Quicktime/ImageCompression.h>
-#include <QuickTime/QuickTimeComponents.h>
-#endif
-#endif
-
-#include <cmath>
 #include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
 #include <cassert>
-#include <fmt/printf.h>
+#include <cstdlib>
+#include <cmath>
+#include <fstream>
+#include <iostream>
 
-#include <config.h>
+extern "C" {
+#include <jpeglib.h>
+}
+#include <png.h>
 
 #include <celutil/filetype.h>
 #include <celutil/debug.h>
 #include <celutil/util.h>
-
-#include <GL/glew.h>
-#include "celestia.h"
-
 #include <Eigen/Core>
-
-#ifdef JPEG_SUPPORT
-#ifndef PNG_SUPPORT
-#include "setjmp.h"
-#endif // PNG_SUPPORT
-extern "C" {
-#include <jpeglib.h>
-}
-#endif // JPEG_SUPPORT
-
-#ifdef PNG_SUPPORT
-#include <png.h>
-#endif // PNG_SUPPORT
-
+#include <GL/glew.h>
+#include <fmt/printf.h>
+#include <config.h>
+#include "celestia.h"
 #include "texture.h"
 #include "virtualtex.h"
+
+#define JPEG_SUPPORT
+#define PNG_SUPPORT
 
 using namespace Eigen;
 using namespace std;
