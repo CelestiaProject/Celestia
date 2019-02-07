@@ -1,4 +1,4 @@
-
+#include <celutil/debug.h>
 #include "name.h"
 
 uint32_t NameDatabase::getNameCount() const
