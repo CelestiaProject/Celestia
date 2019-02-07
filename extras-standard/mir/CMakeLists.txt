@@ -3,4 +3,4 @@ set(MIR_SOURCES
   mir.ssc
 )
 
-install(FILES ${EXTRA_MIR_SOURCES} DESTINATION "${DATADIR}/extras-standard/mir")
+install_to_extras_subdir("${DATADIR}" mir ${MIR_SOURCES})
