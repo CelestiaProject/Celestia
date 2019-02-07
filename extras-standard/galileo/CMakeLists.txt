@@ -5,4 +5,4 @@ set(GALILEO_SOURCES
   models/galileo.3ds
 )
 
-install(FILES ${GALILEO_SOURCES} DESTINATION "${DATADIR}/extras-standard/galileo")
+install_to_extras_subdir("${DATADIR}" galileo ${GALILEO_SOURCES})

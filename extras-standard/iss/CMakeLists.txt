@@ -39,4 +39,4 @@ set(ISS_SOURCES
   models/iss.cmod
 )
 
-install(FILES ${ISS_SOURCES} DESTINATION "${DATADIR}/extras-standard/iss")
+install_to_extras_subdir("${DATADIR}" iss ${ISS_SOURCES})

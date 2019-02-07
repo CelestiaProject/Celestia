@@ -8,4 +8,4 @@ set(CASSINI_SOURCES
   models/huygens.3ds
 )
 
-install(FILES ${CASSINI_SOURCES} DESTINATION "${DATADIR}/extras-standard/cassini")
+install_to_extras_subdir("${DATADIR}" cassini ${CASSINI_SOURCES})

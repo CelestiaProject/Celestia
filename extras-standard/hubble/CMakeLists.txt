@@ -3,4 +3,4 @@ set(HUBBLE_SOURCES
   models/hubble.cmod
 )
 
-install(FILES ${HUBBLE_SOURCES} DESTINATION "${DATADIR}/extras-standard/hubble")
+install_to_extras_subdir("${DATADIR}" hubble ${HUBBLE_SOURCES})
