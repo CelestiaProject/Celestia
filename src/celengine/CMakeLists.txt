@@ -150,10 +150,6 @@ set(CELENGINE_SOURCES
   visibleregion.h
 )
 
-if(APPLE)
-  list(APPEND CELENGINE_SOURCES CGBuffer.h)
-endif()
-
 add_library(celengine STATIC ${CELENGINE_SOURCES})
 cotire(celengine)
 #[[

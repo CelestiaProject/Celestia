@@ -7,51 +7,30 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <fstream>
-
-#ifndef TARGET_OS_MAC
-#define JPEG_SUPPORT
-#define PNG_SUPPORT
-#endif
-
-#ifdef TARGET_OS_MAC
-#include <unistd.h>
-#include "CGBuffer.h"
-#ifndef PNG_SUPPORT
-#include <Quicktime/ImageCompression.h>
-#include <QuickTime/QuickTimeComponents.h>
-#endif
-#endif
-
-#include <config.h>
+#include <algorithm>
+#include <cassert>
+#include <cmath>
 #include <cstdio>
-#include "image.h"
+#include <cstring>
+#include <fstream>
+#include <iostream>
 
-#ifdef JPEG_SUPPORT
-#ifndef PNG_SUPPORT
-#include "setjmp.h"
-#endif // PNG_SUPPORT
 extern "C" {
 #include <jpeglib.h>
 }
-#endif // JPEG_SUPPORT
-
-#ifdef PNG_SUPPORT
 #include <png.h>
-#endif // PNG_SUPPORT
 
 #include <celutil/debug.h>
 #include <celutil/util.h>
 #include <celutil/filetype.h>
 #include <GL/glew.h>
-#include "celestia.h"
-
-#include <cassert>
-#include <iostream>
-#include <algorithm>
-#include <cmath>
-#include <cstring>
 #include <fmt/printf.h>
+#include <config.h>
+#include "celestia.h"
+#include "image.h"
+
+#define JPEG_SUPPORT
+#define PNG_SUPPORT
 
 using namespace std;
 
