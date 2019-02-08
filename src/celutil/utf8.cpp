@@ -11,6 +11,8 @@
 #include <cctype>
 #include <cstring>
 #include "util.h"
+#include <wchar.h>
+#include <climits>
 
 uint16_t WGL4_Normalization_00[256] = {
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007,
@@ -557,7 +559,7 @@ int UTF8StringCompare(const std::string& s0, const std::string& s1)
         return 0;
 }
 
-int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n)
+int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n, bool ignoreCase)
 {
     int len0 = s0.length();
     int len1 = s1.length();
@@ -577,6 +579,11 @@ int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n)
         ch0 = UTF8Normalize(ch0);
         ch1 = UTF8Normalize(ch1);
 
+        if (ignoreCase)
+        {
+            ch0 = std::tolower(ch0);
+            ch1 = std::tolower(ch1);
+        }
         if (ch0 < ch1)
             return -1;
         if (ch0 > ch1)
@@ -897,3 +904,91 @@ ReplaceGreekLetterAbbr(char *dst, unsigned int dstSize, const char* src, unsigne
 
     return 0;
 }
+
+static int findGreekNameIndexBySubstr(const std::string &, int = 0, unsigned int = UINT_MAX);
+static std::string firstGreekAbbrCompletion(const std::string &);
+
+bool inline isSubstringIgnoringCase(const std::string &s0, const std::string &s1, size_t n)
+{
+    return UTF8StringCompare(s0, s1, n, true) == 0;
+}
+
+static int findGreekNameIndexBySubstr(const std::string &s, int start, unsigned int n)
+{
+    Greek *instance = Greek::getInstance();
+
+    if (s.empty())
+        return -1;
+
+    for (int i = start; i < instance->nLetters; i++)
+    {
+        if (isSubstringIgnoringCase(instance->names[i], s, n))
+            return i;
+    }
+
+    for (int i = start; i < instance->nLetters; i++)
+    {
+        if (isSubstringIgnoringCase(instance->abbrevs[i], s, n))
+            return i;
+    }
+
+    return -1;
+}
+
+static std::string firstGreekAbbrCompletion(const std::string &s)
+{
+    std::string ret;
+    size_t sp = s.find_first_of(' ');
+    if (sp == std::string::npos)
+    {
+        int i = findGreekNameIndexBySubstr(s);
+        return (i >= 0) ? Greek::getInstance()->abbrevs[i] : s;
+    }
+    else
+    {
+        std::string prefix = s.substr(0, sp);
+        ret = Greek::canonicalAbbreviation(prefix);
+        return ret.empty() ? s : prefix + s.substr(sp);
+    }
+
+    return ret;
+}
+
+std::vector<std::string> getGreekCompletion(const std::string &s)
+{
+    std::vector<std::string> ret;
+    if (s.empty())
+        return ret;
+
+    size_t sp = s.find_first_of(' ');
+    if (sp == std::string::npos)
+    {
+        sp = UTF8Length(s);
+        for(int i = 0; i >= 0;)
+        {
+            std::string rets;
+            i = findGreekNameIndexBySubstr(s, i, sp);
+            if (i >= 0)
+            {
+                rets = Greek::getInstance()->abbrevs[i];
+                rets += " ";
+                ret.emplace_back(ReplaceGreekLetterAbbr(rets));
+                i++;
+            }
+        }
+    }
+    else
+    {
+        std::string prefix = s.substr(0, sp);
+        std::string rets = Greek::canonicalAbbreviation(prefix);
+        if (!rets.empty())
+        {
+            rets += s.substr(sp);;
+            ret.emplace_back(ReplaceGreekLetterAbbr(rets));
+        }
+    }
+
+    return ret;
+}
+
+
