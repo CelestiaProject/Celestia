@@ -3219,7 +3219,7 @@ static string getSelectionName(const Selection& sel, const Universe& univ)
     case Selection::Type_DeepSky:
         return univ.getDSOCatalog()->getDSOName(sel.deepsky(), false);
     case Selection::Type_Star:
-        return ReplaceGreekLetterAbbr(univ.getStarCatalog()->getStarName(*sel.star(), true));
+        return univ.getStarCatalog()->getStarName(*sel.star(), true);
     case Selection::Type_Location:
         return sel.location()->getName(false);
     default:
@@ -3242,7 +3242,7 @@ static void displaySelectionName(Overlay& overlay,
         break;
     case Selection::Type_Star:
         //displayStarName(overlay, *(sel.star()), *univ.getStarCatalog());
-        overlay << ReplaceGreekLetterAbbr(univ.getStarCatalog()->getStarName(*sel.star(), true));
+        overlay << univ.getStarCatalog()->getStarName(*sel.star(), true);
         break;
     case Selection::Type_Location:
         overlay << sel.location()->getName(true);
@@ -3763,7 +3763,7 @@ void CelestiaCore::renderOverlay()
         glTranslatef(0.0f, fontHeight * 3.0f + 35.0f, 0.0f);
         glColor4f(0.6f, 0.6f, 1.0f, 1.0f);
         overlay->beginText();
-        *overlay << _("Target name: ") << ReplaceGreekLetterAbbr(typedText);
+        *overlay << _("Target name: ") << typedText;
         overlay->endText();
         overlay->setFont(font);
         if (typedTextCompletion.size() >= 1)
@@ -3788,7 +3788,7 @@ void CelestiaCore::renderOverlay()
                         glColor4f(1.0f, 0.6f, 0.6f, 1);
                     else
                         glColor4f(0.6f, 0.6f, 1.0f, 1);
-                    *overlay << ReplaceGreekLetterAbbr(*iter) << "\n";
+                    *overlay << *iter << "\n";
                 }
                 overlay->endText();
                 glPopMatrix();

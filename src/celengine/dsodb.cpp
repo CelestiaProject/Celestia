@@ -146,7 +146,7 @@ string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsig
         if (count != 0)
             dsoNames   += " / ";
 
-        dsoNames   += ReplaceGreekLetterAbbr(iter->second);
+        dsoNames   += iter->second;
         ++iter;
         ++count;
     }
