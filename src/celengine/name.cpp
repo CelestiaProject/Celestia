@@ -6,7 +6,7 @@ uint32_t NameDatabase::getNameCount() const
     return nameIndex.size();
 }
 
-void NameDatabase::add(const uint32_t catalogNumber, const std::string& name)
+void NameDatabase::add(const uint32_t catalogNumber, const std::string& name, bool replaceGreek)
 {
     if (name.length() != 0)
     {
@@ -17,9 +17,10 @@ void NameDatabase::add(const uint32_t catalogNumber, const std::string& name)
 #endif
         // Add the new name
         //nameIndex.insert(NameIndex::value_type(name, catalogNumber));
-
-        nameIndex[name]   = catalogNumber;
-        numberIndex.insert(NumberIndex::value_type(catalogNumber, name));
+        std::string fname = ReplaceGreekLetterAbbr(name);
+        
+        nameIndex[fname]   = catalogNumber;
+        numberIndex.insert(NumberIndex::value_type(catalogNumber, fname));
     }
 }
 void NameDatabase::erase(const uint32_t catalogNumber)
