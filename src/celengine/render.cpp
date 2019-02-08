@@ -1318,7 +1318,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
         }
         else
         {
-            a.labelText = ReplaceGreekLetterAbbr(labelText);
+            a.labelText = labelText;
         }
         a.markerRep = markerRep;
         a.color = color;

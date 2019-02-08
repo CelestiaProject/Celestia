@@ -37,7 +37,7 @@ class NameDatabase
 
     uint32_t getNameCount() const;
 
-    void add(const uint32_t, const std::string&);
+    void add(const uint32_t, const std::string&, bool parseGreek = true);
 
     // delete all names associated with the specified catalog number
     void erase(const uint32_t);

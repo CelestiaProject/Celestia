@@ -433,7 +433,7 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
         if (count != 0)
             starNames += " / ";
 
-        starNames += ReplaceGreekLetterAbbr(iter->second.c_str());
+        starNames += iter->second;
         ++iter;
         ++count;
     }
