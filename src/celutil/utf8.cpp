@@ -697,7 +697,14 @@ static std::string noAbbrev;
 
 // Greek alphabet crud . . . should probably moved to it's own module.
 
-Greek* Greek::instance = nullptr;
+Greek* Greek::m_instance = nullptr;
+
+Greek* Greek::getInstance()
+{
+    if (m_instance == nullptr)
+        m_instance = new Greek();
+    return m_instance;
+}
 
 Greek::Greek()
 {
@@ -720,17 +727,15 @@ Greek::~Greek()
 
 const std::string& Greek::canonicalAbbreviation(const std::string& letter)
 {
-    if (instance == nullptr)
-        instance = new Greek();
-
+    Greek *instance = Greek::getInstance();
     int i;
-    for (i = 0; i < Greek::instance->nLetters; i++)
+    for (i = 0; i < instance->nLetters; i++)
     {
         if (compareIgnoringCase(letter, instance->names[i]) == 0)
             return instance->abbrevs[i];
     }
 
-    for (i = 0; i < Greek::instance->nLetters; i++)
+    for (i = 0; i < instance->nLetters; i++)
     {
         if (compareIgnoringCase(letter, instance->abbrevs[i]) == 0)
             return instance->abbrevs[i];
@@ -738,7 +743,7 @@ const std::string& Greek::canonicalAbbreviation(const std::string& letter)
 
     if (letter.length() == 2)
     {
-        for (i = 0; i < Greek::instance->nLetters; i++)
+        for (i = 0; i < instance->nLetters; i++)
         {
             if (letter[0] == greekAlphabetUTF8[i][0] &&
                 letter[1] == greekAlphabetUTF8[i][1])
@@ -757,15 +762,16 @@ const std::string& Greek::canonicalAbbreviation(const std::string& letter)
 //! superscripts.
 std::string ReplaceGreekLetterAbbr(const std::string& str)
 {
+    Greek *instance = Greek::getInstance();
     std::string ret = str;
 
     if (str[0] >= 'A' && str[0] <= 'Z' &&
         str[1] >= 'A' && str[1] <= 'Z')
     {
         // Linear search through all letter abbreviations
-        for (int i = 0; i < Greek::instance->nLetters; i++)
+        for (int i = 0; i < instance->nLetters; i++)
         {
-            const std::string& abbr = Greek::instance->abbrevs[i];
+            const std::string& abbr = instance->abbrevs[i];
             if (str.compare(0, abbr.length(), abbr) == 0 &&
                 (str[abbr.length()] == ' ' || isdigit(str[abbr.length()])))
             {
@@ -808,11 +814,12 @@ std::string ReplaceGreekLetterAbbr(const std::string& str)
 unsigned int
 ReplaceGreekLetterAbbr(char *dst, unsigned int dstSize, const char* src, unsigned int srcLength)
 {
+    Greek *instance = Greek::getInstance();
     if (src[0] >= 'A' && src[0] <= 'Z' &&
         src[1] >= 'A' && src[1] <= 'Z')
     {
         // Linear search through all letter abbreviations
-        for (unsigned int i = 0; i < (unsigned int) Greek::instance->nLetters; i++)
+        for (unsigned int i = 0; i < (unsigned int) instance->nLetters; i++)
         {
             const char* abbr = canonicalAbbrevs[i];
             unsigned int j = 0;

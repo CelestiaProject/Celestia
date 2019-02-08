@@ -114,9 +114,10 @@ class Greek
     };
 
     static const std::string& canonicalAbbreviation(const std::string&);
-
+private:
+    static Greek* m_instance;
  public:
-    static Greek* instance;
+    static Greek* getInstance();
     int nLetters;
     std::string* names;
     std::string* abbrevs;
