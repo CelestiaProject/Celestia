@@ -24,7 +24,7 @@
 # ------------------------------------------------------ 
 
 
-Globular "47 Tuc:NGC 104:Melotte 1:HD 2051:RBS 55:GCl 1:C 0021-723:xi Tuc"
+Globular "47 Tuc:NGC 104:Melotte 1:HD 2051:RBS 55:GCl 1:C 0021-723:XI Tuc"
 {
         RA          	    0.4014  # [hours]
         Dec         	  -72.0808  # [degrees]
@@ -374,7 +374,7 @@ Globular "NGC 5053:GCl 23:C 1313+179"
         InfoURL  "http://simbad.u-strasbg.fr/sim-id.pl?Ident=NGC 5053"
 }
 
-Globular "Omega Cen:NGC 5139:HD 116790:GCl 24:C 1323-472"
+Globular "OME Cen:NGC 5139:HD 116790:GCl 24:C 1323-472"
 {
         RA          	   13.4458  # [hours]
         Dec         	  -47.4769  # [degrees]
