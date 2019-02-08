@@ -3763,7 +3763,7 @@ void CelestiaCore::renderOverlay()
         glTranslatef(0.0f, fontHeight * 3.0f + 35.0f, 0.0f);
         glColor4f(0.6f, 0.6f, 1.0f, 1.0f);
         overlay->beginText();
-        *overlay << _("Target name: ") << typedText;
+        fmt::fprintf(*overlay, _("Target name: %s"), typedText);
         overlay->endText();
         overlay->setFont(font);
         if (typedTextCompletion.size() >= 1)

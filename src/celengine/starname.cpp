@@ -18,6 +18,10 @@ using namespace std;
 
 uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
 {
+    uint32_t catalogNumber = getCatalogNumberByName(name);
+    if (catalogNumber != Star::InvalidCatalogNumber)
+        return catalogNumber;
+
     string priName   = name;
     string altName;
 
@@ -31,7 +35,7 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
         if (con != nullptr)
         {
             char digit  = ' ';
-            int len     = prefix.length();
+            int len = prefix.length();
 
             // If the first character of the prefix is a letter
             // and the last character is a digit, we may have
@@ -40,7 +44,7 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
             if (len > 2 && isalpha(prefix[0]) && isdigit(prefix[len - 1]))
             {
                 --len;
-                digit   = prefix[len];
+                digit = prefix[len];
             }
 
             // We have a valid constellation as the last part
@@ -59,34 +63,34 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
                 }
                 else
                 {
-                    priName  = letter + digit + ' ' + con->getAbbreviation();
+                    priName = letter + digit + ' ' + con->getAbbreviation();
                 }
             }
             else
             {
                 // Something other than a Bayer designation
-                priName  = prefix + ' ' + con->getAbbreviation();
+                priName = prefix + ' ' + con->getAbbreviation();
             }
         }
     }
 
-    uint32_t catalogNumber   = getCatalogNumberByName(priName);
+    catalogNumber = getCatalogNumberByName(priName);
     if (catalogNumber != Star::InvalidCatalogNumber)
         return catalogNumber;
 
-    priName        += " A";  // try by appending an A
-    catalogNumber   = getCatalogNumberByName(priName);
+    priName += " A";  // try by appending an A
+    catalogNumber = getCatalogNumberByName(priName);
     if (catalogNumber != Star::InvalidCatalogNumber)
         return catalogNumber;
 
     // If the first search failed, try using the alternate name
     if (altName.length() != 0)
     {
-        catalogNumber   = getCatalogNumberByName(altName);
+        catalogNumber = getCatalogNumberByName(altName);
         if (catalogNumber == Star::InvalidCatalogNumber)
         {
-            altName        += " A";
-            catalogNumber   = getCatalogNumberByName(altName);
+            altName += " A";
+            catalogNumber = getCatalogNumberByName(altName);
         }   // Intentional fallthrough.
     }
 

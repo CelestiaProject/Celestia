@@ -18,8 +18,8 @@ void NameDatabase::add(const uint32_t catalogNumber, const std::string& name, bo
         // Add the new name
         //nameIndex.insert(NameIndex::value_type(name, catalogNumber));
         std::string fname = ReplaceGreekLetterAbbr(name);
-        
-        nameIndex[fname]   = catalogNumber;
+
+        nameIndex[fname] = catalogNumber;
         numberIndex.insert(NumberIndex::value_type(catalogNumber, fname));
     }
 }
@@ -83,17 +83,35 @@ NameDatabase::NumberIndex::const_iterator NameDatabase::getFinalNameIter() const
     return numberIndex.end();
 }
 
-std::vector<std::string> NameDatabase::getCompletion(const std::string& name) const
+std::vector<std::string> NameDatabase::getCompletion(const std::string& name, bool greek) const
 {
+    if (greek)
+    {
+        auto compList = getGreekCompletion(name);
+        compList.push_back(name);
+        return getCompletion(compList);
+    }
+
     std::vector<std::string> completion;
     int name_length = UTF8Length(name);
 
     for (NameIndex::const_iterator iter = nameIndex.begin(); iter != nameIndex.end(); ++iter)
     {
-        if (!UTF8StringCompare(iter->first, name, name_length))
+        if (!UTF8StringCompare(iter->first, name, name_length, true))
         {
             completion.push_back(iter->first);
         }
+    }
+    return completion;
+}
+
+std::vector<std::string> NameDatabase::getCompletion(const std::vector<std::string> &list) const
+{
+    std::vector<std::string> completion;
+    for (const auto &n : list)
+    {
+        for (const auto &nn : getCompletion(n, false))
+            completion.emplace_back(nn);
     }
     return completion;
 }

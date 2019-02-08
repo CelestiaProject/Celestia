@@ -48,7 +48,8 @@ class NameDatabase
     NumberIndex::const_iterator getFirstNameIter(const uint32_t catalogNumber) const;
     NumberIndex::const_iterator getFinalNameIter() const;
 
-    std::vector<std::string> getCompletion(const std::string& name) const;
+    std::vector<std::string> getCompletion(const std::string& name, bool greek = true) const;
+    std::vector<std::string> getCompletion(const std::vector<std::string> &list) const;
 
  protected:
     NameIndex   nameIndex;
