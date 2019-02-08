@@ -11,6 +11,7 @@
 #define _CELUTIL_UTF8_
 
 #include <string>
+#include <vector>
 #include <wchar.h>
 
 #define UTF8_DEGREE_SIGN         "\302\260"
@@ -24,7 +25,7 @@ bool UTF8Decode(const std::string& str, int pos, wchar_t& ch);
 bool UTF8Decode(const char* str, int pos, int length, wchar_t& ch);
 int UTF8Encode(wchar_t ch, char* s);
 int UTF8StringCompare(const std::string& s0, const std::string& s1);
-int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n);
+int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n, bool ignoreCase = false);
 
 class UTF8StringOrderingPredicate
 {
@@ -122,5 +123,9 @@ private:
     std::string* names;
     std::string* abbrevs;
 };
+
+int findGreekNameIndexBySubstr(const std::string &, int = 0, uint = 0xffffffff);
+std::string firstGreekAbbrCompletion(const std::string &);
+std::vector<std::string> getGreekCompletion(const std::string &);
 
 #endif // _CELUTIL_UTF8_

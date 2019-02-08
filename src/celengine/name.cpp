@@ -85,18 +85,35 @@ NameDatabase::NumberIndex::const_iterator NameDatabase::getFinalNameIter() const
     return numberIndex.end();
 }
 
-std::vector<std::string> NameDatabase::getCompletion(const std::string& name) const
+std::vector<std::string> NameDatabase::getCompletion(const std::string& name, bool greek) const
 {
+    if (greek)
+    {
+        auto compList = getGreekCompletion(name);
+        compList.push_back(name);
+        return getCompletion(compList);
+    }
+
     std::vector<std::string> completion;
     int name_length = UTF8Length(name);
 
     for (NameIndex::const_iterator iter = nameIndex.begin(); iter != nameIndex.end(); ++iter)
     {
-        if (!UTF8StringCompare(iter->first, name, name_length))
+        if (!UTF8StringCompare(iter->first, name, name_length, true))
         {
             completion.push_back(iter->first);
         }
     }
+    return completion;
+}
+
+std::vector<std::string> NameDatabase::getCompletion(const std::vector<std::string> &list) const
+{
+    std::vector<std::string> completion;
+    for (const auto &n : list)
+        for (const auto &nn : getCompletion(n, false))
+            completion.push_back(nn);
+
     return completion;
 }
 
@@ -107,6 +124,10 @@ std::vector<std::string> NameDatabase::getCompletion(const std::string& name) co
 
 uint32_t NameDatabase::findCatalogNumberByName(const std::string& name) const
 {
+    uint32_t catalogNumber = getCatalogNumberByName(name);
+    if (catalogNumber != InvalidCatalogNumber)
+        return catalogNumber;
+
     std::string priName   = name;
     std::string altName;
 
@@ -159,7 +180,7 @@ uint32_t NameDatabase::findCatalogNumberByName(const std::string& name) const
         }
     }
 
-    uint32_t catalogNumber   = getCatalogNumberByName(priName);
+    catalogNumber   = getCatalogNumberByName(priName);
     if (catalogNumber != InvalidCatalogNumber)
         return catalogNumber;
 
