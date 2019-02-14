@@ -156,3 +156,22 @@ On Windows systems two additonal options are supported:
 - CMAKE_GENERATOR_PLATFORM - can be set to x64 on 64-bit Windows to build
   64-bit Celestia. To build 32-bit Celestia it should be omitted.
 - CMAKE_TOOLCHAIN_FILE - location of vcpkg.cmake if vcpkg is used.
+
+
+
+Executable files
+----------------
+
+As said prevously Celestia provides several user interfaces, accordingly with
+interfaces it's built with it has different executable files installed to
+${CMAKE_INSTALL_PREFIX}/bin (e.g. with default CMAKE_INSTALL_PREFIX on
+Unix-like systems they are installed into /usr/local/bin).
+
+Here the table which provides executable file names accordingly to interface:
+
+| Interface | Executable name
++-----------+-----------------
+| Qt5       | celestia-qt
+| GTK       | celestia-gtk
+| GLUT      | celestia-glut
+| WIN       | celestia-win
