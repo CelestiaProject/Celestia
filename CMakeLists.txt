@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-set(LEGACY_OPENGL_LIBS OFF CACHE BOOL "Use legacy OpenGL libraries instead of glvnd library (Default: off)")
+option(LEGACY_OPENGL_LIBS "Use legacy OpenGL libraries instead of glvnd library (Default: off)" OFF)
 
 if (POLICY CMP0072)
   if (LEGACY_OPENGL_LIBS)
@@ -16,14 +16,14 @@ set(VERSION "1.7.0")
 #
 #
 #
-set(ENABLE_CELX     ON  CACHE BOOL "Enable celx scripting, requires Lua library? (Default: on)")
-set(ENABLE_SPICE    OFF CACHE BOOL "Use spice library? (Default: off)")
-set(ENABLE_NLS      ON  CACHE BOOL "Enable interface translation? (Default: on)")
-set(ENABLE_GLUT     ON  CACHE BOOL "Build simple Glut frontend? (Default: on)")
-set(ENABLE_GTK      OFF CACHE BOOL "Build GTK2 frontend (Unix only)? (Default: off)")
-set(ENABLE_QT       ON  CACHE BOOL "Build Qt frontend? (Default: on)")
-set(ENABLE_WIN      ON  CACHE BOOL "Build Windows native frontend? (Default: on)")
-set(ENABLE_THEORA   ON  CACHE BOOL "Support video capture to OGG Theora? (Default: on)")
+option(ENABLE_CELX    "Enable celx scripting, requires Lua library? (Default: on)" ON)
+option(ENABLE_SPICE   "Use spice library? (Default: off)" OFF)
+option(ENABLE_NLS     "Enable interface translation? (Default: on)" ON)
+option(ENABLE_GLUT    "Build simple Glut frontend? (Default: on)" ON)
+option(ENABLE_GTK     "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
+option(ENABLE_QT      "Build Qt frontend? (Default: on)" ON)
+option(ENABLE_WIN     "Build Windows native frontend? (Default: on)" ON)
+option(ENABLE_THEORA  "Support video capture to OGG Theora? (Default: on)" ON)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type." FORCE)
