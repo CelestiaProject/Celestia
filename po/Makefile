@@ -19,7 +19,7 @@ $(pot_file)-update:
 	         --from-code=utf-8 \
 	         ../data/data.cpp \
 	         $$(find ../src -path ../misc/src/celestia/kde -prune -o -name \*.cpp -o -name \*.h) \
-	         $$(find ../macosx -name \*.m -o -name \*.mm -o -name \*.h)
+	         $$(find ../src/celestia/macosx -name \*.m -o -name \*.mm -o -name \*.h)
 
 po-update: $(po_files)
 
