@@ -23,10 +23,10 @@ my %keywords = (
 while (<>) {
     # Matches lines:
     #   KEYWORD  "String" ...
-    if ( $_ =~ /^\s*(\w+)\s+"(.+?)"/ ) { 
+    if ( $_ =~ /^\s*(\w+)\s+"(.+?)"/ && $_ !~ /^\s*(\w+)\s+""/) {
         # Excludes blank strings and strings of the form word followed by digit
         # which are control names (e.g. DateTimePicker3)
-        if (exists($keywords{$1}) && $2 !~ /^ *$/ && $2 !~ /^\w+\d$/ ) {
+        if (exists($keywords{$1}) && $2 !~ /^ *$/ && $2 !~ /^\w+\d$/ && $2 !~ /^""/) {
             print qq{_("$2");\n};
         }
     }
