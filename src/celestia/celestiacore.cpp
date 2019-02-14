@@ -2762,7 +2762,7 @@ static string DistanceLyToStr(double distance)
     }
     else if (abs(distance) >= 0.5 * astro::parsecsToLightYears(1e+3))
     {
-        units = _("Kpc");
+        units = _("kpc");
         distance = astro::lightYearsToParsecs(distance) / 1e+3;
     }
     else if (abs(distance) >= astro::AUtoLightYears(1000.0f))
