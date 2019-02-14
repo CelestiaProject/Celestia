@@ -245,6 +245,9 @@ if (NOT GIT_COMMIT)
       WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
       OUTPUT_VARIABLE GIT_COMMIT
     )
+    if ("${GIT_COMMIT}" STREQUAL "")
+      set(GIT_COMMIT "unknown")
+    endif()
   else()
     set(GIT_COMMIT "unknown")
   endif()
