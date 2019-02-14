@@ -177,7 +177,7 @@ BEGIN
     LTEXT           "Celestia",IDC_STATIC,56,17,30,9
     LTEXT           VERSION_STRING,IDC_STATIC,90,17,40,9
     LTEXT           "Copyright (C) 2001-2019, Celestia Development Team",IDC_STATIC,56,26,247,9
-    LTEXT           "http://celestiaproject.net/",IDC_CELESTIALINK,56,43,150,9
+    LTEXT           "https://celestia.space/",IDC_CELESTIALINK,56,43,150,9
     LTEXT           "Celestia is free software and comes with absolutely no warranty.",IDC_STATIC,56,66,247,17
     LTEXT           "Authors",IDC_STATIC,56,90,100,9
     LTEXT           "Chris Laurel",IDC_STATIC,56,102,100,9
