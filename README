@@ -175,7 +175,7 @@ Celestia Web Site:
 Celestia User Forums:
   https://celestia.space/forum/
 
-Selden's List of Resources for Celestia :
+Selden's List of Resources for Celestia:
   http://www.lepp.cornell.edu/~seb/celestia/
 
 Celestia WikiBook:
@@ -194,10 +194,10 @@ Celestia Cource Repository:
 Celestia Binary Repository:
   https://bintray.com/celestia
 
-Celestia Bug Tracking (SourceForge.net):
+Celestia Bug Tracking:
   https://github.com/CelestiaProject/celestia/issues
 
-Celestia Feature Requests (SourceForge.net):
+Celestia Feature Requests:
   https://github.com/CelestiaProject/celestia/issues
 
 
@@ -268,11 +268,16 @@ Scientific Data Base
 Texture maps
 ------------
 
-# Most of the planet maps are from David Seal's site:
-    http://maps.jpl.nasa.gov/.
-  A few of these maps were modified by me, with fictional terrain added to fill
-  in gaps. The model of the Galileo spacecraft is also from David Seal's site
-  (though it was converted from Inventor to 3DS format.)
+# The new textures repository in their original quality can be found here:
+https://www.deviantart.com/celestiaofficial/gallery/68412929/Release-Textures
+
+   In particular, there are textures of Jupiter, Saturn, Phobos and Deimos.
+
+# Most of the old maps are from David Seal's site: http://maps.jpl.nasa.gov/.
+
+   Some of these maps were modified, with fictional terrain added to fill in
+   gaps. The Galileo spacecraft model is also from David Seal's site (though
+   it was converted from Inventor to 3DS format.)
 
 # The Mars, Neptune, and Uranus textures and Mars bump maps are all from James
   Hastings-Trew's collection.
@@ -361,6 +366,9 @@ Texture maps
 3D Models
 ---------
 
+# New space bodies models can be found in Greg Friger's 3D Asteroid Catalogue:
+    https://space.frieger.com/asteroids/
+
 # Models of Mars Global Surveyor and Mars Odyssey were created by Shrox:
     http://www.shrox.com/
 
@@ -380,7 +388,7 @@ Texture maps
   Castalia and Golevka are courtesy of Scott Hudson, Washington State
   University.
 
-# 3D models of Phobos, Deimos, Amalthea, Janus, Epimetheus, Prometheus, Pandora,
+# 3D models of Amalthea, Janus, Epimetheus, Prometheus, Pandora,
   Hyperion, Larissa, Proteus, Vesta, Ida, Gaspra and Halley are derived from
   Phil Stooke's Cartography of Non-Spherical Worlds.
 
