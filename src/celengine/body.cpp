@@ -1110,6 +1110,15 @@ void Body::setOrbitColor(const Color& c)
 }
 
 
+/*! Set the comet tail color
+ *
+ */
+void Body::setCometTailColor(const Color& c)
+{
+    cometTailColor = c;
+}
+
+
 /*! Set whether or not the object should be considered when calculating
  *  secondary illumination (e.g. planetshine.)
  */

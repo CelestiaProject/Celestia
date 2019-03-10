@@ -327,6 +327,9 @@ class Body : public CatEntry
     Color getOrbitColor() const { return orbitColor; }
     void setOrbitColor(const Color&);
 
+    Color getCometTailColor() const { return cometTailColor; }
+    void setCometTailColor(const Color& c);
+
     int getOrbitClassification() const;
 
     enum
@@ -402,6 +405,7 @@ class Body : public CatEntry
     std::list<ReferenceMark*>* referenceMarks{ nullptr };
 
     Color orbitColor;
+    Color cometTailColor{ 0.5f, 0.5f, 0.75f };
 
     bool visible{ true };
     bool clickable{ true };
