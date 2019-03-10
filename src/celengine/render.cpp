@@ -5562,7 +5562,8 @@ struct CometTailVertex
 
 static CometTailVertex cometTailVertices[CometTailSlices * MaxCometTailPoints];
 
-static void ProcessCometTailVertex(const CometTailVertex& v,
+static void ProcessCometTailVertex(const Color& cometTailColor,
+                                   const CometTailVertex& v,
                                    const Vector3f& viewDir,
                                    float fadeDistFromSun)
 {
@@ -5571,7 +5572,8 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
 
     float fadeFactor = 0.5f - 0.5f * (float) tanh(fadeDistFromSun - 1.0f / fadeDistFromSun);
     float shade = abs(viewDir.dot(v.normal) * v.brightness * fadeFactor);
-    glColor4f(0.5f, 0.5f, 0.75f, shade);
+    glColor4f(cometTailColor.red(), cometTailColor.green(),
+              cometTailColor.blue(), shade);
     glVertex(v.point);
 }
 
@@ -5737,12 +5739,17 @@ void Renderer::renderCometTail(const Body& body,
         int n = i * nTailSlices;
         for (int j = 0; j < nTailSlices; j++)
         {
-            ProcessCometTailVertex(cometTailVertices[n + j], viewDir, fadeDistance);
-            ProcessCometTailVertex(cometTailVertices[n + j + nTailSlices],
+            ProcessCometTailVertex(body.getCometTailColor(),
+                                   cometTailVertices[n + j], viewDir,
+                                   fadeDistance);
+            ProcessCometTailVertex(body.getCometTailColor(),
+                                   cometTailVertices[n + j + nTailSlices],
                                    viewDir, fadeDistance);
         }
-        ProcessCometTailVertex(cometTailVertices[n], viewDir, fadeDistance);
-        ProcessCometTailVertex(cometTailVertices[n + nTailSlices],
+        ProcessCometTailVertex(body.getCometTailColor(),
+                               cometTailVertices[n], viewDir, fadeDistance);
+        ProcessCometTailVertex(body.getCometTailColor(),
+                               cometTailVertices[n + nTailSlices],
                                viewDir, fadeDistance);
         glEnd();
     }

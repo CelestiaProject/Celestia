@@ -999,6 +999,13 @@ static Body* CreateBody(const string& name,
         }
     }
 
+    // Read comet tail color
+    Color cometTailColor;
+    if(planetData->getColor("TailColor", cometTailColor))
+    {
+        body->setCometTailColor(cometTailColor);
+    }
+
     bool clickable = true;
     if (planetData->getBoolean("Clickable", clickable))
     {
