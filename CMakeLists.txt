@@ -28,6 +28,7 @@ option(ENABLE_GTK     "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
 option(ENABLE_QT      "Build Qt frontend? (Default: on)" ON)
 option(ENABLE_WIN     "Build Windows native frontend? (Default: on)" ON)
 option(ENABLE_THEORA  "Support video capture to OGG Theora? (Default: on)" ON)
+option(NATIVE_OSX_APP "Support native OSX paths read data from (Default: off)" OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type." FORCE)
@@ -273,6 +274,9 @@ if(APPLE)
   # Dirty hack to prevent AIFF.h inclusion which provides `struct Marker`
   # conflicting with out `class Marker`.
   add_definitions(-D__AIFF__)
+  if (NATIVE_OSX_APP)
+    add_definitions(-DNATIVE_OSX_APP)
+  endif()
 endif()
 
 string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type_lc)

@@ -224,7 +224,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     for (const auto& dir : qExtrasDirectories)
         extrasDirectories.push_back(dir.toUtf8().data());
 
-#ifdef TARGET_OS_MAC
+#if defined(TARGET_OS_MAC) && defined(NATIVE_OSX_APP)
     static short domains[] = { kUserDomain, kLocalDomain, kNetworkDomain };
     int domain = 0;
     int domainCount = (sizeof domains / sizeof(short));
