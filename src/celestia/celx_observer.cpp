@@ -16,9 +16,6 @@
 //#include <celengine/timelinephase.h>
 #include "celestiacore.h"
 #include <Eigen/Geometry>
-#ifdef __CELVEC__
-#include <celengine/eigenport.h>
-#endif
 
 using namespace Eigen;
 
@@ -112,11 +109,7 @@ static int observer_setorientation(lua_State* l)
         celx.doError("Argument to observer:setorientation must be a rotation");
         return 0;
     }
-#ifdef __CELVEC__
-    o->setOrientation(toEigen(*q));
-#else
     o->setOrientation(*q);
-#endif
     return 0;
 }
 
@@ -126,11 +119,7 @@ static int observer_getorientation(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to observer:getorientation()");
 
     Observer* o = this_observer(l);
-#ifdef __CELVEC__
-    celx.newRotation(fromEigen(o->getOrientation()));
-#else
     celx.newRotation(o->getOrientation());
-#endif
 
     return 1;
 }
@@ -148,12 +137,7 @@ static int observer_rotate(lua_State* l)
         celx.doError("Argument to observer:setpos must be a rotation");
         return 0;
     }
-#ifdef __CELVEC__
-    Quatf qf((float) q->w, (float) q->x, (float) q->y, (float) q->z);
-    o->rotate(toEigen(qf));
-#else
     o->rotate(q->cast<float>());
-#endif
 
     return 0;
 }
@@ -171,12 +155,7 @@ static int observer_orbit(lua_State* l)
         celx.doError("Argument for observer:orbit must be a rotation");
         return 0;
     }
-#ifdef __CELVEC__
-    Quatf qf((float) q->w, (float) q->x, (float) q->y, (float) q->z);
-    o->orbit(Selection(), toEigen(qf));
-#else
     o->orbit(Selection(), q->cast<float>());
-#endif
 
     return 0;
 }
@@ -191,11 +170,7 @@ static int observer_lookat(lua_State* l)
 
     UniversalCoord* from = nullptr;
     UniversalCoord* to = nullptr;
-#ifdef __CELVEC__
-    Vec3d* upd = nullptr;
-#else
     Vector3d* upd = nullptr;
-#endif
 
     if (argc == 3)
     {
@@ -237,18 +212,6 @@ static int observer_lookat(lua_State* l)
     {
         nd = to->offsetFromKm(*from);
     }
-#ifdef __CELVEC__
-    // need Vec3f instead:
-    Vec3f up = Vec3f((float) upd->x, (float) upd->y, (float) upd->z);
-    Vec3f n = fromEigen(nd.cast<float>());
-
-    n.normalize();
-    Vec3f v = n ^ up;
-    v.normalize();
-    Vec3f u = v ^ n;
-    Quatf qf = Quatf(Mat3f(v, u, -n));
-    o->setOrientation(toEigen(qf));
-#else
     Vector3f up = upd->cast<float>();
     Vector3f n = nd.cast<float>().normalized();
 
@@ -257,7 +220,6 @@ static int observer_lookat(lua_State* l)
     Matrix3f m;
     m.row(0) = v; m.row(1) = u; m.row(2) = n * (-1);
     o->setOrientation(Quaternionf(m));
-#endif
 
     return 0;
 }
@@ -307,22 +269,14 @@ static int observer_gototable(lua_State* l)
     lua_gettable(l, 2);
     auto rot1 = celx.toRotation(3);
     if (rot1 != nullptr)
-#ifdef __CELVEC__
-        jparams.initialOrientation = toEigen(*rot1);
-#else
         jparams.initialOrientation = *rot1;
-#endif
     lua_settop(l, 2);
 
     lua_pushstring(l, "finalOrientation");
     lua_gettable(l, 2);
     auto rot2 = celx.toRotation(3);
     if (rot2 != nullptr)
-#ifdef __CELVEC__
-        jparams.finalOrientation = toEigen(*rot2);
-#else
         jparams.finalOrientation = *rot2;
-#endif
     lua_settop(l, 2);
 
     lua_pushstring(l, "startInterpolation");
@@ -426,11 +380,7 @@ static int observer_gotolonglat(lua_State* l)
             celx.doError("Sixth argument to observer:gotolonglat must be a vector");
             return 0;
         }
-#ifdef __CELVEC__
-        up = toEigen(*uparg).cast<float>();
-#else
         up = uparg->cast<float>();
-#endif
     }
     o->gotoSelectionLongLat(*sel, travelTime, distance, (float)longitude, (float)latitude, up);
 
@@ -488,11 +438,7 @@ static int observer_gotodistance(lua_State* l)
             return 0;
         }
 
-#ifdef __CELVEC__
-        up = toEigen(*up_arg).cast<float>();
-#else
         up = up_arg->cast<float>();
-#endif
     }
 
     o->gotoSelection(*sel, travelTime, distance, up, ObserverFrame::Universal);

@@ -178,13 +178,7 @@ ReferenceFrame::getAngularVelocity(double tjd) const
 
     if (std::abs(dq.w()) > 0.99999999)
         return Vector3d::Zero();
-    else
-        return dq.vec().normalized() *     (2.0 * acos(dq.w()) / ANGULAR_VELOCITY_DIFF_DELTA);
-#ifdef CELVEC
-    Vector3d v(dq.x, dq.y, dq.z);
-    v.normalize();
-    return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);
-#endif
+    return dq.vec().normalized() * (2.0 * acos(dq.w()) / ANGULAR_VELOCITY_DIFF_DELTA);
 }
 
 
@@ -624,29 +618,6 @@ TwoVectorFrame::computeOrientation(double tjd) const
             rhAxis = 1;
         bool rhOrder = rhAxis == abs(secondaryAxis);
 
-#ifdef CELVEC
-        // Set the rotation matrix axes
-        Vector3d v[3];
-        v[abs(primaryAxis) - 1] = v0;
-
-        // Reverse the cross products if the axes are not in right
-        // hand order.
-        if (rhOrder)
-        {
-            v[abs(secondaryAxis) - 1] = v2.cross(v0);
-            v[abs(tertiaryAxis) - 1] = v2;
-        }
-        else
-        {
-            v[abs(secondaryAxis) - 1] = v0.cross(-v2);
-            v[abs(tertiaryAxis) - 1] = -v2;
-        }
-
-        // The axes are the rows of a rotation matrix. The getOrientation
-        // method must return the quaternion representation of the
-        // orientation, so convert the rotation matrix to a quaternion now.
-        Quatd q = Quatd::matrixToQuaternion(Mat3d(v[0], v[1], v[2]));
-#endif
         // Set the rotation matrix axes
         Matrix3d m;
         m.row(abs(primaryAxis) - 1) = v0;

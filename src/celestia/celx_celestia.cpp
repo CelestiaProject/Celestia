@@ -1653,11 +1653,7 @@ static int celestia_newvector(lua_State* l)
     double y = Celx_SafeGetNumber(l, 3, AllErrors, "Second arg to celestia:newvector must be a number");
     double z = Celx_SafeGetNumber(l, 4, AllErrors, "Third arg to celestia:newvector must be a number");
 
-#ifdef __CELVEC__
-    vector_new(l, Vec3d(x,y,z));
-#else
     vector_new(l, Vector3d(x,y,z));
-#endif
 
     return 1;
 }
@@ -1704,11 +1700,7 @@ static int celestia_newrotation(lua_State* l)
         double x = Celx_SafeGetNumber(l, 3, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
         double y = Celx_SafeGetNumber(l, 4, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
         double z = Celx_SafeGetNumber(l, 5, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
-#ifdef __CELVEC__
-        Quatd q(w, x, y, z);
-#else
         Quaterniond q(w, x, y, z);
-#endif
         rotation_new(l, q);
     }
     else
@@ -1720,12 +1712,7 @@ static int celestia_newrotation(lua_State* l)
             return 0;
         }
         double angle = Celx_SafeGetNumber(l, 3, AllErrors, "second argument to celestia:newrotation must be a number");
-#ifdef __CELVEC__
-        Quatd q;
-        q.setAxisAngle(*v, angle);
-#else
         Quaterniond q(AngleAxisd(angle, v->normalized()));
-#endif
         rotation_new(l, q);
     }
     return 1;

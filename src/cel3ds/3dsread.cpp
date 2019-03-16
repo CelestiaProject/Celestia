@@ -300,12 +300,6 @@ Matrix4f readMeshMatrix(ifstream& in/*, int nBytes*/)
          m30, m31, m32, 1;
 
     return m;
-#ifdef CELVEC
-    return Mat4f(Vec4f(m00, m01, m02, 0),
-                 Vec4f(m10, m11, m12, 0),
-                 Vec4f(m20, m21, m22, 0),
-                 Vec4f(m30, m31, m32, 1));
-#endif
 }
 
 

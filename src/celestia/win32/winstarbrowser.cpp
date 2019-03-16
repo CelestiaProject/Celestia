@@ -110,12 +110,6 @@ struct BrighterStarPredicate
             d0 = ucPos.offsetFromLy(star0->getPosition()).norm();
         if (d1 < 1.0f)
             d1 = ucPos.offsetFromLy(star1->getPosition()).norm();
-#if CELVEC
-        if (d0 < 1.0f)
-            d0 = (toMicroLY(star0->getPosition()) - toEigen((Point3f) ucPos)).norm() * 1e-6f;
-        if (d1 < 1.0f)
-            d1 = (toMicroLY(star1->getPosition()) - toEigen((Point3f) ucPos)).norm() * 1e-6f;
-#endif
 
         return (star0->getApparentMagnitude(d0) <
                 star1->getApparentMagnitude(d1));
@@ -309,12 +303,6 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
                 d0 = sortInfo->ucPos.offsetFromLy(star0->getPosition()).norm();
             if (d1 < 1.0f)
                 d1 = sortInfo->ucPos.offsetFromLy(star1->getPosition()).norm();
-#if CELVEC
-            if (d0 < 1.0f)
-                d0 = (toMicroLY(star0->getPosition()) - toEigen((Point3f) sortInfo->ucPos)).norm() * 1e-6f;
-            if (d1 < 1.0f)
-                d1 = (toMicroLY(star1->getPosition()) - toEigen((Point3f) sortInfo->ucPos)).norm() * 1e-6f;
-#endif
             return (int) sign(astro::absToAppMag(star0->getAbsoluteMagnitude(), d0) -
                               astro::absToAppMag(star1->getAbsoluteMagnitude(), d1));
         }

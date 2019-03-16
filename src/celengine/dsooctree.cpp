@@ -33,11 +33,6 @@ bool dsoStraddlesNodesPredicate(const Vector3d& cellCenterPos, DeepSkyObject* co
     float dsoRadius    = _dso->getBoundingSphereRadius();
 
     return (_dso->getPosition() - cellCenterPos).cwiseAbs().minCoeff() < dsoRadius;
-#ifdef CELVEC
-    return abs(dsoPos.x - cellCenterPos.x) < dsoRadius    ||
-           abs(dsoPos.y - cellCenterPos.y) < dsoRadius    ||
-           abs(dsoPos.z - cellCenterPos.z) < dsoRadius;
-#endif
 }
 
 
@@ -89,15 +84,6 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
         double r = scale * plane.normal().cwiseAbs().sum();
         if (plane.signedDistance(cellCenterPos) < -r)
             return;
-
-#ifdef CELVEC
-        double  r     = scale * (abs(plane->normal.x) +
-                                 abs(plane->normal.y) +
-                                 abs(plane->normal.z));
-
-        if (plane->normal * cellCenterPos - plane->d < -r)
-            return;
-#endif
     }
 
     // Compute the distance to node; this is equal to the distance to

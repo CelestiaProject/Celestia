@@ -13,36 +13,10 @@
 #ifndef _CELENGINE_VECGL_H_
 #define _CELENGINE_VECGL_H_
 
-#ifdef __CELVEC__
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
-#endif
 #include <celutil/color.h>
 #include <GL/glew.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-
-#ifdef __CELVEC__
-inline void glVertex(const Point3f& p)
-{
-    glVertex3fv(&p.x);
-}
-
-inline void glVertex(const Vec3f& v)
-{
-    glVertex3fv(&v.x);
-}
-
-inline void glNormal(const Vec3f& n)
-{
-    glNormal3fv(&n.x);
-}
-
-inline void glTexCoord(const Point2f& p)
-{
-    glTexCoord2fv(&p.x);
-}
-#endif
 
 
 inline void glColor(const Color& c)
@@ -55,47 +29,6 @@ inline void glColor(const Color& c, float a)
     glColor4f(c.red(), c.green(), c.blue(), c.alpha() * a);
 }
 
-
-#ifdef __CELVEC__
-inline void glMatrix(const Mat4f& m)
-{
-    Mat4f trans = m.transpose();
-    glMultMatrixf(&trans[0].x);
-}
-
-
-inline void glMatrix(const Mat4d& m)
-{
-    Mat4d trans = m.transpose();
-    glMultMatrixd(&trans[0].x);
-}
-
-
-inline void glRotate(const Quatf& q)
-{
-    glMatrix(q.toMatrix4());
-}
-
-inline void glRotate(const Quatd& q)
-{
-    glMatrix(q.toMatrix4());
-}
-
-inline void glTranslate(const Vec3f& v)
-{
-    glTranslatef(v.x, v.y, v.z);
-}
-
-inline void glTranslate(const Point3f& p)
-{
-    glTranslatef(p.x, p.y, p.z);
-}
-
-inline void glScale(const Vec3f& v)
-{
-    glScalef(v.x, v.y, v.z);
-}
-#endif
 
 #if 0
 inline void glLightDirection(GLenum light, const Vec3f& dir)

@@ -13,11 +13,7 @@
 
 #include <celengine/texture.h>
 #include <celengine/glcontext.h>
-#ifdef __CELVEC__
-#include <celmath/vecmath.h>
-#else
 #include <Eigen/Geometry>
-#endif
 #include <celmath/frustum.h>
 
 
@@ -62,11 +58,7 @@ public:
         int step;
         unsigned int attributes;  // vertex attributes
         const Frustum& frustum;   // frustum, for culling
-#ifdef __CELVEC__
-        Point3f fp[8];            // frustum points, for culling
-#else
         Eigen::Vector3f fp[8];    // frustum points, for culling
-#endif
         int texLOD[MAX_SPHERE_MESH_TEXTURES];
     };
 

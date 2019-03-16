@@ -256,25 +256,14 @@ public:
     void setTable(const char* field, const char* value);
 
     void newFrame(const ObserverFrame& f);
-#ifdef __CELVEC__
-    void newVector(const Vec3d& v);
-#endif
     void newVector(const Eigen::Vector3d& v);
-#ifdef __CELVEC__
-    void newRotation(const Quatd& q);
-#endif
     void newRotation(const Eigen::Quaterniond& q);
     void newPosition(const UniversalCoord& uc);
     void newObject(const Selection& sel);
     void newPhase(const TimelinePhase& phase);
 
-#ifdef __CELVEC__
-    Vec3d* toVector(int n);
-    Quatd* toRotation(int n);
-#else
     Eigen::Vector3d* toVector(int n);
     Eigen::Quaterniond* toRotation(int n);
-#endif
     UniversalCoord* toPosition(int n);
     Selection* toObject(int n);
     ObserverFrame* toFrame(int n);

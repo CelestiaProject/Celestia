@@ -19,9 +19,6 @@
 #include <celengine/cmdparser.h>
 #include <celengine/execenv.h>
 #include <celengine/execution.h>
-#ifdef __CELVEC__
-#include <celmath/vecmath.h>
-#endif
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
 #include <fmt/printf.h>
@@ -41,10 +38,6 @@
 #include "celx_celestia.h"
 #include "celx_gl.h"
 #include "celx_category.h"
-
-#ifdef __CELVEC__
-#include <celengine/eigenport.h>
-#endif
 
 
 // Older gcc versions used <strstream> instead of <sstream>.
@@ -1958,23 +1951,11 @@ bool CelxLua::safeGetBoolean(int index,
 }
 
 
-#ifdef __CELVEC__
-void CelxLua::newVector(const Vec3d& v)
-{
-    vector_new(m_lua, v);
-}
-
-
-void CelxLua::newVector(const Vector3d& v)
-{
-    vector_new(m_lua, fromEigen(v));
-}
-#else
 void CelxLua::newVector(const Vector3d& v)
 {
     vector_new(m_lua, v);
 }
-#endif
+
 
 void CelxLua::newPosition(const UniversalCoord& uc)
 {
@@ -1982,11 +1963,7 @@ void CelxLua::newPosition(const UniversalCoord& uc)
 }
 
 
-#ifdef __CELVEC__
-void CelxLua::newRotation(const Quatd& q)
-#else
 void CelxLua::newRotation(const Quaterniond& q)
-#endif
 {
     rotation_new(m_lua, q);
 }
@@ -2006,20 +1983,12 @@ void CelxLua::newPhase(const TimelinePhase& phase)
     phase_new(m_lua, phase);
 }
 
-#ifdef __CELVEC__
-Vec3d* CelxLua::toVector(int n)
-#else
 Vector3d* CelxLua::toVector(int n)
-#endif
 {
     return to_vector(m_lua, n);
 }
 
-#ifdef __CELVEC__
-Quatd* CelxLua::toRotation(int n)
-#else
 Quaterniond* CelxLua::toRotation(int n)
-#endif
 {
     return to_rotation(m_lua, n);
 }

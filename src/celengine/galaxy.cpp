@@ -658,38 +658,21 @@ void InitializeForms()
     //Irregular Galaxies
     unsigned int galaxySize = GALAXY_POINTS, ip = 0;
     Blob b;
-#ifdef __CELVEC__
-    Point3f p;
-#else
     Vector3f p;
-#endif
 
     BlobVector* irregularPoints = new BlobVector;
     irregularPoints->reserve(galaxySize);
 
     while (ip < galaxySize)
     {
-#ifdef __CELVEC__
-        p        = Point3f(Mathf::sfrand(), Mathf::sfrand(), Mathf::sfrand());
-        float r  = p.distanceFromOrigin();
-#else
         p        = Vector3f(Mathf::sfrand(), Mathf::sfrand(), Mathf::sfrand());
         float r  = p.norm();
-#endif
         if (r < 1)
         {
-#ifdef __CELVEC__
-            float prob = (1 - r) * (fractalsum(Vector3f(p.x + 5, p.y + 5, p.z + 5), 8) + 1) * 0.5f;
-#else
             float prob = (1 - r) * (fractalsum(Vector3f(p.x() + 5, p.y() + 5, p.z() + 5), 8) + 1) * 0.5f;
-#endif
             if (Mathf::frand() < prob)
             {
-#ifdef __CELVEC__
-                b.position   = Vector4f(p.x, p.y, p.z, 1.0f);
-#else
                 b.position   = Vector4f(p.x(), p.y(), p.z(), 1.0f);
-#endif
                 b.brightness = 64u;
                 auto rr      =  (unsigned int) (r * 511);
                 b.colorIndex = rr < 256 ? rr : 255;
