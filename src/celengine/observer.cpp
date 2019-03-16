@@ -264,19 +264,6 @@ lookAt(Matrix<T, 3, 1> from, Matrix<T, 3, 1> to, Matrix<T, 3, 1> up)
     return Quaternion<T>(m).conjugate();
 }
 
-#ifdef CELVEC
-template<class T> static Quat<T>
-lookAt(Point3<T> from, Point3<T> to, Vector3<T> up)
-{
-    Vector3<T> n = to - from;
-    n.normalize();
-    Vector3<T> v = n ^ up;
-    v.normalize();
-    Vector3<T> u = v ^ n;
-
-    return Quat<T>::matrixToQuaternion(Matrix3<T>(v, u, -n));
-}
-#endif
 
 double Observer::getArrivalTime() const
 {
@@ -310,9 +297,6 @@ void Observer::update(double dt, double timeScale)
             t = (float) clamp((realTime - journey.startTime) / journey.duration);
 
         Vector3d jv = journey.to.offsetFromKm(journey.from);
-#ifdef CELVEC
-        Vector3d jv = journey.to - journey.from;
-#endif
         UniversalCoord p;
 
         // Another interpolation method . . . accelerate exponentially,
@@ -348,12 +332,6 @@ void Observer::update(double dt, double timeScale)
                         p = journey.from.offsetKm(v * x);
                     else
                         p = journey.to.offsetKm(-v * x);
-#ifdef CELVEC
-                    if (t < 0.5)
-                        p = journey.from + v * astro::kilometersToMicroLightYears(x);
-                    else
-                        p = journey.to - v * astro::kilometersToMicroLightYears(x);
-#endif
                 }
             }
             else if (journey.traj == GreatCircle)
@@ -392,17 +370,6 @@ void Observer::update(double dt, double timeScale)
                         v = slerp(x, v1, v0);
 
                     p = frame->convertFromUniversal(origin.offsetKm(v), simTime);
-#ifdef CELVEC
-                    x = astro::kilometersToMicroLightYears(x / jv.length());
-                    Vector3d v;
-
-                    if (t < 0.5)
-                        v = slerp(x, v0, v1);
-                    else
-                        v = slerp(x, v1, v0);
-
-                    p = frame->convertFromUniversal(origin + v, simTime);
-#endif
                 }
             }
             else if (journey.traj == CircularOrbit)
@@ -451,18 +418,6 @@ void Observer::update(double dt, double timeScale)
             }
 
             q = journey.initialOrientation.slerp(v, journey.finalOrientation);
-#ifdef CELVEC
-            // Be careful to choose the shortest path when interpolating
-            if ((journey.initialOrientation.coeffs() - journey.finalOrientation.coeffs()).norm() <
-                (journey.initialOrientation.coeffs() + journey.finalOrientation.coeffs()).norm())
-            {
-                q = journey.initialOrientation.slerp(v, journey.finalOrientation);
-            }
-            else
-            {
-                q = journey.initialOrientation.slerp(v, journey.finalOrientation * -1.0);
-            }
-#endif
         }
         else if (t < journey.startInterpolation)
         {
@@ -512,11 +467,6 @@ void Observer::update(double dt, double timeScale)
         Quaterniond dr = Quaterniond(0.0, halfAV.x(), halfAV.y(), halfAV.z()) * orientation;
         orientation = Quaterniond(orientation.coeffs() + dt * dr.coeffs());
         orientation.normalize();
-#ifdef CELVEC
-        Quaterniond dr = 0.5 * (AV * orientation);
-        orientation += dt * dr;
-        orientation.normalize();
-#endif
     }
 
     updateUniversal();
@@ -572,11 +522,6 @@ void Observer::setLocationFilter(uint64_t _locationFilter)
 void Observer::reverseOrientation()
 {
     setOrientation(getOrientation() * Quaterniond(AngleAxisd(PI, Vector3d::UnitY())));
-#ifdef CELVEC
-    Quatd q = getOrientation();
-    q.yrotate(PI);
-    setOrientation(q);
-#endif
     reverseFlag = !reverseFlag;
 }
 

@@ -10,9 +10,6 @@
 #ifndef _CELMATH_SPHERE_H_
 #define _CELMATH_SPHERE_H_
 
-#ifdef __CELVEC__
-#include "vecmath.h"
-#endif
 #include <Eigen/Core>
 
 template<class T> class Sphere
@@ -37,15 +34,6 @@ template<class T> class Sphere
         radius(_radius)
     {
     }
-
-#ifdef __CELVEC__
-    // Compatibility
-    Sphere(const Point3<T>& _center, T _radius) :
-        center(_center.x, _center.y, _center.z),
-        radius(_radius)
-    {
-    }
-#endif
 
  public:
     Eigen::Matrix<T, 3, 1> center;

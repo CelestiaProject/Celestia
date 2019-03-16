@@ -13,9 +13,6 @@
 #include "celx_internal.h"
 #include "celx_position.h"
 #include <Eigen/Geometry>
-#ifdef __CELVEC__
-#include <celengine/eigenport.h>
-#endif
 
 
 using namespace Eigen;
@@ -169,11 +166,7 @@ static int position_vectorto(lua_State* l)
         return 0;
     }
 
-#ifdef __CELVEC__
-    celx.newVector(fromEigen(uc2->offsetFromUly(*uc)));
-#else
     celx.newVector(uc2->offsetFromUly(*uc));
-#endif
 
     return 1;
 }
@@ -201,21 +194,12 @@ static int position_orientationto(lua_State* l)
         return 1;
     }
 
-#ifdef __CELVEC__
-    Vec3d src2target = fromEigen(target->offsetFromKm(*src));
-    src2target.normalize();
-    Vec3d v = src2target ^ *upd;
-    v.normalize();
-    Vec3d u = v ^ src2target;
-    Quatd qd = Quatd(Mat3d(v, u, -src2target));
-#else
     Vector3d src2target = target->offsetFromKm(*src).normalized();
     Vector3d v = src2target.cross(*upd).normalized();
     Vector3d u = v.cross(src2target);
     Matrix3d m;
     m.row(0) = v; m.row(1) = u; m.row(2) = src2target * (-1);
     Quaterniond qd(m);
-#endif
     celx.newRotation(qd);
 
     return 1;
@@ -258,11 +242,7 @@ static int position_add(lua_State* l)
     celx.checkArgs(2, 2, "Need two operands for addition");
     UniversalCoord* p1 = nullptr;
     UniversalCoord* p2 = nullptr;
-#ifdef __CELVEC__
-    Vec3d* v2 = nullptr;
-#else
     Vector3d* v2 = nullptr;
-#endif
 
     if (celx.isType(1, Celx_Position) && celx.isType(2, Celx_Position))
     {
@@ -276,11 +256,7 @@ static int position_add(lua_State* l)
         {
             p1 = celx.toPosition(1);
             v2 = celx.toVector(2);
-#ifdef __CELVEC__
-            celx.newPosition(p1->offsetUly(toEigen(*v2)));
-#else
             celx.newPosition(p1->offsetUly(*v2));
-#endif
         }
     else
     {
@@ -297,11 +273,7 @@ static int position_sub(lua_State* l)
     celx.checkArgs(2, 2, "Need two operands for subtraction");
     UniversalCoord* p1 = nullptr;
     UniversalCoord* p2 = nullptr;
-#ifdef __CELVEC__
-    Vec3d* v2 = nullptr;
-#else
     Vector3d* v2 = nullptr;
-#endif
 
     if (celx.isType(1, Celx_Position) && celx.isType(2, Celx_Position))
     {
@@ -314,11 +286,7 @@ static int position_sub(lua_State* l)
         {
             p1 = celx.toPosition(1);
             v2 = celx.toVector(2);
-#ifdef __CELVEC__
-            celx.newPosition(p1->offsetUly(toEigen(*v2)));
-#else
             celx.newPosition(p1->offsetUly(*v2));
-#endif
         }
     else
     {
@@ -344,11 +312,7 @@ static int position_addvector(lua_State* l)
         return 0;
     }
 
-#ifdef __CELVEC__
-    UniversalCoord ucnew = uc->offsetUly(toEigen(*v3d));
-#else
     UniversalCoord ucnew = uc->offsetUly(*v3d);
-#endif
     position_new(l, ucnew);
     return 1;
 }

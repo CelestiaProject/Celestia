@@ -11,10 +11,6 @@
 #ifndef _CELENGINE_ASTRO_H_
 #define _CELENGINE_ASTRO_H_
 
-#ifdef __CELVEC__
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
-#endif
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <iostream>
@@ -210,11 +206,6 @@ namespace astro
     void decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds);
     double degMinSecToDecimal(int degrees, int minutes, double seconds);
     void decimalToHourMinSec(double angle, int& hours, int& minutes, double& seconds);
-
-#ifdef __CELVEC__
-    float sphereIlluminationFraction(Point3d spherePos,
-                                     Point3d viewerPos);
-#endif
 
     Eigen::Vector3f equatorialToCelestialCart(float ra, float dec, float distance);
     Eigen::Vector3d equatorialToCelestialCart(double ra, double dec, double distance);

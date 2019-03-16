@@ -106,25 +106,6 @@ Frustum::testSphere(const Eigen::Vector3d& center, double radius) const
 }
 
 
-#ifdef __CELVEC__
-Frustum::Aspect Frustum::test(const Point3f& p) const
-{
-    return testSphere(Eigen::Vector3f(p.x, p.y, p.z), 0.0f);
-}
-
-
-Frustum::Aspect Frustum::testSphere(const Point3f& center, float radius) const
-{
-    return testSphere(Eigen::Vector3f(center.x, center.y, center.z), radius);
-}
-
-
-Frustum::Aspect Frustum::testSphere(const Point3d& center, double radius) const
-{
-    return testSphere(Eigen::Vector3d(center.x, center.y, center.z), radius);
-}
-#endif
-
 /*
 Frustum::Aspect Frustum::testCapsule(const Capsulef& capsule) const
 {
@@ -204,21 +185,3 @@ Frustum::transform(const Matrix4f& m)
         //planes[i].d *= s;
     }
 }
-
-
-#ifdef __CELVEC__
-void
-Frustum::transform(const Mat3f& m)
-{
-    Matrix3f m2 = Map<Matrix3f>(&m[0][0]);
-    transform(m2);
-}
-
-
-void
-Frustum::transform(const Mat4f& m)
-{
-    Matrix4f m2 = Map<Matrix4f>(&m[0][0]);
-    transform(m2);
-}
-#endif

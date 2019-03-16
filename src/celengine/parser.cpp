@@ -393,31 +393,6 @@ bool AssociativeArray::getBoolean(const string& key, bool& val) const
     return true;
 }
 
-#ifdef __CELVEC__
-bool AssociativeArray::getVector(const string& key, Vec3d& val) const
-{
-    Value* v = getValue(key);
-    if (v == nullptr || v->getType() != Value::ArrayType)
-        return false;
-
-    ValueArray* arr = v->getArray();
-    if (arr->size() != 3)
-        return false;
-
-    Value* x = (*arr)[0];
-    Value* y = (*arr)[1];
-    Value* z = (*arr)[2];
-
-    if (x->getType() != Value::NumberType ||
-        y->getType() != Value::NumberType ||
-        z->getType() != Value::NumberType)
-        return false;
-
-    val = Vec3d(x->getNumber(), y->getNumber(), z->getNumber());
-    return true;
-}
-#endif
-
 bool AssociativeArray::getVector(const string& key, Vector3d& val) const
 {
     Value* v = getValue(key);
@@ -441,19 +416,6 @@ bool AssociativeArray::getVector(const string& key, Vector3d& val) const
     return true;
 }
 
-#ifdef __CELVEC__
-bool AssociativeArray::getVector(const string& key, Vec3f& val) const
-{
-    Vec3d vecVal;
-
-    if (!getVector(key, vecVal))
-        return false;
-
-    val = Vec3f((float) vecVal.x, (float) vecVal.y, (float) vecVal.z);
-    return true;
-}
-#endif
-
 
 bool AssociativeArray::getVector(const string& key, Vector3f& val) const
 {
@@ -465,46 +427,6 @@ bool AssociativeArray::getVector(const string& key, Vector3f& val) const
     val = vecVal.cast<float>();
     return true;
 }
-
-
-#ifdef __CELVEC__
-/** @copydoc AssociativeArray::getRotation() */
-bool AssociativeArray::getRotation(const string& key, Quatf& val) const
-{
-    Value* v = getValue(key);
-    if (v == nullptr || v->getType() != Value::ArrayType)
-        return false;
-
-    ValueArray* arr = v->getArray();
-    if (arr->size() != 4)
-        return false;
-
-    Value* w = (*arr)[0];
-    Value* x = (*arr)[1];
-    Value* y = (*arr)[2];
-    Value* z = (*arr)[3];
-
-    if (w->getType() != Value::NumberType ||
-        x->getType() != Value::NumberType ||
-        y->getType() != Value::NumberType ||
-        z->getType() != Value::NumberType)
-        return false;
-
-    Vec3f axis((float) x->getNumber(),
-               (float) y->getNumber(),
-               (float) z->getNumber());
-    axis.normalize();
-
-    double ang = w->getNumber();
-    double angScale = 1.0;
-    getAngleScale(key, angScale);
-    float angle = degToRad((float) (ang * angScale));
-
-    val.setAxisAngle(axis, angle);
-
-    return true;
-}
-#endif
 
 
 /**

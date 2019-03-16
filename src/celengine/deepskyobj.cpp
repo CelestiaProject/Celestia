@@ -179,12 +179,6 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
     params->getAngle("Angle", angle);
 
     setOrientation(Quaternionf(AngleAxisf((float) degToRad(angle), axis.cast<float>().normalized())));
-#ifdef CELVEC
-    Quatf q(1);
-    q.setAxisAngle(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
-                   (float) degToRad(angle));
-    setOrientation(toEigen(q));
-#endif
 
     double radius = 1.0;
     params->getLength("Radius", radius, KM_PER_LY);

@@ -10,9 +10,6 @@
 #ifndef _CELMATH_ELLIPSOID_H_
 #define _CELMATH_ELLIPSOID_H_
 
-#ifdef __CELVEC__
-#include "vecmath.h"
-#endif
 #include <Eigen/Core>
 
 template<class T> class Ellipsoid
@@ -57,37 +54,6 @@ template<class T> class Ellipsoid
     }
 
 
-#ifdef __CELVEC__
-    /**** Compatibility with old Celestia vectors ****/
-
-    /*! Created an ellipsoid with the specified semiaxes, centered
-     *  at the origin.
-     */
-    Ellipsoid(const Vector3<T>& _axes) :
-        center(0, 0, 0),
-        axes(_axes.x, _axes.y, _axes.z)
-    {
-    }
-
-    /*! Create an ellipsoid with the specified center and semiaxes.
-     */
-    Ellipsoid(const Point3<T>& _center,
-              const Vector3<T>& _axes) :
-        center(_center.x, _center.y, _center.z),
-        axes(_axes.x, _axes.y, _axes.z)
-    {
-    }
-
-    /*! Test whether the point p lies inside the ellipsoid.
-     */
-    bool contains(const Point3<T>& p) const
-    {
-        Vector3<T> v = p - center;
-        v = Vector3<T>(v.x / axes.x, v.y / axes.y, v.z / axes.z);
-        return v * v <= (T) 1.0;
-    }
-#endif
-
  public:
     Eigen::Matrix<T, 3, 1> center;
     Eigen::Matrix<T, 3, 1> axes;
@@ -96,7 +62,4 @@ template<class T> class Ellipsoid
 typedef Ellipsoid<float>   Ellipsoidf;
 typedef Ellipsoid<double>  Ellipsoidd;
 
-
-
 #endif // _CELMATH_ELLIPSOID_H_
-

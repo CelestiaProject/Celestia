@@ -81,11 +81,7 @@ class CommandGoto : public InstantaneousCommand
 {
  public:
     CommandGoto(double t, double dist,
-#ifdef __CELVEC__
-                Vec3f _up,
-#else
                 Eigen::Vector3f _up,
-#endif
                 ObserverFrame::CoordinateSystem _upFrame);
     ~CommandGoto() = default;
     void process(ExecutionEnvironment&);
@@ -93,11 +89,7 @@ class CommandGoto : public InstantaneousCommand
  private:
     double gotoTime;
     double distance;
-#ifdef __CELVEC__
-    Vec3f up;
-#else
     Eigen::Vector3f up;
-#endif
     ObserverFrame::CoordinateSystem upFrame;
 };
 
@@ -108,11 +100,7 @@ class CommandGotoLongLat : public InstantaneousCommand
     CommandGotoLongLat(double t,
                        double dist,
                        float _longitude, float _latitude,
-#ifdef __CELVEC__
-                       Vec3f _up);
-#else
                        Eigen::Vector3f _up);
-#endif
     ~CommandGotoLongLat() = default;
     void process(ExecutionEnvironment&);
 
@@ -121,11 +109,7 @@ class CommandGotoLongLat : public InstantaneousCommand
     double distance;
     float longitude;
     float latitude;
-#ifdef __CELVEC__
-    Vec3f up;
-#else
     Eigen::Vector3f up;
-#endif
 };
 
 
@@ -135,25 +119,16 @@ class CommandGotoLocation : public InstantaneousCommand
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
     CommandGotoLocation(double t,
-#ifdef __CELVEC__
-                        const Point3d& translation, const Quatf& rotation);
-#else
                         const Eigen::Vector3d& translation,
                         const Eigen::Quaterniond& rotation);
-#endif
 
     ~CommandGotoLocation() = default;
     void process(ExecutionEnvironment&);
 
  private:
     double gotoTime;
-#ifdef __CELVEC__
-    Point3d translation;
-    Quatf rotation;
-#else
     Eigen::Vector3d translation;
     Eigen::Quaterniond rotation;
-#endif
 };
 
 class CommandSetUrl : public InstantaneousCommand
@@ -345,57 +320,33 @@ class CommandChangeDistance : public TimedCommand
 class CommandOrbit : public TimedCommand
 {
  public:
-#ifdef __CELVEC__
-    CommandOrbit(double _duration, const Vec3f& axis, float rate);
-#else
     CommandOrbit(double _duration, const Eigen::Vector3f& axis, float rate);
-#endif
     void process(ExecutionEnvironment&, double t, double dt);
 
  private:
-#ifdef __CELVEC__
-    Vec3f spin;
-#else
     Eigen::Vector3f spin;
-#endif
 };
 
 
 class CommandRotate : public TimedCommand
 {
  public:
-#ifdef __CELVEC__
-    CommandRotate(double _duration, const Vec3f& axis, float rate);
-#else
     CommandRotate(double _duration, const Eigen::Vector3f& axis, float rate);
-#endif
     void process(ExecutionEnvironment&, double t, double dt);
 
  private:
-#ifdef __CELVEC__
-    Vec3f spin;
-#else
     Eigen::Vector3f spin;
-#endif
 };
 
 
 class CommandMove : public TimedCommand
 {
  public:
-#ifdef __CELVEC__
-    CommandMove(double _duration, const Vec3d& _velocity);
-#else
     CommandMove(double _duration, const Eigen::Vector3d& _velocity);
-#endif
     void process(ExecutionEnvironment&, double t, double dt);
 
  private:
-#ifdef __CELVEC__
-    Vec3d velocity;
-#else
     Eigen::Vector3d velocity;
-#endif
 };
 
 
@@ -415,20 +366,11 @@ class CommandSetOrientation : public InstantaneousCommand
  public:
      EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
-#ifdef __CELVEC__
-    CommandSetOrientation(const Vec3f&, float);
-#else
     CommandSetOrientation(const Eigen::Quaternionf&);
-#endif
     void process(ExecutionEnvironment&);
 
  private:
-#ifdef __CELVEC__
-    Vec3f axis;
-    float angle;
-#else
     Eigen::Quaternionf orientation;
-#endif
 };
 
 class CommandLookBack : public InstantaneousCommand
