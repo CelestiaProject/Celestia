@@ -3,38 +3,6 @@
 # that is distributed with the Celestia source package.
 
 # A few main belt asteroids . . 
-"1 Ceres:Ceres:A899 OF" "Sol" 
-{ 
-	Class "dwarfplanet" 
-	Texture "asteroid.jpg" 
-	Color [ 1.000 0.945 0.881 ]
-	BlendTexture true
-	Radius 487.5        # 975x909km
-	Oblateness 0.068    # Thomas et al, Nature, 8 Sep 2005
-
-	EllipticalOrbit 
-	{ 
-	Epoch       2452600.5     # 2002 Nov 22 00:00UT 
-	Period            4.60014 
-	SemiMajorAxis     2.7660 
-	Eccentricity      0.0793 
-	Inclination      10.584 
-	AscendingNode    80.483 
-	ArgOfPericenter  74.043 
-	MeanAnomaly     232.067 
-	} 
-
-	UniformRotation
-	{
-	Period         9.074170 # Icarus 2007,188(2):451 
-	Epoch    2449249.91125  # 1993 Sep 19 09:52:12UT 
-	Inclination             11 
-	AscendingNode  		29 
-	MeridianAngle       339.85 
-	}
-
-	Albedo 0.113 
-} 
 
 "2 Pallas:Pallas" "Sol" 
 # Pole and shape from Schmidt et al
