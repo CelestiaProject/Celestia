@@ -16,6 +16,7 @@
 #include <GL/glew.h>
 #include "vecgl.h"
 #include "lodspheremesh.h"
+#include "shadermanager.h"
 
 using namespace std;
 using namespace Eigen;
@@ -338,6 +339,9 @@ void LODSphereMesh::render(unsigned int attributes,
 
     glDisableClientState(GL_COLOR_ARRAY);
 
+    if ((attributes & Tangents) != 0)
+        glEnableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
+
     if (split == 1)
     {
         renderSection(0, 0, thetaExtent, ri);
@@ -401,6 +405,9 @@ void LODSphereMesh::render(unsigned int attributes,
     glDisableClientState(GL_VERTEX_ARRAY);
     if ((attributes & Normals) != 0)
         glDisableClientState(GL_NORMAL_ARRAY);
+
+    if ((attributes & Tangents) != 0)
+        glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
 
     for (i = 0; i < nTextures; i++)
     {
@@ -641,6 +648,13 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
         if (nTexturesUsed > 1)
             glClientActiveTexture(GL_TEXTURE0 + tc);
         glTexCoordPointer(2, GL_FLOAT, stride,  vertexBase + (tc * 2) + texCoordOffset);
+    }
+
+    if ((ri.attributes & Tangents) != 0)
+    {
+        glVertexAttribPointer(CelestiaGLProgram::TangentAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE,
+                              stride, vertexBase + 3); // 3 == tangentOffset
     }
 
     // assert(ri.step >= minStep);
