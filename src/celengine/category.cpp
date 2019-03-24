@@ -1,7 +1,7 @@
 #include <iostream>
 #include <celutil/util.h>
 #include <celutil/debug.h>
-#include <celengine/catentry.h>
+#include <celengine/astroobj.h>
 #include "category.h"
 
 UserCategory::UserCategory(const std::string &n, UserCategory *p, const std::string &domain) :
@@ -30,10 +30,10 @@ bool UserCategory::addObject(Selection s)
 {
     if (s.empty())
         return false;
-    Selection s_ = s.catEntry()->toSelection();
+    Selection s_ = s.astroObject()->toSelection();
     if (!_addObject(s_))
         return false;
-    return s_.catEntry()->_addToCategory(this);
+    return s_.astroObject()->_addToCategory(this);
 }
 
 bool UserCategory::removeObject(Selection s)
@@ -42,7 +42,7 @@ bool UserCategory::removeObject(Selection s)
         return false;
     if (!_removeObject(s))
         return false;
-    return s.catEntry()->_removeFromCategory(this);
+    return s.astroObject()->_removeFromCategory(this);
 }
 
 bool UserCategory::_removeObject(Selection s)

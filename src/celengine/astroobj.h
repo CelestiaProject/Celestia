@@ -1,14 +1,23 @@
 #pragma once
-
-#include <string>
 #include <unordered_set>
 #include <celengine/selection.h>
 #include <celengine/parseobject.h>
+#include "astrocat.h"
+
+class AstroDatabase;
 
 class UserCategory;
 
-class CatEntry
-{
+class AstroObject {
+    AstroCatalog::IndexNumber m_mainIndexNumber;
+    AstroDatabase *m_db;
+public:
+    AstroObject() { m_db = nullptr; m_mainIndexNumber = -1; }
+    AstroObject(AstroDatabase *db, AstroCatalog::IndexNumber nr) { m_db = db; m_mainIndexNumber = nr; }
+    AstroCatalog::IndexNumber getMainIndex() const { return m_mainIndexNumber; }
+    AstroDatabase *getAstroDatabase() { return m_db; }
+
+// Part from legacy CatEntry    
 public:
     typedef std::unordered_set<UserCategory*> CategorySet;
 

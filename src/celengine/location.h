@@ -11,14 +11,14 @@
 #define _CELENGINE_LOCATION_H_
 
 #include <string>
-#include <celengine/catentry.h>
+#include <celengine/astroobj.h>
 #include <celutil/color.h>
 #include <Eigen/Core>
 
 class Selection;
 class Body;
 
-class Location : public CatEntry
+class Location : public AstroObject
 {
 public:
     virtual Selection toSelection();

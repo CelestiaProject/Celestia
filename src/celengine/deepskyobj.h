@@ -14,7 +14,7 @@
 #include <string>
 #include <iostream>
 #include <celmath/ray.h>
-#include <celengine/catentry.h>
+#include <celengine/astroobj.h>
 #ifdef USE_GLCONTEXT
 #include <celengine/glcontext.h>
 #endif
@@ -33,7 +33,7 @@ class Galaxy;
 class Globular;
 class OpenCluster;
 
-class DeepSkyObject : public CatEntry
+class DeepSkyObject : public AstroObject
 {
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

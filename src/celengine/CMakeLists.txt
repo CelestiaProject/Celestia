@@ -3,6 +3,12 @@ set(CELENGINE_SOURCES
   asterism.h
   astro.cpp
   astro.h
+  astrocat.h
+  astrocat.cpp
+  astrodb.h
+  astrodb.cpp
+  astroobj.h
+  astroobj.cpp
   atmosphere.h
   axisarrow.cpp
   axisarrow.h
@@ -14,8 +20,6 @@ set(CELENGINE_SOURCES
   catalogxref.h
   category.cpp
   category.h
-  catentry.cpp
-  catentry.h
   console.cpp
   console.h
   constellation.cpp

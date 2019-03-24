@@ -14,7 +14,7 @@
 #include <config.h>
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
-#include <celengine/catentry.h>
+#include <celengine/astroobj.h>
 #include <celengine/univcoord.h>
 #include <celengine/stellarclass.h>
 #include <celengine/multitexture.h>
@@ -235,7 +235,7 @@ StarDetails::hasCorona() const
 
 
 
-class Star : public CatEntry
+class Star : public AstroObject
 {
 public:
     Star() = default;

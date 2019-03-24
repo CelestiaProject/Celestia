@@ -1487,7 +1487,7 @@ static int object_getcategories(lua_State *l)
 
     Selection *s = celx.getThis<Selection>();
     checkEmpty(celx, s);
-    CatEntry::CategorySet *set = s->catEntry()->getCategories();
+    AstroObject::CategorySet *set = s->astroObject()->getCategories();
     return celx.pushIterable<UserCategory*>(set);
 }
 
@@ -1503,14 +1503,14 @@ static int object_addtocategory(lua_State *l)
         UserCategory *c = *celx.getUserData<UserCategory*>(2);
         if (c == nullptr)
             return celx.push(false);
-        ret = s->catEntry()->addToCategory(c);
+        ret = s->astroObject()->addToCategory(c);
     }
     else
     {
         const char *n = celx.safeGetString(2, AllErrors, "Argument to object:addtocategory() must be string or userdata");
         if (n == nullptr)
             return celx.push(false);
-        ret = s->catEntry()->addToCategory(n);
+        ret = s->astroObject()->addToCategory(n);
     }
     return celx.push(ret);
 }
@@ -1527,14 +1527,14 @@ static int object_removefromcategory(lua_State *l)
         UserCategory *c = *celx.getUserData<UserCategory*>(2);
         if (c == nullptr)
             return celx.push(false);
-        ret = s->catEntry()->removeFromCategory(c);
+        ret = s->astroObject()->removeFromCategory(c);
     }
     else
     {
         const char *n = celx.safeGetString(2, AllErrors, "Argument to object:addtocategory() must be string or userdata");
         if (n == nullptr)
             return celx.push(false);
-        ret = s->catEntry()->removeFromCategory(n);
+        ret = s->astroObject()->removeFromCategory(n);
     }
     return celx.push(ret);
 }

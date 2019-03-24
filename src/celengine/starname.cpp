@@ -15,7 +15,7 @@
 
 using namespace std;
 
-
+/*
 uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
 {
     uint32_t catalogNumber = getCatalogNumberByName(name);
@@ -96,7 +96,7 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
 
     return catalogNumber;
 }
-
+*/
 
 StarNameDatabase* StarNameDatabase::readNames(istream& in)
 {

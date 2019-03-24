@@ -19,6 +19,7 @@
 #include <celutil/debug.h>
 #include <celutil/util.h>
 #include <celutil/utf8.h>
+#include "astrocat.h"
 
 // TODO: this can be "detemplatized" by creating e.g. a global-scope enum InvalidCatalogNumber since there
 // lies the one and only need for type genericity.
@@ -44,6 +45,7 @@ class NameDatabase
 
     uint32_t      getCatalogNumberByName(const std::string&) const;
     std::string getNameByCatalogNumber(const uint32_t)       const;
+    uint32_t findCatalogNumberByName(const std::string&) const;
 
     NumberIndex::const_iterator getFirstNameIter(const uint32_t catalogNumber) const;
     NumberIndex::const_iterator getFinalNameIter() const;
