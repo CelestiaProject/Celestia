@@ -1010,14 +1010,20 @@ Selection Universe::find(const string& s,
 {
     if (starCatalog != nullptr)
     {
-    Star* star = starCatalog->find(s);
-    if (star != nullptr)
-        return Selection(star);
+        Star* star = starCatalog->find(s);
+        if (star != nullptr)
+            return Selection(star);
+        star = starCatalog->find(ReplaceGreekLetterAbbr(s));
+        if (star != nullptr)
+            return Selection(star);
     }
 
     if (dsoCatalog != nullptr)
     {
         DeepSkyObject* dso = dsoCatalog->find(s);
+        if (dso != nullptr)
+            return Selection(dso);
+        dso = dsoCatalog->find(ReplaceGreekLetterAbbr(s));
         if (dso != nullptr)
             return Selection(dso);
     }
