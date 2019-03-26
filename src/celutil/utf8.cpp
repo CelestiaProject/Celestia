@@ -772,39 +772,45 @@ std::string ReplaceGreekLetterAbbr(const std::string& str)
     Greek *instance = Greek::getInstance();
     std::string ret = str;
 
-    if (str[0] >= 'A' && str[0] <= 'Z' &&
-        str[1] >= 'A' && str[1] <= 'Z')
+    if (str[0] >= 'A' && str[0] <= 'Z')
     {
         // Linear search through all letter abbreviations
         for (int i = 0; i < instance->nLetters; i++)
         {
-            const std::string& abbr = instance->abbrevs[i];
-            if (str.compare(0, abbr.length(), abbr) == 0 &&
-                (str[abbr.length()] == ' ' || isdigit(str[abbr.length()])))
+            
+            std::string prefix = instance->abbrevs[i];
+            if (str.compare(0, prefix.length(), prefix) != 0)
             {
-                std::string superscript;
-                if (str.length() > abbr.length())
+                prefix = instance->names[i];
+                if (str.compare(0, prefix.length(), prefix) != 0)
+                    continue;
+            }
+            
+            std::string superscript;
+            if (isdigit(str[prefix.length()]))
+            {
+                if (str.length() > prefix.length())
                 {
-                    if (str[abbr.length()] == '1')
+                    if (str[prefix.length()] == '1')
                         superscript = UTF8_SUPERSCRIPT_1;
-                    else if (str[abbr.length()] == '2')
+                    else if (str[prefix.length()] == '2')
                         superscript = UTF8_SUPERSCRIPT_2;
-                    else if (str[abbr.length()] == '3')
+                    else if (str[prefix.length()] == '3')
                         superscript = UTF8_SUPERSCRIPT_3;
                 }
-
-                if (superscript.empty())
-                {
-                    ret = std::string(greekAlphabetUTF8[i]) + str.substr(abbr.length());
-                }
-                else
-                {
-                    ret = std::string(greekAlphabetUTF8[i]) + superscript +
-                        str.substr(abbr.length() + 1);
-                }
-
-                break;
             }
+
+            if (superscript.empty())
+            {
+                ret = std::string(greekAlphabetUTF8[i]) + str.substr(prefix.length());
+            }
+            else
+            {
+                ret = std::string(greekAlphabetUTF8[i]) + superscript +
+                    str.substr(prefix.length() + 1);
+            }
+
+            break;
         }
     }
 
