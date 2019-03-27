@@ -101,6 +101,9 @@ class CelestiaAppWindow : public QMainWindow
 
     void handleCelUrl(const QUrl& url);
 
+    void copyText();
+    void pasteText();
+
  signals:
     void progressUpdate(const QString& s, int align, const QColor& c);
 

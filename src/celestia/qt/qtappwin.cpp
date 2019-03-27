@@ -1234,6 +1234,16 @@ void CelestiaAppWindow::createMenus()
     connect(gotoObjAct, SIGNAL(triggered()), this, SLOT(gotoObject()));
     navMenu->addAction(gotoObjAct);
 
+    QAction *copyAction = new QAction(QIcon(":/icons/clip_copy.png"), _("Copy search console text"), this);
+    copyAction->setShortcut(QString("F5"));
+    connect(copyAction, &QAction::triggered, this, &CelestiaAppWindow::copyText);
+    navMenu->addAction(copyAction);
+
+    QAction *pasteAction = new QAction(QIcon(":/icons/clip_paste.png"), _("Paste into search console"), this);
+    pasteAction->setShortcut(QString("F6"));
+    connect(pasteAction, &QAction::triggered, this, &CelestiaAppWindow::pasteText);
+    navMenu->addAction(pasteAction);
+
     /****** Time menu ******/
     timeMenu = menuBar()->addMenu(_("&Time"));
 
@@ -1579,4 +1589,18 @@ QMenu* CelestiaAppWindow::buildScriptsMenu()
 void ContextMenu(float x, float y, Selection sel)
 {
     MainWindowInstance->contextMenu(x, y, sel);
+}
+
+void CelestiaAppWindow::pasteText()
+{
+    QString text = QGuiApplication::clipboard()->text();
+    if (!text.isEmpty())
+        m_appCore->setTypedText(text.toUtf8().data());
+}
+
+void CelestiaAppWindow::copyText()
+{
+    QString text(m_appCore->getTypedText().c_str());
+    if (!text.isEmpty())
+        QGuiApplication::clipboard()->setText(text);
 }
