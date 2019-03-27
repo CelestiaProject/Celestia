@@ -378,6 +378,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void setScriptImage(float, float, float, float, const std::string&, bool);
 
+    const std::string& getTypedText() const { return typedText; }
+    void setTypedText(const char *);
+
  protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
