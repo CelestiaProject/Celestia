@@ -1149,19 +1149,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         if ( wc && (!iswcntrl(wc)) )
 #endif
         {
-            typedText += string(c_p);
-            typedTextCompletion = sim->getObjectCompletion(typedText, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
-            typedTextCompletionIdx = -1;
-#ifdef AUTO_COMPLETION
-            if (typedTextCompletion.size() == 1)
-            {
-                string::size_type pos = typedText.rfind('/', typedText.length());
-                if (pos != string::npos)
-                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[0];
-                else
-                    typedText = typedTextCompletion[0];
-            }
-#endif
+            setTypedText(c_p);
         }
         else if (c == '\b')
         {
@@ -5035,3 +5023,20 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
     return true;
 }
 #endif
+
+void CelestiaCore::setTypedText(const char *c_p)
+{
+    typedText += string(c_p);
+    typedTextCompletion = sim->getObjectCompletion(typedText, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
+    typedTextCompletionIdx = -1;
+#ifdef AUTO_COMPLETION
+    if (typedTextCompletion.size() == 1)
+    {
+        string::size_type pos = typedText.rfind('/', typedText.length());
+        if (pos != string::npos)
+            typedText = typedText.substr(0, pos + 1) + typedTextCompletion[0];
+        else
+            typedText = typedTextCompletion[0];
+    }
+#endif
+}
