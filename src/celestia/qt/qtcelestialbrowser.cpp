@@ -188,9 +188,9 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
         {
         case NameColumn:
             {
-                uint32_t hipCatNo = star->getCatalogNumber();
+                uint32_t hipCatNo = star->getMainIndexNumber();
                 uint32_t hdCatNo  = universe->getStarCatalog()->crossIndex(StarDatabase::HenryDraper, hipCatNo);
-                if (hdCatNo != Star::InvalidCatalogNumber)
+                if (hdCatNo != AstroCatalog::InvalidIndex)
                     return QString("HD %1").arg(hdCatNo);
                 else
                     return QVariant();
@@ -321,14 +321,14 @@ bool StarFilterPredicate::operator()(const Star* star) const
         if (solarSystems == nullptr)
             return true;
 
-        SolarSystemCatalog::iterator iter = solarSystems->find(star->getCatalogNumber());
+        SolarSystemCatalog::iterator iter = solarSystems->find(star->getMainIndexNumber());
         if (iter == solarSystems->end())
             return true;
     }
 
     if (multipleFilterEnabled)
     {
-        if (!star->getOrbitBarycenter() || star->getCatalogNumber() == 0)
+        if (!star->getOrbitBarycenter() || star->getMainIndexNumber() == 0)
             return true;
     }
 

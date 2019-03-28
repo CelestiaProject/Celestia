@@ -154,7 +154,6 @@ double findEclipseEnd(const Body& receiver, const Body& occulter,
     double t = now + step;
     bool eclipsed = true;
 
-
     // Perform a binary search to find the end of the eclipse
     while (step > minStep)
     {

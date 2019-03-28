@@ -26,6 +26,8 @@ set(CELENGINE_SOURCES
   constellation.h
   curveplot.cpp
   curveplot.h
+  dataloader.h
+  dataloader.cpp
   dds.cpp
   deepskyobj.cpp
   deepskyobj.h
@@ -116,6 +118,8 @@ set(CELENGINE_SOURCES
   starcolors.h
   star.cpp
   star.h
+  stardataloader.h
+  stardataloader.cpp
   stardb.cpp
   stardb.h
   starname.cpp

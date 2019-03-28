@@ -106,7 +106,7 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
 
     while (!failed)
     {
-        uint32_t catalogNumber = Star::InvalidCatalogNumber;
+        uint32_t catalogNumber = AstroCatalog::InvalidIndex;
 
         in >> catalogNumber;
         if (in.eof())

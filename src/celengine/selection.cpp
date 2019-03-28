@@ -116,7 +116,7 @@ string Selection::getName(bool i18n) const
     {
     case Type_Star:
         {
-            return fmt::sprintf("#%d", star()->getCatalogNumber());
+            return fmt::sprintf("#%d", star()->getMainIndexNumber());
         }
 
     case Type_DeepSky:
@@ -142,7 +142,7 @@ string Selection::getName(bool i18n) const
                     if (parentStar != nullptr)
                     {
                         string buf;
-                        buf = fmt::sprintf("#%d", parentStar->getCatalogNumber());
+                        buf = fmt::sprintf("#%d", parentStar->getMainIndexNumber());
                         name = buf + '/' + name;
                     }
                     system = nullptr;

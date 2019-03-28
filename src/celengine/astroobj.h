@@ -9,12 +9,13 @@ class AstroDatabase;
 class UserCategory;
 
 class AstroObject {
-    AstroCatalog::IndexNumber m_mainIndexNumber;
-    AstroDatabase *m_db;
+    AstroCatalog::IndexNumber m_mainIndexNumber { AstroCatalog::InvalidIndex };
+    AstroDatabase *m_db { nullptr };
 public:
-    AstroObject() { m_db = nullptr; m_mainIndexNumber = -1; }
-    AstroObject(AstroDatabase *db, AstroCatalog::IndexNumber nr) { m_db = db; m_mainIndexNumber = nr; }
-    AstroCatalog::IndexNumber getMainIndex() const { return m_mainIndexNumber; }
+    AstroObject() = default;
+    AstroObject(AstroDatabase *db, AstroCatalog::IndexNumber nr = AstroCatalog::InvalidIndex) { m_db = db; m_mainIndexNumber = nr; }
+    AstroCatalog::IndexNumber getMainIndexNumber() const { return m_mainIndexNumber; }
+    void setMainIndexNumber(AstroCatalog::IndexNumber nr) { m_mainIndexNumber = nr; }
     AstroDatabase *getAstroDatabase() { return m_db; }
 
 // Part from legacy CatEntry    
@@ -26,6 +27,10 @@ private:
 protected:
     bool _addToCategory(UserCategory*);
     bool _removeFromCategory(UserCategory*);
+    void setDatabase(AstroDatabase *db)
+    {
+        m_db = db;
+    }
 public:
     virtual Selection toSelection();
     bool addToCategory(UserCategory*);
@@ -39,4 +44,5 @@ public:
     CategorySet *getCategories() const { return m_cats; };
     bool loadCategories(Hash*, DataDisposition = DataDisposition::Add, const std::string &domain = "");
     friend UserCategory;
+    friend AstroDatabase;
 };

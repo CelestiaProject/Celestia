@@ -208,7 +208,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     {
         // Child object menus for star
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(selection.star()->getCatalogNumber());
+        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(selection.star()->getMainIndexNumber());
         if (iter != solarSystemCatalog->end())
         {
             SolarSystem* solarSys = iter->second;
@@ -532,7 +532,7 @@ void SelectionPopup::slotSelectChildObject()
             else if (selection.star())
             {
                 SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-                SolarSystemCatalog::iterator iter = solarSystemCatalog->find(selection.star()->getCatalogNumber());
+                SolarSystemCatalog::iterator iter = solarSystemCatalog->find(selection.star()->getMainIndexNumber());
                 if (iter != solarSystemCatalog->end())
                 {
                     SolarSystem* solarSys = iter->second;

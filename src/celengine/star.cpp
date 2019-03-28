@@ -17,6 +17,8 @@
 #include "star.h"
 #include "texmanager.h"
 #include "celephem/orbit.h"
+#include "meshmanager.h"
+#include "astrodb.h"
 
 using namespace Eigen;
 using namespace std;
@@ -942,7 +944,6 @@ StarDetails::setInfoURL(const string& _infoURL)
     infoURL = _infoURL;
 }
 
-
 Star::~Star()
 {
     // TODO: Implement reference counting for StarDetails objects so that
@@ -1081,14 +1082,14 @@ Star::getVelocity(double t) const
 MultiResTexture
 Star::getTexture() const
 {
-    return details->getTexture();
+    return getDetails()->getTexture();
 }
 
 
 ResourceHandle
 Star::getGeometry() const
 {
-    return details->getGeometry();
+    return getDetails()->getGeometry();
 }
 
 
@@ -1098,13 +1099,7 @@ Star::getGeometry() const
 const string&
 Star::getInfoURL() const
 {
-    return details->getInfoURL();
-}
-
-
-void Star::setCatalogNumber(uint32_t n)
-{
-    catalogNumber = n;
+    return getDetails()->getInfoURL();
 }
 
 void Star::setPosition(float x, float y, float z)
@@ -1141,6 +1136,8 @@ void Star::setLuminosity(float lum)
 
 StarDetails* Star::getDetails() const
 {
+    if (details == nullptr)
+        clog << "Details of star nr " << getMainIndexNumber() << " is null pointer! Disaster is coming!\n";
     return details;
 }
 
@@ -1152,32 +1149,398 @@ void Star::setDetails(StarDetails* sd)
 
 void Star::setOrbitBarycenter(Star* s)
 {
-    if (details->shared())
+    if (getDetails()->shared())
         details = new StarDetails(*details);
-    details->setOrbitBarycenter(s);
+    getDetails()->setOrbitBarycenter(s);
 }
 
 void Star::computeOrbitalRadius()
 {
-    details->computeOrbitalRadius();
+    getDetails()->computeOrbitalRadius();
 }
 
 void
 Star::setRotationModel(const RotationModel* rm)
 {
-    details->setRotationModel(rm);
+    getDetails()->setRotationModel(rm);
 }
 
 void
 Star::addOrbitingStar(Star* star)
 {
-    if (details->shared())
+    if (getDetails()->shared())
         details = new StarDetails(*details);
-    details->addOrbitingStar(star);
+    getDetails()->addOrbitingStar(star);
 }
 
 Selection Star::toSelection()
 {
 //    std::cout << "Star::toSelection()\n";
     return Selection(this);
+}
+
+bool Star::createStar(Star* star,
+                            DataDisposition disposition,
+                            Hash* starData,
+                            const string& path,
+                            bool isBarycenter,
+                            AstroDatabase *db
+                     )
+{
+    StarDetails* details = nullptr;
+    string spectralType;
+
+    // Get the magnitude and spectral type; if the star is actually
+    // a barycenter placeholder, these fields are ignored.
+    if (isBarycenter)
+    {
+        details = StarDetails::GetBarycenterDetails();
+    }
+    else
+    {
+        if (starData->getString("SpectralType", spectralType))
+        {
+            StellarClass sc = StellarClass::parse(spectralType);
+            details = StarDetails::GetStarDetails(sc);
+            if (details == nullptr)
+            {
+                cerr << _("Invalid star: bad spectral type.\n");
+                return false;
+            }
+        }
+        else
+        {
+            // Spectral type is required for new stars
+            if (disposition != DataDisposition::Modify)
+            {
+                cerr << _("Invalid star: missing spectral type.\n");
+                return false;
+            }
+        }
+    }
+
+    bool modifyExistingDetails = false;
+    if (disposition == DataDisposition::Modify)
+    {
+        StarDetails* existingDetails = star->getDetails();
+
+        // If we're modifying an existing star and it already has a
+        // customized details record, we'll just modify that.
+        if (!existingDetails->shared())
+        {
+            modifyExistingDetails = true;
+            if (details != nullptr)
+            {
+                // If the spectral type was modified, copy the new data
+                // to the custom details record.
+                existingDetails->setSpectralType(details->getSpectralType());
+                existingDetails->setTemperature(details->getTemperature());
+                existingDetails->setBolometricCorrection(details->getBolometricCorrection());
+                if ((existingDetails->getKnowledge() & StarDetails::KnowTexture) == 0)
+                    existingDetails->setTexture(details->getTexture());
+                if ((existingDetails->getKnowledge() & StarDetails::KnowRotation) == 0)
+                    existingDetails->setRotationModel(details->getRotationModel());
+                existingDetails->setVisibility(details->getVisibility());
+            }
+
+            details = existingDetails;
+        }
+        else if (details == nullptr)
+        {
+            details = existingDetails;
+        }
+    }
+
+    string modelName;
+    string textureName;
+    bool hasTexture = starData->getString("Texture", textureName);
+    bool hasModel = starData->getString("Mesh", modelName);
+
+    RotationModel* rm = CreateRotationModel(starData, path, 1.0);
+    bool hasRotationModel = (rm != nullptr);
+
+    Vector3d semiAxes = Vector3d::Ones();
+    bool hasSemiAxes = starData->getLengthVector("SemiAxes", semiAxes);
+    bool hasBarycenter = false;
+    Eigen::Vector3f barycenterPosition;
+
+    double radius;
+    bool hasRadius = starData->getLength("Radius", radius);
+
+    double temperature = 0.0;
+    bool hasTemperature = starData->getNumber("Temperature", temperature);
+    // disallow unphysical temperature values
+    if (temperature <= 0.0)
+    {
+        hasTemperature = false;
+    }
+
+    double bolometricCorrection;
+    bool hasBolometricCorrection = starData->getNumber("BoloCorrection", bolometricCorrection);
+
+    string infoURL;
+    bool hasInfoURL = starData->getString("InfoURL", infoURL);
+
+    Orbit* orbit = CreateOrbit(Selection(), starData, path, true);
+
+    if (!modifyExistingDetails)
+        star->setDetails(details);
+
+    if (hasTexture              ||
+        hasModel                ||
+        orbit != nullptr        ||
+        hasSemiAxes             ||
+        hasRadius               ||
+        hasTemperature          ||
+        hasBolometricCorrection ||
+        hasRotationModel        ||
+        hasInfoURL)
+    {
+        // If the star definition has extended information, clone the
+        // star details so we can customize it without affecting other
+        // stars of the same spectral type.
+        bool free_details = false;
+        if (!modifyExistingDetails)
+        {
+//             clog << "  Cloning star details...\n";
+            details = new StarDetails(*details);
+            free_details = true;
+            star->setDetails(details);
+        }
+
+        if (hasTexture)
+        {
+            details->setTexture(MultiResTexture(textureName, path));
+            details->addKnowledge(StarDetails::KnowTexture);
+        }
+
+        if (hasModel)
+        {
+            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(modelName, path, Vector3f::Zero(), 1.0f, true));
+            details->setGeometry(geometryHandle);
+        }
+
+        if (hasSemiAxes)
+        {
+            details->setEllipsoidSemiAxes(semiAxes.cast<float>());
+        }
+
+        if (hasRadius)
+        {
+            details->setRadius((float) radius);
+            details->addKnowledge(StarDetails::KnowRadius);
+        }
+
+        if (hasTemperature)
+        {
+            details->setTemperature((float) temperature);
+
+            if (!hasBolometricCorrection)
+            {
+                // if we change the temperature, recalculate the bolometric
+                // correction using formula from formula for main sequence
+                // stars given in B. Cameron Reed (1998), "The Composite
+                // Observational-Theoretical HR Diagram", Journal of the Royal
+                // Astronomical Society of Canada, Vol 92. p36.
+
+                double logT = log10(temperature) - 4;
+                double bc = -8.499 * pow(logT, 4) + 13.421 * pow(logT, 3)
+                            - 8.131 * logT * logT - 3.901 * logT - 0.438;
+
+                details->setBolometricCorrection((float) bc);
+            }
+        }
+
+        if (hasBolometricCorrection)
+        {
+            details->setBolometricCorrection((float) bolometricCorrection);
+        }
+
+        if (hasInfoURL)
+        {
+            details->setInfoURL(infoURL);
+        }
+
+        if (orbit != nullptr)
+        {
+            details->setOrbit(orbit);
+
+            // See if a barycenter was specified as well
+            uint32_t barycenterCatNo = AstroCatalog::InvalidIndex;
+            bool barycenterDefined = false;
+
+            string barycenterName;
+            if (starData->getString("OrbitBarycenter", barycenterName))
+            {
+                barycenterCatNo   = db->findCatalogNumberByName(barycenterName);
+                barycenterDefined = true;
+            }
+            else if (starData->getNumber("OrbitBarycenter", barycenterCatNo))
+            {
+                barycenterDefined = true;
+            }
+
+            if (barycenterDefined)
+            {
+                if (barycenterCatNo != AstroCatalog::InvalidIndex)
+                {
+//                     clog << "  requesting barycenter with nr " << barycenterCatNo << endl;
+                    Star* barycenter = db->getStar(barycenterCatNo);
+                    if (barycenter != nullptr)
+                    {
+//                         clog << "  Requested barycenter exists...\n";
+//                         if (barycenter->getDetails() == nullptr)
+//                             clog << "  ...but coresponding details not!\n";
+//                         else
+//                             clog << "  ...as well as coresponding details.\n";
+                        hasBarycenter = true;
+                        barycenterPosition = barycenter->getPosition();
+                        star->setOrbitBarycenter(barycenter);
+                        barycenter->addOrbitingStar(star);
+                    }
+                }
+
+                if (!hasBarycenter)
+                {
+                    fmt::fprintf(cerr, _("Barycenter %s of star nr %u does not exist.\n"), barycenterName, star->getMainIndexNumber());
+                    delete rm;
+                    if (free_details)
+                        delete details;
+                    return false;
+                }
+            }
+        }
+
+        if (hasRotationModel)
+            details->setRotationModel(rm);
+    }
+
+/*    if (disposition != DataDisposition::Modify)
+        star->setMainIndexNumber(catalogNumber);*/
+
+    // Compute the position in rectangular coordinates.  If a star has an
+    // orbit and barycenter, it's position is the position of the barycenter.
+    if (hasBarycenter)
+    {
+        star->setPosition(barycenterPosition);
+    }
+    else
+    {
+        double ra = 0.0;
+        double dec = 0.0;
+        double distance = 0.0;
+
+        if (disposition == DataDisposition::Modify)
+        {
+            Vector3f pos = star->getPosition();
+
+            // Convert from Celestia's coordinate system
+            Vector3f v(pos.x(), -pos.z(), pos.y());
+            v = Quaternionf(AngleAxis<float>((float) astro::J2000Obliquity, Vector3f::UnitX())) * v;
+
+            distance = v.norm();
+            if (distance > 0.0)
+            {
+                v.normalize();
+                ra = radToDeg(std::atan2(v.y(), v.x())) / DEG_PER_HRA;
+                dec = radToDeg(std::asin(v.z()));
+            }
+        }
+
+        bool modifyPosition = false;
+        if (starData->getAngle("RA", ra, DEG_PER_HRA, 1.0))
+        {
+            modifyPosition = true;
+        }
+        else
+        {
+            if (disposition != DataDisposition::Modify)
+            {
+                cerr << _("Invalid star: missing right ascension\n");
+                return false;
+            }
+        }
+
+        if (starData->getAngle("Dec", dec))
+        {
+            modifyPosition = true;
+        }
+        else
+        {
+            if (disposition != DataDisposition::Modify)
+            {
+                cerr << _("Invalid star: missing declination.\n");
+                return false;
+            }
+        }
+
+        if (starData->getLength("Distance", distance, KM_PER_LY))
+        {
+            modifyPosition = true;
+        }
+        else
+        {
+            if (disposition != DataDisposition::Modify)
+            {
+                cerr << _("Invalid star: missing distance.\n");
+                return false;
+            }
+        }
+
+        // Truncate to floats to match behavior of reading from binary file.
+        // The conversion to rectangular coordinates is still performed at
+        // double precision, however.
+        if (modifyPosition)
+        {
+            float raf = ((float) ra);
+            float decf = ((float) dec);
+            float distancef = ((float) distance);
+            Vector3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
+            star->setPosition(pos.cast<float>());
+        }
+    }
+
+    if (isBarycenter)
+    {
+        star->setAbsoluteMagnitude(30.0f);
+    }
+    else
+    {
+        double magnitude = 0.0;
+        bool magnitudeModified = true;
+        if (!starData->getNumber("AbsMag", magnitude))
+        {
+            if (!starData->getNumber("AppMag", magnitude))
+            {
+                if (disposition != DataDisposition::Modify)
+                {
+                    clog << _("Invalid star: missing magnitude.\n");
+                    return false;
+                }
+                else
+                {
+                    magnitudeModified = false;
+                }
+            }
+            else
+            {
+                float distance = star->getPosition().norm();
+
+                // We can't compute the intrinsic brightness of the star from
+                // the apparent magnitude if the star is within a few AU of the
+                // origin.
+                if (distance < 1e-5f)
+                {
+                    clog << _("Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n");
+                    return false;
+                }
+                magnitude = astro::appToAbsMag((float) magnitude, distance);
+            }
+        }
+
+        if (magnitudeModified)
+            star->setAbsoluteMagnitude((float) magnitude);
+    }
+
+    return true;
 }
