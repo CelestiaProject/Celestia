@@ -317,8 +317,8 @@ void renderGeometry_GLSL(Geometry* geometry,
     if (texOverride != InvalidResource)
     {
         Material m;
-        m.diffuse = Material::Color(ri.color.red(), ri.color.green(), ri.color.blue());
-        m.specular = Material::Color(ri.specularColor.red(), ri.specularColor.green(), ri.specularColor.blue());
+        m.diffuse = Material::Color(ri.color);
+        m.specular = Material::Color(ri.specularColor);
         m.specularPower = ri.specularPower;
 
         CelestiaTextureResource textureResource(texOverride);
@@ -361,8 +361,8 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
     if (texOverride != InvalidResource)
     {
         Material m;
-        m.diffuse = Material::Color(ri.color.red(), ri.color.green(), ri.color.blue());
-        m.specular = Material::Color(ri.specularColor.red(), ri.specularColor.green(), ri.specularColor.blue());
+        m.diffuse = Material::Color(ri.color);
+        m.specular = Material::Color(ri.specularColor);
         m.specularPower = ri.specularPower;
 
         CelestiaTextureResource textureResource(texOverride);
@@ -478,8 +478,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
     prog->eyePosition = ls.eyePos_obj;
-    prog->ambientColor = Vector3f(ri.ambientColor.red(), ri.ambientColor.green(),
-                                  ri.ambientColor.blue());
+    prog->ambientColor = ri.ambientColor.toVector3();
     prog->textureOffset = texOffset;
 
     if (atmosphere != nullptr)

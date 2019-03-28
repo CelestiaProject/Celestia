@@ -14,6 +14,7 @@
 #include <Eigen/Core>
 #include <string>
 #include <array>
+#include <celutil/color.h>
 
 
 namespace cmod
@@ -39,6 +40,13 @@ public:
             m_red(r),
             m_green(g),
             m_blue(b)
+        {
+        }
+
+        Color(const ::Color& color) :
+            m_red(color.red()),
+            m_green(color.green()),
+            m_blue(color.blue())
         {
         }
 
