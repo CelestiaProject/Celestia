@@ -17,5 +17,5 @@ using namespace std;
 //NOTE: this could be expanded in the near future, so we place it here:
 uint32_t DSONameDatabase::findCatalogNumberByName(const string& name) const
 {
-    return getCatalogNumberByName(name);
+    return getIndexNumberByName(name);
 }

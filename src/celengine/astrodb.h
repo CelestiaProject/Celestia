@@ -40,10 +40,10 @@ class AstroDatabase {
     AstroObject *getObject(AstroCatalog::IndexNumber nr) const;
     size_t size() const { return m_mainIndex.size(); };
 
-    AstroCatalog::IndexNumber findCatalogNumberByName(const std::string&) const;
+    AstroCatalog::IndexNumber findMainIndexByName(const std::string&, bool = true) const;
 
-    AstroCatalog::IndexNumber searchCrossIndexForCatalogNumber(int, AstroCatalog::IndexNumber) const;
-    AstroCatalog::IndexNumber crossIndex(int, AstroCatalog::IndexNumber) const;
+    AstroCatalog::IndexNumber findMainIndexByCatalogNumber(int, AstroCatalog::IndexNumber) const;
+    AstroCatalog::IndexNumber findCatalogNumberByMainIndex(int, AstroCatalog::IndexNumber) const;
     bool isInCrossIndex(int, AstroCatalog::IndexNumber) const;
 
     std::string catalogNumberToString(AstroCatalog::IndexNumber) const;
@@ -65,8 +65,6 @@ class AstroDatabase {
     bool addDSO(DeepSkyObject *);
     bool addBody(Body *);
     Star *getStar(AstroCatalog::IndexNumber) const;
-
-    AstroCatalog::IndexNumber findCatalogNumberByName(const std::string &, bool = true);
 
     void addName(AstroCatalog::IndexNumber nr, const std::string &name)
     {

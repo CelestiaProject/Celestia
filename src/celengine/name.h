@@ -26,28 +26,24 @@
 class NameDatabase
 {
  public:
-    typedef std::map<std::string, uint32_t, CompareIgnoringCasePredicate> NameIndex;
-    typedef std::multimap<uint32_t, std::string> NumberIndex;
-    enum {
-        InvalidCatalogNumber = 0xffffffff
-    };
+    typedef std::map<std::string, AstroCatalog::IndexNumber, CompareIgnoringCasePredicate> NameIndex;
+    typedef std::multimap<AstroCatalog::IndexNumber, std::string> NumberIndex;
 
  public:
     NameDatabase() {};
 
-
     uint32_t getNameCount() const;
 
-    void add(const uint32_t, const std::string&, bool parseGreek = true);
+    bool add(AstroCatalog::IndexNumber, const std::string&, bool parseGreek = true);
 
     // delete all names associated with the specified catalog number
-    void erase(const uint32_t);
+    void erase(AstroCatalog::IndexNumber);
 
-    uint32_t      getCatalogNumberByName(const std::string&) const;
-    std::string getNameByCatalogNumber(const uint32_t)       const;
-    uint32_t findCatalogNumberByName(const std::string&) const;
+    AstroCatalog::IndexNumber getIndexNumberByName(const std::string&) const;
+    std::string getNameByIndexNumber(AstroCatalog::IndexNumber) const;
+    AstroCatalog::IndexNumber findIndexNumberByName(const std::string&) const;
 
-    NumberIndex::const_iterator getFirstNameIter(const uint32_t catalogNumber) const;
+    NumberIndex::const_iterator getFirstNameIter(AstroCatalog::IndexNumber index) const;
     NumberIndex::const_iterator getFinalNameIter() const;
 
     std::vector<std::string> getCompletion(const std::string& name, bool greek = true) const;

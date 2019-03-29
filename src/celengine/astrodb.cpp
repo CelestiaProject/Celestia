@@ -11,7 +11,7 @@ AstroObject *AstroDatabase::getObject(AstroCatalog::IndexNumber nr) const
     return it->second;
 }
 
-AstroCatalog::IndexNumber AstroDatabase::searchCrossIndexForCatalogNumber(int catalog, AstroCatalog::IndexNumber nr) const
+AstroCatalog::IndexNumber AstroDatabase::findMainIndexByCatalogNumber(int catalog, AstroCatalog::IndexNumber nr) const
 {
     std::unordered_map<int, CrossIndex*>::const_iterator it = m_catxindex.find(catalog);
     if (it == m_catxindex.end())
@@ -21,7 +21,7 @@ AstroCatalog::IndexNumber AstroDatabase::searchCrossIndexForCatalogNumber(int ca
     return AstroCatalog::InvalidIndex;
 }
 
-AstroCatalog::IndexNumber AstroDatabase::crossIndex(int catalog, AstroCatalog::IndexNumber nr) const
+AstroCatalog::IndexNumber AstroDatabase::findCatalogNumberByMainIndex(int catalog, AstroCatalog::IndexNumber nr) const
 {
     std::unordered_map<int, CrossIndex*>::const_iterator it = m_celxindex.find(catalog);
     if (it == m_celxindex.end())
@@ -41,21 +41,26 @@ bool AstroDatabase::isInCrossIndex(int catalog, AstroCatalog::IndexNumber nr) co
     return true;
 }
 
-AstroCatalog::IndexNumber AstroDatabase::findCatalogNumberByName(const std::string& name) const
+AstroCatalog::IndexNumber AstroDatabase::findMainIndexByName(const std::string& name, bool tryGreek) const
 {
-    AstroCatalog::IndexNumber nr = m_nameDB.getCatalogNumberByName(name);
+    AstroCatalog::IndexNumber nr = m_nameDB.findIndexNumberByName(name);
     if (nr != AstroCatalog::InvalidIndex)
         return nr;
+    if (tryGreek)
+    {
+        string fname = ReplaceGreekLetterAbbr(name);
+        nr = m_nameDB.findIndexNumberByName(fname);
+        if (nr != AstroCatalog::InvalidIndex)
+            return nr;
+    }
     for (const auto ci : m_catalogs)
     {
         AstroCatalog::IndexNumber inr = ci.second->getIndexNumberByName(name);
         if (inr == AstroCatalog::InvalidIndex)
             continue;
-        nr = (ci.first == Celestia) ? inr : searchCrossIndexForCatalogNumber(ci.first, inr);
-        if (nr != AstroCatalog::InvalidIndex)
-            return nr;
+        nr = (ci.first == Celestia) ? inr : findMainIndexByCatalogNumber(ci.first, inr);
     }
-    return AstroCatalog::InvalidIndex;
+    return nr;
 }
 
 std::string AstroDatabase::catalogNumberToString(AstroCatalog::IndexNumber nr) const
@@ -100,7 +105,7 @@ std::string AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr, int m
         ++iter;
         --max;
     }
-    
+
     if (max == 0)
         return names;
     for (const auto it : m_catalogs)
@@ -109,7 +114,7 @@ std::string AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr, int m
             break;
         if (!isInCrossIndex(it.first, nr))
             continue;
-        AstroCatalog::IndexNumber inr = crossIndex(it.first, nr);
+        AstroCatalog::IndexNumber inr = findCatalogNumberByMainIndex(it.first, nr);
         if (names.size() > 0)
             names += " / ";
         names += it.second->getNameByIndexNumber(inr);
@@ -130,14 +135,14 @@ bool AstroDatabase::addCatalogNumber(AstroCatalog::IndexNumber celnr, int catalo
 {
     if (m_catalogs.count(catalog) == 0)
         return false;
-    
+
     if (m_catxindex.count(catalog) == 0)
         m_catxindex.insert(std::make_pair(catalog, new CrossIndex));
     CrossIndex *i = m_catxindex.find(catalog)->second;
     if (i->count(catnr) > 0)
         return false;
     i->insert(std::make_pair(catnr, celnr));
-    
+
     if (m_celxindex.count(catalog) == 0)
         m_celxindex.insert(std::make_pair(catalog, new CrossIndex));
     i = m_celxindex.find(catalog)->second;
@@ -198,12 +203,6 @@ Star *AstroDatabase::getStar(AstroCatalog::IndexNumber nr) const
     if (m_stars.count(static_cast<Star*>(it->second)) == 0)
         return nullptr;
     return static_cast<Star*>(it->second);
-}
-
-AstroCatalog::IndexNumber AstroDatabase::findCatalogNumberByName(const std::string &name, bool tryGreek)
-{
-    string fname = tryGreek ? ReplaceGreekLetterAbbr(name) : name;
-    return m_nameDB.findCatalogNumberByName(name);
 }
 
 void AstroDatabase::createBuildinCatalogs()

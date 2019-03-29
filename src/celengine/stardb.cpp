@@ -221,7 +221,7 @@ uint32_t StarDatabase::findCatalogNumberByName(const string& name) const
 
     if (namesDB != nullptr)
     {
-        catalogNumber = namesDB->findCatalogNumberByName(name);
+        catalogNumber = namesDB->findIndexNumberByName(name);
         if (catalogNumber != AstroCatalog::InvalidIndex)
             return catalogNumber;
     }

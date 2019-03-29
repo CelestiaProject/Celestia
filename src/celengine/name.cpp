@@ -9,29 +9,32 @@ uint32_t NameDatabase::getNameCount() const
     return nameIndex.size();
 }
 
-void NameDatabase::add(const uint32_t catalogNumber, const std::string& name, bool replaceGreek)
+bool NameDatabase::add(AstroCatalog::IndexNumber indexNumber, const std::string& name, bool replaceGreek)
 {
     if (name.length() != 0)
     {
-#ifdef DEBUG
         uint32_t tmp;
-        if ((tmp = getCatalogNumberByName(name)) != InvalidCatalogNumber)
-            DPRINTF(2,"Duplicated name '%s' on object with catalog numbers: %d and %d\n", name.c_str(), tmp, catalogNumber);
-#endif
+        if ((tmp = getIndexNumberByName(name)) != AstroCatalog::InvalidIndex) {
+            DPRINTF(2,"Duplicated name '%s' on object with catalog numbers: %d and %d\n", name.c_str(), tmp, indexNumber);
+            if (tmp == indexNumber)
+                return false;
+        }
         // Add the new name
         //nameIndex.insert(NameIndex::value_type(name, catalogNumber));
         std::string fname = ReplaceGreekLetterAbbr(name);
 
-        nameIndex[fname] = catalogNumber;
-        numberIndex.insert(NumberIndex::value_type(catalogNumber, fname));
+        nameIndex[fname] = indexNumber;
+        numberIndex.insert(NumberIndex::value_type(indexNumber, fname));
+        return true;
     }
+    return false;
 }
-void NameDatabase::erase(const uint32_t catalogNumber)
+void NameDatabase::erase(AstroCatalog::IndexNumber indexNumber)
 {
-    numberIndex.erase(catalogNumber);
+    numberIndex.erase(indexNumber);
 }
 
-uint32_t NameDatabase::getCatalogNumberByName(const std::string& name) const
+uint32_t NameDatabase::getIndexNumberByName(const std::string& name) const
 {
     NameIndex::const_iterator iter = nameIndex.find(name);
 
@@ -52,14 +55,14 @@ uint32_t NameDatabase::getCatalogNumberByName(const std::string& name) const
 // preserve this order when inserting the names into the multimap
 // (not certain whether or not this behavior is in the STL spec.
 // but it works on the implementations I've tried so far.)
-std::string NameDatabase::getNameByCatalogNumber(const uint32_t catalogNumber) const
+std::string NameDatabase::getNameByIndexNumber(AstroCatalog::IndexNumber indexNumber) const
 {
-    if (catalogNumber == InvalidCatalogNumber)
+    if (indexNumber == AstroCatalog::InvalidIndex)
         return "";
 
-    NumberIndex::const_iterator iter = numberIndex.lower_bound(catalogNumber);
+    NumberIndex::const_iterator iter = numberIndex.lower_bound(indexNumber);
 
-    if (iter != numberIndex.end() && iter->first == catalogNumber)
+    if (iter != numberIndex.end() && iter->first == indexNumber)
         return iter->second;
 
     return "";
@@ -74,11 +77,11 @@ std::string NameDatabase::getNameByCatalogNumber(const uint32_t catalogNumber) c
 // preserve this order when inserting the names into the multimap
 // (not certain whether or not this behavior is in the STL spec.
 // but it works on the implementations I've tried so far.)
-NameDatabase::NumberIndex::const_iterator NameDatabase::getFirstNameIter(const uint32_t catalogNumber) const
+NameDatabase::NumberIndex::const_iterator NameDatabase::getFirstNameIter(AstroCatalog::IndexNumber indexNumber) const
 {
-    NumberIndex::const_iterator iter = numberIndex.lower_bound(catalogNumber);
+    NumberIndex::const_iterator iter = numberIndex.lower_bound(indexNumber);
 
-    if (iter == numberIndex.end() || iter->first != catalogNumber)
+    if (iter == numberIndex.end() || iter->first != indexNumber)
         return getFinalNameIter();
     else
         return iter;
@@ -122,11 +125,11 @@ std::vector<std::string> NameDatabase::getCompletion(const std::vector<std::stri
     return completion;
 }
 
-uint32_t NameDatabase::findCatalogNumberByName(const std::string& name) const
+uint32_t NameDatabase::findIndexNumberByName(const std::string& name) const
 {
-    uint32_t catalogNumber = getCatalogNumberByName(name);
-    if (catalogNumber != AstroCatalog::InvalidIndex)
-        return catalogNumber;
+    AstroCatalog::IndexNumber indexNumber = getIndexNumberByName(name);
+    if (indexNumber != AstroCatalog::InvalidIndex)
+        return indexNumber;
 
     std::string priName   = name;
     std::string altName;
@@ -180,25 +183,25 @@ uint32_t NameDatabase::findCatalogNumberByName(const std::string& name) const
         }
     }
 
-    catalogNumber = getCatalogNumberByName(priName);
-    if (catalogNumber != AstroCatalog::InvalidIndex)
-        return catalogNumber;
+    indexNumber = getIndexNumberByName(priName);
+    if (indexNumber != AstroCatalog::InvalidIndex)
+        return indexNumber;
 
     priName += " A";  // try by appending an A
-    catalogNumber = getCatalogNumberByName(priName);
-    if (catalogNumber != AstroCatalog::InvalidIndex)
-        return catalogNumber;
+    indexNumber = getIndexNumberByName(priName);
+    if (indexNumber != AstroCatalog::InvalidIndex)
+        return indexNumber;
 
     // If the first search failed, try using the alternate name
     if (altName.length() != 0)
     {
-        catalogNumber = getCatalogNumberByName(altName);
-        if (catalogNumber == AstroCatalog::InvalidIndex)
+        indexNumber = getIndexNumberByName(altName);
+        if (indexNumber == AstroCatalog::InvalidIndex)
         {
             altName += " A";
-            catalogNumber = getCatalogNumberByName(altName);
+            indexNumber = getIndexNumberByName(altName);
         }   // Intentional fallthrough.
     }
 
-    return catalogNumber;
+    return indexNumber;
 }

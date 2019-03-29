@@ -71,6 +71,8 @@ set(CELENGINE_SOURCES
   multitexture.h
   name.cpp
   name.h
+  namedataloader.h
+  namedataloader.cpp
   nebula.cpp
   nebula.h
   observer.cpp
@@ -152,6 +154,8 @@ set(CELENGINE_SOURCES
   virtualtex.h
   visibleregion.cpp
   visibleregion.h
+  xindexdataloader.h
+  xindexdataloader.cpp
 )
 
 # The object files in the celephem directory are merged in the celengine library

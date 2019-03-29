@@ -126,7 +126,7 @@ bool StcDataLoader::load(istream &in)
         }
         // If catalog number is absent, try to find star by name
         if (catalogNumber == AstroCatalog::InvalidIndex)
-            catalogNumber = m_db->findCatalogNumberByName(firstName);
+            catalogNumber = m_db->findMainIndexByName(firstName);
 
         bool isNewStar = false;
         bool ok = true;
@@ -170,7 +170,7 @@ bool StcDataLoader::load(istream &in)
             {
                 if (!firstName.empty())
                 {
-                    catalogNumber = m_db->findCatalogNumberByName(firstName);
+                    catalogNumber = m_db->findMainIndexByName(firstName);
                 }
             }
 
@@ -213,7 +213,7 @@ bool StcDataLoader::load(istream &in)
             // If no catalog number was specified, try looking up the star by name
             if (catalogNumber == AstroCatalog::InvalidIndex && !firstName.empty())
             {
-                catalogNumber = m_db->findCatalogNumberByName(firstName);
+                catalogNumber = m_db->findMainIndexByName(firstName);
             }
 
             if (catalogNumber == AstroCatalog::InvalidIndex)
@@ -285,8 +285,7 @@ bool StcDataLoader::load(istream &in)
                         ++next;
                     }
                     string starName = objName.substr(startPos, length);
-                    if (m_db->findCatalogNumberByName(starName) == AstroCatalog::InvalidIndex)
-                        m_db->addName(catalogNumber, starName);
+                    m_db->addName(catalogNumber, starName);
 //                     clog << " Adding name \"" << starName << "\" for entry nr " << catalogNumber << endl;
                     auto localName = _(starName.c_str());
                     if (starName != localName)
