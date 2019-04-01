@@ -20,13 +20,12 @@ class AstroDatabase {
 
     enum Catalog
     {
-        Celestia     = 0,
-        HenryDrapper = 1,
-        Gliese       = 2,
-        SAO          = 3,
-        Hipparcos    = 4,
-        Tycho        = 5,
-        MaxBuiltinCatalog = 6
+        HenryDrapper = 0,
+        Gliese       = 1,
+        SAO          = 2,
+        Hipparcos    = 3,
+        Tycho        = 4,
+        MaxBuiltinCatalog = 5
     };
 
 /*    struct BarycenterUsage
@@ -35,15 +34,15 @@ class AstroDatabase {
         uint32_t barycenterCatNo;
     };*/
 
-    static const char *CatalogPrefix[MaxBuiltinCatalog];
+    static constexpr array<const char *, AstroDatabase::MaxBuiltinCatalog> CatalogPrefix  = { "HD", "Gliese", "SAO", "HIP", "TYC" };
 
     AstroObject *getObject(AstroCatalog::IndexNumber nr) const;
     size_t size() const { return m_mainIndex.size(); };
 
-    AstroCatalog::IndexNumber findMainIndexByName(const std::string&, bool = true) const;
+    AstroCatalog::IndexNumber nameToIndex(const std::string&, bool = true) const;
 
-    AstroCatalog::IndexNumber findMainIndexByCatalogNumber(int, AstroCatalog::IndexNumber) const;
-    AstroCatalog::IndexNumber findCatalogNumberByMainIndex(int, AstroCatalog::IndexNumber) const;
+    AstroCatalog::IndexNumber catalogNumberToIndex(int, AstroCatalog::IndexNumber) const;
+    AstroCatalog::IndexNumber indexToCatalogNumber(int, AstroCatalog::IndexNumber) const;
     bool isInCrossIndex(int, AstroCatalog::IndexNumber) const;
 
     std::string catalogNumberToString(AstroCatalog::IndexNumber) const;

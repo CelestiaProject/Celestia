@@ -55,7 +55,7 @@ struct PtrCatalogNumberOrderingPredicate
 
     bool operator()(const DeepSkyObject* const & dso0, const DeepSkyObject* const & dso1) const
     {
-        return (dso0->getCatalogNumber() < dso1->getCatalogNumber());
+        return (dso0->getIndex() < dso1->getIndex());
     }
 };
 
@@ -70,14 +70,14 @@ DSODatabase::~DSODatabase()
 DeepSkyObject* DSODatabase::find(const uint32_t catalogNumber) const
 {
     Galaxy refDSO;  //terrible hack !!
-    refDSO.setCatalogNumber(catalogNumber);
+    refDSO.setIndex(catalogNumber);
 
     DeepSkyObject** dso   = lower_bound(catalogNumberIndex,
                                         catalogNumberIndex + nDSOs,
                                         &refDSO,
                                         PtrCatalogNumberOrderingPredicate());
 
-    if (dso != catalogNumberIndex + nDSOs && (*dso)->getCatalogNumber() == catalogNumber)
+    if (dso != catalogNumberIndex + nDSOs && (*dso)->getIndex() == catalogNumber)
         return *dso;
     else
         return nullptr;
@@ -92,7 +92,7 @@ DeepSkyObject* DSODatabase::find(const string& name) const
     if (namesDB != nullptr)
     {
         uint32_t catalogNumber   = namesDB->findCatalogNumberByName(name);
-        if (catalogNumber != DeepSkyObject::InvalidCatalogNumber)
+        if (catalogNumber != AstroCatalog::InvalidIndex)
             return find(catalogNumber);
     }
 
@@ -114,7 +114,7 @@ vector<string> DSODatabase::getCompletion(const string& name) const
 
 string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) const
 {
-    uint32_t catalogNumber    = dso->getCatalogNumber();
+    uint32_t catalogNumber    = dso->getIndex();
 
     if (namesDB != nullptr)
     {
@@ -136,7 +136,7 @@ string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsig
 {
     string dsoNames;
 
-    unsigned int catalogNumber   = dso->getCatalogNumber();
+    unsigned int catalogNumber   = dso->getIndex();
 
     DSONameDatabase::NumberIndex::const_iterator iter  = namesDB->getFirstNameIter(catalogNumber);
 
@@ -236,18 +236,19 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
         }
         objType = tokenizer.getNameValue();
 
-        bool   autoGenCatalogNumber   = true;
-        uint32_t objCatalogNumber     = DeepSkyObject::InvalidCatalogNumber;
+        bool autoGenCatalogNumber = true;
+        uint32_t objCatalogNumber = AstroCatalog::InvalidIndex;
+
         if (tokenizer.getTokenType() == Tokenizer::TokenNumber)
         {
-            autoGenCatalogNumber   = false;
-            objCatalogNumber       = (uint32_t) tokenizer.getNumberValue();
+            autoGenCatalogNumber = false;
+            objCatalogNumber = (uint32_t) tokenizer.getNumberValue();
             tokenizer.nextToken();
         }
 
         if (autoGenCatalogNumber)
         {
-            objCatalogNumber   = nextAutoCatalogNumber--;
+            objCatalogNumber = nextAutoCatalogNumber--;
         }
 
         if (tokenizer.nextToken() != Tokenizer::TokenString)
@@ -257,7 +258,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
         }
         objName = tokenizer.getStringValue();
 
-        Value* objParamsValue    = parser.readValue();
+        Value* objParamsValue = parser.readValue();
         if (objParamsValue == nullptr ||
             objParamsValue->getType() != Value::HashType)
         {
@@ -265,7 +266,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
             return false;
         }
 
-        Hash* objParams    = objParamsValue->getHash();
+        Hash* objParams = objParamsValue->getHash();
         assert(objParams != nullptr);
 
         DeepSkyObject* obj = nullptr;
@@ -308,7 +309,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
 
             DSOs[nDSOs++] = obj;
 
-            obj->setCatalogNumber(objCatalogNumber);
+            obj->setIndex(objCatalogNumber);
 
             if (namesDB != nullptr && !objName.empty())
             {
@@ -322,8 +323,8 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
                 string::size_type startPos   = 0;
                 while (startPos != string::npos)
                 {
-                    string::size_type next    = objName.find(':', startPos);
-                    string::size_type length  = string::npos;
+                    string::size_type next = objName.find(':', startPos);
+                    string::size_type length = string::npos;
                     if (next != string::npos)
                     {
                         length = next - startPos;
@@ -333,7 +334,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
                     namesDB->add(objCatalogNumber, DSOName);
                     if (DSOName != _(DSOName.c_str()))
                         namesDB->add(objCatalogNumber, _(DSOName.c_str()));
-                    startPos   = next;
+                    startPos = next;
                 }
             }
         }
@@ -375,20 +376,20 @@ void DSODatabase::finish()
 void DSODatabase::buildOctree()
 {
     DPRINTF(1, "Sorting DSOs into octree . . .\n");
-    float absMag             = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
+    float absMag = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
 
     // TODO: investigate using a different center--it's possible that more
     // objects end up straddling the base level nodes when the center of the
     // octree is at the origin.
-    DynamicDSOOctree* root   = new DynamicDSOOctree(Vector3d::Zero(), absMag);
+    DynamicDSOOctree* root = new DynamicDSOOctree(Vector3d::Zero(), absMag);
     for (int i = 0; i < nDSOs; ++i)
     {
         root->insertObject(DSOs[i], DSO_OCTREE_ROOT_SIZE);
     }
 
     DPRINTF(1, "Spatially sorting DSOs for improved locality of reference . . .\n");
-    DeepSkyObject** sortedDSOs    = new DeepSkyObject*[nDSOs];
-    DeepSkyObject** firstDSO      = sortedDSOs;
+    DeepSkyObject** sortedDSOs = new DeepSkyObject*[nDSOs];
+    DeepSkyObject** firstDSO = sortedDSOs;
 
     // The spatial sorting part is useless for DSOs since we
     // are storing pointers to objects and not the objects themselves:
@@ -401,7 +402,7 @@ void DSODatabase::buildOctree()
     //    <<octreeRoot->countChildren() <<endl;
     // Clean up . . .
     delete[] DSOs;
-    delete   root;
+    delete root;
 
     DSOs = sortedDSOs;
 }

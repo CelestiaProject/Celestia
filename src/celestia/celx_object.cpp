@@ -594,7 +594,7 @@ static int object_getinfo(lua_State* l)
         celx.setTable("type", "star");
         celx.setTable("name", celx.appCore(AllErrors)->getSimulation()->getUniverse()
                  ->getStarCatalog()->getStarName(*(sel->star())).c_str());
-        celx.setTable("catalogNumber", star->getMainIndexNumber());
+        celx.setTable("catalogNumber", star->getIndex());
         celx.setTable("stellarClass", star->getSpectralType());
         celx.setTable("absoluteMagnitude", (lua_Number)star->getAbsoluteMagnitude());
         celx.setTable("luminosity", (lua_Number)star->getLuminosity());
@@ -686,7 +686,7 @@ static int object_getinfo(lua_State* l)
 
         celx.setTable("name", celx.appCore(AllErrors)->getSimulation()->getUniverse()
                  ->getDSOCatalog()->getDSOName(deepsky).c_str());
-        celx.setTable("catalogNumber", deepsky->getMainIndexNumber());
+        celx.setTable("catalogNumber", deepsky->getIndex());
 
         if (!strcmp(objTypeName, "galaxy"))
             celx.setTable("hubbleType", deepsky->getType());
@@ -837,7 +837,7 @@ static int object_getchildren(lua_State* l)
     if (sel->star() != nullptr)
     {
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star()->getMainIndexNumber());
+        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star()->getIndex());
         if (iter != solarSystemCatalog->end())
         {
             SolarSystem* solarSys = iter->second;
@@ -946,7 +946,7 @@ static int object_catalognumber(lua_State* l)
     AstroCatalog::IndexNumber catalogNumber = AstroCatalog::InvalidIndex;
     if (sel->star() != nullptr && validCatalog)
     {
-        AstroCatalog::IndexNumber internalNumber = sel->star()->getMainIndexNumber();
+        AstroCatalog::IndexNumber internalNumber = sel->star()->getIndex();
 
         if (useHIPPARCOS)
         {

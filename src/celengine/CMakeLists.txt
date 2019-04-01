@@ -33,6 +33,8 @@ set(CELENGINE_SOURCES
   deepskyobj.h
   dispmap.cpp
   dispmap.h
+  dsodataloader.h
+  dsodataloader.cpp
   dsodb.cpp
   dsodb.h
   dsoname.cpp

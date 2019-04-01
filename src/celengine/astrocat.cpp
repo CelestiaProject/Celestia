@@ -3,7 +3,7 @@
 
 #include "astrocat.h" 
 
-AstroCatalog::IndexNumber SimpleAstroCatalog::getIndexNumberByName(const std::string &name)
+AstroCatalog::IndexNumber SimpleAstroCatalog::nameToCatalogNumber(const std::string &name)
 {
     if (compareIgnoringCase(name, m_prefix, m_prefix.length()) == 0)
     {
@@ -25,18 +25,18 @@ const std::string& SimpleAstroCatalog::getName() const
     return getPrefix();
 }
 
-std::string SimpleAstroCatalog::getNameByIndexNumber(IndexNumber index)
+std::string SimpleAstroCatalog::catalogNumberToName(IndexNumber index)
 {
     return fmt::sprintf("%s %u", m_prefix, static_cast<unsigned int>(index));
 }
 
-AstroCatalog::IndexNumber TychoAstroCatalog::getIndexNumberByName(const std::string& name)
+AstroCatalog::IndexNumber TychoAstroCatalog::nameToCatalogNumber(const std::string& name)
 {
-    int len = m_prefix.size();
+    int len = m_prefix.length();
     if (compareIgnoringCase(name, m_prefix, len) == 0)
     {
         unsigned int tyc1 = 0, tyc2 = 0, tyc3 = 0;
-        if (std::sscanf(name.substr(len, std::string::npos).c_str(),
+        if (std::sscanf(name.c_str(),
                    " %u-%u-%u", &tyc1, &tyc2, &tyc3) == 3)
         {
             return (tyc3 * 1000000000 + tyc2 * 10000 + tyc1);
@@ -45,7 +45,7 @@ AstroCatalog::IndexNumber TychoAstroCatalog::getIndexNumberByName(const std::str
     return InvalidIndex;
 }
 
-std::string TychoAstroCatalog::getNameByIndexNumber(IndexNumber index)
+std::string TychoAstroCatalog::catalogNumberToName(IndexNumber index)
 {
     uint32_t tyc3 = index / 1000000000;
     index -= tyc3 * 1000000000;
@@ -53,15 +53,4 @@ std::string TychoAstroCatalog::getNameByIndexNumber(IndexNumber index)
     index -= tyc2 * 10000;
     uint32_t tyc1 = index;
     return fmt::sprintf("%s %u-%u-%u", m_prefix, tyc1, tyc2, tyc3);
-}
-
-AstroCatalog::IndexNumber CelestiaAstroCatalog::getIndexNumberByName(const std::string &name)
-{
-    char extra[4];
-    IndexNumber index = SimpleAstroCatalog::getIndexNumberByName(name);
-    if (index != InvalidIndex)
-        return index;
-    if (std::sscanf(name.c_str(), "#%u %c", &index, extra) == 1)
-        return index;
-    return InvalidIndex;
 }

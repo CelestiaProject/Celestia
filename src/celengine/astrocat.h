@@ -11,8 +11,8 @@ class AstroCatalog
  public:
     typedef unsigned int IndexNumber;
     static const IndexNumber InvalidIndex = UINT_MAX;
-    virtual IndexNumber getIndexNumberByName(const std::string&) = 0;
-    virtual std::string getNameByIndexNumber(IndexNumber) = 0;
+    virtual IndexNumber nameToCatalogNumber(const std::string&) = 0;
+    virtual std::string catalogNumberToName(IndexNumber) = 0;
     virtual const std::string& getName() const = 0;
 };
 
@@ -22,9 +22,9 @@ class SimpleAstroCatalog : public AstroCatalog
     std::string m_prefix;
  public:
     SimpleAstroCatalog(const std::string& pref) { m_prefix = pref; }
-    virtual IndexNumber getIndexNumberByName(const std::string&);
-    virtual std::string getNameByIndexNumber(IndexNumber);
-    virtual const std::string& getName() const;
+    virtual IndexNumber nameToCatalogNumber(const std::string&) override;
+    virtual std::string catalogNumberToName(IndexNumber) override;
+    virtual const std::string& getName() const override;
     const std::string& getPrefix() const { return m_prefix; };
 };
 
@@ -32,15 +32,8 @@ class TychoAstroCatalog : public SimpleAstroCatalog
 {
  public:
     TychoAstroCatalog() : SimpleAstroCatalog("TYC") {}
-    virtual IndexNumber getIndexNumberByName(const std::string&);
-    virtual std::string getNameByIndexNumber(IndexNumber);
-};
-
-class CelestiaAstroCatalog : public SimpleAstroCatalog
-{
- public:
-    CelestiaAstroCatalog() : SimpleAstroCatalog("CEL") {}
-    virtual IndexNumber getIndexNumberByName(const std::string&);
+    virtual IndexNumber nameToCatalogNumber(const std::string&);
+    virtual std::string catalogNumberToName(IndexNumber);
 };
 
 class HenryDrapperCatalog : public SimpleAstroCatalog

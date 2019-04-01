@@ -1,7 +1,7 @@
 
 #include "astrodb.h"
 
-const char *AstroDatabase::CatalogPrefix[AstroDatabase::MaxBuiltinCatalog] = { "CEL", "HD", "Gliese", "SAO", "HIP", "TYC" };
+constexpr array<const char *, AstroDatabase::MaxBuiltinCatalog> AstroDatabase::CatalogPrefix;
 
 AstroObject *AstroDatabase::getObject(AstroCatalog::IndexNumber nr) const
 {
@@ -11,22 +11,18 @@ AstroObject *AstroDatabase::getObject(AstroCatalog::IndexNumber nr) const
     return it->second;
 }
 
-AstroCatalog::IndexNumber AstroDatabase::findMainIndexByCatalogNumber(int catalog, AstroCatalog::IndexNumber nr) const
+AstroCatalog::IndexNumber AstroDatabase::catalogNumberToIndex(int catalog, AstroCatalog::IndexNumber nr) const
 {
     std::unordered_map<int, CrossIndex*>::const_iterator it = m_catxindex.find(catalog);
-    if (it == m_catxindex.end())
-        return AstroCatalog::InvalidIndex;
-    if (it->second->count(nr) > 0)
+    if (it != m_catxindex.end() && it->second->count(nr) > 0)
         return it->second->at(nr);
     return AstroCatalog::InvalidIndex;
 }
 
-AstroCatalog::IndexNumber AstroDatabase::findCatalogNumberByMainIndex(int catalog, AstroCatalog::IndexNumber nr) const
+AstroCatalog::IndexNumber AstroDatabase::indexToCatalogNumber(int catalog, AstroCatalog::IndexNumber nr) const
 {
     std::unordered_map<int, CrossIndex*>::const_iterator it = m_celxindex.find(catalog);
-    if (it == m_celxindex.end())
-        return AstroCatalog::InvalidIndex;
-    if (it->second->count(nr) > 0)
+    if (it != m_celxindex.end() && it->second->count(nr) > 0)
         return it->second->at(nr);
     return AstroCatalog::InvalidIndex;
 }
@@ -34,14 +30,12 @@ AstroCatalog::IndexNumber AstroDatabase::findCatalogNumberByMainIndex(int catalo
 bool AstroDatabase::isInCrossIndex(int catalog, AstroCatalog::IndexNumber nr) const
 {
     std::unordered_map<int, CrossIndex*>::const_iterator it = m_catxindex.find(catalog);
-    if (it == m_catxindex.end())
-        return false;
-    if (it->second->count(nr) == 0)
+    if (it == m_catxindex.end() || it->second->count(nr) == 0)
         return false;
     return true;
 }
 
-AstroCatalog::IndexNumber AstroDatabase::findMainIndexByName(const std::string& name, bool tryGreek) const
+AstroCatalog::IndexNumber AstroDatabase::nameToIndex(const std::string& name, bool tryGreek) const
 {
     AstroCatalog::IndexNumber nr = m_nameDB.findIndexNumberByName(name);
     if (nr != AstroCatalog::InvalidIndex)
@@ -53,27 +47,27 @@ AstroCatalog::IndexNumber AstroDatabase::findMainIndexByName(const std::string& 
         if (nr != AstroCatalog::InvalidIndex)
             return nr;
     }
-    for (const auto ci : m_catalogs)
+    for (const auto& ci : m_catalogs)
     {
-        AstroCatalog::IndexNumber inr = ci.second->getIndexNumberByName(name);
+        AstroCatalog::IndexNumber inr = ci.second->nameToCatalogNumber(name);
         if (inr == AstroCatalog::InvalidIndex)
             continue;
-        nr = (ci.first == Celestia) ? inr : findMainIndexByCatalogNumber(ci.first, inr);
+        nr = catalogNumberToIndex(ci.first, inr);
     }
     return nr;
 }
 
 std::string AstroDatabase::catalogNumberToString(AstroCatalog::IndexNumber nr) const
 {
-    return m_catalogs.find(Celestia)->second->getNameByIndexNumber(nr);
+    return fmt::sprintf("#%u", nr);
 }
 
 std::string AstroDatabase::catalogNumberToString(int catalog, AstroCatalog::IndexNumber nr) const
 {
     auto it = m_catalogs.find(catalog);
     if (it != m_catalogs.end())
-        return it->second->getNameByIndexNumber(nr);
-    return "#{Invalid catalog}";
+        return it->second->catalogNumberToName(nr);
+    return "";
 }
 
 std::string AstroDatabase::getObjectName(AstroCatalog::IndexNumber nr, bool i18n) const
@@ -94,7 +88,8 @@ std::string AstroDatabase::getObjectName(AstroCatalog::IndexNumber nr, bool i18n
 
 std::string AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr, int max) const
 {
-    string names; // optimize memory allocation
+    string names;
+    names.reserve(127); // optimize memory allocation
     NameDatabase::NumberIndex::const_iterator iter = m_nameDB.getFirstNameIter(nr);
     while (iter != m_nameDB.getFinalNameIter() && iter->first == nr && max > 0)
     {
@@ -114,10 +109,10 @@ std::string AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr, int m
             break;
         if (!isInCrossIndex(it.first, nr))
             continue;
-        AstroCatalog::IndexNumber inr = findCatalogNumberByMainIndex(it.first, nr);
+        AstroCatalog::IndexNumber inr = indexToCatalogNumber(it.first, nr);
         if (names.size() > 0)
             names += " / ";
-        names += it.second->getNameByIndexNumber(inr);
+        names += it.second->catalogNumberToName(inr);
         --max;
     }
     return names;
@@ -154,20 +149,20 @@ bool AstroDatabase::addCatalogNumber(AstroCatalog::IndexNumber celnr, int catalo
 
 bool AstroDatabase::addObject(AstroObject *obj)
 {
-    if (obj->getMainIndexNumber() == AstroCatalog::InvalidIndex)
-        obj->setMainIndexNumber(getAutoIndex());
-    if (obj->getMainIndexNumber() == AstroCatalog::InvalidIndex)
+    if (obj->getIndex() == AstroCatalog::InvalidIndex)
+        obj->setIndex(getAutoIndex());
+    if (obj->getIndex() == AstroCatalog::InvalidIndex)
     {
         clog << "Error: Cannot allocate new index number!\n";
         return false;
     }
-    if (m_mainIndex.count(obj->getMainIndexNumber()) > 0)
+    if (m_mainIndex.count(obj->getIndex()) > 0)
     {
-        clog << "Error: object nr " << obj->getMainIndexNumber() << " already exists!\n";
+        clog << "Error: object nr " << obj->getIndex() << " already exists!\n";
         return false;
     }
     obj->setDatabase(this);
-    m_mainIndex.insert(std::make_pair(obj->getMainIndexNumber(), obj));
+    m_mainIndex.insert(std::make_pair(obj->getIndex(), obj));
     return true;
 }
 
@@ -207,7 +202,6 @@ Star *AstroDatabase::getStar(AstroCatalog::IndexNumber nr) const
 
 void AstroDatabase::createBuildinCatalogs()
 {
-    m_catalogs.insert(std::make_pair(Celestia, new CelestiaAstroCatalog()));
     m_catalogs.insert(std::make_pair(HenryDrapper, new HenryDrapperCatalog()));
     m_catalogs.insert(std::make_pair(Gliese, new GlieseAstroCatalog()));
     m_catalogs.insert(std::make_pair(SAO, new SAOAstroCatalog()));

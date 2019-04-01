@@ -176,7 +176,7 @@ SolarSystemTreeModel::createTreeItem(Selection sel,
         // Stars may have both a solar system and other stars orbiting
         // them.
         SolarSystemCatalog* solarSystems = universe->getSolarSystemCatalog();
-        auto iter = solarSystems->find(sel.star()->getMainIndexNumber());
+        auto iter = solarSystems->find(sel.star()->getIndex());
         if (iter != solarSystems->end())
         {
             sys = iter->second->getPlanets();

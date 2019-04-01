@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const char CrossIndexDataLoader::CROSSINDEX_FILE_HEADER[];
+constexpr const char CrossIndexDataLoader::CROSSINDEX_FILE_HEADER[];
 
 bool CrossIndexDataLoader::load(istream& in)
 {

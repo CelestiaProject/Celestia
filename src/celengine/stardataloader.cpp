@@ -126,7 +126,7 @@ bool StcDataLoader::load(istream &in)
         }
         // If catalog number is absent, try to find star by name
         if (catalogNumber == AstroCatalog::InvalidIndex)
-            catalogNumber = m_db->findMainIndexByName(firstName);
+            catalogNumber = m_db->nameToIndex(firstName);
 
         bool isNewStar = false;
         bool ok = true;
@@ -143,7 +143,7 @@ bool StcDataLoader::load(istream &in)
                 if (star == nullptr)
                 {
                     star = new Star();
-                    star->setMainIndexNumber(catalogNumber);
+                    star->setIndex(catalogNumber);
                     if (!m_db->addStar(star))
                     {
                         clog << __FILE__ << "(" << __LINE__ << "): Cannot add star wit nr " << catalogNumber << "!\n";
@@ -161,7 +161,7 @@ bool StcDataLoader::load(istream &in)
                     ok = false;
                 }
                 else
-                    catalogNumber = star->getMainIndexNumber();
+                    catalogNumber = star->getIndex();
             }
             break;
 
@@ -170,7 +170,7 @@ bool StcDataLoader::load(istream &in)
             {
                 if (!firstName.empty())
                 {
-                    catalogNumber = m_db->findMainIndexByName(firstName);
+                    catalogNumber = m_db->nameToIndex(firstName);
                 }
             }
 
@@ -180,12 +180,12 @@ bool StcDataLoader::load(istream &in)
 //                 clog << " Replace: About to add star with nr: " << catalogNumber << endl;
                 if (m_db->addStar(star))
                 {
-                    catalogNumber = star->getMainIndexNumber();
+                    catalogNumber = star->getIndex();
 //                     clog << " Replace: Added star with nr " << catalogNumber << endl;
                 }
                 else
                 {
-//                     clog << " Unable to add star with index " << star->getMainIndexNumber() << endl;
+//                     clog << " Unable to add star with index " << star->getIndex() << endl;
                     delete star;
                     ok = false;
                 }
@@ -197,11 +197,11 @@ bool StcDataLoader::load(istream &in)
                 if (star == nullptr)
                 {
                     star = new Star();
-                    star->setMainIndexNumber(catalogNumber);
+                    star->setIndex(catalogNumber);
 //                     clog << " Replace 2: About to add star with nr: " << catalogNumber << endl;
                     if (!m_db->addStar(star))
                     {
-//                         clog << " Unable to add star with index " << star->getMainIndexNumber() << endl;
+//                         clog << " Unable to add star with index " << star->getIndex() << endl;
                         delete star;
                         ok = false;
                     }// else clog << " Replace 2: Added star with nr " << catalogNumber << endl;
@@ -213,7 +213,7 @@ bool StcDataLoader::load(istream &in)
             // If no catalog number was specified, try looking up the star by name
             if (catalogNumber == AstroCatalog::InvalidIndex && !firstName.empty())
             {
-                catalogNumber = m_db->findMainIndexByName(firstName);
+                catalogNumber = m_db->nameToIndex(firstName);
             }
 
             if (catalogNumber == AstroCatalog::InvalidIndex)
@@ -253,7 +253,7 @@ bool StcDataLoader::load(istream &in)
 
         if (ok)
         {
-//             clog << " About to create star with nr " << star->getMainIndexNumber() << endl;
+//             clog << " About to create star with nr " << star->getIndex() << endl;
             ok = Star::createStar(star, disposition, starData, resourcePath, !isStar, m_db);
             if (!ok)
                 clog << __FILE__ << "(" << __LINE__ << "): Creation of star failed!\n";
@@ -373,16 +373,16 @@ bool StarBinDataLoader::load(istream& in)
 
         if (details == nullptr)
         {
-            fmt::fprintf(cerr, _("Bad spectral type in star database, star #%u\n"), star->getMainIndexNumber());
+            fmt::fprintf(cerr, _("Bad spectral type in star database, star #%u\n"), star->getIndex());
             return false;
         }
 
         star->setDetails(details);
-        star->setMainIndexNumber(catNo);
+        star->setIndex(catNo);
         if (m_db->addStar(star))
-            ;//clog << "BinData: Added star nr " << star->getMainIndexNumber() << endl;
+            ;//clog << "BinData: Added star nr " << star->getIndex() << endl;
         else
-            clog << "BinData: unable to add star nr " << star->getMainIndexNumber() << endl;
+            clog << "BinData: unable to add star nr " << star->getIndex() << endl;
     }
 
     if (in.bad())

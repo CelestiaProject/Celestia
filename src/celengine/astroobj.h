@@ -13,9 +13,9 @@ class AstroObject {
     AstroDatabase *m_db { nullptr };
 public:
     AstroObject() = default;
-    AstroObject(AstroDatabase *db, AstroCatalog::IndexNumber nr = AstroCatalog::InvalidIndex) { m_db = db; m_mainIndexNumber = nr; }
-    AstroCatalog::IndexNumber getMainIndexNumber() const { return m_mainIndexNumber; }
-    void setMainIndexNumber(AstroCatalog::IndexNumber nr) { m_mainIndexNumber = nr; }
+    AstroObject(AstroDatabase *db, AstroCatalog::IndexNumber nr = AstroCatalog::InvalidIndex) : m_db(db), m_mainIndexNumber(nr) {}
+    AstroCatalog::IndexNumber getIndex() const { return m_mainIndexNumber; }
+    void setIndex(AstroCatalog::IndexNumber nr) { m_mainIndexNumber = nr; }
     AstroDatabase *getAstroDatabase() { return m_db; }
 
 // Part from legacy CatEntry    

@@ -79,9 +79,9 @@ struct SolarSystemPredicate
     {
         SolarSystemCatalog::iterator iter;
 
-        iter = solarSystems->find(star0->getMainIndexNumber());
+        iter = solarSystems->find(star0->getIndex());
         bool hasPlanets0 = (iter != solarSystems->end());
-        iter = solarSystems->find(star1->getMainIndexNumber());
+        iter = solarSystems->find(star1->getIndex());
         bool hasPlanets1 = (iter != solarSystems->end());
         if (hasPlanets1 == hasPlanets0)
         {

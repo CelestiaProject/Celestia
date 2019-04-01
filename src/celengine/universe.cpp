@@ -101,7 +101,7 @@ SolarSystem* Universe::getSolarSystem(const Star* star) const
     if (star == nullptr)
         return nullptr;
 
-    uint32_t starNum = star->getMainIndexNumber();
+    uint32_t starNum = star->getIndex();
     auto iter = solarSystemCatalog->find(starNum);
     if (iter != solarSystemCatalog->end())
         return iter->second;
@@ -152,7 +152,7 @@ SolarSystem* Universe::createSolarSystem(Star* star) const
 
     solarSystem = new SolarSystem(star);
     solarSystemCatalog->insert(SolarSystemCatalog::
-                               value_type(star->getMainIndexNumber(),
+                               value_type(star->getIndex(),
                                           solarSystem));
 
     return solarSystem;
