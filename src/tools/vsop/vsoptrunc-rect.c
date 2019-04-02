@@ -22,6 +22,13 @@ static double maxError[6] = {
 };
 
 
+void usage(const char* name)
+{
+    fprintf(stderr, "Usage:\n %s <body name> <error multiplier>\n", name);
+    exit(1);
+}
+
+
 // Command line args:
 //    vsoptrunc-rect <body name> <error multiplier>
 int main(int argc, char* argv[])
@@ -38,6 +45,9 @@ int main(int argc, char* argv[])
         planet = argv[1];
     if (argc > 2)
         a0 = atof(argv[2]);
+    else
+        usage(argv[0]);
+
 
     while (fgets(buf, LINE_LENGTH + 1, stdin))
     {
