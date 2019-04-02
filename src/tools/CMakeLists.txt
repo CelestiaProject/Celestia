@@ -1,5 +1,6 @@
 add_subdirectory(cmod)
 add_subdirectory(qttxf)
+add_subdirectory(spice2xyzv)
 add_subdirectory(stardb)
 add_subdirectory(vsop)
 add_subdirectory(xyzv2bin)
