@@ -30,8 +30,6 @@ extern "C" {
 #include "texture.h"
 #include "virtualtex.h"
 
-#define JPEG_SUPPORT
-#define PNG_SUPPORT
 
 using namespace Eigen;
 using namespace std;

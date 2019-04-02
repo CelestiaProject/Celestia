@@ -29,8 +29,6 @@ extern "C" {
 #include "celestia.h"
 #include "image.h"
 
-#define JPEG_SUPPORT
-#define PNG_SUPPORT
 
 using namespace std;
 
@@ -345,8 +343,6 @@ Image* LoadImageFromFile(const string& filename)
 
 
 
-#ifdef JPEG_SUPPORT
-
 struct my_error_mgr
 {
     struct jpeg_error_mgr pub;  // "public" fields
@@ -367,12 +363,10 @@ METHODDEF(void) my_error_exit(j_common_ptr cinfo)
     // Return control to the setjmp point
     longjmp(myerr->setjmp_buffer, 1);
 }
-#endif // JPEG_SUPPORT
 
 
 Image* LoadJPEGImage(const string& filename, int /*unused*/)
 {
-#ifdef JPEG_SUPPORT
     Image* img = nullptr;
 
     // This struct contains the JPEG decompression parameters and pointers to
@@ -498,93 +492,19 @@ Image* LoadJPEGImage(const string& filename, int /*unused*/)
     // warnings occurred (test whether jerr.pub.num_warnings is nonzero).
 
     return img;
-
-#elif defined(TARGET_OS_MAC)
-
-    Image* img = nullptr;
-    CGBuffer* cgJpegImage;
-    size_t img_w, img_h, img_d;
-
-    cgJpegImage = new CGBuffer(filename.c_str());
-    if (cgJpegImage == nullptr) {
-        char tempcwd[2048];
-        getcwd(tempcwd, sizeof(tempcwd));
-        DPRINTF(0, "CGBuffer :: Error opening JPEG image file %s/%s\n", tempcwd, filename.c_str());
-        delete cgJpegImage;
-        return nullptr;
-    }
-
-    if (!cgJpegImage->LoadJPEG()) {
-        char tempcwd[2048];
-        getcwd(tempcwd, sizeof(tempcwd));
-        DPRINTF(0, "CGBuffer :: Error loading JPEG image file %s/%s\n", tempcwd, filename.c_str());
-        delete cgJpegImage;
-        return nullptr;
-    }
-
-    cgJpegImage->Render();
-
-    img_w = (size_t) cgJpegImage->image_size.width;
-    img_h = (size_t) cgJpegImage->image_size.height;
-    img_d = (size_t) ((cgJpegImage->image_depth == 8) ? 1 : 4);
-
-    // DPRINTF(0,"cgJpegImage :: %d x %d x %d [%d] bpp\n", img_w, img_h, (size_t)cgJpegImage->image_depth, img_d);
-
-#ifdef MACOSX_ALPHA_JPEGS
-    int format = (img_d == 1) ? GL_LUMINANCE : GL_RGBA;
-#else
-    int format = (img_d == 1) ? GL_LUMINANCE : GL_RGB;
-#endif
-    img = new Image(format, img_w, img_h);
-    if (img == nullptr || img->getPixels() == nullptr) {
-        DPRINTF(0, "Could not create image\n");
-        delete cgJpegImage;
-        return nullptr;
-    }
-    // following code flips image and skips alpha byte if no alpha support
-    unsigned char* bout = (unsigned char*) img->getPixels();
-    unsigned char* bin  = (unsigned char*) cgJpegImage->buffer->data;
-    unsigned int bcount = img_w * img_h * img_d;
-    unsigned int i = 0;
-    bin += bcount+(img_w*img_d); // start one row past end
-    for (i=0; i<bcount; ++i)
-    {
-         // at end of row, move back two rows
-        if ( (i % (img_w * img_d)) == 0 ) bin -= 2*(img_w * img_d);
-
-#ifndef MACOSX_ALPHA_JPEGS
-        if (( (img_d != 1) && !((i&3)^3) )) // skip extra byte
-        {
-            ++bin;
-        } else
-#endif // !MACOSX_ALPHA_JPEGS
-
-        *bout++ = *bin++;
-    }
-    delete cgJpegImage;
-    return img;
-
-#else
-    return nullptr;
-#endif // JPEG_SUPPORT
 }
 
 
-#ifdef PNG_SUPPORT
 void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
     auto* fp = (FILE*) png_get_io_ptr(png_ptr);
     if (fread((void*) data, 1, length, fp) != length)
         cerr << "Error reading PNG data";
 }
-#endif
 
 
 Image* LoadPNGImage(const string& filename)
 {
-#ifndef PNG_SUPPORT
-    return nullptr;
-#else
     char header[8];
     png_structp png_ptr;
     png_infop info_ptr;
@@ -706,7 +626,6 @@ Image* LoadPNGImage(const string& filename)
     fclose(fp);
 
     return img;
-#endif
 }
 
 
