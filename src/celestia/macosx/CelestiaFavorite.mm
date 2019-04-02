@@ -17,8 +17,6 @@
 #import "CelestiaSimulation.h"
 #import "CelestiaSimulation_PrivateAPI.h"
 
-#include <celengine/eigenport.h>
-
 #ifdef URL_FAVORITES
 #include "url.h"
 #endif
