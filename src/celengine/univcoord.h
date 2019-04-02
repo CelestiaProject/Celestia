@@ -19,11 +19,6 @@
 #include "astro.h"
 #include <Eigen/Core>
 
-#define DEPRECATED_UNIVCOORD_METHODS 0
-
-#if DEPRECATED_UNIVCOORD_METHODS
-#include <celmath/vecmath.h>
-#endif
 
 class UniversalCoord
 {
@@ -47,23 +42,6 @@ class UniversalCoord
     {
     }
 
-#if DEPRECATED_UNIVCOORD_METHODS
-    UniversalCoord(const Point3d&);
-    UniversalCoord(const Point3f&);
-
-    operator Point3d() const;
-    operator Point3f() const;
-
-    friend Vec3d operator-(const UniversalCoord&, const UniversalCoord&);
-    friend Vec3d operator-(const UniversalCoord&, const Point3d&);
-    friend Vec3d operator-(const Point3d&, const UniversalCoord&);
-    friend Vec3f operator-(const UniversalCoord&, const Point3f&);
-    friend Vec3f operator-(const Point3f&, const UniversalCoord&);
-    friend UniversalCoord operator+(const UniversalCoord&, const Vec3d&);
-    friend UniversalCoord operator+(const UniversalCoord&, const Vec3f&);
-    friend UniversalCoord operator-(const UniversalCoord&, const Vec3d&);
-    friend UniversalCoord operator-(const UniversalCoord&, const Vec3f&);
-#endif
     friend UniversalCoord operator+(const UniversalCoord&, const UniversalCoord&);
 
     /** Compute a universal coordinate that is the sum of this coordinate and
@@ -140,9 +118,6 @@ class UniversalCoord
         return astro::kilometersToLightYears(offsetFromKm(uc).norm());
     }
 
-#if DEPRECATED_UNIVCOORD_METHODS
-    double distanceTo(const UniversalCoord&);
-#endif
     UniversalCoord difference(const UniversalCoord&) const;
 
     static UniversalCoord Zero()
@@ -182,18 +157,6 @@ class UniversalCoord
 public:
     BigFix x, y, z;
 };
-
-#if DEPRECATED_UNIVCOORD_METHODS
-Vec3d operator-(const UniversalCoord&, const UniversalCoord&);
-Vec3d operator-(const UniversalCoord&, const Point3d&);
-Vec3d operator-(const Point3d&, const UniversalCoord&);
-Vec3f operator-(const UniversalCoord&, const Point3f&);
-Vec3f operator-(const Point3f&, const UniversalCoord&);
-UniversalCoord operator+(const UniversalCoord&, const Vec3d&);
-UniversalCoord operator+(const UniversalCoord&, const Vec3f&);
-UniversalCoord operator-(const UniversalCoord&, const Vec3d&);
-UniversalCoord operator-(const UniversalCoord&, const Vec3f&);
-#endif
 
 UniversalCoord operator+(const UniversalCoord&, const UniversalCoord&);
 
