@@ -42,7 +42,7 @@ uint32_t NameDatabase::getIndexNumberByName(const std::string& name) const
     {
         iter = nameIndex.find(ReplaceGreekLetterAbbr(name));
         if (iter == nameIndex.end())
-            return InvalidCatalogNumber;
+            return AstroCatalog::InvalidIndex;
     }
     return iter->second;
 }

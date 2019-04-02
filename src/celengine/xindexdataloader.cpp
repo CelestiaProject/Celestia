@@ -7,13 +7,13 @@
 
 using namespace std;
 
-constexpr const char CrossIndexDataLoader::CROSSINDEX_FILE_HEADER[];
+const char CrossIndexDataLoader::CROSSINDEX_FILE_HEADER[] = "CELINDEX";
 
 bool CrossIndexDataLoader::load(istream& in)
 {
     // Verify that the star database file has a correct header
     {
-        int headerLength = strlen(CROSSINDEX_FILE_HEADER);
+        const int headerLength = sizeof(CROSSINDEX_FILE_HEADER);
         char header[headerLength];
         in.read(header, headerLength);
         if (strncmp(header, CROSSINDEX_FILE_HEADER, headerLength))

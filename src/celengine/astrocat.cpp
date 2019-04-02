@@ -36,7 +36,7 @@ AstroCatalog::IndexNumber TychoAstroCatalog::nameToCatalogNumber(const std::stri
     if (compareIgnoringCase(name, m_prefix, len) == 0)
     {
         unsigned int tyc1 = 0, tyc2 = 0, tyc3 = 0;
-        if (std::sscanf(name.c_str(),
+        if (std::sscanf(name.c_str() + len,
                    " %u-%u-%u", &tyc1, &tyc2, &tyc3) == 3)
         {
             return (tyc3 * 1000000000 + tyc2 * 10000 + tyc1);
@@ -54,3 +54,5 @@ std::string TychoAstroCatalog::catalogNumberToName(IndexNumber index)
     uint32_t tyc1 = index;
     return fmt::sprintf("%s %u-%u-%u", m_prefix, tyc1, tyc2, tyc3);
 }
+
+constexpr int HipparcosAstroCatalog::MaxCatalogNumber;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <unordered_map>
 #include <climits>
 #include "selection.h"
@@ -28,15 +29,16 @@ class AstroDatabase {
         MaxBuiltinCatalog = 5
     };
 
-/*    struct BarycenterUsage
-    { // Do we really need this?
-        uint32_t catNo;
-        uint32_t barycenterCatNo;
-    };*/
-
     static constexpr array<const char *, AstroDatabase::MaxBuiltinCatalog> CatalogPrefix  = { "HD", "Gliese", "SAO", "HIP", "TYC" };
 
-    AstroObject *getObject(AstroCatalog::IndexNumber nr) const;
+    AstroDatabase();
+
+    AstroObject *getObject(AstroCatalog::IndexNumber) const;
+    AstroObject *getObject(const std::string&) const;
+    Star *getStar(AstroCatalog::IndexNumber) const;
+    DeepSkyObject *getDSO(AstroCatalog::IndexNumber) const;
+    Star *getStar(const std::string&) const;
+    DeepSkyObject *getDSO(const std::string&) const;
     size_t size() const { return m_mainIndex.size(); };
 
     AstroCatalog::IndexNumber nameToIndex(const std::string&, bool = true) const;
@@ -63,12 +65,13 @@ class AstroDatabase {
     bool addStar(Star *);
     bool addDSO(DeepSkyObject *);
     bool addBody(Body *);
-    Star *getStar(AstroCatalog::IndexNumber) const;
 
     void addName(AstroCatalog::IndexNumber nr, const std::string &name)
     {
         m_nameDB.add(nr, name);
     }
+
+    void addNames(AstroCatalog::IndexNumber, const std::string&);
 
     void eraseNames(AstroCatalog::IndexNumber nr)
     {
@@ -78,11 +81,6 @@ class AstroDatabase {
     const std::unordered_set<Star*> getStars() const
     {
         return m_stars;
-    }
-
-    AstroDatabase()
-    {
-        m_autoIndex = AutoIndexMax;
     }
 
  protected:
@@ -100,9 +98,9 @@ class AstroDatabase {
 
     AstroCatalog::IndexNumber m_autoIndex;
     static const AstroCatalog::IndexNumber AutoIndexMax = UINT_MAX - 1;
-    static const AstroCatalog::IndexNumber AutoIndexMin = UINT_MAX / 2;
+    static const AstroCatalog::IndexNumber AutoIndexMin = HipparcosAstroCatalog::MaxCatalogNumber + 1;
 
     AstroCatalog::IndexNumber getAutoIndex();
 
-    void createBuildinCatalogs();
+    void createBuiltinCatalogs();
 };

@@ -19,7 +19,19 @@ bool objectNames(AstroDatabase &db, AstroCatalog::IndexNumber nr)
         cerr << "Object nr " << nr << " doesn't exists!\n";
         return false;
     }
-    cout << "Names of star nr " << nr << ": " << db.getObjectNameList(nr, 1024) << endl;
+    cout << "Names of object nr " << nr << ": " << db.getObjectNameList(nr, 1024) << endl;
+    return true;
+}
+
+bool objectNames(AstroDatabase &db, const std::string &name)
+{
+    AstroObject *o = db.getObject(name);
+    if (o == nullptr)
+    {
+        cerr << "Object named " << name << " doesn't exists!\n";
+        return false;
+    }
+    cout << "Names of object nr " << o->getIndex() << ": " << db.getObjectNameList(o->getIndex(), 1024) << endl;
     return true;
 }
 
@@ -77,10 +89,13 @@ int main()
     ret = dsoloader.load("data/galaxies.dsc");
     cout << "Dsc data loaded with status: " << ret << endl;
 
-    nameAddition(adb, 0, "Olaf Cen");
-    nameAddition(adb, 0, "ALF Centauri");
+    ret = dsoloader.load("data/globulars.dsc");
+    cout << "Dsc data loaded with status: " << ret << endl;
 
     objectNames(adb, 55203);
+    objectNames(adb, "C 1126+292");
+    objectNames(adb, "NGC 3201");
+    objectNames(adb, "36 Oph C");
     assert(adb.getStar(70890) != nullptr);
     assert(adb.nameToIndex("Gliese 423") == 55203);
     assert(adb.nameToIndex("ALF Cen") != AstroCatalog::InvalidIndex);

@@ -3,12 +3,45 @@
 
 constexpr array<const char *, AstroDatabase::MaxBuiltinCatalog> AstroDatabase::CatalogPrefix;
 
+AstroDatabase::AstroDatabase() :
+    m_autoIndex(AutoIndexMax)
+{
+    createBuiltinCatalogs();
+}
+
 AstroObject *AstroDatabase::getObject(AstroCatalog::IndexNumber nr) const
 {
     MainIndex::const_iterator it = m_mainIndex.find(nr);
     if (it == m_mainIndex.end())
         return nullptr;
     return it->second;
+}
+
+AstroObject *AstroDatabase::getObject(const std::string &name) const
+{
+    return getObject(nameToIndex(name));
+}
+
+Star *AstroDatabase::getStar(AstroCatalog::IndexNumber nr) const
+{
+    Star *star = static_cast<Star*>(getObject(nr));
+    return (m_stars.count(star) > 0) ? star : nullptr;
+}
+
+Star *AstroDatabase::getStar(const std::string &name) const
+{
+    return getStar(nameToIndex(name));
+}
+
+DeepSkyObject *AstroDatabase::getDSO(AstroCatalog::IndexNumber nr) const
+{
+    DeepSkyObject *dso = static_cast<DeepSkyObject*>(getObject(nr));
+    return (m_dsos.count(dso) > 0) ? dso : nullptr;
+}
+
+DeepSkyObject *AstroDatabase::getDSO(const std::string &name) const
+{
+    return getDSO(nameToIndex(name));
 }
 
 AstroCatalog::IndexNumber AstroDatabase::catalogNumberToIndex(int catalog, AstroCatalog::IndexNumber nr) const
@@ -153,12 +186,12 @@ bool AstroDatabase::addObject(AstroObject *obj)
         obj->setIndex(getAutoIndex());
     if (obj->getIndex() == AstroCatalog::InvalidIndex)
     {
-        clog << "Error: Cannot allocate new index number!\n";
+        fmt::fprintf(cerr, "Error: Cannot allocate new index number!\n");
         return false;
     }
     if (m_mainIndex.count(obj->getIndex()) > 0)
     {
-        clog << "Error: object nr " << obj->getIndex() << " already exists!\n";
+        fmt::fprintf(cerr, "Error: object nr %u already exists!\n", obj->getIndex());
         return false;
     }
     obj->setDatabase(this);
@@ -190,17 +223,29 @@ bool AstroDatabase::addBody(Body *body)
     return true;
 }
 
-Star *AstroDatabase::getStar(AstroCatalog::IndexNumber nr) const
+void AstroDatabase::addNames(AstroCatalog::IndexNumber nr, const string &names) // string containing names separated by colon
 {
-    MainIndex::const_iterator it = m_mainIndex.find(nr);
-    if (it == m_mainIndex.end())
-        return nullptr;
-    if (m_stars.count(static_cast<Star*>(it->second)) == 0)
-        return nullptr;
-    return static_cast<Star*>(it->second);
+    string::size_type startPos = 0;
+    while (startPos != string::npos)
+    {
+        string::size_type next = names.find(':', startPos);
+        string::size_type length = string::npos;
+        if (next != string::npos)
+        {
+            length = next - startPos;
+            ++next;
+        }
+        string name = names.substr(startPos, length);
+        addName(nr, name);
+        string lname = _(name.c_str());
+//      fmt::printf(cerr, "Added name \"%s\" for DSO nr %u\n", DSOName, );
+        if (name != lname)
+            addName(nr, lname);
+        startPos = next;
+    }
 }
 
-void AstroDatabase::createBuildinCatalogs()
+void AstroDatabase::createBuiltinCatalogs()
 {
     m_catalogs.insert(std::make_pair(HenryDrapper, new HenryDrapperCatalog()));
     m_catalogs.insert(std::make_pair(Gliese, new GlieseAstroCatalog()));

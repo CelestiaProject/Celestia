@@ -21,7 +21,7 @@ class StcDataLoader : public AstroDataLoader
 class StarBinDataLoader : public AstroDataLoader
 {
  public:
-    static constexpr const char FILE_HEADER[] = "CELSTARS";
+    static const char FILE_HEADER[];
     StarBinDataLoader() = default;
     StarBinDataLoader(AstroDatabase *db) { m_db = db; }
     using AstroDataLoader::load;

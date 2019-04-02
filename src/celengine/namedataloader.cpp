@@ -31,22 +31,7 @@ bool NameDataLoader::load(istream& in)
             break;
         }
 
-        // Iterate through the string for names delimited
-        // by ':', and insert them into the star database. Note that
-        // db->add() will skip empty names.
-        string::size_type startPos = 0;
-        while (startPos != string::npos)
-        {
-            ++startPos;
-            string::size_type next = name.find(':', startPos);
-            string::size_type length = string::npos;
-
-            if (next != string::npos)
-                length = next - startPos;
-
-            m_db->addName(catalogNumber, name.substr(startPos, length));
-            startPos = next;
-        }
+        m_db->addNames(catalogNumber, name);
     }
 
     return !failed;

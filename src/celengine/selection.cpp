@@ -141,9 +141,8 @@ string Selection::getName(bool i18n) const
                     const Star* parentStar = system->getStar();
                     if (parentStar != nullptr)
                     {
-                        string buf;
-                        buf = fmt::sprintf("#%d", parentStar->getIndex());
-                        name = buf + '/' + name;
+                        string buf = fmt::sprintf("#%d/%s", parentStar->getIndex(), name);
+                        name = buf;
                     }
                     system = nullptr;
                 }

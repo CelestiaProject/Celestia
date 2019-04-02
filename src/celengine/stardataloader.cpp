@@ -1,4 +1,5 @@
 
+#include <iostream>
 #include <celutil/util.h>
 #include <celutil/bytes.h>
 #include <fmt/printf.h>
@@ -231,6 +232,10 @@ bool StcDataLoader::load(istream &in)
             break;
         }
 
+//         For backward compatibility: index within HIP numbers range is supposed to be valid HIP number
+        if (ok && catalogNumber < HipparcosAstroCatalog::MaxCatalogNumber)
+            m_db->addCatalogNumber(catalogNumber, AstroDatabase::Hipparcos, catalogNumber);
+
         tokenizer.pushBack();
 
         Value* starDataValue = parser.readValue();
@@ -267,31 +272,7 @@ bool StcDataLoader::load(istream &in)
         {
             if (!objName.empty())
             {
-                // List of namesDB will replace any that already exist for
-                // this star.
-//                m_db->eraseNames(catalogNumber);
-
-                // Iterate through the string for names delimited
-                // by ':', and insert them into the star database.
-                // Note that db->add() will skip empty namesDB.
-                string::size_type startPos = 0;
-                while (startPos != string::npos)
-                {
-                    string::size_type next    = objName.find(':', startPos);
-                    string::size_type length = string::npos;
-                    if (next != string::npos)
-                    {
-                        length = next - startPos;
-                        ++next;
-                    }
-                    string starName = objName.substr(startPos, length);
-                    m_db->addName(catalogNumber, starName);
-//                     clog << " Adding name \"" << starName << "\" for entry nr " << catalogNumber << endl;
-                    auto localName = _(starName.c_str());
-                    if (starName != localName)
-                        m_db->addName(catalogNumber, localName);
-                    startPos = next;
-                }
+                m_db->addNames(catalogNumber, objName);
             }
             successCount++;
         }
@@ -307,7 +288,7 @@ bool StcDataLoader::load(istream &in)
     return true;
 }
 
-constexpr const char StarBinDataLoader::FILE_HEADER[];
+const char StarBinDataLoader::FILE_HEADER[] = "CELSTARS";
 
 bool StarBinDataLoader::load(istream& in)
 {
@@ -319,6 +300,7 @@ bool StarBinDataLoader::load(istream& in)
         char* header = new char[headerLength];
         in.read(header, headerLength);
         if (strncmp(header, FILE_HEADER, headerLength)) {
+            fmt::fprintf(cerr, "Bad file header!\n");
             delete[] header;
             return false;
         }
@@ -331,7 +313,10 @@ bool StarBinDataLoader::load(istream& in)
         in.read((char*) &version, sizeof version);
         LE_TO_CPU_INT16(version, version);
         if (version != 0x0100)
+        {
+            fmt::fprintf(cerr, "Bad file version!\n");
             return false;
+        }
     }
 
     // Read the star count

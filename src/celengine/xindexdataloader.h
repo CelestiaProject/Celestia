@@ -6,7 +6,7 @@
 class CrossIndexDataLoader : public AstroDataLoader
 {
 public:
-    static constexpr const char CROSSINDEX_FILE_HEADER[] = "CELINDEX";
+    static const char CROSSINDEX_FILE_HEADER[];
     int catalog;
     CrossIndexDataLoader() = default;
     CrossIndexDataLoader(AstroDatabase *db) { m_db = db; }

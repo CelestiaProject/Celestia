@@ -57,6 +57,7 @@ class SAOAstroCatalog : public SimpleAstroCatalog
 class HipparcosAstroCatalog : public SimpleAstroCatalog
 {
  public:
+    static constexpr int MaxCatalogNumber = 2000000; // Approximately
     HipparcosAstroCatalog() : SimpleAstroCatalog("HIP") {}
 };
 
