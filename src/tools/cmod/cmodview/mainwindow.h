@@ -16,6 +16,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QLabel>
+#include <QAction>
 
 
 class MainWindow : public QMainWindow
