@@ -62,13 +62,6 @@ elseif(_UNIX AND ENABLE_THEORA)
   )
 endif()
 
-if(NOT fmt_FOUND)
-  list(APPEND CELESTIA_SOURCES
-    ${CMAKE_SOURCE_DIR}/thirdparty/fmt/src/format.cc
-    ${CMAKE_SOURCE_DIR}/thirdparty/fmt/src/posix.cc
-  )
-endif()
-
 add_library(celestia STATIC ${CELESTIA_SOURCES})
 #[[
 add_library(celestia SHARED ${CELESTIA_SOURCES})
