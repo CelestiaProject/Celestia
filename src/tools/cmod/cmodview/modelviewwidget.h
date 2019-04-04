@@ -177,7 +177,7 @@ public:
         return m_backgroundColor;
     }
 
-    Eigen::Transform3d cameraTransform() const;
+    Eigen::Affine3d cameraTransform() const;
 
     void setMaterial(unsigned int index, const cmod::Material& material);
 

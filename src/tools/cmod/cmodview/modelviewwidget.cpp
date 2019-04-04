@@ -202,9 +202,9 @@ Matrix4f directionalLightMatrix(const Vector3f& lightDirection)
     Vector3f upDir = viewDir.unitOrthogonal();
     Vector3f rightDir = upDir.cross(viewDir);
     Matrix4f m = Matrix4f::Identity();
-    m.row(0).start<3>() = rightDir;
-    m.row(1).start<3>() = upDir;
-    m.row(2).start<3>() = viewDir;
+    m.row(0).head(3) = rightDir;
+    m.row(1).head(3) = upDir;
+    m.row(2).head(3) = viewDir;
 
     return m;
 }
@@ -458,7 +458,7 @@ ModelViewWidget::select(const Vector2f& viewportPoint)
     Vector3d direction(h * aspectRatio * viewportPoint.x(), h * viewportPoint.y(), -1.0f);
     direction.normalize();
     Vector3d origin = Vector3d::Zero();
-    Transform3d camera(cameraTransform().inverse());
+    Affine3d camera(cameraTransform().inverse());
 
     Mesh::PickResult pickResult;
     bool hit = m_model->pick(camera * origin, camera.linear() * direction, &pickResult);
@@ -478,10 +478,10 @@ ModelViewWidget::select(const Vector2f& viewportPoint)
 }
 
 
-Transform3d
+Affine3d
 ModelViewWidget::cameraTransform() const
 {
-    Transform3d t(m_cameraOrientation.conjugate());
+    Affine3d t(m_cameraOrientation.conjugate());
     t.translate(-m_cameraPosition);
     return t;
 }
@@ -610,9 +610,9 @@ ModelViewWidget::paintGL()
 
         Vector3d direction = m_lightOrientation * lightSource.direction;
         Vector4f lightColor = Vector4f::Zero();
-        lightColor.start<3>() = lightSource.color * lightSource.intensity;
+        lightColor.head(3) = lightSource.color * lightSource.intensity;
         Vector4f lightPosition = Vector4f::Zero();
-        lightPosition.start<3>() = direction.cast<float>();
+        lightPosition.head(3) = direction.cast<float>();
 
         glEnable(glLight);
         glLightfv(glLight, GL_POSITION, lightPosition.data());
@@ -1010,7 +1010,7 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         // Get the eye position in model space
         Vector4f eyePosition = cameraTransform().inverse().cast<float>() * Vector4f::UnitW();
-        shader->setUniformValue("eyePosition", eyePosition.start<3>());
+        shader->setUniformValue("eyePosition", eyePosition.head(3));
 
         // Set all shadow related values
         if (shaderKey.shadowCount() > 0)
