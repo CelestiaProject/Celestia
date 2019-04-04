@@ -100,7 +100,7 @@ public:
                     texId = loadTexture(m_modelDirPath + "/../textures/medres/" + resourceName);
                 }
 
-                std::cout << "Load " << resourceName.toAscii().data() << ", texId = " << texId << std::endl;
+                std::cout << "Load " << resourceName.toStdString() << ", texId = " << texId << std::endl;
                 m_textures[resourceName] = texId;
                 return texId;
             }
@@ -1508,19 +1508,19 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
 
     auto* glShader = new GLShaderProgram();
     auto* vertexShader = new GLVertexShader();
-    if (!vertexShader->compile(vertexShaderSource.toAscii().data()))
+    if (!vertexShader->compile(vertexShaderSource.toStdString()))
     {
         qWarning("Vertex shader error: %s", vertexShader->log().c_str());
-        std::cerr << vertexShaderSource.toAscii().data() << std::endl;
+        std::cerr << vertexShaderSource.toStdString() << std::endl;
         delete glShader;
         return nullptr;
     }
 
     auto* fragmentShader = new GLFragmentShader();
-    if (!fragmentShader->compile(fragmentShaderSource.toAscii().data()))
+    if (!fragmentShader->compile(fragmentShaderSource.toStdString()))
     {
         qWarning("Fragment shader error: %s", fragmentShader->log().c_str());
-        std::cerr << fragmentShaderSource.toAscii().data() << std::endl;
+        std::cerr << fragmentShaderSource.toStdString() << std::endl;
         delete glShader;
         return nullptr;
     }

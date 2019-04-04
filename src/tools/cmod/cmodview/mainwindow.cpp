@@ -8,7 +8,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <QtGui>
 #include "mainwindow.h"
 #include "materialwidget.h"
 #include "convert3ds.h"
@@ -16,6 +15,21 @@
 #include "cmodops.h"
 #include <cel3ds/3dsread.h>
 #include <celmodel/modelfile.h>
+#include <QStatusBar>
+#include <QMenuBar>
+#include <QSettings>
+#include <QDockWidget>
+#include <QEvent>
+#include <QMessageBox>
+#include <QCloseEvent>
+#include <QFileOpenEvent>
+#include <QFileInfo>
+#include <QVBoxLayout>
+#include <QDialogButtonBox>
+#include <QColorDialog>
+#include <QDir>
+#include <QFileDialog>
+#include <QFormLayout>
 
 using namespace cmod;
 using namespace std;
