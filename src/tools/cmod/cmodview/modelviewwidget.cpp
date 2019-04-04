@@ -17,6 +17,7 @@
 #include <QTextStream>
 #include <Eigen/LU>
 #include <algorithm>
+#include <iostream>
 
 using namespace cmod;
 using namespace Eigen;
