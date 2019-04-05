@@ -15,29 +15,27 @@
 #include <cmath>
 #include <algorithm>
 #include <map>
-#include <celmath/vecmath.h>
 #include <celmath/mathlib.h>
+#include <celmath/geomutil.h>
 #include <celmath/ray.h>
 #include <celmath/sphere.h>
 #include <celmath/intersect.h>
-#ifdef MACOSX
-#include "../../../macosx/png.h"
-#else
-#include "png.h"
-#endif // MACOSX
+#include <zlib.h>
+#include <png.h>
 
 using namespace std;
-
+using namespace Eigen;
+using namespace celmath;
 
 
 // Extinction lookup table dimensions
-const unsigned int ExtinctionLUTHeightSteps = 256;
-const unsigned int ExtinctionLUTViewAngleSteps = 512;
+constexpr const unsigned int ExtinctionLUTHeightSteps = 256;
+constexpr const unsigned int ExtinctionLUTViewAngleSteps = 512;
 
 // Scattering lookup table dimensions
-const unsigned int ScatteringLUTHeightSteps = 64;
-const unsigned int ScatteringLUTViewAngleSteps = 64;
-const unsigned int ScatteringLUTLightAngleSteps = 64;
+constexpr const unsigned int ScatteringLUTHeightSteps = 64;
+constexpr const unsigned int ScatteringLUTViewAngleSteps = 64;
+constexpr const unsigned int ScatteringLUTLightAngleSteps = 64;
 
 // Values settable via the command line
 static unsigned int IntegrateScatterSteps = 20;
@@ -96,9 +94,9 @@ Color operator*(const Color& a, const Color& b)
     return {a.r * b.r, a.g * b.g, a.b * b.b};
 }
 
-Color operator*(const Color& a, const Vec3d& v)
+Color operator*(const Color& a, const Vector3d& v)
 {
-    return Color((float) (a.r * v.x), (float) (a.g * v.y), (float) (a.b * v.z));
+    return Color((float) (a.r * v.x()), (float) (a.g * v.y()), (float) (a.b * v.z()));
 }
 
 
@@ -109,7 +107,7 @@ static uint8_t floatToByte(float f)
     if (f >= 1.0f)
         return 255;
     else
-        return (uint8_t)_t (f * 255.99f);
+        return (uint8_t) (f * 255.99f);
 }
 
 
@@ -126,34 +124,33 @@ public:
 
     Ray3d getViewRay(double viewportX, double viewportY) const
     {
-        Vec3d viewDir;
+        Vector3d viewDir;
 
         if (type == Planar)
         {
             double viewPlaneHeight = tan(fov / 2.0) * 2 * front;
-            viewDir.x = viewportX * viewPlaneHeight;
-            viewDir.y = viewportY * viewPlaneHeight;
-            viewDir.z = front;
+            viewDir.x() = viewportX * viewPlaneHeight;
+            viewDir.y() = viewportY * viewPlaneHeight;
+            viewDir.z() = front;
             viewDir.normalize();
         }
         else
         {
             double phi = -viewportY * fov / 2.0 + PI / 2.0;
             double theta = viewportX * fov / 2.0 + PI / 2.0;
-            viewDir.x = sin(phi) * cos(theta);
-            viewDir.y = cos(phi);
-            viewDir.z = sin(phi) * sin(theta);
+            viewDir.x() = sin(phi) * cos(theta);
+            viewDir.y() = cos(phi);
+            viewDir.z() = sin(phi) * sin(theta);
             viewDir.normalize();
         }
 
-        Ray3d viewRay(Point3d(0.0, 0.0, 0.0), viewDir);
-
-        return viewRay * transform;
+        Ray3d viewRay(Vector3d::Zero(), viewDir);
+        return viewRay.transform(transform);
     }
 
     double fov{PI / 2.0};
     double front{1.0};
-    Mat4d transform{Mat4d::identity()};
+    Matrix4d transform{Matrix4d::Identity()};
     CameraType type{Planar};
 };
 
@@ -177,7 +174,7 @@ public:
 class Light
 {
 public:
-    Vec3d direction;
+    Vector3d direction;
     Color color;
 };
 
@@ -227,14 +224,14 @@ public:
     double mieDensity(double h) const;
     double absorbDensity(double h) const;
 
-    Vec3d computeExtinction(const OpticalDepths&) const;
+    Vector3d computeExtinction(const OpticalDepths&) const;
 
     double rayleighScaleHeight;
     double mieScaleHeight;
     double absorbScaleHeight;
 
-    Vec3d rayleighCoeff;
-    Vec3d absorbCoeff;
+    Vector3d rayleighCoeff;
+    Vector3d absorbCoeff;
     double mieCoeff;
 
     double mieAsymmetry;
@@ -248,9 +245,9 @@ class LUT2
 public:
     LUT2(unsigned int _width, unsigned int _height);
 
-    Vec3d getValue(unsigned int x, unsigned int y) const;
-    void setValue(unsigned int x, unsigned int y, const Vec3d&);
-    Vec3d lookup(double x, double y) const;
+    Vector3d getValue(unsigned int x, unsigned int y) const;
+    void setValue(unsigned int x, unsigned int y, const Vector3d&);
+    Vector3d lookup(double x, double y) const;
     unsigned int getWidth() const { return width; }
     unsigned int getHeight() const { return height; }
 
@@ -266,9 +263,9 @@ class LUT3
 public:
     LUT3(unsigned int _width, unsigned int _height, unsigned int _depth);
 
-    Vec4d getValue(unsigned int x, unsigned int y, unsigned int z) const;
-    void setValue(unsigned int x, unsigned int y, unsigned int z, const Vec4d&);
-    Vec4d lookup(double x, double y, double z) const;
+    Vector4d getValue(unsigned int x, unsigned int y, unsigned int z) const;
+    void setValue(unsigned int x, unsigned int y, unsigned int z, const Vector4d&);
+    Vector4d lookup(double x, double y, double z) const;
     unsigned int getWidth() const { return width; }
     unsigned int getHeight() const { return height; }
     unsigned int getDepth() const { return depth; }
@@ -315,7 +312,7 @@ public:
         height(h),
         pixels(nullptr)
     {
-        pixels = new uint8_t[_twidth * height * 3];
+        pixels = new uint8_t[width * height * 3];
     }
 
     ~RGBImage()
@@ -478,7 +475,7 @@ void DumpLUT(const LUT3& lut, const string& filename)
     unsigned int ytiles = lut.getDepth() / xtiles;
     unsigned int tileWidth = lut.getHeight();
     unsigned int tileHeight = lut.getWidth();
-    double scale = 1.0 / 1.0;
+    //double scale = 1.0 / 1.0;
 
     RGBImage img(xtiles * tileWidth, xtiles * tileHeight);
 
@@ -493,10 +490,10 @@ void DumpLUT(const LUT3& lut, const string& filename)
                 for (unsigned int l = 0; l < tileHeight; l++)
                 {
                     unsigned int x = l;
-                    Vec4d v = lut.getValue(x, y, z);
-                    Color c(mapColor(v.x * 0.000617f * 4.0 * PI),
-                            mapColor(v.y * 0.00109f * 4.0 * PI),
-                            mapColor(v.z * 0.00195f * 4.0 * PI));
+                    Vector4d v = lut.getValue(x, y, z);
+                    Color c(mapColor(v.x() * 0.000617f * 4.0 * PI),
+                            mapColor(v.y() * 0.00109f * 4.0 * PI),
+                            mapColor(v.z() * 0.00195f * 4.0 * PI));
                     img.setPixel(j * tileWidth + k, i * tileHeight + l, c);
                 }
             }
@@ -517,8 +514,8 @@ void DumpLUT(const LUT2& lut, const string& filename)
     {
         for (unsigned int j = 0; j < lut.getHeight(); j++)
         {
-            Vec3d v = lut.getValue(i, j);
-            Color c(mapColor(v.x), mapColor(v.y), mapColor(v.z));
+            Vector3d v = lut.getValue(i, j);
+            Color c(mapColor(v.x()), mapColor(v.y()), mapColor(v.z()));
             img.setPixel(j, i, c);
         }
     }
@@ -531,19 +528,23 @@ void DumpLUT(const LUT2& lut, const string& filename)
 
 
 
-template<class T> T lerp(double t, T v0, T v1)
+template<class T> T lerp(double t, const T& v0, const T& v1)
 {
     return (1 - t) * v0 + t * v1;
 }
 
-template<class T> T bilerp(double t, double u, T v00, T v01, T v10, T v11)
+template<class T> T bilerp(double t, double u,
+                           const T& v00, const T& v01,
+                           const T& v10, const T& v11)
 {
     return lerp(u, lerp(t, v00, v01), lerp(t, v10, v11));
 }
 
 template<class T> T trilerp(double t, double u, double v,
-                            T v000, T v001, T v010, T v011,
-                            T v100, T v101, T v110, T v111)
+                            const T& v000, const T& v001,
+                            const T& v010, const T& v011,
+                            const T& v100, const T& v101,
+                            const T& v110, const T& v111)
 {
     return lerp(v,
                 bilerp(t, u, v000, v001, v010, v011),
@@ -560,26 +561,26 @@ LUT2::LUT2(unsigned int _width, unsigned int _height) :
 }
 
 
-Vec3d
+Vector3d
 LUT2::getValue(unsigned int x, unsigned int y) const
 {
     unsigned int n = 3 * (x + y * width);
 
-    return Vec3d(values[n], values[n + 1], values[n + 2]);
+    return {values[n], values[n + 1], values[n + 2]};
 }
 
 
 void
-LUT2::setValue(unsigned int x, unsigned int y, const Vec3d& v)
+LUT2::setValue(unsigned int x, unsigned int y, const Vector3d& v)
 {
     unsigned int n = 3 * (x + y * width);
-    values[n]     = (float) v.x;
-    values[n + 1] = (float) v.y;
-    values[n + 2] = (float) v.z;
+    values[n]     = (float) v.x();
+    values[n + 1] = (float) v.y();
+    values[n + 2] = (float) v.z();
 }
 
 
-Vec3d
+Vector3d
 LUT2::lookup(double x, double y) const
 {
     x = max(0.0, min(x, 0.999999));
@@ -607,28 +608,28 @@ LUT3::LUT3(unsigned int _width, unsigned int _height, unsigned int _depth) :
 }
 
 
-Vec4d
+Vector4d
 LUT3::getValue(unsigned int x, unsigned int y, unsigned int z) const
 {
     unsigned int n = 4 * (x + (y + z * height) * width);
 
-    return Vec4d(values[n], values[n + 1], values[n + 2], values[n + 3]);
+    return {values[n], values[n + 1], values[n + 2], values[n + 3]};
 }
 
 
 void
-LUT3::setValue(unsigned int x, unsigned int y, unsigned int z, const Vec4d& v)
+LUT3::setValue(unsigned int x, unsigned int y, unsigned int z, const Vector4d& v)
 {
     unsigned int n = 4 * (x + (y + z * height) * width);
 
-    values[n]     = (float) v.x;
-    values[n + 1] = (float) v.y;
-    values[n + 2] = (float) v.z;
-    values[n + 3] = (float) v.w;
+    values[n]     = (float) v.x();
+    values[n + 1] = (float) v.y();
+    values[n + 2] = (float) v.z();
+    values[n + 3] = (float) v.w();
 }
 
 
-Vec4d
+Vector4d
 LUT3::lookup(double x, double y, double z) const
 {
     x = max(0.0, min(x, 0.999999));
@@ -658,11 +659,11 @@ template<class T> bool raySphereIntersect(const Ray3<T>& ray,
                                           T& dist0,
                                           T& dist1)
 {
-    Vector3<T> diff = ray.origin - sphere.center;
+    Matrix<T, 3, 1> diff = ray.origin - sphere.center;
     T s = (T) 1.0 / square(sphere.radius);
-    T a = ray.direction * ray.direction * s;
-    T b = ray.direction * diff * s;
-    T c = diff * diff * s - (T) 1.0;
+    T a = ray.direction.dot(ray.direction) * s;
+    T b = ray.direction.dot(diff) * s;
+    T c = diff.dot(diff) * s - (T) 1.0;
     T disc = b * b - a * c;
     if (disc < 0.0)
         return false;
@@ -699,11 +700,11 @@ template<class T> bool raySphereIntersect2(const Ray3<T>& ray,
                                            T& dist0,
                                            T& dist1)
 {
-    Vector3<T> diff = ray.origin - sphere.center;
+    Matrix<T, 3, 1> diff = ray.origin - sphere.center;
     T s = (T) 1.0 / square(sphere.radius);
-    T a = ray.direction * ray.direction * s;
-    T b = ray.direction * diff * s;
-    T c = diff * diff * s - (T) 1.0;
+    T a = ray.direction.dot(ray.direction) * s;
+    T b = ray.direction.dot(diff) * s;
+    T c = diff.dot(diff) * s - (T) 1.0;
     T disc = b * b - a * c;
     if (disc < 0.0)
         return false;
@@ -814,8 +815,8 @@ double phaseSchlick(double cosTheta, double k)
 
 
 OpticalDepths integrateOpticalDepth(const Scene& scene,
-                                    const Point3d& atmStart,
-                                    const Point3d& atmEnd)
+                                    const Vector3d& atmStart,
+                                    const Vector3d& atmEnd)
 {
     unsigned int nSteps = IntegrateDepthSteps;
 
@@ -824,18 +825,18 @@ OpticalDepths integrateOpticalDepth(const Scene& scene,
     depth.mie        = 0.0;
     depth.absorption = 0.0;
 
-    Vec3d dir = atmEnd - atmStart;
-    double length = dir.length();
+    Vector3d dir = atmEnd - atmStart;
+    double length = dir.norm();
     double stepDist = length / (double) nSteps;
     if (length == 0.0)
         return depth;
 
     dir = dir * (1.0 / length);
-    Point3d samplePoint = atmStart + (0.5 * stepDist * dir);
+    Vector3d samplePoint = atmStart + (0.5 * stepDist * dir);
 
     for (unsigned int i = 0; i < nSteps; i++)
     {
-        double h = samplePoint.distanceFromOrigin() - scene.planet.radius;
+        double h = samplePoint.norm() - scene.planet.radius;
 
         // Optical depth due to two phenomena:
         //   Outscattering by Rayleigh and Mie scattering particles
@@ -872,43 +873,42 @@ Atmosphere::absorbDensity(double h) const
 }
 
 
-Vec3d
+Vector3d
 Atmosphere::computeExtinction(const OpticalDepths& depth) const
 {
-    Vec3d extinction;
-    extinction.x = exp(-depth.rayleigh   * rayleighCoeff.x -
-                        depth.mie        * mieCoeff -
-                        depth.absorption * absorbCoeff.x);
-    extinction.y = exp(-depth.rayleigh   * rayleighCoeff.y -
-                        depth.mie        * mieCoeff -
-                        depth.absorption * absorbCoeff.y);
-    extinction.z = exp(-depth.rayleigh   * rayleighCoeff.z -
-                        depth.mie        * mieCoeff -
-                        depth.absorption * absorbCoeff.z);
+    double x = exp(-depth.rayleigh   * rayleighCoeff.x() -
+                    depth.mie        * mieCoeff -
+                    depth.absorption * absorbCoeff.x());
+    double y = exp(-depth.rayleigh   * rayleighCoeff.y() -
+                    depth.mie        * mieCoeff -
+                    depth.absorption * absorbCoeff.y());
+    double z = exp(-depth.rayleigh   * rayleighCoeff.z() -
+                    depth.mie        * mieCoeff -
+                    depth.absorption * absorbCoeff.z());
 
-    return extinction;
+    return {x, y, z};
 }
 
 
-Vec3d integrateInscattering(const Scene& scene,
-                            const Point3d& atmStart,
-                            const Point3d& atmEnd)
+Vector3d integrateInscattering(const Scene& scene,
+                            const Vector3d& atmStart,
+                            const Vector3d& atmEnd)
 {
     const unsigned int nSteps = IntegrateScatterSteps;
 
-    Vec3d dir = atmEnd - atmStart;
-    Point3d origin = Point3d(0.0, 0.0, 0.0) + (atmStart - scene.planet.center);
-    double stepDist = dir.length() / (double) nSteps;
+    Vector3d dir = atmEnd - atmStart;
+    Vector3d origin = Vector3d::Zero() + (atmStart - scene.planet.center);
+    double stepDist = dir.norm() / (double) nSteps;
     dir.normalize();
 
     // Start at the midpoint of the first interval
-    Point3d samplePoint = origin + 0.5 * stepDist * dir;
+    Vector3d samplePoint = origin + 0.5 * stepDist * dir;
 
-    Vec3d rayleighScatter(0.0, 0.0, 0.0);
-    Vec3d mieScatter(0.0, 0.0, 0.0);
+    Vector3d rayleighScatter = Vector3d::Zero();
+    Vector3d mieScatter = Vector3d::Zero();
 
-    Vec3d lightDir = -scene.light.direction;
-    Sphered shell = Sphered(Point3d(0.0, 0.0, 0.0),
+    Vector3d lightDir = -scene.light.direction;
+    Sphered shell = Sphered(Vector3d::Zero(),
                             scene.planet.radius + scene.atmosphereShellHeight);
 
     for (unsigned int i = 0; i < nSteps; i++)
@@ -928,9 +928,9 @@ Vec3d integrateInscattering(const Scene& scene,
         totalDepth.rayleigh *= 4.0 * PI;
         totalDepth.mie      *= 4.0 * PI;
 
-        Vec3d extinction = scene.atmosphere.computeExtinction(totalDepth);
+        Vector3d extinction = scene.atmosphere.computeExtinction(totalDepth);
 
-        double h = samplePoint.distanceFromOrigin() - scene.planet.radius;
+        double h = samplePoint.norm() - scene.planet.radius;
 
         // Add the inscattered light from Rayleigh and Mie scattering particles
         rayleighScatter += scene.atmosphere.rayleighDensity(h) * stepDist * extinction;
@@ -939,36 +939,34 @@ Vec3d integrateInscattering(const Scene& scene,
         samplePoint += stepDist * dir;
     }
 
-    double cosSunAngle = lightDir * dir;
+    double cosSunAngle = lightDir.dot(dir);
 
     double miePhase = scene.atmosphere.miePhase(cosSunAngle);
-    const Vec3d& rayleigh = scene.atmosphere.rayleighCoeff;
-    return phaseRayleigh(cosSunAngle) * Vec3d(rayleighScatter.x * rayleigh.x,
-                                              rayleighScatter.y * rayleigh.y,
-                                              rayleighScatter.z * rayleigh.z) +
+    const Vector3d& rayleigh = scene.atmosphere.rayleighCoeff;
+    return phaseRayleigh(cosSunAngle) * rayleighScatter.cwiseProduct(rayleigh) +
         miePhase * mieScatter * scene.atmosphere.mieCoeff;
 }
 
 
-Vec4d integrateInscatteringFactors(const Scene& scene,
-                                   const Point3d& atmStart,
-                                   const Point3d& atmEnd,
-                                   const Vec3d& lightDir)
+Vector4d integrateInscatteringFactors(const Scene& scene,
+                                   const Vector3d& atmStart,
+                                   const Vector3d& atmEnd,
+                                   const Vector3d& lightDir)
 {
     const unsigned int nSteps = IntegrateScatterSteps;
 
-    Vec3d dir = atmEnd - atmStart;
-    Point3d origin = Point3d(0.0, 0.0, 0.0) + (atmStart - scene.planet.center);
-    double stepDist = dir.length() / (double) nSteps;
+    Vector3d dir = atmEnd - atmStart;
+    Vector3d origin = Vector3d::Zero() + (atmStart - scene.planet.center);
+    double stepDist = dir.norm() / (double) nSteps;
     dir.normalize();
 
     // Start at the midpoint of the first interval
-    Point3d samplePoint = origin + 0.5 * stepDist * dir;
+    Vector3d samplePoint = origin + 0.5 * stepDist * dir;
 
-    Vec3d rayleighScatter(0.0, 0.0, 0.0);
-    Vec3d mieScatter(0.0, 0.0, 0.0);
+    Vector3d rayleighScatter = Vector3d::Zero();
+    Vector3d mieScatter = Vector3d::Zero();
 
-    Sphered shell = Sphered(Point3d(0.0, 0.0, 0.0),
+    Sphered shell = Sphered(Vector3d::Zero(),
                             scene.planet.radius + scene.atmosphereShellHeight);
 
     for (unsigned int i = 0; i < nSteps; i++)
@@ -988,9 +986,9 @@ Vec4d integrateInscatteringFactors(const Scene& scene,
         totalDepth.rayleigh *= 4.0 * PI;
         totalDepth.mie      *= 4.0 * PI;
 
-        Vec3d extinction = scene.atmosphere.computeExtinction(totalDepth);
+        Vector3d extinction = scene.atmosphere.computeExtinction(totalDepth);
 
-        double h = samplePoint.distanceFromOrigin() - scene.planet.radius;
+        double h = samplePoint.norm() - scene.planet.radius;
 
         // Add the inscattered light from Rayleigh and Mie scattering particles
         rayleighScatter += scene.atmosphere.rayleighDensity(h) * stepDist * extinction;
@@ -999,10 +997,9 @@ Vec4d integrateInscatteringFactors(const Scene& scene,
         samplePoint += stepDist * dir;
     }
 
-    return Vec4d(rayleighScatter.x,
-                 rayleighScatter.y,
-                 rayleighScatter.z,
-                 0.0);
+    Vector4d r = Vector4d::Zero();
+    r.head(3) = rayleighScatter;
+    return r;
 }
 
 
@@ -1030,21 +1027,21 @@ buildExtinctionLUT(const Scene& scene)
     auto* lut = new LUT2(ExtinctionLUTHeightSteps,
                          ExtinctionLUTViewAngleSteps);
 
-    Sphered planet = Sphered(scene.planet.radius);
+    //Sphered planet = Sphered(scene.planet.radius);
     Sphered shell = Sphered(scene.planet.radius + scene.atmosphereShellHeight);
 
     for (unsigned int i = 0; i < ExtinctionLUTHeightSteps; i++)
     {
         double h = (double) i / (double) (ExtinctionLUTHeightSteps - 1) *
             scene.atmosphereShellHeight * 0.9999;
-        Point3d atmStart = Point3d(0.0, 0.0, 0.0) +
-            Vec3d(1.0, 0.0, 0.0) * (h + scene.planet.radius);
+        Vector3d atmStart = Vector3d::Zero() +
+            Vector3d::UnitX() * (h + scene.planet.radius);
 
         for (unsigned int j = 0; j < ExtinctionLUTViewAngleSteps; j++)
         {
             double cosAngle = (double) j / (ExtinctionLUTViewAngleSteps - 1) * 2.0 - 1.0;
             double sinAngle = sqrt(1.0 - min(1.0, cosAngle * cosAngle));
-            Vec3d viewDir(cosAngle, sinAngle, 0.0);
+            Vector3d viewDir(cosAngle, sinAngle, 0.0);
 
             Ray3d ray(atmStart, viewDir);
             double dist = 0.0;
@@ -1056,12 +1053,9 @@ buildExtinctionLUT(const Scene& scene)
                                                         ray.point(dist));
             depth.rayleigh *= 4.0 * PI;
             depth.mie      *= 4.0 * PI;
-            Vec3d ext = scene.atmosphere.computeExtinction(depth);
-            ext.x = max(ext.x, 1.0e-18);
-            ext.y = max(ext.y, 1.0e-18);
-            ext.z = max(ext.z, 1.0e-18);
+            Vector3d ext = scene.atmosphere.computeExtinction(depth);
 
-            lut->setValue(i, j, ext);
+            lut->setValue(i, j, ext.cwiseMax(1.0e-18));
         }
     }
 
@@ -1069,18 +1063,18 @@ buildExtinctionLUT(const Scene& scene)
 }
 
 
-Vec3d
+Vector3d
 lookupExtinction(const Scene& scene,
-                 const Point3d& atmStart,
-                 const Point3d& atmEnd)
+                 const Vector3d& atmStart,
+                 const Vector3d& atmEnd)
 {
-    Vec3d viewDir = atmEnd - atmStart;
-    Vec3d toCenter = atmStart - Point3d(0.0, 0.0, 0.0);
+    Vector3d viewDir = atmEnd - atmStart;
+    Vector3d toCenter = atmStart - Vector3d::Zero();
     viewDir.normalize();
     toCenter.normalize();
-    double h = (atmStart.distanceFromOrigin() - scene.planet.radius) /
+    double h = (atmStart.norm() - scene.planet.radius) /
         scene.atmosphereShellHeight;
-    double cosViewAngle = viewDir * toCenter;
+    double cosViewAngle = viewDir.dot(toCenter);
 
     return scene.extinctionLUT->lookup(h, packSNorm(cosViewAngle));
 }
@@ -1093,21 +1087,21 @@ buildOpticalDepthLUT(const Scene& scene)
     auto* lut = new LUT2(ExtinctionLUTHeightSteps,
                          ExtinctionLUTViewAngleSteps);
 
-    Sphered planet = Sphered(scene.planet.radius);
+    //Sphered planet = Sphered(scene.planet.radius);
     Sphered shell = Sphered(scene.planet.radius + scene.atmosphereShellHeight);
 
     for (unsigned int i = 0; i < ExtinctionLUTHeightSteps; i++)
     {
         double h = (double) i / (double) (ExtinctionLUTHeightSteps - 1) *
             scene.atmosphereShellHeight;
-        Point3d atmStart = Point3d(0.0, 0.0, 0.0) +
-            Vec3d(1.0, 0.0, 0.0) * (h + scene.planet.radius);
+        Vector3d atmStart = Vector3d::Zero() +
+            Vector3d::UnitX() * (h + scene.planet.radius);
 
         for (unsigned int j = 0; j < ExtinctionLUTViewAngleSteps; j++)
         {
             double cosAngle = (double) j / (ExtinctionLUTViewAngleSteps - 1) * 2.0 - 1.0;
             double sinAngle = sqrt(1.0 - min(1.0, cosAngle * cosAngle));
-            Vec3d dir(cosAngle, sinAngle, 0.0);
+            Vector3d dir(cosAngle, sinAngle, 0.0);
 
             Ray3d ray(atmStart, dir);
             double dist = 0.0;
@@ -1120,7 +1114,7 @@ buildOpticalDepthLUT(const Scene& scene)
             depth.rayleigh *= 4.0 * PI;
             depth.mie      *= 4.0 * PI;
 
-            lut->setValue(i, j, Vec3d(depth.rayleigh, depth.mie, depth.absorption));
+            lut->setValue(i, j, Vector3d(depth.rayleigh, depth.mie, depth.absorption));
         }
     }
 
@@ -1130,51 +1124,51 @@ buildOpticalDepthLUT(const Scene& scene)
 
 OpticalDepths
 lookupOpticalDepth(const Scene& scene,
-                   const Point3d& atmStart,
-                   const Point3d& atmEnd)
+                   const Vector3d& atmStart,
+                   const Vector3d& atmEnd)
 {
-    Vec3d dir = atmEnd - atmStart;
-    Vec3d toCenter = atmStart - Point3d(0.0, 0.0, 0.0);
+    Vector3d dir = atmEnd - atmStart;
+    Vector3d toCenter = atmStart - Vector3d::Zero();
     dir.normalize();
     toCenter.normalize();
-    double h = (atmStart.distanceFromOrigin() - scene.planet.radius) /
+    double h = (atmStart.norm() - scene.planet.radius) /
         scene.atmosphereShellHeight;
-    double cosViewAngle = dir * toCenter;
+    double cosViewAngle = dir.dot(toCenter);
 
-    Vec3d v = scene.extinctionLUT->lookup(h, (cosViewAngle + 1.0) * 0.5);
+    Vector3d v = scene.extinctionLUT->lookup(h, (cosViewAngle + 1.0) * 0.5);
     OpticalDepths depth;
-    depth.rayleigh = v.x;
-    depth.mie = v.y;
-    depth.absorption = v.z;
+    depth.rayleigh = v.x();
+    depth.mie = v.y();
+    depth.absorption = v.z();
 
     return depth;
 }
 
 
-Vec3d integrateInscattering_LUT(const Scene& scene,
-                                const Point3d& atmStart,
-                                const Point3d& atmEnd,
-                                const Point3d& eyePt,
+Vector3d integrateInscattering_LUT(const Scene& scene,
+                                const Vector3d& atmStart,
+                                const Vector3d& atmEnd,
+                                const Vector3d& eyePt,
                                 bool hitPlanet)
 {
     const unsigned int nSteps = IntegrateScatterSteps;
 
     double shellHeight = scene.planet.radius + scene.atmosphereShellHeight;
     Sphered shell = Sphered(shellHeight);
-    bool eyeInsideAtmosphere = eyePt.distanceFromOrigin() < shellHeight;
+    bool eyeInsideAtmosphere = eyePt.norm() < shellHeight;
 
-    Vec3d lightDir = -scene.light.direction;
+    Vector3d lightDir = -scene.light.direction;
 
-    Point3d origin = eyeInsideAtmosphere ? eyePt : atmStart;
-    Vec3d viewDir = atmEnd - origin;
-    double stepDist = viewDir.length() / (double) nSteps;
+    Vector3d origin = eyeInsideAtmosphere ? eyePt : atmStart;
+    Vector3d viewDir = atmEnd - origin;
+    double stepDist = viewDir.norm() / (double) nSteps;
     viewDir.normalize();
 
     // Start at the midpoint of the first interval
-    Point3d samplePoint = origin + 0.5 * stepDist * viewDir;
+    Vector3d samplePoint = origin + 0.5 * stepDist * viewDir;
 
-    Vec3d rayleighScatter(0.0, 0.0, 0.0);
-    Vec3d mieScatter(0.0, 0.0, 0.0);
+    Vector3d rayleighScatter = Vector3d::Zero();
+    Vector3d mieScatter = Vector3d::Zero();
 
     for (unsigned int i = 0; i < nSteps; i++)
     {
@@ -1182,8 +1176,8 @@ Vec3d integrateInscattering_LUT(const Scene& scene,
         double sunDist = 0.0;
         testIntersection(sunRay, shell, sunDist);
 
-        Vec3d sunExt = lookupExtinction(scene, samplePoint, sunRay.point(sunDist));
-        Vec3d eyeExt;
+        Vector3d sunExt = lookupExtinction(scene, samplePoint, sunRay.point(sunDist));
+        Vector3d eyeExt;
         if (!eyeInsideAtmosphere)
         {
             eyeExt = lookupExtinction(scene, samplePoint, atmStart);
@@ -1195,7 +1189,7 @@ Vec3d integrateInscattering_LUT(const Scene& scene,
             // Do this carefully! We want to avoid doing arithmetic with
             // intervals that pass through the planet, since they tend to
             // have values extremely close to zero.
-            Vec3d subExt;
+            Vector3d subExt;
             if (hitPlanet)
             {
                 eyeExt = lookupExtinction(scene, samplePoint, atmStart);
@@ -1209,16 +1203,14 @@ Vec3d integrateInscattering_LUT(const Scene& scene,
 
             // Subtract the extinction from the untraversed portion of the
             // light path.
-            eyeExt = Vec3d(eyeExt.x / subExt.x,
-                           eyeExt.y / subExt.y,
-                           eyeExt.z / subExt.z);
+            eyeExt = eyeExt.cwiseQuotient(subExt);
         }
 
         // Compute the extinction along the entire light path from sun to sample point
         // to eye.
-        Vec3d extinction(sunExt.x * eyeExt.x, sunExt.y * eyeExt.y, sunExt.z * eyeExt.z);
+        Vector3d extinction = sunExt.cwiseProduct(eyeExt);
 
-        double h = samplePoint.distanceFromOrigin() - scene.planet.radius;
+        double h = samplePoint.norm() - scene.planet.radius;
 
         // Add the inscattered light from Rayleigh and Mie scattering particles
         rayleighScatter += scene.atmosphere.rayleighDensity(h) * stepDist * extinction;
@@ -1227,23 +1219,21 @@ Vec3d integrateInscattering_LUT(const Scene& scene,
         samplePoint += stepDist * viewDir;
     }
 
-    double cosSunAngle = lightDir * viewDir;
+    double cosSunAngle = lightDir.dot(viewDir);
 
     double miePhase = scene.atmosphere.miePhase(cosSunAngle);
-    const Vec3d& rayleigh = scene.atmosphere.rayleighCoeff;
-    return phaseRayleigh(cosSunAngle) * Vec3d(rayleighScatter.x * rayleigh.x,
-                                              rayleighScatter.y * rayleigh.y,
-                                              rayleighScatter.z * rayleigh.z) +
-        miePhase * mieScatter * scene.atmosphere.mieCoeff;
+    const Vector3d& rayleigh = scene.atmosphere.rayleighCoeff;
+    return phaseRayleigh(cosSunAngle) * rayleighScatter.cwiseProduct(rayleigh) +
+           miePhase * mieScatter * scene.atmosphere.mieCoeff;
 }
 
 
 // Used for building LUT; start point is assumed to be within
 // atmosphere.
-Vec4d integrateInscatteringFactors_LUT(const Scene& scene,
-                                       const Point3d& atmStart,
-                                       const Point3d& atmEnd,
-                                       const Vec3d& lightDir,
+Vector4d integrateInscatteringFactors_LUT(const Scene& scene,
+                                       const Vector3d& atmStart,
+                                       const Vector3d& atmEnd,
+                                       const Vector3d& lightDir,
                                        bool planetHit)
 {
     const unsigned int nSteps = IntegrateScatterSteps;
@@ -1251,16 +1241,16 @@ Vec4d integrateInscatteringFactors_LUT(const Scene& scene,
     double shellHeight = scene.planet.radius + scene.atmosphereShellHeight;
     Sphered shell = Sphered(shellHeight);
 
-    Point3d origin = atmStart;
-    Vec3d viewDir = atmEnd - origin;
-    double stepDist = viewDir.length() / (double) nSteps;
+    Vector3d origin = atmStart;
+    Vector3d viewDir = atmEnd - origin;
+    double stepDist = viewDir.norm() / (double) nSteps;
     viewDir.normalize();
 
     // Start at the midpoint of the first interval
-    Point3d samplePoint = origin + 0.5 * stepDist * viewDir;
+    Vector3d samplePoint = origin + 0.5 * stepDist * viewDir;
 
-    Vec3d rayleighScatter(0.0, 0.0, 0.0);
-    Vec3d mieScatter(0.0, 0.0, 0.0);
+    Vector3d rayleighScatter = Vector3d::Zero();
+    Vector3d mieScatter = Vector3d::Zero();
 
     for (unsigned int i = 0; i < nSteps; i++)
     {
@@ -1268,9 +1258,9 @@ Vec4d integrateInscatteringFactors_LUT(const Scene& scene,
         double sunDist = 0.0;
         testIntersection(sunRay, shell, sunDist);
 
-        Vec3d sunExt = lookupExtinction(scene, samplePoint, sunRay.point(sunDist));
-        Vec3d eyeExt;
-        Vec3d subExt;
+        Vector3d sunExt = lookupExtinction(scene, samplePoint, sunRay.point(sunDist));
+        Vector3d eyeExt;
+        Vector3d subExt;
         if (planetHit)
         {
             eyeExt = lookupExtinction(scene, samplePoint, atmEnd);
@@ -1284,18 +1274,16 @@ Vec4d integrateInscatteringFactors_LUT(const Scene& scene,
 
         // Subtract the extinction from the untraversed portion of the
         // light path.
-        eyeExt = Vec3d(eyeExt.x / subExt.x,
-                       eyeExt.y / subExt.y,
-                       eyeExt.z / subExt.z);
+        eyeExt = eyeExt.cwiseQuotient(subExt);
 
-        //Vec3d eyeExt = lookupExtinction(scene, samplePoint, atmStart);
+        //Vector3d eyeExt = lookupExtinction(scene, samplePoint, atmStart);
 
 
         // Compute the extinction along the entire light path from sun to sample point
         // to eye.
-        Vec3d extinction(sunExt.x * eyeExt.x, sunExt.y * eyeExt.y, sunExt.z * eyeExt.z);
+        Vector3d extinction = sunExt.cwiseProduct(eyeExt);
 
-        double h = samplePoint.distanceFromOrigin() - scene.planet.radius;
+        double h = samplePoint.norm() - scene.planet.radius;
 
         // Add the inscattered light from Rayleigh and Mie scattering particles
         rayleighScatter += scene.atmosphere.rayleighDensity(h) * stepDist * extinction;
@@ -1304,10 +1292,9 @@ Vec4d integrateInscatteringFactors_LUT(const Scene& scene,
         samplePoint += stepDist * viewDir;
     }
 
-    return Vec4d(rayleighScatter.x,
-                 rayleighScatter.y,
-                 rayleighScatter.z,
-                 0.0);
+    Vector4d r = Vector4d::Zero();
+    r.head(3) = rayleighScatter;
+    return r;
 }
 
 
@@ -1324,36 +1311,36 @@ buildScatteringLUT(const Scene& scene)
     {
         double h = (double) i / (double) (ScatteringLUTHeightSteps - 1) *
             scene.atmosphereShellHeight * 0.9999;
-        Point3d atmStart = Point3d(0.0, 0.0, 0.0) +
-            Vec3d(1.0, 0.0, 0.0) * (h + scene.planet.radius);
+        Vector3d atmStart = Vector3d::Zero() +
+            Vector3d::UnitX() * (h + scene.planet.radius);
 
         for (unsigned int j = 0; j < ScatteringLUTViewAngleSteps; j++)
         {
             double cosAngle = unpackSNorm((double) j / (ScatteringLUTViewAngleSteps - 1));
             double sinAngle = sqrt(1.0 - min(1.0, cosAngle * cosAngle));
-            Vec3d viewDir(cosAngle, sinAngle, 0.0);
+            Vector3d viewDir(cosAngle, sinAngle, 0.0);
 
             Ray3d viewRay(atmStart, viewDir);
             double dist = 0.0;
             if (!testIntersection(viewRay, shell, dist))
                 dist = 0.0;
 
-            Point3d atmEnd = viewRay.point(dist);
+            Vector3d atmEnd = viewRay.point(dist);
 
             for (unsigned int k = 0; k < ScatteringLUTLightAngleSteps; k++)
             {
                 double cosLightAngle = unpackSNorm((double) k / (ScatteringLUTLightAngleSteps - 1));
                 double sinLightAngle = sqrt(1.0 - min(1.0, cosLightAngle * cosLightAngle));
-                Vec3d lightDir(cosLightAngle, sinLightAngle, 0.0);
+                Vector3d lightDir(cosLightAngle, sinLightAngle, 0.0);
 
 #if 0
-                Vec4d inscatter = integrateInscatteringFactors_LUT(scene,
+                Vector4d inscatter = integrateInscatteringFactors_LUT(scene,
                                                                    atmStart,
                                                                    atmEnd,
                                                                    lightDir,
                                                                    true);
 #else
-                Vec4d inscatter = integrateInscatteringFactors(scene,
+                Vector4d inscatter = integrateInscatteringFactors(scene,
                                                                atmStart,
                                                                atmEnd,
                                                                lightDir);
@@ -1367,37 +1354,37 @@ buildScatteringLUT(const Scene& scene)
 }
 
 
-Vec3d
+Vector3d
 lookupScattering(const Scene& scene,
-                 const Point3d& atmStart,
-                 const Point3d& atmEnd,
-                 const Vec3d& lightDir)
+                 const Vector3d& atmStart,
+                 const Vector3d& atmEnd,
+                 const Vector3d& lightDir)
 {
-    Vec3d viewDir = atmEnd - atmStart;
-    Vec3d toCenter = atmStart - Point3d(0.0, 0.0, 0.0);
+    Vector3d viewDir = atmEnd - atmStart;
+    Vector3d toCenter = atmStart - Vector3d::Zero();
     viewDir.normalize();
     toCenter.normalize();
-    double h = (atmStart.distanceFromOrigin() - scene.planet.radius) /
+    double h = (atmStart.norm() - scene.planet.radius) /
         scene.atmosphereShellHeight;
-    double cosViewAngle = viewDir * toCenter;
-    double cosLightAngle = lightDir * toCenter;
+    double cosViewAngle = viewDir.dot(toCenter);
+    double cosLightAngle = lightDir.dot(toCenter);
 
-    Vec4d v = scene.scatteringLUT->lookup(h,
-                                          packSNorm(cosViewAngle),
-                                          packSNorm(cosLightAngle));
+    Vector4d v = scene.scatteringLUT->lookup(h,
+                                             packSNorm(cosViewAngle),
+                                             packSNorm(cosLightAngle));
 
-    return Vec3d(v.x, v.y, v.z);
+    return v.head(3);
 }
 
 
-Color getPlanetColor(const Scene& scene, const Point3d& p)
+Color getPlanetColor(const Scene& scene, const Vector3d& p)
 {
-    Vec3d n = p - Point3d(0.0, 0.0, 0.0);
+    Vector3d n = p - Vector3d::Zero();
     n.normalize();
 
     // Give the planet a checkerboard texture
-    double phi = atan2(n.z, n.x);
-    double theta = asin(n.y);
+    double phi = atan2(n.z(), n.x());
+    double theta = asin(n.y());
     int tx = (int) (8 + 8 * phi / PI);
     int ty = (int) (8 + 8 * theta / PI);
 
@@ -1414,7 +1401,7 @@ Color Scene::raytrace(const Ray3d& ray) const
     double shellRadius = planet.radius + atmosphereShellHeight;
 
     Color color = background;
-    if (ray.direction * -light.direction > cos(sunAngularDiameter / 2.0))
+    if (ray.direction.dot(-light.direction) > cos(sunAngularDiameter / 2.0))
         color = light.color;
 
     if (raySphereIntersect(ray,
@@ -1423,18 +1410,18 @@ Color Scene::raytrace(const Ray3d& ray) const
                            atmExit))
     {
         Color baseColor = color;
-        Point3d atmStart = ray.origin + atmEnter * ray.direction;
-        Point3d atmEnd = ray.origin + atmExit * ray.direction;
+        Vector3d atmStart = ray.origin + atmEnter * ray.direction;
+        Vector3d atmEnd = ray.origin + atmExit * ray.direction;
 
         if (testIntersection(ray, planet, dist))
         {
-            Point3d intersectPoint = ray.point(dist);
-            Vec3d normal = intersectPoint - planet.center;
+            Vector3d intersectPoint = ray.point(dist);
+            Vector3d normal = intersectPoint - planet.center;
             normal.normalize();
-            Vec3d lightDir = -light.direction;
-            double diffuse = max(0.0, normal * lightDir);
+            Vector3d lightDir = -light.direction;
+            double diffuse = max(0.0, normal.dot(lightDir));
 
-            Point3d surfacePt = Point3d(0.0, 0.0, 0.0) + (intersectPoint - planet.center);
+            Vector3d surfacePt = Vector3d::Zero() + (intersectPoint - planet.center);
             Color planetColor = getPlanetColor(*this, surfacePt);
 
             Sphered shell = Sphered(shellRadius);
@@ -1452,7 +1439,7 @@ Color Scene::raytrace(const Ray3d& ray) const
             OpticalDepths totalDepth = sumOpticalDepths(sunDepth, eyeDepth);
             totalDepth.rayleigh *= 4.0 * PI;
             totalDepth.mie      *= 4.0 * PI;
-            Vec3d extinction = atmosphere.computeExtinction(totalDepth);
+            Vector3d extinction = atmosphere.computeExtinction(totalDepth);
 
             // Reflected color of planet surface is:
             //   surface color * sun color * atmospheric extinction
@@ -1461,15 +1448,13 @@ Color Scene::raytrace(const Ray3d& ray) const
             atmEnd = ray.origin + dist * ray.direction;
         }
 
-        Vec3d inscatter = integrateInscattering(*this, atmStart, atmEnd) * 4.0 * PI;
+        Vector3d inscatter = integrateInscattering(*this, atmStart, atmEnd) * 4.0 * PI;
 
-        return Color((float) inscatter.x, (float) inscatter.y, (float) inscatter.z) +
+        return Color((float) inscatter.x(), (float) inscatter.y(), (float) inscatter.z()) +
             baseColor;
     }
-    else
-    {
-        return color;
-    }
+
+    return color;
 }
 
 
@@ -1481,10 +1466,10 @@ Scene::raytrace_LUT(const Ray3d& ray) const
 
     double  shellRadius = planet.radius + atmosphereShellHeight;
     Sphered shell(shellRadius);
-    Point3d eyePt = Point3d(0.0, 0.0, 0.0) + (ray.origin - planet.center);
+    Vector3d eyePt = Vector3d::Zero() + (ray.origin - planet.center);
 
     Color color = background;
-    if (ray.direction * -light.direction > cos(sunAngularDiameter / 2.0))
+    if (ray.direction.dot(-light.direction) > cos(sunAngularDiameter / 2.0))
         color = light.color;
 
     // Transform ray to model space
@@ -1496,8 +1481,8 @@ Scene::raytrace_LUT(const Ray3d& ray) const
         Color baseColor = color;
 
         bool eyeInsideAtmosphere = atmEnter < 0.0;
-        Point3d atmStart = mray.origin + atmEnter * mray.direction;
-        Point3d atmEnd = mray.origin + atmExit * mray.direction;
+        Vector3d atmStart = mray.origin + atmEnter * mray.direction;
+        Vector3d atmEnd = mray.origin + atmExit * mray.direction;
 
         double planetEnter = 0.0;
         double planetExit = 0.0;
@@ -1507,13 +1492,13 @@ Scene::raytrace_LUT(const Ray3d& ray) const
                                  planetExit);
         if (hit && planetEnter > 0.0)
         {
-            Point3d surfacePt = mray.point(planetEnter);
+            Vector3d surfacePt = mray.point(planetEnter);
 
             // Lambert lighting
-            Vec3d normal = surfacePt - Point3d(0, 0, 0);
+            Vector3d normal = surfacePt - Vector3d::Zero();
             normal.normalize();
-            Vec3d lightDir = -light.direction;
-            double diffuse = max(0.0, normal * lightDir);
+            Vector3d lightDir = -light.direction;
+            double diffuse = max(0.0, normal.dot(lightDir));
 
             Color planetColor = getPlanetColor(*this, surfacePt);
 
@@ -1525,19 +1510,15 @@ Scene::raytrace_LUT(const Ray3d& ray) const
 
             // Compute color of sunlight filtered by the atmosphere; consider extinction
             // along both the sun-to-surface and surface-to-eye paths.
-            Vec3d sunExt = lookupExtinction(*this, surfacePt, sunRay.point(sunDist));
-            Vec3d eyeExt = lookupExtinction(*this, surfacePt, atmStart);
+            Vector3d sunExt = lookupExtinction(*this, surfacePt, sunRay.point(sunDist));
+            Vector3d eyeExt = lookupExtinction(*this, surfacePt, atmStart);
             if (eyeInsideAtmosphere)
             {
-                Vec3d oppExt = lookupExtinction(*this, eyePt, atmStart);
-                eyeExt = Vec3d(eyeExt.x / oppExt.x,
-                               eyeExt.y / oppExt.y,
-                               eyeExt.z / oppExt.z);
+                Vector3d oppExt = lookupExtinction(*this, eyePt, atmStart);
+                eyeExt = eyeExt.cwiseQuotient(oppExt);
             }
 
-            Vec3d extinction(sunExt.x * eyeExt.x,
-                             sunExt.y * eyeExt.y,
-                             sunExt.z * eyeExt.z);
+            Vector3d extinction = sunExt.cwiseProduct(eyeExt);
 
             // Reflected color of planet surface is:
             //   surface color * sun color * atmospheric extinction
@@ -1546,18 +1527,18 @@ Scene::raytrace_LUT(const Ray3d& ray) const
             atmEnd = mray.point(planetEnter);
         }
 
-        Vec3d inscatter;
+        Vector3d inscatter;
 
         if (LUTUsage == UseExtinctionLUT)
         {
             bool hitPlanet = hit && planetEnter > 0.0;
             inscatter = integrateInscattering_LUT(*this, atmStart, atmEnd, eyePt, hitPlanet) * 4.0 * PI;
             //if (!hit)
-            //inscatter = Vec3d(0.0, 0.0, 0.0);
+            //inscatter = Vector3d::Zero();
         }
         else if (LUTUsage == UseScatteringLUT)
         {
-            Vec3d rayleighScatter;
+            Vector3d rayleighScatter;
             if (eyeInsideAtmosphere)
             {
 #if 1
@@ -1575,11 +1556,11 @@ Scene::raytrace_LUT(const Ray3d& ray) const
                         lookupScattering(*this, atmStart, atmEnd, -light.direction) -
                         lookupScattering(*this, eyePt, atmEnd, -light.direction);
 
-                    //cout << rayleighScatter.y << endl;
-                    //cout << (atmStart - atmEnd).length() - (eyePt - atmEnd).length()
-                    //<< ", " << rayleighScatter.y
+                    //cout << rayleighScatter.y() << endl;
+                    //cout << (atmStart - atmEnd).norm() - (eyePt - atmEnd).norm()
+                    //<< ", " << rayleighScatter.y()
                     //<< endl;
-                    //rayleighScatter = Vec3d(0.0, 0.0, 0.0);
+                    //rayleighScatter = Vector3d::Zero();
                 }
 #else
                 //rayleighScatter = lookupScattering(*this, atmEnd, atmStart, -light.direction);
@@ -1590,16 +1571,13 @@ Scene::raytrace_LUT(const Ray3d& ray) const
                 rayleighScatter = lookupScattering(*this, atmEnd, atmStart, -light.direction);
             }
 
-            const Vec3d& rayleigh = atmosphere.rayleighCoeff;
-            double cosSunAngle = mray.direction * -light.direction;
-            inscatter = phaseRayleigh(cosSunAngle) *
-                Vec3d(rayleighScatter.x * rayleigh.x,
-                      rayleighScatter.y * rayleigh.y,
-                      rayleighScatter.z * rayleigh.z);
+            const Vector3d& rayleigh = atmosphere.rayleighCoeff;
+            double cosSunAngle = mray.direction.dot(-light.direction);
+            inscatter = phaseRayleigh(cosSunAngle) * rayleighScatter.cwiseProduct(rayleigh);
             inscatter = inscatter * 4.0 * PI;
         }
 
-        return Color((float) inscatter.x, (float) inscatter.y, (float) inscatter.z) +
+        return Color((float) inscatter.x(), (float) inscatter.y(), (float) inscatter.z()) +
             baseColor;
     }
     else
@@ -1653,20 +1631,18 @@ void render(const Scene& scene,
 }
 
 
-Vec3d computeRayleighCoeffs(Vec3d wavelengths)
+Vector3d computeRayleighCoeffs(Vector3d wavelengths)
 {
-    return Vec3d(pow(wavelengths.x, -4.0),
-                 pow(wavelengths.y, -4.0),
-                 pow(wavelengths.z, -4.0));
+    return wavelengths.array().pow(-4.0);
 }
 
 
 void Scene::setParameters(ParameterSet& params)
 {
     atmosphere.rayleighScaleHeight = params["RayleighScaleHeight"];
-    atmosphere.rayleighCoeff.x     = params["RayleighRed"];
-    atmosphere.rayleighCoeff.y     = params["RayleighGreen"];
-    atmosphere.rayleighCoeff.z     = params["RayleighBlue"];
+    atmosphere.rayleighCoeff.x()   = params["RayleighRed"];
+    atmosphere.rayleighCoeff.y()   = params["RayleighGreen"];
+    atmosphere.rayleighCoeff.z()   = params["RayleighBlue"];
 
     atmosphere.mieScaleHeight      = params["MieScaleHeight"];
     atmosphere.mieCoeff            = params["Mie"];
@@ -1691,16 +1667,16 @@ void Scene::setParameters(ParameterSet& params)
     }
 
     atmosphere.absorbScaleHeight   = params["AbsorbScaleHeight"];
-    atmosphere.absorbCoeff.x       = params["AbsorbRed"];
-    atmosphere.absorbCoeff.y       = params["AbsorbGreen"];
-    atmosphere.absorbCoeff.z       = params["AbsorbBlue"];
+    atmosphere.absorbCoeff.x()     = params["AbsorbRed"];
+    atmosphere.absorbCoeff.y()     = params["AbsorbGreen"];
+    atmosphere.absorbCoeff.z()     = params["AbsorbBlue"];
 
     atmosphereShellHeight          = atmosphere.calcShellHeight();
 
     sunAngularDiameter             = degToRad(params["SunAngularDiameter"]);
 
     planet.radius                  = params["Radius"];
-    planet.center                  = Point3d(0.0, 0.0, 0.0);
+    planet.center                  = Vector3d::Zero();
 
     planetColor.r                  = (float) params["SurfaceRed"];
     planetColor.g                  = (float) params["SurfaceGreen"];
@@ -1793,35 +1769,34 @@ bool LoadParameterSet(ParameterSet& params, const string& filename)
     }
 }
 
-
-
-template<class T> static Matrix4<T>
-lookAt(Point3<T> from, Point3<T> to, Vector3<T> up)
+template<class T> static Quaternion<T>
+lookAt(const Matrix<T, 3, 1>& from, const Matrix<T, 3, 1>& to, const Matrix<T, 3, 1>& up)
 {
-    Vector3<T> n = to - from;
+    Matrix<T, 3, 1> n = to - from;
     n.normalize();
-    Vector3<T> v = n ^ up;
-    v.normalize();
-    Vector3<T> u = v ^ n;
+    Matrix<T, 3, 1> v = n.cross(up).normalized();
+    Matrix<T, 3, 1> u = v.cross(n);
 
-    Matrix4<T> rot(Vector4<T>(v.x, v.y, v.z, 0.0),
-                   Vector4<T>(u.x, u.y, u.z, 0.0),
-                   -Vector4<T>(n.x, n.y, n.z, 0.0),
-                   Vector4<T>(0.0, 0.0, 0.0, 1.0));
+    Matrix<T, 3, 3> m;
+    m.col(0) = v;
+    m.col(1) = u;
+    m.col(2) = -n;
 
-    return Matrix4<T>::translation(from) * rot;
+    return Quaternion<T>(m).conjugate();
 }
 
 
-Camera lookAt(Point3d cameraPos,
-              Point3d targetPos,
-              Vec3d up,
+Camera lookAt(const Vector3d& cameraPos,
+              const Vector3d& targetPos,
+              const Vector3d& up,
               double fov)
 {
     Camera camera;
     camera.fov = degToRad(fov);
     camera.front = 1.0;
-    camera.transform = lookAt(cameraPos, targetPos, up);
+    Matrix4d m(Matrix4d::Identity());
+    m.topLeftCorner(3,3) = lookAt(cameraPos, targetPos, up).toRotationMatrix();
+    camera.transform = m;
 
     return camera;
 }
@@ -1952,30 +1927,27 @@ int main(int argc, char* argv[])
 
     Scene scene;
     scene.light.color = Color(1, 1, 1);
-    scene.light.direction = Vec3d(0.0, 0.0, 1.0);
+    scene.light.direction = Vector3d::UnitZ();
     scene.light.direction.normalize();
 
 #if 0
     // N0 = 2.668e25  // m^-3
-    scene.planet = Sphered(Point3d(0.0, 0.0, 0.0), planetRadius);
+    scene.planet = Sphered(Vector3d::Zero(), planetRadius);
 
     scene.atmosphere.rayleighScaleHeight = 79.94;
     scene.atmosphere.mieScaleHeight = 1.2;
     scene.atmosphere.rayleighCoeff =
-        computeRayleighCoeffs(Vec3d(0.600, 0.520, 0.450)) * 0.000008;
+        computeRayleighCoeffs(Vector3d(0.600, 0.520, 0.450)) * 0.000008;
     scene.atmosphereShellHeight = scene.atmosphere.calcShellHeight();
 
     scene.atmosphere.rayleighCoeff =
-        computeRayleighCoeffs(Vec3d(0.600, 0.520, 0.450)) * 0.000008;
+        computeRayleighCoeffs(Vector3d(0.600, 0.520, 0.450)) * 0.000008;
 #endif
 
     scene.setParameters(sceneParams);
 
-    cout << "atmosphere height: " << scene.atmosphereShellHeight << "\n";
-    cout << "attenuation coeffs: " <<
-        scene.atmosphere.rayleighCoeff.x * 4 * PI << ", " <<
-        scene.atmosphere.rayleighCoeff.y * 4 * PI << ", " <<
-        scene.atmosphere.rayleighCoeff.z * 4 * PI << endl;
+    cout << "atmosphere height: " << scene.atmosphereShellHeight << '\n';
+    cout << "attenuation coeffs: " << scene.atmosphere.rayleighCoeff.transpose() * 4 * PI << '\n';
 
 
     if (LUTUsage != NoLUT)
@@ -2001,32 +1973,32 @@ int main(int argc, char* argv[])
     Camera cameraLowPhase;
     cameraLowPhase.fov = degToRad(45.0);
     cameraLowPhase.front = 1.0;
-    cameraLowPhase.transform =
-        Mat4d::translation(Point3d(0.0, 0.0, -cameraFarDist)) *
-        Mat4d::yrotation(degToRad(20.0));
+    auto t = YRotation(degToRad(-20.0)) *
+             Translation3d(0.0, 0.0, -cameraFarDist);
+    cameraLowPhase.transform = t.matrix();
 
     Camera cameraHighPhase;
     cameraHighPhase.fov = degToRad(45.0);
     cameraHighPhase.front = 1.0;
-    cameraHighPhase.transform =
-        Mat4d::translation(Point3d(0.0, 0.0, -cameraFarDist)) *
-        Mat4d::yrotation(degToRad(160.0));
+    t = YRotation(degToRad(-160.0)) *
+        Translation3d(0.0, 0.0, -cameraFarDist);
+    cameraHighPhase.transform = t.matrix();
 
     Camera cameraClose;
     cameraClose.fov = degToRad(45.0);
     cameraClose.front = 1.0;
-    cameraClose.transform =
-        Mat4d::xrotation(degToRad(55.0)) *
-        Mat4d::translation(Point3d(0.0, 0.0, -cameraCloseDist)) *
-        Mat4d::yrotation(degToRad(50.0));
+    t = YRotation(degToRad(-50.0)) *
+        Translation3d(0.0, 0.0, -cameraCloseDist) *
+        XRotation(degToRad(-55.0));
+    cameraClose.transform = t.matrix();
 
     Camera cameraSurface;
     cameraSurface.fov = degToRad(45.0);
     cameraSurface.front = 1.0;
-    cameraSurface.transform =
-        Mat4d::xrotation(degToRad(85.0)) *
-        Mat4d::translation(Point3d(0.0, 0.0, -planetRadius * 1.0002)) *
-        Mat4d::yrotation(degToRad(20.0));
+    t = YRotation(degToRad(-20.0)) *
+        Translation3d(0.0, 0.0, -planetRadius * 1.0002) *
+        XRotation(degToRad(-85.0));
+    cameraSurface.transform = t.matrix();
 
     double aspectRatio = (double) OutputImageWidth / (double) OutputImageHeight;
     // Make the horizontal FOV of the fisheye cameras 180 degrees
@@ -2035,21 +2007,20 @@ int main(int argc, char* argv[])
     Camera cameraFisheyeMidday;
     cameraFisheyeMidday.fov = fisheyeFOV;
     cameraFisheyeMidday.type = Camera::Spherical;
-    cameraFisheyeMidday.transform =
-        Mat4d::xrotation(degToRad(85.0)) *
-        Mat4d::translation(Point3d(0.0, 0.0, -planetRadius * 1.0002)) *
-        Mat4d::yrotation(degToRad(20.0));
+    t = YRotation(degToRad(-20.0)) *
+        Translation3d(0.0, 0.0, -planetRadius * 1.0002) *
+        XRotation(degToRad(-85.0));
+    cameraFisheyeMidday.transform = t.matrix();
 
     Camera cameraFisheyeSunset;
     cameraFisheyeSunset.fov = degToRad(180.0);
     cameraFisheyeSunset.type = Camera::Spherical;
-    cameraFisheyeSunset.transform =
-        Mat4d::zrotation(degToRad(-5.0)) *
-        Mat4d::yrotation(degToRad(90.0)) *
-        Mat4d::xrotation(degToRad(85.0)) *
-        Mat4d::translation(Point3d(0.0, 0.0, -planetRadius * 1.0002)) *
-        Mat4d::yrotation(degToRad(80.0));
-
+    t = YRotation(degToRad(-80.0)) *
+        Translation3d(0.0, 0.0, -planetRadius * 1.0002) *
+        XRotation(degToRad(-85.0)) *
+        YRotation(degToRad(-90.0)) *
+        ZRotation(degToRad(5.0));
+    cameraFisheyeSunset.transform = t.matrix();
 
     RGBImage image(OutputImageWidth, OutputImageHeight);
 
@@ -2060,7 +2031,7 @@ int main(int argc, char* argv[])
     Viewport tophalf (0, 0, image.width, image.height / 2);
     Viewport bothalf (0, image.height / 2, image.width, image.height / 2);
 
-    image.clear(Color(0.1f, 0.1f, 1.0f));
+    image.clear({0.1f, 0.1f, 1.0f});
 
     if (UseFisheyeCameras)
     {
@@ -2078,5 +2049,4 @@ int main(int argc, char* argv[])
     WritePNG(outputImageName, image);
 
     exit(0);
-
 }

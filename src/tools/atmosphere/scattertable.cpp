@@ -43,15 +43,16 @@
 #include <map>
 #include <cassert>
 #include <Eigen/Core>
-#include <Eigen/Array>
+#include <celmath/mathlib.h>
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
-const unsigned int HeightSamples = 32;
-const unsigned int ViewAngleSamples = 256;
-const unsigned int SunAngleSamples = 32;
+constexpr const unsigned int HeightSamples = 32;
+constexpr const unsigned int ViewAngleSamples = 256;
+constexpr const unsigned int SunAngleSamples = 32;
 
 // Values settable via the command line
 static unsigned int ScatteringIntegrationSteps = 25;
@@ -81,8 +82,6 @@ static Vector3f RayleighScatteringCoeff(float n, float N)
 class Atmosphere
 {
 public:
-    Atmosphere() = default;
-
     float shellRadius() const
     {
         return planetRadius + max(mieScaleHeight, rayleighScaleHeight) * 8.0f;
@@ -91,7 +90,6 @@ public:
     Vector3f* computeTransmittanceTable() const;
     Vector4f* computeInscatterTable() const;
 
-public:
     float planetRadius;
     float rayleighScaleHeight;
     float mieScaleHeight;
@@ -100,24 +98,6 @@ public:
     Vector3f absorptionCoeff;
     float mieAsymmetry;
 };
-
-
-// Check to see if a floating point value is a NaN. Useful for debugging.
-static inline bool isNaN(float x)
-{
-    return x != x;
-}
-
-
-static inline float sign(float x)
-{
-    if (x < 0.0f)
-        return -1.0f;
-    if (x > 0.0f)
-        return 1.0f;
-    else
-        return 0.0f;
-}
 
 
 // Based on approximation from E. Bruneton and F. Neyret,
@@ -148,7 +128,7 @@ Vector3f transmittance(float r, float mu, float l, const Atmosphere& atm)
     float depthM = opticalDepth(r, mu, l, atm.mieScaleHeight, atm.planetRadius);
     return (-depthR * atm.rayleighCoeff
             - depthM * Vector3f::Constant(atm.mieCoeff)
-            - depthM * atm.absorptionCoeff).cwise().exp();
+            - depthM * atm.absorptionCoeff).array().exp();
 }
 
 
@@ -223,7 +203,7 @@ Atmosphere::computeTransmittanceTable() const
             transmittanceTable[index] = transmittance(r, mu, pathLength, *this);
 
             // Warning messages
-            if (isNaN(transmittanceTable[index].x()))
+            if (isnan(transmittanceTable[index].x()))
             {
                 cout << "NaN in transmittance table at (" << j << ", " << i << ")\n";
                 cout << transmittanceTable[index].x() << endl;
@@ -333,7 +313,7 @@ Atmosphere::computeInscatterTable() const
                         float sunPathLength = -rx * c + sqrt(Rt2 - rx2 * s2);
                         Vector3f sunPathTransmittance = transmittance(rx, c, sunPathLength, *this);
 
-                        t = viewPathTransmittance.cwise() * sunPathTransmittance;
+                        t = viewPathTransmittance.cwiseProduct(sunPathTransmittance);
                     }
                     else
                     {
@@ -349,7 +329,7 @@ Atmosphere::computeInscatterTable() const
                 }
 
                 unsigned int index = (i * ViewAngleSamples + j) * SunAngleSamples + k;
-                inscatter[index] << rayleigh.cwise() * rayleighCoeff,
+                inscatter[index] << rayleigh.cwiseProduct(rayleighCoeff),
                                     mie * mieCoeff;
                 if (i == HeightSamples - 1 && k == 0)
                 {
@@ -360,7 +340,7 @@ Atmosphere::computeInscatterTable() const
 
 #if 0
                 // Emit warnings about NaNs in scatter table
-                if (isNaN(rayleigh.x()))
+                if (isnan(rayleigh.x()))
                 {
                     cout << "NaN in inscatter table at (" << k << ", " << j << ", " << i << ")\n";
                 }
@@ -402,7 +382,7 @@ void usage()
 
 Vector3f computeRayleighCoeffs(const Vector3f& wavelengths)
 {
-    return wavelengths.cwise().pow(-4.0f);
+    return wavelengths.array().pow(-4.0f);
 }
 
 
@@ -569,8 +549,6 @@ uint16_t floatToHalf(float f)
     FloatInt fi;
     fi.f = f;
 
-    uint16_t half = 0;
-
     auto signBit = uint16_t((fi.u & 0x80000000) >> 16);
 
     if (f > 65504.0f)
@@ -634,8 +612,6 @@ uint16_t floatToHalf(float f)
 
 struct DDSPixelFormat
 {
-    DDSPixelFormat() = default;
-
     uint32_t dwSize{0};
     uint32_t dwFlags{0};
     uint32_t dwFourCC{0};
@@ -652,10 +628,7 @@ struct DDSHeader
 {
     DDSHeader()
     {
-        for (unsigned int & i : dwReserved1)
-        {
-            i = 0;
-        }
+        fill(begin(dwReserved1), end(dwReserved1), 0);
     }
 
     static const uint32_t CAPS_COMPLEX = 0x000008;
@@ -696,7 +669,7 @@ struct DDSHeader
     uint32_t          dwDepth{0};
     uint32_t          dwMipMapCount{0};
     uint32_t          dwReserved1[11];
-    DDSPixelFormat  ddpf;
+    DDSPixelFormat    ddpf;
     uint32_t          dwCaps{0};
     uint32_t          dwCaps2{0};
     uint32_t          dwCaps3{0};
@@ -741,7 +714,7 @@ struct DDSHeader
 static bool ByteSwapRequired = false;
 static bool IsLittleEndian()
 {
-    Uint32_t endiannessTest;
+    Uint32 endiannessTest;
     endiannessTest.u = 0x01020304;
     return endiannessTest.bytes[0] == 0x04;
 }
@@ -752,7 +725,7 @@ static void WriteUint16(ostream& out, uint16_t u)
 {
     static_assert(sizeof(u) == 2, "");
 
-    Uint16_t ub;
+    Uint16 ub;
     ub.u = u;
     if (ByteSwapRequired)
     {
@@ -768,7 +741,7 @@ static void WriteUint32(ostream& out, uint32_t u)
 {
     static_assert(sizeof(u) == 4, "");
 
-    Uint32_t ub;
+    Uint32 ub;
     ub.u = u;
     if (ByteSwapRequired)
     {
@@ -780,6 +753,7 @@ static void WriteUint32(ostream& out, uint32_t u)
 }
 
 
+#if 0
 // Write out a single precision floating point number
 static void WriteFloat(ostream& out, float f)
 {
@@ -795,6 +769,7 @@ static void WriteFloat(ostream& out, float f)
 
     out.write(ub.bytes, sizeof(ub.bytes));
 }
+#endif
 
 
 // Convert a single precision floating point value to half precision
