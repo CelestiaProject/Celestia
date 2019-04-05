@@ -8,6 +8,7 @@ macro(install_perl_tools)
   install(PROGRAMS ${__sources} DESTINATION ${CMAKE_INSTALL_BINDIR})
 endmacro()
 
+add_subdirectory(atmosphere)
 add_subdirectory(binaries)
 add_subdirectory(charm2)
 add_subdirectory(cmod)
