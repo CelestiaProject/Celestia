@@ -8,9 +8,23 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <QtGui>
 #include "mainwindow.h"
-
+#include <QComboBox>
+#include <QFontComboBox>
+#include <QScrollArea>
+#include <QLabel>
+#include <QFont>
+#include <QDataStream>
+#include <QDebug>
+#include <QMessageBox>
+#include <QFile>
+#include <QAction>
+#include <QMenuBar>
+#include <QMenu>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QFileDialog>
+#include <QPainter>
 
 // TXF format constants
 const char* TXF_HEADER_BYTES = "\377txf";
