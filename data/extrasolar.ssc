@@ -5338,34 +5338,6 @@ AltSurface "limit of knowledge" "Kepler-6/b"
 }
 
 
-"b" "HD 128621"   # Alf Cen B
-{
-	Texture "asteroid.*"
-
-	Mass      1     # M.sin(i) = 1 earths
-	Radius     6700
-
-	InfoURL "http://exoplanet.eu/catalog/alf_cen_b_b/"
-
-	EllipticalOrbit {
-		Period          0.0089
-		SemiMajorAxis   0.04
-		Inclination      82 #
-		AscendingNode   232 # to match system inclination
-	}
-
-	Obliquity             82 # guess, to match inclination
-	EquatorAscendingNode  67 # guess, to match ascending node
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 128621/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
 "b" "KOI-204"   # KIC 9305831
 
 # Detected via transit as well as radial velocity methods; from transit
