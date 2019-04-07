@@ -4,3 +4,5 @@ foreach(tool makestardb makexindex startextdump)
   target_link_libraries(${tool} ${CELESTIA_LIBS})
   install(TARGETS ${tool} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endforeach()
+
+install_perl_tools(buildstardb.pl)
