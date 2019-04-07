@@ -530,9 +530,6 @@ bool readConfig(istream& in, Configuration& config)
 
 int main(int argc, char* argv[])
 {
-    // Load the leap second kernel
-    furnsh_c("naif0012.tls");
-
     if (argc < 2)
     {
         cerr << "Usage: spice2xyzv <config filename> [output filename]\n";
@@ -585,6 +582,9 @@ int main(int argc, char* argv[])
         cerr << "Kernels missing from configuration file.\n";
         return 1;
     }
+
+    // Load the leap second kernel
+    furnsh_c("naif0012.tls");
 
     writeCommentHeader(config, cout);
     convertSpkToXyzv(config, cout);
