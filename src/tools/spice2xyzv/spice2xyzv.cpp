@@ -531,7 +531,7 @@ bool readConfig(istream& in, Configuration& config)
 int main(int argc, char* argv[])
 {
     // Load the leap second kernel
-    furnsh_c("naif0008.tls");
+    furnsh_c("naif0012.tls");
 
     if (argc < 2)
     {
