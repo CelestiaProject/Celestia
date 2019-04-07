@@ -777,12 +777,11 @@ std::string ReplaceGreekLetterAbbr(const std::string& str)
         // Linear search through all letter abbreviations
         for (int i = 0; i < instance->nLetters; i++)
         {
-            
             std::string prefix = instance->abbrevs[i];
-            if (str.compare(0, prefix.length(), prefix) != 0)
+            if (UTF8StringCompare(str, prefix, prefix.length(), true) != 0)
             {
                 prefix = instance->names[i];
-                if (str.compare(0, prefix.length(), prefix) != 0)
+                if (UTF8StringCompare(str, prefix, prefix.length(), true) != 0)
                     continue;
             }
             
@@ -941,10 +940,22 @@ static int findGreekNameIndexBySubstr(const std::string &s, int start, unsigned 
     return -1;
 }
 
+static size_t greekChunkLength(const std::string& str)
+{
+    size_t sp = str.find_first_of(' ');
+    if (sp == std::string::npos)
+        sp = str.length();
+    if (str[sp - 1] > '0' && str[sp -1] < '4')
+        sp--;
+    else
+        sp = std::string::npos;
+    return sp;
+}
+
 static std::string firstGreekAbbrCompletion(const std::string &s)
 {
     std::string ret;
-    size_t sp = s.find_first_of(' ');
+    size_t sp = greekChunkLength(s);
     if (sp == std::string::npos)
     {
         int i = findGreekNameIndexBySubstr(s);
@@ -966,7 +977,7 @@ std::vector<std::string> getGreekCompletion(const std::string &s)
     if (s.empty())
         return ret;
 
-    size_t sp = s.find_first_of(' ');
+    size_t sp = greekChunkLength(s);
     if (sp == std::string::npos)
     {
         sp = UTF8Length(s);
