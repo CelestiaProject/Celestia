@@ -584,7 +584,7 @@ int main(int argc, char* argv[])
     }
 
     // Load the leap second kernel
-    furnsh_c("naif0012.tls");
+    furnsh_c(CONFIG_DATA_DIR "/" "naif0012.tls");
 
     writeCommentHeader(config, cout);
     convertSpkToXyzv(config, cout);
