@@ -18,11 +18,8 @@ using namespace Eigen;
 int rotation_new(lua_State* l, const Quaterniond& qd)
 {
     CelxLua celx(l);
-
     auto q = reinterpret_cast<Quaterniond*>(lua_newuserdata(l, sizeof(Quaterniond)));
-
-    *q = qd;
-
+    memcpy(q, &qd, sizeof(Quaterniond));
     celx.setClass(Celx_Rotation);
 
     return 1;
