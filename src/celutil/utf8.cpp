@@ -704,6 +704,8 @@ static std::string noAbbrev;
 
 // Greek alphabet crud . . . should probably moved to it's own module.
 
+static size_t greekChunkLength(const std::string&);
+
 Greek* Greek::m_instance = nullptr;
 
 Greek* Greek::getInstance()
@@ -771,6 +773,7 @@ std::string ReplaceGreekLetterAbbr(const std::string& str)
 {
     Greek *instance = Greek::getInstance();
     std::string ret = str;
+    size_t len = greekChunkLength(str);
 
     if (str[0] >= 'A' && str[0] <= 'Z')
     {
@@ -778,13 +781,13 @@ std::string ReplaceGreekLetterAbbr(const std::string& str)
         for (int i = 0; i < instance->nLetters; i++)
         {
             std::string prefix = instance->abbrevs[i];
-            if (UTF8StringCompare(str, prefix, prefix.length(), true) != 0)
+            if (len != prefix.length() || UTF8StringCompare(str, prefix, len, true) != 0)
             {
                 prefix = instance->names[i];
-                if (UTF8StringCompare(str, prefix, prefix.length(), true) != 0)
+                if (len != prefix.length() || UTF8StringCompare(str, prefix, len, true) != 0)
                     continue;
             }
-            
+
             std::string superscript;
             if (isdigit(str[prefix.length()]))
             {
@@ -942,12 +945,17 @@ static int findGreekNameIndexBySubstr(const std::string &s, int start, unsigned 
 
 static size_t greekChunkLength(const std::string& str)
 {
+    bool npos = false;
     size_t sp = str.find_first_of(' ');
     if (sp == std::string::npos)
+    {
         sp = str.length();
+        npos = true;
+    }
+
     if (str[sp - 1] > '0' && str[sp -1] < '4')
         sp--;
-    else
+    else if (npos)
         sp = std::string::npos;
     return sp;
 }
