@@ -209,7 +209,7 @@ void Observer::setOrientation(const Quaternionf& q)
  */
 void Observer::setOrientation(const Quaterniond& q)
 {
-    orientationUniv = q;
+    memcpy(&orientationUniv, &q, sizeof(q));
     orientation = frame->convertFromUniversal(q, getTime());
 }
 
