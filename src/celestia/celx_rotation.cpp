@@ -12,14 +12,15 @@
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_vector.h"
+#include <celutil/align.h>
 
 using namespace Eigen;
 
 int rotation_new(lua_State* l, const Quaterniond& qd)
 {
     CelxLua celx(l);
-    auto q = reinterpret_cast<Quaterniond*>(lua_newuserdata(l, sizeof(Quaterniond)));
-    memcpy(q, &qd, sizeof(Quaterniond));
+    auto q = reinterpret_cast<Quaterniond*>(lua_newuserdata(l, aligned_sizeof<Quaterniond>()));
+    *aligned_addr(q) = qd;
     celx.setClass(Celx_Rotation);
 
     return 1;
@@ -28,8 +29,9 @@ int rotation_new(lua_State* l, const Quaterniond& qd)
 Quaterniond* to_rotation(lua_State* l, int index)
 {
     CelxLua celx(l);
+    auto q = reinterpret_cast<Quaterniond*>(celx.checkUserData(index, Celx_Rotation));
 
-    return static_cast<Quaterniond*>(celx.checkUserData(index, Celx_Rotation));
+    return aligned_addr(q);
 }
 
 static Quaterniond* this_rotation(lua_State* l)

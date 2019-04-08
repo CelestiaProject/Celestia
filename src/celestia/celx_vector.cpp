@@ -12,15 +12,17 @@
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_vector.h"
+#include <celutil/align.h>
 #include <Eigen/Geometry>
+
 using namespace Eigen;
 
 int vector_new(lua_State* l, const Vector3d& v)
 {
     CelxLua celx(l);
 
-    auto v3 = reinterpret_cast<Vector3d*>(lua_newuserdata(l, sizeof(Vector3d)));
-    *v3 = v;
+    auto v3 = reinterpret_cast<Vector3d*>(lua_newuserdata(l, aligned_sizeof<Vector3d>()));
+    *aligned_addr(v3) = v;
     celx.setClass(Celx_Vec3);
 
     return 1;
@@ -29,8 +31,9 @@ int vector_new(lua_State* l, const Vector3d& v)
 Vector3d* to_vector(lua_State* l, int index)
 {
     CelxLua celx(l);
+    auto v = reinterpret_cast<Vector3d*>(celx.checkUserData(index, Celx_Vec3));
 
-    return static_cast<Vector3d*>(celx.checkUserData(index, Celx_Vec3));
+    return aligned_addr(v);
 }
 
 static Vector3d* this_vector(lua_State* l)
