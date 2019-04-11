@@ -105,6 +105,7 @@ if(ENABLE_SPICE)
 
     include_directories("${CMAKE_SOURCE_DIR}/thirdparty/Spice/include")
     add_library(CSPICE::CSPICE ALIAS Spice)
+    add_definitions(-DUSE_SPICE)
   endif()
 endif()
 
@@ -208,17 +209,18 @@ if(ENABLE_CELX)
       link_libraries(${LUA_LIBRARIES})
 
       if(LUA_VERSION VERSION_EQUAL "5.3" OR LUA_VERSION VERSION_GREATER "5.3")
-        add_definitions(-DLUA_VER=0x050300)
+        set(LUA_VER 0x050300)
       elseif(LUA_VERSION VERSION_EQUAL "5.2" OR LUA_VERSION VERSION_GREATER "5.2")
-        add_definitions(-DLUA_VER=0x050200)
+        set(LUA_VER 0x050200)
       elseif(LUA_VERSION VERSION_EQUAL "5.1" OR LUA_VERSION VERSION_GREATER "5.1")
-        add_definitions(-DLUA_VER=0x050100)
+        set(LUA_VER 0x050100)
       else() # luajit
-        add_definitions(-DLUA_VER=0x050100)
+        set(LUA_VER 0x050100)
       endif()
-    elseif(WIN32 OR APPLE)
-      add_definitions(-DLUA_VER=0x050100)
+    else()
+      message(FATAL_ERROR "LUA >= 5.1 was not found")
     endif()
+    add_definitions(-DLUA_VER=${LUA_VER})
   endif()
 endif()
 
@@ -230,14 +232,15 @@ foreach (_variableName ${_variableNames})
 endforeach()
 ]]#
 
-if(ENABLE_SPICE)
-  add_definitions(-DUSE_SPICE)
-endif()
-
 if(WIN32)
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
-  add_definitions(-DNOMINMAX -DWIN32_LEAN_AND_MEAN)
-  add_definitions(-DWINVER=0x0601 -D_WIN32_WINNT=0x0601)
+  add_definitions(
+    -D_CRT_SECURE_NO_WARNINGS
+    -D_SCL_SECURE_NO_WARNINGS
+    -DNOMINMAX
+    -DWIN32_LEAN_AND_MEAN
+    -DWINVER=0x0601
+    -D_WIN32_WINNT=0x0601
+  )
 endif()
 
 set(DATADIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
