@@ -4,7 +4,6 @@ if(NOT WIN32 OR NOT ENABLE_WIN)
 endif()
 
 set(WIN32_SOURCES
-  iob_func_shim.cpp
   ODMenu.cpp
   wglext.cpp
   winbookmarks.cpp
