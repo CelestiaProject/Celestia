@@ -3,17 +3,29 @@ macro(build_cmod_tool)
     message(FATAL_ERROR "build_cmod_tool requires at least 1 argument")
   endif()
 
-  set(__source0 ${ARGV0})
+  set(__target ${ARGV0})
+  set(__win32  ${ARGV1})
   set(__sources ${ARGV})
-  list(REMOVE_AT __sources 0 0)
+
+  if("${__win32}" STREQUAL "WIN32")
+    list(REMOVE_AT __sources 0 1)
+  else()
+    list(REMOVE_AT __sources 0 0)
+    set(__win32)
+  endif()
+
+  list(LENGTH __sources len)
+  if(${len} EQUAL 0)
+    set(__sources "${__target}.cpp")
+  endif()
 
   include_directories("../common")
 
-  add_executable(${__source0} ${__source0}.cpp ${__sources})
-  target_link_libraries(${__source0} celmodel cel3ds cmodcommon)
-  add_dependencies(${__source0} celmodel cel3ds cmodcommon)
+  add_executable(${__target} ${__win32} ${__sources})
+  target_link_libraries(${__target} celmodel cel3ds cmodcommon)
+  add_dependencies(${__target} celmodel cel3ds cmodcommon)
 
-  install(TARGETS ${__source0} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS ${__target} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endmacro()
 
 add_subdirectory(common)
