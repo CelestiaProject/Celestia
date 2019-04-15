@@ -20,12 +20,13 @@
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celtxf/texturefont.h>
+#include <celutil/watchable.h>
 #include <vector>
 #include <list>
 #include <string>
 
 
-class RendererWatcher;
+//class RendererWatcher;
 class FrameTree;
 class ReferenceMark;
 class CurvePlot;
@@ -84,7 +85,7 @@ struct SecondaryIlluminator
 
 class PointStarVertexBuffer;
 
-class Renderer
+class Renderer : public Watchable<Renderer>
 {
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -345,9 +346,9 @@ class Renderer
     bool settingsHaveChanged() const;
     void markSettingsChanged();
 
-    void addWatcher(RendererWatcher*);
-    void removeWatcher(RendererWatcher*);
-    void notifyWatchers() const;
+//    void addWatcher(RendererWatcher*);
+//    void removeWatcher(RendererWatcher*);
+//    void notifyWatchers() const;
 
  public:
     // Internal types
@@ -752,7 +753,7 @@ class Renderer
     MarkerRepresentation openClusterRep;
     MarkerRepresentation globularRep;
 
-    std::list<RendererWatcher*> watchers;
+//    std::list<RendererWatcher*> watchers;
 
  public:
     // Colors for all lines and labels

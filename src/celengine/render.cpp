@@ -66,6 +66,7 @@ std::ofstream hdrlog;
 #include <celutil/utf8.h>
 #include <celutil/util.h>
 #include <celutil/timer.h>
+#include <celutil/watchable.h>
 #include <GL/glew.h>
 #ifdef VIDEO_SYNC
 #ifdef _WIN32
@@ -7780,10 +7781,11 @@ bool Renderer::settingsHaveChanged() const
 void Renderer::markSettingsChanged()
 {
     settingsChanged = true;
-    notifyWatchers();
+    notifyWatchers(/*RenderFlagsChanged*/2);
 }
 
 
+/*
 void Renderer::addWatcher(RendererWatcher* watcher)
 {
     assert(watcher != nullptr);
@@ -7806,6 +7808,7 @@ void Renderer::notifyWatchers() const
         watcher->notifyRenderSettingsChanged(this);
     }
 }
+*/
 
 void Renderer::updateBodyVisibilityMask()
 {

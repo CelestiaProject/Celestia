@@ -11,8 +11,7 @@
 #define _CELESTIACORE_H_
 
 #include <celutil/timer.h>
-#include <celutil/watcher.h>
-// #include <celutil/watchable.h>
+#include <celutil/watchable.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
 #include <celengine/command.h>
@@ -81,7 +80,7 @@ class View
 };
 
 
-class CelestiaCore // : public Watchable<CelestiaCore>
+class CelestiaCore : public Watchable<CelestiaCore>
 {
  public:
     enum {
@@ -318,8 +317,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void setContextMenuCallback(ContextMenuFunc);
 
-    void addWatcher(CelestiaWatcher*);
-    void removeWatcher(CelestiaWatcher*);
+//    void addWatcher(CelestiaWatcher*);
+//    void removeWatcher(CelestiaWatcher*);
 
     void setFaintest(float);
     void setFaintestAutoMag();
@@ -348,7 +347,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     CelestiaConfig* getConfig() const;
 
-    void notifyWatchers(int);
+//    void notifyWatchers(int);
 
     class Alerter
     {
@@ -485,7 +484,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     Texture* logoTexture{ nullptr };
 
     Alerter* alerter{ nullptr };
-    std::vector<CelestiaWatcher*> watchers;
+//    std::vector<CelestiaWatcher*> watchers;
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
 

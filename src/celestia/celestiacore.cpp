@@ -4670,6 +4670,7 @@ CelestiaConfig* CelestiaCore::getConfig() const
 }
 
 
+/*
 void CelestiaCore::addWatcher(CelestiaWatcher* watcher)
 {
     assert(watcher != nullptr);
@@ -4691,6 +4692,7 @@ void CelestiaCore::notifyWatchers(int property)
         watcher->notifyChange(this, property);
     }
 }
+*/
 
 
 void CelestiaCore::goToUrl(const string& urlStr)
