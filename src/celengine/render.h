@@ -26,6 +26,9 @@
 #include <string>
 
 
+class Renderer;
+typedef Watcher<Renderer> RendererWatcher;
+
 //class RendererWatcher;
 class FrameTree;
 class ReferenceMark;
@@ -801,6 +804,7 @@ class Renderer : public Watchable<Renderer>
 };
 
 
+/*
 class RendererWatcher
 {
  public:
@@ -809,6 +813,6 @@ class RendererWatcher
 
     virtual void notifyRenderSettingsChanged(const Renderer*) = 0;
 };
-
+*/
 
 #endif // _CELENGINE_RENDER_H_
