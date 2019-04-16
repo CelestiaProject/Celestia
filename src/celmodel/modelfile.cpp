@@ -16,8 +16,6 @@
 
 
 using namespace cmod;
-using namespace std;
-
 
 // Material default values
 static Material::Color DefaultDiffuse(0.0f, 0.0f, 0.0f);
@@ -135,7 +133,7 @@ public:
         if (type() == Name || type() == String)
             return m_stringValue;
 
-       return string();
+       return std::string();
     }
 
 public:
@@ -147,7 +145,7 @@ public:
         return token;
     }
 
-    static Token NameToken(const string& value)
+    static Token NameToken(const std::string& value)
     {
         Token token;
         token.m_type = Name;
@@ -155,7 +153,7 @@ public:
         return token;
     }
 
-    static Token StringToken(const string& value)
+    static Token StringToken(const std::string& value)
     {
         Token token;
         token.m_type = String;
@@ -173,14 +171,14 @@ public:
 private:
     TokenType m_type{Invalid};
     double m_numberValue{0.0};
-    string m_stringValue;
+    std::string m_stringValue;
 };
 
 
 class TokenStream
 {
 public:
-    TokenStream(istream* in) :
+    TokenStream(std::istream* in) :
         m_in(in),
         m_pushedBack(false),
         m_lineNumber(1),
@@ -196,7 +194,7 @@ public:
 
     void syntaxError(const std::string& message)
     {
-        cerr << message << '\n';
+        std::cerr << message << '\n';
         m_parseError = true;
     }
 
@@ -261,7 +259,7 @@ private:
     };
 
 private:
-    istream* m_in;
+    std::istream* m_in;
     Token m_currentToken;
     bool m_pushedBack;
     int m_lineNumber;
@@ -298,7 +296,7 @@ Token TokenStream::nextToken()
 
     Token newToken;
 
-    string textValue;
+    std::string textValue;
 
     while (!hasError() && !newToken.isValid())
     {
@@ -368,7 +366,7 @@ Token TokenStream::nextToken()
             break;
 
         case CommentState:
-            if (m_nextChar == '\n' || m_nextChar == '\r' || m_nextChar == char_traits<char>::eof())
+            if (m_nextChar == '\n' || m_nextChar == '\r' || m_nextChar == std::char_traits<char>::eof())
             {
                 state = StartState;
             }
@@ -384,7 +382,7 @@ Token TokenStream::nextToken()
             {
                 state = StringEscapeState;
             }
-            else if (m_nextChar == char_traits<char>::eof())
+            else if (m_nextChar == std::char_traits<char>::eof())
             {
                 syntaxError("Unterminated string");
             }
@@ -608,11 +606,11 @@ defined here--they have the obvious definitions.
 class AsciiModelLoader : public ModelLoader
 {
 public:
-    AsciiModelLoader(istream& _in);
+    AsciiModelLoader(std::istream& _in);
     ~AsciiModelLoader() override = default;
 
     Model* load() override;
-    void reportError(const string& /*msg*/) override;
+    void reportError(const std::string& /*msg*/) override;
 
     Material*               loadMaterial();
     Mesh::VertexDescription* loadVertexDescription();
@@ -638,7 +636,7 @@ static Token EndMaterialToken = Token::NameToken("end_material");
 class AsciiModelWriter : public ModelWriter
 {
 public:
-    AsciiModelWriter(ostream& /*_out*/);
+    AsciiModelWriter(std::ostream& /*_out*/);
     ~AsciiModelWriter() override = default;
 
     bool write(const Model& /*model*/) override;
@@ -653,18 +651,18 @@ private:
                        unsigned int stride,
                        const Mesh::VertexDescription& desc);
 
-    ostream& out;
+    std::ostream& out;
 };
 
 
 class BinaryModelLoader : public ModelLoader
 {
 public:
-    BinaryModelLoader(istream& _in);
+    BinaryModelLoader(std::istream& _in);
     ~BinaryModelLoader() override = default;
 
     Model* load() override;
-    void reportError(const string& /*msg*/) override;
+    void reportError(const std::string& /*msg*/) override;
 
     Material*                loadMaterial();
     Mesh::VertexDescription* loadVertexDescription();
@@ -673,14 +671,14 @@ public:
                                           unsigned int& vertexCount);
 
 private:
-    istream& in;
+    std::istream& in;
 };
 
 
 class BinaryModelWriter : public ModelWriter
 {
 public:
-    BinaryModelWriter(ostream& /*_out*/);
+    BinaryModelWriter(std::ostream& /*_out*/);
     ~BinaryModelWriter() override = default;
 
     bool write(const Model& /*model*/) override;
@@ -695,18 +693,18 @@ private:
                        unsigned int stride,
                        const Mesh::VertexDescription& desc);
 
-    ostream& out;
+    std::ostream& out;
 };
 
 
 void
-ModelLoader::reportError(const string& msg)
+ModelLoader::reportError(const std::string& msg)
 {
     errorMessage = msg;
 }
 
 
-const string&
+const std::string&
 ModelLoader::getErrorMessage() const
 {
     return errorMessage;
@@ -727,7 +725,7 @@ ModelLoader::getTextureLoader() const
 }
 
 
-Model* cmod::LoadModel(istream& in, TextureLoader* textureLoader)
+Model* cmod::LoadModel(std::istream& in, TextureLoader* textureLoader)
 {
     ModelLoader* loader = ModelLoader::OpenModel(in);
     if (loader == nullptr)
@@ -738,7 +736,7 @@ Model* cmod::LoadModel(istream& in, TextureLoader* textureLoader)
     Model* model = loader->load();
     if (model == nullptr)
     {
-        cerr << "Error in model file: " << loader->getErrorMessage() << '\n';
+        std::cerr << "Error in model file: " << loader->getErrorMessage() << '\n';
     }
 
     delete loader;
@@ -748,7 +746,7 @@ Model* cmod::LoadModel(istream& in, TextureLoader* textureLoader)
 
 
 ModelLoader*
-ModelLoader::OpenModel(istream& in)
+ModelLoader::OpenModel(std::istream& in)
 {
     char header[CEL_MODEL_HEADER_LENGTH + 1];
     memset(header, '\0', sizeof(header));
@@ -764,7 +762,7 @@ ModelLoader::OpenModel(istream& in)
     }
     else
     {
-        cerr << "Model file has invalid header.\n";
+        std::cerr << "Model file has invalid header.\n";
         return nullptr;
     }
 }
@@ -794,16 +792,16 @@ cmod::SaveModelBinary(const Model* model, std::ostream& out)
 }
 
 
-AsciiModelLoader::AsciiModelLoader(istream& _in) :
+AsciiModelLoader::AsciiModelLoader(std::istream& _in) :
     tok(&_in)
 {
 }
 
 
 void
-AsciiModelLoader::reportError(const string& msg)
+AsciiModelLoader::reportError(const std::string& msg)
 {
-    string s;
+    std::string s;
     s = fmt::sprintf("%s (line %d)", msg, tok.getLineNumber());
     ModelLoader::reportError(s);
 }
@@ -828,7 +826,7 @@ AsciiModelLoader::loadMaterial()
 
     while (tok.nextToken().isName() && tok.currentToken() != EndMaterialToken)
     {
-        string property = tok.currentToken().stringValue();
+        std::string property = tok.currentToken().stringValue();
         Material::TextureSemantic texType = Mesh::parseTextureSemantic(property);
 
         if (texType != Material::InvalidTextureSemantic)
@@ -841,7 +839,7 @@ AsciiModelLoader::loadMaterial()
                 return nullptr;
             }
 
-            string textureName = t.stringValue();
+            std::string textureName = t.stringValue();
 
             Material::TextureResource* tex = nullptr;
             if (getTextureLoader())
@@ -862,7 +860,7 @@ AsciiModelLoader::loadMaterial()
             Token t = tok.nextToken();
             if (t.isName())
             {
-                string blendModeName = tok.currentToken().stringValue();
+                std::string blendModeName = tok.currentToken().stringValue();
                 if (blendModeName == "normal")
                     blendMode = Material::NormalBlend;
                 else if (blendModeName == "add")
@@ -958,8 +956,8 @@ AsciiModelLoader::loadVertexDescription()
 
     while (tok.nextToken().isName() && tok.currentToken() != EndVertexDescToken)
     {
-        string semanticName;
-        string formatName;
+        std::string semanticName;
+        std::string formatName;
         bool valid = false;
 
         if (nAttributes == maxAttributes)
@@ -990,7 +988,7 @@ AsciiModelLoader::loadVertexDescription()
             Mesh::parseVertexAttributeSemantic(semanticName);
         if (semantic == Mesh::InvalidSemantic)
         {
-            reportError(string("Invalid vertex attribute semantic '") +
+            reportError(std::string("Invalid vertex attribute semantic '") +
                         semanticName + "'");
             delete[] attributes;
             return nullptr;
@@ -1000,7 +998,7 @@ AsciiModelLoader::loadVertexDescription()
             Mesh::parseVertexAttributeFormat(formatName);
         if (format == Mesh::InvalidFormat)
         {
-            reportError(string("Invalid vertex attribute format '") +
+            reportError(std::string("Invalid vertex attribute format '") +
                         formatName + "'");
             delete[] attributes;
             return nullptr;
@@ -1233,7 +1231,7 @@ AsciiModelLoader::load()
     {
         if (token.isName())
         {
-            string name = tok.currentToken().stringValue();
+            std::string name = tok.currentToken().stringValue();
             tok.pushBack();
 
             if (name == "material")
@@ -1269,7 +1267,7 @@ AsciiModelLoader::load()
             }
             else
             {
-                reportError(string("Error: Unknown block type ") + name);
+                reportError(std::string("Error: Unknown block type ") + name);
                 delete model;
                 return nullptr;
             }
@@ -1287,7 +1285,7 @@ AsciiModelLoader::load()
 
 
 
-AsciiModelWriter::AsciiModelWriter(ostream& _out) :
+AsciiModelWriter::AsciiModelWriter(std::ostream& _out) :
     out(_out)
 {
 }
@@ -1562,7 +1560,7 @@ AsciiModelWriter::writeMaterial(const Material& material)
 
     for (int i = 0; i < Material::TextureSemanticMax; i++)
     {
-        string texSource;
+        std::string texSource;
         if (material.maps[i] != nullptr)
         {
             texSource = material.maps[i]->source();
@@ -1598,23 +1596,23 @@ AsciiModelWriter::writeMaterial(const Material& material)
 
 /***** Binary loader *****/
 
-BinaryModelLoader::BinaryModelLoader(istream& _in) :
+BinaryModelLoader::BinaryModelLoader(std::istream& _in) :
     in(_in)
 {
 }
 
 
 void
-BinaryModelLoader::reportError(const string& msg)
+BinaryModelLoader::reportError(const std::string& msg)
 {
-    string s;
+    std::string s;
     s = fmt::sprintf("%s (offset %d)", msg, 0);
     ModelLoader::reportError(s);
 }
 
 
 // Read a big-endian 32-bit unsigned integer
-static uint32_t readUint(istream& in)
+static uint32_t readUint(std::istream& in)
 {
     int32_t ret;
     in.read((char*) &ret, sizeof(int32_t));
@@ -1623,7 +1621,7 @@ static uint32_t readUint(istream& in)
 }
 
 
-static float readFloat(istream& in)
+static float readFloat(std::istream& in)
 {
     float f;
     in.read((char*) &f, sizeof(float));
@@ -1632,7 +1630,7 @@ static float readFloat(istream& in)
 }
 
 
-static int16_t readInt16(istream& in)
+static int16_t readInt16(std::istream& in)
 {
     int16_t ret;
     in.read((char *) &ret, sizeof(int16_t));
@@ -1641,19 +1639,19 @@ static int16_t readInt16(istream& in)
 }
 
 
-static ModelFileToken readToken(istream& in)
+static ModelFileToken readToken(std::istream& in)
 {
     return (ModelFileToken) readInt16(in);
 }
 
 
-static ModelFileType readType(istream& in)
+static ModelFileType readType(std::istream& in)
 {
     return (ModelFileType) readInt16(in);
 }
 
 
-static bool readTypeFloat1(istream& in, float& f)
+static bool readTypeFloat1(std::istream& in, float& f)
 {
     if (readType(in) != CMOD_Float1)
         return false;
@@ -1662,7 +1660,7 @@ static bool readTypeFloat1(istream& in, float& f)
 }
 
 
-static bool readTypeColor(istream& in, Material::Color& c)
+static bool readTypeColor(std::istream& in, Material::Color& c)
 {
     if (readType(in) != CMOD_Color)
         return false;
@@ -1676,7 +1674,7 @@ static bool readTypeColor(istream& in, Material::Color& c)
 }
 
 
-static bool readTypeString(istream& in, string& s)
+static bool readTypeString(std::istream& in, std::string& s)
 {
     if (readType(in) != CMOD_String)
         return false;
@@ -1693,7 +1691,7 @@ static bool readTypeString(istream& in, string& s)
     {
         auto* buf = new char[len];
         in.read(buf, len);
-        s = string(buf, len);
+        s = std::string(buf, len);
         delete[] buf;
     }
 
@@ -1701,7 +1699,7 @@ static bool readTypeString(istream& in, string& s)
 }
 
 
-static bool ignoreValue(istream& in)
+static bool ignoreValue(std::istream& in)
 {
     ModelFileType type = readType(in);
     int size = 0;
@@ -1887,7 +1885,7 @@ BinaryModelLoader::loadMaterial()
                     return nullptr;
                 }
 
-                string texfile;
+                std::string texfile;
                 if (!readTypeString(in, texfile))
                 {
                     reportError("String expected for texture filename");
@@ -2128,49 +2126,49 @@ BinaryModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
 
 /***** Binary writer *****/
 
-BinaryModelWriter::BinaryModelWriter(ostream& _out) :
+BinaryModelWriter::BinaryModelWriter(std::ostream& _out) :
     out(_out)
 {
 }
 
 // Utility functions for writing binary values to a file
-static void writeUint32(ostream& out, uint32_t val)
+static void writeUint32(std::ostream& out, uint32_t val)
 {
     LE_TO_CPU_INT32(val, val);
     out.write(reinterpret_cast<char*>(&val), sizeof(uint32_t));
 }
 
-static void writeFloat(ostream& out, float val)
+static void writeFloat(std::ostream& out, float val)
 {
     LE_TO_CPU_FLOAT(val, val);
     out.write(reinterpret_cast<char*>(&val), sizeof(float));
 }
 
-static void writeInt16(ostream& out, int16_t val)
+static void writeInt16(std::ostream& out, int16_t val)
 {
     LE_TO_CPU_INT16(val, val);
     out.write(reinterpret_cast<char*>(&val), sizeof(int16_t));
 }
 
-static void writeToken(ostream& out, ModelFileToken val)
+static void writeToken(std::ostream& out, ModelFileToken val)
 {
     writeInt16(out, static_cast<int16_t>(val));
 }
 
-static void writeType(ostream& out, ModelFileType val)
+static void writeType(std::ostream& out, ModelFileType val)
 {
     writeInt16(out, static_cast<int16_t>(val));
 }
 
 
-static void writeTypeFloat1(ostream& out, float f)
+static void writeTypeFloat1(std::ostream& out, float f)
 {
     writeType(out, CMOD_Float1);
     writeFloat(out, f);
 }
 
 
-static void writeTypeColor(ostream& out, const Material::Color& c)
+static void writeTypeColor(std::ostream& out, const Material::Color& c)
 {
     writeType(out, CMOD_Color);
     writeFloat(out, c.red());
@@ -2179,7 +2177,7 @@ static void writeTypeColor(ostream& out, const Material::Color& c)
 }
 
 
-static void writeTypeString(ostream& out, const string& s)
+static void writeTypeString(std::ostream& out, const std::string& s)
 {
     writeType(out, CMOD_String);
     writeInt16(out, static_cast<int16_t>(s.length()));
@@ -2345,7 +2343,7 @@ BinaryModelWriter::writeMaterial(const Material& material)
     {
         if (material.maps[i])
         {
-            string texSource = material.maps[i]->source();
+            std::string texSource = material.maps[i]->source();
             if (!texSource.empty())
             {
                 writeToken(out, CMOD_Texture);
