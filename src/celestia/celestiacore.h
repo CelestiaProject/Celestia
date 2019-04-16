@@ -30,12 +30,9 @@
 #endif
 class Url;
 
-// class CelestiaWatcher;
 class CelestiaCore;
 
 // class astro::Date;
-
-typedef Watcher<CelestiaCore> CelestiaWatcher;
 
 class ProgressNotifier
 {
@@ -317,9 +314,6 @@ class CelestiaCore : public Watchable<CelestiaCore>
 
     void setContextMenuCallback(ContextMenuFunc);
 
-//    void addWatcher(CelestiaWatcher*);
-//    void removeWatcher(CelestiaWatcher*);
-
     void setFaintest(float);
     void setFaintestAutoMag();
 
@@ -484,7 +478,6 @@ class CelestiaCore : public Watchable<CelestiaCore>
     Texture* logoTexture{ nullptr };
 
     Alerter* alerter{ nullptr };
-//    std::vector<CelestiaWatcher*> watchers;
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
 

@@ -26,7 +26,7 @@ template<class T> class Watcher
         watched.removeWatcher(this);
     }
 
-    virtual void notifyChange(T*, int) = 0;
+    virtual void notifyChange(const T*, int) = 0;
 };
 
 #endif // _CELUTIL_WATCHER_H_

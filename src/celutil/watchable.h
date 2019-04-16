@@ -2,6 +2,7 @@
 
 #include "watcher.h"
 #include <vector>
+#include <cassert>
 
 //namespace celutil
 //{
@@ -31,6 +32,6 @@ template<typename T> void Watchable<T>::removeWatcher(Watcher<T>* watcher)
 template<typename T> void Watchable<T>::notifyWatchers(int property) const
 {
     for (const auto watcher : watchers)
-        watcher->notifyChange(reinterpret_cast<T*>(const_cast<Watchable<T>*>(this)), property);
+        watcher->notifyChange(reinterpret_cast<const T*>(this), property);
 }
 //};

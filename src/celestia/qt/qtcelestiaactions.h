@@ -21,15 +21,15 @@ class QAction;
 class CelestiaCore;
 
 
-class CelestiaActions : public QObject, public RendererWatcher
+class CelestiaActions : public QObject, public Watcher<Renderer>
 {
-Q_OBJECT
+    Q_OBJECT
 
  public:
     CelestiaActions(QObject *parent, CelestiaCore* appCore);
     ~CelestiaActions();
 
-    virtual void notifyRenderSettingsChanged(const Renderer* renderer);
+    void notifyChange(const Renderer* renderer, int) override;
 
  private slots:
     void slotToggleRenderFlag();

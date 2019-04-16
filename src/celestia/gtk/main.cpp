@@ -141,21 +141,23 @@ static void createMainMenu(GtkWidget* window, AppData* app)
 /* Our own watcher. Celestiacore will call notifyChange() to tell us
  * we need to recheck the check menu items and option buttons. */
 
-class GtkWatcher : public CelestiaWatcher
+class GtkWatcher : public Watcher<CelestiaCore>
 {
-    public:
-        GtkWatcher(CelestiaCore*, AppData*);
-        virtual void notifyChange(CelestiaCore*, int);
-    private:
-        AppData* app;
+ public:
+    GtkWatcher(CelestiaCore*, AppData*);
+    void notifyChange(const CelestiaCore*, int) override;
+
+ private:
+    AppData* app;
 };
 
 GtkWatcher::GtkWatcher(CelestiaCore* _appCore, AppData* _app) :
-    CelestiaWatcher(*_appCore), app(_app)
+    Watcher<CelestiaCore>(*_appCore),
+    app(_app)
 {
 }
 
-void GtkWatcher::notifyChange(CelestiaCore*, int property)
+void GtkWatcher::notifyChange(const CelestiaCore*, int property)
 {
     if (property & CelestiaCore::LabelFlagsChanged)
         resyncLabelActions(app);

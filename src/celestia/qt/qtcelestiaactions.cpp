@@ -18,6 +18,7 @@
 
 CelestiaActions::CelestiaActions(QObject* parent,
                                  CelestiaCore* _appCore) :
+    Watcher<Renderer>(*this),
     QObject(parent),
     appCore(_appCore)
 {
@@ -310,7 +311,7 @@ void CelestiaActions::syncWithAppCore()
 }
 
 
-void CelestiaActions::notifyRenderSettingsChanged(const Renderer* renderer)
+void CelestiaActions::notifyChange(const Renderer* renderer, int property)
 {
     syncWithRenderer(renderer);
 }
