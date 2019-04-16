@@ -14,7 +14,7 @@
 
 #include "celestia/celestiacore.h"
 
-class ViewOptionsDialog : public CelestiaWatcher
+class ViewOptionsDialog : public Watcher<CelestiaCore>
 {
  public:
     ViewOptionsDialog(HINSTANCE, HWND, CelestiaCore*);
@@ -22,7 +22,7 @@ class ViewOptionsDialog : public CelestiaWatcher
     void SetControls(HWND);
     void RestoreSettings(HWND);
 
-    virtual void notifyChange(CelestiaCore*, int);
+    void notifyChange(CelestiaCore*, int) override;
 
  public:
     CelestiaCore* appCore;

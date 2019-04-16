@@ -160,7 +160,7 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
 LocationsDialog::LocationsDialog(HINSTANCE appInstance,
                                  HWND _parent,
                                  CelestiaCore* _appCore) :
-    CelestiaWatcher(*_appCore),
+    Watcher<CelestiaCore>(*_appCore),
     appCore(_appCore),
     parent(_parent)
 {

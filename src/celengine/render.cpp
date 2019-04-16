@@ -7781,34 +7781,9 @@ bool Renderer::settingsHaveChanged() const
 void Renderer::markSettingsChanged()
 {
     settingsChanged = true;
-    notifyWatchers(/*RenderFlagsChanged*/2);
+    notifyWatchers(/*TODO: RenderFlagsChanged*/2);
 }
 
-
-/*
-void Renderer::addWatcher(RendererWatcher* watcher)
-{
-    assert(watcher != nullptr);
-    watchers.push_back(watcher);
-}
-
-
-void Renderer::removeWatcher(RendererWatcher* watcher)
-{
-    auto iter = find(watchers.begin(), watchers.end(), watcher);
-    if (iter != watchers.end())
-        watchers.erase(iter);
-}
-
-
-void Renderer::notifyWatchers() const
-{
-    for (const auto watcher : watchers)
-    {
-        watcher->notifyRenderSettingsChanged(this);
-    }
-}
-*/
 
 void Renderer::updateBodyVisibilityMask()
 {

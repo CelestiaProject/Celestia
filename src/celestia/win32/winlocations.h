@@ -16,7 +16,7 @@
 #include <commctrl.h>
 #include "celestia/celestiacore.h"
 
-class LocationsDialog : public CelestiaWatcher
+class LocationsDialog : public Watcher<CelestiaCore>
 {
  public:
     LocationsDialog(HINSTANCE, HWND, CelestiaCore*);
@@ -24,7 +24,7 @@ class LocationsDialog : public CelestiaWatcher
     void SetControls(HWND);
     void RestoreSettings(HWND);
 
-    virtual void notifyChange(CelestiaCore*, int);
+    void notifyChange(CelestiaCore*, int) override;
 
  public:
     CelestiaCore* appCore;

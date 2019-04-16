@@ -291,7 +291,7 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
 ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
                                      HWND _parent,
                                      CelestiaCore* _appCore) :
-    CelestiaWatcher(*_appCore),
+    Watcher<CelestiaCore>(*_appCore),
     appCore(_appCore),
     parent(_parent)
 {
