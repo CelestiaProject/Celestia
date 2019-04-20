@@ -20,6 +20,7 @@
 #include <celutil/utf8.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <GL/glew.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -86,6 +87,7 @@ class RingSystem
     float outerRadius;
     Color color;
     MultiResTexture texture;
+    GLuint vboId{ 0 };
 
     RingSystem(float inner, float outer) :
         innerRadius(inner), outerRadius(outer),
