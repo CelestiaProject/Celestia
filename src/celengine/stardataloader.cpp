@@ -126,8 +126,8 @@ bool StcDataLoader::load(istream &in)
             }
         }
         // If catalog number is absent, try to find star by name
-        if (catalogNumber == AstroCatalog::InvalidIndex)
-            catalogNumber = m_db->nameToIndex(firstName);
+        if (isStar && catalogNumber == AstroCatalog::InvalidIndex)
+            catalogNumber = m_db->starnameToIndex(firstName);
 
         bool isNewStar = false;
         bool ok = true;
@@ -233,7 +233,7 @@ bool StcDataLoader::load(istream &in)
         }
 
 //         For backward compatibility: index within HIP numbers range is supposed to be valid HIP number
-        if (ok && catalogNumber < HipparcosAstroCatalog::MaxCatalogNumber)
+        if (ok && catalogNumber > 0 && catalogNumber < HipparcosAstroCatalog::MaxCatalogNumber)
             m_db->addCatalogNumber(catalogNumber, AstroDatabase::Hipparcos, catalogNumber);
 
         tokenizer.pushBack();
@@ -272,13 +272,17 @@ bool StcDataLoader::load(istream &in)
         {
             if (!objName.empty())
             {
+                m_db->eraseNames(catalogNumber);
                 m_db->addNames(catalogNumber, objName);
             }
             successCount++;
         }
         else
         {
-             clog << "Bad star definition -- will continue parsing file.\n";
+            m_db->removeObject(star);
+            if (star != nullptr)
+                delete star;
+            clog << "Bad star definition -- will continue parsing file.\n";
         }
 //         clog << "End parsing entry.\n";
     }

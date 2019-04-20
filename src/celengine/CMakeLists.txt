@@ -9,6 +9,8 @@ set(CELENGINE_SOURCES
   astrodb.cpp
   astroobj.h
   astroobj.cpp
+  astrooctree.h
+  astrooctree.cpp
   atmosphere.h
   axisarrow.cpp
   axisarrow.h
@@ -94,6 +96,8 @@ set(CELENGINE_SOURCES
 #  particlesystem.h
   planetgrid.cpp
   planetgrid.h
+  processoctree.h
+  processoctree.cpp
   referencemark.h
   rendcontext.cpp
   rendcontext.h

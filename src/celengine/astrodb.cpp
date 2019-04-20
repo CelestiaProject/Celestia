@@ -4,7 +4,8 @@
 constexpr array<const char *, AstroDatabase::MaxBuiltinCatalog> AstroDatabase::CatalogPrefix;
 
 AstroDatabase::AstroDatabase() :
-    m_autoIndex(AutoIndexMax)
+    m_autoIndex(AutoIndexMax),
+    m_octree(OctreeNode::PointType(0, 0, 0), 100000000000, 6, 6, nullptr)
 {
     createBuiltinCatalogs();
 }
@@ -17,36 +18,40 @@ AstroObject *AstroDatabase::getObject(AstroCatalog::IndexNumber nr) const
     return it->second;
 }
 
-AstroObject *AstroDatabase::getObject(const std::string &name) const
+AstroObject *AstroDatabase::getObject(const std::string &name, bool tryGreek, bool smart) const
 {
-    return getObject(nameToIndex(name));
+    return getObject(nameToIndex(name, tryGreek, smart));
 }
 
 Star *AstroDatabase::getStar(AstroCatalog::IndexNumber nr) const
 {
-    Star *star = static_cast<Star*>(getObject(nr));
-    return (m_stars.count(star) > 0) ? star : nullptr;
+    AstroObject *star = getObject(nr);
+    if (star == nullptr)
+        return nullptr;
+    return star->toSelection().star();
 }
 
-Star *AstroDatabase::getStar(const std::string &name) const
+Star *AstroDatabase::getStar(const std::string &name, bool tryGreek, bool smart) const
 {
-    return getStar(nameToIndex(name));
+    return getStar(nameToIndex(name, tryGreek, smart));
 }
 
 DeepSkyObject *AstroDatabase::getDSO(AstroCatalog::IndexNumber nr) const
 {
-    DeepSkyObject *dso = static_cast<DeepSkyObject*>(getObject(nr));
-    return (m_dsos.count(dso) > 0) ? dso : nullptr;
+    AstroObject *dso = getObject(nr);
+    if (dso == nullptr)
+        return nullptr;
+    return dso->toSelection().deepsky();
 }
 
-DeepSkyObject *AstroDatabase::getDSO(const std::string &name) const
+DeepSkyObject *AstroDatabase::getDSO(const std::string &name, bool tryGreek, bool smart) const
 {
-    return getDSO(nameToIndex(name));
+    return getDSO(nameToIndex(name, tryGreek, smart));
 }
 
 AstroCatalog::IndexNumber AstroDatabase::catalogNumberToIndex(int catalog, AstroCatalog::IndexNumber nr) const
 {
-    std::unordered_map<int, CrossIndex*>::const_iterator it = m_catxindex.find(catalog);
+    std::map<int, CrossIndex*>::const_iterator it = m_catxindex.find(catalog);
     if (it != m_catxindex.end() && it->second->count(nr) > 0)
         return it->second->at(nr);
     return AstroCatalog::InvalidIndex;
@@ -54,7 +59,7 @@ AstroCatalog::IndexNumber AstroDatabase::catalogNumberToIndex(int catalog, Astro
 
 AstroCatalog::IndexNumber AstroDatabase::indexToCatalogNumber(int catalog, AstroCatalog::IndexNumber nr) const
 {
-    std::unordered_map<int, CrossIndex*>::const_iterator it = m_celxindex.find(catalog);
+    std::map<int, CrossIndex*>::const_iterator it = m_celxindex.find(catalog);
     if (it != m_celxindex.end() && it->second->count(nr) > 0)
         return it->second->at(nr);
     return AstroCatalog::InvalidIndex;
@@ -62,21 +67,20 @@ AstroCatalog::IndexNumber AstroDatabase::indexToCatalogNumber(int catalog, Astro
 
 bool AstroDatabase::isInCrossIndex(int catalog, AstroCatalog::IndexNumber nr) const
 {
-    std::unordered_map<int, CrossIndex*>::const_iterator it = m_catxindex.find(catalog);
+    std::map<int, CrossIndex*>::const_iterator it = m_catxindex.find(catalog);
     if (it == m_catxindex.end() || it->second->count(nr) == 0)
         return false;
     return true;
 }
 
-AstroCatalog::IndexNumber AstroDatabase::nameToIndex(const std::string& name, bool tryGreek) const
+AstroCatalog::IndexNumber AstroDatabase::nameToIndex(const std::string& name, bool tryGreek, bool smart) const
 {
-    AstroCatalog::IndexNumber nr = m_nameDB.findIndexNumberByName(name);
+    AstroCatalog::IndexNumber nr = m_nameDB.getIndexNumberByName(name, tryGreek);
     if (nr != AstroCatalog::InvalidIndex)
         return nr;
-    if (tryGreek)
+    if (smart)
     {
-        string fname = ReplaceGreekLetterAbbr(name);
-        nr = m_nameDB.findIndexNumberByName(fname);
+        nr = m_nameDB.findIndexNumberByName(name, tryGreek);
         if (nr != AstroCatalog::InvalidIndex)
             return nr;
     }
@@ -88,6 +92,11 @@ AstroCatalog::IndexNumber AstroDatabase::nameToIndex(const std::string& name, bo
         nr = catalogNumberToIndex(ci.first, inr);
     }
     return nr;
+}
+
+AstroCatalog::IndexNumber AstroDatabase::starnameToIndex(const std::string& name, bool tryGreek) const
+{
+    return m_nameDB.findIndexNumberByName(name, tryGreek);
 }
 
 std::string AstroDatabase::catalogNumberToString(AstroCatalog::IndexNumber nr) const
@@ -204,6 +213,7 @@ bool AstroDatabase::addStar(Star *star)
     if (!addObject(star))
         return false;
     m_stars.insert(star);
+    m_octree.insertObject(star);
     return true;
 }
 
@@ -212,6 +222,7 @@ bool AstroDatabase::addDSO(DeepSkyObject *dso)
     if (!addObject(dso))
         return false;
     m_dsos.insert(dso);
+    m_octree.insertObject(dso);
     return true;
 }
 
@@ -221,6 +232,29 @@ bool AstroDatabase::addBody(Body *body)
         return false;
     m_bodies.insert(body);
     return true;
+}
+
+bool AstroDatabase::removeObject(AstroCatalog::IndexNumber nr)
+{
+    AstroObject *obj = getObject(nr);
+    if (obj == nullptr)
+        return false;
+    Selection sel = obj->toSelection();
+    switch(sel.getType())
+    {
+        case Selection::Type_Star:
+            m_stars.erase(sel.star());
+            break;
+        case Selection::Type_DeepSky:
+            m_dsos.erase(sel.deepsky());
+    }
+    m_mainIndex.erase(nr);
+    return true;
+}
+
+bool AstroDatabase::removeObject(AstroObject *o)
+{
+    return removeObject(o->getIndex());
 }
 
 void AstroDatabase::addNames(AstroCatalog::IndexNumber nr, const string &names) // string containing names separated by colon

@@ -13,6 +13,7 @@ class AstroDataLoader
     AstroDatabase *m_db { nullptr };
     const ContentType m_CType { Content_Unknown };
  public:
+    std::string resourcePath;
     AstroDataLoader() = default;
     AstroDataLoader(ContentType type) : m_CType(type) {}
     AstroDataLoader(AstroDatabase *db, ContentType type) : m_db(db), m_CType(type) {}

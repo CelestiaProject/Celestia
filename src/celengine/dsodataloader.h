@@ -9,6 +9,5 @@ class DscDataLoader : public AstroDataLoader
     using AstroDataLoader::load;
     DscDataLoader() = default;
     DscDataLoader(AstroDatabase *db) { m_db = db; }
-    std::string resourcePath;
     virtual bool load(std::istream&);
 };

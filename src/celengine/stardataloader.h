@@ -1,13 +1,13 @@
 
 #pragma once
 
+#include <celutil/util.h>
 #include "parser.h"
 #include "dataloader.h"
 
 class StcDataLoader : public AstroDataLoader
 {
  public:
-    std::string resourcePath;
     StcDataLoader() : AstroDataLoader(Content_CelestiaStarCatalog) {}
     StcDataLoader(AstroDatabase *db) : AstroDataLoader(Content_CelestiaStarCatalog) { m_db = db; }
     using AstroDataLoader::load;

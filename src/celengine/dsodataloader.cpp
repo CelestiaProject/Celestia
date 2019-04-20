@@ -78,6 +78,7 @@ bool DscDataLoader::load(istream& in)
             }
 
             objCatalogNumber = obj->getIndex();
+            m_db->eraseNames(objCatalogNumber);
             m_db->addNames(objCatalogNumber, objName);
         }
         else
