@@ -586,28 +586,78 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     //glEnable(GL_TEXTURE_2D);
 }
 
-
-static void renderRingSystem(float innerRadius,
-                             float outerRadius,
-                             float beginAngle,
-                             float endAngle,
-                             unsigned int nSections)
+static void renderRingSystem(GLuint *vboId,
+                             float innerRadius,
+                             float outerRadius)
 {
-    float angle = endAngle - beginAngle;
-
-    glBegin(GL_QUAD_STRIP);
-    for (unsigned int i = 0; i <= nSections; i++)
+    struct RingVertex
     {
-        float t = (float) i / (float) nSections;
-        float theta = beginAngle + t * angle;
-        auto s = (float) sin(theta);
-        auto c = (float) cos(theta);
-        glTexCoord2f(0, 0.5f);
-        glVertex3f(c * innerRadius, 0, s * innerRadius);
-        glTexCoord2f(1, 0.5f);
-        glVertex3f(c * outerRadius, 0, s * outerRadius);
+        GLfloat pos[3];
+        GLshort tex[2];
+    };
+
+    constexpr const float angle = 2*PI;
+    constexpr const unsigned int nSections = 180;
+
+    if (*vboId == 0)
+    {
+        struct RingVertex vertex;
+        vector<struct RingVertex> ringCoord;
+        for (unsigned i = 0; i <= nSections; i++)
+        {
+            float t = (float) i / (float) nSections;
+            float theta = t * angle;
+            float s = (float) sin(theta);
+            float c = (float) cos(theta);
+
+            // inner point
+            vertex.pos[0] = c * innerRadius;
+            vertex.pos[1] = 0.0f;
+            vertex.pos[2] = s * innerRadius;
+            vertex.tex[0] = 0;
+            vertex.tex[1] = (i & 1) ^ 1; // even?(i) ? 0 : 1;
+            ringCoord.push_back(vertex);
+
+            // outer point
+            vertex.pos[0] = c * outerRadius;
+            // vertex.pos[1] = 0.0f;
+            vertex.pos[2] = s * outerRadius;
+            vertex.tex[0] = 1;
+            // vertex.tex[1] = (i & 1) ^ 1;
+            ringCoord.push_back(vertex);
+        }
+
+        glGenBuffers(1, vboId);
+        glBindBuffer(GL_ARRAY_BUFFER, *vboId);
+        glBufferData(GL_ARRAY_BUFFER,
+                     ringCoord.size() * sizeof(struct RingVertex),
+                     ringCoord.data(),
+                     GL_STATIC_DRAW);
     }
-    glEnd();
+    else
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, *vboId);
+    }
+    // I haven't found a way to use glEnableVertexAttribArray instead of
+    // glEnableClientState with OpenGL2
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_SHORT, sizeof(struct RingVertex),
+                      (GLvoid*) offsetof(struct RingVertex, tex));
+
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE,
+                          sizeof(struct RingVertex), 0);
+
+    // Celestia uses glCullFace(GL_BACK) by default so we just skip it here
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, (nSections+1)*2);
+    glCullFace(GL_FRONT);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, (nSections+1)*2);
+    glCullFace(GL_BACK);
+
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 
@@ -652,8 +702,7 @@ void renderRings_GLSL(RingSystem& rings,
     prog->use();
 
     prog->eyePosition = ls.eyePos_obj;
-    prog->ambientColor = Vector3f(ri.ambientColor.red(), ri.ambientColor.green(),
-                                  ri.ambientColor.blue());
+    prog->ambientColor = ri.ambientColor.toVector3();
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
 
     for (unsigned int li = 0; li < ls.nLights; li++)
@@ -725,8 +774,7 @@ void renderRings_GLSL(RingSystem& rings,
     else
         glDisable(GL_TEXTURE_2D);
 
-    renderRingSystem(inner, outer, 0, (float) PI * 2.0f, nSections);
-    renderRingSystem(inner, outer, (float) PI * 2.0f, 0, nSections);
+    renderRingSystem(&rings.vboId, inner, outer);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
