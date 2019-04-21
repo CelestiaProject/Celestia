@@ -669,7 +669,6 @@ void renderRings_GLSL(RingSystem& rings,
                       float planetOblateness,
                       unsigned int textureResolution,
                       bool renderShadow,
-                      unsigned int nSections,
                       const Renderer* renderer)
 {
     float inner = rings.innerRadius / planetRadius;

@@ -95,7 +95,6 @@ class Renderer
     struct DetailOptions
     {
         DetailOptions();
-        unsigned int ringSystemSections;
         unsigned int orbitPathSamplePoints;
         unsigned int shadowTextureSize;
         unsigned int eclipseTextureSize;
