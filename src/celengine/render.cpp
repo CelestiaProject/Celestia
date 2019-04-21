@@ -564,7 +564,6 @@ Renderer::~Renderer()
 
 
 Renderer::DetailOptions::DetailOptions() :
-    ringSystemSections(100),
     orbitPathSamplePoints(100),
     shadowTextureSize(256),
     eclipseTextureSize(128),
@@ -4772,7 +4771,6 @@ void Renderer::renderObject(const Vector3f& pos,
                          radius, 1.0f - obj.semiAxes.y(),
                          textureResolution,
                          (renderFlags & ShowRingShadows) != 0 && lit,
-                         detailOptions.ringSystemSections,
                          this);
     }
 
@@ -4940,7 +4938,6 @@ void Renderer::renderObject(const Vector3f& pos,
                              radius, 1.0f - obj.semiAxes.y(),
                              textureResolution,
                              (renderFlags & ShowRingShadows) != 0 && lit,
-                             detailOptions.ringSystemSections,
                              this);
         }
     }

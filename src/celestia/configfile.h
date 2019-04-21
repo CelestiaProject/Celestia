@@ -61,7 +61,6 @@ public:
     // Renderer detail options
     unsigned int shadowTextureSize;
     unsigned int eclipseTextureSize;
-    unsigned int ringSystemSections;
     unsigned int orbitPathSamplePoints;
 
     unsigned int aaSamples;

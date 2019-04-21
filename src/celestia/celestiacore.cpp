@@ -4260,7 +4260,6 @@ bool CelestiaCore::initRenderer()
     //fmt::printf(_("render path: %i\n"), context->getRenderPath());
 
     Renderer::DetailOptions detailOptions;
-    detailOptions.ringSystemSections = config->ringSystemSections;
     detailOptions.orbitPathSamplePoints = config->orbitPathSamplePoints;
     detailOptions.shadowTextureSize = config->shadowTextureSize;
     detailOptions.eclipseTextureSize = config->eclipseTextureSize;
