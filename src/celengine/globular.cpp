@@ -386,15 +386,14 @@ void Globular::renderGlobularPointSprites(
     glEnable (GL_TEXTURE_2D);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // XXX or transpose() instead of .adjoint()?
-    Matrix3f viewMat = viewerOrientation.toRotationMatrix();
-    Vector3f v0 = viewMat.adjoint() * Vector3f(-1, -1, 0);
-    Vector3f v1 = viewMat.adjoint() * Vector3f( 1, -1, 0);
-    Vector3f v2 = viewMat.adjoint() * Vector3f( 1,  1, 0);
-    Vector3f v3 = viewMat.adjoint() * Vector3f(-1,  1, 0);
+    Quaternionf vOC = viewerOrientation.conjugate();
+    Vector3f v0 = vOC * Vector3f(-1, -1, 0);
+    Vector3f v1 = vOC * Vector3f( 1, -1, 0);
+    Vector3f v2 = vOC * Vector3f( 1,  1, 0);
+    Vector3f v3 = vOC * Vector3f(-1,  1, 0);
 
     float tidalSize = 2 * tidalRadius;
-    Matrix3f m = Scaling(form->scale) * getOrientation().toRotationMatrix() * Scaling(tidalSize);
+    Matrix3f m = Scaling(form->scale) * getOrientation() * Scaling(tidalSize);
 
     vector<GBlob>* points = form->gblobs;
     unsigned int nPoints =

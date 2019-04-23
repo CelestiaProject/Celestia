@@ -144,8 +144,7 @@ static int rotation_transform(lua_State* l)
         celx.doError("Argument to rotation:transform() must be a vector");
         return 0;
     }
-    // XXX or transpose() instead of .adjoint()?
-    vector_new(l, q->toRotationMatrix().adjoint() * (*v));
+    vector_new(l, q->conjugate() * (*v));
     return 1;
 }
 
