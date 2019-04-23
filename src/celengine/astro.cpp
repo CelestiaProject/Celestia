@@ -44,12 +44,9 @@ const double astro::SOLAR_POWER       = 3.8462e26;  // Watts
 const double astro::J2000Obliquity = degToRad(23.4392911);
 
 static const Quaterniond ECLIPTIC_TO_EQUATORIAL_ROTATION = XRotation(-astro::J2000Obliquity);
-static const Matrix3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toRotationMatrix();
 
 static const Quaterniond EQUATORIAL_TO_ECLIPTIC_ROTATION =
     Quaterniond(AngleAxis<double>(-astro::J2000Obliquity, Vector3d::UnitX()));
-static const Matrix3d EQUATORIAL_TO_ECLIPTIC_MATRIX = EQUATORIAL_TO_ECLIPTIC_ROTATION.toRotationMatrix();
-static const Matrix3f EQUATORIAL_TO_ECLIPTIC_MATRIX_F = EQUATORIAL_TO_ECLIPTIC_MATRIX.cast<float>();
 
 // Equatorial to galactic coordinate transformation
 // North galactic pole at:
@@ -65,7 +62,6 @@ static const Quaterniond EQUATORIAL_TO_GALACTIC_ROTATION =
     ZRotation(degToRad(GALACTIC_NODE)) *
     XRotation(degToRad(GALACTIC_INCLINATION)) *
     ZRotation(degToRad(-GALACTIC_LONGITUDE_AT_NODE));
-static const Matrix3d EQUATORIAL_TO_GALACTIC_MATRIX = EQUATORIAL_TO_GALACTIC_ROTATION.toRotationMatrix();
 
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423
@@ -218,7 +214,7 @@ void astro::decimalToHourMinSec(double angle, int& hours, int& minutes, double& 
 
 // Convert equatorial coordinates to Cartesian celestial (or ecliptical)
 // coordinates.
-Eigen::Vector3f
+Vector3f
 astro::equatorialToCelestialCart(float ra, float dec, float distance)
 {
     double theta = ra / 24.0 * PI * 2 + PI;
@@ -227,13 +223,13 @@ astro::equatorialToCelestialCart(float ra, float dec, float distance)
     double y = cos(phi) * distance;
     double z = -sin(theta) * sin(phi) * distance;
 
-    return EQUATORIAL_TO_ECLIPTIC_MATRIX_F * Vector3f((float) x, (float) y, (float) z);
+    return (EQUATORIAL_TO_ECLIPTIC_ROTATION.conjugate() * Vector3d(x, y, z)).cast<float>();
 }
 
 
 // Convert equatorial coordinates to Cartesian celestial (or ecliptical)
 // coordinates.
-Eigen::Vector3d
+Vector3d
 astro::equatorialToCelestialCart(double ra, double dec, double distance)
 {
     double theta = ra / 24.0 * PI * 2 + PI;
@@ -242,14 +238,14 @@ astro::equatorialToCelestialCart(double ra, double dec, double distance)
     double y = cos(phi) * distance;
     double z = -sin(theta) * sin(phi) * distance;
 
-    return EQUATORIAL_TO_ECLIPTIC_MATRIX * Vector3d(x, y, z);
+    return EQUATORIAL_TO_ECLIPTIC_ROTATION * Vector3d(x, y, z);
 }
 
 
 /** Convert spherical coordinates in the J2000 equatorial frame to cartesian
   * coordinates in the J2000 ecliptic frame. RA in hours, dec in degrees.
   */
-Eigen::Vector3f
+Vector3f
 astro::equatorialToEclipticCartesian(float ra, float dec, float distance)
 {
     double theta = ra / 24.0 * PI * 2 + PI;
@@ -258,7 +254,7 @@ astro::equatorialToEclipticCartesian(float ra, float dec, float distance)
     double y = cos(phi) * distance;
     double z = -sin(theta) * sin(phi) * distance;
 
-    return EQUATORIAL_TO_ECLIPTIC_MATRIX_F * Eigen::Vector3f((float) x, (float) y, (float) z);
+    return (EQUATORIAL_TO_ECLIPTIC_ROTATION * Vector3d(x, y, z)).cast<float>();
 }
 
 
@@ -313,7 +309,7 @@ Quaterniond astro::eclipticToEquatorial()
  */
 Vector3d astro::eclipticToEquatorial(const Vector3d& v)
 {
-    return ECLIPTIC_TO_EQUATORIAL_MATRIX.transpose() * v;
+    return ECLIPTIC_TO_EQUATORIAL_ROTATION.conjugate() * v;
 }
 
 
@@ -331,7 +327,7 @@ Quaterniond astro::equatorialToGalactic()
  */
 Vector3d astro::equatorialToGalactic(const Vector3d& v)
 {
-    return EQUATORIAL_TO_GALACTIC_MATRIX.transpose() * v;
+    return EQUATORIAL_TO_GALACTIC_ROTATION.conjugate() * v;
 }
 
 

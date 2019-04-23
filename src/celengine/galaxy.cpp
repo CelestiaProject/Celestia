@@ -305,15 +305,15 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     glEnable(GL_TEXTURE_2D);
     galaxyTex->bind();
 
-    Matrix3f viewMat = viewerOrientation.conjugate().toRotationMatrix();
-    Vector4f v0(Vector4f::Zero());
-    Vector4f v1(Vector4f::Zero());
-    Vector4f v2(Vector4f::Zero());
-    Vector4f v3(Vector4f::Zero());
-    v0.head(3) = viewMat * Vector3f(-1, -1, 0) * size;
-    v1.head(3) = viewMat * Vector3f( 1, -1, 0) * size;
-    v2.head(3) = viewMat * Vector3f( 1,  1, 0) * size;
-    v3.head(3) = viewMat * Vector3f(-1,  1, 0) * size;
+    Quaternionf vOC = viewerOrientation.conjugate();
+    Vector4f v0 = Vector4f::Zero();
+    Vector4f v1 = Vector4f::Zero();
+    Vector4f v2 = Vector4f::Zero();
+    Vector4f v3 = Vector4f::Zero();
+    v0.head(3) = vOC * Vector3f(-1, -1, 0) * size;
+    v1.head(3) = vOC * Vector3f( 1, -1, 0) * size;
+    v2.head(3) = vOC * Vector3f( 1,  1, 0) * size;
+    v3.head(3) = vOC * Vector3f(-1,  1, 0) * size;
 
     //Mat4f m = (getOrientation().toMatrix4() *
     //           Mat4f::scaling(form->scale) *

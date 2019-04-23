@@ -5619,10 +5619,9 @@ void Renderer::renderCometTail(const Body& body,
             v0.normalize();
             v1.normalize();
             q.setFromTwoVectors(v0, v1);
-            Matrix3f m = q.toRotationMatrix();
-            u = m * u;
-            v = m * v;
-            w = m * w;
+            u = q * u;
+            v = q * v;
+            w = q * w;
         }
         else if (i == 0)
         {
@@ -7121,9 +7120,9 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     if (sel.empty())
         return;
 
-    Matrix3f cameraMatrix = observer.getOrientationf().conjugate().toRotationMatrix();
-    Vector3f u = cameraMatrix * Vector3f::UnitX();
-    Vector3f v = cameraMatrix * Vector3f::UnitY();
+    Quaternionf camera = observer.getOrientationf().conjugate();
+    Vector3f u = camera * Vector3f::UnitX();
+    Vector3f v = camera * Vector3f::UnitY();
 
     // Get the position of the cursor relative to the eye
     Vector3d position = sel.getPosition(now).offsetFromKm(observer.getPosition());
@@ -7165,7 +7164,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
         x0 *= t;
         y0 *= t;
         glColor(SelectionCursorColor, 0.6f);
-        Vector3f center = -cameraMatrix * Vector3f::UnitZ();
+        Vector3f center = -(camera * Vector3f::UnitZ());
 
         glPushMatrix();
         glTranslatef(center.x(), center.y(), center.z());
@@ -7256,11 +7255,11 @@ void Renderer::renderParticles(const vector<Particle>& particles,
     int nParticles = particles.size();
 
     {
-        Matrix3f m = orientation.conjugate().toRotationMatrix();
-        Vector3f v0 = m * Vector3f(-1, -1, 0);
-        Vector3f v1 = m * Vector3f( 1, -1, 0);
-        Vector3f v2 = m * Vector3f( 1,  1, 0);
-        Vector3f v3 = m * Vector3f(-1,  1, 0);
+        Quaternionf q = orientation.conjugate();
+        Vector3f v0 = q * Vector3f(-1, -1, 0);
+        Vector3f v1 = q * Vector3f( 1, -1, 0);
+        Vector3f v2 = q * Vector3f( 1,  1, 0);
+        Vector3f v3 = q * Vector3f(-1,  1, 0);
 
         glBegin(GL_QUADS);
         for (int i = 0; i < nParticles; i++)

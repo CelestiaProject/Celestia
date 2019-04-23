@@ -167,7 +167,7 @@ void DSODatabase::findVisibleDSOs(DSOHandler&    dsoHandler,
     Vector3d  planeNormals[5];
 
     Quaterniond obsOrientd = obsOrient.cast<double>();
-    Matrix3d    rot    = obsOrientd.toRotationMatrix().transpose();
+    Quaterniond rot    = obsOrientd.conjugate();
     double      h      = tan(fovY / 2);
     double      w      = h * aspectRatio;
 

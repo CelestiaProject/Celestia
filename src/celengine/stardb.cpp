@@ -495,7 +495,7 @@ void StarDatabase::findVisibleStars(StarHandler& starHandler,
     // Compute the bounding planes of an infinite view frustum
     Hyperplane<float, 3> frustumPlanes[5];
     Vector3f planeNormals[5];
-    Eigen::Matrix3f rot = orientation.toRotationMatrix();
+    Quaternionf rot = orientation.conjugate();
     float h = (float) tan(fovY / 2);
     float w = h * aspectRatio;
     planeNormals[0] = Vector3f(0.0f, 1.0f, -h);
@@ -505,7 +505,7 @@ void StarDatabase::findVisibleStars(StarHandler& starHandler,
     planeNormals[4] = Vector3f(0.0f, 0.0f, -1.0f);
     for (int i = 0; i < 5; i++)
     {
-        planeNormals[i] = rot.transpose() * planeNormals[i].normalized();
+        planeNormals[i] = rot * planeNormals[i].normalized();
         frustumPlanes[i] = Hyperplane<float, 3>(planeNormals[i], position);
     }
 
