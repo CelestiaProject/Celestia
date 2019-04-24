@@ -223,7 +223,7 @@ astro::equatorialToCelestialCart(float ra, float dec, float distance)
     double y = cos(phi) * distance;
     double z = -sin(theta) * sin(phi) * distance;
 
-    return (EQUATORIAL_TO_ECLIPTIC_ROTATION.conjugate() * Vector3d(x, y, z)).cast<float>();
+    return (EQUATORIAL_TO_ECLIPTIC_ROTATION * Vector3d(x, y, z)).cast<float>();
 }
 
 
