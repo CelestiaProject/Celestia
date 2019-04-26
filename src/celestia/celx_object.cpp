@@ -514,12 +514,9 @@ static int object_name(lua_State* l)
             lua_pushstring(l, sel->body()->getName().c_str());
             break;
         case Selection::Type_DeepSky:
-            lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                           ->getDSOCatalog()->getDSOName(sel->deepsky()).c_str());
-            break;
         case Selection::Type_Star:
             lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                           ->getStarCatalog()->getStarName(*(sel->star())).c_str());
+                           ->getDatabase().getObjectName(sel->astroObject()).c_str());
             break;
         case Selection::Type_Location:
             lua_pushstring(l, sel->location()->getName().c_str());
@@ -544,12 +541,9 @@ static int object_localname(lua_State* l)
             lua_pushstring(l, sel->body()->getName(true).c_str());
             break;
         case Selection::Type_DeepSky:
-            lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                           ->getDSOCatalog()->getDSOName(sel->deepsky(), true).c_str());
-            break;
         case Selection::Type_Star:
             lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                           ->getStarCatalog()->getStarName(*(sel->star()), true).c_str());
+                           ->getDatabase().getObjectName(sel->astroObject(), true).c_str());
             break;
         default:
             lua_pushstring(l, "?");
@@ -593,7 +587,7 @@ static int object_getinfo(lua_State* l)
         Star* star = sel->star();
         celx.setTable("type", "star");
         celx.setTable("name", celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                 ->getStarCatalog()->getStarName(*(sel->star())).c_str());
+                 ->getDatabase().getObjectName(sel->star()).c_str());
         celx.setTable("catalogNumber", star->getIndex());
         celx.setTable("stellarClass", star->getSpectralType());
         celx.setTable("absoluteMagnitude", (lua_Number)star->getAbsoluteMagnitude());
@@ -685,7 +679,7 @@ static int object_getinfo(lua_State* l)
         celx.setTable("type", objTypeName);
 
         celx.setTable("name", celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                 ->getDSOCatalog()->getDSOName(deepsky).c_str());
+                 ->getDatabase().getObjectName(deepsky).c_str());
         celx.setTable("catalogNumber", deepsky->getIndex());
 
         if (!strcmp(objTypeName, "galaxy"))
@@ -956,8 +950,8 @@ static int object_catalognumber(lua_State* l)
         }
         else
         {
-            const StarDatabase* stardb = appCore->getSimulation()->getUniverse()->getStarCatalog();
-            catalogNumber = stardb->crossIndex(catalog, internalNumber);
+            const AstroDatabase& db = appCore->getSimulation()->getUniverse()->getDatabase();
+            catalogNumber = db.catalogNumberToIndex(catalog, internalNumber);
         }
     }
 

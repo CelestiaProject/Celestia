@@ -666,7 +666,7 @@ bool StarDatabase::loadBinary(istream& in)
         break;
 
         Star star;
-        star.setPosition(x, y, z);
+        star.setPosition(Eigen::Vector3d(x, y, z));
         star.setAbsoluteMagnitude((float) absMag / 256.0f);
 
         StarDetails* details = nullptr;
@@ -969,7 +969,7 @@ bool StarDatabase::createStar(Star* star,
                     if (barycenter != nullptr)
                     {
                         hasBarycenter = true;
-                        barycenterPosition = barycenter->getPosition();
+                        barycenterPosition = barycenter->getPosition().cast<float>();
                     }
                 }
 
@@ -997,7 +997,7 @@ bool StarDatabase::createStar(Star* star,
     // orbit and barycenter, it's position is the position of the barycenter.
     if (hasBarycenter)
     {
-        star->setPosition(barycenterPosition);
+        star->setPosition(barycenterPosition.cast<double>());
     }
     else
     {
@@ -1007,7 +1007,7 @@ bool StarDatabase::createStar(Star* star,
 
         if (disposition == DataDisposition::Modify)
         {
-            Vector3f pos = star->getPosition();
+            Vector3f pos = star->getPosition().cast<float>();
 
             // Convert from Celestia's coordinate system
             Vector3f v(pos.x(), -pos.z(), pos.y());
@@ -1071,7 +1071,7 @@ bool StarDatabase::createStar(Star* star,
             float decf = ((float) dec);
             float distancef = ((float) distance);
             Vector3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
-            star->setPosition(pos.cast<float>());
+            star->setPosition(pos);
         }
     }
 

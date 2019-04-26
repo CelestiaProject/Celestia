@@ -86,7 +86,7 @@ void Nebula::render(const Vector3f& /*unused*/,
                     const Quaternionf& /*unused*/,
                     float /*unused*/,
                     float pixelSize,
-                    const Renderer* renderer)
+                    const Renderer* renderer) const
 {
     Geometry* g = nullptr;
     if (geometry != InvalidResource)

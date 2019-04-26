@@ -1280,7 +1280,7 @@ bool LoadSolarSystemObjects(istream& in,
             else
             {
                 errorMessagePrelude(tokenizer);
-                fmt::fprintf(cerr, _("parent body '%s' of '%s' not found.\n"), parentName, primaryName);
+                fmt::fprintf(cerr, _("parent body '%s' of location '%s' not found.\n"), parentName, primaryName);
             }
         }
         delete objectDataValue;
@@ -1317,7 +1317,7 @@ Vector3f SolarSystem::getCenter() const
     // TODO: This is a very simple method at the moment, but it will get
     // more complex when planets around multistar systems are supported
     // where the planets may orbit the center of mass of two stars.
-    return star->getPosition();
+    return star->getPosition().cast<float>();
 }
 
 PlanetarySystem* SolarSystem::getPlanets() const

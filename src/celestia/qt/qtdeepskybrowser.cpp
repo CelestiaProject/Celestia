@@ -159,7 +159,7 @@ QVariant DSOTableModel::data(const QModelIndex& index, int role) const
     {
     case NameColumn:
         {
-            string dsoNameString = ReplaceGreekLetterAbbr(universe->getDSOCatalog()->getDSOName(dso, true));
+            string dsoNameString = ReplaceGreekLetterAbbr(universe->getDatabase().getObjectName(dso, true));
             return QString::fromStdString(dsoNameString);
         }
     case DistanceColumn:
@@ -252,7 +252,7 @@ bool DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* ds
         return strcmp(dso0->getType(), dso1->getType()) < 0;
 
     case Alphabetical:
-        return universe->getDSOCatalog()->getDSOName(dso0, true) > universe->getDSOCatalog()->getDSOName(dso1, true);
+        return universe->getDatabase().getObjectName(dso0, true) > universe->getDatabase().getObjectName(dso1, true);
 
     default:
         return false;
@@ -321,7 +321,7 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
                              DSOPredicate::Criterion criterion,
                              unsigned int nDSOs)
 {
-    const DSODatabase& dsodb = *universe->getDSOCatalog();
+    const AstroDatabase& db = universe->getDatabase();
 
     observerPos = _observerPos.offsetFromKm(UniversalCoord::Zero()) * astro::kilometersToLightYears(1.0);
 
@@ -331,12 +331,12 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
 
     // Apply the filter
     vector<DeepSkyObject*> filteredDSOs;
-    unsigned int totalDSOs = dsodb.size();
+    const auto &dsoset = db.getDsos();
+    unsigned int totalDSOs = dsoset.size();
     unsigned int i = 0;
     filteredDSOs.reserve(totalDSOs);
-    for (i = 0; i < totalDSOs; i++)
+    for (const auto &dso : dsoset)
     {
-        DeepSkyObject* dso = dsodb.getDSO(i);
         if (!filterPred(dso))
             filteredDSOs.push_back(dso);
     }
@@ -623,7 +623,7 @@ void DeepSkyBrowser::slotMarkSelected()
                 {
                     if (labelMarker)
                     {
-                        label = universe->getDSOCatalog()->getDSOName(dso, true);
+                        label = universe->getDatabase().getObjectName(dso, true);
                         label = ReplaceGreekLetterAbbr(label);
                     }
 

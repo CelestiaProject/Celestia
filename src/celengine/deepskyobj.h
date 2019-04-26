@@ -14,7 +14,7 @@
 #include <string>
 #include <iostream>
 #include <celmath/ray.h>
-#include <celengine/astroobj.h>
+#include <celengine/luminobj.h>
 #ifdef USE_GLCONTEXT
 #include <celengine/glcontext.h>
 #endif
@@ -33,17 +33,17 @@ class Galaxy;
 class Globular;
 class OpenCluster;
 
-class DeepSkyObject : public AstroObject
+class DeepSkyObject : public LuminousObject
 {
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     virtual Selection toSelection();
-    DeepSkyObject() = default;
+    DeepSkyObject()
+    {
+        setAbsoluteMagnitude(DSO_DEFAULT_ABS_MAGNITUDE);
+    }
     virtual ~DeepSkyObject() = default;
-
-    Eigen::Vector3d getPosition() const;
-    void setPosition(const Eigen::Vector3d&);
 
     static void hsv2rgb( float*, float*, float*, float, float, float);
 
@@ -68,9 +68,6 @@ class DeepSkyObject : public AstroObject
     void setRadius(float r);
     virtual float getHalfMassRadius() const { return radius; }
 
-    float getAbsoluteMagnitude() const;
-    void setAbsoluteMagnitude(float);
-
     const std::string& getInfoURL() const;
     void setInfoURL(const std::string&);
 
@@ -90,16 +87,14 @@ class DeepSkyObject : public AstroObject
                         const Eigen::Quaternionf& viewerOrientation,
                         float brightness,
                         float pixelSize,
-                        const Renderer*) = 0;
+                        const Renderer*) const = 0;
 
     virtual uint64_t getRenderMask() const { return 0; }
     virtual unsigned int getLabelMask() const { return 0; }
 
  private:
-    Eigen::Vector3d position{ Eigen::Vector3d::Zero() };
     Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
     float        radius{ 1 };
-    float        absMag{ DSO_DEFAULT_ABS_MAGNITUDE } ;
     std::string infoURL;
 
     bool visible { true };

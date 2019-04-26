@@ -1,11 +1,14 @@
 
 #include "astrodb.h"
 
+using namespace Eigen;
+
 constexpr array<const char *, AstroDatabase::MaxBuiltinCatalog> AstroDatabase::CatalogPrefix;
 
 AstroDatabase::AstroDatabase() :
     m_autoIndex(AutoIndexMax),
-    m_octree(OctreeNode::PointType(0, 0, 0), 100000000000, 6, 6, nullptr)
+    m_starOctree(Vector3d(0, 0, 0), OctreeNode::MaxScale, OctreeNode::MaxObjectsPerNode, nullptr),
+    m_dsoOctree(Vector3d(0, 0, 0),  OctreeNode::MaxScale, OctreeNode::MaxObjectsPerNode, nullptr)
 {
     createBuiltinCatalogs();
 }
@@ -51,6 +54,10 @@ DeepSkyObject *AstroDatabase::getDSO(const std::string &name, bool tryGreek, boo
 
 AstroCatalog::IndexNumber AstroDatabase::catalogNumberToIndex(int catalog, AstroCatalog::IndexNumber nr) const
 {
+    if (catalog == Hipparcos && nr > 0 && nr < HipparcosAstroCatalog::MaxCatalogNumber)
+        return nr;
+    if (catalog == Tycho && nr > HipparcosAstroCatalog::MaxCatalogNumber && nr < TychoAstroCatalog::MaxCatalogNumber)
+        return nr;
     std::map<int, CrossIndex*>::const_iterator it = m_catxindex.find(catalog);
     if (it != m_catxindex.end() && it->second->count(nr) > 0)
         return it->second->at(nr);
@@ -59,18 +66,15 @@ AstroCatalog::IndexNumber AstroDatabase::catalogNumberToIndex(int catalog, Astro
 
 AstroCatalog::IndexNumber AstroDatabase::indexToCatalogNumber(int catalog, AstroCatalog::IndexNumber nr) const
 {
+    if (catalog == Hipparcos && nr > 0 && nr < HipparcosAstroCatalog::MaxCatalogNumber)
+        return nr;
+    if (catalog == Tycho && nr > HipparcosAstroCatalog::MaxCatalogNumber && nr < TychoAstroCatalog::MaxCatalogNumber)
+        return nr;
     std::map<int, CrossIndex*>::const_iterator it = m_celxindex.find(catalog);
     if (it != m_celxindex.end() && it->second->count(nr) > 0)
         return it->second->at(nr);
+//     cout << "No cross index entry for catalog " << catalog << "[" << nr << "]\n";
     return AstroCatalog::InvalidIndex;
-}
-
-bool AstroDatabase::isInCrossIndex(int catalog, AstroCatalog::IndexNumber nr) const
-{
-    std::map<int, CrossIndex*>::const_iterator it = m_catxindex.find(catalog);
-    if (it == m_catxindex.end() || it->second->count(nr) == 0)
-        return false;
-    return true;
 }
 
 AstroCatalog::IndexNumber AstroDatabase::nameToIndex(const std::string& name, bool tryGreek, bool smart) const
@@ -89,6 +93,10 @@ AstroCatalog::IndexNumber AstroDatabase::nameToIndex(const std::string& name, bo
         AstroCatalog::IndexNumber inr = ci.second->nameToCatalogNumber(name);
         if (inr == AstroCatalog::InvalidIndex)
             continue;
+        if (ci.first == Hipparcos && inr < HipparcosAstroCatalog::MaxCatalogNumber)
+            return inr;
+        if (ci.first == Tycho && inr > HipparcosAstroCatalog::MaxCatalogNumber && inr <= TychoAstroCatalog::MaxCatalogNumber)
+            return inr;
         nr = catalogNumberToIndex(ci.first, inr);
     }
     return nr;
@@ -131,7 +139,7 @@ std::string AstroDatabase::getObjectName(AstroCatalog::IndexNumber nr, bool i18n
 std::string AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr, int max) const
 {
     string names;
-    names.reserve(127); // optimize memory allocation
+    names.reserve(max); // optimize memory allocation
     NameDatabase::NumberIndex::const_iterator iter = m_nameDB.getFirstNameIter(nr);
     while (iter != m_nameDB.getFinalNameIter() && iter->first == nr && max > 0)
     {
@@ -149,9 +157,12 @@ std::string AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr, int m
     {
         if (max == 0)
             break;
-        if (!isInCrossIndex(it.first, nr))
-            continue;
         AstroCatalog::IndexNumber inr = indexToCatalogNumber(it.first, nr);
+        if (inr == AstroCatalog::InvalidIndex)
+        {
+//             cout << "Invalid cross index entry for catalog " << it.first << "[" << nr << "]\n";
+            continue;
+        }
         if (names.size() > 0)
             names += " / ";
         names += it.second->catalogNumberToName(inr);
@@ -168,24 +179,33 @@ bool AstroDatabase::addAstroCatalog(int id, AstroCatalog *catalog)
     return true;
 }
 
-bool AstroDatabase::addCatalogNumber(AstroCatalog::IndexNumber celnr, int catalog, AstroCatalog::IndexNumber catnr)
+bool AstroDatabase::addCatalogNumber(AstroCatalog::IndexNumber celnr, int catalog, AstroCatalog::IndexNumber catnr, bool overwrite)
 {
     if (m_catalogs.count(catalog) == 0)
+    {
+        fmt::fprintf(cerr, "Catalog %i not registered!\n", catalog);
         return false;
+    }
 
     if (m_catxindex.count(catalog) == 0)
         m_catxindex.insert(std::make_pair(catalog, new CrossIndex));
     CrossIndex *i = m_catxindex.find(catalog)->second;
-    if (i->count(catnr) > 0)
+    if (i->count(catnr) > 0 && !overwrite)
+    {
+        fmt::fprintf(cerr, "Cross index entry for catalog nr %i[%i] already exists!\n", catalog, catnr);
         return false;
-    i->insert(std::make_pair(catnr, celnr));
+    }
+    (*i)[catnr] = celnr;
 
     if (m_celxindex.count(catalog) == 0)
         m_celxindex.insert(std::make_pair(catalog, new CrossIndex));
     i = m_celxindex.find(catalog)->second;
-    if (i->count(celnr) > 0)
+    if (i->count(celnr) > 0 && !overwrite)
+    {
+        fmt::fprintf(cerr, "Cross index entry for celestia nr %i[%i] already exists (%i)!\n", catalog, celnr, (*i)[celnr]);
         return false;
-    i->insert(std::make_pair(celnr, catnr));
+    }
+    (*i)[celnr] = catnr;
     return true;
 }
 
@@ -213,7 +233,12 @@ bool AstroDatabase::addStar(Star *star)
     if (!addObject(star))
         return false;
     m_stars.insert(star);
-    m_octree.insertObject(star);
+#ifdef OCTREE_DEBUG
+    if (!m_starOctree.isDirty())
+        cout << "Clean star Octree going to be dirty!\n";
+#endif
+    m_starOctree.insertObject(star);
+//    fmt::fprintf(cout, "Added star  with magnitude %f.\n", star->getAbsoluteMagnitude());
     return true;
 }
 
@@ -222,7 +247,11 @@ bool AstroDatabase::addDSO(DeepSkyObject *dso)
     if (!addObject(dso))
         return false;
     m_dsos.insert(dso);
-    m_octree.insertObject(dso);
+#ifdef OCTREE_DEBUG
+    if (!m_dsoOctree.isDirty())
+        cout << "Clean dso Octree going to be dirty!\n";
+#endif
+    m_dsoOctree.insertObject(dso);
     return true;
 }
 
@@ -297,4 +326,19 @@ AstroCatalog::IndexNumber AstroDatabase::getAutoIndex()
         return ret;
     }
     return AstroCatalog::InvalidIndex;
+}
+
+float AstroDatabase::avgDsoMag() const
+{
+    float avg = 0;
+    size_t n = m_dsos.size();
+    for(const auto & dso : m_dsos)
+    {
+        if (dso->getAbsoluteMagnitude() > 8)
+            avg += dso->getAbsoluteMagnitude();
+        else
+            n--;
+    }
+    avg /= n;
+    return avg;
 }

@@ -233,8 +233,8 @@ bool StcDataLoader::load(istream &in)
         }
 
 //         For backward compatibility: index within HIP numbers range is supposed to be valid HIP number
-        if (ok && catalogNumber > 0 && catalogNumber < HipparcosAstroCatalog::MaxCatalogNumber)
-            m_db->addCatalogNumber(catalogNumber, AstroDatabase::Hipparcos, catalogNumber);
+/*        if (ok && catalogNumber > 0 && catalogNumber < HipparcosAstroCatalog::MaxCatalogNumber)
+            m_db->addCatalogNumber(catalogNumber, AstroDatabase::Hipparcos, catalogNumber, true);*/
 
         tokenizer.pushBack();
 
@@ -275,6 +275,8 @@ bool StcDataLoader::load(istream &in)
                 m_db->eraseNames(catalogNumber);
                 m_db->addNames(catalogNumber, objName);
             }
+            if (m_db->getObjectNameList(catalogNumber).empty())
+                fmt::fprintf(cerr, "Star nr %i is probably without names!\n", catalogNumber);
             successCount++;
         }
         else
@@ -352,7 +354,7 @@ bool StarBinDataLoader::load(istream& in)
         break;
 
         Star *star = new Star();
-        star->setPosition(x, y, z);
+        star->setPosition(Eigen::Vector3d(x, y, z));
         star->setAbsoluteMagnitude((float) absMag / 256.0f);
 
         StarDetails* details = nullptr;

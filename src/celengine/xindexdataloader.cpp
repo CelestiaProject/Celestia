@@ -13,7 +13,7 @@ bool CrossIndexDataLoader::load(istream& in)
 {
     // Verify that the star database file has a correct header
     {
-        const int headerLength = sizeof(CROSSINDEX_FILE_HEADER);
+        const int headerLength = sizeof(CROSSINDEX_FILE_HEADER) - 1;
         char header[headerLength];
         in.read(header, headerLength);
         if (strncmp(header, CROSSINDEX_FILE_HEADER, headerLength))
@@ -52,7 +52,8 @@ bool CrossIndexDataLoader::load(istream& in)
             return false;
         }
 
-        m_db->addCatalogNumber(celnr, catalog, catnr);
+        if (!m_db->addCatalogNumber(celnr, catalog, catnr, true))
+            fmt::fprintf(cerr, "Cannot add cross index entry for %i[%i] = %i\n", catalog, celnr, catnr);
 
         record++;
     }

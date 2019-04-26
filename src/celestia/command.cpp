@@ -19,6 +19,8 @@
 #ifdef CELX
 #include "celx_internal.h"
 #endif
+#include <celengine/stardataloader.h>
+#include <celengine/dsodataloader.h>
 #include <celengine/multitexture.h>
 #include <celutil/util.h>
 #include <celmath/mathlib.h>
@@ -1147,10 +1149,16 @@ void CommandLoadFragment::process(ExecutionEnvironment& env)
     }
     else if (compareIgnoringCase(type, "stc") == 0)
     {
-        u->getStarCatalog()->load(in, dir);
+        StcDataLoader loader(&(u->getDatabase()));
+        loader.resourcePath = dir;
+        loader.load(in);
+//        u->getStarCatalog()->load(in, dir);
     }
     else if (compareIgnoringCase(type, "dsc") == 0)
     {
-        u->getDSOCatalog()->load(in, dir);
+        DscDataLoader loader(&(u->getDatabase()));
+        loader.resourcePath = dir;
+        loader.load(in);
+//        u->getDSOCatalog()->load(in, dir);
     }
 }

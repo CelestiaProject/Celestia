@@ -39,9 +39,9 @@ class NameDatabase
     // delete all names associated with the specified catalog number
     void erase(AstroCatalog::IndexNumber);
 
-    AstroCatalog::IndexNumber getIndexNumberByName(const std::string&) const;
+    AstroCatalog::IndexNumber getIndexNumberByName(const std::string&, bool = true) const;
     std::string getNameByIndexNumber(AstroCatalog::IndexNumber) const;
-    AstroCatalog::IndexNumber findIndexNumberByName(const std::string&) const;
+    AstroCatalog::IndexNumber findIndexNumberByName(const std::string&, bool = true) const;
 
     NumberIndex::const_iterator getFirstNameIter(AstroCatalog::IndexNumber index) const;
     NumberIndex::const_iterator getFinalNameIter() const;

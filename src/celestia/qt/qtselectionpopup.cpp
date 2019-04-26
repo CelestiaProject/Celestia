@@ -95,7 +95,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     }
     else if (sel.star() != nullptr)
     {
-        std::string name = ReplaceGreekLetterAbbr(sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true));
+        std::string name = ReplaceGreekLetterAbbr(sim->getUniverse()->getDatabase().getObjectName(sel.star(), true));
         addAction(boldTextItem(QString::fromStdString(name)));
 
         // Add some text items giving additional information about
@@ -129,7 +129,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     }
     else if (sel.deepsky() != nullptr)
     {
-        addAction(boldTextItem(QString::fromStdString(sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky(), true))));
+        addAction(boldTextItem(QString::fromStdString(sim->getUniverse()->getDatabase().getObjectName(sel.deepsky(), true))));
     }
 
     addSeparator();

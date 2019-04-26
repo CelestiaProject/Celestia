@@ -624,7 +624,7 @@ QVariant SolarSystemTreeModel::data(const QModelIndex& index, int role) const
     case NameColumn:
         if (sel.star() != nullptr)
         {
-            string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*sel.star(), true));
+            string starNameString = ReplaceGreekLetterAbbr(universe->getDatabase().getObjectName(sel.star(), true));
             return QString::fromStdString(starNameString);
         }
         if (sel.body() != nullptr)
@@ -934,7 +934,7 @@ void SolarSystemBrowser::slotMarkSelected()
                 if (sel.body() != nullptr)
                     label = sel.body()->getName(true);
                 else if (sel.star() != nullptr)
-                    label = universe->getStarCatalog()->getStarName(*sel.star());
+                    label = universe->getDatabase().getObjectName(sel.star());
 
                 label = ReplaceGreekLetterAbbr(label);
             }

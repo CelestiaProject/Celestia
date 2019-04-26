@@ -207,7 +207,7 @@ void AsterismList::cleanup()
 }
 
 
-AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
+AsterismList* ReadAsterismList(istream& in, const AstroDatabase& adb)
 {
     auto* asterisms = new AsterismList();
     Tokenizer tokenizer(&in);
@@ -253,11 +253,11 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
                 {
                     if (i->getType() == Value::StringType)
                     {
-                        Star* star = stardb.find(i->getString());
+                        Star* star = adb.getStar(i->getString());
                         if (star == nullptr)
-                            star = stardb.find(ReplaceGreekLetterAbbr(i->getString()));
+                            star = adb.getStar(ReplaceGreekLetterAbbr(i->getString()));
                         if (star != nullptr)
-                            new_chain->push_back(star->getPosition());
+                            new_chain->push_back(star->getPosition().cast<float>());
                         else DPRINTF(0, "Error loading star \"%s\" for asterism \"%s\".\n", name.c_str(), i->getString().c_str());
                     }
                 }

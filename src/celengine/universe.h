@@ -12,8 +12,9 @@
 #define _CELENGINE_UNIVERSE_H_
 
 #include <celengine/univcoord.h>
-#include <celengine/stardb.h>
-#include <celengine/dsodb.h>
+//#include <celengine/stardb.h>
+//#include <celengine/dsodb.h>
+#include <celengine/astrodb.h>
 #include <celengine/solarsys.h>
 #include <celengine/deepskyobj.h>
 #include <celengine/marker.h>
@@ -30,14 +31,17 @@ class Universe
     Universe();
     ~Universe();
 
-    StarDatabase* getStarCatalog() const;
-    void setStarCatalog(StarDatabase*);
+    AstroDatabase& getDatabase() { return m_adb; }
+    const AstroDatabase& getDatabase() const { return m_adb; }
+
+/*    StarDatabase* getStarCatalog() const;
+    void setStarCatalog(StarDatabase*);*/
 
     SolarSystemCatalog* getSolarSystemCatalog() const;
     void setSolarSystemCatalog(SolarSystemCatalog*);
 
-    DSODatabase* getDSOCatalog() const;
-    void setDSOCatalog(DSODatabase*);
+/*    DSODatabase* getDSOCatalog() const;
+    void setDSOCatalog(DSODatabase*);*/
 
     AsterismList* getAsterisms() const;
     void setAsterisms(AsterismList*);
@@ -118,8 +122,9 @@ class Universe
                                 float tolerance = 0.0f);
 
  private:
-    StarDatabase* starCatalog{nullptr};
-    DSODatabase* dsoCatalog{nullptr};
+//    StarDatabase* starCatalog{nullptr};
+//    DSODatabase* dsoCatalog{nullptr};
+    AstroDatabase m_adb;
     SolarSystemCatalog* solarSystemCatalog{nullptr};
     AsterismList* asterisms{nullptr};
     ConstellationBoundaries* boundaries{nullptr};

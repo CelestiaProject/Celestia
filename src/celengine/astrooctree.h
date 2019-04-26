@@ -2,45 +2,39 @@
 #pragma once
 
 #include <array>
+#include <map>
 #include <celmath/frustum.h>
-#include "astroobj.h"
+#include "luminobj.h"
 
 class OctreeNode
 {
  public:
-    typedef Eigen::Matrix<double, 3, 1> PointType;
     typedef std::array<OctreeNode*, 8> Children;
+    typedef std::multimap<float, LuminousObject*> ObjectList;
+    static constexpr double MaxScale = 100000000000;
+    static constexpr size_t MaxObjectsPerNode = 40;
 
  protected:
-    bool limitingFactorPredicate(Star*, float);
-    bool limitingFactorPredicate(DeepSkyObject*, float);
-    bool straddlingPredicate (const PointType&, Star*, float);
-    bool straddlingPredicate (const PointType&, DeepSkyObject*, float);
+    bool add(LuminousObject*);
+    bool rm(LuminousObject*);
 
-    bool add(Star*);
-    bool add(DeepSkyObject*);
-    bool rm(Star*);
-    bool rm(DeepSkyObject*);
+    LuminousObject *popBrightest();
+    LuminousObject *popFaintest();
 
-    bool split();
-    bool collapse();
+    ObjectList::const_iterator objectIterator(const LuminousObject*) const;
 
-    void sortIntoChildNodes();
-    OctreeNode *getChild(const Eigen::Vector3d&);
-
-    double dsoAbsoluteMagnitudeDecay(double excludingFactor);
-    double starAbsoluteMagnitudeDecay(double excludingFactor);
+    bool createChild(int);
+    bool deleteChild(int);
 
     OctreeNode *m_parent;
-    PointType m_cellCenter;
-    std::vector<Star*> m_stars;
-    std::vector<DeepSkyObject*> m_dsos;
-    Children *m_children;
-    double m_starExclusionFactor;
-    double m_dsoExclusionFactor;
+    Eigen::Vector3d m_cellCenter;
+    ObjectList m_objects;
+    Children m_children;
     double m_scale;
-
-    static size_t SPLIT_THRESHOLD;
+    size_t m_childrenCount {0};
+    size_t m_maxObjCount {0};
+    bool m_dirty { true };
+    void setDirty(bool d) { m_dirty = d; }
  public:
     enum
     {
@@ -49,29 +43,44 @@ class OctreeNode
         ZPos = 4,
     };
 
-    OctreeNode(PointType cellCenterPos, double scale, float starExclusionFactor, float dsoExclusionFactor, OctreeNode *parent = nullptr);
+    OctreeNode(const Eigen::Vector3d& cellCenterPos, double scale, size_t = MaxObjectsPerNode, OctreeNode *parent = nullptr);
     ~OctreeNode();
 
     double getScale() const { return m_scale; }
-    PointType getCenter() const { return m_cellCenter; }
-    float getStarExclusionFactor() const { return m_starExclusionFactor; }
-    float getDsoExclusionFactor() const { return m_dsoExclusionFactor; }
+    const Eigen::Vector3d& getCenter() const { return m_cellCenter; }
+
     bool isInFrustum(const Frustum::PlaneType *planes) const;
+    bool isInCell(const Eigen::Vector3d&) const;
 
-    bool insertObject(Star*);
-    bool insertObject(DeepSkyObject*);
-    bool removeObject(Star*);
-    bool removeObject(DeepSkyObject*);
+    bool insertObject(LuminousObject*);
+    bool removeObject(LuminousObject*);
 
-    std::vector<Star*>& getStars() { return m_stars; }
-    const std::vector<Star*>& getStars() const { return m_stars; }
-    std::vector<DeepSkyObject*>& getDsos() { return m_dsos; }
-    const std::vector<DeepSkyObject*>& getDsos() const { return m_dsos; }
+    ObjectList& getObjects() { return m_objects; }
+    const ObjectList& getObjects() const { return m_objects; }
+    const ObjectList::const_iterator hasObject(const LuminousObject *) const;
 
-    bool hasChildren() const { return m_children != nullptr; }
-    Children& getChildren() { return *m_children; }
-    const Children& getChildren() const { return *m_children; }
-    OctreeNode *getChild(int n);
+    int getChildId(const Eigen::Vector3d&);
+    Children& getChildren() { return m_children; }
+    const Children& getChildren() const { return m_children; }
+    OctreeNode *getChild(int n, bool = true);
+    OctreeNode *getChild(const Eigen::Vector3d &pos, bool create = true)
+    {
+        return getChild(getChildId(pos), create);
+    }
+    int getBrightestChildId() const;
 
-    size_t getObjectCount() const { return m_stars.size() + m_dsos.size(); }
+    float getFaintest() const;
+    float getBrightest() const;
+
+    size_t getObjectCount() const { return m_objects.size(); }
+    size_t getChildrenCount() const { return m_childrenCount; }
+    bool empty() const { return m_objects.empty() && getChildrenCount() == 0; }
+
+    bool isDirty() const { return m_dirty; }
+    int check(float max, int, bool);
+    void dump(int) const;
+    OctreeNode *getParent() { return m_parent; }
+    OctreeNode *getRoot();
+    const OctreeNode *getParent() const { return m_parent; }
+    static bool m_debug;
 };

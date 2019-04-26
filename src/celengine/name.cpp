@@ -1,5 +1,6 @@
 #include <celutil/debug.h>
 #include "asterism.h"
+#include "constellation.h"
 #include "name.h"
 
 using namespace std;
@@ -15,13 +16,15 @@ bool NameDatabase::add(AstroCatalog::IndexNumber indexNumber, const std::string&
     {
         uint32_t tmp;
         if ((tmp = getIndexNumberByName(name)) != AstroCatalog::InvalidIndex) {
-            DPRINTF(2,"Duplicated name '%s' on object with catalog numbers: %d and %d\n", name.c_str(), tmp, indexNumber);
+            DPRINTF(cerr,"Duplicated name '%s' on object with catalog numbers: %d and %d\n", name.c_str(), tmp, indexNumber);
             if (tmp == indexNumber)
                 return false;
         }
         // Add the new name
         //nameIndex.insert(NameIndex::value_type(name, catalogNumber));
-        std::string fname = ReplaceGreekLetterAbbr(name);
+        std::string fname = name;
+        if (replaceGreek)
+            fname = ReplaceGreekLetterAbbr(name);
 
         nameIndex[fname] = indexNumber;
         numberIndex.insert(NumberIndex::value_type(indexNumber, fname));
@@ -31,20 +34,26 @@ bool NameDatabase::add(AstroCatalog::IndexNumber indexNumber, const std::string&
 }
 void NameDatabase::erase(AstroCatalog::IndexNumber indexNumber)
 {
+    for (auto i = getFirstNameIter(indexNumber); i != getFinalNameIter() && i->first == indexNumber; i++)
+    {
+        nameIndex.erase(i->second);
+    }
     numberIndex.erase(indexNumber);
 }
 
-uint32_t NameDatabase::getIndexNumberByName(const std::string& name) const
+uint32_t NameDatabase::getIndexNumberByName(const std::string& name, bool greek) const
 {
     NameIndex::const_iterator iter = nameIndex.find(name);
 
-    if (iter == nameIndex.end())
+    if (iter != nameIndex.end())
+        return iter->second;
+    if (greek)
     {
         iter = nameIndex.find(ReplaceGreekLetterAbbr(name));
-        if (iter == nameIndex.end())
-            return AstroCatalog::InvalidIndex;
+        if (iter != nameIndex.end())
+            return iter->second;
     }
-    return iter->second;
+    return AstroCatalog::InvalidIndex;
 }
 
 // Return the first name matching the catalog number or end()
@@ -125,11 +134,9 @@ std::vector<std::string> NameDatabase::getCompletion(const std::vector<std::stri
     return completion;
 }
 
-uint32_t NameDatabase::findIndexNumberByName(const std::string& name) const
+uint32_t NameDatabase::findIndexNumberByName(const std::string& name, bool greek) const
 {
-    AstroCatalog::IndexNumber indexNumber = getIndexNumberByName(name);
-    if (indexNumber != AstroCatalog::InvalidIndex)
-        return indexNumber;
+    AstroCatalog::IndexNumber indexNumber = AstroCatalog::InvalidIndex;
 
     std::string priName   = name;
     std::string altName;
@@ -183,23 +190,23 @@ uint32_t NameDatabase::findIndexNumberByName(const std::string& name) const
         }
     }
 
-    indexNumber = getIndexNumberByName(priName);
+    indexNumber = getIndexNumberByName(priName, greek);
     if (indexNumber != AstroCatalog::InvalidIndex)
         return indexNumber;
 
     priName += " A";  // try by appending an A
-    indexNumber = getIndexNumberByName(priName);
+    indexNumber = getIndexNumberByName(priName, greek);
     if (indexNumber != AstroCatalog::InvalidIndex)
         return indexNumber;
 
     // If the first search failed, try using the alternate name
     if (altName.length() != 0)
     {
-        indexNumber = getIndexNumberByName(altName);
+        indexNumber = getIndexNumberByName(altName, greek);
         if (indexNumber == AstroCatalog::InvalidIndex)
         {
             altName += " A";
-            indexNumber = getIndexNumberByName(altName);
+            indexNumber = getIndexNumberByName(altName, greek);
         }   // Intentional fallthrough.
     }
 

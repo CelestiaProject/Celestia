@@ -1013,7 +1013,7 @@ Star::getPosition(double t) const
     const Orbit* orbit = getOrbit();
     if (orbit == nullptr)
     {
-        return UniversalCoord::CreateLy(position.cast<double>());
+        return UniversalCoord::CreateLy(getPosition().cast<double>());
     }
     else
     {
@@ -1021,11 +1021,16 @@ Star::getPosition(double t) const
 
         if (barycenter == nullptr)
         {
-            UniversalCoord barycenterPos = UniversalCoord::CreateLy(position.cast<double>());
+            UniversalCoord barycenterPos = UniversalCoord::CreateLy(getPosition().cast<double>());
             return UniversalCoord(barycenterPos).offsetKm(orbit->positionAtTime(t));
         }
         else
         {
+            if (barycenter == this)
+            {
+                cout << "Star orbiting around self (" << getIndex() << ")!\n";
+                return UniversalCoord::CreateLy(getPosition().cast<double>());
+            }
             return barycenter->getPosition(t).offsetKm(orbit->positionAtTime(t));
         }
     }
@@ -1039,7 +1044,7 @@ Star::getOrbitBarycenterPosition(double t) const
 
     if (barycenter == nullptr)
     {
-        return UniversalCoord::CreateLy(position.cast<double>());
+        return UniversalCoord::CreateLy(getPosition().cast<double>());
     }
     else
     {
@@ -1102,36 +1107,19 @@ Star::getInfoURL() const
     return getDetails()->getInfoURL();
 }
 
-void Star::setPosition(float x, float y, float z)
-{
-    position = Vector3f(x, y, z);
-}
-
-void Star::setPosition(const Vector3f& positionLy)
-{
-    position = positionLy;
-}
-
-void Star::setAbsoluteMagnitude(float mag)
-{
-    absMag = mag;
-}
-
-
 float Star::getApparentMagnitude(float ly) const
 {
-    return astro::absToAppMag(absMag, ly);
+    return astro::absToAppMag(getAbsoluteMagnitude(), ly);
 }
-
 
 float Star::getLuminosity() const
 {
-    return astro::absMagToLum(absMag);
+    return astro::absMagToLum(getAbsoluteMagnitude());
 }
 
 void Star::setLuminosity(float lum)
 {
-    absMag = astro::lumToAbsMag(lum);
+    setAbsoluteMagnitude(astro::lumToAbsMag(lum));
 }
 
 StarDetails* Star::getDetails() const
@@ -1147,6 +1135,11 @@ void Star::setDetails(StarDetails* sd)
 
 void Star::setOrbitBarycenter(Star* s)
 {
+    if (s == this)
+    {
+        fmt::fprintf(cerr, "Star (%i) going to orbit self!\n", getIndex());
+        return;
+    }
     if (details->shared())
         details = new StarDetails(*details);
     getDetails()->setOrbitBarycenter(s);
@@ -1370,7 +1363,7 @@ bool Star::createStar(Star* star,
             string barycenterName;
             if (starData->getString("OrbitBarycenter", barycenterName))
             {
-                barycenterCatNo   = db->nameToIndex(barycenterName);
+                barycenterCatNo   = db->starnameToIndex(barycenterName, true);
                 barycenterDefined = true;
             }
             else if (starData->getNumber("OrbitBarycenter", barycenterCatNo))
@@ -1382,17 +1375,22 @@ bool Star::createStar(Star* star,
             {
                 if (barycenterCatNo != AstroCatalog::InvalidIndex)
                 {
+                    if (barycenterCatNo == star->getIndex())
+                    {
+                        fmt::fprintf(cerr, "Barycenter index %i same as orbiting star!\n", barycenterCatNo);
+                        return false;
+                    }
 //                     clog << "  requesting barycenter with nr " << barycenterCatNo << endl;
                     Star* barycenter = db->getStar(barycenterCatNo);
                     if (barycenter != nullptr)
                     {
-//                         clog << "  Requested barycenter exists...\n";
-//                         if (barycenter->getDetails() == nullptr)
-//                             clog << "  ...but coresponding details not!\n";
-//                         else
-//                             clog << "  ...as well as coresponding details.\n";
+                        if (barycenter == star)
+                        {
+                            fmt::fprintf(cerr, "Created star %i going to orbit self with nr %i!\n", star->getIndex(), barycenter->getIndex());
+                            return false;
+                        }
                         hasBarycenter = true;
-                        barycenterPosition = barycenter->getPosition();
+                        barycenterPosition = barycenter->getPosition().cast<float>();
                         star->setOrbitBarycenter(barycenter);
                         barycenter->addOrbitingStar(star);
                     }
@@ -1420,7 +1418,7 @@ bool Star::createStar(Star* star,
     // orbit and barycenter, it's position is the position of the barycenter.
     if (hasBarycenter)
     {
-        star->setPosition(barycenterPosition);
+        star->setPosition(barycenterPosition.cast<double>());
     }
     else
     {
@@ -1430,7 +1428,7 @@ bool Star::createStar(Star* star,
 
         if (disposition == DataDisposition::Modify)
         {
-            Vector3f pos = star->getPosition();
+            Vector3f pos = star->getPosition().cast<float>();
 
             // Convert from Celestia's coordinate system
             Vector3f v(pos.x(), -pos.z(), pos.y());
@@ -1494,7 +1492,7 @@ bool Star::createStar(Star* star,
             float decf = ((float) dec);
             float distancef = ((float) distance);
             Vector3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
-            star->setPosition(pos.cast<float>());
+            star->setPosition(pos);
         }
     }
 

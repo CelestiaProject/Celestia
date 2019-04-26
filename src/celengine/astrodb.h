@@ -44,7 +44,8 @@ class AstroDatabase {
     StarsList m_stars;
     DsosList m_dsos;
     BodiesList m_bodies;
-    OctreeNode m_octree;
+    OctreeNode m_starOctree;
+    OctreeNode m_dsoOctree;
 
     AstroCatalog::IndexNumber m_autoIndex;
     static const AstroCatalog::IndexNumber AutoIndexMax = UINT_MAX - 1;
@@ -70,7 +71,6 @@ class AstroDatabase {
 
     AstroCatalog::IndexNumber catalogNumberToIndex(int, AstroCatalog::IndexNumber) const;
     AstroCatalog::IndexNumber indexToCatalogNumber(int, AstroCatalog::IndexNumber) const;
-    bool isInCrossIndex(int, AstroCatalog::IndexNumber) const;
 
     std::string catalogNumberToString(AstroCatalog::IndexNumber) const;
     std::string catalogNumberToString(int, AstroCatalog::IndexNumber) const;
@@ -92,7 +92,7 @@ class AstroDatabase {
     }
 
     bool addAstroCatalog(int, AstroCatalog*);
-    bool addCatalogNumber(AstroCatalog::IndexNumber, int, AstroCatalog::IndexNumber);
+    bool addCatalogNumber(AstroCatalog::IndexNumber, int, AstroCatalog::IndexNumber, bool = false);
 
     bool addObject(AstroObject *);
     bool addStar(Star *);
@@ -126,6 +126,10 @@ class AstroDatabase {
 
 /*    OctreeNode& getOctree() { return m_octree; }
     const OctreeNode& getOctree() const { return m_octree; }*/
-    OctreeNode* getOctree() { return &m_octree; }
-    const OctreeNode* getOctree() const { return &m_octree; }
+    OctreeNode* getStarOctree() { return &m_starOctree; }
+    OctreeNode* getDsoOctree() { return &m_dsoOctree; }
+    const OctreeNode* getStarOctree() const { return &m_starOctree; }
+    const OctreeNode* getDsoOctree() const { return &m_dsoOctree; }
+
+    float avgDsoMag() const;
 };

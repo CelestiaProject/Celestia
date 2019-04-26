@@ -14,7 +14,7 @@
 #include <config.h>
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
-#include <celengine/astroobj.h>
+#include <celengine/luminobj.h>
 #include <celengine/univcoord.h>
 #include <celengine/stellarclass.h>
 #include <celengine/multitexture.h>
@@ -234,12 +234,13 @@ StarDetails::hasCorona() const
     return spectralType[0] != 'Y' && (spectralType[0] != 'T' || spectralType[1] < '5');
 }
 
-
-
-class Star : public AstroObject
+class Star : public LuminousObject
 {
 public:
-    Star() = default;
+    Star()
+    {
+        setAbsoluteMagnitude(4.83f);
+    }
     virtual ~Star();
 
     virtual Selection toSelection();
@@ -249,15 +250,7 @@ public:
      *  star in an orbit, the position should be set to the 'root' barycenter
      *  of the system.
      */
-    Eigen::Vector3f getPosition() const
-    {
-        return position;
-    }
-
-    float getAbsoluteMagnitude() const
-    {
-        return absMag;
-    }
+    using LuminousObject::getPosition;
 
     float getApparentMagnitude(float) const;
     float getLuminosity() const;
@@ -268,9 +261,6 @@ public:
 
     Eigen::Vector3d getVelocity(double t) const;
 
-    void setPosition(float, float, float);
-    void setPosition(const Eigen::Vector3f& positionLy);
-    void setAbsoluteMagnitude(float);
     void setLuminosity(float);
 
     StarDetails* getDetails() const;
@@ -311,8 +301,6 @@ public:
                         bool isBarycenter,
                         AstroDatabase *);
 private:
-    Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
-    float absMag{ 4.83f };
     StarDetails* details{ nullptr };
 };
 
@@ -332,7 +320,7 @@ Star::getSpectralType() const
 float
 Star::getBolometricMagnitude() const
 {
-    return absMag + details->getBolometricCorrection();
+    return getAbsoluteMagnitude() + details->getBolometricCorrection();
 }
 
 Orbit*

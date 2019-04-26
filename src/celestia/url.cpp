@@ -715,7 +715,7 @@ static std::string getBodyName(Universe* universe, Body* body)
 
     if (body->getSystem()->getStar() != nullptr)
     {
-        name = universe->getStarCatalog()->getStarName(*(body->getSystem()->getStar())) + ":" + name;
+        name = universe->getDatabase().getObjectName(body->getSystem()->getStar()) + ":" + name;
     }
 
     return name;
@@ -914,11 +914,11 @@ getEncodedObjectName(const Selection& selection, const CelestiaCore* appCore)
             break;
 
         case Selection::Type_Star:
-            name = universe->getStarCatalog()->getStarName(*selection.star());
+            name = universe->getDatabase().getObjectName(selection.star());
             break;
 
         case Selection::Type_DeepSky:
-            name = universe->getDSOCatalog()->getDSOName(selection.deepsky());
+            name = universe->getDatabase().getObjectName(selection.deepsky());
             break;
 
         case Selection::Type_Location:

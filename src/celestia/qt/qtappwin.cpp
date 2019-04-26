@@ -943,12 +943,12 @@ void CelestiaAppWindow::slotAddBookmark()
     else if (sel.star() != nullptr)
     {
         Universe* universe = m_appCore->getSimulation()->getUniverse();
-        defaultTitle = QString::fromStdString(ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*sel.star(), true)));
+        defaultTitle = QString::fromStdString(ReplaceGreekLetterAbbr(universe->getDatabase().getObjectName(sel.star(), true)));
     }
     else if (sel.deepsky() != nullptr)
     {
         Universe* universe = m_appCore->getSimulation()->getUniverse();
-        defaultTitle = QString::fromStdString(ReplaceGreekLetterAbbr(universe->getDSOCatalog()->getDSOName(sel.deepsky(), true)));
+        defaultTitle = QString::fromStdString(ReplaceGreekLetterAbbr(universe->getDatabase().getObjectName(sel.deepsky(), true)));
     }
     else if (sel.location() != nullptr)
     {

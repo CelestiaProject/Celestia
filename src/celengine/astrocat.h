@@ -31,6 +31,7 @@ class SimpleAstroCatalog : public AstroCatalog
 class TychoAstroCatalog : public SimpleAstroCatalog
 {
  public:
+    static constexpr IndexNumber MaxCatalogNumber = 0xf0000000;
     TychoAstroCatalog() : SimpleAstroCatalog("TYC") {}
     virtual IndexNumber nameToCatalogNumber(const std::string&);
     virtual std::string catalogNumberToName(IndexNumber);
@@ -57,7 +58,7 @@ class SAOAstroCatalog : public SimpleAstroCatalog
 class HipparcosAstroCatalog : public SimpleAstroCatalog
 {
  public:
-    static constexpr int MaxCatalogNumber = 2000000; // Approximately
+    static constexpr IndexNumber MaxCatalogNumber = 999999; // Approximately
     HipparcosAstroCatalog() : SimpleAstroCatalog("HIP") {}
 };
 

@@ -19,6 +19,7 @@ class Star;
 class Body;
 class Location;
 class DeepSkyObject;
+class LuminousObject;
 
 class Selection
 {
@@ -69,6 +70,16 @@ public:
     Location* location() const
     {
         return type == Type_Location ? static_cast<Location*>(obj) : nullptr;
+    }
+
+    bool isLuminous() const
+    {
+        return type == Type_Star || type == Type_DeepSky;
+    }
+
+    LuminousObject* luminous() const
+    {
+        return type == Type_Star || type == Type_DeepSky ? static_cast<LuminousObject*>(obj) : nullptr;
     }
 
     AstroObject *astroObject() const

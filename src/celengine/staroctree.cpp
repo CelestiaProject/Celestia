@@ -44,7 +44,7 @@ bool starOrbitStraddlesNodesPredicate(const Vector3f& cellCenterPos, const Star&
     if (orbitalRadius == 0.0f)
         return false;
 
-    Vector3f starPos    = star.getPosition();
+    Vector3f starPos    = star.getPosition().cast<float>();
 
     return (starPos - cellCenterPos).cwiseAbs().minCoeff() < orbitalRadius;
 }
@@ -60,7 +60,7 @@ template<>
 DynamicStarOctree* DynamicStarOctree::getChild(const Star&          obj,
                                                const Vector3f& cellCenterPos)
 {
-    Vector3f objPos    = obj.getPosition();
+    Vector3f objPos    = obj.getPosition().cast<float>();
 
     int child = 0;
     child     |= objPos.x() < cellCenterPos.x() ? 0 : XPos;
@@ -129,7 +129,7 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
 
         if (obj.getAbsoluteMagnitude() < dimmest)
         {
-            float distance    = (obsPosition - obj.getPosition()).norm();
+            float distance    = (obsPosition - obj.getPosition().cast<float>()).norm();
             float appMag      = astro::absToAppMag(obj.getAbsoluteMagnitude(), distance);
 
             if (appMag < limitingFactor || (distance < MAX_STAR_ORBIT_RADIUS && obj.getOrbit()))
@@ -192,9 +192,9 @@ void StarOctree::processCloseObjects(StarHandler&    processor,
     {
         Star& obj = _firstObject[i];
 
-        if ((obsPosition - obj.getPosition()).squaredNorm() < radiusSquared)
+        if ((obsPosition - obj.getPosition().cast<float>()).squaredNorm() < radiusSquared)
         {
-            float distance    = (obsPosition - obj.getPosition()).norm();
+            float distance    = (obsPosition - obj.getPosition().cast<float>()).norm();
             float appMag      = astro::absToAppMag(obj.getAbsoluteMagnitude(), distance);
 
             processor.process(obj, distance, appMag);

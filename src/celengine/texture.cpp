@@ -918,7 +918,7 @@ static Texture* CreateTextureFromImage(Image& img,
 
     int maxDim = GetTextureCaps().maxTextureSize;
     if ((img.getWidth() > maxDim || img.getHeight() > maxDim) &&
-        splittingAllowed)
+        splittingAllowed && maxDim != 0)
     {
         // The texture is too large; we need to split it.
         int uSplit = max(1, img.getWidth() / maxDim);
