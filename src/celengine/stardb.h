@@ -121,7 +121,8 @@ class StarDatabase
                           const Eigen::Quaternionf&   obsOrientation,
                           float fovY,
                           float aspectRatio,
-                          float limitingMag) const;
+                          float limitingMag,
+                          OctreeProcStats * = nullptr) const;
 
     void findCloseStars(StarHandler& starHandler,
                         const Eigen::Vector3f& obsPosition,

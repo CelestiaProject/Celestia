@@ -6750,12 +6750,16 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     else
         starRenderer.starVertexBuffer->startSprites();
 
+    m_starProcStats.nodes = 0;
+    m_starProcStats.height = 0;
+    m_starProcStats.objects = 0;
     starDB.findVisibleStars(starRenderer,
                             obsPos.cast<float>(),
                             observer.getOrientationf(),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
-                            faintestMagNight);
+                            faintestMagNight,
+                            &m_starProcStats);
 
     starRenderer.starVertexBuffer->render();
     starRenderer.glareVertexBuffer->render();
@@ -7020,12 +7024,16 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
+    m_dsoProcStats.objects = 0;
+    m_dsoProcStats.nodes = 0;
+    m_dsoProcStats.height = 0;
     dsoDB->findVisibleDSOs(dsoRenderer,
                            obsPos,
                            observer.getOrientationf(),
                            degToRad(fov),
                            (float) windowWidth / (float) windowHeight,
-                           2 * faintestMagNight);
+                           2 * faintestMagNight,
+                           &m_dsoProcStats);
 
     // clog << "DSOs processed: " << dsoRenderer.dsosProcessed << endl;
 

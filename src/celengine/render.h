@@ -375,6 +375,8 @@ class Renderer
         LightingState::EclipseShadowVector* eclipseShadows;
     };
 
+    OctreeProcStats m_starProcStats;
+    OctreeProcStats m_dsoProcStats;
  private:
     struct SkyVertex
     {
