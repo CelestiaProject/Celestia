@@ -190,7 +190,7 @@ EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
     period(_period),
     epoch(_epoch)
 {
-    orbitPlaneRotation = (ZRotation(_ascendingNode) * XRotation(_inclination) * ZRotation(_argOfPeriapsis)).toRotationMatrix();
+    orbitPlaneRotation = ZRotation(_ascendingNode) * XRotation(_inclination) * ZRotation(_argOfPeriapsis);
 }
 
 

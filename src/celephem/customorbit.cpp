@@ -1368,23 +1368,23 @@ class PhobosOrbit : public CachingOrbit
         Vector3d p = ellipsePosition(a, e, M);
 
         // Orientation of the orbital plane with respect to the Laplacian plane
-        Matrix3d Rorbit     = (YRotation(node) *
-                               XRotation(degToRad(i)) *
-                               YRotation(w)).toRotationMatrix();
+        Quaterniond Rorbit = YRotation(node) *
+                             XRotation(degToRad(i)) *
+                             YRotation(w);
 
         // Rotate to the Earth's equatorial plane
         double N = degToRad(refplane_RA);
         double J = degToRad(90 - refplane_Dec);
-        Matrix3d RLaplacian = (YRotation( N) *
-                               XRotation( J) *
-                               YRotation(-N)).toRotationMatrix();
+        Quaterniond RLaplacian = YRotation( N) *
+                                 XRotation( J) *
+                                 YRotation(-N);
 
         // Rotate to the Martian equatorial plane
         N = degToRad(marspole_RA);
         J = degToRad(90 - marspole_Dec);
-        Matrix3d RMars_eq   = (YRotation( N) *
+        Quaterniond RMars_eq = YRotation( N) *
                                XRotation(-J) *
-                               YRotation(-N)).toRotationMatrix();
+                               YRotation(-N);
 
         return RMars_eq * (RLaplacian * (Rorbit * p));
     }
@@ -1437,23 +1437,23 @@ class DeimosOrbit : public CachingOrbit
         Vector3d p = ellipsePosition(a, e, M);
 
         // Orientation of the orbital plane with respect to the Laplacian plane
-        Matrix3d Rorbit     = (YRotation(node) *
-                               XRotation(degToRad(i)) *
-                               YRotation(w)).toRotationMatrix();
+        Quaterniond Rorbit = YRotation(node) *
+                             XRotation(degToRad(i)) *
+                             YRotation(w);
 
         // Rotate to the Earth's equatorial plane
         double N = degToRad(refplane_RA);
         double J = degToRad(90 - refplane_Dec);
-        Matrix3d RLaplacian = (YRotation( N) *
-                               XRotation( J) *
-                               YRotation(-N)).toRotationMatrix();
+        Quaterniond RLaplacian = YRotation( N) *
+                                 XRotation( J) *
+                                 YRotation(-N);
 
         // Rotate to the Martian equatorial plane
         N = degToRad(marspole_RA);
         J = degToRad(90 - marspole_Dec);
-        Matrix3d RMars_eq   = (YRotation( N) *
+        Quaterniond RMars_eq = YRotation( N) *
                                XRotation(-J) *
-                               YRotation(-N)).toRotationMatrix();
+                               YRotation(-N);
 
         return RMars_eq * (RLaplacian * (Rorbit * p));
     }
@@ -2629,9 +2629,9 @@ class UranianSatelliteOrbit : public CachingOrbit
         double x = a * (cos(ecc) - e);
         double z = a * sqrt(1 - square(e)) * -sin(ecc);
 
-        Matrix3d R = (YRotation(theta) *
-                      XRotation(gamma) *
-                      YRotation(p - theta)).toRotationMatrix();
+        Quaterniond R = YRotation(theta) *
+                        XRotation(gamma) *
+                        YRotation(p - theta);
         return R * Vector3d(x, 0, z);
     }
 };
@@ -2773,7 +2773,7 @@ class TritonOrbit : public CachingOrbit
         Quaterniond q = toEarthEq * toInvariable;
         //Quatd q = toInvariable * toEarthEq;
 
-        p = q.toRotationMatrix() * p;
+        p = q * p;
 
         // Convert to Celestia's coordinate system
         return Vector3d(p.x(), p.z(), -p.y());

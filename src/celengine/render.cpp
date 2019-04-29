@@ -2607,7 +2607,7 @@ void Renderer::draw(const Observer& observer,
     setupSecondaryLightSources(secondaryIlluminators, lightSourceList);
 
 #ifdef USE_HDR
-    Matrix3f viewMat = observer.getOrientationf().conjugate().toRotationMatrix();
+    Quaternionf view = observer.getOrientationf().conjugate();
     float maxSpan = (float) sqrt(square((float) windowWidth) +
                                  square((float) windowHeight));
     float nearZcoeff = (float) cos(degToRad(fov / 2)) *
@@ -2618,7 +2618,7 @@ void Renderer::draw(const Observer& observer,
     auto notCulled = renderList.begin();
     for (const auto& render_item : renderList)
     {
-        Vector3f center = viewMat * render_item.position;
+        Vector3f center = view * render_item.position;
 
         bool convex = true;
         float radius = 1.0f;
@@ -2957,8 +2957,6 @@ void Renderer::draw(const Observer& observer,
     glPolygonMode(GL_BACK, (GLenum) renderMode);
 
     {
-        Matrix3f viewMat = observer.getOrientationf().conjugate().toRotationMatrix();
-
         // Remove objects from the render list that lie completely outside the
         // view frustum.
         auto notCulled = renderList.begin();
@@ -2979,7 +2977,7 @@ void Renderer::draw(const Observer& observer,
                 continue;
             }
 #endif
-            Vector3f center = viewMat.transpose() * render_item.position;
+            Vector3f center = observer.getOrientationf() * render_item.position;
 
             bool convex = true;
             float radius = 1.0f;
@@ -3617,7 +3615,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             glareAlpha *= fade;
         }
 
-        Matrix3f m = cameraOrientation.conjugate().toRotationMatrix();
+        Quaternionf m = cameraOrientation.conjugate();
         Vector3f center = position;
 
         // Offset the glare sprite so that it lies in front of the object
@@ -3808,13 +3806,12 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     // over one pixel.
     float fade = clamp(pixSize - 2);
 
-    Matrix3f rot = orientation.toRotationMatrix();
-    Matrix3f irot = orientation.conjugate().toRotationMatrix();
+    Quaternionf irot = orientation.conjugate();
 
     Vector3f eyePos = Vector3f::Zero();
     float radius = semiAxes.maxCoeff();
     Vector3f eyeVec = center - eyePos;
-    eyeVec = rot * eyeVec;
+    eyeVec = orientation * eyeVec;
     double centerDist = eyeVec.norm();
 
     float height = atmosphere.height / radius;
@@ -3876,7 +3873,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
         }
         else
         {
-            Vector3f v = (rot * -sunDirection) * (float) centerDist;
+            Vector3f v = (orientation * -sunDirection) * (float) centerDist;
             Vector3f tangentPoint = center +
                 irot * ellipsoidTangent(recipSemiAxes,
                                         v,
@@ -4208,7 +4205,7 @@ void Renderer::renderLocations(const Body& body,
 
     Ellipsoidd bodyEllipsoid(semiAxes.cast<double>());
 
-    Matrix3d bodyMatrix = bodyOrientation.conjugate().toRotationMatrix();
+    Quaterniond ibody = bodyOrientation.conjugate();
 
     for (const auto location : *locations)
     {
@@ -4226,7 +4223,7 @@ void Renderer::renderLocations(const Body& body,
             Vector3d pcLabelPos = locPos * (1.0 + labelOffset);
 
             // Get the camera space label position
-            Vector3d labelPos = bodyCenter + bodyMatrix * locPos;
+            Vector3d labelPos = bodyCenter + ibody * locPos;
 
             float effSize = location->getImportance();
             if (effSize < 0.0f)
@@ -4467,8 +4464,6 @@ setupObjectLighting(const vector<LightSource>& suns,
     auto gamma = (float) (log(minDisplayableValue) / log(minVisibleFraction));
     float minVisibleIrradiance = minVisibleFraction * totalIrradiance;
 
-    Matrix3f m = objOrientation.toRotationMatrix();
-
     // Gamma scale and normalize the light sources; cull light sources that
     // aren't bright enough to contribute the final pixels rendered into the
     // frame buffer.
@@ -4483,14 +4478,14 @@ setupObjectLighting(const vector<LightSource>& suns,
 #endif
 
         // Compute the direction of the light in object space
-        ls.lights[i].direction_obj = m * ls.lights[i].direction_eye;
+        ls.lights[i].direction_obj = objOrientation * ls.lights[i].direction_eye;
 
         ls.nLights++;
     }
 
     Matrix3f invScale = objScale.cwiseInverse().asDiagonal();
-    ls.eyePos_obj = invScale * m * -objPosition_eye;
-    ls.eyeDir_obj = (m * -objPosition_eye).normalized();
+    ls.eyePos_obj = invScale * objOrientation * -objPosition_eye;
+    ls.eyeDir_obj = (objOrientation * -objPosition_eye).normalized();
 
     // When the camera is very far from the object, some view-dependent
     // calculations in the shaders can exhibit precision problems. This
@@ -4589,10 +4584,8 @@ void Renderer::renderObject(const Vector3f& pos,
     }
     glScale(scaleFactors);
 
-    Matrix3f planetRotation = obj.orientation.toRotationMatrix();
-
-    ri.eyeDir_obj = -(planetRotation * pos).normalized();
-    ri.eyePos_obj = -(planetRotation * (pos.cwiseQuotient(scaleFactors)));
+    ri.eyeDir_obj = -(obj.orientation * pos).normalized();
+    ri.eyePos_obj = -(obj.orientation * (pos.cwiseQuotient(scaleFactors)));
 
     ri.orientation = cameraOrientation * obj.orientation.conjugate();
 
@@ -7311,7 +7304,7 @@ static void renderCrosshair(float pixelSize, double tsec)
     for (unsigned int i = 0; i < markCount; i++)
     {
         float theta = (float) (PI / 4.0) + (float) i / (float) markCount * (float) (2 * PI);
-        Matrix3f rotation = AngleAxisf(theta, Vector3f::UnitZ()).toRotationMatrix();
+        AngleAxisf rotation = AngleAxisf(theta, Vector3f::UnitZ());
         glVertex(rotation * p0);
         glVertex(rotation * p1);
         glVertex(rotation * p2);

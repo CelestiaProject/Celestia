@@ -83,7 +83,7 @@ class EllipticalOrbit : public Orbit
     double period;
     double epoch;
 
-    Eigen::Matrix3d orbitPlaneRotation;
+    Eigen::Quaterniond orbitPlaneRotation;
 };
 
 
