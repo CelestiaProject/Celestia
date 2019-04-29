@@ -3153,9 +3153,7 @@ void Renderer::draw(const Observer& observer,
                 posStar = brightestStar->getPosition(now);
             }
 
-            posStar.x /= scale;
-            posStar.y /= scale;
-            posStar.z /= scale;
+            posStar /= scale;
             Vec3d lightToBodyDir = posBody - posStar;
             Vec3d bodyToEyeDir = posEye - posBody;
 
