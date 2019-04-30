@@ -108,7 +108,7 @@ Eigen::Vector4f Color::toVector4() const
 
 inline bool operator==(Color a, Color b)
 {
-    return (a.c[0] == b.c[2] && a.c[1] == b.c[1] &&
+    return (a.c[0] == b.c[0] && a.c[1] == b.c[1] &&
             a.c[2] == b.c[2] && a.c[3] == b.c[3]);
 }
 
