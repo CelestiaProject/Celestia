@@ -10,7 +10,7 @@
 #ifndef _CELENGINE_ORBIT_H_
 #define _CELENGINE_ORBIT_H_
 
-#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 
 class OrbitSampleProc;
