@@ -18,6 +18,8 @@ class OrbitSampleProc;
 class Orbit
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     virtual ~Orbit() = default;
 
     /*! Return the position in the orbit's reference frame at the specified
