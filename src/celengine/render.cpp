@@ -5803,6 +5803,27 @@ static float luminosityAtOpposition(float sunLuminosity,
 }
 
 
+static bool isBodyVisible(const Body* body, int bodyVisibilityMask)
+{
+    int klass = body->getClassification();
+    switch (body->getClassification())
+    {
+    // Diffuse objects don't have controls to show/hide visibility
+    case Body::Diffuse:
+        return body->isVisible();
+
+    // SurfaceFeature inherits visibility of its parent body
+    case Body::SurfaceFeature:
+        assert(body->getSystem() != nullptr);
+        body = body->getSystem()->getPrimaryBody();
+        assert(body != nullptr);
+        return body->isVisible() && (bodyVisibilityMask & body->getClassification()) != 0;
+
+    default:
+        return body->isVisible() && (bodyVisibilityMask & klass) != 0;
+    }
+}
+
 void Renderer::addRenderListEntries(RenderListEntry& rle,
                                     Body& body,
                                     bool isLabeled)
@@ -5978,10 +5999,8 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
 
             bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
             bool isLabeled = (body->getOrbitClassification() & labelClassMask) != 0;
-            bool visible = body->isVisible();
-            bool classVisible = (bodyVisibilityMask & body->getClassification()) != 0;
 
-            if ((discSize > 1 || visibleAsPoint || isLabeled) && visible && classVisible)
+            if ((discSize > 1 || visibleAsPoint || isLabeled) && isBodyVisible(body, bodyVisibilityMask))
             {
                 RenderListEntry rle;
 
