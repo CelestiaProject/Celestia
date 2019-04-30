@@ -7302,7 +7302,7 @@ static void renderCrosshair(float pixelSize, double tsec)
     for (unsigned int i = 0; i < markCount; i++)
     {
         float theta = (float) (PI / 4.0) + (float) i / (float) markCount * (float) (2 * PI);
-        AngleAxisf rotation = AngleAxisf(theta, Vector3f::UnitZ());
+        AngleAxisf rotation(theta, Vector3f::UnitZ());
         glVertex(rotation * p0);
         glVertex(rotation * p1);
         glVertex(rotation * p2);
