@@ -74,12 +74,14 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
                                       double         scale,
                                       OctreeProcStats *stats) const
 {
+#ifdef OCTREE_NODE
     size_t h;
     if (stats != nullptr)
     {
         h = stats->height + 1;
         stats->nodes++;
     }
+#endif
     // See if this node lies within the view frustum
 
     // Test the cubic octree node against each one of the five
@@ -102,8 +104,10 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
 
     for (unsigned int i=0; i<nObjects; ++i)
     {
+#ifdef OCTREE_NODE
         if (stats != nullptr)
             stats->objects++;
+#endif
         DeepSkyObject* _obj = _firstObject[i];
         float  absMag      = _obj->getAbsoluteMagnitude();
         if (absMag < dimmest)
@@ -131,11 +135,15 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
                                                     limitingFactor,
                                                     scale * 0.5f,
                                                     stats);
+#ifdef OCTREE_DEBUG
                 if (stats != nullptr && stats->height > h)
                     h = stats->height;
+#endif
             }
+#ifdef OCTREE_DEBUG
             if (stats != nullptr)
                 stats->height = h;
+#endif
         }
     }
 }
