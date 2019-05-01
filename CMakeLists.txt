@@ -285,6 +285,11 @@ if(NOT "${build_type_lc}" STREQUAL "debug")
   add_definitions(-DNO_DEBUG -DEIGEN_NO_DEBUG)
 endif()
 
+# Turning all debug on dramatically decreses performance
+if(OCTREE_DEBUG)
+  add_definitions(-DOCTREE_DEBUG)
+endif()
+
 include_directories("${CMAKE_SOURCE_DIR}/src" ${CMAKE_BINARY_DIR})
 
 # configure a header file to pass some of the CMake settings
