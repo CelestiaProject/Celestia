@@ -4,10 +4,25 @@ Basic installation instructions
 Install from you OS repository or from the official bintray repository
 https://bintray.com/celestia.
 
-https://bintray.com/celestia/celestia-builds/celestia-dev contains
-official development snapshots.
+https://bintray.com/celestia/celestia-builds/snapshots contains
+official 32/64 bit development snapshots for Windows.
 
 To build from sources please follow instructions below.
+
+Common building instructions
+----------------------------
+
+We recommend using a copy of out git repository to build your own installation
+as it contains some dependencies required for building.
+
+To create the copy install git from your OS distribution repository or from
+https://git-scm.com/ and then execute the following commands:
+* git clone https://github.com/CelestiaProject/Celestia
+* git submodule update --init
+
+If you have fmtlib and Eigen3 installed from other sources (OS repository or
+vcpg) or don't want to build Celestia with SPICE support then you can skip the
+2nd step.
 
 Celestia Install instructions for UNIX
 --------------------------------------
