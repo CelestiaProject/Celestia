@@ -7,8 +7,8 @@ cd ..
 git pull
 git submodule update --init
 
-mkdir build32
-cd build32
+mkdir build64
+cd build64
 
 set Qt5_DIR=C:\Qt\5.10.1\msvc2015_64
 set PATH=%Qt5_DIR%\bin;%PATH%
