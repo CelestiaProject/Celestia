@@ -31,7 +31,7 @@ class EclipseFinderDialog
     SYSTEMTIME fromTime, toTime;
     double TimetoSet_;
     Body* BodytoSet_;
-    bool bSolar;
+    int type;
 };
 
 #endif // _WINECLIPSES_H_
