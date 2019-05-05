@@ -7,4 +7,3 @@ set(CEL3DS_SOURCES
 )
 
 add_library(cel3ds OBJECT ${CEL3DS_SOURCES})
-cotire(cel3ds)

@@ -61,7 +61,6 @@ endif()
 
 add_executable(celestia-gtk ${GTK_SOURCES})
 add_dependencies(celestia-gtk celestia)
-cotire(celestia-gtk)
 
 if(${CMAKE_VERSION} VERSION_LESS "3.13.0")
   function(target_link_directories target scope)

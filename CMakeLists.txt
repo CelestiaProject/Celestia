@@ -99,12 +99,6 @@ endif()
 include(CheckIncludeFiles)
 include(CheckIncludeFileCXX)
 include(FastMath)
-if(NOT WIN32)
-  include(cotire)
-else()
-  macro(cotire _target)
-  endmacro()
-endif()
 
 #
 # Compile options
