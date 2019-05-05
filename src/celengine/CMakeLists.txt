@@ -175,4 +175,3 @@ set(CELENGINE_SOURCES
 )
 
 add_library(celengine OBJECT ${CELENGINE_SOURCES})
-cotire(celengine)

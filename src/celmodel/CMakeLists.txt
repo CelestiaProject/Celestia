@@ -10,4 +10,3 @@ set(CELMODEL_SOURCES
 )
 
 add_library(celmodel OBJECT ${CELMODEL_SOURCES})
-cotire(celmodel)

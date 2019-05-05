@@ -45,4 +45,3 @@ if (APPLE)
 endif()
 
 add_library(celutil OBJECT ${CELUTIL_SOURCES})
-cotire(celutil)
