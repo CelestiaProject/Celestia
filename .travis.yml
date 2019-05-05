@@ -34,7 +34,7 @@ before_script:
 - cd build
 
 script:
-- cmake -DENABLE_SPICE=ON ..
+- cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON ..
 - make -j $(nproc || echo 4)
 
 addons:
