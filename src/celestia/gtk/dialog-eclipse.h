@@ -42,7 +42,7 @@ struct _EclipseData {
     /* End Time */
     selDate* d2;
 
-    bool bSolar;
+    int type;
     char body[7];
     GtkTreeSelection* sel;
 

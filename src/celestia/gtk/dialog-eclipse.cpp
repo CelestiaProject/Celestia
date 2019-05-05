@@ -50,7 +50,7 @@ void dialogEclipseFinder(AppData* app)
     ed->app = app;
     ed->eclipseList = NULL;
     ed->eclipseListStore = NULL;
-    ed->bSolar = TRUE;
+    ed->type = Eclipse::Solar;
     sprintf(ed->body, "%s", eclipsePlanetTitles[0]);
     ed->sel = NULL;
 
@@ -372,26 +372,25 @@ static void eclipseCompute(GtkButton* button, EclipseData* ed)
     astro::Date to(ed->d2->year, ed->d2->month, ed->d2->day);
 
     /* Initialize the eclipse finder */
-    EclipseFinder ef(ed->app->core, ed->body, ed->bSolar ? Eclipse::Solar : Eclipse::Moon, (double)from, (double)to);
-    vector<Eclipse> eclipseListRaw = ef.getEclipses();
-
-    for (std::vector<Eclipse>::iterator i = eclipseListRaw.begin();
-        i != eclipseListRaw.end();
-        i++)
+    vector<Eclipse> eclipseListRaw;
+    const SolarSystem* sys = ed->app->core->getSimulation()->getNearestSolarSystem();
+    if (sys != nullptr && sys->getStar()->getCatalogNumber() == 0)
     {
-
-        /* Handle 0 case */
-        if ((*i).planete == "None") {
-            gtk_list_store_append(ed->eclipseListStore, &iter);
-            gtk_list_store_set(ed->eclipseListStore, &iter, 0, (*i).planete.c_str(), -1);
-            continue;
+        Body* planete = sys->getPlanets()->find(ed->body);
+        if (planete != nullptr)
+        {
+            EclipseFinder ef(planete);
+            ef.findEclipses((double)from, (double)to, ed->type, eclipseListRaw);
         }
+    }
 
+    for (const auto& e : eclipseListRaw)
+    {
         char d[12], strStart[10], strEnd[10];
-        astro::Date start((*i).startTime);
-        astro::Date end((*i).endTime);
+        astro::Date start(e.startTime);
+        astro::Date end(e.endTime);
 
-        sprintf(d, "%d-%02d-%02d", (*i).date->year, (*i).date->month, (*i).date->day);
+        sprintf(d, "%d-%02d-%02d", start.year, start.month, start.day);
         sprintf(strStart, "%02d:%02d:%02d", start.hour, start.minute, (int)start.seconds);
         sprintf(strEnd, "%02d:%02d:%02d", end.hour, end.minute, (int)end.seconds);
 
@@ -399,11 +398,22 @@ static void eclipseCompute(GtkButton* button, EclipseData* ed)
         astro::Date timeToSet = (start + end) / 2.0f;
 
         /* Add item to the list.
-         * Entries 5-11 are not displayed and store data. */
+         * Entries 5-10 are not displayed and store data. */
         gtk_list_store_append(ed->eclipseListStore, &iter);
+        const char *planet, *satellite;
+        if (ed->type == Eclipse::Solar)
+        {
+            planet = e.receiver->getName().c_str();
+            satellite = e.occulter->getName().c_str();
+        }
+        else
+        {
+            satellite = e.receiver->getName().c_str();
+            planet = e.occulter->getName().c_str();
+        }
         gtk_list_store_set(ed->eclipseListStore, &iter,
-                           0, (*i).planete.c_str(),
-                           1, (*i).sattelite.c_str(),
+                           0, planet,
+                           1, satellite,
                            2, d,
                            3, strStart,
                            4, strEnd,
@@ -413,7 +423,6 @@ static void eclipseCompute(GtkButton* button, EclipseData* ed)
                            8, timeToSet.hour,
                            9, timeToSet.minute,
                            10, (int)timeToSet.seconds,
-                           11, (*i).body,
                            -1);
     }
 
@@ -445,10 +454,10 @@ static void eclipseTypeSelect(GtkMenuShell* menu, EclipseData* ed)
 
     /* Solar eclipse */
     if (itemIndex == 0)
-        ed->bSolar = 1;
+        ed->type = Eclipse::Solar;
     /* Moon eclipse */
     else
-        ed->bSolar = 0;
+        ed->type = Eclipse::Lunar;
 }
 
 
