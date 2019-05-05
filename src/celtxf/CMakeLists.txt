@@ -16,6 +16,4 @@ set_target_properties(celtxf PROPERTIES
 add_dependencies(celtxf celutil)
 target_link_libraries(celtxf celutil)
 
-cotire(celtxf)
-
 #install(TARGETS celtxf LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})

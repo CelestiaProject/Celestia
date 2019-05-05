@@ -46,5 +46,3 @@ endif()
 
 # These object files are merged in the celegine library
 add_library(celephem OBJECT ${CELEPHEM_SOURCES})
-
-cotire(celephem)

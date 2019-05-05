@@ -14,4 +14,3 @@ set(CELMATH_SOURCES
 )
 
 add_library(celmath OBJECT ${CELMATH_SOURCES})
-cotire(celmath)

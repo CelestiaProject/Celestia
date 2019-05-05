@@ -8,4 +8,3 @@ set(CMODCOMMON_SOURCES
 )
 
 add_library(cmodcommon STATIC ${CMODCOMMON_SOURCES})
-cotire(cmodcommon)

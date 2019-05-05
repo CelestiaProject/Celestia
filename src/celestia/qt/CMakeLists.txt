@@ -66,7 +66,6 @@ endif()
 
 add_executable(celestia-qt WIN32 ${QT_SOURCES} ${RC_SRC} ${RES})
 add_dependencies(celestia-qt celestia)
-cotire(celestia-qt)
 target_link_libraries(celestia-qt Qt5::Widgets Qt5::OpenGL celestia)
 if(APPLE)
   set_property(TARGET celestia-qt APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreFoundation")
