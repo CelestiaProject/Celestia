@@ -14,23 +14,29 @@
 #define _ECLIPSEFINDER_H_
 
 #include <vector>
-
 #include "celestiacore.h"
 
 class Eclipse
 {
-public:
+ public:
+    Eclipse() = default;
     Eclipse(int Y, int M, int D);
     Eclipse(double JD);
     ~Eclipse();
 
+    // values must be 2^n
     enum Type {
-        Solar = 0,
-        Moon  = 1
+        Solar = 0x01,
+        Moon  = 0x02,
+        Lunar = 0x02
     };
 
-public:
+ public:
     Body* body{ nullptr };
+
+    Body* occulter{ nullptr };
+    Body* receiver{ nullptr };
+
     std::string planete;
     std::string sattelite;
     astro::Date* date{ nullptr };
@@ -38,9 +44,22 @@ public:
     double endTime{ 0.0 };
 };
 
+class EclipseFinderWatcher
+{
+ public:
+    enum Status
+    {
+        ContinueOperation = 0,
+        AbortOperation = 1,
+    };
+
+    virtual Status eclipseFinderProgressUpdate(double t) = 0;
+};
+
 class EclipseFinder
 {
  public:
+    EclipseFinder(Body*, EclipseFinderWatcher* _watcher);
     EclipseFinder(CelestiaCore* core,
                   const std::string& strPlaneteToFindOn_,
                   Eclipse::Type type_,
@@ -52,6 +71,11 @@ class EclipseFinder
                     JDfrom(from),
                     JDto(to),
                     toProcess(true) {};
+
+    void findEclipses(double startDate,
+                      double endDate,
+                      int eclipseTypeMask,
+                      vector<Eclipse>& eclipses);
 
     const std::vector<Eclipse>& getEclipses() { if (toProcess) CalculateEclipses(); return Eclipses_; };
 
@@ -65,10 +89,15 @@ class EclipseFinder
 
     bool toProcess;
 
+    double findEclipseStart(const Body& recever, const Body& occulter, double now, double startStep, double minStep) const;
+    double findEclipseEnd(const Body& recever, const Body& occulter, double now, double startStep, double minStep) const;
+
     int CalculateEclipses();
     bool testEclipse(const Body& receiver, const Body& caster, double now) const;
     double findEclipseSpan(const Body& receiver, const Body& caster, double now, double dt) const;
 
+    Body* body;
+    EclipseFinderWatcher* watcher;
 };
 #endif // _ECLIPSEFINDER_H_
 
