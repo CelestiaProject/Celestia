@@ -15,8 +15,4 @@ endforeach()
 
 if (ENABLE_TOOLS)
   add_subdirectory(tools)
-  if (NOT WIN32)
-    add_executable(buildstardb buildstardb.cpp)
-    cotire(buildstardb)
-  endif()
 endif()
