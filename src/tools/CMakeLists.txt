@@ -1,6 +1,6 @@
 macro(install_perl_tools)
   if(${ARGC} LESS 1)
-    message(FATAL_ERROR "build_cmod_tool requires at least 1 argument")
+    message(FATAL_ERROR "install_perl_tools requires at least 1 argument")
   endif()
 
   set(__sources ${ARGV})
