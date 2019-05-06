@@ -185,8 +185,12 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
                                     t,
                                     orbitalPeriod * 1.0e-6,
                                     &elements);
-
-        if (orbitalPeriod < 365.25 * 2.0)
+        if (orbitalPeriod < 2.0)
+        {
+            orbitalPeriod *= 24.0;
+            units = _("hours");
+        }
+        else if (orbitalPeriod < 365.25 * 2.0)
         {
             units = _("days");
         }
@@ -196,8 +200,24 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
             orbitalPeriod /= 365.25;
         }
 
+        if (body->getRings() != nullptr)
+            stream << _("<b>Has rings</b>") << "<br>\n";
+        if (body->getAtmosphere() != nullptr)
+            stream << _("<b>Has atmosphere</b>") << "<br>\n";
+
+        // Start and end dates
+        double startTime = 0.0;
+        double endTime = 0.0;
+        body->getLifespan(startTime, endTime);
+
+        if (startTime > -1.0e9)
+            stream << "<br>" << QString(_("<b>Start:</b> %1")).arg(astro::TDBtoUTC(startTime).toCStr()) << "<br>\n";
+
+        if (endTime < 1.0e9)
+            stream << "<br>" << QString(_("<b>End:</b> %1")).arg(astro::TDBtoUTC(endTime).toCStr()) << "<br>\n";
+
         stream << "<br><big><b>" << QString(_("Orbit information")) << "</b></big><br>\n";
-        stream << QString(_("Osculating elements for %1")).arg(QString::fromUtf8(astro::TDBtoUTC(t).toCStr())) << "<br>\n";
+        stream << QString(_("Osculating elements for %1")).arg(astro::TDBtoUTC(t).toCStr()) << "<br>\n";
         stream << "<br>\n";
 //        stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
         stream << QString(_("<b>Period:</b> %L1 %2")).arg(orbitalPeriod).arg(units) << "<br>\n";
