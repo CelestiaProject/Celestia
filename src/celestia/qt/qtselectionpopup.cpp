@@ -73,9 +73,8 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
             if (startTime > -1.0e9)
             {
-                ostringstream startDateStr;
-                startDateStr << "Start: " << astro::TDBtoUTC(startTime);
-                QAction* startDateAct = new QAction(startDateStr.str().c_str(), this);
+                QString startDateStr = QString(_("Start: %1")).arg(astro::TDBtoUTC(startTime).toCStr());
+                QAction* startDateAct = new QAction(startDateStr, this);
                 connect(startDateAct, SIGNAL(triggered()),
                         this, SLOT(slotGotoStartDate()));
                 addAction(startDateAct);
@@ -83,9 +82,8 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
             if (endTime < 1.0e9)
             {
-                ostringstream endDateStr;
-                endDateStr << "End: " << astro::TDBtoUTC(endTime);
-                QAction* endDateAct = new QAction(endDateStr.str().c_str(), this);
+                QString endDateStr = QString(_("End: %1")).arg(astro::TDBtoUTC(endTime).toCStr());
+                QAction* endDateAct = new QAction(endDateStr, this);
                 connect(endDateAct, SIGNAL(triggered()),
                         this, SLOT(slotGotoEndDate()));
                 addAction(endDateAct);
