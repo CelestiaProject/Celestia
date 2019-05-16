@@ -48,7 +48,7 @@ class ModelGeometry : public Geometry
      *  and set distance; otherwise return false and leave
      *  distance unmodified.
      */
-    virtual bool pick(const Ray3d& r, double& distance) const;
+    virtual bool pick(const celmath::Ray3d& r, double& distance) const;
 
     //! Render the model in the current OpenGL context
     virtual void render(RenderContext&, double t = 0.0);

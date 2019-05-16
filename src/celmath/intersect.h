@@ -18,6 +18,8 @@
 #include "mathlib.h"
 #include <Eigen/Core>
 
+namespace celmath
+{
 
 template<class T> bool testIntersection(const Ray3<T>& ray,
                                         const Sphere<T>& sphere,
@@ -122,5 +124,6 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
     }
     return false;
 }
+}; // namespace celmath
 
 #endif // _CELMATH_INTERSECT_H_

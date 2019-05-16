@@ -8,24 +8,15 @@
 // of the License, or (at your option) any later version.
 
 #include "color.h"
+#include <celmath/mathlib.h>
 
 using namespace std;
-
+using namespace celmath;
 
 Color::ColorMap Color::x11Colors;
 
 const Color Color::White = Color(1.0f, 1.0f, 1.0f);
 const Color Color::Black = Color(0.0f,0.0f, 0.0f);
-
-template<class T> T clamp(T x)
-{
-    if (x < 0)
-        return 0;
-    if (x > 1)
-        return 1;
-    else
-        return x;
-}
 
 Color::Color()
 {

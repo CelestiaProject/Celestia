@@ -26,6 +26,7 @@
 using namespace cmod;
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 string inputFilename;
 string outputFilename;

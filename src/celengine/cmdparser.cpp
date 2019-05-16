@@ -34,6 +34,7 @@
 #include <sstream>
 
 using namespace std;
+using namespace celmath;
 
 
 static uint64_t parseRenderFlags(string /*s*/);

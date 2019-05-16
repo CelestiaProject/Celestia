@@ -17,6 +17,7 @@
 #include <cstring>
 #include "winstarbrowser.h"
 #include "celutil/winutil.h"
+#include "celmath/mathlib.h"
 
 #include "res/resource.h"
 
@@ -292,7 +293,7 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
         {
             float d0 = (sortInfo->pos - star0->getPosition()).norm();
             float d1 = (sortInfo->pos - star1->getPosition()).norm();
-            return (int) sign(d0 - d1);
+            return (int) celmath::sign(d0 - d1);
         }
 
     case 2:
@@ -303,12 +304,12 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
                 d0 = sortInfo->ucPos.offsetFromLy(star0->getPosition()).norm();
             if (d1 < 1.0f)
                 d1 = sortInfo->ucPos.offsetFromLy(star1->getPosition()).norm();
-            return (int) sign(astro::absToAppMag(star0->getAbsoluteMagnitude(), d0) -
-                              astro::absToAppMag(star1->getAbsoluteMagnitude(), d1));
+            return (int) celmath::sign(astro::absToAppMag(star0->getAbsoluteMagnitude(), d0) -
+                                       astro::absToAppMag(star1->getAbsoluteMagnitude(), d1));
         }
 
     case 3:
-        return (int) sign(star0->getAbsoluteMagnitude() - star1->getAbsoluteMagnitude());
+        return (int) celmath::sign(star0->getAbsoluteMagnitude() - star1->getAbsoluteMagnitude());
 
     case 4:
         return strcmp(star0->getSpectralType(), star1->getSpectralType());

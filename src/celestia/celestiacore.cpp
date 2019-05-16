@@ -60,6 +60,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 static const int DragThreshold = 3;
 

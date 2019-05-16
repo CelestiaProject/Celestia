@@ -23,6 +23,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 const double astro::speedOfLight = 299792.458; // km/s
 

@@ -19,7 +19,7 @@
 using namespace cmod;
 using namespace Eigen;
 using namespace std;
-
+using namespace celmath;
 
 
 // Vertex buffer object support

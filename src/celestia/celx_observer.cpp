@@ -18,6 +18,7 @@
 #include <Eigen/Geometry>
 
 using namespace Eigen;
+using namespace celmath;
 
 
 // ==================== Observer ====================

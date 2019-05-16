@@ -21,7 +21,7 @@
 #include "common.h"
 
 using namespace Eigen;
-
+using namespace celmath;
 
 
 /* Definitions: Callbacks */

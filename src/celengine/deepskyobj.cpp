@@ -25,6 +25,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 void DeepSkyObject::setCatalogNumber(uint32_t n)

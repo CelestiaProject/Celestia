@@ -12,6 +12,9 @@
 
 #include <Eigen/Core>
 
+namespace celmath
+{
+
 template<class T> class Sphere
 {
  public:
@@ -43,5 +46,6 @@ template<class T> class Sphere
 typedef Sphere<float>   Spheref;
 typedef Sphere<double>  Sphered;
 
-#endif // _CELMATH_SPHERE_H_
+}; // namespace celmath
 
+#endif // _CELMATH_SPHERE_H_

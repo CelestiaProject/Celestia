@@ -442,14 +442,14 @@ class Renderer
     void renderSkyGrids(const Observer& observer);
     void renderSelectionPointer(const Observer& observer,
                                 double now,
-                                const Frustum& viewFrustum,
+                                const celmath::Frustum& viewFrustum,
                                 const Selection& sel);
 
     void renderAsterisms(const Universe&, float);
     void renderBoundaries(const Universe&, float);
 
     void buildRenderLists(const Eigen::Vector3d& astrocentricObserverPos,
-                          const Frustum& viewFrustum,
+                          const celmath::Frustum& viewFrustum,
                           const Eigen::Vector3d& viewPlaneNormal,
                           const Eigen::Vector3d& frameCenter,
                           const FrameTree* tree,
@@ -457,10 +457,10 @@ class Renderer
                           double now);
     void buildOrbitLists(const Eigen::Vector3d& astrocentricObserverPos,
                          const Eigen::Quaterniond& observerOrientation,
-                         const Frustum& viewFrustum,
+                         const celmath::Frustum& viewFrustum,
                          const FrameTree* tree,
                          double now);
-    void buildLabelLists(const Frustum& viewFrustum,
+    void buildLabelLists(const celmath::Frustum& viewFrustum,
                          double now);
 
     void addRenderListEntries(RenderListEntry& rle,
@@ -587,7 +587,7 @@ class Renderer
     void renderOrbit(const OrbitPathListEntry&,
                      double now,
                      const Eigen::Quaterniond& cameraOrientation,
-                     const Frustum& frustum,
+                     const celmath::Frustum& frustum,
                      float nearDist,
                      float farDist);
 

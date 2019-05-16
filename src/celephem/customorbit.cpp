@@ -20,6 +20,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 #define TWOPI 6.28318530717958647692

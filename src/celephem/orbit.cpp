@@ -20,6 +20,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 // Orbital velocity is computed by differentiation for orbits that don't

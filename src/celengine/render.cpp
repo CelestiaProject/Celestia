@@ -86,6 +86,7 @@ std::ofstream hdrlog;
 using namespace cmod;
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 #define FOV           45.0f
 #define NEAR_DIST      0.5f
@@ -2774,7 +2775,7 @@ void Renderer::draw(const Observer& observer,
             maxBodyMag = maxBodyMagPrev;
             saturationMag = maxBodyMag;
 #endif
-            float illumination = Math<float>::clamp(sunDir.dot(normal) + 0.2f);
+            float illumination = clamp(sunDir.dot(normal) + 0.2f);
 
             float lightness = illumination * density;
             faintestMag = faintestMag  - 15.0f * lightness;
@@ -3960,7 +3961,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
         auto hh = (float) sqrt(h);
         float u = i <= nHorizonRings ? 0.0f :
             (float) (i - nHorizonRings) / (float) (nRings - nHorizonRings);
-        float r = Mathf::lerp(h, 1.0f - (horizonHeight * 0.05f), 1.0f + horizonHeight);
+        float r = lerp(h, 1.0f - (horizonHeight * 0.05f), 1.0f + horizonHeight);
         float atten = 1.0f - hh;
 
         for (int j = 0; j < nSlices; j++)
