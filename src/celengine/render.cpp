@@ -5308,18 +5308,18 @@ void Renderer::renderPlanet(Body& body,
                     float ringFeatureSize = (projectedRingSize / ringTextureWidth) / approxRingDistance;
                     float relativeFeatureSize = lights.lights[li].apparentSize / ringFeatureSize;
                     //float areaLightLod = log(max(relativeFeatureSize, 1.0f)) / log(2.0f);
-                    float areaLightLod = celmath::log2(max(relativeFeatureSize, 1.0f));
+                    float areaLightLod = log2(max(relativeFeatureSize, 1.0f));
 
                     // Compute the LOD that would be automatically used by the GPU.
                     float texelToPixelRatio = ringTextureWidth / projectedRingSizeInPixels;
-                    float gpuLod = celmath::log2(texelToPixelRatio);
+                    float gpuLod = log2(texelToPixelRatio);
 
                     //float lod = max(areaLightLod, log(texelToPixelRatio) / log(2.0f));
                     float lod = max(areaLightLod, gpuLod);
 
                     // maxLOD is the index of the smallest mipmap (or close to it for non-power-of-two
                     // textures.) We can't make the lod larger than this.
-                    float maxLod = celmath::log2((float) ringsTex->getWidth());
+                    float maxLod = log2((float) ringsTex->getWidth());
                     if (maxLod > 1.0f)
                     {
                         // Avoid using the 1x1 mipmap, as it appears to cause 'bleeding' when

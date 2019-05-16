@@ -21,17 +21,6 @@
 // moved to the celmath namespace.
 namespace celmath
 {
-    /** Return the natural logarithm of 2 */
-    template<class T> CONSTEXPR T Ln2()
-    {
-        return (T) 0.693147180559945;
-    }
-
-    /** Return the log base 2 of the argument. */
-    template<class T> T log2(T x)
-    {
-        return std::log(x) / Ln2<T>();
-    }
 }
 
 
