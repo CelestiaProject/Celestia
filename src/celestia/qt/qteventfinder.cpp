@@ -35,6 +35,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 // TODO: share this constant and function with render.cpp

@@ -4,6 +4,7 @@
 #include <celestia/celestiacore.h>
 
 using namespace Eigen;
+using namespace celmath;
 
 GoToObjectDialog::GoToObjectDialog(QWidget *parent, CelestiaCore* _appCore) :
     QDialog(parent),

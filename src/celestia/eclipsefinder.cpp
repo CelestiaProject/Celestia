@@ -18,6 +18,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 constexpr const double dT = 1.0 / (24.0 * 60.0);

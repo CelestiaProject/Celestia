@@ -20,6 +20,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 // The value of the temperature of the sun is actually 5780, but the

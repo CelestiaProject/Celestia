@@ -20,6 +20,7 @@
 #include "qtinfopanel.h"
 
 using namespace Eigen;
+using namespace celmath;
 
 // TODO: This should be moved to astro.cpp
 struct OrbitalElements

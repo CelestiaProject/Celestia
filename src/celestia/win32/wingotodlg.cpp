@@ -17,6 +17,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 static bool GetDialogFloat(HWND hDlg, int id, float& f)

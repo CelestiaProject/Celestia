@@ -16,6 +16,7 @@
 #include "nutation.h"
 
 using namespace std;
+using namespace celmath;
 
 
 struct NutationTableEntry

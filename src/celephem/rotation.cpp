@@ -18,6 +18,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 static const double ANGULAR_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;

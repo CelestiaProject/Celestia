@@ -20,7 +20,7 @@
 #include "celengine/stardb.h"
 
 using namespace std;
-
+using namespace celmath;
 
 #ifdef _WIN32
 static string MainDatabaseFile("hip_main.dat");

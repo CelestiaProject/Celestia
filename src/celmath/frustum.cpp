@@ -13,6 +13,8 @@
 
 using namespace Eigen;
 
+namespace celmath
+{
 
 Frustum::Frustum(float fov, float aspectRatio, float n) :
     infinite(true)
@@ -185,3 +187,5 @@ Frustum::transform(const Matrix4f& m)
         //planes[i].d *= s;
     }
 }
+
+};

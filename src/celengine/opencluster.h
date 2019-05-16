@@ -25,7 +25,7 @@ class OpenCluster : public DeepSkyObject
     virtual void setType(const std::string&);
     virtual std::string getDescription() const;
 
-    virtual bool pick(const Ray3d& ray,
+    virtual bool pick(const celmath::Ray3d& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const;
     virtual bool load(AssociativeArray*, const std::string&);

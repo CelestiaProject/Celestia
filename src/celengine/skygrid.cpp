@@ -23,6 +23,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 // #define DEBUG_LABEL_PLACEMENT

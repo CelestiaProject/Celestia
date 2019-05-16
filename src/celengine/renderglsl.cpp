@@ -36,6 +36,7 @@
 using namespace cmod;
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 const double AtmosphereExtinctionThreshold = 0.05;

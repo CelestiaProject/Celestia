@@ -29,6 +29,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 // Trajectories are sampled adaptively for rendering.  MaxSampleInterval
 // is the maximum time (in days) between samples.  The threshold angle
@@ -203,9 +204,9 @@ template <typename T> Vector3d SampledOrbit<T>::computePosition(double jd) const
                 Sample<T> s1 = samples[n];
 
                 double t = (jd - s0.t) / (s1.t - s0.t);
-                pos = Vector3d(Mathd::lerp(t, (double) s0.x, (double) s1.x),
-                               Mathd::lerp(t, (double) s0.y, (double) s1.y),
-                               Mathd::lerp(t, (double) s0.z, (double) s1.z));
+                pos = Vector3d(lerp(t, (double) s0.x, (double) s1.x),
+                               lerp(t, (double) s0.y, (double) s1.y),
+                               lerp(t, (double) s0.z, (double) s1.z));
             }
             else if (interpolation == TrajectoryInterpolationCubic)
             {
