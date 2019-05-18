@@ -15,3 +15,6 @@ target_link_libraries(octree celengine celutil)
 
 add_executable(frustum frustum.cpp)
 target_link_libraries(frustum celengine celutil)
+
+add_executable(crossindex crossindex.cpp)
+target_link_libraries(crossindex celengine celutil)

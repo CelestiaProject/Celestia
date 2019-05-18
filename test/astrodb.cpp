@@ -19,7 +19,7 @@ bool objectNames(AstroDatabase &db, AstroCatalog::IndexNumber nr)
         cerr << "Object nr " << nr << " doesn't exists!\n";
         return false;
     }
-    cout << "Names of object nr " << nr << ": " << db.getObjectNameList(nr, 1024) << endl;
+    cout << "Names of object nr " << nr << ": " << db.getObjectNames(nr, 1024) << endl;
     return true;
 }
 
@@ -31,7 +31,7 @@ bool objectNames(AstroDatabase &db, const std::string &name)
         cerr << "Object named " << name << " doesn't exists!\n";
         return false;
     }
-    cout << "Names of object nr " << o->getIndex() << ": " << db.getObjectNameList(o->getIndex(), 1024) << endl;
+    cout << "Names of object nr " << o->getIndex() << ": " << db.getObjectNames(o->getIndex(), 1024) << endl;
     return true;
 }
 

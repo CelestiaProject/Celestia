@@ -54,27 +54,18 @@ DeepSkyObject *AstroDatabase::getDSO(const std::string &name, bool tryGreek, boo
 
 AstroCatalog::IndexNumber AstroDatabase::catalogNumberToIndex(int catalog, AstroCatalog::IndexNumber nr) const
 {
-    if (catalog == Hipparcos && nr > 0 && nr < HipparcosAstroCatalog::MaxCatalogNumber)
-        return nr;
-    if (catalog == Tycho && nr > HipparcosAstroCatalog::MaxCatalogNumber && nr < TychoAstroCatalog::MaxCatalogNumber)
-        return nr;
     std::map<int, CrossIndex*>::const_iterator it = m_catxindex.find(catalog);
-    if (it != m_catxindex.end() && it->second->count(nr) > 0)
-        return it->second->at(nr);
-    return AstroCatalog::InvalidIndex;
+    if (it == m_catxindex.end())
+        return AstroCatalog::InvalidIndex;
+    return it->second->get(nr);
 }
 
 AstroCatalog::IndexNumber AstroDatabase::indexToCatalogNumber(int catalog, AstroCatalog::IndexNumber nr) const
 {
-    if (catalog == Hipparcos && nr > 0 && nr < HipparcosAstroCatalog::MaxCatalogNumber)
-        return nr;
-    if (catalog == Tycho && nr > HipparcosAstroCatalog::MaxCatalogNumber && nr < TychoAstroCatalog::MaxCatalogNumber)
-        return nr;
     std::map<int, CrossIndex*>::const_iterator it = m_celxindex.find(catalog);
-    if (it != m_celxindex.end() && it->second->count(nr) > 0)
-        return it->second->at(nr);
-//     cout << "No cross index entry for catalog " << catalog << "[" << nr << "]\n";
-    return AstroCatalog::InvalidIndex;
+    if (it == m_celxindex.end())
+        return AstroCatalog::InvalidIndex;
+    return it->second->get(nr);
 }
 
 AstroCatalog::IndexNumber AstroDatabase::nameToIndex(const std::string& name, bool tryGreek, bool smart) const
@@ -136,7 +127,36 @@ std::string AstroDatabase::getObjectName(AstroCatalog::IndexNumber nr, bool i18n
     return catalogNumberToString(nr);
 }
 
-std::string AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr, int max) const
+std::vector<std::string> AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr, int max) const
+{
+    std::vector<std::string> ret;
+    NameDatabase::NumberIndex::const_iterator iter = m_nameDB.getFirstNameIter(nr);
+    while (iter != m_nameDB.getFinalNameIter() && iter->first == nr && max > 0)
+    {
+        ret.push_back(iter->second);
+        ++iter;
+        --max;
+    }
+
+    if (max == 0)
+        return ret;
+    for (const auto it : m_catalogs)
+    {
+        if (max == 0)
+            break;
+        AstroCatalog::IndexNumber inr = indexToCatalogNumber(it.first, nr);
+        if (inr == AstroCatalog::InvalidIndex)
+        {
+//             cout << "Invalid cross index entry for catalog " << it.first << "[" << nr << "]\n";
+            continue;
+        }
+        ret.push_back(it.second->catalogNumberToName(inr));
+        --max;
+    }
+    return ret;
+}
+
+std::string AstroDatabase::getObjectNames(AstroCatalog::IndexNumber nr, int max) const
 {
     string names;
     names.reserve(max); // optimize memory allocation
@@ -181,32 +201,29 @@ bool AstroDatabase::addAstroCatalog(int id, AstroCatalog *catalog)
 
 bool AstroDatabase::addCatalogNumber(AstroCatalog::IndexNumber celnr, int catalog, AstroCatalog::IndexNumber catnr, bool overwrite)
 {
+    return addCatalogRange(celnr, catalog, catnr - celnr, 1, overwrite);
+}
+
+bool AstroDatabase::addCatalogRange(AstroCatalog::IndexNumber nr, int catalog, int shift, size_t length, bool overwrite)
+{
     if (m_catalogs.count(catalog) == 0)
     {
         fmt::fprintf(cerr, "Catalog %i not registered!\n", catalog);
         return false;
     }
-
-    if (m_catxindex.count(catalog) == 0)
-        m_catxindex.insert(std::make_pair(catalog, new CrossIndex));
-    CrossIndex *i = m_catxindex.find(catalog)->second;
-    if (i->count(catnr) > 0 && !overwrite)
-    {
-        fmt::fprintf(cerr, "Cross index entry for catalog nr %i[%i] already exists!\n", catalog, catnr);
-        return false;
-    }
-    (*i)[catnr] = celnr;
-
     if (m_celxindex.count(catalog) == 0)
         m_celxindex.insert(std::make_pair(catalog, new CrossIndex));
-    i = m_celxindex.find(catalog)->second;
-    if (i->count(celnr) > 0 && !overwrite)
-    {
-        fmt::fprintf(cerr, "Cross index entry for celestia nr %i[%i] already exists (%i)!\n", catalog, celnr, (*i)[celnr]);
+    CrossIndex *i = m_celxindex.find(catalog)->second;
+//     fmt::fprintf(cout, "Adding cel-cat range %i => [%i, %i]...\n", nr, shift, length);
+    if (!i->set(nr, shift, length, overwrite))
         return false;
-    }
-    (*i)[celnr] = catnr;
-    return true;
+    nr += shift;
+    shift = -shift;
+    if (m_catxindex.count(catalog) == 0)
+        m_catxindex.insert(std::make_pair(catalog, new CrossIndex));
+    i = m_catxindex.find(catalog)->second;
+//     fmt::fprintf(cout, "Adding cat-cel range %i => [%i, %i]...\n", nr, shift, length);
+    return i->set(nr, shift, length, overwrite);
 }
 
 bool AstroDatabase::addObject(AstroObject *obj)
@@ -315,6 +332,9 @@ void AstroDatabase::createBuiltinCatalogs()
     m_catalogs.insert(std::make_pair(SAO, new SAOAstroCatalog()));
     m_catalogs.insert(std::make_pair(Hipparcos, new HipparcosAstroCatalog()));
     m_catalogs.insert(std::make_pair(Tycho, new TychoAstroCatalog()));
+
+    addCatalogRange(1, Hipparcos, 0, HipparcosAstroCatalog::MaxCatalogNumber - 1);
+    addCatalogRange(HipparcosAstroCatalog::MaxCatalogNumber + 1, Tycho, 0, TychoAstroCatalog::MaxCatalogNumber -  HipparcosAstroCatalog::MaxCatalogNumber - 1);
 }
 
 AstroCatalog::IndexNumber AstroDatabase::getAutoIndex()
@@ -341,4 +361,36 @@ float AstroDatabase::avgDsoMag() const
     }
     avg /= n;
     return avg;
+}
+
+CrossIndex *AstroDatabase::getCelestiaCrossIndex(int catalog)
+{
+    map<int, CrossIndex*>::iterator it = m_celxindex.find(catalog);
+    if (it == m_celxindex.end())
+        return nullptr;
+    return it->second;
+}
+
+const CrossIndex *AstroDatabase::getCelestiaCrossIndex(int catalog) const
+{
+    map<int, CrossIndex*>::const_iterator it = m_celxindex.find(catalog);
+    if (it == m_celxindex.end())
+        return nullptr;
+    return it->second;
+}
+
+CrossIndex *AstroDatabase::getCatalogCrossIndex(int catalog)
+{
+    map<int, CrossIndex*>::iterator it = m_catxindex.find(catalog);
+    if (it == m_catxindex.end())
+        return nullptr;
+    return it->second;
+}
+
+const CrossIndex *AstroDatabase::getCatalogCrossIndex(int catalog) const
+{
+    map<int, CrossIndex*>::const_iterator it = m_catxindex.find(catalog);
+    if (it == m_catxindex.end())
+        return nullptr;
+    return it->second;
 }

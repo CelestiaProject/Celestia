@@ -3477,84 +3477,16 @@ void CelestiaCore::renderOverlay()
         {
 #ifdef OCTREE_DEBUG
             Renderer *rend = getRenderer();
-            fmt::fprintf(*overlay, _("FPS: %.1f\nStars: [ %i : %i : %i ] DSOs: [ %i : %i : %i ]\nLimit: %f, proc order err: %i\nsel star: [ processed: %i, node proc.: %i : node in frust.: %i ] sel dso: [ processed: %i, node proc.: %i, node in frust.: %i ]\n"),
+            fmt::fprintf(*overlay, _("FPS: %.1f\nStars: [ %i : %i : %i ], Limit: %f\nDSOs: [ %i : %i : %i ]\n"),
                          fps,
                          rend->m_starProcStats.objects,
                          rend->m_starProcStats.nodes,
                          rend->m_starProcStats.height,
+                         rend->m_starProcStats.limit,
                          rend->m_dsoProcStats.objects,
                          rend->m_dsoProcStats.nodes,
-                         rend->m_dsoProcStats.height,
-                         rend->m_starProcStats.limit,
-                         rend->m_starProcStats.selWrongOrder,
-                         rend->m_starProcStats.selProc,
-                         rend->m_starProcStats.selNode,
-                         rend->m_starProcStats.selInFrustum,
-                         rend->m_dsoProcStats.selProc,
-                         rend->m_dsoProcStats.selNode,
-                         rend->m_dsoProcStats.selInFrustum
+                         rend->m_dsoProcStats.height
                         );
-            OctreeNode *node = nullptr;
-            if (lastSelection.isLuminous() && (node = lastSelection.luminous()->getOctreeNode()) != nullptr)
-            {
-                Vector3d selpos = lastSelection.luminous()->getPosition();
-                if (rend->m_starProcStats.lastSelNode != nullptr)
-                {
-                    const OctreeNode *lastnode = rend->m_starProcStats.lastSelNode;
-                    Vector3d difflastpos = rend->m_starProcStats.obsPos - lastnode->getCenter();
-                    double dist = (rend->m_starProcStats.obsPos - lastnode->getCenter()).norm() - node->getScale() * SQRT3;
-                    fmt::fprintf(*overlay, "Last sel node: [%f, %f, %f,], %f: [%f : %f],scale %f, in frustum: [ %i : %i ].\n",
-                        difflastpos.x(),
-                        difflastpos.y(),
-                        difflastpos.z(),
-                        dist,
-                        dist > 0 ? astro::absToAppMag((double)lastnode->getBrightest(), dist) : 9999,
-                        lastnode->getBrightest(),
-                        lastnode->getScale(),
-                        rend->m_starProcStats.lastSelNodeInFrustum,
-                        lastnode->isInFrustum(rend->m_starProcStats.frustPlanes)
-                    );
-                }
-                double dist = (rend->m_starProcStats.obsPos - node->getCenter()).norm() - node->getScale() * SQRT3;
-                float fdist = dist;
-                Vector3d diffpos = rend->m_starProcStats.obsPos - node->getCenter();
-                Vector3d objrelpos = node->getCenter() - lastSelection.luminous()->getPosition();
-                fmt::fprintf(*overlay, "Sel Node: pos [%f, %f, %f], dist: %f, [ max app %f : max abs %f], scale: %f in frust: %i, with obs: %i.\nPos rel node: [%f : %f : %f]\n",
-                    diffpos.x(), diffpos.y(), diffpos.z(),
-                    dist,
-                    fdist,
-                    dist > 0 ? astro::absToAppMag((double)node->getBrightest(), dist) : 9999,
-                    node->getBrightest(),
-                    node->getScale(),
-                    node->isInFrustum(rend->m_starProcStats.frustPlanes),
-                    node->isInCell(rend->m_starProcStats.obsPos),
-                    objrelpos.x(),objrelpos.y(),objrelpos.z());
-                while(node != nullptr)
-                {
-                    if (node->isInFrustum(rend->m_starProcStats.frustPlanes))
-                        *overlay << "+";
-                    else
-                        *overlay << "-";
-                    if (node->isInCell(selpos))
-                        *overlay << "*";
-                    else
-                        *overlay << "o";
-                    if (node->getParent() != nullptr)
-                    {
-                        if (node->getParent()->getChild(selpos) == node)
-                            *overlay << "@";
-                        else
-                            *overlay << "#";
-                    }
-                    *overlay << " ";
-                    node = node->getParent();
-                }
-                *overlay << endl;
-            }
-            else
-            {
-                *overlay << '\n';
-            }
 #else
             fmt::fprintf(*overlay, _("FPS: %.1f\n"), fps);
 #endif
@@ -3663,7 +3595,7 @@ void CelestiaCore::renderOverlay()
                 if (sel != lastSelection)
                 {
                     lastSelection = sel;
-                    selectionNames = sim->getUniverse()->getDatabase().getObjectNameList(sel.star());
+                    selectionNames = sim->getUniverse()->getDatabase().getObjectNames(sel.star());
                     // Skip displaying the English name if a localized version is present.
                     string starName = sim->getUniverse()->getDatabase().getObjectName(sel.star());
                     string locStarName = sim->getUniverse()->getDatabase().getObjectName(sel.star(), true);
@@ -3697,7 +3629,7 @@ void CelestiaCore::renderOverlay()
                 if (sel != lastSelection)
                 {
                     lastSelection = sel;
-                    selectionNames = sim->getUniverse()->getDatabase().getObjectNameList(sel.deepsky());
+                    selectionNames = sim->getUniverse()->getDatabase().getObjectNames(sel.deepsky());
                     // Skip displaying the English name if a localized version is present.
                     string DSOName = sim->getUniverse()->getDatabase().getObjectName(sel.deepsky());
                     string locDSOName = sim->getUniverse()->getDatabase().getObjectName(sel.deepsky(), true);

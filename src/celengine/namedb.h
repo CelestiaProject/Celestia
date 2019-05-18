@@ -53,4 +53,3 @@ class NameDatabase
     NameIndex   nameIndex;
     NumberIndex numberIndex;
 };
-

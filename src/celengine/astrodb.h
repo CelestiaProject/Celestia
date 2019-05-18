@@ -5,9 +5,10 @@
 #include <set>
 #include <climits>
 #include "selection.h"
-#include "name.h"
+#include "namedb.h"
 #include "astroobj.h"
 #include "astrocat.h"
+#include "crossindex.h"
 #include "astrooctree.h"
 #include "dataloader.h"
 #include "star.h"
@@ -16,7 +17,6 @@
 
 class AstroDatabase {
  public:
-    typedef std::map<AstroCatalog::IndexNumber, AstroCatalog::IndexNumber> CrossIndex;
     typedef std::map<AstroCatalog::IndexNumber, AstroObject*> MainIndex;
     typedef std::map<int, AstroDataLoader*> LoadersMap;
     typedef std::set<Star*> StarsList;
@@ -80,10 +80,17 @@ class AstroDatabase {
     {
         return getObjectName(o->getIndex(), i18n);
     }
-    std::string getObjectNameList(AstroCatalog::IndexNumber, int = 128) const;
-    std::string getObjectNameList(AstroObject *o, int n = 128) const
+
+    std::vector<std::string> getObjectNameList(AstroCatalog::IndexNumber, int = 128) const;
+    std::vector<std::string> getObjectNameList(AstroObject *o, int n = 128) const
     {
         return getObjectNameList(o->getIndex(), n);
+    }
+
+    std::string getObjectNames(AstroCatalog::IndexNumber, int = 128) const;
+    std::string getObjectNames(AstroObject *o, int n = 128) const
+    {
+        return getObjectNames(o->getIndex(), n);
     }
 
     std::vector<std::string> getCompletion(const std::string&name) const
@@ -93,6 +100,7 @@ class AstroDatabase {
 
     bool addAstroCatalog(int, AstroCatalog*);
     bool addCatalogNumber(AstroCatalog::IndexNumber, int, AstroCatalog::IndexNumber, bool = false);
+    bool addCatalogRange(AstroCatalog::IndexNumber, int, int, size_t, bool = false);
 
     bool addObject(AstroObject *);
     bool addStar(Star *);
@@ -132,4 +140,9 @@ class AstroDatabase {
     const OctreeNode* getDsoOctree() const { return &m_dsoOctree; }
 
     float avgDsoMag() const;
+
+    CrossIndex *getCelestiaCrossIndex(int);
+    const CrossIndex *getCelestiaCrossIndex(int) const;
+    CrossIndex *getCatalogCrossIndex(int);
+    const CrossIndex *getCatalogCrossIndex(int) const;
 };
