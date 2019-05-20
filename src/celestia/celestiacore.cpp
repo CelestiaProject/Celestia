@@ -3468,7 +3468,18 @@ void CelestiaCore::renderOverlay()
         overlay->beginText();
         *overlay << '\n';
         if (showFPSCounter)
+#ifdef OCTREE_DEBUG
+            fmt::fprintf(*overlay, _("FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : %zu : %zu ]\n"),
+                         fps,
+                         getRenderer()->m_starProcStats.objects,
+                         getRenderer()->m_starProcStats.nodes,
+                         getRenderer()->m_starProcStats.height,
+                         getRenderer()->m_dsoProcStats.objects,
+                         getRenderer()->m_dsoProcStats.nodes,
+                         getRenderer()->m_dsoProcStats.height);
+#else
             fmt::fprintf(*overlay, _("FPS: %.1f\n"), fps);
+#endif
         else
             *overlay << '\n';
 
@@ -4260,7 +4271,6 @@ bool CelestiaCore::initRenderer()
     //fmt::printf(_("render path: %i\n"), context->getRenderPath());
 
     Renderer::DetailOptions detailOptions;
-    detailOptions.ringSystemSections = config->ringSystemSections;
     detailOptions.orbitPathSamplePoints = config->orbitPathSamplePoints;
     detailOptions.shadowTextureSize = config->shadowTextureSize;
     detailOptions.eclipseTextureSize = config->eclipseTextureSize;

@@ -31,56 +31,10 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
+#include "celestia/eclipsefinder.h"
 
 using namespace Eigen;
 using namespace std;
-
-
-// Based on eclipsefinder.h; should be moved back.
-
-class EclipseRecord
-{
-public:
-    EclipseRecord() = default;
-
-    Body* occulter{ nullptr };
-    Body* receiver{ nullptr };
-    double startTime;
-    double endTime;
-};
-
-
-class QtEclipseFinder
-{
- public:
-    QtEclipseFinder(Body* _body,
-                    EclipseFinderWatcher* _watcher) :
-        body(_body),
-        watcher(_watcher)
-    {
-    }
-
-    enum
-    {
-        SolarEclipse = 0x1,
-        LunarEclipse = 0x2,
-    };
-
-    void findEclipses(double startDate,
-                      double endDate,
-                      int eclipseTypeMask,
-                      vector<EclipseRecord>& eclipses);
-
- private:
-    bool testEclipse(const Body& receiver, const Body& occulter, double now) const;
-    double findEclipseStart(const Body& recever, const Body& occulter, double now, double startStep, double minStep) const;
-    double findEclipseEnd(const Body& recever, const Body& occulter, double now, double startStep, double minStep) const;
-
- private:
-    Body* body;
-    EclipseFinderWatcher* watcher;
-};
-
 
 
 // TODO: share this constant and function with render.cpp
@@ -108,247 +62,9 @@ static QDateTime TDBToQDate(double tdb)
                      QTime(date.hour, date.minute, sec, msec));
 }
 
-
-
-bool QtEclipseFinder::testEclipse(const Body& receiver, const Body& occulter,
-                                  double now) const
-{
-    // Ignore situations where the shadow casting body is much smaller than
-    // the receiver, as these shadows aren't likely to be relevant.  Also,
-    // ignore eclipses where the occulter is not an ellipsoid, since we can't
-    // generate correct shadows in this case.
-    if (occulter.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
-        occulter.isEllipsoid())
-    {
-        // All of the eclipse related code assumes that both the occulter
-        // and receiver are spherical.  Irregular receivers will work more
-        // or less correctly, but occulters that are sufficiently non-spherical
-        // will produce obviously incorrect shadows.  Another assumption we
-        // make is that the distance between the occulter and receiver is much
-        // less than the distance between the sun and the receiver.  This
-        // approximation works everywhere in the solar system, and likely
-        // works for any orbitally stable pair of objects orbiting a star.
-        Vector3d posReceiver = receiver.getAstrocentricPosition(now);
-        Vector3d posOcculter = occulter.getAstrocentricPosition(now);
-
-        const Star* sun = receiver.getSystem()->getStar();
-        assert(sun != nullptr);
-        double distToSun = posReceiver.norm();
-        float appSunRadius = (float) (sun->getRadius() / distToSun);
-
-        Vector3d dir = posOcculter - posReceiver;
-        double distToOcculter = dir.norm() - receiver.getRadius();
-        float appOccluderRadius = (float) (occulter.getRadius() / distToOcculter);
-
-        // The shadow radius is the radius of the occluder plus some additional
-        // amount that depends upon the apparent radius of the sun.  For
-        // a sun that's distant/small and effectively a point, the shadow
-        // radius will be the same as the radius of the occluder.
-        float shadowRadius = (1 + appSunRadius / appOccluderRadius) *
-            occulter.getRadius();
-
-        // Test whether a shadow is cast on the receiver.  We want to know
-        // if the receiver lies within the shadow volume of the occulter.  Since
-        // we're assuming that everything is a sphere and the sun is far
-        // away relative to the occulter, the shadow volume is a
-        // cylinder capped at one end.  Testing for the intersection of a
-        // singly capped cylinder is as simple as checking the distance
-        // from the center of the receiver to the axis of the shadow cylinder.
-        // If the distance is less than the sum of the occulter's and receiver's
-        // radii, then we have an eclipse.
-        float R = receiver.getRadius() + shadowRadius;
-        double dist = distance(posReceiver,
-                               Ray3d(posOcculter, posOcculter - Vector3d::Zero()));
-        if (dist < R)
-        {
-            // Ignore "eclipses" where the occulter and receiver have
-            // intersecting bounding spheres.
-            if (distToOcculter > occulter.getRadius())
-                return true;
-        }
-    }
-
-    return false;
-}
-
-
-// Given a time during an eclipse, find the start of the eclipse to
-// a precision of minStep.
-double QtEclipseFinder::findEclipseStart(const Body& receiver, const Body& occulter,
-                                         double now,
-                                         double startStep,
-                                         double minStep) const
-{
-    double step = startStep / 2;
-    double t = now - step;
-    bool eclipsed = true;
-
-    // Perform a binary search to find the end of the eclipse
-    while (step > minStep)
-    {
-        eclipsed = testEclipse(receiver, occulter, t);
-        step *= 0.5;
-        if (eclipsed)
-            t -= step;
-        else
-            t += step;
-    }
-
-    // Always return a time when the receiver is /not/ in eclipse
-    if (eclipsed)
-        t -= step;
-
-    return t;
-}
-
-
-// Given a time during an eclipse, find the end of the eclipse to
-// a precision of minStep.
-double QtEclipseFinder::findEclipseEnd(const Body& receiver, const Body& occulter,
-                                       double now,
-                                       double startStep,
-                                       double minStep) const
-{
-    // First do a coarse search to find the eclipse end to within the precision
-    // of startStep.
-    while (testEclipse(receiver, occulter, now + startStep))
-        now += startStep;
-
-    double step = startStep / 2;
-    double t = now + step;
-    bool eclipsed = true;
-
-
-    // Perform a binary search to find the end of the eclipse
-    while (step > minStep)
-    {
-        eclipsed = testEclipse(receiver, occulter, t);
-        step *= 0.5;
-        if (eclipsed)
-            t += step;
-        else
-            t -= step;
-    }
-
-    // Always return a time when the receiver is /not/ in eclipse
-    if (eclipsed)
-        t += step;
-
-    return t;
-}
-
-
-void QtEclipseFinder::findEclipses(double startDate,
-                                   double endDate,
-                                   int eclipseTypeMask,
-                                   vector<EclipseRecord>& eclipses)
-{
-    PlanetarySystem* satellites = body->getSatellites();
-
-    // See if there's anything that could test
-    if (satellites == nullptr)
-        return;
-
-    // For each body, we'll need to store the time when the last eclipse ended
-    vector<double> previousEclipseEndTimes;
-
-    // Make a list of satellites that we'll actually test for eclipses; ignore
-    // spacecraft and very small objects.
-    vector<Body*> testBodies;
-    for (int i = 0; i < satellites->getSystemSize(); i++)
-    {
-        Body* obj = satellites->getBody(i);
-        if ((obj->getClassification() & EclipseObjectMask) != 0 &&
-            obj->getRadius() >= body->getRadius() * MinRelativeOccluderRadius)
-        {
-            testBodies.push_back(obj);
-            previousEclipseEndTimes.push_back(startDate - 1.0);
-        }
-    }
-
-    if (testBodies.empty())
-        return;
-
-    // TODO: Use a fixed step of one hour for now; we should use a binary
-    // search instead.
-    double searchStep = 1.0 / 24.0; // one hour
-
-    // Precision of eclipse duration calculation
-    double durationPrecision = 1.0 / (24.0 * 360.0); // ten seconds
-
-    for (double t = startDate; t <= endDate; t += searchStep)
-    {
-        if (watcher != nullptr)
-        {
-            if (watcher->eclipseFinderProgressUpdate(t) == EclipseFinderWatcher::AbortOperation)
-                return;
-        }
-
-        for (unsigned int i = 0; i < testBodies.size(); i++)
-        {
-            Body* occulter = nullptr;
-            Body* receiver = nullptr;
-
-            if (eclipseTypeMask == SolarEclipse)
-            {
-                occulter = testBodies[i];
-                receiver = body;
-            }
-            else
-            {
-                occulter = body;
-                receiver = testBodies[i];
-            }
-
-            // Only test for an eclipse if we're not in the middle of
-            // of previous one.
-            if (t > previousEclipseEndTimes[i])
-            {
-                if (eclipseTypeMask & SolarEclipse)
-                {
-                    occulter = testBodies[i];
-                    receiver = body;
-
-                    if (testEclipse(*receiver, *occulter, t))
-                    {
-                        EclipseRecord eclipse;
-                        eclipse.startTime = findEclipseStart(*receiver, *occulter, t, searchStep, durationPrecision);
-                        eclipse.endTime = findEclipseEnd(*receiver, *occulter, t, searchStep, durationPrecision);
-                        eclipse.receiver = receiver;
-                        eclipse.occulter = occulter;
-                        eclipses.push_back(eclipse);
-
-                        previousEclipseEndTimes[i] = eclipse.endTime;
-                    }
-                }
-
-                if (eclipseTypeMask & LunarEclipse)
-                {
-                    occulter = body;
-                    receiver = testBodies[i];
-
-                    if (testEclipse(*receiver, *occulter, t))
-                    {
-                        EclipseRecord eclipse;
-                        eclipse.startTime = findEclipseStart(*receiver, *occulter, t, searchStep, durationPrecision);
-                        eclipse.endTime = findEclipseEnd(*receiver, *occulter, t, searchStep, durationPrecision);
-                        eclipse.receiver = receiver;
-                        eclipse.occulter = occulter;
-                        eclipses.push_back(eclipse);
-
-                        previousEclipseEndTimes[i] = eclipse.endTime;
-                    }
-                }
-            }
-        }
-    }
-
-}
-
-
 struct EclipseOcculterSortPredicate
 {
-    bool operator()(const EclipseRecord& e0, const EclipseRecord& e1)
+    bool operator()(const Eclipse& e0, const Eclipse& e1)
     {
         return e0.occulter->getName() < e1.occulter->getName();
     }
@@ -358,7 +74,7 @@ struct EclipseOcculterSortPredicate
 
 struct EclipseReceiverSortPredicate
 {
-    bool operator()(const EclipseRecord& e0, const EclipseRecord& e1)
+    bool operator()(const Eclipse& e0, const Eclipse& e1)
     {
         return e0.receiver->getName() < e1.receiver->getName();
     }
@@ -368,7 +84,7 @@ struct EclipseReceiverSortPredicate
 
 struct EclipseStartTimeSortPredicate
 {
-    bool operator()(const EclipseRecord& e0, const EclipseRecord& e1)
+    bool operator()(const Eclipse& e0, const Eclipse& e1)
     {
         return e0.startTime < e1.startTime;
     }
@@ -378,7 +94,7 @@ struct EclipseStartTimeSortPredicate
 
 struct EclipseDurationSortPredicate
 {
-    bool operator()(const EclipseRecord& e0, const EclipseRecord& e1)
+    bool operator()(const Eclipse& e0, const Eclipse& e1)
     {
         return e0.endTime - e0.startTime < e1.endTime - e1.startTime;
     }
@@ -402,9 +118,9 @@ public:
     int columnCount(const QModelIndex& index) const;
     void sort(int column, Qt::SortOrder order);
 
-    void setEclipses(const vector<EclipseRecord>& _eclipses);
+    void setEclipses(const vector<Eclipse>& _eclipses);
 
-    const EclipseRecord* eclipseAtIndex(const QModelIndex& index) const;
+    const Eclipse* eclipseAtIndex(const QModelIndex& index) const;
 
     enum
     {
@@ -415,7 +131,7 @@ public:
     };
 
 private:
-    vector<EclipseRecord> eclipses;
+    vector<Eclipse> eclipses;
 };
 
 
@@ -433,7 +149,7 @@ QVariant EventTableModel::data(const QModelIndex& index, int role) const
         return QVariant();
     }
 
-    const EclipseRecord& eclipse = eclipses[index.row()];
+    const Eclipse& eclipse = eclipses[index.row()];
 
     if (role == Qt::DisplayRole)
     {
@@ -520,7 +236,7 @@ void EventTableModel::sort(int column, Qt::SortOrder order)
 }
 
 
-void EventTableModel::setEclipses(const vector<EclipseRecord>& _eclipses)
+void EventTableModel::setEclipses(const vector<Eclipse>& _eclipses)
 {
     beginResetModel();
     eclipses = _eclipses;
@@ -528,7 +244,7 @@ void EventTableModel::setEclipses(const vector<EclipseRecord>& _eclipses)
 }
 
 
-const EclipseRecord* EventTableModel::eclipseAtIndex(const QModelIndex& index) const
+const Eclipse* EventTableModel::eclipseAtIndex(const QModelIndex& index) const
 {
     int row = index.row();
     if (row >= 0 && row < (int) eclipses.size())
@@ -647,20 +363,20 @@ EclipseFinderWatcher::Status EventFinder::eclipseFinderProgressUpdate(double t)
 
 void EventFinder::slotFindEclipses()
 {
-    int eclipseTypeMask = QtEclipseFinder::SolarEclipse;
+    int eclipseTypeMask = Eclipse::Solar;
     if (lunarOnlyButton->isChecked())
-        eclipseTypeMask = QtEclipseFinder::LunarEclipse;
+        eclipseTypeMask = Eclipse::Lunar;
     else if (allEclipsesButton->isChecked())
-        eclipseTypeMask = QtEclipseFinder::SolarEclipse | QtEclipseFinder::LunarEclipse;
+        eclipseTypeMask = Eclipse::Solar | Eclipse::Lunar;
 
     QString bodyName = QString("Sol/") + planetSelect->currentText();
     Selection obj = appCore->getSimulation()->findObjectFromPath(bodyName.toStdString(), true);
 
     if (obj.body() == nullptr)
     {
-        QMessageBox::critical(this,
-                              _("Event Finder"),
-                              QString(_("%1 is not a valid object")).arg(planetSelect->currentText()));
+        QString msg(_("%1 is not a valid object"));
+        QMessageBox::critical(this, _("Event Finder"),
+                              msg.arg(planetSelect->currentText()));
         return;
     }
 
@@ -669,13 +385,12 @@ void EventFinder::slotFindEclipses()
 
     if (startDate > endDate)
     {
-        QMessageBox::critical(this,
-                              _("Event Finder"),
+        QMessageBox::critical(this, _("Event Finder"),
                               _("End date is earlier than start date."));
         return;
     }
 
-    QtEclipseFinder finder(obj.body(), this);
+    EclipseFinder finder(obj.body(), this);
     searchTimer.start();
 
     double startTimeTDB = QDateToTDB(startDate);
@@ -690,7 +405,7 @@ void EventFinder::slotFindEclipses()
     progress->show();
 
 
-    vector<EclipseRecord> eclipses;
+    vector<Eclipse> eclipses;
     finder.findEclipses(startTimeTDB, endTimeTDB,
                         eclipseTypeMask,
                         eclipses);

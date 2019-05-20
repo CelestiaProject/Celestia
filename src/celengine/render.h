@@ -95,7 +95,6 @@ class Renderer
     struct DetailOptions
     {
         DetailOptions();
-        unsigned int ringSystemSections;
         unsigned int orbitPathSamplePoints;
         unsigned int shadowTextureSize;
         unsigned int eclipseTextureSize;
@@ -376,6 +375,10 @@ class Renderer
         LightingState::EclipseShadowVector* eclipseShadows;
     };
 
+#ifdef OCTREE_DEBUG
+    OctreeProcStats m_starProcStats;
+    OctreeProcStats m_dsoProcStats;
+#endif
  private:
     struct SkyVertex
     {

@@ -15,6 +15,7 @@
 
 #include <QDockWidget>
 #include <QTime>
+#include <celestia/eclipsefinder.h>
 
 class QTreeView;
 class QRadioButton;
@@ -24,22 +25,6 @@ class QProgressDialog;
 class QMenu;
 class EventTableModel;
 class CelestiaCore;
-class EclipseRecord;
-
-class EclipseFinderWatcher
-{
-public:
-    virtual ~EclipseFinderWatcher() = default;
-
-    enum Status
-    {
-        ContinueOperation = 0,
-        AbortOperation = 1,
-    };
-
-    virtual Status eclipseFinderProgressUpdate(double t) = 0;
-};
-
 
 class EventFinder : public QDockWidget, EclipseFinderWatcher
 {
@@ -83,7 +68,7 @@ class EventFinder : public QDockWidget, EclipseFinderWatcher
 
     QTime searchTimer;
 
-    const EclipseRecord* activeEclipse{ nullptr };
+    const Eclipse* activeEclipse{ nullptr };
 };
 
 #endif // _QTEVENTFINDER_H_

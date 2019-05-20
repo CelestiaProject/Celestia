@@ -33,9 +33,12 @@ uint32_t NameDatabase::getCatalogNumberByName(const std::string& name) const
     NameIndex::const_iterator iter = nameIndex.find(name);
 
     if (iter == nameIndex.end())
-        return InvalidCatalogNumber;
-    else
-        return iter->second;
+    {
+        iter = nameIndex.find(ReplaceGreekLetterAbbr(name));
+        if (iter == nameIndex.end())
+            return InvalidCatalogNumber;
+    }
+    return iter->second;
 }
 
 // Return the first name matching the catalog number or end()

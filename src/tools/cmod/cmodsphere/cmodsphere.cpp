@@ -3,7 +3,9 @@
 #include <cmath>
 #include <cstdio>
 
+#ifdef _WIN32
 #include <io.h>
+#endif
 #include <fcntl.h>
 
 #include <celmath/vecmath.h>

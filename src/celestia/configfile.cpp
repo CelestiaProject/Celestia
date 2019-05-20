@@ -135,7 +135,6 @@ CelestiaConfig* ReadCelestiaConfig(const string& filename, CelestiaConfig *confi
     config->linearFadeFraction = 0.0f;
     configParams->getNumber("LinearFadeFraction", config->linearFadeFraction);
 
-    config->ringSystemSections = getUint(configParams, "RingSystemSections", 100);
     config->orbitPathSamplePoints = getUint(configParams, "OrbitPathSamplePoints", 100);
     config->shadowTextureSize = getUint(configParams, "ShadowTextureSize", 256);
     config->eclipseTextureSize = getUint(configParams, "EclipseTextureSize", 128);

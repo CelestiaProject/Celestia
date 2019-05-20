@@ -564,7 +564,6 @@ Renderer::~Renderer()
 
 
 Renderer::DetailOptions::DetailOptions() :
-    ringSystemSections(100),
     orbitPathSamplePoints(100),
     shadowTextureSize(256),
     eclipseTextureSize(128),
@@ -4772,7 +4771,6 @@ void Renderer::renderObject(const Vector3f& pos,
                          radius, 1.0f - obj.semiAxes.y(),
                          textureResolution,
                          (renderFlags & ShowRingShadows) != 0 && lit,
-                         detailOptions.ringSystemSections,
                          this);
     }
 
@@ -4940,7 +4938,6 @@ void Renderer::renderObject(const Vector3f& pos,
                              radius, 1.0f - obj.semiAxes.y(),
                              textureResolution,
                              (renderFlags & ShowRingShadows) != 0 && lit,
-                             detailOptions.ringSystemSections,
                              this);
         }
     }
@@ -5806,6 +5803,27 @@ static float luminosityAtOpposition(float sunLuminosity,
 }
 
 
+static bool isBodyVisible(const Body* body, int bodyVisibilityMask)
+{
+    int klass = body->getClassification();
+    switch (body->getClassification())
+    {
+    // Diffuse objects don't have controls to show/hide visibility
+    case Body::Diffuse:
+        return body->isVisible();
+
+    // SurfaceFeature inherits visibility of its parent body
+    case Body::SurfaceFeature:
+        assert(body->getSystem() != nullptr);
+        body = body->getSystem()->getPrimaryBody();
+        assert(body != nullptr);
+        return body->isVisible() && (bodyVisibilityMask & body->getClassification()) != 0;
+
+    default:
+        return body->isVisible() && (bodyVisibilityMask & klass) != 0;
+    }
+}
+
 void Renderer::addRenderListEntries(RenderListEntry& rle,
                                     Body& body,
                                     bool isLabeled)
@@ -5981,10 +5999,8 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
 
             bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
             bool isLabeled = (body->getOrbitClassification() & labelClassMask) != 0;
-            bool visible = body->isVisible();
-            bool classVisible = (bodyVisibilityMask & body->getClassification()) != 0;
 
-            if ((discSize > 1 || visibleAsPoint || isLabeled) && visible && classVisible)
+            if ((discSize > 1 || visibleAsPoint || isLabeled) && isBodyVisible(body, bodyVisibilityMask))
             {
                 RenderListEntry rle;
 
@@ -6734,12 +6750,22 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     else
         starRenderer.starVertexBuffer->startSprites();
 
+#ifdef OCTREE_DEBUG
+    m_starProcStats.nodes = 0;
+    m_starProcStats.height = 0;
+    m_starProcStats.objects = 0;
+#endif
     starDB.findVisibleStars(starRenderer,
                             obsPos.cast<float>(),
                             observer.getOrientationf(),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
-                            faintestMagNight);
+                            faintestMagNight,
+#ifdef OCTREE_DEBUG
+                            &m_starProcStats);
+#else
+                            nullptr);
+#endif
 
     starRenderer.starVertexBuffer->render();
     starRenderer.glareVertexBuffer->render();
@@ -7004,12 +7030,22 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
+#ifdef OCTREE_DEBUG
+    m_dsoProcStats.objects = 0;
+    m_dsoProcStats.nodes = 0;
+    m_dsoProcStats.height = 0;
+#endif
     dsoDB->findVisibleDSOs(dsoRenderer,
                            obsPos,
                            observer.getOrientationf(),
                            degToRad(fov),
                            (float) windowWidth / (float) windowHeight,
-                           2 * faintestMagNight);
+                           2 * faintestMagNight,
+#ifdef OCTREE_DEBUG
+                           &m_dsoProcStats);
+#else
+                            nullptr);
+#endif
 
     // clog << "DSOs processed: " << dsoRenderer.dsosProcessed << endl;
 

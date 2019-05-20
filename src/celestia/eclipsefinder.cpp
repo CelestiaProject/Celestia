@@ -11,12 +11,8 @@
 // of the License, or (at your option) any later version.
 
 #include <cstring>
-#include <sstream>
-#include <algorithm>
-#include <set>
 #include <cassert>
 #include "eclipsefinder.h"
-#include "celmath/mathlib.h"
 #include "celmath/ray.h"
 #include "celmath/distance.h"
 
@@ -24,28 +20,25 @@ using namespace Eigen;
 using namespace std;
 
 
-
-
-Eclipse::Eclipse(int Y, int M, int D)
-{
-    date = new astro::Date(Y, M, D);
-}
-
-Eclipse::Eclipse(double JD)
-{
-    date = new astro::Date(JD);
-}
-
-Eclipse::~Eclipse()
-{
-    delete date;
-}
+constexpr const double dT = 1.0 / (24.0 * 60.0);
+constexpr const int EclipseObjectMask = Body::Planet      |
+                                        Body::Moon        |
+                                        Body::MinorMoon   |
+                                        Body::DwarfPlanet |
+                                        Body::Asteroid;
 
 // TODO: share this constant and function with render.cpp
 static const float MinRelativeOccluderRadius = 0.005f;
 
-bool EclipseFinder::testEclipse(const Body& receiver, const Body& caster,
-                                double now) const
+EclipseFinder::EclipseFinder(Body* _body,
+                             EclipseFinderWatcher* _watcher) :
+    body(_body),
+    watcher(_watcher)
+{
+};
+
+
+bool testEclipse(const Body& receiver, const Body& caster, double now)
 {
     // Ignore situations where the shadow casting body is much smaller than
     // the receiver, as these shadows aren't likely to be relevant.  Also,
@@ -104,9 +97,9 @@ bool EclipseFinder::testEclipse(const Body& receiver, const Body& caster,
     return false;
 }
 
-
-double EclipseFinder::findEclipseSpan(const Body& receiver, const Body& caster,
-                       double now, double dt) const
+#if 1
+double findEclipseSpan(const Body& receiver, const Body& caster,
+                       double now, double dt)
 {
     double t = now;
     while (testEclipse(receiver, caster, t))
@@ -114,116 +107,154 @@ double EclipseFinder::findEclipseSpan(const Body& receiver, const Body& caster,
 
     return t;
 }
-
-
-int EclipseFinder::CalculateEclipses() // XXX: this function is very fragile and should be rewritten
+#else
+// Given a time during an eclipse, find the start of the eclipse to
+// a precision of minStep.
+double findEclipseStart(const Body& receiver, const Body& occulter,
+                        double now,
+                        double startStep,
+                        double minStep)
 {
-    Simulation* sim = appCore->getSimulation();
+    double step = startStep / 2;
+    double t = now - step;
+    bool eclipsed = true;
 
-    Eclipse* eclipse;
-    double* JDback = nullptr;
-
-    int nIDplanetetofindon = 0;
-    int nSattelites = 0;
-
-    const SolarSystem* sys = sim->getNearestSolarSystem();
-
-    toProcess = false;
-
-    if ((!sys))
+    // Perform a binary search to find the end of the eclipse
+    while (step > minStep)
     {
-        eclipse = new Eclipse(0.);
-        eclipse->planete = "None";
-        Eclipses_.push_back(*eclipse);
-        delete eclipse;
-        return 1;
-    }
-    if (sys->getStar()->getCatalogNumber() != 0)
-    {
-        eclipse = new Eclipse(0.);
-        eclipse->planete = "None";
-        Eclipses_.push_back(*eclipse);
-        delete eclipse;
-        return 1;
+        eclipsed = testEclipse(receiver, occulter, t);
+        step *= 0.5;
+        if (eclipsed)
+            t -= step;
+        else
+            t += step;
     }
 
-    PlanetarySystem* system = sys->getPlanets();
-    int nbPlanets = system->getSystemSize();
+    // Always return a time when the receiver is /not/ in eclipse
+    if (eclipsed)
+        t -= step;
 
-    for (int i = 0; i < nbPlanets; ++i)
-    {
-        Body* planete = system->getBody(i);
-        if (planete != nullptr)
-            if (strPlaneteToFindOn == planete->getName())
-            {
-                nIDplanetetofindon = i;
-                PlanetarySystem* satellites = planete->getSatellites();
-                if (satellites)
-                {
-                    nSattelites = satellites->getSystemSize();
-                    JDback = new double[nSattelites];
-                    memset(JDback, 0, nSattelites*sizeof(double));
-                }
-                break;
-            }
-    }
-
-    Body* planete = system->getBody(nIDplanetetofindon);
-    while (JDfrom < JDto)
-    {
-        PlanetarySystem* satellites = planete->getSatellites();
-        if (satellites)
-        {
-            for (int j = 0; j < nSattelites; ++j)
-            {
-                Body* caster = nullptr;
-                Body* receiver = nullptr;
-                bool test = false;
-
-                if (satellites->getBody(j)->getClassification() != Body::Spacecraft)
-                {
-                    if (type == Eclipse::Solar)
-                    {
-                        caster = satellites->getBody(j);
-                        receiver = planete;
-                    }
-                    else
-                    {
-                        caster = planete;
-                        receiver = satellites->getBody(j);
-                    }
-
-                    test = testEclipse(*receiver, *caster, JDfrom);
-                }
-
-                if (test && JDfrom - JDback[j] > 1)
-                {
-                    JDback[j] = JDfrom;
-                    eclipse = new Eclipse(JDfrom);
-                    eclipse->startTime = findEclipseSpan(*receiver, *caster,
-                                                         JDfrom,
-                                                         -1.0 / (24.0 * 60.0));
-                    eclipse->endTime   = findEclipseSpan(*receiver, *caster,
-                                                         JDfrom,
-                                                         1.0 / (24.0 * 60.0));
-                    eclipse->body = receiver;
-                    eclipse->planete = planete->getName();
-                    eclipse->sattelite = satellites->getBody(j)->getName();
-                    Eclipses_.push_back(*eclipse);
-                    delete eclipse;
-                }
-            }
-        }
-        JDfrom += 1.0 / 24.0;
-    }
-    delete[] JDback;
-    if (Eclipses_.empty())
-    {
-        eclipse = new Eclipse(0.);
-        eclipse->planete = "None";
-        Eclipses_.push_back(*eclipse);
-        delete eclipse;
-    }
-    return 0;
+    return t;
 }
 
+// Given a time during an eclipse, find the end of the eclipse to
+// a precision of minStep.
+double findEclipseEnd(const Body& receiver, const Body& occulter,
+                      double now,
+                      double startStep,
+                      double minStep)
+{
+    // First do a coarse search to find the eclipse end to within the precision
+    // of startStep.
+    while (testEclipse(receiver, occulter, now + startStep))
+        now += startStep;
+
+    double step = startStep / 2;
+    double t = now + step;
+    bool eclipsed = true;
+
+
+    // Perform a binary search to find the end of the eclipse
+    while (step > minStep)
+    {
+        eclipsed = testEclipse(receiver, occulter, t);
+        step *= 0.5;
+        if (eclipsed)
+            t += step;
+        else
+            t -= step;
+    }
+
+    // Always return a time when the receiver is /not/ in eclipse
+    if (eclipsed)
+        t += step;
+
+    return t;
+}
+#endif
+
+void addEclipse(const Body& receiver, const Body& occulter,
+                double now,
+                double /*startStep*/, double /*minStep*/,
+                vector<Eclipse>& eclipses,
+                vector<double>& previousEclipseEndTimes, int i)
+{
+    if (testEclipse(receiver, occulter, now))
+    {
+        Eclipse eclipse;
+#if 1
+        eclipse.startTime = findEclipseSpan(receiver, occulter, now, -dT);
+        eclipse.endTime = findEclipseSpan(receiver, occulter, now, dT);
+#else
+        eclipse.startTime = findEclipseStart(receiver, occulter, now, searchStep, minStep);
+        eclipse.endTime = findEclipseEnd(receiver, occulter, now, searchStep, minStep);
+#endif
+        eclipse.receiver = const_cast<Body*>(&receiver);
+        eclipse.occulter = const_cast<Body*>(&occulter);
+        eclipses.emplace_back(eclipse);
+
+        previousEclipseEndTimes[i] = eclipse.endTime;
+    }
+}
+
+void EclipseFinder::findEclipses(double startDate,
+                                 double endDate,
+                                 int eclipseTypeMask,
+                                 vector<Eclipse>& eclipses)
+{
+    PlanetarySystem* satellites = body->getSatellites();
+
+    // See if there's anything that could test
+    if (satellites == nullptr)
+        return;
+
+    // For each body, we'll need to store the time when the last eclipse ended
+    vector<double> previousEclipseEndTimes;
+
+    // Make a list of satellites that we'll actually test for eclipses; ignore
+    // spacecraft and very small objects.
+    vector<Body*> testBodies;
+    for (int i = 0; i < satellites->getSystemSize(); i++)
+    {
+        Body* obj = satellites->getBody(i);
+        if ((obj->getClassification() & EclipseObjectMask) != 0 &&
+            obj->getRadius() >= body->getRadius() * MinRelativeOccluderRadius)
+        {
+            testBodies.push_back(obj);
+            previousEclipseEndTimes.push_back(startDate - 1.0);
+        }
+    }
+
+    if (testBodies.empty())
+        return;
+
+    // TODO: Use a fixed step of one hour for now; we should use a binary
+    // search instead.
+    double searchStep = 1.0 / 24.0; // one hour
+
+    // Precision of eclipse duration calculation
+    double durationPrecision = 1.0 / (24.0 * 360.0); // ten seconds
+
+    for (double t = startDate; t <= endDate; t += searchStep)
+    {
+        if (watcher != nullptr)
+        {
+            if (watcher->eclipseFinderProgressUpdate(t) == EclipseFinderWatcher::AbortOperation)
+                return;
+        }
+
+        for (unsigned int i = 0; i < testBodies.size(); i++)
+        {
+            // Only test for an eclipse if we're not in the middle of
+            // of previous one.
+            if (t <= previousEclipseEndTimes[i])
+                continue;
+
+            if (eclipseTypeMask & Eclipse::Solar)
+                addEclipse(*body, *testBodies[i], t, searchStep, durationPrecision, eclipses, previousEclipseEndTimes, i);
+
+            if (eclipseTypeMask & Eclipse::Lunar)
+                addEclipse(*testBodies[i], *body, t, searchStep, durationPrecision, eclipses, previousEclipseEndTimes, i);
+        }
+    }
+}
