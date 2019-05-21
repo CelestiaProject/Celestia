@@ -202,17 +202,6 @@ foreach (_variableName ${_variableNames})
 endforeach()
 ]]#
 
-if(WIN32)
-  add_definitions(
-    -D_CRT_SECURE_NO_WARNINGS
-    -D_SCL_SECURE_NO_WARNINGS
-    -DNOMINMAX
-    -DWIN32_LEAN_AND_MEAN
-    -DWINVER=0x0601
-    -D_WIN32_WINNT=0x0601
-  )
-endif()
-
 set(DATADIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
 set(FULL_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${PROJECT_NAME}")
 
@@ -241,6 +230,17 @@ add_definitions(
   -DSPLASH_DIR="${FULL_DATADIR}/splash/"
   -DGIT_COMMIT=${GIT_COMMIT}
 )
+
+if(WIN32)
+  add_definitions(
+    -D_CRT_SECURE_NO_WARNINGS
+    -D_SCL_SECURE_NO_WARNINGS
+    -DNOMINMAX
+    -DWIN32_LEAN_AND_MEAN
+    -DWINVER=0x0601
+    -D_WIN32_WINNT=0x0601
+  )
+endif()
 
 if(APPLE)
   # TARGET_OS_MAC should be replaced with __APPLE__
