@@ -195,6 +195,14 @@ class Renderer
         StarStyleCount   = 3,
     };
 
+    // Pixel formats for image and video capture.
+    // Currently we map them 1:1 to GL
+    enum class PixelFormat
+    {
+        RGB = GL_RGB,
+        BGR_EXT = GL_BGR_EXT
+    };
+
     // constants
     constexpr static const uint64_t DefaultRenderFlags =
                                           Renderer::ShowStars          |
@@ -237,11 +245,15 @@ class Renderer
     void setOrbitMask(int);
     int getScreenDpi() const;
     void setScreenDpi(int);
+    void getScreenSize(int* x, int* y, int* w, int* h) const;
+    void getScreenSize(std::array<int, 4>& viewport) const;
     const ColorTemperatureTable* getStarColorTable() const;
     void setStarColorTable(const ColorTemperatureTable*);
     bool getVideoSync() const;
     void setVideoSync(bool);
     void setSolarSystemMaxDistance(float);
+
+    bool captureFrame(int, int, int, int, PixelFormat format, unsigned char*, bool = false) const;
 
 #ifdef USE_HDR
     bool getBloomEnabled();

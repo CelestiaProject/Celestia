@@ -1118,8 +1118,8 @@ static void openScript(const char* filename, AppData* app)
 static void captureImage(const char* filename, AppData* app)
 {
     /* Get the dimensions of the current viewport */
-    int viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
+    array<int, 4> viewport;
+    app->renderer->getScreenSize(viewport);
 
     bool success = false;
     ContentType type = DetermineFileType(filename);
@@ -1138,13 +1138,15 @@ static void captureImage(const char* filename, AppData* app)
     {
         success = CaptureGLBufferToJPEG(filename,
                                         viewport[0], viewport[1],
-                                        viewport[2], viewport[3]);
+                                        viewport[2], viewport[3],
+                                        app->renderer);
     }
     else if (type == Content_PNG)
     {
         success = CaptureGLBufferToPNG(filename,
                                        viewport[0], viewport[1],
-                                       viewport[2], viewport[3]);
+                                       viewport[2], viewport[3],
+                                       app->renderer);
     }
     else
     {
@@ -1175,10 +1177,10 @@ static void captureImage(const char* filename, AppData* app)
 static void captureMovie(const char* filename, int aspect, float fps, float quality, AppData* app)
 {
     /* Get the dimensions of the current viewport */
-    int viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
+    array<int, 4> viewport;
+    app->renderer->getScreenSize(viewport);
 
-    MovieCapture* movieCapture = new OggTheoraCapture();
+    MovieCapture* movieCapture = new OggTheoraCapture(app->renderer);
     switch (aspect)
     {
     case 0:

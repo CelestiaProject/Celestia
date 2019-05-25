@@ -279,10 +279,11 @@ int celestia_getscreendimension(lua_State* l)
     // error checking only:
     this_celestia(l);
     // Get the dimensions of the current viewport
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    lua_pushnumber(l, viewport[2]);
-    lua_pushnumber(l, viewport[3]);
+    int w, h;
+    CelestiaCore* appCore = to_celestia(l, 1);
+    appCore->getRenderer()->getScreenSize(nullptr, nullptr, &w, &h);
+    lua_pushnumber(l, w);
+    lua_pushnumber(l, h);
     return 2;
 }
 
@@ -1920,8 +1921,8 @@ static int celestia_takescreenshot(lua_State* l)
     filenamestem = fmt::sprintf("screenshot-%s%06i", fileid, luastate->screenshotCount);
 
     // Get the dimensions of the current viewport
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
+    array<GLint, 4> viewport;
+    appCore->getRenderer()->getScreenSize(viewport);
 
 #ifndef TARGET_OS_MAC
     if (strncmp(filetype, "jpg", 3) == 0)
@@ -1929,14 +1930,16 @@ static int celestia_takescreenshot(lua_State* l)
         string filepath = path + filenamestem + ".jpg";
         success = CaptureGLBufferToJPEG(filepath,
                                        viewport[0], viewport[1],
-                                       viewport[2], viewport[3]);
+                                       viewport[2], viewport[3],
+                                       appCore->getRenderer());
     }
     else
     {
         string filepath = path + filenamestem + ".png";
         success = CaptureGLBufferToPNG(filepath,
                                        viewport[0], viewport[1],
-                                       viewport[2], viewport[3]);
+                                       viewport[2], viewport[3],
+                                       appCore->getRenderer());
     }
 #endif
     lua_pushboolean(l, success);

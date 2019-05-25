@@ -11,13 +11,16 @@
 #define _IMAGECAPTURE_H_
 
 #include <string>
+#include <celengine/render.h>
 
 
 extern bool CaptureGLBufferToJPEG(const std::string& filename,
                                   int x, int y,
-                                  int width, int height);
+                                  int width, int height,
+                                  const Renderer *renderer);
 extern bool CaptureGLBufferToPNG(const std::string& filename,
                                  int x, int y,
-                                 int width, int height);
+                                 int width, int height,
+                                 const Renderer *renderer);
 
 #endif // _IMAGECAPTURE_H_
