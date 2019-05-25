@@ -6720,3 +6720,58 @@ float Renderer::getAspectRatio() const
 {
     return static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
 }
+
+bool Renderer::getInfo(map<string, string>& info) const
+{
+    info["API"] = "OpenGL";
+
+    const char* s;
+    s = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    if (s != nullptr)
+        info["APIVersion"] = s;
+
+    s = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    if (s != nullptr)
+        info["Vendor"] = s;
+
+    s = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    if (s != nullptr)
+        info["Renderer"] = s;
+
+    s = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+    if (s != nullptr)
+    {
+        info["Language"] = "GLSL";
+        info["LanguageVersion"] = s;
+    }
+
+    GLint maxTextureSize = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+    info["MaxTextureSize"] = to_string(maxTextureSize);
+
+    GLint maxTextureUnits = 1;
+    glGetIntegerv(GL_MAX_TEXTURE_UNITS, &maxTextureUnits);
+    info["MaxTextureUnits"] = to_string(maxTextureUnits);
+
+    GLint pointSizeRange[2];
+    glGetIntegerv(GL_SMOOTH_POINT_SIZE_RANGE, pointSizeRange);
+    info["PointSizeMin"] = to_string(pointSizeRange[0]);
+    info["PointSizeMax"] = to_string(pointSizeRange[1]);
+
+    GLfloat pointSizeGran = 0;
+    glGetFloatv(GL_SMOOTH_POINT_SIZE_GRANULARITY, &pointSizeGran);
+    info["PointSizeGran"] = to_string(pointSizeGran);
+
+    if (GLEW_EXT_texture_cube_map)
+    {
+        GLint maxCubeMapSize = 0;
+        glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &maxCubeMapSize);
+        info["MaxCubeMapSize"] = to_string(maxCubeMapSize);
+    }
+
+    s = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+    if (s != nullptr)
+        info["Extensions"] = s;
+
+    return true;
+}

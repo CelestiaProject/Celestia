@@ -100,6 +100,8 @@ class Renderer
               float faintestVisible,
               const Selection& sel);
 
+    bool getInfo(std::map<std::string, std::string>& info) const;
+
     enum {
         NoLabels            = 0x000,
         StarLabels          = 0x001,

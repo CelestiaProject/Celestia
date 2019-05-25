@@ -40,6 +40,8 @@
 #include <GL/glew.h>
 #include "celestia/celestiacore.h"
 #include "celestia/avicapture.h"
+#include "celestia/helper.h"
+#include "celestia/scriptmenu.h"
 #include "celestia/url.h"
 #include "winstarbrowser.h"
 #include "winssbrowser.h"
@@ -53,12 +55,12 @@
 #include "wintime.h"
 #include "winsplash.h"
 #include "odmenu.h"
-#include "celestia/scriptmenu.h"
 
 #include "res/resource.h"
 #include "wglext.h"
 
 #include <locale.h>
+#include <fmt/printf.h>
 
 using namespace std;
 
@@ -620,86 +622,8 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
     {
     case WM_INITDIALOG:
         {
-            const char* vendor = (char*) glGetString(GL_VENDOR);
-            const char* render = (char*) glGetString(GL_RENDERER);
-            const char* version = (char*) glGetString(GL_VERSION);
-            const char* ext = (char*) glGetString(GL_EXTENSIONS);
-            string s;
-            s += UTF8ToCurrentCP(_("Vendor: "));
-            if (vendor != NULL)
-                s += vendor;
-            s += "\r\r\n";
-
-            s += UTF8ToCurrentCP(_("Renderer: "));
-            if (render != NULL)
-                s += render;
-            s += "\r\r\n";
-
-            s += UTF8ToCurrentCP(_("Version: "));
-            if (version != NULL)
-                s += version;
-            s += "\r\r\n";
-
-            if (GLEW_ARB_shading_language_100)
-            {
-                const char* versionString = (const char*) glGetString(GL_SHADING_LANGUAGE_VERSION_ARB);
-                if (versionString != NULL)
-                {
-                    s += UTF8ToCurrentCP(_("GLSL version: "));
-                    s += versionString;
-                    s += "\r\r\n";
-                }
-            }
-
-            char buf[1024];
-            GLint simTextures = 1;
-            if (GLEW_ARB_multitexture)
-                glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
-            sprintf(buf, "%s%d\r\r\n",
-                    UTF8ToCurrentCP(_("Max simultaneous textures: ")).c_str(),
-                    simTextures);
-            s += buf;
-
-            GLint maxTextureSize = 0;
-            glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-            sprintf(buf, "%s%d\r\r\n",
-                    UTF8ToCurrentCP(_("Max texture size: ")).c_str(),
-                    maxTextureSize);
-            s += buf;
-
-            if (GLEW_EXT_texture_cube_map)
-            {
-                GLint maxCubeMapSize = 0;
-                glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &maxCubeMapSize);
-                sprintf(buf, "%s%d\r\r\n",
-                        UTF8ToCurrentCP(_("Max cube map size: ")).c_str(),
-                        maxTextureSize);
-                s += buf;
-            }
-
-            GLfloat pointSizeRange[2];
-            glGetFloatv(GL_POINT_SIZE_RANGE, pointSizeRange);
-            sprintf(buf, "%s%f - %f\r\r\n",
-                    UTF8ToCurrentCP(_("Point size range: ")).c_str(),
-                    pointSizeRange[0], pointSizeRange[1]);
-            s += buf;
-
-            s += "\r\r\n";
-            s += UTF8ToCurrentCP(_("Supported Extensions:")).c_str();
-            s += "\r\r\n";
-
-            if (ext != NULL)
-            {
-                string extString(ext);
-                int pos = extString.find(' ', 0);
-                while (pos != string::npos)
-                {
-                    extString.replace(pos, 1, "\r\r\n");
-                    pos = extString.find(' ', pos);
-                }
-                s += extString;
-            }
-
+            string s = Helper::getRenderInfo(appCore->getRenderer());
+            s = UTF8ToCurrentCP(s);
             SetDlgItemText(hDlg, IDC_GLINFO_TEXT, s.c_str());
         }
         return(TRUE);
