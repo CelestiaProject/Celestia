@@ -767,9 +767,9 @@ void CelestiaAppWindow::slotCaptureVideo()
             float frameRate = frameRateCombo->itemData(frameRateCombo->currentIndex()).toFloat();
 
 #ifdef _WIN32
-            MovieCapture* movieCapture = new AVICapture();
+            MovieCapture* movieCapture = new AVICapture(m_appCore->getRenderer());
 #else
-            MovieCapture* movieCapture = new OggTheoraCapture();
+            MovieCapture* movieCapture = new OggTheoraCapture(m_appCore->getRenderer());
             movieCapture->setAspectRatio(1, 1);
 #endif
             bool ok = movieCapture->start(saveAsName.toLatin1().data(),

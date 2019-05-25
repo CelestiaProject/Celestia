@@ -433,11 +433,12 @@ static void ShowLocalTime(CelestiaCore* appCore)
 }
 
 
-static bool BeginMovieCapture(const std::string& filename,
+static bool BeginMovieCapture(const Renderer* renderer,
+                              const std::string& filename,
                               int width, int height,
                               float framerate)
 {
-    MovieCapture* movieCapture = new AVICapture();
+    MovieCapture* movieCapture = new AVICapture(renderer);
 
     bool success = movieCapture->start(filename, width, height, framerate);
     if (success)
@@ -2680,8 +2681,8 @@ static void HandleCaptureImage(HWND hWnd)
         // Ofn.lpstrFileTitle contains just the filename with extension
 
         // Get the dimensions of the current viewport
-        int viewport[4];
-        glGetIntegerv(GL_VIEWPORT, viewport);
+        array<int,4> viewport;
+        appCore->getRenderer()->getScreenSize(viewport);
 
         bool success = false;
 
@@ -2727,13 +2728,15 @@ static void HandleCaptureImage(HWND hWnd)
         {
             success = CaptureGLBufferToJPEG(string(Ofn.lpstrFile),
                                             viewport[0], viewport[1],
-                                            viewport[2], viewport[3]);
+                                            viewport[2], viewport[3],
+                                            appCore->getRenderer());
         }
         else if (nFileType == 2)
         {
             success = CaptureGLBufferToPNG(string(Ofn.lpstrFile),
                                            viewport[0], viewport[1],
-                                           viewport[2], viewport[3]);
+                                           viewport[2], viewport[3],
+                                           appCore->getRenderer());
         }
         else
         {
@@ -2846,7 +2849,8 @@ static void HandleCaptureMovie(HWND hWnd)
         }
         else
         {
-            success = BeginMovieCapture(string(Ofn.lpstrFile),
+            success = BeginMovieCapture(appCore->getRenderer(),
+                                        string(Ofn.lpstrFile),
                                         MovieSizes[movieSize][0],
                                         MovieSizes[movieSize][1],
                                         MovieFramerates[movieFramerate]);

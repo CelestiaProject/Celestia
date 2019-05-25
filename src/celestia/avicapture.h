@@ -19,7 +19,7 @@
 class AVICapture : public MovieCapture
 {
  public:
-    AVICapture();
+    AVICapture(const Renderer *);
     virtual ~AVICapture();
 
     bool start(const std::string& filename, int w, int h, float fps);

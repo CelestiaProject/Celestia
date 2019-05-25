@@ -17,7 +17,8 @@
 using namespace std;
 
 
-AVICapture::AVICapture()
+AVICapture::AVICapture(const Renderer *r) :
+    MovieCapture(r)
 {
     AVIFileInit();
 }
@@ -143,13 +144,13 @@ bool AVICapture::captureFrame()
         return false;
 
     // Get the dimensions of the current viewport
-    int viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
+    int x, y, w, h;
+    renderer->getScreenSize(&x, &y, &w, &h);
 
-    int x = viewport[0] + (viewport[2] - width) / 2;
-    int y = viewport[1] + (viewport[3] - height) / 2;
-    glReadPixels(x, y, width, height,
-                 GL_BGR_EXT, GL_UNSIGNED_BYTE,
+    x += (w - width) / 2;
+    y += (h - height) / 2;
+    renderer->captureFrame(x, y, width, height,
+                 Renderer::PixelFormat::BGR_EXT,
                  image);
 
     int rowBytes = (width * 3 + 3) & ~0x3;

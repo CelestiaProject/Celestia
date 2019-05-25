@@ -8,7 +8,6 @@
 // of the License, or (at your option) any later version.
 
 #include <celutil/debug.h>
-#include <GL/glew.h>
 #include <celengine/celestia.h>
 #include "imagecapture.h"
 
@@ -23,18 +22,19 @@ using namespace std;
 
 bool CaptureGLBufferToJPEG(const string& filename,
                            int x, int y,
-                           int width, int height)
+                           int width, int height,
+                           const Renderer *renderer)
 {
     int rowStride = (width * 3 + 3) & ~0x3;
     int imageSize = height * rowStride;
     auto* pixels = new unsigned char[imageSize];
 
-    glReadBuffer(GL_BACK);
-    glReadPixels(x, y, width, height,
-                 GL_RGB, GL_UNSIGNED_BYTE,
-                 pixels);
-
-    // TODO: Check for GL errors
+    if (!renderer->captureFrame(x, y, width, height,
+                                Renderer::PixelFormat::RGB,
+                                pixels, true))
+    {
+        return false;
+    }
 
     FILE* out;
     out = fopen(filename.c_str(), "wb");
@@ -91,18 +91,19 @@ void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
 
 bool CaptureGLBufferToPNG(const string& filename,
                            int x, int y,
-                           int width, int height)
+                           int width, int height,
+                           const Renderer *renderer)
 {
     int rowStride = (width * 3 + 3) & ~0x3;
     int imageSize = height * rowStride;
     auto* pixels = new unsigned char[imageSize];
 
-    glReadBuffer(GL_BACK);
-    glReadPixels(x, y, width, height,
-                 GL_RGB, GL_UNSIGNED_BYTE,
-                 pixels);
-
-    // TODO: Check for GL errors
+    if (!renderer->captureFrame(x, y, width, height,
+                                Renderer::PixelFormat::RGB,
+                                pixels, true))
+    {
+        return false;
+    }
 
     FILE* out;
     out = fopen(filename.c_str(), "wb");

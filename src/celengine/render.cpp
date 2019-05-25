@@ -7879,3 +7879,36 @@ void  Renderer::setSolarSystemMaxDistance(float t)
     if (t >= 1.0f && t <= 10.0f)
         SolarSystemMaxDistance = t;
 }
+
+void Renderer::getScreenSize(int* x, int* y, int* w, int* h) const
+{
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    if (x != nullptr)
+        *x = viewport[0];
+    if (y != nullptr)
+        *y = viewport[1];
+    if (w != nullptr)
+        *w = viewport[2];
+    if (h != nullptr)
+        *h = viewport[3];
+}
+
+void Renderer::getScreenSize(std::array<int, 4>& viewport) const
+{
+    static_assert(sizeof(int) == sizeof(GLint), "int and GLint size mismatch");
+    glGetIntegerv(GL_VIEWPORT, &viewport[0]);
+}
+
+constexpr GLenum toGLFormat(Renderer::PixelFormat format)
+{
+    return (GLenum) format;
+}
+
+bool Renderer::captureFrame(int x, int y, int w, int h, Renderer::PixelFormat format, unsigned char* buffer, bool back) const
+{
+    glReadBuffer(back ? GL_BACK : GL_FRONT);
+    glReadPixels(x, y, w, h, toGLFormat(format), GL_UNSIGNED_BYTE, (void*) buffer);
+
+    return glGetError == GL_NO_ERROR;
+}

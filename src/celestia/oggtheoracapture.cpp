@@ -84,7 +84,8 @@ using namespace std;
 //  {"framerate-denominator",optional_argument,nullptr,'F'},
 
 
-OggTheoraCapture::OggTheoraCapture():
+OggTheoraCapture::OggTheoraCapture(const Renderer *r):
+    MovieCapture(r),
     video_x(0),
     video_y(0),
     frame_x(0),
@@ -335,14 +336,14 @@ bool OggTheoraCapture::captureFrame()
     if(ogg_stream_eos(&to)) return false;
 
     // Get the dimensions of the current viewport
-    int viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
+    int x, y, w, h;
+    renderer->getScreenSize(&x, &y, &w, &h);
 
-    int x = viewport[0] + (viewport[2] - frame_x) / 2;
-    int y = viewport[1] + (viewport[3] - frame_y) / 2;
-    glReadPixels(x, y, frame_x, frame_y,
-             GL_RGB, GL_UNSIGNED_BYTE,
-             pixels);
+    x += (w - frame_x) / 2;
+    y += (h - frame_y) / 2;
+    renderer->captureFrame(x, y, frame_x, frame_y,
+                           Renderer::PixelFormat::RGB,
+                           pixels);
 
     unsigned char *ybase = yuvframe[0];
     unsigned char *ubase = yuvframe[0]+ video_x*video_y;
