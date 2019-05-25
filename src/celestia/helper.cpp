@@ -1,5 +1,8 @@
+#include <fmt/printf.h>
 #include <celengine/body.h>
+#include <celengine/render.h>
 #include <celengine/selection.h>
+#include <celutil/gettext.h>
 #include "helper.h"
 
 
@@ -89,4 +92,57 @@ Selection Helper::getPrimary(const Body* body)
         return Selection(primaryStar);
 
     return Selection();
+}
+
+std::string Helper::getRenderInfo(const Renderer *r)
+{
+    map<string, string> info;
+    r->getInfo(info);
+
+    string s;
+    s.reserve(4096);
+    if (info.count("API") > 0 && info.count("APIVersion") > 0)
+    s += fmt::sprintf(_("%s Version: %s\n"), info["API"], info["APIVersion"]);
+
+    if (info.count("Vendor") > 0)
+        s += fmt::sprintf(_("Vendor: %s\n"), info["Vendor"]);
+
+    if (info.count("Renderer") > 0)
+        s += fmt::sprintf(_("Renderer: %s\n"), info["Renderer"]);
+
+    if (info.count("Language") > 0)
+        s += fmt::sprintf(_("%s Version: %s\n"), info["Language"], info["LanguageVersion"]);
+
+    if (info.count("MaxTextureUnits") > 0)
+        s += fmt::sprintf(_("Max simultaneous textures: %s\n"), info["MaxTextureUnits"]);
+
+    if (info.count("MaxTextureSize") > 0)
+        s += fmt::sprintf(_("Max texture size: %s\n"), info["MaxTextureSize"]);
+
+    if (info.count("PointSizeMax") > 0 && info.count("PointSizeMin") > 0)
+        s += fmt::sprintf(_("Point size range: %s - %s\n"), info["PointSizeMin"], info["PointSizeMax"]);
+
+    if (info.count("PointSizeGran") > 0)
+        s += fmt::sprintf(_("Point size granularity: %s\n"), info["PointSizeGran"]);
+
+    if (info.count("MaxCubeMapSize") > 0)
+        s += fmt::sprintf(_("Max cube map size: %s\n"), info["MaxCubeMapSize"]);
+
+    s += "\n";
+
+    if (info.count("Extensions") > 0)
+    {
+        s += "Supported Extensions:\n";
+        auto ext = info["Extensions"];
+        string::size_type old = 0, pos = ext.find(' ');
+        while (pos != string::npos)
+        {
+            s += fmt::sprintf("    %s\n", ext.substr(old, pos - old));
+            old = pos + 1;
+            pos = ext.find(' ', old);
+        }
+        s += fmt::sprintf("    %s\n", ext.substr(old));
+    }
+
+    return s;
 }

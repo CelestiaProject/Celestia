@@ -1059,52 +1059,89 @@ void CelestiaAppWindow::slotShowGLInfo()
     QString infoText;
     QTextStream out(&infoText, QIODevice::WriteOnly);
 
+    map<string, string> info;
+    m_appCore->getRenderer()->getInfo(info);
+
     // Get the version string
     // QTextStream::operator<<(const char *string) assumes that the string has
     // ISO-8859-1 encoding, so we need to convert in to QString
-    out << QString(_("<b>OpenGL version: </b>"));
-    const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-    if (version != nullptr)
-        out << version;
-    else
-        out << "???";
-    out << "<br>\n";
-
-    out << QString(_("<b>Renderer: </b>"));
-    const char* glrenderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-    if (glrenderer != nullptr)
-        out << glrenderer;
-    out << "<br>\n";
-
-    // shading language version
-    const char* glslversion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
-    if (glslversion != nullptr)
+    if (info.count("API") > 0 && info.count("APIVersion") > 0)
     {
-        out << QString(_("<b>GLSL Version: </b>")) << glslversion << "<br>\n";
+        out << QString(_("<b>%1 version:</b> %2")).arg(info["API"].c_str(), info["APIVersion"].c_str());
+        out << "<br>\n";
     }
 
-    // texture size
-    GLint maxTextureSize = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    out << QString(_("<b>Maximum texture size: </b>")) << maxTextureSize << "<br>\n";
+    if (info.count("Vendor") > 0)
+    {
+        out << QString(_("<b>Vendor</b>: %1")).arg(info["Vendor"].c_str());
+        out << "<br>\n";
+    }
+
+    if (info.count("Renderer") > 0)
+    {
+        out << QString(_("<b>Renderer:</b> %1")).arg(info["Renderer"].c_str());
+        out << "<br>\n";
+    }
+
+    // shading language version
+    if (info.count("Language") > 0)
+    {
+        out << QString(_("<b>%1 Version:</b> %2")).arg(info["Language"].c_str(), info["LanguageVersion"].c_str());
+        out << "<br>\n";
+    }
+
+    // textures
+    if (info.count("MaxTextureUnits") > 0)
+    {
+        out << QString(_("<b>Max simultaneous textures:</b> %1")).arg(info["MaxTextureUnits"].c_str());
+        out << "<br>\n";
+    }
+
+    if (info.count("MaxTextureSize") > 0)
+    {
+        out << QString(_("<b>Maximum texture size:</b> %1")).arg(info["MaxTextureSize"].c_str());
+        out << "<br>\n";
+    }
+
+    if (info.count("PointSizeMax") > 0 && info.count("PointSizeMin") > 0)
+    {
+        out << QString(_("<b>Point size range</b>: %1 - %2")).arg(info["PointSizeMin"].c_str(), info["PointSizeMax"].c_str());
+        out << "<br>\n";
+    }
+
+    if (info.count("PointSizeGran") > 0)
+    {
+        out << QString(_("<b>Point size granularity</b>: %1")).arg(info["PointSizeGran"].c_str());
+        out << "<br>\n";
+    }
+
+    if (info.count("MaxCubeMapSize") > 0)
+    {
+        out << QString(_("<b>Max cube map size</b>: %1")).arg(info["MaxCubeMapSize"].c_str());
+        out << "<br>\n";
+    }
+
 
     out << "<br>\n";
 
     // Show all supported extensions
-    out << QString(_("<b>Extensions:</b><br>\n"));
-    const char *extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
-    if (extensions != nullptr)
+    if (info.count("Extensions") > 0)
     {
-        QStringList extList = QString(extensions).split(" ");
-        foreach(QString s, extList)
+        out << QString(_("<b>Supported extensions:</b><br>\n"));
+        auto ext = info["Extensions"];
+        string::size_type old = 0, pos = ext.find(' ');
+        while (pos != string::npos)
         {
-            out << s << "<br>\n";
+            out << ext.substr(old, pos - old).c_str() << "<br>\n";
+            old = pos + 1;
+            pos = ext.find(' ', old);
         }
+        out << ext.substr(old).c_str();
     }
 
     QDialog glInfo(this);
 
-    glInfo.setWindowTitle(_("OpenGL Info"));
+    glInfo.setWindowTitle(_("Renderer Info"));
 
     QVBoxLayout* layout = new QVBoxLayout(&glInfo);
     QTextEdit* textEdit = new QTextEdit(infoText, &glInfo);

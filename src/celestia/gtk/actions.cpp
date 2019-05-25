@@ -15,6 +15,7 @@
 #include <cstring>
 #include <fstream>
 #include <gtk/gtk.h>
+#include <fmt/printf.h>
 
 #ifdef GNOME
 #include <gconf/gconf-client.h>
@@ -25,6 +26,7 @@
 #include <celengine/simulation.h>
 #include <celengine/render.h>
 #include <celestia/celestiacore.h>
+#include <celestia/helper.h>
 #include <celestia/url.h>
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
@@ -648,53 +650,8 @@ void actionHelpControls(GtkAction*, AppData* app)
 
 void actionHelpOpenGL(GtkAction*, AppData* app)
 {
-    /* Code grabbed from winmain.cpp */
-    char* vendor = (char*) glGetString(GL_VENDOR);
-    char* render = (char*) glGetString(GL_RENDERER);
-    char* version = (char*) glGetString(GL_VERSION);
-    char* ext = (char*) glGetString(GL_EXTENSIONS);
-
-    string s;
-    s = "Vendor: ";
-    if (vendor != NULL)
-        s += vendor;
-    s += "\n";
-
-    s += "Renderer: ";
-    if (render != NULL)
-        s += render;
-    s += "\n";
-
-    s += "Version: ";
-    if (version != NULL)
-        s += version;
-    s += "\n";
-
-    char buf[100];
-    GLint simTextures = 1;
-    glGetIntegerv(GL_MAX_TEXTURE_UNITS, &simTextures);
-    sprintf(buf, "Max simultaneous textures: %d\n", simTextures);
-    s += buf;
-
-    GLint maxTextureSize = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    sprintf(buf, "Max texture size: %d\n\n", maxTextureSize);
-    s += buf;
-
-    s += "Supported Extensions:\n    ";
-    if (ext != NULL)
-    {
-        string extString(ext);
-        unsigned int pos = extString.find(' ', 0);
-        while (pos != (unsigned int)string::npos)
-        {
-            extString.replace(pos, 1, "\n    ");
-            pos = extString.find(' ', pos + 5);
-        }
-        s += extString;
-    }
-
-    textInfoDialog(s.c_str(), "Open GL Info", app);
+    string s = Helper::getRenderInfo(app->renderer);
+    textInfoDialog(s.c_str(), "Renderer Info", app);
 }
 
 
