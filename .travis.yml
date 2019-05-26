@@ -14,14 +14,14 @@ os:
 - osx
 
 env:
-- LUA=5.1
+- LUA=jit-5.1
 - LUA=5.2
 - LUA=5.3
 
 matrix:
   exclude:
   - os: osx
-    env: LUA=5.1
+    env: LUA=jit-5.1
   - os: osx
     env: LUA=5.2
   allow_failures:
