@@ -24,6 +24,8 @@ matrix:
     env: LUA=jit-5.1
   - os: osx
     env: LUA=5.2
+  - os: linux
+    env: LUA=5.2
   allow_failures:
   - os: osx
 
