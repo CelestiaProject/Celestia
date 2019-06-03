@@ -15,7 +15,11 @@
 #include <iostream>
 #include <string>
 #include <celutil/color.h>
+#if NO_TTF
 #include <celtxf/texturefont.h>
+#else
+#include <celttf/truetypefont.h>
+#endif
 
 
 class Overlay;

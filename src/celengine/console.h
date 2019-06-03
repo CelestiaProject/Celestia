@@ -12,7 +12,11 @@
 
 #include <string>
 #include <iostream>
+#if NO_TTF
 #include <celtxf/texturefont.h>
+#else
+#include <celttf/truetypefont.h>
+#endif
 
 
 class Console;

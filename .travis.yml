@@ -37,7 +37,7 @@ before_script:
 - cd build
 
 script:
-- cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON ..
+- cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TTF=ON ..
 - make -j $(nproc || echo 4)
 
 addons:
@@ -52,6 +52,7 @@ addons:
     - qtbase5-dev
     - qtbase5-dev-tools
     - libqt5opengl5-dev
+    - libfreetype6-dev
   homebrew:
     packages:
     - eigen
@@ -63,3 +64,4 @@ addons:
     - libpng
     - lua
     - qt5
+    - freetype

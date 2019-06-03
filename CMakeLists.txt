@@ -32,6 +32,7 @@ option(ENABLE_THEORA  "Support video capture to OGG Theora? (Default: on)" ON)
 option(ENABLE_TOOLS   "Build different tools? (Default: off)" OFF)
 option(NATIVE_OSX_APP "Support native OSX paths read data from (Default: off)" OFF)
 option(FAST_MATH      "Build with unsafe fast-math compiller option (Default: off)" OFF)
+option(ENABLE_TTF     "Use TrueType fonts instead of TXF (Default: off)" OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type." FORCE)
@@ -186,6 +187,13 @@ if(ENABLE_CELX)
   endif()
   include_directories(${LUA_INCLUDE_DIR})
   link_libraries(${LUA_LIBRARIES})
+endif()
+
+if(ENABLE_TTF)
+  find_package(Freetype REQUIRED)
+  link_libraries(Freetype::Freetype)
+else()
+  add_definitions(-DNO_TTF=1)
 endif()
 
 #[[
