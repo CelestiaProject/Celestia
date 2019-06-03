@@ -3818,7 +3818,11 @@ bool CelestiaCore::initRenderer()
     }
 
     if (config->mainFont == "")
+#if NO_TTF
         font = LoadTextureFont("fonts/default.txf");
+#else
+        font = LoadTextureFont("fonts/FreeSans.ttf,12");
+#endif
     else
         font = LoadTextureFont(string("fonts/") + config->mainFont);
 

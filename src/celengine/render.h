@@ -22,7 +22,11 @@
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include "celengine/vertexobject.h"
+#if NO_TTF
 #include <celtxf/texturefont.h>
+#else
+#include <celttf/truetypefont.h>
+#endif
 #include <vector>
 #include <list>
 #include <string>

@@ -10,7 +10,12 @@
 // of the License, or (at your option) any later version.
 
 #include <celutil/debug.h>
-#include <celtxf/texturefont.h>
+#if NO_TTF
+#include "celtxf/texturefont.h"
+#else
+#include "celttf/truetypefont.h"
+#endif
+#include <fmt/printf.h>
 #include <celengine/category.h>
 #include <celengine/texture.h>
 #include <celcompat/filesystem.h>

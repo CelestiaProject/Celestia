@@ -49,8 +49,8 @@ set_target_properties(celestia PROPERTIES
 )
 ]]#
 
-add_dependencies(celestia celengine celmath celtxf celutil)
-target_link_libraries(celestia celengine celmath celtxf celutil)
+add_dependencies(celestia celengine celmath celutil)
+target_link_libraries(celestia celengine celmath celutil)
 
 cotire(celestia)
 
