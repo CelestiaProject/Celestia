@@ -1052,13 +1052,12 @@ void CelestiaAppWindow::slotBookmarkTriggered(const QString& url)
 
 void CelestiaAppWindow::slotManual()
 {
+#if 0
     QString MANUAL_FILE = "CelestiaGuide.html";
     QDesktopServices::openUrl(QUrl(QUrl::fromLocalFile(QDir::toNativeSeparators(QApplication::applicationDirPath()) + QDir::toNativeSeparators(QDir::separator()) + "help" + QDir::toNativeSeparators(QDir::separator()) + MANUAL_FILE)));
-//    QMessageBox::information(
-//         QApplication::activeWindow(),
-//         QApplication::applicationName(),
-//         QDir::toNativeSeparators(QApplication::applicationDirPath()) + QDir::toNativeSeparators(QDir::separator()) + "help" + QDir::toNativeSeparators(QDir::separator()) + MANUAL_FILE
-//        );
+#else
+    QDesktopServices::openUrl(QUrl("https://en.wikibooks.org/wiki/Celestia"));
+#endif
 }
 
 
