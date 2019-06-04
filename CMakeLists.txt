@@ -111,8 +111,8 @@ if(ENABLE_SPICE)
 
     include_directories("${CMAKE_SOURCE_DIR}/thirdparty/Spice/include")
     add_library(CSPICE::CSPICE ALIAS Spice)
-    add_definitions(-DUSE_SPICE)
   endif()
+  add_definitions(-DUSE_SPICE)
 endif()
 
 if(_UNIX)
