@@ -13,18 +13,10 @@
 #define _CELENGINE_SCRIPTOBJECT_H_
 
 #ifndef LUA_VER
-#define LUA_VER 0x050000
+#define LUA_VER 0x050100
 #endif
 
-#if LUA_VER >= 0x050100
 #include "lua.hpp"
-#else
-extern "C" {
-#include "lua.h"
-#include "lualib.h"
-}
-#endif
-
 #include <string>
 #include <celengine/parser.h>
 

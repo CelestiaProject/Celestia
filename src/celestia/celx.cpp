@@ -261,7 +261,6 @@ void CelxLua::initLineColorMap()
 }
 
 
-#if LUA_VER >= 0x050100
 // Load a Lua library--in Lua 5.1, the luaopen_* functions cannot be called
 // directly. They most be invoked through the Lua state.
 static void openLuaLibrary(lua_State* l,
@@ -276,7 +275,6 @@ static void openLuaLibrary(lua_State* l,
     lua_call(l, 1, 0);
 #endif
 }
-#endif
 
 
 void CelxLua::initMaps()
@@ -512,11 +510,7 @@ LuaState::LuaState() :
     ioMode(NoIO),
     eventHandlerEnabled(false)
 {
-#if LUA_VER >= 0x050100
     state = luaL_newstate();
-#else
-    state = lua_open();
-#endif
     timer = CreateTimer();
     screenshotCount = 0;
 }
@@ -569,7 +563,6 @@ static void checkTimeslice(lua_State* l, lua_Debug* /*ar*/)
         lua_pushstring(l, errormsg);
         lua_error(l);
     }
-    return;
 }
 
 
@@ -670,11 +663,7 @@ static int resumeLuaThread(lua_State *L, lua_State *co, int narg)
 #else
     status = lua_resume(co, narg);
 #endif
-#if LUA_VER >= 0x050100
     if (status == 0 || status == LUA_YIELD)
-#else
-    if (status == 0)
-#endif
     {
         int nres = lua_gettop(co);
         //if (!lua_checkstack(L, narg))
@@ -739,13 +728,9 @@ bool LuaState::charEntered(const char* c_p)
         int stackTop = lua_gettop(costate);
         if (strcmp(c_p, "y") == 0)
         {
-#if LUA_VER >= 0x050100
             openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
             openLuaLibrary(costate, LUA_IOLIBNAME, luaopen_io);
             openLuaLibrary(costate, LUA_OSLIBNAME, luaopen_os);
-#else
-            lua_iolibopen(costate);
-#endif
             ioMode = IOAllowed;
         }
         else
@@ -779,9 +764,6 @@ bool LuaState::charEntered(const char* c_p)
         lua_settop(costate,stackTop);
         return true;
     }
-#if LUA_VER < 0x050100
-    int stack_top = lua_gettop(costate);
-#endif
     bool result = true;
     lua_getglobal(costate, KbdCallback);
     lua_pushstring(costate, c_p);
@@ -800,10 +782,6 @@ bool LuaState::charEntered(const char* c_p)
 		lua_pop(costate, 1);
     }
 
-#if LUA_VER < 0x050100
-    // cleanup stack - is this necessary?
-    lua_settop(costate, stack_top);
-#endif
     return result;
 }
 
@@ -1020,24 +998,12 @@ int LuaState::resume()
         if (errorMessage == NULL)
             errorMessage = "Unknown script error";
 
-#if LUA_VER < 0x050100
-        // This is a nasty hack required in Lua 5.0, where there's no
-        // way to distinguish between a thread returning because it completed
-        // or yielded. Thus, we continue to resume the script until we get
-        // an error.  The 'cannot resume dead coroutine' error appears when
-        // there were no other errors, and execution terminates normally.
-        // In Lua 5.1, we can simply check the thread status to find out
-        // if it's done executing.
-        if (strcmp(errorMessage, "cannot resume dead coroutine") != 0)
-#endif
+        cout << "Error: " << errorMessage << '\n';
+        CelestiaCore* appCore = getAppCore(co);
+        if (appCore != NULL)
         {
-            cout << "Error: " << errorMessage << '\n';
-            CelestiaCore* appCore = getAppCore(co);
-            if (appCore != NULL)
-            {
-                CelestiaCore::Alerter* alerter = appCore->getAlerter();
-                alerter->fatalError(errorMessage);
-            }
+            CelestiaCore::Alerter* alerter = appCore->getAlerter();
+            alerter->fatalError(errorMessage);
         }
 
         return 1; // just the error string
@@ -1051,13 +1017,11 @@ int LuaState::resume()
             timeout = getTime() + 1.0;
         }
 
-#if LUA_VER >= 0x050100
         // The thread status is zero if it has terminated normally
         if (lua_status(co) == 0)
         {
             alive = false;
         }
-#endif
 
         return nArgs; // arguments from yield
     }
@@ -1120,21 +1084,21 @@ bool LuaState::tick(double dt)
 
         if (getTime() > timeout)
         {
-            appCore->showText("WARNING:\n\nThis script requests permission to read/write files\n"
+            appCore->showText(_("WARNING:\n\nThis script requests permission to read/write files\n"
                               "and execute external programs. Allowing this can be\n"
                               "dangerous.\n"
                               "Do you trust the script and want to allow this?\n\n"
-                              "y = yes, ESC = cancel script, any other key = no",
+                              "y = yes, ESC = cancel script, any other key = no"),
                               0, 0,
                               -15, 5, 5);
             appCore->setTextEnterMode(appCore->getTextEnterMode() | CelestiaCore::KbPassToScript);
         }
         else
         {
-            appCore->showText("WARNING:\n\nThis script requests permission to read/write files\n"
+            appCore->showText(_("WARNING:\n\nThis script requests permission to read/write files\n"
                               "and execute external programs. Allowing this can be\n"
                               "dangerous.\n"
-                              "Do you trust the script and want to allow this?",
+                              "Do you trust the script and want to allow this?"),
                               0, 0,
                               -15, 5, 5);
             appCore->setTextEnterMode(appCore->getTextEnterMode() & ~CelestiaCore::KbPassToScript);
@@ -1186,14 +1150,9 @@ void LuaState::requestIO()
         string policy = appCore->getConfig()->scriptSystemAccessPolicy;
         if (policy == "allow")
         {
-#if LUA_VER >= 0x050100
             openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
             openLuaLibrary(costate, LUA_IOLIBNAME, luaopen_io);
             openLuaLibrary(costate, LUA_OSLIBNAME, luaopen_os);
-#else
-            lua_iolibopen(costate);
-#endif
-            //luaopen_io(costate);
             ioMode = IOAllowed;
         }
         else if (policy == "deny")
@@ -3550,7 +3509,6 @@ bool LuaState::init(CelestiaCore* appCore)
     CelxLua::initMaps();
 
     // Import the base, table, string, and math libraries
-#if LUA_VER >= 0x050100
     openLuaLibrary(state, "", luaopen_base);
     openLuaLibrary(state, LUA_MATHLIBNAME, luaopen_math);
     openLuaLibrary(state, LUA_TABLIBNAME, luaopen_table);
@@ -3561,12 +3519,6 @@ bool LuaState::init(CelestiaCore* appCore)
     // Make the package library, except the loadlib function, available
     // for celx regardless of script system access policy.
 		allowLuaPackageAccess();
-#else
-    lua_baselibopen(state);
-    lua_mathlibopen(state);
-    lua_tablibopen(state);
-    lua_strlibopen(state);
-#endif
 
     // Add an easy to use wait function, so that script writers can
     // live in ignorance of coroutines.  There will probably be a significant
@@ -3624,16 +3576,10 @@ bool LuaState::init(CelestiaCore* appCore)
 
 void LuaState::setLuaPath(const string& s)
 {
-#if LUA_VER >= 0x050100
     lua_getglobal(state, "package");
     lua_pushstring(state, s.c_str());
     lua_setfield(state, -2, "path");
     lua_pop(state, 1);
-#else
-    lua_pushstring(state, "LUA_PATH");
-    lua_pushstring(state, s.c_str());
-    lua_settable(state, LUA_GLOBALSINDEX);
-#endif
 }
 
 
@@ -4030,74 +3976,11 @@ static void ExtendCelestiaMetaTable(lua_State* l)
 }
 
 
-#if LUA_VER < 0x050100
-// ======================== loadlib ===================================
-/*
-* This is an implementation of loadlib based on the dlfcn interface.
-* The dlfcn interface is available in Linux, SunOS, Solaris, IRIX, FreeBSD,
-* NetBSD, AIX 4.2, HPUX 11, and  probably most other Unix flavors, at least
-* as an emulation layer on top of native functions.
-*/
-
-#ifndef _WIN32
-extern "C" {
-#include <lualib.h>
-/* #include <lauxlib.h.h> */
-#include <dlfcn.h>
-}
-
-#if 0
-static int x_loadlib(lua_State *L)
-{
-/* temp -- don't have lauxlib
- const char *path=luaL_checkstring(L,1);
- const char *init=luaL_checkstring(L,2);
-*/
-cout << "loading lua lib\n"; cout.flush();
-
- const char *path=lua_tostring(L,1);
- const char *init=lua_tostring(L,2);
-
- void *lib=dlopen(path,RTLD_NOW);
- if (lib!=NULL)
- {
-  lua_CFunction f=(lua_CFunction) dlsym(lib,init);
-  if (f!=NULL)
-  {
-   lua_pushlightuserdata(L,lib);
-   lua_pushcclosure(L,f,1);
-   return 1;
-  }
- }
- /* else return appropriate error messages */
- lua_pushnil(L);
- lua_pushstring(L,dlerror());
- lua_pushstring(L,(lib!=NULL) ? "init" : "open");
- if (lib!=NULL) dlclose(lib);
- return 3;
-}
-#endif
-#endif // _WIN32
-#endif // LUA_VER < 0x050100
-
 // ==================== Load Libraries ================================================
 
 static void loadLuaLibs(lua_State* state)
 {
-#if LUA_VER >= 0x050100
     openLuaLibrary(state, LUA_DBLIBNAME, luaopen_debug);
-#else
-    luaopen_debug(state);
-#endif
-
-    // TODO: Not required with Lua 5.1
-#if 0
-#ifndef _WIN32
-    lua_pushstring(state, "xloadlib");
-    lua_pushcfunction(state, x_loadlib);
-    lua_settable(state, LUA_GLOBALSINDEX);
-#endif
-#endif
 
     CreateObjectMetaTable(state);
     CreateObserverMetaTable(state);
@@ -4120,13 +4003,9 @@ static void loadLuaLibs(lua_State* state)
 
 void LuaState::allowSystemAccess()
 {
-#if LUA_VER >= 0x050100
     openLuaLibrary(state, LUA_LOADLIBNAME, luaopen_package);
     openLuaLibrary(state, LUA_IOLIBNAME, luaopen_io);
     openLuaLibrary(state, LUA_OSLIBNAME, luaopen_os);
-#else
-    luaopen_io(state);
-#endif
     ioMode = IOAllowed;
 }
 
@@ -4135,7 +4014,6 @@ void LuaState::allowSystemAccess()
 // function.
 void LuaState::allowLuaPackageAccess()
 {
-#if LUA_VER >= 0x050100
     openLuaLibrary(state, LUA_LOADLIBNAME, luaopen_package);
 
     // Disallow loadlib
@@ -4143,7 +4021,6 @@ void LuaState::allowLuaPackageAccess()
     lua_pushnil(state);
     lua_setfield(state, -2, "loadlib");
     lua_pop(state, 1);
-#endif
 }
 
 
