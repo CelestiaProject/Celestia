@@ -1066,12 +1066,12 @@ Selection Universe::findPath(const string& s,
 }
 
 
-vector<string> Universe::getCompletion(const string& s,
+vector<Name> Universe::getCompletion(const string& s,
                                                  Selection* contexts,
                                                  int nContexts,
                                                  bool withLocations)
 {
-    vector<string> completion;
+    vector<Name> completion;
     int s_length = UTF8Length(s);
 
     // Solar bodies first:
@@ -1096,7 +1096,7 @@ vector<string> Universe::getCompletion(const string& s,
             PlanetarySystem* planets = sys->getPlanets();
             if (planets != nullptr)
             {
-                vector<string> bodies = planets->getCompletion(s);
+                vector<Name> bodies = planets->getCompletion(s);
                 completion.insert(completion.end(),
                                   bodies.begin(), bodies.end());
             }
@@ -1116,20 +1116,20 @@ vector<string> Universe::getCompletion(const string& s,
         vector<string> stars  = starCatalog->getCompletion(s);
         completion.insert(completion.end(), stars.begin(), stars.end());
     }*/
-    vector<string> objs = m_adb.getCompletion(s);
+    vector<Name> objs = m_adb.getCompletion(s);
     completion.insert(completion.end(), objs.begin(), objs.end());
 
     return completion;
 }
 
 
-vector<string> Universe::getCompletionPath(const string& s,
+vector<Name> Universe::getCompletionPath(const string& s,
                                            Selection* contexts,
                                            int nContexts,
                                            bool withLocations)
 {
-    vector<string> completion;
-    vector<string> locationCompletion;
+    vector<Name> completion;
+    vector<Name> locationCompletion;
     string::size_type pos = s.rfind('/', s.length());
 
     if (pos == string::npos)

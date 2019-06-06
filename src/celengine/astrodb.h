@@ -39,7 +39,7 @@ class AstroDatabase {
     std::map<const char *, Catalog> m_prefixCatalog;
     std::map<int, CrossIndex*> m_catxindex;
     std::map<int, CrossIndex*> m_celxindex;
-    NameDatabase m_nameDB;
+    NameDatabase m_nameIndex;
     LoadersMap m_loaders;
     StarsList m_stars;
     DsosList m_dsos;
@@ -59,15 +59,15 @@ class AstroDatabase {
     AstroDatabase();
 
     AstroObject *getObject(AstroCatalog::IndexNumber) const;
-    AstroObject *getObject(const std::string&, bool = true, bool = true) const;
+    AstroObject *getObject(const Name&, bool = true, bool = true) const;
     Star *getStar(AstroCatalog::IndexNumber) const;
     DeepSkyObject *getDSO(AstroCatalog::IndexNumber) const;
-    Star *getStar(const std::string&, bool = true, bool = true) const;
-    DeepSkyObject *getDSO(const std::string&, bool = true, bool = true) const;
+    Star *getStar(const Name&, bool = true, bool = true) const;
+    DeepSkyObject *getDSO(const Name&, bool = true, bool = true) const;
     size_t size() const { return m_mainIndex.size(); };
 
-    AstroCatalog::IndexNumber nameToIndex(const std::string&, bool = true, bool = true) const;
-    AstroCatalog::IndexNumber starnameToIndex(const std::string& name, bool = true) const;
+    AstroCatalog::IndexNumber nameToIndex(const Name&, bool = true, bool = true) const;
+    AstroCatalog::IndexNumber starnameToIndex(const Name& name, bool = true) const;
 
     AstroCatalog::IndexNumber catalogNumberToIndex(int, AstroCatalog::IndexNumber) const;
     AstroCatalog::IndexNumber indexToCatalogNumber(int, AstroCatalog::IndexNumber) const;
@@ -75,14 +75,14 @@ class AstroDatabase {
     std::string catalogNumberToString(AstroCatalog::IndexNumber) const;
     std::string catalogNumberToString(int, AstroCatalog::IndexNumber) const;
 
-    std::string getObjectName(AstroCatalog::IndexNumber, bool = false) const;
-    std::string getObjectName(const AstroObject *o, bool i18n = false) const
+    Name getObjectName(AstroCatalog::IndexNumber, bool = false) const;
+    Name getObjectName(const AstroObject *o, bool i18n = false) const
     {
         return getObjectName(o->getIndex(), i18n);
     }
 
-    std::vector<std::string> getObjectNameList(AstroCatalog::IndexNumber, int = 128) const;
-    std::vector<std::string> getObjectNameList(AstroObject *o, int n = 128) const
+    std::vector<Name> getObjectNameList(AstroCatalog::IndexNumber, int = 128) const;
+    std::vector<Name> getObjectNameList(AstroObject *o, int n = 128) const
     {
         return getObjectNameList(o->getIndex(), n);
     }
@@ -93,9 +93,9 @@ class AstroDatabase {
         return getObjectNames(o->getIndex(), n);
     }
 
-    std::vector<std::string> getCompletion(const std::string&name) const
+    std::vector<Name> getCompletion(const std::string& name) const
     {
-        return m_nameDB.getCompletion(name);
+        return m_nameIndex.getCompletion(name);
     }
 
     bool addAstroCatalog(int, AstroCatalog*);
@@ -110,17 +110,16 @@ class AstroDatabase {
     bool removeObject(AstroCatalog::IndexNumber);
     bool removeObject(AstroObject *);
 
-    void addName(AstroCatalog::IndexNumber nr, const std::string &name)
-    {
-        m_nameDB.add(nr, name);
-    }
+    bool addName(AstroCatalog::IndexNumber, const Name&);
+    bool addName(NameInfo&);
 
     void addNames(AstroCatalog::IndexNumber, const std::string&);
+    NameInfo *getNameInfo(const Name& name) const { return m_nameIndex.getNameInfo(name); }
 
-    void eraseNames(AstroCatalog::IndexNumber nr)
-    {
-        m_nameDB.erase(nr);
-    }
+    void removeName(const Name& name) { m_nameIndex.erase(name); }
+    void removeName(const NameInfo&);
+    void removeNames(AstroCatalog::IndexNumber);
+    void removeNames(AstroObject*);
 
     const StarsList &getStars() const
     {

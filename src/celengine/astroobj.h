@@ -1,8 +1,10 @@
 #pragma once
+#include <memory>
 #include <unordered_set>
 #include <celengine/selection.h>
 #include <celengine/parseobject.h>
 #include "astrocat.h"
+#include "name.h"
 
 class AstroDatabase;
 
@@ -15,10 +17,38 @@ public:
     AstroObject() = default;
     AstroObject(AstroDatabase *db, AstroCatalog::IndexNumber nr = AstroCatalog::InvalidIndex) : m_db(db), m_mainIndexNumber(nr) {}
     AstroCatalog::IndexNumber getIndex() const { return m_mainIndexNumber; }
-    void setIndex(AstroCatalog::IndexNumber nr) { m_mainIndexNumber = nr; }
+    void setIndex(AstroCatalog::IndexNumber);
     AstroDatabase *getAstroDatabase() { return m_db; }
 
-// Part from legacy CatEntry    
+// Names support
+
+ protected:
+    NameInfoSet m_nameInfos;
+    NameInfo m_primaryName;
+    NameInfoSet::iterator getNameInfoIterator(const Name &) const;
+ public:
+    bool addName(const std::string&, const std::string& = std::string(), bool = true, bool = true);
+    bool addName(const Name&, const std::string& = std::string(), bool = true, bool = true);
+    bool addName(NameInfo&, bool = true, bool = true);
+    void addNames(const std::string&, bool = true);
+    bool addAlias(const std::string& name, const std::string& domain) { return addName(name, domain, false); }
+    bool addAlias(NameInfo &info) { return addName(info, false); }
+    const Name &getName() const { return m_primaryName.getCanon(); }
+    const Name &getLocalizedName() { return m_primaryName.getLocalized(); }
+    bool hasName(const Name& name) const;
+    bool hasName(const std::string& name) const;
+    bool hasName() const { return !m_primaryName.getCanon().empty(); }
+    bool hasLocalizedName(const Name& name) const;
+    bool hasLocalizedName(const std::string& name) const;
+    bool hasLocalizedName() { return m_primaryName.getCanon() != m_primaryName.getLocalized(); }
+    NameInfoSet& getNameInfos() { return m_nameInfos; }
+    bool removeName(const std::string&, bool = true);
+    bool removeName(const Name&, bool = true);
+    bool removeName(const NameInfo&, bool = true);
+    void removeNames(bool = true);
+    NameInfo* getNameInfo(const Name &name);
+
+// Part from legacy CatEntry
 public:
     typedef std::unordered_set<UserCategory*> CategorySet;
 

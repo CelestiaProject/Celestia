@@ -63,7 +63,7 @@ class PlanetarySystem
 
     bool traverse(TraversalFunc, void*) const;
     Body* find(const std::string&, bool deepSearch = false, bool i18n = false) const;
-    std::vector<std::string> getCompletion(const std::string& _name, bool rec = true) const;
+    std::vector<Name> getCompletion(const std::string& _name, bool rec = true) const;
 
  private:
     void addBodyToNameIndex(Body* body);

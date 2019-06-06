@@ -21,9 +21,28 @@ AstroObject *AstroDatabase::getObject(AstroCatalog::IndexNumber nr) const
     return it->second;
 }
 
-AstroObject *AstroDatabase::getObject(const std::string &name, bool tryGreek, bool smart) const
+AstroObject *AstroDatabase::getObject(const Name &name, bool tryGreek, bool smart) const
 {
-    return getObject(nameToIndex(name, tryGreek, smart));
+    AstroObject *obj = m_nameIndex.getObjectByName(name, tryGreek);
+    if (obj != nullptr)
+        return obj;
+    if (smart)
+    {
+        obj = m_nameIndex.findObjectByName(name, tryGreek);
+        if (obj != nullptr)
+            return obj;
+    }
+    for (const auto& ci : m_catalogs)
+    {
+        AstroCatalog::IndexNumber inr = ci.second->nameToCatalogNumber(name.str());
+        if (inr == AstroCatalog::InvalidIndex)
+            continue;
+        AstroCatalog::IndexNumber nr = catalogNumberToIndex(ci.first, inr);
+        obj = getObject(nr);
+        if (obj != nullptr)
+            return obj;
+    }
+    return nullptr;
 }
 
 Star *AstroDatabase::getStar(AstroCatalog::IndexNumber nr) const
@@ -34,9 +53,12 @@ Star *AstroDatabase::getStar(AstroCatalog::IndexNumber nr) const
     return star->toSelection().star();
 }
 
-Star *AstroDatabase::getStar(const std::string &name, bool tryGreek, bool smart) const
+Star *AstroDatabase::getStar(const Name &name, bool tryGreek, bool smart) const
 {
-    return getStar(nameToIndex(name, tryGreek, smart));
+    AstroObject *star = getObject(name, tryGreek, smart);
+    if (star == nullptr)
+        return nullptr;
+    return star->toSelection().star();
 }
 
 DeepSkyObject *AstroDatabase::getDSO(AstroCatalog::IndexNumber nr) const
@@ -47,9 +69,12 @@ DeepSkyObject *AstroDatabase::getDSO(AstroCatalog::IndexNumber nr) const
     return dso->toSelection().deepsky();
 }
 
-DeepSkyObject *AstroDatabase::getDSO(const std::string &name, bool tryGreek, bool smart) const
+DeepSkyObject *AstroDatabase::getDSO(const Name &name, bool tryGreek, bool smart) const
 {
-    return getDSO(nameToIndex(name, tryGreek, smart));
+    AstroObject *dso = getObject(name, tryGreek, smart);
+    if (dso == nullptr)
+        return nullptr;
+    return dso->toSelection().deepsky();
 }
 
 AstroCatalog::IndexNumber AstroDatabase::catalogNumberToIndex(int catalog, AstroCatalog::IndexNumber nr) const
@@ -68,34 +93,20 @@ AstroCatalog::IndexNumber AstroDatabase::indexToCatalogNumber(int catalog, Astro
     return it->second->get(nr);
 }
 
-AstroCatalog::IndexNumber AstroDatabase::nameToIndex(const std::string& name, bool tryGreek, bool smart) const
+AstroCatalog::IndexNumber AstroDatabase::nameToIndex(const Name& name, bool tryGreek, bool smart) const
 {
-    AstroCatalog::IndexNumber nr = m_nameDB.getIndexNumberByName(name, tryGreek);
-    if (nr != AstroCatalog::InvalidIndex)
-        return nr;
-    if (smart)
-    {
-        nr = m_nameDB.findIndexNumberByName(name, tryGreek);
-        if (nr != AstroCatalog::InvalidIndex)
-            return nr;
-    }
-    for (const auto& ci : m_catalogs)
-    {
-        AstroCatalog::IndexNumber inr = ci.second->nameToCatalogNumber(name);
-        if (inr == AstroCatalog::InvalidIndex)
-            continue;
-        if (ci.first == Hipparcos && inr < HipparcosAstroCatalog::MaxCatalogNumber)
-            return inr;
-        if (ci.first == Tycho && inr > HipparcosAstroCatalog::MaxCatalogNumber && inr <= TychoAstroCatalog::MaxCatalogNumber)
-            return inr;
-        nr = catalogNumberToIndex(ci.first, inr);
-    }
-    return nr;
+    AstroObject *obj = getObject(name, tryGreek, smart);
+    if (obj == nullptr)
+        return AstroCatalog::InvalidIndex;
+    return obj->getIndex();
 }
 
-AstroCatalog::IndexNumber AstroDatabase::starnameToIndex(const std::string& name, bool tryGreek) const
+AstroCatalog::IndexNumber AstroDatabase::starnameToIndex(const Name& name, bool tryGreek) const
 {
-    return m_nameDB.findIndexNumberByName(name, tryGreek);
+    AstroObject *obj = m_nameIndex.findObjectByName(name, tryGreek);
+    if (obj == nullptr)
+        return AstroCatalog::InvalidIndex;
+    return obj->getIndex();
 }
 
 std::string AstroDatabase::catalogNumberToString(AstroCatalog::IndexNumber nr) const
@@ -111,30 +122,29 @@ std::string AstroDatabase::catalogNumberToString(int catalog, AstroCatalog::Inde
     return "";
 }
 
-std::string AstroDatabase::getObjectName(AstroCatalog::IndexNumber nr, bool i18n) const
+Name AstroDatabase::getObjectName(AstroCatalog::IndexNumber nr, bool i18n) const
 {
-    NameDatabase::NumberIndex::const_iterator iter = m_nameDB.getFirstNameIter(nr);
-    if (iter != m_nameDB.getFinalNameIter() && iter->first == nr)
-    {
-        if (i18n)
-        {
-            const char* localized = _(iter->second.c_str());
-            if (iter->second != localized)
-                return localized;
-        }
-        return iter->second;
-    }
+    AstroObject *obj = getObject(nr);
+    if (obj == nullptr)
+        return string();
+    if (i18n && obj->hasLocalizedName())
+        return obj->getLocalizedName();
+    if (obj->hasName())
+        return obj->getName();
     return catalogNumberToString(nr);
 }
 
-std::vector<std::string> AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr, int max) const
+std::vector<Name> AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr, int max) const
 {
-    std::vector<std::string> ret;
-    NameDatabase::NumberIndex::const_iterator iter = m_nameDB.getFirstNameIter(nr);
-    while (iter != m_nameDB.getFinalNameIter() && iter->first == nr && max > 0)
+    std::vector<Name> ret;
+    AstroObject *obj = getObject(nr);
+    if (obj == nullptr)
+        return ret;
+    for(const auto &iter : obj->getNameInfos())
     {
-        ret.push_back(iter->second);
-        ++iter;
+        if (max == 0)
+            return ret;
+        ret.push_back(iter.getCanon());
         --max;
     }
 
@@ -160,14 +170,17 @@ std::string AstroDatabase::getObjectNames(AstroCatalog::IndexNumber nr, int max)
 {
     string names;
     names.reserve(max); // optimize memory allocation
-    NameDatabase::NumberIndex::const_iterator iter = m_nameDB.getFirstNameIter(nr);
-    while (iter != m_nameDB.getFinalNameIter() && iter->first == nr && max > 0)
+    AstroObject *obj = getObject(nr);
+    if (obj == nullptr)
+        return "";
+    for (const auto &name : obj->getNameInfos())
     {
+        if (max == 0)
+            return names;
         if (!names.empty())
             names += " / ";
 
-        names += iter->second;
-        ++iter;
+        names += name.getCanon().str();
         --max;
     }
 
@@ -189,6 +202,23 @@ std::string AstroDatabase::getObjectNames(AstroCatalog::IndexNumber nr, int max)
         --max;
     }
     return names;
+}
+
+void AstroDatabase::removeName(const NameInfo& name)
+{
+    m_nameIndex.erase(name.getCanon());
+}
+
+void AstroDatabase::removeNames(AstroCatalog::IndexNumber nr)
+{
+    AstroObject *obj = getObject(nr);
+    if (obj != nullptr)
+        removeNames(obj);
+}
+
+void AstroDatabase::removeNames(AstroObject *obj)
+{
+    obj->removeNames();
 }
 
 bool AstroDatabase::addAstroCatalog(int id, AstroCatalog *catalog)
@@ -242,6 +272,10 @@ bool AstroDatabase::addObject(AstroObject *obj)
     }
     obj->setDatabase(this);
     m_mainIndex.insert(std::make_pair(obj->getIndex(), obj));
+    for(NameInfo info : obj->getNameInfos())
+    {
+        m_nameIndex.add(info);
+    }
     return true;
 }
 
@@ -250,10 +284,6 @@ bool AstroDatabase::addStar(Star *star)
     if (!addObject(star))
         return false;
     m_stars.insert(star);
-#ifdef OCTREE_DEBUG
-    if (!m_starOctree.isDirty())
-        cout << "Clean star Octree going to be dirty!\n";
-#endif
     m_starOctree.insertObject(star);
 //    fmt::fprintf(cout, "Added star  with magnitude %f.\n", star->getAbsoluteMagnitude());
     return true;
@@ -264,10 +294,6 @@ bool AstroDatabase::addDSO(DeepSkyObject *dso)
     if (!addObject(dso))
         return false;
     m_dsos.insert(dso);
-#ifdef OCTREE_DEBUG
-    if (!m_dsoOctree.isDirty())
-        cout << "Clean dso Octree going to be dirty!\n";
-#endif
     m_dsoOctree.insertObject(dso);
     return true;
 }
@@ -280,11 +306,10 @@ bool AstroDatabase::addBody(Body *body)
     return true;
 }
 
-bool AstroDatabase::removeObject(AstroCatalog::IndexNumber nr)
+bool AstroDatabase::removeObject(AstroObject *obj)
 {
-    AstroObject *obj = getObject(nr);
     if (obj == nullptr)
-        return false;
+        cerr << "Null object removing!" << endl;
     Selection sel = obj->toSelection();
     switch(sel.getType())
     {
@@ -294,35 +319,41 @@ bool AstroDatabase::removeObject(AstroCatalog::IndexNumber nr)
         case Selection::Type_DeepSky:
             m_dsos.erase(sel.deepsky());
     }
-    m_mainIndex.erase(nr);
+    m_mainIndex.erase(obj->getIndex());
+    removeNames(obj);
+    obj->setDatabase(nullptr);
     return true;
 }
 
-bool AstroDatabase::removeObject(AstroObject *o)
+bool AstroDatabase::removeObject(AstroCatalog::IndexNumber nr)
 {
-    return removeObject(o->getIndex());
+    AstroObject *obj = getObject(nr);
+    if (obj == nullptr)
+        return false;
+    return removeObject(obj->getIndex());
 }
 
-void AstroDatabase::addNames(AstroCatalog::IndexNumber nr, const string &names) // string containing names separated by colon
+bool AstroDatabase::addName(AstroCatalog::IndexNumber nr, const Name& name)
 {
-    string::size_type startPos = 0;
-    while (startPos != string::npos)
-    {
-        string::size_type next = names.find(':', startPos);
-        string::size_type length = string::npos;
-        if (next != string::npos)
-        {
-            length = next - startPos;
-            ++next;
-        }
-        string name = names.substr(startPos, length);
-        addName(nr, name);
-        string lname = _(name.c_str());
-//      fmt::printf(cerr, "Added name \"%s\" for DSO nr %u\n", DSOName, );
-        if (name != lname)
-            addName(nr, lname);
-        startPos = next;
-    }
+    AstroObject *o = getObject(nr);
+    if (o == nullptr)
+        return false;
+    return o->addName(name);
+}
+
+bool AstroDatabase::addName(NameInfo &info)
+{
+    return m_nameIndex.add(info);
+//     fmt::fprintf(cerr, "Adding name \"%s\" to object nr %u.\n", info.getCanon().str(), obj->getIndex());
+}
+
+void AstroDatabase::addNames(AstroCatalog::IndexNumber nr, const string &names)
+{
+    AstroObject *obj = getObject(nr);
+    if (obj != nullptr)
+        obj->addNames(names);
+    else
+        fmt::fprintf(cerr, "No object nr %u to add names \"%s\"!\n", nr, names);
 }
 
 void AstroDatabase::createBuiltinCatalogs()

@@ -1,107 +1,59 @@
 #include <celutil/debug.h>
 #include "asterism.h"
 #include "constellation.h"
-#include "name.h"
+#include "namedb.h"
 
 using namespace std;
 
 uint32_t NameDatabase::getNameCount() const
 {
-    return nameIndex.size();
+    return m_nameIndex.size();
 }
 
-bool NameDatabase::add(AstroCatalog::IndexNumber indexNumber, const std::string& name, bool replaceGreek)
+bool NameDatabase::add(NameInfo &info, bool overwrite)
 {
-    if (name.length() != 0)
-    {
-        uint32_t tmp;
-        if ((tmp = getIndexNumberByName(name)) != AstroCatalog::InvalidIndex) {
-            DPRINTF(cerr,"Duplicated name '%s' on object with catalog numbers: %d and %d\n", name.c_str(), tmp, indexNumber);
-            if (tmp == indexNumber)
-                return false;
-        }
-        // Add the new name
-        //nameIndex.insert(NameIndex::value_type(name, catalogNumber));
-        std::string fname = name;
-        if (replaceGreek)
-            fname = ReplaceGreekLetterAbbr(name);
-
-        nameIndex[fname] = indexNumber;
-        numberIndex.insert(NumberIndex::value_type(indexNumber, fname));
-        return true;
-    }
-    return false;
-}
-void NameDatabase::erase(AstroCatalog::IndexNumber indexNumber)
-{
-    for (auto i = getFirstNameIter(indexNumber); i != getFinalNameIter() && i->first == indexNumber; i++)
-    {
-        nameIndex.erase(i->second);
-    }
-    numberIndex.erase(indexNumber);
+    if (!overwrite && (info.getCanon().empty() || m_nameIndex.find(info.getCanon()) != m_nameIndex.end()))
+        return false;
+    m_nameIndex[info.getCanon()] = info;
+    if (!info.getLocalized().empty())
+        m_localizedIndex[info.getLocalized()] = info;
+    return true;
 }
 
-uint32_t NameDatabase::getIndexNumberByName(const std::string& name, bool greek) const
+void NameDatabase::erase(const Name& name)
 {
-    NameIndex::const_iterator iter = nameIndex.find(name);
+    NameMap::iterator it = m_nameIndex.find(name);
+    if (it == m_nameIndex.end())
+        return;
+    m_localizedIndex.erase(it->second.getLocalized());
+    m_nameIndex.erase(name);
+}
 
-    if (iter != nameIndex.end())
-        return iter->second;
+NameInfo *NameDatabase::getNameInfo(const Name& name, bool greek) const
+{
+    NameMap::const_iterator iter = m_nameIndex.find(name);
+
+    if (iter != m_nameIndex.end())
+        iter->second;
     if (greek)
     {
-        iter = nameIndex.find(ReplaceGreekLetterAbbr(name));
-        if (iter != nameIndex.end())
-            return iter->second;
+        string fname = ReplaceGreekLetterAbbr(name.str());
+        iter = m_nameIndex.find(fname);
+        if (iter != m_nameIndex.end())
+            return (NameInfo*)&iter->second;
     }
-    return AstroCatalog::InvalidIndex;
+    return nullptr;
 }
 
-// Return the first name matching the catalog number or end()
-// if there are no matching names.  The first name *should* be the
-// proper name of the OBJ, if one exists. This requires the
-// OBJ name database file to have the proper names listed before
-// other designations.  Also, the STL implementation must
-// preserve this order when inserting the names into the multimap
-// (not certain whether or not this behavior is in the STL spec.
-// but it works on the implementations I've tried so far.)
-std::string NameDatabase::getNameByIndexNumber(AstroCatalog::IndexNumber indexNumber) const
+AstroObject *NameDatabase::getObjectByName(const Name& name, bool greek) const
 {
-    if (indexNumber == AstroCatalog::InvalidIndex)
-        return "";
-
-    NumberIndex::const_iterator iter = numberIndex.lower_bound(indexNumber);
-
-    if (iter != numberIndex.end() && iter->first == indexNumber)
-        return iter->second;
-
-    return "";
+    NameInfo *info = getNameInfo(name, greek);
+    if (info == nullptr)
+        return nullptr;
+    return info->getObject();
 }
 
-
-// Return the first name matching the catalog number or end()
-// if there are no matching names.  The first name *should* be the
-// proper name of the OBJ, if one exists. This requires the
-// OBJ name database file to have the proper names listed before
-// other designations.  Also, the STL implementation must
-// preserve this order when inserting the names into the multimap
-// (not certain whether or not this behavior is in the STL spec.
-// but it works on the implementations I've tried so far.)
-NameDatabase::NumberIndex::const_iterator NameDatabase::getFirstNameIter(AstroCatalog::IndexNumber indexNumber) const
-{
-    NumberIndex::const_iterator iter = numberIndex.lower_bound(indexNumber);
-
-    if (iter == numberIndex.end() || iter->first != indexNumber)
-        return getFinalNameIter();
-    else
-        return iter;
-}
-
-NameDatabase::NumberIndex::const_iterator NameDatabase::getFinalNameIter() const
-{
-    return numberIndex.end();
-}
-
-std::vector<std::string> NameDatabase::getCompletion(const std::string& name, bool greek) const
+std::vector<Name> NameDatabase::getCompletion(const std::string& name, bool greek) const
 {
     if (greek)
     {
@@ -110,12 +62,16 @@ std::vector<std::string> NameDatabase::getCompletion(const std::string& name, bo
         return getCompletion(compList);
     }
 
-    std::vector<std::string> completion;
-    int name_length = UTF8Length(name);
+    std::vector<Name> completion;
+    string fname;
+    if (greek)
+        fname = ReplaceGreekLetterAbbr(name);
+    else fname = name;
+    int name_length = UTF8Length(fname);
 
-    for (NameIndex::const_iterator iter = nameIndex.begin(); iter != nameIndex.end(); ++iter)
+    for (NameMap::const_iterator iter = m_nameIndex.begin(); iter != m_nameIndex.end(); ++iter)
     {
-        if (!UTF8StringCompare(iter->first, name, name_length, true))
+        if (!UTF8StringCompare(iter->first.str(), fname, name_length, true))
         {
             completion.push_back(iter->first);
         }
@@ -123,9 +79,9 @@ std::vector<std::string> NameDatabase::getCompletion(const std::string& name, bo
     return completion;
 }
 
-std::vector<std::string> NameDatabase::getCompletion(const std::vector<std::string> &list) const
+std::vector<Name> NameDatabase::getCompletion(const std::vector<string> &list) const
 {
-    std::vector<std::string> completion;
+    std::vector<Name> completion;
     for (const auto &n : list)
     {
         for (const auto &nn : getCompletion(n, false))
@@ -134,19 +90,19 @@ std::vector<std::string> NameDatabase::getCompletion(const std::vector<std::stri
     return completion;
 }
 
-uint32_t NameDatabase::findIndexNumberByName(const std::string& name, bool greek) const
+AstroObject *NameDatabase::findObjectByName(const Name& name, bool greek) const
 {
-    AstroCatalog::IndexNumber indexNumber = AstroCatalog::InvalidIndex;
+    AstroObject *ret = nullptr;
 
-    std::string priName   = name;
+    std::string priName = name.str();
     std::string altName;
 
     // See if the name is a Bayer or Flamsteed designation
-    std::string::size_type pos  = name.find(' ');
+    std::string::size_type pos  = name.str().find(' ');
     if (pos != 0 && pos != std::string::npos && pos < name.length() - 1)
     {
-        std::string prefix(name, 0, pos);
-        std::string conName(name, pos + 1, std::string::npos);
+        std::string prefix(name.str(), 0, pos);
+        std::string conName(name.str(), pos + 1, std::string::npos);
         Constellation* con  = Constellation::getConstellation(conName);
         if (con != nullptr)
         {
@@ -190,25 +146,25 @@ uint32_t NameDatabase::findIndexNumberByName(const std::string& name, bool greek
         }
     }
 
-    indexNumber = getIndexNumberByName(priName, greek);
-    if (indexNumber != AstroCatalog::InvalidIndex)
-        return indexNumber;
+    ret = getObjectByName(priName, greek);
+    if (ret != nullptr)
+        return ret;
 
     priName += " A";  // try by appending an A
-    indexNumber = getIndexNumberByName(priName, greek);
-    if (indexNumber != AstroCatalog::InvalidIndex)
-        return indexNumber;
+    ret = getObjectByName(priName, greek);
+    if (ret != nullptr)
+        return ret;
 
     // If the first search failed, try using the alternate name
     if (altName.length() != 0)
     {
-        indexNumber = getIndexNumberByName(altName, greek);
-        if (indexNumber == AstroCatalog::InvalidIndex)
+        ret = getObjectByName(altName, greek);
+        if (ret == nullptr)
         {
             altName += " A";
-            indexNumber = getIndexNumberByName(altName, greek);
+            ret = getObjectByName(altName, greek);
         }   // Intentional fallthrough.
     }
 
-    return indexNumber;
+    return ret;
 }

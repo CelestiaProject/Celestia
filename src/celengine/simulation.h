@@ -60,7 +60,7 @@ class Simulation
     void selectPlanet(int);
     Selection findObject(std::string s, bool i18n = false);
     Selection findObjectFromPath(std::string s, bool i18n = false);
-    std::vector<std::string> getObjectCompletion(std::string s, bool withLocations = false);
+    std::vector<Name> getObjectCompletion(std::string s, bool withLocations = false);
     void gotoSelection(double gotoTime,
                        const Eigen::Vector3f& up,
                        ObserverFrame::CoordinateSystem upFrame);

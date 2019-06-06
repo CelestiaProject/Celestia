@@ -1199,7 +1199,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (typedTextCompletionIdx >= 0) {
                 string::size_type pos = typedText.rfind('/', typedText.length());
                 if (pos != string::npos)
-                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx];
+                    typedText = typedText.substr(0, pos + 1) + (const string&) typedTextCompletion[typedTextCompletionIdx];
                 else
                     typedText = typedTextCompletion[typedTextCompletionIdx];
             }
@@ -1215,7 +1215,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (typedTextCompletionIdx >= 0) {
                 string::size_type pos = typedText.rfind('/', typedText.length());
                 if (pos != string::npos)
-                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx];
+                    typedText = typedText.substr(0, pos + 1) + (const string&) typedTextCompletion[typedTextCompletionIdx];
                 else
                     typedText = typedTextCompletion[typedTextCompletionIdx];
             }
@@ -3786,7 +3786,7 @@ void CelestiaCore::renderOverlay()
             int nb_lines = 3;
             int start = 0;
             glTranslatef(3.0f, -font->getHeight() - 3.0f, 0.0f);
-            vector<std::string>::const_iterator iter = typedTextCompletion.begin();
+            vector<Name>::const_iterator iter = typedTextCompletion.begin();
             if (typedTextCompletionIdx >= nb_cols * nb_lines)
             {
                start = (typedTextCompletionIdx / nb_lines + 1 - nb_cols) * nb_lines;
@@ -3802,7 +3802,7 @@ void CelestiaCore::renderOverlay()
                         glColor4f(1.0f, 0.6f, 0.6f, 1);
                     else
                         glColor4f(0.6f, 0.6f, 1.0f, 1);
-                    *overlay << *iter << "\n";
+                    *overlay << iter->str() << "\n";
                 }
                 overlay->endText();
                 glPopMatrix();
@@ -4401,6 +4401,22 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
             return false;
         }
     }
+
+    ifstream starNamesFile(cfg.starNamesFile, ios::in);
+    if (!starNamesFile.good())
+    {
+        fmt::fprintf(cerr, _("Error opening %s\n"), cfg.starNamesFile);
+        return false;
+    }
+
+//    StarNameDatabase* starNameDB = StarNameDatabase::readNames(starNamesFile);
+    NameDataLoader nameLoader(&aDB);
+    if (!nameLoader.load(starNamesFile))
+    {
+        cerr << _("Error reading star names file\n");
+        return false;
+    }
+
     CrossIndexDataLoader xloader(&aDB);
     loadCrossIndex(xloader, StarDatabase::HenryDraper, cfg.HDCrossIndexFile);
     loadCrossIndex(xloader, StarDatabase::SAO,         cfg.SAOCrossIndexFile);

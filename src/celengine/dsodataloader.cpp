@@ -77,13 +77,17 @@ bool DscDataLoader::load(istream& in)
                 return false;
             }
 
-            objCatalogNumber = obj->getIndex();
-            m_db->eraseNames(objCatalogNumber);
-            m_db->addNames(objCatalogNumber, objName);
+            if (!objName.empty())
+            {
+                if (obj->getNameInfos().size() > 0)
+                    obj->removeNames();
+                obj->addNames(objName);
+//                 fmt::fprintf(cout, "Object nr %u: Adding names \"%s\".\n", obj->getIndex(), objName);
+            }
         }
         else
         {
-            fmt::fprintf(cerr, "Bad Deep Sky Object definition--will continue parsing file.\n");
+//             fmt::fprintf(cerr, "Bad Deep Sky Object definition--will continue parsing file.\n");
             delete objParamsValue;
             return false;
         }

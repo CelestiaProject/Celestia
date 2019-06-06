@@ -422,7 +422,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     OverlayImage *image{ nullptr };
 
     std::string typedText;
-    std::vector<std::string> typedTextCompletion;
+    std::vector<Name> typedTextCompletion;
     int typedTextCompletionIdx{ -1 };
     int textEnterMode{ KbNormal };
     int hudDetail{ 2 }; // def 1

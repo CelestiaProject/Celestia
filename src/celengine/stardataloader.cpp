@@ -147,7 +147,7 @@ bool StcDataLoader::load(istream &in)
                     star->setIndex(catalogNumber);
                     if (!m_db->addStar(star))
                     {
-                        clog << __FILE__ << "(" << __LINE__ << "): Cannot add star wit nr " << catalogNumber << "!\n";
+                        clog << __FILE__ << "(" << __LINE__ << "): Cannot add star with nr " << catalogNumber << "!\n";
                         ok = false;
                     }
                     isNewStar = true;
@@ -247,7 +247,7 @@ bool StcDataLoader::load(istream &in)
 
         if (starDataValue->getType() != Value::HashType)
         {
-//            clog << " Bad star definition.\n";
+            clog << " Bad star definition.\n";
             delete starDataValue;
             return false;
         }
@@ -263,7 +263,7 @@ bool StcDataLoader::load(istream &in)
             if (!ok)
                 clog << __FILE__ << "(" << __LINE__ << "): Creation of star failed!\n";
             star->loadCategories(starData, disposition, resourcePath);
-        }// else clog << " Errors while preparing star, skipping creation.\n";
+        } else clog << " Errors while preparing star, skipping creation.\n";
 
         if (starDataValue != nullptr)
             delete starDataValue;
@@ -272,7 +272,7 @@ bool StcDataLoader::load(istream &in)
         {
             if (!objName.empty())
             {
-                m_db->eraseNames(catalogNumber);
+                m_db->removeNames(catalogNumber);
                 m_db->addNames(catalogNumber, objName);
             }
             if (m_db->getObjectNameList(catalogNumber).empty())
@@ -281,9 +281,11 @@ bool StcDataLoader::load(istream &in)
         }
         else
         {
-            m_db->removeObject(star);
             if (star != nullptr)
+            {
+                m_db->removeObject(star);
                 delete star;
+            }
             clog << "Bad star definition -- will continue parsing file.\n";
         }
 //         clog << "End parsing entry.\n";
@@ -364,7 +366,7 @@ bool StarBinDataLoader::load(istream& in)
 
         if (details == nullptr)
         {
-            fmt::fprintf(cerr, _("Bad spectral type in star database, star #%u\n"), star->getIndex());
+            fmt::fprintf(cout, _("Bad spectral type in star database, star #%u\n"), star->getIndex());
             return false;
         }
 
@@ -373,14 +375,17 @@ bool StarBinDataLoader::load(istream& in)
         if (m_db->addStar(star))
             ;//clog << "BinData: Added star nr " << star->getIndex() << endl;
         else
-            clog << "BinData: unable to add star nr " << star->getIndex() << endl;
+            cerr << "Binary star data: unable to add star nr " << star->getIndex() << endl;
     }
 
     if (in.bad())
+    {
+        cerr << "Unknown error while loading binary star database.\n";
         return false;
+    }
 
     DPRINTF(0, "StarBinDataLoader::load stars count: %d\n", nStarsInFile);
-    fmt::fprintf(clog, _("%d stars in binary database\n"), m_db->getStars().size());
+    fmt::fprintf(cout, _("%d stars in binary database\n"), m_db->getStars().size());
 
     // Create the temporary list of stars sorted by catalog number; this
     // will be used to lookup stars during file loading. After loading is

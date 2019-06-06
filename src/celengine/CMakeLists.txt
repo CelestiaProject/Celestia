@@ -77,6 +77,8 @@ set(CELENGINE_SOURCES
   modelgeometry.h
   multitexture.cpp
   multitexture.h
+  name.h
+  name.cpp
   namedb.cpp
   namedb.h
   namedataloader.h

@@ -715,7 +715,7 @@ static std::string getBodyName(Universe* universe, Body* body)
 
     if (body->getSystem()->getStar() != nullptr)
     {
-        name = universe->getDatabase().getObjectName(body->getSystem()->getStar()) + ":" + name;
+        name = universe->getDatabase().getObjectName(body->getSystem()->getStar()).str() + ":" + name;
     }
 
     return name;

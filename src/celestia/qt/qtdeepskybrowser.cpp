@@ -252,7 +252,7 @@ bool DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* ds
         return strcmp(dso0->getType(), dso1->getType()) < 0;
 
     case Alphabetical:
-        return universe->getDatabase().getObjectName(dso0, true) > universe->getDatabase().getObjectName(dso1, true);
+        return universe->getDatabase().getObjectName(dso0, true).str() > universe->getDatabase().getObjectName(dso1, true).str();
 
     default:
         return false;
