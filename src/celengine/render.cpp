@@ -7877,10 +7877,9 @@ void Renderer::updateBodyVisibilityMask()
     bodyVisibilityMask = flags;
 }
 
-void  Renderer::setSolarSystemMaxDistance(float t)
+void Renderer::setSolarSystemMaxDistance(float t)
 {
-    if (t >= 1.0f && t <= 10.0f)
-        SolarSystemMaxDistance = t;
+    SolarSystemMaxDistance = clamp(t, 1.0f, 10.0f);
 }
 
 void Renderer::getScreenSize(int* x, int* y, int* w, int* h) const
