@@ -27,7 +27,7 @@ class AstroDatabase {
 
     enum Catalog
     {
-        HenryDrapper = 0,
+        HenryDraper  = 0,
         Gliese       = 1,
         SAO          = 2,
         Hipparcos    = 3,

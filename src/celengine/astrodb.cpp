@@ -406,7 +406,7 @@ bool AstroDatabase::removeSystem(AstroCatalog::IndexNumber nr)
 
 void AstroDatabase::createBuiltinCatalogs()
 {
-    m_catalogs.insert(std::make_pair(HenryDrapper, new HenryDrapperCatalog()));
+    m_catalogs.insert(std::make_pair(HenryDraper, new HenryDrapperCatalog()));
     m_catalogs.insert(std::make_pair(Gliese, new GlieseAstroCatalog()));
     m_catalogs.insert(std::make_pair(SAO, new SAOAstroCatalog()));
     m_catalogs.insert(std::make_pair(Hipparcos, new HipparcosAstroCatalog()));

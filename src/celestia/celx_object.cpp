@@ -886,17 +886,17 @@ static int object_catalognumber(lua_State* l)
     // The argument is a string indicating the catalog.
     bool validCatalog = false;
     bool useHIPPARCOS = false;
-    StarDatabase::Catalog catalog = StarDatabase::HenryDraper;
+    AstroDatabase::Catalog catalog = AstroDatabase::HenryDraper;
     if (catalogName != nullptr)
     {
         if (compareIgnoringCase(catalogName, "HD") == 0)
         {
-            catalog = StarDatabase::HenryDraper;
+            catalog = AstroDatabase::HenryDraper;
             validCatalog = true;
         }
         else if (compareIgnoringCase(catalogName, "SAO") == 0)
         {
-            catalog = StarDatabase::SAO;
+            catalog = AstroDatabase::SAO;
             validCatalog = true;
         }
         else if (compareIgnoringCase(catalogName, "HIP") == 0)
@@ -914,7 +914,7 @@ static int object_catalognumber(lua_State* l)
         if (useHIPPARCOS)
         {
             // Celestia's internal catalog numbers /are/ HIPPARCOS numbers
-            if (internalNumber < StarDatabase::MAX_HIPPARCOS_NUMBER)
+            if (internalNumber < HipparcosAstroCatalog::MaxCatalogNumber)
                 catalogNumber = internalNumber;
         }
         else

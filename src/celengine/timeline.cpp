@@ -58,18 +58,18 @@ Timeline::findPhase(double t) const
     // as the number of phases in a timeline should always be quite small.
     if (phases.size() == 1)
     {
-        return phases[0].get();
+        return phases[0];
     }
     else
     {
         for (const auto& phase : phases)
         {
             if (t < phase->endTime())
-                return phase.get();
+                return phase;
         }
 
         // Time is greater than the end time of the final phase. Just return the final phase.
-        return phases.back().get();
+        return phases.back();
     }
 }
 
@@ -79,7 +79,7 @@ Timeline::findPhase(double t) const
 const TimelinePhase::SharedConstPtr&
 Timeline::getPhase(unsigned int n) const
 {
-    return phases.at(n).get();
+    return phases.at(n);
 }
 
 

@@ -3943,39 +3943,43 @@ class SolarSystemLoader
         ifstream solarSysFile(filepath, ios::in);
         if (solarSysFile.good())
         {
-            SSCDataLoader loader(universe, getPath());
+            SSCDataLoader loader(universe, filepath);
             loader.load(solarSysFile);
         }
     };
 };
 
-template <class OBJDB> class CatalogLoader
+class CatalogLoader
 {
-public:
-    AstroDataLoader &loader;
-    string      typeDesc;
-    ContentType contentType;
-    ProgressNotifier* notifier;
+    AstroDataLoader &m_loader;
+    string          m_typeDesc;
+    ContentType     m_contentType;
+    string          m_resPath;
+    ProgressNotifier* m_notifier;
 
+ public:
     CatalogLoader(AstroDataLoader &dataLoader,
                   const std::string& typeDesc,
                   const ContentType& contentType,
-                  ProgressNotifier* pn) :
-        loader     (dataLoader),
-        typeDesc   (typeDesc),
-        contentType(contentType),
-        notifier(pn)
+                  const string&      respath,
+                  ProgressNotifier*  pn) :
+        m_loader     (dataLoader),
+        m_typeDesc   (typeDesc),
+        m_contentType(contentType),
+        m_resPath    (respath),
+        m_notifier   (pn)
     {
     }
 
+    const string& getPath() { return m_resPath; }
     void process(const fs::path& filepath)
     {
-        if (DetermineFileType(filepath) != contentType)
+        if (DetermineFileType(filepath) != m_contentType)
             return;
 
-        fmt::fprintf(clog, _("Loading %s catalog: %s\n"), typeDesc, filepath.string());
-        if (notifier != nullptr)
-            notifier->update(filepath.filename().string());
+        fmt::fprintf(clog, _("Loading %s catalog: %s\n"), m_typeDesc, filepath.string());
+        if (m_notifier != nullptr)
+            m_notifier->update(filepath.filename().string());
 
         ifstream catalogFile(filepath.string(), ios::in);
         if (catalogFile.good())
@@ -3984,7 +3988,7 @@ public:
             bool success = m_loader.load(catalogFile);
             if (!success)
             {
-                DPRINTF(0, "Error reading %s catalog file: %s\n", typeDesc.c_str(), filepath.string());
+                DPRINTF(0, "Error reading %s catalog file: %s\n", m_typeDesc.c_str(), filepath.string());
             }
         }
     }
@@ -4102,9 +4106,10 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         if (dir.empty())
             continue;
 
-        DeepSkyLoader loader(dscLoader,
+        CatalogLoader loader(dscLoader,
                              "deep sky object",
                              Content_CelestiaDeepSkyCatalog,
+                             dir,
                              progressNotifier);
         for (const auto& fn : fs::recursive_directory_iterator(dir))
             loader.process(fn);
@@ -4309,7 +4314,7 @@ bool CelestiaCore::initRenderer()
 
 
 static void loadCrossIndex(CrossIndexDataLoader &xloader,
-                           StarDatabase::Catalog catalog,
+                           AstroDatabase::Catalog catalog,
                            const fs::path& filename)
 {
     if (!filename.empty())
@@ -4334,21 +4339,6 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
 
     StarDetails::SetStarTextures(cfg.starTextures);
 
-    ifstream starNamesFile(cfg.starNamesFile.string(), ios::in);
-    if (!starNamesFile.good())
-    {
-        fmt::fprintf(cerr, _("Error opening %s\n"), cfg.starNamesFile);
-        return false;
-    }
-
-//    StarNameDatabase* starNameDB = StarNameDatabase::readNames(starNamesFile);
-    NameDataLoader nameLoader(&aDB);
-    if (!nameLoader.load(starNamesFile))
-    {
-        cerr << _("Error reading star names file\n");
-        return false;
-    }
-
     // First load the binary star database file.  The majority of stars
     // will be defined here.
     if (!cfg.starDatabaseFile.empty())
@@ -4371,14 +4361,14 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         }
     }
 
-    ifstream starNamesFile(cfg.starNamesFile, ios::in);
+//  Load star names
+    ifstream starNamesFile(cfg.starNamesFile.string(), ios::in);
     if (!starNamesFile.good())
     {
         fmt::fprintf(cerr, _("Error opening %s\n"), cfg.starNamesFile);
         return false;
     }
 
-//    StarNameDatabase* starNameDB = StarNameDatabase::readNames(starNamesFile);
     NameDataLoader nameLoader(&aDB);
     if (!nameLoader.load(starNamesFile))
     {
@@ -4387,9 +4377,9 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     }
 
     CrossIndexDataLoader xloader(&aDB);
-    loadCrossIndex(xloader, StarDatabase::HenryDraper, cfg.HDCrossIndexFile);
-    loadCrossIndex(xloader, StarDatabase::SAO,         cfg.SAOCrossIndexFile);
-    loadCrossIndex(xloader, StarDatabase::Gliese,      cfg.GlieseCrossIndexFile);
+    loadCrossIndex(xloader, AstroDatabase::HenryDraper, cfg.HDCrossIndexFile);
+    loadCrossIndex(xloader, AstroDatabase::SAO,         cfg.SAOCrossIndexFile);
+    loadCrossIndex(xloader, AstroDatabase::Gliese,      cfg.GlieseCrossIndexFile);
 
     // Next, read any ASCII star catalog files specified in the StarCatalogs
     // list.
@@ -4412,7 +4402,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         if (dir.empty())
             continue;
 
-        StarLoader loader(stcloader, "star", Content_CelestiaStarCatalog, progressNotifier);
+        CatalogLoader loader(stcLoader, "star", Content_CelestiaStarCatalog, dir, progressNotifier);
         for (const auto& fn : fs::recursive_directory_iterator(dir))
             loader.process(fn);
     }

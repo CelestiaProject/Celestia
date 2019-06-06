@@ -189,7 +189,7 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
         case NameColumn:
             {
                 uint32_t hipCatNo = star->getIndex();
-                uint32_t hdCatNo  = universe->getDatabase().indexToCatalogNumber(StarDatabase::HenryDraper, hipCatNo);
+                uint32_t hdCatNo  = universe->getDatabase().indexToCatalogNumber(AstroDatabase::HenryDraper, hipCatNo);
                 if (hdCatNo != AstroCatalog::InvalidIndex)
                     return QString("HD %1").arg(hdCatNo);
                 else
