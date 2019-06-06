@@ -6,8 +6,14 @@
 
 using namespace std;
 using namespace Eigen;
+using namespace celmath;
 
 char* _stack;
+
+static inline bool childValid(int n)
+{
+    return n >= 0 && n < OctreeNode::MaxChildren;
+}
 
 static void dumpObjects(const OctreeNode *node)
 {
@@ -22,14 +28,13 @@ OctreeNode::OctreeNode(const Vector3d& cellCenter, double scale, size_t maxObj, 
     m_maxObjCount(maxObj),
     m_parent(parent)
 {
-    for(int i = 0; i < 8; i++)
+    for(int i = 0; i < MaxChildren; i++)
         m_children[i] = nullptr;
 }
 
 OctreeNode::~OctreeNode()
 {
     for (auto &i : m_children)
-        if (i != nullptr)
             delete i;
 }
 
@@ -38,7 +43,10 @@ bool OctreeNode::add(LuminousObject *obj)
     bool dirty = true;
 //     fmt::fprintf(cout, "Adding to node %i object %i with mag %f.\n", this, obj, obj->getAbsoluteMagnitude());
     if (obj == nullptr)
-        cout << "Null object add!!\n";
+    {
+        cerr << "Octree: trying to add null object!!\n";
+        return false;
+    }
     m_objects.insert(make_pair(obj->getAbsoluteMagnitude(), obj));
     obj->setOctreeNode(this);
     setDirty(dirty);
@@ -58,6 +66,8 @@ bool OctreeNode::rm(LuminousObject *obj)
 
 OctreeNode *OctreeNode::getChild(int i, bool create)
 {
+    if (!childValid(i))
+        return nullptr;
     if (m_children[i] != nullptr)
         return m_children[i];
 
@@ -73,7 +83,7 @@ bool OctreeNode::createChild(int i)
     if (m_children[i] != nullptr)
     {
 // #ifdef OCTREE_DEBUG
-        fmt::fprintf(cout, "Trying to create already created node of index %i!\n", i);
+        fmt::fprintf(clog, "Trying to create already created node of index %i!\n", i);
 // #endif
         return false;
     }
@@ -83,13 +93,15 @@ bool OctreeNode::createChild(int i)
                                         ((i & ZPos) != 0) ? scale : -scale);
     m_children[i] = new OctreeNode(centerPos, scale, m_maxObjCount, this);
     if (m_children[i] == nullptr)
-        fmt::fprintf(cout, "Cannot create new child!\n");
+        fmt::fprintf(cerr, "Cannot create new child!\n");
     m_childrenCount++;
     return true;
 }
 
 bool OctreeNode::deleteChild(int n)
 {
+    if (!childValid(n))
+        return false;
     if (m_children[n] == nullptr)
         return false;
     delete m_children[n];
@@ -101,7 +113,6 @@ bool OctreeNode::deleteChild(int n)
 bool OctreeNode::insertObject(LuminousObject *obj)
 {
     OctreeNode *node = this;
-//     cout << __LINE__ << "\n";
     while (!node->isInCell(obj->getPosition()))
     {
         if (getParent() != nullptr)
@@ -111,28 +122,23 @@ bool OctreeNode::insertObject(LuminousObject *obj)
         else
             return false;
     }
-//     cout << __LINE__ << "\n";
+
     float mag = obj->getAbsoluteMagnitude();
-//     cout << __LINE__ << "\n";
     while(node->getBrightest() > mag && node->getParent() != nullptr)
     {
         node = node->getParent();
     }
-//     cout << __LINE__ << "\n";
     while(node->getFaintest() < mag && node->m_objects.size() == node->m_maxObjCount)
     {
         node = node->getChild(node->getChildId(obj->getPosition()));
     }
-//     cout << __LINE__ << "\n";
     node->add(obj);
-//     cout << __LINE__ << "\n";
     while(node->m_objects.size() > node->m_maxObjCount)
     {
         LuminousObject *obj = node->popFaintest();
         node = node->getChild(node->getChildId(obj->getPosition()));
         node->add(obj);
     }
-//     cout << __LINE__ << "\n";
     return true;
 }
 
@@ -140,7 +146,7 @@ bool OctreeNode::removeObject(LuminousObject *obj)
 {
     if (!rm(obj))
     {
-        fmt::fprintf(cout, "Object %i not found to remove!\n", obj);
+        fmt::fprintf(clog, "Object %i not found to remove!\n", obj);
         return false;
     }
     OctreeNode *node = this;
@@ -150,12 +156,12 @@ bool OctreeNode::removeObject(LuminousObject *obj)
         int i = node->getBrightestChildId();
         if (i < 0)
         {
-            fmt::fprintf(cout, "No brightest child of node %i!!\n", node);
+            fmt::fprintf(clog, "No brightest child of node %i!!\n", node);
             getRoot()->dump(0);
         }
         OctreeNode *child = node->getChild(i);
         if (child == nullptr)
-            cout << "Null child!!" << endl;
+            clog << "Null child!!" << endl;
         LuminousObject *obj = child->popBrightest();
         node->add(obj);
         if (child->getObjectCount() > 0)
@@ -223,7 +229,7 @@ OctreeNode::ObjectList::const_iterator OctreeNode::objectIterator(const Luminous
             return it;
         if(it == pair.second)
             break;
-        it++;
+        ++it;
     }
     while(it != m_objects.end());
     return m_objects.end();
@@ -248,9 +254,10 @@ LuminousObject *OctreeNode::popBrightest()
     if (m_objects.empty())
         return nullptr;
     auto it = m_objects.begin();
+    LuminousObject *ret = it->second;
     m_objects.erase(it);
     setDirty(true);
-    return it->second;
+    return ret;
 }
 
 LuminousObject *OctreeNode::popFaintest()
@@ -278,7 +285,7 @@ int OctreeNode::getBrightestChildId() const
     }
     if (ret < 0 && m_childrenCount == 0)
     {
-        fmt::fprintf(cout, "No brightest child but there should be!\n");
+        fmt::fprintf(clog, "No brightest child but there should be!\n");
     }
     return ret;
 }
@@ -307,22 +314,22 @@ int OctreeNode::check(float max, int level, bool fatal)
     {
         if (obj.first != obj.second->getAbsoluteMagnitude())
         {
-            fmt::fprintf(cout, "Object with mag %f wrongly assigned to mag %f on level %i!\n", obj.second->getAbsoluteMagnitude(), obj.first, level);
+            fmt::fprintf(cout, "Object with nr %u nad mag %f wrongly assigned to mag %f on level %i!\n", obj.second->getIndex(), obj.second->getAbsoluteMagnitude(), obj.first, level);
             if (fatal)
                 exit(1);
             nerr = 1;
         }
     }
-    for(ObjectList::const_iterator it = m_objects.begin(); it != m_objects.end(); it++)
+    for(ObjectList::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
     {
         ObjectList::const_iterator it2 = it;
-        it2++;
+        ++it2;
         if (!isInCell(it->second->getPosition()))
         {
             Vector3d rpos = it->second->getPosition() - getCenter();
             fmt::fprintf(
                 cout,
-                "\nObject nr %i on level %i and scale %f out of cell (rel pos [%f : %f : %f])!\n",
+                "\nObject nr %u on level %i and scale %f out of cell (rel pos [%f : %f : %f])!\n",
                 it->second->getIndex(),
                 level,
                 getScale(),

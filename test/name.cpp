@@ -2,8 +2,12 @@
 #undef NDEBUG
 
 #include <cassert>
+#include <fmt/printf.h>
 #include <celengine/name.h>
 #include <celutil/utf8.h>
+
+using namespace std;
+
 /*
 void dump_completion(const NameDatabase &nd, const std::string &comp)
 {
@@ -32,6 +36,14 @@ void dump_db(const NameDatabase &nd, const std::string &comp)
 */
 int main()
 {
+    Name n1("Ab");
+    Name n2("Bc");
+    Name n3("Cd");
+    fmt::fprintf(cout, "n1(\"%s\"), n2(\"%s\"), n3(\"%s\")\n", n1.str(), n2.str(), n3.str());
+    n1 = n2;
+    fmt::fprintf(cout, "n1(\"%s\"), n2(\"%s\"), n3(\"%s\")\n", n1.str(), n2.str(), n3.str());
+    n1 = n3;
+    fmt::fprintf(cout, "n1(\"%s\"), n2(\"%s\"), n3(\"%s\")\n", n1.str(), n2.str(), n3.str());
     /*
     NameDatabase nd;
 

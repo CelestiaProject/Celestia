@@ -53,6 +53,76 @@ bool nameAddition(AstroDatabase &db, AstroCatalog::IndexNumber nr, const string&
     return ret;
 }
 
+void dumpNames(AstroObject *obj)
+{
+    cout << "Names of object nr: " << obj->getIndex() << ": ";
+    for (auto &info : obj->getNameInfos())
+        cout << info.getCanon().str() << "(" << ((NameInfo)info).getLocalized().str() << ") ";
+    cout << endl;
+}
+
+void dumpStars(AstroDatabase &adb, AstroCatalog::IndexNumber start = 0, size_t size = 0)
+{
+    auto stars = adb.getStars();
+    for (const auto &star : stars)
+    {
+        if (start > 0 || size == 0)
+        {
+            start--;
+            continue;
+        }
+        else
+        {
+            size--;
+        }
+        /*fmt::fprintf(cout, "Star nr %u: ", star->getIndex());
+        for (const auto &info : star->getNameInfos())
+        {
+            fmt::fprintf(cout, "%s, ", info.getCanon().str());
+        }
+        fmt::fprintf(cout, "\n");*/
+        dumpNames(star);
+    }
+}
+
+void load(AstroDataLoader &loader, const string& fname)
+{
+    bool ret = loader.load(fname);
+    fmt::fprintf(cout, "load(\"%s\"): %i\n", fname, ret);
+}
+
+void showExistence(AstroDatabase &adb, const string &name, AstroObject *o = nullptr)
+{
+    AstroObject * obj = adb.getObject(name);
+    if (obj == nullptr)
+    {
+        fmt::fprintf(cout, "Star named \"%s\" doesnt exists!\n", name);
+    }
+    else
+    {
+        fmt::fprintf(cout, "Star named \"%s\" found with nr %u\n", name, obj->getIndex());
+        if (o != nullptr)
+        {
+            if (o != obj)
+            {
+                fmt::fprintf(cout, "Found object nr %u is different than reference object nr %u!\n", obj->getIndex(), o->getIndex());
+                NameInfo *info = adb.getNameInfo(name);
+                fmt::fprintf(cout, "Found object name info: \"%s\"\n", info->getCanon().str());
+            }
+            else
+                fmt::fprintf(cout, "Found object is equal with referenced.\n");
+        }
+    }
+}
+
+void showCompletion(AstroDatabase &adb, const string& s)
+{
+    auto names = adb.getCompletion(s);
+    for (const auto &name : names)
+        fmt::fprintf(cout, "%s ", name.str());
+    cout << endl;
+}
+
 int main()
 {
     bool ret;
@@ -61,59 +131,55 @@ int main()
     clog << "AstroDatabase test\n";
     AstroDatabase adb;
 
+/*    AstroObject o;
+    o.setIndex(1);
+    fmt::fprintf(cout, "Object has nr %u\n", o.getIndex());
+    adb.addObject(&o);
+    o.addNames("Aa:Bb:Cc:Dd");
+    for(auto &info : o.getNameInfos())
+        showExistence(adb, info.getCanon().str(), &o);
+    fmt::fprintf(cout, "Object has nr %u\n", o.getIndex());*/
+
     StarBinDataLoader binloader(&adb);
     StcDataLoader stcloader(&adb);
     NameDataLoader nloader(&adb);
     CrossIndexDataLoader xloader(&adb);
     DscDataLoader dsoloader(&adb);
 
-    ret = binloader.load(string("data/stars.dat"));
-    cout << "Star binary data loaded with status: " << ret << endl;
+    load(binloader, "data/stars.dat");
 
-    ret = nloader.load(string("data/starnames.dat"));
-    cout << "Names data loaded with status: " << ret << endl;
+    load(nloader, "data/starnames.dat");
 
 //    objectNames(adb, adb.nameToIndex("TAU Boo"));
 //    objectNames(adb, adb.starnameToIndex("TAU Boo"));
 
-    ret = stcloader.load(string("data/revised.stc"));
-    cout << "Stc data loaded with status: " << ret << endl;
+    load(stcloader, "data/revised.stc");
 
-    ret = stcloader.load(string("data/extrasolar.stc"));
-    cout << "Stc data loaded with status: " << ret << endl;
+    load(stcloader, "data/extrasolar.stc");
 
-    ret = stcloader.load(string("data/nearstars.stc"));
-    cout << "Stc data loaded with status: " << ret << endl;
+    load(stcloader, "data/nearstars.stc");
 
-    ret = stcloader.load(string("data/visualbins.stc"));
-    cout << "Stc data loaded with status: " << ret << endl;
+    load(stcloader, "data/visualbins.stc");
 
-    ret = stcloader.load(string("data/spectbins.stc"));
-    cout << "Stc data loaded with status: " << ret << endl;
+    load(stcloader, "data/spectbins.stc");
 
-    ret = stcloader.load(string("data/charm2.stc"));
-    cout << "Stc data loaded with status: " << ret << endl;
+    load(stcloader, "data/charm2.stc");
 
     xloader.catalog = AstroDatabase::HenryDraper;
-    ret = xloader.load("data/hdxindex.dat");
-    cout << "HD data loaded with status: " << ret << endl;
+    load(xloader, "data/hdxindex.dat");
 
     xloader.catalog = AstroDatabase::SAO;
-    ret = xloader.load("data/saoxindex.dat");
-    cout << "SAO data loaded with status: " << ret << endl;
+    load(xloader, "data/saoxindex.dat");
 
     xloader.catalog = AstroDatabase::Gliese;
-    ret = xloader.load("data/gliesexindex.dat");
-    cout << "Gliese data loaded with status: " << ret << endl;
+    load(xloader, "data/gliesexindex.dat");
 
-    ret = dsoloader.load("data/galaxies.dsc");
-    cout << "Dsc data loaded with status: " << ret << endl;
+    load(dsoloader, "data/galaxies.dsc");
 
-    ret = dsoloader.load("data/globulars.dsc");
-    cout << "Dsc data loaded with status: " << ret << endl;
+    load(dsoloader, "data/globulars.dsc");
 
     HipparcosAstroCatalog hipCat;
-/*    objectNames(adb, 55203);
+    objectNames(adb, 55203);
     objectNames(adb, "C 1126+292");
     objectNames(adb, "NGC 3201");
     objectNames(adb, "36 Oph C");
@@ -123,11 +189,41 @@ int main()
     objectNames(adb, adb.starnameToIndex("TAU Boo"));
     assert(adb.getStar(70890) != nullptr);
     assert(adb.nameToIndex("Gliese 423") == 55203);
-    assert(adb.nameToIndex("ALF Cen") != AstroCatalog::InvalidIndex);*/
+    assert(adb.nameToIndex("ALF Cen") != AstroCatalog::InvalidIndex);
     objectNames(adb, 19394);
     objectNames(adb, 57087);
     cout << adb.nameToIndex("HIP 19394") << endl;
     cout << adb.nameToIndex("HIP 57087") << endl;
     cout << hipCat.nameToCatalogNumber("HIP 19394") << endl;
-    return 0;
+    objectNames(adb, "BET And");
+    showCompletion(adb, "Bet an");
+//     AstroObject obj1;
+//     obj1.setIndex(4000000);
+//     dumpNames(&obj1);
+//     obj1.addNames("Sirius:Alhabor:ALF CMa:9 CMa:Gliese 244:ADS 5423");
+//     dumpNames(&obj1);
+//     adb.addObject(&obj1);
+//     showExistence(adb, "Barabara");
+//     showExistence(adb, "Alf Centurion");
+//     showExistence(adb, "Alf Cen");
+//     showExistence(adb, "rusałka");
+//     showExistence(adb, "Sirius");
+
+//     dumpStars(adb, 0, 1000);
+    /*Star * star = adb.getStar(32349);
+    if (star == nullptr)
+    {
+        fmt::fprintf(cout, "Star nr 32349 doesnt exists!\n");
+        return 1;
+    }
+
+    dumpNames(star);
+    showExistence(adb, "Sirius");
+    showExistence(adb, "9 CMa");
+    showExistence(adb, "ADS 5423");
+    showExistence(adb, "Alhabor");
+    showExistence(adb, "Gliese 244");
+    showExistence(adb, "α CMa");
+    star->addName(string("ADS 5423"));
+    showExistence(adb, "ADS 5423");*/
 }

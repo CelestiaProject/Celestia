@@ -25,7 +25,7 @@ struct OctreeProcStats
     float limit;
     float faintest;
     float appFaintest;
-    Frustum::PlaneType frustPlanes[5];
+    celmath::Frustum::PlaneType frustPlanes[5];
     const OctreeNode *lastSelNode;
     bool lastSelNodeInFrustum;
     bool selWrongOrder;
@@ -62,13 +62,13 @@ class ObjectProcesor
 typedef ObjectProcesor<const Star*> StarProcesor;
 typedef ObjectProcesor<const DeepSkyObject*> DsoProcesor;
 
-void create5FrustumPlanes(Frustum::PlaneType *, const Eigen::Vector3d &, const Eigen::Quaternionf &, float, float);
+void create5FrustumPlanes(celmath::Frustum::PlaneType *, const Eigen::Vector3d &, const Eigen::Quaternionf &, float, float);
 
 void processVisibleStars(
     const OctreeNode *node,
     StarProcesor& procesor,
     const Eigen::Vector3d& obsPos,
-    const Frustum::PlaneType *frustumPlanes,
+    const celmath::Frustum::PlaneType *frustumPlanes,
 #ifdef OCTREE_DEBUG
     float limitFactor,
     OctreeProcStats * = nullptr);
@@ -94,7 +94,7 @@ void processVisibleDsos(
     const OctreeNode *node,
     DsoProcesor& procesor,
     const Eigen::Vector3d& obsPos,
-    const Frustum::PlaneType *frustumPlanes,
+    const celmath::Frustum::PlaneType *frustumPlanes,
 #ifdef OCTREE_DEBUG
     float limitFactor,
     OctreeProcStats * = nullptr);

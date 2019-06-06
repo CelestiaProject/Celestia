@@ -25,7 +25,7 @@ const Name& NameInfo::getLocalized()
     {
         const char *s = m_canonical.str().c_str();
         const char *l = gettext(s);
-        if (s == l)
+        if (s == l) // gettext was unable to find translation
         {
             m_localized = m_canonical;
         }

@@ -48,7 +48,7 @@ bool inline operator==(const Name& n1, const Name& n2)
 
 bool inline operator!=(const Name& n1, const Name& n2)
 {
-    return n1.ptr() != n2.ptr() && n1.str() != n2.str();
+    return !(n1 == n2);
 }
 
 bool inline operator<(const Name &n1, const Name &n2)
@@ -103,9 +103,7 @@ class NameInfo
     }
     bool hasLocalized() const
     {
-        if (m_canonical.ptr() == m_localized.ptr())
-            return false;
-        return true;
+        return m_canonical.ptr() != m_localized.ptr();
     }
     const Name& getCanon() const { return m_canonical; }
     const Name& getLocalized();
@@ -137,4 +135,4 @@ bool inline operator>(const NameInfo &n1, const NameInfo &n2)
 
 typedef std::set<NameInfo> NameInfoSet;
 typedef std::set<Name> NameSet;
-typedef std::unordered_map<Name, NameInfo, NameHash> NameMap;
+typedef std::map<Name, NameInfo> NameMap;

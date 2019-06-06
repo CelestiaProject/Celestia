@@ -9,10 +9,11 @@
 class OctreeNode
 {
  public:
-    typedef std::array<OctreeNode*, 8> Children;
+    const static int MaxChildren = 8;
+    typedef std::array<OctreeNode*, MaxChildren> Children;
     typedef std::multimap<float, LuminousObject*> ObjectList;
     static constexpr double MaxScale = 100000000000;
-    static constexpr size_t MaxObjectsPerNode = 40;
+    static constexpr size_t MaxObjectsPerNode = 10;
 
  protected:
     bool add(LuminousObject*);
@@ -49,7 +50,7 @@ class OctreeNode
     double getScale() const { return m_scale; }
     const Eigen::Vector3d& getCenter() const { return m_cellCenter; }
 
-    bool isInFrustum(const Frustum::PlaneType *planes) const;
+    bool isInFrustum(const celmath::Frustum::PlaneType *planes) const;
     bool isInCell(const Eigen::Vector3d&) const;
 
     bool insertObject(LuminousObject*);

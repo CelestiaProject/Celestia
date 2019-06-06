@@ -17,7 +17,7 @@
 #include <cassert>
 #include <unistd.h>
 #include <config.h>
-#include "celengine/stardb.h"
+#include "celengine/astrodb.h"
 
 using namespace std;
 using namespace celmath;

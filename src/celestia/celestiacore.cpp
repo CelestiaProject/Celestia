@@ -1199,7 +1199,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (typedTextCompletionIdx >= 0) {
                 string::size_type pos = typedText.rfind('/', typedText.length());
                 if (pos != string::npos)
-                    typedText = typedText.substr(0, pos + 1) + (const string&) typedTextCompletion[typedTextCompletionIdx];
+                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx].str();
                 else
                     typedText = typedTextCompletion[typedTextCompletionIdx];
             }
@@ -1215,7 +1215,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (typedTextCompletionIdx >= 0) {
                 string::size_type pos = typedText.rfind('/', typedText.length());
                 if (pos != string::npos)
-                    typedText = typedText.substr(0, pos + 1) + (const string&) typedTextCompletion[typedTextCompletionIdx];
+                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx].str();
                 else
                     typedText = typedTextCompletion[typedTextCompletionIdx];
             }
@@ -3467,8 +3467,13 @@ void CelestiaCore::renderOverlay()
     if (hudDetail > 0 && (overlayElements & ShowVelocity))
     {
         // Speed
+#ifdef OCTREE_DEBUG
+#define FPS_H 8
+#else
+#define FPS_H 2
+#endif
         glPushMatrix();
-        glTranslatef(0.0f, (float) (fontHeight * 8 + 5), 0.0f);
+        glTranslatef(0.0f, (float) (fontHeight * FPS_H + 5), 0.0f);
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
 
         overlay->beginText();
@@ -3981,17 +3986,16 @@ class SolarSystemLoader
 template <class OBJDB> class CatalogLoader
 {
 public:
-    AstroDataLoader &m_loader;
+    AstroDataLoader &loader;
     string      typeDesc;
     ContentType contentType;
     ProgressNotifier* notifier;
 
- public:
-    CatalogLoader(AstroDataLoader &loader,
+    CatalogLoader(AstroDataLoader &dataLoader,
                   const std::string& typeDesc,
                   const ContentType& contentType,
                   ProgressNotifier* pn) :
-        m_loader      (loader),
+        loader     (dataLoader),
         typeDesc   (typeDesc),
         contentType(contentType),
         notifier(pn)

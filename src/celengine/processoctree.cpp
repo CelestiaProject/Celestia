@@ -5,6 +5,7 @@
 #include "processoctree.h"
 
 using namespace Eigen;
+using namespace celmath;
 
 static constexpr double MAX_STAR_ORBIT_RADIUS = 1;
 
