@@ -14,6 +14,7 @@
 #include <celutil/color.h>
 #include <celengine/referencemark.h>
 #include <celengine/selection.h>
+#include <celengine/shadermanager.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -48,6 +49,7 @@ class ArrowReferenceMark : public ReferenceMark
     float size;
     Color color;
     float opacity;
+    ShaderProperties shadprop;
 };
 
 
@@ -78,6 +80,7 @@ class AxesReferenceMark : public ReferenceMark
  private:
     float size;
     float opacity;
+    ShaderProperties shadprop;
 };
 
 
