@@ -36,6 +36,7 @@
 using namespace cmod;
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 const double AtmosphereExtinctionThreshold = 0.05;
@@ -596,7 +597,7 @@ static void renderRingSystem(GLuint *vboId,
         GLshort tex[2];
     };
 
-    constexpr const float angle = 2*PI;
+    constexpr const float angle = 2*static_cast<float>(PI);
     constexpr const unsigned int nSections = 180;
 
     if (*vboId == 0)

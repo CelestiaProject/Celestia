@@ -21,7 +21,7 @@
 #include <cmath>
 
 using namespace Eigen;
-
+using namespace celmath;
 
 
 /*! Construct a new reference mark that shows the outline of the

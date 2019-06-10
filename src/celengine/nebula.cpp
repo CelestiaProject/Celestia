@@ -21,6 +21,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 const char* Nebula::getType() const

@@ -12,23 +12,14 @@
 #ifndef _CELESTIA_CELX_H_
 #define _CELESTIA_CELX_H_
 
+#ifndef LUA_VER
+#define LUA_VER 0x050100
+#endif
+
 #include <iostream>
 #include <string>
 #include <vector>
-
-#ifndef LUA_VER
-#define LUA_VER 0x050000
-#endif
-
-#if LUA_VER >= 0x050100
 #include "lua.hpp"
-#else
-extern "C" {
-#include "lua.h"
-#include "lualib.h"
-}
-#endif
-
 #include <celutil/timer.h>
 #include <celengine/observer.h>
 

@@ -26,6 +26,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 Body::Body(PlanetarySystem* _system, const string& _name) :

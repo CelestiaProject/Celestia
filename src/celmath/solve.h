@@ -9,6 +9,10 @@
 
 #include <utility>
 
+#pragma once
+
+namespace celmath
+{
 
 // Solve a function using the bisection method.  Returns a pair
 // with the solution as the first element and the error as the second.
@@ -74,3 +78,5 @@ template<class T, class F> std::pair<T, T> solve_iteration_fixed(F f,
 
     return std::make_pair(x2, x2 - x);
 }
+
+}; // namespace celmath

@@ -12,6 +12,7 @@
 #include "astro.h"
 
 using namespace Eigen;
+using namespace celmath;
 
 
 /****** Value method implementations *******/

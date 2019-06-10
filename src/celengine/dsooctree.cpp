@@ -74,7 +74,7 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
                                       double         scale,
                                       OctreeProcStats *stats) const
 {
-#ifdef OCTREE_NODE
+#ifdef OCTREE_DEBUG
     size_t h;
     if (stats != nullptr)
     {
@@ -104,7 +104,7 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
 
     for (unsigned int i=0; i<nObjects; ++i)
     {
-#ifdef OCTREE_NODE
+#ifdef OCTREE_DEBUG
         if (stats != nullptr)
             stats->objects++;
 #endif

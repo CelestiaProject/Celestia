@@ -85,7 +85,7 @@ class DeepSkyObject : public CatEntry
 
     virtual const char* getObjTypeName() const = 0;
 
-    virtual bool pick(const Ray3d& ray,
+    virtual bool pick(const celmath::Ray3d& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const = 0;
     virtual bool load(AssociativeArray*, const std::string& resPath);

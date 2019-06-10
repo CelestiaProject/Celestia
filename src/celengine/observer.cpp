@@ -19,7 +19,7 @@ static const double minimumSimTime = -730498278941.99951; // -2000000000 Jan 01 
 
 using namespace Eigen;
 using namespace std;
-
+using namespace celmath;
 
 #define VELOCITY_CHANGE_TIME      0.25f
 
@@ -38,7 +38,7 @@ static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
     double cosTheta = u.dot(v1 / r1);
     double theta = acos(cosTheta);
 
-    return (cos(theta * t) * u + sin(theta * t) * v) * Mathd::lerp(t, r0, r1);
+    return (cos(theta * t) * u + sin(theta * t) * v) * lerp(t, r0, r1);
 }
 
 

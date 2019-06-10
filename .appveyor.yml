@@ -46,7 +46,8 @@ install:
 - vcpkg install libpng:x86-windows
 - vcpkg install gettext:x86-windows
 - vcpkg install libjpeg-turbo:x86-windows
-- vcpkg install lua:x86-windows
+- vcpkg remove lua:x86-windows
+- vcpkg install luajit:x86-windows
 - vcpkg install fmt:x86-windows
 - vcpkg install glew:x86-windows
 - vcpkg install eigen3:x86-windows

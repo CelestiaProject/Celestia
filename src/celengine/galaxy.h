@@ -41,7 +41,7 @@ class Galaxy : public DeepSkyObject
     //    float getBrightness() const;
     //    void setBrightness();
 
-    virtual bool pick(const Ray3d& ray,
+    virtual bool pick(const celmath::Ray3d& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const;
     virtual bool load(AssociativeArray*, const std::string&);

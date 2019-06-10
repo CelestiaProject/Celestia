@@ -21,6 +21,7 @@
 #include <fmt/printf.h>
 
 using namespace Eigen;
+using namespace celmath;
 
 
 unsigned int PlanetographicGrid::circleSubdivisions = 100;

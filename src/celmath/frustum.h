@@ -15,6 +15,8 @@
 
 //#include <celmath/capsule.h>
 
+namespace celmath
+{
 
 class Frustum
 {
@@ -60,5 +62,7 @@ class Frustum
     Eigen::Hyperplane<float, 3> planes[6];
     bool infinite;
 };
+
+}; // namespace celmath
 
 #endif // _CELMATH_FRUSTUM_H_

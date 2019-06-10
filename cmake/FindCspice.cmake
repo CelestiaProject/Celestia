@@ -31,7 +31,8 @@ find_library(CSPICE_LIBRARY
              DOC "cspice libraries")
 mark_as_advanced(CSPICE_LIBRARY)
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(CSPICE
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(CSPICE
                                   FOUND_VAR CSPICE_FOUND
                                   REQUIRED_VARS CSPICE_INCLUDE_DIR CSPICE_LIBRARY
                                   FAIL_MESSAGE "Failed to find cspice")

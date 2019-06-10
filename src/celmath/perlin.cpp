@@ -6,6 +6,7 @@
 #include "perlin.h"
 
 using namespace Eigen;
+using namespace celmath;
 
 
 float bias(float a, float b)
@@ -181,7 +182,7 @@ float noise1(float arg)
     u = rx0 * g1[p[bx0]];
     v = rx1 * g1[p[bx1]];
 
-    return Mathf::lerp(s_curve(rx0), u, v);
+    return lerp(s_curve(rx0), u, v);
 }
 
 float noise2(const float vec[2])
@@ -211,13 +212,13 @@ float noise2(const float vec[2])
 
     q = g2[ b00 ] ; u = at2(rx0,ry0);
     q = g2[ b10 ] ; v = at2(rx1,ry0);
-    a = Mathf::lerp(sx, u, v);
+    a = lerp(sx, u, v);
 
     q = g2[ b01 ] ; u = at2(rx0,ry1);
     q = g2[ b11 ] ; v = at2(rx1,ry1);
-    b = Mathf::lerp(sx, u, v);
+    b = lerp(sx, u, v);
 
-    return Mathf::lerp(sy, a, b);
+    return lerp(sy, a, b);
 }
 
 float noise3(const float vec[3])
@@ -249,25 +250,25 @@ float noise3(const float vec[3])
 
     q = g3[ b00 + bz0 ] ; u = at3(rx0,ry0,rz0);
     q = g3[ b10 + bz0 ] ; v = at3(rx1,ry0,rz0);
-    a = Mathf::lerp(t, u, v);
+    a = lerp(t, u, v);
 
     q = g3[ b01 + bz0 ] ; u = at3(rx0,ry1,rz0);
     q = g3[ b11 + bz0 ] ; v = at3(rx1,ry1,rz0);
-    b = Mathf::lerp(t, u, v);
+    b = lerp(t, u, v);
 
-    c = Mathf::lerp(sy, a, b);
+    c = lerp(sy, a, b);
 
     q = g3[ b00 + bz1 ] ; u = at3(rx0,ry0,rz1);
     q = g3[ b10 + bz1 ] ; v = at3(rx1,ry0,rz1);
-    a = Mathf::lerp(t, u, v);
+    a = lerp(t, u, v);
 
     q = g3[ b01 + bz1 ] ; u = at3(rx0,ry1,rz1);
     q = g3[ b11 + bz1 ] ; v = at3(rx1,ry1,rz1);
-    b = Mathf::lerp(t, u, v);
+    b = lerp(t, u, v);
 
-    d = Mathf::lerp(sy, a, b);
+    d = lerp(sy, a, b);
 
-    return Mathf::lerp(sz, c, d);
+    return lerp(sz, c, d);
 }
 
 static void normalize2(float v[2])
@@ -292,15 +293,15 @@ static void init()
 
     for (i = 0; i < B; i++)
     {
-        g1[i]    = Mathf::sfrand();
+        g1[i]    = sfrand<float>();
 
-        g2[i][0] = Mathf::sfrand();
-        g2[i][1] = Mathf::sfrand();
+        g2[i][0] = sfrand<float>();
+        g2[i][1] = sfrand<float>();
         normalize2(g2[i]);
 
-        g3[i][0] = Mathf::sfrand();
-        g3[i][1] = Mathf::sfrand();
-        g3[i][2] = Mathf::sfrand();
+        g3[i][0] = sfrand<float>();
+        g3[i][1] = sfrand<float>();
+        g3[i][2] = sfrand<float>();
         normalize3(g3[i]);
     }
 

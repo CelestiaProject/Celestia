@@ -24,6 +24,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 struct OrientationSample
 {

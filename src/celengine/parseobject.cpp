@@ -30,7 +30,7 @@
 
 using namespace Eigen;
 using namespace std;
-
+using namespace celmath;
 
 /**
  * Returns the default units scale for orbits.

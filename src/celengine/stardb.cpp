@@ -28,6 +28,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 constexpr const char HDCatalogPrefix[]        = "HD ";

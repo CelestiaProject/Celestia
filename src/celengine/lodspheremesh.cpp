@@ -20,6 +20,7 @@
 
 using namespace std;
 using namespace Eigen;
+using namespace celmath;
 
 //#define SHOW_PATCH_VISIBILITY
 //#define SHOW_FRUSTUM

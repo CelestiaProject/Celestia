@@ -12,6 +12,9 @@
 
 #include <Eigen/Core>
 
+namespace celmath
+{
+
 template<class T> class Ray3
 {
  public:
@@ -51,5 +54,7 @@ template<class T> Eigen::Matrix<T, 3, 1> Ray3<T>::point(T t) const
 {
     return origin + direction * t;
 }
+
+}; // namespace celmath
 
 #endif // _CELMATH_RAY_H_

@@ -31,7 +31,7 @@ public:
      *  and set distance; otherwise return false and leave
      *  distance unmodified.
      */
-    virtual bool pick(const Ray3d& r, double& distance) const = 0;
+    virtual bool pick(const celmath::Ray3d& r, double& distance) const = 0;
 
     virtual bool isOpaque() const = 0;
 

@@ -14,6 +14,7 @@
 #include "spiceinterface.h"
 #include <celengine/astro.h>
 #include <celmath/geomutil.h>
+#include <celmath/mathlib.h>
 #include "SpiceUsr.h"
 #include <iostream>
 #include <cstdio>
@@ -21,6 +22,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 static const double MILLISEC = astro::secsToDays(0.001);

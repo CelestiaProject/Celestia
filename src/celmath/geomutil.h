@@ -15,6 +15,8 @@
 #include <Eigen/Geometry>
 #include <cmath>
 
+namespace celmath
+{
 
 template<class T> Eigen::Quaternion<T>
 XRotation(T radians)
@@ -60,5 +62,6 @@ LookAt(Eigen::Matrix<T, 3, 1> from, Eigen::Matrix<T, 3, 1> to, Eigen::Matrix<T, 
     return Eigen::Quaternion<T>(m).conjugate();
 }
 
-#endif // _CELMATH_GEOMUTIL_H_
+}; // namespace celmath
 
+#endif // _CELMATH_GEOMUTIL_H_

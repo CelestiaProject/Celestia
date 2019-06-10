@@ -27,6 +27,7 @@ static const double ANGULAR_RES = 3.5e-6;
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 
 Universe::Universe()

@@ -31,6 +31,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 static int cntrTexWidth = 512, cntrTexHeight = 512;
 static int starTexWidth = 128, starTexHeight = 128;
@@ -546,7 +547,7 @@ GlobularForm* buildGlobularForms(float c)
          * parameters and variables!
          */
 
-        float uu = Mathf::frand();
+        float uu = frand<float>();
 
         /* First step: eta distributed as inverse power distribution (~1/Z^2)
          * that majorizes the exact King profile. Compute eta in terms of uniformly
@@ -571,15 +572,15 @@ GlobularForm* buildGlobularForms(float c)
 
         k++;
 
-        if (Mathf::frand() < prob / cH)
+        if (frand<float>() < prob / cH)
         {
             /* Generate 3d points of globular cluster stars in polar coordinates:
              * Distribution in eta (<=> r) according to King's profile.
              * Uniform distribution on any spherical surface for given eta.
              * Note: u = cos(phi) must be used as a stochastic variable to get uniformity in angle!
              */
-            float u = Mathf::sfrand();
-            float theta = 2 * (float) PI * Mathf::frand();
+            float u = sfrand<float>();
+            float theta = 2 * (float) PI * frand<float>();
             float sthetu2 = sin(theta) * sqrt(1.0f - u * u);
 
             // x,y,z points within -0.5..+0.5, as required for consistency:

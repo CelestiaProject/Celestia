@@ -23,7 +23,7 @@ set(VERSION "1.7.0")
 option(ENABLE_CELX    "Enable celx scripting, requires Lua library? (Default: on)" ON)
 option(ENABLE_SPICE   "Use spice library? (Default: off)" OFF)
 option(ENABLE_NLS     "Enable interface translation? (Default: on)" ON)
-option(ENABLE_GLUT    "Build simple Glut frontend? (Default: on)" ON)
+option(ENABLE_GLUT    "Build simple Glut frontend? (Default: on)" OFF)
 option(ENABLE_GTK     "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
 option(ENABLE_QT      "Build Qt frontend? (Default: on)" ON)
 option(ENABLE_WIN     "Build Windows native frontend? (Default: on)" ON)
@@ -98,14 +98,12 @@ if(ENABLE_NLS)
   endif()
   include(FixGettext)
 
-  include(FindIntl)
   find_package(Intl REQUIRED)
   include_directories(${Intl_INCLUDE_DIRS})
   link_libraries(${Intl_LIBRARIES})
 endif()
 
 if(ENABLE_SPICE)
-  include(FindCspice)
   find_package(Cspice)
   if(NOT CSPICE_FOUND)
     message(STATUS "Using cspice submodule")
@@ -113,8 +111,8 @@ if(ENABLE_SPICE)
 
     include_directories("${CMAKE_SOURCE_DIR}/thirdparty/Spice/include")
     add_library(CSPICE::CSPICE ALIAS Spice)
-    add_definitions(-DUSE_SPICE)
   endif()
+  add_definitions(-DUSE_SPICE)
 endif()
 
 if(_UNIX)
@@ -136,35 +134,16 @@ find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 link_libraries(${OPENGL_LIBRARIES})
 
-find_package(GLEW)
-if(GLEW_FOUND)
-  link_libraries(GLEW::GLEW)
-  include_directories(${GLEW_INCLUDE_DIRS})
-elseif(_UNIX)
-  pkg_search_module(GLEW glew)
-  if(GLEW_FOUND)
-    include_directories(${GLEW_INCLUDE_DIRS})
-    link_libraries(${GLEW_LIBRARIES})
-  else()
-    message(FATAL_ERROR "glew was not found")
-  endif()
-else()
-  message(FATAL_ERROR "glew was not found")
-endif()
+find_package(GLEW REQUIRED)
+link_libraries(GLEW::GLEW)
+include_directories(${GLEW_INCLUDE_DIRS})
 
 find_package(Eigen3 3.3 NO_MODULE) # -DEigen3_DIR=...
 if(TARGET Eigen3::Eigen)
   message(STATUS "Found Eigen3 ${EIGEN3_VERSION_STRING}")
   link_libraries(Eigen3::Eigen)
-elseif(_UNIX)
-  pkg_search_module(EIGEN eigen3)
-  if(EIGEN_FOUND)
-    include_directories(${EIGEN_INCLUDE_DIRS})
-  else()
-    message(STATUS "Using Eigen submodule")
-    include_directories("${CMAKE_SOURCE_DIR}/thirdparty/Eigen")
-  endif()
 else()
+  message(STATUS "Using Eigen submodule")
   include_directories("${CMAKE_SOURCE_DIR}/thirdparty/Eigen")
 endif()
 
@@ -177,59 +156,24 @@ else()
   link_libraries(fmt::fmt)
 endif()
 
-find_package(PNG)
-if(PNG_FOUND)
-  add_definitions(${PNG_DEFINITIONS})
-  include_directories(${PNG_INCLUDE_DIRS})
-  link_libraries(${PNG_LIBRARIES})
-elseif(_UNIX)
-  pkg_search_module(PNG libpng REQUIRED)
-  include_directories(${PNG_INCLUDE_DIRS})
-  link_libraries(${PNG_LIBRARIES})
-else()
-  message(FATAL_ERROR "libpng was not found")
-endif()
+find_package(PNG REQUIRED)
+add_definitions(${PNG_DEFINITIONS})
+link_libraries(PNG::PNG)
 
-find_package(JPEG) # -DJPEG_LIBRARY=...
-if(JPEG_FOUND)
-  include_directories(${JPEG_INCLUDE_DIRS})
-  link_libraries(${JPEG_LIBRARIES})
-elseif(_UNIX)
-  pkg_search_module(JPEG libjpeg REQUIRED)
-  include_directories(${JPEG_INCLUDE_DIRS})
-  link_libraries(${JPEG_LIBRARIES})
-else()
-  message(FATAL_ERROR "libjpeg was not found")
-endif()
+find_package(JPEG REQUIRED) # -DJPEG_LIBRARY=...
+include_directories(${JPEG_INCLUDE_DIRS})
+link_libraries(${JPEG_LIBRARIES})
 
 if(ENABLE_CELX)
   add_definitions(-DCELX)
 
-  find_package(Lua)
-  if(LUA_FOUND)
-    add_definitions(-DLUA_VER=0x0${LUA_VERSION_MAJOR}0${LUA_VERSION_MINOR}00)
-    include_directories(${LUA_INCLUDE_DIR})
-    link_libraries(${LUA_LIBRARIES})
-  else()
-    if(_UNIX)
-      pkg_search_module(LUA luajit lua5.3 lua5.2 lua5.1 REQUIRED)
-      include_directories(${LUA_INCLUDE_DIRS})
-      link_libraries(${LUA_LIBRARIES})
-
-      if(LUA_VERSION VERSION_EQUAL "5.3" OR LUA_VERSION VERSION_GREATER "5.3")
-        set(LUA_VER 0x050300)
-      elseif(LUA_VERSION VERSION_EQUAL "5.2" OR LUA_VERSION VERSION_GREATER "5.2")
-        set(LUA_VER 0x050200)
-      elseif(LUA_VERSION VERSION_EQUAL "5.1" OR LUA_VERSION VERSION_GREATER "5.1")
-        set(LUA_VER 0x050100)
-      else() # luajit
-        set(LUA_VER 0x050100)
-      endif()
-    else()
-      message(FATAL_ERROR "LUA >= 5.1 was not found")
-    endif()
-    add_definitions(-DLUA_VER=${LUA_VER})
+  find_package(LuaJIT)
+  if(NOT LUAJIT_FOUND)
+    find_package(Lua REQUIRED)
   endif()
+  add_definitions(-DLUA_VER=0x0${LUA_VERSION_MAJOR}0${LUA_VERSION_MINOR}00)
+  include_directories(${LUA_INCLUDE_DIR})
+  link_libraries(${LUA_LIBRARIES})
 endif()
 
 #[[
@@ -239,17 +183,6 @@ foreach (_variableName ${_variableNames})
     message(STATUS "${_variableName}=${${_variableName}}")
 endforeach()
 ]]#
-
-if(WIN32)
-  add_definitions(
-    -D_CRT_SECURE_NO_WARNINGS
-    -D_SCL_SECURE_NO_WARNINGS
-    -DNOMINMAX
-    -DWIN32_LEAN_AND_MEAN
-    -DWINVER=0x0601
-    -D_WIN32_WINNT=0x0601
-  )
-endif()
 
 set(DATADIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
 set(FULL_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${PROJECT_NAME}")
@@ -279,6 +212,17 @@ add_definitions(
   -DSPLASH_DIR="${FULL_DATADIR}/splash/"
   -DGIT_COMMIT=${GIT_COMMIT}
 )
+
+if(WIN32)
+  add_definitions(
+    -D_CRT_SECURE_NO_WARNINGS
+    -D_SCL_SECURE_NO_WARNINGS
+    -DNOMINMAX
+    -DWIN32_LEAN_AND_MEAN
+    -DWINVER=0x0601
+    -D_WIN32_WINNT=0x0601
+  )
+endif()
 
 if(APPLE)
   # TARGET_OS_MAC should be replaced with __APPLE__

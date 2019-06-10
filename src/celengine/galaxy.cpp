@@ -27,6 +27,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
 
 static int width = 128, height = 128;
 static Vector3f colorTable[256];
@@ -532,8 +533,8 @@ GalacticForm* buildGalacticForms(const std::string& filename)
             z  = floor(i /(float) width);
             x  = (i - width * z - 0.5f * (width - 1)) / (float) width;
             z  = (0.5f * (height - 1) - z) / (float) height;
-            x  += Mathf::sfrand() * 0.008f;
-            z  += Mathf::sfrand() * 0.008f;
+            x  += sfrand<float>() * 0.008f;
+            z  += sfrand<float>() * 0.008f;
             r2 = x * x + z * z;
 
             if ( strcmp ( filename.c_str(), "models/E0.png") != 0 )
@@ -547,10 +548,10 @@ GalacticForm* buildGalacticForms(const std::string& filename)
                     // generate "thickness" y of spirals with emulation of a dust lane
                     // in galctic plane (y=0)
 
-                    yr =  Mathf::sfrand() * h;
+                    yr =  sfrand<float>() * h;
                     prob = (1.0f - B * exp(-yr * yr))/p0;
 
-                } while (Mathf::frand() > prob);
+                } while (frand<float>() > prob);
                 b.brightness  = value * prob;
                 y = y0 * yr / h;
             }
@@ -559,10 +560,10 @@ GalacticForm* buildGalacticForms(const std::string& filename)
                 // generate spherically symmetric distribution from E0.png
                 do
                 {
-                    yy = Mathf::sfrand();
+                    yy = sfrand<float>();
                     float ry2 = 1.0f - yy * yy;
                     prob = ry2 > 0? sqrt(ry2): 0.0f;
-                } while (Mathf::frand() > prob);
+                } while (frand<float>() > prob);
                 y = yy * sqrt(0.25f - r2) ;
                 b.brightness  = value;
                 kmin = 12;
@@ -665,12 +666,12 @@ void InitializeForms()
 
     while (ip < galaxySize)
     {
-        p        = Vector3f(Mathf::sfrand(), Mathf::sfrand(), Mathf::sfrand());
+        p        = Vector3f(sfrand<float>(), sfrand<float>(), sfrand<float>());
         float r  = p.norm();
         if (r < 1)
         {
             float prob = (1 - r) * (fractalsum(Vector3f(p.x() + 5, p.y() + 5, p.z() + 5), 8) + 1) * 0.5f;
-            if (Mathf::frand() < prob)
+            if (frand<float>() < prob)
             {
                 b.position   = Vector4f(p.x(), p.y(), p.z(), 1.0f);
                 b.brightness = 64u;

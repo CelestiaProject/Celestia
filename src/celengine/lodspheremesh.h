@@ -26,12 +26,12 @@ public:
     LODSphereMesh();
     ~LODSphereMesh();
 
-    void render(unsigned int attributes, const Frustum&, float pixWidth,
+    void render(unsigned int attributes, const celmath::Frustum&, float pixWidth,
                 Texture** tex, int nTextures);
-    void render(unsigned int attributes, const Frustum&, float pixWidth,
+    void render(unsigned int attributes, const celmath::Frustum&, float pixWidth,
                 Texture* tex0 = nullptr, Texture* tex1 = nullptr,
                 Texture* tex2 = nullptr, Texture* tex3 = nullptr);
-    void render(const Frustum&, float pixWidth,
+    void render(const celmath::Frustum&, float pixWidth,
                 Texture** tex, int nTextures);
 
     enum {
@@ -49,7 +49,7 @@ public:
     {
         RenderInfo(int _step,
                    unsigned int _attr,
-                   const Frustum& _frustum) :
+                   const celmath::Frustum& _frustum) :
             step(_step),
             attributes(_attr),
             frustum(_frustum)
@@ -57,7 +57,7 @@ public:
 
         int step;
         unsigned int attributes;  // vertex attributes
-        const Frustum& frustum;   // frustum, for culling
+        const celmath::Frustum& frustum;   // frustum, for culling
         Eigen::Vector3f fp[8];    // frustum points, for culling
         int texLOD[MAX_SPHERE_MESH_TEXTURES];
     };
