@@ -64,7 +64,6 @@ void AstroObject::addNames(const string &names, bool updateDB) // string contain
     }
 }
 
-
 bool AstroObject::removeName(const Name& name, bool updateDB)
 {
     if (!m_db)
@@ -113,7 +112,7 @@ NameInfoSet::iterator AstroObject::getNameInfoIterator(const Name &name) const
     return it;
 }
 
-NameInfo* AstroObject::getNameInfo(const Name &name)
+const NameInfo* AstroObject::getNameInfo(const Name &name) const
 {
     if (!m_db)
     {

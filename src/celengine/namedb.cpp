@@ -15,8 +15,8 @@ bool NameDatabase::add(NameInfo &info, bool overwrite)
     if (!overwrite && (info.getCanon().empty() || m_nameIndex.find(info.getCanon()) != m_nameIndex.end()))
         return false;
     m_nameIndex[info.getCanon()] = info;
-    if (!info.getLocalized().empty())
-        m_localizedIndex[info.getLocalized()] = info;
+//     if (info.hasLocalized())
+//         m_localizedIndex[info.getLocalized()] = info;
     return true;
 }
 

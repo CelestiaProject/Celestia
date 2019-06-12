@@ -272,8 +272,8 @@ bool StcDataLoader::load(istream &in)
         {
             if (!objName.empty())
             {
-                m_db->removeNames(catalogNumber);
-                m_db->addNames(catalogNumber, objName);
+                star->removeNames();
+                star->addNames(objName);
             }
             if (m_db->getObjectNameList(catalogNumber).empty())
                 fmt::fprintf(cerr, "Star nr %i is probably without names!\n", catalogNumber);

@@ -1,20 +1,23 @@
-add_executable(utf8 utf8.cpp)
-target_link_libraries(utf8 celutil)
+add_executable(test-utf8 utf8.cpp)
+target_link_libraries(test-utf8 celutil)
 
-add_executable(name name.cpp)
-target_link_libraries(name celengine celutil)
+add_executable(test-name name.cpp)
+target_link_libraries(test-name celengine celutil)
 
-add_executable(greek greek.cpp)
-target_link_libraries(greek celutil)
+add_executable(test-greek greek.cpp)
+target_link_libraries(test-greek celutil)
 
-add_executable(astrodb astrodb.cpp)
-target_link_libraries(astrodb celengine celutil celephem celtxf)
+add_executable(test-astrodb astrodb.cpp)
+target_link_libraries(test-astrodb celengine celutil celephem celtxf)
 
-add_executable(octree octree.cpp)
-target_link_libraries(octree celengine celutil)
+add_executable(test-octree octree.cpp)
+target_link_libraries(test-octree celengine celutil)
 
-add_executable(frustum frustum.cpp)
-target_link_libraries(frustum celengine celutil)
+add_executable(test-frustum frustum.cpp)
+target_link_libraries(test-frustum celengine celutil)
 
-add_executable(crossindex crossindex.cpp)
-target_link_libraries(crossindex celengine celutil)
+add_executable(test-crossindex crossindex.cpp)
+target_link_libraries(test-crossindex celengine celutil)
+
+add_executable(test-astroobj astroobj.cpp)
+target_link_libraries(test-astroobj celengine celutil)
