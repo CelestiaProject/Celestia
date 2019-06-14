@@ -7414,7 +7414,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
             if (markerRep.symbol() == MarkerRepresentation::Crosshair)
                 renderCrosshair(size, realTime);
             else
-                markerRep.render(size);
+                markerRep.render(*this, size);
             glEnable(GL_TEXTURE_2D);
 
             if (!markerRep.label().empty())
@@ -7563,7 +7563,7 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
             if (markerRep.symbol() == MarkerRepresentation::Crosshair)
                 renderCrosshair(size, realTime);
             else
-                markerRep.render(size);
+                markerRep.render(*this, size);
             glEnable(GL_TEXTURE_2D);
 
             if (!markerRep.label().empty())
@@ -7653,7 +7653,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
             if (markerRep.symbol() == MarkerRepresentation::Crosshair)
                 renderCrosshair(size, realTime);
             else
-                markerRep.render(size);
+                markerRep.render(*this, size);
             glEnable(GL_TEXTURE_2D);
 
             if (!markerRep.label().empty())

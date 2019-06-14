@@ -50,6 +50,7 @@ set(CELENGINE_SOURCES
   geometry.h
   #glcontext.cpp
   #glcontext.h
+  glmarker.cpp
   globular.cpp
   globular.h
   glshader.cpp
