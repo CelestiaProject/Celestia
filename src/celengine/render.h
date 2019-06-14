@@ -25,6 +25,7 @@
 #include <vector>
 #include <list>
 #include <string>
+#include "vertexobject.h"
 
 
 class RendererWatcher;
@@ -254,6 +255,8 @@ class Renderer
     void setSolarSystemMaxDistance(float);
 
     bool captureFrame(int, int, int, int, PixelFormat format, unsigned char*, bool = false) const;
+
+    void renderMarker(MarkerRepresentation::Symbol symbol, float size, const Color& color);
 
 #ifdef USE_HDR
     bool getBloomEnabled();
@@ -707,6 +710,7 @@ class Renderer
 
     int currentIntervalIndex{ 0 };
 
+    celgl::VertexObject markerVO{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
 
  public:
 #if 0
