@@ -74,19 +74,13 @@ void ConstellationBoundaries::lineto(float ra, float dec)
 
 void ConstellationBoundaries::render(const Color& color, const Renderer& renderer)
 {
-    if (vboId == 0)
+    m_vo.bind();
+    if (!m_vo.initialized())
     {
-        if (!prepared)
-            prepare();
-
-        glGenBuffers(1, &(vboId));
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        glBufferData(GL_ARRAY_BUFFER, vtx_num * 3 * sizeof(GLshort), vtx_buf, GL_STATIC_DRAW);
+        prepare();
+        m_vo.allocate(vtx_num * 3 * sizeof(GLshort), vtx_buf);
         cleanup();
-    }
-    else
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        m_vo.setVertices(3, GL_SHORT, false, 0, 0);
     }
 
     CelestiaGLProgram* prog = renderer.getShaderManager().getShader(shadprop);
@@ -95,13 +89,10 @@ void ConstellationBoundaries::render(const Color& color, const Renderer& rendere
 
     prog->use();
     prog->color = color.toVector4();
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex, 3, GL_SHORT, GL_FALSE, 0, 0);
-    glDrawArrays(GL_LINES, 0, vtx_num);
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    m_vo.draw(GL_LINES, vtx_num);
 
     glUseProgram(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    m_vo.unbind();
 }
 
 
@@ -128,8 +119,6 @@ void ConstellationBoundaries::prepare()
         for (unsigned j = 0; j < 3; j++, ptr++)
             *ptr = (GLshort) (*chain)[0][j];
     }
-
-    prepared = true;
 }
 
 
