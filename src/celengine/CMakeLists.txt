@@ -144,6 +144,8 @@ set(CELENGINE_SOURCES
   universe.cpp
   universe.h
   vecgl.h
+  vertexobject.cpp
+  vertexobject.h
   virtualtex.cpp
   virtualtex.h
   visibleregion.cpp
