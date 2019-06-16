@@ -15,8 +15,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "celutil/color.h"
+#include <celutil/color.h>
 #include "shadermanager.h"
+#include "vertexobject.h"
 
 class Renderer;
 
@@ -43,10 +44,9 @@ class ConstellationBoundaries
     Chain* currentChain{ nullptr };
     std::vector<Chain*> chains;
 
-    GLuint  vboId{ 0 };
     GLshort *vtx_buf{ nullptr };
     GLsizei vtx_num{ 0 };
-    bool prepared{ false };
+    celgl::VertexObject m_vo{GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW};
 
     ShaderProperties shadprop;
 };
