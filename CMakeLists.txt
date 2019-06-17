@@ -138,7 +138,7 @@ find_package(GLEW REQUIRED)
 link_libraries(GLEW::GLEW)
 include_directories(${GLEW_INCLUDE_DIRS})
 
-find_package(Eigen3 3.3 NO_MODULE) # -DEigen3_DIR=...
+find_package(Eigen3 3.2.92 NO_MODULE) # -DEigen3_DIR=...
 if(TARGET Eigen3::Eigen)
   message(STATUS "Found Eigen3 ${EIGEN3_VERSION_STRING}")
   link_libraries(Eigen3::Eigen)
