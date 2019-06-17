@@ -89,10 +89,10 @@ void Body::setDefaultProperties()
     delete rings;
     rings = nullptr;
     classification = Unknown;
-    visible = 1;
-    clickable = 1;
-    visibleAsPoint = 1;
-    overrideOrbitColor = 0;
+    visible = true;
+    clickable = true;
+    visibleAsPoint = true;
+    overrideOrbitColor = false;
     orbitVisibility = UseClassVisibility;
     recomputeCullingRadius();
 }
@@ -1053,7 +1053,7 @@ Body::getReferenceMarks() const
  */
 void Body::setVisible(bool _visible)
 {
-    visible = _visible ? 1 : 0;
+    visible = _visible;
 }
 
 
@@ -1063,7 +1063,7 @@ void Body::setVisible(bool _visible)
  */
 void Body::setClickable(bool _clickable)
 {
-    clickable = _clickable ? 1 : 0;
+    clickable = _clickable;
 }
 
 
@@ -1074,7 +1074,7 @@ void Body::setClickable(bool _clickable)
  */
 void Body::setVisibleAsPoint(bool _visibleAsPoint)
 {
-    visibleAsPoint = _visibleAsPoint ? 1 : 0;
+    visibleAsPoint = _visibleAsPoint;
 }
 
 
@@ -1082,9 +1082,9 @@ void Body::setVisibleAsPoint(bool _visibleAsPoint)
  *  color should be used (specified via setOrbitColor) instead of the
  *  default class orbit color.
  */
-void Body::setOrbitColorOverridden(bool override)
+void Body::setOrbitColorOverridden(bool _override)
 {
-    overrideOrbitColor = override ? 1 : 0;
+    overrideOrbitColor = _override;
 }
 
 
