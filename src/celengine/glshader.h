@@ -124,6 +124,18 @@ class Vec4ShaderParameter
 };
 
 
+class IntegerShaderParameter
+{
+ public:
+    IntegerShaderParameter();
+    IntegerShaderParameter(GLuint obj, const char* name);
+
+    IntegerShaderParameter& operator=(int);
+
+ private:
+    int slot;
+};
+
 
 class GLShaderLoader
 {

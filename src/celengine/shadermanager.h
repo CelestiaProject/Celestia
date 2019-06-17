@@ -153,6 +153,7 @@ struct CelestiaGLProgramShadow
 class CelestiaGLProgram
 {
  public:
+    CelestiaGLProgram(GLProgram& _program);
     CelestiaGLProgram(GLProgram& _program, const ShaderProperties&);
     ~CelestiaGLProgram();
 
@@ -173,12 +174,12 @@ class CelestiaGLProgram
                                  float atmPlanetRadius,
                                  float objRadius);
 
- enum
- {
-    VertexCoordAttributeIndex = 0,
-    TangentAttributeIndex     = 6,
-    PointSizeAttributeIndex   = 7,
- };
+    enum
+    {
+        VertexCoordAttributeIndex = 0,
+        TangentAttributeIndex     = 6,
+        PointSizeAttributeIndex   = 7,
+    };
 
  public:
     CelestiaGLProgramLight lights[MaxShaderLights];
@@ -249,13 +250,15 @@ class CelestiaGLProgram
 
     CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderEclipseShadows];
 
+    FloatShaderParameter floatParam(const std::string&);
+    IntegerShaderParameter intParam(const std::string&);
+    IntegerShaderParameter samplerParam(const std::string&);
+    Vec3ShaderParameter vec3Param(const std::string&);
+    Vec4ShaderParameter vec4Param(const std::string&);
+
  private:
     void initParameters();
     void initSamplers();
-
-    FloatShaderParameter floatParam(const std::string&);
-    Vec3ShaderParameter vec3Param(const std::string&);
-    Vec4ShaderParameter vec4Param(const std::string&);
 
     GLProgram* program;
     const ShaderProperties props;
@@ -269,9 +272,12 @@ class ShaderManager
     ~ShaderManager();
 
     CelestiaGLProgram* getShader(const ShaderProperties&);
+    CelestiaGLProgram* getShader(const std::string&);
+    CelestiaGLProgram* getShader(const std::string&, const std::string&, const std::string&);
 
  private:
     CelestiaGLProgram* buildProgram(const ShaderProperties&);
+    CelestiaGLProgram* buildProgram(const std::string&, const std::string&);
 
     GLVertexShader* buildVertexShader(const ShaderProperties&);
     GLFragmentShader* buildFragmentShader(const ShaderProperties&);
@@ -291,7 +297,8 @@ class ShaderManager
     GLVertexShader* buildStaticVertexShader(const ShaderProperties&);
     GLFragmentShader* buildStaticFragmentShader(const ShaderProperties&);
 
-    std::map<ShaderProperties, CelestiaGLProgram*> shaders;
+    std::map<ShaderProperties, CelestiaGLProgram*> dynamicShaders;
+    std::map<std::string, CelestiaGLProgram*> staticShaders;
 };
 
 #endif // _CELENGINE_SHADERMANAGER_H_
