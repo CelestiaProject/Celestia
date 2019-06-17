@@ -125,6 +125,24 @@ Vec4ShaderParameter::operator=(const Eigen::Vector4f& v)
 }
 
 
+IntegerShaderParameter::IntegerShaderParameter() :
+    slot(-1)
+{
+}
+
+IntegerShaderParameter::IntegerShaderParameter(GLuint obj, const char* name)
+{
+    slot = glGetUniformLocation(obj, name);
+}
+
+IntegerShaderParameter&
+IntegerShaderParameter::operator=(int i)
+{
+    if (slot != -1)
+        glUniform1i(slot, i);
+    return *this;
+}
+
 //************* GLProgram **************
 
 GLProgram::GLProgram(GLuint _id) :

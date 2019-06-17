@@ -19,6 +19,7 @@
 #include <fmt/printf.h>
 #include <cassert>
 #include <Eigen/Geometry>
+#include <sys/stat.h>
 
 using namespace Eigen;
 using namespace std;
@@ -290,19 +291,22 @@ ShaderManager::ShaderManager()
 
 ShaderManager::~ShaderManager()
 {
-    for(const auto& shader : shaders)
-    {
+    for(const auto& shader : dynamicShaders)
         delete shader.second;
-    }
 
-    shaders.clear();
+    dynamicShaders.clear();
+
+    for(const auto& shader : staticShaders)
+        delete shader.second;
+
+    staticShaders.clear();
 }
 
 CelestiaGLProgram*
 ShaderManager::getShader(const ShaderProperties& props)
 {
-    map<ShaderProperties, CelestiaGLProgram*>::iterator iter = shaders.find(props);
-    if (iter != shaders.end())
+    auto iter = dynamicShaders.find(props);
+    if (iter != dynamicShaders.end())
     {
         // Shader already exists
         return iter->second;
@@ -311,12 +315,88 @@ ShaderManager::getShader(const ShaderProperties& props)
     {
         // Create a new shader and add it to the table of created shaders
         CelestiaGLProgram* prog = buildProgram(props);
-        shaders[props] = prog;
+        dynamicShaders[props] = prog;
 
         return prog;
     }
 }
 
+CelestiaGLProgram*
+ShaderManager::getShader(const string& name, const string& vs, const string& fs)
+{
+    auto iter = staticShaders.find(name);
+    if (iter != staticShaders.end())
+    {
+        // Shader already exists
+        return iter->second;
+    }
+
+    // Create a new shader and add it to the table of created shaders
+    CelestiaGLProgram* prog = buildProgram(vs, fs);
+    staticShaders[name] = prog;
+
+    return prog;
+}
+
+#ifndef _WIN32
+constexpr const char fsDelimeter = '/';
+#else
+constexpr const char fsDelimeter = '\\';
+#endif
+
+CelestiaGLProgram*
+ShaderManager::getShader(const string& name)
+{
+    auto iter = staticShaders.find(name);
+    if (iter != staticShaders.end())
+    {
+        // Shader already exists
+        return iter->second;
+    }
+
+    auto vsName = fmt::sprintf("shaders%c%s_vert.glsl", fsDelimeter, name);
+    auto fsName = fmt::sprintf("shaders%c%s_frag.glsl", fsDelimeter, name);
+
+    struct stat s;
+    if (stat(vsName.c_str(), &s) == -1)
+    {
+        fmt::fprintf(cerr, "Failed to stat %s\n", vsName);
+        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+    }
+    auto vsSize = s.st_size;
+
+    if (stat(fsName.c_str(), &s) == -1)
+    {
+        fmt::fprintf(cerr, "Failed to stat %s\n", fsName);
+        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+    }
+    auto fsSize = s.st_size;
+
+    ifstream vsf(vsName);
+    if (!vsf.good())
+    {
+        fmt::fprintf(cerr, "Failed to open %s\n", vsName);
+        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+    }
+
+    ifstream fsf(fsName);
+    if (!fsf.good())
+    {
+        fmt::fprintf(cerr, "Failed to open %s\n", fsName);
+        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
+    }
+
+    string vs(vsSize, '\0'), fs(fsSize, '\0');
+
+    vsf.read(&vs[0], vsSize);
+    fsf.read(&fs[0], fsSize);
+
+    // Create a new shader and add it to the table of created shaders
+    CelestiaGLProgram* prog = buildProgram(vs, fs);
+    staticShaders[name] = prog;
+
+    return prog;
+}
 
 static string
 LightProperty(unsigned int i, const char* property)
@@ -3095,6 +3175,51 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     return new CelestiaGLProgram(*prog, props);
 }
 
+CelestiaGLProgram*
+ShaderManager::buildProgram(const std::string& vs, const std::string& fs)
+{
+    GLProgram* prog = nullptr;
+    GLShaderStatus status;
+
+    DumpVSSource(vs);
+    DumpFSSource(fs);
+
+    status = GLShaderLoader::CreateProgram(vs, fs, &prog);
+    if (status == ShaderStatus_OK)
+    {
+        // Tangents always in attribute 6 (should be a constant
+        // someplace)
+        glBindAttribLocation(prog->getID(), 6, "tangent");
+
+        // Point size is always in attribute 7
+        glBindAttribLocation(prog->getID(), 7, "pointSize");
+
+        status = prog->link();
+    }
+
+    if (status != ShaderStatus_OK)
+    {
+        // If the shader creation failed for some reason, substitute the
+        // error shader.
+        status = GLShaderLoader::CreateProgram(errorVertexShaderSource,
+                                               errorFragmentShaderSource,
+                                               &prog);
+        if (status != ShaderStatus_OK)
+        {
+            if (g_shaderLogFile != nullptr)
+                *g_shaderLogFile << "Failed to create error shader!\n";
+        }
+        else
+        {
+            status = prog->link();
+        }
+    }
+
+    if (prog == nullptr)
+        return nullptr;
+
+    return new CelestiaGLProgram(*prog);
+}
 
 CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program,
                                      const ShaderProperties& _props) :
@@ -3106,6 +3231,11 @@ CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program,
 };
 
 
+CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program) :
+    program(&_program)
+{
+}
+
 CelestiaGLProgram::~CelestiaGLProgram()
 {
     delete program;
@@ -3116,6 +3246,20 @@ FloatShaderParameter
 CelestiaGLProgram::floatParam(const string& paramName)
 {
     return FloatShaderParameter(program->getID(), paramName.c_str());
+}
+
+
+IntegerShaderParameter
+CelestiaGLProgram::intParam(const string& paramName)
+{
+    return IntegerShaderParameter(program->getID(), paramName.c_str());
+}
+
+
+IntegerShaderParameter
+CelestiaGLProgram::samplerParam(const string& paramName)
+{
+    return IntegerShaderParameter(program->getID(), paramName.c_str());
 }
 
 
