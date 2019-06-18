@@ -35,7 +35,9 @@
 #include "celestia/imagecapture.h"
 #include "celestia/celestiacore.h"
 #include "celengine/simulation.h"
+#ifdef USE_GLCONTEXT
 #include "celengine/glcontext.h"
+#endif
 
 #include "qtglwidget.h"
 
@@ -88,6 +90,7 @@ void CelestiaGlWidget::paintGL()
 }
 
 
+#ifdef USE_GLCONTEXT
 static GLContext::GLRenderPath getBestAvailableRenderPath(const GLContext& /*glc*/)
 {
 #if 0
@@ -104,6 +107,7 @@ static GLContext::GLRenderPath getBestAvailableRenderPath(const GLContext& /*glc
 
     return GLContext::GLPath_GLSL;
 }
+#endif
 
 
 /*!
@@ -137,6 +141,7 @@ void CelestiaGlWidget::initializeGL()
     appCore->getSimulation()->setFaintestVisible((float) settings.value("Preferences/VisualMagnitude", DEFAULT_VISUAL_MAGNITUDE).toDouble());
 
     // Read the saved render path
+#ifdef USE_GLCONTEXT
     GLContext::GLRenderPath bestPath = getBestAvailableRenderPath(*appRenderer->getGLContext());
     GLContext::GLRenderPath savedPath = (GLContext::GLRenderPath) settings.value("RenderPath", bestPath).toInt();
 
@@ -149,6 +154,7 @@ void CelestiaGlWidget::initializeGL()
         usePath = bestPath;
 
     appRenderer->getGLContext()->setRenderPath(usePath);
+#endif
 
     appCore->setScreenDpi(logicalDpiY());
 

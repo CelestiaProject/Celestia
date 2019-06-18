@@ -11,7 +11,9 @@
 #include "astro.h"
 #include "asterism.h"
 #include "execution.h"
+#ifdef USE_GLCONTEXT
 #include "glcontext.h"
+#endif
 #include <celestia/celestiacore.h>
 #include <celestia/imagecapture.h>
 #include <celestia/celx_internal.h>
@@ -680,6 +682,7 @@ void CommandSetTextureResolution::process(ExecutionEnvironment& env)
 ////////////////
 // Set RenderPath command. Left for compatibility.
 
+#ifdef USE_GLCONTEXT
 CommandRenderPath::CommandRenderPath(GLContext::GLRenderPath _path) :
     path(_path)
 {
@@ -697,6 +700,7 @@ void CommandRenderPath::process(ExecutionEnvironment& /*env*/)
     }
 #endif
 }
+#endif
 
 
 ////////////////

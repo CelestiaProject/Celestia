@@ -16,7 +16,9 @@
 #include <celengine/universe.h>
 #include <celengine/observer.h>
 #include <celengine/selection.h>
+#ifdef USE_GLCONTEXT
 #include <celengine/glcontext.h>
+#endif
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celtxf/texturefont.h>
@@ -103,7 +105,11 @@ class Renderer
         double linearFadeFraction;
     };
 
+#ifdef USE_GLCONTEXT
     bool init(GLContext*, int, int, DetailOptions&);
+#else
+    bool init(int, int, DetailOptions&);
+#endif
     void shutdown() {};
     void resize(int, int);
 
@@ -245,7 +251,9 @@ class Renderer
     float getBrightness();
 #endif
 
+#ifdef USE_GLCONTEXT
     GLContext* getGLContext() { return context; }
+#endif
 
     void setStarStyle(StarStyle);
     StarStyle getStarStyle() const;
@@ -626,7 +634,9 @@ class Renderer
 #endif
 
  private:
+#ifdef USE_GLCONTEXT
     GLContext* context;
+#endif
     ShaderManager* shaderManager{ nullptr };
 
     int windowWidth;
