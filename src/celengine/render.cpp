@@ -6222,10 +6222,12 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
 
     for (auto& render_item : renderList)
     {
+        if (render_item.renderableType != RenderListEntry::RenderableBody)
+            continue;
+
         int classification = render_item.body->getOrbitClassification();
 
-        if (render_item.renderableType == RenderListEntry::RenderableBody &&
-            (classification & labelClassMask)                       &&
+        if ((classification & labelClassMask) != 0 &&
             viewFrustum.testSphere(render_item.position, render_item.radius) != Frustum::Outside)
         {
             const Body* body = render_item.body;
