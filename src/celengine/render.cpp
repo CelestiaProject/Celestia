@@ -924,11 +924,17 @@ bool Renderer::OrbitPathListEntry::operator<(const Renderer::OrbitPathListEntry&
 }
 
 
+#ifdef USE_GLCONTEXT
 bool Renderer::init(GLContext* _context,
+#else
+bool Renderer::init(
+#endif
                     int winWidth, int winHeight,
                     DetailOptions& _detailOptions)
 {
+#ifdef USE_GLCONTEXT
     context = _context;
+#endif
     detailOptions = _detailOptions;
 
     // Initialize static meshes and textures common to all instances of Renderer
@@ -6409,7 +6415,9 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
  public:
     const Observer* observer{ nullptr };
 
+#ifdef USE_GLCONTEXT
     GLContext* context{ nullptr };
+#endif
     Renderer*  renderer{ nullptr };
 
     Eigen::Vector3f viewNormal;
@@ -6687,7 +6695,9 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     Vector3d obsPos = observer.getPosition().toLy();
 
     PointStarRenderer starRenderer;
+#ifdef USE_GLCONTEXT
     starRenderer.context           = context;
+#endif
     starRenderer.renderer          = this;
     starRenderer.starDB            = &starDB;
     starRenderer.observer          = &observer;
@@ -6986,7 +6996,9 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 
     DSODatabase* dsoDB  = universe.getDSOCatalog();
 
+#ifdef USE_GLCONTEXT
     dsoRenderer.context          = context;
+#endif
     dsoRenderer.renderer         = this;
     dsoRenderer.dsoDB            = dsoDB;
     dsoRenderer.orientationMatrix= observer.getOrientationf().conjugate().toRotationMatrix();

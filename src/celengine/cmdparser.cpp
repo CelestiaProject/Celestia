@@ -13,7 +13,9 @@
 
 #include "astro.h"
 #include "cmdparser.h"
+#ifdef USE_GLCONTEXT
 #include "glcontext.h"
+#endif
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
@@ -700,7 +702,9 @@ Command* CommandParser::parseCommand()
 
         cmd = new CommandRenderPath(glcpath);
 #else
+#ifdef USE_GLCONTEXT
         cmd = new CommandRenderPath(GLContext::GLPath_GLSL);
+#endif
 #endif
     }
     else if (commandName == "splitview")

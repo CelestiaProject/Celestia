@@ -186,7 +186,9 @@ struct AppPreferences
     string altSurfaceName;
     uint32_t textureResolution;
     Renderer::StarStyle starStyle;
+#ifdef USE_GLCONTEXT
     GLContext::GLRenderPath renderPath;
+#endif
     bool renderPathSet;
 };
 
@@ -2528,8 +2530,10 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "StarsColor", &prefs.starsColor, sizeof(prefs.starsColor));
     prefs.starStyle = Renderer::FuzzyPointStars;
     GetRegistryValue(key, "StarStyle", &prefs.starStyle, sizeof(prefs.starStyle));
+#ifdef USE_GLCONTEXT
     prefs.renderPath = GLContext::GLPath_GLSL;
     prefs.renderPathSet = GetRegistryValue(key, "RenderPath", &prefs.renderPath, sizeof(prefs.renderPath));
+#endif
 
     GetRegistryValue(key, "LastVersion", &prefs.lastVersion, sizeof(prefs.lastVersion));
     GetRegistryValue(key, "TextureResolution", &prefs.textureResolution, sizeof(prefs.textureResolution));
@@ -2587,7 +2591,9 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "LastVersion", prefs.lastVersion);
     SetRegistryInt(key, "StarStyle", prefs.starStyle);
     SetRegistryInt(key, "StarsColor", prefs.starsColor);
+#ifdef USE_GLCONTEXT
     SetRegistryInt(key, "RenderPath", prefs.renderPath);
+#endif
     SetRegistry(key, "AltSurface", prefs.altSurfaceName);
     SetRegistryInt(key, "TextureResolution", prefs.textureResolution);
 
@@ -2629,7 +2635,9 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
         prefs.starsColor = ColorTable_Enhanced;
     if (current == GetStarColorTable(ColorTable_Blackbody_D65))
         prefs.starsColor = ColorTable_Blackbody_D65;
+#ifdef USE_GLCONTEXT
     prefs.renderPath = appCore->getRenderer()->getGLContext()->getRenderPath();
+#endif
     prefs.textureResolution = appCore->getRenderer()->getResolution();
 
     return true;
@@ -3494,12 +3502,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         appCore->setDateFormat((astro::Date::Format) prefs.dateFormat);
         appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(prefs.altSurfaceName);
         appCore->getRenderer()->setResolution(prefs.textureResolution);
+#ifdef USE_GLCONTEXT
         if (prefs.renderPathSet)
         {
             GLContext* glContext = appCore->getRenderer()->getGLContext();
             if (glContext->renderPathSupported(prefs.renderPath))
                 glContext->setRenderPath(prefs.renderPath);
         }
+#endif
     }
     else
     {

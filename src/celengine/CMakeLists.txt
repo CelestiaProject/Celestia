@@ -48,8 +48,8 @@ set(CELENGINE_SOURCES
   galaxy.cpp
   galaxy.h
   geometry.h
-  glcontext.cpp
-  glcontext.h
+  #glcontext.cpp
+  #glcontext.h
   globular.cpp
   globular.h
   glshader.cpp
