@@ -16,7 +16,7 @@
 #include <cassert>
 #include <vector>
 #include <fstream>
-#include <iomanip>
+#include <fmt/printf.h>
 
 using namespace Eigen;
 using namespace std;
@@ -3160,11 +3160,8 @@ Orbit* GetCustomOrbit(const string& name)
             jpleph = JPLEphemeris::load(in);
         if (jpleph != nullptr)
         {
-            clog << "Loaded DE" << jpleph->getDENumber() <<
-                " ephemeris. Valid from JD" <<
-                setprecision(8) <<
-                jpleph->getStartDate() << " to JD" <<
-                jpleph->getEndDate() << '\n';
+           fmt::fprintf(clog, "Loaded DE%u ephemeris. Valid from JD %.8lf to JD %.8lf\n",
+                        jpleph->getDENumber(), jpleph->getStartDate(), jpleph->getEndDate());
         }
     }
 
