@@ -167,6 +167,11 @@ public:
         data = new Vector4f[capacity];
     }
 
+    ~HighPrec_VertexBuffer()
+    {
+        delete[] data;
+    }
+
     void setup()
     {
 #if USE_VERTEX_BUFFER
