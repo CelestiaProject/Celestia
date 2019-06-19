@@ -6471,7 +6471,7 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
     float cosFOV{ 1.0f };
 
     const ColorTemperatureTable* colorTemp{ nullptr };
-    float SolarSystemMaxDistance;
+    float SolarSystemMaxDistance { 1.0f };
 #ifdef DEBUG_HDR_ADAPT
     float minMag;
     float maxMag;

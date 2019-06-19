@@ -141,7 +141,7 @@ class FPSActionGroup
     QActionGroup *m_actionGroup;
     std::map<int, QAction*> m_actions;
     QAction *m_customAction;
-    int m_lastFPS;
+    int m_lastFPS { 0 };
 public:
     FPSActionGroup(QObject *p = nullptr);
 
