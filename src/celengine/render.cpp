@@ -320,16 +320,12 @@ PointStarVertexBuffer::~PointStarVertexBuffer()
 
 void PointStarVertexBuffer::startSprites()
 {
-    ShaderProperties shadprop;
-    shadprop.staticShader = true;
-    shadprop.texUsage = ShaderProperties::PointSprite   |
-                        ShaderProperties::NormalTexture;
-    CelestiaGLProgram* prog = renderer.getShaderManager().getShader(shadprop);
+    CelestiaGLProgram* prog = renderer.getShaderManager().getShader("star");
     if (prog == nullptr)
         return;
 
     prog->use();
-    prog->pointScale = 1.0f;
+    prog->samplerParam("starTex") = 0;
 
     unsigned int stride = sizeof(StarVertex);
     glEnableClientState(GL_VERTEX_ARRAY);
