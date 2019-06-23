@@ -1,0 +1,3 @@
+file(GLOB SHADERS_SOURCES *.glsl)
+
+install(FILES ${SHADERS_SOURCES} DESTINATION "${DATADIR}/shaders")
