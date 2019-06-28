@@ -186,7 +186,7 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol, float size, con
     if (!markerVO.initialized())
         initVO(markerVO);
 
-    assert(shaderManager == nullptr);
+    assert(shaderManager != nullptr);
     auto* prog = shaderManager->getShader("marker");
     if (prog == nullptr)
         return;
