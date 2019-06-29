@@ -17,6 +17,7 @@
 
 #include <Eigen/Geometry>
 #include <celengine/deepskyobj.h>
+#include <celengine/vertexobject.h>
 
 
 struct GBlob
@@ -38,6 +39,7 @@ class Globular : public DeepSkyObject
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     Globular();
+
     const char* getType() const override;
     void setType(const std::string&) override;
     std::string getDescription() const override;
@@ -62,7 +64,7 @@ class Globular : public DeepSkyObject
                 const Eigen::Quaternionf& viewerOrientation,
                 float brightness,
                 float pixelSize,
-                const Renderer* r = nullptr) override;
+                const Renderer* r) override;
 
     GlobularForm* getForm() const;
 
@@ -74,7 +76,8 @@ class Globular : public DeepSkyObject
     void renderGlobularPointSprites(const Eigen::Vector3f& offset,
                                     const Eigen::Quaternionf& viewerOrientation,
                                     float brightness,
-                                    float pixelSize);
+                                    float pixelSize,
+                                    const Renderer* r);
 
    // Reference values ( = data base averages) of core radius, King concentration
    // and mu25 isophote radius:
@@ -88,6 +91,8 @@ class Globular : public DeepSkyObject
     float         r_c{ R_c_ref };
     float         c{ C_ref };
     float         tidalRadius{ 0.0f };
+
+    celgl::VertexObject vo{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
 };
 
 #endif // _GLOBULAR_H_
