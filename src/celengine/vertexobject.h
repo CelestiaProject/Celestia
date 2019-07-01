@@ -13,6 +13,7 @@
 
 #include <GL/glew.h>
 #include <array>
+#include <map>
 
 namespace celgl
 {
@@ -44,6 +45,7 @@ class VertexObject
     void setEdgeFlags(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
     void setTangents(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
     void setPointSizes(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
+    void setVertexAttrib(GLint location, GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
     bool initialized() const { return !m_firstBind; }
     void setBufferType(GLenum bufferType)     { m_bufferType = bufferType; }
     void setBufferSize(GLsizeiptr bufferSize) { m_bufferSize = bufferSize; }
@@ -82,6 +84,7 @@ class VertexObject
     GLenum     m_bufferType{ 0 };
     GLenum     m_streamType{ 0 };
     std::array<PtrParams, 8> m_params {};
+    std::map<GLint, PtrParams>* m_attribParams{ nullptr };
 
     bool       m_firstBind{ true };
 };

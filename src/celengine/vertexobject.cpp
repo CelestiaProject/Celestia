@@ -27,6 +27,8 @@ VertexObject::VertexObject(GLenum bufferType, GLsizeiptr bufferSize, GLenum stre
 
 VertexObject::~VertexObject()
 {
+    delete m_attribParams;
+
     if (GLEW_ARB_vertex_array_object)
         glDeleteVertexArrays(1, &m_vaoId);
 
@@ -168,6 +170,17 @@ void VertexObject::enableAttribArrays()
         glEnableVertexAttribArray(7);
         glVertexAttribPointer(7, p.count, p.type, p.normalized, p.stride, (GLvoid*) p.offset);
     }
+
+    if (m_attribParams != nullptr)
+    {
+        for (const auto& t : *m_attribParams)
+        {
+            auto  n = t.first;
+            auto& p = t.second;
+            glEnableVertexAttribArray(n);
+            glVertexAttribPointer(n, p.count, p.type, p.normalized, p.stride, (GLvoid*) p.offset);
+        }
+    }
 }
 
 void VertexObject::disableAttribArrays()
@@ -195,6 +208,12 @@ void VertexObject::disableAttribArrays()
 
     if (m_attrIndexes & AttrType::PointSize)
         glDisableVertexAttribArray(7);
+
+    if (m_attribParams != nullptr)
+    {
+        for (const auto& t : *m_attribParams)
+            glDisableVertexAttribArray(t.first);
+    }
 
     glBindBuffer(m_bufferType, 0);
 }
@@ -245,5 +264,14 @@ void VertexObject::setPointSizes(GLint count, GLenum type, bool normalized, GLsi
 {
     m_attrIndexes |= AttrType::PointSize;
     m_params[7] = { offset, stride, count, type, normalized };
+}
+
+void VertexObject::setVertexAttrib(GLint location, GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
+{
+    if (m_attribParams == nullptr)
+        m_attribParams = new std::map<GLint, PtrParams>;
+
+    PtrParams p = { offset, stride, count, type, normalized };
+    (*m_attribParams)[location] = p;
 }
 }; // namespace
