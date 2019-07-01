@@ -137,6 +137,32 @@ class IntegerShaderParameter
 };
 
 
+class Mat3ShaderParameter
+{
+ public:
+    Mat3ShaderParameter();
+    Mat3ShaderParameter(GLuint obj, const char* name);
+
+    Mat3ShaderParameter& operator=(const Eigen::Matrix3f&);
+
+ private:
+    int slot;
+};
+
+
+class Mat4ShaderParameter
+{
+ public:
+    Mat4ShaderParameter();
+    Mat4ShaderParameter(GLuint obj, const char* name);
+
+    Mat4ShaderParameter& operator=(const Eigen::Matrix4f&);
+
+ private:
+    int slot;
+};
+
+
 class GLShaderLoader
 {
  public:

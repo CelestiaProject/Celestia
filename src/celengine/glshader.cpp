@@ -143,6 +143,45 @@ IntegerShaderParameter::operator=(int i)
     return *this;
 }
 
+
+Mat3ShaderParameter::Mat3ShaderParameter() :
+    slot(-1)
+{
+}
+
+Mat3ShaderParameter::Mat3ShaderParameter(GLuint obj, const char* name)
+{
+    slot = glGetUniformLocation(obj, name);
+}
+
+Mat3ShaderParameter&
+Mat3ShaderParameter::operator=(const Eigen::Matrix3f& v)
+{
+    if (slot != -1)
+        glUniformMatrix3fv(slot, 1, GL_FALSE, v.data());
+    return *this;
+}
+
+
+Mat4ShaderParameter::Mat4ShaderParameter() :
+    slot(-1)
+{
+}
+
+Mat4ShaderParameter::Mat4ShaderParameter(GLuint obj, const char* name)
+{
+    slot = glGetUniformLocation(obj, name);
+}
+
+Mat4ShaderParameter&
+Mat4ShaderParameter::operator=(const Eigen::Matrix4f& v)
+{
+    if (slot != -1)
+        glUniformMatrix4fv(slot, 1, GL_FALSE, v.data());
+    return *this;
+}
+
+
 //************* GLProgram **************
 
 GLProgram::GLProgram(GLuint _id) :
