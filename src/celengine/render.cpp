@@ -1782,7 +1782,8 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
             cachedOrbit->render(modelview,
                                 nearZ, farZ, viewFrustumPlaneNormals,
                                 subdivisionThreshold,
-                                windowStart, windowEnd);
+                                windowStart, windowEnd,
+                                orbitColor);
         }
         else
         {
@@ -1803,14 +1804,16 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
             cachedOrbit->render(modelview,
                                 nearZ, farZ, viewFrustumPlaneNormals,
                                 subdivisionThreshold,
-                                cachedOrbit->startTime(), t);
+                                cachedOrbit->startTime(), t,
+                                orbitColor);
         }
         else
         {
             // Show the entire trajectory
             cachedOrbit->render(modelview,
                                 nearZ, farZ, viewFrustumPlaneNormals,
-                                subdivisionThreshold);
+                                subdivisionThreshold,
+                                orbitColor);
         }
     }
 
