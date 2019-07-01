@@ -3277,6 +3277,20 @@ CelestiaGLProgram::vec4Param(const string& paramName)
 }
 
 
+Mat3ShaderParameter
+CelestiaGLProgram::mat3Param(const std::string& paramName)
+{
+    return Mat3ShaderParameter(program->getID(), paramName.c_str());
+}
+
+
+Mat4ShaderParameter
+CelestiaGLProgram::mat4Param(const std::string& paramName)
+{
+    return Mat4ShaderParameter(program->getID(), paramName.c_str());
+}
+
+
 void
 CelestiaGLProgram::initParameters()
 {
