@@ -71,14 +71,16 @@ class CurvePlot
                 double nearZ,
                 double farZ,
                 const Eigen::Vector3d viewFrustumPlaneNormals[],
-                double subdivisionThreshold) const;
+                double subdivisionThreshold,
+                const Eigen::Vector4f& color) const;
     void render(const Eigen::Affine3d& modelview,
                 double nearZ,
                 double farZ,
                 const Eigen::Vector3d viewFrustumPlaneNormals[],
                 double subdivisionThreshold,
                 double startTime,
-                double endTime) const;
+                double endTime,
+                const Eigen::Vector4f& color) const;
     void renderFaded(const Eigen::Affine3d& modelview,
                      double nearZ,
                      double farZ,
