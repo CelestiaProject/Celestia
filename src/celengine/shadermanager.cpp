@@ -3291,6 +3291,13 @@ CelestiaGLProgram::mat4Param(const std::string& paramName)
 }
 
 
+int
+CelestiaGLProgram::attribIndex(const std::string& paramName) const
+{
+    return glGetAttribLocation(program->getID(), paramName.c_str());
+}
+
+
 void
 CelestiaGLProgram::initParameters()
 {
