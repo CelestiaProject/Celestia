@@ -141,13 +141,13 @@ class FPSActionGroup
     QActionGroup *m_actionGroup;
     std::map<int, QAction*> m_actions;
     QAction *m_customAction;
-    int m_lastFPS;
+    int m_lastFPS { 0 };
 public:
     FPSActionGroup(QObject *p = nullptr);
 
-    std::map<int, QAction*> &actions() { return m_actions; }
-    QAction *customAction() { return m_customAction; }
-    int lastFPS() { return m_lastFPS; }
+    const std::map<int, QAction*>& actions() const { return m_actions; }
+    QAction *customAction() const { return m_customAction; }
+    int lastFPS() const { return m_lastFPS; }
     void updateFPS(int);
 };
 
@@ -565,7 +565,9 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("LabelMode", renderer->getLabelMode());
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());
     settings.setValue("StarStyle", renderer->getStarStyle());
+#ifdef USE_GLCONTEXT
     settings.setValue("RenderPath", (int) renderer->getGLContext()->getRenderPath());
+#endif
     settings.setValue("TextureResolution", renderer->getResolution());
     ColorTableType colorsst;
     const ColorTemperatureTable* current = renderer->getStarColorTable();
@@ -765,9 +767,9 @@ void CelestiaAppWindow::slotCaptureVideo()
             float frameRate = frameRateCombo->itemData(frameRateCombo->currentIndex()).toFloat();
 
 #ifdef _WIN32
-            MovieCapture* movieCapture = new AVICapture();
+            MovieCapture* movieCapture = new AVICapture(m_appCore->getRenderer());
 #else
-            MovieCapture* movieCapture = new OggTheoraCapture();
+            MovieCapture* movieCapture = new OggTheoraCapture(m_appCore->getRenderer());
             movieCapture->setAspectRatio(1, 1);
 #endif
             bool ok = movieCapture->start(saveAsName.toLatin1().data(),

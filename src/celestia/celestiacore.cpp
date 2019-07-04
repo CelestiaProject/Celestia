@@ -1396,6 +1396,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\026':  // Ctrl+V
+#ifdef USE_GLCONTEXT
         {
             GLContext* context = renderer->getGLContext();
             GLContext::GLRenderPath path = context->getRenderPath();
@@ -1413,6 +1414,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 notifyWatchers(RenderFlagsChanged);
             }
         }
+#endif
         break;
 
     case '\027':  // Ctrl+W
@@ -4264,12 +4266,14 @@ bool CelestiaCore::initRenderer()
                              Renderer::ShowAtmospheres |
                              Renderer::ShowAutoMag);
 
+#ifdef USE_GLCONTEXT
     GLContext* context = new GLContext();
 
     context->init(config->ignoreGLExtensions);
     // Choose the render path, starting with the least desirable
     context->setRenderPath(GLContext::GLPath_GLSL);
     //fmt::printf(_("render path: %i\n"), context->getRenderPath());
+#endif
 
     Renderer::DetailOptions detailOptions;
     detailOptions.orbitPathSamplePoints = config->orbitPathSamplePoints;
@@ -4280,7 +4284,11 @@ bool CelestiaCore::initRenderer()
     detailOptions.linearFadeFraction = config->linearFadeFraction;
 
     // Prepare the scene for rendering.
+#ifdef USE_GLCONTEXT
     if (!renderer->init(context, (int) width, (int) height, detailOptions))
+#else
+    if (!renderer->init((int) width, (int) height, detailOptions))
+#endif
     {
         fatalError(_("Failed to initialize renderer"), false);
         return false;

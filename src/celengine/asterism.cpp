@@ -104,25 +104,20 @@ bool Asterism::isColorOverridden() const
  */
 void AsterismList::render(const Color& defaultColor, const Renderer& renderer)
 {
-    if (vboId == 0)
+    m_vo.bind();
+    if (!m_vo.initialized())
     {
-        if (!prepared)
-            prepare();
+        prepare();
 
         if (vtx_num == 0)
             return;
 
-        glGenBuffers(1, &(vboId));
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        glBufferData(GL_ARRAY_BUFFER, vtx_num * 3 * sizeof(GLfloat), vtx_buf, GL_STATIC_DRAW);
+        m_vo.allocate(vtx_num * 3 * sizeof(GLfloat), vtx_buf);
         cleanup();
+        m_vo.setVertices(3, GL_FLOAT, false, 0, 0);
 
         shadprop.staticShader = true;
         shadprop.staticProps  = ShaderProperties::UniformColor;
-    }
-    else
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
     }
 
     CelestiaGLProgram* prog = renderer.getShaderManager().getShader(shadprop);
@@ -131,10 +126,7 @@ void AsterismList::render(const Color& defaultColor, const Renderer& renderer)
 
     prog->use();
     prog->color = defaultColor.toVector4();
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, 0, 0);
-    glDrawArrays(GL_LINES, 0, vtx_num);
+    m_vo.draw(GL_LINES, vtx_num);
 
     ptrdiff_t offset = 0;
     float opacity = defaultColor.alpha();
@@ -147,16 +139,12 @@ void AsterismList::render(const Color& defaultColor, const Renderer& renderer)
         }
 
         prog->color = Color(ast->getOverrideColor(), opacity).toVector4();
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, 0,
-                              (const void*)(offset*3*sizeof(GLfloat)));
-        glDrawArrays(GL_LINES, 0, ast->vertex_count);
+        m_vo.draw(GL_LINES, ast->vertex_count, offset);
         offset += ast->vertex_count;
     }
 
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glUseProgram(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    m_vo.unbind();
 }
 
 

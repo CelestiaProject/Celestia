@@ -17,6 +17,7 @@
 #include <celutil/color.h>
 #include "stardb.h"
 #include "shadermanager.h"
+#include "vertexobject.h"
 
 class Renderer;
 class AsterismList;
@@ -67,10 +68,10 @@ class AsterismList : public std::vector<Asterism*>
     void cleanup();
     void prepare();
 
-    GLuint  vboId{ 0 };
     GLfloat *vtx_buf{ nullptr };
     GLsizei vtx_num{ 0 };
     bool prepared{ false };
+    celgl::VertexObject m_vo{GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW};
 
     ShaderProperties shadprop;
 };
@@ -78,6 +79,3 @@ class AsterismList : public std::vector<Asterism*>
 AsterismList* ReadAsterismList(std::istream&, const StarDatabase&);
 
 #endif // _CELENGINE_ASTERISM_H_
-
-
-

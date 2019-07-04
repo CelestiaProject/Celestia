@@ -11,12 +11,13 @@
 #define _MOVIECAPTURE_H_
 
 #include <string>
+#include <celengine/render.h>
 
 
 class MovieCapture
 {
  public:
-    MovieCapture() {};
+    MovieCapture(const Renderer *r) : renderer(r) {};
     virtual ~MovieCapture() {};
 
     virtual bool start(const std::string& filename,
@@ -33,6 +34,9 @@ class MovieCapture
     virtual void setAspectRatio(int aspectNumerator, int aspectDenominator) = 0;
     virtual void setQuality(float) = 0;
     virtual void recordingStatus(bool started) = 0; /* to update UI recording status indicator */
+
+ protected:
+    const Renderer *renderer{ nullptr };
 };
 
 #endif // _MOVIECAPTURE_H_

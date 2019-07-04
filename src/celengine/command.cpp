@@ -11,7 +11,9 @@
 #include "astro.h"
 #include "asterism.h"
 #include "execution.h"
+#ifdef USE_GLCONTEXT
 #include "glcontext.h"
+#endif
 #include <celestia/celestiacore.h>
 #include <celestia/imagecapture.h>
 #include <celestia/celx_internal.h>
@@ -636,24 +638,30 @@ CommandCapture::CommandCapture(std::string _type,
 {
 }
 
-void CommandCapture::process(ExecutionEnvironment& /*unused*/)
+void CommandCapture::process(ExecutionEnvironment& env)
 {
 #ifndef TARGET_OS_MAC
+    const Renderer* r = env.getRenderer();
+    if (r == nullptr)
+        return;
+
     // Get the dimensions of the current viewport
-    int viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
+    array<int, 4> viewport;
+    r->getScreenSize(viewport);
 
     if (compareIgnoringCase(type, "jpeg") == 0)
     {
         CaptureGLBufferToJPEG(filename,
                               viewport[0], viewport[1],
-                              viewport[2], viewport[3]);
+                              viewport[2], viewport[3],
+                              r);
     }
     else if (compareIgnoringCase(type, "png") == 0)
     {
         CaptureGLBufferToPNG(filename,
                              viewport[0], viewport[1],
-                             viewport[2], viewport[3]);
+                             viewport[2], viewport[3],
+                             r);
     }
 #endif
 }
@@ -680,6 +688,7 @@ void CommandSetTextureResolution::process(ExecutionEnvironment& env)
 ////////////////
 // Set RenderPath command. Left for compatibility.
 
+#ifdef USE_GLCONTEXT
 CommandRenderPath::CommandRenderPath(GLContext::GLRenderPath _path) :
     path(_path)
 {
@@ -697,6 +706,7 @@ void CommandRenderPath::process(ExecutionEnvironment& /*env*/)
     }
 #endif
 }
+#endif
 
 
 ////////////////

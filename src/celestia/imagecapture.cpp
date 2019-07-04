@@ -8,60 +8,33 @@
 // of the License, or (at your option) any later version.
 
 #include <celutil/debug.h>
-#include <GL/glew.h>
 #include <celengine/celestia.h>
 #include "imagecapture.h"
 
 extern "C" {
-#ifdef _WIN32
-#include "jpeglib.h"
-#else
-#ifdef MACOSX
-#include "../celestia/Celestia.app.skel/Contents/Frameworks/Headers/jpeglib.h"
-#else
 #include <jpeglib.h>
-#endif
-#endif
 }
-
-#ifdef MACOSX
-#include "../celestia/Celestia.app.skel/Contents/Frameworks/Headers/png.h"
-#else
-#include "png.h"
-#endif
-
-// Define png_jmpbuf() in case we are using a pre-1.0.6 version of libpng
-#ifndef png_jmpbuf
-#define png_jmpbuf(png_ptr) png_ptr->jmpbuf
-#endif
-
-#if PNG_LIBPNG_VER < 10004
-// Define various expansion transformations for old versions of libpng
-#define png_set_palette_to_rgb(p)  png_set_expand(p)
-#define png_set_gray_1_2_4_to_8(p) png_set_expand(p)
-#define png_set_tRNS_to_alpha(p)   png_set_expand(p)
-#elif PNG_LIBPNG_VER >= 10500
-// libpng-1.5 include does not pull in zlib.h
-#include "zlib.h"
-#endif
+#include <png.h>
+#include <zlib.h>
 
 using namespace std;
 
 
 bool CaptureGLBufferToJPEG(const string& filename,
                            int x, int y,
-                           int width, int height)
+                           int width, int height,
+                           const Renderer *renderer)
 {
     int rowStride = (width * 3 + 3) & ~0x3;
     int imageSize = height * rowStride;
     auto* pixels = new unsigned char[imageSize];
 
-    glReadBuffer(GL_BACK);
-    glReadPixels(x, y, width, height,
-                 GL_RGB, GL_UNSIGNED_BYTE,
-                 pixels);
-
-    // TODO: Check for GL errors
+    if (!renderer->captureFrame(x, y, width, height,
+                                Renderer::PixelFormat::RGB,
+                                pixels, true))
+    {
+        return false;
+    }
 
     FILE* out;
     out = fopen(filename.c_str(), "wb");
@@ -118,18 +91,19 @@ void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
 
 bool CaptureGLBufferToPNG(const string& filename,
                            int x, int y,
-                           int width, int height)
+                           int width, int height,
+                           const Renderer *renderer)
 {
     int rowStride = (width * 3 + 3) & ~0x3;
     int imageSize = height * rowStride;
     auto* pixels = new unsigned char[imageSize];
 
-    glReadBuffer(GL_BACK);
-    glReadPixels(x, y, width, height,
-                 GL_RGB, GL_UNSIGNED_BYTE,
-                 pixels);
-
-    // TODO: Check for GL errors
+    if (!renderer->captureFrame(x, y, width, height,
+                                Renderer::PixelFormat::RGB,
+                                pixels, true))
+    {
+        return false;
+    }
 
     FILE* out;
     out = fopen(filename.c_str(), "wb");
@@ -204,5 +178,3 @@ bool CaptureGLBufferToPNG(const string& filename,
 
     return true;
 }
-
-

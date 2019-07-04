@@ -480,6 +480,8 @@ static bool CreateTimeline(Body* body,
         if (value->getType() != Value::ArrayType)
         {
             clog << "Error: Timeline must be an array\n";
+            delete defaultBodyFrame;
+            delete defaultOrbitFrame;
             return false;
         }
 
@@ -580,6 +582,7 @@ static bool CreateTimeline(Body* body,
         else
         {
             clog << "No valid orbit specified for object '" << body->getName() << "'. Skipping.\n";
+            delete defaultOrbitFrame;
             return false;
         }
     }
@@ -626,6 +629,11 @@ static bool CreateTimeline(Body* body,
         if (beginning >= ending)
         {
             clog << "Beginning time must be before Ending time.\n";
+            delete defaultBodyFrame;
+            delete bodyFrame;
+            delete defaultOrbitFrame;
+            delete orbitFrame;
+            delete rotationModel;
             return false;
         }
 

@@ -15,7 +15,9 @@
 #include <iostream>
 #include <celmath/ray.h>
 #include <celengine/catentry.h>
+#ifdef USE_GLCONTEXT
 #include <celengine/glcontext.h>
+#endif
 #include <celengine/parser.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>

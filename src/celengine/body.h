@@ -310,18 +310,18 @@ class Body : public CatEntry
     Location* findLocation(const std::string&, bool i18n = false) const;
     void computeLocations();
 
-    bool isVisible() const { return visible == 1; }
+    bool isVisible() const { return visible; }
     void setVisible(bool _visible);
-    bool isClickable() const { return clickable == 1; }
+    bool isClickable() const { return clickable; }
     void setClickable(bool _clickable);
-    bool isVisibleAsPoint() const { return visibleAsPoint == 1; }
+    bool isVisibleAsPoint() const { return visibleAsPoint; }
     void setVisibleAsPoint(bool _visibleAsPoint);
-    bool isOrbitColorOverridden() const { return overrideOrbitColor == 1; }
+    bool isOrbitColorOverridden() const { return overrideOrbitColor; }
     void setOrbitColorOverridden(bool override);
     bool isSecondaryIlluminator() const { return secondaryIlluminator; }
     void setSecondaryIlluminator(bool enable);
 
-    bool hasVisibleGeometry() const { return classification != Invisible && visible != 0; }
+    bool hasVisibleGeometry() const { return classification != Invisible && visible; }
 
     VisibilityPolicy getOrbitVisibility() const { return orbitVisibility; }
     void setOrbitVisibility(VisibilityPolicy _orbitVisibility);

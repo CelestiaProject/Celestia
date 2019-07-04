@@ -48,8 +48,9 @@ set(CELENGINE_SOURCES
   galaxy.cpp
   galaxy.h
   geometry.h
-  glcontext.cpp
-  glcontext.h
+  #glcontext.cpp
+  #glcontext.h
+  glmarker.cpp
   globular.cpp
   globular.h
   glshader.cpp
@@ -144,6 +145,8 @@ set(CELENGINE_SOURCES
   universe.cpp
   universe.h
   vecgl.h
+  vertexobject.cpp
+  vertexobject.h
   virtualtex.cpp
   virtualtex.h
   visibleregion.cpp

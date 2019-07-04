@@ -8,7 +8,7 @@
 class OggTheoraCapture : public MovieCapture
 {
 public:
-    OggTheoraCapture();
+    OggTheoraCapture(const Renderer*);
     virtual ~OggTheoraCapture();
 
     bool start(const std::string& filename, int w, int h, float fps);

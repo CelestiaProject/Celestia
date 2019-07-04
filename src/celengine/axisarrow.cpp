@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <vector>
 #include <celmath/mathlib.h>
 #include <GL/glew.h>
 #include "vecgl.h"
@@ -17,111 +18,192 @@
 #include "frame.h"
 #include "body.h"
 #include "timelinephase.h"
+#include "shadermanager.h"
+#include "vertexobject.h"
+#include "render.h"
 
 using namespace Eigen;
 using namespace std;
+using namespace celmath;
+using namespace celgl;
+
+// draw a simple circle or annulus
+#define DRAW_ANNULUS 0
+
+constexpr const float shaftLength  = 0.85f;
+constexpr const float headLength   = 0.10f;
+constexpr const float shaftRadius  = 0.010f;
+constexpr const float headRadius   = 0.025f;
+constexpr const unsigned nSections = 30;
 
 
-static const unsigned int MaxArrowSections = 100;
-
-static void RenderArrow(float shaftLength,
-                        float headLength,
-                        float shaftRadius,
-                        float headRadius,
-                        unsigned int nSections)
+static void initArrowAndLetters(void (*fn)(VertexObject&, size_t))
 {
-    float sintab[MaxArrowSections];
-    float costab[MaxArrowSections];
+    static_assert(sizeof(Vector3f) == 3*sizeof(GLfloat), "sizeof(Vector3f) != 3*sizeof(GLfloat)");
 
-    unsigned int i;
+    static VertexObject vo(GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
+    static size_t count = 0; // number of vertices in the arrow
 
-    nSections = min(MaxArrowSections, nSections);
-
-    // Initialize the trig tables
-    for (i = 0; i < nSections; i++)
+    vo.bind();
+    if (vo.initialized())
     {
-        double theta = (i * 2.0 * PI) / nSections;
-        sintab[i] = (float) sin(theta);
-        costab[i] = (float) cos(theta);
+        fn(vo, count);
+        vo.unbind();
+        return;
     }
 
-    // Render the circle at the botton of the arrow shaft
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    for (i = 0; i <= nSections; i++)
-    {
-        unsigned int n = (nSections - i) % nSections;
-        glVertex3f(shaftRadius * costab[n], shaftRadius * sintab[n], 0.0f);
-    }
-    glEnd();
+    // circle at bottom of a shaft
+    vector<Vector3f> circle;
+    // arrow shaft
+    vector<Vector3f> shaft;
+    // annulus
+    vector<Vector3f> annulus;
+    // head of the arrow
+    vector<Vector3f> head;
 
-    // Render the arrow shaft
-    glBegin(GL_QUAD_STRIP);
-    for (i = 0; i <= nSections; i++)
+    for (int i = 0; i <= nSections; i++)
     {
-        unsigned int n = i % nSections;
-        glVertex3f(shaftRadius * costab[n], shaftRadius * sintab[n], shaftLength);
-        glVertex3f(shaftRadius * costab[n], shaftRadius * sintab[n], 0.0f);
-    }
-    glEnd();
+        float c, s;
+        sincos((i * 2.0f * (float)PI) / nSections, c, s);
 
-    // Render the annulus
-    glBegin(GL_QUAD_STRIP);
-    for (i = 0; i <= nSections; i++)
-    {
-        unsigned int n = i % nSections;
-        glVertex3f(headRadius * costab[n],  headRadius * sintab[n], shaftLength);
-        glVertex3f(shaftRadius * costab[n], shaftRadius * sintab[n], shaftLength);
-    }
-    glEnd();
+        // circle at bottom
+        Vector3f v0(shaftRadius * c, shaftRadius * s, 0.0f);
+        if (i > 0)
+            circle.push_back(v0);
+        circle.push_back(Vector3f::Zero());
+        circle.push_back(v0);
 
-    // Render the head of the arrow
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex3f(0.0f, 0.0f, shaftLength + headLength);
-    for (i = 0; i <= nSections; i++)
-    {
-        unsigned int n = i % nSections;
-        glVertex3f(headRadius * costab[n], headRadius * sintab[n], shaftLength);
+        // shaft
+        Vector3f v1(shaftRadius * c, shaftRadius * s, shaftLength);
+        Vector3f v1prev;
+        if (i > 0)
+        {
+            shaft.push_back(v0); // left triangle
+
+            shaft.push_back(v0); // right
+            shaft.push_back(v1prev);
+            shaft.push_back(v1);
+        }
+        shaft.push_back(v0); // left
+        shaft.push_back(v1);
+        v1prev = v1;
+
+        // annulus
+        Vector3f v2(headRadius * c, headRadius * s, shaftLength);
+#if DRAW_ANNULUS
+        Vector3f v2prev;
+        if (i > 0)
+        {
+            annulus.push_back(v2);
+
+            annulus.push_back(v2);
+            annulus.push_back(v2prev);
+            annulus.push_back(v1);
+        }
+        annulus.push_back(v2);
+        annulus.push_back(v1);
+        v2prev = v1;
+#else
+        Vector3f v3(0.0f, 0.0f, shaftLength);
+        if (i > 0)
+            annulus.push_back(v2);
+        annulus.push_back(v2);
+        annulus.push_back(v3);
+#endif
+
+        // head
+        Vector3f v4(0.0f, 0.0f, shaftLength + headLength);
+        if (i > 0)
+            head.push_back(v2);
+        head.push_back(v4);
+        head.push_back(v2);
     }
-    glEnd();
+
+    circle.push_back(circle[1]);
+    shaft.push_back(shaft[0]);
+#if DRAW_ANNULUS
+    annulus.push_back(annulus[0]);
+#else
+    annulus.push_back(annulus[1]);
+#endif
+    head.push_back(head[1]);
+
+
+    GLfloat lettersVtx[] =
+    {
+        // X
+        0,    0,    0,
+        1,    0,    1,
+        1,    0,    0,
+        0,    0,    1,
+        // Y
+        0,    0,    1,
+        0.5f, 0,    0.5f,
+        1,    0,    1,
+        0.5f, 0,    0.5f,
+        0.5f, 0,    0,
+        0.5f, 0,    0.5f,
+        // Z
+        0,    0,    1,
+        1,    0,    1,
+        0,    0,    0,
+        1,    0,    0
+    };
+
+    GLintptr offset = 0;
+    count = circle.size() + shaft.size() + annulus.size() + head.size();
+    GLsizeiptr size = sizeof(lettersVtx) + count * sizeof(GLfloat) * 3;
+    GLsizeiptr s = 0;
+
+    vo.allocate(size);
+
+    s = circle.size() * sizeof(Vector3f);
+    vo.setBufferData(circle.data(), offset, s);
+    offset += s;
+
+    s = shaft.size() * sizeof(Vector3f);
+    vo.setBufferData(shaft.data(), offset, s);
+    offset += s;
+
+    s = annulus.size() * sizeof(Vector3f);
+    vo.setBufferData(annulus.data(), offset, s);
+    offset += s;
+
+    s = head.size() * sizeof(Vector3f);
+    vo.setBufferData(head.data(), offset, s);
+    offset += s;
+
+    vo.setBufferData(lettersVtx, offset, sizeof(lettersVtx));
+
+    vo.setVertices(3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    fn(vo, count);
+    vo.unbind();
 }
 
+static void RenderArrow()
+{
+    initArrowAndLetters([](VertexObject& vo, size_t count) { vo.draw(GL_TRIANGLES, count); });
+}
 
 // Draw letter x in xz plane
 static void RenderX()
 {
-    glBegin(GL_LINES);
-    glVertex3f(0, 0, 0);
-    glVertex3f(1, 0, 1);
-    glVertex3f(1, 0, 0);
-    glVertex3f(0, 0, 1);
-    glEnd();
+    initArrowAndLetters([](VertexObject& vo, size_t offset) { vo.draw(GL_LINES, 4, offset); });
 }
 
 
 // Draw letter y in xz plane
 static void RenderY()
 {
-    glBegin(GL_LINES);
-    glVertex3f(0, 0, 1);
-    glVertex3f(0.5f, 0, 0.5f);
-    glVertex3f(1, 0, 1);
-    glVertex3f(0.5f, 0, 0.5f);
-    glVertex3f(0.5f, 0, 0);
-    glVertex3f(0.5f, 0, 0.5f);
-    glEnd();
+    initArrowAndLetters([](VertexObject& vo, size_t offset) { vo.draw(GL_LINES, 6, offset+4); });
 }
 
 
 // Draw letter z in xz plane
 static void RenderZ()
 {
-    glBegin(GL_LINE_STRIP);
-    glVertex3f(0, 0, 1);
-    glVertex3f(1, 0, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(1, 0, 0);
-    glEnd();
+    initArrowAndLetters([](VertexObject& vo, size_t offset) { vo.draw(GL_LINE_STRIP, 4, offset+10); });
 }
 
 
@@ -137,6 +219,8 @@ ArrowReferenceMark::ArrowReferenceMark(const Body& _body) :
     opacity(1.0f)
 #endif
 {
+    shadprop.staticShader = true;
+    shadprop.staticProps  = ShaderProperties::UniformColor;
 }
 
 
@@ -155,7 +239,7 @@ ArrowReferenceMark::setColor(Color _color)
 
 
 void
-ArrowReferenceMark::render(Renderer* /* renderer */,
+ArrowReferenceMark::render(Renderer* renderer,
                            const Vector3f& /* position */,
                            float /* discSize */,
                            double tdb) const
@@ -196,17 +280,16 @@ ArrowReferenceMark::render(Renderer* /* renderer */,
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
 
-    float shaftLength = 0.85f;
-    float headLength = 0.10f;
-    float shaftRadius = 0.010f;
-    float headRadius = 0.025f;
-    unsigned int nSections = 30;
+    CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shadprop);
+    if (prog == nullptr)
+        return;
+    prog->use();
+    prog->color = Color(color, opacity).toVector4();
 
-    glColor4f(color.red(), color.green(), color.blue(), opacity);
-    RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
-
+    RenderArrow();
     glPopMatrix();
 
+    glUseProgram(0);
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
     glEnable(GL_TEXTURE_2D);
@@ -226,6 +309,8 @@ AxesReferenceMark::AxesReferenceMark(const Body& _body) :
     opacity(1.0f)
 #endif
 {
+    shadprop.staticShader = true;
+    shadprop.staticProps  = ShaderProperties::UniformColor;
 }
 
 
@@ -247,7 +332,7 @@ AxesReferenceMark::setOpacity(float _opacity)
 
 
 void
-AxesReferenceMark::render(Renderer* /* renderer */,
+AxesReferenceMark::render(Renderer* renderer,
                           const Vector3f& /* position */,
                           float /* discSize */,
                           double tdb) const
@@ -300,18 +385,18 @@ AxesReferenceMark::render(Renderer* /* renderer */,
     glEnd();
 #endif
 
-    float shaftLength = 0.85f;
-    float headLength = 0.10f;
-    float shaftRadius = 0.010f;
-    float headRadius = 0.025f;
-    unsigned int nSections = 30;
     float labelScale = 0.1f;
+
+    CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shadprop);
+    if (prog == nullptr)
+        return;
+    prog->use();
 
     // x-axis
     glPushMatrix();
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-    glColor4f(1.0f, 0.0f, 0.0f, opacity);
-    RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
+    prog->color = { 1.0f, 0.0f, 0.0f, opacity };
+    RenderArrow();
     glTranslatef(0.1f, 0.0f, 0.75f);
     glScalef(labelScale, labelScale, labelScale);
     RenderX();
@@ -320,8 +405,8 @@ AxesReferenceMark::render(Renderer* /* renderer */,
     // y-axis
     glPushMatrix();
     glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
-    glColor4f(0.0f, 1.0f, 0.0f, opacity);
-    RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
+    prog->color = { 0.0f, 1.0f, 0.0f, opacity };
+    RenderArrow();
     glTranslatef(0.1f, 0.0f, 0.75f);
     glScalef(labelScale, labelScale, labelScale);
     RenderY();
@@ -330,8 +415,8 @@ AxesReferenceMark::render(Renderer* /* renderer */,
     // z-axis
     glPushMatrix();
     glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-    glColor4f(0.0f, 0.0f, 1.0f, opacity);
-    RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
+    prog->color = { 0.0f, 0.0f, 1.0f, opacity };
+    RenderArrow();
     glTranslatef(0.1f, 0.0f, 0.75f);
     glScalef(labelScale, labelScale, labelScale);
     RenderZ();
@@ -339,6 +424,7 @@ AxesReferenceMark::render(Renderer* /* renderer */,
 
     glPopMatrix();
 
+    glUseProgram(0);
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
     glEnable(GL_TEXTURE_2D);
