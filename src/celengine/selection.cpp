@@ -112,21 +112,15 @@ Vector3d Selection::getVelocity(double t) const
 
 string Selection::getName(bool i18n) const
 {
+    string name = astroObject()->getName(i18n);
     switch (type)
     {
     case Type_Star:
-        {
-            return fmt::sprintf("#%d", star()->getIndex());
-        }
-
     case Type_DeepSky:
-        {
-            return fmt::sprintf("#%d", deepsky()->getIndex());
-        }
+        return name;
 
     case Type_Body:
         {
-            string name = body()->getName(i18n);
             PlanetarySystem* system = body()->getSystem();
             while (system != nullptr)
             {
@@ -141,7 +135,7 @@ string Selection::getName(bool i18n) const
                     const Star* parentStar = system->getStar();
                     if (parentStar != nullptr)
                     {
-                        string buf = fmt::sprintf("#%d/%s", parentStar->getIndex(), name);
+                        string buf = fmt::sprintf("#%s/%s", parentStar->getName(i18n).str(), name);
                         name = buf;
                     }
                     system = nullptr;
@@ -153,7 +147,7 @@ string Selection::getName(bool i18n) const
     case Type_Location:
         if (location()->getParentBody() == nullptr)
         {
-            return location()->getName(i18n);
+            return location()->getName(i18n).str();
         }
         else
         {
