@@ -158,7 +158,7 @@ string Selection::getName(bool i18n) const
         else
         {
             return Selection(location()->getParentBody()).getName(i18n) + '/' +
-                location()->getName(i18n);
+                location()->getName(i18n).str();
         }
 
     default:

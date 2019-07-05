@@ -23,8 +23,8 @@ class Location : public AstroObject
 public:
     virtual Selection toSelection();
 
-    std::string getName(bool i18n = false) const;
-    void setName(const std::string&);
+//     std::string getName(bool i18n = false) const;
+//     void setName(const std::string&);
 
     Eigen::Vector3f getPosition() const;
     void setPosition(const Eigen::Vector3f&);

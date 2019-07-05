@@ -98,7 +98,7 @@ FeatureNameEntry FeatureNames[] =
     { "Historical", Location::Historical},
 };
 
-
+/*
 string Location::getName(bool i18n) const
 {
     if (!i18n || i18nName == "") return name;
@@ -112,7 +112,7 @@ void Location::setName(const string& _name)
     i18nName = _(_name.c_str());
     if (name == i18nName) i18nName = "";
 }
-
+*/
 
 Vector3f Location::getPosition() const
 {
