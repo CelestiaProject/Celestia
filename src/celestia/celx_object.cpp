@@ -508,25 +508,8 @@ static int object_name(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to function object:name");
 
     Selection* sel = this_object(l);
-    switch (sel->getType())
-    {
-        case Selection::Type_Body:
-            lua_pushstring(l, sel->body()->getName().c_str());
-            break;
-        case Selection::Type_DeepSky:
-        case Selection::Type_Star:
-            lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                           ->getDatabase().getObjectName(sel->astroObject()).c_str());
-            break;
-        case Selection::Type_Location:
-            lua_pushstring(l, sel->location()->getName().c_str());
-            break;
-        default:
-            lua_pushstring(l, "?");
-            break;
-    }
-
-    return 1;
+    const char *ret = sel->astroObject() != nullptr ? sel->astroObject()->getName().c_str() : "?";
+    return celx.push(ret);
 }
 
 static int object_localname(lua_State* l)
@@ -535,22 +518,8 @@ static int object_localname(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to function object:localname");
 
     Selection* sel = this_object(l);
-    switch (sel->getType())
-    {
-        case Selection::Type_Body:
-            lua_pushstring(l, sel->body()->getName(true).c_str());
-            break;
-        case Selection::Type_DeepSky:
-        case Selection::Type_Star:
-            lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                           ->getDatabase().getObjectName(sel->astroObject(), true).c_str());
-            break;
-        default:
-            lua_pushstring(l, "?");
-            break;
-    }
-
-    return 1;
+    const char *ret = sel->astroObject() != nullptr ? sel->astroObject()->getLocalizedName().c_str() : "?";
+    return celx.push(ret);
 }
 
 static int object_spectraltype(lua_State* l)
