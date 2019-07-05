@@ -11,28 +11,37 @@
 
 using namespace std;
 
+bool objectNames(AstroDatabase &, AstroObject *);
+
 bool objectNames(AstroDatabase &db, AstroCatalog::IndexNumber nr)
 {
     AstroObject *o = db.getObject(nr);
-    if (o == nullptr)
-    {
-        cerr << "Object nr " << nr << " doesn't exists!\n";
-        return false;
-    }
-    cout << "Names of object nr " << nr << ": " << db.getObjectNames(nr, 1024) << endl;
-    return true;
+    return objectNames(db, o);
 }
 
 bool objectNames(AstroDatabase &db, const std::string &name)
 {
     AstroObject *o = db.getObject(name);
+    return objectNames(db, o);
+}
+
+bool objectNames(AstroDatabase &db, AstroObject *o)
+{
     if (o == nullptr)
     {
-        cerr << "Object named " << name << " doesn't exists!\n";
+        cerr << "Object doesn't exists!\n";
         return false;
     }
     cout << "Names of object nr " << o->getIndex() << ": " << db.getObjectNames(o->getIndex(), 1024) << endl;
     return true;
+}
+
+void objectName(AstroObject *o)
+{
+    cout << "Has name: " << o->hasName() << endl;
+    cout << "Has localized name: " << o->hasLocalizedName() << endl;
+    cout << o->getName().str() << endl;
+    cout << o->getLocalizedName().str() << endl;
 }
 
 bool nameAddition(AstroDatabase &db, AstroCatalog::IndexNumber nr, const string& name)
@@ -178,7 +187,10 @@ int main()
 
     load(dsoloader, "data/globulars.dsc");
 
-    HipparcosAstroCatalog hipCat;
+    AstroObject *obj = adb.getObject(55203);
+    objectNames(adb, obj);
+    objectName(obj);
+    /*HipparcosAstroCatalog hipCat;
     objectNames(adb, 55203);
     objectNames(adb, "C 1126+292");
     objectNames(adb, "NGC 3201");

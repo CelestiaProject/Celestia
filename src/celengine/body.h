@@ -190,11 +190,6 @@ class Body : public AstroObject
     void setDefaultProperties();
 
     PlanetarySystem* getSystem() const;
-/*    const std::vector<std::string>& getNames() const;*/
-/*    std::string getName(bool i18n = false) const;
-    std::string getLocalizedName() const;
-    bool hasLocalizedName() const;
-    void addAlias(const std::string& alias);*/
 
     void setTimeline(Timeline* timeline);
     const Timeline* getTimeline() const;
@@ -362,9 +357,6 @@ class Body : public AstroObject
     void recomputeCullingRadius();
 
  private:
-    std::vector<std::string> names{ 1 };
-    unsigned int localizedNameIndex{ 0 };
-
     // Parent in the name hierarchy
     PlanetarySystem* system;
     // Children in the name hierarchy
