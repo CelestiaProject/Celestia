@@ -190,11 +190,11 @@ class Body : public AstroObject
     void setDefaultProperties();
 
     PlanetarySystem* getSystem() const;
-    const std::vector<std::string>& getNames() const;
-    std::string getName(bool i18n = false) const;
+/*    const std::vector<std::string>& getNames() const;*/
+/*    std::string getName(bool i18n = false) const;
     std::string getLocalizedName() const;
     bool hasLocalizedName() const;
-    void addAlias(const std::string& alias);
+    void addAlias(const std::string& alias);*/
 
     void setTimeline(Timeline* timeline);
     const Timeline* getTimeline() const;
@@ -358,7 +358,7 @@ class Body : public AstroObject
     void markUpdated();
 
  private:
-    void setName(const std::string& name);
+//     void setName(const std::string& name);
     void recomputeCullingRadius();
 
  private:

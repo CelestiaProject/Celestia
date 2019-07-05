@@ -133,7 +133,7 @@ string Selection::getName(bool i18n) const
                 Body* parent = system->getPrimaryBody();
                 if (parent != nullptr)
                 {
-                    name = parent->getName(i18n) + '/' + name;
+                    name = parent->getName(i18n).str() + '/' + name;
                     system = parent->getSystem();
                 }
                 else

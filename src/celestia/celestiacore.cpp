@@ -3662,26 +3662,29 @@ void CelestiaCore::renderOverlay()
                 {
                     lastSelection = sel;
                     selectionNames = "";
-                    const vector<string>& names = sel.body()->getNames();
+                    auto names = sel.body()->getNameInfos();
 
                     // Skip displaying the primary name if there's a localized version
                     // of the name.
-                    vector<string>::const_iterator firstName = names.begin();
-                    if (sel.body()->hasLocalizedName())
-                        firstName++;
+                    const Name& firstName = sel.body()->getName(true);
+                    /*if (sel.body()->hasLocalizedName())
+                        firstName++;*/
 
-                    for (vector<string>::const_iterator iter = firstName; iter != names.end(); iter++)
+                    bool first = true;
+                    for (const auto& nameinfo : names)
                     {
-                        if (iter != firstName)
+                        if (!first)
                             selectionNames += " / ";
+                        else
+                            first = false;
 
                         // Use localized version of parent name in alternative names.
-                        string alias = *iter;
+                        string alias = nameinfo.getLocalized().str();
                         Selection parent = sel.parent();
                         if (parent.body() != nullptr)
                         {
-                            string parentName = parent.body()->getName();
-                            string locParentName = parent.body()->getName(true);
+                            string parentName = parent.body()->getName().str();
+                            string locParentName = parent.body()->getLocalizedName();
                             string::size_type startPos = alias.find(parentName);
                             if (startPos != string::npos)
                                 alias.replace(startPos, parentName.length(), locParentName);

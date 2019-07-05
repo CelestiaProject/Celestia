@@ -33,7 +33,7 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
     system(_system),
     orbitVisibility(UseClassVisibility)
 {
-    setName(_name);
+    addName(_name);
     recomputeCullingRadius();
     system->addBody(this);
 }
@@ -100,7 +100,7 @@ void Body::setDefaultProperties()
 
 /*! Return the list of all names (non-localized) by which this
  *  body is known.
- */
+ *
 const vector<string>& Body::getNames() const
 {
     return names;
@@ -109,7 +109,7 @@ const vector<string>& Body::getNames() const
 
 /*! Return the primary name for the body; if i18n, return the
  *  localized name of the body.
- */
+ *
 string Body::getName(bool i18n) const
 {
     if (!i18n)
@@ -121,7 +121,7 @@ string Body::getName(bool i18n) const
 
 /*! Get the localized name for the body. If no localized name
  *  has been set, the primary name is returned.
- */
+ *
 string Body::getLocalizedName() const
 {
     return names[localizedNameIndex];
@@ -138,7 +138,7 @@ bool Body::hasLocalizedName() const
  *  automatically as well.
  *  Note: setName() is private, and only called from the Body constructor.
  *  It shouldn't be called elsewhere.
- */
+ *
 void Body::setName(const string& name)
 {
     names[0] = name;
@@ -158,13 +158,13 @@ void Body::setName(const string& name)
 
 
 /*! Add a new name for this body. Aliases are non localized.
- */
+ *
 void Body::addAlias(const string& alias)
 {
     names.push_back(alias);
     system->addAlias(this, alias);
 }
-
+*/
 
 PlanetarySystem* Body::getSystem() const
 {
@@ -1227,10 +1227,10 @@ void PlanetarySystem::addBody(Body* body)
 // Add all aliases for the body to the name index
 void PlanetarySystem::addBodyToNameIndex(Body* body)
 {
-    const vector<string>& names = body->getNames();
+    auto names = body->getNameInfos();
     for (const auto& name : names)
     {
-        objectIndex.insert(make_pair(name, body));
+        objectIndex.insert(make_pair(name.getLocalized().str(), body));
     }
 }
 
@@ -1241,10 +1241,10 @@ void PlanetarySystem::removeBodyFromNameIndex(const Body* body)
     assert(body->getSystem() == this);
 
     // Erase the object from the object indices
-    const vector<string>& names = body->getNames();
+    auto names = body->getNameInfos();
     for (const auto& name : names)
     {
-        removeAlias(body, name);
+        removeAlias(body, name.getLocalized().str());
     }
 }
 

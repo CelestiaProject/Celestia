@@ -692,7 +692,7 @@ std::string Url::getCoordSysName(ObserverFrame::CoordinateSystem mode) const
 
 static std::string getBodyName(Universe* universe, Body* body)
 {
-    std::string name = body->getName();
+    std::string name = body->getName().str();
     PlanetarySystem* parentSystem = body->getSystem();
     const Body* parentBody = nullptr;
 
@@ -705,7 +705,7 @@ static std::string getBodyName(Universe* universe, Body* body)
 
     while (parentBody != nullptr)
     {
-        name = parentBody->getName() + ":" + name;
+        name = parentBody->getName().str() + ":" + name;
         parentSystem = parentBody->getSystem();
         if (parentSystem == nullptr)
             parentBody = nullptr;
