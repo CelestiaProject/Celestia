@@ -77,7 +77,7 @@ void OpenCluster::render(const Vector3f& /*unused*/,
 }
 
 
-unsigned int OpenCluster::getRenderMask() const
+uint64_t OpenCluster::getRenderMask() const
 {
     return Renderer::ShowOpenClusters;
 }

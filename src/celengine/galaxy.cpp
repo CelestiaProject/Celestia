@@ -458,7 +458,7 @@ void Galaxy::renderGalaxyEllipsoid(const Vec3f& offset,
 #endif
 
 
-unsigned int Galaxy::getRenderMask() const
+uint64_t Galaxy::getRenderMask() const
 {
     return Renderer::ShowGalaxies;
 }

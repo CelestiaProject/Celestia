@@ -68,7 +68,7 @@ class Galaxy : public DeepSkyObject
     static float getLightGain();
     static void  setLightGain(float);
 
-    virtual unsigned int getRenderMask() const;
+    virtual uint64_t getRenderMask() const;
     virtual unsigned int getLabelMask() const;
 
     virtual const char* getObjTypeName() const;

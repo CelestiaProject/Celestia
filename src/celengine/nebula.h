@@ -34,7 +34,7 @@ class Nebula : public DeepSkyObject
                         float pixelSize,
                         const Renderer* renderer);
 
-    virtual unsigned int getRenderMask() const;
+    virtual uint64_t getRenderMask() const;
     virtual unsigned int getLabelMask() const;
 
     void setGeometry(ResourceHandle);

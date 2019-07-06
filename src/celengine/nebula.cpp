@@ -107,7 +107,7 @@ void Nebula::render(const Vector3f& /*unused*/,
 }
 
 
-unsigned int Nebula::getRenderMask() const
+uint64_t Nebula::getRenderMask() const
 {
     return Renderer::ShowNebulae;
 }
