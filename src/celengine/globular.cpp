@@ -494,7 +494,7 @@ void Globular::renderGlobularPointSprites(
     glEnd();
 }
 
-unsigned int Globular::getRenderMask() const
+uint64_t Globular::getRenderMask() const
 {
     return Renderer::ShowGlobulars;
 }

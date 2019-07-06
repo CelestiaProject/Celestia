@@ -69,7 +69,7 @@ class Globular : public DeepSkyObject
                                             float pixelSize);
     GlobularForm* getForm() const;
 
-    virtual unsigned int getRenderMask() const;
+    virtual uint64_t getRenderMask() const;
     virtual unsigned int getLabelMask() const;
     virtual const char* getObjTypeName() const;
 

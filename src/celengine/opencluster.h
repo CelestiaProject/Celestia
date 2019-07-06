@@ -35,7 +35,7 @@ class OpenCluster : public DeepSkyObject
                         float pixelSize,
                         const Renderer* r = nullptr);
 
-    virtual unsigned int getRenderMask() const;
+    virtual uint64_t getRenderMask() const;
     virtual unsigned int getLabelMask() const;
 
     virtual const char* getObjTypeName() const;
