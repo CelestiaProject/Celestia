@@ -38,11 +38,11 @@ class Globular : public DeepSkyObject
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     Globular();
-    virtual const char* getType() const;
-    virtual void setType(const std::string&);
-    virtual std::string getDescription() const;
-    virtual std::string getCustomTmpName() const;
-    virtual void setCustomTmpName(const std::string&);
+    const char* getType() const override;
+    void setType(const std::string&) override;
+    std::string getDescription() const override;
+    std::string getCustomTmpName() const;
+    void setCustomTmpName(const std::string&);
     float getDetail() const;
     void  setDetail(float);
     float getCoreRadius() const;
@@ -52,42 +52,42 @@ class Globular : public DeepSkyObject
     float getHalfMassRadius() const;
     unsigned int cSlot(float) const;
 
-    virtual float getBoundingSphereRadius() const { return tidalRadius; }
+    float getBoundingSphereRadius() const override { return tidalRadius; }
 
-    virtual bool pick(const celmath::Ray3d& ray,
-                      double& distanceToPicker,
-                      double& cosAngleToBoundCenter) const;
-    virtual bool load(AssociativeArray*, const std::string&);
-    virtual void render(const Eigen::Vector3f& offset,
-                        const Eigen::Quaternionf& viewerOrientation,
-                        float brightness,
-                        float pixelSize,
-                        const Renderer* r = nullptr);
-    virtual void renderGlobularPointSprites(const Eigen::Vector3f& offset,
-                                            const Eigen::Quaternionf& viewerOrientation,
-                                            float brightness,
-                                            float pixelSize);
+    bool pick(const celmath::Ray3d& ray,
+              double& distanceToPicker,
+              double& cosAngleToBoundCenter) const override;
+    bool load(AssociativeArray*, const std::string&) override;
+    void render(const Eigen::Vector3f& offset,
+                const Eigen::Quaternionf& viewerOrientation,
+                float brightness,
+                float pixelSize,
+                const Renderer* r = nullptr) override;
+
     GlobularForm* getForm() const;
 
-    virtual uint64_t getRenderMask() const;
-    virtual unsigned int getLabelMask() const;
-    virtual const char* getObjTypeName() const;
+    uint64_t getRenderMask() const override;
+    unsigned int getLabelMask() const override;
+    const char* getObjTypeName() const override;
 
  private:
+    void renderGlobularPointSprites(const Eigen::Vector3f& offset,
+                                    const Eigen::Quaternionf& viewerOrientation,
+                                    float brightness,
+                                    float pixelSize);
+
    // Reference values ( = data base averages) of core radius, King concentration
    // and mu25 isophote radius:
-
     static constexpr float R_c_ref = 0.83f, C_ref = 2.1f, R_mu25 = 40.32f;
 
     void recomputeTidalRadius();
 
- private:
-    float detail{ 1.0f };
-    std::string* customTmpName{ nullptr };
+    float         detail{ 1.0f };
+    std::string*  customTmpName{ nullptr };
     GlobularForm* form{ nullptr };
-    float r_c{ R_c_ref };
-    float c{ C_ref };
-    float tidalRadius{ 0.0f };
+    float         r_c{ R_c_ref };
+    float         c{ C_ref };
+    float         tidalRadius{ 0.0f };
 };
 
 #endif // _GLOBULAR_H_
