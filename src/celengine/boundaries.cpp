@@ -24,9 +24,6 @@ ConstellationBoundaries::ConstellationBoundaries()
 {
     currentChain = new Chain();
     currentChain->emplace_back(Vector3f::Zero());
-
-    shadprop.staticShader = true;
-    shadprop.staticProps  = ShaderProperties::UniformColor;
 }
 
 ConstellationBoundaries::~ConstellationBoundaries()

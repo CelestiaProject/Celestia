@@ -23,7 +23,8 @@
 class ShaderProperties
 {
  public:
-    ShaderProperties();
+    ShaderProperties() = default;
+    ShaderProperties(uint32_t p) : simpleProps(p) {};
     bool usesShadows() const;
     bool usesFragmentLighting() const;
     bool usesTangentSpaceLighting() const;
@@ -87,15 +88,20 @@ class ShaderProperties
      VolumetricEmissionEffect        = 0x0004,
  };
 
- enum
+ enum : uint32_t
  {
-     UniformColor = 0x0001,
+     UniformColor   = 0x0001,
+     PerVertexColor = 0x0002,
+     HasTexture     = 0x0004
  };
 
  public:
-    unsigned short nLights;
-    unsigned short texUsage;
-    unsigned short lightModel;
+    unsigned short nLights{ 0 };
+    unsigned short texUsage{ 0 };
+    unsigned short lightModel{ DiffuseModel };
+
+    // Effects that may be applied with any light model
+    unsigned short effects{ 0 };
 
     // Eight bits per light, up to four lights
     // For each light:
@@ -103,15 +109,32 @@ class ShaderProperties
     //   Bit  2,   on if there are ring shadows
     //   Bit  3,   on for self shadowing
     //   Bit  4,   on for cloud shadows
-    uint32_t shadowCounts;
+    uint32_t shadowCounts{ 0 };
 
-    // Effects that may be applied with any light model
-    unsigned short effects;
-
-    bool staticShader{ false };
-    uint32_t staticProps{ 0 };
+    // Properties of "simple" shaders. Other properties are ignored.
+    uint32_t simpleProps{ 0 };
 
  private:
+    // This struct is required to compare keys in ShaderManager
+    // Default one doesn't work properly in some cases.
+    struct Cmp
+    {
+        bool operator()(const ShaderProperties& lhs, const ShaderProperties& rhs) const
+        {
+            if (lhs.simpleProps != 0 && rhs.simpleProps != 0)
+                return lhs.simpleProps < rhs.simpleProps;
+            if (lhs.nLights != rhs.nLights)
+                return lhs.nLights < rhs.nLights;
+            if (lhs.texUsage != rhs.texUsage)
+                return lhs.texUsage < rhs.texUsage;
+            if (lhs.lightModel != rhs.lightModel)
+                return lhs.lightModel < rhs.lightModel;
+            if (lhs.shadowCounts != rhs.shadowCounts)
+                return lhs.shadowCounts < rhs.shadowCounts;
+            return lhs.effects < rhs.effects;
+        }
+    };
+
     enum
     {
         ShadowBitsPerLight = 4,
@@ -128,6 +151,8 @@ class ShaderProperties
         AnySelfShadowMask    = 0x08080808,
         AnyCloudShadowMask   = 0x10101010,
     };
+
+    friend class ShaderManager;
 };
 
 
@@ -298,10 +323,10 @@ class ShaderManager
     GLVertexShader* buildParticleVertexShader(const ShaderProperties&);
     GLFragmentShader* buildParticleFragmentShader(const ShaderProperties&);
 
-    GLVertexShader* buildStaticVertexShader(const ShaderProperties&);
-    GLFragmentShader* buildStaticFragmentShader(const ShaderProperties&);
+    GLVertexShader* buildSimpleVertexShader(uint32_t);
+    GLFragmentShader* buildSimpleFragmentShader(uint32_t);
 
-    std::map<ShaderProperties, CelestiaGLProgram*> dynamicShaders;
+    std::map<ShaderProperties, CelestiaGLProgram*, ShaderProperties::Cmp> dynamicShaders;
     std::map<std::string, CelestiaGLProgram*> staticShaders;
 };
 

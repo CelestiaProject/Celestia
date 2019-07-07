@@ -48,7 +48,7 @@ class ConstellationBoundaries
     GLsizei vtx_num{ 0 };
     celgl::VertexObject m_vo{GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW};
 
-    ShaderProperties shadprop;
+    ShaderProperties shadprop{ ShaderProperties::UniformColor };
 };
 
 ConstellationBoundaries* ReadBoundaries(std::istream&);

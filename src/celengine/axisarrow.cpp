@@ -219,8 +219,6 @@ ArrowReferenceMark::ArrowReferenceMark(const Body& _body) :
     opacity(1.0f)
 #endif
 {
-    shadprop.staticShader = true;
-    shadprop.staticProps  = ShaderProperties::UniformColor;
 }
 
 
@@ -309,8 +307,6 @@ AxesReferenceMark::AxesReferenceMark(const Body& _body) :
     opacity(1.0f)
 #endif
 {
-    shadprop.staticShader = true;
-    shadprop.staticProps  = ShaderProperties::UniformColor;
 }
 
 
