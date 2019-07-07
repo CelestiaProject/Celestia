@@ -201,6 +201,7 @@ std::string AstroDatabase::getObjectNames(AstroCatalog::IndexNumber nr, int max)
         names += it.second->catalogNumberToName(inr);
         --max;
     }
+//     fmt::fprintf(cout, "AstroDatabase::getObjectNames(): %s\n", names);
     return names;
 }
 
@@ -341,9 +342,15 @@ bool AstroDatabase::addName(AstroCatalog::IndexNumber nr, const Name& name)
     return o->addName(name);
 }
 
-bool AstroDatabase::addName(NameInfo &info)
+bool AstroDatabase::addName(const NameInfo &info)
 {
     return m_nameIndex.add(info);
+//     fmt::fprintf(cerr, "Adding name \"%s\" to object nr %u.\n", info.getCanon().str(), obj->getIndex());
+}
+
+bool AstroDatabase::addLocalizedName(const NameInfo &info)
+{
+    return m_nameIndex.addLocalized(info);
 //     fmt::fprintf(cerr, "Adding name \"%s\" to object nr %u.\n", info.getCanon().str(), obj->getIndex());
 }
 

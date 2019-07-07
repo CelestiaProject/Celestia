@@ -115,7 +115,7 @@ void showExistence(AstroDatabase &adb, const string &name, AstroObject *o = null
             if (o != obj)
             {
                 fmt::fprintf(cout, "Found object nr %u is different than reference object nr %u!\n", obj->getIndex(), o->getIndex());
-                NameInfo *info = adb.getNameInfo(name);
+                const NameInfo *info = adb.getNameInfo(name);
                 fmt::fprintf(cout, "Found object name info: \"%s\"\n", info->getCanon().str());
             }
             else

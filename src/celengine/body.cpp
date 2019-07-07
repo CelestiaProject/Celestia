@@ -1124,18 +1124,20 @@ PlanetarySystem::PlanetarySystem(Star* _star) :
  *  alias already exists in the planetary system, the old entry will
  *  be replaced.
  */
+/*
 void PlanetarySystem::addAlias(Body* body, const string& alias)
 {
     assert(body->getSystem() == this);
 
     objectIndex.insert(make_pair(alias, body));
 }
-
+*/
 
 /*! Remove the an alias for an object. This method does nothing
  *  if the alias is not present in the index, or if the alias
  *  refers to a different object.
  */
+/*
 void PlanetarySystem::removeAlias(const Body* body, const string& alias)
 {
     assert(body->getSystem() == this);
@@ -1147,7 +1149,7 @@ void PlanetarySystem::removeAlias(const Body* body, const string& alias)
             objectIndex.erase(iter);
     }
 }
-
+*/
 
 void PlanetarySystem::addBody(Body* body)
 {
@@ -1162,7 +1164,8 @@ void PlanetarySystem::addBodyToNameIndex(Body* body)
     auto names = body->getNameInfos();
     for (const auto& name : names)
     {
-        objectIndex.insert(make_pair(name.getLocalized().str(), body));
+        m_nameDB.add(name);
+        m_nameDB.addLocalized(name);
     }
 }
 
@@ -1176,7 +1179,7 @@ void PlanetarySystem::removeBodyFromNameIndex(const Body* body)
     auto names = body->getNameInfos();
     for (const auto& name : names)
     {
-        removeAlias(body, name.getLocalized().str());
+        m_nameDB.erase(name.getCanon());
     }
 }
 
@@ -1212,23 +1215,20 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
  */
 Body* PlanetarySystem::find(const string& _name, bool deepSearch, bool i18n) const
 {
-    auto firstMatch = objectIndex.find(_name);
-    if (firstMatch != objectIndex.end())
+    const NameInfo *ni = m_nameDB.getNameInfo(_name, false, i18n);
+    if (ni != nullptr)
+        return (Body*)ni->getObject();
+
+    if (!deepSearch)
     {
-        Body* matchedBody = firstMatch->second;
-
-        if (i18n)
-            return matchedBody;
-        // Ignore localized names
-        if (!matchedBody->hasLocalizedName() || _name != matchedBody->getLocalizedName())
-            return matchedBody;
+//         fmt::fprintf(cout, "Object %s not found in system of %s.\n", _name, getPrimaryBody() != nullptr ? getPrimaryBody()->getName().str() : getStar()->getName().str());
+//         m_nameDB.dump();
     }
-
     if (deepSearch)
     {
         for (const auto sat : satellites)
         {
-            if (UTF8StringCompare(sat->getName(i18n), _name) == 0)
+            if (sat->getName(i18n).str() == _name)
                 return sat;
             if (sat->getSatellites())
             {
@@ -1263,19 +1263,7 @@ bool PlanetarySystem::traverse(TraversalFunc func, void* info) const
 
 std::vector<Name> PlanetarySystem::getCompletion(const std::string& _name, bool deepSearch) const
 {
-    std::vector<Name> completion;
-    int _name_length = UTF8Length(_name);
-
-    // Search through all names in this planetary system.
-    for (const auto& index : objectIndex)
-    {
-        const string& alias = index.first;
-
-        if (UTF8StringCompare(alias, _name, _name_length) == 0)
-        {
-            completion.push_back(alias);
-        }
-    }
+    std::vector<Name> completion = m_nameDB.getCompletion(_name);
 
     // Scan child objects
     if (deepSearch)

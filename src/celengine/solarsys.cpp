@@ -1152,6 +1152,8 @@ bool LoadSolarSystemObjects(istream& in,
         Hash* objectData = objectDataValue->getHash();
 
         Selection parent = universe.findPath(parentName, nullptr, 0);
+        if (parent.empty())
+            fmt::fprintf(cerr, "Parent %s of body %s not found!\n", parentName, nameList);
         PlanetarySystem* parentSystem = nullptr;
 
         vector<string> names;

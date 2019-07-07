@@ -78,7 +78,7 @@ bool AstroObject::removeName(const Name& name, bool updateDB)
         }
         return false;
     }
-    NameInfo *info = m_db->getNameInfo(name);
+    const NameInfo *info = m_db->getNameInfo(name);
     return removeName(*info, updateDB);
 }
 

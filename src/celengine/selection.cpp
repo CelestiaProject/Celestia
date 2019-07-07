@@ -112,6 +112,11 @@ Vector3d Selection::getVelocity(double t) const
 
 string Selection::getName(bool i18n) const
 {
+    if (astroObject() == nullptr)
+    {
+        fmt::fprintf(cout, "Selection::getName(%i): object is null!\n", i18n);
+        return string();
+    }
     string name = astroObject()->getName(i18n);
     switch (type)
     {

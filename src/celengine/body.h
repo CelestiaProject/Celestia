@@ -11,6 +11,7 @@
 #define _CELENGINE_BODY_H_
 
 #include <celengine/astroobj.h>
+#include <celengine/namedb.h>
 #include <celengine/surface.h>
 #include <celengine/star.h>
 #include <celengine/location.h>
@@ -70,13 +71,10 @@ class PlanetarySystem
     void removeBodyFromNameIndex(const Body* body);
 
  private:
-    typedef std::map<std::string, Body*, UTF8StringOrderingPredicate> ObjectIndex;
-
- private:
     Star* star;
     Body* primary{nullptr};
     std::vector<Body*> satellites;
-    ObjectIndex objectIndex;  // index of bodies by name
+    NameDatabase m_nameDB;
 };
 
 

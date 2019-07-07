@@ -54,6 +54,12 @@ class AstroDatabase {
     AstroCatalog::IndexNumber getAutoIndex();
 
     void createBuiltinCatalogs();
+
+    bool addName(const NameInfo&);
+    bool addLocalizedName(const NameInfo&);
+
+    friend AstroObject;
+    friend NameInfo;
  public:
 
     AstroDatabase();
@@ -111,10 +117,9 @@ class AstroDatabase {
     bool removeObject(AstroObject *);
 
     bool addName(AstroCatalog::IndexNumber, const Name&);
-    bool addName(NameInfo&);
-
     void addNames(AstroCatalog::IndexNumber, const std::string&);
-    NameInfo *getNameInfo(const Name& name) const { return m_nameIndex.getNameInfo(name); }
+
+    const NameInfo *getNameInfo(const Name& name) const { return m_nameIndex.getNameInfo(name); }
 
     void removeName(const Name& name) { m_nameIndex.erase(name); }
     void removeName(const NameInfo&);
