@@ -63,4 +63,10 @@ template <class T> struct deleteFunc : public std::unary_function<T, void>
     int dummy;
 };
 
+// size in bytes of memory required to store a container data
+template<typename T> constexpr typename T::size_type memsize(T c)
+{
+    return c.size() * sizeof(typename T::value_type);
+}
+
 #endif // _CELUTIL_UTIL_H_
