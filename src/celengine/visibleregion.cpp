@@ -15,6 +15,7 @@
 #include "body.h"
 #include "selection.h"
 #include "vecgl.h"
+#include "vertexobject.h"
 #include <celmath/intersect.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -130,9 +131,47 @@ ellipsoidTangent(const Matrix<T, 3, 1>& recipSemiAxes,
     return e + v * t1;
 }
 
+constexpr const unsigned maxSections = 360;
+
+static void
+renderTerminator(Renderer* renderer, const vector<Vector3f>& pos, const Vector4f& color, const Quaternionf& qf)
+{
+    /*!
+     * Proper terminator calculation requires double precision floats in GLSL
+     * which were introduced in ARB_gpu_shader_fp64 unavailable with GL2.1.
+     * Because of this we make calculations on a CPU and stream results to GPU.
+     */
+
+    static celgl::VertexObject vo{ GL_ARRAY_BUFFER, maxSections * sizeof(Vector3f), GL_DYNAMIC_DRAW };
+
+    auto *prog = renderer->getShaderManager().getShader("uniform_color");
+    if (prog == nullptr)
+        return;
+
+    vo.bindWritable();
+    if (!vo.initialized())
+    {
+        vo.allocate();
+        vo.setVertices(3, GL_FLOAT);
+    }
+
+    vo.setBufferData(pos.data(), 0, pos.size() * sizeof(Vector3f));
+
+    prog->use();
+    prog->vec4Param("color") = color;
+    Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
+    m.topLeftCorner(3, 3) = qf.conjugate().toRotationMatrix();
+    prog->mat4Param("rotate") = m;
+
+    vo.draw(GL_LINE_LOOP, pos.size());
+
+    vo.unbind();
+    glUseProgram(0);
+}
+
 
 void
-VisibleRegion::render(Renderer* /* renderer */,
+VisibleRegion::render(Renderer* renderer,
                       const Vector3f& /* pos */,
                       float discSizeInPixels,
                       double tdb) const
@@ -157,7 +196,7 @@ VisibleRegion::render(Renderer* /* renderer */,
 
     // Base the amount of subdivision on the apparent size
     auto nSections = (unsigned int) (30.0f + discSizeInPixels * 0.5f);
-    nSections = min(nSections, 360u);
+    nSections = min(nSections, maxSections);
 
     Quaterniond q = m_body.getEclipticToBodyFixed(tdb);
     Quaternionf qf = q.cast<float>();
@@ -211,8 +250,8 @@ VisibleRegion::render(Renderer* /* renderer */,
     Vector3d e_ = e.cwiseProduct(recipSemiAxes);
     double ee = e_.squaredNorm();
 
-    glColor4f(m_color.red(), m_color.green(), m_color.blue(), opacity);
-    glBegin(GL_LINE_LOOP);
+    vector<Vector3f> pos;
+    pos.reserve(nSections);
 
     for (unsigned i = 0; i < nSections; i++)
     {
@@ -221,10 +260,10 @@ VisibleRegion::render(Renderer* /* renderer */,
 
         Vector3d toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
         toCenter *= maxSemiAxis * scale;
-        glVertex3dv(toCenter.data());
+        pos.push_back(toCenter.cast<float>());
     }
 
-    glEnd();
+    renderTerminator(renderer, pos, Color(m_color, opacity).toVector4(), qf);
 
     glPopMatrix();
 
