@@ -30,30 +30,35 @@ class VertexObject
     VertexObject(GLenum bufferType, GLsizeiptr bufferSize, GLenum streamType);
     ~VertexObject();
 
-    void bind();
-    void unbind();
-    void draw(GLenum primitive, GLsizei count, GLint first = 0);
-    bool allocate(const void* data = nullptr);
-    bool allocate(GLsizeiptr bufferSize, const void* data = nullptr);
-    bool allocate(GLenum bufferType, GLsizeiptr bufferSize, const void* data, GLenum streamType);
-    bool setBufferData(const void* data, GLintptr offset = 0, GLsizeiptr size = 0);
-    void setVertices(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
-    void setNormals(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
-    void setColors(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
-    void setIndexes(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
-    void setTextureCoords(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
-    void setEdgeFlags(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
-    void setTangents(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
-    void setPointSizes(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
+    void bind() noexcept;
+    void bindWritable() noexcept;
+    void unbind() noexcept;
+    void draw(GLenum primitive, GLsizei count, GLint first = 0) noexcept;
+    bool allocate(const void* data = nullptr) noexcept;
+    bool allocate(GLsizeiptr bufferSize, const void* data = nullptr) noexcept;
+    bool allocate(GLenum bufferType, GLsizeiptr bufferSize, const void* data, GLenum streamType) noexcept;
+    bool setBufferData(const void* data, GLintptr offset = 0, GLsizeiptr size = 0) noexcept;
+    void setVertices(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0) noexcept;
+    void setNormals(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0) noexcept;
+    void setColors(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0) noexcept;
+    void setIndexes(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0) noexcept;
+    void setTextureCoords(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0) noexcept;
+    void setEdgeFlags(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0) noexcept;
+    void setTangents(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0) noexcept;
+    void setPointSizes(GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0) noexcept;
     void setVertexAttrib(GLint location, GLint count, GLenum type, bool normalized = false, GLsizei stride = 0, GLsizeiptr offset = 0);
-    bool initialized() const { return !m_firstBind; }
-    void setBufferType(GLenum bufferType)     { m_bufferType = bufferType; }
-    void setBufferSize(GLsizeiptr bufferSize) { m_bufferSize = bufferSize; }
-    void setStreamType(GLenum streamType)     { m_streamType = streamType; }
+    inline bool initialized() const noexcept
+    {
+        return (m_state & State::Initialize) == 0;
+    }
+    void setBufferType(GLenum bufferType) noexcept     { m_bufferType = bufferType; }
+    void setBufferSize(GLsizeiptr bufferSize) noexcept { m_bufferSize = bufferSize; }
+    void setStreamType(GLenum streamType) noexcept     { m_streamType = streamType; }
 
  private:
-    enum AttrType
+    enum AttrType : uint16_t
     {
+        Nothing   = 0x00000000,
         Vertices  = 0x00000001,
         Normal    = 0x00000002,
         Color     = 0x00000004,
@@ -62,6 +67,13 @@ class VertexObject
         EdgeFlag  = 0x00000020,
         Tangent   = 0x00000040,
         PointSize = 0x00000080
+    };
+
+    enum State : uint16_t
+    {
+        NormalState = 0x0000,
+        Initialize  = 0x0001,
+        Update      = 0x0002
     };
 
     struct PtrParams
@@ -73,19 +85,18 @@ class VertexObject
         bool       normalized;
     };
 
-    void enableAttribArrays();
-    void disableAttribArrays();
+    void enableAttribArrays() noexcept;
+    void disableAttribArrays() noexcept;
 
     GLuint     m_vboId{ 0 };
     GLuint     m_vaoId{ 0 };
-    uint16_t   m_attrIndexes{ 0 };
+    uint16_t   m_attrIndexes{ AttrType::Nothing };
+    uint16_t   m_state{ State::Initialize };
 
     GLsizeiptr m_bufferSize{ 0 };
     GLenum     m_bufferType{ 0 };
     GLenum     m_streamType{ 0 };
     std::array<PtrParams, 8> m_params {};
     std::map<GLint, PtrParams>* m_attribParams{ nullptr };
-
-    bool       m_firstBind{ true };
 };
 }; // namespace
