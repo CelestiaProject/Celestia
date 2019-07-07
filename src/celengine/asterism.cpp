@@ -114,9 +114,6 @@ void AsterismList::render(const Color& defaultColor, const Renderer& renderer)
         m_vo.allocate(vtx_num * 3 * sizeof(GLfloat), vtx_buf);
         cleanup();
         m_vo.setVertices(3, GL_FLOAT, false, 0, 0);
-
-        shadprop.staticShader = true;
-        shadprop.staticProps  = ShaderProperties::UniformColor;
     }
 
     CelestiaGLProgram* prog = renderer.getShaderManager().getShader(shadprop);

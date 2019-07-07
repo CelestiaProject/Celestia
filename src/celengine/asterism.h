@@ -73,7 +73,7 @@ class AsterismList : public std::vector<Asterism*>
     bool prepared{ false };
     celgl::VertexObject m_vo{GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW};
 
-    ShaderProperties shadprop;
+    ShaderProperties shadprop{ ShaderProperties::UniformColor };
 };
 
 AsterismList* ReadAsterismList(std::istream&, const StarDatabase&);
