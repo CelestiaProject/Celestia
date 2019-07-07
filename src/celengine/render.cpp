@@ -7912,5 +7912,5 @@ bool Renderer::captureFrame(int x, int y, int w, int h, Renderer::PixelFormat fo
     glReadBuffer(back ? GL_BACK : GL_FRONT);
     glReadPixels(x, y, w, h, toGLFormat(format), GL_UNSIGNED_BYTE, (void*) buffer);
 
-    return glGetError == GL_NO_ERROR;
+    return glGetError() == GL_NO_ERROR;
 }
