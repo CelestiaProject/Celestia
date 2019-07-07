@@ -49,7 +49,7 @@ class ArrowReferenceMark : public ReferenceMark
     float size;
     Color color;
     float opacity;
-    ShaderProperties shadprop;
+    ShaderProperties shadprop{ ShaderProperties::UniformColor };
 };
 
 
@@ -80,7 +80,7 @@ class AxesReferenceMark : public ReferenceMark
  private:
     float size;
     float opacity;
-    ShaderProperties shadprop;
+    ShaderProperties shadprop{ ShaderProperties::UniformColor };
 };
 
 
