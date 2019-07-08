@@ -88,7 +88,7 @@ static HDC deviceContext;
 
 static bool bReady = false;
 
-static LPTSTR CelestiaRegKey = "Software\\Shatters.net\\Celestia";
+static LPTSTR CelestiaRegKey = "Software\\celestia.space\\Celestia1.7-dev";
 
 HINSTANCE appInstance;
 HMODULE hRes;
@@ -2442,7 +2442,7 @@ static bool SetRegistryInt64(HKEY key, LPCTSTR value, uint64_t intVal)
     LONG err = RegSetValueEx(key,
                              value,
                              0,
-                             REG_DWORD,
+                             REG_QWORD,
                              reinterpret_cast<CONST BYTE*>(&intVal),
                              sizeof(intVal));
     return err == ERROR_SUCCESS;
