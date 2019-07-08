@@ -61,7 +61,7 @@ public:
         TypeColumn = 1,
     };
 
-    void buildModel(Star* star, bool _groupByClass);
+    void buildModel(Star* star, bool _groupByClass, int _bodyFilter);
 
 private:
     class TreeItem
@@ -82,6 +82,8 @@ private:
     void addTreeItemChildren(TreeItem* item,
                              PlanetarySystem* sys,
                              const vector<Star*>* orbitingStars);
+    void addTreeItemChildrenFiltered(TreeItem* item,
+                                     PlanetarySystem* sys);
     void addTreeItemChildrenGrouped(TreeItem* item,
                                     PlanetarySystem* sys,
                                     const vector<Star*>* orbitingStars,
@@ -97,6 +99,7 @@ private:
     const Universe* universe{nullptr};
     TreeItem* rootItem{nullptr};
     bool groupByClass{false};
+    int bodyFilter{0};
 };
 
 
@@ -115,15 +118,16 @@ SolarSystemTreeModel::SolarSystemTreeModel(const Universe* _universe) :
     universe(_universe)
 {
     // Initialize an empty model
-    buildModel(nullptr, false);
+    buildModel(nullptr, false, 0);
 }
 
 
 // Call createTreeItem() to build the parallel tree structure
-void SolarSystemTreeModel::buildModel(Star* star, bool _groupByClass)
+void SolarSystemTreeModel::buildModel(Star* star, bool _groupByClass, int _bodyFilter)
 {
     beginResetModel();
     groupByClass = _groupByClass;
+    bodyFilter = _bodyFilter;
 
     if (rootItem != nullptr)
         delete rootItem;
@@ -183,6 +187,8 @@ SolarSystemTreeModel::createTreeItem(Selection sel,
 
     if (groupByClass && sys != nullptr)
         addTreeItemChildrenGrouped(item, sys, orbitingStars, sel);
+    else if (bodyFilter != 0 && sys != nullptr)
+        addTreeItemChildrenFiltered(item, sys);
     else
         addTreeItemChildren(item, sys, orbitingStars);
 
@@ -229,6 +235,35 @@ SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
                 childIndex++;
             }
         }
+    }
+}
+
+
+void
+SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* item,
+                                                  PlanetarySystem* sys)
+{
+    vector<Body*> bodies;
+
+    for (int i = 0; i < sys->getSystemSize(); i++)
+    {
+        Body* body = sys->getBody(i);
+        if ((bodyFilter & body->getClassification()) != 0)
+            bodies.push_back(body);
+    }
+
+    // Calculate the total number of children
+    if ((item->nChildren = bodies.size()) == 0)
+        return;
+
+    int childIndex = 0;
+    item->children = new TreeItem*[item->nChildren];
+
+    // Add the direct children
+    for (int i = 0; i < (int) bodies.size(); i++)
+    {
+        item->children[childIndex] = createTreeItem(bodies[i], item, childIndex);
+        childIndex++;
     }
 }
 
@@ -694,6 +729,38 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, 
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(treeView);
 
+    // Predefined filters
+    QGroupBox* objGroup = new QGroupBox();
+    QGridLayout* objGroupLayout = new QGridLayout();
+
+    // Buttons to select filtering criterion for objects
+    planetsButton = new QCheckBox(_("Planets and moons"));
+    connect(planetsButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
+    objGroupLayout->addWidget(planetsButton, 0, 0);
+
+    asteroidsButton = new QCheckBox(_("Asteroids"));
+    connect(asteroidsButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
+    objGroupLayout->addWidget(asteroidsButton, 0, 1);
+
+    spacecraftsButton = new QCheckBox(_("Spacecrafts"));
+    connect(spacecraftsButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
+    objGroupLayout->addWidget(spacecraftsButton, 1, 0);
+
+    cometsButton = new QCheckBox(_("Comets"));
+    connect(cometsButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
+    objGroupLayout->addWidget(cometsButton, 1, 1);
+
+    objGroup->setLayout(objGroupLayout);
+    layout->addWidget(objGroup);
+
+    // Additional filtering controls
+    QGroupBox* filterGroup = new QGroupBox(_("Filter"));
+    QGridLayout* filterGroupLayout = new QGridLayout();
+
+    filterGroup->setLayout(filterGroupLayout);
+    layout->addWidget(filterGroup);
+    // End filtering controls
+
     QPushButton* refreshButton = new QPushButton(_("Refresh"));
     connect(refreshButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
     layout->addWidget(refreshButton);
@@ -701,7 +768,6 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, 
     groupCheckBox = new QCheckBox(_("Group objects by class"));
     connect(groupCheckBox, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
     layout->addWidget(groupCheckBox);
-
 
     // Controls for marking selected objects
     QGroupBox* markGroup = new QGroupBox(_("Markers"));
@@ -793,7 +859,17 @@ void SolarSystemBrowser::slotRefreshTree()
 
     bool groupByClass = groupCheckBox->checkState() == Qt::Checked;
 
-    solarSystemModel->buildModel(rootStar, groupByClass);
+    int bodyFilter = 0;
+    if (planetsButton->isChecked())
+        bodyFilter |= Body::Planet | Body::DwarfPlanet | Body::Moon;
+    if (asteroidsButton->isChecked())
+        bodyFilter |= Body::Asteroid;
+    if (spacecraftsButton->isChecked())
+        bodyFilter |= Body::Spacecraft;
+    if (cometsButton->isChecked())
+        bodyFilter |= Body::Comet;
+
+    solarSystemModel->buildModel(rootStar, groupByClass, bodyFilter);
 
     treeView->resizeColumnToContents(SolarSystemTreeModel::NameColumn);
 
