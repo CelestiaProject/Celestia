@@ -249,8 +249,8 @@ include_directories("${CMAKE_SOURCE_DIR}/src" ${CMAKE_BINARY_DIR})
 
 # configure a header file to pass some of the CMake settings
 # to the source code
-configure_file("config.h.in" "config.h")
 check_include_files(byteswap.h HAVE_BYTESWAP_H)
+configure_file("config.h.in" "config.h")
 
 set(BASE_DATA_SOURCES
   demo.cel
