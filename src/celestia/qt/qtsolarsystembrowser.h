@@ -56,6 +56,11 @@ Q_OBJECT
     SolarSystemTreeModel* solarSystemModel{nullptr};
     QTreeView* treeView{nullptr};
 
+    QCheckBox* planetsButton{nullptr};
+    QCheckBox* asteroidsButton{nullptr};
+    QCheckBox* spacecraftsButton{nullptr};
+    QCheckBox* cometsButton{nullptr};
+
     QCheckBox* groupCheckBox{nullptr};
 
     QComboBox* markerSymbolBox{nullptr};
