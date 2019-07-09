@@ -14,7 +14,6 @@
 #include "modelgeometry.h"
 #include "body.h"
 #include <GL/glew.h>
-#include "vecgl.h"
 #include "render.h"
 
 using namespace cmod;

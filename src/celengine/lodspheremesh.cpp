@@ -14,7 +14,6 @@
 #include <algorithm>
 #include <celmath/mathlib.h>
 #include <GL/glew.h>
-#include "vecgl.h"
 #include "lodspheremesh.h"
 #include "shadermanager.h"
 

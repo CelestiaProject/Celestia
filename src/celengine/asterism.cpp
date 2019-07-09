@@ -14,7 +14,6 @@
 #include <celutil/debug.h>
 #include "asterism.h"
 #include "parser.h"
-#include "vecgl.h"
 #include "render.h"
 
 using namespace std;
