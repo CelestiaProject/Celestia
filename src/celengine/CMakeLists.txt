@@ -16,7 +16,6 @@ set(CELENGINE_SOURCES
   category.h
   catentry.cpp
   catentry.h
-  celestia.h
   cmdparser.cpp
   cmdparser.h
   command.cpp

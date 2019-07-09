@@ -10,7 +10,7 @@
 #include <cstring>
 #include <fmt/printf.h>
 #include <cassert>
-#include "celestia.h"
+#include <config.h>
 #include "stellarclass.h"
 
 using namespace std;

@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <config.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -31,7 +32,6 @@
 #include <celutil/util.h>
 #include <celutil/winutil.h>
 #include <celutil/filetype.h>
-#include <celengine/celestia.h>
 #include <celengine/astro.h>
 #include <celengine/cmdparser.h>
 #include <celengine/axisarrow.h>

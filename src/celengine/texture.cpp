@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <config.h>
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
@@ -25,8 +26,6 @@ extern "C" {
 #include <Eigen/Core>
 #include <GL/glew.h>
 #include <fmt/printf.h>
-#include <config.h>
-#include "celestia.h"
 #include "texture.h"
 #include "virtualtex.h"
 
