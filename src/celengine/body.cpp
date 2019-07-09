@@ -1215,21 +1215,14 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
  */
 Body* PlanetarySystem::find(const string& _name, bool deepSearch, bool i18n) const
 {
-    const NameInfo *ni = m_nameDB.getNameInfo(_name, false, i18n);
+    const NameInfo *ni = m_nameDB.getNameInfo(_name, false, i18n, true);
     if (ni != nullptr)
         return (Body*)ni->getObject();
 
-    if (!deepSearch)
-    {
-//         fmt::fprintf(cout, "Object %s not found in system of %s.\n", _name, getPrimaryBody() != nullptr ? getPrimaryBody()->getName().str() : getStar()->getName().str());
-//         m_nameDB.dump();
-    }
     if (deepSearch)
     {
         for (const auto sat : satellites)
         {
-            if (sat->getName(i18n).str() == _name)
-                return sat;
             if (sat->getSatellites())
             {
                 Body* body = sat->getSatellites()->find(_name, deepSearch, i18n);

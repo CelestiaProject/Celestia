@@ -12,6 +12,18 @@ uint32_t NameDatabase::getNameCount() const
 
 bool NameDatabase::add(const NameInfo &info, bool overwrite)
 {
+    /*cout << "NameDatabase::add\n";
+    const Name &name = info.getCanon();
+    cout << "Canon probed\n";
+    std::shared_ptr<std::string> ptr = name.ptr();
+    cout << "Pointer probed\n";
+    bool null = !ptr;
+    cout << "null probed " << null << endl;
+    if (null)
+        cout << "Name null\n";
+    else
+        cout << "Name not null\n";
+    cout << "test passed\n";*/
     if (info.getCanon().empty() || (!overwrite && m_nameIndex.find(info.getCanon()) != m_nameIndex.end()))
         return false;
     m_nameIndex[info.getCanon()] = info;
@@ -51,6 +63,14 @@ const NameInfo *NameDatabase::getNameInfo(const Name& name, bool greek, bool i18
             return &iter->second;
     }
     return nullptr;
+}
+
+const NameInfo *NameDatabase::getNameInfo(const Name& name, bool greek, bool i18n, bool fallback) const
+{
+    const NameInfo *info = getNameInfo(name, greek, i18n);
+    if (info == nullptr && fallback)
+        return getNameInfo(name, greek, !i18n);
+    return info;
 }
 
 AstroObject *NameDatabase::getObjectByName(const Name& name, bool greek) const

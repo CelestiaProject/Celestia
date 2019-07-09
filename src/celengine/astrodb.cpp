@@ -23,7 +23,8 @@ AstroObject *AstroDatabase::getObject(AstroCatalog::IndexNumber nr) const
 
 AstroObject *AstroDatabase::getObject(const Name &name, bool tryGreek, bool smart) const
 {
-    AstroObject *obj = m_nameIndex.getObjectByName(name, tryGreek);
+    const NameInfo *info = smart ? m_nameIndex.getNameInfo(name, tryGreek, false, true) : m_nameIndex.getNameInfo(name, tryGreek);
+    AstroObject *obj = info == nullptr ? nullptr : (AstroObject*)info->getObject();
     if (obj != nullptr)
         return obj;
     if (smart)
@@ -166,7 +167,7 @@ std::vector<Name> AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr,
     return ret;
 }
 
-std::string AstroDatabase::getObjectNames(AstroCatalog::IndexNumber nr, int max) const
+std::string AstroDatabase::getObjectNames(AstroCatalog::IndexNumber nr, bool i18n, int max) const
 {
     string names;
     names.reserve(max); // optimize memory allocation
@@ -180,7 +181,7 @@ std::string AstroDatabase::getObjectNames(AstroCatalog::IndexNumber nr, int max)
         if (!names.empty())
             names += " / ";
 
-        names += name.getCanon().str();
+        names += i18n ? name.getLocalized().str() : name.getCanon().str();
         --max;
     }
 

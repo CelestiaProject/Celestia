@@ -127,6 +127,18 @@ const NameInfo* AstroObject::getNameInfo(const Name &name) const
     }
 }
 
+string AstroObject::getNames(bool i18n) const
+{
+    string ret;
+    for (const auto &info : getNameInfos())
+    {
+        if (!ret.empty())
+            ret += " / ";
+        ret += i18n ? info.getLocalized() : info.getCanon();
+    }
+    return ret;
+}
+
 // Categories support
 
 bool AstroObject::_addToCategory(UserCategory *c)

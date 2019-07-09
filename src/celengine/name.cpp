@@ -21,27 +21,44 @@ Name & Name::operator=(const Name &n)
     return *this;
 }
 
-const Name& NameInfo::getLocalized() const
+void NameInfo::translate()
 {
-    if (m_localized.null() && !m_canonical.null())
+    const char *s = m_canonical.str().c_str();
+    const char *l = (m_domain.null() || m_domain.empty()) ? gettext(s) : dgettext(s, m_domain.str().c_str());
+//     fmt::fprintf(cout, "Translation of %s: %s\n", s, l);
+    if (s == l || *l == '\0') // gettext was unable to find translation
     {
-        const char *s = m_canonical.str().c_str();
-        const char *l = (m_domain.null() || m_domain.empty()) ? gettext(s) : dgettext(s, m_domain.str().c_str());
-//         fmt::fprintf(cout, "Translation of %s: %s\n", s, l);
-        if (s == l || *l == '\0') // gettext was unable to find translation
+        m_localized = m_canonical;
+    }
+    else
+    {
+        m_localized = l;
+        if (m_object != nullptr && m_object->getAstroDatabase() != nullptr)
         {
-            ((NameInfo*)this)->m_localized = m_canonical;
-        }
-        else
-        {
-            ((NameInfo*)this)->m_localized = l;
-            if (m_object != nullptr && m_object->getAstroDatabase() != nullptr)
-            {
-                m_object->getAstroDatabase()->addLocalizedName(*this);
-            }
+            m_object->getAstroDatabase()->addLocalizedName(*this);
         }
     }
-    return m_localized;
 }
 
-const string Name::m_empty;
+const Name NameInfo::getCanon() const
+{
+    return m_canonical;
+}
+
+bool NameInfo::hasLocalized() const
+{
+    return !m_localized.null() && m_localized != m_canonical;
+}
+
+const Name NameInfo::getLocalized(bool fallback) const
+{
+    if (hasLocalized())
+        return  m_localized;
+    if (fallback)
+        return m_canonical;
+    return Name();
+}
+
+// const Name NameInfo::
+
+const string Name::m_empty = "";

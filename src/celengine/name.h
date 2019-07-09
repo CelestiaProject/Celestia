@@ -22,7 +22,7 @@ protected:
 public:
     Name(const char *s) { m_ptr = std::make_shared<std::string>(s); }
     Name(const std::string& s) { m_ptr = std::make_shared<std::string>(s); }
-    Name() = default;
+    Name() : m_ptr { nullptr } {}
     Name(const Name& n)
     {
         m_ptr = n.ptr();
@@ -36,7 +36,7 @@ public:
     Name & operator=(const std::string &n) { m_ptr = std::make_shared<std::string>(n); return *this; }
     Name & operator=(const char *n) { m_ptr = std::make_shared<std::string>(n); return *this; }
     operator const std::string() const { return str(); }
-    bool null() const { return !(bool) m_ptr; }
+    bool null() const { return !m_ptr; }
     size_t length() const { return null() ? 0 : m_ptr->length(); }
     const char *c_str() const { return str().c_str(); }
     static const Name getEmpty() { return m_empty; }
@@ -106,13 +106,10 @@ class NameInfo
         m_domain = other.m_domain;
         m_object = other.m_object;
     }
-    bool hasLocalized() const
-    {
-        return m_canonical.ptr() != getLocalized().ptr();
-    }
-    const Name& getCanon() const { return m_canonical; }
-    const Name& getLocalized() const;
-    const Name& getLocalizedDirect() const { return m_localized; }
+    bool hasLocalized() const;
+    const Name getCanon() const;
+    const Name getLocalized(bool = true) const;
+    void translate();
     const AstroObject *getObject() const { return m_object; }
     AstroObject* getObject() { return m_object; }
     void setObject(AstroObject *o) { m_object = o; }

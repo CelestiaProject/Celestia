@@ -93,8 +93,8 @@ class AstroDatabase {
         return getObjectNameList(o->getIndex(), n);
     }
 
-    std::string getObjectNames(AstroCatalog::IndexNumber, int = 128) const;
-    std::string getObjectNames(AstroObject *o, int n = 128) const
+    std::string getObjectNames(AstroCatalog::IndexNumber, bool = true, int = 128) const;
+    std::string getObjectNames(const AstroObject *o, int n = 128) const
     {
         return getObjectNames(o->getIndex(), n);
     }

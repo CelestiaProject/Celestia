@@ -3601,7 +3601,7 @@ void CelestiaCore::renderOverlay()
                 {
                     lastSelection = sel;
                     selectionNames = sim->getUniverse()->getDatabase().getObjectNames(sel.star());
-                    // Skip displaying the English name if a localized version is present.
+                    /*// Skip displaying the English name if a localized version is present.
                     string starName = sim->getUniverse()->getDatabase().getObjectName(sel.star());
                     string locStarName = sim->getUniverse()->getDatabase().getObjectName(sel.star(), true);
                     if (sel.star()->getIndex() == 0 && selectionNames.find("Sun") != string::npos && (const char*) "Sun" != _("Sun"))
@@ -3614,7 +3614,7 @@ void CelestiaCore::renderOverlay()
                     {
                         string::size_type startPos = selectionNames.find(locStarName);
                         selectionNames = selectionNames.substr(startPos);
-                    }
+                    }*/
                 }
 
                 overlay->setFont(titleFont);
@@ -3635,14 +3635,6 @@ void CelestiaCore::renderOverlay()
                 {
                     lastSelection = sel;
                     selectionNames = sim->getUniverse()->getDatabase().getObjectNames(sel.deepsky());
-                    // Skip displaying the English name if a localized version is present.
-                    string DSOName = sim->getUniverse()->getDatabase().getObjectName(sel.deepsky());
-                    string locDSOName = sim->getUniverse()->getDatabase().getObjectName(sel.deepsky(), true);
-                    if (selectionNames.find(DSOName) != string::npos && DSOName != locDSOName)
-                    {
-                        string::size_type startPos = selectionNames.find(locDSOName);
-                        selectionNames = selectionNames.substr(startPos);
-                    }
                 }
 
                 overlay->setFont(titleFont);
@@ -3661,37 +3653,7 @@ void CelestiaCore::renderOverlay()
                 if (sel != lastSelection)
                 {
                     lastSelection = sel;
-                    selectionNames = "";
-                    auto names = sel.body()->getNameInfos();
-
-                    // Skip displaying the primary name if there's a localized version
-                    // of the name.
-                    const Name& firstName = sel.body()->getName(true);
-                    /*if (sel.body()->hasLocalizedName())
-                        firstName++;*/
-
-                    bool first = true;
-                    for (const auto& nameinfo : names)
-                    {
-                        if (!first)
-                            selectionNames += " / ";
-                        else
-                            first = false;
-
-                        // Use localized version of parent name in alternative names.
-                        string alias = nameinfo.getLocalized().str();
-                        Selection parent = sel.parent();
-                        if (parent.body() != nullptr)
-                        {
-                            string parentName = parent.body()->getName().str();
-                            string locParentName = parent.body()->getLocalizedName();
-                            string::size_type startPos = alias.find(parentName);
-                            if (startPos != string::npos)
-                                alias.replace(startPos, parentName.length(), locParentName);
-                        }
-
-                        selectionNames += alias;
-                    }
+                    selectionNames = sel.body()->getNames();
                 }
 
                 overlay->setFont(titleFont);
@@ -3709,7 +3671,7 @@ void CelestiaCore::renderOverlay()
 
         case Selection::Type_Location:
             overlay->setFont(titleFont);
-            *overlay << sel.location()->getName(true).c_str();
+            *overlay << sel.location()->getNames();
             overlay->setFont(font);
             *overlay << '\n';
             displayLocationInfo(*overlay,

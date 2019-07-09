@@ -35,6 +35,7 @@ class NameDatabase
     void erase(const Name&);
 
     const NameInfo *getNameInfo(const Name&, bool = true, bool = false) const;
+    const NameInfo *getNameInfo(const Name&, bool, bool, bool) const;
     AstroObject *getObjectByName(const Name&, bool = true) const;
     AstroObject *getObjectByLocalizedName(const Name&, bool = true) const;
     AstroObject *findObjectByName(const Name&, bool = true) const;
