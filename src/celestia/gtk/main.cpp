@@ -29,8 +29,6 @@
 #include <gtk/gtkgl.h>
 
 #include <celengine/astro.h>
-#include <celengine/celestia.h>
-
 #include <celengine/galaxy.h>
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>

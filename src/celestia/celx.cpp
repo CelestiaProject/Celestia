@@ -10,12 +10,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <config.h>
 #include <cassert>
 #include <ctime>
 #include <map>
 #include <celengine/astro.h>
 #include <celengine/asterism.h>
-#include <celengine/celestia.h>
 #include <celengine/cmdparser.h>
 #include <celengine/execenv.h>
 #include <celengine/execution.h>

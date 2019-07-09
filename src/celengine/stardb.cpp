@@ -18,7 +18,7 @@
 #include <celutil/util.h>
 #include <celutil/bytes.h>
 #include <celengine/stardb.h>
-#include "celestia.h"
+#include <config.h>
 #include "astro.h"
 #include "parser.h"
 #include "parseobject.h"

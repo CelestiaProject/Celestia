@@ -10,7 +10,7 @@
 
 #include <algorithm>
 #include <cstdio>
-#include "celestia.h"
+#include <config.h>
 #include <cassert>
 #include "astro.h"
 #include "deepskyobj.h"

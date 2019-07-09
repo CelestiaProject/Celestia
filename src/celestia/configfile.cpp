@@ -7,13 +7,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <config.h>
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <celutil/debug.h>
 #include <celutil/directory.h>
 #include <celutil/util.h>
-#include <celengine/celestia.h>
 #include <celengine/texmanager.h>
 #include "configfile.h"
 

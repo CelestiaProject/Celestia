@@ -9,7 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include "render.h"
-#include "celestia.h"
+#include <config.h>
 #include "astro.h"
 #include "galaxy.h"
 #include "vecgl.h"
