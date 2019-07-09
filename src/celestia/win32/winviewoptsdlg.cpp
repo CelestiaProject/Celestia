@@ -312,6 +312,11 @@ static void dlgCheck(HWND hDlg, WORD item, uint32_t flags, uint32_t f)
                        ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
 }
 
+static void dlgCheck64(HWND hDlg, WORD item, uint64_t flags, uint64_t f)
+{
+    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
+                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+}
 
 void ViewOptionsDialog::SetControls(HWND hDlg)
 {
@@ -351,8 +356,8 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowOpenClusters)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWNIGHTSIDELIGHTS, BM_SETCHECK,
         (renderFlags & Renderer::ShowNightMaps)? BST_CHECKED:BST_UNCHECKED, 0);
-    dlgCheck(hDlg, IDC_SHOWORBITS,       renderFlags, Renderer::ShowOrbits);
-    dlgCheck(hDlg, IDC_SHOWFADINGORBITS, renderFlags, Renderer::ShowFadingOrbits);
+    dlgCheck64(hDlg, IDC_SHOWORBITS,       renderFlags, Renderer::ShowOrbits);
+    dlgCheck64(hDlg, IDC_SHOWFADINGORBITS, renderFlags, Renderer::ShowFadingOrbits);
     dlgCheck(hDlg, IDC_PLANETORBITS,     orbitMask,   Body::Planet);
     dlgCheck(hDlg, IDC_DWARFPLANETORBITS,orbitMask,   Body::DwarfPlanet);
     dlgCheck(hDlg, IDC_MOONORBITS,       orbitMask,   Body::Moon);
