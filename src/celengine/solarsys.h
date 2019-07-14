@@ -35,8 +35,6 @@ class SolarSystem
     FrameTree* frameTree;
 };
 
-typedef std::map<uint32_t, SolarSystem*> SolarSystemCatalog;
-
 class Universe;
 
 bool LoadSolarSystemObjects(std::istream& in,

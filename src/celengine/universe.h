@@ -34,15 +34,6 @@ class Universe
     AstroDatabase& getDatabase() { return m_adb; }
     const AstroDatabase& getDatabase() const { return m_adb; }
 
-/*    StarDatabase* getStarCatalog() const;
-    void setStarCatalog(StarDatabase*);*/
-
-    SolarSystemCatalog* getSolarSystemCatalog() const;
-    void setSolarSystemCatalog(SolarSystemCatalog*);
-
-/*    DSODatabase* getDSOCatalog() const;
-    void setDSOCatalog(DSODatabase*);*/
-
     AsterismList* getAsterisms() const;
     void setAsterisms(AsterismList*);
 
@@ -85,7 +76,7 @@ class Universe
     SolarSystem* getNearestSolarSystem(const UniversalCoord& position) const;
     SolarSystem* getSolarSystem(const Star* star) const;
     SolarSystem* getSolarSystem(const Selection&) const;
-    SolarSystem* createSolarSystem(Star* star) const;
+    SolarSystem* createSolarSystem(Star* star);
 
     void getNearStars(const UniversalCoord& position,
                       float maxDistance,
@@ -122,10 +113,7 @@ class Universe
                                 float tolerance = 0.0f);
 
  private:
-//    StarDatabase* starCatalog{nullptr};
-//    DSODatabase* dsoCatalog{nullptr};
     AstroDatabase m_adb;
-    SolarSystemCatalog* solarSystemCatalog{nullptr};
     AsterismList* asterisms{nullptr};
     ConstellationBoundaries* boundaries{nullptr};
     MarkerList* markers;

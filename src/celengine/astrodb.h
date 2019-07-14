@@ -14,6 +14,7 @@
 #include "star.h"
 #include "deepskyobj.h"
 #include "body.h"
+#include "solarsys.h"
 
 class AstroDatabase {
  public:
@@ -22,6 +23,7 @@ class AstroDatabase {
     typedef std::set<Star*> StarsList;
     typedef std::set<DeepSkyObject*> DsosList;
     typedef std::set<Body*> BodiesList;
+    typedef std::map<AstroCatalog::IndexNumber, SolarSystem*> SolarSystemIndex;
 
     enum Catalog
     {
@@ -33,6 +35,8 @@ class AstroDatabase {
         MaxBuiltinCatalog = 5
     };
     static constexpr array<const char *, AstroDatabase::MaxBuiltinCatalog> CatalogPrefix  = { "HD", "Gliese", "SAO", "HIP", "TYC" };
+    AstroDatabase();
+    ~AstroDatabase();
  protected:
     MainIndex m_mainIndex;
     std::map<int, AstroCatalog*> m_catalogs;
@@ -41,6 +45,7 @@ class AstroDatabase {
     std::map<int, CrossIndex*> m_celxindex;
     NameDatabase m_nameIndex;
     LoadersMap m_loaders;
+    SolarSystemIndex m_systems;
     StarsList m_stars;
     DsosList m_dsos;
     BodiesList m_bodies;
@@ -55,14 +60,12 @@ class AstroDatabase {
 
     void createBuiltinCatalogs();
 
-    bool addName(const NameInfo&);
-    bool addLocalizedName(const NameInfo&);
+    bool addName(NameInfo::SharedConstPtr);
+    bool addLocalizedName(NameInfo::SharedConstPtr);
 
     friend AstroObject;
     friend NameInfo;
  public:
-
-    AstroDatabase();
 
     AstroObject *getObject(AstroCatalog::IndexNumber) const;
     AstroObject *getObject(const Name&, bool = true, bool = true) const;
@@ -119,10 +122,10 @@ class AstroDatabase {
     bool addName(AstroCatalog::IndexNumber, const Name&);
     void addNames(AstroCatalog::IndexNumber, const std::string&);
 
-    const NameInfo *getNameInfo(const Name& name) const { return m_nameIndex.getNameInfo(name); }
+    NameInfo::SharedConstPtr getNameInfo(const Name& name) const { return m_nameIndex.getNameInfo(name); }
 
     void removeName(const Name& name) { m_nameIndex.erase(name); }
-    void removeName(const NameInfo&);
+    void removeName(NameInfo::SharedConstPtr);
     void removeNames(AstroCatalog::IndexNumber);
     void removeNames(AstroObject*);
 
@@ -136,8 +139,12 @@ class AstroDatabase {
         return m_dsos;
     }
 
-/*    OctreeNode& getOctree() { return m_octree; }
-    const OctreeNode& getOctree() const { return m_octree; }*/
+    bool addSystem(SolarSystem*, AstroCatalog::IndexNumber);
+    SolarSystem *getSystem(AstroCatalog::IndexNumber) const;
+    bool removeSystem(AstroCatalog::IndexNumber);
+    SolarSystemIndex &getSystems() { return m_systems; }
+    const SolarSystemIndex &getSystems() const { return m_systems; }
+
     OctreeNode* getStarOctree() { return &m_starOctree; }
     OctreeNode* getDsoOctree() { return &m_dsoOctree; }
     const OctreeNode* getStarOctree() const { return &m_starOctree; }
@@ -149,4 +156,5 @@ class AstroDatabase {
     const CrossIndex *getCelestiaCrossIndex(int) const;
     CrossIndex *getCatalogCrossIndex(int);
     const CrossIndex *getCatalogCrossIndex(int) const;
+    NameDatabase &getNameDatabase() { return m_nameIndex; }
 };

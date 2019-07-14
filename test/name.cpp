@@ -4,6 +4,7 @@
 #include <cassert>
 #include <fmt/printf.h>
 #include <celengine/name.h>
+#include <celengine/namedb.h>
 #include <celutil/utf8.h>
 
 using namespace std;
@@ -30,10 +31,10 @@ void dump_db(const NameDatabase &nd, const std::string &comp)
 
     std::cout << "\ngetCompletion(" << comp << "):\n";
     for (const auto &n : nd.getCompletion(comp))
-        std::cout << n << ": " << nd.getCatalogNumberByName(n) << ", " << nd.findCatalogNumberByName(n) << std::endl;
+        std::cout << n << ": " << nd.get(n) << ", " << nd.findCatalogNumberByName(n) << std::endl;
     std::cout << "=Dump End=\n";
-}
-*/
+}*/
+
 int main()
 {
     Name n1("Ab");
@@ -74,4 +75,12 @@ int main()
     assert(nd.getCatalogNumberByName(ReplaceGreekLetterAbbr("OME Ret")) == 2);
     assert(nd.getNameByCatalogNumber(1) == ReplaceGreekLetterAbbr("ALF Cen"));
     assert(nd.getNameByCatalogNumber(2) == ReplaceGreekLetterAbbr("OME Ret"));*/
+    NameDatabase ndb;
+    NameInfo::SharedConstPtr info = NameInfo::createShared(string("Kepler-16"), Name(""), nullptr);
+    const Name &name = info->getCanon();
+    cout << name.str() << endl;
+    ndb.add(info);
+    NameInfo::SharedConstPtr info2 = ndb.getNameInfo(name);
+    if (info2)
+        cout << info2->getCanon().str() << endl;
 }

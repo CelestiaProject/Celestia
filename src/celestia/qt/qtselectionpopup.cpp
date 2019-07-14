@@ -207,9 +207,9 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     else if (selection.star() != nullptr)
     {
         // Child object menus for star
-        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(selection.star()->getIndex());
-        if (iter != solarSystemCatalog->end())
+        const AstroDatabase::SolarSystemIndex &solarSystemCatalog = sim->getUniverse()->getDatabase().getSystems();
+        auto iter = solarSystemCatalog.find(selection.star()->getIndex());
+        if (iter != solarSystemCatalog.end())
         {
             SolarSystem* solarSys = iter->second;
             if (solarSys)
@@ -531,9 +531,9 @@ void SelectionPopup::slotSelectChildObject()
             }
             else if (selection.star())
             {
-                SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-                SolarSystemCatalog::iterator iter = solarSystemCatalog->find(selection.star()->getIndex());
-                if (iter != solarSystemCatalog->end())
+                const AstroDatabase::SolarSystemIndex &solarSystemCatalog = sim->getUniverse()->getDatabase().getSystems();
+                auto iter = solarSystemCatalog.find(selection.star()->getIndex());
+                if (iter != solarSystemCatalog.end())
                 {
                     SolarSystem* solarSys = iter->second;
                     if (solarSys)

@@ -66,7 +66,7 @@ void dumpNames(AstroObject *obj)
 {
     cout << "Names of object nr: " << obj->getIndex() << ": ";
     for (auto &info : obj->getNameInfos())
-        cout << info.getCanon().str() << "(" << ((NameInfo)info).getLocalized().str() << ") ";
+        cout << info->getCanon().str() << "(" << info->getLocalized().str() << ") ";
     cout << endl;
 }
 
@@ -115,7 +115,7 @@ void showExistence(AstroDatabase &adb, const string &name, AstroObject *o = null
             if (o != obj)
             {
                 fmt::fprintf(cout, "Found object nr %u is different than reference object nr %u!\n", obj->getIndex(), o->getIndex());
-                const NameInfo *info = adb.getNameInfo(name);
+                NameInfo::SharedConstPtr info = adb.getNameInfo(name);
                 fmt::fprintf(cout, "Found object name info: \"%s\"\n", info->getCanon().str());
             }
             else
@@ -139,6 +139,7 @@ int main()
     SetDebugVerbosity(10);
     clog << "AstroDatabase test\n";
     AstroDatabase adb;
+    NameInfo::runTranslation();
 
 /*    AstroObject o;
     o.setIndex(1);
@@ -166,7 +167,7 @@ int main()
 
     load(stcloader, "data/extrasolar.stc");
 
-    load(stcloader, "data/nearstars.stc");
+/*    load(stcloader, "data/nearstars.stc");
 
     load(stcloader, "data/visualbins.stc");
 
@@ -185,8 +186,8 @@ int main()
 
     load(dsoloader, "data/galaxies.dsc");
 
-    load(dsoloader, "data/globulars.dsc");
-
+    load(dsoloader, "data/globulars.dsc");*/
+/*
     AstroObject *obj = adb.getObject(55203);
     objectNames(adb, obj);
     objectName(obj);
@@ -238,4 +239,20 @@ int main()
     showExistence(adb, "α CMa");
     star->addName(string("ADS 5423"));
     showExistence(adb, "ADS 5423");*/
+    showExistence(adb, "Kepler-15");
+    showExistence(adb, "Kepler-16");
+    showExistence(adb, "Kepler-17");
+    NameDatabase &ndb = adb.getNameDatabase();
+    NameInfo::SharedConstPtr info = ndb.getNameInfo("Kepler-16");
+    if (info)
+        cout << info->getCanon().str() << endl;
+    else
+        cout << "Kepler-16 not found in namedb\n";
+    cout << adb.starnameToIndex("Kepler-16", true) <<endl;
+    const AstroObject *o = info->getObject();
+    if (o != nullptr)
+        cout << o->getName().str() <<endl;
+    else
+        cout << "Object is null!\n";
+    NameInfo::stopTranslation();
 }

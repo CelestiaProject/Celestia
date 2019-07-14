@@ -42,17 +42,6 @@ Universe::~Universe()
     // TODO: Clean up!
 }
 
-SolarSystemCatalog* Universe::getSolarSystemCatalog() const
-{
-    return solarSystemCatalog;
-}
-
-void Universe::setSolarSystemCatalog(SolarSystemCatalog* catalog)
-{
-    solarSystemCatalog = catalog;
-}
-
-
 AsterismList* Universe::getAsterisms() const
 {
     return asterisms;
@@ -79,12 +68,8 @@ SolarSystem* Universe::getSolarSystem(const Star* star) const
     if (star == nullptr)
         return nullptr;
 
-    uint32_t starNum = star->getIndex();
-    auto iter = solarSystemCatalog->find(starNum);
-    if (iter != solarSystemCatalog->end())
-        return iter->second;
-
-    return nullptr;
+    AstroCatalog::IndexNumber starNum = star->getIndex();
+    return m_adb.getSystem(starNum);
 }
 
 
@@ -122,17 +107,14 @@ SolarSystem* Universe::getSolarSystem(const Selection& sel) const
 
 // Create a new solar system for a star and return a pointer to it; if it
 // already has a solar system, just return a pointer to the existing one.
-SolarSystem* Universe::createSolarSystem(Star* star) const
+SolarSystem* Universe::createSolarSystem(Star* star)
 {
     SolarSystem* solarSystem = getSolarSystem(star);
     if (solarSystem != nullptr)
         return solarSystem;
 
     solarSystem = new SolarSystem(star);
-    solarSystemCatalog->insert(SolarSystemCatalog::
-                               value_type(star->getIndex(),
-                                          solarSystem));
-
+    m_adb.addSystem(solarSystem, star->getIndex());
     return solarSystem;
 }
 

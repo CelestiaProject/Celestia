@@ -16,6 +16,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <mutex>
 #include <celutil/debug.h>
 #include <celutil/util.h>
 #include <celutil/utf8.h>
@@ -28,14 +29,14 @@ class NameDatabase
 
     uint32_t getNameCount() const;
 
-    bool add(const NameInfo&, bool = true);
-    bool addLocalized(const NameInfo&, bool = true);
+    bool add(NameInfo::SharedConstPtr, bool = true);
+    bool addLocalized(NameInfo::SharedConstPtr, bool = true);
 
     // delete all names associated with the specified catalog number
     void erase(const Name&);
 
-    const NameInfo *getNameInfo(const Name&, bool = true, bool = false) const;
-    const NameInfo *getNameInfo(const Name&, bool, bool, bool) const;
+    NameInfo::SharedConstPtr getNameInfo(const Name&, bool = true, bool = false) const;
+    NameInfo::SharedConstPtr getNameInfo(const Name&, bool, bool, bool) const;
     AstroObject *getObjectByName(const Name&, bool = true) const;
     AstroObject *getObjectByLocalizedName(const Name&, bool = true) const;
     AstroObject *findObjectByName(const Name&, bool = true) const;
@@ -45,6 +46,7 @@ class NameDatabase
 
     void dump() const;
  protected:
-    NameMap m_nameIndex;
-    NameMap m_localizedIndex;
+    SharedNameMap m_nameIndex;
+    SharedNameMap m_localizedIndex;
+    std::recursive_mutex m_mutex;
 };

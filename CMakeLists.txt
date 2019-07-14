@@ -287,6 +287,8 @@ if(OCTREE_DEBUG)
   add_definitions(-DOCTREE_DEBUG)
 endif()
 
+include(FindThreads)
+
 include_directories("${CMAKE_SOURCE_DIR}/src" ${CMAKE_BINARY_DIR})
 
 # configure a header file to pass some of the CMake settings

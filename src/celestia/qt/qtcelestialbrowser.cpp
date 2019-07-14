@@ -38,7 +38,7 @@ using namespace std;
 class StarFilterPredicate
 {
 public:
-    StarFilterPredicate();
+    StarFilterPredicate(const AstroDatabase::SolarSystemIndex &);
     bool operator()(const Star* star) const;
 
     bool planetsFilterEnabled{false};
@@ -47,7 +47,7 @@ public:
     bool omitBarycenters{true};
     bool spectralTypeFilterEnabled{false};
     QRegExp spectralTypeFilter;
-    SolarSystemCatalog* solarSystems;
+    const AstroDatabase::SolarSystemIndex &solarSystems;
 };
 
 
@@ -301,9 +301,9 @@ bool StarPredicate::operator()(const Star* star0, const Star* star1) const
 }
 
 
-StarFilterPredicate::StarFilterPredicate() :
+StarFilterPredicate::StarFilterPredicate(const AstroDatabase::SolarSystemIndex &ssi) :
 
-    solarSystems(nullptr)
+    solarSystems(ssi)
 {
 }
 
@@ -318,11 +318,8 @@ bool StarFilterPredicate::operator()(const Star* star) const
 
     if (planetsFilterEnabled)
     {
-        if (solarSystems == nullptr)
-            return true;
-
-        SolarSystemCatalog::iterator iter = solarSystems->find(star->getIndex());
-        if (iter == solarSystems->end())
+        auto iter = solarSystems.find(star->getIndex());
+        if (iter == solarSystems.end())
             return true;
     }
 
@@ -643,12 +640,11 @@ void CelestialBrowser::slotRefreshTable()
     treeView->clearSelection();
 
     // Set up the filter
-    StarFilterPredicate filterPred;
+    StarFilterPredicate filterPred(appCore->getSimulation()->getUniverse()->getDatabase().getSystems());
     filterPred.planetsFilterEnabled = withPlanetsFilterBox->checkState() == Qt::Checked;
     filterPred.multipleFilterEnabled = multipleFilterBox->checkState() == Qt::Checked;
     filterPred.barycentersFilterEnabled = barycentersFilterBox->checkState() == Qt::Checked;
     filterPred.omitBarycenters = barycentersFilterBox->checkState() == Qt::Unchecked;
-    filterPred.solarSystems = appCore->getSimulation()->getUniverse()->getSolarSystemCatalog();
 
     QRegExp re(spectralTypeFilterBox->text(),
                Qt::CaseInsensitive,

@@ -16,30 +16,38 @@ Selection AstroObject::toSelection()
     return Selection(this);
 }
 
-bool AstroObject::addName(NameInfo &info, bool setPrimary, bool updateDB)
+bool AstroObject::addName(NameInfo::SharedConstPtr info, bool setPrimary, bool updateDB)
 {
-    info.setObject(this);
     m_nameInfos.insert(info);
     if (setPrimary)
         m_primaryName = info;
-    if (updateDB && m_db != nullptr)
-        m_db->addName(info);
+    PlanetarySystem *sys = info->getSystem();
+    if (sys == nullptr)
+    {
+        if (updateDB && m_db != nullptr)
+            m_db->addName(info);
+    }
+    else
+    {
+        sys->addName(info);
+    }
+
     return true;
 }
 
-bool AstroObject::addName(const string &name, const string& domain, bool setPrimary, bool updateDB)
+bool AstroObject::addName(const string &name, const string& domain, PlanetarySystem *sys, bool setPrimary, bool updateDB)
 {
-    NameInfo info(name, domain);
+    NameInfo::SharedConstPtr info = NameInfo::createShared(name, domain, this, sys);
     return addName(info, setPrimary, updateDB);
 }
 
-bool AstroObject::addName(const Name &name, const string& domain, bool setPrimary, bool updateDB)
+bool AstroObject::addName(const Name &name, const string& domain, PlanetarySystem *sys, bool setPrimary, bool updateDB)
 {
-    NameInfo info(name, domain);
+    NameInfo::SharedConstPtr info = NameInfo::createShared(name, domain, this, sys);
     return addName(info, setPrimary, updateDB);
 }
 
-void AstroObject::addNames(const string &names, bool updateDB) // string containing names separated by colon
+void AstroObject::addNames(const string &names, PlanetarySystem *sys, bool updateDB) // string containing names separated by colon
 {
     string::size_type startPos = 0;
     while (startPos != string::npos)
@@ -56,21 +64,37 @@ void AstroObject::addNames(const string &names, bool updateDB) // string contain
         string name = names.substr(startPos, length);
         if (!name.empty())
         {
-            name = ReplaceGreekLetterAbbr(name);
-            addName(name, "", true, updateDB);
+//             name = ReplaceGreekLetterAbbr(name);
+            addName(name, "", sys, true, updateDB);
 //             fmt::fprintf(clog, "Name \"%s\" added.\n", name);
         }
         startPos = next;
     }
 }
 
+const Name AstroObject::getName(bool i18n) const
+{
+    if (m_primaryName)
+        return i18n ? m_primaryName->getLocalized() : m_primaryName->getCanon();
+    else
+        return Name();
+}
+
+const Name AstroObject::getLocalizedName() const
+{
+    if (m_primaryName)
+        return m_primaryName->getLocalized();
+    else
+        return Name();
+}
+
 bool AstroObject::removeName(const Name& name, bool updateDB)
 {
     if (!m_db)
     {
-        for(NameInfoSet::iterator it = m_nameInfos.begin(); it != m_nameInfos.end(); ++it)
+        for(SharedConstNameInfoSet::iterator it = m_nameInfos.begin(); it != m_nameInfos.end(); ++it)
         {
-            if (it->getCanon() == name)
+            if ((*it)->getCanon() == name)
             {
                 m_nameInfos.erase(it);
                 return true;
@@ -78,14 +102,22 @@ bool AstroObject::removeName(const Name& name, bool updateDB)
         }
         return false;
     }
-    const NameInfo *info = m_db->getNameInfo(name);
-    return removeName(*info, updateDB);
+    NameInfo::SharedConstPtr info = m_db->getNameInfo(name);
+    return removeName(info, updateDB);
 }
 
-bool AstroObject::removeName(const NameInfo& info, bool updateDB)
+bool AstroObject::removeName(NameInfo::SharedConstPtr info, bool updateDB)
 {
-    if (updateDB && m_db != nullptr)
-        m_db->removeName(info);
+    PlanetarySystem *sys = info->getSystem();
+    if (sys == nullptr)
+    {
+        if (updateDB && m_db != nullptr)
+            m_db->removeName(info);
+    }
+    else
+    {
+        sys->removeName(info);
+    }
     m_nameInfos.erase(info);
     return true;
 }
@@ -94,32 +126,32 @@ void AstroObject::removeNames(bool updateDB)
 {
     do
     {
-        NameInfoSet::iterator it = m_nameInfos.begin();
+        SharedConstNameInfoSet::iterator it = m_nameInfos.begin();
         if (it != m_nameInfos.end())
             removeName(*it, updateDB);
     }
     while(m_nameInfos.size());
 }
 
-NameInfoSet::iterator AstroObject::getNameInfoIterator(const Name &name) const
+SharedConstNameInfoSet::iterator AstroObject::getNameInfoIterator(const Name &name) const
 {
-    NameInfoSet::iterator it;
+    SharedConstNameInfoSet::iterator it;
     for(it = m_nameInfos.begin(); it != m_nameInfos.end(); ++it)
     {
-        if (it->getCanon() == name)
+        if ((*it)->getCanon() == name)
             return it;
     }
     return it;
 }
 
-const NameInfo* AstroObject::getNameInfo(const Name &name) const
+NameInfo::SharedConstPtr AstroObject::getNameInfo(const Name &name) const
 {
     if (!m_db)
     {
-        NameInfoSet::iterator it = getNameInfoIterator(name);
+        SharedConstNameInfoSet::iterator it = getNameInfoIterator(name);
         if (it == m_nameInfos.end())
             return nullptr;
-        return (NameInfo*)(&(*it));
+        return *it;
     }
     else
     {
@@ -134,7 +166,7 @@ string AstroObject::getNames(bool i18n) const
     {
         if (!ret.empty())
             ret += " / ";
-        ret += i18n ? info.getLocalized() : info.getCanon();
+        ret += i18n ? info->getLocalized() : info->getCanon();
     }
     return ret;
 }

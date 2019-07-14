@@ -33,7 +33,7 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
     system(_system),
     orbitVisibility(UseClassVisibility)
 {
-    addName(_name);
+    addName(_name, string(), _system);
     recomputeCullingRadius();
     system->addBody(this);
 }
@@ -1119,37 +1119,29 @@ PlanetarySystem::PlanetarySystem(Star* _star) :
 {
 }
 
-
-/*! Add a new alias for an object. If an object with the specified
- *  alias already exists in the planetary system, the old entry will
- *  be replaced.
- */
-/*
-void PlanetarySystem::addAlias(Body* body, const string& alias)
+void PlanetarySystem::addName(NameInfo::SharedConstPtr info)
 {
-    assert(body->getSystem() == this);
-
-    objectIndex.insert(make_pair(alias, body));
-}
-*/
-
-/*! Remove the an alias for an object. This method does nothing
- *  if the alias is not present in the index, or if the alias
- *  refers to a different object.
- */
-/*
-void PlanetarySystem::removeAlias(const Body* body, const string& alias)
-{
-    assert(body->getSystem() == this);
-
-    ObjectIndex::iterator iter = objectIndex.find(alias);
-    if (iter != objectIndex.end())
+    if (info->getSystem() == this)
     {
-        if (iter->second == body)
-            objectIndex.erase(iter);
+        m_nameDB.add(info);
     }
 }
-*/
+
+void PlanetarySystem::addLocalizedName(NameInfo::SharedConstPtr info)
+{
+    if (info->getSystem() == this)
+    {
+        m_nameDB.addLocalized(info);
+    }
+}
+
+void PlanetarySystem::removeName(NameInfo::SharedConstPtr info)
+{
+    if (info->getSystem() == this)
+    {
+        m_nameDB.erase(info->getCanon());
+    }
+}
 
 void PlanetarySystem::addBody(Body* body)
 {
@@ -1158,14 +1150,13 @@ void PlanetarySystem::addBody(Body* body)
 }
 
 
-// Add all aliases for the body to the name index
+// Add all names for the body to the name index
 void PlanetarySystem::addBodyToNameIndex(Body* body)
 {
     auto names = body->getNameInfos();
     for (const auto& name : names)
     {
-        m_nameDB.add(name);
-        m_nameDB.addLocalized(name);
+        addName(name);
     }
 }
 
@@ -1179,7 +1170,7 @@ void PlanetarySystem::removeBodyFromNameIndex(const Body* body)
     auto names = body->getNameInfos();
     for (const auto& name : names)
     {
-        m_nameDB.erase(name.getCanon());
+        removeName(name);
     }
 }
 
@@ -1215,8 +1206,8 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
  */
 Body* PlanetarySystem::find(const string& _name, bool deepSearch, bool i18n) const
 {
-    const NameInfo *ni = m_nameDB.getNameInfo(_name, false, i18n, true);
-    if (ni != nullptr)
+    NameInfo::SharedConstPtr ni = m_nameDB.getNameInfo(_name, false, i18n, true);
+    if (ni)
         return (Body*)ni->getObject();
 
     if (deepSearch)
@@ -1289,6 +1280,5 @@ int PlanetarySystem::getOrder(const Body* body) const
 
 Selection Body::toSelection()
 {
-//    std::cout << "Body::toSelection()\n";
     return Selection(this);
 }

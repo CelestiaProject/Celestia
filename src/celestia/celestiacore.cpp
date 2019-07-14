@@ -325,6 +325,7 @@ CelestiaCore::~CelestiaCore()
     delete execEnv;
     delete timer;
     delete renderer;
+    delete universe;
 }
 
 void CelestiaCore::readFavoritesFile()
@@ -4115,8 +4116,6 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // First read the solar system files listed individually in the
     // config file.
     {
-        SolarSystemCatalog* solarSystemCatalog = new SolarSystemCatalog();
-        universe->setSolarSystemCatalog(solarSystemCatalog);
         for (const auto& file : config->solarSystemFiles)
         {
             if (progressNotifier)

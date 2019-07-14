@@ -11,6 +11,13 @@ AstroDatabase::AstroDatabase() :
     m_dsoOctree(Vector3d(0, 0, 0),  OctreeNode::MaxScale, OctreeNode::MaxObjectsPerNode, nullptr)
 {
     createBuiltinCatalogs();
+    NameInfo::runTranslation();
+}
+
+AstroDatabase::~AstroDatabase()
+{
+    cout << "AstroDatabase\n";
+    NameInfo::stopTranslation();
 }
 
 AstroObject *AstroDatabase::getObject(AstroCatalog::IndexNumber nr) const
@@ -23,7 +30,7 @@ AstroObject *AstroDatabase::getObject(AstroCatalog::IndexNumber nr) const
 
 AstroObject *AstroDatabase::getObject(const Name &name, bool tryGreek, bool smart) const
 {
-    const NameInfo *info = smart ? m_nameIndex.getNameInfo(name, tryGreek, false, true) : m_nameIndex.getNameInfo(name, tryGreek);
+    NameInfo::SharedConstPtr info = smart ? m_nameIndex.getNameInfo(name, tryGreek, false, true) : m_nameIndex.getNameInfo(name, tryGreek);
     AstroObject *obj = info == nullptr ? nullptr : (AstroObject*)info->getObject();
     if (obj != nullptr)
         return obj;
@@ -145,7 +152,7 @@ std::vector<Name> AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr,
     {
         if (max == 0)
             return ret;
-        ret.push_back(iter.getCanon());
+        ret.push_back(iter->getCanon());
         --max;
     }
 
@@ -181,7 +188,7 @@ std::string AstroDatabase::getObjectNames(AstroCatalog::IndexNumber nr, bool i18
         if (!names.empty())
             names += " / ";
 
-        names += i18n ? name.getLocalized().str() : name.getCanon().str();
+        names += i18n ? name->getLocalized().str() : name->getCanon().str();
         --max;
     }
 
@@ -206,9 +213,12 @@ std::string AstroDatabase::getObjectNames(AstroCatalog::IndexNumber nr, bool i18
     return names;
 }
 
-void AstroDatabase::removeName(const NameInfo& name)
+void AstroDatabase::removeName(NameInfo::SharedConstPtr name)
 {
-    m_nameIndex.erase(name.getCanon());
+    if (name->getSystem() == nullptr)
+        m_nameIndex.erase(name->getCanon());
+    else
+        fmt::fprintf(cerr, "Trying to remove local name \"%s\" of object nr %u!\n", name->getCanon().str(), name->getObject()->getIndex());
 }
 
 void AstroDatabase::removeNames(AstroCatalog::IndexNumber nr)
@@ -220,7 +230,11 @@ void AstroDatabase::removeNames(AstroCatalog::IndexNumber nr)
 
 void AstroDatabase::removeNames(AstroObject *obj)
 {
-    obj->removeNames();
+    for (const auto &info : obj->getNameInfos())
+    {
+        if (info->getSystem() == nullptr)
+            removeName(info);
+    }
 }
 
 bool AstroDatabase::addAstroCatalog(int id, AstroCatalog *catalog)
@@ -274,9 +288,10 @@ bool AstroDatabase::addObject(AstroObject *obj)
     }
     obj->setDatabase(this);
     m_mainIndex.insert(std::make_pair(obj->getIndex(), obj));
-    for(NameInfo info : obj->getNameInfos())
+    for(const auto& info : obj->getNameInfos())
     {
-        m_nameIndex.add(info);
+        if (info->getSystem() == nullptr)
+            m_nameIndex.add(info);
     }
     return true;
 }
@@ -343,13 +358,13 @@ bool AstroDatabase::addName(AstroCatalog::IndexNumber nr, const Name& name)
     return o->addName(name);
 }
 
-bool AstroDatabase::addName(const NameInfo &info)
+bool AstroDatabase::addName(NameInfo::SharedConstPtr info)
 {
     return m_nameIndex.add(info);
 //     fmt::fprintf(cerr, "Adding name \"%s\" to object nr %u.\n", info.getCanon().str(), obj->getIndex());
 }
 
-bool AstroDatabase::addLocalizedName(const NameInfo &info)
+bool AstroDatabase::addLocalizedName(NameInfo::SharedConstPtr info)
 {
     return m_nameIndex.addLocalized(info);
 //     fmt::fprintf(cerr, "Adding name \"%s\" to object nr %u.\n", info.getCanon().str(), obj->getIndex());
@@ -362,6 +377,31 @@ void AstroDatabase::addNames(AstroCatalog::IndexNumber nr, const string &names)
         obj->addNames(names);
     else
         fmt::fprintf(cerr, "No object nr %u to add names \"%s\"!\n", nr, names);
+}
+
+bool AstroDatabase::addSystem(SolarSystem *sys, AstroCatalog::IndexNumber nr)
+{
+    AstroObject *o = getObject(nr);
+    if (o == nullptr)
+    {
+        fmt::fprintf(cerr, "Trying to add SolarSystem to null object!\n");
+        return false;
+    }
+    m_systems.insert(make_pair(nr, sys));
+    return true;
+}
+
+SolarSystem *AstroDatabase::getSystem(AstroCatalog::IndexNumber nr) const
+{
+    auto it = m_systems.find(nr);
+    if (it == m_systems.end())
+        return nullptr;
+    return it->second;
+}
+
+bool AstroDatabase::removeSystem(AstroCatalog::IndexNumber nr)
+{
+    return m_systems.erase(nr) > 0 ? true : false;
 }
 
 void AstroDatabase::createBuiltinCatalogs()

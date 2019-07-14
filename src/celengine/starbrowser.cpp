@@ -73,16 +73,18 @@ struct BrightestStarPredicate
 struct SolarSystemPredicate
 {
     Vector3f pos;
-    SolarSystemCatalog* solarSystems;
+    const AstroDatabase::SolarSystemIndex &solarSystems;
+
+    SolarSystemPredicate(const AstroDatabase::SolarSystemIndex &ss) : solarSystems(ss) {}
 
     bool operator()(const Star* star0, const Star* star1) const
     {
-        SolarSystemCatalog::iterator iter;
+        AstroDatabase::SolarSystemIndex::const_iterator iter;
 
-        iter = solarSystems->find(star0->getIndex());
-        bool hasPlanets0 = (iter != solarSystems->end());
-        iter = solarSystems->find(star1->getIndex());
-        bool hasPlanets1 = (iter != solarSystems->end());
+        iter = solarSystems.find(star0->getIndex());
+        bool hasPlanets0 = (iter != solarSystems.end());
+        iter = solarSystems.find(star1->getIndex());
+        bool hasPlanets1 = (iter != solarSystems.end());
         if (hasPlanets1 == hasPlanets0)
         {
             Vector3f p0 = star0->getPosition().cast<float>();
@@ -183,14 +185,10 @@ StarBrowser::listStars(unsigned int nStars)
 
     case StarsWithPlanets:
         {
-            SolarSystemCatalog* solarSystems = univ->getSolarSystemCatalog();
-            if (!solarSystems)
-                return nullptr;
-            SolarSystemPredicate solarSysPred;
+            SolarSystemPredicate solarSysPred(univ->getDatabase().getSystems());
             solarSysPred.pos = pos;
-            solarSysPred.solarSystems = solarSystems;
             return findStars(univ->getDatabase(), solarSysPred,
-                             min((size_t) nStars, solarSystems->size()));
+                             min((size_t) nStars, univ->getDatabase().getSystems().size()));
         }
         break;
 

@@ -257,7 +257,7 @@ void Galaxy::render(const Vector3f& offset,
                     const Quaternionf& viewerOrientation,
                     float brightness,
                     float pixelSize,
-                    const Renderer* /* unused */) const
+                    const Renderer* /* unused */)
 {
     if (form == nullptr)
     {
@@ -278,7 +278,7 @@ inline void glVertex4(const Vector4f& v)
 void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
                                       const Quaternionf& viewerOrientation,
                                       float brightness,
-                                      float pixelSize) const
+                                      float pixelSize)
 {
     if (form == nullptr)
         return;

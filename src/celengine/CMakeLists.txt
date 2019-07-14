@@ -182,7 +182,7 @@ set_target_properties(celengine PROPERTIES
 ]]#
 
 add_dependencies(celengine cel3ds celmath celmodel celtxf celutil)
-target_link_libraries(celengine cel3ds celmath celmodel celtxf celutil)
+target_link_libraries(celengine cel3ds celmath celmodel celtxf celutil Threads::Threads)
 
 # Some celephem objects depend on Spice
 if(ENABLE_SPICE)

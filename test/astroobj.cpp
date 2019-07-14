@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void objName(AstroObject *o)
+/*void objName(AstroObject *o)
 {
     cout << "Has name: " << o->hasName() << endl;
     cout << "Has localized name: " << o->hasLocalizedName() << endl;
@@ -18,11 +18,11 @@ void dump(NameInfo *i)
     cout << i->getCanon().ptr() << endl;
     cout << i->getLocalized().ptr() << endl;
 }
-
+*/
 int main()
 {
-    AstroObject obj;
+  /*  AstroObject obj;
     obj.addName(string("Some name"), string(""), true, false);
     objName(&obj);
-    objName(&obj);
+    objName(&obj);*/
 }
