@@ -8,8 +8,11 @@ set(CELUTIL_SOURCES
   debug.h
   directory.cpp
   directory.h
+  filesystem.h
   filetype.cpp
   filetype.h
+  fs.cpp
+  fs.h
   formatnum.cpp
   formatnum.h
   #memorypool.cpp

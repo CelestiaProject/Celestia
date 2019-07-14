@@ -1,5 +1,6 @@
-// winutil.h
+// winutil.cpp
 //
+// Copyright (C) 2019, Celestia Development Team
 // Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -67,8 +68,21 @@ string UTF8ToCurrentCP(const string& str)
     string localeStr;
     LPWSTR wout = new wchar_t[str.length() + 1];
     LPSTR out = new char[str.length() + 1];
-    int wlength = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wout, str.length() + 1);
+    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wout, str.length() + 1);
     WideCharToMultiByte(CP_ACP, 0, wout, -1, out, str.length() + 1, nullptr, nullptr);
+    localeStr = out;
+    delete [] wout;
+    delete [] out;
+    return localeStr;
+}
+
+string CurrentCPToUTF8(const string& str)
+{
+    string localeStr;
+    LPWSTR wout = new wchar_t[str.length() + 1];
+    LPSTR out = new char[str.length() + 1];
+    MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, wout, str.length() + 1);
+    WideCharToMultiByte(CP_UTF8, 0, wout, -1, out, str.length() + 1, nullptr, nullptr);
     localeStr = out;
     delete [] wout;
     delete [] out;
