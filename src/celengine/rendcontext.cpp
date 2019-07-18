@@ -184,6 +184,37 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 
 
 void
+RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
+                               const void* vertexData)
+{
+    setStandardVertexArrays(desc, vertexData);
+    setExtendedVertexArrays(desc, vertexData);
+
+    // Normally, the shader that will be used depends only on the material.
+    // But the presence of point size and normals can also affect the
+    // shader, so force an update of the material if those attributes appear
+    // or disappear in the new set of vertex arrays.
+    bool usePointSizeNow = (desc.getAttribute(Mesh::PointSize).format == Mesh::Float1);
+    bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
+    bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
+    bool useTexCoordsNow = (desc.getAttribute(Mesh::Texture0).format != Mesh::InvalidFormat);
+
+    if (usePointSizeNow != usePointSize ||
+        useNormalsNow   != useNormals   ||
+        useColorsNow    != useColors    ||
+        useTexCoordsNow != useTexCoords)
+    {
+        usePointSize = usePointSizeNow;
+        useNormals = useNormalsNow;
+        useColors = useColorsNow;
+        useTexCoords = useTexCoordsNow;
+        if (getMaterial() != nullptr)
+            makeCurrent(*getMaterial());
+    }
+}
+
+
+void
 setStandardVertexArrays(const Mesh::VertexDescription& desc,
                         const void* vertexData)
 {
@@ -603,37 +634,6 @@ GLSL_RenderContext::makeCurrent(const Material& m)
 
 
 void
-GLSL_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
-                                    const void* vertexData)
-{
-    setStandardVertexArrays(desc, vertexData);
-    setExtendedVertexArrays(desc, vertexData);
-
-    // Normally, the shader that will be used depends only on the material.
-    // But the presence of point size and normals can also affect the
-    // shader, so force an update of the material if those attributes appear
-    // or disappear in the new set of vertex arrays.
-    bool usePointSizeNow = (desc.getAttribute(Mesh::PointSize).format == Mesh::Float1);
-    bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
-    bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
-    bool useTexCoordsNow = (desc.getAttribute(Mesh::Texture0).format != Mesh::InvalidFormat);
-
-    if (usePointSizeNow != usePointSize ||
-        useNormalsNow   != useNormals   ||
-        useColorsNow    != useColors    ||
-        useTexCoordsNow != useTexCoords)
-    {
-        usePointSize = usePointSizeNow;
-        useNormals = useNormalsNow;
-        useColors = useColorsNow;
-        useTexCoords = useTexCoordsNow;
-        if (getMaterial() != nullptr)
-            makeCurrent(*getMaterial());
-    }
-}
-
-
-void
 GLSL_RenderContext::setAtmosphere(const Atmosphere* _atmosphere)
 {
     atmosphere = _atmosphere;
@@ -766,36 +766,5 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
             glDepthMask(GL_TRUE);
             break;
         }
-    }
-}
-
-
-void
-GLSLUnlit_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
-                                         const void* vertexData)
-{
-    setStandardVertexArrays(desc, vertexData);
-    setExtendedVertexArrays(desc, vertexData);
-
-    // Normally, the shader that will be used depends only on the material.
-    // But the presence of point size and normals can also affect the
-    // shader, so force an update of the material if those attributes appear
-    // or disappear in the new set of vertex arrays.
-    bool usePointSizeNow = (desc.getAttribute(Mesh::PointSize).format == Mesh::Float1);
-    bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
-    bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
-    bool useTexCoordsNow = (desc.getAttribute(Mesh::Texture0).format != Mesh::InvalidFormat);
-
-    if (usePointSizeNow != usePointSize ||
-        useNormalsNow   != useNormals   ||
-        useColorsNow    != useColors    ||
-        useTexCoordsNow != useTexCoords)
-    {
-        usePointSize = usePointSizeNow;
-        useNormals = useNormalsNow;
-        useColors = useColorsNow;
-        useTexCoords = useTexCoordsNow;
-        if (getMaterial() != nullptr)
-            makeCurrent(*getMaterial());
     }
 }
