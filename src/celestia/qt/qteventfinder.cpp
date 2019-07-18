@@ -60,7 +60,8 @@ static QDateTime TDBToQDate(double tdb)
     int msec = (int) ((date.seconds - sec) * 1000);
 
     return QDateTime(QDate(date.year, date.month, date.day),
-                     QTime(date.hour, date.minute, sec, msec));
+                     QTime(date.hour, date.minute, sec, msec),
+                     Qt::UTC);
 }
 
 struct EclipseOcculterSortPredicate
@@ -161,7 +162,7 @@ QVariant EventTableModel::data(const QModelIndex& index, int role) const
         case OcculterColumn:
             return QString(eclipse.occulter->getName(true).c_str());
         case StartTimeColumn:
-            return TDBToQDate(eclipse.startTime).toUTC().toString("dd MMM yyyy hh:mm");
+            return TDBToQDate(eclipse.startTime).toLocalTime().toString("dd MMM yyyy hh:mm");
         case DurationColumn:
             {
                 int minutes = (int) ((eclipse.endTime - eclipse.startTime) * 24 * 60);
