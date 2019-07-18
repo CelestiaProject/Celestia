@@ -14,6 +14,7 @@
 #include "geometry.h"
 #include <celmodel/model.h>
 #include <celutil/resmanager.h>
+#include <memory>
 
 
 class CelestiaTextureResource : public cmod::Material::TextureResource
@@ -40,8 +41,8 @@ class ModelOpenGLData;
 class ModelGeometry : public Geometry
 {
  public:
-    ModelGeometry(cmod::Model* model);
-    ~ModelGeometry();
+    ModelGeometry(std::unique_ptr<cmod::Model>&& model);
+    ~ModelGeometry() = default;
 
     /*! Find the closest intersection between the ray and the
      *  model.  If the ray intersects the model, return true
@@ -60,9 +61,9 @@ class ModelGeometry : public Geometry
     void loadTextures();
 
  private:
-    cmod::Model* m_model;
+    std::unique_ptr<cmod::Model> m_model;
     bool m_vbInitialized{ false };
-    ModelOpenGLData* m_glData{ nullptr };
+    std::unique_ptr<ModelOpenGLData> m_glData;
 };
 
 #endif // !_CELENGINE_MODEL_H_
