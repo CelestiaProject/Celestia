@@ -51,17 +51,10 @@ public:
 /** Create a new ModelGeometry wrapping the specified model.
   * The ModelGeoemtry takes ownership of the model.
   */
-ModelGeometry::ModelGeometry(Model* model) :
-    m_model(model)
+ModelGeometry::ModelGeometry(unique_ptr<cmod::Model>&& model) :
+    m_model(move(model)),
+    m_glData(unique_ptr<ModelOpenGLData>(new ModelOpenGLData()))
 {
-    m_glData = new ModelOpenGLData();
-}
-
-
-ModelGeometry::~ModelGeometry()
-{
-    delete m_model;
-    delete m_glData;
 }
 
 

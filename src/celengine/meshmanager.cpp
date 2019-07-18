@@ -36,6 +36,7 @@
 #include <cassert>
 #include <utility>
 #include <fmt/printf.h>
+#include <memory>
 
 
 using namespace cmod;
@@ -196,7 +197,7 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
                      originalMaterialCount,
                      model->getMaterialCount());
 
-        return new ModelGeometry(model);
+        return new ModelGeometry(unique_ptr<cmod::Model>(model));
     }
     else
     {
