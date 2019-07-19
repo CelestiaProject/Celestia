@@ -21,7 +21,7 @@
 class Image
 {
  public:
-    Image(int fmt, int w, int h, int mips = 1);
+    Image(int fmt, int w, int h, int mip = 1);
     ~Image();
 
     int getWidth() const;
