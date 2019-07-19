@@ -1,0 +1,195 @@
+.\" Please adjust this date whenever revising the manpage.
+.TH CELESTIA 1 "May 23, 2001"
+.SH NAME
+celestia \- A real-time visual space simulation
+.SH SYNOPSIS
+.B celestia
+.RI [ options ]
+.SH DESCRIPTION
+This manual page documents briefly \fBcelestia\fP, a 3D space simulator.
+Celestia is a real-time visual simulation of space in our local region of the
+universe. Choose a point within about 1000 light years of Earth, and Celestia
+will show you an approximation of how it would appear to your eyes were you
+actually there. Some of what Celestia shows is necessarily hypothetical--the
+farther away from Earth you get, the less real data there is and the more
+guesswork is involved.  Thus Celestia supplements observational data with good
+guesses based on models of stellar and planetary processes.
+.PP
+Celestia is unique in its ability to allow you to navigate at an immense range
+of scales.  Orbit a couple kilometers above the surface of a tiny, irregular
+asteroid, then head off toward Jupiter, watching it grow from a bright point of
+light into a looming sphere filling your field of vision.  Leave our solar
+system entirely and observe the sun as it fades from a brilliant disk to a
+bright star, disappearing almost entirely as you head off toward the Upsilon
+Andromeda system to orbit around its innermost giant planet.
+.SH OVERVIEW
+Celestia will start up in a window, display a welcome message and some
+information about your target (top left corner), your speed, and the
+current time (Universal Time, so it'll probably be a few hours off from
+your computer's clock.)  In Celestia, you'll generally have an object
+selected; currently, it's Eros, but it could also be a star, planet,
+spacecraft, or galaxy.  The simplest way to select an object is to click
+on it.  Try clicking on a star to select it.  Right drag the mouse to
+orbit arround the selected target.  Left dragging the mouse changes your
+orientation too, but the camera rotates about its center instead of
+rotating around the target.  Rolling the mouse wheel will change your
+distance to the space station--you can move light years away, then roll
+the wheel in the opposite direction to get back to your starting
+location.  If your mouse lacks a wheel, you can use the Home and End
+keys instead.
+.PP
+Press G and you'll zoom through space toward the selected star.  If you
+press G again, you'll approach the star even closer.  Press H to select
+our Sun, and then G to go back to our solar system.  You'll find
+yourself half a light year away from the Sun, which looks merely like a
+bright star at this range.  Press G three more times to get within about
+30 AU of the Sun and you will be to see a few planets become visible
+near the Sun.
+.\" Right click on the sun to bring up a menu of planets and
+.\" other objects in the solar system.  After selecting a planet from the
+.\" menu, hit G again to travel toward it.  Once there, hold down the right
+.\" mouse button and drag to orbit the planet.
+.SH USAGE
+Mouse functions:
+.PP
+.TS
+tab (@);
+l l.
+Left drag@orient camera
+Right drag@orbit the selected object
+Mouse wheel,@
+Middle drag@adjust distance to selection
+left click@select target, double click to center
+.TE
+.PP
+Keyboard commands:
+.PP
+Navigation
+.PP
+.TS
+tab (@);
+l l.
+H@Select the sun (Home)
+C@Center on selected object
+G@Goto selected object
+F@Follow selected object
+Y@Orbit the selected object at a rate synced to its rotation
+ESC@Cancel motion
+.TE
+.PP
+Free movement
+.PP
+.TS
+tab (@);
+l l.
+HOME@Move closer to object
+END@Move farther from object
+F1@Stop
+F2@Set velocity to 1 km/s
+F3@Set velocity to 1,000 km/s
+F4@Set velocity to 1,000,000 km/s
+F5@Set velocity to 1 AU/s
+F6@Set velocity to 1 ly/s
+A@Increase velocity by 10x
+Z@Decrease velocity by 10x
+Q@Reverse direction
+X@Set movement direction toward center of screen
+.TE
+.PP
+Time
+.PP
+.TS
+tab (@);
+l l.
+Space@stop time
+L@Time 10x faster
+K@Time 10x slower
+J@Reverse time
+.TE
+.PP
+Options
+.PP
+.TS
+tab (@);
+l l.
+U@Toggle galaxy rendering
+N@Toggle planet and moon labels
+O@Toggle planet orbits
+V@Toggle HUD Text
+I@Toggle planet atmospheres (cloud textures)
+W@Toggle wireframe mode
+/@Toggle constellation diagrams
+= @Toggle constellation labels
+;@Toggle earth-based equatorial coordinate sphere
+B@Toggle star labels
+P@Toggle per-pixel lighting (if supported)
+[@Decrease limiting magnitude (fewer stars visible)
+]@Increase limiting magnitude (more stars visible)
+{@Decrease ambient illumination
+}@Increase ambient illumination
+,@Narrow field of view
+\.@Widen field of view
+.TE
+.PP
+Other
+.PP
+.TS
+tab (@);
+l l.
+D@Run demo
+`@Show frames rendered per second
+.TE
+.PP
+It's possible to choose a star or planet by name:  press Enter and type in the
+name, and pressing Enter again.  You can use common names, or Bayer
+designations and HD catalog numbers for stars.  Bayer and Flamsteed
+designations need to be entered like "Upsilon And" and "51 Peg".  The
+constellation must be given as a three letter abbreviation and the full Greek
+letter name spelled out.  HD catalog numbers must be entered with a space
+between HD and the number.
+.SH OPTIONS
+The \fIglut\fP based version accepts the usual X Window System specific
+options, namely:
+.TP 8
+.B \-display \fIDISPLAY\fP
+Specify the X server to connect to. If not specified, the value of the
+DISPLAY environment variable is used.
+.TP 8
+.B \-geometry \fIWxH+X+Y\fP
+Determines where window's should be created on the screen. The
+parameter following -geometry should be formatted as a
+standard X geometry specification.  The effect of using this option
+is to change the GLUT initial size and initial position the same as
+if glutInitWindowSize or glutInitWindowPosition were
+called directly.
+.TP 8
+.B \-iconic
+Requests all top-level windows be created in an iconic state.
+.TP 8
+.B \-indirect
+Force the use of indirect OpenGL rendering contexts.
+.TP 8
+.B \-direct
+Force the use of direct OpenGL rendering contexts (not all GLX
+implementations support direct rendering contexts). A fatal error
+is generated if direct rendering is not supported by the OpenGL
+implementation.
+
+If neither -indirect or -direct are used to force a particular
+behavior, GLUT will attempt to use direct rendering if possible
+and otherwise fallback to indirect rendering.
+.TP 8
+.B \-gldebug
+After processing callbacks and/or events, check if there are any
+OpenGL errors by calling glGetError.  If an error is reported,
+print out a warning by looking up the error code with
+gluErrorString.  Using this option is helpful in detecting
+OpenGL run-time errors.
+.TP 8
+.B \-sync
+Enable synchronous X protocol transactions.  This option makes it
+easier to track down potential   X protocol errors.
+.SH AUTHOR
+Celestia has been written by Chris Laurel <claurel@www.shatters.net> and
+it's available under the terms and conditions of the GNU General Public
+License from http://celestia.sf.net/

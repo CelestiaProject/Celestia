@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure --parallel --	\
+		-DENABLE_GLUT=ON	\
+		-DENABLE_GTK=ON		\
+		-DENABLE_QT=ON		\
+		-DENABLE_TOOLS=ON	\
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo
+
+
+override_dh_install:
+	dh_install --fail-missing
+	mv debian/celestia-common/usr/share/celestia/celestia.cfg \
+	   debian/celestia-common/etc/celestia.cfg
+	ln -s /etc/celestia.cfg debian/celestia-common/usr/share/celestia/

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Celestia (GLUT)
+GenericName=Space Simulator
+Comment=Explore the Universe in this detailed space simulation
+Type=Application
+Categories=Astronomy;Education;Science;
+Icon=celestia
+Exec=celestia-glut %f
+Terminal=false
