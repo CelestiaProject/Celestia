@@ -1,0 +1,6 @@
+#!/bin/sh -e
+
+update-alternatives --install /usr/bin/celestia celestia /usr/bin/celestia-glut 100 \
+        --slave /usr/share/man/man1/celestia.1.gz celestia.1.gz /usr/share/man/man1/celestia-glut.1.gz
+
+#DEBHELPER#

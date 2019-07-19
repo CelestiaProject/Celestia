@@ -1,0 +1,2 @@
+version=3
+https://github.com/CelestiaProject/Celestia/tags .*/([\d.]+)\.tar\.gz

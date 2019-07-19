@@ -1,0 +1,6 @@
+?package(celestia-gtk):\
+  needs="X11"\
+  section="Applications/Science/Astronomy"\
+  hints="OpenGL,Gnome"\
+  title="Celestia (Gtk)"\
+  command="/usr/bin/celestia-gtk"

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Celestia (Gtk)
+GenericName=Space Simulator
+Comment=Explore the Universe in this detailed space simulation
+Type=Application
+Categories=Astronomy;Education;Science;
+Icon=celestia
+Exec=celestia-gtk %f
+Terminal=false

@@ -1,0 +1,6 @@
+?package(celestia-glut):\
+  needs="X11"\
+  section="Applications/Science/Astronomy"\
+  hints="OpenGL"\
+  title="Celestia (GLUT)"\
+  command="/usr/bin/celestia-glut"

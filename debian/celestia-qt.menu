@@ -1,0 +1,6 @@
+?package(celestia-qt):\
+  needs="X11"\
+  section="Applications/Science/Astronomy"\
+  hints="OpenGL,KDE"\
+  title="Celestia (Qt)"\
+  command="/usr/bin/celestia-qt"
