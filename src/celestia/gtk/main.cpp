@@ -279,6 +279,16 @@ static void initRealize(GtkWidget* widget, AppData* app)
 /* MAIN */
 int main(int argc, char* argv[])
 {
+    /* Force number displays into C locale. */
+    setlocale(LC_NUMERIC, "C");
+    setlocale(LC_ALL, "");
+
+    #ifndef WIN32
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    bind_textdomain_codeset(PACKAGE, "UTF-8");
+    textdomain(PACKAGE);
+    #endif /* WIN32 */
+
     /* Initialize the structure that holds the application's vitals. */
     AppData* app = g_new0(AppData, 1);
 
@@ -338,16 +348,6 @@ int main(int argc, char* argv[])
     splashSetText(ss, "Initializing...");
 
     SetDebugVerbosity(0);
-
-    /* Force number displays into C locale. */
-    setlocale(LC_NUMERIC, "C");
-    setlocale(LC_ALL, "");
-
-    #ifndef WIN32
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    bind_textdomain_codeset(PACKAGE, "UTF-8");
-    textdomain(PACKAGE);
-    #endif /* WIN32 */
 
     app->core = new CelestiaCore();
     if (app->core == NULL)
