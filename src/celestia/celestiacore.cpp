@@ -3267,7 +3267,7 @@ void CelestiaCore::setScriptImage(float duration,
                                   const string& filename,
                                   bool fitscreen)
 {
-    if (!image || !image->isNewImage(filename))
+    if (image == nullptr || image->isNewImage(filename))
     {
         delete image;
         image = new CelestiaCore::OverlayImage(filename);
@@ -3290,7 +3290,7 @@ CelestiaCore::OverlayImage::OverlayImage(string f)
 
 void CelestiaCore::OverlayImage::render(float curr_time, int width, int height)
 {
-    if (!texture || (curr_time >= start + duration))
+    if (texture == nullptr || (curr_time >= start + duration))
         return;
 
     float xSize = texture->getWidth();
