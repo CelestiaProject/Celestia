@@ -374,7 +374,7 @@ static void eclipseCompute(GtkButton* button, EclipseData* ed)
     /* Initialize the eclipse finder */
     vector<Eclipse> eclipseListRaw;
     const SolarSystem* sys = ed->app->core->getSimulation()->getNearestSolarSystem();
-    if (sys != nullptr && sys->getStar()->getCatalogNumber() == 0)
+    if (sys != nullptr && sys->getStar()->getIndex() == 0)
     {
         Body* planete = sys->getPlanets()->find(ed->body);
         if (planete != nullptr)

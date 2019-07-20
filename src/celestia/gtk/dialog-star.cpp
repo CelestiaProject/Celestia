@@ -10,16 +10,15 @@
  *  $Id: dialog-star.cpp,v 1.3 2006-09-05 04:57:51 suwalski Exp $
  */
 
-#include <gtk/gtk.h>
-
 #include <celengine/body.h>
 #include <celengine/selection.h>
 #include <celengine/simulation.h>
 #include <celengine/star.h>
 #include <celengine/starbrowser.h>
-#include <celengine/stardb.h>
 #include <celengine/univcoord.h>
 #include <celutil/utf8.h>
+
+#include <gtk/gtk.h>
 
 #include "dialog-star.h"
 #include "actions.h"
@@ -254,13 +253,12 @@ static void addStars(sbData* sb)
     const char *values[5];
     GtkTreeIter iter;
 
-    StarDatabase* stardb;
     vector<const Star*> *stars;
     unsigned int currentLength;
     UniversalCoord ucPos;
 
     /* Load the catalogs and set data */
-    stardb = sb->app->simulation->getUniverse()->getStarCatalog();
+    const auto& stardb = sb->app->simulation->getUniverse()->getDatabase();
     sb->browser.refresh();
     stars = sb->browser.listStars(sb->numListStars);
     currentLength = (*stars).size();
@@ -273,10 +271,10 @@ static void addStars(sbData* sb)
     {
         char buf[20];
         const Star *star=(*stars)[i];
-        values[0] = g_strdup(ReplaceGreekLetterAbbr((stardb->getStarName(*star))).c_str());
+        values[0] = g_strdup(star->getName().c_str());
 
         /* Calculate distance to star */
-        float d = ucPos.offsetFromLy(star->getPosition()).norm();
+        float d = ucPos.offsetFromLy(star->getPosition().cast<float>()).norm();
 
         sprintf(buf, " %.3f ", d);
         values[1] = g_strdup(buf);

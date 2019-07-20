@@ -96,16 +96,16 @@ void menuContext(float, float, Selection sel)
         case Selection::Type_Star:
         {
             Simulation* sim = app->simulation;
-            name = ReplaceGreekLetterAbbr(sim->getUniverse()->getStarCatalog()->getStarName(*(sel.star())));
+            name = sel.star()->getName().str();
             AppendMenu(popup, NULL, name.c_str(), gtk_action_group_get_action(app->agMain, "CenterSelection"));
             AppendMenu(popup, NULL, NULL, 0);
             AppendMenu(popup, NULL, "_Goto", gtk_action_group_get_action(app->agMain, "GotoSelection"));
             /* Add info eventually:
              * AppendMenu(popup, NULL, "_Info", 0); */
 
-            SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-            SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getCatalogNumber());
-            if (iter != solarSystemCatalog->end())
+            const AstroDatabase::SolarSystemIndex& solarSystemCatalog = sim->getUniverse()->getDatabase().getSystems();
+            auto iter = solarSystemCatalog.find(sel.star()->getIndex());
+            if (iter != solarSystemCatalog.end())
             {
                 SolarSystem* solarSys = iter->second;
                 GtkMenu* planetsMenu = CreatePlanetarySystemMenu(name, solarSys->getPlanets());
@@ -119,7 +119,7 @@ void menuContext(float, float, Selection sel)
 
         case Selection::Type_DeepSky:
         {
-            AppendMenu(popup, NULL, app->simulation->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str(), gtk_action_group_get_action(app->agMain, "CenterSelection"));
+            AppendMenu(popup, NULL, sel.deepsky()->getName().c_str(), gtk_action_group_get_action(app->agMain, "CenterSelection"));
             AppendMenu(popup, NULL, NULL, 0);
             AppendMenu(popup, NULL, "_Goto", gtk_action_group_get_action(app->agMain, "GotoSelection"));
             AppendMenu(popup, NULL, "_Follow", gtk_action_group_get_action(app->agMain, "FollowSelection"));
