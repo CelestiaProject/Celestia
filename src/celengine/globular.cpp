@@ -36,7 +36,7 @@ constexpr const int starTexHeight = 128;
 
 static Color colorTable[256];
 constexpr const unsigned int GLOBULAR_POINTS  = 8192;
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__clang__)
 constexpr const float LumiShape = 3.0f, Lumi0 = exp(-LumiShape);
 #else
 static const float LumiShape = 3.0f, Lumi0 = exp(-LumiShape);
@@ -49,7 +49,7 @@ constexpr const float MinC = 0.50f, MaxC = 2.58f, BinWidth = (MaxC - MinC) / 8.0
 // The smaller P2 (< 1), the faster stars show up when resolution increases.
 constexpr const float P1 = 65.0f, P2 = 0.75f;
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__clang__)
 constexpr const float RRatio_min = pow(10.0f, 1.7f);
 #else
 static const float RRatio_min = pow(10.0f, 1.7f);
