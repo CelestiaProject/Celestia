@@ -15,7 +15,7 @@
 #include <utility>
 #include <ctime>
 #include <celmath/mathlib.h>
-#include "celestia.h"
+#include <config.h>
 #include "astro.h"
 #include "univcoord.h"
 #include <celutil/util.h>

@@ -7,7 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celestia.h"
+#include <config.h>
 #include "vecgl.h"
 #include "render.h"
 #include "astro.h"
@@ -107,7 +107,7 @@ void Nebula::render(const Vector3f& /*unused*/,
 }
 
 
-unsigned int Nebula::getRenderMask() const
+uint64_t Nebula::getRenderMask() const
 {
     return Renderer::ShowNebulae;
 }

@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <config.h>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -25,7 +26,6 @@
 #include <GLUT/glut.h>
 #endif
 #include <fmt/printf.h>
-#include <celengine/celestia.h>
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>

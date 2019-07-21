@@ -11,11 +11,11 @@
 #ifndef _CELENGINE_STAR_H_
 #define _CELENGINE_STAR_H_
 
+#include <config.h>
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
 #include <celengine/catentry.h>
 #include <celengine/univcoord.h>
-#include <celengine/celestia.h>
 #include <celengine/stellarclass.h>
 #include <celengine/multitexture.h>
 #include <celephem/rotation.h>

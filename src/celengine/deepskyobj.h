@@ -97,7 +97,7 @@ class DeepSkyObject : public CatEntry
                         float pixelSize,
                         const Renderer*) = 0;
 
-    virtual unsigned int getRenderMask() const { return 0; }
+    virtual uint64_t getRenderMask() const { return 0; }
     virtual unsigned int getLabelMask() const { return 0; }
 
     enum : uint32_t

@@ -15,8 +15,9 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <config.h>
+
 #include <cassert>
-#include <celengine/celestia.h>
 #include <celengine/starbrowser.h>
 
 #include <QCursor>

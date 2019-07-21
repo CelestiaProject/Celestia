@@ -38,12 +38,6 @@ using namespace std;
 using namespace celmath;
 
 
-// TODO: share this constant and function with render.cpp
-static const float MinRelativeOccluderRadius = 0.005f;
-
-static const int EclipseObjectMask = Body::Planet | Body::Moon | Body::DwarfPlanet | Body::Asteroid;
-
-
 // Functions to convert between Qt dates and Celestia dates.
 // TODO: Qt's date class doesn't support leap seconds
 static double QDateToTDB(const QDate& date)
@@ -60,49 +54,9 @@ static QDateTime TDBToQDate(double tdb)
     int msec = (int) ((date.seconds - sec) * 1000);
 
     return QDateTime(QDate(date.year, date.month, date.day),
-                     QTime(date.hour, date.minute, sec, msec));
+                     QTime(date.hour, date.minute, sec, msec),
+                     Qt::UTC);
 }
-
-struct EclipseOcculterSortPredicate
-{
-    bool operator()(const Eclipse& e0, const Eclipse& e1)
-    {
-        return e0.occulter->getName() < e1.occulter->getName();
-    }
-
-    int dummy;
-};
-
-struct EclipseReceiverSortPredicate
-{
-    bool operator()(const Eclipse& e0, const Eclipse& e1)
-    {
-        return e0.receiver->getName() < e1.receiver->getName();
-    }
-
-    int dummy;
-};
-
-struct EclipseStartTimeSortPredicate
-{
-    bool operator()(const Eclipse& e0, const Eclipse& e1)
-    {
-        return e0.startTime < e1.startTime;
-    }
-
-    int dummy;
-};
-
-struct EclipseDurationSortPredicate
-{
-    bool operator()(const Eclipse& e0, const Eclipse& e1)
-    {
-        return e0.endTime - e0.startTime < e1.endTime - e1.startTime;
-    }
-
-    int dummy;
-};
-
 
 
 class EventTableModel : public QAbstractTableModel
@@ -112,12 +66,12 @@ public:
     virtual ~EventTableModel() = default;
 
     // Methods from QAbstractTableModel
-    Qt::ItemFlags flags(const QModelIndex& index) const;
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    int rowCount(const QModelIndex& index) const;
-    int columnCount(const QModelIndex& index) const;
-    void sort(int column, Qt::SortOrder order);
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    int rowCount(const QModelIndex& index) const override;
+    int columnCount(const QModelIndex& index) const override;
+    void sort(int column, Qt::SortOrder order) override;
 
     void setEclipses(const vector<Eclipse>& _eclipses);
 
@@ -150,30 +104,27 @@ QVariant EventTableModel::data(const QModelIndex& index, int role) const
         return QVariant();
     }
 
+    if (role != Qt::DisplayRole)
+    {
+        return QVariant();
+    }
+
     const Eclipse& eclipse = eclipses[index.row()];
 
-    if (role == Qt::DisplayRole)
+    switch (index.column())
     {
-        switch (index.column())
-        {
-        case ReceiverColumn:
-            return QString(eclipse.receiver->getName(true).c_str());
-        case OcculterColumn:
-            return QString(eclipse.occulter->getName(true).c_str());
-        case StartTimeColumn:
-            return TDBToQDate(eclipse.startTime).toUTC().toString("dd MMM yyyy hh:mm");
-        case DurationColumn:
-            {
-                int minutes = (int) ((eclipse.endTime - eclipse.startTime) * 24 * 60);
-                return QString("%1:%2").arg(minutes / 60).arg(minutes % 60, 2, 10, QLatin1Char('0'));
-
-            }
-        default:
-            return QVariant();
-        }
+    case ReceiverColumn:
+        return QString(eclipse.receiver->getName(true).c_str());
+    case OcculterColumn:
+        return QString(eclipse.occulter->getName(true).c_str());
+    case StartTimeColumn:
+        return TDBToQDate(eclipse.startTime).toLocalTime().toString("dd MMM yyyy hh:mm");
+    case DurationColumn:
+    {
+        int minutes = (int) ((eclipse.endTime - eclipse.startTime) * 24 * 60);
+        return QString("%1:%2").arg(minutes / 60).arg(minutes % 60, 2, 10, QLatin1Char('0'));
     }
-    else
-    {
+    default:
         return QVariant();
     }
 }
@@ -217,16 +168,20 @@ void EventTableModel::sort(int column, Qt::SortOrder order)
     switch (column)
     {
     case ReceiverColumn:
-        std::sort(eclipses.begin(), eclipses.end(), EclipseReceiverSortPredicate());
+        std::sort(eclipses.begin(), eclipses.end(),
+                  [](const Eclipse& e0, const Eclipse& e1) { return e0.receiver->getName() < e1.receiver->getName(); });
         break;
     case OcculterColumn:
-        std::sort(eclipses.begin(), eclipses.end(), EclipseOcculterSortPredicate());
+        std::sort(eclipses.begin(), eclipses.end(),
+                  [](const Eclipse& e0, const Eclipse& e1) { return e0.occulter->getName() < e1.occulter->getName(); });
         break;
     case StartTimeColumn:
-        std::sort(eclipses.begin(), eclipses.end(), EclipseStartTimeSortPredicate());
+        std::sort(eclipses.begin(), eclipses.end(),
+                  [](const Eclipse& e0, const Eclipse& e1) { return e0.startTime < e1.startTime; });
         break;
     case DurationColumn:
-        std::sort(eclipses.begin(), eclipses.end(), EclipseDurationSortPredicate());
+        std::sort(eclipses.begin(), eclipses.end(),
+                  [](const Eclipse& e0, const Eclipse& e1) { return e0.endTime - e0.startTime < e1.endTime - e1.startTime; });
         break;
     }
 

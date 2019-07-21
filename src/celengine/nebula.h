@@ -20,27 +20,27 @@ class Nebula : public DeepSkyObject
 
     Nebula() = default;
 
-    virtual const char* getType() const;
-    virtual void setType(const std::string&);
-    virtual std::string getDescription() const;
+    const char* getType() const override;
+    void setType(const std::string&) override;
+    std::string getDescription() const override;
 
-    virtual bool pick(const celmath::Ray3d& ray,
-                      double& distanceToPicker,
-                      double& cosAngleToBoundCenter) const;
-    virtual bool load(AssociativeArray*, const std::string&);
-    virtual void render(const Eigen::Vector3f& offset,
-                        const Eigen::Quaternionf& viewerOrientation,
-                        float brightness,
-                        float pixelSize,
-                        const Renderer* renderer);
+    bool pick(const celmath::Ray3d& ray,
+              double& distanceToPicker,
+              double& cosAngleToBoundCenter) const override;
+    bool load(AssociativeArray*, const std::string&) override;
+    void render(const Eigen::Vector3f& offset,
+                const Eigen::Quaternionf& viewerOrientation,
+                float brightness,
+                float pixelSize,
+                const Renderer* renderer) override;
 
-    virtual unsigned int getRenderMask() const;
-    virtual unsigned int getLabelMask() const;
+    uint64_t getRenderMask() const override;
+    unsigned int getLabelMask() const override;
 
     void setGeometry(ResourceHandle);
     ResourceHandle getGeometry() const;
 
-    virtual const char* getObjTypeName() const;
+    const char* getObjTypeName() const override;
 
  public:
     enum NebulaType

@@ -20,7 +20,7 @@
 #include <celutil/bytes.h>
 #include <celutil/utf8.h>
 #include <celengine/dsodb.h>
-#include "celestia.h"
+#include <config.h>
 #include "astro.h"
 #include "parser.h"
 #include "parseobject.h"

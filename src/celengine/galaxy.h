@@ -30,36 +30,24 @@ class Galaxy : public DeepSkyObject
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    virtual const char* getType() const;
-    virtual void setType(const std::string&);
-    virtual std::string getDescription() const;
-    virtual std::string getCustomTmpName() const;
-    virtual void setCustomTmpName(const std::string&);
+    const char* getType() const override;
+    void setType(const std::string&) override;
+    std::string getDescription() const override;
+    std::string getCustomTmpName() const;
+    void setCustomTmpName(const std::string&);
 
     float getDetail() const;
     void setDetail(float);
-    //    float getBrightness() const;
-    //    void setBrightness();
 
-    virtual bool pick(const celmath::Ray3d& ray,
-                      double& distanceToPicker,
-                      double& cosAngleToBoundCenter) const;
-    virtual bool load(AssociativeArray*, const std::string&);
-    virtual void render(const Eigen::Vector3f& offset,
-                        const Eigen::Quaternionf& viewerOrientation,
-                        float brightness,
-                        float pixelSize,
-                        const Renderer* r = nullptr);
-    virtual void renderGalaxyPointSprites(const Eigen::Vector3f& offset,
-                                          const Eigen::Quaternionf& viewerOrientation,
-                                          float brightness,
-                                          float pixelSize);
-#if 0
-    virtual void renderGalaxyEllipsoid(const Eigen::Vector3f& offset,
-                                       const Eigen::Quaternionf& viewerOrientation,
-                                       float brightness,
-                                       float pixelSize);
-#endif
+    bool pick(const celmath::Ray3d& ray,
+              double& distanceToPicker,
+              double& cosAngleToBoundCenter) const override;
+    bool load(AssociativeArray*, const std::string&) override;
+    void render(const Eigen::Vector3f& offset,
+                const Eigen::Quaternionf& viewerOrientation,
+                float brightness,
+                float pixelSize,
+                const Renderer* r = nullptr) override;
 
     GalacticForm* getForm() const;
 
@@ -68,10 +56,10 @@ class Galaxy : public DeepSkyObject
     static float getLightGain();
     static void  setLightGain(float);
 
-    virtual unsigned int getRenderMask() const;
-    virtual unsigned int getLabelMask() const;
+    uint64_t getRenderMask() const override;
+    unsigned int getLabelMask() const override;
 
-    virtual const char* getObjTypeName() const;
+    const char* getObjTypeName() const override;
 
  public:
     enum GalaxyType {
@@ -94,15 +82,22 @@ class Galaxy : public DeepSkyObject
     };
 
  private:
-    float detail{ 1.0f };
-    std::string* customTmpName{ nullptr };
-    //    float brightness;
-    GalaxyType type{ S0 };
+    void renderGalaxyPointSprites(const Eigen::Vector3f& offset,
+                                  const Eigen::Quaternionf& viewerOrientation,
+                                  float brightness,
+                                  float pixelSize);
+#if 0
+    void renderGalaxyEllipsoid(const Eigen::Vector3f& offset,
+                               const Eigen::Quaternionf& viewerOrientation,
+                               float brightness,
+                               float pixelSize);
+#endif
+
+    float         detail{ 1.0f };
+    std::string*  customTmpName{ nullptr };
+    GalaxyType    type{ S0 };
     GalacticForm* form{ nullptr };
 
-    static float lightGain;
+    static float  lightGain;
 };
-
-//std::ostream& operator<<(std::ostream& s, const Galaxy::GalaxyType& sc);
-
 #endif // _GALAXY_H_

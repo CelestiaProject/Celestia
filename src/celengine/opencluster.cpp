@@ -7,12 +7,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celestia.h"
+#include <config.h>
 #include "render.h"
 #include "astro.h"
 #include "opencluster.h"
 #include "meshmanager.h"
-#include "vecgl.h"
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
 #include <celutil/debug.h>
@@ -77,7 +76,7 @@ void OpenCluster::render(const Vector3f& /*unused*/,
 }
 
 
-unsigned int OpenCluster::getRenderMask() const
+uint64_t OpenCluster::getRenderMask() const
 {
     return Renderer::ShowOpenClusters;
 }

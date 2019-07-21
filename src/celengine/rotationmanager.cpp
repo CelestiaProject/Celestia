@@ -8,7 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include "rotationmanager.h"
-#include "celestia.h"
+#include <config.h>
 #include <celephem/samporient.h>
 #include <celutil/debug.h>
 #include <iostream>

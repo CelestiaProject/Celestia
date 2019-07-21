@@ -878,6 +878,11 @@ void actionRenderOrbits(GtkToggleAction* action, AppData* app)
     setRenderFlag(app, Renderer::ShowOrbits, gtk_toggle_action_get_active(action));
 }
 
+void actionRenderFadingOrbits(GtkToggleAction* action, AppData* app)
+{
+    setRenderFlag(app, Renderer::ShowFadingOrbits, gtk_toggle_action_get_active(action));
+}
+
 
 void actionRenderPlanets(GtkToggleAction* action, AppData* app)
 {
@@ -1360,6 +1365,7 @@ void resyncRenderActions(AppData* app)
             case Renderer::ShowDiagrams: actionName = "RenderConstellations"; break;
             case Renderer::ShowCloudMaps: actionName = "RenderClouds"; break;
             case Renderer::ShowOrbits: actionName = "RenderOrbits"; break;
+            case Renderer::ShowFadingOrbits: actionName = "RenderFadingOrbits"; break;
             case Renderer::ShowCelestialSphere: actionName = "RenderCelestialGrid"; break;
             case Renderer::ShowNightMaps: actionName = "RenderNightLights"; break;
             case Renderer::ShowAtmospheres: actionName = "RenderAtmospheres"; break;

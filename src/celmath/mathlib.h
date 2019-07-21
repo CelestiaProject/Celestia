@@ -47,6 +47,12 @@ template<typename T> constexpr T clamp(T t)
     return (t < 0) ? 0 : ((t > 1) ? 1 : t);
 }
 
+// return t clamped to [low, high]
+template<typename T> constexpr T clamp(T t, T low, T high)
+{
+    return (t < low) ? low : ((t > high) ? high : t);
+}
+
 template<typename T> inline constexpr T degToRad(T d)
 {
     return d / 180 * static_cast<T>(PI);

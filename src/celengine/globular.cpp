@@ -11,18 +11,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celestia.h"
+#include <config.h>
 #include "astro.h"
 #include "render.h"
 #include "globular.h"
-#include "vecgl.h"
 #include "texture.h"
-#include <celmath/mathlib.h>
 #include <celmath/perlin.h>
 #include <celmath/intersect.h>
-#include <celutil/util.h>
-#include <celutil/debug.h>
-#include <GL/glew.h>
 #include <cmath>
 #include <fstream>
 #include <algorithm>
@@ -32,29 +27,34 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+using namespace celgl;
 
-static int cntrTexWidth = 512, cntrTexHeight = 512;
-static int starTexWidth = 128, starTexHeight = 128;
+constexpr const int cntrTexWidth  = 512;
+constexpr const int cntrTexHeight = 512;
+constexpr const int starTexWidth  = 128;
+constexpr const int starTexHeight = 128;
+
 static Color colorTable[256];
-static const unsigned int GLOBULAR_POINTS  = 8192;
+constexpr const unsigned int GLOBULAR_POINTS  = 8192;
+#ifndef _MSC_VER
+constexpr const float LumiShape = 3.0f, Lumi0 = exp(-LumiShape);
+#else
 static const float LumiShape = 3.0f, Lumi0 = exp(-LumiShape);
-
-// Reference values ( = data base averages) of core radius, King concentration
-// and mu25 isophote radius:
-
-//static const float R_c_ref = 0.83f, C_ref = 2.1f, R_mu25 = 40.32f;
+#endif
 
 // min/max c-values of globular cluster data
-
-static const float MinC = 0.50f, MaxC = 2.58f, BinWidth = (MaxC - MinC) / 8.0f + 0.02f;
+constexpr const float MinC = 0.50f, MaxC = 2.58f, BinWidth = (MaxC - MinC) / 8.0f + 0.02f;
 
 // P1 determines the zoom level, where individual cluster stars start to appear.
 // The smaller P2 (< 1), the faster stars show up when resolution increases.
+constexpr const float P1 = 65.0f, P2 = 0.75f;
 
-static const float P1 = 65.0f, P2 = 0.75f;
-
+#ifndef _MSC_VER
+constexpr const float RRatio_min = pow(10.0f, 1.7f);
+#else
 static const float RRatio_min = pow(10.0f, 1.7f);
-static float CBin, RRatio, XI, DiskSizeInPixels, Rr = 1.0f, Gg = 1.0f, Bb = 1.0f;
+#endif
+static float CBin, RRatio, XI, Rr = 1.0f, Gg = 1.0f, Bb = 1.0f;
 
 static GlobularForm** globularForms = nullptr;
 static Texture* globularTex = nullptr;
@@ -104,10 +104,11 @@ float relStarDensity(float eta)
 
      *  The resulting blending weight increases strongly -> 1 if the
      *  2d number density of stars rises, i.e for rho -> 0.
+
+     *  Since the central "cloud" is due to lack of visual resolution,
+     *  rather than cluster morphology, we limit it's size by
+     *  taking max(C_ref, CBin). Smaller c gives a shallower distribution!
      */
-     // Since the central "cloud" is due to lack of visual resolution,
-     // rather than cluster morphology, we limit it's size by
-     // taking max(C_ref, CBin). Smaller c gives a shallower distribution!
 
      float rRatio = max(RRatio_min, RRatio);
      float Xi = 1.0f / sqrt(1.0f + rRatio * rRatio);
@@ -124,7 +125,7 @@ static void CenterCloudTexEval(float u, float v, float /*w*/, unsigned char *pix
      */
 
     // Skyplane projected King_1962 profile at center (rho = eta = 0):
-    float c2d   = 1.0f - XI;
+    float c2d = 1.0f - XI;
 
     float eta = sqrt(u * u + v * v);  // u,v = (-1..1)
 
@@ -264,10 +265,10 @@ const char* Globular::getObjTypeName() const
     return "globular";
 }
 
-static const float RADIUS_CORRECTION = 0.025f;
+constexpr const float RADIUS_CORRECTION = 0.025f;
 bool Globular::pick(const Ray3d& ray,
-                  double& distanceToPicker,
-                  double& cosAngleToBoundCenter) const
+                    double& distanceToPicker,
+                    double& cosAngleToBoundCenter) const
 {
     if (!isVisible())
         return false;
@@ -321,9 +322,79 @@ void Globular::render(const Vector3f& offset,
                       const Quaternionf& viewerOrientation,
                       float brightness,
                       float pixelSize,
-                      const Renderer* /* unused */)
+                      const Renderer* r)
 {
-    renderGlobularPointSprites(offset, viewerOrientation, brightness, pixelSize);
+    renderGlobularPointSprites(offset, viewerOrientation, brightness, pixelSize, r);
+}
+
+
+void initGlobularData(VertexObject& vo, vector<GBlob>* points, GLint sizeLoc, GLint etaLoc)
+{
+    struct GlobularVtx
+    {
+        Vector3f position;
+        Vector3f color;
+        float    starSize;
+        float    eta;
+    };
+    vector<GlobularVtx> globularVtx;
+    globularVtx.reserve(4 + points->size());
+
+    // Reuse the buffer for a tidal
+    globularVtx.push_back({{-1, -1, 0}, {0, 0, 0}, 0, 0});
+    globularVtx.push_back({{ 1, -1, 0}, {0, 0, 0}, 1, 0});
+    globularVtx.push_back({{ 1, 1, 0},  {0, 0, 0}, 1, 1});
+    globularVtx.push_back({{-1, 1, 0},  {0, 0, 0}, 0, 1});
+
+    // regarding used constants:
+    // pow2 = 128;           // Associate "Red Giants" with the 128 biggest star-sprites
+    // starSize = br * 0.5f; // Maximal size of star sprites -> "Red Giants"
+    // br = 2 * brightness, where `brightness' is passed to Globular::render()
+
+    float starSize = 0.5f;
+    size_t pow2 = 128;
+    for (size_t i = 0; i < points->size(); ++i)
+    {
+        /*! Note that the [axis,angle] input in globulars.dsc transforms the
+         *  2d projected star distance r_2d in the globular frame to refer to the
+         *  skyplane frame for each globular! That's what I need here.
+         *
+         *  The [axis,angle] input will be needed anyway, when upgrading to
+         *  account for  ellipticities, with corresponding  inclinations and
+         *  position angles...
+         */
+
+        if ((i & pow2) != 0)
+        {
+            pow2    <<= 1;
+            starSize /= 1.25f;
+        }
+
+        GBlob b = (*points)[i];
+        GlobularVtx vtx;
+        vtx.starSize = starSize;
+        vtx.position = b.position;
+        vtx.eta      = b.radius_2d;
+
+        /* Colors of normal globular stars are given by color profile.
+         * Associate orange "Red Giant" stars with the largest sprite
+         * sizes (while pow2 = 128).
+         */
+
+        Color col    = (pow2 < 256) ? colorTable[255] : colorTable[b.colorIndex];
+        vtx.color    = col.toVector3();
+
+        globularVtx.push_back(vtx);
+    }
+
+    vo.allocate(globularVtx.size() * sizeof(GlobularVtx), globularVtx.data());
+    vo.setVertices(3, GL_FLOAT, false, sizeof(GlobularVtx), 0);
+    vo.setTextureCoords(2, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, starSize)); //HACK!!! used only for tidal
+    vo.setColors(3, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, color));
+    if (sizeLoc != -1)
+        vo.setVertexAttrib(sizeLoc, 1, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, starSize));
+    if (etaLoc != -1)
+        vo.setVertexAttrib(etaLoc,  1, GL_FLOAT, false, sizeof(GlobularVtx), offsetof(GlobularVtx, eta));
 }
 
 
@@ -331,7 +402,8 @@ void Globular::renderGlobularPointSprites(
                                       const Vector3f& offset,
                                       const Quaternionf& viewerOrientation,
                                       float brightness,
-                                      float pixelSize)
+                                      float pixelSize,
+                                      const Renderer* renderer)
 {
     if (form == nullptr)
         return;
@@ -342,7 +414,7 @@ void Globular::renderGlobularPointSprites(
 
     float minimumFeatureSize = 0.5f * pixelSize * distanceToDSO;
 
-    DiskSizeInPixels = getRadius() / minimumFeatureSize;
+    float DiskSizeInPixels = getRadius() / minimumFeatureSize;
 
     /*
      * Is the globular's apparent size big enough to
@@ -353,6 +425,12 @@ void Globular::renderGlobularPointSprites(
 
     if (DiskSizeInPixels < 1.0f)
         return;
+
+    auto *tidalProg = renderer->getShaderManager().getShader("tidal");
+    auto *globProg  = renderer->getShaderManager().getShader("globular");
+    if (tidalProg == nullptr || globProg == nullptr)
+        return;
+
     /*
      * When resolution (zoom) varies, the blended texture opacity is controlled by the
      * factor 'pixelWeight'. At low resolution, the latter starts at 1, but tends to 0,
@@ -360,7 +438,9 @@ void Globular::renderGlobularPointSprites(
      * The smaller P2 (<1), the faster pixelWeight -> 0, for DiskSizeInPixels >= P1.
      */
 
-    float pixelWeight = (DiskSizeInPixels >= P1)? 1.0f/(P2 + (1.0f - P2) * DiskSizeInPixels / P1): 1.0f;
+    float pixelWeight = 1.0f;
+    if (DiskSizeInPixels >= P1)
+        pixelWeight = 1.0f/(P2 + (1.0f - P2) * DiskSizeInPixels / P1);
 
     // Use same 8 c-bins as in globularForms below!
 
@@ -372,53 +452,48 @@ void Globular::renderGlobularPointSprites(
 
     if(centerTex[ic] == nullptr)
     {
-        centerTex[ic] = CreateProceduralTexture( cntrTexWidth, cntrTexHeight, GL_RGBA, CenterCloudTexEval);
+        centerTex[ic] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight, GL_RGBA,
+                                                CenterCloudTexEval);
     }
     assert(centerTex[ic] != nullptr);
 
     if (globularTex == nullptr)
     {
-        globularTex = CreateProceduralTexture( starTexWidth, starTexHeight, GL_RGBA,
-                                               GlobularTextureEval);
+        globularTex = CreateProceduralTexture(starTexWidth, starTexHeight, GL_RGBA,
+                                              GlobularTextureEval);
     }
     assert(globularTex != nullptr);
 
-    glEnable (GL_BLEND);
-    glEnable (GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_POINT_SPRITE);
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // XXX or transpose() instead of .adjoint()?
-    Matrix3f viewMat = viewerOrientation.toRotationMatrix();
-    Vector3f v0 = viewMat.adjoint() * Vector3f(-1, -1, 0);
-    Vector3f v1 = viewMat.adjoint() * Vector3f( 1, -1, 0);
-    Vector3f v2 = viewMat.adjoint() * Vector3f( 1,  1, 0);
-    Vector3f v3 = viewMat.adjoint() * Vector3f(-1,  1, 0);
-
     float tidalSize = 2 * tidalRadius;
-    Matrix3f m = Scaling(form->scale) * getOrientation().toRotationMatrix() * Scaling(tidalSize);
-
-    vector<GBlob>* points = form->gblobs;
-    unsigned int nPoints =
-                 (unsigned int) (points->size() * clamp(getDetail()));
 
     /* Render central cloud sprite (centerTex). It fades away when
      * distance from center or resolution increases sufficiently.
      */
 
+    vo.bind();
+    if (!vo.initialized())
+    {
+        auto i = globProg->attribIndex("starSize");
+        auto j = globProg->attribIndex("eta");
+        initGlobularData(vo, form->gblobs, i, j);
+    }
+
+    tidalProg->use();
     centerTex[ic]->bind();
 
-    float br = 2 * brightness;
+    Matrix3f viewMat = viewerOrientation.conjugate().toRotationMatrix();
+    tidalProg->vec4Param("color")       = Vector4f(Rr, Gg, Bb, min(2 * brightness * pixelWeight, 1.0f));
+    tidalProg->floatParam("tidalSize")  = tidalSize;
+    tidalProg->mat3Param("viewMat")     = viewMat;
+    tidalProg->samplerParam("tidalTex") = 0;
 
-    glColor4f(Rr, Gg, Bb, min(br * pixelWeight, 1.0f));
-
-    glBegin(GL_QUADS);
-
-    glTexCoord2f(0, 0);          glVertex(v0 * tidalSize);
-    glTexCoord2f(1, 0);          glVertex(v1 * tidalSize);
-    glTexCoord2f(1, 1);          glVertex(v2 * tidalSize);
-    glTexCoord2f(0, 1);          glVertex(v3 * tidalSize);
-
-    glEnd();
+    vo.draw(GL_TRIANGLE_FAN, 4);
 
     /*! Next, render globular cluster via distinct "star" sprites (globularTex)
      * for sufficiently large resolution and distance from center of globular.
@@ -427,74 +502,34 @@ void Globular::renderGlobularPointSprites(
      * or when distance from globular center decreases.
      */
 
+    GLsizei count = (GLsizei) (form->gblobs->size() * clamp(getDetail()));
+    float t = pow(2, 1 + log2(minimumFeatureSize / brightness) / log2(1/1.25f));
+    count = min(count, (GLsizei) clamp(t, 128.0f, (float) max(count, 128)));
+
+    globProg->use();
 
     globularTex->bind();
+    Matrix3f m = Scaling(form->scale) * getOrientation().toRotationMatrix() * Scaling(tidalSize);
+    globProg->mat3Param("m")            = m;
+    globProg->vec3Param("offset")       = offset;
+    globProg->floatParam("brightness")  = brightness;
+    globProg->floatParam("pixelWeight") = pixelWeight;
+    globProg->floatParam("RRatio")      = RRatio;
+    globProg->samplerParam("starTex")   = 0;
 
+    vo.draw(GL_POINTS, count, 4);
 
-    int pow2 = 128;                 // Associate "Red Giants" with the 128 biggest star-sprites
-
-    float starSize =  br * 0.5f; // Maximal size of star sprites -> "Red Giants"
-    float clipDistance = 100.0f; // observer distance [ly] from globular, where we
-                                 // start "morphing" the star-sprite sizes towards
-                                 // their physical values
-    glBegin(GL_QUADS);
-
-    for (unsigned int i = 0; i < nPoints; ++i)
-    {
-        GBlob         b  = (*points)[i];
-        Vector3f      p  = m * b.position;
-        float    eta_2d  = b.radius_2d;
-
-        /*! Note that the [axis,angle] input in globulars.dsc transforms the
-         *  2d projected star distance r_2d in the globular frame to refer to the
-         *  skyplane frame for each globular! That's what I need here.
-         *
-         *  The [axis,angle] input will be needed anyway, when upgrading to
-         *  account for  ellipticities, with corresponding  inclinations and
-         *  position angles...
-         */
-
-
-        if ((i & pow2) != 0)
-        {
-            pow2    <<=   1;
-            starSize /= 1.25f;
-
-            if (starSize < minimumFeatureSize)
-                   break;
-        }
-
-        float obsDistanceToStarRatio = (p + offset).norm() / clipDistance;
-        float saveSize = starSize;
-
-        if (obsDistanceToStarRatio < 1.0f)
-        {
-            // "Morph" the star-sprite sizes at close observer distance such that
-            // the overdense globular core is dissolved upon closing in.
-
-            starSize = starSize * min(obsDistanceToStarRatio, 1.0f);
-        }
-
-        /* Colors of normal globular stars are given by color profile.
-         * Associate orange "Red Giant" stars with the largest sprite
-         * sizes (while pow2 = 128).
-         */
-
-        Color col  = (pow2 < 256)? colorTable[255]: colorTable[b.colorIndex];
-        glColor4f(col.red(), col.green(), col.blue(),
-                  min(br * (1.0f - pixelWeight * relStarDensity(eta_2d)), 1.0f));
-
-        glTexCoord2f(0, 0);          glVertex(p + (v0 * starSize));
-        glTexCoord2f(1, 0);          glVertex(p + (v1 * starSize));
-        glTexCoord2f(1, 1);          glVertex(p + (v2 * starSize));
-        glTexCoord2f(0, 1);          glVertex(p + (v3 * starSize));
-
-        starSize = saveSize;
-    }
-    glEnd();
+    glUseProgram(0);
+    vo.unbind();
+    glDisable(GL_POINT_SPRITE);
+    glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    // These should be called but stars are broken then
+    // TODO: find and fix
+    //glDisable(GL_BLEND);
+    //glDisable(GL_TEXTURE_2D);
 }
 
-unsigned int Globular::getRenderMask() const
+uint64_t Globular::getRenderMask() const
 {
     return Renderer::ShowGlobulars;
 }

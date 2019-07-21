@@ -12,7 +12,7 @@
 #include <celengine/selection.h>
 #include <cassert>
 #include <fmt/printf.h>
-#include "celestia.h"
+#include <config.h>
 #include "astro.h"
 #include "star.h"
 #include "texmanager.h"

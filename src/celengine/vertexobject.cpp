@@ -35,9 +35,9 @@ VertexObject::~VertexObject()
     glDeleteBuffers(1, &m_vboId);
 }
 
-void VertexObject::bind()
+void VertexObject::bind() noexcept
 {
-    if (m_firstBind)
+    if ((m_state & State::Initialize) != 0)
     {
         if (GLEW_ARB_vertex_array_object)
         {
@@ -52,6 +52,8 @@ void VertexObject::bind()
         if (GLEW_ARB_vertex_array_object)
         {
             glBindVertexArray(m_vaoId);
+            if ((m_state & State::Update) != 0)
+                glBindBuffer(m_bufferType, m_vboId);
         }
         else
         {
@@ -61,11 +63,17 @@ void VertexObject::bind()
     }
 }
 
-void VertexObject::unbind()
+void VertexObject::bindWritable() noexcept
+{
+    m_state |= State::Update;
+    bind();
+}
+
+void VertexObject::unbind() noexcept
 {
     if (GLEW_ARB_vertex_array_object)
     {
-        if (m_firstBind)
+        if ((m_state & (State::Initialize | State::Update)) != 0)
             glBindBuffer(m_bufferType, 0);
         glBindVertexArray(0);
     }
@@ -74,22 +82,22 @@ void VertexObject::unbind()
         disableAttribArrays();
         glBindBuffer(m_bufferType, 0);
     }
-    m_firstBind = false;
+    m_state = State::NormalState;
 }
 
-bool VertexObject::allocate(const void* data)
+bool VertexObject::allocate(const void* data) noexcept
 {
     glBufferData(m_bufferType, m_bufferSize, data, m_streamType);
     return glGetError() != GL_NO_ERROR;
 }
 
-bool VertexObject::allocate(GLsizeiptr bufferSize, const void* data)
+bool VertexObject::allocate(GLsizeiptr bufferSize, const void* data) noexcept
 {
     m_bufferSize = bufferSize;
     return allocate(data);
 }
 
-bool VertexObject::allocate(GLenum bufferType, GLsizeiptr bufferSize, const void* data, GLenum streamType)
+bool VertexObject::allocate(GLenum bufferType, GLsizeiptr bufferSize, const void* data, GLenum streamType) noexcept
 {
     m_bufferType = bufferType;
     m_bufferSize = bufferSize;
@@ -97,21 +105,21 @@ bool VertexObject::allocate(GLenum bufferType, GLsizeiptr bufferSize, const void
     return allocate(data);
 }
 
-bool VertexObject::setBufferData(const void* data, GLintptr offset, GLsizeiptr size)
+bool VertexObject::setBufferData(const void* data, GLintptr offset, GLsizeiptr size) noexcept
 {
     glBufferSubData(m_bufferType, offset, size == 0 ? m_bufferSize : size, data);
     return glGetError() != GL_NO_ERROR;
 }
 
-void VertexObject::draw(GLenum primitive, GLsizei count, GLint first)
+void VertexObject::draw(GLenum primitive, GLsizei count, GLint first) noexcept
 {
-    if (m_firstBind)
+    if ((m_state & State::Initialize) != 0)
         enableAttribArrays();
 
     glDrawArrays(primitive, first, count);
 }
 
-void VertexObject::enableAttribArrays()
+void VertexObject::enableAttribArrays() noexcept
 {
      glBindBuffer(m_bufferType, m_vboId);
 
@@ -183,7 +191,7 @@ void VertexObject::enableAttribArrays()
     }
 }
 
-void VertexObject::disableAttribArrays()
+void VertexObject::disableAttribArrays() noexcept
 {
     if (m_attrIndexes & AttrType::Vertices)
         glDisableClientState(GL_VERTEX_ARRAY);
@@ -218,49 +226,49 @@ void VertexObject::disableAttribArrays()
     glBindBuffer(m_bufferType, 0);
 }
 
-void VertexObject::setVertices(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
+void VertexObject::setVertices(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
     m_attrIndexes |= AttrType::Vertices;
     m_params[0] = { offset, stride, count, type, normalized };
 }
 
-void VertexObject::setNormals(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
+void VertexObject::setNormals(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
     m_attrIndexes |= AttrType::Normal;
     m_params[1] = { offset, stride, count, type, normalized };
 }
 
-void VertexObject::setColors(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
+void VertexObject::setColors(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
     m_attrIndexes |= AttrType::Color;
     m_params[2] = { offset, stride, count, type, normalized };
 }
 
-void VertexObject::setIndexes(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
+void VertexObject::setIndexes(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
     m_attrIndexes |= AttrType::Index;
     m_params[3] = { offset, stride, count, type, normalized };
 }
 
-void VertexObject::setTextureCoords(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
+void VertexObject::setTextureCoords(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
     m_attrIndexes |= AttrType::Texture;
     m_params[4] = { offset, stride, count, type, normalized };
 }
 
-void VertexObject::setEdgeFlags(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
+void VertexObject::setEdgeFlags(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
     m_attrIndexes |= AttrType::EdgeFlag;
     m_params[5] = { offset, stride, count, type, normalized };
 }
 
-void VertexObject::setTangents(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
+void VertexObject::setTangents(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
     m_attrIndexes |= AttrType::Tangent;
     m_params[6] = { offset, stride, count, type, normalized };
 }
 
-void VertexObject::setPointSizes(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
+void VertexObject::setPointSizes(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
     m_attrIndexes |= AttrType::PointSize;
     m_params[7] = { offset, stride, count, type, normalized };

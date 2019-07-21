@@ -21,27 +21,28 @@ class OpenCluster : public DeepSkyObject
 
     OpenCluster() = default;
 
-    virtual const char* getType() const;
-    virtual void setType(const std::string&);
-    virtual std::string getDescription() const;
+    const char* getType() const override;
+    void setType(const std::string&) override;
+    std::string getDescription() const override;
 
-    virtual bool pick(const celmath::Ray3d& ray,
-                      double& distanceToPicker,
-                      double& cosAngleToBoundCenter) const;
-    virtual bool load(AssociativeArray*, const std::string&);
-    virtual void render(const Eigen::Vector3f& offset,
-                        const Eigen::Quaternionf& viewerOrientation,
-                        float brightness,
-                        float pixelSize,
-                        const Renderer* r = nullptr);
+    bool pick(const celmath::Ray3d& ray,
+              double& distanceToPicker,
+              double& cosAngleToBoundCenter) const override;
+    bool load(AssociativeArray*, const std::string&) override;
+    void render(const Eigen::Vector3f& offset,
+                const Eigen::Quaternionf& viewerOrientation,
+                float brightness,
+                float pixelSize,
+                const Renderer* r = nullptr) override;
 
-    virtual unsigned int getRenderMask() const;
-    virtual unsigned int getLabelMask() const;
+    uint64_t getRenderMask() const override;
+    unsigned int getLabelMask() const override;
 
-    virtual const char* getObjTypeName() const;
+    const char* getObjTypeName() const override;
 
  public:
-    enum ClusterType {
+    enum ClusterType
+    {
         Open          = 0,
         Globular      = 1,
         NotDefined    = 2

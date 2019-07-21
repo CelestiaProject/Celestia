@@ -7,10 +7,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <config.h>
 #include <algorithm>
 #include <celutil/debug.h>
 #include <celutil/util.h>
-#include <celengine/celestia.h>
 #include <celengine/astro.h>
 #include <celengine/parser.h>
 #include "destination.h"
