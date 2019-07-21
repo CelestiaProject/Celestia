@@ -36,6 +36,7 @@ Q_OBJECT
     void slotFollowSelection();
     void slotSyncOrbitSelection();
     void slotSelectAlternateSurface();
+    void slotSelectPrimary();
     void slotSelectChildObject();
     void slotMark();
     void slotUnmark();
@@ -59,6 +60,10 @@ Q_OBJECT
     void selectionInfoRequested(Selection& sel);
 
  private:
+    bool hasPrimary(Body *body);
+    bool hasPrimaryBody(Body *body, int classification);
+    bool hasPrimaryStar(Body *body);
+    bool hasPrimaryAroundBarycenter(Body *body);
     QMenu* createMarkMenu();
     QMenu* createReferenceVectorMenu();
     QMenu* createAlternateSurfacesMenu();

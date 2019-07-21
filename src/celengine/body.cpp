@@ -492,6 +492,90 @@ void Body::setSatellites(PlanetarySystem* ssys)
 }
 
 
+bool Body::hasPrimaryStar() const
+{
+    return getSystem() != nullptr && getSystem()->getStar() != nullptr;
+}
+
+bool Body::hasPrimaryBody(int classification) const
+{
+    return getSystem() != nullptr && getSystem()->getPrimaryBody() != nullptr &&
+           (getSystem()->getPrimaryBody()->getClassification() & classification);
+}
+
+bool Body::hasPrimaryAroundBarycenter() const
+{
+    if (getSystem() != nullptr && getSystem()->getPrimaryBody() != nullptr &&
+        (getSystem()->getPrimaryBody()->getClassification() & Body::Invisible))
+    {
+        for (int bodyIdx = 0; bodyIdx < getSystem()->getSystemSize(); bodyIdx++) {
+            if (getSystem()->getBody(bodyIdx)->getClassification() & (Body::Planet | Body::DwarfPlanet)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Body::hasPrimary() const
+{
+    switch (getClassification()) {
+        case Body::Planet:
+        case Body::DwarfPlanet:
+        case Body::Asteroid:
+        case Body::Comet:
+            return hasPrimaryStar();
+        case Body::Moon:
+        case Body::MinorMoon:
+            return hasPrimaryBody(Body::Planet | Body::DwarfPlanet) ||
+                   hasPrimaryAroundBarycenter();
+        case Body::Spacecraft:
+            return hasPrimaryBody(Body::Planet | Body::DwarfPlanet | Body::Asteroid |
+                                  Body::Comet | Body::Moon | Body::MinorMoon) ||
+                   hasPrimaryStar();
+        default:
+            break;
+    }
+    return false;
+}
+
+CatEntry* Body::getPrimary() const
+{
+    PlanetarySystem* system = getSystem();
+    if (system != nullptr)
+    {
+        Body* primaryBody = system->getPrimaryBody();
+        if (primaryBody != nullptr)
+        {
+            int classification = primaryBody->getClassification();
+            if (classification & (Body::Planet | Body::DwarfPlanet | Body::Moon |
+                                  Body::MinorMoon | Body::Asteroid | Body::Comet))
+            {
+                return primaryBody;
+            }
+            else if ((classification & Body::Invisible) &&
+                     (getClassification() & (Body::Moon | Body::MinorMoon)))
+            {
+                for (int bodyIdx = 0; bodyIdx < system->getSystemSize(); bodyIdx++)
+                {
+                    Body *barycenterBody = system->getBody(bodyIdx);
+                    if (barycenterBody->getClassification() & (Body::Planet | Body::DwarfPlanet))
+                    {
+                        return barycenterBody;
+                    }
+                }
+            }
+        }
+        Star* primaryStar = system->getStar();
+        if (primaryStar != nullptr)
+        {
+            return primaryStar;
+        }
+    }
+    return nullptr;
+}
+
+
 RingSystem* Body::getRings() const
 {
     return rings;

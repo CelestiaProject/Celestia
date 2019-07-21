@@ -240,6 +240,9 @@ class Body : public CatEntry
     PlanetarySystem* getSatellites() const;
     void setSatellites(PlanetarySystem*);
 
+    bool hasPrimary() const;
+    CatEntry* getPrimary() const;
+
     float getBoundingRadius() const;
     float getCullingRadius() const;
 
@@ -360,6 +363,10 @@ class Body : public CatEntry
  private:
     void setName(const std::string& name);
     void recomputeCullingRadius();
+
+    bool hasPrimaryStar() const;
+    bool hasPrimaryBody(int classification) const;
+    bool hasPrimaryAroundBarycenter() const;
 
  private:
     std::vector<std::string> names{ 1 };

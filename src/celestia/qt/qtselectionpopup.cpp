@@ -180,19 +180,23 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         addAction(action);
     }
 
-    // Reference vector submenu
     if (selection.body() != nullptr)
     {
+        // Reference vector submenu
         QMenu* refVecMenu = createReferenceVectorMenu();
         addMenu(refVecMenu);
-    }
 
-    if (selection.body() != nullptr)
-    {
         // Alternate surface submenu
         QMenu* surfacesMenu = createAlternateSurfacesMenu();
         if (surfacesMenu != nullptr)
             addMenu(surfacesMenu);
+
+        if (selection.body()->hasPrimary())
+        {
+            QAction *action = new QAction(_("Primary"), this);
+            connect(action, SIGNAL(triggered()), this, SLOT(slotSelectPrimary()));
+            addAction(action);
+        }
 
         // Child object menus
         PlanetarySystem* sys = selection.body()->getSatellites();
@@ -494,6 +498,17 @@ void SelectionPopup::slotSelectAlternateSurface()
         const char* surfName = action->data().toString().toUtf8().constData();
         Simulation* sim = appCore->getSimulation();
         sim->getActiveObserver()->setDisplayedSurface(surfName);
+    }
+}
+
+
+void SelectionPopup::slotSelectPrimary()
+{
+    Body *selectedBody = selection.body();
+    if (selectedBody != nullptr)
+    {
+        Simulation* sim = appCore->getSimulation();
+        sim->setSelection(selectedBody->getPrimary()->toSelection());
     }
 }
 
