@@ -7,19 +7,21 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <string>
-#include <iostream>
-#include <fstream>
 #include <cmath>
 #include <cassert>
+#include <cmath>
+#include <iostream>
+#include <fstream>
+#include <string>
 #include <utility>
 #include <fmt/printf.h>
-#include "celutil/debug.h"
-#include "celutil/directory.h"
-#include "celutil/filetype.h"
-#include "virtualtex.h"
 #include <GL/glew.h>
+#include <celutil/debug.h>
+#include <celutil/filesystem.h>
+#include <celutil/filetype.h>
 #include "parser.h"
+#include "virtualtex.h"
+
 
 using namespace std;
 
@@ -257,31 +259,25 @@ void VirtualTexture::populateTileTree()
 
     for (int i = 0; i < MaxResolutionLevels; i++)
     {
-        string path = fmt::sprintf("%slevel%d", tilePath, i);
-        if (IsDirectory(path))
+        fs::path path(fmt::sprintf("%slevel%d", tilePath, i));
+        if (fs::is_directory(path))
         {
-            Directory* dir = OpenDirectory(path);
-            if (dir)
-            {
-                maxLevel = i + baseSplit;
-                int uLimit = 2 << maxLevel;
-                int vLimit = 1 << maxLevel;
+            maxLevel = i + baseSplit;
+            int uLimit = 2 << maxLevel;
+            int vLimit = 1 << maxLevel;
 
-                string filename;
-                while (dir->nextFile(filename))
+            for (auto& d : fs::directory_iterator(path))
+            {
+                int u = -1, v = -1;
+                if (sscanf(d.path().string().c_str(), pattern.c_str(), &u, &v) == 2)
                 {
-                    int u = -1, v = -1;
-                    if (sscanf(filename.c_str(), pattern.c_str(), &u, &v) == 2)
+                    if (u >= 0 && v >= 0 && u < uLimit && v < vLimit)
                     {
-                        if (u >= 0 && v >= 0 && u < uLimit && v < vLimit)
-                        {
-                            // Found a tile, so add it to the quadtree
-                            Tile* tile = new Tile();
-                            addTileToTree(tile, maxLevel, (unsigned int) u, (unsigned int) v);
-                        }
+                        // Found a tile, so add it to the quadtree
+                        Tile* tile = new Tile();
+                        addTileToTree(tile, maxLevel, (unsigned int) u, (unsigned int) v);
                     }
                 }
-                delete dir;
             }
         }
     }

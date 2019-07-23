@@ -8,7 +8,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celutil/util.h"
+#include <celutil/util.h>
+#include <celutil/filesystem.h>
 #include "shadermanager.h"
 #include <GL/glew.h>
 #include <cmath>
@@ -19,7 +20,6 @@
 #include <fmt/printf.h>
 #include <cassert>
 #include <Eigen/Geometry>
-#include <sys/stat.h>
 
 using namespace Eigen;
 using namespace std;
@@ -338,12 +338,6 @@ ShaderManager::getShader(const string& name, const string& vs, const string& fs)
     return prog;
 }
 
-#ifndef _WIN32
-constexpr const char fsDelimeter = '/';
-#else
-constexpr const char fsDelimeter = '\\';
-#endif
-
 CelestiaGLProgram*
 ShaderManager::getShader(const string& name)
 {
@@ -354,23 +348,18 @@ ShaderManager::getShader(const string& name)
         return iter->second;
     }
 
-    auto vsName = fmt::sprintf("shaders%c%s_vert.glsl", fsDelimeter, name);
-    auto fsName = fmt::sprintf("shaders%c%s_frag.glsl", fsDelimeter, name);
+    fs::path dir("shaders");
+    auto vsName = dir / fmt::sprintf("%s_vert.glsl", name);
+    auto fsName = dir / fmt::sprintf("%s_frag.glsl", name);
 
-    struct stat s;
-    if (stat(vsName.c_str(), &s) == -1)
+    std::error_code ec;
+    uintmax_t vsSize = fs::file_size(vsName, ec);
+    uintmax_t fsSize = fs::file_size(fsName, ec);
+    if (vsSize == static_cast<uintmax_t>(-1) || fsSize == static_cast<uintmax_t>(-1))
     {
-        fmt::fprintf(cerr, "Failed to stat %s\n", vsName);
+        fmt::fprintf(cerr, "Failed to get file size of %s or %s\n", vsName, fsName);
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
     }
-    auto vsSize = s.st_size;
-
-    if (stat(fsName.c_str(), &s) == -1)
-    {
-        fmt::fprintf(cerr, "Failed to stat %s\n", fsName);
-        return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
-    }
-    auto fsSize = s.st_size;
 
     ifstream vsf(vsName);
     if (!vsf.good())

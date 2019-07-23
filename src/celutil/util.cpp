@@ -10,6 +10,11 @@
 // of the License, or (at your option) any later version.
 
 #include "util.h"
+#ifdef _WIN32
+#include <Shlobj.h>
+#else
+#include <wordexp.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -83,4 +88,42 @@ string LocaleFilename(const string & filename)
     }
 
     return localeFilename;
+}
+
+
+string WordExp(const std::string& filename)
+{
+#ifdef _WIN32
+    if (filename[0] == '~' && filename[1] == '/')
+    {
+        char path[MAX_PATH + 1];
+        if (SHGetSpecialFolderPathA(HWND_DESKTOP, path, CSIDL_DESKTOPDIRECTORY, FALSE))
+            return string(path) + filename.substr(1);
+    }
+    return filename;
+#else
+    wordexp_t result;
+
+    switch(wordexp(filename.c_str(), &result, WRDE_NOCMD))
+    {
+    case 0: // successful
+        break;
+    case WRDE_NOSPACE:
+            // If the error was `WRDE_NOSPACE',
+            // then perhaps part of the result was allocated.
+        wordfree(&result);
+    default: // some other error
+        return filename;
+    }
+
+    if (result.we_wordc != 1)
+    {
+        wordfree(&result);
+        return filename;
+    }
+
+    string expanded(result.we_wordv[0]);
+    wordfree(&result);
+    return expanded;
+#endif
 }

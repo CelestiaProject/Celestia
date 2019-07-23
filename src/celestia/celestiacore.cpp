@@ -33,7 +33,6 @@
 #include <celmath/geomutil.h>
 #include <celutil/util.h>
 #include <celutil/filetype.h>
-#include <celutil/directory.h>
 #include <celutil/formatnum.h>
 #include <celutil/debug.h>
 #include <celutil/utf8.h>
@@ -53,6 +52,8 @@
 #ifdef CELX
 #include <celephem/scriptobject.h>
 #endif
+
+#include <celutil/filesystem.h>
 
 // TODO: proper gettext
 #define C_(a, b) (b)
@@ -3945,18 +3946,21 @@ void CelestiaCore::renderOverlay()
 }
 
 
-class SolarSystemLoader : public EnumFilesHandler
+class SolarSystemLoader
 {
- public:
     Universe* universe;
     ProgressNotifier* notifier;
+
+ public:
     SolarSystemLoader(Universe* u, ProgressNotifier* pn) : universe(u), notifier(pn) {};
 
-    bool process(const string& filename)
+    bool process(const fs::path& filepath)
     {
+        const string& filename = filepath.filename().string();
+        const string& fullname = filepath.string();
+
         if (DetermineFileType(filename) == Content_CelestiaCatalog)
         {
-            string fullname = getPath() + '/' + filename;
             fmt::fprintf(clog, _("Loading solar system catalog: %s\n"), fullname);
             if (notifier != nullptr)
                 notifier->update(filename);
@@ -3966,7 +3970,7 @@ class SolarSystemLoader : public EnumFilesHandler
             {
                 LoadSolarSystemObjects(solarSysFile,
                                        *universe,
-                                       getPath());
+                                       filepath.parent_path().string());
             }
         }
 
@@ -3974,14 +3978,14 @@ class SolarSystemLoader : public EnumFilesHandler
     };
 };
 
-template <class OBJDB> class CatalogLoader : public EnumFilesHandler
+template <class OBJDB> class CatalogLoader
 {
-public:
     OBJDB*      objDB;
     string      typeDesc;
     ContentType contentType;
     ProgressNotifier* notifier;
 
+ public:
     CatalogLoader(OBJDB* db,
                   const std::string& typeDesc,
                   const ContentType& contentType,
@@ -3993,11 +3997,13 @@ public:
     {
     }
 
-    bool process(const string& filename)
+    bool process(const fs::path& filepath)
     {
+        const string& filename = filepath.filename().string();
+        const string& fullname = filepath.string();
+
         if (DetermineFileType(filename) == contentType)
         {
-            string fullname = getPath() + '/' + filename;
             fmt::fprintf(clog, _("Loading %s catalog: %s\n"), typeDesc, fullname);
             if (notifier)
                 notifier->update(filename);
@@ -4005,10 +4011,9 @@ public:
             ifstream catalogFile(fullname, ios::in);
             if (catalogFile.good())
             {
-                bool success = objDB->load(catalogFile, getPath());
+                bool success = objDB->load(catalogFile, filepath.parent_path().string());
                 if (!success)
                 {
-                    //DPRINTF(0, _("Error reading star file: %s\n"), fullname.c_str());
                     DPRINTF(0, "Error reading %s catalog file: %s\n", typeDesc.c_str(), fullname.c_str());
                 }
             }
@@ -4127,23 +4132,17 @@ bool CelestiaCore::initSimulation(const string& configFileName,
     }
 
     // Next, read all the deep sky files in the extras directories
+    for (const auto& _dir : config->extrasDirs)
     {
-        for (const auto& _dir : config->extrasDirs)
-        {
-            if (_dir != "")
-            {
-                Directory* dir = OpenDirectory(_dir);
+        if (_dir.empty())
+            continue;
 
-                DeepSkyLoader loader(dsoDB,
-                                     "deep sky object",
-                                     Content_CelestiaDeepSkyCatalog,
-                                     progressNotifier);
-                loader.pushDir(_dir);
-                dir->enumFiles(loader, true);
-
-                delete dir;
-            }
-        }
+        DeepSkyLoader loader(dsoDB,
+                             "deep sky object",
+                             Content_CelestiaDeepSkyCatalog,
+                             progressNotifier);
+        for (const auto& fn : fs::recursive_directory_iterator(fs::path(_dir)))
+            loader.process(fn);
     }
     dsoDB->finish();
     universe->setDSOCatalog(dsoDB);
@@ -4176,16 +4175,12 @@ bool CelestiaCore::initSimulation(const string& configFileName,
     {
         for (const auto& _dir : config->extrasDirs)
         {
-            if (_dir != "")
-            {
-                Directory* dir = OpenDirectory(_dir);
+            if (_dir.empty())
+                continue;
 
-                SolarSystemLoader loader(universe, progressNotifier);
-                loader.pushDir(_dir);
-                dir->enumFiles(loader, true);
-
-                delete dir;
-            }
+            SolarSystemLoader loader(universe, progressNotifier);
+            for (const auto& fn : fs::recursive_directory_iterator(fs::path(_dir)))
+                loader.process(fn);
         }
     }
 
@@ -4443,16 +4438,12 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     // Now, read supplemental star files from the extras directories
     for (const auto& _dir : config->extrasDirs)
     {
-        if (_dir != "")
-        {
-            Directory* dir = OpenDirectory(_dir);
+        if (_dir.empty())
+            continue;
 
-            StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
-            loader.pushDir(_dir);
-            dir->enumFiles(loader, true);
-
-            delete dir;
-        }
+        StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
+        for (const auto& fn : fs::recursive_directory_iterator(fs::path(_dir)))
+            loader.process(fn);
     }
 
     starDB->finish();
@@ -4643,7 +4634,8 @@ void CelestiaCore::initMovieCapture(MovieCapture* mc)
 
 void CelestiaCore::recordBegin()
 {
-    if (movieCapture != nullptr) {
+    if (movieCapture != nullptr)
+    {
         recording = true;
         movieCapture->recordingStatus(true);
     }
@@ -4887,25 +4879,33 @@ bool CelestiaCore::referenceMarkEnabled(const string& refMark, Selection sel) co
 
 
 #ifdef CELX
-class LuaPathFinder : public EnumFilesHandler
+class LuaPathFinder
 {
- public:
     string luaPath;
-    LuaPathFinder(string s) : luaPath(s) {};
-    string lastPath;
+    fs::path lastPath;
 
-    bool process(const string& filename)
+ public:
+    LuaPathFinder(string s) : luaPath(s) {};
+
+    const string& getLuaPath() const
     {
-        if (getPath() != lastPath)
+        return luaPath;
+    }
+
+    bool process(const fs::path& filepath)
+    {
+        const string& filename = filepath.filename().string();
+
+        if (filepath.parent_path() != lastPath)
         {
-            int extPos = filename.rfind('.');
-            if (extPos != (int)string::npos)
+            auto extPos = filename.rfind('.');
+            if (extPos != string::npos)
             {
                 string ext = string(filename, extPos, filename.length() - extPos + 1);
                 if (ext == ".lua")
                 {
-                    lastPath = getPath();
-                    string newPatt = getPath()+"/?.lua;";
+                    lastPath = filepath.parent_path();
+                    string newPatt = (lastPath / "?.lua;").string();
                     extPos = luaPath.rfind(newPatt);
                     if (extPos < 0)
                     {
@@ -4937,16 +4937,13 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
     {
         for (const auto& _dir : config->extrasDirs)
         {
-            if (_dir != "")
-            {
-                Directory* dir = OpenDirectory(_dir);
+            if (_dir.empty())
+                continue;
 
-                LuaPathFinder loader("");
-                loader.pushDir(_dir);
-                dir->enumFiles(loader, true);
-                LuaPath += loader.luaPath;
-                delete dir;
-            }
+            LuaPathFinder loader("");
+            for (const auto& fn : fs::recursive_directory_iterator(fs::path(_dir)))
+                loader.process(fn);
+            LuaPath += loader.getLuaPath();
         }
     }
 

@@ -12,7 +12,6 @@
 #include <fstream>
 #include <cassert>
 #include <celutil/debug.h>
-#include <celutil/directory.h>
 #include <celutil/util.h>
 #include <celengine/texmanager.h>
 #include "configfile.h"
