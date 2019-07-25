@@ -29,7 +29,7 @@ using namespace celmath;
 
 SSCDataLoader::SSCDataLoader(Universe *univ, const string& resPath) : AstroDataLoader(&	univ->getDatabase(), Content_CelestiaCatalog, resPath)
 {
-	m_univ = univ;
+     m_univ = univ;
 }
 
 enum BodyType

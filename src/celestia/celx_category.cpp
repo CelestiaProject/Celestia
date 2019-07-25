@@ -110,7 +110,7 @@ static int category_getchildren(lua_State *l)
 
     UserCategory *c = *celx.getThis<UserCategory*>();
     UserCategory::CategorySet set = c->children();
-    return celx.pushIterable<UserCategory*>(set);
+    return celx.pushClassIterable<UserCategory*>(set);
 }
 
 static int category_getobjects(lua_State *l)
@@ -119,7 +119,7 @@ static int category_getobjects(lua_State *l)
 
     UserCategory *c = *celx.getThis<UserCategory*>();
     UserCategory::ObjectSet set = c->objects();
-    return celx.pushIterable<Selection>(set);
+    return celx.pushClassIterable<Selection>(set);
 }
 
 static int category_addobject(lua_State *l)

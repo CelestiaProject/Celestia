@@ -1,0 +1,11 @@
+
+local moon = celestia:find('Moon');
+if moon == nil then
+    print("Moon is nil!");
+else
+    local t = moon:getnames();
+    print(t);
+    for val in t do
+        print(val);
+    end
+end

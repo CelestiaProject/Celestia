@@ -178,6 +178,20 @@ public:
         i--;
         celx.push(i);
         lua_replace(l, CelxLua::localIndex(2));
+        return celx.push(ret);
+    };
+    template<typename T> static int classIterator(lua_State *l)
+    {
+        CelxLua celx(l);
+
+        T *c = celx.getUserData<T>(CelxLua::localIndex(1));
+        int i = static_cast<int>(celx.getNumber(CelxLua::localIndex(2)));
+        if (i < 0)
+            return 0;
+        T ret = c[i];
+        i--;
+        celx.push(i);
+        lua_replace(l, CelxLua::localIndex(2));
         return celx.pushClass(ret);
     };
     template<typename V, typename K> static V value(std::pair<const K, V> &v)
@@ -203,11 +217,32 @@ public:
 
         return 1;
     }
+    template<typename T, typename C> int pushClassIterable(C& a)
+    {
+        CelxLua celx(m_lua);
+        int n = a.size();
+        T *array = celx.newUserDataArray<T>(n);
+        for (auto &it : a)
+        {
+            *array = value(it);
+            array++;
+        }
+        celx.push(n - 1);
+        celx.push(classIterator<T>, 2);
+
+        return 1;
+    }
     template<typename T, typename C> int pushIterable(C *a)
     {
         if (a == nullptr)
             return 0;
         return pushIterable<T>(*a);
+    }
+    template<typename T, typename C> int pushClassIterable(C *a)
+    {
+        if (a == nullptr)
+            return 0;
+        return pushClassIterable<T>(*a);
     }
 
     /**** type check methods ****/

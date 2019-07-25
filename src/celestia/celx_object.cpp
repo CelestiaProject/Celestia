@@ -1451,7 +1451,7 @@ static int object_getcategories(lua_State *l)
     Selection *s = celx.getThis<Selection>();
     checkEmpty(celx, s);
     AstroObject::CategorySet *set = s->astroObject()->getCategories();
-    return celx.pushIterable<UserCategory*>(set);
+    return celx.pushClassIterable<UserCategory*>(set);
 }
 
 static int object_addtocategory(lua_State *l)
@@ -1502,6 +1502,19 @@ static int object_removefromcategory(lua_State *l)
     return celx.push(ret);
 }
 
+static int object_getnames(lua_State *l)
+{
+    CelxLua celx(l);
+    Selection *s = celx.getThis<Selection>();
+    checkEmpty(celx, s);
+    vector<const char *> ret;
+    for (const auto& info : s->astroObject()->getNameInfos())
+    {
+        ret.emplace_back(info->getCanon().c_str());
+    }
+    return celx.pushIterable<const char *>(ret);
+}
+
 void ExtendObjectMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -1513,5 +1526,6 @@ void ExtendObjectMetaTable(lua_State* l)
     celx.registerMethod("getcategories", object_getcategories);
     celx.registerMethod("addtocategory", object_addtocategory);
     celx.registerMethod("removefromcategory", object_removefromcategory);
+    celx.registerMethod("getnames", object_getnames);
     celx.pop(1);
 }
