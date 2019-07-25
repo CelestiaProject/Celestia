@@ -29,6 +29,7 @@
 #endif
 #include <celengine/stardataloader.h>
 #include <celengine/dsodataloader.h>
+#include <celengine/planetdataloader.h>
 #include <celengine/namedataloader.h>
 #include <celengine/xindexdataloader.h>
 #include <celengine/axisarrow.h>
@@ -3939,12 +3940,11 @@ class SolarSystemLoader
         if (notifier != nullptr)
             notifier->update(filepath.filename().string());
 
-        ifstream solarSysFile(filepath.string(), ios::in);
+        ifstream solarSysFile(filepath, ios::in);
         if (solarSysFile.good())
         {
-            LoadSolarSystemObjects(solarSysFile,
-                                   *universe,
-                                   filepath.parent_path());
+            SSCDataLoader loader(universe, getPath());
+            loader.load(solarSysFile);
         }
     };
 };
@@ -4128,7 +4128,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
             }
             else
             {
-                LoadSolarSystemObjects(solarSysFile, *universe);
+                SSCDataLoader loader(universe, "");
+		loader.load(solarSysFile);
             }
         }
     }

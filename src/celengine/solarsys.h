@@ -35,11 +35,5 @@ class SolarSystem
     FrameTree* frameTree;
 };
 
-class Universe;
-
-bool LoadSolarSystemObjects(std::istream& in,
-                            Universe& universe,
-                            const fs::path& dir = fs::path());
-
 #endif // _SOLARSYS_H_
 

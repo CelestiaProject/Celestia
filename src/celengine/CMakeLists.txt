@@ -100,6 +100,8 @@ set(CELENGINE_SOURCES
 #  particlesystemfile.cpp
 #  particlesystemfile.h
 #  particlesystem.h
+  planetdataloader.cpp
+  planetdataloader.h
   planetgrid.cpp
   planetgrid.h
   processoctree.h

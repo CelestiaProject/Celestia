@@ -16,6 +16,7 @@
 #include <celcompat/filesystem.h>
 #include <celengine/stardataloader.h>
 #include <celengine/dsodataloader.h>
+#include <celengine/planetdataloader.h>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_celestia.h"
@@ -2131,7 +2132,8 @@ static int celestia_loadfragment(lua_State* l)
     istringstream in(frag);
     if (compareIgnoringCase(type, "ssc") == 0)
     {
-        ret = LoadSolarSystemObjects(in, *u, dir);
+		SSCDataLoader loader(u, dir);
+		ret = loader.load(in);
     }
     else if (compareIgnoringCase(type, "stc") == 0)
     {

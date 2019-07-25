@@ -7,7 +7,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "command.h"
+#include <iostream>
+#include <utility>
+#include <algorithm>
+#include <Eigen/Geometry>
+#include <celutil/util.h>
+#include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include <celengine/asterism.h>
 #include "execution.h"
@@ -21,13 +26,16 @@
 #endif
 #include <celengine/stardataloader.h>
 #include <celengine/dsodataloader.h>
+#include <celengine/planetdataloader.h>
 #include <celengine/multitexture.h>
-#include <celutil/util.h>
-#include <celmath/mathlib.h>
-#include <iostream>
-#include <utility>
-#include <algorithm>
-#include <Eigen/Geometry>
+#ifdef USE_GLCONTEXT
+#include <celengine/glcontext.h>
+#endif
+#include "celestiacore.h"
+#include "imagecapture.h"
+#include "celx_internal.h"
+#include "execution.h"
+#include "command.h"
 
 using namespace std;
 using namespace Eigen;
@@ -1145,20 +1153,19 @@ void CommandLoadFragment::process(ExecutionEnvironment& env)
     istringstream in(fragment);
     if (compareIgnoringCase(type, "ssc") == 0)
     {
-        LoadSolarSystemObjects(in, *u, dir);
+		SSCDataLoader loader(u, dir);
+		loader.load(in);
     }
     else if (compareIgnoringCase(type, "stc") == 0)
     {
         StcDataLoader loader(&(u->getDatabase()));
         loader.resourcePath = dir;
         loader.load(in);
-//        u->getStarCatalog()->load(in, dir);
     }
     else if (compareIgnoringCase(type, "dsc") == 0)
     {
         DscDataLoader loader(&(u->getDatabase()));
         loader.resourcePath = dir;
         loader.load(in);
-//        u->getDSOCatalog()->load(in, dir);
     }
 }

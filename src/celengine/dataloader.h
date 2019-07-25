@@ -16,7 +16,7 @@ class AstroDataLoader
     std::string resourcePath;
     AstroDataLoader() = default;
     AstroDataLoader(ContentType type) : m_CType(type) {}
-    AstroDataLoader(AstroDatabase *db, ContentType type) : m_db(db), m_CType(type) {}
+    AstroDataLoader(AstroDatabase *db, ContentType type, const std::string& resPath = std::string()) : m_db(db), m_CType(type), resourcePath(resPath) {}
     void setDatabase(AstroDatabase *db) { m_db = db; }
     bool load(const std::string&, bool = true);
     virtual bool load(std::istream&) = 0;
