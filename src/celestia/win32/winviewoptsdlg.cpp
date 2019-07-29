@@ -107,6 +107,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_SHOWORBITS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowOrbits);
             break;
+        case IDC_SHOWPARTIALTRAJECTORIES:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowPartialTrajectories);
+            break;
         case IDC_SHOWFADINGORBITS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowFadingOrbits);
             break;
@@ -163,6 +166,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             break;
         case IDC_SHOWRINGSHADOWS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowRingShadows);
+            break;
+        case IDC_SHOWRINGS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanetRings);
             break;
         case IDC_SHOWCOMETTAILS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowCometTails);
@@ -358,6 +364,7 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowNightMaps)? BST_CHECKED:BST_UNCHECKED, 0);
     dlgCheck64(hDlg, IDC_SHOWORBITS,       renderFlags, Renderer::ShowOrbits);
     dlgCheck64(hDlg, IDC_SHOWFADINGORBITS, renderFlags, Renderer::ShowFadingOrbits);
+    dlgCheck64(hDlg, IDC_SHOWPARTIALTRAJECTORIES, renderFlags, Renderer::ShowPartialTrajectories);
     dlgCheck(hDlg, IDC_PLANETORBITS,     orbitMask,   Body::Planet);
     dlgCheck(hDlg, IDC_DWARFPLANETORBITS,orbitMask,   Body::DwarfPlanet);
     dlgCheck(hDlg, IDC_MOONORBITS,       orbitMask,   Body::Moon);
@@ -386,6 +393,8 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowBoundaries)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWRINGSHADOWS, BM_SETCHECK,
         (renderFlags & Renderer::ShowRingShadows)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWRINGS, BM_SETCHECK,
+        (renderFlags & Renderer::ShowPlanetRings)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCOMETTAILS, BM_SETCHECK,
         (renderFlags & Renderer::ShowCometTails)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWMARKERS, BM_SETCHECK,
