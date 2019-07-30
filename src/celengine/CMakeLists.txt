@@ -51,6 +51,8 @@ set(CELENGINE_SOURCES
   globular.h
   glshader.cpp
   glshader.h
+  hash.cpp
+  hash.h
   #hdrfuncrender.cpp
   image.cpp
   image.h
@@ -152,6 +154,8 @@ set(CELENGINE_SOURCES
   univcoord.h
   universe.cpp
   universe.h
+  value.cpp
+  value.h
   vecgl.h
   vertexobject.cpp
   vertexobject.h

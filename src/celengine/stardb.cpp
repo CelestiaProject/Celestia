@@ -24,6 +24,7 @@
 #include "parseobject.h"
 #include "multitexture.h"
 #include "meshmanager.h"
+#include "tokenizer.h"
 #include <celutil/debug.h>
 
 using namespace Eigen;

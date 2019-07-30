@@ -19,6 +19,7 @@
 #include <celutil/debug.h>
 #include "astro.h"
 #include "parser.h"
+#include "tokenizer.h"
 #include "texmanager.h"
 #include "meshmanager.h"
 #include "universe.h"

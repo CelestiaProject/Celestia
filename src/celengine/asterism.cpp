@@ -14,6 +14,7 @@
 #include "stardb.h"
 #include "asterism.h"
 #include "parser.h"
+#include "tokenizer.h"
 
 using namespace std;
 

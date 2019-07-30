@@ -18,6 +18,7 @@
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include <celengine/render.h>
+#include <celengine/tokenizer.h>
 #ifdef USE_GLCONTEXT
 #include <celengine/glcontext.h>
 #endif
