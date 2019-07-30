@@ -72,13 +72,15 @@ typedef AssociativeArray Hash;
 
 class Value
 {
-public:
-    enum ValueType {
-        NumberType     = 0,
-        StringType     = 1,
-        ArrayType      = 2,
-        HashType       = 3,
-        BooleanType    = 4
+ public:
+    enum ValueType
+    {
+        NullType       = 0,
+        NumberType     = 1,
+        StringType     = 2,
+        ArrayType      = 3,
+        HashType       = 4,
+        BooleanType    = 5
     };
 
     Value(double);
@@ -86,25 +88,29 @@ public:
     Value(ValueArray*);
     Value(Hash*);
     Value(bool);
+    Value() = default;
     ~Value();
 
     ValueType getType() const;
 
+    bool isNull() const;
     double getNumber() const;
     string getString() const;
     ValueArray* getArray() const;
     Hash* getHash() const;
     bool getBoolean() const;
 
-private:
-    ValueType type;
-
-    union {
+ private:
+    union Data
+    {
         string* s;
         double d;
         ValueArray* a;
         Hash* h;
-    } data;
+    };
+
+    ValueType type{ NullType };
+    Data data;
 };
 
 
