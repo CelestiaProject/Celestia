@@ -14,6 +14,7 @@
 #include <celutil/debug.h>
 #include <celutil/util.h>
 #include <celengine/texmanager.h>
+#include <celengine/tokenizer.h>
 #include "configfile.h"
 
 using namespace std;

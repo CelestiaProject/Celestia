@@ -12,6 +12,7 @@
 #include <iostream>
 #include <iomanip>
 #include <celengine/parser.h>
+#include <celengine/tokenizer.h>
 #include <celutil/debug.h>
 #include <celutil/util.h>
 #include "favorites.h"
