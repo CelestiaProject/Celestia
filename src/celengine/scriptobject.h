@@ -12,10 +12,6 @@
 #ifndef _CELENGINE_SCRIPTOBJECT_H_
 #define _CELENGINE_SCRIPTOBJECT_H_
 
-#ifndef LUA_VER
-#define LUA_VER 0x050100
-#endif
-
 #include "lua.hpp"
 #include <string>
 #include <celengine/parser.h>
