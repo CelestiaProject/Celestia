@@ -103,7 +103,7 @@ const char* MouseDownHandler  = "mousedown";
 const char* MouseUpHandler    = "mouseup";
 
 
-#if LUA_VER < 0x050300
+#if LUA_VERSION_NUM < 503
 int lua_isinteger(lua_State *L, int index)
 {
     if (lua_type(L, index) == LUA_TNUMBER)
@@ -322,7 +322,7 @@ static void openLuaLibrary(lua_State* l,
                            const char* name,
                            lua_CFunction func)
 {
-#if LUA_VER >= 0x050200
+#if LUA_VERSION_NUM >= 502
     luaL_requiref(l, name, func, 1);
 #else
     lua_pushcfunction(l, func);
@@ -607,7 +607,7 @@ static int resumeLuaThread(lua_State *L, lua_State *co, int narg)
     //if (!lua_checkstack(co, narg))
     //   luaL_error(L, "too many arguments to resume");
     lua_xmove(L, co, narg);
-#if LUA_VER >= 0x050200
+#if LUA_VERSION_NUM >= 502
     status = lua_resume(co, nullptr, narg);
 #else
     status = lua_resume(co, narg);
@@ -898,7 +898,7 @@ int LuaState::loadScript(istream& in, const string& streamname)
         lua_settable(state, LUA_REGISTRYINDEX);
     }
 
-#if LUA_VER >= 0x050200
+#if LUA_VERSION_NUM >= 502
     int status = lua_load(state, readStreamChunk, &info, streamname.c_str(),
                           nullptr);
 #else
@@ -1296,7 +1296,7 @@ bool LuaState::init(CelestiaCore* appCore)
     openLuaLibrary(state, LUA_MATHLIBNAME, luaopen_math);
     openLuaLibrary(state, LUA_TABLIBNAME, luaopen_table);
     openLuaLibrary(state, LUA_STRLIBNAME, luaopen_string);
-#if LUA_VER >= 0x050200
+#if LUA_VERSION_NUM >= 502
     openLuaLibrary(state, LUA_COLIBNAME, luaopen_coroutine);
 #endif
     // Make the package library, except the loadlib function, available
