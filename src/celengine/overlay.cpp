@@ -11,14 +11,19 @@
 #include <cstdarg>
 #include <celutil/utf8.h>
 #include <GL/glew.h>
+#include <Eigen/Core>
+#include <fmt/printf.h>
 #include "vecgl.h"
 #include "overlay.h"
+#include "render.h"
 
 using namespace std;
+using namespace Eigen;
 
 
-Overlay::Overlay() :
-    ostream(&sbuf)
+Overlay::Overlay(const Renderer& r) :
+    ostream(&sbuf),
+    renderer(r)
 {
     sbuf.setOverlay(this);
 }
@@ -161,27 +166,99 @@ void Overlay::print(const char* s)
     }
 }
 
-void Overlay::rect(float x, float y, float w, float h, bool fill)
+static void drawRect(const Renderer& r,
+                     const array<float, 8>& vertices,
+                     const vector<Vector4f>& colors,
+                     Overlay::RectType type,
+                     float linewidth)
 {
-    if (useTexture)
+    uint32_t p = 0;
+    switch (type)
+    {
+    case Overlay::RectType::Textured:
+        p |= ShaderProperties::HasTexture;
+    // [[ fallthrough ]]
+    case Overlay::RectType::Outlined:
+    case Overlay::RectType::Filled:
+        switch (colors.size())
+        {
+        case 0:
+            break;
+        case 1:
+            p |= ShaderProperties::UniformColor;
+            break;
+        case 4:
+            p |= ShaderProperties::PerVertexColor;
+            break;
+        default:
+            fmt::fprintf(cerr, "Incorrect number of colors: %i\n", colors.size());
+            break;
+        }
+    default:
+        break;
+    }
+
+    auto prog = r.getShaderManager().getShader(ShaderProperties(p));
+    if (prog == nullptr)
+        return;
+
+    constexpr array<short, 8> texels = {0, 1,  1, 1,  1, 0,  0, 0};
+
+    auto s = static_cast<GLsizeiptr>(memsize(vertices) + memsize(texels) + 4*4*sizeof(GLfloat));
+    static celgl::VertexObject vo{ GL_ARRAY_BUFFER, s, GL_DYNAMIC_DRAW };
+    vo.bindWritable();
+
+    if (!vo.initialized())
+    {
+        vo.allocate();
+        vo.setBufferData(texels.data(), memsize(vertices), memsize(texels));
+        vo.setVertices(2, GL_FLOAT);
+        vo.setTextureCoords(2, GL_SHORT, false, 0, memsize(vertices));
+        vo.setColors(4, GL_FLOAT, false, 0, memsize(vertices) + memsize(texels));
+    }
+
+    vo.setBufferData(vertices.data(), 0, memsize(vertices));
+    if (colors.size() == 4)
+        vo.setBufferData(colors.data(), memsize(vertices) + memsize(texels), 4*4*sizeof(GLfloat));
+
+    prog->use();
+    if (type == Overlay::RectType::Textured)
+        prog->samplerParam("tex") = 0;
+
+    if (colors.size() == 1)
+        prog->vec4Param("color") = colors[0];
+
+    if (type != Overlay::RectType::Outlined)
+    {
+        vo.draw(GL_TRIANGLE_FAN, 4);
+    }
+    else
+    {
+        if (linewidth != 1.0f)
+            glLineWidth(linewidth);
+        vo.draw(GL_LINE_LOOP, 4);
+        if (linewidth != 1.0f)
+            glLineWidth(1.0f);
+    }
+
+    glUseProgram(0);
+    vo.unbind();
+}
+
+void Overlay::rect(const Overlay::Rectangle& r)
+{
+    if (useTexture && r.type != Overlay::RectType::Textured)
     {
         glDisable(GL_TEXTURE_2D);
         useTexture = false;
     }
 
-    if (fill)
-    {
-        glRectf(x, y, x + w, y + h);
-    }
-    else
-    {
-        glBegin(GL_LINE_LOOP);
-        glVertex3f(x, y, 0);
-        glVertex3f(x + w, y, 0);
-        glVertex3f(x + w, y + h, 0);
-        glVertex3f(x, y + h, 0);
-        glEnd();
-    }
+    vector<Vector4f> cv;
+    for (const Color& c : r.colors)
+        cv.push_back(c.toVector4());
+
+    array<float, 8> coord = { r.x, r.y,  r.x+r.w, r.y, r.x+r.w, r.y+r.h, r.x, r.y+r.h };
+    drawRect(renderer, coord, cv, r.type, r.lw);
 }
 
 
