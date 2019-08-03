@@ -71,7 +71,13 @@ int main(int argc, char *argv[])
 
     ParseCommandLine();
 
-    QPixmap pixmap(SPLASH_DIR "splash.png");
+#ifdef NATIVE_OSX_APP
+    // On macOS data directory is in a fixed position relative to the application bundle
+    QString splashDir = QApplication::applicationDirPath() + "/../Resources/splash/";
+#else
+    QString splashDir = SPLASH_DIR;
+#endif
+    QPixmap pixmap(splashDir + "splash.png");
     QSplashScreen splash(pixmap);
     splash.setMask(pixmap.mask());
 
@@ -81,9 +87,15 @@ int main(int argc, char *argv[])
     // Gettext integration
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
-    bindtextdomain("celestia", LOCALEDIR);
+#ifdef NATIVE_OSX_APP
+    // On macOS locale directory is in a fixed position relative to the application bundle
+    QString localeDir = QApplication::applicationDirPath() + "/../Resources/locale";
+#else
+    QString localeDir = LOCALEDIR;
+#endif
+    bindtextdomain("celestia", localeDir.toUtf8().data());
     bind_textdomain_codeset("celestia", "UTF-8");
-    bindtextdomain("celestia_constellations", LOCALEDIR);
+    bindtextdomain("celestia_constellations", localeDir.toUtf8().data());
     bind_textdomain_codeset("celestia_constellations", "UTF-8");
     textdomain("celestia");
 

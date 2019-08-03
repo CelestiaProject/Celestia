@@ -231,13 +231,18 @@ endif()
 
 add_definitions(
   -DVERSION="${VERSION}"
-  -DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}"
   -DPACKAGE="celestia"
-  -DCONFIG_DATA_DIR="${FULL_DATADIR}"
-  -DHIP_DATA_DIR="${FULL_DATADIR}"
-  -DSPLASH_DIR="${FULL_DATADIR}/splash/"
   -DGIT_COMMIT=${GIT_COMMIT}
 )
+
+if(NOT NATIVE_OSX_APP)
+  add_definitions(
+    -DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}"
+    -DCONFIG_DATA_DIR="${FULL_DATADIR}"
+    -DHIP_DATA_DIR="${FULL_DATADIR}"
+    -DSPLASH_DIR="${FULL_DATADIR}/splash/"
+  )
+endif()
 
 if(WIN32)
   add_definitions(
