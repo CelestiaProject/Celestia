@@ -437,61 +437,28 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
  *  (such as bookmarks) which aren't stored in settings. The location
  *  of the data directory depends on the platform:
  *
- *  Win32: %APPDATA%\Celestia
- *  Mac OS X: $HOME/Library/Application Support/Celestia
- *  Unix and Mac OS X: $HOME/.config/Celestia
+ *  Win32: %LOCALAPPDATA%\Celestia
+ *  Mac OS X: ~/Library/Application Support/Celestia
+ *  Unix: $XDG_DATA_HOME/Celestia
+ *
+ *  We don't use AppDataLocation because it returns Qt-specific location,
+ *  e.g. "$XDG_DATA_HOME/Celestia Development Team/Celestia QT" while we
+ *  should keep it compatible between all frontends.
  */
+
 void CelestiaAppWindow::initAppDataDirectory()
 {
-#if defined(_WIN32)
-    // On Windows, the Celestia data directory is %APPDATA%\Celestia
-    // First, get the value of the APPDATA environment variable
-    QStringList envVars = QProcess::systemEnvironment();
-    QString appDataPath;
-    foreach (QString envVariable, envVars)
+    auto dir = QDir(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation));
+    m_dataDirPath = dir.filePath("Celestia");
+    if (!QDir(m_dataDirPath).exists())
     {
-        if (envVariable.startsWith("APPDATA"))
+        if (!dir.mkpath(m_dataDirPath))
         {
-            QStringList nameValue = envVariable.split("=");
-            if (nameValue.size() == 2)
-                appDataPath = nameValue[1];
-            break;
+            // If the doesn't exist even after we tried to create it,
+            // give up on trying to load user data from there.
+            m_dataDirPath = "";
         }
     }
-#elif defined(TARGET_OS_MAC)
-    QString appDataPath = QDir::home().filePath("Library/Application Support");
-#else
-    // UNIX
-    QString appDataPath = QDir::home().filePath(".config");
-#endif
-
-    if (appDataPath != "")
-    {
-        // Create a Celestia subdirectory of APPDATA if it doesn't already exist
-        QDir appDataDir(appDataPath);
-        if (appDataDir.exists())
-        {
-            m_dataDirPath = appDataDir.filePath("Celestia");
-            QDir celestiaDataDir(m_dataDirPath);
-            if (!celestiaDataDir.exists())
-            {
-                appDataDir.mkdir("Celestia");
-            }
-
-            // If the doesn't exist even after we tried to create it, give up
-            // on trying to load user data from there.
-            if (!celestiaDataDir.exists())
-            {
-                m_dataDirPath = "";
-            }
-        }
-    }
-#ifdef _DEBUG
-    else
-    {
-        QMessageBox::warning(this, "APPDIR missing", "APPDIR environment variable not found!");
-    }
-#endif
 }
 
 
