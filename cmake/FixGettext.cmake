@@ -27,7 +27,11 @@ macro(GETTEXT_CREATE_TRANSLATIONS2 _potFile _firstPoFileArg)
          DEPENDS ${_absPotFile} ${_absFile}
       )
 
-      install(FILES ${_gmoFile} DESTINATION share/locale/${_lang}/LC_MESSAGES RENAME ${_potBasename}.mo)
+      if(NATIVE_OSX_APP)
+        install(FILES ${_gmoFile} DESTINATION Resources/locale/${_lang}/LC_MESSAGES RENAME ${_potBasename}.mo)
+      else()
+        install(FILES ${_gmoFile} DESTINATION share/locale/${_lang}/LC_MESSAGES RENAME ${_potBasename}.mo)
+      endif()
       set(_gmoFiles ${_gmoFiles} ${_gmoFile})
 
    endforeach ()
