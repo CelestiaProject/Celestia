@@ -920,7 +920,7 @@ void CreateObserverMetaTable(lua_State* l)
 
     celx.registerMethod("__tostring", observer_tostring);
     celx.registerMethod("isvalid", observer_isvalid);
-#if LUA_VER < 0x050200
+#if LUA_VERSION_NUM < 502
     celx.registerMethod("goto", observer_goto);
 #endif
     celx.registerMethod("gotoobject", observer_goto);
