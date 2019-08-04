@@ -13,6 +13,8 @@
 #ifndef _CELENGINE_TIMELINEPHASE_H_
 #define _CELENGINE_TIMELINEPHASE_H_
 
+#include "refcounted.h"
+
 class ReferenceFrame;
 class Orbit;
 class RotationModel;
@@ -21,12 +23,9 @@ class Universe;
 class Body;
 
 
-class TimelinePhase
+class TimelinePhase : public RefCounted
 {
 public:
-    int addRef() const;
-    int release() const;
-
     Body* body() const
     {
         return m_body;
@@ -104,7 +103,7 @@ private:
     TimelinePhase& operator=(const TimelinePhase& phase);
 
     // TimelinePhases are refCounted; use release() instead.
-    ~TimelinePhase();
+    ~TimelinePhase() override;
 
 private:
     Body* m_body;
@@ -118,8 +117,6 @@ private:
     RotationModel* m_rotationModel;
 
     FrameTree* m_owner;
-
-    mutable int refCount;
 };
 
 #endif // _CELENGINE_TIMELINEPHASE_H_

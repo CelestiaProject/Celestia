@@ -34,8 +34,7 @@ TimelinePhase::TimelinePhase(Body* _body,
     m_orbit(_orbit),
     m_bodyFrame(_bodyFrame),
     m_rotationModel(_rotationModel),
-    m_owner(_owner),
-    refCount(0)
+    m_owner(_owner)
 {
     // assert(owner == orbitFrame->getCenter()->getFrameTree());
     m_orbitFrame->addRef();
@@ -63,27 +62,6 @@ TimelinePhase& TimelinePhase::operator=(const TimelinePhase&)
     assert(0);
     return *this;
 }
-
-
-int TimelinePhase::addRef() const
-{
-    return ++refCount;
-}
-
-
-int TimelinePhase::release() const
-{
-    --refCount;
-    assert(refCount >= 0);
-    if (refCount <= 0)
-    {
-        delete this;
-        return 0;
-    }
-
-    return refCount;
-}
-
 
 /*! Create a new timeline phase in the specified universe.
  */
