@@ -12,10 +12,6 @@
 #ifndef _CELESTIA_CELX_H_
 #define _CELESTIA_CELX_H_
 
-#ifndef LUA_VER
-#define LUA_VER 0x050100
-#endif
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -23,7 +19,11 @@
 #include <celutil/timer.h>
 #include <celengine/observer.h>
 
-#if LUA_VER < 0x050300
+#ifndef LUA_VERSION_NUM
+#define LUA_VERSION_NUM 501
+#endif
+
+#if LUA_VERSION_NUM < 503
 int lua_isinteger(lua_State *L, int index);
 #endif
 
