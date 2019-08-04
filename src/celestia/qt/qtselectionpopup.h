@@ -36,6 +36,7 @@ Q_OBJECT
     void slotFollowSelection();
     void slotSyncOrbitSelection();
     void slotSelectAlternateSurface();
+    void slotSelectPrimary();
     void slotSelectChildObject();
     void slotMark();
     void slotUnmark();

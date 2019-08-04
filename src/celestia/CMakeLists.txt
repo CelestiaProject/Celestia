@@ -9,6 +9,8 @@ set(CELESTIA_SOURCES
   eclipsefinder.h
   favorites.cpp
   favorites.h
+  helper.cpp
+  helper.h
   imagecapture.cpp
   imagecapture.h
   moviecapture.h
