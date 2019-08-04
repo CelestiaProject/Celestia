@@ -9,6 +9,6 @@ namespace fs = std::filesystem;
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 #else
-#include <celutil/fs.h>
-namespace fs = celutil::filesystem;
+#include <celfs/fs.h>
+namespace fs = celfs;
 #endif

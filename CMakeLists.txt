@@ -40,7 +40,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 if(NOT MSVC)
   # Qt requires -fPIC, so build all code with it
-  add_compile_options(-fPIC)
+  add_compile_options(-fPIC -g)
   if(FAST_MATH)
     add_compile_options("-ffast-math")
   endif()
@@ -251,7 +251,7 @@ include_directories("${CMAKE_SOURCE_DIR}/src" ${CMAKE_BINARY_DIR})
 # configure a header file to pass some of the CMake settings
 # to the source code
 check_include_files(byteswap.h HAVE_BYTESWAP_H)
-check_include_file_cxx(experimental/filesystem HAVE_EXPERIMENTAL_FILESYSTEM)
+#check_include_file_cxx(experimental/filesystem HAVE_EXPERIMENTAL_FILESYSTEM)
 configure_file("config.h.in" "config.h")
 
 if ((NOT MSVC) AND HAVE_EXPERIMENTAL_FILESYSTEM)

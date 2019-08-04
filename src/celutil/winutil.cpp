@@ -56,7 +56,8 @@ const char* CurrentCP()
 {
     static bool set = false;
     static char cp[20] = "CP";
-    if (!set) {
+    if (!set)
+    {
         GetLocaleInfo(GetThreadLocale(), LOCALE_IDEFAULTANSICODEPAGE, cp+2, 18);
         set = true;
     }
@@ -65,26 +66,33 @@ const char* CurrentCP()
 
 string UTF8ToCurrentCP(const string& str)
 {
-    string localeStr;
-    LPWSTR wout = new wchar_t[str.length() + 1];
-    LPSTR out = new char[str.length() + 1];
-    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wout, str.length() + 1);
-    WideCharToMultiByte(CP_ACP, 0, wout, -1, out, str.length() + 1, nullptr, nullptr);
-    localeStr = out;
-    delete [] wout;
-    delete [] out;
-    return localeStr;
+    wstring w = UTF8ToWide(str);
+    string out(w.length()+1, 0);
+    WideCharToMultiByte(CP_ACP, 0, w.c_str(), -1, &out[0], w.length()+1, nullptr, nullptr);
+    return out;
 }
 
 string CurrentCPToUTF8(const string& str)
 {
-    string localeStr;
-    LPWSTR wout = new wchar_t[str.length() + 1];
-    LPSTR out = new char[str.length() + 1];
-    MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, wout, str.length() + 1);
-    WideCharToMultiByte(CP_UTF8, 0, wout, -1, out, str.length() + 1, nullptr, nullptr);
-    localeStr = out;
-    delete [] wout;
-    delete [] out;
-    return localeStr;
+    wstring w(str.length()+1, 0);
+    MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, &w[0], str.length()+1);
+    return WideToUTF8(w);
+}
+
+string WideToUTF8(const wstring& ws)
+{
+    // get a converted string length
+    auto len = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    string out(len, 0);
+    WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), -1, &out[0], len, nullptr, nullptr);
+    return out;
+}
+
+wstring UTF8ToWide(const string& s)
+{
+    // get a converted string length
+    auto len = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, nullptr, 0);
+    wstring out(len, 0);
+    MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, &out[0], len);
+    return out;
 }

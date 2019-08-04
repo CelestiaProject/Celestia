@@ -9,11 +9,12 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#ifdef _WIN32
+#include <celutil/winutil.h>
+#endif
 
 
-namespace celutil
-{
-namespace filesystem
+namespace celfs
 {
 class filesystem_error : std::system_error
 {
@@ -28,13 +29,18 @@ class filesystem_error : std::system_error
 class path
 {
  public:
-    using value_type = std::string::value_type;
 #ifdef _WIN32
-    static constexpr value_type preferred_separator = '\\';
+    using string_type = std::wstring;
+#else
+    using string_type = std::string;
+#endif
+    using value_type = string_type::value_type;
+
+#ifdef _WIN32
+    static constexpr value_type preferred_separator = L'\\';
 #else
     static constexpr value_type preferred_separator = '/';
 #endif
-    using string_type = std::string;
 
     enum format
     {
@@ -62,7 +68,10 @@ class path
 
     template<typename T> path& append(const T& p)
     {
-        m_path.append(1, preferred_separator).append(p.c_str());
+        if (empty())
+            m_path = p;
+        else
+            m_path.append(1, preferred_separator).append(p.c_str());
         return *this;
     }
 
@@ -92,12 +101,50 @@ class path
         return !(*this == other);
     }
 
-    const string_type& string() const noexcept
+    bool operator<(const path& other) const noexcept
     {
-        return m_path;
+        return m_path < other.m_path;
     }
 
-    const char* c_str() const noexcept
+    bool operator>(const path& other) const noexcept
+    {
+        return m_path > other.m_path;
+    }
+
+    bool operator<=(const path& other) const noexcept
+    {
+        return m_path <= other.m_path;
+    }
+
+    bool operator>=(const path& other) const noexcept
+    {
+        return m_path >= other.m_path;
+    }
+
+    std::string string() const noexcept
+    {
+        return u8string();
+    }
+
+    std::wstring wstring() const noexcept
+    {
+#ifdef _WIN32
+        return m_path;
+#else
+        return L""; // UB
+#endif
+    }
+
+    std::string u8string() const noexcept
+    {
+#ifdef _WIN32
+        return WideToUTF8(m_path);
+#else
+        return m_path;
+#endif
+    }
+
+    const value_type* c_str() const noexcept
     {
         return m_path.c_str();
     }
@@ -107,12 +154,19 @@ class path
        return m_path;
     }
 
-    operator string_type() const
+    operator string_type() const noexcept
     {
         return m_path;
     }
 
+    bool empty() const noexcept
+    {
+        return m_path.empty();
+    }
+
     path filename() const;
+    path stem() const;
+    path extension() const;
     path parent_path() const;
 
  private:
@@ -123,6 +177,8 @@ class path
 path operator/(const path& lhs, const path& rhs);
 
 std::ostream& operator<<(std::ostream& os, const path& p);
+
+path u8path(const std::string& source);
 
 
 class directory_iterator;
@@ -243,6 +299,9 @@ class recursive_directory_iterator
     recursive_directory_iterator(const path& p, std::error_code& ec);
     ~recursive_directory_iterator() = default;
 
+    recursive_directory_iterator& operator=(const recursive_directory_iterator&) = default;
+    recursive_directory_iterator& operator=(recursive_directory_iterator&&) = default;
+
     bool recursion_pending() const
     {
         return m_pending;
@@ -268,14 +327,7 @@ class recursive_directory_iterator
         return &*m_iter;
     }
 
-    bool operator==(const recursive_directory_iterator& other) const noexcept
-    {
-        return m_depth   == other.m_depth   &&
-               m_pending == other.m_pending &&
-               m_dirs    == other.m_dirs    &&
-               m_iter    == other.m_iter;
-    }
-
+    bool operator==(const recursive_directory_iterator& other) const noexcept;
     bool operator!=(const recursive_directory_iterator& other) const noexcept
     {
         return !(*this == other);
@@ -307,7 +359,9 @@ inline recursive_directory_iterator end(recursive_directory_iterator) noexcept
 uintmax_t file_size(const path& p, std::error_code& ec) noexcept;
 uintmax_t file_size(const path& p);
 
-bool is_directory(const path& p);
+bool exists(const path& p);
+bool exists(const path& p, std::error_code& ec) noexcept;
 
-}; // filesystem
-}; // celutil
+bool is_directory(const path& p);
+bool is_directory(const path& p, std::error_code& ec) noexcept;
+};

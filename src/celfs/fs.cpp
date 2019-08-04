@@ -1,20 +1,22 @@
 #include "fs.h"
-#include <cstring>
 #include <vector>
 #include <memory>
 #ifdef _WIN32
-#include "winutil.h"
+#include <celutil/winutil.h>
 #else
 #include <sys/stat.h>
-#define UTF8ToCurrentCP(s) (s)
-#define CurrentCPToUTF8(s) (s)
 #endif
 
 
-namespace celutil
+namespace celfs
 {
-namespace filesystem
+
+// we should skip "." and ".."
+template<typename CharT> static bool is_special_dir(const CharT s[])
 {
+    return s[0] == '.' && (s[1] == '\0' || (s[1] == '.' && s[2]  == '\0'));
+}
+
 path operator/(const path& lhs, const path& rhs)
 {
     return path(lhs) /= rhs;
@@ -26,21 +28,51 @@ std::ostream& operator<<(std::ostream& os, const path& p)
     return os;
 }
 
+path u8path(const std::string& source)
+{
+#ifdef _WIN32
+    return UTF8ToWide(source);
+#else
+    return source;
+#endif
+}
+
 path path::filename() const
 {
     auto pos = m_path.rfind(preferred_separator);
-    if (pos == std::string::npos)
+    if (pos == string_type::npos)
         pos = 0;
     else
         pos++;
 
     auto fn = m_path.substr(pos);
-    if (fn == "." || fn == "..")
-        fn.clear();
+    if (is_special_dir(fn.c_str()))
+        return path();
 
     return path(fn);
 }
 
+path path::stem() const
+{
+    auto fn = filename().native();
+    auto pos = fn.rfind('.');
+
+    if (pos == 0 || pos == string_type::npos)
+        return fn;
+
+    return fn.substr(0, pos);
+}
+
+path path::extension() const
+{
+    auto fn = filename().native();
+    auto pos = fn.rfind('.');
+
+    if (pos == 0 || pos == string_type::npos)
+        return path();
+
+    return fn.substr(pos);
+}
 
 path path::parent_path() const
 {
@@ -48,7 +80,7 @@ path path::parent_path() const
     if (pos == 0)
         return path(m_path.substr(0, 1));
 
-    if (pos == std::string::npos)
+    if (pos == string_type::npos)
         return path();
 
     return path(m_path.substr(0, pos));
@@ -89,35 +121,30 @@ directory_iterator::SearchImpl::~SearchImpl()
 #endif
 }
 
-static bool is_special_dir(const char* d)
-{
-    return strcmp(d, ".") == 0 || strcmp(d, "..") == 0;
-}
-
 bool directory_iterator::SearchImpl::advance(directory_entry& entry)
 {
 #ifdef _WIN32
-    WIN32_FIND_DATAA findData;
+    WIN32_FIND_DATAW findData;
 
     if (m_handle == INVALID_HANDLE_VALUE)
     {
-        m_handle = FindFirstFileA(UTF8ToCurrentCP(m_path / "*").c_str(), &findData);
+        m_handle = FindFirstFileW((m_path / L"*").c_str(), &findData);
         if (m_handle == INVALID_HANDLE_VALUE)
             return false;
     }
     else
     {
-        if (!FindNextFileA(m_handle, &findData))
+        if (!FindNextFileW(m_handle, &findData))
             return false;
     }
 
     while (is_special_dir(findData.cFileName))
     {
-        if (!FindNextFileA(m_handle, &findData))
+        if (!FindNextFileW(m_handle, &findData))
             return false;
     }
 
-    entry = directory_entry(m_path / CurrentCPToUTF8(findData.cFileName));
+    entry = directory_entry(std::move(m_path / findData.cFileName));
     return true;
 #else
     if (m_dir == nullptr)
@@ -157,9 +184,7 @@ directory_iterator::directory_iterator(const path& p, std::error_code& ec) :
 
 void directory_iterator::reset()
 {
-    m_search = nullptr;
-    m_path   = std::move(path());
-    m_entry  = std::move(directory_entry());
+    *this = std::move(directory_iterator());
 }
 
 bool directory_iterator::operator==(const directory_iterator& other) const noexcept
@@ -169,7 +194,8 @@ bool directory_iterator::operator==(const directory_iterator& other) const noexc
 
 directory_iterator& directory_iterator::operator++()
 {
-    if (!m_search->advance(m_entry))
+    //  *this != end(*this) ...
+    if (m_search != nullptr && !m_search->advance(m_entry))
         reset();
     return *this;
 }
@@ -188,8 +214,21 @@ recursive_directory_iterator::recursive_directory_iterator(const path& p)
     m_iter = directory_iterator(p);
 }
 
+bool recursive_directory_iterator::operator==(const recursive_directory_iterator& other) const noexcept
+{
+    return m_depth   == other.m_depth   &&
+           m_pending == other.m_pending &&
+           m_dirs    == other.m_dirs    &&
+           m_iter    == other.m_iter;
+}
+
+
 recursive_directory_iterator& recursive_directory_iterator::operator++()
 {
+    // *this == end(*this)
+    if (m_dirs == nullptr)
+        return *this;
+
     auto& p = m_iter->path();
     if (m_pending && is_directory(p))
     {
@@ -229,18 +268,16 @@ void recursive_directory_iterator::pop(std::error_code& ec)
 
 void recursive_directory_iterator::reset()
 {
-    m_depth   = 0;
-    m_pending = false;
-    m_dirs    = nullptr;
-    m_iter    = directory_iterator();
+    *this = std::move(recursive_directory_iterator());
 }
+
 
 uintmax_t file_size(const path& p, std::error_code& ec) noexcept
 {
 #ifdef _WIN32
     WIN32_FILE_ATTRIBUTE_DATA attr;
     LARGE_INTEGER fileSize = { 0 };
-    if (GetFileAttributesEx(UTF8ToCurrentCP(p).c_str(), GetFileExInfoStandard, &attr))
+    if (GetFileAttributesExW(p.c_str(), GetFileExInfoStandard, &attr))
     {
         fileSize.LowPart  = attr.nFileSizeLow;
         fileSize.HighPart = attr.nFileSizeHigh;
@@ -268,17 +305,66 @@ uintmax_t file_size(const path& p)
 {
     std::error_code ec;
     uintmax_t s = file_size(p, ec);
-    if (s == static_cast<uintmax_t>(-1))
-        throw filesystem_error(ec, "file_size error");
+    if (ec)
+        throw filesystem_error(ec, "celfs::file_size error");
     return s;
 }
 
-bool is_directory(const path& p)
+
+bool exists(const path& p, std::error_code& ec) noexcept
 {
 #ifdef _WIN32
-    DWORD attr = GetFileAttributesA(const_cast<char*>(UTF8ToCurrentCP(p).c_str()));
-    if (attr == static_cast<DWORD>(-1))
+    DWORD attr = GetFileAttributesW(&p.native()[0]);
+    if (attr != INVALID_FILE_ATTRIBUTES)
+        return true;
+
+    switch (GetLastError())
+    {
+    // behave like boost::filesystem
+    case ERROR_FILE_NOT_FOUND:
+    case ERROR_PATH_NOT_FOUND:
+    case ERROR_INVALID_NAME:
+    case ERROR_INVALID_DRIVE:
+    case ERROR_NOT_READY:
+    case ERROR_INVALID_PARAMETER:
+    case ERROR_BAD_PATHNAME:
+    case ERROR_BAD_NETPATH:
         return false;
+    default:
+        break;
+    }
+#else
+    struct stat buf;
+    if (stat(p.c_str(), &buf) == 0)
+        return true;
+
+    if (errno == ENOENT)
+        return false;
+#endif
+    ec = std::error_code(errno, std::system_category());
+    return false;
+}
+
+bool exists(const path& p)
+{
+    std::error_code ec;
+    bool r = exists(p, ec);
+    if (ec)
+        throw filesystem_error(ec, "celfs::exists error");
+    return r;
+}
+
+
+bool is_directory(const path& p, std::error_code& ec) noexcept
+{
+#ifdef _WIN32
+    DWORD attr = GetFileAttributesW(&p.native()[0]);
+    if (attr == INVALID_FILE_ATTRIBUTES)
+    {
+        ec = std::error_code(errno, std::system_category());
+        return false;
+    }
+
     return (attr & FILE_ATTRIBUTE_DIRECTORY) != 0;
 #else
     struct stat buf;
@@ -286,5 +372,12 @@ bool is_directory(const path& p)
 #endif
 }
 
+bool is_directory(const path& p)
+{
+    std::error_code ec;
+    bool r = is_directory(p, ec);
+    if (ec)
+        throw filesystem_error(ec, "celfs::is_directory error");
+    return r;
 }
 }

@@ -9,8 +9,6 @@ set(CELUTIL_SOURCES
   filesystem.h
   filetype.cpp
   filetype.h
-  fs.cpp
-  fs.h
   formatnum.cpp
   formatnum.h
   #memorypool.cpp
@@ -34,6 +32,8 @@ if (WIN32)
 endif()
 
 add_library(celutil STATIC ${CELUTIL_SOURCES})
+add_dependencies(celutil celfs)
+target_link_libraries(celutil celfs)
 cotire(celutil)
 #[[
 add_library(celutil SHARED ${CELUTIL_SOURCES})

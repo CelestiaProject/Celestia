@@ -16,3 +16,7 @@ endforeach()
 if (ENABLE_TOOLS)
   add_subdirectory(tools)
 endif()
+
+if (NOT HAVE_EXPERIMENTAL_FILESYSTEM)
+  add_subdirectory(celfs)
+endif()

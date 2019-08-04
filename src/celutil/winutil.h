@@ -25,5 +25,7 @@ void AddButtonDefaultStyle(HWND hWnd);
 const char* CurrentCP();
 string UTF8ToCurrentCP(const string& str);
 string CurrentCPToUTF8(const string& str);
+string WideToUTF8(const wstring& ws);
+wstring UTF8ToWide(const string& str);
 
 #endif

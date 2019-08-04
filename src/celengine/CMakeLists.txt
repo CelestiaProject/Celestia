@@ -161,6 +161,6 @@ set_target_properties(celengine PROPERTIES
   SOVERSION ${VERSION}
 )
 ]]#
-add_dependencies(celengine cel3ds celmath celmodel)
-target_link_libraries(celengine cel3ds celmath celmodel)
+add_dependencies(celengine cel3ds celmath celmodel celfs)
+target_link_libraries(celengine cel3ds celmath celmodel celfs)
 #install(TARGETS celengine LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
