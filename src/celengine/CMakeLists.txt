@@ -90,6 +90,8 @@ set(CELENGINE_SOURCES
 #  particlesystem.h
   planetgrid.cpp
   planetgrid.h
+  refcounted.cpp
+  refcounted.h
   referencemark.h
   rendcontext.cpp
   rendcontext.h
