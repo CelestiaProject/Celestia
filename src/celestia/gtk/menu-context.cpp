@@ -15,6 +15,7 @@
 
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
+#include <celestia/helper.h>
 #include <celutil/utf8.h>
 
 #include "menu-context.h"
@@ -26,6 +27,7 @@
 static void wrapAction(GtkAction* action);
 static void menuMark();
 static void menuUnMark();
+static void handleContextPrimary();
 static void handleContextPlanet(gpointer data);
 static void handleContextSurface(gpointer data);
 
@@ -66,6 +68,10 @@ void menuContext(float, float, Selection sel)
             AppendMenu(popup, NULL, "S_ync Orbit", gtk_action_group_get_action(app->agMain, "SyncSelection"));
             /* Add info eventually:
              * AppendMenu(popup, NULL, "_Info", 0); */
+            if (Helper::hasPrimary(sel.body()))
+            {
+                AppendMenu(popup, GTK_SIGNAL_FUNC(handleContextPrimary), "Select Primary Body", NULL);
+            }
 
             const PlanetarySystem* satellites = sel.body()->getSatellites();
             if (satellites != NULL && satellites->getSystemSize() != 0)
@@ -200,6 +206,17 @@ static void handleContextPlanet(gpointer data)
 
         default:
             break;
+    }
+}
+
+
+/* CALLBACK: Handle an object's primary selection */
+static void handleContextPrimary()
+{
+    Selection sel = app->simulation->getSelection();
+    if (sel.body() != NULL)
+    {
+        app->simulation->setSelection(Helper::getPrimary(sel.body()));
     }
 }
 
