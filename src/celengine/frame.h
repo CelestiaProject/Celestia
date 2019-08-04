@@ -13,6 +13,7 @@
 
 #include <celengine/astro.h>
 #include <celengine/selection.h>
+#include <celengine/refcounted.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -23,14 +24,12 @@
  * (which specifies the coordinate axes at a given time) and the
  * nestingDepth() method (which is used to check for recursive frames.)
  */
-class ReferenceFrame
+class ReferenceFrame : public RefCounted
 {
+ protected:
+    ~ReferenceFrame() override {};
  public:
     ReferenceFrame(Selection center);
-    virtual ~ReferenceFrame() {};
-
-    int addRef() const;
-    int release() const;
 
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
@@ -61,7 +60,6 @@ class ReferenceFrame
 
  private:
     Selection centerObject;
-    mutable int refCount;
 };
 
 
@@ -74,13 +72,14 @@ class CachingFrame : public ReferenceFrame
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     CachingFrame(Selection _center);
-    virtual ~CachingFrame() {};
 
     Eigen::Quaterniond getOrientation(double tjd) const;
     Eigen::Vector3d getAngularVelocity(double tjd) const;
     virtual Eigen::Quaterniond computeOrientation(double tjd) const = 0;
     virtual Eigen::Vector3d computeAngularVelocity(double tjd) const;
 
+ protected:
+    ~CachingFrame() override {};
  private:
     mutable double lastTime;
     mutable Eigen::Quaterniond lastOrientation;
@@ -95,7 +94,6 @@ class J2000EclipticFrame : public ReferenceFrame
 {
  public:
     J2000EclipticFrame(Selection center);
-    virtual ~J2000EclipticFrame() {};
 
     Eigen::Quaterniond getOrientation(double /* tjd */) const
     {
@@ -107,6 +105,8 @@ class J2000EclipticFrame : public ReferenceFrame
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth,
                                       FrameType frameType) const;
+ protected:
+    ~J2000EclipticFrame() override {};
 };
 
 
@@ -115,12 +115,13 @@ class J2000EquatorFrame : public ReferenceFrame
 {
  public:
     J2000EquatorFrame(Selection center);
-    virtual ~J2000EquatorFrame() {};
     Eigen::Quaterniond getOrientation(double tjd) const;
     virtual bool isInertial() const;
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth,
                                       FrameType frameType) const;
+ protected:
+    ~J2000EquatorFrame() override {};
 };
 
 
@@ -134,7 +135,6 @@ class BodyFixedFrame : public ReferenceFrame
 {
  public:
     BodyFixedFrame(Selection center, Selection obj);
-    virtual ~BodyFixedFrame() {};
     Eigen::Quaterniond getOrientation(double tjd) const;
     virtual Eigen::Vector3d getAngularVelocity(double tjd) const;
     virtual bool isInertial() const;
@@ -142,6 +142,8 @@ class BodyFixedFrame : public ReferenceFrame
                                       unsigned int maxDepth,
                                       FrameType frameType) const;
 
+ protected:
+    ~BodyFixedFrame() override {};
  private:
     Selection fixObject;
 };
@@ -152,7 +154,6 @@ class BodyMeanEquatorFrame : public ReferenceFrame
  public:
     BodyMeanEquatorFrame(Selection center, Selection obj, double freeze);
     BodyMeanEquatorFrame(Selection center, Selection obj);
-    virtual ~BodyMeanEquatorFrame() {};
     Eigen::Quaterniond getOrientation(double tjd) const;
     virtual Eigen::Vector3d getAngularVelocity(double tjd) const;
     virtual bool isInertial() const;
@@ -160,6 +161,8 @@ class BodyMeanEquatorFrame : public ReferenceFrame
                                       unsigned int maxDepth,
                                       FrameType frameType) const;
 
+ protected:
+    ~BodyMeanEquatorFrame() override {};
  private:
     Selection equatorObject;
     double freezeEpoch;
@@ -234,7 +237,6 @@ class TwoVectorFrame : public CachingFrame
                    int primAxis,
                    const FrameVector& sec,
                    int secAxis);
-    virtual ~TwoVectorFrame() {};
 
     Eigen::Quaterniond computeOrientation(double tjd) const;
     virtual bool isInertial() const;
@@ -245,6 +247,8 @@ class TwoVectorFrame : public CachingFrame
     //! The sine of minimum angle between the primary and secondary vectors
     static const double Tolerance;
 
+ protected:
+    ~TwoVectorFrame() override {};
  private:
     FrameVector primaryVector;
     int primaryAxis;

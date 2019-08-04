@@ -29,29 +29,8 @@ static const double ANGULAR_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
 /*** ReferenceFrame ***/
 
 ReferenceFrame::ReferenceFrame(Selection center) :
-    centerObject(center),
-    refCount(0)
+    centerObject(center)
 {
-}
-
-
-int
-ReferenceFrame::addRef() const
-{
-    return ++refCount;
-}
-
-
-int
-ReferenceFrame::release() const
-{
-    --refCount;
-    assert(refCount >= 0);
-    int refCountCopy = refCount;
-    if (refCount <= 0)
-        delete this;
-
-    return refCountCopy;
 }
 
 
