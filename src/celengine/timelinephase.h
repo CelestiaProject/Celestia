@@ -15,6 +15,7 @@
 
 #include <memory>
 #include "frame.h"
+
 class Orbit;
 class RotationModel;
 class FrameTree;
@@ -44,7 +45,7 @@ public:
 
     const ReferenceFrame::SharedConstPtr& orbitFrame() const
     {
-        return m_orbitFrame;
+        return m_orbitFrame.get();
     }
 
     Orbit* orbit() const
@@ -54,7 +55,7 @@ public:
 
     const ReferenceFrame::SharedConstPtr& bodyFrame() const
     {
-        return m_bodyFrame;
+        return m_bodyFrame.get();
     }
 
     RotationModel* rotationModel() const
