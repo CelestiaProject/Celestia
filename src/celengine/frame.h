@@ -29,9 +29,6 @@ class ReferenceFrame
     ReferenceFrame(Selection center);
     virtual ~ReferenceFrame() {};
 
-    int addRef() const;
-    int release() const;
-
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
     Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const;
@@ -61,7 +58,6 @@ class ReferenceFrame
 
  private:
     Selection centerObject;
-    mutable int refCount;
 };
 
 

@@ -1403,7 +1403,6 @@ ObserverFrame::ObserverFrame() :
     frame(nullptr)
 {
     frame = createFrame(Universal, Selection(), Selection());
-    frame->addRef();
 }
 
 
@@ -1419,7 +1418,6 @@ ObserverFrame::ObserverFrame(CoordinateSystem _coordSys,
     targetObject(_targetObject)
 {
     frame = createFrame(_coordSys, _refObject, _targetObject);
-    frame->addRef();
 }
 
 
@@ -1430,7 +1428,6 @@ ObserverFrame::ObserverFrame(const ReferenceFrame &f) :
     coordSys(Unknown),
     frame(&f)
 {
-    frame->addRef();
 }
 
 
@@ -1440,7 +1437,6 @@ ObserverFrame::ObserverFrame(const ObserverFrame& f) :
     frame(f.frame),
     targetObject(f.targetObject)
 {
-    frame->addRef();
 }
 
 
@@ -1450,8 +1446,6 @@ ObserverFrame& ObserverFrame::operator=(const ObserverFrame& f)
     targetObject = f.targetObject;
 
     // In case frames are the same, make sure we addref before releasing
-    f.frame->addRef();
-    frame->release();
     frame = f.frame;
 
     return *this;
@@ -1460,8 +1454,6 @@ ObserverFrame& ObserverFrame::operator=(const ObserverFrame& f)
 
 ObserverFrame::~ObserverFrame()
 {
-    if (frame != nullptr)
-        frame->release();
 }
 
 

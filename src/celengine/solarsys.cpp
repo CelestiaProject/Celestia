@@ -321,7 +321,6 @@ TimelinePhase* CreateTimelinePhase(Body* body,
         // No orbit frame specified; use the default frame.
         orbitFrame = defaultOrbitFrame;
     }
-    orbitFrame->addRef();
 
     // Get the body reference frame
     ReferenceFrame* bodyFrame;
@@ -331,7 +330,6 @@ TimelinePhase* CreateTimelinePhase(Body* body,
         bodyFrame = CreateReferenceFrame(universe, bodyFrameValue, defaultBodyFrame->getCenter(), body);
         if (bodyFrame == nullptr)
         {
-            orbitFrame->release();
             return nullptr;
         }
     }
@@ -340,7 +338,6 @@ TimelinePhase* CreateTimelinePhase(Body* body,
         // No body frame specified; use the default frame.
         bodyFrame = defaultBodyFrame;
     }
-    bodyFrame->addRef();
 
     // Use planet units (AU for semimajor axis) if the center of the orbit
     // reference frame is a star.
@@ -351,8 +348,6 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     if (!orbit)
     {
         clog << "Error: missing orbit in timeline phase.\n";
-        bodyFrame->release();
-        orbitFrame->release();
         return nullptr;
     }
 
@@ -377,8 +372,6 @@ TimelinePhase* CreateTimelinePhase(Body* body,
                                                               *rotationModel);
 
     // Frame ownership transfered to phase; release local references
-    orbitFrame->release();
-    bodyFrame->release();
 
     return phase;
 }
@@ -463,8 +456,6 @@ static bool CreateTimeline(Body* body,
     {
         defaultOrbitFrame = new BodyFixedFrame(parentObject, parentObject);
         defaultBodyFrame = CreateTopocentricFrame(parentObject, parentObject, Selection(body));
-        defaultOrbitFrame->addRef();
-        defaultBodyFrame->addRef();
     }
     else
     {

@@ -27,9 +27,7 @@ Timeline::~Timeline()
     for (auto phase : phases)
     {
         // Remove the phase from whatever phase tree contains it.
-        phase->getFrameTree()->removeChild(phase);
-
-        phase->release();
+        phase->getFrameTree()->removeChild(phase.get());
     }
 }
 
@@ -46,8 +44,7 @@ Timeline::appendPhase(TimelinePhase* phase)
             return false;
     }
 
-    phase->addRef();
-    phases.push_back(phase);
+    phases.push_back(shared_ptr<TimelinePhase>(phase));
 
     return true;
 }
@@ -61,18 +58,18 @@ Timeline::findPhase(double t) const
     // as the number of phases in a timeline should always be quite small.
     if (phases.size() == 1)
     {
-        return phases[0];
+        return phases[0].get();
     }
     else
     {
         for (const auto phase : phases)
         {
             if (t < phase->endTime())
-                return phase;
+                return phase.get();
         }
 
         // Time is greater than the end time of the final phase. Just return the final phase.
-        return phases.back();
+        return phases.back().get();
     }
 }
 
@@ -82,7 +79,7 @@ Timeline::findPhase(double t) const
 const TimelinePhase*
 Timeline::getPhase(unsigned int n) const
 {
-    return phases.at(n);
+    return phases.at(n).get();
 }
 
 

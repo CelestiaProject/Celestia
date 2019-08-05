@@ -13,6 +13,8 @@
 #ifndef _CELENGINE_TIMELINEPHASE_H_
 #define _CELENGINE_TIMELINEPHASE_H_
 
+#include <memory>
+
 class ReferenceFrame;
 class Orbit;
 class RotationModel;
@@ -24,9 +26,6 @@ class Body;
 class TimelinePhase
 {
 public:
-    int addRef() const;
-    int release() const;
-
     Body* body() const
     {
         return m_body;
@@ -44,7 +43,7 @@ public:
 
     ReferenceFrame* orbitFrame() const
     {
-        return m_orbitFrame;
+        return m_orbitFrame.get();
     }
 
     Orbit* orbit() const
@@ -54,7 +53,7 @@ public:
 
     ReferenceFrame* bodyFrame() const
     {
-        return m_bodyFrame;
+        return m_bodyFrame.get();
     }
 
     RotationModel* rotationModel() const
@@ -87,6 +86,7 @@ public:
                                               ReferenceFrame& bodyFrame,
                                               RotationModel& rotationModel);
 
+    ~TimelinePhase();
 private:
     // Private constructor; phases can only created with the
     // createTimelinePhase factory method.
@@ -103,23 +103,18 @@ private:
     TimelinePhase(const TimelinePhase& phase);
     TimelinePhase& operator=(const TimelinePhase& phase);
 
-    // TimelinePhases are refCounted; use release() instead.
-    ~TimelinePhase();
-
 private:
     Body* m_body;
 
     double m_startTime;
     double m_endTime;
 
-    ReferenceFrame* m_orbitFrame;
+    std::shared_ptr<ReferenceFrame> m_orbitFrame;
     Orbit* m_orbit;
-    ReferenceFrame* m_bodyFrame;
+    std::shared_ptr<ReferenceFrame> m_bodyFrame;
     RotationModel* m_rotationModel;
 
     FrameTree* m_owner;
-
-    mutable int refCount;
 };
 
 #endif // _CELENGINE_TIMELINEPHASE_H_

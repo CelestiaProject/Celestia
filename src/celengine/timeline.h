@@ -13,6 +13,7 @@
 #ifndef _CELENGINE_TIMELINE_H_
 #define _CELENGINE_TIMELINE_H_
 
+#include <memory>
 #include <vector>
 
 class ReferenceFrame;
@@ -38,7 +39,7 @@ public:
     void markChanged();
 
 private:
-    std::vector<TimelinePhase*> phases;
+    std::vector<std::shared_ptr<TimelinePhase> > phases;
 };
 
 #endif // _CELENGINE_TIMELINE_H_

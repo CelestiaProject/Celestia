@@ -28,12 +28,10 @@ public:
     PhaseReference(const TimelinePhase& _phase) :
     phase(&_phase)
 {
-        phase->addRef();
 }
 
 ~PhaseReference()
 {
-    phase->release();
 }
 
 const TimelinePhase* phase;

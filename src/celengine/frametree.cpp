@@ -52,7 +52,6 @@ FrameTree::FrameTree(Star* star) :
     // Default frame for a star is J2000 ecliptical, centered
     // on the star.
     defaultFrame = new J2000EclipticFrame(Selection(star));
-    defaultFrame->addRef();
 }
 
 
@@ -66,13 +65,11 @@ FrameTree::FrameTree(Body* body) :
 {
     // Default frame for a solar system body is the mean equatorial frame of the body.
     defaultFrame = new BodyMeanEquatorFrame(Selection(body), Selection(body));
-    defaultFrame->addRef();
 }
 
 
 FrameTree::~FrameTree()
 {
-    defaultFrame->release();
 }
 
 
@@ -162,7 +159,6 @@ FrameTree::recomputeBoundingSphere()
 void
 FrameTree::addChild(TimelinePhase* phase)
 {
-    phase->addRef();
     children.push_back(phase);
     markChanged();
 }
@@ -177,7 +173,6 @@ FrameTree::removeChild(TimelinePhase* phase)
     vector<TimelinePhase*>::iterator iter = find(children.begin(), children.end(), phase);
     if (iter != children.end())
     {
-        (*iter)->release();
         children.erase(iter);
         markChanged();
     }
