@@ -18,6 +18,7 @@
 #ifndef _CELENGINE_OBSERVER_H_
 #define _CELENGINE_OBSERVER_H_
 
+#include <memory>
 #include <celmath/mathlib.h>
 #include <celengine/frame.h>
 #include <Eigen/Core>
@@ -27,6 +28,8 @@
 class ObserverFrame
 {
 public:
+    using SharedPtr = std::shared_ptr<ObserverFrame>;
+    using SharedConstPtr = std::shared_ptr<const ObserverFrame>;
     enum CoordinateSystem
     {
         Universal       = 0,
@@ -53,43 +56,43 @@ public:
 
     ObserverFrame();
     ObserverFrame(CoordinateSystem cs,
-                  const Selection& _refObject,
-                  const Selection& _targetObj = Selection());
+                  const Selection &_refObject,
+                  const Selection &_targetObj = Selection());
     ObserverFrame(const ObserverFrame&);
-    ObserverFrame(const ReferenceFrame& f);
+    ObserverFrame(const ReferenceFrame &f);
 
-    ~ObserverFrame();
+    ~ObserverFrame() = default;
 
-    ObserverFrame& operator=(const ObserverFrame& f);
+    ObserverFrame &operator=(const ObserverFrame &f);
 
     CoordinateSystem getCoordinateSystem() const;
     Selection getRefObject() const;
     Selection getTargetObject() const;
 
-    const ReferenceFrame* getFrame() const;
+    const ReferenceFrame::SharedConstPtr &getFrame() const;
 
-    UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
-    UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
-    Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const;
-    Eigen::Quaterniond convertToUniversal(const Eigen::Quaterniond& q, double tjd) const;
+    UniversalCoord convertFromUniversal(const UniversalCoord &uc, double tjd) const;
+    UniversalCoord convertToUniversal(const UniversalCoord &uc, double tjd) const;
+    Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond &q, double tjd) const;
+    Eigen::Quaterniond convertToUniversal(const Eigen::Quaterniond &q, double tjd) const;
 
-    static UniversalCoord convert(const ObserverFrame* fromFrame,
-                                  const ObserverFrame* toFrame,
-                                  const UniversalCoord& uc,
+    static UniversalCoord convert(const ObserverFrame::SharedConstPtr &fromFrame,
+                                  const ObserverFrame::SharedConstPtr &toFrame,
+                                  const UniversalCoord &uc,
                                   double t);
-    static Eigen::Quaterniond convert(const ObserverFrame* fromFrame,
-                                      const ObserverFrame* toFrame,
-                                      const Eigen::Quaterniond& q,
+    static Eigen::Quaterniond convert(const ObserverFrame::SharedConstPtr &fromFrame,
+                                      const ObserverFrame::SharedConstPtr &toFrame,
+                                      const Eigen::Quaterniond &q,
                                       double t);
 
 private:
-    ReferenceFrame* createFrame(CoordinateSystem _coordSys,
-                                const Selection& _refObject,
-                                const Selection& _targetObject);
+    ReferenceFrame::SharedConstPtr createFrame(CoordinateSystem _coordSys,
+                                const Selection &_refObject,
+                                const Selection &_targetObject);
 
 private:
     CoordinateSystem coordSys;
-    const ReferenceFrame* frame;
+    ReferenceFrame::SharedConstPtr frame;
     Selection targetObject;
 };
 
@@ -108,10 +111,10 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     Observer();
-    Observer(const Observer& o);
-    ~Observer();
+    Observer(const Observer &o);
+    ~Observer() = default;
 
-    Observer& operator=(const Observer& o);
+    Observer &operator=(const Observer &o);
 
     UniversalCoord getPosition() const;
     void          setPosition(const UniversalCoord&);
@@ -135,8 +138,8 @@ public:
     Eigen::Vector3f getPickRay(float x, float y) const;
 
 
-    void orbit(const Selection&, const Eigen::Quaternionf& q);
-    void rotate(const Eigen::Quaternionf& q);
+    void orbit(const Selection&, const Eigen::Quaternionf &q);
+    void rotate(const Eigen::Quaternionf &q);
     void changeOrbitDistance(const Selection&, float d);
     void setTargetSpeed(float s);
     float getTargetSpeed();
@@ -144,7 +147,7 @@ public:
     Selection getTrackedObject() const;
     void setTrackedObject(const Selection&);
 
-    const std::string& getDisplayedSurface() const;
+    const std::string &getDisplayedSurface() const;
     void setDisplayedSurface(const std::string&);
 
     uint64_t getLocationFilter() const;
@@ -152,41 +155,41 @@ public:
 
     void gotoSelection(const Selection&,
                        double gotoTime,
-                       const Eigen::Vector3f& up,
+                       const Eigen::Vector3f &up,
                        ObserverFrame::CoordinateSystem upFrame);
     void gotoSelection(const Selection&,
                        double gotoTime,
                        double startInter,
                        double endInter,
-                       const Eigen::Vector3f& up,
+                       const Eigen::Vector3f &up,
                        ObserverFrame::CoordinateSystem upFrame);
     void gotoSelectionGC(const Selection&,
                          double gotoTime,
                          double startInter,
                          double endInter,
-                         const Eigen::Vector3f& up,
+                         const Eigen::Vector3f &up,
                          ObserverFrame::CoordinateSystem upFrame);
     void gotoSelection(const Selection&,
                        double gotoTime,
                        double distance,
-                       const Eigen::Vector3f& up,
+                       const Eigen::Vector3f &up,
                        ObserverFrame::CoordinateSystem upFrame);
     void gotoSelectionLongLat(const Selection&,
                               double gotoTime,
                               double distance,
                               float longitude, float latitude,
-                              const Eigen::Vector3f& up);
-    void gotoLocation(const UniversalCoord& toPosition,
-                      const Eigen::Quaterniond& toOrientation,
+                              const Eigen::Vector3f &up);
+    void gotoLocation(const UniversalCoord &toPosition,
+                      const Eigen::Quaterniond &toOrientation,
                       double duration);
     void getSelectionLongLat(const Selection&,
-                             double& distance,
-                             double& longitude,
-                             double& latitude);
-    void gotoSelectionGC(const Selection& selection,
+                             double &distance,
+                             double &longitude,
+                             double &latitude);
+    void gotoSelectionGC(const Selection &selection,
                          double gotoTime,
                          double distance,
-                         const Eigen::Vector3f& up,
+                         const Eigen::Vector3f &up,
                          ObserverFrame::CoordinateSystem upFrame);
     void gotoSurface(const Selection&, double duration);
     void centerSelection(const Selection&, double centerTime = 0.5);
@@ -199,11 +202,11 @@ public:
 
     void reverseOrientation();
 
-    void setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj, const Selection& targetObj);
-    void setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj);
-    void setFrame(const ObserverFrame& f);
+    void setFrame(ObserverFrame::CoordinateSystem cs, const Selection &refObj, const Selection &targetObj);
+    void setFrame(ObserverFrame::CoordinateSystem cs, const Selection &refObj);
+    void setFrame(const ObserverFrame::SharedConstPtr &f);
 
-    const ObserverFrame* getFrame() const;
+    const ObserverFrame::SharedConstPtr &getFrame() const;
 
     double getArrivalTime() const;
 
@@ -251,34 +254,34 @@ public:
     // void setSimulation(Simulation* _sim) { sim = _sim; };
 
  private:
-    void computeGotoParameters(const Selection& sel,
-                               JourneyParams& jparams,
+    void computeGotoParameters(const Selection &sel,
+                               JourneyParams &jparams,
                                double gotoTime,
                                double startInter,
                                double endInter,
-                               const Eigen::Vector3d& offset,
+                               const Eigen::Vector3d &offset,
                                ObserverFrame::CoordinateSystem offsetFrame,
-                               const Eigen::Vector3f& up,
+                               const Eigen::Vector3f &up,
                                ObserverFrame::CoordinateSystem upFrame);
-    void computeGotoParametersGC(const Selection& sel,
-                                 JourneyParams& jparams,
+    void computeGotoParametersGC(const Selection &sel,
+                                 JourneyParams &jparams,
                                  double gotoTime,
                                  double startInter,
                                  double endInter,
-                                 const Eigen::Vector3d& offset,
+                                 const Eigen::Vector3d &offset,
                                  ObserverFrame::CoordinateSystem offsetFrame,
-                                 const Eigen::Vector3f& up,
+                                 const Eigen::Vector3f &up,
                                  ObserverFrame::CoordinateSystem upFrame,
-                                 const Selection& centerObj);
-    void computeCenterParameters(const Selection& sel,
-                                 JourneyParams& jparams,
+                                 const Selection &centerObj);
+    void computeCenterParameters(const Selection &sel,
+                                 JourneyParams &jparams,
                                  double centerTime);
-    void computeCenterCOParameters(const Selection& sel,
-                                   JourneyParams& jparams,
+    void computeCenterCOParameters(const Selection &sel,
+                                   JourneyParams &jparams,
                                    double centerTime);
 
     void updateUniversal();
-    void convertFrameCoordinates(const ObserverFrame* newFrame);
+    void convertFrameCoordinates(const ObserverFrame::SharedConstPtr &newFrame);
 
  private:
     double              simTime{ 0.0 };
@@ -294,7 +297,7 @@ public:
     UniversalCoord      positionUniv;
     Eigen::Quaterniond  orientationUniv;
 
-    ObserverFrame*      frame{ nullptr };
+    ObserverFrame::SharedConstPtr frame;
 
     double              realTime{ 0.0 };
 

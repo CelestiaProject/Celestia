@@ -22,9 +22,9 @@
 TimelinePhase::TimelinePhase(Body* _body,
                              double _startTime,
                              double _endTime,
-                             ReferenceFrame* _orbitFrame,
+                             const ReferenceFrame::SharedConstPtr& _orbitFrame,
                              Orbit* _orbit,
-                             ReferenceFrame* _bodyFrame,
+                             const ReferenceFrame::SharedConstPtr& _bodyFrame,
                              RotationModel* _rotationModel,
                              FrameTree* _owner) :
     m_body(_body),
@@ -34,67 +34,21 @@ TimelinePhase::TimelinePhase(Body* _body,
     m_orbit(_orbit),
     m_bodyFrame(_bodyFrame),
     m_rotationModel(_rotationModel),
-    m_owner(_owner),
-    refCount(0)
+    m_owner(_owner)
 {
     // assert(owner == orbitFrame->getCenter()->getFrameTree());
-    m_orbitFrame->addRef();
-    m_bodyFrame->addRef();
 }
-
-
-TimelinePhase::~TimelinePhase()
-{
-    m_orbitFrame->release();
-    m_bodyFrame->release();
-}
-
-
-// Declared private--should never be used
-TimelinePhase::TimelinePhase(const TimelinePhase&)
-{
-    assert(0);
-}
-
-
-// Declared private--should never be used
-TimelinePhase& TimelinePhase::operator=(const TimelinePhase&)
-{
-    assert(0);
-    return *this;
-}
-
-
-int TimelinePhase::addRef() const
-{
-    return ++refCount;
-}
-
-
-int TimelinePhase::release() const
-{
-    --refCount;
-    assert(refCount >= 0);
-    if (refCount <= 0)
-    {
-        delete this;
-        return 0;
-    }
-
-    return refCount;
-}
-
 
 /*! Create a new timeline phase in the specified universe.
  */
-TimelinePhase*
+TimelinePhase::SharedConstPtr
 TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    Body* body,
                                    double startTime,
                                    double endTime,
-                                   ReferenceFrame& orbitFrame,
+                                   const ReferenceFrame::SharedConstPtr& orbitFrame,
                                    Orbit& orbit,
-                                   ReferenceFrame& bodyFrame,
+                                   const ReferenceFrame::SharedConstPtr& bodyFrame,
                                    RotationModel& rotationModel)
 {
     // Validate the time range.
@@ -104,7 +58,7 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
     // Get the frame tree to add the new phase to. Verify that the reference frame
     // center is either a star or solar system body.
     FrameTree* frameTree = nullptr;
-    Selection center = orbitFrame.getCenter();
+    Selection center = orbitFrame->getCenter();
     if (center.body() != nullptr)
     {
         frameTree = center.body()->getOrCreateFrameTree();
@@ -126,14 +80,14 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
         return nullptr;
     }
 
-    TimelinePhase* phase = new TimelinePhase(body,
-                                             startTime,
-                                             endTime,
-                                             &orbitFrame,
-                                             &orbit,
-                                             &bodyFrame,
-                                             &rotationModel,
-                                             frameTree);
+    auto phase = make_shared<const TimelinePhase>(body,
+                                                  startTime,
+                                                  endTime,
+                                                  orbitFrame,
+                                                  &orbit,
+                                                  bodyFrame,
+                                                  &rotationModel,
+                                                  frameTree);
 
     frameTree->addChild(phase);
 

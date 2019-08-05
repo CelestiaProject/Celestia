@@ -29,31 +29,9 @@ static const double ANGULAR_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
 /*** ReferenceFrame ***/
 
 ReferenceFrame::ReferenceFrame(Selection center) :
-    centerObject(center),
-    refCount(0)
+    centerObject(center)
 {
 }
-
-
-int
-ReferenceFrame::addRef() const
-{
-    return ++refCount;
-}
-
-
-int
-ReferenceFrame::release() const
-{
-    --refCount;
-    assert(refCount >= 0);
-    int refCountCopy = refCount;
-    if (refCount <= 0)
-        delete this;
-
-    return refCountCopy;
-}
-
 
 // High-precision rotation using 64.64 fixed point path. Rotate uc by
 // the rotation specified by unit quaternion q.
@@ -691,8 +669,6 @@ FrameVector::FrameVector(const FrameVector& fv) :
     vec(fv.vec),
     frame(fv.frame)
 {
-    if (frame != nullptr)
-        frame->addRef();
 }
 
 
@@ -705,11 +681,7 @@ FrameVector::operator=(const FrameVector& fv)
     target = fv.target;
     vec = fv.vec;
 
-    if (frame != nullptr)
-        frame->release();
     frame = fv.frame;
-    if (frame != nullptr)
-        frame->addRef();
 
     return *this;
 }
@@ -724,14 +696,6 @@ FrameVector::FrameVector(FrameVectorType t) :
     frame(nullptr)
 {
 }
-
-
-FrameVector::~FrameVector()
-{
-    if (frame != nullptr)
-        frame->release();
-}
-
 
 FrameVector
 FrameVector::createRelativePositionVector(const Selection& _observer,
@@ -759,13 +723,11 @@ FrameVector::createRelativeVelocityVector(const Selection& _observer,
 
 FrameVector
 FrameVector::createConstantVector(const Vector3d& _vec,
-                                  const ReferenceFrame* _frame)
+                                  const ReferenceFrame::SharedConstPtr& _frame)
 {
     FrameVector fv(ConstantVector);
     fv.vec = _vec;
     fv.frame = _frame;
-    if (fv.frame != nullptr)
-        fv.frame->addRef();
     return fv;
 }
 

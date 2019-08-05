@@ -1307,7 +1307,7 @@ getFrameCenter(const Universe& universe, Hash* frameData, const Selection& defau
 }
 
 
-static BodyFixedFrame*
+static BodyFixedFrame::SharedConstPtr
 CreateBodyFixedFrame(const Universe& universe,
                      Hash* frameData,
                      const Selection& defaultCenter)
@@ -1316,11 +1316,11 @@ CreateBodyFixedFrame(const Universe& universe,
     if (center.empty())
         return nullptr;
 
-    return new BodyFixedFrame(center, center);
+    return make_shared<BodyFixedFrame>(center, center);
 }
 
 
-static BodyMeanEquatorFrame*
+static BodyMeanEquatorFrame::SharedConstPtr
 CreateMeanEquatorFrame(const Universe& universe,
                        Hash* frameData,
                        const Selection& defaultCenter)
@@ -1346,11 +1346,11 @@ CreateMeanEquatorFrame(const Universe& universe,
     double freezeEpoch = 0.0;
     if (ParseDate(frameData, "Freeze", freezeEpoch))
     {
-        return new BodyMeanEquatorFrame(center, obj, freezeEpoch);
+        return make_shared<BodyMeanEquatorFrame>(center, obj, freezeEpoch);
     }
     else
     {
-        return new BodyMeanEquatorFrame(center, obj);
+        return make_shared<BodyMeanEquatorFrame>(center, obj);
     }
 }
 
@@ -1542,7 +1542,7 @@ CreateFrameVector(const Universe& universe,
 
         // The frame for the vector is optional; a nullptr frame indicates
         // J2000 ecliptic.
-        ReferenceFrame* f = nullptr;
+        ReferenceFrame::SharedConstPtr f;
         Value* frameValue = constVecData->getValue("Frame");
         if (frameValue != nullptr)
         {
@@ -1561,7 +1561,7 @@ CreateFrameVector(const Universe& universe,
 }
 
 
-static TwoVectorFrame*
+static shared_ptr<const TwoVectorFrame>
 CreateTwoVectorFrame(const Universe& universe,
                      Hash* frameData,
                      const Selection& defaultCenter)
@@ -1623,22 +1623,19 @@ CreateTwoVectorFrame(const Universe& universe,
                                                      center,
                                                      secondaryData);
 
-    TwoVectorFrame* frame = nullptr;
+    shared_ptr<const TwoVectorFrame> frame;
     if (primaryVector != nullptr && secondaryVector != nullptr)
     {
-        frame = new TwoVectorFrame(center,
+        frame = make_shared<TwoVectorFrame>(center,
                                    *primaryVector, primaryAxis,
                                    *secondaryVector, secondaryAxis);
     }
-
-    delete primaryVector;
-    delete secondaryVector;
 
     return frame;
 }
 
 
-static J2000EclipticFrame*
+static shared_ptr<const J2000EclipticFrame>
 CreateJ2000EclipticFrame(const Universe& universe,
                          Hash* frameData,
                          const Selection& defaultCenter)
@@ -1648,11 +1645,11 @@ CreateJ2000EclipticFrame(const Universe& universe,
     if (center.empty())
         return nullptr;
 
-    return new J2000EclipticFrame(center);
+    return make_shared<J2000EclipticFrame>(center);
 }
 
 
-static J2000EquatorFrame*
+static shared_ptr<const J2000EquatorFrame>
 CreateJ2000EquatorFrame(const Universe& universe,
                         Hash* frameData,
                         const Selection& defaultCenter)
@@ -1662,7 +1659,7 @@ CreateJ2000EquatorFrame(const Universe& universe,
     if (center.empty())
         return nullptr;
 
-    return new J2000EquatorFrame(center);
+    return make_shared<J2000EquatorFrame>(center);
 }
 
 
@@ -1670,16 +1667,16 @@ CreateJ2000EquatorFrame(const Universe& universe,
  * Helper function for CreateTopocentricFrame().
  * Creates a two-vector frame with the specified center, target, and observer.
  */
-TwoVectorFrame*
+shared_ptr<const TwoVectorFrame>
 CreateTopocentricFrame(const Selection& center,
                        const Selection& target,
                        const Selection& observer)
 {
-    BodyMeanEquatorFrame* eqFrame = new BodyMeanEquatorFrame(target, target);
+    shared_ptr<const BodyMeanEquatorFrame> eqFrame = make_shared<BodyMeanEquatorFrame>(target, target);
     FrameVector north = FrameVector::createConstantVector(Vector3d::UnitY(), eqFrame);
     FrameVector up = FrameVector::createRelativePositionVector(observer, target);
 
-    return new TwoVectorFrame(center, up, -2, north, -3);
+    return make_shared<TwoVectorFrame>(center, up, -2, north, -3);
 }
 
 
@@ -1723,7 +1720,7 @@ CreateTopocentricFrame(const Selection& center,
  *     ...
  * } </pre>
  */
-static TwoVectorFrame*
+static shared_ptr<const TwoVectorFrame>
 CreateTopocentricFrame(const Universe& universe,
                        Hash* frameData,
                        const Selection& defaultTarget,
@@ -1805,7 +1802,7 @@ CreateTopocentricFrame(const Universe& universe,
 }
 
 
-static ReferenceFrame*
+static ReferenceFrame::SharedConstPtr
 CreateComplexFrame(const Universe& universe, Hash* frameData, const Selection& defaultCenter, Body* defaultObserver)
 {
     Value* value = frameData->getValue("BodyFixed");
@@ -1886,7 +1883,7 @@ CreateComplexFrame(const Universe& universe, Hash* frameData, const Selection& d
 }
 
 
-ReferenceFrame* CreateReferenceFrame(const Universe& universe,
+ReferenceFrame::SharedConstPtr CreateReferenceFrame(const Universe& universe,
                                      Value* frameValue,
                                      const Selection& defaultCenter,
                                      Body* defaultObserver)

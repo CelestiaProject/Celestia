@@ -13,14 +13,14 @@
 #ifndef _CELENGINE_FRAMETREE_H_
 #define _CELENGINE_FRAMETREE_H_
 
+#include <memory>
 #include <vector>
 #include <cstddef>
+#include "frame.h"
+#include "timelinephase.h"
 
 class Star;
 class Body;
-class ReferenceFrame;
-class TimelinePhase;
-
 
 class FrameTree
 {
@@ -37,11 +37,11 @@ public:
         return starParent;
     }
 
-    ReferenceFrame* getDefaultReferenceFrame() const;
+    const ReferenceFrame::SharedConstPtr &getDefaultReferenceFrame() const;
 
-    void addChild(TimelinePhase* phase);
-    void removeChild(TimelinePhase* phase);
-    TimelinePhase* getChild(unsigned int n) const;
+    void addChild(const TimelinePhase::SharedConstPtr &phase);
+    void removeChild(const TimelinePhase::SharedConstPtr &phase);
+    const TimelinePhase::SharedConstPtr &getChild(unsigned int n) const;
     unsigned int childCount() const;
 
     void markChanged();
@@ -92,7 +92,7 @@ public:
 private:
     Star* starParent;
     Body* bodyParent;
-    std::vector<TimelinePhase*> children;
+    std::vector<TimelinePhase::SharedConstPtr> children;
 
     double m_boundingSphereRadius{ 0.0 };
     double m_maxChildRadius{ 0.0 };
@@ -100,7 +100,7 @@ private:
     bool m_changed{ false };
     int m_childClassMask{ 0 };
 
-    ReferenceFrame* defaultFrame;
+    ReferenceFrame::SharedConstPtr defaultFrame;
 };
 
 #endif // _CELENGINE_FRAMETREE_H_

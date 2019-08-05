@@ -233,7 +233,7 @@ void Simulation::setFrame(ObserverFrame::CoordinateSystem coordSys,
     activeObserver->setFrame(coordSys, refObject);
 }
 
-const ObserverFrame* Simulation::getFrame() const
+const ObserverFrame::SharedConstPtr& Simulation::getFrame() const
 {
     return activeObserver->getFrame();
 }

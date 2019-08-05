@@ -12,10 +12,17 @@
 #ifndef _CELX_PHASE_H_
 #define _CELX_PHASE_H_
 
+#include <memory>
+
 struct lua_State;
 class TimelinePhase;
 
+inline int celxClassId(const TimelinePhase::SharedConstPtr&)
+{
+    return Celx_Phase;
+}
+
 extern void CreatePhaseMetaTable(lua_State* l);
-extern int phase_new(lua_State* l, const TimelinePhase& phase);
+extern int phase_new(lua_State* l, const TimelinePhase::SharedConstPtr& phase);
 
 #endif // _CELX_PHASE_H_

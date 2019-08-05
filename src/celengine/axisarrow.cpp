@@ -442,7 +442,7 @@ VelocityVectorArrow::VelocityVectorArrow(const Body& _body) :
 Vector3d
 VelocityVectorArrow::getDirection(double tdb) const
 {
-    const TimelinePhase* phase = body.getTimeline()->findPhase(tdb);
+    auto phase = body.getTimeline()->findPhase(tdb);
     return phase->orbitFrame()->getOrientation(tdb).conjugate() * phase->orbit()->velocityAtTime(tdb);
 }
 
@@ -490,7 +490,7 @@ SpinVectorArrow::SpinVectorArrow(const Body& _body) :
 Vector3d
 SpinVectorArrow::getDirection(double tdb) const
 {
-    const TimelinePhase* phase = body.getTimeline()->findPhase(tdb);
+    auto phase = body.getTimeline()->findPhase(tdb);
     return phase->bodyFrame()->getOrientation(tdb).conjugate() * phase->rotationModel()->angularVelocityAtTime(tdb);
 }
 

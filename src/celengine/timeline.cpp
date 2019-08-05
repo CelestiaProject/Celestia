@@ -28,14 +28,12 @@ Timeline::~Timeline()
     {
         // Remove the phase from whatever phase tree contains it.
         phase->getFrameTree()->removeChild(phase);
-
-        phase->release();
     }
 }
 
 
 bool
-Timeline::appendPhase(TimelinePhase* phase)
+Timeline::appendPhase(TimelinePhase::SharedConstPtr &phase)
 {
     // Validate start and end times. If there are existing phases in the timeline,
     // startTime must be equal to endTime of the previous phases so that there are
@@ -46,14 +44,13 @@ Timeline::appendPhase(TimelinePhase* phase)
             return false;
     }
 
-    phase->addRef();
     phases.push_back(phase);
 
     return true;
 }
 
 
-const TimelinePhase*
+const TimelinePhase::SharedConstPtr&
 Timeline::findPhase(double t) const
 {
     // Find the phase containing time t. The overwhelming common case is
@@ -65,7 +62,7 @@ Timeline::findPhase(double t) const
     }
     else
     {
-        for (const auto phase : phases)
+        for (const auto& phase : phases)
         {
             if (t < phase->endTime())
                 return phase;
@@ -79,7 +76,7 @@ Timeline::findPhase(double t) const
 
 /*! Get the phase at the specified index.
  */
-const TimelinePhase*
+const TimelinePhase::SharedConstPtr&
 Timeline::getPhase(unsigned int n) const
 {
     return phases.at(n);

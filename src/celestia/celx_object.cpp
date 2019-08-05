@@ -1121,7 +1121,7 @@ static int object_orbitframe(lua_State* l)
     }
     else
     {
-        const ReferenceFrame* f = sel->body()->getOrbitFrame(t);
+        auto f = sel->body()->getOrbitFrame(t);
         celx.newFrame(ObserverFrame(*f));
     }
 
@@ -1162,7 +1162,7 @@ static int object_bodyframe(lua_State* l)
     }
     else
     {
-        const ReferenceFrame* f = sel->body()->getBodyFrame(t);
+        auto f = sel->body()->getBodyFrame(t);
         celx.newFrame(ObserverFrame(*f));
     }
 
@@ -1206,7 +1206,7 @@ static int object_getphase(lua_State* l)
         const Timeline* timeline = sel->body()->getTimeline();
         if (timeline->includes(t))
         {
-            celx.newPhase(*timeline->findPhase(t));
+            celx.newPhase(timeline->findPhase(t));
         }
         else
         {
@@ -1245,8 +1245,8 @@ static int object_phases_iter(lua_State* l)
         lua_pushnumber(l, i + 1);
         lua_replace(l, lua_upvalueindex(2));
 
-        const TimelinePhase* phase = timeline->getPhase(i);
-        celx.newPhase(*phase);
+        auto phase = timeline->getPhase(i);
+        celx.newPhase(phase);
 
         return 1;
     }

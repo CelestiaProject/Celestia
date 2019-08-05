@@ -47,7 +47,7 @@ CelestiaState::captureState(CelestiaCore* appCore)
     Simulation *sim = appCore->getSimulation();
     Renderer *renderer = appCore->getRenderer();
 
-    const ObserverFrame* frame = sim->getFrame();
+    auto frame = sim->getFrame();
 
     coordSys = frame->getCoordinateSystem();
     if (coordSys != ObserverFrame::Universal)

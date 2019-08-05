@@ -1851,7 +1851,7 @@ void CelxLua::newFrame(const ObserverFrame& f)
     frame_new(m_lua, f);
 }
 
-void CelxLua::newPhase(const TimelinePhase& phase)
+void CelxLua::newPhase(const shared_ptr<const TimelinePhase>& phase)
 {
     phase_new(m_lua, phase);
 }

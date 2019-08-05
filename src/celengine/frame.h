@@ -11,6 +11,7 @@
 #ifndef _CELENGINE_FRAME_H_
 #define _CELENGINE_FRAME_H_
 
+#include <memory>
 #include <celengine/astro.h>
 #include <celengine/selection.h>
 #include <Eigen/Core>
@@ -26,11 +27,10 @@
 class ReferenceFrame
 {
  public:
+    using SharedPtr = std::shared_ptr<ReferenceFrame>;
+    using SharedConstPtr = std::shared_ptr<const ReferenceFrame>;
     ReferenceFrame(Selection center);
     virtual ~ReferenceFrame() {};
-
-    int addRef() const;
-    int release() const;
 
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
@@ -61,7 +61,6 @@ class ReferenceFrame
 
  private:
     Selection centerObject;
-    mutable int refCount;
 };
 
 
@@ -133,6 +132,8 @@ class J2000EquatorFrame : public ReferenceFrame
 class BodyFixedFrame : public ReferenceFrame
 {
  public:
+    using SharedPtr = std::shared_ptr<BodyFixedFrame>;
+    using SharedConstPtr = std::shared_ptr<const BodyFixedFrame>;
     BodyFixedFrame(Selection center, Selection obj);
     virtual ~BodyFixedFrame() {};
     Eigen::Quaterniond getOrientation(double tjd) const;
@@ -150,6 +151,8 @@ class BodyFixedFrame : public ReferenceFrame
 class BodyMeanEquatorFrame : public ReferenceFrame
 {
  public:
+    using SharedPtr = std::shared_ptr<BodyMeanEquatorFrame>;
+    using SharedConstPtr = std::shared_ptr<const BodyMeanEquatorFrame>;
     BodyMeanEquatorFrame(Selection center, Selection obj, double freeze);
     BodyMeanEquatorFrame(Selection center, Selection obj);
     virtual ~BodyMeanEquatorFrame() {};
@@ -175,7 +178,7 @@ class FrameVector
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     FrameVector(const FrameVector& fv);
-    ~FrameVector();
+    ~FrameVector() = default;
     FrameVector& operator=(const FrameVector&);
 
     Eigen::Vector3d direction(double tjd) const;
@@ -199,7 +202,7 @@ class FrameVector
     static FrameVector createRelativeVelocityVector(const Selection& _observer,
                                                     const Selection& _target);
     static FrameVector createConstantVector(const Eigen::Vector3d& _vec,
-                                            const ReferenceFrame* _frame);
+                                            const ReferenceFrame::SharedConstPtr& _frame);
 
  private:
     /*! Type-only constructor is private. Code outside the class should
@@ -211,7 +214,7 @@ class FrameVector
     Selection observer;
     Selection target;
     Eigen::Vector3d vec;                   // constant vector
-    const ReferenceFrame* frame; // frame for constant vector
+    ReferenceFrame::SharedConstPtr frame; // frame for constant vector
 };
 
 

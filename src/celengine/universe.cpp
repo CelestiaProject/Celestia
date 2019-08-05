@@ -424,7 +424,7 @@ static bool traverseFrameTree(FrameTree* frameTree,
 {
     for (unsigned int i = 0; i < frameTree->childCount(); i++)
     {
-        TimelinePhase* phase = frameTree->getChild(i);
+        auto phase = frameTree->getChild(i);
         if (phase->includes(tdb))
         {
             Body* body = phase->body();

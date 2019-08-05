@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <assert.h>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_phase.h"
@@ -16,38 +17,15 @@
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
 
+using namespace std;
 
-// We want to avoid copying TimelinePhase objects, so we can't make them
-// userdata. But, they can't be lightuserdata either because they need to
-// be reference counted, and Lua doesn't garbage collect lightuserdata. The
-// solution is the PhaseReference object, which just wraps a TimelinePhase
-// pointer.
-class PhaseReference
-{
-public:
-    PhaseReference(const TimelinePhase& _phase) :
-    phase(&_phase)
-{
-        phase->addRef();
-}
-
-~PhaseReference()
-{
-    phase->release();
-}
-
-const TimelinePhase* phase;
-};
-
-
-
-int phase_new(lua_State* l, const TimelinePhase& phase)
+int phase_new(lua_State* l, const TimelinePhase::SharedConstPtr& phase)
 {
     CelxLua celx(l);
 
     // Use placement new to put the new phase reference in the userdata block.
-    void* block = lua_newuserdata(l, sizeof(PhaseReference));
-    new (block) PhaseReference(phase);
+    void* block = lua_newuserdata(l, sizeof(TimelinePhase::SharedConstPtr));
+    new (block) TimelinePhase::SharedConstPtr(phase);
 
     celx.setClass(Celx_Phase);
 
@@ -55,28 +33,27 @@ int phase_new(lua_State* l, const TimelinePhase& phase)
 }
 
 
-static const TimelinePhase* to_phase(lua_State* l, int index)
+static TimelinePhase::SharedConstPtr* to_phase(lua_State* l, int index)
 {
     CelxLua celx(l);
 
-    PhaseReference* ref = static_cast<PhaseReference*>(celx.checkUserData(index, Celx_Phase));
-    return ref == nullptr ? nullptr : ref->phase;
+    return celx.safeGetClass<TimelinePhase::SharedConstPtr>(index);
 }
 
 
-static const TimelinePhase* this_phase(lua_State* l)
+static const TimelinePhase::SharedConstPtr& this_phase(lua_State* l)
 {
     CelxLua celx(l);
 
-    const TimelinePhase* phase = to_phase(l, 1);
+    auto phase = to_phase(l, 1);
+    assert(phase != nullptr);
     if (phase == nullptr)
     {
         celx.doError("Bad phase object!");
     }
 
-    return phase;
+    return *phase;
 }
-
 
 /*! phase:timespan()
  *
@@ -98,7 +75,7 @@ static int phase_timespan(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments allowed for to phase:timespan");
 
-    const TimelinePhase* phase = this_phase(l);
+    auto phase = this_phase(l);
     celx.push(phase->startTime(), phase->endTime());
     //lua_pushnumber(l, phase->startTime());
     //lua_pushnumber(l, phase->endTime());
@@ -117,8 +94,8 @@ static int phase_orbitframe(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments allowed for to phase:orbitframe");
 
-    const TimelinePhase* phase = this_phase(l);
-    const ReferenceFrame* f = phase->orbitFrame();
+    auto phase = this_phase(l);
+    auto f = phase->orbitFrame();
     celx.newFrame(ObserverFrame(*f));
 
     return 1;
@@ -135,8 +112,8 @@ static int phase_bodyframe(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments allowed for to phase:bodyframe");
 
-    const TimelinePhase* phase = this_phase(l);
-    const ReferenceFrame* f = phase->bodyFrame();
+    auto phase = this_phase(l);
+    auto f = phase->bodyFrame();
     celx.newFrame(ObserverFrame(*f));
 
     return 1;
@@ -155,7 +132,7 @@ static int phase_getposition(lua_State* l)
 
     celx.checkArgs(2, 2, "One argument required for phase:getposition");
 
-    const TimelinePhase* phase = this_phase(l);
+    auto phase = this_phase(l);
 
     double tdb = celx.safeGetNumber(2, WrongType, "Argument to phase:getposition() must be number", 0.0);
     if (tdb < phase->startTime())
@@ -180,7 +157,7 @@ static int phase_getorientation(lua_State* l)
 
     celx.checkArgs(2, 2, "One argument required for phase:getorientation");
 
-    const TimelinePhase* phase = this_phase(l);
+    auto phase = this_phase(l);
 
     double tdb = celx.safeGetNumber(2, WrongType, "Argument to phase:getorientation() must be number", 0.0);
     if (tdb < phase->startTime())
@@ -211,15 +188,14 @@ static int phase_gc(lua_State* l)
 {
     CelxLua celx(l);
 
-    PhaseReference* ref = static_cast<PhaseReference*>(celx.checkUserData(1, Celx_Phase));
-    if (ref == nullptr)
+    auto ref = this_phase(l);
+    if (ref)
     {
-        celx.doError("Bad phase object during garbage collection!");
+        ref.reset();
     }
     else
     {
-        // Explicitly call the destructor since the object was created with placement new
-        ref->~PhaseReference();
+        celx.doError("Bad phase object during garbage collection!");
     }
 
     return 0;

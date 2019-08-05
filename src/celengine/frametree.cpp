@@ -41,6 +41,8 @@
  * object will all cause the tree to be marked as changed.
  */
 
+using namespace std;
+
 /*! Create a frame tree associated with a star.
  */
 FrameTree::FrameTree(Star* star) :
@@ -51,8 +53,7 @@ FrameTree::FrameTree(Star* star) :
 {
     // Default frame for a star is J2000 ecliptical, centered
     // on the star.
-    defaultFrame = new J2000EclipticFrame(Selection(star));
-    defaultFrame->addRef();
+    defaultFrame = make_shared<J2000EclipticFrame>(Selection(star));
 }
 
 
@@ -65,21 +66,19 @@ FrameTree::FrameTree(Body* body) :
     defaultFrame(nullptr)
 {
     // Default frame for a solar system body is the mean equatorial frame of the body.
-    defaultFrame = new BodyMeanEquatorFrame(Selection(body), Selection(body));
-    defaultFrame->addRef();
+    defaultFrame = make_shared<BodyMeanEquatorFrame>(Selection(body), Selection(body));
 }
 
 
 FrameTree::~FrameTree()
 {
-    defaultFrame->release();
 }
 
 
 /*! Return the default reference frame for the object a frame tree is associated
  *  with.
  */
-ReferenceFrame*
+const ReferenceFrame::SharedConstPtr&
 FrameTree::getDefaultReferenceFrame() const
 {
     return defaultFrame;
@@ -160,9 +159,8 @@ FrameTree::recomputeBoundingSphere()
 /*! Add a new phase to this tree.
  */
 void
-FrameTree::addChild(TimelinePhase* phase)
+FrameTree::addChild(const TimelinePhase::SharedConstPtr &phase)
 {
-    phase->addRef();
     children.push_back(phase);
     markChanged();
 }
@@ -172,12 +170,11 @@ FrameTree::addChild(TimelinePhase* phase)
  *  phase doesn't exist in the tree.
  */
 void
-FrameTree::removeChild(TimelinePhase* phase)
+FrameTree::removeChild(const TimelinePhase::SharedConstPtr &phase)
 {
-    vector<TimelinePhase*>::iterator iter = find(children.begin(), children.end(), phase);
+    auto iter = find(children.begin(), children.end(), phase);
     if (iter != children.end())
     {
-        (*iter)->release();
         children.erase(iter);
         markChanged();
     }
@@ -185,7 +182,7 @@ FrameTree::removeChild(TimelinePhase* phase)
 
 
 /*! Return the child at the specified index. */
-TimelinePhase*
+const TimelinePhase::SharedConstPtr&
 FrameTree::getChild(unsigned int n) const
 {
     return children[n];
