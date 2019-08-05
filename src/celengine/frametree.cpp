@@ -41,6 +41,8 @@
  * object will all cause the tree to be marked as changed.
  */
 
+using namespace std;
+
 /*! Create a frame tree associated with a star.
  */
 FrameTree::FrameTree(Star* star) :

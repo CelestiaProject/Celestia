@@ -6278,7 +6278,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                 {
                     bool isBehindPrimary = false;
 
-                    const TimelinePhase* phase = body->getTimeline()->findPhase(now);
+                    auto phase = body->getTimeline()->findPhase(now);
                     Body* primary = phase->orbitFrame()->getCenter().body();
                     if (primary != nullptr && (primary->getClassification() & Body::Invisible) != 0)
                     {

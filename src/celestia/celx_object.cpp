@@ -1245,7 +1245,7 @@ static int object_phases_iter(lua_State* l)
         lua_pushnumber(l, i + 1);
         lua_replace(l, lua_upvalueindex(2));
 
-        const TimelinePhase* phase = timeline->getPhase(i);
+        auto phase = timeline->getPhase(i);
         celx.newPhase(*phase);
 
         return 1;

@@ -544,7 +544,7 @@ UniversalCoord Body::getPosition(double tdb) const
 {
     Vector3d position = Vector3d::Zero();
 
-    const TimelinePhase* phase = timeline->findPhase(tdb);
+    auto phase = timeline->findPhase(tdb);
     Vector3d p = phase->orbit()->positionAtTime(tdb);
     ReferenceFrame* frame = phase->orbitFrame();
 
@@ -569,7 +569,7 @@ UniversalCoord Body::getPosition(double tdb) const
  */
 Quaterniond Body::getOrientation(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb);
+    auto phase = timeline->findPhase(tdb);
     return phase->rotationModel()->orientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
 }
 
@@ -578,7 +578,7 @@ Quaterniond Body::getOrientation(double tdb) const
  */
 Vector3d Body::getVelocity(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb);
+    auto phase = timeline->findPhase(tdb);
 
     ReferenceFrame* orbitFrame = phase->orbitFrame();
 
@@ -599,7 +599,7 @@ Vector3d Body::getVelocity(double tdb) const
  */
 Vector3d Body::getAngularVelocity(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb);
+    auto phase = timeline->findPhase(tdb);
 
     Vector3d v = phase->rotationModel()->angularVelocityAtTime(tdb);
 
@@ -622,7 +622,7 @@ Vector3d Body::getAngularVelocity(double tdb) const
  */
 Matrix4d Body::getLocalToAstrocentric(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb);
+    auto phase = timeline->findPhase(tdb);
     Vector3d p = phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
     return Eigen::Transform<double, 3, Affine>(Translation3d(p)).matrix();
 }
@@ -633,7 +633,7 @@ Matrix4d Body::getLocalToAstrocentric(double tdb) const
 Vector3d Body::getAstrocentricPosition(double tdb) const
 {
     // TODO: Switch the iterative method used in getPosition
-    const TimelinePhase* phase = timeline->findPhase(tdb);
+    auto phase = timeline->findPhase(tdb);
     return phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
 }
 
@@ -642,7 +642,7 @@ Vector3d Body::getAstrocentricPosition(double tdb) const
  */
 Quaterniond Body::getEclipticToFrame(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb);
+    auto phase = timeline->findPhase(tdb);
     return phase->bodyFrame()->getOrientation(tdb);
 }
 
@@ -652,7 +652,7 @@ Quaterniond Body::getEclipticToFrame(double tdb) const
  */
 Quaterniond Body::getEclipticToEquatorial(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb);
+    auto phase = timeline->findPhase(tdb);
     return phase->rotationModel()->equatorOrientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
 }
 
@@ -662,7 +662,7 @@ Quaterniond Body::getEclipticToEquatorial(double tdb) const
  */
 Quaterniond Body::getEclipticToBodyFixed(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb);
+    auto phase = timeline->findPhase(tdb);
     return phase->rotationModel()->orientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
 }
 
@@ -672,7 +672,7 @@ Quaterniond Body::getEclipticToBodyFixed(double tdb) const
 // meridian, and z-axis at a right angle the xy plane.
 Quaterniond Body::getEquatorialToBodyFixed(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb);
+    auto phase = timeline->findPhase(tdb);
     return phase->rotationModel()->spin(tdb);
 }
 

@@ -50,7 +50,7 @@ Timeline::appendPhase(TimelinePhase* phase)
 }
 
 
-const TimelinePhase*
+shared_ptr<const TimelinePhase>
 Timeline::findPhase(double t) const
 {
     // Find the phase containing time t. The overwhelming common case is
@@ -58,28 +58,28 @@ Timeline::findPhase(double t) const
     // as the number of phases in a timeline should always be quite small.
     if (phases.size() == 1)
     {
-        return phases[0].get();
+        return phases[0];
     }
     else
     {
         for (const auto phase : phases)
         {
             if (t < phase->endTime())
-                return phase.get();
+                return phase;
         }
 
         // Time is greater than the end time of the final phase. Just return the final phase.
-        return phases.back().get();
+        return phases.back();
     }
 }
 
 
 /*! Get the phase at the specified index.
  */
-const TimelinePhase*
+shared_ptr<const TimelinePhase>
 Timeline::getPhase(unsigned int n) const
 {
-    return phases.at(n).get();
+    return phases.at(n);
 }
 
 

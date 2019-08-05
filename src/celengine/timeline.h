@@ -27,9 +27,9 @@ public:
     Timeline() = default;
     ~Timeline();
 
-    const TimelinePhase* findPhase(double t) const;
+    std::shared_ptr<const TimelinePhase> findPhase(double t) const;
     bool appendPhase(TimelinePhase*);
-    const TimelinePhase* getPhase(unsigned int n) const;
+    std::shared_ptr<const TimelinePhase> getPhase(unsigned int n) const;
     unsigned int phaseCount() const;
 
     double startTime() const;
