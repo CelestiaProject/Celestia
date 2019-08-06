@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstdarg>
 #include <config.h>
+#include <fmt/printf.h>
 
 static int debugVerbosity = 0;
 
@@ -28,15 +29,15 @@ void DebugPrint(int level, const char *format, ...)
         if (IsDebuggerPresent())
         {
             char buf[1024];
-            vsprintf(buf, format, args);
+            fmt::vsprintf(buf, format, args);
             OutputDebugStringA(buf);
         }
         else
         {
-            vfprintf(stdout, format, args);
+            fmt::vfprintf(stdout, format, args);
         }
 #else
-        vfprintf(stderr, format, args);
+        fmt::vfprintf(stderr, format, args);
 #endif
     }
 
