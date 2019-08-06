@@ -62,7 +62,7 @@ TimelinePhase& TimelinePhase::operator=(const TimelinePhase&)
 
 /*! Create a new timeline phase in the specified universe.
  */
-TimelinePhase*
+shared_ptr<const TimelinePhase>
 TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    Body* body,
                                    double startTime,
@@ -101,7 +101,7 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
         return nullptr;
     }
 
-    TimelinePhase* phase = new TimelinePhase(body,
+    auto phase = make_shared<const TimelinePhase>(body,
                                              startTime,
                                              endTime,
                                              &orbitFrame,

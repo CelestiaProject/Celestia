@@ -77,7 +77,7 @@ public:
         return m_startTime <= t && t < m_endTime;
     }
 
-    static TimelinePhase* CreateTimelinePhase(Universe& universe,
+    static std::shared_ptr<const TimelinePhase> CreateTimelinePhase(Universe& universe,
                                               Body* body,
                                               double startTime,
                                               double endTime,
@@ -87,9 +87,9 @@ public:
                                               RotationModel& rotationModel);
 
     ~TimelinePhase();
-private:
+
     // Private constructor; phases can only created with the
-    // createTimelinePhase factory method.
+    // createTimelinePhase factory method. Made public for shared_ptr usage.
     TimelinePhase(Body* _body,
                   double _startTime,
                   double _endTime,
@@ -99,6 +99,7 @@ private:
                   RotationModel* _rotationModel,
                   FrameTree* _owner);
 
+private:
     // Private copy constructor and assignment operator; should never be used.
     TimelinePhase(const TimelinePhase& phase);
     TimelinePhase& operator=(const TimelinePhase& phase);

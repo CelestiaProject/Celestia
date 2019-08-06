@@ -274,7 +274,7 @@ static Selection GetParentObject(PlanetarySystem* system)
 }
 
 
-TimelinePhase* CreateTimelinePhase(Body* body,
+shared_ptr<const TimelinePhase> CreateTimelinePhase(Body* body,
                                    Universe& universe,
                                    Hash* phaseData,
                                    const string& path,
@@ -363,7 +363,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
         rotationModel = new ConstantOrientation(Quaterniond::Identity());
     }
 
-    TimelinePhase* phase = TimelinePhase::CreateTimelinePhase(universe,
+    auto phase = TimelinePhase::CreateTimelinePhase(universe,
                                                               body,
                                                               beginning, ending,
                                                               *orbitFrame,
@@ -400,7 +400,7 @@ Timeline* CreateTimelineFromArray(Body* body,
         bool isFirstPhase = iter == timelineArray->begin();
         bool isLastPhase = *iter == timelineArray->back();
 
-        TimelinePhase* phase = CreateTimelinePhase(body, universe, phaseData,
+        auto phase = CreateTimelinePhase(body, universe, phaseData,
                                                    path,
                                                    defaultOrbitFrame,
                                                    defaultBodyFrame,
@@ -630,7 +630,7 @@ static bool CreateTimeline(Body* body,
 
         // We finally have an orbit, rotation model, frames, and time range. Create
         // the object timeline.
-        TimelinePhase* phase = TimelinePhase::CreateTimelinePhase(universe,
+        auto phase = TimelinePhase::CreateTimelinePhase(universe,
                                                                   body,
                                                                   beginning, ending,
                                                                   *orbitFrame,

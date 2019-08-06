@@ -40,9 +40,9 @@ public:
 
     ReferenceFrame* getDefaultReferenceFrame() const;
 
-    void addChild(TimelinePhase* phase);
-    void removeChild(TimelinePhase* phase);
-    TimelinePhase* getChild(unsigned int n) const;
+    void addChild(std::shared_ptr<const TimelinePhase> &phase);
+    void removeChild(std::shared_ptr<const TimelinePhase> &phase);
+    const TimelinePhase* getChild(unsigned int n) const;
     unsigned int childCount() const;
 
     void markChanged();
@@ -93,7 +93,7 @@ public:
 private:
     Star* starParent;
     Body* bodyParent;
-    std::vector<TimelinePhase*> children;
+    std::vector<std::shared_ptr<const TimelinePhase> > children;
 
     double m_boundingSphereRadius{ 0.0 };
     double m_maxChildRadius{ 0.0 };

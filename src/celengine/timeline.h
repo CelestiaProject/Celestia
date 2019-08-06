@@ -27,9 +27,9 @@ public:
     Timeline() = default;
     ~Timeline();
 
-    std::shared_ptr<const TimelinePhase> findPhase(double t) const;
-    bool appendPhase(TimelinePhase*);
-    std::shared_ptr<const TimelinePhase> getPhase(unsigned int n) const;
+    const std::shared_ptr<const TimelinePhase>& findPhase(double t) const;
+    bool appendPhase(std::shared_ptr<const TimelinePhase>&);
+    const std::shared_ptr<const TimelinePhase>& getPhase(unsigned int n) const;
     unsigned int phaseCount() const;
 
     double startTime() const;
@@ -39,7 +39,7 @@ public:
     void markChanged();
 
 private:
-    std::vector<std::shared_ptr<TimelinePhase> > phases;
+    std::vector<std::shared_ptr<const TimelinePhase> > phases;
 };
 
 #endif // _CELENGINE_TIMELINE_H_
