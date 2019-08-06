@@ -230,34 +230,6 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     for (const auto& dir : qExtrasDirectories)
         extrasDirectories.push_back(dir.toUtf8().data());
 
-#if defined(TARGET_OS_MAC) && defined(NATIVE_OSX_APP)
-    static short domains[] = { kUserDomain, kLocalDomain, kNetworkDomain };
-    int domain = 0;
-    int domainCount = (sizeof domains / sizeof(short));
-    QString resourceDir = QDir::currentPath();
-    while (!QDir::setCurrent(resourceDir+"/CelestiaResources") && domain < domainCount)
-    {
-        FSRef folder;
-        CFURLRef url;
-        UInt8 fullPath[PATH_MAX];
-        if (noErr == FSFindFolder(domains[domain++], kApplicationSupportFolderType, FALSE, &folder))
-        {
-            url = CFURLCreateFromFSRef(nil, &folder);
-            if (CFURLGetFileSystemRepresentation(url, TRUE, fullPath, PATH_MAX))
-                resourceDir = (const char *)fullPath;
-            CFRelease(url);
-        }
-    }
-
-    if (domain >= domainCount)
-    {
-        QMessageBox::critical(0, "Celestia",
-                              _("Celestia is unable to run because the CelestiaResources folder was not "
-                                 "found, probably due to improper installation."));
-        exit(1);
-    }
-#endif
-
     initAppDataDirectory();
 
     m_appCore = new CelestiaCore();
