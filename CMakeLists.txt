@@ -81,7 +81,7 @@ include(GNUInstallDirs)
 include(CheckIncludeFiles)
 include(rpath)
 include(install_to_extras_subdir)
-if (NOT MSVC)
+if (NOT MSVC AND NOT MINGW)
   include(cotire)
 else()
   macro(cotire _target)
@@ -189,16 +189,29 @@ set(FULL_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${PROJECT_NAME}")
 if (NOT GIT_COMMIT)
   find_program(GIT_FOUND git)
   if (GIT_FOUND)
-    execute_process(
-      COMMAND git log --pretty=format:"%h" -1
-      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-      OUTPUT_VARIABLE GIT_COMMIT
-    )
+    if (NOT MINGW)
+      execute_process(
+        COMMAND git log --pretty=format:"%h" -1
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        OUTPUT_VARIABLE GIT_COMMIT
+      )
+    endif()
+    if (MINGW)
+      execute_process(
+        COMMAND git log --pretty=format:'%h' -1
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        OUTPUT_VARIABLE GIT_COMMIT
+      )
+    endif()
     if ("${GIT_COMMIT}" STREQUAL "")
       set(GIT_COMMIT "unknown")
     endif()
   else()
     set(GIT_COMMIT "unknown")
+  endif()
+  
+  if (MINGW)
+    set(GIT_COMMIT "\"${GIT_COMMIT}\"")
   endif()
 endif()
 
