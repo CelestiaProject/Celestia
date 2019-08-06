@@ -19,30 +19,24 @@ using namespace std;
 
 static const char TitleTag[] = "Title:";
 
-static bool ourFile(const string& filepath)
-{
-    return DetermineFileType(filepath) == Content_CelestiaLegacyScript
-#ifdef CELX
-           || DetermineFileType(filepath) == Content_CelestiaScript
-#endif
-           ;
-}
-
 static void process(const fs::path& p, vector<ScriptMenuItem>* menuItems)
 {
-    const string& filepath = p.string();
-
-    if (!ourFile(filepath))
+#ifndef CELX
+    if (DetermineFileType(p) != Content_CelestiaLegacyScript)
+#else
+    if (DetermineFileType(p) != Content_CelestiaScript &&
+        DetermineFileType(p) != Content_CelestiaLegacyScript)
+#endif
         return;
 
     // Scan the script file for metainformation. At the moment,
     // the only thing searched for is the script title, which must
     // appear on the first line after the string 'Title:'
-    ifstream in(filepath);
+    ifstream in(p.u8string());
     if (in.good())
     {
         ScriptMenuItem item;
-        item.filename = filepath;
+        item.filename = p;
 
         // Read the first line, handling various newline conventions
         char firstLineBuf[512];
@@ -69,21 +63,18 @@ static void process(const fs::path& p, vector<ScriptMenuItem>* menuItems)
         else
         {
             // No title tag--just use the filename
-            item.title = p.filename().string();
+            item.title = p.filename().u8string();
         }
-
         menuItems->push_back(item);
     }
 }
 
-
-
 vector<ScriptMenuItem>*
-ScanScriptsDirectory(string scriptsDir, bool deep)
+ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
 {
     vector<ScriptMenuItem>* scripts = new vector<ScriptMenuItem>;
 
-    for (const auto& p : fs::recursive_directory_iterator(fs::u8path(scriptsDir)))
+    for (const auto& p : fs::recursive_directory_iterator(scriptsDir))
         process(p, scripts);
 
     return scripts;

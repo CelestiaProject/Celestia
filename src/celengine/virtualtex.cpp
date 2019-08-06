@@ -55,10 +55,10 @@ static inline unsigned int lodOffset(unsigned int lod)
 #endif
 
 
-VirtualTexture::VirtualTexture(string  _tilePath,
+VirtualTexture::VirtualTexture(fs::path _tilePath,
                                unsigned int _baseSplit,
                                unsigned int _tileSize,
-                               string  _tilePrefix,
+                               string _tilePrefix,
                                const string& _tileType) :
     Texture(_tileSize << (_baseSplit + 1), _tileSize << _baseSplit),
     tilePath(std::move(_tilePath)),
@@ -71,7 +71,7 @@ VirtualTexture::VirtualTexture(string  _tilePath,
     assert(tileSize != 0 && isPow2(tileSize));
     tileTree[0] = new TileQuadtreeNode();
     tileTree[1] = new TileQuadtreeNode();
-    tileExt = string(".") + _tileType;
+    tileExt = fs::u8path(string(".") + _tileType);
     populateTileTree();
 
     if (DetermineFileType(tileExt) == Content_DXT5NormalMap)
@@ -202,11 +202,10 @@ unsigned int VirtualTexture::tileIndex(unsigned int lod,
 ImageTexture* VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, unsigned int v)
 {
     lod >>= baseSplit;
-
     assert(lod < (unsigned)MaxResolutionLevels);
 
-    string path;
-    path = fmt::sprintf("%slevel%d/%s%d_%d%s", tilePath, lod, tilePrefix.c_str(), u, v, tileExt);
+    auto path = fs::u8path(fmt::sprintf("%slevel%d", tilePath, lod)) /
+                fs::u8path(fmt::sprintf("%s%d_%d%s", tilePrefix, u, v, tileExt));
 
     Image* img = LoadImageFromFile(path);
     if (img == nullptr)
@@ -309,7 +308,7 @@ void VirtualTexture::addTileToTree(Tile* tile, unsigned int lod, unsigned int u,
 
 
 static VirtualTexture* CreateVirtualTexture(Hash* texParams,
-                                            const string& path)
+                                            const fs::path& path)
 {
     string imageDirectory;
     if (!texParams->getString("ImageDirectory", imageDirectory))
@@ -349,11 +348,10 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
 
     // if absolute directory notation for ImageDirectory used,
     // don't prepend the current add-on path.
-    string directory = imageDirectory + "/";
-    if (directory.substr(0,1) != "/" && directory.substr(1,1) !=":")
-    {
-        directory = path + "/" + directory;
-    }
+    fs::path directory(imageDirectory);
+
+    if (directory.is_relative())
+        directory = path / directory;
     return new VirtualTexture(directory,
                               (unsigned int) baseSplit,
                               (unsigned int) tileSize,
@@ -362,7 +360,7 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
 }
 
 
-static VirtualTexture* LoadVirtualTexture(istream& in, const string& path)
+static VirtualTexture* LoadVirtualTexture(istream& in, const fs::path& path)
 {
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
@@ -391,7 +389,7 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const string& path)
 }
 
 
-VirtualTexture* LoadVirtualTexture(const string& filename)
+VirtualTexture* LoadVirtualTexture(const fs::path& filename)
 {
     ifstream in(filename, ios::in);
 
@@ -401,12 +399,5 @@ VirtualTexture* LoadVirtualTexture(const string& filename)
         return nullptr;
     }
 
-    // Strip off every character including and after the final slash to get
-    // the pathname.
-    string path = ".";
-    string::size_type pos = filename.rfind('/');
-    if (pos != string::npos)
-        path = string(filename, 0, pos);
-
-    return LoadVirtualTexture(in, path);
+    return LoadVirtualTexture(in, filename.parent_path());
 }

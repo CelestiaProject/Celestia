@@ -11,6 +11,7 @@
 #define _CELENGINE_IMAGE_H_
 
 #include <string>
+#include <celutil/filesystem.h>
 
 // The image class supports multiple GL formats, including compressed ones.
 // Mipmaps may be stored within an image as well.  The mipmaps are stored in
@@ -58,12 +59,12 @@ class Image
     unsigned char* pixels{ nullptr };
 };
 
-extern Image* LoadJPEGImage(const std::string& filename,
+extern Image* LoadJPEGImage(const fs::path& filename,
                             int channels = Image::ColorChannel);
-extern Image* LoadBMPImage(const std::string& filename);
-extern Image* LoadPNGImage(const std::string& filename);
-extern Image* LoadDDSImage(const std::string& filename);
+extern Image* LoadBMPImage(const fs::path& filename);
+extern Image* LoadPNGImage(const fs::path& filename);
+extern Image* LoadDDSImage(const fs::path& filename);
 
-extern Image* LoadImageFromFile(const std::string& filename);
+extern Image* LoadImageFromFile(const fs::path& filename);
 
 #endif // _CELENGINE_IMAGE_H_

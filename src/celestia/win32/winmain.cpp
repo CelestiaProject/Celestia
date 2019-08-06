@@ -2223,7 +2223,7 @@ void handleKey(WPARAM key, bool down)
 }
 
 
-static void BuildScriptsMenu(HMENU menuBar, const string& scriptsDir)
+static void BuildScriptsMenu(HMENU menuBar, const fs::path& scriptsDir)
 {
     HMENU fileMenu = GetSubMenu(menuBar, 0);
 
@@ -2249,8 +2249,7 @@ static void BuildScriptsMenu(HMENU menuBar, const string& scriptsDir)
         HMENU scriptMenu = info.hSubMenu;
 
         // Remove the old menu items
-        int count = GetMenuItemCount(scriptMenu);
-        while (count-- > 0)
+        for (int count = GetMenuItemCount(scriptMenu); count > 0; count--)
             DeleteMenu(scriptMenu, 0, MF_BYPOSITION);
 
         for (unsigned int i = 0; i < ScriptMenuItems->size(); i++)

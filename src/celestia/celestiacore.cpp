@@ -461,7 +461,7 @@ void CelestiaCore::runScript(CommandSequence* script)
 void CelestiaCore::runScript(const string& filename)
 {
     cancelScript();
-    string localeFilename = LocaleFilename(filename);
+    fs::path localeFilename = LocaleFilename(filename);
     ContentType type = DetermineFileType(localeFilename);
 
     if (type == Content_CelestiaLegacyScript)
@@ -3955,27 +3955,22 @@ class SolarSystemLoader
  public:
     SolarSystemLoader(Universe* u, ProgressNotifier* pn) : universe(u), notifier(pn) {};
 
-    bool process(const fs::path& filepath)
+    void process(const fs::path& filepath)
     {
-        const string& filename = filepath.filename().u8string();
-        const string& fullname = filepath.u8string();
+        if (DetermineFileType(filepath) != Content_CelestiaCatalog)
+            return;
 
-        if (DetermineFileType(filename) == Content_CelestiaCatalog)
+        fmt::fprintf(clog, _("Loading solar system catalog: %s\n"), filepath.u8string());
+        if (notifier != nullptr)
+            notifier->update(filepath.filename().u8string());
+
+        ifstream solarSysFile(filepath, ios::in);
+        if (solarSysFile.good())
         {
-            fmt::fprintf(clog, _("Loading solar system catalog: %s\n"), fullname);
-            if (notifier != nullptr)
-                notifier->update(filename);
-
-            ifstream solarSysFile(fullname, ios::in);
-            if (solarSysFile.good())
-            {
-                LoadSolarSystemObjects(solarSysFile,
-                                       *universe,
-                                       filepath.parent_path().string());
-            }
+            LoadSolarSystemObjects(solarSysFile,
+                                   *universe,
+                                   filepath.parent_path());
         }
-
-        return true;
     };
 };
 
@@ -3998,28 +3993,21 @@ template <class OBJDB> class CatalogLoader
     {
     }
 
-    bool process(const fs::path& filepath)
+    void process(const fs::path& filepath)
     {
-        const string& filename = filepath.filename().u8string();
-        const string& fullname = filepath.u8string();
+        if (DetermineFileType(filepath) != contentType)
+            return;
 
-        if (DetermineFileType(filename) == contentType)
+        fmt::fprintf(clog, _("Loading %s catalog: %s\n"), typeDesc, filepath.u8string());
+        if (notifier != nullptr)
+            notifier->update(filepath.filename().u8string());
+
+        ifstream catalogFile(filepath, ios::in);
+        if (catalogFile.good())
         {
-            fmt::fprintf(clog, _("Loading %s catalog: %s\n"), typeDesc, fullname);
-            if (notifier)
-                notifier->update(filename);
-
-            ifstream catalogFile(fullname, ios::in);
-            if (catalogFile.good())
-            {
-                bool success = objDB->load(catalogFile, filepath.parent_path().string());
-                if (!success)
-                {
-                    DPRINTF(0, "Error reading %s catalog file: %s\n", typeDesc.c_str(), fullname.c_str());
-                }
-            }
+            if (!objDB->load(catalogFile, filepath.parent_path()))
+                DPRINTF(0, "Error reading %s catalog file: %s\n", typeDesc.c_str(), filepath.u8string());
         }
-        return true;
     }
 };
 

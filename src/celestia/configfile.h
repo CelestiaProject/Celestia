@@ -77,6 +77,6 @@ public:
     float SolarSystemMaxDistance;
 };
 
-CelestiaConfig* ReadCelestiaConfig(const std::string& filename, CelestiaConfig* config = nullptr);
+CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig* config = nullptr);
 
 #endif // _CONFIGFILE_H_
