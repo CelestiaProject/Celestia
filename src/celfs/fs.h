@@ -169,6 +169,12 @@ class path
     path extension() const;
     path parent_path() const;
 
+    bool is_relative() const
+    {
+        return !is_absolute();
+    }
+    bool is_absolute() const;
+
  private:
     string_type m_path;
     format      m_fmt       { auto_format };

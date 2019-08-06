@@ -87,6 +87,15 @@ path path::parent_path() const
 }
 
 
+bool path::is_absolute() const
+{
+#ifdef _WIN32
+    return m_path[0] == preferred_separator || m_path[1] == L':';
+#else
+    return m_path[0] == preferred_separator;
+#endif
+}
+
 struct directory_iterator::SearchImpl
 {
     path    m_path      {};
