@@ -47,6 +47,7 @@
 #include <cstring>
 #include <cassert>
 #include <ctime>
+#include <set>
 #include <fmt/printf.h>
 
 #ifdef CELX
@@ -3956,8 +3957,8 @@ class SolarSystemLoader
 
     bool process(const fs::path& filepath)
     {
-        const string& filename = filepath.filename().string();
-        const string& fullname = filepath.string();
+        const string& filename = filepath.filename().u8string();
+        const string& fullname = filepath.u8string();
 
         if (DetermineFileType(filename) == Content_CelestiaCatalog)
         {
@@ -3999,8 +4000,8 @@ template <class OBJDB> class CatalogLoader
 
     bool process(const fs::path& filepath)
     {
-        const string& filename = filepath.filename().string();
-        const string& fullname = filepath.string();
+        const string& filename = filepath.filename().u8string();
+        const string& fullname = filepath.u8string();
 
         if (DetermineFileType(filename) == contentType)
         {
@@ -4132,16 +4133,16 @@ bool CelestiaCore::initSimulation(const string& configFileName,
     }
 
     // Next, read all the deep sky files in the extras directories
-    for (const auto& _dir : config->extrasDirs)
+    for (const auto& dir : config->extrasDirs)
     {
-        if (_dir.empty())
+        if (dir.empty())
             continue;
 
         DeepSkyLoader loader(dsoDB,
                              "deep sky object",
                              Content_CelestiaDeepSkyCatalog,
                              progressNotifier);
-        for (const auto& fn : fs::recursive_directory_iterator(fs::path(_dir)))
+        for (const auto& fn : fs::recursive_directory_iterator(fs::u8path(dir)))
             loader.process(fn);
     }
     dsoDB->finish();
@@ -4173,13 +4174,13 @@ bool CelestiaCore::initSimulation(const string& configFileName,
 
     // Next, read all the solar system files in the extras directories
     {
-        for (const auto& _dir : config->extrasDirs)
+        for (const auto& dir : config->extrasDirs)
         {
-            if (_dir.empty())
+            if (dir.empty())
                 continue;
 
             SolarSystemLoader loader(universe, progressNotifier);
-            for (const auto& fn : fs::recursive_directory_iterator(fs::path(_dir)))
+            for (const auto& fn : fs::recursive_directory_iterator(fs::u8path(dir)))
                 loader.process(fn);
         }
     }
@@ -4436,13 +4437,13 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     }
 
     // Now, read supplemental star files from the extras directories
-    for (const auto& _dir : config->extrasDirs)
+    for (const auto& dir : config->extrasDirs)
     {
-        if (_dir.empty())
+        if (dir.empty())
             continue;
 
         StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
-        for (const auto& fn : fs::recursive_directory_iterator(fs::path(_dir)))
+        for (const auto& fn : fs::recursive_directory_iterator(fs::u8path(dir)))
             loader.process(fn);
     }
 
@@ -4881,40 +4882,25 @@ bool CelestiaCore::referenceMarkEnabled(const string& refMark, Selection sel) co
 #ifdef CELX
 class LuaPathFinder
 {
-    string luaPath;
-    fs::path lastPath;
+    set<fs::path> dirs;
 
  public:
-    LuaPathFinder(string s) : luaPath(s) {};
-
-    const string& getLuaPath() const
+    const string getLuaPath() const
     {
-        return luaPath;
+        string out;
+        for (const auto& dir : dirs)
+            out += (dir / fs::u8path("?.lua;")).u8string();
+        return out;
     }
 
-    bool process(const fs::path& filepath)
+    void process(const fs::path& p)
     {
-        const string& filename = filepath.filename().string();
-
-        if (filepath.parent_path() != lastPath)
+        auto dir = p.parent_path();
+        if (p.extension() == fs::u8path(".lua"))
         {
-            auto extPos = filename.rfind('.');
-            if (extPos != string::npos)
-            {
-                string ext = string(filename, extPos, filename.length() - extPos + 1);
-                if (ext == ".lua")
-                {
-                    lastPath = filepath.parent_path();
-                    string newPatt = (lastPath / "?.lua;").string();
-                    extPos = luaPath.rfind(newPatt);
-                    if (extPos < 0)
-                    {
-                        luaPath = luaPath + newPatt;
-                    }
-                }
-            }
+            if (dirs.count(dir) == 0)
+                dirs.insert(dir);
         }
-        return true;
     };
 };
 
@@ -4934,17 +4920,15 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
     string LuaPath = "?.lua;celxx/?.lua;";
 
     // Find the path for lua files in the extras directories
+    for (const auto& dir : config->extrasDirs)
     {
-        for (const auto& _dir : config->extrasDirs)
-        {
-            if (_dir.empty())
-                continue;
+        if (dir.empty())
+            continue;
 
-            LuaPathFinder loader("");
-            for (const auto& fn : fs::recursive_directory_iterator(fs::path(_dir)))
-                loader.process(fn);
-            LuaPath += loader.getLuaPath();
-        }
+        LuaPathFinder loader;
+        for (const auto& fn : fs::recursive_directory_iterator(fs::u8path(dir)))
+            loader.process(fn);
+        LuaPath += loader.getLuaPath();
     }
 
     // Always grant access for the Lua hook

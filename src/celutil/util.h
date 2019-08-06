@@ -16,6 +16,7 @@
 #include <iostream>
 #include <functional>
 #include <libintl.h>
+#include "filesystem.h"
 
 // gettext / libintl setup
 #ifndef _ /* unless somebody already took care of this */
@@ -70,5 +71,6 @@ template<typename T> constexpr typename T::size_type memsize(T c)
 }
 
 std::string WordExp(const std::string& filename);
+fs::path homeDir();
 
 #endif // _CELUTIL_UTIL_H_

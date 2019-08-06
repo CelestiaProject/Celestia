@@ -348,9 +348,9 @@ ShaderManager::getShader(const string& name)
         return iter->second;
     }
 
-    fs::path dir("shaders");
-    auto vsName = dir / fmt::sprintf("%s_vert.glsl", name);
-    auto fsName = dir / fmt::sprintf("%s_frag.glsl", name);
+    fs::path dir = fs::u8path("shaders");
+    auto vsName = dir / fs::u8path(fmt::sprintf("%s_vert.glsl", name));
+    auto fsName = dir / fs::u8path(fmt::sprintf("%s_frag.glsl", name));
 
     std::error_code ec;
     uintmax_t vsSize = fs::file_size(vsName, ec);
