@@ -9,6 +9,8 @@ official 32/64 bit development snapshots for Windows.
 
 To build from sources please follow instructions below.
 
+
+
 Common building instructions
 ----------------------------
 
@@ -23,6 +25,8 @@ https://git-scm.com/ and then execute the following commands:
 If you have fmtlib and Eigen3 installed from other sources (OS repository or
 vcpg) or don't want to build Celestia with SPICE support then you can skip the
 2nd step.
+
+
 
 Celestia Install instructions for UNIX
 --------------------------------------
@@ -85,8 +89,8 @@ following option to cmake: -DCMAKE_INSTALL_PREFIX=/another/path.
 
 
 
-Celestia Install instructions for Windows
------------------------------------------
+Celestia Install instructions for Windows (MSVC)
+------------------------------------------------
 
 Currently to build on Windows you need a Visual Studio 2015 or later, CMake
 and vcpkg (*).
@@ -123,12 +127,46 @@ CMAKE_PREFIX_PATH to cmake call used to configure Celestia, e.g.
 
 Not supported yet:
 - automatic installation using cmake
-- building using GNU toolchain (Mingw32), currently Work-In-Progress
 - using Ninja instead of MSBuild
 
 Notes:
  * vcpkg installation instructions are located on
    https://github.com/Microsoft/vcpkg
+
+
+
+Celestia Install instructions for Windows (MINGW64), qt-only
+------------------------------------------------------------
+
+It is recommended to build the source with MSYS2
+https://www.msys2.org/ .
+
+Do the following in the MINGW64 shell (mingw64.exe).
+
+Install required packages:
+
+  pacman -S mingw-w64-x86_64-toolchain
+  pacman -S base-devel
+  pacman -S git
+  pacman -S mingw-w64-x86_64-cmake
+  pacman -S mingw-w64-x86_64-qt5
+  pacman -S mingw-w64-x86_64-freeglut mingw-w64-x86_64-glew mingw-w64-x86_64-lua
+  pacman -S mingw-w64-x86_64-libtheora mingw-w64-x86_64-mesa
+
+Install optional packages:
+
+  pacman -S mingw-w64-x86_64-fmt mingw-w64-x86_64-eigen3 mingw-w64-x86_64-luajit
+
+Clone the source and go to the source directory.
+
+Configure and build:
+
+  mkdir build
+  cd build
+  cmake .. -G"MSYS Makefiles" -DENABLE_WIN=OFF
+  mingw32-make.exe -jN
+
+Instead of N, pass a number of CPU cores you want to use during a build.
 
 
 
