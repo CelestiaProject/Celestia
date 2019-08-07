@@ -204,20 +204,23 @@ void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
             // Hide the cursor.
             setCursor(QCursor(Qt::BlankCursor));
             cursorVisible = false;
-
-            // Save the cursor position
-            QPoint pt;
-            pt.setX(x);
-            pt.setY(y);
-
-            // Store a local and global location
-            saveLocalCursorPos = pt;
-            pt = mapToGlobal(pt);
-            saveGlobalCursorPos = pt;
+        }
+        else
+        {
+            // Calculate mouse delta from local coordinate then move it back to the saved location
+            appCore->mouseMove(x - saveLocalCursorPos.rx(), y - saveLocalCursorPos.ry(), buttons);
         }
 
-        // Calculate mouse delta from local coordinate then move it back to the saved location
-        appCore->mouseMove(x - saveLocalCursorPos.rx(), y - saveLocalCursorPos.ry(), buttons);
+        // Save the cursor position
+        QPoint pt;
+        pt.setX(x);
+        pt.setY(y);
+
+        // Store a local and global location
+        saveLocalCursorPos = pt;
+        pt = mapToGlobal(pt);
+        saveGlobalCursorPos = pt;
+
         QCursor::setPos(saveGlobalCursorPos);
     }
     else
