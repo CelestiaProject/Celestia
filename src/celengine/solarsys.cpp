@@ -1095,12 +1095,13 @@ static Body* CreateReferencePoint(const string& name,
 
 bool LoadSolarSystemObjects(istream& in,
                             Universe& universe,
-                            const std::string& directory)
+                            const fs::path& directory)
 {
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
-    bindtextdomain(directory.c_str(), directory.c_str()); // domain name is the same as resource path
+    const char* d = directory.string().c_str();
+    bindtextdomain(d, d); // domain name is the same as resource path
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {

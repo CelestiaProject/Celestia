@@ -135,7 +135,7 @@ class StarDatabase
     StarNameDatabase* getNameDatabase() const;
     void setNameDatabase(StarNameDatabase*);
 
-    bool load(std::istream&, const std::string& resourcePath);
+    bool load(std::istream&, const fs::path& resourcePath = fs::path());
     bool loadBinary(std::istream&);
 
     enum Catalog

@@ -203,14 +203,14 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     class OverlayImage
     {
      public:
-        OverlayImage(string);
+        OverlayImage(fs::path);
         ~OverlayImage() { delete texture; }
         OverlayImage()               =default;
         OverlayImage(OverlayImage&)  =delete;
         OverlayImage(OverlayImage&&) =delete;
 
         void render(float, int, int);
-        inline bool isNewImage(const string& f) { return filename != f; }
+        inline bool isNewImage(const fs::path& f) { return filename != f; }
 
         void setStartTime(float t) { start = t; }
         void setDuration(float t) { duration = t; }
@@ -225,7 +225,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         float offsetY{ 0.0f };
         float alpha{ 0.0f };
         bool  fitscreen{ false };
-        std::string filename;
+        fs::path filename;
         Texture* texture{ nullptr };
     };
 
@@ -233,8 +233,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CelestiaCore();
     ~CelestiaCore();
 
-    bool initSimulation(const std::string& configFileName = "",
-                        const std::vector<std::string>& extrasDirs = {},
+    bool initSimulation(const fs::path& configFileName = fs::path(),
+                        const std::vector<fs::path>& extrasDirs = {},
                         ProgressNotifier* progressNotifier = nullptr);
     bool initRenderer();
     void start(double t);
@@ -303,7 +303,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool isRecording();
 
     void runScript(CommandSequence*);
-    void runScript(const std::string& filename);
+    void runScript(const fs::path& filename);
     void cancelScript();
     void resumeScript();
 
@@ -376,7 +376,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void fatalError(const std::string&, bool visual = true);
 
-    void setScriptImage(float, float, float, float, const std::string&, bool);
+    void setScriptImage(float, float, float, float, const fs::path&, bool);
 
     const std::string& getTypedText() const { return typedText; }
     void setTypedText(const char *);

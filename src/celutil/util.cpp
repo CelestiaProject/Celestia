@@ -87,16 +87,6 @@ fs::path LocaleFilename(const fs::path &p)
     return p;
 }
 
-// for compatibility with old code
-string LocaleFilename(const string &s)
-{
-#ifdef _WIN32
-    return LocaleFilename(fs::path(UTF8ToWide(s))).string();
-#else
-    return LocaleFilename(fs::path(s));
-#endif
-}
-
 
 string WordExp(const std::string& filename)
 {

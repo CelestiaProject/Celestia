@@ -458,15 +458,15 @@ void CelestiaCore::runScript(CommandSequence* script)
 }
 
 
-void CelestiaCore::runScript(const string& filename)
+void CelestiaCore::runScript(const fs::path& filename)
 {
     cancelScript();
-    fs::path localeFilename = LocaleFilename(filename);
+    auto localeFilename = LocaleFilename(filename);
     ContentType type = DetermineFileType(localeFilename);
 
     if (type == Content_CelestiaLegacyScript)
     {
-        ifstream scriptfile(localeFilename);
+        ifstream scriptfile(localeFilename.string());
         if (!scriptfile.good())
         {
             fatalError(_("Error opening script file."));
@@ -1733,7 +1733,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case 'D':
         addToHistory();
         if (config->demoScriptFile != "")
-           runScript(config->demoScriptFile);
+           runScript(fs::u8path(config->demoScriptFile));
         break;
 
     case 'E':
@@ -2097,7 +2097,7 @@ void CelestiaCore::start(double t)
     {
         // using the KdeAlerter in runScript would create an infinite loop,
         // break it here by resetting config->initScriptFile:
-        string filename = config->initScriptFile;
+        fs::path filename = fs::u8path(config->initScriptFile);
         config->initScriptFile = "";
         runScript(filename);
     }
@@ -3266,7 +3266,7 @@ void CelestiaCore::setScriptImage(float duration,
                                   float xoffset,
                                   float yoffset,
                                   float alpha,
-                                  const string& filename,
+                                  const fs::path& filename,
                                   bool fitscreen)
 {
     if (!image || !image->isNewImage(filename))
@@ -3282,11 +3282,11 @@ void CelestiaCore::setScriptImage(float duration,
 }
 
 
-CelestiaCore::OverlayImage::OverlayImage(string f)
+CelestiaCore::OverlayImage::OverlayImage(fs::path f)
 {
     filename = std::move(f);
     delete texture;
-    texture = LoadTextureFromFile(string("images/") + filename);
+    texture = LoadTextureFromFile(fs::u8path("images") / filename);
 }
 
 
@@ -3964,7 +3964,7 @@ class SolarSystemLoader
         if (notifier != nullptr)
             notifier->update(filepath.filename().u8string());
 
-        ifstream solarSysFile(filepath, ios::in);
+        ifstream solarSysFile(filepath.string(), ios::in);
         if (solarSysFile.good())
         {
             LoadSolarSystemObjects(solarSysFile,
@@ -4002,7 +4002,7 @@ template <class OBJDB> class CatalogLoader
         if (notifier != nullptr)
             notifier->update(filepath.filename().u8string());
 
-        ifstream catalogFile(filepath, ios::in);
+        ifstream catalogFile(filepath.string(), ios::in);
         if (catalogFile.good())
         {
             if (!objDB->load(catalogFile, filepath.parent_path()))
@@ -4015,8 +4015,8 @@ using StarLoader = CatalogLoader<StarDatabase>;
 using DeepSkyLoader = CatalogLoader<DSODatabase>;
 
 
-bool CelestiaCore::initSimulation(const string& configFileName,
-                                  const vector<string>& extrasDirs,
+bool CelestiaCore::initSimulation(const fs::path& configFileName,
+                                  const vector<fs::path>& extrasDirs,
                                   ProgressNotifier* progressNotifier)
 {
     if (!configFileName.empty())
@@ -4025,10 +4025,10 @@ bool CelestiaCore::initSimulation(const string& configFileName,
     }
     else
     {
-        config = ReadCelestiaConfig("celestia.cfg");
+        config = ReadCelestiaConfig(fs::u8path("celestia.cfg"));
 
-        string localConfigFile = WordExp("~/.celestia.cfg");
-        if (localConfigFile != "")
+        fs::path localConfigFile = fs::u8path(WordExp("~/.celestia.cfg"));
+        if (!localConfigFile.empty())
             ReadCelestiaConfig(localConfigFile, config);
     }
 
@@ -4114,7 +4114,7 @@ bool CelestiaCore::initSimulation(const string& configFileName,
         {
             warning(fmt::sprintf(_("Error opening deepsky catalog file %s.\n"), file));
         }
-        if (!dsoDB->load(dsoFile, ""))
+        if (!dsoDB->load(dsoFile))
         {
             warning(fmt::sprintf(_("Cannot read Deep Sky Objects database %s.\n"), file));
         }
@@ -4155,7 +4155,7 @@ bool CelestiaCore::initSimulation(const string& configFileName,
             }
             else
             {
-                LoadSolarSystemObjects(solarSysFile, *universe, "");
+                LoadSolarSystemObjects(solarSysFile, *universe);
             }
         }
     }
@@ -4208,8 +4208,8 @@ bool CelestiaCore::initSimulation(const string& configFileName,
     // Load destinations list
     if (config->destinationsFile != "")
     {
-        string localeDestinationsFile = LocaleFilename(config->destinationsFile);
-        ifstream destfile(localeDestinationsFile);
+        fs::path localeDestinationsFile = LocaleFilename(fs::u8path(config->destinationsFile));
+        ifstream destfile(localeDestinationsFile.string());
         if (destfile.good())
         {
             destinations = ReadDestinationList(destfile);
@@ -4327,7 +4327,7 @@ bool CelestiaCore::initRenderer()
 
     if (config->logoTextureFile != "")
     {
-        logoTexture = LoadTextureFromFile(string("textures") + "/" + config->logoTextureFile);
+        logoTexture = LoadTextureFromFile(fs::u8path("textures") / fs::u8path(config->logoTextureFile));
     }
 
     return true;
@@ -4414,7 +4414,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
                 ifstream starFile(file, ios::in);
                 if (starFile.good())
                 {
-                    starDB->load(starFile, "");
+                    starDB->load(starFile);
                 }
                 else
                 {
