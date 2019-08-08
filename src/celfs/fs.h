@@ -49,9 +49,15 @@ class path
         auto_format
     };
 
-    path() = default;
+    path() noexcept
+    {
+    };
     path(const path&) = default;
-    path(path&&) = default;
+    path(path&& p) noexcept :
+        m_path(std::move(p.m_path)),
+        m_fmt(p.m_fmt)
+    {
+    };
     path(string_type&& p, format fmt = auto_format) :
         m_path(std::move(p)),
         m_fmt(fmt)
