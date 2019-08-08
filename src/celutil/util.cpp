@@ -88,16 +88,17 @@ fs::path LocaleFilename(const fs::path &p)
 }
 
 
-string WordExp(const std::string& filename)
+fs::path PathExp(const fs::path& filename)
 {
 #ifdef _WIN32
-    if (filename[0] == '~' && (filename[1] == '\\' || filename[1] == '/'))
-        return homeDir().u8string() + filename.substr(1);
+    auto str = filename.native();
+    if (str[0] == '~' && (str[1] == '\\' || str[1] == '/'))
+        return homeDir() / str.substr(1);
     return filename;
 #else
     wordexp_t result;
 
-    switch(wordexp(filename.c_str(), &result, WRDE_NOCMD))
+    switch(wordexp(filename.string().c_str(), &result, WRDE_NOCMD))
     {
     case 0: // successful
         break;
@@ -115,7 +116,7 @@ string WordExp(const std::string& filename)
         return filename;
     }
 
-    string expanded(result.we_wordv[0]);
+    fs::path::string_type expanded(result.we_wordv[0]);
     wordfree(&result);
     return expanded;
 #endif

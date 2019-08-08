@@ -58,7 +58,7 @@ class path
     {
     };
     template<typename T> path(const T& p, format fmt = auto_format ) :
-        m_path(p),
+        m_path(encconv(p)),
         m_fmt(fmt)
     {
     };
@@ -123,7 +123,7 @@ class path
 
     std::string string() const noexcept
     {
-        return u8string();
+        return u8string(); // FIXME
     }
 
     std::wstring wstring() const noexcept
@@ -176,6 +176,23 @@ class path
     bool is_absolute() const;
 
  private:
+    inline string_type encconv(const std::string& p)
+    {
+#ifdef _WIN32
+        return UTF8ToWide(p); // FIXME
+#else
+        return p;
+#endif
+    }
+    inline string_type encconv(const std::wstring& p)
+    {
+#ifdef _WIN32
+        return p;
+#else
+        return ""; // FIXME
+#endif
+    }
+
     string_type m_path;
     format      m_fmt       { auto_format };
 }; // path

@@ -4027,7 +4027,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     {
         config = ReadCelestiaConfig(fs::u8path("celestia.cfg"));
 
-        fs::path localConfigFile = fs::u8path(WordExp("~/.celestia.cfg"));
+        fs::path localConfigFile = PathExp(fs::u8path("~/.celestia.cfg"));
         if (!localConfigFile.empty())
             ReadCelestiaConfig(localConfigFile, config);
     }

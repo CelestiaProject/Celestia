@@ -70,7 +70,7 @@ template<typename T> constexpr typename T::size_type memsize(T c)
     return c.size() * sizeof(typename T::value_type);
 }
 
-std::string WordExp(const std::string& filename);
+fs::path PathExp(const fs::path& filename);
 fs::path homeDir();
 
 #endif // _CELUTIL_UTIL_H_
