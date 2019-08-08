@@ -4053,20 +4053,17 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // Insert additional extras directories into the configuration. These
     // additional directories typically come from the command line. It may
     // be useful to permit other command line overrides of config file fields.
-    if (!extrasDirs.empty())
+    // Only insert the additional extras directories that aren't also
+    // listed in the configuration file. The additional directories are added
+    // after the ones from the config file and the order in which they were
+    // specified is preserved. This process in O(N*M), but the number of
+    // additional extras directories should be small.
+    for (const auto& dir : extrasDirs)
     {
-        // Only insert the additional extras directories that aren't also
-        // listed in the configuration file. The additional directories are added
-        // after the ones from the config file and the order in which they were
-        // specified is preserved. This process in O(N*M), but the number of
-        // additional extras directories should be small.
-        for (const auto& dir : extrasDirs)
+        if (find(config->extrasDirs.begin(), config->extrasDirs.end(), dir.string()) ==
+            config->extrasDirs.end())
         {
-            if (find(config->extrasDirs.begin(), config->extrasDirs.end(), dir) ==
-                config->extrasDirs.end())
-            {
-                config->extrasDirs.push_back(dir);
-            }
+            config->extrasDirs.push_back(dir.string());
         }
     }
 
