@@ -101,7 +101,7 @@ Install required packages:
 
 Install optional packages:
 
-  vcpkg install qt5
+  vcpkg install qt5 luajit
 
 Configure and build 32-bit version:
 
