@@ -38,11 +38,11 @@ public:
         return starParent;
     }
 
-    ReferenceFrame* getDefaultReferenceFrame() const;
+    const std::shared_ptr<const ReferenceFrame> &getDefaultReferenceFrame() const;
 
     void addChild(std::shared_ptr<const TimelinePhase> &phase);
     void removeChild(std::shared_ptr<const TimelinePhase> &phase);
-    const TimelinePhase* getChild(unsigned int n) const;
+    const std::shared_ptr<const TimelinePhase> &getChild(unsigned int n) const;
     unsigned int childCount() const;
 
     void markChanged();
@@ -101,7 +101,7 @@ private:
     bool m_changed{ false };
     int m_childClassMask{ 0 };
 
-    ReferenceFrame* defaultFrame;
+    std::shared_ptr<const ReferenceFrame> defaultFrame;
 };
 
 #endif // _CELENGINE_FRAMETREE_H_

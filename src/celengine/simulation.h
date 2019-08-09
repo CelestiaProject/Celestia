@@ -10,6 +10,7 @@
 #ifndef _CELENGINE_SIMULATION_H_
 #define _CELENGINE_SIMULATION_H_
 
+#include <memory>
 #include <celengine/texture.h>
 #include <celengine/universe.h>
 #include <celengine/astro.h>
@@ -113,7 +114,7 @@ class Simulation
 
     void setFrame(ObserverFrame::CoordinateSystem, const Selection& refObject, const Selection& targetObject);
     void setFrame(ObserverFrame::CoordinateSystem, const Selection& refObject);
-    const ObserverFrame* getFrame() const;
+    const std::shared_ptr<const ObserverFrame> getFrame() const;
 
  private:
     SolarSystem* getSolarSystem(const Star* star);

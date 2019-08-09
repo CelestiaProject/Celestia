@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <memory>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_observer.h"
@@ -17,6 +18,7 @@
 #include "celestiacore.h"
 #include <Eigen/Geometry>
 
+using namespace std;
 using namespace Eigen;
 using namespace celmath;
 
@@ -301,7 +303,7 @@ static int observer_gototable(lua_State* l)
     jparams.endInterpolation = min(1.0, max(0.0, jparams.endInterpolation));
 
     // args are in universal coords, let setFrame handle conversion:
-    ObserverFrame tmp = *(o->getFrame());
+    auto tmp = o->getFrame();
     o->setFrame(ObserverFrame::Universal, Selection());
     o->gotoJourney(jparams);
     o->setFrame(tmp);
@@ -698,7 +700,7 @@ static int observer_getframe(lua_State* l)
 
     Observer* obs = this_observer(l);
 
-    const ObserverFrame* frame = obs->getFrame();
+    auto frame = obs->getFrame();
     celx.newFrame(*frame);
     return 1;
 }
@@ -714,7 +716,7 @@ static int observer_setframe(lua_State* l)
     frame = celx.toFrame(2);
     if (frame != nullptr)
     {
-        obs->setFrame(*frame);
+        obs->setFrame(make_shared<ObserverFrame>(*frame));
     }
     else
     {

@@ -5903,7 +5903,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
     unsigned int nChildren = tree != nullptr ? tree->childCount() : 0;
     for (unsigned int i = 0; i < nChildren; i++)
     {
-        const TimelinePhase* phase = tree->getChild(i);
+        auto phase = tree->getChild(i);
 
         // No need to do anything if the phase isn't active now
         if (!phase->includes(now))
@@ -5916,7 +5916,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
 
         // Get the position of the body relative to the sun.
         Vector3d p = phase->orbit()->positionAtTime(now);
-        ReferenceFrame* frame = phase->orbitFrame();
+        auto frame = phase->orbitFrame();
         Vector3d pos_s = frameCenter + frame->getOrientation(now).conjugate() * p;
 
         // We now have the positions of the observer and the planet relative
@@ -6123,7 +6123,7 @@ void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
     unsigned int nChildren = tree != nullptr ? tree->childCount() : 0;
     for (unsigned int i = 0; i < nChildren; i++)
     {
-        const TimelinePhase* phase = tree->getChild(i);
+        auto phase = tree->getChild(i);
 
         // No need to do anything if the phase isn't active now
         if (!phase->includes(now))
@@ -7105,7 +7105,7 @@ void Renderer::renderSkyGrids(const Observer& observer)
     if ((renderFlags & ShowHorizonGrid) != 0)
     {
         double tdb = observer.getTime();
-        const ObserverFrame* frame = observer.getFrame();
+        auto frame = observer.getFrame();
         Body* body = frame->getRefObject().body();
 
         if (body != nullptr)

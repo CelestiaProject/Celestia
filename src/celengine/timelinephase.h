@@ -41,9 +41,9 @@ public:
         return m_endTime;
     }
 
-    ReferenceFrame* orbitFrame() const
+    const std::shared_ptr<const ReferenceFrame>& orbitFrame() const
     {
-        return m_orbitFrame.get();
+        return m_orbitFrame;
     }
 
     Orbit* orbit() const
@@ -51,9 +51,9 @@ public:
         return m_orbit;
     }
 
-    ReferenceFrame* bodyFrame() const
+    const std::shared_ptr<const ReferenceFrame>& bodyFrame() const
     {
-        return m_bodyFrame.get();
+        return m_bodyFrame;
     }
 
     RotationModel* rotationModel() const
@@ -81,9 +81,9 @@ public:
                                               Body* body,
                                               double startTime,
                                               double endTime,
-                                              ReferenceFrame& orbitFrame,
+                                              const std::shared_ptr<const ReferenceFrame>& orbitFrame,
                                               Orbit& orbit,
-                                              ReferenceFrame& bodyFrame,
+                                              const std::shared_ptr<const ReferenceFrame>& bodyFrame,
                                               RotationModel& rotationModel);
 
     ~TimelinePhase();
@@ -93,9 +93,9 @@ public:
     TimelinePhase(Body* _body,
                   double _startTime,
                   double _endTime,
-                  ReferenceFrame* _orbitFrame,
+                  const std::shared_ptr<const ReferenceFrame>& _orbitFrame,
                   Orbit* _orbit,
-                  ReferenceFrame* _bodyFrame,
+                  const std::shared_ptr<const ReferenceFrame>& _bodyFrame,
                   RotationModel* _rotationModel,
                   FrameTree* _owner);
 
@@ -110,9 +110,9 @@ private:
     double m_startTime;
     double m_endTime;
 
-    std::shared_ptr<ReferenceFrame> m_orbitFrame;
+    std::shared_ptr<const ReferenceFrame> m_orbitFrame;
     Orbit* m_orbit;
-    std::shared_ptr<ReferenceFrame> m_bodyFrame;
+    std::shared_ptr<const ReferenceFrame> m_bodyFrame;
     RotationModel* m_rotationModel;
 
     FrameTree* m_owner;

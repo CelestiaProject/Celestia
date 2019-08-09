@@ -278,8 +278,8 @@ shared_ptr<const TimelinePhase> CreateTimelinePhase(Body* body,
                                    Universe& universe,
                                    Hash* phaseData,
                                    const string& path,
-                                   ReferenceFrame* defaultOrbitFrame,
-                                   ReferenceFrame* defaultBodyFrame,
+                                   const shared_ptr<const ReferenceFrame>& defaultOrbitFrame,
+                                   const shared_ptr<const ReferenceFrame>& defaultBodyFrame,
                                    bool isFirstPhase,
                                    bool isLastPhase,
                                    double previousPhaseEnd)
@@ -306,7 +306,7 @@ shared_ptr<const TimelinePhase> CreateTimelinePhase(Body* body,
     }
 
     // Get the orbit reference frame.
-    ReferenceFrame* orbitFrame;
+    shared_ptr<const ReferenceFrame> orbitFrame;
     Value* frameValue = phaseData->getValue("OrbitFrame");
     if (frameValue != nullptr)
     {
@@ -323,7 +323,7 @@ shared_ptr<const TimelinePhase> CreateTimelinePhase(Body* body,
     }
 
     // Get the body reference frame
-    ReferenceFrame* bodyFrame;
+    shared_ptr<const ReferenceFrame> bodyFrame;
     Value* bodyFrameValue = phaseData->getValue("BodyFrame");
     if (bodyFrameValue != nullptr)
     {
@@ -366,9 +366,9 @@ shared_ptr<const TimelinePhase> CreateTimelinePhase(Body* body,
     auto phase = TimelinePhase::CreateTimelinePhase(universe,
                                                               body,
                                                               beginning, ending,
-                                                              *orbitFrame,
+                                                              orbitFrame,
                                                               *orbit,
-                                                              *bodyFrame,
+                                                              bodyFrame,
                                                               *rotationModel);
 
     // Frame ownership transfered to phase; release local references
@@ -381,8 +381,8 @@ Timeline* CreateTimelineFromArray(Body* body,
                                   Universe& universe,
                                   ValueArray* timelineArray,
                                   const string& path,
-                                  ReferenceFrame* defaultOrbitFrame,
-                                  ReferenceFrame* defaultBodyFrame)
+                                  const shared_ptr<const ReferenceFrame>& defaultOrbitFrame,
+                                  const shared_ptr<const ReferenceFrame>& defaultBodyFrame)
 {
     auto* timeline = new Timeline();
     double previousEnding = -numeric_limits<double>::infinity();
@@ -450,11 +450,11 @@ static bool CreateTimeline(Body* body,
         return false;
     }
 
-    ReferenceFrame* defaultOrbitFrame = nullptr;
-    ReferenceFrame* defaultBodyFrame = nullptr;
+    shared_ptr<const ReferenceFrame> defaultOrbitFrame;
+    shared_ptr<const ReferenceFrame> defaultBodyFrame;
     if (bodyType == SurfaceObject)
     {
-        defaultOrbitFrame = new BodyFixedFrame(parentObject, parentObject);
+        defaultOrbitFrame = make_shared<BodyFixedFrame>(parentObject, parentObject);
         defaultBodyFrame = CreateTopocentricFrame(parentObject, parentObject, Selection(body));
     }
     else
@@ -471,8 +471,6 @@ static bool CreateTimeline(Body* body,
         if (value->getType() != Value::ArrayType)
         {
             clog << "Error: Timeline must be an array\n";
-            delete defaultBodyFrame;
-            delete defaultOrbitFrame;
             return false;
         }
 
@@ -487,8 +485,8 @@ static bool CreateTimeline(Body* body,
     }
 
     // Information required for the object timeline.
-    ReferenceFrame* orbitFrame   = nullptr;
-    ReferenceFrame* bodyFrame    = nullptr;
+    shared_ptr<const ReferenceFrame> orbitFrame;
+    shared_ptr<const ReferenceFrame> bodyFrame;
     Orbit* orbit                 = nullptr;
     RotationModel* rotationModel = nullptr;
     double beginning             = -numeric_limits<double>::infinity();
@@ -524,7 +522,7 @@ static bool CreateTimeline(Body* body,
     Value* frameValue = planetData->getValue("OrbitFrame");
     if (frameValue != nullptr)
     {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue, parentObject, body);
+        auto frame = CreateReferenceFrame(universe, frameValue, parentObject, body);
         if (frame != nullptr)
         {
             orbitFrame = frame;
@@ -538,7 +536,7 @@ static bool CreateTimeline(Body* body,
     Value* bodyFrameValue = planetData->getValue("BodyFrame");
     if (bodyFrameValue != nullptr)
     {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue, parentObject, body);
+        auto frame = CreateReferenceFrame(universe, bodyFrameValue, parentObject, body);
         if (frame != nullptr)
         {
             bodyFrame = frame;
@@ -573,7 +571,6 @@ static bool CreateTimeline(Body* body,
         else
         {
             clog << "No valid orbit specified for object '" << body->getName() << "'. Skipping.\n";
-            delete defaultOrbitFrame;
             return false;
         }
     }
@@ -620,10 +617,6 @@ static bool CreateTimeline(Body* body,
         if (beginning >= ending)
         {
             clog << "Beginning time must be before Ending time.\n";
-            delete defaultBodyFrame;
-            delete bodyFrame;
-            delete defaultOrbitFrame;
-            delete orbitFrame;
             delete rotationModel;
             return false;
         }
@@ -633,9 +626,9 @@ static bool CreateTimeline(Body* body,
         auto phase = TimelinePhase::CreateTimelinePhase(universe,
                                                                   body,
                                                                   beginning, ending,
-                                                                  *orbitFrame,
+                                                                  orbitFrame,
                                                                   *orbit,
-                                                                  *bodyFrame,
+                                                                  bodyFrame,
                                                                   *rotationModel);
 
         // We've already checked that beginning < ending; nothing else should go

@@ -66,30 +66,30 @@ public:
     Selection getRefObject() const;
     Selection getTargetObject() const;
 
-    const ReferenceFrame* getFrame() const;
+    const std::shared_ptr<const ReferenceFrame>& getFrame() const;
 
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
     Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const;
     Eigen::Quaterniond convertToUniversal(const Eigen::Quaterniond& q, double tjd) const;
 
-    static UniversalCoord convert(const ObserverFrame* fromFrame,
-                                  const ObserverFrame* toFrame,
+    static UniversalCoord convert(const std::shared_ptr<const ObserverFrame> &fromFrame,
+                                  const std::shared_ptr<const ObserverFrame> &toFrame,
                                   const UniversalCoord& uc,
                                   double t);
-    static Eigen::Quaterniond convert(const ObserverFrame* fromFrame,
-                                      const ObserverFrame* toFrame,
+    static Eigen::Quaterniond convert(const std::shared_ptr<const ObserverFrame> &fromFrame,
+                                      const std::shared_ptr<const ObserverFrame> &toFrame,
                                       const Eigen::Quaterniond& q,
                                       double t);
 
 private:
-    ReferenceFrame* createFrame(CoordinateSystem _coordSys,
+    std::shared_ptr<const ReferenceFrame> createFrame(CoordinateSystem _coordSys,
                                 const Selection& _refObject,
                                 const Selection& _targetObject);
 
 private:
     CoordinateSystem coordSys;
-    const ReferenceFrame* frame;
+    std::shared_ptr<const ReferenceFrame> frame;
     Selection targetObject;
 };
 
@@ -201,9 +201,9 @@ public:
 
     void setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj, const Selection& targetObj);
     void setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj);
-    void setFrame(const ObserverFrame& f);
+    void setFrame(const std::shared_ptr<const ObserverFrame>& f);
 
-    const ObserverFrame* getFrame() const;
+    const std::shared_ptr<const ObserverFrame>& getFrame() const;
 
     double getArrivalTime() const;
 
@@ -278,7 +278,7 @@ public:
                                    double centerTime);
 
     void updateUniversal();
-    void convertFrameCoordinates(const ObserverFrame* newFrame);
+    void convertFrameCoordinates(const std::shared_ptr<const ObserverFrame> &newFrame);
 
  private:
     double              simTime{ 0.0 };
@@ -294,7 +294,7 @@ public:
     UniversalCoord      positionUniv;
     Eigen::Quaterniond  orientationUniv;
 
-    ObserverFrame*      frame{ nullptr };
+    shared_ptr<const ObserverFrame> frame;
 
     double              realTime{ 0.0 };
 

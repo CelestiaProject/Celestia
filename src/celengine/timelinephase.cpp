@@ -22,9 +22,9 @@
 TimelinePhase::TimelinePhase(Body* _body,
                              double _startTime,
                              double _endTime,
-                             ReferenceFrame* _orbitFrame,
+                             const shared_ptr<const ReferenceFrame>& _orbitFrame,
                              Orbit* _orbit,
-                             ReferenceFrame* _bodyFrame,
+                             const shared_ptr<const ReferenceFrame>& _bodyFrame,
                              RotationModel* _rotationModel,
                              FrameTree* _owner) :
     m_body(_body),
@@ -67,9 +67,9 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    Body* body,
                                    double startTime,
                                    double endTime,
-                                   ReferenceFrame& orbitFrame,
+                                   const shared_ptr<const ReferenceFrame>& orbitFrame,
                                    Orbit& orbit,
-                                   ReferenceFrame& bodyFrame,
+                                   const shared_ptr<const ReferenceFrame>& bodyFrame,
                                    RotationModel& rotationModel)
 {
     // Validate the time range.
@@ -79,7 +79,7 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
     // Get the frame tree to add the new phase to. Verify that the reference frame
     // center is either a star or solar system body.
     FrameTree* frameTree = nullptr;
-    Selection center = orbitFrame.getCenter();
+    Selection center = orbitFrame->getCenter();
     if (center.body() != nullptr)
     {
         frameTree = center.body()->getOrCreateFrameTree();
@@ -104,9 +104,9 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
     auto phase = make_shared<const TimelinePhase>(body,
                                              startTime,
                                              endTime,
-                                             &orbitFrame,
+                                             orbitFrame,
                                              &orbit,
-                                             &bodyFrame,
+                                             bodyFrame,
                                              &rotationModel,
                                              frameTree);
 

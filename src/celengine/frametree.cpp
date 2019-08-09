@@ -53,7 +53,7 @@ FrameTree::FrameTree(Star* star) :
 {
     // Default frame for a star is J2000 ecliptical, centered
     // on the star.
-    defaultFrame = new J2000EclipticFrame(Selection(star));
+    defaultFrame = make_shared<J2000EclipticFrame>(Selection(star));
 }
 
 
@@ -66,7 +66,7 @@ FrameTree::FrameTree(Body* body) :
     defaultFrame(nullptr)
 {
     // Default frame for a solar system body is the mean equatorial frame of the body.
-    defaultFrame = new BodyMeanEquatorFrame(Selection(body), Selection(body));
+    defaultFrame = make_shared<BodyMeanEquatorFrame>(Selection(body), Selection(body));
 }
 
 
@@ -78,7 +78,7 @@ FrameTree::~FrameTree()
 /*! Return the default reference frame for the object a frame tree is associated
  *  with.
  */
-ReferenceFrame*
+const shared_ptr<const ReferenceFrame>&
 FrameTree::getDefaultReferenceFrame() const
 {
     return defaultFrame;
@@ -182,10 +182,10 @@ FrameTree::removeChild(shared_ptr<const TimelinePhase> &phase)
 
 
 /*! Return the child at the specified index. */
-const TimelinePhase*
+const shared_ptr<const TimelinePhase>&
 FrameTree::getChild(unsigned int n) const
 {
-    return children[n].get();
+    return children[n];
 }
 
 

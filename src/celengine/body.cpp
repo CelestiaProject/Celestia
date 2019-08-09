@@ -217,7 +217,7 @@ void Body::markUpdated()
 }
 
 
-const ReferenceFrame* Body::getOrbitFrame(double tdb) const
+const shared_ptr<const ReferenceFrame>& Body::getOrbitFrame(double tdb) const
 {
     return timeline->findPhase(tdb)->orbitFrame();
 }
@@ -229,7 +229,7 @@ const Orbit* Body::getOrbit(double tdb) const
 }
 
 
-const ReferenceFrame* Body::getBodyFrame(double tdb) const
+const shared_ptr<const ReferenceFrame>& Body::getBodyFrame(double tdb) const
 {
     return timeline->findPhase(tdb)->bodyFrame();
 }
@@ -546,7 +546,7 @@ UniversalCoord Body::getPosition(double tdb) const
 
     auto phase = timeline->findPhase(tdb);
     Vector3d p = phase->orbit()->positionAtTime(tdb);
-    ReferenceFrame* frame = phase->orbitFrame();
+    auto frame = phase->orbitFrame();
 
     while (frame->getCenter().getType() == Selection::Type_Body)
     {
@@ -580,7 +580,7 @@ Vector3d Body::getVelocity(double tdb) const
 {
     auto phase = timeline->findPhase(tdb);
 
-    ReferenceFrame* orbitFrame = phase->orbitFrame();
+    auto orbitFrame = phase->orbitFrame();
 
     Vector3d v = phase->orbit()->velocityAtTime(tdb);
     v = orbitFrame->getOrientation(tdb).conjugate() * v + orbitFrame->getCenter().getVelocity(tdb);
@@ -603,7 +603,7 @@ Vector3d Body::getAngularVelocity(double tdb) const
 
     Vector3d v = phase->rotationModel()->angularVelocityAtTime(tdb);
 
-    ReferenceFrame* bodyFrame = phase->bodyFrame();
+    auto bodyFrame = phase->bodyFrame();
     v = bodyFrame->getOrientation(tdb).conjugate() * v;
     if (!bodyFrame->isInertial())
     {

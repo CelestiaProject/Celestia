@@ -729,7 +729,7 @@ FrameVector::createRelativeVelocityVector(const Selection& _observer,
 
 FrameVector
 FrameVector::createConstantVector(const Vector3d& _vec,
-                                  const ReferenceFrame* _frame)
+                                  const shared_ptr<const ReferenceFrame>& _frame)
 {
     FrameVector fv(ConstantVector);
     fv.vec = _vec;

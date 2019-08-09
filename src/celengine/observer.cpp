@@ -57,7 +57,7 @@ static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
 
 Observer::Observer()
 {
-    frame = new ObserverFrame();
+    frame = make_shared<ObserverFrame>();
     updateUniversal();
 }
 
@@ -83,13 +83,12 @@ Observer::Observer(const Observer& o) :
     locationFilter(o.locationFilter),
     displayedSurface(o.displayedSurface)
 {
-    frame = new ObserverFrame(*o.frame);
+    frame = make_shared<ObserverFrame>(*o.frame);
     updateUniversal();
 }
 
 Observer::~Observer()
 {
-    delete frame;
 }
 
 Observer& Observer::operator=(const Observer& o)
@@ -113,7 +112,7 @@ Observer& Observer::operator=(const Observer& o)
     locationFilter = o.locationFilter;
     displayedSurface = o.displayedSurface;
 
-    setFrame(*o.frame);
+    setFrame(o.frame);
     updateUniversal();
 
     return *this;
@@ -775,7 +774,7 @@ void Observer::setMode(Observer::ObserverMode mode)
 // Private method to convert coordinates when a new observer frame is set.
 // Universal coordinates remain the same. All frame coordinates get updated, including
 // the goto parameters.
-void Observer::convertFrameCoordinates(const ObserverFrame* newFrame)
+void Observer::convertFrameCoordinates(const shared_ptr<const ObserverFrame> &newFrame)
 {
     double now = getTime();
 
@@ -797,9 +796,8 @@ void Observer::convertFrameCoordinates(const ObserverFrame* newFrame)
 */
 void Observer::setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj, const Selection& targetObj)
 {
-    ObserverFrame* newFrame = new ObserverFrame(cs, refObj, targetObj);
+    auto newFrame = make_shared<ObserverFrame>(cs, refObj, targetObj);
     convertFrameCoordinates(newFrame);
-    delete frame;
     frame = newFrame;
 }
 
@@ -816,16 +814,15 @@ void Observer::setFrame(ObserverFrame::CoordinateSystem cs, const Selection& ref
 /*! Set the observer's reference frame. The position of the observer in
  *  universal coordinates will not change.
  */
-void Observer::setFrame(const ObserverFrame& f)
+void Observer::setFrame(const shared_ptr<const ObserverFrame>& f)
 {
-    if (frame != &f)
+    if (frame != f)
     {
-        auto* newFrame = new ObserverFrame(f);
+        auto newFrame = make_shared<ObserverFrame>(*f);
 
-        if (frame != nullptr)
+        if (frame)
         {
             convertFrameCoordinates(newFrame);
-            delete frame;
         }
         frame = newFrame;
     }
@@ -834,7 +831,7 @@ void Observer::setFrame(const ObserverFrame& f)
 
 /*! Get the current reference frame for the observer.
  */
-const ObserverFrame* Observer::getFrame() const
+const shared_ptr<const ObserverFrame>& Observer::getFrame() const
 {
     return frame;
 }
@@ -1478,7 +1475,7 @@ ObserverFrame::getTargetObject() const
 }
 
 
-const ReferenceFrame*
+const shared_ptr<const ReferenceFrame>&
 ObserverFrame::getFrame() const
 {
     return frame;
@@ -1516,8 +1513,8 @@ ObserverFrame::convertToUniversal(const Quaterniond& q, double tjd) const
 /*! Convert a position from one frame to another.
  */
 UniversalCoord
-ObserverFrame::convert(const ObserverFrame* fromFrame,
-                       const ObserverFrame* toFrame,
+ObserverFrame::convert(const shared_ptr<const ObserverFrame>& fromFrame,
+                       const shared_ptr<const ObserverFrame>& toFrame,
                        const UniversalCoord& uc,
                        double t)
 {
@@ -1529,8 +1526,8 @@ ObserverFrame::convert(const ObserverFrame* fromFrame,
 /*! Convert an orientation from one frame to another.
 */
 Quaterniond
-ObserverFrame::convert(const ObserverFrame* fromFrame,
-                       const ObserverFrame* toFrame,
+ObserverFrame::convert(const shared_ptr<const ObserverFrame>& fromFrame,
+                       const shared_ptr<const ObserverFrame>& toFrame,
                        const Quaterniond& q,
                        double t)
 {
@@ -1540,7 +1537,7 @@ ObserverFrame::convert(const ObserverFrame* fromFrame,
 
 
 // Create the ReferenceFrame for the specified observer frame parameters.
-ReferenceFrame*
+shared_ptr<const ReferenceFrame>
 ObserverFrame::createFrame(CoordinateSystem _coordSys,
                            const Selection& _refObject,
                            const Selection& _targetObject)
@@ -1548,27 +1545,27 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
     switch (_coordSys)
     {
     case Universal:
-        return new J2000EclipticFrame(Selection());
+        return make_shared<J2000EclipticFrame>(Selection());
 
     case Ecliptical:
-        return new J2000EclipticFrame(_refObject);
+        return make_shared<J2000EclipticFrame>(_refObject);
 
     case Equatorial:
-        return new BodyMeanEquatorFrame(_refObject, _refObject);
+        return make_shared<BodyMeanEquatorFrame>(_refObject, _refObject);
 
     case BodyFixed:
-        return new BodyFixedFrame(_refObject, _refObject);
+        return make_shared<BodyFixedFrame>(_refObject, _refObject);
 
     case PhaseLock:
     {
-        return new TwoVectorFrame(_refObject,
+        return make_shared<TwoVectorFrame>(_refObject,
                                   FrameVector::createRelativePositionVector(_refObject, _targetObject), 1,
                                   FrameVector::createRelativeVelocityVector(_refObject, _targetObject), 2);
     }
 
     case Chase:
     {
-        return new TwoVectorFrame(_refObject,
+        return make_shared<TwoVectorFrame>(_refObject,
                                   FrameVector::createRelativeVelocityVector(_refObject, _refObject.parent()), 1,
                                   FrameVector::createRelativePositionVector(_refObject, _refObject.parent()), 2);
     }
@@ -1576,8 +1573,8 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
     case PhaseLock_Old:
     {
         FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
-                                                              new BodyMeanEquatorFrame(_refObject, _refObject)));
-        return new TwoVectorFrame(_refObject,
+                                                              make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
+        return make_shared<TwoVectorFrame>(_refObject,
                                   FrameVector::createRelativePositionVector(_refObject, _targetObject), 3,
                                   rotAxis, 2);
     }
@@ -1585,9 +1582,9 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
     case Chase_Old:
     {
         FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
-                                                              new BodyMeanEquatorFrame(_refObject, _refObject)));
+                                                              make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
 
-        return new TwoVectorFrame(_refObject,
+        return make_shared<TwoVectorFrame>(_refObject,
                                   FrameVector::createRelativeVelocityVector(_refObject.parent(), _refObject), 3,
                                   rotAxis, 2);
     }
@@ -1595,10 +1592,10 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
     case ObserverLocal:
         // TODO: This is only used for computing up vectors for orientation; it does
         // define a proper frame for the observer position orientation.
-        return new J2000EclipticFrame(Selection());
+        return make_shared<J2000EclipticFrame>(Selection());
 
     default:
-        return new J2000EclipticFrame(_refObject);
+        return make_shared<J2000EclipticFrame>(_refObject);
     }
 }
 

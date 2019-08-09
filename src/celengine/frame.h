@@ -195,7 +195,7 @@ class FrameVector
     static FrameVector createRelativeVelocityVector(const Selection& _observer,
                                                     const Selection& _target);
     static FrameVector createConstantVector(const Eigen::Vector3d& _vec,
-                                            const ReferenceFrame* _frame);
+                                            const std::shared_ptr<const ReferenceFrame>& _frame);
 
  private:
     /*! Type-only constructor is private. Code outside the class should
@@ -207,7 +207,7 @@ class FrameVector
     Selection observer;
     Selection target;
     Eigen::Vector3d vec;                   // constant vector
-    const ReferenceFrame* frame; // frame for constant vector
+    std::shared_ptr<const ReferenceFrame> frame; // frame for constant vector
 };
 
 
