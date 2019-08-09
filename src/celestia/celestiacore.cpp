@@ -1733,7 +1733,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case 'D':
         addToHistory();
         if (config->demoScriptFile != "")
-           runScript(fs::u8path(config->demoScriptFile));
+           runScript(config->demoScriptFile);
         break;
 
     case 'E':
@@ -2097,7 +2097,7 @@ void CelestiaCore::start(double t)
     {
         // using the KdeAlerter in runScript would create an infinite loop,
         // break it here by resetting config->initScriptFile:
-        fs::path filename = fs::u8path(config->initScriptFile);
+        fs::path filename(config->initScriptFile);
         config->initScriptFile = "";
         runScript(filename);
     }
@@ -3286,7 +3286,7 @@ CelestiaCore::OverlayImage::OverlayImage(fs::path f)
 {
     filename = std::move(f);
     delete texture;
-    texture = LoadTextureFromFile(fs::u8path("images") / filename);
+    texture = LoadTextureFromFile(fs::path("images") / filename);
 }
 
 
@@ -3960,9 +3960,9 @@ class SolarSystemLoader
         if (DetermineFileType(filepath) != Content_CelestiaCatalog)
             return;
 
-        fmt::fprintf(clog, _("Loading solar system catalog: %s\n"), filepath.u8string());
+        fmt::fprintf(clog, _("Loading solar system catalog: %s\n"), filepath.string());
         if (notifier != nullptr)
-            notifier->update(filepath.filename().u8string());
+            notifier->update(filepath.filename().string());
 
         ifstream solarSysFile(filepath.string(), ios::in);
         if (solarSysFile.good())
@@ -3998,15 +3998,15 @@ template <class OBJDB> class CatalogLoader
         if (DetermineFileType(filepath) != contentType)
             return;
 
-        fmt::fprintf(clog, _("Loading %s catalog: %s\n"), typeDesc, filepath.u8string());
+        fmt::fprintf(clog, _("Loading %s catalog: %s\n"), typeDesc, filepath.string());
         if (notifier != nullptr)
-            notifier->update(filepath.filename().u8string());
+            notifier->update(filepath.filename().string());
 
         ifstream catalogFile(filepath.string(), ios::in);
         if (catalogFile.good())
         {
             if (!objDB->load(catalogFile, filepath.parent_path()))
-                DPRINTF(0, "Error reading %s catalog file: %s\n", typeDesc.c_str(), filepath.u8string());
+                DPRINTF(0, "Error reading %s catalog file: %s\n", typeDesc.c_str(), filepath.string());
         }
     }
 };
@@ -4025,9 +4025,9 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     }
     else
     {
-        config = ReadCelestiaConfig(fs::u8path("celestia.cfg"));
+        config = ReadCelestiaConfig("celestia.cfg");
 
-        fs::path localConfigFile = PathExp(fs::u8path("~/.celestia.cfg"));
+        fs::path localConfigFile = PathExp("~/.celestia.cfg");
         if (!localConfigFile.empty())
             ReadCelestiaConfig(localConfigFile, config);
     }
@@ -4127,7 +4127,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
                              "deep sky object",
                              Content_CelestiaDeepSkyCatalog,
                              progressNotifier);
-        for (const auto& fn : fs::recursive_directory_iterator(fs::u8path(dir)))
+        for (const auto& fn : fs::recursive_directory_iterator(dir))
             loader.process(fn);
     }
     dsoDB->finish();
@@ -4165,7 +4165,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
                 continue;
 
             SolarSystemLoader loader(universe, progressNotifier);
-            for (const auto& fn : fs::recursive_directory_iterator(fs::u8path(dir)))
+            for (const auto& fn : fs::recursive_directory_iterator(dir))
                 loader.process(fn);
         }
     }
@@ -4205,7 +4205,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // Load destinations list
     if (config->destinationsFile != "")
     {
-        fs::path localeDestinationsFile = LocaleFilename(fs::u8path(config->destinationsFile));
+        fs::path localeDestinationsFile = LocaleFilename(config->destinationsFile);
         ifstream destfile(localeDestinationsFile.string());
         if (destfile.good())
         {
@@ -4324,7 +4324,7 @@ bool CelestiaCore::initRenderer()
 
     if (config->logoTextureFile != "")
     {
-        logoTexture = LoadTextureFromFile(fs::u8path("textures") / fs::u8path(config->logoTextureFile));
+        logoTexture = LoadTextureFromFile(fs::path("textures") / config->logoTextureFile);
     }
 
     return true;
@@ -4428,7 +4428,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
             continue;
 
         StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
-        for (const auto& fn : fs::recursive_directory_iterator(fs::u8path(dir)))
+        for (const auto& fn : fs::recursive_directory_iterator(dir))
             loader.process(fn);
     }
 
@@ -4874,14 +4874,14 @@ class LuaPathFinder
     {
         string out;
         for (const auto& dir : dirs)
-            out += (dir / fs::u8path("?.lua;")).u8string();
+            out += (dir / "?.lua;").string();
         return out;
     }
 
     void process(const fs::path& p)
     {
         auto dir = p.parent_path();
-        if (p.extension() == fs::u8path(".lua"))
+        if (p.extension() == ".lua")
         {
             if (dirs.count(dir) == 0)
                 dirs.insert(dir);
@@ -4911,7 +4911,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
             continue;
 
         LuaPathFinder loader;
-        for (const auto& fn : fs::recursive_directory_iterator(fs::u8path(dir)))
+        for (const auto& fn : fs::recursive_directory_iterator(dir))
             loader.process(fn);
         LuaPath += loader.getLuaPath();
     }

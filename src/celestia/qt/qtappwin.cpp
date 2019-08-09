@@ -1569,7 +1569,7 @@ void CelestiaAppWindow::loadingProgressUpdate(const QString& s)
 
 QMenu* CelestiaAppWindow::buildScriptsMenu()
 {
-    vector<ScriptMenuItem>* scripts = ScanScriptsDirectory(fs::u8path("scripts"), false);
+    vector<ScriptMenuItem>* scripts = ScanScriptsDirectory("scripts", false);
     if (scripts->empty())
         return nullptr;
 
@@ -1578,7 +1578,7 @@ QMenu* CelestiaAppWindow::buildScriptsMenu()
     for (const auto& script : *scripts)
     {
         QAction* act = new QAction(script.title.c_str(), this);
-        act->setData(script.filename.u8string().c_str());
+        act->setData(script.filename.string().c_str());
         connect(act, SIGNAL(triggered()), this, SLOT(slotOpenScript()));
         menu->addAction(act);
     }

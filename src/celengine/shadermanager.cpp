@@ -348,14 +348,14 @@ ShaderManager::getShader(const string& name)
         return iter->second;
     }
 
-    fs::path dir = fs::u8path("shaders");
-    auto vsName = dir / fs::u8path(fmt::sprintf("%s_vert.glsl", name));
-    auto fsName = dir / fs::u8path(fmt::sprintf("%s_frag.glsl", name));
+    fs::path dir("shaders");
+    auto vsName = dir / fmt::sprintf("%s_vert.glsl", name);
+    auto fsName = dir / fmt::sprintf("%s_frag.glsl", name);
 
-    std::error_code ec;
-    uintmax_t vsSize = fs::file_size(vsName, ec);
-    uintmax_t fsSize = fs::file_size(fsName, ec);
-    if (vsSize == static_cast<uintmax_t>(-1) || fsSize == static_cast<uintmax_t>(-1))
+    std::error_code ecv, ecf;
+    uintmax_t vsSize = fs::file_size(vsName, ecv);
+    uintmax_t fsSize = fs::file_size(fsName, ecf);
+    if (ecv || ecf)
     {
         fmt::fprintf(cerr, "Failed to get file size of %s or %s\n", vsName, fsName);
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);

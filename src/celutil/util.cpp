@@ -80,7 +80,7 @@ fs::path LocaleFilename(const fs::path &p)
     if (exists(locPath))
         return locPath;
 
-    locPath = fs::u8path("locale") / locPath;
+    locPath = fs::path("locale") / locPath;
     if (exists(locPath))
         return locPath;
 

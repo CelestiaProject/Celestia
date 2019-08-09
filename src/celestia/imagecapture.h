@@ -10,15 +10,15 @@
 #ifndef _IMAGECAPTURE_H_
 #define _IMAGECAPTURE_H_
 
-#include <string>
+#include <celutil/filesystem.h>
 #include <celengine/render.h>
 
 
-extern bool CaptureGLBufferToJPEG(const std::string& filename,
+extern bool CaptureGLBufferToJPEG(const fs::path& filename,
                                   int x, int y,
                                   int width, int height,
                                   const Renderer *renderer);
-extern bool CaptureGLBufferToPNG(const std::string& filename,
+extern bool CaptureGLBufferToPNG(const fs::path& filename,
                                  int x, int y,
                                  int width, int height,
                                  const Renderer *renderer);

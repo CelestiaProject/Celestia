@@ -71,7 +71,7 @@ VirtualTexture::VirtualTexture(fs::path _tilePath,
     assert(tileSize != 0 && isPow2(tileSize));
     tileTree[0] = new TileQuadtreeNode();
     tileTree[1] = new TileQuadtreeNode();
-    tileExt = fs::u8path(string(".") + _tileType);
+    tileExt = fs::path(".") + _tileType;
     populateTileTree();
 
     if (DetermineFileType(tileExt) == Content_DXT5NormalMap)
@@ -204,8 +204,8 @@ ImageTexture* VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, 
     lod >>= baseSplit;
     assert(lod < (unsigned)MaxResolutionLevels);
 
-    auto path = fs::u8path(fmt::sprintf("%slevel%d", tilePath, lod)) /
-                fs::u8path(fmt::sprintf("%s%d_%d%s", tilePrefix, u, v, tileExt));
+    auto path = fs::path(fmt::sprintf("%slevel%d", tilePath, lod)) /
+                fmt::sprintf("%s%d_%d%s", tilePrefix, u, v, tileExt);
 
     Image* img = LoadImageFromFile(path);
     if (img == nullptr)
@@ -258,7 +258,7 @@ void VirtualTexture::populateTileTree()
 
     for (int i = 0; i < MaxResolutionLevels; i++)
     {
-        fs::path path = fs::u8path((fmt::sprintf("%slevel%d", tilePath, i)));
+        fs::path path(fmt::sprintf("%slevel%d", tilePath, i));
         if (fs::is_directory(path))
         {
             maxLevel = i + baseSplit;

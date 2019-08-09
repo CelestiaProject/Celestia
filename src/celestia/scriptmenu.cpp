@@ -32,7 +32,7 @@ static void process(const fs::path& p, vector<ScriptMenuItem>* menuItems)
     // Scan the script file for metainformation. At the moment,
     // the only thing searched for is the script title, which must
     // appear on the first line after the string 'Title:'
-    ifstream in(p.u8string());
+    ifstream in(p.string());
     if (in.good())
     {
         ScriptMenuItem item;
@@ -63,7 +63,7 @@ static void process(const fs::path& p, vector<ScriptMenuItem>* menuItems)
         else
         {
             // No title tag--just use the filename
-            item.title = p.filename().u8string();
+            item.title = p.filename().string();
         }
         menuItems->push_back(item);
     }

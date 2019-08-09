@@ -40,7 +40,7 @@ static const char CelestiaXYZVTrajectoryExt[] = ".xyzv";
 
 ContentType DetermineFileType(const fs::path& filename)
 {
-    string ext = filename.extension().u8string();
+    const string ext = filename.extension().string();
 
     if (compareIgnoringCase(JPEGExt, ext) == 0 ||
         compareIgnoringCase(JPGExt, ext) == 0 ||
