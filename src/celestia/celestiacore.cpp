@@ -4293,7 +4293,7 @@ bool CelestiaCore::initRenderer()
         titleFont = font;
 
     // Set up the overlay
-    overlay = new Overlay();
+    overlay = new Overlay(*renderer);
     overlay->setWindowSize(width, height);
 
     if (config->labelFont == "")
