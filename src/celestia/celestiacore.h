@@ -203,7 +203,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     class OverlayImage
     {
      public:
-        OverlayImage(fs::path);
+        OverlayImage(fs::path, Overlay*);
         ~OverlayImage() { delete texture; }
         OverlayImage()               =default;
         OverlayImage(OverlayImage&)  =delete;
@@ -227,6 +227,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         bool  fitscreen{ false };
         fs::path filename;
         Texture* texture{ nullptr };
+        Overlay* overlay;
     };
 
  public:
@@ -412,7 +413,11 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int messageVOffset{ 0 };
     double messageStart{ 0.0 };
     double messageDuration{ 0.0 };
-    Color textColor{ Color(1.0f, 1.0f, 1.0f) };
+    Color textColor{ 1.0f, 1.0f, 1.0f };
+
+    const Color frameColor{ 0.5f, 0.5f, 0.5f, 1.0f };
+    const Color activeFrameColor{ 0.5f, 0.5f, 1.0f, 1.0f };
+    const Color consoleColor{ 0.7f, 0.7f, 1.0f, 0.2f };
 
     OverlayImage *image{ nullptr };
 

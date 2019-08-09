@@ -588,7 +588,11 @@ int main(int argc, char* argv[])
     }
 
     // Load the leap second kernel
+#if defined(_WIN32) || defined(NATIVE_OSX_APP)
+    furnsh_c("naif0012.tls");
+#else
     furnsh_c(CONFIG_DATA_DIR "/" "naif0012.tls");
+#endif
 
     writeCommentHeader(config, cout);
     convertSpkToXyzv(config, cout);

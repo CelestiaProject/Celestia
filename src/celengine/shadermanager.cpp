@@ -55,16 +55,6 @@ static const char* errorFragmentShaderSource =
 static const char* CommonHeader = "#version 120\n";
 
 
-ShaderProperties::ShaderProperties() :
-    nLights(0),
-    texUsage(0),
-    lightModel(DiffuseModel),
-    shadowCounts(0),
-    effects(0)
-{
-}
-
-
 bool
 ShaderProperties::usesShadows() const
 {
@@ -2985,37 +2975,26 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
 }
 
 GLVertexShader*
-ShaderManager::buildStaticVertexShader(const ShaderProperties& props)
+ShaderManager::buildSimpleVertexShader(uint32_t props)
 {
     ostringstream source;
 
-    source << CommonHeader << "// static shader\n";
+    source << CommonHeader;
 
-    if (props.texUsage & ShaderProperties::NormalTexture)
-    {
-        source << "uniform sampler2D normTex;\n";
-    }
-
-    if (props.texUsage & ShaderProperties::PointSprite)
-    {
-        source << DeclareUniform("pointScale", Shader_Float);
-        source << DeclareAttribute("pointSize", Shader_Float);
-    }
-
-    if (props.staticProps & ShaderProperties::UniformColor)
-        source << DeclareUniform("color", Shader_Vector4);
-    else
+    if (props & ShaderProperties::PerVertexColor)
         source << DeclareVarying("color", Shader_Vector4);
+
+    if (props & ShaderProperties::HasTexture)
+        source << DeclareVarying("texCoord", Shader_Vector2);
 
     // Begin main()
     source << "\nvoid main(void)\n";
     source << "{\n";
-    // Optional point size
-    if (props.texUsage & ShaderProperties::PointSprite)
-        source << "    gl_PointSize = pointSize;\n";
 
-    if (!(props.staticProps & ShaderProperties::UniformColor))
+    if (props & ShaderProperties::PerVertexColor)
         source << "    color = gl_Color;\n";
+    if (props & ShaderProperties::HasTexture)
+        source << "    texCoord = gl_MultiTexCoord0.st;\n";
     source << "    gl_Position = ftransform();\n";
 
     source << "}\n";
@@ -3030,34 +3009,32 @@ ShaderManager::buildStaticVertexShader(const ShaderProperties& props)
 
 
 GLFragmentShader*
-ShaderManager::buildStaticFragmentShader(const ShaderProperties& props)
+ShaderManager::buildSimpleFragmentShader(uint32_t props)
 {
     ostringstream source;
 
     source << CommonHeader;
 
-    if (props.texUsage & ShaderProperties::NormalTexture)
+    if (props & ShaderProperties::UniformColor)
+        source << DeclareUniform("color", Shader_Vector4);
+
+    if (props & ShaderProperties::HasTexture)
     {
-        source << "uniform sampler2D normTex;\n";
+        source << DeclareUniform("tex", Shader_Sampler2D);
+        source << DeclareVarying("texCoord", Shader_Vector2);
     }
 
-    if (props.staticProps & ShaderProperties::UniformColor)
-        source << DeclareUniform("color", Shader_Vector4);
-    else
+    if (props & ShaderProperties::PerVertexColor)
         source << DeclareVarying("color", Shader_Vector4);
 
     // Begin main()
     source << "\nvoid main(void)\n";
     source << "{\n";
 
-    if (props.texUsage & ShaderProperties::NormalTexture)
-    {
-        source << "    gl_FragColor = texture2D(normTex, gl_PointCoord) * color;\n";
-    }
+    if (props & ShaderProperties::HasTexture)
+        source << "    gl_FragColor = texture2D(tex, texCoord) * color;\n";
     else
-    {
         source << "    gl_FragColor = color;\n";
-    }
 
     source << "}\n";
     // End of main()
@@ -3080,10 +3057,10 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     GLVertexShader* vs = nullptr;
     GLFragmentShader* fs = nullptr;
 
-    if (props.staticShader)
+    if (props.simpleProps != 0)
     {
-        vs = buildStaticVertexShader(props);
-        fs = buildStaticFragmentShader(props);
+        vs = buildSimpleVertexShader(props.simpleProps);
+        fs = buildSimpleFragmentShader(props.simpleProps);
     }
     else if (props.lightModel == ShaderProperties::RingIllumModel)
     {
@@ -3373,10 +3350,9 @@ CelestiaGLProgram::initParameters()
         pointScale           = floatParam("pointScale");
     }
 
-    if (props.staticShader)
+    if (props.simpleProps & ShaderProperties::UniformColor)
     {
-        if (props.staticProps & ShaderProperties::UniformColor)
-            color            = vec4Param("color");
+        color                = vec4Param("color");
     }
 }
 

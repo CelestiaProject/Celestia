@@ -23,15 +23,15 @@ void CenterWindow(HWND hParent, HWND hWnd)
     //Center window with hWnd handle relative to hParent.
     if (hParent && hWnd)
     {
-        RECT o, i;
-        if (GetWindowRect(hParent, &o))
+        RECT ort, irt;
+        if (GetWindowRect(hParent, &ort))
         {
-            if (GetWindowRect(hWnd, &i))
+            if (GetWindowRect(hWnd, &irt))
             {
                 int x, y;
 
-                x = o.left + (o.right - o.left - (i.right - i.left)) / 2;
-                y = o.top + (o.bottom - o.top - (i.bottom - i.top)) / 2;;
+                x = ort.left + (ort.right - ort.left - (irt.right - irt.left)) / 2;
+                y = ort.top + (ort.bottom - ort.top - (irt.bottom - irt.top)) / 2;;
                 SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
             }
         }

@@ -17,6 +17,7 @@ endif()
 project(celestia)
 
 set(VERSION "1.7.0")
+set(DISPLAY_NAME "Celestia")
 #
 #
 #
@@ -82,7 +83,7 @@ include(CheckIncludeFiles)
 include(CheckIncludeFileCXX)
 include(rpath)
 include(install_to_extras_subdir)
-if (NOT MSVC)
+if (NOT MSVC AND NOT MINGW)
   include(cotire)
 else()
   macro(cotire _target)
@@ -172,7 +173,6 @@ if(ENABLE_CELX)
   if(NOT LUAJIT_FOUND)
     find_package(Lua REQUIRED)
   endif()
-  add_definitions(-DLUA_VER=0x0${LUA_VERSION_MAJOR}0${LUA_VERSION_MINOR}00)
   include_directories(${LUA_INCLUDE_DIR})
   link_libraries(${LUA_LIBRARIES})
 endif()
@@ -185,34 +185,66 @@ foreach (_variableName ${_variableNames})
 endforeach()
 ]]#
 
-set(DATADIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
-set(FULL_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${PROJECT_NAME}")
+########### macOS Bundling ###############
+if(NATIVE_OSX_APP)
+  message(STATUS "Generating Info.plist for macOS Bundle")
+  configure_file(${CMAKE_SOURCE_DIR}/Info.plist.in ${CMAKE_BINARY_DIR}/Info.plist @ONLY)
+endif()
+
+if(NATIVE_OSX_APP)
+  set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.app/Contents")
+  set(CMAKE_INSTALL_FULL_LOCALEDIR "${CMAKE_INSTALL_PREFIX}/Resources/locale")
+  set(CMAKE_INSTALL_BINDIR "MacOS")
+  set(DATADIR "${CMAKE_INSTALL_PREFIX}/Resources")
+  set(FULL_DATADIR "${CMAKE_INSTALL_PREFIX}/Resources")
+else()
+  set(DATADIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
+  set(FULL_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${PROJECT_NAME}")
+endif()
 
 if (NOT GIT_COMMIT)
   find_program(GIT_FOUND git)
   if (GIT_FOUND)
-    execute_process(
-      COMMAND git log --pretty=format:"%h" -1
-      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-      OUTPUT_VARIABLE GIT_COMMIT
-    )
+    if (NOT MINGW)
+      execute_process(
+        COMMAND git log --pretty=format:"%h" -1
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        OUTPUT_VARIABLE GIT_COMMIT
+      )
+    endif()
+    if (MINGW)
+      execute_process(
+        COMMAND git log --pretty=format:'%h' -1
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        OUTPUT_VARIABLE GIT_COMMIT
+      )
+    endif()
     if ("${GIT_COMMIT}" STREQUAL "")
       set(GIT_COMMIT "unknown")
     endif()
   else()
     set(GIT_COMMIT "unknown")
   endif()
+
+  if (MINGW)
+    set(GIT_COMMIT "\"${GIT_COMMIT}\"")
+  endif()
 endif()
 
 add_definitions(
   -DVERSION="${VERSION}"
-  -DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}"
   -DPACKAGE="celestia"
-  -DCONFIG_DATA_DIR="${FULL_DATADIR}"
-  -DHIP_DATA_DIR="${FULL_DATADIR}"
-  -DSPLASH_DIR="${FULL_DATADIR}/splash/"
   -DGIT_COMMIT=${GIT_COMMIT}
 )
+
+if(NOT NATIVE_OSX_APP)
+  add_definitions(
+    -DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}"
+    -DCONFIG_DATA_DIR="${FULL_DATADIR}"
+    -DHIP_DATA_DIR="${FULL_DATADIR}"
+    -DSPLASH_DIR="${FULL_DATADIR}/splash/"
+  )
+endif()
 
 if(WIN32)
   add_definitions(
@@ -267,6 +299,10 @@ set(BASE_DATA_SOURCES
 )
 install(FILES ${BASE_DATA_SOURCES} DESTINATION ${DATADIR})
 install(FILES "splash.png" DESTINATION "${DATADIR}/splash")
+
+if(NATIVE_OSX_APP)
+  install(FILES ${CMAKE_BINARY_DIR}/Info.plist DESTINATION .)
+endif()
 
 add_subdirectory(src)
 add_subdirectory(po)

@@ -12,10 +12,13 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 #include <celtxf/texturefont.h>
+#include <celutil/color.h>
 
 
 class Overlay;
+class Renderer;
 
 // Custom streambuf class to support C++ operator style output.  The
 // output is completely unbuffered so that it can coexist with printf
@@ -47,7 +50,8 @@ class OverlayStreamBuf : public std::streambuf
 class Overlay : public std::ostream
 {
  public:
-    Overlay();
+    Overlay(const Renderer&);
+    Overlay() = delete;
     ~Overlay() = default;
 
     void begin();
@@ -56,7 +60,32 @@ class Overlay : public std::ostream
     void setWindowSize(int, int);
     void setFont(TextureFont*);
 
-    void rect(float x, float y, float w, float h, bool fill = true);
+    enum class RectType
+    {
+        Outlined    = 0x0001,
+        Filled      = 0x0002,
+        Textured    = 0x0004
+    };
+
+    struct Rectangle
+    {
+        Rectangle() = default;
+        Rectangle(float _x, float _y, float _w, float _h, const Color& _c, RectType _t, float _lw = 1.0f) :
+            x(_x), y(_y), w(_w), h(_h), type(_t), lw(_lw)
+        {
+            colors.push_back(_c);
+        };
+        Rectangle(float _x, float _y, float _w, float _h, const std::vector<Color>& _c, RectType _t, float _lw = 1.0f) :
+            x(_x), y(_y), w(_w), h(_h), colors(_c), type(_t), lw(_lw)
+        {
+        };
+        float x, y, w, h;
+        float lw      { 1.0f };
+        RectType type { RectType::Filled };
+        std::vector<Color> colors;
+    };
+
+    void rect(const Rectangle&);
 
     void beginText();
     void endText();
@@ -75,7 +104,11 @@ class Overlay : public std::ostream
     float xoffset{ 0.0f };
     float yoffset{ 0.0f };
 
+    float lineWidth { 1.0f };
+
     OverlayStreamBuf sbuf;
+
+    const Renderer& renderer;
 };
 
 #endif // _OVERLAY_H_

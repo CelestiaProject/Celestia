@@ -49,6 +49,8 @@
 #include <ctime>
 #include <set>
 #include <fmt/printf.h>
+#include <celutil/color.h>
+#include <celengine/vecgl.h>
 
 #ifdef CELX
 #include <celephem/scriptobject.h>
@@ -1346,7 +1348,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             {
                 MarkerRepresentation markerRep(MarkerRepresentation::Diamond);
                 markerRep.setSize(10.0f);
-                markerRep.setColor(Color(0.0f, 1.0f, 0.0f, 0.9f));
+                markerRep.setColor({0.0f, 1.0f, 0.0f, 0.9f});
 
                 sim->getUniverse()->markObject(sel, markerRep, 1);
             }
@@ -3251,17 +3253,6 @@ static void displaySelectionName(Overlay& overlay,
 #endif
 
 
-static void showViewFrame(const View* v, int width, int height)
-{
-    glBegin(GL_LINE_LOOP);
-    glVertex3f(v->x * width, v->y * height, 0.0f);
-    glVertex3f(v->x * width, (v->y + v->height) * height - 1, 0.0f);
-    glVertex3f((v->x + v->width) * width - 1, (v->y + v->height) * height - 1, 0.0f);
-    glVertex3f((v->x + v->width) * width - 1, v->y * height, 0.0f);
-    glEnd();
-}
-
-
 void CelestiaCore::setScriptImage(float duration,
                                   float xoffset,
                                   float yoffset,
@@ -3269,10 +3260,10 @@ void CelestiaCore::setScriptImage(float duration,
                                   const fs::path& filename,
                                   bool fitscreen)
 {
-    if (!image || !image->isNewImage(filename))
+    if (image == nullptr || image->isNewImage(filename))
     {
         delete image;
-        image = new CelestiaCore::OverlayImage(filename);
+        image = new CelestiaCore::OverlayImage(filename, overlay);
     }
     image->setStartTime((float) currentTime);
     image->setDuration(duration);
@@ -3282,7 +3273,9 @@ void CelestiaCore::setScriptImage(float duration,
 }
 
 
-CelestiaCore::OverlayImage::OverlayImage(fs::path f)
+CelestiaCore::OverlayImage::OverlayImage(fs::path f, Overlay* o) :
+    filename(std::move(f)),
+    overlay(o)
 {
     filename = std::move(f);
     delete texture;
@@ -3292,7 +3285,7 @@ CelestiaCore::OverlayImage::OverlayImage(fs::path f)
 
 void CelestiaCore::OverlayImage::render(float curr_time, int width, int height)
 {
-    if (!texture || (curr_time >= start + duration))
+    if (texture == nullptr || (curr_time >= start + duration))
         return;
 
     float xSize = texture->getWidth();
@@ -3317,13 +3310,8 @@ void CelestiaCore::OverlayImage::render(float curr_time, int width, int height)
     glEnable(GL_TEXTURE_2D);
     texture->bind();
 
-    glBegin(GL_TRIANGLE_FAN);
-    glColor4f(1.0f, 1.0f, 1.0f, alpha);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(left, bottom);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(left + xSize, bottom);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(left + xSize, bottom + ySize);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(left, bottom + ySize);
-    glEnd();
+    Overlay::Rectangle r(left, bottom, xSize, ySize, {Color::White, alpha}, Overlay::RectType::Textured);
+    overlay->rect(r);
 }
 
 
@@ -3356,37 +3344,45 @@ void CelestiaCore::renderOverlay()
 
     if (views.size() > 1)
     {
+        Overlay::Rectangle r(0, 0, 0, 0, frameColor, Overlay::RectType::Outlined, 1);
+
         // Render a thin border arround all views
         if (showViewFrames || resizeSplit)
         {
-            glLineWidth(1.0f);
-            glDisable(GL_TEXTURE_2D);
-            glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
             for(const auto v : views)
+            {
                 if (v->type == View::ViewWindow)
-                    showViewFrame(v, width, height);
+                {
+                    r.x = v->x * width;
+                    r.y = v->y * height;
+                    r.w = v->width * width - 1;
+                    r.h = v->height * height - 1;
+                    overlay->rect(r);
+                }
+            }
         }
-        glLineWidth(1.0f);
 
         // Render a very simple border around the active view
-        View* av = (*activeView);
+        View* av = *activeView;
+
+        r.x = av->x * width;
+        r.y = av->y * height;
+        r.w = av->width * width - 1;
+        r.h = av->height * height - 1;
 
         if (showActiveViewFrame)
         {
-            glLineWidth(2.0f);
-            glDisable(GL_TEXTURE_2D);
-            glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-            showViewFrame(av, width, height);
-            glLineWidth(1.0f);
+            r.colors[0] = activeFrameColor;
+            r.lw = 2;
+            overlay->rect(r);
         }
 
         if (currentTime < flashFrameStart + 0.5)
         {
-            glLineWidth(8.0f);
-            glColor4f(0.5f, 0.5f, 1.0f,
-                      (float) (1.0 - (currentTime - flashFrameStart) / 0.5));
-            showViewFrame(av, width, height);
-            glLineWidth(1.0f);
+            float alpha = (float) (1.0 - (currentTime - flashFrameStart) / 0.5);
+            r.colors[0] = {activeFrameColor, alpha};
+            r.lw = 8;
+            overlay->rect(r);
         }
     }
 
@@ -3766,8 +3762,8 @@ void CelestiaCore::renderOverlay()
     {
         overlay->setFont(titleFont);
         glPushMatrix();
-        glColor4f(0.7f, 0.7f, 1.0f, 0.2f);
-        overlay->rect(0.0f, 0.0f, (float) width, 100.0f);
+        Overlay::Rectangle r(0, 0, width, 100, consoleColor, Overlay::RectType::Filled);
+        overlay->rect(r);
         glTranslatef(0.0f, fontHeight * 3.0f + 35.0f, 0.0f);
         glColor4f(0.6f, 0.6f, 1.0f, 1.0f);
         overlay->beginText();
@@ -3846,11 +3842,15 @@ void CelestiaCore::renderOverlay()
         int movieWidth = movieCapture->getWidth();
         int movieHeight = movieCapture->getHeight();
         glPushMatrix();
-        glColor4f(1, 0, 0, 1);
-        overlay->rect((float) ((width - movieWidth) / 2 - 1),
-                      (float) ((height - movieHeight) / 2 - 1),
-                      (float) (movieWidth + 1),
-                      (float) (movieHeight + 1), false);
+        Color color(1, 0, 0, 1);
+        glColor(color);
+        Overlay::Rectangle r((width - movieWidth) / 2 - 1,
+                             (height - movieHeight) / 2 - 1,
+                             movieWidth + 1,
+                             movieHeight + 1,
+                             color,
+                             Overlay::RectType::Outlined);
+        overlay->rect(r);
         glTranslatef((float) ((width - movieWidth) / 2),
                      (float) ((height + movieHeight) / 2 + 2), 0.0f);
         overlay->beginText();
@@ -3920,20 +3920,14 @@ void CelestiaCore::renderOverlay()
             }
 
             logoTexture->bind();
-            glBegin(GL_QUADS);
-            glColor4f(0.8f, 0.8f, 1.0f, botAlpha);
-            //glColor4f(1.0f, 1.0f, 1.0f, botAlpha);
-            glTexCoord2f(0.0f, 1.0f);
-            glVertex2i(left, bottom);
-            glTexCoord2f(1.0f, 1.0f);
-            glVertex2i(left + xSize, bottom);
-            glColor4f(0.6f, 0.6f, 1.0f, topAlpha);
-            //glColor4f(1.0f, 1.0f, 1.0f, topAlpha);
-            glTexCoord2f(1.0f, 0.0f);
-            glVertex2i(left + xSize, bottom + ySize);
-            glTexCoord2f(0.0f, 0.0f);
-            glVertex2i(left, bottom + ySize);
-            glEnd();
+            vector<Color> c = {
+                {0.8f, 0.8f, 1.0f, botAlpha},
+                {0.8f, 0.8f, 1.0f, botAlpha},
+                {0.6f, 0.6f, 1.0f, topAlpha},
+                {0.6f, 0.6f, 1.0f, topAlpha}
+            };
+            Overlay::Rectangle r(left, bottom, xSize, ySize, c, Overlay::RectType::Textured);
+            overlay->rect(r);
         }
         else
         {
