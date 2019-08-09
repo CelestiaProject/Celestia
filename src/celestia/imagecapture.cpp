@@ -20,7 +20,7 @@ extern "C" {
 using namespace std;
 
 
-bool CaptureGLBufferToJPEG(const fs:path& filename,
+bool CaptureGLBufferToJPEG(const fs::path& filename,
                            int x, int y,
                            int width, int height,
                            const Renderer *renderer)
@@ -41,7 +41,7 @@ bool CaptureGLBufferToJPEG(const fs:path& filename,
     out = _wfopen(filename.c_str(), L"wb");
 #else
     out = fopen(filename.c_str(), "wb");
-#else
+#endif
     if (out == nullptr)
     {
         DPRINTF(0, "Can't open screen capture file '%s'\n", filename.c_str());

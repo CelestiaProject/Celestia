@@ -226,7 +226,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
         configFileName = qConfigFileName.toStdString();
 
     // Translate extras directories from QString -> std::string
-    vector<string> extrasDirectories;
+    vector<fs::path> extrasDirectories;
     for (const auto& dir : qExtrasDirectories)
         extrasDirectories.push_back(dir.toUtf8().data());
 

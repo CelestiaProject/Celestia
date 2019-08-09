@@ -72,33 +72,33 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
 #ifdef CELX
     config->configParams = configParams;
     configParams->getString("LuaHook", config->luaHook);
-    config->luaHook = WordExp(config->luaHook);
+    config->luaHook = PathExp(config->luaHook);
 #endif
 
     config->faintestVisible = 6.0f;
     configParams->getNumber("FaintestVisibleMagnitude", config->faintestVisible);
     configParams->getString("FavoritesFile", config->favoritesFile);
-    config->favoritesFile = WordExp(config->favoritesFile);
+    config->favoritesFile = PathExp(config->favoritesFile);
     configParams->getString("DestinationFile", config->destinationsFile);
-    config->destinationsFile = WordExp(config->destinationsFile);
+    config->destinationsFile = PathExp(config->destinationsFile);
     configParams->getString("InitScript", config->initScriptFile);
-    config->initScriptFile = WordExp(config->initScriptFile);
+    config->initScriptFile = PathExp(config->initScriptFile);
     configParams->getString("DemoScript", config->demoScriptFile);
-    config->demoScriptFile = WordExp(config->demoScriptFile);
+    config->demoScriptFile = PathExp(config->demoScriptFile);
     configParams->getString("AsterismsFile", config->asterismsFile);
-    config->asterismsFile = WordExp(config->asterismsFile);
+    config->asterismsFile = PathExp(config->asterismsFile);
     configParams->getString("BoundariesFile", config->boundariesFile);
-    config->boundariesFile = WordExp(config->boundariesFile);
+    config->boundariesFile = PathExp(config->boundariesFile);
     configParams->getString("StarDatabase", config->starDatabaseFile);
-    config->starDatabaseFile = WordExp(config->starDatabaseFile);
+    config->starDatabaseFile = PathExp(config->starDatabaseFile);
     configParams->getString("StarNameDatabase", config->starNamesFile);
-    config->starNamesFile = WordExp(config->starNamesFile);
+    config->starNamesFile = PathExp(config->starNamesFile);
     configParams->getString("HDCrossIndex", config->HDCrossIndexFile);
-    config->HDCrossIndexFile = WordExp(config->HDCrossIndexFile);
+    config->HDCrossIndexFile = PathExp(config->HDCrossIndexFile);
     configParams->getString("SAOCrossIndex", config->SAOCrossIndexFile);
-    config->SAOCrossIndexFile = WordExp(config->SAOCrossIndexFile);
+    config->SAOCrossIndexFile = PathExp(config->SAOCrossIndexFile);
     configParams->getString("GlieseCrossIndex", config->GlieseCrossIndexFile);
-    config->GlieseCrossIndexFile = WordExp(config->GlieseCrossIndexFile);
+    config->GlieseCrossIndexFile = PathExp(config->GlieseCrossIndexFile);
     configParams->getString("Font", config->mainFont);
     configParams->getString("LabelFont", config->labelFont);
     configParams->getString("TitleFont", config->titleFont);
@@ -123,7 +123,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     config->reverseMouseWheel = false;
     configParams->getBoolean("ReverseMouseWheel", config->reverseMouseWheel);
     configParams->getString("ScriptScreenshotDirectory", config->scriptScreenshotDirectory);
-    config->scriptScreenshotDirectory = WordExp(config->scriptScreenshotDirectory);
+    config->scriptScreenshotDirectory = PathExp(config->scriptScreenshotDirectory);
     config->scriptSystemAccessPolicy = "ask";
     configParams->getString("ScriptSystemAccessPolicy", config->scriptSystemAccessPolicy);
 
@@ -157,7 +157,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                 // assert(catalogNameVal != nullptr);
                 if (catalogNameVal->getType() == Value::StringType)
                 {
-                    config->solarSystemFiles.push_back(WordExp(catalogNameVal->getString()));
+                    config->solarSystemFiles.push_back(PathExp(catalogNameVal->getString()));
                 }
                 else
                 {
@@ -187,7 +187,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
 
                 if (catalogNameVal->getType() == Value::StringType)
                 {
-                    config->starCatalogFiles.push_back(WordExp(catalogNameVal->getString()));
+                    config->starCatalogFiles.push_back(PathExp(catalogNameVal->getString()));
                 }
                 else
                 {
@@ -217,7 +217,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
 
                 if (catalogNameVal->getType() == Value::StringType)
                 {
-                    config->dsoCatalogFiles.push_back(WordExp(catalogNameVal->getString()));
+                    config->dsoCatalogFiles.push_back(PathExp(catalogNameVal->getString()));
                 }
                 else
                 {
@@ -240,7 +240,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
             {
                 if (dirNameVal->getType() == Value::StringType)
                 {
-                    config->extrasDirs.push_back(WordExp(dirNameVal->getString()));
+                    config->extrasDirs.push_back(PathExp(dirNameVal->getString()));
                 }
                 else
                 {
@@ -251,7 +251,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else if (extrasDirsVal->getType() == Value::StringType)
         {
-            config->extrasDirs.push_back(WordExp(extrasDirsVal->getString()));
+            config->extrasDirs.push_back(PathExp(extrasDirsVal->getString()));
         }
         else
         {

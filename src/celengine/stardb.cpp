@@ -1154,12 +1154,13 @@ bool StarDatabase::createStar(Star* star,
  *  Modify <name>     : error
  *  Modify <number>   : error
  */
-bool StarDatabase::load(istream& in, const string& resourcePath)
+bool StarDatabase::load(istream& in, const fs::path& resourcePath)
 {
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
-    bindtextdomain(resourcePath.c_str(), resourcePath.c_str()); // domain name is the same as resource path
+    const char *d = resourcePath.string().c_str();
+    bindtextdomain(d, d); // domain name is the same as resource path
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {

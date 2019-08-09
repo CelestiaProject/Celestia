@@ -32,8 +32,10 @@ if (WIN32)
 endif()
 
 add_library(celutil STATIC ${CELUTIL_SOURCES})
-add_dependencies(celutil celfs)
-target_link_libraries(celutil celfs)
+if (NOT HAVE_EXPERIMENTAL_FILESYSTEM)
+  add_dependencies(celutil celfs)
+  target_link_libraries(celutil celfs)
+endif()
 cotire(celutil)
 #[[
 add_library(celutil SHARED ${CELUTIL_SOURCES})

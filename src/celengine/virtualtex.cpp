@@ -71,7 +71,7 @@ VirtualTexture::VirtualTexture(fs::path _tilePath,
     assert(tileSize != 0 && isPow2(tileSize));
     tileTree[0] = new TileQuadtreeNode();
     tileTree[1] = new TileQuadtreeNode();
-    tileExt = fs::path(".") + _tileType;
+    tileExt = fs::path(".").concat(_tileType);
     populateTileTree();
 
     if (DetermineFileType(tileExt) == Content_DXT5NormalMap)
