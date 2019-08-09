@@ -277,7 +277,7 @@ static Selection GetParentObject(PlanetarySystem* system)
 TimelinePhase* CreateTimelinePhase(Body* body,
                                    Universe& universe,
                                    Hash* phaseData,
-                                   const string& path,
+                                   const fs::path& path,
                                    ReferenceFrame* defaultOrbitFrame,
                                    ReferenceFrame* defaultBodyFrame,
                                    bool isFirstPhase,
@@ -387,7 +387,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
 Timeline* CreateTimelineFromArray(Body* body,
                                   Universe& universe,
                                   ValueArray* timelineArray,
-                                  const string& path,
+                                  const fs::path& path,
                                   ReferenceFrame* defaultOrbitFrame,
                                   ReferenceFrame* defaultBodyFrame)
 {
@@ -432,7 +432,7 @@ static bool CreateTimeline(Body* body,
                            PlanetarySystem* system,
                            Universe& universe,
                            Hash* planetData,
-                           const string& path,
+                           const fs::path& path,
                            DataDisposition disposition,
                            BodyType bodyType)
 {
@@ -690,7 +690,7 @@ static Body* CreateBody(const string& name,
                         Universe& universe,
                         Body* existingBody,
                         Hash* planetData,
-                        const string& path,
+                        const fs::path& path,
                         DataDisposition disposition,
                         BodyType bodyType)
 {
@@ -805,18 +805,19 @@ static Body* CreateBody(const string& name,
     if (classification & CLASSES_UNCLICKABLE)
         body->setClickable(false);
 
-    string infoURL;
+    string infoURL; // FIXME: should be own class
     if (planetData->getString("InfoURL", infoURL))
     {
         if (infoURL.find(':') == string::npos)
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory
-            if (path[1] == ':')
+            const string p = path.string();
+            if (p[1] == ':')
                 // Absolute Windows path, file:/// is required
-                infoURL = "file:///" + path + "/" + infoURL;
-            else if (!path.empty())
-                infoURL = path + "/" + infoURL;
+                infoURL = "file:///" + p + "/" + infoURL;
+            else if (!p.empty())
+                infoURL = p + "/" + infoURL;
         }
         body->setInfoURL(infoURL);
     }
@@ -1044,7 +1045,7 @@ static Body* CreateReferencePoint(const string& name,
                                   Universe& universe,
                                   Body* existingBody,
                                   Hash* refPointData,
-                                  const string& path,
+                                  const fs::path& path,
                                   DataDisposition disposition)
 {
     Body* body = nullptr;

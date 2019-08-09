@@ -174,7 +174,7 @@ private:
                     DataDisposition disposition,
                     uint32_t catalogNumber,
                     Hash* starData,
-                    const std::string& path,
+                    const fs::path& path,
                     const bool isBarycenter);
 
     void buildOctree();

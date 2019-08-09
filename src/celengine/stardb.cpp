@@ -759,7 +759,7 @@ bool StarDatabase::createStar(Star* star,
                               DataDisposition disposition,
                               uint32_t catalogNumber,
                               Hash* starData,
-                              const string& path,
+                              const fs::path& path,
                               bool isBarycenter)
 {
     StarDetails* details = nullptr;

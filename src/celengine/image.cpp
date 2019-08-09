@@ -518,7 +518,7 @@ Image* LoadPNGImage(const fs::path& filename)
     png_bytep* row_pointers = nullptr;
 
 #ifdef _WIN32
-    in = _wfopen(filename.c_str(), L"rb");
+    fp = _wfopen(filename.c_str(), L"rb");
 #else
     fp = fopen(filename.c_str(), "rb");
 #endif
