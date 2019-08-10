@@ -13,6 +13,7 @@
 #ifndef _CELX_INTERNAL_H_
 #define _CELX_INTERNAL_H_
 
+#include <memory>
 #include <map>
 #include <string>
 #include <Eigen/Core>
@@ -260,7 +261,7 @@ public:
     void newRotation(const Eigen::Quaterniond& q);
     void newPosition(const UniversalCoord& uc);
     void newObject(const Selection& sel);
-    void newPhase(const TimelinePhase& phase);
+    void newPhase(const std::shared_ptr<const TimelinePhase>& phase);
 
     Eigen::Vector3d* toVector(int n);
     Eigen::Quaterniond* toRotation(int n);

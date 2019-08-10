@@ -86,7 +86,7 @@ public:
                                               const std::shared_ptr<const ReferenceFrame>& bodyFrame,
                                               RotationModel& rotationModel);
 
-    ~TimelinePhase();
+    ~TimelinePhase() = default;
 
     // Private constructor; phases can only created with the
     // createTimelinePhase factory method. Made public for shared_ptr usage.
@@ -99,10 +99,9 @@ public:
                   RotationModel* _rotationModel,
                   FrameTree* _owner);
 
-private:
     // Private copy constructor and assignment operator; should never be used.
-    TimelinePhase(const TimelinePhase& phase);
-    TimelinePhase& operator=(const TimelinePhase& phase);
+    TimelinePhase(const TimelinePhase& phase) = delete;
+    TimelinePhase& operator=(const TimelinePhase& phase) = delete;
 
 private:
     Body* m_body;

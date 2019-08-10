@@ -1206,7 +1206,7 @@ static int object_getphase(lua_State* l)
         const Timeline* timeline = sel->body()->getTimeline();
         if (timeline->includes(t))
         {
-            celx.newPhase(*timeline->findPhase(t));
+            celx.newPhase(timeline->findPhase(t));
         }
         else
         {
@@ -1246,7 +1246,7 @@ static int object_phases_iter(lua_State* l)
         lua_replace(l, lua_upvalueindex(2));
 
         auto phase = timeline->getPhase(i);
-        celx.newPhase(*phase);
+        celx.newPhase(phase);
 
         return 1;
     }

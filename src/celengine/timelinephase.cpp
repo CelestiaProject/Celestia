@@ -39,27 +39,6 @@ TimelinePhase::TimelinePhase(Body* _body,
     // assert(owner == orbitFrame->getCenter()->getFrameTree());
 }
 
-
-TimelinePhase::~TimelinePhase()
-{
-}
-
-
-// Declared private--should never be used
-TimelinePhase::TimelinePhase(const TimelinePhase&)
-{
-    assert(0);
-}
-
-
-// Declared private--should never be used
-TimelinePhase& TimelinePhase::operator=(const TimelinePhase&)
-{
-    assert(0);
-    return *this;
-}
-
-
 /*! Create a new timeline phase in the specified universe.
  */
 shared_ptr<const TimelinePhase>
