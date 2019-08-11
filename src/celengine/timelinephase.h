@@ -88,8 +88,6 @@ public:
 
     ~TimelinePhase() = default;
 
-    // Private constructor; phases can only created with the
-    // createTimelinePhase factory method. Made public for shared_ptr usage.
     TimelinePhase(Body* _body,
                   double _startTime,
                   double _endTime,
@@ -99,7 +97,6 @@ public:
                   RotationModel* _rotationModel,
                   FrameTree* _owner);
 
-    // Private copy constructor and assignment operator; should never be used.
     TimelinePhase(const TimelinePhase& phase) = delete;
     TimelinePhase& operator=(const TimelinePhase& phase) = delete;
 

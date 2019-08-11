@@ -39,7 +39,7 @@ public:
     void markChanged();
 
 private:
-    std::vector<std::shared_ptr<const TimelinePhase> > phases;
+    std::vector<std::shared_ptr<const TimelinePhase>> phases;
 };
 
 #endif // _CELENGINE_TIMELINE_H_

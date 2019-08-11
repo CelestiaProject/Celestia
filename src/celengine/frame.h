@@ -11,6 +11,7 @@
 #ifndef _CELENGINE_FRAME_H_
 #define _CELENGINE_FRAME_H_
 
+#include <memory>
 #include <celengine/astro.h>
 #include <celengine/selection.h>
 #include <Eigen/Core>
