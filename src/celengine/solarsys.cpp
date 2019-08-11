@@ -181,7 +181,7 @@ static Location* CreateLocation(Hash* locationData,
 
 static void FillinSurface(Hash* surfaceData,
                           Surface* surface,
-                          const std::string& path)
+                          const fs::path& path)
 {
     surfaceData->getColor("Color", surface->color);
     surfaceData->getColor("SpecularColor", surface->specularColor);

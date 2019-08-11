@@ -43,19 +43,19 @@ using namespace Eigen;
 using namespace std;
 
 
-static Model* LoadCelestiaMesh(const string& filename);
-static Model* Convert3DSModel(const M3DScene& scene, const string& texPath);
+static Model* LoadCelestiaMesh(const fs::path& filename);
+static Model* Convert3DSModel(const M3DScene& scene, const fs::path& texPath);
 
 static GeometryManager* geometryManager = nullptr;
 
-static const char UniqueSuffixChar = '!';
+constexpr const fs::path::value_type UniqueSuffixChar = '!';
 
 
 class CelestiaTextureLoader : public cmod::TextureLoader
 {
 public:
-    CelestiaTextureLoader(std::string texturePath) :
-        m_texturePath(std::move(texturePath))
+    CelestiaTextureLoader(const fs::path& texturePath) :
+        m_texturePath(texturePath)
     {
     }
 
@@ -68,7 +68,7 @@ public:
     }
 
 private:
-    std::string m_texturePath;
+    fs::path m_texturePath;
 };
 
 
@@ -80,17 +80,23 @@ GeometryManager* GetGeometryManager()
 }
 
 
-string GeometryInfo::resolve(const string& baseDir)
+string GeometryInfo::resolve(const fs::path& baseDir)
 {
     // Ensure that models with different centers get resolved to different objects by
     // adding a 'uniquifying' suffix to the filename that encodes the center value.
     // This suffix is stripped before the file is actually loaded.
-    string uniquifyingSuffix;
-    uniquifyingSuffix = fmt::sprintf("%c%f,%f,%f,%f,%d", UniqueSuffixChar, center.x(), center.y(), center.z(), scale, (int) isNormalized);
+    fs::path::string_type uniquifyingSuffix;
+    fs::path::string_type format;
+#ifdef _WIN32
+    format = L"%c%f,%f,%f,%f,%d";
+#else
+    format = "%c%f,%f,%f,%f,%d";
+#endif
+    uniquifyingSuffix = fmt::sprintf(format, UniqueSuffixChar, center.x(), center.y(), center.z(), scale, (int) isNormalized);
 
     if (!path.empty())
     {
-        string filename = path + "/models/" + source;
+        fs::path filename = path / "models" / source;
         ifstream in(filename);
         if (in.good())
         {
@@ -99,15 +105,15 @@ string GeometryInfo::resolve(const string& baseDir)
         }
     }
 
-    return baseDir + "/" + source + uniquifyingSuffix;
+    return baseDir / (source + uniquifyingSuffix);
 }
 
 
-Geometry* GeometryInfo::load(const string& resolvedFilename)
+Geometry* GeometryInfo::load(const fs::path& resolvedFilename)
 {
     // Strip off the uniquifying suffix
-    string::size_type uniquifyingSuffixStart = resolvedFilename.rfind(UniqueSuffixChar);
-    string filename(resolvedFilename, 0, uniquifyingSuffixStart);
+    fs::path::string_type::size_type uniquifyingSuffixStart = resolvedFilename.native().rfind(UniqueSuffixChar);
+    fs::path filename = resolvedFilename.native().substr(0, uniquifyingSuffixStart);
 
     fmt::fprintf(clog, _("Loading model: %s\n"), filename);
     Model* model = nullptr;
