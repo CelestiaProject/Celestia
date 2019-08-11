@@ -10,10 +10,10 @@
 #ifndef _CELUTIL_RESMANAGER_H_
 #define _CELUTIL_RESMANAGER_H_
 
-#include <string>
 #include <vector>
 #include <map>
 #include <celutil/reshandle.h>
+#include <celutil/filesystem.h>
 
 
 enum ResourceState {
@@ -29,12 +29,12 @@ template<class T> class ResourceInfo
     ResourceInfo() : state(ResourceNotLoaded), resource(nullptr) {};
     virtual ~ResourceInfo() {};
 
-    virtual std::string resolve(const std::string&) = 0;
-    virtual T* load(const std::string&) = 0;
+    virtual fs::path resolve(const fs::path&) = 0;
+    virtual T* load(const fs::path&) = 0;
 
     typedef T ResourceType;
     ResourceState state;
-    std::string resolvedName;
+    fs::path resolvedName;
     T* resource;
 };
 
@@ -42,11 +42,11 @@ template<class T> class ResourceInfo
 template<class T> class ResourceManager
 {
  private:
-    std::string baseDir;
+    fs::path baseDir;
 
  public:
     ResourceManager();
-    ResourceManager(std::string _baseDir) : baseDir(_baseDir) {};
+    ResourceManager(const fs::path& _baseDir) : baseDir(_baseDir) {};
     ~ResourceManager();
 
     typedef typename T::ResourceType ResourceType;
@@ -54,7 +54,7 @@ template<class T> class ResourceManager
  private:
     typedef std::vector<T> ResourceTable;
     typedef std::map<T, ResourceHandle> ResourceHandleMap;
-    typedef std::map<std::string, ResourceType*> NameMap;
+    typedef std::map<fs::path, ResourceType*> NameMap;
 
     typedef typename ResourceHandleMap::value_type ResourceHandleMapValue;
     typedef typename NameMap::value_type NameMapValue;

@@ -77,7 +77,7 @@ class path
         if (empty())
             m_path = p;
         else
-            m_path.append(1, preferred_separator).append(p.c_str());
+            m_path.append(1, preferred_separator).append(p);
         return *this;
     }
 
@@ -88,7 +88,7 @@ class path
 
     template<typename T> path& concat(const T& p)
     {
-        m_path.append(p.c_str());
+        m_path += p;
         return *this;
     }
 

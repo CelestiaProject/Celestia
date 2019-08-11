@@ -101,7 +101,7 @@ fs::path GeometryInfo::resolve(const fs::path& baseDir)
         if (in.good())
         {
             resolvedToPath = true;
-            return filename + uniquifyingSuffix;
+            return filename += uniquifyingSuffix;
         }
     }
 
@@ -240,7 +240,7 @@ static float NoiseDisplacementFunc(float u, float v, void* info)
 
 
 // TODO: The Celestia mesh format is deprecated
-Model* LoadCelestiaMesh(const string& filename)
+Model* LoadCelestiaMesh(const fs::path& filename)
 {
     ifstream meshFile(filename, ios::in);
     if (!meshFile.good())
@@ -537,7 +537,7 @@ toMaterialColor(Color c)
 
 
 static Model*
-Convert3DSModel(const M3DScene& scene, const string& texPath)
+Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
 {
     Model* model = new Model();
 
