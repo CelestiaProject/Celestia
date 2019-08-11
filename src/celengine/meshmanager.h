@@ -50,8 +50,8 @@ class GeometryInfo : public ResourceInfo<Geometry>
         isNormalized(_isNormalized)
         {};
 
-    virtual std::string resolve(const std::string&);
-    virtual Geometry* load(const std::string&);
+    virtual fs::path resolve(const fs::path&);
+    virtual Geometry* load(const fs::path&);
 };
 
 inline bool operator<(const GeometryInfo& g0, const GeometryInfo& g1)

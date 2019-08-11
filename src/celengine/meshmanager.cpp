@@ -80,7 +80,7 @@ GeometryManager* GetGeometryManager()
 }
 
 
-string GeometryInfo::resolve(const fs::path& baseDir)
+fs::path GeometryInfo::resolve(const fs::path& baseDir)
 {
     // Ensure that models with different centers get resolved to different objects by
     // adding a 'uniquifying' suffix to the filename that encodes the center value.
