@@ -652,7 +652,7 @@ CreateScriptedOrbit(Hash* orbitData,
     string moduleName;
     orbitData->getString("Module", moduleName);
 
-    Value* pathValue = new Value(path);
+    Value* pathValue = new Value(path.string());
     orbitData->addValue("AddonPath", *pathValue);
 
     ScriptedOrbit* scriptedOrbit = new ScriptedOrbit();
@@ -1023,7 +1023,7 @@ CreateScriptedRotation(Hash* rotationData,
     string moduleName;
     rotationData->getString("Module", moduleName);
 
-    Value* pathValue = new Value(path);
+    Value* pathValue = new Value(path.string());
     rotationData->addValue("AddonPath", *pathValue);
 
     ScriptedRotation* scriptedRotation = new ScriptedRotation();

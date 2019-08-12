@@ -85,7 +85,7 @@ static uint32_t FourCC(const char* s)
 
 Image* LoadDDSImage(const fs::path& filename)
 {
-    ifstream in(filename, ios::in | ios::binary);
+    ifstream in(filename.string(), ios::in | ios::binary);
     if (!in.good())
     {
         DPRINTF(0, "Error opening DDS texture file %s.\n", filename.c_str());

@@ -495,7 +495,7 @@ void CelestiaCore::runScript(const fs::path& filename)
 #ifdef CELX
     else if (type == Content_CelestiaScript)
     {
-        ifstream scriptfile(localeFilename);
+        ifstream scriptfile(localeFilename.string());
         if (!scriptfile.good())
         {
             string errMsg;
@@ -509,7 +509,7 @@ void CelestiaCore::runScript(const fs::path& filename)
             celxScript->init(this);
         }
 
-        int status = celxScript->loadScript(scriptfile, localeFilename);
+        int status = celxScript->loadScript(scriptfile, localeFilename.string()); // FIXME
         if (status != 0)
         {
             string errMsg = celxScript->getErrorMessage();

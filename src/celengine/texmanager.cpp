@@ -86,13 +86,13 @@ fs::path TextureInfo::resolve(const fs::path& baseDir)
         // cout << "Resolve: testing [" << filename << "]\n";
         if (wildcard)
         {
-            filename = resolveWildcard(filename);
+            filename = resolveWildcard(filename.string());
             if (!filename.empty())
                 return filename;
         }
         else
         {
-            ifstream in(filename);
+            ifstream in(filename.string());
             if (in.good())
                 return filename;
         }
@@ -101,7 +101,7 @@ fs::path TextureInfo::resolve(const fs::path& baseDir)
     fs::path filename = baseDir / directories[resolution] / source;
     if (wildcard)
     {
-        string matched = resolveWildcard(filename);
+        string matched = resolveWildcard(filename.string());
         if (matched.empty())
             return filename; // . . . for lack of any better way to handle it.
         else

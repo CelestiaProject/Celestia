@@ -19,6 +19,7 @@
 #include <celengine/glcontext.h>
 #endif
 #include <celengine/parser.h>
+#include <celutil/filesystem.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -90,7 +91,7 @@ class DeepSkyObject : public CatEntry
     virtual bool pick(const celmath::Ray3d& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const = 0;
-    virtual bool load(AssociativeArray*, const std::string& resPath);
+    virtual bool load(AssociativeArray*, const fs::path& resPath);
     virtual void render(const Eigen::Vector3f& offset,
                         const Eigen::Quaternionf& viewerOrientation,
                         float brightness,

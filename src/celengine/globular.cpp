@@ -289,7 +289,7 @@ bool Globular::pick(const Ray3d& ray,
 }
 
 
-bool Globular::load(AssociativeArray* params, const string& resPath)
+bool Globular::load(AssociativeArray* params, const fs::path& resPath)
 {
     // Load the basic DSO parameters first
 

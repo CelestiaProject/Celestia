@@ -234,14 +234,14 @@ bool Galaxy::pick(const Ray3d& ray,
 }
 
 
-bool Galaxy::load(AssociativeArray* params, const string& resPath)
+bool Galaxy::load(AssociativeArray* params, const fs::path& resPath)
 {
     double detail = 1.0;
     params->getNumber("Detail", detail);
     setDetail((float) detail);
 
     string customTmpName;
-    if(params->getString("CustomTemplate",customTmpName))
+    if(params->getString("CustomTemplate", customTmpName))
         setCustomTmpName(customTmpName);
 
     string typeName;

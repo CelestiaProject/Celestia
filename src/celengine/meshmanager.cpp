@@ -97,7 +97,7 @@ fs::path GeometryInfo::resolve(const fs::path& baseDir)
     if (!path.empty())
     {
         fs::path filename = path / "models" / source;
-        ifstream in(filename);
+        ifstream in(filename.string());
         if (in.good())
         {
             resolvedToPath = true;
@@ -139,7 +139,7 @@ Geometry* GeometryInfo::load(const fs::path& resolvedFilename)
     }
     else if (fileType == Content_CelestiaModel)
     {
-        ifstream in(filename, ios::binary);
+        ifstream in(filename.string(), ios::binary);
         if (in.good())
         {
             CelestiaTextureLoader textureLoader(path);
@@ -242,7 +242,7 @@ static float NoiseDisplacementFunc(float u, float v, void* info)
 // TODO: The Celestia mesh format is deprecated
 Model* LoadCelestiaMesh(const fs::path& filename)
 {
-    ifstream meshFile(filename, ios::in);
+    ifstream meshFile(filename.string(), ios::in);
     if (!meshFile.good())
     {
         DPRINTF(0, "Error opening mesh file: %s\n", filename.c_str());

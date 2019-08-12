@@ -1259,16 +1259,11 @@ bool LoadSolarSystemObjects(istream& in,
                     body = CreateBody(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition, bodyType);
 
                 if (body != nullptr)
-                    body->loadCategories(objectData, disposition, directory);
-                if (body != nullptr && disposition == DataDisposition::Add)
                 {
-                    vector<string>::const_iterator iter = names.begin();
-                    iter++;
-                    while (iter != names.end())
-                    {
-                        body->addAlias(*iter);
-                        iter++;
-                    }
+                    body->loadCategories(objectData, disposition, directory.string());
+                    if (disposition == DataDisposition::Add)
+                        for (const auto& name : names)
+                            body->addAlias(name);
                 }
             }
         }
@@ -1287,7 +1282,7 @@ bool LoadSolarSystemObjects(istream& in,
             if (parent.body() != nullptr)
             {
                 Location* location = CreateLocation(objectData, parent.body());
-                location->loadCategories(objectData, disposition, directory);
+                location->loadCategories(objectData, disposition, directory.string());
                 if (location != nullptr)
                 {
                     location->setName(primaryName);

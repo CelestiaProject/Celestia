@@ -33,7 +33,7 @@ fs::path RotationModelInfo::resolve(const fs::path& baseDir)
     if (!path.empty())
     {
         fs::path filename = path / "data" / source;
-        ifstream in(filename);
+        ifstream in(filename.string());
         if (in.good())
             return filename;
     }

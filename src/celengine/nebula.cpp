@@ -67,7 +67,7 @@ bool Nebula::pick(const Ray3d& ray,
 }
 
 
-bool Nebula::load(AssociativeArray* params, const string& resPath)
+bool Nebula::load(AssociativeArray* params, const fs::path& resPath)
 {
     string geometryFileName;
     if (params->getString("Mesh", geometryFileName))

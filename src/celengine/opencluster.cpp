@@ -55,7 +55,7 @@ bool OpenCluster::pick(const Ray3d& ray,
 }
 
 
-bool OpenCluster::load(AssociativeArray* params, const string& resPath)
+bool OpenCluster::load(AssociativeArray* params, const fs::path& resPath)
 {
     // No parameters specific to open cluster, though a list of member stars
     // could be useful.

@@ -351,14 +351,14 @@ ShaderManager::getShader(const string& name)
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
     }
 
-    ifstream vsf(vsName);
+    ifstream vsf(vsName.string());
     if (!vsf.good())
     {
         fmt::fprintf(cerr, "Failed to open %s\n", vsName);
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
     }
 
-    ifstream fsf(fsName);
+    ifstream fsf(fsName.string());
     if (!fsf.good())
     {
         fmt::fprintf(cerr, "Failed to open %s\n", fsName);
