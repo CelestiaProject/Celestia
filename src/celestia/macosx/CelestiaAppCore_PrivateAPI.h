@@ -9,7 +9,7 @@
 
 #include <celestia/celestiacore.h>
 #include <celestia/url.h>
-#include <celengine/cmdparser.h>
+#include <celestia/cmdparser.h>
 extern CelestiaCore *appCore;
 
 

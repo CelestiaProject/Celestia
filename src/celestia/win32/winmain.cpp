@@ -33,7 +33,7 @@
 #include <celutil/winutil.h>
 #include <celutil/filetype.h>
 #include <celengine/astro.h>
-#include <celengine/cmdparser.h>
+#include <celestia/cmdparser.h>
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
 

@@ -16,10 +16,6 @@ set(CELENGINE_SOURCES
   category.h
   catentry.cpp
   catentry.h
-  cmdparser.cpp
-  cmdparser.h
-  command.cpp
-  command.h
   console.cpp
   console.h
   constellation.cpp
@@ -38,8 +34,6 @@ set(CELENGINE_SOURCES
   dsooctree.cpp
   dsooctree.h
   execenv.h
-  execution.cpp
-  execution.h
   frame.cpp
   frame.h
   frametree.cpp
@@ -152,8 +146,9 @@ set(CELENGINE_SOURCES
   visibleregion.h
 )
 
-add_library(celengine STATIC ${CELENGINE_SOURCES})
-cotire(celengine)
+# The object files in the celephem directory are merged in the celengine library
+add_library(celengine STATIC ${CELENGINE_SOURCES} $<TARGET_OBJECTS:celephem>)
+
 #[[
 add_library(celengine SHARED ${CELENGINE_SOURCES})
 set_target_properties(celengine PROPERTIES
@@ -161,6 +156,15 @@ set_target_properties(celengine PROPERTIES
   SOVERSION ${VERSION}
 )
 ]]#
-add_dependencies(celengine cel3ds celmath celmodel)
-target_link_libraries(celengine cel3ds celmath celmodel)
+
+add_dependencies(celengine cel3ds celmath celmodel celtxf celutil)
+target_link_libraries(celengine cel3ds celmath celmodel celtxf celutil)
+
+# Some celephem objects depend on Spice
+if(ENABLE_SPICE)
+  target_link_libraries(celengine CSPICE::CSPICE)
+endif()
+
+cotire(celengine)
+
 #install(TARGETS celengine LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
