@@ -62,3 +62,7 @@ addons:
     - libpng
     - lua
     - qt5
+
+branches:
+  only:
+    - appimage_build
