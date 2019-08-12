@@ -16,10 +16,10 @@
 #include <memory>
 #include <vector>
 #include <cstddef>
+#include "frame.h"
 
 class Star;
 class Body;
-class ReferenceFrame;
 class TimelinePhase;
 
 
@@ -38,7 +38,7 @@ public:
         return starParent;
     }
 
-    const std::shared_ptr<const ReferenceFrame> &getDefaultReferenceFrame() const;
+    const ReferenceFrame::SharedConstPtr &getDefaultReferenceFrame() const;
 
     void addChild(std::shared_ptr<const TimelinePhase> &phase);
     void removeChild(std::shared_ptr<const TimelinePhase> &phase);
@@ -101,7 +101,7 @@ private:
     bool m_changed{ false };
     int m_childClassMask{ 0 };
 
-    std::shared_ptr<const ReferenceFrame> defaultFrame;
+    ReferenceFrame::SharedConstPtr defaultFrame;
 };
 
 #endif // _CELENGINE_FRAMETREE_H_

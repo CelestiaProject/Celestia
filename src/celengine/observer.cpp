@@ -816,16 +816,11 @@ void Observer::setFrame(ObserverFrame::CoordinateSystem cs, const Selection& ref
  */
 void Observer::setFrame(const shared_ptr<const ObserverFrame>& f)
 {
-    if (frame != f)
+    if (frame)
     {
-        auto newFrame = make_shared<ObserverFrame>(*f);
-
-        if (frame)
-        {
-            convertFrameCoordinates(newFrame);
-        }
-        frame = newFrame;
+        convertFrameCoordinates(f);
     }
+    frame = f;
 }
 
 
@@ -1475,7 +1470,7 @@ ObserverFrame::getTargetObject() const
 }
 
 
-const shared_ptr<const ReferenceFrame>&
+const ReferenceFrame::SharedConstPtr&
 ObserverFrame::getFrame() const
 {
     return frame;
@@ -1537,7 +1532,7 @@ ObserverFrame::convert(const shared_ptr<const ObserverFrame>& fromFrame,
 
 
 // Create the ReferenceFrame for the specified observer frame parameters.
-shared_ptr<const ReferenceFrame>
+ReferenceFrame::SharedConstPtr
 ObserverFrame::createFrame(CoordinateSystem _coordSys,
                            const Selection& _refObject,
                            const Selection& _targetObject)

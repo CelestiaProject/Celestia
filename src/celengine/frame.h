@@ -27,6 +27,8 @@
 class ReferenceFrame
 {
  public:
+    using SharedPtr = std::shared_ptr<ReferenceFrame>;
+    using SharedConstPtr = std::shared_ptr<const ReferenceFrame>;
     ReferenceFrame(Selection center);
     virtual ~ReferenceFrame() {};
 
@@ -172,7 +174,7 @@ class FrameVector
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     FrameVector(const FrameVector& fv);
-    ~FrameVector();
+    ~FrameVector() = default;
     FrameVector& operator=(const FrameVector&);
 
     Eigen::Vector3d direction(double tjd) const;
@@ -196,7 +198,7 @@ class FrameVector
     static FrameVector createRelativeVelocityVector(const Selection& _observer,
                                                     const Selection& _target);
     static FrameVector createConstantVector(const Eigen::Vector3d& _vec,
-                                            const std::shared_ptr<const ReferenceFrame>& _frame);
+                                            const ReferenceFrame::SharedConstPtr& _frame);
 
  private:
     /*! Type-only constructor is private. Code outside the class should

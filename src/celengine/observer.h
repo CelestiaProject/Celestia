@@ -66,7 +66,7 @@ public:
     Selection getRefObject() const;
     Selection getTargetObject() const;
 
-    const std::shared_ptr<const ReferenceFrame>& getFrame() const;
+    const ReferenceFrame::SharedConstPtr& getFrame() const;
 
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
@@ -83,13 +83,13 @@ public:
                                       double t);
 
 private:
-    std::shared_ptr<const ReferenceFrame> createFrame(CoordinateSystem _coordSys,
+    ReferenceFrame::SharedConstPtr createFrame(CoordinateSystem _coordSys,
                                 const Selection& _refObject,
                                 const Selection& _targetObject);
 
 private:
     CoordinateSystem coordSys;
-    std::shared_ptr<const ReferenceFrame> frame;
+    ReferenceFrame::SharedConstPtr frame;
     Selection targetObject;
 };
 

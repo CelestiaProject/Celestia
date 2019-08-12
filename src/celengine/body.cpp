@@ -217,7 +217,7 @@ void Body::markUpdated()
 }
 
 
-const shared_ptr<const ReferenceFrame>& Body::getOrbitFrame(double tdb) const
+const ReferenceFrame::SharedConstPtr& Body::getOrbitFrame(double tdb) const
 {
     return timeline->findPhase(tdb)->orbitFrame();
 }
@@ -229,7 +229,7 @@ const Orbit* Body::getOrbit(double tdb) const
 }
 
 
-const shared_ptr<const ReferenceFrame>& Body::getBodyFrame(double tdb) const
+const ReferenceFrame::SharedConstPtr& Body::getBodyFrame(double tdb) const
 {
     return timeline->findPhase(tdb)->bodyFrame();
 }

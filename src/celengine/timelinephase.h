@@ -14,8 +14,7 @@
 #define _CELENGINE_TIMELINEPHASE_H_
 
 #include <memory>
-
-class ReferenceFrame;
+#include "frame.h"
 class Orbit;
 class RotationModel;
 class FrameTree;
@@ -41,7 +40,7 @@ public:
         return m_endTime;
     }
 
-    const std::shared_ptr<const ReferenceFrame>& orbitFrame() const
+    const ReferenceFrame::SharedConstPtr& orbitFrame() const
     {
         return m_orbitFrame;
     }
@@ -51,7 +50,7 @@ public:
         return m_orbit;
     }
 
-    const std::shared_ptr<const ReferenceFrame>& bodyFrame() const
+    const ReferenceFrame::SharedConstPtr& bodyFrame() const
     {
         return m_bodyFrame;
     }
@@ -81,9 +80,9 @@ public:
                                               Body* body,
                                               double startTime,
                                               double endTime,
-                                              const std::shared_ptr<const ReferenceFrame>& orbitFrame,
+                                              const ReferenceFrame::SharedConstPtr& orbitFrame,
                                               Orbit& orbit,
-                                              const std::shared_ptr<const ReferenceFrame>& bodyFrame,
+                                              const ReferenceFrame::SharedConstPtr& bodyFrame,
                                               RotationModel& rotationModel);
 
     ~TimelinePhase() = default;
@@ -91,9 +90,9 @@ public:
     TimelinePhase(Body* _body,
                   double _startTime,
                   double _endTime,
-                  const std::shared_ptr<const ReferenceFrame>& _orbitFrame,
+                  const ReferenceFrame::SharedConstPtr& _orbitFrame,
                   Orbit* _orbit,
-                  const std::shared_ptr<const ReferenceFrame>& _bodyFrame,
+                  const ReferenceFrame::SharedConstPtr& _bodyFrame,
                   RotationModel* _rotationModel,
                   FrameTree* _owner);
 
@@ -106,9 +105,9 @@ private:
     double m_startTime;
     double m_endTime;
 
-    std::shared_ptr<const ReferenceFrame> m_orbitFrame;
+    ReferenceFrame::SharedConstPtr m_orbitFrame;
     Orbit* m_orbit;
-    std::shared_ptr<const ReferenceFrame> m_bodyFrame;
+    ReferenceFrame::SharedConstPtr m_bodyFrame;
     RotationModel* m_rotationModel;
 
     FrameTree* m_owner;

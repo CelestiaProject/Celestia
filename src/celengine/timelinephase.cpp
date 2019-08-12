@@ -22,9 +22,9 @@
 TimelinePhase::TimelinePhase(Body* _body,
                              double _startTime,
                              double _endTime,
-                             const shared_ptr<const ReferenceFrame>& _orbitFrame,
+                             const ReferenceFrame::SharedConstPtr& _orbitFrame,
                              Orbit* _orbit,
-                             const shared_ptr<const ReferenceFrame>& _bodyFrame,
+                             const ReferenceFrame::SharedConstPtr& _bodyFrame,
                              RotationModel* _rotationModel,
                              FrameTree* _owner) :
     m_body(_body),
@@ -46,9 +46,9 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    Body* body,
                                    double startTime,
                                    double endTime,
-                                   const shared_ptr<const ReferenceFrame>& orbitFrame,
+                                   const ReferenceFrame::SharedConstPtr& orbitFrame,
                                    Orbit& orbit,
-                                   const shared_ptr<const ReferenceFrame>& bodyFrame,
+                                   const ReferenceFrame::SharedConstPtr& bodyFrame,
                                    RotationModel& rotationModel)
 {
     // Validate the time range.

@@ -697,12 +697,6 @@ FrameVector::FrameVector(FrameVectorType t) :
 {
 }
 
-
-FrameVector::~FrameVector()
-{
-}
-
-
 FrameVector
 FrameVector::createRelativePositionVector(const Selection& _observer,
                                           const Selection& _target)
@@ -729,7 +723,7 @@ FrameVector::createRelativeVelocityVector(const Selection& _observer,
 
 FrameVector
 FrameVector::createConstantVector(const Vector3d& _vec,
-                                  const shared_ptr<const ReferenceFrame>& _frame)
+                                  const ReferenceFrame::SharedConstPtr& _frame)
 {
     FrameVector fv(ConstantVector);
     fv.vec = _vec;

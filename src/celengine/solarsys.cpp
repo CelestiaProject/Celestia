@@ -278,8 +278,8 @@ shared_ptr<const TimelinePhase> CreateTimelinePhase(Body* body,
                                    Universe& universe,
                                    Hash* phaseData,
                                    const string& path,
-                                   const shared_ptr<const ReferenceFrame>& defaultOrbitFrame,
-                                   const shared_ptr<const ReferenceFrame>& defaultBodyFrame,
+                                   const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
+                                   const ReferenceFrame::SharedConstPtr& defaultBodyFrame,
                                    bool isFirstPhase,
                                    bool isLastPhase,
                                    double previousPhaseEnd)
@@ -306,7 +306,7 @@ shared_ptr<const TimelinePhase> CreateTimelinePhase(Body* body,
     }
 
     // Get the orbit reference frame.
-    shared_ptr<const ReferenceFrame> orbitFrame;
+    ReferenceFrame::SharedConstPtr orbitFrame;
     Value* frameValue = phaseData->getValue("OrbitFrame");
     if (frameValue != nullptr)
     {
@@ -323,7 +323,7 @@ shared_ptr<const TimelinePhase> CreateTimelinePhase(Body* body,
     }
 
     // Get the body reference frame
-    shared_ptr<const ReferenceFrame> bodyFrame;
+    ReferenceFrame::SharedConstPtr bodyFrame;
     Value* bodyFrameValue = phaseData->getValue("BodyFrame");
     if (bodyFrameValue != nullptr)
     {
@@ -381,8 +381,8 @@ Timeline* CreateTimelineFromArray(Body* body,
                                   Universe& universe,
                                   ValueArray* timelineArray,
                                   const string& path,
-                                  const shared_ptr<const ReferenceFrame>& defaultOrbitFrame,
-                                  const shared_ptr<const ReferenceFrame>& defaultBodyFrame)
+                                  const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
+                                  const ReferenceFrame::SharedConstPtr& defaultBodyFrame)
 {
     auto* timeline = new Timeline();
     double previousEnding = -numeric_limits<double>::infinity();
@@ -450,8 +450,8 @@ static bool CreateTimeline(Body* body,
         return false;
     }
 
-    shared_ptr<const ReferenceFrame> defaultOrbitFrame;
-    shared_ptr<const ReferenceFrame> defaultBodyFrame;
+    ReferenceFrame::SharedConstPtr defaultOrbitFrame;
+    ReferenceFrame::SharedConstPtr defaultBodyFrame;
     if (bodyType == SurfaceObject)
     {
         defaultOrbitFrame = make_shared<BodyFixedFrame>(parentObject, parentObject);
@@ -485,8 +485,8 @@ static bool CreateTimeline(Body* body,
     }
 
     // Information required for the object timeline.
-    shared_ptr<const ReferenceFrame> orbitFrame;
-    shared_ptr<const ReferenceFrame> bodyFrame;
+    ReferenceFrame::SharedConstPtr orbitFrame;
+    ReferenceFrame::SharedConstPtr bodyFrame;
     Orbit* orbit                 = nullptr;
     RotationModel* rotationModel = nullptr;
     double beginning             = -numeric_limits<double>::infinity();

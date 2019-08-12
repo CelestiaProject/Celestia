@@ -78,7 +78,7 @@ FrameTree::~FrameTree()
 /*! Return the default reference frame for the object a frame tree is associated
  *  with.
  */
-const shared_ptr<const ReferenceFrame>&
+const ReferenceFrame::SharedConstPtr&
 FrameTree::getDefaultReferenceFrame() const
 {
     return defaultFrame;

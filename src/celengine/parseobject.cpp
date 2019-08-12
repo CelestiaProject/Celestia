@@ -1542,7 +1542,7 @@ CreateFrameVector(const Universe& universe,
 
         // The frame for the vector is optional; a nullptr frame indicates
         // J2000 ecliptic.
-        shared_ptr<const ReferenceFrame> f;
+        ReferenceFrame::SharedConstPtr f;
         Value* frameValue = constVecData->getValue("Frame");
         if (frameValue != nullptr)
         {
@@ -1802,7 +1802,7 @@ CreateTopocentricFrame(const Universe& universe,
 }
 
 
-static shared_ptr<const ReferenceFrame>
+static ReferenceFrame::SharedConstPtr
 CreateComplexFrame(const Universe& universe, Hash* frameData, const Selection& defaultCenter, Body* defaultObserver)
 {
     Value* value = frameData->getValue("BodyFixed");
@@ -1883,7 +1883,7 @@ CreateComplexFrame(const Universe& universe, Hash* frameData, const Selection& d
 }
 
 
-shared_ptr<const ReferenceFrame> CreateReferenceFrame(const Universe& universe,
+ReferenceFrame::SharedConstPtr CreateReferenceFrame(const Universe& universe,
                                      Value* frameValue,
                                      const Selection& defaultCenter,
                                      Body* defaultObserver)

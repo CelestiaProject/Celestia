@@ -202,9 +202,9 @@ class Body : public CatEntry
     FrameTree* getFrameTree() const;
     FrameTree* getOrCreateFrameTree();
 
-    const shared_ptr<const ReferenceFrame>& getOrbitFrame(double tdb) const;
+    const ReferenceFrame::SharedConstPtr& getOrbitFrame(double tdb) const;
     const Orbit* getOrbit(double tdb) const;
-    const shared_ptr<const ReferenceFrame>& getBodyFrame(double tdb) const;
+    const ReferenceFrame::SharedConstPtr& getBodyFrame(double tdb) const;
     const RotationModel* getRotationModel(double tdb) const;
 
     // Size methods
