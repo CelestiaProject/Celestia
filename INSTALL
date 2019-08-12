@@ -175,7 +175,7 @@ default linker in gcc.
 
 Follow by: 
 
-  cmake .. -G "MSYS Makefiles" -DENABLE_WIN=OFF -DCMAKE_CXX_FLAGS='-fuse-ld=lld' 
+  cmake .. -G "MSYS Makefiles" -DENABLE_WIN=OFF -DCMAKE_CXX_FLAGS='-fuse-ld=lld' -DCMAKE_BUILD_TYPE=Debug
 
 Then do mingw32-make.exe.
 
