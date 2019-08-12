@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include "lua.hpp"
+#include <celutil/filesystem.h>
 #include <celutil/timer.h>
 #include <celengine/observer.h>
 
@@ -38,8 +39,8 @@ public:
 
     lua_State* getState() const;
 
-    int loadScript(std::istream&, const std::string& streamname);
-    int loadScript(const std::string&);
+    int loadScript(std::istream&, const fs::path&);
+    int loadScript(const fs::path&);
     bool init(CelestiaCore*);
 
     std::string getErrorMessage();

@@ -69,40 +69,42 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     if (config == nullptr)
         config = new CelestiaConfig();
 
+    string t;
 #ifdef CELX
     config->configParams = configParams;
-    configParams->getString("LuaHook", config->luaHook);
-    config->luaHook = PathExp(config->luaHook);
+    configParams->getString("LuaHook", t);
+    config->luaHook = PathExp(t);
 #endif
 
     config->faintestVisible = 6.0f;
     configParams->getNumber("FaintestVisibleMagnitude", config->faintestVisible);
-    configParams->getString("FavoritesFile", config->favoritesFile);
-    config->favoritesFile = PathExp(config->favoritesFile);
-    configParams->getString("DestinationFile", config->destinationsFile);
-    config->destinationsFile = PathExp(config->destinationsFile);
-    configParams->getString("InitScript", config->initScriptFile);
-    config->initScriptFile = PathExp(config->initScriptFile);
-    configParams->getString("DemoScript", config->demoScriptFile);
-    config->demoScriptFile = PathExp(config->demoScriptFile);
-    configParams->getString("AsterismsFile", config->asterismsFile);
-    config->asterismsFile = PathExp(config->asterismsFile);
-    configParams->getString("BoundariesFile", config->boundariesFile);
-    config->boundariesFile = PathExp(config->boundariesFile);
-    configParams->getString("StarDatabase", config->starDatabaseFile);
-    config->starDatabaseFile = PathExp(config->starDatabaseFile);
-    configParams->getString("StarNameDatabase", config->starNamesFile);
-    config->starNamesFile = PathExp(config->starNamesFile);
-    configParams->getString("HDCrossIndex", config->HDCrossIndexFile);
-    config->HDCrossIndexFile = PathExp(config->HDCrossIndexFile);
-    configParams->getString("SAOCrossIndex", config->SAOCrossIndexFile);
-    config->SAOCrossIndexFile = PathExp(config->SAOCrossIndexFile);
-    configParams->getString("GlieseCrossIndex", config->GlieseCrossIndexFile);
-    config->GlieseCrossIndexFile = PathExp(config->GlieseCrossIndexFile);
+    configParams->getString("FavoritesFile", t);
+    config->favoritesFile = PathExp(t);
+    configParams->getString("DestinationFile", t);
+    config->destinationsFile = PathExp(t);
+    configParams->getString("InitScript", t);
+    config->initScriptFile = PathExp(t);
+    configParams->getString("DemoScript", t);
+    config->demoScriptFile = PathExp(t);
+    configParams->getString("AsterismsFile", t);
+    config->asterismsFile = PathExp(t);
+    configParams->getString("BoundariesFile", t);
+    config->boundariesFile = PathExp(t);
+    configParams->getString("StarDatabase", t);
+    config->starDatabaseFile = PathExp(t);
+    configParams->getString("StarNameDatabase", t);
+    config->starNamesFile = PathExp(t);
+    configParams->getString("HDCrossIndex", t);
+    config->HDCrossIndexFile = PathExp(t);
+    configParams->getString("SAOCrossIndex", t);
+    config->SAOCrossIndexFile = PathExp(t);
+    configParams->getString("GlieseCrossIndex", t);
+    config->GlieseCrossIndexFile = PathExp(t);
     configParams->getString("Font", config->mainFont);
     configParams->getString("LabelFont", config->labelFont);
     configParams->getString("TitleFont", config->titleFont);
-    configParams->getString("LogoTexture", config->logoTextureFile);
+    configParams->getString("LogoTexture", t);
+    config->logoTextureFile = t;
     configParams->getString("Cursor", config->cursor);
 
     float maxDist = 1.0;
@@ -122,8 +124,8 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     configParams->getNumber("MouseRotationSensitivity", config->mouseRotationSensitivity);
     config->reverseMouseWheel = false;
     configParams->getBoolean("ReverseMouseWheel", config->reverseMouseWheel);
-    configParams->getString("ScriptScreenshotDirectory", config->scriptScreenshotDirectory);
-    config->scriptScreenshotDirectory = PathExp(config->scriptScreenshotDirectory);
+    configParams->getString("ScriptScreenshotDirectory", t);
+    config->scriptScreenshotDirectory = PathExp(t);
     config->scriptSystemAccessPolicy = "ask";
     configParams->getString("ScriptSystemAccessPolicy", config->scriptSystemAccessPolicy);
 

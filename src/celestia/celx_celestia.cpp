@@ -9,10 +9,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celtxf/texturefont.h"
 #include <fmt/printf.h>
+#include <celtxf/texturefont.h>
 #include <celengine/category.h>
 #include <celengine/texture.h>
+#include <celutil/filesystem.h>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_celestia.h"
@@ -1908,13 +1909,6 @@ static int celestia_takescreenshot(lua_State* l)
     if (fileid.length() > 0)
         fileid.append("-");
 
-    string path = appCore->getConfig()->scriptScreenshotDirectory;
-    if (path.length() > 0 &&
-        path[path.length()-1] != '/' &&
-        path[path.length()-1] != '\\')
-
-        path.append("/");
-
     luastate->screenshotCount++;
     bool success = false;
     string filenamestem;
@@ -1924,10 +1918,12 @@ static int celestia_takescreenshot(lua_State* l)
     array<GLint, 4> viewport;
     appCore->getRenderer()->getScreenSize(viewport);
 
+
+    fs::path path = appCore->getConfig()->scriptScreenshotDirectory;
 #ifndef TARGET_OS_MAC
     if (strncmp(filetype, "jpg", 3) == 0)
     {
-        string filepath = path + filenamestem + ".jpg";
+        fs::path filepath = path / (filenamestem + ".jpg");
         success = CaptureGLBufferToJPEG(filepath,
                                        viewport[0], viewport[1],
                                        viewport[2], viewport[3],
@@ -1935,7 +1931,7 @@ static int celestia_takescreenshot(lua_State* l)
     }
     else
     {
-        string filepath = path + filenamestem + ".png";
+        fs::path filepath = path / (filenamestem + ".png");
         success = CaptureGLBufferToPNG(filepath,
                                        viewport[0], viewport[1],
                                        viewport[2], viewport[3],

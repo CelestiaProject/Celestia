@@ -326,9 +326,9 @@ CelestiaCore::~CelestiaCore()
 void CelestiaCore::readFavoritesFile()
 {
     // Set up favorites list
-    if (config->favoritesFile != "")
+    if (!config->favoritesFile.empty())
     {
-        ifstream in(config->favoritesFile, ios::in);
+        ifstream in(config->favoritesFile.string(), ios::in);
 
         if (in.good())
         {
@@ -343,9 +343,9 @@ void CelestiaCore::readFavoritesFile()
 
 void CelestiaCore::writeFavoritesFile()
 {
-    if (config->favoritesFile != "")
+    if (!config->favoritesFile.empty())
     {
-        ofstream out(config->favoritesFile, ios::out);
+        ofstream out(config->favoritesFile.string(), ios::out);
         if (out.good())
             WriteFavoritesList(*favorites, out);
     }
@@ -4098,9 +4098,9 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     for (const auto& file : config->dsoCatalogFiles)
     {
         if (progressNotifier)
-            progressNotifier->update(file);
+            progressNotifier->update(file.string());
 
-        ifstream dsoFile(file, ios::in);
+        ifstream dsoFile(file.string(), ios::in);
         if (!dsoFile.good())
         {
             warning(fmt::sprintf(_("Error opening deepsky catalog file %s.\n"), file));
@@ -4137,9 +4137,9 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         for (const auto& file : config->solarSystemFiles)
         {
             if (progressNotifier)
-                progressNotifier->update(file);
+                progressNotifier->update(file.string());
 
-            ifstream solarSysFile(file, ios::in);
+            ifstream solarSysFile(file.string(), ios::in);
             if (!solarSysFile.good())
             {
                 warning(fmt::sprintf(_("Error opening solar system catalog %s.\n"), file));
@@ -4165,9 +4165,9 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     }
 
     // Load asterisms:
-    if (config->asterismsFile != "")
+    if (!config->asterismsFile.empty())
     {
-        ifstream asterismsFile(config->asterismsFile, ios::in);
+        ifstream asterismsFile(config->asterismsFile.string(), ios::in);
         if (!asterismsFile.good())
         {
             warning(fmt::sprintf(_("Error opening asterisms file %s.\n"),
@@ -4181,9 +4181,9 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         }
     }
 
-    if (config->boundariesFile != "")
+    if (!config->boundariesFile.empty())
     {
-        ifstream boundariesFile(config->boundariesFile, ios::in);
+        ifstream boundariesFile(config->boundariesFile.string(), ios::in);
         if (!boundariesFile.good())
         {
             warning(fmt::sprintf(_("Error opening constellation boundaries file %s.\n"),
@@ -4197,7 +4197,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     }
 
     // Load destinations list
-    if (config->destinationsFile != "")
+    if (!config->destinationsFile.empty())
     {
         fs::path localeDestinationsFile = LocaleFilename(config->destinationsFile);
         ifstream destfile(localeDestinationsFile.string());
@@ -4327,11 +4327,11 @@ bool CelestiaCore::initRenderer()
 
 static void loadCrossIndex(StarDatabase* starDB,
                            StarDatabase::Catalog catalog,
-                           const string& filename)
+                           const fs::path& filename)
 {
     if (!filename.empty())
     {
-        ifstream xrefFile(filename, ios::in | ios::binary);
+        ifstream xrefFile(filename.string(), ios::in | ios::binary);
         if (xrefFile.good())
         {
             if (!starDB->loadCrossIndex(catalog, xrefFile))
@@ -4348,7 +4348,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
 {
     StarDetails::SetStarTextures(cfg.starTextures);
 
-    ifstream starNamesFile(cfg.starNamesFile, ios::in);
+    ifstream starNamesFile(cfg.starNamesFile.string(), ios::in);
     if (!starNamesFile.good())
     {
         fmt::fprintf(cerr, _("Error opening %s\n"), cfg.starNamesFile);
@@ -4368,9 +4368,9 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     if (!cfg.starDatabaseFile.empty())
     {
         if (progressNotifier)
-            progressNotifier->update(cfg.starDatabaseFile);
+            progressNotifier->update(cfg.starDatabaseFile.string());
 
-        ifstream starFile(cfg.starDatabaseFile, ios::in | ios::binary);
+        ifstream starFile(cfg.starDatabaseFile.string(), ios::in | ios::binary);
         if (!starFile.good())
         {
             fmt::fprintf(cerr, _("Error opening %s\n"), cfg.starDatabaseFile);
@@ -4396,23 +4396,16 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
 
     // Next, read any ASCII star catalog files specified in the StarCatalogs
     // list.
-    if (!cfg.starCatalogFiles.empty())
+    for (const auto& file : config->starCatalogFiles)
     {
-        for (const auto& file : config->starCatalogFiles)
-        {
-            if (file != "")
-            {
-                ifstream starFile(file, ios::in);
-                if (starFile.good())
-                {
-                    starDB->load(starFile);
-                }
-                else
-                {
-                    fmt::fprintf(cerr, _("Error opening star catalog %s\n"), file);
-                }
-            }
-        }
+        if (file.empty())
+            continue;
+
+        ifstream starFile(file.string(), ios::in);
+        if (starFile.good())
+            starDB->load(starFile);
+        else
+            fmt::fprintf(cerr, _("Error opening star catalog %s\n"), file);
     }
 
     // Now, read supplemental star files from the extras directories
@@ -4918,21 +4911,20 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
     int status = 0;
 
     // Execute the Lua hook initialization script
-    if (config->luaHook != "")
+    if (!config->luaHook.empty())
     {
-        string filename = config->luaHook;
-        ifstream scriptfile(filename);
+        ifstream scriptfile(config->luaHook.string());
         if (!scriptfile.good())
         {
             string errMsg;
-            errMsg = fmt::sprintf(_("Error opening LuaHook '%s'"),  filename);
+            errMsg = fmt::sprintf(_("Error opening LuaHook '%s'"), config->luaHook);
             fatalError(errMsg);
         }
 
         if (progressNotifier)
-            progressNotifier->update(config->luaHook);
+            progressNotifier->update(config->luaHook.string());
 
-        status = luaHook->loadScript(scriptfile, filename);
+        status = luaHook->loadScript(scriptfile, config->luaHook);
     }
     else
     {
