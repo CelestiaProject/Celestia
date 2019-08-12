@@ -44,16 +44,7 @@ if(ENABLE_CELX)
   )
 endif()
 
-add_library(celephem STATIC ${CELEPHEM_SOURCES})
-if(ENABLE_SPICE)
-  target_link_libraries(celephem CSPICE::CSPICE)
-endif()
+# These object files are merged in the celegine library
+add_library(celephem OBJECT ${CELEPHEM_SOURCES})
+
 cotire(celephem)
-#[[
-add_library(celephem SHARED ${CELEPHEM_SOURCES})
-set_target_properties(celephem PROPERTIES
-  VERSION ${VERSION}
-  SOVERSION ${VERSION}
-)
-]]#
-#install(TARGETS celephem LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})

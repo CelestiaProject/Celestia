@@ -16,9 +16,9 @@
 #include <map>
 #include <celengine/astro.h>
 #include <celengine/asterism.h>
-#include <celengine/cmdparser.h>
+#include "cmdparser.h"
 #include <celengine/execenv.h>
-#include <celengine/execution.h>
+#include "execution.h"
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
 #include <fmt/printf.h>

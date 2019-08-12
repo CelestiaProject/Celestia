@@ -4,7 +4,7 @@ set(CELTFX_SOURCES
 )
 
 add_library(celtxf STATIC ${CELTFX_SOURCES})
-cotire(celtxf)
+
 #[[
 add_library(celtxf SHARED ${CELTFX_SOURCES})
 set_target_properties(celtxf PROPERTIES
@@ -12,4 +12,10 @@ set_target_properties(celtxf PROPERTIES
   SOVERSION ${VERSION}
 )
 ]]#
+
+add_dependencies(celtxf celutil)
+target_link_libraries(celtxf celutil)
+
+cotire(celtxf)
+
 #install(TARGETS celtxf LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})

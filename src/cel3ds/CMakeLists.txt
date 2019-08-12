@@ -7,7 +7,7 @@ set(CEL3DS_SOURCES
 )
 
 add_library(cel3ds STATIC ${CEL3DS_SOURCES})
-cotire(cel3ds)
+
 #[[
 add_library(cel3ds SHARED ${CEL3DS_SOURCES})
 set_target_properties(cel3ds PROPERTIES
@@ -15,4 +15,10 @@ set_target_properties(cel3ds PROPERTIES
   SOVERSION ${VERSION}
 )
 ]]#
+
+add_dependencies(cel3ds celutil)
+target_link_libraries(cel3ds celutil)
+
+cotire(cel3ds)
+
 #install(TARGETS cel3ds LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})

@@ -13,7 +13,7 @@
 #include <iomanip>
 #include <celutil/debug.h>
 #include <celutil/util.h>
-#include <celengine/cmdparser.h>
+#include "cmdparser.h"
 #include "favorites.h"
 
 using namespace Eigen;

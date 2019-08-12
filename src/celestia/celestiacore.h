@@ -15,8 +15,8 @@
 // #include <celutil/watchable.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
-#include <celengine/command.h>
-#include <celengine/execution.h>
+#include "command.h"
+#include "execution.h"
 #include <celengine/texture.h>
 #include <celengine/universe.h>
 #include <celengine/render.h>

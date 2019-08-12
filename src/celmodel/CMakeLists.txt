@@ -10,7 +10,7 @@ set(CELMODEL_SOURCES
 )
 
 add_library(celmodel STATIC ${CELMODEL_SOURCES})
-cotire(celmodel)
+
 #[[
 add_library(celmodel SHARED ${CELMODEL_SOURCES})
 set_target_properties(celmodel PROPERTIES
@@ -18,5 +18,11 @@ set_target_properties(celmodel PROPERTIES
   SOVERSION ${VERSION}
 )
 ]]#
+
+add_dependencies(celmodel celutil)
+target_link_libraries(celmodel celutil)
+
+cotire(celmodel)
+
 #install(TARGETS celmodel LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 #install(TARGETS celmodel ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
