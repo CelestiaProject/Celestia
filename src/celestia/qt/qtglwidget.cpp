@@ -430,7 +430,19 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         {
             if ((e->text() != 0) && (e->text() != ""))
             {
-                appCore->charEntered(e->text().toUtf8().data(), modifiers);
+                QString input = e->text();
+#ifdef __APPLE__
+                // Taken from the macOS project
+                if (input.length() == 1)
+                {
+                    QChar c = input.at(0);
+                    if (c == 0x7f /* NSDeleteCharacter */)
+                        input.replace(0, 1, 0x08 /* NSBackspaceCharacter */); // delete = backspace
+                    else if (c == 0x19 /* NSBackTabCharacter */)
+                        input.replace(0, 1, 0x7f /* NSDeleteCharacter */);
+                }
+#endif
+                appCore->charEntered(input.toUtf8().data(), modifiers);
             }
         }
     }
