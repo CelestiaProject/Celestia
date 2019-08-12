@@ -83,12 +83,12 @@ class path
 
     template<typename T> path& operator/=(const T& p)
     {
-        return append(p);
+        return append(p.c_str());
     }
 
     template<typename T> path& concat(const T& p)
     {
-        m_path += p;
+        m_path += p.c_str();
         return *this;
     }
 
@@ -160,10 +160,12 @@ class path
        return m_path;
     }
 
+/*
     operator string_type() const noexcept
     {
         return m_path;
     }
+*/
 
     bool empty() const noexcept
     {
