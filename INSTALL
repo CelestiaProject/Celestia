@@ -168,6 +168,17 @@ Configure and build:
 
 Instead of N, pass a number of CPU cores you want to use during a build.
 
+To build in debug configuration, you have to use lld linker instead of the
+default linker in gcc.
+
+  pacman -S mingw-w64-x86_64-lld mingw-w64-x86_64-lldb
+
+Follow by: 
+
+  cmake .. -G "MSYS Makefiles" -DENABLE_WIN=OFF -DCMAKE_CXX_FLAGS='-fuse-ld=lld' 
+
+Then do mingw32-make.exe.
+
 
 
 Celestia Install instructions for OS X
