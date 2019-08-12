@@ -208,6 +208,12 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
         QString dataDir = QApplication::applicationDirPath() + "/../Resources";
 #else
         QString dataDir = CONFIG_DATA_DIR;
+#ifdef APPIMAGE
+        QString appimageDir = QString::fromLocal8Bit(::getenv("APPDIR"));
+        if (!appimageDir.isEmpty()) {
+            dataDir = appimageDir + "/" + dataDir;
+        }
+#endif
 #endif
         QString celestia_data_dir = dataDir;
         QDir::setCurrent(celestia_data_dir);

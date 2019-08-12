@@ -76,6 +76,12 @@ int main(int argc, char *argv[])
     QString splashDir = QApplication::applicationDirPath() + "/../Resources/splash/";
 #else
     QString splashDir = SPLASH_DIR;
+#ifdef APPIMAGE
+    QString appimageDir = QString::fromLocal8Bit(::getenv("APPDIR"));
+    if (!appimageDir.isEmpty()) {
+        splashDir = appimageDir + "/" + splashDir;
+    }
+#endif
 #endif
     QPixmap pixmap(splashDir + "splash.png");
     QSplashScreen splash(pixmap);
@@ -92,6 +98,11 @@ int main(int argc, char *argv[])
     QString localeDir = QApplication::applicationDirPath() + "/../Resources/locale";
 #else
     QString localeDir = LOCALEDIR;
+#ifdef APPIMAGE
+    if (!appimageDir.isEmpty()) {
+        localeDir = appimageDir + "/" + localeDir;
+    }
+#endif
 #endif
     bindtextdomain("celestia", localeDir.toUtf8().data());
     bind_textdomain_codeset("celestia", "UTF-8");

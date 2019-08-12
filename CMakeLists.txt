@@ -21,17 +21,18 @@ set(DISPLAY_NAME "Celestia")
 #
 #
 #
-option(ENABLE_CELX    "Enable celx scripting, requires Lua library? (Default: on)" ON)
-option(ENABLE_SPICE   "Use spice library? (Default: off)" OFF)
-option(ENABLE_NLS     "Enable interface translation? (Default: on)" ON)
-option(ENABLE_GLUT    "Build simple Glut frontend? (Default: on)" OFF)
-option(ENABLE_GTK     "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
-option(ENABLE_QT      "Build Qt frontend? (Default: on)" ON)
-option(ENABLE_WIN     "Build Windows native frontend? (Default: on)" ON)
-option(ENABLE_THEORA  "Support video capture to OGG Theora? (Default: on)" ON)
-option(ENABLE_TOOLS   "Build different tools? (Default: off)" OFF)
-option(NATIVE_OSX_APP "Support native OSX paths read data from (Default: off)" OFF)
-option(FAST_MATH      "Build with unsafe fast-math compiller option (Default: off)" OFF)
+option(ENABLE_CELX     "Enable celx scripting, requires Lua library? (Default: on)" ON)
+option(ENABLE_SPICE    "Use spice library? (Default: off)" OFF)
+option(ENABLE_NLS      "Enable interface translation? (Default: on)" ON)
+option(ENABLE_GLUT     "Build simple Glut frontend? (Default: on)" OFF)
+option(ENABLE_GTK      "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
+option(ENABLE_QT       "Build Qt frontend? (Default: on)" ON)
+option(ENABLE_WIN      "Build Windows native frontend? (Default: on)" ON)
+option(ENABLE_THEORA   "Support video capture to OGG Theora? (Default: on)" ON)
+option(ENABLE_TOOLS    "Build different tools? (Default: off)" OFF)
+option(NATIVE_OSX_APP  "Support native OSX paths read data from (Default: off)" OFF)
+option(FAST_MATH       "Build with unsafe fast-math compiller option (Default: off)" OFF)
+option(ENABLE_APPIMAGE "Build AppImage package? (Default: off)" OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type." FORCE)
@@ -62,9 +63,10 @@ if(UNIX AND (NOT APPLE) AND (NOT CYGWIN))
   set(_UNIX true)
 endif()
 
-# Theora supported on Unix-like systems only, but not on OSX
+# Theora/AppImage supported on Unix-like systems only, but not on OSX
 if(NOT _UNIX)
   set(ENABLE_THEORA OFF)
+  set(ENABLE_APPIMAGE OFF)
 endif()
 
 # _USE_MATH_DEFINES enables use of math constants like M_PI,
@@ -118,6 +120,10 @@ endif()
 
 if(_UNIX)
   find_package(PkgConfig)
+endif()
+
+if(_UNIX AND ENABLE_APPIMAGE)
+  add_definitions(-DAPPIMAGE)
 endif()
 
 if(_UNIX AND ENABLE_THEORA)
