@@ -4,7 +4,7 @@ if(NOT WIN32 OR NOT ENABLE_WIN)
 endif()
 
 set(WIN32_SOURCES
-  ODMenu.cpp
+  odmenu.cpp
   wglext.cpp
   winbookmarks.cpp
   windatepicker.cpp
@@ -22,7 +22,7 @@ set(WIN32_SOURCES
 )
 
 set(WIN32_HEADERS
-  ODMenu.h
+  odmenu.h
   wglext.h
   winbookmarks.h
   wineclipses.h
