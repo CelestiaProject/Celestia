@@ -41,7 +41,7 @@ TimelinePhase::TimelinePhase(Body* _body,
 
 /*! Create a new timeline phase in the specified universe.
  */
-shared_ptr<const TimelinePhase>
+TimelinePhase::SharedConstPtr
 TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    Body* body,
                                    double startTime,

@@ -114,7 +114,7 @@ class Simulation
 
     void setFrame(ObserverFrame::CoordinateSystem, const Selection& refObject, const Selection& targetObject);
     void setFrame(ObserverFrame::CoordinateSystem, const Selection& refObject);
-    const std::shared_ptr<const ObserverFrame> getFrame() const;
+    const ObserverFrame::SharedConstPtr& getFrame() const;
 
  private:
     SolarSystem* getSolarSystem(const Star* star);

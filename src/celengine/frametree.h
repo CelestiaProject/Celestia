@@ -17,11 +17,10 @@
 #include <vector>
 #include <cstddef>
 #include "frame.h"
+#include "timelinephase.h"
 
 class Star;
 class Body;
-class TimelinePhase;
-
 
 class FrameTree
 {
@@ -40,9 +39,9 @@ public:
 
     const ReferenceFrame::SharedConstPtr &getDefaultReferenceFrame() const;
 
-    void addChild(std::shared_ptr<const TimelinePhase> &phase);
-    void removeChild(std::shared_ptr<const TimelinePhase> &phase);
-    const std::shared_ptr<const TimelinePhase> &getChild(unsigned int n) const;
+    void addChild(const TimelinePhase::SharedConstPtr &phase);
+    void removeChild(const TimelinePhase::SharedConstPtr &phase);
+    const TimelinePhase::SharedConstPtr &getChild(unsigned int n) const;
     unsigned int childCount() const;
 
     void markChanged();
@@ -93,7 +92,7 @@ public:
 private:
     Star* starParent;
     Body* bodyParent;
-    std::vector<std::shared_ptr<const TimelinePhase> > children;
+    std::vector<TimelinePhase::SharedConstPtr > children;
 
     double m_boundingSphereRadius{ 0.0 };
     double m_maxChildRadius{ 0.0 };

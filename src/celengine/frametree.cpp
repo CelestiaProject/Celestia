@@ -159,7 +159,7 @@ FrameTree::recomputeBoundingSphere()
 /*! Add a new phase to this tree.
  */
 void
-FrameTree::addChild(shared_ptr<const TimelinePhase> &phase)
+FrameTree::addChild(const TimelinePhase::SharedConstPtr &phase)
 {
     children.push_back(phase);
     markChanged();
@@ -170,7 +170,7 @@ FrameTree::addChild(shared_ptr<const TimelinePhase> &phase)
  *  phase doesn't exist in the tree.
  */
 void
-FrameTree::removeChild(shared_ptr<const TimelinePhase> &phase)
+FrameTree::removeChild(const TimelinePhase::SharedConstPtr &phase)
 {
     auto iter = find(children.begin(), children.end(), phase);
     if (iter != children.end())
@@ -182,7 +182,7 @@ FrameTree::removeChild(shared_ptr<const TimelinePhase> &phase)
 
 
 /*! Return the child at the specified index. */
-const shared_ptr<const TimelinePhase>&
+const TimelinePhase::SharedConstPtr&
 FrameTree::getChild(unsigned int n) const
 {
     return children[n];

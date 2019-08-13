@@ -18,6 +18,7 @@
 #ifndef _CELENGINE_OBSERVER_H_
 #define _CELENGINE_OBSERVER_H_
 
+#include <memory>
 #include <celmath/mathlib.h>
 #include <celengine/frame.h>
 #include <Eigen/Core>
@@ -27,6 +28,8 @@
 class ObserverFrame
 {
 public:
+    using SharedPtr = std::shared_ptr<ObserverFrame>;
+    using SharedConstPtr = std::shared_ptr<const ObserverFrame>;
     enum CoordinateSystem
     {
         Universal       = 0,
@@ -73,12 +76,12 @@ public:
     Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const;
     Eigen::Quaterniond convertToUniversal(const Eigen::Quaterniond& q, double tjd) const;
 
-    static UniversalCoord convert(const std::shared_ptr<const ObserverFrame> &fromFrame,
-                                  const std::shared_ptr<const ObserverFrame> &toFrame,
+    static UniversalCoord convert(const ObserverFrame::SharedConstPtr &fromFrame,
+                                  const ObserverFrame::SharedConstPtr &toFrame,
                                   const UniversalCoord& uc,
                                   double t);
-    static Eigen::Quaterniond convert(const std::shared_ptr<const ObserverFrame> &fromFrame,
-                                      const std::shared_ptr<const ObserverFrame> &toFrame,
+    static Eigen::Quaterniond convert(const ObserverFrame::SharedConstPtr &fromFrame,
+                                      const ObserverFrame::SharedConstPtr &toFrame,
                                       const Eigen::Quaterniond& q,
                                       double t);
 
@@ -201,9 +204,9 @@ public:
 
     void setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj, const Selection& targetObj);
     void setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj);
-    void setFrame(const std::shared_ptr<const ObserverFrame>& f);
+    void setFrame(const ObserverFrame::SharedConstPtr& f);
 
-    const std::shared_ptr<const ObserverFrame>& getFrame() const;
+    const ObserverFrame::SharedConstPtr& getFrame() const;
 
     double getArrivalTime() const;
 
@@ -278,7 +281,7 @@ public:
                                    double centerTime);
 
     void updateUniversal();
-    void convertFrameCoordinates(const std::shared_ptr<const ObserverFrame> &newFrame);
+    void convertFrameCoordinates(const ObserverFrame::SharedConstPtr &newFrame);
 
  private:
     double              simTime{ 0.0 };
@@ -294,7 +297,7 @@ public:
     UniversalCoord      positionUniv;
     Eigen::Quaterniond  orientationUniv;
 
-    shared_ptr<const ObserverFrame> frame;
+    ObserverFrame::SharedConstPtr frame;
 
     double              realTime{ 0.0 };
 

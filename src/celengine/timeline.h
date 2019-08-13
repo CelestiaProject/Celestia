@@ -15,11 +15,11 @@
 
 #include <memory>
 #include <vector>
+#include "timelinephase.h"
 
 class ReferenceFrame;
 class Orbit;
 class RotationModel;
-class TimelinePhase;
 
 class Timeline
 {
@@ -27,9 +27,9 @@ public:
     Timeline() = default;
     ~Timeline();
 
-    const std::shared_ptr<const TimelinePhase>& findPhase(double t) const;
-    bool appendPhase(std::shared_ptr<const TimelinePhase>&);
-    const std::shared_ptr<const TimelinePhase>& getPhase(unsigned int n) const;
+    const TimelinePhase::SharedConstPtr& findPhase(double t) const;
+    bool appendPhase(TimelinePhase::SharedConstPtr&);
+    const TimelinePhase::SharedConstPtr& getPhase(unsigned int n) const;
     unsigned int phaseCount() const;
 
     double startTime() const;
@@ -39,7 +39,7 @@ public:
     void markChanged();
 
 private:
-    std::vector<std::shared_ptr<const TimelinePhase>> phases;
+    std::vector<TimelinePhase::SharedConstPtr> phases;
 };
 
 #endif // _CELENGINE_TIMELINE_H_

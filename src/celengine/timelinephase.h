@@ -25,6 +25,8 @@ class Body;
 class TimelinePhase
 {
 public:
+    using SharedPtr = std::shared_ptr<TimelinePhase>;
+    using SharedConstPtr = std::shared_ptr<const TimelinePhase>;
     Body* body() const
     {
         return m_body;
@@ -76,7 +78,7 @@ public:
         return m_startTime <= t && t < m_endTime;
     }
 
-    static std::shared_ptr<const TimelinePhase> CreateTimelinePhase(Universe& universe,
+    static TimelinePhase::SharedConstPtr CreateTimelinePhase(Universe& universe,
                                               Body* body,
                                               double startTime,
                                               double endTime,

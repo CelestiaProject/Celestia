@@ -274,7 +274,7 @@ static Selection GetParentObject(PlanetarySystem* system)
 }
 
 
-shared_ptr<const TimelinePhase> CreateTimelinePhase(Body* body,
+TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
                                    Universe& universe,
                                    Hash* phaseData,
                                    const string& path,

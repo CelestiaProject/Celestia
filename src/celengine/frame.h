@@ -210,7 +210,7 @@ class FrameVector
     Selection observer;
     Selection target;
     Eigen::Vector3d vec;                   // constant vector
-    std::shared_ptr<const ReferenceFrame> frame; // frame for constant vector
+    ReferenceFrame::SharedConstPtr frame; // frame for constant vector
 };
 
 

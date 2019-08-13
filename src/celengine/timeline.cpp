@@ -33,7 +33,7 @@ Timeline::~Timeline()
 
 
 bool
-Timeline::appendPhase(shared_ptr<const TimelinePhase> &phase)
+Timeline::appendPhase(TimelinePhase::SharedConstPtr &phase)
 {
     // Validate start and end times. If there are existing phases in the timeline,
     // startTime must be equal to endTime of the previous phases so that there are
@@ -50,7 +50,7 @@ Timeline::appendPhase(shared_ptr<const TimelinePhase> &phase)
 }
 
 
-const shared_ptr<const TimelinePhase>&
+const TimelinePhase::SharedConstPtr&
 Timeline::findPhase(double t) const
 {
     // Find the phase containing time t. The overwhelming common case is
@@ -76,7 +76,7 @@ Timeline::findPhase(double t) const
 
 /*! Get the phase at the specified index.
  */
-const shared_ptr<const TimelinePhase>&
+const TimelinePhase::SharedConstPtr&
 Timeline::getPhase(unsigned int n) const
 {
     return phases.at(n);

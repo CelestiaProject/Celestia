@@ -774,7 +774,7 @@ void Observer::setMode(Observer::ObserverMode mode)
 // Private method to convert coordinates when a new observer frame is set.
 // Universal coordinates remain the same. All frame coordinates get updated, including
 // the goto parameters.
-void Observer::convertFrameCoordinates(const shared_ptr<const ObserverFrame> &newFrame)
+void Observer::convertFrameCoordinates(const ObserverFrame::SharedConstPtr &newFrame)
 {
     double now = getTime();
 
@@ -814,7 +814,7 @@ void Observer::setFrame(ObserverFrame::CoordinateSystem cs, const Selection& ref
 /*! Set the observer's reference frame. The position of the observer in
  *  universal coordinates will not change.
  */
-void Observer::setFrame(const shared_ptr<const ObserverFrame>& f)
+void Observer::setFrame(const ObserverFrame::SharedConstPtr& f)
 {
     if (frame)
     {
@@ -826,7 +826,7 @@ void Observer::setFrame(const shared_ptr<const ObserverFrame>& f)
 
 /*! Get the current reference frame for the observer.
  */
-const shared_ptr<const ObserverFrame>& Observer::getFrame() const
+const ObserverFrame::SharedConstPtr& Observer::getFrame() const
 {
     return frame;
 }
@@ -1508,8 +1508,8 @@ ObserverFrame::convertToUniversal(const Quaterniond& q, double tjd) const
 /*! Convert a position from one frame to another.
  */
 UniversalCoord
-ObserverFrame::convert(const shared_ptr<const ObserverFrame>& fromFrame,
-                       const shared_ptr<const ObserverFrame>& toFrame,
+ObserverFrame::convert(const ObserverFrame::SharedConstPtr& fromFrame,
+                       const ObserverFrame::SharedConstPtr& toFrame,
                        const UniversalCoord& uc,
                        double t)
 {
@@ -1521,8 +1521,8 @@ ObserverFrame::convert(const shared_ptr<const ObserverFrame>& fromFrame,
 /*! Convert an orientation from one frame to another.
 */
 Quaterniond
-ObserverFrame::convert(const shared_ptr<const ObserverFrame>& fromFrame,
-                       const shared_ptr<const ObserverFrame>& toFrame,
+ObserverFrame::convert(const ObserverFrame::SharedConstPtr& fromFrame,
+                       const ObserverFrame::SharedConstPtr& toFrame,
                        const Quaterniond& q,
                        double t)
 {
