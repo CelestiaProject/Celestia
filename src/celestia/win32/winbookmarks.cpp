@@ -238,7 +238,7 @@ void BuildFavoritesMenu(HMENU menuBar,
             return;
 
         // Insert separator
-        menuInfo.cbSize = sizeof MENUITEMINFO;
+        menuInfo.cbSize = sizeof(MENUITEMINFO);
         menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
         menuInfo.fType = MFT_SEPARATOR;
         menuInfo.fState = MFS_UNHILITE;
@@ -264,7 +264,7 @@ void BuildFavoritesMenu(HMENU menuBar,
                 if (subMenu = CreatePopupMenu())
                 {
                     // Create a menu item that displays a popup sub menu
-                    menuInfo.cbSize = sizeof MENUITEMINFO;
+                    menuInfo.cbSize = sizeof(MENUITEMINFO);
                     menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_ID;
                     menuInfo.fType = MFT_STRING;
                     menuInfo.wID = ID_BOOKMARKS_FIRSTBOOKMARK + rootResIndex;
@@ -297,7 +297,7 @@ void BuildFavoritesMenu(HMENU menuBar,
                             {
                                 clog << "  " << child->name << '\n';
                                 // Add item to sub menu
-                                menuInfo.cbSize = sizeof MENUITEMINFO;
+                                menuInfo.cbSize = sizeof(MENUITEMINFO);
                                 menuInfo.fMask = MIIM_TYPE | MIIM_ID;
                                 menuInfo.fType = MFT_STRING;
                                 menuInfo.wID = ID_BOOKMARKS_FIRSTBOOKMARK + childResIndex;
@@ -315,7 +315,7 @@ void BuildFavoritesMenu(HMENU menuBar,
                         // were added to sub menu
                         if (subMenuIndex == 0)
                         {
-                            menuInfo.cbSize = sizeof MENUITEMINFO;
+                            menuInfo.cbSize = sizeof(MENUITEMINFO);
                             menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
                             menuInfo.fType = MFT_STRING;
                             menuInfo.fState = MFS_DISABLED;

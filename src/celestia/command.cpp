@@ -8,15 +8,15 @@
 // of the License, or (at your option) any later version.
 
 #include "command.h"
-#include "astro.h"
-#include "asterism.h"
+#include <celengine/astro.h>
+#include <celengine/asterism.h>
 #include "execution.h"
 #ifdef USE_GLCONTEXT
-#include "glcontext.h"
+#include <celengine/glcontext.h>
 #endif
-#include <celestia/celestiacore.h>
-#include <celestia/imagecapture.h>
-#include <celestia/celx_internal.h>
+#include "celestiacore.h"
+#include "imagecapture.h"
+#include "celx_internal.h"
 #include <celengine/multitexture.h>
 #include <celutil/util.h>
 #include <celmath/mathlib.h>

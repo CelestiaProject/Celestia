@@ -11,17 +11,16 @@
 
 #include <config.h>
 
-#include "astro.h"
 #include "cmdparser.h"
 #ifdef USE_GLCONTEXT
-#include "glcontext.h"
+#include <celengine/glcontext.h>
 #endif
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
-#include <celestia/celx.h>
-#include <celestia/celx_internal.h>
+#include "celx.h"
+#include "celx_internal.h"
 #include <celengine/render.h>
 #include <algorithm>
 #include <Eigen/Geometry>

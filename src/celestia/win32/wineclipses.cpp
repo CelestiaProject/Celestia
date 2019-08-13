@@ -157,7 +157,7 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
 }
 
 
-void InitDateControls(HWND hDlg, astro::Date& newTime, SYSTEMTIME& fromTime, SYSTEMTIME& toTime)
+void InitDateControls(HWND hDlg, const astro::Date& newTime, SYSTEMTIME& fromTime, SYSTEMTIME& toTime)
 {
     HWND dateItem = NULL;
 

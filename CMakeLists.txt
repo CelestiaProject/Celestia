@@ -39,13 +39,21 @@ endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if(NOT MSVC)
+if(NOT WIN32)
   # Qt requires -fPIC, so build all code with it
-  add_compile_options(-fPIC -g)
-  if(FAST_MATH)
+  # It's always set on windows
+  add_compile_options(-fPIC)
+endif()
+
+if(FAST_MATH)
+  if(NOT MSVC)
     add_compile_options("-ffast-math")
+  else()
+    add_compile_options("/fp:fast")
   endif()
-else()
+endif()
+
+if(MSVC)
   # Disabled warnings
   # C4244, C4267, C4503: implicit type conversion to a smaller type
   # C4786: long names in templates
@@ -53,9 +61,6 @@ else()
   # Additional options
   # bigobj: generate more object sections than allowed by default
   add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/bigobj")
-  if(FAST_MATH)
-    add_compile_options("/fp:fast")
-  endif()
 endif()
 
 if(UNIX AND (NOT APPLE) AND (NOT CYGWIN))
@@ -110,8 +115,9 @@ if(ENABLE_SPICE)
   if(NOT CSPICE_FOUND)
     message(STATUS "Using cspice submodule")
     add_subdirectory("${CMAKE_SOURCE_DIR}/thirdparty/Spice")
-
-    include_directories("${CMAKE_SOURCE_DIR}/thirdparty/Spice/include")
+    get_target_property(SPICE_INCLUDE_DIR Spice INCLUDE_DIRECTORIES)
+    include_directories(${SPICE_INCLUDE_DIR})
+    message(STATUS "Spice include directories: ${SPICE_INCLUDE_DIR}")
     add_library(CSPICE::CSPICE ALIAS Spice)
   endif()
   add_definitions(-DUSE_SPICE)

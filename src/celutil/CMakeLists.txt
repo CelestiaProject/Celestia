@@ -32,11 +32,7 @@ if (WIN32)
 endif()
 
 add_library(celutil STATIC ${CELUTIL_SOURCES})
-if (NOT HAVE_EXPERIMENTAL_FILESYSTEM)
-  add_dependencies(celutil celfs)
-  target_link_libraries(celutil celfs)
-endif()
-cotire(celutil)
+
 #[[
 add_library(celutil SHARED ${CELUTIL_SOURCES})
 set_target_properties(celutil PROPERTIES
@@ -44,4 +40,10 @@ set_target_properties(celutil PROPERTIES
   SOVERSION ${VERSION}
 )
 ]]#
+
+add_dependencies(celutil celmath)
+target_link_libraries(celutil celmath)
+
+cotire(celutil)
+
 #install(TARGETS celutil LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})

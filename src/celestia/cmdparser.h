@@ -12,7 +12,7 @@
 #ifndef _CMDPARSER_H_
 #define _CMDPARSER_H_
 
-#include <celengine/command.h>
+#include "command.h"
 #include <celengine/parser.h>
 #include <celengine/render.h>
 #include <iostream>

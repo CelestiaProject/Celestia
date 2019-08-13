@@ -11,7 +11,7 @@
 #define _EXECUTION_H_
 
 #include <celengine/execenv.h>
-#include <celengine/command.h>
+#include "command.h"
 
 
 class Execution

@@ -23,7 +23,7 @@
 #include <celengine/body.h>
 
 #include <celengine/simulation.h>
-#include <celengine/cmdparser.h>
+#include <celestia/cmdparser.h>
 #include <celengine/render.h>
 #include <celestia/celestiacore.h>
 #include <celestia/imagecapture.h>

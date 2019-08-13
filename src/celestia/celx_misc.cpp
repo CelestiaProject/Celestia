@@ -2,9 +2,9 @@
 #include <fmt/printf.h>
 #include "celx_misc.h"
 #include "celx_internal.h"
-#include <celengine/cmdparser.h>
+#include "cmdparser.h"
 #include <celengine/execenv.h>
-#include <celengine/execution.h>
+#include "execution.h"
 #include "celestiacore.h"
 
 LuaState *getLuaStateObject(lua_State*);
