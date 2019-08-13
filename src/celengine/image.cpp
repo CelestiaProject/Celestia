@@ -513,18 +513,17 @@ Image* LoadPNGImage(const fs::path& filename)
     png_infop info_ptr;
     png_uint_32 width, height;
     int bit_depth, color_type, interlace_type;
-    FILE* fp = nullptr;
     Image* img = nullptr;
     png_bytep* row_pointers = nullptr;
 
 #ifdef _WIN32
-    fp = _wfopen(filename.c_str(), L"rb");
+    FILE *fp = _wfopen(filename.c_str(), L"rb");
 #else
-    fp = fopen(filename.c_str(), "rb");
+    FILE *fp = fopen(filename.c_str(), "rb");
 #endif
     if (fp == nullptr)
     {
-        fmt::fprintf(clog, _("Error opening image file %s\n"), filename.string());
+        fmt::fprintf(clog, _("Error opening image file %s\n"), filename);
         return nullptr;
     }
 
@@ -532,7 +531,7 @@ Image* LoadPNGImage(const fs::path& filename)
     elements_read = fread(header, 1, sizeof(header), fp);
     if (elements_read == 0 || png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
     {
-        fmt::fprintf(clog, _("Error: %s is not a PNG file.\n"), filename.string());
+        fmt::fprintf(clog, _("Error: %s is not a PNG file.\n"), filename);
         fclose(fp);
         return nullptr;
     }
@@ -558,7 +557,7 @@ Image* LoadPNGImage(const fs::path& filename)
         fclose(fp);
         delete img;
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) nullptr);
-        fmt::fprintf(clog, _("Error reading PNG image file %s\n"), filename.string());
+        fmt::fprintf(clog, _("Error reading PNG image file %s\n"), filename);
         return nullptr;
     }
 

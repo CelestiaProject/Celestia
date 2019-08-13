@@ -20,14 +20,14 @@
 class GeometryInfo : public ResourceInfo<Geometry>
 {
  public:
-    fs::path::string_type source;
+    fs::path source;
     fs::path path;
     bool resolvedToPath;
     Eigen::Vector3f center;
     float scale;
     bool isNormalized;
 
-    GeometryInfo(const fs::path::string_type& _source,
+    GeometryInfo(const fs::path& _source,
                  const fs::path& _path = "") :
         source(_source),
         path(_path),
@@ -37,7 +37,7 @@ class GeometryInfo : public ResourceInfo<Geometry>
         isNormalized(true)
         {};
 
-    GeometryInfo(const fs::path::string_type& _source,
+    GeometryInfo(const fs::path& _source,
                  const fs::path& _path,
                  const Eigen::Vector3f& _center,
                  float _scale,

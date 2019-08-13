@@ -22,7 +22,7 @@ using namespace std;
 
 static TrajectoryManager* trajectoryManager = nullptr;
 
-constexpr const char UniqueSuffixChar = '!';
+constexpr const fs::path::value_type UniqueSuffixChar = '!';
 
 
 TrajectoryManager* GetTrajectoryManager()
@@ -38,7 +38,12 @@ fs::path TrajectoryInfo::resolve(const fs::path& baseDir)
     // Ensure that trajectories with different interpolation or precision get resolved to different objects by
     // adding a 'uniquifying' suffix to the filename that encodes the properties other than filename which can
     // distinguish two trajectories. This suffix is stripped before the file is actually loaded.
-    string uniquifyingSuffix, format;
+    fs::path::string_type uniquifyingSuffix, format;
+#ifdef _WIN32
+    format = L"%c%u%u";
+#else
+    format = "%c%u%u";
+#endif
     uniquifyingSuffix = fmt::sprintf(format, UniqueSuffixChar, (unsigned int) interpolation, (unsigned int) precision);
 
     if (!path.empty())
@@ -49,7 +54,7 @@ fs::path TrajectoryInfo::resolve(const fs::path& baseDir)
             return filename += uniquifyingSuffix;
     }
 
-    return baseDir / (source + uniquifyingSuffix);
+    return (baseDir / source) += uniquifyingSuffix;
 }
 
 Orbit* TrajectoryInfo::load(const fs::path& filename)

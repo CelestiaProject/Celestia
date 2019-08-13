@@ -105,7 +105,7 @@ fs::path GeometryInfo::resolve(const fs::path& baseDir)
         }
     }
 
-    return baseDir / (source + uniquifyingSuffix);
+    return (baseDir / source) += uniquifyingSuffix;
 }
 
 

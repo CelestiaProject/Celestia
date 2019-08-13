@@ -109,11 +109,10 @@ bool CaptureGLBufferToPNG(const fs::path& filename,
         return false;
     }
 
-    FILE* out;
 #ifdef _WIN32
-    in = _wfopen(filename.c_str(), L"wb");
+    FILE* out = _wfopen(filename.c_str(), L"wb");
 #else
-    out = fopen(filename.c_str(), "wb");
+    FILE* out = fopen(filename.c_str(), "wb");
 #endif
     if (out == nullptr)
     {
