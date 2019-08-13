@@ -55,9 +55,8 @@ static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
  *  updates due to an active goto operation.
  */
 
-Observer::Observer()
+Observer::Observer() : frame(make_shared<ObserverFrame>())
 {
-    frame = make_shared<ObserverFrame>();
     updateUniversal();
 }
 
@@ -69,7 +68,7 @@ Observer::Observer(const Observer& o) :
     orientation(o.orientation),
     velocity(o.velocity),
     angularVelocity(o.angularVelocity),
-    frame(nullptr),
+    frame(make_shared<ObserverFrame>(*o.frame)),
     realTime(o.realTime),
     targetSpeed(o.targetSpeed),
     targetVelocity(o.targetVelocity),
@@ -83,12 +82,7 @@ Observer::Observer(const Observer& o) :
     locationFilter(o.locationFilter),
     displayedSurface(o.displayedSurface)
 {
-    frame = make_shared<ObserverFrame>(*o.frame);
     updateUniversal();
-}
-
-Observer::~Observer()
-{
 }
 
 Observer& Observer::operator=(const Observer& o)
@@ -816,11 +810,14 @@ void Observer::setFrame(ObserverFrame::CoordinateSystem cs, const Selection& ref
  */
 void Observer::setFrame(const ObserverFrame::SharedConstPtr& f)
 {
-    if (frame)
+    if (frame != f)
     {
-        convertFrameCoordinates(f);
+        if (frame)
+        {
+            convertFrameCoordinates(f);
+        }
+        frame = f;
     }
-    frame = f;
 }
 
 
@@ -1442,12 +1439,6 @@ ObserverFrame& ObserverFrame::operator=(const ObserverFrame& f)
 
     return *this;
 }
-
-
-ObserverFrame::~ObserverFrame()
-{
-}
-
 
 ObserverFrame::CoordinateSystem
 ObserverFrame::getCoordinateSystem() const

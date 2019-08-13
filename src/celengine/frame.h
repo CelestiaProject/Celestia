@@ -132,6 +132,8 @@ class J2000EquatorFrame : public ReferenceFrame
 class BodyFixedFrame : public ReferenceFrame
 {
  public:
+    using SharedPtr = std::shared_ptr<BodyFixedFrame>;
+    using SharedConstPtr = std::shared_ptr<const BodyFixedFrame>;
     BodyFixedFrame(Selection center, Selection obj);
     virtual ~BodyFixedFrame() {};
     Eigen::Quaterniond getOrientation(double tjd) const;
@@ -149,6 +151,8 @@ class BodyFixedFrame : public ReferenceFrame
 class BodyMeanEquatorFrame : public ReferenceFrame
 {
  public:
+    using SharedPtr = std::shared_ptr<BodyMeanEquatorFrame>;
+    using SharedConstPtr = std::shared_ptr<const BodyMeanEquatorFrame>;
     BodyMeanEquatorFrame(Selection center, Selection obj, double freeze);
     BodyMeanEquatorFrame(Selection center, Selection obj);
     virtual ~BodyMeanEquatorFrame() {};

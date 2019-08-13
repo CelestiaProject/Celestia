@@ -92,7 +92,7 @@ public:
 private:
     Star* starParent;
     Body* bodyParent;
-    std::vector<TimelinePhase::SharedConstPtr > children;
+    std::vector<TimelinePhase::SharedConstPtr> children;
 
     double m_boundingSphereRadius{ 0.0 };
     double m_maxChildRadius{ 0.0 };

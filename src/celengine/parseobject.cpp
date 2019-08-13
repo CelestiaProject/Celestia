@@ -1307,7 +1307,7 @@ getFrameCenter(const Universe& universe, Hash* frameData, const Selection& defau
 }
 
 
-static shared_ptr<const BodyFixedFrame>
+static BodyFixedFrame::SharedConstPtr
 CreateBodyFixedFrame(const Universe& universe,
                      Hash* frameData,
                      const Selection& defaultCenter)
@@ -1320,7 +1320,7 @@ CreateBodyFixedFrame(const Universe& universe,
 }
 
 
-static shared_ptr<const BodyMeanEquatorFrame>
+static BodyMeanEquatorFrame::SharedConstPtr
 CreateMeanEquatorFrame(const Universe& universe,
                        Hash* frameData,
                        const Selection& defaultCenter)
