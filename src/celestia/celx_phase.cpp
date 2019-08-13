@@ -18,13 +18,13 @@
 
 using namespace std;
 
-int phase_new(lua_State* l, const shared_ptr<const TimelinePhase>& phase)
+int phase_new(lua_State* l, const TimelinePhase::SharedConstPtr& phase)
 {
     CelxLua celx(l);
 
     // Use placement new to put the new phase reference in the userdata block.
-    void* block = lua_newuserdata(l, sizeof(shared_ptr<const TimelinePhase>));
-    new (block) shared_ptr<const TimelinePhase>(phase);
+    void* block = lua_newuserdata(l, sizeof(TimelinePhase::SharedConstPtr));
+    new (block) TimelinePhase::SharedConstPtr(phase);
 
     celx.setClass(Celx_Phase);
 
@@ -32,15 +32,15 @@ int phase_new(lua_State* l, const shared_ptr<const TimelinePhase>& phase)
 }
 
 
-static shared_ptr<const TimelinePhase>* to_phase(lua_State* l, int index)
+static TimelinePhase::SharedConstPtr* to_phase(lua_State* l, int index)
 {
     CelxLua celx(l);
 
-    return celx.safeGetClass<shared_ptr<const TimelinePhase>>(index);
+    return celx.safeGetClass<TimelinePhase::SharedConstPtr>(index);
 }
 
 
-static shared_ptr<const TimelinePhase>* this_phase(lua_State* l)
+static TimelinePhase::SharedConstPtr* this_phase(lua_State* l)
 {
     CelxLua celx(l);
 
