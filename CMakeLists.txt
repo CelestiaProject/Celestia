@@ -39,13 +39,21 @@ endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if(NOT MSVC)
+if(NOT WIN32)
   # Qt requires -fPIC, so build all code with it
+  # It's always set on windows
   add_compile_options(-fPIC)
-  if(FAST_MATH)
+endif()
+
+if(FAST_MATH)
+  if(NOT MSVC)
     add_compile_options("-ffast-math")
+  else()
+    add_compile_options("/fp:fast")
   endif()
-else()
+endif()
+
+if(MSVC)
   # Disabled warnings
   # C4244, C4267, C4503: implicit type conversion to a smaller type
   # C4786: long names in templates
@@ -53,9 +61,6 @@ else()
   # Additional options
   # bigobj: generate more object sections than allowed by default
   add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/bigobj")
-  if(FAST_MATH)
-    add_compile_options("/fp:fast")
-  endif()
 endif()
 
 if(UNIX AND (NOT APPLE) AND (NOT CYGWIN))
