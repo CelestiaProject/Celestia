@@ -163,6 +163,7 @@ target_link_libraries(celengine cel3ds celmath celmodel celtxf celutil)
 if (NOT HAVE_EXPERIMENTAL_FILESYSTEM)
   add_dependencies(celengine celfs)
   target_link_libraries(celengine celfs)
+endif()
 
 # Some celephem objects depend on Spice
 if(ENABLE_SPICE)
