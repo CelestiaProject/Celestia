@@ -11,6 +11,7 @@
 #define _CELMATH_MATHLIB_H_
 
 #include <cmath>
+#include <cstdlib>
 
 #define PI 3.14159265358979323846
 
