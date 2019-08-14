@@ -68,7 +68,6 @@ Observer::Observer(const Observer& o) :
     orientation(o.orientation),
     velocity(o.velocity),
     angularVelocity(o.angularVelocity),
-    frame(make_shared<ObserverFrame>(*o.frame)),
     realTime(o.realTime),
     targetSpeed(o.targetSpeed),
     targetVelocity(o.targetVelocity),
@@ -82,6 +81,7 @@ Observer::Observer(const Observer& o) :
     locationFilter(o.locationFilter),
     displayedSurface(o.displayedSurface)
 {
+    setFrame(o.frame);
     updateUniversal();
 }
 
