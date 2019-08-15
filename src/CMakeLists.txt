@@ -12,8 +12,9 @@ foreach(lib ${CELESTIA_LIBS})
   add_subdirectory(${lib})
 endforeach()
 
-# Compiled celephem objects are merged with the celengine library
+# These compiled objects are merged with the celengine library
 add_subdirectory(celephem)
+add_subdirectory(celcompat)
 
 if (ENABLE_TOOLS)
   add_subdirectory(tools)

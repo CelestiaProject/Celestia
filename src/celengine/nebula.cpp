@@ -67,11 +67,12 @@ bool Nebula::pick(const Ray3d& ray,
 }
 
 
-bool Nebula::load(AssociativeArray* params, const string& resPath)
+bool Nebula::load(AssociativeArray* params, const fs::path& resPath)
 {
-    string geometryFileName;
-    if (params->getString("Mesh", geometryFileName))
+    string t;
+    if (params->getString("Mesh", t))
     {
+        fs::path geometryFileName(t);
         ResourceHandle geometryHandle =
             GetGeometryManager()->getHandle(GeometryInfo(geometryFileName, resPath));
         setGeometry(geometryHandle);

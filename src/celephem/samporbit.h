@@ -11,7 +11,7 @@
 #define _CELENGINE_SAMPORBIT_H_
 
 #include "orbit.h"
-#include <string>
+#include <celcompat/filesystem.h>
 
 enum TrajectoryInterpolation
 {
@@ -25,9 +25,9 @@ enum TrajectoryPrecision
     TrajectoryPrecisionDouble
 };
 
-extern Orbit* LoadSampledTrajectoryDoublePrec(const std::string& filename, TrajectoryInterpolation interpolation);
-extern Orbit* LoadSampledTrajectorySinglePrec(const std::string& filename, TrajectoryInterpolation interpolation);
-extern Orbit* LoadXYZVTrajectoryDoublePrec(const std::string& filename, TrajectoryInterpolation interpolation);
-extern Orbit* LoadXYZVTrajectorySinglePrec(const std::string& filename, TrajectoryInterpolation interpolation);
+extern Orbit* LoadSampledTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
+extern Orbit* LoadSampledTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
+extern Orbit* LoadXYZVTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
+extern Orbit* LoadXYZVTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
 
 #endif // _CELENGINE_SAMPORBIT_H_

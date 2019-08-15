@@ -216,12 +216,13 @@ void DSODatabase::setNameDatabase(DSONameDatabase* _namesDB)
 }
 
 
-bool DSODatabase::load(istream& in, const string& resourcePath)
+bool DSODatabase::load(istream& in, const fs::path& resourcePath)
 {
     Tokenizer tokenizer(&in);
     Parser    parser(&tokenizer);
 
-    bindtextdomain(resourcePath.c_str(), resourcePath.c_str()); // domain name is the same as resource path
+    const char *d = resourcePath.string().c_str();
+    bindtextdomain(d, d); // domain name is the same as resource path
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
@@ -236,7 +237,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
         objType = tokenizer.getNameValue();
 
         bool   autoGenCatalogNumber   = true;
-        uint32_t objCatalogNumber       = DeepSkyObject::InvalidCatalogNumber;
+        uint32_t objCatalogNumber     = DeepSkyObject::InvalidCatalogNumber;
         if (tokenizer.getTokenType() == Tokenizer::TokenNumber)
         {
             autoGenCatalogNumber   = false;
@@ -279,7 +280,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
 
         if (obj != nullptr && obj->load(objParams, resourcePath))
         {
-            obj->loadCategories(objParams, DataDisposition::Add, resourcePath);
+            obj->loadCategories(objParams, DataDisposition::Add, resourcePath.string());
             delete objParamsValue;
 
             // Ensure that the DSO array is large enough

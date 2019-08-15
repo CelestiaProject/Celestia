@@ -85,7 +85,7 @@ SpiceOrbit::getPeriod() const
 
 
 bool
-SpiceOrbit::init(const string& path,
+SpiceOrbit::init(const fs::path& path,
                  const list<string>* requiredKernels)
 {
     // Load required kernel files
@@ -93,7 +93,7 @@ SpiceOrbit::init(const string& path,
     {
         for (const auto& kernel : *requiredKernels)
         {
-            string filepath = path + string("/data/") + kernel;
+            fs::path filepath = path / "data" / kernel;
             if (!LoadSpiceKernel(filepath))
             {
                 spiceErr = true;

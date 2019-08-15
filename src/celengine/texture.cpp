@@ -939,7 +939,7 @@ static Texture* CreateTextureFromImage(Image& img,
 }
 
 
-Texture* LoadTextureFromFile(const string& filename,
+Texture* LoadTextureFromFile(const fs::path& filename,
                              Texture::AddressMode addressMode,
                              Texture::MipMapMode mipMode)
 {
@@ -976,7 +976,7 @@ Texture* LoadTextureFromFile(const string& filename,
 
 
 // Load a height map texture from a file and convert it to a normal map.
-Texture* LoadHeightMapFromFile(const string& filename,
+Texture* LoadHeightMapFromFile(const fs::path& filename,
                                float height,
                                Texture::AddressMode addressMode)
 {

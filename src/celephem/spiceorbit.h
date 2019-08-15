@@ -15,6 +15,7 @@
 #include "orbit.h"
 #include <string>
 #include <list>
+#include <celcompat/filesystem.h>
 
 
 class SpiceOrbit : public CachingOrbit
@@ -32,7 +33,7 @@ class SpiceOrbit : public CachingOrbit
                double _boundingRadius);
     virtual ~SpiceOrbit() = default;
 
-    bool init(const std::string& path,
+    bool init(const fs::path& path,
               const std::list<std::string>* requiredKernels);
 
     virtual bool isPeriodic() const;

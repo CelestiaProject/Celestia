@@ -83,12 +83,12 @@ static uint32_t FourCC(const char* s)
 #define DDPF_FOURCC 0x04
 
 
-Image* LoadDDSImage(const string& filename)
+Image* LoadDDSImage(const fs::path& filename)
 {
-    ifstream in(filename, ios::in | ios::binary);
+    ifstream in(filename.string(), ios::in | ios::binary);
     if (!in.good())
     {
-        DPRINTF(0, "Error opening DDS texture file %s.\n", filename.c_str());
+        DPRINTF(0, "Error opening DDS texture file %s.\n", filename);
         return nullptr;
     }
 
@@ -97,7 +97,7 @@ Image* LoadDDSImage(const string& filename)
     if (header[0] != 'D' || header[1] != 'D' ||
         header[2] != 'S' || header[3] != ' ')
     {
-        DPRINTF(0, "DDS texture file %s has bad header.\n", filename.c_str());
+        DPRINTF(0, "DDS texture file %s has bad header.\n", filename);
         return nullptr;
     }
 
@@ -176,8 +176,7 @@ Image* LoadDDSImage(const string& filename)
 
     if (format == -1)
     {
-        DPRINTF(0, "Unsupported format for DDS texture file %s.\n",
-                filename.c_str());
+        DPRINTF(0, "Unsupported format for DDS texture file %s.\n", filename);
         return nullptr;
     }
 
@@ -201,8 +200,7 @@ Image* LoadDDSImage(const string& filename)
     in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize());
     if (!in.eof() && !in.good())
     {
-        DPRINTF(0, "Failed reading data from DDS texture file %s.\n",
-                filename.c_str());
+        DPRINTF(0, "Failed reading data from DDS texture file %s.\n", filename);
         delete img;
         return nullptr;
     }

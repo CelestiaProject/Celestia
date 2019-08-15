@@ -17,21 +17,21 @@
 class VirtualTexture : public Texture
 {
  public:
-    VirtualTexture(std::string _tilePath,
+    VirtualTexture(fs::path _tilePath,
                    unsigned int _baseSplit,
                    unsigned int _tileSize,
                    std::string _tilePrefix,
                    const std::string& _tileType);
     ~VirtualTexture() = default;
 
-    virtual const TextureTile getTile(int lod, int u, int v);
-    virtual void bind();
+    const TextureTile getTile(int lod, int u, int v) override;
+    void bind() override;
 
-    virtual int getLODCount() const;
-    virtual int getUTileCount(int lod) const;
-    virtual int getVTileCount(int lod) const;
-    virtual void beginUsage();
-    virtual void endUsage();
+    int getLODCount() const override;
+    int getUTileCount(int lod) const override;
+    int getVTileCount(int lod) const override;
+    void beginUsage() override;
+    void endUsage() override;
 
  private:
     struct Tile
@@ -59,8 +59,8 @@ class VirtualTexture : public Texture
                    unsigned int u, unsigned int v);
 
  private:
-    std::string tilePath;
-    std::string tileExt;
+    fs::path tilePath;
+    fs::path tileExt;
     std::string tilePrefix;
     unsigned int baseSplit{ 0 };
     unsigned int tileSize{ 0 };
@@ -68,7 +68,8 @@ class VirtualTexture : public Texture
     unsigned int tilesRequested{ 0 };
     unsigned int nResolutionLevels{ 0 };
 
-    enum {
+    enum
+    {
         TileNotLoaded  = -1,
         TileLoadFailed = -2,
     };
@@ -77,6 +78,6 @@ class VirtualTexture : public Texture
 };
 
 
-VirtualTexture* LoadVirtualTexture(const std::string& filename);
+VirtualTexture* LoadVirtualTexture(const fs::path& filename);
 
 #endif // _CELENGINE_VIRTUALTEX_H_

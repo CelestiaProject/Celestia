@@ -226,7 +226,7 @@ CreateEllipticalOrbit(Hash* orbitData,
  * DoublePrecision defaults to true.
  */
 static Orbit*
-CreateSampledTrajectory(Hash* trajData, const string& path)
+CreateSampledTrajectory(Hash* trajData, const fs::path& path)
 {
     string sourceName;
     if (!trajData->getString("Source", sourceName))
@@ -401,7 +401,7 @@ ParseStringList(Hash* table,
  */
 static SpiceOrbit*
 CreateSpiceOrbit(Hash* orbitData,
-                 const string& path,
+                 const fs::path& path,
                  bool usePlanetUnits)
 {
     string targetBodyName;
@@ -541,7 +541,7 @@ CreateSpiceOrbit(Hash* orbitData,
  */
 static SpiceRotation*
 CreateSpiceRotation(Hash* rotationData,
-                    const string& path)
+                    const fs::path& path)
 {
     string frameName;
     string baseFrameName = "eclipj2000";
@@ -633,7 +633,7 @@ CreateSpiceRotation(Hash* rotationData,
 
 static ScriptedOrbit*
 CreateScriptedOrbit(Hash* orbitData,
-                    const string& path)
+                    const fs::path& path)
 {
 #if !defined(CELX)
     clog << "ScriptedOrbit not usable without scripting support.\n";
@@ -652,7 +652,7 @@ CreateScriptedOrbit(Hash* orbitData,
     string moduleName;
     orbitData->getString("Module", moduleName);
 
-    Value* pathValue = new Value(path);
+    Value* pathValue = new Value(path.string());
     orbitData->addValue("AddonPath", *pathValue);
 
     ScriptedOrbit* scriptedOrbit = new ScriptedOrbit();
@@ -670,7 +670,7 @@ CreateScriptedOrbit(Hash* orbitData,
 Orbit*
 CreateOrbit(const Selection& centralObject,
             Hash* planetData,
-            const string& path,
+            const fs::path& path,
             bool usePlanetUnits)
 {
     Orbit* orbit = nullptr;
@@ -1004,7 +1004,7 @@ CreatePrecessingRotationModel(Hash* rotationData,
 
 static ScriptedRotation*
 CreateScriptedRotation(Hash* rotationData,
-                       const string& path)
+                       const fs::path& path)
 {
 #if !defined(CELX)
     clog << "ScriptedRotation not usable without scripting support.\n";
@@ -1023,7 +1023,7 @@ CreateScriptedRotation(Hash* rotationData,
     string moduleName;
     rotationData->getString("Module", moduleName);
 
-    Value* pathValue = new Value(path);
+    Value* pathValue = new Value(path.string());
     rotationData->addValue("AddonPath", *pathValue);
 
     ScriptedRotation* scriptedRotation = new ScriptedRotation();
@@ -1046,7 +1046,7 @@ CreateScriptedRotation(Hash* rotationData,
  */
 RotationModel*
 CreateRotationModel(Hash* planetData,
-                    const string& path,
+                    const fs::path& path,
                     double syncRotationPeriod)
 {
     RotationModel* rotationModel = nullptr;

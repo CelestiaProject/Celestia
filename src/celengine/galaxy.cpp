@@ -19,6 +19,7 @@
 #include <celmath/intersect.h>
 #include <celutil/util.h>
 #include <celutil/debug.h>
+#include <celcompat/filesystem.h>
 #include <cstring>
 #include <fstream>
 #include <algorithm>
@@ -42,7 +43,7 @@ static GalacticForm*  irregularForm   = nullptr;
 static Texture* galaxyTex = nullptr;
 
 static void InitializeForms();
-static GalacticForm* buildGalacticForms(const std::string& filename);
+static GalacticForm* buildGalacticForms(const fs::path& filename);
 
 float Galaxy::lightGain  = 0.0f;
 
@@ -155,7 +156,7 @@ void Galaxy::setType(const string& typeStr)
 
     if (customTmpName != nullptr)
     {
-        form = buildGalacticForms("models/" + *customTmpName);
+        form = buildGalacticForms(fs::path("models") / *customTmpName);
     }
     else
     {
@@ -234,14 +235,14 @@ bool Galaxy::pick(const Ray3d& ray,
 }
 
 
-bool Galaxy::load(AssociativeArray* params, const string& resPath)
+bool Galaxy::load(AssociativeArray* params, const fs::path& resPath)
 {
     double detail = 1.0;
     params->getNumber("Detail", detail);
     setDetail((float) detail);
 
     string customTmpName;
-    if(params->getString("CustomTemplate",customTmpName))
+    if(params->getString("CustomTemplate", customTmpName))
         setCustomTmpName(customTmpName);
 
     string typeName;
@@ -503,7 +504,7 @@ void Galaxy::setLightGain(float lg)
 }
 
 
-GalacticForm* buildGalacticForms(const std::string& filename)
+GalacticForm* buildGalacticForms(const fs::path& filename)
 {
     Blob b;
     BlobVector* galacticPoints = new BlobVector;
@@ -537,7 +538,7 @@ GalacticForm* buildGalacticForms(const std::string& filename)
             z  += sfrand<float>() * 0.008f;
             r2 = x * x + z * z;
 
-            if ( strcmp ( filename.c_str(), "models/E0.png") != 0 )
+            if (filename != "models/E0.png")
             {
                 float y0 = 0.5f * MAX_SPIRAL_THICKNESS * sqrt((float)value/256.0f) * exp(- 5.0f * r2);
                 float B, yr;

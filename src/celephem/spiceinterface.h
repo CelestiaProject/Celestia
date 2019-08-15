@@ -13,13 +13,14 @@
 #define _CELENGINE_SPICEINTERFACE_H_
 
 #include <string>
+#include <celcompat/filesystem.h>
 
 extern bool InitializeSpice();
 
 // SPICE utility functions
 
 extern bool GetNaifId(const std::string& name, int* id);
-extern bool IsSpiceKernelLoaded(const std::string& filepath);
-extern bool LoadSpiceKernel(const std::string& filepath);
+extern bool IsSpiceKernelLoaded(const fs::path& filepath);
+extern bool LoadSpiceKernel(const fs::path& filepath);
 
 #endif // _CELENGINE_SPICEINTERFACE_H_

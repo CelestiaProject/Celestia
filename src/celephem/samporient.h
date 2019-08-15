@@ -11,8 +11,8 @@
 #define _CELENGINE_SAMPORIENT_H_
 
 #include "rotation.h"
-#include <string>
+#include <celcompat/filesystem.h>
 
-extern RotationModel* LoadSampledOrientation(const std::string& filename);
+extern RotationModel* LoadSampledOrientation(const fs::path& filename);
 
 #endif // _CELENGINE_SAMPORIENT_H_

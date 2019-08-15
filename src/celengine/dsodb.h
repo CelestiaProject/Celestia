@@ -60,7 +60,7 @@ class DSODatabase
     DSONameDatabase* getNameDatabase() const;
     void setNameDatabase(DSONameDatabase*);
 
-    bool load(std::istream&, const std::string& resourcePath);
+    bool load(std::istream&, const fs::path& resourcePath = fs::path());
     bool loadBinary(std::istream&);
     void finish();
 

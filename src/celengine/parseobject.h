@@ -17,6 +17,7 @@
 #include <memory>
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
+#include <celcompat/filesystem.h>
 #include "frame.h"
 #include "parser.h"
 
@@ -37,11 +38,11 @@ bool ParseDate(Hash* hash, const string& name, double& jd);
 
 Orbit* CreateOrbit(const Selection& centralObject,
                    Hash* planetData,
-                   const std::string& path,
+                   const fs::path& path,
                    bool usePlanetUnits);
 
 RotationModel* CreateRotationModel(Hash* rotationData,
-                                   const string& path,
+                                   const fs::path& path,
                                    double syncRotationPeriod);
 
 RotationModel* CreateDefaultRotationModel(double syncRotationPeriod);
