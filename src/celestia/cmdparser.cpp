@@ -19,8 +19,10 @@
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
+#ifdef CELX
 #include "celx.h"
 #include "celx_internal.h"
+#endif
 #include <celengine/render.h>
 #include <algorithm>
 #include <Eigen/Geometry>
@@ -851,6 +853,7 @@ uint64_t parseRenderFlags(string s)
     Tokenizer tokenizer(&in);
     uint64_t flags = 0;
 
+#ifdef CELX
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
     {
@@ -868,6 +871,7 @@ uint64_t parseRenderFlags(string s)
                 ttype = tokenizer.nextToken();
         }
     }
+#endif
 
     return flags;
 }
@@ -880,6 +884,7 @@ int parseLabelFlags(string s)
     Tokenizer tokenizer(&in);
     int flags = 0;
 
+#ifdef CELX
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
     {
@@ -897,6 +902,7 @@ int parseLabelFlags(string s)
                 ttype = tokenizer.nextToken();
         }
     }
+#endif
 
     return flags;
 }
@@ -909,6 +915,7 @@ int parseOrbitFlags(string s)
     Tokenizer tokenizer(&in);
     int flags = 0;
 
+#ifdef CELX
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
     {
@@ -927,6 +934,7 @@ int parseOrbitFlags(string s)
                 ttype = tokenizer.nextToken();
         }
     }
+#endif
 
     return flags;
 }
