@@ -21,7 +21,7 @@ class TextureInfo : public ResourceInfo<Texture>
 {
  public:
     std::string source;
-    std::string path;
+    fs::path path;
     unsigned int flags;
     float bumpHeight;
     unsigned int resolution;
@@ -35,8 +35,8 @@ class TextureInfo : public ResourceInfo<Texture>
         BorderClamp      = 0x20,
     };
 
-    TextureInfo(const std::string _source,
-                const std::string _path,
+    TextureInfo(const std::string& _source,
+                const fs::path& _path,
                 unsigned int _flags,
                 unsigned int _resolution = medres) :
         source(_source),
@@ -45,8 +45,8 @@ class TextureInfo : public ResourceInfo<Texture>
         bumpHeight(0.0f),
         resolution(_resolution) {};
 
-    TextureInfo(const std::string _source,
-                const std::string _path,
+    TextureInfo(const std::string& _source,
+                const fs::path& _path,
                 float _bumpHeight,
                 unsigned int _flags,
                 unsigned int _resolution = medres) :
@@ -56,7 +56,7 @@ class TextureInfo : public ResourceInfo<Texture>
         bumpHeight(_bumpHeight),
         resolution(_resolution) {};
 
-    TextureInfo(const std::string _source,
+    TextureInfo(const std::string& _source,
                 unsigned int _flags,
                 unsigned int _resolution = medres) :
         source(_source),
@@ -65,8 +65,8 @@ class TextureInfo : public ResourceInfo<Texture>
         bumpHeight(0.0f),
         resolution(_resolution) {};
 
-    virtual std::string resolve(const std::string&);
-    virtual Texture* load(const std::string&);
+    fs::path resolve(const fs::path&) override;
+    Texture* load(const fs::path&) override;
 };
 
 inline bool operator<(const TextureInfo& ti0, const TextureInfo& ti1)

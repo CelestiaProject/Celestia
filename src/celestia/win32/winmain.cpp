@@ -500,10 +500,10 @@ static bool ToggleMenuItem(HMENU menu, int id)
 
 bool LoadItemTextFromFile(HWND hWnd,
                           int item,
-                          char* filename)
+                          const fs::path& filename)
 {
     // ifstream textFile(filename, ios::in | ios::binary);
-    ifstream textFile(filename, ios::in);
+    ifstream textFile(filename.string(), ios::in);
     string s;
 
     if (!textFile.good())
@@ -586,7 +586,7 @@ BOOL APIENTRY ControlsHelpProc(HWND hDlg,
     switch (message)
     {
     case WM_INITDIALOG:
-        LoadItemTextFromFile(hDlg, IDC_TEXT_CONTROLSHELP, const_cast<char*>(LocaleFilename("controls.txt").c_str()));
+        LoadItemTextFromFile(hDlg, IDC_TEXT_CONTROLSHELP, LocaleFilename("controls.txt"));
         return(TRUE);
 
     case WM_COMMAND:
@@ -610,7 +610,7 @@ BOOL APIENTRY LicenseProc(HWND hDlg,
     switch (message)
     {
     case WM_INITDIALOG:
-        LoadItemTextFromFile(hDlg, IDC_LICENSE_TEXT, const_cast<char*>(LocaleFilename("COPYING").c_str()));
+        LoadItemTextFromFile(hDlg, IDC_LICENSE_TEXT, LocaleFilename("COPYING"));
         return(TRUE);
 
     case WM_COMMAND:
@@ -2223,7 +2223,7 @@ void handleKey(WPARAM key, bool down)
 }
 
 
-static void BuildScriptsMenu(HMENU menuBar, const string& scriptsDir)
+static void BuildScriptsMenu(HMENU menuBar, const fs::path& scriptsDir)
 {
     HMENU fileMenu = GetSubMenu(menuBar, 0);
 
@@ -2249,8 +2249,7 @@ static void BuildScriptsMenu(HMENU menuBar, const string& scriptsDir)
         HMENU scriptMenu = info.hSubMenu;
 
         // Remove the old menu items
-        int count = GetMenuItemCount(scriptMenu);
-        while (count-- > 0)
+        for (int count = GetMenuItemCount(scriptMenu); count > 0; count--)
             DeleteMenu(scriptMenu, 0, MF_BYPOSITION);
 
         for (unsigned int i = 0; i < ScriptMenuItems->size(); i++)
@@ -3099,7 +3098,7 @@ static bool runOnce = false;
 static string startURL;
 static string startDirectory;
 static string startScript;
-static vector<string> extrasDirectories;
+static vector<fs::path> extrasDirectories;
 static string configFileName;
 static bool useAlternateConfigFile = false;
 static bool skipSplashScreen = false;

@@ -21,18 +21,18 @@ class TrajectoryInfo : public ResourceInfo<Orbit>
 {
  public:
     std::string source;
-    std::string path;
+    fs::path path;
     TrajectoryInterpolation interpolation;
     TrajectoryPrecision precision;
 
-    TrajectoryInfo(const std::string _source,
-                   const std::string _path = "",
+    TrajectoryInfo(const std::string& _source,
+                   const fs::path& _path = "",
                    TrajectoryInterpolation _interpolation = TrajectoryInterpolationCubic,
                    TrajectoryPrecision _precision = TrajectoryPrecisionSingle) :
         source(_source), path(_path), interpolation(_interpolation), precision(_precision) {};
 
-    virtual std::string resolve(const std::string&);
-    virtual Orbit* load(const std::string&);
+    fs::path resolve(const fs::path&) override;
+    Orbit* load(const fs::path&) override;
 };
 
 // Sort trajectory info records. The same trajectory can be loaded multiple times with

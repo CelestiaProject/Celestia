@@ -723,9 +723,9 @@ static bool SkipComments(istream& in)
 // with a #; data is read start fromt the first non-whitespace character outside
 // of a comment.
 
-template <typename T> SampledOrbit<T>* LoadSampledOrbit(const string& filename, TrajectoryInterpolation interpolation, T /*unused*/)
+template <typename T> SampledOrbit<T>* LoadSampledOrbit(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
-    ifstream in(filename);
+    ifstream in(filename.string());
     if (!in.good())
         return nullptr;
 
@@ -778,9 +778,9 @@ template <typename T> SampledOrbit<T>* LoadSampledOrbit(const string& filename, 
 // with a #; data is read start fromt the first non-whitespace character outside
 // of a comment.
 
-template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const string& filename, TrajectoryInterpolation interpolation, T /*unused*/)
+template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
-    ifstream in(filename);
+    ifstream in(filename.string());
     if (!in.good())
         return nullptr;
 
@@ -825,9 +825,9 @@ template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const string& fi
 /* Load a binary xyzv sampled trajectory file.
  */
 template <typename T> SampledOrbitXYZV<T>*
-LoadSampledOrbitXYZVBinary(const string& filename, TrajectoryInterpolation interpolation, T /*unused*/)
+LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
-    ifstream in(filename);
+    ifstream in(filename.string());
     if (!in.good())
     {
         fmt::fprintf(cerr, _("Error openning %s.\n"), filename);
@@ -896,7 +896,7 @@ LoadSampledOrbitXYZVBinary(const string& filename, TrajectoryInterpolation inter
 
 /*! Load a trajectory file containing single precision positions.
  */
-Orbit* LoadSampledTrajectorySinglePrec(const string& filename, TrajectoryInterpolation interpolation)
+Orbit* LoadSampledTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
 {
     return LoadSampledOrbit(filename, interpolation, 0.0f);
 }
@@ -904,7 +904,7 @@ Orbit* LoadSampledTrajectorySinglePrec(const string& filename, TrajectoryInterpo
 
 /*! Load a trajectory file containing double precision positions.
  */
-Orbit* LoadSampledTrajectoryDoublePrec(const string& filename, TrajectoryInterpolation interpolation)
+Orbit* LoadSampledTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
 {
     return LoadSampledOrbit(filename, interpolation, 0.0);
 }
@@ -912,9 +912,10 @@ Orbit* LoadSampledTrajectoryDoublePrec(const string& filename, TrajectoryInterpo
 
 /*! Load a trajectory file with single precision positions and velocities.
  */
-Orbit* LoadXYZVTrajectorySinglePrec(const string& filename, TrajectoryInterpolation interpolation)
+Orbit* LoadXYZVTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
 {
-    Orbit* ret = LoadSampledOrbitXYZVBinary(filename + "bin", interpolation, 0.0f);
+    auto f = filename;
+    Orbit* ret = LoadSampledOrbitXYZVBinary(f += fs::path("bin"), interpolation, 0.0f); // FIXME
     if (ret != nullptr)
         return ret;
 
@@ -924,9 +925,10 @@ Orbit* LoadXYZVTrajectorySinglePrec(const string& filename, TrajectoryInterpolat
 
 /*! Load a trajectory file with double precision positions and velocities.
  */
-Orbit* LoadXYZVTrajectoryDoublePrec(const string& filename, TrajectoryInterpolation interpolation)
+Orbit* LoadXYZVTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
 {
-    Orbit* ret = LoadSampledOrbitXYZVBinary(filename + "bin", interpolation, 0.0);
+    auto f = filename;
+    Orbit* ret = LoadSampledOrbitXYZVBinary(f += fs::path("bin"), interpolation, 0.0); // FIXME
     if (ret != nullptr)
         return ret;
 

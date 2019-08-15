@@ -41,7 +41,7 @@ class Universe;
 
 bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
-                            const std::string& dir = "");
+                            const fs::path& dir = fs::path());
 
 #endif // _SOLARSYS_H_
 

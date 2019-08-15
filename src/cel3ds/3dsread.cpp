@@ -642,12 +642,12 @@ M3DScene* Read3DSFile(ifstream& in)
 }
 
 
-M3DScene* Read3DSFile(const string& filename)
+M3DScene* Read3DSFile(const fs::path& filename)
 {
-    ifstream in(filename, ios::in | ios::binary);
+    ifstream in(filename.string(), ios::in | ios::binary);
     if (!in.good())
     {
-        DPRINTF(0, "Read3DSFile: Error opening %s\n", filename.c_str());
+        DPRINTF(0, "Read3DSFile: Error opening %s\n", filename);
         return nullptr;
     }
 

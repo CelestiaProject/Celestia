@@ -21,7 +21,7 @@ using namespace std;
 // Track loaded SPICE kernels in order to avoid loading the same kernel
 // multiple times. This is a global variable because SPICE uses a global
 // kernel pool.
-static set<string> ResidentSpiceKernels;
+static set<fs::path> ResidentSpiceKernels;
 
 
 /*! Perform one-time initialization of SPICE.
@@ -74,7 +74,7 @@ bool GetNaifId(const string& name, int* id)
 
 /*! Return true if a SPICE kernel has already been loaded, false if not.
  */
-bool IsSpiceKernelLoaded(const string& filepath)
+bool IsSpiceKernelLoaded(const fs::path& filepath)
 {
     return ResidentSpiceKernels.find(filepath) != ResidentSpiceKernels.end();
 }
@@ -83,7 +83,7 @@ bool IsSpiceKernelLoaded(const string& filepath)
 /*! Load a SPICE kernel file of any type into the kernel pool. If the kernel
  *  is already resident, it will not be reloaded.
  */
-bool LoadSpiceKernel(const string& filepath)
+bool LoadSpiceKernel(const fs::path& filepath)
 {
     // Only load the kernel if it is not already resident. Note that this detection
     // of duplicate kernels will not work if a file was originally loaded through
@@ -92,7 +92,7 @@ bool LoadSpiceKernel(const string& filepath)
         return true;
 
     ResidentSpiceKernels.insert(filepath);
-    furnsh_c(filepath.c_str());
+    furnsh_c(filepath.string().c_str());
 
     // If there was an error loading the kernel, dump the error message.
     if (failed_c())

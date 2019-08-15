@@ -14,29 +14,30 @@
 #include <vector>
 #include <celengine/parser.h>
 #include <celengine/star.h>
+#include <celcompat/filesystem.h>
 
 
 class CelestiaConfig
 {
 public:
-    std::string starDatabaseFile;
-    std::string starNamesFile;
-    std::vector<std::string> solarSystemFiles;
-    std::vector<std::string> starCatalogFiles;
-    std::vector<std::string> dsoCatalogFiles;
-    std::vector<std::string> extrasDirs;
-    std::string deepSkyCatalog;
-    std::string asterismsFile;
-    std::string boundariesFile;
+    fs::path starDatabaseFile;
+    fs::path starNamesFile;
+    std::vector<fs::path> solarSystemFiles;
+    std::vector<fs::path> starCatalogFiles;
+    std::vector<fs::path> dsoCatalogFiles;
+    std::vector<fs::path> extrasDirs;
+    fs::path deepSkyCatalog;
+    fs::path asterismsFile;
+    fs::path boundariesFile;
     float faintestVisible;
-    std::string favoritesFile;
-    std::string initScriptFile;
-    std::string demoScriptFile;
-    std::string destinationsFile;
+    fs::path favoritesFile;
+    fs::path initScriptFile;
+    fs::path demoScriptFile;
+    fs::path destinationsFile;
     std::string mainFont;
     std::string labelFont;
     std::string titleFont;
-    std::string logoTextureFile;
+    fs::path logoTextureFile;
     std::string cursor;
     std::vector<std::string> ignoreGLExtensions;
     float rotateAcceleration;
@@ -45,16 +46,16 @@ public:
     double orbitWindowEnd;
     double orbitPeriodsShown;
     double linearFadeFraction;
-    std::string scriptScreenshotDirectory;
+    fs::path scriptScreenshotDirectory;
     std::string scriptSystemAccessPolicy;
 #ifdef CELX
-    std::string luaHook;
+    fs::path luaHook;
     Hash* configParams;
 #endif
 
-    std::string HDCrossIndexFile;
-    std::string SAOCrossIndexFile;
-    std::string GlieseCrossIndexFile;
+    fs::path HDCrossIndexFile;
+    fs::path SAOCrossIndexFile;
+    fs::path GlieseCrossIndexFile;
 
     StarDetails::StarTextureSet starTextures;
 
@@ -77,6 +78,6 @@ public:
     float SolarSystemMaxDistance;
 };
 
-CelestiaConfig* ReadCelestiaConfig(const std::string& filename, CelestiaConfig* config = nullptr);
+CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig* config = nullptr);
 
 #endif // _CONFIGFILE_H_

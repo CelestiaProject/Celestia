@@ -308,12 +308,12 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
 }
 
 
-Image* LoadImageFromFile(const string& filename)
+Image* LoadImageFromFile(const fs::path& filename)
 {
     ContentType type = DetermineFileType(filename);
     Image* img = nullptr;
 
-    fmt::fprintf(clog, _("Loading image from file %s\n"), filename);
+    fmt::fprintf(clog, _("Loading image from file %s\n"), filename.string());
 
     switch (type)
     {
@@ -331,7 +331,7 @@ Image* LoadImageFromFile(const string& filename)
         img = LoadDDSImage(filename);
         break;
     default:
-        fmt::printf(_("%s: unrecognized or unsupported image file type.\n"), filename);
+        fmt::printf(_("%s: unrecognized or unsupported image file type.\n"), filename.string());
         break;
     }
 
@@ -364,7 +364,7 @@ METHODDEF(void) my_error_exit(j_common_ptr cinfo)
 }
 
 
-Image* LoadJPEGImage(const string& filename, int /*unused*/)
+Image* LoadJPEGImage(const fs::path& filename, int /*unused*/)
 {
     Image* img = nullptr;
 
@@ -387,7 +387,11 @@ Image* LoadJPEGImage(const string& filename, int /*unused*/)
     // requires it in order to read binary files.
 
     FILE *in;
+#ifdef _WIN32
+    in = _wfopen(filename.c_str(), L"rb");
+#else
     in = fopen(filename.c_str(), "rb");
+#endif
     if (!in)
         return nullptr;
 
@@ -502,18 +506,21 @@ void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 }
 
 
-Image* LoadPNGImage(const string& filename)
+Image* LoadPNGImage(const fs::path& filename)
 {
     char header[8];
     png_structp png_ptr;
     png_infop info_ptr;
     png_uint_32 width, height;
     int bit_depth, color_type, interlace_type;
-    FILE* fp = nullptr;
     Image* img = nullptr;
     png_bytep* row_pointers = nullptr;
 
-    fp = fopen(filename.c_str(), "rb");
+#ifdef _WIN32
+    FILE *fp = _wfopen(filename.c_str(), L"rb");
+#else
+    FILE *fp = fopen(filename.c_str(), "rb");
+#endif
     if (fp == nullptr)
     {
         fmt::fprintf(clog, _("Error opening image file %s\n"), filename);
@@ -779,9 +786,9 @@ static Image* LoadBMPImage(ifstream& in)
 }
 
 
-Image* LoadBMPImage(const string& filename)
+Image* LoadBMPImage(const fs::path& filename)
 {
-    ifstream bmpFile(filename, ios::in | ios::binary);
+    ifstream bmpFile(filename.string(), ios::in | ios::binary);
 
     if (bmpFile.good())
     {

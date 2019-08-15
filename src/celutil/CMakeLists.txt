@@ -6,8 +6,6 @@ set(CELUTIL_SOURCES
   color.h
   debug.cpp
   debug.h
-  directory.cpp
-  directory.h
   filetype.cpp
   filetype.h
   formatnum.cpp
@@ -27,13 +25,8 @@ set(CELUTIL_SOURCES
 
 if (WIN32)
   list(APPEND CELUTIL_SOURCES
-    windirectory.cpp
     winutil.cpp
     winutil.h
-  )
-else()
-  list(APPEND CELUTIL_SOURCES
-    unixdirectory.cpp
   )
 endif()
 

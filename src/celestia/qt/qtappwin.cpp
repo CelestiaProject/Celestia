@@ -226,7 +226,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
         configFileName = qConfigFileName.toStdString();
 
     // Translate extras directories from QString -> std::string
-    vector<string> extrasDirectories;
+    vector<fs::path> extrasDirectories;
     for (const auto& dir : qExtrasDirectories)
         extrasDirectories.push_back(dir.toUtf8().data());
 
@@ -1523,7 +1523,7 @@ QMenu* CelestiaAppWindow::buildScriptsMenu()
     for (const auto& script : *scripts)
     {
         QAction* act = new QAction(script.title.c_str(), this);
-        act->setData(script.filename.c_str());
+        act->setData(script.filename.string().c_str());
         connect(act, SIGNAL(triggered()), this, SLOT(slotOpenScript()));
         menu->addAction(act);
     }

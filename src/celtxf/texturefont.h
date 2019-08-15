@@ -13,6 +13,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <celcompat/filesystem.h>
 
 
 class TextureFont
@@ -101,7 +102,7 @@ class TextureFont
     static TextureFont* load(std::istream& in);
 };
 
-TextureFont* LoadTextureFont(const std::string&);
+TextureFont* LoadTextureFont(const fs::path&);
 
 #endif // _TEXTUREFONT_H_
 

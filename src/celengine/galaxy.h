@@ -42,7 +42,7 @@ class Galaxy : public DeepSkyObject
     bool pick(const celmath::Ray3d& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
-    bool load(AssociativeArray*, const std::string&) override;
+    bool load(AssociativeArray*, const fs::path&) override;
     void render(const Eigen::Vector3f& offset,
                 const Eigen::Quaternionf& viewerOrientation,
                 float brightness,
