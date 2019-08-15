@@ -883,7 +883,7 @@ bool LuaState::handleTickEvent(double dt)
 }
 
 
-int LuaState::loadScript(istream& in, const string& streamname)
+int LuaState::loadScript(istream& in, const fs::path& streamname)
 {
     char buf[4096];
     ReadChunkInfo info;
@@ -894,15 +894,16 @@ int LuaState::loadScript(istream& in, const string& streamname)
     if (streamname != "string")
     {
         lua_pushstring(state, "celestia-scriptpath");
-        lua_pushstring(state, streamname.c_str());
+        lua_pushstring(state, streamname.string().c_str());
         lua_settable(state, LUA_REGISTRYINDEX);
     }
 
 #if LUA_VERSION_NUM >= 502
-    int status = lua_load(state, readStreamChunk, &info, streamname.c_str(),
-                          nullptr);
+    int status = lua_load(state, readStreamChunk, &info,
+                          streamname.string().c_str(), nullptr);
 #else
-    int status = lua_load(state, readStreamChunk, &info, streamname.c_str());
+    int status = lua_load(state, readStreamChunk, &info,
+                          streamname.string().c_str());
 #endif
     if (status != 0)
         cout << "Error loading script: " << lua_tostring(state, -1) << '\n';
@@ -910,9 +911,9 @@ int LuaState::loadScript(istream& in, const string& streamname)
     return status;
 }
 
-int LuaState::loadScript(const string& s)
+int LuaState::loadScript(const fs::path& s)
 {
-    istringstream in(s);
+    istringstream in(s.string());
     return loadScript(in, "string");
 }
 

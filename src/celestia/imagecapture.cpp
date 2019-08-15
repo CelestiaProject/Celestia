@@ -20,7 +20,7 @@ extern "C" {
 using namespace std;
 
 
-bool CaptureGLBufferToJPEG(const string& filename,
+bool CaptureGLBufferToJPEG(const fs::path& filename,
                            int x, int y,
                            int width, int height,
                            const Renderer *renderer)
@@ -37,7 +37,11 @@ bool CaptureGLBufferToJPEG(const string& filename,
     }
 
     FILE* out;
+#ifdef _WIN32
+    out = _wfopen(filename.c_str(), L"wb");
+#else
     out = fopen(filename.c_str(), "wb");
+#endif
     if (out == nullptr)
     {
         DPRINTF(0, "Can't open screen capture file '%s'\n", filename.c_str());
@@ -89,7 +93,7 @@ void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
 }
 
 
-bool CaptureGLBufferToPNG(const string& filename,
+bool CaptureGLBufferToPNG(const fs::path& filename,
                            int x, int y,
                            int width, int height,
                            const Renderer *renderer)
@@ -105,8 +109,11 @@ bool CaptureGLBufferToPNG(const string& filename,
         return false;
     }
 
-    FILE* out;
-    out = fopen(filename.c_str(), "wb");
+#ifdef _WIN32
+    FILE* out = _wfopen(filename.c_str(), L"wb");
+#else
+    FILE* out = fopen(filename.c_str(), "wb");
+#endif
     if (out == nullptr)
     {
         DPRINTF(0, "Can't open screen capture file '%s'\n", filename.c_str());

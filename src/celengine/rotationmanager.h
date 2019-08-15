@@ -20,14 +20,14 @@ class RotationModelInfo : public ResourceInfo<RotationModel>
 {
  public:
     std::string source;
-    std::string path;
+    fs::path path;
 
-    RotationModelInfo(const std::string _source,
-                      const std::string _path = "") :
+    RotationModelInfo(const std::string& _source,
+                      const fs::path& _path = "") :
         source(_source), path(_path) {};
 
-    virtual std::string resolve(const std::string&);
-    virtual RotationModel* load(const std::string&);
+    fs::path resolve(const fs::path&) override;
+    RotationModel* load(const fs::path&) override;
 };
 
 inline bool operator<(const RotationModelInfo& ti0,

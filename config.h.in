@@ -1,1 +1,3 @@
 #cmakedefine HAVE_BYTESWAP_H
+#cmakedefine HAVE_FILESYSTEM
+#cmakedefine HAVE_EXPERIMENTAL_FILESYSTEM

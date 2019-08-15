@@ -28,21 +28,21 @@ RotationModelManager* GetRotationModelManager()
 }
 
 
-string RotationModelInfo::resolve(const string& baseDir)
+fs::path RotationModelInfo::resolve(const fs::path& baseDir)
 {
     if (!path.empty())
     {
-        string filename = path + "/data/" + source;
-        ifstream in(filename);
+        fs::path filename = path / "data" / source;
+        ifstream in(filename.string());
         if (in.good())
             return filename;
     }
 
-    return baseDir + "/" + source;
+    return baseDir / source;
 }
 
 
-RotationModel* RotationModelInfo::load(const string& filename)
+RotationModel* RotationModelInfo::load(const fs::path& filename)
 {
     DPRINTF(1, "Loading rotation model: %s\n", filename.c_str());
 

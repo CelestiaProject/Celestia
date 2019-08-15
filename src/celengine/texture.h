@@ -12,6 +12,7 @@
 
 #include <string>
 #include <celutil/color.h>
+#include <celcompat/filesystem.h>
 #include <celengine/image.h>
 
 
@@ -179,11 +180,11 @@ extern Texture* CreateProceduralTexture(int width, int height,
 extern Texture* CreateProceduralCubeMap(int size, int format,
                                         ProceduralTexEval func);
 
-extern Texture* LoadTextureFromFile(const std::string& filename,
+extern Texture* LoadTextureFromFile(const fs::path& filename,
                                     Texture::AddressMode addressMode = Texture::EdgeClamp,
                                     Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
 
-extern Texture* LoadHeightMapFromFile(const std::string& filename,
+extern Texture* LoadHeightMapFromFile(const fs::path& filename,
                                       float height,
                                       Texture::AddressMode addressMode = Texture::EdgeClamp);
 

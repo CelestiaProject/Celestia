@@ -33,13 +33,14 @@ MultiResTexture::MultiResTexture(ResourceHandle loTex,
 
 
 MultiResTexture::MultiResTexture(const string& source,
-                                 const string& path)
+                                 const fs::path& path)
 {
     setTexture(source, path);
 }
 
 
-void MultiResTexture::setTexture(const string& source, const string& path,
+void MultiResTexture::setTexture(const string& source,
+                                 const fs::path& path,
                                  unsigned int flags)
 {
     TextureManager* texMan = GetTextureManager();
@@ -49,8 +50,10 @@ void MultiResTexture::setTexture(const string& source, const string& path,
 }
 
 
-void MultiResTexture::setTexture(const string& source, const string& path,
-                                 float bumpHeight, unsigned int flags)
+void MultiResTexture::setTexture(const string& source,
+                                 const fs::path& path,
+                                 float bumpHeight,
+                                 unsigned int flags)
 {
     TextureManager* texMan = GetTextureManager();
     tex[lores] = texMan->getHandle(TextureInfo(source, path, bumpHeight, flags, lores));

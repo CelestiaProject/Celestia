@@ -11,8 +11,10 @@
 #define _FILETYPE_H_
 
 #include <string>
+#include <celcompat/filesystem.h>
 
-enum ContentType {
+enum ContentType
+{
     Content_JPEG                   = 1,
     Content_BMP                    = 2,
     Content_GIF                    = 3,
@@ -36,6 +38,6 @@ enum ContentType {
     Content_Unknown                = -1,
 };
 
-ContentType DetermineFileType(const std::string& filename);
+ContentType DetermineFileType(const fs::path& filename);
 
 #endif // _FILETYPE_H_

@@ -14,20 +14,21 @@
 #include <map>
 #include <celutil/resmanager.h>
 #include <celengine/geometry.h>
+#include <celcompat/filesystem.h>
 
 
 class GeometryInfo : public ResourceInfo<Geometry>
 {
  public:
-    std::string source;
-    std::string path;
+    fs::path source;
+    fs::path path;
     bool resolvedToPath;
     Eigen::Vector3f center;
     float scale;
     bool isNormalized;
 
-    GeometryInfo(const std::string _source,
-                 const std::string _path = "") :
+    GeometryInfo(const fs::path& _source,
+                 const fs::path& _path = "") :
         source(_source),
         path(_path),
         resolvedToPath(false),
@@ -36,8 +37,8 @@ class GeometryInfo : public ResourceInfo<Geometry>
         isNormalized(true)
         {};
 
-    GeometryInfo(const std::string _source,
-                 const std::string _path,
+    GeometryInfo(const fs::path& _source,
+                 const fs::path& _path,
                  const Eigen::Vector3f& _center,
                  float _scale,
                  bool _isNormalized) :
@@ -49,8 +50,8 @@ class GeometryInfo : public ResourceInfo<Geometry>
         isNormalized(_isNormalized)
         {};
 
-    virtual std::string resolve(const std::string&);
-    virtual Geometry* load(const std::string&);
+    virtual fs::path resolve(const fs::path&);
+    virtual Geometry* load(const fs::path&);
 };
 
 inline bool operator<(const GeometryInfo& g0, const GeometryInfo& g1)

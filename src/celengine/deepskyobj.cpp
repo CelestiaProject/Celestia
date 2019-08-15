@@ -152,7 +152,7 @@ void DeepSkyObject::hsv2rgb( float *r, float *g, float *b, float h, float s, flo
     }
 }
 
-bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
+bool DeepSkyObject::load(AssociativeArray* params, const fs::path& resPath)
 {
     // Get position
     Vector3d position(Vector3d::Zero());
@@ -190,18 +190,18 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
     if (params->getNumber("AbsMag", absMag))
         setAbsoluteMagnitude((float) absMag);
 
-    string infoURL;
+    string infoURL; // FIXME: infourl class
     if (params->getString("InfoURL", infoURL))
     {
         if (infoURL.find(':') == string::npos)
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory
-            if (resPath[1] == ':')
+            if (resPath.c_str()[1] == ':')
                 // Absolute Windows path, file:/// is required
-                infoURL = "file:///" + resPath + "/" + infoURL;
+                infoURL = "file:///" + resPath.string() + "/" + infoURL;
             else if (!resPath.empty())
-                infoURL = resPath + "/" + infoURL;
+                infoURL = resPath.string() + "/" + infoURL;
         }
         setInfoURL(infoURL);
     }

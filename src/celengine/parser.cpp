@@ -10,6 +10,7 @@
 
 #include "parser.h"
 #include "astro.h"
+#include <celutil/util.h>
 
 using namespace Eigen;
 using namespace celmath;
@@ -382,6 +383,17 @@ bool AssociativeArray::getString(const string& key, string& val) const
 
     val = v->getString();
     return true;
+}
+
+bool AssociativeArray::getPath(const string& key, fs::path& val) const
+{
+    string v;
+    if (getString(key, v))
+    {
+        val = PathExp(v);
+        return true;
+    }
+    return false;
 }
 
 bool AssociativeArray::getBoolean(const string& key, bool& val) const

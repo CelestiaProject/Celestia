@@ -11,14 +11,15 @@
 
 #include <string>
 #include <vector>
+#include <celcompat/filesystem.h>
 
 
 struct ScriptMenuItem
 {
-    std::string filename;
+    fs::path filename;
     std::string title;
 };
 
 
 std::vector<ScriptMenuItem>*
-ScanScriptsDirectory(std::string dirname, bool deep);
+ScanScriptsDirectory(const fs::path &dirname, bool deep);

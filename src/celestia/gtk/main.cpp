@@ -364,7 +364,7 @@ int main(int argc, char* argv[])
     if (configFile != NULL)
         altConfig = string(configFile);
 
-    vector<string> configDirs;
+    vector<fs::path> configDirs;
     if (extrasDir != NULL)
     {
         /* Add each extrasDir to the vector */

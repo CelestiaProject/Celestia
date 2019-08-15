@@ -16,6 +16,7 @@
 #include <iostream>
 #include <functional>
 #include <libintl.h>
+#include <celcompat/filesystem.h>
 
 // gettext / libintl setup
 #ifndef _ /* unless somebody already took care of this */
@@ -41,7 +42,7 @@
 
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2);
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2, int n);
-extern std::string LocaleFilename(const std::string & filename);
+extern fs::path LocaleFilename(const fs::path& filename);
 
 class CompareIgnoringCasePredicate : public std::binary_function<std::string, std::string, bool>
 {
@@ -68,5 +69,8 @@ template<typename T> constexpr typename T::size_type memsize(T c)
 {
     return c.size() * sizeof(typename T::value_type);
 }
+
+fs::path PathExp(const fs::path& filename);
+fs::path homeDir();
 
 #endif // _CELUTIL_UTIL_H_

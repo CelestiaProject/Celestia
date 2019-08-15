@@ -22,7 +22,7 @@ using namespace std;
 
 static TrajectoryManager* trajectoryManager = nullptr;
 
-static const char UniqueSuffixChar = '!';
+constexpr const fs::path::value_type UniqueSuffixChar = '!';
 
 
 TrajectoryManager* GetTrajectoryManager()
@@ -33,30 +33,35 @@ TrajectoryManager* GetTrajectoryManager()
 }
 
 
-string TrajectoryInfo::resolve(const string& baseDir)
+fs::path TrajectoryInfo::resolve(const fs::path& baseDir)
 {
     // Ensure that trajectories with different interpolation or precision get resolved to different objects by
     // adding a 'uniquifying' suffix to the filename that encodes the properties other than filename which can
     // distinguish two trajectories. This suffix is stripped before the file is actually loaded.
-    string uniquifyingSuffix;
-    uniquifyingSuffix = fmt::sprintf("%c%u%u", UniqueSuffixChar, (unsigned int) interpolation, (unsigned int) precision);
+    fs::path::string_type uniquifyingSuffix, format;
+#ifdef _WIN32
+    format = L"%c%u%u";
+#else
+    format = "%c%u%u";
+#endif
+    uniquifyingSuffix = fmt::sprintf(format, UniqueSuffixChar, (unsigned int) interpolation, (unsigned int) precision);
 
     if (!path.empty())
     {
-        string filename = path + "/data/" + source;
-        ifstream in(filename);
+        fs::path filename = path / "data" / source;
+        ifstream in(filename.string());
         if (in.good())
-            return filename + uniquifyingSuffix;
+            return filename += uniquifyingSuffix;
     }
 
-    return baseDir + "/" + source + uniquifyingSuffix;
+    return (baseDir / source) += uniquifyingSuffix;
 }
 
-Orbit* TrajectoryInfo::load(const string& filename)
+Orbit* TrajectoryInfo::load(const fs::path& filename)
 {
     // strip off the uniquifying suffix
-    string::size_type uniquifyingSuffixStart = filename.rfind(UniqueSuffixChar);
-    string strippedFilename(filename, 0, uniquifyingSuffixStart);
+    string::size_type uniquifyingSuffixStart = filename.string().rfind(UniqueSuffixChar);
+    fs::path strippedFilename = filename.string().substr(0, uniquifyingSuffixStart);
     ContentType filetype = DetermineFileType(strippedFilename);
 
     DPRINTF(1, "Loading trajectory: %s\n", strippedFilename.c_str());

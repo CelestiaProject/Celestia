@@ -9,9 +9,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <fmt/printf.h>
 #include "util.h"
-#include <sys/types.h>
-#include <sys/stat.h>
+#ifdef _WIN32
+#include <shlobj.h>
+#else
+#include <unistd.h>
+#include <pwd.h>
+#include <wordexp.h>
+#endif
 
 using namespace std;
 
@@ -58,29 +64,97 @@ bool CompareIgnoringCasePredicate::operator()(const string& s1,
 }
 
 
-string LocaleFilename(const string & filename)
+fs::path LocaleFilename(const fs::path &p)
 {
-    string localeFilename;
-    struct stat filestat;
-    string::size_type pos;
+    fs::path::string_type format, lang;
+#ifdef _WIN32
+    format = L"%s_%s%s";
+    lang = UTF8ToWide(_("LANGUAGE"));
+#else
+    format = "%s_%s%s";
+    lang = _("LANGUAGE");
+#endif
+    fs::path locPath = p.parent_path() / fmt::sprintf(format, p.stem().native(), lang, p.extension().native());
 
-    if ((pos = filename.rfind('.')) != string::npos)
+    if (exists(locPath))
+        return locPath;
+
+    locPath = fs::path("locale") / locPath;
+    if (exists(locPath))
+        return locPath;
+
+    return p;
+}
+
+
+fs::path PathExp(const fs::path& filename)
+{
+#ifdef _WIN32
+    auto str = filename.native();
+    if (str[0] == '~' && (str[1] == '\\' || str[1] == '/'))
+        return homeDir() / str.substr(1);
+    return filename;
+#else
+    wordexp_t result;
+
+    switch(wordexp(filename.string().c_str(), &result, WRDE_NOCMD))
     {
-        localeFilename = filename.substr(0, pos) + '_' + _("LANGUAGE") + filename.substr(pos);
-    }
-    else
-    {
-        localeFilename = filename + '_' + _("LANGUAGE");
+    case 0: // successful
+        break;
+    case WRDE_NOSPACE:
+            // If the error was `WRDE_NOSPACE',
+            // then perhaps part of the result was allocated.
+        wordfree(&result);
+    default: // some other error
+        return filename;
     }
 
-    if (stat(localeFilename.c_str(), &filestat) != 0)
+    if (result.we_wordc != 1)
     {
-        localeFilename = string("locale/") + localeFilename;
-        if (stat(localeFilename.c_str(), &filestat) != 0)
-        {
-            localeFilename = filename;
-        }
+        wordfree(&result);
+        return filename;
     }
 
-    return localeFilename;
+    fs::path::string_type expanded(result.we_wordv[0]);
+    wordfree(&result);
+    return expanded;
+#endif
+}
+
+fs::path homeDir()
+{
+#ifdef _WIN32
+    wstring p(MAX_PATH + 1, 0);
+    if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_PROFILE, nullptr, 0, &p[0])))
+        return fs::path(p);
+
+    // fallback to environment variables
+    const auto *s = _wgetenv(L"USERPROFILE"); // FIXME: rewrite using _wgetenv_s
+    if (s != nullptr)
+        return fs::path(s);
+
+    auto *s1 = _wgetenv(L"HOMEDRIVE");
+    auto *s2 = _wgetenv(L"HOMEPATH");
+    if (s1 != nullptr && s2 != nullptr)
+    {
+        return fs::path(s1) / fs::path(s2);
+    }
+
+    // unlikely this is defined in woe but let's check
+    s = _wgetenv(L"HOME");
+    if (s != nullptr)
+        return fs::path(s);
+#else
+    const auto *home = getenv("HOME");
+    if (home != nullptr)
+        return home;
+
+    // FIXME: rewrite using getpwuid_r
+    struct passwd *pw = getpwuid(geteuid());
+    home = pw->pw_dir;
+    if (home != nullptr)
+        return home;
+#endif
+
+    return fs::path();
 }

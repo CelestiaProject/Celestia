@@ -85,6 +85,7 @@ list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(GNUInstallDirs)
 include(CheckIncludeFiles)
+include(CheckIncludeFileCXX)
 include(rpath)
 include(install_to_extras_subdir)
 if (NOT MSVC AND NOT MINGW)
@@ -288,7 +289,23 @@ include_directories("${CMAKE_SOURCE_DIR}/src" ${CMAKE_BINARY_DIR})
 # configure a header file to pass some of the CMake settings
 # to the source code
 check_include_files(byteswap.h HAVE_BYTESWAP_H)
+check_include_file_cxx(experimental/filesystem HAVE_EXPERIMENTAL_FILESYSTEM)
 configure_file("config.h.in" "config.h")
+
+
+if (HAVE_EXPERIMENTAL_FILESYSTEM)
+  if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    find_library(CLANG_FS_LIBRARY "c++fs")
+    if (CLANG_FS_LIBRARY)
+      set(FS_LIBRARY c++fs)
+    else()
+      set(FS_LIBRARY stdc++fs)
+    endif()
+  elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(FS_LIBRARY stdc++fs)
+  endif()
+  link_libraries("${FS_LIBRARY}")
+endif()
 
 set(BASE_DATA_SOURCES
   demo.cel

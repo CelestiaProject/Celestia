@@ -181,7 +181,7 @@ static Location* CreateLocation(Hash* locationData,
 
 static void FillinSurface(Hash* surfaceData,
                           Surface* surface,
-                          const std::string& path)
+                          const fs::path& path)
 {
     surfaceData->getColor("Color", surface->color);
     surfaceData->getColor("SpecularColor", surface->specularColor);
@@ -277,7 +277,7 @@ static Selection GetParentObject(PlanetarySystem* system)
 TimelinePhase* CreateTimelinePhase(Body* body,
                                    Universe& universe,
                                    Hash* phaseData,
-                                   const string& path,
+                                   const fs::path& path,
                                    ReferenceFrame* defaultOrbitFrame,
                                    ReferenceFrame* defaultBodyFrame,
                                    bool isFirstPhase,
@@ -387,7 +387,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
 Timeline* CreateTimelineFromArray(Body* body,
                                   Universe& universe,
                                   ValueArray* timelineArray,
-                                  const string& path,
+                                  const fs::path& path,
                                   ReferenceFrame* defaultOrbitFrame,
                                   ReferenceFrame* defaultBodyFrame)
 {
@@ -432,7 +432,7 @@ static bool CreateTimeline(Body* body,
                            PlanetarySystem* system,
                            Universe& universe,
                            Hash* planetData,
-                           const string& path,
+                           const fs::path& path,
                            DataDisposition disposition,
                            BodyType bodyType)
 {
@@ -690,7 +690,7 @@ static Body* CreateBody(const string& name,
                         Universe& universe,
                         Body* existingBody,
                         Hash* planetData,
-                        const string& path,
+                        const fs::path& path,
                         DataDisposition disposition,
                         BodyType bodyType)
 {
@@ -805,18 +805,19 @@ static Body* CreateBody(const string& name,
     if (classification & CLASSES_UNCLICKABLE)
         body->setClickable(false);
 
-    string infoURL;
+    string infoURL; // FIXME: should be own class
     if (planetData->getString("InfoURL", infoURL))
     {
         if (infoURL.find(':') == string::npos)
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory
-            if (path[1] == ':')
+            const string p = path.string();
+            if (p[1] == ':')
                 // Absolute Windows path, file:/// is required
-                infoURL = "file:///" + path + "/" + infoURL;
-            else if (!path.empty())
-                infoURL = path + "/" + infoURL;
+                infoURL = "file:///" + p + "/" + infoURL;
+            else if (!p.empty())
+                infoURL = p + "/" + infoURL;
         }
         body->setInfoURL(infoURL);
     }
@@ -1044,7 +1045,7 @@ static Body* CreateReferencePoint(const string& name,
                                   Universe& universe,
                                   Body* existingBody,
                                   Hash* refPointData,
-                                  const string& path,
+                                  const fs::path& path,
                                   DataDisposition disposition)
 {
     Body* body = nullptr;
@@ -1095,12 +1096,13 @@ static Body* CreateReferencePoint(const string& name,
 
 bool LoadSolarSystemObjects(istream& in,
                             Universe& universe,
-                            const std::string& directory)
+                            const fs::path& directory)
 {
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
-    bindtextdomain(directory.c_str(), directory.c_str()); // domain name is the same as resource path
+    const char* d = directory.string().c_str();
+    bindtextdomain(d, d); // domain name is the same as resource path
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
@@ -1257,16 +1259,11 @@ bool LoadSolarSystemObjects(istream& in,
                     body = CreateBody(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition, bodyType);
 
                 if (body != nullptr)
-                    body->loadCategories(objectData, disposition, directory);
-                if (body != nullptr && disposition == DataDisposition::Add)
                 {
-                    vector<string>::const_iterator iter = names.begin();
-                    iter++;
-                    while (iter != names.end())
-                    {
-                        body->addAlias(*iter);
-                        iter++;
-                    }
+                    body->loadCategories(objectData, disposition, directory.string());
+                    if (disposition == DataDisposition::Add)
+                        for (const auto& name : names)
+                            body->addAlias(name);
                 }
             }
         }
@@ -1285,7 +1282,7 @@ bool LoadSolarSystemObjects(istream& in,
             if (parent.body() != nullptr)
             {
                 Location* location = CreateLocation(objectData, parent.body());
-                location->loadCategories(objectData, disposition, directory);
+                location->loadCategories(objectData, disposition, directory.string());
                 if (location != nullptr)
                 {
                     location->setName(primaryName);

@@ -38,12 +38,9 @@ static const char CelestiaParticleSystemExt[] = ".cpart";
 static const char CelestiaXYZTrajectoryExt[] = ".xyz";
 static const char CelestiaXYZVTrajectoryExt[] = ".xyzv";
 
-ContentType DetermineFileType(const string& filename)
+ContentType DetermineFileType(const fs::path& filename)
 {
-    int extPos = filename.rfind('.');
-    if (extPos == (int)string::npos)
-        return Content_Unknown;
-    string ext = string(filename, extPos, filename.length() - extPos + 1);
+    const string ext = filename.extension().string();
 
     if (compareIgnoringCase(JPEGExt, ext) == 0 ||
         compareIgnoringCase(JPGExt, ext) == 0 ||
@@ -74,7 +71,7 @@ ContentType DetermineFileType(const string& filename)
     if (compareIgnoringCase(CelestiaLegacyScriptExt, ext) == 0)
         return Content_CelestiaLegacyScript;
     if (compareIgnoringCase(CelestiaScriptExt, ext) == 0 ||
-             compareIgnoringCase(CelestiaScriptExt2, ext) == 0)
+        compareIgnoringCase(CelestiaScriptExt2, ext) == 0)
         return Content_CelestiaScript;
     if (compareIgnoringCase(CelestiaModelExt, ext) == 0)
         return Content_CelestiaModel;

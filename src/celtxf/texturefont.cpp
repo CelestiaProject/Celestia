@@ -462,10 +462,10 @@ TextureFont* TextureFont::load(istream& in)
 }
 
 
-TextureFont* LoadTextureFont(const string& filename)
+TextureFont* LoadTextureFont(const fs::path& filename)
 {
-    string localeFilename = LocaleFilename(filename);
-    ifstream in(localeFilename, ios::in | ios::binary);
+    fs::path localeFilename = LocaleFilename(filename);
+    ifstream in(localeFilename.string(), ios::in | ios::binary);
     if (!in.good())
     {
         DPRINTF(0, "Could not open font file %s\n", filename.c_str());
