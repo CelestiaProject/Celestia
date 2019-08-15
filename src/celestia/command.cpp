@@ -16,7 +16,9 @@
 #endif
 #include "celestiacore.h"
 #include "imagecapture.h"
+#ifdef CELX
 #include "celx_internal.h"
+#endif
 #include <celengine/multitexture.h>
 #include <celutil/util.h>
 #include <celmath/mathlib.h>
@@ -721,6 +723,7 @@ CommandSplitView::CommandSplitView(unsigned int _view, string _splitType, double
 
 void CommandSplitView::process(ExecutionEnvironment& env)
 {
+#ifdef CELX // because of getObservers
     vector<Observer*> observer_list;
     getObservers(env.getCelestiaCore(), observer_list);
 
@@ -731,6 +734,7 @@ void CommandSplitView::process(ExecutionEnvironment& env)
         View::Type type = (compareIgnoringCase(splitType, "h") == 0) ? View::HorizontalSplit : View::VerticalSplit;
         env.getCelestiaCore()->splitView(type, view, (float)splitPos);
     }
+#endif
 }
 
 
@@ -744,6 +748,7 @@ CommandDeleteView::CommandDeleteView(unsigned int _view) :
 
 void CommandDeleteView::process(ExecutionEnvironment& env)
 {
+#ifdef CELX
     vector<Observer*> observer_list;
     getObservers(env.getCelestiaCore(), observer_list);
 
@@ -753,6 +758,7 @@ void CommandDeleteView::process(ExecutionEnvironment& env)
         View* view = getViewByObserver(env.getCelestiaCore(), obs);
         env.getCelestiaCore()->deleteView(view);
     }
+#endif
 }
 
 
@@ -761,8 +767,10 @@ void CommandDeleteView::process(ExecutionEnvironment& env)
 
 void CommandSingleView::process(ExecutionEnvironment& env)
 {
+#ifdef CELX
     View* view = getViewByObserver(env.getCelestiaCore(), env.getSimulation()->getActiveObserver());
     env.getCelestiaCore()->singleView(view);
+#endif
 }
 
 
@@ -776,6 +784,7 @@ CommandSetActiveView::CommandSetActiveView(unsigned int _view) :
 
 void CommandSetActiveView::process(ExecutionEnvironment& env)
 {
+#ifdef CELX
     vector<Observer*> observer_list;
     getObservers(env.getCelestiaCore(), observer_list);
 
@@ -785,6 +794,7 @@ void CommandSetActiveView::process(ExecutionEnvironment& env)
         View* view = getViewByObserver(env.getCelestiaCore(), obs);
         env.getCelestiaCore()->setActiveView(view);
     }
+#endif
 }
 
 
@@ -834,6 +844,7 @@ CommandSetLineColor::CommandSetLineColor(string _item, Color _color) :
 
 void CommandSetLineColor::process(ExecutionEnvironment& /* env */)
 {
+#ifdef CELX
     if (CelxLua::LineColorMap.count(item) == 0)
     {
         cerr << "Unknown line style: " << item << "\n";
@@ -842,6 +853,7 @@ void CommandSetLineColor::process(ExecutionEnvironment& /* env */)
     {
         *CelxLua::LineColorMap[item] = color;
     }
+#endif
 }
 
 
@@ -856,6 +868,7 @@ CommandSetLabelColor::CommandSetLabelColor(string _item, Color _color) :
 
 void CommandSetLabelColor::process(ExecutionEnvironment& /* env */)
 {
+#ifdef CELX
     if (CelxLua::LabelColorMap.count(item) == 0)
     {
         cerr << "Unknown label style: " << item << "\n";
@@ -864,6 +877,7 @@ void CommandSetLabelColor::process(ExecutionEnvironment& /* env */)
     {
         *CelxLua::LabelColorMap[item] = color;
     }
+#endif
 }
 
 
