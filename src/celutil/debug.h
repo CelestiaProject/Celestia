@@ -22,7 +22,7 @@
 #define DPRINTF(level, args...)
 #else
 #define DPRINTF(level, args...) DebugPrint(level, args)
-extern void DebugPrint(int level, char *format, ...);
+extern void DebugPrint(int level, const char *format, ...);
 #endif
 
 #else
@@ -31,7 +31,7 @@ extern void DebugPrint(int level, char *format, ...);
 #define DPRINTF //
 #else
 #define DPRINTF DebugPrint
-extern void DebugPrint(int level, char *format, ...);
+extern void DebugPrint(int level, const char *format, ...);
 #endif
 
 #endif // __GNUC__
