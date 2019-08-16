@@ -61,6 +61,9 @@ if(MSVC)
   # Additional options
   # bigobj: generate more object sections than allowed by default
   add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/bigobj")
+
+  # Fix the issue: https://github.com/CelestiaProject/Celestia/issues/364
+  add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
 endif()
 
 if(UNIX AND (NOT APPLE) AND (NOT CYGWIN))
