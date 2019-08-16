@@ -20,10 +20,10 @@
 #include <Eigen/Geometry>
 #include <celutil/color.h>
 #include <celengine/parser.h>
+#include <celengine/timelinephase.h>
 #include "celx.h"
 
 class CelestiaCore;
-class TimelinePhase;
 
 enum
 {
@@ -261,7 +261,7 @@ public:
     void newRotation(const Eigen::Quaterniond& q);
     void newPosition(const UniversalCoord& uc);
     void newObject(const Selection& sel);
-    void newPhase(const std::shared_ptr<const TimelinePhase>& phase);
+    void newPhase(const TimelinePhase::SharedConstPtr& phase);
 
     Eigen::Vector3d* toVector(int n);
     Eigen::Quaterniond* toRotation(int n);

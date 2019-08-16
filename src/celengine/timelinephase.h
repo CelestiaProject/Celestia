@@ -79,13 +79,13 @@ public:
     }
 
     static TimelinePhase::SharedConstPtr CreateTimelinePhase(Universe& universe,
-                                              Body* body,
-                                              double startTime,
-                                              double endTime,
-                                              const ReferenceFrame::SharedConstPtr& orbitFrame,
-                                              Orbit& orbit,
-                                              const ReferenceFrame::SharedConstPtr& bodyFrame,
-                                              RotationModel& rotationModel);
+                                                             Body* body,
+                                                             double startTime,
+                                                             double endTime,
+                                                             const ReferenceFrame::SharedConstPtr& orbitFrame,
+                                                             Orbit& orbit,
+                                                             const ReferenceFrame::SharedConstPtr& bodyFrame,
+                                                             RotationModel& rotationModel);
 
     ~TimelinePhase() = default;
 

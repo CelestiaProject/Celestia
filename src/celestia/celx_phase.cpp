@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <assert.h>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_phase.h"
@@ -40,17 +41,18 @@ static TimelinePhase::SharedConstPtr* to_phase(lua_State* l, int index)
 }
 
 
-static TimelinePhase::SharedConstPtr* this_phase(lua_State* l)
+static const TimelinePhase::SharedConstPtr& this_phase(lua_State* l)
 {
     CelxLua celx(l);
 
-    auto* phase = to_phase(l, 1);
+    auto phase = to_phase(l, 1);
+    assert(phase != nullptr);
     if (phase == nullptr)
     {
         celx.doError("Bad phase object!");
     }
 
-    return phase;
+    return *phase;
 }
 
 /*! phase:timespan()
@@ -73,7 +75,7 @@ static int phase_timespan(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments allowed for to phase:timespan");
 
-    auto& phase = *this_phase(l);
+    auto phase = this_phase(l);
     celx.push(phase->startTime(), phase->endTime());
     //lua_pushnumber(l, phase->startTime());
     //lua_pushnumber(l, phase->endTime());
@@ -92,7 +94,7 @@ static int phase_orbitframe(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments allowed for to phase:orbitframe");
 
-    auto& phase = *this_phase(l);
+    auto phase = this_phase(l);
     auto f = phase->orbitFrame();
     celx.newFrame(ObserverFrame(*f));
 
@@ -110,7 +112,7 @@ static int phase_bodyframe(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments allowed for to phase:bodyframe");
 
-    auto& phase = *this_phase(l);
+    auto phase = this_phase(l);
     auto f = phase->bodyFrame();
     celx.newFrame(ObserverFrame(*f));
 
@@ -130,7 +132,7 @@ static int phase_getposition(lua_State* l)
 
     celx.checkArgs(2, 2, "One argument required for phase:getposition");
 
-    auto& phase = *this_phase(l);
+    auto phase = this_phase(l);
 
     double tdb = celx.safeGetNumber(2, WrongType, "Argument to phase:getposition() must be number", 0.0);
     if (tdb < phase->startTime())
@@ -155,7 +157,7 @@ static int phase_getorientation(lua_State* l)
 
     celx.checkArgs(2, 2, "One argument required for phase:getorientation");
 
-    auto& phase = *this_phase(l);
+    auto phase = this_phase(l);
 
     double tdb = celx.safeGetNumber(2, WrongType, "Argument to phase:getorientation() must be number", 0.0);
     if (tdb < phase->startTime())
@@ -186,7 +188,7 @@ static int phase_gc(lua_State* l)
 {
     CelxLua celx(l);
 
-    auto & ref = *this_phase(l);
+    auto ref = this_phase(l);
     if (ref)
     {
         ref.reset();
