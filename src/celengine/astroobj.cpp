@@ -16,7 +16,7 @@ Selection AstroObject::toSelection()
     return Selection(this);
 }
 
-bool AstroObject::addName(NameInfo::SharedConstPtr info, bool setPrimary, bool updateDB)
+bool AstroObject::addName(const NameInfo::SharedConstPtr& info, bool setPrimary, bool updateDB)
 {
     m_nameInfos.insert(info);
     if (setPrimary)
@@ -37,13 +37,13 @@ bool AstroObject::addName(NameInfo::SharedConstPtr info, bool setPrimary, bool u
 
 bool AstroObject::addName(const string &name, const string& domain, PlanetarySystem *sys, bool setPrimary, bool updateDB)
 {
-    NameInfo::SharedConstPtr info = NameInfo::createShared(name, domain, this, sys);
+    auto info = NameInfo::createShared(name, domain, this, sys);
     return addName(info, setPrimary, updateDB);
 }
 
 bool AstroObject::addName(const Name &name, const string& domain, PlanetarySystem *sys, bool setPrimary, bool updateDB)
 {
-    NameInfo::SharedConstPtr info = NameInfo::createShared(name, domain, this, sys);
+    auto info = NameInfo::createShared(name, domain, this, sys);
     return addName(info, setPrimary, updateDB);
 }
 
@@ -102,11 +102,11 @@ bool AstroObject::removeName(const Name& name, bool updateDB)
         }
         return false;
     }
-    NameInfo::SharedConstPtr info = m_db->getNameInfo(name);
+    auto info = m_db->getNameInfo(name);
     return removeName(info, updateDB);
 }
 
-bool AstroObject::removeName(NameInfo::SharedConstPtr info, bool updateDB)
+bool AstroObject::removeName(const NameInfo::SharedConstPtr &info, bool updateDB)
 {
     PlanetarySystem *sys = info->getSystem();
     if (sys == nullptr)
@@ -144,13 +144,13 @@ SharedConstNameInfoSet::iterator AstroObject::getNameInfoIterator(const Name &na
     return it;
 }
 
-NameInfo::SharedConstPtr AstroObject::getNameInfo(const Name &name) const
+const NameInfo::SharedConstPtr &AstroObject::getNameInfo(const Name &name) const
 {
     if (!m_db)
     {
         SharedConstNameInfoSet::iterator it = getNameInfoIterator(name);
         if (it == m_nameInfos.end())
-            return nullptr;
+            return NameInfo::nullPtr;
         return *it;
     }
     else

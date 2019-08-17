@@ -136,6 +136,8 @@ void NameInfo::stopTranslation()
 
 const string Name::m_empty = "";
 
+const NameInfo::SharedConstPtr NameInfo::nullPtr;
+
 queue<NameInfo::SharedPtr> NameInfo::m_trQueue;
 mutex NameInfo::m_trquMutex;
 condition_variable NameInfo::m_trquNotifier;

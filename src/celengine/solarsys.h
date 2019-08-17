@@ -14,7 +14,6 @@
 #include <map>
 #include <iostream>
 #include <celengine/body.h>
-#include <celengine/stardb.h>
 
 class FrameTree;
 

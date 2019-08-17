@@ -45,7 +45,7 @@ public:
 
     const ReferenceFrame::SharedConstPtr& orbitFrame() const
     {
-        return m_orbitFrame.get();
+        return m_orbitFrame;
     }
 
     Orbit* orbit() const
@@ -55,7 +55,7 @@ public:
 
     const ReferenceFrame::SharedConstPtr& bodyFrame() const
     {
-        return m_bodyFrame.get();
+        return m_bodyFrame;
     }
 
     RotationModel* rotationModel() const

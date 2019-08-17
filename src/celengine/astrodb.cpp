@@ -30,7 +30,7 @@ AstroObject *AstroDatabase::getObject(AstroCatalog::IndexNumber nr) const
 
 AstroObject *AstroDatabase::getObject(const Name &name, bool tryGreek, bool smart) const
 {
-    NameInfo::SharedConstPtr info = smart ? m_nameIndex.getNameInfo(name, tryGreek, false, true) : m_nameIndex.getNameInfo(name, tryGreek);
+    auto info = smart ? m_nameIndex.getNameInfo(name, tryGreek, false, true) : m_nameIndex.getNameInfo(name, tryGreek);
     AstroObject *obj = info == nullptr ? nullptr : (AstroObject*)info->getObject();
     if (obj != nullptr)
         return obj;
@@ -213,7 +213,7 @@ std::string AstroDatabase::getObjectNames(AstroCatalog::IndexNumber nr, bool i18
     return names;
 }
 
-void AstroDatabase::removeName(NameInfo::SharedConstPtr name)
+void AstroDatabase::removeName(const NameInfo::SharedConstPtr &name)
 {
     if (name->getSystem() == nullptr)
         m_nameIndex.erase(name->getCanon());
@@ -358,13 +358,13 @@ bool AstroDatabase::addName(AstroCatalog::IndexNumber nr, const Name& name)
     return o->addName(name);
 }
 
-bool AstroDatabase::addName(NameInfo::SharedConstPtr info)
+bool AstroDatabase::addName(const NameInfo::SharedConstPtr &info)
 {
     return m_nameIndex.add(info);
 //     fmt::fprintf(cerr, "Adding name \"%s\" to object nr %u.\n", info.getCanon().str(), obj->getIndex());
 }
 
-bool AstroDatabase::addLocalizedName(NameInfo::SharedConstPtr info)
+bool AstroDatabase::addLocalizedName(const NameInfo::SharedConstPtr &info)
 {
     return m_nameIndex.addLocalized(info);
 //     fmt::fprintf(cerr, "Adding name \"%s\" to object nr %u.\n", info.getCanon().str(), obj->getIndex());

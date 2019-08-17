@@ -29,14 +29,14 @@ class NameDatabase
 
     uint32_t getNameCount() const;
 
-    bool add(NameInfo::SharedConstPtr, bool = true);
-    bool addLocalized(NameInfo::SharedConstPtr, bool = true);
+    bool add(const NameInfo::SharedConstPtr &, bool = true);
+    bool addLocalized(const NameInfo::SharedConstPtr &, bool = true);
 
     // delete all names associated with the specified catalog number
     void erase(const Name&);
 
-    NameInfo::SharedConstPtr getNameInfo(const Name&, bool = true, bool = false) const;
-    NameInfo::SharedConstPtr getNameInfo(const Name&, bool, bool, bool) const;
+    const NameInfo::SharedConstPtr &getNameInfo(const Name&, bool = true, bool = false) const;
+    const NameInfo::SharedConstPtr &getNameInfo(const Name&, bool, bool, bool) const;
     AstroObject *getObjectByName(const Name&, bool = true) const;
     AstroObject *getObjectByLocalizedName(const Name&, bool = true) const;
     AstroObject *findObjectByName(const Name&, bool = true) const;

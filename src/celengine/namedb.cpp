@@ -10,7 +10,7 @@ uint32_t NameDatabase::getNameCount() const
     return m_nameIndex.size();
 }
 
-bool NameDatabase::add(NameInfo::SharedConstPtr info, bool overwrite)
+bool NameDatabase::add(const NameInfo::SharedConstPtr &info, bool overwrite)
 {
     if (info->getCanon().empty() || (!overwrite && m_nameIndex.find(info->getCanon()) != m_nameIndex.end()))
     {
@@ -22,7 +22,7 @@ bool NameDatabase::add(NameInfo::SharedConstPtr info, bool overwrite)
     return true;
 }
 
-bool NameDatabase::addLocalized(NameInfo::SharedConstPtr info, bool overwrite)
+bool NameDatabase::addLocalized(const NameInfo::SharedConstPtr &info, bool overwrite)
 {
     lock_guard<recursive_mutex> lock(m_mutex);
     if (!info->hasLocalized() || (!overwrite && m_localizedIndex.find(info->getLocalized()) != m_localizedIndex.end()))
@@ -41,7 +41,7 @@ void NameDatabase::erase(const Name& name)
     m_nameIndex.erase(name);
 }
 
-NameInfo::SharedConstPtr NameDatabase::getNameInfo(const Name& name, bool greek, bool i18n) const
+const NameInfo::SharedConstPtr &NameDatabase::getNameInfo(const Name& name, bool greek, bool i18n) const
 {
     const SharedNameMap &map = i18n ? m_localizedIndex : m_nameIndex;
 
@@ -57,13 +57,13 @@ NameInfo::SharedConstPtr NameDatabase::getNameInfo(const Name& name, bool greek,
         if (iter != map.end())
             return iter->second;
     }
-    return nullptr;
+    return NameInfo::nullPtr;
 }
 
-NameInfo::SharedConstPtr NameDatabase::getNameInfo(const Name& name, bool greek, bool i18n, bool fallback) const
+const NameInfo::SharedConstPtr &NameDatabase::getNameInfo(const Name& name, bool greek, bool i18n, bool fallback) const
 {
     lock_guard<recursive_mutex> lock(((NameDatabase*)this)->m_mutex);
-    NameInfo::SharedConstPtr info = getNameInfo(name, greek, i18n);
+    auto& info = getNameInfo(name, greek, i18n);
     if (info == nullptr && fallback)
         return getNameInfo(name, greek, !i18n);
     return info;
@@ -71,7 +71,7 @@ NameInfo::SharedConstPtr NameDatabase::getNameInfo(const Name& name, bool greek,
 
 AstroObject *NameDatabase::getObjectByName(const Name& name, bool greek) const
 {
-    NameInfo::SharedConstPtr info = getNameInfo(name, greek);
+    auto info = getNameInfo(name, greek);
     if (info == nullptr)
         return nullptr;
     return (AstroObject*)info->getObject();

@@ -128,6 +128,7 @@ class NameInfo
     AstroObject* getObject() { return m_object; }
 //     PlanetarySystem *getSystem() { return m_system; }
     PlanetarySystem *getSystem() const { return m_system; }
+    static const SharedConstPtr nullPtr;
     static NameInfo::SharedConstPtr createShared(const Name, const Name, AstroObject *, PlanetarySystem * = nullptr);
     static NameInfo::SharedConstPtr createShared(const std::string&, const Name, AstroObject *, PlanetarySystem * = nullptr, bool = true);
     static void runTranslation();
