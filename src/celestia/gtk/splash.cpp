@@ -31,7 +31,7 @@ GtkSplashProgressNotifier::GtkSplashProgressNotifier(SplashData* _splash) :
 
 void GtkSplashProgressNotifier::update(const string& filename)
 {
-    splashSetText(splash, filename.string().c_str());
+    splashSetText(splash, filename.c_str());
 }
 
 GtkSplashProgressNotifier::~GtkSplashProgressNotifier() {};
