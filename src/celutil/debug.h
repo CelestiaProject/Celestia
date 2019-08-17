@@ -10,31 +10,40 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
-// Define the DPRINTF macro; g++ supports macros with variable
-// length arguments, so we'll use those when we can.
+#ifdef _MSC_VER
+#include <windows.h>
+#endif
+#include <iostream>
+#include <fmt/printf.h>
+
 #ifdef DPRINTF
 #undef DPRINTF // OSX has DPRINTF
 #endif // DPRINTF
 
-#ifdef __GNUC__
-
 #if !defined(_DEBUG) && !defined(DEBUG)
-#define DPRINTF(level, args...)
+#define DPRINTF(level, format, ...)
 #else
-#define DPRINTF(level, args...) DebugPrint(level, args)
-extern void DebugPrint(int level, const char *format, ...);
+extern int debugVerbosity;
+template <typename... T>
+void DPRINTF(int level, const char *format, const T & ... args)
+{
+    if (level <= debugVerbosity)
+    {
+#ifdef _MSC_VER
+        if (IsDebuggerPresent())
+        {
+            OutputDebugStringA(fmt::sprintf(format, args...).c_str());
+        }
+        else
+        {
+            fmt::fprintf(std::cerr, format, args...);
+        }
+#else
+        fmt::fprintf(std::cerr, format, args...);
 #endif
-
-#else
-
-#if !defined(_DEBUG) && !defined(DEBUG)
-#define DPRINTF //
-#else
-#define DPRINTF DebugPrint
-extern void DebugPrint(int level, const char *format, ...);
-#endif
-
-#endif // __GNUC__
+    }
+}
+#endif /* DEBUG */
 
 extern void SetDebugVerbosity(int);
 extern int GetDebugVerbosity();
