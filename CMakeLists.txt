@@ -267,8 +267,6 @@ if(WIN32)
 endif()
 
 if(APPLE)
-  # TARGET_OS_MAC should be replaced with __APPLE__
-  add_definitions(-DTARGET_OS_MAC)
   # Dirty hack to prevent AIFF.h inclusion which provides `struct Marker`
   # conflicting with out `class Marker`.
   add_definitions(-D__AIFF__)

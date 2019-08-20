@@ -418,7 +418,7 @@ const char* astro::Date::toCStr(Format format) const
     cal_time.tm_sec = (int)seconds;
     cal_time.tm_wday = wday;
     cal_time.tm_gmtoff = utc_offset;
-#if defined(TARGET_OS_MAC) || defined(__FreeBSD__)
+#if defined(__APPLE__) || defined(__FreeBSD__)
     // tm_zone is a non-const string field on the Mac and FreeBSD (why?)
     cal_time.tm_zone = const_cast<char*>(tzname.c_str());
 #else

@@ -71,9 +71,9 @@ std::ofstream hdrlog;
 #ifdef _WIN32
 #include <GL/wglew.h>
 #else
-#ifndef TARGET_OS_MAC
+#ifndef __APPLE__
 #include <GL/glxew.h>
-#endif // TARGET_OS_MAC
+#endif // __APPLE__
 #endif //_WIN32
 #endif // VIDEO_SYNC
 #include <algorithm>
@@ -2215,7 +2215,7 @@ void Renderer::renderToBlurTexture(int blurLevel)
         drawGaussian3x3(xdelta, ydelta, blurTexWidth, blurTexHeight, 1.f);
         break;
 */
-#ifdef TARGET_OS_MAC
+#ifdef __APPLE__
     case 0:
         drawGaussian5x5(xdelta, ydelta, blurTexWidth, blurTexHeight, 1.f);
         break;
