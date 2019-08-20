@@ -273,7 +273,9 @@ if(APPLE)
 endif()
 
 string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type_lc)
-if(NOT "${build_type_lc}" STREQUAL "debug")
+if("${build_type_lc}" STREQUAL "debug")
+  add_definitions(-D_DEBUG -DDEBUG)
+else()
   add_definitions(-DNO_DEBUG -DEIGEN_NO_DEBUG)
 endif()
 
