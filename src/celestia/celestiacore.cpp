@@ -1148,7 +1148,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     {
         wchar_t wc = 0; // Null wide character
         UTF8Decode(c_p, 0, strlen(c_p), wc);
-#ifdef TARGET_OS_MAC
+#ifdef __APPLE__
         if ( wc && (!iscntrl(wc)) )
 #else
         if ( wc && (!iswcntrl(wc)) )

@@ -1920,7 +1920,7 @@ static int celestia_takescreenshot(lua_State* l)
 
 
     fs::path path = appCore->getConfig()->scriptScreenshotDirectory;
-#ifndef TARGET_OS_MAC
+#ifndef __APPLE__
     if (strncmp(filetype, "jpg", 3) == 0)
     {
         fs::path filepath = path / (filenamestem + ".jpg");

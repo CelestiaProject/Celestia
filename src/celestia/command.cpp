@@ -642,7 +642,7 @@ CommandCapture::CommandCapture(std::string _type,
 
 void CommandCapture::process(ExecutionEnvironment& env)
 {
-#ifndef TARGET_OS_MAC
+#ifndef __APPLE__
     const Renderer* r = env.getRenderer();
     if (r == nullptr)
         return;
