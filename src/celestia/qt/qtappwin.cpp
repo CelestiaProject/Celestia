@@ -10,9 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifdef TARGET_OS_MAC
-#include <Carbon/Carbon.h>
-#endif
+
 #include <ctime>
 
 #include <QIcon>
@@ -64,7 +62,7 @@
 #if defined(_WIN32)
 #include "celestia/avicapture.h"
 // TODO: Add Mac support
-#elif !defined(TARGET_OS_MAC)
+#elif !defined(__APPLE__)
 #ifdef THEORA
 #include "celestia/oggtheoracapture.h"
 #endif
@@ -638,7 +636,7 @@ void CelestiaAppWindow::slotGrabImage()
 void CelestiaAppWindow::slotCaptureVideo()
 {
 // TODO: Add Mac support
-#if defined(_WIN32) || (defined(THEORA) && !defined(TARGET_OS_MAC))
+#if defined(_WIN32) || (defined(THEORA) && !defined(__APPLE__))
     QString dir;
     QSettings settings;
     settings.beginGroup("Preferences");
@@ -1117,7 +1115,7 @@ void CelestiaAppWindow::createMenus()
     QAction* captureVideoAction = new QAction(QIcon(":/icons/capture-video.png"),
                                               _("Capture &video"), this);
     // TODO: Add Mac support for video capture
-#if defined(TARGET_OS_MAC) || (!defined(_WIN32) && !defined(THEORA))
+#if defined(__APPLE__) || (!defined(_WIN32) && !defined(THEORA))
     captureVideoAction->setEnabled(false);
 #endif
     captureVideoAction->setShortcut(QString(_("Shift+F10")));
