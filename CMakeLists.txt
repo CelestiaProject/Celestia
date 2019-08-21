@@ -267,9 +267,6 @@ if(WIN32)
 endif()
 
 if(APPLE)
-  # Dirty hack to prevent AIFF.h inclusion which provides `struct Marker`
-  # conflicting with out `class Marker`.
-  add_definitions(-D__AIFF__)
   if (NATIVE_OSX_APP)
     add_definitions(-DNATIVE_OSX_APP)
   endif()
