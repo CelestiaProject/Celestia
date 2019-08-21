@@ -147,7 +147,7 @@ set(CELENGINE_SOURCES
 )
 
 # The object files in the celephem directory are merged in the celengine library
-add_library(celengine STATIC ${CELENGINE_SOURCES} $<TARGET_OBJECTS:celephem> $<TARGET_OBJECTS:celcompat>)
+add_library(celengine STATIC ${CELENGINE_SOURCES} $<TARGET_OBJECTS:celephem>)
 
 #[[
 add_library(celengine SHARED ${CELENGINE_SOURCES})

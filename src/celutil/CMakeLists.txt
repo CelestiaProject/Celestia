@@ -30,7 +30,7 @@ if (WIN32)
   )
 endif()
 
-add_library(celutil STATIC ${CELUTIL_SOURCES})
+add_library(celutil STATIC ${CELUTIL_SOURCES} $<TARGET_OBJECTS:celcompat>)
 
 #[[
 add_library(celutil SHARED ${CELUTIL_SOURCES})
