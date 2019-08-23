@@ -40,17 +40,33 @@ void TextureFont::render(wchar_t ch) const
     if (glyph == nullptr) glyph = getGlyph((wchar_t)'?');
     if (glyph != nullptr)
     {
-        glBegin(GL_QUADS);
-        glTexCoord2f(glyph->texCoords[0].u, glyph->texCoords[0].v);
-        glVertex2f(glyph->xoff, glyph->yoff);
-        glTexCoord2f(glyph->texCoords[1].u, glyph->texCoords[1].v);
-        glVertex2f(glyph->xoff + glyph->width, glyph->yoff);
-        glTexCoord2f(glyph->texCoords[2].u, glyph->texCoords[2].v);
-        glVertex2f(glyph->xoff + glyph->width, glyph->yoff + glyph->height);
-        glTexCoord2f(glyph->texCoords[3].u, glyph->texCoords[3].v);
-        glVertex2f(glyph->xoff, glyph->yoff + glyph->height);
-        glEnd();
-        glTranslatef(glyph->advance, 0.0f, 0.0f);
+        float vertexData[] = {0, 0, 0, 0, 0, 0, 0, 0};
+        float texCoordData[] = {0, 0, 0, 0, 0, 0, 0, 0};
+        vertexData[0] = glyph->xoff;
+        vertexData[1] = glyph->yoff;
+        vertexData[2] = glyph->xoff + glyph->width;
+        vertexData[3] = glyph->yoff;
+        vertexData[4] = glyph->xoff;
+        vertexData[5] = glyph->yoff + glyph->height;
+        vertexData[6] = glyph->xoff + glyph->width;
+        vertexData[7] = glyph->yoff + glyph->height;
+
+        texCoordData[0] = glyph->texCoords[0].u;
+        texCoordData[1] = glyph->texCoords[0].v;
+        texCoordData[2] = glyph->texCoords[1].u;
+        texCoordData[3] = glyph->texCoords[1].v;
+        texCoordData[4] = glyph->texCoords[0].u;
+        texCoordData[5] = glyph->texCoords[2].v;
+        texCoordData[6] = glyph->texCoords[2].u;
+        texCoordData[7] = glyph->texCoords[3].v;
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(2, GL_FLOAT, 0, vertexData);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, 0, texCoordData);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 }
 
@@ -64,16 +80,33 @@ void TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
     if (glyph == nullptr) glyph = getGlyph((wchar_t)'?');
     if (glyph != nullptr)
     {
-        glBegin(GL_QUADS);
-        glTexCoord2f(glyph->texCoords[0].u, glyph->texCoords[0].v);
-        glVertex2f(glyph->xoff + xoffset, glyph->yoff + yoffset);
-        glTexCoord2f(glyph->texCoords[1].u, glyph->texCoords[1].v);
-        glVertex2f(glyph->xoff + glyph->width + xoffset, glyph->yoff + yoffset);
-        glTexCoord2f(glyph->texCoords[2].u, glyph->texCoords[2].v);
-        glVertex2f(glyph->xoff + glyph->width + xoffset, glyph->yoff + glyph->height + yoffset);
-        glTexCoord2f(glyph->texCoords[3].u, glyph->texCoords[3].v);
-        glVertex2f(glyph->xoff + xoffset, glyph->yoff + glyph->height + yoffset);
-        glEnd();
+        float vertexData[] = {0, 0, 0, 0, 0, 0, 0, 0};
+        float texCoordData[] = {0, 0, 0, 0, 0, 0, 0, 0};
+        vertexData[0] = glyph->xoff + xoffset;
+        vertexData[1] = glyph->yoff + yoffset;
+        vertexData[2] = glyph->xoff + glyph->width + xoffset;
+        vertexData[3] = glyph->yoff + yoffset;
+        vertexData[4] = glyph->xoff + xoffset;
+        vertexData[5] = glyph->yoff + glyph->height + yoffset;
+        vertexData[6] = glyph->xoff + glyph->width + xoffset;
+        vertexData[7] = glyph->yoff + glyph->height + yoffset;
+
+        texCoordData[0] = glyph->texCoords[0].u;
+        texCoordData[1] = glyph->texCoords[0].v;
+        texCoordData[2] = glyph->texCoords[1].u;
+        texCoordData[3] = glyph->texCoords[1].v;
+        texCoordData[4] = glyph->texCoords[0].u;
+        texCoordData[5] = glyph->texCoords[2].v;
+        texCoordData[6] = glyph->texCoords[2].u;
+        texCoordData[7] = glyph->texCoords[3].v;
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(2, GL_FLOAT, 0, vertexData);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, 0, texCoordData);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 }
 
