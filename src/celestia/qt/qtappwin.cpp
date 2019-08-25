@@ -84,12 +84,6 @@ const QPoint DEFAULT_MAIN_WINDOW_POSITION(20, 20);
 // new dockables or toolbars are added.
 static const int CELESTIA_MAIN_WINDOW_VERSION = 12;
 
-
-// Terrible hack required because context menu callback doesn't retain
-// any state.
-static CelestiaAppWindow* MainWindowInstance = nullptr;
-static void ContextMenu(float x, float y, Selection sel);
-
 static int fps_to_ms(int fps) { return fps > 0 ? 1000 / fps : 0; }
 static int ms_to_fps(int ms) { return ms > 0? 1000 / ms : 0; }
 
@@ -182,7 +176,8 @@ void FPSActionGroup::updateFPS(int fps)
 }
 
 CelestiaAppWindow::CelestiaAppWindow(QWidget* parent) :
-    QMainWindow(parent)
+    QMainWindow(parent),
+    CelestiaCore::ContextMenuHandler()
 {
     setObjectName("celestia-mainwin");
     timer = new QTimer(this);
@@ -268,8 +263,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     }
 
     m_appCore->setCursorHandler(glWidget);
-    m_appCore->setContextMenuCallback(ContextMenu);
-    MainWindowInstance = this; // TODO: Fix context menu callback
+    m_appCore->setContextMenuHandler(this);
 
     setCentralWidget(glWidget);
 
@@ -1494,7 +1488,7 @@ void CelestiaAppWindow::setCustomFPS()
         fpsActions->updateFPS(fpsActions->lastFPS());
 }
 
-void CelestiaAppWindow::contextMenu(float x, float y, Selection sel)
+void CelestiaAppWindow::requestContextMenu(float x, float y, Selection sel)
 {
     SelectionPopup* menu = new SelectionPopup(sel, m_appCore, this);
     connect(menu, SIGNAL(selectionInfoRequested(Selection&)),
@@ -1527,12 +1521,6 @@ QMenu* CelestiaAppWindow::buildScriptsMenu()
     }
 
     return menu;
-}
-
-
-void ContextMenu(float x, float y, Selection sel)
-{
-    MainWindowInstance->contextMenu(x, y, sel);
 }
 
 void CelestiaAppWindow::pasteText()
