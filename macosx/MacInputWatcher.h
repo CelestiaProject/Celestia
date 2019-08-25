@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class _MacInputWatcher;
+class _MacInputWatcher;
 
 
 @interface MacInputWatcher : NSObject

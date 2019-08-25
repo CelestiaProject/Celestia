@@ -29,7 +29,7 @@
 	<key>CFBundleIconFile</key>
 	<string>celestia</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.shatters.Celestia</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>

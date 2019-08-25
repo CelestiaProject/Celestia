@@ -160,13 +160,13 @@
 #endif
     return self;
 }
--(unsigned)hash
+-(NSUInteger)hash
 {
 #ifdef URL_FAVORITES
     if (url)
         return [url hash];
 #endif
-    return (unsigned)[_data pointerValue];
+    return (NSUInteger)[_data pointerValue];
 }
 -(void)dealloc
 {

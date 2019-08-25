@@ -552,7 +552,7 @@ NSString* fatalErrorMessage;
 
 - (void) forceDisplay
 {
-    if (![glView needsDisplay]) [glView setNeedsDisplay:YES];
+    [glView setNeedsDisplay:YES];
 }
 
 - (void) display 
