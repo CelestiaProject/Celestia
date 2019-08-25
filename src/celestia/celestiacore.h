@@ -197,8 +197,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         ShowFrame     = 0x010,
     };
 
-    typedef void (*ContextMenuFunc)(float, float, Selection);
-
  private:
     class OverlayImage
     {
@@ -317,8 +315,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int getOverlayElements() const;
     void setOverlayElements(int);
 
-    void setContextMenuCallback(ContextMenuFunc);
-
     void addWatcher(CelestiaWatcher*);
     void removeWatcher(CelestiaWatcher*);
 
@@ -371,6 +367,16 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void setCursorHandler(CursorHandler*);
     CursorHandler* getCursorHandler() const;
+
+    class ContextMenuHandler
+    {
+    public:
+        virtual ~ContextMenuHandler() = default;
+        virtual void requestContextMenu(float, float, Selection) = 0;
+    };
+
+    void setContextMenuHandler(ContextMenuHandler*);
+    ContextMenuHandler* getContextMenuHandler() const;
 
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
     bool referenceMarkEnabled(const std::string& refMark, Selection sel = Selection()) const;
@@ -485,14 +491,13 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     MovieCapture* movieCapture{ nullptr };
     bool recording{ false };
 
-    ContextMenuFunc contextMenuCallback{ nullptr };
-
     Texture* logoTexture{ nullptr };
 
     Alerter* alerter{ nullptr };
     std::vector<CelestiaWatcher*> watchers;
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
+    ContextMenuHandler* contextMenuHandler{ nullptr };
 
     std::vector<Url*> history;
     std::vector<Url*>::size_type historyCurrent{ 0 };

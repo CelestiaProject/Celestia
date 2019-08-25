@@ -687,8 +687,8 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             Selection sel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
             if (!sel.empty())
             {
-                if (contextMenuCallback != nullptr)
-                    contextMenuCallback(x, y, sel);
+                if (contextMenuHandler != nullptr)
+                    contextMenuHandler->requestContextMenu(x, y, sel);
             }
         }
         else if (button == MiddleButton)
@@ -2721,12 +2721,6 @@ void CelestiaCore::setActiveFrameVisible(bool visible)
 }
 
 
-void CelestiaCore::setContextMenuCallback(ContextMenuFunc callback)
-{
-    contextMenuCallback = callback;
-}
-
-
 Renderer* CelestiaCore::getRenderer() const
 {
     return renderer;
@@ -4488,6 +4482,16 @@ void CelestiaCore::setCursorHandler(CursorHandler* handler)
 CelestiaCore::CursorHandler* CelestiaCore::getCursorHandler() const
 {
     return cursorHandler;
+}
+
+void CelestiaCore::setContextMenuHandler(ContextMenuHandler* handler)
+{
+    contextMenuHandler = handler;
+}
+
+CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
+{
+    return contextMenuHandler;
 }
 
 int CelestiaCore::getTimeZoneBias() const
