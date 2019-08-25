@@ -472,11 +472,11 @@ int main(int argc, char* argv[])
     /* Create the main menu bar */
     createMainMenu(app->mainWindow, app);
 
-    /* Initialize the context menu */
-    initContext(app);
+    /* Initialize the context menu handler */
+    GTKContextMenuHandler *handler = new GTKContextMenuHandler(app);
 
-    /* Set context menu callback for the core */
-    app->core->setContextMenuCallback(menuContext);
+    /* Set context menu handler for the core */
+    app->core->setContextMenuHandler(handler);
 
     #ifdef GNOME
     /* Set window contents (GNOME) */

@@ -21,11 +21,12 @@
 
 #include "common.h"
 
+class GTKContextMenuHandler : public CelestiaCore::ContextMenuHandler
+{
+ public:
+    GTKContextMenuHandler(AppData* app);
 
-/* Initializer Function */
-void initContext(AppData* a);
-
-/* Entry Function */
-void menuContext(float, float, Selection sel);
+    void requestContextMenu(float, float, Selection sel);
+};
 
 #endif /* GTK_MENU_CONTEXT_H */
