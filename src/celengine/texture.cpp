@@ -66,12 +66,8 @@ extern "C" {
 
 #endif // JPEG_SUPPORT
 
-#ifdef PNG_SUPPORT // PNG_SUPPORT
-#ifdef TARGET_OS_MAC
-#include "../../macosx/png.h"
-#else
+#ifdef PNG_SUPPORT
 #include "png.h"
-#endif // TARGET_OS_MAC
 
 // Define png_jmpbuf() in case we are using a pre-1.0.6 version of libpng
 #ifndef png_jmpbuf

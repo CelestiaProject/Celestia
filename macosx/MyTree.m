@@ -48,13 +48,13 @@
 -(void)addObject:(id)obj
 {
     if (![obj isKindOfClass:_myClass])
-        [NSException raise:@"TypeError" format:@"%s invalid, only %s allowed",NAMEOF(obj),_myClass->name];
+        [NSException raise:@"TypeError" format:@"%@ invalid, only %@ allowed",NSStringFromClass([obj class]),NSStringFromClass(_myClass)];
     [_array addObject:obj];
 }
 -(void)insertObject:(id)obj atIndex:(unsigned)idx
 {
     if (![obj isKindOfClass:_myClass])
-        [NSException raise:@"TypeError" format:@"%s invalid, only %s allowed",NAMEOF(obj),_myClass->name];
+        [NSException raise:@"TypeError" format:@"%@ invalid, only %@ allowed",NSStringFromClass([obj class]),NSStringFromClass(_myClass)];
     [_array insertObject:obj atIndex:idx];
 }
 -(void)removeLastObject
@@ -68,7 +68,7 @@
 -(void)replaceObjectAtIndex:(unsigned)idx withObject:(id)obj
 {
     if (![obj isKindOfClass:_myClass])
-        [NSException raise:@"TypeError" format:@"%s invalid, only %s allowed",NAMEOF(obj),_myClass->name];
+        [NSException raise:@"TypeError" format:@"%@ invalid, only %@ allowed",NSStringFromClass([obj class]),NSStringFromClass(_myClass)];
     [_array replaceObjectAtIndex:idx withObject:obj];
 }
 -(unsigned)count

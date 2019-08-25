@@ -105,22 +105,10 @@ public:
         switch (aShape)
         {
         case CelestiaCore::SizeVerCursor:
-            changedCursor =
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
-            kThemeResizeUpDownCursor
-#else
-            kThemeClosedHandCursor
-#endif
-            ;
+            changedCursor = kThemeResizeUpDownCursor;
             break;
         case CelestiaCore::SizeHorCursor:
-            changedCursor =
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
-            kThemeResizeLeftRightCursor
-#else
-            kThemeClosedHandCursor
-#endif
-            ;
+            changedCursor = kThemeResizeLeftRightCursor;
             break;
         default:
             changedCursor = kThemeArrowCursor;
@@ -129,7 +117,18 @@ public:
 
         if (changedCursor != cursor)
         {
-            SetThemeCursor(changedCursor);
+            switch (changedCursor)
+            {
+            case kThemeResizeUpDownCursor:
+                [[NSCursor resizeUpDownCursor] set];
+                break;
+            case kThemeResizeLeftRightCursor:
+                [[NSCursor resizeLeftRightCursor] set];
+                break;
+            default:
+                [[NSCursor arrowCursor] set];
+                break;
+            }
             cursor = changedCursor;
             shape = aShape;
         }

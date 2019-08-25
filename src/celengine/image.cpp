@@ -49,11 +49,7 @@ extern "C" {
 #endif // JPEG_SUPPORT
 
 #ifdef PNG_SUPPORT // PNG_SUPPORT
-#ifdef TARGET_OS_MAC
-#include "../../macosx/png.h"
-#else
 #include "png.h"
-#endif // TARGET_OS_MAC
 
 #include <celutil/debug.h>
 #include <celutil/util.h>

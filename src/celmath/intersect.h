@@ -15,6 +15,7 @@
 #include "ray.h"
 #include "sphere.h"
 #include "ellipsoid.h"
+#include "mathlib.h"
 
 
 template<class T> bool testIntersection(const Ray3<T>& ray,
