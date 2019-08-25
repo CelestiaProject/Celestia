@@ -42,16 +42,18 @@ static GtkMenu* CreateAlternateSurfaceMenu(const vector<string>& surfaces);
 static AppData* app;
 
 
-/* Initializer. Sets the appData, since there is no way to pass it. */
-void initContext(AppData* a)
+/* Initializer. Sets the appData */
+GTKContextMenuHandler::GTKContextMenuHandler(AppData* _app) :
+    CelestiaCore::ContextMenuHandler()
 {
-    app = a;
+    // FIXME: a workaround to have it referenced by any menu callback
+    app = _app;
 }
 
 
 /* ENTRY: Context menu (event handled by appCore)
  *        Normally, float x and y, but unused, so removed. */
-void menuContext(float, float, Selection sel)
+void GTKContextMenuHandler::requestContextMenu(float, float, Selection sel)
 {
     GtkWidget* popup = gtk_menu_new();
     string name;

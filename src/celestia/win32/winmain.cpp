@@ -1786,12 +1786,6 @@ void ShowWWWInfo(const Selection& sel)
 }
 
 
-void ContextMenu(float x, float y, Selection sel)
-{
-    handlePopupMenu(mainWindow, x, y, sel);
-}
-
-
 bool EnableFullScreen(const DEVMODE& dm)
 {
     DEVMODE devMode;
@@ -2346,6 +2340,15 @@ public:
                    msg.c_str(),
                    "Fatal Error",
                    MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
+    }
+};
+
+class WinContextMenuHandler : public CelestiaCore::ContextMenuHandler
+{
+public:
+    void requestContextMenu(float x, float y, Selection sel)
+    {
+        handlePopupMenu(mainWindow, x, y, sel);
     }
 };
 
@@ -3524,7 +3527,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     BuildScriptsMenu(menuBar, ScriptsDirectory);
     syncMenusWithRendererState();
 
-    appCore->setContextMenuCallback(ContextMenu);
+    appCore->setContextMenuHandler(new WinContextMenuHandler());
 
     bReady = true;
 
