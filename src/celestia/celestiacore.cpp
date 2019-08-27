@@ -90,6 +90,20 @@ static void warning(string s)
     cout << s;
 }
 
+static bool is_valid_directory(const fs::path& dir)
+{
+    if (dir.empty())
+        return false;
+
+    if (!is_directory(dir))
+    {
+        fmt::fprintf(cerr, "Path %s doesn't exist or isn't a directory", dir);
+        return false;
+    }
+
+    return true;
+}
+
 
 // Extremely basic implementation of an ExecutionEnvironment for
 // running scripts.
@@ -4112,7 +4126,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // Next, read all the deep sky files in the extras directories
     for (const auto& dir : config->extrasDirs)
     {
-        if (dir.empty())
+        if (!is_valid_directory(dir))
             continue;
 
         DeepSkyLoader loader(dsoDB,
@@ -4153,7 +4167,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     {
         for (const auto& dir : config->extrasDirs)
         {
-            if (dir.empty())
+            if (!is_valid_directory(dir))
                 continue;
 
             SolarSystemLoader loader(universe, progressNotifier);
@@ -4409,7 +4423,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     // Now, read supplemental star files from the extras directories
     for (const auto& dir : config->extrasDirs)
     {
-        if (dir.empty())
+        if (!is_valid_directory(dir))
             continue;
 
         StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
@@ -4892,7 +4906,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
     // Find the path for lua files in the extras directories
     for (const auto& dir : config->extrasDirs)
     {
-        if (dir.empty())
+        if (!is_valid_directory(dir))
             continue;
 
         LuaPathFinder loader;
