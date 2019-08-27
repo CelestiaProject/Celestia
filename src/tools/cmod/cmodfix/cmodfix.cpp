@@ -1031,6 +1031,8 @@ generateTangents(Mesh& mesh,
                 }
             }
             break;
+        default:
+            break;
         }
     }
 
