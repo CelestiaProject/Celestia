@@ -1002,23 +1002,52 @@ void CelestiaAppWindow::slotManual()
 
 void CelestiaAppWindow::slotShowAbout()
 {
-    static const char* aboutText =
-    gettext_noop("<html>"
-    "<p><b>Celestia 1.7.0 (Qt5 beta version, git commit %1)</b></p>"
-    "<p>Copyright (C) 2001-2018 by the Celestia Development Team. Celestia "
-    "is free software. You can redistribute it and/or modify it under the "
-    "terms of the GNU General Public License version&nbsp;2.</p>"
-    "<b>Celestia on the web</b>"
-    "<br>"
-    "Main site: <a href=\"https://celestia.space/\">"
-    "https://celestia.space/</a><br>"
-    "Forum: <a href=\"https://celestia.space/forum/\">"
-    "https://celestia.space/forum/</a><br>"
-    "GitHub project: <a href=\"https://github.com/CelestiaProject/Celestia\">"
-    "https://github.com/CelestiaProject/Celestia</a><br>"
-    "</html>");
+    const char* aboutText = gettext_noop(
+        "<html>"
+        "<h1>Celestia 1.7</h1>"
+        "<p>Development snapshot, commit <b>%1</b>.</p>"
 
-    QMessageBox::about(this, "Celestia", QString(_(aboutText)).arg(GIT_COMMIT));
+        "<p>Built for %2 bit CPU<br>"
+        "Using %3 %4<br>"
+        "Built against Qt library: %5<br>"
+        "NAIF kerners are %7<br>"
+        "Runtime Qt version: %6</p>"
+
+        "<p>Copyright (C) 2001-2020 by the Celestia Development Team.<br>"
+        "Celestia is free software. You can redistribute it and/or modify "
+        "it under the terms of the GNU General Public License as published "
+        "by the Free Software Foundation; either version 2 of the License, "
+        "or (at your option) any later version.</p>"
+
+        "<p>Main site: <a href=\"https://celestia.space/\">"
+        "https://celestia.space/</a><br>"
+        "Forum: <a href=\"https://celestia.space/forum/\">"
+        "https://celestia.space/forum/</a><br>"
+        "GitHub project: <a href=\"https://github.com/CelestiaProject/Celestia\">"
+        "https://github.com/CelestiaProject/Celestia</a></p>"
+        "</html>"
+    );
+
+    auto qAboutText = QString(_(aboutText))
+                                .arg(GIT_COMMIT)
+                                .arg(QSysInfo::WordSize)
+#if defined(_MSC_VER)
+                                .arg("MSVC").arg(_MSC_FULL_VER)
+#elif defined(__clang_version__)
+                                .arg("Clang").arg(__clang_version__)
+#elif defined(__GNUC__)
+                                .arg("GNU GCC").arg(__VERSION__)
+#else
+                                .arg(_("Unknown compiler")).arg("")
+#endif
+                                .arg(QT_VERSION_STR, qVersion())
+#if defined(USE_SPICE)
+                                .arg(_("supported"))
+#else
+                                .arg(_("not supported"))
+#endif
+    ;
+        QMessageBox::about(this, _("About Celestia"), qAboutText);
 }
 
 
