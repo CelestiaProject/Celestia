@@ -270,6 +270,7 @@ if(APPLE)
   if (NATIVE_OSX_APP)
     add_definitions(-DNATIVE_OSX_APP)
   endif()
+  add_definitions(-DGL_SILENCE_DEPRECATION)
 endif()
 
 string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type_lc)
