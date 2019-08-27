@@ -32,7 +32,7 @@
 using namespace std;
 
 
-class SolarSystemTreeModel : public QAbstractTableModel, public ModelHelper
+class SolarSystemTreeModel : public QAbstractItemModel, public ModelHelper
 {
 public:
     SolarSystemTreeModel(const Universe* _universe);
