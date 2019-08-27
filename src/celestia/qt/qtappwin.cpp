@@ -1008,10 +1008,21 @@ void CelestiaAppWindow::slotManual()
 
 void CelestiaAppWindow::slotShowAbout()
 {
+
+#if defined(_MSC_VER)
+    QString compilerVersion = QString("MSVC %1").arg(_MSC_FULL_VER);
+#elif defined(__clang__) && defined(__clang_version__)
+    static const char* compilerVersion = "Clang " __clang_version__;
+#elif defined(__GNUC__)
+    static const char* compilerVersion = "GCC " __VERSION__;
+#endif
+
     static const char* aboutText =
     gettext_noop("<html>"
-    "<p><b>Celestia 1.7.0 (Qt5 beta version, git commit %1)</b></p>"
-    "<p>Copyright (C) 2001-2018 by the Celestia Development Team. Celestia "
+    "<p><b>Celestia 1.7.0-devel %1 bit, git commit %2.</b></p>"
+    "<p>Built against Qt library:&nbsp;%3 using&nbsp;%4.</p>"
+    "<p>Loaded Qt version:&nbsp;%5</p>"
+    "<p>Copyright (C) 2001-2019 by the Celestia Development Team. Celestia "
     "is free software. You can redistribute it and/or modify it under the "
     "terms of the GNU General Public License version&nbsp;2.</p>"
     "<b>Celestia on the web</b>"
@@ -1024,7 +1035,8 @@ void CelestiaAppWindow::slotShowAbout()
     "https://github.com/CelestiaProject/Celestia</a><br>"
     "</html>");
 
-    QMessageBox::about(this, "Celestia", QString(_(aboutText)).arg(GIT_COMMIT));
+    QMessageBox::about(this, "Celestia",
+                       QString(_(aboutText)).arg(QSysInfo::WordSize).arg(GIT_COMMIT, qVersion(), compilerVersion, QT_VERSION_STR));
 }
 
 
