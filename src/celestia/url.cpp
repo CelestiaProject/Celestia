@@ -20,7 +20,7 @@
 #include <sstream>
 #include <iomanip>
 #include <utility>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include "celestiacore.h"
 #include "celutil/util.h"
 #include "celengine/astro.h"

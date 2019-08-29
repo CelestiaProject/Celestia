@@ -21,7 +21,7 @@
 #include "execution.h"
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include "imagecapture.h"
 #include "url.h"
 

@@ -25,7 +25,7 @@
 #include <fstream>
 #include <limits>
 #include <iomanip>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 
 using namespace Eigen;
 using namespace std;

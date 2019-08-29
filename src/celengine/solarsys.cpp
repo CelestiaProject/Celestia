@@ -16,7 +16,7 @@
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
 #include <limits>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include "astro.h"
 #include "parser.h"
 #include "texmanager.h"

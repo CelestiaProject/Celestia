@@ -25,7 +25,7 @@ extern "C" {
 #include <celutil/util.h>
 #include <celutil/filetype.h>
 #include <GL/glew.h>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include "image.h"
 
 
@@ -331,7 +331,7 @@ Image* LoadImageFromFile(const fs::path& filename)
         img = LoadDDSImage(filename);
         break;
     default:
-        fmt::printf(_("%s: unrecognized or unsupported image file type.\n"), filename.string());
+        DPRINTF(LOG_LEVEL_ERROR, "%s: unrecognized or unsupported image file type.\n", filename.string());
         break;
     }
 

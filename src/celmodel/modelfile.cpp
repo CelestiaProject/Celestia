@@ -12,7 +12,7 @@
 #include <celutil/bytes.h>
 #include <cassert>
 #include <cmath>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 
 
 using namespace cmod;

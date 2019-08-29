@@ -11,7 +11,7 @@
 #include <cstring>
 #include <cmath>
 #include <cstdlib>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include <cassert>
 #include <algorithm>
 #include <celmath/mathlib.h>
@@ -690,7 +690,7 @@ bool StarDatabase::loadBinary(istream& in)
     if (in.bad())
         return false;
 
-    DPRINTF(0, "StarDatabase::read: nStars = %d\n", nStarsInFile);
+    DPRINTF(LOG_LEVEL_ERROR, "StarDatabase::read: nStars = %d\n", nStarsInFile);
     fmt::fprintf(clog, _("%d stars in binary database\n"), nStars);
 
     // Create the temporary list of stars sorted by catalog number; this
@@ -1294,7 +1294,7 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
 
         if (starDataValue->getType() != Value::HashType)
         {
-            DPRINTF(0, "Bad star definition.\n");
+            DPRINTF(LOG_LEVEL_ERROR, "Bad star definition.\n");
             delete starDataValue;
             return false;
         }
@@ -1358,7 +1358,7 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
         {
             if (isNewStar)
                 delete star;
-            DPRINTF(1, "Bad star definition--will continue parsing file.\n");
+            DPRINTF(LOG_LEVEL_INFO, "Bad star definition--will continue parsing file.\n");
         }
     }
 
@@ -1371,7 +1371,7 @@ void StarDatabase::buildOctree()
     // This should only be called once for the database
     // ASSERT(octreeRoot == nullptr);
 
-    DPRINTF(1, "Sorting stars into octree . . .\n");
+    DPRINTF(LOG_LEVEL_INFO, "Sorting stars into octree . . .\n");
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
                                       STAR_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
     DynamicStarOctree* root = new DynamicStarOctree(Vector3f(1000.0f, 1000.0f, 1000.0f),
@@ -1381,14 +1381,14 @@ void StarDatabase::buildOctree()
         root->insertObject(unsortedStars[i], STAR_OCTREE_ROOT_SIZE);
     }
 
-    DPRINTF(1, "Spatially sorting stars for improved locality of reference . . .\n");
+    DPRINTF(LOG_LEVEL_INFO, "Spatially sorting stars for improved locality of reference . . .\n");
     Star* sortedStars    = new Star[nStars];
     Star* firstStar      = sortedStars;
     root->rebuildAndSort(octreeRoot, firstStar);
 
     // ASSERT((int) (firstStar - sortedStars) == nStars);
-    DPRINTF(1, "%d stars total\n", (int) (firstStar - sortedStars));
-    DPRINTF(1, "Octree has %d nodes and %d stars.\n",
+    DPRINTF(LOG_LEVEL_INFO, "%d stars total\n", (int) (firstStar - sortedStars));
+    DPRINTF(LOG_LEVEL_INFO, "Octree has %d nodes and %d stars.\n",
             1 + octreeRoot->countChildren(), octreeRoot->countObjects());
 #ifdef PROFILE_OCTREE
     vector<OctreeLevelStatistics> stats;
@@ -1420,7 +1420,7 @@ void StarDatabase::buildIndexes()
     // This should only be called once for the database
     // assert(catalogNumberIndexes[0] == nullptr);
 
-    DPRINTF(1, "Building catalog number indexes . . .\n");
+    DPRINTF(LOG_LEVEL_INFO, "Building catalog number indexes . . .\n");
 
     catalogNumberIndex = new Star*[nStars];
     for (int i = 0; i < nStars; ++i)

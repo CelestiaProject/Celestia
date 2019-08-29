@@ -13,7 +13,7 @@ void NameDatabase::add(const uint32_t catalogNumber, const std::string& name, bo
 #ifdef DEBUG
         uint32_t tmp;
         if ((tmp = getCatalogNumberByName(name)) != InvalidCatalogNumber)
-            DPRINTF(2,"Duplicated name '%s' on object with catalog numbers: %d and %d\n", name.c_str(), tmp, catalogNumber);
+            DPRINTF(LOG_LEVEL_INFO,"Duplicated name '%s' on object with catalog numbers: %d and %d\n", name.c_str(), tmp, catalogNumber);
 #endif
         // Add the new name
         //nameIndex.insert(NameIndex::value_type(name, catalogNumber));

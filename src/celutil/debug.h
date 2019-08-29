@@ -20,6 +20,13 @@
 #undef DPRINTF // OSX has DPRINTF
 #endif // DPRINTF
 
+// verbosity choices
+#define LOG_LEVEL_ERROR           0
+#define LOG_LEVEL_WARNING         1
+#define LOG_LEVEL_INFO            2
+#define LOG_LEVEL_VERBOSE         3
+#define LOG_LEVEL_DEBUG           4
+
 #if !defined(_DEBUG) && !defined(DEBUG)
 #define DPRINTF(level, format, ...)
 #else

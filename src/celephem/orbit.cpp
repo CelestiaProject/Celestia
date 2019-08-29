@@ -297,7 +297,7 @@ double EllipticalOrbit::eccentricAnomaly(double M) const
         // much faster converging iteration.
         Solution sol = solve_iteration_fixed(SolveKeplerFunc2(eccentricity, M), M, 6);
         // Debugging
-        // fmt::printf("ecc: %f, error: %f mas\n",
+        // DPRINTF(LOG_LEVEL_INFO, "ecc: %f, error: %f mas\n",
         //        eccentricity, radToDeg(sol.second) * 3600000);
         return sol.first;
     }

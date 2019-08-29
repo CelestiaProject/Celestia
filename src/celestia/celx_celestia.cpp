@@ -9,7 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include <celtxf/texturefont.h>
 #include <celengine/category.h>
 #include <celengine/texture.h>
