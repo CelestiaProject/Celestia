@@ -35,7 +35,7 @@
 #include <fstream>
 #include <cassert>
 #include <utility>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include <memory>
 
 
@@ -246,7 +246,7 @@ Model* LoadCelestiaMesh(const fs::path& filename)
     ifstream meshFile(filename.string(), ios::in);
     if (!meshFile.good())
     {
-        DPRINTF(0, "Error opening mesh file: %s\n", filename);
+        DPRINTF(LOG_LEVEL_ERROR, "Error opening mesh file: %s\n", filename);
         return nullptr;
     }
 
@@ -255,13 +255,13 @@ Model* LoadCelestiaMesh(const fs::path& filename)
 
     if (tokenizer.nextToken() != Tokenizer::TokenName)
     {
-        DPRINTF(0, "Mesh file %s is invalid.\n", filename);
+        DPRINTF(LOG_LEVEL_ERROR, "Mesh file %s is invalid.\n", filename);
         return nullptr;
     }
 
     if (tokenizer.getStringValue() != "SphereDisplacementMesh")
     {
-        DPRINTF(0, "%s: Unrecognized mesh type %s.\n",
+        DPRINTF(LOG_LEVEL_ERROR, "%s: Unrecognized mesh type %s.\n",
                 filename, tokenizer.getStringValue());
         return nullptr;
     }
@@ -269,13 +269,13 @@ Model* LoadCelestiaMesh(const fs::path& filename)
     Value* meshDefValue = parser.readValue();
     if (meshDefValue == nullptr)
     {
-        DPRINTF(0, "%s: Bad mesh file.\n", filename);
+        DPRINTF(LOG_LEVEL_ERROR, "%s: Bad mesh file.\n", filename);
         return nullptr;
     }
 
     if (meshDefValue->getType() != Value::HashType)
     {
-        DPRINTF(0, "%s: Bad mesh file.\n", filename);
+        DPRINTF(LOG_LEVEL_ERROR, "%s: Bad mesh file.\n", filename);
         delete meshDefValue;
         return nullptr;
     }

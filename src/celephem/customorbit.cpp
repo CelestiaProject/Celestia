@@ -16,7 +16,7 @@
 #include <cassert>
 #include <vector>
 #include <fstream>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 
 using namespace Eigen;
 using namespace std;

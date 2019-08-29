@@ -18,7 +18,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <cmath>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 
 using namespace Eigen;
 using namespace celmath;

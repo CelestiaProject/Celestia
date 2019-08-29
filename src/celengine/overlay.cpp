@@ -12,7 +12,7 @@
 #include <celutil/utf8.h>
 #include <GL/glew.h>
 #include <Eigen/Core>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include "vecgl.h"
 #include "overlay.h"
 #include "render.h"

@@ -254,7 +254,7 @@ CreateSampledTrajectory(Hash* trajData, const fs::path& path)
     trajData->getBoolean("DoublePrecision", useDoublePrecision);
     TrajectoryPrecision precision = useDoublePrecision ? TrajectoryPrecisionDouble : TrajectoryPrecisionSingle;
 
-    DPRINTF(1, "Attempting to load sampled trajectory from source '%s'\n", sourceName.c_str());
+    DPRINTF(LOG_LEVEL_INFO, "Attempting to load sampled trajectory from source '%s'\n", sourceName.c_str());
     ResourceHandle orbitHandle = GetTrajectoryManager()->getHandle(TrajectoryInfo(sourceName, path, interpolation, precision));
     Orbit* orbit = GetTrajectoryManager()->find(orbitHandle);
     if (orbit == nullptr)
@@ -704,7 +704,7 @@ CreateOrbit(const Selection& centralObject,
                 return orbit;
             }
             clog << "Bad spice orbit\n";
-            DPRINTF(0, "Could not load SPICE orbit\n");
+            DPRINTF(LOG_LEVEL_ERROR, "Could not load SPICE orbit\n");
         }
     }
 #endif
@@ -743,7 +743,7 @@ CreateOrbit(const Selection& centralObject,
     string sampOrbitFile;
     if (planetData->getString("SampledOrbit", sampOrbitFile))
     {
-        DPRINTF(1, "Attempting to load sampled orbit file '%s'\n",
+        DPRINTF(LOG_LEVEL_INFO, "Attempting to load sampled orbit file '%s'\n",
                 sampOrbitFile.c_str());
         ResourceHandle orbitHandle =
             GetTrajectoryManager()->getHandle(TrajectoryInfo(sampOrbitFile,
@@ -1089,7 +1089,7 @@ CreateRotationModel(Hash* planetData,
                 return rotationModel;
             }
             clog << "Bad spice rotation model\n";
-            DPRINTF(0, "Could not load SPICE rotation model\n");
+            DPRINTF(LOG_LEVEL_ERROR, "Could not load SPICE rotation model\n");
         }
     }
 #endif
@@ -1112,7 +1112,7 @@ CreateRotationModel(Hash* planetData,
     string sampOrientationFile;
     if (planetData->getString("SampledOrientation", sampOrientationFile))
     {
-        DPRINTF(1, "Attempting to load orientation file '%s'\n",
+        DPRINTF(LOG_LEVEL_INFO, "Attempting to load orientation file '%s'\n",
                 sampOrientationFile.c_str());
         ResourceHandle orientationHandle =
             GetRotationModelManager()->getHandle(RotationModelInfo(sampOrientationFile, path));
@@ -1406,14 +1406,14 @@ getAxis(Hash* vectorData)
     string axisLabel;
     if (!vectorData->getString("Axis", axisLabel))
     {
-        DPRINTF(0, "Bad two-vector frame: missing axis label for vector.\n");
+        DPRINTF(LOG_LEVEL_ERROR, "Bad two-vector frame: missing axis label for vector.\n");
         return 0;
     }
 
     int axis = parseAxisLabel(axisLabel);
     if (axis == 0)
     {
-        DPRINTF(0, "Bad two-vector frame: vector has invalid axis label.\n");
+        DPRINTF(LOG_LEVEL_ERROR, "Bad two-vector frame: vector has invalid axis label.\n");
     }
 
     // Permute axis labels to match non-standard Celestia coordinate

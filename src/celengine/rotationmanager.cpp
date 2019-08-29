@@ -44,7 +44,7 @@ fs::path RotationModelInfo::resolve(const fs::path& baseDir)
 
 RotationModel* RotationModelInfo::load(const fs::path& filename)
 {
-    DPRINTF(1, "Loading rotation model: %s\n", filename);
+    DPRINTF(LOG_LEVEL_INFO, "Loading rotation model: %s\n", filename);
 
     return LoadSampledOrientation(filename);
 }

@@ -8,7 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cstring>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include <cassert>
 #include <config.h>
 #include "stellarclass.h"

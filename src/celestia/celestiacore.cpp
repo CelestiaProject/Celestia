@@ -49,7 +49,7 @@
 #include <cassert>
 #include <ctime>
 #include <set>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include <celutil/color.h>
 #include <celengine/vecgl.h>
 
@@ -438,8 +438,7 @@ void showSelectionInfo(const Selection& sel)
 
     AngleAxisf aa(orientation);
 
-    fmt::printf(_("%s\nOrientation: [%f, %f, %f], %.1f\n"),
-                sel.getName(), aa.axis().x(), aa.axis().y(), aa.axis().z(), radToDeg(aa.angle()));
+    DPRINTF(LOG_LEVEL_VERBOSE, "%s\nOrientation: [%f, %f, %f], %.1f\n", sel.getName(), aa.axis().x(), aa.axis().y(), aa.axis().z(), radToDeg(aa.angle()));
 }
 
 
@@ -4006,7 +4005,7 @@ template <class OBJDB> class CatalogLoader
         if (catalogFile.good())
         {
             if (!objDB->load(catalogFile, filepath.parent_path()))
-                DPRINTF(0, "Error reading %s catalog file: %s\n", typeDesc.c_str(), filepath.string());
+                DPRINTF(LOG_LEVEL_ERROR, "Error reading %s catalog file: %s\n", typeDesc.c_str(), filepath.string());
         }
     }
 };
@@ -4253,7 +4252,7 @@ bool CelestiaCore::initRenderer()
     context->init(config->ignoreGLExtensions);
     // Choose the render path, starting with the least desirable
     context->setRenderPath(GLContext::GLPath_GLSL);
-    //fmt::printf(_("render path: %i\n"), context->getRenderPath());
+    //DPRINTF(LOG_LEVEL_VERBOSE, "render path: %i\n", context->getRenderPath());
 #endif
 
     Renderer::DetailOptions detailOptions;

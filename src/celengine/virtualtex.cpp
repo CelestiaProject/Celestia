@@ -14,7 +14,7 @@
 #include <fstream>
 #include <string>
 #include <utility>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include <GL/glew.h>
 #include <celutil/debug.h>
 #include <celcompat/filesystem.h>
@@ -313,7 +313,7 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
     string imageDirectory;
     if (!texParams->getString("ImageDirectory", imageDirectory))
     {
-        DPRINTF(0, "ImageDirectory missing in virtual texture.\n");
+        DPRINTF(LOG_LEVEL_ERROR, "ImageDirectory missing in virtual texture.\n");
         return nullptr;
     }
 
@@ -321,14 +321,14 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
     if (!texParams->getNumber("BaseSplit", baseSplit) ||
         baseSplit < 0.0 || baseSplit != floor(baseSplit))
     {
-        DPRINTF(0, "BaseSplit in virtual texture missing or has bad value\n");
+        DPRINTF(LOG_LEVEL_ERROR, "BaseSplit in virtual texture missing or has bad value\n");
         return nullptr;
     }
 
     double tileSize = 0.0;
     if (!texParams->getNumber("TileSize", tileSize))
     {
-        DPRINTF(0, "TileSize is missing from virtual texture\n");
+        DPRINTF(LOG_LEVEL_ERROR, "TileSize is missing from virtual texture\n");
         return nullptr;
     }
 
@@ -336,7 +336,7 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
         tileSize < 64.0 ||
         !isPow2((int) tileSize))
     {
-        DPRINTF(0, "Virtual texture tile size must be a power of two >= 64\n");
+        DPRINTF(LOG_LEVEL_ERROR, "Virtual texture tile size must be a power of two >= 64\n");
         return nullptr;
     }
 
@@ -375,7 +375,7 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const fs::path& path)
     Value* texParamsValue = parser.readValue();
     if (texParamsValue == nullptr || texParamsValue->getType() != Value::HashType)
     {
-        DPRINTF(0, "Error parsing virtual texture\n");
+        DPRINTF(LOG_LEVEL_ERROR, "Error parsing virtual texture\n");
         delete texParamsValue;
         return nullptr;
     }
@@ -395,7 +395,7 @@ VirtualTexture* LoadVirtualTexture(const fs::path& filename)
 
     if (!in.good())
     {
-        //DPRINTF(0, "Error opening virtual texture file: %s\n", filename.c_str());
+        //DPRINTF(LOG_LEVEL_ERROR, "Error opening virtual texture file: %s\n", filename.c_str());
         return nullptr;
     }
 

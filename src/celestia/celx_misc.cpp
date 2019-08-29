@@ -1,5 +1,5 @@
 
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include "celx_misc.h"
 #include "celx_internal.h"
 #include "cmdparser.h"

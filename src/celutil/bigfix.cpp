@@ -13,7 +13,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cmath>
-#include <fmt/printf.h>
+#include <debug.h>
 #include <iostream>
 #include "bigfix.h"
 
@@ -255,11 +255,12 @@ int BigFix::sign() const
 // For debugging
 void BigFix::dump()
 {
-    fmt::printf("%08x %08x %08x %08x",
-                (uint32_t) (hi >> 32),
-                (uint32_t) (hi & 0xffffffff),
-                (uint32_t) (lo >> 32),
-                (uint32_t) (lo & 0xffffffff));
+    DPRINTF(LOG_LEVEL_INFO,
+            "%08x %08x %08x %08x",
+            (uint32_t) (hi >> 32),
+            (uint32_t) (hi & 0xffffffff),
+            (uint32_t) (lo >> 32),
+            (uint32_t) (lo & 0xffffffff));
 }
 
 
@@ -277,10 +278,10 @@ int main(int argc, char* argv[])
     if (sscanf(argv[2], "%lf", &b) != 1)
         return 1;
 
-    fmt::printf("    sum:\n%f\n%f\n", a + b, (double) (BigFix(a) + BigFix(b)));
-    fmt::printf("   diff:\n%f\n%f\n", a - b, (double) (BigFix(a) - BigFix(b)));
-    fmt::printf("product:\n%f\n%f\n", a * b, (double) (BigFix(a) * BigFix(b)));
-    fmt::printf("     lt: %u %u\n", a < b, BigFix(a) < BigFix(b));
+    DPRINTF(LOG_LEVEL_INFO, "    sum:\n%f\n%f\n", a + b, (double) (BigFix(a) + BigFix(b)));
+    DPRINTF(LOG_LEVEL_INFO, "   diff:\n%f\n%f\n", a - b, (double) (BigFix(a) - BigFix(b)));
+    DPRINTF(LOG_LEVEL_INFO, "product:\n%f\n%f\n", a * b, (double) (BigFix(a) * BigFix(b)));
+    DPRINTF(LOG_LEVEL_INFO, "     lt: %u %u\n", a < b, BigFix(a) < BigFix(b));
 
     return 0;
 }

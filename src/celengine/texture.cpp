@@ -25,7 +25,7 @@ extern "C" {
 #include <celutil/util.h>
 #include <Eigen/Core>
 #include <GL/glew.h>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include "texture.h"
 #include "virtualtex.h"
 

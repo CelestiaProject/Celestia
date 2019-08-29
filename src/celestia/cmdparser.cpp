@@ -966,7 +966,7 @@ int parseConstellations(CommandConstellations* cmd, string s, int act)
         }
         else
         {
-            DPRINTF(0, "Command Parser: error parsing render flags\n");
+            DPRINTF(LOG_LEVEL_ERROR, "Command Parser: error parsing render flags\n");
             return 0;
         }
     }
@@ -1006,7 +1006,7 @@ int parseConstellationColor(CommandConstellationColor* cmd, string s, Eigen::Vec
         }
         else
         {
-            DPRINTF(0, "Command Parser: error parsing render flags\n");
+            DPRINTF(LOG_LEVEL_ERROR, "Command Parser: error parsing render flags\n");
             return 0;
         }
     }

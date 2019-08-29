@@ -15,7 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 
 using namespace std;
 
@@ -64,7 +64,7 @@ Orbit* TrajectoryInfo::load(const fs::path& filename)
     fs::path strippedFilename = filename.string().substr(0, uniquifyingSuffixStart);
     ContentType filetype = DetermineFileType(strippedFilename);
 
-    DPRINTF(1, "Loading trajectory: %s\n", strippedFilename);
+    DPRINTF(LOG_LEVEL_INFO, "Loading trajectory: %s\n", strippedFilename);
 
     Orbit* sampTrajectory = nullptr;
 

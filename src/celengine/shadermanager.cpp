@@ -17,7 +17,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include <cassert>
 #include <Eigen/Geometry>
 

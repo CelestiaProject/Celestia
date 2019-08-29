@@ -44,7 +44,7 @@ bool CaptureGLBufferToJPEG(const fs::path& filename,
 #endif
     if (out == nullptr)
     {
-        DPRINTF(0, "Can't open screen capture file '%s'\n", filename);
+        DPRINTF(LOG_LEVEL_ERROR, "Can't open screen capture file '%s'\n", filename);
         delete[] pixels;
         return false;
     }
@@ -116,7 +116,7 @@ bool CaptureGLBufferToPNG(const fs::path& filename,
 #endif
     if (out == nullptr)
     {
-        DPRINTF(0, "Can't open screen capture file '%s'\n", filename);
+        DPRINTF(LOG_LEVEL_ERROR, "Can't open screen capture file '%s'\n", filename);
         delete[] pixels;
         return false;
     }
@@ -133,7 +133,7 @@ bool CaptureGLBufferToPNG(const fs::path& filename,
 
     if (png_ptr == nullptr)
     {
-        DPRINTF(0, "Screen capture: error allocating png_ptr\n");
+        DPRINTF(LOG_LEVEL_ERROR, "Screen capture: error allocating png_ptr\n");
         fclose(out);
         delete[] pixels;
         delete[] row_pointers;
@@ -143,7 +143,7 @@ bool CaptureGLBufferToPNG(const fs::path& filename,
     info_ptr = png_create_info_struct(png_ptr);
     if (info_ptr == nullptr)
     {
-        DPRINTF(0, "Screen capture: error allocating info_ptr\n");
+        DPRINTF(LOG_LEVEL_ERROR, "Screen capture: error allocating info_ptr\n");
         fclose(out);
         delete[] pixels;
         delete[] row_pointers;
@@ -153,7 +153,7 @@ bool CaptureGLBufferToPNG(const fs::path& filename,
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        DPRINTF(0, "Error writing PNG file '%s'\n", filename);
+        DPRINTF(LOG_LEVEL_ERROR, "Error writing PNG file '%s'\n", filename);
         fclose(out);
         delete[] pixels;
         delete[] row_pointers;

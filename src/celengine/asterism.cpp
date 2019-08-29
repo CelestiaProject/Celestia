@@ -217,7 +217,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
-            DPRINTF(0, "Error parsing asterism file.\n");
+            DPRINTF(LOG_LEVEL_ERROR, "Error parsing asterism file.\n");
             for_each(asterisms->begin(), asterisms->end(), deleteFunc<Asterism*>());
             delete asterisms;
             return nullptr;
@@ -229,7 +229,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
         Value* chainsValue = parser.readValue();
         if (chainsValue == nullptr || chainsValue->getType() != Value::ArrayType)
         {
-            DPRINTF(0, "Error parsing asterism %s\n", name.c_str());
+            DPRINTF(LOG_LEVEL_ERROR, "Error parsing asterism %s\n", name.c_str());
             for_each(asterisms->begin(), asterisms->end(), deleteFunc<Asterism*>());
             delete ast;
             delete asterisms;
@@ -258,7 +258,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
                             star = stardb.find(ReplaceGreekLetterAbbr(i->getString()));
                         if (star != nullptr)
                             new_chain->push_back(star->getPosition());
-                        else DPRINTF(0, "Error loading star \"%s\" for asterism \"%s\".\n", name.c_str(), i->getString().c_str());
+                        else DPRINTF(LOG_LEVEL_ERROR, "Error loading star \"%s\" for asterism \"%s\".\n", name.c_str(), i->getString().c_str());
                     }
                 }
 

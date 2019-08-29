@@ -129,13 +129,13 @@ Texture* TextureInfo::load(const fs::path& name)
 
     if (bumpHeight == 0.0f)
     {
-        DPRINTF(0, "Loading texture: %s\n", name.c_str());
+        DPRINTF(LOG_LEVEL_ERROR, "Loading texture: %s\n", name.c_str());
         // cout << "Loading texture: " << name << '\n';
 
         return LoadTextureFromFile(name, addressMode, mipMode);
     }
 
-    DPRINTF(0, "Loading bump map: %s\n", name.c_str());
+    DPRINTF(LOG_LEVEL_ERROR, "Loading bump map: %s\n", name.c_str());
     // cout << "Loading texture: " << name << '\n';
 
     return LoadHeightMapFromFile(name, bumpHeight, addressMode);

@@ -23,7 +23,7 @@
 #include <cstring>
 #include <fstream>
 #include <algorithm>
-#include <fmt/printf.h>
+#include <celutil/debug.h>
 #include <cassert>
 
 using namespace Eigen;
