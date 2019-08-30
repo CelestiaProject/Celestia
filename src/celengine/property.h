@@ -5,9 +5,12 @@
 #include "parser.h"
 
 
-namespace celengine
+namespace celestia
 {
-class BaseProperty
+namespace engine
+{
+
+class IProperty
 {
  public:
     virtual void update() = 0;
@@ -15,7 +18,7 @@ class BaseProperty
 };
 
 template<typename T>
-class Property : BaseProperty
+class Property : IProperty
 {
  public:
     Property() = default;
@@ -24,7 +27,7 @@ class Property : BaseProperty
         m_config(std::move(config)),
         m_name(std::move(name))
     {
-        m_config->setProperty(this);
+        m_config->addProperty(this);
     };
 
     Property(std::shared_ptr<Config> config, std::string name, T value) :
@@ -32,9 +35,13 @@ class Property : BaseProperty
         m_name(std::move(name)),
         m_value(std::move(value))
     {
+        m_config->addProperty(this);
     };
 
-    ~Property();
+    ~Property()
+    {
+        m_config->removeProperty(this);
+    };
 
     // Getters and setters
     inline Property& set(T value)
@@ -71,6 +78,7 @@ class Property : BaseProperty
     T                       m_value  {};
 };
 
+/*
 template<>
 void Property<double>::update()
 {
@@ -88,11 +96,11 @@ void Property<bool>::update()
 {
     m_value = (*m_config)[m_name].getBoolean();
 }
+*/
 
-template<typename T>
-Property<T>::~Property()
-{
-    m_config->removeProperty(*this);
+using NumericProperty = Property<double>;
+using StringProperty  = Property<std::string>;
+using BoolProperty    = Property<bool>;
+
 }
-
 } // namespace;

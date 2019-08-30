@@ -2,17 +2,19 @@
 #include "property.h"
 
 
-namespace celengine
+namespace celestia
+{
+namespace engine
 {
 
-void Config::setProperty(BaseProperty *p)
+void Config::addProperty(IProperty *p)
 {
     auto pos = std::find(m_props.begin(), m_props.end(), p);
     if (pos != m_props.end())
         m_props.push_back(p);
 }
 
-void Config::removeProperty(BaseProperty *p)
+void Config::removeProperty(IProperty *p)
 {
     auto pos = std::find(m_props.begin(), m_props.end(), p);
     if (pos != m_props.end())
@@ -46,8 +48,9 @@ void Config::endUpdate()
 
 void Config::onUpdate()
 {
-    for (auto* p : m_props)
+    for (auto p : m_props)
         p->update();
 }
 
+}
 } // namespace;
