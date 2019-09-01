@@ -1173,12 +1173,12 @@ void CelestiaAppWindow::createMenus()
     navMenu->addAction(gotoObjAct);
 
     QAction *copyAction = new QAction(QIcon(":/icons/clip_copy.png"), _("Copy search console text"), this);
-    copyAction->setShortcut(QString("F5"));
+    // copyAction->setShortcut(QString("F5")); // conflict with setTargetSpeed
     connect(copyAction, &QAction::triggered, this, &CelestiaAppWindow::copyText);
     navMenu->addAction(copyAction);
 
     QAction *pasteAction = new QAction(QIcon(":/icons/clip_paste.png"), _("Paste into search console"), this);
-    pasteAction->setShortcut(QString("F6"));
+    // pasteAction->setShortcut(QString("F6")); // conflict with setTargetSpeed
     connect(pasteAction, &QAction::triggered, this, &CelestiaAppWindow::pasteText);
     navMenu->addAction(pasteAction);
 
