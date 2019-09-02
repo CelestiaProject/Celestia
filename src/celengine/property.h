@@ -1,8 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "config.h"
-#include "parser.h"
+#include "configuration.h"
 
 
 namespace celestia
@@ -23,17 +22,10 @@ class Property : IProperty
  public:
     Property() = default;
 
-    Property(std::shared_ptr<Config> config, std::string name) :
-        m_config(std::move(config)),
-        m_name(std::move(name))
-    {
-        m_config->addProperty(this);
-    };
-
-    Property(std::shared_ptr<Config> config, std::string name, T value) :
+    Property(std::shared_ptr<Config> config, std::string name, T def) :
         m_config(std::move(config)),
         m_name(std::move(name)),
-        m_value(std::move(value))
+        m_default(std::move(def))
     {
         m_config->addProperty(this);
     };
@@ -61,7 +53,7 @@ class Property : IProperty
 
     T get() const
     {
-        return m_value;
+        return m_has_value ? m_value : m_default;
     };
 
     T operator()() const
@@ -73,30 +65,12 @@ class Property : IProperty
     void update() override;
 
  private:
-    std::shared_ptr<Config> m_config { nullptr };
+    std::shared_ptr<Config> m_config        { nullptr };
     std::string             m_name;
-    T                       m_value  {};
+    T                       m_value         {};
+    T                       m_default       {};
+    bool                    m_has_value     { false };
 };
-
-/*
-template<>
-void Property<double>::update()
-{
-    m_value = (*m_config)[m_name].getNumber();
-}
-
-template<>
-void Property<std::string>::update()
-{
-    m_value = (*m_config)[m_name].getString();
-}
-
-template<>
-void Property<bool>::update()
-{
-    m_value = (*m_config)[m_name].getBoolean();
-}
-*/
 
 using NumericProperty = Property<double>;
 using StringProperty  = Property<std::string>;

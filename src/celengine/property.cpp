@@ -6,23 +6,31 @@ namespace celestia
 namespace engine
 {
 
+#define PROPERTY_UPDATE(ValueType) \
+    auto v = m_config->find(m_name); \
+    m_has_value = v->getType() == Value:: ValueType ## Type; \
+    if (m_has_value) \
+        m_value = v->get ## ValueType (); \
+
 template<>
 void Property<double>::update()
 {
-    m_value = (*m_config)[m_name].getNumber();
+    PROPERTY_UPDATE(Number);
 }
 
 template<>
 void Property<std::string>::update()
 {
-    m_value = (*m_config)[m_name].getString();
+    PROPERTY_UPDATE(String);
 }
 
 template<>
 void Property<bool>::update()
 {
-    m_value = (*m_config)[m_name].getBoolean();
+    PROPERTY_UPDATE(Boolean);
 }
+
+#undef PROPERTY_UPDATE
 
 }
 } // namespace;
