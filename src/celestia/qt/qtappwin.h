@@ -104,6 +104,9 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
     void copyText();
     void pasteText();
 
+    void copyTextOrURL();
+    void pasteTextOrURL();
+
  signals:
     void progressUpdate(const QString& s, int align, const QColor& c);
 
