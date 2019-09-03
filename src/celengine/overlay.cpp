@@ -10,6 +10,7 @@
 #include <cstring>
 #include <cstdarg>
 #include <cstdio>
+#include <cstring>
 #include <celutil/utf8.h>
 #include "gl.h"
 #include "vecgl.h"

@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <cstdio>
 #include <cassert>
+#include <cstring>
+#include <libintl.h>
 #include "celestia.h"
 #include <celmath/mathlib.h>
 #include <celmath/perlin.h>

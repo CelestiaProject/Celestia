@@ -12,6 +12,7 @@
 #include "util.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <libintl.h>
 
 using namespace std;
 

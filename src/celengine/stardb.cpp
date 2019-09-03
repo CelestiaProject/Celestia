@@ -11,7 +11,9 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstdio>
+#include <cstring>
 #include <cassert>
+#include <libintl.h>
 #include <algorithm>
 #include <celmath/mathlib.h>
 #include <celmath/plane.h>

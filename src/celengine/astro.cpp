@@ -11,6 +11,7 @@
 #include <cmath>
 #include <iomanip>
 #include <cstdio>
+#include <cstring>
 #include <time.h>
 #include <celutil/basictypes.h>
 #include <celmath/mathlib.h>

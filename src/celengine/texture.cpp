@@ -22,6 +22,7 @@
 #endif
 
 #include <cmath>
+#include <libintl.h>
 #include <algorithm>
 #include <iostream>
 #include <fstream>

@@ -23,6 +23,7 @@
 #include <cstring>
 #include <cassert>
 #include <ctime>
+#include <libintl.h>
 #include <celengine/gl.h>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>

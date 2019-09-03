@@ -20,6 +20,7 @@
 #include <sstream>
 #include <fstream>
 #include <algorithm>
+#include <libintl.h>
 
 #include "selectionpopup.h"
 

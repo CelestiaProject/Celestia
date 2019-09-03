@@ -15,6 +15,7 @@
 #endif /* TARGET_OS_MAC */
 #endif /* _WIN32 */
 
+#include <libintl.h>
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include "parser.h"
