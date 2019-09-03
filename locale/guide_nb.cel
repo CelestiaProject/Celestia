@@ -1,0 +1,78 @@
+{
+	Name   "Jupiter"
+	Target "Sol/Jupiter"
+        Description "Jupiter er den største planeten i vårt solsystem og den femte fra solen.  Jupiter er en gasskjempe uten fast overflate, akkurat som de andre store ytre planetene. Den store Røde Flekken er den største og mest langlivete v de mange stormene i Jupiters turbulente atmosfære. Denne kjempestormen større enn Jorden har vært der i minst 300 år."}
+
+{
+	Name "Pluto and Charon"
+	Target "Sol/Pluto"
+	Distance 40000
+	DistanceUnits "km"
+        Description "Pluto går i bane rundt vår sol med en gjennomsnittlig avstand på nesten seks milliarder kilometer. Plutos måne Charon er så stor at de to sammen ofte kalles en «dobbeltplanet»."
+}
+
+{
+	Name "Eros"
+	Target "Sol/Eros"
+        Description "Eros er en potetformet asteroide nær Jorden, den er omtrent 33 km lang. Takket være romsomden NEAR Shoemaker vet man mer om Eros enn noen annen asteroide. Den 14. februar 2001 satte NEAR seg ned på Eros og ble den første romsonden som noen gang har landet på en asteroide."
+}
+
+{
+	Name "Alpha Centauri"
+	Target "Alpha Centauri"
+	Distance 90
+	DistanceUnits "au"
+        Description "Alpha Centauri A og B, sammen med Proxima Centauri, er det stjernesystemet 
+som er nærmest oss. Alpha Cen A er ganske lik vår Sol, men litt eldre og lyssterkere. B er mørkere 
+og rødere, og Proxima er så svak at den ikke kan ses med bare øyet selv om den er den stjernen som 
+er nærmest Solen."
+}
+
+{
+	Name "Pleiadene"
+	Target "Alcyone"
+	Distance 35
+	DistanceUnits "ly"
+	Description "Stjernehopen Pleiadene er en gruppe  lyssterke, unge stjerner. Pleiadene er oppkalt etter sju søstre fra gresk mytologi, selv om kikkerter viser at det er atskillig flere enn sju stjerner i hopen."
+}
+
+{
+	Name "Hyadene"
+	Target "63 Tau"
+	Distance 25
+	DistanceUnits "ly"
+        Descripton "Hyadene, som er oppkalt etter de fem døtrene til Atlas og Aethra, er en av de tydeligste åpne stjernehopene på himmelen. Det blir anslått at stjernene i Hyadene er omtrent 600 millioner år gamle - mer enn seks ganger eldre enn de varmere, blåere Pleiadene som ses ikke langt unna på vår himmel."
+}
+
+{
+	Name "Gliese 876 b"
+	Target "Gliese 876/b"
+        Description "Gliese 876 b er en kjempeplanet i bane rundt en rød dvergstjerne. Den går i en 2:1 baneresonans med en annen planet i systemet."
+}
+
+{
+	Name "Ida og Dactyl"
+	Target "Sol/Ida"
+	Distance 200
+	DistanceUnits "km"
+	Description "Romsonden Galileo fotograferte asteroiden 243 Ida i 1993 på vei til Jupiter. Disse bildene viste at Ida hadde en bitteliten satellitt som senere ble kalt Dactyl. Siden er det funnet flere andre asteroider som også har satellitter."
+}
+
+{
+	Name "51 Peg b"
+	Target "51 Peg/b"
+	Description "51 Pegasi b var den første planeten oppdaget rundt en annen normal stjerne enn Solen. Det er en gasskjempeplanet og går i bane svært nær sin stjerne - mindre enn en femdel av avstanden mellom Merkur og Solen. Astronomer har vært nødt til å endre sine teorier om hvordan solsystemer oppstår, når en gasskjempe kan eksistere så nær en stjerne."
+}
+
+{
+	Name "Albireo"
+	Target "Albireo"
+	Distance 0.6
+        Description "Albireo-systemet betraktes som et av de vakreste stjerneparene på himmelen på grunn av fargekontrastene mellom orange og blå-hvit. Den orange stjernen er en type K kjempe, og følgesvennen er en B-dverg."
+}
+
+{
+	Name "Komet Borrelly"
+	Target "Sol/Borrelly"
+        Description "22. september 2001 ble komet Borrelly den andre kometen som ble fotografert på nært hold av en romsonde. Selv om Deep Space 1 ikke var laget for å fly nær en komet kom den så nær kometkjernen som 2200 km og sendte tilbake de mest detaljerte bildene vi har av en kometkjerne."
+}
