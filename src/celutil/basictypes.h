@@ -10,33 +10,25 @@
 #ifndef _BASICTYPES_H_
 #define _BASICTYPES_H_
 
+#include <stdint.h>
+
 typedef unsigned int   uint;
 
 // Fixed size types
-typedef int            int32;
-typedef unsigned int   uint32;
-typedef short          int16;
-typedef unsigned short uint16;
-typedef char           int8;
-typedef unsigned char  uint8;
+typedef int32_t        int32;
+typedef uint32_t       uint32;
+typedef int16_t        int16;
+typedef uint16_t       uint16;
+typedef int8_t         int8;
+typedef uint8_t        uint8;
+typedef int64_t        int64;
+typedef uint64_t       uint64;
 
-#ifdef _MSC_VER
-// MS Visual C++ does not include stdint.h
-typedef __int64          int64;
-typedef unsigned __int64 uint64;
-#define INT64_MAX  LLONG_MAX
-#define UINT64_MAX ULLONG_MAX
-#else
-#include <stdint.h>
-#include <limits>
-typedef          int64_t int64;
-typedef         uint64_t uint64;
+#ifndef INT64_MAX
 #define INT64_MAX 9223372036854775807LL
+#endif
 #ifndef UINT64_MAX
 #define UINT64_MAX 0xffffffffffffffffULL
-#endif
-//#define INT64_MAX  std::numeric_limits<int64_t>::max()
-//#define UINT64_MAX std::numeric_limits<uint64_t>::max()
 #endif
 
 #endif // _BASICTYPES_H_
