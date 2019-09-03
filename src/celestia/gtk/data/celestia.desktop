@@ -1,12 +1,13 @@
 [Desktop Entry]
 Encoding=UTF-8
-Version=1.4.0
+Version=1.0
 Type=Application
-Exec=celestia
+Exec=celestia-gnome
 Icon=celestia
 X-GNOME-DocPath=
 Terminal=false
-Name=Celestia
-Comment=Space Simulator
+Name=Celestia (Gtk+)
+GenericName=Space Simulator
+Comment=Explore the Universe in this detailed space simulation
 StartupNotify=true
-Categories=Astronomy;Science;Application;
+Categories=Astronomy;Education;Application;
