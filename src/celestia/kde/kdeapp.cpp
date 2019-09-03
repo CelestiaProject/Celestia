@@ -19,6 +19,7 @@
 #include <libintl.h>
 #include <fstream>
 #include <sstream>
+#include <libintl.h>
 
 #include <qpushbutton.h>
 #include <qslider.h>

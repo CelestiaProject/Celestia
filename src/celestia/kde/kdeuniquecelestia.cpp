@@ -20,6 +20,7 @@
 #include <qdir.h>
 #include <string>
 #include <vector>
+#include <libintl.h>
 #include <klocale.h>
 #include <libintl.h>
 

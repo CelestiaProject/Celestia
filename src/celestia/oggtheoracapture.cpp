@@ -62,6 +62,9 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
+#include <cstring>
+#include <ctime>
+#include <libintl.h>
 #include <celutil/debug.h>
 #include <celutil/util.h>
 #include "../celengine/gl.h"

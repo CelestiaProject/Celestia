@@ -13,6 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include <libintl.h>
 
 #include "celestia.h"
 #include <celutil/debug.h>

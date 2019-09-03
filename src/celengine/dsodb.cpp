@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
+#include <libintl.h>
 #include <algorithm>
 #include <celmath/mathlib.h>
 #include <celmath/plane.h>

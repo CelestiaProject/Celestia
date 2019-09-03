@@ -8,7 +8,8 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include <stdio.h>
+#include <cstdio>
+#include <libintl.h>
 #include "celestia.h"
 #include <celmath/mathlib.h>
 #include <celutil/util.h>

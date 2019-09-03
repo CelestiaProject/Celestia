@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
+#include <libintl.h>
 #include <time.h>
 #include <unistd.h>
 #include <celengine/gl.h>
