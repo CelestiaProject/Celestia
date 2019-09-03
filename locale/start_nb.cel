@@ -1,0 +1,316 @@
+{
+# ... Skriptet begynner her
+
+#****************************************************************************
+#                                                                           *
+#                 START.CEL - Oppstartsskript for Celestia                  *
+#                             (versjon 2.1)                                 *
+#                                                                           *
+#---------------------------------------------------------------------------*
+#                                                                           *
+#  Dette skriptet kjøres automatisk hver gang du kjører Celestia.           *
+#                                                                           *
+#  MERK: Ikke ta bort krøllparentesene som er første og siste tegn i denne  *
+#        fila. De definerer denne fila som et CEL-skript.                   *
+#                                                                           *
+#  Du kan endre dette skriptet mpå mange måter slik det passer deg best.    *
+#  Bare ta vekk kommentartegnet fra en eller flere av linjene nedenfor,     *
+#  slik det er beskrevet. Hver linje eller kodeavsnitt inneholder           *
+#  kommentarer som beskriver hva som gjøres. For å avkommentere en kode-    *
+#  linje tar du bare vekk tegnet «#» fra begynnelsen av den linja.          *
+#                                                                           *
+#  Hvis du endrer dette skriptet bør du kopiere det til et trygt sted FØR   *
+#  du begynner, slik at du har det til å slå opp i senere.                  *
+#                                                                           *
+#                                                                           *
+#****************************************************************************
+
+  preloadtex { object "Sol/Earth" }
+  preloadtex { object "Sol/Earth/Moon" }
+
+  select {object "Sol"}
+  goto   {time 3.0 distance 30}
+  wait   {duration 3.0}
+
+  select {object "Sol/Earth"}
+  follow {}
+  goto   {time 3.0  distance 6.0}
+  wait   {duration 2.0}
+
+  print  {text "Welcome to Celestia!"  row -3  column 1  duration 3}
+  wait   {duration 3.0}
+
+#****************************************************************************
+#  Kodelinjene over er hele start.cel-skriptet. Nedenfor er en beskrivelse  *
+#  av hva hver kommando gjør. Først går vi til Solen, slik at når vi går    *
+#  til Jorden viser den solsiden, uansett hva din lokale tid er ...         *
+#                                                                           *
+#  preloadtex: Ber Celestia å laste inn teksturene for det oppgitte         *
+#          objektet. Ellers ville Celestia laste inn teksturen når objktet  *
+#          kommer til syne, og det ville merkes som en liten forsinkelse.   *
+#                                                                           *
+#  select: Viser Celestia hvilket objekt (planet, måne, romskip etc.) som   *
+#          skal defineres som gjeldende objekt. Sol definerer vårt sol-     *
+#          system, tegnet "/" er bare en markør for et hierarki, Earth -    *
+#          Jorden - er objektet vi vil velge. Hvis du vil velge Månen, så   *
+#          vil select-kommandoen se slik ut:                                *
+#            select {object "Sol/Earth/Moon"}                               *
+#                                                                           *
+#  goto:   Får Celestia til å reise til det valgte objektet, akkurat som å  *
+#          trykke «G»-tasten på tastaturet. Tidsparameteren angir hvor      *
+#          mange sekunder det skal ta å reise dit. Avstandsparameteren      *
+#          angir hvor langt unna objektet vi skal plasseres, i enheter lik  *
+#          objektets radius, pluss 1. HVis objektets radius for eksempel er *
+#          10 000 km og du oppgir 6.0 som avstand, så blir du plassert      *
+#          50 000 km fra senter av objektet.                                *
+#                                                                           *
+#  wait:   Siden goto-kommandoen sier at Celestia skal bruke en viss tid    *
+#          til å gjøre noe, så må vi gi Celestia like mye tid til faktisk   *
+#          å GJØRE det. Når vi går til Solen sier wait-kommandoen at        *
+#          Celestia skal vente i 3 sekunder mens goto-kommandoen utføres    *
+#          (i 3 sekunder.) Varighetsparameteren er som regel den samme som  *
+#          tidsparameteren i goto-kommandoen. Men det er alltid unntak :-D  *
+#                                                                           *
+#          Når vi reiser til Jorden, venter wait-kommandoen etter goto bare *
+#          i 2 sekunder. Neste kommando er en print-kommando, som viser     *
+#          litt tekst på skjermen og er fulgt av nok en wait-kommando, som  *
+#          venter i 3 sekunder til. Det er et spørsmål om tidsangivelse.    *
+#          goto-kommandoen tillater at vi viser tekst på skjermen MENS den  *
+#          kjører, så vi passer rett og slett på at den totale ventetiden i *
+#          wait-kommandoer etter en goto blir til sammen MINST den tiden    *
+#          som er oppgitt i goto-kommandoen. Den kan være lenger, om ønskes.*
+#                                                                           *
+#  follow: Får Celestia til å følge det valgte objektet gjennom rommet,     *
+#          akkurat som å trykke «F» på tastaturet. Du kan også erstatte     *
+#          follow {}-kommandoen med synchronous {}, som gjør at du blir     *
+#          stående i en stasjonær, eller synkron bane over det valgte       *
+#          objektet.                                                        *
+#                                                                           *
+#   print: Får Celestia til å vise (skrive ut) tekst på skjermen. Tekst-    *
+#          parameteren definerer teksten som skal vises. Rad-parameteren    *
+#          definerer hvor mange rader det er fra bunnen av vinduet til dit  *
+#          starten på teksten blir skrevet. Kolonneparameteren definerer    *
+#          hvor mange kolonner fra venstre kant av vinduet teksten skal     *
+#          begynne. Varighetsparameteren definerer hvor mange sekunder      *
+#          teksten skal vises på skjermen, dette følges av wait-kommandoen  *
+#          som beskrevet over.                                              *
+#****************************************************************************
+
+
+#****************************************************************************
+#  Hvis du vil plasseres over der DU er på Jorden, så bruk kommandoen       *
+#  gotolonglat vist nedenfor. Trinn for trinn :                             *                                             *
+#  * Kopier hele kodelinja.                                                 *
+#                                                                           *
+#  * Lim den inn nedenfor «goto»-kommandoen ovenfor.                        *
+#                                                                           *
+#  * Ta vekk «#»-tegnet på begynnelsen av linja. Dette tar vekk kommentar-  *
+#    merket slik at kommandolinja blir utført.                              * 
+#                                                                           *
+#  * Sett et «#»-tegn først på den originale goto-kommandoen.               *
+#    Dette gjør kommandolinja til en kommentar, så den blir IKKE kjørt.     *
+#                                                                           *
+#  * Endre «longitude» - lengde - og «latitude» - bredde - til verdiene for *
+#    ditt sted.                                                             *
+#                                                                           *
+#  * Siden du går til et bestemt sted på Jorden er det kanskje ikke dag der,*
+#    så du kunne kommentere ut de følgende kodelinjene ved å sette «#»      *
+#    først på hver linje ...                                                *
+#      select {object "Sol"}                                                *
+#      goto   {time 3.0 distance 30}                                        *
+#      wait   {duration 3.0}                                                *
+#    Hvis du VIL vise ditt sted på dagtid, så bruk time-kommandoen som er   *
+#    beskrevet nedenfor.                                                    *
+#****************************************************************************
+
+#  gotolonglat {time 5.0  distance 4.0  longitude 0.0  latitude 0.0}
+
+
+#****************************************************************************
+#  Hvis du vil at Celestia alltid skal starte med en bestemt dato/tid, så   *
+#  bruk time-kommandoen, som vist nedenfor.                                 *
+#                                                                           *
+#  ADVARSEL: Om Celestia startes med en fastsatt dato/tid må du trykke «!»  *
+#           (utropstegn) på tastaturet for å TILBAKESTILLE tiden til den    *
+#           datamaskinen din viser, hver gang du vil utforske litt - HVIS   *
+#           den virkelige tiden gjør noen forskjell.                        *
+#                                                                           *
+#  Trinn for trinn ...                                                      *
+#                                                                           *
+#  * Bestem om du vil oppgi datoen som en UTC dato-tidsstreng, eller en     *
+#    Juliansk dag (se nedenfor).                                            *
+#                                                                           *
+#  * Kopier den kodelinjen som har tidsangivelsen du vil bruke.             *
+#                                                                           *
+#  * Lim den inn over goto-kommandoen øverst i denne fila.                  *
+#                                                                           *
+#  * Ta vekk «#»-tegnet først på linja. Denne tar vekk kommentartegnet slik *
+#    at kodelinja vil bli utført.                                           *
+#                                                                           *
+#  * Endre dato/tidsangivelsen til det DU vil bruke.                        *
+#****************************************************************************
+
+# Oppgi tidspunkt med en UTC-streng :
+#  time { utc "2003-08-11T09:29:24.0000" }
+#              ÅÅÅÅ-MM-DDTtt:mm:ss.ssss
+#  Merk  "T"-en .........^ ... (Den må være der)
+
+# Oppgi tidspunkt som e Juliansk dato:
+#  time { jd JulianDate }
+#    Datokonverterer fra US Navy:
+#    http://aa.usno.navy.mil/data/docs/JulianDate.html
+#
+#  Det er også flere andre nettsteder som gjør dette, f.eks.
+#    http://www.csgnetwork.com/julianmodifdateconv.html
+
+
+#****************************************************************************
+#  The commands listed below allow you to define several of Celestia's      *
+#  settings, that will be set every time you start Celestia. Modify any of  *
+#  the settings you want to.                                                *
+#****************************************************************************
+
+# Field of View (UNcomment / modify to meet your needs)...
+# Default is 25 degrees, at a screen resolution of 1024 x 768
+#  set {name "FOV" value 25.0}
+
+
+# Ambient light level (UNcomment / modify to meet your needs)...
+# 0.0 to 0.5 is a good Lo-Hi range
+#  set {name "AmbientLightLevel" value 0.1}
+
+
+# Faintest visible star magnitude (brightness)...
+# (UNcomment / modify to meet your needs)
+# Celestia UI: 0.8 to 15.2, default is 6.0
+#
+#  setvisibilitylimit {magnitude 6.0}
+
+
+# Faintest auto-magnitude brightness, at 45 degrees, Default is 8.5...
+# (UNcomment / modify to meet your needs)
+#  setfaintestautomag45deg {magnitude 8.5}
+
+
+# Items to be displayed (rendered):
+# Do NOT render the following objects (UNcomment to suit your needs)...
+#  renderflags {clear "atmospheres"}
+#  renderflags {clear "automag"}
+#  renderflags {clear "boundaries"}
+#  renderflags {clear "cloudmaps"}
+#  renderflags {clear "comettails"}
+#  renderflags {clear "constellations"}
+#  renderflags {clear "eclipseshadows"}
+#  renderflags {clear "galaxies"}
+#  renderflags {clear "grid"}
+#  renderflags {clear "markers"}
+#  renderflags {clear "nightmaps"}
+#  renderflags {clear "orbits"}
+#  renderflags {clear "planets"}
+#  renderflags {clear "pointstars"}
+#  renderflags {clear "ringshadows"}
+#  renderflags {clear "stars"}
+#  renderflags {clear "partialtrajectories"}
+
+
+# Items to be displayed (rendered):
+# DO render the following objects (UNcomment to suit your needs)...
+#  renderflags {set "atmospheres"}
+#  renderflags {set "automag"}
+#  renderflags {set "boundaries"}
+#  renderflags {set "cloudmaps"}
+#  renderflags {set "comettails"}
+#  renderflags {set "constellations"}
+#  renderflags {set "eclipseshadows"}
+#  renderflags {set "galaxies"}
+#  renderflags {set "grid"}
+#  renderflags {set "markers"}
+#  renderflags {set "nightmaps"}
+#  renderflags {set "orbits"}
+#  renderflags {set "planets"}
+#  renderflags {set "pointstars"}
+#  renderflags {set "ringshadows"}
+#  renderflags {set "stars"}
+#  renderflags {set "partialtrajectories"}
+
+
+# Text labels:
+# Do NOT label the following objects (UNcomment to suit your needs)...
+#  labels {clear "asteroids"}
+#  labels {clear "constellations"}
+#  labels {clear "galaxies"}
+#  labels {clear "moons"}
+#  labels {clear "planets"}
+#  labels {clear "spacecraft"}
+#  labels {clear "stars"}
+
+
+# Text labels:
+# DO label the following objects (UNcomment to suit your needs)...
+#  labels {set "asteroids"}
+#  labels {set "constellations"}
+#  labels {set "galaxies"}
+#  labels {set "moons"}
+#  labels {set "planets"}
+#  labels {set "spacecraft"}
+#  labels {set "stars"}
+
+
+# Marker control:
+# Unmark any objects that are currently Marked and disable Marker display...
+# (UNcomment to suit your needs)
+#  unmarkall { }
+
+
+# Minimum orbit diameter to be rendered (in pixels)...
+# (UNcomment / modify  to suit your needs)
+#  set {name "MinOrbitSize"  value 1.0}
+
+
+# Furthest visible star distance, default is 1000000...
+# (UNcomment / modify to suit your needs)
+#  set {name "StarDistanceLimit"  value 1000000}
+
+
+# Time rate (1x, 100x, 1000x, etc.)...
+# (UNcomment / modify to suit your needs)
+#    Negative value = Reverse Time
+#               0   = Pause Time
+#               1.0 = Real Time (default)
+#            1000.0 = Good moon orbit motion
+#
+#  timerate {rate 1.0}
+
+
+#****************************************************************************
+#  If you are using large textures, you can have Celestia pre-load them     *
+#  into your graphics card memory by listing them below.                    *
+#****************************************************************************
+# Examples...
+#  preloadtex {object "earth.*"}
+#  preloadtex {object "earth.png"}
+
+
+#****************************************************************************
+#  orbit is a fun command to play with. The axis is specified in [X Y Z]    *
+#  order, and each axis can be either 0 or 1. rate = how fast, duration =   *
+#  number of seconds. Just make sure you have an object selected.           *
+#****************************************************************************
+#  orbit {axis [0 1 0]  rate 10.0  duration 7.0}
+
+
+#****************************************************************************
+#  To learn more about scripting in Celestia, visit:                        *
+#                                                                           *
+#   * Scripting forum: (http://www.shatters.net/forum/viewforum.php?f=9)    *
+#   * Don G's Celestia page: (http://www.donandcarla.com/Celestia/)         *
+#   * Harald's Celestia page: (http://www.h-schmidt.net/celestia/)          *
+#                                                                           *
+#  Don G's page includes a guide for CEL scripting. Harald's page includes  *
+#  a guide for CELX (Lua) scripting. Both also have example scripts and     *
+#  other goodies.                                                           *
+#****************************************************************************
+
+
+# End of script...
+}
