@@ -22,17 +22,17 @@ void dialogViewOptions(AppData* app);
 /* Local data */
 static const char * const ambientLabels[]=
 {
-    "None",
-    "Low",
-    "Medium",
+    N_("None"),
+    N_("Low"),
+    N_("Medium"),
     NULL
 };
 
 static const char * const infoLabels[]=
 {
-    "None",
-    "Terse",
-    "Verbose",
+    N_("None"),
+    N_("Terse"),
+    N_("Verbose"),
     NULL
 };
 

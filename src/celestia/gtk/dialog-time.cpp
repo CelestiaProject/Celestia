@@ -21,7 +21,7 @@
 
 
 /* Labels for TimeZone dropdown */
-static const char* timeOptions[] = { "UTC", "Local", NULL };
+static const char* timeOptions[] = { N_("UTC"), N_("Local"), NULL };
 
 /* Declarations: Callbacks */
 static gboolean intAdjChanged(GtkAdjustment* adj, int *val);
@@ -40,12 +40,12 @@ void dialogSetTime(AppData* app)
 {
 	int timezone = 1;
 	
-	GtkWidget *stimedialog = gtk_dialog_new_with_buttons("Set Time",
+	GtkWidget *stimedialog = gtk_dialog_new_with_buttons(_("Set Time"),
 	                                                     GTK_WINDOW(app->mainWindow),
 	                                                     GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                     GTK_STOCK_OK,
 	                                                     GTK_RESPONSE_OK,
-	                                                     "Set Current Time",
+	                                                     _("Set Current Time"),
 	                                                     GTK_RESPONSE_ACCEPT,
 	                                                     GTK_STOCK_CANCEL,
 	                                                     GTK_RESPONSE_CANCEL,
@@ -55,7 +55,7 @@ void dialogSetTime(AppData* app)
 		timezone = 2;
 	
 	GtkWidget *hbox = gtk_hbox_new(FALSE, 6);
-	GtkWidget *frame = gtk_frame_new("Time");
+	GtkWidget *frame = gtk_frame_new(_("Time"));
 	GtkWidget *align = gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
 
 	astro::Date date(app->simulation->getTime() +
@@ -69,31 +69,31 @@ void dialogSetTime(AppData* app)
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(stimedialog)->vbox), frame, FALSE, FALSE, 0);
     
 	int seconds = (int)date.seconds;
-	intSpin(hbox, "Hour", 0, 23, &date.hour, ":");
-	intSpin(hbox, "Minute", 0, 59, &date.minute, ":");
-	intSpin(hbox, "Second", 0, 59, &seconds, "  ");
+	intSpin(hbox, N_("Hour"), 0, 23, &date.hour, N_(":"));
+	intSpin(hbox, N_("Minute"), 0, 59, &date.minute, N_(":"));
+	intSpin(hbox, N_("Second"), 0, 59, &seconds, N_("  "));
 
 	chooseOption(hbox,
-	             "Timezone",
+	             N_("Timezone"),
 	             (char **)timeOptions,
 	             &timezone,
 	             GTK_SIGNAL_FUNC(zoneChosen));
 	
 	gtk_widget_show_all(hbox);
 	hbox = gtk_hbox_new(FALSE, 6);
-	frame = gtk_frame_new("Date");
+	frame = gtk_frame_new(_("Date"));
 	align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
 	gtk_container_set_border_width (GTK_CONTAINER (frame), 7);
 
 	chooseOption(hbox,
-	             "Month",
+	             N_("Month"),
 	             (char **)monthOptions,
 	             &date.month,
 	             GTK_SIGNAL_FUNC(monthChosen));
 	
 	/* (Hopefully, noone will need to go beyond these years :-) */
-	intSpin(hbox, "Day", 1, 31, &date.day, ",");
-	intSpin(hbox, "Year", -9999, 9999, &date.year, " ");
+	intSpin(hbox, N_("Day"), 1, 31, &date.day, N_(","));
+	intSpin(hbox, N_("Year"), -9999, 9999, &date.year, N_(" "));
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(stimedialog)->vbox), frame, FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(align),GTK_WIDGET(hbox));
@@ -152,13 +152,13 @@ static gboolean monthChosen(GtkComboBox *menu, int* month)
 static void chooseOption(GtkWidget *hbox, const char *str, char *choices[], int *val, GtkSignalFunc chosen)
 {
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
-	GtkWidget *label = gtk_label_new(str);
+	GtkWidget *label = gtk_label_new(_(str));
 	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
 	GtkWidget* combo = gtk_combo_box_new_text();
 	
 	for(unsigned int i = 0; choices[i]; i++)
 	{
-		gtk_combo_box_append_text(GTK_COMBO_BOX(combo), choices[i]);
+		gtk_combo_box_append_text(GTK_COMBO_BOX(combo), _(choices[i]));
 	}
 	
 	gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, TRUE, 0);
@@ -175,7 +175,7 @@ static void chooseOption(GtkWidget *hbox, const char *str, char *choices[], int 
 static void intSpin(GtkWidget *hbox, const char *str, int min, int max, int *val, const char *sep)
 {
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
-	GtkWidget *label = gtk_label_new(str);
+	GtkWidget *label = gtk_label_new(_(str));
 	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
 	GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new ((float)*val, (float) min, (float) max,
 	                                                           1.0, 5.0, 0.0);
@@ -192,7 +192,7 @@ static void intSpin(GtkWidget *hbox, const char *str, int min, int max, int *val
 	{
 		gtk_widget_show (label);
 		GtkWidget *hbox2 = gtk_hbox_new(FALSE, 3);
-		label = gtk_label_new(sep);
+		label = gtk_label_new(_(sep));
 		gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.5);
 		gtk_box_pack_start (GTK_BOX (hbox2), spinner, FALSE, FALSE, 0);
 		gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, FALSE, 0);

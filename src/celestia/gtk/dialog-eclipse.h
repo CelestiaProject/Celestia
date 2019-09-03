@@ -55,29 +55,29 @@ struct _EclipseData {
 
 const char * const eclipseTitles[] =
 {
-	"Planet",
-	"Satellite",
-	"Date",
-	"Start",
-	"End",
+	N_("Planet"),
+	N_("Satellite"),
+	N_("Date"),
+	N_("Start"),
+	N_("End"),
 	NULL
 };
 
 const char * const eclipseTypeTitles[] =
 {
-	"solar",
-	"moon",
+	N_("solar"),
+	N_("moon"),
 	NULL
 };
 
 const char * const eclipsePlanetTitles[] =
 {
-	"Earth",
-	"Jupiter",
-	"Saturn",
-	"Uranus",
-	"Neptune",
-	"Pluto",
+	N_("Earth"),
+	N_("Jupiter"),
+	N_("Saturn"),
+	N_("Uranus"),
+	N_("Neptune"),
+	N_("Pluto"),
 	NULL
 };
 

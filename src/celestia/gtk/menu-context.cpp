@@ -61,9 +61,9 @@ void menuContext(float, float, Selection sel)
 			name = sel.body()->getName();
 			AppendMenu(popup, NULL, name.c_str(), gtk_action_group_get_action(app->agMain, "CenterSelection"));
 			AppendMenu(popup, NULL, NULL, 0);
-			AppendMenu(popup, NULL, "_Goto", gtk_action_group_get_action(app->agMain, "GotoSelection"));
-			AppendMenu(popup, NULL, "_Follow", gtk_action_group_get_action(app->agMain, "FollowSelection"));
-			AppendMenu(popup, NULL, "S_ync Orbit", gtk_action_group_get_action(app->agMain, "SyncSelection"));
+			AppendMenu(popup, NULL, N_("_Goto"), gtk_action_group_get_action(app->agMain, "GotoSelection"));
+			AppendMenu(popup, NULL, N_("_Follow"), gtk_action_group_get_action(app->agMain, "FollowSelection"));
+			AppendMenu(popup, NULL, N_("S_ync Orbit"), gtk_action_group_get_action(app->agMain, "SyncSelection"));
 			/* Add info eventually:
 			 * AppendMenu(popup, NULL, "_Info", 0); */
 
@@ -71,7 +71,7 @@ void menuContext(float, float, Selection sel)
 			if (satellites != NULL && satellites->getSystemSize() != 0)
 			{
 				GtkMenu* satMenu = CreatePlanetarySystemMenu(name, satellites);
-				gtk_menu_item_set_submenu(AppendMenu(popup, NULL, "_Satellites", 0), GTK_WIDGET(satMenu));
+				gtk_menu_item_set_submenu(AppendMenu(popup, NULL, N_("_Satellites"), 0), GTK_WIDGET(satMenu));
 			}
 
 			vector<string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
@@ -80,7 +80,7 @@ void menuContext(float, float, Selection sel)
 				if (altSurfaces->size() > 0)
 				{
 					GtkMenu* surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
-					gtk_menu_item_set_submenu(AppendMenu(popup, NULL, "_Alternate Surfaces", 0), GTK_WIDGET(surfMenu));
+					gtk_menu_item_set_submenu(AppendMenu(popup, NULL, N_("_Alternate Surfaces"), 0), GTK_WIDGET(surfMenu));
 					delete altSurfaces;
 				}
 			}
@@ -93,7 +93,7 @@ void menuContext(float, float, Selection sel)
 			name = ReplaceGreekLetterAbbr(sim->getUniverse()->getStarCatalog()->getStarName(*(sel.star())));
 			AppendMenu(popup, NULL, name.c_str(), gtk_action_group_get_action(app->agMain, "CenterSelection"));
 			AppendMenu(popup, NULL, NULL, 0);
-			AppendMenu(popup, NULL, "_Goto", gtk_action_group_get_action(app->agMain, "GotoSelection"));
+			AppendMenu(popup, NULL, N_("_Goto"), gtk_action_group_get_action(app->agMain, "GotoSelection"));
 			/* Add info eventually:
 			 * AppendMenu(popup, NULL, "_Info", 0); */
 
@@ -115,8 +115,8 @@ void menuContext(float, float, Selection sel)
 		{
 			AppendMenu(popup, NULL, app->simulation->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str(), gtk_action_group_get_action(app->agMain, "CenterSelection"));
 			AppendMenu(popup, NULL, NULL, 0);
-			AppendMenu(popup, NULL, "_Goto", gtk_action_group_get_action(app->agMain, "GotoSelection"));
-			AppendMenu(popup, NULL, "_Follow", gtk_action_group_get_action(app->agMain, "FollowSelection"));
+			AppendMenu(popup, NULL, N_("_Goto"), gtk_action_group_get_action(app->agMain, "GotoSelection"));
+			AppendMenu(popup, NULL, N_("_Follow"), gtk_action_group_get_action(app->agMain, "FollowSelection"));
 			/* Add info eventually:
 			 * AppendMenu(popup, NULL, "_Info", 0); */
 		}
@@ -130,9 +130,9 @@ void menuContext(float, float, Selection sel)
 	}
 
 	if (app->simulation->getUniverse()->isMarked(sel, 1))
-		AppendMenu(popup, menuUnMark, "_Unmark", 0);
+		AppendMenu(popup, menuUnMark, N_("_Unmark"), 0);
 	else
-		AppendMenu(popup, menuMark, "_Mark", 0);
+		AppendMenu(popup, menuMark, N_("_Mark"), 0);
 
 	app->simulation->setSelection(sel);
 
@@ -237,7 +237,7 @@ static GtkMenuItem* AppendMenu(GtkWidget* parent, GtkSignalFunc callback, const 
 	if (name == NULL)
 		menuitem = gtk_separator_menu_item_new();
 	else
-		menuitem = gtk_menu_item_new_with_mnemonic(name);
+		menuitem = gtk_menu_item_new_with_mnemonic(_(name));
 
 	/* If no callback was provided, pass GtkAction, else convert to pointer */
 	if (callback == NULL && extra != 0)
@@ -330,17 +330,17 @@ static GtkMenu* CreatePlanetarySystemMenu(string parentName, const PlanetarySyst
 
 	/* Add each vector of PlanetarySystem bodies to a vector to iterate over */
 	objects.push_back(asteroids);
-	menuNames.push_back("Asteroids");
+	menuNames.push_back(_("Asteroids"));
 	objects.push_back(comets);
-	menuNames.push_back("Comets");
+	menuNames.push_back(_("Comets"));
 	objects.push_back(invisibles);
-	menuNames.push_back("Invisibles");
+	menuNames.push_back(_("Invisibles"));
 	objects.push_back(moons);
-	menuNames.push_back("Moons");
+	menuNames.push_back(_("Moons"));
 	objects.push_back(planets);
-	menuNames.push_back("Planets");
+	menuNames.push_back(_("Planets"));
 	objects.push_back(spacecraft);
-	menuNames.push_back("Spacecraft");
+	menuNames.push_back(_("Spacecraft"));
 
 	/* Now sort each vector and generate submenus */
 	IntStrPairComparePredicate pred;
@@ -374,7 +374,7 @@ static GtkMenu* CreatePlanetarySystemMenu(string parentName, const PlanetarySyst
 			{
 				/* Skip sorting if we are dealing with the planets in our own
 				 * Solar System. */
-				if (parentName != "Sol" || *menuName != "Planets")
+				if (parentName != _("Sol") || *menuName != _("Planets"))
 					sort(obj->begin(), obj->end(), pred);
 
 				if (numSubMenus > 1)
@@ -407,7 +407,7 @@ static GtkMenu* CreateAlternateSurfaceMenu(const vector<string>& surfaces)
 {
 	GtkWidget* menu = gtk_menu_new();
 
-	AppendMenu(menu, GTK_SIGNAL_FUNC(handleContextSurface), "Normal", 0);
+	AppendMenu(menu, GTK_SIGNAL_FUNC(handleContextSurface), _("Normal"), 0);
 	for (guint i = 0; i < surfaces.size(); i++)
 	{
 		AppendMenu(menu, GTK_SIGNAL_FUNC(handleContextSurface), surfaces[i].c_str(), GINT_TO_POINTER(i+1));

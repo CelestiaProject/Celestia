@@ -41,19 +41,19 @@ struct _sbData {
 
 static const char * const sbTitles[] =
 {
-	"Name",
-	"Distance(LY)",
-	"App. Mag",
-	"Abs. Mag",
-	"Type"
+	N_("Name"),
+	N_("Distance(LY)"),
+	N_("App. Mag"),
+	N_("Abs. Mag"),
+	N_("Type")
 };
 
 static const char * const sbRadioLabels[] =
 {
-	"Nearest",
-	"Brightest (App.)",
-	"Brightest (Abs.)",
-	"With Planets",
+	N_("Nearest"),
+	N_("Brightest (App.)"),
+	N_("Brightest (Abs.)"),
+	N_("With Planets"),
 	NULL
 };
 

@@ -125,7 +125,7 @@ void splashSetText(SplashData* ss, const char* text)
 	if (!ss->splash)
 		return;
 
-	sprintf(message, "Version " VERSION "\n%s", text);
+	sprintf(message, _("Version " VERSION "\n%s"), text);
 
 	gtk_label_set_text(GTK_LABEL(ss->label), message);
 

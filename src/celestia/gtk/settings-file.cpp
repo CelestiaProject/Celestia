@@ -38,7 +38,7 @@ void initSettingsFile(AppData* app)
 	 * error code. */
 	if (error != NULL && g_file_test(fn, G_FILE_TEST_EXISTS))
 	{
-		g_print("Error reading '%s': %s.\n", fn, error->message);
+		g_print(_("Error reading '%s': %s.\n"), fn, error->message);
 		exit(1);
 	}
 	
@@ -300,7 +300,7 @@ void saveSettingsFile(AppData* app)
 	outfile = fopen(fn, "w");
 	
 	if (outfile == NULL)
-		g_print("Error writing '%s'.\n", fn);
+		g_print(_("Error writing '%s'.\n"), fn);
 	
 	fputs(g_key_file_to_data(file, NULL, NULL), outfile);
 	
