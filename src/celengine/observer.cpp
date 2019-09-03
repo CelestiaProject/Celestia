@@ -1413,9 +1413,9 @@ ObserverFrame::ObserverFrame(CoordinateSystem _coordSys,
 /*! Create a new ObserverFrame with the specified reference frame.
  *  The coordinate system of this frame will be marked as unknown.
  */
-ObserverFrame::ObserverFrame(const ReferenceFrame &f) :
+ObserverFrame::ObserverFrame(const ReferenceFrame::SharedConstPtr &f) :
     coordSys(Unknown),
-    frame(&f)
+    frame(f)
 {
 }
 

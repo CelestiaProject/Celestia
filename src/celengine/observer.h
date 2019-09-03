@@ -18,18 +18,17 @@
 #ifndef _CELENGINE_OBSERVER_H_
 #define _CELENGINE_OBSERVER_H_
 
-#include <memory>
 #include <celmath/mathlib.h>
 #include <celengine/frame.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-
+#include "shared.h"
 
 class ObserverFrame
 {
 public:
-    using SharedPtr = std::shared_ptr<ObserverFrame>;
-    using SharedConstPtr = std::shared_ptr<const ObserverFrame>;
+    SHARED_TYPES(ObserverFrame)
+
     enum CoordinateSystem
     {
         Universal       = 0,
@@ -59,7 +58,7 @@ public:
                   const Selection &_refObject,
                   const Selection &_targetObj = Selection());
     ObserverFrame(const ObserverFrame&);
-    ObserverFrame(const ReferenceFrame &f);
+    ObserverFrame(const ReferenceFrame::SharedConstPtr &f);
 
     ~ObserverFrame() = default;
 

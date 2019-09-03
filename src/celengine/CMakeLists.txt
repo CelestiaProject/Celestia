@@ -98,6 +98,7 @@ set(CELENGINE_SOURCES
   selection.h
   shadermanager.cpp
   shadermanager.h
+  shared.h
   simulation.cpp
   simulation.h
   skygrid.cpp
