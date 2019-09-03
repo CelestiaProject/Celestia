@@ -10,7 +10,12 @@ namespace engine
     auto v = m_config->find(m_name); \
     m_has_value = v->getType() == Value:: ValueType ## Type; \
     if (m_has_value) \
-        m_value = v->get ## ValueType (); \
+    { \
+        if (m_validate != nullptr) \
+            m_value = m_validate(v->get ## ValueType ()); \
+        else \
+            m_value = v->get ## ValueType (); \
+    }
 
 template<>
 void Property<double>::update()

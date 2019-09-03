@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <string>
 #include <vector>
 
@@ -21,9 +22,8 @@ namespace engine
 class Value;
 class AssociativeArray;
 
-typedef std::vector<Value*> Array;
-typedef std::vector<Value*> ValueArray;
-typedef AssociativeArray Hash;
+using Array = std::vector<Value*>;
+using Hash  = AssociativeArray;
 
 class Value
 {
@@ -38,33 +38,80 @@ class Value
         BooleanType    = 5
     };
 
-    Value(double);
-    Value(const std::string&);
-    Value(ValueArray*);
-    Value(Hash*);
-    Value(bool);
     Value() = default;
     ~Value();
+    Value(const Value&) = delete; // TODO: implement
+    Value(Value&&) = delete; // TODO: implement
 
-    ValueType getType() const;
+    Value(double d) : type(NumberType)
+    {
+        data.d = d;
+    }
+    Value(const char *s) : type(StringType)
+    {
+        data.s = new std::string(s);
+    }
+    explicit Value(const std::string &s) : type(StringType)
+    {
+        data.s = new std::string(s);
+    }
+    Value(Array *a) : type(ArrayType)
+    {
+        data.a = a;
+    }
+    Value(Hash *h) : type(HashType)
+    {
+        data.h = h;
+    }
+    Value(bool b) : type(BooleanType)
+    {
+        data.d = b ? 1.0 : 0.0;
+    }
 
-    bool isNull() const;
-    double getNumber() const;
-    std::string getString() const;
-    ValueArray* getArray() const;
-    Hash* getHash() const;
-    bool getBoolean() const;
+    ValueType getType() const
+    {
+        return type;
+    }
+    bool isNull() const
+    {
+        return type == NullType;
+    }
+    double getNumber() const
+    {
+        assert(type == NumberType);
+        return data.d;
+    }
+    std::string getString() const
+    {
+        assert(type == StringType);
+        return *data.s;
+    }
+    Array* getArray() const
+    {
+        assert(type == ArrayType);
+        return data.a;
+    }
+    Hash* getHash() const
+    {
+        assert(type == HashType);
+        return data.h;
+    }
+    bool getBoolean() const
+    {
+        assert(type == BooleanType);
+        return (data.d != 0.0);
+    }
 
  private:
     union Data
     {
-        std::string* s;
-        double d;
-        ValueArray* a;
-        Hash* h;
+        std::string *s;
+        double       d;
+        Array       *a;
+        Hash        *h;
     };
 
-    ValueType type{ NullType };
+    ValueType type { NullType };
     Data data;
 };
 

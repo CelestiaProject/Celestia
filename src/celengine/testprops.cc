@@ -15,11 +15,11 @@ class myconfig : IConfigUpdater
 void myconfig::read()
 {
     beginUpdate();
-	auto *v1 = new Value(10.18);
+    auto *v1 = new Value(10.18);
     set("Distance", v1);
-	auto *v2 = new Value(std::string("foobar"));
+    auto *v2 = new Value(std::string("foobar"));
     set("Name", v2);
-	auto *v3 = new Value(true);
+    auto *v3 = new Value(true);
     set("Visible", v3);
     endUpdate();
 }
@@ -29,17 +29,17 @@ class Foo
     Property<double>    m_p1;
     NumericProperty     m_distance;
     StringProperty      m_name, m_type;
-    BoolProperty        m_visible;
+    BooleanProperty     m_visible;
     shared_ptr<Config>  m_cfg;
 
  public:
     Foo(const shared_ptr<Config> &cfg):
         m_cfg       (cfg),
         m_p1        (Property<double>(cfg, "P1", 10.5)),
-        m_distance  (NumericProperty(cfg, "distance", 55.1)),
+        m_distance  (NumericProperty(cfg, "distance", 55.1, [](const double &v){ return v > 0 ? -v : v; })),
         m_name      (StringProperty(cfg, "name", "baz")),
         m_type      (StringProperty(cfg, "type", "baz")),
-        m_visible   (BoolProperty(cfg, "visible", false))
+        m_visible   (BooleanProperty(cfg, "visible", false))
     {
     }
     double p1()

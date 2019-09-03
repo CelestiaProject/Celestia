@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+#include <functional>
 #include <memory>
 #include "configuration.h"
 
@@ -20,19 +22,24 @@ template<typename T>
 class Property : IProperty
 {
  public:
+    using validate_fn_t = std::function<T(const T&)>;
+
     Property() = default;
 
-    Property(std::shared_ptr<Config> config, std::string name, T def) :
-        m_config(std::move(config)),
-        m_name(std::move(name)),
-        m_default(std::move(def))
+    Property(std::shared_ptr<Config> config, std::string name, T _default, validate_fn_t validate = nullptr) :
+        m_config    (std::move(config)),
+        m_name      (std::move(name)),
+        m_default   (std::move(_default)),
+        m_validate  (std::move(validate))
     {
+        assert(m_config != nullptr);
         m_config->addProperty(this);
     };
 
     ~Property()
     {
-        m_config->removeProperty(this);
+        if (m_config != nullptr)
+            m_config->removeProperty(this);
     };
 
     // Getters and setters
@@ -70,11 +77,12 @@ class Property : IProperty
     T                       m_value         {};
     T                       m_default       {};
     bool                    m_has_value     { false };
+    validate_fn_t           m_validate      { nullptr };
 };
 
 using NumericProperty = Property<double>;
 using StringProperty  = Property<std::string>;
-using BoolProperty    = Property<bool>;
+using BooleanProperty = Property<bool>;
 
 }
 } // namespace;
