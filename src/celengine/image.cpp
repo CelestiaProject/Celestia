@@ -139,10 +139,10 @@ static int calcMipLevelSize(int fmt, int w, int h, int mip)
 }
 
 
-Image::Image(int fmt, int w, int h, int mips) :
+Image::Image(int fmt, int w, int h, int mip) :
     width(w),
     height(h),
-    mipLevels(mips),
+    mipLevels(mip),
     format(fmt),
     pixels(NULL)
 {
