@@ -11,12 +11,11 @@
 #ifndef _CELENGINE_FRAME_H_
 #define _CELENGINE_FRAME_H_
 
-#include <memory>
 #include <celengine/astro.h>
 #include <celengine/selection.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-
+#include "shared.h"
 
 /*! A ReferenceFrame object has a center and set of orthogonal axes.
  *
@@ -27,8 +26,8 @@
 class ReferenceFrame
 {
  public:
-    using SharedPtr = std::shared_ptr<ReferenceFrame>;
-    using SharedConstPtr = std::shared_ptr<const ReferenceFrame>;
+    SHARED_TYPES(ReferenceFrame)
+
     ReferenceFrame(Selection center);
     virtual ~ReferenceFrame() {};
 
@@ -72,6 +71,8 @@ class CachingFrame : public ReferenceFrame
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+    SHARED_TYPES(CachingFrame)
+
     CachingFrame(Selection _center);
     virtual ~CachingFrame() {};
 
@@ -93,6 +94,8 @@ class CachingFrame : public ReferenceFrame
 class J2000EclipticFrame : public ReferenceFrame
 {
  public:
+    SHARED_TYPES(J2000EclipticFrame)
+
     J2000EclipticFrame(Selection center);
     virtual ~J2000EclipticFrame() {};
 
@@ -113,6 +116,8 @@ class J2000EclipticFrame : public ReferenceFrame
 class J2000EquatorFrame : public ReferenceFrame
 {
  public:
+    SHARED_TYPES(J2000EquatorFrame)
+
     J2000EquatorFrame(Selection center);
     virtual ~J2000EquatorFrame() {};
     Eigen::Quaterniond getOrientation(double tjd) const;
@@ -132,8 +137,8 @@ class J2000EquatorFrame : public ReferenceFrame
 class BodyFixedFrame : public ReferenceFrame
 {
  public:
-    using SharedPtr = std::shared_ptr<BodyFixedFrame>;
-    using SharedConstPtr = std::shared_ptr<const BodyFixedFrame>;
+    SHARED_TYPES(BodyFixedFrame)
+
     BodyFixedFrame(Selection center, Selection obj);
     virtual ~BodyFixedFrame() {};
     Eigen::Quaterniond getOrientation(double tjd) const;
@@ -151,8 +156,8 @@ class BodyFixedFrame : public ReferenceFrame
 class BodyMeanEquatorFrame : public ReferenceFrame
 {
  public:
-    using SharedPtr = std::shared_ptr<BodyMeanEquatorFrame>;
-    using SharedConstPtr = std::shared_ptr<const BodyMeanEquatorFrame>;
+    SHARED_TYPES(BodyMeanEquatorFrame)
+
     BodyMeanEquatorFrame(Selection center, Selection obj, double freeze);
     BodyMeanEquatorFrame(Selection center, Selection obj);
     virtual ~BodyMeanEquatorFrame() {};

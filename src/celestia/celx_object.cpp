@@ -1122,7 +1122,7 @@ static int object_orbitframe(lua_State* l)
     else
     {
         auto f = sel->body()->getOrbitFrame(t);
-        celx.newFrame(ObserverFrame(*f));
+        celx.newFrame(ObserverFrame(f));
     }
 
     return 1;
@@ -1163,7 +1163,7 @@ static int object_bodyframe(lua_State* l)
     else
     {
         auto f = sel->body()->getBodyFrame(t);
-        celx.newFrame(ObserverFrame(*f));
+        celx.newFrame(ObserverFrame(f));
     }
 
     return 1;
