@@ -28,6 +28,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <cstdio>
+#include <cstring> /* for memcpy */
 #include <cassert>
 
 #ifndef _WIN32
