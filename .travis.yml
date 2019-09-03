@@ -54,9 +54,10 @@ addons:
     - libqt5opengl5-dev
   homebrew:
     packages:
+    - eigen
     - cspice
     - fmt
-    - freeglut
+    - jpeg
     - gettext
     - glew
     - libpng
