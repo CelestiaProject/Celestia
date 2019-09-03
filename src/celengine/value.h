@@ -13,7 +13,7 @@
 #include <cassert>
 #include <string>
 #include <vector>
-#include "hash.h"
+#include <celengine/hash.h>
 
 namespace celestia
 {

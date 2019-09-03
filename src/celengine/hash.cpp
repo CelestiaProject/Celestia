@@ -10,9 +10,9 @@
 
 #include <celutil/color.h>
 #include <celmath/mathlib.h>
-#include "astro.h"
-#include "hash.h"
-#include "value.h"
+#include <celengine/astro.h>
+#include <celengine/hash.h>
+#include <celengine/value.h>
 
 using namespace Eigen;
 using namespace std;
