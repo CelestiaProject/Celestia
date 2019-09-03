@@ -7,14 +7,14 @@ DEFS = -DCONFIG_DATA_DIR='"$(PKGDATADIR)"' -DLOCALEDIR='"$(datadir)/locale"' @DE
 
 if ENABLE_KDE
 SUBDIRS += kde
-celestiaKDELIBS = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) \
-                  $(LIBSOCKET) -lDCOP kde/libkdegui.a
+celestiaKDELIBS = kde/libkdegui.a $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) \
+		  $(LIB_KFILE) $(LIBSOCKET) -lDCOP
 celestia_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 endif
 
 if ENABLE_GTK
 SUBDIRS += gtk
-celestiaGTKLIBS = $(GTK_LIBS) gtk/libgtkgui.a
+celestiaGTKLIBS = gtk/libgtkgui.a $(GTK_LIBS)
 endif
 
 COMMONSOURCES = \
