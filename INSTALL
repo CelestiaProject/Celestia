@@ -181,10 +181,42 @@ Then do mingw32-make.exe.
 
 
 
-Celestia Install instructions for OS X
+Celestia Install instructions for macOS, qt-only
 --------------------------------------
 
-Currently not supported as nobody in the Team has access to an OS X system.
+Currently Qt frontend is the only available option for macOS users building
+Celestia from source.
+
+Install the latest Xcode:
+
+  You should be able to get Xcode from the Mac App Store.
+
+Install required packages:
+
+  brew install cmake cspice fmt gettext glew libpng lua qt5 jpeg eigen
+
+Clone the source and go to the source directory.
+
+Configure and build:
+
+  mkdir build
+  cd build
+  cmake -DENABLE_SPICE=ON ..
+  make -jN
+
+Instead of N, pass a number of CPU cores you want to use during a build.
+
+Install:
+
+  make install
+
+Celestia will be installed into /usr/local by default, with data files landing
+in /usr/local/share/celestia, but you may specify a new location with the
+following option to cmake: -DCMAKE_INSTALL_PREFIX=/another/path.
+
+To build the application bundle, pass -DNATIVE_OSX_APP=ON to the cmake command,
+the application bundle will be located in the "build" folder that you previously
+created.
 
 
 
