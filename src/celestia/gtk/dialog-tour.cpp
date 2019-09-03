@@ -32,7 +32,7 @@ void dialogTourGuide(AppData* app)
 	TourData* td = g_new0(TourData, 1);
 	td->app = app;
 
-	GtkWidget* dialog = gtk_dialog_new_with_buttons("Tour Guide...",
+	GtkWidget* dialog = gtk_dialog_new_with_buttons(_("Tour Guide..."),
 	                                                GTK_WINDOW(app->mainWindow),
 	                                                GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                GTK_STOCK_CLOSE,
@@ -42,13 +42,13 @@ void dialogTourGuide(AppData* app)
 	GtkWidget* hbox = gtk_hbox_new(FALSE, CELSPACING); 
 	gtk_container_set_border_width(GTK_CONTAINER(hbox), CELSPACING);
 
-	GtkWidget* label = gtk_label_new("Select your destination:");
+	GtkWidget* label = gtk_label_new(_("Select your destination:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
 	GtkWidget* menubox = gtk_option_menu_new();
 	gtk_box_pack_start(GTK_BOX(hbox), menubox, TRUE, TRUE, 0);
 
-	GtkWidget* gotoButton = gtk_button_new_with_label("Go To");
+	GtkWidget* gotoButton = gtk_button_new_with_label(_("Go To"));
 	gtk_box_pack_start(GTK_BOX(hbox), gotoButton, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, TRUE, 0);

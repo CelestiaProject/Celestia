@@ -52,7 +52,7 @@ void updateTimeZone(AppData* app, gboolean local)
 /* Creates a button. Used in several dialogs. */
 gint buttonMake(GtkWidget *hbox, const char *txt, GtkSignalFunc func, gpointer data)
 {
-	GtkWidget* button = gtk_button_new_with_label(txt);
+	GtkWidget* button = gtk_button_new_with_label(_(txt));
 
 	gtk_box_pack_start(GTK_BOX (hbox), button, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(button), "pressed", func, data);
@@ -68,7 +68,7 @@ void makeRadioItems(const char* const *labels, GtkWidget *box, GtkSignalFunc sig
 
 	for (gint i=0; labels[i]; i++)
 	{
-		GtkWidget *button = gtk_radio_button_new_with_label(group, labels[i]);
+		GtkWidget *button = gtk_radio_button_new_with_label(group, _(labels[i]));
 
 		if (gads)
 			gads[i] = GTK_TOGGLE_BUTTON(button);
@@ -93,9 +93,9 @@ char *readFromFile(const char *fname)
 	string s("");
 	if (!textFile.is_open())
 	{
-		s = "Unable to open file '";
+		s = _("Unable to open file '");
 		s += fname ;
-		s += "', probably due to improper installation !\n";
+		s += _("', probably due to improper installation !\n");
 	}
 
 	char c;

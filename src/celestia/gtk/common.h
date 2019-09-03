@@ -17,6 +17,7 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
 #ifdef GNOME
@@ -104,18 +105,18 @@ void setDefaultRenderFlags(AppData* app);
 /* Constants used throughout */
 const char * const monthOptions[] = 
 {
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    N_("January"),
+    N_("February"),
+    N_("March"),
+    N_("April"),
+    N_("May"),
+    N_("June"),
+    N_("July"),
+    N_("August"),
+    N_("September"),
+    N_("October"),
+    N_("November"),
+    N_("December"),
     NULL
 };
 

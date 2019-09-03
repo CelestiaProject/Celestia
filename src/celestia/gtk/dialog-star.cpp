@@ -46,7 +46,7 @@ void dialogStarBrowser(AppData* app)
 	sb->app = app;
 	sb->numListStars = 100;
 	
-	GtkWidget *browser = gtk_dialog_new_with_buttons("Star System Browser",
+	GtkWidget *browser = gtk_dialog_new_with_buttons(_("Star System Browser"),
 	                                                 GTK_WINDOW(app->mainWindow),
 	                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                 GTK_STOCK_OK, GTK_RESPONSE_OK,
@@ -84,7 +84,7 @@ void dialogStarBrowser(AppData* app)
 	/* Add the columns */
 	for (int i=0; i<5; i++) {
 		renderer = gtk_cell_renderer_text_new();
-		column = gtk_tree_view_column_new_with_attributes (sbTitles[i], renderer, "text", i, NULL);
+		column = gtk_tree_view_column_new_with_attributes (_(sbTitles[i]), renderer, "text", i, NULL);
 		if (i > 0 && i < 4) {
 			/* Right align */
 			gtk_tree_view_column_set_alignment(column, 1.0);
@@ -101,7 +101,7 @@ void dialogStarBrowser(AppData* app)
 	g_signal_connect(selection, "changed", G_CALLBACK(listStarSelect), app);
 
 	/* From now on, it's the bottom-of-the-window controls */
-	GtkWidget *frame = gtk_frame_new("Star Search Criteria");
+	GtkWidget *frame = gtk_frame_new(_("Star Search Criteria"));
 	gtk_box_pack_start(GTK_BOX(mainbox), frame, FALSE, FALSE, 0);
 
 	GtkWidget *hbox = gtk_hbox_new(FALSE, CELSPACING);
@@ -111,7 +111,7 @@ void dialogStarBrowser(AppData* app)
 	/* List viewing preference settings */
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
 	GtkWidget *hbox2 = gtk_hbox_new(FALSE, CELSPACING);
-	GtkWidget *label = gtk_label_new("Maximum Stars Displayed in List");
+	GtkWidget *label = gtk_label_new(_("Maximum Stars Displayed in List"));
 	gtk_box_pack_start(GTK_BOX(hbox2), label, TRUE, FALSE, 0);
 	sb->entry = gtk_entry_new_with_max_length(3);
 	gtk_entry_set_width_chars(GTK_ENTRY(sb->entry), 5);
@@ -141,11 +141,11 @@ void dialogStarBrowser(AppData* app)
 
 	/* Common Buttons */
 	hbox = gtk_hbox_new(TRUE, CELSPACING);
-	if (buttonMake(hbox, "Center", (GtkSignalFunc)actionCenterSelection, app))
+	if (buttonMake(hbox, N_("Center"), (GtkSignalFunc)actionCenterSelection, app))
 		return;
-	if (buttonMake(hbox, "Go To", (GtkSignalFunc)actionGotoSelection, app))
+	if (buttonMake(hbox, N_("Go To"), (GtkSignalFunc)actionGotoSelection, app))
 		return;
-	if (buttonMake(hbox, "Refresh", (GtkSignalFunc)refreshBrowser, sb))
+	if (buttonMake(hbox, N_("Refresh"), (GtkSignalFunc)refreshBrowser, sb))
 		return;
 	gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
 

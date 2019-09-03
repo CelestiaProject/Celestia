@@ -27,8 +27,8 @@ void dialogSolarBrowser(AppData* app);
 /* Local Data */
 static const char * const ssTitles[] =
 {
-    "Name",
-    "Type"
+    N_("Name"),
+    N_("Type")
 };
 
 #endif /* GTK_DIALOG_SOLAR_H */

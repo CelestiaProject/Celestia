@@ -45,7 +45,7 @@ void dialogViewOptions(AppData* app)
 		return;
 	}
 	
-	app->optionDialog = gtk_dialog_new_with_buttons("View Options",
+	app->optionDialog = gtk_dialog_new_with_buttons(_("View Options"),
 	                                                GTK_WINDOW(app->mainWindow),
 	                                                GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                GTK_STOCK_OK,
@@ -58,13 +58,13 @@ void dialogViewOptions(AppData* app)
 	GtkWidget* miscBox = gtk_vbox_new(FALSE, CELSPACING);
 
 	/* Create all of the frames */
-	GtkWidget* showFrame = gtk_frame_new("Show");
-	GtkWidget* orbitFrame = gtk_frame_new("Orbits");
-	GtkWidget* labelFrame = gtk_frame_new("Label");
-	GtkWidget* limitFrame = gtk_frame_new("Filter Stars");
-	GtkWidget* textureFrame = gtk_frame_new("Texture Detail");
-	GtkWidget* infoFrame = gtk_frame_new("Info Text");
-	GtkWidget* ambientFrame = gtk_frame_new("Ambient Light");
+	GtkWidget* showFrame = gtk_frame_new(_("Show"));
+	GtkWidget* orbitFrame = gtk_frame_new(_("Orbits"));
+	GtkWidget* labelFrame = gtk_frame_new(_("Label"));
+	GtkWidget* limitFrame = gtk_frame_new(_("Filter Stars"));
+	GtkWidget* textureFrame = gtk_frame_new(_("Texture Detail"));
+	GtkWidget* infoFrame = gtk_frame_new(_("Info Text"));
+	GtkWidget* ambientFrame = gtk_frame_new(_("Ambient Light"));
 
 	/* Create the boxes that go in the frames */
 	GtkWidget* showBox = gtk_vbox_new(FALSE, 0);
@@ -167,8 +167,9 @@ static gint changeDistanceLimit(GtkRange *slider, AppData* app)
 	float limit = makeDistanceLimit(gtk_range_get_value(slider));
 	app->renderer->setDistanceLimit(limit);
 
-	char labeltext[16] = "100000 ly";
-	sprintf(labeltext, "%ld ly", (long)(limit + 0.5));
+	char labeltext[32] = "100000 ly";
+	/* TRANSLATORS: use short form (`ly' NOT `light years') here */
+	sprintf(labeltext, _("%ld ly"), (long)(limit + 0.5));
 	gtk_label_set_text(GTK_LABEL(magLabel), labeltext);
 
 	#ifdef GNOME
@@ -197,10 +198,10 @@ static gint changeTextureResolution(GtkRange *slider, AppData* app)
 static gchar* formatTextureSlider(GtkRange*, gdouble value)
 {
 	switch ((int)value) {
-		case 0: return g_strdup("Low");
-		case 1: return g_strdup("Medium");
-		case 2: return g_strdup("High");
-		default: return g_strdup("Error");
+		case 0: return g_strdup(_("Low"));
+		case 1: return g_strdup(_("Medium"));
+		case 2: return g_strdup(_("High"));
+		default: return g_strdup(_("Error"));
 	}
 }
 

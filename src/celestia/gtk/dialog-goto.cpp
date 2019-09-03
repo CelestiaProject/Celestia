@@ -35,10 +35,10 @@ void dialogGotoObject(AppData* app)
 	gotoObjectData *data = g_new0(gotoObjectData, 1);
 	data->app = app;
 
-	data->dialog = gtk_dialog_new_with_buttons("Goto Object",
+	data->dialog = gtk_dialog_new_with_buttons(_("Goto Object"),
 	                                           GTK_WINDOW(app->mainWindow),
 	                                           GTK_DIALOG_DESTROY_WITH_PARENT,
-	                                           "Go To",
+	                                          _( "Go To"),
 	                                           GTK_RESPONSE_OK,
 	                                           GTK_STOCK_CLOSE,
 	                                           GTK_RESPONSE_CLOSE,
@@ -87,7 +87,7 @@ void dialogGotoObject(AppData* app)
 	/* Object name label and entry */
 	align = gtk_alignment_new(1, 0, 0, 0);
 	hbox = gtk_hbox_new(FALSE, CELSPACING);
-	label = gtk_label_new("Object name:");
+	label = gtk_label_new(_("Object name:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), data->nameEntry, FALSE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(align), hbox);
@@ -96,7 +96,7 @@ void dialogGotoObject(AppData* app)
 	/* Latitude and longitude */
 	align = gtk_alignment_new(1, 0, 0, 0);
 	hbox = gtk_hbox_new(FALSE, CELSPACING);
-	label = gtk_label_new("Latitude:");
+	label = gtk_label_new(_("Latitude:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), data->latEntry, FALSE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(align), hbox);
@@ -104,7 +104,7 @@ void dialogGotoObject(AppData* app)
 
 	align = gtk_alignment_new(1, 0, 0, 0);
 	hbox = gtk_hbox_new(FALSE, CELSPACING);
-	label = gtk_label_new("Longitude:");
+	label = gtk_label_new(_("Longitude:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), data->longEntry, FALSE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(align), hbox);
@@ -113,7 +113,7 @@ void dialogGotoObject(AppData* app)
 	/* Distance */
 	align = gtk_alignment_new(1, 0, 0, 0);
 	hbox = gtk_hbox_new(FALSE, CELSPACING);
-	label = gtk_label_new("Distance:");
+	label = gtk_label_new(_("Distance:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), data->distEntry, FALSE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(align), hbox);

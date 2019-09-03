@@ -50,7 +50,7 @@ void dialogEclipseFinder(AppData* app)
 	sprintf(ed->body, "%s", eclipsePlanetTitles[0]);
 	ed->sel = NULL;
 
-	ed->window = GTK_DIALOG(gtk_dialog_new_with_buttons("Eclipse Finder",
+	ed->window = GTK_DIALOG(gtk_dialog_new_with_buttons(_("Eclipse Finder"),
 	                                                    GTK_WINDOW(app->mainWindow),
 	                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                    GTK_STOCK_OK,
@@ -97,7 +97,7 @@ void dialogEclipseFinder(AppData* app)
 	/* Add the columns */
 	for (int i=0; i<5; i++) {
 		renderer = gtk_cell_renderer_text_new();
-		column = gtk_tree_view_column_new_with_attributes (eclipseTitles[i], renderer, "text", i, NULL);
+		column = gtk_tree_view_column_new_with_attributes (_(eclipseTitles[i]), renderer, "text", i, NULL);
 		gtk_tree_view_append_column(GTK_TREE_VIEW(ed->eclipseList), column);
 	}
 
@@ -112,7 +112,7 @@ void dialogEclipseFinder(AppData* app)
 	/* -------------------------------- */
 	hbox = gtk_hbox_new(FALSE, CELSPACING);
 	
-	label = gtk_label_new("Find");
+	label = gtk_label_new(_("Find"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	
 	GtkWidget* menuTypeBox = gtk_option_menu_new();
@@ -128,7 +128,7 @@ void dialogEclipseFinder(AppData* app)
 	/* -------------------------------- */
 	hbox = gtk_hbox_new(FALSE, CELSPACING);
 
-	label = gtk_label_new("From");
+	label = gtk_label_new(_("From"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	/* Get current date */
@@ -149,7 +149,7 @@ void dialogEclipseFinder(AppData* app)
 	g_object_set_data(G_OBJECT(date1Button), "eclipsedata", ed->d1);
 	gtk_box_pack_start(GTK_BOX(hbox), date1Button, FALSE, FALSE, 0);
 
-	label = gtk_label_new("to");
+	label = gtk_label_new(_("to"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	GtkWidget* date2Button = gtk_toggle_button_new();
@@ -162,9 +162,9 @@ void dialogEclipseFinder(AppData* app)
 
 	/* Common Buttons */
 	hbox = gtk_hbox_new(TRUE, CELSPACING);
-	if (buttonMake(hbox, "Compute", (GtkSignalFunc)eclipseCompute, ed))
+	if (buttonMake(hbox, N_("Compute"), (GtkSignalFunc)eclipseCompute, ed))
 		return;
-	if (buttonMake(hbox, "Set Date and Go to Planet", (GtkSignalFunc)eclipseGoto, ed))
+	if (buttonMake(hbox, N_("Set Date and Go to Planet"), (GtkSignalFunc)eclipseGoto, ed))
 		return;
 	gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
 
@@ -174,7 +174,7 @@ void dialogEclipseFinder(AppData* app)
 	GtkWidget* menuType = gtk_menu_new();
 	for (int i = 0; eclipseTypeTitles[i] != NULL; i++)
 	{
-		item = gtk_menu_item_new_with_label(eclipseTypeTitles[i]);
+		item = gtk_menu_item_new_with_label(_(eclipseTypeTitles[i]));
 		gtk_menu_append(GTK_MENU(menuType), item);
 		gtk_widget_show(item);
 	}
@@ -183,7 +183,7 @@ void dialogEclipseFinder(AppData* app)
 	GtkWidget* menuBody = gtk_menu_new();
 	for (int i = 0; eclipsePlanetTitles[i] != NULL; i++)
 	{
-		item = gtk_menu_item_new_with_label(eclipsePlanetTitles[i]);
+		item = gtk_menu_item_new_with_label(_(eclipsePlanetTitles[i]));
 		gtk_menu_append(GTK_MENU(menuBody), item);
 		gtk_widget_show(item);
 	}
@@ -469,7 +469,7 @@ static void eclipseDestroy(GtkWidget* w, gint, EclipseData* ed)
 static void setButtonDateString(GtkToggleButton *button, int year, int month, int day)
 {
 	char date[50];
-	sprintf(date, "%d %s %d", day, monthOptions[month - 1], year);
+	sprintf(date, "%d %s %d", day, _(monthOptions[month - 1]), year);
 
 	gtk_button_set_label(GTK_BUTTON(button), date);
 }

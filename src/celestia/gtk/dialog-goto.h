@@ -38,9 +38,9 @@ struct _gotoObjectData {
 
 static const char * const unitLabels[] =
 {
-	"km",
-	"radii",
-	"au",
+	N_("km"),
+	N_("radii"),
+	N_("au"),
 	NULL
 };
 

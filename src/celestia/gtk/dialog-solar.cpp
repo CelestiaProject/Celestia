@@ -41,7 +41,7 @@ void dialogSolarBrowser(AppData* app)
 	GtkWidget *solarTree = NULL;
 	GtkTreeStore *solarTreeStore = NULL;
 	
-	GtkWidget *browser = gtk_dialog_new_with_buttons("Solar System Browser",
+	GtkWidget *browser = gtk_dialog_new_with_buttons(_("Solar System Browser"),
 	                                                 GTK_WINDOW(app->mainWindow),
 	                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                 GTK_STOCK_CLOSE,
@@ -74,7 +74,7 @@ void dialogSolarBrowser(AppData* app)
 
 	for (int i = 0; i < 2; i++) {
 		renderer = gtk_cell_renderer_text_new();
-		column = gtk_tree_view_column_new_with_attributes (ssTitles[i], renderer, "text", i, NULL);
+		column = gtk_tree_view_column_new_with_attributes (_(ssTitles[i]), renderer, "text", i, NULL);
 		gtk_tree_view_append_column(GTK_TREE_VIEW(solarTree), column);
 		gtk_tree_view_column_set_min_width(column, 200);
 	}
@@ -86,9 +86,9 @@ void dialogSolarBrowser(AppData* app)
 
 	/* Common Buttons */
 	GtkWidget *hbox = gtk_hbox_new(TRUE, CELSPACING);
-	if (buttonMake(hbox, "Center", (GtkSignalFunc)actionCenterSelection, app))
+	if (buttonMake(hbox, N_("Center"), (GtkSignalFunc)actionCenterSelection, app))
 		return;
-	if (buttonMake(hbox, "Go To", (GtkSignalFunc)actionGotoSelection, app))
+	if (buttonMake(hbox, N_("Go To"), (GtkSignalFunc)actionGotoSelection, app))
 		return;
 	gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
 	
@@ -128,7 +128,7 @@ static void treeSolarSelect(GtkTreeSelection* sel, AppData* app)
 	else if (type == Selection::Type_Body)
 		app->simulation->setSelection(Selection((Body *)item));
 	else
-		g_warning("Unexpected selection type selected.");
+		g_warning(_("Unexpected selection type selected."));
 }
 
 
@@ -150,23 +150,23 @@ static void addPlanetarySystemToTree(const PlanetarySystem* sys, GtkTreeStore* s
 		switch(world->getClassification())
 		{
 			case Body::Planet:
-				type = "Planet";
+				type = _("Planet");
 				break;
 			case Body::Moon:
-				type = "Moon";
+				type = _("Moon");
 				break;
 			case Body::Asteroid:
-				type = "Asteroid";
+				type = _("Asteroid");
 				break;
 			case Body::Comet:
-				type = "Comet";
+				type = _("Comet");
 				break;
 			case Body::Spacecraft:
-				type = "Spacecraft";
+				type = _("Spacecraft");
 				break;
 			case Body::Unknown:
 			default:
-				type = "-";
+				type = _("-");
 				break;
 		}
 
@@ -211,7 +211,7 @@ static void loadNearestStarSystem(AppData* app, GtkWidget* solarTree, GtkTreeSto
 
 		name = g_strdup(stardb->getStarName(*nearestStar).c_str());
 
-		sprintf(type, "%s Star", nearestStar->getSpectralType());
+		sprintf(type, _("%s Star"), nearestStar->getSpectralType());
 	
 		/* Set up the top-level node. */
 		gtk_tree_store_set(solarTreeStore, &top,
@@ -230,5 +230,5 @@ static void loadNearestStarSystem(AppData* app, GtkWidget* solarTree, GtkTreeSto
 		gtk_tree_view_expand_row(GTK_TREE_VIEW(solarTree), path, FALSE);
 	}
 	else
-		gtk_tree_store_set(solarTreeStore, &top, 0, "No Planetary Bodies", -1);
+		gtk_tree_store_set(solarTreeStore, &top, 0, _("No Planetary Bodies"), -1);
 }
