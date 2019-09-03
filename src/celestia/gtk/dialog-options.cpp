@@ -148,6 +148,8 @@ void dialogViewOptions(AppData* app)
 	toggleButtonsFromAG(actionsVerbosity, G_N_ELEMENTS(actionsVerbosity), app->agVerbosity, infoBox);
 	toggleButtonsFromAG(actionsAmbientLight, G_N_ELEMENTS(actionsAmbientLight), app->agAmbient, ambientBox);
 
+	g_signal_connect(app->optionDialog, "delete-event",
+	                 G_CALLBACK(gtk_widget_hide_on_delete), GTK_WIDGET(app->optionDialog));
 	g_signal_connect(app->optionDialog, "response",
 	                 G_CALLBACK(gtk_widget_hide), GTK_WIDGET(app->optionDialog));
 
