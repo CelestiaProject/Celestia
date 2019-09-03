@@ -33,6 +33,8 @@
 
 #ifdef JPEG_SUPPORT
 
+#include <cstring> /* for memcpy */
+
 #ifndef PNG_SUPPORT
 #include "setjmp.h"
 #endif // PNG_SUPPORT
