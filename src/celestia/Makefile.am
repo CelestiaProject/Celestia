@@ -88,7 +88,8 @@ celestia_LDADD = \
 	../cel3ds/libcel3ds.a \
 	../celmath/libcelmath.a \
 	../celutil/libcelutil.a \
-	$(SPICE_LIBS)
+	$(SPICE_LIBS) \
+	$(GL_LIBS)
 
 noinst_HEADERS = $(wildcard *.h)
 noinst_DATA = ../../celestia
