@@ -13,6 +13,7 @@
 #include <cassert>
 #include <string>
 #include <vector>
+#include "hash.h"
 
 namespace celestia
 {
@@ -20,10 +21,7 @@ namespace engine
 {
 
 class Value;
-class AssociativeArray;
-
 using Array = std::vector<Value*>;
-using Hash  = AssociativeArray;
 
 class Value
 {

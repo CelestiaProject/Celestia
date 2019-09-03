@@ -33,16 +33,7 @@ Value::~Value()
         }
         break;
     case HashType:
-        if (data.h != nullptr)
-        {
-#if 0 // TODO: fixme
-            for (const auto &t : *data.h)
-            {
-                delete t.second;
-            }
-#endif
-            delete data.h;
-        }
+        delete data.h;
         break;
     default:
         break;
