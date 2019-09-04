@@ -21,6 +21,7 @@ set(DATA_SOURCES
   stars.txt
   asteroids.ssc
   comets.ssc
+  dwarfplanets.ssc
   earth_locs.ssc
   eros_locs.ssc
   galaxies.dsc

@@ -7,72 +7,29 @@
 {
 	Class       "dwarfplanet"
 	# NormalMap "ceres-normal.*"
-	Texture     "ceres.*"
+	Texture     "asteroid.*"
 	Radius      482.6
+	Oblateness  0.07475
 	OrbitColor  [ 0.556863 0.235294 0.576471 ]
-	Timeline
-	[
-		{
-			Ending  2457087.5  # 2015 Mar 06
-			EllipticalOrbit
-			{
-				Epoch           2457087.5  # 2015 Mar 06
-				Period          4.60448985029235
-				SemiMajorAxis   2.767677895200867
-				Eccentricity    0.07582355092759185
-				Inclination     10.59298976951364
-				AscendingNode   80.3290197643724
-				ArgOfPericenter 72.57244779564185
-				MeanAnomaly     114.560076126873
-			}
-			UniformRotation
-			{
-				Period        9.074170
-				Epoch         2449249.91125  # 1993 Sept 19 09:52:12
-				Inclination   11
-				AscendingNode 29
-				MeridianAngle 339.85
-			}
-		}
-		{
-			Ending  2458423.5  # 2018 Nov 01
-			SampledTrajectory
-			{
-				Source          "Ceres-Dawn.xyzv"
-				DoublePrecision true
-				Interpolation   "cubic"
-			}
-			UniformRotation
-			{
-				Period        9.074170
-				Epoch         2449249.91125  # 1993 Sept 19 09:52:12
-				Inclination   11
-				AscendingNode 29
-				MeridianAngle 339.85
-			}
-		}
-		{
-			EllipticalOrbit
-			{
-				Epoch           2458423.5  # 2018 Nov 01
-				Period          4.60401747781265
-				SemiMajorAxis   2.7674886021025
-				Eccentricity    0.07564579725783116
-				Inclination     10.59365304837129
-				AscendingNode   80.30765909009021
-				ArgOfPericenter 73.24257694493157
-				MeanAnomaly     39.86376095818883
-			}
-			UniformRotation
-			{
-				Period        9.074170
-				Epoch         2449249.91125  # 1993 Sept 19 09:52:12
-				Inclination   11
-				AscendingNode 29
-				MeridianAngle 339.85
-			}
-		}
-	]
+	EllipticalOrbit
+	{
+		Epoch           2458423.5  # 2018 Nov 01
+		Period          4.60401747781265
+		SemiMajorAxis   2.7674886021025
+		Eccentricity    0.07564579725783116
+		Inclination     10.59365304837129
+		AscendingNode   80.30765909009021
+		ArgOfPericenter 73.24257694493157
+		MeanAnomaly     39.86376095818883
+	}
+	UniformRotation
+	{
+		Period        9.074170
+		Epoch         2449249.91125  # 1993 Sept 19 09:52:12
+		Inclination   11
+		AscendingNode 29
+		MeridianAngle 339.85
+	}
 	GeomAlbedo 0.09
 	InfoURL	"https://en.wikipedia.org/wiki/Ceres_(dwarf_planet)"
 }
