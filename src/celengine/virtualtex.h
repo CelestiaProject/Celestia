@@ -17,10 +17,10 @@
 class VirtualTexture : public Texture
 {
  public:
-    VirtualTexture(fs::path _tilePath,
+    VirtualTexture(const fs::path& _tilePath,
                    unsigned int _baseSplit,
                    unsigned int _tileSize,
-                   std::string _tilePrefix,
+                   const std::string& _tilePrefix,
                    const std::string& _tileType);
     ~VirtualTexture() = default;
 
