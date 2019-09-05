@@ -36,8 +36,8 @@ Description: common files for Celestia, a real-time visual space simulation
 
 Package: celestia-data
 Architecture: all
-Conflicts: celestia (<< 1.4.1), celestia-common (<< 1.7.0~)
-Replaces: celestia (<< 1.4.1), celestia-common (<< 1.7.0~)
+Conflicts: celestia (<< 1.4.1), celestia-common (<< 1.7.0~), celestia-common-nonfree (<< 1.7.0~)
+Replaces: celestia (<< 1.4.1), celestia-common (<< 1.7.0~), celestia-common-nonfree (<< 1.7.0~)
 Depends: ${misc:Depends}
 Description: data files for Celestia, a real-time visual space simulation
  Celestia is a free 3D astronomy program. Based on the Hipparcos
