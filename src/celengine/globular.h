@@ -64,7 +64,7 @@ class Globular : public DeepSkyObject
                 const Eigen::Quaternionf& viewerOrientation,
                 float brightness,
                 float pixelSize,
-                const Renderer* r) override;
+                const Renderer* r) const override;
 
     GlobularForm* getForm() const;
 
@@ -77,7 +77,7 @@ class Globular : public DeepSkyObject
                                     const Eigen::Quaternionf& viewerOrientation,
                                     float brightness,
                                     float pixelSize,
-                                    const Renderer* r);
+                                    const Renderer* r) const;
 
    // Reference values ( = data base averages) of core radius, King concentration
    // and mu25 isophote radius:
@@ -92,7 +92,7 @@ class Globular : public DeepSkyObject
     float         c{ C_ref };
     float         tidalRadius{ 0.0f };
 
-    celgl::VertexObject vo{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
+    mutable celgl::VertexObject vo{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
 };
 
 #endif // _GLOBULAR_H_

@@ -322,7 +322,7 @@ void Globular::render(const Vector3f& offset,
                       const Quaternionf& viewerOrientation,
                       float brightness,
                       float pixelSize,
-                      const Renderer* r)
+                      const Renderer* r) const
 {
     renderGlobularPointSprites(offset, viewerOrientation, brightness, pixelSize, r);
 }
@@ -403,7 +403,7 @@ void Globular::renderGlobularPointSprites(
                                       const Quaternionf& viewerOrientation,
                                       float brightness,
                                       float pixelSize,
-                                      const Renderer* renderer)
+                                      const Renderer* renderer) const
 {
     if (form == nullptr)
         return;
