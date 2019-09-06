@@ -8,3 +8,4 @@ Categories=Astronomy;Education;Science;
 Icon=celestia
 Exec=celestia-glut %f
 Terminal=false
+MimeType=application/x-celestia-script;
