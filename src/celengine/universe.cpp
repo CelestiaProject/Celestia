@@ -668,7 +668,7 @@ public:
     DSOPicker(const Vector3d& pickOrigin, const Vector3d& pickDir, uint64_t renderFlags, float angle);
     ~DSOPicker() = default;
 
-    virtual void process(const DeepSkyObject*, double, float) override;
+    void process(DeepSkyObject*, double, float) override;
 
 public:
     Vector3d pickOrigin;
@@ -693,7 +693,7 @@ DSOPicker::DSOPicker(const Vector3d& pickOrigin,
 }
 
 
-void DSOPicker::process(const DeepSkyObject* dso, double /*unused*/, float /*unused*/)
+void DSOPicker::process(DeepSkyObject* dso, double /*unused*/, float /*unused*/)
 {
     if (!(dso->getRenderMask() & renderFlags) || !dso->isVisible() || !dso->isClickable())
         return;
@@ -731,7 +731,7 @@ public:
                    float);
     ~CloseDSOPicker() = default;
 
-    virtual void process(const DeepSkyObject* dso, double distance, float appMag) override;
+    void process(DeepSkyObject* dso, double distance, float appMag) override;
 
 public:
     Vector3d  pickOrigin;
@@ -759,7 +759,7 @@ CloseDSOPicker::CloseDSOPicker(const Vector3d& pos,
 }
 
 
-void CloseDSOPicker::process(const DeepSkyObject* dso,
+void CloseDSOPicker::process(DeepSkyObject* dso,
                              double distance,
                              float /*unused*/)
 {

@@ -6795,7 +6795,7 @@ class DSORenderer : public ObjectRenderer, public DsoProcesor
  public:
     DSORenderer();
 
-    virtual void process(const DeepSkyObject*, double, float) override;
+    void process(DeepSkyObject*, double, float) override;
 
  public:
     Vector3d     obsPos;
@@ -6819,7 +6819,7 @@ DSORenderer::DSORenderer() :
 };
 
 
-void DSORenderer::process(const DeepSkyObject* dso,
+void DSORenderer::process(DeepSkyObject* dso,
                           double distanceToDSO,
                           float  absMag)
 {

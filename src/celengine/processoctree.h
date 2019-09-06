@@ -60,7 +60,7 @@ class ObjectProcesor
 };
 
 typedef ObjectProcesor<const Star*> StarProcesor;
-typedef ObjectProcesor<const DeepSkyObject*> DsoProcesor;
+typedef ObjectProcesor<DeepSkyObject*> DsoProcesor;
 
 void create5FrustumPlanes(celmath::Frustum::PlaneType *, const Eigen::Vector3d &, const Eigen::Quaternionf &, float, float);
 
