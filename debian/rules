@@ -3,16 +3,24 @@
 # Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
 
+include /usr/share/dpkg/pkg-info.mk
+
 %:
 	dh $@
 
 override_dh_auto_configure:
+	if echo "$(DEB_VERSION)" | grep -q '~git' ; then \
+		_git_commit=$$(echo "$(DEB_VERSION)" | cut -d'+' -f2) ; \
+	else \
+		_git_commit="unknown" ; \
+	fi ; \
 	dh_auto_configure --parallel --	\
 		-DENABLE_GLUT=ON	\
 		-DENABLE_GTK=ON		\
 		-DENABLE_QT=ON		\
 		-DENABLE_TOOLS=ON	\
-		-DCMAKE_BUILD_TYPE=RelWithDebInfo
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DGIT_COMMIT=\"$$_git_commit\"
 
 
 override_dh_install:
