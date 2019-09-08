@@ -19,6 +19,7 @@
 @class SplashWindowController;
 @class EclipseFinderController;
 @class ScriptsController;
+@class ConfigSelectionWindowController;
 
 @interface CelestiaController : NSWindowController 
 {
@@ -28,6 +29,7 @@
     BOOL ready;
     BOOL isDirty;
     BOOL isFullScreen;
+    BOOL needsRelaunch;
     IBOutlet SplashWindowController *splashWindowController;
     IBOutlet NSTextView *glInfo;
     IBOutlet NSPanel *glInfoPanel;
@@ -39,6 +41,7 @@
     BrowserWindowController *browserWindowController;
     EclipseFinderController *eclipseFinderController;
     NSWindowController *helpWindowController;
+    ConfigSelectionWindowController *configSelectionWindowController;
     NSTimer* timer;
 
     NSConditionLock* startupCondition;
@@ -47,6 +50,7 @@
     NSString *pendingScript;
     NSString *pendingUrl;
 }
+-(void)setNeedsRelaunch:(BOOL)needsRelaunch;
 -(BOOL)applicationShouldTerminate:(id)sender;
 -(BOOL)windowShouldClose:(id)sender;
 -(IBAction)back:(id)sender;

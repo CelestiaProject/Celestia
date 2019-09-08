@@ -18,11 +18,15 @@
 #import <Carbon/Carbon.h>
 #import <OpenGL/gl.h>
 #import "CGLInfo.h"
+#import "ConfigSelectionWindowController.h"
 
 #include <float.h>
 
-
 @implementation CelestiaController
+
+static NSURL *configFilePath = nil;
+static NSURL *dataDirPath = nil;
+static NSURL *extraDataDirPath = nil;
 
 static CelestiaController* firstInstance;
 
@@ -44,6 +48,30 @@ NSString* fatalErrorMessage;
     }
 
     if (firstInstance == nil ) firstInstance = self;
+
+    // read config file/data dir from saved
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    NSData *configFileData = [prefs objectForKey:configFilePathPrefKey];
+    NSData *dataDirData = [prefs objectForKey:configFilePathPrefKey];
+
+    if (configFileData != nil && dataDirData != nil) {
+        // read saved sandbox bookmark
+        NSError *error = nil;
+        configFilePath = [NSURL URLByResolvingBookmarkData:configFileData options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:nil error:&error];
+        dataDirPath = [NSURL URLByResolvingBookmarkData:dataDirData options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:nil error:&error];
+    }
+
+    if (configFilePath == nil || dataDirPath == nil)
+    {
+        // use the default location
+        configFilePath = [[[NSBundle mainBundle] URLForResource:[NSString stringWithFormat:@"%@/celestia.cfg", CELESTIA_RESOURCES_FOLDER] withExtension:nil] retain];
+        dataDirPath = [[[NSBundle mainBundle] URLForResource:[NSString stringWithFormat:@"%@", CELESTIA_RESOURCES_FOLDER] withExtension:nil] retain];
+    }
+
+    // add the edit configuration menu item
+    NSMenu *appMenu = [[[[NSApp mainMenu] itemArray] objectAtIndex:0] submenu];
+    [appMenu insertItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Change Configuration File", "") action:@selector(changeConfigFileLocation) keyEquivalent:@""] atIndex:[[appMenu itemArray] count] - 1];
+
     int cpuCount = 0;
     size_t cpuCountSize = sizeof cpuCount;
     if (0 == sysctlbyname("hw.ncpu", &cpuCount, &cpuCountSize, NULL, 0))
@@ -53,12 +81,13 @@ NSString* fatalErrorMessage;
     ready = NO;
     isDirty = YES;
     isFullScreen = NO;
+    needsRelaunch = NO;
     appCore = nil;
     fatalErrorMessage = nil;
     lastScript = nil;
 
     [self setupResourceDirectory];
-    [scriptsController buildScriptMenu];
+    [scriptsController buildScriptMenuWithScriptDir:extraDataDirPath.path];
 
     //  hide main window until ready
     [[glView window] setAlphaValue: 0.0f];  //  not  [[glView window] orderOut: nil];
@@ -94,72 +123,48 @@ NSString* fatalErrorMessage;
     }
 }
 
+- (void)setNeedsRelaunch:(BOOL)newValue {
+    needsRelaunch = newValue;
+}
+
+- (void)changeConfigFileLocation {
+    if (configSelectionWindowController == nil) {
+        configSelectionWindowController = [[ConfigSelectionWindowController alloc] initWithWindowNibName:@"ConfigSelectionWindow"];
+        configSelectionWindowController->dataDirPath = [dataDirPath retain];
+        configSelectionWindowController->configFilePath = [configFilePath retain];
+    }
+    [configSelectionWindowController showWindow:self];
+}
 
 - (void) setupResourceDirectory
 {
-    NSBundle* mainBundle = [NSBundle mainBundle];
     // Change directory to resource dir so Celestia can find cfg files and textures
-    NSFileManager *fileManager = [NSFileManager defaultManager]; 
-    NSString* path;
-    NSMutableArray *resourceDirs = [NSMutableArray array];
-    BOOL isFolder = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager changeCurrentDirectoryPath:[dataDirPath path]];
 
-    if ( [ fileManager fileExistsAtPath: path = [[ mainBundle resourcePath ] stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER ] isDirectory: &isFolder ] && isFolder )
-    {
-        [resourceDirs addObject: path];
-    }
-    if ( [ fileManager fileExistsAtPath: path = [[[ mainBundle bundlePath ]  stringByDeletingLastPathComponent] stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER ] isDirectory: &isFolder ] && isFolder )
-    {
-        [resourceDirs addObject: path];
-    }
-    FSRef folder;
-    CFURLRef url;
-    static short domains[] = { kUserDomain, kLocalDomain, kNetworkDomain };
-    unsigned i;
-    path = nil;
+    // extra/script resources are located in application support folder, not sandboxed
+    NSString *supportPath = [NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *extraDataDir = [supportPath stringByAppendingPathComponent:CELESTIA_RESOURCES_FOLDER];
+    NSString *extraDir = [extraDataDir stringByAppendingPathComponent:@"extras"];
+    NSString *scriptDir = [extraDataDir stringByAppendingPathComponent:CEL_SCRIPTS_FOLDER];
+    BOOL isDirectory;
+    BOOL exists = [fileManager fileExistsAtPath:extraDataDir isDirectory:&isDirectory];
 
-    for (i = 0; i < (sizeof domains / sizeof(short)); ++i)
+    if (exists && !isDirectory) // should be a directory but not
+        return;
+
+    if (!exists)
     {
-        if (FSFindFolder(domains[i], kApplicationSupportFolderType, FALSE, &folder) == noErr)
+        // create directory and subdirectories
+        if ([fileManager createDirectoryAtPath:extraDataDir withIntermediateDirectories:YES attributes:nil error:nil])
         {
-            url = CFURLCreateFromFSRef(nil, &folder);
-            path = [(NSURL *)url path];
-            CFRelease(url);
-
-            if (path)
-            {
-                if (![fileManager fileExistsAtPath: path = [path stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER]] &&
-                    kUserDomain==domains[i])
-                {
-                    if ([fileManager createDirectoryAtPath:path attributes:nil])
-                    {
-                        [fileManager createDirectoryAtPath:[path stringByAppendingPathComponent:@"extras"] attributes:nil];
-                        [fileManager createDirectoryAtPath:[path stringByAppendingPathComponent:CEL_SCRIPTS_FOLDER] attributes:nil];
-                    }
-                }
-                if ([fileManager fileExistsAtPath:path isDirectory:&isFolder] && isFolder)
-                {
-                    [resourceDirs addObject: path];
-                }
-            }
-
-            path = nil;
+            [fileManager createDirectoryAtPath:extraDir withIntermediateDirectories:YES attributes:nil error:nil];
+            [fileManager createDirectoryAtPath:scriptDir withIntermediateDirectories:YES attributes:nil error:nil];
         }
     }
 
-    if ([resourceDirs count] > 0)
-    {
-        [fileManager changeCurrentDirectoryPath: [resourceDirs objectAtIndex: 0]];
-        [resourceDirs removeObjectAtIndex: 0];
-        if ([resourceDirs count] > 0) {
-            NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-            [prefs registerDefaults:[NSDictionary dictionaryWithObject:[NSArray arrayWithObject:[resourceDirs objectAtIndex:0]] forKey:@"existingResourceDirs"]];
-        }
-    }
-    else 
-    {
-        [self fatalError: NSLocalizedString(@"It appears that the \"CelestiaResources\" directory has not been properly installed in the correct location as indicated in the installation instructions. \n\nPlease correct this and try again.",@"")];
-        [self fatalError: nil];
+    if ([fileManager fileExistsAtPath:extraDataDir isDirectory:&isDirectory] && isDirectory) {
+        extraDataDirPath = [NSURL fileURLWithPath:extraDataDir];
     }
 }
 
@@ -171,7 +176,7 @@ NSString* fatalErrorMessage;
 #ifdef DEBUG
     NSDate *t = [NSDate date];
 #endif
-    if (![appCore initSimulation])
+    if (![appCore initSimulationWithConfigPath:configFilePath.path extraPath:extraDataDirPath.path])
     {
         [startupCondition lock];
         [startupCondition unlockWithCondition: 99];
@@ -464,14 +469,17 @@ NSString* fatalErrorMessage;
 
 -(BOOL)applicationShouldTerminate:(id)sender
 {
-   if (  NSRunAlertPanel(NSLocalizedString(@"Quit Celestia?",@""),
-                         NSLocalizedString(@"Are you sure you want to quit Celestia?",@""),
-                         NSLocalizedString(@"Quit",@""),
-                         NSLocalizedString(@"Cancel",@""),
-                         nil) != NSAlertDefaultReturn ) 
-   {
-       return NO;
-   }
+    if (needsRelaunch)
+        return YES;
+
+    if (  NSRunAlertPanel(NSLocalizedString(@"Quit Celestia?",@""),
+                          NSLocalizedString(@"Are you sure you want to quit Celestia?",@""),
+                          NSLocalizedString(@"Quit",@""),
+                          NSLocalizedString(@"Cancel",@""),
+                          nil) != NSAlertDefaultReturn )
+    {
+        return NO;
+    }
 
     if (timer != nil) {
         [timer invalidate];
@@ -494,6 +502,11 @@ NSString* fatalErrorMessage;
     if (appCore != nil) {
         [appCore release];
         appCore = nil;
+    }
+
+    if (needsRelaunch)
+    {
+         [[NSWorkspace sharedWorkspace] launchAppWithBundleIdentifier:[[NSBundle mainBundle] bundleIdentifier] options:NSWorkspaceLaunchAsync additionalEventParamDescriptor:nil launchIdentifier:nil];
     }
 }
 

@@ -45,6 +45,8 @@
 		88654A260DB29585007C8027 /* celx_rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A130DB29585007C8027 /* celx_rotation.cpp */; };
 		88654A280DB29585007C8027 /* celx_vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A150DB29585007C8027 /* celx_vector.cpp */; };
 		9708E6A92312A8BB0015C9F4 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9708E6A72312A8B00015C9F4 /* libjpeg.a */; };
+		978EBA922324D0740025C9D5 /* ConfigSelectionWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 978EBA912324D0740025C9D5 /* ConfigSelectionWindow.xib */; };
+		9798FB522324D2BE007F92B8 /* ConfigSelectionWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9798FB502324D2BE007F92B8 /* ConfigSelectionWindowController.m */; };
 		97E4018123101501002013C7 /* cspice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4EEA6D0F50144A003341A2 /* cspice.a */; };
 		97E4018323101501002013C7 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E4018223101501002013C7 /* libpng.a */; };
 		97E401852310150F002013C7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E401842310150F002013C7 /* libz.tbd */; };
@@ -536,6 +538,9 @@
 		9708E6A22312A8310015C9F4 /* jconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jconfig.h; path = include/jconfig.h; sourceTree = "<group>"; };
 		9708E6A72312A8B00015C9F4 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = lib/libjpeg.a; sourceTree = "<group>"; };
 		9726813A231D0D930014C8D7 /* Celestia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Celestia.entitlements; sourceTree = "<group>"; };
+		978EBA912324D0740025C9D5 /* ConfigSelectionWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConfigSelectionWindow.xib; sourceTree = "<group>"; };
+		9798FB4F2324D2BE007F92B8 /* ConfigSelectionWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfigSelectionWindowController.h; sourceTree = "<group>"; };
+		9798FB502324D2BE007F92B8 /* ConfigSelectionWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfigSelectionWindowController.m; sourceTree = "<group>"; };
 		97E4018223101501002013C7 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = lib/libpng.a; sourceTree = "<group>"; };
 		97E401842310150F002013C7 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		97E40188231015AD002013C7 /* liblua5.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblua5.1.a; path = lib/liblua5.1.a; sourceTree = "<group>"; };
@@ -1089,6 +1094,7 @@
 				E5E365AB095C11B500B14224 /* SplashScreen.m */,
 				E5D956DF096651DF00CB02B2 /* SplashWindowController.m */,
 				E5E2BDD50C24F7E6000D6E83 /* TextWindowController.m */,
+				9798FB502324D2BE007F92B8 /* ConfigSelectionWindowController.m */,
 				F5040B0E02A484DA014901DC /* CelestiaController.h */,
 				F5231C7202C2997601000006 /* CelestiaFavorites.h */,
 				F5274ED202AE88260100020A /* CelestiaOpenGLView.h */,
@@ -1106,6 +1112,7 @@
 				E5E365AA095C11B500B14224 /* SplashScreen.h */,
 				E5D956DE096651DF00CB02B2 /* SplashWindowController.h */,
 				E5E2BDD40C24F7E6000D6E83 /* TextWindowController.h */,
+				9798FB4F2324D2BE007F92B8 /* ConfigSelectionWindowController.h */,
 				F578B79D02B3E2AD0100020A /* Cocoa Extensions */,
 				F55A246702B2D4FF0100020A /* Wrappers */,
 				E5CC203109AA832000CFFF2C /* POConverter */,
@@ -1191,6 +1198,7 @@
 				E50CCA530C065F0100E9C76A /* EclipseFinder.nib */,
 				E5D7660E0982B1860099DBBD /* HelpWindow.nib */,
 				E5E2BDD00C24F7B6000D6E83 /* TextWindow.nib */,
+				978EBA912324D0740025C9D5 /* ConfigSelectionWindow.xib */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				E5CC204509AA843300CFFF2C /* Localizable.strings */,
 			);
@@ -1920,6 +1928,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				978EBA922324D0740025C9D5 /* ConfigSelectionWindow.xib in Resources */,
 				E56430BB07769C9000E2C4A3 /* MainMenu.nib in Resources */,
 				E56430BC07769C9000E2C4A3 /* InfoPlist.strings in Resources */,
 				E5B615070777307F001BB2BF /* celestia.icns in Resources */,
@@ -2131,6 +2140,7 @@
 				E532F4F50933331800D7D5B3 /* dsooctree.cpp in Sources */,
 				E532F4F80933331800D7D5B3 /* staroctree.cpp in Sources */,
 				E5E365AD095C11B500B14224 /* SplashScreen.m in Sources */,
+				9798FB522324D2BE007F92B8 /* ConfigSelectionWindowController.m in Sources */,
 				E5D956E00966520700CB02B2 /* SplashWindowController.m in Sources */,
 				E56B96570AAB22AA0097DDFE /* renderglsl.cpp in Sources */,
 				E56457520AF8FD6A00F2D9FA /* samporient.cpp in Sources */,
