@@ -339,70 +339,22 @@ CelestiaCore *appCore;
     [super dealloc];
 }
 
--(BOOL)initSimulation
+-(BOOL)initSimulationWithConfigPath:(NSString *)configPath extraPath:(NSString *)extraPath
 {
     BOOL result = NO;
     appCore = new CelestiaCore();
-    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-    NSString *confFileSetting;
-    std::string confFile;
-    NSArray *existingResourceDirsSetting;
-    NSArray *extrasDirsSetting;
+    std::string confFile = [configPath UTF8String];
     std::vector<std::string> extrasDirs;
-    NSString *extrasDir = nil;
     MacOSXSplashProgressNotifier progressNotifier;
 
-    if ((confFileSetting = [prefs stringForKey:@"conf"]))
+    if (extraPath)
     {
-        confFile = [confFileSetting stdString];
-    }
-
-    if ((existingResourceDirsSetting = [prefs stringArrayForKey:@"existingResourceDirs"]))
-    {
-        NSFileManager *fm = [NSFileManager defaultManager];
-        BOOL isFolder = NO;
-        NSEnumerator *resouceDirEnum = [existingResourceDirsSetting objectEnumerator];
-        NSString *resourceDir = nil;
-        NSString *existingConfFile = nil;
-        while ((resourceDir = [resouceDirEnum nextObject]))
-        {
-            existingConfFile = [resourceDir stringByAppendingPathComponent:@"celestia.cfg"];
-            CelestiaConfig *config = ReadCelestiaConfig([existingConfFile stdString], NULL);
-            if (config)
-            {
-                for (vector<string>::const_iterator iter = config->extrasDirs.begin();
-                     iter != config->extrasDirs.end(); iter++)
-                {
-                    if (*iter != "")
-                    {
-                        extrasDir = [NSString stringWithStdString: (*iter)];
-                        if (([fm fileExistsAtPath: extrasDir = [extrasDir stringByStandardizingPath] isDirectory: &isFolder] && isFolder) ||
-                            [fm fileExistsAtPath: extrasDir = [resourceDir stringByAppendingPathComponent:extrasDir] isDirectory: &isFolder] && isFolder)
-                        {
-                            extrasDirs.push_back([extrasDir stdString]);
-                        }
-                    }
-                }
-                delete config;
-            }
-            else
-            {
-                if ([fm fileExistsAtPath: extrasDir = [resourceDir stringByAppendingPathComponent: @"extras"] isDirectory: &isFolder] && isFolder)
-                    extrasDirs.push_back([extrasDir stdString]);
-            }
-
-        }
-    }
-    if ((extrasDirsSetting = [prefs stringArrayForKey:@"extrasDirs"]))
-    {
-        NSEnumerator *iter = [extrasDirsSetting objectEnumerator];
-        while ((extrasDir = [iter nextObject]))
-            extrasDirs.push_back([extrasDir stdString]);
+        extrasDirs.push_back([extraPath UTF8String]);
     }
 
     appCore->setAlerter(new MacOSXAlerter());
     appCore->setCursorHandler(new MacOSXCursorHandler());
-    result = appCore->initSimulation(!confFile.empty() ? &confFile : nil,
+    result = appCore->initSimulation(&confFile,
                                      &extrasDirs,
                                      &progressNotifier);
     if (result)

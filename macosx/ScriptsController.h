@@ -14,5 +14,5 @@
 {
     IBOutlet NSMenu *scriptMenu;
 }
-- (void)buildScriptMenu;
+- (void)buildScriptMenuWithScriptDir:(NSString *)scriptDir;
 @end

@@ -82,39 +82,29 @@
     return [itemDict count] > 0 ? itemDict : nil;
 }
 
-- (void)buildScriptMenu
+- (void)buildScriptMenuWithScriptDir:(NSString *)scriptDir
 {
     NSDictionary *itemDict = nil;
-    NSArray *existingResourceDirsSetting = nil;
-    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     BOOL addSeparator = NO;
 
     int count = [scriptMenu numberOfItems];
     while (count-- > 0)
         [scriptMenu removeItemAtIndex: 0];
 
-    if (itemDict = [ScriptsController scriptsForFolderRoot: @""])
+    if ((itemDict = [ScriptsController scriptsForFolderRoot:@""]) != nil)
     {
         [self addItems:itemDict toMenu:scriptMenu];
         addSeparator = YES;
     }
 
-    if ((existingResourceDirsSetting = [prefs stringArrayForKey:@"existingResourceDirs"]))
+    if ((itemDict = [ScriptsController scriptsForFolderRoot:scriptDir]) != nil)
     {
-        NSEnumerator *iter = [existingResourceDirsSetting objectEnumerator];
-        NSString *dir = nil;
-        while ((dir = [iter nextObject]))
+        if (addSeparator)
         {
-            if (itemDict = [ScriptsController scriptsForFolderRoot: dir])
-            {
-                if (addSeparator)
-                {
-                    [scriptMenu addItem: [NSMenuItem separatorItem]];
-                    addSeparator = NO;
-                }
-                [self addItems:[NSDictionary dictionaryWithObject:itemDict forKey:[dir stringByAbbreviatingWithTildeInPath]] toMenu:scriptMenu];
-            }
+            [scriptMenu addItem: [NSMenuItem separatorItem]];
+            addSeparator = NO;
         }
+        [self addItems:[NSDictionary dictionaryWithObject:itemDict forKey:[scriptDir stringByAbbreviatingWithTildeInPath]] toMenu:scriptMenu];
     }
 }
 

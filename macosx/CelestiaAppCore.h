@@ -27,7 +27,7 @@ class CelestiaCore;
 -(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons;
 -(void)archive;
 +(CelestiaAppCore *)sharedAppCore;
--(BOOL)initSimulation;
+-(BOOL)initSimulationWithConfigPath:(NSString *)configPath extraPath:(NSString *)extraPath;
 -(BOOL)initRenderer;
 -(void)start:(NSDate *)date;
 -(void)charEntered:(char)c withModifiers:(int)modifiers;
