@@ -2,8 +2,8 @@
 
 #include <cassert>
 #include <functional>
-#include <memory>
-#include "configuration.h"
+#include <celutil/watcher.h>
+#include <celengine/configuration.h>
 
 
 namespace celestia
@@ -11,35 +11,23 @@ namespace celestia
 namespace engine
 {
 
-class IProperty
-{
- public:
-    virtual void update() = 0;
-    friend class Config;
-};
-
 template<typename T>
-class Property : IProperty
+class Property : public utility::Watcher<Config>
 {
  public:
     using validate_fn_t = std::function<T(const T&)>;
 
-    Property() = default;
+//    Property() = default;
 
-    Property(std::shared_ptr<Config> config, std::string name, T _default, validate_fn_t validate = nullptr) :
-        m_config    (std::move(config)),
-        m_name      (std::move(name)),
-        m_default   (std::move(_default)),
-        m_validate  (std::move(validate))
+    Property(const std::shared_ptr<Config>& config,
+             const std::string &name,
+             const T &_default,
+             validate_fn_t validate = nullptr) :
+        utility::Watcher<Config>(config),
+        m_name      { name     },
+        m_default   { _default },
+        m_validate  { validate }
     {
-        assert(m_config != nullptr);
-        m_config->addProperty(this);
-    };
-
-    ~Property()
-    {
-        if (m_config != nullptr)
-            m_config->removeProperty(this);
     };
 
     // Getters and setters
@@ -69,10 +57,9 @@ class Property : IProperty
     };
 
     // Used by Config to propagate changes
-    void update() override;
+    void notifyChange(int = 0) override;
 
  private:
-    std::shared_ptr<Config> m_config        { nullptr };
     std::string             m_name;
     T                       m_value         {};
     T                       m_default       {};

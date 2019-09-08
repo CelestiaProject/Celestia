@@ -1,5 +1,6 @@
 // watcher.h
 //
+// Copyright (C) 2019, Celestia Development Team
 // Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -7,26 +8,42 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELUTIL_WATCHER_H_
-#define _CELUTIL_WATCHER_H_
+#pragma once
+#include <memory>
+#include <iostream>
 
-template<class T> class Watcher
+namespace celestia
+{
+namespace utility
+{
+
+template<typename T> class Watcher
 {
  private:
-    T& watched;
+    std::shared_ptr<T> m_watched;
+
+ protected:
+    const std::shared_ptr<T>& watched()
+    {
+        return m_watched;
+    }
 
  public:
-    Watcher(T& _watched) : watched(_watched)
+    Watcher() = default;
+    Watcher(const std::shared_ptr<T>& watched) :
+        m_watched(watched)
     {
-        watched.addWatcher(this);
+        m_watched->addWatcher(this);
     };
 
     virtual ~Watcher()
     {
-        watched.removeWatcher(this);
+        if (m_watched != nullptr)
+            m_watched->removeWatcher(this);
     }
 
-    virtual void notifyChange(T*, int) = 0;
+    virtual void notifyChange(int = 0) /*= 0*/{std::cout << "Watcher::notifyChange()\n";};
 };
 
-#endif // _CELUTIL_WATCHER_H_
+}
+}

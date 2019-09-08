@@ -1,7 +1,6 @@
 #include "configuration.h"
 #include "property.h"
 #include <iostream>
-#include <algorithm>
 
 
 namespace celestia
@@ -40,20 +39,6 @@ void Config::dump() const
 }
 #endif
 
-void Config::addProperty(IProperty *p)
-{
-    if (std::find(m_props.begin(), m_props.end(), p) == m_props.end())
-        m_props.push_back(p);
-    p->update();
-}
-
-void Config::removeProperty(IProperty *p)
-{
-    auto pos = std::find(m_props.begin(), m_props.end(), p);
-    if (pos != m_props.end())
-        m_props.erase(pos);
-}
-
 const Value* Config::find(const std::string& name) const
 {
     static Value v;
@@ -78,13 +63,7 @@ void Config::set(const std::string& name, const Value* value)
 void Config::endUpdate()
 {
     m_update = false;
-    onUpdate();
-}
-
-void Config::onUpdate()
-{
-    for (auto *p : m_props)
-        p->update();
+    notifyWatchers();
 }
 
 Config::~Config()
