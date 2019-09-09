@@ -15,8 +15,14 @@ extern NSString *const dataDirPathPrefKey;
     NSURL *configFilePath;
     NSURL *dataDirPath;
 @private
+    BOOL mandatory;
     IBOutlet NSPathControl *configFilePathControl;
     IBOutlet NSPathControl *dataDirPathControl;
+    IBOutlet NSButton *cancelButton;
 }
+
++ (NSURL *)applicationConfig;
++ (NSURL *)applicationDataDirectory;
+- (void)setMandatory:(BOOL)isMandatory;
 
 @end
