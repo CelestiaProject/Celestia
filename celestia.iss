@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.6.1
+AppVerName=Celestia 1.6.2
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
