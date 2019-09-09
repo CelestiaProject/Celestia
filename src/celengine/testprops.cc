@@ -26,16 +26,20 @@ void myconfig::read()
 
 class Foo
 {
+    Property<double>    m_p1;
+    NumericProperty     m_distance;
+    StringProperty      m_name, m_type;
+    BooleanProperty     m_visible;
     shared_ptr<Config>  m_cfg;
-    Property<double>    m_p1            { m_cfg, "P1",       10.5  };
-    NumericProperty     m_distance      { m_cfg, "distance", 55.1, [](const double &v){ return v > 0 ? -v : v; } };
-    StringProperty      m_name          { m_cfg, "name",     "baz" };
-    StringProperty      m_type          { m_cfg, "type",     "baz" };
-    BooleanProperty     m_visible       { m_cfg, "visible",  false };
 
  public:
     Foo(const shared_ptr<Config> &cfg):
-        m_cfg { cfg }
+        m_cfg       (cfg),
+        m_p1        (Property<double>(cfg, "P1", 10.5)),
+        m_distance  (NumericProperty(cfg, "distance", 55.1, [](const double &v){ return v > 0 ? -v : v; })),
+        m_name      (StringProperty(cfg, "name", "baz")),
+        m_type      (StringProperty(cfg, "type", "baz")),
+        m_visible   (BooleanProperty(cfg, "visible", false))
     {
     }
     double p1()

@@ -4,9 +4,8 @@
 #include <memory>
 #include <vector>
 #include <map>
-#include <celengine/value.h>
+#include "value.h"
 #include <celutil/util.h>
-#include <celutil/watchable.h>
 
 
 namespace celestia
@@ -15,8 +14,9 @@ namespace engine
 {
 class IConfigUpdater;
 class IConfigWriter;
+class IProperty;
 
-class Config : public utility::Watchable<Config>
+class Config
 {
  public:
     Config() = default;
@@ -27,6 +27,8 @@ class Config : public utility::Watchable<Config>
     Config& operator=(const Config&) = delete;
     Config& operator=(Config&&) = delete;
 
+    void addProperty(IProperty*);
+    void removeProperty(IProperty*);
     const Value* find(const std::string& name) const;
 
 #ifdef DEBUG
@@ -44,17 +46,19 @@ class Config : public utility::Watchable<Config>
         }
     };
 
+    void onUpdate();
     void beginUpdate();
     void set(const std::string& name, const Value *value);
     void endUpdate();
 
+    std::vector<IProperty*> m_props;
     std::map<std::string, const Value*, Cmp> m_values;
 
     bool m_update { false };
 
     friend class IConfigUpdater;
     friend class IConfigWriter;
-    friend class utility::Watcher<Config>;
+    friend class IProperty;
 };
 
 
