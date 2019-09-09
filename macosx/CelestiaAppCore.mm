@@ -343,7 +343,7 @@ CelestiaCore *appCore;
 {
     BOOL result = NO;
     appCore = new CelestiaCore();
-    std::string confFile = [configPath UTF8String];
+    std::string confFile = configPath ? [configPath UTF8String] : "";
     std::vector<std::string> extrasDirs;
     MacOSXSplashProgressNotifier progressNotifier;
 
@@ -352,15 +352,16 @@ CelestiaCore *appCore;
         extrasDirs.push_back([extraPath UTF8String]);
     }
 
-    appCore->setAlerter(new MacOSXAlerter());
     appCore->setCursorHandler(new MacOSXCursorHandler());
-    result = appCore->initSimulation(&confFile,
+    result = appCore->initSimulation(confFile.empty() ? NULL : &confFile,
                                      &extrasDirs,
                                      &progressNotifier);
     if (result)
     {
         CelestiaSettings *settings = [CelestiaSettings shared];
         new MacSettingsWatcher(self, settings); // adds itself to the appCore
+
+        appCore->setAlerter(new MacOSXAlerter());
     }
 
     return result;

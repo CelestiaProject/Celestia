@@ -25,11 +25,11 @@
 {
     CelestiaSettings* settings;
     CelestiaAppCore* appCore;
-    BOOL threaded;
     BOOL ready;
     BOOL isDirty;
     BOOL isFullScreen;
     BOOL needsRelaunch;
+    BOOL forceQuit;
     IBOutlet SplashWindowController *splashWindowController;
     IBOutlet NSTextView *glInfo;
     IBOutlet NSPanel *glInfoPanel;
@@ -65,7 +65,7 @@
 -(void)setDirty;
 -(void)forceDisplay;
 -(void)resize;
--(void)startInitialization;
+-(BOOL)startInitialization;
 -(void)finishInitialization;
 -(void)display;
 -(void)awakeFromNib;

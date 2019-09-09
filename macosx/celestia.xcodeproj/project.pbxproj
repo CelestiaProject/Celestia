@@ -247,7 +247,6 @@
 		E5CAABA70D3D7A08001926FC /* POSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5CAABA60D3D7A08001926FC /* POSupport.cpp */; };
 		E5CC203709AA836E00CFFF2C /* POConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = E5CC203209AA834B00CFFF2C /* POConverter.m */; };
 		E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E5CC204509AA843300CFFF2C /* Localizable.strings */; };
-		E5D3196B096C91A6007FA87F /* vp_patch.sh in Resources */ = {isa = PBXBuildFile; fileRef = E5D3196A096C91A6007FA87F /* vp_patch.sh */; };
 		E5D3E6550D1EA18A00214838 /* axisarrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D3E6530D1EA18A00214838 /* axisarrow.cpp */; };
 		E5D446660777291700A1577D /* utf8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D446640777291700A1577D /* utf8.cpp */; };
 		E5D4467607772B6C00A1577D /* CelestiaSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5D4467407772B6C00A1577D /* CelestiaSettings.mm */; };
@@ -711,7 +710,6 @@
 		E5CC203309AA834B00CFFF2C /* POSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POSupport.h; sourceTree = "<group>"; };
 		E5CC204609AA843300CFFF2C /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E5CC204809AA846600CFFF2C /* fr */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
-		E5D3196A096C91A6007FA87F /* vp_patch.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = vp_patch.sh; sourceTree = "<group>"; };
 		E5D3E6530D1EA18A00214838 /* axisarrow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = axisarrow.cpp; path = ../src/celengine/axisarrow.cpp; sourceTree = SOURCE_ROOT; };
 		E5D3E6540D1EA18A00214838 /* axisarrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = axisarrow.h; path = ../src/celengine/axisarrow.h; sourceTree = SOURCE_ROOT; };
 		E5D446640777291700A1577D /* utf8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = utf8.cpp; path = ../src/celutil/utf8.cpp; sourceTree = SOURCE_ROOT; };
@@ -1181,7 +1179,6 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				E5D3196A096C91A6007FA87F /* vp_patch.sh */,
 				E54742CF09631D3600E89E09 /* defaults.plist */,
 				E599A78C097CAB390079C254 /* Credits.rtf */,
 				E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */,
@@ -1936,7 +1933,6 @@
 				E56A5AD10848F24D00A21D7E /* caution.tiff in Resources */,
 				E5E365AF095C123E00B14224 /* splash.png in Resources */,
 				E54742D009631D3600E89E09 /* defaults.plist in Resources */,
-				E5D3196B096C91A6007FA87F /* vp_patch.sh in Resources */,
 				E599A78E097CAB390079C254 /* Credits.rtf in Resources */,
 				E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */,
 				E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */,

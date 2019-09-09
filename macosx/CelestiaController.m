@@ -52,45 +52,55 @@ NSString* fatalErrorMessage;
     // read config file/data dir from saved
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     NSData *configFileData = [prefs objectForKey:configFilePathPrefKey];
-    NSData *dataDirData = [prefs objectForKey:configFilePathPrefKey];
+    NSData *dataDirData = [prefs objectForKey:dataDirPathPrefKey];
 
-    if (configFileData != nil && dataDirData != nil) {
-        // read saved sandbox bookmark
-        NSError *error = nil;
-        configFilePath = [NSURL URLByResolvingBookmarkData:configFileData options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:nil error:&error];
-        dataDirPath = [NSURL URLByResolvingBookmarkData:dataDirData options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:nil error:&error];
-    }
-
-    if (configFilePath == nil || dataDirPath == nil)
+    // access saved bookmarks
+    if (configFileData != nil)
     {
-        // use the default location
-        configFilePath = [[[NSBundle mainBundle] URLForResource:[NSString stringWithFormat:@"%@/celestia.cfg", CELESTIA_RESOURCES_FOLDER] withExtension:nil] retain];
-        dataDirPath = [[[NSBundle mainBundle] URLForResource:[NSString stringWithFormat:@"%@", CELESTIA_RESOURCES_FOLDER] withExtension:nil] retain];
+        NSError *error = nil;
+        NSURL *tempPath = [NSURL URLByResolvingBookmarkData:configFileData options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:nil error:&error];
+        if ([tempPath startAccessingSecurityScopedResource])
+        {
+            configFilePath = [tempPath retain];
+        }
     }
+
+    if (dataDirData != nil)
+    {
+        NSError *error = nil;
+        NSURL *tempPath = [NSURL URLByResolvingBookmarkData:dataDirData options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:nil error:&error];
+        if ([tempPath startAccessingSecurityScopedResource])
+        {
+            dataDirPath = [tempPath retain];
+        }
+    }
+
+    // use the default location for nil ones
+    if (configFilePath == nil)
+        configFilePath = [[ConfigSelectionWindowController applicationConfig] retain];
+
+    if (dataDirPath == nil)
+        dataDirPath = [[ConfigSelectionWindowController applicationDataDirectory] retain];
 
     // add the edit configuration menu item
     NSMenu *appMenu = [[[[NSApp mainMenu] itemArray] objectAtIndex:0] submenu];
-    [appMenu insertItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Change Configuration File", "") action:@selector(changeConfigFileLocation) keyEquivalent:@""] atIndex:[[appMenu itemArray] count] - 1];
+    [appMenu insertItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Change Configuration File", "") action:@selector(changeConfigFileLocationFromMenu) keyEquivalent:@""] atIndex:[[appMenu itemArray] count] - 1];
 
-    int cpuCount = 0;
-    size_t cpuCountSize = sizeof cpuCount;
-    if (0 == sysctlbyname("hw.ncpu", &cpuCount, &cpuCountSize, NULL, 0))
-    {
-        threaded = (cpuCount > 1);
-    }
     ready = NO;
     isDirty = YES;
     isFullScreen = NO;
     needsRelaunch = NO;
+    forceQuit = NO;
     appCore = nil;
     fatalErrorMessage = nil;
     lastScript = nil;
 
     [self setupResourceDirectory];
-    [scriptsController buildScriptMenuWithScriptDir:extraDataDirPath.path];
+    [scriptsController buildScriptMenuWithScriptDir:[extraDataDirPath path]];
 
     //  hide main window until ready
     [[glView window] setAlphaValue: 0.0f];  //  not  [[glView window] orderOut: nil];
+    [[glView window] setIgnoresMouseEvents:YES];
 
     // create appCore
     appCore = [CelestiaAppCore sharedAppCore];
@@ -109,30 +119,38 @@ NSString* fatalErrorMessage;
 	{
 		[splashWindowController showWindow];
 	}
-    if (threaded)
-    {
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // start initialization thread
-        [NSThread detachNewThreadSelector: @selector(startInitialization) toTarget: self
-        withObject: nil];
-        // wait for completion
-        [self performSelectorOnMainThread: @selector(waitWhileLoading:) withObject: nil waitUntilDone: NO ];
-    }
-    else
-    {
-        [self performSelector:@selector(startInitialization) withObject:nil afterDelay:0];
-    }
+        BOOL result = [self startInitialization];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [splashWindowController close];
+            if (result)
+                [self finishInitialization];
+            else
+                [self initializationError];
+        });
+    });
 }
 
-- (void)setNeedsRelaunch:(BOOL)newValue {
+- (void)setNeedsRelaunch:(BOOL)newValue
+{
     needsRelaunch = newValue;
 }
 
-- (void)changeConfigFileLocation {
+- (void)changeConfigFileLocationFromMenu
+{
+    [self changeConfigFileLocation:YES];
+}
+
+- (void)changeConfigFileLocation:(BOOL)cancelAllowed
+{
     if (configSelectionWindowController == nil) {
         configSelectionWindowController = [[ConfigSelectionWindowController alloc] initWithWindowNibName:@"ConfigSelectionWindow"];
         configSelectionWindowController->dataDirPath = [dataDirPath retain];
         configSelectionWindowController->configFilePath = [configFilePath retain];
     }
+    [configSelectionWindowController setMandatory:!cancelAllowed];
     [configSelectionWindowController showWindow:self];
 }
 
@@ -168,7 +186,7 @@ NSString* fatalErrorMessage;
     }
 }
 
-- (void)startInitialization
+- (BOOL)startInitialization
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -176,37 +194,43 @@ NSString* fatalErrorMessage;
 #ifdef DEBUG
     NSDate *t = [NSDate date];
 #endif
-    if (![appCore initSimulationWithConfigPath:configFilePath.path extraPath:extraDataDirPath.path])
+
+    BOOL result = [appCore initSimulationWithConfigPath:[configFilePath path] extraPath:[extraDataDirPath path]];
+
+    if (!result)
     {
         [startupCondition lock];
-        [startupCondition unlockWithCondition: 99];
-#ifdef DEBUG
-        [pool release];
-#endif
-        [self fatalError: NSLocalizedString(@"Error loading data files. Celestia will now quit.",@"")];
-        if (!threaded)
-            [self fatalError: nil];
-        else
-            [NSThread exit];
-        return;
+        [startupCondition unlockWithCondition:99];
     }
-
-#ifdef DEBUG
-    NSLog(@"Init took %lf seconds\n", -[t timeIntervalSinceNow]);
-#endif
-    [startupCondition lock];
-    [startupCondition unlockWithCondition: 1];
-    if (!threaded)
+    else
     {
-        [splashWindowController close];
-        // complete startup
-        [self fatalError: nil];
-        [self finishInitialization];
+#ifdef DEBUG
+        NSLog(@"Init took %lf seconds\n", -[t timeIntervalSinceNow]);
+#endif
+        [startupCondition lock];
+        [startupCondition unlockWithCondition:1];
     }
 
     [pool release];
+    return result;
 }
 
+- (void) initializationError
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:NSLocalizedString(@"Celestia failed to load data files.", @"")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Choose Configuration File", @"")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Quit", @"")];
+    forceQuit = YES;
+    if ([alert runModal] == NSAlertFirstButtonReturn)
+    {
+        // choose new configuration file
+        [self changeConfigFileLocation:NO];
+        return;
+    }
+    // quit
+    [NSApp terminate:self];
+}
 
 - (void) fatalError: (NSString *) msg
 {
@@ -223,37 +247,6 @@ NSString* fatalErrorMessage;
     fatalErrorMessage = [msg retain];
 }
 
-- (void) waitWhileLoading: (id) obj
-{
-    // display loading indicator window while loading
-
-    static NSModalSession session = nil;
-
-    if ( [startupCondition condition] == 0 ) 
-    {
-        if ( session != nil )
-            return;
-        // beginModalSession also displays the window, but the centering
-        // is wrong so do the display and centering beforehand
-        session = [NSApp beginModalSessionForWindow: [splashWindowController window]];
-        for (;;) 
-        {
-            if ( fatalErrorMessage != nil )
-                break;
-            if ([NSApp runModalSession:session] != NSRunContinuesResponse)
-                break;
-            if ( [startupCondition condition] != 0 )
-                break;
-        }
-        [NSApp endModalSession:session];
-    }
-    [splashWindowController close];
-    // check for fatal error in loading thread
-    [self fatalError: nil];
-    // complete startup
-    [self finishInitialization];
-}
-
 -(void) setupFavorites
 {
     NSInvocation *menuCallback;
@@ -267,6 +260,7 @@ NSString* fatalErrorMessage;
 
 -(void) startGLView
 {
+    [[glView window] setIgnoresMouseEvents:NO];
     [[glView window] setAutodisplay:YES];
     [[glView window] setHidesOnDeactivate: NO];
     [[glView window] setFrameUsingName: @"Celestia"];
@@ -300,72 +294,6 @@ NSString* fatalErrorMessage;
 
 - (void)finishInitialization
 {
-#ifndef NO_VP_WORKAROUND
-    NSString *VP_PROBLEM_EXT  = @"GL_ARB_vertex_program";
-    NSString *VP_PATCH_SCRIPT = @"vp_patch.sh";
-    NSString *VP_PATCH_SHELL  = @"/bin/zsh";
-    NSString *CELESTIA_CFG    = @"~/.celestia.cfg";
-
-    const char *VP_PROBLEM_RENDERERS[] = { "ATI Radeon 9200" };
-    const char *glRenderer = (const char *) glGetString(GL_RENDERER);
-    BOOL shouldWorkaround = NO;
-    size_t i = 0;
-
-    if (glRenderer)
-    {
-        for (; i < (sizeof VP_PROBLEM_RENDERERS)/sizeof(char *); ++i)
-        {
-            if (strstr(glRenderer, VP_PROBLEM_RENDERERS[i]))
-            {
-                shouldWorkaround = YES;
-                break;
-            }
-        }
-    }
-
-    if (shouldWorkaround && ![appCore glExtensionIgnored: VP_PROBLEM_EXT])
-    {
-        if (NSRunAlertPanel([NSString stringWithFormat: NSLocalizedString(@"It appears you are running Celestia on %s hardware. Do you wish to install a workaround?",nil), VP_PROBLEM_RENDERERS[i]],
-                            [NSString stringWithFormat: NSLocalizedString(@"A shell script will be run to modify your %@, adding an IgnoreGLExtensions directive. This can prevent freezing issues.",nil), CELESTIA_CFG],
-                            NSLocalizedString(@"Yes",nil),
-                            NSLocalizedString(@"No",nil),
-                            nil) == NSAlertDefaultReturn)
-        {
-            // Install it
-            NSString *cfgPath = [CELESTIA_CFG stringByStandardizingPath];
-            NSString *toolPath = [[NSBundle mainBundle] pathForResource: VP_PATCH_SCRIPT ofType: @""];
-            BOOL patchInstalled = NO;
-
-            if (toolPath)
-            {
-                NSArray *taskArgs = [NSArray arrayWithObjects:
-                    toolPath, cfgPath, nil];
-                NSTask *theTask = [NSTask launchedTaskWithLaunchPath: VP_PATCH_SHELL
-                                                           arguments: taskArgs];
-                if (theTask)
-                {
-                    [theTask waitUntilExit];
-                    patchInstalled = ([theTask terminationStatus] == 0);
-                }
-            }
-
-            if (patchInstalled)
-            {
-                // Have to apply same patch to config already loaded in memory
-                [appCore setGLExtensionIgnored: VP_PROBLEM_EXT];
-                NSRunAlertPanel(NSLocalizedString(@"Workaround successfully installed.",nil),
-                                [NSString stringWithFormat: NSLocalizedString(@"Your original %@ has been backed up.",nil), CELESTIA_CFG],
-                                nil, nil, nil);
-            }
-            else
-            {
-                [[CelestiaController shared] fatalError: NSLocalizedString(@"There was a problem installing the workaround. You can attempt to perform the workaround manually by following the instructions in the README.",nil)];
-                [[CelestiaController shared] fatalError: nil];
-            }
-        }
-    }
-#endif NO_VP_WORKAROUND
-
     [glView setAASamples: [appCore aaSamples]];
     [appCore initRenderer];
 
@@ -469,7 +397,7 @@ NSString* fatalErrorMessage;
 
 -(BOOL)applicationShouldTerminate:(id)sender
 {
-    if (needsRelaunch)
+    if (forceQuit || needsRelaunch)
         return YES;
 
     if (  NSRunAlertPanel(NSLocalizedString(@"Quit Celestia?",@""),
@@ -494,6 +422,11 @@ NSString* fatalErrorMessage;
 {
     [settings storeUserDefaults];
 
+    [configFilePath stopAccessingSecurityScopedResource];
+    [dataDirPath stopAccessingSecurityScopedResource];
+    [configFilePath release];
+    [dataDirPath release];
+
     [lastScript release];
     [eclipseFinderController release];
     [browserWindowController release];
@@ -504,10 +437,11 @@ NSString* fatalErrorMessage;
         appCore = nil;
     }
 
-    if (needsRelaunch)
-    {
-         [[NSWorkspace sharedWorkspace] launchAppWithBundleIdentifier:[[NSBundle mainBundle] bundleIdentifier] options:NSWorkspaceLaunchAsync additionalEventParamDescriptor:nil launchIdentifier:nil];
-    }
+    // TODO: relaunch app in sandbox
+//    if (needsRelaunch)
+//    {
+//         [[NSWorkspace sharedWorkspace] launchAppWithBundleIdentifier:[[NSBundle mainBundle] bundleIdentifier] options:NSWorkspaceLaunchAsync additionalEventParamDescriptor:nil launchIdentifier:nil];
+//    }
 }
 
 
