@@ -294,24 +294,6 @@ void CelxLua::initMaps()
 }
 
 
-static void getField(lua_State* l, int index, const char* key)
-{
-    // When we move to Lua 5.1, this will be replaced by:
-    // lua_getfield(l, index, key);
-    lua_pushstring(l, key);
-#ifdef LUA_GLOBALSINDEX
-    if (index == LUA_GLOBALSINDEX) {
-      lua_gettable(l, index);
-      return;
-    }
-#endif
-    if (index != LUA_REGISTRYINDEX)
-        lua_gettable(l, index - 1);
-    else
-        lua_gettable(l, index);
-}
-
-
 // Wrapper for a CEL-script, including the needed Execution Environment
 class CelScriptWrapper : public ExecutionEnvironment
 {
@@ -796,7 +778,7 @@ bool LuaState::handleKeyEvent(const char* key)
     }
 
     // get the registered event table
-    getField(costate, LUA_REGISTRYINDEX, EventHandlers);
+    lua_getfield(costate, LUA_REGISTRYINDEX, EventHandlers);
     if (!lua_istable(costate, -1))
     {
         cerr << "Missing event handler table";
@@ -805,7 +787,7 @@ bool LuaState::handleKeyEvent(const char* key)
     }
 
     bool handled = false;
-    getField(costate, -1, KeyHandler);
+    lua_getfield(costate, -1, KeyHandler);
     if (lua_isfunction(costate, -1))
     {
         lua_remove(costate, -2);        // remove the key event table from the stack
@@ -845,7 +827,7 @@ bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
     }
 
     // get the registered event table
-    getField(costate, LUA_REGISTRYINDEX, EventHandlers);
+    lua_getfield(costate, LUA_REGISTRYINDEX, EventHandlers);
     if (!lua_istable(costate, -1))
     {
         cerr << "Missing event handler table";
@@ -854,7 +836,7 @@ bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
     }
 
     bool handled = false;
-    getField(costate, -1, down ? MouseDownHandler : MouseUpHandler);
+    lua_getfield(costate, -1, down ? MouseDownHandler : MouseUpHandler);
     if (lua_isfunction(costate, -1))
     {
         lua_remove(costate, -2);        // remove the key event table from the stack
@@ -903,7 +885,7 @@ bool LuaState::handleTickEvent(double dt)
     }
 
     // get the registered event table
-    getField(costate, LUA_REGISTRYINDEX, EventHandlers);
+    lua_getfield(costate, LUA_REGISTRYINDEX, EventHandlers);
     if (!lua_istable(costate, -1))
     {
         cerr << "Missing event handler table";
@@ -912,7 +894,7 @@ bool LuaState::handleTickEvent(double dt)
     }
 
     bool handled = false;
-    getField(costate, -1, TickHandler);
+    lua_getfield(costate, -1, TickHandler);
     if (lua_isfunction(costate, -1))
     {
         lua_remove(costate, -2);        // remove the key event table from the stack
