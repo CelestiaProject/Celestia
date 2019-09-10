@@ -384,10 +384,10 @@ void Observer::update(double dt, double timeScale)
                 Selection centerObj = frame->getRefObject();
 
                 UniversalCoord ufrom = frame->convertToUniversal(journey.from, simTime);
-                UniversalCoord uto   = frame->convertToUniversal(journey.to, simTime);
+                //UniversalCoord uto   = frame->convertToUniversal(journey.to, simTime);
                 UniversalCoord origin = centerObj.getPosition(simTime);
                 Vec3d v0 = ufrom - origin;
-                Vec3d v1 = uto - origin;
+                //Vec3d v1 = uto - origin;
 
                 if (jv.length() == 0.0)
                 {
@@ -756,7 +756,7 @@ void Observer::computeCenterCOParameters(const Selection& destination,
 
     Selection centerObj = frame->getRefObject();
     UniversalCoord centerPos = centerObj.getPosition(getTime());
-    UniversalCoord targetPosition = destination.getPosition(getTime());
+    //UniversalCoord targetPosition = destination.getPosition(getTime());
 
     Quatd q = Quatd::vecToVecRotation(v, w);
 

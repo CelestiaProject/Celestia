@@ -4777,8 +4777,8 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     float height = atmosphere.height / radius;
     Vec3f recipSemiAxes(1.0f / semiAxes.x, 1.0f / semiAxes.y, 1.0f / semiAxes.z);
 
-    Vec3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
-    Mat3f A = Mat3f::scaling(recipAtmSemiAxes);
+    //Vec3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
+    //Mat3f A = Mat3f::scaling(recipAtmSemiAxes);
     Mat3f A1 = Mat3f::scaling(recipSemiAxes);
 
     // ellipDist is not the true distance from the surface unless the
@@ -5053,19 +5053,19 @@ void renderCompass(Point3f center,
     Mat3f irot = conjugate(orientation).toMatrix3();
 
     Point3f eyePos(0.0f, 0.0f, 0.0f);
-    float radius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
+    //float radius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
     Vec3f eyeVec = center - eyePos;
     eyeVec = eyeVec * irot;
     double centerDist = eyeVec.length();
 
-    float height = 1.0f / radius;
+    //float height = 1.0f / radius;
     Vec3f recipSemiAxes(1.0f / semiAxes.x,
                         1.0f / semiAxes.y,
                         1.0f / semiAxes.z);
 
-    Vec3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
-    Mat3f A = Mat3f::scaling(recipAtmSemiAxes);
-    Mat3f A1 = Mat3f::scaling(recipSemiAxes);
+    //Vec3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
+    //Mat3f A = Mat3f::scaling(recipAtmSemiAxes);
+    //Mat3f A1 = Mat3f::scaling(recipSemiAxes);
 
     const int nCompassPoints = 16;
     Vec3f compassPoints[nCompassPoints];
@@ -6874,7 +6874,7 @@ void Renderer::renderLocations(const Body& body,
                 Ray3d testRay(Point3d(viewRayOrigin.x, viewRayOrigin.y, viewRayOrigin.z),
                               pcLabelPos - viewRayOrigin);
                 bool hit = testIntersection(testRay, bodyEllipsoid, t);
-                Vec3d blah = labelPos - viewRayOrigin;
+                //Vec3d blah = labelPos - viewRayOrigin;
 
                 if (!hit || t >= 1.0)
                 {                    
@@ -7036,7 +7036,7 @@ setupObjectLighting(const vector<LightSource>& suns,
                 }
             }
         }
-#if DEBUG_SECONDARY_ILLUMINATION      
+#ifdef DEBUG_SECONDARY_ILLUMINATION      
         clog << "maxIrr = " << maxIrr << ", "
              << secondaryIlluminators[maxIrrSource].body->getName() << ", "
              << secondaryIlluminators[maxIrrSource].reflectedIrradiance << endl;
@@ -8288,8 +8288,8 @@ void Renderer::renderCometTail(const Body& body,
 {
     Point3f cometPoints[MaxCometTailPoints];
     Point3d pos0 = body.getOrbit(now)->positionAtTime(now);
-    Point3d pos1 = body.getOrbit(now)->positionAtTime(now - 0.01);
-    Vec3d vd = pos1 - pos0;
+    //Point3d pos1 = body.getOrbit(now)->positionAtTime(now - 0.01);
+    //Vec3d vd = pos1 - pos0;
     double t = now;
     /*float f = 1.0e15f;    Unused*/
     /*int nSteps = MaxCometTailPoints;  Unused*/
@@ -8657,7 +8657,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
                     if ((body->getRadius() / (float) pos_v.length()) / pixelSize > PLANETSHINE_PIXEL_SIZE_LIMIT)
                     {
                         // add to planetshine list if larger than 1/10 pixel
-#if DEBUG_SECONDARY_ILLUMINATION
+#ifdef DEBUG_SECONDARY_ILLUMINATION
                         clog << "Planetshine: " << body->getName()
                              << ", " << body->getRadius() / (float) pos_v.length() / pixelSize << endl;
 #endif
@@ -9510,7 +9510,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 #else
         Color starColor = colorTemp->lookupColor(star.getTemperature());
 #endif
-        float renderDistance = distance;
+        //float renderDistance = distance;
         /*float s = renderDistance * size;      Unused*/
         float discSizeInPixels = 0.0f;
         float orbitSizeInPixels = 0.0f;
@@ -9545,7 +9545,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
 
             float f        = RenderDistance / distance;
-            renderDistance = RenderDistance;
+            //renderDistance = RenderDistance;
             starPos        = obsPos + relPos * f;
 
             float radius = star.getRadius();

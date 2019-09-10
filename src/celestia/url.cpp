@@ -353,6 +353,10 @@ Url::Url(CelestiaCore* core, UrlType type)
         break;
     }
 
+#ifndef _MSC_VER
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
+#endif
     switch (type) {
     case Absolute: // Intentional Fall-Through
     case Relative:
@@ -378,6 +382,9 @@ Url::Url(CelestiaCore* core, UrlType type)
         urlStr += buff;
         break;
     }
+#ifndef _MSC_VER
+#pragma GCC diagnostic pop
+#endif
 
     // Append the Celestia URL version
     {

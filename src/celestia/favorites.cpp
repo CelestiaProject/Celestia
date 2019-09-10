@@ -80,7 +80,7 @@ FavoritesList* ReadFavoritesList(istream& in)
 
         // Get fov
         if (!favParams->getNumber("fov", fav->fov))
-            fav->fov = NULL;
+            fav->fov = 0.0;
 
         // Get time
         fav->jd = 0.0;
@@ -137,7 +137,7 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
             out << "\tangle  " << angle << '\n';
             out << setprecision(16);
             out << "\ttime   " << fav->jd << '\n';
-            if (fav->fov != NULL)
+            if (fav->fov != 0.0)
                 out << "\tfov   " << fav->fov << '\n';
             out << "\tselection \"" << fav->selectionName << "\"\n";
             out << "\tcoordsys \"";
@@ -157,6 +157,7 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
                 out << "phaselock"; break;
             case ObserverFrame::Chase:
                 out << "chase"; break;
+            default: break; // Make GCC happy
             }
             out << "\"\n";
         }

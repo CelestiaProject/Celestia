@@ -1071,7 +1071,7 @@ void CompareTycho()
                 cout << recs << " records.\n";
             else
                 cout << ".";
-                cout.flush();
+            cout.flush();
             }
     }
     if (verbose<0)
@@ -1144,7 +1144,7 @@ int main(int argc, char* argv[])
                     cout << stars.size() << " records.\n";
                 else
                     cout << ".";
-                    cout.flush();
+                cout.flush();
                 }
         }
         if (verbose<0)

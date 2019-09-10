@@ -111,6 +111,8 @@ std::string WordExp(const std::string& filename)
     wordexp_t result;
     std::string expanded;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
     switch(wordexp(filename.c_str(), &result, WRDE_NOCMD)) {
     case 0: // successful
         break;
@@ -121,6 +123,7 @@ std::string WordExp(const std::string& filename)
     default: // some other error
         return filename;
     }
+#pragma GCC diagnostic pop
 
     if (result.we_wordc != 1) {
         wordfree(&result);

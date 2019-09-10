@@ -440,7 +440,7 @@ void CelestiaCore::activateFavorite(FavoritesEntry& fav)
     sim->setTime(fav.jd);
     sim->setObserverPosition(fav.position);
     sim->setObserverOrientation(fav.orientation);
-    if (fav.fov != NULL)
+    if (fav.fov != 0.0)
     {
         sim->getActiveObserver()->setFOV(fav.fov);
         setZoomFromFOV();
@@ -787,9 +787,9 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             }
         }
         else if (button == MiddleButton)
-	    {
+        {
             if ((*activeView)->zoom != 1)
-	        {
+            {
                 (*activeView)->alternateZoom = (*activeView)->zoom;
                 (*activeView)->zoom = 1;
             }
@@ -801,8 +801,8 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
 
             // If AutoMag, adapt the faintestMag to the new fov
             if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
-	        setFaintestAutoMag();
-	    }
+                setFaintestAutoMag();
+        }
     }
 }
 
@@ -902,11 +902,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
     }
 
 #ifdef CELX
-	if (luaHook &&
-            luaHook->callLuaHook(this,"mousebuttonmove", dx, dy, modifiers))
-        {
-            return;
-        }
+    if (luaHook && luaHook->callLuaHook(this, "mousebuttonmove", dx, dy, modifiers))
+        return;
 #endif
 
     if ((modifiers & (LeftButton | RightButton)) != 0)
@@ -986,13 +983,13 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 setZoomFromFOV();
             }
 
-    	    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag))
-	        {
-	            setFaintestAutoMag();
-    		    char buf[128];
-        		sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
-        		flash(buf);
-	        }
+            if ((renderer->getRenderFlags() & Renderer::ShowAutoMag))
+            {
+                setFaintestAutoMag();
+                char buf[128];
+                sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
+                flash(buf);
+            }
         }
         else
         {
@@ -1424,9 +1421,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '\013': // Ctrl+K
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowMarkers);
         if (renderer->getRenderFlags() & Renderer::ShowMarkers)
-	{
             flash(_("Markers enabled"));
-	}
         else
             flash(_("Markers disabled"));
         notifyWatchers(RenderFlagsChanged);
@@ -1528,9 +1523,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '\024':  // Ctrl+T
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCometTails);
         if (renderer->getRenderFlags() & Renderer::ShowCometTails)
-	{
             flash(_("Comet tails enabled"));
-	}
         else
             flash(_("Comet tails disabled"));
         notifyWatchers(RenderFlagsChanged);
@@ -1722,7 +1715,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '*':
         addToHistory();
-	sim->reverseObserverOrientation();
+        sim->reverseObserverOrientation();
         break;
 
     case '?':
@@ -1730,30 +1723,27 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         if (!sim->getSelection().empty())
         {
             Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
-            sim->getObserver().getPosition();
+                      sim->getObserver().getPosition();
             int hours, mins;
             float secs;
             char buf[128];
-	    if (astro::microLightYearsToKilometers(v.length()) >=
+            if (astro::microLightYearsToKilometers(v.length()) >=
                 86400.0 * astro::speedOfLight)
-	    {
-	        // Light travel time in years, if >= 1day
-	        sprintf(buf, _("Light travel time:  %.4f yr "),
-                        v.length() * 1.0e-6);
-                flash(buf, 2.0);
-	    }
-	    else
-	    {
-	        // If Light travel delay < 1 day, display in [ hr : min : sec ]
+            {
+                // Light travel time in years, if >= 1day
+                sprintf(buf, _("Light travel time:  %.4f yr "), v.length() * 1.0e-6);
+               flash(buf, 2.0);
+            }
+            else
+            {
+                // If Light travel delay < 1 day, display in [ hr : min : sec ]
                 getLightTravelDelay(v.length(), hours, mins, secs);
                 if (hours == 0)
-                    sprintf(buf, _("Light travel time:  %d min  %.1f s"),
-                            mins, secs);
+                    sprintf(buf, _("Light travel time:  %d min  %.1f s"), mins, secs);
                 else
-		    sprintf(buf, _("Light travel time:  %d h  %d min  %.1f s")
-                            ,hours, mins, secs);
+                    sprintf(buf, _("Light travel time:  %d h  %d min  %.1f s"), hours, mins, secs);
                 flash(buf, 2.0);
-	    }
+            }
         }
         break;
 
@@ -1787,37 +1777,37 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case ',':
         addToHistory();
         if (observer->getFOV() > MinimumFOV)
-	{
-	    observer->setFOV(observer->getFOV() / 1.05f);
+        {
+            observer->setFOV(observer->getFOV() / 1.05f);
             setZoomFromFOV();
-	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag))
-	    {
-	        setFaintestAutoMag();
-		char buf[128];
+            if((renderer->getRenderFlags() & Renderer::ShowAutoMag))
+            {
+                setFaintestAutoMag();
+                char buf[128];
                 setlocale(LC_NUMERIC, "");
-		sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
+                sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
                 setlocale(LC_NUMERIC, "C");
-		flash(buf);
-	    }
-	}
+                flash(buf);
+            }
+        }
         break;
 
     case '.':
         addToHistory();
         if (observer->getFOV() < MaximumFOV)
-	{
-	    observer->setFOV(observer->getFOV() * 1.05f);
+        {
+            observer->setFOV(observer->getFOV() * 1.05f);
             setZoomFromFOV();
-	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
-	    {
-	        setFaintestAutoMag();
-		char buf[128];
+            if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+            {
+                setFaintestAutoMag();
+                char buf[128];
                 setlocale(LC_NUMERIC, "");
-		sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
+                sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
                 setlocale(LC_NUMERIC, "C");
-		flash(buf);
-	    }
-	}
+                flash(buf);
+            }
+        }
         break;
 
     case '+':
@@ -1887,13 +1877,13 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
            runScript(config->demoScriptFile);
         break;
 
-	case 'E':
-		if (c == 'e')
-			renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);
-		else
-        	renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GlobularLabels);		
+    case 'E':
+        if (c == 'e')
+            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);
+        else
+            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GlobularLabels);
         notifyWatchers(LabelFlagsChanged);
-		break;
+        break;
 
     case 'F':
         addToHistory();
@@ -2001,11 +1991,11 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             sim->setTrackedObject(Selection());
         break;
 
-	case 'U':
-		if (c == 'u')
-			renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGalaxies);
-		else
-			renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGlobulars);
+    case 'U':
+        if (c == 'u')
+            renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGalaxies);
+        else
+            renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGlobulars);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -2080,8 +2070,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
         {
             if (sim->getFaintestVisible() < 15.0f)
-	          {
-	              setFaintest(sim->getFaintestVisible() + 0.2f);
+            {
+                setFaintest(sim->getFaintestVisible() + 0.2f);
                 notifyWatchers(FaintestChanged);
                 char buf[128];
                 setlocale(LC_NUMERIC, "");
@@ -2203,9 +2193,9 @@ void CelestiaCore::getLightTravelDelay(double distance, int& hours, int& mins,
 {
     // light travel time in hours
     double lt = astro::microLightYearsToKilometers(distance)/
-	        (3600.0 * astro::speedOfLight);
+                (3600.0 * astro::speedOfLight);
     hours = (int) lt;
-    double mm    = (lt - hours) * 60;
+    double mm = (lt - hours) * 60;
     mins = (int) mm;
     secs = (float) ((mm  - mins) * 60);
 }
@@ -2214,7 +2204,7 @@ void CelestiaCore::setLightTravelDelay(double distance)
 {
     // light travel time in days
     double lt = astro::microLightYearsToKilometers(distance)/
-	        (86400.0 * astro::speedOfLight);
+                (86400.0 * astro::speedOfLight);
     sim->setTime(sim->getTime() - lt);
 }
 
@@ -2290,6 +2280,7 @@ void CelestiaCore::tick()
     if (zoomMotion != 0.0f)
     {
         double span = 0.1;
+#if 0
         double fraction;
 
         if (currentTime - zoomTime >= span)
@@ -2297,7 +2288,8 @@ void CelestiaCore::tick()
         else
             fraction = dt / span;
 
-        // sim->changeOrbitDistance(zoomMotion * (float) fraction);
+        sim->changeOrbitDistance(zoomMotion * (float) fraction);
+#endif
         if (currentTime - zoomTime >= span)
             zoomMotion = 0.0f;
     }
@@ -2510,7 +2502,7 @@ void CelestiaCore::draw()
     }
 
     renderOverlay();
-	if (showConsole)
+    if (showConsole)
     {
         console.setFont(font);
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -2546,7 +2538,7 @@ void CelestiaCore::draw()
 void CelestiaCore::resize(GLsizei w, GLsizei h)
 {
     if (h == 0)
-	h = 1;
+        h = 1;
 
     glViewport(0, 0, w, h);
     if (renderer != NULL)
@@ -3204,8 +3196,8 @@ static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double di
     overlay << descBuf << '\n';
     if (distance >= 0)
     {
-    	overlay << _("Distance: ");
-    	displayDistance(overlay, distance);
+        overlay << _("Distance: ");
+        displayDistance(overlay, distance);
     }
     else
     {
@@ -3253,46 +3245,46 @@ static void displayPlanetInfo(Overlay& overlay,
 
     displayApparentDiameter(overlay, body.getRadius(), kmDistance);
 
-	// Display the phase angle
+    // Display the phase angle
 
-	// Find the parent star of the body. This can be slightly complicated if
-	// the body orbits a barycenter instead of a star.
-	Selection parent = Selection(&body).parent();
-	while (parent.body() != NULL)
-		parent = parent.parent();
+    // Find the parent star of the body. This can be slightly complicated if
+    // the body orbits a barycenter instead of a star.
+    Selection parent = Selection(&body).parent();
+    while (parent.body() != NULL)
+        parent = parent.parent();
 
-	if (parent.star() != NULL)
-	{
-		bool showPhaseAngle = false;
+    if (parent.star() != NULL)
+    {
+        bool showPhaseAngle = false;
 
-		Star* sun = parent.star();
-		if (sun->getVisibility())
-		{
-			showPhaseAngle = true;
-		}
-		else if (sun->getOrbitingStars())
-		{
-			// The planet's orbit is defined with respect to a barycenter. If there's
-			// a single star orbiting the barycenter, we'll compute the phase angle
-			// for the planet with respect to that star. If there are no stars, the
-			// planet is an orphan, drifting through space with no star. We also skip
-			// displaying the phase angle when there are multiple stars (for now.)
-			if (sun->getOrbitingStars()->size() == 1)
-			{
-				sun = sun->getOrbitingStars()->at(0);
-				showPhaseAngle = sun->getVisibility();
-			}
-		}
+        Star* sun = parent.star();
+        if (sun->getVisibility())
+        {
+            showPhaseAngle = true;
+        }
+        else if (sun->getOrbitingStars())
+        {
+            // The planet's orbit is defined with respect to a barycenter. If there's
+            // a single star orbiting the barycenter, we'll compute the phase angle
+            // for the planet with respect to that star. If there are no stars, the
+            // planet is an orphan, drifting through space with no star. We also skip
+            // displaying the phase angle when there are multiple stars (for now.)
+            if (sun->getOrbitingStars()->size() == 1)
+            {
+                sun = sun->getOrbitingStars()->at(0);
+                showPhaseAngle = sun->getVisibility();
+            }
+        }
 
-		if (showPhaseAngle)
-		{
-			Vec3d sunVec = Selection(&body).getPosition(t) - Selection(sun).getPosition(t);
-			sunVec.normalize();
-			double cosPhaseAngle = sunVec * ((1.0 / viewVec.length()) * viewVec);
-			double phaseAngle = acos(cosPhaseAngle);
-			overlay.oprintf(_("Phase angle: %.1f%s\n"), radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
-		}
-	}
+        if (showPhaseAngle)
+        {
+            Vec3d sunVec = Selection(&body).getPosition(t) - Selection(sun).getPosition(t);
+            sunVec.normalize();
+            double cosPhaseAngle = sunVec * ((1.0 / viewVec.length()) * viewVec);
+            double phaseAngle = acos(cosPhaseAngle);
+            overlay.oprintf(_("Phase angle: %.1f%s\n"), radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
+        }
+    }
 
     if (detail > 1)
     {
@@ -3451,18 +3443,18 @@ void CelestiaCore::renderOverlay()
             (sim->getTargetSpeed() < 0.99 *
              astro::kilometersToMicroLightYears(astro::speedOfLight)))
         {
-    	    if (lightTravelFlag)
-    	    {
-    	        Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
+            if (lightTravelFlag)
+            {
+                Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
                               sim->getObserver().getPosition();
-    	        // light travel time in days
+                // light travel time in days
                 lt = astro::microLightYearsToKilometers(v.length()) / (86400.0 * astro::speedOfLight);
-    	    }
-    	}
+            }
+        }
         else
-    	{
-    	    lt = 0.0;
-    	}
+        {
+            lt = 0.0;
+        }
 
         double tdb = sim->getTime() + lt;
         astro::Date d = timeZoneBias != 0?astro::TDBtoLocal(tdb):astro::TDBtoUTC(tdb);
@@ -3614,8 +3606,8 @@ void CelestiaCore::renderOverlay()
                                      *sim->getUniverse());
                 break;
 
-	    default:
-		break;
+            default:
+                break;
             }
 
             *overlay << '\n';
@@ -3764,8 +3756,8 @@ void CelestiaCore::renderOverlay()
                                 v.length() * 1e-6);
             break;
 
-	      default:
-	          break;
+        default:
+            break;
         }
 
         
@@ -4181,27 +4173,27 @@ bool CelestiaCore::initSimulation(const string* configFileName,
     DSONameDatabase* dsoNameDB  = new DSONameDatabase;
     DSODatabase*     dsoDB      = new DSODatabase;
     dsoDB->setNameDatabase(dsoNameDB);
-	    
-	// Load first the vector of dsoCatalogFiles in the data directory (deepsky.dsc, globulars.dsc,...):
-	 
-	for (vector<string>::const_iterator iter = config->dsoCatalogFiles.begin();
-    iter != config->dsoCatalogFiles.end(); iter++)
+
+    // Load first the vector of dsoCatalogFiles in the data directory (deepsky.dsc, globulars.dsc,...):
+
+    for (vector<string>::const_iterator iter = config->dsoCatalogFiles.begin();
+         iter != config->dsoCatalogFiles.end(); ++iter)
     {
-    	if (progressNotifier)
-        	progressNotifier->update(*iter);
-	
-		ifstream dsoFile(iter->c_str(), ios::in);
+        if (progressNotifier)
+            progressNotifier->update(*iter);
+
+        ifstream dsoFile(iter->c_str(), ios::in);
         if (!dsoFile.good())
         {
-        	cerr<< _("Error opening deepsky catalog file.") << '\n';
+            cerr<< _("Error opening deepsky catalog file.") << '\n';
             delete dsoDB;
             return false;
-		}
-        else if (!dsoDB->load(dsoFile, ""))		
-	    {
-    		cerr << "Cannot read Deep Sky Objects database." << '\n';
-        	delete dsoDB;
-           	return false;
+        }
+        else if (!dsoDB->load(dsoFile, ""))
+        {
+            cerr << "Cannot read Deep Sky Objects database." << '\n';
+            delete dsoDB;
+            return false;
         }
     }
 
@@ -4460,7 +4452,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     ifstream starNamesFile(cfg.starNamesFile.c_str(), ios::in);
     if (!starNamesFile.good())
     {
-	cerr << _("Error opening ") << cfg.starNamesFile << '\n';
+        cerr << _("Error opening ") << cfg.starNamesFile << '\n';
         return false;
     }
 
@@ -4995,7 +4987,7 @@ class LuaPathFinder : public EnumFilesHandler
                     }
                 }
             }
-	    }
+        }
         return true;
     };
 };

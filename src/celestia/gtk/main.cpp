@@ -88,7 +88,7 @@ static GOptionEntry optionEntries[] =
 	{ "extrasdir", 'e', 0, G_OPTION_ARG_FILENAME_ARRAY, &extrasDir, "Additional \"extras\" directory", "directory" },
 	{ "fullscreen", 'f', 0, G_OPTION_ARG_NONE, &fullScreen, "Start full-screen", NULL },
 	{ "nosplash", 's', 0, G_OPTION_ARG_NONE, &noSplash, "Disable splash screen", NULL },
-	{ NULL },
+	{ NULL, '\0', 0, G_OPTION_ARG_NONE, NULL, NULL, NULL },
 };
 
 
@@ -293,7 +293,7 @@ int main(int argc, char* argv[])
 	app->startURL = NULL;
 
 	/* Watcher enables sending signals from inside of core */
-	GtkWatcher* gtkWatcher;
+	//GtkWatcher* gtkWatcher;
 
 	/* Command line option parsing */
 	GError *error = NULL;
@@ -486,7 +486,7 @@ int main(int argc, char* argv[])
 	gtk_widget_grab_focus(GTK_WIDGET(app->glArea));
 
 	/* Initialize the Watcher */
-	gtkWatcher = new GtkWatcher(app->core, app);
+	//gtkWatcher = new GtkWatcher(app->core, app);
 
 	/* Unload the splash screen */
 	splashEnd(ss);
