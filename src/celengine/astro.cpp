@@ -79,7 +79,6 @@ struct LeapSecondRecord
 // to the date in the table.
 static const LeapSecondRecord LeapSeconds[] =
 {
-    { 10, 2441317.5 }, // 1 Jan 1972
     { 11, 2441499.5 }, // 1 Jul 1972
     { 12, 2441683.5 }, // 1 Jan 1973
     { 13, 2442048.5 }, // 1 Jan 1974
@@ -104,6 +103,9 @@ static const LeapSecondRecord LeapSeconds[] =
     { 32, 2451179.5 }, // 1 Jan 1999
     { 33, 2453736.5 }, // 1 Jan 2006
     { 34, 2454832.5 }, // 1 Jan 2009
+    { 35, 2456109.5 }, // 1 Jul 2012
+    { 36, 2457204.5 }, // 1 Jul 2015
+    { 37, 2457754.5 }, // 1 Jan 2017
 };
 
 
