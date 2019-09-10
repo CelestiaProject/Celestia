@@ -208,7 +208,7 @@ FixedFunctionRenderContext::~FixedFunctionRenderContext()
 }
 
 
-static int blah = 0;
+//static int blah = 0;
 void
 FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
 {

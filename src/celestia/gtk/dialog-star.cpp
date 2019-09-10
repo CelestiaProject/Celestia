@@ -285,7 +285,7 @@ static void addStars(sbData* sb)
 		sprintf(buf, " %.3f ", d);
 		values[1] = g_strdup(buf);
 
-		Vec3f r = star->getPosition() - ucPos;
+		//Vec3f r = star->getPosition() - ucPos;
 		sprintf(buf, " %.2f ", astro::absToAppMag(star->getAbsoluteMagnitude(), d));
 		values[2] = g_strdup(buf);
 

@@ -115,6 +115,7 @@ void indent()
         cout << "  ";
 }
 
+#ifdef DEBUG
 void logChunk(uint16 chunkType/*, int chunkSize*/)
 {
     const char* name = NULL;
@@ -192,7 +193,6 @@ void logChunk(uint16 chunkType/*, int chunkSize*/)
     default:
         break;
     }
-#if 0
     indent();
 
     if (name == NULL)
@@ -206,9 +206,8 @@ void logChunk(uint16 chunkType/*, int chunkSize*/)
     }
 
     cout.flush();
-#endif
 }
-
+#endif
 
 int read3DSChunk(ifstream& in,
                  ProcessChunkFunc chunkFunc,

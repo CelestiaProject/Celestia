@@ -756,7 +756,7 @@ StarDetails::StarDetails() :
     bolometricCorrection(0.0f),
     knowledge(0u),
     visible(true),
-    texture(texture),
+    texture(InvalidResource),
     geometry(InvalidResource),
     orbit(NULL),
     orbitalRadius(0.0f),

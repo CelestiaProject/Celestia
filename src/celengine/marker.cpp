@@ -151,6 +151,10 @@ void MarkerRepresentation::render(float size) const
 {
     float s = size / 2.0f;
 
+#ifndef _MSC_VER
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
+#endif
     switch (m_symbol)
     {
     case Diamond:
@@ -182,7 +186,6 @@ void MarkerRepresentation::render(float size) const
 
     case Square:
         glBegin(GL_LINE_LOOP);
-
     case FilledSquare:
         glBegin(GL_POLYGON);
 
@@ -268,5 +271,9 @@ void MarkerRepresentation::render(float size) const
         DrawCircle(s);
         glEnd();
         break;
+    default: break;
     }
+#ifndef _MSC_VER
+#pragma GCC diagnostic pop
+#endif
 }

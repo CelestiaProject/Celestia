@@ -20,6 +20,9 @@
 #include "common.h"
 
 
+/* Labels for TimeZone dropdown */
+static const char* timeOptions[] = { "UTC", "Local", NULL };
+
 /* Declarations: Callbacks */
 static gboolean intAdjChanged(GtkAdjustment* adj, int *val);
 static gboolean zoneChosen(GtkComboBox *menu, int* timezone);
