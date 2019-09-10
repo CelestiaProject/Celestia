@@ -13,6 +13,7 @@
 #ifndef _CELENGINE_FRAMETREE_H_
 #define _CELENGINE_FRAMETREE_H_
 
+#include <cstddef>
 #include <vector>
 
 class Star;
