@@ -30,6 +30,7 @@ extern "C" {
 #else
 #include "png.h"
 #endif
+#include <zlib.h>
 
 // Define png_jmpbuf() in case we are using a pre-1.0.6 version of libpng
 #ifndef png_jmpbuf
