@@ -116,7 +116,7 @@ void indent()
 }
 
 #ifdef DEBUG
-void logChunk(uint16 chunkType/*, int chunkSize*/)
+void logChunk(uint16 chunkType, int chunkSize)
 {
     const char* name = NULL;
 

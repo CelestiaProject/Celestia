@@ -6,6 +6,7 @@
 //  Copyright 2005 Chris Laurel. All rights reserved.
 //
 
+#include <libintl.h>
 #ifndef gettext
 #include "POSupport.h"
 #define gettext(s)      localizedUTF8String(s)
