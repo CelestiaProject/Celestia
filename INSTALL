@@ -1,11 +1,50 @@
 Basic installation instructions
 -------------------------------
 
-Install from you OS repository or from the official bintray repository
-https://bintray.com/celestia.
+Stable version installation on Unix-like systems (e.g. GNU/Linux or *BSD):
+* Check your OS repository for already built packages.
+* Check https://celestia.space/download.html.
+* Check https://bintray.com/celestia if it contains packages for your system.
 
-https://bintray.com/celestia/celestia-builds/snapshots contains
-official 32/64 bit development snapshots for Windows.
+Stable version installation on Windows and OSX:
+* Check https://celestia.space/download.html.
+
+
+Development snapshots installation on Unix-like systems:
+* On Debian 10 and derived systems:
+  curl https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/Release.key | sudo apt-key add -
+  echo "deb https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
+  sudo apt update && sudo apt install celestia
+
+* On Ubuntu 18.04 and derived systems:
+  curl https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubuntu_18.04/Release.key | sudo apt-key add -
+  echo "deb https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubuntu_18.04/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
+  sudo apt update && sudo apt install celestia
+
+* On openSUSE Leap 15.1:
+  sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Leap_15.1/home:munix9:unstable.repo
+  sudo zypper refresh
+  sudo zypper install celestia
+
+* On openSUSE Tumbleweed:
+  sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Tumbleweed/home:munix9:unstable.repo
+  sudo zypper refresh
+  sudo zypper install celestia
+
+* On other GNU/Linux distributions:
+  Try experimental portable AppImage (see https://github.com/CelestiaProject/Celestia/issues/333):
+  wget https://github.com/munix9/Celestia/releases/download/continuous/celestia-qt-continuous-x86_64.AppImage
+  chmod 755 celestia-qt-continuous-x86_64.AppImage
+
+  Optionally create a portable, version-independent $HOME directory in the
+  same folder as the AppImage file:
+  mkdir celestia-qt.home
+
+
+Development snapshots installation on Windows:
+* https://bintray.com/celestia/celestia-builds/snapshots contains
+  official 32/64 bit development snapshots for Windows.
+
 
 To build from sources please follow instructions below.
 
@@ -50,9 +89,9 @@ what you need to do to build and run Celestia:
 
   mkdir build
   cd build
-	cmake .. -DENABLE_INTERFACE=ON [*]
-	make
-	sudo make install
+  cmake .. -DENABLE_INTERFACE=ON [*]
+  make
+  sudo make install
 
 [*] INTERFACE must be replaced with one of "QT", "GTK", or "GLUT".
 
