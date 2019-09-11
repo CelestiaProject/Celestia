@@ -68,6 +68,10 @@
 #endif
 #endif
 
+#ifdef CELX
+#include "lua.hpp"
+#endif
+
 #ifndef CONFIG_DATA_DIR
 #define CONFIG_DATA_DIR "./"
 #endif
@@ -1008,35 +1012,51 @@ void CelestiaAppWindow::slotManual()
 
 void CelestiaAppWindow::slotShowAbout()
 {
-
 #if defined(_MSC_VER)
     QString compilerVersion = QString("MSVC %1").arg(_MSC_FULL_VER);
-#elif defined(__clang__) && defined(__clang_version__)
-    static const char* compilerVersion = "Clang " __clang_version__;
+#elif defined(__clang__)
+    const char* compilerVersion = "Clang " __clang_version__;
 #elif defined(__GNUC__)
-    static const char* compilerVersion = "GCC " __VERSION__;
+    const char* compilerVersion = "GCC " __VERSION__;
 #endif
 
-    static const char* aboutText =
+#ifdef CELX
+    const char* luaInfo = LUA_VERSION;
+#else
+    const char* luaInfo = _("unsupported");
+#endif
+
+#ifdef USE_SPICE
+    const char* spiceInfo = _("supported");
+#else
+    const char* spiceInfo = _("unsupported");
+#endif
+
+    const char* aboutText =
     gettext_noop("<html>"
-    "<p><b>Celestia 1.7.0-devel %1 bit, git commit %2.</b></p>"
-    "<p>Built against Qt library:&nbsp;%3 using&nbsp;%4.</p>"
-    "<p>Loaded Qt version:&nbsp;%5</p>"
-    "<p>Copyright (C) 2001-2019 by the Celestia Development Team. Celestia "
-    "is free software. You can redistribute it and/or modify it under the "
-    "terms of the GNU General Public License version&nbsp;2.</p>"
-    "<b>Celestia on the web</b>"
-    "<br>"
-    "Main site: <a href=\"https://celestia.space/\">"
+    "<h1>Celestia 1.7.0</h1>"
+    "<p>Development snapshot, commit %2.</p>"
+    "<p>Built for %1 bit CPU.<br>"
+    "Built against Qt library:&nbsp;%3 using&nbsp;%4.<br>"
+    "Loaded Qt version:&nbsp;%5.<br>"
+    "CELX scripting:&nbsp;%6.<br>"
+    "NAIF kerners:&nbsp;%7.</p>"
+    "<p>Copyright (C) 2001-2019 by the Celestia Development Team.<br>"
+    "Celestia is free software. You can redistribute it and/or modify "
+    "it under the terms of the GNU General Public License as published "
+    "by the Free Software Foundation; either version 2 of the License, "
+    "or (at your option) any later version.</p>"
+    "<p>Main site: <a href=\"https://celestia.space/\">"
     "https://celestia.space/</a><br>"
     "Forum: <a href=\"https://celestia.space/forum/\">"
     "https://celestia.space/forum/</a><br>"
     "GitHub project: <a href=\"https://github.com/CelestiaProject/Celestia\">"
-    "https://github.com/CelestiaProject/Celestia</a><br>"
+    "https://github.com/CelestiaProject/Celestia</a></p>"
     "</html>");
 
-    QMessageBox::about(this, "Celestia",
-                       QString(_(aboutText)).arg(QSysInfo::WordSize).arg(GIT_COMMIT, qVersion(), compilerVersion, QT_VERSION_STR));
+    QMessageBox::about(this, _("About Celestia"),
+                       QString(_(aboutText)).arg(QSysInfo::WordSize)
+                                            .arg(GIT_COMMIT, QT_VERSION_STR, compilerVersion, qVersion(), luaInfo, spiceInfo));
 }
 
 
