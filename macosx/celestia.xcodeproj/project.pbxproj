@@ -2381,7 +2381,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/lib";
-				PRODUCT_BUNDLE_IDENTIFIER = net.shatters.Celestia;
+				PRODUCT_BUNDLE_IDENTIFIER = space.celestia.Celestia;
 				PRODUCT_NAME = Celestia;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
@@ -2444,7 +2444,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/lib";
-				PRODUCT_BUNDLE_IDENTIFIER = net.shatters.Celestia;
+				PRODUCT_BUNDLE_IDENTIFIER = space.celestia.Celestia;
 				PRODUCT_NAME = Celestia;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
@@ -2582,7 +2582,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/lib";
-				PRODUCT_BUNDLE_IDENTIFIER = net.shatters.Celestia;
+				PRODUCT_BUNDLE_IDENTIFIER = space.celestia.Celestia;
 				PRODUCT_NAME = Celestia;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
@@ -2626,7 +2626,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/lib";
-				PRODUCT_BUNDLE_IDENTIFIER = net.shatters.Celestia;
+				PRODUCT_BUNDLE_IDENTIFIER = space.celestia.Celestia;
 				PRODUCT_NAME = Celestia;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;

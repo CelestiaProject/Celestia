@@ -42,7 +42,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>CFBundleURLName</key>
-			<string>net.shatters.Celestia.celurl</string>
+			<string>space.celestia.Celestia.celurl</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>cel</string>
