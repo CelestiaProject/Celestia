@@ -51,6 +51,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>Prerelease</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.education</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
