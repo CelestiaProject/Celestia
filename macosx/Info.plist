@@ -26,8 +26,6 @@
 	<string>Celestia Help</string>
 	<key>CFBundleHelpBookName</key>
 	<string>Celestia Help</string>
-	<key>CFBundleIconFile</key>
-	<string>celestia</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>

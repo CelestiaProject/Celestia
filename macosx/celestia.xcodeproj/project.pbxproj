@@ -48,6 +48,7 @@
 		970AEE8E2329417000E9ED22 /* liblua5.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE8D2329417000E9ED22 /* liblua5.3.a */; };
 		970AEE90232943D300E9ED22 /* libintl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE8F232943D300E9ED22 /* libintl.a */; };
 		970AEE92232943DC00E9ED22 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE91232943DC00E9ED22 /* libiconv.tbd */; };
+		9772E5A02329DDC400531773 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9772E59F2329DDC400531773 /* Images.xcassets */; };
 		978EBA922324D0740025C9D5 /* ConfigSelectionWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 978EBA912324D0740025C9D5 /* ConfigSelectionWindow.xib */; };
 		9798FB522324D2BE007F92B8 /* ConfigSelectionWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9798FB502324D2BE007F92B8 /* ConfigSelectionWindowController.m */; };
 		97E4018123101501002013C7 /* cspice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4EEA6D0F50144A003341A2 /* cspice.a */; };
@@ -227,7 +228,6 @@
 		E567F094099112EC00D05031 /* visualbins.stc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8F09910E8F00D05031 /* visualbins.stc */; };
 		E567F095099112EC00D05031 /* world-capitals.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF9009910E8F00D05031 /* world-capitals.ssc */; };
 		E56A3DB80848C19800A21D7E /* MacDirectory.mm in Sources */ = {isa = PBXBuildFile; fileRef = E56A3DB70848C19800A21D7E /* MacDirectory.mm */; };
-		E56A5AD10848F24D00A21D7E /* caution.tiff in Resources */ = {isa = PBXBuildFile; fileRef = E56A5AD00848F24D00A21D7E /* caution.tiff */; };
 		E56A5AED0848F92200A21D7E /* FullScreenWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = E56A5AEB0848F92200A21D7E /* FullScreenWindow.m */; };
 		E56B96570AAB22AA0097DDFE /* renderglsl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E56B96530AAB22AA0097DDFE /* renderglsl.cpp */; };
 		E572837C0793A02800C1F239 /* celestia.cfg in Copy Misc */ = {isa = PBXBuildFile; fileRef = F5626A0002A49B8B014901DC /* celestia.cfg */; };
@@ -244,7 +244,6 @@
 		E5A994750B1482FE009F40FA /* scriptrotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5A994710B1482FE009F40FA /* scriptrotation.cpp */; };
 		E5A994770B1482FE009F40FA /* scriptobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5A994730B1482FE009F40FA /* scriptobject.cpp */; };
 		E5B48EBA0C22065E00C6FBD7 /* MacInputWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5B48EB80C22065E00C6FBD7 /* MacInputWatcher.mm */; };
-		E5B615070777307F001BB2BF /* celestia.icns in Resources */ = {isa = PBXBuildFile; fileRef = E5B615060777307F001BB2BF /* celestia.icns */; };
 		E5C9ADE10848FFEF0071B1EE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5040B0602A47B91014901DC /* Carbon.framework */; };
 		E5CAABA70D3D7A08001926FC /* POSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5CAABA60D3D7A08001926FC /* POSupport.cpp */; };
 		E5CC203709AA836E00CFFF2C /* POConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = E5CC203209AA834B00CFFF2C /* POConverter.m */; };
@@ -298,7 +297,6 @@
 		E5E2BDD20C24F7B6000D6E83 /* TextWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = E5E2BDD00C24F7B6000D6E83 /* TextWindow.nib */; };
 		E5E2BDD70C24F7E6000D6E83 /* TextWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E5E2BDD50C24F7E6000D6E83 /* TextWindowController.m */; };
 		E5E365AD095C11B500B14224 /* SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = E5E365AB095C11B500B14224 /* SplashScreen.m */; };
-		E5E365AF095C123E00B14224 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = E5E365AE095C123E00B14224 /* splash.png */; };
 		FF7B2B0E0E89B0D90089BF43 /* globular.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF7B2B0C0E89B0D90089BF43 /* globular.cpp */; };
 		FF7B2B1B0E89B22D0089BF43 /* charm2.stc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B110E89B1A30089BF43 /* charm2.stc */; };
 		FF7B2B1C0E89B23D0089BF43 /* galaxies.dsc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B120E89B1A30089BF43 /* galaxies.dsc */; };
@@ -542,6 +540,7 @@
 		970AEE8F232943D300E9ED22 /* libintl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libintl.a; path = lib/libintl.a; sourceTree = "<group>"; };
 		970AEE91232943DC00E9ED22 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		9726813A231D0D930014C8D7 /* Celestia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Celestia.entitlements; sourceTree = "<group>"; };
+		9772E59F2329DDC400531773 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		978EBA912324D0740025C9D5 /* ConfigSelectionWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConfigSelectionWindow.xib; sourceTree = "<group>"; };
 		9798FB4F2324D2BE007F92B8 /* ConfigSelectionWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfigSelectionWindowController.h; sourceTree = "<group>"; };
 		9798FB502324D2BE007F92B8 /* ConfigSelectionWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfigSelectionWindowController.m; sourceTree = "<group>"; };
@@ -673,7 +672,6 @@
 		E567EFF509910F0D00D05031 /* shroxmars.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shroxmars.ssc; sourceTree = "<group>"; };
 		E567EFF609910F0D00D05031 /* skylab.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = skylab.ssc; sourceTree = "<group>"; };
 		E56A3DB70848C19800A21D7E /* MacDirectory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacDirectory.mm; sourceTree = "<group>"; };
-		E56A5AD00848F24D00A21D7E /* caution.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = caution.tiff; sourceTree = "<group>"; };
 		E56A5AEA0848F92200A21D7E /* FullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullScreenWindow.h; sourceTree = "<group>"; };
 		E56A5AEB0848F92200A21D7E /* FullScreenWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullScreenWindow.m; sourceTree = "<group>"; };
 		E56B96520AAB22AA0097DDFE /* lightenv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lightenv.h; path = ../src/celengine/lightenv.h; sourceTree = SOURCE_ROOT; };
@@ -703,7 +701,6 @@
 		E5A994730B1482FE009F40FA /* scriptobject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scriptobject.cpp; path = ../src/celengine/scriptobject.cpp; sourceTree = SOURCE_ROOT; };
 		E5B48EB70C22065E00C6FBD7 /* MacInputWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacInputWatcher.h; sourceTree = "<group>"; };
 		E5B48EB80C22065E00C6FBD7 /* MacInputWatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacInputWatcher.mm; sourceTree = "<group>"; };
-		E5B615060777307F001BB2BF /* celestia.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = celestia.icns; sourceTree = "<group>"; };
 		E5B61B2C077737A6001BB2BF /* lua.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lua.h; path = include/lua.h; sourceTree = "<group>"; };
 		E5B61B2D077737A6001BB2BF /* lualib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lualib.h; path = include/lualib.h; sourceTree = "<group>"; };
 		E5B61B2E077737A6001BB2BF /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = include/png.h; sourceTree = "<group>"; };
@@ -780,7 +777,6 @@
 		E5E2BDD50C24F7E6000D6E83 /* TextWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextWindowController.m; sourceTree = "<group>"; };
 		E5E365AA095C11B500B14224 /* SplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashScreen.h; sourceTree = "<group>"; };
 		E5E365AB095C11B500B14224 /* SplashScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplashScreen.m; sourceTree = "<group>"; };
-		E5E365AE095C123E00B14224 /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splash.png; path = ../splash.png; sourceTree = "<group>"; };
 		E5E365B0095C12BD00B14224 /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		E5E365B1095C12C900B14224 /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
 		E5E365B2095C12D200B14224 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1186,6 +1182,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9772E59F2329DDC400531773 /* Images.xcassets */,
 				E54742CF09631D3600E89E09 /* defaults.plist */,
 				E599A78C097CAB390079C254 /* Credits.rtf */,
 				E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */,
@@ -1193,9 +1190,6 @@
 				E57283980793F82A00C1F239 /* AUTHORS */,
 				E57283990793F82A00C1F239 /* ChangeLog */,
 				E572839A0793F82A00C1F239 /* COPYING */,
-				E5B615060777307F001BB2BF /* celestia.icns */,
-				E56A5AD00848F24D00A21D7E /* caution.tiff */,
-				E5E365AE095C123E00B14224 /* splash.png */,
 				F578B7AE02B3E35F0100020A /* Celestia Data */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				E54343100783C3F200053094 /* BrowserWindow.nib */,
@@ -1938,10 +1932,8 @@
 				978EBA922324D0740025C9D5 /* ConfigSelectionWindow.xib in Resources */,
 				E56430BB07769C9000E2C4A3 /* MainMenu.nib in Resources */,
 				E56430BC07769C9000E2C4A3 /* InfoPlist.strings in Resources */,
-				E5B615070777307F001BB2BF /* celestia.icns in Resources */,
 				E54343120783C3F200053094 /* BrowserWindow.nib in Resources */,
-				E56A5AD10848F24D00A21D7E /* caution.tiff in Resources */,
-				E5E365AF095C123E00B14224 /* splash.png in Resources */,
+				9772E5A02329DDC400531773 /* Images.xcassets in Resources */,
 				E54742D009631D3600E89E09 /* defaults.plist in Resources */,
 				E599A78E097CAB390079C254 /* Credits.rtf in Resources */,
 				E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */,
@@ -2358,6 +2350,7 @@
 		E50E8707097436A4006687D3 /* Universal_Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_ENTITLEMENTS = Celestia.entitlements;
@@ -2424,6 +2417,7 @@
 		E532F41A0933316100D7D5B3 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_ENTITLEMENTS = Celestia.entitlements;
@@ -2561,6 +2555,7 @@
 		E5F9EC680D9EA6BE00A83FEF /* HDR_Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_ENTITLEMENTS = Celestia.entitlements;
@@ -2600,6 +2595,7 @@
 		E5F9EC690D9EA6BE00A83FEF /* HDR_Universal_Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_ENTITLEMENTS = Celestia.entitlements;
