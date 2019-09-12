@@ -48,7 +48,7 @@
 		970AEE8E2329417000E9ED22 /* liblua5.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE8D2329417000E9ED22 /* liblua5.3.a */; };
 		970AEE90232943D300E9ED22 /* libintl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE8F232943D300E9ED22 /* libintl.a */; };
 		970AEE92232943DC00E9ED22 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE91232943DC00E9ED22 /* libiconv.tbd */; };
-		9772E5A02329DDC400531773 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9772E59F2329DDC400531773 /* Images.xcassets */; };
+		9772E5A02329DDC400531773 /* Images.xcassets in Sources */ = {isa = PBXBuildFile; fileRef = 9772E59F2329DDC400531773 /* Images.xcassets */; };
 		978EBA922324D0740025C9D5 /* ConfigSelectionWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 978EBA912324D0740025C9D5 /* ConfigSelectionWindow.xib */; };
 		9798FB522324D2BE007F92B8 /* ConfigSelectionWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9798FB502324D2BE007F92B8 /* ConfigSelectionWindowController.m */; };
 		97E4018123101501002013C7 /* cspice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4EEA6D0F50144A003341A2 /* cspice.a */; };
@@ -1933,7 +1933,6 @@
 				E56430BB07769C9000E2C4A3 /* MainMenu.nib in Resources */,
 				E56430BC07769C9000E2C4A3 /* InfoPlist.strings in Resources */,
 				E54343120783C3F200053094 /* BrowserWindow.nib in Resources */,
-				9772E5A02329DDC400531773 /* Images.xcassets in Resources */,
 				E54742D009631D3600E89E09 /* defaults.plist in Resources */,
 				E599A78E097CAB390079C254 /* Credits.rtf in Resources */,
 				E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */,
@@ -2016,6 +2015,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9772E5A02329DDC400531773 /* Images.xcassets in Sources */,
 				E56430C107769C9000E2C4A3 /* main.m in Sources */,
 				E56430C207769C9000E2C4A3 /* 3dsmodel.cpp in Sources */,
 				E56430C307769C9000E2C4A3 /* 3dsread.cpp in Sources */,
