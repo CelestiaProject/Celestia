@@ -527,7 +527,7 @@ class Renderer
 
     void renderCometTail(const Body& body,
                          const Eigen::Vector3f& pos,
-                         double now,
+                         const Observer& observer,
                          float discSizeInPixels);
 
     void renderObjectAsPoint_nosprite(const Eigen::Vector3f& center,
