@@ -961,22 +961,17 @@ float Star::getRadius() const
         return details->getRadius();
 
 #ifdef NO_BOLOMETRIC_MAGNITUDE_CORRECTION
-    // Use the Stefan-Boltzmann law to estimate the radius of a
-    // star from surface temperature and luminosity
-    return SOLAR_RADIUS * (float) sqrt(getLuminosity()) *
-        square(SOLAR_TEMPERATURE / getTemperature());
+    auto lum = getLuminosity();
 #else
     // Calculate the luminosity of the star from the bolometric, not the
     // visual magnitude of the star.
-    float solarBMag = SOLAR_BOLOMETRIC_MAG;
-    float bmag = getBolometricMagnitude();
-    auto boloLum = (float) exp((solarBMag - bmag) / LN_MAG);
+    auto lum = getBolometricLuminosity();
+#endif
 
     // Use the Stefan-Boltzmann law to estimate the radius of a
     // star from surface temperature and luminosity
-    return SOLAR_RADIUS * (float) sqrt(boloLum) *
+    return SOLAR_RADIUS * (float) sqrt(lum) *
         square(SOLAR_TEMPERATURE / getTemperature());
-#endif
 }
 
 
@@ -1137,6 +1132,19 @@ float Star::getLuminosity() const
 void Star::setLuminosity(float lum)
 {
     absMag = astro::lumToAbsMag(lum);
+}
+
+float Star::getBolometricLuminosity() const
+{
+#ifdef NO_BOLOMETRIC_MAGNITUDE_CORRECTION
+    return getLuminosity();
+#else
+    // Calculate the luminosity of the star from the bolometric, not the
+    // visual magnitude of the star.
+    float solarBMag = SOLAR_BOLOMETRIC_MAG;
+    float bmag = getBolometricMagnitude();
+    return (float) exp((solarBMag - bmag) / LN_MAG);
+#endif
 }
 
 StarDetails* Star::getDetails() const

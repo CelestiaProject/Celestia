@@ -265,6 +265,7 @@ public:
 
     float getApparentMagnitude(float) const;
     float getLuminosity() const;
+    float getBolometricLuminosity() const;
 
     // Return the exact position of the star, accounting for its orbit
     UniversalCoord getPosition(double t) const;
