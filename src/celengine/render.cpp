@@ -1963,7 +1963,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
     case RenderListEntry::RenderableCometTail:
         renderCometTail(*rle.body,
                         rle.position,
-                        observer.getTime(),
+                        observer,
                         rle.discSizeInPixels);
         break;
 
@@ -5541,9 +5541,11 @@ static float cometDustTailLength(float distanceToSun,
 // TODO: Remove unused parameters??
 void Renderer::renderCometTail(const Body& body,
                                const Vector3f& pos,
-                               double now,
+                               const Observer& observer,
                                float discSizeInPixels)
 {
+    double now = observer.getTime();
+
     Vector3f cometPoints[MaxCometTailPoints];
     Vector3d pos0 = body.getOrbit(now)->positionAtTime(now);
 #if 0
@@ -5553,8 +5555,6 @@ void Renderer::renderCometTail(const Body& body,
     double t = now;
 
     float distanceFromSun, irradiance_max = 0.0f;
-    unsigned int li_eff = 0;    // Select the first sun as default to
-                                // shut up compiler warnings
 
     // Adjust the amount of triangles used for the comet tail based on
     // the screen size of the comet.
@@ -5565,21 +5565,27 @@ void Renderer::renderCometTail(const Body& body,
     // Find the sun with the largest irrradiance of light onto the comet
     // as function of the comet's position;
     // irradiance = sun's luminosity / square(distanceFromSun);
-
-    for (unsigned int li = 0; li < lightSourceList.size(); li++)
+    Vector3d sunPos(Vector3d::Zero());
+    for (const auto star : nearStars)
     {
-        distanceFromSun = (float) (pos.cast<double>() - lightSourceList[li].position).norm();
-        float irradiance = lightSourceList[li].luminosity / square(distanceFromSun);
-        if (irradiance > irradiance_max)
+        if (star->getVisibility())
         {
-            li_eff = li;
-            irradiance_max = irradiance;
+            Vector3d p = star->getPosition(t).offsetFromKm(observer.getPosition());
+            distanceFromSun = (float) (pos.cast<double>() - p).norm();
+            float irradiance = star->getBolometricLuminosity() / square(distanceFromSun);
+
+            if (irradiance > irradiance_max)
+            {
+                irradiance_max = irradiance;
+                sunPos = p;
+            }
         }
     }
+
     float fadeDistance = 1.0f / (float) (COMET_TAIL_ATTEN_DIST_SOL * sqrt(irradiance_max));
 
     // direction to sun with dominant light irradiance:
-    Vector3f sunDir = (pos.cast<double>() - lightSourceList[li_eff].position).cast<float>().normalized();
+    Vector3f sunDir = (pos.cast<double>() - sunPos).cast<float>().normalized();
 
     float dustTailLength = cometDustTailLength((float) pos0.norm(), body.getRadius());
     float dustTailRadius = dustTailLength * 0.1f;
