@@ -992,7 +992,7 @@ void RepeatCommand::process(ExecutionEnvironment& env, double t, double dt)
     }
 }
 
-double RepeatCommand::getDuration()
+double RepeatCommand::getDuration() const
 {
     return bodyDuration * repeatCount;
 }

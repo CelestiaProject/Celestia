@@ -42,7 +42,7 @@ using namespace std;
 const float DSO_OCTREE_ROOT_SIZE   = 1.0e11f;
 
 static const float DSO_OCTREE_MAGNITUDE   = 8.0f;
-static const float DSO_EXTRA_ROOM         = 0.01f; // Reserve 1% capacity for extra DSOs
+//static const float DSO_EXTRA_ROOM         = 0.01f; // Reserve 1% capacity for extra DSOs
                                                    // (useful as a complement of binary loaded DSOs)
 
 const char* DSODatabase::FILE_HEADER      = "CEL_DSOs";

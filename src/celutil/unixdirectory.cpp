@@ -112,7 +112,7 @@ std::string WordExp(const std::string& filename)
     std::string expanded;
 
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
     switch(wordexp(filename.c_str(), &result, WRDE_NOCMD)) {
     case 0: // successful
         break;

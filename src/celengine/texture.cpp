@@ -934,7 +934,7 @@ extern Texture* CreateProceduralCubeMap(int size, int format,
     {
         faces[i] = NULL;
         faces[i] = new Image(format, size, size);
-        if (faces == NULL)
+        if (faces[i] == NULL)
             failed = true;
     }
 

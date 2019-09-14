@@ -99,7 +99,7 @@ static const float PLANETSHINE_PIXEL_SIZE_LIMIT      =   0.1f;
 // Distance from the Sun at which comet tails will start to fade out
 static const float COMET_TAIL_ATTEN_DIST_SOL = astro::AUtoKilometers(5.0f);
 
-static const int StarVertexListSize = 1024;
+//static const int StarVertexListSize = 1024;
 
 // Fractional pixel offset used when rendering text as texture mapped
 // quads to ensure consistent mapping of texels to pixels.
@@ -10540,7 +10540,11 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
                     hOffset = 2 + (int) annotations[i].markerRep->size() / 2;
                 break;
             }
-            
+
+#ifndef _MSC_VER
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wenum-compare-switch"
+#endif
             switch (annotations[i].valign)
             {
             case AlignCenter:
@@ -10553,7 +10557,10 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
                 vOffset = 0;
                 break;
             }
-            
+#ifndef _MSC_VER
+#pragma GCC diagnostic pop
+#endif
+
             glColor(annotations[i].color);
             glTranslatef((int) annotations[i].position.x + hOffset + PixelOffset,
                          (int) annotations[i].position.y + vOffset + PixelOffset, 0.0f);

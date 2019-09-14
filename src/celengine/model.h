@@ -46,6 +46,11 @@ public:
 };
 
 
+#ifndef _MSC_VER
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#endif
+
 /*!
  * Model is the standard geometry object in Celestia.  A Model
  * consists of a library of materials together with a list of
@@ -179,5 +184,9 @@ class Model : public Geometry
     bool opaque;
     bool normalized;
 };
+
+#ifndef _MSC_VER
+#pragma clang diagnostic pop
+#endif
 
 #endif // !_CELENGINE_MODEL_H_

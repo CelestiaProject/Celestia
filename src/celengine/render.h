@@ -708,7 +708,7 @@ class Renderer
     double modelMatrix[16];
     double projMatrix[16];
 
-    bool useCompressedTextures;
+    //bool useCompressedTextures;
     bool useVertexPrograms;
     bool useRescaleNormal;
     bool usePointSprite;
