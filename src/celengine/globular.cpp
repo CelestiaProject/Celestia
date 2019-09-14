@@ -39,7 +39,7 @@ static const float LumiShape = 3.0f, Lumi0 = exp(-LumiShape);
 // Reference values ( = data base averages) of core radius, King concentration
 // and mu25 isophote radius:
 
-static const float R_c_ref = 0.83f, C_ref = 2.1f, R_mu25 = 40.32f;
+static const float R_c_ref = 0.83f, C_ref = 2.1f/*, R_mu25 = 40.32f*/;
 
 // min/max c-values of globular cluster data
 

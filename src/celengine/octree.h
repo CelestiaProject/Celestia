@@ -18,6 +18,12 @@
 #include <celengine/observer.h>
 
 
+#ifndef _MSC_VER
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundefined-var-template"
+#endif
+
+
 // The DynamicOctree and StaticOctree template arguments are:
 // OBJ:  object hanging from the node,
 // PREC: floating point precision of the culling operations at node level.
@@ -377,5 +383,8 @@ void StaticOctree<OBJ, PREC>::computeStatistics(std::vector<OctreeLevelStatistic
     }
 }
 
+#ifndef _MSC_VER
+#pragma clang diagnostic pop
+#endif
 
 #endif // _OCTREE_H_

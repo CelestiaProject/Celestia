@@ -687,7 +687,7 @@ AsciiModelLoader::loadMesh()
             if (tok.nextToken() != Tokenizer::TokenNumber)
             {
                 reportError("Incomplete index list in primitive group");
-                delete indices;
+                delete[] indices;
                 delete mesh;
                 return NULL;
             }
@@ -696,7 +696,7 @@ AsciiModelLoader::loadMesh()
             if (index >= vertexCount)
             {
                 reportError("Index out of range");
-                delete indices;
+                delete[] indices;
                 delete mesh;
                 return NULL;
             }
@@ -1574,7 +1574,7 @@ BinaryModelLoader::loadMesh()
             if (index >= vertexCount)
             {
                 reportError("Index out of range");
-                delete indices;
+                delete[] indices;
                 delete mesh;
                 return NULL;
             }

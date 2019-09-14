@@ -96,6 +96,10 @@ namespace arbvp
 };
 
 
+#ifndef _MSC_VER
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#endif
 class VertexProcessor
 {
  public:
@@ -122,6 +126,8 @@ class VertexProcessor
  private:
     int dummy;
 };
-
+#ifndef _MSC_VER
+#pragma clang diagnostic pop
+#endif
 
 #endif // _VERTEXPROG_H_

@@ -23,7 +23,7 @@ template<class T> T distance(const Point3<T>& p, const Sphere<T>& s)
     return abs(s.center.distanceTo(p) - s.radius);
 }
 
-template<class T> T distance(const Point3<T>& p, const Ellipsoid<T>& e)
+template<class T> T distance(const Point3<T>& /*p*/, const Ellipsoid<T>& /*e*/)
 {
     return 0.0f;
 }

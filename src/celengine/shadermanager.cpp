@@ -2550,7 +2550,6 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
          li < min(ls.nLights, MaxShaderLights);
          li++)
     {
-        if (shadows != NULL)
         {
             unsigned int nShadows = min((size_t) MaxShaderShadows, ls.shadows[li]->size());
 

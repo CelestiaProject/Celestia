@@ -18,6 +18,11 @@
 #include <celengine/astro.h>
 
 
+#ifndef _MSC_VER
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#endif
+
 class Command
 {
  public:
@@ -677,7 +682,7 @@ class RepeatCommand : public Command
     RepeatCommand(CommandSequence* _body, int _repeatCount);
     ~RepeatCommand();
     void process(ExecutionEnvironment&, double t, double dt) = 0;
-    double getDuration();
+    virtual double getDuration() const;
 
  private:
     CommandSequence* body;
@@ -687,5 +692,8 @@ class RepeatCommand : public Command
 };
 
 
+#ifndef _MSC_VER
+#pragma clang diagnostic pop
+#endif
 
 #endif // _COMMAND_H_
