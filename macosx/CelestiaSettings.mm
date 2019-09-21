@@ -271,11 +271,7 @@ static NSMutableDictionary* tagMap;
 	NSEnumerator* keys = [ defaultsDictionary keyEnumerator];
 	while ( nil != (key = [keys nextObject]) )
 	{
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
 		[self setValue: [defaultsDictionary objectForKey: key] forKey: key];
-#else
-		[self setValue: [defaultsDictionary objectForKey: key] forKey: key];
-#endif
 	}
 }
 
@@ -625,11 +621,7 @@ FEATUREMETHODS(Other)
 -(int)  fullScreenMode { return [[control valueForKey: @"isFullScreen"] intValue]; }
 -(void) setFullScreenMode: (int) value
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
     [control setValue: [NSNumber numberWithBool: (value != 0)] forKey: @"isFullScreen"];
-#else
-    [control setValue: [NSNumber numberWithBool: (value != 0)] forKey: @"isFullScreen"];
-#endif
 }
 
 // Alt Surface Setting

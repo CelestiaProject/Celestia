@@ -19,7 +19,6 @@ NSDictionary* coordinateDict;
     NSDate *date = nil;
     astro::Date astroDate([jd doubleValue]);
     int year = astroDate.year;
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4
     NSCalendar *currentCalendar = [NSCalendar currentCalendar];
     [currentCalendar setTimeZone: [NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
     NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
@@ -37,15 +36,6 @@ NSDictionary* coordinateDict;
     [comps setMinute: astroDate.minute];
     [comps setSecond: (int)astroDate.seconds];
     date = [currentCalendar dateFromComponents: comps];
-#else
-    date = [NSCalendarDate dateWithYear: year
-                                  month: astroDate.month
-                                    day: astroDate.day
-                                   hour: astroDate.hour
-                                 minute: astroDate.minute
-                                 second: (int)astroDate.seconds
-                               timeZone: [NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-#endif
 
     return date;
 }
@@ -106,7 +96,6 @@ NSDictionary* coordinateDict;
     [NSTimeZone setDefaultTimeZone: [NSTimeZone timeZoneWithAbbreviation: @"GMT"]];
     NSDate *roundedDate = nil;
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4
     NSCalendar *currentCalendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
     NSDateComponents *comps = [currentCalendar components:
         NSEraCalendarUnit  |
@@ -124,16 +113,6 @@ NSDictionary* coordinateDict;
     // so have to calculate and add decimal part
     roundedDate = [currentCalendar dateFromComponents: comps];
     [currentCalendar release];
-#else
-    NSCalendarDate *cd =  [date dateWithCalendarFormat: nil timeZone: nil];
-    astro::Date astroDate([cd yearOfCommonEra],
-                          [cd monthOfYear],
-                          [cd dayOfMonth]);
-    astroDate.hour    = [cd hourOfDay];    // takes DST in to account
-    astroDate.minute  = [cd minuteOfHour];
-    astroDate.seconds = [cd secondOfMinute];
-    roundedDate = cd;
-#endif
 
     NSTimeInterval extraSeconds = [date timeIntervalSinceDate: roundedDate];
     astroDate.seconds += extraSeconds;

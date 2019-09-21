@@ -12,10 +12,6 @@
     IBOutlet NSTextField *jdField;
     IBOutlet NSTextField *timeField;
     NSDateFormatter *dateTimeFormat;
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_4
-    NSDateFormatter *bcFormat;
-    NSDateFormatter *zeroFormat;
-#endif
     BOOL setupDone;
 }
 - (IBAction)setTime:(id)sender;
