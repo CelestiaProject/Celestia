@@ -50,12 +50,11 @@
 
 - (NSArray*)allSelectedItems {
     NSMutableArray *items = [NSMutableArray array];
-    NSEnumerator *selectedRows = [self selectedRowEnumerator];
-    NSNumber *selRow = nil;
-    while( (selRow = [selectedRows nextObject]) ) {
-        if ([self itemAtRow:[selRow intValue]]) 
-            [items addObject: [self itemAtRow:[selRow intValue]]];
-    }
+    NSIndexSet *selectedRows = [self selectedRowIndexes];
+    [selectedRows enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([self itemAtRow:idx])
+            [items addObject: [self itemAtRow:idx]];
+    }];
     return items;
 }
 
@@ -64,7 +63,7 @@
     if (extend==NO) [self deselectAll:nil];
     for (i=0;i<[items count];i++) {
         int row = [self rowForItem:[items objectAtIndex:i]];
-        if(row>=0) [self selectRow: row byExtendingSelection:YES];
+        if(row>=0) [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:YES];
     }
 }
 

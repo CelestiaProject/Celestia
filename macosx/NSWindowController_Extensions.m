@@ -13,6 +13,6 @@
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-    [[NSApp delegate] tryToPerform:@selector(delegateKeyDown:) with:theEvent];
+    [(NSResponder *)[NSApp delegate] tryToPerform:@selector(delegateKeyDown:) with:theEvent];
 }
 @end

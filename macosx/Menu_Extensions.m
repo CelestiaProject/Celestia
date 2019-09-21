@@ -195,7 +195,7 @@
     NSMenu *satMenu;
     id childName;
     id child;
-    id childChildren;
+    NSArray *childChildren;
     unsigned childCount = 0;
     BOOL loneChild = NO;
     NSString *locationsName = NSLocalizedStringFromTable(@"Locations",@"po",@"");
