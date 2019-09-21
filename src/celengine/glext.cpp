@@ -346,16 +346,14 @@ FUNCS GetGLProcAddress(const GLubyte* procName)
 
 
 #ifdef TARGET_OS_MAC
+#include <dlfcn.h>
 #include <mach-o/dyld.h>
 #include <stdio.h>
 typedef void (*FUNCS) (void);
-const struct mach_header *openGLImagePtr = NULL;
+static void *openGLImagePtr = NULL;
 FUNCS osxGetProcAddress(const GLubyte *procName) {
-    char myProcName[128];
-    NSSymbol mySymbol = NULL;
-    FUNCS myPtr = NULL;
     if (openGLImagePtr == NULL) {
-        openGLImagePtr = NSAddImage("/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL",NSADDIMAGE_OPTION_RETURN_ON_ERROR);
+        openGLImagePtr = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL", RTLD_LAZY);
 #if 0
         unsigned long i;
         unsigned long imageCount = _dyld_image_count();
@@ -373,28 +371,10 @@ FUNCS osxGetProcAddress(const GLubyte *procName) {
         printf("Can't find OpenGL??\n");
         return NULL;
     }
-    strcpy(myProcName,"_");
-
-    /* sanity check */
-    if (strlen((char *)procName)>125) return NULL;
-    strcat(myProcName,(char *)procName);
-    //printf("%s\n",myProcName);
-    //if (NSIsSymbolNameDefinedInImage(openGLImagePtr,myProcName) != FALSE) {
-    mySymbol = NSLookupSymbolInImage(openGLImagePtr, myProcName, NSLOOKUPSYMBOLINIMAGE_OPTION_BIND_NOW | NSLOOKUPSYMBOLINIMAGE_OPTION_RETURN_ON_ERROR);
-    if (mySymbol != NULL)
-        myPtr = (FUNCS)NSAddressOfSymbol(mySymbol);
-    //printf("  (symbol, address) -> (%08x -> %08x)\n",(unsigned int)mySymbol,(unsigned int)myPtr);
-    return myPtr;
-    //}
+    return (FUNCS)dlsym(openGLImagePtr, (char *)procName);
 }
 #define GET_GL_PROC_ADDRESS(name) osxGetProcAddress((GLubyte *)name)
 #endif /* TARGET_OS_MAC */
-
-
-void Alert(const char /* *szFormat*/, ...)
-{
-}
-
 
 // ARB_multitexture
 static void InitExt_ARB_multitexture()

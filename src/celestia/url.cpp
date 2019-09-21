@@ -355,7 +355,7 @@ Url::Url(CelestiaCore* core, UrlType type)
 
 #ifndef _MSC_VER
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #endif
     switch (type) {
     case Absolute: // Intentional Fall-Through

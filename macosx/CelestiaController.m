@@ -640,7 +640,7 @@ NSString* fatalErrorMessage;
     // Close the original window (does not release it)
     [origWindow close];
     glView = fullScreenView;
-    [glView takeValue: self forKey: @"controller"];
+    [glView setValue: self forKey: @"controller"];
     [fullScreenWindow makeFirstResponder: glView];
     // Make sure the view looks ready before unfading from black
     [glView update];

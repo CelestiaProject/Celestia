@@ -1,7 +1,7 @@
 /* FavoritesDrawerController */
 
-#import "CelestiaFavorite.h";
-#import "ContextOutlineView.h";
+#import "CelestiaFavorite.h"
+#import "ContextOutlineView.h"
 #import "FavoriteInfoWindowController.h"
 #import "NSWindowController_Extensions.h"
 

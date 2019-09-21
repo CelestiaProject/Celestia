@@ -479,7 +479,7 @@
     }
     return NO;
 }
-- (unsigned int) draggingEntered: (id <NSDraggingInfo>) sender
+- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>) sender
 {
     NSPasteboard *pb = [sender draggingPasteboard];
     NSString *type = [pb availableTypeFromArray:
