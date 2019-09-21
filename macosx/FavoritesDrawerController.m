@@ -199,27 +199,27 @@ contextMenuForItem:(id)item
     NSMenuItem* delItem = [contextMenu itemAtIndex:4];
     NSMutableArray* arr = nil;
     
-    BOOL multipleItems = NO;
+    __block BOOL multipleItems = NO;
     //NSLog(@"[FavoritesDrawerController outlineView:%@ contextMenuForItem:%@]",olv,item);
     //NSLog(@"row = %d",[olv rowForItem:item]);
     //[olv selectRow:[olv rowForItem:item] byExtendingSelection:NO];
     if ([olv numberOfSelectedRows]>1 || [olv rowForItem:item]!=[olv selectedRow]) {
-        id nextItem = nil;
-        NSEnumerator* rowEnum = [olv selectedRowEnumerator];
-        arr = [NSMutableArray arrayWithCapacity:[olv numberOfSelectedRows]];
-        while ((nextItem = [rowEnum nextObject]) != nil) {
-            nextItem = [olv itemAtRow:[nextItem intValue]];
-            if (nextItem == nil)
-                continue;
-            if ([item isEqual:nextItem])
-                multipleItems = YES;
-            [arr addObject:nextItem];
-        }
+        NSIndexSet *selectedRows = [olv selectedRowIndexes];
+        arr = [NSMutableArray arrayWithCapacity:[selectedRows count]];
+        [selectedRows enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+            id nextItem = [olv itemAtRow:idx];
+            if (nextItem) {
+                if (item == nextItem) {
+                    multipleItems = YES;
+                }
+                [arr addObject:nextItem];
+            }
+        }];
     }
     if (multipleItems)
         item = arr;
     else
-        [olv selectRow:[olv rowForItem:item] byExtendingSelection:NO];
+        [olv selectRowIndexes:[NSIndexSet indexSetWithIndex:[olv rowForItem:item]] byExtendingSelection:NO];
     if (![node isLeaf] || multipleItems) {
         [contextMenu removeItemAtIndex:0];
         [contextMenu removeItemAtIndex:0];
@@ -262,7 +262,7 @@ contextMenuForItem:(id)item
         NSLog(@"row is -1");
         return;
     }
-    [olv selectRow:row byExtendingSelection:NO];
+    [olv selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
     [olv editColumn:[olv columnWithIdentifier:@"NAME"] row:row withEvent:nil select:YES];
 }
 
@@ -356,7 +356,7 @@ contextMenuForItem:(id)item
     
     // Check to make sure we don't allow a node to be inserted into one of its descendants!
     if (targetNodeIsValid && ([info draggingSource]==outlineView) && [[info draggingPasteboard] availableTypeFromArray:[NSArray arrayWithObject: DragDropSimplePboardType]] != nil) {
-        NSArray* _draggedNodes = [[[info draggingSource] dataSource] draggedNodes];
+        NSArray* _draggedNodes = [(FavoritesDrawerController *)[[info draggingSource] dataSource] draggedNodes];
         //NSEnumerator* enumerator = [_draggedNodes objectEnumerator];
         //MyTree* node = nil;
         targetNodeIsValid = ![targetNode isDescendantOfNodeInArray: _draggedNodes];
@@ -384,7 +384,7 @@ contextMenuForItem:(id)item
     //NSLog(@"[FavoritesDrawerController _performDropOperation:%@ onNode:%@ atIndex:%d]",info,pnode,childIndex);
     //NSLog(@"parentNode = %@",parentNode);
     if ([pboard availableTypeFromArray:[NSArray arrayWithObjects:DragDropSimplePboardType, nil]] != nil) {
-        FavoritesDrawerController *dragDataSource = [[info draggingSource] dataSource];
+        FavoritesDrawerController *dragDataSource = (FavoritesDrawerController *)[[info draggingSource] dataSource];
         NSArray *_draggedNodes = [MyTree minimumNodeCoverFromNodesInArray: [dragDataSource draggedNodes]];
         NSEnumerator *draggedNodesEnum = [_draggedNodes objectEnumerator];
         MyTree *_draggedNode = nil, *_draggedNodeParent = nil;

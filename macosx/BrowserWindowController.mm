@@ -133,7 +133,7 @@ static CelestiaCore *appCore;
     NSEnumerator *tempEnum = [tempDict keyEnumerator];
     while ((type = [tempEnum nextObject]))
     {
-        if ([[tempDict objectForKey: type] count] > 0)
+        if ([(NSDictionary *)[tempDict objectForKey: type] count] > 0)
         {
             [result setObject: [[[BrowserItem alloc] initWithName: [typeMap objectForKey: type] children: [tempDict objectForKey: type]] autorelease]
                        forKey: [typeMap objectForKey: type]];

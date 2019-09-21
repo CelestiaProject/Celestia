@@ -239,7 +239,7 @@ NSString* fatalErrorMessage;
     {
         if (fatalErrorMessage == nil) return;
         [splashWindowController close];
-        NSRunAlertPanel(NSLocalizedString(@"Fatal Error",@""), fatalErrorMessage, nil, nil, nil);
+        NSRunAlertPanel(NSLocalizedString(@"Fatal Error",@""), @"%@", fatalErrorMessage, nil, nil, nil);
         fatalErrorMessage = nil;    // user could cancel the terminate
         [NSApp terminate:self];
         return;
@@ -673,12 +673,11 @@ NSString* fatalErrorMessage;
 - (IBAction) openScript: (id) sender
 {
     NSOpenPanel* panel = [NSOpenPanel openPanel];
-    NSDocumentController *dc = [NSDocumentController sharedDocumentController];
-    int result = [panel runModalForTypes: [dc fileExtensionsFromType:@"Celestia Script"]];
-    if (result == NSOKButton)
+    [panel setAllowedFileTypes:@[@"cel", @"celx"]];
+    if ([panel runModal] == NSOKButton)
     {
         NSString *path;
-        path = [panel filename];
+        path = [[panel URL] path];
         [self runScript: path];       
     }
 }
@@ -729,18 +728,6 @@ NSString* fatalErrorMessage;
     [appCore showInfoURL];
 }
 
-- (void) moviePanelDidEnd:(NSSavePanel*)savePanel returnCode: (int) rc contextInfo: (void *) ci
-{
-//    if (rc == NSOKButton )
-    if (rc == 0 ) return;
-    {
-        NSString *path;
-        path = [savePanel filename];
-        NSLog(@"Saving movie: %@",path);       
-		[appCore captureMovie: path width: 640 height: 480 frameRate: 30 ];
-    }
-}
-
 - (IBAction) captureMovie: (id) sender
 {
 //  Remove following line to enable movie capture...
@@ -749,15 +736,19 @@ NSString* fatalErrorMessage;
     NSSavePanel* panel = [NSSavePanel savePanel];
 	NSString* lastMovie = nil; // temporary; should be saved in defaults
 
-	[panel setRequiredFileType: @"mov"];
-	[panel setTitle: NSLocalizedString(@"Capture Movie",@"")];
-    [ panel beginSheetForDirectory:  [lastMovie stringByDeletingLastPathComponent]
-                              file: [lastMovie lastPathComponent]
-                    modalForWindow: [glView window]
-                     modalDelegate: self
-                    didEndSelector: @selector(moviePanelDidEnd:returnCode:contextInfo:)
-                       contextInfo: nil
-    ];
+    [panel setAllowedFileTypes:@[@"move"]];
+    [panel setDirectoryURL:[NSURL fileURLWithPath:[lastMovie stringByDeletingLastPathComponent]]];
+    [panel setNameFieldStringValue:[lastMovie lastPathComponent]];
+    [panel setTitle: NSLocalizedString(@"Capture Movie",@"")];
+    [panel beginSheetModalForWindow:[glView window] completionHandler:^(NSModalResponse result) {
+        if (result == 0 ) return;
+        {
+            NSString *path;
+            path = [[panel URL] path];
+            NSLog(@"Saving movie: %@",path);
+            [appCore captureMovie: path width: 640 height: 480 frameRate: 30 ];
+        }
+    }];
 }
 
 // GUI Tag Methods ----------------------------------------------------------

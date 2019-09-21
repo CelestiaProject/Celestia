@@ -13,7 +13,7 @@
         if (item != nil) {
             id delegate = [self delegate];
             if ([delegate respondsToSelector:@selector(outlineView:shouldSelectItem:)] && [delegate outlineView:self shouldSelectItem:item])
-                [self selectRow:rowIndex byExtendingSelection:NO];
+                [self selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
             if ([delegate respondsToSelector:@selector(outlineView:contextMenuForItem:)])
             {
                 SEL sel = @selector(outlineView:contextMenuForItem:);

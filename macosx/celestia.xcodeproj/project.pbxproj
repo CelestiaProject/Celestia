@@ -146,7 +146,6 @@
 		E564310107769C9000E2C4A3 /* CelestiaVector.mm in Sources */ = {isa = PBXBuildFile; fileRef = F55A246902B2D9BA0100020A /* CelestiaVector.mm */; };
 		E564310207769C9000E2C4A3 /* CelestiaGalaxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58102A502B3269F0100020A /* CelestiaGalaxy.mm */; };
 		E564310307769C9000E2C4A3 /* CelestiaStar.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58102A602B3269F0100020A /* CelestiaStar.mm */; };
-		E564310407769C9000E2C4A3 /* ImageAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F578B79E02B3E2DD0100020A /* ImageAndTextCell.m */; };
 		E564310507769C9000E2C4A3 /* NSOutlineView_Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = F578B7A002B3E2DD0100020A /* NSOutlineView_Extensions.m */; };
 		E564310607769C9000E2C4A3 /* NSArray_Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = F578B7A102B3E2DD0100020A /* NSArray_Extensions.m */; };
 		E564310707769C9000E2C4A3 /* FavoritesDrawerController.m in Sources */ = {isa = PBXBuildFile; fileRef = F578B7B402B3E4DB0100020A /* FavoritesDrawerController.m */; };
@@ -1003,11 +1002,9 @@
 		F56FFFAA02C571280100020A /* MyTree.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyTree.m; sourceTree = "<group>"; };
 		F56FFFAD02C578050100020A /* boundaries.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = boundaries.cpp; path = ../src/celengine/boundaries.cpp; sourceTree = SOURCE_ROOT; };
 		F56FFFAE02C578050100020A /* boundaries.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = boundaries.h; path = ../src/celengine/boundaries.h; sourceTree = SOURCE_ROOT; };
-		F578B79E02B3E2DD0100020A /* ImageAndTextCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageAndTextCell.m; sourceTree = "<group>"; };
 		F578B79F02B3E2DD0100020A /* NSOutlineView_Extensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSOutlineView_Extensions.h; sourceTree = "<group>"; };
 		F578B7A002B3E2DD0100020A /* NSOutlineView_Extensions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSOutlineView_Extensions.m; sourceTree = "<group>"; };
 		F578B7A102B3E2DD0100020A /* NSArray_Extensions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSArray_Extensions.m; sourceTree = "<group>"; };
-		F578B7A202B3E2DD0100020A /* ImageAndTextCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageAndTextCell.h; sourceTree = "<group>"; };
 		F578B7A302B3E2DD0100020A /* NSArray_Extensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSArray_Extensions.h; sourceTree = "<group>"; };
 		F578B7B302B3E4DB0100020A /* FavoritesDrawerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FavoritesDrawerController.h; sourceTree = "<group>"; };
 		F578B7B402B3E4DB0100020A /* FavoritesDrawerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FavoritesDrawerController.m; sourceTree = "<group>"; };
@@ -1788,7 +1785,6 @@
 			children = (
 				F57F9FD402B94A0B01000006 /* ContextOutlineView.m */,
 				E56A5AEB0848F92200A21D7E /* FullScreenWindow.m */,
-				F578B79E02B3E2DD0100020A /* ImageAndTextCell.m */,
 				E5D5425F0D0B86B200E8C513 /* Menu_Extensions.m */,
 				F56FFFAA02C571280100020A /* MyTree.m */,
 				F578B7A102B3E2DD0100020A /* NSArray_Extensions.m */,
@@ -1797,7 +1793,6 @@
 				E59F0B900E93A62F001A985D /* NSWindowController_Extensions.m */,
 				F57F9FD302B94A0B01000006 /* ContextOutlineView.h */,
 				E56A5AEA0848F92200A21D7E /* FullScreenWindow.h */,
-				F578B7A202B3E2DD0100020A /* ImageAndTextCell.h */,
 				E5D5425E0D0B86B200E8C513 /* Menu_Extensions.h */,
 				F56FFFA902C571280100020A /* MyTree.h */,
 				F578B7A302B3E2DD0100020A /* NSArray_Extensions.h */,
@@ -2080,7 +2075,6 @@
 				E564310107769C9000E2C4A3 /* CelestiaVector.mm in Sources */,
 				E564310207769C9000E2C4A3 /* CelestiaGalaxy.mm in Sources */,
 				E564310307769C9000E2C4A3 /* CelestiaStar.mm in Sources */,
-				E564310407769C9000E2C4A3 /* ImageAndTextCell.m in Sources */,
 				E564310507769C9000E2C4A3 /* NSOutlineView_Extensions.m in Sources */,
 				E564310607769C9000E2C4A3 /* NSArray_Extensions.m in Sources */,
 				E564310707769C9000E2C4A3 /* FavoritesDrawerController.m in Sources */,
