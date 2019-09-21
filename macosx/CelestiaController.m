@@ -713,7 +713,10 @@ NSString* fatalErrorMessage;
     if (![glInfoPanel isVisible])
     {
         NSTextStorage *text = [glInfo textStorage];
-        NSAttributedString *str = [[NSAttributedString alloc] initWithString: [CGLInfo info]];
+        NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString: [CGLInfo info]];
+        if (@available(macOS 10.10, *)) {
+            [str addAttributes:@{NSForegroundColorAttributeName : [NSColor labelColor]} range:NSMakeRange(0, [str length])];
+        }
         [text setAttributedString: str];
         [str release];
     }
