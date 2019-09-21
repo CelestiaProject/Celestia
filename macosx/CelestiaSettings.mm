@@ -29,14 +29,14 @@ class MacOSXWatcher : public CelestiaWatcher
 
     void notifyChange(CelestiaCore* core, int i)
     {
-        if ( 0 == i & (
+        if ( 0 == (i & (
         CelestiaCore::LabelFlagsChanged 
         | CelestiaCore::RenderFlagsChanged 
         | CelestiaCore::VerbosityLevelChanged 
         | CelestiaCore::TimeZoneChanged       
         | CelestiaCore::AmbientLightChanged   
         | CelestiaCore::FaintestChanged       
-        )) { return; } 
+        ))) { return; } 
         [control validateItems];
     };
 };
@@ -274,7 +274,7 @@ static NSMutableDictionary* tagMap;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
 		[self setValue: [defaultsDictionary objectForKey: key] forKey: key];
 #else
-		[self takeValue: [defaultsDictionary objectForKey: key] forKey: key];
+		[self setValue: [defaultsDictionary objectForKey: key] forKey: key];
 #endif
 	}
 }
@@ -316,20 +316,15 @@ static NSMutableDictionary* tagMap;
     return [self valueForKey: [tagDict objectForKey: [NSNumber numberWithInt: tag] ] ];
 }
 
--(void) takeValue: (id) value forTag: (int) tag 
+-(void) setValue: (id) value forTag: (int) tag
 {
     id key = [tagDict objectForKey: [NSNumber numberWithInt: tag] ];
     if (key!= nil)
     {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
         [self setValue: value forKey: key ];
-#else
-        [self takeValue: value forKey: key ];
-#endif
     }
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
 - (id)valueForUndefinedKey: (NSString *) key
 {
 #ifdef DEBUG
@@ -351,31 +346,6 @@ static NSMutableDictionary* tagMap;
     NSLog(@"nil value for %@", key);
 #endif
 }
-
-#else
-
--(id)handleQueryWithUnboundKey: (NSString*) key
-{
-#ifdef DEBUG
-    if ( key ) NSLog(@"unbound key query for %@", key);
-#endif
-    return nil;
-}
-
--(void)handleTakeValue: (id) value forUnboundKey: (NSString*) key
-{
-#ifdef DEBUG
-    NSLog(@"unbound key set for %@", key);
-#endif
-}
-
--(void)unableToSetNilForKey: (NSString*) key
-{
-#ifdef DEBUG
-    NSLog(@"nil key for %@", key);
-#endif
-}
-#endif
 
 // Time Settings
 
@@ -658,7 +628,7 @@ FEATUREMETHODS(Other)
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
     [control setValue: [NSNumber numberWithBool: (value != 0)] forKey: @"isFullScreen"];
 #else
-    [control takeValue: [NSNumber numberWithBool: (value != 0)] forKey: @"isFullScreen"];
+    [control setValue: [NSNumber numberWithBool: (value != 0)] forKey: @"isFullScreen"];
 #endif
 }
 
@@ -675,7 +645,7 @@ FEATUREMETHODS(Other)
         if ( surfaces && [surfaces count] > 0 )
         {
             NSString *displayedSurfStr = [NSString stringWithStdString: displayedSurfName];
-            unsigned index = [surfaces indexOfObject: displayedSurfStr];
+            NSUInteger index = [surfaces indexOfObject: displayedSurfStr];
             if (index != NSNotFound)
                 return index+1;
         }
@@ -731,11 +701,11 @@ FEATUREMETHODS(Other)
     switch ( tag/100)
     {
         case 4: case 5: case 7: case 8: case 10: // 400, 500, 700, 800, 1000
-            [self takeValue: [NSNumber numberWithInt: (1-[[self valueForTag: tag] intValue])] forTag: tag ];
+            [self setValue: [NSNumber numberWithInt: (1-[[self valueForTag: tag] intValue])] forTag: tag ];
         break;
         case 6: // 600
             value = [NSNumber numberWithInt: tag%10 ];
-            [self takeValue: value forTag: (tag/10)*10 ];
+            [self setValue: value forTag: (tag/10)*10 ];
             [self selectPopUpButtonItem: item withIndex: tag%10];
             //[self setPopUpButtonWithTag: ((tag/10)*10) toIndex: [value intValue]];
             if ([[tagDict objectForKey:[NSNumber numberWithInt:((tag/10)*10)]] isEqualToString: @"renderPath"])
@@ -748,7 +718,7 @@ FEATUREMETHODS(Other)
             }
         break;
         case 9: // 900
-            [self takeValue: [NSNumber numberWithFloat: [item floatValue]] forTag: tag];
+            [self setValue: [NSNumber numberWithFloat: [item floatValue]] forTag: tag];
         break;
     }
 }

@@ -7,7 +7,7 @@
 //
 
 #import "CelestiaFavorite.h"
-#import "myTree.h"
+#import "MyTree.h"
 
 
 @interface CelestiaFavorites : MyTree

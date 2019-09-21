@@ -19,7 +19,7 @@
 -(void) setControl: (id) _control;
 
 -(id) valueForTag: (int) tag; 
--(void) takeValue: (id) value forTag: (int) tag; 
+-(void) setValue: (id) value forTag: (int) tag; 
 
 // User Defaults 
 

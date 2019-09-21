@@ -21,7 +21,7 @@
 @class ScriptsController;
 @class ConfigSelectionWindowController;
 
-@interface CelestiaController : NSWindowController 
+@interface CelestiaController : NSWindowController <NSWindowDelegate>
 {
     CelestiaSettings* settings;
     CelestiaAppCore* appCore;

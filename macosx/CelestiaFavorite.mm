@@ -12,7 +12,6 @@
 #import "CelestiaUniversalCoord_PrivateAPI.h"
 #import "NSString_ObjCPlusPlus.h"
 #import "Astro.h"
-#import "Observer.h"
 #import "CelestiaAppCore.h"
 #import "CelestiaSimulation.h"
 #import "CelestiaSimulation_PrivateAPI.h"

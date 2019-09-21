@@ -153,7 +153,7 @@ void MarkerRepresentation::render(float size) const
 
 #ifndef _MSC_VER
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #endif
     switch (m_symbol)
     {
