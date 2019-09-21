@@ -209,7 +209,7 @@ contextMenuForItem:(id)item
         [selectedRows enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
             id nextItem = [olv itemAtRow:idx];
             if (nextItem) {
-                if (item == nextItem) {
+                if ([item isEqual:nextItem]) {
                     multipleItems = YES;
                 }
                 [arr addObject:nextItem];
