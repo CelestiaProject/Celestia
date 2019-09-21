@@ -2402,7 +2402,6 @@
 					PNG_SUPPORT,
 					CELX,
 					LUA_USE_MACOSX,
-					"LUA_VER=0x050100",
 					USE_SPICE,
 					JPEG_SUPPORT,
 					"LUA_VER=0x050305",
@@ -2467,7 +2466,6 @@
 					PNG_SUPPORT,
 					CELX,
 					LUA_USE_MACOSX,
-					"LUA_VER=0x050100",
 					USE_SPICE,
 					JPEG_SUPPORT,
 					"LUA_VER=0x050305",
@@ -2490,7 +2488,7 @@
 				);
 				INSTALL_PATH = "$(HOME)/bin";
 				PRODUCT_NAME = POConverter;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Development;
@@ -2509,7 +2507,7 @@
 					Foundation,
 				);
 				PRODUCT_NAME = POConverter;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Universal_Release;
@@ -2528,7 +2526,7 @@
 					Foundation,
 				);
 				PRODUCT_NAME = POConverter;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = HDR_Development;
@@ -2547,7 +2545,7 @@
 					Foundation,
 				);
 				PRODUCT_NAME = POConverter;
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = HDR_Universal_Release;
@@ -2649,7 +2647,6 @@
 					PNG_SUPPORT,
 					CELX,
 					LUA_USE_MACOSX,
-					"LUA_VER=0x050100",
 					USE_SPICE,
 					USE_HDR,
 					HDR_COMPRESS,
@@ -2675,7 +2672,6 @@
 					PNG_SUPPORT,
 					CELX,
 					LUA_USE_MACOSX,
-					"LUA_VER=0x050100",
 					USE_SPICE,
 					USE_HDR,
 					HDR_COMPRESS,
