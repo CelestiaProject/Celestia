@@ -276,7 +276,7 @@ static BOOL isSource(NSString *line, BOOL *containsNonKde)
 
     return isSource;
 }
-#endif TARGET_CELESTIA
+#endif /* TARGET_CELESTIA */
 
 /*! Does all the work of reading, converting, and writing. Returns the number of lines successfully converted. */
 static long convertData(NSData *data, NSStringEncoding encoding, NSFileHandle *ofh)
