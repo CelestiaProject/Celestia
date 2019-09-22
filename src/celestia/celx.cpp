@@ -985,7 +985,8 @@ int LuaState::resume()
         if (appCore != NULL)
         {
             CelestiaCore::Alerter* alerter = appCore->getAlerter();
-            alerter->fatalError(errorMessage);
+            if (alerter)
+                alerter->fatalError(errorMessage);
         }
 
         return 1; // just the error string
@@ -3547,7 +3548,8 @@ bool LuaState::init(CelestiaCore* appCore)
         // copy string?!
         const char* errorMessage = lua_tostring(state, -1);
         cout << errorMessage << '\n'; cout.flush();
-        alerter->fatalError(errorMessage);
+        if (alerter)
+            alerter->fatalError(errorMessage);
         return false;
     }
 #endif
