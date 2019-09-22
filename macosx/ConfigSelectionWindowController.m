@@ -41,17 +41,17 @@ NSString *const dataDirPathPrefKey = @"dataDirPath";
     // save the selection, since we are running in a sandboxed environment, save bookmark
     NSError *error = nil;
     NSData *configFilePathData = nil;
-    NSData *dataDirPathData = nil; [[dataDirPathControl URL] bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
+    NSData *dataDirPathData = nil;
 
     // if reset to default, don't change and save nil
     if (![[configFilePathControl URL] isEqual:[ConfigSelectionWindowController applicationConfig]])
     {
-        configFilePathData = [[configFilePathControl URL] bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
+        configFilePathData = [[configFilePathControl URL] bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope | NSURLBookmarkCreationSecurityScopeAllowOnlyReadAccess includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
     }
 
     if (![[dataDirPathControl URL] isEqual:[ConfigSelectionWindowController applicationDataDirectory]])
     {
-        dataDirPathData = [[dataDirPathControl URL] bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
+        dataDirPathData = [[dataDirPathControl URL] bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope | NSURLBookmarkCreationSecurityScopeAllowOnlyReadAccess includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
     }
 
     if (error != nil)
