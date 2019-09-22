@@ -190,6 +190,7 @@ NSString* fatalErrorMessage;
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
+    [[glView openGLContext] makeCurrentContext];
 #ifdef DEBUG
     NSDate *t = [NSDate date];
 #endif
@@ -209,6 +210,7 @@ NSString* fatalErrorMessage;
         [startupCondition lock];
         [startupCondition unlockWithCondition:1];
     }
+    [NSOpenGLContext clearCurrentContext];
 
     [pool release];
     return result;
