@@ -9,9 +9,11 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <pwd.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <wordexp.h>
+#include <cstdlib>
 #include "directory.h"
 
 using namespace std;
@@ -105,6 +107,7 @@ bool IsDirectory(const std::string& filename)
     return S_ISDIR(buf.st_mode);
 }
 
+
 std::string WordExp(const std::string& filename) 
 {
 #ifndef WORDEXP_PROBLEM   
@@ -136,4 +139,40 @@ std::string WordExp(const std::string& filename)
     std::string expanded = filename;
 #endif
     return expanded;
+}
+
+string HomeDir()
+{
+    const char *s = getenv("HOME");
+    if (s != NULL)
+        return s;
+    struct passwd *pw = getpwuid(geteuid());
+    s = pw->pw_dir;
+    if (s != NULL)
+        return s;
+    return "";
+}
+
+
+bool IsAbsolutePath(const std::string &p)
+{
+    return p[0] == '/';
+}
+
+
+string WriteableDataPath()
+{
+#if defined(__APPLE__)
+    const char *p = "~/Library/Application Support";
+#else
+    const char *p = getenv("XDG_DATA_HOME");
+    p = p != NULL ? p : "~/.local/share";
+#endif
+    return WordExp(p) + "/Celestia";
+}
+
+
+bool MkDir(const std::string &p)
+{
+    return mkdir(p.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
 }

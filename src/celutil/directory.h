@@ -43,6 +43,10 @@ class Directory
 extern std::string WordExp(const std::string&);
 extern Directory* OpenDirectory(const std::string&);
 extern bool IsDirectory(const std::string&);
+extern std::string HomeDir();
+extern bool IsAbsolutePath(const std::string&);
+extern std::string WriteableDataPath();
+extern bool MkDir(const std::string&);
 
 
 #endif // _CELUTIL_DIRECTORY_H_
