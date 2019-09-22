@@ -14,7 +14,7 @@
 @implementation CelestiaFavorite(ViewAPI)
 -(NSMenuItem*)favoriteMenuItem
 {
-    NSMenuItem* menuItem = [[[NSMenuItem alloc] initWithTitle:[self name] action:([self isFolder] ? nil : @selector(activate)) keyEquivalent:@""] autorelease];
+    NSMenuItem* menuItem = [[NSMenuItem alloc] initWithTitle:[self name] action:([self isFolder] ? nil : @selector(activate)) keyEquivalent:@""];
     return [self setupFavoriteMenuItem:menuItem];
 }
 -(NSMenuItem*)setupFavoriteMenuItem:(NSMenuItem*)menuItem
@@ -56,7 +56,7 @@
     if ([self isLeaf])
         return menuItem;
     enumerator = [[self children] objectEnumerator];
-    subMenu = [[[NSMenu alloc] initWithTitle:[[self nodeValue] name]] autorelease];
+    subMenu = [[NSMenu alloc] initWithTitle:[[self nodeValue] name]];
     while ((node = [enumerator nextObject]) != nil)
         [subMenu addItem:[node favoriteMenuItem]];
     [menuItem setSubmenu:subMenu];
@@ -240,15 +240,19 @@ contextMenuForItem:(id)item
     } else {
         [editInv setTarget:self];
         [editInv setSelector:@selector(outlineView:editItem:)];
-        [editInv setArgument:&olv atIndex:2];
-        [editInv setArgument:&item atIndex:3];
+        __unsafe_unretained id arg1 = olv;
+        __unsafe_unretained id arg2 = item;
+        [editInv setArgument:&arg1 atIndex:2];
+        [editInv setArgument:&arg2 atIndex:3];
         [editItem setTarget:editInv];
         [editItem setAction:@selector(invoke)];
     }
     [delInv setTarget:self];
     [delInv setSelector:@selector(outlineView:deleteItem:)];
-    [delInv setArgument:&olv atIndex:2];
-    [delInv setArgument:&item atIndex:3];
+    __unsafe_unretained id arg1 = olv;
+    __unsafe_unretained id arg2 = item;
+    [delInv setArgument:&arg1 atIndex:2];
+    [delInv setArgument:&arg2 atIndex:3];
     [delItem setTarget:delInv];
     [delItem setAction:@selector(invoke)];
     return contextMenu;

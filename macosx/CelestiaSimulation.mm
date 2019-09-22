@@ -36,15 +36,6 @@ FrameOfReference getFrame() const;
 @end
 
 @implementation CelestiaSimulation
--(void)dealloc
-{
-    if (_data != nil)
-    {
-        [_data release];
-        _data = nil;
-    }
-    [super dealloc];
-}
 -(NSNumber*)julianDate
 {
     return [NSNumber numberWithDouble:[self simulation]->getTime()];
@@ -73,7 +64,7 @@ FrameOfReference getFrame() const;
 }
 -(CelestiaSelection*)pickObject:(CelestiaVector*)pickRay tolerance:(NSNumber*)tolerance
 {
-    return [[[CelestiaSelection alloc] initWithSelection:[self simulation]->pickObject([pickRay vec3f],[tolerance floatValue])] autorelease];
+    return [[CelestiaSelection alloc] initWithSelection:[self simulation]->pickObject([pickRay vec3f],[tolerance floatValue])];
 }
 -(CelestiaSelection*)pickObject:(CelestiaVector*)pickRay
 {
@@ -84,7 +75,7 @@ FrameOfReference getFrame() const;
     Universe* uni = [self simulation]->getUniverse();
     if (uni == NULL)
         return nil;
-    return [[[CelestiaUniverse alloc] initWithUniverse:uni] autorelease];
+    return [[CelestiaUniverse alloc] initWithUniverse:uni];
 }
 
 -(void)orbit:(CelestiaVector*)q
@@ -109,7 +100,7 @@ FrameOfReference getFrame() const;
 }
 -(CelestiaSelection*)selection
 {
-    return [[[CelestiaSelection alloc] initWithSelection:[self simulation]->getSelection()] autorelease];
+    return [[CelestiaSelection alloc] initWithSelection:[self simulation]->getSelection()];
 }
 -(void)setSelection:(CelestiaSelection*)sel
 {
@@ -117,7 +108,7 @@ FrameOfReference getFrame() const;
 }
 -(CelestiaSelection*)trackedObject
 {
-    return [[[CelestiaSelection alloc] initWithSelection:[self simulation]->getTrackedObject()] autorelease];
+    return [[CelestiaSelection alloc] initWithSelection:[self simulation]->getTrackedObject()];
 }
 -(void)setTrackedObject:(CelestiaSelection*)sel
 {
@@ -131,12 +122,12 @@ FrameOfReference getFrame() const;
 
 -(CelestiaSelection*)findObject:(NSString*)s
 {
-    return [[[CelestiaSelection alloc] initWithSelection:[self simulation]->findObject([s stdString])] autorelease];
+    return [[CelestiaSelection alloc] initWithSelection:[self simulation]->findObject([s stdString])];
 }
 
 -(CelestiaSelection*)findObjectFromPath:(NSString*)s
 {
-    return [[[CelestiaSelection alloc] initWithSelection:[self simulation]->findObjectFromPath([s stdString], true)] autorelease];
+    return [[CelestiaSelection alloc] initWithSelection:[self simulation]->findObjectFromPath([s stdString], true)];
 }
 
 -(void)gotoSelection:(NSNumber*)gotoTime up:(CelestiaVector*)up coordinateSystem:(NSString*)csysName
@@ -204,7 +195,7 @@ FrameOfReference getFrame() const;
 }
 -(CelestiaObserver*)observer
 {
-    return [[[CelestiaObserver alloc] initWithObserver:[self simulation]->getObserver()] autorelease];
+    return [[CelestiaObserver alloc] initWithObserver:[self simulation]->getObserver()];
 }
 -(void)setObserverPosition:(CelestiaUniversalCoord*)uc
 {

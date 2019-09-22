@@ -25,15 +25,6 @@
     return reinterpret_cast<DeepSkyObject*>([_data pointerValue]);
 }
 
--(void)dealloc
-{
-    if (_data != nil) {
-        [_data release];
-        _data = nil;
-    }
-    [super dealloc];
-}
-
 -(NSString*)type
 {
     return [NSString stringWithStdString: [self DSO]->getType()];

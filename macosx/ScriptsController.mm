@@ -128,7 +128,7 @@
             if ([item respondsToSelector: @selector(objectForKey:)])
             {
                 [mi setAction: nil];
-                NSMenu *subMenu = [[[NSMenu alloc] initWithTitle: title] autorelease];
+                NSMenu *subMenu = [[NSMenu alloc] initWithTitle: title];
                 [self addItems: item toMenu: subMenu];
                 [mi setSubmenu: subMenu];
             }

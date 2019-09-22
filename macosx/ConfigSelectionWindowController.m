@@ -23,12 +23,6 @@ NSString *const dataDirPathPrefKey = @"dataDirPath";
     [[[self window] standardWindowButton:NSWindowCloseButton] setEnabled:!mandatory];
 }
 
-- (void)dealloc
-{
-    [configFilePath release];
-    [dataDirPath release];
-    [super dealloc];
-}
 
 - (IBAction)reset:(id)sender
 {

@@ -98,7 +98,7 @@ static CelestiaCore *appCore;
         obj = catalog->getDSO(i);
         if (obj)
         {
-            dsoWrapper = [[[CelestiaDSO alloc] initWithDSO: obj] autorelease];
+            dsoWrapper = [[CelestiaDSO alloc] initWithDSO: obj];
             type = [dsoWrapper type];
             NSNumber *typeCount = [countPerType objectForKey: type];
             if (nil == typeCount)
@@ -125,7 +125,7 @@ static CelestiaCore *appCore;
                 group = [tempDict objectForKey: @"Unknown"];
 
             name = [NSString stringWithStdString: catalog->getDSOName(obj)];
-            [group setObject: [[[BrowserItem alloc] initWithCelestiaDSO: dsoWrapper] autorelease]
+            [group setObject: [[BrowserItem alloc] initWithCelestiaDSO: dsoWrapper]
                       forKey: name];
         }
     }
@@ -135,19 +135,18 @@ static CelestiaCore *appCore;
     {
         if ([(NSDictionary *)[tempDict objectForKey: type] count] > 0)
         {
-            [result setObject: [[[BrowserItem alloc] initWithName: [typeMap objectForKey: type] children: [tempDict objectForKey: type]] autorelease]
+            [result setObject: [[BrowserItem alloc] initWithName: [typeMap objectForKey: type] children: [tempDict objectForKey: type]]
                        forKey: [typeMap objectForKey: type]];
         }
     }
 
-    [typeMap release];
     return result;       
 }
 
 - (BrowserItem *) sol
 {
     Selection sol = appCore->getSimulation()->getUniverse()->find("Sol");
-    return [[[BrowserItem alloc] initWithCelestiaStar: [[[CelestiaStar alloc] initWithStar: sol.star()] autorelease]] autorelease];
+    return [[BrowserItem alloc] initWithCelestiaStar: [[CelestiaStar alloc] initWithStar: sol.star()]];
 }
 
 - (NSDictionary *) starsOfKind: (int) kind
@@ -168,7 +167,7 @@ static CelestiaCore *appCore;
         aStar = (*nearStars)[i];
         starName = [NSString  stringWithStdString: sim->getUniverse()->getStarCatalog()->getStarName(*aStar) ];
         [starDict setObject:
-            [[[BrowserItem alloc] initWithCelestiaStar: [[[CelestiaStar alloc] initWithStar: aStar] autorelease]] autorelease]
+            [[BrowserItem alloc] initWithCelestiaStar: [[CelestiaStar alloc] initWithStar: aStar]]
                      forKey: starName];
     }
 
@@ -189,15 +188,15 @@ static CelestiaCore *appCore;
     [BrowserItem addChildrenToStar: sol];
 
     stars = [[BrowserItem alloc] initWithName: @""];
-    [stars addChild: [[[BrowserItem alloc] initWithName:
+    [stars addChild: [[BrowserItem alloc] initWithName:
         NSLocalizedString(@"Nearest Stars",@"")      children:
-        [self starsOfKind: StarBrowser::NearestStars]] autorelease]];
-    [stars addChild: [[[BrowserItem alloc] initWithName:
+        [self starsOfKind: StarBrowser::NearestStars]]];
+    [stars addChild: [[BrowserItem alloc] initWithName:
         NSLocalizedString(@"Brightest Stars",@"")    children:
-        [self starsOfKind: StarBrowser::BrighterStars]] autorelease]];
-    [stars addChild: [[[BrowserItem alloc] initWithName:
+        [self starsOfKind: StarBrowser::BrighterStars]]];
+    [stars addChild: [[BrowserItem alloc] initWithName:
         NSLocalizedString(@"Stars With Planets",@"") children:
-        [self starsOfKind: StarBrowser::StarsWithPlanets]] autorelease]];
+        [self starsOfKind: StarBrowser::StarsWithPlanets]]];
 
     dsos = [[BrowserItem alloc] initWithName: @"" children: [self deepSkyObjects]];
 
@@ -207,8 +206,6 @@ static CelestiaCore *appCore;
         dsos,  @"dso",
         nil];
 
-    [stars release];
-    [dsos  release];
     return [rootItems objectForKey: rootId];
 }
 
@@ -339,7 +336,7 @@ static CelestiaCore *appCore;
         NSDictionary *parenAttr = [NSDictionary dictionaryWithObjectsAndKeys:
             [NSColor grayColor], NSForegroundColorAttributeName,
             nil];
-        NSMutableAttributedString *attrStr = [[[NSMutableAttributedString alloc] initWithString: itemName] autorelease];
+        NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString: itemName];
         [attrStr setAttributes:parenAttr range:parenRange];
 
         [cell setAttributedStringValue:attrStr];
@@ -392,9 +389,9 @@ static CelestiaCore *appCore;
         if (browser && [rootId isEqualToString: @"star"])
         {
             BrowserItem *rootItem = [self root];
-            [rootItem addChild: [[[BrowserItem alloc] initWithName:
+            [rootItem addChild: [[BrowserItem alloc] initWithName:
                 NSLocalizedString(@"Nearest Stars",@"")   children:
-                [self starsOfKind: StarBrowser::NearestStars]] autorelease]];
+                [self starsOfKind: StarBrowser::NearestStars]]];
 
             // Immediately synch browser display with reloaded star list,
             // but only if star list is showing

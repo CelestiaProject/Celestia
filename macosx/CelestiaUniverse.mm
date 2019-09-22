@@ -29,14 +29,6 @@
 @end
 
 @implementation CelestiaUniverse
--(void)dealloc
-{
-    if (_data != nil) {
-        [_data release];
-        _data = nil;
-    }
-    [super dealloc];
-}
 /*
 -(CelestiaSelection*)pick:(CelestiaUniversalCoord*)origin direction:(CelestiaVector*)direction when:(NSNumber*)when faintestMag:(NSNumber*)faintestMag tolerance:(NSNumber*)tolerance
 {

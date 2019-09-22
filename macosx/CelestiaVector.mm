@@ -144,37 +144,29 @@
 {
     //self = [super initWithCoder:coder];
     self = [self init];
-    _array = [[coder decodeObject] retain];
+    _array = [coder decodeObject];
     return self;
-}
--(void)dealloc
-{
-    if (_array != nil) {
-        [_array release];
-        _array = nil;
-    }
-    [super dealloc];
 }
 +(CelestiaVector*)vectorWithArray:(NSArray*)v
 {
-    return [[[CelestiaVector alloc] initWithArray:v] autorelease];
+    return [[CelestiaVector alloc] initWithArray:v];
 }
 +(CelestiaVector*)vectorWithx:(NSNumber*)x y:(NSNumber*)y
 {
-    return [[[CelestiaVector alloc] initWithx:x y:y] autorelease];
+    return [[CelestiaVector alloc] initWithx:x y:y];
 }
 +(CelestiaVector*)vectorWithx:(NSNumber*)x y:(NSNumber*)y z:(NSNumber*)z
 {
-    return [[[CelestiaVector alloc] initWithx:x y:y z:z] autorelease];
+    return [[CelestiaVector alloc] initWithx:x y:y z:z];
 }
 +(CelestiaVector*)vectorWithx:(NSNumber*)x y:(NSNumber*)y z:(NSNumber*)z w:(NSNumber*)w
 {
-    return [[[CelestiaVector alloc] initWithx:x y:y z:z w:w] autorelease];
+    return [[CelestiaVector alloc] initWithx:x y:y z:z w:w];
 }
 -(CelestiaVector*)initWithArray:(NSArray*)v
 {
     self = [super init];
-    _array = [v retain];
+    _array = v;
     return self;
 }
 -(CelestiaVector*)initWithx:(NSNumber*)x y:(NSNumber*)y

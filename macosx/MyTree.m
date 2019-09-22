@@ -23,14 +23,14 @@
 //    NSLog(@"[MyVector initWithCoder:%@]",coder);
     //self = [super initWithCoder:coder];
     self = [self init];
-    _array = [[coder decodeObject] retain];
+    _array = [coder decodeObject];
     //[coder decodeValueOfObjCType:@encode(Class) at:&_myClass];
     return self;
 }
 -(id)init
 {
     self = [super init];
-    _array = [[NSMutableArray arrayWithCapacity:0] retain];
+    _array = [NSMutableArray arrayWithCapacity:0];
     _myClass = [NSObject class];
     return self;
 }
@@ -39,11 +39,6 @@
     self = [self init];
     _myClass = myClass;
     return self;
-}
--(void)dealloc
-{
-    [_array release];
-    [super dealloc];
 }
 -(void)addObject:(id)obj
 {
@@ -95,8 +90,8 @@
     //self = [super initWithCoder:coder];
     self = [self init];
     _parent = nil;
-    _nodeValue = [[coder decodeObject] retain];
-    _children = [[coder decodeObject] retain];
+    _nodeValue = [coder decodeObject];
+    _children = [coder decodeObject];
     [_children makeObjectsPerformSelector:@selector(setParent:) withObject:self];
     return self;
 }
@@ -108,23 +103,10 @@
     _parent = nil;
     return self;
 }
--(void)dealloc
-{
-//    NSLog(@"[MyTree dealloc]");
-//    NSLog(@"%@",self);
-    if ([self nodeValue] != nil)
-        [[self nodeValue] autorelease];
-    if ([self children] != nil)
-        [[self children] autorelease];
-    _nodeValue = nil;
-    _children = nil;
-    _parent = nil;
-    [super dealloc];
-}
 -(id)initWithNode:(id)obj parent:(MyTree*)parent
 {
     self = [self init];
-    _nodeValue = [obj retain];
+    _nodeValue = obj;
     _parent = parent;
     _children = nil;
     return self;
@@ -148,14 +130,14 @@
     id <NSCoding> nodeValue = nil;
     // NSLog(@"[MyTree initWithDictionary:%@ parent:%@]",dict,parent);
     // this part could use some work
-    nodeValue = [[[CelestiaFavorite alloc] initWithDictionary:[dict objectForKey:@"nodeValue"]] autorelease];
+    nodeValue = [[CelestiaFavorite alloc] initWithDictionary:[dict objectForKey:@"nodeValue"]];
     // Leaf
     if ((origArray = [dict objectForKey:@"children"]) == nil)
         return [self initWithNode:nodeValue parent:parent];
-    children = [[[MyVector alloc] initWithClass:[MyTree class]] autorelease];
+    children = [[MyVector alloc] initWithClass:[MyTree class]];
     enumerator = [origArray objectEnumerator];
     while ((childDict = [enumerator nextObject]) != nil)
-        [children addObject:[[[MyTree alloc] initWithDictionary:childDict parent:self] autorelease]];
+        [children addObject:[[MyTree alloc] initWithDictionary:childDict parent:self]];
     return [self initWithNode:nodeValue parent:parent children:children];
 }
 -(MyTree*)parent
@@ -176,9 +158,7 @@
 }
 -(void)setNode:(id)obj
 {
-    if ([self nodeValue] != nil)
-        [[self nodeValue] autorelease];
-    _nodeValue = [obj retain];
+    _nodeValue = obj;
 }
 -(void)setParent:(MyTree*)obj
 {
@@ -188,8 +168,6 @@
 {
     NSEnumerator *enumerator = nil;
     id obj = nil;
-    if ([self children] == nil)
-        [[self children] autorelease];
     if (children == nil) {
         _children = nil;
         return;

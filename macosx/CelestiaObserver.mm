@@ -25,17 +25,9 @@
 @end
 
 @implementation CelestiaObserver
--(void)dealloc
-{
-    if (_data != nil) {
-        [_data release];
-        _data = nil;
-    }
-    [super dealloc];
-}
 -(CelestiaUniversalCoord*)position
 {
-    return [[[CelestiaUniversalCoord alloc] initWithUniversalCoord:[self observer].getPosition()] autorelease];
+    return [[CelestiaUniversalCoord alloc] initWithUniversalCoord:[self observer].getPosition()];
 }
 -(CelestiaVector*)orientation
 {

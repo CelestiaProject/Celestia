@@ -48,7 +48,6 @@
         if (pixFmt)
         {
             [self setPixelFormat: pixFmt] ;
-            [pixFmt release];
 
             if (0 == CGLEnable([[self openGLContext] CGLContextObj], (CGLContextEnable)313))
             {
@@ -67,19 +66,11 @@
         }
         else
         {
-            [self release];
             return nil;
         }
     }
 
     return self;
-}
-
-- (void)dealloc
-{
-    [inputWatcher release];
-    [textWindow release];
-    [super dealloc];
 }
 
 - (void)setAASamples: (unsigned int)aaSamples
@@ -119,7 +110,6 @@
             {
                 context = [[NSOpenGLContext alloc] initWithFormat: pixFmt
                                                      shareContext: nil];
-                [pixFmt release];
 
                 if (context)
                 {
@@ -132,7 +122,6 @@
                     [self setOpenGLContext: context];
                     [context setView: self];
                     [context makeCurrentContext];
-                    [context release];
 
                     glEnable(GL_MULTISAMPLE_ARB);
                     // GL_NICEST enables Quincunx on supported NVIDIA cards,

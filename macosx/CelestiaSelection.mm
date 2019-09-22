@@ -41,15 +41,6 @@
     Selection(Galaxy* _galaxy) : star(NULL), body(NULL), galaxy(_galaxy) {};
 */
 
--(void)dealloc
-{
-    if (_data != nil) {
-        [_data release];
-        _data = nil;
-    }
-    [super dealloc];
-}
-
 -(CelestiaSelection*)initWithCelestiaStar:(CelestiaStar*)s
 {
     return [self initWithSelection:Selection([s star])];
@@ -69,7 +60,7 @@
 -(CelestiaBody *)body
 {
     if ([self selection].getType() != Selection::Type_Body) return nil;
-    return [[[CelestiaBody alloc] initWithBody:[self selection].body()] autorelease];
+    return [[CelestiaBody alloc] initWithBody:[self selection].body()];
 }
 -(BOOL)isEmpty
 {
@@ -87,17 +78,17 @@
 -(CelestiaStar*)star
 {
     if ([self selection].getType() != Selection::Type_Star) return nil;
-    return [[[CelestiaStar alloc] initWithStar:[self selection].star()] autorelease];
+    return [[CelestiaStar alloc] initWithStar:[self selection].star()];
 }
 -(CelestiaGalaxy*)galaxy
 {
     if ([self selection].getType() != Selection::Type_DeepSky) return nil;
-    return [[[CelestiaGalaxy alloc] initWithGalaxy:((Galaxy*)[self selection].deepsky())] autorelease];
+    return [[CelestiaGalaxy alloc] initWithGalaxy:((Galaxy*)[self selection].deepsky())];
 }
 -(CelestiaLocation*)location
 {
     if ([self selection].getType() != Selection::Type_Location) return nil;
-    return [[[CelestiaLocation alloc] initWithLocation:((Location*)[self selection].location())] autorelease];
+    return [[CelestiaLocation alloc] initWithLocation:((Location*)[self selection].location())];
 }
 -(NSString *)name
 {
@@ -145,7 +136,7 @@
 
 -(CelestiaUniversalCoord*)position:(NSNumber*)t
 {
-    return [[[CelestiaUniversalCoord alloc] initWithUniversalCoord:[self selection].getPosition([t doubleValue])] autorelease];
+    return [[CelestiaUniversalCoord alloc] initWithUniversalCoord:[self selection].getPosition([t doubleValue])];
 }
 
 @end

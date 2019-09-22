@@ -30,7 +30,6 @@
           children:             (NSDictionary *)aChildren;
 + (void)addChildrenToStar: (BrowserItem *) aStar;
 + (void)addChildrenToBody: (BrowserItem *) aBody;
-- (void)dealloc;
 
 - (NSString *)name;
 - (id)body;

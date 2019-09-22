@@ -26,15 +26,6 @@
 
 
 @implementation CelestiaBody
--(void)dealloc
-{
-    if (_data != nil) {
-        [_data release];
-        _data = nil;
-    }
-    [super dealloc];
-}
-
 -(NSString*)classification
 {
     switch ([self body]->getClassification())

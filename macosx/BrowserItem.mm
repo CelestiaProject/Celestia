@@ -22,31 +22,31 @@
 - (id)initWithCelestiaDSO: (CelestiaDSO *)aDSO
 {
     self = [super init];
-    if (self) data = [aDSO retain];
+    if (self) data = aDSO;
     return self;
 }
 - (id)initWithCelestiaStar: (CelestiaStar *)aStar
 {
     self = [super init];
-    if (self) data = [aStar retain];
+    if (self) data = aStar;
     return self;
 }
 - (id)initWithCelestiaBody: (CelestiaBody *)aBody
 {
     self = [super init];
-    if (self) data = [aBody retain];
+    if (self) data = aBody;
     return self;
 }
 - (id)initWithCelestiaLocation: (CelestiaLocation *)aLocation
 {
     self = [super init];
-    if (self) data = [aLocation retain];
+    if (self) data = aLocation;
     return self;
 }
 - (id)initWithName: (NSString *)aName
 {
     self = [super init];
-    if (self) data = [aName retain];
+    if (self) data = aName;
     return self;
 }
 - (id)initWithName: (NSString *)aName
@@ -55,7 +55,7 @@
     self = [super init];
     if (self)
     {
-        data = [aName retain];
+        data = aName;
         if (nil == children)
         {
             children = [[NSMutableDictionary alloc] initWithDictionary: aChildren];
@@ -87,8 +87,8 @@
             Body* body = sys->getBody(i);
             if (body->getName().empty())
                 continue;
-            BrowserItem *item = [[[BrowserItem alloc] initWithCelestiaBody:
-                [[[CelestiaBody alloc] initWithBody: body] autorelease]] autorelease];
+            BrowserItem *item = [[BrowserItem alloc] initWithCelestiaBody:
+                [[CelestiaBody alloc] initWithBody: body]];
             int bodyClass  = body->getClassification();
             switch (bodyClass)
             {
@@ -96,12 +96,12 @@
                     continue;
                 case Body::Planet:
                     if (!planets)
-                        planets = [[[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Planets",@"po",@"")] autorelease];
+                        planets = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Planets",@"po",@"")];
                     subItem = planets;
                     break;
                 case Body::DwarfPlanet:
                     if (!dwarfPlanets)
-                        dwarfPlanets = [[[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Dwarf Planets",@"po",@"")] autorelease];
+                        dwarfPlanets = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Dwarf Planets",@"po",@"")];
                     subItem = dwarfPlanets;
                     break;
                 case Body::Moon:
@@ -109,7 +109,7 @@
                     if (body->getRadius() < 100.0f || Body::MinorMoon == bodyClass)
                     {
                         if (!minorMoons)
-                            minorMoons = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Minor Moons",@"")] autorelease];
+                            minorMoons = [[BrowserItem alloc] initWithName: NSLocalizedString(@"Minor Moons",@"")];
                         subItem = minorMoons;
                     }
                     else
@@ -119,17 +119,17 @@
                     break;
                 case Body::Asteroid:
                     if (!asteroids)
-                        asteroids = [[[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Asteroids",@"po",@"")] autorelease];
+                        asteroids = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Asteroids",@"po",@"")];
                     subItem = asteroids;
                     break;
                 case Body::Comet:
                     if (!comets)
-                        comets = [[[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Comets",@"po",@"")] autorelease];
+                        comets = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Comets",@"po",@"")];
                     subItem = comets;
                     break;
                 case Body::Spacecraft:
                     if (!spacecrafts)
-                        spacecrafts = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Spacecrafts",@"")] autorelease];
+                        spacecrafts = [[BrowserItem alloc] initWithName: NSLocalizedString(@"Spacecrafts",@"")];
                     subItem = spacecrafts;
                     break;
                 default:
@@ -165,8 +165,8 @@
             Body* body = sys->getBody(i);
             if (body->getName().empty())
                 continue;
-            BrowserItem *item = [[[BrowserItem alloc] initWithCelestiaBody:
-                [[[CelestiaBody alloc] initWithBody: body] autorelease]] autorelease];
+            BrowserItem *item = [[BrowserItem alloc] initWithCelestiaBody:
+                [[CelestiaBody alloc] initWithBody: body]];
             int bodyClass  = body->getClassification();
             if (bodyClass==Body::Asteroid) bodyClass = Body::Moon;
             
@@ -179,7 +179,7 @@
                     if (body->getRadius() < 100.0f || Body::MinorMoon == bodyClass)
                     {
                         if (!minorMoons)
-                            minorMoons = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Minor Moons",@"")] autorelease];
+                            minorMoons = [[BrowserItem alloc] initWithName: NSLocalizedString(@"Minor Moons",@"")];
                         subItem = minorMoons;
                     }
                     else
@@ -189,12 +189,12 @@
                     break;
                 case Body::Comet:
                     if (!comets)
-                        comets = [[[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Comets",@"po",@"")] autorelease];
+                        comets = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Comets",@"po",@"")];
                     subItem = comets;
                     break;
                 case Body::Spacecraft:
                     if (!spacecrafts)
-                        spacecrafts = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Spacecrafts",@"")] autorelease];
+                        spacecrafts = [[BrowserItem alloc] initWithName: NSLocalizedString(@"Spacecrafts",@"")];
                     subItem = spacecrafts;
                     break;
                 default:
@@ -212,22 +212,14 @@
     std::vector<Location*>* locations = [(CelestiaBody *)[aBody body] body]->getLocations();
     if (locations != NULL)
     {
-        BrowserItem *locationItems = [[[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Locations",@"po",@"")] autorelease];
+        BrowserItem *locationItems = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Locations",@"po",@"")];
         for (vector<Location*>::const_iterator iter = locations->begin();
              iter != locations->end(); iter++)
         {
-            [locationItems addChild: [[[BrowserItem alloc] initWithCelestiaLocation: [[[CelestiaLocation alloc] initWithLocation: *iter] autorelease]] autorelease]];
+            [locationItems addChild: [[BrowserItem alloc] initWithCelestiaLocation: [[CelestiaLocation alloc] initWithLocation: *iter]]];
         }
         [aBody addChild: locationItems];
     }
-}
-
-- (void)dealloc
-{
-    [childNames release];
-    [children release];
-    [data release];
-    [super dealloc];
 }
 
 - (NSString *)name
@@ -258,12 +250,12 @@
 {
     if (childrenChanged)
     {
-        [childNames release]; childNames = nil;
+        childNames = nil;
     }
     
     if (nil == childNames)
     {
-        childNames = [[[children allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] retain];
+        childNames = [[children allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
         childrenChanged = NO;
     }
     

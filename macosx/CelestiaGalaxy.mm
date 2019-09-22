@@ -33,14 +33,6 @@
 
 @implementation CelestiaGalaxy
 
--(void)dealloc
-{
-    if (_data != nil) {
-        [_data release];
-        _data = nil;
-    }
-    [super dealloc];
-}
 -(NSString*)type
 {
     return [NSString stringWithUTF8String:[self galaxy]->getType()];

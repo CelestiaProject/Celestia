@@ -6,7 +6,6 @@
 //  Copyright (C) 2007, Celestia Development Team
 //
 
-#import "CelestiaDestination.h"
 #import "CelestiaFavorite.h"
 #import "CelestiaFavorites.h"
 #import "CelestiaSimulation.h"
@@ -19,9 +18,7 @@ class CelestiaCore;
 @class CelestiaCore;
 #endif
 
-@interface CelestiaAppCore : NSObject {
-    CelestiaDestinations* _destinations;
-}
+@interface CelestiaAppCore : NSObject
 -(CelestiaCore*) appCore;
 -(int)toCelestiaKey:(NSEvent*)theEvent;
 -(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons;
@@ -49,7 +46,6 @@ class CelestiaCore;
 -(void)showText:(NSString *)text;
 -(void)activateFavorite:(id)fav;
 -(CelestiaFavorites *)favorites;
--(CelestiaDestinations *)destinations;
 -(NSTimeZone *)timeZone;
 -(void)setTimeZone:(NSTimeZone *)timeZone withDate:(NSDate *)date;
 -(int)textEnterMode;

@@ -46,15 +46,6 @@
 {
 //    return [NSNumber numberWithUnsignedInt:[self star]->getCatalogNumber([cat unsignedIntValue])];
 }
--(void)dealloc
-{
-    if (_data != nil) {
-        [_data release];
-        _data = nil;
-    }
-    [super dealloc];
-}
-
 -(NSNumber *)radius
 {
     return [NSNumber numberWithFloat:[self star]->getRadius()];

@@ -24,9 +24,7 @@ static CelestiaFavorites* _celestiaFavorites;
 }
 -(void)setSynchronize:(NSInvocation*)synchronize
 {
-    if (_synchronize != nil)
-        [_synchronize autorelease];
-    _synchronize = [synchronize retain];
+    _synchronize = synchronize;
 }
 -(void)synchronize
 {
@@ -39,13 +37,13 @@ static CelestiaFavorites* _celestiaFavorites;
 }
 -(MyTree*)addNewFavorite:(NSString*)name
 {
-    MyTree* obj = [[[MyTree alloc] initWithNode:[[[CelestiaFavorite alloc] initWithName:name] autorelease] parent:self] autorelease];
+    MyTree* obj = [[MyTree alloc] initWithNode:[[CelestiaFavorite alloc] initWithName:name]parent:self];
     [[self children] addObject:obj];
     return obj;
 }
 -(MyTree*)addNewFolder:(NSString*)name
 {
-    MyTree* obj = [[[MyTree alloc] initWithNode:[[[CelestiaFavorite alloc] initWithFolderName:name] autorelease] parent:self children:[NSArray array]] autorelease];
+    MyTree* obj = [[MyTree alloc] initWithNode:[[CelestiaFavorite alloc] initWithFolderName:name] parent:self children:[NSArray array]];
     [[self children] addObject:obj];
     return obj;
 }
@@ -66,7 +64,7 @@ static CelestiaFavorites* _celestiaFavorites;
             MyVector* children = [_celestiaFavorites children];
             id obj = nil;
             while ((obj = [enumerator nextObject]) != nil)
-                [children addObject:[[[MyTree alloc] initWithDictionary:obj parent:_celestiaFavorites] autorelease]];            
+                [children addObject:[[MyTree alloc] initWithDictionary:obj parent:_celestiaFavorites]];
         }
         return _celestiaFavorites;
     }
