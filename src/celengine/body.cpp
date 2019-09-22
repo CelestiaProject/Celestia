@@ -77,6 +77,14 @@ Body::~Body()
 
     delete satellites;
     delete frameTree;
+
+    if (altSurfaces != NULL)
+    {
+        for (AltSurfaceTable::iterator iter = altSurfaces->begin(); iter != altSurfaces->end(); ++iter)
+            delete iter->second;
+        delete altSurfaces;
+    }
+    delete locations;
 }
 
 
