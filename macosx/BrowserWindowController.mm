@@ -297,12 +297,17 @@ static CelestiaCore *appCore;
     return YES;
 }
 
-- (void) browser: (NSBrowser*) sender willDisplayCell: (id) cell atRow: (int) row column: (int) column
+- (void) browser: (NSBrowser*) sender willDisplayCell: (id) cell atRow: (NSInteger) row column: (NSInteger) column
 {
     BrowserItem *itemForColumn = [self itemForPathArray: [[sender pathToColumn: column ] componentsSeparatedByString: [sender pathSeparator] ] ];
     NSArray* colKeys = [itemForColumn allChildNames];
     BOOL isLeaf = YES;
+
+    if (row >= (NSInteger)[colKeys count])
+        return;
+
     NSString* itemName = [colKeys objectAtIndex: row];
+
     if (!itemName)
         itemName = @"????";
     else
