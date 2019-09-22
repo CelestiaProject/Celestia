@@ -190,7 +190,6 @@ NSString* fatalErrorMessage;
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    [[glView openGLContext] makeCurrentContext];
 #ifdef DEBUG
     NSDate *t = [NSDate date];
 #endif
@@ -294,6 +293,7 @@ NSString* fatalErrorMessage;
 
 - (void)finishInitialization
 {
+    [[glView openGLContext] makeCurrentContext];
     [glView setAASamples: [appCore aaSamples]];
     [appCore initRenderer];
 
