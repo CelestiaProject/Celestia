@@ -23,10 +23,13 @@
                 {
                     NSMenu *result;
                     [invoc setSelector: sel];
-                    [invoc setArgument: &self atIndex: 2];
-                    [invoc setArgument: &item atIndex: 3];
+                    __unsafe_unretained id arg1 = self;
+                    __unsafe_unretained id arg2 = item;
+                    __unsafe_unretained id ret = result;
+                    [invoc setArgument: &arg1 atIndex: 2];
+                    [invoc setArgument: &arg2 atIndex: 3];
                     [invoc invokeWithTarget: delegate];
-                    [invoc getReturnValue: &result];
+                    [invoc getReturnValue: &ret];
                     return result;
                 }
             }

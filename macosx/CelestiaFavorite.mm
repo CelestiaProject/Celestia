@@ -169,19 +169,12 @@
 }
 -(void)dealloc
 {
-#ifdef URL_FAVORITES
-    [url release];   url = nil;
-    [_name release]; _name = nil;
-#endif
     if (_data != nil) {
         if (_freeWhenDone) {
             FavoritesEntry* fav = [self favorite];
             delete fav;
         }
-        [_data release];
-        _data = nil;
     }
-    [super dealloc];
 }
 -(BOOL)isEqualToFavorite:(CelestiaFavorite*)fav
 {
@@ -236,7 +229,7 @@
     [self setParentFolder:[dict objectForKey:@"parentFolder"]];
     [self setSelectionName:[dict objectForKey:@"selectionName"]];
     [self setOrientation:[CelestiaVector vectorWithArray:[dict objectForKey:@"orientation"]]];
-    [self setPosition:[[[CelestiaUniversalCoord alloc] initWithData:[dict objectForKey:@"position"]] autorelease]];
+    [self setPosition:[[CelestiaUniversalCoord alloc] initWithData:[dict objectForKey:@"position"]]];
     [self setJd:[dict objectForKey:@"jd"]];
     [self setCoordinateSystem:[dict objectForKey:@"coordinateSystem"]];
 #ifdef URL_FAVORITES
@@ -253,8 +246,7 @@
     if (name == nil)
         name = @"";
 #ifdef URL_FAVORITES
-    [_name release];
-    _name = [name retain];
+    _name = name;
 #else
     [self favorite]->name = [name stdString];
 #endif
@@ -268,7 +260,7 @@
 -(NSString*)name
 {
 #ifdef URL_FAVORITES
-    return [[_name retain] autorelease];
+    return _name;
 #else
     return [NSString stringWithStdString:[self favorite]->name];
 #endif
@@ -279,7 +271,7 @@
 }
 -(CelestiaUniversalCoord*)position
 {
-    return [[[CelestiaUniversalCoord alloc] initWithUniversalCoord:[self favorite]->position] autorelease];
+    return [[CelestiaUniversalCoord alloc] initWithUniversalCoord:[self favorite]->position];
 }
 -(CelestiaVector*)orientation
 {
@@ -308,7 +300,7 @@
 }
 -(void)setUrl:(NSString *)aUrl
 {
-    url = [aUrl retain];
+    url = aUrl;
 }
 #endif
 @end

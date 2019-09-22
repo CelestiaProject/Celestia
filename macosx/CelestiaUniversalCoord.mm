@@ -31,7 +31,7 @@
 -(id)initWithData:(NSData*)data
 {
     self = [super init];
-    _data = [data retain];
+    _data = data;
     return self;
 }
 -(void)encodeWithCoder:(NSCoder*)coder
@@ -45,16 +45,8 @@
     NSLog(@"[CelestiaUniversalCoord initWithCoder:%@]",coder);
     //self = [super initWithCoder:coder];
     self = [super init];
-    _data = [[coder decodeObject] retain];
+    _data = [coder decodeObject];
     return self;
-}
--(void)dealloc
-{
-    if (_data != nil) {
-        [_data release];
-        _data = nil;
-    }
-    [super dealloc];
 }
 -(CelestiaVector*)celestiaVector
 {
@@ -66,6 +58,6 @@
 }
 -(CelestiaUniversalCoord*)difference:(CelestiaUniversalCoord*)t
 {
-    return [[[CelestiaUniversalCoord alloc] initWithUniversalCoord:[self universalCoord].difference([self universalCoord])] autorelease];
+    return [[CelestiaUniversalCoord alloc] initWithUniversalCoord:[self universalCoord].difference([self universalCoord])];
 }
 @end

@@ -29,11 +29,6 @@
     // http://unicode.org/reports/tr35/tr35-4.html
 }
 
-- (void) dealloc
-{
-    [dateTimeFormat release];
-    [super dealloc];
-}
 
 - (IBAction)setTime:(id)sender
 {

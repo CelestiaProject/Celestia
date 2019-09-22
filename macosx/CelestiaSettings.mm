@@ -72,13 +72,12 @@ static NSMutableDictionary* tagMap;
 -(CelestiaSettings*)init
 {
     if (sharedInstance != nil) {
-        [[super init] release];
         return sharedInstance;
     }
 
     self = [super init];
 
-    tagMap = [[ NSMutableDictionary dictionaryWithCapacity: 100 ] retain];
+    tagMap = [ NSMutableDictionary dictionaryWithCapacity: 100 ];
 
     appCore = (CelestiaCore*) [[CelestiaAppCore sharedAppCore] appCore];
 
@@ -186,7 +185,7 @@ static NSMutableDictionary* tagMap;
 //        TAGDEF(999,@"saturationMagnitude")
 
         nil];
-    keyArray = [[tagDict allValues] retain];
+    keyArray = [tagDict allValues];
 
     NSDictionary *volatileTagDict = [NSDictionary dictionaryWithObjectsAndKeys:
         TAGDEF(1000,@"showBodyAxes")

@@ -60,7 +60,7 @@ NSString* fatalErrorMessage;
         NSURL *tempPath = [NSURL URLByResolvingBookmarkData:configFileData options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:nil error:&error];
         if ([tempPath startAccessingSecurityScopedResource])
         {
-            configFilePath = [tempPath retain];
+            configFilePath = tempPath;
         }
     }
 
@@ -70,16 +70,16 @@ NSString* fatalErrorMessage;
         NSURL *tempPath = [NSURL URLByResolvingBookmarkData:dataDirData options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:nil error:&error];
         if ([tempPath startAccessingSecurityScopedResource])
         {
-            dataDirPath = [tempPath retain];
+            dataDirPath = tempPath;
         }
     }
 
     // use the default location for nil ones
     if (configFilePath == nil)
-        configFilePath = [[ConfigSelectionWindowController applicationConfig] retain];
+        configFilePath = [ConfigSelectionWindowController applicationConfig];
 
     if (dataDirPath == nil)
-        dataDirPath = [[ConfigSelectionWindowController applicationDataDirectory] retain];
+        dataDirPath = [ConfigSelectionWindowController applicationDataDirectory];
 
     // add the edit configuration menu item
     NSMenu *appMenu = [[[[NSApp mainMenu] itemArray] objectAtIndex:0] submenu];
@@ -146,8 +146,8 @@ NSString* fatalErrorMessage;
 {
     if (configSelectionWindowController == nil) {
         configSelectionWindowController = [[ConfigSelectionWindowController alloc] initWithWindowNibName:@"ConfigSelectionWindow"];
-        configSelectionWindowController->dataDirPath = [dataDirPath retain];
-        configSelectionWindowController->configFilePath = [configFilePath retain];
+        configSelectionWindowController->dataDirPath = dataDirPath;
+        configSelectionWindowController->configFilePath = configFilePath;
     }
     [configSelectionWindowController setMandatory:!cancelAllowed];
     [configSelectionWindowController showWindow:self];
@@ -187,31 +187,34 @@ NSString* fatalErrorMessage;
 
 - (BOOL)startInitialization
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    BOOL result = NO;
 
     [[glView openGLContext] makeCurrentContext];
+
+    @autoreleasepool {
 #ifdef DEBUG
-    NSDate *t = [NSDate date];
+        NSDate *t = [NSDate date];
 #endif
 
-    BOOL result = [appCore initSimulationWithConfigPath:[configFilePath path] extraPath:[extraDataDirPath path]];
+        result = [appCore initSimulationWithConfigPath:[configFilePath path] extraPath:[extraDataDirPath path]];
 
-    if (!result)
-    {
-        [startupCondition lock];
-        [startupCondition unlockWithCondition:99];
-    }
-    else
-    {
+        if (!result)
+        {
+            [startupCondition lock];
+            [startupCondition unlockWithCondition:99];
+        }
+        else
+        {
 #ifdef DEBUG
-        NSLog(@"Init took %lf seconds\n", -[t timeIntervalSinceNow]);
+            NSLog(@"Init took %lf seconds\n", -[t timeIntervalSinceNow]);
 #endif
-        [startupCondition lock];
-        [startupCondition unlockWithCondition:1];
+            [startupCondition lock];
+            [startupCondition unlockWithCondition:1];
+        }
     }
+
     [NSOpenGLContext clearCurrentContext];
 
-    [pool release];
     return result;
 }
 
@@ -244,7 +247,7 @@ NSString* fatalErrorMessage;
         [NSApp terminate:self];
         return;
     }
-    fatalErrorMessage = [msg retain];
+    fatalErrorMessage = msg;
 }
 
 -(void) setupFavorites
@@ -320,7 +323,7 @@ NSString* fatalErrorMessage;
     [appCore start:[NSDate date]];
 
     ready = YES;
-    timer = [[NSTimer timerWithTimeInterval: 0.01 target: self selector:@selector(timeDisplay) userInfo:nil repeats:YES] retain];
+    timer = [NSTimer timerWithTimeInterval: 0.01 target: self selector:@selector(timeDisplay) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
 
     // Threaded startup can allow app to be hidden during startup
@@ -347,7 +350,7 @@ NSString* fatalErrorMessage;
     if ( ready )
         [self runScript: filename ];
     else
-        pendingScript = [filename retain];
+        pendingScript = filename;
     return YES;
 }
 
@@ -356,7 +359,7 @@ NSString* fatalErrorMessage;
     if ( ready )
         [ appCore goToUrl: [[event descriptorAtIndex:1] stringValue] ];
     else
-        pendingUrl = [[[event descriptorAtIndex:1] stringValue] retain];
+        pendingUrl = [[event descriptorAtIndex:1] stringValue];
 }
 
 /* On a multi-screen setup, user is able to change the resolution of the screen running Celestia from a different screen, or the menu bar position so handle that */
@@ -412,7 +415,6 @@ NSString* fatalErrorMessage;
 
     if (timer != nil) {
         [timer invalidate];
-        [timer release];
         timer = nil;
     }
     [[CelestiaAppCore sharedAppCore] archive];
@@ -425,16 +427,8 @@ NSString* fatalErrorMessage;
 
     [configFilePath stopAccessingSecurityScopedResource];
     [dataDirPath stopAccessingSecurityScopedResource];
-    [configFilePath release];
-    [dataDirPath release];
-
-    [lastScript release];
-    [eclipseFinderController release];
-    [browserWindowController release];
-    [helpWindowController release];
 
     if (appCore != nil) {
-        [appCore release];
         appCore = nil;
     }
 
@@ -625,14 +619,12 @@ NSString* fatalErrorMessage;
     [fullScreenWindow setBackgroundColor: [NSColor blackColor]];
     [fullScreenWindow setReleasedWhenClosed: YES];
     [self setWindow: fullScreenWindow]; // retains it
-    [fullScreenWindow release];
     [fullScreenWindow setDelegate: self];
     // Hide the menu bar only if it's on the same screen
     [self hideMenuBarOnActiveScreen];
     [fullScreenWindow makeKeyAndOrderFront: nil];
 
     [fullScreenWindow setContentView: fullScreenView];
-    [fullScreenView release];
     [fullScreenView setOpenGLContext: [glView openGLContext]];
     [[glView openGLContext] setView: fullScreenView];
 
@@ -665,10 +657,8 @@ NSString* fatalErrorMessage;
 
 - (void) runScript: (NSString*) path
 {
-    NSString* oldScript = lastScript;
-    lastScript = [path retain];
-    [oldScript release];
-    [appCore runScript: lastScript];       
+    lastScript = path;
+    [appCore runScript: lastScript];
 }
 
 - (IBAction) openScript: (id) sender
@@ -704,7 +694,7 @@ NSString* fatalErrorMessage;
         [sender respondsToSelector: @selector(representedObject)] &&
         [sender representedObject])
     {
-        [[appCore simulation] setSelection: [[[CelestiaSelection alloc] initWithCelestiaBody: [sender representedObject]] autorelease]];
+        [[appCore simulation] setSelection: [[CelestiaSelection alloc] initWithCelestiaBody: [sender representedObject]]];
     }
 }
 
@@ -718,7 +708,6 @@ NSString* fatalErrorMessage;
             [str addAttributes:@{NSForegroundColorAttributeName : [NSColor labelColor]} range:NSMakeRange(0, [str length])];
         }
         [text setAttributedString: str];
-        [str release];
     }
 
     [glInfoPanel makeKeyAndOrderFront: self];

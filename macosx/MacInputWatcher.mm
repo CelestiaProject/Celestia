@@ -54,7 +54,6 @@ public:
 - (void)dealloc
 {
     if (watcher) delete watcher;
-    [super dealloc];
 }
 
 - (id) watched

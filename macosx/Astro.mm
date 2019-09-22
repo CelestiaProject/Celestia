@@ -21,7 +21,7 @@ NSDictionary* coordinateDict;
     int year = astroDate.year;
     NSCalendar *currentCalendar = [NSCalendar currentCalendar];
     [currentCalendar setTimeZone: [NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-    NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
+    NSDateComponents *comps = [[NSDateComponents alloc] init];
     int era = 1;
     if (year < 1)
     {
@@ -78,7 +78,7 @@ NSDictionary* coordinateDict;
 }
 +(CelestiaUniversalCoord*)universalPosition:(CelestiaVector*)heliocentric starPosition:(CelestiaVector*)starPosition
 {
-    return [[[CelestiaUniversalCoord alloc] initWithUniversalCoord:astro::universalPosition([heliocentric point3d],[starPosition point3f])] autorelease];
+    return [[CelestiaUniversalCoord alloc] initWithUniversalCoord:astro::universalPosition([heliocentric point3d],[starPosition point3f])];
 }
 +(CelestiaVector*)equatorialToCelestialCart:(NSNumber*)ra declination:(NSNumber*)dec distance:(NSNumber*)distance
 {
@@ -112,7 +112,6 @@ NSDictionary* coordinateDict;
     // -[NSDateComponents second] is rounded to an integer,
     // so have to calculate and add decimal part
     roundedDate = [currentCalendar dateFromComponents: comps];
-    [currentCalendar release];
 
     NSTimeInterval extraSeconds = [date timeIntervalSinceDate: roundedDate];
     astroDate.seconds += extraSeconds;

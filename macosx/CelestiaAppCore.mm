@@ -9,7 +9,6 @@
 #import "CelestiaAppCore.h"
 #import "CelestiaAppCore_PrivateAPI.h"
 #import "NSString_ObjCPlusPlus.h"
-#import "CelestiaDestination_PrivateAPI.h"
 #import "CelestiaFavorite_PrivateAPI.h"
 #import "CelestiaSelection_PrivateAPI.h"
 #import "CelestiaSimulation_PrivateAPI.h"
@@ -70,11 +69,11 @@ public:
 
     virtual void fatalError(const std::string& msg)
     {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        NSLog(@"alerter fatalError!");
-        [[CelestiaController shared] fatalError: [NSString stringWithStdString: msg] ];
-        NSLog(@"alerter fatalError finis");
-        [pool release];
+        @autoreleasepool {
+            NSLog(@"alerter fatalError!");
+            [[CelestiaController shared] fatalError: [NSString stringWithStdString: msg] ];
+            NSLog(@"alerter fatalError finis");
+        }
     }
 };
 
@@ -86,9 +85,9 @@ public:
 
     virtual void update(const string& msg)
     {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        [[[CelestiaController shared] valueForKey: @"splashWindowController"] performSelector: @selector(setStatusText:) withObject: [NSString stringWithStdString: msg]];
-        [pool release];
+        @autoreleasepool {
+            [[[CelestiaController shared] valueForKey: @"splashWindowController"] performSelector: @selector(setStatusText:) withObject: [NSString stringWithStdString: msg]];
+        }
     };
 };
 
@@ -303,12 +302,10 @@ CelestiaCore *appCore;
 -(CelestiaAppCore *)init
 {
     if (_sharedCelestiaAppCore != nil) {
-        [[super init] release];
         return _sharedCelestiaAppCore;
     }
     self = [super init];
     appCore = NULL;
-    _destinations = nil;
     return self;
 }
 -(void)archive
@@ -320,10 +317,6 @@ CelestiaCore *appCore;
 
 - (void)dealloc
 {
-    if (_destinations != nil) {
-        [_destinations release];
-        _destinations = nil;
-    }
     if (appCore != NULL) {
         // appCore doesn't own the custom alerter and cursor
         // handler for some reason so we assume responsibility
@@ -336,7 +329,6 @@ CelestiaCore *appCore;
         appCore = NULL;
     }
     _sharedCelestiaAppCore = nil;
-    [super dealloc];
 }
 
 -(BOOL)initSimulationWithConfigPath:(NSString *)configPath extraPath:(NSString *)extraPath
@@ -460,12 +452,12 @@ CelestiaCore *appCore;
 
 -(CelestiaSimulation *)simulation
 {
-    return [[[CelestiaSimulation alloc] initWithSimulation:appCore->getSimulation()] autorelease];
+    return [[CelestiaSimulation alloc] initWithSimulation:appCore->getSimulation()];
 }
 
 -(CelestiaRenderer *)renderer
 {
-    return [[[CelestiaRenderer alloc] initWithRenderer:appCore->getRenderer()] autorelease];
+    return [[CelestiaRenderer alloc] initWithRenderer:appCore->getRenderer()];
 }
 
 -(void)showText:(NSString *)text
@@ -483,16 +475,6 @@ CelestiaCore *appCore;
 -(CelestiaFavorites *)favorites
 {
     return [CelestiaFavorites sharedFavorites];
-}
-
--(CelestiaDestinations *)destinations
-{
-    if (_destinations == nil || [_destinations destinations] != appCore->getDestinations()) {
-        if (_destinations != nil)
-            [_destinations release];
-        _destinations = [[CelestiaDestinations alloc] initWithDestinations:appCore->getDestinations()];
-    }
-    return _destinations; 
 }
 
 -(NSTimeZone *)timeZone
@@ -626,8 +608,7 @@ CelestiaCore *appCore;
     if (!url.empty())
     {
         NSString *unescUrl = [NSString stringWithStdString: url];
-        NSString *escUrl =
-            (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)unescUrl, NULL, NULL, kCFStringEncodingUTF8);
+        NSString *escUrl = [unescUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
         if (escUrl)
         {
@@ -644,7 +625,6 @@ CelestiaCore *appCore;
                 }
             }
 
-            [escUrl release];
         }
     }
 }

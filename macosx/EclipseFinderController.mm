@@ -51,12 +51,6 @@ static CelestiaBody *eclipseBody;
     }
 }
 
-- (void)dealloc
-{
-    [eclipses release];
-    [super dealloc];
-}
-
 - (void)controlTextDidEndEditing:(NSNotification *)aNotification
 {
     NSDictionary *userInfo = [aNotification userInfo];
@@ -102,7 +96,7 @@ static CelestiaBody *eclipseBody;
         return;
     }
 
-    eclipseBody = [[sel body] retain];
+    eclipseBody = [sel body];
     body = [eclipseBody body];
     if (nil == body || nil == body->getSystem())
     {
@@ -122,7 +116,6 @@ static CelestiaBody *eclipseBody;
             Body *parent = system->getPrimaryBody();
             if (NULL == parent)
             {
-                [eclipseBody release];
                 return;
             }
             receiverName = parent->getName();
@@ -136,19 +129,18 @@ static CelestiaBody *eclipseBody;
     }
     
 
-    startDate = (NSCalendarDate *)[startDateObj retain];
-    endDate = (NSCalendarDate *)[endDateObj retain];
-    midDate = [[startDate dateByAddingYears: 0
+    startDate = (NSCalendarDate *)startDateObj;
+    endDate = (NSCalendarDate *)endDateObj;
+    midDate = [startDate dateByAddingYears: 0
                                      months: 0
                                        days: 15
                                       hours: 0
                                     minutes: 0
-                                    seconds: 0] retain];
+                                    seconds: 0];
     // Find eclipses in small timeslices, to give the user
     // a chance to abort with the stop button
 
     [findButton setEnabled: NO];
-    [eclipses release];
     eclipses = [[NSMutableArray alloc] init];
     [eclipseProgress startAnimation: self];
 
@@ -188,7 +180,6 @@ static CelestiaBody *eclipseBody;
 
 - (void)getEclipses: (id)aObject
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     CelestiaCore *appCore = (CelestiaCore*) [[CelestiaAppCore sharedAppCore] appCore];
     EclipseFinder *eclipseFinder;
     const Eclipse *eclipse;
@@ -205,8 +196,7 @@ static CelestiaBody *eclipseBody;
         {
             if (NSOrderedAscending == [startDate compare: endDate])
             {
-                [midDate release];
-                midDate = [endDate retain];
+                midDate = endDate;
             }
             else
             {
@@ -245,7 +235,7 @@ static CelestiaBody *eclipseBody;
                 [NSDictionary dictionaryWithObjectsAndKeys:
                     NSLocalizedStringFromTable(eclipseName,@"po",@""), @"caster",
                     eclipseDate, @"date",
-                    [[[CelestiaBody alloc] initWithBody: eclipse->body] autorelease], @"body",
+                    [[CelestiaBody alloc] initWithBody: eclipse->body], @"body",
                     [NSNumber numberWithDouble: eclipse->startTime], @"start",
                     duration, @"duration",                
                     nil]
@@ -254,29 +244,26 @@ static CelestiaBody *eclipseBody;
 
         delete eclipseFinder;
 
-        [startDate release];
-        startDate = [midDate retain];
-        [midDate release];
-        midDate = [[startDate dateByAddingYears: 0
-                                         months: 0
-                                           days: 15
-                                          hours: 0
-                                        minutes: 0
-                                        seconds: 0] retain];
+        startDate = midDate;
+        midDate = [startDate dateByAddingYears: 0
+                                           months: 0
+                                             days: 15
+                                            hours: 0
+                                          minutes: 0
+                                         seconds: 0];
     }
 
     [self performSelectorOnMainThread: @selector(getEclipsesDone:)
                            withObject: nil
                         waitUntilDone: NO];
-    [pool release];
 }
 
 - (void)getEclipsesDone: (id)aObject
 {
-    [startDate release];   startDate = nil;
-    [midDate release];     midDate = nil;
-    [endDate release];     endDate = nil;
-    [eclipseBody release]; eclipseBody = nil;
+    startDate = nil;
+    midDate = nil;
+    endDate = nil;
+    eclipseBody = nil;
     [eclipseProgress stopAnimation: self];
     [findButton setEnabled: YES];
     [eclipseList reloadData];    

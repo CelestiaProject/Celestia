@@ -24,15 +24,6 @@
     return reinterpret_cast<Location*>([_data pointerValue]);
 }
 
--(void)dealloc
-{
-    if (_data != nil) {
-        [_data release];
-        _data = nil;
-    }
-    [super dealloc];
-}
-
 -(NSString*)name
 {
     return [NSString stringWithStdString: [self location]->getName(true)];

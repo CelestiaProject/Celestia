@@ -16,25 +16,12 @@
     [self hideRenderPathWarning];
 }
 
-- (void)dealloc
-{
-    if (_renderPathWarningSuper)
-    {
-        [renderPathCautionIcon release];
-        [renderPathWarning release];
-    }
-
-    [super dealloc];
-}
-
 - (void)displayRenderPathWarning:(NSString *)warning
 {
     if (_renderPathWarningSuper)
     {
         [_renderPathWarningSuper addSubview: renderPathCautionIcon];
         [_renderPathWarningSuper addSubview: renderPathWarning];
-        [renderPathCautionIcon release];
-        [renderPathWarning release];
         _renderPathWarningSuper = nil;
     }
 
@@ -47,8 +34,6 @@
     if (_renderPathWarningSuper == nil)
     {
         _renderPathWarningSuper = [renderPathWarning superview];
-        [renderPathCautionIcon retain];
-        [renderPathWarning retain];
         [renderPathCautionIcon removeFromSuperview];
         [renderPathWarning removeFromSuperview];
     }
