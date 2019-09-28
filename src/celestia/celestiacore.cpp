@@ -2878,12 +2878,12 @@ static void displayDistance(Overlay& overlay, double distance)
 
     if (abs(distance) >= astro::parsecsToLightYears(1e+6))
     {
-        units = "Mpc";
+        units = _("Mpc");
         distance = astro::lightYearsToParsecs(distance) / 1e+6;
     }
     else if (abs(distance) >= 0.5 * astro::parsecsToLightYears(1e+3))
     {
-        units = "Kpc";
+        units = _("Kpc");
         distance = astro::lightYearsToParsecs(distance) / 1e+3;
     }
     else if (abs(distance) >= astro::AUtoLightYears(1000.0f))
@@ -2897,12 +2897,12 @@ static void displayDistance(Overlay& overlay, double distance)
     }
     else if (abs(distance) > astro::kilometersToLightYears(1.0f))
     {
-        units = "km";
+        units = _("km");
         distance = astro::lightYearsToKilometers(distance);
     }
     else
     {
-        units = "m";
+        units = _("m");
         distance = astro::lightYearsToKilometers(distance) * 1000.0f;
     }
 
@@ -3160,11 +3160,11 @@ static void displayStarInfo(Overlay& overlay,
             if (solarRadii > 0.01f)
             {
                 overlay << SigDigitNum(star.getRadius() / 696000.0f, 2) << " " << _("Rsun")
-                        << "  (" << SigDigitNum(star.getRadius(), 3) << " km" << ")\n";
+                        << "  (" << SigDigitNum(star.getRadius(), 3) << _(" km") << ")\n";
             }
             else
             {
-                overlay << SigDigitNum(star.getRadius(), 3) << " km\n";
+                overlay << SigDigitNum(star.getRadius(), 3) << _(" km") << '\n';
             }
 
             if (star.getRotationModel()->isPeriodic())
