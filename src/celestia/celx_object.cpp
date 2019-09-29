@@ -9,11 +9,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <new>
 #include <cstring>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_object.h"
 #include "celx_category.h"
+#include "celx_name.h"
 #include <celengine/body.h>
 #include <celengine/timelinephase.h>
 #include <celengine/axisarrow.h>
@@ -1437,10 +1439,17 @@ static int object_setatmosphere(lua_State* l)
     return 0;
 }
 
-#define checkEmpty(c,s) \
+#define checkThisEmpty(c,s) \
     if (s->empty()) \
     { \
         c.doError("Selection object is empty!"); \
+        return 0; \
+    }
+
+#define checkNull(c,s,m) \
+    if (s == nullptr) \
+    { \
+        c.doError(m); \
         return 0; \
     }
 
@@ -1449,7 +1458,7 @@ static int object_getcategories(lua_State *l)
     CelxLua celx(l);
 
     Selection *s = celx.getThis<Selection>();
-    checkEmpty(celx, s);
+    checkThisEmpty(celx, s);
     AstroObject::CategorySet *set = s->astroObject()->getCategories();
     return celx.pushClassIterable<UserCategory*>(set);
 }
@@ -1459,7 +1468,7 @@ static int object_addtocategory(lua_State *l)
     CelxLua celx(l);
 
     Selection *s = celx.getThis<Selection>();
-    checkEmpty(celx, s);
+    checkThisEmpty(celx, s);
     bool ret;
     if (celx.isUserData(2))
     {
@@ -1483,7 +1492,7 @@ static int object_removefromcategory(lua_State *l)
     CelxLua celx(l);
 
     Selection *s = celx.getThis<Selection>();
-    checkEmpty(celx, s);
+    checkThisEmpty(celx, s);
     bool ret;
     if (celx.isUserData(2))
     {
@@ -1506,13 +1515,67 @@ static int object_getnames(lua_State *l)
 {
     CelxLua celx(l);
     Selection *s = celx.getThis<Selection>();
-    checkEmpty(celx, s);
-    vector<const char *> ret;
-    for (const auto& info : s->astroObject()->getNameInfos())
+    checkThisEmpty(celx, s);
+    vector<NameInfo::SharedConstPtr> ret;
+    for (const auto &info : s->astroObject()->getNameInfos())
     {
-        ret.emplace_back(info->getCanon().c_str());
+        ret.emplace_back(info);
     }
-    return celx.pushIterable<const char *>(ret);
+    return celx.pushClassIterable<NameInfo::SharedConstPtr>(ret);
+}
+
+static int object_addname(lua_State *l)
+{
+    const char *arg1msg = "First argument of object::addname must be string!";
+//     const char arg2msg = "Second argument of object::addname must be string!";
+    CelxLua celx(l);
+    Selection *s = celx.getThis<Selection>();
+    checkThisEmpty(celx, s);
+    const char *namev = celx.safeGetString(2, AllErrors, arg1msg);
+    checkNull(celx, namev, arg1msg);
+    const char *domain = celx.getString(3);
+    bool greek = true;
+    if (celx.isBoolean(4))
+        greek = celx.getBoolean(4);
+    bool ret = s->astroObject()->addName(string(namev), Name(domain), nullptr, greek);
+    return celx.push(ret);
+}
+
+static int object_addalias(lua_State *l)
+{
+    const char *arg1msg = "First argument of object::addalias must be string!";
+//     const char arg2msg = "Second argument of object::addalias must be string!";
+    CelxLua celx(l);
+    Selection *s = celx.getThis<Selection>();
+    checkThisEmpty(celx, s);
+    const char *namev = celx.safeGetString(2, AllErrors, arg1msg);
+    checkNull(celx, namev, arg1msg);
+    const char *domain = celx.getString(3);
+    bool greek = true;
+    if (celx.isBoolean(4))
+        greek = celx.getBoolean(4);
+    bool ret = s->astroObject()->addAlias(string(namev), Name(domain), nullptr, greek);
+    return celx.push(ret);
+}
+
+static int object_removename(lua_State *l)
+{
+    const char *arg1msg = "First argument of object::remove must be a string or name object!";
+
+    CelxLua celx(l);
+    Selection *s = celx.getThis<Selection>();
+    checkThisEmpty(celx, s);
+    bool greek = true;
+    if (celx.isBoolean(3))
+        greek = celx.getBoolean(4);
+    const char *namev = celx.getString(2);
+    if (namev != nullptr)
+        return celx.push(s->astroObject()->removeName(string(namev), greek));
+    auto namei = celx.getClass<NameInfo::SharedConstPtr>(2);
+    if (namei != nullptr)
+        return celx.push(s->astroObject()->removeName((*namei)));
+    celx.doError(arg1msg);
+    return 0;
 }
 
 void ExtendObjectMetaTable(lua_State* l)
@@ -1527,5 +1590,8 @@ void ExtendObjectMetaTable(lua_State* l)
     celx.registerMethod("addtocategory", object_addtocategory);
     celx.registerMethod("removefromcategory", object_removefromcategory);
     celx.registerMethod("getnames", object_getnames);
+    celx.registerMethod("addname", object_addname);
+    celx.registerMethod("addalias", object_addalias);
+    celx.registerMethod("removename", object_removename);
     celx.pop(1);
 }

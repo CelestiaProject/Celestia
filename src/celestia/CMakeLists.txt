@@ -40,6 +40,8 @@ set(CELX_SOURCES
   celx_internal.h
   celx_misc.cpp
   celx_misc.h
+  celx_name.cpp
+  celx_name.h
   celx_object.cpp
   celx_object.h
   celx_observer.cpp

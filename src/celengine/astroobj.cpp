@@ -18,6 +18,9 @@ Selection AstroObject::toSelection()
 
 bool AstroObject::addName(const NameInfo::SharedConstPtr& info, bool setPrimary, bool updateDB)
 {
+    auto ptr = getNameInfo(info->getCanon());
+    if (ptr)
+        removeName(ptr);
     m_nameInfos.insert(info);
     if (setPrimary)
         m_primaryName = info;
@@ -35,9 +38,9 @@ bool AstroObject::addName(const NameInfo::SharedConstPtr& info, bool setPrimary,
     return true;
 }
 
-bool AstroObject::addName(const string &name, const string& domain, PlanetarySystem *sys, bool setPrimary, bool updateDB)
+bool AstroObject::addName(const string &name, const string& domain, PlanetarySystem *sys, bool greek, bool setPrimary, bool updateDB)
 {
-    auto info = NameInfo::createShared(name, domain, this, sys);
+    auto info = NameInfo::createShared(name, domain, this, sys, greek);
     return addName(info, setPrimary, updateDB);
 }
 
@@ -86,6 +89,12 @@ const Name AstroObject::getLocalizedName() const
         return m_primaryName->getLocalized();
     else
         return Name();
+}
+
+bool AstroObject::removeName(const string& name, bool greek, bool updateDB)
+{
+    string namef = greek ? ReplaceGreekLetterAbbr(name) : name;
+    return removeName(Name(namef), updateDB);
 }
 
 bool AstroObject::removeName(const Name& name, bool updateDB)

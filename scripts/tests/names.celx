@@ -9,3 +9,46 @@ else
         print(val);
     end
 end
+
+moon:addalias("NU Blablabla", "", false)
+
+local t = moon:getnames();
+print("\nRaw name added");
+for val in t do
+    print(val);
+end
+
+moon:addalias("NU Blablabla")
+
+local t = moon:getnames();
+print("\nGreek name added");
+for val in t do
+    print(val);
+end
+
+moon:removename("NU Blablabla")
+
+local t = moon:getnames();
+print("\nGreek name removed");
+for val in t do
+    print(val);
+end
+
+moon:removename("NU Blablabla", false)
+
+local t = moon:getnames();
+print("\nRaw name removed");
+for val in t do
+    print(val);
+end
+
+local ret1 = moon:addalias("NU Blablabla")
+local ret2 = moon:addalias("NU Blablabla")
+
+local t = moon:getnames();
+print("\nTwo greek names added:", ret1, ret2);
+for val in t do
+    print(val);
+end
+
+moon:addname();

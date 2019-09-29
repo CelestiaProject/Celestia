@@ -25,7 +25,12 @@ protected:
 //     void makeHash();
     const static std::string m_empty;
 public:
-    Name(const char *s) { m_ptr = std::make_shared<std::string>(s); }
+    Name(const char *s) {
+        if (s == nullptr)
+            m_ptr = std::make_shared<std::string>(m_empty);
+        else
+            m_ptr = std::make_shared<std::string>(s);
+    }
     Name(const std::string& s) { m_ptr = std::make_shared<std::string>(s); }
     Name() : m_ptr { nullptr } {}
     Name(const Name& n)
@@ -130,7 +135,7 @@ class NameInfo
     PlanetarySystem *getSystem() const { return m_system; }
     static const SharedConstPtr nullPtr;
     static NameInfo::SharedConstPtr createShared(const Name, const Name, AstroObject *, PlanetarySystem * = nullptr);
-    static NameInfo::SharedConstPtr createShared(const std::string&, const Name, AstroObject *, PlanetarySystem * = nullptr, bool = true);
+    static NameInfo::SharedConstPtr createShared(const std::string&, const Name, AstroObject *, PlanetarySystem * = nullptr, bool greek = true);
     static void runTranslation();
     static void stopTranslation();
  protected:
@@ -146,22 +151,22 @@ class NameInfo
 
 bool inline operator==(const NameInfo &n1, const NameInfo &n2)
 {
-    return n1.getCanon().str() == n2.getCanon().str();
+    return n1.getCanon().str() == n2.getCanon().str() && n1.getSystem() == n2.getSystem();
 }
 
 bool inline operator!=(const NameInfo &n1, const NameInfo &n2)
 {
-    return n1.getCanon().str() != n2.getCanon().str();
+    return n1.getCanon().str() != n2.getCanon().str() || n1.getSystem() != n2.getSystem();
 }
 
 bool inline operator<(const NameInfo &n1, const NameInfo &n2)
 {
-    return n1.getCanon().str() < n2.getCanon().str();
+    return n1.getCanon().str() < n2.getCanon().str() || n1.getSystem() < n2.getSystem();
 }
 
 bool inline operator>(const NameInfo &n1, const NameInfo &n2)
 {
-    return n1.getCanon().str() > n2.getCanon().str();
+    return n1.getCanon().str() > n2.getCanon().str() || n1.getSystem() > n2.getSystem();
 }
 
 typedef std::set<NameInfo> NameInfoSet;

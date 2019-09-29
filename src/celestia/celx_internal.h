@@ -13,6 +13,7 @@
 #ifndef _CELX_INTERNAL_H_
 #define _CELX_INTERNAL_H_
 
+#include <new>
 #include <memory>
 #include <map>
 #include <string>
@@ -40,7 +41,8 @@ enum
     Celx_Image    = 10,
     Celx_Texture  = 11,
     Celx_Phase    = 12,
-    Celx_Category = 13
+    Celx_Category = 13,
+    Celx_Name     = 14
 };
 
 
@@ -224,7 +226,7 @@ public:
         T *array = celx.newUserDataArray<T>(n);
         for (auto &it : a)
         {
-            *array = value(it);
+            new (array) T(value(it));
             array++;
         }
         celx.push(n - 1);

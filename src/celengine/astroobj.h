@@ -27,16 +27,17 @@ public:
     NameInfo::SharedConstPtr m_primaryName;
     SharedConstNameInfoSet::iterator getNameInfoIterator(const Name &) const;
  public:
-    bool addName(const std::string&, const std::string& = std::string(), PlanetarySystem * = nullptr, bool primary = true, bool db = true);
+    bool addName(const std::string&, const std::string& = std::string(), PlanetarySystem * = nullptr, bool greek = true, bool primary = true, bool db = true);
     bool addName(const Name&, const std::string& = std::string(), PlanetarySystem * = nullptr, bool primary = true, bool db = true);
     bool addName(const NameInfo::SharedConstPtr &, bool primary = true, bool db = true);
     void addNames(const std::string &, PlanetarySystem * = nullptr, bool db = true);
     bool addAlias(const std::string &name,
                   const std::string &domain = string(),
                   PlanetarySystem *sys = nullptr,
+                  bool greek = true,
                   bool db = true)
     {
-        return addName(name, domain, sys, false, db);
+        return addName(name, domain, sys, greek, false, db);
     }
     bool addAlias(const NameInfo::SharedConstPtr &info, bool db) { return addName(info, false, db); }
     const Name getName(bool i18n = false) const;
@@ -48,7 +49,7 @@ public:
     bool hasLocalizedName(const std::string& name) const;
     bool hasLocalizedName() { return m_primaryName && m_primaryName->hasLocalized(); }
     const SharedConstNameInfoSet& getNameInfos() const { return m_nameInfos; }
-    bool removeName(const std::string&, bool = true);
+    bool removeName(const std::string&, bool greek = true, bool = true);
     bool removeName(const Name&, bool = true);
     bool removeName(const NameInfo::SharedConstPtr &, bool = true);
     void removeNames(bool = true);

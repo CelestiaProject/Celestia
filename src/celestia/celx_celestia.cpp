@@ -28,6 +28,7 @@
 #include "celx_rotation.h"
 #include "celx_vector.h"
 #include "celx_category.h"
+#include "celx_name.h"
 #include "url.h"
 #include "imagecapture.h"
 #include "celestiacore.h"
@@ -2488,6 +2489,31 @@ static int celestia_bindtranslationdomain(lua_State *l)
     return celx.push(newdir);
 }
 
+/*
+static int celestia_newname(lua_State *l)
+{
+    CelxLua celx(l);
+
+    const char *arg1msg = "First argument of celestia:newname must be a string";
+    const char *arg2msg = "Second argument of celestia:newname must be an AstroObject";
+    const char *namev = celx.safeGetString(2, AllErrors, arg1msg);
+    if (namev == nullptr)
+    {
+        celx.doError(arg1msg);
+        return 0;
+    }
+    Selection *obj = celx.safeGetClass<Selection>(3, AllErrors, arg2msg);
+    if (obj == nullptr)
+    {
+        celx.doError(arg2msg);
+        return 0;
+    }
+    const char *domain = celx.getString(4);
+    auto n = NameInfo::createShared(string(namev), Name(domain), obj->astroObject(), nullptr, true);
+    return celx.pushClass(n);
+}
+*/
+
 void ExtendCelestiaMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -2511,5 +2537,6 @@ void ExtendCelestiaMetaTable(lua_State* l)
     celx.registerMethod("getcategories", celestia_getcategories);
     celx.registerMethod("getrootcategories", celestia_getrootcategories);
     celx.registerMethod("bindtranslationdomain", celestia_bindtranslationdomain);
+//     celx.registerMethod("newname", celestia_newname);
     celx.pop(1);
 }

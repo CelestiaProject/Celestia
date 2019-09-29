@@ -38,6 +38,7 @@
 #include "celx_celestia.h"
 #include "celx_gl.h"
 #include "celx_category.h"
+#include "celx_name.h"
 
 
 // Older gcc versions used <strstream> instead of <sstream>.
@@ -71,7 +72,8 @@ const char* CelxLua::ClassNames[] =
     "class_image",
     "class_texture",
     "class_phase",
-    "class_category"
+    "class_category",
+    "class_name"
 };
 
 CelxLua::FlagMap64 CelxLua::RenderFlagMap;
@@ -1383,6 +1385,7 @@ static void loadLuaLibs(lua_State* state)
     CreateImageMetaTable(state);
     CreateTextureMetaTable(state);
     CreateCategoryMetaTable(state);
+    CreateNameMetaTable(state);
     ExtendCelestiaMetaTable(state);
     ExtendObjectMetaTable(state);
 
