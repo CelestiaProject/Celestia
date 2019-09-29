@@ -32,12 +32,22 @@ lpfnSetLayeredWindowAttributes winSetLayeredWindowAttributes = NULL;
 lpfnUpdateLayeredWindow        winUpdateLayeredWindow = NULL;
 
 #define WS_EX_LAYERED 0x00080000 
+#ifndef LWA_COLORKEY
 #define LWA_COLORKEY  1
+#endif
+#ifndef LWA_ALPHA
 #define LWA_ALPHA     2
+#endif
 
+#ifndef ULW_COLORKEY
 #define ULW_COLORKEY  1
+#endif
+#ifndef ULW_ALPHA
 #define ULW_ALPHA     2
+#endif
+#ifndef ULW_OPAQUE
 #define ULW_OPAQUE    4
+#endif
 
 
 static LRESULT CALLBACK SplashWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

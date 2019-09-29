@@ -19,6 +19,7 @@
 #endif /* ! TARGET_OS_MAC */
 #endif /* ! _WIN32 */
 
+#include <algorithm> // for min & max
 #include <libintl.h>
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>

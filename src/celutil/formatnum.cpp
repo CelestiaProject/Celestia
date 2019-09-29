@@ -14,7 +14,7 @@
 #include "formatnum.h"
 
 // HACK: MS Visual C++ has _snprintf declared in stdio.h but not snprintf
-#ifdef _WIN32
+#if defined(_MSC_VER) && _MSC_VER < 1700
 #define snprintf _snprintf
 #endif
 
