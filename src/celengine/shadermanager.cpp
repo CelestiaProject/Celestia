@@ -12,6 +12,7 @@
 #include "glext.h"
 #include "shadermanager.h"
 #include <cmath>
+#include <algorithm> // for min & max
 #include <iostream>
 #include <fstream>
 #include <sstream>

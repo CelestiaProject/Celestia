@@ -1859,7 +1859,7 @@ bool SetDCPixelFormat(HDC hDC)
             PFD_SUPPORT_OPENGL |	// Support OpenGL calls in window
             PFD_DOUBLEBUFFER,		// Double buffered mode
             PFD_TYPE_RGBA,		// RGBA Color mode
-            GetDeviceCaps(hDC, BITSPIXEL),// Want the display bit depth
+            (BYTE)GetDeviceCaps(hDC, BITSPIXEL),// Want the display bit depth
             0,0,0,0,0,0,		  // Not used to select mode
             0,0,			// Not used to select mode
             0,0,0,0,0,			// Not used to select mode
