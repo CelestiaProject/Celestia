@@ -4,7 +4,7 @@
 #include <thread>
 #include "astroobj.h"
 #include "astrodb.h"
-#include "name.h"
+#include "astroname.h"
 
 using namespace std;
 /*

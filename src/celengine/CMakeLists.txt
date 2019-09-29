@@ -7,6 +7,8 @@ set(CELENGINE_SOURCES
   astrocat.cpp
   astrodb.h
   astrodb.cpp
+  astroname.h
+  astroname.cpp
   astroobj.h
   astroobj.cpp
   astrooctree.h
@@ -69,8 +71,6 @@ set(CELENGINE_SOURCES
   modelgeometry.h
   multitexture.cpp
   multitexture.h
-  name.h
-  name.cpp
   namedb.cpp
   namedb.h
   namedataloader.h

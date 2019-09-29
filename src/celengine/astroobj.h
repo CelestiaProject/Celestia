@@ -4,7 +4,7 @@
 #include <celengine/selection.h>
 #include <celengine/parseobject.h>
 #include "astrocat.h"
-#include "name.h"
+#include "astroname.h"
 
 class AstroDatabase;
 
