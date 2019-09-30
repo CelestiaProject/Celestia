@@ -90,8 +90,8 @@ struct CloserStarPredicate
     Vector3f pos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        return ((pos - star0->getPosition()).squaredNorm() <
-                (pos - star1->getPosition()).squaredNorm());
+        return ((pos - star0->getPosition().cast<float>()).squaredNorm() <
+                (pos - star1->getPosition().cast<float>()).squaredNorm());
 
     }
 };
@@ -102,15 +102,15 @@ struct BrighterStarPredicate
     UniversalCoord ucPos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        float d0 = (pos - star0->getPosition()).norm();
-        float d1 = (pos - star1->getPosition()).norm();
+        float d0 = (pos - star0->getPosition().cast<float>()).norm();
+        float d1 = (pos - star1->getPosition().cast<float>()).norm();
 
         // If the stars are closer than one light year, use
         // a more precise distance estimate.
         if (d0 < 1.0f)
-            d0 = ucPos.offsetFromLy(star0->getPosition()).norm();
+            d0 = ucPos.offsetFromLy(star0->getPosition().cast<float>()).norm();
         if (d1 < 1.0f)
-            d1 = ucPos.offsetFromLy(star1->getPosition()).norm();
+            d1 = ucPos.offsetFromLy(star1->getPosition().cast<float>()).norm();
 
         return (star0->getApparentMagnitude(d0) <
                 star1->getApparentMagnitude(d1));
@@ -132,8 +132,8 @@ struct SolarSystemPredicate
         bool hasPlanets1 = (iter != solarSystems->end());
         if (hasPlanets1 == hasPlanets0)
         {
-            return ((pos - star0->getPosition()).squaredNorm() <
-                    (pos - star1->getPosition()).squaredNorm());
+            return ((pos - star0->getPosition().cast<float>()).squaredNorm() <
+                    (pos - star1->getPosition().cast<float>()).squaredNorm());
         }
         else
         {
@@ -290,19 +290,19 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
 
     case 1:
         {
-            float d0 = (sortInfo->pos - star0->getPosition()).norm();
-            float d1 = (sortInfo->pos - star1->getPosition()).norm();
+            float d0 = (sortInfo->pos - star0->getPosition().cast<float>()).norm();
+            float d1 = (sortInfo->pos - star1->getPosition().cast<float>()).norm();
             return (int) celmath::sign(d0 - d1);
         }
 
     case 2:
         {
-            float d0 = (sortInfo->pos - star0->getPosition()).norm();
-            float d1 = (sortInfo->pos - star1->getPosition()).norm();
+            float d0 = (sortInfo->pos - star0->getPosition().cast<float>()).norm();
+            float d1 = (sortInfo->pos - star1->getPosition().cast<float>()).norm();
             if (d0 < 1.0f)
-                d0 = sortInfo->ucPos.offsetFromLy(star0->getPosition()).norm();
+                d0 = sortInfo->ucPos.offsetFromLy(star0->getPosition().cast<float>()).norm();
             if (d1 < 1.0f)
-                d1 = sortInfo->ucPos.offsetFromLy(star1->getPosition()).norm();
+                d1 = sortInfo->ucPos.offsetFromLy(star1->getPosition().cast<float>()).norm();
             return (int) celmath::sign(astro::absToAppMag(star0->getAbsoluteMagnitude(), d0) -
                                        astro::absToAppMag(star1->getAbsoluteMagnitude(), d1));
         }

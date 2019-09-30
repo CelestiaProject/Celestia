@@ -8,7 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celutil/debug.h>
+#include <fmt/printf.h>
 #include <cassert>
 #include "astro.h"
 #include "selection.h"
@@ -112,21 +112,20 @@ Vector3d Selection::getVelocity(double t) const
 
 string Selection::getName(bool i18n) const
 {
+    if (astroObject() == nullptr)
+    {
+        fmt::fprintf(cout, "Selection::getName(%i): object is null!\n", i18n);
+        return string();
+    }
+    string name = astroObject()->getName(i18n);
     switch (type)
     {
     case Type_Star:
-        {
-            return fmt::sprintf("#%d", star()->getCatalogNumber());
-        }
-
     case Type_DeepSky:
-        {
-            return fmt::sprintf("#%d", deepsky()->getCatalogNumber());
-        }
+        return name;
 
     case Type_Body:
         {
-            string name = body()->getName(i18n);
             PlanetarySystem* system = body()->getSystem();
             while (system != nullptr)
             {
@@ -141,9 +140,8 @@ string Selection::getName(bool i18n) const
                     const Star* parentStar = system->getStar();
                     if (parentStar != nullptr)
                     {
-                        string buf;
-                        buf = fmt::sprintf("#%d", parentStar->getCatalogNumber());
-                        name = buf + '/' + name;
+                        string buf = fmt::sprintf("#%i/%s", parentStar->getCatalogNumber(), name);
+                        name = buf;
                     }
                     system = nullptr;
                 }

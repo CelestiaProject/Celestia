@@ -33,7 +33,12 @@ void DeepSkyObject::setCatalogNumber(uint32_t n)
     catalogNumber = n;
 }
 
-Vector3d DeepSkyObject::getPosition() const
+uint32_t DeepSkyObject::getCatalogNumber() const
+{
+    return catalogNumber;
+}
+
+/*Vector3d DeepSkyObject::getPosition() const
 {
     return position;
 }
@@ -41,7 +46,7 @@ Vector3d DeepSkyObject::getPosition() const
 void DeepSkyObject::setPosition(const Vector3d& p)
 {
     position = p;
-}
+}*/
 
 Quaternionf DeepSkyObject::getOrientation() const
 {
@@ -58,7 +63,7 @@ void DeepSkyObject::setRadius(float r)
     radius = r;
 }
 
-float DeepSkyObject::getAbsoluteMagnitude() const
+/*float DeepSkyObject::getAbsoluteMagnitude() const
 {
     return absMag;
 }
@@ -66,7 +71,7 @@ float DeepSkyObject::getAbsoluteMagnitude() const
 void DeepSkyObject::setAbsoluteMagnitude(float _absMag)
 {
     absMag = _absMag;
-}
+}*/
 
 string DeepSkyObject::getDescription() const
 {
@@ -89,7 +94,7 @@ bool DeepSkyObject::pick(const Ray3d& ray,
                          double& cosAngleToBoundCenter) const
 {
     if (isVisible())
-        return testIntersection(ray, Sphered(position, (double) radius), distanceToPicker, cosAngleToBoundCenter);
+        return testIntersection(ray, Sphered(getPosition(), (double) radius), distanceToPicker, cosAngleToBoundCenter);
     else
         return false;
 }

@@ -14,11 +14,12 @@
 #include <celengine/univcoord.h>
 #include <Eigen/Core>
 
-class CatEntry;
+class AstroObject;
 class Star;
 class Body;
 class Location;
 class DeepSkyObject;
+class LuminousObject;
 
 class Selection
 {
@@ -34,7 +35,7 @@ class Selection
 
 public:
     Selection() : type(Type_Nil), obj(nullptr) {};
-    Selection(CatEntry *cat) : type(Type_Generic), obj(cat) { checkNull(); };
+    Selection(AstroObject *o) : type(Type_Generic), obj(o) { checkNull(); };
     Selection(Star* star) : type(Type_Star), obj(star) { checkNull(); };
     Selection(Body* body) : type(Type_Body), obj(body) { checkNull(); };
     Selection(DeepSkyObject* deepsky) : type(Type_DeepSky), obj(deepsky) {checkNull(); };
@@ -71,9 +72,19 @@ public:
         return type == Type_Location ? static_cast<Location*>(obj) : nullptr;
     }
 
-    CatEntry *catEntry() const
+    bool isLuminous() const
     {
-        return type != Type_Nil ? static_cast<CatEntry*>(obj) : nullptr;
+        return type == Type_Star || type == Type_DeepSky;
+    }
+
+    LuminousObject* luminous() const
+    {
+        return type == Type_Star || type == Type_DeepSky ? static_cast<LuminousObject*>(obj) : nullptr;
+    }
+
+    AstroObject *astroObject() const
+    {
+        return type != Type_Nil ? static_cast<AstroObject*>(obj) : nullptr;
     }
 
     Type getType() const { return type; }

@@ -10,7 +10,6 @@
 #ifndef _CELENGINE_BODY_H_
 #define _CELENGINE_BODY_H_
 
-#include <celengine/catentry.h>
 #include <celengine/surface.h>
 #include <celengine/star.h>
 #include <celengine/location.h>
@@ -25,6 +24,8 @@
 #include <vector>
 #include <map>
 #include <list>
+#include <celengine/astroobj.h>
+#include <celengine/namedb.h>
 
 class Selection;
 class ReferenceFrame;
@@ -51,6 +52,10 @@ class PlanetarySystem
     void removeBody(Body* body);
     void replaceBody(Body* oldBody, Body* newBody);
 
+    void addName(NameInfo::SharedConstPtr);
+    void addLocalizedName(NameInfo::SharedConstPtr);
+    void removeName(NameInfo::SharedConstPtr);
+
     int getOrder(const Body* body) const;
 
     enum TraversalResult
@@ -73,6 +78,9 @@ class PlanetarySystem
     typedef std::map<std::string, Body*, UTF8StringOrderingPredicate> ObjectIndex;
 
  private:
+    AstroNameDatabase m_nameDB;
+    friend AstroObject;
+    friend NameInfo;
     Star* star;
     Body* primary{nullptr};
     std::vector<Body*> satellites;
@@ -107,7 +115,7 @@ class RingSystem
 };
 
 
-class Body : public CatEntry
+class Body : public AstroObject
 {
  public:
      EIGEN_MAKE_ALIGNED_OPERATOR_NEW

@@ -63,5 +63,5 @@ public:
     static UserCategory *createRoot(const std::string&, const std::string &domain = "");
     static bool deleteCategory(const std::string&);
     static bool deleteCategory(UserCategory*);
-    friend CatEntry;
+    friend AstroObject;
 }; 

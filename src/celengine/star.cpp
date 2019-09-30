@@ -1007,7 +1007,7 @@ Star::getPosition(double t) const
     const Orbit* orbit = getOrbit();
     if (orbit == nullptr)
     {
-        return UniversalCoord::CreateLy(position.cast<double>());
+        return UniversalCoord::CreateLy(getPosition());
     }
     else
     {
@@ -1015,7 +1015,7 @@ Star::getPosition(double t) const
 
         if (barycenter == nullptr)
         {
-            UniversalCoord barycenterPos = UniversalCoord::CreateLy(position.cast<double>());
+            UniversalCoord barycenterPos = UniversalCoord::CreateLy(getPosition());
             return UniversalCoord(barycenterPos).offsetKm(orbit->positionAtTime(t));
         }
         else
@@ -1033,7 +1033,7 @@ Star::getOrbitBarycenterPosition(double t) const
 
     if (barycenter == nullptr)
     {
-        return UniversalCoord::CreateLy(position.cast<double>());
+        return UniversalCoord::CreateLy(getPosition());
     }
     else
     {
@@ -1101,10 +1101,10 @@ void Star::setCatalogNumber(uint32_t n)
 {
     catalogNumber = n;
 }
-
+/*
 void Star::setPosition(float x, float y, float z)
 {
-    position = Vector3f(x, y, z);
+    setPosition(Vector3d(x, y, z));
 }
 
 void Star::setPosition(const Vector3f& positionLy)
@@ -1116,22 +1116,22 @@ void Star::setAbsoluteMagnitude(float mag)
 {
     absMag = mag;
 }
-
+*/
 
 float Star::getApparentMagnitude(float ly) const
 {
-    return astro::absToAppMag(absMag, ly);
+    return astro::absToAppMag(getAbsoluteMagnitude(), ly);
 }
 
 
 float Star::getLuminosity() const
 {
-    return astro::absMagToLum(absMag);
+    return astro::absMagToLum(getAbsoluteMagnitude());
 }
 
 void Star::setLuminosity(float lum)
 {
-    absMag = astro::lumToAbsMag(lum);
+    setAbsoluteMagnitude(astro::lumToAbsMag(lum));
 }
 
 float Star::getBolometricLuminosity() const

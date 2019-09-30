@@ -267,20 +267,20 @@ bool StarPredicate::operator()(const Star* star0, const Star* star1) const
     switch (criterion)
     {
     case Distance:
-        return ((pos - star0->getPosition()).squaredNorm() <
-                (pos - star1->getPosition()).squaredNorm());
+        return ((pos - star0->getPosition().cast<float>()).squaredNorm() <
+                (pos - star1->getPosition().cast<float>()).squaredNorm());
 
     case Brightness:
         {
-            float d0 = (pos - star0->getPosition()).norm();
-            float d1 = (pos - star1->getPosition()).norm();
+            float d0 = (pos - star0->getPosition().cast<float>()).norm();
+            float d1 = (pos - star1->getPosition().cast<float>()).norm();
 
             // If the stars are closer than one light year, use
             // a more precise distance estimate.
             if (d0 < 1.0f)
-                d0 = ucPos.offsetFromLy(star0->getPosition()).norm();
+                d0 = ucPos.offsetFromLy(star0->getPosition().cast<float>()).norm();
             if (d1 < 1.0f)
-                d1 = ucPos.offsetFromLy(star1->getPosition()).norm();
+                d1 = ucPos.offsetFromLy(star1->getPosition().cast<float>()).norm();
 
             return (star0->getApparentMagnitude(d0) <
                     star1->getApparentMagnitude(d1));

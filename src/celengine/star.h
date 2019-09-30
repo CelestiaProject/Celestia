@@ -14,7 +14,7 @@
 #include <config.h>
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
-#include <celengine/catentry.h>
+#include <celengine/luminobj.h>
 #include <celengine/univcoord.h>
 #include <celengine/stellarclass.h>
 #include <celengine/multitexture.h>
@@ -25,6 +25,7 @@
 class Selection;
 class Orbit;
 class Star;
+class AstroDatabase;
 
 class StarDetails
 {
@@ -233,16 +234,18 @@ StarDetails::hasCorona() const
     return spectralType[0] != 'Y' && (spectralType[0] != 'T' || spectralType[1] < '5');
 }
 
-
-
-class Star : public CatEntry
+class Star : public LuminousObject
 {
 public:
-    Star() = default;
+    Star()
+    {
+        setAbsoluteMagnitude(4.83f);
+    }
     virtual ~Star();
 
     virtual Selection toSelection();
 
+    void setCatalogNumber(uint32_t);
     inline uint32_t getCatalogNumber() const
     {
         return catalogNumber;
@@ -253,19 +256,10 @@ public:
      *  star in an orbit, the position should be set to the 'root' barycenter
      *  of the system.
      */
-    Eigen::Vector3f getPosition() const
-    {
-        return position;
-    }
-
-    float getAbsoluteMagnitude() const
-    {
-        return absMag;
-    }
+    using LuminousObject::getPosition;
 
     float getApparentMagnitude(float) const;
     float getLuminosity() const;
-    float getBolometricLuminosity() const;
 
     // Return the exact position of the star, accounting for its orbit
     UniversalCoord getPosition(double t) const;
@@ -273,11 +267,8 @@ public:
 
     Eigen::Vector3d getVelocity(double t) const;
 
-    void setCatalogNumber(uint32_t);
-    void setPosition(float, float, float);
-    void setPosition(const Eigen::Vector3f& positionLy);
-    void setAbsoluteMagnitude(float);
     void setLuminosity(float);
+    float getBolometricLuminosity() const;
 
     StarDetails* getDetails() const;
     void setDetails(StarDetails*);
@@ -307,14 +298,18 @@ public:
     inline bool hasCorona() const;
 
     enum : uint32_t {
-        MaxTychoCatalogNumber = 0xf0000000,
         InvalidCatalogNumber = 0xffffffff,
+        MaxTychoCatalogNumber = 0xf0000000
     };
 
+    /*static bool createStar(Star* star,
+                        DataDisposition disposition,
+                        Hash* starData,
+                        const string& path,
+                        bool isBarycenter,
+                        AstroDatabase *);*/
 private:
     uint32_t catalogNumber{ InvalidCatalogNumber };
-    Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
-    float absMag{ 4.83f };
     StarDetails* details{ nullptr };
 };
 
@@ -334,7 +329,7 @@ Star::getSpectralType() const
 float
 Star::getBolometricMagnitude() const
 {
-    return absMag + details->getBolometricCorrection();
+    return getAbsoluteMagnitude() + details->getBolometricCorrection();
 }
 
 Orbit*

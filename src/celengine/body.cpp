@@ -1216,6 +1216,25 @@ void PlanetarySystem::removeAlias(const Body* body, const string& alias)
     }
 }
 
+void PlanetarySystem::addName(NameInfo::SharedConstPtr info)
+{
+    if (info->getSystem() == this)
+        m_nameDB.add(info);
+}
+
+void PlanetarySystem::addLocalizedName(NameInfo::SharedConstPtr info)
+{
+    if (info->getSystem() == this)
+        m_nameDB.addLocalized(info);
+}
+
+void PlanetarySystem::removeName(NameInfo::SharedConstPtr info)
+{
+    if (info->getSystem() == this)
+    {
+        m_nameDB.erase(info->getCanon());
+    }
+}
 
 void PlanetarySystem::addBody(Body* body)
 {

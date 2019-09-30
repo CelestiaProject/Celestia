@@ -257,7 +257,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
                         if (star == nullptr)
                             star = stardb.find(ReplaceGreekLetterAbbr(i->getString()));
                         if (star != nullptr)
-                            new_chain->push_back(star->getPosition());
+                            new_chain->push_back(star->getPosition().cast<float>());
                         else DPRINTF(LOG_LEVEL_ERROR, "Error loading star \"%s\" for asterism \"%s\".\n", name.c_str(), i->getString().c_str());
                     }
                 }

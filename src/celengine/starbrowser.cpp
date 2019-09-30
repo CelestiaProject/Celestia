@@ -26,8 +26,8 @@ struct CloserStarPredicate
     Vector3f pos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        Vector3f p0 = star0->getPosition();
-        Vector3f p1 = star1->getPosition();
+        Vector3f p0 = star0->getPosition().cast<float>();
+        Vector3f p1 = star1->getPosition().cast<float>();
 
 #if 0
         Vector3f v0(p0.x * 1e6 - pos.x, p0.y * 1e6 - pos.y, p0.z * 1e6 - pos.z);
@@ -47,8 +47,8 @@ struct BrighterStarPredicate
     UniversalCoord ucPos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        Vector3f p0 = star0->getPosition();
-        Vector3f p1 = star1->getPosition();
+        Vector3f p0 = star0->getPosition().cast<float>();
+        Vector3f p1 = star1->getPosition().cast<float>();
         Vector3f v0 = p0 * 1.0e6f - pos;
         Vector3f v1 = p1 * 1.0e6f - pos;
         float d0 = v0.norm();
@@ -85,8 +85,8 @@ struct SolarSystemPredicate
         bool hasPlanets1 = (iter != solarSystems->end());
         if (hasPlanets1 == hasPlanets0)
         {
-            Vector3f p0 = star0->getPosition();
-            Vector3f p1 = star1->getPosition();
+            Vector3f p0 = star0->getPosition().cast<float>();
+            Vector3f p1 = star1->getPosition().cast<float>();
             Vector3f v0 = p0 * 1.0e6f - pos;
             Vector3f v1 = p1 * 1.0e6f - pos;
             return (v0.squaredNorm() < v1.squaredNorm());

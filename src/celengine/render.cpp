@@ -6513,7 +6513,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 {
     nProcessed++;
 
-    Vector3f starPos = star.getPosition();
+    Vector3f starPos = star.getPosition().cast<float>();
 
     // Calculate the difference at double precision *before* converting to float.
     // This is very important for stars that are far from the origin.

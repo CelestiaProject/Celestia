@@ -3,6 +3,16 @@ set(CELENGINE_SOURCES
   asterism.h
   astro.cpp
   astro.h
+  astrodb.cpp
+  astrodb.h
+  astrocat.h
+  astrocat.cpp
+  astroname.cpp
+  astroname.h
+  astroobj.cpp
+  astroobj.h
+  astrooctree.h
+  astrooctree.cpp
   atmosphere.h
   axisarrow.cpp
   axisarrow.h
@@ -14,14 +24,16 @@ set(CELENGINE_SOURCES
   catalogxref.h
   category.cpp
   category.h
-  catentry.cpp
-  catentry.h
   console.cpp
   console.h
   constellation.cpp
   constellation.h
+  crossindex.cpp
+  crossindex.h
   curveplot.cpp
   curveplot.h
+  dataloader.cpp
+  dataloader.h
   dds.cpp
   deepskyobj.cpp
   deepskyobj.h
@@ -55,6 +67,8 @@ set(CELENGINE_SOURCES
   location.h
   lodspheremesh.cpp
   lodspheremesh.h
+  luminobj.cpp
+  luminobj.h
   marker.cpp
   marker.h
   meshmanager.cpp
@@ -65,6 +79,8 @@ set(CELENGINE_SOURCES
   multitexture.h
   name.cpp
   name.h
+  namedb.cpp
+  namedb.h
   nebula.cpp
   nebula.h
   observer.cpp
@@ -82,6 +98,8 @@ set(CELENGINE_SOURCES
 #  particlesystemfile.cpp
 #  particlesystemfile.h
 #  particlesystem.h
+  processoctree.cpp
+  processoctree.h
   planetgrid.cpp
   planetgrid.h
   referencemark.h
@@ -159,7 +177,8 @@ set_target_properties(celengine PROPERTIES
 ]]#
 
 add_dependencies(celengine cel3ds celmath celmodel celtxf celutil)
-target_link_libraries(celengine cel3ds celmath celmodel celtxf celutil)
+# target_link_libraries(celengine cel3ds celmath celmodel celtxf celutil)
+target_link_libraries(celengine cel3ds celmath celmodel celtxf celutil Threads::Threads)
 
 # Some celephem objects depend on Spice
 if(ENABLE_SPICE)
