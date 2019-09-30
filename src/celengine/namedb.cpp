@@ -5,12 +5,12 @@
 
 using namespace std;
 
-uint32_t NameDatabase::getNameCount() const
+uint32_t AstroNameDatabase::getNameCount() const
 {
     return m_nameIndex.size();
 }
 
-bool NameDatabase::add(const NameInfo::SharedConstPtr &info, bool overwrite)
+bool AstroNameDatabase::add(const NameInfo::SharedConstPtr &info, bool overwrite)
 {
     if (info->getCanon().empty() || (!overwrite && m_nameIndex.find(info->getCanon()) != m_nameIndex.end()))
     {
@@ -22,7 +22,7 @@ bool NameDatabase::add(const NameInfo::SharedConstPtr &info, bool overwrite)
     return true;
 }
 
-bool NameDatabase::addLocalized(const NameInfo::SharedConstPtr &info, bool overwrite)
+bool AstroNameDatabase::addLocalized(const NameInfo::SharedConstPtr &info, bool overwrite)
 {
     lock_guard<recursive_mutex> lock(m_mutex);
     if (!info->hasLocalized() || (!overwrite && m_localizedIndex.find(info->getLocalized()) != m_localizedIndex.end()))
@@ -31,7 +31,7 @@ bool NameDatabase::addLocalized(const NameInfo::SharedConstPtr &info, bool overw
     return true;
 }
 
-void NameDatabase::erase(const Name& name)
+void AstroNameDatabase::erase(const Name& name)
 {
     lock_guard<recursive_mutex> lock(m_mutex);
     SharedNameMap::iterator it = m_nameIndex.find(name);
@@ -41,11 +41,11 @@ void NameDatabase::erase(const Name& name)
     m_nameIndex.erase(name);
 }
 
-const NameInfo::SharedConstPtr &NameDatabase::getNameInfo(const Name& name, bool greek, bool i18n) const
+const NameInfo::SharedConstPtr &AstroNameDatabase::getNameInfo(const Name& name, bool greek, bool i18n) const
 {
     const SharedNameMap &map = i18n ? m_localizedIndex : m_nameIndex;
 
-    lock_guard<recursive_mutex> lock(((NameDatabase*)this)->m_mutex);
+    lock_guard<recursive_mutex> lock(((AstroNameDatabase*)this)->m_mutex);
     SharedNameMap::const_iterator iter = map.find(name);
 
     if (iter != map.end())
@@ -60,16 +60,16 @@ const NameInfo::SharedConstPtr &NameDatabase::getNameInfo(const Name& name, bool
     return NameInfo::nullPtr;
 }
 
-const NameInfo::SharedConstPtr &NameDatabase::getNameInfo(const Name& name, bool greek, bool i18n, bool fallback) const
+const NameInfo::SharedConstPtr &AstroNameDatabase::getNameInfo(const Name& name, bool greek, bool i18n, bool fallback) const
 {
-    lock_guard<recursive_mutex> lock(((NameDatabase*)this)->m_mutex);
+    lock_guard<recursive_mutex> lock(((AstroNameDatabase*)this)->m_mutex);
     auto& info = getNameInfo(name, greek, i18n);
     if (info == nullptr && fallback)
         return getNameInfo(name, greek, !i18n);
     return info;
 }
 
-AstroObject *NameDatabase::getObjectByName(const Name& name, bool greek) const
+AstroObject *AstroNameDatabase::getObjectByName(const Name& name, bool greek) const
 {
     auto info = getNameInfo(name, greek);
     if (info == nullptr)
@@ -77,7 +77,7 @@ AstroObject *NameDatabase::getObjectByName(const Name& name, bool greek) const
     return (AstroObject*)info->getObject();
 }
 
-std::vector<Name> NameDatabase::getCompletion(const std::string& name, bool greek) const
+std::vector<Name> AstroNameDatabase::getCompletion(const std::string& name, bool greek) const
 {
     if (greek)
     {
@@ -93,7 +93,7 @@ std::vector<Name> NameDatabase::getCompletion(const std::string& name, bool gree
     else fname = name;
     int name_length = UTF8Length(fname);
 
-    lock_guard<recursive_mutex> lock(((NameDatabase*)this)->m_mutex);
+    lock_guard<recursive_mutex> lock(((AstroNameDatabase*)this)->m_mutex);
     for (SharedNameMap::const_iterator iter = m_nameIndex.begin(); iter != m_nameIndex.end(); ++iter)
     {
         if (!UTF8StringCompare(iter->first.str(), fname, name_length, true))
@@ -111,7 +111,7 @@ std::vector<Name> NameDatabase::getCompletion(const std::string& name, bool gree
     return completion;
 }
 
-std::vector<Name> NameDatabase::getCompletion(const std::vector<string> &list) const
+std::vector<Name> AstroNameDatabase::getCompletion(const std::vector<string> &list) const
 {
     std::vector<Name> completion;
     for (const auto &n : list)
@@ -122,7 +122,7 @@ std::vector<Name> NameDatabase::getCompletion(const std::vector<string> &list) c
     return completion;
 }
 
-AstroObject *NameDatabase::findObjectByName(const Name& name, bool greek) const
+AstroObject *AstroNameDatabase::findObjectByName(const Name& name, bool greek) const
 {
     AstroObject *ret = nullptr;
 
@@ -201,9 +201,9 @@ AstroObject *NameDatabase::findObjectByName(const Name& name, bool greek) const
     return ret;
 }
 
-void NameDatabase::dump() const
+void AstroNameDatabase::dump() const
 {
-    lock_guard<recursive_mutex> lock(((NameDatabase*)this)->m_mutex);
+    lock_guard<recursive_mutex> lock(((AstroNameDatabase*)this)->m_mutex);
     fmt::fprintf(cout, "%i canonical names:\n", m_nameIndex.size());
     for (const auto &pair : m_nameIndex)
         fmt::fprintf(cout, "  %s", pair.first.str());

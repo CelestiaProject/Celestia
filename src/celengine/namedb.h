@@ -22,10 +22,10 @@
 #include <celutil/utf8.h>
 #include "astroobj.h"
 
-class NameDatabase
+class AstroNameDatabase
 {
  public:
-    NameDatabase() {};
+    AstroNameDatabase() {};
 
     uint32_t getNameCount() const;
 

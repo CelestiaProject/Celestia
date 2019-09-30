@@ -77,7 +77,7 @@ class PlanetarySystem
     Star* star;
     Body* primary{nullptr};
     std::vector<Body*> satellites;
-    NameDatabase m_nameDB;
+    AstroNameDatabase m_nameDB;
     friend AstroObject;
     friend NameInfo;
 };

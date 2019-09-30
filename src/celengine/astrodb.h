@@ -43,7 +43,7 @@ class AstroDatabase {
     std::map<const char *, Catalog> m_prefixCatalog;
     std::map<int, CrossIndex*> m_catxindex;
     std::map<int, CrossIndex*> m_celxindex;
-    NameDatabase m_nameIndex;
+    AstroNameDatabase m_nameIndex;
     LoadersMap m_loaders;
     SolarSystemIndex m_systems;
     StarsList m_stars;
@@ -156,5 +156,5 @@ class AstroDatabase {
     const CrossIndex *getCelestiaCrossIndex(int) const;
     CrossIndex *getCatalogCrossIndex(int);
     const CrossIndex *getCatalogCrossIndex(int) const;
-    NameDatabase &getNameDatabase() { return m_nameIndex; }
+    AstroNameDatabase &getAstroNameDatabase() { return m_nameIndex; }
 };
