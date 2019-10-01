@@ -104,10 +104,14 @@ static void treeSolarSelect(GtkTreeSelection* sel, AppData* app)
 {
 	gpointer item;
 	gint type;
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-braces"
+#endif
 	GValue value = { 0, 0 }; /* Initialize empty GValue */
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif
 	GtkTreeIter iter;
 	GtkTreeModel* model;
 	

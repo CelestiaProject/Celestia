@@ -159,10 +159,14 @@ void dialogStarBrowser(AppData* app)
 /* CALLBACK: When Star is selected in Star Browser */
 static void listStarSelect(GtkTreeSelection* sel, AppData* app)
 {
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-braces"
+#endif
 	GValue value = { 0, 0 }; /* Initialize GValue to 0 */
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif
 	GtkTreeIter iter;
 	GtkTreeModel* model;
 
