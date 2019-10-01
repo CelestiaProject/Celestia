@@ -10541,9 +10541,9 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
                 break;
             }
 
-#ifndef _MSC_VER
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wenum-compare-switch"
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wenum-compare-switch"
 #endif
             switch (annotations[i].valign)
             {
@@ -10557,8 +10557,8 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
                 vOffset = 0;
                 break;
             }
-#ifndef _MSC_VER
-#pragma GCC diagnostic pop
+#ifdef __clang__
+#pragma clang diagnostic pop
 #endif
 
             glColor(annotations[i].color);

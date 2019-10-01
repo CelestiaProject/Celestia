@@ -18,7 +18,7 @@
 #include <celengine/observer.h>
 
 
-#ifndef _MSC_VER
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundefined-var-template"
 #endif
@@ -383,7 +383,7 @@ void StaticOctree<OBJ, PREC>::computeStatistics(std::vector<OctreeLevelStatistic
     }
 }
 
-#ifndef _MSC_VER
+#ifdef __clang__
 #pragma clang diagnostic pop
 #endif
 
