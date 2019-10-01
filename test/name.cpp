@@ -3,7 +3,7 @@
 
 #include <cassert>
 #include <fmt/printf.h>
-#include <celengine/name.h>
+#include <celengine/astroname.h>
 #include <celengine/namedb.h>
 #include <celutil/utf8.h>
 
@@ -75,7 +75,7 @@ int main()
     assert(nd.getCatalogNumberByName(ReplaceGreekLetterAbbr("OME Ret")) == 2);
     assert(nd.getNameByCatalogNumber(1) == ReplaceGreekLetterAbbr("ALF Cen"));
     assert(nd.getNameByCatalogNumber(2) == ReplaceGreekLetterAbbr("OME Ret"));*/
-    NameDatabase ndb;
+    AstroNameDatabase ndb;
     NameInfo::SharedConstPtr info = NameInfo::createShared(string("Kepler-16"), Name(""), nullptr);
     const Name &name = info->getCanon();
     cout << name.str() << endl;

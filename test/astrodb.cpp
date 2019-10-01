@@ -242,7 +242,7 @@ int main()
     showExistence(adb, "Kepler-15");
     showExistence(adb, "Kepler-16");
     showExistence(adb, "Kepler-17");
-    NameDatabase &ndb = adb.getNameDatabase();
+    AstroNameDatabase &ndb = adb.getAstroNameDatabase();
     NameInfo::SharedConstPtr info = ndb.getNameInfo("Kepler-16");
     if (info)
         cout << info->getCanon().str() << endl;
