@@ -30,7 +30,9 @@
 #endif
 
 // gettext / libintl setup
+#ifndef _
 #define _(string) gettext (string)
+#endif
 
 #ifdef _WIN32
 
