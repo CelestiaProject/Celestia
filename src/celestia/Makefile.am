@@ -80,7 +80,6 @@ EXTRA_DIST = \
 celestia_LDADD = \
 	$(celestiaKDELIBS) \
 	$(celestiaGTKLIBS) \
-	$(DL_LIBS) \
 	$(LUA_LIBS) \
 	$(THEORA_LIBS) \
 	../celengine/libcelengine.a \
@@ -89,7 +88,8 @@ celestia_LDADD = \
 	../celmath/libcelmath.a \
 	../celutil/libcelutil.a \
 	$(SPICE_LIBS) \
-	$(GL_LIBS)
+	$(GL_LIBS) \
+	$(DL_LIBS)
 
 noinst_HEADERS = $(wildcard *.h)
 noinst_DATA = ../../celestia
