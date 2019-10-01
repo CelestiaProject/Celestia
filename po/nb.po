@@ -134,7 +134,7 @@ msgstr "' til '"
 
 #: src/celengine/solarsys.cpp:1200
 msgid "' not found."
-msgstr "' ikke funnet.\n"
+msgstr "' ikke funnet."
 
 #: src/celengine/solarsys.cpp:1211
 msgid "warning duplicate definition of "
