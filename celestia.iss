@@ -5,11 +5,13 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.6.2
-AppPublisher=Shatters Software
-AppPublisherURL=http://www.shatters.net/celestia/
-AppSupportURL=http://www.shatters.net/celestia/
-AppUpdatesURL=http://www.shatters.net/celestia/
+AppVersion=1.6.2
+VersionInfoVersion=1.6.2
+AppPublisher=Celestia Development Team
+AppPublisherURL=https://celestia.space/
+AppSupportURL=https://celestia.space/
+AppUpdatesURL=https://celestia.space/
+AppCopyright=Copyright (C) 2001-2019 Celestia Development Team
 DefaultDirName={code:DefDirRoot}\Celestia
 DefaultGroupName=Celestia
 LicenseFile=COPYING
@@ -19,6 +21,7 @@ SolidCompression=true
 UninstallDisplayIcon={app}\celestia.exe
 WizardImageFile=win32-installer-image.bmp
 PrivilegesRequired=none
+ArchitecturesInstallIn64BitMode=x64
 ; Tell Explorer to refresh its file associations information at the
 ; end of the installation, and Uninstall will do the same at the end
 ; of uninstallation.
@@ -64,14 +67,22 @@ Name: "{app}\help"
 Name: "{app}\help\CelestiaGuide" 
 
 [Files]
-Source: "celestia.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "x64\Release\celestia.exe";                              DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "win32\Release\celestia.exe";                            DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x64-windows\bin\jpeg62.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x86-windows\bin\jpeg62.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x64-windows\bin\libintl.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x86-windows\bin\libintl.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x64-windows\bin\libpng16.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x86-windows\bin\libpng16.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x64-windows\bin\lua.dll";      DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x86-windows\bin\lua.dll";      DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x64-windows\bin\zlib1.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x86-windows\bin\zlib1.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "start.cel";    DestDir: "{app}"; Flags: ignoreversion
 Source: "celestia.cfg"; DestDir: "{app}"; Flags: ignoreversion
 Source: "demo.cel";     DestDir: "{app}"; Flags: ignoreversion
 Source: "guide.cel";    DestDir: "{app}"; Flags: ignoreversion
-Source: "intl.dll";     DestDir: "{app}"; Flags: ignoreversion
-Source: "iconv.dll";    DestDir: "{app}"; Flags: ignoreversion
-Source: "lua5.1.dll";   DestDir: "{app}"; Flags: ignoreversion
 Source: "controls.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "COPYING";      DestDir: "{app}"; Flags: ignoreversion
 Source: "README";       DestDir: "{app}"; Flags: ignoreversion isreadme;   DestName: "README.txt"
@@ -80,39 +91,64 @@ Source: "TRANSLATORS";  DestDir: "{app}"; Flags: ignoreversion;            DestN
 Source: "ChangeLog";    DestDir: "{app}"; Flags: ignoreversion;            DestName: "ChangeLog.txt"
 Source: "splash.png";   DestDir: "{app}"; Flags: ignoreversion
 
-Source: "lib\microsoft.vc90.crt.manifest";   DestDir: "{app}"; Flags: ignoreversion
-Source: "lib\msvcm90.dll";   DestDir: "{app}"; Flags: ignoreversion
-Source: "lib\msvcp90.dll";   DestDir: "{app}"; Flags: ignoreversion
-Source: "lib\msvcr90.dll";   DestDir: "{app}"; Flags: ignoreversion
-
 ; Languages
-Source: "locale\res_ar.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_be.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_bg.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_de.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_el.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_es.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_fr.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_gl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_hu.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_it.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_ja.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_ko.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_lt.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_lv.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_nl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_no.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_pl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_pt.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_pt_BR.dll";    DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_ro.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_ru.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_sk.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_sv.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_tr.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_uk.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_zh_CN.dll";    DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_zh_TW.dll";    DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\x64\res_ar.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_be.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_bg.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_de.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_el.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_es.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_fr.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_gl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_hu.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_it.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_ja.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_ko.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_lt.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_lv.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_nb.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_nl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_no.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_pl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_pt.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_pt_BR.dll";    DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_ro.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_ru.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_sk.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_sv.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_tr.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_uk.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_zh_CN.dll";    DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "locale\x64\res_zh_TW.dll";    DestDir: "{app}/locale"; Flags: ignoreversion; Check: Is64BitInstallMode
+
+Source: "locale\win32\res_ar.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_be.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_bg.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_de.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_el.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_es.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_fr.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_gl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_hu.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_it.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_ja.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_ko.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_lt.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_lv.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_nb.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_nl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_no.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_pl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_pt.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_pt_BR.dll";    DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_ro.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_ru.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_sk.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_sv.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_tr.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_uk.dll";       DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_zh_CN.dll";    DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "locale\win32\res_zh_TW.dll";    DestDir: "{app}/locale"; Flags: ignoreversion; Check: not Is64BitInstallMode
 
 Source: "locale\ar\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/ar/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\ar\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/ar/LC_MESSAGES"; Flags: ignoreversion
@@ -143,6 +179,8 @@ Source: "locale\lt\LC_MESSAGES\celestia.mo";                      DestDir: "{app
 Source: "locale\lt\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/lt/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\lv\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/lv/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\lv\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/lv/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\nb\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/nb/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\nb\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/nb/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\nl\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/nl/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\nl\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/nl/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\no\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/no/LC_MESSAGES"; Flags: ignoreversion
@@ -182,13 +220,13 @@ Source: "locale\COPYING_nl";       DestDir: "{app}/locale"; Flags: ignoreversion
 ; Source: "locale\COPYING_no";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_pl";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_pt";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\COPYING_pt_BR";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\COPYING_pt_BR";    DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_ru";       DestDir: "{app}/locale"; Flags: ignoreversion
 ; Source: "locale\COPYING_sk";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_sv";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_uk";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\COPYING_zh_CN";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\COPYING_zh_TW";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\COPYING_zh_CN";    DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\COPYING_zh_TW";    DestDir: "{app}/locale"; Flags: ignoreversion
 
 Source: "locale\controls_be.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_bg.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -203,13 +241,13 @@ Source: "locale\controls_nl.txt";       DestDir: "{app}/locale"; Flags: ignoreve
 Source: "locale\controls_no.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_pl.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_pt.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\controls_pt_BR.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\controls_pt_BR.txt";    DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_ru.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_sk.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_sv.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_uk.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\controls_zh_CN.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\controls_zh_TW.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\controls_zh_CN.txt";    DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\controls_zh_TW.txt";    DestDir: "{app}/locale"; Flags: ignoreversion
 
 Source: "locale\demo_be.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_de.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -221,18 +259,19 @@ Source: "locale\demo_ja.cel";       DestDir: "{app}/locale"; Flags: ignoreversio
 Source: "locale\demo_ko.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_lt.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_lv.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\demo_nb.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_nl.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_no.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_pl.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_pt.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\demo_pt_BR.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\demo_pt_BR.cel";    DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_ru.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_sk.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_sv.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_tr.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_uk.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\demo_zh_CN.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\demo_zh_TW.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\demo_zh_CN.cel";    DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\demo_zh_TW.cel";    DestDir: "{app}/locale"; Flags: ignoreversion
 
 Source: "locale\guide_be.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_bg.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -244,6 +283,7 @@ Source: "locale\guide_it.cel";       DestDir: "{app}/locale"; Flags: ignoreversi
 Source: "locale\guide_ja.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_ko.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_lt.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\guide_nb.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_nl.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 ; Source: "locale\guide_no.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_pl.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -268,6 +308,7 @@ Source: "locale\start_ja.cel";       DestDir: "{app}/locale"; Flags: ignoreversi
 Source: "locale\start_ko.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_lt.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_lv.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\start_nb.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_nl.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 ; Source: "locale\start_no.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_pl.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -321,7 +362,7 @@ Source: "data\ring_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\eros_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\gaspra_locs.ssc";    DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\ida_locs.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
-;Source: "data\itokawa_locs.ssc";   DestDir: "{app}/data"; Flags: ignoreversion
+Source: "data\itokawa_locs.ssc";   DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\world-capitals.ssc"; DestDir: "{app}/data"; Flags: ignoreversion
 
 ; Textures (General)
@@ -597,29 +638,29 @@ Source: "fonts\sansbold12.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sansbold14.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sansbold20.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 
-Source: "fonts\sans12_be.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans14_be.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sansbold20_be.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans12_bg.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sansbold20_bg.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans12_ja.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans14_ja.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sansbold20_ja.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans12_ko.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans14_ko.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sansbold20_ko.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans12_ru.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans14_ru.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sansbold20_ru.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans12_uk.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans14_uk.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sansbold20_uk.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans12_be.txf";         DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans14_be.txf";         DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sansbold20_be.txf";     DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans12_bg.txf";         DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sansbold20_bg.txf";     DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans12_ja.txf";         DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans14_ja.txf";         DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sansbold20_ja.txf";     DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans12_ko.txf";         DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans14_ko.txf";         DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sansbold20_ko.txf";     DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans12_ru.txf";         DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans14_ru.txf";         DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sansbold20_ru.txf";     DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans12_uk.txf";         DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans14_uk.txf";         DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sansbold20_uk.txf";     DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sans12_zh_CN.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sans14_zh_CN.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sansbold20_zh_CN.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sansbold20_zh_CN.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sans12_zh_TW.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sans14_zh_TW.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sansbold20_zh_TW.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sansbold20_zh_TW.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 
 ; Standard extras
 Source: "extras-standard\cassini\cassini.ssc"; DestDir: "{app}/extras-standard/cassini"; Flags: ignoreversion
@@ -675,7 +716,7 @@ Type: files; Name: "{app}\extras\minormoons.ssc";
 Type: files; Name: "{app}\extras\numberedmoons.ssc";
 
 [INI]
-Filename: "{app}\celestia.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://www.shatters.net/celestia/"
+Filename: "{app}\celestia.url"; Section: "InternetShortcut"; Key: "URL"; String: "https://celestia.space"
 
 [Icons]
 Name: "{group}\Celestia";            Filename: "{app}\celestia.exe"; WorkingDir: "{app}"
@@ -735,7 +776,7 @@ Type: files; Name: "{app}\celestia.url"
 [code]
 function IsRegularUser(): Boolean;
 begin
-  Result := not (IsAdminLoggedOn or IsPowerUserLoggedOn);
+  Result := not (IsAdmin or IsPowerUserLoggedOn);
 end;
 
 function DefDirRoot(Param: String): String;
