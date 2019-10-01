@@ -503,10 +503,10 @@ BEGIN
     LTEXT           VERSION_STRING,IDC_STATIC,90,17,40,9
 
 
-    LTEXT           "Copyright (C) 2001-2010, Celestia Development Team",IDC_STATIC,56,26,247,9
+    LTEXT           "Copyright (C) 2001-2019, Celestia Development Team",IDC_STATIC,56,26,247,9
 
 
-    LTEXT           "http://www.shatters.net/celestia",IDC_CELESTIALINK,56,43,150,9
+    LTEXT           "https://celestia.space",IDC_CELESTIALINK,56,43,150,9
 
 
     LTEXT           "Celestia is free software and comes with absolutely no warranty.",IDC_STATIC,56,66,247,17
@@ -546,7 +546,9 @@ BEGIN
     LTEXT           "Vincent Giangiulio",IDC_STATIC,160,142,100,9
     LTEXT           "Andrew Tribick",IDC_STATIC,160,152,100,9
 
-
+    LTEXT           "Hleb Valoshka",IDC_STATIC,160,162,100,9
+    LTEXT           "Li Linfeng",IDC_STATIC,160,172,100,9
+    LTEXT           "Dmitry Brant",IDC_STATIC,160,182,100,9
 END
 
 
