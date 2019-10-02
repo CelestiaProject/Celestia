@@ -62,7 +62,7 @@ https://git-scm.com/ and then execute the following commands:
 * git submodule update --init
 
 If you have fmtlib and Eigen3 installed from other sources (OS repository or
-vcpg) or don't want to build Celestia with SPICE support then you can skip the
+vcpkg) or don't want to build Celestia with SPICE support then you can skip the
 2nd step.
 
 
