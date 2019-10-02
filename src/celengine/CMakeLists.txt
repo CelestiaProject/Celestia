@@ -41,6 +41,8 @@ set(CELENGINE_SOURCES
   dispmap.h
   dsodb.cpp
   dsodb.h
+  dsodataloader.cpp
+  dsodataloader.h
   dsoname.cpp
   dsoname.h
   dsooctree.cpp
@@ -79,6 +81,8 @@ set(CELENGINE_SOURCES
   multitexture.h
   name.cpp
   name.h
+  namedataloader.cpp
+  namedataloader.h
   namedb.cpp
   namedb.h
   nebula.cpp
@@ -100,6 +104,8 @@ set(CELENGINE_SOURCES
 #  particlesystem.h
   processoctree.cpp
   processoctree.h
+  planetdataloader.cpp
+  planetdataloader.h
   planetgrid.cpp
   planetgrid.h
   referencemark.h
@@ -131,6 +137,8 @@ set(CELENGINE_SOURCES
   starcolors.h
   star.cpp
   star.h
+  stardataloader.cpp
+  stardataloader.h
   stardb.cpp
   stardb.h
   starname.cpp
@@ -163,6 +171,8 @@ set(CELENGINE_SOURCES
   virtualtex.h
   visibleregion.cpp
   visibleregion.h
+  xindexdataloader.cpp
+  xindexdataloader.h
 )
 
 # The object files in the celephem directory are merged in the celengine library

@@ -14,6 +14,7 @@
 #include <celengine/univcoord.h>
 #include <celengine/stardb.h>
 #include <celengine/dsodb.h>
+#include <celengine/astrodb.h>
 #include <celengine/solarsys.h>
 #include <celengine/deepskyobj.h>
 #include <celengine/marker.h>
@@ -38,6 +39,9 @@ class Universe
 
     DSODatabase* getDSOCatalog() const;
     void setDSOCatalog(DSODatabase*);
+
+    AstroDatabase& getDatabase() { return m_adb; }
+    const AstroDatabase& getDatabase() const { return m_adb; }
 
     AsterismList* getAsterisms() const;
     void setAsterisms(AsterismList*);
@@ -118,6 +122,7 @@ class Universe
                                 float tolerance = 0.0f);
 
  private:
+    AstroDatabase m_adb;
     StarDatabase* starCatalog{nullptr};
     DSODatabase* dsoCatalog{nullptr};
     SolarSystemCatalog* solarSystemCatalog{nullptr};

@@ -204,6 +204,8 @@ class Body : public AstroObject
     bool hasLocalizedName() const;
     void addAlias(const std::string& alias);
 
+    using AstroObject::addAlias;
+
     void setTimeline(Timeline* timeline);
     const Timeline* getTimeline() const;
 

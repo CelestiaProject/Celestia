@@ -302,12 +302,13 @@ public:
         MaxTychoCatalogNumber = 0xf0000000
     };
 
-    /*static bool createStar(Star* star,
-                        DataDisposition disposition,
-                        Hash* starData,
-                        const string& path,
-                        bool isBarycenter,
-                        AstroDatabase *);*/
+    static bool createStar(Star* star,
+                           DataDisposition disposition,
+                           Hash* starData,
+                           const string& path,
+                           bool isBarycenter,
+                           AstroDatabase *);
+
 private:
     uint32_t catalogNumber{ InvalidCatalogNumber };
     StarDetails* details{ nullptr };
