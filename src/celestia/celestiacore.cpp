@@ -402,36 +402,64 @@ CelestiaCore::~CelestiaCore()
 #endif
 
     delete execEnv;
-
-
 }
 
 void CelestiaCore::readFavoritesFile()
 {
     // Set up favorites list
+    string path;
     if (config->favoritesFile != "")
-    {
-        ifstream in(config->favoritesFile.c_str(), ios::in);
+        path = config->favoritesFile;
+    else
+        path = "favorites.cel";
 
-        if (in.good())
+    if (!IsAbsolutePath(path))
+#ifdef _WIN32
+        path = WriteableDataPath() + '\\' + path;
+#else
+        path = WriteableDataPath() + '/' + path;
+#endif
+
+    ifstream in(path.c_str(), ios::in);
+    if (in.good())
+    {
+        favorites = ReadFavoritesList(in);
+        if (favorites == NULL)
         {
-            favorites = ReadFavoritesList(in);
-            if (favorites == NULL)
-            {
-                warning(_("Error reading favorites file."));
-            }
+            warning(_("Error reading favorites file."));
         }
     }
 }
 
 void CelestiaCore::writeFavoritesFile()
 {
+    string path;
     if (config->favoritesFile != "")
+        path = config->favoritesFile;
+    else
+        path = "favorites.cel";
+
+    if (!IsAbsolutePath(path))
     {
-        ofstream out(config->favoritesFile.c_str(), ios::out);
-        if (out.good())
-        WriteFavoritesList(*favorites, out);
+        string dir = WriteableDataPath();
+        if (!IsDirectory(dir))
+        {
+            if (!MkDir(dir))
+            {
+                warning(_("Failed to create a directory for favorites file ") + dir);
+                return;
+            }
+#ifdef _WIN32
+            path = dir + '\\' + path;
+#else
+            path = dir + '/' + path;
+#endif
+        }
     }
+
+    ofstream out(path.c_str(), ios::out);
+    if (out.good())
+        WriteFavoritesList(*favorites, out);
 }
 
 void CelestiaCore::activateFavorite(FavoritesEntry& fav)
