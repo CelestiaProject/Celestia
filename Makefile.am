@@ -6,7 +6,8 @@ dosstuff = \
 	celestia.mak \
 	celestia.iss \
 	celestia.sln \
-	celestia.vcproj \
+	celestia.vcxproj \
+	celestia.vcxproj.filters \
 	$(wildcard *.bat)
 
 noinst_DATA = \
