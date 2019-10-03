@@ -10,6 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cstring>
+#include <algorithm>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_object.h"

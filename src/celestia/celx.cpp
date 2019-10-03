@@ -14,6 +14,7 @@
 #include <cstring>
 #include <cstdio>
 #include <ctime>
+#include <algorithm>
 #include <map>
 #include <celengine/astro.h>
 #include <celengine/celestia.h>

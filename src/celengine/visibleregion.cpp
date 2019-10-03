@@ -12,6 +12,7 @@
 
 #include <cstdio>
 #include <cmath>
+#include <algorithm>
 #include <celmath/intersect.h>
 #include "visibleregion.h"
 #include "body.h"

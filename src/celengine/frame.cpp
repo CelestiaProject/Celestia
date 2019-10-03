@@ -10,6 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+#include <algorithm>
 #include <celengine/frame.h>
 
 using namespace std;
