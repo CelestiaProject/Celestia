@@ -479,7 +479,7 @@ END
 
 
 
-IDD_ABOUT DIALOGEX 100, 50, 310, 200
+IDD_ABOUT DIALOGEX 100, 50, 310, 230
 
 
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
@@ -492,9 +492,9 @@ FONT 8, "Segoe UI", 0, 0, 0x0
 
 
 BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,131,196,50,14
 
 
-    DEFPUSHBUTTON   "OK",IDOK,131,175,50,14
 
 
     LTEXT           "Celestia",IDC_STATIC,56,17,30,9
@@ -510,9 +510,9 @@ BEGIN
 
 
     LTEXT           "Celestia is free software and comes with absolutely no warranty.",IDC_STATIC,56,66,247,17
+    CTEXT           "Authors",IDC_STATIC,6,88,297,9
 
 
-    LTEXT           "Authors",IDC_STATIC,56,90,100,9
 
 
     LTEXT           "Chris Laurel",IDC_STATIC,56,102,100,9
@@ -548,7 +548,7 @@ BEGIN
 
     LTEXT           "Hleb Valoshka",IDC_STATIC,160,162,100,9
     LTEXT           "Li Linfeng",IDC_STATIC,160,172,100,9
-    LTEXT           "Dmitry Brant",IDC_STATIC,160,182,100,9
+    LTEXT           "Dmitry Brant",IDC_STATIC,56,162,100,9
 END
 
 
@@ -1911,10 +1911,10 @@ END
 VS_VERSION_INFO VERSIONINFO
 
 
- FILEVERSION 1,6,1,0
+ FILEVERSION 1,6,2,0
 
 
- PRODUCTVERSION 1,6,1,0
+ PRODUCTVERSION 1,6,2,0
 
 
  FILEFLAGSMASK 0x3fL
@@ -1965,13 +1965,13 @@ BEGIN
             VALUE "FileDescription", "celestia"
 
 
-            VALUE "FileVersion", "1, 6, 1, 0"
+            VALUE "FileVersion", "1, 6, 2, 0"
 
 
             VALUE "InternalName", "celestia"
 
 
-            VALUE "LegalCopyright", "Copyright  2001-2010, Celestia Development Team"
+            VALUE "LegalCopyright", "Copyright  2001-2019, Celestia Development Team"
 
 
             VALUE "OriginalFilename", "celestia.exe"
@@ -1980,7 +1980,7 @@ BEGIN
             VALUE "ProductName", "  celestia"
 
 
-            VALUE "ProductVersion", "1, 6, 1, 0"
+            VALUE "ProductVersion", "1, 6, 2, 0"
 
 
         END
@@ -1995,7 +1995,7 @@ BEGIN
     BEGIN
 
 
-        VALUE "Translation", 0x409, 1200
+        VALUE "Translation", 0x409, 1252
 
 
     END
