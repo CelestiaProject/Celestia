@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#ifdef USE_SPICE
 #include <iostream>
 #include <cstdio>
 #include "SpiceUsr.h"
@@ -335,3 +336,4 @@ void SpiceOrbit::getValidRange(double& begin, double& end) const
     begin = validIntervalBegin;
     end = validIntervalEnd;
 }
+#endif

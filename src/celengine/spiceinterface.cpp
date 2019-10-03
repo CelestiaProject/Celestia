@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#ifdef USE_SPICE
 #include "SpiceUsr.h"
 #include "spiceinterface.h"
 #include <cstdio>
@@ -113,3 +114,4 @@ bool LoadSpiceKernel(const string& filepath)
 		return true;
 	}
 }
+#endif

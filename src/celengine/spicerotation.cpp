@@ -10,6 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#ifdef USE_SPICE
 #include <iostream>
 #include <cstdio>
 #include <limits>
@@ -184,3 +185,4 @@ SpiceRotation::computeSpin(double jd) const
         return Quatd::yrotation(PI) * Quatd::xrotation(-PI / 2.0) * ~q * Quatd::xrotation(PI / 2.0);
     }
 }
+#endif
