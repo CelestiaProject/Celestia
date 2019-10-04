@@ -95,7 +95,7 @@ NameInfo::SharedPtr NameInfo::popForTr()
 
 void NameInfo::trThread()
 {
-    fmt::fprintf(cout, "Translating thread started!\n");
+//     fmt::fprintf(cout, "Translating thread started!\n");
     while(true)
     {
 //         fmt::fprintf(cout, "Waiting for data...\n");
