@@ -10547,7 +10547,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
 #endif
             switch (annotations[i].valign)
             {
-            case AlignCenter:
+            case VerticalAlignCenter:
                 vOffset = -font[fs]->getHeight() / 2;
                 break;
             case VerticalAlignTop:

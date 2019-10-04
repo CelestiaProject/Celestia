@@ -623,9 +623,6 @@ static LRESULT
 DatePickerCreate(HWND hwnd, CREATESTRUCT& cs)
 {
     DatePicker* dp = new DatePicker(hwnd, cs);
-    if (dp == NULL)
-        return -1;
-
     SetWindowLongPtr(hwnd, 0, reinterpret_cast<DWORD_PTR>(dp));
 
     return 0;
