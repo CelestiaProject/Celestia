@@ -2232,7 +2232,7 @@ static void BuildScriptsMenu(HMENU menuBar, const fs::path& scriptsDir)
     }
 
     MENUITEMINFO info;
-    memset(&info, sizeof(info), 0);
+    memset(&info, 0, sizeof(info));
     info.cbSize = sizeof(info);
     info.fMask = MIIM_SUBMENU;
 
@@ -3028,7 +3028,7 @@ static char* skipSpace(char* s)
 
 static char* skipUntilQuote(char* s)
 {
-    while (*s != '"' && s != '\0')
+    while (*s != '"' && *s != '\0')
         s++;
     return s;
 }

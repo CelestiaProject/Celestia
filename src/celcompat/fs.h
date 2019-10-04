@@ -18,7 +18,7 @@ namespace celestia
 {
 namespace filesystem
 {
-class filesystem_error : std::system_error
+class filesystem_error : public std::system_error
 {
  public:
     filesystem_error(std::error_code ec, const char* msg) :
