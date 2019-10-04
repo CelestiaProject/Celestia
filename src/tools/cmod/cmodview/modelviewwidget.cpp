@@ -1513,6 +1513,7 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
     {
         qWarning("Vertex shader error: %s", vertexShader->log().c_str());
         std::cerr << vertexShaderSource.toStdString() << std::endl;
+        delete vertexShader;
         delete glShader;
         return nullptr;
     }
@@ -1522,6 +1523,8 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
     {
         qWarning("Fragment shader error: %s", fragmentShader->log().c_str());
         std::cerr << fragmentShaderSource.toStdString() << std::endl;
+        delete vertexShader;
+        delete fragmentShader;
         delete glShader;
         return nullptr;
     }
@@ -1536,6 +1539,8 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
     if (!glShader->link())
     {
         qWarning("Shader link error: %s", glShader->log().c_str());
+        delete vertexShader;
+        delete fragmentShader;
         delete glShader;
         return nullptr;
     }

@@ -13,6 +13,7 @@
 #include "cmodops.h"
 #include <celmodel/modelfile.h>
 #include <cel3ds/3dsread.h>
+#include <celmath/mathlib.h>
 #include <cstring>
 #include <cassert>
 #include <cmath>
@@ -20,6 +21,7 @@
 
 using namespace cmod;
 using namespace std;
+using namespace celmath;
 
 
 void usage()
@@ -59,7 +61,7 @@ int main(int argc, char* argv[])
     double weldTolerance = 1.0e-6;
     bool weldVertices = true;
 
-    Model* newModel = GenerateModelNormals(*model, float(smoothAngle * 3.14159265 / 180.0), weldVertices, weldTolerance);
+    Model* newModel = GenerateModelNormals(*model, (float)degToRad(smoothAngle), weldVertices, weldTolerance);
     delete model;
 
     if (!newModel)

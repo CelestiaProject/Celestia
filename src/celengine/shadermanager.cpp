@@ -2845,10 +2845,6 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     {
         source << "uniform float pointScale;\n";
         source << "attribute float pointSize;\n";
-    }
-
-    if (props.texUsage & ShaderProperties::PointSprite)
-    {
         source << DeclareVarying("pointFade", Shader_Float);
     }
 

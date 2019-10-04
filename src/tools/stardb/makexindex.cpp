@@ -118,7 +118,7 @@ bool WriteCrossIndex(istream& in, ostream& out)
 
 int main(int argc, char* argv[])
 {
-    if (!parseCommandLine(argc, argv) || inputFilename.empty())
+    if (!parseCommandLine(argc, argv)/* || inputFilename.empty()*/)
     {
         Usage();
         return 1;
