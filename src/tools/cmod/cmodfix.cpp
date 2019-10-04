@@ -294,14 +294,14 @@ bool operator<(const Mesh::VertexDescription& a,
 
     if (a.nAttributes < b.nAttributes)
         return true;
-    else if (b.nAttributes < b.nAttributes)
+    if (b.nAttributes < a.nAttributes)
         return false;
 
     for (uint32 i = 0; i < a.nAttributes; i++)
     {
         if (a.attributes[i] < b.attributes[i])
             return true;
-        else if (b.attributes[i] < a.attributes[i])
+        if (b.attributes[i] < a.attributes[i])
             return false;
     }
 
