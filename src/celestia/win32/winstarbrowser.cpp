@@ -40,6 +40,7 @@ enum {
     StarsWithPlanets = 2,
 };
 
+using SolarSystemIndex = AstroDatabase::SolarSystemIndex;
 
 bool InitStarBrowserColumns(HWND listView)
 {
@@ -107,9 +108,9 @@ struct BrighterStarPredicate
 
         // If the stars are closer than one light year, use
         // a more precise distance estimate.
-        if (d0 < 1.0f)
+        if (d0 < 1)
             d0 = ucPos.offsetFromLy(star0->getPosition().cast<float>()).norm();
-        if (d1 < 1.0f)
+        if (d1 < 1)
             d1 = ucPos.offsetFromLy(star1->getPosition().cast<float>()).norm();
 
         return (star0->getApparentMagnitude(d0) <
@@ -120,16 +121,17 @@ struct BrighterStarPredicate
 struct SolarSystemPredicate
 {
     Vector3f pos;
-    SolarSystemCatalog* solarSystems;
+
+    const SolarSystemIndex &solarSystems;
+
+    SolarSystemPredicate(const SolarSystemIndex &i) : solarSystems(i) {}
 
     bool operator()(const Star* star0, const Star* star1) const
     {
-        SolarSystemCatalog::iterator iter;
-
-        iter = solarSystems->find(star0->getCatalogNumber());
-        bool hasPlanets0 = (iter != solarSystems->end());
-        iter = solarSystems->find(star1->getCatalogNumber());
-        bool hasPlanets1 = (iter != solarSystems->end());
+        auto iter = solarSystems.find(star0->getIndex());
+        bool hasPlanets0 = (iter != solarSystems.end());
+        iter = solarSystems.find(star1->getIndex());
+        bool hasPlanets1 = (iter != solarSystems.end());
         if (hasPlanets1 == hasPlanets0)
         {
             return ((pos - star0->getPosition().cast<float>()).squaredNorm() <
@@ -146,7 +148,7 @@ struct SolarSystemPredicate
 // Find the nearest/brightest/X-est N stars in a database.  The
 // supplied predicate determines which of two stars is a better match.
 template<class Pred> vector<const Star*>*
-FindStars(const StarDatabase& stardb, Pred pred, int nStars)
+FindStars(const AstroDatabase& stardb, Pred pred, int nStars)
 {
     vector<const Star*>* finalStars = new vector<const Star*>();
     if (nStars == 0)
@@ -219,8 +221,8 @@ bool InitStarBrowserLVItems(HWND listView, vector<const Star*>& stars)
 bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
 {
     Universe* univ = browser->appCore->getSimulation()->getUniverse();
-    StarDatabase* stardb = univ->getStarCatalog();
-    SolarSystemCatalog* solarSystems = univ->getSolarSystemCatalog();
+    AstroDatabase &stardb = univ->getDatabase();
+    const SolarSystemIndex &solarSystems = stardb.getSystems();
 
     vector<const Star*>* stars = NULL;
     switch (browser->predicate)
@@ -230,7 +232,7 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
             BrighterStarPredicate brighterPred;
             brighterPred.pos = browser->pos;
             brighterPred.ucPos = browser->ucPos;
-            stars = FindStars(*stardb, brighterPred, browser->nStars);
+            stars = FindStars(stardb, brighterPred, browser->nStars);
         }
         break;
 
@@ -238,19 +240,16 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
         {
             CloserStarPredicate closerPred;
             closerPred.pos = browser->pos;
-            stars = FindStars(*stardb, closerPred, browser->nStars);
+            stars = FindStars(stardb, closerPred, browser->nStars);
         }
         break;
 
     case StarsWithPlanets:
         {
-            if (solarSystems == NULL)
-                return false;
-            SolarSystemPredicate solarSysPred;
+            SolarSystemPredicate solarSysPred(solarSystems);
             solarSysPred.pos = browser->pos;
-            solarSysPred.solarSystems = solarSystems;
-            stars = FindStars(*stardb, solarSysPred,
-                              min((unsigned int) browser->nStars, (unsigned int) solarSystems->size()));
+            stars = FindStars(stardb, solarSysPred,
+                              min((unsigned int) browser->nStars, (unsigned int) solarSystems.size()));
         }
         break;
 
@@ -335,7 +334,7 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
     case 0:
         {
             Universe* u = browser->appCore->getSimulation()->getUniverse();
-            starNameString = UTF8ToCurrentCP(u->getStarCatalog()->getStarName(*star));
+            starNameString = UTF8ToCurrentCP(star->getName());
             nm->item.pszText = const_cast<char*>(starNameString.c_str());
         }
         break;
@@ -351,8 +350,8 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
     case 2:
         {
             Vector3d r = star->getPosition(tdb).offsetFromKm(browser->ucPos);
-            double appMag = astro::absToAppMag((double) star->getAbsoluteMagnitude(),
-                                               astro::kilometersToLightYears(r.norm()));
+            float appMag = astro::absToAppMag(star->getAbsoluteMagnitude(),
+                                               astro::kilometersToLightYears(r.cast<float>().norm()));
             sprintf(callbackScratch, "%.2f", appMag);
             nm->item.pszText = callbackScratch;
         }

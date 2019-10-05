@@ -1668,17 +1668,15 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     case Selection::Type_Star:
         {
             Simulation* sim = appCore->getSimulation();
-            name = sim->getUniverse()->getStarCatalog()->getStarName(*(sel.star()));
+            name = sel.star()->getName().str();
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, UTF8ToCurrentCP(name).c_str());
             AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, UTF8ToCurrentCP(_("&Goto")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_INFO, UTF8ToCurrentCP(_("&Info")).c_str());
 
-            SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-            SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getCatalogNumber());
-            if (iter != solarSystemCatalog->end())
+            auto solarSys = sim->getUniverse()->getDatabase().getSystem(sel.star()->getIndex());
+            if (solarSys != nullptr)
             {
-                SolarSystem* solarSys = iter->second;
                 HMENU planetsMenu = CreatePlanetarySystemMenu(name, solarSys->getPlanets());
                 if (name == "Sol")
                     AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) planetsMenu, UTF8ToCurrentCP(_("Orbiting Bodies")).c_str());
@@ -1691,7 +1689,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     case Selection::Type_DeepSky:
         {
             Simulation* sim = appCore->getSimulation();
-            name = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
+            name = sel.deepsky()->getName().str();
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, UTF8ToCurrentCP(name).c_str());
             AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, UTF8ToCurrentCP(_("&Goto")).c_str());
@@ -1760,7 +1758,7 @@ void ShowWWWInfo(const Selection& sel)
             if (url.empty())
             {
                 char name[32];
-                sprintf(name, "HIP%d", sel.star()->getCatalogNumber() & ~0xf0000000);
+                sprintf(name, "HIP%d", sel.star()->getIndex() & ~0xf0000000);
                 url = string("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=") + name;
             }
         }
