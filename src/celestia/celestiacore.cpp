@@ -3930,7 +3930,7 @@ class SolarSystemLoader
         ifstream solarSysFile(filepath.string(), ios::in);
         if (solarSysFile.good())
         {
-            SSCDataLoader loader(universe, filepath);
+            SSCDataLoader loader(universe, filepath.string());
             loader.load(solarSysFile);
         }
     };
@@ -4098,7 +4098,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         CatalogLoader loader(dscLoader,
                              "deep sky object",
                              Content_CelestiaDeepSkyCatalog,
-                             dir,
+                             dir.string(),
                              progressNotifier);
         for (const auto& fn : fs::recursive_directory_iterator(dir))
             loader.process(fn);
@@ -4391,7 +4391,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         if (!is_valid_directory(dir))
             continue;
 
-        CatalogLoader loader(stcLoader, "star", Content_CelestiaStarCatalog, dir, progressNotifier);
+        CatalogLoader loader(stcLoader, "star", Content_CelestiaStarCatalog, dir.string(), progressNotifier);
         for (const auto& fn : fs::recursive_directory_iterator(dir))
             loader.process(fn);
     }

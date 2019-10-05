@@ -20,8 +20,6 @@ set(CELENGINE_SOURCES
   body.h
   boundaries.cpp
   boundaries.h
-  catalogxref.cpp
-  catalogxref.h
   category.cpp
   category.h
   console.cpp
@@ -39,14 +37,8 @@ set(CELENGINE_SOURCES
   deepskyobj.h
   dispmap.cpp
   dispmap.h
-#  dsodb.cpp
-#  dsodb.h
   dsodataloader.cpp
   dsodataloader.h
-  dsoname.cpp
-  dsoname.h
-#  dsooctree.cpp
-#  dsooctree.h
   execenv.h
   frame.cpp
   frame.h
@@ -79,8 +71,6 @@ set(CELENGINE_SOURCES
   modelgeometry.h
   multitexture.cpp
   multitexture.h
-#  name.cpp
-#  name.h
   namedataloader.cpp
   namedataloader.h
   namedb.cpp
@@ -89,7 +79,6 @@ set(CELENGINE_SOURCES
   nebula.h
   observer.cpp
   observer.h
-#  octree.h
   opencluster.cpp
   opencluster.h
   overlay.cpp
@@ -122,7 +111,6 @@ set(CELENGINE_SOURCES
   selection.h
   shadermanager.cpp
   shadermanager.h
-  shared.h
   simulation.cpp
   simulation.h
   skygrid.cpp
@@ -139,12 +127,6 @@ set(CELENGINE_SOURCES
   star.h
   stardataloader.cpp
   stardataloader.h
-#  stardb.cpp
-#  stardb.h
-#  starname.cpp
-#  starname.h
-#  staroctree.cpp
-#  staroctree.h
   stellarclass.cpp
   stellarclass.h
   surface.h
