@@ -27,27 +27,6 @@ using namespace Eigen;
 using namespace std;
 using namespace celmath;
 
-
-void DeepSkyObject::setCatalogNumber(uint32_t n)
-{
-    catalogNumber = n;
-}
-
-uint32_t DeepSkyObject::getCatalogNumber() const
-{
-    return catalogNumber;
-}
-
-/*Vector3d DeepSkyObject::getPosition() const
-{
-    return position;
-}
-
-void DeepSkyObject::setPosition(const Vector3d& p)
-{
-    position = p;
-}*/
-
 Quaternionf DeepSkyObject::getOrientation() const
 {
     return orientation;
@@ -62,16 +41,6 @@ void DeepSkyObject::setRadius(float r)
 {
     radius = r;
 }
-
-/*float DeepSkyObject::getAbsoluteMagnitude() const
-{
-    return absMag;
-}
-
-void DeepSkyObject::setAbsoluteMagnitude(float _absMag)
-{
-    absMag = _absMag;
-}*/
 
 string DeepSkyObject::getDescription() const
 {

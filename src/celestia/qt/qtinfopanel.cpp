@@ -267,7 +267,7 @@ Vector3d rectToSpherical(const Vector3d& v)
 
 void InfoPanel::buildStarPage(const Star* star, const Universe* universe, double tdb, QTextStream& stream)
 {
-    string name = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*star, true));
+    string name = star->getName(true).str();
     stream << QString("<h1>%1</h1>").arg(QString::fromStdString(name));
 
     // Compute the star's position relative to the Solar System Barycenter. Note that
@@ -295,7 +295,7 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
                              const Universe* universe,
                              QTextStream& stream)
 {
-    string name = universe->getDSOCatalog()->getDSOName(dso, true);
+    string name = dso->getName(true).str();
     stream << QString("<h1>%1</h1>").arg(QString::fromStdString(name));
 
     Vector3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(dso->getPosition()));

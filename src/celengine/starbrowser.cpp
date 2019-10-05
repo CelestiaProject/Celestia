@@ -73,16 +73,18 @@ struct BrightestStarPredicate
 struct SolarSystemPredicate
 {
     Vector3f pos;
-    SolarSystemCatalog* solarSystems;
+    const AstroDatabase::SolarSystemIndex &solarSystems;
+
+    SolarSystemPredicate(const AstroDatabase::SolarSystemIndex &ss) : solarSystems(ss) {}
 
     bool operator()(const Star* star0, const Star* star1) const
     {
-        SolarSystemCatalog::iterator iter;
+        AstroDatabase::SolarSystemIndex::const_iterator iter;
 
-        iter = solarSystems->find(star0->getCatalogNumber());
-        bool hasPlanets0 = (iter != solarSystems->end());
-        iter = solarSystems->find(star1->getCatalogNumber());
-        bool hasPlanets1 = (iter != solarSystems->end());
+        iter = solarSystems.find(star0->getIndex());
+        bool hasPlanets0 = (iter != solarSystems.end());
+        iter = solarSystems.find(star1->getIndex());
+        bool hasPlanets1 = (iter != solarSystems.end());
         if (hasPlanets1 == hasPlanets0)
         {
             Vector3f p0 = star0->getPosition().cast<float>();
@@ -102,7 +104,7 @@ struct SolarSystemPredicate
 // Find the nearest/brightest/X-est N stars in a database.  The
 // supplied predicate determines which of two stars is a better match.
 template<class Pred> static std::vector<const Star*>*
-findStars(const StarDatabase& stardb, Pred pred, int nStars)
+findStars(const AstroDatabase& astrodb, Pred pred, int nStars)
 {
     std::vector<const Star*>* finalStars = new std::vector<const Star*>();
     if (nStars == 0)
@@ -113,7 +115,7 @@ findStars(const StarDatabase& stardb, Pred pred, int nStars)
     typedef std::multiset<const Star*, Pred> StarSet;
     StarSet firstStars(pred);
 
-    int totalStars = stardb.size();
+    int totalStars = astrodb.size();
     if (totalStars < nStars)
         nStars = totalStars;
 
@@ -121,7 +123,7 @@ findStars(const StarDatabase& stardb, Pred pred, int nStars)
     // up the list indiscriminately.
     int i = 0;
     for (i = 0; i < nStars; i++)
-        firstStars.insert(stardb.getStar(i));
+        firstStars.insert(astrodb.getStar(i));
 
     // From here on, only add a star to the set if it's
     // a better match than the worst matching star already
@@ -129,7 +131,7 @@ findStars(const StarDatabase& stardb, Pred pred, int nStars)
     const Star* lastStar = *--firstStars.end();
     for (; i < totalStars; i++)
     {
-        Star* star = stardb.getStar(i);
+        Star* star = astrodb.getStar(i);
         if (pred(star, lastStar))
         {
             firstStars.insert(star);
@@ -152,7 +154,7 @@ const Star* StarBrowser::nearestStar()
     Universe* univ = appSim->getUniverse();
     CloserStarPredicate closerPred;
     closerPred.pos = pos;
-    std::vector<const Star*>* stars = findStars(*(univ->getStarCatalog()), closerPred, 1);
+    std::vector<const Star*>* stars = findStars(univ->getDatabase(), closerPred, 1);
     const Star *star = (*stars)[0];
     delete stars;
     return star;
@@ -170,27 +172,23 @@ StarBrowser::listStars(unsigned int nStars)
             BrighterStarPredicate brighterPred;
             brighterPred.pos = pos;
             brighterPred.ucPos = ucPos;
-            return findStars(*(univ->getStarCatalog()), brighterPred, nStars);
+            return findStars(univ->getDatabase(), brighterPred, nStars);
         }
         break;
 
     case BrightestStars:
         {
             BrightestStarPredicate brightestPred;
-            return findStars(*(univ->getStarCatalog()), brightestPred, nStars);
+            return findStars(univ->getDatabase(), brightestPred, nStars);
         }
         break;
 
     case StarsWithPlanets:
         {
-            SolarSystemCatalog* solarSystems = univ->getSolarSystemCatalog();
-            if (!solarSystems)
-                return nullptr;
-            SolarSystemPredicate solarSysPred;
+            SolarSystemPredicate solarSysPred(univ->getDatabase().getSystems());
             solarSysPred.pos = pos;
-            solarSysPred.solarSystems = solarSystems;
-            return findStars(*(univ->getStarCatalog()), solarSysPred,
-                             min((size_t) nStars, solarSystems->size()));
+            return findStars(univ->getDatabase(), solarSysPred,
+                             min((size_t) nStars, univ->getDatabase().getSystems().size()));
         }
         break;
 
@@ -199,7 +197,7 @@ StarBrowser::listStars(unsigned int nStars)
         {
             CloserStarPredicate closerPred;
             closerPred.pos = pos;
-            return findStars(*(univ->getStarCatalog()), closerPred, nStars);
+            return findStars(univ->getDatabase(), closerPred, nStars);
         }
         break;
     }

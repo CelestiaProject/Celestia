@@ -19,6 +19,7 @@
 #ifdef USE_GLCONTEXT
 #include <celengine/glcontext.h>
 #endif
+#include <celengine/processoctree.h>
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celtxf/texturefont.h>
@@ -401,7 +402,11 @@ class Renderer
 #ifdef OCTREE_DEBUG
     OctreeProcStats m_starProcStats;
     OctreeProcStats m_dsoProcStats;
+    Selection m_selected;
 #endif
+
+    float m_avgDsoMag;
+
  private:
     struct SkyVertex
     {
@@ -453,10 +458,10 @@ class Renderer
 
  private:
     void setFieldOfView(float);
-    void renderStars(const StarDatabase& starDB,
+    void renderStars(const AstroDatabase& aDB,
                      float faintestVisible,
                      const Observer& observer);
-    void renderPointStars(const StarDatabase& starDB,
+    void renderPointStars(const AstroDatabase& aDB,
                           float faintestVisible,
                           const Observer& observer);
     void renderDeepSkyObjects(const Universe&,
@@ -527,7 +532,7 @@ class Renderer
 
     void renderCometTail(const Body& body,
                          const Eigen::Vector3f& pos,
-                         const Observer& observer,
+                         double now,
                          float discSizeInPixels);
 
     void renderObjectAsPoint_nosprite(const Eigen::Vector3f& center,

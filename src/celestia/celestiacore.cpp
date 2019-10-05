@@ -23,6 +23,12 @@
 #include <celengine/console.h>
 #include "execution.h"
 #include "cmdparser.h"
+#include <celengine/stardataloader.h>
+#include <celengine/dsodataloader.h>
+#include <celengine/planetdataloader.h>
+#include <celengine/namedataloader.h>
+#include <celengine/xindexdataloader.h>
+
 #include <celengine/multitexture.h>
 #ifdef USE_SPICE
 #include <celephem/spiceinterface.h>
@@ -335,6 +341,7 @@ CelestiaCore::~CelestiaCore()
     delete execEnv;
     delete timer;
     delete renderer;
+    delete universe;
 }
 
 void CelestiaCore::readFavoritesFile()
@@ -392,7 +399,7 @@ void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::
 
     Selection sel = sim->getSelection();
     if (sel.deepsky() != nullptr)
-        fav->selectionName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
+        fav->selectionName = sel.deepsky()->getName().str();
     else
         fav->selectionName = sel.getName();
 
@@ -672,6 +679,10 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             sim->setSelection(newSel);
             if (!oldSel.empty() && oldSel == newSel)
                 sim->centerSelection();
+#ifdef OCTREE_DEBUG
+            getRenderer()->m_selected = newSel;
+#endif
+
         }
         else if (button == RightButton)
         {
@@ -1205,7 +1216,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (typedTextCompletionIdx >= 0) {
                 string::size_type pos = typedText.rfind('/', typedText.length());
                 if (pos != string::npos)
-                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx];
+                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx].str();
                 else
                     typedText = typedTextCompletion[typedTextCompletionIdx];
             }
@@ -1221,7 +1232,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (typedTextCompletionIdx >= 0) {
                 string::size_type pos = typedText.rfind('/', typedText.length());
                 if (pos != string::npos)
-                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx];
+                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx].str();
                 else
                     typedText = typedTextCompletion[typedTextCompletionIdx];
             }
@@ -1774,7 +1785,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'H':
         addToHistory();
-        sim->setSelection(sim->getUniverse()->getStarCatalog()->find(0));
+        sim->setSelection(sim->getUniverse()->getDatabase().getStar(0));
         break;
 
     case 'I':
@@ -3218,19 +3229,9 @@ static void displayLocationInfo(Overlay& overlay,
 
 static string getSelectionName(const Selection& sel, const Universe& univ)
 {
-    switch (sel.getType())
-    {
-    case Selection::Type_Body:
-        return sel.body()->getName(false);
-    case Selection::Type_DeepSky:
-        return univ.getDSOCatalog()->getDSOName(sel.deepsky(), false);
-    case Selection::Type_Star:
-        return univ.getStarCatalog()->getStarName(*sel.star(), true);
-    case Selection::Type_Location:
-        return sel.location()->getName(false);
-    default:
-        return "";
-    }
+    if (sel.getType() != Selection::Type_Nil)
+        return sel.astroObject()->getName(false);
+    return "";
 }
 
 #if 0
@@ -3464,28 +3465,40 @@ void CelestiaCore::renderOverlay()
         glPopMatrix();
     }
 
+#ifdef OCTREE_DEBUG
+#define FPS_H 8
+#else
+#define FPS_H 2
+#endif
+
     if (hudDetail > 0 && (overlayElements & ShowVelocity))
     {
         // Speed
         glPushMatrix();
-        glTranslatef(0.0f, (float) (fontHeight * 2 + 5), 0.0f);
+        glTranslatef(0.0f, (float) (fontHeight * FPS_H + 5), 0.0f);
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
 
         overlay->beginText();
         *overlay << '\n';
         if (showFPSCounter)
+        {
 #ifdef OCTREE_DEBUG
             fmt::fprintf(*overlay, _("FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : %zu : %zu ]\n"),
+            Renderer *rend = getRenderer();
+            fmt::fprintf(*overlay, _("FPS: %.1f\nStars: [ %i : %i : %i ], Limit: %f\nDSOs: [ %i : %i : %i ]\n"),
                          fps,
-                         getRenderer()->m_starProcStats.objects,
-                         getRenderer()->m_starProcStats.nodes,
-                         getRenderer()->m_starProcStats.height,
-                         getRenderer()->m_dsoProcStats.objects,
-                         getRenderer()->m_dsoProcStats.nodes,
-                         getRenderer()->m_dsoProcStats.height);
+                         rend->m_starProcStats.objects,
+                         rend->m_starProcStats.nodes,
+                         rend->m_starProcStats.height,
+                         rend->m_starProcStats.limit,
+                         rend->m_dsoProcStats.objects,
+                         rend->m_dsoProcStats.nodes,
+                         rend->m_dsoProcStats.height);
+
 #else
             fmt::fprintf(*overlay, _("FPS: %.1f\n"), fps);
 #endif
+        }
         else
             *overlay << '\n';
 
@@ -3590,21 +3603,7 @@ void CelestiaCore::renderOverlay()
                 if (sel != lastSelection)
                 {
                     lastSelection = sel;
-                    selectionNames = sim->getUniverse()->getStarCatalog()->getStarNameList(*sel.star());
-                    // Skip displaying the English name if a localized version is present.
-                    string starName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star());
-                    string locStarName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true);
-                    if (sel.star()->getCatalogNumber() == 0 && selectionNames.find("Sun") != string::npos && (const char*) "Sun" != _("Sun"))
-                    {
-                        string::size_type startPos = selectionNames.find("Sun");
-                        string::size_type endPos = selectionNames.find(_("Sun"));
-                        selectionNames = selectionNames.erase(startPos, endPos - startPos);
-                    }
-                    else if (selectionNames.find(starName) != string::npos && starName != locStarName)
-                    {
-                        string::size_type startPos = selectionNames.find(locStarName);
-                        selectionNames = selectionNames.substr(startPos);
-                    }
+                    selectionNames = sel.star()->getName().str();
                 }
 
                 overlay->setFont(titleFont);
@@ -3624,15 +3623,7 @@ void CelestiaCore::renderOverlay()
                 if (sel != lastSelection)
                 {
                     lastSelection = sel;
-                    selectionNames = sim->getUniverse()->getDSOCatalog()->getDSONameList(sel.deepsky());
-                    // Skip displaying the English name if a localized version is present.
-                    string DSOName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
-                    string locDSOName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky(), true);
-                    if (selectionNames.find(DSOName) != string::npos && DSOName != locDSOName)
-                    {
-                        string::size_type startPos = selectionNames.find(locDSOName);
-                        selectionNames = selectionNames.substr(startPos);
-                    }
+                    selectionNames = sel.deepsky()->getName().str();
                 }
 
                 overlay->setFont(titleFont);
@@ -3651,34 +3642,7 @@ void CelestiaCore::renderOverlay()
                 if (sel != lastSelection)
                 {
                     lastSelection = sel;
-                    selectionNames = "";
-                    const vector<string>& names = sel.body()->getNames();
-
-                    // Skip displaying the primary name if there's a localized version
-                    // of the name.
-                    vector<string>::const_iterator firstName = names.begin();
-                    if (sel.body()->hasLocalizedName())
-                        firstName++;
-
-                    for (vector<string>::const_iterator iter = firstName; iter != names.end(); iter++)
-                    {
-                        if (iter != firstName)
-                            selectionNames += " / ";
-
-                        // Use localized version of parent name in alternative names.
-                        string alias = *iter;
-                        Selection parent = sel.parent();
-                        if (parent.body() != nullptr)
-                        {
-                            string parentName = parent.body()->getName();
-                            string locParentName = parent.body()->getName(true);
-                            string::size_type startPos = alias.find(parentName);
-                            if (startPos != string::npos)
-                                alias.replace(startPos, parentName.length(), locParentName);
-                        }
-
-                        selectionNames += alias;
-                    }
+                    selectionNames = sel.body()->getNames();
                 }
 
                 overlay->setFont(titleFont);
@@ -3696,7 +3660,7 @@ void CelestiaCore::renderOverlay()
 
         case Selection::Type_Location:
             overlay->setFont(titleFont);
-            *overlay << sel.location()->getName(true).c_str();
+            *overlay << sel.location()->getNames();
             overlay->setFont(font);
             *overlay << '\n';
             displayLocationInfo(*overlay,
@@ -3781,7 +3745,7 @@ void CelestiaCore::renderOverlay()
             int nb_lines = 3;
             int start = 0;
             glTranslatef(3.0f, -font->getHeight() - 3.0f, 0.0f);
-            vector<std::string>::const_iterator iter = typedTextCompletion.begin();
+            vector<Name>::const_iterator iter = typedTextCompletion.begin();
             if (typedTextCompletionIdx >= nb_cols * nb_lines)
             {
                start = (typedTextCompletionIdx / nb_lines + 1 - nb_cols) * nb_lines;
@@ -3797,7 +3761,7 @@ void CelestiaCore::renderOverlay()
                         glColor4f(1.0f, 0.6f, 0.6f, 1);
                     else
                         glColor4f(0.6f, 0.6f, 1.0f, 1);
-                    *overlay << *iter << "\n";
+                    *overlay << iter->str() << "\n";
                 }
                 overlay->endText();
                 glPopMatrix();
@@ -3966,53 +3930,57 @@ class SolarSystemLoader
         ifstream solarSysFile(filepath.string(), ios::in);
         if (solarSysFile.good())
         {
-            LoadSolarSystemObjects(solarSysFile,
-                                   *universe,
-                                   filepath.parent_path());
+            SSCDataLoader loader(universe, filepath);
+            loader.load(solarSysFile);
         }
     };
 };
 
-template <class OBJDB> class CatalogLoader
+class CatalogLoader
 {
-    OBJDB*      objDB;
-    string      typeDesc;
-    ContentType contentType;
-    ProgressNotifier* notifier;
+    AstroDataLoader &m_loader;
+    string          m_typeDesc;
+    ContentType     m_contentType;
+    string          m_resPath;
+    ProgressNotifier* m_notifier;
 
  public:
-    CatalogLoader(OBJDB* db,
-                  const std::string& typeDesc,
-                  const ContentType& contentType,
-                  ProgressNotifier* pn) :
-        objDB      (db),
-        typeDesc   (typeDesc),
-        contentType(contentType),
-        notifier(pn)
+        CatalogLoader(AstroDataLoader &dataLoader,
+                      const std::string& typeDesc,
+                      const ContentType& contentType,
+                      const string&      respath,
+                      ProgressNotifier* pn) :
+        m_loader     (dataLoader),
+        m_typeDesc   (typeDesc),
+        m_contentType(contentType),
+        m_resPath    (respath),
+        m_notifier   (pn)
     {
     }
 
+    const string& getPath() { return m_resPath; }
+
     void process(const fs::path& filepath)
     {
-        if (DetermineFileType(filepath) != contentType)
+        if (DetermineFileType(filepath) != m_contentType)
             return;
 
-        fmt::fprintf(clog, _("Loading %s catalog: %s\n"), typeDesc, filepath.string());
-        if (notifier != nullptr)
-            notifier->update(filepath.filename().string());
+        fmt::fprintf(clog, _("Loading %s catalog: %s\n"), m_typeDesc, filepath.string());
+        if (m_notifier != nullptr)
+            m_notifier->update(filepath.filename().string());
 
         ifstream catalogFile(filepath.string(), ios::in);
         if (catalogFile.good())
         {
-            if (!objDB->load(catalogFile, filepath.parent_path()))
-                DPRINTF(LOG_LEVEL_ERROR, "Error reading %s catalog file: %s\n", typeDesc.c_str(), filepath.string());
+            m_loader.resourcePath = getPath();
+            bool success = m_loader.load(catalogFile);
+            if (!success)
+            {
+                DPRINTF(LOG_LEVEL_ERROR, "Error reading %s catalog file: %s\n", m_typeDesc.c_str(), filepath.string());
+            }
         }
     }
 };
-
-using StarLoader = CatalogLoader<StarDatabase>;
-using DeepSkyLoader = CatalogLoader<DSODatabase>;
-
 
 bool CelestiaCore::initSimulation(const fs::path& configFileName,
                                   const vector<fs::path>& extrasDirs,
@@ -4082,6 +4050,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     universe = new Universe();
 
+    AstroDatabase &aDB = universe->getDatabase();
 
     /***** Load star catalogs *****/
 
@@ -4091,15 +4060,19 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         return false;
     }
 
+    OctreeNode *root = aDB.getStarOctree();
+    int nerrnodes = root->check(-1000, 0, false);
+    if (nerrnodes > 0)
+    {
+        fmt::fprintf(cout, "%i bad nodes detected!\n", nerrnodes);
+        exit(1);
+    }
 
     /***** Load the deep sky catalogs *****/
 
-    DSONameDatabase* dsoNameDB  = new DSONameDatabase;
-    DSODatabase*     dsoDB      = new DSODatabase;
-    dsoDB->setNameDatabase(dsoNameDB);
-
     // Load first the vector of dsoCatalogFiles in the data directory (deepsky.dsc, globulars.dsc,...):
 
+    DscDataLoader dscLoader(&aDB);
     for (const auto& file : config->dsoCatalogFiles)
     {
         if (progressNotifier)
@@ -4110,7 +4083,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         {
             warning(fmt::sprintf(_("Error opening deepsky catalog file %s.\n"), file));
         }
-        if (!dsoDB->load(dsoFile, ""))
+        if (!dscLoader.load(dsoFile))
         {
             warning(fmt::sprintf(_("Cannot read Deep Sky Objects database %s.\n"), file));
         }
@@ -4122,23 +4095,23 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         if (!is_valid_directory(dir))
             continue;
 
-        DeepSkyLoader loader(dsoDB,
+        CatalogLoader loader(dscLoader,
                              "deep sky object",
                              Content_CelestiaDeepSkyCatalog,
+                             dir,
                              progressNotifier);
         for (const auto& fn : fs::recursive_directory_iterator(dir))
             loader.process(fn);
     }
-    dsoDB->finish();
-    universe->setDSOCatalog(dsoDB);
+
+    aDB.getDsoOctree()->check(-1000 , 0, false);
+    getRenderer()->m_avgDsoMag = aDB.avgDsoMag();
 
 
     /***** Load the solar system catalogs *****/
     // First read the solar system files listed individually in the
     // config file.
     {
-        SolarSystemCatalog* solarSystemCatalog = new SolarSystemCatalog();
-        universe->setSolarSystemCatalog(solarSystemCatalog);
         for (const auto& file : config->solarSystemFiles)
         {
             if (progressNotifier)
@@ -4151,7 +4124,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
             }
             else
             {
-                LoadSolarSystemObjects(solarSysFile, *universe);
+                SSCDataLoader loader(universe, "");
+                loader.load(solarSysFile);
             }
         }
     }
@@ -4181,7 +4155,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         else
         {
             AsterismList* asterisms = ReadAsterismList(asterismsFile,
-                                                       *universe->getStarCatalog());
+                                                       universe->getDatabase());
             universe->setAsterisms(asterisms);
         }
     }
@@ -4329,9 +4303,8 @@ bool CelestiaCore::initRenderer()
     return true;
 }
 
-
-static void loadCrossIndex(StarDatabase* starDB,
-                           StarDatabase::Catalog catalog,
+static void loadCrossIndex(CrossIndexDataLoader &xloader,
+                           AstroDatabase::Catalog catalog,
                            const fs::path& filename)
 {
     if (!filename.empty())
@@ -4339,7 +4312,8 @@ static void loadCrossIndex(StarDatabase* starDB,
         ifstream xrefFile(filename.string(), ios::in | ios::binary);
         if (xrefFile.good())
         {
-            if (!starDB->loadCrossIndex(catalog, xrefFile))
+            xloader.catalog = catalog;
+            if (!xloader.load(xrefFile))
                 fmt::fprintf(cerr, _("Error reading cross index %s\n"), filename);
             else
                 fmt::fprintf(clog, _("Loaded cross index %s\n"), filename);
@@ -4351,25 +4325,11 @@ static void loadCrossIndex(StarDatabase* starDB,
 bool CelestiaCore::readStars(const CelestiaConfig& cfg,
                              ProgressNotifier* progressNotifier)
 {
+    AstroDatabase &aDB = universe->getDatabase();
     StarDetails::SetStarTextures(cfg.starTextures);
-
-    ifstream starNamesFile(cfg.starNamesFile.string(), ios::in);
-    if (!starNamesFile.good())
-    {
-        fmt::fprintf(cerr, _("Error opening %s\n"), cfg.starNamesFile);
-        return false;
-    }
-
-    StarNameDatabase* starNameDB = StarNameDatabase::readNames(starNamesFile);
-    if (starNameDB == nullptr)
-    {
-        cerr << _("Error reading star names file\n");
-        return false;
-    }
 
     // First load the binary star database file.  The majority of stars
     // will be defined here.
-    StarDatabase* starDB = new StarDatabase();
     if (!cfg.starDatabaseFile.empty())
     {
         if (progressNotifier)
@@ -4379,28 +4339,40 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         if (!starFile.good())
         {
             fmt::fprintf(cerr, _("Error opening %s\n"), cfg.starDatabaseFile);
-            delete starDB;
-            delete starNameDB;
             return false;
         }
 
-        if (!starDB->loadBinary(starFile))
+        StarBinDataLoader starBinLoader(&aDB);
+        if (!starBinLoader.load(starFile))
         {
             cerr << _("Error reading stars file\n");
-            delete starDB;
-            delete starNameDB;
             return false;
         }
     }
 
-    starDB->setNameDatabase(starNameDB);
+    // Load star names
+    ifstream starNamesFile(cfg.starNamesFile.string(), ios::in);
+    if (!starNamesFile.good())
+    {
+        fmt::fprintf(cerr, _("Error opening %s\n"), cfg.starNamesFile);
+        return false;
+    }
 
-    loadCrossIndex(starDB, StarDatabase::HenryDraper, cfg.HDCrossIndexFile);
-    loadCrossIndex(starDB, StarDatabase::SAO,         cfg.SAOCrossIndexFile);
-    loadCrossIndex(starDB, StarDatabase::Gliese,      cfg.GlieseCrossIndexFile);
+    NameDataLoader nameLoader(&aDB);
+    if (!nameLoader.load(starNamesFile))
+    {
+        cerr << _("Error reading star names file\n");
+        return false;
+    }
+
+    CrossIndexDataLoader xloader(&aDB);
+    loadCrossIndex(xloader, AstroDatabase::HenryDraper, cfg.HDCrossIndexFile);
+    loadCrossIndex(xloader, AstroDatabase::SAO,         cfg.SAOCrossIndexFile);
+    loadCrossIndex(xloader, AstroDatabase::Gliese,      cfg.GlieseCrossIndexFile);
 
     // Next, read any ASCII star catalog files specified in the StarCatalogs
     // list.
+    StcDataLoader stcLoader(&aDB);
     for (const auto& file : config->starCatalogFiles)
     {
         if (file.empty())
@@ -4408,7 +4380,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
 
         ifstream starFile(file.string(), ios::in);
         if (starFile.good())
-            starDB->load(starFile);
+            stcLoader.load(starFile);
         else
             fmt::fprintf(cerr, _("Error opening star catalog %s\n"), file);
     }
@@ -4419,14 +4391,10 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         if (!is_valid_directory(dir))
             continue;
 
-        StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
+        CatalogLoader loader(stcLoader, "star", Content_CelestiaStarCatalog, dir, progressNotifier);
         for (const auto& fn : fs::recursive_directory_iterator(dir))
             loader.process(fn);
     }
-
-    starDB->finish();
-
-    universe->setStarCatalog(starDB);
 
     return true;
 }

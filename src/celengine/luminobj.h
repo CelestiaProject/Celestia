@@ -17,7 +17,6 @@ class LuminousObject : public AstroObject
     void setAbsoluteMagnitude(float _mag);
     Eigen::Vector3d getPosition() const { return m_position; }
     void setPosition(const Eigen::Vector3d _pos);
-    void setPosition(double x, double y, double z) { setPosition(Eigen::Vector3d(x, y, z)); }
     void setOctreeNode(OctreeNode *n) { m_octreeNode = n; }
     OctreeNode *getOctreeNode() { return m_octreeNode; }
     const OctreeNode *getOctreeNode() const { return m_octreeNode; }

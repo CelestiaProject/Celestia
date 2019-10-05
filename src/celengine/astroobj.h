@@ -32,7 +32,7 @@ public:
     bool addName(const NameInfo::SharedConstPtr &, bool primary = true, bool db = true);
     void addNames(const std::string &, PlanetarySystem * = nullptr, bool db = true);
     bool addAlias(const std::string &name,
-                  const std::string &domain,
+                  const std::string &domain = string(),
                   PlanetarySystem *sys = nullptr,
                   bool greek = true,
                   bool db = true)

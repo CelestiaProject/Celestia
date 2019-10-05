@@ -9,11 +9,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <new>
 #include <cstring>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_object.h"
 #include "celx_category.h"
+#include "celx_name.h"
 #include <celengine/body.h>
 #include <celengine/timelinephase.h>
 #include <celengine/axisarrow.h>
@@ -508,28 +510,8 @@ static int object_name(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to function object:name");
 
     Selection* sel = this_object(l);
-    switch (sel->getType())
-    {
-        case Selection::Type_Body:
-            lua_pushstring(l, sel->body()->getName().c_str());
-            break;
-        case Selection::Type_DeepSky:
-            lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                           ->getDSOCatalog()->getDSOName(sel->deepsky()).c_str());
-            break;
-        case Selection::Type_Star:
-            lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                           ->getStarCatalog()->getStarName(*(sel->star())).c_str());
-            break;
-        case Selection::Type_Location:
-            lua_pushstring(l, sel->location()->getName().c_str());
-            break;
-        default:
-            lua_pushstring(l, "?");
-            break;
-    }
-
-    return 1;
+    const char *ret = sel->astroObject() != nullptr ? sel->astroObject()->getName().c_str() : "?";
+    return celx.push(ret);
 }
 
 static int object_localname(lua_State* l)
@@ -538,25 +520,8 @@ static int object_localname(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to function object:localname");
 
     Selection* sel = this_object(l);
-    switch (sel->getType())
-    {
-        case Selection::Type_Body:
-            lua_pushstring(l, sel->body()->getName(true).c_str());
-            break;
-        case Selection::Type_DeepSky:
-            lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                           ->getDSOCatalog()->getDSOName(sel->deepsky(), true).c_str());
-            break;
-        case Selection::Type_Star:
-            lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                           ->getStarCatalog()->getStarName(*(sel->star()), true).c_str());
-            break;
-        default:
-            lua_pushstring(l, "?");
-            break;
-    }
-
-    return 1;
+    const char *ret = sel->astroObject() != nullptr ? sel->astroObject()->getLocalizedName().c_str() : "?";
+    return celx.push(ret);
 }
 
 static int object_spectraltype(lua_State* l)
@@ -592,9 +557,8 @@ static int object_getinfo(lua_State* l)
     {
         Star* star = sel->star();
         celx.setTable("type", "star");
-        celx.setTable("name", celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                 ->getStarCatalog()->getStarName(*(sel->star())).c_str());
-        celx.setTable("catalogNumber", star->getCatalogNumber());
+        celx.setTable("name", sel->star()->getName().c_str());
+        celx.setTable("catalogNumber", star->getIndex());
         celx.setTable("stellarClass", star->getSpectralType());
         celx.setTable("absoluteMagnitude", (lua_Number)star->getAbsoluteMagnitude());
         celx.setTable("luminosity", (lua_Number)star->getLuminosity());
@@ -684,9 +648,8 @@ static int object_getinfo(lua_State* l)
         const char* objTypeName = deepsky->getObjTypeName();
         celx.setTable("type", objTypeName);
 
-        celx.setTable("name", celx.appCore(AllErrors)->getSimulation()->getUniverse()
-                 ->getDSOCatalog()->getDSOName(deepsky).c_str());
-        celx.setTable("catalogNumber", deepsky->getCatalogNumber());
+        celx.setTable("name", deepsky->getName().c_str());
+        celx.setTable("catalogNumber", deepsky->getIndex());
 
         if (!strcmp(objTypeName, "galaxy"))
             celx.setTable("hubbleType", deepsky->getType());
@@ -836,9 +799,9 @@ static int object_getchildren(lua_State* l)
     lua_newtable(l);
     if (sel->star() != nullptr)
     {
-        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star()->getCatalogNumber());
-        if (iter != solarSystemCatalog->end())
+        const auto& solarSystemCatalog = sim->getUniverse()->getDatabase().getSystems();
+        auto iter = solarSystemCatalog.find(sel->star()->getIndex());
+        if (iter != solarSystemCatalog.end())
         {
             SolarSystem* solarSys = iter->second;
             for (int i = 0; i < solarSys->getPlanets()->getSystemSize(); i++)
@@ -923,17 +886,17 @@ static int object_catalognumber(lua_State* l)
     // The argument is a string indicating the catalog.
     bool validCatalog = false;
     bool useHIPPARCOS = false;
-    StarDatabase::Catalog catalog = StarDatabase::HenryDraper;
+    AstroDatabase::Catalog catalog = AstroDatabase::HenryDraper;
     if (catalogName != nullptr)
     {
         if (compareIgnoringCase(catalogName, "HD") == 0)
         {
-            catalog = StarDatabase::HenryDraper;
+            catalog = AstroDatabase::HenryDraper;
             validCatalog = true;
         }
         else if (compareIgnoringCase(catalogName, "SAO") == 0)
         {
-            catalog = StarDatabase::SAO;
+            catalog = AstroDatabase::SAO;
             validCatalog = true;
         }
         else if (compareIgnoringCase(catalogName, "HIP") == 0)
@@ -943,25 +906,25 @@ static int object_catalognumber(lua_State* l)
         }
     }
 
-    uint32_t catalogNumber = Star::InvalidCatalogNumber;
+    AstroCatalog::IndexNumber catalogNumber = AstroCatalog::InvalidIndex;
     if (sel->star() != nullptr && validCatalog)
     {
-        uint32_t internalNumber = sel->star()->getCatalogNumber();
+        AstroCatalog::IndexNumber internalNumber = sel->star()->getIndex();
 
         if (useHIPPARCOS)
         {
             // Celestia's internal catalog numbers /are/ HIPPARCOS numbers
-            if (internalNumber < StarDatabase::MAX_HIPPARCOS_NUMBER)
+            if (internalNumber < HipparcosAstroCatalog::MaxCatalogNumber)
                 catalogNumber = internalNumber;
         }
         else
         {
-            const StarDatabase* stardb = appCore->getSimulation()->getUniverse()->getStarCatalog();
-            catalogNumber = stardb->crossIndex(catalog, internalNumber);
+            const AstroDatabase& db = appCore->getSimulation()->getUniverse()->getDatabase();
+            catalogNumber = db.catalogNumberToIndex(catalog, internalNumber);
         }
     }
 
-    if (catalogNumber != Star::InvalidCatalogNumber)
+    if (catalogNumber != AstroCatalog::InvalidIndex)
         lua_pushnumber(l, catalogNumber);
     else
         lua_pushnil(l);
@@ -1122,7 +1085,7 @@ static int object_orbitframe(lua_State* l)
     else
     {
         auto f = sel->body()->getOrbitFrame(t);
-        celx.newFrame(ObserverFrame(f));
+        celx.newFrame(ObserverFrame(*f));
     }
 
     return 1;
@@ -1163,7 +1126,7 @@ static int object_bodyframe(lua_State* l)
     else
     {
         auto f = sel->body()->getBodyFrame(t);
-        celx.newFrame(ObserverFrame(f));
+        celx.newFrame(ObserverFrame(*f));
     }
 
     return 1;
@@ -1474,10 +1437,17 @@ static int object_setatmosphere(lua_State* l)
     return 0;
 }
 
-#define checkEmpty(c,s) \
+#define checkThisEmpty(c,s) \
     if (s->empty()) \
     { \
         c.doError("Selection object is empty!"); \
+        return 0; \
+    }
+
+#define checkNull(c,s,m) \
+    if (s == nullptr) \
+    { \
+        c.doError(m); \
         return 0; \
     }
 
@@ -1486,9 +1456,9 @@ static int object_getcategories(lua_State *l)
     CelxLua celx(l);
 
     Selection *s = celx.getThis<Selection>();
-    checkEmpty(celx, s);
+    checkThisEmpty(celx, s);
     AstroObject::CategorySet *set = s->astroObject()->getCategories();
-    return celx.pushIterable<UserCategory*>(set);
+    return celx.pushClassIterable<UserCategory*>(set);
 }
 
 static int object_addtocategory(lua_State *l)
@@ -1496,7 +1466,7 @@ static int object_addtocategory(lua_State *l)
     CelxLua celx(l);
 
     Selection *s = celx.getThis<Selection>();
-    checkEmpty(celx, s);
+    checkThisEmpty(celx, s);
     bool ret;
     if (celx.isUserData(2))
     {
@@ -1520,7 +1490,7 @@ static int object_removefromcategory(lua_State *l)
     CelxLua celx(l);
 
     Selection *s = celx.getThis<Selection>();
-    checkEmpty(celx, s);
+    checkThisEmpty(celx, s);
     bool ret;
     if (celx.isUserData(2))
     {
@@ -1539,6 +1509,73 @@ static int object_removefromcategory(lua_State *l)
     return celx.push(ret);
 }
 
+static int object_getnames(lua_State *l)
+{
+    CelxLua celx(l);
+    Selection *s = celx.getThis<Selection>();
+    checkThisEmpty(celx, s);
+    vector<NameInfo::SharedConstPtr> ret;
+    for (const auto &info : s->astroObject()->getNameInfos())
+    {
+        ret.emplace_back(info);
+    }
+    return celx.pushClassIterable<NameInfo::SharedConstPtr>(ret);
+}
+
+static int object_addname(lua_State *l)
+{
+    const char *arg1msg = "First argument of object::addname must be string!";
+//     const char arg2msg = "Second argument of object::addname must be string!";
+    CelxLua celx(l);
+    Selection *s = celx.getThis<Selection>();
+    checkThisEmpty(celx, s);
+    const char *namev = celx.safeGetString(2, AllErrors, arg1msg);
+    checkNull(celx, namev, arg1msg);
+    const char *domain = celx.getString(3);
+    bool greek = true;
+    if (celx.isBoolean(4))
+        greek = celx.getBoolean(4);
+    bool ret = s->astroObject()->addName(string(namev), Name(domain), nullptr, greek);
+    return celx.push(ret);
+}
+
+static int object_addalias(lua_State *l)
+{
+    const char *arg1msg = "First argument of object::addalias must be string!";
+//     const char arg2msg = "Second argument of object::addalias must be string!";
+    CelxLua celx(l);
+    Selection *s = celx.getThis<Selection>();
+    checkThisEmpty(celx, s);
+    const char *namev = celx.safeGetString(2, AllErrors, arg1msg);
+    checkNull(celx, namev, arg1msg);
+    const char *domain = celx.getString(3);
+    bool greek = true;
+    if (celx.isBoolean(4))
+        greek = celx.getBoolean(4);
+    bool ret = s->astroObject()->addAlias(string(namev), Name(domain), nullptr, greek);
+    return celx.push(ret);
+}
+
+static int object_removename(lua_State *l)
+{
+    const char *arg1msg = "First argument of object::remove must be a string or name object!";
+
+    CelxLua celx(l);
+    Selection *s = celx.getThis<Selection>();
+    checkThisEmpty(celx, s);
+    bool greek = true;
+    if (celx.isBoolean(3))
+        greek = celx.getBoolean(4);
+    const char *namev = celx.getString(2);
+    if (namev != nullptr)
+        return celx.push(s->astroObject()->removeName(string(namev), greek));
+    auto namei = celx.getClass<NameInfo::SharedConstPtr>(2);
+    if (namei != nullptr)
+        return celx.push(s->astroObject()->removeName((*namei)));
+    celx.doError(arg1msg);
+    return 0;
+}
+
 void ExtendObjectMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -1550,5 +1587,9 @@ void ExtendObjectMetaTable(lua_State* l)
     celx.registerMethod("getcategories", object_getcategories);
     celx.registerMethod("addtocategory", object_addtocategory);
     celx.registerMethod("removefromcategory", object_removefromcategory);
+    celx.registerMethod("getnames", object_getnames);
+    celx.registerMethod("addname", object_addname);
+    celx.registerMethod("addalias", object_addalias);
+    celx.registerMethod("removename", object_removename);
     celx.pop(1);
 }

@@ -15,7 +15,7 @@
 #include <vector>
 #include <iostream>
 #include <celutil/color.h>
-#include "stardb.h"
+#include "astrodb.h"
 #include "shadermanager.h"
 #include "vertexobject.h"
 
@@ -76,6 +76,6 @@ class AsterismList : public std::vector<Asterism*>
     ShaderProperties shadprop{ ShaderProperties::UniformColor };
 };
 
-AsterismList* ReadAsterismList(std::istream&, const StarDatabase&);
+AsterismList* ReadAsterismList(std::istream&, const AstroDatabase&);
 
 #endif // _CELENGINE_ASTERISM_H_

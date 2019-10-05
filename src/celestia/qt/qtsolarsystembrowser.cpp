@@ -32,7 +32,7 @@
 using namespace std;
 
 
-class SolarSystemTreeModel : public QAbstractItemModel, public ModelHelper
+class SolarSystemTreeModel : public QAbstractTableModel, public ModelHelper
 {
 public:
     SolarSystemTreeModel(const Universe* _universe);
@@ -175,9 +175,9 @@ SolarSystemTreeModel::createTreeItem(Selection sel,
     {
         // Stars may have both a solar system and other stars orbiting
         // them.
-        SolarSystemCatalog* solarSystems = universe->getSolarSystemCatalog();
-        auto iter = solarSystems->find(sel.star()->getCatalogNumber());
-        if (iter != solarSystems->end())
+        const AstroDatabase::SolarSystemIndex &solarSystems = universe->getDatabase().getSystems();
+        auto iter = solarSystems.find(sel.star()->getIndex());
+        if (iter != solarSystems.end())
         {
             sys = iter->second->getPlanets();
         }
@@ -624,7 +624,7 @@ QVariant SolarSystemTreeModel::data(const QModelIndex& index, int role) const
     case NameColumn:
         if (sel.star() != nullptr)
         {
-            string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*sel.star(), true));
+            string starNameString = sel.star()->getName(true).str();
             return QString::fromStdString(starNameString);
         }
         if (sel.body() != nullptr)
@@ -934,9 +934,8 @@ void SolarSystemBrowser::slotMarkSelected()
                 if (sel.body() != nullptr)
                     label = sel.body()->getName(true);
                 else if (sel.star() != nullptr)
-                    label = universe->getStarCatalog()->getStarName(*sel.star());
+                    label = sel.star()->getName().str();
 
-                label = ReplaceGreekLetterAbbr(label);
             }
             // FIXME: unmark is required to change the marker representation
             universe->unmarkObject(sel, 1);

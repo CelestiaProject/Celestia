@@ -13,7 +13,7 @@
 #define _CELENGINE_STARBROWSER_H_
 
 #include "star.h"
-#include "stardb.h"
+#include "astrodb.h"
 #include "simulation.h"
 
 

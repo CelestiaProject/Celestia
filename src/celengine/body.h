@@ -10,6 +10,8 @@
 #ifndef _CELENGINE_BODY_H_
 #define _CELENGINE_BODY_H_
 
+#include <celengine/astroobj.h>
+#include <celengine/namedb.h>
 #include <celengine/surface.h>
 #include <celengine/star.h>
 #include <celengine/location.h>
@@ -24,8 +26,6 @@
 #include <vector>
 #include <map>
 #include <list>
-#include <celengine/astroobj.h>
-#include <celengine/namedb.h>
 
 class Selection;
 class ReferenceFrame;
@@ -52,10 +52,6 @@ class PlanetarySystem
     void removeBody(Body* body);
     void replaceBody(Body* oldBody, Body* newBody);
 
-    void addName(NameInfo::SharedConstPtr);
-    void addLocalizedName(NameInfo::SharedConstPtr);
-    void removeName(NameInfo::SharedConstPtr);
-
     int getOrder(const Body* body) const;
 
     enum TraversalResult
@@ -68,23 +64,22 @@ class PlanetarySystem
 
     bool traverse(TraversalFunc, void*) const;
     Body* find(const std::string&, bool deepSearch = false, bool i18n = false) const;
-    std::vector<std::string> getCompletion(const std::string& _name, bool rec = true) const;
+    std::vector<Name> getCompletion(const std::string& _name, bool rec = true) const;
 
  private:
     void addBodyToNameIndex(Body* body);
     void removeBodyFromNameIndex(const Body* body);
+    void addName(NameInfo::SharedConstPtr);
+    void addLocalizedName(NameInfo::SharedConstPtr);
+    void removeName(NameInfo::SharedConstPtr);
 
  private:
-    typedef std::map<std::string, Body*, UTF8StringOrderingPredicate> ObjectIndex;
-
- private:
-    AstroNameDatabase m_nameDB;
-    friend AstroObject;
-    friend NameInfo;
     Star* star;
     Body* primary{nullptr};
     std::vector<Body*> satellites;
-    ObjectIndex objectIndex;  // index of bodies by name
+    AstroNameDatabase m_nameDB;
+    friend AstroObject;
+    friend NameInfo;
 };
 
 
@@ -198,13 +193,6 @@ class Body : public AstroObject
     void setDefaultProperties();
 
     PlanetarySystem* getSystem() const;
-    const std::vector<std::string>& getNames() const;
-    std::string getName(bool i18n = false) const;
-    std::string getLocalizedName() const;
-    bool hasLocalizedName() const;
-    void addAlias(const std::string& alias);
-
-    using AstroObject::addAlias;
 
     void setTimeline(Timeline* timeline);
     const Timeline* getTimeline() const;
@@ -368,13 +356,10 @@ class Body : public AstroObject
     void markUpdated();
 
  private:
-    void setName(const std::string& name);
+//     void setName(const std::string& name);
     void recomputeCullingRadius();
 
  private:
-    std::vector<std::string> names{ 1 };
-    unsigned int localizedNameIndex{ 0 };
-
     // Parent in the name hierarchy
     PlanetarySystem* system;
     // Children in the name hierarchy

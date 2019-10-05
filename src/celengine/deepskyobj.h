@@ -45,9 +45,6 @@ class DeepSkyObject : public LuminousObject
     }
     virtual ~DeepSkyObject() = default;
 
-    void setCatalogNumber(uint32_t);
-    uint32_t getCatalogNumber() const;
-
     static void hsv2rgb( float*, float*, float*, float, float, float);
 
     virtual const char* getType() const = 0;
@@ -95,13 +92,7 @@ class DeepSkyObject : public LuminousObject
     virtual uint64_t getRenderMask() const { return 0; }
     virtual unsigned int getLabelMask() const { return 0; }
 
-    enum : uint32_t
-    {
-        InvalidCatalogNumber = 0xffffffff
-    };
-
  private:
-    uint32_t catalogNumber { InvalidCatalogNumber };
     Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
     float        radius{ 1 };
     std::string infoURL;

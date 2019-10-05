@@ -12,8 +12,8 @@
 #define _CELENGINE_UNIVERSE_H_
 
 #include <celengine/univcoord.h>
-#include <celengine/stardb.h>
-#include <celengine/dsodb.h>
+//#include <celengine/stardb.h>
+//#include <celengine/dsodb.h>
 #include <celengine/astrodb.h>
 #include <celengine/solarsys.h>
 #include <celengine/deepskyobj.h>
@@ -30,15 +30,6 @@ class Universe
  public:
     Universe();
     ~Universe();
-
-    StarDatabase* getStarCatalog() const;
-    void setStarCatalog(StarDatabase*);
-
-    SolarSystemCatalog* getSolarSystemCatalog() const;
-    void setSolarSystemCatalog(SolarSystemCatalog*);
-
-    DSODatabase* getDSOCatalog() const;
-    void setDSOCatalog(DSODatabase*);
 
     AstroDatabase& getDatabase() { return m_adb; }
     const AstroDatabase& getDatabase() const { return m_adb; }
@@ -72,11 +63,11 @@ class Universe
                                   const string& name,
                                   bool i18n = false) const;
 
-    std::vector<std::string> getCompletion(const std::string& s,
+    std::vector<Name> getCompletion(const std::string& s,
                                            Selection* contexts = nullptr,
                                            int nContexts = 0,
                                            bool withLocations = false);
-    std::vector<std::string> getCompletionPath(const std::string& s,
+    std::vector<Name> getCompletionPath(const std::string& s,
                                                Selection* contexts = nullptr,
                                                int nContexts = 0,
                                                bool withLocations = false);
@@ -85,7 +76,7 @@ class Universe
     SolarSystem* getNearestSolarSystem(const UniversalCoord& position) const;
     SolarSystem* getSolarSystem(const Star* star) const;
     SolarSystem* getSolarSystem(const Selection&) const;
-    SolarSystem* createSolarSystem(Star* star) const;
+    SolarSystem* createSolarSystem(Star* star);
 
     void getNearStars(const UniversalCoord& position,
                       float maxDistance,
@@ -123,9 +114,6 @@ class Universe
 
  private:
     AstroDatabase m_adb;
-    StarDatabase* starCatalog{nullptr};
-    DSODatabase* dsoCatalog{nullptr};
-    SolarSystemCatalog* solarSystemCatalog{nullptr};
     AsterismList* asterisms{nullptr};
     ConstellationBoundaries* boundaries{nullptr};
     MarkerList* markers;

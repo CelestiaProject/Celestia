@@ -14,7 +14,6 @@
 #include <map>
 #include <iostream>
 #include <celengine/body.h>
-#include <celengine/stardb.h>
 
 class FrameTree;
 
@@ -34,14 +33,6 @@ class SolarSystem
     PlanetarySystem* planets;
     FrameTree* frameTree;
 };
-
-typedef std::map<uint32_t, SolarSystem*> SolarSystemCatalog;
-
-class Universe;
-
-bool LoadSolarSystemObjects(std::istream& in,
-                            Universe& universe,
-                            const fs::path& dir = fs::path());
 
 #endif // _SOLARSYS_H_
 

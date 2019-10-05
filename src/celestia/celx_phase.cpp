@@ -96,7 +96,7 @@ static int phase_orbitframe(lua_State* l)
 
     auto phase = this_phase(l);
     auto f = phase->orbitFrame();
-    celx.newFrame(ObserverFrame(f));
+    celx.newFrame(ObserverFrame(*f));
 
     return 1;
 }
@@ -114,7 +114,7 @@ static int phase_bodyframe(lua_State* l)
 
     auto phase = this_phase(l);
     auto f = phase->bodyFrame();
-    celx.newFrame(ObserverFrame(f));
+    celx.newFrame(ObserverFrame(*f));
 
     return 1;
 }

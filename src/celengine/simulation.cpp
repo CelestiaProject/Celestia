@@ -440,7 +440,7 @@ Selection Simulation::findObjectFromPath(string s, bool i18n)
 }
 
 
-vector<std::string> Simulation::getObjectCompletion(string s, bool withLocations)
+vector<Name> Simulation::getObjectCompletion(string s, bool withLocations)
 {
     Selection path[2];
     int nPathEntries = 0;

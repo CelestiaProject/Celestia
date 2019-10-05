@@ -132,7 +132,7 @@ string Selection::getName(bool i18n) const
                 Body* parent = system->getPrimaryBody();
                 if (parent != nullptr)
                 {
-                    name = parent->getName(i18n) + '/' + name;
+                    name = parent->getName(i18n).str() + '/' + name;
                     system = parent->getSystem();
                 }
                 else
@@ -140,7 +140,7 @@ string Selection::getName(bool i18n) const
                     const Star* parentStar = system->getStar();
                     if (parentStar != nullptr)
                     {
-                        string buf = fmt::sprintf("#%i/%s", parentStar->getCatalogNumber(), name);
+                        string buf = fmt::sprintf("#%s/%s", parentStar->getName(i18n).str(), name);
                         name = buf;
                     }
                     system = nullptr;
@@ -152,12 +152,12 @@ string Selection::getName(bool i18n) const
     case Type_Location:
         if (location()->getParentBody() == nullptr)
         {
-            return location()->getName(i18n);
+            return location()->getName(i18n).str();
         }
         else
         {
             return Selection(location()->getParentBody()).getName(i18n) + '/' +
-                location()->getName(i18n);
+                location()->getName(i18n).str();
         }
 
     default:

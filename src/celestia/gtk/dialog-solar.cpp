@@ -17,7 +17,6 @@
 #include <celengine/simulation.h>
 #include <celengine/solarsys.h>
 #include <celengine/star.h>
-#include <celengine/stardb.h>
 
 #include "dialog-solar.h"
 #include "actions.h"
@@ -196,8 +195,7 @@ static void loadNearestStarSystem(AppData* app, GtkWidget* solarTree, GtkTreeSto
     const Star* nearestStar;
 
     const SolarSystem* solarSys = app->simulation->getNearestSolarSystem();
-    StarDatabase *stardb = app->simulation->getUniverse()->getStarCatalog();
-    g_assert(stardb);
+    const AstroDatabase &stardb = app->simulation->getUniverse()->getDatabase();
 
     GtkTreeIter top;
     gtk_tree_store_clear(solarTreeStore);
@@ -207,7 +205,7 @@ static void loadNearestStarSystem(AppData* app, GtkWidget* solarTree, GtkTreeSto
     {
         nearestStar = solarSys->getStar();
 
-        name = g_strdup(stardb->getStarName(*nearestStar).c_str());
+        name = g_strdup(nearestStar->getName().c_str());
 
         sprintf(type, "%s Star", nearestStar->getSpectralType());
 

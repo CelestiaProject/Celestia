@@ -14,6 +14,9 @@
 #include <celengine/category.h>
 #include <celengine/texture.h>
 #include <celcompat/filesystem.h>
+#include <celengine/stardataloader.h>
+#include <celengine/dsodataloader.h>
+#include <celengine/planetdataloader.h>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_celestia.h"
@@ -25,6 +28,7 @@
 #include "celx_rotation.h"
 #include "celx_vector.h"
 #include "celx_category.h"
+#include "celx_name.h"
 #include "url.h"
 #include "imagecapture.h"
 #include "celestiacore.h"
@@ -1263,7 +1267,7 @@ static int celestia_getstarcount(lua_State* l)
 
     CelestiaCore* appCore = this_celestia(l);
     Universe* u = appCore->getSimulation()->getUniverse();
-    lua_pushnumber(l, u->getStarCatalog()->size());
+    lua_pushnumber(l, u->getDatabase().getStars().size());
 
     return 1;
 }
@@ -1282,13 +1286,13 @@ static int celestia_stars_iter(lua_State* l)
     auto i = (uint32_t) lua_tonumber(l, lua_upvalueindex(2));
     Universe* u = appCore->getSimulation()->getUniverse();
 
-    if (i < u->getStarCatalog()->size())
+    if (i < u->getDatabase().getStars().size())
     {
         // Increment the counter
         lua_pushnumber(l, i + 1);
         lua_replace(l, lua_upvalueindex(2));
 
-        Star* star = u->getStarCatalog()->getStar(i);
+        Star* star = u->getDatabase().getStar(i);
         if (star == nullptr)
             lua_pushnil(l);
         else
@@ -1306,11 +1310,13 @@ static int celestia_stars(lua_State* l)
 {
     // Push a closure with two upvalues: the celestia object and a
     // counter.
-    lua_pushvalue(l, 1);    // Celestia object
+    /*lua_pushvalue(l, 1);    // Celestia object
     lua_pushnumber(l, 0);   // counter
     lua_pushcclosure(l, celestia_stars_iter, 2);
 
-    return 1;
+    return 1;*/
+    CelxLua celx(l);
+    return celx.pushIterable<Star*>(this_celestia(l)->getSimulation()->getUniverse()->getDatabase().getStars());
 }
 
 
@@ -1320,14 +1326,14 @@ static int celestia_getdsocount(lua_State* l)
 
     CelestiaCore* appCore = this_celestia(l);
     Universe* u = appCore->getSimulation()->getUniverse();
-    lua_pushnumber(l, u->getDSOCatalog()->size());
+    lua_pushnumber(l, u->getDatabase().getDsos().size());
 
     return 1;
 }
 
 
 // DSOs iterator function; two upvalues expected
-static int celestia_dsos_iter(lua_State* l)
+/*static int celestia_dsos_iter(lua_State* l)
 {
     CelestiaCore* appCore = to_celestia(l, lua_upvalueindex(1));
     if (appCore == nullptr)
@@ -1356,18 +1362,20 @@ static int celestia_dsos_iter(lua_State* l)
 
     // Return nil when we've enumerated all the DSOs
     return 0;
-}
+}*/
 
 
 static int celestia_dsos(lua_State* l)
 {
     // Push a closure with two upvalues: the celestia object and a
     // counter.
-    lua_pushvalue(l, 1);    // Celestia object
+    /*lua_pushvalue(l, 1);    // Celestia object
     lua_pushnumber(l, 0);   // counter
     lua_pushcclosure(l, celestia_dsos_iter, 2);
 
-    return 1;
+    return 1;*/
+    CelxLua celx(l);
+    return celx.pushIterable<DeepSkyObject*>(this_celestia(l)->getSimulation()->getUniverse()->getDatabase().getDsos());
 }
 
 static int celestia_setambient(lua_State* l)
@@ -1620,7 +1628,7 @@ static int celestia_getstar(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     double starIndex = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:getstar must be a number");
     Universe* u = appCore->getSimulation()->getUniverse();
-    Star* star = u->getStarCatalog()->getStar((uint32_t) starIndex);
+    Star* star = u->getDatabase().getStar((uint32_t) starIndex);
     if (star == nullptr)
         lua_pushnil(l);
     else
@@ -1636,7 +1644,7 @@ static int celestia_getdso(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     double dsoIndex = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:getdso must be a number");
     Universe* u = appCore->getSimulation()->getUniverse();
-    DeepSkyObject* dso = u->getDSOCatalog()->getDSO((uint32_t) dsoIndex);
+    DeepSkyObject* dso = u->getDatabase().getDSO((uint32_t) dsoIndex);
     if (dso == nullptr)
         lua_pushnil(l);
     else
@@ -1920,7 +1928,7 @@ static int celestia_takescreenshot(lua_State* l)
 
 
     fs::path path = appCore->getConfig()->scriptScreenshotDirectory;
-#ifndef __APPLE__
+#ifndef TARGET_OS_MAC
     if (strncmp(filetype, "jpg", 3) == 0)
     {
         fs::path filepath = path / (filenamestem + ".jpg");
@@ -2125,15 +2133,20 @@ static int celestia_loadfragment(lua_State* l)
     istringstream in(frag);
     if (compareIgnoringCase(type, "ssc") == 0)
     {
-        ret = LoadSolarSystemObjects(in, *u, dir);
+		SSCDataLoader loader(u, dir);
+		ret = loader.load(in);
     }
     else if (compareIgnoringCase(type, "stc") == 0)
     {
-        ret = u->getStarCatalog()->load(in, dir);
+        StcDataLoader loader(&(u->getDatabase()));
+        loader.resourcePath = dir;
+        ret = loader.load(in);
     }
     else if (compareIgnoringCase(type, "dsc") == 0)
     {
-        ret = u->getDSOCatalog()->load(in, dir);
+        DscDataLoader loader(&(u->getDatabase()));
+        loader.resourcePath = dir;
+        ret = loader.load(in);
     }
 
     lua_pushboolean(l, ret);
@@ -2476,6 +2489,31 @@ static int celestia_bindtranslationdomain(lua_State *l)
     return celx.push(newdir);
 }
 
+/*
+static int celestia_newname(lua_State *l)
+{
+    CelxLua celx(l);
+
+    const char *arg1msg = "First argument of celestia:newname must be a string";
+    const char *arg2msg = "Second argument of celestia:newname must be an AstroObject";
+    const char *namev = celx.safeGetString(2, AllErrors, arg1msg);
+    if (namev == nullptr)
+    {
+        celx.doError(arg1msg);
+        return 0;
+    }
+    Selection *obj = celx.safeGetClass<Selection>(3, AllErrors, arg2msg);
+    if (obj == nullptr)
+    {
+        celx.doError(arg2msg);
+        return 0;
+    }
+    const char *domain = celx.getString(4);
+    auto n = NameInfo::createShared(string(namev), Name(domain), obj->astroObject(), nullptr, true);
+    return celx.pushClass(n);
+}
+*/
+
 void ExtendCelestiaMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -2499,5 +2537,6 @@ void ExtendCelestiaMetaTable(lua_State* l)
     celx.registerMethod("getcategories", celestia_getcategories);
     celx.registerMethod("getrootcategories", celestia_getrootcategories);
     celx.registerMethod("bindtranslationdomain", celestia_bindtranslationdomain);
+//     celx.registerMethod("newname", celestia_newname);
     celx.pop(1);
 }

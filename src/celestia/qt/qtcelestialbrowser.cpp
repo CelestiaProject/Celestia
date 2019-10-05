@@ -38,7 +38,7 @@ using namespace std;
 class StarFilterPredicate
 {
 public:
-    StarFilterPredicate();
+    StarFilterPredicate(const AstroDatabase::SolarSystemIndex &);
     bool operator()(const Star* star) const;
 
     bool planetsFilterEnabled{false};
@@ -47,7 +47,7 @@ public:
     bool omitBarycenters{true};
     bool spectralTypeFilterEnabled{false};
     QRegExp spectralTypeFilter;
-    SolarSystemCatalog* solarSystems;
+    const AstroDatabase::SolarSystemIndex &solarSystems;
 };
 
 
@@ -158,7 +158,7 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
         {
         case NameColumn:
             {
-                string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*star));
+                string starNameString = star->getName().str();
                 return QString::fromStdString(starNameString);
             }
         case DistanceColumn:
@@ -188,9 +188,9 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
         {
         case NameColumn:
             {
-                uint32_t hipCatNo = star->getCatalogNumber();
-                uint32_t hdCatNo  = universe->getStarCatalog()->crossIndex(StarDatabase::HenryDraper, hipCatNo);
-                if (hdCatNo != Star::InvalidCatalogNumber)
+                uint32_t hipCatNo = star->getIndex();
+                uint32_t hdCatNo  = universe->getDatabase().indexToCatalogNumber(AstroDatabase::HenryDraper, hipCatNo);
+                if (hdCatNo != AstroCatalog::InvalidIndex)
                     return QString("HD %1").arg(hdCatNo);
                 else
                     return QVariant();
@@ -293,7 +293,7 @@ bool StarPredicate::operator()(const Star* star0, const Star* star1) const
         return strcmp(star0->getSpectralType(), star1->getSpectralType()) < 0;
 
     case Alphabetical:
-        return strcmp(universe->getStarCatalog()->getStarName(*star0, true).c_str(), universe->getStarCatalog()->getStarName(*star1, true).c_str()) < 0;
+        return strcmp(star0->getName(true).c_str(), star1->getName(true).c_str()) < 0;
 
     default:
         return false;
@@ -301,9 +301,9 @@ bool StarPredicate::operator()(const Star* star0, const Star* star1) const
 }
 
 
-StarFilterPredicate::StarFilterPredicate() :
+StarFilterPredicate::StarFilterPredicate(const AstroDatabase::SolarSystemIndex &ssi) :
 
-    solarSystems(nullptr)
+    solarSystems(ssi)
 {
 }
 
@@ -318,17 +318,14 @@ bool StarFilterPredicate::operator()(const Star* star) const
 
     if (planetsFilterEnabled)
     {
-        if (solarSystems == nullptr)
-            return true;
-
-        SolarSystemCatalog::iterator iter = solarSystems->find(star->getCatalogNumber());
-        if (iter == solarSystems->end())
+        auto iter = solarSystems.find(star->getIndex());
+        if (iter == solarSystems.end())
             return true;
     }
 
     if (multipleFilterEnabled)
     {
-        if (!star->getOrbitBarycenter() || star->getCatalogNumber() == 0)
+        if (!star->getOrbitBarycenter() || star->getIndex() == 0)
             return true;
     }
 
@@ -389,7 +386,7 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
                               StarPredicate::Criterion criterion,
                               unsigned int nStars)
 {
-    const StarDatabase& stardb = *universe->getStarCatalog();
+    const AstroDatabase& db = universe->getDatabase();
 
     observerPos = _observerPos;
     now = _now;
@@ -399,12 +396,12 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
 
     // Apply the filter
     vector<Star*> filteredStars;
-    unsigned int totalStars = stardb.size();
+    const auto &starset = db.getStars();
+    unsigned int totalStars = starset.size();
     unsigned int i = 0;
     filteredStars.reserve(totalStars);
-    for (i = 0; i < totalStars; i++)
+    for (const auto &star : starset)
     {
-        Star* star = stardb.getStar(i);
         if (!filterPred(star))
             filteredStars.push_back(star);
     }
@@ -643,12 +640,11 @@ void CelestialBrowser::slotRefreshTable()
     treeView->clearSelection();
 
     // Set up the filter
-    StarFilterPredicate filterPred;
+    StarFilterPredicate filterPred(appCore->getSimulation()->getUniverse()->getDatabase().getSystems());
     filterPred.planetsFilterEnabled = withPlanetsFilterBox->checkState() == Qt::Checked;
     filterPred.multipleFilterEnabled = multipleFilterBox->checkState() == Qt::Checked;
     filterPred.barycentersFilterEnabled = barycentersFilterBox->checkState() == Qt::Checked;
     filterPred.omitBarycenters = barycentersFilterBox->checkState() == Qt::Unchecked;
-    filterPred.solarSystems = appCore->getSimulation()->getUniverse()->getSolarSystemCatalog();
 
     QRegExp re(spectralTypeFilterBox->text(),
                Qt::CaseInsensitive,
@@ -714,8 +710,7 @@ void CelestialBrowser::slotMarkSelected()
                     if (labelMarker)
                     {
                         if (sel.star() != nullptr)
-                            label = universe->getStarCatalog()->getStarName(*sel.star());
-                        label = ReplaceGreekLetterAbbr(label);
+                            label = sel.star()->getName().str();
                     }
 
                     // FIXME: unmark is required to change the marker representation

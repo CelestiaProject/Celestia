@@ -58,6 +58,7 @@ std::ofstream hdrlog;
 #include "modelgeometry.h"
 #include "curveplot.h"
 #include "shadermanager.h"
+#include "processoctree.h"
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -71,9 +72,9 @@ std::ofstream hdrlog;
 #ifdef _WIN32
 #include <GL/wglew.h>
 #else
-#ifndef __APPLE__
+#ifndef _APPLE_
 #include <GL/glxew.h>
-#endif // __APPLE__
+#endif // _APPLE_
 #endif //_WIN32
 #endif // VIDEO_SYNC
 #include <algorithm>
@@ -1963,7 +1964,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
     case RenderListEntry::RenderableCometTail:
         renderCometTail(*rle.body,
                         rle.position,
-                        observer,
+                        observer.getTime(),
                         rle.discSizeInPixels);
         break;
 
@@ -2215,7 +2216,7 @@ void Renderer::renderToBlurTexture(int blurLevel)
         drawGaussian3x3(xdelta, ydelta, blurTexWidth, blurTexHeight, 1.f);
         break;
 */
-#ifdef __APPLE__
+#ifdef _APPLE_
     case 0:
         drawGaussian5x5(xdelta, ydelta, blurTexWidth, blurTexHeight, 1.f);
         break;
@@ -2859,7 +2860,7 @@ void Renderer::draw(const Observer& observer,
     glEnable(GL_TEXTURE_2D);
 
     // Render deep sky objects
-    if ((renderFlags & ShowDSO) != 0 && universe.getDSOCatalog() != nullptr)
+    if ((renderFlags & ShowDSO) != 0)
     {
         renderDeepSkyObjects(universe, observer, faintestMag);
     }
@@ -2873,14 +2874,14 @@ void Renderer::draw(const Observer& observer,
 #endif
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != nullptr)
+    if ((renderFlags & ShowStars) != 0)
     {
         // Disable multisample rendering when drawing point stars
         bool toggleAA = (starStyle == Renderer::PointStars && glIsEnabled(GL_MULTISAMPLE));
         if (toggleAA)
             glDisable(GL_MULTISAMPLE);
 
-        renderPointStars(*universe.getStarCatalog(), faintestMag, observer);
+        renderPointStars(universe.getDatabase(), faintestMag, observer);
 
         if (toggleAA)
             glEnable(GL_MULTISAMPLE);
@@ -5541,11 +5542,9 @@ static float cometDustTailLength(float distanceToSun,
 // TODO: Remove unused parameters??
 void Renderer::renderCometTail(const Body& body,
                                const Vector3f& pos,
-                               const Observer& observer,
+                               double now,
                                float discSizeInPixels)
 {
-    double now = observer.getTime();
-
     Vector3f cometPoints[MaxCometTailPoints];
     Vector3d pos0 = body.getOrbit(now)->positionAtTime(now);
 #if 0
@@ -5555,6 +5554,8 @@ void Renderer::renderCometTail(const Body& body,
     double t = now;
 
     float distanceFromSun, irradiance_max = 0.0f;
+    unsigned int li_eff = 0;    // Select the first sun as default to
+                                // shut up compiler warnings
 
     // Adjust the amount of triangles used for the comet tail based on
     // the screen size of the comet.
@@ -5565,27 +5566,21 @@ void Renderer::renderCometTail(const Body& body,
     // Find the sun with the largest irrradiance of light onto the comet
     // as function of the comet's position;
     // irradiance = sun's luminosity / square(distanceFromSun);
-    Vector3d sunPos(Vector3d::Zero());
-    for (const auto star : nearStars)
-    {
-        if (star->getVisibility())
-        {
-            Vector3d p = star->getPosition(t).offsetFromKm(observer.getPosition());
-            distanceFromSun = (float) (pos.cast<double>() - p).norm();
-            float irradiance = star->getBolometricLuminosity() / square(distanceFromSun);
 
-            if (irradiance > irradiance_max)
-            {
-                irradiance_max = irradiance;
-                sunPos = p;
-            }
+    for (unsigned int li = 0; li < lightSourceList.size(); li++)
+    {
+        distanceFromSun = (float) (pos.cast<double>() - lightSourceList[li].position).norm();
+        float irradiance = lightSourceList[li].luminosity / square(distanceFromSun);
+        if (irradiance > irradiance_max)
+        {
+            li_eff = li;
+            irradiance_max = irradiance;
         }
     }
-
     float fadeDistance = 1.0f / (float) (COMET_TAIL_ATTEN_DIST_SOL * sqrt(irradiance_max));
 
     // direction to sun with dominant light irradiance:
-    Vector3f sunDir = (pos.cast<double>() - sunPos).cast<float>().normalized();
+    Vector3f sunDir = (pos.cast<double>() - lightSourceList[li_eff].position).cast<float>().normalized();
 
     float dustTailLength = cometDustTailLength((float) pos0.norm(), body.getRadius());
     float dustTailRadius = dustTailLength * 0.1f;
@@ -6413,12 +6408,12 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
 }
 
 
-template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<OBJ, PREC>
+class ObjectRenderer// : public ObjectProcesor<OBJ>
 {
  public:
-    ObjectRenderer(PREC _distanceLimit);
+    ObjectRenderer(double _distanceLimit);
 
-    void process(const OBJ& /*unused*/, PREC /*unused*/, float /*unused*/) {};
+//    void process(const OBJ /*unused*/, double /*unused*/, float /*unused*/) {};
 
  public:
     const Observer* observer{ nullptr };
@@ -6431,7 +6426,7 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     Eigen::Vector3f viewNormal;
 
     float fov{ 0.0f };
-    float size{ 0.0f };
+    double size{ 0.0 };
     float pixelSize{ 0.0f };
     float faintestMag{ 0.0f };
     float faintestMagNight{ 0.0f };
@@ -6441,7 +6436,7 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
 #endif
     float brightnessScale{ 0.0f };
     float brightnessBias{ 0.0f };
-    float distanceLimit{ 0.0f };
+    double distanceLimit{ 0.0 };
 
     // Objects brighter than labelThresholdMag will be labeled
     float labelThresholdMag{ 0.0f };
@@ -6460,19 +6455,18 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
 };
 
 
-template <class OBJ, class PREC>
-ObjectRenderer<OBJ, PREC>::ObjectRenderer(const PREC _distanceLimit) :
-    distanceLimit((float) _distanceLimit)
+ObjectRenderer::ObjectRenderer(double _distanceLimit) :
+    distanceLimit(_distanceLimit)
 {
 }
 
 
-class PointStarRenderer : public ObjectRenderer<Star, float>
+class PointStarRenderer : public StarProcesor, public ObjectRenderer
 {
  public:
     PointStarRenderer();
 
-    void process(const Star& star, float distance, float appMag);
+    virtual void process(const Star *star, double distance, float appMag) override;
 
  public:
     Vector3d obsPos;
@@ -6481,7 +6475,7 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
     PointStarVertexBuffer*   starVertexBuffer{ nullptr };
     PointStarVertexBuffer*   glareVertexBuffer{ nullptr };
 
-    const StarDatabase* starDB{ nullptr };
+    const AstroDatabase* aDB{ nullptr };
 
     bool  useScaledDiscs{ false };
     float maxDiscSize{ 1.0f };
@@ -6504,21 +6498,21 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
 
 
 PointStarRenderer::PointStarRenderer() :
-    ObjectRenderer<Star, float>(STAR_DISTANCE_LIMIT)
+    ObjectRenderer(STAR_DISTANCE_LIMIT)
 {
 }
 
 
-void PointStarRenderer::process(const Star& star, float distance, float appMag)
+void PointStarRenderer::process(const Star *star, double distance, float appMag)
 {
     nProcessed++;
 
-    Vector3f starPos = star.getPosition().cast<float>();
+    Vector3f starPos = star->getPosition().cast<float>();
 
     // Calculate the difference at double precision *before* converting to float.
     // This is very important for stars that are far from the origin.
     Vector3f relPos = (starPos.cast<double>() - obsPos).cast<float>();
-    float   orbitalRadius = star.getOrbitalRadius();
+    float   orbitalRadius = star->getOrbitalRadius();
     bool    hasOrbit = orbitalRadius > 0.0f;
 
     if (distance > distanceLimit)
@@ -6539,7 +6533,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                         starColorFull.green() * 0.5f,
                         starColorFull.blue()  * 0.5f);
 #else
-        Color starColor = colorTemp->lookupColor(star.getTemperature());
+        Color starColor = colorTemp->lookupColor(star->getTemperature());
 #endif
         float discSizeInPixels = 0.0f;
         float orbitSizeInPixels = 0.0f;
@@ -6564,17 +6558,17 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             // calculation than the previous one which used the observer's
             // position rounded off to floats.
             Vector3d hPos = astrocentricPosition(observer->getPosition(),
-                                                 star,
+                                                 *star,
                                                  observer->getTime());
             relPos = hPos.cast<float>() * -astro::kilometersToLightYears(1.0f),
             distance = relPos.norm();
 
             // Recompute apparent magnitude using new distance computation
-            appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
+            appMag = astro::absToAppMag((double)star->getAbsoluteMagnitude(), distance);
 
             starPos = obsPos.cast<float>() + relPos * (RenderDistance / distance);
 
-            float radius = star.getRadius();
+            float radius = star->getRadius();
             discSizeInPixels = radius / astro::lightYearsToKilometers(distance) / pixelSize;
             ++nClose;
         }
@@ -6589,7 +6583,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
                 if (distr > 1.0f)
                     distr = 1.0f;
-                renderer->addBackgroundAnnotation(nullptr, starDB->getStarName(star, true),
+                renderer->addBackgroundAnnotation(nullptr, aDB->getObjectName(star, true),
                                                   Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
                                                   relPos);
                 nLabelled++;
@@ -6666,7 +6660,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 
             RenderListEntry rle;
             rle.renderableType = RenderListEntry::RenderableStar;
-            rle.star = &star;
+            rle.star = star;
 
             // Objects in the render list are always rendered relative to
             // a viewer at the origin--this is different than for distant
@@ -6675,7 +6669,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             rle.position = relPos * scale;
             rle.centerZ = rle.position.dot(viewMatZ);
             rle.distance = rle.position.norm();
-            rle.radius = star.getRadius();
+            rle.radius = star->getRadius();
             rle.discSizeInPixels = discSizeInPixels;
             rle.appMag = appMag;
             rle.isOpaque = true;
@@ -6695,8 +6689,7 @@ static double calcMaxFOV(double fovY_degrees, double aspectRatio)
     return radToDeg(atan(sqrt(aspectRatio * aspectRatio + 1.0) / l)) * 2.0;
 }
 
-
-void Renderer::renderPointStars(const StarDatabase& starDB,
+void Renderer::renderPointStars(const AstroDatabase& aDB,
                                 float faintestMagNight,
                                 const Observer& observer)
 {
@@ -6707,7 +6700,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.context           = context;
 #endif
     starRenderer.renderer          = this;
-    starRenderer.starDB            = &starDB;
+    starRenderer.aDB            = &aDB;
     starRenderer.observer          = &observer;
     starRenderer.obsPos            = obsPos;
     starRenderer.viewNormal        = observer.getOrientationf().conjugate() * -Vector3f::UnitZ();
@@ -6770,20 +6763,24 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         starRenderer.starVertexBuffer->startSprites();
 
 #ifdef OCTREE_DEBUG
-    m_starProcStats.nodes = 0;
-    m_starProcStats.height = 0;
-    m_starProcStats.objects = 0;
+    m_starProcStats.reset();
+    m_starProcStats.selection = m_selected;
+    m_starProcStats.obsPos = obsPos;
+    m_starProcStats.limit = faintestMagNight;
+    create5FrustumPlanes(m_starProcStats.frustPlanes, obsPos, observer.getOrientationf(), degToRad(fov), windowWidth / windowHeight);
 #endif
-    starDB.findVisibleStars(starRenderer,
-                            obsPos.cast<float>(),
-                            observer.getOrientationf(),
-                            degToRad(fov),
-                            (float) windowWidth / (float) windowHeight,
-                            faintestMagNight,
+    processVisibleStars(
+        aDB.getStarOctree(),
+        starRenderer,
+        obsPos,
+        observer.getOrientationf(),
+        degToRad(fov),
+        windowWidth / windowHeight,
 #ifdef OCTREE_DEBUG
-                            &m_starProcStats);
+        faintestMagNight,
+        &m_starProcStats);
 #else
-                            nullptr);
+        faintestMagNight);
 #endif
 
     starRenderer.starVertexBuffer->render();
@@ -6793,16 +6790,16 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 }
 
 
-class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
+class DSORenderer : public ObjectRenderer, public DsoProcesor
 {
  public:
     DSORenderer();
 
-    void process(DeepSkyObject* const&, double, float);
+    void process(DeepSkyObject*, double, float) override;
 
  public:
     Vector3d     obsPos;
-    DSODatabase* dsoDB{ nullptr };
+    const AstroDatabase* aDB{ nullptr };
     Frustum      frustum{ degToRad(45.0f), 1.0f, 1.0f };
 
     Matrix3f orientationMatrix;
@@ -6817,12 +6814,12 @@ class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
 
 
 DSORenderer::DSORenderer() :
-    ObjectRenderer<DeepSkyObject*, double>(DSO_OCTREE_ROOT_SIZE)
+    ObjectRenderer(100000000000)
 {
 };
 
 
-void DSORenderer::process(DeepSkyObject* const & dso,
+void DSORenderer::process(DeepSkyObject* dso,
                           double distanceToDSO,
                           float  absMag)
 {
@@ -6983,7 +6980,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
                         distr = 1.0f;
 
                     renderer->addBackgroundAnnotation(rep,
-                                                      dsoDB->getDSOName(dso, true),
+                                                      aDB->getObjectName(dso, true),
                                                       Color(labelColor, distr * labelColor.alpha()),
                                                       relPos,
                                                       Renderer::AlignLeft, Renderer::VerticalAlignCenter, symbolSize);
@@ -7002,13 +6999,13 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 
     Vector3d obsPos     = observer.getPosition().toLy();
 
-    DSODatabase* dsoDB  = universe.getDSOCatalog();
+    const AstroDatabase* aDB  = &(universe.getDatabase());
 
 #ifdef USE_GLCONTEXT
     dsoRenderer.context          = context;
 #endif
     dsoRenderer.renderer         = this;
-    dsoRenderer.dsoDB            = dsoDB;
+    dsoRenderer.aDB            = aDB;
     dsoRenderer.orientationMatrix= observer.getOrientationf().conjugate().toRotationMatrix();
     dsoRenderer.observer         = &observer;
     dsoRenderer.obsPos           = obsPos;
@@ -7019,7 +7016,7 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
     dsoRenderer.pixelSize        = pixelSize;
     dsoRenderer.brightnessScale  = brightnessScale * corrFac;
     dsoRenderer.brightnessBias   = brightnessBias;
-    dsoRenderer.avgAbsMag        = dsoDB->getAverageAbsoluteMagnitude();
+    dsoRenderer.avgAbsMag        = m_avgDsoMag;
     dsoRenderer.faintestMag      = faintestMag;
     dsoRenderer.faintestMagNight = faintestMagNight;
     dsoRenderer.saturationMag    = saturationMag;
@@ -7047,20 +7044,22 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 #ifdef OCTREE_DEBUG
-    m_dsoProcStats.objects = 0;
-    m_dsoProcStats.nodes = 0;
-    m_dsoProcStats.height = 0;
+    m_dsoProcStats.reset();
+    m_dsoProcStats.selection = m_selected;
+    m_dsoProcStats.limit = 2 * faintestMagNight;
 #endif
-    dsoDB->findVisibleDSOs(dsoRenderer,
-                           obsPos,
-                           observer.getOrientationf(),
-                           degToRad(fov),
-                           (float) windowWidth / (float) windowHeight,
-                           2 * faintestMagNight,
+    processVisibleDsos(
+        aDB->getDsoOctree(),
+        dsoRenderer,
+        obsPos,
+        observer.getOrientationf(),
+        degToRad(fov),
+        windowWidth / windowHeight,
 #ifdef OCTREE_DEBUG
-                           &m_dsoProcStats);
+        2 * faintestMagNight,
+        &m_dsoProcStats);
 #else
-                            nullptr);
+        2 * faintestMagNight);
 #endif
 
     // clog << "DSOs processed: " << dsoRenderer.dsosProcessed << endl;

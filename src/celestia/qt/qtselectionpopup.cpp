@@ -93,7 +93,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     }
     else if (sel.star() != nullptr)
     {
-        std::string name = ReplaceGreekLetterAbbr(sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true));
+        std::string name = sel.star()->getName(true).str();
         addAction(boldTextItem(QString::fromStdString(name)));
 
         // Add some text items giving additional information about
@@ -127,7 +127,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     }
     else if (sel.deepsky() != nullptr)
     {
-        addAction(boldTextItem(QString::fromStdString(sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky(), true))));
+        addAction(boldTextItem(QString::fromStdString(sel.deepsky()->getName(true).str())));
     }
 
     addSeparator();
@@ -205,9 +205,9 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     else if (selection.star() != nullptr)
     {
         // Child object menus for star
-        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(selection.star()->getCatalogNumber());
-        if (iter != solarSystemCatalog->end())
+        const AstroDatabase::SolarSystemIndex &solarSystemCatalog = sim->getUniverse()->getDatabase().getSystems();
+        auto iter = solarSystemCatalog.find(selection.star()->getIndex());
+        if (iter != solarSystemCatalog.end())
         {
             SolarSystem* solarSys = iter->second;
             if (solarSys)
@@ -529,9 +529,9 @@ void SelectionPopup::slotSelectChildObject()
             }
             else if (selection.star())
             {
-                SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-                SolarSystemCatalog::iterator iter = solarSystemCatalog->find(selection.star()->getCatalogNumber());
-                if (iter != solarSystemCatalog->end())
+                const AstroDatabase::SolarSystemIndex &solarSystemCatalog = sim->getUniverse()->getDatabase().getSystems();
+                auto iter = solarSystemCatalog.find(selection.star()->getIndex());
+                if (iter != solarSystemCatalog.end())
                 {
                     SolarSystem* solarSys = iter->second;
                     if (solarSys)

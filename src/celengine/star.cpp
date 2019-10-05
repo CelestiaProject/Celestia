@@ -11,14 +11,14 @@
 #include <celmath/mathlib.h>
 #include <celengine/selection.h>
 #include <cassert>
-#include <celutil/debug.h>
+#include <fmt/printf.h>
 #include <config.h>
 #include "astro.h"
 #include "star.h"
 #include "texmanager.h"
+#include "celephem/orbit.h"
 #include "meshmanager.h"
 #include "astrodb.h"
-#include "celephem/orbit.h"
 
 using namespace Eigen;
 using namespace std;
@@ -944,7 +944,6 @@ StarDetails::setInfoURL(const string& _infoURL)
     infoURL = _infoURL;
 }
 
-
 Star::~Star()
 {
     // TODO: Implement reference counting for StarDetails objects so that
@@ -963,17 +962,22 @@ float Star::getRadius() const
         return details->getRadius();
 
 #ifdef NO_BOLOMETRIC_MAGNITUDE_CORRECTION
-    auto lum = getLuminosity();
+    // Use the Stefan-Boltzmann law to estimate the radius of a
+    // star from surface temperature and luminosity
+    return SOLAR_RADIUS * (float) sqrt(getLuminosity()) *
+        square(SOLAR_TEMPERATURE / getTemperature());
 #else
     // Calculate the luminosity of the star from the bolometric, not the
     // visual magnitude of the star.
-    auto lum = getBolometricLuminosity();
-#endif
+    float solarBMag = SOLAR_BOLOMETRIC_MAG;
+    float bmag = getBolometricMagnitude();
+    auto boloLum = (float) exp((solarBMag - bmag) / LN_MAG);
 
     // Use the Stefan-Boltzmann law to estimate the radius of a
     // star from surface temperature and luminosity
-    return SOLAR_RADIUS * (float) sqrt(lum) *
+    return SOLAR_RADIUS * (float) sqrt(boloLum) *
         square(SOLAR_TEMPERATURE / getTemperature());
+#endif
 }
 
 
@@ -1009,7 +1013,7 @@ Star::getPosition(double t) const
     const Orbit* orbit = getOrbit();
     if (orbit == nullptr)
     {
-        return UniversalCoord::CreateLy(getPosition());
+        return UniversalCoord::CreateLy(getPosition().cast<double>());
     }
     else
     {
@@ -1017,11 +1021,16 @@ Star::getPosition(double t) const
 
         if (barycenter == nullptr)
         {
-            UniversalCoord barycenterPos = UniversalCoord::CreateLy(getPosition());
+            UniversalCoord barycenterPos = UniversalCoord::CreateLy(getPosition().cast<double>());
             return UniversalCoord(barycenterPos).offsetKm(orbit->positionAtTime(t));
         }
         else
         {
+            if (barycenter == this)
+            {
+                cout << "Star orbiting around self (" << getIndex() << ")!\n";
+                return UniversalCoord::CreateLy(getPosition().cast<double>());
+            }
             return barycenter->getPosition(t).offsetKm(orbit->positionAtTime(t));
         }
     }
@@ -1035,7 +1044,7 @@ Star::getOrbitBarycenterPosition(double t) const
 
     if (barycenter == nullptr)
     {
-        return UniversalCoord::CreateLy(getPosition());
+        return UniversalCoord::CreateLy(getPosition().cast<double>());
     }
     else
     {
@@ -1078,14 +1087,14 @@ Star::getVelocity(double t) const
 MultiResTexture
 Star::getTexture() const
 {
-    return details->getTexture();
+    return getDetails()->getTexture();
 }
 
 
 ResourceHandle
 Star::getGeometry() const
 {
-    return details->getGeometry();
+    return getDetails()->getGeometry();
 }
 
 
@@ -1095,36 +1104,13 @@ Star::getGeometry() const
 const string&
 Star::getInfoURL() const
 {
-    return details->getInfoURL();
+    return getDetails()->getInfoURL();
 }
-
-
-void Star::setCatalogNumber(uint32_t n)
-{
-    catalogNumber = n;
-}
-/*
-void Star::setPosition(float x, float y, float z)
-{
-    setPosition(Vector3d(x, y, z));
-}
-
-void Star::setPosition(const Vector3f& positionLy)
-{
-    position = positionLy;
-}
-
-void Star::setAbsoluteMagnitude(float mag)
-{
-    absMag = mag;
-}
-*/
 
 float Star::getApparentMagnitude(float ly) const
 {
     return astro::absToAppMag(getAbsoluteMagnitude(), ly);
 }
-
 
 float Star::getLuminosity() const
 {
@@ -1134,19 +1120,6 @@ float Star::getLuminosity() const
 void Star::setLuminosity(float lum)
 {
     setAbsoluteMagnitude(astro::lumToAbsMag(lum));
-}
-
-float Star::getBolometricLuminosity() const
-{
-#ifdef NO_BOLOMETRIC_MAGNITUDE_CORRECTION
-    return getLuminosity();
-#else
-    // Calculate the luminosity of the star from the bolometric, not the
-    // visual magnitude of the star.
-    float solarBMag = SOLAR_BOLOMETRIC_MAG;
-    float bmag = getBolometricMagnitude();
-    return (float) exp((solarBMag - bmag) / LN_MAG);
-#endif
 }
 
 StarDetails* Star::getDetails() const
@@ -1162,28 +1135,33 @@ void Star::setDetails(StarDetails* sd)
 
 void Star::setOrbitBarycenter(Star* s)
 {
+    if (s == this)
+    {
+        fmt::fprintf(cerr, "Star (%i) going to orbit self!\n", getIndex());
+        return;
+    }
     if (details->shared())
         details = new StarDetails(*details);
-    details->setOrbitBarycenter(s);
+    getDetails()->setOrbitBarycenter(s);
 }
 
 void Star::computeOrbitalRadius()
 {
-    details->computeOrbitalRadius();
+    getDetails()->computeOrbitalRadius();
 }
 
 void
 Star::setRotationModel(const RotationModel* rm)
 {
-    details->setRotationModel(rm);
+    getDetails()->setRotationModel(rm);
 }
 
 void
 Star::addOrbitingStar(Star* star)
 {
-    if (details->shared())
+    if (getDetails()->shared())
         details = new StarDetails(*details);
-    details->addOrbitingStar(star);
+    getDetails()->addOrbitingStar(star);
 }
 
 Selection Star::toSelection()
@@ -1193,11 +1171,12 @@ Selection Star::toSelection()
 }
 
 bool Star::createStar(Star* star,
-                      DataDisposition disposition,
-                      Hash* starData,
-                      const string& path,
-                      bool isBarycenter,
-                      AstroDatabase *db)
+                            DataDisposition disposition,
+                            Hash* starData,
+                            const string& path,
+                            bool isBarycenter,
+                            AstroDatabase *db
+                     )
 {
     StarDetails* details = nullptr;
     string spectralType;

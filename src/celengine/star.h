@@ -245,12 +245,6 @@ public:
 
     virtual Selection toSelection();
 
-    void setCatalogNumber(uint32_t);
-    inline uint32_t getCatalogNumber() const
-    {
-        return catalogNumber;
-    }
-
     /** This getPosition() method returns the approximate star position; that is,
      *  star position without any orbital motion taken into account.  For a
      *  star in an orbit, the position should be set to the 'root' barycenter
@@ -268,7 +262,6 @@ public:
     Eigen::Vector3d getVelocity(double t) const;
 
     void setLuminosity(float);
-    float getBolometricLuminosity() const;
 
     StarDetails* getDetails() const;
     void setDetails(StarDetails*);
@@ -298,19 +291,16 @@ public:
     inline bool hasCorona() const;
 
     enum : uint32_t {
-        InvalidCatalogNumber = 0xffffffff,
         MaxTychoCatalogNumber = 0xf0000000
     };
 
     static bool createStar(Star* star,
-                           DataDisposition disposition,
-                           Hash* starData,
-                           const string& path,
-                           bool isBarycenter,
-                           AstroDatabase *);
-
+                        DataDisposition disposition,
+                        Hash* starData,
+                        const string& path,
+                        bool isBarycenter,
+                        AstroDatabase *);
 private:
-    uint32_t catalogNumber{ InvalidCatalogNumber };
     StarDetails* details{ nullptr };
 };
 

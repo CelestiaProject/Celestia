@@ -11,9 +11,9 @@
 #define _CELENGINE_LOCATION_H_
 
 #include <string>
+#include <celengine/astroobj.h>
 #include <celutil/color.h>
 #include <Eigen/Core>
-#include <celengine/astroobj.h>
 
 class Selection;
 class Body;
@@ -22,9 +22,6 @@ class Location : public AstroObject
 {
 public:
     virtual Selection toSelection();
-
-    std::string getName(bool i18n = false) const;
-    void setName(const std::string&);
 
     Eigen::Vector3f getPosition() const;
     void setPosition(const Eigen::Vector3f&);
@@ -128,8 +125,6 @@ public:
 
  private:
     Body* parent{ nullptr };
-    std::string name;
-    std::string i18nName;
     Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
     float size{ 0.0f };
     float importance{ -1.0f };

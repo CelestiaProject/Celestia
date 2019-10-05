@@ -33,7 +33,7 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
     system(_system),
     orbitVisibility(UseClassVisibility)
 {
-    setName(_name);
+    addName(_name, string(), _system);
     recomputeCullingRadius();
     system->addBody(this);
 }
@@ -95,74 +95,6 @@ void Body::setDefaultProperties()
     overrideOrbitColor = false;
     orbitVisibility = UseClassVisibility;
     recomputeCullingRadius();
-}
-
-
-/*! Return the list of all names (non-localized) by which this
- *  body is known.
- */
-const vector<string>& Body::getNames() const
-{
-    return names;
-}
-
-
-/*! Return the primary name for the body; if i18n, return the
- *  localized name of the body.
- */
-string Body::getName(bool i18n) const
-{
-    if (!i18n)
-        return names[0];
-    else
-        return names[localizedNameIndex];
-}
-
-
-/*! Get the localized name for the body. If no localized name
- *  has been set, the primary name is returned.
- */
-string Body::getLocalizedName() const
-{
-    return names[localizedNameIndex];
-}
-
-
-bool Body::hasLocalizedName() const
-{
-    return localizedNameIndex != 0;
-}
-
-
-/*! Set the primary name of the body. The localized name is updated
- *  automatically as well.
- *  Note: setName() is private, and only called from the Body constructor.
- *  It shouldn't be called elsewhere.
- */
-void Body::setName(const string& name)
-{
-    names[0] = name;
-    string localizedName = _(name.c_str());
-    if (name == localizedName)
-    {
-        // No localized name; set the localized name index to zero to
-        // indicate this.
-        localizedNameIndex = 0;
-    }
-    else
-    {
-        names.push_back(localizedName);
-        localizedNameIndex = names.size() - 1;
-    }
-}
-
-
-/*! Add a new name for this body. Aliases are non localized.
- */
-void Body::addAlias(const string& alias)
-{
-    names.push_back(alias);
-    system->addAlias(this, alias);
 }
 
 
@@ -1187,45 +1119,20 @@ PlanetarySystem::PlanetarySystem(Star* _star) :
 {
 }
 
-
-/*! Add a new alias for an object. If an object with the specified
- *  alias already exists in the planetary system, the old entry will
- *  be replaced.
- */
-void PlanetarySystem::addAlias(Body* body, const string& alias)
-{
-    assert(body->getSystem() == this);
-
-    objectIndex.insert(make_pair(alias, body));
-}
-
-
-/*! Remove the an alias for an object. This method does nothing
- *  if the alias is not present in the index, or if the alias
- *  refers to a different object.
- */
-void PlanetarySystem::removeAlias(const Body* body, const string& alias)
-{
-    assert(body->getSystem() == this);
-
-    ObjectIndex::iterator iter = objectIndex.find(alias);
-    if (iter != objectIndex.end())
-    {
-        if (iter->second == body)
-            objectIndex.erase(iter);
-    }
-}
-
 void PlanetarySystem::addName(NameInfo::SharedConstPtr info)
 {
     if (info->getSystem() == this)
+    {
         m_nameDB.add(info);
+    }
 }
 
 void PlanetarySystem::addLocalizedName(NameInfo::SharedConstPtr info)
 {
     if (info->getSystem() == this)
+    {
         m_nameDB.addLocalized(info);
+    }
 }
 
 void PlanetarySystem::removeName(NameInfo::SharedConstPtr info)
@@ -1243,13 +1150,13 @@ void PlanetarySystem::addBody(Body* body)
 }
 
 
-// Add all aliases for the body to the name index
+// Add all names for the body to the name index
 void PlanetarySystem::addBodyToNameIndex(Body* body)
 {
-    const vector<string>& names = body->getNames();
+    auto names = body->getNameInfos();
     for (const auto& name : names)
     {
-        objectIndex.insert(make_pair(name, body));
+        addName(name);
     }
 }
 
@@ -1260,10 +1167,10 @@ void PlanetarySystem::removeBodyFromNameIndex(const Body* body)
     assert(body->getSystem() == this);
 
     // Erase the object from the object indices
-    const vector<string>& names = body->getNames();
+    auto names = body->getNameInfos();
     for (const auto& name : names)
     {
-        removeAlias(body, name);
+        removeName(name);
     }
 }
 
@@ -1299,24 +1206,14 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
  */
 Body* PlanetarySystem::find(const string& _name, bool deepSearch, bool i18n) const
 {
-    auto firstMatch = objectIndex.find(_name);
-    if (firstMatch != objectIndex.end())
-    {
-        Body* matchedBody = firstMatch->second;
-
-        if (i18n)
-            return matchedBody;
-        // Ignore localized names
-        if (!matchedBody->hasLocalizedName() || _name != matchedBody->getLocalizedName())
-            return matchedBody;
-    }
+    NameInfo::SharedConstPtr ni = m_nameDB.getNameInfo(_name, false, i18n, true);
+    if (ni)
+        return (Body*)ni->getObject();
 
     if (deepSearch)
     {
         for (const auto sat : satellites)
         {
-            if (UTF8StringCompare(sat->getName(i18n), _name) == 0)
-                return sat;
             if (sat->getSatellites())
             {
                 Body* body = sat->getSatellites()->find(_name, deepSearch, i18n);
@@ -1348,21 +1245,9 @@ bool PlanetarySystem::traverse(TraversalFunc func, void* info) const
     return true;
 }
 
-std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name, bool deepSearch) const
+std::vector<Name> PlanetarySystem::getCompletion(const std::string& _name, bool deepSearch) const
 {
-    std::vector<std::string> completion;
-    int _name_length = UTF8Length(_name);
-
-    // Search through all names in this planetary system.
-    for (const auto& index : objectIndex)
-    {
-        const string& alias = index.first;
-
-        if (UTF8StringCompare(alias, _name, _name_length) == 0)
-        {
-            completion.push_back(alias);
-        }
-    }
+    std::vector<Name> completion = m_nameDB.getCompletion(_name);
 
     // Scan child objects
     if (deepSearch)
@@ -1395,6 +1280,5 @@ int PlanetarySystem::getOrder(const Body* body) const
 
 Selection Body::toSelection()
 {
-//    std::cout << "Body::toSelection()\n";
     return Selection(this);
 }
