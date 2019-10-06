@@ -48,6 +48,7 @@
 		970AEE8E2329417000E9ED22 /* liblua5.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE8D2329417000E9ED22 /* liblua5.3.a */; };
 		970AEE90232943D300E9ED22 /* libintl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE8F232943D300E9ED22 /* libintl.a */; };
 		970AEE92232943DC00E9ED22 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE91232943DC00E9ED22 /* libiconv.tbd */; };
+		973256992349A397002D1DAE /* unixdirectory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973256982349A397002D1DAE /* unixdirectory.cpp */; };
 		9772E5A02329DDC400531773 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9772E59F2329DDC400531773 /* Images.xcassets */; };
 		978EBA922324D0740025C9D5 /* ConfigSelectionWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 978EBA912324D0740025C9D5 /* ConfigSelectionWindow.xib */; };
 		9798FB522324D2BE007F92B8 /* ConfigSelectionWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9798FB502324D2BE007F92B8 /* ConfigSelectionWindowController.m */; };
@@ -226,7 +227,6 @@
 		E567F093099112EC00D05031 /* venus_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8E09910E8F00D05031 /* venus_locs.ssc */; };
 		E567F094099112EC00D05031 /* visualbins.stc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8F09910E8F00D05031 /* visualbins.stc */; };
 		E567F095099112EC00D05031 /* world-capitals.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF9009910E8F00D05031 /* world-capitals.ssc */; };
-		E56A3DB80848C19800A21D7E /* MacDirectory.mm in Sources */ = {isa = PBXBuildFile; fileRef = E56A3DB70848C19800A21D7E /* MacDirectory.mm */; };
 		E56A5AED0848F92200A21D7E /* FullScreenWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = E56A5AEB0848F92200A21D7E /* FullScreenWindow.m */; };
 		E56B96570AAB22AA0097DDFE /* renderglsl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E56B96530AAB22AA0097DDFE /* renderglsl.cpp */; };
 		E572837C0793A02800C1F239 /* celestia.cfg in Copy Misc */ = {isa = PBXBuildFile; fileRef = F5626A0002A49B8B014901DC /* celestia.cfg */; };
@@ -539,6 +539,7 @@
 		970AEE8F232943D300E9ED22 /* libintl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libintl.a; path = lib/libintl.a; sourceTree = "<group>"; };
 		970AEE91232943DC00E9ED22 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		9726813A231D0D930014C8D7 /* Celestia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Celestia.entitlements; sourceTree = "<group>"; };
+		973256982349A397002D1DAE /* unixdirectory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unixdirectory.cpp; path = ../src/celutil/unixdirectory.cpp; sourceTree = SOURCE_ROOT; };
 		9772E59F2329DDC400531773 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		978EBA912324D0740025C9D5 /* ConfigSelectionWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConfigSelectionWindow.xib; sourceTree = "<group>"; };
 		9798FB4F2324D2BE007F92B8 /* ConfigSelectionWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfigSelectionWindowController.h; sourceTree = "<group>"; };
@@ -670,7 +671,6 @@
 		E567EFF409910F0D00D05031 /* shroxclassic.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shroxclassic.ssc; sourceTree = "<group>"; };
 		E567EFF509910F0D00D05031 /* shroxmars.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shroxmars.ssc; sourceTree = "<group>"; };
 		E567EFF609910F0D00D05031 /* skylab.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = skylab.ssc; sourceTree = "<group>"; };
-		E56A3DB70848C19800A21D7E /* MacDirectory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacDirectory.mm; sourceTree = "<group>"; };
 		E56A5AEA0848F92200A21D7E /* FullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullScreenWindow.h; sourceTree = "<group>"; };
 		E56A5AEB0848F92200A21D7E /* FullScreenWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullScreenWindow.m; sourceTree = "<group>"; };
 		E56B96520AAB22AA0097DDFE /* lightenv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lightenv.h; path = ../src/celengine/lightenv.h; sourceTree = SOURCE_ROOT; };
@@ -1084,7 +1084,6 @@
 				E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */,
 				F57FA4F002B9AB8601000006 /* FavoriteInfoWindowController.m */,
 				F578B7B402B3E4DB0100020A /* FavoritesDrawerController.m */,
-				E56A3DB70848C19800A21D7E /* MacDirectory.mm */,
 				F55C817602AF55890100020A /* GotoWindowController.m */,
 				F565A8B202EB418701000006 /* RenderPanelController.m */,
 				E53E61AB0C0CA444003CD767 /* ScriptsController.mm */,
@@ -1437,6 +1436,7 @@
 				F51C6D580295987B014901DC /* bytes.h */,
 				F51C6D5A0295987B014901DC /* color.h */,
 				F51C6D5C0295987B014901DC /* debug.h */,
+				973256982349A397002D1DAE /* unixdirectory.cpp */,
 				F51C6D5D0295987B014901DC /* directory.h */,
 				F51C6D5F0295987B014901DC /* filetype.h */,
 				F51C6D600295987B014901DC /* reshandle.h */,
@@ -2085,6 +2085,7 @@
 				E564310C07769C9000E2C4A3 /* MyTree.m in Sources */,
 				E564310D07769C9000E2C4A3 /* boundaries.cpp in Sources */,
 				E564310F07769C9000E2C4A3 /* RenderPanelController.m in Sources */,
+				973256992349A397002D1DAE /* unixdirectory.cpp in Sources */,
 				E564311007769C9000E2C4A3 /* url.cpp in Sources */,
 				E564311107769C9000E2C4A3 /* render.cpp in Sources */,
 				E564311207769C9000E2C4A3 /* CelestiaAppCore.mm in Sources */,
@@ -2124,7 +2125,6 @@
 				E54343170783C42500053094 /* BrowserWindowController.mm in Sources */,
 				E589B6DD078AC511005B8DD9 /* glshader.cpp in Sources */,
 				E589B6DF078AC511005B8DD9 /* shadermanager.cpp in Sources */,
-				E56A3DB80848C19800A21D7E /* MacDirectory.mm in Sources */,
 				E56A5AED0848F92200A21D7E /* FullScreenWindow.m in Sources */,
 				0C76BFD108537EDB00D31A90 /* qtcapture.cpp in Sources */,
 				E532F4F10933331800D7D5B3 /* dsodb.cpp in Sources */,
