@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Version=1.0
 Type=Application
-Exec=celestia-gnome
+Exec=celestia-gtk
 Icon=celestia
 X-GNOME-DocPath=
 Terminal=false
