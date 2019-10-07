@@ -48,6 +48,7 @@
 		970AEE8E2329417000E9ED22 /* liblua5.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE8D2329417000E9ED22 /* liblua5.3.a */; };
 		970AEE90232943D300E9ED22 /* libintl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE8F232943D300E9ED22 /* libintl.a */; };
 		970AEE92232943DC00E9ED22 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE91232943DC00E9ED22 /* libiconv.tbd */; };
+		9717E96E234B641E00AAD7D1 /* Migrator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9717E96D234B641E00AAD7D1 /* Migrator.m */; };
 		973256992349A397002D1DAE /* unixdirectory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973256982349A397002D1DAE /* unixdirectory.cpp */; };
 		9772E5A02329DDC400531773 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9772E59F2329DDC400531773 /* Images.xcassets */; };
 		978EBA922324D0740025C9D5 /* ConfigSelectionWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 978EBA912324D0740025C9D5 /* ConfigSelectionWindow.xib */; };
@@ -538,6 +539,8 @@
 		970AEE8D2329417000E9ED22 /* liblua5.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblua5.3.a; path = lib/liblua5.3.a; sourceTree = "<group>"; };
 		970AEE8F232943D300E9ED22 /* libintl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libintl.a; path = lib/libintl.a; sourceTree = "<group>"; };
 		970AEE91232943DC00E9ED22 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		9717E96C234B641E00AAD7D1 /* Migrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Migrator.h; sourceTree = "<group>"; };
+		9717E96D234B641E00AAD7D1 /* Migrator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Migrator.m; sourceTree = "<group>"; };
 		9726813A231D0D930014C8D7 /* Celestia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Celestia.entitlements; sourceTree = "<group>"; };
 		973256982349A397002D1DAE /* unixdirectory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unixdirectory.cpp; path = ../src/celutil/unixdirectory.cpp; sourceTree = SOURCE_ROOT; };
 		9772E59F2329DDC400531773 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -1110,6 +1113,8 @@
 				E5D956DE096651DF00CB02B2 /* SplashWindowController.h */,
 				E5E2BDD40C24F7E6000D6E83 /* TextWindowController.h */,
 				9798FB4F2324D2BE007F92B8 /* ConfigSelectionWindowController.h */,
+				9717E96C234B641E00AAD7D1 /* Migrator.h */,
+				9717E96D234B641E00AAD7D1 /* Migrator.m */,
 				F578B79D02B3E2AD0100020A /* Cocoa Extensions */,
 				F55A246702B2D4FF0100020A /* Wrappers */,
 				E5CC203109AA832000CFFF2C /* POConverter */,
@@ -2157,6 +2162,7 @@
 				8844BAAE0D6D13FE0059AA3A /* frametree.cpp in Sources */,
 				8844BAB00D6D13FE0059AA3A /* timeline.cpp in Sources */,
 				8844BAB20D6D13FE0059AA3A /* timelinephase.cpp in Sources */,
+				9717E96E234B641E00AAD7D1 /* Migrator.m in Sources */,
 				8844CBC40D80DB020059AA3A /* nutation.cpp in Sources */,
 				8844CBC60D80DB020059AA3A /* precession.cpp in Sources */,
 				8844CF0B0D931D4E0059AA3A /* planetgrid.cpp in Sources */,
