@@ -1661,3 +1661,41 @@ Scripting
 Code optimization and reorganization
 * Fixes for gcc-4.5, and include -ldl for systems that need it.
 * More granular setting of CFLAGS.
+
+1.6.2~beta1
+Bug fixes
+* Options dialog is hidden on delete event instead of removed (GTK+ frontend)
+* Fixed crash when loading of a celx script failed
+* Localization support enabled early on startup (GTK+ frontend)
+* Fixed compilation on MIPS platform
+* Add missing gettext calls to make units (km, Kpc, ...) translatable
+* Fixed compilation with modern compilers (GCC9, LLVM7, MSVC2015)
+* Fixed syntax error in GL2 shader called when there is no light sources
+* First object in Guided Tour can be selected (Windows frontend)
+* Fixed errors reported by PVS studio and Coverity
+* Fixed compilation for 64 bit target of Windows frontend
+
+Platform-specific changes
+* Unix: GTK+ frontend made translatable
+* Unix: celestia.desktop updated for GTK+ frontend
+* Unix: build infrastructure updated for newer autotools
+* Windows: tilde (~) can be used in filenames to represent home directory
+* Windows: Use Segoe UI font instead of MS Sans Serif in dialogs
+* OSX:
+
+Code optimization and reorganization
+* Warnings reported with `-Wall' mostly fixed or suppressed
+
+Features
+* Leap seconds added for 2012, 2015, 2017. Dropped for 1 Jan 1972
+* Add support for Lua 5.2 and 5.3, drop Lua 5.0
+* Favorites file by default is saved to user home directory:
+  - Unix: $XDG_DATA_DIR/Celestia (~/.local/cache)
+  - OS X: ~/Library/Application Support
+  - Windows: %APPDATA% (~/AppData/Roaming)
+
+Scripting
+* Add titles for example scripts
+
+Translations:
+* Add Norwegian Bokmål translation
