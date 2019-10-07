@@ -19,6 +19,7 @@
 #import <OpenGL/gl.h>
 #import "CGLInfo.h"
 #import "ConfigSelectionWindowController.h"
+#import "Migrator.h"
 
 #include <float.h>
 
@@ -42,10 +43,8 @@ NSString* fatalErrorMessage;
 
 - (void)awakeFromNib
 {
-    if ([[self superclass] instancesRespondToSelector:@selector(awakeFromNib)]) 
-    {
-        [super awakeFromNib];
-    }
+    [super awakeFromNib];
+    [Migrator tryToMigrate];
 
     if (firstInstance == nil ) firstInstance = self;
 
