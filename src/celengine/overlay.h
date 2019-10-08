@@ -10,15 +10,17 @@
 #ifndef _OVERLAY_H_
 #define _OVERLAY_H_
 
-#include <string>
+#include <algorithm>
+#include <array>
 #include <iostream>
-#include <vector>
-#include <celtxf/texturefont.h>
+#include <string>
 #include <celutil/color.h>
+#include <celtxf/texturefont.h>
 
 
 class Overlay;
 class Renderer;
+class Rect;
 
 // Custom streambuf class to support C++ operator style output.  The
 // output is completely unbuffered so that it can coexist with printf
@@ -60,32 +62,24 @@ class Overlay : public std::ostream
     void setWindowSize(int, int);
     void setFont(TextureFont*);
 
-    enum class RectType
+    void setColor(float r, float g, float b, float a) const;
+    void setColor(const Color& c) const;
+
+    void moveBy(float dx, float dy, float dz = 0.0f) const;
+    void savePos() const
     {
-        Outlined    = 0x0001,
-        Filled      = 0x0002,
-        Textured    = 0x0004
+        glPushMatrix();
+    };
+    void restorePos() const
+    {
+        glPopMatrix();
+    };
+    const Renderer& getRenderer() const
+    {
+        return renderer;
     };
 
-    struct Rectangle
-    {
-        Rectangle() = default;
-        Rectangle(float _x, float _y, float _w, float _h, const Color& _c, RectType _t, float _lw = 1.0f) :
-            x(_x), y(_y), w(_w), h(_h), type(_t), lw(_lw)
-        {
-            colors.push_back(_c);
-        };
-        Rectangle(float _x, float _y, float _w, float _h, const std::vector<Color>& _c, RectType _t, float _lw = 1.0f) :
-            x(_x), y(_y), w(_w), h(_h), colors(_c), type(_t), lw(_lw)
-        {
-        };
-        float x, y, w, h;
-        float lw      { 1.0f };
-        RectType type { RectType::Filled };
-        std::vector<Color> colors;
-    };
-
-    void rect(const Rectangle&);
+    void drawRectangle(const Rect&);
 
     void beginText();
     void endText();

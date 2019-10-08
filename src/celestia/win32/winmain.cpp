@@ -2684,7 +2684,7 @@ static void HandleCaptureImage(HWND hWnd)
 
         // Get the dimensions of the current viewport
         array<int,4> viewport;
-        appCore->getRenderer()->getScreenSize(viewport);
+        appCore->getRenderer()->getViewport(viewport);
 
         bool success = false;
 

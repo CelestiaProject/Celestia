@@ -28,6 +28,7 @@
 #include "url.h"
 #include "imagecapture.h"
 #include "celestiacore.h"
+#include "view.h"
 
 using namespace Eigen;
 
@@ -282,7 +283,7 @@ int celestia_getscreendimension(lua_State* l)
     // Get the dimensions of the current viewport
     int w, h;
     CelestiaCore* appCore = to_celestia(l, 1);
-    appCore->getRenderer()->getScreenSize(nullptr, nullptr, &w, &h);
+    appCore->getRenderer()->getViewport(nullptr, nullptr, &w, &h);
     lua_pushnumber(l, w);
     lua_pushnumber(l, h);
     return 2;
@@ -1916,7 +1917,7 @@ static int celestia_takescreenshot(lua_State* l)
 
     // Get the dimensions of the current viewport
     array<GLint, 4> viewport;
-    appCore->getRenderer()->getScreenSize(viewport);
+    appCore->getRenderer()->getViewport(viewport);
 
 
     fs::path path = appCore->getConfig()->scriptScreenshotDirectory;
@@ -2081,7 +2082,14 @@ static int celestia_overlay(lua_State* l)
     else
         fitscreen = (bool) Celx_SafeGetNumber(l, 7, WrongType, "Sixth argument to celestia:overlay must be a number or a boolean(fitscreen)", 0);
 
-    appCore->setScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
+    auto image = unique_ptr<OverlayImage>(new OverlayImage(filename, appCore->getRenderer()));
+    image->setDuration(duration);
+    image->setFadeAfter(duration); // FIXME
+    image->setOffset(xoffset, yoffset);
+    image->setColor({Color::White, alpha}); // FIXME
+    image->fitScreen(fitscreen);
+
+    appCore->setScriptImage(std::move(image));
 
     return 0;
 }

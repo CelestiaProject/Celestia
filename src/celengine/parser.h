@@ -42,6 +42,8 @@ class AssociativeArray
     bool getBoolean(const std::string&, bool&) const;
     bool getVector(const std::string&, Eigen::Vector3d&) const;
     bool getVector(const std::string&, Eigen::Vector3f&) const;
+    bool getVector(const std::string&, Eigen::Vector4d&) const;
+    bool getVector(const std::string&, Eigen::Vector4f&) const;
     bool getRotation(const std::string&, Eigen::Quaternionf&) const;
     bool getColor(const std::string&, Color&) const;
     bool getAngle(const std::string&, double&, double = 1.0, double = 0.0) const;

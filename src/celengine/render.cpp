@@ -58,6 +58,7 @@ std::ofstream hdrlog;
 #include "modelgeometry.h"
 #include "curveplot.h"
 #include "shadermanager.h"
+#include "rectangle.h"
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -7886,7 +7887,7 @@ void Renderer::setSolarSystemMaxDistance(float t)
     SolarSystemMaxDistance = clamp(t, 1.0f, 10.0f);
 }
 
-void Renderer::getScreenSize(int* x, int* y, int* w, int* h) const
+void Renderer::getViewport(int* x, int* y, int* w, int* h) const
 {
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
@@ -7900,10 +7901,61 @@ void Renderer::getScreenSize(int* x, int* y, int* w, int* h) const
         *h = viewport[3];
 }
 
-void Renderer::getScreenSize(std::array<int, 4>& viewport) const
+void Renderer::getViewport(std::array<int, 4>& viewport) const
 {
     static_assert(sizeof(int) == sizeof(GLint), "int and GLint size mismatch");
     glGetIntegerv(GL_VIEWPORT, &viewport[0]);
+}
+
+void Renderer::setViewport(int x, int y, int w, int h) const
+{
+    glViewport(x, y, w, h);
+}
+
+void Renderer::setViewport(const std::array<int, 4>& viewport) const
+{
+    glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+}
+
+void Renderer::setScissor(int x, int y, int w, int h)
+{
+    if ((m_GLStateFlag & ScissorTest) == 0)
+    {
+        glEnable(GL_SCISSOR_TEST);
+        m_GLStateFlag |= ScissorTest;
+    }
+    glScissor(x, y, w, h);
+}
+
+void Renderer::removeScissor()
+{
+    if ((m_GLStateFlag & ScissorTest) != 0)
+    {
+        glDisable(GL_SCISSOR_TEST);
+        m_GLStateFlag &= ~ScissorTest;
+    }
+}
+
+void Renderer::enableMSAA()
+{
+    if ((m_GLStateFlag & Multisaple) == 0)
+    {
+        glEnable(GL_MULTISAMPLE);
+        m_GLStateFlag |= Multisaple;
+    }
+}
+void Renderer::disableMSAA()
+{
+    if ((m_GLStateFlag & Multisaple) != 0)
+    {
+        glDisable(GL_MULTISAMPLE);
+        m_GLStateFlag &= ~Multisaple;
+    }
+}
+
+bool Renderer::isMSAAEnabled() const
+{
+    return (m_GLStateFlag & Multisaple) != 0;;
 }
 
 constexpr GLenum toGLFormat(Renderer::PixelFormat format)
@@ -7917,4 +7969,94 @@ bool Renderer::captureFrame(int x, int y, int w, int h, Renderer::PixelFormat fo
     glReadPixels(x, y, w, h, toGLFormat(format), GL_UNSIGNED_BYTE, (void*) buffer);
 
     return glGetError() == GL_NO_ERROR;
+}
+
+static void drawRectangle(const Renderer &renderer, const Rect &r)
+{
+    uint32_t p = r.tex == nullptr ? 0 : ShaderProperties::HasTexture;
+    switch (r.nColors)
+    {
+    case 0:
+        break;
+    case 1:
+        p |= ShaderProperties::UniformColor;
+        break;
+    case 4:
+        p |= ShaderProperties::PerVertexColor;
+        break;
+    default:
+        fmt::fprintf(cerr, "Incorrect number of colors: %i\n", r.nColors);
+    }
+
+    auto prog = renderer.getShaderManager().getShader(ShaderProperties(p));
+    if (prog == nullptr)
+        return;
+
+    constexpr array<short, 8> texels = {0, 1,  1, 1,  1, 0,  0, 0};
+    array<float, 8> vertices = { r.x, r.y,  r.x+r.w, r.y, r.x+r.w, r.y+r.h, r.x, r.y+r.h };
+
+    auto s = static_cast<GLsizeiptr>(memsize(vertices) + memsize(texels) + 4*4*sizeof(GLfloat));
+    static celgl::VertexObject vo{ GL_ARRAY_BUFFER, s, GL_DYNAMIC_DRAW };
+    vo.bindWritable();
+
+    if (!vo.initialized())
+    {
+        vo.allocate();
+        vo.setBufferData(texels.data(), memsize(vertices), memsize(texels));
+        vo.setVertices(2, GL_FLOAT);
+        vo.setTextureCoords(2, GL_SHORT, false, 0, memsize(vertices));
+        vo.setColors(4, GL_FLOAT, false, 0, memsize(vertices) + memsize(texels));
+    }
+
+    vo.setBufferData(vertices.data(), 0, memsize(vertices));
+    if (r.nColors == 4)
+    {
+        array<Vector4f, 4> ct;
+        for (size_t i = 0; i < 4; i++)
+            ct[i] = r.colors[i].toVector4();
+        vo.setBufferData(ct.data(), memsize(vertices) + memsize(texels), 4*4*sizeof(GLfloat));
+    }
+
+    prog->use();
+    if (r.tex != nullptr)
+    {
+        glEnable(GL_TEXTURE_2D);
+        r.tex->bind();
+        prog->samplerParam("tex") = 0;
+    }
+
+    if (r.nColors == 1)
+        prog->vec4Param("color") = r.colors[0].toVector4();
+
+    if (r.type != Rect::Type::BorderOnly)
+    {
+        vo.draw(GL_TRIANGLE_FAN, 4);
+    }
+    else
+    {
+        if (r.lw != 1.0f)
+            glLineWidth(r.lw);
+        vo.draw(GL_LINE_LOOP, 4);
+        if (r.lw != 1.0f)
+            glLineWidth(1.0f);
+    }
+
+    glUseProgram(0);
+    vo.unbind();
+}
+
+void Renderer::drawRectangle(const Rect &r) const
+{
+    ::drawRectangle(*this, r);
+}
+
+void Renderer::setRenderRegion(int x, int y, int width, int height, bool withScissor)
+{
+    if (withScissor)
+        setScissor(x, y, width, height);
+    else
+        removeScissor();
+
+    setViewport(x, y, width, height);
+    resize(width, height);
 }

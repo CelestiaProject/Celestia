@@ -338,7 +338,7 @@ bool OggTheoraCapture::captureFrame()
 
     // Get the dimensions of the current viewport
     int x, y, w, h;
-    renderer->getScreenSize(&x, &y, &w, &h);
+    renderer->getViewport(&x, &y, &w, &h);
 
     x += (w - frame_x) / 2;
     y += (h - frame_y) / 2;

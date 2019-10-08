@@ -74,6 +74,8 @@ set(CELENGINE_SOURCES
   opencluster.h
   overlay.cpp
   overlay.h
+  overlayimage.cpp
+  overlayimage.h
   parseobject.cpp
   parseobject.h
   parser.cpp
@@ -84,6 +86,7 @@ set(CELENGINE_SOURCES
 #  particlesystem.h
   planetgrid.cpp
   planetgrid.h
+  rectangle.h
   referencemark.h
   rendcontext.cpp
   rendcontext.h
