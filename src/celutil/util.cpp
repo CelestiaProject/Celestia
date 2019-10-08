@@ -92,8 +92,14 @@ fs::path PathExp(const fs::path& filename)
 {
 #ifdef _WIN32
     auto str = filename.native();
-    if (str[0] == '~' && (str[1] == '\\' || str[1] == '/'))
-        return homeDir() / str.substr(1);
+    if (str[0] == '~')
+    {
+        if (str.size() == 1)
+            return homeDir();
+        if (str[1] == '\\' || str[1] == '/')
+            return homeDir() / str.substr(2);
+    }
+
     return filename;
 #else
     wordexp_t result;
