@@ -1851,7 +1851,7 @@ msgstr "&Merk"
 
 #: src/celestia/gtk/menu-context.cpp:377
 msgid "Sol"
-msgstr ""
+msgstr "Solen"
 
 #: src/celestia/gtk/menu-context.cpp:410
 #: src/celestia/kde/selectionpopup.cpp:359

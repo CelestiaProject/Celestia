@@ -1847,7 +1847,7 @@ msgstr "标记(&M)"
 #: src/celestia/gtk/menu-context.cpp:377
 #, fuzzy
 msgid "Sol"
-msgstr "首尔"
+msgstr "太阳"
 
 #: src/celestia/gtk/menu-context.cpp:410
 #: src/celestia/kde/selectionpopup.cpp:359

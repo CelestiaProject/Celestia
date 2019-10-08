@@ -1857,7 +1857,7 @@ msgstr "&Označiť"
 #: src/celestia/gtk/menu-context.cpp:377
 #, fuzzy
 msgid "Sol"
-msgstr "Soul"
+msgstr "Slnko"
 
 #: src/celestia/gtk/menu-context.cpp:410
 #: src/celestia/kde/selectionpopup.cpp:359
