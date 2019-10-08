@@ -1885,7 +1885,7 @@ msgstr "&تحديد"
 #: src/celestia/gtk/menu-context.cpp:377
 #, fuzzy
 msgid "Sol"
-msgstr "سول"
+msgstr "زحل"
 
 #: src/celestia/gtk/menu-context.cpp:410
 #: src/celestia/kde/selectionpopup.cpp:359

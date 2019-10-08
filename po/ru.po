@@ -1852,7 +1852,7 @@ msgstr "Поставить &метку"
 #: src/celestia/gtk/menu-context.cpp:377
 #, fuzzy
 msgid "Sol"
-msgstr "Сеул"
+msgstr "Солнце"
 
 #: src/celestia/gtk/menu-context.cpp:410
 #: src/celestia/kde/selectionpopup.cpp:359

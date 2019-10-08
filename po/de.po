@@ -1855,7 +1855,7 @@ msgstr "&Markierung setzen"
 #: src/celestia/gtk/menu-context.cpp:377
 #, fuzzy
 msgid "Sol"
-msgstr "Seoul"
+msgstr "Sonne"
 
 #: src/celestia/gtk/menu-context.cpp:410
 #: src/celestia/kde/selectionpopup.cpp:359

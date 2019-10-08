@@ -1849,7 +1849,7 @@ msgstr "&Zaznacz"
 #: src/celestia/gtk/menu-context.cpp:377
 #, fuzzy
 msgid "Sol"
-msgstr "Seul"
+msgstr "słońce"
 
 #: src/celestia/gtk/menu-context.cpp:410
 #: src/celestia/kde/selectionpopup.cpp:359

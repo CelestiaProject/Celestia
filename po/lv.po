@@ -1852,7 +1852,7 @@ msgstr "&Iezīmēt"
 #: src/celestia/gtk/menu-context.cpp:377
 #, fuzzy
 msgid "Sol"
-msgstr "Seula"
+msgstr "Saule"
 
 #: src/celestia/gtk/menu-context.cpp:410
 #: src/celestia/kde/selectionpopup.cpp:359
