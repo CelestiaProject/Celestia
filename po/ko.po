@@ -1850,7 +1850,6 @@ msgid "_Mark"
 msgstr "마커(&M)"
 
 #: src/celestia/gtk/menu-context.cpp:377
-#, fuzzy
 msgid "Sol"
 msgstr "태양"
 

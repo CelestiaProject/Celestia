@@ -1847,7 +1847,6 @@ msgid "_Mark"
 msgstr "&Markeer"
 
 #: src/celestia/gtk/menu-context.cpp:377
-#, fuzzy
 msgid "Sol"
 msgstr "Zon"
 
