@@ -428,8 +428,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     MovieCapture* movieCapture{ nullptr };
     bool recording{ false };
 
-    Texture* logoTexture{ nullptr };
-
     Alerter* alerter{ nullptr };
     std::vector<CelestiaWatcher*> watchers;
     CursorHandler* cursorHandler{ nullptr };

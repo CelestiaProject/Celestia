@@ -23,6 +23,14 @@
 #                                                                           *
 #****************************************************************************
 
+  overlay {
+    duration    5.0
+    fadeafter   4.0
+    colortop    "#9999ff"
+    colorbottom "#ccccff"
+    filename    "logo.png"
+  }
+
   preloadtex { object "Sol/Earth" }
   preloadtex { object "Sol/Earth/Moon" }
 

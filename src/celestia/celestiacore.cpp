@@ -3602,45 +3602,6 @@ void CelestiaCore::renderOverlay()
         overlay->restorePos();
     }
 
-    // Show logo at start
-    if (logoTexture != nullptr)
-    {
-        glEnable(GL_TEXTURE_2D);
-        if (currentTime < 5.0)
-        {
-            int xSize = (int) (logoTexture->getWidth() * 0.8f);
-            int ySize = (int) (logoTexture->getHeight() * 0.8f);
-            int left = (width - xSize) / 2;
-            int bottom = height / 2;
-
-            float topAlpha, botAlpha;
-            if (currentTime < 4.0)
-            {
-                botAlpha = (float) clamp(currentTime / 1.0);
-                topAlpha = (float) clamp(currentTime / 4.0);
-            }
-            else
-            {
-                botAlpha = topAlpha = (float) (5.0 - currentTime);
-            }
-
-            logoTexture->bind();
-            vector<Color> c = {
-                {0.8f, 0.8f, 1.0f, botAlpha},
-                {0.8f, 0.8f, 1.0f, botAlpha},
-                {0.6f, 0.6f, 1.0f, topAlpha},
-                {0.6f, 0.6f, 1.0f, topAlpha}
-            };
-            Overlay::Rectangle r(left, bottom, xSize, ySize, c, Overlay::RectType::Textured);
-            overlay->rect(r);
-        }
-        else
-        {
-            delete logoTexture;
-            logoTexture = nullptr;
-        }
-    }
-
     overlay->end();
     setlocale(LC_NUMERIC, "C");
 }
@@ -4022,12 +3983,6 @@ bool CelestiaCore::initRenderer()
     }
 
     renderer->setFont(Renderer::FontLarge, titleFont);
-
-    if (config->logoTextureFile != "")
-    {
-        logoTexture = LoadTextureFromFile(fs::path("textures") / config->logoTextureFile);
-    }
-
     return true;
 }
 
