@@ -1124,7 +1124,7 @@ static void captureImage(const char* filename, AppData* app)
 {
     /* Get the dimensions of the current viewport */
     array<int, 4> viewport;
-    app->renderer->getScreenSize(viewport);
+    app->renderer->getViewport(viewport);
 
     bool success = false;
     ContentType type = DetermineFileType(filename);
@@ -1183,7 +1183,7 @@ static void captureMovie(const char* filename, int aspect, float fps, float qual
 {
     /* Get the dimensions of the current viewport */
     array<int, 4> viewport;
-    app->renderer->getScreenSize(viewport);
+    app->renderer->getViewport(viewport);
 
     MovieCapture* movieCapture = new OggTheoraCapture(app->renderer);
     switch (aspect)

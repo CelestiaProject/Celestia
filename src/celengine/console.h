@@ -56,6 +56,11 @@ class Console : public std::ostream
     void setScale(int, int);
     void setFont(TextureFont*);
 
+    void setColor(float r, float g, float b, float a) const;
+    void setColor(const Color& c) const;
+
+    void moveBy(float dx, float dy, float dz = 0.0f) const;
+
     void print(wchar_t);
     void print(char*);
     void newline();

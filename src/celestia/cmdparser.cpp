@@ -773,39 +773,57 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "overlay")
     {
-        float duration;
-        float xoffset;
-        float yoffset;
-        float alpha;
+        float duration = 3.0f;
+        float fadeafter;
+        float xoffset = 0.0f;
+        float yoffset = 0.0f;
+        float alpha = 1.0f;
+        bool hasAlpha = true;
         string filename;
-        bool fitscreen;
+        bool fitscreen = false;
+        Color color(Color::White);
 
-        if(!paramList->getNumber("duration", duration))
-            duration = 3;
-        if(!paramList->getNumber("xoffset", xoffset))
-            xoffset = 0.0;
-        if(!paramList->getNumber("yoffset", yoffset))
-            yoffset = 0.0;
-        if(!paramList->getNumber("alpha", alpha))
-            alpha = 1;
-        if(!paramList->getString("filename", filename))
-            filename = "";
-        if(!paramList->getBoolean("fitscreen", fitscreen))
+        paramList->getNumber("duration", duration);
+        paramList->getNumber("xoffset", xoffset);
+        paramList->getNumber("yoffset", yoffset);
+        if (paramList->getNumber("alpha", alpha))
+            hasAlpha = true;
+        paramList->getString("filename", filename);
+
+        if (!paramList->getBoolean("fitscreen", fitscreen))
         {
-          int f;
-          if(!paramList->getNumber("fitscreen", f))
-             fitscreen = false;
-          else
-            fitscreen = (bool) f;
+            int f;
+            // backward compatibility with celestia ed implementation
+            if (paramList->getNumber("fitscreen", f))
+                fitscreen = (bool) f;
         }
 
-        cmd = new CommandScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
+        array<Color, 4> colors;
+        paramList->getColor("color", color);
+        colors.fill(hasAlpha ? Color(color, alpha) : color);
+        if (paramList->getColor("colortop", color))
+            colors[0] = colors[1] = hasAlpha ? Color(color, alpha) : color;
+        if (paramList->getColor("colorbottom", color))
+            colors[2] = colors[3] = hasAlpha ? Color(color, alpha) : color;
+        if (paramList->getColor("colortopleft", color))
+            colors[0] = hasAlpha ? Color(color, alpha) : color;
+        if (paramList->getColor("colortopright", color))
+            colors[1] = hasAlpha ? Color(color, alpha) : color;
+        if (paramList->getColor("colorbottomright", color))
+            colors[2] = hasAlpha ? Color(color, alpha) : color;
+        if (paramList->getColor("colorbottomleft", color))
+            colors[3] = hasAlpha ? Color(color, alpha) : color;
+
+        if (!paramList->getNumber("fadeafter", fadeafter))
+            fadeafter = duration;
+
+        cmd = new CommandScriptImage(duration, fadeafter, xoffset, yoffset, filename, fitscreen, colors);
     }
     else if (commandName == "verbosity")
     {
         int level;
 
-        if(!paramList->getNumber("level", level))
+        if (!paramList->getNumber("level", level))
             level = 2;
 
         cmd = new CommandVerbosity(level);

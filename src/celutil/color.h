@@ -22,9 +22,13 @@ class Color
     Color(float, float, float);
     Color(float, float, float, float);
     Color(unsigned char, unsigned char, unsigned char);
+    Color(unsigned char, unsigned char, unsigned char, unsigned char);
     Color(const Color&, float);
+    Color(const Eigen::Vector3f&);
+    Color(const Eigen::Vector4f&);
 
-    enum {
+    enum
+    {
         Red    = 0,
         Green  = 1,
         Blue   = 2,
@@ -52,7 +56,6 @@ class Color
  private:
     static void buildX11ColorMap();
 
- private:
     unsigned char c[4];
 
     typedef std::map<const std::string, Color> ColorMap;

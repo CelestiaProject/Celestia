@@ -145,7 +145,7 @@ bool AVICapture::captureFrame()
 
     // Get the dimensions of the current viewport
     int x, y, w, h;
-    renderer->getScreenSize(&x, &y, &w, &h);
+    renderer->getViewport(&x, &y, &w, &h);
 
     x += (w - width) / 2;
     y += (h - height) / 2;

@@ -649,7 +649,7 @@ void CommandCapture::process(ExecutionEnvironment& env)
 
     // Get the dimensions of the current viewport
     array<int, 4> viewport;
-    r->getScreenSize(viewport);
+    r->getViewport(viewport);
 
     if (compareIgnoringCase(type, "jpeg") == 0)
     {
@@ -952,21 +952,30 @@ double RepeatCommand::getDuration() const
 }
 
 // ScriptImage command
-CommandScriptImage::CommandScriptImage(float _duration, float _xoffset,
-                                       float _yoffset, float _alpha,
-                                       std::string _filename, bool _fitscreen) :
+CommandScriptImage::CommandScriptImage(float _duration, float _fadeafter,
+                                       float _xoffset, float _yoffset,
+                                       fs::path _filename,
+                                       bool _fitscreen,
+                                       array<Color,4> &_colors) :
     duration(_duration),
+    fadeafter(_fadeafter),
     xoffset(_xoffset),
     yoffset(_yoffset),
-    alpha(_alpha),
     filename(std::move(_filename)),
     fitscreen(_fitscreen)
 {
+    copy(_colors.begin(), _colors.end(), colors.begin());
 }
 
 void CommandScriptImage::process(ExecutionEnvironment& env)
 {
-    env.getCelestiaCore()->setScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
+    auto image = unique_ptr<OverlayImage>(new OverlayImage(filename, env.getRenderer()));
+    image->setDuration(duration);
+    image->setFadeAfter(fadeafter);
+    image->setOffset(xoffset, yoffset);
+    image->setColor(colors);
+    image->fitScreen(fitscreen);
+    env.getCelestiaCore()->setScriptImage(std::move(image));
 }
 
 // Verbosity command

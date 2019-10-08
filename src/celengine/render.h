@@ -21,11 +21,11 @@
 #endif
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
+#include "celengine/vertexobject.h"
 #include <celtxf/texturefont.h>
 #include <vector>
 #include <list>
 #include <string>
-#include "vertexobject.h"
 
 
 class RendererWatcher;
@@ -33,6 +33,7 @@ class FrameTree;
 class ReferenceMark;
 class CurvePlot;
 class AsterismList;
+class Rect;
 
 struct LightSource
 {
@@ -246,8 +247,20 @@ class Renderer
     void setOrbitMask(int);
     int getScreenDpi() const;
     void setScreenDpi(int);
-    void getScreenSize(int* x, int* y, int* w, int* h) const;
-    void getScreenSize(std::array<int, 4>& viewport) const;
+
+    // GL wrappers
+    void getViewport(int* x, int* y, int* w, int* h) const;
+    void getViewport(std::array<int, 4>& viewport) const;
+    void setViewport(int x, int y, int w, int h) const;
+    void setViewport(const std::array<int, 4>& viewport) const;
+    void setScissor(int x, int y, int w, int h);
+    void removeScissor();
+    void enableMSAA();
+    void disableMSAA();
+    bool isMSAAEnabled() const;
+    void drawRectangle(const Rect& r) const;
+    void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
+
     const ColorTemperatureTable* getStarColorTable() const;
     void setStarColorTable(const ColorTemperatureTable*);
     bool getVideoSync() const;
@@ -709,6 +722,13 @@ class Renderer
     uint32_t frameCount;
 
     int currentIntervalIndex{ 0 };
+    enum GLStateFlags
+    {
+        ScissorTest     = 0x0001,
+        Multisaple      = 0x0002,
+    };
+
+    int m_GLStateFlag { 0 };
 
     celgl::VertexObject markerVO{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
 

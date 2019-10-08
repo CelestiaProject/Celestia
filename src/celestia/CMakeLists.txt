@@ -24,6 +24,8 @@ set(CELESTIA_SOURCES
   scriptmenu.h
   url.cpp
   url.h
+  view.cpp
+  view.h
 )
 
 set(CELX_SOURCES

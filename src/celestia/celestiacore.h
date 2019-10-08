@@ -21,11 +21,13 @@
 #include <celengine/universe.h>
 #include <celengine/render.h>
 #include <celengine/simulation.h>
+#include <celengine/overlayimage.h>
 #include <GL/glew.h>
 #include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
 #include "moviecapture.h"
+#include "view.h"
 #ifdef CELX
 #include "celx.h"
 #endif
@@ -46,40 +48,6 @@ public:
 
     virtual void update(const std::string&) = 0;
 };
-
-class View
-{
- public:
-    enum Type {
-        ViewWindow      = 1,
-        HorizontalSplit = 2,
-        VerticalSplit   = 3
-    };
-
-    View(Type, Observer*, float, float, float, float);
-
-    void mapWindowToView(float, float, float&, float&) const;
-
- public:
-    Type type;
-
-    Observer* observer;
-    View *parent;
-    View *child1;
-    View *child2;
-    float x;
-    float y;
-    float width;
-    float height;
-    uint64_t renderFlags;
-    int labelMode;
-    float zoom;
-    float alternateZoom;
-
-    void walkTreeResize(View*, int);
-    bool walkTreeResizeDelta(View*, float, bool);
-};
-
 
 class CelestiaCore // : public Watchable<CelestiaCore>
 {
@@ -195,37 +163,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         ShowVelocity  = 0x004,
         ShowSelection = 0x008,
         ShowFrame     = 0x010,
-    };
-
- private:
-    class OverlayImage
-    {
-     public:
-        OverlayImage(fs::path, Overlay*);
-        ~OverlayImage() { delete texture; }
-        OverlayImage()               =default;
-        OverlayImage(OverlayImage&)  =delete;
-        OverlayImage(OverlayImage&&) =delete;
-
-        void render(float, int, int);
-        inline bool isNewImage(const fs::path& f) { return filename != f; }
-
-        void setStartTime(float t) { start = t; }
-        void setDuration(float t) { duration = t; }
-        void setOffset(float x, float y) { offsetX = x; offsetY = y; }
-        void setAlpha(float t) { alpha = t; }
-        void fitScreen(bool t) { fitscreen = t; }
-
-     private:
-        float start{ 0.0f };
-        float duration{ 0.0f };
-        float offsetX{ 0.0f };
-        float offsetY{ 0.0f };
-        float alpha{ 0.0f };
-        bool  fitscreen{ false };
-        fs::path filename;
-        Texture* texture{ nullptr };
-        Overlay* overlay;
     };
 
  public:
@@ -383,7 +320,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void fatalError(const std::string&, bool visual = true);
 
-    void setScriptImage(float, float, float, float, const fs::path&, bool);
+    void setScriptImage(std::unique_ptr<OverlayImage>&&);
 
     const std::string& getTypedText() const { return typedText; }
     void setTypedText(const char *);
@@ -425,7 +362,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     const Color activeFrameColor{ 0.5f, 0.5f, 1.0f, 1.0f };
     const Color consoleColor{ 0.7f, 0.7f, 1.0f, 0.2f };
 
-    OverlayImage *image{ nullptr };
+    std::unique_ptr<OverlayImage> image;
 
     std::string typedText;
     std::vector<std::string> typedTextCompletion;

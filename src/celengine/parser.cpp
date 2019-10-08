@@ -442,6 +442,44 @@ bool AssociativeArray::getVector(const string& key, Vector3f& val) const
 }
 
 
+bool AssociativeArray::getVector(const string& key, Vector4d& val) const
+{
+    Value* v = getValue(key);
+    if (v == nullptr || v->getType() != Value::ArrayType)
+        return false;
+
+    ValueArray* arr = v->getArray();
+    if (arr->size() != 4)
+        return false;
+
+    Value* x = (*arr)[0];
+    Value* y = (*arr)[1];
+    Value* z = (*arr)[2];
+    Value* w = (*arr)[3];
+
+    if (x->getType() != Value::NumberType ||
+        y->getType() != Value::NumberType ||
+        z->getType() != Value::NumberType ||
+        w->getType() != Value::NumberType)
+        return false;
+
+    val = Vector4d(x->getNumber(), y->getNumber(), z->getNumber(), w->getNumber());
+    return true;
+}
+
+
+bool AssociativeArray::getVector(const string& key, Vector4f& val) const
+{
+    Vector4d vecVal;
+
+    if (!getVector(key, vecVal))
+        return false;
+
+    val = vecVal.cast<float>();
+    return true;
+}
+
+
 /**
  * Retrieves a quaternion, scaled to an associated angle unit.
  *
@@ -490,14 +528,40 @@ bool AssociativeArray::getRotation(const string& key, Eigen::Quaternionf& val) c
 
 bool AssociativeArray::getColor(const string& key, Color& val) const
 {
-    Vector3d vecVal;
+    Vector4d vec4;
+    if (getVector(key, vec4))
+    {
+        Vector4f vec4f = vec4.cast<float>();
+        val = Color(vec4f);
+        return true;
+    }
 
-    if (!getVector(key, vecVal))
-        return false;
+    Vector3d vec3;
+    if (getVector(key, vec3))
+    {
+        Vector3f vec3f = vec3.cast<float>();
+        val = Color(vec3f);
+        return true;
+    }
 
-    val = Color((float) vecVal.x(), (float) vecVal.y(), (float) vecVal.z());
+    string rgba;
+    if (getString(key, rgba))
+    {
+        int r, g, b, a;
+        int ret = sscanf(rgba.c_str(), "#%2x%2x%2x%2x", &r, &g, &b, &a);
+        switch (ret)
+        {
+        case 3:
+            a = 0xFF;
+        case 4:
+            val = Color((char unsigned)r, (char unsigned)g, (unsigned char)b, (unsigned char)a);
+            return true;
+        default:
+            return false;
+        }
+    }
 
-    return true;
+    return false;
 }
 
 

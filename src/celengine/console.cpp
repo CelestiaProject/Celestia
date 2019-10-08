@@ -228,6 +228,24 @@ int Console::getHeight() const
 }
 
 
+void Console::setColor(float r, float g, float b, float a) const
+{
+    glColor4f(r, g, b, a);
+}
+
+
+void Console::setColor(const Color& c) const
+{
+    glColor4f(c.red(), c.green(), c.blue(), c.alpha());
+}
+
+
+void Console::moveBy(float dx, float dy, float dz) const
+{
+    glTranslatef(dx, dy, dz);
+}
+
+
 //
 // ConsoleStreamBuf implementation
 //

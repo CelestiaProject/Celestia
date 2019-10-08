@@ -43,12 +43,30 @@ Color::Color(float r, float g, float b, float a)
 }
 
 
-Color::Color(unsigned char r, unsigned char g, unsigned char b)
+Color::Color(unsigned char r, unsigned char g, unsigned char b) :
+    Color(r, g, b, 0xff)
+{
+}
+
+
+Color::Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     c[Red] = r;
     c[Green] = g;
     c[Blue] = b;
-    c[Alpha] = 0xff;
+    c[Alpha] = a;
+}
+
+
+Color::Color(const Eigen::Vector3f &c) :
+    Color(c.x(), c.y(), c.z())
+{
+}
+
+
+Color::Color(const Eigen::Vector4f &c) :
+    Color(c.x(), c.y(), c.z(), c.w())
+{
 }
 
 
