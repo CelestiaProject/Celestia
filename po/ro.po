@@ -1847,7 +1847,6 @@ msgid "_Mark"
 msgstr "&Marchează"
 
 #: src/celestia/gtk/menu-context.cpp:377
-#, fuzzy
 msgid "Sol"
 msgstr "Soare"
 

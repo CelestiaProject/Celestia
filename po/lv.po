@@ -1850,7 +1850,6 @@ msgid "_Mark"
 msgstr "&Iezīmēt"
 
 #: src/celestia/gtk/menu-context.cpp:377
-#, fuzzy
 msgid "Sol"
 msgstr "Saule"
 

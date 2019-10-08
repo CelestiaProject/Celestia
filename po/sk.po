@@ -1855,7 +1855,6 @@ msgid "_Mark"
 msgstr "&Označiť"
 
 #: src/celestia/gtk/menu-context.cpp:377
-#, fuzzy
 msgid "Sol"
 msgstr "Slnko"
 

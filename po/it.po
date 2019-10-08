@@ -1856,7 +1856,6 @@ msgid "_Mark"
 msgstr "Marca (&M) "
 
 #: src/celestia/gtk/menu-context.cpp:377
-#, fuzzy
 msgid "Sol"
 msgstr "Sole"
 

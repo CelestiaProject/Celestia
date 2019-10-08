@@ -1842,7 +1842,6 @@ msgid "_Mark"
 msgstr "標示(&M)"
 
 #: src/celestia/gtk/menu-context.cpp:377
-#, fuzzy
 msgid "Sol"
 msgstr "太陽"
 
