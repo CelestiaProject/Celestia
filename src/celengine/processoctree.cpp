@@ -103,7 +103,7 @@ void processVisibleStars(
 
     for (const auto &objit : node->getObjects())
     {
-        Star *obj = static_cast<Star*>(objit.second);
+        Star *obj = static_cast<Star*>(objit);
 #ifdef OCTREE_DEBUG
         if (stats != nullptr)
         {
@@ -221,7 +221,7 @@ void processVisibleDsos(
 
     for (const auto &objit : node->getObjects())
     {
-        DeepSkyObject *obj = static_cast<DeepSkyObject*>(objit.second);
+        DeepSkyObject *obj = static_cast<DeepSkyObject*>(objit);
 #ifdef OCTREE_DEBUG
         if (stats != nullptr)
         {
@@ -330,7 +330,7 @@ void processCloseStars(
     // Check all the objects in the node.
     for (const auto &objit : node->getObjects())
     {
-        Star *obj = static_cast<Star*>(objit.second);
+        Star *obj = static_cast<Star*>(objit);
 
         if ((obsPosition - obj->getPosition().cast<double>()).squaredNorm() < radiusSquared)
         {
@@ -377,7 +377,7 @@ void processCloseDsos(
     // Check all the objects in the node.
     for (const auto &objit : node->getObjects())
     {
-        DeepSkyObject *obj = static_cast<DeepSkyObject*>(objit.second);
+        DeepSkyObject *obj = static_cast<DeepSkyObject*>(objit);
 
         if ((obsPosition - obj->getPosition().cast<double>()).squaredNorm() < radiusSquared)    //
         {

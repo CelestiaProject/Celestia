@@ -1,5 +1,6 @@
 
 #include <limits.h>
+#include <celutil/debug.h>
 #include "astrooctree.h"
 #include "star.h"
 #include "deepskyobj.h"
@@ -10,6 +11,8 @@ using namespace celmath;
 
 char* _stack;
 
+static size_t max_node_size = 12;
+
 static inline bool childValid(int n)
 {
     return n >= 0 && n < OctreeNode::MaxChildren;
@@ -18,8 +21,151 @@ static inline bool childValid(int n)
 static void dumpObjects(const OctreeNode *node)
 {
     for (const auto &obj : node->getObjects())
-        fmt::fprintf(cout, "%f ", obj.first);
+        fmt::fprintf(cout, "%f ", obj->getAbsoluteMagnitude());
     fmt::fprintf(cout, "\n");
+}
+
+bool OctreeNode::ObjectList::insert(LuminousObject *o)
+{
+    if (contains(o))
+    {
+//         fmt::fprintf(cout, "OctreeNode::ObjectList::insert(%i, %f): found duplicate!\n", o->getIndex(), o->getAbsoluteMagnitude());
+        return false;
+    }
+    if (m_brightest == nullptr || o->getAbsoluteMagnitude() < m_brightest->getAbsoluteMagnitude())
+        m_brightest = o;
+    if (m_faintest == nullptr || o->getAbsoluteMagnitude() > m_faintest->getAbsoluteMagnitude())
+        m_faintest = o;
+    push_back(o);
+    return true;
+}
+
+void OctreeNode::ObjectList::remove(LuminousObject *o)
+{
+//     fmt::fprintf(cout, " ObjectList::remove(%i (%f))\n", o->getIndex(), o->getAbsoluteMagnitude());
+//     dump();
+    bool ff = false;
+    bool fb = false;
+    bool found = false;
+    if (m_brightest != nullptr && m_brightest->getIndex() == o->getIndex() && m_brightest != o)
+    {
+        fmt::fprintf(cout, "  Object %i (%f) has the same index but different address than brightest one!\n", o->getIndex(), o->getAbsoluteMagnitude());
+        exit(1);
+    }
+    if (m_faintest != nullptr && m_faintest->getIndex() == o->getIndex() && m_faintest != o)
+    {
+        fmt::fprintf(cout, "  Object %i (%f) has the same index but different address than faintest one!\n", o->getIndex(), o->getAbsoluteMagnitude());
+        exit(1);
+    }
+    if (o == m_brightest)
+    {
+        m_brightest = nullptr;
+        fb = true;
+    }
+    if (o == m_faintest)
+    {
+        m_faintest = nullptr;
+        ff = true;
+    }
+    auto it = begin();
+    ObjectList::iterator dit = it;
+    float f = -std::numeric_limits<float>::max();
+    float b = std::numeric_limits<float>::max();
+//     fmt::fprintf(cout, "  Seeking faintest: %i (%f), seeking brightest: %i (%f).\n", ff, f, fb, b);
+//     cout << "OctreeNode::ObjectList::erase()\n";
+    while(it != end())
+    {
+//         cout << (*it)->getAbsoluteMagnitude() << endl;
+        if (*it == o)
+        {
+            dit = it;
+            found = true;
+//             fmt::fprintf(cout, "   Found %i (%f).\n", (*it)->getIndex(), (*it)->getAbsoluteMagnitude());
+            if (!ff && !fb)
+                break;
+        }
+        else
+        {
+            if (ff && (*it)->getAbsoluteMagnitude() > f)
+            {
+                f = (*it)->getAbsoluteMagnitude();
+                m_faintest = *it;
+//                 fmt::fprintf(cout, "   Found new faintest %i (%f).\n", (*it)->getIndex(), (*it)->getAbsoluteMagnitude());
+            }
+            if (fb && (*it)->getAbsoluteMagnitude() < b)
+            {
+                b = (*it)->getAbsoluteMagnitude();
+                m_brightest = *it;
+//                 fmt::fprintf(cout, "   Found new brightest %i (%f).\n", (*it)->getIndex(), (*it)->getAbsoluteMagnitude());
+            }
+        }
+        ++it;
+    }
+//     cout << "Found object: " << found << ", find faintest: " << ff << ", find brightest: " << fb << endl;
+    if (found)
+    {
+//         fmt::fprintf(cout, " Deleting %i (%f)\n", (*dit)->getIndex(), (*dit)->getAbsoluteMagnitude());
+        erase(dit);
+        if (m_faintest == o)
+        {
+            fmt::fprintf(cout, " Deleted object %i (%f) is still the faintest one!\n", o->getIndex(), o->getAbsoluteMagnitude());
+            dump();
+            exit(1);
+        }
+        if (m_brightest == o)
+        {
+            fmt::fprintf(cout, " Deleted object %i (%f) is still the brightest one!\n", o->getIndex(), o->getAbsoluteMagnitude());
+            dump();
+            exit(1);
+        }
+    }
+    else
+    {
+        fmt::fprintf(cout, " Deleting object %i (%f) not found!\n", o->getIndex(), o->getAbsoluteMagnitude());
+        dump();
+        exit(1);
+    }
+//     fmt::fprintf(cout, " Object %i (%f) deleted successfuly.\n", o->getIndex(), o->getAbsoluteMagnitude());
+    shrink_to_fit();
+}
+
+LuminousObject *OctreeNode::ObjectList::popBrightest()
+{
+    auto ret = getBrightest();
+//     fmt::fprintf(cout, "OctreeNode::ObjectList::popBrightest(): %i (%f)\n", ret->getIndex(), ret->getAbsoluteMagnitude());
+    remove(ret);
+    return ret;
+}
+
+LuminousObject *OctreeNode::ObjectList::popFaintest()
+{
+    auto ret = getFaintest();
+//     fmt::fprintf(cout, "OctreeNode::ObjectList::popFaintest(): %i (%f)\n", ret->getIndex(), ret->getAbsoluteMagnitude());
+    remove(ret);
+    return ret;
+}
+
+bool OctreeNode::ObjectList::contains(const LuminousObject *o) const
+{
+    for (const auto &it : *this)
+        if (it == o)
+            return true;
+    return false;
+}
+
+void OctreeNode::ObjectList::dump() const
+{
+    fmt::fprintf(cout, "OctreeNode::ObjectList::dump(): %i objects:\n", size());
+    if (m_brightest)
+        fmt::fprintf(cout, "  brightest: %i (%f)\n", m_brightest->getIndex(), m_brightest->getAbsoluteMagnitude());
+    else
+        fmt::fprintf(cout, "  no brightest\n");
+    if (m_faintest)
+        fmt::fprintf(cout, "  faintest: %i (%f)\n", m_faintest->getIndex(), m_faintest->getAbsoluteMagnitude());
+    else
+        fmt::fprintf(cout, "  no faintest\n");
+    for (const auto &it : *this)
+        fmt::fprintf(cout, "  %i : %f\n", it->getIndex(), it->getAbsoluteMagnitude());
 }
 
 OctreeNode::OctreeNode(const Vector3d& cellCenter, double scale, size_t maxObj, OctreeNode *parent) :
@@ -28,6 +174,8 @@ OctreeNode::OctreeNode(const Vector3d& cellCenter, double scale, size_t maxObj, 
     m_maxObjCount(maxObj),
     m_parent(parent)
 {
+    if (max_node_size > 0)
+        m_maxObjCount = max_node_size;
     for(int i = 0; i < MaxChildren; i++)
         m_children[i] = nullptr;
 }
@@ -40,6 +188,8 @@ OctreeNode::~OctreeNode()
 
 bool OctreeNode::add(LuminousObject *obj)
 {
+//     fmt::fprintf(cout, "OctreeNode::add(%i (%f))\n", obj->getIndex(), obj->getAbsoluteMagnitude());
+//     m_objects.dump();
     bool dirty = true;
 //     fmt::fprintf(cout, "Adding to node %i object %i with mag %f.\n", this, obj, obj->getAbsoluteMagnitude());
     if (obj == nullptr)
@@ -47,7 +197,7 @@ bool OctreeNode::add(LuminousObject *obj)
         cerr << "Octree: trying to add null object!!\n";
         return false;
     }
-    m_objects.insert(make_pair(obj->getAbsoluteMagnitude(), obj));
+    m_objects.insert(obj);
     obj->setOctreeNode(this);
     setDirty(dirty);
     return true;
@@ -55,10 +205,8 @@ bool OctreeNode::add(LuminousObject *obj)
 
 bool OctreeNode::rm(LuminousObject *obj)
 {
-    auto i = objectIterator(obj);
-    if (i == m_objects.end())
-        return false;
-    m_objects.erase(i);
+//     fmt::fprintf(cout, "OctreeNode::rm(%i (%f))\n", obj->getIndex(), obj->getAbsoluteMagnitude());
+    m_objects.remove(obj);
     obj->setOctreeNode(nullptr);
     setDirty(true);
     return true;
@@ -112,6 +260,8 @@ bool OctreeNode::deleteChild(int n)
 
 bool OctreeNode::insertObject(LuminousObject *obj)
 {
+//     fmt::fprintf(cout, "OctreeNode::insertObject(%i (%f))\n", obj->getIndex(), obj->getAbsoluteMagnitude());
+//     m_objects.dump();
     OctreeNode *node = this;
     while (!node->isInCell(obj->getPosition()))
     {
@@ -122,7 +272,6 @@ bool OctreeNode::insertObject(LuminousObject *obj)
         else
             return false;
     }
-
     float mag = obj->getAbsoluteMagnitude();
     while(node->getBrightest() > mag && node->getParent() != nullptr)
     {
@@ -144,6 +293,7 @@ bool OctreeNode::insertObject(LuminousObject *obj)
 
 bool OctreeNode::removeObject(LuminousObject *obj)
 {
+//     fmt::fprintf(cout, "OctreeNode::removeObject(%i (%f))\n", obj->getIndex(), obj->getAbsoluteMagnitude());
     if (!rm(obj))
     {
         fmt::fprintf(clog, "Object %i not found to remove!\n", obj);
@@ -214,10 +364,10 @@ bool OctreeNode::isInCell(const Vector3d& pos) const
 
 static bool pred(const OctreeNode::ObjectList::iterator &i1, const OctreeNode::ObjectList::iterator &i2)
 {
-    return i1->first < i2->first;
+    return (*i1)->getAbsoluteMagnitude() < (*i2)->getAbsoluteMagnitude();
 }
 
-OctreeNode::ObjectList::const_iterator OctreeNode::objectIterator(const LuminousObject *obj) const
+/*OctreeNode::ObjectList::const_iterator OctreeNode::objectIterator(const LuminousObject *obj) const
 {
     auto pair = m_objects.equal_range(obj->getAbsoluteMagnitude());
     if (pair.first == m_objects.end())
@@ -233,22 +383,18 @@ OctreeNode::ObjectList::const_iterator OctreeNode::objectIterator(const Luminous
     }
     while(it != m_objects.end());
     return m_objects.end();
-}
+}*/
 
 float OctreeNode::getBrightest() const
 {
-    if (m_objects.empty())
-        return numeric_limits<float>::max();
-    return m_objects.begin()->first;
+    return m_objects.getBrightest() != nullptr ? m_objects.getBrightest()->getAbsoluteMagnitude() : std::numeric_limits<float>::max();
 }
 
 float OctreeNode::getFaintest() const
 {
-    if (m_objects.empty())
-        return numeric_limits<float>::min();
-    return (--m_objects.end())->first;
+    return m_objects.getFaintest() != nullptr ? m_objects.getFaintest()->getAbsoluteMagnitude() : -std::numeric_limits<float>::max();
 }
-
+/*
 LuminousObject *OctreeNode::popBrightest()
 {
     if (m_objects.empty())
@@ -269,7 +415,7 @@ LuminousObject *OctreeNode::popFaintest()
     setDirty(true);
     return it->second;
 }
-
+*/
 int OctreeNode::getBrightestChildId() const
 {
     int ret = -1;
@@ -310,27 +456,17 @@ int OctreeNode::check(float max, int level, bool fatal)
         if (nerr == 0)
             nerr = 1;
     }
-    for(const auto &obj : m_objects)
-    {
-        if (obj.first != obj.second->getAbsoluteMagnitude())
-        {
-            fmt::fprintf(cout, "Object with nr %u nad mag %f wrongly assigned to mag %f on level %i!\n", obj.second->getIndex(), obj.second->getAbsoluteMagnitude(), obj.first, level);
-            if (fatal)
-                exit(1);
-            nerr = 1;
-        }
-    }
     for(ObjectList::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
     {
         ObjectList::const_iterator it2 = it;
         ++it2;
-        if (!isInCell(it->second->getPosition()))
+        if (!isInCell((*it)->getPosition()))
         {
-            Vector3d rpos = it->second->getPosition() - getCenter();
+            Vector3d rpos = (*it)->getPosition() - getCenter();
             fmt::fprintf(
                 cout,
                 "\nObject nr %u on level %i and scale %f out of cell (rel pos [%f : %f : %f])!\n",
-                it->second->getIndex(),
+                (*it)->getIndex(),
                 level,
                 getScale(),
                 rpos.x(), rpos.y(), rpos.z()
@@ -339,13 +475,13 @@ int OctreeNode::check(float max, int level, bool fatal)
                 exit(1);
             nerr = 1;
         }
-        if (it2 != m_objects.end() && it->first > it2->first)
-        {
-            fmt::fprintf(cout, "\nObjects on level %i wrongly sorted!\n", level);
-            if (fatal)
-                exit(1);
-            nerr = 1;
-        }
+//         if (it2 != m_objects.end() && (*it)->getAbsoluteMagnitude() > (*it2)->getAbsoluteMagnitude())
+//         {
+//             fmt::fprintf(cout, "\nObjects on level %i wrongly sorted!\n", level);
+//             if (fatal)
+//                 exit(1);
+//             nerr = 1;
+//         }
     }
     if (getBrightest() < max)
     {

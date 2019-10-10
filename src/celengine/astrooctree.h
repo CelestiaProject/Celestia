@@ -2,7 +2,8 @@
 #pragma once
 
 #include <array>
-#include <map>
+// #include <map>
+#include <deque>
 #include <celmath/frustum.h>
 #include "luminobj.h"
 
@@ -11,18 +12,32 @@ class OctreeNode
  public:
     const static int MaxChildren = 8;
     typedef std::array<OctreeNode*, MaxChildren> Children;
-    typedef std::multimap<float, LuminousObject*> ObjectList;
+//     typedef std::multimap<float, LuminousObject*> ObjectList;
     static constexpr double MaxScale = 100000000000;
-    static constexpr size_t MaxObjectsPerNode = 10;
+    static constexpr size_t MaxObjectsPerNode = 100;
 
+    class ObjectList : public std::deque<LuminousObject*>
+    {
+        LuminousObject *m_brightest { nullptr };
+        LuminousObject *m_faintest { nullptr };
+     public:
+        LuminousObject *getFaintest() const { return m_faintest; }
+        LuminousObject *getBrightest() const { return m_brightest; }
+        bool insert(LuminousObject *);
+        void remove(LuminousObject *);
+        LuminousObject *popBrightest();
+        LuminousObject *popFaintest();
+        bool contains(const LuminousObject *) const;
+        void dump() const;
+    };
  protected:
     bool add(LuminousObject*);
     bool rm(LuminousObject*);
 
-    LuminousObject *popBrightest();
-    LuminousObject *popFaintest();
+    LuminousObject *popBrightest() { return m_objects.popBrightest(); }
+    LuminousObject *popFaintest() { return m_objects.popFaintest(); }
 
-    ObjectList::const_iterator objectIterator(const LuminousObject*) const;
+//     ObjectList::const_iterator objectIterator(const LuminousObject*) const;
 
     bool createChild(int);
     bool deleteChild(int);
