@@ -6,23 +6,6 @@
 	objectVersion = 45;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		CEC0004F0F3BCC2800E518E0 /* Dmg */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = CEC000560F3BCC7100E518E0 /* Build configuration list for PBXAggregateTarget "Dmg" */;
-			buildPhases = (
-				CEC000DA0F3BD73C00E518E0 /* Copy App */,
-				CEC000DC0F3BD79F00E518E0 /* Copy License Files */,
-				CEC0004E0F3BCC2800E518E0 /* Make dmg */,
-			);
-			dependencies = (
-				CEC000DE0F3BD93500E518E0 /* PBXTargetDependency */,
-			);
-			name = Dmg;
-			productName = Dmg;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		0C76BFD108537EDB00D31A90 /* qtcapture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C76BFCF08537EDB00D31A90 /* qtcapture.cpp */; };
 		3D8726810EA84D260069EBBA /* extras-standard in Copy Misc */ = {isa = PBXBuildFile; fileRef = 3D8726800EA84D260069EBBA /* extras-standard */; };
@@ -50,6 +33,10 @@
 		970AEE92232943DC00E9ED22 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE91232943DC00E9ED22 /* libiconv.tbd */; };
 		9717E96E234B641E00AAD7D1 /* Migrator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9717E96D234B641E00AAD7D1 /* Migrator.m */; };
 		973256992349A397002D1DAE /* unixdirectory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973256982349A397002D1DAE /* unixdirectory.cpp */; };
+		9761B09C234F470C0057CF1F /* AUTHORS in Resources */ = {isa = PBXBuildFile; fileRef = E57283980793F82A00C1F239 /* AUTHORS */; };
+		9761B09D234F47110057CF1F /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = E572839A0793F82A00C1F239 /* COPYING */; };
+		9761B09E234F471E0057CF1F /* README in Resources */ = {isa = PBXBuildFile; fileRef = E57283AD0793FC7300C1F239 /* README */; };
+		9761B09F234F47260057CF1F /* ChangeLog in Resources */ = {isa = PBXBuildFile; fileRef = E57283990793F82A00C1F239 /* ChangeLog */; };
 		9772E5A02329DDC400531773 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9772E59F2329DDC400531773 /* Images.xcassets */; };
 		978EBA922324D0740025C9D5 /* ConfigSelectionWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 978EBA912324D0740025C9D5 /* ConfigSelectionWindow.xib */; };
 		9798FB522324D2BE007F92B8 /* ConfigSelectionWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9798FB502324D2BE007F92B8 /* ConfigSelectionWindowController.m */; };
@@ -59,11 +46,6 @@
 		CE5203030F4F9DD0007D0DE8 /* spiceinterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE5202FD0F4F9DD0007D0DE8 /* spiceinterface.cpp */; };
 		CE5203040F4F9DD0007D0DE8 /* spiceorbit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE5202FF0F4F9DD0007D0DE8 /* spiceorbit.cpp */; };
 		CE5203050F4F9DD0007D0DE8 /* spicerotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE5203010F4F9DD0007D0DE8 /* spicerotation.cpp */; };
-		CEC000D50F3BD70E00E518E0 /* AUTHORS in Copy App */ = {isa = PBXBuildFile; fileRef = E57283980793F82A00C1F239 /* AUTHORS */; };
-		CEC000D60F3BD70E00E518E0 /* Celestia.app in Copy App */ = {isa = PBXBuildFile; fileRef = E564312E07769C9000E2C4A3 /* Celestia.app */; };
-		CEC000D70F3BD70E00E518E0 /* ChangeLog in Copy App */ = {isa = PBXBuildFile; fileRef = E57283990793F82A00C1F239 /* ChangeLog */; };
-		CEC000D80F3BD70E00E518E0 /* README in Copy App */ = {isa = PBXBuildFile; fileRef = E57283AD0793FC7300C1F239 /* README */; };
-		CEC000D90F3BD70E00E518E0 /* README for Mac OS X.rtf in Copy App */ = {isa = PBXBuildFile; fileRef = E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */; };
 		CED3D1880FD803CC003B4562 /* minormoons.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = CED3D1860FD8036C003B4562 /* minormoons.ssc */; };
 		CED3D1890FD803D6003B4562 /* numberedmoons.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = CED3D1870FD8036C003B4562 /* numberedmoons.ssc */; };
 		E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */; };
@@ -305,13 +287,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		CEC000DD0F3BD93500E518E0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E564302B07769C9000E2C4A3;
-			remoteInfo = Celestia;
-		};
 		E5CC205909AA8C7100CFFF2C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -322,21 +297,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		CEC000DA0F3BD73C00E518E0 /* Copy App */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 8;
-			dstPath = Celestia;
-			dstSubfolderSpec = 16;
-			files = (
-				CEC000D50F3BD70E00E518E0 /* AUTHORS in Copy App */,
-				CEC000D60F3BD70E00E518E0 /* Celestia.app in Copy App */,
-				CEC000D70F3BD70E00E518E0 /* ChangeLog in Copy App */,
-				CEC000D80F3BD70E00E518E0 /* README in Copy App */,
-				CEC000D90F3BD70E00E518E0 /* README for Mac OS X.rtf in Copy App */,
-			);
-			name = "Copy App";
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		E567F018099110C000D05031 /* Copy Data */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
@@ -1912,7 +1872,6 @@
 			targets = (
 				E564302B07769C9000E2C4A3 /* Celestia */,
 				E5CC202809AA823400CFFF2C /* POConverter */,
-				CEC0004F0F3BCC2800E518E0 /* Dmg */,
 			);
 		};
 /* End PBXProject section */
@@ -1928,9 +1887,13 @@
 				E54343120783C3F200053094 /* BrowserWindow.nib in Resources */,
 				9772E5A02329DDC400531773 /* Images.xcassets in Resources */,
 				E54742D009631D3600E89E09 /* defaults.plist in Resources */,
+				9761B09E234F471E0057CF1F /* README in Resources */,
 				E599A78E097CAB390079C254 /* Credits.rtf in Resources */,
 				E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */,
 				E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */,
+				9761B09F234F47260057CF1F /* ChangeLog in Resources */,
+				9761B09D234F47110057CF1F /* COPYING in Resources */,
+				9761B09C234F470C0057CF1F /* AUTHORS in Resources */,
 				E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */,
 				E5E2BDD20C24F7B6000D6E83 /* TextWindow.nib in Resources */,
 			);
@@ -1952,39 +1915,6 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "DIDCOPY=0\nDEST=\"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources/locale\"\nmkdir -p $DEST\nfor prefix in 'demo' 'guide' 'start'; do\nfor cel in $SRCROOT/../locale/$prefix_*.cel; do\n    f=${cel##*/}\n    if [ $cel -nt $DEST/$f ];then\n        echo \"cp $cel $DEST/$f\"\n        cp $cel $DEST/$f\n        DIDCOPY=1\n    fi\ndone\ndone\nif [ $DIDCOPY -eq 1 ];then\n    echo \"Touch $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\"\n    touch -c $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\nfi";
-			showEnvVarsInLog = 0;
-		};
-		CEC0004E0F3BCC2800E518E0 /* Make dmg */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			comments = "1. Removes extraneous files\n2. Creates writable disk image containing Celestia.app and readme files.";
-			files = (
-			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/Celestia/$(PRODUCT_NAME).app",
-			);
-			name = "Make dmg";
-			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(PRODUCT_NAME).dmg",
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "find $BUILT_PRODUCTS_DIR/Celestia -name 'Makefile*' -delete\nhdiutil create -srcfolder $BUILT_PRODUCTS_DIR/Celestia -format UDRW -ov $TARGET_BUILD_DIR/$PRODUCT_NAME.dmg";
-			showEnvVarsInLog = 0;
-		};
-		CEC000DC0F3BD79F00E518E0 /* Copy License Files */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy License Files";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "mkdir -p $BUILT_PRODUCTS_DIR/Celestia/License\nrm -f $BUILT_PRODUCTS_DIR/Celestia/License/*\ncp $SRCROOT/../COPYING $BUILT_PRODUCTS_DIR/Celestia/License\ncp $SRCROOT/../locale/COPYING_* $BUILT_PRODUCTS_DIR/Celestia/License";
 			showEnvVarsInLog = 0;
 		};
 		E5CC203B09AA83A900CFFF2C /* Convert PO */ = {
@@ -2188,11 +2118,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		CEC000DE0F3BD93500E518E0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E564302B07769C9000E2C4A3 /* Celestia */;
-			targetProxy = CEC000DD0F3BD93500E518E0 /* PBXContainerItemProxy */;
-		};
 		E5CC205A09AA8C7100CFFF2C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E5CC202809AA823400CFFF2C /* POConverter */;
@@ -2302,43 +2227,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		CEC000500F3BCC2900E518E0 /* Development */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = Celestia;
-				SKIP_INSTALL = NO;
-			};
-			name = Development;
-		};
-		CEC000510F3BCC2900E518E0 /* HDR_Development */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = Celestia;
-				SKIP_INSTALL = NO;
-			};
-			name = HDR_Development;
-		};
-		CEC000520F3BCC2900E518E0 /* Universal_Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEPLOYMENT_POSTPROCESSING = YES;
-				PRODUCT_NAME = Celestia;
-				SKIP_INSTALL = NO;
-			};
-			name = Universal_Release;
-		};
-		CEC000530F3BCC2900E518E0 /* HDR_Universal_Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEPLOYMENT_POSTPROCESSING = YES;
-				PRODUCT_NAME = Celestia;
-				SKIP_INSTALL = NO;
-			};
-			name = HDR_Universal_Release;
-		};
 		E50E8707097436A4006687D3 /* Universal_Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2688,17 +2576,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CEC000560F3BCC7100E518E0 /* Build configuration list for PBXAggregateTarget "Dmg" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CEC000500F3BCC2900E518E0 /* Development */,
-				CEC000510F3BCC2900E518E0 /* HDR_Development */,
-				CEC000520F3BCC2900E518E0 /* Universal_Release */,
-				CEC000530F3BCC2900E518E0 /* HDR_Universal_Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Universal_Release;
-		};
 		E532F4190933316100D7D5B3 /* Build configuration list for PBXNativeTarget "Celestia" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
