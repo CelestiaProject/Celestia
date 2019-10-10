@@ -27,7 +27,6 @@
 
 BOOL gIgnoreFuzzy;  /*! -n cmdline arg, YES = ignore fuzzy entries */
 int gDebugLevel;    /*! -v cmdline arg, 0   = no console messages */
-NSAutoreleasePool *gPool;
 NSCharacterSet *gNewLineSet;
 NSCharacterSet *gDelimitSet;
 
@@ -50,7 +49,7 @@ static BOOL readLine(NSString *string, NSRange *range, NSString **outString)
 /*! Scans data (from a po file) in ascii mode and gets the charset specification */
 static NSStringEncoding getCharset(NSData *data)
 {
-    NSString *string = [[[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding] autorelease];
+    NSString *string = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
     if (nil == string)
         return 0;
 
@@ -92,7 +91,7 @@ static NSStringEncoding getCharset(NSData *data)
                     }
 
                     if (gDebugLevel)
-                        CFShow(line);
+                        CFShow((__bridge CFTypeRef)(line));
                     break;
                 }
             }
@@ -282,13 +281,13 @@ static BOOL isSource(NSString *line, BOOL *containsNonKde)
 static long convertData(NSData *data, NSStringEncoding encoding, NSFileHandle *ofh)
 {
     long numConverted = 0;
-    NSString *fileString = [[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+    NSString *fileString = [[NSString alloc] initWithData:data encoding:encoding];
     if (nil == fileString)
         return 0;
 
     BOOL notComment = YES;
     NSString *line;
-    NSString **aString;
+    __strong NSString **aString;
     NSRange range = NSMakeRange(0, 0);
     long fileStringLength = [fileString length];
 
@@ -379,7 +378,7 @@ static long convertData(NSData *data, NSStringEncoding encoding, NSFileHandle *o
                         ++numConverted;
 
                         if (gDebugLevel>2 && *aString)
-                            CFShow(*aString);
+                            CFShow((__bridge CFTypeRef)(*aString));
                     }
                     else if (gDebugLevel)
                         CFShow((CFStringRef)[NSString stringWithFormat:@"Ignoring entry \"%@\"", *aString]);
@@ -434,181 +433,177 @@ static void usage()
 static void ctrl_c_handler(int sig)
 {
     fprintf(stderr, "\nGot Ctrl-C, cleaning up...\n");
-    [gPool release];
     exit(1);
 }
 
 int main(int argc, const char **argv)
 {
-    NSAutoreleasePool *gPool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
+        // Catch ctrl-c so we can release the autorelease pool
+        signal(SIGINT, ctrl_c_handler);
 
-    // Catch ctrl-c so we can release the autorelease pool
-    signal(SIGINT, ctrl_c_handler);
+        gIgnoreFuzzy = NO;
+        gDebugLevel = 0;
+        BOOL isSilent = NO;
 
-    gIgnoreFuzzy = NO;
-    gDebugLevel = 0;
-    BOOL isSilent = NO;
+        BOOL isErr = NO;
+        NSProcessInfo *theProcess = [NSProcessInfo processInfo];
+        NSArray *args = [theProcess arguments];
+        NSString *arg;
+        NSEnumerator *argEnum = [args objectEnumerator];
+        [argEnum nextObject];   // advance past args[0] (the program full path)
 
-    BOOL isErr = NO;
-    NSProcessInfo *theProcess = [NSProcessInfo processInfo];
-    NSArray *args = [theProcess arguments];
-    NSString *arg;
-    NSEnumerator *argEnum = [args objectEnumerator];
-    [argEnum nextObject];   // advance past args[0] (the program full path)
+        NSString *poFilename = nil;
+        NSString *resultFilename = nil;
+        NSFileHandle *ofh;
 
-    NSString *poFilename = nil;
-    NSString *resultFilename = nil;
-    NSFileHandle *ofh;
-
-    do
-    {
-        if (argc < 2 || argc > 5)
+        do
         {
-            usage(); break;
-        }
-
-        // Parse options
-        long j;
-
-        while ((arg = [argEnum nextObject]) && [arg hasPrefix: @"-"])
-        {
-            if ([arg length] > 1)
+            if (argc < 2 || argc > 5)
             {
-                for (j = 1; j < [arg length]; ++j)
-                {
-                    switch ([arg characterAtIndex: j])
-                    {
-                        case 'n':
-                            gIgnoreFuzzy = YES; break;
-                        case 's':
-                            isSilent = YES; break;
-                        case 'v':
-                            gDebugLevel = POCONV_DEBUG_LEVEL; break;
-                        default:
-                            isErr = YES;
-                    }
-
-                    if (isErr)
-                        break;
-                }
-            }
-            else
-            {
-                isErr = YES;
-                break;
-            }
-        }
-
-        if (isErr)
-        {
-            usage(); break;
-        }
-        
-        // Can't just have options, need filename(s) too
-        if (nil == arg)//i == argc)
-        {
-            usage(); break;
-        }
-
-        poFilename = arg;
-
-        // Check if po file exists and isn't a directory
-        BOOL isDirectory;
-        BOOL fileExists;
-        NSFileManager *fm = [NSFileManager defaultManager];
-
-        if (![fm fileExistsAtPath:poFilename isDirectory:&isDirectory] || isDirectory)
-        {
-            usage(); break;
-        }
-
-        // Destination path - can be either a filename or a directory
-        // If unspecified, defaults to stdout
-        resultFilename = [argEnum nextObject];
-
-        if (resultFilename)
-        {
-            if ([argEnum nextObject])
-            {
-                // Too many filenames
                 usage(); break;
             }
 
-            // If directory, append default filename
-            fileExists = [fm fileExistsAtPath:resultFilename isDirectory:&isDirectory];
-            if (fileExists && isDirectory)
-            {
-                resultFilename = [resultFilename stringByAppendingPathComponent:POCONV_DEFAULT_STRINGS_FILENAME];
-                fileExists = [fm fileExistsAtPath: resultFilename];
-            }
+            // Parse options
+            long j;
 
-            if (!fileExists)
+            while ((arg = [argEnum nextObject]) && [arg hasPrefix: @"-"])
             {
-                [fm createFileAtPath:resultFilename contents:nil attributes:nil];
-            }
-
-            if(!isSilent && fileExists)
-            {
-                printf("\nDestination file exists, overwrite (y/n)? [y] ");
-                int confirm = getchar();
-                fflush(stdout);
-
-                switch (confirm)
+                if ([arg length] > 1)
                 {
-                    case 'y':
-                    case 'Y':
-                    case '\n':
-                        break;
-                    default:
-                        printf("Destination file not overwritten.\n\n");
-                        [gPool release];
-                        exit(0);
+                    for (j = 1; j < [arg length]; ++j)
+                    {
+                        switch ([arg characterAtIndex: j])
+                        {
+                            case 'n':
+                                gIgnoreFuzzy = YES; break;
+                            case 's':
+                                isSilent = YES; break;
+                            case 'v':
+                                gDebugLevel = POCONV_DEBUG_LEVEL; break;
+                            default:
+                                isErr = YES;
+                        }
+
+                        if (isErr)
+                            break;
+                    }
+                }
+                else
+                {
+                    isErr = YES;
+                    break;
                 }
             }
 
-            ofh = [NSFileHandle fileHandleForWritingAtPath: resultFilename];
-            // Delay truncating file and wiping it out until we actually
-            // get something to write to
-        }
-        else
-        {
-            // Output filename not specified, use stdout
-            ofh = [NSFileHandle fileHandleWithStandardOutput];
-        }
+            if (isErr)
+            {
+                usage(); break;
+            }
 
-        if (nil == ofh)
-        {
-            CFShow(@"***Could not write output. Please check if directory exists, and you have permissions.***");
-            [gPool release];
-            exit(1);
-        }
+            // Can't just have options, need filename(s) too
+            if (nil == arg)//i == argc)
+            {
+                usage(); break;
+            }
 
-        if (gDebugLevel)
-            CFShow((CFStringRef)[NSString stringWithFormat:@"poFile='%@', result='%@', ignoreFuzzy=%d, debugLevel=%d, silent=%d", poFilename, (resultFilename ? resultFilename : @"stdout"), gIgnoreFuzzy, gDebugLevel, isSilent]);
+            poFilename = arg;
 
-        NSData *data = [NSData dataWithContentsOfMappedFile: poFilename];
-        NSMutableCharacterSet *newLineSet = [[[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy] autorelease];
-        [newLineSet formIntersectionWithCharacterSet:
-            [[NSCharacterSet whitespaceCharacterSet] invertedSet]];
-        gNewLineSet = newLineSet;
-        gDelimitSet = [NSCharacterSet characterSetWithCharactersInString: @"&\""];
+            // Check if po file exists and isn't a directory
+            BOOL isDirectory;
+            BOOL fileExists;
+            NSFileManager *fm = [NSFileManager defaultManager];
 
-        // First detect the file encoding
-        NSStringEncoding encoding = getCharset(data);
-        if (gDebugLevel)
-            CFShow((CFStringRef)[NSString stringWithFormat:@"NSStringEncoding = %#lx", encoding]);
+            if (![fm fileExistsAtPath:poFilename isDirectory:&isDirectory] || isDirectory)
+            {
+                usage(); break;
+            }
 
-        // Reread the file again, in the correct encoding
-        long numConverted = 0;
-        if (encoding)
-        {
-            numConverted = convertData(data, encoding, ofh);
-        }
+            // Destination path - can be either a filename or a directory
+            // If unspecified, defaults to stdout
+            resultFilename = [argEnum nextObject];
 
-        if (gDebugLevel)
-            CFShow((CFStringRef)[NSString stringWithFormat:@"%ld entries converted.", numConverted]);
-    } while (NO);
+            if (resultFilename)
+            {
+                if ([argEnum nextObject])
+                {
+                    // Too many filenames
+                    usage(); break;
+                }
 
-    [gPool release];
+                // If directory, append default filename
+                fileExists = [fm fileExistsAtPath:resultFilename isDirectory:&isDirectory];
+                if (fileExists && isDirectory)
+                {
+                    resultFilename = [resultFilename stringByAppendingPathComponent:POCONV_DEFAULT_STRINGS_FILENAME];
+                    fileExists = [fm fileExistsAtPath: resultFilename];
+                }
+
+                if (!fileExists)
+                {
+                    [fm createFileAtPath:resultFilename contents:nil attributes:nil];
+                }
+
+                if(!isSilent && fileExists)
+                {
+                    printf("\nDestination file exists, overwrite (y/n)? [y] ");
+                    int confirm = getchar();
+                    fflush(stdout);
+
+                    switch (confirm)
+                    {
+                        case 'y':
+                        case 'Y':
+                        case '\n':
+                            break;
+                        default:
+                            printf("Destination file not overwritten.\n\n");
+                            exit(0);
+                    }
+                }
+
+                ofh = [NSFileHandle fileHandleForWritingAtPath: resultFilename];
+                // Delay truncating file and wiping it out until we actually
+                // get something to write to
+            }
+            else
+            {
+                // Output filename not specified, use stdout
+                ofh = [NSFileHandle fileHandleWithStandardOutput];
+            }
+
+            if (nil == ofh)
+            {
+                CFShow(@"***Could not write output. Please check if directory exists, and you have permissions.***");
+                exit(1);
+            }
+
+            if (gDebugLevel)
+                CFShow((CFStringRef)[NSString stringWithFormat:@"poFile='%@', result='%@', ignoreFuzzy=%d, debugLevel=%d, silent=%d", poFilename, (resultFilename ? resultFilename : @"stdout"), gIgnoreFuzzy, gDebugLevel, isSilent]);
+
+            NSData *data = [NSData dataWithContentsOfMappedFile: poFilename];
+            NSMutableCharacterSet *newLineSet = [[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy];
+            [newLineSet formIntersectionWithCharacterSet:
+             [[NSCharacterSet whitespaceCharacterSet] invertedSet]];
+            gNewLineSet = newLineSet;
+            gDelimitSet = [NSCharacterSet characterSetWithCharactersInString: @"&\""];
+
+            // First detect the file encoding
+            NSStringEncoding encoding = getCharset(data);
+            if (gDebugLevel)
+                CFShow((CFStringRef)[NSString stringWithFormat:@"NSStringEncoding = %#lx", encoding]);
+
+            // Reread the file again, in the correct encoding
+            long numConverted = 0;
+            if (encoding)
+            {
+                numConverted = convertData(data, encoding, ofh);
+            }
+
+            if (gDebugLevel)
+                CFShow((CFStringRef)[NSString stringWithFormat:@"%ld entries converted.", numConverted]);
+        } while (NO);
+    }
+
     return 0;
 }

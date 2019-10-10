@@ -245,7 +245,7 @@
 		E5B48EBA0C22065E00C6FBD7 /* MacInputWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5B48EB80C22065E00C6FBD7 /* MacInputWatcher.mm */; };
 		E5C9ADE10848FFEF0071B1EE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5040B0602A47B91014901DC /* Carbon.framework */; };
 		E5CAABA70D3D7A08001926FC /* POSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5CAABA60D3D7A08001926FC /* POSupport.cpp */; };
-		E5CC203709AA836E00CFFF2C /* POConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = E5CC203209AA834B00CFFF2C /* POConverter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		E5CC203709AA836E00CFFF2C /* POConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = E5CC203209AA834B00CFFF2C /* POConverter.m */; };
 		E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E5CC204509AA843300CFFF2C /* Localizable.strings */; };
 		E5D3E6550D1EA18A00214838 /* axisarrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D3E6530D1EA18A00214838 /* axisarrow.cpp */; };
 		E5D446660777291700A1577D /* utf8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D446640777291700A1577D /* utf8.cpp */; };
@@ -2475,7 +2475,7 @@
 		E5CC202C09AA829B00CFFF2C /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(GCC_PREPROCESSOR_DEFINITIONS)",
@@ -2491,7 +2491,7 @@
 		E5CC202E09AA829B00CFFF2C /* Universal_Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(GCC_PREPROCESSOR_DEFINITIONS)",
@@ -2511,7 +2511,7 @@
 		E5F9EC660D9EA6BE00A83FEF /* HDR_Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(GCC_PREPROCESSOR_DEFINITIONS)",
@@ -2531,7 +2531,7 @@
 		E5F9EC670D9EA6BE00A83FEF /* HDR_Universal_Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(GCC_PREPROCESSOR_DEFINITIONS)",
