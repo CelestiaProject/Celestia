@@ -130,10 +130,13 @@ void processVisibleStars(
 
     // See if any of the objects in child nodes are potentially included
     // that we need to recurse deeper.
-    if (minDistance <= 0 || astro::absToAppMag(node->getFaintest(), minDistance) <= limitingFactor)
+    auto children = node->getChildren();
+    if (children != nullptr &&
+        (minDistance <= 0 ||
+        astro::absToAppMag(node->getFaintest(), minDistance) <= limitingFactor))
     {
         // Recurse into the child nodes
-        for (const auto &child : node->getChildren())
+        for (const auto &child : *children)
         {
             if (child == nullptr)
                 continue;
@@ -251,14 +254,17 @@ void processVisibleDsos(
 
     // See if any of the objects in child nodes are potentially included
     // that we need to recurse deeper.
-    if (minDistance <= 0.0 || astro::absToAppMag((double) node->getFaintest(), minDistance) <= limitingFactor)
+    auto children = node->getChildren();
+    if (children != nullptr &&
+        (minDistance <= 0.0 ||
+        astro::absToAppMag((double) node->getFaintest(), minDistance) <= limitingFactor))
     {
         // Recurse into the child nodes
-        for (const auto &child : node->getChildren())
+        for (const auto &child : *children)
         {
             if (child == nullptr)
                 continue;
-            processVisibleDsos(
+                processVisibleDsos(
                 child,
                 procesor,
                 obsPosition,
@@ -342,11 +348,14 @@ void processCloseStars(
     }
 
     // Recurse into the child nodes
-    for (const auto &child : node->getChildren())
+    auto children = node->getChildren();
+    if (children == nullptr)
+        return;
+    for (const auto &child : *children)
     {
         if (child == nullptr)
             continue;
-        processCloseStars(
+            processCloseStars(
             child,
             procesor,
             obsPosition,
@@ -389,11 +398,14 @@ void processCloseDsos(
     }
 
     // Recurse into the child nodes
-    for (const auto &child : node->getChildren())
+    auto children = node->getChildren();
+    if (children == nullptr)
+        return;
+    for (const auto &child : *children)
     {
         if (child == nullptr)
             continue;
-        processCloseDsos(
+            processCloseDsos(
             child,
             procesor,
             obsPosition,

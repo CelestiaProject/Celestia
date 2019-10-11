@@ -11,12 +11,7 @@ using namespace celmath;
 
 char* _stack;
 
-static size_t max_node_size = 12;
-
-static inline bool childValid(int n)
-{
-    return n >= 0 && n < OctreeNode::MaxChildren;
-}
+size_t OctreeNode::m_maxObjCount = 10;
 
 static void dumpObjects(const OctreeNode *node)
 {
@@ -168,22 +163,68 @@ void OctreeNode::ObjectList::dump() const
         fmt::fprintf(cout, "  %i : %f\n", it->getIndex(), it->getAbsoluteMagnitude());
 }
 
-OctreeNode::OctreeNode(const Vector3d& cellCenter, double scale, size_t maxObj, OctreeNode *parent) :
+OctreeNode::Children::Children()
+{
+    for(int i = 0; i < MaxChildren; i++)
+        (*this)[i] = nullptr;
+}
+
+OctreeNode::Children::~Children()
+{
+    for (const auto &child : *this)
+        delete child;
+}
+
+OctreeNode *OctreeNode::Children::getChild(int n, OctreeNode *parent)
+{
+//     if (!isValid(n))
+//         return nullptr;
+    if (at(n) != nullptr)
+        return at(n);
+    if (parent != nullptr)
+        return createChild(n, parent);
+    return nullptr;
+}
+
+OctreeNode *OctreeNode::Children::createChild(int i, OctreeNode *parent)
+{
+    if (at(i) != nullptr)
+    {
+        fmt::fprintf(cout, "Creating child at already existing index %i!\n", i);
+        exit(1);
+    }
+    double scale = parent->getScale() / 2;
+    Vector3d centerPos = parent->getCenter() + Vector3d(((i & XPos) != 0) ? scale : -scale,
+                                        ((i & YPos) != 0) ? scale : -scale,
+                                        ((i & ZPos) != 0) ? scale : -scale);
+    (*this)[i] = new OctreeNode(centerPos, scale, parent);
+    ++m_childrenCount;
+    return (*this)[i];
+}
+
+bool OctreeNode::Children::deleteChild(int n)
+{
+    if (at(n) == nullptr)
+    {
+        fmt::fprintf(cout, "Deleting non-existing child at index %i!\n", n);
+        exit(1);
+    }
+    delete (*this)[n];
+    (*this)[n] = nullptr;
+    --m_childrenCount;
+    return true;
+}
+
+OctreeNode::OctreeNode(const Vector3d& cellCenter, double scale, OctreeNode *parent) :
     m_cellCenter(cellCenter),
     m_scale(scale),
-    m_maxObjCount(maxObj),
     m_parent(parent)
-{
-    if (max_node_size > 0)
-        m_maxObjCount = max_node_size;
-    for(int i = 0; i < MaxChildren; i++)
-        m_children[i] = nullptr;
-}
+{}
 
 OctreeNode::~OctreeNode()
 {
-    for (auto &i : m_children)
-            delete i;
+    if (m_children != nullptr)
+        delete m_children;
 }
 
 bool OctreeNode::add(LuminousObject *obj)
@@ -214,47 +255,27 @@ bool OctreeNode::rm(LuminousObject *obj)
 
 OctreeNode *OctreeNode::getChild(int i, bool create)
 {
-    if (!childValid(i))
-        return nullptr;
-    if (m_children[i] != nullptr)
-        return m_children[i];
-
-    if (!create)
-        return nullptr;
-
-    createChild(i);
-    return m_children[i];
-}
-
-bool OctreeNode::createChild(int i)
-{
-    if (m_children[i] != nullptr)
-    {
-// #ifdef OCTREE_DEBUG
-        fmt::fprintf(clog, "Trying to create already created node of index %i!\n", i);
-// #endif
-        return false;
-    }
-    double scale = m_scale / 2;
-    Vector3d centerPos = m_cellCenter + Vector3d(((i & XPos) != 0) ? scale : -scale,
-                                        ((i & YPos) != 0) ? scale : -scale,
-                                        ((i & ZPos) != 0) ? scale : -scale);
-    m_children[i] = new OctreeNode(centerPos, scale, m_maxObjCount, this);
-    if (m_children[i] == nullptr)
-        fmt::fprintf(cerr, "Cannot create new child!\n");
-    m_childrenCount++;
-    return true;
+//     if (!Children::isValid(i))
+//         return nullptr;
+    if (m_children == nullptr && create)
+        m_children = new Children;
+    if (m_children != nullptr)
+        return m_children->getChild(i, create ? this : nullptr);
+    return nullptr;
 }
 
 bool OctreeNode::deleteChild(int n)
 {
-    if (!childValid(n))
-        return false;
-    if (m_children[n] == nullptr)
-        return false;
-    delete m_children[n];
-    m_children[n] = nullptr;
-    m_childrenCount--;
+//     if (!childValid(n))
+//         return false;
+//     if (m_children->at(n) == nullptr)
+//         return false;
+    m_children->deleteChild(n);
+    if (m_children->getChildrenCount() == 0)
+    {
+        delete m_children;
+        m_children = nullptr;
+    }
     return true;
 }
 
@@ -367,24 +388,6 @@ static bool pred(const OctreeNode::ObjectList::iterator &i1, const OctreeNode::O
     return (*i1)->getAbsoluteMagnitude() < (*i2)->getAbsoluteMagnitude();
 }
 
-/*OctreeNode::ObjectList::const_iterator OctreeNode::objectIterator(const LuminousObject *obj) const
-{
-    auto pair = m_objects.equal_range(obj->getAbsoluteMagnitude());
-    if (pair.first == m_objects.end())
-        return m_objects.end();
-    OctreeNode::ObjectList::const_iterator it = pair.first;
-    do
-    {
-        if (it->second == obj)
-            return it;
-        if(it == pair.second)
-            break;
-        ++it;
-    }
-    while(it != m_objects.end());
-    return m_objects.end();
-}*/
-
 float OctreeNode::getBrightest() const
 {
     return m_objects.getBrightest() != nullptr ? m_objects.getBrightest()->getAbsoluteMagnitude() : std::numeric_limits<float>::max();
@@ -394,42 +397,28 @@ float OctreeNode::getFaintest() const
 {
     return m_objects.getFaintest() != nullptr ? m_objects.getFaintest()->getAbsoluteMagnitude() : -std::numeric_limits<float>::max();
 }
-/*
-LuminousObject *OctreeNode::popBrightest()
+
+size_t OctreeNode::getChildrenCount() const
 {
-    if (m_objects.empty())
-        return nullptr;
-    auto it = m_objects.begin();
-    LuminousObject *ret = it->second;
-    m_objects.erase(it);
-    setDirty(true);
-    return ret;
+    return m_children == nullptr ? 0 : m_children->getChildrenCount();
 }
 
-LuminousObject *OctreeNode::popFaintest()
-{
-    if (m_objects.empty())
-        return nullptr;
-    auto it = --m_objects.end();
-    m_objects.erase(it);
-    setDirty(true);
-    return it->second;
-}
-*/
 int OctreeNode::getBrightestChildId() const
 {
     int ret = -1;
     float f = numeric_limits<float>::max();
+    if (m_children == nullptr)
+        return ret;
     for(int i = 0; i < 8; i++)
     {
-        OctreeNode *child = m_children[i];
+        OctreeNode *child = (*m_children)[i];
         if (child != nullptr && child->getBrightest() < f)
         {
             f = child->getBrightest();
             ret = i;
         }
     }
-    if (ret < 0 && m_childrenCount == 0)
+    if (ret < 0 && getChildrenCount() == 0)
     {
         fmt::fprintf(clog, "No brightest child but there should be!\n");
     }
@@ -496,11 +485,12 @@ int OctreeNode::check(float max, int level, bool fatal)
             exit(1);
         nerr = 1;
     }
-    for (const auto &child : m_children)
-    {
-        if (child != nullptr)
-            nerr += child->check(getFaintest(), level, fatal);
-    }
+    if (m_children != nullptr)
+        for (const auto &child : *m_children)
+        {
+            if (child != nullptr)
+                nerr += child->check(getFaintest(), level, fatal);
+        }
     return nerr;
 }
 
@@ -514,7 +504,9 @@ void OctreeNode::dump(int level) const
     }
     cout << this << " ";
     dumpObjects(this);
-    for(const auto &child : m_children)
+    if (m_children == nullptr)
+        return;
+    for(const auto &child : *m_children)
     {
         if (child != nullptr)
             child->dump(level + 1);

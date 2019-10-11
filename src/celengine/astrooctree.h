@@ -11,10 +11,10 @@ class OctreeNode
 {
  public:
     const static int MaxChildren = 8;
-    typedef std::array<OctreeNode*, MaxChildren> Children;
+//     typedef std::array<OctreeNode*, MaxChildren> Children;
 //     typedef std::multimap<float, LuminousObject*> ObjectList;
     static constexpr double MaxScale = 100000000000;
-    static constexpr size_t MaxObjectsPerNode = 100;
+    static constexpr size_t MaxObjectsPerNode = 10;
 
     class ObjectList : public std::deque<LuminousObject*>
     {
@@ -30,6 +30,18 @@ class OctreeNode
         bool contains(const LuminousObject *) const;
         void dump() const;
     };
+    class Children : public array<OctreeNode*, MaxChildren>
+    {
+        size_t m_childrenCount { 0 };
+     public:
+        static bool isValid(int n) { return n >= 0 && n < OctreeNode::MaxChildren; }
+        size_t getChildrenCount() const { return m_childrenCount; }
+        OctreeNode *getChild(int n, OctreeNode * = nullptr);
+        OctreeNode *createChild(int, OctreeNode *);
+        bool deleteChild(int);
+        Children();
+        ~Children();
+    };
  protected:
     bool add(LuminousObject*);
     bool rm(LuminousObject*);
@@ -39,16 +51,15 @@ class OctreeNode
 
 //     ObjectList::const_iterator objectIterator(const LuminousObject*) const;
 
-    bool createChild(int);
+//     bool createChild(int);
     bool deleteChild(int);
 
     OctreeNode *m_parent;
     Eigen::Vector3d m_cellCenter;
     ObjectList m_objects;
-    Children m_children;
+    Children *m_children { nullptr };
     double m_scale;
-    size_t m_childrenCount {0};
-    size_t m_maxObjCount {0};
+    static size_t m_maxObjCount;
     bool m_dirty { true };
     void setDirty(bool d) { m_dirty = d; }
  public:
@@ -59,11 +70,13 @@ class OctreeNode
         ZPos = 4,
     };
 
-    OctreeNode(const Eigen::Vector3d& cellCenterPos, double scale, size_t = MaxObjectsPerNode, OctreeNode *parent = nullptr);
+    OctreeNode(const Eigen::Vector3d& cellCenterPos, double scale, OctreeNode *parent = nullptr);
     ~OctreeNode();
 
     double getScale() const { return m_scale; }
     const Eigen::Vector3d& getCenter() const { return m_cellCenter; }
+
+    static size_t getMaxObjectCount() { return m_maxObjCount; }
 
     bool isInFrustum(const celmath::Frustum::PlaneType *planes) const;
     bool isInCell(const Eigen::Vector3d&) const;
@@ -76,9 +89,9 @@ class OctreeNode
     const ObjectList::const_iterator hasObject(const LuminousObject *) const;
 
     int getChildId(const Eigen::Vector3d&);
-    Children& getChildren() { return m_children; }
-    const Children& getChildren() const { return m_children; }
-    OctreeNode *getChild(int n, bool = true);
+    Children *getChildren() { return m_children; }
+    const Children *getChildren() const { return m_children; }
+    OctreeNode *getChild(int n, bool create = true);
     OctreeNode *getChild(const Eigen::Vector3d &pos, bool create = true)
     {
         return getChild(getChildId(pos), create);
@@ -89,7 +102,7 @@ class OctreeNode
     float getBrightest() const;
 
     size_t getObjectCount() const { return m_objects.size(); }
-    size_t getChildrenCount() const { return m_childrenCount; }
+    size_t getChildrenCount() const;
     bool empty() const { return m_objects.empty() && getChildrenCount() == 0; }
 
     bool isDirty() const { return m_dirty; }

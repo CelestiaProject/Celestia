@@ -7,8 +7,8 @@ constexpr array<const char *, AstroDatabase::MaxBuiltinCatalog> AstroDatabase::C
 
 AstroDatabase::AstroDatabase() :
     m_autoIndex(AutoIndexMax),
-    m_starOctree(Vector3d(0, 0, 0), OctreeNode::MaxScale, OctreeNode::MaxObjectsPerNode, nullptr),
-    m_dsoOctree(Vector3d(0, 0, 0),  OctreeNode::MaxScale, OctreeNode::MaxObjectsPerNode, nullptr)
+    m_starOctree(Vector3d(0, 0, 0), OctreeNode::MaxScale, nullptr),
+    m_dsoOctree(Vector3d(0, 0, 0),  OctreeNode::MaxScale, nullptr)
 {
     createBuiltinCatalogs();
     NameInfo::runTranslation();
