@@ -501,21 +501,21 @@
 		9726813A231D0D930014C8D7 /* Celestia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Celestia.entitlements; sourceTree = "<group>"; };
 		973256982349A397002D1DAE /* unixdirectory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unixdirectory.cpp; path = ../src/celutil/unixdirectory.cpp; sourceTree = SOURCE_ROOT; };
 		973619692350BF2D00B1D89E /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh_CN"; path = zh_CN.lproj/ConfigSelectionWindow.xib; sourceTree = "<group>"; };
-		9746D3E02350BDD50018CFD1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ConfigSelectionWindow.xib; sourceTree = "<group>"; };
+		9746D3E02350BDD50018CFD1 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ConfigSelectionWindow.xib; sourceTree = "<group>"; };
 		9772E59F2329DDC400531773 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		9798FB4F2324D2BE007F92B8 /* ConfigSelectionWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfigSelectionWindowController.h; sourceTree = "<group>"; };
 		9798FB502324D2BE007F92B8 /* ConfigSelectionWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfigSelectionWindowController.m; sourceTree = "<group>"; };
 		97E4018223101501002013C7 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = lib/libpng.a; sourceTree = "<group>"; };
 		97E401842310150F002013C7 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		97E40188231015AD002013C7 /* liblua5.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblua5.1.a; path = lib/liblua5.1.a; sourceTree = "<group>"; };
-		97E97FB623500A3A00BB1897 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Base; path = Base.lproj/Credits.rtf; sourceTree = "<group>"; };
-		97E97FB923500A3B00BB1897 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		97E97FBA23500A3B00BB1897 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
-		97E97FBD23500CB700BB1897 /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/MainMenu.nib; sourceTree = "<group>"; };
-		97E97FBE23500CB800BB1897 /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
-		97E97FBF23500CB800BB1897 /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
-		97E97FC023500CB900BB1897 /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/HelpWindow.nib; sourceTree = "<group>"; };
-		97E97FC123500CB900BB1897 /* Base */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Base; path = Base.lproj/TextWindow.nib; sourceTree = "<group>"; };
+		97E97FB623500A3A00BB1897 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		97E97FB923500A3B00BB1897 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		97E97FBA23500A3B00BB1897 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		97E97FBD23500CB700BB1897 /* en */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = en; path = en.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		97E97FBE23500CB800BB1897 /* en */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = en; path = en.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
+		97E97FBF23500CB800BB1897 /* en */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = en; path = en.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
+		97E97FC023500CB900BB1897 /* en */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = en; path = en.lproj/HelpWindow.nib; sourceTree = "<group>"; };
+		97E97FC123500CB900BB1897 /* en */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = en; path = en.lproj/TextWindow.nib; sourceTree = "<group>"; };
 		CE4EEA6D0F50144A003341A2 /* cspice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = cspice.a; path = lib/cspice.a; sourceTree = "<group>"; };
 		CE5202FD0F4F9DD0007D0DE8 /* spiceinterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = spiceinterface.cpp; path = ../src/celengine/spiceinterface.cpp; sourceTree = SOURCE_ROOT; };
 		CE5202FE0F4F9DD0007D0DE8 /* spiceinterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spiceinterface.h; path = ../src/celengine/spiceinterface.h; sourceTree = SOURCE_ROOT; };
@@ -1862,9 +1862,6 @@
 				ja,
 				zh_CN,
 				zh_TW,
-				de,
-				Base,
-				zh,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* celestia */;
 			projectDirPath = "";
@@ -1929,7 +1926,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "DIDBUILD=0\nfor po in $SRCROOT/../po/*.po; do\n    f=${po##*/};f=${f%.*}\n    if [ $f == 'en' ];then f='Base'\n    fi\n    LPROJ=$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$f.lproj\n    mkdir -p $LPROJ\n    if [ $po -nt $LPROJ/po.strings ];then\n        echo \"$BUILT_PRODUCTS_DIR/POConverter -sn $po $LPROJ/po.strings\"\n        $BUILT_PRODUCTS_DIR/POConverter -sn $po $LPROJ/po.strings\n        DIDBUILD=1\n    fi\ndone\n\nfor po in $SRCROOT/../po2/*.po; do\n    f=${po##*/};f=${f%.*}\n    if [ $f == 'en' ];then f='Base'\n    fi\n    LPROJ=$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$f.lproj\n    mkdir -p $LPROJ\n    if [ $po -nt $LPROJ/celestia_constellations.strings ];then\n        echo \"$BUILT_PRODUCTS_DIR/POConverter -sn $po $LPROJ/celestia_constellations.strings\"\n        $BUILT_PRODUCTS_DIR/POConverter -sn $po $LPROJ/celestia_constellations.strings\n        DIDBUILD=1\n    fi\ndone\nif [ $DIDBUILD -eq 1 ];then\n    echo \"Touch $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\"\n    touch -c $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\nfi\n";
+			shellScript = "DIDBUILD=0\nfor po in $SRCROOT/../po/*.po; do\n    f=${po##*/};f=${f%.*}\n    LPROJ=$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$f.lproj\n    mkdir -p $LPROJ\n    if [ $po -nt $LPROJ/po.strings ];then\n        echo \"$BUILT_PRODUCTS_DIR/POConverter -sn $po $LPROJ/po.strings\"\n        $BUILT_PRODUCTS_DIR/POConverter -sn $po $LPROJ/po.strings\n        DIDBUILD=1\n    fi\ndone\n\nfor po in $SRCROOT/../po2/*.po; do\n    f=${po##*/};f=${f%.*}\n    LPROJ=$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$f.lproj\n    mkdir -p $LPROJ\n    if [ $po -nt $LPROJ/celestia_constellations.strings ];then\n        echo \"$BUILT_PRODUCTS_DIR/POConverter -sn $po $LPROJ/celestia_constellations.strings\"\n        $BUILT_PRODUCTS_DIR/POConverter -sn $po $LPROJ/celestia_constellations.strings\n        DIDBUILD=1\n    fi\ndone\nif [ $DIDBUILD -eq 1 ];then\n    echo \"Touch $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\"\n    touch -c $BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -2134,7 +2131,7 @@
 				E5EAAE650A1A0E9700848446 /* ja */,
 				CEBD084F0F3A8F0500B3A535 /* zh_CN */,
 				8459EE891127970C0077F40B /* zh_TW */,
-				97E97FB923500A3B00BB1897 /* Base */,
+				97E97FB923500A3B00BB1897 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2147,7 +2144,7 @@
 				E5EAAE530A1A0B3000848446 /* ja */,
 				CE70D6BD0F38568E0020C34D /* zh_CN */,
 				8459EE821127967F0077F40B /* zh_TW */,
-				97E97FBD23500CB700BB1897 /* Base */,
+				97E97FBD23500CB700BB1897 /* en */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -2155,8 +2152,8 @@
 		9746D3E12350BDD50018CFD1 /* ConfigSelectionWindow.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				9746D3E02350BDD50018CFD1 /* Base */,
 				973619692350BF2D00B1D89E /* zh_CN */,
+				9746D3E02350BDD50018CFD1 /* en */,
 			);
 			name = ConfigSelectionWindow.xib;
 			sourceTree = "<group>";
@@ -2169,7 +2166,7 @@
 				CEDE1E960F0FC29700C95690 /* ja */,
 				CE70D6BF0F3856970020C34D /* zh_CN */,
 				8459EE86112796D40077F40B /* zh_TW */,
-				97E97FBF23500CB800BB1897 /* Base */,
+				97E97FBF23500CB800BB1897 /* en */,
 			);
 			name = EclipseFinder.nib;
 			sourceTree = "<group>";
@@ -2182,7 +2179,7 @@
 				E5EAAE540A1A0B3F00848446 /* ja */,
 				CE70D6BE0F3856930020C34D /* zh_CN */,
 				8459EE85112796C60077F40B /* zh_TW */,
-				97E97FBE23500CB800BB1897 /* Base */,
+				97E97FBE23500CB800BB1897 /* en */,
 			);
 			name = BrowserWindow.nib;
 			sourceTree = "<group>";
@@ -2195,7 +2192,7 @@
 				E579D3130A1A1949008F3BC8 /* ja */,
 				CE70D6BC0F3856880020C34D /* zh_CN */,
 				8459EE8B112797390077F40B /* zh_TW */,
-				97E97FB623500A3A00BB1897 /* Base */,
+				97E97FB623500A3A00BB1897 /* en */,
 			);
 			name = Credits.rtf;
 			sourceTree = "<group>";
@@ -2208,7 +2205,7 @@
 				E5EAAE660A1A0E9B00848446 /* ja */,
 				CEBD08500F3A8F0B00B3A535 /* zh_CN */,
 				8459EE8A112797190077F40B /* zh_TW */,
-				97E97FBA23500A3B00BB1897 /* Base */,
+				97E97FBA23500A3B00BB1897 /* en */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -2220,7 +2217,7 @@
 				E5EAAE550A1A0B4600848446 /* ja */,
 				CE70D6C00F38569C0020C34D /* zh_CN */,
 				8459EE87112796E10077F40B /* zh_TW */,
-				97E97FC023500CB900BB1897 /* Base */,
+				97E97FC023500CB900BB1897 /* en */,
 			);
 			name = HelpWindow.nib;
 			sourceTree = "<group>";
@@ -2228,7 +2225,7 @@
 		E5E2BDD00C24F7B6000D6E83 /* TextWindow.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				97E97FC123500CB900BB1897 /* Base */,
+				97E97FC123500CB900BB1897 /* en */,
 			);
 			name = TextWindow.nib;
 			sourceTree = "<group>";
