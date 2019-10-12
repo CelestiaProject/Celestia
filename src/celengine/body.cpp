@@ -161,8 +161,12 @@ void Body::setName(const string& name)
  */
 void Body::addAlias(const string& alias)
 {
-    names.push_back(alias);
-    system->addAlias(this, alias);
+    // Don't add an alias if it matches the primary name
+    if (alias != names[0])
+    {
+        names.push_back(alias);
+        system->addAlias(this, alias);
+    }
 }
 
 
