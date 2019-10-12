@@ -18,9 +18,12 @@ Selection AstroObject::toSelection()
 
 bool AstroObject::addName(const NameInfo::SharedConstPtr& info, bool setPrimary, bool updateDB)
 {
-    auto ptr = getNameInfo(info->getCanon());
-    if (ptr)
-        removeName(ptr);
+    if (updateDB && m_db != nullptr)
+    {
+        auto ptr = m_db->getNameInfo(info->getCanon());
+        if (ptr)
+            removeName(info->getCanon());
+    }
     m_nameInfos.insert(info);
     if (setPrimary)
         m_primaryName = info;
@@ -164,8 +167,11 @@ const NameInfo::SharedConstPtr &AstroObject::getNameInfo(const Name &name) const
     }
     else
     {
-        return m_db->getNameInfo(name);
+        const auto &info = m_db->getNameInfo(name);
+        if (info && info->getObject() == this)
+            return info;
     }
+    return NameInfo::nullPtr;
 }
 
 string AstroObject::getNames(bool i18n) const
