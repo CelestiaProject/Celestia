@@ -500,7 +500,7 @@
 		9717E96D234B641E00AAD7D1 /* Migrator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Migrator.m; sourceTree = "<group>"; };
 		9726813A231D0D930014C8D7 /* Celestia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Celestia.entitlements; sourceTree = "<group>"; };
 		973256982349A397002D1DAE /* unixdirectory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unixdirectory.cpp; path = ../src/celutil/unixdirectory.cpp; sourceTree = SOURCE_ROOT; };
-		973619692350BF2D00B1D89E /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh_CN"; path = zh_CN.lproj/ConfigSelectionWindow.xib; sourceTree = "<group>"; };
+		973619692350BF2D00B1D89E /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = zh_CN; path = zh_CN.lproj/ConfigSelectionWindow.xib; sourceTree = "<group>"; };
 		9746D3E02350BDD50018CFD1 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ConfigSelectionWindow.xib; sourceTree = "<group>"; };
 		9772E59F2329DDC400531773 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		9798FB4F2324D2BE007F92B8 /* ConfigSelectionWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfigSelectionWindowController.h; sourceTree = "<group>"; };
