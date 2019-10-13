@@ -102,13 +102,13 @@ NSDictionary* coordinateDict;
         NSYearCalendarUnit | NSMonthCalendarUnit  | NSDayCalendarUnit | 
         NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit
                                                  fromDate: date];
-    int era  = [comps era];
-    int year = [comps year];
+    NSInteger era  = [comps era];
+    NSInteger year = [comps year];
     if (era < 1) year = 1 - year;
-    astro::Date astroDate(year, [comps month], [comps day]);
-    astroDate.hour    = [comps hour];
-    astroDate.minute  = [comps minute];
-    astroDate.seconds = [comps second];
+    astro::Date astroDate((int)year, (int)[comps month], (int)[comps day]);
+    astroDate.hour    = (int)[comps hour];
+    astroDate.minute  = (int)[comps minute];
+    astroDate.seconds = (int)[comps second];
     // -[NSDateComponents second] is rounded to an integer,
     // so have to calculate and add decimal part
     roundedDate = [currentCalendar dateFromComponents: comps];

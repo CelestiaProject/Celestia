@@ -62,7 +62,7 @@
     unsigned i;
     if (extend==NO) [self deselectAll:nil];
     for (i=0;i<[items count];i++) {
-        int row = [self rowForItem:[items objectAtIndex:i]];
+        NSInteger row = [self rowForItem:[items objectAtIndex:i]];
         if(row>=0) [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:YES];
     }
 }
@@ -70,11 +70,13 @@
 @end
 
 
-@implementation MyOutlineView 
+@implementation MyOutlineView
 
-- (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal {
-    if (isLocal) return NSDragOperationEvery;
-    else return NSDragOperationCopy;
+- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context {
+    if (context == NSDraggingContextWithinApplication)
+        return NSDragOperationEvery;
+    else
+        return NSDragOperationCopy;
 }
 
 @end

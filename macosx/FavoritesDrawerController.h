@@ -23,18 +23,18 @@ contextMenuForItem:(id)item;
 -(IBAction)addNewFolder:(id)sender;
 -(IBAction)doubleClick:(id)sender;
 -(void)synchronizeFavoritesMenu;
--(id)outlineView:(NSOutlineView*)olv child:(int)index ofItem:(id)item;
+-(id)outlineView:(NSOutlineView*)olv child:(NSInteger)index ofItem:(id)item;
 -(BOOL)outlineView:(NSOutlineView*)olv isItemExpandable:(id)item;
--(int)outlineView:(NSOutlineView *)olv numberOfChildrenOfItem:(id)item;
+-(NSInteger)outlineView:(NSOutlineView *)olv numberOfChildrenOfItem:(id)item;
 -(id)outlineView:(NSOutlineView *)olv objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item;
 -(void)outlineView:(NSOutlineView *)olv setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item;
 -(void)outlineView:(NSOutlineView*)olv deleteItem:(id)item;
 -(void)outlineView:(NSOutlineView*)olv editItem:(id)item;
 -(void)outlineViewSelectionDidChange:(NSNotification*)notification;
 -(BOOL)outlineView:(NSOutlineView *)olv writeItems:(NSArray*)items toPasteboard:(NSPasteboard*)pboard;
--(unsigned int)outlineView:(NSOutlineView*)olv validateDrop:(id <NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(int)childIndex;
--(void)_performDropOperation:(id <NSDraggingInfo>)info onNode:(id)pnode atIndex:(int)childIndex;
--(BOOL)outlineView:(NSOutlineView*)olv acceptDrop:(id <NSDraggingInfo>)info item:(id)targetItem childIndex:(int)childIndex;
+-(NSDragOperation)outlineView:(NSOutlineView*)olv validateDrop:(id <NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)childIndex;
+-(void)_performDropOperation:(id <NSDraggingInfo>)info onNode:(id)pnode atIndex:(NSInteger)childIndex;
+-(BOOL)outlineView:(NSOutlineView*)olv acceptDrop:(id <NSDraggingInfo>)info item:(id)targetItem childIndex:(NSInteger)childIndex;
 @end
 
 @interface CelestiaFavorite(ViewAPI)

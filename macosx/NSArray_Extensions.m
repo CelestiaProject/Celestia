@@ -55,7 +55,7 @@
 
 @implementation NSMutableArray (MyExtensions)
 
-- (void) insertObjectsFromArray:(NSArray *)array atIndex:(int)index {
+- (void) insertObjectsFromArray:(NSArray *)array atIndex:(NSUInteger)index {
     NSObject *entry = nil;
     NSEnumerator *enumerator = [array objectEnumerator];
     while ((entry=[enumerator nextObject])) {

@@ -6,8 +6,6 @@
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
 
-#include <Carbon/Carbon.h>
-
 int main(int argc, const char *argv[])
 {
     CFLocaleRef curLocale = CFLocaleCopyCurrent();

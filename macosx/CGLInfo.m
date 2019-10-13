@@ -27,7 +27,7 @@ static BOOL ExtensionSupported(const char *ext)
         return false;
 
     char *extensions = gExtensions;
-    int len = strlen(ext);
+    unsigned long len = strlen(ext);
     for (;;) {
         if (strncmp(extensions, ext, len) == 0)
             return YES;

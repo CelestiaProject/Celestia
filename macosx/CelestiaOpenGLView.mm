@@ -22,6 +22,8 @@
 #define CEL_MIDDLE_BUTTON 2
 #define CEL_RIGHT_BUTTON 4
 
+@interface CelestiaOpenGLView () <MacInputWatcherDelegate>
+@end
 
 @implementation CelestiaOpenGLView
 
@@ -153,8 +155,8 @@
     [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers: 0 buttons:CEL_LEFT_BUTTON]];
     [appCore mouseButtonUp:location2 modifiers:[appCore toCelestiaModifiers: 0 buttons:CEL_LEFT_BUTTON]];
 
-    int auxItemIndex     = -1;
-    int separatorIndex   = -1;
+    NSInteger auxItemIndex     = -1;
+    NSInteger separatorIndex   = -1;
     BOOL insertedAuxItem = NO;
 
     [[self menu] removePlanetarySystemItem];
@@ -455,14 +457,6 @@
             [controller runScript: value ];
         
             return NO;
-            if (value != nil)
-            {
-                value = [ pb stringForType: NSFilenamesPboardType ];
-                if (value != nil )
-                {
-                    [controller runScript: value ];
-                }
-            }
         }
         return YES;
     }

@@ -24,7 +24,7 @@
 + (NSDictionary *)scriptsForFolderRoot: (NSString *)root
 {
     NSString *scriptsFolder = nil;
-    unsigned baseDirLevel = [[CEL_SCRIPTS_FOLDER pathComponents] count];
+    NSUInteger baseDirLevel = [[CEL_SCRIPTS_FOLDER pathComponents] count];
     BOOL isAbsoluteFolder = (root && [root length] > 0);
     if (isAbsoluteFolder)
         scriptsFolder = [root stringByAppendingPathComponent: CEL_SCRIPTS_FOLDER];
@@ -64,7 +64,7 @@
             id parentDict = itemDict;
             id childDict = nil;
             NSString *subDir;
-            for (unsigned j = baseDirLevel; j < [subPaths count]; ++j)
+            for (NSUInteger j = baseDirLevel; j < [subPaths count]; ++j)
             {
                 subDir = [subPaths objectAtIndex: j];
                 childDict = [parentDict objectForKey: subDir];
@@ -87,7 +87,7 @@
     NSDictionary *itemDict = nil;
     BOOL addSeparator = NO;
 
-    int count = [scriptMenu numberOfItems];
+    NSInteger count = [scriptMenu numberOfItems];
     while (count-- > 0)
         [scriptMenu removeItemAtIndex: 0];
 

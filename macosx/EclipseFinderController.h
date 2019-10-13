@@ -23,6 +23,6 @@
 - (IBAction)go:(id)sender;
 - (IBAction)stopFind:(id)sender;
 
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView;
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView;
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex;
 @end

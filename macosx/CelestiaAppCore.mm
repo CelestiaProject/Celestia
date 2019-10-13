@@ -19,7 +19,6 @@
 #include "celestiacore.h"
 #include "render.h"
 #include "qtcapture.h"
-#import <Carbon/Carbon.h>
 
 class MacSettingsWatcher : public CelestiaWatcher, public RendererWatcher
 {
@@ -86,7 +85,10 @@ public:
     virtual void update(const string& msg)
     {
         @autoreleasepool {
-            [[[CelestiaController shared] valueForKey: @"splashWindowController"] performSelector: @selector(setStatusText:) withObject: [NSString stringWithStdString: msg]];
+            id splash = [[CelestiaController shared] valueForKey: @"splashWindowController"];
+            if (splash && [splash respondsToSelector:@selector(setStatusText:)]) {
+                [splash performSelectorOnMainThread:@selector(setStatusText:) withObject:[NSString stringWithStdString: msg] waitUntilDone:NO];
+            }
         }
     };
 };
@@ -94,41 +96,24 @@ public:
 class MacOSXCursorHandler : public CelestiaCore::CursorHandler
 {
 public:
-    MacOSXCursorHandler() : cursor(kThemeArrowCursor),
-        shape(CelestiaCore::ArrowCursor) {};
+    MacOSXCursorHandler() : shape(CelestiaCore::ArrowCursor) {};
     virtual ~MacOSXCursorHandler() {};
     virtual void setCursorShape(CelestiaCore::CursorShape aShape)
     {
-        ThemeCursor changedCursor;
-
-        switch (aShape)
+        if (aShape != shape)
         {
-        case CelestiaCore::SizeVerCursor:
-            changedCursor = kThemeResizeUpDownCursor;
-            break;
-        case CelestiaCore::SizeHorCursor:
-            changedCursor = kThemeResizeLeftRightCursor;
-            break;
-        default:
-            changedCursor = kThemeArrowCursor;
-            break;                
-        }
-
-        if (changedCursor != cursor)
-        {
-            switch (changedCursor)
+            switch (aShape)
             {
-            case kThemeResizeUpDownCursor:
+            case CelestiaCore::SizeVerCursor:
                 [[NSCursor resizeUpDownCursor] set];
                 break;
-            case kThemeResizeLeftRightCursor:
+            case CelestiaCore::SizeHorCursor:
                 [[NSCursor resizeLeftRightCursor] set];
                 break;
             default:
                 [[NSCursor arrowCursor] set];
                 break;
             }
-            cursor = changedCursor;
             shape = aShape;
         }
     };
@@ -139,7 +124,6 @@ public:
     };
     
 private:
-    ThemeCursor cursor;
     CelestiaCore::CursorShape shape;
 };
 
@@ -268,7 +252,7 @@ CelestiaCore *appCore;
     return celestiaKey;
 }
 
--(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons {
+-(int)toCelestiaModifiers:(NSEventModifierFlags)modifiers buttons:(unsigned int)buttons {
     int cModifiers = 0;
     if (modifiers & NSCommandKeyMask)
         cModifiers |= CelestiaCore::ControlKey;
@@ -488,7 +472,7 @@ CelestiaCore *appCore;
 
 -(void)setTimeZone:(NSTimeZone *)timeZone withDate:(NSDate *)date
 {
-    appCore->setTimeZoneBias([timeZone secondsFromGMTForDate:date]);
+    appCore->setTimeZoneBias((int)[timeZone secondsFromGMTForDate:date]);
     appCore->setTimeZoneName([[timeZone abbreviationForDate:date] stdString]);
 }
 

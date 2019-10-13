@@ -15,7 +15,6 @@
 - (id) watched;
 @end
 
-
 class _MacInputWatcher : public CelestiaWatcher
 {
 private:
@@ -31,8 +30,8 @@ public:
         if ( 0 != (flags & CelestiaCore::TextEnterModeChanged) )
         {
             id watched = [watcherWrapper watched];
-            if ([watched respondsToSelector: @selector(textEnterModeChanged)])
-                [watched performSelector: @selector(textEnterModeChanged)];
+            if ([watched respondsToSelector:@selector(textEnterModeChanged)])
+                [watched textEnterModeChanged];
         }
     };
 };

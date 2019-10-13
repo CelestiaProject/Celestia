@@ -11,11 +11,10 @@
 #import "BrowserItem.h"
 #import "CelestiaSettings.h"
 
-
 @implementation NSMenu (CelestiaMenu)
-- (int) indexOfItemWithLocalizableTitle: (NSString *) aTitle
+- (NSInteger) indexOfItemWithLocalizableTitle: (NSString *) aTitle
 {
-    int index = [self indexOfItemWithTitle: NSLocalizedString(aTitle,@"")];
+    NSInteger index = [self indexOfItemWithTitle: NSLocalizedString(aTitle,@"")];
     if (index < 0)
         index = [self indexOfItemWithTitle: aTitle];
     return index;
@@ -23,14 +22,14 @@
 
 - (void) removeRefMarkItems
 {
-    int index;
+    NSInteger index;
     index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Reference Vectors",@"po",@"")];
     if (index >= 0) [self removeItemAtIndex: index];
 }
 
 - (void) removePlanetarySystemItem
 {
-    int satMenuIndex = [self indexOfItemWithTitle:
+    NSInteger satMenuIndex = [self indexOfItemWithTitle:
         NSLocalizedStringFromTable(@"Satellites",@"po",@"")];
     if (satMenuIndex < 0)
         satMenuIndex = [self indexOfItemWithTitle:
@@ -43,14 +42,14 @@
 
 - (void) removeAltSurfaceItem
 {
-    int surfMenuIndex = [self indexOfItemWithLocalizableTitle:
+    NSInteger surfMenuIndex = [self indexOfItemWithLocalizableTitle:
         @"Show Alternate Surface" ];
     if (surfMenuIndex >= 0)
         [self removeItemAtIndex: surfMenuIndex];
 }
 
 - (BOOL) insertRefMarkItemsForSelection: (CelestiaSelection *) aSelection
-                                atIndex: (int) aIndex
+                                atIndex: (NSInteger) aIndex
 {
     BOOL result    = NO;
     NSMenuItem *mi = nil;
@@ -117,7 +116,7 @@
 
 - (BOOL) insertPlanetarySystemItemForSelection: (CelestiaSelection *) aSelection
                                         target: (id) aTarget
-                                       atIndex: (int) aIndex
+                                       atIndex: (NSInteger) aIndex
 {
     BOOL result = NO;
     NSMenuItem *mi = nil;
@@ -160,7 +159,7 @@
 
 - (BOOL) insertAltSurfaceItemForSelection: (CelestiaSelection *) aSelection
                                    target: (id) aTarget
-                                  atIndex: (int) aIndex
+                                  atIndex: (NSInteger) aIndex
 {
     BOOL result = NO;
     NSMenuItem *mi = nil;

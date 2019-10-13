@@ -11,7 +11,6 @@
 @interface CelestiaStar : NSObject {
     NSValue* _data;
 }
--(NSNumber*)catalogNumberAtIndex:(NSNumber*)cat;
 -(NSNumber*)catalogNumber;
 -(void)setCatalogNumber:(NSNumber*)cat;
 -(void)setCatalogNumber:(NSNumber*)cat atIndex:(NSNumber*)index;
@@ -21,7 +20,6 @@
 -(NSNumber*)apparentMagnitude:(NSNumber*)m;
 -(NSNumber*)luminosity;
 -(NSNumber*)temperature;
--(NSNumber*)rotationPeriod;
 -(void)setAbsoluteMagnitude:(NSNumber*)m;
 -(void)setLuminosity:(NSNumber*)m;
 -(NSString *)name;

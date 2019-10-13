@@ -36,5 +36,5 @@
 - (void)addChild: (BrowserItem *)aChild;
 - (id)childNamed: (NSString *)aName;
 - (NSArray *)allChildNames;
-- (unsigned)childCount;
+- (NSUInteger)childCount;
 @end

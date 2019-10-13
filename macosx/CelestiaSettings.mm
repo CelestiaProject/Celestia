@@ -307,13 +307,13 @@ static NSMutableDictionary* tagMap;
     [defs synchronize];
 }
 
--(id) valueForTag: (int) tag { 
-    return [self valueForKey: [tagDict objectForKey: [NSNumber numberWithInt: tag] ] ];
+-(id) valueForTag: (NSInteger) tag { 
+    return [self valueForKey: [tagDict objectForKey: [NSNumber numberWithInteger: tag] ] ];
 }
 
--(void) setValue: (id) value forTag: (int) tag
+-(void) setValue: (id) value forTag: (NSInteger) tag
 {
-    id key = [tagDict objectForKey: [NSNumber numberWithInt: tag] ];
+    id key = [tagDict objectForKey: [NSNumber numberWithInteger: tag] ];
     if (key!= nil)
     {
         [self setValue: value forKey: key ];
@@ -625,7 +625,7 @@ FEATUREMETHODS(Other)
 
 // Alt Surface Setting
 
-- (int) altSurface
+- (NSUInteger) altSurface
 {
     // return alternate surface index
     string displayedSurfName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
@@ -673,10 +673,10 @@ FEATUREMETHODS(Other)
 
 - (void) selectPopUpButtonItem: (id) item withIndex: (int) index
 {
-    id item2 = [ tagMap objectForKey: [NSNumber numberWithInt: ([item tag]-index) ]];
+    id item2 = [ tagMap objectForKey: [NSNumber numberWithInteger: ([item tag]-index) ]];
     if ([item2 isKindOfClass: [NSPopUpButton class]])
     {
-        int popUpIndex = [item2 indexOfItemWithTag: [item tag]];
+        NSInteger popUpIndex = [item2 indexOfItemWithTag: [item tag]];
         if (popUpIndex >= 0)
             [item2 selectItemAtIndex: popUpIndex];
     }
@@ -684,7 +684,7 @@ FEATUREMETHODS(Other)
 
 - (void) actionForItem: (id) item
 {
-    int tag = [item tag];
+    NSInteger tag = [item tag];
     id value;
 
     if ( tag <= 128 ) tag = [self tagForKey: tag ]; // handle menu item for setting; obsolete?
@@ -692,14 +692,14 @@ FEATUREMETHODS(Other)
     switch ( tag/100)
     {
         case 4: case 5: case 7: case 8: case 10: // 400, 500, 700, 800, 1000
-            [self setValue: [NSNumber numberWithInt: (1-[[self valueForTag: tag] intValue])] forTag: tag ];
+            [self setValue: [NSNumber numberWithInteger: (1-[[self valueForTag: tag] integerValue])] forTag: tag ];
         break;
         case 6: // 600
-            value = [NSNumber numberWithInt: tag%10 ];
+            value = [NSNumber numberWithInteger: tag%10 ];
             [self setValue: value forTag: (tag/10)*10 ];
             [self selectPopUpButtonItem: item withIndex: tag%10];
             //[self setPopUpButtonWithTag: ((tag/10)*10) toIndex: [value intValue]];
-            if ([[tagDict objectForKey:[NSNumber numberWithInt:((tag/10)*10)]] isEqualToString: @"renderPath"])
+            if ([[tagDict objectForKey:[NSNumber numberWithInteger:((tag/10)*10)]] isEqualToString: @"renderPath"])
             {
                 value = [self valueForTag: (tag/10)*10];
                 if ([value intValue] != (tag%10))
@@ -737,7 +737,7 @@ FEATUREMETHODS(Other)
 
 - (BOOL) validateItem: (id) item
 {
-    int tag = [item tag];
+    NSInteger tag = [item tag];
     if ( tag <= 128 ) tag = [self tagForKey: tag ];
     if ( tag == 32 ) 
     {
@@ -759,7 +759,7 @@ FEATUREMETHODS(Other)
 		// 600s (popups)
             if ( tag >= 600 && tag < 610 ) // altSurface menu
             {
-                int index = tag-600;
+                NSUInteger index = tag-600;
                 [item setState:  ([self altSurface] == index ) ? NSOnState: NSOffState ];            
             } 
             else
@@ -777,10 +777,10 @@ FEATUREMETHODS(Other)
 
 - (void) defineKeyForItem: (id) item
 {
-    int tag = [item tag];
+    NSInteger tag = [item tag];
     if ( tag != 0 )
     {
-        NSNumber* itemKey = [NSNumber numberWithInt: tag ];
+        NSNumber* itemKey = [NSNumber numberWithInteger: tag ];
         if ( [ tagMap objectForKey: itemKey ] == 0 )
         {
             [tagMap setObject: item forKey: itemKey];
@@ -789,9 +789,9 @@ FEATUREMETHODS(Other)
 }
 
 
-- (int) tagForKey: (int) key
+- (NSInteger) tagForKey: (NSInteger) key
 {
-    int tag;
+    NSInteger tag;
     switch (key)
     {
             case 112: tag = 501; break;  // LabelPlanets
@@ -821,10 +821,10 @@ FEATUREMETHODS(Other)
     return tag;
 }
 
-- (void) validateItemForTag: (int) tag
+- (void) validateItemForTag: (NSInteger) tag
 {
     if ( tag <= 128 ) tag = [self tagForKey: tag ];
-    id item = [ tagMap objectForKey: [NSNumber numberWithInt: tag ]];
+    id item = [ tagMap objectForKey: [NSNumber numberWithInteger: tag ]];
     if ( [item isKindOfClass: [NSMenuItem class]] ) return; // auto-validated
     if ( item != 0 )
     {
@@ -858,7 +858,7 @@ FEATUREMETHODS(Other)
 
 - (IBAction) activateMenuItem: (id) item
 {
-    int tag = [item tag];
+    NSInteger tag = [item tag];
     if ( tag != 0 )
     {
         if ( tag < 0 ) // simulate key press and hold
@@ -875,7 +875,7 @@ FEATUREMETHODS(Other)
 
 - (IBAction) activateSwitchButton: (id) item
 {
-    int tag = [item tag];
+    NSInteger tag = [item tag];
     if ( tag != 0 )
     {
         [self actionForItem: item];
@@ -886,7 +886,7 @@ FEATUREMETHODS(Other)
 - (IBAction) activateMatrixButton: (id) item
 {
     item = [item selectedCell];
-    int tag = [item tag];
+    NSInteger tag = [item tag];
     if ( tag != 0 )
     {
         [self actionForItem: item];

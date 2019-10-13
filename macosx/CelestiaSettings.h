@@ -18,8 +18,8 @@
 
 -(void) setControl: (id) _control;
 
--(id) valueForTag: (int) tag; 
--(void) setValue: (id) value forTag: (int) tag; 
+-(id) valueForTag: (NSInteger) tag;
+-(void) setValue: (id) value forTag: (NSInteger) tag; 
 
 // User Defaults 
 
@@ -211,8 +211,8 @@
 - (void) actionForItem: (id) item;
 - (BOOL) validateItem: (id) item;
 - (void) validateItems;
-- (void) validateItemForTag: (int) tag;
-- (int)  tagForKey: (int) key;
+- (void) validateItemForTag: (NSInteger) tag;
+- (NSInteger)  tagForKey: (NSInteger) key;
 - (void) scanForKeys: (id) item;
 
 @end

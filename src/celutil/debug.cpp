@@ -22,7 +22,7 @@
 static int debugVerbosity = 0;
 
 #if defined(DEBUG) || defined(_DEBUG)
-void DebugPrint(int level, char *format, ...)
+void DebugPrint(int level, const char *format, ...)
 {
     va_list args;
     va_start(args, format);

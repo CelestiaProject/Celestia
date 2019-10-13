@@ -46,7 +46,7 @@
         [NSException raise:@"TypeError" format:@"%@ invalid, only %@ allowed",NSStringFromClass([obj class]),NSStringFromClass(_myClass)];
     [_array addObject:obj];
 }
--(void)insertObject:(id)obj atIndex:(unsigned)idx
+-(void)insertObject:(id)obj atIndex:(NSUInteger)idx
 {
     if (![obj isKindOfClass:_myClass])
         [NSException raise:@"TypeError" format:@"%@ invalid, only %@ allowed",NSStringFromClass([obj class]),NSStringFromClass(_myClass)];
@@ -56,21 +56,21 @@
 {
     [_array removeLastObject];
 }
--(void)removeObjectAtIndex:(unsigned)idx
+-(void)removeObjectAtIndex:(NSUInteger)idx
 {
     [_array removeObjectAtIndex:idx];
 }
--(void)replaceObjectAtIndex:(unsigned)idx withObject:(id)obj
+-(void)replaceObjectAtIndex:(NSUInteger)idx withObject:(id)obj
 {
     if (![obj isKindOfClass:_myClass])
         [NSException raise:@"TypeError" format:@"%@ invalid, only %@ allowed",NSStringFromClass([obj class]),NSStringFromClass(_myClass)];
     [_array replaceObjectAtIndex:idx withObject:obj];
 }
--(unsigned)count
+-(NSUInteger)count
 {
     return [_array count];
 }
--(id)objectAtIndex:(unsigned)idx
+-(id)objectAtIndex:(NSUInteger)idx
 {
     return [_array objectAtIndex:idx];
 }
@@ -218,12 +218,12 @@
     return NO;
 }
 
-- (void)insertChild:(MyTree*)child atIndex:(int)index {
+- (void)insertChild:(MyTree*)child atIndex:(NSInteger)index {
     [[self children] insertObject:child atIndex:index];
     [child setParent: self];
 }
 
-- (void)insertChildren:(NSArray*)children atIndex:(int)index {
+- (void)insertChildren:(NSArray*)children atIndex:(NSInteger)index {
     [[self children] insertObjectsFromArray: children atIndex: index];
     [children makeObjectsPerformSelector:@selector(setParent:) withObject:self];
 }
@@ -251,15 +251,15 @@
     [[self parent] removeChild:self];
 }
 
-- (int)indexOfChild:(MyTree*)child {
+- (NSUInteger)indexOfChild:(MyTree*)child {
     return [[self children] indexOfObject:child];
 }
 
-- (int)indexOfChildIdenticalTo:(MyTree*)child {
+- (NSUInteger)indexOfChildIdenticalTo:(MyTree*)child {
     return [[self children] indexOfObjectIdenticalTo:child];
 }
 
-- (int)numberOfChildren {
+- (NSUInteger)numberOfChildren {
     return [[self children] count];
 }
 
@@ -271,7 +271,7 @@
     return [[self children] lastObject];
 }
 
-- (MyTree*)childAtIndex:(int)index {
+- (MyTree*)childAtIndex:(NSInteger)index {
     return [[self children] objectAtIndex:index];
 }
 

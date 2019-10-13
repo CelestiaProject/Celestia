@@ -8,7 +8,6 @@
 
 #import "NSWindowController_Extensions.h"
 
-
 @implementation NSWindowController (CelestiaWindowController)
 
 - (void)keyDown:(NSEvent *)theEvent

@@ -12,6 +12,12 @@
 
 // Define the DPRINTF macro; g++ supports macros with variable
 // length arguments, so we'll use those when we can.
+#ifdef __APPLE__
+#ifdef DPRINTF
+#undef DPRINTF // OSX has DPRINTF
+#endif // DPRINTF
+#endif // __APPLE__
+
 #ifndef DPRINTF
 
 #ifdef __GNUC__
@@ -20,7 +26,7 @@
 #define DPRINTF(level, args...)
 #else
 #define DPRINTF(level, args...) DebugPrint(level, args)
-extern void DebugPrint(int level, char *format, ...);
+extern void DebugPrint(int level, const char *format, ...);
 #endif
 
 #else
@@ -29,7 +35,7 @@ extern void DebugPrint(int level, char *format, ...);
 #define DPRINTF //
 #else
 #define DPRINTF DebugPrint
-extern void DebugPrint(int level, char *format, ...);
+extern void DebugPrint(int level, const char *format, ...);
 #endif
 
 #endif // __GNUC__

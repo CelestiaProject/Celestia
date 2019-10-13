@@ -262,7 +262,7 @@
     return childNames;
 }
 
-- (unsigned)childCount
+- (NSUInteger)childCount
 {
     return [children count];
 }
