@@ -138,6 +138,7 @@ class NameInfo
     static NameInfo::SharedConstPtr createShared(const std::string&, const Name, AstroObject *, PlanetarySystem * = nullptr, bool greek = true);
     static void runTranslation();
     static void stopTranslation();
+    void dump() const;
  protected:
     std::recursive_mutex m_mutex;
     static std::queue<SharedPtr> m_trQueue;
@@ -168,6 +169,11 @@ bool inline operator>(const NameInfo &n1, const NameInfo &n2)
 {
     return n1.getCanon().str() > n2.getCanon().str() || n1.getSystem() > n2.getSystem();
 }
+
+struct SharedConstNameInfoPtrPredicate
+{
+    bool operator()(const NameInfo::SharedConstPtr&, const NameInfo::SharedConstPtr&) const;
+};
 
 typedef std::set<NameInfo> NameInfoSet;
 typedef std::set<NameInfo::SharedPtr> SharedNameInfoSet;

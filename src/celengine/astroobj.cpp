@@ -8,6 +8,8 @@ using namespace std;
 
 void AstroObject::setIndex(AstroCatalog::IndexNumber nr)
 {
+    if (m_mainIndexNumber != AstroCatalog::InvalidIndex)
+        fmt::fprintf(cout, "AstroObject::setIndex(%u) on object with already set index: %u!\n", nr, m_mainIndexNumber);
     m_mainIndexNumber = nr;
 }
 
@@ -18,13 +20,21 @@ Selection AstroObject::toSelection()
 
 bool AstroObject::addName(const NameInfo::SharedConstPtr& info, bool setPrimary, bool updateDB)
 {
-    if (updateDB && m_db != nullptr)
+    if (info->getObject() != nullptr && info->getObject() != this)
     {
-        auto ptr = m_db->getNameInfo(info->getCanon());
-        if (ptr)
-            removeName(info->getCanon());
+        fmt::fprintf(cout, " Host object different from this: %u != %u\n", getIndex(), info->getObject()->getIndex());
     }
-    m_nameInfos.insert(info);
+    if (m_nameInfos == nullptr)
+        m_nameInfos = new SharedConstNameInfoSet;
+    if (updateDB && m_db)
+    {
+        auto name = m_db->getNameInfo(info->getCanon());
+        if (name)
+            removeName(name, true);
+    }
+    if (m_nameInfos == nullptr)
+        m_nameInfos = new SharedConstNameInfoSet;
+    m_nameInfos->insert(info);
     if (setPrimary)
         m_primaryName = info;
     PlanetarySystem *sys = info->getSystem();
@@ -102,13 +112,15 @@ bool AstroObject::removeName(const string& name, bool greek, bool updateDB)
 
 bool AstroObject::removeName(const Name& name, bool updateDB)
 {
+    if (m_nameInfos == nullptr)
+        return false;
     if (!m_db)
     {
-        for(SharedConstNameInfoSet::iterator it = m_nameInfos.begin(); it != m_nameInfos.end(); ++it)
+        for(SharedConstNameInfoSet::iterator it = m_nameInfos->begin(); it != m_nameInfos->end(); ++it)
         {
             if ((*it)->getCanon() == name)
             {
-                m_nameInfos.erase(it);
+                m_nameInfos->erase(it);
                 return true;
             }
         }
@@ -120,6 +132,8 @@ bool AstroObject::removeName(const Name& name, bool updateDB)
 
 bool AstroObject::removeName(const NameInfo::SharedConstPtr &info, bool updateDB)
 {
+    if (m_nameInfos == nullptr)
+        return false;
     PlanetarySystem *sys = info->getSystem();
     if (sys == nullptr)
     {
@@ -130,25 +144,40 @@ bool AstroObject::removeName(const NameInfo::SharedConstPtr &info, bool updateDB
     {
         sys->removeName(info);
     }
-    m_nameInfos.erase(info);
+    m_nameInfos->erase(info);
+    if (m_nameInfos->size() == 0)
+    {
+        delete m_nameInfos;
+        m_nameInfos = nullptr;
+    }
     return true;
 }
 
 void AstroObject::removeNames(bool updateDB)
 {
+    if (m_nameInfos == nullptr)
+        return;
     do
     {
-        SharedConstNameInfoSet::iterator it = m_nameInfos.begin();
-        if (it != m_nameInfos.end())
+        SharedConstNameInfoSet::iterator it = m_nameInfos->begin();
+        if (it != m_nameInfos->end())
             removeName(*it, updateDB);
     }
-    while(m_nameInfos.size());
+    while(m_nameInfos != nullptr && m_nameInfos->size());
 }
 
 SharedConstNameInfoSet::iterator AstroObject::getNameInfoIterator(const Name &name) const
 {
+    if (m_nameInfos == nullptr)
+    {
+        fmt::fprintf(cout, " Trying to get iterator to \"%s\" while name set is null!\n", name.str());
+        exit(1);
+    }
+//     fmt::fprintf(cout, "AstroObject::getNameInfoIterator(%s)\n", name.str());
+//     fmt::fprintf(cout, " nameset at address: %u\n", m_nameInfos);
+//     fmt::fprintf(cout, " in object at index: %u\n", getIndex());
     SharedConstNameInfoSet::iterator it;
-    for(it = m_nameInfos.begin(); it != m_nameInfos.end(); ++it)
+    for(it = m_nameInfos->begin(); it != m_nameInfos->end(); ++it)
     {
         if ((*it)->getCanon() == name)
             return it;
@@ -158,10 +187,12 @@ SharedConstNameInfoSet::iterator AstroObject::getNameInfoIterator(const Name &na
 
 const NameInfo::SharedConstPtr &AstroObject::getNameInfo(const Name &name) const
 {
+    if (m_nameInfos == nullptr)
+        return NameInfo::nullPtr;
     if (!m_db)
     {
         SharedConstNameInfoSet::iterator it = getNameInfoIterator(name);
-        if (it == m_nameInfos.end())
+        if (it == m_nameInfos->end())
             return NameInfo::nullPtr;
         return *it;
     }
@@ -177,7 +208,10 @@ const NameInfo::SharedConstPtr &AstroObject::getNameInfo(const Name &name) const
 string AstroObject::getNames(bool i18n) const
 {
     string ret;
-    for (const auto &info : getNameInfos())
+    auto infos = getNameInfos();
+    if (infos == nullptr)
+        return ret;
+    for (const auto &info : *infos)
     {
         if (!ret.empty())
             ret += " / ";

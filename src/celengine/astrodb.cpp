@@ -146,9 +146,9 @@ std::vector<Name> AstroDatabase::getObjectNameList(AstroCatalog::IndexNumber nr,
 {
     std::vector<Name> ret;
     AstroObject *obj = getObject(nr);
-    if (obj == nullptr)
+    if (obj == nullptr || obj->getNameInfos() == nullptr)
         return ret;
-    for(const auto &iter : obj->getNameInfos())
+    for(const auto &iter : *obj->getNameInfos())
     {
         if (max == 0)
             return ret;
@@ -179,9 +179,9 @@ std::string AstroDatabase::getObjectNames(AstroCatalog::IndexNumber nr, bool i18
     string names;
     names.reserve(max); // optimize memory allocation
     AstroObject *obj = getObject(nr);
-    if (obj == nullptr)
+    if (obj == nullptr || obj->getNameInfos() == nullptr)
         return "";
-    for (const auto &name : obj->getNameInfos())
+    for (const auto &name : *obj->getNameInfos())
     {
         if (max == 0)
             return names;
@@ -230,7 +230,9 @@ void AstroDatabase::removeNames(AstroCatalog::IndexNumber nr)
 
 void AstroDatabase::removeNames(AstroObject *obj)
 {
-    for (const auto &info : obj->getNameInfos())
+    if (obj->getNameInfos() == nullptr)
+        return;
+    for (const auto &info : *obj->getNameInfos())
     {
         if (info->getSystem() == nullptr)
             removeName(info);
@@ -288,7 +290,9 @@ bool AstroDatabase::addObject(AstroObject *obj)
     }
     obj->setDatabase(this);
     m_mainIndex.insert(std::make_pair(obj->getIndex(), obj));
-    for(const auto& info : obj->getNameInfos())
+    if (obj->getNameInfos() == nullptr)
+        return true;
+    for(const auto& info : *obj->getNameInfos())
     {
         if (info->getSystem() == nullptr)
             m_nameIndex.add(info);

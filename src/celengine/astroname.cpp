@@ -134,6 +134,33 @@ void NameInfo::stopTranslation()
     pushForTr(nullptr);
 }
 
+void NameInfo::dump() const
+{
+    if (!getCanon().ptr())
+    {
+        fmt::fprintf(cout, "NameInfo: null!");
+        return;
+    }
+    fmt::fprintf(cout, "NameInfo: %s\n", getCanon().str());
+    fmt::fprintf(cout, " domain: %s\n", m_domain.str());
+    if (hasLocalized())
+        fmt::fprintf(cout, " localized: %s\n", getLocalized().str());
+    if (getObject() != nullptr)
+        fmt::fprintf(cout, " object index: %u\n", getObject()->getIndex());
+    if (getSystem() != nullptr)
+        fmt::fprintf(cout, " system of: %u\n", getSystem()->getStar()->getIndex());
+}
+
+bool SharedConstNameInfoPtrPredicate::operator()(const NameInfo::SharedConstPtr& n1, const NameInfo::SharedConstPtr& n2) const
+{
+//     fmt::fprintf(cout, "Comparing const NameInfo ptrs:\n");
+//     fmt::fprintf(cout, " arg 1: \"%s\"\n", n1->getCanon().str());
+//     fmt::fprintf(cout, " arg 2: \"%s\"\n", n2->getCanon().str());
+    bool ret = n1 < n2;
+//     fmt::fprintf(cout, " result: \"%s\"\n", ret);
+    return ret;
+}
+
 const string Name::m_empty = "";
 
 const NameInfo::SharedConstPtr NameInfo::nullPtr;

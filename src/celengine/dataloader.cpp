@@ -23,5 +23,7 @@ bool AstroDataLoader::load(const string& fname, bool cType)
         return false;
     }
 
+//     fmt::fprintf(cout, "Loading data from \"%s\"\n", fname);
+
     return load(stream);
 }

@@ -1515,10 +1515,12 @@ static int object_getnames(lua_State *l)
     Selection *s = celx.getThis<Selection>();
     checkThisEmpty(celx, s);
     vector<NameInfo::SharedConstPtr> ret;
-    for (const auto &info : s->astroObject()->getNameInfos())
-    {
-        ret.emplace_back(info);
-    }
+    auto names = s->astroObject()->getNameInfos();
+    if (names != nullptr)
+        for (const auto &info : *names)
+        {
+            ret.emplace_back(info);
+        }
     return celx.pushClassIterable<NameInfo::SharedConstPtr>(ret);
 }
 

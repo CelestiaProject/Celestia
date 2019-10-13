@@ -23,7 +23,7 @@ public:
 // Names support
 
  protected:
-    SharedConstNameInfoSet m_nameInfos;
+    SharedConstNameInfoSet *m_nameInfos { nullptr };
     NameInfo::SharedConstPtr m_primaryName;
     SharedConstNameInfoSet::iterator getNameInfoIterator(const Name &) const;
  public:
@@ -48,7 +48,7 @@ public:
     bool hasLocalizedName(const Name& name) const;
     bool hasLocalizedName(const std::string& name) const;
     bool hasLocalizedName() { return m_primaryName && m_primaryName->hasLocalized(); }
-    const SharedConstNameInfoSet& getNameInfos() const { return m_nameInfos; }
+    const SharedConstNameInfoSet *getNameInfos() const { return m_nameInfos; }
     bool removeName(const std::string&, bool greek = true, bool = true);
     bool removeName(const Name&, bool = true);
     bool removeName(const NameInfo::SharedConstPtr &, bool = true);

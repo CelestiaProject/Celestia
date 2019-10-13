@@ -1154,7 +1154,9 @@ void PlanetarySystem::addBody(Body* body)
 void PlanetarySystem::addBodyToNameIndex(Body* body)
 {
     auto names = body->getNameInfos();
-    for (const auto& name : names)
+    if (names == nullptr)
+        return;
+    for (const auto& name : *names)
     {
         addName(name);
     }
@@ -1168,7 +1170,9 @@ void PlanetarySystem::removeBodyFromNameIndex(const Body* body)
 
     // Erase the object from the object indices
     auto names = body->getNameInfos();
-    for (const auto& name : names)
+    if (names == nullptr)
+        return;
+    for (const auto& name : *names)
     {
         removeName(name);
     }

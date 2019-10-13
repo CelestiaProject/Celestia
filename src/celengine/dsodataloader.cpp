@@ -79,7 +79,7 @@ bool DscDataLoader::load(istream& in)
 
             if (!objName.empty())
             {
-                if (obj->getNameInfos().size() > 0)
+                if (obj->getNameInfos() != nullptr && obj->getNameInfos()->size() > 0)
                     obj->removeNames();
                 obj->addNames(objName);
 //                 fmt::fprintf(cout, "Object nr %u: Adding names \"%s\".\n", obj->getIndex(), objName);
