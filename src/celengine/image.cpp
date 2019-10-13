@@ -9,18 +9,16 @@
 
 #include <fstream>
 
-#ifndef TARGET_OS_MAC
+#ifndef JPEG_SUPPORT
 #define JPEG_SUPPORT
+#endif
+
+#ifndef PNG_SUPPORT
 #define PNG_SUPPORT
 #endif
 
 #ifdef TARGET_OS_MAC
 #include <unistd.h>
-#include "CGBuffer.h"
-#ifndef PNG_SUPPORT
-#include <Quicktime/ImageCompression.h>
-#include <QuickTime/QuickTimeComponents.h>
-#endif
 #endif
 
 #ifndef _WIN32
@@ -551,72 +549,6 @@ Image* LoadJPEGImage(const string& filename, int)
     // warnings occurred (test whether jerr.pub.num_warnings is nonzero).
 
     return img;
-
-#elif TARGET_OS_MAC
-
-    Image* img = NULL;
-    CGBuffer* cgJpegImage;
-    size_t img_w, img_h, img_d;
-
-    cgJpegImage = new CGBuffer(filename.c_str());
-    if (cgJpegImage == NULL) {
-        char tempcwd[2048];
-        getcwd(tempcwd, sizeof(tempcwd));
-        DPRINTF(0, "CGBuffer :: Error opening JPEG image file %s/%s\n", tempcwd, filename.c_str());
-        delete cgJpegImage;
-        return NULL;
-    }
-
-    if (!cgJpegImage->LoadJPEG()) {
-        char tempcwd[2048];
-        getcwd(tempcwd, sizeof(tempcwd));
-        DPRINTF(0, "CGBuffer :: Error loading JPEG image file %s/%s\n", tempcwd, filename.c_str());
-        delete cgJpegImage;
-        return NULL;
-    }
-
-    cgJpegImage->Render();
-
-    img_w = (size_t) cgJpegImage->image_size.width;
-    img_h = (size_t) cgJpegImage->image_size.height;
-    img_d = (size_t) ((cgJpegImage->image_depth == 8) ? 1 : 4);
-
-    // DPRINTF(0,"cgJpegImage :: %d x %d x %d [%d] bpp\n", img_w, img_h, (size_t)cgJpegImage->image_depth, img_d);
-
-#ifdef MACOSX_ALPHA_JPEGS
-    int format = (img_d == 1) ? GL_LUMINANCE : GL_RGBA;
-#else
-    int format = (img_d == 1) ? GL_LUMINANCE : GL_RGB;
-#endif
-    img = new Image(format, img_w, img_h);
-    if (img == NULL || img->getPixels() == NULL) {
-        DPRINTF(0, "Could not create image\n");
-        delete cgJpegImage;
-        return NULL;
-    }
-    // following code flips image and skips alpha byte if no alpha support
-    unsigned char* bout = (unsigned char*) img->getPixels();
-    unsigned char* bin  = (unsigned char*) cgJpegImage->buffer->data;
-    unsigned int bcount = img_w * img_h * img_d;
-    unsigned int i = 0;
-    bin += bcount+(img_w*img_d); // start one row past end
-    for (i=0; i<bcount; ++i)
-    {
-         // at end of row, move back two rows
-        if ( (i % (img_w * img_d)) == 0 ) bin -= 2*(img_w * img_d);
-
-#ifndef MACOSX_ALPHA_JPEGS
-        if (( (img_d != 1) && !((i&3)^3) )) // skip extra byte
-        {
-            ++bin;
-        } else
-#endif // !MACOSX_ALPHA_JPEGS
-
-        *bout++ = *bin++;
-    }
-    delete cgJpegImage;
-    return img;
-
 #else
     return NULL;
 #endif // JPEG_SUPPORT
