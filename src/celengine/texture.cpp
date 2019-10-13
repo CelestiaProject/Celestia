@@ -7,18 +7,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef TARGET_OS_MAC
+#ifndef JPEG_SUPPORT
 #define JPEG_SUPPORT
+#endif
+
+#ifndef PNG_SUPPORT
 #define PNG_SUPPORT
 #endif
 
 #ifdef TARGET_OS_MAC
 #include <unistd.h>
-#include "CGBuffer.h"
-#ifndef PNG_SUPPORT
-#include <Quicktime/ImageCompression.h>
-#include <QuickTime/QuickTimeComponents.h>
-#endif
 #endif
 
 #include <cmath>

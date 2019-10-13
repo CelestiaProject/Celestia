@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1020" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -946,11 +946,6 @@ DQ
                                                 <action selector="activateMenuItem:" target="231" id="1325"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Pantalla completa" tag="300" keyEquivalent="f" id="1382">
-                                            <connections>
-                                                <action selector="toggleFullScreen:" target="231" id="1384"/>
-                                            </connections>
-                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
@@ -1448,7 +1443,7 @@ Line 2</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" drawsBackground="NO" id="r7F-eq-93F">
                             <rect key="frame" x="1" y="0.0" width="291" height="286"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" autosaveColumns="NO" headerView="2765" id="690" customClass="ContextOutlineView">
                                     <rect key="frame" x="0.0" y="0.0" width="291" height="261"/>
@@ -1457,7 +1452,7 @@ Line 2</string>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn identifier="NAME" editable="NO" width="287.58099365234375" minWidth="56.581001281738281" maxWidth="1000" id="691">
+                                        <tableColumn identifier="NAME" editable="NO" width="288.08099365234375" minWidth="56.581001281738281" maxWidth="1000" id="691">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Favoritos">
                                                 <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>

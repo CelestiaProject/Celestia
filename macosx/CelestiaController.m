@@ -10,12 +10,10 @@
 #import "CelestiaController.h"
 #import "FavoritesDrawerController.h"
 #import "CelestiaOpenGLView.h"
-#import "FullScreenWindow.h"
 #import "SplashScreen.h"
 #import "SplashWindowController.h"
 #import "EclipseFinderController.h"
 #import "ScriptsController.h"
-#import <Carbon/Carbon.h>
 #import <OpenGL/gl.h>
 #import "CGLInfo.h"
 #import "ConfigSelectionWindowController.h"
@@ -92,7 +90,6 @@ NSString* fatalErrorMessage;
 
     ready = NO;
     isDirty = YES;
-    isFullScreen = NO;
     needsRelaunch = NO;
     forceQuit = NO;
     appCore = nil;
@@ -287,12 +284,6 @@ NSString* fatalErrorMessage;
 {
     [self startGLView];
 
-    if (isFullScreen)
-    {
-        isFullScreen = NO;
-        [self toggleFullScreen: self];
-    }
-
     // workaround for fov problem
     if (pendingUrl) [appCore goToUrl: pendingUrl];
 
@@ -365,23 +356,6 @@ NSString* fatalErrorMessage;
         [ appCore goToUrl: [[event descriptorAtIndex:1] stringValue] ];
     else
         pendingUrl = [[event descriptorAtIndex:1] stringValue];
-}
-
-/* On a multi-screen setup, user is able to change the resolution of the screen running Celestia from a different screen, or the menu bar position so handle that */
-- (void)applicationDidChangeScreenParameters:(NSNotification *) aNotification
-{
-    if (isFullScreen && aNotification && ([aNotification object] == NSApp))
-    {
-        // If menu bar not on same screen, don't hide it anymore
-        if (![self hideMenuBarOnActiveScreen])
-            SetSystemUIMode(kUIModeNormal, 0);
-
-        NSScreen *screen = [[self window] screen];
-        NSRect screenRect = [screen frame];
-
-        if (!NSEqualSizes(screenRect.size, [[self window] frame].size))
-            [[self window] setFrame: screenRect display:YES];
-    }
 }
 
 - (void)applicationDidHide:(NSNotification *)aNotification
@@ -554,110 +528,6 @@ NSString* fatalErrorMessage;
 #endif
     // force display update
     [self forceDisplay];
-}
-
-// Application Action Methods ----------------------------------------------------------
-
-
-/* Full screen toggle method. Uses a borderless window that covers the screen so that context menus continue to work. */
-- (IBAction) toggleFullScreen: (id) sender
-{
-    if (isFullScreen)
-    {
-        CelestiaOpenGLView *windowedView = nil;
-        Class viewClass = [CelestiaOpenGLView class];
-        NSArray *mainSubViews = [[origWindow contentView] subviews];
-
-        if (mainSubViews && [mainSubViews count]>0)
-        {
-            // Just to be safe, search for first child of correct type
-            NSEnumerator *viewEnum = [mainSubViews objectEnumerator];
-            id subView;
-            while ((subView = [viewEnum nextObject]))
-            {
-                if ([subView isKindOfClass: viewClass])
-                {
-                    windowedView = subView;
-                    break;
-                }
-            }
-        }
-        else if ([[origWindow contentView] isKindOfClass: viewClass])
-            windowedView = [origWindow contentView];
-
-        [origWindow makeKeyAndOrderFront: self];
-
-        if (windowedView == nil)
-        {
-            // Can't switch back to windowed mode, but hide full screen window
-            // so user can still quit the program
-            [[self window] orderOut: self];
-            SetSystemUIMode(kUIModeNormal, 0);
-            [self fatalError: NSLocalizedString(@"Unable to properly exit full screen mode. Celestia will now quit.",@"")];
-            [self performSelector:@selector(fatalError:) withObject:nil afterDelay:0.1];
-            return;
-        }
-
-        [windowedView setOpenGLContext: [glView openGLContext]];
-        [[glView openGLContext] setView: windowedView];
-
-        [[self window] close];  // full screen window releases on close
-        SetSystemUIMode(kUIModeNormal, 0);
-        [self setWindow: origWindow];
-        glView = windowedView;
-        [self setDirty];
-        [origWindow makeMainWindow];
-        isFullScreen = NO;
-        return;
-    }
-
-    // We will take over the screen that the window is on
-    // (if there are >1 screens, the 50% rule applies)
-    NSScreen *screen = [[glView window] screen];
-
-    CelestiaOpenGLView *fullScreenView = [[CelestiaOpenGLView alloc] initWithFrame:[glView frame] pixelFormat:[glView pixelFormat]];
-    [fullScreenView setMenu: [glView menu]];    // context menu
-
-    FullScreenWindow *fullScreenWindow = [[FullScreenWindow alloc] initWithScreen: screen];
-    [fullScreenWindow fadeOutScreen];
-
-    [fullScreenWindow setBackgroundColor: [NSColor blackColor]];
-    [fullScreenWindow setReleasedWhenClosed: YES];
-    [self setWindow: fullScreenWindow]; // retains it
-    [fullScreenWindow setDelegate: self];
-    // Hide the menu bar only if it's on the same screen
-    [self hideMenuBarOnActiveScreen];
-    [fullScreenWindow makeKeyAndOrderFront: nil];
-
-    [fullScreenWindow setContentView: fullScreenView];
-    [fullScreenView setOpenGLContext: [glView openGLContext]];
-    [[glView openGLContext] setView: fullScreenView];
-
-    // Remember the original (bordered) window
-    origWindow = [glView window];
-    // Close the original window (does not release it)
-    [origWindow close];
-    glView = fullScreenView;
-    [glView setValue: self forKey: @"controller"];
-    [fullScreenWindow makeFirstResponder: glView];
-    // Make sure the view looks ready before unfading from black
-    [glView update];
-    [glView display];
-
-    [fullScreenWindow makeMainWindow];
-    [fullScreenWindow restoreScreen];
-    isFullScreen = YES;
-}
-
-- (BOOL) hideMenuBarOnActiveScreen
-{
-    NSScreen *screen = [[self window] screen];
-    NSArray *allScreens = [NSScreen screens];
-    if (allScreens && [allScreens objectAtIndex: 0]!=screen)
-        return NO;
-
-    SetSystemUIMode(kUIModeAllHidden, kUIOptionAutoShowMenuBar);
-    return YES;
 }
 
 - (void) runScript: (NSString*) path

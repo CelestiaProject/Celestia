@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>Celestia-1.4.0</key>
@@ -7,15 +7,13 @@
 		<key>altSurface</key>
 		<integer>0</integer>
 		<key>ambientLightLevel</key>
-		<real>0.10000000000000001</real>
+		<real>0.1</real>
 		<key>dateFormat</key>
 		<integer>1</integer>
 		<key>faintestVisible</key>
 		<real>7</real>
-		<key>fullScreenMode</key>
-		<integer>0</integer>
 		<key>galaxyBrightness</key>
-		<real>0.0</real>
+		<real>0</real>
 		<key>hudDetail</key>
 		<integer>1</integer>
 		<key>minimumFeatureSize</key>

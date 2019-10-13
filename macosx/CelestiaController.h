@@ -27,7 +27,6 @@
     CelestiaAppCore* appCore;
     BOOL ready;
     BOOL isDirty;
-    BOOL isFullScreen;
     BOOL needsRelaunch;
     BOOL forceQuit;
     IBOutlet SplashWindowController *splashWindowController;
@@ -60,8 +59,6 @@
 -(void)runScript: (NSString*) path;
 -(IBAction)openScript:(id)sender;
 -(IBAction)rerunScript: (id) sender;
--(IBAction)toggleFullScreen:(id)sender;
--(BOOL)hideMenuBarOnActiveScreen;
 -(void)setDirty;
 -(void)forceDisplay;
 -(void)resize;
