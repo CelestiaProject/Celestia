@@ -4,7 +4,7 @@
 
 - (NSMenu*)menuForEvent:(NSEvent*)theEvent
 {
-    int rowIndex = [self rowAtPoint:[self convertPoint:[theEvent locationInWindow] fromView:nil]];
+    NSInteger rowIndex = [self rowAtPoint:[self convertPoint:[theEvent locationInWindow] fromView:nil]];
     if (rowIndex >= 0)
     {
         id item;

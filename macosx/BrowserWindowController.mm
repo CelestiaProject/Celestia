@@ -152,7 +152,7 @@ static CelestiaCore *appCore;
 - (NSDictionary *) starsOfKind: (int) kind
 {
     std::vector<const Star*>* nearStars;
-    int starCount = 0;
+    NSInteger starCount = 0;
     Simulation *sim = appCore->getSimulation();
     StarBrowser* sb = new StarBrowser(sim,kind);
     nearStars = sb->listStars( BROWSER_MAX_STAR_COUNT );
@@ -161,7 +161,7 @@ static CelestiaCore *appCore;
     NSMutableDictionary* starDict = [NSMutableDictionary dictionaryWithCapacity: starCount+2];
     const Star *aStar;
     NSString *starName;
-    int i;
+    NSInteger i;
     for (i=0;i<starCount;i++)
     {
         aStar = (*nearStars)[i];
@@ -258,8 +258,7 @@ static CelestiaCore *appCore;
     return sel;
 }
 
-
-- (int) browser: (NSBrowser*) sender numberOfRowsInColumn: (int) column
+- (NSInteger) browser: (NSBrowser*) sender numberOfRowsInColumn: (NSInteger) column
 {
     if (browser != sender)
     {

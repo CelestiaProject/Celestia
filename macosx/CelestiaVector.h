@@ -21,7 +21,7 @@
 -(CelestiaVector*)initWithx:(NSNumber*)v y:(NSNumber*)y;
 -(CelestiaVector*)initWithx:(NSNumber*)v y:(NSNumber*)y z:(NSNumber*)z;
 -(CelestiaVector*)initWithx:(NSNumber*)v y:(NSNumber*)y z:(NSNumber*)z w:(NSNumber*)w;
--(unsigned)count;
+-(NSUInteger)count;
 -objectAtIndex:(unsigned)index;
 -(NSNumber*)x;
 -(NSNumber*)y;

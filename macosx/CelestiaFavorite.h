@@ -43,7 +43,6 @@
 -(BOOL)isEqual:(id)obj;
 //-(NSDictionary*)dictionaryRepresentation;
 -(NSString*)description;
--(NSString*)selectionName;
 -(NSString*)coordinateSystem;
 #ifdef URL_FAVORITES
 -(NSString*)url;

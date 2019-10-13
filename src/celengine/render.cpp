@@ -9280,8 +9280,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             Point3d hPos = astrocentricPosition(observer->getPosition(),
                                                 star,
                                                 observer->getTime());
-            relPos = Vec3f((float) hPos.x, (float) hPos.y, (float) hPos.z) *
-                -astro::kilometersToLightYears(1.0f),
+            relPos = Vec3f((float) hPos.x, (float) hPos.y, (float) hPos.z) * -astro::kilometersToLightYears(1.0f);
             distance = relPos.length();
 
             // Recompute apparent magnitude using new distance computation
@@ -9537,8 +9536,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             Point3d hPos = astrocentricPosition(observer->getPosition(),
                                                 star,
                                                 observer->getTime());
-            relPos = Vec3f((float) hPos.x, (float) hPos.y, (float) hPos.z) *
-                -astro::kilometersToLightYears(1.0f),
+            relPos = Vec3f((float) hPos.x, (float) hPos.y, (float) hPos.z) * -astro::kilometersToLightYears(1.0f);
             distance = relPos.length();
 
             // Recompute apparent magnitude using new distance computation

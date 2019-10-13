@@ -8,6 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 
+@protocol CelestiaWindowKeyDownNotifier <NSObject>
+- (void)delegateKeyDown:(NSEvent *)theEvent;
+@end
 
 @interface NSWindowController (CelestiaWindowController)
 - (void)keyDown:(NSEvent *)theEvent;

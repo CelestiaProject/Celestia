@@ -7,7 +7,10 @@
 //
 
 #import "SplashWindowController.h"
+#import "CelestiaAppCore.h"
 
+@interface SplashWindowController () <SplashProgressDelegate>
+@end
 
 @implementation SplashWindowController
 
@@ -28,10 +31,8 @@
 
 - (void)setStatusText: (NSString *)statusText
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [status setStringValue: statusText];
-        [status displayIfNeeded];
-    });
+    [status setStringValue: statusText];
+    [status displayIfNeeded];
 }
 
 - (void)showWindow

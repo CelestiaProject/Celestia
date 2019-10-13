@@ -18,10 +18,14 @@ class CelestiaCore;
 @class CelestiaCore;
 #endif
 
+@protocol SplashProgressDelegate <NSObject>
+- (void)setStatusText:(NSString *)statusText;
+@end
+
 @interface CelestiaAppCore : NSObject
 -(CelestiaCore*) appCore;
 -(int)toCelestiaKey:(NSEvent*)theEvent;
--(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons;
+-(int)toCelestiaModifiers:(NSEventModifierFlags)modifiers buttons:(unsigned int)buttons;
 -(void)archive;
 +(CelestiaAppCore *)sharedAppCore;
 -(BOOL)initSimulationWithConfigPath:(NSString *)configPath extraPath:(NSString *)extraPath;

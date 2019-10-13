@@ -45,7 +45,7 @@
     NSTimer* timer;
 
     NSConditionLock* startupCondition;
-    int keyCode, keyTime;
+    NSInteger keyCode, keyTime;
     NSString* lastScript;
     NSString *pendingScript;
     NSString *pendingUrl;
@@ -70,7 +70,7 @@
 -(void)display;
 -(void)awakeFromNib;
 -(void)delegateKeyDown:(NSEvent *)theEvent;
--(void)keyPress:(int)code hold:(int)time;
+-(void)keyPress:(NSInteger)code hold:(NSInteger)time;
 -(void)setupResourceDirectory;
 +(CelestiaController*) shared;
 -(void) fatalError: (NSString *) msg;

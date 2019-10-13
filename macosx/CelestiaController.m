@@ -20,8 +20,13 @@
 #import "CGLInfo.h"
 #import "ConfigSelectionWindowController.h"
 #import "Migrator.h"
+#import "NSWindowController_Extensions.h"
+#import "Menu_Extensions.h"
 
 #include <float.h>
+
+@interface CelestiaController () <CelestiaWindowKeyDownNotifier, MenuCallbackNotifier>
+@end
 
 @implementation CelestiaController
 
@@ -123,7 +128,7 @@ NSString* fatalErrorMessage;
         // start initialization thread
         BOOL result = [self startInitialization];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [splashWindowController close];
+            [self->splashWindowController close];
             if (result)
                 [self finishInitialization];
             else
@@ -463,12 +468,12 @@ NSString* fatalErrorMessage;
 
 // Held Key Simulation Methods ----------------------------------------------------------
 
--(void) keyPress:(int) code hold: (int) time
+-(void) keyPress:(NSInteger) code hold: (NSInteger) time
 {
     // start simulated key hold
     keyCode = code;
     keyTime = time;
-    [appCore keyDown: keyCode ];
+    [appCore keyDown: (int)keyCode ];
 }
 
 - (void) keyTick
@@ -477,7 +482,7 @@ NSString* fatalErrorMessage;
        {
             if ( keyTime <= 0 )
             {
-               [ appCore keyUp: keyCode];
+               [ appCore keyUp: (int)keyCode];
                keyCode = 0;  
             }
             else 
@@ -720,25 +725,8 @@ NSString* fatalErrorMessage;
 
 - (IBAction) captureMovie: (id) sender
 {
-//  Remove following line to enable movie capture...
-	NSRunAlertPanel(NSLocalizedString(@"No Movie Capture",@""), NSLocalizedString(@"Movie capture is not available in this version of Celestia.",@""),nil,nil,nil); return;
-
-    NSSavePanel* panel = [NSSavePanel savePanel];
-	NSString* lastMovie = nil; // temporary; should be saved in defaults
-
-    [panel setAllowedFileTypes:@[@"move"]];
-    [panel setDirectoryURL:[NSURL fileURLWithPath:[lastMovie stringByDeletingLastPathComponent]]];
-    [panel setNameFieldStringValue:[lastMovie lastPathComponent]];
-    [panel setTitle: NSLocalizedString(@"Capture Movie",@"")];
-    [panel beginSheetModalForWindow:[glView window] completionHandler:^(NSModalResponse result) {
-        if (result == 0 ) return;
-        {
-            NSString *path;
-            path = [[panel URL] path];
-            NSLog(@"Saving movie: %@",path);
-            [appCore captureMovie: path width: 640 height: 480 frameRate: 30 ];
-        }
-    }];
+    // Not supported now
+	NSRunAlertPanel(NSLocalizedString(@"No Movie Capture",@""), NSLocalizedString(@"Movie capture is not available in this version of Celestia.",@""),nil,nil,nil);
 }
 
 // GUI Tag Methods ----------------------------------------------------------
@@ -760,7 +748,7 @@ NSString* fatalErrorMessage;
 
 - (IBAction) activateMenuItem: (id) item
 {
-    int tag = [item tag];
+    NSInteger tag = [item tag];
     if ( tag != 0 )
     {
         if ( tag < 0 ) // simulate key press and hold

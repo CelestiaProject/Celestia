@@ -322,7 +322,7 @@ static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
         faceNormals[i].normalize();
     }
 
-    if (!smooth && 0)
+    if (!smooth && /* DISABLES CODE */ (0))
     {
         for (i = 0; i < nFaces; i++)
         {

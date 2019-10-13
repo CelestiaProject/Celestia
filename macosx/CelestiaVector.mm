@@ -207,7 +207,7 @@
 {
     return [_array objectAtIndex:index];
 }
--(unsigned)count
+-(NSUInteger)count
 {
     return [_array count];
 }

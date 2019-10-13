@@ -42,10 +42,6 @@
 {
     return [NSNumber numberWithUnsignedInt:[self star]->getCatalogNumber()];
 }
--(NSNumber*)catalogNumberAtIndex:(NSNumber*)cat
-{
-//    return [NSNumber numberWithUnsignedInt:[self star]->getCatalogNumber([cat unsignedIntValue])];
-}
 -(NSNumber *)radius
 {
     return [NSNumber numberWithFloat:[self star]->getRadius()];
@@ -69,10 +65,6 @@
 -(NSNumber*)temperature
 {
     return [NSNumber numberWithFloat:[self star]->getTemperature()];
-}
--(NSNumber*)rotationPeriod
-{
-//    return [NSNumber numberWithFloat:[self star]->getRotationPeriod()];
 }
 -(void)setAbsoluteMagnitude:(NSNumber*)m
 {

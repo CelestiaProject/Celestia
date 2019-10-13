@@ -11,16 +11,21 @@
 @class CelestiaSelection;
 @class BrowserItem;
 
+@protocol MenuCallbackNotifier <NSObject>
+- (void)selectSatellite:(id)sender;
+- (void)activateMenuItem:(id)item;
+@end
+
 @interface NSMenu (CelestiaMenu)
-- (int) indexOfItemWithLocalizableTitle: (NSString *) aTitle;
+- (NSInteger) indexOfItemWithLocalizableTitle: (NSString *) aTitle;
 - (BOOL) insertRefMarkItemsForSelection: (CelestiaSelection *) aSelection
-                                atIndex: (int) aIndex;
+                                atIndex: (NSInteger) aIndex;
 - (BOOL) insertPlanetarySystemItemForSelection: (CelestiaSelection *) aSelection
                                         target: (id) aTarget
-                                       atIndex: (int) aIndex;
+                                       atIndex: (NSInteger) aIndex;
 - (BOOL) insertAltSurfaceItemForSelection: (CelestiaSelection *) aSelection
                                    target: (id) aTarget
-                                  atIndex: (int) aIndex;
+                                  atIndex: (NSInteger) aIndex;
 - (void) removeRefMarkItems;
 - (void) removePlanetarySystemItem;
 - (void) removeAltSurfaceItem;

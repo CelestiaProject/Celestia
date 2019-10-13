@@ -16,12 +16,12 @@
 -(id)initWithCoder:(NSCoder*)coder;
 -(id)initWithClass:(Class)myClass;
 -(void)addObject:(id)obj;
--(void)insertObject:(id)obj atIndex:(unsigned)idx;
+-(void)insertObject:(id)obj atIndex:(NSUInteger)idx;
 -(void)removeLastObject;
--(void)removeObjectAtIndex:(unsigned)idx;
--(void)replaceObjectAtIndex:(unsigned)idx withObject:(id)obj;
--(unsigned)count;
--(id)objectAtIndex:(unsigned)idx;
+-(void)removeObjectAtIndex:(NSUInteger)idx;
+-(void)replaceObjectAtIndex:(NSUInteger)idx withObject:(id)obj;
+-(NSUInteger)count;
+-(id)objectAtIndex:(NSUInteger)idx;
 @end
 
 @interface MyTree : NSObject <NSCoding> {
@@ -52,17 +52,17 @@
 -(NSDictionary*)dictionary;
 -(NSDictionary*)recursiveDictionary;
 
-- (void)insertChild:(MyTree*)child atIndex:(int)index;
-- (void)insertChildren:(NSArray*)children atIndex:(int)index;
+- (void)insertChild:(MyTree*)child atIndex:(NSInteger)index;
+- (void)insertChildren:(NSArray*)children atIndex:(NSInteger)index;
 - (void)removeChild:(MyTree*)child;
 - (void)removeFromParent;
 
-- (int)indexOfChild:(MyTree*)child;
-- (int)indexOfChildIdenticalTo:(MyTree*)child;
+- (NSUInteger)indexOfChild:(MyTree*)child;
+- (NSUInteger)indexOfChildIdenticalTo:(MyTree*)child;
 
-- (int)numberOfChildren;
+- (NSUInteger)numberOfChildren;
 - (MyTree*)firstChild;
 - (MyTree*)lastChild;
-- (MyTree*)childAtIndex:(int)index;
+- (MyTree*)childAtIndex:(NSInteger)index;
 
 @end

@@ -63,8 +63,8 @@ public:
 	
 	CGFrame(const Rect& rect)
 	{
-		origin.x = rect.left, size.width = rect.right - rect.left;
-		origin.y = rect.top, size.height = rect.bottom - rect.top;
+        origin.x = rect.left; size.width = rect.right - rect.left;
+        origin.y = rect.top; size.height = rect.bottom - rect.top;
 	}
 	
 	CGFrame(const CGRect& copy)
@@ -91,13 +91,13 @@ public:
 	
 	void Offset(float dx, float dy)
 	{
-		origin.x += dx, origin.y += dy;
+        origin.x += dx; origin.y += dy;
 	}
 	
 	void Inset(float dx, float dy)
 	{
-		origin.x += dx, origin.y += dy;
-		size.width -= dx*2, size.height -= dy*2;
+        origin.x += dx; origin.y += dy;
+        size.width -= dx*2; size.height -= dy*2;
 	}
 };
 

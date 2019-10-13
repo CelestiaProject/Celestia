@@ -10,6 +10,9 @@
 
 class _MacInputWatcher;
 
+@protocol MacInputWatcherDelegate <NSObject>
+- (void)textEnterModeChanged;
+@end
 
 @interface MacInputWatcher : NSObject
 {

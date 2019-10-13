@@ -151,7 +151,7 @@ static CelestiaBody *eclipseBody;
 /* Go code borrowed from Windows version */
 - (IBAction)go: (id)sender
 {
-    int rowIndex = [eclipseList selectedRow];
+    NSInteger rowIndex = [eclipseList selectedRow];
     if (rowIndex < 0) return;
 
     CelestiaCore *appCore = (CelestiaCore*) [[CelestiaAppCore sharedAppCore] appCore];
@@ -270,7 +270,7 @@ static CelestiaBody *eclipseBody;
 }
 
 
-- (int)numberOfRowsInTableView: (NSTableView *)aTableView
+- (NSInteger)numberOfRowsInTableView: (NSTableView *)aTableView
 {
     return [eclipses count];
 }

@@ -33,7 +33,7 @@ static CelestiaFavorites* _celestiaFavorites;
 }
 -(NSString*)description
 {
-    return [NSString stringWithFormat:@"<CelestiaFavorites numberOfChildren=%d>",[self numberOfChildren]];
+    return [NSString stringWithFormat:@"<CelestiaFavorites numberOfChildren=%lu>",(unsigned long)[self numberOfChildren]];
 }
 -(MyTree*)addNewFavorite:(NSString*)name
 {

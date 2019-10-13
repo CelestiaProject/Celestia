@@ -66,6 +66,10 @@
 }
 @end
 
+@interface FavoritesDrawerController () <ContextOutlineViewDelegate>
+
+@end
+
 @implementation FavoritesDrawerController
 -(NSArray*)selectedNodes
 {
@@ -140,7 +144,7 @@
         [favoritesMenu addItem:menuItem];
     [outlineView reloadData];
 }
--(id)outlineView:(NSOutlineView*)olv child:(int)index ofItem:(id)item
+-(id)outlineView:(NSOutlineView*)olv child:(NSInteger)index ofItem:(id)item
 {
     id rval;
     //NSLog(@"[FavoritesDrawerController outlineview:%@ child:%d ofItem:%@]",olv,index,item);
@@ -153,11 +157,11 @@
     //NSLog(@"[FavoritesDrawerController outlineview:%@ itemIsExpandable:%@]",olv,item);
     return ![SAFENODE(item) isLeaf];
 }
--(int)outlineView:(NSOutlineView *)olv numberOfChildrenOfItem:(id)item 
+-(NSInteger)outlineView:(NSOutlineView *)olv numberOfChildrenOfItem:(id)item
 {
-    int rval;
+    NSInteger rval;
     //NSLog(@"[FavoritesDrawerController outlineview:%@ numberOfChildrenOfItem:%@]",olv,item);
-    rval = [SAFENODE(item) numberOfChildren];
+    rval = (NSInteger)[SAFENODE(item) numberOfChildren];
     //NSLog(@"rval = %d",rval);
     return rval;
 }
@@ -259,7 +263,7 @@ contextMenuForItem:(id)item
 }
 - (void)outlineView:(NSOutlineView*)olv editItem:(id)item
 {
-    int row = [olv rowForItem:item];
+    NSInteger row = [olv rowForItem:item];
     //NSLog(@"[FavoritesDrawerController outlineView:%@ editItem:%@]",olv,item);
     //NSLog(@"row = %d",row); // -1 ??
     if (row<0) {
@@ -337,7 +341,7 @@ contextMenuForItem:(id)item
     return YES;
 }
 
-- (unsigned int)outlineView:(NSOutlineView*)olv validateDrop:(id <NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(int)childIndex {
+- (NSDragOperation)outlineView:(NSOutlineView*)olv validateDrop:(id <NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)childIndex {
     // This method validates whether or not the proposal is a valid one. Returns NO if the drop should not be allowed.
     MyTree *targetNode = item;
     BOOL targetNodeIsValid = YES;
@@ -380,7 +384,7 @@ contextMenuForItem:(id)item
     return targetNodeIsValid ? NSDragOperationGeneric : NSDragOperationNone;
 }
 
-- (void)_performDropOperation:(id <NSDraggingInfo>)info onNode:(id)pnode atIndex:(int)childIndex {
+- (void)_performDropOperation:(id <NSDraggingInfo>)info onNode:(id)pnode atIndex:(NSInteger)childIndex {
     // Helper method to insert dropped data into the model. 
     NSPasteboard* pboard = [info draggingPasteboard];
     NSMutableArray* itemsToSelect = nil;
@@ -401,7 +405,7 @@ contextMenuForItem:(id)item
          */
         while ((_draggedNode = [draggedNodesEnum nextObject])) {
             _draggedNodeParent = [_draggedNode parent];
-            if (parentNode==_draggedNodeParent && [parentNode indexOfChild: _draggedNode]<childIndex) childIndex--;
+            if (parentNode==_draggedNodeParent && [parentNode indexOfChild: _draggedNode]<(NSUInteger)childIndex) childIndex--;
             [_draggedNodeParent removeChild: _draggedNode];
         }
         [parentNode insertChildren: _draggedNodes atIndex: childIndex];
@@ -411,7 +415,7 @@ contextMenuForItem:(id)item
     [outlineView selectItems: itemsToSelect byExtendingSelection: NO];
 }
 
-- (BOOL)outlineView:(NSOutlineView*)olv acceptDrop:(id <NSDraggingInfo>)info item:(id)targetItem childIndex:(int)childIndex {
+- (BOOL)outlineView:(NSOutlineView*)olv acceptDrop:(id <NSDraggingInfo>)info item:(id)targetItem childIndex:(NSInteger)childIndex {
     MyTree * 		parentNode = nil;
     //NSLog(@"[FavoritesDrawerController outlineView:%@ acceptDrop:%@ item:%@ childIndex:%d]",olv,info,targetItem,childIndex);
     // Determine the parent to insert into and the child index to insert at.
