@@ -673,7 +673,7 @@ CurvePlot::setDuration(double duration)
   * @param nearZ z coordinate of the near plane
   * @param farZ z coordinate of the far plane
   * @param viewFrustumPlaneNormals array of four normals (top, bottom, left, and right frustum planes)
-  * @param subdivisionThreshold
+  * @param subdivisionThreshold the threashhold for subdivision
   */
 void
 CurvePlot::render(const Affine3d& modelview,
@@ -813,7 +813,7 @@ CurvePlot::render(const Affine3d& modelview,
   * @param nearZ z coordinate of the near plane
   * @param farZ z coordinate of the far plane
   * @param viewFrustumPlaneNormals array of four normals (top, bottom, left, and right frustum planes)
-  * @param subdivisionThreshold
+  * @param subdivisionThreshold the threashhold for subdivision
   * @param startTime the beginning of the time interval
   * @param endTime the end of the time interval
   */
@@ -977,7 +977,7 @@ CurvePlot::render(const Affine3d& modelview,
   * @param nearZ z coordinate of the near plane
   * @param farZ z coordinate of the far plane
   * @param viewFrustumPlaneNormals array of four normals (top, bottom, left, and right frustum planes)
-  * @param subdivisionThreshold
+  * @param subdivisionThreshold the threashhold for subdivision
   * @param startTime the beginning of the time interval
   * @param endTime the end of the time interval
   * @param fadeStartTime points on the curve before this time are drawn with full opacity

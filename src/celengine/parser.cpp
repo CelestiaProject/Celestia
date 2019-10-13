@@ -314,7 +314,7 @@ AssociativeArray::~AssociativeArray()
         iter++;
     }
 #endif
-    for (const auto iter : assoc)
+    for (const auto &iter : assoc)
         delete iter.second;
 }
 
