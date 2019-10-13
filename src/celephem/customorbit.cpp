@@ -2286,7 +2286,7 @@ class TitanOrbit : public CachingOrbit
         double g = W4 - Om_ - psi;
 
         // Three successive approximations will always be enough
-        double om;
+        double om = 0.0;
         for (int n = 0; n < 3; n++)
         {
             om = W4 + 0.37515 * (sinD(2 * g) - sinD(2 * g0));

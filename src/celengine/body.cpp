@@ -59,7 +59,7 @@ Body::~Body()
 
     if(altSurfaces)
     {
-        for (const auto s : *altSurfaces)
+        for (const auto &s : *altSurfaces)
             delete s.second;
         delete altSurfaces;
     }

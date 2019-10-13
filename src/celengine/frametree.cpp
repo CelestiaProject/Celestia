@@ -110,7 +110,7 @@ FrameTree::markUpdated()
     if (m_changed)
     {
         m_changed = false;
-        for (const auto child : children)
+        for (const auto &child : children)
             child->body()->markUpdated();
     }
 }
@@ -132,7 +132,7 @@ FrameTree::recomputeBoundingSphere()
         m_containsSecondaryIlluminators = false;
         m_childClassMask = 0;
 
-        for (const auto phase : children)
+        for (const auto &phase : children)
         {
             double bodyRadius = phase->body()->getRadius();
             double r = phase->body()->getCullingRadius() + phase->orbit()->getBoundingRadius();

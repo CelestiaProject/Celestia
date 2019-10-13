@@ -2586,13 +2586,25 @@ static void displayRotationPeriod(Overlay& overlay, double days)
     const char *p;
 
     if (days > 1.0)
-        n = FormattedNumber(days, 3, FormattedNumber::GroupThousands), p = _("days");
+    {
+        n = FormattedNumber(days, 3, FormattedNumber::GroupThousands);
+        p = _("days");
+    }
     else if (days > 1.0 / 24.0)
-        n = FormattedNumber(days * 24.0, 3, FormattedNumber::GroupThousands), p = _("hours");
+    {
+        n = FormattedNumber(days * 24.0, 3, FormattedNumber::GroupThousands);
+        p = _("hours");
+    }
     else if (days > 1.0 / (24.0 * 60.0))
-        n = FormattedNumber(days * 24.0 * 60.0, 3, FormattedNumber::GroupThousands), p = _("minutes");
+    {
+        n = FormattedNumber(days * 24.0 * 60.0, 3, FormattedNumber::GroupThousands);
+        p = _("minutes");
+    }
     else
-        n = FormattedNumber(days * 24.0 * 60.0 * 60.0, 3, FormattedNumber::GroupThousands), p = _("seconds");
+    {
+        n = FormattedNumber(days * 24.0 * 60.0 * 60.0, 3, FormattedNumber::GroupThousands);
+        p = _("seconds");
+    }
 
     fmt::fprintf(overlay, _("Rotation period: %s %s\n"), n, p);
 }
@@ -2603,15 +2615,30 @@ static void displaySpeed(Overlay& overlay, float speed)
     const char *u;
 
     if (speed < 1.0f)
-        n = SigDigitNum(speed * 1000.0f, 3), u = _("m/s");
+    {
+        n = SigDigitNum(speed * 1000.0f, 3);
+        u = _("m/s");
+    }
     else if (speed < 10000.0f)
-        n = SigDigitNum(speed, 3), u = _("km/s");
+    {
+        n = SigDigitNum(speed, 3);
+        u = _("km/s");
+    }
     else if (speed < (float) astro::speedOfLight * 100.0f)
-        n = SigDigitNum(speed / astro::speedOfLight, 3), u = "c";
+    {
+        n = SigDigitNum(speed / astro::speedOfLight, 3);
+        u = "c";
+    }
     else if (speed < astro::AUtoKilometers(1000.0f))
-        n = SigDigitNum(astro::kilometersToAU(speed), 3), u = _("AU/s");
+    {
+        n = SigDigitNum(astro::kilometersToAU(speed), 3);
+        u = _("AU/s");
+    }
     else
-        n = SigDigitNum(astro::kilometersToLightYears(speed), 3), u = _("ly/s");
+    {
+        n = SigDigitNum(astro::kilometersToLightYears(speed), 3);
+        u = _("ly/s");
+    }
 
     fmt::fprintf(overlay, _("Speed: %s %s\n"), n, u);
 }

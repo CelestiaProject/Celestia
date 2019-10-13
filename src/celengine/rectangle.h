@@ -25,7 +25,7 @@ class Rect
         Filled      = 0x0002,
     };
 
-    Rect() = default;
+    Rect() = delete;
     Rect(float _x, float _y, float _w, float _h) :
         x(_x), y(_y), w(_w), h(_h)
     {

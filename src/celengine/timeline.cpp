@@ -127,7 +127,7 @@ Timeline::markChanged()
     }
     else
     {
-        for (const auto phase : phases)
+        for (const auto &phase : phases)
             phase->getFrameTree()->markChanged();
     }
 }

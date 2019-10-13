@@ -6567,7 +6567,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             Vector3d hPos = astrocentricPosition(observer->getPosition(),
                                                  star,
                                                  observer->getTime());
-            relPos = hPos.cast<float>() * -astro::kilometersToLightYears(1.0f),
+            relPos = hPos.cast<float>() * -astro::kilometersToLightYears(1.0f);
             distance = relPos.norm();
 
             // Recompute apparent magnitude using new distance computation
