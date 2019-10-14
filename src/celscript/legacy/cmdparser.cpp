@@ -20,8 +20,8 @@
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #ifdef CELX
-#include "celx.h"
-#include "celx_internal.h"
+#include <celscript/lua/celx.h>
+#include <celscript/lua/celx_internal.h>
 #endif
 #include <celengine/render.h>
 #include <algorithm>

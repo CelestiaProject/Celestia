@@ -12,7 +12,7 @@
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_frame.h"
-#include "celestiacore.h"
+#include <celestia/celestiacore.h>
 #include <celengine/observer.h>
 #include <Eigen/Geometry>
 

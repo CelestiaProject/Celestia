@@ -12,6 +12,8 @@ foreach(lib ${CELESTIA_LIBS})
   add_subdirectory(${lib})
 endforeach()
 
+add_subdirectory(celscript)
+
 # These compiled objects are merged with the celengine library
 add_subdirectory(celephem)
 add_subdirectory(celcompat)

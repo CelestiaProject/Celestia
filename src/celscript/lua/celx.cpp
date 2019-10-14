@@ -14,18 +14,20 @@
 #include <cassert>
 #include <ctime>
 #include <map>
+#include <sstream>
+#include <utility>
 #include <celengine/astro.h>
 #include <celengine/asterism.h>
-#include "cmdparser.h"
+#include <celscript/legacy/cmdparser.h>
 #include <celengine/execenv.h>
-#include "execution.h"
+#include <celscript/legacy/execution.h>
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
 #include <celutil/debug.h>
-#include "imagecapture.h"
-#include "url.h"
+#include <celestia/celestiacore.h>
+#include <celestia/imagecapture.h>
+#include <celestia/url.h>
 
-#include "celx.h"
 #include "celx_internal.h"
 #include "celx_misc.h"
 #include "celx_vector.h"
@@ -39,19 +41,6 @@
 #include "celx_gl.h"
 #include "celx_category.h"
 
-
-// Older gcc versions used <strstream> instead of <sstream>.
-// This has been corrected in GCC 3.2, but name clashing must
-// be avoided
-#ifdef __GNUC__
-#undef min
-#undef max
-#endif
-#include <sstream>
-#include <utility>
-
-#include "celx.h"
-#include "celestiacore.h"
 
 using namespace Eigen;
 using namespace std;

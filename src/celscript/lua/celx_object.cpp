@@ -20,7 +20,7 @@
 #include <celengine/visibleregion.h>
 #include <celengine/planetgrid.h>
 #include <celengine/multitexture.h>
-#include "celestiacore.h"
+#include <celestia/celestiacore.h>
 
 using namespace Eigen;
 using namespace std;

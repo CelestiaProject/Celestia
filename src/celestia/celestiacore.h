@@ -15,8 +15,8 @@
 // #include <celutil/watchable.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
-#include "command.h"
-#include "execution.h"
+#include <celscript/legacy/command.h>
+#include <celscript/legacy/execution.h>
 #include <celengine/texture.h>
 #include <celengine/universe.h>
 #include <celengine/render.h>
@@ -29,7 +29,7 @@
 #include "moviecapture.h"
 #include "view.h"
 #ifdef CELX
-#include "celx.h"
+#include <celscript/lua/celx.h>
 #endif
 class Url;
 
