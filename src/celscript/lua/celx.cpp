@@ -19,7 +19,6 @@
 #include <celengine/astro.h>
 #include <celengine/asterism.h>
 #include <celscript/legacy/cmdparser.h>
-#include <celengine/execenv.h>
 #include <celscript/legacy/execution.h>
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>

@@ -14,9 +14,9 @@
 
 #include <array>
 #include <iostream>
-#include <celengine/execenv.h>
 #include <celengine/astro.h>
 #include <celutil/color.h>
+#include "execenv.h"
 
 
 class Command

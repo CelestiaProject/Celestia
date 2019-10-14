@@ -10,7 +10,7 @@
 #ifndef _EXECUTION_H_
 #define _EXECUTION_H_
 
-#include <celengine/execenv.h>
+#include "execenv.h"
 #include "command.h"
 
 

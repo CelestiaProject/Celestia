@@ -3,7 +3,6 @@
 #include "celx_misc.h"
 #include "celx_internal.h"
 #include <celscript/legacy/cmdparser.h>
-#include <celengine/execenv.h>
 #include <celscript/legacy/execution.h>
 #include <celestia/celestiacore.h>
 
