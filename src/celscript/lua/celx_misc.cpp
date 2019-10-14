@@ -2,10 +2,10 @@
 #include <celutil/debug.h>
 #include "celx_misc.h"
 #include "celx_internal.h"
-#include "cmdparser.h"
+#include <celscript/legacy/cmdparser.h>
 #include <celengine/execenv.h>
-#include "execution.h"
-#include "celestiacore.h"
+#include <celscript/legacy/execution.h>
+#include <celestia/celestiacore.h>
 
 LuaState *getLuaStateObject(lua_State*);
 

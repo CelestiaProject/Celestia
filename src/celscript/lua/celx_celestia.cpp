@@ -25,10 +25,10 @@
 #include "celx_rotation.h"
 #include "celx_vector.h"
 #include "celx_category.h"
-#include "url.h"
-#include "imagecapture.h"
-#include "celestiacore.h"
-#include "view.h"
+#include <celestia/url.h>
+#include <celestia/imagecapture.h>
+#include <celestia/celestiacore.h>
+#include <celestia/view.h>
 
 using namespace Eigen;
 

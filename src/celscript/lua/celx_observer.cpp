@@ -15,7 +15,7 @@
 #include "celx_observer.h"
 //#include <celengine/body.h>
 //#include <celengine/timelinephase.h>
-#include "celestiacore.h"
+#include <celestia/celestiacore.h>
 #include <Eigen/Geometry>
 
 using namespace std;

@@ -14,10 +14,10 @@
 #ifdef USE_GLCONTEXT
 #include <celengine/glcontext.h>
 #endif
-#include "celestiacore.h"
-#include "imagecapture.h"
+#include <celestia/celestiacore.h>
+#include <celestia/imagecapture.h>
 #ifdef CELX
-#include "celx_internal.h"
+#include <celscript/lua/celx_internal.h>
 #endif
 #include <celengine/multitexture.h>
 #include <celutil/util.h>

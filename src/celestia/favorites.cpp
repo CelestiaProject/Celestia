@@ -11,9 +11,9 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
+#include <celengine/parser.h>
 #include <celutil/debug.h>
 #include <celutil/util.h>
-#include "cmdparser.h"
 #include "favorites.h"
 
 using namespace Eigen;

@@ -21,8 +21,8 @@
 #include <celengine/boundaries.h>
 #include <celengine/overlay.h>
 #include <celengine/console.h>
-#include "execution.h"
-#include "cmdparser.h"
+#include <celscript/legacy/execution.h>
+#include <celscript/legacy/cmdparser.h>
 #include <celengine/multitexture.h>
 #ifdef USE_SPICE
 #include <celephem/spiceinterface.h>
