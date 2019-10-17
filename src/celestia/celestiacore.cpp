@@ -66,6 +66,7 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+using namespace celestia::scripts;
 
 static const int DragThreshold = 3;
 
@@ -177,7 +178,8 @@ CelestiaCore::CelestiaCore() :
        routine will be called much later. */
     renderer(new Renderer()),
     timer(new Timer()),
-    execEnv(new CoreExecutionEnvironment(*this))
+    execEnv(new CoreExecutionEnvironment(*this)),
+    m_scriptMaps(make_shared<ScriptMaps>())
 {
 
     for (int i = 0; i < KeyCount; i++)
@@ -361,7 +363,7 @@ void CelestiaCore::runScript(const fs::path& filename)
         }
         else
         {
-            CommandParser parser(scriptfile);
+            CommandParser parser(scriptfile, m_scriptMaps);
             CommandSequence* script = parser.parse();
             if (script == nullptr)
             {
@@ -4709,4 +4711,21 @@ void CelestiaCore::setTypedText(const char *c_p)
             typedText = typedTextCompletion[0];
     }
 #endif
+}
+
+vector<Observer*> CelestiaCore::getObservers() const
+{
+    vector<Observer*> observerList;
+    for (const auto view : views)
+        if (view->type == View::ViewWindow)
+            observerList.push_back(view->observer);
+    return observerList;
+}
+
+View* CelestiaCore::getViewByObserver(const Observer *obs) const
+{
+    for (const auto view : views)
+         if (view->observer == obs)
+             return view;
+    return nullptr;
 }

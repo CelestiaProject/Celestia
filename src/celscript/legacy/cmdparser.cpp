@@ -10,49 +10,40 @@
 // of the License, or (at your option) any later version.
 
 #include <config.h>
-
-#include "cmdparser.h"
-#ifdef USE_GLCONTEXT
-#include <celengine/glcontext.h>
-#endif
+#include <algorithm>
+#include <sstream>
+#include <Eigen/Geometry>
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
-#ifdef CELX
-#include <celscript/lua/celx.h>
-#include <celscript/lua/celx_internal.h>
-#endif
 #include <celengine/render.h>
-#include <algorithm>
-#include <Eigen/Geometry>
-
-// Older gcc versions used <strstream> instead of <sstream>.
-// This has been corrected in GCC 3.2, but name clashing must
-// be avoided
-#ifdef __GNUC__
-#undef min
-#undef max
+#ifdef USE_GLCONTEXT
+#include <celengine/glcontext.h>
 #endif
-#include <sstream>
+#include <celscript/common/scriptmaps.h>
+#include "cmdparser.h"
 
 using namespace std;
 using namespace celmath;
+using namespace celestia::scripts;
 
 
-static uint64_t parseRenderFlags(string /*s*/);
-static int parseLabelFlags(string /*s*/);
-static int parseOrbitFlags(string /*s*/);
-static int parseConstellations(CommandConstellations* cmd, string s, int act);
-int parseConstellationColor(CommandConstellationColor* cmd, string s, Eigen::Vector3d *col, int act);
+static uint64_t parseRenderFlags(const string&, const FlagMap64&);
+static int parseLabelFlags(const string&, const FlagMap&);
+static int parseOrbitFlags(const string&, const FlagMap&);
+static int parseConstellations(CommandConstellations* cmd, const string &s, int act);
+int parseConstellationColor(CommandConstellationColor* cmd, const string &s, Eigen::Vector3d *col, int act);
 
-CommandParser::CommandParser(istream& in)
+CommandParser::CommandParser(istream& in, const shared_ptr<ScriptMaps> &sm) :
+    scriptMaps(sm)
 {
     tokenizer = new Tokenizer(&in);
     parser = new Parser(tokenizer);
 }
 
-CommandParser::CommandParser(Tokenizer& tok)
+CommandParser::CommandParser(Tokenizer& tok, const shared_ptr<ScriptMaps> &sm) :
+    scriptMaps(sm)
 {
     tokenizer = &tok;
     parser = new Parser(tokenizer);
@@ -519,9 +510,9 @@ Command* CommandParser::parseCommand()
         string s;
 
         if (paramList->getString("set", s))
-            setFlags = parseRenderFlags(s);
+            setFlags = parseRenderFlags(s, scriptMaps->RenderFlagMap);
         if (paramList->getString("clear", s))
-            clearFlags = parseRenderFlags(s);
+            clearFlags = parseRenderFlags(s, scriptMaps->RenderFlagMap);
 
         cmd = new CommandRenderFlags(setFlags, clearFlags);
     }
@@ -532,9 +523,9 @@ Command* CommandParser::parseCommand()
         string s;
 
         if (paramList->getString("set", s))
-            setFlags = parseLabelFlags(s);
+            setFlags = parseLabelFlags(s, scriptMaps->LabelFlagMap);
         if (paramList->getString("clear", s))
-            clearFlags = parseLabelFlags(s);
+            clearFlags = parseLabelFlags(s, scriptMaps->LabelFlagMap);
 
         cmd = new CommandLabels(setFlags, clearFlags);
     }
@@ -545,9 +536,9 @@ Command* CommandParser::parseCommand()
         string s;
 
         if (paramList->getString("set", s))
-            setFlags = parseOrbitFlags(s);
+            setFlags = parseOrbitFlags(s, scriptMaps->OrbitVisibilityMap);
         if (paramList->getString("clear", s))
-            clearFlags = parseOrbitFlags(s);
+            clearFlags = parseOrbitFlags(s, scriptMaps->OrbitVisibilityMap);
 
         cmd = new CommandOrbitFlags(setFlags, clearFlags);
     }
@@ -864,14 +855,13 @@ Command* CommandParser::parseCommand()
 }
 
 
-uint64_t parseRenderFlags(string s)
+uint64_t parseRenderFlags(const string &s, const FlagMap64& RenderFlagMap)
 {
     istringstream in(s);
 
     Tokenizer tokenizer(&in);
     uint64_t flags = 0;
 
-#ifdef CELX
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
     {
@@ -879,30 +869,28 @@ uint64_t parseRenderFlags(string s)
         {
             string name = tokenizer.getNameValue();
 
-            if (CelxLua::RenderFlagMap.count(name) == 0)
+            if (RenderFlagMap.count(name) == 0)
                 cerr << "Unknown render flag: " << name << "\n";
             else
-                flags |= CelxLua::RenderFlagMap[name];
+                flags |= RenderFlagMap.at(name);
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
                 ttype = tokenizer.nextToken();
         }
     }
-#endif
 
     return flags;
 }
 
 
-int parseLabelFlags(string s)
+int parseLabelFlags(const string &s, const FlagMap &LabelFlagMap)
 {
     istringstream in(s);
 
     Tokenizer tokenizer(&in);
     int flags = 0;
 
-#ifdef CELX
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
     {
@@ -910,30 +898,28 @@ int parseLabelFlags(string s)
         {
             string name = tokenizer.getNameValue();
 
-            if (CelxLua::LabelFlagMap.count(name) == 0)
+            if (LabelFlagMap.count(name) == 0)
                 cerr << "Unknown label flag: " << name << "\n";
             else
-                flags |= CelxLua::LabelFlagMap[name];
+                flags |= LabelFlagMap.at(name);
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
                 ttype = tokenizer.nextToken();
         }
     }
-#endif
 
     return flags;
 }
 
 
-int parseOrbitFlags(string s)
+int parseOrbitFlags(const string &s, const FlagMap &BodyTypeMap)
 {
     istringstream in(s);
 
     Tokenizer tokenizer(&in);
     int flags = 0;
 
-#ifdef CELX
     Tokenizer::TokenType ttype = tokenizer.nextToken();
     while (ttype != Tokenizer::TokenEnd)
     {
@@ -942,23 +928,22 @@ int parseOrbitFlags(string s)
             string name = tokenizer.getNameValue();
             name[0] = toupper(name[0]);
 
-            if (CelxLua::BodyTypeMap.count(name) == 0)
+            if (BodyTypeMap.count(name) == 0)
                 cerr << "Unknown orbit flag: " << name << "\n";
             else
-                flags |= CelxLua::BodyTypeMap[name];
+                flags |= BodyTypeMap.at(name);
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
                 ttype = tokenizer.nextToken();
         }
     }
-#endif
 
     return flags;
 }
 
 
-int parseConstellations(CommandConstellations* cmd, string s, int act)
+int parseConstellations(CommandConstellations* cmd, const string &s, int act)
 {
     istringstream in(s);
 
@@ -993,7 +978,7 @@ int parseConstellations(CommandConstellations* cmd, string s, int act)
 }
 
 
-int parseConstellationColor(CommandConstellationColor* cmd, string s, Eigen::Vector3d *col, int act)
+int parseConstellationColor(CommandConstellationColor* cmd, const string &s, Eigen::Vector3d *col, int act)
 {
     istringstream in(s);
 

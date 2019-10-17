@@ -21,6 +21,7 @@
 #include <celengine/planetgrid.h>
 #include <celengine/multitexture.h>
 #include <celestia/celestiacore.h>
+#include <celscript/common/scriptmaps.h>
 
 using namespace Eigen;
 using namespace std;
@@ -258,13 +259,14 @@ static int object_setorbitvisibility(lua_State* l)
     string key;
     key = lua_tostring(l, 2);
 
-    if (CelxLua::OrbitVisibilityMap.count(key) == 0)
+    auto &OrbitVisibilityMap = celx.appCore(AllErrors)->scriptMaps()->OrbitVisibilityMap;
+    if (OrbitVisibilityMap.count(key) == 0)
     {
         cerr << "Unknown visibility policy: " << key << endl;
     }
     else
     {
-        Body::VisibilityPolicy visibility = static_cast<Body::VisibilityPolicy>(CelxLua::OrbitVisibilityMap[key]);
+        auto visibility = static_cast<Body::VisibilityPolicy>(OrbitVisibilityMap[key]);
 
         if (sel->body() != nullptr)
         {
@@ -705,10 +707,11 @@ static int object_getinfo(lua_State* l)
 
         uint32_t featureType = location->getFeatureType();
         string featureName("Unknown");
-        auto iter = std::find_if(CelxLua::LocationFlagMap.begin(),
-                                 CelxLua::LocationFlagMap.end(),
+        auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps()->LocationFlagMap;
+        auto iter = std::find_if(LocationFlagMap.begin(),
+                                 LocationFlagMap.end(),
                                  [&featureType](pair<const string, uint64_t>& it){ return it.second == featureType; });
-        if (iter != CelxLua::LocationFlagMap.end())
+        if (iter != LocationFlagMap.end())
             featureName = iter->first;
         celx.setTable("featureType", featureName.c_str());
 

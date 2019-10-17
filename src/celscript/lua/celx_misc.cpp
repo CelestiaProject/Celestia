@@ -6,6 +6,8 @@
 #include <celscript/legacy/execution.h>
 #include <celestia/celestiacore.h>
 
+using namespace celestia::scripts;
+
 LuaState *getLuaStateObject(lua_State*);
 
 // Wrapper for a CEL-script, including the needed Execution Environment
@@ -15,7 +17,7 @@ class CelScriptWrapper : public ExecutionEnvironment
     CelScriptWrapper(CelestiaCore& appCore, istream& scriptfile):
         core(appCore)
     {
-        CommandParser parser(scriptfile);
+        CommandParser parser(scriptfile, appCore.scriptMaps());
         cmdSequence = parser.parse();
         if (cmdSequence != nullptr)
         {
