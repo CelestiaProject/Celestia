@@ -16,9 +16,6 @@
 #endif
 #include <celestia/celestiacore.h>
 #include <celestia/imagecapture.h>
-#ifdef CELX
-#include <celscript/lua/celx_internal.h>
-#endif
 #include <celengine/multitexture.h>
 #include <celutil/util.h>
 #include <celmath/mathlib.h>
@@ -723,18 +720,14 @@ CommandSplitView::CommandSplitView(unsigned int _view, string _splitType, double
 
 void CommandSplitView::process(ExecutionEnvironment& env)
 {
-#ifdef CELX // because of getObservers
-    vector<Observer*> observer_list;
-    getObservers(env.getCelestiaCore(), observer_list);
-
+    vector<Observer*> observer_list = env.getCelestiaCore()->getObservers();
     if (view >= 1 && view <= observer_list.size())
     {
         Observer* obs = observer_list[view - 1];
-        View* view = getViewByObserver(env.getCelestiaCore(), obs);
+        View* view = env.getCelestiaCore()->getViewByObserver(obs);
         View::Type type = (compareIgnoringCase(splitType, "h") == 0) ? View::HorizontalSplit : View::VerticalSplit;
         env.getCelestiaCore()->splitView(type, view, (float)splitPos);
     }
-#endif
 }
 
 
@@ -748,17 +741,14 @@ CommandDeleteView::CommandDeleteView(unsigned int _view) :
 
 void CommandDeleteView::process(ExecutionEnvironment& env)
 {
-#ifdef CELX
-    vector<Observer*> observer_list;
-    getObservers(env.getCelestiaCore(), observer_list);
+    vector<Observer*> observer_list = env.getCelestiaCore()->getObservers();
 
     if (view >= 1 && view <= observer_list.size())
     {
         Observer* obs = observer_list[view - 1];
-        View* view = getViewByObserver(env.getCelestiaCore(), obs);
+        View* view = env.getCelestiaCore()->getViewByObserver(obs);
         env.getCelestiaCore()->deleteView(view);
     }
-#endif
 }
 
 
@@ -767,10 +757,8 @@ void CommandDeleteView::process(ExecutionEnvironment& env)
 
 void CommandSingleView::process(ExecutionEnvironment& env)
 {
-#ifdef CELX
-    View* view = getViewByObserver(env.getCelestiaCore(), env.getSimulation()->getActiveObserver());
+    View* view = env.getCelestiaCore()->getViewByObserver(env.getSimulation()->getActiveObserver());
     env.getCelestiaCore()->singleView(view);
-#endif
 }
 
 
@@ -784,17 +772,14 @@ CommandSetActiveView::CommandSetActiveView(unsigned int _view) :
 
 void CommandSetActiveView::process(ExecutionEnvironment& env)
 {
-#ifdef CELX
-    vector<Observer*> observer_list;
-    getObservers(env.getCelestiaCore(), observer_list);
+    vector<Observer*> observer_list = env.getCelestiaCore()->getObservers();
 
     if (view >= 1 && view <= observer_list.size())
     {
         Observer* obs = observer_list[view - 1];
-        View* view = getViewByObserver(env.getCelestiaCore(), obs);
+        View* view = env.getCelestiaCore()->getViewByObserver(obs);
         env.getCelestiaCore()->setActiveView(view);
     }
-#endif
 }
 
 
@@ -842,18 +827,17 @@ CommandSetLineColor::CommandSetLineColor(string _item, Color _color) :
 {
 }
 
-void CommandSetLineColor::process(ExecutionEnvironment& /* env */)
+void CommandSetLineColor::process(ExecutionEnvironment& env)
 {
-#ifdef CELX
-    if (CelxLua::LineColorMap.count(item) == 0)
+    auto &LineColorMap = env.getCelestiaCore()->scriptMaps()->LineColorMap;
+    if (LineColorMap.count(item) == 0)
     {
         cerr << "Unknown line style: " << item << "\n";
     }
     else
     {
-        *CelxLua::LineColorMap[item] = color;
+        *LineColorMap[item] = color;
     }
-#endif
 }
 
 
@@ -866,18 +850,17 @@ CommandSetLabelColor::CommandSetLabelColor(string _item, Color _color) :
 {
 }
 
-void CommandSetLabelColor::process(ExecutionEnvironment& /* env */)
+void CommandSetLabelColor::process(ExecutionEnvironment& env)
 {
-#ifdef CELX
-    if (CelxLua::LabelColorMap.count(item) == 0)
+    auto &LabelColorMap = env.getCelestiaCore()->scriptMaps()->LabelColorMap;
+    if (LabelColorMap.count(item) == 0)
     {
         cerr << "Unknown label style: " << item << "\n";
     }
     else
     {
-        *CelxLua::LabelColorMap[item] = color;
+        *LabelColorMap[item] = color;
     }
-#endif
 }
 
 

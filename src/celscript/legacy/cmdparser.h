@@ -13,16 +13,17 @@
 #define _CMDPARSER_H_
 
 #include "command.h"
+#include <iostream>
 #include <celengine/parser.h>
 #include <celengine/render.h>
-#include <iostream>
+#include <celscript/common/scriptmaps.h>
 
 
 class CommandParser
 {
  public:
-    CommandParser(std::istream&);
-    CommandParser(Tokenizer&);
+    CommandParser(std::istream&, const std::shared_ptr<celestia::scripts::ScriptMaps> &sm);
+    CommandParser(Tokenizer&, const std::shared_ptr<celestia::scripts::ScriptMaps> &sm);
     ~CommandParser();
 
     CommandSequence* parse();
@@ -35,6 +36,7 @@ class CommandParser
     Parser* parser;
     Tokenizer* tokenizer;
     std::vector<std::string> errorList;
+    std::shared_ptr<celestia::scripts::ScriptMaps> scriptMaps;
 };
 
 #endif // _CMDPARSER_H_

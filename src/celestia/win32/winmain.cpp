@@ -2925,7 +2925,7 @@ static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
             }
             else
             {
-                CommandParser parser(scriptfile);
+                CommandParser parser(scriptfile, appCore->scriptMaps());
                 CommandSequence* script = parser.parse();
                 if (script == NULL)
                 {
@@ -4025,7 +4025,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                         {
                             // TODO: Need to fix memory leak with scripts;
                             // a refcount is probably required.
-                            CommandParser parser(scriptfile);
+                            CommandParser parser(scriptfile, appCore->scriptMaps());
                             CommandSequence* script = parser.parse();
                             if (script == NULL)
                             {

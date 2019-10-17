@@ -877,13 +877,14 @@ static int observer_setlocationflags(lua_State* l)
             celx.doError("Values in table-argument to observer:setlocationflags() must be boolean");
             return 0;
         }
-        if (CelxLua::LocationFlagMap.count(key) == 0)
+        auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps()->LocationFlagMap;
+        if (LocationFlagMap.count(key) == 0)
         {
             cerr << "Unknown key: " << key << "\n";
         }
         else
         {
-            const auto flag = CelxLua::LocationFlagMap[key];
+            const auto flag = LocationFlagMap[key];
             if (value)
             {
                 locationFlags |= flag;
@@ -906,7 +907,8 @@ static int observer_getlocationflags(lua_State* l)
     Observer* obs = this_observer(l);
     lua_newtable(l);
     const auto locationFlags = obs->getLocationFilter();
-    for (const auto& it : CelxLua::LocationFlagMap)
+    auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps()->LocationFlagMap;
+    for (const auto& it : LocationFlagMap)
     {
         lua_pushstring(l, it.first.c_str());
         lua_pushboolean(l, (it.second & locationFlags) != 0);

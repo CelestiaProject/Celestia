@@ -328,32 +328,6 @@ public:
     }
 
     LuaState* getLuaStateObject();
-
-    // String to flag mappings
-    typedef std::map<std::string, uint32_t> FlagMap;
-    typedef std::map<std::string, uint64_t> FlagMap64;
-    typedef std::map<std::string, Color*> ColorMap;
-
-    static void initMaps();
-    static void initRenderFlagMap();
-    static void initLabelFlagMap();
-    static void initBodyTypeMap();
-    static void initLocationFlagMap();
-    static void initOverlayElementMap();
-    static void initOrbitVisibilityMap();
-    static void initLabelColorMap();
-    static void initLineColorMap();
-
-    static FlagMap64 RenderFlagMap;
-    static FlagMap LabelFlagMap;
-    static FlagMap64 LocationFlagMap;
-    static FlagMap BodyTypeMap;
-    static FlagMap OverlayElementMap;
-    static FlagMap OrbitVisibilityMap;
-    static ColorMap LineColorMap;
-    static ColorMap LabelColorMap;
-    static bool mapsInitialized;
-
     static const char* ClassNames[];
 
 private:

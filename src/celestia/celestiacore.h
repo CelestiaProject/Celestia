@@ -31,6 +31,8 @@
 #ifdef CELX
 #include <celscript/lua/celx.h>
 #endif
+#include <celscript/common/scriptmaps.h>
+
 class Url;
 
 // class CelestiaWatcher;
@@ -52,7 +54,8 @@ public:
 class CelestiaCore // : public Watchable<CelestiaCore>
 {
  public:
-    enum {
+    enum
+    {
         LeftButton   = 0x01,
         MiddleButton = 0x02,
         RightButton  = 0x04,
@@ -60,7 +63,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         ControlKey   = 0x10,
     };
 
-    enum CursorShape {
+    enum CursorShape
+    {
         ArrowCursor         = 0,
         UpArrowCursor       = 1,
         CrossCursor         = 2,
@@ -80,13 +84,15 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         WhatsThisCursor     = 16,
     };
 
-    enum {
+    enum
+    {
         Joy_XAxis           = 0,
         Joy_YAxis           = 1,
         Joy_ZAxis           = 2,
     };
 
-    enum {
+    enum
+    {
         JoyButton1          = 0,
         JoyButton2          = 1,
         JoyButton3          = 2,
@@ -98,7 +104,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         JoyButtonCount      = 8,
     };
 
-    enum {
+    enum
+    {
         Key_Left            =  1,
         Key_Right           =  2,
         Key_Up              =  3,
@@ -258,6 +265,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setFaintest(float);
     void setFaintestAutoMag();
 
+    std::vector<Observer*> getObservers() const;
+    View* getViewByObserver(const Observer*) const;
     void splitView(View::Type type, View* av = nullptr, float splitPos = 0.5f);
     void singleView(View* av = nullptr);
     void deleteView(View* v = nullptr);
@@ -325,6 +334,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     const std::string& getTypedText() const { return typedText; }
     void setTypedText(const char *);
 
+    const std::shared_ptr<celestia::scripts::ScriptMaps>& scriptMaps() const { return m_scriptMaps; }
+
  protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
@@ -389,6 +400,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     LuaState* luaHook{ nullptr };     // Lua hook context
     LuaState* luaSandbox{ nullptr };  // Safe Lua context for ssc scripts
 #endif // CELX
+    std::shared_ptr<celestia::scripts::ScriptMaps> m_scriptMaps;
 
     enum ScriptState
     {
