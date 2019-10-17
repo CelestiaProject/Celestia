@@ -1,4 +1,6 @@
 set(SCRIPT_COMMON_SOURCES
+  script.cpp
+  script.h
   scriptmaps.cpp
   scriptmaps.h
 )
