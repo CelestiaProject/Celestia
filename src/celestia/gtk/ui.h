@@ -45,8 +45,8 @@ static const GtkActionEntry actionsPlain[] = {
 	{ "EclipseFinder", NULL, N_("_Eclipse Finder..."), NULL, NULL, G_CALLBACK(actionEclipseFinder) },
 	
 	{ "TimeMenu", NULL, N_("_Time"), NULL, NULL, NULL },
-	{ "TimeFaster", NULL, N_("10x _Faster"), "L", NULL, G_CALLBACK(actionTimeFaster) },
-	{ "TimeSlower", NULL, N_("10x _Slower"), "K", NULL, G_CALLBACK(actionTimeSlower) },
+	{ "TimeFaster", NULL, N_("2x _Faster"), "L", NULL, G_CALLBACK(actionTimeFaster) },
+	{ "TimeSlower", NULL, N_("2x _Slower"), "K", NULL, G_CALLBACK(actionTimeSlower) },
 	{ "TimeFreeze", NULL, N_("Free_ze"), "space", NULL, G_CALLBACK(actionTimeFreeze) },
 	{ "TimeReal", NULL, N_("_Real Time"), "backslash", NULL, G_CALLBACK(actionTimeReal) },
 	{ "TimeReverse", NULL, N_("Re_verse Time"), "J", NULL, G_CALLBACK(actionTimeReverse) },
