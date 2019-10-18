@@ -477,3 +477,32 @@ const CrossIndex *AstroDatabase::getCatalogCrossIndex(int catalog) const
         return nullptr;
     return it->second;
 }
+
+static inline float toM(size_t n) { return n / 1024 / 1024; }
+
+void AstroDatabase::dumpStats() const
+{
+    fmt::fprintf(cout,
+                 "AstroDatabase::dumpStats()\n"
+                 " Objects: %u (* %u B = %f MB)\n"
+                 " Stars: %u (* %u B = %f MB)\n"
+                 " DSOs: %u (* %u B = %f MB)\n"
+                 " Bodies: %u (* %u B = %f MB)\n"
+                 " Names: %u\n"
+                 " Localized names: %u\n",
+                 m_mainIndex.size(),
+                 sizeof(AstroObject),
+                 toM(sizeof(AstroObject) * m_mainIndex.size()),
+                 m_stars.size(),
+                 sizeof(Star),
+                 toM(sizeof(Star) * m_stars.size()),
+                 m_dsos.size(),
+                 sizeof(DeepSkyObject),
+                 toM(sizeof(DeepSkyObject) * m_dsos.size()),
+                 m_bodies.size(),
+                 sizeof(Body),
+                 toM(sizeof(Body) * m_bodies.size()),
+                 m_nameIndex.getNamesNumber(),
+                 m_nameIndex.getLocalizedNamesNumber()
+                );
+}

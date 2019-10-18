@@ -3,6 +3,7 @@
 #include <array>
 #include <map>
 #include <set>
+#include <vector>
 #include <climits>
 #include "selection.h"
 #include "namedb.h"
@@ -157,4 +158,6 @@ class AstroDatabase {
     CrossIndex *getCatalogCrossIndex(int);
     const CrossIndex *getCatalogCrossIndex(int) const;
     AstroNameDatabase &getAstroNameDatabase() { return m_nameIndex; }
+
+    void dumpStats() const;
 };
