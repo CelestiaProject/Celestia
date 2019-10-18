@@ -37,6 +37,7 @@
 #include <celutil/debug.h>
 #include <celutil/utf8.h>
 #include <celcompat/filesystem.h>
+#include <celcompat/memory.h>
 #include <Eigen/Geometry>
 #include <GL/glew.h>
 #include <iostream>
@@ -179,6 +180,7 @@ CelestiaCore::CelestiaCore() :
     renderer(new Renderer()),
     timer(new Timer()),
     execEnv(new CoreExecutionEnvironment(*this)),
+    m_luaPlugin(make_unique<LuaScriptPlugin>(this)),
     m_scriptMaps(make_shared<ScriptMaps>())
 {
 
@@ -199,13 +201,6 @@ CelestiaCore::~CelestiaCore()
 {
     if (movieCapture != nullptr)
         recordEnd();
-
-#ifdef CELX
-    // Clean up all scripts
-    delete celxScript;
-    delete luaHook;
-    delete luaSandbox;
-#endif
 
     delete execEnv;
     delete timer;
@@ -326,12 +321,12 @@ void CelestiaCore::cancelScript()
         runningScript = nullptr;
     }
 #ifdef CELX
-    if (celxScript != nullptr)
+    if (m_script != nullptr)
     {
-        celxScript->cleanup();
         if (textEnterMode & KbPassToScript)
             setTextEnterMode(textEnterMode & ~KbPassToScript);
         scriptState = ScriptCompleted;
+        m_script = nullptr;
     }
 #endif
 }
@@ -381,43 +376,11 @@ void CelestiaCore::runScript(const fs::path& filename)
         }
     }
 #ifdef CELX
-    else if (type == Content_CelestiaScript)
+    else if (m_luaPlugin->isOurFile(localeFilename))
     {
-        ifstream scriptfile(localeFilename.string());
-        if (!scriptfile.good())
-        {
-            string errMsg;
-            errMsg = fmt::sprintf(_("Error opening script '%s'"), localeFilename);
-            fatalError(errMsg);
-        }
-
-        if (celxScript == nullptr)
-        {
-            celxScript = new LuaState();
-            celxScript->init(this);
-        }
-
-        int status = celxScript->loadScript(scriptfile, localeFilename.string()); // FIXME
-        if (status != 0)
-        {
-            string errMsg = celxScript->getErrorMessage();
-            if (errMsg.empty())
-                errMsg = _("Unknown error opening script");
-            fatalError(errMsg);
-        }
-        else
-        {
-            // Coroutine execution; control may be transferred between the
-            // script and Celestia's event loop
-            if (!celxScript->createThread())
-            {
-                fatalError(_("Script coroutine initialization failed"));
-            }
-            else
-            {
-                scriptState = sim->getPauseState()?ScriptPaused:ScriptRunning;
-            }
-        }
+        m_script = m_luaPlugin->loadScript(localeFilename);
+        if (m_script != nullptr)
+            scriptState = sim->getPauseState() ? ScriptPaused : ScriptRunning;
     }
 #endif
     else
@@ -427,7 +390,7 @@ void CelestiaCore::runScript(const fs::path& filename)
 }
 
 
-bool checkMask(int modifiers, int mask)
+static bool checkMask(int modifiers, int mask)
 {
     return (modifiers & mask) == mask;
 }
@@ -439,15 +402,14 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
     mouseMotion = 0.0f;
 
 #ifdef CELX
-    if (celxScript != nullptr)
+    if (m_script != nullptr)
     {
-        if (celxScript->handleMouseButtonEvent(x, y, button, true))
+        if (m_script->handleMouseButtonEvent(x, y, button, true))
             return;
     }
-
-    if (luaHook && luaHook->callLuaHook(this, "mousebuttondown", x, y, button))
-        return;
 #endif
+   if (m_scriptHook != nullptr && m_scriptHook->call("mousebuttondown", x, y, button))
+        return;
 
     if (views.size() > 1)
     {
@@ -515,15 +477,14 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
     }
 
 #ifdef CELX
-    if (celxScript != nullptr)
+    if (m_script != nullptr)
     {
-        if (celxScript->handleMouseButtonEvent(x, y, button, false))
+        if (m_script->handleMouseButtonEvent(x, y, button, false))
             return;
     }
-
-    if (luaHook && luaHook->callLuaHook(this,"mousebuttonup", x, y, button))
-        return;
 #endif
+    if (m_scriptHook != nullptr && m_scriptHook->call("mousebuttonup", x, y, button))
+        return;
 
     // If the mouse hasn't moved much since it was pressed, treat this
     // as a selection or context menu event.  Otherwise, assume that the
@@ -611,10 +572,8 @@ void CelestiaCore::mouseWheel(float motion, int modifiers)
 /// x and y are the pixel coordinates relative to the widget.
 void CelestiaCore::mouseMove(float x, float y)
 {
-#ifdef CELX
-    if (luaHook && luaHook->callLuaHook(this, "mousemove", x, y))
+    if (m_scriptHook != nullptr && m_scriptHook->call("mousemove", x, y))
         return;
-#endif
 
     if (views.size() > 1 && cursorHandler != nullptr)
     {
@@ -676,13 +635,9 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         return;
     }
 
-#ifdef CELX
-    if (luaHook &&
-            luaHook->callLuaHook(this,"mousebuttonmove", dx, dy, modifiers))
-    {
-            return;
-    }
-#endif
+    if (m_scriptHook != nullptr && m_scriptHook->call("mousebuttonmove", dx, dy, modifiers))
+       return;
+
 
     if ((modifiers & (LeftButton | RightButton)) != 0)
     {
@@ -877,15 +832,9 @@ void CelestiaCore::keyDown(int key, int modifiers)
 {
     setViewChanged();
 
-#ifdef CELX
-    // TODO: should pass modifiers as a Lua table
-    if (luaHook && luaHook->callLuaHook(this,
-                                        "keydown",
-                                        (float) key, (float) modifiers))
-    {
+    if (m_scriptHook != nullptr && m_scriptHook->call("keydown", float(key), float(modifiers)))
         return;
-    }
-#endif
+
     switch (key)
     {
     case Key_F1:
@@ -1020,9 +969,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
 
 #ifdef CELX
-    if (celxScript != nullptr && (textEnterMode & KbPassToScript))
+    if (m_script != nullptr && (textEnterMode & KbPassToScript))
     {
-        if (c != '\033' && celxScript->charEntered(c_p))
+        if (c != '\033' && m_script->charEntered(c_p))
         {
             return;
         }
@@ -1125,25 +1074,18 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     }
 
 #ifdef CELX
-    if (celxScript != nullptr)
+    if (m_script != nullptr)
     {
         if (c != '\033')
         {
             string keyName = getKeyName(c_p, modifiers);
-            if (celxScript->handleKeyEvent(keyName.c_str()))
+            if (m_script->handleKeyEvent(keyName.c_str()))
                 return;
         }
     }
-
-    if (luaHook)
-    {
-        string keyName = getKeyName(c_p, modifiers);
-        if (luaHook->callLuaHook(this, "charentered", keyName.c_str()))
-        {
-            return;
-        }
-    }
 #endif
+    if (m_scriptHook != nullptr && m_scriptHook->call("charentered", getKeyName(c_p, modifiers).c_str()))
+        return;
 
     char C = toupper(c);
     switch (C)
@@ -1375,7 +1317,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             // potentially confusing side effect of rendering nonfunctional
             // goto, center, and other movement commands.
 #ifdef CELX
-            if (runningScript != nullptr || celxScript != nullptr)
+            if (runningScript != nullptr || m_script != nullptr)
 #else
             if (runningScript != nullptr)
 #endif
@@ -2198,20 +2140,19 @@ void CelestiaCore::tick()
     }
 
 #ifdef CELX
-    if (celxScript != nullptr)
+    if (m_script != nullptr)
     {
-        celxScript->handleTickEvent(dt);
+        m_script->handleTickEvent(dt);
         if (scriptState == ScriptRunning)
         {
-            bool finished = celxScript->tick(dt);
+            bool finished = m_script->tick(dt);
             if (finished)
                 cancelScript();
         }
     }
-
-    if (luaHook != nullptr)
-        luaHook->callLuaHook(this, "tick", dt);
 #endif // CELX
+    if (m_scriptHook != nullptr)
+        m_scriptHook->call("tick", dt);
 
     sim->update(dt);
 }
@@ -2305,10 +2246,8 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
     height = h;
 
     setFOVFromZoom();
-#ifdef CELX
-    if (luaHook && luaHook->callLuaHook(this,"resize", (float) w, (float) h))
+    if (m_scriptHook != nullptr && m_scriptHook->call("resize", float(w), float(h)))
         return;
-#endif
 }
 
 
@@ -3076,9 +3015,9 @@ void CelestiaCore::setScriptImage(std::unique_ptr<OverlayImage> &&_image)
 
 void CelestiaCore::renderOverlay()
 {
-#ifdef CELX
-    if (luaHook) luaHook->callLuaHook(this, "renderoverlay");
-#endif
+    if (m_scriptHook != nullptr)
+        m_scriptHook->call("renderoverlay");
+
     if (font == nullptr)
         return;
 
@@ -3091,7 +3030,7 @@ void CelestiaCore::renderOverlay()
     overlay->begin();
 
 #ifdef CELX
-    if (runningScript || celxScript)
+    if (runningScript || m_script != nullptr)
     {
 #else
     if (runningScript)
@@ -4553,146 +4492,9 @@ bool CelestiaCore::referenceMarkEnabled(const string& refMark, Selection sel) co
 
 
 #ifdef CELX
-class LuaPathFinder
-{
-    set<fs::path> dirs;
-
- public:
-    const string getLuaPath() const
-    {
-        string out;
-        for (const auto& dir : dirs)
-            out += (dir / "?.lua;").string();
-        return out;
-    }
-
-    void process(const fs::path& p)
-    {
-        auto dir = p.parent_path();
-        if (p.extension() == ".lua")
-        {
-            if (dirs.count(dir) == 0)
-                dirs.insert(dir);
-        }
-    };
-};
-
-
-// Initialize the Lua hook table as well as the Lua state for scripted
-// objects. The Lua hook operates in a different Lua state than user loaded
-// scripts. It always has file system access via the IO package. If the script
-// system access policy is "allow", then scripted objects will run in the same
-// Lua context as the Lua hook. Sharing state between scripted objects and the
-// hook can be very useful, but it gives system access to scripted objects,
-// and therefore must be restricted based on the system access policy.
 bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
 {
-    luaHook = new LuaState();
-    luaHook->init(this);
-
-    string LuaPath = "?.lua;celxx/?.lua;";
-
-    // Find the path for lua files in the extras directories
-    for (const auto& dir : config->extrasDirs)
-    {
-        if (!is_valid_directory(dir))
-            continue;
-
-        LuaPathFinder loader;
-        for (const auto& fn : fs::recursive_directory_iterator(dir))
-            loader.process(fn);
-        LuaPath += loader.getLuaPath();
-    }
-
-    // Always grant access for the Lua hook
-    luaHook->allowSystemAccess();
-
-    luaHook->setLuaPath(LuaPath);
-
-    int status = 0;
-
-    // Execute the Lua hook initialization script
-    if (!config->luaHook.empty())
-    {
-        ifstream scriptfile(config->luaHook.string());
-        if (!scriptfile.good())
-        {
-            string errMsg;
-            errMsg = fmt::sprintf(_("Error opening LuaHook '%s'"), config->luaHook);
-            fatalError(errMsg);
-        }
-
-        if (progressNotifier)
-            progressNotifier->update(config->luaHook.string());
-
-        status = luaHook->loadScript(scriptfile, config->luaHook);
-    }
-    else
-    {
-        status = luaHook->loadScript("");
-    }
-
-    if (status != 0)
-    {
-        cerr << "lua hook load failed\n";
-        string errMsg = luaHook->getErrorMessage();
-        if (errMsg.empty())
-            errMsg = _("Unknown error loading hook script");
-        fatalError(errMsg);
-        delete luaHook;
-        luaHook = nullptr;
-    }
-    else
-    {
-        // Coroutine execution; control may be transferred between the
-        // script and Celestia's event loop
-        if (!luaHook->createThread())
-        {
-            cerr << "hook thread failed\n";
-            string errMsg = _("Script coroutine initialization failed");
-            fatalError(errMsg);
-            delete luaHook;
-            luaHook = nullptr;
-        }
-
-        if (luaHook)
-        {
-            while (!luaHook->tick(0.1)) ;
-        }
-    }
-
-    // Set up the script context; if the system access policy is allow,
-    // it will share the same context as the Lua hook. Otherwise, we
-    // create a private context.
-    if (config->scriptSystemAccessPolicy == "allow")
-    {
-        if (luaHook)
-        {
-            SetScriptedObjectContext(luaHook->getState());
-        }
-    }
-    else
-    {
-        luaSandbox = new LuaState();
-        luaSandbox->init(this);
-
-        // Allow access to functions in package because we need 'require'
-        // But, loadlib is prohibited.
-        luaSandbox->allowLuaPackageAccess();
-        luaSandbox->setLuaPath(LuaPath);
-
-        status = luaSandbox->loadScript("");
-        if (status != 0)
-        {
-            delete luaSandbox;
-            luaSandbox = nullptr;
-            return false;
-        }
-
-        SetScriptedObjectContext(luaSandbox->getState());
-    }
-
-    return true;
+    return CreateLuaEnvironment(this, config, progressNotifier);
 }
 #endif
 

@@ -24,6 +24,8 @@ set(CELX_SOURCES
   celx_rotation.h
   celx_vector.cpp
   celx_vector.h
+  luascript.cpp
+  luascript.h
 )
 
 add_library(celluascript OBJECT ${CELX_SOURCES})

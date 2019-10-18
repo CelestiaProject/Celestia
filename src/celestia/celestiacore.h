@@ -30,7 +30,9 @@
 #include "view.h"
 #ifdef CELX
 #include <celscript/lua/celx.h>
+#include <celscript/lua/luascript.h>
 #endif
+#include <celscript/common/script.h>
 #include <celscript/common/scriptmaps.h>
 
 class Url;
@@ -334,6 +336,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     const std::string& getTypedText() const { return typedText; }
     void setTypedText(const char *);
 
+    void setScriptHook(std::unique_ptr<celestia::scripts::IScriptHook> &&hook) { m_scriptHook = std::move(hook); }
     const std::shared_ptr<celestia::scripts::ScriptMaps>& scriptMaps() const { return m_scriptMaps; }
 
  protected:
@@ -395,12 +398,10 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     Execution* runningScript{ nullptr };
     ExecutionEnvironment* execEnv{ nullptr };
 
-#ifdef CELX
-    LuaState* celxScript{ nullptr };
-    LuaState* luaHook{ nullptr };     // Lua hook context
-    LuaState* luaSandbox{ nullptr };  // Safe Lua context for ssc scripts
-#endif // CELX
-    std::shared_ptr<celestia::scripts::ScriptMaps> m_scriptMaps;
+    std::unique_ptr<celestia::scripts::IScript>         m_script;
+    std::unique_ptr<celestia::scripts::IScriptHook>     m_scriptHook;
+    std::unique_ptr<celestia::scripts::LuaScriptPlugin> m_luaPlugin;
+    std::shared_ptr<celestia::scripts::ScriptMaps>      m_scriptMaps;
 
     enum ScriptState
     {
