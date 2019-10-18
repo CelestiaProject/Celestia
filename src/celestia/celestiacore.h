@@ -15,8 +15,6 @@
 // #include <celutil/watchable.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
-#include <celscript/legacy/command.h>
-#include <celscript/legacy/execution.h>
 #include <celengine/texture.h>
 #include <celengine/universe.h>
 #include <celengine/render.h>
@@ -33,6 +31,7 @@
 #include <celscript/lua/luascript.h>
 #endif
 #include <celscript/common/script.h>
+#include <celscript/legacy/legacyscript.h>
 #include <celscript/common/scriptmaps.h>
 
 class Url;
@@ -247,7 +246,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool isCaptureActive();
     bool isRecording();
 
-    void runScript(CommandSequence*);
     void runScript(const fs::path& filename);
     void cancelScript();
     void resumeScript();
@@ -395,13 +393,11 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     Timer* timer{ nullptr };
 
-    Execution* runningScript{ nullptr };
-    ExecutionEnvironment* execEnv{ nullptr };
-
-    std::unique_ptr<celestia::scripts::IScript>         m_script;
-    std::unique_ptr<celestia::scripts::IScriptHook>     m_scriptHook;
-    std::unique_ptr<celestia::scripts::LuaScriptPlugin> m_luaPlugin;
-    std::shared_ptr<celestia::scripts::ScriptMaps>      m_scriptMaps;
+    std::unique_ptr<celestia::scripts::IScript>             m_script;
+    std::unique_ptr<celestia::scripts::IScriptHook>         m_scriptHook;
+    std::unique_ptr<celestia::scripts::LegacyScriptPlugin>  m_legacyPlugin;
+    std::unique_ptr<celestia::scripts::LuaScriptPlugin>     m_luaPlugin;
+    std::shared_ptr<celestia::scripts::ScriptMaps>          m_scriptMaps;
 
     enum ScriptState
     {
