@@ -108,41 +108,6 @@ static bool is_valid_directory(const fs::path& dir)
 }
 
 
-// Extremely basic implementation of an ExecutionEnvironment for
-// running scripts.
-class CoreExecutionEnvironment : public ExecutionEnvironment
-{
-private:
-    CelestiaCore& core;
-
-public:
-    CoreExecutionEnvironment(CelestiaCore& _core) : core(_core)
-    {
-    }
-
-    Simulation* getSimulation() const
-    {
-        return core.getSimulation();
-    }
-
-    Renderer* getRenderer() const
-    {
-        return core.getRenderer();
-    }
-
-    CelestiaCore* getCelestiaCore() const
-    {
-        return &core;
-    }
-
-    void showText(string s, int horig, int vorig, int hoff, int voff,
-                  double duration)
-    {
-        core.showText(s, horig, vorig, hoff, voff, duration);
-    }
-};
-
-
 // If right dragging to rotate, adjust the rotation rate based on the
 // distance from the reference object.  This makes right drag rotation
 // useful even when the camera is very near the surface of an object.
@@ -179,7 +144,7 @@ CelestiaCore::CelestiaCore() :
        routine will be called much later. */
     renderer(new Renderer()),
     timer(new Timer()),
-    execEnv(new CoreExecutionEnvironment(*this)),
+    m_legacyPlugin(make_unique<LegacyScriptPlugin>(this)),
     m_luaPlugin(make_unique<LuaScriptPlugin>(this)),
     m_scriptMaps(make_shared<ScriptMaps>())
 {
@@ -202,7 +167,6 @@ CelestiaCore::~CelestiaCore()
     if (movieCapture != nullptr)
         recordEnd();
 
-    delete execEnv;
     delete timer;
     delete renderer;
 }
@@ -314,31 +278,12 @@ void showSelectionInfo(const Selection& sel)
 
 void CelestiaCore::cancelScript()
 {
-    if (runningScript != nullptr)
-    {
-        delete runningScript;
-        scriptState = ScriptCompleted;
-        runningScript = nullptr;
-    }
-#ifdef CELX
     if (m_script != nullptr)
     {
         if (textEnterMode & KbPassToScript)
             setTextEnterMode(textEnterMode & ~KbPassToScript);
         scriptState = ScriptCompleted;
         m_script = nullptr;
-    }
-#endif
-}
-
-
-void CelestiaCore::runScript(CommandSequence* script)
-{
-    cancelScript();
-    if (runningScript == nullptr && script != nullptr && scriptState == ScriptCompleted)
-    {
-        scriptState = ScriptRunning;
-        runningScript = new Execution(*script, *execEnv);
     }
 }
 
@@ -347,33 +292,12 @@ void CelestiaCore::runScript(const fs::path& filename)
 {
     cancelScript();
     auto localeFilename = LocaleFilename(filename);
-    ContentType type = DetermineFileType(localeFilename);
 
-    if (type == Content_CelestiaLegacyScript)
+    if (m_legacyPlugin->isOurFile(localeFilename))
     {
-        ifstream scriptfile(localeFilename.string());
-        if (!scriptfile.good())
-        {
-            fatalError(_("Error opening script file."));
-        }
-        else
-        {
-            CommandParser parser(scriptfile, m_scriptMaps);
-            CommandSequence* script = parser.parse();
-            if (script == nullptr)
-            {
-                const vector<string>* errors = parser.getErrors();
-                string errorMsg;
-                if (errors->size() > 0)
-                    errorMsg = (*errors)[0];
-                fatalError(errorMsg);
-            }
-            else
-            {
-                runningScript = new Execution(*script, *execEnv);
-                scriptState = sim->getPauseState()?ScriptPaused:ScriptRunning;
-            }
-        }
+        m_script = m_legacyPlugin->loadScript(localeFilename);
+        if (m_script != nullptr)
+            scriptState = sim->getPauseState() ? ScriptPaused : ScriptRunning;
     }
 #ifdef CELX
     else if (m_luaPlugin->isOurFile(localeFilename))
@@ -1316,11 +1240,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             // If there's a script running then pause it.  This has the
             // potentially confusing side effect of rendering nonfunctional
             // goto, center, and other movement commands.
-#ifdef CELX
-            if (runningScript != nullptr || m_script != nullptr)
-#else
-            if (runningScript != nullptr)
-#endif
+            if (m_script != nullptr)
             {
                 if (scriptState == ScriptRunning)
                     scriptState = ScriptPaused;
@@ -2132,14 +2052,6 @@ void CelestiaCore::tick()
     }
 
     // If there's a script running, tick it
-    if (runningScript != nullptr)
-    {
-        bool finished = runningScript->tick(dt);
-        if (finished)
-            cancelScript();
-    }
-
-#ifdef CELX
     if (m_script != nullptr)
     {
         m_script->handleTickEvent(dt);
@@ -2150,7 +2062,6 @@ void CelestiaCore::tick()
                 cancelScript();
         }
     }
-#endif // CELX
     if (m_scriptHook != nullptr)
         m_scriptHook->call("tick", dt);
 
@@ -3029,16 +2940,8 @@ void CelestiaCore::renderOverlay()
 
     overlay->begin();
 
-#ifdef CELX
-    if (runningScript || m_script != nullptr)
-    {
-#else
-    if (runningScript)
-    {
-#endif
-        if (image != nullptr)
-            image->render((float) currentTime, width, height);
-    }
+    if (m_script != nullptr && image != nullptr)
+        image->render((float) currentTime, width, height);
 
     if (views.size() > 1)
     {
