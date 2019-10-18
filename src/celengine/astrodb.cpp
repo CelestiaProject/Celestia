@@ -478,7 +478,7 @@ const CrossIndex *AstroDatabase::getCatalogCrossIndex(int catalog) const
     return it->second;
 }
 
-static inline float toM(size_t n) { return n / 1024 / 1024; }
+static inline float toM(size_t n) { return n / 1024.f / 1024.f; }
 
 void AstroDatabase::dumpStats() const
 {
@@ -489,7 +489,8 @@ void AstroDatabase::dumpStats() const
                  " DSOs: %u (* %u B = %f MB)\n"
                  " Bodies: %u (* %u B = %f MB)\n"
                  " Names: %u\n"
-                 " Localized names: %u\n",
+                 " Localized names: %u\n"
+                 " Octree nodes: %u (* %u B = %f MB)\n",
                  m_mainIndex.size(),
                  sizeof(AstroObject),
                  toM(sizeof(AstroObject) * m_mainIndex.size()),
@@ -503,6 +504,9 @@ void AstroDatabase::dumpStats() const
                  sizeof(Body),
                  toM(sizeof(Body) * m_bodies.size()),
                  m_nameIndex.getNamesNumber(),
-                 m_nameIndex.getLocalizedNamesNumber()
+                 m_nameIndex.getLocalizedNamesNumber(),
+                 OctreeNode::getNodesNumber(),
+                 sizeof(OctreeNode),
+                 toM(OctreeNode::getNodesNumber() * sizeof(OctreeNode))
                 );
 }

@@ -13,6 +13,8 @@ char* _stack;
 
 size_t OctreeNode::m_maxObjCount = 12;
 
+size_t OctreeNode::m_nodesNumber = 0;
+
 static void dumpObjects(const OctreeNode *node)
 {
     for (const auto &obj : node->getObjects())
@@ -219,12 +221,15 @@ OctreeNode::OctreeNode(const Vector3d& cellCenter, double scale, OctreeNode *par
     m_cellCenter(cellCenter),
     m_scale(scale),
     m_parent(parent)
-{}
+{
+    ++m_nodesNumber;
+}
 
 OctreeNode::~OctreeNode()
 {
     if (m_children != nullptr)
         delete m_children;
+    --m_nodesNumber;
 }
 
 bool OctreeNode::add(LuminousObject *obj)

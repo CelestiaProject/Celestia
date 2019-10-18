@@ -1253,6 +1253,8 @@ bool LoadSolarSystemObjects(istream& in,
                         iter++;
                     }
                 }
+                if (body != nullptr)
+                    universe.getDatabase().addBody(body);
             }
         }
         else if (itemType == "AltSurface")

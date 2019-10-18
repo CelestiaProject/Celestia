@@ -44,6 +44,8 @@ class AstroNameDatabase
     std::vector<Name> getCompletion(const std::string& name, bool greek = true) const;
     std::vector<Name> getCompletion(const std::vector<std::string> &list) const;
 
+    size_t getNamesNumber() const { return m_nameIndex.size(); }
+    size_t getLocalizedNamesNumber() const { return m_localizedIndex.size(); }
     void dump() const;
  protected:
     SharedNameMap m_nameIndex;

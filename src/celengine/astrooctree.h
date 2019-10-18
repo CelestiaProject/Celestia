@@ -62,6 +62,7 @@ class OctreeNode
     static size_t m_maxObjCount;
     bool m_dirty { true };
     void setDirty(bool d) { m_dirty = d; }
+    static size_t m_nodesNumber;
  public:
     enum
     {
@@ -112,4 +113,5 @@ class OctreeNode
     OctreeNode *getRoot();
     const OctreeNode *getParent() const { return m_parent; }
     static bool m_debug;
+    static size_t getNodesNumber() { return m_nodesNumber; }
 };
