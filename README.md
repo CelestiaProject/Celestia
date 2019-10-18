@@ -124,7 +124,7 @@ favorite text editing program.
 ## Contributions
 | **`Authors`** | **`Contributors`** | **`Documentation`** | **`Other`** |
 |-----------------|---------------------|------------------|-------------------|
-| Chris Laurel, Clint Weisbrod, Fridger Schrempp, Bob Ippolito, Christophe Teyssier, Hank Ramsey, Grant Hutchison, Pat Suwalski, Toti, Da Woon Jung, Vincent Giangiulio, Andrew Tribick, Hleb Valoshka, Łukasz Buczyński | Selden Ball, Deon Ramsey, Christopher Andre, Colin Walters, Peter Chapman, James Holmes, Harald Schmidt, Sergey Leonov, Alexell, Dmitry Brant, Janus, Li Linfeng | Frank Gregorio, Hitoshi Suzuki, Christophe Teyssier, Diego Rodriguez, Don Goyette, Harald Schmidt | Creators of scientific database, texture maps, 3D models and used libraries, you can see in full README.|
+| Chris Laurel, Clint Weisbrod, Fridger Schrempp, Bob Ippolito, Christophe Teyssier, Hank Ramsey, Grant Hutchison, Pat Suwalski, Toti, Da Woon Jung, Vincent Giangiulio, Andrew Tribick, Hleb Valoshka, Łukasz Buczyński | Deon Ramsey, Christopher Andre, Colin Walters, Peter Chapman, James Holmes, Harald Schmidt, Nils Larsson, Sergey Leonov, Alexell, Dmitry Brant, Janus, Li Linfeng | Selden Ball, Frank Gregorio, Hitoshi Suzuki, Christophe Teyssier, Diego Rodriguez, Don Goyette, Harald Schmidt | Creators of scientific database, texture maps, 3D models and used libraries, you can see in full README.|
 
 ### Contributing
 
