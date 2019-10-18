@@ -2909,40 +2909,7 @@ static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
         // If you got here, a path and file has been specified.
         // Ofn.lpstrFile contains full path to specified file
         // Ofn.lpstrFileTitle contains just the filename with extension
-        ContentType type = DetermineFileType(Ofn.lpstrFile);
-
-        if (type == Content_CelestiaScript)
-        {
-            appCore->runScript(Ofn.lpstrFile);
-        }
-        else if (type == Content_CelestiaLegacyScript)
-        {
-            ifstream scriptfile(Ofn.lpstrFile);
-            if (!scriptfile.good())
-            {
-                MessageBox(hWnd, "Error opening script file.", "Error",
-                           MB_OK | MB_ICONERROR);
-            }
-            else
-            {
-                CommandParser parser(scriptfile, appCore->scriptMaps());
-                CommandSequence* script = parser.parse();
-                if (script == NULL)
-                {
-                    const vector<string>* errors = parser.getErrors();
-                    const char* errorMsg = "";
-                    if (errors->size() > 0)
-                        errorMsg = (*errors)[0].c_str();
-                    MessageBox(hWnd, errorMsg, "Error in script file.",
-                               MB_OK | MB_ICONERROR);
-                }
-                else
-                {
-                    appCore->cancelScript(); // cancel any running script
-                    appCore->runScript(script);
-                }
-            }
-        }
+        appCore->runScript(Ofn.lpstrFile);
     }
 
     if (strlen(currentDir) != 0)
