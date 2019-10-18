@@ -509,4 +509,15 @@ void AstroDatabase::dumpStats() const
                  sizeof(OctreeNode),
                  toM(OctreeNode::getNodesNumber() * sizeof(OctreeNode))
                 );
+    size_t xindexRecords = 0;
+    for (const auto &it : m_catxindex)
+        xindexRecords += it.second->getRecords().size();
+    for (const auto &it : m_celxindex)
+        xindexRecords += it.second->getRecords().size();
+    fmt::fprintf(cout,
+                 " CrossIndex records: %u (* %u B = %f MB)\n",
+                 xindexRecords,
+                 sizeof(CrossIndex::CrossIndexRange),
+                 toM(sizeof(CrossIndex::CrossIndexRange) * xindexRecords)
+                );
 }
