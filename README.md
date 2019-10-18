@@ -20,10 +20,10 @@ This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details,
 which you should have received along with this program (filename: COPYING).
-If not, request a copy from:  
-Free Software Foundation, Inc.  
-59 Temple Place - Suite 330  
-Boston, MA  02111-1307  
+If not, request a copy from:<br>
+Free Software Foundation, Inc.<br>
+59 Temple Place - Suite 330<br>
+Boston, MA  02111-1307<br>
 USA
 
 ## Getting started
@@ -62,8 +62,8 @@ button, and you're off.
 
 That covers the very basics.  For a more in-depth look at Celestia and the
 controls available to you, download the "Celestia User's Guide" (written by 
-Frank Gregorio), available in several languages, from:  
-  https://celestia.space/guides.html  
+Frank Gregorio), available in several languages, from:<br>
+  https://celestia.space/guides.html<br>
 This web page also includes links to the Celestia README file translated into
 Japanese.
 
