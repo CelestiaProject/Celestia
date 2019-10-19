@@ -3977,43 +3977,9 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                         appCore->flash(_("Loading URL"));
                         appCore->goToUrl(urlString);
                     }
-                    else if (DetermineFileType(urlString) == Content_CelestiaScript)
-                    {
-                        appCore->runScript(urlString);
-                    }
                     else
                     {
-                        ifstream scriptfile(urlString.c_str());
-                        if (!scriptfile.good())
-                        {
-                            appCore->flash(_("Error opening script"));
-                        }
-                        else
-                        {
-                            // TODO: Need to fix memory leak with scripts;
-                            // a refcount is probably required.
-                            CommandParser parser(scriptfile, appCore->scriptMaps());
-                            CommandSequence* script = parser.parse();
-                            if (script == NULL)
-                            {
-                                const vector<string>* errors = parser.getErrors();
-                                const char* errorMsg = "";
-                                if (errors->size() > 0)
-                                {
-                                    errorMsg = (*errors)[0].c_str();
-                                    appCore->flash(errorMsg);
-                                }
-                                else
-                                {
-                                    appCore->flash(_("Error loading script"));
-                                }
-                            }
-                            else
-                            {
-                                appCore->flash(_("Running script"));
-                                appCore->runScript(script);
-                            }
-                        }
+                        appCore->runScript(urlString);
                     }
                 }
             }
