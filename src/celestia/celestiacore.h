@@ -10,6 +10,7 @@
 #ifndef _CELESTIACORE_H_
 #define _CELESTIACORE_H_
 
+#include <celutil/filetype.h>
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
 // #include <celutil/watchable.h>
@@ -336,6 +337,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void setScriptHook(std::unique_ptr<celestia::scripts::IScriptHook> &&hook) { m_scriptHook = std::move(hook); }
     const std::shared_ptr<celestia::scripts::ScriptMaps>& scriptMaps() const { return m_scriptMaps; }
+
+    bool saveScreenShot(const fs::path&, ContentType = Content_Unknown) const;
 
  protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);

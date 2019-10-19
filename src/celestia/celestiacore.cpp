@@ -59,6 +59,7 @@
 #include <celephem/scriptobject.h>
 #endif
 
+#include "imagecapture.h"
 
 // TODO: proper gettext
 #define C_(a, b) (b)
@@ -4433,4 +4434,31 @@ View* CelestiaCore::getViewByObserver(const Observer *obs) const
          if (view->observer == obs)
              return view;
     return nullptr;
+}
+
+bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) const
+{
+    if (type == Content_Unknown)
+        type = DetermineFileType(filename);
+
+    // Get the dimensions of the current viewport
+    array<int, 4> viewport;
+    getRenderer()->getViewport(viewport);
+
+    if (type == Content_JPEG)
+    {
+        return CaptureGLBufferToJPEG(filename,
+                                     viewport[0], viewport[1],
+                                     viewport[2], viewport[3],
+                                     getRenderer());
+    }
+    if (type == Content_PNG)
+    {
+        return CaptureGLBufferToPNG(filename,
+                                    viewport[0], viewport[1],
+                                    viewport[2], viewport[3],
+                                    getRenderer());
+    }
+
+    return false;
 }

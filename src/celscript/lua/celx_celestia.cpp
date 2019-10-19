@@ -26,7 +26,6 @@
 #include "celx_vector.h"
 #include "celx_category.h"
 #include <celestia/url.h>
-#include <celestia/imagecapture.h>
 #include <celestia/celestiacore.h>
 #include <celestia/view.h>
 #include <celscript/common/scriptmaps.h>
@@ -1915,30 +1914,9 @@ static int celestia_takescreenshot(lua_State* l)
     string filenamestem;
     filenamestem = fmt::sprintf("screenshot-%s%06i", fileid, luastate->screenshotCount);
 
-    // Get the dimensions of the current viewport
-    array<GLint, 4> viewport;
-    appCore->getRenderer()->getViewport(viewport);
-
-
     fs::path path = appCore->getConfig()->scriptScreenshotDirectory;
-#ifndef __APPLE__
-    if (strncmp(filetype, "jpg", 3) == 0)
-    {
-        fs::path filepath = path / (filenamestem + ".jpg");
-        success = CaptureGLBufferToJPEG(filepath,
-                                       viewport[0], viewport[1],
-                                       viewport[2], viewport[3],
-                                       appCore->getRenderer());
-    }
-    else
-    {
-        fs::path filepath = path / (filenamestem + ".png");
-        success = CaptureGLBufferToPNG(filepath,
-                                       viewport[0], viewport[1],
-                                       viewport[2], viewport[3],
-                                       appCore->getRenderer());
-    }
-#endif
+    fs::path filepath = path / fmt::sprintf("%s.%s", filenamestem, filetype);
+    success = appCore->saveScreenShot(filepath);
     lua_pushboolean(l, success);
 
     // no matter how long it really took, make it look like 0.1s to timeout check:
@@ -2411,7 +2389,7 @@ static int celestia_newcategory(lua_State *l)
 static int celestia_findcategory(lua_State *l)
 {
     CelxLua celx(l);
-    
+
     const char *emsg = "Argument of celestia:fndcategory must be a string.";
     const char *name = celx.safeGetString(2, AllErrors, emsg);
     if (name == nullptr)

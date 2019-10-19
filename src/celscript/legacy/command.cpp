@@ -15,8 +15,8 @@
 #include <celengine/glcontext.h>
 #endif
 #include <celestia/celestiacore.h>
-#include <celestia/imagecapture.h>
 #include <celengine/multitexture.h>
+#include <celutil/filetype.h>
 #include <celutil/util.h>
 #include <celmath/mathlib.h>
 #include <iostream>
@@ -639,30 +639,12 @@ CommandCapture::CommandCapture(std::string _type,
 
 void CommandCapture::process(ExecutionEnvironment& env)
 {
-#ifndef __APPLE__
-    const Renderer* r = env.getRenderer();
-    if (r == nullptr)
-        return;
-
-    // Get the dimensions of the current viewport
-    array<int, 4> viewport;
-    r->getViewport(viewport);
-
-    if (compareIgnoringCase(type, "jpeg") == 0)
-    {
-        CaptureGLBufferToJPEG(filename,
-                              viewport[0], viewport[1],
-                              viewport[2], viewport[3],
-                              r);
-    }
-    else if (compareIgnoringCase(type, "png") == 0)
-    {
-        CaptureGLBufferToPNG(filename,
-                             viewport[0], viewport[1],
-                             viewport[2], viewport[3],
-                             r);
-    }
-#endif
+    ContentType _type = Content_Unknown;
+    if (type == "jpeg" || type == "jpg")
+        _type = Content_JPEG;
+    else if (type == "png")
+        _type = Content_PNG;
+    env.getCelestiaCore()->saveScreenShot(filename, _type);
 }
 
 
