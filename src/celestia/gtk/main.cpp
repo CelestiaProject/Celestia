@@ -211,25 +211,51 @@ void GtkWatcher::notifyChange(CelestiaCore*, int property)
 
 /* END Watcher */
 
+class GtkAlerter : public CelestiaCore::Alerter
+{
+private:
+    AppData* app;
+
+public:
+    GtkAlerter() = delete;
+    GtkAlerter(AppData* _app) : app(_app) {};
+    ~GtkAlerter() = default;
+    GtkAlerter(const GtkAlerter&) = delete;
+    GtkAlerter(GtkAlerter&&) = delete;
+    GtkAlerter& operator=(const GtkAlerter&) = delete;
+    GtkAlerter& operator=(GtkAlerter&&) = delete;
+
+    void fatalError(const std::string& errorMsg)
+    {
+        GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_MESSAGE_ERROR,
+                                                   GTK_BUTTONS_OK, "%s",
+                                                   errorMsg.c_str());
+        gtk_dialog_run(GTK_DIALOG(errBox));
+        gtk_widget_destroy(errBox);
+    }
+};
+
 
 /* CALLBACK: Event "realize" on the main GL area. Things that go here are those
  *           that require the glArea to be set up. */
 static void initRealize(GtkWidget* widget, AppData* app)
 {
     GLenum glewErr = glewInit();
-       {
-         if (GLEW_OK != glewErr)
-        {
+    if (GLEW_OK != glewErr)
+    {
         GtkWidget *message;
-            message = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
-            GTK_DIALOG_DESTROY_WITH_PARENT,
-            GTK_MESSAGE_ERROR,
-            GTK_BUTTONS_CLOSE,
-            "Celestia was unable to initialize OpenGL extensions. Graphics quality will be reduced. Only Basic render path will be available.");
+        message = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
+                                         GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         GTK_MESSAGE_ERROR,
+                                         GTK_BUTTONS_CLOSE,
+                                         "Celestia was unable to initialize OpenGL.");
         gtk_dialog_run(GTK_DIALOG(message));
         gtk_widget_destroy(message);
-        }
     }
+
+    app->core->setAlerter(new GtkAlerter(app));
 
     if (!app->core->initRenderer())
     {
