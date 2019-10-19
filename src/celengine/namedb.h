@@ -47,6 +47,7 @@ class AstroNameDatabase
     size_t getNamesNumber() const { return m_nameIndex.size(); }
     size_t getLocalizedNamesNumber() const { return m_localizedIndex.size(); }
     void dump() const;
+    const SharedNameMap& getCanonicalMap() const { return m_nameIndex; }
  protected:
     SharedNameMap m_nameIndex;
     SharedNameMap m_localizedIndex;

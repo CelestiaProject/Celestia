@@ -488,7 +488,7 @@ void AstroDatabase::dumpStats() const
                  " Stars: %u (* %u B = %f MB)\n"
                  " DSOs: %u (* %u B = %f MB)\n"
                  " Bodies: %u (* %u B = %f MB)\n"
-                 " Names: %u\n"
+                 " Names: %u (* %u B = %f MB)\n"
                  " Localized names: %u\n"
                  " Octree nodes: %u (* %u B = %f MB)\n",
                  m_mainIndex.size(),
@@ -504,6 +504,8 @@ void AstroDatabase::dumpStats() const
                  sizeof(Body),
                  toM(sizeof(Body) * m_bodies.size()),
                  m_nameIndex.getNamesNumber(),
+                 sizeof(NameInfo),
+                 toM(m_nameIndex.getNamesNumber() * sizeof(NameInfo)),
                  m_nameIndex.getLocalizedNamesNumber(),
                  OctreeNode::getNodesNumber(),
                  sizeof(OctreeNode),
@@ -520,4 +522,8 @@ void AstroDatabase::dumpStats() const
                  sizeof(CrossIndex::CrossIndexRange),
                  toM(sizeof(CrossIndex::CrossIndexRange) * xindexRecords)
                 );
+    size_t stringSize = 0;
+    for (const auto &it : m_nameIndex.getCanonicalMap())
+        stringSize += it.second->getCanon().str().size();
+    fmt::fprintf(cout, " Total canonical name strings size: %f\n", toM(stringSize));
 }
