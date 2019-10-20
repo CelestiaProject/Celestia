@@ -3185,8 +3185,9 @@ void CelestiaCore::renderOverlay()
                 }
 
                 overlay->setFont(titleFont);
-                *overlay << selectionNames << '\n';
+                *overlay << selectionNames;
                 overlay->setFont(font);
+                *overlay << '\n';
                 displayStarInfo(*overlay,
                                 hudDetail,
                                 *(sel.star()),
@@ -3212,8 +3213,9 @@ void CelestiaCore::renderOverlay()
                 }
 
                 overlay->setFont(titleFont);
-                *overlay << selectionNames << '\n';
+                *overlay << selectionNames;
                 overlay->setFont(font);
+                *overlay << '\n';
                 displayDSOinfo(*overlay,
                                *sel.deepsky(),
                                astro::kilometersToLightYears(v.norm()) - sel.deepsky()->getRadius());
