@@ -1246,8 +1246,19 @@ bool LoadSolarSystemObjects(istream& in,
                 {
                     body->loadCategories(objectData, disposition, directory.string());
                     if (disposition == DataDisposition::Add)
+                    {
                         for (const auto& name : names)
                             body->addAlias(name);
+                    }
+                    auto p = parent.body();
+                    if (   bodyType != ReferencePoint
+                        && p != nullptr
+                        && p->getClassification() == Body::Invisible
+                        && !p->isOrbitColorOverridden())
+                    {
+                        p->setOrbitColorOverridden(true);
+                        p->setOrbitColor(body->getOrbitColor());
+                    }
                 }
             }
         }
