@@ -30,6 +30,15 @@ template<class T> class Ray3
         return Ray3<T>(m * origin, m * direction);
     }
 
+    Ray3<T> transform(const Eigen::Matrix<T, 4, 4>& m) const
+    {
+        Eigen::Matrix<T, 4, 1> o(Eigen::Matrix<T, 4, 1>::Ones());
+        o.head(3) = origin;
+        Eigen::Matrix<T, 4, 1> d(Eigen::Matrix<T, 4, 1>::Zero());
+        d.head(3) = direction;
+        return Ray3<T>((m * o).head(3), (m * d).head(3));
+    }
+
  public:
     Eigen::Matrix<T, 3, 1> origin;
     Eigen::Matrix<T, 3, 1> direction;
