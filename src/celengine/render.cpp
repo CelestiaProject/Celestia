@@ -2565,18 +2565,25 @@ void Renderer::draw(const Observer& observer,
     bool foundBrightestStar = false;
 #endif
 
-    if ((renderFlags & ShowSSO) != 0)
+    if ((renderFlags & (ShowSSO | ShowOrbits)) != 0)
     {
         nearStars.clear();
         universe.getNearStars(observer.getPosition(), SolarSystemMaxDistance, nearStars);
 
         // Set up direct light sources (i.e. just stars at the moment)
-        setupLightSources(nearStars, observer.getPosition(), now, lightSourceList, renderFlags);
+        // Skip if only star orbits to be shown
+        if ((renderFlags & ShowSSO) != 0)
+            setupLightSources(nearStars, observer.getPosition(), now, lightSourceList, renderFlags);
 
         // Traverse the frame trees of each nearby solar system and
         // build the list of objects to be rendered.
         for (const auto sun : nearStars)
         {
+            addStarOrbitToRenderList(*sun, observer, now);
+            // Skip if only star orbits to be shown
+            if ((renderFlags & ShowSSO) == 0)
+                continue;
+
             SolarSystem* solarSystem = universe.getSolarSystem(sun);
             if (solarSystem == nullptr)
                 continue;
@@ -2603,7 +2610,7 @@ void Renderer::draw(const Observer& observer,
                              solarSysTree,
                              observer,
                              now);
-            if (renderFlags & ShowOrbits)
+            if ((renderFlags & ShowOrbits) != 0)
             {
                 buildOrbitLists(astrocentricObserverPos,
                                 observer.getOrientation(),
@@ -2611,8 +2618,6 @@ void Renderer::draw(const Observer& observer,
                                 solarSysTree,
                                 now);
             }
-
-            addStarOrbitToRenderList(*sun, observer, now);
         }
 
         if ((labelMode & BodyLabelMask) != 0)
