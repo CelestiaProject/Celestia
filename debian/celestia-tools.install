@@ -21,3 +21,5 @@ usr/bin/bin2xyzv
 usr/bin/makestardb
 usr/bin/startextdump
 usr/bin/makexindex
+usr/bin/scattersim
+usr/bin/scattertable
