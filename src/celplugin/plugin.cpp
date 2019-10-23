@@ -92,6 +92,11 @@ void* Plugin::loadSym(const char* fn) const
 #endif
 }
 
+bool Plugin::isSupportedVersion() const
+{
+    return getPluginInfo()->APIVersion == 0x0107;
+}
+
 bool Plugin::createScriptEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, ProgressNotifier *progressNotifier) const
 {
     auto fn = m_func.createScriptEnvironment;

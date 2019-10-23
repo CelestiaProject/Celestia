@@ -70,6 +70,7 @@ class Plugin
     PluginType getType() const { return m_type; }
 
     static Plugin* load(const fs::path&);
+    bool isSupportedVersion() const;
 
     // pointers to plugin functions
     /// scripting support
