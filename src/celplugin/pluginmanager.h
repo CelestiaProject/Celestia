@@ -15,8 +15,8 @@ class PluginManager
 {
  public:
     ~PluginManager();
-    Plugin* loadByPath(const fs::path&);
-    Plugin* loadByName(const std::string &name);
+    const Plugin* loadByPath(const fs::path&);
+    const Plugin* loadByName(const std::string &name);
     fs::path& searchDirectory() { return m_directory; }
     const fs::path searchDirectory() const { return m_directory; }
 

@@ -51,7 +51,7 @@ struct PluginInfo
     uint16_t    Reserved1;
     PluginType  Type;
     uint32_t    Reserved2;
-    void       *IDDPtr; // IDD == Implementation Defined Data
+    const void *IDDPtr; // IDD == Implementation Defined Data
 };
 #pragma pack(pop)
 
@@ -65,12 +65,15 @@ class Plugin
     Plugin& operator=(const Plugin&) = delete;
     Plugin& operator=(Plugin&&) = default;
 
-    PluginInfo* getPluginInfo() const;
     void* loadSym(const char*) const;
-    PluginType getType() const { return m_type; }
+
+    const PluginInfo* getPluginInfo() const { return m_pluginInfo; }
+    bool isSupportedVersion() const;
+    PluginType getType() const { return m_pluginInfo->Type; }
 
     static Plugin* load(const fs::path&);
-    bool isSupportedVersion() const;
+
+    const char* getScriptLanguage() const { return reinterpret_cast<const char*>(m_pluginInfo->IDDPtr); }
 
     // pointers to plugin functions
     /// scripting support
@@ -89,6 +92,7 @@ class Plugin
     Renderer* createRenderer() const;
 
  private:
+    void loadPluginInfo();
 
 #ifdef _WIN32
     HMODULE m_handle { nullptr };
@@ -96,7 +100,7 @@ class Plugin
     void   *m_handle { nullptr };
 #endif
 
-    PluginType m_type { Nothing };
+    PluginInfo *m_pluginInfo;
 
     typedef PluginInfo*(RegisterFunc)();
     RegisterFunc *m_regfn;

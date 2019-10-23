@@ -8,6 +8,7 @@ namespace celestia
 {
 namespace plugin
 {
+
 Plugin::~Plugin()
 {
     if (m_handle != nullptr)
@@ -27,12 +28,18 @@ Plugin::Plugin(Plugin &&other)
     m_regfn = other.m_regfn;
     other.m_regfn = nullptr;
 
+    m_pluginInfo = other.m_pluginInfo;
     m_func = other.m_func;
 }
 
-PluginInfo* Plugin::getPluginInfo() const
+bool Plugin::isSupportedVersion() const
 {
-    return (*m_regfn)();
+    return m_pluginInfo->APIVersion == 0x0107;
+}
+
+void Plugin::loadPluginInfo()
+{
+    m_pluginInfo = (*m_regfn)();
 }
 
 Plugin* Plugin::load(const fs::path& path)
@@ -60,8 +67,20 @@ Plugin* Plugin::load(const fs::path& path)
         return nullptr;
     p.m_regfn = reinterpret_cast<RegisterFunc*>(ptr);
 
-    PluginInfo *pi = p.getPluginInfo();
-    switch (pi->Type)
+    p.loadPluginInfo();
+    if (p.m_pluginInfo == nullptr)
+    {
+        fmt::print(std::cerr, "plugin doesn't have PluginInfo\n");
+        return nullptr;
+    }
+
+    if (!p.isSupportedVersion())
+    {
+        fmt::print(std::cerr, "unsupported plugin API version {:#06x}\n", p.m_pluginInfo->APIVersion);
+        return nullptr;
+    }
+
+    switch (p.getType())
     {
     case Nothing:
         break;
@@ -71,13 +90,7 @@ Plugin* Plugin::load(const fs::path& path)
             p.m_func.createScriptEnvironment = reinterpret_cast<CreateScriptEnvironmentFunc*>(ptr);
         break;
     default:
-        fmt::print(std::cerr, "unknown plugin type {} ({})\n", pi->Type, path);
-        return nullptr;
-    }
-    p.m_type = pi->Type;
-    if (!p.isSupportedVersion())
-    {
-        fmt::print(std::cerr, "unsupported plugin API version {:#06x}\n", pi->APIVersion);
+        fmt::print(std::cerr, "unknown plugin type {} ({})\n", p.getType(), path);
         return nullptr;
     }
 
@@ -95,11 +108,6 @@ void* Plugin::loadSym(const char* fn) const
         fmt::print(std::cerr, "dlsym({}) failed: {}\n", fn, error);
     return ptr;
 #endif
-}
-
-bool Plugin::isSupportedVersion() const
-{
-    return getPluginInfo()->APIVersion == 0x0107;
 }
 
 bool Plugin::createScriptEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, ProgressNotifier *progressNotifier) const

@@ -15,12 +15,12 @@ PluginManager::~PluginManager()
         delete p;
 }
 
-Plugin* PluginManager::loadByPath(const fs::path &path)
+const Plugin* PluginManager::loadByPath(const fs::path &path)
 {
     return Plugin::load(path);
 }
 
-Plugin* PluginManager::loadByName(const std::string &name)
+const Plugin* PluginManager::loadByName(const std::string &name)
 {
 #if defined(_WIN32)
     return Plugin::load(m_directory / fmt::sprintf("%s.dll", name));
