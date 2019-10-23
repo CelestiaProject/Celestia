@@ -75,6 +75,11 @@ Plugin* Plugin::load(const fs::path& path)
         return nullptr;
     }
     p.m_type = pi->Type;
+    if (!p.isSupportedVersion())
+    {
+        fmt::print(std::cerr, "unsupported plugin API version {:#06x}\n", pi->APIVersion);
+        return nullptr;
+    }
 
     return new Plugin(std::move(p));
 }
