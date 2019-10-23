@@ -3,14 +3,23 @@
 #include "plugin.h"
 #include "pluginmanager.h"
 #include <iostream>
+#ifdef _WIN32
+#include <direct.h> // _getcwd
+#else
 #include <unistd.h> // getcwd
+#endif
 
 using namespace celestia::plugin;
 
 int main()
 {
-    char cwd[256];
-    getcwd(cwd, 255);
+#ifdef _WIN32
+    wchar_t *cwd = _wgetcwd(nullptr, 0);
+    if (cwd == nullptr) cwd = L"";
+#else
+    char *cwd = getcwd(nullptr, 0);
+    if (cwd == nullptr) cwd = "";
+#endif
 
     PluginManager pm;
     pm.setSearchDirectory(cwd);
