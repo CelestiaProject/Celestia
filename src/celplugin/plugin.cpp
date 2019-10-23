@@ -1,3 +1,14 @@
+// plugin.cpp
+//
+// Copyright (C) 2019, Celestia Development Team
+//
+// Plugin application side implementation
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+
 #include <fmt/printf.h>
 #include "plugin.h"
 #ifndef _WIN32
@@ -82,9 +93,9 @@ Plugin* Plugin::load(const fs::path& path)
 
     switch (p.getType())
     {
-    case Nothing:
+    case TestPlugin:
         break;
-    case Script:
+    case Scripting:
         ptr = p.loadSym("CreateScriptEnvironment");
         if (ptr != nullptr)
             p.m_func.createScriptEnvironment = reinterpret_cast<CreateScriptEnvironmentFunc*>(ptr);

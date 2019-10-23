@@ -1,5 +1,5 @@
 #include <iostream>
-#include "plugin.h"
+#include "plugin-common.h"
 
 using namespace celestia::plugin;
 
@@ -10,7 +10,6 @@ static void myfn()
 
 CELESTIA_PLUGIN_ENTRYPOINT()
 {
-//    static PluginInfo pinf = { 0x0108, 0, Nothing, 0, reinterpret_cast<void*>(&myfn) };
-    static PluginInfo pinf = { 0x0107, 0, Script, 0, "LUA" };
+    static PluginInfo pinf(Scripting, "LUA");
     return &pinf;
 }

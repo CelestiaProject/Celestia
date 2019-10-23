@@ -1,3 +1,4 @@
+#define PUBLIC_GET_INFO
 #include <fmt/printf.h>
 #include "plugin.h"
 #include "pluginmanager.h"
@@ -12,7 +13,7 @@ int main()
     getcwd(cwd, 255);
 
     PluginManager pm;
-    pm.searchDirectory() = cwd;
+    pm.setSearchDirectory(cwd);
     const Plugin* p = pm.loadByName("myplug");
     if (p == nullptr)
     {
@@ -21,15 +22,16 @@ int main()
     }
 
     const PluginInfo *pi = p->getPluginInfo();
-    fmt::printf("APIVersion = %hx, Type = %hu, Implementation Defined Data = %p\n", pi->APIVersion, pi->Type, fmt::ptr(pi->IDDPtr));
+    fmt::printf("APIVersion = %hx, Type = %hu, ID = %p\n", pi->APIVersion, pi->Type, fmt::ptr(pi->ID));
 
-    if (p->getType() == Script)
+    if (p->getType() == Scripting)
     {
-       fmt::printf("%s\n", p->getScriptLanguage());
+        fmt::printf("%s\n", p->getScriptLanguage());
+        fmt::printf("%p %p\n", fmt::ptr(p), fmt::ptr(pm.getScriptPlugin("lUa")));
     }
     else
     {
-        void (*myfn)() = reinterpret_cast<void(*)()>(pi->IDDPtr);
+        void (*myfn)() = reinterpret_cast<void(*)()>(pi->ID);
         (*myfn)();
     }
 

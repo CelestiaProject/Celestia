@@ -1,23 +1,23 @@
+// plugin.h
+//
+// Copyright (C) 2019, Celestia Development Team
+//
+// Plugin class
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+
 #pragma once
 
 #include <cstdint>
 #include <string>
-#include <vector>
 #include <celcompat/filesystem.h>
 #ifdef _WIN32
 #include <windows.h>
 #endif
-
-#define CELESTIA_PLUGIN_ENTRY_NAME get_celestia_plugin_info
-#define CELESTIA_PLUGIN_ENTRY_NAME_STR "get_celestia_plugin_info"
-
-#ifdef _WIN32
-#define CELESTIA_PLUGIN_EXPORTABLE extern "C" __declspec(dllexport)
-#else
-#define CELESTIA_PLUGIN_EXPORTABLE extern "C"
-#endif
-
-#define CELESTIA_PLUGIN_ENTRYPOINT CELESTIA_PLUGIN_EXPORTABLE PluginInfo* CELESTIA_PLUGIN_ENTRY_NAME
+#include "plugin-common.h"
 
 class CelestiaCore;
 class CelestiaConfig;
@@ -35,26 +35,6 @@ namespace plugin
 
 class PluginManager;
 
-enum PluginType : uint32_t
-{
-    Nothing = 0,
-    Script  = 0x0001,
-    Audio   = 0x0002,
-    Video   = 0x0004,
-    Render  = 0x0010,
-};
-
-#pragma pack(push,1)
-struct PluginInfo
-{
-    uint16_t    APIVersion;
-    uint16_t    Reserved1;
-    PluginType  Type;
-    uint32_t    Reserved2;
-    const void *IDDPtr; // IDD == Implementation Defined Data
-};
-#pragma pack(pop)
-
 class Plugin
 {
  public:
@@ -67,13 +47,15 @@ class Plugin
 
     void* loadSym(const char*) const;
 
+#ifdef PUBLIC_GET_INFO
     const PluginInfo* getPluginInfo() const { return m_pluginInfo; }
+#endif
     bool isSupportedVersion() const;
     PluginType getType() const { return m_pluginInfo->Type; }
 
     static Plugin* load(const fs::path&);
 
-    const char* getScriptLanguage() const { return reinterpret_cast<const char*>(m_pluginInfo->IDDPtr); }
+    const char* getScriptLanguage() const { return m_pluginInfo->ID; }
 
     // pointers to plugin functions
     /// scripting support
@@ -93,6 +75,9 @@ class Plugin
 
  private:
     void loadPluginInfo();
+#ifndef PUBLIC_GET_INFO
+    const PluginInfo* getPluginInfo() const { return m_pluginInfo; }
+#endif
 
 #ifdef _WIN32
     HMODULE m_handle { nullptr };
