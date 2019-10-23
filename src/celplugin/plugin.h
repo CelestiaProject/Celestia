@@ -19,6 +19,14 @@
 
 #define CELESTIA_PLUGIN_ENTRYPOINT CELESTIA_PLUGIN_EXPORTABLE PluginInfo* CELESTIA_PLUGIN_ENTRY_NAME
 
+class CelestiaCore;
+class CelestiaConfig;
+class ProgressNotifier;
+class IScript;
+class Hash;
+class Renderer;
+class CachingOrbit;
+class RotationModel;
 
 namespace celestia
 {
@@ -58,17 +66,26 @@ class Plugin
     Plugin& operator=(Plugin&&) = default;
 
     PluginInfo* getPluginInfo() const;
-
     void* loadSym(const char*) const;
-
     PluginType getType() const { return m_type; }
 
     static Plugin* load(const fs::path&);
 
     // pointers to plugin functions
-    typedef bool(SetupScriptEnvironmentFunc)();
+    /// scripting support
+    typedef bool(CreateScriptEnvironmentFunc)(CelestiaCore*, const CelestiaConfig*, ProgressNotifier*);
+    typedef IScript*(CreateScriptFunc)(CelestiaCore*);
+    typedef RotationModel*(CreateScritedRotationFunc)(const std::string&, const std::string&, Hash*);
+    typedef CachingOrbit*(CreateScritedOrbitFunc)(const std::string&, const std::string&, Hash*);
 
-    SetupScriptEnvironmentFunc *setupScriptEnvironment;
+    /// renderer support
+    typedef Renderer*(CreateRendererFunc)();
+
+    bool createScriptEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, ProgressNotifier *progressNotifier) const;
+    IScript* createScript(CelestiaCore *appCore) const;
+    RotationModel* createScritedRotation(const std::string& moduleName, const std::string& funcName, Hash* parameters) const;
+    CachingOrbit* createScritedOrbit(const std::string& moduleName, const std::string& funcName, Hash* parameters) const;
+    Renderer* createRenderer() const;
 
  private:
 
@@ -82,6 +99,21 @@ class Plugin
 
     typedef PluginInfo*(RegisterFunc)();
     RegisterFunc *m_regfn;
+
+    union
+    {
+        struct
+        {
+            CreateScriptEnvironmentFunc *createScriptEnvironment;
+            CreateScriptFunc            *createScript;
+            CreateScritedRotationFunc   *createScritedRotation;
+            CreateScritedOrbitFunc      *createScritedOrbit;
+        };
+        struct
+        {
+            CreateRendererFunc         *createRenderer;
+        };
+    } m_func;
 
     friend class PluginManager;
 }; // Plugin

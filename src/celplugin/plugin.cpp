@@ -27,7 +27,7 @@ Plugin::Plugin(Plugin &&other)
     m_regfn = other.m_regfn;
     other.m_regfn = nullptr;
 
-    setupScriptEnvironment = other.setupScriptEnvironment;
+    m_func = other.m_func;
 }
 
 PluginInfo* Plugin::getPluginInfo() const
@@ -66,9 +66,9 @@ Plugin* Plugin::load(const fs::path& path)
     case Nothing:
         break;
     case Script:
-        ptr = p.loadSym("SetupScriptEnvironment");
+        ptr = p.loadSym("CreateScriptEnvironment");
         if (ptr != nullptr)
-            p.setupScriptEnvironment = reinterpret_cast<SetupScriptEnvironmentFunc*>(ptr);
+            p.m_func.createScriptEnvironment = reinterpret_cast<CreateScriptEnvironmentFunc*>(ptr);
         break;
     default:
         fmt::print(std::cerr, "unknown plugin type {} ({})\n", pi->Type, path);
@@ -90,6 +90,36 @@ void* Plugin::loadSym(const char* fn) const
         fmt::print(std::cerr, "dlsym({}) failed: {}\n", fn, error);
     return ptr;
 #endif
+}
+
+bool Plugin::createScriptEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, ProgressNotifier *progressNotifier) const
+{
+    auto fn = m_func.createScriptEnvironment;
+    return fn == nullptr ? false : (*fn)(appCore, config, progressNotifier);
+}
+
+IScript* Plugin::createScript(CelestiaCore *appCore) const
+{
+    auto fn = m_func.createScript;
+    return fn == nullptr ? nullptr : (*fn)(appCore);
+}
+
+RotationModel* Plugin::createScritedRotation(const std::string& moduleName, const std::string& funcName, Hash* parameters) const
+{
+    auto fn = m_func.createScritedRotation;
+    return fn == nullptr ? nullptr : (*fn)(moduleName, funcName, parameters);
+}
+
+CachingOrbit* Plugin::createScritedOrbit(const std::string& moduleName, const std::string& funcName, Hash* parameters) const
+{
+    auto fn = m_func.createScritedOrbit;
+    return fn == nullptr ? nullptr : (*fn)(moduleName, funcName, parameters);
+}
+
+Renderer* Plugin::createRenderer() const 
+{ 
+    auto fn = m_func.createRenderer;
+    return fn == nullptr ? nullptr : (*fn)();
 }
 
 }
