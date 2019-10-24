@@ -52,7 +52,7 @@ const Plugin* PluginManager::loadByName(const std::string &name)
 #if defined(_WIN32)
     return PluginManager::loadByPath(m_directory / fmt::sprintf("%s.dll", name));
 #elif defined(__APPLE__)
-    return nullptr; // FIXME
+    return PluginManager::loadByPath(m_directory / fmt::sprintf("lib%s.dylib", name));
 #else
     return PluginManager::loadByPath(m_directory / fmt::sprintf("lib%s.so", name));
 #endif
