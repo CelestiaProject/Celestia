@@ -205,7 +205,7 @@ Color Renderer::HorizonGridLabelColor   (0.72f,  0.72f,  0.72f);
 
 Color Renderer::StarOrbitColor          (0.5f,   0.5f,   0.8f);
 Color Renderer::PlanetOrbitColor        (0.3f,   0.323f, 0.833f);
-Color Renderer::DwarfPlanetOrbitColor   (0.3f,   0.323f, 0.833f);
+Color Renderer::DwarfPlanetOrbitColor   (0.556f, 0.235f, 0.576f);
 Color Renderer::MoonOrbitColor          (0.08f,  0.407f, 0.392f);
 Color Renderer::MinorMoonOrbitColor     (0.08f,  0.407f, 0.392f);
 Color Renderer::AsteroidOrbitColor      (0.58f,  0.152f, 0.08f);

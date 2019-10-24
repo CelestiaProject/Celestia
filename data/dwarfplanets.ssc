@@ -10,7 +10,6 @@
 	Texture     "asteroid.*"
 	Radius      482.6
 	Oblateness  0.07475
-	OrbitColor  [ 0.556863 0.235294 0.576471 ]
 	EllipticalOrbit
 	{
 		Epoch           2458423.5  # 2018 Nov 01
@@ -38,6 +37,8 @@ ReferencePoint "Pluto-Charon" "Sol"
 {
     CustomOrbit "pluto"
 
+    OrbitColor  [ 0.556863 0.235294 0.576471 ]
+
     # Make the orbit and label visible
     Visible true
     Clickable true
@@ -57,7 +58,6 @@ ReferencePoint "Pluto-Charon" "Sol"
 		Sky    [ 0.16 0.24 0.32 ]
 		Sunset [ 0.20 0.29 0.40 ]
 	}
-	OrbitColor [ 0.556863 0.235294 0.576471 ]
 	EllipticalOrbit
 	{
 		Epoch           2457217.5  # 2015 Jul 14
@@ -227,7 +227,6 @@ ReferencePoint "Pluto-Charon" "Sol"
 	# BumpMap    "haumea-bump.*"
 	# BumpHeight 10
 	SemiAxes     [ 1161 852 569 ]
-	OrbitColor   [ 0.556863 0.235294 0.576471 ]
 	EllipticalOrbit
 	{
 		Epoch           2457754.5  # 2017 Jan 01
@@ -320,7 +319,6 @@ ReferencePoint "Pluto-Charon" "Sol"
 	Texture    "asteroid.*"
 	Radius     717
 	Oblateness 0.0083682
-	OrbitColor [ 0.556863 0.235294 0.576471 ]
 	EllipticalOrbit
 	{
 		Epoch           2457754.5  # 2017 Jan 01
@@ -372,7 +370,6 @@ ReferencePoint "Pluto-Charon" "Sol"
 		Upper  [ 0.5 0.5 0.5 ]
 		Sky    [ 0.0 0.0 0.0 ]
 	}
-	OrbitColor [ 0.556863 0.235294 0.576471 ]
 	EllipticalOrbit
 	{
 		Epoch           2457754.5  # 2017 Jan 01
