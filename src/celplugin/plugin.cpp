@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <fmt/printf.h>
+#include <utility>
 #include "plugin.h"
 #ifndef _WIN32
 #include <dlfcn.h>
@@ -33,12 +34,12 @@ Plugin::~Plugin()
     }
 }
 
-Plugin::Plugin(Plugin &&other)
+Plugin::Plugin(Plugin &&other) :
+    IScriptPlugin(std::forward<IScriptPlugin>(other))
 {
     m_handle = other.m_handle;
     other.m_handle = nullptr;
-    m_regfn = other.m_regfn;
-    other.m_regfn = nullptr;
+    m_appCore = other.m_appCore;
 
     m_pluginInfo = other.m_pluginInfo;
     m_func = other.m_func;
@@ -49,14 +50,9 @@ bool Plugin::isSupportedVersion() const
     return m_pluginInfo->APIVersion == 0x0107;
 }
 
-void Plugin::loadPluginInfo()
+Plugin* Plugin::load(CelestiaCore *appCore, const fs::path& path)
 {
-    m_pluginInfo = (*m_regfn)();
-}
-
-Plugin* Plugin::load(const fs::path& path)
-{
-    Plugin p;
+    Plugin p(appCore);
 
 #ifdef _WIN32
     p.m_handle = ::LoadLibraryW(path.c_str());
@@ -77,9 +73,9 @@ Plugin* Plugin::load(const fs::path& path)
     void *ptr = p.loadSym(CELESTIA_PLUGIN_ENTRY_NAME_STR);
     if (ptr == nullptr)
         return nullptr;
-    p.m_regfn = reinterpret_cast<RegisterFunc*>(ptr);
+    auto LoadPluginInfo = reinterpret_cast<RegisterFunc*>(ptr);
+    p.m_pluginInfo = (*LoadPluginInfo)();
 
-    p.loadPluginInfo();
     if (p.m_pluginInfo == nullptr)
     {
         fmt::print(std::cerr, "plugin doesn't have PluginInfo\n");
@@ -144,6 +140,12 @@ CachingOrbit* Plugin::createScriptedOrbit(const std::string& moduleName, const s
 {
     auto fn = m_func.createScriptedOrbit;
     return fn == nullptr ? nullptr : (*fn)(moduleName, funcName, parameters);
+}
+
+bool Plugin::isOurFile(const fs::path &filename) const
+{
+    auto fn = m_func.isOurFile;
+    return fn == nullptr ? false : (*fn)(filename);
 }
 
 Renderer* Plugin::createRenderer() const 

@@ -24,6 +24,7 @@ set(CELX_SOURCES
   celx_rotation.h
   celx_vector.cpp
   celx_vector.h
+  luaplugin.cpp
   luascript.cpp
   luascript.h
   scriptobject.cpp

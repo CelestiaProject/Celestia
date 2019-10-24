@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <string>
+#include <celplugin/plugin-common.h>
 #include "luascript.h"
 
 class CelestiaCore;
@@ -16,6 +17,9 @@ class ProgressNotifier;
 class Hash;
 class CachingOrbit;
 class RotationModel;
+
+using namespace celestia::plugin;
+using namespace celestia::scripts;
 
 CELESTIA_PLUGIN_ENTRYPOINT()
 {
@@ -30,15 +34,15 @@ CELESTIA_PLUGIN_EXPORTABLE bool CreateScriptEnvironment(CelestiaCore *appCore, c
 
 CELESTIA_PLUGIN_EXPORTABLE LuaScript* CreateScript(CelestiaCore *appCore)
 {
-    return 
+    return nullptr;
 }
 
-ScriptedModel* CreateScriptedRotation(const std::string& moduleName, const std::string& funcName, Hash* parameters)
+RotationModel* CreateScriptedRotation(const std::string& moduleName, const std::string& funcName, Hash* parameters)
 {
     return nullptr;
 }
 
-ScriptedOrbit* CreateScriptedOrbit(const std::string& moduleName, const std::string& funcName, Hash* parameters)
+CachingOrbit* CreateScriptedOrbit(const std::string& moduleName, const std::string& funcName, Hash* parameters)
 {
     return nullptr;
 }

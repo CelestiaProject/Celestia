@@ -41,7 +41,7 @@ const fs::path& PluginManager::getSearchDirectory() const
 
 const Plugin* PluginManager::loadByPath(const fs::path &path)
 {
-    auto p = Plugin::load(path);
+    auto p = Plugin::load(m_appCore, path);
     if (p != nullptr)
         m_plugins.push_back(p);
     return p;
@@ -50,11 +50,11 @@ const Plugin* PluginManager::loadByPath(const fs::path &path)
 const Plugin* PluginManager::loadByName(const std::string &name)
 {
 #if defined(_WIN32)
-    return PluginManager::loadByPath(m_directory / fmt::sprintf("%s.dll", name));
+    return loadByPath(m_directory / fmt::sprintf("%s.dll", name));
 #elif defined(__APPLE__)
-    return PluginManager::loadByPath(m_directory / fmt::sprintf("lib%s.dylib", name));
+    return loadByPath(m_directory / fmt::sprintf("lib%s.dylib", name));
 #else
-    return PluginManager::loadByPath(m_directory / fmt::sprintf("lib%s.so", name));
+    return loadByPath(m_directory / fmt::sprintf("lib%s.so", name));
 #endif
 }
 

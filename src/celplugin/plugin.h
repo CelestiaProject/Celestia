@@ -14,6 +14,8 @@
 #include <cstdint>
 #include <string>
 #include <celcompat/filesystem.h>
+#include <celscript/common/script.h> // IScriptPlugin, IScript
+#include <celengine/parser.h> // Hash
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -22,8 +24,6 @@
 class CelestiaCore;
 class CelestiaConfig;
 class ProgressNotifier;
-class IScript;
-class Hash;
 class Renderer;
 class CachingOrbit;
 class RotationModel;
@@ -33,12 +33,18 @@ namespace celestia
 namespace plugin
 {
 
+using scripts::IScript;
+using scripts::IScriptPlugin;
+
 class PluginManager;
 
-class Plugin
+class Plugin : public IScriptPlugin
 {
  public:
-    Plugin() = default;
+    Plugin() = delete;
+    explicit Plugin(CelestiaCore *appCore) :
+        IScriptPlugin(appCore)
+    {}
     ~Plugin();
     Plugin(const Plugin&) = delete;
     Plugin(Plugin&&);
@@ -53,7 +59,7 @@ class Plugin
     bool isSupportedVersion() const;
     PluginType getType() const { return m_pluginInfo->Type; }
 
-    static Plugin* load(const fs::path&);
+    static Plugin* load(CelestiaCore*, const fs::path&);
 
     const char* getScriptLanguage() const { return m_pluginInfo->ID; }
 
@@ -63,18 +69,25 @@ class Plugin
     typedef IScript*(CreateScriptFunc)(CelestiaCore*);
     typedef RotationModel*(CreateScriptedRotationFunc)(const std::string&, const std::string&, Hash*);
     typedef CachingOrbit*(CreateScriptedOrbitFunc)(const std::string&, const std::string&, Hash*);
+    typedef bool (IsOurFile)(const fs::path&);
 
     /// renderer support
     typedef Renderer*(CreateRendererFunc)();
 
+
+    /// scripting support
     bool createScriptEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, ProgressNotifier *progressNotifier) const;
     IScript* createScript(CelestiaCore *appCore) const;
     RotationModel* createScriptedRotation(const std::string& moduleName, const std::string& funcName, Hash* parameters) const;
     CachingOrbit* createScriptedOrbit(const std::string& moduleName, const std::string& funcName, Hash* parameters) const;
+    bool isOurFile(const fs::path&) const;
+    std::unique_ptr<IScript> loadScript(const fs::path&);
+
+    /// renderer support
     Renderer* createRenderer() const;
 
  private:
-    void loadPluginInfo();
+    typedef PluginInfo*(RegisterFunc)();
 #ifndef PUBLIC_GET_INFO
     const PluginInfo* getPluginInfo() const { return m_pluginInfo; }
 #endif
@@ -84,11 +97,8 @@ class Plugin
 #else
     void   *m_handle { nullptr };
 #endif
-
+    CelestiaCore *m_appCore;
     PluginInfo *m_pluginInfo;
-
-    typedef PluginInfo*(RegisterFunc)();
-    RegisterFunc *m_regfn;
 
     union
     {
@@ -96,12 +106,13 @@ class Plugin
         {
             CreateScriptEnvironmentFunc *createScriptEnvironment;
             CreateScriptFunc            *createScript;
-            CreateScriptedRotationFunc   *createScriptedRotation;
-            CreateScriptedOrbitFunc      *createScriptedOrbit;
+            CreateScriptedRotationFunc  *createScriptedRotation;
+            CreateScriptedOrbitFunc     *createScriptedOrbit;
+            IsOurFile                   *isOurFile;
         };
         struct
         {
-            CreateRendererFunc         *createRenderer;
+            CreateRendererFunc          *createRenderer;
         };
     } m_func;
 

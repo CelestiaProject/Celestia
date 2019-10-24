@@ -37,7 +37,11 @@ class IScriptPlugin
     IScriptPlugin() = delete;
     IScriptPlugin(CelestiaCore *appcore) : m_appCore(appcore) {};
     IScriptPlugin(const IScriptPlugin&) = delete;
+#ifdef ENABLE_PLUGINS
+    IScriptPlugin(IScriptPlugin&&) = default;
+#else
     IScriptPlugin(IScriptPlugin&&) = delete;
+#endif
     IScriptPlugin& operator=(const IScriptPlugin&) = delete;
     IScriptPlugin& operator=(IScriptPlugin&&) = delete;
     virtual ~IScriptPlugin() = default;

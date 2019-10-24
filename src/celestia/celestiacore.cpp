@@ -6,7 +6,7 @@
 // keyboard events.  CelestiaCore then turns those events into calls
 // to Renderer and Simulation.
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-2019, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -54,6 +54,8 @@
 #include <celutil/color.h>
 #include <celengine/vecgl.h>
 #include <celengine/rectangle.h>
+#include <celplugin/plugin.h>
+#include <celplugin/pluginmanager.h>
 #include "imagecapture.h"
 
 // TODO: proper gettext
@@ -64,6 +66,7 @@ using namespace Eigen;
 using namespace std;
 using namespace celmath;
 using namespace celestia::scripts;
+using namespace celestia::plugin;
 
 static const int DragThreshold = 3;
 
@@ -142,7 +145,8 @@ CelestiaCore::CelestiaCore() :
     timer(new Timer()),
     m_legacyPlugin(make_unique<LegacyScriptPlugin>(this)),
     m_luaPlugin(make_unique<LuaScriptPlugin>(this)),
-    m_scriptMaps(make_shared<ScriptMaps>())
+    m_scriptMaps(make_shared<ScriptMaps>()),
+    m_pluginManager(make_unique<PluginManager>(this))
 {
 
     for (int i = 0; i < KeyCount; i++)

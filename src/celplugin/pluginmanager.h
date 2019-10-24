@@ -15,6 +15,8 @@
 #include <vector>
 #include <celcompat/filesystem.h>
 
+class CelestiaCore;
+
 namespace celestia
 {
 namespace plugin
@@ -28,7 +30,10 @@ class Plugin;
 class PluginManager
 {
  public:
-    PluginManager() = default;
+    PluginManager() = delete;
+    explicit PluginManager(CelestiaCore *appCore) :
+        m_appCore(appCore)
+    {}
     ~PluginManager();
     PluginManager(const PluginManager&) = delete;
     PluginManager(PluginManager&&) = delete;
@@ -46,6 +51,7 @@ class PluginManager
  private:
     std::vector<const Plugin*> m_plugins;
     fs::path m_directory;
+    CelestiaCore *m_appCore;
 }; // PluginManager
 }
 }

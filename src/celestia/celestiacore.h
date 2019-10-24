@@ -39,7 +39,14 @@ class Url;
 
 // class CelestiaWatcher;
 class CelestiaCore;
-
+namespace celestia
+{
+namespace plugin
+{
+class PluginManager;
+class Plugin;
+}
+}
 // class astro::Date;
 
 typedef Watcher<CelestiaCore> CelestiaWatcher;
@@ -401,6 +408,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::unique_ptr<celestia::scripts::LegacyScriptPlugin>  m_legacyPlugin;
     std::unique_ptr<celestia::scripts::LuaScriptPlugin>     m_luaPlugin;
     std::shared_ptr<celestia::scripts::ScriptMaps>          m_scriptMaps;
+
+    std::unique_ptr<celestia::plugin::PluginManager> m_pluginManager;
 
     enum ScriptState
     {
