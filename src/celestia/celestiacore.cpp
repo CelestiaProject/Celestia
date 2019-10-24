@@ -54,11 +54,6 @@
 #include <celutil/color.h>
 #include <celengine/vecgl.h>
 #include <celengine/rectangle.h>
-
-#ifdef CELX
-#include <celephem/scriptobject.h>
-#endif
-
 #include "imagecapture.h"
 
 // TODO: proper gettext

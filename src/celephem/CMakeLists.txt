@@ -32,18 +32,6 @@ if(ENABLE_SPICE)
   )
 endif()
 
-
-if(ENABLE_CELX)
-  list(APPEND CELEPHEM_SOURCES
-    scriptobject.cpp
-    scriptobject.h
-    scriptorbit.cpp
-    scriptorbit.h
-    scriptrotation.cpp
-    scriptrotation.h
-  )
-endif()
-
 # These object files are merged in the celegine library
 add_library(celephem OBJECT ${CELEPHEM_SOURCES})
 

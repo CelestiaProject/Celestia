@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <iostream>
 #include <fmt/printf.h>
 #include "plugin.h"
 #ifndef _WIN32
@@ -133,15 +134,15 @@ IScript* Plugin::createScript(CelestiaCore *appCore) const
     return fn == nullptr ? nullptr : (*fn)(appCore);
 }
 
-RotationModel* Plugin::createScritedRotation(const std::string& moduleName, const std::string& funcName, Hash* parameters) const
+RotationModel* Plugin::createScriptedRotation(const std::string& moduleName, const std::string& funcName, Hash* parameters) const
 {
-    auto fn = m_func.createScritedRotation;
+    auto fn = m_func.createScriptedRotation;
     return fn == nullptr ? nullptr : (*fn)(moduleName, funcName, parameters);
 }
 
-CachingOrbit* Plugin::createScritedOrbit(const std::string& moduleName, const std::string& funcName, Hash* parameters) const
+CachingOrbit* Plugin::createScriptedOrbit(const std::string& moduleName, const std::string& funcName, Hash* parameters) const
 {
-    auto fn = m_func.createScritedOrbit;
+    auto fn = m_func.createScriptedOrbit;
     return fn == nullptr ? nullptr : (*fn)(moduleName, funcName, parameters);
 }
 

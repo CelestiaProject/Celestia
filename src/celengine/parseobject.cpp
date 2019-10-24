@@ -22,8 +22,6 @@
 #include <celephem/spiceorbit.h>
 #include <celephem/spicerotation.h>
 #endif
-#include <celephem/scriptorbit.h>
-#include <celephem/scriptrotation.h>
 #include <celmath/geomutil.h>
 #include <celutil/debug.h>
 #include <cassert>

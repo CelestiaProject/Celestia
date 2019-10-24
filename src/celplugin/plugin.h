@@ -61,16 +61,16 @@ class Plugin
     /// scripting support
     typedef bool(CreateScriptEnvironmentFunc)(CelestiaCore*, const CelestiaConfig*, ProgressNotifier*);
     typedef IScript*(CreateScriptFunc)(CelestiaCore*);
-    typedef RotationModel*(CreateScritedRotationFunc)(const std::string&, const std::string&, Hash*);
-    typedef CachingOrbit*(CreateScritedOrbitFunc)(const std::string&, const std::string&, Hash*);
+    typedef RotationModel*(CreateScriptedRotationFunc)(const std::string&, const std::string&, Hash*);
+    typedef CachingOrbit*(CreateScriptedOrbitFunc)(const std::string&, const std::string&, Hash*);
 
     /// renderer support
     typedef Renderer*(CreateRendererFunc)();
 
     bool createScriptEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, ProgressNotifier *progressNotifier) const;
     IScript* createScript(CelestiaCore *appCore) const;
-    RotationModel* createScritedRotation(const std::string& moduleName, const std::string& funcName, Hash* parameters) const;
-    CachingOrbit* createScritedOrbit(const std::string& moduleName, const std::string& funcName, Hash* parameters) const;
+    RotationModel* createScriptedRotation(const std::string& moduleName, const std::string& funcName, Hash* parameters) const;
+    CachingOrbit* createScriptedOrbit(const std::string& moduleName, const std::string& funcName, Hash* parameters) const;
     Renderer* createRenderer() const;
 
  private:
@@ -96,8 +96,8 @@ class Plugin
         {
             CreateScriptEnvironmentFunc *createScriptEnvironment;
             CreateScriptFunc            *createScript;
-            CreateScritedRotationFunc   *createScritedRotation;
-            CreateScritedOrbitFunc      *createScritedOrbit;
+            CreateScriptedRotationFunc   *createScriptedRotation;
+            CreateScriptedOrbitFunc      *createScriptedOrbit;
         };
         struct
         {

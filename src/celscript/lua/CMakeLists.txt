@@ -26,6 +26,12 @@ set(CELX_SOURCES
   celx_vector.h
   luascript.cpp
   luascript.h
+  scriptobject.cpp
+  scriptobject.h
+  scriptorbit.cpp
+  scriptorbit.h
+  scriptrotation.cpp
+  scriptrotation.h
 )
 
-add_library(celluascript OBJECT ${CELX_SOURCES})
+add_library(celluascript SHARED ${CELX_SOURCES})

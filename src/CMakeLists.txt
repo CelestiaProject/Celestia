@@ -17,6 +17,7 @@ add_subdirectory(celscript)
 # These compiled objects are merged with the celengine library
 add_subdirectory(celephem)
 add_subdirectory(celcompat)
+add_subdirectory(celplugin)
 
 if (ENABLE_TOOLS)
   add_subdirectory(tools)

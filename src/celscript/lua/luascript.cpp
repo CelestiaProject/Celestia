@@ -13,12 +13,12 @@
 #include <fmt/printf.h>
 #include <celcompat/filesystem.h>
 #include <celcompat/memory.h>
-#include <celephem/scriptobject.h>
 #include <celestia/configfile.h>
 #include <celestia/celestiacore.h>
 #include <celutil/util.h>
 #include "celx_internal.h"
 #include "luascript.h"
+#include "scriptobject.h"
 
 using namespace std;
 

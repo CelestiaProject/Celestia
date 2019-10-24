@@ -17,6 +17,40 @@
 using namespace Eigen;
 using namespace std;
 
+static ScriptedOrbit*
+CreateScriptedOrbit(Hash* orbitData,
+                    const fs::path& path)
+{
+#if !defined(CELX)
+    clog << "ScriptedOrbit not usable without scripting support.\n";
+    return nullptr;
+#else
+
+    // Function name is required
+    string funcName;
+    if (!orbitData->getString("Function", funcName))
+    {
+        clog << "Function name missing from script orbit definition.\n";
+        return nullptr;
+    }
+
+    // Module name is optional
+    string moduleName;
+    orbitData->getString("Module", moduleName);
+
+    Value* pathValue = new Value(path.string());
+    orbitData->addValue("AddonPath", *pathValue);
+
+    ScriptedOrbit* scriptedOrbit = new ScriptedOrbit();
+    if (!scriptedOrbit->initialize(moduleName, funcName, orbitData))
+    {
+        delete scriptedOrbit;
+        scriptedOrbit = nullptr;
+    }
+
+    return scriptedOrbit;
+
+
 
 /*! Initialize the script orbit.
  *  moduleName is the name of a module that contains the orbit factory
