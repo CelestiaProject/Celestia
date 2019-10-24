@@ -11,6 +11,7 @@
 
 #include <celscript/common/script.h>
 #include <iosfwd>
+#include "celx.h"
 
 class LuaState;
 class CelestiaConfig;
