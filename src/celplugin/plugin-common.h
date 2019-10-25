@@ -19,7 +19,7 @@
 #ifdef _WIN32
 #define CELESTIA_PLUGIN_EXPORTABLE extern "C" __declspec(dllexport)
 #else
-#define CELESTIA_PLUGIN_EXPORTABLE extern "C"
+#define CELESTIA_PLUGIN_EXPORTABLE extern "C" __attribute__ ((visibility ("default")))
 #endif
 
 #define CELESTIA_PLUGIN_ENTRYPOINT CELESTIA_PLUGIN_EXPORTABLE celestia::plugin::PluginInfo* CELESTIA_PLUGIN_ENTRY_NAME

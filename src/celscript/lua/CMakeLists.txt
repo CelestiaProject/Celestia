@@ -35,4 +35,8 @@ set(CELX_SOURCES
   scriptrotation.h
 )
 
-add_library(celluascript SHARED ${CELX_SOURCES})
+add_library(celluascript MODULE ${CELX_SOURCES})
+
+if(ENABLE_PLUGINS)
+  target_compile_options(celluascript PUBLIC -fvisibility=hidden PUBLIC -fvisibility-inlines-hidden)
+endif()

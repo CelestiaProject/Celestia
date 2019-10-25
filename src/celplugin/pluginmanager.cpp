@@ -51,8 +51,6 @@ const Plugin* PluginManager::loadByName(const std::string &name)
 {
 #if defined(_WIN32)
     return loadByPath(m_directory / fmt::sprintf("%s.dll", name));
-#elif defined(__APPLE__)
-    return loadByPath(m_directory / fmt::sprintf("lib%s.dylib", name));
 #else
     return loadByPath(m_directory / fmt::sprintf("lib%s.so", name));
 #endif
