@@ -53,6 +53,7 @@ static bool ParseCommandLine();
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
     QApplication app(argc, argv);
 
     QTranslator qtTranslator;
@@ -65,7 +66,6 @@ int main(int argc, char *argv[])
 
     Q_INIT_RESOURCE(icons);
 
-    QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
     QCoreApplication::setOrganizationName("Celestia Development Team");
     QCoreApplication::setApplicationName("Celestia QT");
 
