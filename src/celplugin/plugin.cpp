@@ -148,6 +148,12 @@ bool Plugin::isOurFile(const fs::path &filename) const
     return fn == nullptr ? false : (*fn)(filename);
 }
 
+std::unique_ptr<IScript> Plugin::loadScript(const fs::path &filename)
+{
+    auto fn = m_func.loadScript;
+    return fn == nullptr ? nullptr : (*fn)(filename);
+}
+
 Renderer* Plugin::createRenderer() const 
 { 
     auto fn = m_func.createRenderer;

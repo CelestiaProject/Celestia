@@ -670,7 +670,13 @@ CreateScriptedOrbit(Hash* orbitData,
     orbitData->addValue("AddonPath", *pathValue);
 
 #if defined(ENABLE_PLUGINS)
-    auto plugin = pluginManager.getScriptPlugin(language);
+    auto pluginManager = celestia::plugin::GetPluginManager();
+    if (pluginManager == nullptr)
+    {
+        fmt::print(cerr, "Error: PluginManager is not initialized!\n");
+        return nullptr;
+    }
+    auto plugin = pluginManager->getScriptPlugin(language);
     if (plugin == nullptr)
     {
         fmt::print(cerr, "Support for language {} is missing\n", language);
@@ -1061,7 +1067,13 @@ CreateScriptedRotation(Hash* rotationData,
     rotationData->addValue("AddonPath", *pathValue);
 
 #if defined(ENABLE_PLUGINS)
-    auto plugin = pluginManager.getScriptPlugin(language);
+    auto pluginManager = celestia::plugin::GetPluginManager();
+    if (pluginManager == nullptr)
+    {
+        fmt::print(cerr, "Error: PluginManager is not initialized!\n");
+        return nullptr;
+    }
+    auto plugin = pluginManager->getScriptPlugin(language);
     if (plugin == nullptr)
     {
         fmt::print(cerr, "Support for language {} is missing\n", language);

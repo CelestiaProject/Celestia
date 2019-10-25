@@ -65,5 +65,17 @@ const Plugin* PluginManager::getScriptPlugin(const std::string &lang) const
     return it != m_plugins.end() ? *it : nullptr;
 }
 
+static PluginManager* pluginManager = nullptr;
+
+PluginManager* GetPluginManager()
+{
+    return pluginManager;
+}
+
+void SetPluginManager(PluginManager *pm)
+{
+    pluginManager = pm;
+}
+
 }
 }

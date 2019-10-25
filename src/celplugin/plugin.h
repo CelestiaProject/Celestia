@@ -70,6 +70,7 @@ class Plugin : public IScriptPlugin
     typedef RotationModel*(CreateScriptedRotationFunc)(const std::string&, const std::string&, Hash*);
     typedef CachingOrbit*(CreateScriptedOrbitFunc)(const std::string&, const std::string&, Hash*);
     typedef bool (IsOurFile)(const fs::path&);
+    typedef std::unique_ptr<IScript>(LoadScript)(const fs::path&);
 
     /// renderer support
     typedef Renderer*(CreateRendererFunc)();
@@ -109,6 +110,7 @@ class Plugin : public IScriptPlugin
             CreateScriptedRotationFunc  *createScriptedRotation;
             CreateScriptedOrbitFunc     *createScriptedOrbit;
             IsOurFile                   *isOurFile;
+            LoadScript                  *loadScript;
         };
         struct
         {

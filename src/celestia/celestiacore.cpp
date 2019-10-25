@@ -144,10 +144,13 @@ CelestiaCore::CelestiaCore() :
     renderer(new Renderer()),
     timer(new Timer()),
     m_legacyPlugin(make_unique<LegacyScriptPlugin>(this)),
+#if defined(CELX) && !defined(ENABLE_PLUGINS)
     m_luaPlugin(make_unique<LuaScriptPlugin>(this)),
+#endif
     m_scriptMaps(make_shared<ScriptMaps>()),
     m_pluginManager(make_unique<PluginManager>(this))
 {
+    SetPluginManager(m_pluginManager.get());
 
     for (int i = 0; i < KeyCount; i++)
     {
@@ -164,6 +167,8 @@ CelestiaCore::CelestiaCore() :
 
 CelestiaCore::~CelestiaCore()
 {
+    SetPluginManager(nullptr);
+
     if (movieCapture != nullptr)
         recordEnd();
 
@@ -299,7 +304,7 @@ void CelestiaCore::runScript(const fs::path& filename)
         if (m_script != nullptr)
             scriptState = sim->getPauseState() ? ScriptPaused : ScriptRunning;
     }
-#ifdef CELX
+#if defined(CELX) && !defined(ENABLE_PLUGINS)
     else if (m_luaPlugin->isOurFile(localeFilename))
     {
         m_script = m_luaPlugin->loadScript(localeFilename);
@@ -3600,7 +3605,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         }
     }
 
-#ifdef CELX
+#if defined(CELX) && !defined(ENABLE_PLUGINS)
     initLuaHook(progressNotifier);
 #endif
 
@@ -4396,7 +4401,7 @@ bool CelestiaCore::referenceMarkEnabled(const string& refMark, Selection sel) co
 }
 
 
-#ifdef CELX
+#if defined(CELX) && !defined(ENABLE_PLUGINS)
 bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
 {
     return CreateLuaEnvironment(this, config, progressNotifier);

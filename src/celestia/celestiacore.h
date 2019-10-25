@@ -350,7 +350,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
  protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
-#ifdef CELX
+#if defined(CELX) && !defined(ENABLE_PLUGINS)
     bool initLuaHook(ProgressNotifier*);
 #endif // CELX
 
@@ -406,7 +406,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::unique_ptr<celestia::scripts::IScript>             m_script;
     std::unique_ptr<celestia::scripts::IScriptHook>         m_scriptHook;
     std::unique_ptr<celestia::scripts::LegacyScriptPlugin>  m_legacyPlugin;
+#if defined(CELX) && !defined(ENABLE_PLUGINS)
     std::unique_ptr<celestia::scripts::LuaScriptPlugin>     m_luaPlugin;
+#endif
     std::shared_ptr<celestia::scripts::ScriptMaps>          m_scriptMaps;
 
     std::unique_ptr<celestia::plugin::PluginManager> m_pluginManager;

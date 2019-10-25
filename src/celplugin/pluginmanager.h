@@ -53,5 +53,9 @@ class PluginManager
     fs::path m_directory;
     CelestiaCore *m_appCore;
 }; // PluginManager
+
+PluginManager* GetPluginManager();
+void SetPluginManager(PluginManager*);
+
 }
 }
