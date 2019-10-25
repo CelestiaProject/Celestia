@@ -13,12 +13,12 @@
 #include <fmt/printf.h>
 #include <celcompat/filesystem.h>
 #include <celcompat/memory.h>
-#include <celephem/scriptobject.h>
 #include <celestia/configfile.h>
 #include <celestia/celestiacore.h>
 #include <celutil/util.h>
 #include "celx_internal.h"
 #include "luascript.h"
+#include "scriptobject.h"
 
 using namespace std;
 
@@ -74,6 +74,7 @@ bool LuaScript::tick(double dt)
     return m_celxScript->tick(dt);
 }
 
+#ifndef ENABLE_PLUGINS
 bool LuaScriptPlugin::isOurFile(const fs::path &p) const
 {
     auto ext = p.extension();
@@ -108,6 +109,7 @@ unique_ptr<IScript> LuaScriptPlugin::loadScript(const fs::path &path)
 
     return script;
 }
+#endif
 
 bool LuaHook::call(const char *method) const
 {

@@ -32,6 +32,7 @@ option(ENABLE_THEORA  "Support video capture to OGG Theora? (Default: on)" ON)
 option(ENABLE_TOOLS   "Build different tools? (Default: off)" OFF)
 option(NATIVE_OSX_APP "Support native OSX paths read data from (Default: off)" OFF)
 option(FAST_MATH      "Build with unsafe fast-math compiller option (Default: off)" OFF)
+option(ENABLE_PLUGINS "Build with experimental plugins support (Default: off)" OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type." FORCE)
@@ -283,6 +284,10 @@ endif()
 # Turning all debug on dramatically decreses performance
 if(OCTREE_DEBUG)
   add_definitions(-DOCTREE_DEBUG)
+endif()
+
+if(ENABLE_PLUGINS)
+  add_definitions(-DENABLE_PLUGINS)
 endif()
 
 include_directories("${CMAKE_SOURCE_DIR}/src" ${CMAKE_BINARY_DIR})

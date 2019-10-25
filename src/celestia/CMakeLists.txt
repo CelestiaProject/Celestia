@@ -37,7 +37,7 @@ endif()
 add_library(celestia STATIC ${CELESTIA_SOURCES}
                             $<TARGET_OBJECTS:celcommonscript>
                             $<TARGET_OBJECTS:cellegacyscript>
-                            $<TARGET_OBJECTS:celluascript>)
+                            $<TARGET_OBJECTS:celplugin>)
 
 #[[
 add_library(celestia SHARED ${CELESTIA_SOURCES})

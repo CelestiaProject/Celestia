@@ -24,8 +24,19 @@ set(CELX_SOURCES
   celx_rotation.h
   celx_vector.cpp
   celx_vector.h
+  luaplugin.cpp
   luascript.cpp
   luascript.h
+  scriptobject.cpp
+  scriptobject.h
+  scriptorbit.cpp
+  scriptorbit.h
+  scriptrotation.cpp
+  scriptrotation.h
 )
 
-add_library(celluascript OBJECT ${CELX_SOURCES})
+add_library(celluascript MODULE ${CELX_SOURCES})
+
+if(ENABLE_PLUGINS)
+  target_compile_options(celluascript PUBLIC -fvisibility=hidden PUBLIC -fvisibility-inlines-hidden)
+endif()

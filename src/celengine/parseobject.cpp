@@ -22,8 +22,13 @@
 #include <celephem/spiceorbit.h>
 #include <celephem/spicerotation.h>
 #endif
-#include <celephem/scriptorbit.h>
-#include <celephem/scriptrotation.h>
+#if defined(ENABLE_PLUGINS)
+#include <celplugin/plugin.h>
+#include <celplugin/pluginmanager.h>
+#else
+#include <celscript/lua/scriptorbit.h>
+#include <celscript/lua/scriptrotation.h>
+#endif
 #include <celmath/geomutil.h>
 #include <celutil/debug.h>
 #include <cassert>
@@ -630,12 +635,15 @@ CreateSpiceRotation(Hash* rotationData,
 }
 #endif
 
-
+#if defined(ENABLE_PLUGINS)
+static CachingOrbit*
+#else
 static ScriptedOrbit*
+#endif
 CreateScriptedOrbit(Hash* orbitData,
                     const fs::path& path)
 {
-#if !defined(CELX)
+#if !defined(CELX) && !defined(ENABLE_PLUGINS)
     clog << "ScriptedOrbit not usable without scripting support.\n";
     return nullptr;
 #else
@@ -648,6 +656,12 @@ CreateScriptedOrbit(Hash* orbitData,
         return nullptr;
     }
 
+#if defined(ENABLE_PLUGINS)
+    // If language name is missing assume Lua to be backward compatible
+    string language("LUA");
+    orbitData->getString("Language", language);
+#endif
+
     // Module name is optional
     string moduleName;
     orbitData->getString("Module", moduleName);
@@ -655,12 +669,29 @@ CreateScriptedOrbit(Hash* orbitData,
     Value* pathValue = new Value(path.string());
     orbitData->addValue("AddonPath", *pathValue);
 
+#if defined(ENABLE_PLUGINS)
+    auto pluginManager = celestia::plugin::GetPluginManager();
+    if (pluginManager == nullptr)
+    {
+        fmt::print(cerr, "Error: PluginManager is not initialized!\n");
+        return nullptr;
+    }
+    auto plugin = pluginManager->getScriptPlugin(language);
+    if (plugin == nullptr)
+    {
+        fmt::print(cerr, "Support for language {} is missing\n", language);
+        return nullptr;
+    }
+
+    auto *scriptedOrbit = plugin->createScriptedOrbit(moduleName, funcName, orbitData);
+#else
     ScriptedOrbit* scriptedOrbit = new ScriptedOrbit();
     if (!scriptedOrbit->initialize(moduleName, funcName, orbitData))
     {
         delete scriptedOrbit;
         scriptedOrbit = nullptr;
     }
+#endif
 
     return scriptedOrbit;
 #endif
@@ -1001,12 +1032,15 @@ CreatePrecessingRotationModel(Hash* rotationData,
     }
 }
 
-
+#if defined(ENABLE_PLUGINS)
+static RotationModel*
+#else
 static ScriptedRotation*
+#endif
 CreateScriptedRotation(Hash* rotationData,
                        const fs::path& path)
 {
-#if !defined(CELX)
+#if !defined(CELX) && !defined(ENABLE_PLUGINS)
     clog << "ScriptedRotation not usable without scripting support.\n";
     return nullptr;
 #else
@@ -1019,6 +1053,12 @@ CreateScriptedRotation(Hash* rotationData,
         return nullptr;
     }
 
+#if defined(ENABLE_PLUGINS)
+    // If language name is missing assume Lua to be backward compatible
+    string language("LUA");
+    rotationData->getString("LUA", language);
+#endif
+
     // Module name is optional
     string moduleName;
     rotationData->getString("Module", moduleName);
@@ -1026,12 +1066,29 @@ CreateScriptedRotation(Hash* rotationData,
     Value* pathValue = new Value(path.string());
     rotationData->addValue("AddonPath", *pathValue);
 
+#if defined(ENABLE_PLUGINS)
+    auto pluginManager = celestia::plugin::GetPluginManager();
+    if (pluginManager == nullptr)
+    {
+        fmt::print(cerr, "Error: PluginManager is not initialized!\n");
+        return nullptr;
+    }
+    auto plugin = pluginManager->getScriptPlugin(language);
+    if (plugin == nullptr)
+    {
+        fmt::print(cerr, "Support for language {} is missing\n", language);
+        return nullptr;
+    }
+
+    auto *scriptedRotation = plugin->createScriptedRotation(moduleName, funcName, rotationData);
+#else
     ScriptedRotation* scriptedRotation = new ScriptedRotation();
     if (!scriptedRotation->initialize(moduleName, funcName, rotationData))
     {
          delete scriptedRotation;
          scriptedRotation = nullptr;
     }
+#endif
 
     return scriptedRotation;
 #endif

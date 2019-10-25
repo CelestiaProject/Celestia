@@ -11,6 +11,7 @@
 
 #include <celscript/common/script.h>
 #include <iosfwd>
+#include "celx.h"
 
 class LuaState;
 class CelestiaConfig;
@@ -43,6 +44,7 @@ class LuaScript : public IScript
     friend class LuaScriptPlugin;
 };
 
+#ifndef ENABLE_PLUGINS
 class LuaScriptPlugin : public IScriptPlugin
 {
  public:
@@ -57,6 +59,7 @@ class LuaScriptPlugin : public IScriptPlugin
     bool isOurFile(const fs::path&) const override;
     std::unique_ptr<IScript> loadScript(const fs::path&) override;
 };
+#endif
 
 class LuaHook : public IScriptHook
 {
