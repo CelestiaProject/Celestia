@@ -576,7 +576,7 @@
     Albedo 0.5
 }
 
-"Atlas:Saturn XV:1980 S 28" "Sol/Saturn"   # Cassini-epoch data
+"Atlas (moon):Saturn XV:1980 S 28" "Sol/Saturn"   # Cassini-epoch data
 {
     Class "minormoon"
     Texture     "asteroid.jpg"
