@@ -399,7 +399,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::unique_ptr<celestia::scripts::IScript>             m_script;
     std::unique_ptr<celestia::scripts::IScriptHook>         m_scriptHook;
     std::unique_ptr<celestia::scripts::LegacyScriptPlugin>  m_legacyPlugin;
+#ifdef CELX
     std::unique_ptr<celestia::scripts::LuaScriptPlugin>     m_luaPlugin;
+#endif
     std::shared_ptr<celestia::scripts::ScriptMaps>          m_scriptMaps;
 
     enum ScriptState
