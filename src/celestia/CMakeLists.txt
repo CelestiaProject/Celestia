@@ -34,10 +34,12 @@ elseif(_UNIX AND ENABLE_THEORA)
   )
 endif()
 
-add_library(celestia STATIC ${CELESTIA_SOURCES}
-                            $<TARGET_OBJECTS:celcommonscript>
-                            $<TARGET_OBJECTS:cellegacyscript>
-                            $<TARGET_OBJECTS:celluascript>)
+set(SCRIPT_LIBS $<TARGET_OBJECTS:celcommonscript> $<TARGET_OBJECTS:cellegacyscript>)
+if(ENABLE_CELX)
+  set(SCRIPT_LIBS ${SCRIPT_LIBS} $<TARGET_OBJECTS:celluascript>)
+endif()
+
+add_library(celestia STATIC ${CELESTIA_SOURCES} ${SCRIPT_LIBS})
 
 #[[
 add_library(celestia SHARED ${CELESTIA_SOURCES})

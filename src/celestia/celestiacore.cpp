@@ -146,7 +146,9 @@ CelestiaCore::CelestiaCore() :
     renderer(new Renderer()),
     timer(new Timer()),
     m_legacyPlugin(make_unique<LegacyScriptPlugin>(this)),
+#ifdef CELX
     m_luaPlugin(make_unique<LuaScriptPlugin>(this)),
+#endif
     m_scriptMaps(make_shared<ScriptMaps>())
 {
 
@@ -855,7 +857,6 @@ void CelestiaCore::keyUp(int key, int)
     shiftKeysPressed[key] = false;
 }
 
-#ifdef CELX
 static string getKeyName(const char* c, int modifiers)
 {
     unsigned int length = strlen(c);
@@ -873,7 +874,6 @@ static string getKeyName(const char* c, int modifiers)
 
     return string(c);
 }
-#endif
 
 void CelestiaCore::charEntered(char c, int modifiers)
 {
