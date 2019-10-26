@@ -184,7 +184,7 @@ static const uint32_t OrbitCacheRetireAge = 16;
 
 Color Renderer::StarLabelColor          (0.471f, 0.356f, 0.682f);
 Color Renderer::PlanetLabelColor        (0.407f, 0.333f, 0.964f);
-Color Renderer::DwarfPlanetLabelColor   (0.407f, 0.333f, 0.964f);
+Color Renderer::DwarfPlanetLabelColor   (0.557f, 0.235f, 0.576f);
 Color Renderer::MoonLabelColor          (0.231f, 0.733f, 0.792f);
 Color Renderer::MinorMoonLabelColor     (0.231f, 0.733f, 0.792f);
 Color Renderer::AsteroidLabelColor      (0.596f, 0.305f, 0.164f);
@@ -202,10 +202,9 @@ Color Renderer::GalacticGridLabelColor  (0.88f,  0.72f,  0.64f);
 Color Renderer::EclipticGridLabelColor  (0.72f,  0.64f,  0.88f);
 Color Renderer::HorizonGridLabelColor   (0.72f,  0.72f,  0.72f);
 
-
 Color Renderer::StarOrbitColor          (0.5f,   0.5f,   0.8f);
 Color Renderer::PlanetOrbitColor        (0.3f,   0.323f, 0.833f);
-Color Renderer::DwarfPlanetOrbitColor   (0.556f, 0.235f, 0.576f);
+Color Renderer::DwarfPlanetOrbitColor   (0.557f, 0.235f, 0.576f);
 Color Renderer::MoonOrbitColor          (0.08f,  0.407f, 0.392f);
 Color Renderer::MinorMoonOrbitColor     (0.08f,  0.407f, 0.392f);
 Color Renderer::AsteroidOrbitColor      (0.58f,  0.152f, 0.08f);
