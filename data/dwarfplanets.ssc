@@ -37,8 +37,6 @@ ReferencePoint "Pluto-Charon" "Sol"
 {
     CustomOrbit "pluto"
 
-    OrbitColor  [ 0.556863 0.235294 0.576471 ]
-
     # Make the orbit and label visible
     Visible true
     Clickable true
