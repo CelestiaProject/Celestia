@@ -46,10 +46,16 @@
 #include "celestiacore.h"
 #include <celutil/debug.h>
 #include <celutil/utf8.h>
-#include "url.h"
-
+#ifdef _WIN32
+#include <celutil/winutil.h>
+#endif
 #ifdef CELX
 #include <celengine/scriptobject.h>
+#endif
+#include "url.h"
+
+#ifndef _WIN32
+#define UTF8ToCurrentOEMCP(s) (s)
 #endif
 
 #ifdef _WIN32
@@ -426,7 +432,7 @@ void CelestiaCore::readFavoritesFile()
         favorites = ReadFavoritesList(in);
         if (favorites == NULL)
         {
-            warning(_("Error reading favorites file."));
+            warning(UTF8ToCurrentOEMCP(_("Error reading favorites file.")));
         }
     }
 }
@@ -446,7 +452,7 @@ void CelestiaCore::writeFavoritesFile()
         {
             if (!MkDir(dir))
             {
-                warning(_("Failed to create a directory for favorites file ") + dir);
+                warning(UTF8ToCurrentOEMCP(_("Failed to create a directory for favorites file ")) + dir);
                 return;
             }
 #ifdef _WIN32
@@ -4265,7 +4271,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
             ifstream solarSysFile(iter->c_str(), ios::in);
             if (!solarSysFile.good())
             {
-                warning(_("Error opening solar system catalog.\n"));
+                warning(UTF8ToCurrentOEMCP(_("Error opening solar system catalog.\n")));
             }
             else
             {
@@ -4298,7 +4304,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
         ifstream asterismsFile(config->asterismsFile.c_str(), ios::in);
         if (!asterismsFile.good())
         {
-            warning(_("Error opening asterisms file."));
+            warning(UTF8ToCurrentOEMCP(_("Error opening asterisms file.")));
         }
         else
         {
@@ -4313,7 +4319,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
         ifstream boundariesFile(config->boundariesFile.c_str(), ios::in);
         if (!boundariesFile.good())
         {
-            warning(_("Error opening constellation boundaries files."));
+            warning(UTF8ToCurrentOEMCP(_("Error opening constellation boundaries files.")));
         }
         else
         {
@@ -4380,7 +4386,7 @@ bool CelestiaCore::initRenderer()
     context->setRenderPath(GLContext::GLPath_NvCombiner_NvVP);
     context->setRenderPath(GLContext::GLPath_NvCombiner_ARBVP);
     context->setRenderPath(GLContext::GLPath_GLSL);
-    cout << _("render path: ") << context->getRenderPath() << '\n';
+    cout << UTF8ToCurrentOEMCP(_("render path: ")) << context->getRenderPath() << '\n';
 
     Renderer::DetailOptions detailOptions;
     detailOptions.ringSystemSections = config->ringSystemSections;

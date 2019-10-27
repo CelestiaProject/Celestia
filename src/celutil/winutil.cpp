@@ -74,3 +74,17 @@ string UTF8ToCurrentCP(const string& str)
     delete [] out;
     return localeStr;
 }
+
+
+string UTF8ToCurrentOEMCP(const string& str)
+{
+    string localeStr;
+    LPWSTR wout = new wchar_t[str.length() + 1];
+    LPSTR out = new char[str.length() + 1];
+    int wlength = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wout, str.length() + 1);
+    WideCharToMultiByte(CP_OEMCP, 0, wout, -1, out, str.length() + 1, NULL, NULL);
+    localeStr = out;
+    delete [] wout;
+    delete [] out;
+    return localeStr;
+}
