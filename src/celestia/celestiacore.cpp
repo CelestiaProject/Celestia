@@ -419,11 +419,13 @@ void CelestiaCore::readFavoritesFile()
     else
         path = "favorites.cel";
 
+#ifndef PORTABLE_BUILD
     if (!IsAbsolutePath(path))
 #ifdef _WIN32
         path = WriteableDataPath() + '\\' + path;
 #else
         path = WriteableDataPath() + '/' + path;
+#endif
 #endif
 
     ifstream in(path.c_str(), ios::in);
@@ -445,6 +447,7 @@ void CelestiaCore::writeFavoritesFile()
     else
         path = "favorites.cel";
 
+#ifndef PORTABLE_BUILD
     if (!IsAbsolutePath(path))
     {
         string dir = WriteableDataPath();
@@ -462,6 +465,7 @@ void CelestiaCore::writeFavoritesFile()
         path = dir + '/' + path;
 #endif
     }
+#endif
 
     ofstream out(path.c_str(), ios::out);
     if (out.good())
