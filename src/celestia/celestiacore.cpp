@@ -455,12 +455,12 @@ void CelestiaCore::writeFavoritesFile()
                 warning(UTF8ToCurrentOEMCP(_("Failed to create a directory for favorites file ")) + dir);
                 return;
             }
-#ifdef _WIN32
-            path = dir + '\\' + path;
-#else
-            path = dir + '/' + path;
-#endif
         }
+#ifdef _WIN32
+        path = dir + '\\' + path;
+#else
+        path = dir + '/' + path;
+#endif
     }
 
     ofstream out(path.c_str(), ios::out);
