@@ -312,7 +312,9 @@ static GtkMenu* CreatePlanetarySystemMenu(string parentName, const PlanetarySyst
     vector<IntStrPair> comets;
     vector<IntStrPair> invisibles;
     vector<IntStrPair> moons;
+    vector<IntStrPair> minorMoons;
     vector<IntStrPair> planets;
+    vector<IntStrPair> dwarfPlanets;
     vector<IntStrPair> spacecraft;
 
     /* We will use these objects to iterate over all the above vectors */
@@ -338,8 +340,14 @@ static GtkMenu* CreatePlanetarySystemMenu(string parentName, const PlanetarySyst
             case Body::Moon:
                 moons.push_back(make_pair(i, body->getName()));
                 break;
+            case Body::MinorMoon:
+                minorMoons.push_back(make_pair(i, body->getName()));
+                break;
             case Body::Planet:
                 planets.push_back(make_pair(i, body->getName()));
+                break;
+            case Body::DwarfPlanet:
+                dwarfPlanets.push_back(make_pair(i, body->getName()));
                 break;
             case Body::Spacecraft:
                 spacecraft.push_back(make_pair(i, body->getName()));
@@ -356,8 +364,12 @@ static GtkMenu* CreatePlanetarySystemMenu(string parentName, const PlanetarySyst
     menuNames.push_back("Invisibles");
     objects.push_back(moons);
     menuNames.push_back("Moons");
+    objects.push_back(minorMoons);
+    menuNames.push_back("Minor moons");
     objects.push_back(planets);
     menuNames.push_back("Planets");
+    objects.push_back(dwarfPlanets);
+    menuNames.push_back("Dwarf planets");
     objects.push_back(spacecraft);
     menuNames.push_back("Spacecraft");
 

@@ -385,8 +385,14 @@ QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
                     case Body::Planet:
                         title = _("Planets");
                         break;
+                    case Body::DwarfPlanet:
+                        title = _("Dwarf planets");
+                        break;
                     case Body::Moon:
                         title = _("Moons");
+                        break;
+                    case Body::MinorMoon:
+                        title = _("Minor moons");
                         break;
                     case Body::Asteroid:
                         title = _("Asteroids");
@@ -423,9 +429,17 @@ void SelectionPopup::addObjectMenus(PlanetarySystem* sys)
     if (planetsMenu != nullptr)
         addMenu(planetsMenu);
 
+    QMenu* dwarfPlanetsMenu = createObjectMenu(sys, Body::DwarfPlanet);
+    if (dwarfPlanetsMenu != nullptr)
+        addMenu(dwarfPlanetsMenu);
+
     QMenu* moonsMenu = createObjectMenu(sys, Body::Moon);
     if (moonsMenu != nullptr)
         addMenu(moonsMenu);
+
+    QMenu* minorMoonsMenu = createObjectMenu(sys, Body::MinorMoon);
+    if (minorMoonsMenu != nullptr)
+        addMenu(minorMoonsMenu);
 
     QMenu* asteroidsMenu = createObjectMenu(sys, Body::Asteroid);
     if (asteroidsMenu != nullptr)
