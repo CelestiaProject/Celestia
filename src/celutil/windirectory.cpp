@@ -174,6 +174,11 @@ bool IsAbsolutePath(const std::string &p)
 
 string WriteableDataPath()
 {
+    char s[MAX_PATH + 1];
+    if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_APPDATA, NULL, 0, &s[0])))
+        return WordExp(s) + "\\Celestia";
+
+    // fallback to environment variables
     const char *p = getenv("APPDATA");
     p = p != NULL ? p : "~\\AppData\\Roaming";
     return WordExp(p) + "\\Celestia";
