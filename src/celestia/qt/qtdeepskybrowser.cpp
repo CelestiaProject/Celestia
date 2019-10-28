@@ -337,8 +337,8 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
     filteredDSOs.reserve(totalDSOs);
     for (const auto &dso : dsoset)
     {
-        if (!filterPred(dso))
-            filteredDSOs.push_back(dso);
+        if (!filterPred(static_cast<DeepSkyObject*>(dso)))
+            filteredDSOs.push_back(static_cast<DeepSkyObject*>(dso));
     }
 
     // Don't try and show more DSOs than remain after the filter

@@ -402,8 +402,8 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
     filteredStars.reserve(totalStars);
     for (const auto &star : starset)
     {
-        if (!filterPred(star))
-            filteredStars.push_back(star);
+        if (!filterPred(static_cast<Star*>(star)))
+            filteredStars.push_back(static_cast<Star*>(star));
     }
 
     // Don't try and show more stars than remain after the filter

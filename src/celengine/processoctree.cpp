@@ -112,7 +112,7 @@ void processVisibleStars(
 #endif
         if (obj->getAbsoluteMagnitude() < dimmest)
         {
-            double distance = (obsPosition - obj->getPosition().cast<double>()).norm();
+            float distance = (obsPosition - obj->getPosition()).norm();
             float appMag = astro::absToAppMag(obj->getAbsoluteMagnitude(), (float)distance);
 
             if (appMag < limitingFactor || (distance < MAX_STAR_ORBIT_RADIUS && obj->getOrbit()))

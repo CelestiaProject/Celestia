@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <list>
 #include <unordered_set>
 #include <celengine/selection.h>
 #include <celengine/parseobject.h>
@@ -14,6 +15,7 @@ class AstroObject {
     AstroCatalog::IndexNumber m_mainIndexNumber { AstroCatalog::InvalidIndex };
     AstroDatabase *m_db { nullptr };
 public:
+    typedef std::list<AstroObject*> List;
     AstroObject() = default;
     AstroObject(AstroDatabase *db, AstroCatalog::IndexNumber nr = AstroCatalog::InvalidIndex) : m_db(db), m_mainIndexNumber(nr) {}
     AstroCatalog::IndexNumber getIndex() const { return m_mainIndexNumber; }
@@ -83,4 +85,18 @@ public:
     bool loadCategories(Hash*, DataDisposition = DataDisposition::Add, const std::string &domain = "");
     friend UserCategory;
     friend AstroDatabase;
+
+ protected:
+    AstroObject::List::iterator m_listIterator;
+ public:
+    void addToList(List &l)
+    {
+        l.push_front(this);
+        m_listIterator = l.begin();
+    }
+    void remFromList(List &l)
+    {
+        l.erase(m_listIterator);
+        m_listIterator = l.end();
+    }
 };

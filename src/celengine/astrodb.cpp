@@ -304,7 +304,7 @@ bool AstroDatabase::addStar(Star *star)
 {
     if (!addObject(star))
         return false;
-    m_stars.insert(star);
+    star->addToList(m_stars);
     m_starOctree.insertObject(star);
 //    fmt::fprintf(cout, "Added star  with magnitude %f.\n", star->getAbsoluteMagnitude());
     return true;
@@ -314,7 +314,7 @@ bool AstroDatabase::addDSO(DeepSkyObject *dso)
 {
     if (!addObject(dso))
         return false;
-    m_dsos.insert(dso);
+    dso->addToList(m_dsos);
     m_dsoOctree.insertObject(dso);
     return true;
 }
@@ -323,7 +323,7 @@ bool AstroDatabase::addBody(Body *body)
 {
     if (!addObject(body))
         return false;
-    m_bodies.insert(body);
+    body->addToList(m_bodies);
     return true;
 }
 
@@ -335,10 +335,14 @@ bool AstroDatabase::removeObject(AstroObject *obj)
     switch(sel.getType())
     {
         case Selection::Type_Star:
-            m_stars.erase(sel.star());
+            m_stars.erase(obj->m_listIterator);
             break;
         case Selection::Type_DeepSky:
-            m_dsos.erase(sel.deepsky());
+            m_dsos.erase(obj->m_listIterator);
+            break;
+        case Selection::Type_Body:
+            m_bodies.erase(obj->m_listIterator);
+            break;
     }
     m_mainIndex.erase(obj->getIndex());
     removeNames(obj);
@@ -437,8 +441,8 @@ float AstroDatabase::avgDsoMag() const
     size_t n = m_dsos.size();
     for(const auto & dso : m_dsos)
     {
-        if (dso->getAbsoluteMagnitude() > 8)
-            avg += dso->getAbsoluteMagnitude();
+        if (static_cast<DeepSkyObject*>(dso)->getAbsoluteMagnitude() > 8)
+            avg += static_cast<DeepSkyObject*>(dso)->getAbsoluteMagnitude();
         else
             n--;
     }

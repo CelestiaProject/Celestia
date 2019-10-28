@@ -1316,7 +1316,7 @@ static int celestia_stars(lua_State* l)
 
     return 1;*/
     CelxLua celx(l);
-    return celx.pushIterable<Star*>(this_celestia(l)->getSimulation()->getUniverse()->getDatabase().getStars());
+    return celx.pushIterable<AstroObject*>(this_celestia(l)->getSimulation()->getUniverse()->getDatabase().getStars());
 }
 
 
@@ -1375,7 +1375,7 @@ static int celestia_dsos(lua_State* l)
 
     return 1;*/
     CelxLua celx(l);
-    return celx.pushIterable<DeepSkyObject*>(this_celestia(l)->getSimulation()->getUniverse()->getDatabase().getDsos());
+    return celx.pushIterable<AstroObject*>(this_celestia(l)->getSimulation()->getUniverse()->getDatabase().getDsos());
 }
 
 static int celestia_setambient(lua_State* l)

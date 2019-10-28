@@ -11,7 +11,7 @@ using namespace celmath;
 
 char* _stack;
 
-size_t OctreeNode::m_maxObjCount = 12;
+size_t OctreeNode::m_maxObjCount = 10;
 
 size_t OctreeNode::m_nodesNumber = 0;
 

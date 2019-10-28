@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <list>
 #include <climits>
 #include "selection.h"
 #include "namedb.h"
@@ -21,9 +22,9 @@ class AstroDatabase {
  public:
     typedef std::map<AstroCatalog::IndexNumber, AstroObject*> MainIndex;
     typedef std::map<int, AstroDataLoader*> LoadersMap;
-    typedef std::set<Star*> StarsList;
-    typedef std::set<DeepSkyObject*> DsosList;
-    typedef std::set<Body*> BodiesList;
+    typedef std::list<Star*> StarsList;
+    typedef std::list<DeepSkyObject*> DsosList;
+    typedef std::list<Body*> BodiesList;
     typedef std::map<AstroCatalog::IndexNumber, SolarSystem*> SolarSystemIndex;
 
     enum Catalog
@@ -47,9 +48,9 @@ class AstroDatabase {
     AstroNameDatabase m_nameIndex;
     LoadersMap m_loaders;
     SolarSystemIndex m_systems;
-    StarsList m_stars;
-    DsosList m_dsos;
-    BodiesList m_bodies;
+    AstroObject::List m_stars;
+    AstroObject::List m_dsos;
+    AstroObject::List m_bodies;
     OctreeNode m_starOctree;
     OctreeNode m_dsoOctree;
 
@@ -130,12 +131,12 @@ class AstroDatabase {
     void removeNames(AstroCatalog::IndexNumber);
     void removeNames(AstroObject*);
 
-    const StarsList &getStars() const
+    const AstroObject::List &getStars() const
     {
         return m_stars;
     }
 
-    const DsosList &getDsos() const
+    const AstroObject::List &getDsos() const
     {
         return m_dsos;
     }
