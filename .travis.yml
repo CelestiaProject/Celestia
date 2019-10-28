@@ -1,5 +1,5 @@
 dist: xenial
-osx_image: xcode10.2
+osx_image: xcode11.1
 language: cpp
 sudo: true
 
@@ -27,8 +27,6 @@ matrix:
     env: LUA=5.2
   - os: linux
     env: LUA=5.2
-  allow_failures:
-  - os: osx
 
 before_script:
 - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt install -y liblua${LUA}-dev; fi
