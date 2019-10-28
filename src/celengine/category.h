@@ -11,7 +11,7 @@ public:
     {
         size_t operator()(const Selection &s) const
         {
-            return (size_t)s.obj;
+            return (size_t)s.catEntry();
         }
     };
 
