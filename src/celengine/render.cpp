@@ -3502,6 +3502,7 @@ void Renderer::draw(const Observer& observer,
                 addAnnotation(backgroundAnnotations, &cursorRep, EMPTY_STRING, Color(SelectionCursorColor, 1.0f),
                               Point3f((float) offset.x, (float) offset.y, (float) offset.z),
                               AlignLeft, VerticalAlignTop, symbolSize);
+                renderBackgroundAnnotations(FontNormal);
             }
 
             Color occludedCursorColor(SelectionCursorColor.red(), SelectionCursorColor.green() + 0.3f, SelectionCursorColor.blue());
