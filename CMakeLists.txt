@@ -293,6 +293,14 @@ check_include_files(byteswap.h HAVE_BYTESWAP_H)
 check_include_file_cxx(experimental/filesystem HAVE_EXPERIMENTAL_FILESYSTEM)
 configure_file("config.h.in" "config.h")
 
+if(APPLE)
+  string(REGEX MATCH "[0-9]+" DARWIN_MAJOR_VERSION ${CMAKE_SYSTEM_VERSION})
+  # C++ filesystem can only be used on macOS Catalina (Darwin 19.0) or later
+  if(DARWIN_MAJOR_VERSION LESS 19)
+    message(STATUS "C++17 filesystem is turned off on macOS prior to macOS Catalina")
+    set(HAVE_EXPERIMENTAL_FILESYSTEM OFF)
+  endif()
+endif()
 
 if (HAVE_EXPERIMENTAL_FILESYSTEM)
   if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
