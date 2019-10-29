@@ -291,7 +291,6 @@ include_directories("${CMAKE_SOURCE_DIR}/src" ${CMAKE_BINARY_DIR})
 # to the source code
 check_include_files(byteswap.h HAVE_BYTESWAP_H)
 check_include_file_cxx(experimental/filesystem HAVE_EXPERIMENTAL_FILESYSTEM)
-configure_file("config.h.in" "config.h")
 
 if(APPLE)
   string(REGEX MATCH "[0-9]+" DARWIN_MAJOR_VERSION ${CMAKE_SYSTEM_VERSION})
@@ -301,6 +300,8 @@ if(APPLE)
     set(HAVE_EXPERIMENTAL_FILESYSTEM OFF)
   endif()
 endif()
+
+configure_file("config.h.in" "config.h")
 
 if (HAVE_EXPERIMENTAL_FILESYSTEM)
   if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
