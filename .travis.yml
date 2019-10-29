@@ -1,5 +1,5 @@
 dist: xenial
-osx_image: xcode10.2
+osx_image: xcode11.1
 language: cpp
 sudo: true
 
