@@ -4783,15 +4783,20 @@ void Renderer::renderObject(const Vector3f& pos,
         }
     }
 
-    if (obj.rings != nullptr &&
-        (renderFlags & ShowPlanetRings) != 0 &&
-        distance <= obj.rings->innerRadius)
+    float segmentSizeInPixels = 0.0f;
+    if (obj.rings != nullptr && (renderFlags & ShowPlanetRings) != 0)
     {
-        renderRings_GLSL(*obj.rings, ri, ls,
-                         radius, 1.0f - obj.semiAxes.y(),
-                         textureResolution,
-                         (renderFlags & ShowRingShadows) != 0 && lit,
-                         this);
+        // calculate ring segment size in pixels, actual size is segmentSizeInPixels * tan(segmentAngle)
+        segmentSizeInPixels = 2.0f * obj.rings->outerRadius / (max(nearPlaneDistance, altitude) * pixelSize);
+        if (distance <= obj.rings->innerRadius)
+        {
+            renderRings_GLSL(*obj.rings, ri, ls,
+                             radius, 1.0f - obj.semiAxes.y(),
+                             textureResolution,
+                             (renderFlags & ShowRingShadows) != 0 && lit,
+                             segmentSizeInPixels,
+                             this);
+        }
     }
 
     if (obj.atmosphere != nullptr)
@@ -4958,6 +4963,7 @@ void Renderer::renderObject(const Vector3f& pos,
                              radius, 1.0f - obj.semiAxes.y(),
                              textureResolution,
                              (renderFlags & ShowRingShadows) != 0 && lit,
+                             segmentSizeInPixels,
                              this);
         }
     }

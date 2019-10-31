@@ -68,6 +68,7 @@ void renderRings_GLSL(RingSystem& rings,
                       float planetOblateness,
                       unsigned int textureResolution,
                       bool renderShadow,
+                      float segmentSizeInPixels,
                       const Renderer* renderer);
 
 void renderGeometry_GLSL_Unlit(Geometry* geometry,
