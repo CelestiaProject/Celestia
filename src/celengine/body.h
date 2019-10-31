@@ -23,6 +23,7 @@
 #include <GL/glew.h>
 #include <string>
 #include <vector>
+#include <array>
 #include <map>
 #include <list>
 
@@ -87,7 +88,7 @@ class RingSystem
     float outerRadius;
     Color color;
     MultiResTexture texture;
-    GLuint vboId{ 0 };
+    std::array<GLuint, 4> vboId {{ 0, 0, 0, 0 }};
 
     RingSystem(float inner, float outer) :
         innerRadius(inner), outerRadius(outer),

@@ -588,7 +588,8 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
 
 static void renderRingSystem(GLuint *vboId,
                              float innerRadius,
-                             float outerRadius)
+                             float outerRadius,
+                             unsigned int nSections = 180)
 {
     struct RingVertex
     {
@@ -597,12 +598,12 @@ static void renderRingSystem(GLuint *vboId,
     };
 
     constexpr const float angle = 2*static_cast<float>(PI);
-    constexpr const unsigned int nSections = 180;
 
     if (*vboId == 0)
     {
         struct RingVertex vertex;
         vector<struct RingVertex> ringCoord;
+        ringCoord.reserve(2 * nSections);
         for (unsigned i = 0; i <= nSections; i++)
         {
             float t = (float) i / (float) nSections;
@@ -669,6 +670,7 @@ void renderRings_GLSL(RingSystem& rings,
                       float planetOblateness,
                       unsigned int textureResolution,
                       bool renderShadow,
+                      float segmentSizeInPixels,
                       const Renderer* renderer)
 {
     float inner = rings.innerRadius / planetRadius;
@@ -773,7 +775,16 @@ void renderRings_GLSL(RingSystem& rings,
     else
         glDisable(GL_TEXTURE_2D);
 
-    renderRingSystem(&rings.vboId, inner, outer);
+    unsigned nSections = 180;
+    size_t i = 0;
+    for (i = 0; i < rings.vboId.size() - 1; i++)
+    {
+        float s = segmentSizeInPixels * tan(PI / nSections);
+        if (s < 30.0f) // TODO: make configurable
+            break;
+        nSections <<= 1;
+    }
+    renderRingSystem(&rings.vboId[i], inner, outer, nSections);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
