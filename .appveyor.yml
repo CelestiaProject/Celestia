@@ -21,6 +21,26 @@ branches:
   only:
   - master
 
+artifacts:
+- path: build/src/celestia/qt/Release/celestia-qt.exe
+  name: qt
+- path: build/src/celestia/win32/Release/celestia-win.exe
+  name: win
+
+
+deploy:
+- provider: BinTray
+  username: 375gnu
+  api_key:
+    secure: WjSIisk+6MMl82p8bvJPavyNhJIoDLnr3+d8Yj+Xo5EUb82aK7XNNhD50vh7/01q
+  subject: celestia
+  repo: celestia-builds
+  package: snapshots
+#  artifact: qt win
+  publish: true
+  on:
+    branch: master
+
 # Build worker image (VM template)
 image: "Previous Visual Studio 2015"
 
