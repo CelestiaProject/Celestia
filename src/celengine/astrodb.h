@@ -48,11 +48,12 @@ class AstroDatabase {
     AstroNameDatabase m_nameIndex;
     LoadersMap m_loaders;
     SolarSystemIndex m_systems;
-    AstroObject::List m_stars;
-    AstroObject::List m_dsos;
-    AstroObject::List m_bodies;
     OctreeNode m_starOctree;
     OctreeNode m_dsoOctree;
+    size_t m_starNum { 0 };
+    size_t m_dsoNum { 0 };
+    size_t m_bodyNum { 0 };
+    float m_totalDsoMag { 0 };
 
     AstroCatalog::IndexNumber m_autoIndex;
     static const AstroCatalog::IndexNumber AutoIndexMax = UINT_MAX - 1;
@@ -131,14 +132,9 @@ class AstroDatabase {
     void removeNames(AstroCatalog::IndexNumber);
     void removeNames(AstroObject*);
 
-    const AstroObject::List &getStars() const
+    const MainIndex &getMainIndex() const
     {
-        return m_stars;
-    }
-
-    const AstroObject::List &getDsos() const
-    {
-        return m_dsos;
+        return m_mainIndex;
     }
 
     bool addSystem(SolarSystem*, AstroCatalog::IndexNumber);
@@ -159,6 +155,9 @@ class AstroDatabase {
     CrossIndex *getCatalogCrossIndex(int);
     const CrossIndex *getCatalogCrossIndex(int) const;
     AstroNameDatabase &getAstroNameDatabase() { return m_nameIndex; }
+    size_t getStarNumber() const { return m_starNum; }
+    size_t getDsoNumber() const { return m_dsoNum; }
+    size_t getBodyNumber() const { return m_bodyNum; }
 
     void dumpStats() const;
 };

@@ -331,14 +331,15 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
 
     // Apply the filter
     vector<DeepSkyObject*> filteredDSOs;
-    const auto &dsoset = db.getDsos();
-    unsigned int totalDSOs = dsoset.size();
+    const auto &astroset = db.getMainIndex();
+    unsigned int totalDSOs = db.getDsoNumber();
     unsigned int i = 0;
     filteredDSOs.reserve(totalDSOs);
-    for (const auto &dso : dsoset)
+    for (const auto &pair : astroset)
     {
-        if (!filterPred(static_cast<DeepSkyObject*>(dso)))
-            filteredDSOs.push_back(static_cast<DeepSkyObject*>(dso));
+        AstroObject *dso = pair.second;
+        if (dso->toSelection().deepsky() != nullptr && !filterPred(dso->toSelection().deepsky()))
+            filteredDSOs.push_back(dso->toSelection().deepsky());
     }
 
     // Don't try and show more DSOs than remain after the filter

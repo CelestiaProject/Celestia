@@ -304,7 +304,7 @@ bool AstroDatabase::addStar(Star *star)
 {
     if (!addObject(star))
         return false;
-    star->addToList(m_stars);
+    m_starNum++;
     m_starOctree.insertObject(star);
 //    fmt::fprintf(cout, "Added star  with magnitude %f.\n", star->getAbsoluteMagnitude());
     return true;
@@ -314,7 +314,8 @@ bool AstroDatabase::addDSO(DeepSkyObject *dso)
 {
     if (!addObject(dso))
         return false;
-    dso->addToList(m_dsos);
+    m_dsoNum++;
+    m_totalDsoMag += dso->getAbsoluteMagnitude();
     m_dsoOctree.insertObject(dso);
     return true;
 }
@@ -323,7 +324,7 @@ bool AstroDatabase::addBody(Body *body)
 {
     if (!addObject(body))
         return false;
-    body->addToList(m_bodies);
+    m_bodyNum++;
     return true;
 }
 
@@ -335,13 +336,14 @@ bool AstroDatabase::removeObject(AstroObject *obj)
     switch(sel.getType())
     {
         case Selection::Type_Star:
-            m_stars.erase(obj->m_listIterator);
+            m_starNum--;
             break;
         case Selection::Type_DeepSky:
-            m_dsos.erase(obj->m_listIterator);
+            m_dsoNum--;
+            m_totalDsoMag -= obj->toSelection().deepsky()->getAbsoluteMagnitude();
             break;
         case Selection::Type_Body:
-            m_bodies.erase(obj->m_listIterator);
+            m_bodyNum--;
             break;
     }
     m_mainIndex.erase(obj->getIndex());
@@ -437,15 +439,8 @@ AstroCatalog::IndexNumber AstroDatabase::getAutoIndex()
 
 float AstroDatabase::avgDsoMag() const
 {
-    float avg = 0;
-    size_t n = m_dsos.size();
-    for(const auto & dso : m_dsos)
-    {
-        if (static_cast<DeepSkyObject*>(dso)->getAbsoluteMagnitude() > 8)
-            avg += static_cast<DeepSkyObject*>(dso)->getAbsoluteMagnitude();
-        else
-            n--;
-    }
+    float avg = m_totalDsoMag;
+    size_t n = getDsoNumber();
     avg /= n;
     return avg;
 }
@@ -498,15 +493,15 @@ void AstroDatabase::dumpStats() const
                  m_mainIndex.size(),
                  sizeof(AstroObject),
                  toM(sizeof(AstroObject) * m_mainIndex.size()),
-                 m_stars.size(),
+                 getStarNumber(),
                  sizeof(Star),
-                 toM(sizeof(Star) * m_stars.size()),
-                 m_dsos.size(),
+                 toM(sizeof(Star) * getStarNumber()),
+                 getDsoNumber(),
                  sizeof(DeepSkyObject),
-                 toM(sizeof(DeepSkyObject) * m_dsos.size()),
-                 m_bodies.size(),
+                 toM(sizeof(DeepSkyObject) * getDsoNumber()),
+                 getBodyNumber(),
                  sizeof(Body),
-                 toM(sizeof(Body) * m_bodies.size()),
+                 toM(sizeof(Body) * getBodyNumber()),
                  m_nameIndex.getNamesNumber(),
                  sizeof(NameInfo),
                  toM(m_nameIndex.getNamesNumber() * sizeof(NameInfo)),

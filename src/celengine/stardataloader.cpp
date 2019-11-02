@@ -385,7 +385,7 @@ bool StarBinDataLoader::load(istream& in)
     }
 
     DPRINTF(0, "StarBinDataLoader::load stars count: %d\n", nStarsInFile);
-    fmt::fprintf(clog, _("%d stars in binary database\n"), m_db->getStars().size());
+    fmt::fprintf(clog, _("%d stars in binary database\n"), m_db->getStarNumber());
 
     // Create the temporary list of stars sorted by catalog number; this
     // will be used to lookup stars during file loading. After loading is

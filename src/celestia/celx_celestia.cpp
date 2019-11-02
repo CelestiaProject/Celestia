@@ -1267,7 +1267,7 @@ static int celestia_getstarcount(lua_State* l)
 
     CelestiaCore* appCore = this_celestia(l);
     Universe* u = appCore->getSimulation()->getUniverse();
-    lua_pushnumber(l, u->getDatabase().getStars().size());
+    lua_pushnumber(l, u->getDatabase().getStarNumber());
 
     return 1;
 }
@@ -1276,33 +1276,26 @@ static int celestia_getstarcount(lua_State* l)
 // Stars iterator function; two upvalues expected
 static int celestia_stars_iter(lua_State* l)
 {
-    CelestiaCore* appCore = to_celestia(l, lua_upvalueindex(1));
+    CelxLua celx(l);
+
+    CelestiaCore* appCore = getAppCore(l);
     if (appCore == nullptr)
     {
         Celx_DoError(l, "Bad celestia object!");
         return 0;
     }
 
-    auto i = (uint32_t) lua_tonumber(l, lua_upvalueindex(2));
-    Universe* u = appCore->getSimulation()->getUniverse();
+    AstroDatabase::MainIndex::const_iterator *it = celx.getUserData<AstroDatabase::MainIndex::const_iterator>(CelxLua::localIndex(1));
+    AstroDatabase::MainIndex::const_iterator *end = celx.getUserData<AstroDatabase::MainIndex::const_iterator>(CelxLua::localIndex(2));
 
-    if (i < u->getDatabase().getStars().size())
-    {
-        // Increment the counter
-        lua_pushnumber(l, i + 1);
-        lua_replace(l, lua_upvalueindex(2));
-
-        Star* star = u->getDatabase().getStar(i);
-        if (star == nullptr)
-            lua_pushnil(l);
-        else
-            object_new(l, Selection(star));
-
-        return 1;
-    }
-
-    // Return nil when we've enumerated all the stars
-    return 0;
+    if (it == nullptr || end == nullptr || *it == *end)
+        return 0;
+    AstroObject *obj = (*it)->second;
+    Selection ret(obj->toSelection());
+    ++(*it);
+    if (ret.star() == nullptr)
+        return celx.push();
+    return celx.pushClass(ret);
 }
 
 
@@ -1316,7 +1309,13 @@ static int celestia_stars(lua_State* l)
 
     return 1;*/
     CelxLua celx(l);
-    return celx.pushIterable<AstroObject*>(this_celestia(l)->getSimulation()->getUniverse()->getDatabase().getStars());
+    const AstroDatabase::MainIndex &index = this_celestia(l)->getSimulation()->getUniverse()->getDatabase().getMainIndex();
+    auto *it = celx.newUserData<AstroDatabase::MainIndex::const_iterator>();
+    auto *end = celx.newUserData<AstroDatabase::MainIndex::const_iterator>();
+    new (it) AstroDatabase::MainIndex::const_iterator(index.begin());
+    new (end) AstroDatabase::MainIndex::const_iterator(index.end());
+    lua_pushcclosure(l, celestia_stars_iter, 2);
+    return 1;
 }
 
 
@@ -1326,7 +1325,7 @@ static int celestia_getdsocount(lua_State* l)
 
     CelestiaCore* appCore = this_celestia(l);
     Universe* u = appCore->getSimulation()->getUniverse();
-    lua_pushnumber(l, u->getDatabase().getDsos().size());
+    lua_pushnumber(l, u->getDatabase().getDsoNumber());
 
     return 1;
 }
@@ -1364,6 +1363,31 @@ static int celestia_getdsocount(lua_State* l)
     return 0;
 }*/
 
+// Stars iterator function; two upvalues expected
+static int celestia_dsos_iter(lua_State* l)
+{
+    CelxLua celx(l);
+
+    CelestiaCore* appCore = getAppCore(l);
+    if (appCore == nullptr)
+    {
+        Celx_DoError(l, "Bad celestia object!");
+        return 0;
+    }
+
+    AstroDatabase::MainIndex::const_iterator *it = celx.getUserData<AstroDatabase::MainIndex::const_iterator>(CelxLua::localIndex(1));
+    AstroDatabase::MainIndex::const_iterator *end = celx.getUserData<AstroDatabase::MainIndex::const_iterator>(CelxLua::localIndex(2));
+
+    if (it == nullptr || end == nullptr || *it == *end)
+        return 0;
+    AstroObject *obj = (*it)->second;
+    Selection ret(obj->toSelection());
+    ++(*it);
+    if (ret.deepsky() == nullptr)
+        return celx.push();
+    return celx.pushClass(ret);
+}
+
 
 static int celestia_dsos(lua_State* l)
 {
@@ -1371,12 +1395,32 @@ static int celestia_dsos(lua_State* l)
     // counter.
     /*lua_pushvalue(l, 1);    // Celestia object
     lua_pushnumber(l, 0);   // counter
-    lua_pushcclosure(l, celestia_dsos_iter, 2);
+    lua_pushcclosure(l, celestia_stars_iter, 2);
 
     return 1;*/
     CelxLua celx(l);
-    return celx.pushIterable<AstroObject*>(this_celestia(l)->getSimulation()->getUniverse()->getDatabase().getDsos());
+    const AstroDatabase::MainIndex &index = this_celestia(l)->getSimulation()->getUniverse()->getDatabase().getMainIndex();
+    auto *it = celx.newUserData<AstroDatabase::MainIndex::const_iterator>();
+    auto *end = celx.newUserData<AstroDatabase::MainIndex::const_iterator>();
+    new (it) AstroDatabase::MainIndex::const_iterator(index.begin());
+    new (end) AstroDatabase::MainIndex::const_iterator(index.end());
+    lua_pushcclosure(l, celestia_dsos_iter, 2);
+    return 1;
 }
+
+/*
+static int celestia_dsos(lua_State* l)
+{
+    // Push a closure with two upvalues: the celestia object and a
+    // counter.
+    lua_pushvalue(l, 1);    // Celestia object
+    lua_pushnumber(l, 0);   // counter
+    lua_pushcclosure(l, celestia_dsos_iter, 2);
+
+    return 1;
+    CelxLua celx(l);
+    return celx.pushIterable<AstroObject*>(this_celestia(l)->getSimulation()->getUniverse()->getDatabase().getDsos());
+}*/
 
 static int celestia_setambient(lua_State* l)
 {

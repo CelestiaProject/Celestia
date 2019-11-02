@@ -85,18 +85,4 @@ public:
     bool loadCategories(Hash*, DataDisposition = DataDisposition::Add, const std::string &domain = "");
     friend UserCategory;
     friend AstroDatabase;
-
- protected:
-    AstroObject::List::iterator m_listIterator;
- public:
-    void addToList(List &l)
-    {
-        l.push_front(this);
-        m_listIterator = l.begin();
-    }
-    void remFromList(List &l)
-    {
-        l.erase(m_listIterator);
-        m_listIterator = l.end();
-    }
 };

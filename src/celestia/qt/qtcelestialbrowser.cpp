@@ -396,14 +396,15 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
 
     // Apply the filter
     vector<Star*> filteredStars;
-    const auto &starset = db.getStars();
-    unsigned int totalStars = starset.size();
+    const auto &astroset = db.getMainIndex();
+    unsigned int totalStars = db.getStarNumber();
     unsigned int i = 0;
     filteredStars.reserve(totalStars);
-    for (const auto &star : starset)
+    for (const auto &pair : astroset)
     {
-        if (!filterPred(static_cast<Star*>(star)))
-            filteredStars.push_back(static_cast<Star*>(star));
+        AstroObject *star = pair.second;
+        if (star->toSelection().star() != nullptr && !filterPred(star->toSelection().star()))
+            filteredStars.push_back(star->toSelection().star());
     }
 
     // Don't try and show more stars than remain after the filter
