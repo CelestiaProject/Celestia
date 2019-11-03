@@ -517,16 +517,6 @@ Renderer::Renderer() :
     }
 
     shaderManager = new ShaderManager();
-
-    mountainRep        = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, LocationLabelColor);
-    craterRep          = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, LocationLabelColor);
-    observatoryRep     = MarkerRepresentation(MarkerRepresentation::Plus,     8.0f, LocationLabelColor);
-    cityRep            = MarkerRepresentation(MarkerRepresentation::X,        3.0f, LocationLabelColor);
-    genericLocationRep = MarkerRepresentation(MarkerRepresentation::Square,   8.0f, LocationLabelColor);
-    galaxyRep          = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, GalaxyLabelColor);
-    nebulaRep          = MarkerRepresentation(MarkerRepresentation::Square,   8.0f, NebulaLabelColor);
-    openClusterRep     = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, OpenClusterLabelColor);
-    globularRep        = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, OpenClusterLabelColor);
 }
 
 
@@ -5378,6 +5368,13 @@ void Renderer::renderPlanet(Body& body,
 
         if (body.getLocations() != nullptr && (labelMode & LocationLabels) != 0)
         {
+            // Set up location markers for this body
+            mountainRep    = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, LocationLabelColor);
+            craterRep      = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, LocationLabelColor);
+            observatoryRep = MarkerRepresentation(MarkerRepresentation::Plus,     8.0f, LocationLabelColor);
+            cityRep        = MarkerRepresentation(MarkerRepresentation::X,        3.0f, LocationLabelColor);
+            genericLocationRep = MarkerRepresentation(MarkerRepresentation::Square, 8.0f, LocationLabelColor);
+
             glEnable(GL_DEPTH_TEST);
             glDepthMask(GL_FALSE);
             glDisable(GL_BLEND);
@@ -7045,6 +7042,11 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
 
     dsoRenderer.labelThresholdMag = 2.0f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
+
+    galaxyRep      = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, GalaxyLabelColor);
+    nebulaRep      = MarkerRepresentation(MarkerRepresentation::Square,   8.0f, NebulaLabelColor);
+    openClusterRep = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, OpenClusterLabelColor);
+    globularRep    = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, OpenClusterLabelColor);
 
     // Render any line primitives with smooth lines
     // (mostly to make graticules look good.)
