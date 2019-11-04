@@ -22,11 +22,8 @@ branches:
   - master
 
 artifacts:
-- path: build/src/celestia/qt/Release/celestia-qt.exe
-  name: qt
-- path: build/src/celestia/win32/Release/celestia-win.exe
+- path: '**/celestia-*.exe'
   name: win
-
 
 deploy:
 - provider: BinTray
