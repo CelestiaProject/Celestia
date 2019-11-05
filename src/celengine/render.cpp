@@ -7875,7 +7875,10 @@ void Renderer::notifyWatchers() const
 
 void Renderer::updateBodyVisibilityMask()
 {
-    int flags = 0;
+    // Bodies with type `Invisible' (e.g. ReferencePoints) are not drawn,
+    // but if their property `Visible' is set they have visible labels,
+    // so we make `Body::Invisible' class visible.
+    int flags = Body::Invisible;
 
     if ((renderFlags & Renderer::ShowPlanets) != 0)
         flags |= Body::Planet;
