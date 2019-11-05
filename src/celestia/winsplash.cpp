@@ -237,8 +237,8 @@ SplashWindow::createWindow()
 
     int x = (nScrWidth  - winWidth) / 2;
     int y = (nScrHeight - winHeight) / 2;
-    hwnd = ::CreateWindowEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, className, 
                             TEXT("Banner"), WS_POPUP, x, y, 
+    hwnd = ::CreateWindowEx(WS_EX_TOOLWINDOW, className,
                             winWidth, winHeight, NULL, NULL, NULL, this);
 
     if (hwnd)
