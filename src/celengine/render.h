@@ -114,6 +114,7 @@ class Renderer
 #endif
     void shutdown() {};
     void resize(int, int);
+    float getAspectRatio() const;
 
     float calcPixelSize(float fovY, float windowHeight);
     void setFaintestAM45deg(float);
