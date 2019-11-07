@@ -8076,3 +8076,8 @@ void Renderer::setRenderRegion(int x, int y, int width, int height, bool withSci
     setViewport(x, y, width, height);
     resize(width, height);
 }
+
+float Renderer::getAspectRatio() const
+{
+    return static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
+}
