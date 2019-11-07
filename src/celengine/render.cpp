@@ -2500,16 +2500,13 @@ void Renderer::draw(const Observer& observer,
     m_cameraOrientation = observer.getOrientationf();
 
     // Get the view frustum used for culling in camera space.
-    float viewAspectRatio = (float) windowWidth / (float) windowHeight;
     Frustum frustum(degToRad(fov),
-                    viewAspectRatio,
+                    getAspectRatio(),
                     MinNearPlaneDistance);
 
     // Get the transformed frustum, used for culling in the astrocentric coordinate
     // system.
-    Frustum xfrustum(degToRad(fov),
-                     viewAspectRatio,
-                     MinNearPlaneDistance);
+    Frustum xfrustum(frustum);
     xfrustum.transform(observer.getOrientationf().conjugate().toRotationMatrix());
 
     // Set up the camera for star rendering; the units of this phase
