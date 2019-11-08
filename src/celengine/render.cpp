@@ -7252,45 +7252,6 @@ void Renderer::renderParticles(const vector<Particle>& particles,
     }
 }
 
-
-static void renderCrosshair(float pixelSize, double tsec)
-{
-    const float cursorMinRadius = 6.0f;
-    const float cursorRadiusVariability = 4.0f;
-    const float minCursorWidth = 7.0f;
-    const float cursorPulsePeriod = 1.5f;
-
-    float selectionSizeInPixels = pixelSize;
-    float cursorRadius = selectionSizeInPixels + cursorMinRadius;
-    cursorRadius += cursorRadiusVariability * (float) (0.5 + 0.5 * std::sin(tsec * 2 * PI / cursorPulsePeriod));
-
-    // Enlarge the size of the cross hair sligtly when the selection
-    // has a large apparent size
-    float cursorGrow = max(1.0f, min(2.5f, (selectionSizeInPixels - 10.0f) / 100.0f));
-
-    float h = 2.0f * cursorGrow;
-    float cursorWidth = minCursorWidth * cursorGrow;
-    float r0 = cursorRadius;
-    float r1 = cursorRadius + cursorWidth;
-
-    const unsigned int markCount = 4;
-    Vector3f p0(r0, 0.0f, 0.0f);
-    Vector3f p1(r1, -h, 0.0f);
-    Vector3f p2(r1,  h, 0.0f);
-
-    glBegin(GL_TRIANGLES);
-    for (unsigned int i = 0; i < markCount; i++)
-    {
-        float theta = (float) (PI / 4.0) + (float) i / (float) markCount * (float) (2 * PI);
-        Matrix3f rotation = AngleAxisf(theta, Vector3f::UnitZ()).toRotationMatrix();
-        glVertex(rotation * p0);
-        glVertex(rotation * p1);
-        glVertex(rotation * p2);
-    }
-    glEnd();
-}
-
-
 void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyle fs)
 {
     if (font[fs] == nullptr)
@@ -7332,12 +7293,10 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
             glTranslatef((GLfloat) (int) annotations[i].position.x(),
                          (GLfloat) (int) annotations[i].position.y(), 0.0f);
 
-            glDisable(GL_TEXTURE_2D);
             if (markerRep.symbol() == MarkerRepresentation::Crosshair)
-                renderCrosshair(size, realTime);
+                renderCrosshair(size, realTime, annotations[i].color);
             else
                 markerRep.render(*this, size);
-            glEnable(GL_TEXTURE_2D);
 
             if (!markerRep.label().empty())
             {
@@ -7481,12 +7440,10 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
             glTranslatef((GLfloat) (int) iter->position.x(), (GLfloat) (int) iter->position.y(), ndc_z);
             glColor(iter->color);
 
-            glDisable(GL_TEXTURE_2D);
             if (markerRep.symbol() == MarkerRepresentation::Crosshair)
-                renderCrosshair(size, realTime);
+                renderCrosshair(size, realTime, iter->color);
             else
                 markerRep.render(*this, size);
-            glEnable(GL_TEXTURE_2D);
 
             if (!markerRep.label().empty())
             {
@@ -7571,12 +7528,10 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
             glTranslatef((GLfloat) (int) iter->position.x(), (GLfloat) (int) iter->position.y(), ndc_z);
             glColor(iter->color);
 
-            glDisable(GL_TEXTURE_2D);
             if (markerRep.symbol() == MarkerRepresentation::Crosshair)
-                renderCrosshair(size, realTime);
+                renderCrosshair(size, realTime, iter->color);
             else
                 markerRep.render(*this, size);
-            glEnable(GL_TEXTURE_2D);
 
             if (!markerRep.label().empty())
             {

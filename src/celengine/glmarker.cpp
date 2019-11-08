@@ -140,7 +140,16 @@ static GLfloat SelPointer[SelPointerCount * 2] =
    -20.0f,     -6.0f
 };
 
-constexpr const int StaticVtxCount = SelPointerOffset + SelPointerCount;
+constexpr const int CrosshairOffset = SelPointerOffset + SelPointerCount;
+constexpr const int CrosshairCount  = 3;
+static GLfloat Crosshair[CrosshairCount * 2 ] =
+{
+    0.0f,       0.0f,
+    1.0f,      -1.0f,
+    1.0f,       1.0f
+};
+
+constexpr const int StaticVtxCount = CrosshairOffset + CrosshairCount;
 
 constexpr const int SmallCircleOffset = StaticVtxCount;
 static int SmallCircleCount  = 0;
@@ -193,6 +202,7 @@ static void initVO(VertexObject& vo)
     VOSTREAM(UpArrow);
     VOSTREAM(DownArrow);
     VOSTREAM(SelPointer);
+    VOSTREAM(Crosshair);
 #undef VOSTREAM
 
     vo.setBufferData(small.data(), VTXTOMEM(SmallCircleOffset), memsize(small));
@@ -384,6 +394,46 @@ void Renderer::renderEclipticLine()
     prog->vec4Param("color") = EclipticColor.toVector4();
     markerVO.draw(GL_LINE_LOOP, EclipticCount, EclipticOffset);
 
+    glUseProgram(0);
+    markerVO.unbind();
+}
+
+void Renderer::renderCrosshair(float selectionSizeInPixels, double tsec, const Color &color)
+{
+    assert(shaderManager != nullptr);
+    auto* prog = shaderManager->getShader("crosshair");
+    if (prog == nullptr)
+        return;
+
+    markerVO.bind();
+    if (!markerVO.initialized())
+        initVO(markerVO);
+
+    const float cursorMinRadius = 6.0f;
+    const float cursorRadiusVariability = 4.0f;
+    const float minCursorWidth = 7.0f;
+    const float cursorPulsePeriod = 1.5f;
+
+    float cursorRadius = selectionSizeInPixels + cursorMinRadius;
+    cursorRadius += cursorRadiusVariability * (float) (0.5 + 0.5 * sin(tsec * 2 * PI / cursorPulsePeriod));
+
+    // Enlarge the size of the cross hair sligtly when the selection
+    // has a large apparent size
+    float cursorGrow = max(1.0f, min(2.5f, (selectionSizeInPixels - 10.0f) / 100.0f));
+
+    prog->use();
+    prog->vec4Param("color") = color.toVector4();
+    prog->floatParam("radius") = cursorRadius;
+    prog->floatParam("width") = minCursorWidth * cursorGrow;
+    prog->floatParam("h") = 2.0f * cursorGrow;
+
+    const unsigned int markCount = 4;
+    for (unsigned int i = 0; i < markCount; i++)
+    {
+        float theta = (float) (PI / 4.0) + (float) i / (float) markCount * (float) (2 * PI);
+        prog->floatParam("angle") = theta;
+        markerVO.draw(GL_TRIANGLES, CrosshairCount, CrosshairOffset);
+    }
     glUseProgram(0);
     markerVO.unbind();
 }
