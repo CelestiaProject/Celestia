@@ -484,6 +484,7 @@ class Renderer
 
     void renderAsterisms(const Universe&, float);
     void renderBoundaries(const Universe&, float);
+    void renderEclipticLine();
 
     void buildRenderLists(const Eigen::Vector3d& astrocentricObserverPos,
                           const celmath::Frustum& viewFrustum,

@@ -7158,20 +7158,7 @@ void Renderer::renderSkyGrids(const Observer& observer)
         }
     }
 
-    if ((renderFlags & ShowEcliptic) != 0)
-    {
-        // Draw the J2000.0 ecliptic; trivial, since this forms the basis for
-        // Celestia's coordinate system.
-        const int subdivision = 200;
-        glColor(EclipticColor);
-        glBegin(GL_LINE_LOOP);
-        for (int i = 0; i < subdivision; i++)
-        {
-            double theta = (double) i / (double) subdivision * 2 * PI;
-            glVertex3f((float) cos(theta) * 1000.0f, 0.0f, (float) sin(theta) * 1000.0f);
-        }
-        glEnd();
-    }
+    renderEclipticLine();
 }
 
 void Renderer::labelConstellations(const AsterismList& asterisms,
