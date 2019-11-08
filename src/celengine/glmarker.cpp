@@ -146,13 +146,16 @@ constexpr const int SmallCircleOffset = StaticVtxCount;
 static int SmallCircleCount  = 0;
 static int LargeCircleOffset = 0;
 static int LargeCircleCount  = 0;
+static int EclipticOffset    = 0;
+constexpr const int EclipticCount = 200;
 
 static void initVO(VertexObject& vo)
 {
+    float c, s;
+
     vector<GLfloat> small, large;
     for (int i = 0; i < 360; i += 36)
     {
-        float c, s;
         sincos(degToRad(static_cast<float>(i)), s, c);
         small.push_back(c); small.push_back(s);
         large.push_back(c); large.push_back(s);
@@ -167,8 +170,17 @@ static void initVO(VertexObject& vo)
     LargeCircleCount = large.size() / 2;
     LargeCircleOffset = SmallCircleOffset + SmallCircleCount;
 
+    vector<GLfloat> ecliptic;
+    for (int i = 0; i < EclipticCount; i++)
+    {
+        sincos((float) (2 * i) / (float) EclipticCount * ((float) PI), s, c);
+        ecliptic.push_back(c * 1000.0f);
+        ecliptic.push_back(s * 1000.0f);
+    }
+    EclipticOffset = LargeCircleOffset + LargeCircleCount;
+
 #define VTXTOMEM(a) ((a) * sizeof(GLfloat) * 2)
-    vo.allocate(VTXTOMEM(StaticVtxCount + SmallCircleCount + LargeCircleCount));
+    vo.allocate(VTXTOMEM(StaticVtxCount + SmallCircleCount + LargeCircleCount + EclipticCount));
 
 #define VOSTREAM(a) vo.setBufferData(a, VTXTOMEM(a ## Offset), sizeof(a))
     VOSTREAM(Diamond);
@@ -185,6 +197,7 @@ static void initVO(VertexObject& vo)
 
     vo.setBufferData(small.data(), VTXTOMEM(SmallCircleOffset), memsize(small));
     vo.setBufferData(large.data(), VTXTOMEM(LargeCircleOffset), memsize(large));
+    vo.setBufferData(ecliptic.data(), VTXTOMEM(EclipticOffset), memsize(ecliptic));
 #undef VTXTOMEM
 
     vo.setVertices(2, GL_FLOAT, false, 0, 0);
@@ -348,4 +361,29 @@ void Renderer::renderSelectionPointer(const Observer& observer,
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 #endif
+}
+
+/*! Draw the J2000.0 ecliptic; trivial, since this forms the basis for
+ *  Celestia's coordinate system.
+ */
+void Renderer::renderEclipticLine()
+{
+    if ((renderFlags & ShowEcliptic) == 0)
+        return;
+
+    assert(shaderManager != nullptr);
+    auto* prog = shaderManager->getShader("ecliptic");
+    if (prog == nullptr)
+        return;
+
+    markerVO.bind();
+    if (!markerVO.initialized())
+        initVO(markerVO);
+
+    prog->use();
+    prog->vec4Param("color") = EclipticColor.toVector4();
+    markerVO.draw(GL_LINE_LOOP, EclipticCount, EclipticOffset);
+
+    glUseProgram(0);
+    markerVO.unbind();
 }
