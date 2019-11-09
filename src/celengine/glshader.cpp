@@ -381,13 +381,36 @@ GetInfoLog(GLuint obj)
     GLint logLength = 0;
     GLsizei charsWritten = 0;
 
-    glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &logLength);
+    enum { Unknown, Shader, Program } kind;
+
+    if (glIsShader(obj))
+    {
+        kind = Shader;
+    }
+    else if (glIsProgram(obj))
+    {
+        kind = Program;
+    }
+    else
+    {
+        cerr << "Unknown object passed to GetInfoLog()!\n";
+        return string();
+    }
+
+    if (kind == Shader)
+        glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &logLength);
+    else
+        glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &logLength);
+
     if (logLength <= 0)
         return string();
 
     auto* log = new char[logLength];
 
-    glGetShaderInfoLog(obj, logLength, &charsWritten, log);
+    if (kind == Shader)
+        glGetShaderInfoLog(obj, logLength, &charsWritten, log);
+    else
+        glGetProgramInfoLog(obj, logLength, &charsWritten, log);
 
     string s(log, charsWritten);
     delete[] log;
