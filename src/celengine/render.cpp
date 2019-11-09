@@ -4009,135 +4009,49 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 }
 
 
-static void setupNightTextureCombine()
+static void renderSphereUnlit(const RenderInfo& ri,
+                              const Frustum& frustum,
+                              const Renderer *r)
 {
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_ONE_MINUS_SRC_COLOR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
-}
+    Texture* textures[MAX_SPHERE_MESH_TEXTURES];
+    int nTextures = 0;
 
+    ShaderProperties shadprop;
 
-#if 0
-static void setupBumpTexenvAmbient(Color ambientColor)
-{
-    float texenvConst[4];
-    texenvConst[0] = ambientColor.red();
-    texenvConst[1] = ambientColor.green();
-    texenvConst[2] = ambientColor.blue();
-    texenvConst[3] = ambientColor.alpha();
-
-    // Set up the texenv_combine extension to do DOT3 bump mapping.
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-
-    // The primary color contains the light direction in surface
-    // space, and texture0 is a normal map.  The lighting is
-    // calculated by computing the dot product.
-    glActiveTexture(GL_TEXTURE0);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_DOT3_RGB);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-
-    // Add in the ambient color
-    glActiveTexture(GL_TEXTURE1);
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, texenvConst);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PREVIOUS_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_CONSTANT_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-    glEnable(GL_TEXTURE_2D);
-
-    // In the final stage, modulate the lighting value by the
-    // base texture color.
-    glActiveTexture(GL_TEXTURE2);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PREVIOUS_EXT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-    glEnable(GL_TEXTURE_2D);
-
-    glActiveTexture(GL_TEXTURE0);
-}
-#endif
-
-
-static void renderSphereDefault(const RenderInfo& ri,
-                                const Frustum& frustum,
-                                bool lit)
-{
-    if (lit)
-        glEnable(GL_LIGHTING);
-    else
-        glDisable(GL_LIGHTING);
-
-    if (ri.baseTex == nullptr)
+    // Set up the textures used by this object
+    if (ri.baseTex != nullptr)
     {
-        glDisable(GL_TEXTURE_2D);
+        shadprop.texUsage = ShaderProperties::DiffuseTexture;
+        textures[nTextures++] = ri.baseTex;
     }
-    else
+    if (ri.nightTex != nullptr)
     {
-        glEnable(GL_TEXTURE_2D);
-        ri.baseTex->bind();
+        shadprop.texUsage |= ShaderProperties::NightTexture;
+        textures[nTextures++] = ri.nightTex;
     }
-
-    glColor(ri.color);
-
-    g_lodSphere->render(LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                        frustum, ri.pixWidth,
-                        ri.baseTex);
-    if (ri.nightTex != nullptr && ri.useTexEnvCombine)
-    {
-        ri.nightTex->bind();
-#ifdef USE_HDR
-#ifdef HDR_COMPRESS
-        Color nightColor(ri.color.red()   * 2.f,
-                         ri.color.green() * 2.f,
-                         ri.color.blue()  * 2.f,
-                         ri.nightLightScale);  // Modulate brightness using alpha
-#else
-        Color nightColor(ri.color.red(),
-                         ri.color.green(),
-                         ri.color.blue(),
-                         ri.nightLightScale);  // Modulate brightness using alpha
-#endif
-        glColor(nightColor);
-#endif
-        setupNightTextureCombine();
-        glEnable(GL_BLEND);
-#ifdef USE_HDR
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-#else
-        glBlendFunc(GL_ONE, GL_ONE);
-#endif
-        glAmbientLightColor(Color::Black); // Disable ambient light
-        g_lodSphere->render(LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                            frustum, ri.pixWidth,
-                            ri.nightTex);
-        glAmbientLightColor(ri.ambientColor);
-#ifdef USE_HDR
-        glColor(ri.color);
-#endif
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    }
-
     if (ri.overlayTex != nullptr)
     {
-        ri.overlayTex->bind();
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        g_lodSphere->render(LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                            frustum, ri.pixWidth,
-                            ri.overlayTex);
-        glBlendFunc(GL_ONE, GL_ONE);
+        shadprop.texUsage |= ShaderProperties::OverlayTexture;
+        textures[nTextures++] = ri.overlayTex;
     }
+
+    // Get a shader for the current rendering configuration
+    auto* prog = r->getShaderManager().getShader(shadprop);
+    if (prog == nullptr)
+        return;
+    prog->use();
+
+    prog->textureOffset = 0.0f;
+    // TODO: introduce a new ShaderProperties light model, so those
+    // assignments are not required
+    prog->ambientColor = Color::White.toVector3();
+    prog->opacity = 1.0f;
+#ifdef USE_HDR
+    prog->nightLightScale = ri.nightLightScale;
+#endif
+    g_lodSphere->render(frustum, ri.pixWidth, textures, nTextures);
+
+    glUseProgram(0);
 }
 
 
@@ -4674,7 +4588,7 @@ void Renderer::renderObject(const Vector3f& pos,
         }
         else
         {
-            renderSphereDefault(ri, viewFrustum, false);
+            renderSphereUnlit(ri, viewFrustum, this);
         }
     }
     else
