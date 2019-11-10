@@ -4520,20 +4520,6 @@ void Renderer::renderObject(const Vector3f& pos,
     // See if the surface should be lit
     bool lit = (obj.surface->appearanceFlags & Surface::Emissive) == 0;
 
-    // Set the OpenGL light state
-    unsigned int i;
-    for (i = 0; i < ls.nLights; i++)
-    {
-        const DirectionalLight& light = ls.lights[i];
-
-        glLightDirection(GL_LIGHT0 + i, ls.lights[i].direction_obj);
-
-        Vector3f lightColor = light.color.toVector3() * light.irradiance;
-        glLightColor(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
-        glLightColor(GL_LIGHT0 + i, GL_SPECULAR, lightColor);
-        glEnable(GL_LIGHT0 + i);
-    }
-
     // Compute the inverse model/view matrix
     Affine3f invModelView = obj.orientation *
                             Translation3f(-pos / obj.radius) *
@@ -4654,15 +4640,6 @@ void Renderer::renderObject(const Vector3f& pos,
                                           astro::daysToSecs(now - astro::J2000),
                                           this);
             }
-
-            for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
-            {
-                glActiveTexture(GL_TEXTURE0 + i);
-                glDisable(GL_TEXTURE_2D);
-            }
-            glActiveTexture(GL_TEXTURE0);
-            glEnable(GL_TEXTURE_2D);
-            glUseProgram(0);
         }
     }
 
@@ -4752,28 +4729,10 @@ void Renderer::renderObject(const Vector3f& pos,
             if (distance - radius < atmosphere->cloudHeight)
                 glFrontFace(GL_CW);
 
-            if (atmosphere->cloudSpeed != 0.0f)
-            {
-                // Make the clouds appear to rotate above the surface of
-                // the planet.  This is easier to do with the texture
-                // matrix than the model matrix because changing the
-                // texture matrix doesn't require us to compute a second
-                // set of model space rendering parameters.
-                glMatrixMode(GL_TEXTURE);
-                glTranslatef(cloudTexOffset, 0.0f, 0.0f);
-                glMatrixMode(GL_MODELVIEW);
-            }
-
-            glEnable(GL_LIGHTING);
             glDepthMask(GL_FALSE);
             cloudTex->bind();
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#ifdef HDR_COMPRESS
-            glColor4f(0.5f, 0.5f, 0.5f, 1);
-#else
-            glColor4f(1, 1, 1, 1);
-#endif
 
             // Cloud layers can be trouble for the depth buffer, since they tend
             // to be very close to the surface of a planet relative to the radius
@@ -4826,7 +4785,6 @@ void Renderer::renderObject(const Vector3f& pos,
             Texture* ringsTex = obj.rings->texture.find(textureResolution);
             if (ringsTex != nullptr)
             {
-                glEnable(GL_TEXTURE_2D);
                 ringsTex->bind();
             }
         }
@@ -4843,14 +4801,9 @@ void Renderer::renderObject(const Vector3f& pos,
         }
     }
 
-    // Disable all light sources other than the first
-    for (i = 0; i < ls.nLights; i++)
-        glDisable(GL_LIGHT0 + i);
-
     glPopMatrix();
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glDisable(GL_LIGHTING);
     glEnable(GL_BLEND);
 }
 
