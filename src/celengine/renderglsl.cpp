@@ -60,8 +60,6 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     unsigned int nTextures = 0;
 
-    glDisable(GL_LIGHTING);
-
     ShaderProperties shadprop;
     shadprop.nLights = min(ls.nLights, MaxShaderLights);
 
@@ -297,8 +295,6 @@ void renderGeometry_GLSL(Geometry* geometry,
                          double tsec,
                          const Renderer* renderer)
 {
-    glDisable(GL_LIGHTING);
-
     GLSL_RenderContext rc(renderer, ls, geometryScale, planetOrientation);
 
     if ((renderFlags & Renderer::ShowAtmospheres) != 0)
@@ -350,8 +346,6 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                double tsec,
                                const Renderer* renderer)
 {
-    glDisable(GL_LIGHTING);
-
     GLSLUnlit_RenderContext rc(renderer, geometryScale);
 
     rc.setPointScale(ri.pointScale);
@@ -400,8 +394,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
     Texture* textures[MAX_SPHERE_MESH_TEXTURES] =
         { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     unsigned int nTextures = 0;
-
-    glDisable(GL_LIGHTING);
 
     ShaderProperties shadprop;
     shadprop.nLights = ls.nLights;
@@ -531,8 +523,6 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     // of planets and stars behind it.
     if (ls.nLights == 0)
         return;
-
-    glDisable(GL_LIGHTING);
 
     ShaderProperties shadprop;
     shadprop.nLights = ls.nLights;
@@ -806,8 +796,6 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
                               double tsec,
                               const Renderer* renderer)
 {
-    glDisable(GL_LIGHTING);
-
     shadowFbo->bind();
     glViewport(0, 0, shadowFbo->width(), shadowFbo->height());
     glClear(GL_DEPTH_BUFFER_BIT);
