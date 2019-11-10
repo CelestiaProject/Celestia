@@ -3,11 +3,11 @@
 |[![GitHub release](https://img.shields.io/badge/Release-v1.6.1-blue.svg)](https://celestiaproject.net/download.html) | [![Localization](https://img.shields.io/badge/Localized-85%25-green.svg)](#) | [![License](https://img.shields.io/badge/License-GPLv2-blue.svg)](https://github.com/CelestiaProject/Celestia/blob/master/COPYING) | [![Contribute](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](#contributing) |
 
 # Celestia
-![Celestia](https://celestiaproject.net/img/albums/2017/04/20/9a57d8f21a129049a6b0e1da3a5c852d.png)  
+![Celestia](celestia-logo.png)  
 **A real-time space simulation that lets you experience our universe in three dimensions.**  
 
 **Copyright © 2001-2019, Celestia Development Team**  
-**Celestia web site: https://celestia.space**  
+**Celestia website: https://celestia.space**  
 **Celestia WikiBook: https://en.wikibooks.org/wiki/Celestia**  
 **Celestia forums: https://celestia.space/forum/**  
 **Celestia Archive Repository: https://github.com/Anthony-B-Russo10/Celestia-Archive**
