@@ -3513,8 +3513,7 @@ void Renderer::draw(const Observer& observer,
     glDisable(GL_LIGHTING);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glPolygonMode(GL_FRONT, GL_FILL);
-    glPolygonMode(GL_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
@@ -4579,9 +4578,11 @@ void Renderer::renderObject(const Vector3f& pos,
     Texture* cloudTex       = nullptr;
     Texture* cloudNormalMap = nullptr;
     float cloudTexOffset    = 0.0f;
-    if (obj.atmosphere != nullptr)
+    // Ugly cast required because MultiResTexture::find() is non-const
+    Atmosphere* atmosphere  = const_cast<Atmosphere*>(obj.atmosphere);
+
+    if (atmosphere != nullptr)
     {
-        Atmosphere* atmosphere = const_cast<Atmosphere*>(obj.atmosphere); // Ugly cast required because MultiResTexture::find() is non-const
         if ((renderFlags & ShowCloudMaps) != 0)
         {
             if (atmosphere->cloudTexture.tex[textureResolution] != InvalidResource)
@@ -4599,7 +4600,7 @@ void Renderer::renderObject(const Vector3f& pos,
         if (lit)
         {
             renderEllipsoid_GLSL(ri, ls,
-                                 const_cast<Atmosphere*>(obj.atmosphere), cloudTexOffset,
+                                 atmosphere, cloudTexOffset,
                                  scaleFactors,
                                  textureResolution,
                                  renderFlags,
@@ -4659,10 +4660,8 @@ void Renderer::renderObject(const Vector3f& pos,
         }
     }
 
-    if (obj.atmosphere != nullptr)
+    if (atmosphere != nullptr)
     {
-        Atmosphere* atmosphere = const_cast<Atmosphere *>(obj.atmosphere);
-
         // Compute the apparent thickness in pixels of the atmosphere.
         // If it's only one pixel thick, it can look quite unsightly
         // due to aliasing.  To avoid popping, we gradually fade in the
@@ -4779,8 +4778,7 @@ void Renderer::renderObject(const Vector3f& pos,
 
     if (obj.rings != nullptr && (renderFlags & ShowPlanetRings) != 0)
     {
-        if ((obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
-            (renderFlags & ShowRingShadows) != 0)
+        if (lit && (renderFlags & ShowRingShadows) != 0)
         {
             Texture* ringsTex = obj.rings->texture.find(textureResolution);
             if (ringsTex != nullptr)
