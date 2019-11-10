@@ -4062,6 +4062,32 @@ static void renderSphereUnlit(const RenderInfo& ri,
 }
 
 
+static void renderCloudsUnlit(const RenderInfo& ri,
+                              const Frustum& frustum,
+                              Texture *cloudTex,
+                              float cloudTexOffset,
+                              const Renderer *r)
+{
+    ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::DiffuseTexture;
+
+    // Get a shader for the current rendering configuration
+    auto* prog = r->getShaderManager().getShader(shadprop);
+    if (prog == nullptr)
+        return;
+    prog->use();
+
+    prog->textureOffset = cloudTexOffset;
+    // TODO: introduce a new ShaderProperties light model, so those
+    // assignments are not required
+    prog->ambientColor = Color::White.toVector3();
+    prog->opacity = 1.0f;
+
+    g_lodSphere->render(frustum, ri.pixWidth, &cloudTex, 1);
+
+    glUseProgram(0);
+}
+
 void Renderer::renderLocations(const Body& body,
                                const Vector3d& bodyPosition,
                                const Quaterniond& bodyOrientation)
@@ -4775,12 +4801,7 @@ void Renderer::renderObject(const Vector3f& pos,
             }
             else
             {
-                glDisable(GL_LIGHTING);
-                g_lodSphere->render(LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                                    viewFrustum,
-                                    ri.pixWidth,
-                                    cloudTex);
-                glEnable(GL_LIGHTING);
+                renderCloudsUnlit(ri, viewFrustum, cloudTex, cloudTexOffset, this);
             }
 
             glDisable(GL_POLYGON_OFFSET_FILL);
