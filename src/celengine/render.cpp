@@ -3758,6 +3758,10 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     if (atmosphere.height == 0.0f)
         return;
 
+    auto *prog = shaderManager->getShader(ShaderProperties::PerVertexColor);
+    if (prog == nullptr)
+        return;
+
     glDepthMask(GL_FALSE);
 
     // Gradually fade in the atmosphere if it's thickness on screen is just
@@ -3997,6 +4001,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SkyVertex),
                    static_cast<void*>(&skyVertices[0].color));
 
+    prog->use();
     for (int i = 0; i < nRings; i++)
     {
         glDrawElements(GL_QUAD_STRIP,
@@ -4006,6 +4011,8 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     }
 
     glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glUseProgram(0);
 }
 
 
@@ -4689,8 +4696,6 @@ void Renderer::renderObject(const Vector3f& pos,
             {
                 glPushMatrix();
                 glLoadIdentity();
-                glDisable(GL_LIGHTING);
-                glDisable(GL_TEXTURE_2D);
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -4704,7 +4709,6 @@ void Renderer::renderObject(const Vector3f& pos,
                                           ls,
                                           thicknessInPixels,
                                           lit);
-                glEnable(GL_TEXTURE_2D);
                 glPopMatrix();
             }
         }
