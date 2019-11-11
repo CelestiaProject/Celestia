@@ -45,7 +45,7 @@ constexpr const char SAOCatalogPrefix[]       = "SAO ";
 // local group of galaxies. A larger value should be OK, but the
 // performance implications for octree traversal still need to be
 // investigated.
-constexpr const float STAR_OCTREE_ROOT_SIZE   = 10000000.0f;
+constexpr const float STAR_OCTREE_ROOT_SIZE   = 1000000000.0f;
 
 constexpr const float STAR_OCTREE_MAGNITUDE   = 6.0f;
 //constexpr const float STAR_EXTRA_ROOM        = 0.01f; // Reserve 1% capacity for extra stars
