@@ -5355,22 +5355,6 @@ struct CometTailVertex
 
 static CometTailVertex cometTailVertices[CometTailSlices * MaxCometTailPoints];
 
-static void ProcessCometTailVertex(const Color& cometTailColor,
-                                   const CometTailVertex& v,
-                                   const Vector3f& viewDir,
-                                   float fadeDistFromSun)
-{
-    // If fadeDistFromSun = x/x0 >= 1.0, comet tail starts fading,
-    // i.e. fadeFactor quickly transits from 1 to 0.
-
-    float fadeFactor = 0.5f - 0.5f * (float) tanh(fadeDistFromSun - 1.0f / fadeDistFromSun);
-    float shade = abs(viewDir.dot(v.normal) * v.brightness * fadeFactor);
-    glColor4f(cometTailColor.red(), cometTailColor.green(),
-              cometTailColor.blue(), shade);
-    glVertex(v.point);
-}
-
-
 // Compute a rough estimate of the visible length of the dust tail.
 // TODO: This is old code that needs to be rewritten. For one thing,
 // the length is inversely proportional to the distance from the sun,
@@ -5389,6 +5373,10 @@ void Renderer::renderCometTail(const Body& body,
                                const Observer& observer,
                                float discSizeInPixels)
 {
+    auto prog = shaderManager->getShader("comet");
+    if (prog == nullptr)
+        return;
+
     double now = observer.getTime();
 
     Vector3f cometPoints[MaxCometTailPoints];
@@ -5453,74 +5441,57 @@ void Renderer::renderCometTail(const Body& body,
     Vector3f u = v.unitOrthogonal();
     Vector3f w = u.cross(v);
 
-    glColor4f(0.0f, 1.0f, 1.0f, 0.5f);
-    glPushMatrix();
-    glTranslate(pos);
-
-    // glActiveTexture(GL_TEXTURE0);
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
-    glDepthMask(GL_FALSE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
     for (i = 0; i < nTailPoints; i++)
     {
         float brightness = 1.0f - (float) i / (float) (nTailPoints - 1);
         Vector3f v0, v1;
         float sectionLength;
-        if (i != 0 && i != nTailPoints - 1)
+        float w0, w1;
+        // Special case the first vertex in the comet tail
+        if (i == 0)
         {
-            v0 = cometPoints[i] - cometPoints[i - 1];
-            v1 = cometPoints[i + 1] - cometPoints[i];
-            sectionLength = v0.norm();
-            v0.normalize();
-            v1.normalize();
-            q.setFromTwoVectors(v0, v1);
-            Matrix3f m = q.toRotationMatrix();
-            u = m * u;
-            v = m * v;
-            w = m * w;
-        }
-        else if (i == 0)
-        {
-            v0 = cometPoints[i + 1] - cometPoints[i];
+            v0 = cometPoints[1] - cometPoints[0];
             sectionLength = v0.norm();
             v0.normalize();
             v1 = v0;
+            w0 = 1.0f;
+            w1 = 0.0f;
         }
         else
         {
             v0 = cometPoints[i] - cometPoints[i - 1];
             sectionLength = v0.norm();
             v0.normalize();
-            v1 = v0;
+
+            if (i == nTailPoints - 1)
+            {
+                v1 = v0;
+            }
+            else
+            {
+                v1 = (cometPoints[i + 1] - cometPoints[i]).normalized();
+                q.setFromTwoVectors(v0, v1);
+                Matrix3f m = q.toRotationMatrix();
+                u = m * u;
+                v = m * v;
+                w = m * w;
+            }
+            float dr = (dustTailRadius / (float) nTailPoints) / sectionLength;
+            w0 = atan(dr);
+            float d = sqrt(1.0f + w0 * w0);
+            w1 = 1.0f / d;
+            w0 = w0 / d;
         }
 
-        float radius = (float) i / (float) nTailPoints *
-            dustTailRadius;
-        float dr = (dustTailRadius / (float) nTailPoints) /
-            sectionLength;
-
-        auto w0 = (float) atan(dr);
-        float d = std::sqrt(1.0f + w0 * w0);
-        float w1 = 1.0f / d;
-        w0 = w0 / d;
-
-        // Special case the first vertex in the comet tail
-        if (i == 0)
-        {
-            w0 = 1;
-            w1 = 0.0f;
-        }
-
+        float radius = (float) i / (float) nTailPoints * dustTailRadius;
         for (int j = 0; j < nTailSlices; j++)
         {
             float theta = (float) (2 * PI * (float) j / nTailSlices);
-            auto s = (float) sin(theta);
-            auto c = (float) cos(theta);
+            float s, c;
+            sincos(theta, s, c);
             CometTailVertex& vtx = cometTailVertices[i * nTailSlices + j];
             vtx.normal = u * (s * w1) + w * (c * w1) + v * w0;
+            vtx.normal.normalize();
             s *= radius;
             c *= radius;
 
@@ -5529,40 +5500,65 @@ void Renderer::renderCometTail(const Body& body,
         }
     }
 
-    Vector3f viewDir = pos.normalized();
-
+    glPushMatrix();
+    glTranslate(pos);
+    glDepthMask(GL_FALSE);
     glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    prog->use();
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    auto brightness = prog->attribIndex("brightness");
+    if (brightness != -1)
+        glEnableVertexAttribArray(brightness);
+    prog->vec3Param("color") = body.getCometTailColor().toVector3();
+    prog->vec3Param("viewDir") = pos.normalized();
+    // If fadeDistFromSun = x/x0 >= 1.0, comet tail starts fading,
+    // i.e. fadeFactor quickly transits from 1 to 0.
+    float fadeFactor = 0.5f * (1.0f - tanh(fadeDistance - 1.0f / fadeDistance));
+    prog->floatParam("fadeFactor") = fadeFactor;
+
+    vector<unsigned short> indeces;
+    indeces.reserve(nTailSlices * 2 + 2);
+    for (int j = 0; j < nTailSlices; j++)
+    {
+        indeces.push_back(j);
+        indeces.push_back(j + nTailSlices);
+    }
+    indeces.push_back(0);
+    indeces.push_back(nTailSlices);
+
+    const size_t stride = sizeof(CometTailVertex);
     for (i = 0; i < nTailPoints - 1; i++)
     {
-        glBegin(GL_QUAD_STRIP);
-        int n = i * nTailSlices;
-        for (int j = 0; j < nTailSlices; j++)
-        {
-            ProcessCometTailVertex(body.getCometTailColor(),
-                                   cometTailVertices[n + j], viewDir,
-                                   fadeDistance);
-            ProcessCometTailVertex(body.getCometTailColor(),
-                                   cometTailVertices[n + j + nTailSlices],
-                                   viewDir, fadeDistance);
-        }
-        ProcessCometTailVertex(body.getCometTailColor(),
-                               cometTailVertices[n], viewDir, fadeDistance);
-        ProcessCometTailVertex(body.getCometTailColor(),
-                               cometTailVertices[n + nTailSlices],
-                               viewDir, fadeDistance);
-        glEnd();
+        const auto p = &cometTailVertices[i * nTailSlices];
+        glVertexPointer(3, GL_FLOAT, stride, &p->point);
+        glNormalPointer(GL_FLOAT, stride, &p->normal);
+        if (brightness != -1)
+            glVertexAttribPointer(brightness, 1, GL_FLOAT, GL_FALSE, stride, &p->brightness);
+        glDrawElements(GL_TRIANGLE_STRIP, indeces.size(), GL_UNSIGNED_SHORT, indeces.data());
     }
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    if (brightness == -1)
+        glDisableVertexAttribArray(brightness);
     glEnable(GL_CULL_FACE);
+    glUseProgram(0);
 
-    glBegin(GL_LINE_STRIP);
-    for (i = 0; i < nTailPoints; i++)
-    {
-        glVertex(cometPoints[i]);
-    }
-    glEnd();
-
+#ifdef DEBUG_COMET_TAIL
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
+    glColor4f(0.0f, 1.0f, 1.0f, 0.5f);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, cometPoints);
+    glDrawArrays(GL_LINE_STRIP, 0, nTailPoints);
+    glDisableClientState(GL_VERTEX_ARRAY);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
+#endif
 
     glPopMatrix();
 }
