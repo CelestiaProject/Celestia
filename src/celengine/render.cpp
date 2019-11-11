@@ -7060,35 +7060,29 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 
 
 void Renderer::renderParticles(const vector<Particle>& particles,
-                               const Quaternionf& orientation)
+                               const Quaternionf& /*orientation*/)
 {
-    int nParticles = particles.size();
+    ShaderProperties shaderprop;
+    shaderprop.lightModel = ShaderProperties::ParticleModel;
+    shaderprop.texUsage = ShaderProperties::PointSprite;
+    auto *prog = shaderManager->getShader(shaderprop);
+    if (prog == nullptr)
+        return;
+    prog->use();
 
-    {
-        Matrix3f m = orientation.conjugate().toRotationMatrix();
-        Vector3f v0 = m * Vector3f(-1, -1, 0);
-        Vector3f v1 = m * Vector3f( 1, -1, 0);
-        Vector3f v2 = m * Vector3f( 1,  1, 0);
-        Vector3f v3 = m * Vector3f(-1,  1, 0);
+    glEnable(GL_POINT_SPRITE);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, sizeof(Particle), &particles[0].center);
+    glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
+                          1, GL_FLOAT, GL_FALSE,
+                          sizeof(Particle), &particles[0].size);
+    glDrawArrays(GL_POINTS, 0, particles.size());
 
-        glBegin(GL_QUADS);
-        for (int i = 0; i < nParticles; i++)
-        {
-            Vector3f center = particles[i].center;
-            float size = particles[i].size;
-
-            glColor(particles[i].color);
-            glTexCoord2f(0, 1);
-            glVertex(center + (v0 * size));
-            glTexCoord2f(1, 1);
-            glVertex(center + (v1 * size));
-            glTexCoord2f(1, 0);
-            glVertex(center + (v2 * size));
-            glTexCoord2f(0, 0);
-            glVertex(center + (v3 * size));
-        }
-        glEnd();
-    }
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
+    glUseProgram(0);
+    glDisable(GL_POINT_SPRITE);
 }
 
 void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyle fs)
