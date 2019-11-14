@@ -39,7 +39,7 @@ deploy:
     branch: master
 
 # Build worker image (VM template)
-image: "Previous Visual Studio 2015"
+image: "Visual Studio 2015"
 
 # clone directory
 clone_folder: c:\projects\celestia
