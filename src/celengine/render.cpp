@@ -1572,6 +1572,10 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                            float nearDist,
                            float farDist)
 {
+    auto *prog = shaderManager->getShader(ShaderProperties::PerVertexColor);
+    if (prog == nullptr)
+        return;
+
     Body* body = orbitPath.body;
     double nearZ = -nearDist;  // negate, becase z is into the screen in camera space
     double farZ = -farDist;
@@ -1755,7 +1759,6 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     else
         highlight = highlightObject.star() == orbitPath.star;
     Vector4f orbitColor = renderOrbitColor(body, highlight, orbitPath.opacity);
-    glColor4fv(orbitColor.data());
 
 #ifdef STIPPLED_LINES
     glLineStipple(3, 0x5555);
@@ -1770,6 +1773,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         viewFrustumPlaneNormals[i] = frustum.plane(i).normal().cast<double>();
     }
 
+    prog->use();
     if (orbit->isPeriodic())
     {
         double period = orbit->getPeriod();
@@ -1821,6 +1825,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     glDisable(GL_LINE_STIPPLE);
 #endif
 
+    glUseProgram(0);
     glPopMatrix();
 }
 
