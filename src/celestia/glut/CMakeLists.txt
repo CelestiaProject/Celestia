@@ -1,0 +1,11 @@
+if(NOT ENABLE_GLUT)
+  message(STATUS "GLUT frontend is disabled.")
+  return()
+endif()
+
+find_package(GLUT REQUIRED)
+set(GLUT_SOURCES glutmain.cpp)
+add_executable(celestia-glut ${GLUT_SOURCES})
+target_include_directories(celestia-glut PRIVATE ${GLUT_INCLUDE_DIR})
+target_link_libraries(celestia-glut ${CELESTIA_LIBS} ${GLUT_LIBRARIES})
+install(TARGETS celestia-glut RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

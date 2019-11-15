@@ -30,7 +30,7 @@
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
-#include "celestiacore.h"
+#include <celestia/celestiacore.h>
 /* what are you supposed to be?
 #include "popt.h"
 */
@@ -551,5 +551,3 @@ int main(int argc, char* argv[])
 
     return 0;
 }
-
-

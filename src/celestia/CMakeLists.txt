@@ -56,21 +56,7 @@ cotire(celestia)
 
 #install(TARGETS celestia LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-# celestia-glut binary
-if(ENABLE_GLUT)
-  find_package(GLUT)
-  if(NOT GLUT_FOUND)
-    message(WARNING "GLUT library isn't found, not building GLUT fronend.")
-  else()
-    set(GLUT_SOURCES glutmain.cpp)
-    add_executable(celestia-glut ${GLUT_SOURCES})
-    cotire(celestia-glut)
-    target_include_directories(celestia-glut PRIVATE ${GLUT_INCLUDE_DIR})
-    target_link_libraries(celestia-glut ${CELESTIA_LIBS} ${GLUT_LIBRARIES})
-    install(TARGETS celestia-glut RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  endif()
-endif()
-
+add_subdirectory(glut)
 add_subdirectory(gtk)
 add_subdirectory(qt)
 add_subdirectory(win32)
