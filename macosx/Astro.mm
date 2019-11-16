@@ -19,8 +19,8 @@ NSDictionary* coordinateDict;
     NSDate *date = nil;
     astro::Date astroDate([jd doubleValue]);
     int year = astroDate.year;
-    NSCalendar *currentCalendar = [NSCalendar currentCalendar];
-    [currentCalendar setTimeZone: [NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    NSCalendar *currentCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    [currentCalendar setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
     NSDateComponents *comps = [[NSDateComponents alloc] init];
     int era = 1;
     if (year < 1)
@@ -91,17 +91,16 @@ NSDictionary* coordinateDict;
 
 +(NSNumber*)julianDate:(NSDate *)date
 {
-    NSTimeZone *prevTimeZone = [NSTimeZone defaultTimeZone];
-    // UTCtoTDB() expects GMT
-    [NSTimeZone setDefaultTimeZone: [NSTimeZone timeZoneWithAbbreviation: @"GMT"]];
     NSDate *roundedDate = nil;
 
-    NSCalendar *currentCalendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
+    NSCalendar *currentCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    // UTCtoTDB() expects GMT
+    [currentCalendar setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
     NSDateComponents *comps = [currentCalendar components:
-        NSEraCalendarUnit  |
-        NSYearCalendarUnit | NSMonthCalendarUnit  | NSDayCalendarUnit | 
-        NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit
-                                                 fromDate: date];
+        NSCalendarUnitEra  |
+        NSCalendarUnitYear | NSCalendarUnitMonth  | NSCalendarUnitDay |
+        NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond
+                                                 fromDate:date];
     NSInteger era  = [comps era];
     NSInteger year = [comps year];
     if (era < 1) year = 1 - year;
@@ -111,14 +110,13 @@ NSDictionary* coordinateDict;
     astroDate.seconds = (int)[comps second];
     // -[NSDateComponents second] is rounded to an integer,
     // so have to calculate and add decimal part
-    roundedDate = [currentCalendar dateFromComponents: comps];
+    roundedDate = [currentCalendar dateFromComponents:comps];
 
-    NSTimeInterval extraSeconds = [date timeIntervalSinceDate: roundedDate];
+    NSTimeInterval extraSeconds = [date timeIntervalSinceDate:roundedDate];
     astroDate.seconds += extraSeconds;
 
-    [NSTimeZone setDefaultTimeZone: prevTimeZone];
     double jd = astro::UTCtoTDB(astroDate);
-    return [NSNumber numberWithDouble: jd];
+    return [NSNumber numberWithDouble:jd];
 }
 
 +(NSNumber*)speedOfLight
