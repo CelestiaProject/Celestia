@@ -13,6 +13,7 @@
 #include "frametree.h"
 #include <celmath/mathlib.h>
 #include <celmath/solve.h>
+#include <celmath/geomutil.h>
 
 static const double maximumSimTime = 730486721060.00073; // 2000000000 Jan 01 12:00:00 UTC
 static const double minimumSimTime = -730498278941.99951; // -2000000000 Jan 01 12:00:00 UTC
@@ -235,29 +236,6 @@ void Observer::setAngularVelocity(const Vector3d& v)
 }
 
 
-/*! Determine an orientation that will make the negative z-axis point from
- *  from the observer to the target, with the y-axis pointing in direction
- *  of the component of 'up' that is orthogonal to the z-axis.
- */
-// TODO: This is a generally useful function that should be moved to
-// the celmath package.
-template<class T> static Quaternion<T>
-lookAt(Matrix<T, 3, 1> from, Matrix<T, 3, 1> to, Matrix<T, 3, 1> up)
-{
-    Matrix<T, 3, 1> n = to - from;
-    n.normalize();
-    Matrix<T, 3, 1> v = n.cross(up).normalized();
-    Matrix<T, 3, 1> u = v.cross(n);
-
-    Matrix<T, 3, 3> m;
-    m.col(0) = v;
-    m.col(1) = u;
-    m.col(2) = -n;
-
-    return Quaternion<T>(m).conjugate();
-}
-
-
 double Observer::getArrivalTime() const
 {
     if (observerMode != Travelling)
@@ -471,7 +449,7 @@ void Observer::update(double dt, double timeScale)
         Vector3d up = getOrientation().conjugate() * Vector3d::UnitY();
         Vector3d viewDir = trackObject.getPosition(getTime()).offsetFromKm(getPosition()).normalized();
 
-        setOrientation(lookAt<double>(Vector3d::Zero(), viewDir, up));
+        setOrientation(LookAt<double>(Vector3d::Zero(), viewDir, up));
     }
 }
 
@@ -587,7 +565,7 @@ void Observer::computeGotoParameters(const Selection& destination,
 
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
-    jparams.finalOrientation = lookAt<double>(Vector3d::Zero(), focus, upd);
+    jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, upd);
     jparams.startInterpolation = min(startInter, endInter);
     jparams.endInterpolation   = max(startInter, endInter);
 
@@ -649,7 +627,7 @@ void Observer::computeGotoParametersGC(const Selection& destination,
 
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
-    jparams.finalOrientation = lookAt<double>(Vector3d::Zero(), focus, upd);
+    jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, upd);
     jparams.startInterpolation = min(startInter, endInter);
     jparams.endInterpolation   = max(startInter, endInter);
 
@@ -686,7 +664,7 @@ void Observer::computeCenterParameters(const Selection& destination,
 
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
-    jparams.finalOrientation = lookAt<double>(Vector3d::Zero(), focus, up);
+    jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, up);
     jparams.startInterpolation = 0;
     jparams.endInterpolation   = 1;
 
@@ -1273,7 +1251,7 @@ void Observer::gotoSurface(const Selection& sel, double duration)
     Quaterniond q = orientationUniv;
     if (v.dot(viewDir) < 0.0)
     {
-        q = lookAt<double>(Vector3d::Zero(), up, v);
+        q = LookAt<double>(Vector3d::Zero(), up, v);
     }
 
     ObserverFrame frame(ObserverFrame::BodyFixed, sel);
