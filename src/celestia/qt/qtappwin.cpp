@@ -38,6 +38,7 @@
 #include <QDesktopWidget>
 #include <QInputDialog>
 #include <QUrl>
+#include <QScreen>
 #include <vector>
 #include <string>
 #include <cassert>
@@ -446,10 +447,9 @@ void CelestiaAppWindow::readSettings()
     // Make sure that the saved size fits on screen; it's possible for the previous saved
     // position to be off-screen if the monitor settings have changed.
     bool onScreen = false;
-    for (int screenIndex = 0; screenIndex < desktop.numScreens(); screenIndex++)
+    foreach (const QScreen *screen, QGuiApplication::screens())
     {
-        QRect screenGeometry = desktop.screenGeometry(screenIndex);
-        if (screenGeometry.contains(windowPosition))
+        if (screen->geometry().contains(windowPosition))
             onScreen = true;
     }
 
