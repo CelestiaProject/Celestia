@@ -4646,6 +4646,15 @@ void Renderer::renderObject(const Vector3f& pos,
                                           astro::daysToSecs(now - astro::J2000),
                                           this);
             }
+
+            // XXX: this code should be removed
+            for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
+            {
+                glActiveTexture(GL_TEXTURE0 + i);
+                glDisable(GL_TEXTURE_2D);
+            }
+            glActiveTexture(GL_TEXTURE0);
+            glEnable(GL_TEXTURE_2D);
         }
     }
 
