@@ -48,8 +48,9 @@ static TextureCaps texCaps;
 static bool testMaxLevel()
 {
     unsigned char texels[64];
-
-    glEnable(GL_TEXTURE_2D);
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
     // Test whether GL_TEXTURE_MAX_LEVEL is supported . . .
     glTexImage2D(GL_TEXTURE_2D,
                  0,
@@ -62,7 +63,7 @@ static bool testMaxLevel()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 2);
     float maxLev = -1.0f;
     glGetTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, &maxLev);
-    glDisable(GL_TEXTURE_2D);
+    glDeleteTextures(1, &textureID);
 
     return maxLev == 2;
 }
@@ -378,7 +379,7 @@ ImageTexture::ImageTexture(Image& img,
     }
 
     if (mipMapMode == AutoMipMaps)
-        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
     int internalFormat = getInternalFormat(img.getFormat());
 

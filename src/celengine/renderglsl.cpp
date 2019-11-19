@@ -568,12 +568,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     glDepthMask(GL_TRUE);
     glFrontFace(GL_CCW);
     glPopMatrix();
-
-
     glUseProgram(0);
-
-    //glActiveTexture(GL_TEXTURE0);
-    //glEnable(GL_TEXTURE_2D);
 }
 
 static void renderRingSystem(GLuint *vboId,
@@ -762,8 +757,6 @@ void renderRings_GLSL(RingSystem& rings,
 
     if (ringsTex != nullptr)
         ringsTex->bind();
-    else
-        glDisable(GL_TEXTURE_2D);
 
     unsigned nSections = 180;
     size_t i = 0;

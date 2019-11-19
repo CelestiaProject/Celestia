@@ -863,10 +863,6 @@ bool Renderer::init(
     glEnable(GL_MULTISAMPLE);
 #endif
 
-    glEnable(GL_RESCALE_NORMAL_EXT);
-
-    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT, GL_SEPARATE_SPECULAR_COLOR_EXT);
-
 #ifdef USE_HDR
     Image        *testImg = new Image(GL_LUMINANCE_ALPHA, 1, 1);
     ImageTexture *testTex = new ImageTexture(*testImg,
@@ -904,10 +900,6 @@ bool Renderer::init(
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_LIGHTING);
-    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
     // LEQUAL rather than LESS required for multipass rendering
     glDepthFunc(GL_LEQUAL);
@@ -1778,7 +1770,6 @@ void Renderer::render(const Observer& observer,
     glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
-    glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
@@ -2180,10 +2171,6 @@ void Renderer::draw(const Observer& observer,
     ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
 #endif
 
-    // Create the ambient light source.  For realistic scenes in space, this
-    // should be black.
-    glAmbientLightColor(ambientColor);
-
 #ifdef USE_HDR
     glClearColor(skyColor.red(), skyColor.green(), skyColor.blue(), 0.0f);
 #else
@@ -2191,9 +2178,6 @@ void Renderer::draw(const Observer& observer,
 #endif
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-    glDisable(GL_LIGHTING);
     glDepthMask(GL_FALSE);
 
     // Render sky grids first--these will always be in the background
@@ -2201,7 +2185,6 @@ void Renderer::draw(const Observer& observer,
     renderSkyGrids(observer);
     disableSmoothLines(renderFlags);
     glEnable(GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
 
     // Render deep sky objects
     if ((renderFlags & ShowDSO) != 0 && universe.getDSOCatalog() != nullptr)
@@ -2315,8 +2298,7 @@ void Renderer::draw(const Observer& observer,
         }
     }
 
-    glPolygonMode(GL_FRONT, (GLenum) renderMode);
-    glPolygonMode(GL_BACK, (GLenum) renderMode);
+    glPolygonMode(GL_FRONT_AND_BACK, (GLenum) renderMode);
 
     {
         Matrix3f viewMat = observer.getOrientationf().conjugate().toRotationMatrix();
@@ -2759,8 +2741,6 @@ void Renderer::draw(const Observer& observer,
             // Render orbit paths
             if (!orbitPathList.empty())
             {
-                glDisable(GL_LIGHTING);
-                glDisable(GL_TEXTURE_2D);
                 glEnable(GL_DEPTH_TEST);
                 glDepthMask(GL_FALSE);
 #ifdef USE_HDR
@@ -2857,15 +2837,11 @@ void Renderer::draw(const Observer& observer,
     // Pop camera orientation matrix
     glPopMatrix();
 
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
-    glEnable(GL_LIGHTING);
 
 #if 0
     int errCode = glGetError();
@@ -3949,14 +3925,12 @@ void Renderer::renderObject(const Vector3f& pos,
                                           this);
             }
 
-            // XXX: this code should be removed
-            for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
+            for (unsigned int i = 0; i < 8;/*context->getMaxTextures();*/ i++)
             {
                 glActiveTexture(GL_TEXTURE0 + i);
-                glDisable(GL_TEXTURE_2D);
+                glBindTexture(GL_TEXTURE_2D, 0);
             }
             glActiveTexture(GL_TEXTURE0);
-            glEnable(GL_TEXTURE_2D);
         }
     }
 
@@ -4536,7 +4510,6 @@ void Renderer::renderPlanet(Body& body,
         }
     }
 
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 #ifdef USE_HDR
@@ -4630,7 +4603,6 @@ void Renderer::renderStar(const Star& star,
                      rp, LightingState());
     }
 
-    glEnable(GL_TEXTURE_2D);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
@@ -4854,14 +4826,11 @@ void Renderer::renderCometTail(const Body& body,
     glUseProgram(0);
 
 #ifdef DEBUG_COMET_TAIL
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
     glColor4f(0.0f, 1.0f, 1.0f, 0.5f);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, cometPoints);
     glDrawArrays(GL_LINE_STRIP, 0, nTailPoints);
     glDisableClientState(GL_VERTEX_ARRAY);
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
 #endif
 
@@ -4893,7 +4862,6 @@ void Renderer::renderReferenceMark(const ReferenceMark& refMark,
 
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 }
@@ -5653,7 +5621,6 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     starRenderer.colorTemp = colorTemp;
 
-    glEnable(GL_TEXTURE_2D);
     gaussianDiscTex->bind();
     starRenderer.starVertexBuffer->setTexture(gaussianDiscTex);
     starRenderer.glareVertexBuffer->setTexture(gaussianGlareTex);
@@ -6769,7 +6736,6 @@ static void drawRectangle(const Renderer &renderer, const Rect &r)
     prog->use();
     if (r.tex != nullptr)
     {
-        glEnable(GL_TEXTURE_2D);
         r.tex->bind();
         prog->samplerParam("tex") = 0;
     }

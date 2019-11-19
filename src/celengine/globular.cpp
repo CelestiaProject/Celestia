@@ -465,7 +465,6 @@ void Globular::renderGlobularPointSprites(
     assert(globularTex != nullptr);
 
     glEnable(GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_POINT_SPRITE);
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -526,7 +525,6 @@ void Globular::renderGlobularPointSprites(
     // These should be called but stars are broken then
     // TODO: find and fix
     //glDisable(GL_BLEND);
-    //glDisable(GL_TEXTURE_2D);
 }
 
 uint64_t Globular::getRenderMask() const

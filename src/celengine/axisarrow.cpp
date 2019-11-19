@@ -275,8 +275,6 @@ ArrowReferenceMark::render(Renderer* renderer,
     glPushMatrix();
     glRotate(q.cast<float>());
     glScalef(size, size, size);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
 
     CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shadprop);
     if (prog == nullptr)
@@ -290,7 +288,6 @@ ArrowReferenceMark::render(Renderer* renderer,
     glUseProgram(0);
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 }
@@ -354,13 +351,9 @@ AxesReferenceMark::render(Renderer* renderer,
 #endif
     }
 
-    glDisable(GL_TEXTURE_2D);
-
     glPushMatrix();
     glRotate(q.cast<float>());
     glScalef(size, size, size);
-
-    glDisable(GL_LIGHTING);
 
 #if 0
     // Simple line axes
@@ -423,7 +416,6 @@ AxesReferenceMark::render(Renderer* renderer,
     glUseProgram(0);
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 }

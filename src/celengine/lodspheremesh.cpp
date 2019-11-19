@@ -252,7 +252,6 @@ void LODSphereMesh::render(unsigned int attributes,
         subtextures[i] = 0;
         if (nTextures > 1)
             glActiveTexture(GL_TEXTURE0 + i);
-        glEnable(GL_TEXTURE_2D);
     }
 
 #ifdef VERTEX_BUFFER_OBJECTS_ENABLED
@@ -419,8 +418,6 @@ void LODSphereMesh::render(unsigned int attributes,
             glActiveTexture(GL_TEXTURE0 + i);
         }
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        if (i > 0)
-            glDisable(GL_TEXTURE_2D);
     }
 
     if (nTextures > 1)
@@ -445,8 +442,6 @@ void LODSphereMesh::render(unsigned int attributes,
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
     glColor4f(1, 0, 0, 1);
     glTranslatef(0, 0, -20);
     glBegin(GL_LINES);
@@ -485,8 +480,6 @@ void LODSphereMesh::render(unsigned int attributes,
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
     glColor4f(1, 0, 1, 1);
 
     {

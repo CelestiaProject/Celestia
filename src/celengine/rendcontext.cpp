@@ -533,7 +533,6 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     for (unsigned int i = 0; i < nTextures; i++)
     {
         glActiveTexture(GL_TEXTURE0 + i);
-        glEnable(GL_TEXTURE_2D);
         textures[i]->bind();
     }
 
@@ -717,7 +716,6 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
     for (unsigned int i = 0; i < nTextures; i++)
     {
         glActiveTexture(GL_TEXTURE0 + i);
-        glEnable(GL_TEXTURE_2D);
         textures[i]->bind();
     }
 
