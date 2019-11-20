@@ -10,6 +10,7 @@
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/gl.h>
 #import <OpenGL/glext.h>
+#include <celutil/util.h>
 
 #ifndef GL_SHADING_LANGUAGE_VERSION_ARB
 #define GL_SHADING_LANGUAGE_VERSION_ARB   0x8B8C
@@ -83,9 +84,7 @@ static NSString *queryGLExtension(const char *extName)
         if (glslVersion)
         {
             [result appendString:
-                [NSString stringWithFormat: @"%@%@",
-                    NSLocalizedStringFromTable(@"GLSL version: ",@"po",""),
-                    glslVersion]
+                [NSString stringWithFormat:@"%s%@", _("GLSL version: "), glslVersion]
             ]; ENDL;
         }
     }
@@ -103,18 +102,14 @@ static NSString *queryGLExtension(const char *extName)
         GLint maxCubeMapSize = 0;
         glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &maxCubeMapSize);
         [result appendString:
-            [NSString stringWithFormat: @"%@%d",
-                NSLocalizedStringFromTable(@"Max cube map size: ",@"po",""),
-                maxCubeMapSize]
+            [NSString stringWithFormat:@"%s%d", _("Max cube map size: "), maxCubeMapSize]
         ]; ENDL;
     }
 
     GLfloat pointSizeRange[2];
     glGetFloatv(GL_POINT_SIZE_RANGE, pointSizeRange);
     [result appendString:
-        [NSString stringWithFormat: @"%@%f - %f",
-            NSLocalizedStringFromTable(@"Point size range: ",@"po",""),
-            pointSizeRange[0], pointSizeRange[1]]
+        [NSString stringWithFormat:@"%s%f - %f", _("Point size range: "), pointSizeRange[0], pointSizeRange[1]]
     ]; ENDL;
 
     ENDL;

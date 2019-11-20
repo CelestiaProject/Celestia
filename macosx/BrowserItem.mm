@@ -16,7 +16,7 @@
 #import "CelestiaAppCore.h"
 #import "CelestiaUniverse_PrivateAPI.h"
 #include "solarsys.h"
-
+#include <celutil/util.h>
 
 @implementation BrowserItem
 - (id)initWithCelestiaDSO: (CelestiaDSO *)aDSO
@@ -96,12 +96,12 @@
                     continue;
                 case Body::Planet:
                     if (!planets)
-                        planets = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Planets",@"po",@"")];
+                        planets = [[BrowserItem alloc] initWithName:[NSString stringWithUTF8String:_("Planets")]];
                     subItem = planets;
                     break;
                 case Body::DwarfPlanet:
                     if (!dwarfPlanets)
-                        dwarfPlanets = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Dwarf Planets",@"po",@"")];
+                        dwarfPlanets = [[BrowserItem alloc] initWithName:[NSString stringWithUTF8String:_("Dwarf Planets")]];
                     subItem = dwarfPlanets;
                     break;
                 case Body::Moon:
@@ -119,12 +119,12 @@
                     break;
                 case Body::Asteroid:
                     if (!asteroids)
-                        asteroids = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Asteroids",@"po",@"")];
+                        asteroids = [[BrowserItem alloc] initWithName:[NSString stringWithUTF8String:_("Asteroids")]];
                     subItem = asteroids;
                     break;
                 case Body::Comet:
                     if (!comets)
-                        comets = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Comets",@"po",@"")];
+                        comets = [[BrowserItem alloc] initWithName:[NSString stringWithUTF8String:_("Comets")]];
                     subItem = comets;
                     break;
                 case Body::Spacecraft:
@@ -189,7 +189,7 @@
                     break;
                 case Body::Comet:
                     if (!comets)
-                        comets = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Comets",@"po",@"")];
+                        comets = [[BrowserItem alloc] initWithName:[NSString stringWithUTF8String:_("Comets")]];
                     subItem = comets;
                     break;
                 case Body::Spacecraft:
@@ -212,7 +212,7 @@
     std::vector<Location*>* locations = [(CelestiaBody *)[aBody body] body]->getLocations();
     if (locations != NULL)
     {
-        BrowserItem *locationItems = [[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Locations",@"po",@"")];
+        BrowserItem *locationItems = [[BrowserItem alloc] initWithName:[NSString stringWithUTF8String:_("Locations")]];
         for (vector<Location*>::const_iterator iter = locations->begin();
              iter != locations->end(); iter++)
         {
