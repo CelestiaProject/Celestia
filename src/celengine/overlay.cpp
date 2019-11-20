@@ -13,6 +13,7 @@
 #include <GL/glew.h>
 #include <Eigen/Core>
 #include <celutil/debug.h>
+#include <celmath/geomutil.h>
 #include "vecgl.h"
 #include "overlay.h"
 #include "rectangle.h"
@@ -21,7 +22,7 @@
 
 using namespace std;
 using namespace Eigen;
-
+using namespace celmath;
 
 Overlay::Overlay(const Renderer& r) :
     ostream(&sbuf),
@@ -34,8 +35,7 @@ void Overlay::begin()
 {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0, windowWidth, 0, windowHeight);
+    glLoadMatrix(Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight));
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();

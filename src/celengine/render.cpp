@@ -2423,8 +2423,7 @@ void Renderer::render(const Observer& observer,
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadIdentity();
-    glOrtho( 0.0, 1.0, 0.0, 1.0, -1.0, 1.0 );
+    glLoadMatrix(Ortho2D(0.0f, 1.0f, 0.0f, 1.0f));
     glMatrixMode (GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -7095,8 +7094,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0, windowWidth, 0, windowHeight);
+    glLoadMatrix(Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight));
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -7229,8 +7227,7 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0, windowWidth, 0, windowHeight);
+    glLoadMatrix(Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight));
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -7316,8 +7313,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0, windowWidth, 0, windowHeight);
+    glLoadMatrix(Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight));
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
