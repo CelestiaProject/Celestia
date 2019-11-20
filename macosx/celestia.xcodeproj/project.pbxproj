@@ -225,8 +225,6 @@
 		E5A994770B1482FE009F40FA /* scriptobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5A994730B1482FE009F40FA /* scriptobject.cpp */; };
 		E5B48EBA0C22065E00C6FBD7 /* MacInputWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5B48EB80C22065E00C6FBD7 /* MacInputWatcher.mm */; };
 		E5C9ADE10848FFEF0071B1EE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5040B0602A47B91014901DC /* Carbon.framework */; };
-		E5CAABA70D3D7A08001926FC /* POSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5CAABA60D3D7A08001926FC /* POSupport.cpp */; };
-		E5CC203709AA836E00CFFF2C /* POConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = E5CC203209AA834B00CFFF2C /* POConverter.m */; };
 		E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E5CC204509AA843300CFFF2C /* Localizable.strings */; };
 		E5D3E6550D1EA18A00214838 /* axisarrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D3E6530D1EA18A00214838 /* axisarrow.cpp */; };
 		E5D446660777291700A1577D /* utf8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D446640777291700A1577D /* utf8.cpp */; };
@@ -282,18 +280,7 @@
 		FF7B2B1C0E89B23D0089BF43 /* galaxies.dsc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B120E89B1A30089BF43 /* galaxies.dsc */; };
 		FF7B2B1D0E89B23D0089BF43 /* globulars.dsc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B130E89B1A30089BF43 /* globulars.dsc */; };
 		FF7B2B220E89B3250089BF43 /* itokawa.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = FF7B2B210E89B2F20089BF43 /* itokawa.cmod */; };
-		FFACF2C10E75F1BD007AE5CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		E5CC205909AA8C7100CFFF2C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E5CC202809AA823400CFFF2C;
-			remoteInfo = POConverter;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		E567F018099110C000D05031 /* Copy Data */ = {
@@ -668,10 +655,6 @@
 		E5B61B2E077737A6001BB2BF /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = include/png.h; sourceTree = "<group>"; };
 		E5B61B2F077737A6001BB2BF /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngconf.h; path = include/pngconf.h; sourceTree = "<group>"; };
 		E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "README for Mac OS X.rtf"; sourceTree = "<group>"; };
-		E5CAABA60D3D7A08001926FC /* POSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = POSupport.cpp; sourceTree = "<group>"; };
-		E5CC202909AA823400CFFF2C /* POConverter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = POConverter; sourceTree = BUILT_PRODUCTS_DIR; };
-		E5CC203209AA834B00CFFF2C /* POConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POConverter.m; sourceTree = "<group>"; };
-		E5CC203309AA834B00CFFF2C /* POSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POSupport.h; sourceTree = "<group>"; };
 		E5CC204809AA846600CFFF2C /* fr */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E5D3E6530D1EA18A00214838 /* axisarrow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = axisarrow.cpp; path = ../src/celengine/axisarrow.cpp; sourceTree = SOURCE_ROOT; };
 		E5D3E6540D1EA18A00214838 /* axisarrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = axisarrow.h; path = ../src/celengine/axisarrow.h; sourceTree = SOURCE_ROOT; };
@@ -1016,14 +999,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FFACF2C00E75F1AE007AE5CF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FFACF2C10E75F1BD007AE5CF /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -1070,7 +1045,6 @@
 				9717E96D234B641E00AAD7D1 /* Migrator.m */,
 				F578B79D02B3E2AD0100020A /* Cocoa Extensions */,
 				F55A246702B2D4FF0100020A /* Wrappers */,
-				E5CC203109AA832000CFFF2C /* POConverter */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -1101,7 +1075,6 @@
 			isa = PBXGroup;
 			children = (
 				E564312E07769C9000E2C4A3 /* Celestia.app */,
-				E5CC202909AA823400CFFF2C /* POConverter */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1280,16 +1253,6 @@
 			name = extras;
 			path = ../extras;
 			sourceTree = SOURCE_ROOT;
-		};
-		E5CC203109AA832000CFFF2C /* POConverter */ = {
-			isa = PBXGroup;
-			children = (
-				E5CC203209AA834B00CFFF2C /* POConverter.m */,
-				E5CC203309AA834B00CFFF2C /* POSupport.h */,
-				E5CAABA60D3D7A08001926FC /* POSupport.cpp */,
-			);
-			name = POConverter;
-			sourceTree = "<group>";
 		};
 		E5D766250982B3300099DBBD /* models */ = {
 			isa = PBXGroup;
@@ -1795,29 +1758,12 @@
 			buildRules = (
 			);
 			dependencies = (
-				E5CC205A09AA8C7100CFFF2C /* PBXTargetDependency */,
 			);
 			name = Celestia;
 			productInstallPath = "$(HOME)/Applications";
 			productName = celestia;
 			productReference = E564312E07769C9000E2C4A3 /* Celestia.app */;
 			productType = "com.apple.product-type.application";
-		};
-		E5CC202809AA823400CFFF2C /* POConverter */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = E5CC202B09AA829B00CFFF2C /* Build configuration list for PBXNativeTarget "POConverter" */;
-			buildPhases = (
-				E5CC202609AA823400CFFF2C /* Sources */,
-				FFACF2C00E75F1AE007AE5CF /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = POConverter;
-			productName = POConverter;
-			productReference = E5CC202909AA823400CFFF2C /* POConverter */;
-			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
@@ -1853,7 +1799,6 @@
 			projectRoot = "";
 			targets = (
 				E564302B07769C9000E2C4A3 /* Celestia */,
-				E5CC202809AA823400CFFF2C /* POConverter */,
 			);
 		};
 /* End PBXProject section */
@@ -2060,7 +2005,6 @@
 				E512245A0CF9FC7D009092A2 /* BrowserItem.mm in Sources */,
 				E5D542770D0B87EA00E8C513 /* Menu_Extensions.mm in Sources */,
 				E5D3E6550D1EA18A00214838 /* axisarrow.cpp in Sources */,
-				E5CAABA70D3D7A08001926FC /* POSupport.cpp in Sources */,
 				8844B87E0D5AA3290059AA3A /* customrotation.cpp in Sources */,
 				8844BAAE0D6D13FE0059AA3A /* frametree.cpp in Sources */,
 				8844BAB00D6D13FE0059AA3A /* timeline.cpp in Sources */,
@@ -2088,23 +2032,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E5CC202609AA823400CFFF2C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E5CC203709AA836E00CFFF2C /* POConverter.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		E5CC205A09AA8C7100CFFF2C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E5CC202809AA823400CFFF2C /* POConverter */;
-			targetProxy = E5CC205909AA8C7100CFFF2C /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
@@ -2410,90 +2338,6 @@
 			};
 			name = Development;
 		};
-		E5CC202C09AA829B00CFFF2C /* Development */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(GCC_PREPROCESSOR_DEFINITIONS)",
-					TARGET_CELESTIA,
-				);
-				INSTALL_PATH = "$(HOME)/bin";
-				PRODUCT_NAME = POConverter;
-				SKIP_INSTALL = YES;
-				ZERO_LINK = NO;
-			};
-			name = Development;
-		};
-		E5CC202E09AA829B00CFFF2C /* Universal_Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(GCC_PREPROCESSOR_DEFINITIONS)",
-					TARGET_CELESTIA,
-				);
-				INSTALL_PATH = "$(HOME)/bin";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-				);
-				PRODUCT_NAME = POConverter;
-				SKIP_INSTALL = YES;
-				ZERO_LINK = NO;
-			};
-			name = Universal_Release;
-		};
-		E5F9EC660D9EA6BE00A83FEF /* HDR_Development */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(GCC_PREPROCESSOR_DEFINITIONS)",
-					TARGET_CELESTIA,
-				);
-				INSTALL_PATH = "$(HOME)/bin";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-				);
-				PRODUCT_NAME = POConverter;
-				SKIP_INSTALL = YES;
-				ZERO_LINK = NO;
-			};
-			name = HDR_Development;
-		};
-		E5F9EC670D9EA6BE00A83FEF /* HDR_Universal_Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(GCC_PREPROCESSOR_DEFINITIONS)",
-					TARGET_CELESTIA,
-				);
-				INSTALL_PATH = "$(HOME)/bin";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-				);
-				PRODUCT_NAME = POConverter;
-				SKIP_INSTALL = YES;
-				ZERO_LINK = NO;
-			};
-			name = HDR_Universal_Release;
-		};
 		E5F9EC680D9EA6BE00A83FEF /* HDR_Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2712,17 +2556,6 @@
 				E5F9EC6A0D9EA6BE00A83FEF /* HDR_Development */,
 				E50E8708097436A4006687D3 /* Universal_Release */,
 				E5F9EC6B0D9EA6BE00A83FEF /* HDR_Universal_Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Universal_Release;
-		};
-		E5CC202B09AA829B00CFFF2C /* Build configuration list for PBXNativeTarget "POConverter" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E5CC202C09AA829B00CFFF2C /* Development */,
-				E5F9EC660D9EA6BE00A83FEF /* HDR_Development */,
-				E5CC202E09AA829B00CFFF2C /* Universal_Release */,
-				E5F9EC670D9EA6BE00A83FEF /* HDR_Universal_Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Universal_Release;
