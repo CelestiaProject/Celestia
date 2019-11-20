@@ -719,8 +719,8 @@ class Renderer
 
     std::vector<LightSource> lightSourceList;
 
-    double modelMatrix[16];
-    double projMatrix[16];
+    Eigen::Matrix4d modelMatrix;
+    Eigen::Matrix4d projMatrix;
 
     bool useCompressedTextures{ false };
     unsigned int textureResolution;

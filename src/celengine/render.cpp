@@ -1298,30 +1298,22 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                              float size,
                              bool special)
 {
-    double winX, winY, winZ;
     GLint view[4] = { 0, 0, windowWidth, windowHeight };
-    float depth = (float) (pos.x() * modelMatrix[2] +
-                           pos.y() * modelMatrix[6] +
-                           pos.z() * modelMatrix[10]);
-    if (gluProject(pos.x(), pos.y(), pos.z(),
-                   modelMatrix,
-                   projMatrix,
-                   view,
-                   &winX, &winY, &winZ) != GL_FALSE)
+    Vector3d win;
+    Vector3d posd = pos.cast<double>();
+    if (Project(posd, modelMatrix, projMatrix, view, win))
     {
+        double depth = pos.x() * modelMatrix(2, 0) +
+                       pos.y() * modelMatrix(2, 1) +
+                       pos.z() * modelMatrix(2, 2);
+        win.z() = -depth;
+
         Annotation a;
-        if (special)
-        {
-            if (markerRep == nullptr)
-                a.labelText = labelText;
-        }
-        else
-        {
-            a.labelText = labelText;
-        }
+        if (!special || markerRep == nullptr)
+             a.labelText = labelText;
         a.markerRep = markerRep;
         a.color = color;
-        a.position = Vector3f((float) winX, (float) winY, -depth);
+        a.position = win.cast<float>();
         a.halign = halign;
         a.valign = valign;
         a.size = size;
@@ -2522,8 +2514,8 @@ void Renderer::draw(const Observer& observer,
 
     // Get the model matrix *before* translation.  We'll use this for
     // positioning star and planet labels.
-    glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
-    glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix.data());
+    glGetDoublev(GL_PROJECTION_MATRIX, projMatrix.data());
 
     clearSortedAnnotations();
 
