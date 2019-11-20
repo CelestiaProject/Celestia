@@ -7,11 +7,6 @@
 //
 
 #include <libintl.h>
-#ifndef gettext
-#include "POSupport.h"
-#define gettext(s)      localizedUTF8String(s)
-#define dgettext(d,s)   localizedUTF8StringWithDomain(d,s)
-#endif
 
 #define __AIFF__
 #include <TargetConditionals.h>
