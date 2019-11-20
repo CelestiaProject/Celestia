@@ -10,7 +10,8 @@
 #import "CelestiaAppCore.h"
 #import "NSString_ObjCPlusPlus.h"
 #import "CelestiaBody_PrivateAPI.h"
-#import "eclipsefinder.h"
+#include "eclipsefinder.h"
+#include <celutil/util.h>
 
 @interface EclipseFinderController(Private)
 - (void)getEclipses: (id)aObject;
@@ -233,7 +234,7 @@ static CelestiaBody *eclipseBody;
 
             [eclipses addObject:
                 [NSDictionary dictionaryWithObjectsAndKeys:
-                    NSLocalizedStringFromTable(eclipseName,@"po",@""), @"caster",
+                    [NSString stringWithUTF8String:_([eclipseName UTF8String])], @"caster",
                     eclipseDate, @"date",
                     [[CelestiaBody alloc] initWithBody: eclipse->body], @"body",
                     [NSNumber numberWithDouble: eclipse->startTime], @"start",

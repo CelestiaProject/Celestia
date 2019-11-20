@@ -231,8 +231,8 @@
 		E5D3E6550D1EA18A00214838 /* axisarrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D3E6530D1EA18A00214838 /* axisarrow.cpp */; };
 		E5D446660777291700A1577D /* utf8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D446640777291700A1577D /* utf8.cpp */; };
 		E5D4467607772B6C00A1577D /* CelestiaSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5D4467407772B6C00A1577D /* CelestiaSettings.mm */; };
-		E5D4467807772BA000A1577D /* CGLInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F505BFFA02CA9DAE0100020A /* CGLInfo.m */; };
-		E5D542770D0B87EA00E8C513 /* Menu_Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = E5D5425F0D0B86B200E8C513 /* Menu_Extensions.m */; };
+		E5D4467807772BA000A1577D /* CGLInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = F505BFFA02CA9DAE0100020A /* CGLInfo.mm */; };
+		E5D542770D0B87EA00E8C513 /* Menu_Extensions.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5D5425F0D0B86B200E8C513 /* Menu_Extensions.mm */; };
 		E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = E5D7660E0982B1860099DBBD /* HelpWindow.nib */; };
 		E5D766700982B4660099DBBD /* amalthea.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766270982B3300099DBBD /* amalthea.cmod */; };
 		E5D766720982B4660099DBBD /* asteroid.cms in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766290982B3300099DBBD /* asteroid.cms */; };
@@ -681,7 +681,7 @@
 		E5D4467407772B6C00A1577D /* CelestiaSettings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CelestiaSettings.mm; sourceTree = "<group>"; };
 		E5D471260778E33C007731C3 /* libpng.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng.dylib; path = Frameworks/libpng.dylib; sourceTree = "<group>"; };
 		E5D5425E0D0B86B200E8C513 /* Menu_Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Menu_Extensions.h; sourceTree = "<group>"; };
-		E5D5425F0D0B86B200E8C513 /* Menu_Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Menu_Extensions.m; sourceTree = "<group>"; };
+		E5D5425F0D0B86B200E8C513 /* Menu_Extensions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Menu_Extensions.mm; sourceTree = "<group>"; };
 		E5D7660B0982B15C0099DBBD /* es */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = es; path = es.lproj/Credits.rtf; sourceTree = "<group>"; };
 		E5D7660C0982B1630099DBBD /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = fr; path = fr.lproj/Credits.rtf; sourceTree = "<group>"; };
 		E5D766150982B19F0099DBBD /* fr */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = fr; path = fr.lproj/HelpWindow.nib; sourceTree = "<group>"; };
@@ -750,7 +750,7 @@
 		F5040B0602A47B91014901DC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F5040B0E02A484DA014901DC /* CelestiaController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CelestiaController.h; sourceTree = "<group>"; };
 		F5040B0F02A484DA014901DC /* CelestiaController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CelestiaController.m; sourceTree = "<group>"; };
-		F505BFFA02CA9DAE0100020A /* CGLInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CGLInfo.m; sourceTree = "<group>"; };
+		F505BFFA02CA9DAE0100020A /* CGLInfo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CGLInfo.mm; sourceTree = "<group>"; };
 		F505BFFB02CA9DAE0100020A /* CGLInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CGLInfo.h; sourceTree = "<group>"; };
 		F51C6D450295968D014901DC /* 3dsmodel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = 3dsmodel.cpp; path = ../src/cel3ds/3dsmodel.cpp; sourceTree = SOURCE_ROOT; };
 		F51C6D460295968D014901DC /* 3dsmodel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = 3dsmodel.h; path = ../src/cel3ds/3dsmodel.h; sourceTree = SOURCE_ROOT; };
@@ -1034,7 +1034,7 @@
 				F5231C7102C2997601000006 /* CelestiaFavorites.m */,
 				F5274ED302AE88260100020A /* CelestiaOpenGLView.mm */,
 				E5D4467407772B6C00A1577D /* CelestiaSettings.mm */,
-				F505BFFA02CA9DAE0100020A /* CGLInfo.m */,
+				F505BFFA02CA9DAE0100020A /* CGLInfo.mm */,
 				E51224580CF9FC7D009092A2 /* BrowserItem.mm */,
 				E54343150783C42500053094 /* BrowserWindowController.mm */,
 				E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */,
@@ -1738,7 +1738,7 @@
 			isa = PBXGroup;
 			children = (
 				F57F9FD402B94A0B01000006 /* ContextOutlineView.m */,
-				E5D5425F0D0B86B200E8C513 /* Menu_Extensions.m */,
+				E5D5425F0D0B86B200E8C513 /* Menu_Extensions.mm */,
 				F56FFFAA02C571280100020A /* MyTree.m */,
 				F578B7A102B3E2DD0100020A /* NSArray_Extensions.m */,
 				F578B7A002B3E2DD0100020A /* NSOutlineView_Extensions.m */,
@@ -2030,7 +2030,7 @@
 				E56431630776D5C800E2C4A3 /* starcolors.cpp in Sources */,
 				E5D446660777291700A1577D /* utf8.cpp in Sources */,
 				E5D4467607772B6C00A1577D /* CelestiaSettings.mm in Sources */,
-				E5D4467807772BA000A1577D /* CGLInfo.m in Sources */,
+				E5D4467807772BA000A1577D /* CGLInfo.mm in Sources */,
 				E54343170783C42500053094 /* BrowserWindowController.mm in Sources */,
 				E589B6DD078AC511005B8DD9 /* glshader.cpp in Sources */,
 				E589B6DF078AC511005B8DD9 /* shadermanager.cpp in Sources */,
@@ -2058,7 +2058,7 @@
 				E5B48EBA0C22065E00C6FBD7 /* MacInputWatcher.mm in Sources */,
 				E5E2BDD70C24F7E6000D6E83 /* TextWindowController.m in Sources */,
 				E512245A0CF9FC7D009092A2 /* BrowserItem.mm in Sources */,
-				E5D542770D0B87EA00E8C513 /* Menu_Extensions.m in Sources */,
+				E5D542770D0B87EA00E8C513 /* Menu_Extensions.mm in Sources */,
 				E5D3E6550D1EA18A00214838 /* axisarrow.cpp in Sources */,
 				E5CAABA70D3D7A08001926FC /* POSupport.cpp in Sources */,
 				8844B87E0D5AA3290059AA3A /* customrotation.cpp in Sources */,

@@ -10,6 +10,7 @@
 #import "CelestiaSelection.h"
 #import "BrowserItem.h"
 #import "CelestiaSettings.h"
+#include <celutil/util.h>
 
 @implementation NSMenu (CelestiaMenu)
 - (NSInteger) indexOfItemWithLocalizableTitle: (NSString *) aTitle
@@ -23,19 +24,19 @@
 - (void) removeRefMarkItems
 {
     NSInteger index;
-    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Reference Vectors",@"po",@"")];
+    index = [self indexOfItemWithTitle:[NSString stringWithUTF8String:_("Reference Vectors")]];
     if (index >= 0) [self removeItemAtIndex: index];
 }
 
 - (void) removePlanetarySystemItem
 {
     NSInteger satMenuIndex = [self indexOfItemWithTitle:
-        NSLocalizedStringFromTable(@"Satellites",@"po",@"")];
+       [NSString stringWithUTF8String:_("Satellites")]];
     if (satMenuIndex < 0)
         satMenuIndex = [self indexOfItemWithTitle:
-            NSLocalizedStringFromTable(@"Orbiting Bodies",@"po",@"")];
+           [NSString stringWithUTF8String:_("Orbiting Bodies")]];
     if (satMenuIndex < 0)
-        satMenuIndex = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Planets",@"po",@"")];
+        satMenuIndex = [self indexOfItemWithTitle:[NSString stringWithUTF8String:_("Planets")]];
     if (satMenuIndex >= 0)
         [self removeItemAtIndex: satMenuIndex];
 }
@@ -59,7 +60,7 @@
     if ([aSelection body])
     {
         target = [aSelection body];
-        mi = [[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Reference Vectors",@"po",@"") action: nil keyEquivalent: @""];
+        mi = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:_("Reference Vectors")] action: nil keyEquivalent: @""];
         NSMenu *refMarksMenu = [[NSMenu alloc] initWithTitle: @"Reference Vectors" ];
         [mi setSubmenu: refMarksMenu];
         if (mi)
@@ -67,42 +68,42 @@
             [self insertItem: mi atIndex: aIndex];
         }                
         
-        mi = [[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Body Axes",@"po",@"") action: nil keyEquivalent: @""];
+        mi = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:_("Show Body Axes")] action: nil keyEquivalent: @""];
         if (mi)
         {
             [mi setTag: 1000];
             [refMarksMenu addItem: mi];
             [settings scanForKeys: mi];
         }
-        mi = [[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Frame Axes",@"po",@"") action: nil keyEquivalent: @""];
+        mi = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:_("Show Frame Axes")] action: nil keyEquivalent: @""];
         if (mi)
         {
             [mi setTag: 1001];
             [refMarksMenu addItem: mi];
             [settings scanForKeys: mi];
         }
-        mi = [[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Sun Direction",@"po",@"") action: nil keyEquivalent: @""];
+        mi = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:_("Show Sun Direction")] action: nil keyEquivalent: @""];
         if (mi)
         {
             [mi setTag: 1002];
             [refMarksMenu addItem: mi];
             [settings scanForKeys: mi];
         }
-        mi = [[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Velocity Vector",@"po",@"") action: nil keyEquivalent: @""];
+        mi = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:_("Show Velocity Vector")] action: nil keyEquivalent: @""];
         if (mi)
         {
             [mi setTag: 1003];
             [refMarksMenu addItem: mi];
             [settings scanForKeys: mi];
         }
-        mi = [[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Planetographic Grid",@"po",@"") action: nil keyEquivalent: @""];
+        mi = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:_("Show Planetographic Grid")] action: nil keyEquivalent: @""];
         if (mi)
         {
             [mi setTag: 1004];
             [refMarksMenu addItem: mi];
             [settings scanForKeys: mi];
         }        
-        mi = [[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Terminator",@"po",@"") action: nil keyEquivalent: @""];
+        mi = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:_("Show Terminator")] action: nil keyEquivalent: @""];
         if (mi)
         {
             [mi setTag: 1005];
@@ -128,7 +129,7 @@
         NSArray *children = [browseItem allChildNames];
         if (children && [children count] > 0)
         {
-            mi = [[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Satellites",@"po",@"") action: nil keyEquivalent: @""];
+            mi = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:_("Satellites")] action: nil keyEquivalent: @""];
             [mi addPlanetarySystemMenuForItem: browseItem
                                        target: aTarget
                                        action: @selector(selectSatellite:)];
@@ -143,7 +144,7 @@
         {
             NSString *satMenuItemName = [[browseItem name] isEqualToString: @"Sol"] ?
             @"Orbiting Bodies" : @"Planets";
-            mi = [[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(satMenuItemName,@"po",@"") action: nil keyEquivalent: @""];
+            mi = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:_([satMenuItemName UTF8String])] action: nil keyEquivalent: @""];
             [mi addPlanetarySystemMenuForItem: browseItem
                                        target: aTarget
                                        action: @selector(selectSatellite:)];
@@ -197,7 +198,7 @@
     NSArray *childChildren;
     unsigned childCount = 0;
     BOOL loneChild = NO;
-    NSString *locationsName = NSLocalizedStringFromTable(@"Locations",@"po",@"");
+    NSString *locationsName =[NSString stringWithUTF8String:_("Locations")];
     NSArray *children = [browseItem allChildNames];
     NSEnumerator *childEnum = [children objectEnumerator];
 
@@ -272,7 +273,7 @@
     unsigned i;
     for (i = 0; i < [surfaces count]; ++i)
     {
-        newItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable([surfaces objectAtIndex: i],@"po",@"") action: action keyEquivalent: @""];
+        newItem = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:_([[surfaces objectAtIndex: i] UTF8String])] action: action keyEquivalent: @""];
         [newItem setTag:     601+i ];
         [newItem setTarget:  target ];
         [ surfaceMenu addItem: newItem ];

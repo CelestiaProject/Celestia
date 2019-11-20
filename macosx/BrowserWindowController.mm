@@ -76,7 +76,7 @@ static CelestiaCore *appCore;
         NSLocalizedString(@"Galaxies (Elliptical)",@""),    @"E",
         NSLocalizedString(@"Galaxies (Irregular)",@""),     @"Irr",
         NSLocalizedString(@"Nebulae",@""),                  @"Neb",
-        NSLocalizedStringFromTable(@"Globulars",@"po",@""), @"Glob",
+        [NSString stringWithUTF8String:_("Globulars")],     @"Glob",
         NSLocalizedString(@"Open Clusters",@""),            @"Clust",
         NSLocalizedString(@"Unknown",@""),                  @"Unknown",
         nil];
