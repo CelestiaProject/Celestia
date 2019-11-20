@@ -166,6 +166,18 @@ NSString* fatalErrorMessage;
     NSString *extraDataDir = [supportPath stringByAppendingPathComponent:CELESTIA_RESOURCES_FOLDER];
     NSString *extraDir = [extraDataDir stringByAppendingPathComponent:@"extras"];
     NSString *scriptDir = [extraDataDir stringByAppendingPathComponent:CEL_SCRIPTS_FOLDER];
+
+    NSString *localeDir = [[dataDirPath path] stringByAppendingPathComponent:@"locale"];
+
+    // setup gettext localization
+    setlocale(LC_ALL, "");
+    setlocale(LC_NUMERIC, "C");
+    bindtextdomain("celestia", [localeDir UTF8String]);
+    bind_textdomain_codeset("celestia", "UTF-8");
+    bindtextdomain("celestia_constellations", [localeDir UTF8String]);
+    bind_textdomain_codeset("celestia_constellations", "UTF-8");
+    textdomain("celestia");
+
     BOOL isDirectory;
     BOOL exists = [fileManager fileExistsAtPath:extraDataDir isDirectory:&isDirectory];
 
