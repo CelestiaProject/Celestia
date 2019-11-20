@@ -11,13 +11,14 @@
 #include <cstdarg>
 #include <cassert>
 #include <algorithm>
-#include "celutil/utf8.h"
+#include <celutil/utf8.h>
+#include <celmath/geomutil.h>
 #include <GL/glew.h>
 #include "vecgl.h"
 #include "console.h"
 
 using namespace std;
-
+using namespace celmath;
 
 static int pmod(int n, int m)
 {
@@ -74,8 +75,7 @@ void Console::begin()
 {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0, xscale, 0, yscale);
+    glLoadMatrix(Ortho2D(0.0f, (float)xscale, 0.0f, (float)yscale));
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();

@@ -115,6 +115,27 @@ Perspective(T fovy, T aspect, T nearZ, T farZ)
     return m;
 }
 
-}; // namespace celmath
+/*! Return an orthographic projection matrix
+ */
+template<class T> Eigen::Matrix<T, 4, 4>
+Ortho(T left, T right, T bottom, T top, T nearZ, T farZ)
+{
+    T rl = right - left;
+    T tb = top - bottom;
+    T fn = farZ - nearZ;
+    Eigen::Matrix<T, 4, 4> m;
+    m << 2/rl,    0,     0, - (right + left) / rl,
+            0, 2/tb,     0, - (top + bottom) / tb,
+            0,    0, -2/fn, - (farZ + nearZ) / fn,
+            0,    0,     0,                     1;
+    return m;
+}
 
+template<class T> Eigen::Matrix<T, 4, 4>
+Ortho2D(T left, T right, T bottom, T top)
+{
+    return Ortho(left, right, bottom, top, T(-1), T(1));
+}
+
+}; // namespace celmath
 #endif // _CELMATH_GEOMUTIL_H_
