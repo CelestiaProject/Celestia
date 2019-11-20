@@ -77,6 +77,16 @@ inline void glMatrix(const Eigen::Matrix4d& m)
     glMultMatrixd(m.data());
 }
 
+inline void glLoadMatrix(const Eigen::Matrix4f& m)
+{
+    glLoadMatrixf(m.data());
+}
+
+inline void glLoadMatrix(const Eigen::Matrix4d& m)
+{
+    glLoadMatrixd(m.data());
+}
+
 inline void glScale(const Eigen::Vector3f& scale)
 {
     glScalef(scale.x(), scale.y(), scale.z());

@@ -2479,9 +2479,7 @@ void Renderer::draw(const Observer& observer,
     pixelSize = calcPixelSize(fov, (float) windowHeight);
 
     // Set up the projection we'll use for rendering stars.
-    gluPerspective(fov,
-                   (float) windowWidth / (float) windowHeight,
-                   NEAR_DIST, FAR_DIST);
+    glMatrix(Perspective(fov, getAspectRatio(), NEAR_DIST, FAR_DIST));
 
     // Set the modelview matrix
     glMatrixMode(GL_MODELVIEW);
@@ -3337,11 +3335,9 @@ void Renderer::draw(const Observer& observer,
             // Set up a perspective projection using the current interval's near and
             // far clip planes.
             glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            gluPerspective(fov,
-                           (float) windowWidth / (float) windowHeight,
-                           nearPlaneDistance,
-                           farPlaneDistance);
+            glLoadMatrix(Perspective(fov, getAspectRatio(),
+                                     nearPlaneDistance,
+                                     farPlaneDistance));
             glMatrixMode(GL_MODELVIEW);
 
             Frustum intervalFrustum(degToRad(fov),
@@ -3494,10 +3490,7 @@ void Renderer::draw(const Observer& observer,
     renderForegroundAnnotations(FontNormal);
 
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(fov,
-                   (float) windowWidth / (float) windowHeight,
-                   NEAR_DIST, FAR_DIST);
+    glLoadMatrix(Perspective(fov, getAspectRatio(), NEAR_DIST, FAR_DIST));
     glMatrixMode(GL_MODELVIEW);
 
     if (!selectionVisible && (renderFlags & ShowMarkers))
@@ -6747,11 +6740,8 @@ void DSORenderer::process(DeepSkyObject* const & dso,
 
                     glMatrixMode(GL_PROJECTION);
                     glPushMatrix();
-                    glLoadIdentity();
-                    gluPerspective(fov,
-                                   (float) wWidth / (float) wHeight,
-                                   nearZ,
-                                   farZ);
+                    float t = (float) wWidth / (float) wHeight;
+                    glLoadMatrix(Perspective(fov, t, nearZ, farZ));
                     glMatrixMode(GL_MODELVIEW);
                 }
 

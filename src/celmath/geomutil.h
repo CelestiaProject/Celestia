@@ -87,6 +87,34 @@ Project(const Eigen::Matrix<T, 3, 1>& from,
     return true;
 }
 
+/*! Return an perspective projection matrix
+ */
+template<class T> Eigen::Matrix<T, 4, 4>
+Perspective(T fovy, T aspect, T nearZ, T farZ)
+{
+    if (aspect == T(0.0))
+        return Eigen::Matrix<T, 4, 4>::Identity();
+
+    T deltaZ = farZ - nearZ;
+    if (deltaZ == T(0.0))
+        return Eigen::Matrix<T, 4, 4>::Identity();
+
+    T angle = degToRad(fovy / 2);
+    T sine = sin(angle);
+    if (sine == T(0.0))
+        return Eigen::Matrix<T, 4, 4>::Identity();
+    T ctg = cos(angle) / sine;
+
+    Eigen::Matrix<T, 4, 4> m = Eigen::Matrix<T, 4, 4>::Identity();
+    m(0, 0) = ctg / aspect;
+    m(1, 1) = ctg;
+    m(2, 2) = -(farZ + nearZ) / deltaZ;
+    m(2, 3) = T(-2.0) * nearZ * farZ / deltaZ;
+    m(3, 2) = T(-1.0);
+    m(3, 3) = T(0.0);
+    return m;
+}
+
 }; // namespace celmath
 
 #endif // _CELMATH_GEOMUTIL_H_
