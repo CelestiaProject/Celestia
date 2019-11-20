@@ -3340,7 +3340,7 @@ void Renderer::draw(const Observer& observer,
             glMatrixMode(GL_MODELVIEW);
 
             Frustum intervalFrustum(degToRad(fov),
-                                    (float) windowWidth / (float) windowHeight,
+                                    getAspectRatio(),
                                     -depthPartitions[interval].nearZ,
                                     -depthPartitions[interval].farZ);
 
@@ -4559,7 +4559,7 @@ void Renderer::renderObject(const Vector3f& pos,
     // radius (for an ellipsoidal planet, radius is taken to be
     // largest semiaxis.)
     Frustum viewFrustum(degToRad(fov),
-                        (float) windowWidth / (float) windowHeight,
+                        getAspectRatio(),
                         nearPlaneDistance / radius, frustumFarPlane / radius);
     viewFrustum.transform(invMV);
 
@@ -6554,7 +6554,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.starVertexBuffer  = pointStarVertexBuffer;
     starRenderer.glareVertexBuffer = glareVertexBuffer;
     starRenderer.fov               = fov;
-    starRenderer.cosFOV            = (float) cos(degToRad(calcMaxFOV(fov, (float) windowWidth / (float) windowHeight)) / 2.0f);
+    starRenderer.cosFOV            = (float) cos(degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
     starRenderer.brightnessScale   = brightnessScale * corrFac;
@@ -6617,7 +6617,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                             obsPos.cast<float>(),
                             observer.getOrientationf(),
                             degToRad(fov),
-                            (float) windowWidth / (float) windowHeight,
+                            getAspectRatio(),
                             faintestMagNight,
 #ifdef OCTREE_DEBUG
                             &m_starProcStats);
@@ -6868,8 +6868,8 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
     dsoRenderer.wHeight          = windowHeight;
 
     dsoRenderer.frustum = Frustum(degToRad(fov),
-                        (float) windowWidth / (float) windowHeight,
-                        MinNearPlaneDistance);
+                                  getAspectRatio(),
+                                  MinNearPlaneDistance);
     // Use pixelSize * screenDpi instead of FoV, to eliminate windowHeight dependence.
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
@@ -6896,7 +6896,7 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
                            obsPos,
                            observer.getOrientationf(),
                            degToRad(fov),
-                           (float) windowWidth / (float) windowHeight,
+                           getAspectRatio(),
                            2 * faintestMagNight,
 #ifdef OCTREE_DEBUG
                            &m_dsoProcStats);
@@ -7398,7 +7398,7 @@ void Renderer::renderMarkers(const MarkerList& markers,
     // vertical field of view; we want the field of view as measured on the
     // diagonal between viewport corners.
     double h = tan(degToRad(fov / 2));
-    double diag = sqrt(1.0 + square(h) + square(h * (double) windowWidth / (double) windowHeight));
+    double diag = sqrt(1.0 + square(h) + square(h * (double) getAspectRatio()));
     double cosFOV = 1.0 / diag;
 
     Vector3d viewVector = cameraOrientation.conjugate() * -Vector3d::UnitZ();
