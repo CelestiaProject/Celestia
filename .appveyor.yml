@@ -25,19 +25,6 @@ artifacts:
 - path: '**/celestia-*.exe'
   name: win
 
-deploy:
-- provider: BinTray
-  username: 375gnu
-  api_key:
-    secure: WjSIisk+6MMl82p8bvJPavyNhJIoDLnr3+d8Yj+Xo5EUb82aK7XNNhD50vh7/01q
-  subject: celestia
-  repo: celestia-builds
-  package: snapshots
-#  artifact: qt win
-  publish: true
-  on:
-    branch: master
-
 # Build worker image (VM template)
 image: "Visual Studio 2015"
 
@@ -69,7 +56,7 @@ install:
 - vcpkg install glew:x86-windows
 - vcpkg install eigen3:x86-windows
 - vcpkg install freetype:x86-windows
-- cd c:\tools\vcpkg
+- vcpkg install cspice:x86-windows
 - vcpkg integrate install
 - cd %APPVEYOR_BUILD_FOLDER%
 
@@ -81,7 +68,7 @@ build_script:
 
     cd build
 
-    cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON ENABLE_TTF=ON ..
+    cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TTF=ON ..
 
     cmake --build . --config Release -- /maxcpucount:4 /nologo
 
