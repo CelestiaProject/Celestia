@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <config.h>
 #include <celutil/debug.h>
 #include "util.h"
 #ifdef _WIN32
@@ -17,8 +18,10 @@
 #else
 #include <unistd.h>
 #include <pwd.h>
+#ifdef HAVE_WORDEXP
 #include <wordexp.h>
-#endif
+#endif // HAVE_WORDEXP
+#endif // !_WIN32
 
 using namespace std;
 
@@ -101,7 +104,7 @@ fs::path PathExp(const fs::path& filename)
     }
 
     return filename;
-#else
+#elif defined(HAVE_WORDEXP)
     wordexp_t result;
 
     switch(wordexp(filename.string().c_str(), &result, WRDE_NOCMD))
@@ -125,6 +128,8 @@ fs::path PathExp(const fs::path& filename)
     fs::path::string_type expanded(result.we_wordv[0]);
     wordfree(&result);
     return expanded;
+#else
+    return filename;
 #endif
 }
 

@@ -299,6 +299,8 @@ include_directories("${CMAKE_SOURCE_DIR}/src" ${CMAKE_BINARY_DIR})
 
 # configure a header file to pass some of the CMake settings
 # to the source code
+include(CheckSymbolExists)
+check_symbol_exists(wordexp wordexp.h HAVE_WORDEXP)
 check_include_files(byteswap.h HAVE_BYTESWAP_H)
 check_include_file_cxx(experimental/filesystem HAVE_EXPERIMENTAL_FILESYSTEM)
 
