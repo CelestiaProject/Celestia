@@ -31,7 +31,6 @@ using namespace std;
 using namespace celmath;
 
 static int width = 128, height = 128;
-static Vector3f colorTable[256];
 static const unsigned int GALAXY_POINTS  = 3500;
 
 static bool formsInitialized = false;
@@ -41,6 +40,7 @@ static GalacticForm** ellipticalForms = nullptr;
 static GalacticForm*  irregularForm   = nullptr;
 
 static Texture* galaxyTex = nullptr;
+static Texture* colorTex  = nullptr;
 
 static void InitializeForms();
 static GalacticForm* buildGalacticForms(const fs::path& filename);
@@ -106,6 +106,21 @@ static void GalaxyTextureEval(float u, float v, float /*w*/, unsigned char *pixe
     pixel[3] = pixVal;
 }
 
+static void ColorTextureEval(float u, float v, float /*w*/, unsigned char *pixel)
+{
+    unsigned int i = (u*0.5f + 0.5f)*255.99f; // [-1, 1] -> [0, 255]
+
+    // generic Hue profile as deduced from true-color imaging for spirals
+    // Hue in degrees
+    float hue = 25 * tanh(0.0615f * (27 - i));
+    if (i >= 28) hue += 220;
+    //convert Hue to RGB
+    float r, g, b;
+    DeepSkyObject::hsv2rgb(&r, &g, &b, hue, 0.20f, 1.0f);
+    pixel[0] = (unsigned char) (r * 255.99f);
+    pixel[1] = (unsigned char) (g * 255.99f);
+    pixel[2] = (unsigned char) (b * 255.99f);
+}
 
 float Galaxy::getDetail() const
 {
@@ -257,7 +272,7 @@ void Galaxy::render(const Vector3f& offset,
                     const Quaternionf& viewerOrientation,
                     float brightness,
                     float pixelSize,
-                    const Renderer* /* unused */)
+                    const Renderer* renderer)
 {
     if (form == nullptr)
     {
@@ -265,20 +280,30 @@ void Galaxy::render(const Vector3f& offset,
     }
     else
     {
-        renderGalaxyPointSprites(offset, viewerOrientation, brightness, pixelSize);
+        renderGalaxyPointSprites(offset, viewerOrientation, brightness, pixelSize, renderer);
     }
 }
 
-
-inline void glVertex4(const Vector4f& v)
+struct GalaxyVertex
 {
-    glVertex3fv(v.data());
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+
+    Vector4f position;
+    Matrix<GLshort, 4, 1> texCoord; // texCoord.x = x, texCoord.y = y, texCoord.z = color index, texCoord.w = alpha
+};
+
+static void draw(const GalaxyVertex *v, size_t count, void *indices)
+{
+    glVertexPointer(4, GL_FLOAT, sizeof(GalaxyVertex), &v->position);
+    glTexCoordPointer(4, GL_SHORT, sizeof(GalaxyVertex), &v->texCoord);
+    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, indices);
 }
 
 void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
                                       const Quaternionf& viewerOrientation,
                                       float brightness,
-                                      float pixelSize)
+                                      float pixelSize,
+                                      const Renderer* renderer)
 {
     if (form == nullptr)
         return;
@@ -297,15 +322,27 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     if (size < minimumFeatureSize)
         return;
 
+    auto *prog = renderer->getShaderManager().getShader("galaxy");
+    if (prog == nullptr)
+        return;
+
     if (galaxyTex == nullptr)
     {
         galaxyTex = CreateProceduralTexture(width, height, GL_RGBA,
                                             GalaxyTextureEval);
     }
     assert(galaxyTex != nullptr);
-
-    glEnable(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE0);
     galaxyTex->bind();
+
+    if (colorTex == nullptr)
+    {
+        colorTex = CreateProceduralTexture(256, 1, GL_RGBA,
+                                           ColorTextureEval);
+    }
+    assert(colorTex != nullptr);
+    glActiveTexture(GL_TEXTURE1);
+    colorTex->bind();
 
     Matrix3f viewMat = viewerOrientation.conjugate().toRotationMatrix();
     Vector4f v0(Vector4f::Zero());
@@ -317,12 +354,7 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     v2.head(3) = viewMat * Vector3f( 1,  1, 0) * size;
     v3.head(3) = viewMat * Vector3f(-1,  1, 0) * size;
 
-    //Mat4f m = (getOrientation().toMatrix4() *
-    //           Mat4f::scaling(form->scale) *
-    //           Mat4f::scaling(getRadius()));
-
     Quaternionf orientation = getOrientation().conjugate();
-
     Matrix3f mScale = form->scale.asDiagonal() * size;
     Matrix3f mLinear = orientation.toRotationMatrix() * mScale;
 
@@ -330,7 +362,7 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     m.topLeftCorner(3,3) = mLinear;
     m.block<3,1>(0, 3) = offset;
 
-    int   pow2  = 1;
+    int pow2 = 1;
 
     BlobVector* points = form->blobs;
     unsigned int nPoints = (unsigned int) (points->size() * clamp(getDetail()));
@@ -357,10 +389,22 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     glPushMatrix();
     glTranslatef(-offset.x(), -offset.y(), -offset.z());
 
-    float btot = ((type > SBc) && (type < Irr))? 2.5f: 5.0f;
+    const float btot = ((type > SBc) && (type < Irr)) ? 2.5f : 5.0f;
     const float spriteScaleFactor = 1.0f / 1.55f;
 
-    glBegin(GL_QUADS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    vector<GalaxyVertex, aligned_allocator<GalaxyVertex>> vertices;
+    vertices.reserve(4096 / sizeof(GalaxyVertex));
+    vector<short> indices;
+    indices.reserve(4096 / sizeof(GalaxyVertex) / 4 * 6); // 6 indices per 4 vertices
+    unsigned short j = 0;
+
+    prog->use();
+    prog->samplerParam("galaxyTex") = 0;
+    prog->samplerParam("colorTex") = 1;
+
     for (unsigned int i = 0; i < nPoints; ++i)
     {
         if ((i & pow2) != 0)
@@ -379,22 +423,52 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
         Vector4f    p  = m * b.position;
         float       br = b.brightness / 255.0f;
 
-        Vector3f   c      = colorTable[b.colorIndex];     // lookup static color table
-
         float screenFrac = size / p.norm();
         if (screenFrac < 0.1f)
         {
-            float a  = btot * (0.1f - screenFrac) * brightness_corr * brightness * br;
-            glColor4f(c.x(), c.y(), c.z(), (4.0f * lightGain + 1.0f) * a);
-            glTexCoord2f(0, 0);          glVertex4(p + v0);
-            glTexCoord2f(1, 0);          glVertex4(p + v1);
-            glTexCoord2f(1, 1);          glVertex4(p + v2);
-            glTexCoord2f(0, 1);          glVertex4(p + v3);
+            float a = (4.0f * lightGain + 1.0f) * btot * (0.1f - screenFrac) * brightness_corr * brightness * br;
+            short alpha = (short) (a * 65535.99f);
+            short color = (short)b.colorIndex;
+            GalaxyVertex vtx;
+            vtx.position = p + v0;
+            vtx.texCoord = { 0, 0, color, alpha };
+            vertices.push_back(vtx);
+            vtx.position = p + v1;
+            vtx.texCoord = { 1, 0, color, alpha  };
+            vertices.push_back(vtx);
+            vtx.position = p + v2;
+            vtx.texCoord = { 1, 1, color, alpha  };
+            vertices.push_back(vtx);
+            vtx.position = p + v3;
+            vtx.texCoord = { 0, 1, color, alpha  };
+            vertices.push_back(vtx);
+
+            indices.push_back(j+0);
+            indices.push_back(j+1);
+            indices.push_back(j+2);
+            indices.push_back(j+0);
+            indices.push_back(j+2);
+            indices.push_back(j+3);
+            j += 4;
+
+            if ((vertices.size() + 4) * sizeof(GalaxyVertex) > 4096)
+            {
+                draw(&vertices[0], indices.size(), indices.data());
+                vertices.clear();
+                indices.clear();
+                j = 0;
+            }
         }
     }
-    glEnd();
 
+    if (indices.size() > 0)
+        draw(&vertices[0], indices.size(), indices.data());
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glUseProgram(0);
     glPopMatrix();
+    glActiveTexture(GL_TEXTURE0);
 }
 
 
@@ -495,12 +569,7 @@ float Galaxy::getLightGain()
 
 void Galaxy::setLightGain(float lg)
 {
-    if (lg < 0.0f)
-        lightGain = 0.0f;
-    else if (lg > 1.0f)
-        lightGain = 1.0f;
-    else
-        lightGain = lg;
+    lightGain = clamp(lg);
 }
 
 
@@ -601,23 +670,6 @@ GalacticForm* buildGalacticForms(const fs::path& filename)
 
 void InitializeForms()
 {
-    // build color table:
-
-    for (unsigned int i = 0; i < 256; i++)
-    {
-        float rr, gg, bb;
-        //
-        // generic Hue profile as deduced from true-color imaging for spirals
-        // Hue in degrees
-
-        float hue = (i < 28)? 25 * tanh(0.0615f * (27 - i)): 25 * tanh(0.0615f * (27 - i)) + 220;
-
-        //convert Hue to RGB
-
-        DeepSkyObject::hsv2rgb(&rr, &gg, &bb, hue, 0.20f, 1.0f);
-        Color c(rr, gg, bb);
-        colorTable[i]  = Vector3f(c.red(), c.green(), c.blue());
-    }
     // Spiral Galaxies, 7 classical Hubble types
 
     spiralForms   = new GalacticForm*[7];
