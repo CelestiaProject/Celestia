@@ -5518,15 +5518,15 @@ void Renderer::renderCometTail(const Body& body,
     float fadeFactor = 0.5f * (1.0f - tanh(fadeDistance - 1.0f / fadeDistance));
     prog->floatParam("fadeFactor") = fadeFactor;
 
-    vector<unsigned short> indeces;
-    indeces.reserve(nTailSlices * 2 + 2);
+    vector<unsigned short> indices;
+    indices.reserve(nTailSlices * 2 + 2);
     for (int j = 0; j < nTailSlices; j++)
     {
-        indeces.push_back(j);
-        indeces.push_back(j + nTailSlices);
+        indices.push_back(j);
+        indices.push_back(j + nTailSlices);
     }
-    indeces.push_back(0);
-    indeces.push_back(nTailSlices);
+    indices.push_back(0);
+    indices.push_back(nTailSlices);
 
     const size_t stride = sizeof(CometTailVertex);
     for (i = 0; i < nTailPoints - 1; i++)
@@ -5536,7 +5536,7 @@ void Renderer::renderCometTail(const Body& body,
         glNormalPointer(GL_FLOAT, stride, &p->normal);
         if (brightness != -1)
             glVertexAttribPointer(brightness, 1, GL_FLOAT, GL_FALSE, stride, &p->brightness);
-        glDrawElements(GL_TRIANGLE_STRIP, indeces.size(), GL_UNSIGNED_SHORT, indeces.data());
+        glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_SHORT, indices.data());
     }
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDisableClientState(GL_VERTEX_ARRAY);
