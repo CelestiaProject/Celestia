@@ -91,6 +91,10 @@ PlanetographicGrid::render(Renderer* renderer,
                            float discSizeInPixels,
                            double tdb) const
 {
+    auto *prog = renderer->getShaderManager().getShader("uniform_color");
+    if (prog == nullptr)
+        return;
+
     // Compatibility
     Quaterniond q = Quaterniond(AngleAxis<double>(PI, Vector3d::UnitY())) * body.getEclipticToBodyFixed(tdb);
     Quaternionf qf = q.cast<float>();
@@ -116,8 +120,6 @@ PlanetographicGrid::render(Renderer* renderer,
     glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
 
-    glDisable(GL_TEXTURE_2D);
-
     glPushMatrix();
     glRotate(qf.conjugate());
     glScale(scale * semiAxes);
@@ -139,6 +141,8 @@ PlanetographicGrid::render(Renderer* renderer,
         longitudeStep = 30.0f;
     }
 
+    prog->use();
+
     for (float latitude = -90.0f + latitudeStep; latitude < 90.0f; latitude += latitudeStep)
     {
         float phi = degToRad(latitude);
@@ -146,12 +150,12 @@ PlanetographicGrid::render(Renderer* renderer,
 
         if (latitude == 0.0f)
         {
-            glColor(Renderer::PlanetEquatorColor);
+            prog->vec4Param("color") = Renderer::PlanetEquatorColor.toVector4();
             glLineWidth(2.0f);
         }
         else
         {
-            glColor(Renderer::PlanetographicGridColor);
+            prog->vec4Param("color") = Renderer::PlanetographicGridColor.toVector4();
         }
         glPushMatrix();
         glTranslatef(0.0f, (float) std::sin(phi), 0.0f);
@@ -179,9 +183,9 @@ PlanetographicGrid::render(Renderer* renderer,
 
     glVertexPointer(3, GL_FLOAT, 0, xyCircle);
 
+    prog->vec4Param("color") = Renderer::PlanetographicGridColor.toVector4();
     for (float longitude = 0.0f; longitude <= 180.0f; longitude += longitudeStep)
     {
-        glColor(Renderer::PlanetographicGridColor);
         glPushMatrix();
         glRotatef(longitude, 0.0f, 1.0f, 0.0f);
         glDrawArrays(GL_LINE_LOOP, 0, circleSubdivisions);
@@ -242,11 +246,9 @@ PlanetographicGrid::render(Renderer* renderer,
 
     glPopMatrix();
 
-    glDisable(GL_LIGHTING);
-
+    glUseProgram(0);
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 }
@@ -295,11 +297,13 @@ PlanetographicGrid::InitializeGeometry()
     for (unsigned int i = 0; i < circleSubdivisions; i++)
     {
         float theta = (float) (2.0 * PI) * (float) i / (float) circleSubdivisions;
-        xyCircle[i * 3 + 0] = (float) std::cos(theta);
-        xyCircle[i * 3 + 1] = (float) std::sin(theta);
+        float s, c;
+        sincos(theta, s, c);
+        xyCircle[i * 3 + 0] = c;
+        xyCircle[i * 3 + 1] = s;
         xyCircle[i * 3 + 2] = 0.0f;
-        xzCircle[i * 3 + 0] = (float) std::cos(theta);
+        xzCircle[i * 3 + 0] = c;
         xzCircle[i * 3 + 1] = 0.0f;
-        xzCircle[i * 3 + 2] = (float) std::sin(theta);
+        xzCircle[i * 3 + 2] = s;
     }
 }
