@@ -3524,6 +3524,51 @@ void Renderer::draw(const Observer& observer,
 #endif
 }
 
+void renderPoint(const Renderer &renderer,
+                 const Vector3f &position,
+                 const Color &color,
+                 float size,
+                 bool useSprite)
+{
+    CelestiaGLProgram *prog;
+    if (useSprite)
+        prog = renderer.getShaderManager().getShader("star");
+    else
+        prog = renderer.getShaderManager().getShader(ShaderProperties::PerVertexColor);
+    if (prog == nullptr)
+        return;
+
+    prog->use();
+    prog->samplerParam("starTex") = 0;
+
+    glEnable(GL_POINT_SPRITE);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, &position);
+    glEnableClientState(GL_COLOR_ARRAY);
+    Vector4f mainColor = color.toVector4();
+    glColorPointer(4, GL_FLOAT, 0, &mainColor);
+    glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
+    if (useSprite)
+    {
+        glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
+                              1, GL_FLOAT, GL_FALSE,
+                              0, &size);
+        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    }
+
+    glDrawArrays(GL_POINTS, 0, 1);
+
+    if (useSprite)
+    {
+        glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+        glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
+    }
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisable(GL_POINT_SPRITE);
+    glUseProgram(0);
+}
+
 // If the an object occupies a pixel or less of screen space, we don't
 // render its mesh at all and just display a starlike point instead.
 // Switching between the particle and mesh renderings of an object is
@@ -3610,53 +3655,11 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             glareAlpha *= fade;
         }
 
-        Matrix3f m = cameraOrientation.conjugate().toRotationMatrix();
-        Vector3f center = position;
-
-        // Offset the glare sprite so that it lies in front of the object
-        Vector3f direction = center.normalized();
-
-        // Position the sprite on the the line between the viewer and the
-        // object, and on a plane normal to the view direction.
-        center = center + direction * (radius / (m * Vector3f::UnitZ()).dot(direction));
-
         glEnable(GL_DEPTH_TEST);
-#if !defined(NO_MAX_POINT_SIZE)
-        // TODO: OpenGL appears to limit the max point size unless we
-        // actually set up a shader that writes the pointsize values. To get
-        // around this, we'll use billboards.
-        Vector3f v0 = m * Vector3f(-1, -1, 0);
-        Vector3f v1 = m * Vector3f( 1, -1, 0);
-        Vector3f v2 = m * Vector3f( 1,  1, 0);
-        Vector3f v3 = m * Vector3f(-1,  1, 0);
-        float distanceAdjust = pixelSize * center.norm() * 0.5f;
-
-        if (starStyle == PointStars)
-        {
-            glDisable(GL_TEXTURE_2D);
-            glBegin(GL_POINTS);
-            glColor(color, alpha);
-            glVertex(center);
-            glEnd();
-            glEnable(GL_TEXTURE_2D);
-        }
-        else
-        {
+        bool useSprites = starStyle != PointStars;
+        if (useSprites)
             gaussianDiscTex->bind();
-
-            pointSize *= distanceAdjust;
-            glBegin(GL_QUADS);
-            glColor(color, alpha);
-            glTexCoord2f(0, 1);
-            glVertex(center + (v0 * pointSize));
-            glTexCoord2f(1, 1);
-            glVertex(center + (v1 * pointSize));
-            glTexCoord2f(1, 0);
-            glVertex(center + (v2 * pointSize));
-            glTexCoord2f(0, 0);
-            glVertex(center + (v3 * pointSize));
-            glEnd();
-        }
+        renderPoint(*this, position, {color, alpha}, pointSize, useSprites);
 
         // If the object is brighter than magnitude 1, add a halo around it to
         // make it appear more brilliant.  This is a hack to compensate for the
@@ -3667,52 +3670,10 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         if (useHalos && glareAlpha > 0.0f)
         {
             gaussianGlareTex->bind();
-
-            glareSize *= distanceAdjust;
-            glBegin(GL_QUADS);
-            glColor(color, glareAlpha);
-            glTexCoord2f(0, 1);
-            glVertex(center + (v0 * glareSize));
-            glTexCoord2f(1, 1);
-            glVertex(center + (v1 * glareSize));
-            glTexCoord2f(1, 0);
-            glVertex(center + (v2 * glareSize));
-            glTexCoord2f(0, 0);
-            glVertex(center + (v3 * glareSize));
-            glEnd();
-        }
-#else
-        // Disabled because of point size limits
-        glEnable(GL_POINT_SPRITE);
-        glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
-
-        gaussianDiscTex->bind();
-        glColor(color, alpha);
-        glPointSize(pointSize);
-        glBegin(GL_POINTS);
-        glVertex(center);
-        glEnd();
-
-        // If the object is brighter than magnitude 1, add a halo around it to
-        // make it appear more brilliant.  This is a hack to compensate for the
-        // limited dynamic range of monitors.
-        //
-        // TODO: Stars look fine but planets look unrealistically bright
-        // with halos.
-        if (useHalos && glareAlpha > 0.0f)
-        {
-            gaussianGlareTex->bind();
-
-            glColor(color, glareAlpha);
-            glPointSize(glareSize);
-            glBegin(GL_POINTS);
-            glVertex(center);
-            glEnd();
+            renderPoint(*this, position, {color, glareAlpha}, glareSize, true);
         }
 
-        glDisable(GL_POINT_SPRITE);
         glDisable(GL_DEPTH_TEST);
-#endif // NO_MAX_POINT_SIZE
     }
 }
 
