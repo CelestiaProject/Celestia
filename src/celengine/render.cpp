@@ -320,10 +320,9 @@ PointStarVertexBuffer::~PointStarVertexBuffer()
 
 void PointStarVertexBuffer::startSprites()
 {
-    CelestiaGLProgram* prog = renderer.getShaderManager().getShader("star");
+    auto *prog = renderer.getShaderManager().getShader("star");
     if (prog == nullptr)
         return;
-
     prog->use();
     prog->samplerParam("starTex") = 0;
 
@@ -348,6 +347,11 @@ void PointStarVertexBuffer::startSprites()
 
 void PointStarVertexBuffer::startPoints()
 {
+    auto *prog = renderer.getShaderManager().getShader(ShaderProperties::PerVertexColor);
+    if (prog == nullptr)
+        return;
+    prog->use();
+
     unsigned int stride = sizeof(StarVertex);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
@@ -375,12 +379,10 @@ void PointStarVertexBuffer::render()
         if (useSprites)
         {
             glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-            glEnable(GL_TEXTURE_2D);
         }
         else
         {
             glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
-            glDisable(GL_TEXTURE_2D);
             glPointSize(1.0f);
         }
         glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
@@ -410,13 +412,9 @@ void PointStarVertexBuffer::finish()
     if (useSprites)
     {
         glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-        glUseProgram(0);
         glDisable(GL_POINT_SPRITE);
     }
-    else
-    {
-        glEnable(GL_TEXTURE_2D);
-    }
+    glUseProgram(0);
 }
 
 inline void PointStarVertexBuffer::addStar(const Eigen::Vector3f& pos,
