@@ -13,6 +13,6 @@ cd build64
 set Qt5_DIR=C:\Qt\5.10.1\msvc2015_64
 set PATH=%Qt5_DIR%\bin;%PATH%
 
-cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_GENERATOR_PLATFORM=x64 -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON ..
+cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_GENERATOR_PLATFORM=x64 -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TTF=ON ..
 
 cmake --build . --config Release -- /maxcpucount:2 /nologo
