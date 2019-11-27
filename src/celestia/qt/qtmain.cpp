@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
 
     // TODO: resolve issues with pixmap alpha channel
     splash.show();
+    app.processEvents();
 
     // Gettext integration
     setlocale(LC_ALL, "");
