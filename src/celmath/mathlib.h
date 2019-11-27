@@ -49,11 +49,13 @@ template<typename T> constexpr T clamp(T t)
     return (t < 0) ? 0 : ((t > 1) ? 1 : t);
 }
 
+#if __cplusplus < 201703L
 // return t clamped to [low, high]
 template<typename T> constexpr T clamp(T t, T low, T high)
 {
     return (t < low) ? low : ((t > high) ? high : t);
 }
+#endif
 
 template<typename T> inline constexpr T degToRad(T d)
 {
@@ -151,4 +153,11 @@ ellipsoidTangent(const Eigen::Matrix<T, 3, 1>& recipSemiAxes,
     return e + v * t1;
 }
 }; // namespace celmath
+
+#if __cplusplus < 201703L
+namespace std
+{
+    using celmath::clamp;
+};
+#endif
 #endif // _MATHLIB_H_
