@@ -230,9 +230,17 @@ Install the latest Xcode:
 
   You should be able to get Xcode from the Mac App Store.
 
+Install Homebrew
+
+  Follow the instructions on https://brew.sh/
+
 Install required packages:
 
-  brew install cmake cspice fmt gettext glew libpng lua qt5 jpeg eigen
+  brew install cmake cspice fmt gettext libpng lua qt5 jpeg eigen
+
+Build GLEW from source (Homebrew's precompiled GLEW has wrong linking path):
+
+  brew install glew --build-from-source
 
 Clone the source and go to the source directory.
 
