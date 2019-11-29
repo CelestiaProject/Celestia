@@ -41,6 +41,7 @@ class ShaderProperties
     void setCloudShadowForLight(unsigned int lightIndex, bool enabled);
     bool hasCloudShadowForLight(unsigned int lightIndex) const;
     bool hasCloudShadows() const;
+    bool hasShadowMap() const;
 
     bool hasShadowsForLight(unsigned int) const;
     bool hasSharedTextureCoords() const;
@@ -60,6 +61,7 @@ class ShaderProperties
      CloudShadowTexture      =   0x80,
      CompressedNormalTexture =  0x100,
      EmissiveTexture         =  0x200,
+     ShadowMapTexture        =  0x400,
      VertexOpacities         =  0x800,
      VertexColors            = 0x1000,
      Scattering              = 0x2000,
@@ -272,6 +274,9 @@ class CelestiaGLProgram
 
     // Color sent as a uniform
     Vec4ShaderParameter color;
+
+    // Matrix used to project to light space
+    Mat4ShaderParameter ShadowMatrix0;
 
     CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderEclipseShadows];
 

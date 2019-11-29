@@ -76,6 +76,7 @@ public:
     const std::string getStringValue(const std::string& name);
 
     float SolarSystemMaxDistance;
+    unsigned ShadowMapSize;
 };
 
 CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig* config = nullptr);

@@ -411,6 +411,7 @@ int main(int argc, char* argv[])
     g_assert(app->simulation);
 
     app->renderer->setSolarSystemMaxDistance(app->core->getConfig()->SolarSystemMaxDistance);
+    app->renderer->setShadowMapSize(app->core->getConfig()->ShadowMapSize);
 
     #ifdef GNOME
     /* Create the main window (GNOME) */

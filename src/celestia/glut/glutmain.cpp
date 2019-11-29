@@ -526,6 +526,7 @@ int main(int argc, char* argv[])
     appCore->initRenderer();
 
     appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
+    appCore->getRenderer()->setShadowMapSize(appCore->getConfig()->ShadowMapSize);
 
     // Set the simulation starting time to the current system time
     appCore->start();
