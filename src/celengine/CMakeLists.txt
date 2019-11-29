@@ -39,6 +39,8 @@ set(CELENGINE_SOURCES
   dsooctree.h
   frame.cpp
   frame.h
+  framebuffer.cpp
+  framebuffer.h
   frametree.cpp
   frametree.h
   galaxy.cpp
