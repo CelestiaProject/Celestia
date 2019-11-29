@@ -2,7 +2,7 @@
 //
 // Functions for rendering objects using dynamically generated GLSL shaders.
 //
-// Copyright (C) 2006-2009, the Celestia Development Team
+// Copyright (C) 2006-2020, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -10,23 +10,20 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <algorithm>
-#include <cassert>
 #include <config.h>
-#include "render.h"
-#include "astro.h"
-#include "glshader.h"
-#include "shadermanager.h"
-#include "spheremesh.h"
-#include "lodspheremesh.h"
+#include <algorithm>
+#include "framebuffer.h"
 #include "geometry.h"
-#include "texmanager.h"
+#include "lodspheremesh.h"
 #include "meshmanager.h"
+#include "modelgeometry.h"
+#include "render.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
-#include "modelgeometry.h"
+#include "shadermanager.h"
+#include "texmanager.h"
 #include "vecgl.h"
-#include <celutil/debug.h>
+#include <celengine/astro.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
 #include <celmath/intersect.h>
@@ -821,187 +818,3 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
     // Re-enable the color buffer
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
-
-
-
-
-FramebufferObject::FramebufferObject(GLuint width, GLuint height, unsigned int attachments) :
-    m_width(width),
-    m_height(height),
-    m_colorTexId(0),
-    m_depthTexId(0),
-    m_fboId(0),
-    m_status(GL_FRAMEBUFFER_UNSUPPORTED_EXT)
-{
-    if (attachments != 0)
-    {
-        generateFbo(attachments);
-    }
-}
-
-
-FramebufferObject::~FramebufferObject()
-{
-    cleanup();
-}
-
-
-bool
-FramebufferObject::isValid() const
-{
-    return m_status == GL_FRAMEBUFFER_COMPLETE_EXT;
-}
-
-
-GLuint
-FramebufferObject::colorTexture() const
-{
-    return m_colorTexId;
-}
-
-
-GLuint
-FramebufferObject::depthTexture() const
-{
-    return m_depthTexId;
-}
-
-
-void
-FramebufferObject::generateColorTexture()
-{
-    // Create and bind the texture
-    glGenTextures(1, &m_colorTexId);
-    glBindTexture(GL_TEXTURE_2D, m_colorTexId);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Clamp to edge
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    // Set the texture dimensions
-    // Do we need to set GL_DEPTH_COMPONENT24 here?
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-
-    // Unbind the texture
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-
-void
-FramebufferObject::generateDepthTexture()
-{
-    // Create and bind the texture
-    glGenTextures(1, &m_depthTexId);
-    glBindTexture(GL_TEXTURE_2D, m_depthTexId);
-
-    // Only nearest sampling is appropriate for depth textures
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    // Clamp to edge
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    // Set the texture dimensions
-    // Do we need to set GL_DEPTH_COMPONENT24 here?
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
-
-    // Unbind the texture
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-
-void
-FramebufferObject::generateFbo(unsigned int attachments)
-{
-    // Create the FBO
-    glGenFramebuffersEXT(1, &m_fboId);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId);
-
-    glReadBuffer(GL_NONE);
-
-    if ((attachments & ColorAttachment) != 0)
-    {
-        generateColorTexture();
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexId, 0);
-        m_status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-        if (m_status != GL_FRAMEBUFFER_COMPLETE_EXT)
-        {
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-            cleanup();
-            return;
-        }
-    }
-    else
-    {
-        // Depth-only rendering; no color buffer.
-        glDrawBuffer(GL_NONE);
-    }
-
-    if ((attachments & DepthAttachment) != 0)
-    {
-        generateDepthTexture();
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_depthTexId, 0);
-        m_status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-        if (m_status != GL_FRAMEBUFFER_COMPLETE_EXT)
-        {
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-            cleanup();
-            return;
-        }
-    }
-    else
-    {
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0);
-    }
-
-    // Restore default frame buffer
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-}
-
-
-// Delete all GL objects associated with this framebuffer object
-void
-FramebufferObject::cleanup()
-{
-    if (m_fboId != 0)
-    {
-        glDeleteFramebuffersEXT(1, &m_fboId);
-    }
-
-    if (m_colorTexId != 0)
-    {
-        glDeleteTextures(1, &m_colorTexId);
-    }
-
-    if (m_depthTexId != 0)
-    {
-        glDeleteTextures(1, &m_depthTexId);
-    }
-}
-
-
-bool
-FramebufferObject::bind()
-{
-    if (isValid())
-    {
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId);
-        return true;
-    }
-
-    return false;
-}
-
-
-bool
-FramebufferObject::unbind()
-{
-    // Restore default frame buffer
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-    return true;
-}
-
