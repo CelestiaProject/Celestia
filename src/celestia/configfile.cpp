@@ -98,6 +98,8 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     configParams->getNumber("SolarSystemMaxDistance", maxDist);
     config->SolarSystemMaxDistance = min(max(maxDist, 1.0f), 10.0f);
 
+    config->ShadowMapSize = getUint(configParams, "ShadowMapSize", 0);
+
     double aaSamples = 1;
     configParams->getNumber("AntialiasingSamples", aaSamples);
     config->aaSamples = (unsigned int) aaSamples;

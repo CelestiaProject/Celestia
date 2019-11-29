@@ -34,8 +34,6 @@ std::ofstream hdrlog;
 //#define USE_BLOOM_LISTS
 #endif
 
-// #define ENABLE_SELF_SHADOW
-
 #include <config.h>
 #include "render.h"
 #include "boundaries.h"
@@ -59,6 +57,7 @@ std::ofstream hdrlog;
 #include "curveplot.h"
 #include "shadermanager.h"
 #include "rectangle.h"
+#include "framebuffer.h"
 #include "pointstarvertexbuffer.h"
 #include "pointstarrenderer.h"
 #include "orbitsampler.h"
@@ -66,6 +65,7 @@ std::ofstream hdrlog;
 #include "boundariesrenderer.h"
 #include "rendcontext.h"
 #include "vertexobject.h"
+#include <celcompat/memory.h>
 #include <celengine/observer.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -235,11 +235,6 @@ constexpr const uint64_t ShowDSO = Renderer::ShowGalaxies     |
                                    Renderer::ShowGlobulars    |
                                    Renderer::ShowNebulae      |
                                    Renderer::ShowOpenClusters;
-
-#ifdef ENABLE_SELF_SHADOW
-static FramebufferObject* shadowFbo = nullptr;
-#endif
-
 
 // Some useful unit conversions
 inline float mmToInches(float mm)
@@ -776,17 +771,6 @@ bool Renderer::init(
 #ifdef USE_HDR
         genSceneTexture();
         genBlurTextures();
-#endif
-
-#ifdef ENABLE_SELF_SHADOW
-        if (gl::EXT_framebuffer_object)
-        {
-            shadowFbo = new FramebufferObject(1024, 1024, FramebufferObject::DepthAttachment);
-            if (!shadowFbo->isValid())
-            {
-                clog << "Error creating shadow FBO.\n";
-            }
-        }
 #endif
 
         commonDataInitialized = true;
@@ -6781,4 +6765,37 @@ Renderer::getVertexObject(VOType owner, GLenum type, GLsizeiptr size, GLenum str
         m_VertexObjects[i] = new celgl::VertexObject(type, size, stream);
 
     return *m_VertexObjects[i];
+}
+
+FramebufferObject*
+Renderer::getShadowFBO(int index) const
+{
+    return index == 0 ? m_shadowFBO.get() : nullptr;
+}
+
+void
+Renderer::createShadowFBO()
+{
+    m_shadowFBO = make_unique<FramebufferObject>(m_shadowMapSize, m_shadowMapSize, FramebufferObject::DepthAttachment);
+    if (!m_shadowFBO->isValid())
+    {
+        clog << "Error creating shadow FBO.\n";
+        m_shadowFBO = nullptr;
+    }
+}
+
+void
+Renderer::setShadowMapSize(unsigned size)
+{
+    if (!gl::EXT_framebuffer_object)
+        return;
+    GLint t = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &t);
+    m_shadowMapSize = clamp(size, 0u, static_cast<unsigned>(t));
+    if (m_shadowFBO != nullptr && m_shadowMapSize == m_shadowFBO->width())
+	return;
+    if (m_shadowMapSize == 0)
+        m_shadowFBO = nullptr;
+    else
+        createShadowFBO();
 }

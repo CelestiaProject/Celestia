@@ -26,6 +26,7 @@
 #include <celengine/astro.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
+#include <celmath/geomutil.h>
 #include <celmath/intersect.h>
 #include <celutil/utf8.h>
 #include <celutil/util.h>
@@ -35,9 +36,28 @@ using namespace Eigen;
 using namespace std;
 using namespace celmath;
 
+#ifndef GL_ONLY_SHADOWS
+#define GL_ONLY_SHADOWS 1
+#endif
 
 const double AtmosphereExtinctionThreshold = 0.05;
 
+static
+void renderGeometryShadow_GLSL(Geometry* geometry,
+                               FramebufferObject* shadowFbo,
+                               const RenderInfo& ri,
+                               const LightingState& ls,
+                               int lightIndex,
+                               float geometryScale,
+                               const Quaternionf& planetOrientation,
+                               double tsec,
+                               const Renderer* renderer,
+                               Eigen::Matrix4f *lightMatrix);
+
+static
+Matrix4f directionalLightMatrix(const Vector3f& lightDirection);
+static
+Matrix4f shadowProjectionMatrix(float objectRadius);
 
 // Render a planet sphere with GLSL shaders
 void renderEllipsoid_GLSL(const RenderInfo& ri,
@@ -277,6 +297,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 }
 
 
+#undef DEPTH_BUFFER_DEBUG
+
 /*! Render a mesh object
  *  Parameters:
  *    tsec : animation clock time in seconds
@@ -292,11 +314,87 @@ void renderGeometry_GLSL(Geometry* geometry,
                          double tsec,
                          const Renderer* renderer)
 {
+    auto *shadowBuffer = renderer->getShadowFBO(0);
+    Matrix4f lightMatrix(Matrix4f::Identity());
+
+    if (shadowBuffer != nullptr && shadowBuffer->isValid())
+    {
+        std::array<int, 4> viewport;
+        renderer->getViewport(viewport);
+
+        // Save current GL state to avoid depth rendering bugs
+        glPushAttrib(GL_TRANSFORM_BIT);
+        float range[2];
+        glGetFloatv(GL_DEPTH_RANGE, range);
+        glDepthRange(0.0f, 1.0f);
+
+#ifdef DEPTH_STATE_DEBUG
+        float bias, bits, clear, range[2], scale;
+        glGetFloatv(GL_DEPTH_BIAS, &bias);
+        glGetFloatv(GL_DEPTH_BITS, &bits);
+        glGetFloatv(GL_DEPTH_CLEAR_VALUE, &clear);
+        glGetFloatv(GL_DEPTH_RANGE, range);
+        glGetFloatv(GL_DEPTH_SCALE, &scale);
+        fmt::printf("bias: %f bits: %f clear: %f range: %f - %f, scale:%f\n", bias, bits, clear, range[0], range[1], scale);
+#endif
+
+        renderGeometryShadow_GLSL(geometry, shadowBuffer,
+                                  ri, ls, 0, geometryScale,
+                                  planetOrientation,
+                                  tsec, renderer, &lightMatrix);
+        renderer->setViewport(viewport);
+#ifdef DEPTH_BUFFER_DEBUG
+        glDisable(GL_DEPTH_TEST);
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadMatrix(Ortho2D(0.0f, (float)viewport[2], 0.0f, (float)viewport[3]));
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+        glUseProgram(0);
+        glColor4f(1, 1, 1, 1);
+
+        glActiveTexture(GL_TEXTURE0);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, shadowBuffer->depthTexture());
+#if GL_ONLY_SHADOWS
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+#endif
+
+        glBegin(GL_QUADS);
+        float side = 300.0f;
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex2f(0.0f, 0.0f);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex2f(side, 0.0f);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex2f(side, side);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex2f(0.0f, side);
+        glEnd();
+
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_DEPTH_TEST);
+#endif
+        glPopAttrib();
+        glDepthRange(range[0], range[1]);
+    }
+
     GLSL_RenderContext rc(renderer, ls, geometryScale, planetOrientation);
 
     if ((renderFlags & Renderer::ShowAtmospheres) != 0)
     {
         rc.setAtmosphere(atmosphere);
+    }
+
+    if (shadowBuffer != nullptr && shadowBuffer->isValid())
+    {
+        rc.setShadowMap(shadowBuffer->depthTexture(), shadowBuffer->width(), &lightMatrix);
     }
 
     rc.setCameraOrientation(ri.orientation);
@@ -771,50 +869,107 @@ void renderRings_GLSL(RingSystem& rings,
     glUseProgram(0);
 }
 
+// Calculate the matrix used to render the model from the
+// perspective of the light.
+static
+Matrix4f directionalLightMatrix(const Vector3f& lightDirection)
+{
+    const Vector3f &viewDir = lightDirection;
+    Vector3f upDir = viewDir.unitOrthogonal();
+    Vector3f rightDir = upDir.cross(viewDir);
+    Matrix4f m = Matrix4f::Identity();
 
+    m.row(0).head(3) = rightDir;
+    m.row(1).head(3) = upDir;
+    m.row(2).head(3) = viewDir;
+
+    return m;
+}
+
+static
+Matrix4f shadowProjectionMatrix(float objectRadius)
+{
+    return Ortho(-objectRadius, objectRadius,
+                 -objectRadius, objectRadius,
+                 -objectRadius, objectRadius);
+}
 
 /*! Render a mesh object
  *  Parameters:
  *    tsec : animation clock time in seconds
  */
+static
 void renderGeometryShadow_GLSL(Geometry* geometry,
                               FramebufferObject* shadowFbo,
                               const RenderInfo& ri,
                               const LightingState& ls,
+                              int lightIndex,
                               float geometryScale,
                               const Quaternionf& planetOrientation,
                               double tsec,
-                              const Renderer* renderer)
+                              const Renderer* renderer,
+                              Eigen::Matrix4f *lightMatrix)
 {
+    glBindTexture(GL_TEXTURE_2D, 0);
     shadowFbo->bind();
     glViewport(0, 0, shadowFbo->width(), shadowFbo->height());
-    glClear(GL_DEPTH_BUFFER_BIT);
 
     // Write only to the depth buffer
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glDepthMask(GL_TRUE);
-
-    // Set up the camera for drawing from the light source direction
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_DEPTH_BUFFER_BIT);
 
     // Render backfaces only in order to reduce self-shadowing artifacts
     glCullFace(GL_FRONT);
 
     GLSL_RenderContext rc(renderer, ls, geometryScale, planetOrientation);
 
+    Material m;
+    m.diffuse = Material::Color(1.0f, 1.0f, 1.0f);
+    rc.setMaterial(&m);
+    rc.lock();
     rc.setPointScale(ri.pointScale);
 
-    int lightIndex = 0;
-    Vector3f viewDir = -ls.lights[lightIndex].direction_obj;
-    Vector3f upDir = viewDir.unitOrthogonal();
-    /*Vector3f rightDir = */upDir.cross(viewDir);
-
-
+#ifdef USE_DEPTH_SHADER
+    auto *prog = renderer->getShaderManager().getShader("depth");
+    if (prog == nullptr)
+        return;
+    prog->use();
+#else
     glUseProgram(0);
+#endif
+
+    auto projMat = shadowProjectionMatrix(1);
+    auto modelViewMat = directionalLightMatrix(ls.lights[lightIndex].direction_obj);
+    *lightMatrix = projMat * modelViewMat;
+
+    // Enable poligon offset to decrease "shadow acne"
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(.001f, .001f);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadMatrix(projMat);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadMatrix(modelViewMat);
 
     geometry->render(rc, tsec);
 
-    shadowFbo->unbind();
-
+#ifdef USE_DEPTH_SHADER
+    glUseProgram(0);
+#endif
+    glDisable(GL_POLYGON_OFFSET_FILL);
     // Re-enable the color buffer
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glCullFace(GL_BACK);
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    shadowFbo->unbind();
+#if GL_ONLY_SHADOWS
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+#endif
 }

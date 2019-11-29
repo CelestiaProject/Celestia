@@ -11,9 +11,10 @@
 #ifndef _CELENGINE_RENDER_H_
 #define _CELENGINE_RENDER_H_
 
-#include <vector>
 #include <list>
+#include <memory>
 #include <string>
+#include <vector>
 #include <Eigen/Core>
 #include <celengine/universe.h>
 #include <celengine/selection.h>
@@ -35,6 +36,7 @@ class AsterismRenderer;
 class BoundariesRenderer;
 class Observer;
 class TextureFont;
+class FramebufferObject;
 namespace celmath
 {
 class Frustum;
@@ -249,6 +251,7 @@ class Renderer
     bool getVideoSync() const;
     void setVideoSync(bool);
     void setSolarSystemMaxDistance(float);
+    void setShadowMapSize(unsigned);
 
     bool captureFrame(int, int, int, int, PixelFormat format, unsigned char*, bool = false) const;
 
@@ -368,6 +371,8 @@ class Renderer
     void addWatcher(RendererWatcher*);
     void removeWatcher(RendererWatcher*);
     void notifyWatchers() const;
+
+    FramebufferObject* getShadowFBO(int) const;
 
  public:
     // Internal types
@@ -616,6 +621,8 @@ class Renderer
 
     void updateBodyVisibilityMask();
 
+    void createShadowFBO();
+
 #ifdef USE_HDR
  private:
     int sceneTexWidth, sceneTexHeight;
@@ -775,6 +782,10 @@ class Renderer
     // will not necessarily be rendered correctly. This limit is used for
     // visibility culling of solar systems.
     float SolarSystemMaxDistance{ 1.0f };
+
+    // Size of a texture used in shadow mapping
+    unsigned m_shadowMapSize { 0 };
+    std::unique_ptr<FramebufferObject> m_shadowFBO;
 
     std::array<celgl::VertexObject*, static_cast<size_t>(VOType::Count)> m_VertexObjects;
 

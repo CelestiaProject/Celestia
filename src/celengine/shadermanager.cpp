@@ -8,18 +8,19 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celutil/util.h>
-#include <celcompat/filesystem.h>
-#include "shadermanager.h"
-#include "glsupport.h"
+#include <cassert>
 #include <cmath>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <celutil/debug.h>
-#include <cassert>
 #include <Eigen/Geometry>
+#include <celcompat/filesystem.h>
+#include <celmath/geomutil.h>
+#include <celutil/debug.h>
+#include "glsupport.h"
+#include "vecgl.h"
+#include "shadermanager.h"
 
 using namespace celestia;
 using namespace Eigen;
@@ -29,12 +30,19 @@ using namespace std;
 #define USE_GLSL_STRUCTS
 #define POINT_FADE 0
 
+#ifndef GL_ONLY_SHADOWS
+#define GL_ONLY_SHADOWS 1
+#endif
+
+constexpr const int ShadowSampleKernelWidth = 2;
+
 enum ShaderVariableType
 {
     Shader_Float,
     Shader_Vector2,
     Shader_Vector3,
     Shader_Vector4,
+    Shader_Matrix4,
     Shader_Sampler1D,
     Shader_Sampler2D,
     Shader_Sampler3D,
@@ -162,6 +170,12 @@ ShaderProperties::hasCloudShadows() const
     return (shadowCounts & AnyCloudShadowMask) != 0;
 }
 
+
+bool
+ShaderProperties::hasShadowMap() const
+{
+    return (texUsage & ShadowMapTexture) != 0;
+}
 
 void
 ShaderProperties::setCloudShadowForLight(unsigned int lightIndex, bool enabled)
@@ -416,6 +430,8 @@ ShaderTypeString(ShaderVariableType type)
         return "vec3";
     case Shader_Vector4:
         return "vec4";
+    case Shader_Matrix4:
+        return "mat4";
     case Shader_Sampler1D:
         return "sampler1D";
     case Shader_Sampler2D:
@@ -1532,6 +1548,15 @@ TextureSamplerDeclarations(const ShaderProperties& props)
         source += "uniform sampler2D overlayTex;\n";
     }
 
+    if (props.texUsage & ShaderProperties::ShadowMapTexture)
+    {
+#ifndef GL_ONLY_SHADOWS
+        source += DeclareUniform("shadowMapTex0", Shader_Sampler2D);
+#else
+        source += DeclareUniform("shadowMapTex0", Shader_Sampler2DShadow);
+#endif
+    }
+
     return source;
 }
 
@@ -1571,6 +1596,12 @@ TextureCoordDeclarations(const ShaderProperties& props)
             source += "varying vec2 overlayTexCoord;\n";
     }
 
+    if (props.texUsage & ShaderProperties::ShadowMapTexture)
+    {
+        source += DeclareVarying("shadowTexCoord0", Shader_Vector4);
+        source += DeclareVarying("cosNormalLightDir", Shader_Float);
+    }
+
     return source;
 }
 
@@ -1586,6 +1617,48 @@ PointSizeCalculation()
     return source;
 }
 
+static string
+CalculateShadow()
+{
+    string source;
+#if GL_ONLY_SHADOWS
+    source += R"glsl(
+float calculateShadow()
+{
+    float texelSize = 1.0 / shadowMapSize;
+    float s = 0.0;
+    float bias = max(0.005 * (1.0 - cosNormalLightDir), 0.0005);
+)glsl";
+    float boxFilterWidth = (float) ShadowSampleKernelWidth - 1.0f;
+    float firstSample = -boxFilterWidth / 2.0f;
+    float lastSample = firstSample + boxFilterWidth;
+    float sampleWeight = 1.0f / (float) (ShadowSampleKernelWidth * ShadowSampleKernelWidth);
+    source += fmt::sprintf("    for (float y = %f; y <= %f; y += 1.0)\n", firstSample, lastSample);
+    source += fmt::sprintf("        for (float x = %f; x <= %f; x += 1.0)\n", firstSample, lastSample);
+    source += "            s += shadow2D(shadowMapTex0, shadowTexCoord0.xyz + vec3(x * texelSize, y * texelSize, bias)).z;\n";
+    source += fmt::sprintf("    return s * %f;\n", sampleWeight);
+    source += "}\n";
+#else
+    source += R"glsl(
+float calculateShadow()
+{
+    float texelSize = 1.0 / shadowMapSize;
+    float s = 0.0;
+    float bias = max(0.005 * (1.0 - cosNormalLightDir), 0.0005);
+    for(float x = -1.0; x <= 1.0; x += 1.0)
+    {
+        for(float y = -1.0; y <= 1.0; y += 1.0)
+        {
+            float pcfDepth = texture2D(shadowMapTex0, shadowTexCoord0.xy + vec2(x * texelSize, y * texelSize)).r;
+            s += shadowTexCoord0.z - bias > pcfDepth ? 1.0 : 0.0;
+        }
+    }
+    return 1.0 - s / 9.0;
+}
+)glsl";
+#endif
+    return source;
+}
 
 GLVertexShader*
 ShaderManager::buildVertexShader(const ShaderProperties& props)
@@ -1704,6 +1777,9 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         }
     }
 
+    if (props.hasShadowMap())
+        source += "uniform mat4 ShadowMatrix0;\n";
+
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
     if (props.isViewDependent() || props.hasScattering())
@@ -1752,6 +1828,11 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += "diff = vec4(ambientColor, opacity);\n";
         if (props.hasSpecular())
             source += "spec = vec4(0.0, 0.0, 0.0, 0.0);\n";
+    }
+
+    if (props.hasShadowMap())
+    {
+        source += "cosNormalLightDir = dot(gl_Normal, lights[0].direction);\n";
     }
 
     for (unsigned int i = 0; i < props.nLights; i++)
@@ -1900,6 +1981,9 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     if ((props.texUsage & ShaderProperties::PointSprite) != 0)
         source += PointSizeCalculation();
+
+    if (props.hasShadowMap())
+        source += "shadowTexCoord0 = ShadowMatrix0 * vec4(gl_Vertex.xyz, 1);\n";
 
     source += "gl_Position = ftransform();\n";
     source += "}\n";
@@ -2081,6 +2165,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += DeclareVarying("pointFade", Shader_Float);
     }
 
+    if (props.hasShadowMap())
+    {
+        source += DeclareUniform("shadowMapSize", Shader_Float);
+        source += CalculateShadow();
+    }
+
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
     if (props.usesTangentSpaceLighting() ||
@@ -2205,6 +2295,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         source += "float NH;\n";
         source += "vec3 n = normalize(normal);\n";
+        source += "float shadowMapCoeff = 1.0;\n";
 
         // Sum the contributions from each light source
         for (unsigned i = 0; i < props.nLights; i++)
@@ -2222,6 +2313,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             source += "diff.rgb += " + illum + " * " + FragLightProperty(i, "color") + ";\n";
             source += "NH = max(0.0, dot(n, normalize(" + LightHalfVector(i) + ")));\n";
             source += "spec.rgb += " + illum + " * pow(NH, shininess) * " + FragLightProperty(i, "specColor") + ";\n";
+            if (props.hasShadowMap() && i == 0)
+            {
+                source += "shadowMapCoeff = calculateShadow();\n";
+                source += "diff.rgb *= shadowMapCoeff;\n";
+                source += "spec.rgb *= shadowMapCoeff;\n";
+            }
         }
     }
     else if (props.usesShadows())
@@ -3098,15 +3195,16 @@ ShaderManager::buildProgram(const ShaderProperties& props)
         {
             if (props.texUsage & ShaderProperties::NormalTexture)
             {
-                // Tangents always in attribute 6 (should be a constant
-                // someplace)
-                glBindAttribLocation(prog->getID(), 6, "tangent");
+                glBindAttribLocation(prog->getID(),
+                                     CelestiaGLProgram::TangentAttributeIndex,
+                                     "tangent");
             }
 
             if (props.texUsage & ShaderProperties::PointSprite)
             {
-                // Point size is always in attribute 7
-                glBindAttribLocation(prog->getID(), 7, "pointSize");
+                glBindAttribLocation(prog->getID(),
+                                     CelestiaGLProgram::PointSizeAttributeIndex,
+                                     "pointSize");
             }
 
             status = prog->link();
@@ -3330,6 +3428,11 @@ CelestiaGLProgram::initParameters()
         shadowTextureOffset = floatParam("cloudShadowTexOffset");
     }
 
+    if (props.texUsage & ShaderProperties::ShadowMapTexture)
+    {
+        ShadowMatrix0       = mat4Param("ShadowMatrix0");
+    }
+
     if (props.hasScattering())
     {
         mieCoeff             = floatParam("mieCoeff");
@@ -3419,6 +3522,13 @@ CelestiaGLProgram::initSamplers()
     if (props.texUsage & ShaderProperties::CloudShadowTexture)
     {
         int slot = glGetUniformLocation(program->getID(), "cloudShadowTex");
+        if (slot != -1)
+            glUniform1i(slot, nSamplers++);
+    }
+
+    if (props.texUsage & ShaderProperties::ShadowMapTexture)
+    {
+        int slot = glGetUniformLocation(program->getID(), "shadowMapTex0");
         if (slot != -1)
             glUniform1i(slot, nSamplers++);
     }

@@ -3263,6 +3263,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
 
         appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
+        appCore->getRenderer()->setShadowMapSize(appCore->getConfig()->ShadowMapSize);
     }
 
     cursorHandler = new WinCursorHandler(hDefaultCursor);
