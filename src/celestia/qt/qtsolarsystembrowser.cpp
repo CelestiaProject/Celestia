@@ -742,9 +742,9 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, 
     connect(asteroidsButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
     objGroupLayout->addWidget(asteroidsButton, 0, 1);
 
-    spacecraftsButton = new QCheckBox(_("Spacecrafts"));
-    connect(spacecraftsButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
-    objGroupLayout->addWidget(spacecraftsButton, 1, 0);
+    spacecraftButton = new QCheckBox(_("Spacecraft"));
+    connect(spacecraftButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
+    objGroupLayout->addWidget(spacecraftButton, 1, 0);
 
     cometsButton = new QCheckBox(_("Comets"));
     connect(cometsButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
@@ -864,7 +864,7 @@ void SolarSystemBrowser::slotRefreshTree()
         bodyFilter |= Body::Planet | Body::DwarfPlanet | Body::Moon;
     if (asteroidsButton->isChecked())
         bodyFilter |= Body::Asteroid;
-    if (spacecraftsButton->isChecked())
+    if (spacecraftButton->isChecked())
         bodyFilter |= Body::Spacecraft;
     if (cometsButton->isChecked())
         bodyFilter |= Body::Comet;

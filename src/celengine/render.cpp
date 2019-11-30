@@ -231,7 +231,7 @@ constexpr const uint64_t ShowSSO = Renderer::ShowPlanets      |
                                    Renderer::ShowMinorMoons   |
                                    Renderer::ShowAsteroids    |
                                    Renderer::ShowComets       |
-                                   Renderer::ShowSpacecrafts;
+                                   Renderer::ShowSpacecraft;
 // Deep Sky Objects
 constexpr const uint64_t ShowDSO = Renderer::ShowGalaxies     |
                                    Renderer::ShowGlobulars    |
@@ -7528,7 +7528,7 @@ void Renderer::updateBodyVisibilityMask()
         flags |= Body::Asteroid;
     if ((renderFlags & Renderer::ShowComets) != 0)
         flags |= Body::Comet;
-    if ((renderFlags & Renderer::ShowSpacecrafts) != 0)
+    if ((renderFlags & Renderer::ShowSpacecraft) != 0)
         flags |= Body::Spacecraft;
 
     bodyVisibilityMask = flags;

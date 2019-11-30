@@ -98,7 +98,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.minorMoonsCheck->setChecked((renderFlags & Renderer::ShowMinorMoons) != 0);
     ui.asteroidsCheck->setChecked((renderFlags & Renderer::ShowAsteroids) != 0);
     ui.cometsCheck->setChecked((renderFlags & Renderer::ShowComets) != 0);
-    ui.spacecraftsCheck->setChecked((renderFlags & Renderer::ShowSpacecrafts) != 0);
+    ui.spacecraftCheck->setChecked((renderFlags & Renderer::ShowSpacecraft) != 0);
     ui.galaxiesCheck->setChecked((renderFlags & Renderer::ShowGalaxies) != 0);
     ui.nebulaeCheck->setChecked((renderFlags & Renderer::ShowNebulae) != 0);
     ui.openClustersCheck->setChecked((renderFlags & Renderer::ShowOpenClusters) != 0);
@@ -317,9 +317,9 @@ void PreferencesDialog::on_cometsCheck_stateChanged(int state)
 }
 
 
-void PreferencesDialog::on_spacecraftsCheck_stateChanged(int state)
+void PreferencesDialog::on_spacecraftCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowSpacecrafts, state);
+    setRenderFlag(appCore, Renderer::ShowSpacecraft, state);
 }
 
 

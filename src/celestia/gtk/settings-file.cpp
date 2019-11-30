@@ -148,7 +148,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
     getFlag64(file, &rf, Renderer::ShowMinorMoons, "RenderFlags", "minorMoons", &errors);
     getFlag64(file, &rf, Renderer::ShowAsteroids, "RenderFlags", "asteroids", &errors);
     getFlag64(file, &rf, Renderer::ShowComets, "RenderFlags", "comets", &errors);
-    getFlag64(file, &rf, Renderer::ShowSpacecrafts, "RenderFlags", "spacecrafts", &errors);
+    getFlag64(file, &rf, Renderer::ShowSpacecraft, "RenderFlags", "spacecraft", &errors);
     getFlag64(file, &rf, Renderer::ShowGalaxies, "RenderFlags", "galaxies", &errors);
     getFlag64(file, &rf, Renderer::ShowDiagrams, "RenderFlags", "diagrams", &errors);
     getFlag64(file, &rf, Renderer::ShowCloudMaps, "RenderFlags", "cloudMaps", &errors);
@@ -262,7 +262,7 @@ void saveSettingsFile(AppData* app)
     g_key_file_set_boolean(file, "RenderFlags", "minorMoons", (rf & Renderer::ShowMinorMoons) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "asteroids", (rf & Renderer::ShowAsteroids) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "comets", (rf & Renderer::ShowComets) != 0);
-    g_key_file_set_boolean(file, "RenderFlags", "spacecrafts", (rf & Renderer::ShowSpacecrafts) != 0);
+    g_key_file_set_boolean(file, "RenderFlags", "spacecraft", (rf & Renderer::ShowSpacecraft) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "galaxies", (rf & Renderer::ShowGalaxies) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "diagrams", (rf & Renderer::ShowDiagrams) != 0);
     g_key_file_set_boolean(file, "RenderFlags", "cloudMaps", (rf & Renderer::ShowCloudMaps) != 0);

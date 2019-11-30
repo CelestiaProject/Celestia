@@ -918,9 +918,9 @@ void actionRenderComets(GtkToggleAction* action, AppData* app)
 }
 
 
-void actionRenderSpacecrafts(GtkToggleAction* action, AppData* app)
+void actionRenderSpacecraft(GtkToggleAction* action, AppData* app)
 {
-    setRenderFlag(app, Renderer::ShowSpacecrafts, gtk_toggle_action_get_active(action));
+    setRenderFlag(app, Renderer::ShowSpacecraft, gtk_toggle_action_get_active(action));
 }
 
 
@@ -1274,7 +1274,7 @@ void resyncRenderActions(AppData* app)
             case Renderer::ShowMinorMoons: actionName = "RenderMinorMoons"; break;
             case Renderer::ShowAsteroids: actionName = "RenderAsteroids"; break;
             case Renderer::ShowComets: actionName = "RenderComets"; break;
-            case Renderer::ShowSpacecrafts: actionName = "RenderSpacecrafts"; break;
+            case Renderer::ShowSpacecraft: actionName = "RenderSpacecraft"; break;
             case Renderer::ShowGalaxies: actionName = "RenderGalaxies"; break;
             case Renderer::ShowDiagrams: actionName = "RenderConstellations"; break;
             case Renderer::ShowCloudMaps: actionName = "RenderClouds"; break;

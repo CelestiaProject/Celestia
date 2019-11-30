@@ -36,7 +36,7 @@ constexpr const uint64_t NewRenderFlags = Renderer::ShowDwarfPlanets |
                                           Renderer::ShowMinorMoons   |
                                           Renderer::ShowAsteroids    |
                                           Renderer::ShowComets       |
-                                          Renderer::ShowSpacecrafts;
+                                          Renderer::ShowSpacecraft;
 
 
 const string getEncodedObjectName(const Selection& sel, const CelestiaCore* appCore);

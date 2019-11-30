@@ -80,7 +80,7 @@
         BrowserItem *minorMoons = nil;
         BrowserItem *asteroids = nil;
         BrowserItem *comets = nil;
-        BrowserItem *spacecrafts = nil;
+        BrowserItem *spacecraft = nil;
         int i;
         for ( i=0; i<sysSize; i++)
         {
@@ -128,9 +128,9 @@
                     subItem = comets;
                     break;
                 case Body::Spacecraft:
-                    if (!spacecrafts)
-                        spacecrafts = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Spacecrafts",@"")] autorelease];
-                    subItem = spacecrafts;
+                    if (!spacecraft)
+                        spacecraft = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Spacecraft",@"")] autorelease];
+                    subItem = spacecraft;
                     break;
                 default:
                     subItem = aStar;
@@ -144,7 +144,7 @@
         if (minorMoons)   [aStar addChild: minorMoons];
         if (asteroids)    [aStar addChild: asteroids];
         if (comets)       [aStar addChild: comets];
-        if (spacecrafts)  [aStar addChild: spacecrafts];
+        if (spacecraft)  [aStar addChild: spacecraft];
     }
 }
 
@@ -158,7 +158,7 @@
         BrowserItem *subItem = nil;
         BrowserItem *minorMoons = nil;
         BrowserItem *comets = nil;
-        BrowserItem *spacecrafts = nil;
+        BrowserItem *spacecraft = nil;
         int i;
         for ( i=0; i<sysSize; i++)
         {
@@ -193,9 +193,9 @@
                     subItem = comets;
                     break;
                 case Body::Spacecraft:
-                    if (!spacecrafts)
-                        spacecrafts = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Spacecrafts",@"")] autorelease];
-                    subItem = spacecrafts;
+                    if (!spacecraft)
+                        spacecraft = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Spacecraft",@"")] autorelease];
+                    subItem = spacecraft;
                     break;
                 default:
                     subItem = aBody;
@@ -206,7 +206,7 @@
         
         if (minorMoons)  [aBody addChild: minorMoons];
         if (comets)      [aBody addChild: comets];
-        if (spacecrafts) [aBody addChild: spacecrafts];
+        if (spacecraft) [aBody addChild: spacecraft];
     }
     
     std::vector<Location*>* locations = [(CelestiaBody *)[aBody body] body]->getLocations();

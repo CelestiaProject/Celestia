@@ -156,7 +156,7 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowComets);
             break;
         case IDC_SHOWSPACECRAFTS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowSpacecrafts);
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowSpacecraft);
             break;
         case IDC_SHOWSTARS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowStars);
@@ -386,7 +386,7 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     SendDlgItemMessage(hDlg, IDC_SHOWCOMETS, BM_SETCHECK,
         ((renderFlags ^ Renderer::ShowComets) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWSPACECRAFTS, BM_SETCHECK,
-        ((renderFlags ^ Renderer::ShowSpacecrafts) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+        ((renderFlags ^ Renderer::ShowSpacecraft) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWSTARS, BM_SETCHECK,
         (renderFlags & Renderer::ShowStars)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCONSTELLATIONBORDERS, BM_SETCHECK,

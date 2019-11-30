@@ -86,9 +86,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="spacecraftsCheck">
+           <widget class="QCheckBox" name="spacecraftCheck">
             <property name="text">
-             <string>Spacecrafts</string>
+             <string>Spacecraft</string>
             </property>
            </widget>
           </item>
@@ -325,7 +325,7 @@
             <item>
              <widget class="QCheckBox" name="spacecraftOrbitsCheck">
               <property name="text">
-               <string>Spacecrafts</string>
+               <string>Spacecraft</string>
               </property>
              </widget>
             </item>
@@ -545,7 +545,7 @@
           <item>
            <widget class="QCheckBox" name="spacecraftLabelsCheck">
             <property name="text">
-             <string>Spacecrafts</string>
+             <string>Spacecraft</string>
             </property>
            </widget>
           </item>

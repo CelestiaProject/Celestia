@@ -242,7 +242,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     actionColl->action("showSpacecraftOrbits")->connect(showSpacecraftOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
     showSpacecraftOrbitsCheck->setChecked(orbitMask & Body::Spacecraft);
     labelGroupLayout->addWidget(showSpacecraftOrbitsCheck, 12, 0, Qt::AlignHCenter);
-    QCheckBox* showSpacecraftLabelsCheck = new QCheckBox(i18n("Spacecrafts"), labelGroup);
+    QCheckBox* showSpacecraftLabelsCheck = new QCheckBox(i18n("Spacecraft"), labelGroup);
     actionColl->action("showSpacecraftLabels")->connect(showSpacecraftLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showSpacecraftLabelsCheck->setChecked(labelMode & Renderer::SpacecraftLabels);
     labelGroupLayout->addWidget(showSpacecraftLabelsCheck, 12, 1);

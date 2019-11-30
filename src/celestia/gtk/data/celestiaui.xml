@@ -57,7 +57,7 @@
         <menuitem action='RenderMinorMoons'/>
         <menuitem action='RenderAsteroids'/>
         <menuitem action='RenderComets'/>
-        <menuitem action='RenderSpacecrafts'/>
+        <menuitem action='RenderSpacecraft'/>
         <menuitem action='RenderRingShadows'/>
         <menuitem action='RenderStars'/>
       </menu>

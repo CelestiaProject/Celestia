@@ -3110,7 +3110,7 @@ msgid "Comets"
 msgstr "혜성"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:91
-#. i18n: ectx: property (text), widget (QCheckBox, spacecraftsCheck)
+#. i18n: ectx: property (text), widget (QCheckBox, spacecraftCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:328
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:548
@@ -3118,7 +3118,7 @@ msgstr "혜성"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:89
 #: ../src/celestia/qt/qtcelestiaactions.cpp:116 ../src/celestia/qt/rc.cpp:93
 #: ../src/celestia/qt/rc.cpp:174 ../src/celestia/qt/rc.cpp:240
-msgid "Spacecrafts"
+msgid "Spacecraft"
 msgstr "인공위성"
 
 #. Label actions

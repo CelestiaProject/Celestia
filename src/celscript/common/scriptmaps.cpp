@@ -21,7 +21,7 @@ void initRenderFlagMap(FlagMap64 &RenderFlagMap)
     RenderFlagMap["minormoons"]          = Renderer::ShowMinorMoons;
     RenderFlagMap["asteroids"]           = Renderer::ShowAsteroids;
     RenderFlagMap["comets"]              = Renderer::ShowComets;
-    RenderFlagMap["spasecrafts"]         = Renderer::ShowSpacecrafts;
+    RenderFlagMap["spasecrafts"]         = Renderer::ShowSpacecraft;
     RenderFlagMap["stars"]               = Renderer::ShowStars;
     RenderFlagMap["nightmaps"]           = Renderer::ShowNightMaps;
     RenderFlagMap["eclipseshadows"]      = Renderer::ShowEclipseShadows;

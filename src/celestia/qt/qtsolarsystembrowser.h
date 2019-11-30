@@ -58,7 +58,7 @@ Q_OBJECT
 
     QCheckBox* planetsButton{nullptr};
     QCheckBox* asteroidsButton{nullptr};
-    QCheckBox* spacecraftsButton{nullptr};
+    QCheckBox* spacecraftButton{nullptr};
     QCheckBox* cometsButton{nullptr};
 
     QCheckBox* groupCheckBox{nullptr};

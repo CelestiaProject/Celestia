@@ -190,7 +190,7 @@ class Renderer
         ShowMinorMoons          = 0x0000000020000000,
         ShowAsteroids           = 0x0000000040000000,
         ShowComets              = 0x0000000080000000,
-        ShowSpacecrafts         = 0x0000000100000000,
+        ShowSpacecraft          = 0x0000000100000000,
         ShowFadingOrbits        = 0x0000000200000000,
     };
 
@@ -219,7 +219,7 @@ class Renderer
                                           Renderer::ShowMinorMoons     |
                                           Renderer::ShowAsteroids      |
                                           Renderer::ShowComets         |
-                                          Renderer::ShowSpacecrafts    |
+                                          Renderer::ShowSpacecraft     |
                                           Renderer::ShowGalaxies       |
                                           Renderer::ShowGlobulars      |
                                           Renderer::ShowCloudMaps      |
