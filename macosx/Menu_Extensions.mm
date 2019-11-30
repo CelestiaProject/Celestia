@@ -267,14 +267,14 @@
     NSMenu *surfaceMenu = [[NSMenu alloc ] initWithTitle: @"altsurf" ];
     [ self setEnabled: YES ];
     NSMenuItem *newItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"default",@"") action: action keyEquivalent: @""];
-    [newItem setTag:    600 ];
+    [newItem setTag:    1100 ];
     [newItem setTarget: target ];
     [ surfaceMenu addItem: newItem ];
     unsigned i;
     for (i = 0; i < [surfaces count]; ++i)
     {
         newItem = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:_([[surfaces objectAtIndex: i] UTF8String])] action: action keyEquivalent: @""];
-        [newItem setTag:     601+i ];
+        [newItem setTag:     1101+i ];
         [newItem setTarget:  target ];
         [ surfaceMenu addItem: newItem ];
     }
