@@ -126,7 +126,6 @@ static NSMutableDictionary* tagMap;
         TAGDEF(512,@"showDwarfPlanetLabels")
         TAGDEF(513,@"showMinorMoonLabels")
         // popups
-        TAGDEF(600,@"altSurface")
         TAGDEF(610,@"hudDetail")
         TAGDEF(620,@"starStyle")
         TAGDEF(630,@"renderPath")
@@ -182,7 +181,8 @@ static NSMutableDictionary* tagMap;
         TAGDEF(902,@"faintestVisible")
         TAGDEF(904,@"galaxyBrightness")
 //        TAGDEF(999,@"saturationMagnitude")
-
+        // alt surface
+        TAGDEF(1100,@"altSurface")
         nil];
     keyArray = [tagDict allValues];
 
@@ -664,7 +664,7 @@ FEATUREMETHODS(Other)
 // GUI Tag Methods ----------------------------------------------------------
 
 
-- (void) selectPopUpButtonItem: (id) item withIndex: (int) index
+- (void) selectPopUpButtonItem: (id) item withIndex: (NSInteger) index
 {
     id item2 = [ tagMap objectForKey: [NSNumber numberWithInteger: ([item tag]-index) ]];
     if ([item2 isKindOfClass: [NSPopUpButton class]])
@@ -678,6 +678,7 @@ FEATUREMETHODS(Other)
 - (void) actionForItem: (id) item
 {
     NSInteger tag = [item tag];
+    NSInteger valueTag = tag;
     id value;
 
     if ( tag <= 128 ) tag = [self tagForKey: tag ]; // handle menu item for setting; obsolete?
@@ -688,14 +689,15 @@ FEATUREMETHODS(Other)
             [self setValue: [NSNumber numberWithInteger: (1-[[self valueForTag: tag] integerValue])] forTag: tag ];
         break;
         case 6: // 600
-            value = [NSNumber numberWithInteger: tag%10 ];
-            [self setValue: value forTag: (tag/10)*10 ];
-            [self selectPopUpButtonItem: item withIndex: tag%10];
+        case 11: // 1100
+            valueTag = (tag / 100 == 6) ? (tag / 10 * 10) : (tag / 100 * 100);
+            value = [NSNumber numberWithInteger:(tag / 100 == 6) ? (tag % 10) : (tag % 100)];
+            [self setValue:value forTag:valueTag];
+            [self selectPopUpButtonItem:item withIndex:[value integerValue]];
             //[self setPopUpButtonWithTag: ((tag/10)*10) toIndex: [value intValue]];
-            if ([[tagDict objectForKey:[NSNumber numberWithInteger:((tag/10)*10)]] isEqualToString: @"renderPath"])
+            if ([[tagDict objectForKey:[NSNumber numberWithInteger:valueTag]] isEqualToString: @"renderPath"])
             {
-                value = [self valueForTag: (tag/10)*10];
-                if ([value intValue] != (tag%10))
+                if ([[self valueForTag:valueTag] integerValue] != [value integerValue])
                     [[control valueForKey:@"renderPanelController"] performSelector:@selector(displayRenderPathWarning:) withObject:[item title]];
                 else
                     [[control valueForKey:@"renderPanelController"] performSelector:@selector(hideRenderPathWarning)];
@@ -750,18 +752,18 @@ FEATUREMETHODS(Other)
 		break;
 		case 6:
 		// 600s (popups)
-            if ( tag >= 600 && tag < 610 ) // altSurface menu
-            {
-                NSUInteger index = tag-600;
-                [item setState:  ([self altSurface] == index ) ? NSOnState: NSOffState ];            
-            } 
-            else
-                [self validateButton: item atIndex: tag%10 withValue: [[self valueForTag: tag-(tag%10)] intValue] ];
+            [self validateButton: item atIndex: tag%10 withValue: [[self valueForTag: tag-(tag%10)] intValue] ];
 		break;
 		case 9:
 		// 900s (floats)
             [item setFloatValue: [[self valueForTag: tag] floatValue] ];                
 		break;
+        case 11:
+        // 1100s (alt surface, menu item)
+            {
+                NSUInteger index = tag - 1100;
+                [item setState:([self altSurface] == index) ? NSOnState: NSOffState];
+            }
         }
     }
     return YES;
