@@ -381,7 +381,7 @@ Model::usesTextureType(Material::TextureSemantic t) const
 }
 
 
-class MeshComparatorAdapter : public std::binary_function<const Mesh*, const Mesh*, bool>
+class MeshComparatorAdapter
 {
 public:
     MeshComparatorAdapter(const Model::MeshComparator& c) :

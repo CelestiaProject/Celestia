@@ -23,7 +23,7 @@
 #include <cstring>
 #include <fstream>
 #include <algorithm>
-#include <celutil/debug.h>
+#include <random>
 #include <cassert>
 
 using namespace Eigen;
@@ -658,7 +658,9 @@ GalacticForm* buildGalacticForms(const fs::path& filename)
     // reshuffle the galaxy points randomly...except the first kmin+1 in the center!
     // the higher that number the stronger the central "glow"
 
-    random_shuffle( galacticPoints->begin() + kmin, galacticPoints->end());
+    std::random_device rng;
+    std::mt19937 urng(rng());
+    shuffle(galacticPoints->begin() + kmin, galacticPoints->end(), urng);
 
     auto* galacticForm  = new GalacticForm();
     galacticForm->blobs = galacticPoints;

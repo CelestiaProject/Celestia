@@ -498,7 +498,7 @@ void Observer::reverseOrientation()
 
 
 
-struct TravelExpFunc : public unary_function<double, double>
+struct TravelExpFunc
 {
     double dist, s;
 

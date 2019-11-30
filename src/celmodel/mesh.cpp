@@ -304,16 +304,12 @@ Mesh::remapMaterials(const vector<unsigned int>& materialMap)
 }
 
 
-class PrimitiveGroupComparator : public std::binary_function<const Mesh::PrimitiveGroup*, const Mesh::PrimitiveGroup*, bool>
+struct PrimitiveGroupComparator
 {
-public:
     bool operator()(const Mesh::PrimitiveGroup* g0, const Mesh::PrimitiveGroup* g1) const
     {
         return g0->materialIndex < g1->materialIndex;
     }
-
-private:
-    int unused;
 };
 
 

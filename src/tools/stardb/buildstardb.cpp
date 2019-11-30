@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <random>
 #include <cstdio>
 #include <cassert>
 #include <unistd.h>
@@ -1130,7 +1131,9 @@ int main(int argc, char* argv[])
         // It may not even be necessary to sort the records, if the
         // HIPPARCOS catalog is strictly ordered by catalog number.  I'm not
         // sure about this however,
-        random_shuffle(starIndex.begin(), starIndex.end());
+        std::random_device rng;
+        std::mt19937 urng(rng());
+        shuffle(starIndex.begin(), starIndex.end(), urng);
         sort(starIndex.begin(), starIndex.end(), pred);
     }
 
