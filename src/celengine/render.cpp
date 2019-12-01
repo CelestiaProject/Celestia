@@ -59,6 +59,9 @@ std::ofstream hdrlog;
 #include "curveplot.h"
 #include "shadermanager.h"
 #include "rectangle.h"
+#include "pointstarvertexbuffer.h"
+#include "pointstarrenderer.h"
+#include "orbitsampler.h"
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -93,7 +96,6 @@ using namespace celmath;
 #define NEAR_DIST      0.5f
 #define FAR_DIST       1.0e9f
 
-static const float  STAR_DISTANCE_LIMIT  = 1.0e6f;
 static const int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
 
 // Contribution from planetshine beyond this distance (in units of object radius)
@@ -117,13 +119,6 @@ static const float PixelOffset = 0.125f;
 // will not exceed MaxFarNearRatio.
 static const float MinNearPlaneDistance = 0.0001f; // km
 static const float MaxFarNearRatio      = 2000000.0f;
-
-static const float RenderDistance       = 50.0f;
-
-// Star disc size in pixels
-static const float BaseStarDiscSize      = 5.0f;
-static const float MaxScaledDiscStarSize = 8.0f;
-static const float GlareOpacity = 0.65f;
 
 static const float MinRelativeOccluderRadius = 0.005f;
 
@@ -274,174 +269,6 @@ double computeCosViewConeAngle(double verticalFOV, double width, double height)
     double diag = sqrt(1.0 + square(h) + square(h * width / height));
     return 1.0 / diag;
 }
-
-// PointStarVertexBuffer is used when hardware supports point sprites.
-class PointStarVertexBuffer
-{
-public:
-    PointStarVertexBuffer(const Renderer& _renderer, unsigned int _capacity);
-    ~PointStarVertexBuffer();
-    void startPoints();
-    void startSprites();
-    void render();
-    void finish();
-    inline void addStar(const Eigen::Vector3f& pos, const Color&, float);
-    void setTexture(Texture* /*_texture*/);
-
-private:
-    struct StarVertex
-    {
-        Eigen::Vector3f position;
-        float size;
-        unsigned char color[4];
-        float pad;
-    };
-
-    const Renderer& renderer;
-    unsigned int capacity;
-    unsigned int nStars{ 0 };
-    StarVertex* vertices{ nullptr };
-    bool useSprites{ false };
-    Texture* texture{ nullptr };
-};
-
-PointStarVertexBuffer::PointStarVertexBuffer(const Renderer& _renderer,
-                                             unsigned int _capacity) :
-    renderer(_renderer),
-    capacity(_capacity)
-{
-    vertices = new StarVertex[capacity];
-}
-
-PointStarVertexBuffer::~PointStarVertexBuffer()
-{
-    delete[] vertices;
-}
-
-void PointStarVertexBuffer::startSprites()
-{
-    auto *prog = renderer.getShaderManager().getShader("star");
-    if (prog == nullptr)
-        return;
-    prog->use();
-    prog->samplerParam("starTex") = 0;
-
-    unsigned int stride = sizeof(StarVertex);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
-
-    glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
-                          1, GL_FLOAT, GL_FALSE,
-                          stride, &vertices[0].size);
-
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-
-    glEnable(GL_POINT_SPRITE);
-
-    useSprites = true;
-}
-
-void PointStarVertexBuffer::startPoints()
-{
-    auto *prog = renderer.getShaderManager().getShader(ShaderProperties::PerVertexColor);
-    if (prog == nullptr)
-        return;
-    prog->use();
-
-    unsigned int stride = sizeof(StarVertex);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
-
-    // An option to control the size of the stars would be helpful.
-    // Which size looks best depends a lot on the resolution and the
-    // type of display device.
-    // glPointSize(2.0f);
-    // glEnable(GL_POINT_SMOOTH);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisable(GL_TEXTURE_2D);
-
-    glDisableClientState(GL_NORMAL_ARRAY);
-
-    useSprites = false;
-}
-
-void PointStarVertexBuffer::render()
-{
-    if (nStars != 0)
-    {
-        unsigned int stride = sizeof(StarVertex);
-        if (useSprites)
-        {
-            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-        }
-        else
-        {
-            glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
-            glPointSize(1.0f);
-        }
-        glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
-        glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
-
-        if (useSprites)
-        {
-            glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
-                                  1, GL_FLOAT, GL_FALSE,
-                                  stride, &vertices[0].size);
-        }
-
-        if (texture != nullptr)
-            texture->bind();
-        glDrawArrays(GL_POINTS, 0, nStars);
-        nStars = 0;
-    }
-}
-
-void PointStarVertexBuffer::finish()
-{
-    render();
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    if (useSprites)
-    {
-        glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-        glDisable(GL_POINT_SPRITE);
-    }
-    glUseProgram(0);
-}
-
-inline void PointStarVertexBuffer::addStar(const Eigen::Vector3f& pos,
-                                           const Color& color,
-                                           float size)
-{
-    if (nStars < capacity)
-    {
-        vertices[nStars].position = pos;
-        vertices[nStars].size = size;
-        color.get(vertices[nStars].color);
-        nStars++;
-    }
-
-    if (nStars == capacity)
-    {
-        render();
-        nStars = 0;
-    }
-}
-
-void PointStarVertexBuffer::setTexture(Texture* _texture)
-{
-  texture = _texture;
-}
-
-/**** End star vertex buffer classes ****/
 
 
 Renderer::Renderer() :
@@ -1458,40 +1285,6 @@ inline void disableSmoothLines(uint64_t renderFlags)
         disableSmoothLines();
 }
 
-class OrbitSampler : public OrbitSampleProc
-{
-public:
-    vector<CurvePlotSample> samples;
-
-    OrbitSampler() = default;
-
-    void sample(double t, const Vector3d& position, const Vector3d& velocity)
-    {
-        CurvePlotSample samp;
-        samp.t = t;
-        samp.position = position;
-        samp.velocity = velocity;
-        samples.push_back(samp);
-    }
-
-    void insertForward(CurvePlot* plot)
-    {
-        for (const auto& sample : samples)
-        {
-            plot->addSample(sample);
-        }
-    }
-
-    void insertBackward(CurvePlot* plot)
-    {
-        for (auto iter = samples.rbegin(); iter != samples.rend(); ++iter)
-        {
-            plot->addSample(*iter);
-        }
-    }
-};
-
-
 Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
 {
     Color orbitColor;
@@ -1860,7 +1653,7 @@ setupLightSources(const vector<const Star*>& nearStars,
             ls.luminosity = star->getLuminosity();
             ls.radius = star->getRadius();
 
-            if (renderFlags & Renderer::ShowTintedIllumination)
+            if ((renderFlags & Renderer::ShowTintedIllumination) != 0)
             {
                 // If the star is sufficiently cool, change the light color
                 // from white.  Though our sun appears yellow, we still make
@@ -1966,440 +1759,6 @@ void Renderer::renderItem(const RenderListEntry& rle,
 }
 
 
-#ifdef USE_HDR
-void Renderer::genBlurTextures()
-{
-    for (size_t i = 0; i < BLUR_PASS_COUNT; ++i)
-    {
-        if (blurTextures[i] != nullptr)
-        {
-            delete blurTextures[i];
-            blurTextures[i] = nullptr;
-        }
-    }
-    if (blurTempTexture)
-    {
-        delete blurTempTexture;
-        blurTempTexture = nullptr;
-    }
-
-    blurBaseWidth = sceneTexWidth, blurBaseHeight = sceneTexHeight;
-
-    if (blurBaseWidth > blurBaseHeight)
-    {
-        while (blurBaseWidth > BLUR_SIZE)
-        {
-            blurBaseWidth  >>= 1;
-            blurBaseHeight >>= 1;
-        }
-    }
-    else
-    {
-        while (blurBaseHeight > BLUR_SIZE)
-        {
-            blurBaseWidth  >>= 1;
-            blurBaseHeight >>= 1;
-        }
-    }
-    genBlurTexture(0);
-    genBlurTexture(1);
-
-    Image *tempImg;
-    ImageTexture *tempTexture;
-    tempImg = new Image(GL_LUMINANCE, blurBaseWidth, blurBaseHeight);
-    tempTexture = new ImageTexture(*tempImg, Texture::EdgeClamp, Texture::DefaultMipMaps);
-    delete tempImg;
-    if (tempTexture && tempTexture->getName() != 0)
-        blurTempTexture = tempTexture;
-}
-
-void Renderer::genBlurTexture(int blurLevel)
-{
-    Image *img;
-    ImageTexture *texture;
-
-#ifdef DEBUG_HDR
-    HDR_LOG <<
-        "Window width = "    << windowWidth << ", " <<
-        "Window height = "   << windowHeight << ", " <<
-        "Blur tex width = "  << (blurBaseWidth>>blurLevel) << ", " <<
-        "Blur tex height = " << (blurBaseHeight>>blurLevel) << endl;
-#endif
-    img = new Image(blurFormat,
-                    blurBaseWidth>>blurLevel,
-                    blurBaseHeight>>blurLevel);
-    texture = new ImageTexture(*img,
-                               Texture::EdgeClamp,
-                               Texture::NoMipMaps);
-    delete img;
-
-    if (texture && texture->getName() != 0)
-        blurTextures[blurLevel] = texture;
-}
-
-void Renderer::genSceneTexture()
-{
-    unsigned int *data;
-    if (sceneTexture != 0)
-        glDeleteTextures(1, &sceneTexture);
-
-    sceneTexWidth  = 1;
-    sceneTexHeight = 1;
-    while (sceneTexWidth < windowWidth)
-        sceneTexWidth <<= 1;
-    while (sceneTexHeight < windowHeight)
-        sceneTexHeight <<= 1;
-    sceneTexWScale = (windowWidth > 0)  ? (GLfloat)sceneTexWidth  / (GLfloat)windowWidth :
-        1.0f;
-    sceneTexHScale = (windowHeight > 0) ? (GLfloat)sceneTexHeight / (GLfloat)windowHeight :
-        1.0f;
-    data = (unsigned int* )malloc(sceneTexWidth*sceneTexHeight*4*sizeof(unsigned int));
-    memset(data, 0, sceneTexWidth*sceneTexHeight*4*sizeof(unsigned int));
-
-    glGenTextures(1, &sceneTexture);
-    glBindTexture(GL_TEXTURE_2D, sceneTexture);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, sceneTexWidth, sceneTexHeight, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-    free(data);
-#ifdef DEBUG_HDR
-    static int genSceneTexCounter = 1;
-    HDR_LOG <<
-        "[" << genSceneTexCounter++ << "] " <<
-        "Window width = "  << windowWidth << ", " <<
-        "Window height = " << windowHeight << ", " <<
-        "Tex width = "  << sceneTexWidth << ", " <<
-        "Tex height = " << sceneTexHeight << endl;
-#endif
-}
-
-void Renderer::renderToBlurTexture(int blurLevel)
-{
-    if (blurTextures[blurLevel] == nullptr)
-        return;
-    GLsizei blurTexWidth  = blurBaseWidth>>blurLevel;
-    GLsizei blurTexHeight = blurBaseHeight>>blurLevel;
-    GLsizei blurDrawWidth = (GLfloat)windowWidth/(GLfloat)sceneTexWidth * blurTexWidth;
-    GLsizei blurDrawHeight = (GLfloat)windowHeight/(GLfloat)sceneTexHeight * blurTexHeight;
-    GLfloat blurWScale = 1.f;
-    GLfloat blurHScale = 1.f;
-    GLfloat savedWScale = 1.f;
-    GLfloat savedHScale = 1.f;
-
-    glPushAttrib(GL_COLOR_BUFFER_BIT | GL_VIEWPORT_BIT);
-    glClearColor(0, 0, 0, 1.f);
-    glViewport(0, 0, blurDrawWidth, blurDrawHeight);
-    glBindTexture(GL_TEXTURE_2D, sceneTexture);
-
-    glBegin(GL_QUADS);
-    drawBlendedVertices(0.0f, 0.0f, 1.0f);
-    glEnd();
-    // Do not need to scale alpha so mask it off
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-    glEnable(GL_BLEND);
-    savedWScale = sceneTexWScale;
-    savedHScale = sceneTexHScale;
-
-    // Remove ldr part of image
-    {
-    const GLfloat bias  = -0.5f;
-    glBlendFunc(GL_ONE, GL_ONE);
-    glBlendEquationEXT(GL_FUNC_REVERSE_SUBTRACT_EXT);
-    glColor4f(-bias, -bias, -bias, 0.0f);
-
-    glDisable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
-    glVertex2f(0.0f, 0.0f);
-    glVertex2f(1.f,  0.0f);
-    glVertex2f(1.f,  1.f);
-    glVertex2f(0.0f, 1.f);
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
-    blurTextures[blurLevel]->bind();
-    glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
-                     blurTexWidth, blurTexHeight, 0);
-    }
-
-    // Scale back up hdr part
-    {
-    glBlendEquationEXT(GL_FUNC_ADD_EXT);
-    glBlendFunc(GL_DST_COLOR, GL_ONE);
-
-    glBegin(GL_QUADS);
-    drawBlendedVertices(0.f, 0.f, 1.f); //x2
-    drawBlendedVertices(0.f, 0.f, 1.f); //x2
-    glEnd();
-    }
-
-    glDisable(GL_BLEND);
-
-    if (!useLuminanceAlpha)
-    {
-        blurTempTexture->bind();
-        glCopyTexImage2D(GL_TEXTURE_2D, blurLevel, GL_LUMINANCE, 0, 0,
-                         blurTexWidth, blurTexHeight, 0);
-        // Erase color, replace with luminance image
-        glBegin(GL_QUADS);
-        glColor4f(0.f, 0.f, 0.f, 1.f);
-        glVertex2f(0.0f, 0.0f);
-        glVertex2f(1.0f, 0.0f);
-        glVertex2f(1.0f, 1.0f);
-        glVertex2f(0.0f, 1.0f);
-        glEnd();
-        glBegin(GL_QUADS);
-        drawBlendedVertices(0.f, 0.f, 1.f);
-        glEnd();
-    }
-
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    blurTextures[blurLevel]->bind();
-    glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
-                     blurTexWidth, blurTexHeight, 0);
-// blending end
-
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    GLfloat xdelta = 1.0f / (GLfloat)blurTexWidth;
-    GLfloat ydelta = 1.0f / (GLfloat)blurTexHeight;
-    blurWScale = ((GLfloat)blurTexWidth / (GLfloat)blurDrawWidth);
-    blurHScale = ((GLfloat)blurTexHeight / (GLfloat)blurDrawHeight);
-    sceneTexWScale = blurWScale;
-    sceneTexHScale = blurHScale;
-
-    // Butterworth low pass filter to reduce flickering dots
-    {
-        glBegin(GL_QUADS);
-        drawBlendedVertices(0.0f,    0.0f, .5f*1.f);
-        drawBlendedVertices(-xdelta, 0.0f, .5f*0.333f);
-        drawBlendedVertices( xdelta, 0.0f, .5f*0.25f);
-        glEnd();
-        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
-                         blurTexWidth, blurTexHeight, 0);
-        glBegin(GL_QUADS);
-        drawBlendedVertices(0.0f, -ydelta, .5f*0.667f);
-        drawBlendedVertices(0.0f,  ydelta, .5f*0.333f);
-        glEnd();
-        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
-                         blurTexWidth, blurTexHeight, 0);
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
-
-    // Gaussian blur
-    switch (blurLevel)
-    {
-/*
-    case 0:
-        drawGaussian3x3(xdelta, ydelta, blurTexWidth, blurTexHeight, 1.f);
-        break;
-*/
-#ifdef __APPLE__
-    case 0:
-        drawGaussian5x5(xdelta, ydelta, blurTexWidth, blurTexHeight, 1.f);
-        break;
-    case 1:
-        drawGaussian9x9(xdelta, ydelta, blurTexWidth, blurTexHeight, .3f);
-        break;
-#else
-    // Gamma correct: windows=(mac^1.8)^(1/2.2)
-    case 0:
-        drawGaussian5x5(xdelta, ydelta, blurTexWidth, blurTexHeight, 1.f);
-        break;
-    case 1:
-        drawGaussian9x9(xdelta, ydelta, blurTexWidth, blurTexHeight, .373f);
-        break;
-#endif
-    default:
-        break;
-    }
-
-    blurTextures[blurLevel]->bind();
-    glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
-                     blurTexWidth, blurTexHeight, 0);
-
-    glDisable(GL_BLEND);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glPopAttrib();
-    sceneTexWScale = savedWScale;
-    sceneTexHScale = savedHScale;
-}
-
-void Renderer::renderToTexture(const Observer& observer,
-                               const Universe& universe,
-                               float faintestMagNight,
-                               const Selection& sel)
-{
-    if (sceneTexture == 0)
-        return;
-    glPushAttrib(GL_COLOR_BUFFER_BIT);
-
-    draw(observer, universe, faintestMagNight, sel);
-
-    glBindTexture(GL_TEXTURE_2D, sceneTexture);
-    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0,
-                     sceneTexWidth, sceneTexHeight, 0);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glPopAttrib();
-}
-
-void Renderer::drawSceneTexture()
-{
-    if (sceneTexture == 0)
-        return;
-    glBindTexture(GL_TEXTURE_2D, sceneTexture);
-    glBegin(GL_QUADS);
-    drawBlendedVertices(0.0f, 0.0f, 1.0f);
-    glEnd();
-}
-
-void Renderer::drawBlendedVertices(float xdelta, float ydelta, float blend)
-{
-    glColor4f(1.0f, 1.0f, 1.0f, blend);
-    glTexCoord2i(0, 0); glVertex2f(xdelta,                ydelta);
-    glTexCoord2i(1, 0); glVertex2f(sceneTexWScale+xdelta, ydelta);
-    glTexCoord2i(1, 1); glVertex2f(sceneTexWScale+xdelta, sceneTexHScale+ydelta);
-    glTexCoord2i(0, 1); glVertex2f(xdelta,                sceneTexHScale+ydelta);
-}
-
-void Renderer::drawGaussian3x3(float xdelta, float ydelta, GLsizei width, GLsizei height, float blend)
-{
-#ifdef USE_BLOOM_LISTS
-    if (gaussianLists[0] == 0)
-    {
-        gaussianLists[0] = glGenLists(1);
-        glNewList(gaussianLists[0], GL_COMPILE);
-#endif
-        glBegin(GL_QUADS);
-        drawBlendedVertices(0.0f, 0.0f, blend);
-        drawBlendedVertices(-xdelta, 0.0f, 0.25f*blend);
-        drawBlendedVertices( xdelta, 0.0f, 0.20f*blend);
-        glEnd();
-
-        // Take result of horiz pass and apply vertical pass
-        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
-                         width, height, 0);
-        glBegin(GL_QUADS);
-        drawBlendedVertices(0.0f, -ydelta, 0.429f);
-        drawBlendedVertices(0.0f,  ydelta, 0.300f);
-        glEnd();
-#ifdef USE_BLOOM_LISTS
-        glEndList();
-    }
-    glCallList(gaussianLists[0]);
-#endif
-}
-
-void Renderer::drawGaussian5x5(float xdelta, float ydelta, GLsizei width, GLsizei height, float blend)
-{
-#ifdef USE_BLOOM_LISTS
-    if (gaussianLists[1] == 0)
-    {
-        gaussianLists[1] = glGenLists(1);
-        glNewList(gaussianLists[1], GL_COMPILE);
-#endif
-        glBegin(GL_QUADS);
-        drawBlendedVertices(0.0f, 0.0f, blend);
-        drawBlendedVertices(-xdelta,      0.0f, 0.475f*blend);
-        drawBlendedVertices( xdelta,      0.0f, 0.475f*blend);
-        drawBlendedVertices(-2.0f*xdelta, 0.0f, 0.075f*blend);
-        drawBlendedVertices( 2.0f*xdelta, 0.0f, 0.075f*blend);
-        glEnd();
-        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
-                         width, height, 0);
-        glBegin(GL_QUADS);
-        drawBlendedVertices(0.0f, -ydelta,      0.475f);
-        drawBlendedVertices(0.0f,  ydelta,      0.475f);
-        drawBlendedVertices(0.0f, -2.0f*ydelta, 0.075f);
-        drawBlendedVertices(0.0f,  2.0f*ydelta, 0.075f);
-        glEnd();
-#ifdef USE_BLOOM_LISTS
-        glEndList();
-    }
-    glCallList(gaussianLists[1]);
-#endif
-}
-
-void Renderer::drawGaussian9x9(float xdelta, float ydelta, GLsizei width, GLsizei height, float blend)
-{
-#ifdef USE_BLOOM_LISTS
-    if (gaussianLists[2] == 0)
-    {
-        gaussianLists[2] = glGenLists(1);
-        glNewList(gaussianLists[2], GL_COMPILE);
-#endif
-        glBegin(GL_QUADS);
-        drawBlendedVertices(0.0f, 0.0f, blend);
-        drawBlendedVertices(-xdelta,      0.0f, 0.632f*blend);
-        drawBlendedVertices( xdelta,      0.0f, 0.632f*blend);
-        drawBlendedVertices(-2.0f*xdelta, 0.0f, 0.159f*blend);
-        drawBlendedVertices( 2.0f*xdelta, 0.0f, 0.159f*blend);
-        drawBlendedVertices(-3.0f*xdelta, 0.0f, 0.016f*blend);
-        drawBlendedVertices( 3.0f*xdelta, 0.0f, 0.016f*blend);
-        glEnd();
-
-        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
-                         width, height, 0);
-        glBegin(GL_QUADS);
-        drawBlendedVertices(0.0f, -ydelta,      0.632f);
-        drawBlendedVertices(0.0f,  ydelta,      0.632f);
-        drawBlendedVertices(0.0f, -2.0f*ydelta, 0.159f);
-        drawBlendedVertices(0.0f,  2.0f*ydelta, 0.159f);
-        drawBlendedVertices(0.0f, -3.0f*ydelta, 0.016f);
-        drawBlendedVertices(0.0f,  3.0f*ydelta, 0.016f);
-        glEnd();
-#ifdef USE_BLOOM_LISTS
-        glEndList();
-    }
-    glCallList(gaussianLists[2]);
-#endif
-}
-
-void Renderer::drawBlur()
-{
-    blurTextures[0]->bind();
-    glBegin(GL_QUADS);
-    drawBlendedVertices(0.0f, 0.0f, 1.0f);
-    glEnd();
-    blurTextures[1]->bind();
-    glBegin(GL_QUADS);
-    drawBlendedVertices(0.0f, 0.0f, 1.0f);
-    glEnd();
-}
-
-bool Renderer::getBloomEnabled()
-{
-    return bloomEnabled;
-}
-
-void Renderer::setBloomEnabled(bool aBloomEnabled)
-{
-    bloomEnabled = aBloomEnabled;
-}
-
-void Renderer::increaseBrightness()
-{
-    brightPlus += 1.0f;
-}
-
-void Renderer::decreaseBrightness()
-{
-    brightPlus -= 1.0f;
-}
-
-float Renderer::getBrightness()
-{
-    return brightPlus;
-}
-#endif // USE_HDR
-
 void Renderer::render(const Observer& observer,
                       const Universe& universe,
                       float faintestMagNight,
@@ -2492,9 +1851,7 @@ void Renderer::draw(const Observer& observer,
     m_cameraOrientation = observer.getOrientationf();
 
     // Get the view frustum used for culling in camera space.
-    Frustum frustum(degToRad(fov),
-                    getAspectRatio(),
-                    MinNearPlaneDistance);
+    Frustum frustum(degToRad(fov), getAspectRatio(), MinNearPlaneDistance);
 
     // Get the transformed frustum, used for culling in the astrocentric coordinate
     // system.
@@ -2728,7 +2085,7 @@ void Renderer::draw(const Observer& observer,
     // atmosphere.  If so, we need to adjust the sky color as well as the
     // limiting magnitude of stars (so stars aren't visible in the daytime
     // on planets with thick atmospheres.)
-    if (renderFlags & ShowAtmospheres)
+    if ((renderFlags & ShowAtmospheres) != 0)
     {
         for (const auto& render_item : renderList)
         {
@@ -3585,7 +2942,8 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
                                    bool useHalos,
                                    bool emissive)
 {
-    float maxDiscSize = (starStyle == ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
+    const float maxSize = MaxScaledDiscStarSize;
+    float maxDiscSize = (starStyle == ScaledDiscStars) ? maxSize : 1.0f;
     float maxBlendDiscSize = maxDiscSize + 3.0f;
 
     bool useScaledDiscs = starStyle == ScaledDiscStars;
@@ -3622,15 +2980,12 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         {
             if (alpha > 1.0f)
             {
-                float discScale = min(MaxScaledDiscStarSize, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
+                float discScale = min(maxSize, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
                 pointSize *= max(1.0f, discScale);
 
                 glareAlpha = min(0.5f, discScale / 4.0f);
-                if (discSizeInPixels > MaxScaledDiscStarSize)
-                {
-                    glareAlpha = min(glareAlpha,
-                                     (MaxScaledDiscStarSize - discSizeInPixels) / MaxScaledDiscStarSize + 1.0f);
-                }
+                if (discSizeInPixels > maxSize)
+                    glareAlpha = min(glareAlpha, (maxSize - discSizeInPixels) / maxSize + 1.0f);
                 glareSize = pointSize * 3.0f;
 
                 alpha = 1.0f;
@@ -4739,9 +4094,7 @@ void Renderer::renderObject(const Vector3f& pos,
         {
             Texture* ringsTex = obj.rings->texture.find(textureResolution);
             if (ringsTex != nullptr)
-            {
                 ringsTex->bind();
-            }
         }
 
         if (distance > obj.rings->innerRadius)
@@ -4998,7 +4351,7 @@ void Renderer::renderPlanet(Body& body,
 
 
         // Add ring shadow records for each light
-        if (body.getRings() &&
+        if (body.getRings() != nullptr &&
             (renderFlags & ShowPlanetRings) != 0 &&
             (renderFlags & ShowRingShadows) != 0)
         {
@@ -5076,10 +4429,9 @@ void Renderer::renderPlanet(Body& body,
         // that exotic cases with shadows from two ring different ring systems aren't handled.
         for (unsigned int li = 0; li < lights.nLights; li++)
         {
-            if (lights.ringShadows[li].ringSystem != nullptr)
+            RingSystem* rings = lights.ringShadows[li].ringSystem;
+            if (rings != nullptr)
             {
-                RingSystem* rings = lights.ringShadows[li].ringSystem;
-
                 // Use the first set of ring shadows found (shadowing the brightest light
                 // source.)
                 if (lights.shadowingRingSystem == nullptr)
@@ -5096,7 +4448,7 @@ void Renderer::renderPlanet(Body& body,
                 float projectedRingSize = std::abs(lights.lights[li].direction_obj.dot(lights.ringPlaneNormal)) * ringWidth;
                 float projectedRingSizeInPixels = projectedRingSize / (max(nearPlaneDistance, altitude) * pixelSize);
                 Texture* ringsTex = rings->texture.find(textureResolution);
-                if (ringsTex)
+                if (ringsTex != nullptr)
                 {
                     // Calculate the approximate distance from the shadowed object to the rings
                     Hyperplane<float, 3> ringPlane(lights.ringPlaneNormal, lights.ringCenter);
@@ -5143,16 +4495,9 @@ void Renderer::renderPlanet(Body& body,
                     // us explicitly set the LOD. But, they do all have an optional lodBias parameter
                     // for the textureXD instruction. The bias is just the difference between the
                     // area light LOD and the approximate GPU calculated LOD.
-                    float lodBias = max(0.0f, lod - gpuLod);
-
-                    if (GLEW_ARB_shader_texture_lod)
-                    {
-                        lights.ringShadows[li].texLod = lod;
-                    }
-                    else
-                    {
-                        lights.ringShadows[li].texLod = lodBias;
-                    }
+                    if (!GLEW_ARB_shader_texture_lod)
+                        lod = max(0.0f, lod - gpuLod);
+                    lights.ringShadows[li].texLod = lod;
                 }
                 else
                 {
@@ -5324,7 +4669,6 @@ static float cometDustTailLength(float distanceToSun,
 }
 
 
-// TODO: Remove unused parameters??
 void Renderer::renderCometTail(const Body& body,
                                const Vector3f& pos,
                                const Observer& observer,
@@ -5500,7 +4844,7 @@ void Renderer::renderCometTail(const Body& body,
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
-    if (brightness == -1)
+    if (brightness != -1)
         glDisableVertexAttribArray(brightness);
     glEnable(GL_CULL_FACE);
     glUseProgram(0);
@@ -5617,7 +4961,7 @@ static float luminosityAtOpposition(float sunLuminosity,
 static bool isBodyVisible(const Body* body, int bodyVisibilityMask)
 {
     int klass = body->getClassification();
-    switch (body->getClassification())
+    switch (klass)
     {
     // Diffuse objects don't have controls to show/hide visibility
     case Body::Diffuse:
@@ -6206,278 +5550,6 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
                 path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
                 orbitPathList.push_back(path);
             }
-        }
-    }
-}
-
-
-template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<OBJ, PREC>
-{
- public:
-    ObjectRenderer(PREC _distanceLimit);
-
-    void process(const OBJ& /*unused*/, PREC /*unused*/, float /*unused*/) {};
-
- public:
-    const Observer* observer{ nullptr };
-
-#ifdef USE_GLCONTEXT
-    GLContext* context{ nullptr };
-#endif
-    Renderer*  renderer{ nullptr };
-
-    Eigen::Vector3f viewNormal;
-
-    float fov{ 0.0f };
-    float size{ 0.0f };
-    float pixelSize{ 0.0f };
-    float faintestMag{ 0.0f };
-    float faintestMagNight{ 0.0f };
-    float saturationMag{ 0.0f };
-#ifdef USE_HDR
-    float exposure{ 0.0f };
-#endif
-    float brightnessScale{ 0.0f };
-    float brightnessBias{ 0.0f };
-    float distanceLimit{ 0.0f };
-
-    // Objects brighter than labelThresholdMag will be labeled
-    float labelThresholdMag{ 0.0f };
-
-    // These are not fully used by this template's descendants
-    // but we place them here just in case a more sophisticated
-    // rendering scheme is implemented:
-    int nRendered{ 0 };
-    int nClose{ 0 };
-    int nBright{ 0 };
-    int nProcessed{ 0 };
-    int nLabelled{ 0 };
-
-    uint64_t renderFlags{ 0 };
-    int labelMode{ 0 };
-};
-
-
-template <class OBJ, class PREC>
-ObjectRenderer<OBJ, PREC>::ObjectRenderer(const PREC _distanceLimit) :
-    distanceLimit((float) _distanceLimit)
-{
-}
-
-
-class PointStarRenderer : public ObjectRenderer<Star, float>
-{
- public:
-    PointStarRenderer();
-
-    void process(const Star& star, float distance, float appMag);
-
- public:
-    Vector3d obsPos;
-
-    vector<RenderListEntry>* renderList{ nullptr };
-    PointStarVertexBuffer*   starVertexBuffer{ nullptr };
-    PointStarVertexBuffer*   glareVertexBuffer{ nullptr };
-
-    const StarDatabase* starDB{ nullptr };
-
-    bool  useScaledDiscs{ false };
-    float maxDiscSize{ 1.0f };
-
-    float cosFOV{ 1.0f };
-
-    const ColorTemperatureTable* colorTemp{ nullptr };
-    float SolarSystemMaxDistance { 1.0f };
-#ifdef DEBUG_HDR_ADAPT
-    float minMag;
-    float maxMag;
-    float minAlpha;
-    float maxAlpha;
-    float maxSize;
-    float above;
-    unsigned long countAboveN;
-    unsigned long total;
-#endif
-};
-
-
-PointStarRenderer::PointStarRenderer() :
-    ObjectRenderer<Star, float>(STAR_DISTANCE_LIMIT)
-{
-}
-
-
-void PointStarRenderer::process(const Star& star, float distance, float appMag)
-{
-    nProcessed++;
-
-    Vector3f starPos = star.getPosition();
-
-    // Calculate the difference at double precision *before* converting to float.
-    // This is very important for stars that are far from the origin.
-    Vector3f relPos = (starPos.cast<double>() - obsPos).cast<float>();
-    float   orbitalRadius = star.getOrbitalRadius();
-    bool    hasOrbit = orbitalRadius > 0.0f;
-
-    if (distance > distanceLimit)
-        return;
-
-
-    // A very rough check to see if the star may be visible: is the star in
-    // front of the viewer? If the star might be close (relPos.x^2 < 0.1) or
-    // is moving in an orbit, we'll always regard it as potentially visible.
-    // TODO: consider normalizing relPos and comparing relPos*viewNormal against
-    // cosFOV--this will cull many more stars than relPos*viewNormal, at the
-    // cost of a normalize per star.
-    if (relPos.dot(viewNormal) > 0.0f || relPos.x() * relPos.x() < 0.1f || hasOrbit)
-    {
-#ifdef HDR_COMPRESS
-        Color starColorFull = colorTemp->lookupColor(star.getTemperature());
-        Color starColor(starColorFull.red()   * 0.5f,
-                        starColorFull.green() * 0.5f,
-                        starColorFull.blue()  * 0.5f);
-#else
-        Color starColor = colorTemp->lookupColor(star.getTemperature());
-#endif
-        float discSizeInPixels = 0.0f;
-        float orbitSizeInPixels = 0.0f;
-
-        if (hasOrbit)
-            orbitSizeInPixels = orbitalRadius / (distance * pixelSize);
-
-        // Special handling for stars less than one light year away . . .
-        // We can't just go ahead and render a nearby star in the usual way
-        // for two reasons:
-        //   * It may be clipped by the near plane
-        //   * It may be large enough that we should render it as a mesh
-        //     instead of a particle
-        // It's possible that the second condition might apply for stars
-        // further than one light year away if the star is huge, the fov is
-        // very small and the resolution is high.  We'll ignore this for now
-        // and use the most inexpensive test possible . . .
-        if (distance < 1.0f || orbitSizeInPixels > 1.0f)
-        {
-            // Compute the position of the observer relative to the star.
-            // This is a much more accurate (and expensive) distance
-            // calculation than the previous one which used the observer's
-            // position rounded off to floats.
-            Vector3d hPos = astrocentricPosition(observer->getPosition(),
-                                                 star,
-                                                 observer->getTime());
-            relPos = hPos.cast<float>() * -astro::kilometersToLightYears(1.0f);
-            distance = relPos.norm();
-
-            // Recompute apparent magnitude using new distance computation
-            appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
-
-            starPos = obsPos.cast<float>() + relPos * (RenderDistance / distance);
-
-            float radius = star.getRadius();
-            discSizeInPixels = radius / astro::lightYearsToKilometers(distance) / pixelSize;
-            ++nClose;
-        }
-
-        // Place labels for stars brighter than the specified label threshold brightness
-        if ((labelMode & Renderer::StarLabels) && appMag < labelThresholdMag)
-        {
-            Vector3f starDir = relPos;
-            starDir.normalize();
-            if (starDir.dot(viewNormal) > cosFOV)
-            {
-                float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
-                if (distr > 1.0f)
-                    distr = 1.0f;
-                renderer->addBackgroundAnnotation(nullptr, starDB->getStarName(star, true),
-                                                  Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
-                                                  relPos);
-                nLabelled++;
-            }
-        }
-
-        // Stars closer than the maximum solar system size are actually
-        // added to the render list and depth sorted, since they may occlude
-        // planets.
-        if (distance > SolarSystemMaxDistance)
-        {
-#ifdef USE_HDR
-            float satPoint = saturationMag;
-            float alpha = exposure*(faintestMag - appMag)/(faintestMag - saturationMag + 0.001f);
-#else
-            float satPoint = faintestMag - (1.0f - brightnessBias) / brightnessScale; // TODO: precompute this value
-            float alpha = (faintestMag - appMag) * brightnessScale + brightnessBias;
-#endif
-#ifdef DEBUG_HDR_ADAPT
-            minMag = max(minMag, appMag);
-            maxMag = min(maxMag, appMag);
-            minAlpha = min(minAlpha, alpha);
-            maxAlpha = max(maxAlpha, alpha);
-            ++total;
-            if (alpha > above)
-            {
-                ++countAboveN;
-            }
-#endif
-
-            if (useScaledDiscs)
-            {
-                float discSize = size;
-                if (alpha < 0.0f)
-                {
-                    alpha = 0.0f;
-                }
-                else if (alpha > 1.0f)
-                {
-                    float discScale = min(MaxScaledDiscStarSize, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
-                    discSize *= discScale;
-
-                    float glareAlpha = min(0.5f, discScale / 4.0f);
-                    glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), discSize * 3.0f);
-
-                    alpha = 1.0f;
-                }
-                starVertexBuffer->addStar(relPos, Color(starColor, alpha), discSize);
-            }
-            else
-            {
-                if (alpha < 0.0f)
-                {
-                    alpha = 0.0f;
-                }
-                else if (alpha > 1.0f)
-                {
-                    float discScale = min(100.0f, satPoint - appMag + 2.0f);
-                    float glareAlpha = min(GlareOpacity, (discScale - 2.0f) / 4.0f);
-                    glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), 2.0f * discScale * size);
-#ifdef DEBUG_HDR_ADAPT
-                    maxSize = max(maxSize, 2.0f * discScale * size);
-#endif
-                }
-                starVertexBuffer->addStar(relPos, Color(starColor, alpha), size);
-            }
-
-            ++nRendered;
-        }
-        else
-        {
-            Matrix3f viewMat = observer->getOrientationf().toRotationMatrix();
-            Vector3f viewMatZ = viewMat.row(2);
-
-            RenderListEntry rle;
-            rle.renderableType = RenderListEntry::RenderableStar;
-            rle.star = &star;
-
-            // Objects in the render list are always rendered relative to
-            // a viewer at the origin--this is different than for distant
-            // stars.
-            float scale = astro::lightYearsToKilometers(1.0f);
-            rle.position = relPos * scale;
-            rle.centerZ = rle.position.dot(viewMatZ);
-            rle.distance = rle.position.norm();
-            rle.radius = star.getRadius();
-            rle.discSizeInPixels = discSizeInPixels;
-            rle.appMag = appMag;
-            rle.isOpaque = true;
-            renderList->push_back(rle);
         }
     }
 }
