@@ -27,6 +27,8 @@
 // License and a copy of the GNU General Public License along with
 // orbitpath. If not, see <http://www.gnu.org/licenses/>.
 
+#pragma once
+
 #include <deque>
 #include <Eigen/Geometry>
 
