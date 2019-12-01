@@ -705,8 +705,6 @@ class Renderer
 
     int m_GLStateFlag { 0 };
 
-    celgl::VertexObject markerVO{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
-
  public:
 #if 0
     struct OrbitSample

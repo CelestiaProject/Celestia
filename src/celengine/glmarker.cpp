@@ -8,12 +8,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "marker.h"
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
 #include <GL/glew.h>
 #include <vector>
 #include "render.h"
+#include "marker.h"
 
 
 using namespace std;
@@ -212,6 +212,8 @@ static void initVO(VertexObject& vo)
 
     vo.setVertices(2, GL_FLOAT, false, 0, 0);
 }
+
+celgl::VertexObject markerVO{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
 
 void Renderer::renderMarker(MarkerRepresentation::Symbol symbol, float size, const Color& color)
 {
