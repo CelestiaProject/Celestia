@@ -64,9 +64,9 @@ class LuaHook : public IScriptHook
     LuaHook() = delete;
     LuaHook(CelestiaCore *appCore) : IScriptHook(appCore) {};
     ~LuaHook() override = default;
-    LuaHook(const LuaHook&) = default;
+    LuaHook(const LuaHook&) = delete;
     LuaHook(LuaHook&&) = default;
-    LuaHook& operator=(const LuaHook&) = default;
+    LuaHook& operator=(const LuaHook&) = delete;
     LuaHook& operator=(LuaHook&&) = default;
 
     bool call(const char *method) const override;
