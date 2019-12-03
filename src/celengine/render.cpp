@@ -62,6 +62,7 @@ std::ofstream hdrlog;
 #include "pointstarvertexbuffer.h"
 #include "pointstarrenderer.h"
 #include "orbitsampler.h"
+#include "asterismrenderer.h"
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -382,6 +383,7 @@ Renderer::~Renderer()
         delete tex;
 
     delete shaderManager;
+    delete m_asterismRenderer;
 }
 
 
@@ -4897,8 +4899,20 @@ void Renderer::renderReferenceMark(const ReferenceMark& refMark,
 
 void Renderer::renderAsterisms(const Universe& universe, float dist)
 {
-    if ((renderFlags & ShowDiagrams) == 0 || universe.getAsterisms() == nullptr)
+    auto *asterisms = universe.getAsterisms();
+
+    if ((renderFlags & ShowDiagrams) == 0 || asterisms == nullptr)
         return;
+
+    if (m_asterismRenderer == nullptr)
+    {
+        m_asterismRenderer = new AsterismRenderer(asterisms);
+    }
+    else if (!m_asterismRenderer->sameAsterisms(asterisms))
+    {
+        delete m_asterismRenderer;
+        m_asterismRenderer = new AsterismRenderer(asterisms);
+    }
 
     float opacity = 1.0f;
     if (dist > MaxAsterismLinesConstDist)
@@ -4907,9 +4921,8 @@ void Renderer::renderAsterisms(const Universe& universe, float dist)
                         (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1);
     }
 
-    glDisable(GL_TEXTURE_2D);
     enableSmoothLines(renderFlags);
-    universe.getAsterisms()->render(Color(ConstellationColor, opacity), *this);
+    m_asterismRenderer->render(*this, Color(ConstellationColor, opacity));
     disableSmoothLines(renderFlags);
 }
 
