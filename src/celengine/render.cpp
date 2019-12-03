@@ -63,6 +63,7 @@ std::ofstream hdrlog;
 #include "pointstarrenderer.h"
 #include "orbitsampler.h"
 #include "asterismrenderer.h"
+#include "boundariesrenderer.h"
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -384,6 +385,7 @@ Renderer::~Renderer()
 
     delete shaderManager;
     delete m_asterismRenderer;
+    delete m_boundariesRenderer;
 }
 
 
@@ -4929,8 +4931,19 @@ void Renderer::renderAsterisms(const Universe& universe, float dist)
 
 void Renderer::renderBoundaries(const Universe& universe, float dist)
 {
-    if ((renderFlags & ShowBoundaries) == 0 || universe.getBoundaries() == nullptr)
+    auto boundaries = universe.getBoundaries();
+    if ((renderFlags & ShowBoundaries) == 0 || boundaries == nullptr)
         return;
+
+    if (m_boundariesRenderer == nullptr)
+    {
+        m_boundariesRenderer = new BoundariesRenderer(boundaries);
+    }
+    else if (!m_boundariesRenderer->sameBoundaries(boundaries))
+    {
+        delete m_boundariesRenderer;
+        m_boundariesRenderer = new BoundariesRenderer(boundaries);
+    }
 
     /* We'll linearly fade the boundaries as a function of the
        observer's distance to the origin of coordinates: */
@@ -4941,9 +4954,8 @@ void Renderer::renderBoundaries(const Universe& universe, float dist)
                         (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
     }
 
-    glDisable(GL_TEXTURE_2D);
     enableSmoothLines(renderFlags);
-    universe.getBoundaries()->render(Color(BoundaryColor, opacity), *this);
+    m_boundariesRenderer->render(*this, Color(BoundaryColor, opacity));
     disableSmoothLines(renderFlags);
 }
 
