@@ -688,7 +688,7 @@ bool AssociativeArray::getTime(const string& key, float& val, double outputScale
 {
     double dval;
 
-    if(!getLength(key, dval, outputScale, defaultScale))
+    if(!getTime(key, dval, outputScale, defaultScale))
         return false;
 
     val = ((float) dval);
