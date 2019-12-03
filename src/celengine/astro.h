@@ -199,9 +199,11 @@ namespace astro
     bool isLengthUnit(string unitName);
     bool isTimeUnit(string unitName);
     bool isAngleUnit(string unitName);
+    bool isMassUnit(string unitName);
     bool getLengthScale(const string& unitName, double& scale);
     bool getTimeScale(const string& unitName, double& scale);
     bool getAngleScale(const string& unitName, double& scale);
+    bool getMassScale(const string& unitName, double& scale);
 
     void decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds);
     double degMinSecToDecimal(int degrees, int minutes, double seconds);
@@ -227,6 +229,7 @@ namespace astro
     extern const double SolarMass;
     extern const double EarthMass;
     extern const double LunarMass;
+    extern const double JupiterMass;
 
     extern const double J2000Obliquity;
 

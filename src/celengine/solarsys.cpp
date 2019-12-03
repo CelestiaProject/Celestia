@@ -830,9 +830,7 @@ static Body* CreateBody(const string& name,
     if (planetData->getNumber("TempDiscrepancy", t))
         body->setTempDiscrepancy((float) t);
 
-
-    // TODO - add mass units
-    if (planetData->getNumber("Mass", t))
+    if (planetData->getMass("Mass", t, 1.0, 1.0))
         body->setMass((float) t);
 
     if (planetData->getNumber("Density", t))

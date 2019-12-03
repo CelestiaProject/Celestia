@@ -52,6 +52,8 @@ class AssociativeArray
     bool getLength(const std::string&, float&, double = 1.0, double = 0.0) const;
     bool getTime(const std::string&, double&, double = 1.0, double = 0.0) const;
     bool getTime(const std::string&, float&, double = 1.0, double = 0.0) const;
+    bool getMass(const std::string&, double&, double = 1.0, double = 0.0) const;
+    bool getMass(const std::string&, float&, double = 1.0, double = 0.0) const;
     bool getLengthVector(const std::string&, Eigen::Vector3d&, double = 1.0, double = 0.0) const;
     bool getLengthVector(const std::string&, Eigen::Vector3f&, double = 1.0, double = 0.0) const;
     bool getSphericalTuple(const std::string&, Eigen::Vector3d&) const;
@@ -62,6 +64,8 @@ class AssociativeArray
     bool getLengthScale(const std::string&, float&) const;
     bool getTimeScale(const std::string&, double&) const;
     bool getTimeScale(const std::string&, float&) const;
+    bool getMassScale(const string&, double&) const;
+    bool getMassScale(const string&, float&) const;
 
     HashIterator begin();
     HashIterator end();
