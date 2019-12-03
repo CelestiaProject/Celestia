@@ -12,6 +12,8 @@ set(CELENGINE_SOURCES
   body.h
   boundaries.cpp
   boundaries.h
+  boundariesrenderer.cpp
+  boundariesrenderer.h
   catalogxref.cpp
   catalogxref.h
   category.cpp

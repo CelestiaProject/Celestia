@@ -1,6 +1,6 @@
 // boundaries.cpp
 //
-// Copyright (C) 2002-2009, the Celestia Development Team
+// Copyright (C) 2002-2019, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -9,11 +9,8 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
-#include <numeric>
-#include <GL/glew.h>
 #include "boundaries.h"
 #include "astro.h"
-#include "render.h"
 
 using namespace Eigen;
 using namespace std;
@@ -28,20 +25,18 @@ ConstellationBoundaries::ConstellationBoundaries()
 
 ConstellationBoundaries::~ConstellationBoundaries()
 {
-    cleanup();
-}
-
-void ConstellationBoundaries::cleanup()
-{
     for (const auto chain : chains)
         delete chain;
     chains.clear();
 
     delete currentChain;
-    currentChain = nullptr;
+}
 
-    delete[] vtx_buf;
-    vtx_buf = nullptr;
+
+const std::vector<ConstellationBoundaries::Chain*>&
+ConstellationBoundaries::getChains() const
+{
+    return chains;
 }
 
 
@@ -66,56 +61,6 @@ void ConstellationBoundaries::moveto(float ra, float dec)
 void ConstellationBoundaries::lineto(float ra, float dec)
 {
     currentChain->emplace_back(astro::equatorialToEclipticCartesian(ra, dec, BoundariesDrawDistance));
-}
-
-
-void ConstellationBoundaries::render(const Color& color, const Renderer& renderer)
-{
-    m_vo.bind();
-    if (!m_vo.initialized())
-    {
-        prepare();
-        m_vo.allocate(vtx_num * 3 * sizeof(GLshort), vtx_buf);
-        cleanup();
-        m_vo.setVertices(3, GL_SHORT, false, 0, 0);
-    }
-
-    CelestiaGLProgram* prog = renderer.getShaderManager().getShader(shadprop);
-    if (prog == nullptr)
-        return;
-
-    prog->use();
-    prog->color = color.toVector4();
-    m_vo.draw(GL_LINES, vtx_num);
-
-    glUseProgram(0);
-    m_vo.unbind();
-}
-
-
-void ConstellationBoundaries::prepare()
-{
-    vtx_num = accumulate(chains.begin(), chains.end(), 0,
-                         [](int a, Chain* b) { return a + b->size(); });
-
-    // as we use GL_LINES we should double the number of vertices
-    vtx_num *= 2;
-
-    vtx_buf = new GLshort[vtx_num * 3];
-    GLshort* ptr = vtx_buf;
-    for (const auto chain : chains)
-    {
-        for (unsigned j = 0; j < 3; j++, ptr++)
-            *ptr = (GLshort) (*chain)[0][j];
-        for (unsigned i = 1; i < chain->size(); i++)
-        {
-            for (unsigned j = 0; j < 3; j++)
-                ptr[j] = ptr[j + 3] = (GLshort) (*chain)[i][j];
-            ptr += 6;
-        }
-        for (unsigned j = 0; j < 3; j++, ptr++)
-            *ptr = (GLshort) (*chain)[0][j];
-    }
 }
 
 

@@ -40,6 +40,7 @@ class CurvePlot;
 class Rect;
 class PointStarVertexBuffer;
 class AsterismRenderer;
+class BoundariesRenderer;
 
 struct LightSource
 {
@@ -753,6 +754,7 @@ class Renderer
     bool settingsChanged;
 
     AsterismRenderer* m_asterismRenderer { nullptr };
+    BoundariesRenderer* m_boundariesRenderer { nullptr };
 
     // True if we're in between a begin/endObjectAnnotations
     bool objectAnnotationSetOpen;
