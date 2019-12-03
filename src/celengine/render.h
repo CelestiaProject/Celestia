@@ -37,9 +37,9 @@ class RendererWatcher;
 class FrameTree;
 class ReferenceMark;
 class CurvePlot;
-class AsterismList;
 class Rect;
 class PointStarVertexBuffer;
+class AsterismRenderer;
 
 struct LightSource
 {
@@ -751,6 +751,8 @@ class Renderer
 
     bool videoSync;
     bool settingsChanged;
+
+    AsterismRenderer* m_asterismRenderer { nullptr };
 
     // True if we're in between a begin/endObjectAnnotations
     bool objectAnnotationSetOpen;
