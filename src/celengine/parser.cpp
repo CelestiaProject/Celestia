@@ -242,6 +242,11 @@ bool Parser::readUnits(const string& propertyName, Hash* hash)
             string keyName(propertyName + "%Angle");
             hash->addValue(keyName, *value);
         }
+        else if (astro::isMassUnit(unit))
+        {
+            string keyName(propertyName + "%Mass");
+            hash->addValue(keyName, *value);
+        }
         else
         {
             delete value;
@@ -698,6 +703,48 @@ bool AssociativeArray::getTime(const string& key, float& val, double outputScale
 
 
 /**
+ * Retrieves a numeric quantity scaled to an associated mass unit.
+ * @param[in] key Hash key for the quantity.
+ * @param[out] val The returned quantity if present, unaffected if not.
+ * @param[in] outputScale Returned value is scaled to this value.
+ * @param[in] defaultScale If no units are specified, use this scale. Defaults to outputScale.
+ * @return True if the key exists in the hash, false otherwise.
+ */
+bool AssociativeArray::getMass(const string& key, double& val, double outputScale, double defaultScale) const
+{
+    if(!getNumber(key, val))
+        return false;
+
+    double massScale;
+    if(getMassScale(key, massScale))
+    {
+        massScale /= outputScale;
+    }
+    else
+    {
+        massScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
+    }
+
+    val *= massScale;
+
+    return true;
+}
+
+/** @copydoc AssociativeArray::getMass() */
+bool AssociativeArray::getMass(const string& key, float& val, double outputScale, double defaultScale) const
+{
+    double dval;
+
+    if(!getMass(key, dval, outputScale, defaultScale))
+        return false;
+
+    val = ((float) dval);
+
+    return true;
+}
+
+
+/**
  * Retrieves a vector quantity scaled to an associated length unit.
  * @param[in] key Hash key for the quantity.
  * @param[out] val The returned vector if present, unaffected if not.
@@ -867,6 +914,35 @@ bool AssociativeArray::getTimeScale(const string& key, float& scale) const
     return true;
 }
 
+
+/**
+ * Retrieves the mass unit associated with a given property.
+ * @param[in] key Hash key for the property.
+ * @param[out] scale The returned mass unit scaled to Earth mass if present, unaffected if not.
+ * @return True if a mass unit has been specified for the property, false otherwise.
+ */
+bool AssociativeArray::getMassScale(const string& key, double& scale) const
+{
+    string unitKey(key + "%Mass");
+    string unit;
+
+    if (!getString(unitKey, unit))
+        return false;
+
+    return astro::getMassScale(unit, scale);
+}
+
+
+/** @copydoc AssociativeArray::getMassScale() */
+bool AssociativeArray::getMassScale(const string& key, float& scale) const
+{
+    double dscale;
+    if (!getMassScale(key, dscale))
+        return false;
+
+    scale = ((float) dscale);
+    return true;
+}
 
 HashIterator
 AssociativeArray::begin()

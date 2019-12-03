@@ -32,9 +32,10 @@ const double astro::J2000 = 2451545.0;
 
 const double astro::G = 6.672e-11; // N m^2 / kg^2
 
-const double astro::SolarMass = 1.989e30;
-const double astro::EarthMass = 5.976e24;
-const double astro::LunarMass = 7.354e22;
+const double astro::SolarMass   = 1.989e30;
+const double astro::EarthMass   = 5.972e24;
+const double astro::LunarMass   = 7.346e22;
+const double astro::JupiterMass = 1.898e27;
 
 const double astro::SOLAR_IRRADIANCE  = 1367.6;        // Watts / m^2
 const double astro::SOLAR_POWER       = 3.8462e26;  // Watts
@@ -163,6 +164,14 @@ static const UnitDefinition angleUnits[] =
     { "deg", 1.0 },
     { "hRA", DEG_PER_HRA },
     { "rad", 180.0 / PI },
+};
+
+
+static const UnitDefinition massUnits[] =
+{
+    { "kg", 1.0 / astro::EarthMass },
+    { "mE", 1.0 },
+    { "mJ", astro::JupiterMass / astro::EarthMass },
 };
 
 
@@ -829,6 +838,21 @@ bool astro::getAngleScale(const string& unitName, double& scale)
 }
 
 
+bool astro::getMassScale(const string& unitName, double& scale)
+{
+    for (const auto& massUnit : massUnits)
+    {
+        if (massUnit.name == unitName)
+        {
+            scale = massUnit.conversion;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
 // Check if unit is a length unit
 bool astro::isLengthUnit(string unitName)
 {
@@ -850,4 +874,11 @@ bool astro::isAngleUnit(string unitName)
 {
     double dummy;
     return getAngleScale(std::move(unitName), dummy);
+}
+
+
+bool astro::isMassUnit(string unitName)
+{
+    double dummy;
+    return getMassScale(std::move(unitName), dummy);
 }
