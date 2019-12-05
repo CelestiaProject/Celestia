@@ -152,21 +152,10 @@ static bool commonDataInitialized = false;
 
 LODSphereMesh* g_lodSphere = nullptr;
 
-static Texture* normalizationTex = nullptr;
-
 static Texture* starTex = nullptr;
 static Texture* glareTex = nullptr;
-static Texture* shadowTex = nullptr;
 static Texture* gaussianDiscTex = nullptr;
 static Texture* gaussianGlareTex = nullptr;
-
-static Texture* eclipseShadowTextures[4];
-static Texture* shadowMaskTexture = nullptr;
-static Texture* penumbraFunctionTexture = nullptr;
-
-Texture* rectToSphericalTexture = nullptr;
-
-static const Color compassColor(0.4f, 0.4f, 1.0f);
 
 static const float CoronaHeight = 0.2f;
 
@@ -374,14 +363,6 @@ Renderer::~Renderer()
     if (sceneTexture != 0)
         glDeleteTextures(1, &sceneTexture);
 #endif
-
-    delete shadowTex;
-    delete shadowMaskTexture;
-    delete penumbraFunctionTexture;
-    delete normalizationTex;
-
-    for(const auto tex : eclipseShadowTextures)
-        delete tex;
 
     delete shaderManager;
     delete m_asterismRenderer;
@@ -773,63 +754,8 @@ bool Renderer::init(
         if (glareTex == nullptr)
             glareTex = CreateProceduralTexture(64, 64, GL_RGB, GlareTextureEval);
 
-        // Max mipmap level doesn't work reliably on all graphics
-        // cards.  In particular, Rage 128 and TNT cards resort to software
-        // rendering when this feature is enabled.  The only workaround is to
-        // disable mipmapping completely unless texture border clamping is
-        // supported, which solves the problem much more elegantly than all
-        // the mipmap level nonsense.
-        // shadowTex->setMaxMipMapLevel(3);
-        Texture::AddressMode shadowTexAddress = Texture::BorderClamp;
-        Texture::MipMapMode shadowTexMip = Texture::DefaultMipMaps;
-
-        shadowTex = CreateProceduralTexture(detailOptions.shadowTextureSize,
-                                            detailOptions.shadowTextureSize,
-                                            GL_RGB,
-                                            ShadowTextureEval,
-                                            shadowTexAddress, shadowTexMip);
-        shadowTex->setBorderColor(Color::White);
-
-        if (gaussianDiscTex == nullptr)
-            gaussianDiscTex = BuildGaussianDiscTexture(8);
-        if (gaussianGlareTex == nullptr)
-            gaussianGlareTex = BuildGaussianGlareTexture(9);
-
-        // Create the eclipse shadow textures
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                ShadowTextureFunction func(i * 0.25f);
-                eclipseShadowTextures[i] =
-                    CreateProceduralTexture(detailOptions.eclipseTextureSize,
-                                            detailOptions.eclipseTextureSize,
-                                            GL_RGB, func,
-                                            shadowTexAddress, shadowTexMip);
-                if (eclipseShadowTextures[i] != nullptr)
-                {
-                    // eclipseShadowTextures[i]->setMaxMipMapLevel(2);
-                    eclipseShadowTextures[i]->setBorderColor(Color::White);
-                }
-            }
-        }
-
-        // Create the shadow mask texture
-        {
-            ShadowMaskTextureFunction func;
-            shadowMaskTexture = CreateProceduralTexture(128, 2, GL_RGBA, func);
-            //shadowMaskTexture->bindName();
-        }
-
-        // Create a function lookup table in a texture for use with
-        // fragment program eclipse shadows.
-        penumbraFunctionTexture = CreateProceduralTexture(512, 1, GL_LUMINANCE,
-                                                          PenumbraFunctionEval,
-                                                          Texture::EdgeClamp);
-
-         normalizationTex = CreateProceduralCubeMap(64, GL_RGB, IllumMapEval);
-#if ADVANCED_CLOUD_SHADOWS
-         rectToSphericalTexture = CreateProceduralCubeMap(128, GL_RGBA, RectToSphericalMapEval);
-#endif
+        gaussianDiscTex = BuildGaussianDiscTexture(8);
+        gaussianGlareTex = BuildGaussianGlareTexture(9);
 
 #ifdef USE_HDR
         genSceneTexture();
