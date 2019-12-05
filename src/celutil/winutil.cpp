@@ -58,7 +58,7 @@ const char* CurrentCP()
     static char cp[20] = "CP";
     if (!set)
     {
-        GetLocaleInfo(GetThreadLocale(), LOCALE_IDEFAULTANSICODEPAGE, cp+2, 18);
+        GetLocaleInfoA(GetThreadLocale(), LOCALE_IDEFAULTANSICODEPAGE, cp+2, 18);
         set = true;
     }
     return cp;
