@@ -1,6 +1,7 @@
 // star.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2019, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -50,7 +51,8 @@ StarDetails::StarTextureSet StarDetails::starTextures;
 
 // Star temperature data from Lang's _Astrophysical Data: Planets and Stars_
 // Temperatures from missing (and typically not used) types in those
-// tables were just interpolated.
+// tables were just interpolated. M dwarf temperatures are taken from:
+// https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt
 static float tempO[3][10] =
 {
     { 52500, 52500, 52500, 52500, 48000, 44500, 41000, 38000, 35800, 33000 },
@@ -95,12 +97,12 @@ static float tempK[3][10] =
 
 static float tempM[3][10] =
 {
-    { 3850, 3720, 3580, 3470, 3370, 3240, 3050, 2940, 2640, 2000 },
+    { 3870, 3700, 3550, 3410, 3200, 3030, 2850, 2650, 2500, 2400 },
     { 3800, 3720, 3620, 3530, 3430, 3330, 3240, 3240, 3240, 3240 },
     { 3650, 3550, 3450, 3200, 2980, 2800, 2600, 2600, 2600, 2600 },
 };
 
-// Wolf-Rayet temperatures.  From Lang's Astrophysical Data: Planets and
+// Wolf-Rayet temperatures. From Lang's Astrophysical Data: Planets and
 // Stars.
 static float tempWN[10] =
 {
@@ -112,24 +114,25 @@ static float tempWC[10] =
     60000, 60000, 60000, 60000, 60000, 60000, 60000, 54000, 46000, 38000
 };
 
-// Brown dwarf temperatures
+// Brown dwarf temperatures. From this website:
+// https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt
+// Data for types after Y2 (which are not actually used) is extrapolated.
 static float tempL[10] =
 {
-    1960, 1930, 1900, 1850, 1800, 1740, 1680, 1620, 1560, 1500
+    2250, 2100, 1960, 1830, 1700, 1590, 1490, 1410, 1350, 1300
 };
 
 static float tempT[10] =
 {
-    1425, 1350, 1275, 1200, 1140, 1080, 1020, 900, 750, 500
+    1260, 1230, 1200, 1160, 1120, 1050, 960, 840, 700, 530
 };
 
-// For Y type we just extrapolate the L & T data
 static float tempY[10] =
 {
-    400, 350, 300, 250, 200, 150, 100, 50, 3, 3
+    420, 350, 250, 200, 150, 100, 50, 25, 3, 3
 };
 
-// White dwarf temperaturs
+// White dwarf temperatures
 static float tempWD[10] =
 {
     100000.0f, 50400.0f, 25200.0f, 16800.0f, 12600.0f,
