@@ -6638,7 +6638,7 @@ static void drawRectangle(const Renderer &renderer, const Rect &r)
     array<float, 8> vertices = { r.x, r.y,  r.x+r.w, r.y, r.x+r.w, r.y+r.h, r.x, r.y+r.h };
 
     auto s = static_cast<GLsizeiptr>(memsize(vertices) + memsize(texels) + 4*4*sizeof(GLfloat));
-    static celgl::VertexObject vo{ GL_ARRAY_BUFFER, s, GL_DYNAMIC_DRAW };
+    static celgl::VertexObject vo{ GL_ARRAY_BUFFER, s, GL_STREAM_DRAW };
     vo.bindWritable();
 
     if (!vo.initialized())
