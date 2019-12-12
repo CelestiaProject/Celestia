@@ -137,7 +137,7 @@ class ShaderProperties
 
     enum
     {
-        ShadowBitsPerLight = 4,
+        ShadowBitsPerLight = 8,
     };
 
     enum
