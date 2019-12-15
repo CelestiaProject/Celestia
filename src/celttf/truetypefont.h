@@ -12,11 +12,14 @@
 #include <string>
 #include <celcompat/filesystem.h>
 
+class Renderer;
+
 struct TextureFontPrivate;
 class TextureFont
 {
+    TextureFont(const Renderer*);
  public:
-    TextureFont();
+    TextureFont() = delete;
     ~TextureFont();
     TextureFont(const TextureFont&) = delete;
     TextureFont(TextureFont&&) = delete;
@@ -43,12 +46,13 @@ class TextureFont
 
     int getTextureName() const;
     void bind();
+    void unbind();
     bool buildTexture();
 
-    static TextureFont* load(const fs::path&, int size, int dpi);
+    static TextureFont* load(const Renderer*, const fs::path&, int size, int dpi);
 
  private:
     TextureFontPrivate *impl;
 };
 
-TextureFont* LoadTextureFont(const fs::path&, int size = 12, int dpi = 96);
+TextureFont* LoadTextureFont(const Renderer*, const fs::path&, int size = 12, int dpi = 96);

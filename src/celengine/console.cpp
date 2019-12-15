@@ -81,7 +81,6 @@ void Console::begin()
     glLoadIdentity();
     glTranslatef(0.125f, 0.125f, 0);
 
-    glDisable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
@@ -93,6 +92,7 @@ void Console::end()
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
+    font->unbind();
 }
 
 
@@ -101,7 +101,6 @@ void Console::render(int rowHeight)
     if (font == nullptr)
         return;
 
-    glEnable(GL_TEXTURE_2D);
     font->bind();
     glPushMatrix();
     for (int i = 0; i < rowHeight; i++)
