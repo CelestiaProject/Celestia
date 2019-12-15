@@ -14,7 +14,7 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: /tmp/celestia-1.6.0+dfsg\n"
-"X-Generator: Poedit 2.2.3\n"
+"X-Generator: Poedit 2.2.4\n"
 "X-Poedit-SearchPath-0: /tmp/celestia-1.6.0+dfsg\n"
 "X-Poedit-SearchPath-1: /tmp/celestia-1.6.0+dfsg/src/celestia\n"
 
@@ -361,39 +361,39 @@ msgstr "Хвасты камэт абязьдзейненыя"
 
 #: src/celestia/celestiacore.cpp:1543
 msgid "Render path: Basic"
-msgstr "Спосаб пабудовы: асноўны"
+msgstr "Спосаб рэндэру: асноўны"
 
 #: src/celestia/celestiacore.cpp:1546
 msgid "Render path: Multitexture"
-msgstr "Спосаб пабудовы: мультытэкстурны"
+msgstr "Спосаб рэндэру: мультытэкстурны"
 
 #: src/celestia/celestiacore.cpp:1549
 msgid "Render path: NVIDIA combiners"
-msgstr "Спосаб пабудовы: суматары NVIDIA"
+msgstr "Спосаб рэндэры: суматары NVIDIA"
 
 #: src/celestia/celestiacore.cpp:1552
 msgid "Render path: OpenGL vertex program"
-msgstr "Спосаб пабудовы: вяршыневыя праґрамы OpenGL"
+msgstr "Спосаб рэндэру: вяршыневыя праґрамы OpenGL"
 
 #: src/celestia/celestiacore.cpp:1555
 msgid "Render path: NVIDIA vertex program and combiners"
-msgstr "Спосаб пабудовы: суматары й вяршыневыя праґрамы NVIDIA"
+msgstr "Спосаб рэндэру: суматары й вяршыневыя праґрамы NVIDIA"
 
 #: src/celestia/celestiacore.cpp:1558
 msgid "Render path: OpenGL vertex program/NVIDIA combiners"
-msgstr "Спосаб пабудовы: вяршыневыя праґрамы OpenGL/суматары NVIDIA"
+msgstr "Спосаб рэндэру: вяршыневыя праґрамы OpenGL/суматары NVIDIA"
 
 #: src/celestia/celestiacore.cpp:1561
 msgid "Render path: OpenGL 1.5 vertex/fragment program"
-msgstr "Спосаб пабудовы: вяршыневыя/фраґмэнтавыя праґрамы OpenGL 1.5"
+msgstr "Спосаб рэндэру: вяршыневыя/фраґмэнтавыя праґрамы OpenGL 1.5"
 
 #: src/celestia/celestiacore.cpp:1564
 msgid "Render path: NVIDIA GeForce FX"
-msgstr "Спосаб пабудовы: NVIDIA GeForce FX"
+msgstr "Спосаб рэндэру: NVIDIA GeForce FX"
 
 #: src/celestia/celestiacore.cpp:1567
 msgid "Render path: OpenGL 2.0"
-msgstr "Спосаб пабудовы: OpenGL 2.0"
+msgstr "Спосаб рэндэру: OpenGL 2.0"
 
 #: src/celestia/celestiacore.cpp:1590
 msgid "Auto-magnitude enabled"
@@ -901,7 +901,7 @@ msgstr "Распаўсюднік: "
 #: src/celestia/winmain.cpp:631 src/celestia/gtk/actions.cpp:667
 #: src/celestia/kde/kdeapp.cpp:960
 msgid "Renderer: "
-msgstr "Будаўнік: "
+msgstr "Рэндэр: "
 
 #: src/celestia/winmain.cpp:636 src/celestia/gtk/actions.cpp:672
 #: src/celestia/kde/kdeapp.cpp:965
@@ -1700,7 +1700,7 @@ msgstr " "
 
 #: src/celestia/gtk/dialog-tour.cpp:35
 msgid "Tour Guide..."
-msgstr "Падарожжа з ґідам"
+msgstr "Падарожжа з ґідам…"
 
 #: src/celestia/gtk/dialog-tour.cpp:45
 #: src/celestia/res/resource_strings.cpp:128
@@ -1868,7 +1868,7 @@ msgstr "Вылучыць _Сонца"
 
 #: src/celestia/gtk/ui.h:35
 msgid "Tour G_uide..."
-msgstr "_Падарожжа з ґідам"
+msgstr "_Падарожжа з ґідам…"
 
 #: src/celestia/gtk/ui.h:36
 msgid "Search for _Object..."
@@ -1904,7 +1904,7 @@ msgstr "_Аглядальнік сонечнай сыстэмы…"
 
 #: src/celestia/gtk/ui.h:44
 msgid "Star B_rowser..."
-msgstr "Аглядальнік зорак"
+msgstr "Аглядальнік _зорак…"
 
 #: src/celestia/gtk/ui.h:45
 msgid "_Eclipse Finder..."
@@ -2629,7 +2629,7 @@ msgstr "OpenGL 2.0"
 
 #: src/celestia/kde/kdeapp.cpp:732
 msgid "Cycle OpenGL Render Path"
-msgstr "Зьмяніць па цыклі спосабы пабудовы"
+msgstr "Зьмяніць па цыклі спосабы рэндэру"
 
 #: src/celestia/kde/kdeapp.cpp:734
 #: src/celestia/kde/kdepreferencesdialog.cpp:535
@@ -4063,7 +4063,7 @@ msgstr "Сэтльмэнт"
 
 #: data/data.cpp:251
 msgid "Singapore"
-msgstr "Сынґапут"
+msgstr "Сынґапур"
 
 #: data/data.cpp:252
 msgid "Skopje"
@@ -4359,7 +4359,7 @@ msgstr "Паказваць мясцовы час"
 
 #: src/celestia/res/resource_strings.cpp:29
 msgid "&Render"
-msgstr "&Будаўнік"
+msgstr "&Рэндэр"
 
 #: src/celestia/res/resource_strings.cpp:30
 msgid "Select Display Mode..."
@@ -4686,7 +4686,7 @@ msgstr "Шыр."
 #: src/celestia/res/resource_strings.cpp:138
 #: src/celestia/res/resource_strings.cpp:192
 msgid "Distance"
-msgstr "Адлегласьць"
+msgstr "Адлегл."
 
 #: src/celestia/res/resource_strings.cpp:139
 msgid "Size:"
