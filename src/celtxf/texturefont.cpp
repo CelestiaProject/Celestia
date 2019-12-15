@@ -15,11 +15,16 @@
 #include <celutil/bytes.h>
 #include <celutil/utf8.h>
 #include <celutil/util.h>
+#include <celengine/render.h>
 #include <GL/glew.h>
 #include "texturefont.h"
 
 using namespace std;
 
+TextureFont::TextureFont(const Renderer *r) :
+    renderer(r)
+{
+}
 
 TextureFont::~TextureFont()
 {
@@ -191,10 +196,25 @@ int TextureFont::getTextureName() const
 
 void TextureFont::bind()
 {
+    auto *prog = renderer->getShaderManager().getShader("text");
+    if (prog == nullptr)
+        return;
+
     if (texName != 0)
+    {
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texName);
+        prog->use();
+        prog->samplerParam("atlasTex") = 0;
+    }
 }
 
+void TextureFont::unbind()
+{
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glUseProgram(0);
+}
 
 void TextureFont::addGlyph(const TextureFont::Glyph& g)
 {
@@ -315,7 +335,7 @@ static int8_t readInt8(istream& in)
 }
 
 
-TextureFont* TextureFont::load(istream& in)
+TextureFont* TextureFont::load(const Renderer *r, istream& in)
 {
     char header[4];
 
@@ -360,7 +380,7 @@ TextureFont* TextureFont::load(istream& in)
 
     DPRINTF(LOG_LEVEL_INFO, "Font contains %d glyphs.\n", nGlyphs);
 
-    auto* font = new TextureFont();
+    auto* font = new TextureFont(r);
     assert(font != nullptr);
 
     font->setMaxAscent(maxAscent);
@@ -462,7 +482,7 @@ TextureFont* TextureFont::load(istream& in)
 }
 
 
-TextureFont* LoadTextureFont(const fs::path& filename)
+TextureFont* LoadTextureFont(const Renderer *r, const fs::path& filename)
 {
     fs::path localeFilename = LocaleFilename(filename);
     ifstream in(localeFilename.string(), ios::in | ios::binary);
@@ -472,5 +492,5 @@ TextureFont* LoadTextureFont(const fs::path& filename)
         return nullptr;
     }
 
-    return TextureFont::load(in);
+    return TextureFont::load(r, in);
 }

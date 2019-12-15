@@ -2284,7 +2284,8 @@ static int celestia_loadfont(lua_State* l)
 
     celx.checkArgs(2, 2, "Need one argument for celestia:loadtexture()");
     string s = celx.safeGetString(2, AllErrors, "Argument to celestia:loadfont() must be a string");
-    TextureFont* font = LoadTextureFont(s);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    TextureFont* font = LoadTextureFont(appCore->getRenderer(), s);
     if (font == nullptr) return 0;
     font->buildTexture();
     return celx.pushClass(font);

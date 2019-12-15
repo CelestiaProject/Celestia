@@ -3339,7 +3339,6 @@ void CelestiaCore::renderOverlay()
         }
 
         overlay->endText();
-
         overlay->restorePos();
     }
 
@@ -3825,12 +3824,12 @@ bool CelestiaCore::initRenderer()
 
     if (config->mainFont == "")
 #if NO_TTF
-        font = LoadTextureFont("fonts/default.txf");
+        font = LoadTextureFont(renderer, "fonts/default.txf");
 #else
-        font = LoadTextureFont("fonts/FreeSans.ttf,12");
+        font = LoadTextureFont(renderer, "fonts/FreeSans.ttf,12");
 #endif
     else
-        font = LoadTextureFont(string("fonts/") + config->mainFont);
+        font = LoadTextureFont(renderer, fs::path("fonts") / config->mainFont);
 
     if (font == nullptr)
         cout << _("Error loading font; text will not be visible.\n");
@@ -3838,7 +3837,7 @@ bool CelestiaCore::initRenderer()
         font->buildTexture();
 
     if (config->titleFont != "")
-        titleFont = LoadTextureFont(string("fonts") + "/" + config->titleFont);
+        titleFont = LoadTextureFont(renderer, fs::path("fonts") / config->titleFont);
     if (titleFont != nullptr)
         titleFont->buildTexture();
     else
@@ -3848,13 +3847,13 @@ bool CelestiaCore::initRenderer()
     overlay = new Overlay(*renderer);
     overlay->setWindowSize(width, height);
 
-    if (config->labelFont == "")
+    if (config->labelFont.empty())
     {
         renderer->setFont(Renderer::FontNormal, font);
     }
     else
     {
-        TextureFont* labelFont = LoadTextureFont(string("fonts") + "/" + config->labelFont);
+        TextureFont* labelFont = LoadTextureFont(renderer, fs::path("fonts") / config->labelFont);
         if (labelFont == nullptr)
         {
             renderer->setFont(Renderer::FontNormal, font);

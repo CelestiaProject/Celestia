@@ -15,6 +15,7 @@
 #include <GL/glew.h>
 #include <fmt/printf.h>
 #include <celutil/utf8.h>
+#include <celengine/render.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include "truetypefont.h"
@@ -53,7 +54,8 @@ struct UnicodeBlock
 
 struct TextureFontPrivate
 {
-    TextureFontPrivate();
+    TextureFontPrivate() = delete;
+    TextureFontPrivate(const Renderer *renderer);
     ~TextureFontPrivate();
     TextureFontPrivate(const TextureFontPrivate&) = default;
     TextureFontPrivate(TextureFontPrivate&&) = default;
@@ -72,6 +74,8 @@ struct TextureFontPrivate
     Glyph& getGlyph(wchar_t, wchar_t);
     int toPos(wchar_t) const;
     void optimize();
+
+    const Renderer *m_renderer;
 
     FT_Face m_face;         // font face
 
@@ -102,7 +106,8 @@ inline float pt_to_px(float pt, int dpi = 96)
    last  = first + 32
 */
 
-TextureFontPrivate::TextureFontPrivate()
+TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) :
+    m_renderer(renderer)
 {
     m_unicodeBlocks[0] = { 0x0020, 0x007E }; // Basic Latin
     m_unicodeBlocks[1] = { 0x03B1, 0x03CF }; // Lower case Greek
@@ -310,8 +315,7 @@ Glyph& TextureFontPrivate::getGlyph(wchar_t ch)
 
     auto it = find_if(m_glyphs.begin() + getCommonGlyphsCount(),
                       m_glyphs.end(),
-                      [ch](Glyph &g) { return g.ch == ch; }
-                     );
+                      [ch](Glyph &g) { return g.ch == ch; });
 
     if (it != m_glyphs.end())
         return *it;
@@ -408,8 +412,8 @@ float TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
 }
 
 
-TextureFont::TextureFont() :
-    impl(new TextureFontPrivate)
+TextureFont::TextureFont(const Renderer *renderer) :
+    impl(new TextureFontPrivate(renderer))
 {
 }
 
@@ -545,8 +549,24 @@ int TextureFont::getTextureName() const
 
 void TextureFont::bind()
 {
+    auto *prog = impl->m_renderer->getShaderManager().getShader("text");
+    if (prog == nullptr)
+        return;
+
     if (impl->m_texName != 0)
+    {
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, impl->m_texName);
+        prog->use();
+        prog->samplerParam("atlasTex") = 0;
+    }
+}
+
+void TextureFont::unbind()
+{
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glUseProgram(0);
 }
 
 short TextureFont::getAdvance(wchar_t ch) const
@@ -560,7 +580,7 @@ bool TextureFont::buildTexture()
     return true;
 }
 
-TextureFont* TextureFont::load(const fs::path &path, int size, int dpi)
+TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int size, int dpi)
 {
     FT_Face face;
 
@@ -582,7 +602,7 @@ TextureFont* TextureFont::load(const fs::path &path, int size, int dpi)
         return nullptr;
     }
 
-    auto* font = new TextureFont();
+    auto* font = new TextureFont(r);
     font->impl->m_face = face;
 
     if (!font->impl->buildAtlas())
@@ -611,7 +631,7 @@ static fs::path ParseFontName(const fs::path &filename, int &size)
     }
 }
 
-TextureFont* LoadTextureFont(const fs::path &filename, int size, int dpi)
+TextureFont* LoadTextureFont(const Renderer *r, const fs::path &filename, int size, int dpi)
 {
     if (ft == nullptr)
     {
@@ -624,5 +644,5 @@ TextureFont* LoadTextureFont(const fs::path &filename, int size, int dpi)
 
     int psize = 0;
     auto nameonly = ParseFontName(filename, psize);
-    return TextureFont::load(nameonly, psize, dpi);
+    return TextureFont::load(r, nameonly, psize, dpi);
 }

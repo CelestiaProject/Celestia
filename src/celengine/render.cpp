@@ -6036,8 +6036,6 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 #endif
-    glEnable(GL_TEXTURE_2D);
-    font[fs]->bind();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -6074,6 +6072,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
             {
                 int labelOffset = (int) markerRep.size() / 2;
                 glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
+                font[fs]->bind();
                 font[fs]->render(markerRep.label(), 0.0f, 0.0f);
             }
             glPopMatrix();
@@ -6121,6 +6120,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
             glTranslatef((int) annotations[i].position.x() + hOffset + PixelOffset,
                          (int) annotations[i].position.y() + vOffset + PixelOffset, 0.0f);
             // EK TODO: Check where to replace (see '_(' above)
+            font[fs]->bind();
             font[fs]->render(annotations[i].labelText, 0.0f, 0.0f);
             glPopMatrix();
         }
@@ -6134,6 +6134,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 #endif
 
+    font[fs]->unbind();
     disableSmoothLines(renderFlags);
 }
 
@@ -6169,8 +6170,6 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
         return iter;
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
-    font[fs]->bind();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -6220,6 +6219,7 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
             {
                 int labelOffset = (int) markerRep.size() / 2;
                 glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
+                font[fs]->bind();
                 font[fs]->render(markerRep.label(), 0.0f, 0.0f);
             }
         }
@@ -6229,6 +6229,7 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
                          (int) iter->position.y() + PixelOffset + labelVOffset,
                          ndc_z);
             glColor(iter->color);
+            font[fs]->bind();
             font[fs]->render(iter->labelText, 0.0f, 0.0f);
         }
         glPopMatrix();
@@ -6239,6 +6240,7 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     glDisable(GL_DEPTH_TEST);
+    font[fs]->unbind();
 
     return iter;
 }
@@ -6255,8 +6257,6 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
         return endIter;
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
-    font[fs]->bind();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -6307,6 +6307,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
             {
                 int labelOffset = (int) markerRep.size() / 2;
                 glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
+                font[fs]->bind();
                 font[fs]->render(markerRep.label(), 0.0f, 0.0f);
             }
             glPopMatrix();
@@ -6322,6 +6323,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
                          (int) iter->position.y() + PixelOffset + labelVOffset,
                          ndc_z);
             glColor(iter->color);
+            font[fs]->bind();
             font[fs]->render(iter->labelText, 0.0f, 0.0f);
             glPopMatrix();
         }
@@ -6332,6 +6334,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     glDisable(GL_DEPTH_TEST);
+    font[fs]->unbind();
 
     return iter;
 }

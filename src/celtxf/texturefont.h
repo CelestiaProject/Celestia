@@ -15,11 +15,14 @@
 #include <iostream>
 #include <celcompat/filesystem.h>
 
+class Renderer;
 
 class TextureFont
 {
+    TextureFont(const Renderer*);
+
  public:
-    TextureFont() = default;
+    TextureFont() = delete;
     ~TextureFont();
 
     void render(wchar_t ch) const;
@@ -49,6 +52,7 @@ class TextureFont
     int getTextureName() const;
 
     void bind();
+    void unbind();
 
     bool buildTexture();
 
@@ -73,7 +77,8 @@ class TextureFont
         TexCoord texCoords[4];
     };
 
-    enum {
+    enum
+    {
         TxfByte = 0,
         TxfBitmap = 1,
     };
@@ -84,6 +89,7 @@ class TextureFont
     void rebuildGlyphLookupTable();
 
  private:
+    const Renderer *renderer;
     int maxAscent{ 0 };
     int maxDescent{ 0 };
     int maxWidth{ 0 };
@@ -99,10 +105,9 @@ class TextureFont
     unsigned int glyphLookupTableSize{ 0 };
 
  public:
-    static TextureFont* load(std::istream& in);
+    static TextureFont* load(const Renderer*, std::istream& in);
 };
 
-TextureFont* LoadTextureFont(const fs::path&);
+TextureFont* LoadTextureFont(const Renderer*, const fs::path&);
 
 #endif // _TEXTUREFONT_H_
-
