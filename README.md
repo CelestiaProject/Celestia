@@ -3,13 +3,15 @@
 |[![GitHub release](https://img.shields.io/badge/Release-v1.6.1-blue.svg)](https://celestiaproject.net/download.html) | [![Localization](https://img.shields.io/badge/Localized-85%25-green.svg)](#) | [![License](https://img.shields.io/badge/License-GPLv2-blue.svg)](https://github.com/CelestiaProject/Celestia/blob/master/COPYING) | [![Contribute](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](#contributing) |
 
 # Celestia
-![Celestia](celestia-logo.png)  
-**A real-time space simulation that lets you experience our universe in three dimensions.**  
+![Celestia](celestia-logo.png)<br>
+**A real-time space simulation that lets you experience our universe in three dimensions.**
 
-**Copyright © 2001-2019, Celestia Development Team**  
-**Celestia website: https://celestia.space**  
-**Celestia WikiBook: https://en.wikibooks.org/wiki/Celestia**  
-**Celestia forums: https://celestia.space/forum/**  
+**Copyright © 2001-2019, Celestia Development Team**<br>
+**Celestia website: https://celestia.space**<br>
+**Celestia WikiBook: https://en.wikibooks.org/wiki/Celestia**<br>
+**Celestia forums: https://celestia.space/forum/**<br>
+**Celestia Discord Server: https://discordapp.com/invite/WEWDcJh**<br>
+**Celestia SubReddit: https://www.reddit.com/r/Celestiasoftware/**<br>
 **Celestia Archive Repository: https://github.com/Anthony-B-Russo10/Celestia-Archive**
 ## License
 
@@ -121,6 +123,9 @@ types of catalog files:
 
 All three types of catalog file are text files that can be updated with your
 favorite text editing program.
+
+### Building from sources
+See instructions in file [INSTALL](INSTALL).
 
 ## Contributions
 | **`Authors`** | **`Contributors`** | **`Documentation`** | **`Other`** |

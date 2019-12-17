@@ -285,12 +285,17 @@ List of supported parameters (passed as -DPARAMETER=VALUE):
 | ENABLE_QT            | bool | ON      | Build Qt frontend
 | ENABLE_WIN           | bool | ***ON   | Build Windows native frontend
 | ENABLE_THEORA        | bool | **ON    | Support video capture to OGG Theora
+| ENABLE_TOOLS         | bool | OFF     | Build tools for Celestia data files
+| ENABLE_TTF           | bool | ****OFF | Build with FreeType support
+| NATIVE_OSX_APP       | bool | OFF     | Support native OSX data paths
 
 Notes:
  * /usr/local on Unix-like systems, c:\Program Files or c:\Program Files (x86)
    on Windows depending on OS type (32 or 64 bit) and build configuration.
+   This option effect is overriden by NATIVE_OSX_APP.
  ** Ignored on Windows systems.
  *** Ignored on Unix-like systems.
+ **** This option support is not finished yet.
 
 Parameters of type "bool" accept ON or OFF value. Parameters of type "path"
 accept any directory.

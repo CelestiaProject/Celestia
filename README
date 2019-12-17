@@ -27,6 +27,7 @@ CONTENTS
   Known Issues
   User Modifiable Elements
   Celestia Resources
+  Building From Sources
   Contributions
   Acknowledgements
 
@@ -199,6 +200,17 @@ Celestia Bug Tracking:
 
 Celestia Feature Requests:
   https://github.com/CelestiaProject/celestia/issues
+
+Celestia Discord Server:
+  https://discordapp.com/invite/WEWDcJh
+
+Celestia SubReddit:
+  https://www.reddit.com/r/Celestiasoftware/
+
+
+BUILDING FROM SOURCES
+---------------------
+See file INSTALL for building instructions.
 
 
 CONTRIBUTIONS
