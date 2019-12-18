@@ -64,14 +64,22 @@ std::ofstream hdrlog;
 #include "orbitsampler.h"
 #include "asterismrenderer.h"
 #include "boundariesrenderer.h"
-#include <celutil/debug.h>
+#include "rendcontext.h"
+#include "vertexobject.h"
+#include <celengine/observer.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
 #include <celmath/intersect.h>
 #include <celmath/geomutil.h>
+#include <celutil/debug.h>
 #include <celutil/utf8.h>
 #include <celutil/util.h>
 #include <celutil/timer.h>
+#if NO_TTF
+#include <celtxf/texturefont.h>
+#else
+#include <celttf/truetypefont.h>
+#endif
 #include <GL/glew.h>
 #ifdef VIDEO_SYNC
 #ifdef _WIN32
@@ -88,6 +96,9 @@ std::ofstream hdrlog;
 #include <sstream>
 #include <iomanip>
 #include <numeric>
+#ifdef USE_GLCONTEXT
+#include "glcontext.h"
+#endif
 
 using namespace cmod;
 using namespace Eigen;

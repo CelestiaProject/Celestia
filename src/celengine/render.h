@@ -15,24 +15,15 @@
 #include <list>
 #include <string>
 #include <Eigen/Core>
-#include <celmath/frustum.h>
 #include <celengine/universe.h>
-#include <celengine/observer.h>
 #include <celengine/selection.h>
-#ifdef USE_GLCONTEXT
-#include <celengine/glcontext.h>
-#endif
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celengine/renderlistentry.h>
-#include <celengine/vertexobject.h>
-#if NO_TTF
-#include <celtxf/texturefont.h>
-#else
-#include <celttf/truetypefont.h>
+
+#ifdef USE_GLCONTEXT
+class GLContext;
 #endif
-
-
 class RendererWatcher;
 class FrameTree;
 class ReferenceMark;
@@ -41,6 +32,12 @@ class Rect;
 class PointStarVertexBuffer;
 class AsterismRenderer;
 class BoundariesRenderer;
+class Observer;
+class TextureFont;
+namespace celmath
+{
+class Frustum;
+};
 
 struct LightSource
 {

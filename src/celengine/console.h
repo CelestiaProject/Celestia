@@ -11,15 +11,10 @@
 #define _CELENGINE_CONSOLE_H_
 
 #include <string>
-#include <iostream>
-#if NO_TTF
-#include <celtxf/texturefont.h>
-#else
-#include <celttf/truetypefont.h>
-#endif
-
+#include <iosfwd>
 
 class Console;
+class TextureFont;
 
 // Custom streambuf class to support C++ operator style output.  The
 // output is completely unbuffered.

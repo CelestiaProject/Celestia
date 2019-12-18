@@ -9,16 +9,22 @@
 
 #include <cstring>
 #include <cstdarg>
-#include <celutil/utf8.h>
+#include <iostream>
 #include <GL/glew.h>
 #include <Eigen/Core>
 #include <celutil/debug.h>
+#include <celutil/utf8.h>
 #include <celmath/geomutil.h>
 #include "vecgl.h"
 #include "overlay.h"
 #include "rectangle.h"
 #include "render.h"
 #include "texture.h"
+#if NO_TTF
+#include <celtxf/texturefont.h>
+#else
+#include <celttf/truetypefont.h>
+#endif
 
 using namespace std;
 using namespace Eigen;
