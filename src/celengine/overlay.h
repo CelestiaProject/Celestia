@@ -10,21 +10,15 @@
 #ifndef _OVERLAY_H_
 #define _OVERLAY_H_
 
-#include <algorithm>
 #include <array>
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <celutil/color.h>
-#if NO_TTF
-#include <celtxf/texturefont.h>
-#else
-#include <celttf/truetypefont.h>
-#endif
-
 
 class Overlay;
 class Renderer;
 class Rect;
+class TextureFont;
 
 // Custom streambuf class to support C++ operator style output.  The
 // output is completely unbuffered so that it can coexist with printf

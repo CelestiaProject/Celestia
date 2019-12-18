@@ -58,6 +58,11 @@
 #ifdef CELX
 #include <celephem/scriptobject.h>
 #endif
+#if NO_TTF
+#include <celtxf/texturefont.h>
+#else
+#include <celttf/truetypefont.h>
+#endif
 
 #include "imagecapture.h"
 

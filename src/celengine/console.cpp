@@ -11,11 +11,17 @@
 #include <cstdarg>
 #include <cassert>
 #include <algorithm>
+#include <iostream>
 #include <celutil/utf8.h>
 #include <celmath/geomutil.h>
 #include <GL/glew.h>
 #include "vecgl.h"
 #include "console.h"
+#if NO_TTF
+#include <celtxf/texturefont.h>
+#else
+#include <celttf/truetypefont.h>
+#endif
 
 using namespace std;
 using namespace celmath;
