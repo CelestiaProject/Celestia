@@ -10,6 +10,7 @@ glu and glibc packages.
 OK, assuming you've collected all the necessary libraries, here's
 what you need to do to build and run Celestia:
 
+	autoreconf -f
 	./configure --with-INTERFACE                   [*]
 	make
 	make install
