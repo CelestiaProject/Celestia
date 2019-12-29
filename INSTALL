@@ -53,17 +53,17 @@ To build from sources please follow instructions below.
 Common building instructions
 ----------------------------
 
-We recommend using a copy of out git repository to build your own installation
+We recommend using a copy of our git repository to build your own installation
 as it contains some dependencies required for building.
 
 To create the copy install git from your OS distribution repository or from
 https://git-scm.com/ and then execute the following commands:
-* git clone https://github.com/CelestiaProject/Celestia
-* git submodule update --init
+1. git clone https://github.com/CelestiaProject/Celestia
+2. cd Celestia
+3. git submodule update --init
 
 If you have fmtlib and Eigen3 installed from other sources (OS repository or
-vcpkg) or don't want to build Celestia with SPICE support then you can skip the
-2nd step.
+vcpkg) or don't want to build Celestia with SPICE support then you can skip the 3rd step.
 
 
 
