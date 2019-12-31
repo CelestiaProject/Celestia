@@ -6,7 +6,7 @@
 ![Celestia](celestia-logo.png)<br>
 **A real-time space simulation that lets you experience our universe in three dimensions.**
 
-**Copyright © 2001-2019, Celestia Development Team**<br>
+**Copyright © 2001-2020, Celestia Development Team**<br>
 **Celestia website: https://celestia.space**<br>
 **Celestia WikiBook: https://en.wikibooks.org/wiki/Celestia**<br>
 **Celestia forums: https://celestia.space/forum/**<br>

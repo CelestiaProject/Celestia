@@ -4,7 +4,7 @@
 *  A real-time space simulation that lets you experience our universe in  *
 *  three dimensions.                                                      *
 *                                                                         *
-*  Copyright (c) 2001-2019, Celestia Development Team                     *
+*  Copyright (c) 2001-2020, Celestia Development Team                     *
 *                                                                         *
 *-------------------------------------------------------------------------*
 *  Celestia web site: https://celestia.space                              *
@@ -230,11 +230,13 @@ Authors
   Da Woon Jung        <dirkpitt2050@users.sf.net>
   Vincent Giangiulio  <vince.gian@free.fr>
   Andrew Tribick
+  Hleb Valoshka
+  Li Linfeng
 
 Contributors
 ------------
   Deon Ramsey ........... original GTK1 interface
-  Christopher ANDRE ..... Eclipse Finder
+  Christopher Andre ..... Eclipse Finder
   Colin Walters ......... Endianness fixes
   Peter Chapman ......... Orbit path rendering changes
   James Holmes ..........
