@@ -112,7 +112,7 @@ ScriptedRotation::initialize(const std::string& moduleName,
     luaRotationObjectName = GenerateScriptObjectName();
 
     // Attach the name to the script rotation
-    lua_pushvalue(luaState, -2); // dup the rotation object on top of stack
+    lua_pushvalue(luaState, -1); // dup the rotation object on top of stack
     lua_setglobal(luaState, luaRotationObjectName.c_str());
 
     // Get the rest of the rotation parameters; they are all optional.
