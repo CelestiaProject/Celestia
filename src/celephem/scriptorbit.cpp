@@ -115,7 +115,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     luaOrbitObjectName = GenerateScriptObjectName();
 
     // Attach the name to the script orbit
-    lua_pushvalue(luaState, -2); // dup the orbit object on top of stack
+    lua_pushvalue(luaState, -1); // dup the orbit object on top of stack
     lua_setglobal(luaState, luaOrbitObjectName.c_str());
 
     // Now, call orbit object methods to get the bounding radius
