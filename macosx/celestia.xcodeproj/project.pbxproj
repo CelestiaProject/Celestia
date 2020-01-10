@@ -28,7 +28,6 @@
 		88654A260DB29585007C8027 /* celx_rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A130DB29585007C8027 /* celx_rotation.cpp */; };
 		88654A280DB29585007C8027 /* celx_vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A150DB29585007C8027 /* celx_vector.cpp */; };
 		9708E6A92312A8BB0015C9F4 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9708E6A72312A8B00015C9F4 /* libjpeg.a */; };
-		970AEE8E2329417000E9ED22 /* liblua5.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE8D2329417000E9ED22 /* liblua5.3.a */; };
 		970AEE90232943D300E9ED22 /* libintl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE8F232943D300E9ED22 /* libintl.a */; };
 		970AEE92232943DC00E9ED22 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 970AEE91232943DC00E9ED22 /* libiconv.tbd */; };
 		9717E96E234B641E00AAD7D1 /* Migrator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9717E96D234B641E00AAD7D1 /* Migrator.m */; };
@@ -43,6 +42,7 @@
 		97E4018123101501002013C7 /* cspice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE4EEA6D0F50144A003341A2 /* cspice.a */; };
 		97E4018323101501002013C7 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E4018223101501002013C7 /* libpng.a */; };
 		97E401852310150F002013C7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E401842310150F002013C7 /* libz.tbd */; };
+		97FE30EF23BA2F40002ADDF0 /* liblua5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E40188231015AD002013C7 /* liblua5.1.a */; };
 		CE5203030F4F9DD0007D0DE8 /* spiceinterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE5202FD0F4F9DD0007D0DE8 /* spiceinterface.cpp */; };
 		CE5203040F4F9DD0007D0DE8 /* spiceorbit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE5202FF0F4F9DD0007D0DE8 /* spiceorbit.cpp */; };
 		CE5203050F4F9DD0007D0DE8 /* spicerotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE5203010F4F9DD0007D0DE8 /* spicerotation.cpp */; };
@@ -989,9 +989,9 @@
 				970AEE92232943DC00E9ED22 /* libiconv.tbd in Frameworks */,
 				97E401852310150F002013C7 /* libz.tbd in Frameworks */,
 				E564312B07769C9000E2C4A3 /* Cocoa.framework in Frameworks */,
+				97FE30EF23BA2F40002ADDF0 /* liblua5.1.a in Frameworks */,
 				E564312C07769C9000E2C4A3 /* OpenGL.framework in Frameworks */,
 				E5C9ADE10848FFEF0071B1EE /* Carbon.framework in Frameworks */,
-				970AEE8E2329417000E9ED22 /* liblua5.3.a in Frameworks */,
 				970AEE90232943D300E9ED22 /* libintl.a in Frameworks */,
 				9708E6A92312A8BB0015C9F4 /* libjpeg.a in Frameworks */,
 				97E4018323101501002013C7 /* libpng.a in Frameworks */,
