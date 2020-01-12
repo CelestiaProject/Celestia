@@ -1818,13 +1818,14 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.hasRingShadows())
     {
         source += "vec3 ringShadowProj;\n";
+        source += "float t = -(dot(gl_Vertex.xyz, ringPlane.xyz) + ringPlane.w);\n";
         for (unsigned int j = 0; j < props.nLights; j++)
         {
             if (props.hasRingShadowForLight(j))
             {
                 source += "ringShadowProj = gl_Vertex.xyz + " +
                   LightProperty(j, "direction") +
-                  " * max(0.0, -(dot(gl_Vertex.xyz, ringPlane.xyz) + ringPlane.w) / dot(" +
+                  " * max(0.0, t / dot(" +
                   LightProperty(j, "direction") + ", ringPlane.xyz));\n";
 
                 source += RingShadowTexCoord(j) +
