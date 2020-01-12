@@ -166,9 +166,6 @@ IDR_MAIN_MENU MENU
         MENUITEM "Capture &Movie...\tShift+F10", ID_FILE_CAPTUREMOVIE
         MENUITEM SEPARATOR
         MENUITEM "E&xit", ID_FILE_EXIT
-        MENUITEM SEPARATOR
-        MENUITEM SEPARATOR
-        MENUITEM SEPARATOR
     }
     POPUP "&Navigation"
     {
@@ -260,7 +257,6 @@ IDR_MAIN_MENU MENU
         MENUITEM "&License", ID_HELP_LICENSE
         MENUITEM SEPARATOR
         MENUITEM "&About Celestia", ID_HELP_ABOUT
-        MENUITEM SEPARATOR
     }
 }
 
