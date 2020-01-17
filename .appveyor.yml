@@ -22,7 +22,7 @@ branches:
   - master
 
 artifacts:
-- path: '**/celestia-*.exe'
+- path: '**/celestia-*.7z'
   name: win
 
 # Build worker image (VM template)
@@ -73,6 +73,16 @@ build_script:
     cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TTF=ON ..
 
     cmake --build . --config Release -- /maxcpucount:4 /nologo
+
+after_build:
+  - cmd: >-
+      cd c:\projects\celestia\build\src\celestia
+
+      7z a celestia-win.x86.7z win32\Release\*
+
+      windeployqt --no-angle --no-opengl-sw --no-translations --no-system-d3d-compiler qt\Release\
+
+      7z a celestia-qt.x86.7z qt\Release\*
 
 #on_failure:
 #- type "c:\projects\celestia\build\CMakeFiles\CMakeOutput.log"
