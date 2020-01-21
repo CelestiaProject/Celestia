@@ -25,7 +25,7 @@ using namespace Eigen;
 using namespace std;
 
 // GLSL on Mac OS X appears to have a bug that precludes us from using structs
-// #define USE_GLSL_STRUCTS
+#define USE_GLSL_STRUCTS
 #define POINT_FADE 0
 
 enum ShaderVariableType
@@ -964,11 +964,10 @@ static string
 DeclareLights(const ShaderProperties& props)
 {
     if (props.nLights == 0)
-        return string("");
+        return {};
 
-#ifndef USE_GLSL_STRUCTS
     ostringstream stream;
-
+#ifndef USE_GLSL_STRUCTS
     for (unsigned int i = 0; i < props.nLights; i++)
     {
         stream << "uniform vec3 light" << i << "_direction;\n";
@@ -990,7 +989,7 @@ DeclareLights(const ShaderProperties& props)
     stream << "   vec3 halfVector;\n";
     if (props.texUsage & ShaderProperties::NightTexture)
         stream << "   float brightness;\n";
-    stream << "} lights[%d];\n";
+    stream << "} lights[" << props.nLights << "];\n";
 #endif
 
     return stream.str();
@@ -2675,10 +2674,15 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
     source += "uniform vec3  rayleighCoeff;\n";
     source += "uniform vec3  invScatterCoeffSum;\n";
 
+#ifdef USE_GLSL_STRUCTS
+    source += DeclareLights(props);
+#endif
     unsigned int i;
     for (i = 0; i < props.nLights; i++)
     {
+#ifndef USE_GLSL_STRUCTS
         source += "uniform vec3 " + LightProperty(i, "direction") + ";\n";
+#endif
         source += "varying vec3 " + ScatteredColor(i) + ";\n";
     }
 
