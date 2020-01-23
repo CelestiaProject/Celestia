@@ -125,7 +125,7 @@ All three types of catalog file are text files that can be updated with your
 favorite text editing program.
 
 ### Building from sources
-See instructions in file [INSTALL](INSTALL).
+See instructions in file [INSTALL.md](INSTALL.md).
 
 ## Contributions
 | **`Authors`** | **`Contributors`** | **`Documentation`** | **`Other`** |
