@@ -183,6 +183,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
                         ProgressNotifier* progressNotifier = nullptr);
     bool initRenderer();
     void start(double t);
+    void start();
     void getLightTravelDelay(double distanceKm, int&, int&, float&);
     void setLightTravelDelay(double distanceKm);
 
