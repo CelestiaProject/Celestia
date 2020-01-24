@@ -170,3 +170,44 @@ fs::path homeDir()
 
     return fs::path();
 }
+
+bool GetTZInfo(std::string &tzName, int &dstBias)
+{
+#ifdef _WIN32
+    TIME_ZONE_INFORMATION tzi;
+    DWORD dst = GetTimeZoneInformation(&tzi);
+    if (dst == TIME_ZONE_ID_INVALID)
+        return false;
+
+    LONG bias = 0;
+    WCHAR* name = nullptr;
+
+    switch (dst)
+    {
+    case TIME_ZONE_ID_STANDARD:
+        bias = tzi.StandardBias;
+        name = tzi.StandardName;
+        break;
+    case TIME_ZONE_ID_DAYLIGHT:
+        bias = tzi.DaylightBias;
+        name = tzi.DaylightName;
+        break;
+    default:
+        cerr << _("Unknown value returned by GetTimeZoneInformation()\n");
+        return false;
+    }
+
+    tzName = name == nullptr ? "   " : WideToUTF8(name);
+    dstBias = (tzi.Bias + bias) * -60;
+    return true;
+#else
+    struct tm result;
+    time_t curtime = time(nullptr); // required only to get TZ info
+    if (!localtime_r(&curtime, &result))
+        return false;
+
+    dstBias = result.tm_gmtoff;
+    tzName = result.tm_zone;
+    return true;
+#endif
+}

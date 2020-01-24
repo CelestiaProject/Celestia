@@ -62,12 +62,14 @@ template <class T> struct deleteFunc
 };
 
 // size in bytes of memory required to store a container data
-template<typename T> constexpr typename T::size_type memsize(T c)
+template<typename T> constexpr typename T::size_type memsize(const T &c)
 {
     return c.size() * sizeof(typename T::value_type);
 }
 
 fs::path PathExp(const fs::path& filename);
 fs::path homeDir();
+
+bool GetTZInfo(std::string&, int&);
 
 #endif // _CELUTIL_UTIL_H_

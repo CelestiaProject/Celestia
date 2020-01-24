@@ -1847,6 +1847,12 @@ void CelestiaCore::setAltAzimuthMode(bool enable)
     altAzimuthMode = enable;
 }
 
+void CelestiaCore::start()
+{
+    time_t curtime = time(nullptr);
+    start(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
+}
+
 void CelestiaCore::start(double t)
 {
     if (config->initScriptFile != "")

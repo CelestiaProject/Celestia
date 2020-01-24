@@ -1370,49 +1370,15 @@ void CelestiaAppWindow::createMenus()
     m_appCore->getSimulation()->setSyncTime(check);
 
     // Set up the default time zone name and offset from UTC
-    time_t curtime = time(nullptr);
-    m_appCore->start(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
+    m_appCore->start();
 
-#ifndef _WIN32
-    struct tm result;
-    if (localtime_r(&curtime, &result))
+    string tzName;
+    int dstBias;
+    if (GetTZInfo(tzName, dstBias))
     {
-        m_appCore->setTimeZoneBias(result.tm_gmtoff);
-        m_appCore->setTimeZoneName(result.tm_zone);
+        m_appCore->setTimeZoneName(tzName);
+        m_appCore->setTimeZoneBias(dstBias);
     }
-#else
-    TIME_ZONE_INFORMATION tzi;
-    DWORD dst = GetTimeZoneInformation(&tzi);
-    if (dst != TIME_ZONE_ID_INVALID)
-    {
-        LONG dstBias = 0;
-        WCHAR* tzName = nullptr;
-
-        if (dst == TIME_ZONE_ID_STANDARD)
-        {
-            dstBias = tzi.StandardBias;
-            tzName = tzi.StandardName;
-        }
-        else if (dst == TIME_ZONE_ID_DAYLIGHT)
-        {
-            dstBias = tzi.DaylightBias;
-            tzName = tzi.DaylightName;
-        }
-
-        if (tzName == nullptr)
-        {
-            m_appCore->setTimeZoneName("   ");
-        }
-        else
-        {
-            char tz_name_out[20];
-            size_t length = wcstombs(tz_name_out, tzName, sizeof(tz_name_out)-1);
-            tz_name_out[std::min(sizeof(tz_name_out)-1, length)] = '\0';
-            m_appCore->setTimeZoneName(tz_name_out);
-        }
-        m_appCore->setTimeZoneBias((tzi.Bias + dstBias) * -60);
-    }
-#endif
 
     // If LocalTime is set to false, set the time zone bias to zero.
     if (settings.contains("LocalTime"))

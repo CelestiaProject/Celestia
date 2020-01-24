@@ -408,26 +408,12 @@ static void ShowUniversalTime(CelestiaCore* appCore)
 
 static void ShowLocalTime(CelestiaCore* appCore)
 {
-    TIME_ZONE_INFORMATION tzi;
-    DWORD dst = GetTimeZoneInformation(&tzi);
-    if (dst != TIME_ZONE_ID_INVALID)
+    string tzName;
+    int dstBias;
+    if (GetTZInfo(tzName, dstBias))
     {
-        LONG dstBias = 0;
-        WCHAR* tzName = NULL;
-
-        if (dst == TIME_ZONE_ID_STANDARD)
-        {
-            dstBias = tzi.StandardBias;
-            tzName = tzi.StandardName;
-        }
-        else if (dst == TIME_ZONE_ID_DAYLIGHT)
-        {
-            dstBias = tzi.DaylightBias;
-            tzName = tzi.DaylightName;
-        }
-
-        appCore->setTimeZoneName("   ");
-        appCore->setTimeZoneBias((tzi.Bias + dstBias) * -60);
+        appCore->setTimeZoneName(tzName);
+        appCore->setTimeZoneBias(dstBias);
     }
 }
 
@@ -3454,22 +3440,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     bReady = true;
 
-    // Get the current time
-    time_t systime = time(NULL);
-    struct tm *gmt = gmtime(&systime);
-    double timeTDB = astro::J2000;
-    if (gmt != NULL)
-    {
-        astro::Date d;
-        d.year = gmt->tm_year + 1900;
-        d.month = gmt->tm_mon + 1;
-        d.day = gmt->tm_mday;
-        d.hour = gmt->tm_hour;
-        d.minute = gmt->tm_min;
-        d.seconds = (int) gmt->tm_sec;
-        timeTDB = astro::UTCtoTDB(d);
-    }
-    appCore->start(timeTDB);
+    appCore->start();
 
     if (startURL != "")
     {

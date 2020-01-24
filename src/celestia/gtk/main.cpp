@@ -290,7 +290,7 @@ static void initRealize(GtkWidget* widget, AppData* app)
         app->core->setStartURL(app->startURL);
 
     /* Set simulation time */
-    app->core->start((double)time(NULL) / 86400.0 + (double)astro::Date(1970, 1, 1));
+    app->core->start();
     updateTimeZone(app, app->showLocalTime);
 
     /* Setting time zone name not very useful, but makes space for "LT" status in
