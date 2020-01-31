@@ -40,6 +40,7 @@ class Color
     inline float blue() const;
     inline float alpha() const;
     inline void get(unsigned char*) const;
+    inline const unsigned char* data() const;
 
     inline Eigen::Vector3f toVector3() const;
     inline Eigen::Vector4f toVector4() const;
@@ -89,6 +90,11 @@ void Color::get(unsigned char* rgba) const
     rgba[1] = c[Green];
     rgba[2] = c[Blue];
     rgba[3] = c[Alpha];
+}
+
+const unsigned char* Color::data() const
+{
+    return c;
 }
 
 /** Return the color as a vector, with red, green, and blue in the
