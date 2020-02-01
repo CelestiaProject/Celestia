@@ -837,6 +837,21 @@ bool StarDatabase::createStar(Star* star,
 
     Vector3d semiAxes = Vector3d::Ones();
     bool hasSemiAxes = starData->getLengthVector("SemiAxes", semiAxes);
+    if (hasSemiAxes)
+    {
+        auto ones = Vector3d::Ones().array();
+        if ((semiAxes.array() > ones).any())
+        {
+            cerr << _("Invalid star: at least one of SemiAxes values is greater than 1.\n");
+            return false;
+        }
+        if ((semiAxes.array() < ones).all())
+        {
+            cerr << _("Invalid star: all values of SemiAxes values are lower than 1.\n");
+            return false;
+        }
+    }
+
     bool hasBarycenter = false;
     Eigen::Vector3f barycenterPosition;
 
