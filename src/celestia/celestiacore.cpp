@@ -87,7 +87,7 @@ static const double MaximumTimeRate = 1.0e15;
 static const double MinimumTimeRate = 1.0e-15;
 static const float stdFOV = degToRad(45.0f);
 static const float MaximumFOV = degToRad(120.0f);
-static const float MinimumFOV = degToRad(0.001f);
+static const float MinimumFOV = degToRad(0.00000000694f);
 static float KeyRotationAccel = degToRad(120.0f);
 static float MouseRotationSensitivity = degToRad(1.0f);
 
