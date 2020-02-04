@@ -8,74 +8,13 @@
 // of the License, or (at your option) any later version.
 
 #include "color.h"
-#include <celmath/mathlib.h>
 
 using namespace std;
-using namespace celmath;
 
 Color::ColorMap Color::x11Colors;
 
 const Color Color::White = Color(1.0f, 1.0f, 1.0f);
 const Color Color::Black = Color(0.0f,0.0f, 0.0f);
-
-Color::Color()
-{
-    c[Red] = c[Green] = c[Blue] = 0;
-    c[Alpha] = 0xff;
-}
-
-
-Color::Color(float r, float g, float b)
-{
-    c[Red] = (unsigned char) (clamp(r) * 255.99f);
-    c[Green] = (unsigned char) (clamp(g) * 255.99f);
-    c[Blue] = (unsigned char) (clamp(b) * 255.99f);
-    c[Alpha] = 0xff;
-}
-
-
-Color::Color(float r, float g, float b, float a)
-{
-    c[Red]   = (unsigned char) (clamp(r) * 255.99f);
-    c[Green] = (unsigned char) (clamp(g) * 255.99f);
-    c[Blue]  = (unsigned char) (clamp(b) * 255.99f);
-    c[Alpha] = (unsigned char) (clamp(a) * 255.99f);
-}
-
-
-Color::Color(unsigned char r, unsigned char g, unsigned char b) :
-    Color(r, g, b, 0xff)
-{
-}
-
-
-Color::Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-{
-    c[Red] = r;
-    c[Green] = g;
-    c[Blue] = b;
-    c[Alpha] = a;
-}
-
-
-Color::Color(const Eigen::Vector3f &c) :
-    Color(c.x(), c.y(), c.z())
-{
-}
-
-
-Color::Color(const Eigen::Vector4f &c) :
-    Color(c.x(), c.y(), c.z(), c.w())
-{
-}
-
-
-Color::Color(const Color& color, float alpha)
-{
-    *this = color;
-    c[Alpha] = (unsigned char) (clamp(alpha) * 255.99f);
-}
-
 
 /*! Parse a color string and return true if it was a valid color, otherwise
  *  false.  Accetable inputs are HTML/X11 style #xxxxxx colors (where x is
@@ -108,14 +47,14 @@ bool Color::parse(const char* s, Color& c)
         switch(length)
         {
         case 3:
-            c = Color((unsigned char) ((n >> 8) * 17),
-                      (unsigned char) (((n & 0x0f0) >> 4) * 17),
-                      (unsigned char) ((n & 0x00f) * 17));
+            c = Color((uint8_t) ((n >> 8) * 17),
+                      (uint8_t) (((n & 0x0f0) >> 4) * 17),
+                      (uint8_t) ((n & 0x00f) * 17));
             return true;
         case 6:
-            c = Color((unsigned char) (n >> 16),
-                      (unsigned char) ((n & 0x00ff00) >> 8),
-                      (unsigned char) (n & 0x0000ff));
+            c = Color((uint8_t) (n >> 16),
+                      (uint8_t) ((n & 0x00ff00) >> 8),
+                      (uint8_t) (n & 0x0000ff));
             return true;
         default:
             return false;
@@ -136,144 +75,144 @@ bool Color::parse(const char* s, Color& c)
 // X11 Colors STL map
 void Color::buildX11ColorMap()
 {
-    x11Colors["aliceblue"]            = Color((unsigned char)240, (unsigned char)248, (unsigned char)255);
-    x11Colors["antiquewhite"]         = Color((unsigned char)250, (unsigned char)235, (unsigned char)215);
-    x11Colors["aqua"]                 = Color((unsigned char)0,   (unsigned char)255, (unsigned char)255);
-    x11Colors["aquamarine"]           = Color((unsigned char)127, (unsigned char)255, (unsigned char)212);
-    x11Colors["azure"]                = Color((unsigned char)240, (unsigned char)255, (unsigned char)255);
-    x11Colors["beige"]                = Color((unsigned char)245, (unsigned char)245, (unsigned char)220);
-    x11Colors["bisque"]               = Color((unsigned char)255, (unsigned char)228, (unsigned char)196);
-    x11Colors["black"]                = Color((unsigned char)0,   (unsigned char)0,   (unsigned char)0);
-    x11Colors["blanchedalmond"]       = Color((unsigned char)255, (unsigned char)235, (unsigned char)205);
-    x11Colors["blue"]                 = Color((unsigned char)0,   (unsigned char)0,   (unsigned char)255);
-    x11Colors["blueviolet"]           = Color((unsigned char)138, (unsigned char)43,  (unsigned char)226);
-    x11Colors["brown"]                = Color((unsigned char)165, (unsigned char)42,  (unsigned char)42);
-    x11Colors["burlywood"]            = Color((unsigned char)222, (unsigned char)184, (unsigned char)135);
-    x11Colors["cadetblue"]            = Color((unsigned char)95,  (unsigned char)158, (unsigned char)160);
-    x11Colors["chartreuse"]           = Color((unsigned char)127, (unsigned char)255, (unsigned char)0);
-    x11Colors["chocolate"]            = Color((unsigned char)210, (unsigned char)105, (unsigned char)30);
-    x11Colors["coral"]                = Color((unsigned char)255, (unsigned char)127, (unsigned char)80);
-    x11Colors["cornflowerblue"]       = Color((unsigned char)100, (unsigned char)149, (unsigned char)237);
-    x11Colors["cornsilk"]             = Color((unsigned char)255, (unsigned char)248, (unsigned char)220);
-    x11Colors["crimson"]              = Color((unsigned char)220, (unsigned char)20,  (unsigned char)60);
-    x11Colors["cyan"]                 = Color((unsigned char)0,   (unsigned char)255, (unsigned char)255);
-    x11Colors["darkblue"]             = Color((unsigned char)0,   (unsigned char)0,   (unsigned char)139);
-    x11Colors["darkcyan"]             = Color((unsigned char)0,   (unsigned char)139, (unsigned char)139);
-    x11Colors["darkgoldenrod"]        = Color((unsigned char)184, (unsigned char)134, (unsigned char)11);
-    x11Colors["darkgray"]             = Color((unsigned char)169, (unsigned char)169, (unsigned char)169);
-    x11Colors["darkgreen"]            = Color((unsigned char)0,   (unsigned char)100, (unsigned char)0);
-    x11Colors["darkkhaki"]            = Color((unsigned char)189, (unsigned char)183, (unsigned char)107);
-    x11Colors["darkmagenta"]          = Color((unsigned char)139, (unsigned char)0,   (unsigned char)139);
-    x11Colors["darkolivegreen"]       = Color((unsigned char)85,  (unsigned char)107, (unsigned char)47);
-    x11Colors["darkorange"]           = Color((unsigned char)255, (unsigned char)140, (unsigned char)0);
-    x11Colors["darkorchid"]           = Color((unsigned char)153, (unsigned char)50,  (unsigned char)204);
-    x11Colors["darkred"]              = Color((unsigned char)139, (unsigned char)0,   (unsigned char)0);
-    x11Colors["darksalmon"]           = Color((unsigned char)233, (unsigned char)150, (unsigned char)122);
-    x11Colors["darkseagreen"]         = Color((unsigned char)143, (unsigned char)188, (unsigned char)143);
-    x11Colors["darkslateblue"]        = Color((unsigned char)72,  (unsigned char)61,  (unsigned char)139);
-    x11Colors["darkslategray"]        = Color((unsigned char)47,  (unsigned char)79,  (unsigned char)79);
-    x11Colors["darkturquoise"]        = Color((unsigned char)0,   (unsigned char)206, (unsigned char)209);
-    x11Colors["darkviolet"]           = Color((unsigned char)148, (unsigned char)0,   (unsigned char)211);
-    x11Colors["deeppink"]             = Color((unsigned char)255, (unsigned char)20,  (unsigned char)147);
-    x11Colors["deepskyblue"]          = Color((unsigned char)0,   (unsigned char)191, (unsigned char)255);
-    x11Colors["dimgray"]              = Color((unsigned char)105, (unsigned char)105, (unsigned char)105);
-    x11Colors["dodgerblue"]           = Color((unsigned char)30,  (unsigned char)144, (unsigned char)255);
-    x11Colors["firebrick"]            = Color((unsigned char)178, (unsigned char)34,  (unsigned char)34);
-    x11Colors["floralwhite"]          = Color((unsigned char)255, (unsigned char)250, (unsigned char)240);
-    x11Colors["forestgreen"]          = Color((unsigned char)34,  (unsigned char)139, (unsigned char)34);
-    x11Colors["fuchsia"]              = Color((unsigned char)255, (unsigned char)0,   (unsigned char)255);
-    x11Colors["gainsboro"]            = Color((unsigned char)220, (unsigned char)220, (unsigned char)220);
-    x11Colors["ghostwhite"]           = Color((unsigned char)248, (unsigned char)248, (unsigned char)255);
-    x11Colors["gold"]                 = Color((unsigned char)255, (unsigned char)215, (unsigned char)0);
-    x11Colors["goldenrod"]            = Color((unsigned char)218, (unsigned char)165, (unsigned char)32);
-    x11Colors["gray"]                 = Color((unsigned char)128, (unsigned char)128, (unsigned char)128);
-    x11Colors["green"]                = Color((unsigned char)0,   (unsigned char)128, (unsigned char)0);
-    x11Colors["greenyellow"]          = Color((unsigned char)173, (unsigned char)255, (unsigned char)47);
-    x11Colors["honeydew"]             = Color((unsigned char)240, (unsigned char)255, (unsigned char)240);
-    x11Colors["hotpink"]              = Color((unsigned char)255, (unsigned char)105, (unsigned char)180);
-    x11Colors["indianred"]            = Color((unsigned char)205, (unsigned char)92,  (unsigned char)92);
-    x11Colors["indigo"]               = Color((unsigned char)75,  (unsigned char)0,   (unsigned char)130);
-    x11Colors["ivory"]                = Color((unsigned char)255, (unsigned char)255, (unsigned char)240);
-    x11Colors["khaki"]                = Color((unsigned char)240, (unsigned char)230, (unsigned char)140);
-    x11Colors["lavender"]             = Color((unsigned char)230, (unsigned char)230, (unsigned char)250);
-    x11Colors["lavenderblush"]        = Color((unsigned char)255, (unsigned char)240, (unsigned char)245 );
-    x11Colors["lawngreen"]            = Color((unsigned char)124, (unsigned char)252, (unsigned char)0);
-    x11Colors["lemonchiffon"]         = Color((unsigned char)255, (unsigned char)250, (unsigned char)205);
-    x11Colors["lightblue"]            = Color((unsigned char)173, (unsigned char)216, (unsigned char)230);
-    x11Colors["lightcoral"]           = Color((unsigned char)240, (unsigned char)128, (unsigned char)128);
-    x11Colors["lightcyan"]            = Color((unsigned char)224, (unsigned char)255, (unsigned char)255);
-    x11Colors["lightgoldenrodyellow"] = Color((unsigned char)250, (unsigned char)250, (unsigned char)210);
-    x11Colors["lightgreen"]           = Color((unsigned char)144, (unsigned char)238, (unsigned char)144);
-    x11Colors["lightgrey"]            = Color((unsigned char)211, (unsigned char)211, (unsigned char)211);
-    x11Colors["lightpink"]            = Color((unsigned char)255, (unsigned char)182, (unsigned char)193);
-    x11Colors["lightsalmon"]          = Color((unsigned char)255, (unsigned char)160, (unsigned char)122);
-    x11Colors["lightseagreen"]        = Color((unsigned char)32,  (unsigned char)178, (unsigned char)170);
-    x11Colors["lightskyblue"]         = Color((unsigned char)135, (unsigned char)206, (unsigned char)250);
-    x11Colors["lightslategray"]       = Color((unsigned char)119, (unsigned char)136, (unsigned char)153);
-    x11Colors["lightsteelblue"]       = Color((unsigned char)176, (unsigned char)196, (unsigned char)222);
-    x11Colors["lightyellow"]          = Color((unsigned char)255, (unsigned char)255, (unsigned char)224);
-    x11Colors["lime"]                 = Color((unsigned char)0,   (unsigned char)255, (unsigned char)0);
-    x11Colors["limegreen"]            = Color((unsigned char)50,  (unsigned char)205, (unsigned char)50);
-    x11Colors["linen"]                = Color((unsigned char)250, (unsigned char)240, (unsigned char)230);
-    x11Colors["magenta"]              = Color((unsigned char)255, (unsigned char)0,   (unsigned char)255);
-    x11Colors["maroon"]               = Color((unsigned char)128, (unsigned char)0,   (unsigned char)0);
-    x11Colors["mediumaquamarine"]     = Color((unsigned char)102, (unsigned char)205, (unsigned char)170);
-    x11Colors["mediumblue"]           = Color((unsigned char)0,   (unsigned char)0,   (unsigned char)205);
-    x11Colors["mediumorchid"]         = Color((unsigned char)186, (unsigned char)85,  (unsigned char)211);
-    x11Colors["mediumpurple"]         = Color((unsigned char)147, (unsigned char)112, (unsigned char)219);
-    x11Colors["mediumseagreen"]       = Color((unsigned char)60,  (unsigned char)179, (unsigned char)113);
-    x11Colors["mediumslateblue"]      = Color((unsigned char)123, (unsigned char)104, (unsigned char)238);
-    x11Colors["mediumspringgreen"]    = Color((unsigned char)0,   (unsigned char)250, (unsigned char)154);
-    x11Colors["mediumturquoise"]      = Color((unsigned char)72,  (unsigned char)209, (unsigned char)204);
-    x11Colors["mediumvioletred"]      = Color((unsigned char)199, (unsigned char)21,  (unsigned char)133);
-    x11Colors["midnightblue"]         = Color((unsigned char)25,  (unsigned char)25,  (unsigned char)112);
-    x11Colors["mintcream"]            = Color((unsigned char)245, (unsigned char)255, (unsigned char)250);
-    x11Colors["mistyrose"]            = Color((unsigned char)255, (unsigned char)228, (unsigned char)225);
-    x11Colors["moccasin"]             = Color((unsigned char)255, (unsigned char)228, (unsigned char)181);
-    x11Colors["navajowhite"]          = Color((unsigned char)255, (unsigned char)222, (unsigned char)173);
-    x11Colors["navy"]                 = Color((unsigned char)0,   (unsigned char)0,   (unsigned char)128);
-    x11Colors["oldlace"]              = Color((unsigned char)253, (unsigned char)245, (unsigned char)230);
-    x11Colors["olive"]                = Color((unsigned char)128, (unsigned char)128, (unsigned char)0);
-    x11Colors["olivedrab"]            = Color((unsigned char)107, (unsigned char)142, (unsigned char)35);
-    x11Colors["orange"]               = Color((unsigned char)255, (unsigned char)165, (unsigned char)0);
-    x11Colors["orangered"]            = Color((unsigned char)255, (unsigned char)69,  (unsigned char)0);
-    x11Colors["orchid"]               = Color((unsigned char)218, (unsigned char)112, (unsigned char)214);
-    x11Colors["palegoldenrod"]        = Color((unsigned char)238, (unsigned char)232, (unsigned char)170);
-    x11Colors["palegreen"]            = Color((unsigned char)152, (unsigned char)251, (unsigned char)152);
-    x11Colors["paleturquoise"]        = Color((unsigned char)175, (unsigned char)238, (unsigned char)238);
-    x11Colors["palevioletred"]        = Color((unsigned char)219, (unsigned char)112, (unsigned char)147);
-    x11Colors["papayawhip"]           = Color((unsigned char)255, (unsigned char)239, (unsigned char)213);
-    x11Colors["peachpuff"]            = Color((unsigned char)255, (unsigned char)218, (unsigned char)185);
-    x11Colors["peru"]                 = Color((unsigned char)205, (unsigned char)133, (unsigned char)63);
-    x11Colors["pink"]                 = Color((unsigned char)255, (unsigned char)192, (unsigned char)203);
-    x11Colors["plum"]                 = Color((unsigned char)221, (unsigned char)160, (unsigned char)221);
-    x11Colors["powderblue"]           = Color((unsigned char)176, (unsigned char)224, (unsigned char)230);
-    x11Colors["purple"]               = Color((unsigned char)128, (unsigned char)0,   (unsigned char)128);
-    x11Colors["red"]                  = Color((unsigned char)255, (unsigned char)0,   (unsigned char)0);
-    x11Colors["rosybrown"]            = Color((unsigned char)188, (unsigned char)143, (unsigned char)143);
-    x11Colors["royalblue"]            = Color((unsigned char)65,  (unsigned char)105, (unsigned char)225);
-    x11Colors["saddlebrown"]          = Color((unsigned char)139, (unsigned char)69,  (unsigned char)19);
-    x11Colors["salmon"]               = Color((unsigned char)250, (unsigned char)128, (unsigned char)114);
-    x11Colors["sandybrown"]           = Color((unsigned char)244, (unsigned char)164, (unsigned char)96);
-    x11Colors["seagreen"]             = Color((unsigned char)46,  (unsigned char)139, (unsigned char)87);
-    x11Colors["seashell"]             = Color((unsigned char)255, (unsigned char)245, (unsigned char)238);
-    x11Colors["sienna"]               = Color((unsigned char)160, (unsigned char)82,  (unsigned char)45);
-    x11Colors["silver"]               = Color((unsigned char)192, (unsigned char)192, (unsigned char)192);
-    x11Colors["skyblue"]              = Color((unsigned char)135, (unsigned char)206, (unsigned char)235);
-    x11Colors["slateblue"]            = Color((unsigned char)106, (unsigned char)90,  (unsigned char)205);
-    x11Colors["slategray"]            = Color((unsigned char)112, (unsigned char)128, (unsigned char)144);
-    x11Colors["snow"]                 = Color((unsigned char)255, (unsigned char)250, (unsigned char)250);
-    x11Colors["springgreen"]          = Color((unsigned char)0,   (unsigned char)255, (unsigned char)127);
-    x11Colors["steelblue"]            = Color((unsigned char)70,  (unsigned char)130, (unsigned char)180);
-    x11Colors["tan"]                  = Color((unsigned char)210, (unsigned char)180, (unsigned char)140);
-    x11Colors["teal"]                 = Color((unsigned char)0,   (unsigned char)128, (unsigned char)128);
-    x11Colors["thistle"]              = Color((unsigned char)216, (unsigned char)191, (unsigned char)216);
-    x11Colors["tomato"]               = Color((unsigned char)255, (unsigned char)99,  (unsigned char)71);
-    x11Colors["turquoise"]            = Color((unsigned char)64,  (unsigned char)224, (unsigned char)208);
-    x11Colors["violet"]               = Color((unsigned char)238, (unsigned char)130, (unsigned char)238);
-    x11Colors["wheat"]                = Color((unsigned char)245, (unsigned char)222, (unsigned char)179);
-    x11Colors["white"]                = Color((unsigned char)255, (unsigned char)255, (unsigned char)255);
-    x11Colors["whitesmoke"]           = Color((unsigned char)245, (unsigned char)245, (unsigned char)245);
-    x11Colors["yellow"]               = Color((unsigned char)255, (unsigned char)255, (unsigned char)0);
-    x11Colors["yellowgreen"]          = Color((unsigned char)154, (unsigned char)205, (unsigned char)50);
+    x11Colors["aliceblue"]            = Color((uint8_t)240, (uint8_t)248, (uint8_t)255);
+    x11Colors["antiquewhite"]         = Color((uint8_t)250, (uint8_t)235, (uint8_t)215);
+    x11Colors["aqua"]                 = Color((uint8_t)0,   (uint8_t)255, (uint8_t)255);
+    x11Colors["aquamarine"]           = Color((uint8_t)127, (uint8_t)255, (uint8_t)212);
+    x11Colors["azure"]                = Color((uint8_t)240, (uint8_t)255, (uint8_t)255);
+    x11Colors["beige"]                = Color((uint8_t)245, (uint8_t)245, (uint8_t)220);
+    x11Colors["bisque"]               = Color((uint8_t)255, (uint8_t)228, (uint8_t)196);
+    x11Colors["black"]                = Color((uint8_t)0,   (uint8_t)0,   (uint8_t)0);
+    x11Colors["blanchedalmond"]       = Color((uint8_t)255, (uint8_t)235, (uint8_t)205);
+    x11Colors["blue"]                 = Color((uint8_t)0,   (uint8_t)0,   (uint8_t)255);
+    x11Colors["blueviolet"]           = Color((uint8_t)138, (uint8_t)43,  (uint8_t)226);
+    x11Colors["brown"]                = Color((uint8_t)165, (uint8_t)42,  (uint8_t)42);
+    x11Colors["burlywood"]            = Color((uint8_t)222, (uint8_t)184, (uint8_t)135);
+    x11Colors["cadetblue"]            = Color((uint8_t)95,  (uint8_t)158, (uint8_t)160);
+    x11Colors["chartreuse"]           = Color((uint8_t)127, (uint8_t)255, (uint8_t)0);
+    x11Colors["chocolate"]            = Color((uint8_t)210, (uint8_t)105, (uint8_t)30);
+    x11Colors["coral"]                = Color((uint8_t)255, (uint8_t)127, (uint8_t)80);
+    x11Colors["cornflowerblue"]       = Color((uint8_t)100, (uint8_t)149, (uint8_t)237);
+    x11Colors["cornsilk"]             = Color((uint8_t)255, (uint8_t)248, (uint8_t)220);
+    x11Colors["crimson"]              = Color((uint8_t)220, (uint8_t)20,  (uint8_t)60);
+    x11Colors["cyan"]                 = Color((uint8_t)0,   (uint8_t)255, (uint8_t)255);
+    x11Colors["darkblue"]             = Color((uint8_t)0,   (uint8_t)0,   (uint8_t)139);
+    x11Colors["darkcyan"]             = Color((uint8_t)0,   (uint8_t)139, (uint8_t)139);
+    x11Colors["darkgoldenrod"]        = Color((uint8_t)184, (uint8_t)134, (uint8_t)11);
+    x11Colors["darkgray"]             = Color((uint8_t)169, (uint8_t)169, (uint8_t)169);
+    x11Colors["darkgreen"]            = Color((uint8_t)0,   (uint8_t)100, (uint8_t)0);
+    x11Colors["darkkhaki"]            = Color((uint8_t)189, (uint8_t)183, (uint8_t)107);
+    x11Colors["darkmagenta"]          = Color((uint8_t)139, (uint8_t)0,   (uint8_t)139);
+    x11Colors["darkolivegreen"]       = Color((uint8_t)85,  (uint8_t)107, (uint8_t)47);
+    x11Colors["darkorange"]           = Color((uint8_t)255, (uint8_t)140, (uint8_t)0);
+    x11Colors["darkorchid"]           = Color((uint8_t)153, (uint8_t)50,  (uint8_t)204);
+    x11Colors["darkred"]              = Color((uint8_t)139, (uint8_t)0,   (uint8_t)0);
+    x11Colors["darksalmon"]           = Color((uint8_t)233, (uint8_t)150, (uint8_t)122);
+    x11Colors["darkseagreen"]         = Color((uint8_t)143, (uint8_t)188, (uint8_t)143);
+    x11Colors["darkslateblue"]        = Color((uint8_t)72,  (uint8_t)61,  (uint8_t)139);
+    x11Colors["darkslategray"]        = Color((uint8_t)47,  (uint8_t)79,  (uint8_t)79);
+    x11Colors["darkturquoise"]        = Color((uint8_t)0,   (uint8_t)206, (uint8_t)209);
+    x11Colors["darkviolet"]           = Color((uint8_t)148, (uint8_t)0,   (uint8_t)211);
+    x11Colors["deeppink"]             = Color((uint8_t)255, (uint8_t)20,  (uint8_t)147);
+    x11Colors["deepskyblue"]          = Color((uint8_t)0,   (uint8_t)191, (uint8_t)255);
+    x11Colors["dimgray"]              = Color((uint8_t)105, (uint8_t)105, (uint8_t)105);
+    x11Colors["dodgerblue"]           = Color((uint8_t)30,  (uint8_t)144, (uint8_t)255);
+    x11Colors["firebrick"]            = Color((uint8_t)178, (uint8_t)34,  (uint8_t)34);
+    x11Colors["floralwhite"]          = Color((uint8_t)255, (uint8_t)250, (uint8_t)240);
+    x11Colors["forestgreen"]          = Color((uint8_t)34,  (uint8_t)139, (uint8_t)34);
+    x11Colors["fuchsia"]              = Color((uint8_t)255, (uint8_t)0,   (uint8_t)255);
+    x11Colors["gainsboro"]            = Color((uint8_t)220, (uint8_t)220, (uint8_t)220);
+    x11Colors["ghostwhite"]           = Color((uint8_t)248, (uint8_t)248, (uint8_t)255);
+    x11Colors["gold"]                 = Color((uint8_t)255, (uint8_t)215, (uint8_t)0);
+    x11Colors["goldenrod"]            = Color((uint8_t)218, (uint8_t)165, (uint8_t)32);
+    x11Colors["gray"]                 = Color((uint8_t)128, (uint8_t)128, (uint8_t)128);
+    x11Colors["green"]                = Color((uint8_t)0,   (uint8_t)128, (uint8_t)0);
+    x11Colors["greenyellow"]          = Color((uint8_t)173, (uint8_t)255, (uint8_t)47);
+    x11Colors["honeydew"]             = Color((uint8_t)240, (uint8_t)255, (uint8_t)240);
+    x11Colors["hotpink"]              = Color((uint8_t)255, (uint8_t)105, (uint8_t)180);
+    x11Colors["indianred"]            = Color((uint8_t)205, (uint8_t)92,  (uint8_t)92);
+    x11Colors["indigo"]               = Color((uint8_t)75,  (uint8_t)0,   (uint8_t)130);
+    x11Colors["ivory"]                = Color((uint8_t)255, (uint8_t)255, (uint8_t)240);
+    x11Colors["khaki"]                = Color((uint8_t)240, (uint8_t)230, (uint8_t)140);
+    x11Colors["lavender"]             = Color((uint8_t)230, (uint8_t)230, (uint8_t)250);
+    x11Colors["lavenderblush"]        = Color((uint8_t)255, (uint8_t)240, (uint8_t)245 );
+    x11Colors["lawngreen"]            = Color((uint8_t)124, (uint8_t)252, (uint8_t)0);
+    x11Colors["lemonchiffon"]         = Color((uint8_t)255, (uint8_t)250, (uint8_t)205);
+    x11Colors["lightblue"]            = Color((uint8_t)173, (uint8_t)216, (uint8_t)230);
+    x11Colors["lightcoral"]           = Color((uint8_t)240, (uint8_t)128, (uint8_t)128);
+    x11Colors["lightcyan"]            = Color((uint8_t)224, (uint8_t)255, (uint8_t)255);
+    x11Colors["lightgoldenrodyellow"] = Color((uint8_t)250, (uint8_t)250, (uint8_t)210);
+    x11Colors["lightgreen"]           = Color((uint8_t)144, (uint8_t)238, (uint8_t)144);
+    x11Colors["lightgrey"]            = Color((uint8_t)211, (uint8_t)211, (uint8_t)211);
+    x11Colors["lightpink"]            = Color((uint8_t)255, (uint8_t)182, (uint8_t)193);
+    x11Colors["lightsalmon"]          = Color((uint8_t)255, (uint8_t)160, (uint8_t)122);
+    x11Colors["lightseagreen"]        = Color((uint8_t)32,  (uint8_t)178, (uint8_t)170);
+    x11Colors["lightskyblue"]         = Color((uint8_t)135, (uint8_t)206, (uint8_t)250);
+    x11Colors["lightslategray"]       = Color((uint8_t)119, (uint8_t)136, (uint8_t)153);
+    x11Colors["lightsteelblue"]       = Color((uint8_t)176, (uint8_t)196, (uint8_t)222);
+    x11Colors["lightyellow"]          = Color((uint8_t)255, (uint8_t)255, (uint8_t)224);
+    x11Colors["lime"]                 = Color((uint8_t)0,   (uint8_t)255, (uint8_t)0);
+    x11Colors["limegreen"]            = Color((uint8_t)50,  (uint8_t)205, (uint8_t)50);
+    x11Colors["linen"]                = Color((uint8_t)250, (uint8_t)240, (uint8_t)230);
+    x11Colors["magenta"]              = Color((uint8_t)255, (uint8_t)0,   (uint8_t)255);
+    x11Colors["maroon"]               = Color((uint8_t)128, (uint8_t)0,   (uint8_t)0);
+    x11Colors["mediumaquamarine"]     = Color((uint8_t)102, (uint8_t)205, (uint8_t)170);
+    x11Colors["mediumblue"]           = Color((uint8_t)0,   (uint8_t)0,   (uint8_t)205);
+    x11Colors["mediumorchid"]         = Color((uint8_t)186, (uint8_t)85,  (uint8_t)211);
+    x11Colors["mediumpurple"]         = Color((uint8_t)147, (uint8_t)112, (uint8_t)219);
+    x11Colors["mediumseagreen"]       = Color((uint8_t)60,  (uint8_t)179, (uint8_t)113);
+    x11Colors["mediumslateblue"]      = Color((uint8_t)123, (uint8_t)104, (uint8_t)238);
+    x11Colors["mediumspringgreen"]    = Color((uint8_t)0,   (uint8_t)250, (uint8_t)154);
+    x11Colors["mediumturquoise"]      = Color((uint8_t)72,  (uint8_t)209, (uint8_t)204);
+    x11Colors["mediumvioletred"]      = Color((uint8_t)199, (uint8_t)21,  (uint8_t)133);
+    x11Colors["midnightblue"]         = Color((uint8_t)25,  (uint8_t)25,  (uint8_t)112);
+    x11Colors["mintcream"]            = Color((uint8_t)245, (uint8_t)255, (uint8_t)250);
+    x11Colors["mistyrose"]            = Color((uint8_t)255, (uint8_t)228, (uint8_t)225);
+    x11Colors["moccasin"]             = Color((uint8_t)255, (uint8_t)228, (uint8_t)181);
+    x11Colors["navajowhite"]          = Color((uint8_t)255, (uint8_t)222, (uint8_t)173);
+    x11Colors["navy"]                 = Color((uint8_t)0,   (uint8_t)0,   (uint8_t)128);
+    x11Colors["oldlace"]              = Color((uint8_t)253, (uint8_t)245, (uint8_t)230);
+    x11Colors["olive"]                = Color((uint8_t)128, (uint8_t)128, (uint8_t)0);
+    x11Colors["olivedrab"]            = Color((uint8_t)107, (uint8_t)142, (uint8_t)35);
+    x11Colors["orange"]               = Color((uint8_t)255, (uint8_t)165, (uint8_t)0);
+    x11Colors["orangered"]            = Color((uint8_t)255, (uint8_t)69,  (uint8_t)0);
+    x11Colors["orchid"]               = Color((uint8_t)218, (uint8_t)112, (uint8_t)214);
+    x11Colors["palegoldenrod"]        = Color((uint8_t)238, (uint8_t)232, (uint8_t)170);
+    x11Colors["palegreen"]            = Color((uint8_t)152, (uint8_t)251, (uint8_t)152);
+    x11Colors["paleturquoise"]        = Color((uint8_t)175, (uint8_t)238, (uint8_t)238);
+    x11Colors["palevioletred"]        = Color((uint8_t)219, (uint8_t)112, (uint8_t)147);
+    x11Colors["papayawhip"]           = Color((uint8_t)255, (uint8_t)239, (uint8_t)213);
+    x11Colors["peachpuff"]            = Color((uint8_t)255, (uint8_t)218, (uint8_t)185);
+    x11Colors["peru"]                 = Color((uint8_t)205, (uint8_t)133, (uint8_t)63);
+    x11Colors["pink"]                 = Color((uint8_t)255, (uint8_t)192, (uint8_t)203);
+    x11Colors["plum"]                 = Color((uint8_t)221, (uint8_t)160, (uint8_t)221);
+    x11Colors["powderblue"]           = Color((uint8_t)176, (uint8_t)224, (uint8_t)230);
+    x11Colors["purple"]               = Color((uint8_t)128, (uint8_t)0,   (uint8_t)128);
+    x11Colors["red"]                  = Color((uint8_t)255, (uint8_t)0,   (uint8_t)0);
+    x11Colors["rosybrown"]            = Color((uint8_t)188, (uint8_t)143, (uint8_t)143);
+    x11Colors["royalblue"]            = Color((uint8_t)65,  (uint8_t)105, (uint8_t)225);
+    x11Colors["saddlebrown"]          = Color((uint8_t)139, (uint8_t)69,  (uint8_t)19);
+    x11Colors["salmon"]               = Color((uint8_t)250, (uint8_t)128, (uint8_t)114);
+    x11Colors["sandybrown"]           = Color((uint8_t)244, (uint8_t)164, (uint8_t)96);
+    x11Colors["seagreen"]             = Color((uint8_t)46,  (uint8_t)139, (uint8_t)87);
+    x11Colors["seashell"]             = Color((uint8_t)255, (uint8_t)245, (uint8_t)238);
+    x11Colors["sienna"]               = Color((uint8_t)160, (uint8_t)82,  (uint8_t)45);
+    x11Colors["silver"]               = Color((uint8_t)192, (uint8_t)192, (uint8_t)192);
+    x11Colors["skyblue"]              = Color((uint8_t)135, (uint8_t)206, (uint8_t)235);
+    x11Colors["slateblue"]            = Color((uint8_t)106, (uint8_t)90,  (uint8_t)205);
+    x11Colors["slategray"]            = Color((uint8_t)112, (uint8_t)128, (uint8_t)144);
+    x11Colors["snow"]                 = Color((uint8_t)255, (uint8_t)250, (uint8_t)250);
+    x11Colors["springgreen"]          = Color((uint8_t)0,   (uint8_t)255, (uint8_t)127);
+    x11Colors["steelblue"]            = Color((uint8_t)70,  (uint8_t)130, (uint8_t)180);
+    x11Colors["tan"]                  = Color((uint8_t)210, (uint8_t)180, (uint8_t)140);
+    x11Colors["teal"]                 = Color((uint8_t)0,   (uint8_t)128, (uint8_t)128);
+    x11Colors["thistle"]              = Color((uint8_t)216, (uint8_t)191, (uint8_t)216);
+    x11Colors["tomato"]               = Color((uint8_t)255, (uint8_t)99,  (uint8_t)71);
+    x11Colors["turquoise"]            = Color((uint8_t)64,  (uint8_t)224, (uint8_t)208);
+    x11Colors["violet"]               = Color((uint8_t)238, (uint8_t)130, (uint8_t)238);
+    x11Colors["wheat"]                = Color((uint8_t)245, (uint8_t)222, (uint8_t)179);
+    x11Colors["white"]                = Color((uint8_t)255, (uint8_t)255, (uint8_t)255);
+    x11Colors["whitesmoke"]           = Color((uint8_t)245, (uint8_t)245, (uint8_t)245);
+    x11Colors["yellow"]               = Color((uint8_t)255, (uint8_t)255, (uint8_t)0);
+    x11Colors["yellowgreen"]          = Color((uint8_t)154, (uint8_t)205, (uint8_t)50);
 }

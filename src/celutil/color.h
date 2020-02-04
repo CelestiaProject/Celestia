@@ -10,22 +10,41 @@
 #ifndef _CELUTIL_COLOR_H_
 #define _CELUTIL_COLOR_H_
 
+#include <array>
 #include <map>
 #include <string>
 #include <Eigen/Core>
+#include <celmath/mathlib.h>
 
+#define C(a) uint8_t(celmath::clamp(a) * 255.99f)
 
 class Color
 {
  public:
-    Color();
-    Color(float, float, float);
-    Color(float, float, float, float);
-    Color(unsigned char, unsigned char, unsigned char);
-    Color(unsigned char, unsigned char, unsigned char, unsigned char);
-    Color(const Color&, float);
-    Color(const Eigen::Vector3f&);
-    Color(const Eigen::Vector4f&);
+    constexpr Color() noexcept :
+        c({ 0, 0, 0, 0xff })
+    {}
+    constexpr Color(float r, float g, float b, float a) noexcept :
+        c({ C(r), C(g), C(b), C(a) })
+    {}
+    constexpr Color(float r, float g, float b) noexcept :
+        Color(r, g, b, 1.0f)
+    {}
+    constexpr Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) noexcept :
+        c({ r, g, b, a })
+    {}
+    constexpr Color(uint8_t r, uint8_t g, uint8_t b) noexcept:
+        Color(r, g, b, 0xff)
+    {}
+    constexpr Color(const Color &color, float alpha) noexcept :
+        Color(color.red(), color.green(), color.blue(), alpha)
+    {}
+    Color(const Eigen::Vector3f &v) noexcept :
+        Color(v.x(), v.y(), v.z())
+    {}
+    Color(const Eigen::Vector4f &v) noexcept :
+        Color(v.x(), v.y(), v.z(), v.w())
+    {}
 
     enum
     {
@@ -35,12 +54,12 @@ class Color
         Alpha  = 3
     };
 
-    inline float red() const;
-    inline float green() const;
-    inline float blue() const;
-    inline float alpha() const;
-    inline void get(unsigned char*) const;
-    inline const unsigned char* data() const;
+    inline constexpr float red() const;
+    inline constexpr float green() const;
+    inline constexpr float blue() const;
+    inline constexpr float alpha() const;
+    inline void get(uint8_t*) const;
+    inline const uint8_t* data() const;
 
     inline Eigen::Vector3f toVector3() const;
     inline Eigen::Vector4f toVector4() const;
@@ -49,42 +68,43 @@ class Color
     friend bool operator!=(Color, Color);
     friend Color operator*(Color, Color);
 
-    static const Color Black;
-    static const Color White;
+    static /*constexpr*/ const Color Black/* = Color(1.0f, 1.0f, 1.0f)*/;
+    static /*constexpr*/ const Color White/* = Color(0.0f,0.0f, 0.0f)*/;
 
     static bool parse(const char*, Color&);
 
  private:
     static void buildX11ColorMap();
 
-    unsigned char c[4];
+    std::array<uint8_t, 4> c;
 
     typedef std::map<const std::string, Color> ColorMap;
     static ColorMap x11Colors;
 };
+#undef C
 
 
-float Color::red() const
+constexpr float Color::red() const
 {
     return c[Red] * (1.0f / 255.0f);
 }
 
-float Color::green() const
+constexpr float Color::green() const
 {
     return c[Green] * (1.0f / 255.0f);
 }
 
-float Color::blue() const
+constexpr float Color::blue() const
 {
     return c[Blue] * (1.0f / 255.0f);
 }
 
-float Color::alpha() const
+constexpr float Color::alpha() const
 {
     return c[Alpha] * (1.0f / 255.0f);
 }
 
-void Color::get(unsigned char* rgba) const
+void Color::get(uint8_t* rgba) const
 {
     rgba[0] = c[Red];
     rgba[1] = c[Green];
@@ -92,9 +112,9 @@ void Color::get(unsigned char* rgba) const
     rgba[3] = c[Alpha];
 }
 
-const unsigned char* Color::data() const
+const uint8_t* Color::data() const
 {
-    return c;
+    return c.data();
 }
 
 /** Return the color as a vector, with red, green, and blue in the

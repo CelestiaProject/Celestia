@@ -26,7 +26,7 @@ using namespace Eigen;
 #define DEBUG_SHADOWS 0
 
 static const float VIEWPORT_FOV = 45.0;
-static const double PI = 3.1415926535897932;
+//static const double PI = 3.1415926535897932;
 
 static const int ShadowBufferSize = 1024;
 static const int ShadowSampleKernelWidth = 2;
