@@ -17,6 +17,7 @@
 #endif
 
 #include "lua.hpp"
+#include <iostream>
 #include <string>
 #include <celengine/parser.h>
 
