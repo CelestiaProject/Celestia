@@ -285,8 +285,6 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     if (shadprop.hasEclipseShadows() != 0)
         prog->setEclipseShadowParameters(ls, semiAxes, planetOrientation);
 
-    glColor(ri.color);
-
     unsigned int attributes = LODSphereMesh::Normals;
     if (ri.bumpTex != nullptr)
         attributes |= LODSphereMesh::Tangents;
