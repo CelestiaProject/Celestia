@@ -3257,9 +3257,7 @@ static void renderSphereUnlit(const RenderInfo& ri,
     prog->use();
 
     prog->textureOffset = 0.0f;
-    // TODO: introduce a new ShaderProperties light model, so those
-    // assignments are not required
-    prog->ambientColor = Color::White.toVector3();
+    prog->ambientColor = ri.color.toVector3();
     prog->opacity = 1.0f;
 #ifdef USE_HDR
     prog->nightLightScale = ri.nightLightScale;
