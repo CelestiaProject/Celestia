@@ -20,12 +20,12 @@ extern "C" {
 }
 #include <png.h>
 
-#include <celutil/filetype.h>
-#include <celutil/debug.h>
-#include <celutil/util.h>
 #include <Eigen/Core>
 #include <GL/glew.h>
+
+#include <celutil/filetype.h>
 #include <celutil/debug.h>
+#include <celutil/gettext.h>
 #include "texture.h"
 #include "virtualtex.h"
 

@@ -112,6 +112,7 @@ if(ENABLE_NLS)
   find_package(Intl REQUIRED)
   include_directories(${Intl_INCLUDE_DIRS})
   link_libraries(${Intl_LIBRARIES})
+  add_definitions(-DENABLE_NLS)
 endif()
 
 if(ENABLE_SPICE)

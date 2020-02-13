@@ -88,6 +88,7 @@ int main(int argc, char *argv[])
     // Gettext integration
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
+#ifdef ENABLE_NLS
 #ifdef NATIVE_OSX_APP
     // On macOS locale directory is in a fixed position relative to the application bundle
     QString localeDir = QApplication::applicationDirPath() + "/../Resources/locale";
@@ -99,6 +100,7 @@ int main(int argc, char *argv[])
     bindtextdomain("celestia_constellations", localeDir.toUtf8().data());
     bind_textdomain_codeset("celestia_constellations", "UTF-8");
     textdomain("celestia");
+#endif
 
     CelestiaAppWindow window;
 

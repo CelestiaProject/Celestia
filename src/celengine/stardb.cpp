@@ -8,24 +8,23 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <config.h>
 #include <cstring>
 #include <cmath>
 #include <cstdlib>
-#include <celutil/debug.h>
 #include <cassert>
 #include <algorithm>
 #include <celmath/mathlib.h>
-#include <celutil/util.h>
 #include <celutil/bytes.h>
-#include <celengine/stardb.h>
-#include <config.h>
+#include <celutil/debug.h>
+#include <celutil/gettext.h>
+#include "stardb.h"
 #include "astro.h"
 #include "parser.h"
 #include "parseobject.h"
 #include "multitexture.h"
 #include "meshmanager.h"
 #include "tokenizer.h"
-#include <celutil/debug.h>
 
 using namespace Eigen;
 using namespace std;
@@ -1160,8 +1159,10 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
+#ifdef ENABLE_NLS
     const char *d = resourcePath.string().c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
+#endif
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {

@@ -20,10 +20,10 @@
 #include <sstream>
 #include <iomanip>
 #include <utility>
+#include <celengine/astro.h>
 #include <celutil/debug.h>
+#include <celutil/gettext.h>
 #include "celestiacore.h"
-#include "celutil/util.h"
-#include "celengine/astro.h"
 #include "url.h"
 
 using namespace Eigen;

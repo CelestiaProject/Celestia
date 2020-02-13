@@ -66,10 +66,9 @@
 #include <cstdlib>
 #include <cmath>
 #include <celutil/debug.h>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 #include <GL/glew.h>
 #include <string>
-#include <celutil/debug.h>
 #include <theora/theora.h>
 
 using namespace std;

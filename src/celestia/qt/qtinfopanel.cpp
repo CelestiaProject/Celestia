@@ -13,6 +13,7 @@
 
 #include <celestia/celestiacore.h>
 #include <celengine/astro.h>
+#include <celutil/gettext.h>
 #include <celutil/utf8.h>
 #include <celengine/universe.h>
 #include <QTextBrowser>

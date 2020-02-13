@@ -9,7 +9,7 @@
 
 #include <config.h>
 #include <GL/glew.h>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 #include <celutil/debug.h>
 #include "stardb.h"
 #include "asterism.h"
@@ -22,12 +22,18 @@ using namespace std;
 Asterism::Asterism(string _name) :
     name(_name)
 {
+#ifdef ENABLE_NLS
     i18nName = dgettext("celestia_constellations", _name.c_str());
+#endif
 }
 
 string Asterism::getName(bool i18n) const
 {
+#ifdef ENABLE_NLS
     return i18n ? i18nName : name;
+#else
+    return name;
+#endif
 }
 
 int Asterism::getChainCount() const

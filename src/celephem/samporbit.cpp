@@ -16,7 +16,8 @@
 #include <celengine/astro.h>
 #include <celmath/mathlib.h>
 #include <celutil/bytes.h>
-#include <celutil/util.h> // intl.h
+#include <celutil/gettext.h>
+#include <celutil/debug.h>
 #include <cmath>
 #include <string>
 #include <algorithm>
@@ -25,7 +26,6 @@
 #include <fstream>
 #include <limits>
 #include <iomanip>
-#include <celutil/debug.h>
 
 using namespace Eigen;
 using namespace std;

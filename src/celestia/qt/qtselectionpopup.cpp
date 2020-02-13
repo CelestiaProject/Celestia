@@ -16,6 +16,7 @@
 #include <celestia/helper.h>
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
+#include <celutil/gettext.h>
 #include <fmt/printf.h>
 #include "qtselectionpopup.h"
 #include "qtappwin.h"

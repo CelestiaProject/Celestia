@@ -12,6 +12,7 @@
 #include <config.h>
 #include <celutil/debug.h>
 #include "util.h"
+#include "gettext.h"
 #ifdef _WIN32
 #include <shlobj.h>
 #include "winutil.h"

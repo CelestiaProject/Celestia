@@ -13,8 +13,8 @@
 #include "opencluster.h"
 #include "meshmanager.h"
 #include <celmath/mathlib.h>
-#include <celutil/util.h>
 #include <celutil/debug.h>
+#include <celutil/gettext.h>
 #include <algorithm>
 
 using namespace Eigen;

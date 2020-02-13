@@ -21,11 +21,11 @@ extern "C" {
 }
 #include <png.h>
 
-#include <celutil/debug.h>
-#include <celutil/util.h>
-#include <celutil/filetype.h>
 #include <GL/glew.h>
+
 #include <celutil/debug.h>
+#include <celutil/filetype.h>
+#include <celutil/gettext.h>
 #include "image.h"
 
 

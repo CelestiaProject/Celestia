@@ -10,7 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include "winsplash.h"
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 #include <celutil/winutil.h>
 #include <string>
 #include <winuser.h>

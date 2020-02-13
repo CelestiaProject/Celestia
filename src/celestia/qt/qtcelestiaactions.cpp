@@ -12,7 +12,8 @@
 
 #include <QAction>
 #include <QMenu>
-#include "celestia/celestiacore.h"
+#include <celestia/celestiacore.h>
+#include <celutil/gettext.h>
 #include "qtcelestiaactions.h"
 
 

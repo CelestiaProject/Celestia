@@ -29,7 +29,7 @@
 
 #include <celmath/mathlib.h>
 #include <celutil/debug.h>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 #include <celutil/winutil.h>
 #include <celutil/filetype.h>
 #include <celengine/astro.h>
@@ -1384,10 +1384,14 @@ BOOL APIENTRY SelectDisplayModeProc(HWND hDlg,
             HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_RESOLUTION);
 
             // Add windowed mode as the first item on the menu
+#ifdef ENABLE_NLS
             bind_textdomain_codeset("celestia", CurrentCP());
+#endif
             SendMessage(hwnd, CB_INSERTSTRING, -1,
                         reinterpret_cast<LPARAM>(_("Windowed Mode")));
+#ifdef ENABLE_NLS
             bind_textdomain_codeset("celestia", "UTF8");
+#endif
 
             for (vector<DEVMODE>::const_iterator iter= displayModes->begin();
                  iter != displayModes->end(); iter++)
@@ -3276,6 +3280,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     // Gettext integration
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
+#ifdef ENABLE_NLS
     bindtextdomain("celestia","locale");
     bind_textdomain_codeset("celestia", "UTF-8");
     bindtextdomain("celestia_constellations","locale");
@@ -3292,6 +3297,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         cout << "Couldn't load localized resources: "<< res<< "\n";
         hRes = hInstance;
     }
+#endif
 
     appCore->setAlerter(new WinAlerter());
 

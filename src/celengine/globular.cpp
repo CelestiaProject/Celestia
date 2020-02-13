@@ -18,11 +18,12 @@
 #include "texture.h"
 #include <celmath/perlin.h>
 #include <celmath/intersect.h>
+#include <celutil/debug.h>
+#include <celutil/gettext.h>
 #include <cmath>
 #include <fstream>
 #include <algorithm>
 #include <cassert>
-#include <celutil/debug.h>
 
 using namespace Eigen;
 using namespace std;

@@ -10,13 +10,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cassert>
 #include <config.h>
-#include <celutil/debug.h>
-#include <celmath/mathlib.h>
-#include <celutil/util.h>
+#include <cassert>
 #include <limits>
+#include <celmath/mathlib.h>
 #include <celutil/debug.h>
+#include <celutil/gettext.h>
 #include "astro.h"
 #include "parser.h"
 #include "tokenizer.h"
@@ -1084,8 +1083,10 @@ bool LoadSolarSystemObjects(istream& in,
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
+#ifdef ENABLE_NLS
     const char* d = directory.string().c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
+#endif
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {

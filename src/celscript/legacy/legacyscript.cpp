@@ -12,7 +12,7 @@
 #include <celcompat/filesystem.h>
 #include <celcompat/memory.h>
 #include <celestia/celestiacore.h>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 #include "legacyscript.h"
 #include "cmdparser.h"
 #include "execution.h"
