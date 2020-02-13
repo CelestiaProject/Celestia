@@ -11,7 +11,7 @@
 #include <celengine/location.h>
 #include <celengine/body.h>
 #include <celengine/selection.h>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 
 using namespace Eigen;
 using namespace std;

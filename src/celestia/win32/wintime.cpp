@@ -16,8 +16,8 @@
 #include <time.h>
 #include "res/resource.h"
 #include <celengine/astro.h>
-#include "celutil/util.h"
-#include "celutil/winutil.h"
+#include <celutil/gettext.h>
+#include <celutil/winutil.h>
 
 
 
@@ -91,12 +91,16 @@ SetTimeDialog::init(HWND _hDlg)
     useLocalTime = appCore->getTimeZoneBias() != 0;
     useUTCOffset = appCore->getDateFormat() == 2;
 
+#ifdef ENABLE_NLS
     bind_textdomain_codeset("celestia", CurrentCP());
+#endif
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, (LPARAM) _("Universal Time"));
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, (LPARAM) _("Local Time"));
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_ADDSTRING, 0, (LPARAM) _("Time Zone Name"));
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_ADDSTRING, 0, (LPARAM) _("UTC Offset"));
+#ifdef ENABLE_NLS
     bind_textdomain_codeset("celestia", "UTF8");
+#endif
 
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_SETCURSEL, useLocalTime ? 1 : 0, 0);
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_SETCURSEL, useUTCOffset ? 1 : 0, 0);

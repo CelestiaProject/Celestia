@@ -1,5 +1,5 @@
 #include <iostream>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 #include <celutil/debug.h>
 #include <celengine/catentry.h>
 #include "category.h"
@@ -8,7 +8,9 @@ UserCategory::UserCategory(const std::string &n, UserCategory *p, const std::str
         m_name(n), 
         m_parent(p)
 {
+#ifdef ENABLE_NLS
     m_i18n = dgettext(m_name.c_str(), domain.c_str());
+#endif
 }
 
 UserCategory::~UserCategory() { cleanup(); }

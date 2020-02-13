@@ -15,10 +15,10 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <cstring>
+#include <celutil/gettext.h>
+#include <celutil/winutil.h>
+#include <celmath/mathlib.h>
 #include "winstarbrowser.h"
-#include "celutil/winutil.h"
-#include "celmath/mathlib.h"
-
 #include "res/resource.h"
 
 extern void SetMouseCursor(LPCTSTR lpCursor);
@@ -57,7 +57,9 @@ bool InitStarBrowserColumns(HWND listView)
     for (i = 0; i < nColumns; i++)
         columns[i] = lvc;
 
+#ifdef ENABLE_NLS
     bind_textdomain_codeset("celestia", CurrentCP());
+#endif
 
     columns[0].pszText = _("Name");
     columns[0].cx = 100;
@@ -72,7 +74,9 @@ bool InitStarBrowserColumns(HWND listView)
     columns[3].cx = 65;
     columns[4].pszText = _("Type");
 
+#ifdef ENABLE_NLS
     bind_textdomain_codeset("celestia", "UTF8");
+#endif
 
     for (i = 0; i < nColumns; i++)
     {

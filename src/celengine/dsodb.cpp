@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 #include <celutil/bytes.h>
 #include <celutil/utf8.h>
 #include <celengine/dsodb.h>
@@ -222,8 +222,10 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
     Tokenizer tokenizer(&in);
     Parser    parser(&tokenizer);
 
+#ifdef ENABLE_NLS
     const char *d = resourcePath.string().c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
+#endif
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {

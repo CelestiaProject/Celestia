@@ -11,6 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include <celestia/celestiacore.h>
+#include <celutil/gettext.h>
 #include "qtsolarsystembrowser.h"
 #include "qtinfopanel.h"
 #include "qtcolorswatchwidget.h"

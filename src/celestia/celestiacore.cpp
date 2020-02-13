@@ -31,10 +31,11 @@
 #include <celengine/planetgrid.h>
 #include <celengine/visibleregion.h>
 #include <celmath/geomutil.h>
-#include <celutil/util.h>
+#include <celutil/color.h>
 #include <celutil/filetype.h>
 #include <celutil/formatnum.h>
 #include <celutil/debug.h>
+#include <celutil/gettext.h>
 #include <celutil/utf8.h>
 #include <celcompat/filesystem.h>
 #include <celcompat/memory.h>
@@ -50,9 +51,6 @@
 #include <cassert>
 #include <ctime>
 #include <set>
-#include <celutil/debug.h>
-#include <celutil/color.h>
-#include <celengine/vecgl.h>
 #include <celengine/rectangle.h>
 
 #ifdef CELX

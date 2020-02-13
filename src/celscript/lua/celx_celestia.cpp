@@ -10,6 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include <celutil/debug.h>
+#include <celutil/gettext.h>
 #if NO_TTF
 #include "celtxf/texturefont.h"
 #else
@@ -2458,6 +2459,7 @@ static int celestia_getrootcategories(lua_State *l)
 
 static int celestia_bindtranslationdomain(lua_State *l)
 {
+#ifdef ENABLE_NLS
     CelxLua celx(l);
 
     const char *domain = celx.safeGetNonEmptyString(2, AllErrors, "First argument of celestia:bindtranslationdomain must be domain name string.");
@@ -2466,6 +2468,9 @@ static int celestia_bindtranslationdomain(lua_State *l)
     if (newdir == nullptr)
         return 0;
     return celx.push(newdir);
+#else
+    return 0;
+#endif
 }
 
 void ExtendCelestiaMetaTable(lua_State* l)

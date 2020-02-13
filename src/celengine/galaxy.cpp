@@ -17,7 +17,7 @@
 #include <celmath/mathlib.h>
 #include <celmath/perlin.h>
 #include <celmath/intersect.h>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 #include <celutil/debug.h>
 #include <celcompat/filesystem.h>
 #include <cstring>

@@ -12,7 +12,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "celengine/astro.h"
-#include "celutil/util.h"
+#include "celutil/gettext.h"
 #include "celutil/winutil.h"
 
 
@@ -157,11 +157,15 @@ DatePicker::redraw(HDC hdc)
     char monthBuf[32];
     char yearBuf[32];
 
+#ifdef ENABLE_NLS
     bind_textdomain_codeset("celestia", CurrentCP());
+#endif
     sprintf(dayBuf, "%02d", date.day);
     sprintf(monthBuf, "%s", _(Months[date.month - 1]));
     sprintf(yearBuf, "%5d", date.year);
+#ifdef ENABLE_NLS
     bind_textdomain_codeset("celestia", "UTF8");
+#endif
 
     char* fieldText[NumFields];
     fieldText[DayField] = dayBuf;

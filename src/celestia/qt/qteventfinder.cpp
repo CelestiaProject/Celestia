@@ -10,11 +10,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celestia/celestiacore.h"
-#include "qteventfinder.h"
-#include "celmath/distance.h"
-#include "celmath/intersect.h"
-#include "celmath/geomutil.h"
 #include <QRadioButton>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -31,7 +26,13 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
-#include "celestia/eclipsefinder.h"
+#include <celestia/celestiacore.h>
+#include <celestia/eclipsefinder.h>
+#include <celmath/distance.h>
+#include <celmath/intersect.h>
+#include <celmath/geomutil.h>
+#include <celutil/gettext.h>
+#include "qteventfinder.h"
 
 using namespace Eigen;
 using namespace std;

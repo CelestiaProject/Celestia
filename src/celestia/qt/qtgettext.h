@@ -9,7 +9,7 @@
 
 
 #include <QTranslator>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 
 class CelestiaQTranslator : public QTranslator
 {
@@ -25,5 +25,6 @@ CelestiaQTranslator::translate(const char*,
                                const char*,
                                int) const
 {
-    return QString(gettext(msgid));
+    return QString(_(msgid));
+    return QString(msgid);
 }

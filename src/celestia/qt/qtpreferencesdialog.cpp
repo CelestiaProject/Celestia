@@ -27,11 +27,12 @@
 
 #include "qtappwin.h"
 #include "qtpreferencesdialog.h"
-#include "celengine/render.h"
+#include <celengine/render.h>
 #ifdef USE_GLCONTEXT
-#include "celengine/glcontext.h"
+#include <celengine/glcontext.h>
 #endif
-#include "celestia/celestiacore.h"
+#include <celestia/celestiacore.h>
+#include <celutil/gettext.h>
 
 
 static void SetComboBoxValue(QComboBox* combo, const QVariant& value)

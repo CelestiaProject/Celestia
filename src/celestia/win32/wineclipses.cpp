@@ -19,7 +19,7 @@
 #include "wineclipses.h"
 #include "res/resource.h"
 #include "celmath/geomutil.h"
-#include "celutil/util.h"
+#include "celutil/gettext.h"
 #include "celutil/winutil.h"
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -56,7 +56,9 @@ bool InitEclipseFinderColumns(HWND listView)
     for (i = 0; i < nColumns; i++)
         columns[i] = lvc;
 
+#ifdef ENABLE_NLS
     bind_textdomain_codeset("celestia", CurrentCP());
+#endif
     columns[0].pszText = _("Planet");
     columns[0].cx = 65;
     columns[1].pszText = _("Satellite");
@@ -67,7 +69,9 @@ bool InitEclipseFinderColumns(HWND listView)
     columns[3].cx = 55;
     columns[4].pszText = _("Duration");
     columns[4].cx = 135;
+#ifdef ENABLE_NLS
     bind_textdomain_codeset("celestia", "UTF8");
+#endif
 
     for (i = 0; i < nColumns; i++)
     {
@@ -126,14 +130,18 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
 
     case 2:
         {
+#ifdef ENABLE_NLS
             bind_textdomain_codeset("celestia", CurrentCP());
+#endif
             astro::Date startDate(eclipse->startTime);
             sprintf(callbackScratch, "%2d %s %4d",
                     startDate.day,
                     _(MonthNames[startDate.month - 1]),
                     startDate.year);
             nm->item.pszText = callbackScratch;
+#ifdef ENABLE_NLS
             bind_textdomain_codeset("celestia", "UTF8");
+#endif
         }
         break;
 
@@ -280,7 +288,9 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             InitEclipseFinderColumns(hwnd);
             SendDlgItemMessage(hDlg, IDC_ECLIPSES_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
 
+#ifdef ENABLE_NLS
             bind_textdomain_codeset("celestia", CurrentCP());
+#endif
             CheckRadioButton(hDlg, IDC_SOLARECLIPSE, IDC_LUNARECLIPSE, IDC_SOLARECLIPSE);
             efd->type = Eclipse::Solar;
 
@@ -292,7 +302,9 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)_("Pluto"));
             SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_SETCURSEL, 0, 0);
             efd->strPlaneteToFindOn = "Earth";
+#ifdef ENABLE_NLS
             bind_textdomain_codeset("celestia", "UTF8");
+#endif
 
             InitDateControls(hDlg, astro::Date(efd->appCore->getSimulation()->getTime()), efd->fromTime, efd->toTime);
 

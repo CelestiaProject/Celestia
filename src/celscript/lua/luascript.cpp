@@ -16,7 +16,7 @@
 #include <celephem/scriptobject.h>
 #include <celestia/configfile.h>
 #include <celestia/celestiacore.h>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 #include "celx_internal.h"
 #include "luascript.h"
 

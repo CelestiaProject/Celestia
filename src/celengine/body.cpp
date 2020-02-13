@@ -11,7 +11,7 @@
 #include <cassert>
 #include <algorithm>
 #include <celmath/mathlib.h>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 #include <celutil/utf8.h>
 #include "geometry.h"
 #include "meshmanager.h"
