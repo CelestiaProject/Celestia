@@ -377,6 +377,15 @@ void CelestiaActions::slotAdjustLimitingMagnitude()
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != nullptr)
     {
+        // HACK!HACK!HACK!
+        // Consider removal relevant entries from menus.
+        // If search console is open then pass keys to it.
+        if (appCore->getTextEnterMode() != CelestiaCore::KbNormal)
+        {
+            appCore->charEntered(act->shortcut().toString().toUtf8().data());
+            return;
+        }
+
         Renderer* renderer = appCore->getRenderer();
         float change = (float) act->data().toDouble();
 
