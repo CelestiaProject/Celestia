@@ -13,6 +13,7 @@
 #include "util.h"
 #include <wchar.h>
 #include <climits>
+#include <fmt/printf.h>
 
 uint16_t WGL4_Normalization_00[256] = {
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007,
@@ -765,6 +766,35 @@ const std::string& Greek::canonicalAbbreviation(const std::string& letter)
     return noAbbrev;
 }
 
+static const char* toSuperscript(char c)
+{
+    switch (c)
+    {
+    case '0':
+        return UTF8_SUPERSCRIPT_0;
+    case '1':
+        return UTF8_SUPERSCRIPT_1;
+    case '2':
+        return UTF8_SUPERSCRIPT_2;
+    case '3':
+        return UTF8_SUPERSCRIPT_3;
+    case '4':
+        return UTF8_SUPERSCRIPT_4;
+    case '5':
+        return UTF8_SUPERSCRIPT_5;
+    case '6':
+        return UTF8_SUPERSCRIPT_6;
+    case '7':
+        return UTF8_SUPERSCRIPT_7;
+    case '8':
+        return UTF8_SUPERSCRIPT_8;
+    case '9':
+        return UTF8_SUPERSCRIPT_9;
+    default:
+        return nullptr;
+    }
+}
+
 //! Replaces the Greek letter abbreviation at the beginning
 //! of a string by the UTF-8 representation of that letter.
 //! Also, replace digits following Greek letters with UTF-8
@@ -772,7 +802,6 @@ const std::string& Greek::canonicalAbbreviation(const std::string& letter)
 std::string ReplaceGreekLetterAbbr(const std::string& str)
 {
     Greek *instance = Greek::getInstance();
-    std::string ret = str;
     size_t len = greekChunkLength(str);
 
     if (str[0] >= 'A' && str[0] <= 'Z')
@@ -788,35 +817,16 @@ std::string ReplaceGreekLetterAbbr(const std::string& str)
                     continue;
             }
 
-            std::string superscript;
-            if (isdigit(str[prefix.length()]))
-            {
-                if (str.length() > prefix.length())
-                {
-                    if (str[prefix.length()] == '1')
-                        superscript = UTF8_SUPERSCRIPT_1;
-                    else if (str[prefix.length()] == '2')
-                        superscript = UTF8_SUPERSCRIPT_2;
-                    else if (str[prefix.length()] == '3')
-                        superscript = UTF8_SUPERSCRIPT_3;
-                }
-            }
-
-            if (superscript.empty())
-            {
-                ret = std::string(greekAlphabetUTF8[i]) + str.substr(prefix.length());
-            }
-            else
-            {
-                ret = std::string(greekAlphabetUTF8[i]) + superscript +
-                    str.substr(prefix.length() + 1);
-            }
-
-            break;
+            std::string ret = greekAlphabetUTF8[i];
+            auto len = prefix.length();
+            for (; str.length() > len && isdigit(str[len]); len++)
+                ret += toSuperscript(str[len]);
+            ret += str.substr(len);
+            return ret;
         }
     }
 
-    return ret;
+    return str;
 }
 
 //! Replaces the Greek letter abbreviation at the beginning
@@ -846,18 +856,12 @@ ReplaceGreekLetterAbbr(char *dst, unsigned int dstSize, const char* src, unsigne
             {
                 unsigned int abbrevLength = j;
                 unsigned int srcIndex = j;
-                const char* superscript = nullptr;
-                if (src[abbrevLength] == '1')
-                    superscript = UTF8_SUPERSCRIPT_1;
-                else if (src[abbrevLength] == '2')
-                    superscript = UTF8_SUPERSCRIPT_2;
-                else if (src[abbrevLength] == '3')
-                    superscript = UTF8_SUPERSCRIPT_3;
+                const char *superscript = toSuperscript(src[abbrevLength]);
 
                 const char* utfGreek = greekAlphabetUTF8[i];
                 unsigned int utfGreekLength = strlen(utfGreek);
 
-                unsigned int requiredLength = (int) srcLength;
+                unsigned int requiredLength = srcLength;
                 if (utfGreekLength > abbrevLength)
                     requiredLength += utfGreekLength - abbrevLength;
                 if (superscript != nullptr)
@@ -953,8 +957,8 @@ static size_t greekChunkLength(const std::string& str)
         npos = true;
     }
 
-    if (str[sp - 1] > '0' && str[sp -1] < '4')
-        sp--;
+    if (isdigit(str[sp - 1]))
+        while(isdigit(str[sp - 1])) sp--;
     else if (npos)
         sp = std::string::npos;
     return sp;
@@ -1008,12 +1012,10 @@ std::vector<std::string> getGreekCompletion(const std::string &s)
         std::string rets = Greek::canonicalAbbreviation(prefix);
         if (!rets.empty())
         {
-            rets += s.substr(sp);;
+            rets += s.substr(sp);
             ret.emplace_back(ReplaceGreekLetterAbbr(rets));
         }
     }
 
     return ret;
 }
-
-
