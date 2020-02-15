@@ -76,32 +76,40 @@ string CurrentCPToUTF8(const string& str)
 
 string WideToCurrentCP(const wstring& ws)
 {
-    string out(ws.length()+1, 0);
-    WideCharToMultiByte(CP_ACP, 0, ws.c_str(), -1, &out[0], ws.length()+1, nullptr, nullptr);
+    if (ws.empty())
+        return {};
+    string out(ws.length(), 0);
+    WideCharToMultiByte(CP_ACP, 0, ws.c_str(), -1, &out[0], ws.length(), nullptr, nullptr);
     return out;
 }
 
 wstring CurrentCPToWide(const string& str)
 {
-    wstring w(str.length()+1, 0);
-    MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, &w[0], str.length()+1);
+    if (str.empty())
+        return {};
+    wstring w(str.length(), 0);
+    MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, &w[0], str.length());
     return w;
 }
 
 string WideToUTF8(const wstring& ws)
 {
+    if (ws.empty())
+        return {};
     // get a converted string length
-    auto len = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    auto len = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), ws.length(), nullptr, 0, nullptr, nullptr);
     string out(len, 0);
-    WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), -1, &out[0], len, nullptr, nullptr);
+    WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), ws.length(), &out[0], len, nullptr, nullptr);
     return out;
 }
 
 wstring UTF8ToWide(const string& s)
 {
+    if (s.empty())
+        return {};
     // get a converted string length
-    auto len = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, nullptr, 0);
+    auto len = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), s.length(), nullptr, 0);
     wstring out(len, 0);
-    MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, &out[0], len);
+    MultiByteToWideChar(CP_UTF8, 0, s.c_str(), s.length(), &out[0], len);
     return out;
 }
