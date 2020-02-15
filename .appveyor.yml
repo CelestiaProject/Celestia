@@ -70,9 +70,13 @@ build_script:
 
     cd build
 
-    cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TTF=ON ..
+    cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TTF=ON -DENABLE_TESTS=ON ..
 
     cmake --build . --config Release -- /maxcpucount:4 /nologo
+
+    set CTEST_OUTPUT_ON_FAILURE=1
+
+    ctest -C Release
 
 after_build:
   - cmd: >-

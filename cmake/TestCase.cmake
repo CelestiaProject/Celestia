@@ -1,0 +1,10 @@
+macro(test_case)
+  set(trgt ${ARGV0})
+  set(libs ${ARGV})
+  list(REMOVE_AT libs 0 0)
+
+  add_executable(${trgt} "${trgt}_test.cpp")
+  target_link_libraries(${trgt} PRIVATE ${libs})
+  add_test(${trgt} ${trgt})
+  set_target_properties(${trgt} PROPERTIES FOLDER test/unit)
+endmacro()
