@@ -26,7 +26,7 @@
 #include <GLUT/glut.h>
 #endif
 #include <fmt/printf.h>
-#include <celutil/util.h>
+#include <celutil/gettext.h>
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>

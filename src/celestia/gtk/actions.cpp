@@ -27,6 +27,7 @@
 #include <celestia/celestiacore.h>
 #include <celestia/url.h>
 #include <celutil/filetype.h>
+#include <celutil/gettext.h>
 #ifdef THEORA
 #include <celestia/oggtheoracapture.h>
 #endif
