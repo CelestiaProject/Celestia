@@ -56,6 +56,12 @@ bool Color::parse(const char* s, Color& c)
                       (uint8_t) ((n & 0x00ff00) >> 8),
                       (uint8_t) (n & 0x0000ff));
             return true;
+        case 8:
+            c = Color((uint8_t) (n >> 24),
+                      (uint8_t) ((n & 0x00ff0000) >> 16),
+                      (uint8_t) ((n & 0x00ff00) >> 8),
+                      (uint8_t) (n & 0x0000ff));
+            return true;
         default:
             return false;
         }
