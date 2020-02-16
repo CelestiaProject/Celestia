@@ -266,18 +266,7 @@ bool AssociativeArray::getColor(const string& key, Color& val) const
     string rgba;
     if (getString(key, rgba))
     {
-        int r, g, b, a;
-        int ret = sscanf(rgba.c_str(), "#%2x%2x%2x%2x", &r, &g, &b, &a);
-        switch (ret)
-        {
-        case 3:
-            a = 0xFF;
-        case 4:
-            val = Color((char unsigned)r, (char unsigned)g, (unsigned char)b, (unsigned char)a);
-            return true;
-        default:
-            return false;
-        }
+        return Color::parse(rgba.c_str(), val);
     }
 
     return false;
