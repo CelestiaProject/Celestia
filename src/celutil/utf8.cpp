@@ -836,6 +836,7 @@ std::string ReplaceGreekLetterAbbr(const std::string& str)
 //! convenient, but more efficient. Return the number of
 //! characters copied to the destination string, not
 //! including the zero terminator.
+#if 0
 unsigned int
 ReplaceGreekLetterAbbr(char *dst, unsigned int dstSize, const char* src, unsigned int srcLength)
 {
@@ -916,6 +917,7 @@ ReplaceGreekLetterAbbr(char *dst, unsigned int dstSize, const char* src, unsigne
 
     return 0;
 }
+#endif
 
 static int findGreekNameIndexBySubstr(const std::string &, int = 0, unsigned int = UINT_MAX);
 static std::string firstGreekAbbrCompletion(const std::string &);
