@@ -229,7 +229,6 @@
     <ClCompile Include="src\celengine\spiceorbit.cpp" />
     <ClCompile Include="src\celengine\spicerotation.cpp" />
     <ClCompile Include="src\celengine\star.cpp" />
-    <ClCompile Include="src\celengine\starbrowser.cpp" />
     <ClCompile Include="src\celengine\starcolors.cpp" />
     <ClCompile Include="src\celengine\stardb.cpp" />
     <ClCompile Include="src\celengine\starname.cpp" />
@@ -377,7 +376,6 @@
     <ClInclude Include="src\celengine\spiceorbit.h" />
     <ClInclude Include="src\celengine\spicerotation.h" />
     <ClInclude Include="src\celengine\star.h" />
-    <ClInclude Include="src\celengine\starbrowser.h" />
     <ClInclude Include="src\celengine\starcolors.h" />
     <ClInclude Include="src\celengine\stardb.h" />
     <ClInclude Include="src\celengine\starname.h" />

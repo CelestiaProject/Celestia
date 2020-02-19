@@ -402,9 +402,6 @@
     <ClCompile Include="src\celengine\star.cpp">
       <Filter>Source Files\celengine</Filter>
     </ClCompile>
-    <ClCompile Include="src\celengine\starbrowser.cpp">
-      <Filter>Source Files\celengine</Filter>
-    </ClCompile>
     <ClCompile Include="src\celengine\starcolors.cpp">
       <Filter>Source Files\celengine</Filter>
     </ClCompile>
@@ -687,9 +684,6 @@
       <Filter>Header Files\celengine</Filter>
     </ClInclude>
     <ClInclude Include="src\celengine\star.h">
-      <Filter>Header Files\celengine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\celengine\starbrowser.h">
       <Filter>Header Files\celengine</Filter>
     </ClInclude>
     <ClInclude Include="src\celengine\starcolors.h">
