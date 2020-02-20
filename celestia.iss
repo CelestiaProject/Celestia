@@ -11,7 +11,7 @@ AppPublisher=Celestia Development Team
 AppPublisherURL=https://celestia.space/
 AppSupportURL=https://celestia.space/
 AppUpdatesURL=https://celestia.space/
-AppCopyright=Copyright (C) 2001-2019 Celestia Development Team
+AppCopyright=Copyright (C) 2001-2020 Celestia Development Team
 DefaultDirName={code:DefDirRoot}\Celestia
 DefaultGroupName=Celestia
 LicenseFile=COPYING
@@ -73,10 +73,14 @@ Source: "c:\tools\vcpkg\installed\x64-windows\bin\jpeg62.dll";   DestDir: "{app}
 Source: "c:\tools\vcpkg\installed\x86-windows\bin\jpeg62.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "c:\tools\vcpkg\installed\x64-windows\bin\libintl.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "c:\tools\vcpkg\installed\x86-windows\bin\libintl.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x64-windows\bin\libiconv.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x86-windows\bin\libiconv.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x64-windows\bin\libcharset.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x86-windows\bin\libcharset.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "c:\tools\vcpkg\installed\x64-windows\bin\libpng16.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "c:\tools\vcpkg\installed\x86-windows\bin\libpng16.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x64-windows\bin\lua.dll";      DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "c:\tools\vcpkg\installed\x86-windows\bin\lua.dll";      DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x64-windows\bin\lua51.dll";      DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x86-windows\bin\lua51.dll";      DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "c:\tools\vcpkg\installed\x64-windows\bin\zlib1.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "c:\tools\vcpkg\installed\x86-windows\bin\zlib1.dll";    DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "start.cel";    DestDir: "{app}"; Flags: ignoreversion
