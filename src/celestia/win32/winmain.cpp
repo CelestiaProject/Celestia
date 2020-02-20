@@ -38,6 +38,7 @@
 #include <celengine/planetgrid.h>
 
 #include <GL/glew.h>
+#include <GL/wglew.h>
 #include "celestia/celestiacore.h"
 #include "celestia/avicapture.h"
 #include "celestia/helper.h"
@@ -57,10 +58,11 @@
 #include "odmenu.h"
 
 #include "res/resource.h"
-#include "wglext.h"
 
 #include <locale.h>
 #include <fmt/printf.h>
+
+#pragma GCC diagnostic ignored "-Wwrite-strings"
 
 using namespace std;
 
@@ -1567,7 +1569,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             vector<string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
             if (altSurfaces != NULL)
             {
-                if (altSurfaces->size() != NULL)
+                if (altSurfaces->size() != 0)
                 {
                     HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
                     AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) surfMenu,
@@ -1698,6 +1700,12 @@ void ShowWWWInfo(const Selection& sel)
                  0);
 }
 
+static void FatalError(const char *msg)
+{
+    MessageBox(nullptr, msg, "Fatal Error", MB_OK | MB_ICONERROR);
+    exit(1);
+}
+
 
 bool EnableFullScreen(const DEVMODE& dm)
 {
@@ -1762,61 +1770,124 @@ ChooseBestMSAAPixelFormat(HDC hdc, int *formats, unsigned int numFormats,
     return bestFormat;
 }
 
+static bool SetBasicPixelFormat(HDC hDC)
+{
+    PIXELFORMATDESCRIPTOR pfd =
+    {
+        sizeof(PIXELFORMATDESCRIPTOR),          // Size of this structure
+        1,                                      // Version of this structure
+        PFD_DRAW_TO_WINDOW |                    // Draw to Window (not to bitmap)
+        PFD_SUPPORT_OPENGL |                    // Support OpenGL calls in window
+        PFD_DOUBLEBUFFER,                       // Double buffered mode
+        PFD_TYPE_RGBA,                          // RGBA Color mode
+        (BYTE)GetDeviceCaps(hDC, BITSPIXEL),    // Want the display bit depth
+        0, 0, 0, 0, 0, 0,                       // Not used to select mode
+        0, 0,                                   // Not used to select mode
+        0, 0, 0, 0, 0,                          // Not used to select mode
+        24,                                     // Size of depth buffer
+        0,                                      // Not used to select mode
+        0,                                      // Not used to select mode
+        PFD_MAIN_PLANE,                         // Draw in main plane
+        0,                                      // Not used to select mode
+        0, 0, 0                                 // Not used to select mode
+    };
+
+    // Choose a pixel format that best matches that described in pfd
+    int nPixelFormat = ChoosePixelFormat(hDC, &pfd);
+    if (nPixelFormat == 0)
+    {
+        // Uh oh... looks like we can't handle OpenGL on this device.
+        return false;
+    }
+
+    // Set the pixel format for the device context
+    SetPixelFormat(hDC, nPixelFormat, &pfd);
+    return true;
+}
+
+
+static bool RegisterCelestiaWindowClass()
+{
+    // Set up and register the window class
+    WNDCLASS wc;
+    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    wc.lpfnWndProc = (WNDPROC) MainWindowProc;
+    wc.cbClsExtra = 0;
+    wc.cbWndExtra = 0;
+    wc.hInstance = appInstance;
+    wc.hIcon = LoadIcon(hRes, MAKEINTRESOURCE(IDI_CELESTIA_ICON));
+    wc.hCursor = hDefaultCursor;
+    wc.hbrBackground = NULL;
+    wc.lpszMenuName = NULL;
+    wc.lpszClassName = AppName;
+    return RegisterClass(&wc) != 0;
+}
+
+
+// To properly initialize GLEW we need a fake context.
+// See https://www.khronos.org/opengl/wiki/Creating_an_OpenGL_Context_(WGL)#Proper_Context_Creation
+static bool InitGL()
+{
+    // Create the window
+    HWND hwnd = CreateWindow(AppName,
+                             AppName,
+                             0,
+                             0, 0, // x, y
+                             1, 1, // w, h
+                             nullptr,
+                             nullptr,
+                             appInstance,
+                             nullptr);
+
+    if (hwnd == nullptr)
+    {
+        cerr << "InitGL: CreateWindow failed!\n";
+        return false;
+    }
+
+    bool ret = true;
+    HDC hDC = GetDC(hwnd);
+    if (!SetBasicPixelFormat(hDC))
+    {
+        cerr << "InitGL: SetBasicPixelFormat failed!\n";
+        ReleaseDC(hwnd, hDC);
+        DestroyWindow(hwnd);
+        return false;
+    }
+
+    HGLRC hGLC = wglCreateContext(hDC);
+    wglMakeCurrent(hDC, hGLC);
+
+    if (glewInit() != GLEW_OK)
+    {
+        cerr << "InitGL: glewInit failed!\n";
+        ret = false;
+    }
+
+    wglMakeCurrent(hDC, nullptr);
+    wglDeleteContext(hGLC);
+    ReleaseDC(hwnd, hDC);
+    DestroyWindow(hwnd);
+    return ret;
+}
 
 // Select the pixel format for a given device context
 bool SetDCPixelFormat(HDC hDC)
 {
-    bool msaa = false;
-    if (appCore->getConfig()->aaSamples > 1 &&
-        WGLExtensionSupported("WGL_ARB_pixel_format") &&
-        WGLExtensionSupported("WGL_ARB_multisample"))
+    if (!(appCore->getConfig()->aaSamples > 1 &&
+        WGLEW_ARB_pixel_format &&
+        WGLEW_ARB_multisample))
     {
-        msaa = true;
-    }
-
-    if (!msaa)
-    {
-        static PIXELFORMATDESCRIPTOR pfd = {
-            sizeof(PIXELFORMATDESCRIPTOR),    // Size of this structure
-            1,                // Version of this structure
-            PFD_DRAW_TO_WINDOW |    // Draw to Window (not to bitmap)
-            PFD_SUPPORT_OPENGL |    // Support OpenGL calls in window
-            PFD_DOUBLEBUFFER,        // Double buffered mode
-            PFD_TYPE_RGBA,        // RGBA Color mode
-            (BYTE)GetDeviceCaps(hDC, BITSPIXEL),// Want the display bit depth
-            0,0,0,0,0,0,          // Not used to select mode
-            0,0,            // Not used to select mode
-            0,0,0,0,0,            // Not used to select mode
-            24,                // Size of depth buffer
-            0,                // Not used to select mode
-            0,                // Not used to select mode
-            PFD_MAIN_PLANE,             // Draw in main plane
-            0,                          // Not used to select mode
-            0,0,0                       // Not used to select mode
-        };
-
-        // Choose a pixel format that best matches that described in pfd
-        int nPixelFormat = ChoosePixelFormat(hDC, &pfd);
-        if (nPixelFormat == 0)
-        {
-            // Uh oh . . . looks like we can't handle OpenGL on this device.
-            return false;
-        }
-        else
-        {
-            // Set the pixel format for the device context
-            SetPixelFormat(hDC, nPixelFormat, &pfd);
-            return true;
-        }
+        return SetBasicPixelFormat(hDC);
     }
     else
     {
         PIXELFORMATDESCRIPTOR pfd;
 
         int ifmtList[] = {
-            WGL_DRAW_TO_WINDOW_ARB,        TRUE,
-            WGL_SUPPORT_OPENGL_ARB,        TRUE,
-            WGL_DOUBLE_BUFFER_ARB,         TRUE,
+            WGL_DRAW_TO_WINDOW_ARB,        GL_TRUE,
+            WGL_SUPPORT_OPENGL_ARB,        GL_TRUE,
+            WGL_DOUBLE_BUFFER_ARB,         GL_TRUE,
             WGL_PIXEL_TYPE_ARB,            WGL_TYPE_RGBA_ARB,
             WGL_DEPTH_BITS_ARB,            24,
             WGL_COLOR_BITS_ARB,            24,
@@ -1826,7 +1897,7 @@ bool SetDCPixelFormat(HDC hDC)
             WGL_ALPHA_BITS_ARB,             0,
             WGL_ACCUM_BITS_ARB,             0,
             WGL_STENCIL_BITS_ARB,           0,
-            WGL_SAMPLE_BUFFERS_ARB,         appCore->getConfig()->aaSamples > 1,
+            WGL_SAMPLE_BUFFERS_ARB,         1, // Must be 1, see https://www.khronos.org/opengl/wiki/Multisampling
             0
         };
 
@@ -1862,26 +1933,6 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
         height = displayModes->at(mode - 1).dmPelsHeight;
     }
 
-    // Set up and register the window class
-    WNDCLASS wc;
-    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-    wc.lpfnWndProc = (WNDPROC) MainWindowProc;
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
-    wc.hInstance = appInstance;
-    wc.hIcon = LoadIcon(hRes, MAKEINTRESOURCE(IDI_CELESTIA_ICON));
-    wc.hCursor = hDefaultCursor;
-    wc.hbrBackground = NULL;
-    wc.lpszMenuName = NULL;
-    wc.lpszClassName = AppName;
-    if (RegisterClass(&wc) == 0)
-    {
-        MessageBox(NULL,
-                   "Failed to register the window class.", "Fatal Error",
-                   MB_OK | MB_ICONERROR);
-    return NULL;
-    }
-
     newMode = currentScreenMode;
     if (mode != 0)
     {
@@ -1906,6 +1957,7 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     }
 
     // Create the window
+
     HWND hwnd = CreateWindow(AppName,
                              AppName,
                              dwStyle,
@@ -1925,37 +1977,20 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
 
     deviceContext = GetDC(hwnd);
     if (!SetDCPixelFormat(deviceContext))
-    {
-        MessageBox(NULL,
-                   "Could not get appropriate pixel format for OpenGL rendering.", "Fatal Error",
-                   MB_OK | MB_ICONERROR);
-        return NULL;
-    }
+        FatalError("Could not get appropriate pixel format for OpenGL rendering.");
 
     if (newMode == 0)
         SetMenu(hwnd, menuBar);
     else
         hideMenuBar = true;
 
-    bool firstContext = false;
+#if 1
     if (glContext == NULL)
-    {
         glContext = wglCreateContext(deviceContext);
-        firstContext = true;
-    }
+#else
+    glContext = wglCreateContext(deviceContext);
+#endif
     wglMakeCurrent(deviceContext, glContext);
-
-    if (firstContext)
-    {
-        GLenum glewErr = glewInit();
-        if (glewErr != GLEW_OK)
-        {
-            MessageBox(NULL, "Could not set up OpenGL extensions.", "Fatal Error",
-                       MB_OK | MB_ICONERROR);
-            return NULL;
-        }
-    }
-
     return hwnd;
 }
 
@@ -1964,6 +1999,7 @@ void DestroyOpenGLWindow()
 {
 #if 0
     if (glContext != NULL)
+
     {
         wglMakeCurrent(NULL, NULL);
         if (!wglDeleteContext(glContext))
@@ -2801,8 +2837,6 @@ bool operator<(const DEVMODE& a, const DEVMODE& b)
 vector<DEVMODE>* EnumerateDisplayModes(unsigned int minBPP)
 {
     vector<DEVMODE>* modes = new vector<DEVMODE>();
-    if (modes == NULL)
-        return NULL;
 
     DEVMODE dm;
     int i = 0;
@@ -3106,14 +3140,11 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     OleInitialize(NULL);
     dropTarget = new CelestiaDropTarget();
-    if (dropTarget)
+    if (CoLockObjectExternal(dropTarget, TRUE, TRUE) != S_OK)
     {
-        if (CoLockObjectExternal(dropTarget, TRUE, TRUE) != S_OK)
-        {
-            cout << "Error locking drop target\n";
-            delete dropTarget;
-            dropTarget = NULL;
-        }
+        cout << "Error locking drop target\n";
+        delete dropTarget;
+        dropTarget = NULL;
     }
 
     // Specify some default values in case registry keys are not found. Ideally, these
@@ -3186,20 +3217,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     appCore = new CelestiaCore();
-    if (appCore == NULL)
-    {
-        if (s_splash != NULL)
-        {
-            s_splash->close();
-            delete s_splash;
-            s_splash = NULL;
-        }
-
-        MessageBox(NULL,
-                   "Out of memory.", "Fatal Error",
-                   MB_OK | MB_ICONERROR | MB_TOPMOST);
-        return false;
-    }
 
     // Gettext integration
     setlocale(LC_ALL, "");
@@ -3267,7 +3284,11 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     cursorHandler = new WinCursorHandler(hDefaultCursor);
     appCore->setCursorHandler(cursorHandler);
 
-    InitWGLExtensions(appInstance);
+    if (!RegisterCelestiaWindowClass())
+        FatalError("Failed to register the window class.");
+
+    if (!InitGL())
+        FatalError("Could not set up OpenGL extensions.");
 
     HWND hWnd;
     if (startFullscreen)
@@ -3287,13 +3308,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     if (hWnd == NULL)
-    {
-        MessageBox(NULL,
-                   "Failed to create the application window.",
-                   "Fatal Error",
-                   MB_OK | MB_ICONERROR);
-        return FALSE;
-    }
+        FatalError("Failed to create the application window.");
 
     if (dropTarget != NULL)
     {
@@ -3942,7 +3957,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                               MAKEINTRESOURCE(IDD_DISPLAYMODE),
                               hWnd,
                               (DLGPROC)SelectDisplayModeProc,
-                              NULL);
+                              0);
             break;
 
         case ID_RENDER_FULLSCREEN:
@@ -4146,7 +4161,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                               MAKEINTRESOURCE(IDD_CONTROLSHELP),
                               hWnd,
                               (DLGPROC)ControlsHelpProc,
-                              NULL);
+                              0);
             break;
 
         case ID_HELP_ABOUT:
