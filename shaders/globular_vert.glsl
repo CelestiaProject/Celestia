@@ -40,7 +40,7 @@ float relStarDensity(void)
 void main(void)
 {
     vec3 p = m * gl_Vertex.xyz;
-    float br = 2 * brightness;
+    float br = 2.0f * brightness;
 
     vec4 mod = vec4(gl_ModelViewMatrix * gl_Vertex);
     float s = 2000.0 / -mod.z * br * starSize;
