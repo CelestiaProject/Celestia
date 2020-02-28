@@ -3902,18 +3902,17 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
 {
     StarDetails::SetStarTextures(cfg.starTextures);
 
+    StarNameDatabase* starNameDB = nullptr;
     ifstream starNamesFile(cfg.starNamesFile.string(), ios::in);
-    if (!starNamesFile.good())
+    if (starNamesFile.good())
+    {
+        starNameDB = StarNameDatabase::readNames(starNamesFile);
+        if (starNameDB == nullptr)
+            cerr << _("Error reading star names file\n");
+    }
+    else
     {
         fmt::fprintf(cerr, _("Error opening %s\n"), cfg.starNamesFile);
-        return false;
-    }
-
-    StarNameDatabase* starNameDB = StarNameDatabase::readNames(starNamesFile);
-    if (starNameDB == nullptr)
-    {
-        cerr << _("Error reading star names file\n");
-        return false;
     }
 
     // First load the binary star database file.  The majority of stars
@@ -3942,6 +3941,8 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         }
     }
 
+    if (starNameDB == nullptr)
+        starNameDB = new StarNameDatabase();
     starDB->setNameDatabase(starNameDB);
 
     loadCrossIndex(starDB, StarDatabase::HenryDraper, cfg.HDCrossIndexFile);
