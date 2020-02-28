@@ -446,14 +446,17 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
     StarNameDatabase::NumberIndex::const_iterator iter  = namesDB->getFirstNameIter(catalogNumber);
 
     unsigned int count = 0;
-    while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
+    if (namesDB != NULL)
     {
-        if (count != 0)
-            starNames   += " / ";
+        while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
+        {
+            if (count != 0)
+                starNames += " / ";
 
-        starNames   += ReplaceGreekLetterAbbr(iter->second.c_str());
-        ++iter;
-        ++count;
+             starNames += ReplaceGreekLetterAbbr(iter->second.c_str());
+             ++iter;
+             ++count;
+        }
     }
 
     uint32 hip  = catalogNumber;
