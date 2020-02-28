@@ -426,17 +426,21 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
 {
     string starNames;
     unsigned int catalogNumber = star.getCatalogNumber();
-    StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
-
     unsigned int count = 0;
-    while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
-    {
-        if (count != 0)
-            starNames += " / ";
 
-        starNames += iter->second;
-        ++iter;
-        ++count;
+    if (namesDB != nullptr)
+    {
+        StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
+
+        while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
+        {
+            if (count != 0)
+                starNames += " / ";
+
+            starNames += iter->second;
+            ++iter;
+            ++count;
+        }
     }
 
     uint32_t hip  = catalogNumber;
