@@ -29,6 +29,7 @@
 #include <QLineEdit>
 #include <QRegExp>
 #include <QFontMetrics>
+#include <QCollator>
 #include <vector>
 #include <set>
 
@@ -73,6 +74,7 @@ private:
     Vector3f pos;
     UniversalCoord ucPos;
     const Universe* universe;
+    QCollator coll;
 };
 
 
@@ -260,6 +262,7 @@ StarPredicate::StarPredicate(Criterion _criterion,
     universe(_universe)
 {
     pos = ucPos.toLy().cast<float>();
+    coll.setNumericMode(true);
 }
 
 
@@ -294,7 +297,8 @@ bool StarPredicate::operator()(const Star* star0, const Star* star1) const
         return strcmp(star0->getSpectralType(), star1->getSpectralType()) < 0;
 
     case Alphabetical:
-        return strcmp(universe->getStarCatalog()->getStarName(*star0, true).c_str(), universe->getStarCatalog()->getStarName(*star1, true).c_str()) < 0;
+        return coll.compare(universe->getStarCatalog()->getStarName(*star0, true).c_str(),
+                            universe->getStarCatalog()->getStarName(*star1, true).c_str()) < 0;
 
     default:
         return false;
