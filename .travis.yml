@@ -62,3 +62,4 @@ addons:
     - lua
     - qt5
     - freetype
+    update: true
