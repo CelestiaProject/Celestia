@@ -20,6 +20,7 @@
 #include <QApplication>
 #include <QSplashScreen>
 #include <QDesktopServices>
+#include <QDir>
 #include <QPixmap>
 #include <QBitmap>
 #include "qtgettext.h"
@@ -29,10 +30,6 @@
 #include "qtappwin.h"
 #include <qtextcodec.h>
 #include <fmt/printf.h>
-
-#ifndef SPLASH_DIR
-#define SPLASH_DIR
-#endif
 
 using namespace std;
 
@@ -73,11 +70,11 @@ int main(int argc, char *argv[])
 
 #ifdef NATIVE_OSX_APP
     // On macOS data directory is in a fixed position relative to the application bundle
-    QString splashDir = QApplication::applicationDirPath() + "/../Resources/splash/";
+    QDir splashDir(QApplication::applicationDirPath() + "/../Resources/splash");
 #else
-    QString splashDir = SPLASH_DIR;
+    QDir splashDir(SPLASH_DIR);
 #endif
-    QPixmap pixmap(splashDir + "splash.png");
+    QPixmap pixmap(splashDir.filePath("splash.png"));
     QSplashScreen splash(pixmap);
     splash.setMask(pixmap.mask());
 

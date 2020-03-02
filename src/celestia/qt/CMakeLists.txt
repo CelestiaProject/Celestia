@@ -1,5 +1,5 @@
 if(NOT ENABLE_QT)
-  message("Qt frontend is disabled.")
+  message(STATUS "Qt frontend is disabled.")
   return()
 endif()
 

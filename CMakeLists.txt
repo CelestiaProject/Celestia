@@ -2,21 +2,19 @@ cmake_minimum_required(VERSION 3.1.0)
 
 option(LEGACY_OPENGL_LIBS "Use legacy OpenGL libraries instead of glvnd library (Default: off)" OFF)
 
-if (POLICY CMP0071)
+if(POLICY CMP0071)
   cmake_policy(SET CMP0071 OLD)
 endif()
 
-if (POLICY CMP0072)
-  if (LEGACY_OPENGL_LIBS)
+if(POLICY CMP0072)
+  if(LEGACY_OPENGL_LIBS)
     cmake_policy(SET CMP0072 OLD)
   else()
     cmake_policy(SET CMP0072 NEW)
   endif()
 endif()
 
-project(celestia)
-
-set(VERSION "1.7.0")
+project(celestia VERSION 1.7.0 DESCRIPTION "3D Universe simulator")
 set(DISPLAY_NAME "Celestia")
 #
 #
@@ -40,40 +38,8 @@ endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if(NOT WIN32)
-  # Qt requires -fPIC, so build all code with it
-  # It's always set on windows
-  add_compile_options(-fPIC)
-endif()
-
-if(FAST_MATH)
-  if(NOT MSVC)
-    add_compile_options("-ffast-math")
-  else()
-    add_compile_options("/fp:fast")
-  endif()
-endif()
-
-if(MSVC)
-  # Disabled warnings
-  # C4244, C4267, C4503: implicit type conversion to a smaller type
-  # C4786: long names in templates
-  # C4800: forcing value to bool
-  # Additional options
-  # bigobj: generate more object sections than allowed by default
-  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/bigobj")
-
-  # Fix the issue: https://github.com/CelestiaProject/Celestia/issues/364
-  add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
-endif()
-
 if(UNIX AND (NOT APPLE) AND (NOT CYGWIN))
   set(_UNIX true)
-endif()
-
-# Theora supported on Unix-like systems only, but not on OSX
-if(NOT _UNIX)
-  set(ENABLE_THEORA OFF)
 endif()
 
 # _USE_MATH_DEFINES enables use of math constants like M_PI,
@@ -87,17 +53,41 @@ set(CMAKE_C_STANDARD 11)
 # Use our cmake files
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-include(GNUInstallDirs)
+if((NOT WIN32) AND (NOT NATIVE_OSX_APP))
+  include(GNUInstallDirs)
+  include(rpath)
+endif()
 include(CheckIncludeFiles)
 include(CheckIncludeFileCXX)
-include(rpath)
+include(FastMath)
 include(install_to_extras_subdir)
-if (NOT MSVC AND NOT MINGW)
+if(NOT WIN32)
   include(cotire)
 else()
   macro(cotire _target)
   endmacro()
 endif()
+
+#
+# Compile options
+#
+if(MSVC)
+  # Disabled warnings
+  # C4244, C4267, C4503: implicit type conversion to a smaller type
+  # C4786: long names in templates
+  # C4800: forcing value to bool
+  # Additional options
+  # bigobj: generate more object sections than allowed by default
+  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/bigobj")
+endif()
+
+if(NOT WIN32)
+  # Qt requires -fPIC, so build all code with it
+  # It's always set on windows
+  add_compile_options(-fPIC)
+endif()
+
+EnableFastMath(${FAST_MATH})
 
 #
 # NLS (Gettext) support
@@ -113,6 +103,8 @@ if(ENABLE_NLS)
   include_directories(${Intl_INCLUDE_DIRS})
   link_libraries(${Intl_LIBRARIES})
   add_definitions(-DENABLE_NLS)
+else()
+  message(STATUS "NLS is disabled. Not looking for gettext and libintl.")
 endif()
 
 if(ENABLE_SPICE)
@@ -128,6 +120,8 @@ if(ENABLE_SPICE)
     include_directories(${CSPICE_INCLUDE_DIR})
   endif()
   add_definitions(-DUSE_SPICE)
+else()
+  message(STATUS "NAIF SPICE is disabled. Not looking for cspice library.")
 endif()
 
 if(_UNIX)
@@ -141,7 +135,7 @@ if(_UNIX AND ENABLE_THEORA)
   add_definitions(-DTHEORA)
 endif()
 
-if (WIN32)
+if(WIN32)
   link_libraries("vfw32" "comctl32" "winmm")
 endif()
 
@@ -188,6 +182,8 @@ if(ENABLE_CELX)
   endif()
   include_directories(${LUA_INCLUDE_DIR})
   link_libraries(${LUA_LIBRARIES})
+else()
+  message(STATUS "CELX is disabled. Not looking for LUA libraries.")
 endif()
 
 if(ENABLE_TTF)
@@ -205,7 +201,7 @@ foreach (_variableName ${_variableNames})
 endforeach()
 ]]#
 
-########### macOS Bundling ###############
+# macOS Bundling
 if(NATIVE_OSX_APP)
   message(STATUS "Generating Info.plist for macOS Bundle")
   configure_file(${CMAKE_SOURCE_DIR}/Info.plist.in ${CMAKE_BINARY_DIR}/Info.plist @ONLY)
@@ -217,44 +213,41 @@ if(NATIVE_OSX_APP)
   set(CMAKE_INSTALL_BINDIR "MacOS")
   set(DATADIR "${CMAKE_INSTALL_PREFIX}/Resources")
   set(FULL_DATADIR "${CMAKE_INSTALL_PREFIX}/Resources")
+elseif(WIN32)
+  set(CMAKE_INSTALL_BINDIR ".")
+  set(CMAKE_INSTALL_DATAROOTDIR ".")
+  set(CMAKE_INSTALL_DATADIR ".")
+  set(CMAKE_INSTALL_FULL_LOCALEDIR "locale")
+  set(DATADIR "${CMAKE_INSTALL_DATADIR}")
+  set(FULL_DATADIR ".")
 else()
   set(DATADIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
   set(FULL_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${PROJECT_NAME}")
 endif()
 
-if (NOT GIT_COMMIT)
+if(NOT GIT_COMMIT)
   find_program(GIT_FOUND git)
-  if (GIT_FOUND)
-    if (NOT MINGW)
-      execute_process(
-        COMMAND git log --pretty=format:"%h" -1
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-        OUTPUT_VARIABLE GIT_COMMIT
-      )
-    endif()
-    if (MINGW)
-      execute_process(
-        COMMAND git log --pretty=format:'%h' -1
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-        OUTPUT_VARIABLE GIT_COMMIT
-      )
-    endif()
-    if ("${GIT_COMMIT}" STREQUAL "")
+  if(GIT_FOUND)
+    execute_process(
+      COMMAND git log --pretty=format:%h -1
+      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+      OUTPUT_VARIABLE GIT_COMMIT
+    )
+    if("${GIT_COMMIT}" STREQUAL "")
       set(GIT_COMMIT "unknown")
     endif()
   else()
     set(GIT_COMMIT "unknown")
   endif()
-  
-  if (MINGW)
-    set(GIT_COMMIT "\"${GIT_COMMIT}\"")
-  endif()
 endif()
 
+#
+# Compile definitions
+#
 add_definitions(
-  -DVERSION="${VERSION}"
+  -DVERSION="${PROJECT_VERSION}"
   -DPACKAGE="celestia"
-  -DGIT_COMMIT=${GIT_COMMIT}
+  -DGIT_COMMIT="${GIT_COMMIT}"
 )
 
 if(NOT NATIVE_OSX_APP)
@@ -262,7 +255,7 @@ if(NOT NATIVE_OSX_APP)
     -DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}"
     -DCONFIG_DATA_DIR="${FULL_DATADIR}"
     -DHIP_DATA_DIR="${FULL_DATADIR}"
-    -DSPLASH_DIR="${FULL_DATADIR}/splash/"
+    -DSPLASH_DIR="${FULL_DATADIR}/splash"
   )
 endif()
 
@@ -275,10 +268,12 @@ if(WIN32)
     -DWINVER=0x0601
     -D_WIN32_WINNT=0x0601
   )
+  # Fix the issue: https://github.com/CelestiaProject/Celestia/issues/364
+  add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
 endif()
 
 if(APPLE)
-  if (NATIVE_OSX_APP)
+  if(NATIVE_OSX_APP)
     add_definitions(-DNATIVE_OSX_APP)
   endif()
   add_definitions(-DGL_SILENCE_DEPRECATION)
@@ -291,7 +286,7 @@ else()
   add_definitions(-DNO_DEBUG -DEIGEN_NO_DEBUG)
 endif()
 
-# Turning all debug on dramatically decreses performance
+# Turning all debug on dramatically decreases performance
 if(OCTREE_DEBUG)
   add_definitions(-DOCTREE_DEBUG)
 endif()
@@ -305,30 +300,28 @@ check_symbol_exists(wordexp wordexp.h HAVE_WORDEXP)
 check_include_files(byteswap.h HAVE_BYTESWAP_H)
 check_include_file_cxx(experimental/filesystem HAVE_EXPERIMENTAL_FILESYSTEM)
 
-if(APPLE)
-  string(REGEX MATCH "[0-9]+" DARWIN_MAJOR_VERSION ${CMAKE_SYSTEM_VERSION})
-  # C++ filesystem can only be used on macOS Catalina (Darwin 19.0) or later
-  if(DARWIN_MAJOR_VERSION LESS 19)
-    message(STATUS "C++17 filesystem is turned off on macOS prior to macOS Catalina")
-    set(HAVE_EXPERIMENTAL_FILESYSTEM OFF)
-  endif()
-endif()
-
-configure_file("config.h.in" "config.h")
-
-if (HAVE_EXPERIMENTAL_FILESYSTEM)
-  if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+if(HAVE_EXPERIMENTAL_FILESYSTEM)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     find_library(CLANG_FS_LIBRARY "c++fs")
-    if (CLANG_FS_LIBRARY)
+    if(CLANG_FS_LIBRARY)
       set(FS_LIBRARY c++fs)
     else()
       set(FS_LIBRARY stdc++fs)
     endif()
-  elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(FS_LIBRARY stdc++fs)
   endif()
-  link_libraries("${FS_LIBRARY}")
+
+  try_compile(CXXFSLIB ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxfs.cpp" LINK_LIBRARIES "${FS_LIBRARY}")
+  if(CXXFSLIB)
+    link_libraries("${FS_LIBRARY}")
+  else()
+    set(HAVE_EXPERIMENTAL_FILESYSTEM OFF)
+    message(WARNING "C++ experimental filesystem library is unusable!\nWill use own implementation.")
+  endif()
 endif()
+
+configure_file("config.h.in" "config.h")
 
 set(BASE_DATA_SOURCES
   demo.cel
