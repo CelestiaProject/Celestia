@@ -1,5 +1,5 @@
 if(NOT WIN32 OR NOT ENABLE_WIN)
-  message("Either not Windows or Windows frontend is disabled.")
+  message(STATUS "Either not Windows or Windows frontend is disabled.")
   return()
 endif()
 

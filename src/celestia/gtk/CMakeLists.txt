@@ -1,5 +1,5 @@
 if(NOT _UNIX OR NOT ENABLE_GTK)
-  message("Either not Unix or Gtk frontend is disabled.")
+  message(STATUS "Either not Unix or Gtk frontend is disabled.")
   return()
 endif()
 

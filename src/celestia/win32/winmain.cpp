@@ -3099,7 +3099,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (startDirectory != "")
         SetCurrentDirectory(startDirectory.c_str());
 
-    s_splash = new SplashWindow("splash.png");
+    s_splash = new SplashWindow(SPLASH_DIR "\\" "splash.png");
     s_splash->setMessage("Loading data files...");
     if (!skipSplashScreen)
         s_splash->showSplash();

@@ -1,0 +1,11 @@
+function(EnableFastMath flag)
+  if(NOT flag)
+    return()
+  endif()
+
+  if(MSVC)
+    add_compile_options("/fp:fast")
+  else()
+    add_compile_options("-ffast-math")
+  endif()
+endfunction()
