@@ -1,4 +1,3 @@
 s = celestia:getselection()
 -- celestia:flash(s:name .. ": " .. "abs magnitude = " .. s:absmag())
 celestia:flash("abs magnitude = " .. s:absmag())
-

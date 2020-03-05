@@ -1,6 +1,6 @@
 #  ---------------------------------------------------------------------------------------
 #   verbosity ( level [int] )
-# 
+#
 #   level - Determines the mode of displaying information about the selected object.
 #           The mode must be specified by an integer value (int) from 0 to 3:
 #              0 - Information display is disabled;

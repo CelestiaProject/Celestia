@@ -1,0 +1,3 @@
+print(_VERSION)
+print(_RELEASE)
+print(_LUAJIT_VERSION)
