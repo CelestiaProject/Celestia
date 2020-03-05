@@ -14,7 +14,7 @@
 #include <config.h>
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
-#include <celengine/catentry.h>
+#include <celengine/astroobj.h>
 #include <celengine/univcoord.h>
 #include <celengine/stellarclass.h>
 #include <celengine/multitexture.h>
@@ -235,18 +235,13 @@ StarDetails::hasCorona() const
 
 
 
-class Star : public CatEntry
+class Star : public AstroObject
 {
 public:
     Star() = default;
     virtual ~Star();
 
     virtual Selection toSelection();
-
-    inline uint32_t getCatalogNumber() const
-    {
-        return catalogNumber;
-    }
 
     /** This getPosition() method returns the approximate star position; that is,
      *  star position without any orbital motion taken into account.  For a
@@ -273,7 +268,6 @@ public:
 
     Eigen::Vector3d getVelocity(double t) const;
 
-    void setCatalogNumber(uint32_t);
     void setPosition(float, float, float);
     void setPosition(const Eigen::Vector3f& positionLy);
     void setAbsoluteMagnitude(float);
@@ -307,12 +301,10 @@ public:
     inline bool hasCorona() const;
 
     enum : uint32_t {
-        MaxTychoCatalogNumber = 0xf0000000,
-        InvalidCatalogNumber = 0xffffffff,
+        MaxTychoCatalogNumber = 0xf0000000
     };
 
 private:
-    uint32_t catalogNumber{ InvalidCatalogNumber };
     Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
     float absMag{ 4.83f };
     StarDetails* details{ nullptr };

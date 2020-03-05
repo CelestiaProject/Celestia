@@ -1,15 +1,23 @@
 
+#include <celutil/debug.h>
 #include <celutil/util.h>
 #include "parseobject.h"
-#include "catentry.h"
+#include "astroobj.h"
 #include "category.h"
 
-Selection CatEntry::toSelection()
+void AstroObject::setIndex(AstroCatalog::IndexNumber nr)
+{
+    if (m_mainIndexNumber != AstroCatalog::InvalidIndex)
+        DPRINTF(LOG_LEVEL_WARNING, "AstroObject::setIndex(%u) on object with already set index: %u!\n", nr, m_mainIndexNumber);
+    m_mainIndexNumber = nr;
+}
+
+Selection AstroObject::toSelection()
 {
     return Selection(this);
 }
 
-bool CatEntry::_addToCategory(UserCategory *c)
+bool AstroObject::_addToCategory(UserCategory *c)
 {
     if (m_cats == nullptr)
         m_cats = new CategorySet;
@@ -17,14 +25,14 @@ bool CatEntry::_addToCategory(UserCategory *c)
     return true;
 }
 
-bool CatEntry::addToCategory(UserCategory *c)
+bool AstroObject::addToCategory(UserCategory *c)
 {
     if (!_addToCategory(c))
         return false;
     return c->_addObject(toSelection());
 }
 
-bool CatEntry::addToCategory(const std::string &s, bool create, const std::string &d)
+bool AstroObject::addToCategory(const std::string &s, bool create, const std::string &d)
 {
     UserCategory *c = UserCategory::find(s);
     if (c == nullptr)
@@ -37,7 +45,7 @@ bool CatEntry::addToCategory(const std::string &s, bool create, const std::strin
     return addToCategory(c);
 }
 
-bool CatEntry::_removeFromCategory(UserCategory *c)
+bool AstroObject::_removeFromCategory(UserCategory *c)
 {
     if (!isInCategory(c))
         return false;
@@ -50,14 +58,14 @@ bool CatEntry::_removeFromCategory(UserCategory *c)
     return true;
 }
 
-bool CatEntry::removeFromCategory(UserCategory *c)
+bool AstroObject::removeFromCategory(UserCategory *c)
 {
     if (!_removeFromCategory(c))
         return false;
     return c->_removeObject(toSelection());
 }
 
-bool CatEntry::removeFromCategory(const std::string &s)
+bool AstroObject::removeFromCategory(const std::string &s)
 {
     UserCategory *c = UserCategory::find(s);
     if (c == nullptr)
@@ -65,7 +73,7 @@ bool CatEntry::removeFromCategory(const std::string &s)
     return removeFromCategory(c);
 }
 
-bool CatEntry::clearCategories()
+bool AstroObject::clearCategories()
 {
     bool ret = true;
     while(m_cats != nullptr)
@@ -77,14 +85,14 @@ bool CatEntry::clearCategories()
     return ret;
 }
 
-bool CatEntry::isInCategory(UserCategory *c) const
+bool AstroObject::isInCategory(UserCategory *c) const
 {
     if (m_cats == nullptr)
         return false;
     return m_cats->count(c) > 0;
 }
 
-bool CatEntry::isInCategory(const std::string &s) const
+bool AstroObject::isInCategory(const std::string &s) const
 {
     UserCategory *c = UserCategory::find(s);
     if (c == nullptr)
@@ -92,7 +100,7 @@ bool CatEntry::isInCategory(const std::string &s) const
     return isInCategory(c);
 }
 
-bool CatEntry::loadCategories(Hash *hash, DataDisposition disposition, const std::string &domain)
+bool AstroObject::loadCategories(Hash *hash, DataDisposition disposition, const std::string &domain)
 {
     if (disposition == DataDisposition::Replace)
         clearCategories();

@@ -596,7 +596,7 @@ static int object_getinfo(lua_State* l)
         celx.setTable("type", "star");
         celx.setTable("name", celx.appCore(AllErrors)->getSimulation()->getUniverse()
                  ->getStarCatalog()->getStarName(*(sel->star())).c_str());
-        celx.setTable("catalogNumber", star->getCatalogNumber());
+        celx.setTable("catalogNumber", star->getIndex());
         celx.setTable("stellarClass", star->getSpectralType());
         celx.setTable("absoluteMagnitude", (lua_Number)star->getAbsoluteMagnitude());
         celx.setTable("luminosity", (lua_Number)star->getLuminosity());
@@ -688,7 +688,7 @@ static int object_getinfo(lua_State* l)
 
         celx.setTable("name", celx.appCore(AllErrors)->getSimulation()->getUniverse()
                  ->getDSOCatalog()->getDSOName(deepsky).c_str());
-        celx.setTable("catalogNumber", deepsky->getCatalogNumber());
+        celx.setTable("catalogNumber", deepsky->getIndex());
 
         if (!strcmp(objTypeName, "galaxy"))
             celx.setTable("hubbleType", deepsky->getType());
@@ -840,7 +840,7 @@ static int object_getchildren(lua_State* l)
     if (sel->star() != nullptr)
     {
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star()->getCatalogNumber());
+        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star()->getIndex());
         if (iter != solarSystemCatalog->end())
         {
             SolarSystem* solarSys = iter->second;
@@ -946,10 +946,10 @@ static int object_catalognumber(lua_State* l)
         }
     }
 
-    uint32_t catalogNumber = Star::InvalidCatalogNumber;
+    uint32_t catalogNumber = AstroCatalog::InvalidIndex;
     if (sel->star() != nullptr && validCatalog)
     {
-        uint32_t internalNumber = sel->star()->getCatalogNumber();
+        uint32_t internalNumber = sel->star()->getIndex();
 
         if (useHIPPARCOS)
         {
@@ -964,7 +964,7 @@ static int object_catalognumber(lua_State* l)
         }
     }
 
-    if (catalogNumber != Star::InvalidCatalogNumber)
+    if (catalogNumber != AstroCatalog::InvalidIndex)
         lua_pushnumber(l, catalogNumber);
     else
         lua_pushnil(l);
@@ -1490,7 +1490,7 @@ static int object_getcategories(lua_State *l)
 
     Selection *s = celx.getThis<Selection>();
     checkEmpty(celx, s);
-    CatEntry::CategorySet *set = s->catEntry()->getCategories();
+    AstroObject::CategorySet *set = s->object()->getCategories();
     return celx.pushIterable<UserCategory*>(set);
 }
 
@@ -1506,14 +1506,14 @@ static int object_addtocategory(lua_State *l)
         UserCategory *c = *celx.getUserData<UserCategory*>(2);
         if (c == nullptr)
             return celx.push(false);
-        ret = s->catEntry()->addToCategory(c);
+        ret = s->object()->addToCategory(c);
     }
     else
     {
         const char *n = celx.safeGetString(2, AllErrors, "Argument to object:addtocategory() must be string or userdata");
         if (n == nullptr)
             return celx.push(false);
-        ret = s->catEntry()->addToCategory(n);
+        ret = s->object()->addToCategory(n);
     }
     return celx.push(ret);
 }
@@ -1530,14 +1530,14 @@ static int object_removefromcategory(lua_State *l)
         UserCategory *c = *celx.getUserData<UserCategory*>(2);
         if (c == nullptr)
             return celx.push(false);
-        ret = s->catEntry()->removeFromCategory(c);
+        ret = s->object()->removeFromCategory(c);
     }
     else
     {
         const char *n = celx.safeGetString(2, AllErrors, "Argument to object:addtocategory() must be string or userdata");
         if (n == nullptr)
             return celx.push(false);
-        ret = s->catEntry()->removeFromCategory(n);
+        ret = s->object()->removeFromCategory(n);
     }
     return celx.push(ret);
 }

@@ -11,7 +11,7 @@ public:
     {
         size_t operator()(const Selection &s) const
         {
-            return (size_t)s.catEntry();
+            return (size_t)s.object();
         }
     };
 
@@ -63,5 +63,5 @@ public:
     static UserCategory *createRoot(const std::string&, const std::string &domain = "");
     static bool deleteCategory(const std::string&);
     static bool deleteCategory(UserCategory*);
-    friend CatEntry;
+    friend AstroObject;
 }; 

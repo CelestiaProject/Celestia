@@ -14,7 +14,7 @@
 #include <string>
 #include <iostream>
 #include <celmath/ray.h>
-#include <celengine/catentry.h>
+#include <celengine/astroobj.h>
 #ifdef USE_GLCONTEXT
 #include <celengine/glcontext.h>
 #endif
@@ -33,7 +33,7 @@ class Galaxy;
 class Globular;
 class OpenCluster;
 
-class DeepSkyObject : public CatEntry
+class DeepSkyObject : public AstroObject
 {
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -41,12 +41,6 @@ class DeepSkyObject : public CatEntry
     virtual Selection toSelection();
     DeepSkyObject() = default;
     virtual ~DeepSkyObject() = default;
-
-    inline uint32_t getCatalogNumber() const
-    {
-        return catalogNumber;
-    }
-    void setCatalogNumber(uint32_t);
 
     Eigen::Vector3d getPosition() const;
     void setPosition(const Eigen::Vector3d&);
@@ -101,13 +95,7 @@ class DeepSkyObject : public CatEntry
     virtual uint64_t getRenderMask() const { return 0; }
     virtual unsigned int getLabelMask() const { return 0; }
 
-    enum : uint32_t
-    {
-        InvalidCatalogNumber = 0xffffffff
-    };
-
  private:
-    uint32_t     catalogNumber{ InvalidCatalogNumber };
     Eigen::Vector3d position{ Eigen::Vector3d::Zero() };
     Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
     float        radius{ 1 };

@@ -27,12 +27,6 @@ using namespace Eigen;
 using namespace std;
 using namespace celmath;
 
-
-void DeepSkyObject::setCatalogNumber(uint32_t n)
-{
-    catalogNumber = n;
-}
-
 Vector3d DeepSkyObject::getPosition() const
 {
     return position;
