@@ -166,7 +166,6 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
     {
         glEnable(GL_POINT_SPRITE);
         glActiveTexture(GL_TEXTURE0);
-        glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE);
         glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     }
 

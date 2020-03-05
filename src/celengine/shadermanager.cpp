@@ -2236,7 +2236,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
         if (props.texUsage & ShaderProperties::PointSprite)
-            source += "color = texture2D(diffTex, gl_TexCoord[0].st);\n";
+            source += "color = texture2D(diffTex, gl_PointCoord);\n";
         else
             source += "color = texture2D(diffTex, " + diffTexCoord + ".st);\n";
     }
@@ -2811,7 +2811,10 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += "    gl_FragColor = " + colorSource + " * texture2D(diffTex, gl_TexCoord[0].st);\n";
+        if (props.texUsage & ShaderProperties::PointSprite)
+            source += "    gl_FragColor = " + colorSource + " * texture2D(diffTex, gl_PointCoord);\n";
+        else
+            source += "    gl_FragColor = " + colorSource + " * texture2D(diffTex, gl_TexCoord[0].st);\n";
     }
     else
     {
@@ -2882,14 +2885,6 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     source << "    float brightness = 1.0;\n";
 #endif
 
-    // Optional texture coordinates (generated automatically for point
-    // sprites.)
-    if ((props.texUsage & ShaderProperties::DiffuseTexture) &&
-        !(props.texUsage & ShaderProperties::PointSprite))
-    {
-        source << "    gl_TexCoord[0].st = " << TexCoord2D(0) << ";\n";
-    }
-
     // Set the color. Should *always* use vertex colors for color and opacity.
     source << "    gl_FrontColor = gl_Color * brightness;\n";
 
@@ -2958,7 +2953,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source << "    gl_FragColor = gl_Color * texture2D(diffTex, gl_TexCoord[0].st);\n";
+        source << "    gl_FragColor = gl_Color * texture2D(diffTex, gl_PointCoord);\n";
     }
     else
     {
