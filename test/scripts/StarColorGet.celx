@@ -1,3 +1,2 @@
 s = celestia:getstarcolor()
 celestia:flash("Star Color = " .. s)
-
