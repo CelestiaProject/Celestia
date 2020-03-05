@@ -97,7 +97,7 @@ private:
     Selection tracked;
 
     ObserverFrame::CoordinateSystem mode{ ObserverFrame::Universal };
-    int nbBodies{ 0 };
+    int nbBodies{ -1 };
     float fieldOfView{ 0.0f };
     float timeScale{ 0.0f };
     uint64_t renderFlags{ 0 };

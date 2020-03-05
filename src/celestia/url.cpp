@@ -154,18 +154,20 @@ bool CelestiaState::loadState(std::map<std::string, std::string> params)
 #endif
 
 
-Url::Url(std::string  str, CelestiaCore *core):
+Url::Url(std::string str, CelestiaCore *core):
     urlStr(std::move(str)),
     appCore(core)
 {
-    std::string::size_type pos, endPrevious;
-    std::vector<Selection> bodies;
-    Simulation *sim = appCore->getSimulation();
-    std::map<std::string, std::string> params = parseUrlParams(urlStr);
-
-    if (urlStr.substr(0, 6) != "cel://")
+    if (urlStr.compare(0, 6, "cel://") != 0)
     {
-        urlStr = "";
+        urlStr.clear();
+        return;
+    }
+
+    std::map<std::string, std::string> params = parseUrlParams(urlStr);
+    if (params.empty())
+    {
+        urlStr.clear();
         return;
     }
 
@@ -173,7 +175,7 @@ Url::Url(std::string  str, CelestiaCore *core):
     // version 2. Assume any URL without a version is version 1.
     version = params.count("ver") == 0 ? 1 : (unsigned) stoi(params["ver"]);
 
-    pos = urlStr.find('/', 6);
+    auto pos = urlStr.find('/', 6);
     if (pos == std::string::npos)
         pos = urlStr.find('?', 6);
 
@@ -182,32 +184,32 @@ Url::Url(std::string  str, CelestiaCore *core):
     else
         modeStr = decodeString(urlStr.substr(6, pos - 6));
 
-    if (!compareIgnoringCase(modeStr, std::string("Freeflight")))
+    if (!compareIgnoringCase(modeStr, "Freeflight"))
     {
         mode = ObserverFrame::Universal;
         nbBodies = 0;
     }
-    else if (!compareIgnoringCase(modeStr, std::string("Follow")))
+    else if (!compareIgnoringCase(modeStr, "Follow"))
     {
         mode = ObserverFrame::Ecliptical;
         nbBodies = 1;
     }
-    else if (!compareIgnoringCase(modeStr, std::string("SyncOrbit")))
+    else if (!compareIgnoringCase(modeStr, "SyncOrbit"))
     {
         mode = ObserverFrame::BodyFixed;
         nbBodies = 1;
     }
-    else if (!compareIgnoringCase(modeStr, std::string("Chase")))
+    else if (!compareIgnoringCase(modeStr, "Chase"))
     {
         mode = ObserverFrame::Chase;
         nbBodies = 1;
     }
-    else if (!compareIgnoringCase(modeStr, std::string("PhaseLock")))
+    else if (!compareIgnoringCase(modeStr, "PhaseLock"))
     {
         mode = ObserverFrame::PhaseLock;
         nbBodies = 2;
     }
-    else if (!compareIgnoringCase(modeStr, std::string("Settings")))
+    else if (!compareIgnoringCase(modeStr, "Settings"))
     {
         type = Settings;
         nbBodies = 0;
@@ -215,27 +217,36 @@ Url::Url(std::string  str, CelestiaCore *core):
 
     if (nbBodies == -1)
     {
-        urlStr = "";
+        urlStr.clear();
         return; // Mode not recognized
     }
 
-    endPrevious = pos;
-    int nb = nbBodies, i=1;
-    while (nb != 0 && endPrevious != std::string::npos) {
-        std::string bodyName="";
+    auto endPrevious = pos;
+    int nb = nbBodies, i = 1;
+    std::vector<Selection> bodies;
+    auto *sim = appCore->getSimulation();
+
+    while (nb != 0 && endPrevious != std::string::npos)
+    {
+        std::string bodyName;
         pos = urlStr.find('/', endPrevious + 1);
-        if (pos == std::string::npos) pos = urlStr.find('?', endPrevious + 1);
-        if (pos == std::string::npos) bodyName = urlStr.substr(endPrevious + 1);
-        else bodyName = urlStr.substr(endPrevious + 1, pos - endPrevious - 1);
+        if (pos == std::string::npos)
+            pos = urlStr.find('?', endPrevious + 1);
+        if (pos == std::string::npos)
+            bodyName = urlStr.substr(endPrevious + 1);
+        else
+            bodyName = urlStr.substr(endPrevious + 1, pos - endPrevious - 1);
         endPrevious = pos;
 
         bodyName = decodeString(bodyName);
         pos = 0;
         if (i==1) body1 = bodyName;
         if (i==2) body2 = bodyName;
-        while(pos != std::string::npos) {
+        while (pos != std::string::npos)
+        {
             pos = bodyName.find(":", pos + 1);
-            if (pos != std::string::npos) bodyName[pos]='/';
+            if (pos != std::string::npos)
+                bodyName[pos] = '/';
         }
 
         bodies.push_back(sim->findObjectFromPath(bodyName));
@@ -244,36 +255,57 @@ Url::Url(std::string  str, CelestiaCore *core):
         i++;
     }
 
-    if (nb != 0) {
-        urlStr = "";
+    if (nb != 0)
+    {
+        urlStr.clear();
         return; // Number of bodies in Url doesn't match Mode
     }
 
-    if (nbBodies == 0) ref = ObserverFrame();
-    if (nbBodies == 1) ref = ObserverFrame(mode, bodies[0]);
-    if (nbBodies == 2) ref = ObserverFrame(mode, bodies[0], bodies[1]);
+    switch (nbBodies)
+    {
+    case 0:
+        ref = ObserverFrame();
+        break;
+    case 1:
+        ref = ObserverFrame(mode, bodies[0]);
+        break;
+    case 2:
+        ref = ObserverFrame(mode, bodies[0], bodies[1]);
+        break;
+    default:
+        break;
+    }
     fromString = true;
 
-    std::string time="";
+    std::string time;
     pos = urlStr.find('?', endPrevious + 1);
     if (pos == std::string::npos)
         time = urlStr.substr(endPrevious + 1);
-    else time = urlStr.substr(endPrevious + 1, pos - endPrevious -1);
-        time = decodeString(time);
+    else
+        time = urlStr.substr(endPrevious + 1, pos - endPrevious -1);
+    time = decodeString(time);
 
-    switch (version)
+    try
     {
-    case 1:
-    case 2:
-        initVersion2(params, time);
-        break;
-    case 3:
-    case 4:
-        // Version 4 has only render flags defined as uint64_t
-        initVersion3(params, time);
-        break;
-    default:
-        urlStr = "";
+        switch (version)
+        {
+        case 1:
+        case 2:
+            initVersion2(params, time);
+            break;
+        case 3:
+        case 4:
+            // Version 4 has only render flags defined as uint64_t
+            initVersion3(params, time);
+            break;
+        default:
+            urlStr.clear();
+            return;
+        }
+    }
+    catch (...)
+    {
+        urlStr.clear();
         return;
     }
 
