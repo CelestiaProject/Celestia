@@ -167,20 +167,27 @@ Url::Url()
 Url::Url(const std::string& str, CelestiaCore *core):
     urlStr(str),
     appCore(core),
+    nbBodies(-1),
     pauseState(false),
     timeSource(UseUrlTime),
     version(2)
 {
-    std::string::size_type pos, endPrevious;
-    std::vector<Selection> bodies;
-    Simulation *sim = appCore->getSimulation();
-    std::map<std::string, std::string> params = parseUrlParams(urlStr);
-
     if (urlStr.substr(0, 6) != "cel://")
     {
         urlStr = "";
         return;
     }
+
+    std::map<std::string, std::string> params = parseUrlParams(urlStr);
+    if (params.empty())
+    {
+        urlStr = "";
+        return;
+    }
+
+    std::string::size_type pos, endPrevious;
+    std::vector<Selection> bodies;
+    Simulation *sim = appCore->getSimulation();
 
     // Version labelling of cel URLs was only added in Celestia 1.5, cel URL
     // version 2. Assume any URL without a version is version 1.
