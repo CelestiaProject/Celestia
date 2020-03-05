@@ -19,7 +19,7 @@ using namespace std;
 uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
 {
     uint32_t catalogNumber = getCatalogNumberByName(name);
-    if (catalogNumber != Star::InvalidCatalogNumber)
+    if (catalogNumber != AstroCatalog::InvalidIndex)
         return catalogNumber;
 
     string priName   = name;
@@ -75,19 +75,19 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
     }
 
     catalogNumber = getCatalogNumberByName(priName);
-    if (catalogNumber != Star::InvalidCatalogNumber)
+    if (catalogNumber != AstroCatalog::InvalidIndex)
         return catalogNumber;
 
     priName += " A";  // try by appending an A
     catalogNumber = getCatalogNumberByName(priName);
-    if (catalogNumber != Star::InvalidCatalogNumber)
+    if (catalogNumber != AstroCatalog::InvalidIndex)
         return catalogNumber;
 
     // If the first search failed, try using the alternate name
     if (altName.length() != 0)
     {
         catalogNumber = getCatalogNumberByName(altName);
-        if (catalogNumber == Star::InvalidCatalogNumber)
+        if (catalogNumber == AstroCatalog::InvalidIndex)
         {
             altName += " A";
             catalogNumber = getCatalogNumberByName(altName);
@@ -106,7 +106,7 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
 
     while (!failed)
     {
-        uint32_t catalogNumber = Star::InvalidCatalogNumber;
+        uint32_t catalogNumber = AstroCatalog::InvalidIndex;
 
         in >> catalogNumber;
         if (in.eof())

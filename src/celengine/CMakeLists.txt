@@ -5,6 +5,8 @@ set(CELENGINE_SOURCES
   asterismrenderer.h
   astro.cpp
   astro.h
+  astroobj.h
+  astroobj.cpp
   atmosphere.h
   axisarrow.cpp
   axisarrow.h
@@ -18,8 +20,6 @@ set(CELENGINE_SOURCES
   catalogxref.h
   category.cpp
   category.h
-  catentry.cpp
-  catentry.h
   console.cpp
   console.h
   constellation.cpp

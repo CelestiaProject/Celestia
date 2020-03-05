@@ -1098,12 +1098,6 @@ Star::getInfoURL() const
     return details->getInfoURL();
 }
 
-
-void Star::setCatalogNumber(uint32_t n)
-{
-    catalogNumber = n;
-}
-
 void Star::setPosition(float x, float y, float z)
 {
     position = Vector3f(x, y, z);

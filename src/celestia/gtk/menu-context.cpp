@@ -106,7 +106,7 @@ void GTKContextMenuHandler::requestContextMenu(float, float, Selection sel)
              * AppendMenu(popup, NULL, "_Info", 0); */
 
             SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-            SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getCatalogNumber());
+            SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getIndex());
             if (iter != solarSystemCatalog->end())
             {
                 SolarSystem* solarSys = iter->second;

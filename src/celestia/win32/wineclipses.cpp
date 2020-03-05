@@ -348,7 +348,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                                eclipseFinderDlg->toTime.wDay);
 
                 const SolarSystem* sys = eclipseFinderDlg->appCore->getSimulation()->getNearestSolarSystem();
-                if (sys != nullptr && sys->getStar()->getCatalogNumber() == 0)
+                if (sys != nullptr && sys->getStar()->getIndex() == 0)
                 {
                     Body* planete = sys->getPlanets()->find(eclipseFinderDlg->strPlaneteToFindOn);
                     if (planete != nullptr)
