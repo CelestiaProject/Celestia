@@ -809,7 +809,7 @@ static Body* CreateBody(const string& name,
     double t;
     if (planetData->getNumber("Albedo", t))
     {
-        fmt::fprintf(cerr, "Deprecated parameter Albedo used in %s definition.\nUse GeomAlbedo instead.", name);
+        fmt::fprintf(cerr, "Deprecated parameter Albedo used in %s definition.\nUse GeomAlbedo instead.\n", name);
         body->setGeomAlbedo((float) t);
     }
 
@@ -821,7 +821,7 @@ static Body* CreateBody(const string& name,
         if (t >= 0.0 && t <= 1.0)
             body->setBondAlbedo((float) t);
         else
-            fmt::fprintf(cerr, "Incorrect BondAlbedo value: %lf", t);
+            fmt::fprintf(cerr, "Incorrect BondAlbedo value: %lf\n", t);
     }
 
     if (planetData->getNumber("Temperature", t))
