@@ -37,7 +37,7 @@ class DSODatabase
     inline DeepSkyObject* getDSO(const uint32_t) const;
     inline uint32_t size() const;
 
-    DeepSkyObject* find(const uint32_t catalogNumber) const;
+    DeepSkyObject* find(const AstroCatalog::IndexNumber catalogNumber) const;
     DeepSkyObject* find(const std::string&) const;
 
     std::vector<std::string> getCompletion(const std::string&) const;
@@ -79,7 +79,7 @@ private:
     DSONameDatabase* namesDB{ nullptr };
     DeepSkyObject**  catalogNumberIndex{ nullptr };
     DSOOctree*       octreeRoot{ nullptr };
-    uint32_t         nextAutoCatalogNumber{ 0xfffffffe };
+    AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };
 
     double           avgAbsMag{ 0.0 };
 };

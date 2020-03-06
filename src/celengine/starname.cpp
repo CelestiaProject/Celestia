@@ -18,7 +18,7 @@ using namespace std;
 
 uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
 {
-    uint32_t catalogNumber = getCatalogNumberByName(name);
+    auto catalogNumber = getCatalogNumberByName(name);
     if (catalogNumber != AstroCatalog::InvalidIndex)
         return catalogNumber;
 
@@ -106,7 +106,7 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
 
     while (!failed)
     {
-        uint32_t catalogNumber = AstroCatalog::InvalidIndex;
+        auto catalogNumber = AstroCatalog::InvalidIndex;
 
         in >> catalogNumber;
         if (in.eof())

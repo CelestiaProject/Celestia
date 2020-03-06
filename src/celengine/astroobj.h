@@ -10,8 +10,8 @@ class UserCategory;
 class AstroCatalog
 {
  public:
-    typedef unsigned int IndexNumber;
-    static const IndexNumber InvalidIndex = UINT_MAX;
+    typedef uint32_t IndexNumber;
+    static const IndexNumber InvalidIndex = UINT32_MAX;
 };
 
 class AstroObject

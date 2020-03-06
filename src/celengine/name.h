@@ -19,17 +19,15 @@
 #include <celutil/debug.h>
 #include <celutil/util.h>
 #include <celutil/utf8.h>
+#include <celengine/astroobj.h>
 
 // TODO: this can be "detemplatized" by creating e.g. a global-scope enum InvalidCatalogNumber since there
 // lies the one and only need for type genericity.
 class NameDatabase
 {
  public:
-    typedef std::map<std::string, uint32_t, CompareIgnoringCasePredicate> NameIndex;
-    typedef std::multimap<uint32_t, std::string> NumberIndex;
-    enum {
-        InvalidCatalogNumber = 0xffffffff
-    };
+    typedef std::map<std::string, AstroCatalog::IndexNumber, CompareIgnoringCasePredicate> NameIndex;
+    typedef std::multimap<AstroCatalog::IndexNumber, std::string> NumberIndex;
 
  public:
     NameDatabase() {};
@@ -37,15 +35,15 @@ class NameDatabase
 
     uint32_t getNameCount() const;
 
-    void add(const uint32_t, const std::string&, bool parseGreek = true);
+    void add(const AstroCatalog::IndexNumber, const std::string&, bool parseGreek = true);
 
     // delete all names associated with the specified catalog number
-    void erase(const uint32_t);
+    void erase(const AstroCatalog::IndexNumber);
 
-    uint32_t      getCatalogNumberByName(const std::string&) const;
-    std::string getNameByCatalogNumber(const uint32_t)       const;
+    AstroCatalog::IndexNumber getCatalogNumberByName(const std::string&) const;
+    std::string getNameByCatalogNumber(const AstroCatalog::IndexNumber) const;
 
-    NumberIndex::const_iterator getFirstNameIter(const uint32_t catalogNumber) const;
+    NumberIndex::const_iterator getFirstNameIter(const AstroCatalog::IndexNumber catalogNumber) const;
     NumberIndex::const_iterator getFinalNameIter() const;
 
     std::vector<std::string> getCompletion(const std::string& name, bool greek = true) const;
