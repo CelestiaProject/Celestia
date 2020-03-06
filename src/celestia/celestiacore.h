@@ -189,7 +189,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     // URLs and history navigation
     void setStartURL(std::string url);
-    void goToUrl(const std::string& urlStr);
+    bool goToUrl(const std::string& urlStr);
     void addToHistory();
     void back();
     void forward();
