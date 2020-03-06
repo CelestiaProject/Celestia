@@ -65,7 +65,7 @@ public:
 
     std::string getAsString() const;
     std::string getName() const;
-    void goTo();
+    bool goTo();
 
     static const unsigned int CurrentVersion;
 
