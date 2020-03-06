@@ -4242,11 +4242,15 @@ void CelestiaCore::notifyWatchers(int property)
 }
 
 
-void CelestiaCore::goToUrl(const string& urlStr)
+bool CelestiaCore::goToUrl(const string& urlStr)
 {
     Url url(urlStr, this);
-    url.goTo();
-    notifyWatchers(RenderFlagsChanged | LabelFlagsChanged);
+    bool ret = url.goTo();
+    if (ret)
+        notifyWatchers(RenderFlagsChanged | LabelFlagsChanged);
+    else
+        fatalError(_("Invalid URL"));
+    return ret;
 }
 
 

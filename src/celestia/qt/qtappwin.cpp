@@ -743,7 +743,7 @@ void CelestiaAppWindow::slotCopyURL()
 
     Url url(appState, Url::CurrentVersion);
     QApplication::clipboard()->setText(url.getAsString().c_str());
-    m_appCore->flash(QString(_("Copied URL")).toStdString());
+    m_appCore->flash(_("Copied URL"));
 }
 
 
@@ -752,8 +752,8 @@ void CelestiaAppWindow::slotPasteURL()
     QString urlText = QApplication::clipboard()->text();
     if (!urlText.isEmpty())
     {
-        m_appCore->goToUrl(urlText.toStdString());
-        m_appCore->flash(QString(_("Pasting URL")).toStdString());
+        if (m_appCore->goToUrl(urlText.toStdString()))
+            m_appCore->flash(_("Pasting URL"));
     }
 }
 

@@ -754,19 +754,19 @@ static std::string getBodyName(Universe* universe, Body* body)
 }
 
 
-void Url::goTo()
+bool Url::goTo()
 {
-    Selection sel;
+    if (urlStr.empty())
+        return false;
 
-    if (urlStr == "")
-        return;
     Simulation *sim = appCore->getSimulation();
     Renderer *renderer = appCore->getRenderer();
     std::string::size_type pos;
 
     sim->update(0.0);
 
-    switch(type) {
+    switch(type)
+    {
     case Absolute:// Intentional Fall-Through
     case Relative:
         sim->setFrame(ref.getCoordinateSystem(), ref.getRefObject(), ref.getTargetObject());
@@ -776,15 +776,15 @@ void Url::goTo()
         sim->setPauseState(pauseState);
         appCore->setLightDelayActive(lightTimeDelay);
 
-        if (selectedStr != "")
+        if (!selectedStr.empty())
         {
             pos = 0;
-            while(pos != std::string::npos)
+            while (pos != std::string::npos)
             {
                 pos = selectedStr.find(":", pos + 1);
-                if (pos != std::string::npos) selectedStr[pos]='/';
+                if (pos != std::string::npos) selectedStr[pos] = '/';
             }
-            sel = sim->findObjectFromPath(selectedStr);
+            auto sel = sim->findObjectFromPath(selectedStr);
             sim->setSelection(sel);
         }
         else
@@ -792,15 +792,15 @@ void Url::goTo()
             sim->setSelection(Selection());
         }
 
-        if (trackedStr != "")
+        if (!trackedStr.empty())
         {
             pos = 0;
-            while(pos != std::string::npos)
+            while (pos != std::string::npos)
             {
                 pos = trackedStr.find(":", pos + 1);
-                if (pos != std::string::npos) trackedStr[pos]='/';
+                if (pos != std::string::npos) trackedStr[pos] = '/';
             }
-            sel = sim->findObjectFromPath(trackedStr);
+            auto sel = sim->findObjectFromPath(trackedStr);
             sim->setTrackedObject(sel);
         }
         else
@@ -842,7 +842,8 @@ void Url::goTo()
     }
     else
     {
-        switch(type) {
+        switch(type)
+        {
         case Absolute:
             sim->setTime((double) date);
             sim->setObserverPosition(coord);
@@ -855,6 +856,7 @@ void Url::goTo()
             break;
         }
     }
+    return true;
 }
 
 
