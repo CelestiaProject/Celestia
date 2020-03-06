@@ -761,12 +761,13 @@ static std::string getBodyName(Universe* universe, Body* body)
 }
 
 
-void Url::goTo()
+bool Url::goTo()
 {
     Selection sel;
 
     if (urlStr == "")
-        return;
+        return false;
+
     Simulation *sim = appCore->getSimulation();
     Renderer *renderer = appCore->getRenderer();
     std::string::size_type pos;
@@ -863,6 +864,7 @@ void Url::goTo()
             break;
         }
     }
+    return true;
 }
 
 
