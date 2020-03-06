@@ -1,6 +1,7 @@
 set(CELUTIL_SOURCES
   bigfix.cpp
   bigfix.h
+  blockarray.h
   bytes.h
   color.cpp
   color.h
