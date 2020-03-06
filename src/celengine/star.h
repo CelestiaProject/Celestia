@@ -300,7 +300,8 @@ public:
     const std::string& getInfoURL() const;
     inline bool hasCorona() const;
 
-    enum : uint32_t {
+    enum : AstroCatalog::IndexNumber
+    {
         MaxTychoCatalogNumber = 0xf0000000
     };
 

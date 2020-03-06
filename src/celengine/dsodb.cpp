@@ -68,7 +68,7 @@ DSODatabase::~DSODatabase()
 }
 
 
-DeepSkyObject* DSODatabase::find(const uint32_t catalogNumber) const
+DeepSkyObject* DSODatabase::find(const AstroCatalog::IndexNumber catalogNumber) const
 {
     Galaxy refDSO;  //terrible hack !!
     refDSO.setIndex(catalogNumber);
@@ -92,7 +92,7 @@ DeepSkyObject* DSODatabase::find(const string& name) const
 
     if (namesDB != nullptr)
     {
-        uint32_t catalogNumber   = namesDB->findCatalogNumberByName(name);
+        AstroCatalog::IndexNumber catalogNumber   = namesDB->findCatalogNumberByName(name);
         if (catalogNumber != AstroCatalog::InvalidIndex)
             return find(catalogNumber);
     }
@@ -115,7 +115,7 @@ vector<string> DSODatabase::getCompletion(const string& name) const
 
 string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) const
 {
-    uint32_t catalogNumber    = dso->getIndex();
+    AstroCatalog::IndexNumber catalogNumber    = dso->getIndex();
 
     if (namesDB != nullptr)
     {
@@ -137,7 +137,7 @@ string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsig
 {
     string dsoNames;
 
-    unsigned int catalogNumber   = dso->getIndex();
+    auto catalogNumber   = dso->getIndex();
 
     DSONameDatabase::NumberIndex::const_iterator iter  = namesDB->getFirstNameIter(catalogNumber);
 
@@ -239,12 +239,12 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
         }
         objType = tokenizer.getNameValue();
 
-        bool   autoGenCatalogNumber   = true;
-        uint32_t objCatalogNumber     = AstroCatalog::InvalidIndex;
+        bool autoGenCatalogNumber = true;
+        AstroCatalog::IndexNumber objCatalogNumber = AstroCatalog::InvalidIndex;
         if (tokenizer.getTokenType() == Tokenizer::TokenNumber)
         {
             autoGenCatalogNumber   = false;
-            objCatalogNumber       = (uint32_t) tokenizer.getNumberValue();
+            objCatalogNumber       = (AstroCatalog::IndexNumber) tokenizer.getNumberValue();
             tokenizer.nextToken();
         }
 

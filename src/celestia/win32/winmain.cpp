@@ -1673,7 +1673,7 @@ void ShowWWWInfo(const Selection& sel)
             if (url.empty())
             {
                 char name[32];
-                sprintf(name, "HIP%d", sel.star()->getIndex() & ~0xf0000000);
+                sprintf(name, "HIP%d", sel.star()->getIndex() & ~Star::MaxTychoCatalogNumber);
                 url = string("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=") + name;
             }
         }

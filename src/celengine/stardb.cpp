@@ -97,7 +97,7 @@ struct PtrCatalogNumberOrderingPredicate
 
 static bool parseSimpleCatalogNumber(const string& name,
                                      const string& prefix,
-                                     uint32_t* catalogNumber)
+                                     AstroCatalog::IndexNumber* catalogNumber)
 {
     char extra[4];
     if (compareIgnoringCase(name, prefix, prefix.length()) == 0)
@@ -108,7 +108,7 @@ static bool parseSimpleCatalogNumber(const string& name,
         // characters other than whitespace are allowed after the number.
         if (sscanf(name.c_str() + prefix.length(), " %u %c", &num, extra) == 1)
         {
-            *catalogNumber = (uint32_t) num;
+            *catalogNumber = (AstroCatalog::IndexNumber) num;
             return true;
         }
     }
@@ -118,7 +118,7 @@ static bool parseSimpleCatalogNumber(const string& name,
 
 
 static bool parseHIPPARCOSCatalogNumber(const string& name,
-                                        uint32_t* catalogNumber)
+                                        AstroCatalog::IndexNumber* catalogNumber)
 {
     return parseSimpleCatalogNumber(name,
                                     HIPPARCOSCatalogPrefix,
@@ -127,7 +127,7 @@ static bool parseHIPPARCOSCatalogNumber(const string& name,
 
 
 static bool parseHDCatalogNumber(const string& name,
-                                 uint32_t* catalogNumber)
+                                 AstroCatalog::IndexNumber* catalogNumber)
 {
     return parseSimpleCatalogNumber(name,
                                     HDCatalogPrefix,
@@ -136,7 +136,7 @@ static bool parseHDCatalogNumber(const string& name,
 
 
 static bool parseTychoCatalogNumber(const string& name,
-                                    uint32_t* catalogNumber)
+                                    AstroCatalog::IndexNumber* catalogNumber)
 {
     int len = strlen(TychoCatalogPrefix);
     if (compareIgnoringCase(name, TychoCatalogPrefix, len) == 0)
@@ -145,7 +145,7 @@ static bool parseTychoCatalogNumber(const string& name,
         if (sscanf(string(name, len, string::npos).c_str(),
                    " %u-%u-%u", &tyc1, &tyc2, &tyc3) == 3)
         {
-            *catalogNumber = (uint32_t) (tyc3 * 1000000000 + tyc2 * 10000 + tyc1);
+            *catalogNumber = (AstroCatalog::IndexNumber) (tyc3 * 1000000000 + tyc2 * 10000 + tyc1);
             return true;
         }
     }
@@ -155,7 +155,7 @@ static bool parseTychoCatalogNumber(const string& name,
 
 
 static bool parseCelestiaCatalogNumber(const string& name,
-                                       uint32_t* catalogNumber)
+                                       AstroCatalog::IndexNumber* catalogNumber)
 {
     char extra[4];
 
@@ -164,7 +164,7 @@ static bool parseCelestiaCatalogNumber(const string& name,
         unsigned int num;
         if (sscanf(name.c_str(), "#%u %c", &num, extra) == 1)
         {
-            *catalogNumber = (uint32_t) num;
+            *catalogNumber = (AstroCatalog::IndexNumber) num;
             return true;
         }
     }
@@ -195,7 +195,7 @@ StarDatabase::~StarDatabase()
 }
 
 
-Star* StarDatabase::find(uint32_t catalogNumber) const
+Star* StarDatabase::find(AstroCatalog::IndexNumber catalogNumber) const
 {
     Star refStar;
     refStar.setIndex(catalogNumber);
@@ -212,12 +212,12 @@ Star* StarDatabase::find(uint32_t catalogNumber) const
 }
 
 
-uint32_t StarDatabase::findCatalogNumberByName(const string& name) const
+AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(const string& name) const
 {
     if (name.empty())
         return AstroCatalog::InvalidIndex;
 
-    uint32_t catalogNumber = AstroCatalog::InvalidIndex;
+    AstroCatalog::IndexNumber catalogNumber = AstroCatalog::InvalidIndex;
 
     if (namesDB != nullptr)
     {
@@ -256,7 +256,7 @@ uint32_t StarDatabase::findCatalogNumberByName(const string& name) const
 
 Star* StarDatabase::find(const string& name) const
 {
-    uint32_t catalogNumber = findCatalogNumberByName(name);
+    AstroCatalog::IndexNumber catalogNumber = findCatalogNumberByName(name);
     if (catalogNumber != AstroCatalog::InvalidIndex)
         return find(catalogNumber);
     else
@@ -264,9 +264,9 @@ Star* StarDatabase::find(const string& name) const
 }
 
 
-uint32_t StarDatabase::crossIndex(const Catalog catalog, const uint32_t celCatalogNumber) const
+AstroCatalog::IndexNumber StarDatabase::crossIndex(const Catalog catalog, const AstroCatalog::IndexNumber celCatalogNumber) const
 {
-    if (static_cast<uint32_t>(catalog) >= crossIndexes.size())
+    if (static_cast<size_t>(catalog) >= crossIndexes.size())
         return AstroCatalog::InvalidIndex;
 
     CrossIndex* xindex = crossIndexes[catalog];
@@ -286,7 +286,7 @@ uint32_t StarDatabase::crossIndex(const Catalog catalog, const uint32_t celCatal
 
 // Return the Celestia catalog number for the star with a specified number
 // in a cross index.
-uint32_t StarDatabase::searchCrossIndexForCatalogNumber(const Catalog catalog, const uint32_t number) const
+AstroCatalog::IndexNumber StarDatabase::searchCrossIndexForCatalogNumber(const Catalog catalog, const AstroCatalog::IndexNumber number) const
 {
     if (static_cast<unsigned int>(catalog) >= crossIndexes.size())
         return AstroCatalog::InvalidIndex;
@@ -307,9 +307,9 @@ uint32_t StarDatabase::searchCrossIndexForCatalogNumber(const Catalog catalog, c
 }
 
 
-Star* StarDatabase::searchCrossIndex(const Catalog catalog, const uint32_t number) const
+Star* StarDatabase::searchCrossIndex(const Catalog catalog, const AstroCatalog::IndexNumber number) const
 {
-    uint32_t celCatalogNumber = searchCrossIndexForCatalogNumber(catalog, number);
+    AstroCatalog::IndexNumber celCatalogNumber = searchCrossIndexForCatalogNumber(catalog, number);
     if (celCatalogNumber != AstroCatalog::InvalidIndex)
         return find(celCatalogNumber);
     else
@@ -330,14 +330,14 @@ vector<string> StarDatabase::getCompletion(const string& name) const
 
 
 #if 0
-static void catalogNumberToString(uint32_t catalogNumber, char* buf, unsigned int bufSize)
+static void catalogNumberToString(AstroCatalog::IndexNumber catalogNumber, char* buf, unsigned int bufSize)
 {
     // TODO: implement using using fmt::write
 }
 #endif
 
 
-static string catalogNumberToString(uint32_t catalogNumber)
+static string catalogNumberToString(AstroCatalog::IndexNumber catalogNumber)
 {
     if (catalogNumber <= StarDatabase::MAX_HIPPARCOS_NUMBER)
     {
@@ -345,11 +345,11 @@ static string catalogNumberToString(uint32_t catalogNumber)
     }
     else
     {
-        uint32_t tyc3 = catalogNumber / 1000000000;
+        AstroCatalog::IndexNumber tyc3 = catalogNumber / 1000000000;
         catalogNumber -= tyc3 * 1000000000;
-        uint32_t tyc2 = catalogNumber / 10000;
+        AstroCatalog::IndexNumber tyc2 = catalogNumber / 10000;
         catalogNumber -= tyc2 * 10000;
-        uint32_t tyc1 = catalogNumber;
+        AstroCatalog::IndexNumber tyc1 = catalogNumber;
         return fmt::sprintf("TYC %d-%d-%d", tyc1, tyc2, tyc3);
     }
 }
@@ -370,7 +370,7 @@ static string catalogNumberToString(uint32_t catalogNumber)
 // required as it's all wrapped in the string class.)
 string StarDatabase::getStarName(const Star& star, bool i18n) const
 {
-    uint32_t catalogNumber = star.getIndex();
+    AstroCatalog::IndexNumber catalogNumber = star.getIndex();
 
     if (namesDB != nullptr)
     {
@@ -400,7 +400,7 @@ void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int 
 {
     assert(bufferSize != 0);
 
-    uint32_t catalogNumber = star.getIndex();
+    AstroCatalog::IndexNumber catalogNumber = star.getIndex();
 
     if (namesDB != nullptr)
     {
@@ -444,7 +444,7 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
         }
     }
 
-    uint32_t hip  = catalogNumber;
+    AstroCatalog::IndexNumber hip  = catalogNumber;
     if (hip != AstroCatalog::InvalidIndex && hip != 0 && count < maxNames)
     {
         if (hip <= Star::MaxTychoCatalogNumber)
@@ -453,12 +453,12 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
                 starNames += " / ";
             if (hip >= 1000000)
             {
-                uint32_t h      = hip;
-                uint32_t tyc3   = h / 1000000000;
+                AstroCatalog::IndexNumber h = hip;
+                AstroCatalog::IndexNumber tyc3   = h / 1000000000;
                        h     -= tyc3 * 1000000000;
-                uint32_t tyc2   = h / 10000;
+                AstroCatalog::IndexNumber tyc2   = h / 10000;
                        h     -= tyc2 * 10000;
-                uint32_t tyc1   = h;
+                AstroCatalog::IndexNumber tyc1   = h;
 
                 starNames += fmt::sprintf("TYC %u-%u-%u", tyc1, tyc2, tyc3);
             }
@@ -471,7 +471,7 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
         }
     }
 
-    uint32_t hd   = crossIndex(StarDatabase::HenryDraper, hip);
+    AstroCatalog::IndexNumber hd   = crossIndex(StarDatabase::HenryDraper, hip);
     if (count < maxNames && hd != AstroCatalog::InvalidIndex)
     {
         if (count != 0)
@@ -479,7 +479,7 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
         starNames += fmt::sprintf("HD %u", hd);
     }
 
-    uint32_t sao   = crossIndex(StarDatabase::SAO, hip);
+    AstroCatalog::IndexNumber sao   = crossIndex(StarDatabase::SAO, hip);
     if (count < maxNames && sao != AstroCatalog::InvalidIndex)
     {
         if (count != 0)
@@ -650,7 +650,7 @@ bool StarDatabase::loadBinary(istream& in)
 
     while (((unsigned int) nStars) < totalStars)
     {
-        uint32_t catNo = 0;
+        AstroCatalog::IndexNumber catNo = 0;
         float x = 0.0f, y = 0.0f, z = 0.0f;
         int16_t absMag;
         uint16_t spectralType;
@@ -762,7 +762,7 @@ static void stcError(const Tokenizer& tok,
  */
 bool StarDatabase::createStar(Star* star,
                               DataDisposition disposition,
-                              uint32_t catalogNumber,
+                              AstroCatalog::IndexNumber catalogNumber,
                               Hash* starData,
                               const fs::path& path,
                               bool isBarycenter)
@@ -941,7 +941,7 @@ bool StarDatabase::createStar(Star* star,
             details->setOrbit(orbit);
 
             // See if a barycenter was specified as well
-            uint32_t barycenterCatNo = AstroCatalog::InvalidIndex;
+            AstroCatalog::IndexNumber barycenterCatNo = AstroCatalog::InvalidIndex;
             bool barycenterDefined = false;
 
             string barycenterName;
@@ -1216,10 +1216,10 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
         }
 
         // Parse the catalog number; it may be omitted if a name is supplied.
-        uint32_t catalogNumber = AstroCatalog::InvalidIndex;
+        AstroCatalog::IndexNumber catalogNumber = AstroCatalog::InvalidIndex;
         if (tokenizer.getTokenType() == Tokenizer::TokenNumber)
         {
-            catalogNumber = (uint32_t) tokenizer.getNumberValue();
+            catalogNumber = (AstroCatalog::IndexNumber) tokenizer.getNumberValue();
             tokenizer.nextToken();
         }
 
@@ -1448,7 +1448,7 @@ void StarDatabase::buildIndexes()
  *  in an stc file may reference each other (barycenters). Thus, a dynamic
  *  structure like a map is both practical and essential.
  */
-Star* StarDatabase::findWhileLoading(uint32_t catalogNumber) const
+Star* StarDatabase::findWhileLoading(AstroCatalog::IndexNumber catalogNumber) const
 {
     // First check for stars loaded from the binary database
     if (binFileCatalogNumberIndex != nullptr)
@@ -1466,7 +1466,7 @@ Star* StarDatabase::findWhileLoading(uint32_t catalogNumber) const
     }
 
     // Next check for stars loaded from an stc file
-    map<uint32_t, Star*>::const_iterator iter = stcFileCatalogNumberIndex.find(catalogNumber);
+    map<AstroCatalog::IndexNumber, Star*>::const_iterator iter = stcFileCatalogNumberIndex.find(catalogNumber);
     if (iter != stcFileCatalogNumberIndex.end())
     {
         return iter->second;
