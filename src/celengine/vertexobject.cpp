@@ -29,10 +29,11 @@ VertexObject::~VertexObject()
 {
     delete m_attribParams;
 
-    if (GLEW_ARB_vertex_array_object)
+    if (m_vaoId != 0 && GLEW_ARB_vertex_array_object)
         glDeleteVertexArrays(1, &m_vaoId);
 
-    glDeleteBuffers(1, &m_vboId);
+    if (m_vboId != 0)
+        glDeleteBuffers(1, &m_vboId);
 }
 
 void VertexObject::bind() noexcept
