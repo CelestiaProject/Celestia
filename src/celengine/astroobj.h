@@ -21,7 +21,22 @@ public:
     AstroCatalog::IndexNumber getIndex() const { return m_mainIndexNumber; }
     void setIndex(AstroCatalog::IndexNumber);
 
+//  Auto Indexing stuff
+    static constexpr AstroCatalog::IndexNumber MaxAutoIndex = UINT32_MAX - 1;
+    static AstroCatalog::IndexNumber getAutoIndexAndUpdate() { return m_autoIndex--; }
+    static AstroCatalog::IndexNumber getAutoIndex() { return m_autoIndex; }
+    static void recoverAutoIndex()
+    {
+        if (m_autoIndex < MaxAutoIndex)
+            ++m_autoIndex;
+    }
+    AstroCatalog::IndexNumber setAutoIndex();
+    static void setAutoIndex(AstroCatalog::IndexNumber i) { m_autoIndex = i; }
+ protected:
+    static AstroCatalog::IndexNumber m_autoIndex;
+
 // Category stuff
+ public:
     typedef std::unordered_set<UserCategory*> CategorySet;
 
 private:

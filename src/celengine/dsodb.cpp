@@ -248,11 +248,6 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
             tokenizer.nextToken();
         }
 
-        if (autoGenCatalogNumber)
-        {
-            objCatalogNumber   = nextAutoCatalogNumber--;
-        }
-
         if (tokenizer.nextToken() != Tokenizer::TokenString)
         {
             DPRINTF(LOG_LEVEL_ERROR, "Error parsing deep sky catalog file: bad name.\n");
@@ -311,7 +306,10 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
 
             DSOs[nDSOs++] = obj;
 
-            obj->setIndex(objCatalogNumber);
+            if (autoGenCatalogNumber)
+                objCatalogNumber = obj->setAutoIndex();
+            else
+                obj->setIndex(objCatalogNumber);
 
             if (namesDB != nullptr && !objName.empty())
             {

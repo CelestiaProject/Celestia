@@ -17,6 +17,13 @@ Selection AstroObject::toSelection()
     return Selection(this);
 }
 
+AstroCatalog::IndexNumber AstroObject::setAutoIndex()
+{
+    auto i = getAutoIndexAndUpdate();
+    setIndex(i);
+    return i;
+}
+
 bool AstroObject::_addToCategory(UserCategory *c)
 {
     if (m_cats == nullptr)
@@ -126,3 +133,5 @@ bool AstroObject::loadCategories(Hash *hash, DataDisposition disposition, const 
     }
     return ret;
 }
+
+AstroCatalog::IndexNumber AstroObject::m_autoIndex { MaxAutoIndex };

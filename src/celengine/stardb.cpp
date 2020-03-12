@@ -1245,13 +1245,9 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
             // Automatically generate a catalog number for the star if one isn't
             // supplied.
             if (catalogNumber == AstroCatalog::InvalidIndex)
-            {
-                catalogNumber = nextAutoCatalogNumber--;
-            }
+                catalogNumber = AstroObject::getAutoIndexAndUpdate();
             else
-            {
                 star = findWhileLoading(catalogNumber);
-            }
             break;
 
         case DataDisposition::Replace:
@@ -1264,13 +1260,9 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
             }
 
             if (catalogNumber == AstroCatalog::InvalidIndex)
-            {
-                catalogNumber = nextAutoCatalogNumber--;
-            }
+                catalogNumber = AstroObject::getAutoIndexAndUpdate();
             else
-            {
                 star = findWhileLoading(catalogNumber);
-            }
             break;
 
         case DataDisposition::Modify:
@@ -1364,7 +1356,10 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
         else
         {
             if (isNewStar)
+            {
                 delete star;
+                AstroObject::recoverAutoIndex();
+            }
             DPRINTF(LOG_LEVEL_INFO, "Bad star definition--will continue parsing file.\n");
         }
     }

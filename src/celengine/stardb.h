@@ -112,7 +112,6 @@ private:
     StarNameDatabase* namesDB{ nullptr };
     Star**            catalogNumberIndex{ nullptr };
     StarOctree*       octreeRoot{ nullptr };
-    AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };
 
     std::vector<CrossIndex*> crossIndexes;
 
