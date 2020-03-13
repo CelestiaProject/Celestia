@@ -15,13 +15,8 @@
 #include <fstream>
 #include <iostream>
 
-extern "C" {
-#include <jpeglib.h>
-}
-#include <png.h>
-
 #include <Eigen/Core>
-#include <GL/glew.h>
+#include "glsupport.h"
 
 #include <celutil/filetype.h>
 #include <celutil/debug.h>
@@ -30,6 +25,7 @@ extern "C" {
 #include "virtualtex.h"
 
 
+using namespace celestia;
 using namespace Eigen;
 using namespace std;
 
@@ -79,7 +75,7 @@ static const TextureCaps& GetTextureCaps()
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texCaps.maxTextureSize);
 
         texCaps.preferredAnisotropy = 1;
-        if (GLEW_EXT_texture_filter_anisotropic)
+        if (gl::EXT_texture_filter_anisotropic)
         {
             GLint maxAnisotropy = 1;
             glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
@@ -373,7 +369,7 @@ ImageTexture::ImageTexture(Image& img,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
-    if (GLEW_EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
+    if (gl::EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
     }
@@ -508,7 +504,7 @@ TiledTexture::TiledTexture(Image& img,
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                             mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-            if (GLEW_EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
+            if (gl::EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
             {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
             }

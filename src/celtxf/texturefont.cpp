@@ -16,7 +16,7 @@
 #include <celutil/utf8.h>
 #include <celutil/util.h>
 #include <celengine/render.h>
-#include <GL/glew.h>
+#include <celengine/glsupport.h>
 #include "texturefont.h"
 
 using namespace std;

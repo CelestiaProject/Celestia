@@ -11,7 +11,7 @@
 #include <celutil/util.h>
 #include <celcompat/filesystem.h>
 #include "shadermanager.h"
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <cmath>
 #include <iostream>
 #include <fstream>
@@ -21,6 +21,7 @@
 #include <cassert>
 #include <Eigen/Geometry>
 
+using namespace celestia;
 using namespace Eigen;
 using namespace std;
 
@@ -1220,7 +1221,7 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
 
     if (props.hasRingShadowForLight(light))
     {
-        if (GLEW_ARB_shader_texture_lod)
+        if (gl::ARB_shader_texture_lod)
         {
             source += mulAssign("shadow",
                       (1.0f - texture2DLod(sampler2D("ringTex"), vec2(ringShadowTexCoord(light), 0.0f), indexedUniform("ringShadowLOD", light))["a"]));
@@ -1914,7 +1915,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     // Without GL_ARB_shader_texture_lod enabled one can use texture2DLod
     // in vertext shaders only
-    if (GLEW_ARB_shader_texture_lod)
+    if (gl::ARB_shader_texture_lod)
         source += "#extension GL_ARB_shader_texture_lod : enable\n";
 
     string diffTexCoord("diffTexCoord");

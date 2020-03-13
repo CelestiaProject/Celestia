@@ -8,7 +8,6 @@
 // of the License, or (at your option) any later version.
 
 #include <config.h>
-#include <GL/glew.h>
 #include <celutil/gettext.h>
 #include <celutil/debug.h>
 #include "stardb.h"

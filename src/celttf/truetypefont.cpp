@@ -12,9 +12,9 @@
 #include <array>
 #include <iostream>
 #include <vector>
-#include <GL/glew.h>
 #include <fmt/printf.h>
 #include <celutil/utf8.h>
+#include <celengine/glsupport.h>
 #include <celengine/render.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H

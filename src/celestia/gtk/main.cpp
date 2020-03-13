@@ -24,7 +24,7 @@
 #include <unistd.h>
 #endif /* WIN32 */
 
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <gtk/gtk.h>
 #include <gtk/gtkgl.h>
 
@@ -60,6 +60,7 @@
 #endif /* DEBUG */
 
 
+using namespace celestia;
 using namespace std;
 
 
@@ -242,8 +243,7 @@ public:
  *           that require the glArea to be set up. */
 static void initRealize(GtkWidget* widget, AppData* app)
 {
-    GLenum glewErr = glewInit();
-    if (GLEW_OK != glewErr)
+    if (!gl::init())
     {
         GtkWidget *message;
         message = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),

@@ -8,7 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <GL/glew.h>
+#include "glsupport.h"
 #include "modelviewwidget.h"
 #include "glframebuffer.h"
 #include <QFileInfo>
@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <iostream>
 
+using namespace celestia;
 using namespace cmod;
 using namespace Eigen;
 
@@ -545,7 +546,7 @@ ModelViewWidget::setBackgroundColor(const QColor& color)
 void
 ModelViewWidget::initializeGL()
 {
-    glewInit();
+    gl::init();
     emit contextCreated();
 }
 
@@ -878,7 +879,7 @@ ModelViewWidget::setAmbientLight(bool enable)
 void
 ModelViewWidget::setShadows(bool enable)
 {
-    if (!GLEW_EXT_framebuffer_object)
+    if (!gl::EXT_framebuffer_object)
     {
         return;
     }

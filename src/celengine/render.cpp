@@ -80,7 +80,7 @@ std::ofstream hdrlog;
 #else
 #include <celttf/truetypefont.h>
 #endif
-#include <GL/glew.h>
+#include "glsupport.h"
 #ifdef VIDEO_SYNC
 #ifdef _WIN32
 #include <GL/wglew.h>
@@ -103,6 +103,7 @@ std::ofstream hdrlog;
 using namespace cmod;
 using namespace Eigen;
 using namespace std;
+using namespace celestia;
 using namespace celmath;
 
 #define FOV           45.0f
@@ -778,7 +779,7 @@ bool Renderer::init(
 #endif
 
 #ifdef ENABLE_SELF_SHADOW
-        if (GLEW_EXT_framebuffer_object)
+        if (gl::EXT_framebuffer_object)
         {
             shadowFbo = new FramebufferObject(1024, 1024, FramebufferObject::DepthAttachment);
             if (!shadowFbo->isValid())
@@ -4414,7 +4415,7 @@ void Renderer::renderPlanet(Body& body,
                     // us explicitly set the LOD. But, they do all have an optional lodBias parameter
                     // for the textureXD instruction. The bias is just the difference between the
                     // area light LOD and the approximate GPU calculated LOD.
-                    if (!GLEW_ARB_shader_texture_lod)
+                    if (!gl::ARB_shader_texture_lod)
                         lod = max(0.0f, lod - gpuLod);
                     lights.ringShadows[li].texLod = lod;
                 }
@@ -6761,12 +6762,9 @@ bool Renderer::getInfo(map<string, string>& info) const
     glGetFloatv(GL_SMOOTH_POINT_SIZE_GRANULARITY, &pointSizeGran);
     info["PointSizeGran"] = to_string(pointSizeGran);
 
-    if (GLEW_EXT_texture_cube_map)
-    {
-        GLint maxCubeMapSize = 0;
-        glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &maxCubeMapSize);
-        info["MaxCubeMapSize"] = to_string(maxCubeMapSize);
-    }
+    GLint maxCubeMapSize = 0;
+    glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &maxCubeMapSize);
+    info["MaxCubeMapSize"] = to_string(maxCubeMapSize);
 
     s = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
     if (s != nullptr)

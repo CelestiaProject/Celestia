@@ -18,7 +18,7 @@
 #include <cstring>
 #include <ctime>
 #include <unistd.h>
-#include <GL/glew.h>
+#include "glsupport.h"
 #ifndef MACOSX
 #include <GL/glut.h>
 #else
@@ -35,6 +35,7 @@
 #include "popt.h"
 */
 
+using namespace celestia;
 using namespace std;
 
 
@@ -513,12 +514,9 @@ int main(int argc, char* argv[])
     initMenus();
     #endif
 
-    GLenum glewErr = glewInit();
-    if (glewErr != GLEW_OK)
+    if (!gl::init())
     {
-        fmt::fprintf(std::cerr,
-                     _("Celestia was unable to initialize OpenGL extensions (error %i). Graphics quality will be reduced."),
-                     glewErr);
+        cerr << _("Celestia was unable to initialize OpenGL.");
     }
 
     // GL should be all set up, now initialize the renderer.

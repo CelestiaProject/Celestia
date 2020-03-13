@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include <celengine/starbrowser.h>
+#include <celengine/glsupport.h>
 
 #include <QCursor>
 #include <QPaintDevice>

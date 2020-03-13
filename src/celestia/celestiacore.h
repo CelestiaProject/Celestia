@@ -21,7 +21,6 @@
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 #include <celengine/overlayimage.h>
-#include <GL/glew.h>
 #include "configfile.h"
 #include "favorites.h"
 #include "destination.h"

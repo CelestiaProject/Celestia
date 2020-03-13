@@ -17,7 +17,7 @@
 #include <limits>
 #include "modelgeometry.h"
 #include "particlesystem.h"
-#include <GL/glew.h>
+#include "glsupport.h"
 #include "vecgl.h"
 #include "rendcontext.h"
 #include "texmanager.h"

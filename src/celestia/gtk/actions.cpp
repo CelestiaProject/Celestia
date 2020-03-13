@@ -11,7 +11,7 @@
  */
 
 #include <config.h>
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <cstring>
 #include <fstream>
 #include <gtk/gtk.h>

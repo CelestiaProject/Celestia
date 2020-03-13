@@ -11,6 +11,7 @@
 
 #include "glshader.h"
 
+using namespace celestia;
 using namespace std;
 
 
@@ -177,7 +178,7 @@ GLShaderProgram::link()
 bool
 GLShaderProgram::hasOpenGLShaderPrograms()
 {
-    return GLEW_ARB_shader_objects && GLEW_ARB_shading_language_100;
+    return gl::ARB_shader_objects && gl::ARB_shading_language_100;
 }
 
 

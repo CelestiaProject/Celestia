@@ -74,6 +74,7 @@
 #define CONFIG_DATA_DIR "./"
 #endif
 
+using namespace celestia;
 using namespace std;
 
 
@@ -257,11 +258,9 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     glWidget = new CelestiaGlWidget(nullptr, "Celestia", m_appCore);
     glWidget->makeCurrent();
 
-    GLenum glewErr = glewInit();
-    if (glewErr != GLEW_OK)
+    if (!gl::init())
     {
-        QMessageBox::critical(0, "Celestia",
-                              QString(_("Celestia was unable to initialize OpenGL extensions (error %1). Graphics quality will be reduced.")).arg(glewErr));
+        QMessageBox::critical(0, "Celestia", _("Celestia was unable to initialize OpenGL."));
     }
 
     m_appCore->setCursorHandler(glWidget);

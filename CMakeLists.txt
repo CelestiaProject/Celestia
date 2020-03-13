@@ -32,6 +32,7 @@ option(NATIVE_OSX_APP "Support native OSX paths read data from (Default: off)" O
 option(FAST_MATH      "Build with unsafe fast-math compiller option (Default: off)" OFF)
 option(ENABLE_TTF     "Use TrueType fonts instead of TXF (Default: off)" OFF)
 option(ENABLE_TESTS   "Enable unit tests? (Default: off)" OFF)
+option(ENABLE_GLEW    "Use GLEW instead of libepoxy? (Default: on)" ON)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type." FORCE)
@@ -144,9 +145,16 @@ find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 link_libraries(${OPENGL_LIBRARIES})
 
-find_package(GLEW REQUIRED)
-link_libraries(GLEW::GLEW)
-include_directories(${GLEW_INCLUDE_DIRS})
+if(ENABLE_GLEW)
+  find_package(GLEW REQUIRED)
+  link_libraries(GLEW::GLEW)
+  include_directories(${GLEW_INCLUDE_DIRS})
+  add_definitions(-DUSE_GLEW)
+else()
+  find_package(Libepoxy REQUIRED)
+  link_libraries(libepoxy::libepoxy)
+  include_directories(${LIBEPOXY_INCLUDE_DIR})
+endif()
 
 find_package(Eigen3 3.3 NO_MODULE) # -DEigen3_DIR=...
 if(TARGET Eigen3::Eigen)

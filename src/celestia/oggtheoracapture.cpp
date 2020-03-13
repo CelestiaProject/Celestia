@@ -67,7 +67,6 @@
 #include <cmath>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
-#include <GL/glew.h>
 #include <string>
 #include <theora/theora.h>
 

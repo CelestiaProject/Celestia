@@ -14,7 +14,7 @@
 
 #include "spheremesh.h"
 #include <celmath/mathlib.h>
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <cmath>
 
 using namespace Eigen;

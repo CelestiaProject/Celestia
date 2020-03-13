@@ -9,7 +9,7 @@
 //
 // C++ wrapper for OpenGL shaders and shader programs
 
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <Eigen/Core>
 #include <string>
 

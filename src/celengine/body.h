@@ -20,7 +20,7 @@
 #include <celutil/utf8.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <string>
 #include <vector>
 #include <array>
