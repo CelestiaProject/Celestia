@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include "glshader.h"
-#include <GL/glew.h>
 
 using namespace std;
 

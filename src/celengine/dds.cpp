@@ -13,10 +13,10 @@
 #include <celutil/debug.h>
 #include <celutil/bytes.h>
 #include <celengine/image.h>
-#include <GL/glew.h>
+#include "glsupport.h"
 
+using namespace celestia;
 using namespace std;
-
 
 
 struct DDPixelFormat
@@ -186,7 +186,7 @@ Image* LoadDDSImage(const fs::path& filename)
         format == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT ||
         format == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
     {
-        if (!GLEW_EXT_texture_compression_s3tc)
+        if (!gl::EXT_texture_compression_s3tc)
             return nullptr;
     }
 

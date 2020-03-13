@@ -11,7 +11,7 @@
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <vector>
 #include "render.h"
 #include "vertexobject.h"

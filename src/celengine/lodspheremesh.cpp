@@ -13,7 +13,7 @@
 #include <iostream>
 #include <algorithm>
 #include <celmath/mathlib.h>
-#include <GL/glew.h>
+#include "glsupport.h"
 #include "lodspheremesh.h"
 #include "shadermanager.h"
 

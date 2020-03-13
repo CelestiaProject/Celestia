@@ -24,12 +24,12 @@
 #include <unistd.h>
 #endif /* WIN32 */
 
-#include <GL/glew.h>
 #include <gtk/gtk.h>
 #include <gtk/gtkgl.h>
 
 #include <celengine/astro.h>
 #include <celengine/galaxy.h>
+#include <celengine/glsupport.h>
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
 #include <celutil/debug.h>
@@ -60,6 +60,7 @@
 #endif /* DEBUG */
 
 
+using namespace celestia;
 using namespace std;
 
 
@@ -242,17 +243,17 @@ public:
  *           that require the glArea to be set up. */
 static void initRealize(GtkWidget* widget, AppData* app)
 {
-    GLenum glewErr = glewInit();
-    if (GLEW_OK != glewErr)
+    if (!gl::init() || !gl::checkVersion(gl::GL_2_1))
     {
         GtkWidget *message;
         message = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
                                          GTK_DIALOG_DESTROY_WITH_PARENT,
                                          GTK_MESSAGE_ERROR,
                                          GTK_BUTTONS_CLOSE,
-                                         "Celestia was unable to initialize OpenGL.");
+                                         "Celestia was unable to initialize OpenGL 2.1.");
         gtk_dialog_run(GTK_DIALOG(message));
         gtk_widget_destroy(message);
+	exit(1);
     }
 
     app->core->setAlerter(new GtkAlerter(app));

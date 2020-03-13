@@ -10,7 +10,7 @@
 #include <cstring>
 #include <cstdarg>
 #include <iostream>
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <Eigen/Core>
 #include <celutil/debug.h>
 #include <celutil/utf8.h>

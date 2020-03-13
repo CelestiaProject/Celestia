@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <array>
 #include <map>
 

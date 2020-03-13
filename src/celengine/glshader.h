@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <GL/glew.h>
+#include "glsupport.h"
 
 class GLShaderLoader;
 

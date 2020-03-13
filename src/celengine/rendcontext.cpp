@@ -13,7 +13,7 @@
 #include "texmanager.h"
 #include "modelgeometry.h"
 #include "body.h"
-#include <GL/glew.h>
+#include "glsupport.h"
 #include "render.h"
 
 using namespace cmod;

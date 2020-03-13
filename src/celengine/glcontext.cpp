@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <celutil/debug.h>
 #include "glcontext.h"
-#include <GL/glew.h>
+#include "glsupport.h"
 
 using namespace std;
 

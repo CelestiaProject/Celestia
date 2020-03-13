@@ -12,7 +12,7 @@
 #ifndef _GLFRAMEBUFFER_H_
 #define _GLFRAMEBUFFER_H_
 
-#include <GL/glew.h>
+#include "glsupport.h"
 
 
 class GLFrameBufferObject

@@ -11,7 +11,6 @@
  */
 
 #include <config.h>
-#include <GL/glew.h>
 #include <cstring>
 #include <fstream>
 #include <gtk/gtk.h>
@@ -22,7 +21,7 @@
 #endif /* GNOME */
 
 #include <celengine/body.h>
-
+#include <celengine/glsupport.h>
 #include <celengine/simulation.h>
 #include <celengine/render.h>
 #include <celestia/celestiacore.h>

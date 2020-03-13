@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <vector>
 #include <celmath/mathlib.h>
-#include <GL/glew.h>
+#include "glsupport.h"
 #include "vecgl.h"
 #include "axisarrow.h"
 #include "selection.h"
