@@ -1626,7 +1626,7 @@ static int celestia_getstar(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     double starIndex = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:getstar must be a number");
     Universe* u = appCore->getSimulation()->getUniverse();
-    Star* star = u->getStarCatalog()->getStar((uint32_t) starIndex);
+    Star* star = u->getStarCatalog()->find((uint32_t) starIndex);
     if (star == nullptr)
         lua_pushnil(l);
     else
@@ -1642,7 +1642,7 @@ static int celestia_getdso(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     double dsoIndex = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:getdso must be a number");
     Universe* u = appCore->getSimulation()->getUniverse();
-    DeepSkyObject* dso = u->getDSOCatalog()->getDSO((uint32_t) dsoIndex);
+    DeepSkyObject* dso = u->getDSOCatalog()->find((uint32_t) dsoIndex);
     if (dso == nullptr)
         lua_pushnil(l);
     else
