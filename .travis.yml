@@ -30,12 +30,12 @@ matrix:
 
 before_script:
 - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt install -y liblua${LUA}-dev; fi
-- if [ "$TRAVIS_OS_NAME" == "osx" ] ; then brew install glew --build-from-source; brew link gettext --force; fi
+- if [ "$TRAVIS_OS_NAME" == "osx" ] ; then brew link gettext --force; fi
 - mkdir build
 - cd build
 
 script:
-- cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TTF=ON -DENABLE_TESTS=ON ..
+- cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TTF=ON -DENABLE_TESTS=ON -DENABLE_GLEW=OFF ..
 - make -j $(nproc || echo 4)
 - CTEST_OUTPUT_ON_FAILURE=1 ctest
 
@@ -43,7 +43,7 @@ addons:
   apt:
     packages:
     - libeigen3-dev
-    - libglew-dev
+    - libepoxy-dev
     - libtheora-dev
     - libjpeg-dev
     - libpng-dev
@@ -63,4 +63,5 @@ addons:
     - lua
     - qt5
     - freetype
+    - libepoxy
     update: true

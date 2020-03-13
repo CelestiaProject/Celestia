@@ -14,7 +14,7 @@
 #define _CELENGINE_VECGL_H_
 
 #include <celutil/color.h>
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 

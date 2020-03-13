@@ -14,7 +14,7 @@
 #include <iostream>
 #include <celutil/utf8.h>
 #include <celmath/geomutil.h>
-#include <GL/glew.h>
+#include "glsupport.h"
 #include "vecgl.h"
 #include "console.h"
 #if NO_TTF

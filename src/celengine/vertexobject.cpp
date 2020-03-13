@@ -11,6 +11,8 @@
 
 #include "vertexobject.h"
 
+using namespace celestia;
+
 namespace celgl
 {
 VertexObject::VertexObject(GLenum bufferType) :
@@ -29,7 +31,7 @@ VertexObject::~VertexObject()
 {
     delete m_attribParams;
 
-    if (m_vaoId != 0 && GLEW_ARB_vertex_array_object)
+    if (m_vaoId != 0 && gl::ARB_vertex_array_object)
         glDeleteVertexArrays(1, &m_vaoId);
 
     if (m_vboId != 0)
@@ -40,7 +42,7 @@ void VertexObject::bind() noexcept
 {
     if ((m_state & State::Initialize) != 0)
     {
-        if (GLEW_ARB_vertex_array_object)
+        if (gl::ARB_vertex_array_object)
         {
             glGenVertexArrays(1, &m_vaoId);
             glBindVertexArray(m_vaoId);
@@ -50,7 +52,7 @@ void VertexObject::bind() noexcept
     }
     else
     {
-        if (GLEW_ARB_vertex_array_object)
+        if (gl::ARB_vertex_array_object)
         {
             glBindVertexArray(m_vaoId);
             if ((m_state & State::Update) != 0)
@@ -72,7 +74,7 @@ void VertexObject::bindWritable() noexcept
 
 void VertexObject::unbind() noexcept
 {
-    if (GLEW_ARB_vertex_array_object)
+    if (gl::ARB_vertex_array_object)
     {
         if ((m_state & (State::Initialize | State::Update)) != 0)
             glBindBuffer(m_bufferType, 0);

@@ -8,7 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <celutil/color.h>
 #include "objectrenderer.h"
 #include "shadermanager.h"

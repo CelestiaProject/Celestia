@@ -18,5 +18,5 @@ set(CMAKE_AUTOMOC ON)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-build_cmod_tool(cmodview WIN32 cmodview.cpp glframebuffer.cpp  glshader.cpp  mainwindow.cpp  materialwidget.cpp  modelviewwidget.cpp)
+build_cmod_tool(cmodview WIN32 cmodview.cpp glframebuffer.cpp  glshader.cpp  mainwindow.cpp  materialwidget.cpp  modelviewwidget.cpp glsupport.cpp)
 qt5_use_modules(cmodview ${QT_LIBS})

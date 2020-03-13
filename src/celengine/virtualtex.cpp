@@ -15,7 +15,7 @@
 #include <string>
 #include <utility>
 #include <celutil/debug.h>
-#include <GL/glew.h>
+#include "glsupport.h"
 #include <celutil/debug.h>
 #include <celcompat/filesystem.h>
 #include <celutil/filetype.h>

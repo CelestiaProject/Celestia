@@ -21,7 +21,7 @@ extern "C" {
 }
 #include <png.h>
 
-#include <GL/glew.h>
+#include "glsupport.h"
 
 #include <celutil/debug.h>
 #include <celutil/filetype.h>

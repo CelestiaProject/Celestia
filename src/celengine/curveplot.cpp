@@ -34,8 +34,8 @@
 #define USE_VERTEX_BUFFER 1
 #endif
 
+#include "glsupport.h"
 #include "curveplot.h"
-#include "GL/glew.h"
 #include <vector>
 #include <iostream>
 

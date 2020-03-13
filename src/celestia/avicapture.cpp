@@ -9,7 +9,6 @@
 
 #include <cmath>
 
-#include <GL/glew.h>
 #include <windowsx.h>
 #include <celutil/debug.h>
 #include "avicapture.h"

@@ -40,7 +40,6 @@
 #include <celcompat/filesystem.h>
 #include <celcompat/memory.h>
 #include <Eigen/Geometry>
-#include <GL/glew.h>
 #include <iostream>
 #include <fstream>
 #include <iomanip>

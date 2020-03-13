@@ -53,6 +53,8 @@ set(CELENGINE_SOURCES
   globular.h
   glshader.cpp
   glshader.h
+  glsupport.cpp
+  glsupport.h
   hash.cpp
   hash.h
   #hdrfuncrender.cpp
