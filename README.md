@@ -13,6 +13,7 @@
 **Celestia Discord Server: https://discordapp.com/invite/WEWDcJh**<br>
 **Celestia SubReddit: https://www.reddit.com/r/Celestiasoftware/**<br>
 **Celestia Archive Repository: https://github.com/Anthony-B-Russo10/Celestia-Archive**
+**Celestia Android repository by Markerz: https://github.com/eyvallah/AndroidCelestia**
 ## License
 
 This program is free software; you can redistribute it and/or modify it under
