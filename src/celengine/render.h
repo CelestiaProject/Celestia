@@ -20,6 +20,7 @@
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celengine/renderlistentry.h>
+#include "vertexobject.h"
 
 #ifdef USE_GLCONTEXT
 class GLContext;
@@ -54,6 +55,16 @@ struct SecondaryIlluminator
     Eigen::Vector3d position_v;       // viewer relative position
     float           radius;           // radius in km
     float           reflectedIrradiance;  // albedo times total irradiance from direct sources
+};
+
+
+enum class VOType
+{
+    Marker     = 0,
+    AxisArrow  = 1,
+    Rectangle  = 2,
+    Terminator = 3,
+    Count      = 4
 };
 
 
@@ -230,7 +241,7 @@ class Renderer
     void enableMSAA();
     void disableMSAA();
     bool isMSAAEnabled() const;
-    void drawRectangle(const Rect& r) const;
+    void drawRectangle(const Rect& r);
     void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
 
     const ColorTemperatureTable* getStarColorTable() const;
@@ -312,7 +323,9 @@ class Renderer
                              LabelVerticalAlignment valign = VerticalAlignBottom,
                              float size = 0.0f);
 
-   ShaderManager& getShaderManager() const { return *shaderManager; }
+    ShaderManager& getShaderManager() const { return *shaderManager; }
+
+    celgl::VertexObject& getVertexObject(VOType, GLenum, GLsizeiptr, GLenum);
 
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
@@ -758,11 +771,12 @@ class Renderer
 
     double realTime{ true };
 
-   // Maximum size of a solar system in light years. Features beyond this distance
-   // will not necessarily be rendered correctly. This limit is used for
-   // visibility culling of solar systems.
-   float SolarSystemMaxDistance{ 1.0f };
+    // Maximum size of a solar system in light years. Features beyond this distance
+    // will not necessarily be rendered correctly. This limit is used for
+    // visibility culling of solar systems.
+    float SolarSystemMaxDistance{ 1.0f };
 
+    std::array<celgl::VertexObject*, static_cast<size_t>(VOType::Count)> m_VertexObjects;
 
     // Location markers
  public:

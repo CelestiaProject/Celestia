@@ -37,20 +37,14 @@ constexpr const float headRadius   = 0.025f;
 constexpr const unsigned nSections = 30;
 
 
-static void initArrowAndLetters(void (*fn)(VertexObject&, size_t))
+static size_t initArrowAndLetters(VertexObject &vo)
 {
     static_assert(sizeof(Vector3f) == 3*sizeof(GLfloat), "sizeof(Vector3f) != 3*sizeof(GLfloat)");
-
-    static VertexObject vo(GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
     static size_t count = 0; // number of vertices in the arrow
 
     vo.bind();
     if (vo.initialized())
-    {
-        fn(vo, count);
-        vo.unbind();
-        return;
-    }
+        return count;
 
     // circle at bottom of a shaft
     vector<Vector3f> circle;
@@ -177,33 +171,40 @@ static void initArrowAndLetters(void (*fn)(VertexObject&, size_t))
 
     vo.setVertices(3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    fn(vo, count);
+    return count;
+}
+
+static void RenderArrow(VertexObject& vo)
+{
+    auto count = initArrowAndLetters(vo);
+    vo.draw(GL_TRIANGLES, count);
     vo.unbind();
 }
 
-static void RenderArrow()
-{
-    initArrowAndLetters([](VertexObject& vo, size_t count) { vo.draw(GL_TRIANGLES, count); });
-}
-
 // Draw letter x in xz plane
-static void RenderX()
+static void RenderX(VertexObject& vo)
 {
-    initArrowAndLetters([](VertexObject& vo, size_t offset) { vo.draw(GL_LINES, 4, offset); });
+    auto offset = initArrowAndLetters(vo);
+    vo.draw(GL_LINES, 4, offset);
+    vo.unbind();
 }
 
 
 // Draw letter y in xz plane
-static void RenderY()
+static void RenderY(VertexObject& vo)
 {
-    initArrowAndLetters([](VertexObject& vo, size_t offset) { vo.draw(GL_LINES, 6, offset+4); });
+    auto offset = initArrowAndLetters(vo);
+    vo.draw(GL_LINES, 6, offset+4);
+    vo.unbind();
 }
 
 
 // Draw letter z in xz plane
-static void RenderZ()
+static void RenderZ(VertexObject& vo)
 {
-    initArrowAndLetters([](VertexObject& vo, size_t offset) { vo.draw(GL_LINE_STRIP, 4, offset+10); });
+    auto offset = initArrowAndLetters(vo);
+    vo.draw(GL_LINE_STRIP, 4, offset+10);
+    vo.unbind();
 }
 
 
@@ -282,7 +283,8 @@ ArrowReferenceMark::render(Renderer* renderer,
     prog->use();
     prog->color = Color(color, opacity).toVector4();
 
-    RenderArrow();
+    auto &vo = renderer->getVertexObject(VOType::AxisArrow, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
+    RenderArrow(vo);
     glPopMatrix();
 
     glUseProgram(0);
@@ -381,34 +383,36 @@ AxesReferenceMark::render(Renderer* renderer,
         return;
     prog->use();
 
+    auto &vo = renderer->getVertexObject(VOType::AxisArrow, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
+
     // x-axis
     glPushMatrix();
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
     prog->color = { 1.0f, 0.0f, 0.0f, opacity };
-    RenderArrow();
+    RenderArrow(vo);
     glTranslatef(0.1f, 0.0f, 0.75f);
     glScalef(labelScale, labelScale, labelScale);
-    RenderX();
+    RenderX(vo);
     glPopMatrix();
 
     // y-axis
     glPushMatrix();
     glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
     prog->color = { 0.0f, 1.0f, 0.0f, opacity };
-    RenderArrow();
+    RenderArrow(vo);
     glTranslatef(0.1f, 0.0f, 0.75f);
     glScalef(labelScale, labelScale, labelScale);
-    RenderY();
+    RenderY(vo);
     glPopMatrix();
 
     // z-axis
     glPushMatrix();
     glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
     prog->color = { 0.0f, 0.0f, 1.0f, opacity };
-    RenderArrow();
+    RenderArrow(vo);
     glTranslatef(0.1f, 0.0f, 0.75f);
     glScalef(labelScale, labelScale, labelScale);
-    RenderZ();
+    RenderZ(vo);
     glPopMatrix();
 
     glPopMatrix();

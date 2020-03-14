@@ -215,8 +215,6 @@ static void initVO(VertexObject& vo)
     vo.setVertices(2, GL_FLOAT, false, 0, 0);
 }
 
-celgl::VertexObject markerVO{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
-
 void Renderer::renderMarker(MarkerRepresentation::Symbol symbol, float size, const Color& color)
 {
     assert(shaderManager != nullptr);
@@ -224,6 +222,7 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol, float size, con
     if (prog == nullptr)
         return;
 
+    auto &markerVO = getVertexObject(VOType::Marker, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
     markerVO.bind();
     if (!markerVO.initialized())
         initVO(markerVO);
@@ -353,6 +352,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     glPushMatrix();
     glTranslatef(-center.x(), -center.y(), -center.z());
 
+    auto &markerVO = getVertexObject(VOType::Marker, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
     markerVO.bind();
     if (!markerVO.initialized())
         initVO(markerVO);
@@ -390,6 +390,7 @@ void Renderer::renderEclipticLine()
     if (prog == nullptr)
         return;
 
+    auto &markerVO = getVertexObject(VOType::Marker, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
     markerVO.bind();
     if (!markerVO.initialized())
         initVO(markerVO);
@@ -409,6 +410,7 @@ void Renderer::renderCrosshair(float selectionSizeInPixels, double tsec, const C
     if (prog == nullptr)
         return;
 
+    auto &markerVO = getVertexObject(VOType::Marker, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
     markerVO.bind();
     if (!markerVO.initialized())
         initVO(markerVO);
