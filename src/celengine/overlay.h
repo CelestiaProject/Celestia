@@ -50,7 +50,7 @@ class OverlayStreamBuf : public std::streambuf
 class Overlay : public std::ostream
 {
  public:
-    Overlay(const Renderer&);
+    Overlay(Renderer&);
     Overlay() = delete;
     ~Overlay() = default;
 
@@ -72,7 +72,7 @@ class Overlay : public std::ostream
     {
         glPopMatrix();
     };
-    const Renderer& getRenderer() const
+    Renderer& getRenderer() const
     {
         return renderer;
     };
@@ -100,7 +100,7 @@ class Overlay : public std::ostream
 
     OverlayStreamBuf sbuf;
 
-    const Renderer& renderer;
+    Renderer& renderer;
 };
 
 #endif // _OVERLAY_H_

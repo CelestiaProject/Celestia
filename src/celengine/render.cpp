@@ -344,6 +344,7 @@ Renderer::Renderer() :
     }
 
     shaderManager = new ShaderManager();
+    m_VertexObjects.fill(nullptr);
 }
 
 
@@ -378,6 +379,9 @@ Renderer::~Renderer()
     delete shaderManager;
     delete m_asterismRenderer;
     delete m_boundariesRenderer;
+
+    for (auto p : m_VertexObjects)
+        delete p;
 }
 
 
@@ -6627,7 +6631,7 @@ bool Renderer::captureFrame(int x, int y, int w, int h, Renderer::PixelFormat fo
     return glGetError() == GL_NO_ERROR;
 }
 
-static void drawRectangle(const Renderer &renderer, const Rect &r)
+void Renderer::drawRectangle(const Rect &r)
 {
     uint32_t p = r.tex == nullptr ? 0 : ShaderProperties::HasTexture;
     switch (r.nColors)
@@ -6644,7 +6648,7 @@ static void drawRectangle(const Renderer &renderer, const Rect &r)
         fmt::fprintf(cerr, "Incorrect number of colors: %i\n", r.nColors);
     }
 
-    auto prog = renderer.getShaderManager().getShader(ShaderProperties(p));
+    auto prog = getShaderManager().getShader(ShaderProperties(p));
     if (prog == nullptr)
         return;
 
@@ -6652,7 +6656,7 @@ static void drawRectangle(const Renderer &renderer, const Rect &r)
     array<float, 8> vertices = { r.x, r.y,  r.x+r.w, r.y, r.x+r.w, r.y+r.h, r.x, r.y+r.h };
 
     auto s = static_cast<GLsizeiptr>(memsize(vertices) + memsize(texels) + 4*4*sizeof(GLfloat));
-    static celgl::VertexObject vo{ GL_ARRAY_BUFFER, s, GL_STREAM_DRAW };
+    auto &vo = getVertexObject(VOType::Rectangle, GL_ARRAY_BUFFER, s, GL_STREAM_DRAW);
     vo.bindWritable();
 
     if (!vo.initialized())
@@ -6698,11 +6702,6 @@ static void drawRectangle(const Renderer &renderer, const Rect &r)
 
     glUseProgram(0);
     vo.unbind();
-}
-
-void Renderer::drawRectangle(const Rect &r) const
-{
-    ::drawRectangle(*this, r);
 }
 
 void Renderer::setRenderRegion(int x, int y, int width, int height, bool withScissor)
@@ -6774,4 +6773,14 @@ bool Renderer::getInfo(map<string, string>& info) const
         info["Extensions"] = s;
 
     return true;
+}
+
+celgl::VertexObject&
+Renderer::getVertexObject(VOType owner, GLenum type, GLsizeiptr size, GLenum stream)
+{
+    auto i = static_cast<size_t>(owner);
+    if (m_VertexObjects[i] == nullptr)
+        m_VertexObjects[i] = new celgl::VertexObject(type, size, stream);
+
+    return *m_VertexObjects[i];
 }

@@ -30,7 +30,7 @@ using namespace std;
 using namespace Eigen;
 using namespace celmath;
 
-Overlay::Overlay(const Renderer& r) :
+Overlay::Overlay(Renderer& r) :
     ostream(&sbuf),
     renderer(r)
 {
