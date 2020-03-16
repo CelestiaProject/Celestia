@@ -56,7 +56,11 @@
 #include "odmenu.h"
 
 #include "res/resource.h"
+#ifndef USE_GLEW
+#include <epoxy/wgl.h>
+#else
 #include "wglext.h"
+#endif
 
 #include <locale.h>
 #include <fmt/printf.h>
@@ -1768,8 +1772,12 @@ bool SetDCPixelFormat(HDC hDC)
 {
     bool msaa = false;
     if (appCore->getConfig()->aaSamples > 1 &&
+#ifdef USE_GLEW
         WGLExtensionSupported("WGL_ARB_pixel_format") &&
         WGLExtensionSupported("WGL_ARB_multisample"))
+#else
+        gl::checkVersion(GL_2_1))
+#endif
     {
         msaa = true;
     }
@@ -3266,7 +3274,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     cursorHandler = new WinCursorHandler(hDefaultCursor);
     appCore->setCursorHandler(cursorHandler);
 
+#ifdef USE_GLEW
     InitWGLExtensions(appInstance);
+#endif
 
     HWND hWnd;
     if (startFullscreen)

@@ -5,7 +5,6 @@ endif()
 
 set(WIN32_SOURCES
   odmenu.cpp
-  wglext.cpp
   winbookmarks.cpp
   windatepicker.cpp
   wineclipses.cpp
@@ -23,7 +22,6 @@ set(WIN32_SOURCES
 
 set(WIN32_HEADERS
   odmenu.h
-  wglext.h
   winbookmarks.h
   wineclipses.h
   wingotodlg.h
@@ -36,6 +34,11 @@ set(WIN32_HEADERS
   wintourguide.h
   winviewoptsdlg.h
 )
+
+if(ENABLE_GLEW)
+  set(WIN32_HEADERS ${WIN32_HEADERS} wglext.h)
+  set(WIN32_SOURCES ${WIN32_SOURCES} wglext.cpp)
+endif()
 
 add_library(resources OBJECT res/celestia.rc)
 target_include_directories(resources PRIVATE "${CMAKE_SOURCE_DIR}/src/celestia/win32/res")
