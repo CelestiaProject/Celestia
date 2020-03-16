@@ -1605,13 +1605,6 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += ScatteringConstantDeclarations(props);
     }
 
-    if (props.isViewDependent() || props.hasScattering())
-    {
-        source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
-        if (!props.usesTangentSpaceLighting())
-            source += "float NV = dot(gl_Normal, eyeDir);\n";
-    }
-
     if (props.texUsage & ShaderProperties::PointSprite)
     {
         source += DeclareUniform("pointScale", Shader_Float);
@@ -1648,7 +1641,6 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
             source += "varying vec4 specFactors;\n";
-            source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
         }
     }
     else
@@ -1659,7 +1651,6 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
             source += "varying vec4 spec;\n";
-            source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
         }
     }
 
@@ -1714,6 +1705,19 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
+    if (props.isViewDependent() || props.hasScattering())
+    {
+        source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
+        if (!props.usesTangentSpaceLighting())
+        {
+            source += "float NV = dot(gl_Normal, eyeDir);\n";
+        }
+    }
+    else if (props.lightModel == ShaderProperties::SpecularModel)
+    {
+        source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
+    }
+
     source += "float NL;\n";
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
@@ -1938,7 +1942,6 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         source += "uniform vec3 ambientColor;\n";
         source += "uniform float opacity;\n";
-        source += "vec4 diff = vec4(ambientColor, opacity);\n";
         if (props.isViewDependent())
         {
             if (props.lightModel == ShaderProperties::SpecularModel)
@@ -1978,7 +1981,6 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "uniform vec3 ambientColor;\n";
         source += "uniform float opacity;\n";
         source += "varying vec4 diffFactors;\n";
-        source += "vec4 diff = vec4(ambientColor, opacity);\n";
         source += "varying vec3 normal;\n";
         source += "vec4 spec = vec4(0.0);\n";
         source += "uniform float shininess;\n";
@@ -1994,7 +1996,6 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         source += "uniform vec3 ambientColor;\n";
         source += "uniform float opacity;\n";
-        source += "vec4 diff = vec4(ambientColor, opacity);\n";
         source += "varying vec4 diffFactors;\n";
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
@@ -2081,6 +2082,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
+    if (props.usesTangentSpaceLighting() ||
+        props.lightModel == ShaderProperties::PerPixelSpecularModel ||
+        props.usesShadows())
+    {
+        source += "vec4 diff = vec4(ambientColor, opacity);\n";
+    }
 
     if (props.usesShadows())
     {
@@ -2636,15 +2643,14 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
         source += "varying vec3 " + ScatteredColor(i) + ";\n";
     }
 
-    source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
-    source += "float NV = dot(gl_Normal, eyeDir);\n";
-
     source += "varying vec3 scatterEx;\n";
     source += "varying vec3 eyeDir_obj;\n";
 
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
     source += "float NL;\n";
+    source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
+    source += "float NV = dot(gl_Normal, eyeDir);\n";
 
     source += AtmosphericEffects(props);
 
