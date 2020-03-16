@@ -1776,7 +1776,7 @@ bool SetDCPixelFormat(HDC hDC)
         WGLExtensionSupported("WGL_ARB_pixel_format") &&
         WGLExtensionSupported("WGL_ARB_multisample"))
 #else
-        gl::checkVersion(GL_2_1))
+        gl::checkVersion(gl::GL_2_1))
 #endif
     {
         msaa = true;
