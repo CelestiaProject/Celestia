@@ -332,7 +332,7 @@ set(BASE_DATA_SOURCES
   controls.txt
 )
 install(FILES ${BASE_DATA_SOURCES} DESTINATION ${DATADIR})
-install(FILES "splash.png" DESTINATION "${DATADIR}/splash")
+install(FILES "splash/splash.png" DESTINATION "${DATADIR}/splash")
 
 if(NATIVE_OSX_APP)
   install(FILES ${CMAKE_BINARY_DIR}/Info.plist DESTINATION .)
