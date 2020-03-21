@@ -13,6 +13,7 @@ set(CELUTIL_SOURCES
   formatnum.h
   #memorypool.cpp
   #memorypool.h
+  packedrangeset.h
   reshandle.h
   resmanager.h
   timer.cpp
