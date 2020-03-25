@@ -1770,19 +1770,19 @@ ChooseBestMSAAPixelFormat(HDC hdc, int *formats, unsigned int numFormats,
 // Select the pixel format for a given device context
 bool SetDCPixelFormat(HDC hDC)
 {
+#ifdef USE_GLEW
     bool msaa = false;
     if (appCore->getConfig()->aaSamples > 1 &&
-#ifdef USE_GLEW
         WGLExtensionSupported("WGL_ARB_pixel_format") &&
         WGLExtensionSupported("WGL_ARB_multisample"))
-#else
-        gl::checkVersion(gl::GL_2_1))
-#endif
     {
         msaa = true;
     }
 
     if (!msaa)
+#else
+    if (appCore->getConfig()->aaSamples <= 1)
+#endif
     {
         static PIXELFORMATDESCRIPTOR pfd = {
             sizeof(PIXELFORMATDESCRIPTOR),    // Size of this structure
@@ -1953,15 +1953,18 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     }
     wglMakeCurrent(deviceContext, glContext);
 
+#ifdef USE_GLEW
     if (firstContext)
     {
-        if (!gl::init())
+        GLenum glewErr = glewInit();
+        if (glewErr != GLEW_OK)
         {
             MessageBox(NULL, "Could not set up OpenGL extensions.", "Fatal Error",
                        MB_OK | MB_ICONERROR);
             return NULL;
         }
     }
+#endif
 
     return hwnd;
 }
@@ -3252,8 +3255,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (!initSucceeded)
         return 1;
 
-    appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
-
     if (startURL != "")
         appCore->setStartURL(startURL);
 
@@ -3269,6 +3270,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR));
         else
             hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
+
+        appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
     }
 
     cursorHandler = new WinCursorHandler(hDefaultCursor);
@@ -3276,6 +3279,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 #ifdef USE_GLEW
     InitWGLExtensions(appInstance);
+#else
+    gl::init();
 #endif
 
     HWND hWnd;
