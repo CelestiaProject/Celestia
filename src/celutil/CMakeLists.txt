@@ -11,6 +11,7 @@ set(CELUTIL_SOURCES
   filetype.h
   formatnum.cpp
   formatnum.h
+  largepackedset.h
   #memorypool.cpp
   #memorypool.h
   packedrangeset.h
