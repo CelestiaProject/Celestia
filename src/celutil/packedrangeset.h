@@ -30,6 +30,7 @@ public:
     typename Container::const_iterator end() const { return m_vector.end(); }
     typename Container::const_iterator begin() const { return m_vector.begin(); }
     const V &operator[](size_t i) const { return m_vector[i]; }
+    V &operator[](size_t i) { return m_vector[i]; }
     PackedRangeSet(size_t n) { m_vector.reserve(n); }
     size_t getSize() const { return m_vector.size(); }
     K getMinKey() const { return m_minKey; }
@@ -78,16 +79,16 @@ public:
     }
     bool insert(V v)
     {
-        if (getSize() > 0)
+        if (getSize() > 0 && isWithinRange(getKey(v)))
         {
             for (typename Container::iterator it = m_vector.begin(); it != m_vector.end(); it++)
             {
                 if (getKey(*it) == getKey(v))
                 {
                     *it = v;
-                    return true;
+                    return false;
                 }
-                if (isSorted() && getKey(v) > getKey(*it))
+                if (isSorted() && getKey(v) < getKey(*it))
                     break;
             }
         }
@@ -96,14 +97,18 @@ public:
         {
             m_minKey = getKey(v);
             m_maxKey = getKey(v);
+            setSorted(true);
             return true;
         }
-        if (getMaxKey() < getKey(v))
-            m_maxKey = getKey(v);
-        else if (getMaxKey() != getKey(v))
-            setSorted(false);
-        if (getMinKey() > getKey(v))
-            m_minKey = getKey(v);
+        else
+        {
+            if (getMaxKey() < getKey(v))
+                m_maxKey = getKey(v);
+            else if (getMaxKey() != getKey(v))
+                setSorted(false);
+            if (getMinKey() > getKey(v))
+                m_minKey = getKey(v);
+        }
         return true;
     }
     void updateMinKey()

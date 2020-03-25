@@ -47,12 +47,10 @@ TEST_CASE("packedrangeset", "[packedrangeset]")
     SECTION("n = 3")
     {
         PackedV1Set set1(100);
-//         dump(set1);
         REQUIRE(set1.getSize() == 0);
         REQUIRE(set1.insert(V1(0)) == true);
         REQUIRE(set1.insert(V1(-1)) == true);
         REQUIRE(set1.insert(V1(1)) == true);
-//         dump(set1);
         REQUIRE(set1.getSize() == 3);
         REQUIRE(set1.findIterator(-1) != set1.end());
         REQUIRE(set1.findIterator(-1)->val == -1);
@@ -65,7 +63,6 @@ TEST_CASE("packedrangeset", "[packedrangeset]")
         REQUIRE(set1.getMinKey() == -1);
         REQUIRE(set1.getMaxKey() == 1);
         set1.sort();
-//         dump(set1);
         REQUIRE(set1.findIndex(-1) == 0);
         REQUIRE(set1.findIndex(0) == 1);
         REQUIRE(set1.findIndex(1) == 2);
@@ -94,7 +91,6 @@ TEST_CASE("packedrangeset", "[packedrangeset]")
     SECTION("n = 5")
     {
         PackedV1Set set1(100);
-//         dump(set1);
         REQUIRE(set1.getSize() == 0);
         REQUIRE(set1.insert(V1(0)) == true);
         REQUIRE(set1.insert(V1(-2)) == true);
@@ -144,8 +140,6 @@ TEST_CASE("packedrangeset", "[packedrangeset]")
         REQUIRE(set1.insert(V1(-4)) == true);
         REQUIRE(set1.insert(V1(5)) == true);
         auto set2 = set1.split();
-//         DUMP(set1);
-//         DUMP(set2);
         REQUIRE(set1.getSize() == 3);
         REQUIRE(set2.getSize() == 2);
         REQUIRE(set1[0].val == -4);
@@ -165,11 +159,10 @@ TEST_CASE("packedrangeset", "[packedrangeset]")
         REQUIRE(set1.insert(V1(0)) == true);
         REQUIRE(set1.insert(V1(-2)) == true);
         REQUIRE(set1.insert(V1(3)) == true);
-        REQUIRE(set1.insert(V1(-2)) == true);
+        REQUIRE(set1.insert(V1(-2)) == false);
         REQUIRE(set1.insert(V1(-4)) == true);
         REQUIRE(set1.insert(V1(5)) == true);
-        REQUIRE(set1.insert(V1(0)) == true);
-//         DUMP(set1);
+        REQUIRE(set1.insert(V1(0)) == false);
         REQUIRE(set1.getSize() == 5);
         REQUIRE(set1.getMinKey() == -4);
         REQUIRE(set1.getMaxKey() == 5);
@@ -178,7 +171,6 @@ TEST_CASE("packedrangeset", "[packedrangeset]")
     SECTION("merge() unsorted")
     {
         PackedV1Set set1(100), set2(100);
-//         dump(set1);
         REQUIRE(set1.insert(V1(0)) == true);
         REQUIRE(set1.insert(V1(-2)) == true);
         REQUIRE(set1.insert(V1(3)) == true);
@@ -191,7 +183,6 @@ TEST_CASE("packedrangeset", "[packedrangeset]")
         REQUIRE(set2.insert(V1(6)) == true);
         set1.sort();
         set1.merge(set2);
-//         DUMP(set1);
         REQUIRE(set1.getSize() == 10);
         REQUIRE(set1.getMinKey() == -5);
         REQUIRE(set1.getMaxKey() == 6);
@@ -201,7 +192,6 @@ TEST_CASE("packedrangeset", "[packedrangeset]")
     SECTION("merge() sorted")
     {
         PackedV1Set set1(100), set2(100);
-//         dump(set1);
         REQUIRE(set1.insert(V1(0)) == true);
         REQUIRE(set1.insert(V1(-2)) == true);
         REQUIRE(set1.insert(V1(3)) == true);
@@ -215,7 +205,6 @@ TEST_CASE("packedrangeset", "[packedrangeset]")
         set1.sort();
         set2.sort();
         set1.merge(set2);
-//         DUMP(set1);
         REQUIRE(set1.getSize() == 10);
         REQUIRE(set1.getMinKey() == -5);
         REQUIRE(set1.getMaxKey() == 6);
@@ -225,7 +214,6 @@ TEST_CASE("packedrangeset", "[packedrangeset]")
     SECTION("merge() sorted & greater")
     {
         PackedV1Set set1(100), set2(100);
-//         dump(set1);
         REQUIRE(set1.insert(V1(0)) == true);
         REQUIRE(set1.insert(V1(-2)) == true);
         REQUIRE(set1.insert(V1(3)) == true);
@@ -240,7 +228,6 @@ TEST_CASE("packedrangeset", "[packedrangeset]")
         set2.sort();
         REQUIRE(set1.getMaxKey() < set2.getMinKey());
         set1.merge(set2);
-        DUMP(set1);
         REQUIRE(set1.getSize() == 10);
         REQUIRE(set1.getMinKey() == -4);
         REQUIRE(set1.getMaxKey() == 66);
