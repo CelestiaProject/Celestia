@@ -33,6 +33,14 @@ sudo zypper refresh
 sudo zypper install celestia
 ```
 
+### On openSUSE Leap 15.2:
+
+```
+sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Leap_15.2/home:munix9:unstable.repo
+sudo zypper refresh
+sudo zypper install celestia
+```
+
 ### On openSUSE Tumbleweed:
 
 ```
@@ -45,13 +53,13 @@ sudo zypper install celestia
 
   Try experimental portable AppImage (see https://github.com/CelestiaProject/Celestia/issues/333):
 ```
-wget https://github.com/munix9/Celestia/releases/download/continuous/celestia-qt-continuous-x86_64.AppImage
-chmod 755 celestia-qt-continuous-x86_64.AppImage
+wget https://download.opensuse.org/repositories/home:/munix9:/unstable/AppImage/celestia-1.7.0-git-x86_64.AppImage
+chmod 755 celestia-1.7.0-git-x86_64.AppImage
 ```
 
-  Optionally create a portable, version-independent `$HOME` directory in the same folder as the AppImage file:
+  Optionally create a portable, main version-independent `$HOME` directory in the same folder as the AppImage file:
 ```
-mkdir celestia-qt.home
+mkdir celestia-1.7.home
 ```
 
 Development snapshots installation on Windows:
