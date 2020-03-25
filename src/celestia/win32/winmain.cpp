@@ -3246,8 +3246,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (!initSucceeded)
         return 1;
 
-    appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
-
     if (startURL != "")
         appCore->setStartURL(startURL);
 
@@ -3263,6 +3261,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR));
         else
             hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
+
+        appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
     }
 
     cursorHandler = new WinCursorHandler(hDefaultCursor);
