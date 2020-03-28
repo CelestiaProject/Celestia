@@ -8,3 +8,6 @@
 [submodule "thirdparty/Spice"]
 	path = thirdparty/Spice
 	url = https://github.com/OpenSpace/Spice
+[submodule "content"]
+	path = content
+	url = https://github.com/CelestiaProject/CelestiaContent.git
