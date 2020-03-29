@@ -37,9 +37,9 @@ TEST_CASE("AssociativeArray", "[AssociativeArray]")
 
             Color c;
             h.getColor("color", c);
-            REQUIRE(c.red()   == Approx(C(.23)));
-            REQUIRE(c.green() == Approx(C(.34)));
-            REQUIRE(c.blue()  == Approx(C(.45)));
+            REQUIRE(c.red()   == Approx(C(.23f)));
+            REQUIRE(c.green() == Approx(C(.34f)));
+            REQUIRE(c.blue()  == Approx(C(.45f)));
             REQUIRE(c.alpha() == Approx(1.0));
         }
 
@@ -66,10 +66,10 @@ TEST_CASE("AssociativeArray", "[AssociativeArray]")
 
             Color c;
             h.getColor("color", c);
-            REQUIRE(c.red()   == Approx(C(.23)));
-            REQUIRE(c.green() == Approx(C(.34)));
-            REQUIRE(c.blue()  == Approx(C(.45)));
-            REQUIRE(c.alpha() == Approx(C(.56)));
+            REQUIRE(c.red()   == Approx(C(.23f)));
+            REQUIRE(c.green() == Approx(C(.34f)));
+            REQUIRE(c.blue()  == Approx(C(.45f)));
+            REQUIRE(c.alpha() == Approx(C(.56f)));
 
         }
 

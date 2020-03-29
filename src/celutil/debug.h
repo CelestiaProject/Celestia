@@ -28,7 +28,7 @@
 #define LOG_LEVEL_DEBUG           4
 
 #if !defined(_DEBUG) && !defined(DEBUG)
-#define DPRINTF(level, format, ...)
+#define DPRINTF(level, format, ...) static_cast<void>(level);
 #else
 extern int debugVerbosity;
 template <typename... T>
