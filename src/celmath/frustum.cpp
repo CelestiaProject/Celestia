@@ -188,4 +188,4 @@ Frustum::transform(const Matrix4f& m)
     }
 }
 
-};
+}

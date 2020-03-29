@@ -293,7 +293,10 @@ void recursive_directory_iterator::pop()
 
 void recursive_directory_iterator::pop(std::error_code& ec)
 {
-    m_dirs->m_dirIters.pop_back();
+    if (m_dirs->m_dirIters.empty())
+        ec = std::error_code(errno, std::system_category()); // filesystem_error
+    else
+        m_dirs->m_dirIters.pop_back();
 }
 
 void recursive_directory_iterator::reset()
@@ -398,7 +401,12 @@ bool is_directory(const path& p, std::error_code& ec) noexcept
     return (attr & FILE_ATTRIBUTE_DIRECTORY) != 0;
 #else
     struct stat buf;
-    return (stat(p.c_str(), &buf) == 0) && S_ISDIR(buf.st_mode);
+    if (stat(p.c_str(), &buf) != 0)
+    {
+        ec = std::error_code(errno, std::system_category());
+        return false;
+    }
+    return S_ISDIR(buf.st_mode);
 #endif
 }
 

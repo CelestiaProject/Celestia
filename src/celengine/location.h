@@ -21,7 +21,9 @@ class Body;
 class Location : public AstroObject
 {
 public:
-    virtual Selection toSelection();
+    ~Location() override = default;
+
+    Selection toSelection() override;
 
     std::string getName(bool i18n = false) const;
     void setName(const std::string&);

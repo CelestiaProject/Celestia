@@ -76,9 +76,11 @@ class EllipticalOrbit : public Orbit
 
     double pericenterDistance;
     double eccentricity;
+#if 0
     double inclination;
     double ascendingNode;
     double argOfPeriapsis;
+#endif
     double meanAnomalyAtEpoch;
     double period;
     double epoch;

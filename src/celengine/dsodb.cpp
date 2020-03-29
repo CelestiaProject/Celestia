@@ -45,7 +45,7 @@ constexpr const float DSO_OCTREE_MAGNITUDE   = 8.0f;
 //constexpr const float DSO_EXTRA_ROOM         = 0.01f; // Reserve 1% capacity for extra DSOs
                                                       // (useful as a complement of binary loaded DSOs)
 
-constexpr char FILE_HEADER[]                 = "CEL_DSOs";
+//constexpr char FILE_HEADER[]                 = "CEL_DSOs";
 
 // Used to sort DSO pointers by catalog number
 struct PtrCatalogNumberOrderingPredicate
@@ -223,7 +223,8 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
     Parser    parser(&tokenizer);
 
 #ifdef ENABLE_NLS
-    const char *d = resourcePath.string().c_str();
+    string s = resourcePath.string();
+    const char *d = s.c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
 

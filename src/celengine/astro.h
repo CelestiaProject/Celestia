@@ -235,7 +235,7 @@ namespace astro
 
     extern const double SOLAR_IRRADIANCE;
     extern const double SOLAR_POWER;  // in Watts
-};
+}
 
 // Convert a date structure to a Julian date
 

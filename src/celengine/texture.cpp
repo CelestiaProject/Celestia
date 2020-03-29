@@ -428,7 +428,6 @@ ImageTexture::ImageTexture(Image& img,
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 #endif
 
-    int internalFormat = getInternalFormat(img.getFormat());
     bool genMipmaps = mipmap && !precomputedMipMaps;
 
 #if !defined(GL_ES) && defined(NO_GLU)
@@ -448,7 +447,7 @@ ImageTexture::ImageTexture(Image& img,
             LoadMiplessTexture(img, GL_TEXTURE_2D);
 #else
             gluBuild2DMipmaps(GL_TEXTURE_2D,
-                              internalFormat,
+                              getInternalFormat(img.getFormat()),
                               getWidth(), getHeight(),
                               (GLenum) img.getFormat(),
                               GL_UNSIGNED_BYTE,
@@ -546,7 +545,6 @@ TiledTexture::TiledTexture(Image& img,
         mipmap = false;
 
     GLenum texAddress = GetGLTexAddressMode(EdgeClamp);
-    int internalFormat = getInternalFormat(img.getFormat());
     int components = img.getComponents();
 
     // Create a temporary image which we'll use for the tile texels
@@ -667,7 +665,7 @@ TiledTexture::TiledTexture(Image& img,
 #endif
 #else
                     gluBuild2DMipmaps(GL_TEXTURE_2D,
-                                      internalFormat,
+                                      getInternalFormat(img.getFormat()),
                                       tileWidth, tileHeight,
                                       (GLenum) tile->getFormat(),
                                       GL_UNSIGNED_BYTE,
@@ -781,7 +779,6 @@ CubeMap::CubeMap(Image* faces[]) :
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
-    int internalFormat = getInternalFormat(format);
     bool genMipmaps = mipmap && !precomputedMipMaps;
 
 #if !defined(GL_ES) && defined(NO_GLU)
@@ -806,7 +803,7 @@ CubeMap::CubeMap(Image* faces[]) :
                 LoadMiplessTexture(*face, targetFace);
 #else
                 gluBuild2DMipmaps(targetFace,
-                                  internalFormat,
+                                  getInternalFormat(format),
                                   getWidth(), getHeight(),
                                   (GLenum) face->getFormat(),
                                   GL_UNSIGNED_BYTE,

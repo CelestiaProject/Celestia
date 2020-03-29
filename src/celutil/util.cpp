@@ -113,8 +113,8 @@ fs::path PathExp(const fs::path& filename)
     case 0: // successful
         break;
     case WRDE_NOSPACE:
-            // If the error was `WRDE_NOSPACE',
-            // then perhaps part of the result was allocated.
+        // If the error was `WRDE_NOSPACE',
+        // then perhaps part of the result was allocated.
         wordfree(&result);
     default: // some other error
         return filename;

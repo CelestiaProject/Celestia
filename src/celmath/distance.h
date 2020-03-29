@@ -28,5 +28,5 @@ template<class T> T distance(const Eigen::Matrix<T, 3, 1>& p, const Ray3<T>& r)
     else
         return (p - r.point(t)).norm();
 }
-};
+}
 #endif // _CELMATH_DISTANCE_H_

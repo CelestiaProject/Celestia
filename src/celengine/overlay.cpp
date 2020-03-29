@@ -226,7 +226,7 @@ void Overlay::restorePos()
 OverlayStreamBuf::OverlayStreamBuf()
 {
     setbuf(nullptr, 0);
-};
+}
 
 
 void OverlayStreamBuf::setOverlay(Overlay* o)

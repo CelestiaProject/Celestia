@@ -324,7 +324,7 @@ void Simulation::getSelectionLongLat(double& distance,
 void Simulation::gotoSurface(double duration)
 {
     activeObserver->gotoSurface(selection, duration);
-};
+}
 
 
 void Simulation::cancelMotion()

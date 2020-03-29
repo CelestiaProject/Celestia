@@ -91,4 +91,4 @@ class VertexObject
     GLenum     m_streamType{ 0 };
     std::map<GLint, PtrParams>* m_attribParams{ nullptr };
 };
-}; // namespace
+} // namespace

@@ -2723,7 +2723,7 @@ static UranianSatelliteOrbit* CreateUranianSatelliteOrbit(int n)
                                      uran_z_theta[n], uran_z_phi[n],
                                      uran_zeta_k[n], uran_zeta_theta[n],
                                      uran_zeta_phi[n]);
-};
+}
 
 
 /*! Orbit of Triton, from Seidelmann, _Explanatory Supplement to the
@@ -2985,13 +2985,12 @@ class HTC20Orbit : public CachingOrbit
  public:
     HTC20Orbit(int _nTerms, const double* _args, const double* _amplitudes,
                const HTC20Angles& _angles,
-               double _period, double _boundingRadius) :
+               double _period, double /*_boundingRadius*/) :
         nTerms(_nTerms),
         args(_args),
         amplitudes(_amplitudes),
         angles(_angles),
-        period(_period),
-        boundingRadius(_boundingRadius)
+        period(_period)
     {
     }
 
@@ -3034,7 +3033,6 @@ class HTC20Orbit : public CachingOrbit
     const double* amplitudes;
     HTC20Angles angles;
     double period;
-    double boundingRadius;
 
  public:
      static HTC20Orbit* CreateHeleneOrbit()

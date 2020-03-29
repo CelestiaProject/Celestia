@@ -27,6 +27,7 @@ class CelestiaCore;
 class ModelHelper
 {
  public:
+    virtual ~ModelHelper() = default;
     virtual Selection itemForInfoPanel(const QModelIndex&) = 0;
 };
 

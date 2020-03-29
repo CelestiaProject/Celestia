@@ -920,7 +920,9 @@ ReplaceGreekLetterAbbr(char *dst, unsigned int dstSize, const char* src, unsigne
 #endif
 
 static int findGreekNameIndexBySubstr(const std::string &, int = 0, unsigned int = UINT_MAX);
+#if 0
 static std::string firstGreekAbbrCompletion(const std::string &);
+#endif
 
 bool inline isSubstringIgnoringCase(const std::string &s0, const std::string &s1, size_t n)
 {
@@ -966,6 +968,7 @@ static size_t greekChunkLength(const std::string& str)
     return sp;
 }
 
+#if 0
 static std::string firstGreekAbbrCompletion(const std::string &s)
 {
     std::string ret;
@@ -984,6 +987,7 @@ static std::string firstGreekAbbrCompletion(const std::string &s)
 
     return ret;
 }
+#endif
 
 std::vector<std::string> getGreekCompletion(const std::string &s)
 {

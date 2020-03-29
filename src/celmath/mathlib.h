@@ -152,13 +152,13 @@ ellipsoidTangent(const Eigen::Matrix<T, 3, 1>& recipSemiAxes,
 
     return e + v * t1;
 }
-}; // namespace celmath
+} // namespace celmath
 
 #if __cplusplus < 201703L
 namespace std
 {
     using celmath::clamp;
-};
+}
 #endif
 
 constexpr long double operator"" _deg (long double deg)

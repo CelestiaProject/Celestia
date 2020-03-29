@@ -64,7 +64,7 @@ LegacyScript::LegacyScript(CelestiaCore *core) :
 {
 }
 
-bool LegacyScript::load(ifstream &scriptfile, const fs::path &path, string &errorMsg)
+bool LegacyScript::load(ifstream &scriptfile, const fs::path &/*path*/, string &errorMsg)
 {
     CommandParser parser(scriptfile, m_appCore->scriptMaps());
     CommandSequence* script = parser.parse();

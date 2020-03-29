@@ -147,9 +147,6 @@ class Model
         virtual ~OpacityComparator() = default;
 
         virtual bool operator()(const Mesh&, const Mesh&) const;
-
-     private:
-        int unused;
     };
 
  private:

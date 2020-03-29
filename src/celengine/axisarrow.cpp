@@ -56,7 +56,7 @@ static size_t initArrowAndLetters(VertexObject &vo)
     // head of the arrow
     vector<Vector3f> head;
 
-    for (int i = 0; i <= nSections; i++)
+    for (unsigned i = 0; i <= nSections; i++)
     {
         float c, s;
         sincos((i * 2.0f * (float)PI) / nSections, c, s);

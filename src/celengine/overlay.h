@@ -92,8 +92,6 @@ class Overlay : public std::ostream
     float xoffset{ 0.0f };
     float yoffset{ 0.0f };
 
-    float lineWidth { 1.0f };
-
     OverlayStreamBuf sbuf;
 
     Renderer& renderer;

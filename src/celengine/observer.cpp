@@ -120,7 +120,7 @@ Observer& Observer::operator=(const Observer& o)
 double Observer::getTime() const
 {
     return simTime;
-};
+}
 
 
 /*! Get the current real time. The time returned is a Julian date,
@@ -129,7 +129,7 @@ double Observer::getTime() const
 double Observer::getRealTime() const
 {
     return realTime;
-};
+}
 
 
 /*! Set the simulation time (Julian date, TDB time standard)
@@ -1263,7 +1263,7 @@ void Observer::gotoSurface(const Selection& sel, double duration)
     UniversalCoord nearSurfacePoint = UniversalCoord::Zero().offsetKm(dir);
 
     gotoLocation(nearSurfacePoint, q, duration);
-};
+}
 
 
 void Observer::cancelMotion()

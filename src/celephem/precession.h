@@ -64,4 +64,4 @@ extern EclipticAngles EclipticPrecessionAngles_P03(double T);
 extern PrecessionAngles PrecObliquity_P03(double T);
 extern EquatorialPrecessionAngles EquatorialPrecessionAngles_P03(double T);
 
-};
+}

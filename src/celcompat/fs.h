@@ -53,13 +53,13 @@ class path
 
     path() noexcept
     {
-    };
+    }
     path(const path&) = default;
     path(path&& p) noexcept :
         m_path(std::move(p.m_path)),
         m_fmt(p.m_fmt)
     {
-    };
+    }
     path(string_type&& p, format fmt = auto_format) :
         m_path(std::move(p)),
         m_fmt(fmt)
@@ -67,7 +67,7 @@ class path
 #ifdef _WIN32
         fixup_separators();
 #endif
-    };
+    }
     template<typename T> path(const T& p, format fmt = auto_format ) :
         m_path(encconv(p)),
         m_fmt(fmt)
@@ -75,7 +75,7 @@ class path
 #ifdef _WIN32
         fixup_separators();
 #endif
-    };
+    }
     ~path() = default;
     path& operator=(const path& p) = default;
     path& operator=(path&&) = default;
@@ -207,6 +207,7 @@ class path
 #ifdef _WIN32
         return p;
 #else
+        (void)p;
         return ""; // FIXME
 #endif
     }
@@ -408,5 +409,5 @@ bool exists(const path& p, std::error_code& ec) noexcept;
 
 bool is_directory(const path& p);
 bool is_directory(const path& p, std::error_code& ec) noexcept;
-};
-};
+}
+}

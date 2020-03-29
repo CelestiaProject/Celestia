@@ -11009,7 +11009,7 @@ static double SumSeries(const VSOPSeries& series, double t)
         x += term->A * cos(term->B + term->C * t);
 
     return x;
-};
+}
 
 class VSOP87Orbit : public CachingOrbit
 {

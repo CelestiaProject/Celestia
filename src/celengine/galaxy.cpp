@@ -105,7 +105,7 @@ static void GalaxyTextureEval(float u, float v, float /*w*/, unsigned char *pixe
     pixel[3] = pixVal;
 }
 
-static void ColorTextureEval(float u, float v, float /*w*/, unsigned char *pixel)
+static void ColorTextureEval(float u, float /*v*/, float /*w*/, unsigned char *pixel)
 {
     unsigned int i = (u*0.5f + 0.5f)*255.99f; // [-1, 1] -> [0, 255]
 
@@ -286,7 +286,7 @@ void Galaxy::render(const Vector3f& offset,
 
 struct GalaxyVertex
 {
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     Vector4f position;
     Matrix<GLshort, 4, 1> texCoord; // texCoord.x = x, texCoord.y = y, texCoord.z = color index, texCoord.w = alpha

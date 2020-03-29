@@ -179,7 +179,7 @@ public:
         celx.push(i);
         lua_replace(l, CelxLua::localIndex(2));
         return celx.pushClass(ret);
-    };
+    }
     template<typename V, typename K> static V value(std::pair<const K, V> &v)
     {
         return v.second;

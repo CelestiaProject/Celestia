@@ -92,9 +92,18 @@ private:
     ObjectList*                _objects;
 };
 
+// make clang happy
+#ifndef _MSC_VER
+template<> DynamicOctree<Star, float>::ExclusionFactorDecayFunction* DynamicOctree<Star, float>::decayFunction;
+template<> DynamicOctree<Star, float>::LimitingFactorPredicate* DynamicOctree<Star, float>::limitingFactorPredicate;
+template<> DynamicOctree<Star, float>::StraddlingPredicate* DynamicOctree<Star, float>::straddlingPredicate;
+template<> unsigned int DynamicOctree<Star, float>::SPLIT_THRESHOLD;
 
-
-
+template<> DynamicOctree<DeepSkyObject*, double>::ExclusionFactorDecayFunction* DynamicOctree<DeepSkyObject*, double>::decayFunction;
+template<> DynamicOctree<DeepSkyObject*, double>::LimitingFactorPredicate* DynamicOctree<DeepSkyObject *, double>::limitingFactorPredicate;
+template<> DynamicOctree<DeepSkyObject*, double>::StraddlingPredicate* DynamicOctree<DeepSkyObject *, double>::straddlingPredicate;
+template<> unsigned int DynamicOctree<DeepSkyObject*, double>::SPLIT_THRESHOLD;
+#endif
 
 template <class OBJ, class PREC> class StaticOctree
 {

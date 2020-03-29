@@ -22,8 +22,8 @@ VertexObject::VertexObject(GLenum bufferType) :
 }
 
 VertexObject::VertexObject(GLenum bufferType, GLsizeiptr bufferSize, GLenum streamType) :
-    m_bufferType(bufferType),
     m_bufferSize(bufferSize),
+    m_bufferType(bufferType),
     m_streamType(streamType)
 {
 }
@@ -191,4 +191,4 @@ void VertexObject::setVertexAttribArray(GLint location, GLint count, GLenum type
     PtrParams p = { offset, stride, count, type, normalized };
     (*m_attribParams)[location] = p;
 }
-}; // namespace
+} // namespace

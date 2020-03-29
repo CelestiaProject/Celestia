@@ -467,7 +467,7 @@ ShaderTypeString(ShaderVariableType type)
     default:
         return "unknown";
     }
-};
+}
 
 static string
 IndexedParameter(const char* name, unsigned int index0)
@@ -485,8 +485,8 @@ IndexedParameter(const char* name, unsigned int index0, unsigned int index1)
 class Sh_ExpressionContents
 {
 protected:
-    Sh_ExpressionContents()  {}
-    virtual ~Sh_ExpressionContents() = default;;
+    Sh_ExpressionContents() = default;
+    virtual ~Sh_ExpressionContents() = default;
 
 public:
     virtual string toString() const = 0;
@@ -769,64 +769,64 @@ private:
 Sh_Expression vec2(const Sh_Expression& x, const Sh_Expression& y)
 {
     return new Sh_BinaryFunctionExpression("vec2", x, y);
-};
+}
 
 Sh_Expression vec3(const Sh_Expression& x, const Sh_Expression& y, const Sh_Expression& z)
 {
     return new Sh_TernaryFunctionExpression("vec3", x, y, z);
-};
+}
 
 Sh_Expression dot(const Sh_Expression& v0, const Sh_Expression& v1)
 {
     return new Sh_BinaryFunctionExpression("dot", v0, v1);
-};
+}
 
 Sh_Expression cross(const Sh_Expression& v0, const Sh_Expression& v1)
 {
     return new Sh_BinaryFunctionExpression("cross", v0, v1);
-};
+}
 
 Sh_Expression sqrt(const Sh_Expression& v0)
 {
     return new Sh_UnaryFunctionExpression("sqrt", v0);
-};
+}
 
 Sh_Expression length(const Sh_Expression& v0)
 {
     return new Sh_UnaryFunctionExpression("length", v0);
-};
+}
 
 Sh_Expression normalize(const Sh_Expression& v0)
 {
     return new Sh_UnaryFunctionExpression("normalize", v0);
-};
+}
 
 Sh_Expression step(const Sh_Expression& f, const Sh_Expression& v)
 {
     return new Sh_BinaryFunctionExpression("step", f, v);
-};
+}
 
 Sh_Expression mix(const Sh_Expression& v0, const Sh_Expression& v1, const Sh_Expression& alpha)
 {
     return new Sh_TernaryFunctionExpression("mix", v0, v1, alpha);
-};
+}
 
 Sh_Expression texture2D(const Sh_Expression& sampler, const Sh_Expression& texCoord)
 {
     return new Sh_BinaryFunctionExpression("texture2D", sampler, texCoord);
-};
+}
 
 Sh_Expression texture2DLod(const Sh_Expression& sampler, const Sh_Expression& texCoord, const Sh_Expression& lod)
 {
     return new Sh_TernaryFunctionExpression("texture2DLod", sampler, texCoord, lod);
-};
+}
 
 Sh_Expression texture2DLodBias(const Sh_Expression& sampler, const Sh_Expression& texCoord, const Sh_Expression& lodBias)
 {
     // Use the optional third argument to texture2D to specify the LOD bias. Implemented with
     // a different function name here for clarity when it's used in a shader.
     return new Sh_TernaryFunctionExpression("texture2D", sampler, texCoord, lodBias);
-};
+}
 
 Sh_Expression sampler2D(const string& name)
 {
@@ -3346,7 +3346,7 @@ CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program,
 {
     initParameters();
     initSamplers();
-};
+}
 
 
 CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program) :

@@ -42,11 +42,8 @@ using namespace celestia;
 static
 void renderGeometryShadow_GLSL(Geometry* geometry,
                                FramebufferObject* shadowFbo,
-                               const RenderInfo& ri,
                                const LightingState& ls,
                                int lightIndex,
-                               float geometryScale,
-                               const Quaternionf& planetOrientation,
                                double tsec,
                                const Renderer* renderer,
                                Matrix4f *lightMatrix);
@@ -337,9 +334,7 @@ void renderGeometry_GLSL(Geometry* geometry,
         fmt::printf("bias: %f bits: %f clear: %f range: %f - %f, scale:%f\n", bias, bits, clear, range[0], range[1], scale);
 #endif
 
-        renderGeometryShadow_GLSL(geometry, shadowBuffer,
-                                  ri, ls, 0, geometryScale,
-                                  planetOrientation,
+        renderGeometryShadow_GLSL(geometry, shadowBuffer, ls, 0,
                                   tsec, renderer, &lightMatrix);
         renderer->setViewport(viewport);
 #ifdef DEPTH_BUFFER_DEBUG
@@ -916,11 +911,8 @@ Matrix4f directionalLightMatrix(const Vector3f& lightDirection)
 static
 void renderGeometryShadow_GLSL(Geometry* geometry,
                               FramebufferObject* shadowFbo,
-                              const RenderInfo& ri,
                               const LightingState& ls,
                               int lightIndex,
-                              float geometryScale,
-                              const Quaternionf& planetOrientation,
                               double tsec,
                               const Renderer* renderer,
                               Eigen::Matrix4f *lightMatrix)

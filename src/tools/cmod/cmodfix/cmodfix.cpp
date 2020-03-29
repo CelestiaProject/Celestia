@@ -83,6 +83,7 @@ class VertexComparator
 {
 public:
     virtual bool compare(const Vertex& a, const Vertex& b) const = 0;
+    virtual ~VertexComparator() = default;
 
     bool operator()(const Vertex& a, const Vertex& b) const
     {
@@ -528,7 +529,7 @@ copyVertex(void* newVertexData,
 
     for (uint32_t i = 0; i < newDesc.nAttributes; i++)
     {
-        if (fromOffsets[i] != ~0)
+        if (fromOffsets[i] != ~0u)
         {
             memcpy(newVertex + newDesc.attributes[i].offset,
                    oldVertex + fromOffsets[i],
@@ -1030,7 +1031,7 @@ generateTangents(Mesh& mesh,
     }
 
     uint32_t posOffset = desc.getAttribute(Mesh::Position).offset;
-    uint32_t normOffset = desc.getAttribute(Mesh::Normal).offset;
+    //uint32_t normOffset = desc.getAttribute(Mesh::Normal).offset;
     uint32_t texCoordOffset = desc.getAttribute(Mesh::Texture0).offset;
 
     const void* vertexData = mesh.getVertexData();

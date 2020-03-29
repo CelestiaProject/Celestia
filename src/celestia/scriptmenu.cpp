@@ -75,8 +75,16 @@ ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
 {
     vector<ScriptMenuItem>* scripts = new vector<ScriptMenuItem>;
 
-    for (const auto& p : fs::recursive_directory_iterator(scriptsDir))
-        process(p, scripts);
+    if (deep)
+    {
+        for (const auto& p : fs::recursive_directory_iterator(scriptsDir))
+            process(p, scripts);
+    }
+    else
+    {
+        for (const auto& p : fs::directory_iterator(scriptsDir))
+            process(p, scripts);
+    }
 
     return scripts;
 }

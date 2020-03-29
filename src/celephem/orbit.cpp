@@ -184,9 +184,11 @@ EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
                                  double _epoch) :
     pericenterDistance(_pericenterDistance),
     eccentricity(_eccentricity),
+#if 0
     inclination(_inclination),
     ascendingNode(_ascendingNode),
     argOfPeriapsis(_argOfPeriapsis),
+#endif
     meanAnomalyAtEpoch(_meanAnomalyAtEpoch),
     period(_period),
     epoch(_epoch)
