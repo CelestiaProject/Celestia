@@ -14,7 +14,7 @@
 #define _QTEVENTFINDER_H_
 
 #include <QDockWidget>
-#include <QTime>
+#include <QElapsedTimer>
 #include <celestia/eclipsefinder.h>
 
 class QTreeView;
@@ -66,7 +66,7 @@ class EventFinder : public QDockWidget, EclipseFinderWatcher
     double searchSpan{ 0.0 };
     double lastProgressUpdate{ 0.0 };
 
-    QTime searchTimer;
+    QElapsedTimer searchTimer;
 
     const Eclipse* activeEclipse{ nullptr };
 };

@@ -361,7 +361,7 @@ MainWindow::buildTxf(const QFont& font, QDataStream& out, int texWidth, int texH
         out << (quint16) info.ch.unicode();
         out << (quint8) (bounds.width() + 2) << (quint8) (bounds.height() + 2);
         out << (qint8) bounds.left() << (qint8) (-bounds.bottom());
-#if QT_VERSION >= 0x051100
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
         out << (qint8) fm.horizontalAdvance(info.ch);
 #else
         out << (qint8) fm.width(info.ch);
