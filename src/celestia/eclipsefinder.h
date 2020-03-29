@@ -41,6 +41,7 @@ class EclipseFinderWatcher
     };
 
     virtual Status eclipseFinderProgressUpdate(double t) = 0;
+    virtual ~EclipseFinderWatcher() = default;
 };
 
 class EclipseFinder

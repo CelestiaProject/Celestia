@@ -148,5 +148,5 @@ Ortho2D(T left, T right, T bottom, T top)
     return Ortho(left, right, bottom, top, T(-1), T(1));
 }
 
-}; // namespace celmath
+} // namespace celmath
 #endif // _CELMATH_GEOMUTIL_H_

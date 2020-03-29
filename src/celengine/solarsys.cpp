@@ -1084,7 +1084,8 @@ bool LoadSolarSystemObjects(istream& in,
     Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
-    const char* d = directory.string().c_str();
+    string s = directory.string();
+    const char* d = s.c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
 

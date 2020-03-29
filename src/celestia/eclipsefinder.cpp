@@ -36,7 +36,7 @@ EclipseFinder::EclipseFinder(Body* _body,
     body(_body),
     watcher(_watcher)
 {
-};
+}
 
 
 bool testEclipse(const Body& receiver, const Body& caster, double now)

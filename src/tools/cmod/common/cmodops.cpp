@@ -27,6 +27,7 @@ using namespace std;
 struct VertexComparator
 {
     virtual bool compare(const Vertex& a, const Vertex& b) const = 0;
+    virtual ~VertexComparator() = default;
 
     bool operator()(const Vertex& a, const Vertex& b) const
     {
@@ -66,8 +67,6 @@ private:
 class PointOrderingPredicate : public VertexComparator
 {
 public:
-    PointOrderingPredicate() = default;
-
     bool compare(const Vertex& a, const Vertex& b) const override
     {
         const Vector3f* p0 = reinterpret_cast<const Vector3f*>(a.attributes);

@@ -6,7 +6,7 @@ uint32_t NameDatabase::getNameCount() const
     return nameIndex.size();
 }
 
-void NameDatabase::add(const AstroCatalog::IndexNumber catalogNumber, const std::string& name, bool replaceGreek)
+void NameDatabase::add(const AstroCatalog::IndexNumber catalogNumber, const std::string& name, bool /*replaceGreek*/)
 {
     if (name.length() != 0)
     {

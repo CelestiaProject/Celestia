@@ -180,8 +180,6 @@ void TextureFontPrivate::initCommonGlyphs()
 
 void TextureFontPrivate::computeTextureSize()
 {
-    FT_GlyphSlot g = m_face->glyph;
-
     int roww = 0;
     int rowh = 0;
     int w = 0;
@@ -322,7 +320,7 @@ Glyph& TextureFontPrivate::getGlyph(wchar_t ch, wchar_t fallback)
     return g.ch == ch ? g : getGlyph(fallback);
 }
 
-Glyph g_badGlyph = {0};
+Glyph g_badGlyph = {0, 0, 0, 0, 0, 0, 0, 0.0f, 0.0f};
 Glyph& TextureFontPrivate::getGlyph(wchar_t ch)
 {
     auto pos = toPos(ch);

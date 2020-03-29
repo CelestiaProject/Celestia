@@ -124,6 +124,6 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
     }
     return false;
 }
-}; // namespace celmath
+} // namespace celmath
 
 #endif // _CELMATH_INTERSECT_H_

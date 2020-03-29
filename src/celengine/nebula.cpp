@@ -82,7 +82,7 @@ bool Nebula::load(AssociativeArray* params, const fs::path& resPath)
 }
 
 
-void Nebula::render(const Vector3f& offset,
+void Nebula::render(const Vector3f& /*offset*/,
                     const Quaternionf& /*unused*/,
                     float /*unused*/,
                     float pixelSize,

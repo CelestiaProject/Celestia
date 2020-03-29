@@ -33,11 +33,13 @@ using namespace celmath;
 
 constexpr const char HDCatalogPrefix[]        = "HD ";
 constexpr const char HIPPARCOSCatalogPrefix[] = "HIP ";
+constexpr const char TychoCatalogPrefix[]     = "TYC ";
+constexpr const char SAOCatalogPrefix[]       = "SAO ";
+#if 0
 constexpr const char GlieseCatalogPrefix[]    = "Gliese ";
 constexpr const char RossCatalogPrefix[]      = "Ross ";
 constexpr const char LacailleCatalogPrefix[]  = "Lacaille ";
-constexpr const char TychoCatalogPrefix[]     = "TYC ";
-constexpr const char SAOCatalogPrefix[]       = "SAO ";
+#endif
 
 // The size of the root star octree node is also the maximum distance
 // distance from the Sun at which any star may be located. The current
@@ -1165,7 +1167,8 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
     Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
-    const char *d = resourcePath.string().c_str();
+    string s = resourcePath.string();
+    const char *d = s.c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
 

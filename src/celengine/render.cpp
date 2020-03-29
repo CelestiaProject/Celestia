@@ -1831,7 +1831,7 @@ void renderPoint(const Renderer &renderer,
 // object to smooth things out, making it dimmer as the disc size exceeds the
 // max disc size.
 void Renderer::renderObjectAsPoint(const Vector3f& position,
-                                   float radius,
+                                   float /*radius*/,
                                    float appMag,
                                    float _faintestMag,
                                    float discSizeInPixels,

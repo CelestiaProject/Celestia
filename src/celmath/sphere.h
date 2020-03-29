@@ -46,6 +46,6 @@ template<class T> class Sphere
 typedef Sphere<float>   Spheref;
 typedef Sphere<double>  Sphered;
 
-}; // namespace celmath
+} // namespace celmath
 
 #endif // _CELMATH_SPHERE_H_

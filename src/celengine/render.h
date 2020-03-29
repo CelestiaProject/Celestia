@@ -40,7 +40,7 @@ class FramebufferObject;
 namespace celmath
 {
 class Frustum;
-};
+}
 
 struct Matrices
 {

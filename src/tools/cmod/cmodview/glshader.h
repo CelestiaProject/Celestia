@@ -156,7 +156,7 @@ private:
 
 
 template<typename SCALAR, int ROWS, int COLS> inline void
-glsh_setUniformValue(GLhandleARB id, const char* name, const SCALAR* data)
+glsh_setUniformValue(GLhandleARB /*id*/, const char* /*name*/, const SCALAR* /*data*/)
 {
 }
 

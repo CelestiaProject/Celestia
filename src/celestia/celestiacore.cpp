@@ -141,7 +141,6 @@ float ComputeRotationCoarseness(Simulation& sim)
 
 
 CelestiaCore::CelestiaCore() :
-    oldFOV(stdFOV),
     /* Get a renderer here so it may be queried for capabilities of the
        underlying engine even before rendering is enabled. It's initRenderer()
        routine will be called much later. */
@@ -151,7 +150,8 @@ CelestiaCore::CelestiaCore() :
 #ifdef CELX
     m_luaPlugin(make_unique<LuaScriptPlugin>(this)),
 #endif
-    m_scriptMaps(make_shared<ScriptMaps>())
+    m_scriptMaps(make_shared<ScriptMaps>()),
+    oldFOV(stdFOV)
 {
 
     for (int i = 0; i < KeyCount; i++)
@@ -3190,7 +3190,7 @@ void CelestiaCore::renderOverlay()
                     // Skip displaying the English name if a localized version is present.
                     string starName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star());
                     string locStarName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true);
-                    if (sel.star()->getIndex() == 0 && selectionNames.find("Sun") != string::npos && (const char*) "Sun" != _("Sun"))
+                    if (sel.star()->getIndex() == 0 && selectionNames.find("Sun") != string::npos && strcmp("Sun", _("Sun")) != 0)
                     {
                         string::size_type startPos = selectionNames.find("Sun");
                         string::size_type endPos = selectionNames.find(_("Sun"));

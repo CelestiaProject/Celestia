@@ -22,4 +22,4 @@ struct NutationAngles
 
 extern NutationAngles Nutation_IAU2000B(double T);
 
-};
+}

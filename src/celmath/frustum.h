@@ -63,6 +63,6 @@ class Frustum
     bool infinite;
 };
 
-}; // namespace celmath
+} // namespace celmath
 
 #endif // _CELMATH_FRUSTUM_H_

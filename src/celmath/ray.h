@@ -64,6 +64,6 @@ template<class T> Eigen::Matrix<T, 3, 1> Ray3<T>::point(T t) const
     return origin + direction * t;
 }
 
-}; // namespace celmath
+} // namespace celmath
 
 #endif // _CELMATH_RAY_H_

@@ -65,6 +65,6 @@ template<class T> class Ellipsoid
 typedef Ellipsoid<float>   Ellipsoidf;
 typedef Ellipsoid<double>  Ellipsoidd;
 
-}; // namespace celmath
+} // namespace celmath
 
 #endif // _CELMATH_ELLIPSOID_H_

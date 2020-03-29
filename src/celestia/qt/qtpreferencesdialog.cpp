@@ -706,15 +706,19 @@ void PreferencesDialog::on_featureSizeEdit_textEdited(const QString& text)
 }
 
 
+#ifdef USE_GLCONTEXT
 void PreferencesDialog::on_renderPathBox_currentIndexChanged(int index)
 {
-#ifdef USE_GLCONTEXT
     GLContext* glContext = appCore->getRenderer()->getGLContext();
     QVariant itemData = ui.renderPathBox->itemData(index, Qt::UserRole);
     GLContext::GLRenderPath renderPath = (GLContext::GLRenderPath) itemData.toInt();
     glContext->setRenderPath(renderPath);
-#endif
 }
+#else
+void PreferencesDialog::on_renderPathBox_currentIndexChanged(int /*index*/)
+{
+}
+#endif
 
 
 void PreferencesDialog::on_antialiasLinesCheck_stateChanged(int state)

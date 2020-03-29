@@ -79,4 +79,4 @@ template<class T, class F> std::pair<T, T> solve_iteration_fixed(F f,
     return std::make_pair(x2, x2 - x);
 }
 
-}; // namespace celmath
+} // namespace celmath

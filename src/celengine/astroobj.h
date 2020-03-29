@@ -18,6 +18,8 @@ class AstroObject
 {
     AstroCatalog::IndexNumber m_mainIndexNumber { AstroCatalog::InvalidIndex };
 public:
+    virtual ~AstroObject() = default;
+
     AstroCatalog::IndexNumber getIndex() const { return m_mainIndexNumber; }
     void setIndex(AstroCatalog::IndexNumber);
 

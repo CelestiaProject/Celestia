@@ -447,7 +447,7 @@ bool CheckStarRecord(istream& in)
     in.read(buf, TycStarRecordLength);
     lineno++;
 
-    if (sscanf(buf + 210, "%d", &star.HIPCatalogNumber) != 1)
+    if (sscanf(buf + 210, "%u", &star.HIPCatalogNumber) != 1)
     {
         // Not in Hipparcos, skip it.
         if (verbose>1)
@@ -472,7 +472,7 @@ bool CheckStarRecord(istream& in)
         hipstar->tycline=lineno;
 
     tested++;
-    sscanf(buf + 309, "%d", &star.HDCatalogNumber);
+    sscanf(buf + 309, "%u", &star.HDCatalogNumber);
 
     if (sscanf(buf + 224, "%f", &star.e_Mag) != 1)
         /* Tycho Database gives no error in for VMag, so we use error on BTmag
@@ -649,13 +649,13 @@ bool ReadStarRecord(istream& in)
 
     in.read(buf, HipStarRecordLength);
 
-    if (sscanf(buf + 8, "%d", &star.HIPCatalogNumber) != 1)
+    if (sscanf(buf + 8, "%u", &star.HIPCatalogNumber) != 1)
     {
         cout << "Error reading catalog number.\n";
         return false;
     }
 
-    sscanf(buf + 390, "%d", &star.HDCatalogNumber);
+    sscanf(buf + 390, "%u", &star.HDCatalogNumber);
     star.tycline=0;
 
     if (sscanf(buf + 41, "%f", &star.appMag) != 1)
@@ -875,7 +875,7 @@ bool ReadComponentRecord(istream& in)
     components.push_back(component);
 
     return true;
-};
+}
 
 
 void BuildMultistarSystemCatalog()

@@ -170,7 +170,7 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ofstream& hdOut,
         float  parallax      = readFloat(in);
         int16_t  appMag        = readShort(in);
         uint16_t stellarClass  = readUshort(in);
-        uint8_t  parallaxError = readUbyte(in);
+        /*uint8_t  parallaxError = */readUbyte(in); // not used yet
 
         // Compute distance based on parallax
         double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
@@ -198,7 +198,7 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ofstream& hdOut,
         out << '\n';
 
         // Dump HD catalog cross reference
-        if (hdOut.is_open() && HDCatalogNum != ~0)
+        if (hdOut.is_open() && HDCatalogNum != ~0u)
             hdOut << HDCatalogNum << ' ' << catalogNum << '\n';
     }
 
@@ -250,7 +250,7 @@ bool DumpStarDatabase(istream& in, ostream& out, bool spherical)
 
         out << catalogNum << ' ';
         out << setprecision(7);
-        
+
         if (spherical)
         {
             Eigen::Vector3d eclipticpos = {(double) x, (double) y, (double) z};
@@ -263,7 +263,7 @@ bool DumpStarDatabase(istream& in, ostream& out, bool spherical)
             double ra = theta - 180 + 360;
             double dec = phi + 90;
             float appMag = float (absMag / 256.0 - 5 + 5 * log10(distance / LY_PER_PARSEC));
-            
+
             out << fixed << setprecision(9) << (float) ra << ' ' << (float) dec << ' ';
             out << setprecision(6) << (float) distance << ' ';
             out << setprecision(2);
@@ -275,7 +275,7 @@ bool DumpStarDatabase(istream& in, ostream& out, bool spherical)
             out << setprecision(4);
             out << ((float) absMag / 256.0f) << ' ';
         }
-        
+
         printStellarClass(stellarClass, out);
         out << '\n';
     }

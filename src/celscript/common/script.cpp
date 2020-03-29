@@ -14,7 +14,7 @@ namespace celestia
 namespace scripts
 {
 
-bool IScript::handleMouseButtonEvent(float x, float y, int button, bool down)
+bool IScript::handleMouseButtonEvent(float /*x*/, float /*y*/, int /*button*/, bool /*down*/)
 {
     return false;
 }
@@ -24,12 +24,12 @@ bool IScript::charEntered(const char*)
     return false;
 }
 
-bool IScript::handleKeyEvent(const char* key)
+bool IScript::handleKeyEvent(const char* /*key*/)
 {
     return false;
 }
 
-bool IScript::handleTickEvent(double dt)
+bool IScript::handleTickEvent(double /*dt*/)
 {
     return false;
 }

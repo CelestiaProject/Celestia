@@ -108,7 +108,6 @@ static void writeShort(ostream& out, int16_t n)
 
 bool WriteStarDatabase(istream& in, ostream& out, bool sphericalCoords)
 {
-    unsigned int record = 0;
     unsigned int nStarsInFile = 0;
 
     in >> nStarsInFile;
