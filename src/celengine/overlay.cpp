@@ -188,19 +188,29 @@ void Overlay::drawRectangle(const Rect& r)
     renderer.drawRectangle(r);
 }
 
-void Overlay::setColor(float r, float g, float b, float a) const
+void Overlay::setColor(float r, float g, float b, float a)
 {
     glColor4f(r, g, b, a);
 }
 
-void Overlay::setColor(const Color& c) const
+void Overlay::setColor(const Color& c)
 {
     glColor4f(c.red(), c.green(), c.blue(), c.alpha());
 }
 
-void Overlay::moveBy(float dx, float dy, float dz) const
+void Overlay::moveBy(float dx, float dy, float dz)
 {
     glTranslatef(dx, dy, dz);
+}
+
+void Overlay::savePos()
+{
+    glPushMatrix();
+}
+
+void Overlay::restorePos()
+{
+    glPopMatrix();
 }
 
 //
