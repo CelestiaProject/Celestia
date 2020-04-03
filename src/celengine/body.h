@@ -20,11 +20,10 @@
 #include <celutil/utf8.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-#include "glsupport.h"
 #include <string>
 #include <vector>
-#include <array>
 #include <map>
+#include <memory>
 #include <list>
 
 class Selection;
@@ -81,6 +80,18 @@ class PlanetarySystem
 };
 
 
+class RingRenderData
+{
+ public:
+    RingRenderData() = default;
+    virtual ~RingRenderData() = default;
+    RingRenderData(const RingRenderData&) = delete;
+    RingRenderData(RingRenderData&&) = delete;
+    RingRenderData& operator=(const RingRenderData&) = delete;
+    RingRenderData& operator=(RingRenderData&&) = delete;
+};
+
+
 class RingSystem
 {
  public:
@@ -88,7 +99,7 @@ class RingSystem
     float outerRadius;
     Color color;
     MultiResTexture texture;
-    std::array<GLuint, 4> vboId {{ 0, 0, 0, 0 }};
+    std::shared_ptr<RingRenderData> renderData;
 
     RingSystem(float inner, float outer) :
         innerRadius(inner), outerRadius(outer),

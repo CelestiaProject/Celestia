@@ -12,6 +12,7 @@
 
 #include <config.h>
 #include <algorithm>
+#include <memory>
 #include "framebuffer.h"
 #include "geometry.h"
 #include "lodspheremesh.h"
@@ -644,6 +645,18 @@ static void renderRingSystem(GLuint *vboId,
 }
 
 
+class GLRingRenderData : public RingRenderData
+{
+ public:
+    ~GLRingRenderData() override
+    {
+        glDeleteBuffers(vboId.size(), vboId.data());
+        vboId.fill(0);
+    }
+
+    std::array<GLuint, 4> vboId {{ 0, 0, 0, 0 }};
+};
+
 // Render a planetary ring system
 void renderRings_GLSL(RingSystem& rings,
                       RenderInfo& ri,
@@ -755,16 +768,20 @@ void renderRings_GLSL(RingSystem& rings,
     if (ringsTex != nullptr)
         ringsTex->bind();
 
+    if (rings.renderData == nullptr)
+        rings.renderData = make_shared<GLRingRenderData>();
+    auto data = reinterpret_cast<GLRingRenderData*>(rings.renderData.get());
+
     unsigned nSections = 180;
     size_t i = 0;
-    for (i = 0; i < rings.vboId.size() - 1; i++)
+    for (i = 0; i < data->vboId.size() - 1; i++)
     {
         float s = segmentSizeInPixels * tan(PI / nSections);
         if (s < 30.0f) // TODO: make configurable
             break;
         nSections <<= 1;
     }
-    renderRingSystem(&rings.vboId[i], inner, outer, nSections);
+    renderRingSystem(&data->vboId[i], inner, outer, nSections);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
