@@ -3717,7 +3717,6 @@ void Renderer::renderObject(const Vector3f& pos,
     ri.ambientColor = ambientColor;
     ri.specularColor = obj.surface->specularColor;
     ri.specularPower = obj.surface->specularPower;
-    ri.useTexEnvCombine = true;
     ri.lunarLambert = obj.surface->lunarLambert;
 #ifdef USE_HDR
     ri.nightLightScale = obj.surface->nightLightRadiance * exposure * 1.e5f * .5f;

@@ -36,7 +36,6 @@ struct RenderInfo
     Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
     float pixWidth{ 1.0f };
     float pointScale{ 1.0f };
-    bool useTexEnvCombine{ false };
 };
 
 extern LODSphereMesh* g_lodSphere;
