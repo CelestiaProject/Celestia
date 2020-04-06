@@ -117,26 +117,6 @@ class ShaderProperties
     uint32_t simpleProps{ 0 };
 
  private:
-    // This struct is required to compare keys in ShaderManager
-    // Default one doesn't work properly in some cases.
-    struct Cmp
-    {
-        bool operator()(const ShaderProperties& lhs, const ShaderProperties& rhs) const
-        {
-            if (lhs.simpleProps != 0 && rhs.simpleProps != 0)
-                return lhs.simpleProps < rhs.simpleProps;
-            if (lhs.nLights != rhs.nLights)
-                return lhs.nLights < rhs.nLights;
-            if (lhs.texUsage != rhs.texUsage)
-                return lhs.texUsage < rhs.texUsage;
-            if (lhs.lightModel != rhs.lightModel)
-                return lhs.lightModel < rhs.lightModel;
-            if (lhs.shadowCounts != rhs.shadowCounts)
-                return lhs.shadowCounts < rhs.shadowCounts;
-            return lhs.effects < rhs.effects;
-        }
-    };
-
     enum
     {
         ShadowBitsPerLight = 8,
@@ -331,7 +311,7 @@ class ShaderManager
     GLVertexShader* buildSimpleVertexShader(uint32_t);
     GLFragmentShader* buildSimpleFragmentShader(uint32_t);
 
-    std::map<ShaderProperties, CelestiaGLProgram*, ShaderProperties::Cmp> dynamicShaders;
+    std::map<ShaderProperties, CelestiaGLProgram*> dynamicShaders;
     std::map<std::string, CelestiaGLProgram*> staticShaders;
 };
 

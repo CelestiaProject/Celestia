@@ -254,6 +254,11 @@ ShaderProperties::usesTangentSpaceLighting() const
 
 bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 {
+    if (p0.simpleProps < p1.simpleProps)
+        return true;
+    if (p1.simpleProps < p0.simpleProps)
+        return false;
+
     if (p0.texUsage < p1.texUsage)
         return true;
     if (p1.texUsage < p0.texUsage)
