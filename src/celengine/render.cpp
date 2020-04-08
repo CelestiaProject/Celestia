@@ -81,15 +81,6 @@ std::ofstream hdrlog;
 #include <celttf/truetypefont.h>
 #endif
 #include "glsupport.h"
-#ifdef VIDEO_SYNC
-#ifdef _WIN32
-#include <GL/wglew.h>
-#else
-#ifndef __APPLE__
-#include <GL/glxew.h>
-#endif // __APPLE__
-#endif //_WIN32
-#endif // VIDEO_SYNC
 #include <algorithm>
 #include <cstring>
 #include <cassert>
@@ -305,7 +296,6 @@ Renderer::Renderer() :
     exposurePrev(1.0f),
     brightPlus(0.0f),
 #endif
-    videoSync(false),
     settingsChanged(true),
     objectAnnotationSetOpen(false)
 {
@@ -839,13 +829,11 @@ Renderer::setStarColorTable(const ColorTemperatureTable* ct)
 
 bool Renderer::getVideoSync() const
 {
-    return videoSync;
+    return true;
 }
 
-void Renderer::setVideoSync(bool sync)
+void Renderer::setVideoSync(bool /*sync*/)
 {
-    videoSync = sync;
-    markSettingsChanged();
 }
 
 
@@ -2639,15 +2627,6 @@ void Renderer::draw(const Observer& observer,
     if (errCode != GL_NO_ERROR)
     {
         cout << "glError: " << (char*) gluErrorString(errCode) << '\n';
-    }
-#endif
-
-#ifdef VIDEO_SYNC
-    if (videoSync && glXWaitVideoSyncSGI != nullptr)
-    {
-        unsigned int count;
-        glXGetVideoSyncSGI(&count);
-        glXWaitVideoSyncSGI(2, (count+1) & 1, &count);
     }
 #endif
 }

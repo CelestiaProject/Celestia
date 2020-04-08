@@ -248,8 +248,8 @@ class Renderer
 
     const ColorTemperatureTable* getStarColorTable() const;
     void setStarColorTable(const ColorTemperatureTable*);
-    bool getVideoSync() const;
-    void setVideoSync(bool);
+    [[deprecated]] bool getVideoSync() const;
+    [[deprecated]] void setVideoSync(bool);
     void setSolarSystemMaxDistance(float);
     void setShadowMapSize(unsigned);
 
@@ -767,7 +767,6 @@ class Renderer
 
     Selection highlightObject;
 
-    bool videoSync;
     bool settingsChanged;
 
     AsterismRenderer* m_asterismRenderer { nullptr };
