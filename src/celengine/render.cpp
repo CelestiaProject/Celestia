@@ -229,6 +229,7 @@ constexpr const uint64_t ShowSSO = Renderer::ShowPlanets      |
                                    Renderer::ShowMinorMoons   |
                                    Renderer::ShowAsteroids    |
                                    Renderer::ShowComets       |
+                                   Renderer::ShowPlanetRings  |
                                    Renderer::ShowSpacecrafts;
 // Deep Sky Objects
 constexpr const uint64_t ShowDSO = Renderer::ShowGalaxies     |
