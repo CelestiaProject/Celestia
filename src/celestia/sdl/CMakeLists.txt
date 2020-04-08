@@ -1,0 +1,11 @@
+if(NOT ENABLE_SDL)
+  message(STATUS "SDL frontend is disabled.")
+  return()
+endif()
+
+find_package(SDL2 CONFIG REQUIRED)
+set(SDL_SOURCES sdlmain.cpp)
+add_executable(celestia-sdl ${SDL_SOURCES})
+target_include_directories(celestia-sdl PRIVATE ${SDL2_INCLUDE_DIRS})
+target_link_libraries(celestia-sdl ${CELESTIA_LIBS} ${SDL2_LIBRARIES})
+install(TARGETS celestia-sdl RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

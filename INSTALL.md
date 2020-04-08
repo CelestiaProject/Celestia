@@ -117,10 +117,13 @@ make
 sudo make install
 ```
 
-[*] `INTERFACE` must be replaced with one of "`QT`", "`GTK`", or "`GLUT`".
+[*] `INTERFACE` must be replaced with one of "`QT`", "`GTK`", "`SDL`" or
+"`GLUT`".
 
-Three interfaces are available for Celestia on Unix-like systems:
+Four interfaces are available for Celestia on Unix-like systems:
 - GLUT: minimal interface, barebone Celestia core with no toolbar or menu...
+       Disabled by default.
+- SDL: minimal interface, barebone Celestia core with no toolbar or menu...
        Disabled by default.
 - GTK: A full interface with minimal dependencies, adds a menu, a configuration
        dialog some other utilities. Legacy interface, may lack some new
@@ -228,6 +231,7 @@ Install optional packages:
 
 ```
 pacman -S mingw-w64-x86_64-fmt mingw-w64-x86_64-eigen3 mingw-w64-x86_64-luajit
+pacman -S mingw-w64-x86_64-sld2
 ```
 
 Clone the source and go to the source directory.
@@ -325,6 +329,7 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_GLUT          | bool | OFF     | Build simple Glut frontend
 | ENABLE_GTK           | bool | \*\*OFF   | Build legacy GTK2 frontend
 | ENABLE_QT            | bool | ON      | Build Qt frontend
+| ENABLE_SDL           | bool | OFF     | Build SQL frontend
 | ENABLE_WIN           | bool | \*\*\*ON   | Build Windows native frontend
 | ENABLE_THEORA        | bool | \*\*ON    | Support video capture to OGG Theora
 | ENABLE_TOOLS         | bool | OFF     | Build tools for Celestia data files
@@ -364,4 +369,5 @@ Here's the table which provides executable file names accordingly to interface:
 | Qt5       | celestia-qt
 | GTK       | celestia-gtk
 | GLUT      | celestia-glut
+| SDL       | celestia-sdl
 | WIN       | celestia-win
