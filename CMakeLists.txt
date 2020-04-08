@@ -14,6 +14,11 @@ if(POLICY CMP0072)
   endif()
 endif()
 
+# Remove leading and trailing whitespace from libraries linked
+if(POLICY CMP0004)
+  cmake_policy(SET CMP0004 OLD)
+endif()
+
 project(celestia VERSION 1.7.0 LANGUAGES C CXX)
 set(DISPLAY_NAME "Celestia")
 #
@@ -25,6 +30,7 @@ option(ENABLE_NLS     "Enable interface translation? (Default: on)" ON)
 option(ENABLE_GLUT    "Build simple Glut frontend? (Default: on)" OFF)
 option(ENABLE_GTK     "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
 option(ENABLE_QT      "Build Qt frontend? (Default: on)" ON)
+option(ENABLE_SDL     "Build SDL frontend? (Default: off)" OFF)
 option(ENABLE_WIN     "Build Windows native frontend? (Default: on)" ON)
 option(ENABLE_THEORA  "Support video capture to OGG Theora? (Default: on)" ON)
 option(ENABLE_TOOLS   "Build different tools? (Default: off)" OFF)

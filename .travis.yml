@@ -35,7 +35,7 @@ before_script:
 - cd build
 
 script:
-- cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TTF=ON -DENABLE_TESTS=ON -DENABLE_GLEW=OFF ..
+- cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TTF=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON ..
 - make -j $(nproc || echo 4)
 - CTEST_OUTPUT_ON_FAILURE=1 ctest
 
@@ -52,6 +52,7 @@ addons:
     - qtbase5-dev-tools
     - libqt5opengl5-dev
     - libfreetype6-dev
+    - libsdl2-dev
   homebrew:
     packages:
     - eigen
@@ -64,4 +65,5 @@ addons:
     - qt5
     - freetype
     - libepoxy
+    - sdl2
     update: true
