@@ -49,7 +49,6 @@ void actionFullScreen(GtkAction*, AppData*);
 void actionViewOptions(GtkAction*, AppData*);
 void actionStarsMore(GtkAction*, AppData*);
 void actionStarsFewer(GtkAction*, AppData*);
-void actionVideoSync(GtkToggleAction*, AppData*);
 void actionMenuBarVisible(GtkToggleAction*, AppData*);
 void actionMultiSplitH(GtkAction*, AppData*);
 void actionMultiSplitV(GtkAction*, AppData*);

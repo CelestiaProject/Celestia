@@ -39,7 +39,6 @@ Q_OBJECT
     void slotSetTextureResolution();
     void slotAdjustLimitingMagnitude();
     void slotSetLightTimeDelay();
-    void slotToggleVsync();
 
  private:
     void syncWithRenderer(const Renderer* renderer);

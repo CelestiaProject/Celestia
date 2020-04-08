@@ -568,16 +568,6 @@ void actionStarsFewer(GtkAction*, AppData* app)
 }
 
 
-void actionVideoSync(GtkToggleAction* action, AppData* app)
-{
-    app->renderer->setVideoSync(gtk_toggle_action_get_active(action));
-
-    #ifdef GNOME
-    gconf_client_set_bool(app->client, "/apps/celestia/videoSync", app->renderer->getVideoSync(), NULL);
-    #endif
-}
-
-
 void actionMenuBarVisible(GtkToggleAction* action, AppData* app)
 {
     g_object_set(G_OBJECT(app->mainMenu), "visible", gtk_toggle_action_get_active(action), NULL);

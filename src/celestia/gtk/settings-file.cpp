@@ -124,10 +124,6 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
     app->showLocalTime = g_key_file_get_boolean(file, "Main", "localTime", &e);
     if (e != NULL) app->showLocalTime = FALSE;
 
-    e = NULL;
-    app->renderer->setVideoSync(g_key_file_get_integer(file, "Main", "starStyle", &e));
-    if (e != NULL) app->renderer->setVideoSync(TRUE);
-
     /* All settings that need sanity checks get them */
     setSaneAmbientLight(app, ambientLight);
     setSaneVisualMagnitude(app, visualMagnitude);
@@ -245,8 +241,6 @@ void saveSettingsFile(AppData* app)
     g_key_file_set_integer(file, "Main", "textureResolution", app->renderer->getResolution());
     g_key_file_set_comment(file, "Main", "textureResolution", "Resolution of textures. 0=Low, 1=Medium, 2=High", NULL);
     g_key_file_set_string(file, "Main", "altSurfaceName", app->simulation->getActiveObserver()->getDisplayedSurface().c_str());
-    g_key_file_set_boolean(file, "Main", "videoSync", app->renderer->getVideoSync());
-    g_key_file_set_comment(file, "Main", "videoSync", "Sync Framerate to Video Refresh", NULL);
 
     g_key_file_set_integer(file, "Window", "width", getWinWidth(app));
     g_key_file_set_integer(file, "Window", "height", getWinHeight(app));

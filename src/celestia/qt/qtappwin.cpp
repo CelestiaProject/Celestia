@@ -523,9 +523,6 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("SyncTime", simulation->getSyncTime());
     settings.setValue("FramesVisible", m_appCore->getFramesVisible());
     settings.setValue("ActiveFrameVisible", m_appCore->getActiveFrameVisible());
-#ifdef VIDEO_SYNC
-    settings.setValue("VSync", m_appCore->getRenderer()->getVideoSync());
-#endif
 
     // TODO: This is not a reliable way determine when local time is enabled, but it's
     // all that CelestiaCore offers right now. useLocalTime won't ever be true when the system
@@ -1351,18 +1348,6 @@ void CelestiaAppWindow::createMenus()
     bool check;
     QSettings settings;
     settings.beginGroup("Preferences");
-#ifdef VIDEO_SYNC
-    if (settings.contains("VSync"))
-    {
-        check = settings.value("VSync").toBool();
-    }
-    else
-    {
-        check = m_appCore->getRenderer()->getVideoSync();
-    }
-    actions->toggleVSyncAction->setChecked(check);
-    m_appCore->getRenderer()->setVideoSync(check);
-#endif
 
     if (settings.contains("FramesVisible"))
     {
