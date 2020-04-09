@@ -827,7 +827,7 @@ template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const fs::path& 
 template <typename T> SampledOrbitXYZV<T>*
 LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation interpolation, T /*unused*/)
 {
-    ifstream in(filename.string());
+    ifstream in(filename.string(), ios::binary);
     if (!in.good())
     {
         fmt::fprintf(cerr, _("Error openning %s.\n"), filename);
