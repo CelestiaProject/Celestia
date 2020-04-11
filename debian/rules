@@ -20,6 +20,7 @@ override_dh_auto_configure:
 		-DENABLE_QT=ON		\
 		-DENABLE_TOOLS=ON	\
 		-DENABLE_TTF=ON		\
+		-DENABLE_DATA=OFF       \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DGIT_COMMIT="$$_git_commit"
 

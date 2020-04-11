@@ -33,7 +33,7 @@ option(FAST_MATH      "Build with unsafe fast-math compiller option (Default: of
 option(ENABLE_TTF     "Use TrueType fonts instead of TXF (Default: off)" OFF)
 option(ENABLE_TESTS   "Enable unit tests? (Default: off)" OFF)
 option(ENABLE_GLEW    "Use GLEW instead of libepoxy? (Default: on)" ON)
-option(ENABLE_DATA    "Install data from content submodule? (Default: off)" OFF)
+option(ENABLE_DATA    "Install data from content submodule? (Default: on)" ON)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type." FORCE)
