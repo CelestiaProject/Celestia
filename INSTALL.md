@@ -274,23 +274,23 @@ Install Homebrew
 Install required packages:
 
 ```
-brew install cmake cspice fmt gettext libpng lua qt5 jpeg eigen
+brew install cmake glew fmt gettext libpng lua qt5 jpeg eigen
 ```
 
-Build GLEW from source (Homebrew's precompiled GLEW has wrong linking path):
+Install optional packages:
 
 ```
-brew install glew --build-from-source
+brew install cspice
 ```
 
-Clone the source and go to the source directory.
+Follow common building instructions to fetch the source.
 
 Configure and build:
 
 ```
 mkdir build
 cd build
-cmake -DENABLE_SPICE=ON ..
+cmake ..
 make -jN
 ```
 
@@ -303,8 +303,8 @@ make install
 ```
 
 Celestia will be installed into /usr/local by default, with data files landing
-in /usr/local/share/celestia, but you may specify a new location with the
-following option to cmake: `-DCMAKE_INSTALL_PREFIX=/another/path`.
+in /usr/local/share/celestia, but you may want to specify a new location with
+the following option to cmake: `-DCMAKE_INSTALL_PREFIX=/another/path`.
 
 To build the application bundle, pass -DNATIVE_OSX_APP=ON to the cmake command,
 the application bundle will be located in the "build" folder that you previously
@@ -329,6 +329,7 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_THEORA        | bool | \*\*ON    | Support video capture to OGG Theora
 | ENABLE_TOOLS         | bool | OFF     | Build tools for Celestia data files
 | ENABLE_TTF           | bool | \*\*\*\*OFF | Build with FreeType support
+| ENABLE_DATA          | bool | OFF     | Use CelestiaContent submodule for data
 | NATIVE_OSX_APP       | bool | OFF     | Support native OSX data paths
 
 Notes:  
