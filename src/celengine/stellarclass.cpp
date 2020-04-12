@@ -76,7 +76,7 @@ string StellarClass::str() const
     case StellarClass::BlackHole:
         return "X";
     case StellarClass::NormalStar:
-        s0 = "OBAFGKMRSNWW?LTYC"[(unsigned int) getSpectralClass()];
+        s0 = "OBAFGKMRSNWWW?LTYC"[(unsigned int) getSpectralClass()];
         s1 = "0123456789"[getSubclass()];
         switch (getLuminosityClass())
         {
@@ -317,6 +317,11 @@ StellarClass::parse(const string& st)
                 break;
             case 'N':
                 specClass = StellarClass::Spectral_WN;
+                state = NormalStarSubclassState;
+                i++;
+                break;
+            case 'O':
+                specClass = StellarClass::Spectral_WO;
                 state = NormalStarSubclassState;
                 i++;
                 break;

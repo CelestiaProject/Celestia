@@ -106,7 +106,8 @@ static float tempM[3][10] =
 };
 
 // Wolf-Rayet temperatures. From Lang's Astrophysical Data: Planets and
-// Stars.
+// Stars. WO2 to WO4 temperatures taken from a sample of 6 WO stars.
+// Unused spectral types are filled in based on the closest type with data.
 static float tempWN[10] =
 {
     50000, 50000, 50000, 50000, 47000, 43000, 39000, 32000, 29000, 29000
@@ -115,6 +116,11 @@ static float tempWN[10] =
 static float tempWC[10] =
 {
     60000, 60000, 60000, 60000, 60000, 60000, 60000, 54000, 46000, 38000
+};
+
+static float tempWO[10] =
+{
+    210000, 210000, 200000, 160000, 140000, 130000, 130000, 130000, 130000, 130000
 };
 
 // Brown dwarf temperatures. From this website:
@@ -385,8 +391,8 @@ const char* SubclassNames[11] = {
 };
 
 const char* SpectralClassNames[StellarClass::NormalClassCount] = {
-    "O", "B", "A", "F", "G", "K", "M", "R",
-    "S", "N", "WC", "WN", "?", "L", "T", "Y", "C",
+    "O", "B", "A", "F", "G", "K", "M", "R", "S", "N",
+    "WC", "WN", "WO", "?", "L", "T", "Y", "C",
 };
 
 const char* WDSpectralClassNames[StellarClass::WDClassCount] = {
@@ -488,6 +494,7 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
             case StellarClass::Spectral_O:
             case StellarClass::Spectral_WN:
             case StellarClass::Spectral_WC:
+            case StellarClass::Spectral_WO:
                 subclass = 9;
                 break;
             case StellarClass::Spectral_Y:
@@ -564,6 +571,9 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
         case StellarClass::Spectral_WC:
             temp = tempWC[subclass];
             break;
+        case StellarClass::Spectral_WO:
+            temp = tempWO[subclass];
+            break;
         case StellarClass::Spectral_L:
             temp = tempL[subclass];
             break;
@@ -621,6 +631,7 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
 
         case StellarClass::Spectral_WC:
         case StellarClass::Spectral_WN:
+        case StellarClass::Spectral_WO:
             period = rotperiod_O[lumIndex][subclass];
             bmagCorrection = bmag_correctionO[lumIndex][subclass];
             break;
