@@ -197,18 +197,7 @@ StarDatabase::~StarDatabase()
 
 Star* StarDatabase::find(AstroCatalog::IndexNumber catalogNumber) const
 {
-    Star refStar;
-    refStar.setIndex(catalogNumber);
-
-    Star** star   = lower_bound(catalogNumberIndex,
-                                catalogNumberIndex + nStars,
-                                &refStar,
-                                PtrCatalogNumberOrderingPredicate());
-
-    if (star != catalogNumberIndex + nStars && (*star)->getIndex() == catalogNumber)
-        return *star;
-    else
-        return nullptr;
+    return Star::find(catalogNumber);
 }
 
 
@@ -692,27 +681,13 @@ bool StarDatabase::loadBinary(istream& in)
         nStars++;
     }
 
+    for(size_t i = 0; i < nStars; ++i)
+        unsortedStars[i].addToMainIndex();
+
     if (in.bad())
         return false;
 
     DPRINTF(LOG_LEVEL_ERROR, "StarDatabase::read: nStars = %d\n", nStarsInFile);
-    fmt::fprintf(clog, _("%d stars in binary database\n"), nStars);
-
-    // Create the temporary list of stars sorted by catalog number; this
-    // will be used to lookup stars during file loading. After loading is
-    // complete, the stars are sorted into an octree and this list gets
-    // replaced.
-    if (unsortedStars.size() > 0)
-    {
-        binFileStarCount = unsortedStars.size();
-        binFileCatalogNumberIndex = new Star*[binFileStarCount];
-        for (unsigned int i = 0; i < binFileStarCount; i++)
-        {
-            binFileCatalogNumberIndex[i] = &unsortedStars[i];
-        }
-        sort(binFileCatalogNumberIndex, binFileCatalogNumberIndex + binFileStarCount,
-             PtrCatalogNumberOrderingPredicate());
-    }
 
     return true;
 }
@@ -996,7 +971,7 @@ bool StarDatabase::createStar(Star* star,
     if (!modifyExistingDetails)
         star->setDetails(details);
     if (disposition != DataDisposition::Modify)
-        star->setIndex(catalogNumber);
+        star->setIndexAndAdd(catalogNumber);
 
     // Compute the position in rectangular coordinates.  If a star has an
     // orbit and barycenter, it's position is the position of the barycenter.
@@ -1245,13 +1220,9 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
             // Automatically generate a catalog number for the star if one isn't
             // supplied.
             if (catalogNumber == AstroCatalog::InvalidIndex)
-            {
-                catalogNumber = nextAutoCatalogNumber--;
-            }
+                catalogNumber = AstroObject::getAutoIndexAndUpdate();
             else
-            {
                 star = findWhileLoading(catalogNumber);
-            }
             break;
 
         case DataDisposition::Replace:
@@ -1264,13 +1235,9 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
             }
 
             if (catalogNumber == AstroCatalog::InvalidIndex)
-            {
-                catalogNumber = nextAutoCatalogNumber--;
-            }
+                catalogNumber = AstroObject::getAutoIndexAndUpdate();
             else
-            {
                 star = findWhileLoading(catalogNumber);
-            }
             break;
 
         case DataDisposition::Modify:
@@ -1313,12 +1280,13 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
         bool ok = false;
         if (isNewStar && disposition == DataDisposition::Modify)
         {
-            clog << "Modify requested for nonexistent star.\n";
+            clog << "Modify requested for new star.\n";
         }
         else
         {
             ok = createStar(star, disposition, catalogNumber, starData, resourcePath, !isStar);
-            star->loadCategories(starData, disposition, resourcePath.string());
+            if (ok)
+                star->loadCategories(starData, disposition, resourcePath.string());
         }
         delete starDataValue;
 
@@ -1364,7 +1332,10 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
         else
         {
             if (isNewStar)
+            {
                 delete star;
+                AstroObject::recoverAutoIndex();
+            }
             DPRINTF(LOG_LEVEL_INFO, "Bad star definition--will continue parsing file.\n");
         }
     }
@@ -1427,13 +1398,6 @@ void StarDatabase::buildIndexes()
     // This should only be called once for the database
     // assert(catalogNumberIndexes[0] == nullptr);
 
-    DPRINTF(LOG_LEVEL_INFO, "Building catalog number indexes . . .\n");
-
-    catalogNumberIndex = new Star*[nStars];
-    for (int i = 0; i < nStars; ++i)
-        catalogNumberIndex[i] = &stars[i];
-
-    sort(catalogNumberIndex, catalogNumberIndex + nStars, PtrCatalogNumberOrderingPredicate());
 }
 
 
@@ -1450,29 +1414,6 @@ void StarDatabase::buildIndexes()
  */
 Star* StarDatabase::findWhileLoading(AstroCatalog::IndexNumber catalogNumber) const
 {
-    // First check for stars loaded from the binary database
-    if (binFileCatalogNumberIndex != nullptr)
-    {
-        Star refStar;
-        refStar.setIndex(catalogNumber);
-
-        Star** star   = lower_bound(binFileCatalogNumberIndex,
-                                    binFileCatalogNumberIndex + binFileStarCount,
-                                    &refStar,
-                                    PtrCatalogNumberOrderingPredicate());
-
-        if (star != binFileCatalogNumberIndex + binFileStarCount && (*star)->getIndex() == catalogNumber)
-            return *star;
-    }
-
-    // Next check for stars loaded from an stc file
-    map<AstroCatalog::IndexNumber, Star*>::const_iterator iter = stcFileCatalogNumberIndex.find(catalogNumber);
-    if (iter != stcFileCatalogNumberIndex.end())
-    {
-        return iter->second;
-    }
-
-    // Star not found
-    return nullptr;
+    return find(catalogNumber);
 }
 

@@ -79,7 +79,6 @@ private:
     DSONameDatabase* namesDB{ nullptr };
     DeepSkyObject**  catalogNumberIndex{ nullptr };
     DSOOctree*       octreeRoot{ nullptr };
-    AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0xfffffffe };
 
     double           avgAbsMag{ 0.0 };
 };

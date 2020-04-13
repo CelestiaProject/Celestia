@@ -70,18 +70,7 @@ DSODatabase::~DSODatabase()
 
 DeepSkyObject* DSODatabase::find(const AstroCatalog::IndexNumber catalogNumber) const
 {
-    Galaxy refDSO;  //terrible hack !!
-    refDSO.setIndex(catalogNumber);
-
-    DeepSkyObject** dso   = lower_bound(catalogNumberIndex,
-                                        catalogNumberIndex + nDSOs,
-                                        &refDSO,
-                                        PtrCatalogNumberOrderingPredicate());
-
-    if (dso != catalogNumberIndex + nDSOs && (*dso)->getIndex() == catalogNumber)
-        return *dso;
-    else
-        return nullptr;
+    return DeepSkyObject::find(catalogNumber);
 }
 
 
@@ -248,11 +237,6 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
             tokenizer.nextToken();
         }
 
-        if (autoGenCatalogNumber)
-        {
-            objCatalogNumber   = nextAutoCatalogNumber--;
-        }
-
         if (tokenizer.nextToken() != Tokenizer::TokenString)
         {
             DPRINTF(LOG_LEVEL_ERROR, "Error parsing deep sky catalog file: bad name.\n");
@@ -311,7 +295,10 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
 
             DSOs[nDSOs++] = obj;
 
-            obj->setIndex(objCatalogNumber);
+            if (autoGenCatalogNumber)
+                objCatalogNumber = obj->setAutoIndex();
+            else
+                obj->setIndexAndAdd(objCatalogNumber);
 
             if (namesDB != nullptr && !objName.empty())
             {
@@ -433,14 +420,6 @@ void DSODatabase::buildIndexes()
 {
     // This should only be called once for the database
     // assert(catalogNumberIndexes[0] == nullptr);
-
-    DPRINTF(LOG_LEVEL_INFO, "Building catalog number indexes . . .\n");
-
-    catalogNumberIndex = new DeepSkyObject*[nDSOs];
-    for (int i = 0; i < nDSOs; ++i)
-        catalogNumberIndex[i] = DSOs[i];
-
-    sort(catalogNumberIndex, catalogNumberIndex + nDSOs, PtrCatalogNumberOrderingPredicate());
 }
 
 
