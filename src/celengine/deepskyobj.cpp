@@ -27,6 +27,14 @@ using namespace Eigen;
 using namespace std;
 using namespace celmath;
 
+DeepSkyObject *DeepSkyObject::find(AstroCatalog::IndexNumber in)
+{
+    auto dso = AstroObject::find(in);
+    if (dso == nullptr)
+        return nullptr;
+    return dso->toSelection().deepsky();
+}
+
 Vector3d DeepSkyObject::getPosition() const
 {
     return position;

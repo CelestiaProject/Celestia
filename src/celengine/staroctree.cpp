@@ -57,7 +57,7 @@ float starAbsoluteMagnitudeDecayFunction(const float excludingFactor)
 
 
 template<>
-DynamicStarOctree* DynamicStarOctree::getChild(const Star&          obj,
+DynamicStarOctree* DynamicStarOctree::getChild(Star& obj,
                                                const Vector3f& cellCenterPos)
 {
     Vector3f objPos    = obj.getPosition();

@@ -241,7 +241,11 @@ public:
     Star() = default;
     virtual ~Star();
 
+    Star(Star &&s);
+
     virtual Selection toSelection();
+
+    static Star *find(AstroCatalog::IndexNumber);
 
     /** This getPosition() method returns the approximate star position; that is,
      *  star position without any orbital motion taken into account.  For a

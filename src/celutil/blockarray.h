@@ -54,7 +54,7 @@ public:
         }
 
         unsigned int elementIndex = m_elementCount % m_blockSize;
-        m_blocks.back()[elementIndex] = element;
+        new (&m_blocks.back()[elementIndex]) T(std::move(element));
 
         ++m_elementCount;
     }

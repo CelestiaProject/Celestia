@@ -945,6 +945,14 @@ StarDetails::setInfoURL(const string& _infoURL)
 }
 
 
+Star::Star(Star &&s) : AstroObject(std::move(s))
+{
+    position = s.position;
+    absMag = s.absMag;
+    details = s.details;
+    s.details = nullptr;
+}
+
 Star::~Star()
 {
     // TODO: Implement reference counting for StarDetails objects so that
@@ -1184,4 +1192,12 @@ Selection Star::toSelection()
 {
 //    std::cout << "Star::toSelection()\n";
     return Selection(this);
+}
+
+Star *Star::find(AstroCatalog::IndexNumber in)
+{
+    auto star = AstroObject::find(in);
+    if (star == nullptr)
+        return nullptr;
+    return star->toSelection().star();
 }

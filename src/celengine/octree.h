@@ -58,7 +58,7 @@ public:
     typedef Eigen::Matrix<PREC, 3, 1> PointType;
 
 private:
-    typedef std::vector<const OBJ*> ObjectList;
+    typedef std::vector<OBJ*> ObjectList;
 
 
     typedef bool (LimitingFactorPredicate)     (const OBJ&, const float);
@@ -70,7 +70,7 @@ private:
                   const float         exclusionFactor);
     ~DynamicOctree();
 
-    void insertObject  (const OBJ&, const PREC);
+    void insertObject  (OBJ&, const PREC);
     void rebuildAndSort(StaticOctree<OBJ, PREC>*&, OBJ*&);
 
  private:
@@ -81,10 +81,10 @@ private:
    static ExclusionFactorDecayFunction* decayFunction;
 
  private:
-    void           add  (const OBJ&);
+    void           add  (OBJ&);
     void           split(const PREC);
     void           sortIntoChildNodes();
-    DynamicOctree* getChild(const OBJ&, const Eigen::Matrix<PREC, 3, 1>&);
+    DynamicOctree* getChild(OBJ&, const Eigen::Matrix<PREC, 3, 1>&);
 
     DynamicOctree**            _children;
     Eigen::Matrix<PREC, 3, 1>  cellCenterPos;
@@ -202,7 +202,7 @@ inline DynamicOctree<OBJ, PREC>::~DynamicOctree()
 
 
 template <class OBJ, class PREC>
-inline void DynamicOctree<OBJ, PREC>::insertObject(const OBJ& obj, const PREC scale)
+inline void DynamicOctree<OBJ, PREC>::insertObject(OBJ& obj, const PREC scale)
 {
     // If the object can't be placed into this node's children, then put it here:
     if (limitingFactorPredicate(obj, exclusionFactor) || straddlingPredicate(cellCenterPos, obj, exclusionFactor) )
@@ -232,7 +232,7 @@ inline void DynamicOctree<OBJ, PREC>::insertObject(const OBJ& obj, const PREC sc
 
 
 template <class OBJ, class PREC>
-inline void DynamicOctree<OBJ, PREC>::add(const OBJ& obj)
+inline void DynamicOctree<OBJ, PREC>::add(OBJ& obj)
 {
     if (_objects == nullptr)
         _objects = new ObjectList;
@@ -277,7 +277,7 @@ inline void DynamicOctree<OBJ, PREC>::sortIntoChildNodes()
 
     for (unsigned int i=0; i<_objects->size(); ++i)
     {
-        const OBJ& obj    = *(*_objects)[i];
+        OBJ& obj = *(*_objects)[i];
 
         if (limitingFactorPredicate(obj, exclusionFactor) ||
             straddlingPredicate(cellCenterPos, obj, exclusionFactor) )
@@ -300,9 +300,10 @@ inline void DynamicOctree<OBJ, PREC>::rebuildAndSort(StaticOctree<OBJ, PREC>*& _
     OBJ* _firstObject = _sortedObjects;
 
     if (_objects != nullptr)
-        for (typename ObjectList::const_iterator iter = _objects->begin(); iter != _objects->end(); ++iter)
+        for (const auto &obj : *_objects)
         {
-            *_sortedObjects++ = **iter;
+            new (_sortedObjects) OBJ(std::move(*obj));
+            ++_sortedObjects;
         }
 
     unsigned int nObjects  = (unsigned int) (_sortedObjects - _firstObject);

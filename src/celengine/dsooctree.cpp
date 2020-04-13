@@ -43,7 +43,7 @@ double dsoAbsoluteMagnitudeDecayFunction(const double excludingFactor)
 
 
 template <>
-DynamicDSOOctree* DynamicDSOOctree::getChild(DeepSkyObject* const & _obj, const PointType& cellCenterPos)
+DynamicDSOOctree* DynamicDSOOctree::getChild(DeepSkyObject* & _obj, const PointType& cellCenterPos)
 {
     PointType objPos = _obj->getPosition();
 
