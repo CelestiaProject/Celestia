@@ -56,7 +56,7 @@ addons:
     packages:
     - eigen
     - cspice
-    - fmt
+    - fmt@6.1.2
     - jpeg
     - gettext
     - libpng
