@@ -177,12 +177,10 @@ unsigned int Globular::cSlot(float conc) const
     return (unsigned int) floor((conc - MinC) / BinWidth);
 }
 
-
 const char* Globular::getType() const
 {
     return "Globular";
 }
-
 
 void Globular::setType(const std::string& /*typeStr*/)
 {
@@ -193,26 +191,9 @@ float Globular::getDetail() const
     return detail;
 }
 
-
 void Globular::setDetail(float d)
 {
     detail = d;
-}
-
-string Globular::getCustomTmpName() const
-{
-    if (customTmpName == nullptr)
-        return "";
-    else
-        return *customTmpName;
-}
-
-void Globular::setCustomTmpName(const string& tmpNameStr)
-{
-    if (customTmpName == nullptr)
-        customTmpName = new string(tmpNameStr);
-    else
-        *customTmpName = tmpNameStr;
 }
 
 float Globular::getCoreRadius() const
@@ -300,10 +281,6 @@ bool Globular::load(AssociativeArray* params, const fs::path& resPath)
 
     if (params->getNumber("Detail", detail))
         setDetail((float) detail);
-
-    string customTmpName;
-    if (params->getString("CustomTemplate", customTmpName ))
-        setCustomTmpName(customTmpName);
 
     double coreRadius;
     if (params->getAngle("CoreRadius", coreRadius, 1.0 / MINUTES_PER_DEG))
