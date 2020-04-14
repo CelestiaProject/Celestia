@@ -43,8 +43,6 @@ class Globular : public DeepSkyObject
     const char* getType() const override;
     void setType(const std::string&) override;
     std::string getDescription() const override;
-    std::string getCustomTmpName() const;
-    void setCustomTmpName(const std::string&);
     float getDetail() const;
     void  setDetail(float);
     float getCoreRadius() const;
@@ -86,7 +84,6 @@ class Globular : public DeepSkyObject
     void recomputeTidalRadius();
 
     float         detail{ 1.0f };
-    std::string*  customTmpName{ nullptr };
     GlobularForm* form{ nullptr };
     float         r_c{ R_c_ref };
     float         c{ C_ref };
