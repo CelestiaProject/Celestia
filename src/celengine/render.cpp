@@ -5806,6 +5806,52 @@ void Renderer::renderParticles(const vector<Particle>& particles,
     glDisable(GL_POINT_SPRITE);
 }
 
+void
+Renderer::renderAnnotationMarker(const Annotation &a,
+                                 FontStyle fs,
+                                 float depth)
+{
+    const MarkerRepresentation& markerRep = *a.markerRep;
+    float size = a.size > 0.0f ? a.size : markerRep.size();
+
+    glColor(a.color);
+    glPushMatrix();
+    glTranslatef((int)a.position.x(), (int)a.position.y(), depth);
+
+    if (markerRep.symbol() == MarkerRepresentation::Crosshair)
+        renderCrosshair(size, realTime, a.color);
+    else
+        markerRep.render(*this, size);
+
+    if (!markerRep.label().empty())
+    {
+        int labelOffset = (int)markerRep.size() / 2;
+        glTranslatef(labelOffset + PixelOffset,
+                     -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
+        font[fs]->bind();
+        font[fs]->render(markerRep.label(), 0.0f, 0.0f);
+    }
+    glPopMatrix();
+}
+
+void
+Renderer::renderAnnotationLabel(const Annotation &a,
+                                FontStyle fs,
+                                int hOffset,
+                                int vOffset,
+                                float depth)
+{
+    glColor(a.color);
+    glPushMatrix();
+    glTranslatef((int)a.position.x() + hOffset + PixelOffset,
+                 (int)a.position.y() + vOffset + PixelOffset,
+                 depth);
+    font[fs]->bind();
+    font[fs]->render(a.labelText, 0.0f, 0.0f);
+    glPopMatrix();
+}
+
+// stars and constellations. DSOs
 void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyle fs)
 {
     if (font[fs] == nullptr)
@@ -5831,37 +5877,11 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
     {
         if (annotations[i].markerRep != nullptr)
         {
-            glPushMatrix();
-            const MarkerRepresentation& markerRep = *annotations[i].markerRep;
-
-            float size = markerRep.size();
-            if (annotations[i].size > 0.0f)
-            {
-                size = annotations[i].size;
-            }
-
-            glColor(annotations[i].color);
-            glTranslatef((GLfloat) (int) annotations[i].position.x(),
-                         (GLfloat) (int) annotations[i].position.y(), 0.0f);
-
-            if (markerRep.symbol() == MarkerRepresentation::Crosshair)
-                renderCrosshair(size, realTime, annotations[i].color);
-            else
-                markerRep.render(*this, size);
-
-            if (!markerRep.label().empty())
-            {
-                int labelOffset = (int) markerRep.size() / 2;
-                glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
-                font[fs]->bind();
-                font[fs]->render(markerRep.label(), 0.0f, 0.0f);
-            }
-            glPopMatrix();
+            renderAnnotationMarker(annotations[i], fs, 0.0f);
         }
 
         if (!annotations[i].labelText.empty())
         {
-            glPushMatrix();
             int labelWidth = 0;
             int hOffset = 2;
             int vOffset = 0;
@@ -5896,14 +5916,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
                 vOffset = 0;
                 break;
             }
-
-            glColor(annotations[i].color);
-            glTranslatef((int) annotations[i].position.x() + hOffset + PixelOffset,
-                         (int) annotations[i].position.y() + vOffset + PixelOffset, 0.0f);
-            // EK TODO: Check where to replace (see '_(' above)
-            font[fs]->bind();
-            font[fs]->render(annotations[i].labelText, 0.0f, 0.0f);
-            glPopMatrix();
+            renderAnnotationLabel(annotations[i], fs, hOffset, vOffset, 0.0f);
         }
     }
 
@@ -5941,92 +5954,18 @@ Renderer::renderForegroundAnnotations(FontStyle fs)
 }
 
 
+// solar system objects
 vector<Renderer::Annotation>::iterator
 Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
                                   float nearDist,
                                   float farDist,
                                   FontStyle fs)
 {
-    if (font[fs] == nullptr)
-        return iter;
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadMatrix(Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight));
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    // Precompute values that will be used to generate the normalized device z value;
-    // we're effectively just handling the projection instead of OpenGL. We use an orthographic
-    // projection matrix in order to get the label text position exactly right but need to mimic
-    // the depth coordinate generation of a perspective projection.
-    float d1 = -(farDist + nearDist) / (farDist - nearDist);
-    float d2 = -2.0f * nearDist * farDist / (farDist - nearDist);
-
-    for (; iter != depthSortedAnnotations.end() && iter->position.z() > nearDist; iter++)
-    {
-        // Compute normalized device z
-        float ndc_z = d1 + d2 / -iter->position.z();
-        ndc_z = min(1.0f, max(-1.0f, ndc_z)); // Clamp to [-1,1]
-
-        // Offsets to left align label
-        int labelHOffset = 0;
-        int labelVOffset = 0;
-
-        glPushMatrix();
-        if (iter->markerRep != nullptr)
-        {
-            const MarkerRepresentation& markerRep = *iter->markerRep;
-            float size = markerRep.size();
-            if (iter->size > 0.0f)
-            {
-                size = iter->size;
-            }
-
-            glTranslatef((GLfloat) (int) iter->position.x(), (GLfloat) (int) iter->position.y(), ndc_z);
-            glColor(iter->color);
-
-            if (markerRep.symbol() == MarkerRepresentation::Crosshair)
-                renderCrosshair(size, realTime, iter->color);
-            else
-                markerRep.render(*this, size);
-
-            if (!markerRep.label().empty())
-            {
-                int labelOffset = (int) markerRep.size() / 2;
-                glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
-                font[fs]->bind();
-                font[fs]->render(markerRep.label(), 0.0f, 0.0f);
-            }
-        }
-        else
-        {
-            glTranslatef((int) iter->position.x() + PixelOffset + labelHOffset,
-                         (int) iter->position.y() + PixelOffset + labelVOffset,
-                         ndc_z);
-            glColor(iter->color);
-            font[fs]->bind();
-            font[fs]->render(iter->labelText, 0.0f, 0.0f);
-        }
-        glPopMatrix();
-    }
-
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glDisable(GL_DEPTH_TEST);
-    font[fs]->unbind();
-
-    return iter;
+    return renderAnnotations(iter, depthSortedAnnotations.end(), nearDist, farDist, fs);
 }
 
 
+// locations
 vector<Renderer::Annotation>::iterator
 Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
                             vector<Annotation>::iterator endIter,
@@ -6059,8 +5998,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     for (; iter != endIter && iter->position.z() > nearDist; iter++)
     {
         // Compute normalized device z
-        float ndc_z = d1 + d2 / -iter->position.z();
-        ndc_z = min(1.0f, max(-1.0f, ndc_z)); // Clamp to [-1,1]
+        float ndc_z = clamp(d1 + d2 / -iter->position.z(), -1.0f, 1.0f);
 
         // Offsets to left align label
         int labelHOffset = 0;
@@ -6068,30 +6006,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
 
         if (iter->markerRep != nullptr)
         {
-            glPushMatrix();
-            const MarkerRepresentation& markerRep = *iter->markerRep;
-            float size = markerRep.size();
-            if (iter->size > 0.0f)
-            {
-                size = iter->size;
-            }
-
-            glTranslatef((GLfloat) (int) iter->position.x(), (GLfloat) (int) iter->position.y(), ndc_z);
-            glColor(iter->color);
-
-            if (markerRep.symbol() == MarkerRepresentation::Crosshair)
-                renderCrosshair(size, realTime, iter->color);
-            else
-                markerRep.render(*this, size);
-
-            if (!markerRep.label().empty())
-            {
-                int labelOffset = (int) markerRep.size() / 2;
-                glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
-                font[fs]->bind();
-                font[fs]->render(markerRep.label(), 0.0f, 0.0f);
-            }
-            glPopMatrix();
+            renderAnnotationMarker(*iter, fs, ndc_z);
         }
 
         if (!iter->labelText.empty())
@@ -6099,14 +6014,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
             if (iter->markerRep != nullptr)
                 labelHOffset += (int) iter->markerRep->size() / 2 + 3;
 
-            glPushMatrix();
-            glTranslatef((int) iter->position.x() + PixelOffset + labelHOffset,
-                         (int) iter->position.y() + PixelOffset + labelVOffset,
-                         ndc_z);
-            glColor(iter->color);
-            font[fs]->bind();
-            font[fs]->render(iter->labelText, 0.0f, 0.0f);
-            glPopMatrix();
+            renderAnnotationLabel(*iter, fs, labelHOffset, labelVOffset, ndc_z);
         }
     }
 

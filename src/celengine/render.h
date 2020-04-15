@@ -593,6 +593,14 @@ class Renderer
                        LabelVerticalAlignment = VerticalAlignBottom,
                        float size = 0.0f,
                        bool special = false);
+    void renderAnnotationMarker(const Annotation &a,
+                                FontStyle fs,
+                                float depth);
+    void renderAnnotationLabel(const Annotation &a,
+                               FontStyle fs,
+                               int hOffset,
+                               int vOffset,
+                               float depth);
     void renderAnnotations(const std::vector<Annotation>&, FontStyle fs);
     void renderBackgroundAnnotations(FontStyle fs);
     void renderForegroundAnnotations(FontStyle fs);
