@@ -128,6 +128,12 @@ std::string Helper::getRenderInfo(const Renderer *r)
     if (info.count("MaxCubeMapSize") > 0)
         s += fmt::sprintf(_("Max cube map size: %s\n"), info["MaxCubeMapSize"]);
 
+    if (info.count("MaxVaryingFloats") > 0)
+        s += fmt::sprintf(_("Number of interpolators: %s\n"), info["MaxVaryingFloats"]);
+
+    if (info.count("MaxAnisotropy") > 0)
+        s += fmt::sprintf(_("Max anisotropy filtering: %s\n"), info["MaxAnisotropy"]);
+
     s += "\n";
 
     if (info.count("Extensions") > 0)

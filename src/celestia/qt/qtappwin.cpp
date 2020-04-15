@@ -1118,6 +1118,18 @@ void CelestiaAppWindow::slotShowGLInfo()
         out << "<br>\n";
     }
 
+    if (info.count("MaxVaryingFloats") > 0)
+    {
+        out << QString(_("<b>Number of interpolators</b>: %1")).arg(info["MaxVaryingFloats"].c_str());
+        out << "<br>\n";
+    }
+
+    if (info.count("MaxAnisotropy") > 0)
+    {
+        out << QString(_("<b>Max anisotropy filtering</b>: %1")).arg(info["MaxAnisotropy"].c_str());
+        out << "<br>\n";
+    }
+
 
     out << "<br>\n";
 

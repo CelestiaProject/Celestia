@@ -6585,11 +6585,22 @@ bool Renderer::getInfo(map<string, string>& info) const
 
     GLfloat pointSizeGran = 0;
     glGetFloatv(GL_SMOOTH_POINT_SIZE_GRANULARITY, &pointSizeGran);
-    info["PointSizeGran"] = to_string(pointSizeGran);
+    info["PointSizeGran"] = fmt::sprintf("%.2f", pointSizeGran);
 
     GLint maxCubeMapSize = 0;
     glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &maxCubeMapSize);
     info["MaxCubeMapSize"] = to_string(maxCubeMapSize);
+
+    GLint maxVaryings = 0;
+    glGetIntegerv(GL_MAX_VARYING_FLOATS, &maxVaryings);
+    info["MaxVaryingFloats"] = to_string(maxVaryings);
+
+    if (gl::EXT_texture_filter_anisotropic)
+    {
+        float maxAnisotropy = 0.0f;
+        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+        info["MaxAnisotropy"] = fmt::sprintf("%.2f", maxAnisotropy);
+    }
 
     s = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
     if (s != nullptr)
