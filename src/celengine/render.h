@@ -172,6 +172,31 @@ class Renderer
         ShowComets              = 0x0000000080000000,
         ShowSpacecrafts         = 0x0000000100000000,
         ShowFadingOrbits        = 0x0000000200000000,
+        ShowSolarSystemObjects  = ShowPlanets           |
+                                  ShowDwarfPlanets      |
+                                  ShowMoons             |
+                                  ShowMinorMoons        |
+                                  ShowAsteroids         |
+                                  ShowComets            |
+                                  ShowPlanetRings       |
+                                  ShowSpacecrafts,
+        ShowDeepSpaceObjects    = ShowGalaxies          |
+                                  ShowGlobulars         |
+                                  ShowNebulae           |
+                                  ShowOpenClusters,
+        DefaultRenderFlags      = ShowStars             |
+                                  ShowSolarSystemObjects|
+                                  ShowDeepSpaceObjects  |
+                                  ShowCloudMaps         |
+                                  ShowNightMaps         |
+                                  ShowAtmospheres       |
+                                  ShowEclipseShadows    |
+                                  ShowRingShadows       |
+                                  ShowCloudShadows      |
+                                  ShowCometTails        |
+                                  ShowAutoMag           |
+                                  ShowFadingOrbits      |
+                                  ShowSmoothLines
     };
 
     enum StarStyle
@@ -189,32 +214,6 @@ class Renderer
         RGB = GL_RGB,
         BGR_EXT = GL_BGR_EXT
     };
-
-    // constants
-    constexpr static const uint64_t DefaultRenderFlags =
-                                          Renderer::ShowStars          |
-                                          Renderer::ShowPlanets        |
-                                          Renderer::ShowDwarfPlanets   |
-                                          Renderer::ShowMoons          |
-                                          Renderer::ShowMinorMoons     |
-                                          Renderer::ShowAsteroids      |
-                                          Renderer::ShowComets         |
-                                          Renderer::ShowSpacecrafts    |
-                                          Renderer::ShowGalaxies       |
-                                          Renderer::ShowGlobulars      |
-                                          Renderer::ShowCloudMaps      |
-                                          Renderer::ShowNightMaps      |
-                                          Renderer::ShowAtmospheres    |
-                                          Renderer::ShowEclipseShadows |
-                                          Renderer::ShowPlanetRings    |
-                                          Renderer::ShowRingShadows    |
-                                          Renderer::ShowCloudShadows   |
-                                          Renderer::ShowCometTails     |
-                                          Renderer::ShowNebulae        |
-                                          Renderer::ShowOpenClusters   |
-                                          Renderer::ShowAutoMag        |
-                                          Renderer::ShowFadingOrbits   |
-                                          Renderer::ShowSmoothLines;
 
     uint64_t getRenderFlags() const;
     void setRenderFlags(uint64_t);

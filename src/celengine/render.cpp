@@ -211,21 +211,6 @@ Color Renderer::EclipticColor           (0.5f,   0.1f,   0.1f);
 
 Color Renderer::SelectionCursorColor    (1.0f,   0.0f,   0.0f);
 
-// Solar system objects
-constexpr const uint64_t ShowSSO = Renderer::ShowPlanets      |
-                                   Renderer::ShowDwarfPlanets |
-                                   Renderer::ShowMoons        |
-                                   Renderer::ShowMinorMoons   |
-                                   Renderer::ShowAsteroids    |
-                                   Renderer::ShowComets       |
-                                   Renderer::ShowPlanetRings  |
-                                   Renderer::ShowSpacecrafts;
-// Deep Sky Objects
-constexpr const uint64_t ShowDSO = Renderer::ShowGalaxies     |
-                                   Renderer::ShowGlobulars    |
-                                   Renderer::ShowNebulae      |
-                                   Renderer::ShowOpenClusters;
-
 // Some useful unit conversions
 inline float mmToInches(float mm)
 {
@@ -1676,14 +1661,14 @@ void Renderer::draw(const Observer& observer,
     bool foundBrightestStar = false;
 #endif
 
-    if ((renderFlags & (ShowSSO | ShowOrbits)) != 0)
+    if ((renderFlags & (ShowSolarSystemObjects | ShowOrbits)) != 0)
     {
         nearStars.clear();
         universe.getNearStars(observer.getPosition(), SolarSystemMaxDistance, nearStars);
 
         // Set up direct light sources (i.e. just stars at the moment)
         // Skip if only star orbits to be shown
-        if ((renderFlags & ShowSSO) != 0)
+        if ((renderFlags & ShowSolarSystemObjects) != 0)
             setupLightSources(nearStars, observer.getPosition(), now, lightSourceList, renderFlags);
 
         // Traverse the frame trees of each nearby solar system and
@@ -1692,7 +1677,7 @@ void Renderer::draw(const Observer& observer,
         {
             addStarOrbitToRenderList(*sun, observer, now);
             // Skip if only star orbits to be shown
-            if ((renderFlags & ShowSSO) == 0)
+            if ((renderFlags & ShowSolarSystemObjects) == 0)
                 continue;
 
             SolarSystem* solarSystem = universe.getSolarSystem(sun);
@@ -1966,7 +1951,7 @@ void Renderer::draw(const Observer& observer,
     glEnable(GL_BLEND);
 
     // Render deep sky objects
-    if ((renderFlags & ShowDSO) != 0 && universe.getDSOCatalog() != nullptr)
+    if ((renderFlags & ShowDeepSpaceObjects) != 0 && universe.getDSOCatalog() != nullptr)
     {
         renderDeepSkyObjects(universe, observer, faintestMag);
     }
