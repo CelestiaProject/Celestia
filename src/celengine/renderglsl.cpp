@@ -41,8 +41,6 @@ using namespace celmath;
 #define GL_ONLY_SHADOWS 1
 #endif
 
-const double AtmosphereExtinctionThreshold = 0.05;
-
 static
 void renderGeometryShadow_GLSL(Geometry* geometry,
                                FramebufferObject* shadowFbo,
@@ -634,7 +632,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
     prog->ambientColor = Vector3f::Zero();
 
-    float atmosphereRadius = radius + -atmosphere->mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
+    float atmosphereRadius = radius + -atmosphere->mieScaleHeight * log(AtmosphereExtinctionThreshold);
     float atmScale = atmosphereRadius / radius;
 
     prog->eyePosition = ls.eyePos_obj / atmScale;

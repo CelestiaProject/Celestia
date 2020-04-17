@@ -3587,7 +3587,7 @@ void Renderer::renderObject(const Vector3f& pos,
         if (obj.atmosphere != nullptr)
         {
             float atmosphereHeight = max(obj.atmosphere->cloudHeight,
-                                         obj.atmosphere->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
+                                         obj.atmosphere->mieScaleHeight * -log(AtmosphereExtinctionThreshold));
             if (atmosphereHeight > 0.0f)
             {
                 // If there's an atmosphere, we need to move the far plane
