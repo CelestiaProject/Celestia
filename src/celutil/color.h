@@ -58,12 +58,17 @@ class Color
     inline constexpr float green() const;
     inline constexpr float blue() const;
     inline constexpr float alpha() const;
+    inline Color& alpha(float a);
+
     inline void get(uint8_t*) const;
     inline const uint8_t* data() const;
 
     inline Eigen::Vector3f toVector3() const;
     inline Eigen::Vector4f toVector4() const;
+    inline operator Eigen::Vector3f() const;
+    inline operator Eigen::Vector4f() const;
 
+    inline Color operator*(float m) const;
     friend bool operator==(Color, Color);
     friend bool operator!=(Color, Color);
     friend Color operator*(Color, Color);
@@ -81,8 +86,6 @@ class Color
     typedef std::map<const std::string, Color> ColorMap;
     static ColorMap x11Colors;
 };
-#undef C
-
 
 constexpr float Color::red() const
 {
@@ -153,5 +156,27 @@ inline Color operator*(Color a, Color b)
                  a.blue() * b.blue(),
                  a.alpha() * b.alpha());
 }
+
+inline Color::operator Eigen::Vector3f() const
+{
+    return toVector3();
+}
+
+inline Color::operator Eigen::Vector4f() const
+{
+    return toVector4();
+}
+
+inline Color Color::operator*(float m) const
+{
+    return { red() * m, green() * m, blue() *m };
+}
+
+inline Color& Color::alpha(float a)
+{
+    c[Alpha] = C(a);
+    return *this;
+}
+#undef C
 
 #endif // _CELUTIL_COLOR_H_
