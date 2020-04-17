@@ -3056,7 +3056,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     prog->use();
     for (int i = 0; i < nRings; i++)
     {
-        glDrawElements(GL_QUAD_STRIP,
+        glDrawElements(GL_TRIANGLE_STRIP,
                        (nSlices + 1) * 2,
                        GL_UNSIGNED_INT,
                        &skyIndices[(nSlices + 1) * 2 * i]);

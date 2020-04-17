@@ -805,7 +805,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     unsigned short* indexBase = useVertexBuffers ? (unsigned short*) nullptr : indices;
     for (int i = 0; i < nRings; i++)
     {
-        glDrawElements(GL_QUAD_STRIP,
+        glDrawElements(GL_TRIANGLE_STRIP,
                        (nSlices + 1) * 2,
                        GL_UNSIGNED_SHORT,
                        indexBase + (nSlices + 1) * 2 * i);
