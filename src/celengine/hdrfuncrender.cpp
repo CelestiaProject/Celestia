@@ -440,4 +440,52 @@ float Renderer::getBrightness()
 {
     return brightPlus;
 }
+
+void Renderer::adjustEclipsedStarExposure(double now)
+{
+    // Compute 1 eclipse between eye - closest body - brightest star
+    // This prevents an eclipsed star from increasing exposure
+    bool eyeNotEclipsed = true;
+    closestBody = renderList.empty() ? renderList.end() : renderList.begin();
+    if (foundClosestBody &&
+        closestBody != renderList.end() &&
+        closestBody->renderableType == RenderListEntry::RenderableBody &&
+        closestBody->body &&
+        brightestStar != nullptr)
+    {
+        const Body* body = closestBody->body;
+        double scale = astro::microLightYearsToKilometers(1.0);
+        Vector3d posBody = body->getAstrocentricPosition(now);
+        Vector3d posEye = astrocentricPosition(observer.getPosition(), *brightestStar, now);
+
+        Vector3d posStar;
+        if (body->getSystem() &&
+            body->getSystem()->getStar() &&
+            body->getSystem()->getStar() != brightestStar)
+        {
+            UniversalCoord center = body->getSystem()->getStar()->getPosition(now);
+            posStar = brightestStar->getPosition(now) - center;
+        }
+        else
+        {
+            posStar = brightestStar->getPosition(now);
+        }
+
+        posStar /= scale;
+        Vector3d lightToBodyDir = posBody - posStar;
+        Vector3d bodyToEyeDir = posEye - posBody;
+
+        if (lightToBodyDir * bodyToEyeDir > 0.0)
+        {
+            double dist = distance(posEye, Ray3d(posBody, lightToBodyDir));
+            if (dist < body->getRadius())
+                eyeNotEclipsed = false;
+        }
+    }
+
+    if (eyeNotEclipsed)
+    {
+        maxBodyMag = min(maxBodyMag, starMaxMag);
+    }
+}
 #endif // USE_HDR
