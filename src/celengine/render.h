@@ -475,6 +475,11 @@ class Renderer
     void renderEclipticLine();
     void renderCrosshair(float size, double tsec, const Color &color);
 
+    void buildNearSystemsLists(const Universe &universe,
+                               const Observer &observer,
+                               const celmath::Frustum &xfrustum,
+                               double jd);
+
     void buildRenderLists(const Eigen::Vector3d& astrocentricObserverPos,
                           const celmath::Frustum& viewFrustum,
                           const Eigen::Vector3d& viewPlaneNormal,

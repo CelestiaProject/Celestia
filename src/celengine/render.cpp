@@ -1638,6 +1638,7 @@ void Renderer::draw(const Observer& observer,
     orbitPathList.clear();
     lightSourceList.clear();
     secondaryIlluminators.clear();
+    nearStars.clear();
 
     // See if we want to use AutoMag.
     if ((renderFlags & ShowAutoMag) != 0)
@@ -1662,61 +1663,7 @@ void Renderer::draw(const Observer& observer,
 
     if ((renderFlags & (ShowSolarSystemObjects | ShowOrbits)) != 0)
     {
-        nearStars.clear();
-        universe.getNearStars(observer.getPosition(), SolarSystemMaxDistance, nearStars);
-
-        // Set up direct light sources (i.e. just stars at the moment)
-        // Skip if only star orbits to be shown
-        if ((renderFlags & ShowSolarSystemObjects) != 0)
-            setupLightSources(nearStars, observer.getPosition(), now, lightSourceList, renderFlags);
-
-        // Traverse the frame trees of each nearby solar system and
-        // build the list of objects to be rendered.
-        for (const auto sun : nearStars)
-        {
-            addStarOrbitToRenderList(*sun, observer, now);
-            // Skip if only star orbits to be shown
-            if ((renderFlags & ShowSolarSystemObjects) == 0)
-                continue;
-
-            SolarSystem* solarSystem = universe.getSolarSystem(sun);
-            if (solarSystem == nullptr)
-                continue;
-
-            FrameTree* solarSysTree = solarSystem->getFrameTree();
-            if (solarSysTree == nullptr)
-                continue;
-
-            if (solarSysTree->updateRequired())
-            {
-                // Tree has changed, so we must recompute bounding spheres.
-                solarSysTree->recomputeBoundingSphere();
-                solarSysTree->markUpdated();
-            }
-
-            // Compute the position of the observer in astrocentric coordinates
-            Vector3d astrocentricObserverPos = astrocentricPosition(observer.getPosition(), *sun, now);
-
-            // Build render lists for bodies and orbits paths
-            buildRenderLists(astrocentricObserverPos,
-                             xfrustum,
-                             observer.getOrientation().conjugate() * -Vector3d::UnitZ(),
-                             Vector3d::Zero(),
-                             solarSysTree,
-                             observer,
-                             now);
-            if ((renderFlags & ShowOrbits) != 0)
-            {
-                buildOrbitLists(astrocentricObserverPos,
-                                observer.getOrientation(),
-                                xfrustum,
-                                solarSysTree,
-                                now);
-            }
-        }
-
-        if ((labelMode & BodyLabelMask) != 0)
-            buildLabelLists(xfrustum, now);
+        buildNearSystemsLists(universe, observer, xfrustum, now);
     }
 
     setupSecondaryLightSources(secondaryIlluminators, lightSourceList);
@@ -6332,4 +6279,62 @@ Renderer::selectionToAnnotation(const Selection &sel,
                             offset.cast<float>(),
                             AlignLeft, VerticalAlignTop, symbolSize);
     return true;
+}
+
+void
+Renderer::buildNearSystemsLists(const Universe &universe,
+                                const Observer &observer,
+                                const Frustum &xfrustum,
+                                double now)
+{
+    UniversalCoord observerPos = observer.getPosition();
+    Eigen::Quaterniond observerOrient = observer.getOrientation();
+
+    universe.getNearStars(observerPos, SolarSystemMaxDistance, nearStars);
+
+    // Set up direct light sources (i.e. just stars at the moment)
+    // Skip if only star orbits to be shown
+    if ((renderFlags & ShowSolarSystemObjects) != 0)
+        setupLightSources(nearStars, observerPos, now, lightSourceList, renderFlags);
+
+    // Traverse the frame trees of each nearby solar system and
+    // build the list of objects to be rendered.
+    for (const auto sun : nearStars)
+    {
+        addStarOrbitToRenderList(*sun, observer, now);
+        // Skip if only star orbits to be shown
+        if ((renderFlags & ShowSolarSystemObjects) == 0)
+            continue;
+
+        SolarSystem* solarSystem = universe.getSolarSystem(sun);
+        if (solarSystem == nullptr)
+            continue;
+
+        FrameTree* solarSysTree = solarSystem->getFrameTree();
+        if (solarSysTree == nullptr)
+            continue;
+
+        if (solarSysTree->updateRequired())
+        {
+            // Tree has changed, so we must recompute bounding spheres.
+            solarSysTree->recomputeBoundingSphere();
+            solarSysTree->markUpdated();
+        }
+
+        // Compute the position of the observer in astrocentric coordinates
+        Vector3d astrocentricObserverPos = astrocentricPosition(observerPos, *sun, now);
+
+        // Build render lists for bodies and orbits paths
+        buildRenderLists(astrocentricObserverPos, xfrustum,
+                         observerOrient.conjugate() * -Vector3d::UnitZ(),
+                         Vector3d::Zero(), solarSysTree, observer, now);
+        if ((renderFlags & ShowOrbits) != 0)
+        {
+            buildOrbitLists(astrocentricObserverPos, observerOrient,
+                            xfrustum, solarSysTree, now);
+        }
+    }
+
+    if ((labelMode & BodyLabelMask) != 0)
+        buildLabelLists(xfrustum, now);
 }
