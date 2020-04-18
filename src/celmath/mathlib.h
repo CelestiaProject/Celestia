@@ -160,4 +160,10 @@ namespace std
     using celmath::clamp;
 };
 #endif
+
+constexpr long double operator"" _deg (long double deg)
+{
+    return celmath::degToRad(deg);
+}
+
 #endif // _MATHLIB_H_
