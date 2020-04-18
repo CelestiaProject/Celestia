@@ -494,6 +494,8 @@ class Renderer
                          double now);
     void buildLabelLists(const celmath::Frustum& viewFrustum,
                          double now);
+    int buildDepthPartitions();
+
 
     void addRenderListEntries(RenderListEntry& rle,
                               Body& body,

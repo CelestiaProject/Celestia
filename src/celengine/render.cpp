@@ -1801,165 +1801,26 @@ void Renderer::draw(const Observer& observer,
 
     glPolygonMode(GL_FRONT_AND_BACK, (GLenum) renderMode);
 
-    {
-        removeInvisibleItems(frustum);
+    removeInvisibleItems(frustum);
 
-        // Sort the annotations
-        sort(depthSortedAnnotations.begin(), depthSortedAnnotations.end());
+    // Sort the annotations
+    sort(depthSortedAnnotations.begin(), depthSortedAnnotations.end());
 
-        // Sort the orbit paths
-        sort(orbitPathList.begin(), orbitPathList.end());
-
-        int nEntries = renderList.size();
+    // Sort the orbit paths
+    sort(orbitPathList.begin(), orbitPathList.end());
 
 #ifdef USE_HDR
     adjustEclipsedStarExposure(now);
 #endif
 
-        // Since we're rendering objects of a huge range of sizes spread over
-        // vast distances, we can't just rely on the hardware depth buffer to
-        // handle hidden surface removal without a little help. We'll partition
-        // the depth buffer into spans that can be rendered without running
-        // into terrible depth buffer precision problems. Typically, each body
-        // with an apparent size greater than one pixel is allocated its own
-        // depth buffer interval. However, this will not correctly handle
-        // overlapping objects.  If two objects overlap in depth, we must
-        // assign them to the same interval.
+    int nIntervals = buildDepthPartitions();
 
-        depthPartitions.clear();
-        int nIntervals = 0;
-        float prevNear = -1e12f;  // ~ 1 light year
-        if (nEntries > 0)
-            prevNear = renderList[nEntries - 1].farZ * 1.01f;
+    vector<Annotation>::iterator annotation = depthSortedAnnotations.begin();
 
-        int i;
-
-        // Completely partition the depth buffer. Scan from back to front
-        // through all the renderable items that passed the culling test.
-        for (i = nEntries - 1; i >= 0; i--)
-        {
-            // Only consider renderables that will occupy more than one pixel.
-            if (renderList[i].discSizeInPixels > 1)
-            {
-                if (nIntervals == 0 || renderList[i].farZ >= depthPartitions[nIntervals - 1].nearZ)
-                {
-                    // This object spans a depth interval that's disjoint with
-                    // the current interval, so create a new one for it, and
-                    // another interval to fill the gap between the last
-                    // interval.
-                    DepthBufferPartition partition;
-                    partition.index = nIntervals;
-                    partition.nearZ = renderList[i].farZ;
-                    partition.farZ = prevNear;
-
-                    // Omit null intervals
-                    // TODO: Is this necessary? Shouldn't the >= test prevent this?
-                    if (partition.nearZ != partition.farZ)
-                    {
-                        depthPartitions.push_back(partition);
-                        nIntervals++;
-                    }
-
-                    partition.index = nIntervals;
-                    partition.nearZ = renderList[i].nearZ;
-                    partition.farZ = renderList[i].farZ;
-                    depthPartitions.push_back(partition);
-                    nIntervals++;
-
-                    prevNear = partition.nearZ;
-                }
-                else
-                {
-                    // This object overlaps the current span; expand the
-                    // interval so that it completely contains the object.
-                    DepthBufferPartition& partition = depthPartitions[nIntervals - 1];
-                    partition.nearZ = max(partition.nearZ, renderList[i].nearZ);
-                    partition.farZ = min(partition.farZ, renderList[i].farZ);
-                    prevNear = partition.nearZ;
-                }
-            }
-        }
-
-        // Scan the list of orbit paths and find the closest one. We'll need
-        // adjust the nearest interval to accommodate it.
-        float zNearest = prevNear;
-        for (i = 0; i < (int) orbitPathList.size(); i++)
-        {
-            const OrbitPathListEntry& o = orbitPathList[i];
-            float minNearDistance = min(-MinNearPlaneDistance, o.centerZ + o.radius);
-            if (minNearDistance > zNearest)
-                zNearest = minNearDistance;
-        }
-
-        // Adjust the nearest interval to include the closest marker (if it's
-        // closer to the observer than anything else
-        if (!depthSortedAnnotations.empty())
-        {
-            // Factor of 0.999 makes sure ensures that the near plane does not fall
-            // exactly at the marker's z coordinate (in which case the marker
-            // would be susceptible to getting clipped.)
-            if (-depthSortedAnnotations[0].position.z() > zNearest)
-                zNearest = -depthSortedAnnotations[0].position.z() * 0.999f;
-        }
-
-
-#if DEBUG_COALESCE
-        clog << "nEntries: " << nEntries << ",   zNearest: " << zNearest << ",   prevNear: " << prevNear << "\n";
-#endif
-
-        // If the nearest distance wasn't set, nothing should appear
-        // in the frontmost depth buffer interval (so we can set the near plane
-        // of the front interval to whatever we want as long as it's less than
-        // the far plane distance.
-        if (zNearest == prevNear)
-            zNearest = 0.0f;
-
-        // Add one last interval for the span from 0 to the front of the
-        // nearest object
-        {
-            // TODO: closest object may not be at entry 0, since objects are
-            // sorted by far distance.
-            float closest = zNearest;
-            if (nEntries > 0)
-            {
-                closest = max(closest, renderList[0].nearZ);
-
-                // Setting a the near plane distance to zero results in unreliable rendering, even
-                // if we don't care about the depth buffer. Compromise and set the near plane
-                // distance to a small fraction of distance to the nearest object.
-                if (closest == 0.0f)
-                {
-                    closest = renderList[0].nearZ * 0.01f;
-                }
-            }
-
-            DepthBufferPartition partition;
-            partition.index = nIntervals;
-            partition.nearZ = closest;
-            partition.farZ = prevNear;
-            depthPartitions.push_back(partition);
-
-            nIntervals++;
-        }
-
-        // If orbits are enabled, adjust the farthest partition so that it
-        // can contain the orbit.
-        if (!orbitPathList.empty())
-        {
-            depthPartitions[0].farZ = min(depthPartitions[0].farZ,
-                                           orbitPathList[orbitPathList.size() - 1].centerZ -
-                                           orbitPathList[orbitPathList.size() - 1].radius);
-        }
-
-        // We want to avoid overpartitioning the depth buffer. In this stage, we coalesce
-        // partitions that have small spans in the depth buffer.
-        // TODO: Implement this step!
-
-        vector<Annotation>::iterator annotation = depthSortedAnnotations.begin();
-
+    {
         // Render everything that wasn't culled.
         float intervalSize = 1.0f / (float) max(1, nIntervals);
-        i = nEntries - 1;
+        int i = (int) renderList.size() - 1;
         for (int interval = 0; interval < nIntervals; interval++)
         {
             currentIntervalIndex = interval;
@@ -6177,4 +6038,147 @@ Renderer::buildNearSystemsLists(const Universe &universe,
 
     if ((labelMode & BodyLabelMask) != 0)
         buildLabelLists(xfrustum, now);
+}
+
+int
+Renderer::buildDepthPartitions()
+{
+    // Since we're rendering objects of a huge range of sizes spread over
+    // vast distances, we can't just rely on the hardware depth buffer to
+    // handle hidden surface removal without a little help. We'll partition
+    // the depth buffer into spans that can be rendered without running
+    // into terrible depth buffer precision problems. Typically, each body
+    // with an apparent size greater than one pixel is allocated its own
+    // depth buffer interval. However, this will not correctly handle
+    // overlapping objects.  If two objects overlap in depth, we must
+    // assign them to the same interval.
+
+    depthPartitions.clear();
+    int nIntervals = 0;
+    int nEntries = (int)renderList.size();
+    float prevNear = -1e12f; // ~ 1 light year
+    if (nEntries > 0)
+        prevNear = renderList[nEntries - 1].farZ * 1.01f;
+
+    int i;
+
+    // Completely partition the depth buffer. Scan from back to front
+    // through all the renderable items that passed the culling test.
+    for (i = nEntries - 1; i >= 0; i--)
+    {
+        // Only consider renderables that will occupy more than one pixel.
+        if (renderList[i].discSizeInPixels > 1)
+        {
+            if (nIntervals == 0 ||
+                renderList[i].farZ >= depthPartitions[nIntervals - 1].nearZ)
+            {
+                // This object spans a depth interval that's disjoint with
+                // the current interval, so create a new one for it, and
+                // another interval to fill the gap between the last
+                // interval.
+                DepthBufferPartition partition;
+                partition.index = nIntervals;
+                partition.nearZ = renderList[i].farZ;
+                partition.farZ = prevNear;
+
+                // Omit null intervals
+                // TODO: Is this necessary? Shouldn't the >= test prevent this?
+                if (partition.nearZ != partition.farZ)
+                {
+                    depthPartitions.push_back(partition);
+                    nIntervals++;
+                }
+
+                partition.index = nIntervals;
+                partition.nearZ = renderList[i].nearZ;
+                partition.farZ = renderList[i].farZ;
+                depthPartitions.push_back(partition);
+                nIntervals++;
+
+                prevNear = partition.nearZ;
+            }
+            else
+            {
+                // This object overlaps the current span; expand the
+                // interval so that it completely contains the object.
+                DepthBufferPartition& partition = depthPartitions[nIntervals - 1];
+                partition.nearZ = max(partition.nearZ, renderList[i].nearZ);
+                partition.farZ = min(partition.farZ, renderList[i].farZ);
+                prevNear = partition.nearZ;
+            }
+        }
+    }
+
+    // Scan the list of orbit paths and find the closest one. We'll need
+    // adjust the nearest interval to accommodate it.
+    float zNearest = prevNear;
+    for (i = 0; i < (int)orbitPathList.size(); i++)
+    {
+        const OrbitPathListEntry& o = orbitPathList[i];
+        float minNearDistance = min(-MinNearPlaneDistance, o.centerZ + o.radius);
+        if (minNearDistance > zNearest)
+            zNearest = minNearDistance;
+    }
+
+    // Adjust the nearest interval to include the closest marker (if it's
+    // closer to the observer than anything else
+    if (!depthSortedAnnotations.empty())
+    {
+        // Factor of 0.999 makes sure ensures that the near plane does not fall
+        // exactly at the marker's z coordinate (in which case the marker
+        // would be susceptible to getting clipped.)
+        if (-depthSortedAnnotations[0].position.z() > zNearest)
+            zNearest = -depthSortedAnnotations[0].position.z() * 0.999f;
+    }
+
+#if DEBUG_COALESCE
+    clog << "nEntries: " << nEntries << ",   zNearest: " << zNearest
+         << ",   prevNear: " << prevNear << "\n";
+#endif
+
+    // If the nearest distance wasn't set, nothing should appear
+    // in the frontmost depth buffer interval (so we can set the near plane
+    // of the front interval to whatever we want as long as it's less than
+    // the far plane distance.
+    if (zNearest == prevNear)
+        zNearest = 0.0f;
+
+    // Add one last interval for the span from 0 to the front of the
+    // nearest object
+    // TODO: closest object may not be at entry 0, since objects are
+    // sorted by far distance.
+    float closest = zNearest;
+    if (nEntries > 0)
+    {
+        closest = max(closest, renderList[0].nearZ);
+
+        // Setting a the near plane distance to zero results in unreliable rendering, even
+        // if we don't care about the depth buffer. Compromise and set the near plane
+        // distance to a small fraction of distance to the nearest object.
+        if (closest == 0.0f)
+        {
+            closest = renderList[0].nearZ * 0.01f;
+        }
+    }
+
+    DepthBufferPartition partition;
+    partition.index = nIntervals;
+    partition.nearZ = closest;
+    partition.farZ = prevNear;
+    depthPartitions.push_back(partition);
+
+    nIntervals++;
+
+    // If orbits are enabled, adjust the farthest partition so that it
+    // can contain the orbit.
+    if (!orbitPathList.empty())
+    {
+        depthPartitions[0].farZ = min(depthPartitions[0].farZ,
+                                      orbitPathList.back().centerZ - orbitPathList.back().radius);
+    }
+
+    // We want to avoid overpartitioning the depth buffer. In this stage, we
+    // coalesce partitions that have small spans in the depth buffer.
+    // TODO: Implement this step!
+    return nIntervals;
 }
