@@ -37,6 +37,8 @@ set(CELENGINE_SOURCES
   dsoname.h
   dsooctree.cpp
   dsooctree.h
+  dsorenderer.cpp
+  dsorenderer.h
   frame.cpp
   frame.h
   framebuffer.cpp
