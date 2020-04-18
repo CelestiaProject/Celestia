@@ -37,6 +37,7 @@ std::ofstream hdrlog;
 #include <config.h>
 #include "render.h"
 #include "boundaries.h"
+#include "dsorenderer.h"
 #include "asterism.h"
 #include "astro.h"
 #include "vecgl.h"
@@ -126,9 +127,6 @@ static const float MinNearPlaneDistance = 0.0001f; // km
 static const float MaxFarNearRatio      = 2000000.0f;
 
 static const float MinRelativeOccluderRadius = 0.005f;
-
-static const float CubeCornerToCenterDistance = (float) sqrt(3.0);
-
 
 // The minimum apparent size of an objects orbit in pixels before we display
 // a label for it.  This minimizes label clutter.
@@ -5362,206 +5360,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.glareVertexBuffer->finish();
 }
 
-
-class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
-{
- public:
-    DSORenderer();
-
-    void process(DeepSkyObject* const&, double, float);
-
- public:
-    Vector3d     obsPos;
-    DSODatabase* dsoDB{ nullptr };
-    Frustum      frustum{ degToRad(45.0f), 1.0f, 1.0f };
-
-    Matrix3f orientationMatrix;
-
-    int wWidth{ 0 };
-    int wHeight{ 0 };
-
-    double avgAbsMag{ 0.0 };
-
-    unsigned int dsosProcessed{ 0 };
-};
-
-
-DSORenderer::DSORenderer() :
-    ObjectRenderer<DeepSkyObject*, double>(DSO_OCTREE_ROOT_SIZE)
-{
-};
-
-
-void DSORenderer::process(DeepSkyObject* const & dso,
-                          double distanceToDSO,
-                          float  absMag)
-{
-    if (distanceToDSO > distanceLimit)
-        return;
-
-    Vector3f relPos = (dso->getPosition() - obsPos).cast<float>();
-
-    Vector3f center = orientationMatrix.transpose() * relPos;
-
-    constexpr const double enhance = 4.0, pc10 = 32.6167;
-
-    // The parameter 'enhance' adjusts the DSO brightness as viewed from "inside"
-    // (e.g. MilkyWay as seen from Earth). It provides an enhanced apparent  core
-    // brightness appMag  ~ absMag - enhance. 'enhance' thus serves to uniformly
-    // enhance the too low sprite luminosity at close distance.
-
-    float  appMag = (distanceToDSO >= pc10)? (float) astro::absToAppMag((double) absMag, distanceToDSO): absMag + (float) (enhance * tanh(distanceToDSO/pc10 - 1.0));
-
-    // Test the object's bounding sphere against the view frustum. If we
-    // avoid this stage, overcrowded octree cells may hit performance badly:
-    // each object (even if it's not visible) would be sent to the OpenGL
-    // pipeline.
-
-    if (dso->isVisible())
-    {
-        double dsoRadius = dso->getBoundingSphereRadius();
-        bool inFrustum = frustum.testSphere(center, (float) dsoRadius) != Frustum::Outside;
-
-        if (inFrustum)
-        {
-            if ((renderFlags & dso->getRenderMask()))
-            {
-                dsosProcessed++;
-
-                // Input: display looks satisfactory for 0.2 < brightness < O(1.0)
-                // Ansatz: brightness = a - b * appMag(distanceToDSO), emulating eye sensitivity...
-                // determine a,b such that
-                // a - b * absMag = absMag / avgAbsMag ~ 1; a - b * faintestMag = 0.2.
-                // The 2nd eq. guarantees that the faintest galaxies are still visible.
-
-                if(!strcmp(dso->getObjTypeName(),"globular"))
-                    avgAbsMag =  -6.86;    // average over 150  globulars in globulars.dsc.
-                else if (!strcmp(dso->getObjTypeName(),"galaxy"))
-                    avgAbsMag = -19.04;    // average over 10937 galaxies in galaxies.dsc.
-
-
-                float r = absMag / (float) avgAbsMag;
-                float brightness = r - (r - 0.2f) * (absMag - appMag) / (absMag - faintestMag);
-
-                // obviously, brightness(appMag = absMag) = r and
-                // brightness(appMag = faintestMag) = 0.2, as desired.
-
-                brightness = 2.3f * brightness * (faintestMag - 4.75f) / renderer->getFaintestAM45deg();
-
-#ifdef USE_HDR
-                brightness *= exposure;
-#endif
-                if (brightness < 0)
-                    brightness = 0;
-
-                if (dsoRadius < 1000.0)
-                {
-                    // Small objects may be prone to clipping; give them special
-                    // handling.  We don't want to always set the projection
-                    // matrix, since that could be expensive with large galaxy
-                    // catalogs.
-                    auto nearZ = (float) (distanceToDSO / 2);
-                    auto farZ  = (float) (distanceToDSO + dsoRadius * 2 * CubeCornerToCenterDistance);
-                    if (nearZ < dsoRadius * 0.001)
-                    {
-                        nearZ = (float) (dsoRadius * 0.001);
-                        farZ  = nearZ * 10000.0f;
-                    }
-
-                    glMatrixMode(GL_PROJECTION);
-                    glPushMatrix();
-                    float t = (float) wWidth / (float) wHeight;
-                    glLoadMatrix(Perspective(fov, t, nearZ, farZ));
-                    glMatrixMode(GL_MODELVIEW);
-                }
-
-                glPushMatrix();
-                glTranslate(relPos);
-
-                dso->render(relPos,
-                            observer->getOrientationf(),
-                            (float) brightness,
-                            pixelSize,
-                            renderer);
-                glPopMatrix();
-
-                if (dsoRadius < 1000.0)
-                {
-                    glMatrixMode(GL_PROJECTION);
-                    glPopMatrix();
-                    glMatrixMode(GL_MODELVIEW);
-                }
-            } // renderFlags check
-
-            // Only render those labels that are in front of the camera:
-            // Place labels for DSOs brighter than the specified label threshold brightness
-            //
-            unsigned int labelMask = dso->getLabelMask();
-
-            if ((labelMask & labelMode) != 0)
-            {
-                Color labelColor;
-                float appMagEff = 6.0f;
-                float step = 6.0f;
-                float symbolSize = 0.0f;
-                MarkerRepresentation* rep = nullptr;
-
-                // Use magnitude based fading for galaxies, and distance based
-                // fading for nebulae and open clusters.
-                switch (labelMask)
-                {
-                case Renderer::NebulaLabels:
-                    rep = &renderer->nebulaRep;
-                    labelColor = Renderer::NebulaLabelColor;
-                    appMagEff = astro::absToAppMag(-7.5f, (float) distanceToDSO);
-                    symbolSize = (float) (dso->getRadius() / distanceToDSO) / pixelSize;
-                    step = 6.0f;
-                    break;
-                case Renderer::OpenClusterLabels:
-                    rep = &renderer->openClusterRep;
-                    labelColor = Renderer::OpenClusterLabelColor;
-                    appMagEff = astro::absToAppMag(-6.0f, (float) distanceToDSO);
-                    symbolSize = (float) (dso->getRadius() / distanceToDSO) / pixelSize;
-                    step = 4.0f;
-                    break;
-                case Renderer::GalaxyLabels:
-                    labelColor = Renderer::GalaxyLabelColor;
-                    appMagEff = appMag;
-                    step = 6.0f;
-                    break;
-                case Renderer::GlobularLabels:
-                    labelColor = Renderer::GlobularLabelColor;
-                    appMagEff = appMag;
-                    step = 3.0f;
-                    break;
-                default:
-                    // Unrecognized object class
-                    labelColor = Color::White;
-                    appMagEff = appMag;
-                    step = 6.0f;
-                    break;
-                }
-
-                if (appMagEff < labelThresholdMag)
-                {
-                    // introduce distance dependent label transparency.
-                    float distr = step * (labelThresholdMag - appMagEff) / labelThresholdMag;
-                    if (distr > 1.0f)
-                        distr = 1.0f;
-
-                    renderer->addBackgroundAnnotation(rep,
-                                                      dsoDB->getDSOName(dso, true),
-                                                      Color(labelColor, distr * labelColor.alpha()),
-                                                      relPos,
-                                                      Renderer::AlignLeft, Renderer::VerticalAlignCenter, symbolSize);
-                }
-            } // labels enabled
-        } // in frustum
-    } // isVisible()
-}
-
-
-void Renderer::renderDeepSkyObjects(const Universe&  universe,
+void Renderer::renderDeepSkyObjects(const Universe& universe,
                                     const Observer& observer,
                                     const float     faintestMagNight)
 {
