@@ -540,14 +540,6 @@ class Renderer
                          const Observer& observer,
                          float discSizeInPixels);
 
-    void renderObjectAsPoint_nosprite(const Eigen::Vector3f& center,
-                                      float radius,
-                                      float appMag,
-                                      float _faintestMag,
-                                      float discSizeInPixels,
-                                      Color color,
-                                      const Eigen::Quaternionf& cameraOrientation,
-                                      bool useHalos);
     void renderObjectAsPoint(const Eigen::Vector3f& center,
                              float radius,
                              float appMag,
@@ -749,31 +741,6 @@ class Renderer
     };
 
     int m_GLStateFlag { 0 };
-
- public:
-#if 0
-    struct OrbitSample
-    {
-        double t;
-        Point3d pos;
-
-        OrbitSample(const Eigen::Vector3d& _pos, double _t) : t(_t), pos(_pos.x(), _pos.y(), _pos.z()) { }
-        OrbitSample() { }
-    };
-
-    struct OrbitSection
-    {
-        Capsuled boundingVolume;
-        uint32_t firstSample;
-    };
-
-    struct CachedOrbit
-    {
-        std::vector<OrbitSample> trajectory;
-        std::vector<OrbitSection> sections;
-        uint32_t lastUsed;
-    };
-#endif
 
  private:
     typedef std::map<const Orbit*, CurvePlot*> OrbitCache;

@@ -31,7 +31,6 @@ std::ofstream hdrlog;
 #define BLUR_SIZE           128
 #define DEFAULT_EXPOSURE    -23.35f
 #define EXPOSURE_HALFLIFE   0.4f
-//#define USE_BLOOM_LISTS
 #endif
 
 #include <config.h>
@@ -299,12 +298,6 @@ Renderer::Renderer() :
         blurTextures[i] = nullptr;
     }
 #endif
-#ifdef USE_BLOOM_LISTS
-    for (size_t i = 0; i < (sizeof gaussianLists/sizeof(GLuint)); ++i)
-    {
-        gaussianLists[i] = 0;
-    }
-#endif
 
     for (int i = 0; i < (int) FontCount; i++)
     {
@@ -323,13 +316,7 @@ Renderer::~Renderer()
     delete[] skyVertices;
     delete[] skyIndices;
     delete[] skyContour;
-#ifdef USE_BLOOM_LISTS
-    for (size_t i = 0; i < (sizeof gaussianLists/sizeof(GLuint)); ++i)
-    {
-        if (gaussianLists[i] != 0)
-            glDeleteLists(gaussianLists[i], 1);
-    }
-#endif
+
 #ifdef USE_HDR
     for (size_t i = 0; i < BLUR_PASS_COUNT; ++i)
     {
@@ -615,19 +602,6 @@ bool Renderer::init(
 
         commonDataInitialized = true;
     }
-
-#if 0
-    int nSamples = 0;
-    int sampleBuffers = 0;
-    int enabled = (int) glIsEnabled(GL_MULTISAMPLE);
-    glGetIntegerv(GL_SAMPLE_BUFFERS, &sampleBuffers);
-    glGetIntegerv(GL_SAMPLES, &nSamples);
-    clog << "AA samples: " << nSamples
-         << ", enabled=" << (int) enabled
-         << ", sample buffers=" << (sampleBuffers)
-         << "\n";
-    glEnable(GL_MULTISAMPLE);
-#endif
 
 #ifdef USE_HDR
     Image        *testImg = new Image(GL_LUMINANCE_ALPHA, 1, 1);
@@ -1818,14 +1792,6 @@ void Renderer::draw(const Observer& observer,
 
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
-
-#if 0
-    int errCode = glGetError();
-    if (errCode != GL_NO_ERROR)
-    {
-        cout << "glError: " << (char*) gluErrorString(errCode) << '\n';
-    }
-#endif
 }
 
 void renderPoint(const Renderer &renderer,
@@ -2028,9 +1994,6 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     float height = atmosphere.height / radius;
     Vector3f recipSemiAxes = semiAxes.cwiseInverse();
 
-#if 0
-    Vector3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
-#endif
     // ellipDist is not the true distance from the surface unless the
     // planet is spherical.  Computing the true distance requires finding
     // the roots of a sixth degree polynomial, and isn't actually what we
@@ -3016,15 +2979,8 @@ void Renderer::renderObject(const Vector3f& pos,
             }
 
             glDisable(GL_POLYGON_OFFSET_FILL);
-
-            // Reset the texture matrix
-            glMatrixMode(GL_TEXTURE);
-            glLoadIdentity();
-            glMatrixMode(GL_MODELVIEW);
-
             glDepthMask(GL_TRUE);
             glFrontFace(GL_CCW);
-
             glPopMatrix();
         }
     }
