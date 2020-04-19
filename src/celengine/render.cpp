@@ -3203,17 +3203,13 @@ void Renderer::renderPlanet(Body& body,
                             lights);
         assert(lights.nLights <= MaxLights);
 
-        lights.ambientColor = Vector3f(ambientColor.red(),
-                                       ambientColor.green(),
-                                       ambientColor.blue());
+        lights.ambientColor = ambientColor;
 
+        // Clear out the list of eclipse shadows
+        for (unsigned int li = 0; li < lights.nLights; li++)
         {
-            // Clear out the list of eclipse shadows
-            for (unsigned int li = 0; li < lights.nLights; li++)
-            {
-                eclipseShadows[li].clear();
-                lights.shadows[li] = &eclipseShadows[li];
-            }
+            eclipseShadows[li].clear();
+            lights.shadows[li] = &eclipseShadows[li];
         }
 
 
@@ -3236,9 +3232,7 @@ void Renderer::renderPlanet(Body& body,
             body.getSystem() != nullptr)
         {
             PlanetarySystem* system = body.getSystem();
-
-            if (system->getPrimaryBody() == nullptr &&
-                body.getSatellites() != nullptr)
+            if (system->getPrimaryBody() == nullptr)
             {
                 // The body is a planet.  Check for eclipse shadows
                 // from all of its satellites.
@@ -3258,7 +3252,7 @@ void Renderer::renderPlanet(Body& body,
                     }
                 }
             }
-            else if (system->getPrimaryBody() != nullptr)
+            else
             {
                 for (unsigned int li = 0; li < lights.nLights; li++)
                 {
@@ -4247,6 +4241,29 @@ void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
 }
 
 
+static Color getBodyLabelColor(int classification)
+{
+    switch (classification)
+    {
+    case Body::Planet:
+        return Renderer::PlanetLabelColor;
+    case Body::DwarfPlanet:
+        return Renderer::DwarfPlanetLabelColor;
+    case Body::Moon:
+        return Renderer::MoonLabelColor;
+    case Body::MinorMoon:
+        return Renderer::MinorMoonLabelColor;
+    case Body::Asteroid:
+        return Renderer::AsteroidLabelColor;
+    case Body::Comet:
+        return Renderer::CometLabelColor;
+    case Body::Spacecraft:
+        return Renderer::SpacecraftLabelColor;
+    default:
+        return Color::Black;
+    }
+}
+
 void Renderer::buildLabelLists(const Frustum& viewFrustum,
                                double now)
 {
@@ -4254,142 +4271,109 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
     Body* lastPrimary = nullptr;
     Sphered primarySphere;
 
-    for (auto& render_item : renderList)
+    for (auto &ri : renderList)
     {
-        if (render_item.renderableType != RenderListEntry::RenderableBody)
+        if (ri.renderableType != RenderListEntry::RenderableBody)
             continue;
 
-        int classification = render_item.body->getOrbitClassification();
+        if ((ri.body->getOrbitClassification() & labelClassMask) == 0)
+            continue;
 
-        if ((classification & labelClassMask) != 0 &&
-            viewFrustum.testSphere(render_item.position, render_item.radius) != Frustum::Outside)
+        if (viewFrustum.testSphere(ri.position, ri.radius) == Frustum::Outside)
+            continue;
+
+        const Body* body = ri.body;
+        auto boundingRadiusSize = (float) (body->getOrbit(now)->getBoundingRadius() / ri.distance) / pixelSize;
+        if (boundingRadiusSize <= minOrbitSize)
+            continue;
+
+        if (body->getName().empty())
+            continue;
+
+        auto phase = body->getTimeline()->findPhase(now);
+        Body* primary = phase->orbitFrame()->getCenter().body();
+        if (primary != nullptr && (primary->getClassification() & Body::Invisible) != 0)
         {
-            const Body* body = render_item.body;
-            Vector3f pos = render_item.position;
+            Body* parent = phase->orbitFrame()->getCenter().body();
+            if (parent != nullptr)
+                primary = parent;
+        }
 
-            auto boundingRadiusSize = (float) (body->getOrbit(now)->getBoundingRadius() / render_item.distance) / pixelSize;
-            if (boundingRadiusSize > minOrbitSize)
+        // Position the label slightly in front of the object along a line from
+        // object center to viewer.
+        Vector3f pos = ri.position;
+        pos = pos * (1.0f - body->getBoundingRadius() * 1.01f / pos.norm());
+
+        // Try and position the label so that it's not partially
+        // occluded by other objects. We'll consider just the object
+        // that the labeled body is orbiting (its primary) as a
+        // potential occluder. If a ray from the viewer to labeled
+        // object center intersects the occluder first, skip
+        // rendering the object label. Otherwise, ensure that the
+        // label is completely in front of the primary by projecting
+        // it onto the plane tangent to the primary at the
+        // viewer-primary intersection point. Whew. Don't do any of
+        // this if the primary isn't an ellipsoid.
+        //
+        // This only handles the problem of partial label occlusion
+        // for low orbiting and surface positioned objects, but that
+        // case is *much* more common than other possibilities.
+        if (primary != nullptr && primary->isEllipsoid())
+        {
+            // In the typical case, we're rendering labels for many
+            // objects that orbit the same primary. Avoid repeatedly
+            // calling getPosition() by caching the last primary
+            // position.
+            if (primary != lastPrimary)
             {
-                Color labelColor;
-                float opacity = sizeFade(boundingRadiusSize, minOrbitSize, 2.0f);
+                Vector3d p = phase->orbitFrame()->getOrientation(now).conjugate() *
+                             phase->orbit()->positionAtTime(now);
+                Vector3d v = ri.position.cast<double>() - p;
 
-                switch (classification)
-                {
-                case Body::Planet:
-                    labelColor = PlanetLabelColor;
-                    break;
-                case Body::DwarfPlanet:
-                    labelColor = DwarfPlanetLabelColor;
-                    break;
-                case Body::Moon:
-                    labelColor = MoonLabelColor;
-                    break;
-                case Body::MinorMoon:
-                    labelColor = MinorMoonLabelColor;
-                    break;
-                case Body::Asteroid:
-                    labelColor = AsteroidLabelColor;
-                    break;
-                case Body::Comet:
-                    labelColor = CometLabelColor;
-                    break;
-                case Body::Spacecraft:
-                    labelColor = SpacecraftLabelColor;
-                    break;
-                default:
-                    labelColor = Color::Black;
-                    break;
-                }
+                primarySphere = Sphered(v, primary->getRadius());
+                lastPrimary = primary;
+            }
 
-                labelColor = Color(labelColor, opacity * labelColor.alpha());
+            Ray3d testRay(Vector3d::Zero(), pos.cast<double>());
 
-                if (!body->getName().empty())
-                {
-                    bool isBehindPrimary = false;
+            // Test the viewer-to-labeled object ray against
+            // the primary sphere (TODO: handle ellipsoids)
+            double t = 0.0;
+            bool isBehindPrimary = false;
+            if (testIntersection(testRay, primarySphere, t))
+            {
+                // Center of labeled object is behind primary
+                // sphere; mark it for rejection.
+                isBehindPrimary = t < 1.0;
+            }
 
-                    auto phase = body->getTimeline()->findPhase(now);
-                    Body* primary = phase->orbitFrame()->getCenter().body();
-                    if (primary != nullptr && (primary->getClassification() & Body::Invisible) != 0)
-                    {
-                        Body* parent = phase->orbitFrame()->getCenter().body();
-                        if (parent != nullptr)
-                            primary = parent;
-                    }
+            if (!isBehindPrimary)
+            {
+                // Not rejected. Compute the plane tangent to
+                // the primary at the viewer-to-primary
+                // intersection point.
+                Vector3d primaryVec = primarySphere.center;
+                double distToPrimary = primaryVec.norm();
+                double t = 1.0 - primarySphere.radius / distToPrimary;
+                double distance = primaryVec.dot(primaryVec * t);
 
-                    // Position the label slightly in front of the object along a line from
-                    // object center to viewer.
-                    pos = pos * (1.0f - body->getBoundingRadius() * 1.01f / pos.norm());
+                // Compute the intersection of the viewer-to-labeled
+                // object ray with the tangent plane.
+                Vector3d posd = pos.cast<double>();
+                float u = (float)(distance / primaryVec.dot(posd));
 
-                    // Try and position the label so that it's not partially
-                    // occluded by other objects. We'll consider just the object
-                    // that the labeled body is orbiting (its primary) as a
-                    // potential occluder. If a ray from the viewer to labeled
-                    // object center intersects the occluder first, skip
-                    // rendering the object label. Otherwise, ensure that the
-                    // label is completely in front of the primary by projecting
-                    // it onto the plane tangent to the primary at the
-                    // viewer-primary intersection point. Whew. Don't do any of
-                    // this if the primary isn't an ellipsoid.
-                    //
-                    // This only handles the problem of partial label occlusion
-                    // for low orbiting and surface positioned objects, but that
-                    // case is *much* more common than other possibilities.
-                    if (primary != nullptr && primary->isEllipsoid())
-                    {
-                        // In the typical case, we're rendering labels for many
-                        // objects that orbit the same primary. Avoid repeatedly
-                        // calling getPosition() by caching the last primary
-                        // position.
-                        if (primary != lastPrimary)
-                        {
-                            Vector3d p = phase->orbitFrame()->getOrientation(now).conjugate() *
-                                         phase->orbit()->positionAtTime(now);
-                            Vector3d v = render_item.position.cast<double>() - p;
-
-                            primarySphere = Sphered(v, primary->getRadius());
-                            lastPrimary = primary;
-                        }
-
-                        Ray3d testRay(Vector3d::Zero(), pos.cast<double>());
-
-                        // Test the viewer-to-labeled object ray against
-                        // the primary sphere (TODO: handle ellipsoids)
-                        double t = 0.0;
-                        if (testIntersection(testRay, primarySphere, t))
-                        {
-                            // Center of labeled object is behind primary
-                            // sphere; mark it for rejection.
-                            isBehindPrimary = t < 1.0;
-                        }
-
-                        if (!isBehindPrimary)
-                        {
-                            // Not rejected. Compute the plane tangent to
-                            // the primary at the viewer-to-primary
-                            // intersection point.
-                            Vector3d primaryVec = primarySphere.center;
-                            double distToPrimary = primaryVec.norm();
-                            Hyperplane<double, 3> primaryTangentPlane(primaryVec,
-                                                                      primaryVec.dot(primaryVec * (1.0 - primarySphere.radius / distToPrimary)));
-
-                            // Compute the intersection of the viewer-to-labeled
-                            // object ray with the tangent plane.
-                            float u = (float) (primaryTangentPlane.offset() / primaryTangentPlane.normal().dot(pos.cast<double>()));
-
-                            // If the intersection point is closer to the viewer
-                            // than the label, then project the label onto the
-                            // tangent plane.
-                            if (u < 1.0f && u > 0.0f)
-                            {
-                                pos = pos * u;
-                            }
-                        }
-                    }
-
-                    addSortedAnnotation(nullptr, body->getName(true), labelColor, pos);
-                }
+                // If the intersection point is closer to the viewer
+                // than the label, then project the label onto the
+                // tangent plane.
+                if (u < 1.0f && u > 0.0f)
+                    pos = pos * u;
             }
         }
+
+        Color labelColor = getBodyLabelColor(ri.body->getOrbitClassification());
+        float opacity = sizeFade(boundingRadiusSize, minOrbitSize, 2.0f);
+        labelColor.alpha(opacity * labelColor.alpha());
+        addSortedAnnotation(nullptr, body->getName(true), labelColor, pos);
     } // for each render list entry
 }
 
@@ -4400,35 +4384,35 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
                                         double now)
 {
     // If the star isn't fixed, add its orbit to the render list
-    if ((renderFlags & ShowOrbits) != 0 &&
-        ((orbitMask & Body::Stellar) != 0 || highlightObject.star() == &star))
+    if ((renderFlags & ShowOrbits) == 0)
+        return;
+    if ((orbitMask & Body::Stellar) == 0 && highlightObject.star() != &star)
+        return;
+    if (star.getOrbit() == nullptr)
+        return;
+
+    Matrix3d viewMat = observer.getOrientation().toRotationMatrix();
+    Vector3d viewMatZ = viewMat.row(2);
+
+    // Get orbit origin relative to the observer
+    Vector3d orbitOrigin = star.getOrbitBarycenterPosition(now).offsetFromKm(observer.getPosition());
+
+    // Compute the size of the orbit in pixels
+    double originDistance = orbitOrigin.norm();
+    double boundingRadius = star.getOrbit()->getBoundingRadius();
+    auto orbitRadiusInPixels = (float)(boundingRadius / (originDistance * pixelSize));
+
+    if (orbitRadiusInPixels > minOrbitSize)
     {
-        Matrix3d viewMat = observer.getOrientation().toRotationMatrix();
-        Vector3d viewMatZ = viewMat.row(2);
-
-        if (star.getOrbit() != nullptr)
-        {
-            // Get orbit origin relative to the observer
-            Vector3d orbitOrigin = star.getOrbitBarycenterPosition(now).offsetFromKm(observer.getPosition());
-
-            // Compute the size of the orbit in pixels
-            double originDistance = orbitOrigin.norm();
-            double boundingRadius = star.getOrbit()->getBoundingRadius();
-            auto orbitRadiusInPixels = (float) (boundingRadius / (originDistance * pixelSize));
-
-            if (orbitRadiusInPixels > minOrbitSize)
-            {
-                // Add the orbit of this body to the list of orbits to be rendered
-                OrbitPathListEntry path;
-                path.star = &star;
-                path.body = nullptr;
-                path.centerZ = (float) orbitOrigin.dot(viewMatZ);
-                path.radius = (float) boundingRadius;
-                path.origin = orbitOrigin;
-                path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
-                orbitPathList.push_back(path);
-            }
-        }
+        // Add the orbit of this body to the list of orbits to be rendered
+        OrbitPathListEntry path;
+        path.star = &star;
+        path.body = nullptr;
+        path.centerZ = (float)orbitOrigin.dot(viewMatZ);
+        path.radius = (float)boundingRadius;
+        path.origin = orbitOrigin;
+        path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
+        orbitPathList.push_back(path);
     }
 }
 
