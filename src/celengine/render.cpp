@@ -1668,122 +1668,6 @@ void Renderer::draw(const Observer& observer,
 
     setupSecondaryLightSources(secondaryIlluminators, lightSourceList);
 
-#ifdef USE_HDR
-    Matrix3f viewMat = observer.getOrientationf().conjugate().toRotationMatrix();
-    float maxSpan = (float) sqrt(square((float) windowWidth) +
-                                 square((float) windowHeight));
-    float nearZcoeff = (float) cos(degToRad(fov / 2)) *
-        ((float) windowHeight / maxSpan);
-
-    // Remove objects from the render list that lie completely outside the
-    // view frustum.
-    auto notCulled = renderList.begin();
-    for (const auto& render_item : renderList)
-    {
-        Vector3f center = viewMat * render_item.position;
-
-        bool convex = true;
-        float radius = 1.0f;
-        float cullRadius = 1.0f;
-        float cloudHeight = 0.0f;
-
-        switch (render_item.renderableType)
-        {
-        case RenderListEntry::RenderableStar:
-            continue;
-
-        case RenderListEntry::RenderableCometTail:
-        case RenderListEntry::RenderableReferenceMark:
-            radius = render_item.radius;
-            cullRadius = radius;
-            convex = false;
-            break;
-
-        case RenderListEntry::RenderableBody:
-        default:
-            radius = render_item.body->getBoundingRadius();
-            if (render_item.body->getRings() != nullptr)
-            {
-                radius = render_item.body->getRings()->outerRadius;
-                convex = false;
-            }
-
-            if (!render_item.body->isEllipsoid())
-                convex = false;
-
-            cullRadius = radius;
-            if (render_item.body->getAtmosphere() != nullptr)
-            {
-                cullRadius += render_item.body->getAtmosphere()->height;
-                cloudHeight = max(render_item.body->getAtmosphere()->cloudHeight,
-                                  render_item.body->getAtmosphere()->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
-            }
-            break;
-        }
-
-        // Test the object's bounding sphere against the view frustum
-        if (frustum.testSphere(center, cullRadius) != Frustum::Outside)
-        {
-            float nearZ = center.norm() - radius;
-            nearZ = -nearZ * nearZcoeff;
-
-            if (nearZ > -MinNearPlaneDistance)
-                render_item.nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
-            else
-                render_item.nearZ = nearZ;
-
-            if (!convex)
-            {
-                render_item.farZ = center.z() - radius;
-                if (render_item.farZ / render_item.nearZ > MaxFarNearRatio * 0.5f)
-                    render_item.nearZ = render_item.farZ / (MaxFarNearRatio * 0.5f);
-            }
-            else
-            {
-                // Make the far plane as close as possible
-                float d = center.norm();
-                // Account for ellipsoidal objects
-                float eradius = radius;
-                if (render_item.body != nullptr) // XXX: not checked before
-                {
-                    Vector3f semiAxes = render_item.body->getSemiAxes();
-                    float minSemiAxis = min(semiAxes.x(), min(semiAxes.y(), semiAxes.z()));
-                    eradius *= minSemiAxis / radius;
-                }
-
-                if (d > eradius)
-                {
-                    render_item.farZ = render_item.centerZ - render_item.radius;
-                }
-                else
-                {
-                    // We're inside the bounding sphere (and, if the planet
-                    // is spherical, inside the planet.)
-                    render_item.farZ = render_item.nearZ * 2.0f;
-                }
-
-                if (cloudHeight > 0.0f)
-                {
-                    // If there's a cloud layer, we need to move the
-                    // far plane out so that the clouds aren't clipped
-                    float cloudLayerRadius = eradius + cloudHeight;
-                    render_item.farZ -= (float) sqrt(square(cloudLayerRadius) -
-                                               square(eradius));
-                }
-            }
-
-            *notCulled = render_item;
-            notCulled++;
-
-            maxBodyMag = min(maxBodyMag, render_item.appMag);
-            foundClosestBody = true;
-        }
-    }
-
-    renderList.resize(notCulled - renderList.begin());
-    saturationMag = maxBodyMag;
-#endif // USE_HDR
-
     Color skyColor(0.0f, 0.0f, 0.0f);
 
     // Scan through the render list to see if we're inside a planetary
@@ -1918,164 +1802,7 @@ void Renderer::draw(const Observer& observer,
     glPolygonMode(GL_FRONT_AND_BACK, (GLenum) renderMode);
 
     {
-        Matrix3f viewMat = observer.getOrientationf().conjugate().toRotationMatrix();
-
-        // Remove objects from the render list that lie completely outside the
-        // view frustum.
-        auto notCulled = renderList.begin();
-#ifdef USE_HDR
-        maxBodyMag = maxBodyMagPrev;
-        float starMaxMag = maxBodyMagPrev;
-#endif
-        for (auto& render_item : renderList)
-        {
-#ifdef USE_HDR
-            switch (render_item.renderableType)
-            {
-            case RenderListEntry::RenderableStar:
-                break;
-            default:
-                *notCulled = render_item;
-                notCulled++;
-                continue;
-            }
-#endif
-            Vector3f center = viewMat.transpose() * render_item.position;
-
-            bool convex = true;
-            float radius = 1.0f;
-            float cullRadius = 1.0f;
-            float cloudHeight = 0.0f;
-
-#ifndef USE_HDR
-            switch (render_item.renderableType)
-            {
-            case RenderListEntry::RenderableStar:
-                radius = render_item.star->getRadius();
-                cullRadius = radius * (1.0f + CoronaHeight);
-                break;
-
-            case RenderListEntry::RenderableCometTail:
-                radius = render_item.radius;
-                cullRadius = radius;
-                convex = false;
-                break;
-
-            case RenderListEntry::RenderableBody:
-                radius = render_item.body->getBoundingRadius();
-                if (render_item.body->getRings() != nullptr)
-                {
-                    radius = render_item.body->getRings()->outerRadius;
-                    convex = false;
-                }
-
-                if (!render_item.body->isEllipsoid())
-                    convex = false;
-
-                cullRadius = radius;
-                if (render_item.body->getAtmosphere() != nullptr)
-                {
-                    cullRadius += render_item.body->getAtmosphere()->height;
-                    cloudHeight = max(render_item.body->getAtmosphere()->cloudHeight,
-                                      render_item.body->getAtmosphere()->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
-                }
-                break;
-
-            case RenderListEntry::RenderableReferenceMark:
-                radius = render_item.radius;
-                cullRadius = radius;
-                convex = false;
-                break;
-
-            default:
-                break;
-            }
-#else
-            radius = render_item.star->getRadius();
-            cullRadius = radius * (1.0f + CoronaHeight);
-#endif // USE_HDR
-
-            // Test the object's bounding sphere against the view frustum
-            if (frustum.testSphere(center, cullRadius) != Frustum::Outside)
-            {
-                float nearZ = center.norm() - radius;
-#ifdef USE_HDR
-                nearZ = -nearZ * nearZcoeff;
-#else
-                float maxSpan = (float) sqrt(square((float) windowWidth) +
-                                             square((float) windowHeight));
-
-                nearZ = -nearZ * (float) cos(degToRad(fov / 2)) *
-                    ((float) windowHeight / maxSpan);
-#endif
-                if (nearZ > -MinNearPlaneDistance)
-                    render_item.nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
-                else
-                    render_item.nearZ = nearZ;
-
-                if (!convex)
-                {
-                    render_item.farZ = center.z() - radius;
-                    if (render_item.farZ / render_item.nearZ > MaxFarNearRatio * 0.5f)
-                        render_item.nearZ = render_item.farZ / (MaxFarNearRatio * 0.5f);
-                }
-                else
-                {
-                    // Make the far plane as close as possible
-                    float d = center.norm();
-
-                    // Account for ellipsoidal objects
-                    float eradius = radius;
-                    if (render_item.renderableType == RenderListEntry::RenderableBody)
-                    {
-                        float minSemiAxis = render_item.body->getSemiAxes().minCoeff();
-                        eradius *= minSemiAxis / radius;
-                    }
-
-                    if (d > eradius)
-                    {
-                        render_item.farZ = render_item.centerZ - render_item.radius;
-                    }
-                    else
-                    {
-                        // We're inside the bounding sphere (and, if the planet
-                        // is spherical, inside the planet.)
-                        render_item.farZ = render_item.nearZ * 2.0f;
-                    }
-
-                    if (cloudHeight > 0.0f)
-                    {
-                        // If there's a cloud layer, we need to move the
-                        // far plane out so that the clouds aren't clipped
-                        float cloudLayerRadius = eradius + cloudHeight;
-                        render_item.farZ -= (float) sqrt(square(cloudLayerRadius) -
-                                                   square(eradius));
-                    }
-                }
-
-                *notCulled = render_item;
-                notCulled++;
-#ifdef USE_HDR
-                if (render_item.discSizeInPixels > 1.0f &&
-                    render_item.appMag < starMaxMag)
-                {
-                    starMaxMag = render_item.appMag;
-                    brightestStar = render_item.star;
-                    foundBrightestStar = true;
-                }
-#endif
-            }
-        }
-
-        renderList.resize(notCulled - renderList.begin());
-
-        // The calls to buildRenderLists/renderStars filled renderList
-        // with visible bodies.  Sort it front to back, then
-        // render each entry in reverse order (TODO: convenient, but not
-        // ideal for performance; should render opaque objects front to
-        // back, then translucent objects back to front. However, the
-        // amount of overdraw in Celestia is typically low.)
-        sort(renderList.begin(), renderList.end());
+        removeInvisibleItems(frustum);
 
         // Sort the annotations
         sort(depthSortedAnnotations.begin(), depthSortedAnnotations.end());
@@ -6191,6 +5918,144 @@ Renderer::setShadowMapSize(unsigned size)
         m_shadowFBO = nullptr;
     else
         createShadowFBO();
+}
+
+void
+Renderer::removeInvisibleItems(const Frustum &frustum)
+{
+    // Remove objects from the render list that lie completely outside the
+    // view frustum.
+    auto notCulled = renderList.begin();
+#ifdef USE_HDR
+    maxBodyMag = maxBodyMagPrev;
+    float starMaxMag = maxBodyMagPrev;
+#endif
+    for (auto &ri : renderList)
+    {
+        bool convex = true;
+        float radius = 1.0f;
+        float cullRadius = 1.0f;
+        float cloudHeight = 0.0f;
+
+        switch (ri.renderableType)
+        {
+        case RenderListEntry::RenderableStar:
+            radius = ri.star->getRadius();
+            cullRadius = radius * (1.0f + CoronaHeight);
+            break;
+
+        case RenderListEntry::RenderableCometTail:
+        case RenderListEntry::RenderableReferenceMark:
+            radius = ri.radius;
+            cullRadius = radius;
+            convex = false;
+            break;
+
+        case RenderListEntry::RenderableBody:
+            radius = ri.body->getBoundingRadius();
+            if (ri.body->getRings() != nullptr)
+            {
+                radius = ri.body->getRings()->outerRadius;
+                convex = false;
+            }
+
+            if (!ri.body->isEllipsoid())
+                convex = false;
+
+            cullRadius = radius;
+            if (ri.body->getAtmosphere() != nullptr)
+            {
+                auto *a = ri.body->getAtmosphere();
+                cullRadius += a->height;
+                cloudHeight = max(a->cloudHeight,
+                                  a->mieScaleHeight * -log(AtmosphereExtinctionThreshold));
+            }
+            break;
+
+        default:
+            break;
+        }
+
+        Vector3f center = getCameraOrientation().toRotationMatrix() * ri.position;
+        // Test the object's bounding sphere against the view frustum
+        if (frustum.testSphere(center, cullRadius) != Frustum::Outside)
+        {
+            float nearZ = center.norm() - radius;
+            float maxSpan = hypot((float) windowWidth, (float) windowHeight);
+            float nearZcoeff = cos(degToRad(fov / 2.0f)) * ((float) windowHeight / maxSpan);
+            nearZ = -nearZ * nearZcoeff;
+
+            if (nearZ > -MinNearPlaneDistance)
+                ri.nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
+            else
+                ri.nearZ = nearZ;
+
+            if (!convex)
+            {
+                ri.farZ = center.z() - radius;
+                if (ri.farZ / ri.nearZ > MaxFarNearRatio * 0.5f)
+                    ri.nearZ = ri.farZ / (MaxFarNearRatio * 0.5f);
+            }
+            else
+            {
+                // Make the far plane as close as possible
+                float d = center.norm();
+
+                // Account for ellipsoidal objects
+                float eradius = radius;
+                if (ri.renderableType == RenderListEntry::RenderableBody)
+                {
+                    float minSemiAxis = ri.body->getSemiAxes().minCoeff();
+                    eradius *= minSemiAxis / radius;
+                }
+
+                if (d > eradius)
+                {
+                    ri.farZ = ri.centerZ - ri.radius;
+                }
+                else
+                {
+                    // We're inside the bounding sphere (and, if the planet
+                    // is spherical, inside the planet.)
+                    ri.farZ = ri.nearZ * 2.0f;
+                }
+
+                if (cloudHeight > 0.0f)
+                {
+                    // If there's a cloud layer, we need to move the
+                    // far plane out so that the clouds aren't clipped
+                    float cloudLayerRadius = eradius + cloudHeight;
+                    ri.farZ -= sqrt(square(cloudLayerRadius) - square(eradius));
+                }
+            }
+
+            *notCulled = ri;
+            notCulled++;
+#ifdef USE_HDR
+            if (ri.discSizeInPixels > 1.0f && ri.appMag < starMaxMag)
+            {
+                starMaxMag = ri.appMag;
+                brightestStar = ri.star;
+                foundBrightestStar = true;
+            }
+            maxBodyMag = min(maxBodyMag, starMaxMag);
+            foundClosestBody = true;
+#endif
+        }
+    }
+
+    renderList.resize(notCulled - renderList.begin());
+#ifdef USE_HDR
+    saturationMag = maxBodyMag;
+#endif // USE_HDR
+
+    // The calls to buildRenderLists/renderStars filled renderList
+    // with visible bodies.  Sort it front to back, then
+    // render each entry in reverse order (TODO: convenient, but not
+    // ideal for performance; should render opaque objects front to
+    // back, then translucent objects back to front. However, the
+    // amount of overdraw in Celestia is typically low.)
+    sort(renderList.begin(), renderList.end());
 }
 
 bool

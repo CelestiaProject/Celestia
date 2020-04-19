@@ -503,6 +503,8 @@ class Renderer
                                   const Observer& observer,
                                   double now);
 
+    void removeInvisibleItems(const celmath::Frustum &frustum);
+
     void renderObject(const Eigen::Vector3f& pos,
                       float distance,
                       double now,
