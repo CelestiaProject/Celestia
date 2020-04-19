@@ -338,7 +338,6 @@ class Renderer
     float getNearPlaneDistance() const;
 
     void clearAnnotations(std::vector<Annotation>&);
-    void clearSortedAnnotations();
 
     void invalidateOrbitCache();
 

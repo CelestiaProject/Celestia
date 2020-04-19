@@ -924,12 +924,6 @@ void Renderer::clearAnnotations(vector<Annotation>& annotations)
 }
 
 
-void Renderer::clearSortedAnnotations()
-{
-    depthSortedAnnotations.clear();
-}
-
-
 // Return the orientation of the camera used to render the current
 // frame. Available only while rendering a frame.
 const Quaternionf& Renderer::getCameraOrientation() const
@@ -1577,9 +1571,6 @@ void Renderer::draw(const Observer& observer,
     Frustum xfrustum(frustum);
     xfrustum.transform(observer.getOrientationf().conjugate().toRotationMatrix());
 
-    // Set up the camera for star rendering; the units of this phase
-    // are light years.
-    Vector3f observerPosLY = observer.getPosition().offsetFromLy(Vector3f::Zero());
     glPushMatrix();
     glRotate(m_cameraOrientation);
 
@@ -1588,7 +1579,10 @@ void Renderer::draw(const Observer& observer,
     glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix.data());
     glGetDoublev(GL_PROJECTION_MATRIX, projMatrix.data());
 
-    clearSortedAnnotations();
+    depthSortedAnnotations.clear();
+    foregroundAnnotations.clear();
+    backgroundAnnotations.clear();
+    objectAnnotations.clear();
 
     // Put all solar system bodies into the render list.  Stars close and
     // large enough to have discernible surface detail are also placed in
@@ -1627,8 +1621,6 @@ void Renderer::draw(const Observer& observer,
 
     setupSecondaryLightSources(secondaryIlluminators, lightSourceList);
 
-    Color skyColor(0.0f, 0.0f, 0.0f);
-
     // Scan through the render list to see if we're inside a planetary
     // atmosphere.  If so, we need to adjust the sky color as well as the
     // limiting magnitude of stars (so stars aren't visible in the daytime
@@ -1647,18 +1639,15 @@ void Renderer::draw(const Observer& observer,
     // sets or rises.
 #ifdef USE_HDR
     brightnessScale = 1.0f / (faintestMag -  saturationMag);
+    exposurePrev = exposure;
+    float exposureNow = 1.f / (1.f+exp((faintestMag - saturationMag + DEFAULT_EXPOSURE)/2.f));
+    exposure = exposurePrev + (exposureNow - exposurePrev) * (1.f - exp(-1.f/(15.f * EXPOSURE_HALFLIFE)));
+    brightnessScale /= exposure;
 #else
     if (faintestMag - saturationMag >= 6.0f)
         brightnessScale = 1.0f / (faintestMag -  saturationMag);
     else
         brightnessScale = 0.1667f;
-#endif
-
-#ifdef USE_HDR
-    exposurePrev = exposure;
-    float exposureNow = 1.f / (1.f+exp((faintestMag - saturationMag + DEFAULT_EXPOSURE)/2.f));
-    exposure = exposurePrev + (exposureNow - exposurePrev) * (1.f - exp(-1.f/(15.f * EXPOSURE_HALFLIFE)));
-    brightnessScale /= exposure;
 #endif
 
 #ifdef DEBUG_HDR_TONEMAP
@@ -1676,12 +1665,11 @@ void Renderer::draw(const Observer& observer,
 #endif
 
 #ifdef USE_HDR
-    glClearColor(skyColor.red(), skyColor.green(), skyColor.blue(), 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 #else
-    glClearColor(skyColor.red(), skyColor.green(), skyColor.blue(), 1);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 #endif
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     glDepthMask(GL_FALSE);
 
     // Render sky grids first--these will always be in the background
@@ -1696,9 +1684,6 @@ void Renderer::draw(const Observer& observer,
         renderDeepSkyObjects(universe, observer, faintestMag);
     }
 
-    // Translate the camera before rendering the stars
-    glPushMatrix();
-
     // Render stars
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
@@ -1707,23 +1692,19 @@ void Renderer::draw(const Observer& observer,
 
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != nullptr)
     {
-        // Disable multisample rendering when drawing point stars
-        bool toggleAA = (starStyle == Renderer::PointStars && glIsEnabled(GL_MULTISAMPLE));
-        if (toggleAA)
-            glDisable(GL_MULTISAMPLE);
-
         renderPointStars(*universe.getStarCatalog(), faintestMag, observer);
-
-        if (toggleAA)
-            glEnable(GL_MULTISAMPLE);
     }
 
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 #endif
 
+    // Translate the camera before rendering the asterisms and boundaries
+    glPushMatrix();
+    // Set up the camera for star rendering; the units of this phase
+    // are light years.
+    Vector3f observerPosLY = observer.getPosition().offsetFromLy(Vector3f::Zero());
     glTranslatef(-observerPosLY.x(), -observerPosLY.y(), -observerPosLY.z());
-
 
     float dist = observerPosLY.norm() * 1.6e4f;
     renderAsterisms(universe, dist);
@@ -1758,8 +1739,6 @@ void Renderer::draw(const Observer& observer,
     // solar system objects are rendered.
     renderBackgroundAnnotations(FontNormal);
 
-    glPolygonMode(GL_FRONT_AND_BACK, (GLenum) renderMode);
-
     removeInvisibleItems(frustum);
 
     // Sort the annotations
@@ -1772,13 +1751,15 @@ void Renderer::draw(const Observer& observer,
     adjustEclipsedStarExposure(now);
 #endif
 
+    glPolygonMode(GL_FRONT_AND_BACK, (GLenum) renderMode);
+
     int nIntervals = buildDepthPartitions();
     renderSolarSystemObjects(observer, nIntervals, now);
 
     renderForegroundAnnotations(FontNormal);
 
     glMatrixMode(GL_PROJECTION);
-    glLoadMatrix(Perspective(fov, getAspectRatio(), NEAR_DIST, FAR_DIST));
+    glLoadMatrix(projMatrix);
     glMatrixMode(GL_MODELVIEW);
 
     if (!selectionVisible && (renderFlags & ShowMarkers))
@@ -4477,6 +4458,11 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                                 float faintestMagNight,
                                 const Observer& observer)
 {
+    // Disable multisample rendering when drawing point stars
+    bool toggleAA = (starStyle == Renderer::PointStars && glIsEnabled(GL_MULTISAMPLE));
+    if (toggleAA)
+        glDisable(GL_MULTISAMPLE);
+
     Vector3d obsPos = observer.getPosition().toLy();
 
     PointStarRenderer starRenderer;
@@ -4566,6 +4552,9 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.glareVertexBuffer->render();
     starRenderer.starVertexBuffer->finish();
     starRenderer.glareVertexBuffer->finish();
+
+    if (toggleAA)
+        glEnable(GL_MULTISAMPLE);
 }
 
 void Renderer::renderDeepSkyObjects(const Universe& universe,
