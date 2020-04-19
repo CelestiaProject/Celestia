@@ -334,7 +334,7 @@ class Renderer
     void beginObjectAnnotations();
     void addObjectAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Eigen::Vector3f&);
     void endObjectAnnotations();
-    Eigen::Quaternionf getCameraOrientation() const;
+    const Eigen::Quaternionf& getCameraOrientation() const;
     float getNearPlaneDistance() const;
 
     void clearAnnotations(std::vector<Annotation>&);
@@ -510,7 +510,6 @@ class Renderer
     void renderObject(const Eigen::Vector3f& pos,
                       float distance,
                       double now,
-                      const Eigen::Quaternionf& cameraOrientation,
                       float nearPlaneDistance,
                       float farPlaneDistance,
                       RenderProperties& obj,
@@ -521,14 +520,12 @@ class Renderer
                       float distance,
                       float appMag,
                       const Observer& observer,
-                      const Eigen::Quaternionf& cameraOrientation,
                       float, float);
 
     void renderStar(const Star& star,
                     const Eigen::Vector3f& pos,
                     float distance,
                     float appMag,
-                    const Eigen::Quaternionf& orientation,
                     double now,
                     float, float);
 
@@ -557,7 +554,6 @@ class Renderer
                              float _faintestMag,
                              float discSizeInPixels,
                              Color color,
-                             const Eigen::Quaternionf& cameraOrientation,
                              bool useHalos,
                              bool emissive);
 
@@ -577,7 +573,6 @@ class Renderer
     // Render an item from the render list
     void renderItem(const RenderListEntry& rle,
                     const Observer& observer,
-                    const Eigen::Quaternionf& cameraOrientation,
                     float nearPlaneDistance,
                     float farPlaneDistance);
 
@@ -589,8 +584,7 @@ class Renderer
 
     void labelConstellations(const AsterismList& asterisms,
                              const Observer& observer);
-    void renderParticles(const std::vector<Particle>& particles,
-                         const Eigen::Quaternionf& orientation);
+    void renderParticles(const std::vector<Particle>& particles);
 
 
     void addAnnotation(std::vector<Annotation>&,
