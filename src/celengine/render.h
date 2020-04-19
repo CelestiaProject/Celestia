@@ -628,6 +628,10 @@ class Renderer
                                const celmath::Frustum &xfrustum,
                                double now);
 
+    void adjustMagnitudeInsideAtmosphere(float &faintestMag,
+                                         float &saturationMag,
+                                         double now);
+
     void renderOrbit(const OrbitPathListEntry&,
                      double now,
                      const Eigen::Quaterniond& cameraOrientation,

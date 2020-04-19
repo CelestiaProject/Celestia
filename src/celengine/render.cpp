@@ -1792,56 +1792,7 @@ void Renderer::draw(const Observer& observer,
     // on planets with thick atmospheres.)
     if ((renderFlags & ShowAtmospheres) != 0)
     {
-        for (const auto& render_item : renderList)
-        {
-            if (render_item.renderableType != RenderListEntry::RenderableBody || render_item.body->getAtmosphere() == nullptr)
-                continue;
-
-            // Compute the density of the atmosphere, and from that
-            // the amount light scattering.  It's complicated by the
-            // possibility that the planet is oblate and a simple distance
-            // to sphere calculation will not suffice.
-            const Atmosphere* atmosphere = render_item.body->getAtmosphere();
-            if (atmosphere->height <= 0.0f)
-                continue;
-
-            float radius = render_item.body->getRadius();
-            Vector3f semiAxes = render_item.body->getSemiAxes() / radius;
-
-            Vector3f recipSemiAxes = semiAxes.cwiseInverse();
-            Vector3f eyeVec = render_item.position / radius;
-
-            // Compute the orientation of the planet before axial rotation
-            Quaterniond qd = render_item.body->getEclipticToEquatorial(now);
-            Quaternionf q = qd.cast<float>();
-            eyeVec = q * eyeVec;
-
-            // ellipDist is not the true distance from the surface unless
-            // the planet is spherical.  The quantity that we do compute
-            // is the distance to the surface along a line from the eye
-            // position to the center of the ellipsoid.
-            float ellipDist = (eyeVec.cwiseProduct(recipSemiAxes)).norm() - 1.0f;
-            if (ellipDist >= atmosphere->height / radius)
-                continue;
-
-            float density = 1.0f - ellipDist / (atmosphere->height / radius);
-            if (density > 1.0f)
-                density = 1.0f;
-
-            Vector3f sunDir = render_item.sun.normalized();
-            Vector3f normal = -render_item.position.normalized();
-#ifdef USE_HDR
-            // Ignore magnitude of planet underneath when lighting atmosphere
-            // Could be changed to simulate light pollution, etc
-            maxBodyMag = maxBodyMagPrev;
-            saturationMag = maxBodyMag;
-#endif
-            float illumination = clamp(sunDir.dot(normal) + 0.2f);
-
-            float lightness = illumination * density;
-            faintestMag = faintestMag  - 15.0f * lightness;
-            saturationMag = saturationMag - 15.0f * lightness;
-        }
+        adjustMagnitudeInsideAtmosphere(faintestMag, saturationMag, now);
     }
 
     // Now we need to determine how to scale the brightness of stars.  The
@@ -6279,6 +6230,62 @@ Renderer::selectionToAnnotation(const Selection &sel,
                             offset.cast<float>(),
                             AlignLeft, VerticalAlignTop, symbolSize);
     return true;
+}
+
+void
+Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
+                                          float &saturationMag,
+                                          double now)
+{
+    for (const auto& ri : renderList)
+    {
+        if (ri.renderableType != RenderListEntry::RenderableBody)
+            continue;
+
+        // Compute the density of the atmosphere, and from that
+        // the amount light scattering.  It's complicated by the
+        // possibility that the planet is oblate and a simple distance
+        // to sphere calculation will not suffice.
+        const Atmosphere* atmosphere = ri.body->getAtmosphere();
+        if (atmosphere == nullptr || atmosphere->height <= 0.0f)
+            continue;
+
+        float radius = ri.body->getRadius();
+        Vector3f semiAxes = ri.body->getSemiAxes() / radius;
+
+        Vector3f recipSemiAxes = semiAxes.cwiseInverse();
+        Vector3f eyeVec = ri.position / radius;
+
+        // Compute the orientation of the planet before axial rotation
+        Quaternionf q = ri.body->getEclipticToEquatorial(now).cast<float>();
+        eyeVec = q * eyeVec;
+
+        // ellipDist is not the true distance from the surface unless
+        // the planet is spherical.  The quantity that we do compute
+        // is the distance to the surface along a line from the eye
+        // position to the center of the ellipsoid.
+        float ellipDist = eyeVec.cwiseProduct(recipSemiAxes).norm() - 1.0f;
+        if (ellipDist >= atmosphere->height / radius)
+            continue;
+
+        float density = 1.0f - ellipDist / (atmosphere->height / radius);
+        if (density > 1.0f)
+            density = 1.0f;
+
+        Vector3f sunDir = ri.sun.normalized();
+        Vector3f normal = -ri.position.normalized();
+#ifdef USE_HDR
+        // Ignore magnitude of planet underneath when lighting atmosphere
+        // Could be changed to simulate light pollution, etc
+        maxBodyMag = maxBodyMagPrev;
+        saturationMag = maxBodyMag;
+#endif
+        float illumination = clamp(sunDir.dot(normal) + 0.2f);
+
+        float lightness = illumination * density;
+        faintestMag = faintestMag - 15.0f * lightness;
+        saturationMag = saturationMag - 15.0f * lightness;
+    }
 }
 
 void
