@@ -570,9 +570,9 @@ class Renderer
                                    float fade,
                                    bool lit);
 
-    void renderLocations(const Body& body,
-                         const Eigen::Vector3d& bodyPosition,
-                         const Eigen::Quaterniond& bodyOrientation);
+    void locationsToAnnotations(const Body& body,
+                                const Eigen::Vector3d& bodyPosition,
+                                const Eigen::Quaterniond& bodyOrientation);
 
     // Render an item from the render list
     void renderItem(const RenderListEntry& rle,
