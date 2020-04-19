@@ -2004,63 +2004,19 @@ void Renderer::draw(const Observer& observer,
 
     if ((renderFlags & ShowMarkers) != 0)
     {
-        renderMarkers(*universe.getMarkers(),
-                      observer.getPosition(),
-                      observer.getOrientation(),
-                      now);
-
-        // Render background markers; rendering of other markers is deferred until
-        // solar system objects are rendered.
-        renderBackgroundAnnotations(FontNormal);
+        markersToAnnotations(*universe.getMarkers(), observer, now);
     }
 
     // Draw the selection cursor
     bool selectionVisible = false;
     if (!sel.empty() && (renderFlags & ShowMarkers) != 0)
     {
-        Vector3d offset = sel.getPosition(now).offsetFromKm(observer.getPosition());
-
-        static MarkerRepresentation cursorRep(MarkerRepresentation::Crosshair);
-        selectionVisible = xfrustum.testSphere(offset, sel.radius()) != Frustum::Outside;
-
-        if (selectionVisible)
-        {
-            double distance = offset.norm();
-            float symbolSize = (float) (sel.radius() / distance) / pixelSize;
-
-            // Modify the marker position so that it is always in front of the marked object.
-            double boundingRadius;
-            if (sel.body() != nullptr)
-                boundingRadius = sel.body()->getBoundingRadius();
-            else
-                boundingRadius = sel.radius();
-            offset *= (1.0 - boundingRadius * 1.01 / distance);
-
-            // The selection cursor is only partially visible when the selected object is obscured. To implement
-            // this behavior we'll draw two markers at the same position: one that's always visible, and another one
-            // that's depth sorted. When the selection is occluded, only the foreground marker is visible. Otherwise,
-            // both markers are drawn and cursor appears much brighter as a result.
-            if (distance < astro::lightYearsToKilometers(1.0))
-            {
-                addSortedAnnotation(&cursorRep, "", Color(SelectionCursorColor, 1.0f),
-                                    offset.cast<float>(),
-                                    AlignLeft, VerticalAlignTop, symbolSize);
-            }
-            else
-            {
-                addAnnotation(backgroundAnnotations, &cursorRep, "", Color(SelectionCursorColor, 1.0f),
-                              offset.cast<float>(),
-                              AlignLeft, VerticalAlignTop, symbolSize);
-                renderBackgroundAnnotations(FontNormal);
-            }
-
-            Color occludedCursorColor(SelectionCursorColor.red(), SelectionCursorColor.green() + 0.3f, SelectionCursorColor.blue());
-            addAnnotation(foregroundAnnotations,
-                          &cursorRep, "", Color(occludedCursorColor, 0.4f),
-                          offset.cast<float>(),
-                          AlignLeft, VerticalAlignTop, symbolSize);
-        }
+        selectionVisible = selectionToAnnotation(sel, observer, xfrustum, now);
     }
+
+    // Render background markers; rendering of other markers is deferred until
+    // solar system objects are rendered.
+    renderBackgroundAnnotations(FontNormal);
 
     glPolygonMode(GL_FRONT_AND_BACK, (GLenum) renderMode);
 
@@ -6165,11 +6121,12 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
 }
 
 
-void Renderer::renderMarkers(const MarkerList& markers,
-                             const UniversalCoord& cameraPosition,
-                             const Quaterniond& cameraOrientation,
-                             double jd)
+void Renderer::markersToAnnotations(const MarkerList& markers,
+                                    const Observer& observer,
+                                    double jd)
 {
+    const UniversalCoord& cameraPosition = observer.getPosition();
+    const Quaterniond& cameraOrientation = observer.getOrientation();
     // Calculate the cosine of half the maximum field of view. We'll use this for
     // fast testing of marker visibility. The stored field of view is the
     // vertical field of view; we want the field of view as measured on the
@@ -6194,6 +6151,7 @@ void Renderer::renderMarkers(const MarkerList& markers,
                 symbolSize = (float) (marker.representation().size() / distance) / pixelSize;
             }
 
+            auto *a = &foregroundAnnotations;
             if (marker.occludable())
             {
                 // If the marker is occludable, add it to the sorted annotation list if it's relatively
@@ -6208,25 +6166,18 @@ void Renderer::renderMarkers(const MarkerList& markers,
                         boundingRadius = marker.object().radius();
                     offset *= (1.0 - boundingRadius * 1.01 / distance);
 
-                    addSortedAnnotation(&(marker.representation()), "", marker.representation().color(),
-                                        offset.cast<float>(),
-                                        AlignLeft, VerticalAlignTop, symbolSize);
+                    a = &depthSortedAnnotations;
                 }
                 else
                 {
-                    addAnnotation(backgroundAnnotations,
-                                  &(marker.representation()), "", marker.representation().color(),
-                                  offset.cast<float>(),
-                                  AlignLeft, VerticalAlignTop, symbolSize);
+                    a = &backgroundAnnotations;
                 }
             }
-            else
-            {
-                addAnnotation(foregroundAnnotations,
-                              &(marker.representation()), "", marker.representation().color(),
-                              offset.cast<float>(),
-                              AlignLeft, VerticalAlignTop, symbolSize);
-            }
+
+            addAnnotation(*a, &(marker.representation()), "",
+                          marker.representation().color(),
+                          offset.cast<float>(),
+                          AlignLeft, VerticalAlignTop, symbolSize);
         }
     }
 }
@@ -6623,4 +6574,54 @@ Renderer::setShadowMapSize(unsigned size)
         m_shadowFBO = nullptr;
     else
         createShadowFBO();
+}
+
+bool
+Renderer::selectionToAnnotation(const Selection &sel,
+                                const Observer &observer,
+                                const Frustum &xfrustum,
+                                double jd)
+{
+    Vector3d offset = sel.getPosition(jd).offsetFromKm(observer.getPosition());
+
+    static MarkerRepresentation cursorRep(MarkerRepresentation::Crosshair);
+    if (xfrustum.testSphere(offset, sel.radius()) == Frustum::Outside)
+        return false;
+
+    double distance = offset.norm();
+    float symbolSize = (float)(sel.radius() / distance) / pixelSize;
+
+    // Modify the marker position so that it is always in front of the marked object.
+    double boundingRadius;
+    if (sel.body() != nullptr)
+        boundingRadius = sel.body()->getBoundingRadius();
+    else
+        boundingRadius = sel.radius();
+    offset *= (1.0 - boundingRadius * 1.01 / distance);
+
+    // The selection cursor is only partially visible when the selected object is obscured. To implement
+    // this behavior we'll draw two markers at the same position: one that's always visible, and another one
+    // that's depth sorted. When the selection is occluded, only the foreground marker is visible. Otherwise,
+    // both markers are drawn and cursor appears much brighter as a result.
+    if (distance < astro::lightYearsToKilometers(1.0))
+    {
+        addSortedAnnotation(&cursorRep, "", SelectionCursorColor,
+                            offset.cast<float>(),
+                            AlignLeft, VerticalAlignTop, symbolSize);
+    }
+    else
+    {
+        addBackgroundAnnotation(&cursorRep, "", SelectionCursorColor,
+                                offset.cast<float>(),
+                                AlignLeft, VerticalAlignTop, symbolSize);
+    }
+
+    Color occludedCursorColor(SelectionCursorColor.red(),
+                              SelectionCursorColor.green() + 0.3f,
+                              SelectionCursorColor.blue(),
+                              0.4f);
+    addForegroundAnnotation(&cursorRep, "", occludedCursorColor,
+                            offset.cast<float>(),
+                            AlignLeft, VerticalAlignTop, symbolSize);
+    return true;
 }

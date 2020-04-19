@@ -606,10 +606,14 @@ class Renderer
                                                                   float farDist,
                                                                   FontStyle fs);
 
-    void renderMarkers(const MarkerList&,
-                       const UniversalCoord& cameraPosition,
-                       const Eigen::Quaterniond& cameraOrientation,
-                       double jd);
+    void markersToAnnotations(const MarkerList &markers,
+                              const Observer &observer,
+                              double now);
+
+    bool selectionToAnnotation(const Selection &sel,
+                               const Observer &observer,
+                               const celmath::Frustum &xfrustum,
+                               double now);
 
     void renderOrbit(const OrbitPathListEntry&,
                      double now,
