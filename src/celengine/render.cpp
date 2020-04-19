@@ -1011,9 +1011,12 @@ void Renderer::addObjectAnnotation(const MarkerRepresentation* markerRep,
     }
 }
 
-
-static void enableSmoothLines()
+void
+Renderer::enableSmoothLines() const
 {
+    if ((renderFlags & ShowSmoothLines) == 0)
+        return;
+
     // glEnable(GL_BLEND);
 #ifdef USE_HDR
     glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
@@ -1024,26 +1027,16 @@ static void enableSmoothLines()
     glLineWidth(1.5f);
 }
 
-static void disableSmoothLines()
+void
+Renderer::disableSmoothLines() const
 {
+    if ((renderFlags & Renderer::ShowSmoothLines) == 0)
+        return;
+
     // glDisable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     glDisable(GL_LINE_SMOOTH);
     glLineWidth(1.0f);
-}
-
-
-inline void enableSmoothLines(uint64_t renderFlags)
-{
-    if ((renderFlags & Renderer::ShowSmoothLines) != 0)
-        enableSmoothLines();
-}
-
-
-inline void disableSmoothLines(uint64_t renderFlags)
-{
-    if ((renderFlags & Renderer::ShowSmoothLines) != 0)
-        disableSmoothLines();
 }
 
 Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
@@ -1721,9 +1714,9 @@ void Renderer::draw(const Observer& observer,
     glDepthMask(GL_FALSE);
 
     // Render sky grids first--these will always be in the background
-    enableSmoothLines(renderFlags);
+    enableSmoothLines();
     renderSkyGrids(observer);
-    disableSmoothLines(renderFlags);
+    disableSmoothLines();
     glEnable(GL_BLEND);
 
     // Render deep sky objects
@@ -3865,9 +3858,9 @@ void Renderer::renderAsterisms(const Universe& universe, float dist)
                         (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1);
     }
 
-    enableSmoothLines(renderFlags);
+    enableSmoothLines();
     m_asterismRenderer->render(*this, Color(ConstellationColor, opacity));
-    disableSmoothLines(renderFlags);
+    disableSmoothLines();
 }
 
 
@@ -3896,9 +3889,9 @@ void Renderer::renderBoundaries(const Universe& universe, float dist)
                         (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
     }
 
-    enableSmoothLines(renderFlags);
+    enableSmoothLines();
     m_boundariesRenderer->render(*this, Color(BoundaryColor, opacity));
-    disableSmoothLines(renderFlags);
+    disableSmoothLines();
 }
 
 
@@ -4681,7 +4674,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
 
     // Render any line primitives with smooth lines
     // (mostly to make graticules look good.)
-    enableSmoothLines(renderFlags);
+    enableSmoothLines();
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
@@ -4704,7 +4697,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
 
     // clog << "DSOs processed: " << dsoRenderer.dsosProcessed << endl;
 
-    disableSmoothLines(renderFlags);
+    disableSmoothLines();
 }
 
 
@@ -4926,7 +4919,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
         return;
 
     // Enable line smoothing for rendering symbols
-    enableSmoothLines(renderFlags);
+    enableSmoothLines();
 
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
@@ -4997,7 +4990,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
 #endif
 
     font[fs]->unbind();
-    disableSmoothLines(renderFlags);
+    disableSmoothLines();
 }
 
 
@@ -6068,7 +6061,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
 #else
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
-            enableSmoothLines(renderFlags);
+            enableSmoothLines();
 
             // Scan through the list of orbits and render any that overlap this interval
             for (const auto& orbit : orbitPathList)
@@ -6089,7 +6082,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
                 }
             }
 
-            disableSmoothLines(renderFlags);
+            disableSmoothLines();
             glDepthMask(GL_FALSE);
         }
 
@@ -6104,13 +6097,13 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         }
 
         // Render annotations in this interval
-        enableSmoothLines(renderFlags);
+        enableSmoothLines();
         annotation = renderSortedAnnotations(annotation,
                                              nearPlaneDistance,
                                              farPlaneDistance,
                                              FontNormal);
         endObjectAnnotations();
-        disableSmoothLines(renderFlags);
+        disableSmoothLines();
         glDisable(GL_DEPTH_TEST);
     }
 
