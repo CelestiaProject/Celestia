@@ -1104,11 +1104,6 @@ Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
 #endif
 }
 
-
-static int orbitsRendered = 0;
-static int orbitsSkipped = 0;
-static int sectionsCulled = 0;
-
 void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                            double t,
                            const Quaterniond& cameraOrientation,
@@ -1814,178 +1809,7 @@ void Renderer::draw(const Observer& observer,
 #endif
 
     int nIntervals = buildDepthPartitions();
-
-    vector<Annotation>::iterator annotation = depthSortedAnnotations.begin();
-
-    {
-        // Render everything that wasn't culled.
-        float intervalSize = 1.0f / (float) max(1, nIntervals);
-        int i = (int) renderList.size() - 1;
-        for (int interval = 0; interval < nIntervals; interval++)
-        {
-            currentIntervalIndex = interval;
-            beginObjectAnnotations();
-
-            float nearPlaneDistance = -depthPartitions[interval].nearZ;
-            float farPlaneDistance  = -depthPartitions[interval].farZ;
-
-            // Set the depth range for this interval--each interval is allocated an
-            // equal section of the depth buffer.
-            glDepthRange(1.0f - (float) (interval + 1) * intervalSize,
-                         1.0f - (float) interval * intervalSize);
-
-            // Set up a perspective projection using the current interval's near and
-            // far clip planes.
-            glMatrixMode(GL_PROJECTION);
-            glLoadMatrix(Perspective(fov, getAspectRatio(),
-                                     nearPlaneDistance,
-                                     farPlaneDistance));
-            glMatrixMode(GL_MODELVIEW);
-
-            Frustum intervalFrustum(degToRad(fov),
-                                    getAspectRatio(),
-                                    -depthPartitions[interval].nearZ,
-                                    -depthPartitions[interval].farZ);
-
-
-#if DEBUG_COALESCE
-            clog << "interval: " << interval <<
-                    ", near: " << -depthPartitions[interval].nearZ <<
-                    ", far: " << -depthPartitions[interval].farZ <<
-                    "\n";
-#endif
-            int firstInInterval = i;
-
-            // Render just the opaque objects in the first pass
-            while (i >= 0 && renderList[i].farZ < depthPartitions[interval].nearZ)
-            {
-                // This interval should completely contain the item
-                // Unless it's just a point?
-                //assert(renderList[i].nearZ <= depthPartitions[interval].near);
-
-#if DEBUG_COALESCE
-                switch (renderList[i].renderableType)
-                {
-                case RenderListEntry::RenderableBody:
-                    if (renderList[i].discSizeInPixels > 1)
-                    {
-                        clog << renderList[i].body->getName() << "\n";
-                    }
-                    else
-                    {
-                        clog << "point: " << renderList[i].body->getName() << "\n";
-                    }
-                    break;
-
-                case RenderListEntry::RenderableStar:
-                    if (renderList[i].discSizeInPixels > 1)
-                    {
-                        clog << "Star\n";
-                    }
-                    else
-                    {
-                        clog << "point: " << "Star" << "\n";
-                    }
-                    break;
-
-                default:
-                    break;
-                }
-#endif
-                // Treat objects that are smaller than one pixel as transparent and render
-                // them in the second pass.
-                if (renderList[i].isOpaque && renderList[i].discSizeInPixels > 1.0f)
-                    renderItem(renderList[i], observer, m_cameraOrientation, nearPlaneDistance, farPlaneDistance);
-
-                i--;
-            }
-
-            // Render orbit paths
-            if (!orbitPathList.empty())
-            {
-                glEnable(GL_DEPTH_TEST);
-                glDepthMask(GL_FALSE);
-#ifdef USE_HDR
-                glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
-#else
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#endif
-                enableSmoothLines(renderFlags);
-
-                // Scan through the list of orbits and render any that overlap this interval
-                for (const auto& orbit : orbitPathList)
-                {
-                    // Test for overlap
-                    float nearZ = -orbit.centerZ - orbit.radius;
-                    float farZ = -orbit.centerZ + orbit.radius;
-
-                    // Don't render orbits when they're completely outside this
-                    // depth interval.
-                    if (nearZ < farPlaneDistance && farZ > nearPlaneDistance)
-                    {
-#ifdef DEBUG_COALESCE
-                        switch (interval % 6)
-                        {
-                            case 0: glColor4f(1.0f, 0.0f, 0.0f, 1.0f); break;
-                            case 1: glColor4f(1.0f, 1.0f, 0.0f, 1.0f); break;
-                            case 2: glColor4f(0.0f, 1.0f, 0.0f, 1.0f); break;
-                            case 3: glColor4f(0.0f, 1.0f, 1.0f, 1.0f); break;
-                            case 4: glColor4f(0.0f, 0.0f, 1.0f, 1.0f); break;
-                            case 5: glColor4f(1.0f, 0.0f, 1.0f, 1.0f); break;
-                            default: glColor4f(1.0f, 1.0f, 1.0f, 1.0f); break;
-                        }
-#endif
-                        orbitsRendered++;
-                        renderOrbit(orbit, now, m_cameraOrientation.cast<double>(), intervalFrustum, nearPlaneDistance, farPlaneDistance);
-
-#if DEBUG_COALESCE
-                        if (highlightObject.body() == orbit.body)
-                        {
-                            clog << "orbit, radius=" << orbit.radius << "\n";
-                        }
-#endif
-                    }
-                    else
-                    {
-                        orbitsSkipped++;
-                    }
-                }
-
-                disableSmoothLines(renderFlags);
-                glDepthMask(GL_FALSE);
-            }
-
-            // Render transparent objects in the second pass
-            i = firstInInterval;
-            while (i >= 0 && renderList[i].farZ < depthPartitions[interval].nearZ)
-            {
-                if (!renderList[i].isOpaque || renderList[i].discSizeInPixels <= 1.0f)
-                    renderItem(renderList[i], observer, m_cameraOrientation, nearPlaneDistance, farPlaneDistance);
-
-                i--;
-            }
-
-            // Render annotations in this interval
-            enableSmoothLines(renderFlags);
-            annotation = renderSortedAnnotations(annotation, -depthPartitions[interval].nearZ, -depthPartitions[interval].farZ, FontNormal);
-            endObjectAnnotations();
-            disableSmoothLines(renderFlags);
-            glDisable(GL_DEPTH_TEST);
-        }
-#if 0
-        // TODO: Debugging output for new orbit code; remove when development is complete
-        clog << "orbits: " << orbitsRendered
-             << ", skipped: " << orbitsSkipped
-             << ", sections culled: " << sectionsCulled
-             << ", nIntervals: " << nIntervals << "\n";
-#endif
-        orbitsRendered = 0;
-        orbitsSkipped = 0;
-        sectionsCulled = 0;
-
-        // reset the depth range
-        glDepthRange(0, 1);
-    }
+    renderSolarSystemObjects(observer, nIntervals, now);
 
     renderForegroundAnnotations(FontNormal);
 
@@ -6182,4 +6006,114 @@ Renderer::buildDepthPartitions()
     // coalesce partitions that have small spans in the depth buffer.
     // TODO: Implement this step!
     return nIntervals;
+}
+
+void
+Renderer::renderSolarSystemObjects(const Observer &observer,
+                                   int nIntervals,
+                                   double now)
+{
+    // Render everything that wasn't culled.
+    auto annotation = depthSortedAnnotations.begin();
+    float intervalSize = 1.0f / static_cast<float>(max(1, nIntervals));
+    int i = static_cast<int>(renderList.size()) - 1;
+    for (int interval = 0; interval < nIntervals; interval++)
+    {
+        currentIntervalIndex = interval;
+        beginObjectAnnotations();
+
+        const float nearPlaneDistance = -depthPartitions[interval].nearZ;
+        const float farPlaneDistance = -depthPartitions[interval].farZ;
+
+        // Set the depth range for this interval--each interval is allocated an
+        // equal section of the depth buffer.
+        glDepthRange(1.0f - (interval + 1) * intervalSize,
+                     1.0f - interval * intervalSize);
+
+        // Set up a perspective projection using the current interval's near and
+        // far clip planes.
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrix(Perspective(fov, getAspectRatio(), nearPlaneDistance, farPlaneDistance));
+        glMatrixMode(GL_MODELVIEW);
+
+        Frustum intervalFrustum(degToRad(fov),
+                                getAspectRatio(),
+                                nearPlaneDistance,
+                                farPlaneDistance);
+
+        int firstInInterval = i;
+
+        // Render just the opaque objects in the first pass
+        while (i >= 0 && renderList[i].farZ < depthPartitions[interval].nearZ)
+        {
+            // This interval should completely contain the item
+            // Unless it's just a point?
+            // assert(renderList[i].nearZ <= depthPartitions[interval].near);
+
+            // Treat objects that are smaller than one pixel as transparent and
+            // render them in the second pass.
+            if (renderList[i].isOpaque && renderList[i].discSizeInPixels > 1.0f)
+                renderItem(renderList[i], observer, getCameraOrientation(), nearPlaneDistance, farPlaneDistance);
+
+            i--;
+        }
+
+        // Render orbit paths
+        if (!orbitPathList.empty())
+        {
+            glEnable(GL_DEPTH_TEST);
+            glDepthMask(GL_FALSE);
+#ifdef USE_HDR
+            glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+#else
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
+            enableSmoothLines(renderFlags);
+
+            // Scan through the list of orbits and render any that overlap this interval
+            for (const auto& orbit : orbitPathList)
+            {
+                // Test for overlap
+                float nearZ = -orbit.centerZ - orbit.radius;
+                float farZ = -orbit.centerZ + orbit.radius;
+
+                // Don't render orbits when they're completely outside this
+                // depth interval.
+                if (nearZ < farPlaneDistance && farZ > nearPlaneDistance)
+                {
+                    renderOrbit(orbit, now,
+                                observer.getOrientation(),
+                                intervalFrustum,
+                                nearPlaneDistance,
+                                farPlaneDistance);
+                }
+            }
+
+            disableSmoothLines(renderFlags);
+            glDepthMask(GL_FALSE);
+        }
+
+        // Render transparent objects in the second pass
+        i = firstInInterval;
+        while (i >= 0 && renderList[i].farZ < depthPartitions[interval].nearZ)
+        {
+            if (!renderList[i].isOpaque || renderList[i].discSizeInPixels <= 1.0f)
+                renderItem(renderList[i], observer, getCameraOrientation(), nearPlaneDistance, farPlaneDistance);
+
+            i--;
+        }
+
+        // Render annotations in this interval
+        enableSmoothLines(renderFlags);
+        annotation = renderSortedAnnotations(annotation,
+                                             nearPlaneDistance,
+                                             farPlaneDistance,
+                                             FontNormal);
+        endObjectAnnotations();
+        disableSmoothLines(renderFlags);
+        glDisable(GL_DEPTH_TEST);
+    }
+
+    // reset the depth range
+    glDepthRange(0, 1);
 }

@@ -643,6 +643,10 @@ class Renderer
                      float nearDist,
                      float farDist);
 
+    void renderSolarSystemObjects(const Observer &observer,
+                                  int nIntervals,
+                                  double now);
+
     void updateBodyVisibilityMask();
 
     void createShadowFBO();
