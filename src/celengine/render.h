@@ -722,8 +722,8 @@ class Renderer
 
     std::vector<LightSource> lightSourceList;
 
-    Eigen::Matrix4d modelMatrix;
-    Eigen::Matrix4d projMatrix;
+    Eigen::Matrix4f m_modelMatrix;
+    Eigen::Matrix4f m_projMatrix;
     Eigen::Matrix4f m_orthoProjMatrix;
 
     bool useCompressedTextures{ false };

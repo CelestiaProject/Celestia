@@ -859,13 +859,12 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                              bool special)
 {
     GLint view[4] = { 0, 0, windowWidth, windowHeight };
-    Vector3d win;
-    Vector3d posd = pos.cast<double>();
-    if (Project(posd, modelMatrix, projMatrix, view, win))
+    Vector3f win;
+    if (Project(pos, m_modelMatrix, m_projMatrix, view, win))
     {
-        double depth = pos.x() * modelMatrix(2, 0) +
-                       pos.y() * modelMatrix(2, 1) +
-                       pos.z() * modelMatrix(2, 2);
+        float depth = pos.x() * m_modelMatrix(2, 0) +
+                      pos.y() * m_modelMatrix(2, 1) +
+                      pos.z() * m_modelMatrix(2, 2);
         win.z() = -depth;
 
         Annotation a;
@@ -873,7 +872,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
              a.labelText = labelText;
         a.markerRep = markerRep;
         a.color = color;
-        a.position = win.cast<float>();
+        a.position = win;
         a.halign = halign;
         a.valign = valign;
         a.size = size;
@@ -1478,10 +1477,10 @@ void Renderer::render(const Observer& observer,
                       float faintestMagNight,
                       const Selection& sel)
 {
+#ifdef USE_HDR
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-#ifdef USE_HDR
     renderToTexture(observer, universe, faintestMagNight, sel);
 
     //------------- Post processing from here ------------//
@@ -1547,12 +1546,6 @@ void Renderer::draw(const Observer& observer,
     setFieldOfView(radToDeg(observer.getFOV()));
     pixelSize = calcPixelSize(fov, (float) windowHeight);
 
-    // Set up the projection we'll use for rendering stars.
-    glMatrix(Perspective(fov, getAspectRatio(), NEAR_DIST, FAR_DIST));
-
-    // Set the modelview matrix
-    glMatrixMode(GL_MODELVIEW);
-
     // Get the displayed surface texture set to use from the observer
     displayedSurface = observer.getDisplayedSurface();
 
@@ -1569,15 +1562,12 @@ void Renderer::draw(const Observer& observer,
     // Get the transformed frustum, used for culling in the astrocentric coordinate
     // system.
     Frustum xfrustum(frustum);
-    xfrustum.transform(observer.getOrientationf().conjugate().toRotationMatrix());
+    xfrustum.transform(getCameraOrientation().conjugate().toRotationMatrix());
 
-    glPushMatrix();
-    glRotate(m_cameraOrientation);
-
-    // Get the model matrix *before* translation.  We'll use this for
-    // positioning star and planet labels.
-    glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix.data());
-    glGetDoublev(GL_PROJECTION_MATRIX, projMatrix.data());
+    // Set up the projection and modelview matrices.
+    // We'll usethem for positioning star and planet labels.
+    m_projMatrix = Perspective(fov, getAspectRatio(), NEAR_DIST, FAR_DIST);
+    m_modelMatrix = Affine3f(getCameraOrientation()).matrix();
 
     depthSortedAnnotations.clear();
     foregroundAnnotations.clear();
@@ -1672,6 +1662,11 @@ void Renderer::draw(const Observer& observer,
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDepthMask(GL_FALSE);
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrix(m_projMatrix);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrix(m_modelMatrix);
+
     // Render sky grids first--these will always be in the background
     enableSmoothLines();
     renderSkyGrids(observer);
@@ -1758,15 +1753,10 @@ void Renderer::draw(const Observer& observer,
 
     renderForegroundAnnotations(FontNormal);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrix(projMatrix);
-    glMatrixMode(GL_MODELVIEW);
-
     if (!selectionVisible && (renderFlags & ShowMarkers))
+    {
         renderSelectionPointer(observer, now, xfrustum, sel);
-
-    // Pop camera orientation matrix
-    glPopMatrix();
+    }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
