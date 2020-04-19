@@ -651,6 +651,9 @@ class Renderer
 
     void createShadowFBO();
 
+    void enableSmoothLines() const;
+    void disableSmoothLines() const;
+
 #ifdef USE_HDR
  private:
     int sceneTexWidth, sceneTexHeight;
