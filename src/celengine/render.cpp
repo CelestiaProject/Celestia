@@ -5021,14 +5021,6 @@ void Renderer::markersToAnnotations(const MarkerList& markers,
 {
     const UniversalCoord& cameraPosition = observer.getPosition();
     const Quaterniond& cameraOrientation = observer.getOrientation();
-    // Calculate the cosine of half the maximum field of view. We'll use this for
-    // fast testing of marker visibility. The stored field of view is the
-    // vertical field of view; we want the field of view as measured on the
-    // diagonal between viewport corners.
-    double h = tan(degToRad(fov / 2));
-    double diag = sqrt(1.0 + square(h) + square(h * (double) getAspectRatio()));
-    double cosFOV = 1.0 / diag;
-
     Vector3d viewVector = cameraOrientation.conjugate() * -Vector3d::UnitZ();
 
     for (const auto& marker : markers)
@@ -5036,7 +5028,7 @@ void Renderer::markersToAnnotations(const MarkerList& markers,
         Vector3d offset = marker.position(jd).offsetFromKm(cameraPosition);
 
         // Only render those markers that lie withing the field of view.
-        if ((offset.dot(viewVector)) > cosFOV * offset.norm())
+        if ((offset.dot(viewVector)) > cosViewConeAngle * offset.norm())
         {
             double distance = offset.norm();
             float symbolSize = 0.0f;
