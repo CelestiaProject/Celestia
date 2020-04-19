@@ -688,6 +688,7 @@ void Renderer::resize(int width, int height)
     windowHeight = height;
     cosViewConeAngle = computeCosViewConeAngle(fov, windowWidth, windowHeight);
     // glViewport(windowWidth, windowHeight);
+    m_orthoProjMatrix = Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
 
 #ifdef USE_HDR
     if (commonDataInitialized)
@@ -5868,7 +5869,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadMatrix(Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight));
+    glLoadMatrix(m_orthoProjMatrix);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -5982,7 +5983,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadMatrix(Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight));
+    glLoadMatrix(m_orthoProjMatrix);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();

@@ -719,6 +719,7 @@ class Renderer
 
     Eigen::Matrix4d modelMatrix;
     Eigen::Matrix4d projMatrix;
+    Eigen::Matrix4f m_orthoProjMatrix;
 
     bool useCompressedTextures{ false };
     unsigned int textureResolution;
