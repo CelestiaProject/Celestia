@@ -4677,7 +4677,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     galaxyRep      = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, GalaxyLabelColor);
     nebulaRep      = MarkerRepresentation(MarkerRepresentation::Square,   8.0f, NebulaLabelColor);
     openClusterRep = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, OpenClusterLabelColor);
-    globularRep    = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, OpenClusterLabelColor);
+    globularRep    = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, GlobularLabelColor);
 
     // Render any line primitives with smooth lines
     // (mostly to make graticules look good.)
