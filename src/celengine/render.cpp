@@ -2521,9 +2521,10 @@ static void renderCloudsUnlit(const RenderInfo& ri,
     glUseProgram(0);
 }
 
-void Renderer::renderLocations(const Body& body,
-                               const Vector3d& bodyPosition,
-                               const Quaterniond& bodyOrientation)
+void
+Renderer::locationsToAnnotations(const Body& body,
+                                 const Vector3d& bodyPosition,
+                                 const Quaterniond& bodyOrientation)
 {
     const vector<Location*>* locations = body.getLocations();
 
@@ -3654,7 +3655,7 @@ void Renderer::renderPlanet(Body& body,
             // We need a double precision body-relative position of the
             // observer, otherwise location labels will tend to jitter.
             Vector3d posd = body.getPosition(observer.getTime()).offsetFromKm(observer.getPosition());
-            renderLocations(body, posd, q);
+            locationsToAnnotations(body, posd, q);
 
             glDisable(GL_DEPTH_TEST);
         }
