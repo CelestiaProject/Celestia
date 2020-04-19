@@ -958,7 +958,7 @@ void Renderer::clearSortedAnnotations()
 
 // Return the orientation of the camera used to render the current
 // frame. Available only while rendering a frame.
-Quaternionf Renderer::getCameraOrientation() const
+const Quaternionf& Renderer::getCameraOrientation() const
 {
     return m_cameraOrientation;
 }
@@ -1461,7 +1461,6 @@ setupSecondaryLightSources(vector<SecondaryIlluminator>& secondaryIlluminators,
 // Render an item from the render list
 void Renderer::renderItem(const RenderListEntry& rle,
                           const Observer& observer,
-                          const Quaternionf& cameraOrientation,
                           float nearPlaneDistance,
                           float farPlaneDistance)
 {
@@ -1472,7 +1471,6 @@ void Renderer::renderItem(const RenderListEntry& rle,
                    rle.position,
                    rle.distance,
                    rle.appMag,
-                   cameraOrientation,
                    observer.getTime(),
                    nearPlaneDistance, farPlaneDistance);
         break;
@@ -1483,7 +1481,6 @@ void Renderer::renderItem(const RenderListEntry& rle,
                      rle.distance,
                      rle.appMag,
                      observer,
-                     cameraOrientation,
                      nearPlaneDistance, farPlaneDistance);
         break;
 
@@ -1888,7 +1885,6 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
                                    float _faintestMag,
                                    float discSizeInPixels,
                                    Color color,
-                                   const Quaternionf& cameraOrientation,
                                    bool useHalos,
                                    bool emissive)
 {
@@ -2666,7 +2662,6 @@ setupObjectLighting(const vector<LightSource>& suns,
 void Renderer::renderObject(const Vector3f& pos,
                             float distance,
                             double now,
-                            const Quaternionf& cameraOrientation,
                             float nearPlaneDistance,
                             float farPlaneDistance,
                             RenderProperties& obj,
@@ -2748,7 +2743,7 @@ void Renderer::renderObject(const Vector3f& pos,
     ri.eyeDir_obj = -(planetRotation * pos).normalized();
     ri.eyePos_obj = -(planetRotation * (pos.cwiseQuotient(scaleFactors)));
 
-    ri.orientation = cameraOrientation * obj.orientation.conjugate();
+    ri.orientation = getCameraOrientation() * obj.orientation.conjugate();
 
     ri.pixWidth = discSizeInPixels;
 
@@ -2773,7 +2768,7 @@ void Renderer::renderObject(const Vector3f& pos,
     // Compute the inverse model/view matrix
     Affine3f invModelView = obj.orientation *
                             Translation3f(-pos / obj.radius) *
-                            cameraOrientation.conjugate();
+                            getCameraOrientation().conjugate();
     Matrix4f invMV = invModelView.matrix();
 
     // The sphere rendering code uses the view frustum to determine which
@@ -2959,7 +2954,7 @@ void Renderer::renderObject(const Vector3f& pos,
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-                glRotate(cameraOrientation);
+                glRotate(getCameraOrientation());
 
                 renderEllipsoidAtmosphere(*atmosphere,
                                           pos,
@@ -3214,7 +3209,6 @@ void Renderer::renderPlanet(Body& body,
                             float distance,
                             float appMag,
                             const Observer& observer,
-                            const Quaternionf& cameraOrientation,
                             float nearPlaneDistance,
                             float farPlaneDistance)
 {
@@ -3453,7 +3447,7 @@ void Renderer::renderPlanet(Body& body,
         }
 
         renderObject(pos, distance, now,
-                     cameraOrientation, nearPlaneDistance, farPlaneDistance,
+                     nearPlaneDistance, farPlaneDistance,
                      rp, lights);
 
         if (body.getLocations() != nullptr && (labelMode & LocationLabels) != 0)
@@ -3492,7 +3486,6 @@ void Renderer::renderPlanet(Body& body,
                             faintestMag,
                             discSizeInPixels,
                             body.getSurface().color,
-                            cameraOrientation,
                             false, false);
     }
 #ifdef USE_HDR
@@ -3505,7 +3498,6 @@ void Renderer::renderStar(const Star& star,
                           const Vector3f& pos,
                           float distance,
                           float appMag,
-                          const Quaternionf& cameraOrientation,
                           double now,
                           float nearPlaneDistance,
                           float farPlaneDistance)
@@ -3567,7 +3559,7 @@ void Renderer::renderStar(const Star& star,
         rp.orientation = star.getRotationModel()->orientationAtTime(now).cast<float>();
 
         renderObject(pos, distance, now,
-                     cameraOrientation, nearPlaneDistance, farPlaneDistance,
+                     nearPlaneDistance, farPlaneDistance,
                      rp, LightingState());
     }
 
@@ -3582,7 +3574,6 @@ void Renderer::renderStar(const Star& star,
                         faintestMag,
                         discSizeInPixels,
                         color,
-                        cameraOrientation,
                         true, true);
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -4841,8 +4832,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 }
 
 
-void Renderer::renderParticles(const vector<Particle>& particles,
-                               const Quaternionf& /*orientation*/)
+void Renderer::renderParticles(const vector<Particle>& particles)
 {
     ShaderProperties shaderprop;
     shaderprop.lightModel = ShaderProperties::ParticleModel;
@@ -6035,7 +6025,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
             // Treat objects that are smaller than one pixel as transparent and
             // render them in the second pass.
             if (renderList[i].isOpaque && renderList[i].discSizeInPixels > 1.0f)
-                renderItem(renderList[i], observer, getCameraOrientation(), nearPlaneDistance, farPlaneDistance);
+                renderItem(renderList[i], observer, nearPlaneDistance, farPlaneDistance);
 
             i--;
         }
@@ -6080,7 +6070,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         while (i >= 0 && renderList[i].farZ < depthPartitions[interval].nearZ)
         {
             if (!renderList[i].isOpaque || renderList[i].discSizeInPixels <= 1.0f)
-                renderItem(renderList[i], observer, getCameraOrientation(), nearPlaneDistance, farPlaneDistance);
+                renderItem(renderList[i], observer, nearPlaneDistance, farPlaneDistance);
 
             i--;
         }
