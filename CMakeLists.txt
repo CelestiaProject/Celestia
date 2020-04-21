@@ -2,10 +2,28 @@ cmake_minimum_required(VERSION 3.1.0)
 
 option(LEGACY_OPENGL_LIBS "Use legacy OpenGL libraries instead of glvnd library (Default: off)" OFF)
 
+# Honor link flags in try_compile()
+if (POLICY CMP0056)
+  cmake_policy(SET CMP0056 NEW)
+endif()
+
+# only use the additional link flags when linking executables if the
+# ENABLE_EXPORTS target property is set to True
+if(POLICY CMP0065)
+  cmake_policy(SET CMP0065 NEW)
+endif()
+
+# Honor language standard (CMAKE_CXX_STANDARD) in try_compile()
+if(POLICY CMP0067)
+  cmake_policy(SET CMP0067 NEW)
+endif()
+
+# Ignore generated source files in AUTOMOC and AUTOUIC
 if(POLICY CMP0071)
   cmake_policy(SET CMP0071 OLD)
 endif()
 
+# Prefer GLVND or "legacy" OpenGL library (libOpenGL.so vs libGL.so)
 if(POLICY CMP0072)
   if(LEGACY_OPENGL_LIBS)
     cmake_policy(SET CMP0072 OLD)
