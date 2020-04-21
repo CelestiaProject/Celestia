@@ -1,0 +1,1416 @@
+#
+# Copyright (C) 2001-2020 Celestia Development Team
+# This file is distributed under the same license as the celestia package.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: celestia 1.7.0\n"
+"Report-Msgid-Bugs-To: team@celestia.space\n"
+"POT-Creation-Date: 2020-04-15 20:22+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: lt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Android/iOS/Mac
+#, c-format
+msgid "%.2f days"
+msgstr ""
+
+# Android/iOS/Mac
+#, c-format
+msgid "%.2f hours"
+msgstr ""
+
+# Android/iOS/Mac, Unit kilometer
+#, c-format
+msgid "%d km"
+msgstr ""
+
+# Android/iOS/Mac, Unit meter
+#, c-format
+msgid "%d m"
+msgstr ""
+
+# Mac
+msgid "%H:%M"
+msgstr ""
+
+# Mac
+msgid "1 AU/s"
+msgstr ""
+
+# Mac
+msgid "1 km/s"
+msgstr ""
+
+# Mac
+msgid "1 ly/s"
+msgstr ""
+
+# Mac
+msgid "1000 km/s"
+msgstr ""
+
+# Mac
+msgid "10c"
+msgstr ""
+
+# Android/iOS, About Celstia...
+msgid "About"
+msgstr ""
+
+# Mac
+msgid "About Celestia"
+msgstr "Apie Celestia"
+
+# Mac
+msgid "Abs. mag"
+msgstr "Abs. ryšk"
+
+# Android, Add a new item (bookmark)
+msgid "Add"
+msgstr ""
+
+# Mac
+msgid "Add Bookmark"
+msgstr "Įtraukti žymelę"
+
+# iOS, Add a new item (bookmark)
+msgid "Add new..."
+msgstr ""
+
+# Mac
+msgid "Add/Subtract Light Travel Delay"
+msgstr ""
+
+# Android/iOS, Advanced setting items
+msgid "Advanced"
+msgstr ""
+
+# Mac
+msgid "Ahead"
+msgstr ""
+
+# Mac
+msgid "Alternate Surfaces"
+msgstr ""
+
+# Mac
+msgid "Ambient Light"
+msgstr ""
+
+# Mac
+msgid "and:"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Asteroids"
+msgstr "Asteroidai"
+
+# Android/iOS/Mac
+msgid "Atmospheres"
+msgstr "Atmosfera"
+
+# Mac
+msgid "au"
+msgstr "av"
+
+# Android/iOS
+msgid "Authors"
+msgstr "Autoriai"
+
+# Mac
+msgid "Auto Mag"
+msgstr ""
+
+# Android/iOS/Mac, Galactic coordinates
+#, c-format
+msgid "B: %d° %d′ %.2f″"
+msgstr ""
+
+# Mac
+msgid "Back"
+msgstr ""
+
+# Mac
+msgid "Beginning"
+msgstr ""
+
+# Mac
+msgid "Between:"
+msgstr ""
+
+# Mac
+msgid "Bookmark Organizer"
+msgstr ""
+
+# Android/iOS/Mac, URL bookmarks
+msgid "Bookmarks"
+msgstr "Žymelės"
+
+# Mac
+msgid "Box"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Brightest Stars"
+msgstr "Ryškiausias"
+
+# Mac
+msgid "Bring All to Front"
+msgstr ""
+
+# Android/iOS/Mac, Object browser
+msgid "Browser"
+msgstr ""
+
+# Mac
+msgid "c (lightspeed)"
+msgstr ""
+
+# Android/iOS, Observer control
+msgid "Camera Control"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Cancel"
+msgstr "Atšaukti"
+
+# Android/iOS, Failed to add a favorite item (currently a bookmark)
+msgid "Cannot add object"
+msgstr ""
+
+# Mac
+msgid "Capture Video"
+msgstr "Įrašyti video"
+
+# Mac
+msgid "Celestia"
+msgstr "Celestia"
+
+# Mac
+msgid "Celestia Browser"
+msgstr ""
+
+# Mac
+msgid "Celestia failed to load data files."
+msgstr ""
+
+# Mac
+msgid "Celestia Help"
+msgstr ""
+
+# Android/iOS/Mac, Center an object
+msgid "Center"
+msgstr ""
+
+# Mac
+msgid "Center Selection"
+msgstr "&Pasirinkimą į centrą\tC"
+
+# Mac
+msgid "Change Configuration File"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Chase"
+msgstr "Surišti"
+
+# Mac, Choose location for celestia.cfg
+msgid "Choose Configuration File"
+msgstr ""
+
+# Mac
+msgid "Circle"
+msgstr "Apskritimas"
+
+# Android/iOS/Mac
+msgid "Cities"
+msgstr "Miestai"
+
+# Mac
+msgid "Close"
+msgstr "Uždaryti"
+
+# Android/iOS/Mac
+msgid "Cloud Shadows"
+msgstr "Debesų šešėliai"
+
+# Android/iOS/Mac
+msgid "Clouds"
+msgstr "Debesys"
+
+# Android/iOS/Mac
+msgid "Comet Tails"
+msgstr "Kometų uodegos"
+
+# Android/iOS/Mac
+msgid "Comets"
+msgstr "Kometos"
+
+# Android/iOS, celestia.cfg
+msgid "Config File"
+msgstr ""
+
+# Mac
+msgid "Configuration File"
+msgstr ""
+
+# Android/iOS, celestia.cfg change requires a restart
+msgid "Configuration will take effect after a restart."
+msgstr ""
+
+# Mac
+msgid "Confirm and Relaunch"
+msgstr ""
+
+# Android/iOS
+msgid "Constellation Labels"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Constellations"
+msgstr "Žvaigždynai"
+
+# Android/iOS/Mac, display constellation labels in latin
+msgid "Constellations in Latin"
+msgstr "Žvaigždynai lotyniškai"
+
+# Mac
+msgid "Coordinate:"
+msgstr ""
+
+# Mac
+msgid "Copy URL"
+msgstr ""
+
+# Android/iOS/Mac, Location labels
+msgid "Crater"
+msgstr ""
+
+# Mac
+msgid "Crosshair"
+msgstr ""
+
+# Mac
+msgid "Current Date"
+msgstr ""
+
+# Android/iOS
+msgid "Current Time"
+msgstr ""
+
+# Android/iOS
+msgid "Custom"
+msgstr ""
+
+# Android/iOS/Mac, Directory to load data from
+msgid "Data Directory"
+msgstr ""
+
+# Android/iOS, Title for celestia.cfg, data location setting
+msgid "Data Location"
+msgstr ""
+
+# Mac
+msgid "Date"
+msgstr "Data"
+
+# Android/iOS
+msgid "Date Format"
+msgstr ""
+
+# Android/iOS/Mac, Equatorial coordinate
+#, c-format
+msgid "DEC: %d° %d′ %.2f″"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Deep Sky Objects"
+msgstr "Gilaus dangaus objektai"
+
+# Androd/iOS/Mac
+msgid "Default"
+msgstr ""
+
+# Android/iOS
+msgid "Delete"
+msgstr "Trinti"
+
+# Mac
+msgid "Delete Active View"
+msgstr ""
+
+# Mac
+msgid "Delete Other Views"
+msgstr ""
+
+# iOS, Title for share link
+msgid "Description"
+msgstr "Trukmė"
+
+# Mac
+msgid "Diamond"
+msgstr "Deimantas"
+
+# Mac
+msgid "Direction"
+msgstr ""
+
+# Mac
+msgid "Disk"
+msgstr "Diskas"
+
+# Android/iOS/Mac, Display settings
+msgid "Display"
+msgstr "Rodyti"
+
+# Mac
+msgid "Display Light Travel Delay"
+msgstr ""
+
+# Mac
+msgid "Distance:"
+msgstr "Atstumas:"
+
+# Mac
+msgid "Double click on item to go"
+msgstr ""
+
+# Mac
+msgid "Double-click item to open or control-click for contextual menu. Drag items to reorganize."
+msgstr ""
+
+# Mac
+msgid "Down"
+msgstr ""
+
+# Mac
+msgid "Down Arrow"
+msgstr "Rodyklę žemyn"
+
+# Android/iOS
+msgid "Drag with one finger to move/rotate around an object."
+msgstr ""
+
+# Mac
+msgid "DSOs"
+msgstr ""
+
+# Mac
+msgid "Duration"
+msgstr "Trukmė"
+
+# Mac
+msgid "Dwaf Planets"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Dwarf Planets"
+msgstr "Nykštukinės planetos"
+
+# Mac
+msgid "Eclipse Finder"
+msgstr "Užtemimų paiška"
+
+# Android/iOS/Mac
+msgid "Eclipse Shadows"
+msgstr "Užtemimų šešėliai"
+
+# Android/iOS/Mac, Grids
+msgid "Ecliptic"
+msgstr "Ekliptika"
+
+# iOS, Enter edit mode for favorite items
+msgid "Edit"
+msgstr ""
+
+# Mac
+msgid "Enter name of planet or moon"
+msgstr ""
+
+# Android/iOS/Mac, Grids
+msgid "Equatorial"
+msgstr "Pusiaujo"
+
+# Android/iOS/Mac
+#, c-format
+msgid "Equatorial radius: %s"
+msgstr ""
+
+# Android/iOS
+msgid "Error loading data, fallback to original configuration."
+msgstr ""
+
+# Mac
+msgid "Failed to start OpenGL."
+msgstr ""
+
+# Mac
+msgid "Failed to start renderer."
+msgstr ""
+
+# Mac
+msgid "Faintest Stars"
+msgstr ""
+
+# Mac
+msgid "Faster"
+msgstr ""
+
+# Mac
+msgid "Fatal Error"
+msgstr ""
+
+# Android/iOS, Favorites (currently bookmarks and scripts)
+msgid "Favorites"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Features"
+msgstr "Rodyti savybes"
+
+# Mac
+msgid "File"
+msgstr ""
+
+# Mac
+msgid "Filled Square"
+msgstr "Miesto aikštė"
+
+# Mac
+msgid "Find"
+msgstr ""
+
+# Mac
+msgid "Find Eclipses cast on:"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Follow"
+msgstr "Sekti"
+
+# Mac
+msgid "Format:"
+msgstr ""
+
+# Mac
+msgid "Forward"
+msgstr ""
+
+# Mac, Frame rate for capturing video
+msgid "Frame rate:"
+msgstr "Rėmelio norma:"
+
+# Android/iOS/Mac, Star style
+msgid "Fuzzy Points"
+msgstr "&Išplaukę taškai"
+
+# Android/iOS/Mac, Grids
+msgid "Galactic"
+msgstr "Galaktika"
+
+# Android/iOS/Mac
+msgid "Galaxies"
+msgstr "Galaktikos"
+
+# Android/iOS/Mac
+msgid "Galaxies (Barred Spiral)"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Galaxies (Elliptical)"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Galaxies (Irregular)"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Galaxies (Spiral)"
+msgstr ""
+
+# Mac
+msgid "General"
+msgstr ""
+
+# Android/iOS
+msgid "Generating sharing link..."
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Globulars"
+msgstr "Kamuoliniai spiečiai"
+
+# Android/iOS/Mac, Go to an object
+msgid "Go"
+msgstr ""
+
+# Mac
+msgid "Go To Object"
+msgstr ""
+
+# Mac
+msgid "Go To Object…"
+msgstr ""
+
+# Mac
+msgid "Go to Selection"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Grids"
+msgstr "Tinkleliai"
+
+# Mac
+msgid "Guides"
+msgstr "Kelionių gidas"
+
+# Android/iOS/Mac, Indicate that an object has atmosphere
+msgid "Has atmosphere"
+msgstr ""
+
+# Android/iOS/Mac, Indicate that an object has rings
+msgid "Has rings"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Help"
+msgstr ""
+
+# Mac
+msgid "Hide Celestia"
+msgstr ""
+
+# Mac
+msgid "Hide Others"
+msgstr ""
+
+# Android/iOS/Mac, High resolution
+msgid "High"
+msgstr "Aukšta"
+
+# Mac
+msgid "History"
+msgstr ""
+
+# Mac
+msgid "Home (Sol)"
+msgstr ""
+
+# Android/iOS/Mac, Grids
+msgid "Horizontal"
+msgstr "Horizontaliai"
+
+# Mac
+msgid "Info"
+msgstr "&Info"
+
+# Android/iOS, HUD display
+msgid "Info Display"
+msgstr ""
+
+# Mac
+msgid "Info Display:"
+msgstr ""
+
+# Android/iOS, Information of an object
+msgid "Information"
+msgstr ""
+
+# Mac
+msgid "Julian Date:"
+msgstr ""
+
+# Mac
+msgid "km"
+msgstr "km"
+
+# Android/iOS/Mac, Galactic coordinates
+#, c-format
+msgid "L: %d° %d′ %.2f″"
+msgstr ""
+
+# Mac
+msgid "Label"
+msgstr "Pavadinimų ypatybės"
+
+# Mac
+msgid "Label Density"
+msgstr ""
+
+# Android/iOS/Mac, Location labels
+msgid "Landing Sites"
+msgstr "Nusileidimo vietos"
+
+# Mac
+msgid "Latitude"
+msgstr ""
+
+# Mac
+msgid "Left"
+msgstr ""
+
+# Mac
+msgid "Left Arrow"
+msgstr "Rodyklę kairėn"
+
+# Android/iOS/Mac
+#, c-format
+msgid "Length of day: %s"
+msgstr ""
+
+# Android/iOS, Celestia loading failed
+#, c-format
+msgid "Loading Celestia failed..."
+msgstr ""
+
+# Android, Loading Celestia configuration
+#, c-format
+msgid "Loading configuration..."
+msgstr ""
+
+# Mac
+msgid "loading... "
+msgstr ""
+
+# Android/iOS, Celestia initialization, loading file
+#, c-format
+msgid "Loading: %s"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Local Time"
+msgstr "Vietinis laikas"
+
+# Mac
+msgid "Location"
+msgstr ""
+
+# Mac
+msgid "Location Types"
+msgstr ""
+
+# Android/iOS
+msgid "Locations"
+msgstr "Vietovės"
+
+# Android/iOS
+msgid "Lock"
+msgstr "Užrakinti"
+
+# Mac
+msgid "Lock Phase"
+msgstr ""
+
+# Android/iOS
+msgid "Long press on stepper to change orientation."
+msgstr ""
+
+# Mac
+msgid "Longitude"
+msgstr ""
+
+# Mac
+msgid "Look Back"
+msgstr ""
+
+# Android/iOS/Mac, Low resolution
+msgid "Low"
+msgstr "Žema"
+
+# Android/iOS/Mac, Location labels
+msgid "Mare"
+msgstr "Vandenynai"
+
+# Mac
+msgid "Mark"
+msgstr ""
+
+# Mac
+msgid "Markers"
+msgstr "Žymekliai"
+
+# Mac
+msgid "Mass"
+msgstr ""
+
+# Android/iOS/Mac, Medium resolution
+msgid "Medium"
+msgstr "Vidutinė"
+
+# Mac
+msgid "Menu"
+msgstr ""
+
+# Mac
+msgid "Minimize"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Minor Moons"
+msgstr "Mažieji palydovai"
+
+# Mac
+msgid "MInor Moons"
+msgstr ""
+
+# Android/iOS/Mac, Location labels
+msgid "Mons"
+msgstr "Monsas"
+
+# Android/iOS/Mac
+msgid "Moons"
+msgstr "Palydovai"
+
+# Mac
+msgid "Move Closer"
+msgstr ""
+
+# Mac
+msgid "Move Farther"
+msgstr ""
+
+# Mac
+msgid "Name"
+msgstr "Pavadinimas"
+
+# Android/iOS/Mac
+msgid "Nearest Stars"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Nebulae"
+msgstr "Ūkai"
+
+# Mac
+msgid "New Folder"
+msgstr "Naujas aplankas..."
+
+# Android/iOS/Mac
+msgid "Night Lights"
+msgstr ""
+
+# iOS, No data received for a request
+msgid "No data"
+msgstr ""
+
+# Mac
+msgid "No object name entered"
+msgstr ""
+
+# Android/iOS/Mac, No overview for an object
+msgid "No overview available."
+msgstr ""
+
+# iOS, No response received for a request
+msgid "No response"
+msgstr ""
+
+# Android/iOS/Mac, Empty HUD display
+msgid "None"
+msgstr "Nėra"
+
+# Mac
+msgid "Note:\nSpecifying a large time interval may cause long search times and a very large number of results."
+msgstr ""
+
+# Mac
+msgid "Object"
+msgstr "Objektas"
+
+# Android/iOS, Labels
+msgid "Object Labels"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Object not found"
+msgstr ""
+
+# Mac
+msgid "Object:"
+msgstr ""
+
+# Android/iOS
+msgid "Objects"
+msgstr "Objektai"
+
+# Android/iOS/Mac, Location labels
+msgid "Observatories"
+msgstr "Observatorijos"
+
+# Mac
+msgid "Occulter"
+msgstr ""
+
+# Android/iOS
+msgid "Official Website"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "OK"
+msgstr "Gerai"
+
+# Android/iOS/Mac
+msgid "Open Clusters"
+msgstr "Padrikieji spiečiai"
+
+# Android/iOS/Mac, Request user consent to open a URL
+msgid "Open URL?"
+msgstr ""
+
+# Mac
+msgid "Open Web URL"
+msgstr ""
+
+# Mac
+msgid "OpenGL Info"
+msgstr "OpenGL info"
+
+# Android
+msgid "Opening external file or URL..."
+msgstr ""
+
+# iOS
+msgid "Operation not permitted."
+msgstr ""
+
+# Mac
+msgid "Orbit"
+msgstr ""
+
+# Mac
+msgid "Orbit Synchronously"
+msgstr ""
+
+# Android/iOS
+msgid "Orbits"
+msgstr "Orbitos"
+
+# Mac
+msgid "Organize Bookmarks…"
+msgstr ""
+
+# Mac
+msgid "Other"
+msgstr ""
+
+# Android/iOS, Other settings
+msgid "Others"
+msgstr ""
+
+# Mac
+msgid "OtherViews"
+msgstr ""
+
+# Mac
+msgid "Paste URL"
+msgstr ""
+
+# Mac
+msgid "Pause"
+msgstr ""
+
+# Android/iOS
+msgid "Pinch to zoom in/out on an object."
+msgstr ""
+
+# Android/iOS/Mac, Camera control
+msgid "Pitch"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Planet Rings"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Planets"
+msgstr "Planetos"
+
+# Mac
+msgid "Please check that the object name is correct."
+msgstr ""
+
+# iOS, Message for sharing a URL
+msgid "Please enter a description of the content."
+msgstr ""
+
+# iOS, Message for renaming a favorite item (currently bookmark)
+msgid "Please enter a new name."
+msgstr ""
+
+# Mac
+msgid "Please enter an object name."
+msgstr ""
+
+# Android, Possibly due to memory issue, Celestia needs to be restarted
+msgid "Please restart Celestia"
+msgstr ""
+
+# Mac
+msgid "Plus"
+msgstr "Plius"
+
+# Android/iOS/Mac, Star style
+msgid "Points"
+msgstr "&Taškai"
+
+# Mac
+msgid "Preference"
+msgstr ""
+
+# Mac
+msgid "Preferences…"
+msgstr ""
+
+# Mac, Quit app
+msgid "Quit"
+msgstr "Kitas"
+
+# Mac
+msgid "Quit Celestia"
+msgstr ""
+
+# Android/iOS/Mac, Equatorial coordinate
+#, c-format
+msgid "RA: %dh %dm %.2fs"
+msgstr ""
+
+# Mac
+msgid "radii"
+msgstr "spindulys"
+
+# Mac
+msgid "Radius"
+msgstr ""
+
+# Mac
+msgid "Real Time"
+msgstr ""
+
+# Mac
+msgid "Receiver"
+msgstr ""
+
+# Mac
+msgid "Reference Vectors"
+msgstr ""
+
+# Android, Rename a favorite item (currently bookmark)
+msgid "Rename"
+msgstr ""
+
+# Android/iOS, Information about renderer
+msgid "Render Info"
+msgstr ""
+
+# Mac
+msgid "Renderer"
+msgstr ""
+
+# Android, Finished requesting permission needed for Celestia
+msgid "Requesting permission finished"
+msgstr ""
+
+# Mac
+msgid "Rerun Script"
+msgstr ""
+
+# Mac
+msgid "Reset"
+msgstr ""
+
+# Android/iOS, Reset celestia.cfg, data directory location
+msgid "Reset to Default"
+msgstr ""
+
+# Mac, Resolution for capturing video
+msgid "Resolution:"
+msgstr "Skyros:"
+
+# Mac
+msgid "Reverse"
+msgstr ""
+
+# Android/iOS, Reverse camera direction
+msgid "Reverse Direction"
+msgstr ""
+
+# Mac
+msgid "Right"
+msgstr ""
+
+# Mac
+msgid "Right Arrow"
+msgstr "Rodyklę dešinėn"
+
+# Android/iOS/Mac
+msgid "Ring Shadows"
+msgstr "Žiedų šešėliai"
+
+# Android/iOS/Mac, Camera control
+msgid "Roll"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Run Demo"
+msgstr ""
+
+# Android/iOS/Mac, Request user consent to run a script
+msgid "Run script?"
+msgstr ""
+
+# Mac
+msgid "Run Script…"
+msgstr ""
+
+# Android/iOS/Mac, Star style
+msgid "Scaled Discs"
+msgstr "Scaled &diskai"
+
+# Android/iOS
+msgid "Script Control"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Scripts"
+msgstr "Scenarijai"
+
+# Android/iOS
+msgid "Search"
+msgstr "Ieškoti"
+
+# Android/iOS/Mac, Select an object
+msgid "Select"
+msgstr ""
+
+# Mac
+msgid "Select Next View"
+msgstr ""
+
+# Android, Select simulation time
+msgid "Select Time"
+msgstr ""
+
+# Mac
+msgid "Services"
+msgstr ""
+
+# Mac
+msgid "Set Time"
+msgstr "Nustatyti laiką..."
+
+# Mac
+msgid "Set Time…"
+msgstr ""
+
+# Android/iOS, Set simulation time to device
+msgid "Set to Current Time"
+msgstr ""
+
+# Android/iOS
+msgid "Settings"
+msgstr "Nustatymai"
+
+# Android/iOS, Share a URL
+msgid "Share"
+msgstr ""
+
+# Mac
+msgid "Show All"
+msgstr ""
+
+# Mac
+msgid "Show Body Axes"
+msgstr "Rodyti kūno ašis"
+
+# Android/iOS/Mac, Show constellation boundaries
+msgid "Show Boundaries"
+msgstr "Rodyti kontūrus"
+
+# Mac
+msgid "Show Constellation Labels"
+msgstr ""
+
+# Mac
+msgid "Show Constellations"
+msgstr ""
+
+# Mac
+msgid "Show Frame Axes"
+msgstr "Rodyti rėmelio ašis"
+
+# Mac
+msgid "Show Info"
+msgstr ""
+
+# Mac
+msgid "Show Locations"
+msgstr ""
+
+# Mac
+msgid "Show Markers"
+msgstr ""
+
+# Mac
+msgid "Show Orbits"
+msgstr ""
+
+# Mac
+msgid "Show Planetographic Grid"
+msgstr "Rodyti planetografinį tinklelį"
+
+# Mac
+msgid "Show Sun Direction"
+msgstr "Rodyti saulės kryptį"
+
+# Mac
+msgid "Show Terminator"
+msgstr "Rodyti terminatorių"
+
+# Mac
+msgid "Show Velocity Vector"
+msgstr "Rodyti greičio vektorių"
+
+# Android/iOS/Mac
+#, c-format
+msgid "Sidereal rotation period: %s"
+msgstr ""
+
+# Android/iOS/Mac, Size of an object
+#, c-format
+msgid "Size: %s"
+msgstr ""
+
+# Mac
+msgid "Slower"
+msgstr ""
+
+# Mac
+msgid "Smooth Lines"
+msgstr ""
+
+# Mac
+msgid "Solar System"
+msgstr "Saulės sistema"
+
+# Mac
+msgid "Spacecraft"
+msgstr "Kosminiai aparatai"
+
+# Android/iOS/Mac
+msgid "Spacecrafts"
+msgstr "Kosminiai aparatai"
+
+# Mac
+msgid "Split Horizontally"
+msgstr ""
+
+# Mac
+msgid "Split Vertically"
+msgstr ""
+
+# Mac
+msgid "Square"
+msgstr "Aikštė"
+
+# Mac
+msgid "Star"
+msgstr "Blogas spektrinis tipas žvaigždžių  bazėje, žvaigždė #"
+
+# Android/iOS/Mac
+msgid "Star Style"
+msgstr ""
+
+# Mac
+msgid "Star Style:"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Stars"
+msgstr "Žvaigždės"
+
+# Android/iOS/Mac
+msgid "Stars With Planets"
+msgstr ""
+
+# Mac
+msgid "Stop"
+msgstr ""
+
+# Android/iOS
+msgid "Support Forum"
+msgstr ""
+
+# iOS
+msgid "Swipe left from right edge of screen to open action menu."
+msgstr ""
+
+# Android/iOS
+msgid "Sync Orbit"
+msgstr "Sinchronizuoti orbitą"
+
+# Android/iOS
+msgid "Tap to select an object."
+msgstr ""
+
+# Android/iOS/Mac, Location labels
+msgid "Terra"
+msgstr "Žemynai"
+
+# Android/iOS/Mac, Terse HUD display
+msgid "Terse"
+msgstr "Glaustas"
+
+# Android/iOS/Mac
+msgid "Texture Resolution"
+msgstr ""
+
+# Mac
+msgid "Texture Resolution:"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Time"
+msgstr "Laikas"
+
+# Android/iOS
+msgid "Time Control"
+msgstr ""
+
+# Android/iOS
+msgid "Time Zone"
+msgstr ""
+
+# Mac
+msgid "Time Zone:"
+msgstr ""
+
+# Mac
+msgid "Time:"
+msgstr ""
+
+# Mac
+msgid "Track"
+msgstr ""
+
+# Mac
+msgid "Track Selection"
+msgstr ""
+
+# Android/iOS
+msgid "Translators"
+msgstr ""
+
+# Mac
+msgid "Travel"
+msgstr ""
+
+# Mac
+msgid "Triangle"
+msgstr "Trikampis"
+
+# Android/iOS
+msgid "Tutorial"
+msgstr ""
+
+# Mac
+msgid "Type"
+msgstr "Tipas"
+
+# Mac
+msgid "Unable to capture video"
+msgstr ""
+
+# Android/iOS/Mac
+msgid "Unknown"
+msgstr "Nežinoma klaida atidarant scenarijų"
+
+# iOS
+msgid "Unknown error"
+msgstr ""
+
+# Mac
+msgid "Unmark"
+msgstr ""
+
+# Mac, Default name for a newly created folder
+msgid "Untitled"
+msgstr ""
+
+# Mac
+msgid "Up"
+msgstr ""
+
+# Mac
+msgid "Up Arrow"
+msgstr "Rodyklę aukštyn"
+
+# Android/iOS/Mac
+msgid "UTC"
+msgstr "UTC"
+
+# Android/iOS/Mac
+msgid "UTC Offset"
+msgstr "UTC kompensacija"
+
+# Android/iOS/Mac, Location labels
+msgid "Vallis"
+msgstr "Slėniai"
+
+# Mac
+msgid "Velocity"
+msgstr ""
+
+# Android/iOS/Mac, Verbose HUD display
+msgid "Verbose"
+msgstr "Pilnas"
+
+# Android/iOS
+msgid "Version"
+msgstr ""
+
+# Mac
+msgid "VERSION"
+msgstr ""
+
+# Mac
+msgid "Views"
+msgstr ""
+
+# Mac
+msgid "Volcano"
+msgstr ""
+
+# Android/iOS, Location labels
+msgid "Volcanoes"
+msgstr "Vulkanas"
+
+# Android/iOS, Web info for an object
+msgid "Web Info"
+msgstr ""
+
+# Android/iOS, Welcome message
+msgid "Welcome to Celestia"
+msgstr ""
+
+# Mac
+msgid "X"
+msgstr "X"
+
+# Android/iOS/Mac, Camera control
+msgid "Yaw"
+msgstr ""
+
+# Mac
+msgid "YYYY MMM DD HH:MM:SS TZ"
+msgstr ""
+
+# Mac
+msgid "Zoom"
+msgstr ""
