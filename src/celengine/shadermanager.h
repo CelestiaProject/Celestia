@@ -24,7 +24,6 @@ class ShaderProperties
 {
  public:
     ShaderProperties() = default;
-    ShaderProperties(uint32_t p) : simpleProps(p) {};
     bool usesShadows() const;
     bool usesFragmentLighting() const;
     bool usesTangentSpaceLighting() const;
@@ -91,13 +90,6 @@ class ShaderProperties
      VolumetricEmissionEffect        = 0x0004,
  };
 
- enum : uint32_t
- {
-     UniformColor   = 0x0001,
-     PerVertexColor = 0x0002,
-     HasTexture     = 0x0004
- };
-
  public:
     unsigned short nLights{ 0 };
     unsigned short texUsage{ 0 };
@@ -113,9 +105,6 @@ class ShaderProperties
     //   Bit  3,   on for self shadowing
     //   Bit  4,   on for cloud shadows
     uint32_t shadowCounts{ 0 };
-
-    // Properties of "simple" shaders. Other properties are ignored.
-    uint32_t simpleProps{ 0 };
 
  private:
     enum
@@ -308,9 +297,6 @@ class ShaderManager
 
     GLVertexShader* buildParticleVertexShader(const ShaderProperties&);
     GLFragmentShader* buildParticleFragmentShader(const ShaderProperties&);
-
-    GLVertexShader* buildSimpleVertexShader(uint32_t);
-    GLFragmentShader* buildSimpleFragmentShader(uint32_t);
 
     std::map<ShaderProperties, CelestiaGLProgram*> dynamicShaders;
     std::map<std::string, CelestiaGLProgram*> staticShaders;
