@@ -238,6 +238,7 @@ ShaderProperties::isViewDependent() const
     case DiffuseModel:
     case ParticleDiffuseModel:
     case EmissiveModel:
+    case UnlitModel:
         return false;
     default:
         return true;
@@ -1724,8 +1725,11 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
     else
     {
-        source += "uniform vec3 ambientColor;\n";
-        source += "uniform float opacity;\n";
+        if (props.lightModel != ShaderProperties::UnlitModel)
+        {
+            source += "uniform vec3 ambientColor;\n";
+            source += "uniform float opacity;\n";
+        }
         source += "varying vec4 diff;\n";
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
@@ -1830,7 +1834,17 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
     else
     {
-        source += "diff = vec4(ambientColor, opacity);\n";
+        if (props.lightModel == ShaderProperties::UnlitModel)
+        {
+            if ((props.texUsage & ShaderProperties::VertexColors) != 0)
+                source += "diff = gl_Color;\n";
+            else
+                source += "diff = vec4(1.0);\n";
+        }
+        else
+        {
+            source += "diff = vec4(ambientColor, opacity);\n";
+        }
         if (props.hasSpecular())
             source += "spec = vec4(0.0, 0.0, 0.0, 0.0);\n";
     }
