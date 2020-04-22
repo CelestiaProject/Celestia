@@ -16,6 +16,7 @@
 #include "render.h"
 #include "vertexobject.h"
 #include "marker.h"
+#include "vecgl.h"
 
 
 using namespace std;
@@ -218,7 +219,10 @@ static void initVO(VertexObject& vo)
 void Renderer::renderMarker(MarkerRepresentation::Symbol symbol, float size, const Color& color)
 {
     assert(shaderManager != nullptr);
-    auto* prog = shaderManager->getShader("marker");
+    ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::VertexColors;
+    shadprop.lightModel = ShaderProperties::UnlitModel;
+    auto* prog = shaderManager->getShader(shadprop);
     if (prog == nullptr)
         return;
 
@@ -229,8 +233,8 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol, float size, con
 
     float s = size / 2.0f;
     prog->use();
-    prog->vec4Param("color") = color.toVector4();
-    prog->floatParam("s") = s;
+    glColor(color);
+    glScalef(s, s, 0);
 
     switch (symbol)
     {

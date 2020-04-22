@@ -59,7 +59,10 @@ void PointStarVertexBuffer::startSprites()
 
 void PointStarVertexBuffer::startPoints()
 {
-    auto *prog = renderer.getShaderManager().getShader(ShaderProperties::PerVertexColor);
+    ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::VertexColors;
+    shadprop.lightModel = ShaderProperties::UnlitModel;
+    auto *prog = renderer.getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
     prog->use();

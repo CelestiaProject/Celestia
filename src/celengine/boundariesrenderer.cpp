@@ -13,6 +13,7 @@
 #include <celutil/color.h>
 #include "boundariesrenderer.h"
 #include "render.h"
+#include "vecgl.h"
 
 using namespace Eigen;
 using namespace std;
@@ -20,6 +21,8 @@ using namespace std;
 BoundariesRenderer::BoundariesRenderer(const ConstellationBoundaries *boundaries) :
     m_boundaries(boundaries)
 {
+    m_shadprop.texUsage = ShaderProperties::VertexColors;
+    m_shadprop.lightModel = ShaderProperties::UnlitModel;
 }
 
 bool BoundariesRenderer::sameBoundaries(const ConstellationBoundaries *boundaries) const
@@ -48,7 +51,7 @@ void BoundariesRenderer::render(const Renderer &renderer, const Color &color)
     }
 
     prog->use();
-    prog->color = color.toVector4();
+    glColor(color);
     m_vo.draw(GL_LINES, m_vtxTotal);
 
     glUseProgram(0);
