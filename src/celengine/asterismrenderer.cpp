@@ -10,12 +10,15 @@
 #include <cassert>
 #include "asterismrenderer.h"
 #include "render.h"
+#include "vecgl.h"
 
 using namespace std;
 
 AsterismRenderer::AsterismRenderer(const AsterismList *asterisms) :
     m_asterisms(asterisms)
 {
+    m_shadprop.texUsage = ShaderProperties::VertexColors;
+    m_shadprop.lightModel = ShaderProperties::UnlitModel;
 }
 
 bool AsterismRenderer::sameAsterisms(const AsterismList *asterisms) const
@@ -47,7 +50,7 @@ void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColo
     }
 
     prog->use();
-    prog->color = defaultColor.toVector4();
+    glColor(defaultColor);
     m_vo.draw(GL_LINES, m_vtxTotal);
 
     assert(m_asterisms->size() == m_vtxCount.size());
@@ -63,7 +66,7 @@ void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColo
             continue;
         }
 
-        prog->color = Color(ast->getOverrideColor(), opacity).toVector4();
+        glColor(ast->getOverrideColor(), opacity);
         m_vo.draw(GL_LINES, m_vtxCount[i], offset);
         offset += m_vtxCount[i];
     }

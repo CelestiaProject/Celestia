@@ -34,7 +34,7 @@ class BoundariesRenderer
     GLshort* prepare();
 
     celgl::VertexObject            m_vo         { GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
-    ShaderProperties               m_shadprop   { ShaderProperties::UniformColor };
+    ShaderProperties               m_shadprop;
     const ConstellationBoundaries *m_boundaries { nullptr };
     GLsizei                        m_vtxTotal   { 0 };
 };

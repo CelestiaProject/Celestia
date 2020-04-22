@@ -1071,7 +1071,10 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                            float nearDist,
                            float farDist)
 {
-    auto *prog = shaderManager->getShader(ShaderProperties::PerVertexColor);
+    ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::VertexColors;
+    shadprop.lightModel = ShaderProperties::UnlitModel;
+    auto *prog = shaderManager->getShader(shadprop);
     if (prog == nullptr)
         return;
 
@@ -1773,9 +1776,16 @@ void renderPoint(const Renderer &renderer,
 {
     CelestiaGLProgram *prog;
     if (useSprite)
+    {
         prog = renderer.getShaderManager().getShader("star");
+    }
     else
-        prog = renderer.getShaderManager().getShader(ShaderProperties::PerVertexColor);
+    {
+        ShaderProperties shadprop;
+        shadprop.texUsage = ShaderProperties::VertexColors;
+        shadprop.lightModel = ShaderProperties::UnlitModel;
+        prog = renderer.getShaderManager().getShader(shadprop);
+    }
     if (prog == nullptr)
         return;
 
@@ -1943,7 +1953,10 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     if (atmosphere.height == 0.0f)
         return;
 
-    auto *prog = shaderManager->getShader(ShaderProperties::PerVertexColor);
+    ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::VertexColors;
+    shadprop.lightModel = ShaderProperties::UnlitModel;
+    auto *prog = shaderManager->getShader(shadprop);
     if (prog == nullptr)
         return;
 
@@ -2250,18 +2263,14 @@ static void renderCloudsUnlit(const RenderInfo& ri,
 {
     ShaderProperties shadprop;
     shadprop.texUsage = ShaderProperties::DiffuseTexture;
+    shadprop.lightModel = ShaderProperties::UnlitModel;
 
     // Get a shader for the current rendering configuration
     auto* prog = r->getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
     prog->use();
-
     prog->textureOffset = cloudTexOffset;
-    // TODO: introduce a new ShaderProperties light model, so those
-    // assignments are not required
-    prog->ambientColor = Color::White.toVector3();
-    prog->opacity = 1.0f;
 
     g_lodSphere->render(frustum, ri.pixWidth, &cloudTex, 1);
 
@@ -5264,75 +5273,58 @@ bool Renderer::captureFrame(int x, int y, int w, int h, Renderer::PixelFormat fo
 
 void Renderer::drawRectangle(const Rect &r)
 {
-    uint32_t p = r.tex == nullptr ? 0 : ShaderProperties::HasTexture;
-    switch (r.nColors)
-    {
-    case 0:
-        break;
-    case 1:
-        p |= ShaderProperties::UniformColor;
-        break;
-    case 4:
-        p |= ShaderProperties::PerVertexColor;
-        break;
-    default:
-        fmt::fprintf(cerr, "Incorrect number of colors: %i\n", r.nColors);
-    }
+    ShaderProperties shadprop;
+    shadprop.lightModel = ShaderProperties::UnlitModel;
 
-    auto prog = getShaderManager().getShader(ShaderProperties(p));
+    if (r.nColors > 0)
+        shadprop.texUsage |= ShaderProperties::VertexColors;
+    if (r.tex != nullptr)
+        shadprop.texUsage |= ShaderProperties::DiffuseTexture;
+
+    auto *prog = getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
 
     constexpr array<short, 8> texels = {0, 1,  1, 1,  1, 0,  0, 0};
     array<float, 8> vertices = { r.x, r.y,  r.x+r.w, r.y, r.x+r.w, r.y+r.h, r.x, r.y+r.h };
 
-    auto s = static_cast<GLsizeiptr>(memsize(vertices) + memsize(texels) + 4*4*sizeof(GLfloat));
-    auto &vo = getVertexObject(VOType::Rectangle, GL_ARRAY_BUFFER, s, GL_STREAM_DRAW);
-    vo.bindWritable();
-
-    if (!vo.initialized())
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, vertices.data());
+    if (r.tex != nullptr)
     {
-        vo.allocate();
-        vo.setBufferData(texels.data(), memsize(vertices), memsize(texels));
-        vo.setVertices(2, GL_FLOAT);
-        vo.setTextureCoords(2, GL_SHORT, false, 0, memsize(vertices));
-        vo.setColors(4, GL_FLOAT, false, 0, memsize(vertices) + memsize(texels));
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_SHORT, 0, texels.data());
+        r.tex->bind();
     }
-
-    vo.setBufferData(vertices.data(), 0, memsize(vertices));
     if (r.nColors == 4)
     {
-        array<Vector4f, 4> ct;
-        for (size_t i = 0; i < 4; i++)
-            ct[i] = r.colors[i].toVector4();
-        vo.setBufferData(ct.data(), memsize(vertices) + memsize(texels), 4*4*sizeof(GLfloat));
+        glEnableClientState(GL_COLOR_ARRAY);
+        glColorPointer(4, GL_UNSIGNED_BYTE, 0, r.colors.data());
+    }
+    else if (r.nColors == 1)
+    {
+        glColor(r.colors[0]);
     }
 
     prog->use();
-    if (r.tex != nullptr)
-    {
-        r.tex->bind();
-        prog->samplerParam("tex") = 0;
-    }
-
-    if (r.nColors == 1)
-        prog->vec4Param("color") = r.colors[0].toVector4();
 
     if (r.type != Rect::Type::BorderOnly)
     {
-        vo.draw(GL_TRIANGLE_FAN, 4);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
     else
     {
         if (r.lw != 1.0f)
             glLineWidth(r.lw);
-        vo.draw(GL_LINE_LOOP, 4);
+        glDrawArrays(GL_LINE_LOOP, 0, 4);
         if (r.lw != 1.0f)
             glLineWidth(1.0f);
     }
 
     glUseProgram(0);
-    vo.unbind();
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void Renderer::setRenderRegion(int x, int y, int width, int height, bool withScissor)
@@ -5450,7 +5442,7 @@ Renderer::setShadowMapSize(unsigned size)
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &t);
     m_shadowMapSize = clamp(size, 0u, static_cast<unsigned>(t));
     if (m_shadowFBO != nullptr && m_shadowMapSize == m_shadowFBO->width())
-	return;
+        return;
     if (m_shadowMapSize == 0)
         m_shadowFBO = nullptr;
     else

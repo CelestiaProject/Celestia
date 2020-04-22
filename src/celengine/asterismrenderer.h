@@ -35,7 +35,7 @@ class AsterismRenderer
     GLfloat* prepare();
 
     celgl::VertexObject     m_vo        { GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
-    ShaderProperties        m_shadprop  { ShaderProperties::UniformColor };
+    ShaderProperties        m_shadprop;
     std::vector<GLsizei>    m_vtxCount;
 
     const AsterismList     *m_asterisms { nullptr };
