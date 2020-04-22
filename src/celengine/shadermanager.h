@@ -81,6 +81,7 @@ class ShaderProperties
      ParticleDiffuseModel  = 7,
      EmissiveModel         = 8,
      ParticleModel         = 9,
+     UnlitModel            = 10,
  };
 
  enum
