@@ -5004,10 +5004,10 @@ void Renderer::markersToAnnotations(const MarkerList& markers,
     {
         Vector3d offset = marker.position(jd).offsetFromKm(cameraPosition);
 
+        double distance = offset.norm();
         // Only render those markers that lie withing the field of view.
-        if ((offset.dot(viewVector)) > cosViewConeAngle * offset.norm())
+        if ((offset.dot(viewVector)) > cosViewConeAngle * distance)
         {
-            double distance = offset.norm();
             float symbolSize = 0.0f;
             if (marker.sizing() == DistanceBasedSize)
             {
