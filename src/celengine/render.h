@@ -454,9 +454,6 @@ class Renderer
 
  private:
     void setFieldOfView(float);
-    void renderStars(const StarDatabase& starDB,
-                     float faintestVisible,
-                     const Observer& observer);
     void renderPointStars(const StarDatabase& starDB,
                           float faintestVisible,
                           const Observer& observer);
