@@ -76,7 +76,7 @@ string StellarClass::str() const
     case StellarClass::BlackHole:
         return "X";
     case StellarClass::NormalStar:
-        s0 = "OBAFGKMRSNWW?LTYC"[(unsigned int) getSpectralClass()];
+        s0 = "OBAFGKMRSNWWW?LTYC"[(unsigned int) getSpectralClass()];
         s1 = "0123456789"[getSubclass()];
         switch (getLuminosityClass())
         {
@@ -116,13 +116,18 @@ string StellarClass::str() const
 uint16_t
 StellarClass::packV1() const
 {
-    // StarDB Ver. 0x0100 doesn't support Spectral_Y.
-    // Classes following Spectral_Y are shifted by 1.
+    // StarDB Ver. 0x0100 doesn't support Spectral_Y/WO.
+    // Classes following Spectral_Y are shifted by 2.
+    // Classes following Spectral_WO are shifted by 1.
     uint16_t sc;
-    if (specClass == SpectralClass::Spectral_Y)
-        sc = (uint16_t) SpectralClass::Spectral_Unknown;
+    if (specClass > SpectralClass::Spectral_Y)
+        sc = (uint16_t) specClass - 2;
+    else if (specClass == SpectralClass::Spectral_Y)
+        sc = (uint16_t) SpectralClass::Spectral_WO; // WO uses value Unknown used
+    else if (specClass > SpectralClass::Spectral_WO)
+        sc = (uint16_t) specClass - 1;
     else
-        sc = (uint16_t) specClass > SpectralClass::Spectral_Y ? specClass - 1 : specClass;
+        sc = (uint16_t) specClass;
 
     return (((uint16_t) starType << 12) |
            (((uint16_t) sc & 0x0f) << 8) |
@@ -134,7 +139,7 @@ StellarClass::packV1() const
 uint16_t
 StellarClass::packV2() const
 {
-    uint16_t sc = (starType == StellarClass::WhiteDwarf ? specClass - 1 : specClass);
+    uint16_t sc = (starType == StellarClass::WhiteDwarf ? specClass - 2 : specClass);
 
     return (((uint16_t) starType         << 13) |
            (((uint16_t) sc       & 0x1f) << 8)  |
@@ -152,17 +157,37 @@ StellarClass::unpackV1(uint16_t st)
     {
     case NormalStar:
         specClass = static_cast<SpectralClass>(st >> 8 & 0xf);
-        // StarDB Ver. 0x0100 doesn't support Spectral_Y
-        // Spectral_Y has the value Spectral_C had earlier.
-        if (specClass == SpectralClass::Spectral_Y)
+        // StarDB Ver. 0x0100 doesn't support Spectral_Y & Spectral_WO
+        // 0x0100                   0x0200
+        // Spectral_Unknown = 12    Spectral_WO      = 12
+        // Spectral_L       = 13    Spectral_Unknown = 13
+        // Spectral_T       = 14    Spectral_L     = 14
+        // Spectral_C       = 15    Spectral_T     = 15
+        //                          Spectral_Y     = 16
+        //                          Spectral_C     = 17
+        switch (specClass)
+        {
+        case SpectralClass::Spectral_WO:
+            specClass = SpectralClass::Spectral_Unknown;
+            break;
+        case SpectralClass::Spectral_Unknown:
+            specClass = SpectralClass::Spectral_L;
+            break;
+        case SpectralClass::Spectral_L:
+            specClass = SpectralClass::Spectral_T;
+            break;
+        case SpectralClass::Spectral_T:
             specClass = SpectralClass::Spectral_C;
+            break;
+        default: break;
+        }
         subclass = st >> 4 & 0xf;
         lumClass = static_cast<LuminosityClass>(st & 0xf);
         break;
     case WhiteDwarf:
         if ((st >> 8 & 0xf) >= WDClassCount)
             return false;
-        specClass = static_cast<SpectralClass>((st >> 8 & 0xf) + SpectralClass::Spectral_DA);
+        specClass = static_cast<SpectralClass>((st >> 8 & 0xf) + FirstWDClass);
         subclass = st >> 4 & 0xf;
         lumClass = Lum_Unknown;
         break;
@@ -195,7 +220,7 @@ StellarClass::unpackV2(uint16_t st)
     case WhiteDwarf:
         if ((st >> 8 & 0xf) >= WDClassCount)
             return false;
-        specClass = static_cast<SpectralClass>((st >> 8 & 0xf) + SpectralClass::Spectral_DA);
+        specClass = static_cast<SpectralClass>((st >> 8 & 0xf) + FirstWDClass);
         subclass = st >> 4 & 0xf;
         lumClass = Lum_Unknown;
         break;
@@ -317,6 +342,11 @@ StellarClass::parse(const string& st)
                 break;
             case 'N':
                 specClass = StellarClass::Spectral_WN;
+                state = NormalStarSubclassState;
+                i++;
+                break;
+            case 'O':
+                specClass = StellarClass::Spectral_WO;
                 state = NormalStarSubclassState;
                 i++;
                 break;
