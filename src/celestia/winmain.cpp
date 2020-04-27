@@ -31,6 +31,7 @@
 #include <celutil/util.h>
 #include <celutil/winutil.h>
 #include <celutil/filetype.h>
+#include <celutil/directory.h>
 #include <celengine/celestia.h>
 #include <celengine/astro.h>
 #include <celengine/cmdparser.h>
@@ -164,6 +165,8 @@ static LRESULT CALLBACK MainWindowProc(HWND hWnd,
 #define MENU_CHOOSE_PLANET   32000
 #define MENU_CHOOSE_SURFACE  31000
 
+
+bool ignoreOldFavorites = false;
 
 struct AppPreferences
 {
@@ -2502,6 +2505,10 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
         prefs.renderFlags |= Renderer::ShowRingShadows;
     }
 
+    int fav = 0;
+    GetRegistryValue(key, "IgnoreOldFavorites", &fav, sizeof(fav));
+    ignoreOldFavorites = fav != 0;
+
     RegCloseKey(key);
 
     return true;
@@ -2546,6 +2553,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
 	  SetRegistryInt(key, "RenderPath", prefs.renderPath);
     SetRegistry(key, "AltSurface", prefs.altSurfaceName);
     SetRegistryInt(key, "TextureResolution", prefs.textureResolution);
+    SetRegistryInt(key, "IgnoreOldFavorites", ignoreOldFavorites);
 
     RegCloseKey(key);
 
@@ -3369,6 +3377,38 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore->setCursorHandler(cursorHandler);
 
     InitWGLExtensions(appInstance);
+
+#ifndef PORTABLE_BUILD
+    if (!ignoreOldFavorites)
+    { // move favorites to the new location
+        string path;
+        if (appCore->getConfig() != NULL && appCore->getConfig()->favoritesFile != "")
+            path = appCore->getConfig()->favoritesFile;
+        else
+            path = "favorites.cel";
+
+        if (!IsAbsolutePath(path))
+            path = WriteableDataPath() + '\\' + path;
+
+        DWORD attr = GetFileAttributes("favorites.cel");
+        if (attr != INVALID_FILE_ATTRIBUTES) // old exists
+        {
+            attr = GetFileAttributes(path.c_str());
+            if (attr == INVALID_FILE_ATTRIBUTES) // new does not
+            {
+                int resp = MessageBox(NULL,
+                                      _("Old favorites file detected.\nCopy to the new location?"),
+                                      _("Copy favorites?"),
+                                      MB_YESNO);
+                if (resp == IDYES)
+                {
+                    CopyFile("favorites.cel", path.c_str(), true);
+                    ignoreOldFavorites = true;
+                }
+            }
+        }
+    }
+#endif
 
     HWND hWnd;
     if (startFullscreen)
