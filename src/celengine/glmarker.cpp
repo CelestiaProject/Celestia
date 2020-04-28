@@ -233,7 +233,7 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol, float size, con
 
     float s = size / 2.0f;
     prog->use();
-    glColor(color);
+    glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
     glScalef(s, s, 0);
 
     switch (symbol)

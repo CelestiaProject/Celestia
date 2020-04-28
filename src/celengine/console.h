@@ -13,6 +13,7 @@
 #include <string>
 #include <iosfwd>
 #include <vector>
+#include <celutil/color.h>
 
 class Console;
 class TextureFont;

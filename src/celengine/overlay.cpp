@@ -188,12 +188,13 @@ void Overlay::drawRectangle(const Rect& r)
 
 void Overlay::setColor(float r, float g, float b, float a)
 {
-    glColor4f(r, g, b, a);
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, r, g, b, a);
 }
 
 void Overlay::setColor(const Color& c)
 {
-    glColor4f(c.red(), c.green(), c.blue(), c.alpha());
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
+		     c.red(), c.green(), c.blue(), c.alpha());
 }
 
 

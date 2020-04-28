@@ -149,5 +149,18 @@ inline void glLightColor(GLenum light, GLenum which, const Eigen::Vector4f& colo
     glLightfv(light, which, color.data());
 }
 
-#endif // _CELENGINE_VECGL_H_
+inline void glVertexAttrib(GLuint index, const Color &color)
+{
+#ifdef GL_ES
+    glVertexAttrib4fv(index, color.toVector4().data());
+#else
+    glVertexAttrib4Nubv(index, color.data());
+#endif
+}
 
+inline void glVertexAttrib(GLuint index, const Eigen::Vector4f &v)
+{
+    glVertexAttrib4fv(index, v.data());
+}
+
+#endif // _CELENGINE_VECGL_H_

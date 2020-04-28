@@ -716,21 +716,16 @@ static void renderRingSystem(GLuint *vboId,
     {
         glBindBuffer(GL_ARRAY_BUFFER, *vboId);
     }
-    // I haven't found a way to use glEnableVertexAttribArray instead of
-    // glEnableClientState with OpenGL2
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_SHORT, sizeof(struct RingVertex),
-                      (GLvoid*) offsetof(struct RingVertex, tex));
+    glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                          2, GL_SHORT, GL_FALSE,
+                          sizeof(struct RingVertex),
+                          (GLvoid*) offsetof(struct RingVertex, tex));
 
-#if 0
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
                           3, GL_FLOAT, GL_FALSE,
                           sizeof(struct RingVertex), 0);
-#else
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, sizeof(struct RingVertex), 0);
-#endif
 
     // Celestia uses glCullFace(GL_BACK) by default so we just skip it here
     glDrawArrays(GL_TRIANGLE_STRIP, 0, (nSections+1)*2);
@@ -738,12 +733,8 @@ static void renderRingSystem(GLuint *vboId,
     glDrawArrays(GL_TRIANGLE_STRIP, 0, (nSections+1)*2);
     glCullFace(GL_BACK);
 
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#if 0
+    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-#else
-    glDisableClientState(GL_VERTEX_ARRAY);
-#endif
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
