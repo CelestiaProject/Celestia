@@ -9,6 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "shadermanager.h"
 #include "vertexobject.h"
 
 using namespace celestia;
@@ -111,7 +112,7 @@ bool VertexObject::allocate(GLenum bufferType, GLsizeiptr bufferSize, const void
 bool VertexObject::setBufferData(const void* data, GLintptr offset, GLsizeiptr size) noexcept
 {
     glBufferSubData(m_bufferType, offset, size == 0 ? m_bufferSize : size, data);
-    return glGetError() != GL_NO_ERROR;
+    return glGetError() == GL_NO_ERROR;
 }
 
 void VertexObject::draw(GLenum primitive, GLsizei count, GLint first) noexcept
@@ -125,62 +126,6 @@ void VertexObject::draw(GLenum primitive, GLsizei count, GLint first) noexcept
 void VertexObject::enableAttribArrays() noexcept
 {
      glBindBuffer(m_bufferType, m_vboId);
-
-     if (m_attrIndexes & AttrType::Vertices)
-     {
-        const auto& p = m_params[0];
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(p.count, p.type, p.stride, (GLvoid*) p.offset);
-    }
-
-    if (m_attrIndexes & AttrType::Normal)
-    {
-        const auto& p = m_params[1];
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(p.type, p.stride, (GLvoid*) p.offset);
-    }
-
-    if (m_attrIndexes & AttrType::Color)
-    {
-        const auto& p = m_params[2];
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(p.count, p.type, p.stride, (GLvoid*) p.offset);
-    }
-
-    if (m_attrIndexes & AttrType::Index)
-    {
-       const auto& p = m_params[3];
-       glEnableClientState(GL_INDEX_ARRAY);
-       glIndexPointer(p.type, p.stride, (GLvoid*) p.offset);
-    }
-
-    if (m_attrIndexes & AttrType::Texture)
-    {
-        const auto& p = m_params[4];
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(p.count, p.type, p.stride, (GLvoid*) p.offset);
-    }
-
-    if (m_attrIndexes & AttrType::EdgeFlag)
-    {
-       const auto& p = m_params[5];
-       glEnableClientState(GL_EDGE_FLAG_ARRAY);
-       glEdgeFlagPointer(p.stride, (GLvoid*) p.offset);
-    }
-
-    if (m_attrIndexes & AttrType::Tangent)
-    {
-        const auto& p = m_params[6];
-        glEnableVertexAttribArray(6);
-        glVertexAttribPointer(6, p.count, p.type, p.normalized, p.stride, (GLvoid*) p.offset);
-    }
-
-    if (m_attrIndexes & AttrType::PointSize)
-    {
-        const auto& p = m_params[7];
-        glEnableVertexAttribArray(7);
-        glVertexAttribPointer(7, p.count, p.type, p.normalized, p.stride, (GLvoid*) p.offset);
-    }
 
     if (m_attribParams != nullptr)
     {
@@ -196,30 +141,6 @@ void VertexObject::enableAttribArrays() noexcept
 
 void VertexObject::disableAttribArrays() noexcept
 {
-    if (m_attrIndexes & AttrType::Vertices)
-        glDisableClientState(GL_VERTEX_ARRAY);
-
-    if (m_attrIndexes & AttrType::Normal)
-        glDisableClientState(GL_NORMAL_ARRAY);
-
-    if (m_attrIndexes & AttrType::Color)
-        glDisableClientState(GL_COLOR_ARRAY);
-
-    if (m_attrIndexes & AttrType::Index)
-        glDisableClientState(GL_INDEX_ARRAY);
-
-    if (m_attrIndexes & AttrType::Texture)
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    if (m_attrIndexes & AttrType::EdgeFlag)
-        glDisableClientState(GL_EDGE_FLAG_ARRAY);
-
-    if (m_attrIndexes & AttrType::Tangent)
-        glDisableVertexAttribArray(6);
-
-    if (m_attrIndexes & AttrType::PointSize)
-        glDisableVertexAttribArray(7);
-
     if (m_attribParams != nullptr)
     {
         for (const auto& t : *m_attribParams)
@@ -231,54 +152,39 @@ void VertexObject::disableAttribArrays() noexcept
 
 void VertexObject::setVertices(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
-    m_attrIndexes |= AttrType::Vertices;
-    m_params[0] = { offset, stride, count, type, normalized };
+    setVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex, count, type, normalized, stride, offset);
 }
 
 void VertexObject::setNormals(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
-    m_attrIndexes |= AttrType::Normal;
-    m_params[1] = { offset, stride, count, type, normalized };
+    setVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex, count, type, normalized, stride, offset);
 }
 
 void VertexObject::setColors(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
-    m_attrIndexes |= AttrType::Color;
-    m_params[2] = { offset, stride, count, type, normalized };
-}
-
-void VertexObject::setIndexes(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
-{
-    m_attrIndexes |= AttrType::Index;
-    m_params[3] = { offset, stride, count, type, normalized };
+    setVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex, count, type, normalized, stride, offset);
 }
 
 void VertexObject::setTextureCoords(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
-    m_attrIndexes |= AttrType::Texture;
-    m_params[4] = { offset, stride, count, type, normalized };
-}
-
-void VertexObject::setEdgeFlags(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
-{
-    m_attrIndexes |= AttrType::EdgeFlag;
-    m_params[5] = { offset, stride, count, type, normalized };
+    setVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex, count, type, normalized, stride, offset);
 }
 
 void VertexObject::setTangents(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
-    m_attrIndexes |= AttrType::Tangent;
-    m_params[6] = { offset, stride, count, type, normalized };
+    setVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex, count, type, normalized, stride, offset);
 }
 
 void VertexObject::setPointSizes(GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset) noexcept
 {
-    m_attrIndexes |= AttrType::PointSize;
-    m_params[7] = { offset, stride, count, type, normalized };
+    setVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex, count, type, normalized, offset, stride);
 }
 
-void VertexObject::setVertexAttrib(GLint location, GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
+void VertexObject::setVertexAttribArray(GLint location, GLint count, GLenum type, bool normalized, GLsizei stride, GLsizeiptr offset)
 {
+    if (location < 0)
+        return;
+
     if (m_attribParams == nullptr)
         m_attribParams = new std::map<GLint, PtrParams>;
 

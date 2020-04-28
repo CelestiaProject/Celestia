@@ -1783,18 +1783,7 @@ void renderPoint(const Renderer &renderer,
                  float size,
                  bool useSprite)
 {
-    CelestiaGLProgram *prog;
-    if (useSprite)
-    {
-        prog = renderer.getShaderManager().getShader("star");
-    }
-    else
-    {
-        ShaderProperties shadprop;
-        shadprop.texUsage = ShaderProperties::VertexColors;
-        shadprop.lightModel = ShaderProperties::UnlitModel;
-        prog = renderer.getShaderManager().getShader(shadprop);
-    }
+    auto *prog = renderer.getShaderManager().getShader("star");
     if (prog == nullptr)
         return;
 
@@ -1802,29 +1791,15 @@ void renderPoint(const Renderer &renderer,
     prog->samplerParam("starTex") = 0;
 
     glEnable(GL_POINT_SPRITE);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, &position);
-    glEnableClientState(GL_COLOR_ARRAY);
-    Vector4f mainColor = color.toVector4();
-    glColorPointer(4, GL_FLOAT, 0, &mainColor);
-    glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-    if (useSprite)
-    {
-        glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
-                              1, GL_FLOAT, GL_FALSE,
-                              0, &size);
-        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-    }
+    glVertexAttrib3fv(CelestiaGLProgram::VertexCoordAttributeIndex, position.data());
+    glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
+    glVertexAttrib1f(CelestiaGLProgram::PointSizeAttributeIndex, useSprite ? size : 1.0f);
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
     glDrawArrays(GL_POINTS, 0, 1);
 
     if (useSprite)
-    {
         glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
-        glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-    }
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
     glDisable(GL_POINT_SPRITE);
     glUseProgram(0);
 }
@@ -2199,12 +2174,14 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
         skyIndices[index++] = baseVertex + nSlices;
     }
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, sizeof(SkyVertex), &skyVertices[0].x);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SkyVertex),
-                   static_cast<void*>(&skyVertices[0].color));
-
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE,
+                          sizeof(SkyVertex), &skyVertices[0].x);
+    glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
+                          4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(SkyVertex),
+                          static_cast<void*>(&skyVertices[0].color));
     prog->use();
     for (int i = 0; i < nRings; i++)
     {
@@ -2214,8 +2191,8 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
                        &skyIndices[(nSlices + 1) * 2 * i]);
     }
 
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glUseProgram(0);
 }
 
@@ -3683,8 +3660,8 @@ void Renderer::renderCometTail(const Body& body,
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     prog->use();
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glEnableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
     auto brightness = prog->attribIndex("brightness");
     if (brightness != -1)
         glEnableVertexAttribArray(brightness);
@@ -3709,14 +3686,16 @@ void Renderer::renderCometTail(const Body& body,
     for (i = 0; i < nTailPoints - 1; i++)
     {
         const auto p = &cometTailVertices[i * nTailSlices];
-        glVertexPointer(3, GL_FLOAT, stride, &p->point);
-        glNormalPointer(GL_FLOAT, stride, &p->normal);
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, stride, &p->point);
+        glVertexAttribPointer(CelestiaGLProgram::NormalAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, stride, &p->normal);
         if (brightness != -1)
             glVertexAttribPointer(brightness, 1, GL_FLOAT, GL_FALSE, stride, &p->brightness);
         glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_SHORT, indices.data());
     }
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
     if (brightness != -1)
         glDisableVertexAttribArray(brightness);
     glEnable(GL_CULL_FACE);
@@ -4780,15 +4759,16 @@ void Renderer::renderParticles(const vector<Particle>& particles)
     prog->use();
 
     glEnable(GL_POINT_SPRITE);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, sizeof(Particle), &particles[0].center);
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE, sizeof(Particle), &particles[0].center);
     glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
                           1, GL_FLOAT, GL_FALSE,
                           sizeof(Particle), &particles[0].size);
     glDrawArrays(GL_POINTS, 0, particles.size());
 
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
     glUseProgram(0);
     glDisable(GL_POINT_SPRITE);
@@ -4802,7 +4782,7 @@ Renderer::renderAnnotationMarker(const Annotation &a,
     const MarkerRepresentation& markerRep = *a.markerRep;
     float size = a.size > 0.0f ? a.size : markerRep.size();
 
-    glColor(a.color);
+    glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
     glPushMatrix();
     glTranslatef(a.position.x(), a.position.y(), depth);
 
@@ -4829,7 +4809,7 @@ Renderer::renderAnnotationLabel(const Annotation &a,
                                 int vOffset,
                                 float depth)
 {
-    glColor(a.color);
+    glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
     glPushMatrix();
     glTranslatef(a.position.x() + hOffset + PixelOffset,
                  a.position.y() + vOffset + PixelOffset,
@@ -5297,22 +5277,25 @@ void Renderer::drawRectangle(const Rect &r)
     constexpr array<short, 8> texels = {0, 1,  1, 1,  1, 0,  0, 0};
     array<float, 8> vertices = { r.x, r.y,  r.x+r.w, r.y, r.x+r.w, r.y+r.h, r.x, r.y+r.h };
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(2, GL_FLOAT, 0, vertices.data());
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          2, GL_FLOAT, GL_FALSE, 0, vertices.data());
     if (r.tex != nullptr)
     {
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_SHORT, 0, texels.data());
+        glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                              2, GL_SHORT, GL_FALSE, 0, texels.data());
         r.tex->bind();
     }
     if (r.nColors == 4)
     {
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(4, GL_UNSIGNED_BYTE, 0, r.colors.data());
+        glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
+                             4, GL_UNSIGNED_BYTE, GL_TRUE, 0, r.colors.data());
     }
     else if (r.nColors == 1)
     {
-        glColor(r.colors[0]);
+        glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, r.colors[0]);
     }
 
     prog->use();
@@ -5331,9 +5314,9 @@ void Renderer::drawRectangle(const Rect &r)
     }
 
     glUseProgram(0);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
 }
 
 void Renderer::setRenderRegion(int x, int y, int width, int height, bool withScissor)

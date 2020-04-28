@@ -288,18 +288,14 @@ void LODSphereMesh::render(unsigned int attributes,
     for (i = 0; i < nTextures; i++)
         vertexSize += 2;
 
-    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     if ((attributes & Normals) != 0)
-        glEnableClientState(GL_NORMAL_ARRAY);
+        glEnableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
 
     for (i = 0; i < nTextures; i++)
     {
-        if (nTextures > 1)
-            glClientActiveTexture(GL_TEXTURE0 + i);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex + i);
     }
-
-    glDisableClientState(GL_COLOR_ARRAY);
 
     if ((attributes & Tangents) != 0)
         glEnableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
@@ -350,9 +346,9 @@ void LODSphereMesh::render(unsigned int attributes,
         }
     }
 
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     if ((attributes & Normals) != 0)
-        glDisableClientState(GL_NORMAL_ARRAY);
+        glDisableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
 
     if ((attributes & Tangents) != 0)
         glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
@@ -360,18 +356,11 @@ void LODSphereMesh::render(unsigned int attributes,
     for (i = 0; i < nTextures; i++)
     {
         tex[i]->endUsage();
-
-        if (nTextures > 1)
-        {
-            glClientActiveTexture(GL_TEXTURE0 + i);
-            glActiveTexture(GL_TEXTURE0 + i);
-        }
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex + i);
     }
 
     if (nTextures > 1)
     {
-        glClientActiveTexture(GL_TEXTURE0);
         glActiveTexture(GL_TEXTURE0);
     }
 
@@ -465,15 +454,21 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     int texCoordOffset = ((ri.attributes & Tangents) != 0) ? 6 : 3;
     float* vertexBase = nullptr;
 
-    glVertexPointer(3, GL_FLOAT, stride, vertexBase + 0);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE,
+                          stride, vertexBase + 0);
     if ((ri.attributes & Normals) != 0)
-        glNormalPointer(GL_FLOAT, stride, vertexBase);
+    {
+        glVertexAttribPointer(CelestiaGLProgram::NormalAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE,
+                              stride, vertexBase);
+    }
 
     for (int tc = 0; tc < nTexturesUsed; tc++)
     {
-        if (nTexturesUsed > 1)
-            glClientActiveTexture(GL_TEXTURE0 + tc);
-        glTexCoordPointer(2, GL_FLOAT, stride,  vertexBase + (tc * 2) + texCoordOffset);
+        glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex + tc,
+                              2, GL_FLOAT, GL_FALSE,
+                              stride, vertexBase + (tc * 2) + texCoordOffset);
     }
 
     if ((ri.attributes & Tangents) != 0)

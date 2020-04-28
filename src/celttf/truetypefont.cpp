@@ -7,7 +7,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <algorithm>
 #include <array>
 #include <iostream>
@@ -34,17 +33,17 @@ struct Glyph
 {
     wchar_t ch;
 
-    float ax;    // advance.x
-    float ay;    // advance.y
+    int ax;    // advance.x
+    int ay;    // advance.y
 
-    float bw;    // bitmap.width;
-    float bh;    // bitmap.height;
+    int bw;    // bitmap.width;
+    int bh;    // bitmap.height;
 
-    float bl;    // bitmap_left;
-    float bt;    // bitmap_top;
+    int bl;    // bitmap_left;
+    int bt;    // bitmap_top;
 
-    float tx;    // x offset of glyph in texture coordinates
-    float ty;    // y offset of glyph in texture coordinates
+    float tx;  // x offset of glyph in texture coordinates
+    float ty;  // y offset of glyph in texture coordinates
 };
 
 struct UnicodeBlock
@@ -248,8 +247,8 @@ bool TextureFontPrivate::buildAtlas()
         }
 
         glTexSubImage2D(GL_TEXTURE_2D, 0, ox, oy, g->bitmap.width, g->bitmap.rows, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
-        c.tx = ox / (float)m_texWidth;
-        c.ty = oy / (float)m_texHeight;
+        c.tx = (float)ox / (float)m_texWidth;
+        c.ty = (float)oy / (float)m_texHeight;
 
         rowh = max(rowh, (int)g->bitmap.rows);
         ox += g->bitmap.width + 1;
@@ -337,6 +336,15 @@ void TextureFontPrivate::optimize()
     m_inserted = 0;
 }
 
+
+struct FontVertex
+{
+    FontVertex(float _x, float _y, float _u, float _v) :
+        x(_x), y(_y), u(_u), v(_v)
+    {}
+    float x, y;
+    float u, v;
+};
 /*
  * Render text using the currently loaded font and currently set font size.
  * Rendering starts at coordinates (x, y), z is always 0.
@@ -354,6 +362,11 @@ float TextureFontPrivate::render(const string &s, float x, float y)
     int len = s.length();
     bool validChar = true;
     int i = 0;
+    int first = true;
+
+    vector<FontVertex> vertices;
+    vector<unsigned short> indexes;
+    unsigned short index = 0;
 
     while (i < len && validChar)
     {
@@ -379,13 +392,33 @@ float TextureFontPrivate::render(const string &s, float x, float y)
         if (!w || !h)
             continue;
 
-        glBegin(GL_TRIANGLE_FAN);
-            glTexCoord2f(g.tx,                     g.ty + g.bh / m_texHeight); glVertex2f(x2,     y2);
-            glTexCoord2f(g.tx + g.bw / m_texWidth, g.ty + g.bh / m_texHeight); glVertex2f(x2 + w, y2);
-            glTexCoord2f(g.tx + g.bw / m_texWidth, g.ty);                      glVertex2f(x2 + w, y2 + h);
-            glTexCoord2f(g.tx,                     g.ty);                      glVertex2f(x2,     y2 + h);
-        glEnd();
+        float tw = w / m_texWidth;
+        float th = h / m_texHeight;
+        vertices.emplace_back(FontVertex(x2,     y2,     g.tx,      g.ty + th));
+        vertices.emplace_back(FontVertex(x2 + w, y2,     g.tx + tw, g.ty + th));
+        vertices.emplace_back(FontVertex(x2,     y2 + h, g.tx,      g.ty));
+        vertices.emplace_back(FontVertex(x2 + w, y2 + h, g.tx + tw, g.ty));
+        indexes.push_back(index + 0);
+        indexes.push_back(index + 1);
+        indexes.push_back(index + 2);
+        indexes.push_back(index + 1);
+        indexes.push_back(index + 3);
+        indexes.push_back(index + 2);
+        index += 4;
     }
+
+    if (vertices.size() < 4)
+        return 0;
+
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].x);
+    glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].u);
+    glDrawElements(GL_TRIANGLES, indexes.size(), GL_UNSIGNED_SHORT, indexes.data());
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
 
     return x;
 }
@@ -396,17 +429,32 @@ float TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
     auto& g = getGlyph(ch, L'?');
 
     // Calculate the vertex and texture coordinates
-    float x2 = xoffset + g.bl;
-    float y2 = yoffset + g.bt - g.bh;
-    float w = g.bw;
-    float h = g.bh;
+    const float x1 = xoffset + g.bl;
+    const float y1 = yoffset + g.bt - g.bh;
+    const float x2 = x1 + g.bw;
+    const float y2 = y1 + g.bh;
 
-    glBegin(GL_TRIANGLE_FAN);
-        glTexCoord2f(g.tx,                     g.ty + g.bh / m_texHeight); glVertex2f(x2,     y2);
-        glTexCoord2f(g.tx + g.bw / m_texWidth, g.ty + g.bh / m_texHeight); glVertex2f(x2 + w, y2);
-        glTexCoord2f(g.tx + g.bw / m_texWidth, g.ty);                      glVertex2f(x2 + w, y2 + h);
-        glTexCoord2f(g.tx,                     g.ty);                      glVertex2f(x2,     y2 + h);
-    glEnd();
+    const float tx1 = g.tx;
+    const float ty1 = g.ty;
+    const float tx2 = tx1 + static_cast<float>(g.bw) / m_texWidth;
+    const float ty2 = ty1 + static_cast<float>(g.bh) / m_texHeight;
+
+    FontVertex vertices[4] = {
+        {x1, y1, tx1, ty2},
+        {x2, y1, tx2, ty2},
+        {x1, y2, tx1, ty1},
+        {x2, y2, tx2, ty1}
+    };
+
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].x);
+    glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].u);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
 
     return g.ax;
 }

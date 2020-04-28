@@ -17,6 +17,7 @@
 #include "glsupport.h"
 #include "vecgl.h"
 #include "console.h"
+#include "shadermanager.h"
 #if NO_TTF
 #include <celtxf/texturefont.h>
 #else
@@ -236,13 +237,15 @@ int Console::getHeight() const
 
 void Console::setColor(float r, float g, float b, float a) const
 {
-    glColor4f(r, g, b, a);
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, r, g, b, a);
 }
 
 
 void Console::setColor(const Color& c) const
 {
-    glColor4f(c.red(), c.green(), c.blue(), c.alpha());
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
+		     c.red(), c.green(), c.blue(), c.alpha());
+
 }
 
 

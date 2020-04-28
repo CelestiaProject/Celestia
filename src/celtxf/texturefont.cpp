@@ -36,6 +36,15 @@ TextureFont::~TextureFont()
 }
 
 
+struct FontVertex
+{
+    FontVertex(float _x, float _y, float _u, float _v) :
+        x(_x), y(_y), u(_u), v(_v)
+    {}
+    float x, y;
+    float u, v;
+};
+
 /** Render a single character of the font. The modelview transform is
  *  automatically updated to advance to the next character.
  */
@@ -45,16 +54,25 @@ void TextureFont::render(wchar_t ch) const
     if (glyph == nullptr) glyph = getGlyph((wchar_t)'?');
     if (glyph != nullptr)
     {
-        glBegin(GL_QUADS);
-        glTexCoord2f(glyph->texCoords[0].u, glyph->texCoords[0].v);
-        glVertex2f(glyph->xoff, glyph->yoff);
-        glTexCoord2f(glyph->texCoords[1].u, glyph->texCoords[1].v);
-        glVertex2f(glyph->xoff + glyph->width, glyph->yoff);
-        glTexCoord2f(glyph->texCoords[2].u, glyph->texCoords[2].v);
-        glVertex2f(glyph->xoff + glyph->width, glyph->yoff + glyph->height);
-        glTexCoord2f(glyph->texCoords[3].u, glyph->texCoords[3].v);
-        glVertex2f(glyph->xoff, glyph->yoff + glyph->height);
-        glEnd();
+        const float x1 = glyph->xoff;
+        const float y1 = glyph->yoff;
+        const float x2 = glyph->xoff + glyph->width;
+        const float y2 = glyph->yoff + glyph->height;
+        FontVertex vertices[4] = {
+            {x1, y1, glyph->texCoords[0].u, glyph->texCoords[0].v},
+            {x2, y1, glyph->texCoords[1].u, glyph->texCoords[1].v},
+            {x2, y2, glyph->texCoords[2].u, glyph->texCoords[2].v},
+            {x1, y2, glyph->texCoords[3].u, glyph->texCoords[3].v}
+        };
+        glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+        glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].x);
+        glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                              2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].u);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
         glTranslatef(glyph->advance, 0.0f, 0.0f);
     }
 }
@@ -69,16 +87,25 @@ void TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
     if (glyph == nullptr) glyph = getGlyph((wchar_t)'?');
     if (glyph != nullptr)
     {
-        glBegin(GL_QUADS);
-        glTexCoord2f(glyph->texCoords[0].u, glyph->texCoords[0].v);
-        glVertex2f(glyph->xoff + xoffset, glyph->yoff + yoffset);
-        glTexCoord2f(glyph->texCoords[1].u, glyph->texCoords[1].v);
-        glVertex2f(glyph->xoff + glyph->width + xoffset, glyph->yoff + yoffset);
-        glTexCoord2f(glyph->texCoords[2].u, glyph->texCoords[2].v);
-        glVertex2f(glyph->xoff + glyph->width + xoffset, glyph->yoff + glyph->height + yoffset);
-        glTexCoord2f(glyph->texCoords[3].u, glyph->texCoords[3].v);
-        glVertex2f(glyph->xoff + xoffset, glyph->yoff + glyph->height + yoffset);
-        glEnd();
+        const float x1 = glyph->xoff + xoffset;
+        const float y1 = glyph->yoff + yoffset;
+        const float x2 = glyph->xoff + glyph->width + xoffset;
+        const float y2 = glyph->yoff + glyph->height + yoffset;
+        FontVertex vertices[4] = {
+            {x1, y1, glyph->texCoords[0].u, glyph->texCoords[0].v},
+            {x2, y1, glyph->texCoords[1].u, glyph->texCoords[1].v},
+            {x2, y2, glyph->texCoords[2].u, glyph->texCoords[2].v},
+            {x1, y2, glyph->texCoords[3].u, glyph->texCoords[3].v}
+        };
+        glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+        glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].x);
+        glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                              2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].u);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     }
 }
 

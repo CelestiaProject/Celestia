@@ -36,6 +36,7 @@
 
 #include "glsupport.h"
 #include "curveplot.h"
+#include "shadermanager.h"
 #include <vector>
 #include <iostream>
 
@@ -180,14 +181,16 @@ public:
             glBindBuffer(GL_ARRAY_BUFFER, vbobj);
         }
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
+        glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+        glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
 
         Vector4f* vertexBase = vbobj ? (Vector4f*) offsetof(Vertex, position) : &data[0].position;
-        glVertexPointer(3, GL_FLOAT, sizeof(Vertex), vertexBase);
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(Vertex), vertexBase);
 
         Vector4f* colorBase = vbobj ? (Vector4f*) offsetof(Vertex, color) : &data[0].color;
-        glColorPointer(4, GL_FLOAT, sizeof(Vertex), colorBase);
+        glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
+                              4, GL_FLOAT, GL_FALSE, sizeof(Vertex), colorBase);
 
         stripLengths.clear();
         currentStripLength = 0;
@@ -200,8 +203,8 @@ public:
 #if USE_VERTEX_BUFFER
         if (vbobj)
         {
-            glDisableClientState(GL_COLOR_ARRAY);
-            glDisableClientState(GL_VERTEX_ARRAY);
+            glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+            glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
 #endif
