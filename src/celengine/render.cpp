@@ -860,7 +860,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
 {
     GLint view[4] = { 0, 0, windowWidth, windowHeight };
     Vector3f win;
-    if (Project(pos, m_modelMatrix, m_projMatrix, view, win))
+    if (Project(pos, m_MVPMatrix, view, win))
     {
         float depth = pos.x() * m_modelMatrix(2, 0) +
                       pos.y() * m_modelMatrix(2, 1) +
@@ -1577,6 +1577,7 @@ void Renderer::draw(const Observer& observer,
     // We'll usethem for positioning star and planet labels.
     m_projMatrix = Perspective(fov, getAspectRatio(), NEAR_DIST, FAR_DIST);
     m_modelMatrix = Affine3f(getCameraOrientation()).matrix();
+    m_MVPMatrix = m_projMatrix * m_modelMatrix;
 
     depthSortedAnnotations.clear();
     foregroundAnnotations.clear();
@@ -5017,10 +5018,10 @@ void Renderer::markersToAnnotations(const MarkerList& markers,
     {
         Vector3d offset = marker.position(jd).offsetFromKm(cameraPosition);
 
+        double distance = offset.norm();
         // Only render those markers that lie withing the field of view.
-        if ((offset.dot(viewVector)) > cosViewConeAngle * offset.norm())
+        if ((offset.dot(viewVector)) > cosViewConeAngle * distance)
         {
-            double distance = offset.norm();
             float symbolSize = 0.0f;
             if (marker.sizing() == DistanceBasedSize)
             {

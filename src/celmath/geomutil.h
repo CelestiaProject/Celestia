@@ -66,13 +66,12 @@ LookAt(const Eigen::Matrix<T, 3, 1>& from, const Eigen::Matrix<T, 3, 1>& to, con
  */
 template<class T> bool
 Project(const Eigen::Matrix<T, 3, 1>& from,
-        const Eigen::Matrix<T, 4, 4>& modelViewMatrix,
-        const Eigen::Matrix<T, 4, 4>& projMatrix,
+        const Eigen::Matrix<T, 4, 4>& modelViewProjectionMatrix,
         const int viewport[4],
         Eigen::Matrix<T, 3, 1>& to)
 {
     Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), T(1.0));
-    Eigen::Matrix<T, 4, 1> out = projMatrix * modelViewMatrix * in;
+    Eigen::Matrix<T, 4, 1> out = modelViewProjectionMatrix * in;
     if (out.w() == T(0.0))
         return false;
 
@@ -86,6 +85,18 @@ Project(const Eigen::Matrix<T, 3, 1>& from,
     to = { out.x(), out.y(), out.z() };
     return true;
 }
+
+template<class T> bool
+Project(const Eigen::Matrix<T, 3, 1>& from,
+        const Eigen::Matrix<T, 4, 4>& modelViewMatrix,
+        const Eigen::Matrix<T, 4, 4>& projMatrix,
+        const int viewport[4],
+        Eigen::Matrix<T, 3, 1>& to)
+{
+    Eigen::Matrix<T, 4, 4> m = projMatrix * modelViewMatrix;
+    return Project(from, m, viewport, to);
+}
+
 
 /*! Return an perspective projection matrix
  */
