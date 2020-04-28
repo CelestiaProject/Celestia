@@ -860,12 +860,15 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
 {
     GLint view[4] = { 0, 0, windowWidth, windowHeight };
     Vector3f win;
-    if (Project(pos, m_modelMatrix, m_projMatrix, view, win))
+    if (Project(pos, m_MVPMatrix, view, win))
     {
         float depth = pos.x() * m_modelMatrix(2, 0) +
                       pos.y() * m_modelMatrix(2, 1) +
                       pos.z() * m_modelMatrix(2, 2);
         win.z() = -depth;
+
+        if (&depthSortedAnnotations == &annotations)
+            win.z() -= 1000.0f;
 
         Annotation a;
         if (!special || markerRep == nullptr)
@@ -1571,6 +1574,7 @@ void Renderer::draw(const Observer& observer,
     // We'll usethem for positioning star and planet labels.
     m_projMatrix = Perspective(fov, getAspectRatio(), NEAR_DIST, FAR_DIST);
     m_modelMatrix = Affine3f(getCameraOrientation()).matrix();
+    m_MVPMatrix = m_projMatrix * m_modelMatrix;
 
     depthSortedAnnotations.clear();
     foregroundAnnotations.clear();

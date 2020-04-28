@@ -724,6 +724,7 @@ class Renderer
 
     Eigen::Matrix4f m_modelMatrix;
     Eigen::Matrix4f m_projMatrix;
+    Eigen::Matrix4f m_MVPMatrix;
     Eigen::Matrix4f m_orthoProjMatrix;
 
     bool useCompressedTextures{ false };

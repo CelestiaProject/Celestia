@@ -7,7 +7,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <algorithm>
 #include <array>
 #include <iostream>
@@ -34,17 +33,17 @@ struct Glyph
 {
     wchar_t ch;
 
-    float ax;    // advance.x
-    float ay;    // advance.y
+    int ax;    // advance.x
+    int ay;    // advance.y
 
-    float bw;    // bitmap.width;
-    float bh;    // bitmap.height;
+    int bw;    // bitmap.width;
+    int bh;    // bitmap.height;
 
-    float bl;    // bitmap_left;
-    float bt;    // bitmap_top;
+    int bl;    // bitmap_left;
+    int bt;    // bitmap_top;
 
-    float tx;    // x offset of glyph in texture coordinates
-    float ty;    // y offset of glyph in texture coordinates
+    float tx;  // x offset of glyph in texture coordinates
+    float ty;  // y offset of glyph in texture coordinates
 };
 
 struct UnicodeBlock
@@ -248,8 +247,8 @@ bool TextureFontPrivate::buildAtlas()
         }
 
         glTexSubImage2D(GL_TEXTURE_2D, 0, ox, oy, g->bitmap.width, g->bitmap.rows, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
-        c.tx = ox / (float)m_texWidth;
-        c.ty = oy / (float)m_texHeight;
+        c.tx = (float)ox / (float)m_texWidth;
+        c.ty = (float)oy / (float)m_texHeight;
 
         rowh = max(rowh, (int)g->bitmap.rows);
         ox += g->bitmap.width + 1;
@@ -379,11 +378,13 @@ float TextureFontPrivate::render(const string &s, float x, float y)
         if (!w || !h)
             continue;
 
-        glBegin(GL_TRIANGLE_FAN);
-            glTexCoord2f(g.tx,                     g.ty + g.bh / m_texHeight); glVertex2f(x2,     y2);
-            glTexCoord2f(g.tx + g.bw / m_texWidth, g.ty + g.bh / m_texHeight); glVertex2f(x2 + w, y2);
-            glTexCoord2f(g.tx + g.bw / m_texWidth, g.ty);                      glVertex2f(x2 + w, y2 + h);
-            glTexCoord2f(g.tx,                     g.ty);                      glVertex2f(x2,     y2 + h);
+        float tw = w / m_texWidth;
+        float th = h / m_texHeight;
+        glBegin(GL_TRIANGLE_STRIP);
+            glTexCoord2f(g.tx,      g.ty + th); glVertex2f(x2,     y2);
+            glTexCoord2f(g.tx + tw, g.ty + th); glVertex2f(x2 + w, y2);
+            glTexCoord2f(g.tx,      g.ty);      glVertex2f(x2,     y2 + h);
+            glTexCoord2f(g.tx + tw, g.ty);      glVertex2f(x2 + w, y2 + h);
         glEnd();
     }
 
@@ -401,11 +402,13 @@ float TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
     float w = g.bw;
     float h = g.bh;
 
-    glBegin(GL_TRIANGLE_FAN);
-        glTexCoord2f(g.tx,                     g.ty + g.bh / m_texHeight); glVertex2f(x2,     y2);
-        glTexCoord2f(g.tx + g.bw / m_texWidth, g.ty + g.bh / m_texHeight); glVertex2f(x2 + w, y2);
-        glTexCoord2f(g.tx + g.bw / m_texWidth, g.ty);                      glVertex2f(x2 + w, y2 + h);
-        glTexCoord2f(g.tx,                     g.ty);                      glVertex2f(x2,     y2 + h);
+    float tw = w / m_texWidth;
+    float th = h / m_texHeight;
+    glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2f(g.tx,      g.ty + th); glVertex2f(x2,     y2);
+        glTexCoord2f(g.tx + tw, g.ty + th); glVertex2f(x2 + w, y2);
+        glTexCoord2f(g.tx,      g.ty);      glVertex2f(x2,     y2 + h);
+        glTexCoord2f(g.tx + tw, g.ty);      glVertex2f(x2 + w, y2 + h);
     glEnd();
 
     return g.ax;
