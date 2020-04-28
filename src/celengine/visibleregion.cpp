@@ -84,7 +84,7 @@ VisibleRegion::setOpacity(float opacity)
 constexpr const unsigned maxSections = 360;
 
 static void
-renderTerminator(Renderer* renderer, const vector<Vector3f>& pos, const Vector4f& color, const Quaternionf& qf)
+renderTerminator(Renderer* renderer, const vector<Vector3f>& pos, const Color& color)
 {
     /*!
      * Proper terminator calculation requires double precision floats in GLSL
@@ -112,7 +112,7 @@ renderTerminator(Renderer* renderer, const vector<Vector3f>& pos, const Vector4f
     vo.setBufferData(pos.data(), 0, pos.size() * sizeof(Vector3f));
 
     prog->use();
-    glColor(color);
+    glVertexAttrib4Nubv(CelestiaGLProgram::ColorAttributeIndex, color.data());
 
     vo.draw(GL_LINE_LOOP, pos.size());
 
@@ -211,7 +211,7 @@ VisibleRegion::render(Renderer* renderer,
         pos.push_back(toCenter.cast<float>());
     }
 
-    renderTerminator(renderer, pos, Color(m_color, opacity).toVector4(), qf);
+    renderTerminator(renderer, pos, Color(m_color, opacity));
 
     glPopMatrix();
 

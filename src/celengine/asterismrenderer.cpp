@@ -50,7 +50,7 @@ void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColo
     }
 
     prog->use();
-    glColor(defaultColor);
+    glVertexAttrib4Nubv(CelestiaGLProgram::ColorAttributeIndex, defaultColor.data());
     m_vo.draw(GL_LINES, m_vtxTotal);
 
     assert(m_asterisms->size() == m_vtxCount.size());
@@ -66,7 +66,8 @@ void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColo
             continue;
         }
 
-        glColor(ast->getOverrideColor(), opacity);
+	Color color = {ast->getOverrideColor(), opacity};
+        glVertexAttrib4Nubv(CelestiaGLProgram::ColorAttributeIndex, color.data());
         m_vo.draw(GL_LINES, m_vtxCount[i], offset);
         offset += m_vtxCount[i];
     }

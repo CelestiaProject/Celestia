@@ -547,7 +547,7 @@ SkyGrid::render(Renderer& renderer,
     Quaternionf orientationf = q.cast<float>();
 
     prog->use();
-    glColor(m_lineColor);
+    glVertexAttrib4Nubv(CelestiaGLProgram::ColorAttributeIndex, m_lineColor.data());
 
     // Render the parallels
     glPushMatrix();
@@ -561,8 +561,9 @@ SkyGrid::render(Renderer& renderer,
     double theta0 = minTheta;
 
     auto buffer = new Vector3f[ARC_SUBDIVISIONS+1];
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, buffer);
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE, 0, buffer);
 
     for (int dec = startDec; dec <= endDec; dec += decIncrement)
     {
@@ -713,7 +714,7 @@ SkyGrid::render(Renderer& renderer,
     buffer[7] = {0.0f, -1.0f,  polarCrossSize};
     glDrawArrays(GL_LINES, 0, 8);
 
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glPopMatrix();
     glUseProgram(0);
     delete[] buffer;

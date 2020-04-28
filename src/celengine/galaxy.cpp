@@ -294,8 +294,12 @@ struct GalaxyVertex
 
 static void draw(const GalaxyVertex *v, size_t count, void *indices)
 {
-    glVertexPointer(4, GL_FLOAT, sizeof(GalaxyVertex), &v->position);
-    glTexCoordPointer(4, GL_SHORT, sizeof(GalaxyVertex), &v->texCoord);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          4, GL_FLOAT, GL_FALSE,
+                          sizeof(GalaxyVertex), &v->position);
+    glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                          4, GL_SHORT, GL_FALSE,
+                          sizeof(GalaxyVertex), &v->texCoord);
     glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, indices);
 }
 
@@ -392,8 +396,8 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     const float btot = ((type > SBc) && (type < Irr)) ? 2.5f : 5.0f;
     const float spriteScaleFactor = 1.0f / 1.55f;
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
 
     vector<GalaxyVertex, aligned_allocator<GalaxyVertex>> vertices;
     vertices.reserve(4096 / sizeof(GalaxyVertex));
@@ -464,8 +468,8 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     if (indices.size() > 0)
         draw(&vertices[0], indices.size(), indices.data());
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     glUseProgram(0);
     glPopMatrix();
     glActiveTexture(GL_TEXTURE0);

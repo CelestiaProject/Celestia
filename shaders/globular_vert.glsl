@@ -1,5 +1,7 @@
 #version 120
 
+attribute vec3 in_Position;
+attribute vec4 in_Color;
 attribute float starSize;
 attribute float eta;
 
@@ -39,10 +41,10 @@ float relStarDensity(void)
 
 void main(void)
 {
-    vec3 p = m * gl_Vertex.xyz;
-    float br = 2.0f * brightness;
+    vec3 p = m * in_Position.xyz;
+    float br = 2 * brightness;
 
-    vec4 mod = vec4(gl_ModelViewMatrix * gl_Vertex);
+    vec4 mod = gl_ModelViewMatrix * vec4(in_Position, 1.0f);
     float s = 2000.0 / -mod.z * br * starSize;
 
     float obsDistanceToStarRatio = length(p + offset) / clipDistance;
@@ -50,6 +52,6 @@ void main(void)
     // the overdense globular core is dissolved upon closing in.
     gl_PointSize = s * min(obsDistanceToStarRatio, 1.0f);
 
-    color = vec4(gl_Color.rgb, min(1.0f, br * (1.0f - pixelWeight * relStarDensity())));
+    color = vec4(in_Color.rgb, min(1.0f, br * (1.0f - pixelWeight * relStarDensity())));
     gl_Position = gl_ModelViewProjectionMatrix * vec4(p, 1.0f);
 }

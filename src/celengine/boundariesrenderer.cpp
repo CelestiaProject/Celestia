@@ -51,7 +51,7 @@ void BoundariesRenderer::render(const Renderer &renderer, const Color &color)
     }
 
     prog->use();
-    glColor(color);
+    glVertexAttrib4Nubv(CelestiaGLProgram::ColorAttributeIndex, color.data());
     m_vo.draw(GL_LINES, m_vtxTotal);
 
     glUseProgram(0);

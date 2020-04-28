@@ -39,18 +39,19 @@ void PointStarVertexBuffer::startSprites()
     prog->samplerParam("starTex") = 0;
 
     unsigned int stride = sizeof(StarVertex);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE,
+                          stride, &vertices[0].position);
+    glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
+                          4, GL_UNSIGNED_BYTE, GL_TRUE,
+                          stride, &vertices[0].color);
 
     glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
                           1, GL_FLOAT, GL_FALSE,
                           stride, &vertices[0].size);
-
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
 
     glEnable(GL_POINT_SPRITE);
 
@@ -68,19 +69,20 @@ void PointStarVertexBuffer::startPoints()
     prog->use();
 
     unsigned int stride = sizeof(StarVertex);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE,
+                          stride, &vertices[0].position);
+    glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
+                          4, GL_UNSIGNED_BYTE, GL_TRUE,
+                          stride, &vertices[0].color);
 
     // An option to control the size of the stars would be helpful.
     // Which size looks best depends a lot on the resolution and the
     // type of display device.
     // glPointSize(2.0f);
     // glEnable(GL_POINT_SMOOTH);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-
     useSprites = false;
 }
 
@@ -98,8 +100,12 @@ void PointStarVertexBuffer::render()
             glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
             glPointSize(1.0f);
         }
-        glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
-        glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex, 
+                              3, GL_FLOAT, GL_FALSE,
+                              stride, &vertices[0].position);
+        glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
+                              4, GL_UNSIGNED_BYTE, GL_TRUE,
+                              stride, &vertices[0].color);
 
         if (useSprites)
         {
@@ -118,9 +124,8 @@ void PointStarVertexBuffer::render()
 void PointStarVertexBuffer::finish()
 {
     render();
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
 
     if (useSprites)
     {

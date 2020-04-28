@@ -173,9 +173,15 @@ class CelestiaGLProgram
 
     enum
     {
-        VertexCoordAttributeIndex = 0,
-        TangentAttributeIndex     = 6,
-        PointSizeAttributeIndex   = 7,
+        VertexCoordAttributeIndex   = 0,
+        NormalAttributeIndex        = 1,
+        TextureCoord0AttributeIndex = 2,
+        TextureCoord1AttributeIndex = 3,
+        TextureCoord2AttributeIndex = 4,
+        TextureCoord3AttributeIndex = 5,
+        TangentAttributeIndex       = 6,
+        PointSizeAttributeIndex     = 7,
+        ColorAttributeIndex         = 8,
     };
 
  public:

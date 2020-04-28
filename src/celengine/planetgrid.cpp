@@ -127,9 +127,9 @@ PlanetographicGrid::render(Renderer* renderer,
     glRotate(qf.conjugate());
     glScale(scale * semiAxes);
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-
-    glVertexPointer(3, GL_FLOAT, 0, xzCircle);
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE, 0, xzCircle);
 
     // Only show the coordinate labels if the body is sufficiently large on screen
     bool showCoordinateLabels = false;
@@ -153,12 +153,14 @@ PlanetographicGrid::render(Renderer* renderer,
 
         if (latitude == 0.0f)
         {
-            glColor(Renderer::PlanetEquatorColor);
+            glVertexAttrib4Nubv(CelestiaGLProgram::ColorAttributeIndex,
+                                Renderer::PlanetEquatorColor.data());
             glLineWidth(2.0f);
         }
         else
         {
-            glColor(Renderer::PlanetographicGridColor);
+            glVertexAttrib4Nubv(CelestiaGLProgram::ColorAttributeIndex,
+                                Renderer::PlanetographicGridColor.data());
         }
         glPushMatrix();
         glTranslatef(0.0f, (float) std::sin(phi), 0.0f);
@@ -184,7 +186,8 @@ PlanetographicGrid::render(Renderer* renderer,
         }
     }
 
-    glVertexPointer(3, GL_FLOAT, 0, xyCircle);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE, 0, xyCircle);
 
     prog->vec4Param("color") = Renderer::PlanetographicGridColor.toVector4();
     for (float longitude = 0.0f; longitude <= 180.0f; longitude += longitudeStep)
@@ -245,7 +248,7 @@ PlanetographicGrid::render(Renderer* renderer,
         }
     }
 
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
 
     glPopMatrix();
 

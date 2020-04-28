@@ -283,7 +283,7 @@ ArrowReferenceMark::render(Renderer* renderer,
     if (prog == nullptr)
         return;
     prog->use();
-    glColor(color, opacity);
+    glVertexAttrib4Nubv(CelestiaGLProgram::ColorAttributeIndex, Color(color, opacity).data());
 
     auto &vo = renderer->getVertexObject(VOType::AxisArrow, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
     RenderArrow(vo);
@@ -392,7 +392,7 @@ AxesReferenceMark::render(Renderer* renderer,
     // x-axis
     glPushMatrix();
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-    glColor4f(1.0f, 0.0f, 0.0f, opacity);
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
     RenderArrow(vo);
     glTranslatef(0.1f, 0.0f, 0.75f);
     glScalef(labelScale, labelScale, labelScale);
@@ -402,7 +402,7 @@ AxesReferenceMark::render(Renderer* renderer,
     // y-axis
     glPushMatrix();
     glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
-    glColor4f(0.0f, 1.0f, 0.0f, opacity);
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
     RenderArrow(vo);
     glTranslatef(0.1f, 0.0f, 0.75f);
     glScalef(labelScale, labelScale, labelScale);
@@ -412,7 +412,7 @@ AxesReferenceMark::render(Renderer* renderer,
     // z-axis
     glPushMatrix();
     glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-    glColor4f(0.0f, 0.0f, 1.0f, opacity);
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
     RenderArrow(vo);
     glTranslatef(0.1f, 0.0f, 0.75f);
     glScalef(labelScale, labelScale, labelScale);
