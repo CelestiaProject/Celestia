@@ -14,7 +14,8 @@ if(POLICY CMP0072)
   endif()
 endif()
 
-project(celestia VERSION 1.7.0 DESCRIPTION "3D Universe simulator")
+project(celestia)
+
 set(DISPLAY_NAME "Celestia")
 #
 #
