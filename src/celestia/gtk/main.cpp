@@ -20,6 +20,7 @@
 #include <cctype>
 #include <cstring>
 #include <time.h>
+#include <libintl.h>
 
 #ifdef WIN32
 #include <direct.h>
