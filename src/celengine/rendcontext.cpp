@@ -251,17 +251,19 @@ setStandardVertexArrays(const Mesh::VertexDescription& desc,
         break;
     }
 
+    GLint normalized = GL_TRUE;
     // Set up the color array
     switch (color0.format)
     {
     case Mesh::Float3:
     case Mesh::Float4:
+        normalized = GL_FALSE;
     case Mesh::UByte4:
         glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
         glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
                               GLComponentCounts[color0.format],
                               GLComponentTypes[color0.format],
-                              GL_FALSE, desc.stride,
+                              normalized, desc.stride,
                               reinterpret_cast<const char*>(vertexData) + color0.offset);
         break;
     default:
