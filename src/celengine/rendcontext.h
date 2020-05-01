@@ -68,6 +68,18 @@ class RenderContext
 };
 
 
+class Shadow_RenderContext : public RenderContext
+{
+ public:
+    Shadow_RenderContext(const Renderer *r) :
+        RenderContext(r)
+    {
+    }
+    void makeCurrent(const cmod::Material&) override
+    {
+    }
+};
+
 
 class GLSL_RenderContext : public RenderContext
 {
