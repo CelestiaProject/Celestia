@@ -899,14 +899,6 @@ Matrix4f directionalLightMatrix(const Vector3f& lightDirection)
     return m;
 }
 
-static
-Matrix4f shadowProjectionMatrix(float objectRadius)
-{
-    return Ortho(-objectRadius, objectRadius,
-                 -objectRadius, objectRadius,
-                 -objectRadius, objectRadius);
-}
-
 /*! Render a mesh object
  *  Parameters:
  *    tsec : animation clock time in seconds
@@ -936,53 +928,28 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
     // Render backfaces only in order to reduce self-shadowing artifacts
     glCullFace(GL_FRONT);
 
-    GLSL_RenderContext rc(renderer, ls, geometryScale, planetOrientation);
+    Shadow_RenderContext rc(renderer);
 
-    Material m;
-    m.diffuse = Material::Color(1.0f, 1.0f, 1.0f);
-    rc.setMaterial(&m);
-    rc.lock();
-    rc.setPointScale(ri.pointScale);
-
-#ifdef USE_DEPTH_SHADER
     auto *prog = renderer->getShaderManager().getShader("depth");
     if (prog == nullptr)
         return;
     prog->use();
-#else
-    glUseProgram(0);
-#endif
-
-    auto projMat = shadowProjectionMatrix(1);
-    auto modelViewMat = directionalLightMatrix(ls.lights[lightIndex].direction_obj);
-    *lightMatrix = projMat * modelViewMat;
 
     // Enable poligon offset to decrease "shadow acne"
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(.001f, .001f);
 
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadMatrix(projMat);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadMatrix(modelViewMat);
+    Matrix4f projMat = Ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
+    Matrix4f modelViewMat = directionalLightMatrix(ls.lights[lightIndex].direction_obj);
+    *lightMatrix = projMat * modelViewMat;
+    prog->mat4Param("MVPMatrix") = *lightMatrix;
 
     geometry->render(rc, tsec);
 
-#ifdef USE_DEPTH_SHADER
     glUseProgram(0);
-#endif
     glDisable(GL_POLYGON_OFFSET_FILL);
     // Re-enable the color buffer
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glCullFace(GL_BACK);
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
     shadowFbo->unbind();
-#if GL_ONLY_SHADOWS
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-#endif
 }
