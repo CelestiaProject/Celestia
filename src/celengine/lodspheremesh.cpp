@@ -273,10 +273,6 @@ void LODSphereMesh::render(unsigned int attributes,
         }
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glGenBuffers(1, &indexBuffer);
-
-        // HACK: delete the user arrays--we shouldn't need to allocate
-        // these at all if we're using vertex buffer objects.
-        delete[] vertices;
     }
 
     currentVB = 0;
@@ -402,7 +398,6 @@ void LODSphereMesh::render(unsigned int attributes,
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    vertices = nullptr;
 
 #ifdef SHOW_FRUSTUM
     // Debugging code for visualizing the frustum.
@@ -639,6 +634,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     float v0[MAX_SPHERE_MESH_TEXTURES];
 
 
+#if 0 // Test if this still relevant
     // Calling glBufferData() with nullptr before mapping the buffer
     // is a hint to OpenGL that previous contents of vertex buffer will
     // be discarded and overwritten. It enables renaming in the driver,
@@ -647,10 +643,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
                  maxVertices * vertexSize * sizeof(float),
                  nullptr,
                  GL_STREAM_DRAW);
-
-    vertices = reinterpret_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-    if (vertices == nullptr)
-        return;
+#endif
 
     // Set the current texture.  This is necessary because the texture
     // may be split into subtextures.
@@ -760,9 +753,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
         }
     }
 
-    vertices = nullptr;
-    if (!glUnmapBuffer(GL_ARRAY_BUFFER))
-        return;
+    glBufferSubData(GL_ARRAY_BUFFER, 0, vindex * sizeof(float), vertices);
 
     // TODO: Fix this--number of rings can reach zero and cause dropout
     // int nRings = max(phiExtent / ri.step, 1); // buggy
