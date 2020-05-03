@@ -5436,7 +5436,7 @@ Renderer::createShadowFBO()
 void
 Renderer::setShadowMapSize(unsigned size)
 {
-    if (!gl::EXT_framebuffer_object)
+    if (!FramebufferObject::isSupported())
         return;
     GLint t = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &t);

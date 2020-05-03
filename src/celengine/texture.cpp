@@ -21,6 +21,7 @@
 #include <celutil/filetype.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
+#include "framebuffer.h"
 #include "texture.h"
 #include "virtualtex.h"
 
@@ -401,7 +402,7 @@ ImageTexture::ImageTexture(Image& img,
     bool genMipmaps = mipmap && !precomputedMipMaps;
 
 #ifdef NO_GLU
-    if (genMipmaps && !gl::EXT_framebuffer_object)
+    if (genMipmaps && !FramebufferObject::isSupported())
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 #endif
 
@@ -435,7 +436,7 @@ ImageTexture::ImageTexture(Image& img,
         LoadMiplessTexture(img, GL_TEXTURE_2D);
     }
 #ifdef NO_GLU
-    if (genMipmaps && gl::EXT_framebuffer_object)
+    if (genMipmaps && FramebufferObject::isSupported())
         glGenerateMipmap(GL_TEXTURE_2D);
 #endif
     DumpTextureMipmapInfo(GL_TEXTURE_2D);
@@ -620,7 +621,7 @@ TiledTexture::TiledTexture(Image& img,
                 if (mipmap)
                 {
 #ifdef NO_GLU
-                    if (gl::EXT_framebuffer_object)
+                    if (FramebufferObject::isSupported())
                     {
                         LoadMiplessTexture(*tile, GL_TEXTURE_2D);
                         glGenerateMipmap(GL_TEXTURE_2D);
@@ -750,7 +751,7 @@ CubeMap::CubeMap(Image* faces[]) :
     bool genMipmaps = mipmap && !precomputedMipMaps;
 
 #ifdef NO_GLU
-    if (genMipmaps && !gl::EXT_framebuffer_object)
+    if (genMipmaps && !FramebufferObject::isSupported())
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE);
 #endif
 
@@ -785,7 +786,7 @@ CubeMap::CubeMap(Image* faces[]) :
         }
     }
 #ifdef NO_GLU
-    if (genMipmaps && gl::EXT_framebuffer_object)
+    if (genMipmaps && FramebufferObject::isSupported())
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 #endif
     DumpTextureMipmapInfo(GL_TEXTURE_CUBE_MAP_POSITIVE_X);
