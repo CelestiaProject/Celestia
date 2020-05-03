@@ -91,7 +91,10 @@ PlanetographicGrid::render(Renderer* renderer,
                            float discSizeInPixels,
                            double tdb) const
 {
-    auto *prog = renderer->getShaderManager().getShader("uniform_color");
+    ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::VertexColors;
+    shadprop.lightModel = ShaderProperties::UnlitModel;
+    auto *prog = renderer->getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
 
@@ -150,12 +153,12 @@ PlanetographicGrid::render(Renderer* renderer,
 
         if (latitude == 0.0f)
         {
-            prog->vec4Param("color") = Renderer::PlanetEquatorColor.toVector4();
+            glColor(Renderer::PlanetEquatorColor);
             glLineWidth(2.0f);
         }
         else
         {
-            prog->vec4Param("color") = Renderer::PlanetographicGridColor.toVector4();
+            glColor(Renderer::PlanetographicGridColor);
         }
         glPushMatrix();
         glTranslatef(0.0f, (float) std::sin(phi), 0.0f);

@@ -238,6 +238,7 @@ ShaderProperties::isViewDependent() const
     case DiffuseModel:
     case ParticleDiffuseModel:
     case EmissiveModel:
+    case UnlitModel:
         return false;
     default:
         return true;
@@ -254,11 +255,6 @@ ShaderProperties::usesTangentSpaceLighting() const
 
 bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 {
-    if (p0.simpleProps < p1.simpleProps)
-        return true;
-    if (p1.simpleProps < p0.simpleProps)
-        return false;
-
     if (p0.texUsage < p1.texUsage)
         return true;
     if (p1.texUsage < p0.texUsage)
@@ -1724,8 +1720,11 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
     else
     {
-        source += "uniform vec3 ambientColor;\n";
-        source += "uniform float opacity;\n";
+        if (props.lightModel != ShaderProperties::UnlitModel)
+        {
+            source += "uniform vec3 ambientColor;\n";
+            source += "uniform float opacity;\n";
+        }
         source += "varying vec4 diff;\n";
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
@@ -1830,7 +1829,17 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
     else
     {
-        source += "diff = vec4(ambientColor, opacity);\n";
+        if (props.lightModel == ShaderProperties::UnlitModel)
+        {
+            if ((props.texUsage & ShaderProperties::VertexColors) != 0)
+                source += "diff = gl_Color;\n";
+            else
+                source += "diff = vec4(1.0);\n";
+        }
+        else
+        {
+            source += "diff = vec4(ambientColor, opacity);\n";
+        }
         if (props.hasSpecular())
             source += "spec = vec4(0.0, 0.0, 0.0, 0.0);\n";
     }
@@ -3079,80 +3088,6 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
     return status == ShaderStatus_OK ? fs : nullptr;
 }
 
-GLVertexShader*
-ShaderManager::buildSimpleVertexShader(uint32_t props)
-{
-    ostringstream source;
-
-    source << CommonHeader;
-
-    if (props & ShaderProperties::PerVertexColor)
-        source << DeclareVarying("color", Shader_Vector4);
-
-    if (props & ShaderProperties::HasTexture)
-        source << DeclareVarying("texCoord", Shader_Vector2);
-
-    // Begin main()
-    source << "\nvoid main(void)\n";
-    source << "{\n";
-
-    if (props & ShaderProperties::PerVertexColor)
-        source << "    color = gl_Color;\n";
-    if (props & ShaderProperties::HasTexture)
-        source << "    texCoord = gl_MultiTexCoord0.st;\n";
-    source << "    gl_Position = ftransform();\n";
-
-    source << "}\n";
-    // End of main()
-
-    DumpVSSource(source);
-
-    GLVertexShader* vs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source.str(), &vs);
-    return status == ShaderStatus_OK ? vs : nullptr;
-}
-
-
-GLFragmentShader*
-ShaderManager::buildSimpleFragmentShader(uint32_t props)
-{
-    ostringstream source;
-
-    source << CommonHeader;
-
-    if (props & ShaderProperties::UniformColor)
-        source << DeclareUniform("color", Shader_Vector4);
-
-    if (props & ShaderProperties::HasTexture)
-    {
-        source << DeclareUniform("tex", Shader_Sampler2D);
-        source << DeclareVarying("texCoord", Shader_Vector2);
-    }
-
-    if (props & ShaderProperties::PerVertexColor)
-        source << DeclareVarying("color", Shader_Vector4);
-
-    // Begin main()
-    source << "\nvoid main(void)\n";
-    source << "{\n";
-
-    if (props & ShaderProperties::HasTexture)
-        source << "    gl_FragColor = texture2D(tex, texCoord) * color;\n";
-    else
-        source << "    gl_FragColor = color;\n";
-
-    source << "}\n";
-    // End of main()
-
-    DumpFSSource(source);
-
-    GLFragmentShader* fs = nullptr;
-    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source.str(), &fs);
-    return status == ShaderStatus_OK ? fs : nullptr;
-}
-
-
-
 CelestiaGLProgram*
 ShaderManager::buildProgram(const ShaderProperties& props)
 {
@@ -3162,12 +3097,7 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     GLVertexShader* vs = nullptr;
     GLFragmentShader* fs = nullptr;
 
-    if (props.simpleProps != 0)
-    {
-        vs = buildSimpleVertexShader(props.simpleProps);
-        fs = buildSimpleFragmentShader(props.simpleProps);
-    }
-    else if (props.lightModel == ShaderProperties::RingIllumModel)
+    if (props.lightModel == ShaderProperties::RingIllumModel)
     {
         vs = buildRingsVertexShader(props);
         fs = buildRingsFragmentShader(props);
@@ -3459,11 +3389,6 @@ CelestiaGLProgram::initParameters()
     if ((props.texUsage & ShaderProperties::PointSprite) != 0)
     {
         pointScale           = floatParam("pointScale");
-    }
-
-    if (props.simpleProps & ShaderProperties::UniformColor)
-    {
-        color                = vec4Param("color");
     }
 }
 

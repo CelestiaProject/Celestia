@@ -92,7 +92,10 @@ renderTerminator(Renderer* renderer, const vector<Vector3f>& pos, const Vector4f
      * Because of this we make calculations on a CPU and stream results to GPU.
      */
 
-    auto *prog = renderer->getShaderManager().getShader("uniform_color");
+    ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::VertexColors;
+    shadprop.lightModel = ShaderProperties::UnlitModel;
+    auto *prog = renderer->getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
 
@@ -109,10 +112,7 @@ renderTerminator(Renderer* renderer, const vector<Vector3f>& pos, const Vector4f
     vo.setBufferData(pos.data(), 0, pos.size() * sizeof(Vector3f));
 
     prog->use();
-    prog->vec4Param("color") = color;
-    Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
-    m.topLeftCorner(3, 3) = qf.conjugate().toRotationMatrix();
-    prog->mat4Param("rotate") = m;
+    glColor(color);
 
     vo.draw(GL_LINE_LOOP, pos.size());
 

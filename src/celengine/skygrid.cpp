@@ -390,7 +390,10 @@ SkyGrid::render(Renderer& renderer,
                 int windowWidth,
                 int windowHeight)
 {
-    auto *prog = renderer.getShaderManager().getShader("uniform_color");
+    ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::VertexColors;
+    shadprop.lightModel = ShaderProperties::UnlitModel;
+    auto *prog = renderer.getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
 
@@ -544,7 +547,7 @@ SkyGrid::render(Renderer& renderer,
     Quaternionf orientationf = q.cast<float>();
 
     prog->use();
-    prog->vec4Param("color") = m_lineColor.toVector4();
+    glColor(m_lineColor);
 
     // Render the parallels
     glPushMatrix();
