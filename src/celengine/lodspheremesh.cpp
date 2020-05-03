@@ -23,7 +23,6 @@ using namespace celmath;
 
 //#define SHOW_PATCH_VISIBILITY
 //#define SHOW_FRUSTUM
-#define VERTEX_BUFFER_OBJECTS_ENABLED
 
 static bool trigArraysInitialized = false;
 static int maxDivisions = 16384;
@@ -254,7 +253,6 @@ void LODSphereMesh::render(unsigned int attributes,
             glActiveTexture(GL_TEXTURE0 + i);
     }
 
-#ifdef VERTEX_BUFFER_OBJECTS_ENABLED
     if (!vertexBuffersInitialized)
     {
         // TODO: assumes that the same context is used every time we
@@ -262,37 +260,27 @@ void LODSphereMesh::render(unsigned int attributes,
         // would only cause problems if we rendered in two different contexts
         // and only one had vertex buffer objects.
         vertexBuffersInitialized = true;
-        if (true)
+        for (unsigned int & vertexBuffer : vertexBuffers)
         {
-            for (unsigned int & vertexBuffer : vertexBuffers)
-            {
-                GLuint vbname = 0;
-                glGenBuffers(1, &vbname);
-                vertexBuffer = (unsigned int) vbname;
-                glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-                glBufferData(GL_ARRAY_BUFFER,
-                                     maxVertices * MaxVertexSize * sizeof(float),
-                                     nullptr,
-                                     GL_STREAM_DRAW);
-            }
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-            glGenBuffers(1, &indexBuffer);
-
-            useVertexBuffers = true;
-
-            // HACK: delete the user arrays--we shouldn't need to allocate
-            // these at all if we're using vertex buffer objects.
-            delete[] vertices;
+            GLuint vbname = 0;
+            glGenBuffers(1, &vbname);
+            vertexBuffer = (unsigned int) vbname;
+            glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+            glBufferData(GL_ARRAY_BUFFER,
+                         maxVertices * MaxVertexSize * sizeof(float),
+                         nullptr,
+                         GL_STREAM_DRAW);
         }
-    }
-#endif
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glGenBuffers(1, &indexBuffer);
 
-    if (useVertexBuffers)
-    {
-        currentVB = 0;
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[currentVB]);
+        // HACK: delete the user arrays--we shouldn't need to allocate
+        // these at all if we're using vertex buffer objects.
+        delete[] vertices;
     }
+
+    currentVB = 0;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[currentVB]);
 
     // Set up the mesh vertices
     int nRings = phiExtent / ri.step;
@@ -309,14 +297,11 @@ void LODSphereMesh::render(unsigned int attributes,
         }
     }
 
-    if (useVertexBuffers)
-    {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                             nIndices * sizeof(indices[0]),
-                             indices,
-                             GL_DYNAMIC_DRAW);
-    }
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 nIndices * sizeof(indices[0]),
+                 indices,
+                 GL_DYNAMIC_DRAW);
 
     // Compute the size of a vertex
     vertexSize = 3;
@@ -415,12 +400,9 @@ void LODSphereMesh::render(unsigned int attributes,
         glActiveTexture(GL_TEXTURE0);
     }
 
-    if (useVertexBuffers)
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        vertices = nullptr;
-    }
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    vertices = nullptr;
 
 #ifdef SHOW_FRUSTUM
     // Debugging code for visualizing the frustum.
@@ -565,9 +547,7 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
                                       phi0 + phiExtent / 2);
 #else
     // . . . or is the average of the points better?
-    Vector3f patchCenter = Vector3f(p0.x() + p1.x() + p2.x() + p3.x(),
-                                    p0.y() + p1.y() + p2.y() + p3.y(),
-                                    p0.z() + p1.z() + p2.z() + p3.z()) * 0.25f;
+    Vector3f patchCenter = (p0 + p1 + p2 + p3) * 0.25f;
 #endif
     float boundingRadius = 0.0f;
     boundingRadius = max(boundingRadius, (patchCenter - p0).norm()); // patchCenter.distanceTo(p0)
@@ -575,9 +555,6 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
     boundingRadius = max(boundingRadius, (patchCenter - p2).norm());
     boundingRadius = max(boundingRadius, (patchCenter - p3).norm());
     if (ri.frustum.testSphere(patchCenter, boundingRadius) == Frustum::Outside)
-        outside = true;
-
-    if (outside)
         return 0;
 
     if (level == 1)
@@ -619,7 +596,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
 
     auto stride = (GLsizei) (vertexSize * sizeof(float));
     int texCoordOffset = ((ri.attributes & Tangents) != 0) ? 6 : 3;
-    float* vertexBase = useVertexBuffers ? (float*) nullptr : vertices;
+    float* vertexBase = nullptr;
 
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
                           3, GL_FLOAT, GL_FALSE,
@@ -628,7 +605,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     {
         glVertexAttribPointer(CelestiaGLProgram::NormalAttributeIndex,
                               3, GL_FLOAT, GL_FALSE,
-                              stride, vertexBase);
+                              stride, vertexBase); /// BUG?
     }
 
     for (int tc = 0; tc < nTexturesUsed; tc++)
@@ -662,21 +639,18 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     float v0[MAX_SPHERE_MESH_TEXTURES];
 
 
-    if (useVertexBuffers)
-    {
-        // Calling glBufferData() with nullptr before mapping the buffer
-        // is a hint to OpenGL that previous contents of vertex buffer will
-        // be discarded and overwritten. It enables renaming in the driver,
-        // hopefully resulting in performance gains.
-        glBufferData(GL_ARRAY_BUFFER,
-                             maxVertices * vertexSize * sizeof(float),
-                             nullptr,
-                             GL_STREAM_DRAW);
+    // Calling glBufferData() with nullptr before mapping the buffer
+    // is a hint to OpenGL that previous contents of vertex buffer will
+    // be discarded and overwritten. It enables renaming in the driver,
+    // hopefully resulting in performance gains.
+    glBufferData(GL_ARRAY_BUFFER,
+                 maxVertices * vertexSize * sizeof(float),
+                 nullptr,
+                 GL_STREAM_DRAW);
 
-        vertices = reinterpret_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-        if (vertices == nullptr)
-            return;
-    }
+    vertices = reinterpret_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+    if (vertices == nullptr)
+        return;
 
     // Set the current texture.  This is necessary because the texture
     // may be split into subtextures.
@@ -786,18 +760,15 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
         }
     }
 
-    if (useVertexBuffers)
-    {
-        vertices = nullptr;
-        if (!glUnmapBuffer(GL_ARRAY_BUFFER))
-            return;
-    }
+    vertices = nullptr;
+    if (!glUnmapBuffer(GL_ARRAY_BUFFER))
+        return;
 
     // TODO: Fix this--number of rings can reach zero and cause dropout
     // int nRings = max(phiExtent / ri.step, 1); // buggy
     int nRings = phiExtent / ri.step;
     int nSlices = thetaExtent / ri.step;
-    unsigned short* indexBase = useVertexBuffers ? (unsigned short*) nullptr : indices;
+    unsigned short* indexBase = nullptr;
     for (int i = 0; i < nRings; i++)
     {
         glDrawElements(GL_TRIANGLE_STRIP,
@@ -807,11 +778,8 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     }
 
     // Cycle through the vertex buffers
-    if (useVertexBuffers)
-    {
-        currentVB++;
-        if (currentVB == NUM_SPHERE_VERTEX_BUFFERS)
-            currentVB = 0;
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[currentVB]);
-    }
+    currentVB++;
+    if (currentVB == NUM_SPHERE_VERTEX_BUFFERS)
+        currentVB = 0;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[currentVB]);
 }
