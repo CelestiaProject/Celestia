@@ -14,7 +14,7 @@ if(POLICY CMP0072)
   endif()
 endif()
 
-project(celestia VERSION 1.7.0 LANGUAGES CXX)
+project(celestia VERSION 1.7.0 LANGUAGES C CXX)
 
 set(DISPLAY_NAME "Celestia")
 #
