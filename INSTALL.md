@@ -96,11 +96,11 @@ First you need a C++ compiler able to compile C++11 code (GCC 4.8.1 or later,
 Clang 3.3 or later), CMake, GNU Make or Ninja.
 
 Then you need to have the following devel components installed before Celestia
-will build: OpenGL, glu, glew, theora, libjpeg, and libpng. Optional packages
-are fmtlib, Eigen3, Qt5, Gtk2 and glut.
+will build: OpenGL, glu, libepoxy, theora, libjpeg, and libpng. Optional
+packages are fmtlib, Eigen3, Qt5, Gtk2 and glut.
 
 For example on modern Debian-derived system you need to install the following
-packages: libglew-dev, libjpeg-dev, libpng-dev, libtheora-dev, libgl1-mesa-dev,
+packages: libepoxy-dev, libjpeg-dev, libpng-dev, libtheora-dev, libgl1-mesa-dev,
 libglu1-mesa-dev. Then you may want to install libeigen3-dev, libfmt-dev;
 qtbase5-dev, qtbase5-dev-tools and libqt5opengl5-dev if you want to build with
 Qt5 interface; libgtk2.0-dev and libgtkglext1-dev to build with legacy Gtk2
@@ -159,7 +159,7 @@ and vcpkg (*).
 Install required packages:
 
 ```
-vcpkg install libpng libjpeg-turbo gettext lua fmt glew eigen3
+vcpkg install libpng libjpeg-turbo gettext lua fmt libepoxy eigen3
 ```
 
 Install optional packages:
@@ -220,7 +220,7 @@ pacman -S base-devel
 pacman -S git
 pacman -S mingw-w64-x86_64-cmake
 pacman -S mingw-w64-x86_64-qt5
-pacman -S mingw-w64-x86_64-freeglut mingw-w64-x86_64-glew mingw-w64-x86_64-lua
+pacman -S mingw-w64-x86_64-freeglut mingw-w64-x86_64-libepoxy mingw-w64-x86_64-lua
 pacman -S mingw-w64-x86_64-libtheora mingw-w64-x86_64-mesa
 ```
 
@@ -274,7 +274,7 @@ Install Homebrew
 Install required packages:
 
 ```
-brew install cmake glew fmt gettext libpng lua qt5 jpeg eigen
+brew install cmake fmt gettext libepoxy libpng lua qt5 jpeg eigen
 ```
 
 Install optional packages:
