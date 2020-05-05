@@ -3788,6 +3788,14 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     return true;
 }
 
+static TextureFont*
+LoadFontHelper(const Renderer* renderer, const fs::path& p)
+{
+    if (p.is_absolute())
+        return LoadTextureFont(renderer, p);
+
+    return LoadTextureFont(renderer, fs::path("fonts") / p);
+}
 
 bool CelestiaCore::initRenderer()
 {
@@ -3830,22 +3838,22 @@ bool CelestiaCore::initRenderer()
         setFaintestAutoMag();
     }
 
-    if (config->mainFont == "")
+    if (config->mainFont.empty())
 #if NO_TTF
         font = LoadTextureFont(renderer, "fonts/default.txf");
 #else
-        font = LoadTextureFont(renderer, "fonts/FreeSans.ttf,12");
+        font = LoadTextureFont(renderer, "fonts/DejaVuSans.ttf,12");
 #endif
     else
-        font = LoadTextureFont(renderer, fs::path("fonts") / config->mainFont);
+        font = LoadFontHelper(renderer, config->mainFont);
 
     if (font == nullptr)
         cout << _("Error loading font; text will not be visible.\n");
     else
         font->buildTexture();
 
-    if (config->titleFont != "")
-        titleFont = LoadTextureFont(renderer, fs::path("fonts") / config->titleFont);
+    if (!config->titleFont.empty())
+        titleFont = LoadFontHelper(renderer, config->titleFont);
     if (titleFont != nullptr)
         titleFont->buildTexture();
     else
@@ -3861,7 +3869,7 @@ bool CelestiaCore::initRenderer()
     }
     else
     {
-        TextureFont* labelFont = LoadTextureFont(renderer, fs::path("fonts") / config->labelFont);
+        TextureFont* labelFont = LoadFontHelper(renderer, config->labelFont);
         if (labelFont == nullptr)
         {
             renderer->setFont(Renderer::FontNormal, font);
