@@ -1,8 +1,5 @@
 #pragma once
 
-#ifdef USE_GLEW
-#include <GL/glew.h>
-#else
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -11,7 +8,6 @@
 #include <OpenGL/glu.h>
 #else
 #include <GL/glu.h>
-#endif
 #endif
 
 namespace celestia
