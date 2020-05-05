@@ -18,7 +18,7 @@ GLFrameBufferObject::GLFrameBufferObject(GLuint width, GLuint height, unsigned i
     m_colorTexId(0),
     m_depthTexId(0),
     m_fboId(0),
-    m_status(GL_FRAMEBUFFER_UNSUPPORTED_EXT)
+    m_status(GL_FRAMEBUFFER_UNSUPPORTED)
 {
     if (attachments != 0)
     {
@@ -36,7 +36,7 @@ GLFrameBufferObject::~GLFrameBufferObject()
 bool
 GLFrameBufferObject::isValid() const
 {
-    return m_status == GL_FRAMEBUFFER_COMPLETE_EXT;
+    return m_status == GL_FRAMEBUFFER_COMPLETE;
 }
 
 
@@ -112,19 +112,19 @@ void
 GLFrameBufferObject::generateFbo(unsigned int attachments)
 {
     // Create the FBO
-    glGenFramebuffersEXT(1, &m_fboId);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId);
+    glGenFramebuffers(1, &m_fboId);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fboId);
 
     glReadBuffer(GL_NONE);
 
     if ((attachments & ColorAttachment) != 0)
     {
         generateColorTexture();
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexId, 0);
-        m_status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-        if (m_status != GL_FRAMEBUFFER_COMPLETE_EXT)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexId, 0);
+        m_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (m_status != GL_FRAMEBUFFER_COMPLETE)
         {
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
             cleanup();
             return;
         }
@@ -138,22 +138,22 @@ GLFrameBufferObject::generateFbo(unsigned int attachments)
     if ((attachments & DepthAttachment) != 0)
     {
         generateDepthTexture();
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_depthTexId, 0);
-        m_status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-        if (m_status != GL_FRAMEBUFFER_COMPLETE_EXT)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_depthTexId, 0);
+        m_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (m_status != GL_FRAMEBUFFER_COMPLETE)
         {
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
             cleanup();
             return;
         }
     }
     else
     {
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0);
     }
 
     // Restore default frame buffer
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
@@ -163,7 +163,7 @@ GLFrameBufferObject::cleanup()
 {
     if (m_fboId != 0)
     {
-        glDeleteFramebuffersEXT(1, &m_fboId);
+        glDeleteFramebuffers(1, &m_fboId);
     }
 
     if (m_colorTexId != 0)
@@ -183,7 +183,7 @@ GLFrameBufferObject::bind()
 {
     if (isValid())
     {
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fboId);
         return true;
     }
     return false;
@@ -194,7 +194,7 @@ bool
 GLFrameBufferObject::unbind()
 {
     // Restore default frame buffer
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     return true;
 }
 

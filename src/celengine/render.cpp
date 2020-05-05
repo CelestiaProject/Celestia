@@ -5385,7 +5385,7 @@ bool Renderer::getInfo(map<string, string>& info) const
     info["PointSizeGran"] = fmt::sprintf("%.2f", pointSizeGran);
 
     GLint maxCubeMapSize = 0;
-    glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &maxCubeMapSize);
+    glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &maxCubeMapSize);
     info["MaxCubeMapSize"] = to_string(maxCubeMapSize);
 
     GLint maxVaryings = 0;
