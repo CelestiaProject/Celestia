@@ -16,7 +16,7 @@ FramebufferObject::FramebufferObject(GLuint width, GLuint height, unsigned int a
     m_colorTexId(0),
     m_depthTexId(0),
     m_fboId(0),
-    m_status(GL_FRAMEBUFFER_UNSUPPORTED_EXT)
+    m_status(GL_FRAMEBUFFER_UNSUPPORTED)
 {
     if (attachments != 0)
     {
@@ -33,7 +33,7 @@ FramebufferObject::FramebufferObject(FramebufferObject &&other) :
     m_status(other.m_status)
 {
     other.m_fboId  = 0;
-    other.m_status = GL_FRAMEBUFFER_UNSUPPORTED_EXT;
+    other.m_status = GL_FRAMEBUFFER_UNSUPPORTED;
 }
 
 FramebufferObject& FramebufferObject::operator=(FramebufferObject &&other)
@@ -46,7 +46,7 @@ FramebufferObject& FramebufferObject::operator=(FramebufferObject &&other)
     m_status       = other.m_status;
 
     other.m_fboId  = 0;
-    other.m_status = GL_FRAMEBUFFER_UNSUPPORTED_EXT;
+    other.m_status = GL_FRAMEBUFFER_UNSUPPORTED;
     return *this;
 }
 
@@ -58,7 +58,7 @@ FramebufferObject::~FramebufferObject()
 bool
 FramebufferObject::isValid() const
 {
-    return m_status == GL_FRAMEBUFFER_COMPLETE_EXT;
+    return m_status == GL_FRAMEBUFFER_COMPLETE;
 }
 
 GLuint
@@ -123,19 +123,19 @@ void
 FramebufferObject::generateFbo(unsigned int attachments)
 {
     // Create the FBO
-    glGenFramebuffersEXT(1, &m_fboId);
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId);
+    glGenFramebuffers(1, &m_fboId);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fboId);
 
     glReadBuffer(GL_NONE);
 
     if ((attachments & ColorAttachment) != 0)
     {
         generateColorTexture();
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexId, 0);
-        m_status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-        if (m_status != GL_FRAMEBUFFER_COMPLETE_EXT)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_colorTexId, 0);
+        m_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (m_status != GL_FRAMEBUFFER_COMPLETE)
         {
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
             cleanup();
             return;
         }
@@ -149,22 +149,22 @@ FramebufferObject::generateFbo(unsigned int attachments)
     if ((attachments & DepthAttachment) != 0)
     {
         generateDepthTexture();
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_depthTexId, 0);
-        m_status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-        if (m_status != GL_FRAMEBUFFER_COMPLETE_EXT)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTexId, 0);
+        m_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (m_status != GL_FRAMEBUFFER_COMPLETE)
         {
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
             cleanup();
             return;
         }
     }
     else
     {
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
     }
 
     // Restore default frame buffer
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 // Delete all GL objects associated with this framebuffer object
@@ -173,7 +173,7 @@ FramebufferObject::cleanup()
 {
     if (m_fboId != 0)
     {
-        glDeleteFramebuffersEXT(1, &m_fboId);
+        glDeleteFramebuffers(1, &m_fboId);
     }
 
     if (m_colorTexId != 0)
@@ -192,7 +192,7 @@ FramebufferObject::bind()
 {
     if (isValid())
     {
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fboId);
         return true;
     }
 
@@ -203,6 +203,6 @@ bool
 FramebufferObject::unbind()
 {
     // Restore default frame buffer
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     return true;
 }

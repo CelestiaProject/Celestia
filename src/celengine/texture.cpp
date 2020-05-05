@@ -116,10 +116,10 @@ static int getInternalFormat(int format)
     switch (format)
     {
     case GL_RGBA:
-    case GL_BGRA_EXT:
+    case GL_BGRA:
         return 4;
     case GL_RGB:
-    case GL_BGR_EXT:
+    case GL_BGR:
         return 3;
     case GL_LUMINANCE_ALPHA:
         return 2;
@@ -147,10 +147,10 @@ static int getCompressedInternalFormat(int format)
     switch (format)
     {
     case GL_RGB:
-    case GL_BGR_EXT:
+    case GL_BGR:
         return GL_COMPRESSED_RGB;
     case GL_RGBA:
-    case GL_BGRA_EXT:
+    case GL_BGRA:
         return GL_COMPRESSED_RGBA;
     case GL_ALPHA:
         return GL_COMPRESSED_ALPHA;
@@ -436,7 +436,7 @@ ImageTexture::ImageTexture(Image& img,
     }
 #ifdef NO_GLU
     if (genMipmaps && gl::EXT_framebuffer_object)
-        glGenerateMipmapEXT(GL_TEXTURE_2D);
+        glGenerateMipmap(GL_TEXTURE_2D);
 #endif
     DumpTextureMipmapInfo(GL_TEXTURE_2D);
 
@@ -623,7 +623,7 @@ TiledTexture::TiledTexture(Image& img,
                     if (gl::EXT_framebuffer_object)
                     {
                         LoadMiplessTexture(*tile, GL_TEXTURE_2D);
-                        glGenerateMipmapEXT(GL_TEXTURE_2D);
+                        glGenerateMipmap(GL_TEXTURE_2D);
                     }
                     else
                     {
@@ -786,7 +786,7 @@ CubeMap::CubeMap(Image* faces[]) :
     }
 #ifdef NO_GLU
     if (genMipmaps && gl::EXT_framebuffer_object)
-        glGenerateMipmapEXT(GL_TEXTURE_CUBE_MAP);
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 #endif
     DumpTextureMipmapInfo(GL_TEXTURE_CUBE_MAP_POSITIVE_X);
 }
