@@ -36,14 +36,10 @@ public:
     void render(const celmath::Frustum&, float pixWidth,
                 Texture** tex, int nTextures);
 
-    enum {
+    enum
+    {
         Normals    = 0x01,
         Tangents   = 0x02,
-        Colors     = 0x04,
-        TexCoords0 = 0x08,
-        TexCoords1 = 0x10,
-        VertexProgParams = 0x1000,
-        Multipass  = 0x10000000,
     };
 
  private:
@@ -64,10 +60,10 @@ public:
         int texLOD[MAX_SPHERE_MESH_TEXTURES];
     };
 
-    int renderPatches(int phi0, int theta0,
-                      int extent,
-                      int level,
-                      const RenderInfo&);
+    void renderPatches(int phi0, int theta0,
+                       int extent,
+                       int level,
+                       const RenderInfo&);
 
     void renderSection(int phi0, int theta0, int extent, const RenderInfo&);
 
@@ -84,9 +80,8 @@ public:
     unsigned int subtextures[MAX_SPHERE_MESH_TEXTURES]{};
 
     bool vertexBuffersInitialized{ false };
-    bool useVertexBuffers{ false };
-    int currentVB{ 0 };
-    unsigned int vertexBuffers[NUM_SPHERE_VERTEX_BUFFERS];
+    GLuint currentVB{ 0 };
+    GLuint vertexBuffers[NUM_SPHERE_VERTEX_BUFFERS];
     GLuint indexBuffer{ 0 };
 };
 
