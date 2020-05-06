@@ -40,7 +40,7 @@
 
 #define EARTH_RADIUS   6378.14
 #define JUPITER_RADIUS 71492.0
-#define SOLAR_RADIUS   696000.0
+#define SOLAR_RADIUS   695660.0
 
 using namespace std;
 
