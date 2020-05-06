@@ -1668,6 +1668,7 @@ void Renderer::draw(const Observer& observer,
     glMatrixMode(GL_PROJECTION);
     glLoadMatrix(m_projMatrix);
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadMatrix(m_modelMatrix);
 
     // Render sky grids first--these will always be in the background
@@ -1756,10 +1757,18 @@ void Renderer::draw(const Observer& observer,
 
     renderForegroundAnnotations(FontNormal);
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrix(m_projMatrix);
+    glMatrixMode(GL_MODELVIEW);
+
     if (!selectionVisible && (renderFlags & ShowMarkers))
     {
         renderSelectionPointer(observer, now, xfrustum, sel);
     }
+
+    // Pop camera orientation matrix
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
