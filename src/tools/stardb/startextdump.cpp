@@ -143,7 +143,7 @@ void printStellarClass(uint16_t sc, ostream& out)
 }
 
 
-bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut,
+bool DumpOldStarDatabase(istream& in, ostream& out, ofstream& hdOut,
                          bool spherical)
 {
     uint32_t nStarsInFile = readUint(in);
@@ -198,15 +198,15 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut,
         out << '\n';
 
         // Dump HD catalog cross reference
-        if (hdOut != nullptr && HDCatalogNum != ~0)
-            *hdOut << HDCatalogNum << ' ' << catalogNum << '\n';
+        if (hdOut.is_open() && HDCatalogNum != ~0)
+            hdOut << HDCatalogNum << ' ' << catalogNum << '\n';
     }
 
     return true;
 }
 
 
-bool DumpStarDatabase(istream& in, ostream& out, ostream* hdOut)
+bool DumpStarDatabase(istream& in, ostream& out)
 {
     char header[8];
     in.read(header, sizeof header);
@@ -339,11 +339,11 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    ofstream* hdOut = nullptr;
-    if (!hdFilename.empty())
+    ofstream hdOut;
+    if (useOldFormat && !hdFilename.empty())
     {
-        hdOut = new ofstream(hdFilename, ios::out);
-        if (!hdOut->good())
+        hdOut.open(hdFilename, ios::out);
+        if (!hdOut.good())
         {
             cerr << "Error opening HD catalog output file " << hdFilename << '\n';
             return 1;
@@ -352,14 +352,16 @@ int main(int argc, char* argv[])
 
     bool success;
     ostream* out = &cout;
+    ofstream fout;
     if (!outputFilename.empty())
     {
-        out = new ofstream(outputFilename, ios::out);
-        if (!out->good())
+        fout.open(outputFilename, ios::out);
+        if (!fout.good())
         {
             cerr << "Error opening output file " << outputFilename << '\n';
             return 1;
         }
+	out = &fout;
     }
 
     if (useOldFormat)
@@ -369,7 +371,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        success = DumpStarDatabase(stardbFile, *out, hdOut);
+        success = DumpStarDatabase(stardbFile, *out);
     }
 
     return success ? 0 : 1;
