@@ -183,8 +183,6 @@ public:
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
 
-        mapBuffer();
-
         Vector4f* vertexBase = vbobj ? (Vector4f*) offsetof(Vertex, position) : &data[0].position;
         glVertexPointer(3, GL_FLOAT, sizeof(Vertex), vertexBase);
 
@@ -199,8 +197,6 @@ public:
 
     void finish()
     {
-        unmapBuffer();
-
 #if USE_VERTEX_BUFFER
         if (vbobj)
         {
@@ -297,7 +293,7 @@ public:
 #if USE_VERTEX_BUFFER
         if (currentPosition > 0)
         {
-            unmapBuffer();
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * currentPosition, data);
 
             // Finish the current line strip
             if (currentStripLength > 1)
@@ -309,8 +305,6 @@ public:
                 glDrawArrays(GL_LINE_STRIP, startIndex, *iter);
                 startIndex += *iter;
             }
-
-            mapBuffer();
 
             currentPosition = 0;
             stripLengths.clear();
@@ -331,34 +325,6 @@ public:
                          capacity * sizeof(Vertex),
                          nullptr,
                          GL_STREAM_DRAW);
-        }
-#endif
-    }
-
-    void mapBuffer()
-    {
-        if (vbobj)
-        {
-            // Calling glBufferData() with nullptr before mapping the buffer
-            // is a hint to OpenGL that previous contents of vertex buffer will
-            // be discarded and overwritten. It enables renaming in the driver,
-            // hopefully resulting in performance gains.
-            glBufferData(GL_ARRAY_BUFFER,
-                         capacity * sizeof(Vertex),
-                         nullptr,
-                         GL_STREAM_DRAW);
-
-            data = reinterpret_cast<Vertex*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-        }
-    }
-
-    void unmapBuffer()
-    {
-#if USE_VERTEX_BUFFER
-        if (vbobj)
-        {
-            glUnmapBuffer(GL_ARRAY_BUFFER);
-            data = nullptr;
         }
 #endif
     }
