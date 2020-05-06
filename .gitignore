@@ -8,6 +8,7 @@ Release/
 *.la
 *.exe
 *.dll
+.DS_Store
 po*/*.gmo
 po*/POTFILES
 build*/
