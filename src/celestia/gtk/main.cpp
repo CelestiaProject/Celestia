@@ -299,8 +299,11 @@ int main(int argc, char* argv[])
 	app->fullScreen = FALSE;
 	app->startURL = NULL;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 	/* Watcher enables sending signals from inside of core */
-	//GtkWatcher* gtkWatcher;
+	GtkWatcher* gtkWatcher;
+#pragma GCC diagnostic pop
 
 	/* Command line option parsing */
 	GError *error = NULL;
@@ -493,7 +496,7 @@ int main(int argc, char* argv[])
 	gtk_widget_grab_focus(GTK_WIDGET(app->glArea));
 
 	/* Initialize the Watcher */
-	//gtkWatcher = new GtkWatcher(app->core, app);
+	gtkWatcher = new GtkWatcher(app->core, app);
 
 	/* Unload the splash screen */
 	splashEnd(ss);
