@@ -125,25 +125,29 @@ int main(int argc, char* argv[])
     }
 
     istream* inputFile = &cin;
+    ifstream fin;
     if (!inputFilename.empty())
     {
-        inputFile = new ifstream(inputFilename, ios::in);
-        if (!inputFile->good())
+        fin.open(inputFilename, ios::in);
+        if (!fin.good())
         {
             cerr << "Error opening input file " << inputFilename << '\n';
             return 1;
         }
+        inputFile = &fin;
     }
 
     ostream* outputFile = &cout;
+    ofstream fout;
     if (!outputFilename.empty())
     {
-        outputFile = new ofstream(outputFilename, ios::out | ios::binary);
-        if (!outputFile->good())
+        fout.open(outputFilename, ios::out | ios::binary);
+        if (!fout.good())
         {
             cerr << "Error opening output file " << outputFilename << '\n';
             return 1;
         }
+        outputFile = &fout;
     }
 
     bool success = WriteCrossIndex(*inputFile, *outputFile);
