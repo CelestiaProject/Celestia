@@ -17,8 +17,6 @@ standard output stream.  The options are:
   rectangular coordinates.  RA is in degrees instead of the more conventional
   hours/minutes/seconds.  Distance is in units of light years.  Also, the
   apparent magnitude will be written instead of the absolute magnitude.
-  The spherical option is ignored unless the input is an old format star
-  database.
 
   --hd <filename>
   Dump the HD catalog numbers of an old format star database to a separate
