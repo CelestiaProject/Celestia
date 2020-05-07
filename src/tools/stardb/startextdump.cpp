@@ -187,7 +187,7 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ofstream& hdOut,
         {
             Eigen::Vector3d pos = astro::equatorialToCelestialCart((double) RA, (double) dec, distance);
             float absMag = (float) (appMag / 256.0 + 5 -
-                                    5 * log10(distance / 3.26));
+                                    5 * log10(distance / LY_PER_PARSEC));
             out << (float) pos.x() << ' ' <<
                    (float) pos.y() << ' ' <<
                    (float) pos.z() << ' ';
@@ -206,7 +206,7 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ofstream& hdOut,
 }
 
 
-bool DumpStarDatabase(istream& in, ostream& out)
+bool DumpStarDatabase(istream& in, ostream& out, bool spherical)
 {
     char header[8];
     in.read(header, sizeof header);
@@ -250,9 +250,32 @@ bool DumpStarDatabase(istream& in, ostream& out)
 
         out << catalogNum << ' ';
         out << setprecision(7);
-        out << x << ' ' << y << ' ' << z << ' ';
-        out << setprecision(4);
-        out << ((float) absMag / 256.0f) << ' ';
+        
+        if (spherical)
+        {
+            Eigen::Vector3d eclipticpos = {(double) x, (double) y, (double) z};
+            Eigen::Vector3d pos = astro::eclipticToEquatorial(eclipticpos);
+            double distance = sqrt(x * x + y * y + z * z);
+            // acos outputs angles in interval [0, pi], use negative sign for interval [-pi, 0]
+            double phi = -acos(pos.y() / distance) * 180 / PI;
+            double theta = atan2(pos.z(), -pos.x()) * 180 / PI;
+            // atan2 outputs angles in interval [-pi, pi], so we add 360 to fix this
+            double ra = theta - 180 + 360;
+            double dec = phi + 90;
+            float appMag = float (absMag / 256.0 - 5 + 5 * log10(distance / LY_PER_PARSEC));
+            
+            out << fixed << setprecision(9) << (float) ra << ' ' << (float) dec << ' ';
+            out << setprecision(6) << (float) distance << ' ';
+            out << setprecision(2);
+            out << appMag << ' ';
+        }
+        else
+        {
+            out << x << ' ' << y << ' ' << z << ' ';
+            out << setprecision(4);
+            out << ((float) absMag / 256.0f) << ' ';
+        }
+        
         printStellarClass(stellarClass, out);
         out << '\n';
     }
@@ -371,7 +394,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        success = DumpStarDatabase(stardbFile, *out);
+        success = DumpStarDatabase(stardbFile, *out, useSphericalCoords);
     }
 
     return success ? 0 : 1;
