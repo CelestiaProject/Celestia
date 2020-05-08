@@ -81,7 +81,7 @@ msgid "Add Bookmark"
 msgstr "Añadir señalador"
 
 # iOS, Add a new item (bookmark)
-msgid "Add new..."
+msgid "Add new…"
 msgstr ""
 
 # Mac
@@ -532,7 +532,7 @@ msgid "General"
 msgstr "General"
 
 # Android/iOS
-msgid "Generating sharing link..."
+msgid "Generating sharing link…"
 msgstr ""
 
 # Android/iOS/Mac
@@ -659,17 +659,13 @@ msgstr ""
 
 # Android/iOS, Celestia loading failed
 #, c-format
-msgid "Loading Celestia failed..."
+msgid "Loading Celestia failed…"
 msgstr ""
 
 # Android, Loading Celestia configuration
 #, c-format
-msgid "Loading configuration..."
+msgid "Loading configuration…"
 msgstr ""
-
-# Mac
-msgid "loading... "
-msgstr "loading... "
 
 # Android/iOS, Celestia initialization, loading file
 #, c-format
@@ -774,7 +770,7 @@ msgstr "Nebulosas"
 
 # Mac
 msgid "New Folder"
-msgstr "Nueva carpeta..."
+msgstr "Nueva carpeta…"
 
 # Android/iOS/Mac
 msgid "Night Lights"
@@ -861,7 +857,7 @@ msgid "OpenGL Info"
 msgstr "Información OpenGL"
 
 # Android
-msgid "Opening external file or URL..."
+msgid "Opening external file or URL…"
 msgstr ""
 
 # iOS
@@ -1087,7 +1083,7 @@ msgstr "Servicios"
 
 # Mac
 msgid "Set Time"
-msgstr "Establecer fecha y hora..."
+msgstr "Establecer fecha y hora…"
 
 # Mac
 msgid "Set Time…"

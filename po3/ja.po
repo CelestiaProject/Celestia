@@ -81,7 +81,7 @@ msgid "Add Bookmark"
 msgstr "ブックマークに追加"
 
 # iOS, Add a new item (bookmark)
-msgid "Add new..."
+msgid "Add new…"
 msgstr ""
 
 # Mac
@@ -532,7 +532,7 @@ msgid "General"
 msgstr "General"
 
 # Android/iOS
-msgid "Generating sharing link..."
+msgid "Generating sharing link…"
 msgstr ""
 
 # Android/iOS/Mac
@@ -659,17 +659,13 @@ msgstr ""
 
 # Android/iOS, Celestia loading failed
 #, c-format
-msgid "Loading Celestia failed..."
+msgid "Loading Celestia failed…"
 msgstr ""
 
 # Android, Loading Celestia configuration
 #, c-format
-msgid "Loading configuration..."
+msgid "Loading configuration…"
 msgstr ""
-
-# Mac
-msgid "loading... "
-msgstr "loading... "
 
 # Android/iOS, Celestia initialization, loading file
 #, c-format
@@ -774,7 +770,7 @@ msgstr "星雲"
 
 # Mac
 msgid "New Folder"
-msgstr "新規フォルダ..."
+msgstr "新規フォルダ…"
 
 # Android/iOS/Mac
 msgid "Night Lights"
@@ -861,7 +857,7 @@ msgid "OpenGL Info"
 msgstr "OpenGL情報"
 
 # Android
-msgid "Opening external file or URL..."
+msgid "Opening external file or URL…"
 msgstr ""
 
 # iOS
@@ -1087,7 +1083,7 @@ msgstr "サービス"
 
 # Mac
 msgid "Set Time"
-msgstr "時刻を設定..."
+msgstr "時刻を設定…"
 
 # Mac
 msgid "Set Time…"

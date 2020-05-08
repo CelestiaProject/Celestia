@@ -81,7 +81,7 @@ msgid "Add Bookmark"
 msgstr "Pridať záložku"
 
 # iOS, Add a new item (bookmark)
-msgid "Add new..."
+msgid "Add new…"
 msgstr ""
 
 # Mac
@@ -408,7 +408,7 @@ msgstr "Trpasličie planéty"
 
 # Mac
 msgid "Eclipse Finder"
-msgstr "Vyhľadávač zatmení..."
+msgstr "Vyhľadávač zatmení…"
 
 # Android/iOS/Mac
 msgid "Eclipse Shadows"
@@ -532,7 +532,7 @@ msgid "General"
 msgstr ""
 
 # Android/iOS
-msgid "Generating sharing link..."
+msgid "Generating sharing link…"
 msgstr ""
 
 # Android/iOS/Mac
@@ -659,16 +659,12 @@ msgstr ""
 
 # Android/iOS, Celestia loading failed
 #, c-format
-msgid "Loading Celestia failed..."
+msgid "Loading Celestia failed…"
 msgstr ""
 
 # Android, Loading Celestia configuration
 #, c-format
-msgid "Loading configuration..."
-msgstr ""
-
-# Mac
-msgid "loading... "
+msgid "Loading configuration…"
 msgstr ""
 
 # Android/iOS, Celestia initialization, loading file
@@ -774,7 +770,7 @@ msgstr "Hmloviny"
 
 # Mac
 msgid "New Folder"
-msgstr "Nový priečinok..."
+msgstr "Nový priečinok…"
 
 # Android/iOS/Mac
 msgid "Night Lights"
@@ -859,7 +855,7 @@ msgid "OpenGL Info"
 msgstr "Informácie o OpenGL"
 
 # Android
-msgid "Opening external file or URL..."
+msgid "Opening external file or URL…"
 msgstr ""
 
 # iOS
@@ -1085,7 +1081,7 @@ msgstr ""
 
 # Mac
 msgid "Set Time"
-msgstr "Nastaviť čas..."
+msgstr "Nastaviť čas…"
 
 # Mac
 msgid "Set Time…"

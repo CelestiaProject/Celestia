@@ -81,7 +81,7 @@ msgid "Add Bookmark"
 msgstr "Adaugă marcaj"
 
 # iOS, Add a new item (bookmark)
-msgid "Add new..."
+msgid "Add new…"
 msgstr ""
 
 # Mac
@@ -532,7 +532,7 @@ msgid "General"
 msgstr ""
 
 # Android/iOS
-msgid "Generating sharing link..."
+msgid "Generating sharing link…"
 msgstr ""
 
 # Android/iOS/Mac
@@ -561,7 +561,7 @@ msgstr "Caroiaje"
 
 # Mac
 msgid "Guides"
-msgstr "Tur de iniţiere..."
+msgstr "Tur de iniţiere…"
 
 # Android/iOS/Mac, Indicate that an object has atmosphere
 msgid "Has atmosphere"
@@ -659,16 +659,12 @@ msgstr ""
 
 # Android/iOS, Celestia loading failed
 #, c-format
-msgid "Loading Celestia failed..."
+msgid "Loading Celestia failed…"
 msgstr ""
 
 # Android, Loading Celestia configuration
 #, c-format
-msgid "Loading configuration..."
-msgstr ""
-
-# Mac
-msgid "loading... "
+msgid "Loading configuration…"
 msgstr ""
 
 # Android/iOS, Celestia initialization, loading file
@@ -774,7 +770,7 @@ msgstr "Nebuloase"
 
 # Mac
 msgid "New Folder"
-msgstr "Dosar nou..."
+msgstr "Dosar nou…"
 
 # Android/iOS/Mac
 msgid "Night Lights"
@@ -859,7 +855,7 @@ msgid "OpenGL Info"
 msgstr "Informaţii OpenGL"
 
 # Android
-msgid "Opening external file or URL..."
+msgid "Opening external file or URL…"
 msgstr ""
 
 # iOS
