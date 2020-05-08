@@ -153,10 +153,6 @@ msgstr ""
 msgid "Bookmarks"
 msgstr "Закладки"
 
-# Mac
-msgid "Box"
-msgstr ""
-
 # Android/iOS/Mac
 msgid "Brightest Stars"
 msgstr "Самые яркие звёзды"
@@ -401,10 +397,6 @@ msgstr ""
 # Mac
 msgid "Duration"
 msgstr "Продолжительность"
-
-# Mac
-msgid "Dwaf Planets"
-msgstr ""
 
 # Android/iOS/Mac
 msgid "Dwarf Planets"

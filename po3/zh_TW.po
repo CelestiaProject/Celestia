@@ -153,10 +153,6 @@ msgstr "Bookmark Organizer"
 msgid "Bookmarks"
 msgstr "書籤"
 
-# Mac
-msgid "Box"
-msgstr "Box"
-
 # Android/iOS/Mac
 msgid "Brightest Stars"
 msgstr "星體"
@@ -401,10 +397,6 @@ msgstr "深太空星體"
 # Mac
 msgid "Duration"
 msgstr "歷時"
-
-# Mac
-msgid "Dwaf Planets"
-msgstr "Dwaf Planets"
 
 # Android/iOS/Mac
 msgid "Dwarf Planets"

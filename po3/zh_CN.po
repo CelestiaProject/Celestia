@@ -2,39 +2,39 @@
 # Copyright (C) 2001-2020 Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
 "POT-Creation-Date: 2020-04-15 20:22+0800\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2020-05-08 22:42+0800\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 2.3\n"
 
 # Android/iOS/Mac
 #, c-format
 msgid "%.2f days"
-msgstr ""
+msgstr "%.2f 天"
 
 # Android/iOS/Mac
 #, c-format
 msgid "%.2f hours"
-msgstr ""
+msgstr "%.2f 小时"
 
 # Android/iOS/Mac, Unit kilometer
 #, c-format
 msgid "%d km"
-msgstr ""
+msgstr "%d 千米"
 
 # Android/iOS/Mac, Unit meter
 #, c-format
 msgid "%d m"
-msgstr ""
+msgstr "%d 米"
 
 # Mac
 msgid "%H:%M"
@@ -62,7 +62,7 @@ msgstr "10倍光速"
 
 # Android/iOS, About Celstia...
 msgid "About"
-msgstr ""
+msgstr "关于"
 
 # Mac
 msgid "About Celestia"
@@ -74,7 +74,7 @@ msgstr "绝对星等"
 
 # Android, Add a new item (bookmark)
 msgid "Add"
-msgstr ""
+msgstr "添加"
 
 # Mac
 msgid "Add Bookmark"
@@ -82,7 +82,7 @@ msgstr "添加书签"
 
 # iOS, Add a new item (bookmark)
 msgid "Add new…"
-msgstr ""
+msgstr "添加…"
 
 # Mac
 msgid "Add/Subtract Light Travel Delay"
@@ -90,7 +90,7 @@ msgstr "增加/减少光速延迟"
 
 # Android/iOS, Advanced setting items
 msgid "Advanced"
-msgstr ""
+msgstr "高级"
 
 # Mac
 msgid "Ahead"
@@ -98,11 +98,11 @@ msgstr "向前"
 
 # Mac
 msgid "Alternate Surfaces"
-msgstr ""
+msgstr "替换表面"
 
 # Mac
 msgid "Ambient Light"
-msgstr ""
+msgstr "环境光"
 
 # Mac
 msgid "and:"
@@ -114,7 +114,7 @@ msgstr "小行星"
 
 # Android/iOS/Mac
 msgid "Atmospheres"
-msgstr "大气层"
+msgstr "大气"
 
 # Mac
 msgid "au"
@@ -126,12 +126,12 @@ msgstr "软件作者"
 
 # Mac
 msgid "Auto Mag"
-msgstr " 自动广度"
+msgstr "自动增强"
 
 # Android/iOS/Mac, Galactic coordinates
 #, c-format
 msgid "B: %d° %d′ %.2f″"
-msgstr ""
+msgstr "B: %d° %d′ %.2f″"
 
 # Mac
 msgid "Back"
@@ -153,13 +153,9 @@ msgstr "管理书签"
 msgid "Bookmarks"
 msgstr "书签"
 
-# Mac
-msgid "Box"
-msgstr "Box"
-
 # Android/iOS/Mac
 msgid "Brightest Stars"
-msgstr "恒星"
+msgstr "最亮的恒星"
 
 # Mac
 msgid "Bring All to Front"
@@ -167,7 +163,7 @@ msgstr "前置全部窗口"
 
 # Android/iOS/Mac, Object browser
 msgid "Browser"
-msgstr ""
+msgstr "星体浏览器"
 
 # Mac
 msgid "c (lightspeed)"
@@ -175,7 +171,7 @@ msgstr "c (光速)"
 
 # Android/iOS, Observer control
 msgid "Camera Control"
-msgstr ""
+msgstr "镜头控制"
 
 # Android/iOS/Mac
 msgid "Cancel"
@@ -183,11 +179,11 @@ msgstr "取消"
 
 # Android/iOS, Failed to add a favorite item (currently a bookmark)
 msgid "Cannot add object"
-msgstr ""
+msgstr "无法添加对象"
 
 # Mac
 msgid "Capture Video"
-msgstr "捕捉屏幕影像"
+msgstr "录制视频"
 
 # Mac
 msgid "Celestia"
@@ -199,7 +195,7 @@ msgstr "星体浏览器"
 
 # Mac
 msgid "Celestia failed to load data files."
-msgstr ""
+msgstr "Celestia加载数据文件失败。"
 
 # Mac
 msgid "Celestia Help"
@@ -207,15 +203,15 @@ msgstr "Celestia 帮助"
 
 # Android/iOS/Mac, Center an object
 msgid "Center"
-msgstr ""
+msgstr "居中"
 
 # Mac
 msgid "Center Selection"
-msgstr "置中所选物体(&C)\tC"
+msgstr "居中所选物体"
 
 # Mac
 msgid "Change Config File"
-msgstr ""
+msgstr "修改配置文件"
 
 # Android/iOS/Mac
 msgid "Chase"
@@ -223,11 +219,11 @@ msgstr "追赶"
 
 # Mac, Choose location for celestia.cfg
 msgid "Choose Config File"
-msgstr ""
+msgstr "选择配置文件"
 
 # Mac
 msgid "Circle"
-msgstr "圆形"
+msgstr "圆"
 
 # Android/iOS/Mac
 msgid "Cities"
@@ -255,19 +251,19 @@ msgstr "彗星"
 
 # Android/iOS/Mac, celestia.cfg
 msgid "Config File"
-msgstr ""
+msgstr "配置文件"
 
 # Android/iOS, celestia.cfg change requires a restart
 msgid "Configuration will take effect after a restart."
-msgstr ""
+msgstr "配置会在重启后生效。"
 
 # Mac
 msgid "Confirm and Relaunch"
-msgstr ""
+msgstr "确认并重启"
 
 # Android/iOS
 msgid "Constellation Labels"
-msgstr ""
+msgstr "星座标签"
 
 # Android/iOS/Mac
 msgid "Constellations"
@@ -275,7 +271,7 @@ msgstr "星座"
 
 # Android/iOS/Mac, display constellation labels in latin
 msgid "Constellations in Latin"
-msgstr "拉丁名星座标记"
+msgstr "拉丁名星座标签"
 
 # Mac
 msgid "Coordinate:"
@@ -283,15 +279,15 @@ msgstr "坐标："
 
 # Mac
 msgid "Copy URL"
-msgstr "拷贝网址"
+msgstr "拷贝URL"
 
 # Android, Copying default data from APK
 msgid "Copying data…"
-msgstr ""
+msgstr "复制数据…"
 
 # Android/iOS/Mac, Location labels
 msgid "Crater"
-msgstr ""
+msgstr "陨石坑"
 
 # Mac
 msgid "Crosshair"
@@ -299,19 +295,19 @@ msgstr "瞄准线"
 
 # Android/iOS/Mac
 msgid "Current Time"
-msgstr ""
+msgstr "当前时间"
 
 # Android/iOS
 msgid "Custom"
-msgstr ""
+msgstr "自定义"
 
 # Android/iOS/Mac, Directory to load data from
 msgid "Data Directory"
-msgstr ""
+msgstr "数据目录"
 
 # Android/iOS, Title for celestia.cfg, data location setting
 msgid "Data Location"
-msgstr ""
+msgstr "数据位置"
 
 # Mac
 msgid "Date"
@@ -319,20 +315,20 @@ msgstr "日期"
 
 # Android/iOS
 msgid "Date Format"
-msgstr ""
+msgstr "日期格式"
 
 # Android/iOS/Mac, Equatorial coordinate
 #, c-format
 msgid "DEC: %d° %d′ %.2f″"
-msgstr ""
+msgstr "DEC: %d° %d′ %.2f″"
 
 # Android/iOS/Mac
 msgid "Deep Sky Objects"
-msgstr " 个深空间物体"
+msgstr "深空天体"
 
 # Androd/iOS/Mac
 msgid "Default"
-msgstr ""
+msgstr "默认"
 
 # Android/iOS
 msgid "Delete"
@@ -348,7 +344,7 @@ msgstr "删除其他视图"
 
 # iOS, Title for share link
 msgid "Description"
-msgstr "持续时间"
+msgstr "描述"
 
 # Mac
 msgid "Diamond"
@@ -376,11 +372,11 @@ msgstr "距离:"
 
 # Mac
 msgid "Double click on item to go"
-msgstr "双击条目查看"
+msgstr "双击条目前往"
 
 # Mac
 msgid "Double-click item to open or control-click for contextual menu. Drag items to reorganize."
-msgstr "双击项目打开，右键点击项目打开菜单。拖拽项目进行管理。"
+msgstr "双击项目前往，右键点击项目打开菜单。拖拽项目进行管理。"
 
 # Mac
 msgid "Down"
@@ -392,7 +388,7 @@ msgstr "下箭头"
 
 # Android/iOS
 msgid "Drag with one finger to move/rotate around an object."
-msgstr ""
+msgstr "使用单个手指拖动来移动视角或者旋转某个物体。"
 
 # Mac
 msgid "DSOs"
@@ -402,21 +398,17 @@ msgstr "深空天体"
 msgid "Duration"
 msgstr "持续时间"
 
-# Mac
-msgid "Dwaf Planets"
-msgstr ""
-
 # Android/iOS/Mac
 msgid "Dwarf Planets"
 msgstr "矮行星"
 
 # Mac
 msgid "Eclipse Finder"
-msgstr "星月食查找"
+msgstr "日月食查找"
 
 # Android/iOS/Mac
 msgid "Eclipse Shadows"
-msgstr "星月食投影"
+msgstr "日月食投影"
 
 # Android/iOS/Mac, Grids
 msgid "Ecliptic"
@@ -424,7 +416,7 @@ msgstr "黄道座标系"
 
 # iOS, Enter edit mode for favorite items
 msgid "Edit"
-msgstr ""
+msgstr "编辑"
 
 # Mac
 msgid "Enter name of planet or moon"
@@ -437,35 +429,35 @@ msgstr "赤道坐标系"
 # Android/iOS/Mac
 #, c-format
 msgid "Equatorial radius: %s"
-msgstr ""
+msgstr "赤道半径：%s"
 
 # Android/iOS
 msgid "Error loading data, fallback to original configuration."
-msgstr ""
+msgstr "加载数据失败，尝试加载默认配置。"
 
 # Mac
 msgid "Failed to start OpenGL."
-msgstr ""
+msgstr "无法启用OpenGL。"
 
 # Mac
 msgid "Failed to start renderer."
-msgstr ""
+msgstr "无法启用渲染器。"
 
 # Mac
 msgid "Faintest Stars"
-msgstr ""
+msgstr "最暗的星"
 
 # Mac
 msgid "Faster"
-msgstr "较快"
+msgstr "加快"
 
 # Mac
 msgid "Fatal Error"
-msgstr ""
+msgstr "致命错误"
 
 # Android/iOS, Favorites (currently bookmarks and scripts)
 msgid "Favorites"
-msgstr ""
+msgstr "收藏"
 
 # Android/iOS/Mac
 msgid "Features"
@@ -489,11 +481,11 @@ msgstr "查找日月食发生在"
 
 # Android/iOS/Mac
 msgid "Follow"
-msgstr "跟随物体"
+msgstr "跟随"
 
 # Mac
 msgid "Format:"
-msgstr ""
+msgstr "格式："
 
 # Mac
 msgid "Forward"
@@ -501,11 +493,11 @@ msgstr "前进"
 
 # Mac, Frame rate for capturing video
 msgid "Frame rate:"
-msgstr "帧速率:"
+msgstr "帧率："
 
 # Android/iOS/Mac, Star style
 msgid "Fuzzy Points"
-msgstr "模糊点(&F)"
+msgstr "模糊点"
 
 # Android/iOS/Mac, Grids
 msgid "Galactic"
@@ -517,27 +509,27 @@ msgstr "星系"
 
 # Android/iOS/Mac
 msgid "Galaxies (Barred Spiral)"
-msgstr ""
+msgstr "棒旋星系"
 
 # Android/iOS/Mac
 msgid "Galaxies (Elliptical)"
-msgstr ""
+msgstr "椭圆星系"
 
 # Android/iOS/Mac
 msgid "Galaxies (Irregular)"
-msgstr ""
+msgstr "不规则星系"
 
 # Android/iOS/Mac
 msgid "Galaxies (Spiral)"
-msgstr ""
+msgstr "漩涡星系"
 
 # Mac
 msgid "General"
-msgstr "    通用  "
+msgstr "通用"
 
 # Android/iOS
 msgid "Generating sharing link…"
-msgstr ""
+msgstr "生成分享链接…"
 
 # Android/iOS/Mac
 msgid "Globulars"
@@ -545,7 +537,7 @@ msgstr "球状星团"
 
 # Android/iOS/Mac, Go to an object
 msgid "Go"
-msgstr ""
+msgstr "前往"
 
 # Mac
 msgid "Go to Object"
@@ -569,15 +561,15 @@ msgstr "向导"
 
 # Android/iOS/Mac, Indicate that an object has atmosphere
 msgid "Has atmosphere"
-msgstr ""
+msgstr "存在大气"
 
 # Android/iOS/Mac, Indicate that an object has rings
 msgid "Has rings"
-msgstr ""
+msgstr "存在星环"
 
 # Android/iOS/Mac
 msgid "Help"
-msgstr ""
+msgstr "帮助"
 
 # Mac
 msgid "Hide Celestia"
@@ -605,11 +597,11 @@ msgstr "地平座标系"
 
 # Mac
 msgid "Info"
-msgstr "信息(&I)"
+msgstr "信息"
 
 # Android/iOS, HUD display
 msgid "Info Display"
-msgstr ""
+msgstr "信息显示"
 
 # Mac
 msgid "Info Display:"
@@ -617,7 +609,7 @@ msgstr "信息显示 :"
 
 # Android/iOS, Information of an object
 msgid "Information"
-msgstr ""
+msgstr "信息"
 
 # Mac
 msgid "Julian Date:"
@@ -630,15 +622,15 @@ msgstr "千米"
 # Android/iOS/Mac, Galactic coordinates
 #, c-format
 msgid "L: %d° %d′ %.2f″"
-msgstr ""
+msgstr "L: %d° %d′ %.2f″"
 
 # Mac
 msgid "Label"
-msgstr "标签显示"
+msgstr "标签"
 
 # Mac
 msgid "Label Density"
-msgstr ""
+msgstr "标签密度"
 
 # Android/iOS/Mac, Location labels
 msgid "Landing Sites"
@@ -659,22 +651,22 @@ msgstr "左箭头"
 # Android/iOS/Mac
 #, c-format
 msgid "Length of day: %s"
-msgstr ""
+msgstr "日长：%s"
 
 # Android/iOS, Celestia loading failed
 #, c-format
 msgid "Loading Celestia failed…"
-msgstr ""
+msgstr "Celestia加载失败"
 
 # Android, Loading Celestia configuration
 #, c-format
 msgid "Loading configuration…"
-msgstr ""
+msgstr "加载配置…"
 
 # Android/iOS, Celestia initialization, loading file
 #, c-format
 msgid "Loading: %s"
-msgstr ""
+msgstr "加载中：%s"
 
 # Android/iOS/Mac
 msgid "Local Time"
@@ -686,7 +678,7 @@ msgstr "位置"
 
 # Mac
 msgid "Location Types"
-msgstr ""
+msgstr "位置类型"
 
 # Android/iOS
 msgid "Locations"
@@ -702,7 +694,7 @@ msgstr "锁定相位"
 
 # Android/iOS
 msgid "Long press on stepper to change orientation."
-msgstr ""
+msgstr "长按来控制方向。"
 
 # Mac
 msgid "Longitude"
@@ -730,7 +722,7 @@ msgstr "标记"
 
 # Mac
 msgid "Mass"
-msgstr ""
+msgstr "质量"
 
 # Android/iOS/Mac, Medium resolution
 msgid "Medium"
@@ -766,7 +758,7 @@ msgstr "名称"
 
 # Android/iOS/Mac
 msgid "Nearest Stars"
-msgstr ""
+msgstr "最近的恒星"
 
 # Android/iOS/Mac
 msgid "Nebulae"
@@ -778,23 +770,23 @@ msgstr "新建文件夹…"
 
 # Android/iOS/Mac
 msgid "Night Lights"
-msgstr ""
+msgstr "夜间照明"
 
 # iOS, No data received for a request
 msgid "No data"
-msgstr ""
+msgstr "无数据"
 
 # Mac
 msgid "No object name entered"
-msgstr ""
+msgstr "没有输入天体名称"
 
 # Android/iOS/Mac, No overview for an object
 msgid "No overview available."
-msgstr ""
+msgstr "无描述。"
 
 # iOS, No response received for a request
 msgid "No response"
-msgstr ""
+msgstr "无响应"
 
 # Android/iOS/Mac, Empty HUD display
 msgid "None"
@@ -806,7 +798,7 @@ msgid ""
 "Specifying a large time interval may cause long search times and a very large number of results."
 msgstr ""
 "注意：\n"
-"设定较长的时间范围内的搜索会需要更多的时间，且会产生较多的数据结果。"
+"计算较长的时间范围会需要更多的时间，且可能会产生过多的数据结果。"
 
 # Mac
 msgid "Object"
@@ -814,11 +806,11 @@ msgstr "物体"
 
 # Android/iOS, Labels
 msgid "Object Labels"
-msgstr ""
+msgstr "物体标签"
 
 # Android/iOS/Mac
 msgid "Object not found"
-msgstr ""
+msgstr "找不到对象"
 
 # Mac
 msgid "Object:"
@@ -834,11 +826,11 @@ msgstr "观测站"
 
 # Mac
 msgid "Occulter"
-msgstr ""
+msgstr "遮光体"
 
 # Android/iOS
 msgid "Official Website"
-msgstr ""
+msgstr "官方网站"
 
 # Android/iOS/Mac
 msgid "OK"
@@ -850,7 +842,7 @@ msgstr "疏散星团"
 
 # Android/iOS/Mac, Request user consent to open a URL
 msgid "Open URL?"
-msgstr ""
+msgstr "打开URL？"
 
 # Mac
 msgid "Open Web URL"
@@ -862,15 +854,15 @@ msgstr "OpenGL 信息"
 
 # Android
 msgid "Opening external file or URL…"
-msgstr ""
+msgstr "打开外部文件或URL…"
 
 # iOS
 msgid "Operation not permitted."
-msgstr ""
+msgstr "操作不被允许。"
 
 # Mac
 msgid "Orbit"
-msgstr ""
+msgstr "轨道"
 
 # Mac
 msgid "Orbit Synchronously"
@@ -890,11 +882,11 @@ msgstr "其他"
 
 # Android/iOS, Other settings
 msgid "Others"
-msgstr ""
+msgstr "其他"
 
 # Mac
 msgid "Paste URL"
-msgstr "粘贴网址"
+msgstr "粘贴URL"
 
 # Mac
 msgid "Pause"
@@ -902,15 +894,15 @@ msgstr "暂停"
 
 # Android/iOS
 msgid "Pinch to zoom in/out on an object."
-msgstr ""
+msgstr "手指捏和以放大/缩小物体。"
 
 # Android/iOS/Mac, Camera control
 msgid "Pitch"
-msgstr ""
+msgstr "Pitch"
 
 # Android/iOS/Mac
 msgid "Planet Rings"
-msgstr ""
+msgstr "行星环"
 
 # Android/iOS/Mac
 msgid "Planets"
@@ -918,23 +910,23 @@ msgstr "行星"
 
 # Mac
 msgid "Please check that the object name is correct."
-msgstr ""
+msgstr "请检查输入的物体名是否正确。"
 
 # iOS, Message for sharing a URL
 msgid "Please enter a description of the content."
-msgstr ""
+msgstr "请输入内容介绍。"
 
 # iOS, Message for renaming a favorite item (currently bookmark)
 msgid "Please enter a new name."
-msgstr ""
+msgstr "请输入新名称。"
 
 # Mac
 msgid "Please enter an object name."
-msgstr ""
+msgstr "请输入物体名称。"
 
 # Android, Possibly due to memory issue, Celestia needs to be restarted
 msgid "Please restart Celestia"
-msgstr ""
+msgstr "请重启Celestia"
 
 # Mac
 msgid "Plus"
@@ -942,11 +934,11 @@ msgstr "加号"
 
 # Android/iOS/Mac, Star style
 msgid "Points"
-msgstr "点(&P)"
+msgstr "点"
 
 # Mac
 msgid "Preferences"
-msgstr ""
+msgstr "偏好设置"
 
 # Mac
 msgid "Preferences…"
@@ -954,7 +946,7 @@ msgstr "偏好设置…"
 
 # Mac, Quit app
 msgid "Quit"
-msgstr "基多"
+msgstr "退出"
 
 # Mac
 msgid "Quit Celestia"
@@ -963,15 +955,15 @@ msgstr "退出 Celestia"
 # Android/iOS/Mac, Equatorial coordinate
 #, c-format
 msgid "RA: %dh %dm %.2fs"
-msgstr ""
+msgstr "RA: %dh %dm %.2fs"
 
 # Mac
 msgid "radii"
-msgstr "半径"
+msgstr "倍半径"
 
 # Mac
 msgid "Radius"
-msgstr ""
+msgstr "半径"
 
 # Mac
 msgid "Real Time"
@@ -983,23 +975,23 @@ msgstr "观测地"
 
 # Mac
 msgid "Reference Vectors"
-msgstr ""
+msgstr "参考向量"
 
 # Android, Rename a favorite item (currently bookmark)
 msgid "Rename"
-msgstr ""
+msgstr "重命名"
 
 # Android/iOS, Information about renderer
 msgid "Render Info"
-msgstr ""
+msgstr "渲染信息"
 
 # Mac
 msgid "Renderer"
-msgstr ""
+msgstr "渲染器"
 
 # Android, Finished requesting permission needed for Celestia
 msgid "Requesting permission finished"
-msgstr ""
+msgstr "完成请求权限"
 
 # Mac
 msgid "Rerun Script"
@@ -1007,11 +999,11 @@ msgstr "重新运行脚本"
 
 # Mac
 msgid "Reset"
-msgstr ""
+msgstr "重置"
 
 # Android/iOS, Reset celestia.cfg, data directory location
 msgid "Reset to Default"
-msgstr ""
+msgstr "恢复默认"
 
 # Mac, Resolution for capturing video
 msgid "Resolution:"
@@ -1023,7 +1015,7 @@ msgstr "反向"
 
 # Android/iOS, Reverse camera direction
 msgid "Reverse Direction"
-msgstr ""
+msgstr "反转朝向"
 
 # Mac
 msgid "Right"
@@ -1039,15 +1031,15 @@ msgstr "星环投影"
 
 # Android/iOS/Mac, Camera control
 msgid "Roll"
-msgstr ""
+msgstr "Roll"
 
 # Android/iOS/Mac
 msgid "Run Demo"
-msgstr ""
+msgstr "运行演示"
 
 # Android/iOS/Mac, Request user consent to run a script
 msgid "Run script?"
-msgstr ""
+msgstr "运行脚本？"
 
 # Mac
 msgid "Run Script…"
@@ -1055,11 +1047,11 @@ msgstr "运行脚本…"
 
 # Android/iOS/Mac, Star style
 msgid "Scaled Discs"
-msgstr "缩放点(&D)"
+msgstr "缩放点"
 
 # Android/iOS
 msgid "Script Control"
-msgstr ""
+msgstr "脚本控制"
 
 # Android/iOS/Mac
 msgid "Scripts"
@@ -1071,7 +1063,7 @@ msgstr "查找"
 
 # Android/iOS/Mac, Select an object
 msgid "Select"
-msgstr ""
+msgstr "选择"
 
 # Mac
 msgid "Select Next View"
@@ -1079,7 +1071,7 @@ msgstr "选择下一个视图"
 
 # Android, Select simulation time
 msgid "Select Time"
-msgstr ""
+msgstr "选择时间"
 
 # Mac
 msgid "Services"
@@ -1095,7 +1087,7 @@ msgstr "设置时间…"
 
 # Android/iOS, Set simulation time to device
 msgid "Set to Current Time"
-msgstr ""
+msgstr "设置为当前时间"
 
 # Android/iOS
 msgid "Settings"
@@ -1103,7 +1095,7 @@ msgstr "设置"
 
 # Android/iOS, Share a URL
 msgid "Share"
-msgstr ""
+msgstr "分享"
 
 # Mac
 msgid "Show All"
@@ -1115,7 +1107,7 @@ msgstr "显示赤道轴"
 
 # Android/iOS/Mac, Show constellation boundaries
 msgid "Show Boundaries"
-msgstr "显示边界"
+msgstr "显示星座边界"
 
 # Mac
 msgid "Show Constellation Labels"
@@ -1143,7 +1135,7 @@ msgstr "显示标记器"
 
 # Mac
 msgid "Show Orbits"
-msgstr ""
+msgstr "显示轨道"
 
 # Mac
 msgid "Show Planetographic Grid"
@@ -1164,12 +1156,12 @@ msgstr "显示速度向量"
 # Android/iOS/Mac
 #, c-format
 msgid "Sidereal rotation period: %s"
-msgstr ""
+msgstr "自转周期：%s"
 
 # Android/iOS/Mac, Size of an object
 #, c-format
 msgid "Size: %s"
-msgstr ""
+msgstr "尺寸: %s"
 
 # Mac
 msgid "Slower"
@@ -1177,7 +1169,7 @@ msgstr "减慢"
 
 # Mac
 msgid "Smooth Lines"
-msgstr " 线性平滑"
+msgstr "线性平滑"
 
 # Mac
 msgid "Solar System"
@@ -1205,11 +1197,11 @@ msgstr "正方形"
 
 # Mac
 msgid "Star"
-msgstr "恒星数据库中的恒星光谱类型不正确，恒星编号#"
+msgstr "恒星"
 
 # Android/iOS/Mac
 msgid "Star Style"
-msgstr ""
+msgstr "恒星样式"
 
 # Mac
 msgid "Star Style:"
@@ -1221,7 +1213,7 @@ msgstr "恒星"
 
 # Android/iOS/Mac
 msgid "Stars With Planets"
-msgstr ""
+msgstr "有行星的恒星"
 
 # Mac
 msgid "Stop"
@@ -1229,11 +1221,11 @@ msgstr "停止"
 
 # Android/iOS
 msgid "Support Forum"
-msgstr ""
+msgstr "论坛"
 
 # iOS
 msgid "Swipe left from right edge of screen to open action menu."
-msgstr ""
+msgstr "从屏幕右侧边缘向左滑动打开菜单。"
 
 # Android/iOS
 msgid "Sync Orbit"
@@ -1241,7 +1233,7 @@ msgstr "同步轨道"
 
 # Android/iOS
 msgid "Tap to select an object."
-msgstr ""
+msgstr "轻点选中天体。"
 
 # Android/iOS/Mac, Location labels
 msgid "Terra"
@@ -1253,11 +1245,11 @@ msgstr "简单"
 
 # Android/iOS/Mac
 msgid "Texture Resolution"
-msgstr ""
+msgstr "纹理分辨率"
 
 # Mac
 msgid "Texture Resolution:"
-msgstr ""
+msgstr "纹理分辨率："
 
 # Android/iOS/Mac
 msgid "Time"
@@ -1265,15 +1257,15 @@ msgstr "时间"
 
 # Android/iOS
 msgid "Time Control"
-msgstr ""
+msgstr "时间控制"
 
 # Android/iOS
 msgid "Time Zone"
-msgstr ""
+msgstr "时区"
 
 # Mac
 msgid "Time Zone:"
-msgstr ""
+msgstr "时区："
 
 # Mac
 msgid "Time:"
@@ -1289,7 +1281,7 @@ msgstr "保持居中"
 
 # Android/iOS
 msgid "Translators"
-msgstr ""
+msgstr "翻译"
 
 # Mac
 msgid "Travel"
@@ -1301,7 +1293,7 @@ msgstr "三角形"
 
 # Android/iOS
 msgid "Tutorial"
-msgstr ""
+msgstr "教程"
 
 # Mac
 msgid "Type"
@@ -1309,15 +1301,15 @@ msgstr "类型"
 
 # Mac
 msgid "Unable to capture video"
-msgstr ""
+msgstr "无法录制视频"
 
 # Android/iOS/Mac
 msgid "Unknown"
-msgstr "打开脚本文件出现未知错误"
+msgstr "未知"
 
 # iOS
 msgid "Unknown error"
-msgstr ""
+msgstr "未知错误"
 
 # Mac
 msgid "Unmark"
@@ -1325,7 +1317,7 @@ msgstr "取消标记"
 
 # Mac, Default name for a newly created folder
 msgid "Untitled"
-msgstr ""
+msgstr "未命名"
 
 # Mac
 msgid "Up"
@@ -1337,11 +1329,11 @@ msgstr "上箭头"
 
 # Android/iOS/Mac
 msgid "UTC"
-msgstr "国际统一标准时间"
+msgstr "UTC"
 
 # Android/iOS/Mac
 msgid "UTC Offset"
-msgstr "与世界标准时的差异"
+msgstr "UTC偏移"
 
 # Android/iOS/Mac, Location labels
 msgid "Vallis"
@@ -1357,7 +1349,7 @@ msgstr "详细"
 
 # Android/iOS
 msgid "Version"
-msgstr ""
+msgstr "版本"
 
 # Mac
 msgid "Views"
@@ -1369,11 +1361,11 @@ msgstr "火山"
 
 # Android/iOS, Web info for an object
 msgid "Web Info"
-msgstr ""
+msgstr "在线信息"
 
 # Android/iOS, Welcome message
 msgid "Welcome to Celestia"
-msgstr ""
+msgstr "欢迎使用Celestia"
 
 # Mac
 msgid "X"
@@ -1381,11 +1373,11 @@ msgstr "X"
 
 # Android/iOS/Mac, Camera control
 msgid "Yaw"
-msgstr ""
+msgstr "Yaw"
 
 # Mac
 msgid "YYYY MMM DD HH:MM:SS TZ"
-msgstr ""
+msgstr "YYYY MMM DD HH:MM:SS TZ"
 
 # Mac
 msgid "Zoom"

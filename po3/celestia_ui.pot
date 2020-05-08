@@ -153,10 +153,6 @@ msgstr ""
 msgid "Bookmarks"
 msgstr ""
 
-# Mac
-msgid "Box"
-msgstr ""
-
 # Android/iOS/Mac
 msgid "Brightest Stars"
 msgstr ""
@@ -400,10 +396,6 @@ msgstr ""
 
 # Mac
 msgid "Duration"
-msgstr ""
-
-# Mac
-msgid "Dwaf Planets"
 msgstr ""
 
 # Android/iOS/Mac

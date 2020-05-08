@@ -153,10 +153,6 @@ msgstr "Bookmark Organizer"
 msgid "Bookmarks"
 msgstr "Señaladores"
 
-# Mac
-msgid "Box"
-msgstr "Box"
-
 # Android/iOS/Mac
 msgid "Brightest Stars"
 msgstr "Estrellas"
@@ -401,10 +397,6 @@ msgstr "Objetos de cielo profundo"
 # Mac
 msgid "Duration"
 msgstr "Duración"
-
-# Mac
-msgid "Dwaf Planets"
-msgstr ""
 
 # Android/iOS/Mac
 msgid "Dwarf Planets"

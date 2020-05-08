@@ -153,10 +153,6 @@ msgstr ""
 msgid "Bookmarks"
 msgstr "Σελιδοδείκτες "
 
-# Mac
-msgid "Box"
-msgstr ""
-
 # Android/iOS/Mac
 msgid "Brightest Stars"
 msgstr "Άστρα"
@@ -401,10 +397,6 @@ msgstr ""
 # Mac
 msgid "Duration"
 msgstr "Διάρκεια"
-
-# Mac
-msgid "Dwaf Planets"
-msgstr ""
 
 # Android/iOS/Mac
 msgid "Dwarf Planets"
