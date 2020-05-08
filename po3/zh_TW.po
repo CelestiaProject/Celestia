@@ -285,6 +285,10 @@ msgstr "Coordinate:"
 msgid "Copy URL"
 msgstr "拷貝網址"
 
+# Android, Copying default data from APK
+msgid "Copying data…"
+msgstr ""
+
 # Android/iOS/Mac, Location labels
 msgid "Crater"
 msgstr ""

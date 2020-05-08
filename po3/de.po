@@ -285,6 +285,10 @@ msgstr ""
 msgid "Copy URL"
 msgstr ""
 
+# Android, Copying default data from APK
+msgid "Copying data…"
+msgstr ""
+
 # Android/iOS/Mac, Location labels
 msgid "Crater"
 msgstr ""
