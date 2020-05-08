@@ -214,7 +214,7 @@ msgid "Center Selection"
 msgstr ""
 
 # Mac
-msgid "Change Configuration File"
+msgid "Change Config File"
 msgstr ""
 
 # Android/iOS/Mac
@@ -222,7 +222,7 @@ msgid "Chase"
 msgstr "Pourchasser"
 
 # Mac, Choose location for celestia.cfg
-msgid "Choose Configuration File"
+msgid "Choose Config File"
 msgstr ""
 
 # Mac
@@ -253,12 +253,8 @@ msgstr "Queues des comètes"
 msgid "Comets"
 msgstr "Comètes"
 
-# Android/iOS, celestia.cfg
+# Android/iOS/Mac, celestia.cfg
 msgid "Config File"
-msgstr ""
-
-# Mac
-msgid "Configuration File"
 msgstr ""
 
 # Android/iOS, celestia.cfg change requires a restart
@@ -297,11 +293,7 @@ msgstr ""
 msgid "Crosshair"
 msgstr "Crosshair"
 
-# Mac
-msgid "Current Date"
-msgstr "Current Date"
-
-# Android/iOS
+# Android/iOS/Mac
 msgid "Current Time"
 msgstr ""
 
@@ -552,11 +544,11 @@ msgid "Go"
 msgstr ""
 
 # Mac
-msgid "Go To Object"
+msgid "Go to Object"
 msgstr "Aller à l'objet"
 
 # Mac
-msgid "Go To Object…"
+msgid "Go to Object…"
 msgstr "Aller à l'objet…"
 
 # Mac
@@ -745,20 +737,12 @@ msgid "Medium"
 msgstr "Moyenne"
 
 # Mac
-msgid "Menu"
-msgstr "Menu"
-
-# Mac
 msgid "Minimize"
 msgstr "Minimiser"
 
 # Android/iOS/Mac
 msgid "Minor Moons"
 msgstr "Lunes mineures"
-
-# Mac
-msgid "MInor Moons"
-msgstr ""
 
 # Android/iOS/Mac, Location labels
 msgid "Mons"
@@ -817,8 +801,12 @@ msgid "None"
 msgstr "Aucun"
 
 # Mac
-msgid "Note:\nSpecifying a large time interval may cause long search times and a very large number of results."
-msgstr "Note:\nSpécifier un intervalle de temps trop grand peut générer un temps de recherche très long et une liste de résultats très longue…"
+msgid ""
+"Note:\n"
+"Specifying a large time interval may cause long search times and a very large number of results."
+msgstr ""
+"Note:\n"
+"Spécifier un intervalle de temps trop grand peut générer un temps de recherche très long et une liste de résultats très longue…"
 
 # Mac
 msgid "Object"
@@ -905,10 +893,6 @@ msgid "Others"
 msgstr ""
 
 # Mac
-msgid "OtherViews"
-msgstr "OtherViews"
-
-# Mac
 msgid "Paste URL"
 msgstr "Coller l'URL"
 
@@ -961,7 +945,7 @@ msgid "Points"
 msgstr ""
 
 # Mac
-msgid "Preference"
+msgid "Preferences"
 msgstr ""
 
 # Mac
@@ -1376,18 +1360,10 @@ msgid "Version"
 msgstr ""
 
 # Mac
-msgid "VERSION"
-msgstr "VERSION"
-
-# Mac
 msgid "Views"
 msgstr "Vues"
 
-# Mac
-msgid "Volcano"
-msgstr "Volcano"
-
-# Android/iOS, Location labels
+# Android/iOS/Mac, Location labels
 msgid "Volcanoes"
 msgstr "Volcans"
 

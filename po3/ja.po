@@ -214,7 +214,7 @@ msgid "Center Selection"
 msgstr "選択した天体を画面中央へ(&C)\tC"
 
 # Mac
-msgid "Change Configuration File"
+msgid "Change Config File"
 msgstr ""
 
 # Android/iOS/Mac
@@ -222,7 +222,7 @@ msgid "Chase"
 msgstr "公転同期"
 
 # Mac, Choose location for celestia.cfg
-msgid "Choose Configuration File"
+msgid "Choose Config File"
 msgstr ""
 
 # Mac
@@ -253,12 +253,8 @@ msgstr "彗星の尾"
 msgid "Comets"
 msgstr "彗星"
 
-# Android/iOS, celestia.cfg
+# Android/iOS/Mac, celestia.cfg
 msgid "Config File"
-msgstr ""
-
-# Mac
-msgid "Configuration File"
 msgstr ""
 
 # Android/iOS, celestia.cfg change requires a restart
@@ -297,11 +293,7 @@ msgstr ""
 msgid "Crosshair"
 msgstr "Crosshair"
 
-# Mac
-msgid "Current Date"
-msgstr "Current Date"
-
-# Android/iOS
+# Android/iOS/Mac
 msgid "Current Time"
 msgstr ""
 
@@ -489,7 +481,7 @@ msgstr "検索"
 
 # Mac
 msgid "Find Eclipses cast on:"
-msgstr "食が起きる天体:\n:"
+msgstr "食が起きる天体:"
 
 # Android/iOS/Mac
 msgid "Follow"
@@ -552,11 +544,11 @@ msgid "Go"
 msgstr ""
 
 # Mac
-msgid "Go To Object"
+msgid "Go to Object"
 msgstr "天体へ移動"
 
 # Mac
-msgid "Go To Object…"
+msgid "Go to Object…"
 msgstr "天体へ移動…"
 
 # Mac
@@ -745,20 +737,12 @@ msgid "Medium"
 msgstr "中"
 
 # Mac
-msgid "Menu"
-msgstr "Chasma"
-
-# Mac
 msgid "Minimize"
 msgstr "最小化"
 
 # Android/iOS/Mac
 msgid "Minor Moons"
 msgstr "小衛星"
-
-# Mac
-msgid "MInor Moons"
-msgstr ""
 
 # Android/iOS/Mac, Location labels
 msgid "Mons"
@@ -817,8 +801,12 @@ msgid "None"
 msgstr "無し"
 
 # Mac
-msgid "Note:\nSpecifying a large time interval may cause long search times and a very large number of results."
-msgstr "注意:\n期間を長く設定すると、検索に時間がかかり表示されるリストも長いものとなる場合があります。"
+msgid ""
+"Note:\n"
+"Specifying a large time interval may cause long search times and a very large number of results."
+msgstr ""
+"注意:\n"
+"期間を長く設定すると、検索に時間がかかり表示されるリストも長いものとなる場合があります。"
 
 # Mac
 msgid "Object"
@@ -905,10 +893,6 @@ msgid "Others"
 msgstr ""
 
 # Mac
-msgid "OtherViews"
-msgstr "OtherViews"
-
-# Mac
 msgid "Paste URL"
 msgstr "URLをペースト"
 
@@ -961,7 +945,7 @@ msgid "Points"
 msgstr "点(&P)"
 
 # Mac
-msgid "Preference"
+msgid "Preferences"
 msgstr ""
 
 # Mac
@@ -1376,18 +1360,10 @@ msgid "Version"
 msgstr ""
 
 # Mac
-msgid "VERSION"
-msgstr "VERSION"
-
-# Mac
 msgid "Views"
 msgstr "画面"
 
-# Mac
-msgid "Volcano"
-msgstr "Volcano"
-
-# Android/iOS, Location labels
+# Android/iOS/Mac, Location labels
 msgid "Volcanoes"
 msgstr "Volcanoes (火山)"
 

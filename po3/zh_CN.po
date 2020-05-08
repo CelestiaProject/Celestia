@@ -214,7 +214,7 @@ msgid "Center Selection"
 msgstr "置中所选物体(&C)\tC"
 
 # Mac
-msgid "Change Configuration File"
+msgid "Change Config File"
 msgstr ""
 
 # Android/iOS/Mac
@@ -222,7 +222,7 @@ msgid "Chase"
 msgstr "追赶"
 
 # Mac, Choose location for celestia.cfg
-msgid "Choose Configuration File"
+msgid "Choose Config File"
 msgstr ""
 
 # Mac
@@ -253,12 +253,8 @@ msgstr "彗尾"
 msgid "Comets"
 msgstr "彗星"
 
-# Android/iOS, celestia.cfg
+# Android/iOS/Mac, celestia.cfg
 msgid "Config File"
-msgstr ""
-
-# Mac
-msgid "Configuration File"
 msgstr ""
 
 # Android/iOS, celestia.cfg change requires a restart
@@ -297,11 +293,7 @@ msgstr ""
 msgid "Crosshair"
 msgstr "瞄准线"
 
-# Mac
-msgid "Current Date"
-msgstr "当前时间"
-
-# Android/iOS
+# Android/iOS/Mac
 msgid "Current Time"
 msgstr ""
 
@@ -552,11 +544,11 @@ msgid "Go"
 msgstr ""
 
 # Mac
-msgid "Go To Object"
+msgid "Go to Object"
 msgstr "转到目标"
 
 # Mac
-msgid "Go To Object…"
+msgid "Go to Object…"
 msgstr "转到目标…"
 
 # Mac
@@ -745,20 +737,12 @@ msgid "Medium"
 msgstr "中"
 
 # Mac
-msgid "Menu"
-msgstr "网格"
-
-# Mac
 msgid "Minimize"
 msgstr "最小化窗口"
 
 # Android/iOS/Mac
 msgid "Minor Moons"
 msgstr "子卫星"
-
-# Mac
-msgid "MInor Moons"
-msgstr ""
 
 # Android/iOS/Mac, Location labels
 msgid "Mons"
@@ -817,8 +801,12 @@ msgid "None"
 msgstr "无"
 
 # Mac
-msgid "Note:\nSpecifying a large time interval may cause long search times and a very large number of results."
-msgstr "注意：\n设定较长的时间范围内的搜索会需要更多的时间，且会产生较多的数据结果。"
+msgid ""
+"Note:\n"
+"Specifying a large time interval may cause long search times and a very large number of results."
+msgstr ""
+"注意：\n"
+"设定较长的时间范围内的搜索会需要更多的时间，且会产生较多的数据结果。"
 
 # Mac
 msgid "Object"
@@ -905,10 +893,6 @@ msgid "Others"
 msgstr ""
 
 # Mac
-msgid "OtherViews"
-msgstr "OtherViews"
-
-# Mac
 msgid "Paste URL"
 msgstr "粘贴网址"
 
@@ -961,7 +945,7 @@ msgid "Points"
 msgstr "点(&P)"
 
 # Mac
-msgid "Preference"
+msgid "Preferences"
 msgstr ""
 
 # Mac
@@ -1376,18 +1360,10 @@ msgid "Version"
 msgstr ""
 
 # Mac
-msgid "VERSION"
-msgstr "VERSION"
-
-# Mac
 msgid "Views"
 msgstr "视图"
 
-# Mac
-msgid "Volcano"
-msgstr "火山"
-
-# Android/iOS, Location labels
+# Android/iOS/Mac, Location labels
 msgid "Volcanoes"
 msgstr "火山"
 

@@ -214,7 +214,7 @@ msgid "Center Selection"
 msgstr "Kijelölt égitest középre\tC"
 
 # Mac
-msgid "Change Configuration File"
+msgid "Change Config File"
 msgstr ""
 
 # Android/iOS/Mac
@@ -222,7 +222,7 @@ msgid "Chase"
 msgstr "Követés"
 
 # Mac, Choose location for celestia.cfg
-msgid "Choose Configuration File"
+msgid "Choose Config File"
 msgstr ""
 
 # Mac
@@ -253,12 +253,8 @@ msgstr "Üstököscsóvák"
 msgid "Comets"
 msgstr "Üstökösök"
 
-# Android/iOS, celestia.cfg
+# Android/iOS/Mac, celestia.cfg
 msgid "Config File"
-msgstr ""
-
-# Mac
-msgid "Configuration File"
 msgstr ""
 
 # Android/iOS, celestia.cfg change requires a restart
@@ -297,11 +293,7 @@ msgstr ""
 msgid "Crosshair"
 msgstr ""
 
-# Mac
-msgid "Current Date"
-msgstr ""
-
-# Android/iOS
+# Android/iOS/Mac
 msgid "Current Time"
 msgstr ""
 
@@ -552,11 +544,11 @@ msgid "Go"
 msgstr ""
 
 # Mac
-msgid "Go To Object"
+msgid "Go to Object"
 msgstr ""
 
 # Mac
-msgid "Go To Object…"
+msgid "Go to Object…"
 msgstr ""
 
 # Mac
@@ -745,20 +737,12 @@ msgid "Medium"
 msgstr "Közepes "
 
 # Mac
-msgid "Menu"
-msgstr ""
-
-# Mac
 msgid "Minimize"
 msgstr ""
 
 # Android/iOS/Mac
 msgid "Minor Moons"
 msgstr "Kis holdak"
-
-# Mac
-msgid "MInor Moons"
-msgstr ""
 
 # Android/iOS/Mac, Location labels
 msgid "Mons"
@@ -817,7 +801,9 @@ msgid "None"
 msgstr "Semmi"
 
 # Mac
-msgid "Note:\nSpecifying a large time interval may cause long search times and a very large number of results."
+msgid ""
+"Note:\n"
+"Specifying a large time interval may cause long search times and a very large number of results."
 msgstr ""
 
 # Mac
@@ -905,10 +891,6 @@ msgid "Others"
 msgstr ""
 
 # Mac
-msgid "OtherViews"
-msgstr ""
-
-# Mac
 msgid "Paste URL"
 msgstr ""
 
@@ -961,7 +943,7 @@ msgid "Points"
 msgstr "&Pontok"
 
 # Mac
-msgid "Preference"
+msgid "Preferences"
 msgstr ""
 
 # Mac
@@ -1376,18 +1358,10 @@ msgid "Version"
 msgstr ""
 
 # Mac
-msgid "VERSION"
-msgstr ""
-
-# Mac
 msgid "Views"
 msgstr ""
 
-# Mac
-msgid "Volcano"
-msgstr ""
-
-# Android/iOS, Location labels
+# Android/iOS/Mac, Location labels
 msgid "Volcanoes"
 msgstr "Vulkánok"
 

@@ -214,7 +214,7 @@ msgid "Center Selection"
 msgstr "選取星體置中(&C)\tC"
 
 # Mac
-msgid "Change Configuration File"
+msgid "Change Config File"
 msgstr "Change Configuration File"
 
 # Android/iOS/Mac
@@ -222,7 +222,7 @@ msgid "Chase"
 msgstr "追逐"
 
 # Mac, Choose location for celestia.cfg
-msgid "Choose Configuration File"
+msgid "Choose Config File"
 msgstr ""
 
 # Mac
@@ -253,13 +253,9 @@ msgstr "彗尾"
 msgid "Comets"
 msgstr "彗星"
 
-# Android/iOS, celestia.cfg
+# Android/iOS/Mac, celestia.cfg
 msgid "Config File"
 msgstr ""
-
-# Mac
-msgid "Configuration File"
-msgstr "Configuration File"
 
 # Android/iOS, celestia.cfg change requires a restart
 msgid "Configuration will take effect after a restart."
@@ -297,11 +293,7 @@ msgstr ""
 msgid "Crosshair"
 msgstr "Crosshair"
 
-# Mac
-msgid "Current Date"
-msgstr "Current Date"
-
-# Android/iOS
+# Android/iOS/Mac
 msgid "Current Time"
 msgstr ""
 
@@ -552,11 +544,11 @@ msgid "Go"
 msgstr ""
 
 # Mac
-msgid "Go To Object"
+msgid "Go to Object"
 msgstr "前往星體"
 
 # Mac
-msgid "Go To Object…"
+msgid "Go to Object…"
 msgstr "前往星體…"
 
 # Mac
@@ -745,20 +737,12 @@ msgid "Medium"
 msgstr "中"
 
 # Mac
-msgid "Menu"
-msgstr "坐標系"
-
-# Mac
 msgid "Minimize"
 msgstr "縮到最小"
 
 # Android/iOS/Mac
 msgid "Minor Moons"
 msgstr "小行星衛星 (二重小行星)"
-
-# Mac
-msgid "MInor Moons"
-msgstr "MInor Moons"
 
 # Android/iOS/Mac, Location labels
 msgid "Mons"
@@ -817,8 +801,12 @@ msgid "None"
 msgstr "無"
 
 # Mac
-msgid "Note:\nSpecifying a large time interval may cause long search times and a very large number of results."
-msgstr "注意：\n分析較長時間內將會嚴懲分析的時間并產生大量結果。"
+msgid ""
+"Note:\n"
+"Specifying a large time interval may cause long search times and a very large number of results."
+msgstr ""
+"注意：\n"
+"分析較長時間內將會嚴懲分析的時間并產生大量結果。"
 
 # Mac
 msgid "Object"
@@ -905,10 +893,6 @@ msgid "Others"
 msgstr ""
 
 # Mac
-msgid "OtherViews"
-msgstr "OtherViews"
-
-# Mac
 msgid "Paste URL"
 msgstr "貼上網址"
 
@@ -961,7 +945,7 @@ msgid "Points"
 msgstr "點(&P)"
 
 # Mac
-msgid "Preference"
+msgid "Preferences"
 msgstr "Preference"
 
 # Mac
@@ -1376,18 +1360,10 @@ msgid "Version"
 msgstr ""
 
 # Mac
-msgid "VERSION"
-msgstr "版本"
-
-# Mac
 msgid "Views"
 msgstr "視角"
 
-# Mac
-msgid "Volcano"
-msgstr "火山"
-
-# Android/iOS, Location labels
+# Android/iOS/Mac, Location labels
 msgid "Volcanoes"
 msgstr "火山"
 
