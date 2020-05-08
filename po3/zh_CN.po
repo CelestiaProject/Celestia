@@ -1368,6 +1368,10 @@ msgid "Welcome to Celestia"
 msgstr "欢迎使用Celestia"
 
 # Mac
+msgid "Window"
+msgstr "窗口"
+
+# Mac
 msgid "X"
 msgstr "X"
 
