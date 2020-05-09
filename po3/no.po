@@ -1210,7 +1210,7 @@ msgid "Stars"
 msgstr "Stjerner"
 
 # Android/iOS/Mac
-msgid "Stars With Planets"
+msgid "Stars with Planets"
 msgstr ""
 
 # Mac

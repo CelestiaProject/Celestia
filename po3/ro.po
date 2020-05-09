@@ -1210,7 +1210,7 @@ msgid "Stars"
 msgstr "Stele"
 
 # Android/iOS/Mac
-msgid "Stars With Planets"
+msgid "Stars with Planets"
 msgstr ""
 
 # Mac
