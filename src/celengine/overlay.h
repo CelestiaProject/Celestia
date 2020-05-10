@@ -10,11 +10,11 @@
 #ifndef _OVERLAY_H_
 #define _OVERLAY_H_
 
-#include <array>
 #include <iosfwd>
 #include <string>
-#include <celutil/color.h>
+#include <vector>
 
+class Color;
 class Overlay;
 class Renderer;
 class Rect;
@@ -63,7 +63,7 @@ class Overlay : public std::ostream
     void setColor(float r, float g, float b, float a);
     void setColor(const Color& c);
 
-    void moveBy(float dx, float dy, float dz = 0.0f);
+    void moveBy(float dx, float dy);
     void savePos();
     void restorePos();
 
@@ -96,6 +96,17 @@ class Overlay : public std::ostream
     OverlayStreamBuf sbuf;
 
     Renderer& renderer;
+
+    struct CursorPosition
+    {
+        void reset()
+        {
+            x = y = 0.125f;
+        }
+        float x, y;
+    };
+    CursorPosition global { 0.0f, 0.0f };
+    std::vector<CursorPosition> posStack;
 };
 
 #endif // _OVERLAY_H_

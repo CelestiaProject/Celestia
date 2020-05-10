@@ -2119,7 +2119,7 @@ void CelestiaCore::draw()
         console.setFont(font);
         console.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         console.begin();
-        console.moveBy(0.0f, 200.0f, 0.0f);
+        console.moveBy(0.0f, 200.0f);
         console.render(ConsolePageRows);
         console.end();
     }
@@ -3390,7 +3390,7 @@ void CelestiaCore::renderOverlay()
                 }
                 overlay->endText();
                 overlay->restorePos();
-                overlay->moveBy((float) (width/nb_cols), 0.0f, 0.0f);
+                overlay->moveBy((float) (width/nb_cols), 0.0f);
            }
         }
         overlay->restorePos();

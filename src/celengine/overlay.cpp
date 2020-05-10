@@ -12,6 +12,7 @@
 #include <iostream>
 #include "glsupport.h"
 #include <Eigen/Core>
+#include <celutil/color.h>
 #include <celutil/debug.h>
 #include <celutil/utf8.h>
 #include <celmath/geomutil.h>
@@ -45,11 +46,11 @@ void Overlay::begin()
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(0.125f, 0.125f, 0);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    global.reset();
     useTexture = false;
 }
 
@@ -80,7 +81,7 @@ void Overlay::setFont(TextureFont* f)
 
 void Overlay::beginText()
 {
-    glPushMatrix();
+    savePos();
     textBlock++;
     if (font != nullptr)
     {
@@ -95,8 +96,7 @@ void Overlay::endText()
     if (textBlock > 0)
     {
         textBlock--;
-        xoffset = 0.0f;
-        glPopMatrix();
+        restorePos();
     }
     font->unbind();
 }
@@ -118,14 +118,13 @@ void Overlay::print(wchar_t c)
         case '\n':
             if (textBlock > 0)
             {
-                glPopMatrix();
-                glTranslatef(0.0f, (float) -(1 + font->getHeight()), 0.0f);
-                xoffset = 0.0f;
-                glPushMatrix();
+                restorePos();
+                global.y -= 1.0f + font->getHeight();
+                savePos();
             }
             break;
         default:
-            font->render(c, xoffset, yoffset);
+            font->render(c, global.x + xoffset, global.y + yoffset);
             xoffset += font->getAdvance(c);
             break;
         }
@@ -149,14 +148,13 @@ void Overlay::print(char c)
         case '\n':
             if (textBlock > 0)
             {
-                glPopMatrix();
-                glTranslatef(0.0f, (float) -(1 + font->getHeight()), 0.0f);
-                xoffset = 0.0f;
-                glPushMatrix();
+                restorePos();
+                global.y -= 1.0f + font->getHeight();
+                savePos();
             }
             break;
         default:
-            font->render(c, xoffset, yoffset);
+            font->render(c, global.x + xoffset, global.y + yoffset);
             xoffset += font->getAdvance(c);
             break;
         }
@@ -198,19 +196,26 @@ void Overlay::setColor(const Color& c)
     glColor4f(c.red(), c.green(), c.blue(), c.alpha());
 }
 
-void Overlay::moveBy(float dx, float dy, float dz)
+
+void Overlay::moveBy(float dx, float dy)
 {
-    glTranslatef(dx, dy, dz);
+    global.x += dx;
+    global.y += dy;
 }
 
 void Overlay::savePos()
 {
-    glPushMatrix();
+    posStack.push_back(global);
 }
 
 void Overlay::restorePos()
 {
-    glPopMatrix();
+    if (!posStack.empty())
+    {
+        global = posStack.back();
+        posStack.pop_back();
+    }
+    xoffset = yoffset = 0.0f;
 }
 
 //
