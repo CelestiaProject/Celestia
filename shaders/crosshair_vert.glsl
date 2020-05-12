@@ -1,5 +1,3 @@
-#version 120
-
 attribute vec4 in_Position;
 
 uniform float radius;
@@ -11,10 +9,10 @@ void main(void)
 {
     float c = cos(angle);
     float s = sin(angle);
-    mat3 rot = mat3(c, s, 0.0f, -s, c, 0.0f, 0.0f, 0.0f, 1.0f);
+    mat3 rot = mat3(c, s, 0.0, -s, c, 0.0, 0.0, 0.0, 1.0);
 
     float x = in_Position.x * width + radius;
     float y = in_Position.y * h;
-    vec3 p = rot * vec3(x, y, 0.0f);
-    gl_Position = gl_ModelViewProjectionMatrix * vec4(p, 1.0f);
+    vec3 p = rot * vec3(x, y, 0.0);
+    gl_Position = MVPMatrix * vec4(p, 1.0);
 }

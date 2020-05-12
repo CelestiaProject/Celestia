@@ -1,5 +1,3 @@
-#version 120
-
 attribute vec3 in_Position;
 attribute vec4 in_Color;
 attribute float starSize;
@@ -11,10 +9,10 @@ uniform float brightness;
 uniform float pixelWeight;
 uniform float RRatio;
 
-const float RRatio_min   = pow(10.0f, 1.7f);
-const float clipDistance = 100.0f; // observer distance [ly] from globular, where we
-                                   // start "morphing" the star-sprite sizes towards
-                                   // their physical values
+const float RRatio_min   = pow(10.0, 1.7);
+const float clipDistance = 100.0; // observer distance [ly] from globular, where we
+                                  // start "morphing" the star-sprite sizes towards
+                                  // their physical values
 
 varying vec4 color;
 
@@ -31,27 +29,27 @@ float relStarDensity(void)
      */
 
      float rRatio = max(RRatio_min, RRatio);
-     float Xi = 1.0f / sqrt(1.0f + rRatio * rRatio);
+     float Xi = 1.0 / sqrt(1.0 + rRatio * rRatio);
      float XI2 = Xi * Xi;
-     float rho2 = 1.0001f + eta * eta * rRatio * rRatio; //add 1e-4 as regulator near rho=0
+     float rho2 = 1.0001 + eta * eta * rRatio * rRatio; //add 1e-4 as regulator near rho=0
 
-     return ((log(rho2) + 4.0f * (1.0f - sqrt(rho2)) * Xi) / (rho2 - 1.0f) + XI2) / (1.0f - 2.0f * Xi + XI2);
+     return ((log(rho2) + 4.0 * (1.0 - sqrt(rho2)) * Xi) / (rho2 - 1.0) + XI2) / (1.0 - 2.0 * Xi + XI2);
 }
 
 
 void main(void)
 {
     vec3 p = m * in_Position.xyz;
-    float br = 2.0f * brightness;
+    float br = 2.0 * brightness;
 
-    vec4 mod = gl_ModelViewMatrix * vec4(in_Position, 1.0f);
+    vec4 mod = ModelViewMatrix * vec4(in_Position, 1.0);
     float s = 2000.0 / -mod.z * br * starSize;
 
     float obsDistanceToStarRatio = length(p + offset) / clipDistance;
     // "Morph" the star-sprite sizes at close observer distance such that
     // the overdense globular core is dissolved upon closing in.
-    gl_PointSize = s * min(obsDistanceToStarRatio, 1.0f);
+    gl_PointSize = s * min(obsDistanceToStarRatio, 1.0);
 
-    color = vec4(in_Color.rgb, min(1.0f, br * (1.0f - pixelWeight * relStarDensity())));
-    gl_Position = gl_ModelViewProjectionMatrix * vec4(p, 1.0f);
+    color = vec4(in_Color.rgb, min(1.0, br * (1.0 - pixelWeight * relStarDensity())));
+    gl_Position = MVPMatrix * vec4(p, 1.0);
 }

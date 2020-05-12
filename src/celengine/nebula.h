@@ -32,6 +32,7 @@ class Nebula : public DeepSkyObject
                 const Eigen::Quaternionf& viewerOrientation,
                 float brightness,
                 float pixelSize,
+                const Matrices& m,
                 const Renderer* renderer) override;
 
     uint64_t getRenderMask() const override;

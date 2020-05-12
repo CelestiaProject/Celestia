@@ -36,6 +36,7 @@ void PointStarVertexBuffer::startSprites()
     if (prog == nullptr)
         return;
     prog->use();
+    prog->mat4Param("MVPMatrix") = renderer.getProjectionMatrix() * renderer.getModelViewMatrix();
     prog->samplerParam("starTex") = 0;
 
     unsigned int stride = sizeof(StarVertex);
@@ -53,7 +54,9 @@ void PointStarVertexBuffer::startSprites()
                           1, GL_FLOAT, GL_FALSE,
                           stride, &vertices[0].size);
 
+#ifndef GL_ES
     glEnable(GL_POINT_SPRITE);
+#endif
 
     useSprites = true;
 }
@@ -67,6 +70,7 @@ void PointStarVertexBuffer::startPoints()
     if (prog == nullptr)
         return;
     prog->use();
+    prog->MVPMatrix = renderer.getProjectionMatrix() * renderer.getModelViewMatrix();
 
     unsigned int stride = sizeof(StarVertex);
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
@@ -91,6 +95,7 @@ void PointStarVertexBuffer::render()
     if (nStars != 0)
     {
         unsigned int stride = sizeof(StarVertex);
+#ifndef GL_ES
         if (useSprites)
         {
             glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -100,6 +105,7 @@ void PointStarVertexBuffer::render()
             glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
             glPointSize(1.0f);
         }
+#endif
         glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex, 
                               3, GL_FLOAT, GL_FALSE,
                               stride, &vertices[0].position);
@@ -130,7 +136,9 @@ void PointStarVertexBuffer::finish()
     if (useSprites)
     {
         glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
+#ifndef GL_ES
         glDisable(GL_POINT_SPRITE);
+#endif
     }
     glUseProgram(0);
 }

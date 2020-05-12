@@ -6,8 +6,6 @@ set(CELX_SOURCES
   celx.cpp
   celx_frame.cpp
   celx_frame.h
-  celx_gl.cpp
-  celx_gl.h
   celx.h
   celx_internal.h
   celx_misc.cpp
@@ -27,5 +25,9 @@ set(CELX_SOURCES
   luascript.cpp
   luascript.h
 )
+
+if(NOT ENABLE_GLES)
+  set(CELX_SOURCES ${CELX_SOURCES} celx_gl.cpp celx_gl.h)
+endif()
 
 add_library(celluascript OBJECT ${CELX_SOURCES})

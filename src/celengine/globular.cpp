@@ -11,7 +11,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include "astro.h"
 #include "render.h"
 #include "globular.h"
@@ -24,11 +23,13 @@
 #include <fstream>
 #include <algorithm>
 #include <cassert>
+#include "vecgl.h"
 
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
 using namespace celgl;
+using namespace celestia;
 
 constexpr const int cntrTexWidth  = 512;
 constexpr const int cntrTexHeight = 512;
@@ -300,9 +301,10 @@ void Globular::render(const Vector3f& offset,
                       const Quaternionf& viewerOrientation,
                       float brightness,
                       float pixelSize,
+                      const Matrices& m,
                       const Renderer* r)
 {
-    renderGlobularPointSprites(offset, viewerOrientation, brightness, pixelSize, r);
+    renderGlobularPointSprites(offset, viewerOrientation, brightness, pixelSize, m, r);
 }
 
 
@@ -378,6 +380,7 @@ void Globular::renderGlobularPointSprites(
                                       const Quaternionf& viewerOrientation,
                                       float brightness,
                                       float pixelSize,
+                                      const Matrices& m,
                                       const Renderer* renderer)
 {
     if (form == nullptr)
@@ -442,8 +445,10 @@ void Globular::renderGlobularPointSprites(
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+#ifndef GL_ES
     glEnable(GL_POINT_SPRITE);
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+#endif
 
     float tidalSize = 2 * tidalRadius;
 
@@ -461,6 +466,9 @@ void Globular::renderGlobularPointSprites(
 
     tidalProg->use();
     centerTex[ic]->bind();
+
+    Matrix4f mvp = (*m.projection) * (*m.modelview);
+    tidalProg->mat4Param("MVPMatrix") = mvp;
 
     Matrix3f viewMat = viewerOrientation.conjugate().toRotationMatrix();
     tidalProg->vec4Param("color")       = Vector4f(Rr, Gg, Bb, min(2 * brightness * pixelWeight, 1.0f));
@@ -484,8 +492,10 @@ void Globular::renderGlobularPointSprites(
     globProg->use();
 
     globularTex->bind();
-    Matrix3f m = Scaling(form->scale) * getOrientation().toRotationMatrix() * Scaling(tidalSize);
-    globProg->mat3Param("m")            = m;
+    globProg->mat4Param("MVPMatrix") = mvp;
+    globProg->mat4Param("ModelViewMatrix") = vecgl::translate(*m.modelview, offset);
+    Matrix3f mx = Scaling(form->scale) * getOrientation().toRotationMatrix() * Scaling(tidalSize);
+    globProg->mat3Param("m")            = mx;
     globProg->vec3Param("offset")       = offset;
     globProg->floatParam("brightness")  = brightness;
     globProg->floatParam("pixelWeight") = pixelWeight;
@@ -496,8 +506,10 @@ void Globular::renderGlobularPointSprites(
 
     glUseProgram(0);
     vo.unbind();
+#ifndef GL_ES
     glDisable(GL_POINT_SPRITE);
     glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+#endif
     // These should be called but stars are broken then
     // TODO: find and fix
     //glDisable(GL_BLEND);

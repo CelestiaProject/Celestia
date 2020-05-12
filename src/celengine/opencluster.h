@@ -33,6 +33,7 @@ class OpenCluster : public DeepSkyObject
                 const Eigen::Quaternionf& viewerOrientation,
                 float brightness,
                 float pixelSize,
+                const Matrices& m,
                 const Renderer* r = nullptr) override;
 
     uint64_t getRenderMask() const override;

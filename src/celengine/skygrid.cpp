@@ -24,6 +24,7 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+using namespace celestia;
 
 
 // #define DEBUG_LABEL_PLACEMENT
@@ -549,13 +550,12 @@ SkyGrid::render(Renderer& renderer,
     prog->use();
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, m_lineColor);
 
-    // Render the parallels
-    glPushMatrix();
-    glRotate(xrot90 * m_orientation.conjugate() * xrot90.conjugate());
-
     // Radius of sphere is arbitrary, with the constraint that it shouldn't
     // intersect the near or far plane of the view frustum.
-    glScalef(1000.0f, 1000.0f, 1000.0f);
+    Matrix4f m = renderer.getModelViewMatrix() *
+                 vecgl::rotate((xrot90 * m_orientation.conjugate() * xrot90.conjugate()).cast<float>()) *
+                 vecgl::scale(1000.0f);
+    prog->MVPMatrix = renderer.getProjectionMatrix() * m;
 
     double arcStep = (maxTheta - minTheta) / (double) ARC_SUBDIVISIONS;
     double theta0 = minTheta;
@@ -715,7 +715,6 @@ SkyGrid::render(Renderer& renderer,
     glDrawArrays(GL_LINES, 0, 8);
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glPopMatrix();
     glUseProgram(0);
     delete[] buffer;
 }

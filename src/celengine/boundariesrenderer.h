@@ -27,7 +27,7 @@ class BoundariesRenderer
     BoundariesRenderer& operator=(const BoundariesRenderer&) = delete;
     BoundariesRenderer& operator=(BoundariesRenderer&&) = delete;
 
-    void render(const Renderer &renderer, const Color &color);
+    void render(const Renderer &renderer, const Color &color, const Eigen::Matrix4f &mvp);
     bool sameBoundaries(const ConstellationBoundaries*) const;
 
  private:

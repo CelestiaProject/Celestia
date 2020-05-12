@@ -264,6 +264,9 @@ class CelestiaGLProgram
     Mat3ShaderParameter mat3Param(const std::string&);
     Mat4ShaderParameter mat4Param(const std::string&);
 
+    Mat4ShaderParameter ModelViewMatrix;
+    Mat4ShaderParameter MVPMatrix;
+
     int attribIndex(const std::string&) const;
 
  private:

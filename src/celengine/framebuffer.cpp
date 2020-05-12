@@ -89,11 +89,21 @@ FramebufferObject::generateColorTexture()
 
     // Set the texture dimensions
     // Do we need to set GL_DEPTH_COMPONENT24 here?
+#ifdef GL_ES
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+#else
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+#endif
 
     // Unbind the texture
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+#ifdef GL_ES
+#define CEL_DEPTH_FORMAT GL_UNSIGNED_INT
+#else
+#define CEL_DEPTH_FORMAT GL_UNSIGNED_BYTE
+#endif
 
 void
 FramebufferObject::generateDepthTexture()
@@ -101,6 +111,9 @@ FramebufferObject::generateDepthTexture()
     // Create and bind the texture
     glGenTextures(1, &m_depthTexId);
     glBindTexture(GL_TEXTURE_2D, m_depthTexId);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 
     // Only nearest sampling is appropriate for depth textures
     // But we can use linear to decrease aliasing
@@ -113,7 +126,8 @@ FramebufferObject::generateDepthTexture()
 
     // Set the texture dimensions
     // Do we need to set GL_DEPTH_COMPONENT24 here?
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, CEL_DEPTH_FORMAT, nullptr);
 
     // Unbind the texture
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -126,7 +140,9 @@ FramebufferObject::generateFbo(unsigned int attachments)
     glGenFramebuffers(1, &m_fboId);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fboId);
 
+#ifndef GL_ES
     glReadBuffer(GL_NONE);
+#endif
 
     if ((attachments & ColorAttachment) != 0)
     {
@@ -140,11 +156,13 @@ FramebufferObject::generateFbo(unsigned int attachments)
             return;
         }
     }
+#ifndef GL_ES
     else
     {
         // Depth-only rendering; no color buffer.
         glDrawBuffer(GL_NONE);
     }
+#endif
 
     if ((attachments & DepthAttachment) != 0)
     {

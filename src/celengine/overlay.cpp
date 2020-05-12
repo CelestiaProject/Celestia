@@ -40,12 +40,8 @@ Overlay::Overlay(Renderer& r) :
 
 void Overlay::begin()
 {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadMatrix(Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight));
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
+    mvp = Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
+    // ModelView is Identity
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -56,10 +52,6 @@ void Overlay::begin()
 
 void Overlay::end()
 {
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
 }
 
 
@@ -88,6 +80,7 @@ void Overlay::beginText()
     if (font != nullptr)
     {
         font->bind();
+        font->setMVPMatrix(mvp);
         useTexture = true;
         fontChanged = false;
     }
@@ -111,6 +104,7 @@ void Overlay::print(wchar_t c)
         if (!useTexture || fontChanged)
         {
             font->bind();
+            font->setMVPMatrix(mvp);
             useTexture = true;
             fontChanged = false;
         }
@@ -141,6 +135,7 @@ void Overlay::print(char c)
         if (!useTexture || fontChanged)
         {
             font->bind();
+            font->setMVPMatrix(mvp);
             useTexture = true;
             fontChanged = false;
         }
@@ -185,7 +180,7 @@ void Overlay::drawRectangle(const Rect& r)
         useTexture = false;
     }
 
-    renderer.drawRectangle(r);
+    renderer.drawRectangle(r, mvp);
 }
 
 void Overlay::setColor(float r, float g, float b, float a)

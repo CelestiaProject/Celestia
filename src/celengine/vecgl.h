@@ -19,68 +19,7 @@
 #include <Eigen/Geometry>
 
 
-/**** Eigen helpers for OpenGL ****/
-
-inline void glMatrix(const Eigen::Matrix4f& m)
-{
-    glMultMatrixf(m.data());
-}
-
-inline void glMatrix(const Eigen::Matrix4d& m)
-{
-    glMultMatrixd(m.data());
-}
-
-inline void glLoadMatrix(const Eigen::Matrix4f& m)
-{
-    glLoadMatrixf(m.data());
-}
-
-inline void glLoadMatrix(const Eigen::Matrix4d& m)
-{
-    glLoadMatrixd(m.data());
-}
-
-inline void glScale(const Eigen::Vector3f& scale)
-{
-    glScalef(scale.x(), scale.y(), scale.z());
-}
-
-inline void glTranslate(const Eigen::Vector3f& offset)
-{
-    glTranslatef(offset.x(), offset.y(), offset.z());
-}
-
-inline void glTranslate(const Eigen::Vector3d& offset)
-{
-    glTranslated(offset.x(), offset.y(), offset.z());
-}
-
-inline void glRotate(const Eigen::Quaternionf& q)
-{
-    Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
-    m.topLeftCorner(3, 3) = q.toRotationMatrix();
-    glMultMatrixf(m.data());
-}
-
-inline void glRotate(const Eigen::Quaterniond& q)
-{
-    Eigen::Matrix4d m = Eigen::Matrix4d::Identity();
-    m.topLeftCorner(3, 3) = q.toRotationMatrix();
-    glMultMatrixd(m.data());
-}
-
-inline void glVertex(const Eigen::Vector3f& v)
-{
-    glVertex3fv(v.data());
-}
-
-#if 0
-inline void glVertex(const Eigen::Vector3d& v)
-{
-    glVertex3dv(v.data());
-}
-#endif
+/**** Helpers for OpenGL ****/
 
 inline void glVertexAttrib(GLuint index, const Color &color)
 {
@@ -95,5 +34,125 @@ inline void glVertexAttrib(GLuint index, const Eigen::Vector4f &v)
 {
     glVertexAttrib4fv(index, v.data());
 }
+
+namespace celestia
+{
+namespace vecgl
+{
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+scale(const Eigen::Matrix<T,4,4> &m, const Eigen::Matrix<T,4,1> &s)
+{
+    return m * Eigen::Transform<T,3,Eigen::Affine>(Eigen::Scaling(s.x(), s.y(), s.z())).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+scale(const Eigen::Matrix<T,4,1> &s)
+{
+    Eigen::Matrix<T,4,4> sm(Eigen::Matrix<T,4,4>::Zero());
+    sm.diagonal() = s;
+    return sm;
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+scale(const Eigen::Matrix<T,4,4> &m, const Eigen::Matrix<T,3,1> &s)
+{
+    return m * Eigen::Transform<T,3,Eigen::Affine>(Eigen::Scaling(s.x(), s.y(), s.z())).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+scale(const Eigen::Matrix<T,3,1> &s)
+{
+    return Eigen::Transform<T,3,Eigen::Affine>(Eigen::Scaling(s.x(), s.y(), s.z())).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+scale(const Eigen::Matrix<T,4,4> &m, T s)
+{
+    return m * Eigen::Transform<T,3,Eigen::Affine>(Eigen::Scaling(s)).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+scale(T s)
+{
+    return Eigen::Transform<T,3,Eigen::Affine>(Eigen::Scaling(s)).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+rotate(const Eigen::Matrix<T,4,4> &m, const Eigen::Quaternion<T> &q)
+{
+    return m * Eigen::Transform<T,3,Eigen::Affine>(q).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+rotate(const Eigen::Quaternion<T> &q)
+{
+    return Eigen::Transform<T,3,Eigen::Affine>(q).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+rotate(const Eigen::Matrix<T,4,4> &m, const Eigen::AngleAxis<T> &aa)
+{
+    return m * Eigen::Transform<T,3,Eigen::Affine>(aa).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+rotate(const Eigen::AngleAxis<T> &aa)
+{
+    return Eigen::Transform<T,3,Eigen::Affine>(aa).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+rotate(const Eigen::Matrix<T,4,4> &m, T angle, const Eigen::Matrix<T,3,1> &axis)
+{
+    return rotate(m, Eigen::AngleAxis<T>(angle, axis));
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+rotate(T angle, const Eigen::Matrix<T,3,1> &axis)
+{
+    return rotate(Eigen::AngleAxis<T>(angle, axis));
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+translate(const Eigen::Matrix<T,4,4> &m, const Eigen::Matrix<T,3,1> &t)
+{
+    return m * Eigen::Transform<T,3,Eigen::Affine>(Eigen::Translation<T,3>(t)).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+translate(const Eigen::Matrix<T,3,1> &t)
+{
+    return Eigen::Transform<T,3,Eigen::Affine>(Eigen::Translation<T,3>(t)).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+translate(const Eigen::Matrix<T,4,4> &m, T x, T y, T z)
+{
+    return m * Eigen::Transform<T,3,Eigen::Affine>(Eigen::Translation<T,3>(Eigen::Matrix<T,3,1>(x,y,z))).matrix();
+}
+
+template<typename T>
+inline Eigen::Matrix<T,4,4>
+translate(T x, T y, T z)
+{
+    return Eigen::Transform<T,3,Eigen::Affine>(Eigen::Translation<T,3>(Eigen::Matrix<T,3,1>(x,y,z))).matrix();
+}
+} // namespace vecgl
+} // namespace celestia
 
 #endif // _CELENGINE_VECGL_H_

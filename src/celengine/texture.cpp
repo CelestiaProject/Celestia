@@ -64,6 +64,7 @@ static void DumpTextureMipmapInfo(GLenum target)
 
 static bool testMaxLevel()
 {
+#ifndef GL_ES
     unsigned char texels[64];
     GLuint textureID;
     glGenTextures(1, &textureID);
@@ -83,6 +84,9 @@ static bool testMaxLevel()
     glDeleteTextures(1, &textureID);
 
     return maxLev == 2;
+#else
+    return false;
+#endif
 }
 
 
@@ -96,6 +100,7 @@ static const TextureCaps& GetTextureCaps()
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texCaps.maxTextureSize);
 
         texCaps.preferredAnisotropy = 1;
+#ifndef GL_ES
         if (gl::EXT_texture_filter_anisotropic)
         {
             GLint maxAnisotropy = 1;
@@ -105,6 +110,7 @@ static const TextureCaps& GetTextureCaps()
             // the user to control this.
             texCaps.preferredAnisotropy = min(8, maxAnisotropy);
         }
+#endif
     }
 
     return texCaps;
@@ -114,22 +120,14 @@ static const TextureCaps& GetTextureCaps()
 
 static int getInternalFormat(int format)
 {
+#ifdef GL_ES
     switch (format)
     {
     case GL_RGBA:
-    case GL_BGRA:
-        return 4;
     case GL_RGB:
-    case GL_BGR:
-        return 3;
     case GL_LUMINANCE_ALPHA:
-        return 2;
     case GL_ALPHA:
-    case GL_INTENSITY:
     case GL_LUMINANCE:
-        return 1;
-    case GL_DSDT_NV:
-        return format;
     case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
     case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
     case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
@@ -137,6 +135,26 @@ static int getInternalFormat(int format)
     default:
         return 0;
     }
+#else
+    switch (format)
+    {
+    case GL_RGBA:
+    case GL_BGRA:
+    case GL_RGB:
+    case GL_BGR:
+    case GL_LUMINANCE_ALPHA:
+    case GL_ALPHA:
+    case GL_INTENSITY:
+    case GL_LUMINANCE:
+    case GL_DSDT_NV:
+    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+        return format;
+    default:
+        return 0;
+    }
+#endif
 }
 
 
@@ -189,7 +207,11 @@ static GLenum GetGLTexAddressMode(Texture::AddressMode addressMode)
         return GL_CLAMP_TO_EDGE;
 
     case Texture::BorderClamp:
+#ifndef GL_ES
         return GL_CLAMP_TO_BORDER;
+#else
+        return GL_CLAMP_TO_BORDER_OES;
+#endif
     }
 
     return 0;
@@ -200,7 +222,11 @@ static void SetBorderColor(Color borderColor, GLenum target)
 {
     float bc[4] = { borderColor.red(), borderColor.green(),
                     borderColor.blue(), borderColor.alpha() };
+#ifndef GL_ES
     glTexParameterfv(target, GL_TEXTURE_BORDER_COLOR, bc);
+#else
+    glTexParameterfv(target, GL_TEXTURE_BORDER_COLOR_OES, bc);
+#endif
 }
 
 
@@ -390,18 +416,22 @@ ImageTexture::ImageTexture(Image& img,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
+#ifndef GL_ES
     if (gl::EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
     }
+#endif
 
+#ifndef GL_ES
     if (mipMapMode == AutoMipMaps)
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+#endif
 
     int internalFormat = getInternalFormat(img.getFormat());
     bool genMipmaps = mipmap && !precomputedMipMaps;
 
-#ifdef NO_GLU
+#if !defined(GL_ES) && defined(NO_GLU)
     if (genMipmaps && !FramebufferObject::isSupported())
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 #endif
@@ -540,10 +570,12 @@ TiledTexture::TiledTexture(Image& img,
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                             mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+#ifndef GL_ES
             if (gl::EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
             {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
             }
+#endif
 
             // Copy texels from the subtexture area to the pixel buffer.  This
             // is straightforward for normal textures, but an immense headache
@@ -626,11 +658,13 @@ TiledTexture::TiledTexture(Image& img,
                         LoadMiplessTexture(*tile, GL_TEXTURE_2D);
                         glGenerateMipmap(GL_TEXTURE_2D);
                     }
+#ifndef GL_ES
                     else
                     {
                         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
                         LoadMiplessTexture(*tile, GL_TEXTURE_2D);
                     }
+#endif
 #else
                     gluBuild2DMipmaps(GL_TEXTURE_2D,
                                       internalFormat,
@@ -750,7 +784,7 @@ CubeMap::CubeMap(Image* faces[]) :
     int internalFormat = getInternalFormat(format);
     bool genMipmaps = mipmap && !precomputedMipMaps;
 
-#ifdef NO_GLU
+#if !defined(GL_ES) && defined(NO_GLU)
     if (genMipmaps && !FramebufferObject::isSupported())
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE);
 #endif

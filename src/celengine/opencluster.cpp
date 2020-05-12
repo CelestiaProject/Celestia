@@ -67,6 +67,7 @@ void OpenCluster::render(const Vector3f& /*unused*/,
                          const Quaternionf& /*unused*/,
                          float /*unused*/,
                          float /*unused*/,
+                         const Matrices& /*m*/,
                          const Renderer* /*unused*/)
 {
     // Nothing to do right now; open clusters are only visible as their

@@ -17,6 +17,7 @@
 #include "dsorenderer.h"
 
 using namespace Eigen;
+using namespace celestia;
 using namespace celmath;
 
 // The parameter 'enhance' adjusts the DSO brightness as viewed from "inside"
@@ -85,6 +86,9 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         if (brightness < 0)
             brightness = 0;
 
+        Matrix4f mv = vecgl::translate(renderer->getModelViewMatrix(), relPos);
+        Matrix4f pr;
+
         if (dsoRadius < 1000.0)
         {
             // Small objects may be prone to clipping; give them special
@@ -99,26 +103,17 @@ void DSORenderer::process(DeepSkyObject* const &dso,
                 farZ = nearZ * 10000.0f;
             }
 
-            glMatrixMode(GL_PROJECTION);
-            glPushMatrix();
             float t = (float)wWidth / (float)wHeight;
-            glLoadMatrix(Perspective(fov, t, nearZ, farZ));
-            glMatrixMode(GL_MODELVIEW);
+            pr = Perspective(fov, t, nearZ, farZ);
         }
-
-        glPushMatrix();
-        glTranslate(relPos);
+        else
+        {
+            pr = renderer->getProjectionMatrix();
+        }
 
         dso->render(relPos, observer->getOrientationf(), brightness,
-                    pixelSize, renderer);
-        glPopMatrix();
+                    pixelSize, { &pr, &mv }, renderer);
 
-        if (dsoRadius < 1000.0)
-        {
-            glMatrixMode(GL_PROJECTION);
-            glPopMatrix();
-            glMatrixMode(GL_MODELVIEW);
-        }
     } // renderFlags check
 
     // Only render those labels that are in front of the camera:

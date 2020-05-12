@@ -1,5 +1,3 @@
-#version 120
-
 uniform vec3 color;
 varying float shade;
 

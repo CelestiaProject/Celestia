@@ -22,6 +22,7 @@
 
 using namespace Eigen;
 using namespace celmath;
+using namespace celestia;
 
 
 unsigned int PlanetographicGrid::circleSubdivisions = 100;
@@ -89,7 +90,8 @@ void
 PlanetographicGrid::render(Renderer* renderer,
                            const Eigen::Vector3f& pos,
                            float discSizeInPixels,
-                           double tdb) const
+                           double tdb,
+                           const Matrices& m) const
 {
     ShaderProperties shadprop;
     shadprop.texUsage = ShaderProperties::VertexColors;
@@ -111,7 +113,7 @@ PlanetographicGrid::render(Renderer* renderer,
 
     Vector3f semiAxes = body.getSemiAxes();
     Vector3d posd = pos.cast<double>();
-    Vector3d viewRayOrigin = q * -pos.cast<double>();
+    Vector3d viewRayOrigin = q * -posd;
 
     // Calculate the view normal; this is used for placement of the long/lat
     // label text.
@@ -123,9 +125,8 @@ PlanetographicGrid::render(Renderer* renderer,
     glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
 
-    glPushMatrix();
-    glRotate(qf.conjugate());
-    glScale(scale * semiAxes);
+    Affine3f transform = Translation3f(pos) * qf.conjugate() * Scaling(scale * semiAxes);
+    Matrix4f mvp = (*m.projection) * (*m.modelview) * transform.matrix();
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
@@ -162,11 +163,9 @@ PlanetographicGrid::render(Renderer* renderer,
             glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex,
                            Renderer::PlanetographicGridColor);
         }
-        glPushMatrix();
-        glTranslatef(0.0f, (float) std::sin(phi), 0.0f);
-        glScalef(r, r, r);
+        prog->MVPMatrix = mvp * vecgl::translate(0.0f, sin(phi), 0.0f) * vecgl::scale(r);;
         glDrawArrays(GL_LINE_LOOP, 0, circleSubdivisions);
-        glPopMatrix();
+
         glLineWidth(1.0f);
 
         if (showCoordinateLabels)
@@ -179,7 +178,7 @@ PlanetographicGrid::render(Renderer* renderer,
                 else
                     ns = northDirection == NorthNormal ? 'N' : 'S';
                 string buf;
-                buf = fmt::sprintf("%d%c", (int) fabs((double) latitude), ns);
+                buf = fmt::sprintf("%d%c", (int) fabs(latitude), ns);
                 longLatLabel(buf, 0.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
                 longLatLabel(buf, 180.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             }
@@ -193,10 +192,8 @@ PlanetographicGrid::render(Renderer* renderer,
                    Renderer::PlanetographicGridColor);
     for (float longitude = 0.0f; longitude <= 180.0f; longitude += longitudeStep)
     {
-        glPushMatrix();
-        glRotatef(longitude, 0.0f, 1.0f, 0.0f);
+        prog->MVPMatrix = mvp * vecgl::rotate(AngleAxisf(degToRad(longitude), Vector3f::UnitY()));
         glDrawArrays(GL_LINE_LOOP, 0, circleSubdivisions);
-        glPopMatrix();
 
         if (showCoordinateLabels)
         {
@@ -250,8 +247,6 @@ PlanetographicGrid::render(Renderer* renderer,
     }
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-
-    glPopMatrix();
 
     glUseProgram(0);
     glDisable(GL_DEPTH_TEST);

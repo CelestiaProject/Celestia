@@ -200,6 +200,12 @@ static int font_render(lua_State* l)
 
     const char* s = celx.safeGetString(2, AllErrors, "First argument to font:render must be a string");
     auto font = *celx.getThis<TextureFont*>();
+#ifndef GL_ES
+    Eigen::Matrix4f p, m;
+    glGetFloatv(GL_PROJECTION_MATRIX, p.data());
+    glGetFloatv(GL_MODELVIEW_MATRIX, m.data());
+    font->setMVPMatrix(p * m);
+#endif
     return celx.push(font->render(s));
 }
 

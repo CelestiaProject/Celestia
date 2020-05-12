@@ -7,7 +7,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include "vecgl.h"
 #include "render.h"
 #include "astro.h"
@@ -22,6 +21,7 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+using namespace celestia;
 
 
 const char* Nebula::getType() const
@@ -82,10 +82,11 @@ bool Nebula::load(AssociativeArray* params, const fs::path& resPath)
 }
 
 
-void Nebula::render(const Vector3f& /*unused*/,
+void Nebula::render(const Vector3f& offset,
                     const Quaternionf& /*unused*/,
                     float /*unused*/,
                     float pixelSize,
+                    const Matrices& m,
                     const Renderer* renderer)
 {
     Geometry* g = nullptr;
@@ -96,11 +97,13 @@ void Nebula::render(const Vector3f& /*unused*/,
 
     glDisable(GL_BLEND);
 
-    glScalef(getRadius(), getRadius(), getRadius());
-    glRotate(getOrientation());
+    Matrix4f mv = vecgl::rotate(vecgl::scale(*m.modelview, getRadius()),
+                                getOrientation());
 
     GLSLUnlit_RenderContext rc(renderer, getRadius());
     rc.setPointScale(2.0f * getRadius() / pixelSize);
+    rc.setProjectionMatrix(m.projection);
+    rc.setModelViewMatrix(&mv);
     g->render(rc);
     glUseProgram(0);
 
