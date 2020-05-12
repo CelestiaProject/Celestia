@@ -47,10 +47,14 @@ static int formatComponents(int fmt)
     case GL_BGRA_EXT:
         return 4;
     case GL_RGB:
+#ifndef GL_ES
     case GL_BGR_EXT:
+#endif
         return 3;
     case GL_LUMINANCE_ALPHA:
+#ifndef GL_ES
     case GL_DSDT_NV:
+#endif
         return 2;
     case GL_ALPHA:
     case GL_LUMINANCE:

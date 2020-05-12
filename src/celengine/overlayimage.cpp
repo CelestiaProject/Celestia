@@ -11,7 +11,9 @@ OverlayImage::OverlayImage(fs::path f, Renderer *r) :
     filename(std::move(f)),
     renderer(r)
 {
-    texture = std::unique_ptr<Texture>(LoadTextureFromFile(fs::path("images") / filename));
+    texture = std::unique_ptr<Texture>(LoadTextureFromFile(fs::path("images") / filename,
+                                                           Texture::EdgeClamp,
+                                                           Texture::NoMipMaps));
 }
 
 void OverlayImage::setColor(const Color& c)
@@ -61,5 +63,5 @@ void OverlayImage::render(float curr_time, int width, int height)
         r.colors[i] = Color(colors[i], colors[i].alpha() * alpha);
     }
     r.nColors = 4;
-    renderer->drawRectangle(r);
+    renderer->drawRectangle(r, renderer->getOrthoProjectionMatrix());
 }

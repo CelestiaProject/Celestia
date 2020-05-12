@@ -62,6 +62,7 @@ class Globular : public DeepSkyObject
                 const Eigen::Quaternionf& viewerOrientation,
                 float brightness,
                 float pixelSize,
+                const Matrices& m,
                 const Renderer* r) override;
 
     GlobularForm* getForm() const;
@@ -75,6 +76,7 @@ class Globular : public DeepSkyObject
                                     const Eigen::Quaternionf& viewerOrientation,
                                     float brightness,
                                     float pixelSize,
+                                    const Matrices& m,
                                     const Renderer* r);
 
    // Reference values ( = data base averages) of core radius, King concentration

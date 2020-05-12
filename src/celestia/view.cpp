@@ -262,5 +262,5 @@ void View::drawBorder(int gWidth, int gHeight, const Color &color, float linewid
     r.setColor(color);
     r.setType(Rect::Type::BorderOnly);
     r.setLineWidth(linewidth);
-    renderer->drawRectangle(r);
+    renderer->drawRectangle(r, renderer->getOrthoProjectionMatrix());
 }

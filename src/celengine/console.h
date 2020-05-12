@@ -12,8 +12,9 @@
 
 #include <string>
 #include <iosfwd>
-#include <vector>
 #include <celutil/color.h>
+#include <vector>
+#include <Eigen/Core>
 
 class Console;
 class TextureFont;
@@ -108,6 +109,7 @@ class Console : public std::ostream
     };
     CursorPosition global { 0.0f, 0.0f };
     std::vector<CursorPosition> posStack;
+    Eigen::Matrix4f mpv;
 };
 
 #endif // _CELENGINE_CONSOLE_H_

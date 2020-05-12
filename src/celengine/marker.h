@@ -17,6 +17,7 @@
 #include <celutil/debug.h>
 
 class Renderer;
+struct Matrices;
 
 class MarkerRepresentation
 {
@@ -61,7 +62,7 @@ public:
     string label() const { return m_label; }
     void setLabel(const std::string&);
 
-    void render(Renderer& r, float size) const;
+    void render(Renderer &r, float size, const Matrices &m) const;
 
 private:
     Symbol m_symbol;
@@ -105,7 +106,7 @@ class Marker
     MarkerRepresentation& representation() { return m_representation; }
     void setRepresentation(const MarkerRepresentation& rep);
 
-    void render(Renderer& r, float size) const;
+    void render(Renderer &r, float size, const Matrices &m) const;
 
  private:
     Selection m_object;

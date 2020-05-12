@@ -52,7 +52,8 @@ public:
     void render(Renderer* renderer,
                 const Eigen::Vector3f& pos,
                 float discSizeInPixels,
-                double tdb) const;
+                double tdb,
+                const Matrices& m) const override;
     float boundingSphereRadius() const;
 
     void setIAULongLatConvention();

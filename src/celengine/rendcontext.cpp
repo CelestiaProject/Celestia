@@ -22,7 +22,11 @@ using namespace Eigen;
 using namespace std;
 
 #ifndef GL_ONLY_SHADOWS
+#ifndef GL_ES
 #define GL_ONLY_SHADOWS 1
+#else
+#define GL_ONLY_SHADOWS 0
+#endif
 #endif
 
 static Material defaultMaterial;
@@ -168,21 +172,24 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 
     if (group.prim == Mesh::SpriteList)
     {
+#ifndef GL_ES
         glEnable(GL_POINT_SPRITE);
-        glActiveTexture(GL_TEXTURE0);
         glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+#endif
+        glActiveTexture(GL_TEXTURE0);
     }
 
     glDrawElements(GLPrimitiveModes[(int) group.prim],
                    group.nIndices,
                    GL_UNSIGNED_INT,
                    group.indices);
-
+#ifndef GL_ES
     if (group.prim == Mesh::SpriteList)
     {
         glDisable(GL_POINT_SPRITE);
         glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
     }
+#endif
 }
 
 
@@ -216,6 +223,17 @@ RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
     }
 }
 
+void
+RenderContext::setProjectionMatrix(const Eigen::Matrix4f *m)
+{
+    projectionMatrix = m;
+}
+
+void
+RenderContext::setModelViewMatrix(const Eigen::Matrix4f *m)
+{
+    modelViewMatrix = m;
+}
 
 void
 setStandardVertexArrays(const Mesh::VertexDescription& desc,
@@ -500,8 +518,13 @@ GLSL_RenderContext::makeCurrent(const Material& m)
             // Tweak the texture--set clamp to border and a border color with
             // a zero alpha.
             float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+#ifndef GL_ES
             glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+#else
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR_OES, bc);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_OES);
+#endif
             glActiveTexture(GL_TEXTURE0);
 
             shaderProps.texUsage |= ShaderProperties::RingShadowTexture;
@@ -543,6 +566,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
         return;
 
     prog->use();
+    prog->MVPMatrix = (*projectionMatrix) * (*modelViewMatrix);
 
     for (unsigned int i = 0; i < nTextures; i++)
     {
@@ -747,6 +771,9 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
         return;
 
     prog->use();
+    prog->MVPMatrix = (*projectionMatrix) * (*modelViewMatrix);
+    if (usePointSize)
+        prog->ModelViewMatrix = *modelViewMatrix;
 
     for (unsigned int i = 0; i < nTextures; i++)
     {

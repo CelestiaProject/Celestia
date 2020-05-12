@@ -80,12 +80,7 @@ bool Console::setRowCount(int _nRows)
 
 void Console::begin()
 {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadMatrix(Ortho2D(0.0f, (float)xscale, 0.0f, (float)yscale));
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
+    mpv = Ortho2D(0.0f, (float)xscale, 0.0f, (float)yscale);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -96,11 +91,8 @@ void Console::begin()
 
 void Console::end()
 {
-    font->unbind();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
+    if (font != nullptr)
+        font->unbind();
 }
 
 
@@ -110,6 +102,7 @@ void Console::render(int rowHeight)
         return;
 
     font->bind();
+    font->setMVPMatrix(mpv);
     savePos();
     for (int i = 0; i < rowHeight; i++)
     {

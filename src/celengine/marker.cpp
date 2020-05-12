@@ -69,9 +69,9 @@ void Marker::setSizing(MarkerSizing sizing)
 }
 
 
-void Marker::render(Renderer& r, float size) const
+void Marker::render(Renderer& r, float size, const Matrices &m) const
 {
-    m_representation.render(r, m_sizing == DistanceBasedSize ? size : m_representation.size());
+    m_representation.render(r, m_sizing == DistanceBasedSize ? size : m_representation.size(), m);
 }
 
 
@@ -117,7 +117,7 @@ void MarkerRepresentation::setLabel(const std::string& label)
 /*! Render the marker symbol at the specified size. The size is
  *  the diameter of the marker in pixels.
  */
-void MarkerRepresentation::render(Renderer& r, float size) const
+void MarkerRepresentation::render(Renderer &r, float size, const Matrices &m) const
 {
-    r.renderMarker(m_symbol, size, m_color);
+    r.renderMarker(m_symbol, size, m_color, m);
 }

@@ -159,18 +159,20 @@ Image* LoadDDSImage(const fs::path& filename)
         }
         else if (ddsd.format.bpp == 24)
         {
-            if (ddsd.format.redMask   == 0x00ff0000 &&
+            if (ddsd.format.redMask   == 0x000000ff &&
                 ddsd.format.greenMask == 0x0000ff00 &&
-                ddsd.format.blueMask  == 0x000000ff)
-            {
-                format = GL_BGR_EXT;
-            }
-            else if (ddsd.format.redMask   == 0x000000ff &&
-                     ddsd.format.greenMask == 0x0000ff00 &&
-                     ddsd.format.blueMask  == 0x00ff0000)
+                ddsd.format.blueMask  == 0x00ff0000)
             {
                 format = GL_RGB;
             }
+#ifndef GL_ES
+            else if (ddsd.format.redMask   == 0x00ff0000 &&
+                     ddsd.format.greenMask == 0x0000ff00 &&
+                     ddsd.format.blueMask  == 0x000000ff)
+            {
+                format = GL_BGR;
+            }
+#endif
         }
     }
 

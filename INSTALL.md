@@ -17,13 +17,16 @@ echo "deb https://download.opensuse.org/repositories/home:/munix9:/unstable/Debi
 sudo apt update && sudo apt install celestia
 ```
 
-### On Ubuntu 18.04 and derived systems:
+### On Ubuntu 18.04/20.04 and derived systems:
 
 ```
-curl https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubuntu_18.04/Release.key | sudo apt-key add -
-echo "deb https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubuntu_18.04/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
+curl https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubuntu_${VERSION}/Release.key | sudo apt-key add -
+echo "deb https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubuntu_${VERSION}/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
 sudo apt update && sudo apt install celestia
 ```
+
+Where VERSION is 18.04 or 20.04.
+
 
 ### On openSUSE Leap 15.1:
 
@@ -254,7 +257,7 @@ default linker in gcc.
 pacman -S mingw-w64-x86_64-lld mingw-w64-x86_64-lldb
 ```
 
-Follow by: 
+Follow by:
 
 ```
 cmake .. -G "MSYS Makefiles" -DENABLE_WIN=OFF -DCMAKE_CXX_FLAGS='-fuse-ld=lld' -DCMAKE_BUILD_TYPE=Debug
@@ -335,15 +338,16 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_TOOLS         | bool | OFF     | Build tools for Celestia data files
 | ENABLE_TTF           | bool | \*\*\*\*OFF | Build with FreeType support
 | ENABLE_DATA          | bool | OFF     | Use CelestiaContent submodule for data
+| ENABLE_GLES          | bool | OFF     | Use OpenGL ES 2.0 in rendering code
 | NATIVE_OSX_APP       | bool | OFF     | Support native OSX data paths
 
-Notes:  
+Notes:
  \* /usr/local on Unix-like systems, c:\Program Files or c:\Program Files (x86)
    on Windows depending on OS type (32 or 64 bit) and build configuration.
-   This option effect is overriden by NATIVE_OSX_APP.  
- \*\* Ignored on Windows systems.  
- \*\*\* Ignored on Unix-like systems.  
- \*\*\*\* This option support is not finished yet.  
+   This option effect is overriden by NATIVE_OSX_APP.
+ \*\* Ignored on Windows systems.
+ \*\*\* Ignored on Unix-like systems.
+ \*\*\*\* This option support is not finished yet.
 
 Parameters of type "bool" accept ON or OFF value. Parameters of type "path"
 accept any directory.

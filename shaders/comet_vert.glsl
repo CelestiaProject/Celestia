@@ -1,5 +1,3 @@
-#version 120
-
 attribute vec4 in_Position;
 attribute vec3 in_Normal;
 attribute float brightness;
@@ -13,5 +11,5 @@ varying float shade;
 void main(void)
 {
     shade = abs(dot(viewDir.xyz, in_Normal.xyz) * brightness * fadeFactor);
-    gl_Position = gl_ModelViewProjectionMatrix * in_Position;
+    gl_Position = MVPMatrix * in_Position;
 }

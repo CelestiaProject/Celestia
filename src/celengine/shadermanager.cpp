@@ -31,7 +31,11 @@ using namespace std;
 #define POINT_FADE 0
 
 #ifndef GL_ONLY_SHADOWS
+#ifndef GL_ES
 #define GL_ONLY_SHADOWS 1
+#else
+#define GL_ONLY_SHADOWS 0
+#endif
 #endif
 
 constexpr const int ShadowSampleKernelWidth = 2;
@@ -54,7 +58,7 @@ enum ShaderVariableType
 static const char* errorVertexShaderSource =
     "attribute vec4 in_Position;\n"
     "void main(void) {\n"
-    "   gl_Position = gl_ModelViewProjectionMatrix * in_Position;\n"
+    "   gl_Position = MVPMatrix * in_Position;\n"
     "}\n";
 static const char* errorFragmentShaderSource =
     "void main(void) {\n"
@@ -62,7 +66,19 @@ static const char* errorFragmentShaderSource =
     "}\n";
 
 
+#ifndef GL_ES
 static const char* CommonHeader = "#version 120\n";
+#else
+static const char* CommonHeader = "#version 100\nprecision highp float;\n";
+#endif
+static const char* VertexHeader = R"glsl(
+uniform mat4 ModelViewMatrix;
+uniform mat4 MVPMatrix;
+
+invariant gl_Position;
+)glsl";
+
+static const char* FragmentHeader = "";
 
 static const char* CommonAttribs = R"glsl(
 attribute vec4 in_Position;
@@ -924,13 +940,13 @@ CloudShadowTexCoord(unsigned int index)
 static string
 VarScatterInVS()
 {
-    return string("gl_FrontSecondaryColor.rgb");
+    return "v_ScatterColor";
 }
 
 static string
 VarScatterInFS()
 {
-    return string("gl_SecondaryColor.rgb");
+    return "v_ScatterColor";
 }
 
 
@@ -1561,10 +1577,10 @@ TextureSamplerDeclarations(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::ShadowMapTexture)
     {
-#ifndef GL_ONLY_SHADOWS
-        source += DeclareUniform("shadowMapTex0", Shader_Sampler2D);
-#else
+#if GL_ONLY_SHADOWS
         source += DeclareUniform("shadowMapTex0", Shader_Sampler2DShadow);
+#else
+        source += DeclareUniform("shadowMapTex0", Shader_Sampler2D);
 #endif
     }
 
@@ -1621,7 +1637,7 @@ string
 PointSizeCalculation()
 {
     string source;
-    source += "float ptSize = pointScale * in_PointSize / length(vec3(gl_ModelViewMatrix * in_Position));\n";
+    source += "float ptSize = pointScale * in_PointSize / length(vec3(ModelViewMatrix * in_Position));\n";
     source += "pointFade = min(1.0, ptSize * ptSize);\n";
     source += "gl_PointSize = ptSize;\n";
 
@@ -1675,6 +1691,7 @@ GLVertexShader*
 ShaderManager::buildVertexShader(const ShaderProperties& props)
 {
     string source(CommonHeader);
+    source += VertexHeader;
     source += CommonAttribs;
 
     source += DeclareLights(props);
@@ -1762,6 +1779,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     {
         //source += "varying vec3 scatterIn;\n";
         source += "varying vec3 scatterEx;\n";
+        source += DeclareVarying(VarScatterInVS(), Shader_Vector3);
     }
 
     // Shadow parameters
@@ -2008,9 +2026,9 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += PointSizeCalculation();
 
     if (props.hasShadowMap())
-        source += "shadowTexCoord0 = ShadowMatrix0 * vec4(in_Position.xyz, 1);\n";
+        source += "shadowTexCoord0 = ShadowMatrix0 * vec4(in_Position.xyz, 1.0);\n";
 
-    source += "gl_Position = gl_ModelViewProjectionMatrix * in_Position;\n";
+    source += "gl_Position = MVPMatrix * in_Position;\n";
     source += "}\n";
 
     DumpVSSource(source);
@@ -2132,6 +2150,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         //source += "varying vec3 scatterIn;\n";
         source += "varying vec3 scatterEx;\n";
+        source += DeclareVarying(VarScatterInFS(), Shader_Vector3);
     }
 
     if ((props.texUsage & ShaderProperties::NightTexture))
@@ -2348,6 +2367,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     }
     else if (props.usesShadows())
     {
+        source += "float shadowMapCoeff = 1.0;\n";
+
         // Sum the contributions from each light source
         for (unsigned i = 0; i < props.nLights; i++)
         {
@@ -2359,6 +2380,13 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += "spec.rgb += shadow * " + SeparateSpecular(i) +
                     " * " +
                     FragLightProperty(i, "specColor") + ";\n";
+            }
+            if (props.hasShadowMap() && i == 0)
+            {
+                source += "shadowMapCoeff = calculateShadow();\n";
+                source += "diff.rgb *= shadowMapCoeff;\n";
+                if (props.lightModel == ShaderProperties::SpecularModel)
+                    source += "spec.rgb *= shadowMapCoeff;\n";
             }
         }
     }
@@ -2465,6 +2493,7 @@ GLVertexShader*
 ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 {
     string source(CommonHeader);
+    source += VertexHeader;
     source += CommonAttribs;
 
     source += DeclareLights(props);
@@ -2505,7 +2534,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
         }
     }
 
-    source += "gl_Position = gl_ModelViewProjectionMatrix * in_Position;\n";
+    source += "gl_Position = MVPMatrix * in_Position;\n";
     source += "}\n";
 
     DumpVSSource(source);
@@ -2606,6 +2635,7 @@ GLVertexShader*
 ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 {
     string source(CommonHeader);
+    source += VertexHeader;
     source += CommonAttribs;
 
     source += DeclareLights(props);
@@ -2634,7 +2664,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
         }
     }
 
-    source += "gl_Position = gl_ModelViewProjectionMatrix * in_Position;\n";
+    source += "gl_Position = MVPMatrix * in_Position;\n";
     source += "}\n";
 
     DumpVSSource(source);
@@ -2759,6 +2789,7 @@ GLVertexShader*
 ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
 {
     string source(CommonHeader);
+    source += VertexHeader;
     source += CommonAttribs;
 
     source += DeclareLights(props);
@@ -2781,7 +2812,7 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
     source += AtmosphericEffects(props);
 
     source += "eyeDir_obj = eyeDir;\n";
-    source += "gl_Position = gl_ModelViewProjectionMatrix * in_Position;\n";
+    source += "gl_Position = MVPMatrix * in_Position;\n";
     source += "}\n";
 
     DumpVSSource(source);
@@ -2854,6 +2885,7 @@ GLVertexShader*
 ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
 {
     string source(CommonHeader);
+    source += VertexHeader;
     source += CommonAttribs;
 
     source += "uniform float opacity;\n";
@@ -2876,6 +2908,9 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
         source += "varying float pointFade;\n";
     }
 
+    source += DeclareVarying("v_Color", Shader_Vector4);
+    source += DeclareVarying("v_TexCoord0", Shader_Vector2);
+
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
 
@@ -2884,7 +2919,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     if ((props.texUsage & ShaderProperties::DiffuseTexture) &&
         !(props.texUsage & ShaderProperties::PointSprite))
     {
-        source += "    gl_TexCoord[0].st = " + TexCoord2D(0) + ";\n";
+        source += "    v_TexCoord0.st = " + TexCoord2D(0) + ";\n";
     }
 
     // Set the color.
@@ -2894,13 +2929,13 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     else
         colorSource = LightProperty(0, "diffuse");
 
-    source += "    gl_FrontColor = vec4(" + colorSource + ", opacity);\n";
+    source += "    v_Color = vec4(" + colorSource + ", opacity);\n";
 
     // Optional point size
     if ((props.texUsage & ShaderProperties::PointSprite) != 0)
         source += PointSizeCalculation();
 
-    source += "    gl_Position = gl_ModelViewProjectionMatrix * in_Position;\n";
+    source += "    gl_Position = MVPMatrix * in_Position;\n";
 
     source += "}\n";
     // End of main()
@@ -2928,14 +2963,17 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
         source += "varying float pointFade;\n";
     }
 
+    source += DeclareVarying("v_Color", Shader_Vector4);
+    source += DeclareVarying("v_TexCoord0", Shader_Vector2);
+
     // Begin main()
     source += "\nvoid main(void)\n";
     source += "{\n";
 
-    string colorSource = "gl_Color";
+    string colorSource = "v_Color";
     if (props.texUsage & ShaderProperties::PointSprite)
     {
-        source += "    vec4 color = gl_Color;\n";
+        source += "    vec4 color = v_Color;\n";
 #if POINT_FADE
         source += "    color.a *= pointFade;\n";
 #endif
@@ -2947,7 +2985,7 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
         if (props.texUsage & ShaderProperties::PointSprite)
             source += "    gl_FragColor = " + colorSource + " * texture2D(diffTex, gl_PointCoord);\n";
         else
-            source += "    gl_FragColor = " + colorSource + " * texture2D(diffTex, gl_TexCoord[0].st);\n";
+            source += "    gl_FragColor = " + colorSource + " * texture2D(diffTex, v_TexCoord0.st);\n";
     }
     else
     {
@@ -2972,6 +3010,7 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     ostringstream source;
 
     source << CommonHeader;
+    source << VertexHeader;
     source << CommonAttribs;
 
     source << "// PARTICLE SHADER\n";
@@ -2989,6 +3028,8 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
         source << "attribute float in_PointSize;\n";
         source << DeclareVarying("pointFade", Shader_Float);
     }
+
+     source << DeclareVarying("v_Color", Shader_Vector4);
 
     // Shadow parameters
     if (props.shadowCounts != 0)
@@ -3020,13 +3061,13 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
 #endif
 
     // Set the color. Should *always* use vertex colors for color and opacity.
-    source << "    gl_FrontColor = in_Color * brightness;\n";
+    source << "    v_Color = in_Color * brightness;\n";
 
     // Optional point size
     if ((props.texUsage & ShaderProperties::PointSprite) != 0)
         source << PointSizeCalculation();
 
-    source << "    gl_Position = gl_ModelViewProjectionMatrix * in_Position;\n";
+    source << "    gl_Position = MVPMatrix * in_Position;\n";
 
     source << "}\n";
     // End of main()
@@ -3081,17 +3122,19 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
         }
     }
 
+    source << DeclareVarying("v_Color", Shader_Vector4);
+
     // Begin main()
     source << "\nvoid main(void)\n";
     source << "{\n";
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source << "    gl_FragColor = gl_Color * texture2D(diffTex, gl_PointCoord);\n";
+        source << "    gl_FragColor = v_Color * texture2D(diffTex, gl_PointCoord);\n";
     }
     else
     {
-        source << "    gl_FragColor = gl_Color;\n";
+        source << "    gl_FragColor = v_Color;\n";
     }
 
     source << "}\n";
@@ -3227,10 +3270,13 @@ ShaderManager::buildProgram(const std::string& vs, const std::string& fs)
     GLProgram* prog = nullptr;
     GLShaderStatus status;
 
-    DumpVSSource(vs);
-    DumpFSSource(fs);
+    string _vs = fmt::sprintf("%s%s%s\n", CommonHeader, VertexHeader, vs);
+    string _fs = fmt::sprintf("%s%s%s\n", CommonHeader, FragmentHeader, fs);
 
-    status = GLShaderLoader::CreateProgram(vs, fs, &prog);
+    DumpVSSource(_vs);
+    DumpFSSource(_fs);
+
+    status = GLShaderLoader::CreateProgram(_vs, _fs, &prog);
     if (status == ShaderStatus_OK)
     {
         glBindAttribLocation(prog->getID(),
@@ -3376,6 +3422,9 @@ CelestiaGLProgram::attribIndex(const std::string& paramName) const
 void
 CelestiaGLProgram::initParameters()
 {
+    ModelViewMatrix = mat4Param("ModelViewMatrix");
+    MVPMatrix       = mat4Param("MVPMatrix");
+
     for (unsigned int i = 0; i < props.nLights; i++)
     {
         lights[i].direction  = vec3Param(LightProperty(i, "direction"));

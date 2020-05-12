@@ -24,6 +24,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace celestia;
 using namespace celmath;
 using namespace celgl;
 
@@ -241,9 +242,10 @@ ArrowReferenceMark::setColor(Color _color)
 
 void
 ArrowReferenceMark::render(Renderer* renderer,
-                           const Vector3f& /* position */,
+                           const Vector3f& position,
                            float /* discSize */,
-                           double tdb) const
+                           double tdb,
+                           const Matrices& m) const
 {
     Vector3d v = getDirection(tdb);
     if (v.norm() < 1.0e-12)
@@ -275,20 +277,20 @@ ArrowReferenceMark::render(Renderer* renderer,
 #endif
     }
 
-    glPushMatrix();
-    glRotate(q.cast<float>());
-    glScalef(size, size, size);
+    Affine3f transform = Translation3f(position) * q.cast<float>() * Scaling(size);
+    Matrix4f mv = (*m.modelview) * transform.matrix();
 
     CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
     prog->use();
+    prog->MVPMatrix = (*m.projection) * mv;
+
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
 		     color.red(), color.green(), color.blue(), opacity);
 
     auto &vo = renderer->getVertexObject(VOType::AxisArrow, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
     RenderArrow(vo);
-    glPopMatrix();
 
     glUseProgram(0);
     glDisable(GL_DEPTH_TEST);
@@ -333,9 +335,10 @@ AxesReferenceMark::setOpacity(float _opacity)
 
 void
 AxesReferenceMark::render(Renderer* renderer,
-                          const Vector3f& /* position */,
+                          const Vector3f& position,
                           float /* discSize */,
-                          double tdb) const
+                          double tdb,
+                          const Matrices& m) const
 {
     Quaterniond q = getOrientation(tdb);
 
@@ -358,9 +361,8 @@ AxesReferenceMark::render(Renderer* renderer,
 #endif
     }
 
-    glPushMatrix();
-    glRotate(q.cast<float>());
-    glScalef(size, size, size);
+    Affine3f transform = Translation3f(position) * q.cast<float>() * Scaling(size);
+    Matrix4f mvp = (*m.projection) * (*m.modelview) * transform.matrix();
 
 #if 0
     // Simple line axes
@@ -390,37 +392,33 @@ AxesReferenceMark::render(Renderer* renderer,
 
     auto &vo = renderer->getVertexObject(VOType::AxisArrow, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
 
+    Affine3f labelTransform = Translation3f(Vector3f(0.1f, 0.0f, 0.75f)) * Scaling(labelScale);
+    Matrix4f labelTransformMatrix = labelTransform.matrix();
+    Matrix4f t;
+
     // x-axis
-    glPushMatrix();
-    glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+    t = mvp * vecgl::rotate(AngleAxisf(90.0_deg, Vector3f::UnitY()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
+    prog->MVPMatrix = t;
     RenderArrow(vo);
-    glTranslatef(0.1f, 0.0f, 0.75f);
-    glScalef(labelScale, labelScale, labelScale);
+    prog->MVPMatrix = t * labelTransformMatrix;
     RenderX(vo);
-    glPopMatrix();
 
     // y-axis
-    glPushMatrix();
-    glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
+    t = mvp * vecgl::rotate(AngleAxisf(180.0_deg, Vector3f::UnitY()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
+    prog->MVPMatrix = t;
     RenderArrow(vo);
-    glTranslatef(0.1f, 0.0f, 0.75f);
-    glScalef(labelScale, labelScale, labelScale);
+    prog->MVPMatrix = t * labelTransformMatrix;
     RenderY(vo);
-    glPopMatrix();
 
     // z-axis
-    glPushMatrix();
-    glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+    t = mvp *vecgl::rotate(AngleAxisf(-90.0_deg, Vector3f::UnitX()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
+    prog->MVPMatrix = t;
     RenderArrow(vo);
-    glTranslatef(0.1f, 0.0f, 0.75f);
-    glScalef(labelScale, labelScale, labelScale);
+    prog->MVPMatrix = t * labelTransformMatrix;
     RenderZ(vo);
-    glPopMatrix();
-
-    glPopMatrix();
 
     glUseProgram(0);
     glDisable(GL_DEPTH_TEST);

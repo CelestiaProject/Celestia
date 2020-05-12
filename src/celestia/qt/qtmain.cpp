@@ -50,7 +50,11 @@ static bool ParseCommandLine();
 
 int main(int argc, char *argv[])
 {
+#ifndef GL_ES
     QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+#else
+    QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
+#endif
     QApplication app(argc, argv);
 
     QTranslator qtTranslator;

@@ -52,6 +52,9 @@ class RenderContext
     void setCameraOrientation(const Eigen::Quaternionf& q);
     Eigen::Quaternionf getCameraOrientation() const;
 
+    void setModelViewMatrix(const Eigen::Matrix4f *m);
+    void setProjectionMatrix(const Eigen::Matrix4f *m);
+
  private:
     const cmod::Material* material{ nullptr };
     bool locked{ false };
@@ -65,6 +68,8 @@ class RenderContext
     bool useNormals{ true };
     bool useColors{ false };
     bool useTexCoords{ true };
+    const Eigen::Matrix4f *modelViewMatrix;
+    const Eigen::Matrix4f *projectionMatrix;
 };
 
 

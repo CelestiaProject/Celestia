@@ -1,5 +1,3 @@
-#version 120
-
 attribute vec3 in_Position;
 attribute vec4 in_Color;
 attribute float in_PointSize;
@@ -9,5 +7,5 @@ void main(void)
 {
     gl_PointSize = in_PointSize;
     color = in_Color;
-    gl_Position = gl_ModelViewProjectionMatrix * vec4(in_Position, 1.0);
+    gl_Position = MVPMatrix * vec4(in_Position, 1.0);
 }

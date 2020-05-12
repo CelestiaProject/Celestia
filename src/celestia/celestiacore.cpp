@@ -1178,7 +1178,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '\027':  // Ctrl+W
         wireframe = !wireframe;
-        renderer->setRenderMode(wireframe ? GL_LINE : GL_FILL);
+        renderer->setRenderMode(wireframe ? RenderMode::Line : RenderMode::Fill);
         break;
 
     case '\030':  // Ctrl+X

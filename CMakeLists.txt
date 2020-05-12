@@ -39,6 +39,11 @@ option(FAST_MATH      "Build with unsafe fast-math compiller option (Default: of
 option(ENABLE_TTF     "Use TrueType fonts instead of TXF (Default: off)" OFF)
 option(ENABLE_TESTS   "Enable unit tests? (Default: off)" OFF)
 option(ENABLE_DATA    "Install data from content submodule? (Default: on)" ON)
+option(ENABLE_GLES    "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
+
+if(ENABLE_GLES)
+  add_definitions(-DGL_ES)
+endif()
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type." FORCE)
@@ -177,9 +182,11 @@ if(WIN32)
   link_libraries("vfw32" "comctl32" "winmm")
 endif()
 
-find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIRS})
-link_libraries(${OPENGL_LIBRARIES})
+if(NOT ENABLE_GLES)
+  find_package(OpenGL REQUIRED)
+  include_directories(${OPENGL_INCLUDE_DIRS})
+  link_libraries(${OPENGL_LIBRARIES})
+endif()
 
 find_package(Libepoxy REQUIRED)
 link_libraries(libepoxy::libepoxy)

@@ -11,6 +11,7 @@
 
 #include <string>
 #include <celcompat/filesystem.h>
+#include <Eigen/Core>
 
 class Renderer;
 
@@ -25,6 +26,8 @@ class TextureFont
     TextureFont(TextureFont&&) = delete;
     TextureFont& operator=(const TextureFont&) = delete;
     TextureFont& operator=(TextureFont&&) = delete;
+
+    void setMVPMatrix(const Eigen::Matrix4f& m);
 
     float render(wchar_t c, float xoffset = 0.0f, float yoffset = 0.0f) const;
     float render(const std::string& str, float xoffset = 0.0f, float yoffset = 0.0f) const;

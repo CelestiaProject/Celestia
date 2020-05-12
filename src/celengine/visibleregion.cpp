@@ -84,7 +84,10 @@ VisibleRegion::setOpacity(float opacity)
 constexpr const unsigned maxSections = 360;
 
 static void
-renderTerminator(Renderer* renderer, const vector<Vector3f>& pos, const Color& color)
+renderTerminator(Renderer* renderer,
+                 const vector<Vector3f>& pos,
+                 const Color& color,
+                 const Matrix4f& mvp)
 {
     /*!
      * Proper terminator calculation requires double precision floats in GLSL
@@ -112,6 +115,7 @@ renderTerminator(Renderer* renderer, const vector<Vector3f>& pos, const Color& c
     vo.setBufferData(pos.data(), 0, pos.size() * sizeof(Vector3f));
 
     prog->use();
+    prog->MVPMatrix = mvp;
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
 
     vo.draw(GL_LINE_LOOP, pos.size());
@@ -123,9 +127,10 @@ renderTerminator(Renderer* renderer, const vector<Vector3f>& pos, const Color& c
 
 void
 VisibleRegion::render(Renderer* renderer,
-                      const Vector3f& /* pos */,
+                      const Vector3f& position,
                       float discSizeInPixels,
-                      double tdb) const
+                      double tdb,
+                      const Matrices& m) const
 {
     // Don't render anything if the current time is not within the
     // target object's time window.
@@ -170,9 +175,6 @@ VisibleRegion::render(Renderer* renderer,
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
 
-    glPushMatrix();
-    glRotate(qf.conjugate());
-
     double maxSemiAxis = m_body.getRadius();
 
     // In order to avoid precision problems and extremely large values, scale
@@ -211,9 +213,9 @@ VisibleRegion::render(Renderer* renderer,
         pos.push_back(toCenter.cast<float>());
     }
 
-    renderTerminator(renderer, pos, Color(m_color, opacity));
-
-    glPopMatrix();
+    Affine3f transform = Translation3f(position) * qf.conjugate();
+    Matrix4f mvp = (*m.projection) * (*m.modelview) * transform.matrix();
+    renderTerminator(renderer, pos, Color(m_color, opacity), mvp);
 
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);

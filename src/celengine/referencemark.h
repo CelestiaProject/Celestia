@@ -17,6 +17,7 @@
 #include <Eigen/Core>
 
 class Renderer;
+struct Matrices;
 
 /*! Reference marks give additional visual information about the
  *  position and orientation of a solar system body. Items such as
@@ -40,7 +41,8 @@ class ReferenceMark
     virtual void render(Renderer* renderer,
                         const Eigen::Vector3f& position,
                         float discSizeInPixels,
-                        double tdb) const = 0;
+                        double tdb,
+                        const Matrices& m) const = 0;
 
     /*! Return the radius of a bounding sphere (in kilometers) large enough
      *  to contain the reference mark geometry.

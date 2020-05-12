@@ -28,7 +28,7 @@ class AsterismRenderer
     AsterismRenderer& operator=(const AsterismRenderer&) = delete;
     AsterismRenderer& operator=(AsterismRenderer&&) = delete;
 
-    void render(const Renderer &renderer, const Color &color);
+    void render(const Renderer &renderer, const Color &color, const Eigen::Matrix4f &mvp);
     bool sameAsterisms(const AsterismList *asterisms) const;
 
  private:
