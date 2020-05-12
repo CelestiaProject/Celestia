@@ -1,5 +1,5 @@
 dist: xenial
-osx_image: xcode11.2
+osx_image: xcode11.4
 language: cpp
 sudo: true
 
@@ -57,7 +57,7 @@ addons:
     packages:
     - eigen
     - cspice
-    - fmt@6.1.2
+    - fmt
     - jpeg
     - gettext
     - libpng
