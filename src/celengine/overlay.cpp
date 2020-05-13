@@ -73,6 +73,8 @@ void Overlay::setFont(TextureFont* f)
 {
     if (f != font)
     {
+        if (font != nullptr)
+            font->flush();
         font = f;
         fontChanged = true;
     }
@@ -188,13 +190,17 @@ void Overlay::drawRectangle(const Rect& r)
 
 void Overlay::setColor(float r, float g, float b, float a)
 {
+    if (font != nullptr)
+        font->flush();
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, r, g, b, a);
 }
 
 void Overlay::setColor(const Color& c)
 {
+    if (font != nullptr)
+        font->flush();
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
-		     c.red(), c.green(), c.blue(), c.alpha());
+                     c.red(), c.green(), c.blue(), c.alpha());
 }
 
 

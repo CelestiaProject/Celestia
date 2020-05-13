@@ -48,6 +48,7 @@ class TextureFont
     void bind();
     void unbind();
     bool buildTexture();
+    void flush();
 
     static TextureFont* load(const Renderer*, const fs::path&, int size, int dpi);
 
