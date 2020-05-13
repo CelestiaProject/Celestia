@@ -53,6 +53,15 @@ struct UnicodeBlock
 
 struct TextureFontPrivate
 {
+    struct FontVertex
+    {
+        FontVertex(float _x, float _y, float _u, float _v) :
+            x(_x), y(_y), u(_u), v(_v)
+        {}
+        float x, y;
+        float u, v;
+    };
+
     TextureFontPrivate() = delete;
     TextureFontPrivate(const Renderer *renderer);
     ~TextureFontPrivate();
@@ -73,6 +82,7 @@ struct TextureFontPrivate
     Glyph& getGlyph(wchar_t, wchar_t);
     int toPos(wchar_t) const;
     void optimize();
+    void flush();
 
     const Renderer *m_renderer;
 
@@ -93,6 +103,8 @@ struct TextureFontPrivate
     int m_commonGlyphsCount { 0 };
 
     int m_inserted { 0 };
+
+    vector<FontVertex> m_fontVertices;
 };
 
 inline float pt_to_px(float pt, int dpi = 96)
@@ -200,7 +212,7 @@ bool TextureFontPrivate::buildAtlas()
     initCommonGlyphs();
     computeTextureSize();
 
-     // Create a texture that will be used to hold all glyphs
+    // Create a texture that will be used to hold all glyphs
     glActiveTexture(GL_TEXTURE0);
     if (m_texName != 0)
         glDeleteTextures(1, &m_texName);
@@ -362,11 +374,6 @@ float TextureFontPrivate::render(const string &s, float x, float y)
     int len = s.length();
     bool validChar = true;
     int i = 0;
-    int first = true;
-
-    vector<FontVertex> vertices;
-    vector<unsigned short> indexes;
-    unsigned short index = 0;
 
     while (i < len && validChar)
     {
@@ -379,46 +386,31 @@ float TextureFontPrivate::render(const string &s, float x, float y)
         auto& g = getGlyph(ch, L'?');
 
         // Calculate the vertex and texture coordinates
-        float x2 = x + g.bl;
-        float y2 = y + g.bt - g.bh;
-        float w = g.bw;
-        float h = g.bh;
+        const float x1 = x + g.bl;
+        const float y1 = y + g.bt - g.bh;
+        const float w = g.bw;
+        const float h = g.bh;
+        const float x2 = x1 + w;
+        const float y2 = y1 + h;
 
         // Advance the cursor to the start of the next character
         x += g.ax;
         y += g.ay;
 
         // Skip glyphs that have no pixels
-        if (!w || !h)
+        if (g.bw == 0 || g.bh == 0)
             continue;
 
-        float tw = w / m_texWidth;
-        float th = h / m_texHeight;
-        vertices.emplace_back(FontVertex(x2,     y2,     g.tx,      g.ty + th));
-        vertices.emplace_back(FontVertex(x2 + w, y2,     g.tx + tw, g.ty + th));
-        vertices.emplace_back(FontVertex(x2,     y2 + h, g.tx,      g.ty));
-        vertices.emplace_back(FontVertex(x2 + w, y2 + h, g.tx + tw, g.ty));
-        indexes.push_back(index + 0);
-        indexes.push_back(index + 1);
-        indexes.push_back(index + 2);
-        indexes.push_back(index + 1);
-        indexes.push_back(index + 3);
-        indexes.push_back(index + 2);
-        index += 4;
+        const float tx1 = g.tx;
+        const float ty1 = g.ty;
+        const float tx2 = tx1 + w / m_texWidth;
+        const float ty2 = ty1 + h / m_texHeight;
+
+        m_fontVertices.emplace_back(FontVertex(x1, y1, tx1, ty2));
+        m_fontVertices.emplace_back(FontVertex(x2, y1, tx2, ty2));
+        m_fontVertices.emplace_back(FontVertex(x1, y2, tx1, ty1));
+        m_fontVertices.emplace_back(FontVertex(x2, y2, tx2, ty1));
     }
-
-    if (vertices.size() < 4)
-        return 0;
-
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].x);
-    glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].u);
-    glDrawElements(GL_TRIANGLES, indexes.size(), GL_UNSIGNED_SHORT, indexes.data());
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
 
     return x;
 }
@@ -439,24 +431,44 @@ float TextureFontPrivate::render(wchar_t ch, float xoffset, float yoffset)
     const float tx2 = tx1 + static_cast<float>(g.bw) / m_texWidth;
     const float ty2 = ty1 + static_cast<float>(g.bh) / m_texHeight;
 
-    FontVertex vertices[4] = {
-        {x1, y1, tx1, ty2},
-        {x2, y1, tx2, ty2},
-        {x1, y2, tx1, ty1},
-        {x2, y2, tx2, ty1}
-    };
+    m_fontVertices.emplace_back(FontVertex(x1, y1, tx1, ty2));
+    m_fontVertices.emplace_back(FontVertex(x2, y1, tx2, ty2));
+    m_fontVertices.emplace_back(FontVertex(x1, y2, tx1, ty1));
+    m_fontVertices.emplace_back(FontVertex(x2, y2, tx2, ty1));
+
+    return g.ax;
+}
+
+void TextureFontPrivate::flush()
+{
+    if (m_fontVertices.size() < 4)
+        return;
+
+    vector<unsigned short> indexes;
+    indexes.reserve(m_fontVertices.size() / 4 * 6);
+    for (unsigned short index = 0;
+         index < (unsigned short) m_fontVertices.size();
+         index += 4)
+    {
+        indexes.push_back(index + 0);
+        indexes.push_back(index + 1);
+        indexes.push_back(index + 2);
+        indexes.push_back(index + 1);
+        indexes.push_back(index + 3);
+        indexes.push_back(index + 2);
+    }
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].x);
+                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &m_fontVertices[0].x);
     glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].u);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+                          2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &m_fontVertices[0].u);
+    glDrawElements(GL_TRIANGLES, indexes.size(), GL_UNSIGNED_SHORT, indexes.data());
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
 
-    return g.ax;
+    m_fontVertices.clear();
 }
 
 
@@ -612,6 +624,7 @@ void TextureFont::bind()
 
 void TextureFont::unbind()
 {
+    flush();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
     glUseProgram(0);
@@ -626,6 +639,11 @@ short TextureFont::getAdvance(wchar_t ch) const
 bool TextureFont::buildTexture()
 {
     return true;
+}
+
+void TextureFont::flush()
+{
+    impl->flush();
 }
 
 TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int size, int dpi)

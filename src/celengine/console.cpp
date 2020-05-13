@@ -143,7 +143,11 @@ void Console::setScale(int w, int h)
 void Console::setFont(TextureFont* f)
 {
     if (f != font)
+    {
+        if (font != nullptr)
+            font->flush();
         font = f;
+    }
 }
 
 
@@ -237,14 +241,18 @@ int Console::getHeight() const
 
 void Console::setColor(float r, float g, float b, float a) const
 {
+    if (font != nullptr)
+        font->flush();
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, r, g, b, a);
 }
 
 
 void Console::setColor(const Color& c) const
 {
+    if (font != nullptr)
+        font->flush();
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
-		     c.red(), c.green(), c.blue(), c.alpha());
+                     c.red(), c.green(), c.blue(), c.alpha());
 
 }
 

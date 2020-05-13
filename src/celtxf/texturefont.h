@@ -53,6 +53,7 @@ class TextureFont
 
     void bind();
     void unbind();
+    void flush() {};
 
     bool buildTexture();
 

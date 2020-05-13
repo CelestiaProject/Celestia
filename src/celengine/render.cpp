@@ -4798,6 +4798,7 @@ Renderer::renderAnnotationMarker(const Annotation &a,
                      -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
         font[fs]->bind();
         font[fs]->render(markerRep.label(), 0.0f, 0.0f);
+        font[fs]->flush();
     }
     glPopMatrix();
 }
@@ -4816,6 +4817,7 @@ Renderer::renderAnnotationLabel(const Annotation &a,
                  depth);
     font[fs]->bind();
     font[fs]->render(a.labelText, 0.0f, 0.0f);
+    font[fs]->flush();
     glPopMatrix();
 }
 
