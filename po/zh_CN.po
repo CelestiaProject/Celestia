@@ -1,21 +1,19 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Chris Laurel
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Copyright (C) 2001-2020 Celestia Development Team
+# This file is distributed under the same license as the celestia package.
+# LBV 2012-26 <lbv2012-26@outlook.com>, 2020
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
 "POT-Creation-Date: 2019-02-14 21:37+0300\n"
-"PO-Revision-Date: 2018-05-28 21:02+0300\n"
-"Last-Translator: Alexell <alexell@alexell.ru>\n"
-"Language-Team: \n"
-"Language: zh_CN\n"
+"PO-Revision-Date: 2018-11-02 18:33+0000\n"
+"Last-Translator: LBV 2012-26 <lbv2012-26@outlook.com>, 2020\n"
+"Language-Team: Chinese (China) (https://www.transifex.com/celestia/teams/93131/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.7\n"
+"Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../data/data.cpp:1
@@ -1126,7 +1124,7 @@ msgstr "瓦利"
 
 #: ../data/data.cpp:277
 msgid "Vatican City"
-msgstr "梵蒂冈城"
+msgstr "梵蒂冈"
 
 #: ../data/data.cpp:278 ../data/data.cpp:279
 msgid "Victoria"
@@ -1190,15 +1188,15 @@ msgstr "萨格勒布"
 
 #: ../data/data.cpp:294
 msgid "Milky Way"
-msgstr "银河"
+msgstr "银河系"
 
 #: ../data/data.cpp:295
 msgid "SMC"
-msgstr "小麦哲伦星系"
+msgstr "小麦哲伦云"
 
 #: ../data/data.cpp:296
 msgid "LMC"
-msgstr "大麦哲伦星系"
+msgstr "大麦哲伦云"
 
 #: ../data/data.cpp:297
 msgid "Solar System Barycenter"
@@ -1212,34 +1210,32 @@ msgstr "夏令时"
 msgid "STD"
 msgstr "标准时间"
 
-#.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
 #. for (int i = 0; i < nDSOs; ++i)
 #. {
 #. if(DSOs[i]->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
 #. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
 #. }
-#.
 #: ../src/celengine/dsodb.cpp:368
-#, fuzzy, c-format
+#, c-format
 msgid "Loaded %i deep space objects\n"
-msgstr " 个深空间物体"
+msgstr "已加载 %i 个深空天体\n"
 
 #: ../src/celengine/fragmentprog.cpp:92
 msgid "Loading NV fragment program: "
-msgstr "正在加载 NV 片段程序:"
+msgstr "正在加载 NV 片段程序："
 
 #: ../src/celengine/fragmentprog.cpp:97
 msgid "Error loading NV fragment program: "
-msgstr "加载 NV 片段程序时出现错误:"
+msgstr "加载 NV 片段程序时出错："
 
 #: ../src/celengine/fragmentprog.cpp:114
 msgid "Error in fragment program "
-msgstr "片段程序出现错误 "
+msgstr "错误片段程序 "
 
 #: ../src/celengine/fragmentprog.cpp:125
 msgid "Initializing NV fragment programs . . .\n"
-msgstr "正在对 NV 片段程序进行初始化. . .\n"
+msgstr "正在初始化 NV 片段程序...\n"
 
 #: ../src/celengine/fragmentprog.cpp:141
 msgid "All NV fragment programs loaded successfully.\n"
@@ -1247,58 +1243,58 @@ msgstr "所有 NV 片段程序加载成功。\n"
 
 #: ../src/celengine/fragmentprog.cpp:149
 msgid "Initializing ARB fragment programs . . .\n"
-msgstr "对 ARB 片段程序进行初始化. . .\n"
+msgstr "正在初始化 ARB 片段程序...\n"
 
 #: ../src/celengine/galaxy.cpp:193
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
-msgstr "星系(哈勃分类: %s)"
+msgstr "星系（哈勃分类：%s）"
 
 #: ../src/celengine/globular.cpp:256
 #, c-format, qt-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
-msgstr "球状星团 (核心半径: %4.2f', King 模型聚度参数: %4.2f)"
+msgstr "球状星团（核心半径：%4.2f'，King 模型聚度参数：%4.2f）"
 
 #: ../src/celengine/image.cpp:319
-#, fuzzy, c-format
+#, c-format
 msgid "Loading image from file %s\n"
-msgstr "从文件加载图像 "
+msgstr "正在从 %s 文件加载图像\n"
 
 #: ../src/celengine/image.cpp:337
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized or unsupported image file type.\n"
-msgstr ": 无法识别或不支持的图像文件格式。\n"
+msgstr "%s：无法识别或不支持的图像文件格式。\n"
 
 #: ../src/celengine/image.cpp:600
-#, fuzzy, c-format
+#, c-format
 msgid "Error opening image file %s\n"
-msgstr "打开图像文件错误 "
+msgstr "打开 %s 图像文件时出错\n"
 
 #: ../src/celengine/image.cpp:608
-#, fuzzy, c-format
+#, c-format
 msgid "Error: %s is not a PNG file.\n"
-msgstr " 不是PNG图像文件。\n"
+msgstr "错误：%s 不是 PNG 图像文件。\n"
 
 #: ../src/celengine/image.cpp:634
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading PNG image file %s\n"
-msgstr "读取PNG图像文件时出错。"
+msgstr "读取 PNG 图像文件 %s 时出错。\n"
 
 #: ../src/celengine/meshmanager.cpp:112
-#, fuzzy, c-format
+#, c-format
 msgid "Loading model: %s\n"
-msgstr "加载模型:"
+msgstr "正在加载模型：%s\n"
 
 #: ../src/celengine/meshmanager.cpp:193
 #, c-format
 msgid ""
 "   Model statistics: %u vertices, %u primitives, %u materials (%u unique)\n"
-msgstr ""
+msgstr "模型统计：%u 顶点，%u 原语，%u 材质（%u 唯一）\n"
 
 #: ../src/celengine/meshmanager.cpp:203
-#, fuzzy, c-format
+#, c-format
 msgid "Error loading model '%s'\n"
-msgstr "加载模型时出错 '"
+msgstr "加载模型 %s 时出错\n"
 
 #: ../src/celengine/nebula.cpp:39
 msgid "Nebula"
@@ -1309,138 +1305,138 @@ msgid "Open cluster"
 msgstr "疏散星团"
 
 #: ../src/celengine/solarsys.cpp:79
-#, fuzzy, c-format
+#, c-format
 msgid "Error in .ssc file (line %d): "
-msgstr ".ssc 文件出错（行 "
+msgstr ".ssc 文件出错（行 %d）："
 
 #: ../src/celengine/solarsys.cpp:1218 ../src/celengine/solarsys.cpp:1286
 #, c-format
 msgid "parent body '%s' of '%s' not found.\n"
-msgstr ""
+msgstr "找不到“%s”的父级天体“%s”。\n"
 
 #: ../src/celengine/solarsys.cpp:1229
-#, fuzzy, c-format
+#, c-format
 msgid "warning duplicate definition of %s %s\n"
-msgstr "警告:重复定义"
+msgstr "警告：重复定义 %s %s\n"
 
 #: ../src/celengine/solarsys.cpp:1265
 msgid "bad alternate surface"
-msgstr "不正确的可替换物体表面"
+msgstr "可替换表面错误"
 
 #: ../src/celengine/solarsys.cpp:1280
 msgid "bad location"
-msgstr "不正确的地理位置"
+msgstr "地理位置错误"
 
 #: ../src/celengine/stardb.cpp:558
 msgid "Bad header for cross index\n"
-msgstr "不正确的跨索引文件头\n"
+msgstr "跨索引文件头错误\n"
 
 #: ../src/celengine/stardb.cpp:572
 msgid "Bad version for cross index\n"
-msgstr "不正确的跨索引文件文本\n"
+msgstr "跨索引文件文本错误\n"
 
 #: ../src/celengine/stardb.cpp:592
-#, fuzzy, c-format
+#, c-format
 msgid "Loading cross index failed at record %u\n"
-msgstr "加载跨索引文件失败--出错数据点 "
+msgstr "加载跨索引文件失败 - 数据点 %u 错误\n"
 
 #: ../src/celengine/stardb.cpp:676
-#, fuzzy, c-format
+#, c-format
 msgid "Bad spectral type in star database, star #%u\n"
-msgstr "恒星数据库中的恒星光谱类型不正确，恒星编号#"
+msgstr "恒星数据库中的恒星光谱型错误，恒星编号 #%u\n"
 
 #: ../src/celengine/stardb.cpp:691
-#, fuzzy, c-format
+#, c-format
 msgid "%d stars in binary database\n"
-msgstr " 个恒星在双星系统数据库中\n"
+msgstr "%d 个恒星在双星系统数据库中\n"
 
 #: ../src/celengine/stardb.cpp:715
-#, fuzzy, c-format
+#, c-format
 msgid "Total star count: %d\n"
-msgstr "总计恒星数:"
+msgstr "总计恒星数：%d\n"
 
 #: ../src/celengine/stardb.cpp:749
-#, fuzzy, c-format
+#, c-format
 msgid "Error in .stc file (line %i): %s\n"
-msgstr ".stc文件出错（行 "
+msgstr ".stc 文件出错（行 %i）：%s\n"
 
 #: ../src/celengine/stardb.cpp:779
 msgid "Invalid star: bad spectral type.\n"
-msgstr "无效恒星数据:不正确的恒星光谱类型。\n"
+msgstr "无效恒星数据：恒星光谱型错误。\n"
 
 #: ../src/celengine/stardb.cpp:788
 msgid "Invalid star: missing spectral type.\n"
-msgstr "无效恒星数据:缺少恒星光谱类型。\n"
+msgstr "无效恒星数据：缺少恒星光谱类型。\n"
 
 #: ../src/celengine/stardb.cpp:975
-#, fuzzy, c-format
+#, c-format
 msgid "Barycenter %s does not exist.\n"
-msgstr " 不存在。\n"
+msgstr "质心 %s 不存在。\n"
 
 #: ../src/celengine/stardb.cpp:1031
 msgid "Invalid star: missing right ascension\n"
-msgstr "无效恒星数据:缺少赤经\n"
+msgstr "无效恒星数据：缺少赤经\n"
 
 #: ../src/celengine/stardb.cpp:1044
 msgid "Invalid star: missing declination.\n"
-msgstr "无效恒星数据:缺少赤纬。\n"
+msgstr "无效恒星数据：缺少赤纬。\n"
 
 #: ../src/celengine/stardb.cpp:1057
 msgid "Invalid star: missing distance.\n"
-msgstr "无效恒星数据:缺少距离。\n"
+msgstr "无效恒星数据：缺少距离。\n"
 
 #: ../src/celengine/stardb.cpp:1089
 msgid "Invalid star: missing magnitude.\n"
-msgstr "无效恒星数据:缺少星等。\n"
+msgstr "无效恒星数据：缺少星等。\n"
 
 #: ../src/celengine/stardb.cpp:1106
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
-msgstr "无效恒星数据:必须输入接近起源的恒星的绝对星等（非视星等）\n"
+msgstr "无效恒星数据：必须输入接近原始的恒星的绝对星等（非视星等）\n"
 
 #: ../src/celengine/stardb.cpp:1397
 #, c-format
 msgid "Level %i, %.5f ly, %i nodes, %i  stars\n"
-msgstr ""
+msgstr "等级 %i，%.5f ly，%i 节点，%i 恒星\n"
 
 #: ../src/celengine/texture.cpp:929
-#, fuzzy, c-format
+#, c-format
 msgid "Creating tiled texture. Width=%i, max=%i\n"
-msgstr "正在创建平铺纹理。宽度="
+msgstr "正在创建平铺纹理。宽度=%i，Max=%i\n"
 
 #: ../src/celengine/texture.cpp:934
-#, fuzzy, c-format
+#, c-format
 msgid "Creating ordinary texture: %ix%i\n"
-msgstr "正在创建一般纹理:"
+msgstr "正在创建一般纹理：%i×%i\n"
 
 #: ../src/celengine/vertexprog.cpp:114
 msgid "Loading NV vertex program: "
-msgstr "加载 NV 顶点程序:"
+msgstr "正在加载 NV 顶点程序："
 
 #: ../src/celengine/vertexprog.cpp:119
 msgid "Error loading NV vertex program: "
-msgstr "加载 NV 顶点程序时出现错误:"
+msgstr "加载 NV 顶点程序时出错："
 
 #: ../src/celengine/vertexprog.cpp:136 ../src/celengine/vertexprog.cpp:195
 msgid "Error in vertex program "
-msgstr " NV 顶点程序出现错误 "
+msgstr "错误 NV 顶点程序 "
 
 #: ../src/celengine/vertexprog.cpp:163
 msgid "Loading ARB vertex program: "
-msgstr "加载 ARB 顶点程序:"
+msgstr "正在加载 ARB 顶点程序："
 
 #: ../src/celengine/vertexprog.cpp:168
 msgid "Error loading ARB vertex program: "
-msgstr "加 载ARB 顶点程序时出现错误:"
+msgstr "加载 ARB 顶点程序时出错："
 
 #: ../src/celengine/vertexprog.cpp:196
 msgid ", line "
-msgstr "，行"
+msgstr "，行 "
 
 #: ../src/celengine/vertexprog.cpp:208
 msgid "Initializing NV vertex programs . . .\n"
-msgstr "对 NV 顶点程序进行初始化 . . .\n"
+msgstr "正在初始化 NV 顶点程序...\n"
 
 #: ../src/celengine/vertexprog.cpp:240
 msgid "All NV vertex programs loaded successfully.\n"
@@ -1448,40 +1444,40 @@ msgstr "所有 NV 顶点程序加载成功。\n"
 
 #: ../src/celengine/vertexprog.cpp:253
 msgid "Initializing ARB vertex programs . . .\n"
-msgstr "对 ARB 顶点程序进行初始化 . . .\n"
+msgstr "正在初始化 ARB 顶点程序...\n"
 
 #: ../src/celengine/vertexprog.cpp:313
 msgid "All ARB vertex programs loaded successfully.\n"
 msgstr "所有 ARB 顶点程序加载成功。\n"
 
 #: ../src/celephem/samporbit.cpp:832
-#, fuzzy, c-format
+#, c-format
 msgid "Error openning %s.\n"
-msgstr "读取发生错误"
+msgstr "打开 %s 时出错。\n"
 
 #: ../src/celephem/samporbit.cpp:839 ../src/tools/xyzv2bin/bin2xyzv.cpp:25
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading header of %s.\n"
-msgstr "读取PNG图像文件时出错。"
+msgstr "读取标题 %s 时出错。\n"
 
 #: ../src/celephem/samporbit.cpp:845 ../src/tools/xyzv2bin/bin2xyzv.cpp:31
 #, c-format
 msgid "Bad binary xyzv file %s.\n"
-msgstr ""
+msgstr "二进制 xyzv 文件 %s 错误。\n"
 
 #: ../src/celephem/samporbit.cpp:851 ../src/tools/xyzv2bin/bin2xyzv.cpp:37
 #, c-format
 msgid "Unsupported byte order %i, expected %i.\n"
-msgstr ""
+msgstr "不支持的字节顺序 %i，缺少 %i。\n"
 
 #: ../src/celephem/samporbit.cpp:859 ../src/tools/xyzv2bin/bin2xyzv.cpp:44
 #, c-format
 msgid "Unsupported digits number %i, expected %i.\n"
-msgstr ""
+msgstr "不支持的数字 %i，缺少 %i。\n"
 
 #: ../src/celestia/celestiacore.cpp:333
 msgid "Error reading favorites file."
-msgstr "读出收藏夹中的文件时出错。"
+msgstr "读取收藏夹中的文件时出错。"
 
 #: ../src/celestia/celestiacore.cpp:422
 #, c-format
@@ -1489,19 +1485,21 @@ msgid ""
 "%s\n"
 "Orientation: [%f, %f, %f], %.1f\n"
 msgstr ""
+"%s\n"
+"方向：[%f，%f，%f]，%.1f\n"
 
 #: ../src/celestia/celestiacore.cpp:469
 msgid "Error opening script file."
-msgstr "打开脚本文件时出现错误。"
+msgstr "打开脚本文件时出错。"
 
 #: ../src/celestia/celestiacore.cpp:497
 #, c-format
 msgid "Error opening script '%s'"
-msgstr "打开脚本文件'%s'时出现错误"
+msgstr "打开脚本文件 %s 时出错"
 
 #: ../src/celestia/celestiacore.cpp:512
 msgid "Unknown error opening script"
-msgstr "打开脚本文件出现未知错误"
+msgstr "打开脚本文件时出现未知错误"
 
 #: ../src/celestia/celestiacore.cpp:521 ../src/celestia/celestiacore.cpp:4988
 msgid "Script coroutine initialization failed"
@@ -1515,7 +1513,7 @@ msgstr "无效文件格式"
 #: ../src/celestia/celestiacore.cpp:1668
 #, c-format
 msgid "Magnitude limit: %.2f"
-msgstr "极限星等:%.2f"
+msgstr "极限星等：%.2f"
 
 #: ../src/celestia/celestiacore.cpp:1296
 msgid "Markers enabled"
@@ -1528,7 +1526,7 @@ msgstr "标记已关闭"
 #. Ctrl+G
 #: ../src/celestia/celestiacore.cpp:1309
 msgid "Goto surface"
-msgstr "前往物体表面"
+msgstr "登陆"
 
 #: ../src/celestia/celestiacore.cpp:1320
 msgid "Alt-azimuth mode enabled"
@@ -1540,37 +1538,35 @@ msgstr "经纬仪模式已关闭"
 
 #: ../src/celestia/celestiacore.cpp:1379
 msgid "Star style: fuzzy points"
-msgstr "星点渲染:模糊点"
+msgstr "星点渲染：模糊点"
 
 #: ../src/celestia/celestiacore.cpp:1382
 msgid "Star style: points"
-msgstr "星点渲染:正常点"
+msgstr "星点渲染：点"
 
 #: ../src/celestia/celestiacore.cpp:1385
 msgid "Star style: scaled discs"
-msgstr "星点渲染:缩放点"
+msgstr "星点渲染：缩放点"
 
 #: ../src/celestia/celestiacore.cpp:1398
 msgid "Comet tails enabled"
-msgstr "彗星尾渲染已开启"
+msgstr "彗尾渲染已开启"
 
 #: ../src/celestia/celestiacore.cpp:1401
 msgid "Comet tails disabled"
-msgstr "彗星尾渲染已关闭"
+msgstr "彗尾渲染已关闭"
 
 #: ../src/celestia/celestiacore.cpp:1416
 msgid "Render path: OpenGL 2.0"
-msgstr "渲染通道: OpenGL 2.0"
+msgstr "渲染通道：OpenGL 2.0"
 
 #: ../src/celestia/celestiacore.cpp:1434
-#, fuzzy
 msgid "Anti-aliasing enabled"
-msgstr "经纬仪模式已开启"
+msgstr "抗锯齿已开启"
 
 #: ../src/celestia/celestiacore.cpp:1439
-#, fuzzy
 msgid "Anti-aliasing disabled"
-msgstr "经纬仪模式已关闭"
+msgstr "抗锯齿已关闭"
 
 #: ../src/celestia/celestiacore.cpp:1448
 msgid "Auto-magnitude enabled"
@@ -1608,42 +1604,40 @@ msgid "Resume"
 msgstr "恢复"
 
 #: ../src/celestia/celestiacore.cpp:1551
-#, fuzzy
 msgid "Star color: Blackbody D65"
-msgstr "总计恒星数:"
+msgstr "恒星着色：黑体 D65"
 
 #: ../src/celestia/celestiacore.cpp:1557
-#, fuzzy
 msgid "Star color: Enhanced"
-msgstr "总计恒星数:"
+msgstr "恒星着色：增强色"
 
 #. Light travel time in years, if >= 1day
 #: ../src/celestia/celestiacore.cpp:1594
-#, fuzzy, c-format
+#, c-format
 msgid "Light travel time:  %.4f yr"
-msgstr "光传播时间: %.4f年"
+msgstr "光传播时间：%.4f yr"
 
 #: ../src/celestia/celestiacore.cpp:1603
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
-msgstr "光传播时间: %d分 %.1f秒"
+msgstr "光传播时间：%d min %.1f s"
 
 #: ../src/celestia/celestiacore.cpp:1608
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
-msgstr "光传播时间: %d小时 %d分 %.1f秒"
+msgstr "光传播时间：%d h %d min %.1f s"
 
 #: ../src/celestia/celestiacore.cpp:1626
 msgid "Light travel delay included"
-msgstr "开启光的传播时间延迟"
+msgstr "包含光传播时间延迟"
 
 #: ../src/celestia/celestiacore.cpp:1631
 msgid "Light travel delay switched off"
-msgstr "关闭光的传播时间延迟"
+msgstr "关闭光传播时间延迟"
 
 #: ../src/celestia/celestiacore.cpp:1637
 msgid "Light travel delay ignored"
-msgstr "忽略光的传播时间延迟"
+msgstr "忽略光传播时间延迟"
 
 #: ../src/celestia/celestiacore.cpp:1680
 msgid "Using normal surface textures."
@@ -1655,35 +1649,32 @@ msgstr "调用知识界限表面纹理。"
 
 #: ../src/celestia/celestiacore.cpp:1752
 msgid "Follow"
-msgstr "跟随物体"
+msgstr "跟随"
 
 #: ../src/celestia/celestiacore.cpp:1777
 msgid "Time: Forward"
-msgstr "时间:前进"
+msgstr "时间：前进"
 
 #: ../src/celestia/celestiacore.cpp:1779
 msgid "Time: Backward"
-msgstr "时间:后退"
+msgstr "时间：后退"
 
 #: ../src/celestia/celestiacore.cpp:1791 ../src/celestia/celestiacore.cpp:1806
-#, fuzzy, c-format
+#, c-format
 msgid "Time rate: %.6g"
-msgstr "时间速率"
+msgstr "时间步长：%.6g"
 
 #: ../src/celestia/celestiacore.cpp:1846
-#, fuzzy
 msgid "Low res textures"
-msgstr "纹理"
+msgstr "低分辨率纹理"
 
 #: ../src/celestia/celestiacore.cpp:1849
-#, fuzzy
 msgid "Medium res textures"
-msgstr "纹理"
+msgstr "中分辨率纹理"
 
 #: ../src/celestia/celestiacore.cpp:1852
-#, fuzzy
 msgid "High res textures"
-msgstr "纹理"
+msgstr "高分辨率纹理"
 
 #: ../src/celestia/celestiacore.cpp:1899
 msgid "Sync Orbit"
@@ -1695,22 +1686,22 @@ msgstr "锁定"
 
 #: ../src/celestia/celestiacore.cpp:1911
 msgid "Chase"
-msgstr "追赶"
+msgstr "追逐"
 
 #: ../src/celestia/celestiacore.cpp:1924 ../src/celestia/celestiacore.cpp:1955
-#, fuzzy, c-format
+#, c-format
 msgid "Magnitude limit:  %.2f"
-msgstr "极限星等:%.2f"
+msgstr "极限星等：%.2f"
 
 #: ../src/celestia/celestiacore.cpp:1935 ../src/celestia/celestiacore.cpp:1966
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
-msgstr "45度视野区内星等自动调节:%.2f"
+msgstr "45° 视野区内星等自动调节：%.2f"
 
 #: ../src/celestia/celestiacore.cpp:1985 ../src/celestia/celestiacore.cpp:2000
 #, c-format
 msgid "Ambient light level:  %.2f"
-msgstr "环境光等级: %.2f"
+msgstr "环境光等级：%.2f"
 
 #: ../src/celestia/celestiacore.cpp:2011 ../src/celestia/celestiacore.cpp:2022
 #, c-format
@@ -1732,7 +1723,7 @@ msgstr "曝光"
 
 #: ../src/celestia/celestiacore.cpp:2412
 msgid "GL error: "
-msgstr "GL 错误:"
+msgstr "GL 错误："
 
 #: ../src/celestia/celestiacore.cpp:2511
 msgid "View too small to be split"
@@ -1744,16 +1735,16 @@ msgstr "已增加视窗"
 
 #: ../src/celestia/celestiacore.cpp:2760
 msgid "Mpc"
-msgstr ""
+msgstr "Mpc"
 
 #: ../src/celestia/celestiacore.cpp:2765
 msgid "kpc"
-msgstr ""
+msgstr "kpc"
 
 #: ../src/celestia/celestiacore.cpp:2770
 #: ../src/celestia/qt/qtselectionpopup.cpp:108
 msgid "ly"
-msgstr "光年"
+msgstr "ly"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:194
 #. i18n: ectx: property (text), widget (QRadioButton, auButton)
@@ -1761,100 +1752,93 @@ msgstr "光年"
 #: ../src/celestia/qt/qtselectionpopup.cpp:110 ../src/celestia/qt/rc.cpp:36
 #: ../src/celestia/win32/res/resource_strings.cpp:135
 msgid "au"
-msgstr "天文单位"
+msgstr "AU"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/celestiacore.cpp:2779 ../src/celestia/qt/qtinfopanel.cpp:118
+#: ../src/celestia/celestiacore.cpp:2779
+#: ../src/celestia/qt/qtinfopanel.cpp:118
 #: ../src/celestia/qt/qtinfopanel.cpp:212 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:133
 msgid "km"
-msgstr "千米"
+msgstr "km"
 
-#: ../src/celestia/celestiacore.cpp:2784 ../src/celestia/qt/qtinfopanel.cpp:122
-#, fuzzy
+#: ../src/celestia/celestiacore.cpp:2784
+#: ../src/celestia/qt/qtinfopanel.cpp:122
 msgid "m"
-msgstr "米/秒"
+msgstr "m"
 
-#: ../src/celestia/celestiacore.cpp:2804 ../src/celestia/qt/qtinfopanel.cpp:166
+#: ../src/celestia/celestiacore.cpp:2804
+#: ../src/celestia/qt/qtinfopanel.cpp:166
 #: ../src/celestia/qt/qtinfopanel.cpp:190
 #: ../src/celestia/qt/qtinfopanel.cpp:224
-#, fuzzy
 msgid "days"
-msgstr " 天"
+msgstr "d"
 
-#: ../src/celestia/celestiacore.cpp:2806 ../src/celestia/qt/qtinfopanel.cpp:162
-#, fuzzy
+#: ../src/celestia/celestiacore.cpp:2806
+#: ../src/celestia/qt/qtinfopanel.cpp:162
 msgid "hours"
-msgstr " 小时"
+msgstr "h"
 
 #: ../src/celestia/celestiacore.cpp:2808
-#, fuzzy
 msgid "minutes"
-msgstr " 分"
+msgstr "min"
 
 #: ../src/celestia/celestiacore.cpp:2810
-#, fuzzy
 msgid "seconds"
-msgstr " 秒"
+msgstr "s"
 
 #: ../src/celestia/celestiacore.cpp:2812
-#, fuzzy, c-format
+#, c-format
 msgid "Rotation period: %s %s\n"
-msgstr "自转周期:"
+msgstr "自转周期：%s %s\n"
 
 #: ../src/celestia/celestiacore.cpp:2821
-#, fuzzy
 msgid "m/s"
-msgstr "米/秒"
+msgstr "m/s"
 
 #: ../src/celestia/celestiacore.cpp:2823
-#, fuzzy
 msgid "km/s"
-msgstr "千米/秒"
+msgstr "km/s"
 
 #: ../src/celestia/celestiacore.cpp:2827
-#, fuzzy
 msgid "AU/s"
-msgstr "天文单位/秒"
+msgstr "AU/s"
 
 #: ../src/celestia/celestiacore.cpp:2829
-#, fuzzy
 msgid "ly/s"
-msgstr " 光年/秒"
+msgstr "ly/s"
 
 #: ../src/celestia/celestiacore.cpp:2831
-#, fuzzy, c-format
+#, c-format
 msgid "Speed: %s %s\n"
-msgstr ""
-"\n"
-"速度:"
+msgstr "速度：%s %s\n"
 
 #: ../src/celestia/celestiacore.cpp:2895
-#, fuzzy, c-format
+#, c-format
 msgid "Apparent diameter: %s\n"
-msgstr "视直径:"
+msgstr "视直径：%s\n"
 
 #: ../src/celestia/celestiacore.cpp:2908
-#, fuzzy, c-format
+#, c-format
 msgid "Apparent magnitude: %.1f\n"
-msgstr "视星等:"
+msgstr "视星等：%.1f\n"
 
 #: ../src/celestia/celestiacore.cpp:2912
-#, fuzzy, c-format
+#, c-format
 msgid "Absolute magnitude: %.1f\n"
-msgstr "绝对星等:"
+msgstr "绝对星等：%.1f\n"
 
 #: ../src/celestia/celestiacore.cpp:2992
 #, c-format
 msgid "%.6f%c %.6f%c %f km"
-msgstr ""
+msgstr "%.6f%c %.6f%c %f km"
 
 #: ../src/celestia/celestiacore.cpp:3018 ../src/celestia/celestiacore.cpp:3091
 #: ../src/celestia/celestiacore.cpp:3120 ../src/celestia/celestiacore.cpp:3201
-#, fuzzy, c-format
+#, c-format
 msgid "Distance: %s\n"
-msgstr "距离:"
+msgstr "距离：%s\n"
 
 #: ../src/celestia/celestiacore.cpp:3022
 msgid "Star system barycenter\n"
@@ -1863,12 +1847,12 @@ msgstr "星系质心\n"
 #: ../src/celestia/celestiacore.cpp:3026
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
-msgstr "绝对星等(视星等):%.2f (%.2f)\n"
+msgstr "绝对星等（视星等）：%.2f（%.2f）\n"
 
 #: ../src/celestia/celestiacore.cpp:3032
-#, fuzzy, c-format
+#, c-format
 msgid "Luminosity: %sx Sun\n"
-msgstr "光度:"
+msgstr "光度: %s Lsun\n"
 
 #: ../src/celestia/celestiacore.cpp:3038
 msgid "Neutron star"
@@ -1879,58 +1863,58 @@ msgid "Black hole"
 msgstr "黑洞"
 
 #: ../src/celestia/celestiacore.cpp:3046
-#, fuzzy, c-format
+#, c-format
 msgid "Class: %s\n"
-msgstr "天体类别:"
+msgstr "类别：%s\n"
 
 #: ../src/celestia/celestiacore.cpp:3053
-#, fuzzy, c-format
+#, c-format
 msgid "Surface temp: %s K\n"
-msgstr "表面温度:"
+msgstr "表面温度：%s K\n"
 
 #: ../src/celestia/celestiacore.cpp:3058
-#, fuzzy, c-format
+#, c-format
 msgid "Radius: %s Rsun  (%s km)\n"
-msgstr "半径:"
+msgstr "半径：%s Rsun（%s km）\n"
 
 #: ../src/celestia/celestiacore.cpp:3064
-#, fuzzy, c-format
+#, c-format
 msgid "Radius: %s km\n"
-msgstr "半径:"
+msgstr "半径：%s km\n"
 
 #: ../src/celestia/celestiacore.cpp:3080
 msgid "Planetary companions present\n"
 msgstr "拥有行星\n"
 
 #: ../src/celestia/celestiacore.cpp:3096
-#, fuzzy, c-format
+#, c-format
 msgid "Distance from center: %s\n"
-msgstr "到中心的距离:"
+msgstr "到中心的距离：%s\n"
 
 #: ../src/celestia/celestiacore.cpp:3099 ../src/celestia/celestiacore.cpp:3127
-#, fuzzy, c-format
+#, c-format
 msgid "Radius: %s\n"
-msgstr "半径:"
+msgstr "半径：%s\n"
 
 #: ../src/celestia/celestiacore.cpp:3168
 #, c-format
 msgid "Phase angle: %.1f%s\n"
-msgstr "相位角: %.1f%s\n"
+msgstr "相位角：%.1f%s\n"
 
 #: ../src/celestia/celestiacore.cpp:3180
 #, c-format
 msgid "Mass: %.2f Me\n"
-msgstr ""
+msgstr "质量：%.2f Me\n"
 
 #: ../src/celestia/celestiacore.cpp:3186
 #, c-format
 msgid "Density: %.2f x 1000 kg/m^3\n"
-msgstr ""
+msgstr "密度：%.2f×10^3 kg/m^3\n"
 
 #: ../src/celestia/celestiacore.cpp:3192
-#, fuzzy, c-format
+#, c-format
 msgid "Temperature: %.0f K\n"
-msgstr "温度:"
+msgstr "温度：%.0f K\n"
 
 #: ../src/celestia/celestiacore.cpp:3432
 msgid "  LT"
@@ -1951,63 +1935,63 @@ msgid "Time stopped"
 msgstr "时间已停止"
 
 #: ../src/celestia/celestiacore.cpp:3451
-#, fuzzy, c-format
+#, c-format
 msgid "%.6g x faster"
-msgstr " 加快"
+msgstr "加快 %.6g 倍"
 
 #: ../src/celestia/celestiacore.cpp:3455
-#, fuzzy, c-format
+#, c-format
 msgid "%.6g x slower"
-msgstr " 减慢"
+msgstr "减慢至 1/%.6g"
 
 #: ../src/celestia/celestiacore.cpp:3461
 msgid " (Paused)"
 msgstr "（已暂停）"
 
 #: ../src/celestia/celestiacore.cpp:3479
-#, fuzzy, c-format
+#, c-format
 msgid "FPS: %.1f\n"
-msgstr "帧速率:"
+msgstr "FPS：%.1f\n"
 
 #: ../src/celestia/celestiacore.cpp:3504
-#, fuzzy, c-format
+#, c-format
 msgid "Travelling (%s)\n"
-msgstr "太空飞行中"
+msgstr "正在飞行（%s）\n"
 
 #: ../src/celestia/celestiacore.cpp:3507
-#, fuzzy, c-format
+#, c-format
 msgid "Travelling\n"
-msgstr "太空飞行中"
+msgstr "正在飞行\n"
 
 #: ../src/celestia/celestiacore.cpp:3516
-#, fuzzy, c-format
+#, c-format
 msgid "Track %s\n"
-msgstr "追踪"
+msgstr "跟踪 %s\n"
 
 #: ../src/celestia/celestiacore.cpp:3532
-#, fuzzy, c-format
+#, c-format
 msgid "Follow %s\n"
-msgstr "跟随"
+msgstr "跟随 %s\n"
 
 #: ../src/celestia/celestiacore.cpp:3536
-#, fuzzy, c-format
+#, c-format
 msgid "Sync Orbit %s\n"
-msgstr "同步轨道"
+msgstr "同步轨道 %s\n"
 
 #: ../src/celestia/celestiacore.cpp:3540
 #, c-format
 msgid "Lock %s -> %s\n"
-msgstr ""
+msgstr "锁定 %s -> %s\n"
 
 #: ../src/celestia/celestiacore.cpp:3546
-#, fuzzy, c-format
+#, c-format
 msgid "Chase %s\n"
-msgstr "追赶"
+msgstr "追逐 %s\n"
 
 #: ../src/celestia/celestiacore.cpp:3560
 #, c-format
 msgid "FOV: %s (%.2fx)\n"
-msgstr ""
+msgstr "FOV：%s（%.2f×）\n"
 
 #: ../src/celestia/celestiacore.cpp:3588 ../src/celestia/celestiacore.cpp:3591
 msgid "Sun"
@@ -2015,22 +1999,20 @@ msgstr "太阳"
 
 #: ../src/celestia/celestiacore.cpp:3766
 msgid "Target name: "
-msgstr "目标物体名称:"
+msgstr "目标名称："
 
 #: ../src/celestia/celestiacore.cpp:3849
 #, c-format
 msgid "%dx%d at %f fps  %s"
-msgstr ""
+msgstr "%d×%d 于 %f FPS  %s"
 
 #: ../src/celestia/celestiacore.cpp:3852
-#, fuzzy
 msgid "Paused"
-msgstr " 已暂停"
+msgstr "已暂停"
 
 #: ../src/celestia/celestiacore.cpp:3852
-#, fuzzy
 msgid "Recording"
-msgstr "  录像中"
+msgstr "正在录像"
 
 #: ../src/celestia/celestiacore.cpp:3875
 msgid "F11 Start/Pause    F12 Stop"
@@ -2041,51 +2023,51 @@ msgid "Edit Mode"
 msgstr "编辑模式"
 
 #: ../src/celestia/celestiacore.cpp:3954
-#, fuzzy, c-format
+#, c-format
 msgid "Loading solar system catalog: %s\n"
-msgstr "加载太阳系目录:"
+msgstr "正在加载太阳系目录：%s\n"
 
 #: ../src/celestia/celestiacore.cpp:3995
-#, fuzzy, c-format
+#, c-format
 msgid "Loading %s catalog: %s\n"
-msgstr "加载太阳系目录:"
+msgstr "正在加载 %s 目录：%s\n"
 
 #: ../src/celestia/celestiacore.cpp:4037
 msgid "Error reading configuration file."
-msgstr "读取系统设置文件时出错。"
+msgstr "读取配置文件时出错。"
 
 #: ../src/celestia/celestiacore.cpp:4048
 msgid "Initialization of SPICE library failed."
-msgstr "SPICE 库初始化失败。"
+msgstr "Spice 库初始化失败。"
 
 #: ../src/celestia/celestiacore.cpp:4094
 msgid "Cannot read star database."
-msgstr "无法读出星体数据库。"
+msgstr "无法读取星体数据库。"
 
 #: ../src/celestia/celestiacore.cpp:4115
-#, fuzzy, c-format
+#, c-format
 msgid "Error opening deepsky catalog file %s.\n"
-msgstr "读取深空间恒星目录文件错误。"
+msgstr "读取深空天体目录文件 %s 时出错。\n"
 
 #: ../src/celestia/celestiacore.cpp:4119
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot read Deep Sky Objects database %s.\n"
-msgstr "无法读出星体数据库。"
+msgstr "深空天体数据库 %s 无法读取。\n"
 
 #: ../src/celestia/celestiacore.cpp:4160
-#, fuzzy, c-format
+#, c-format
 msgid "Error opening solar system catalog %s.\n"
-msgstr "打开太阳系目录文件时出错。\n"
+msgstr "打开太阳系目录文件 %s 时出错。\n"
 
 #: ../src/celestia/celestiacore.cpp:4192
-#, fuzzy, c-format
+#, c-format
 msgid "Error opening asterisms file %s.\n"
-msgstr "打开星群文件时出错。"
+msgstr "打开星群文件 %s 时出错。\n"
 
 #: ../src/celestia/celestiacore.cpp:4208
-#, fuzzy, c-format
+#, c-format
 msgid "Error opening constellation boundaries file %s.\n"
-msgstr "打开星座边界文件时出错。"
+msgstr "打开星座边界文件 %s 时出错。\n"
 
 #: ../src/celestia/celestiacore.cpp:4282
 msgid "Failed to initialize renderer"
@@ -2093,22 +2075,22 @@ msgstr "渲染器初始化失败"
 
 #: ../src/celestia/celestiacore.cpp:4298
 msgid "Error loading font; text will not be visible.\n"
-msgstr "读取字体时出错；文字将无法显示。\n"
+msgstr "读取字体时出错，文字将无法显示。\n"
 
 #: ../src/celestia/celestiacore.cpp:4352
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading cross index %s\n"
-msgstr "读取跨索引文件发生错误"
+msgstr "读取跨索引文件 %s 时出错\n"
 
 #: ../src/celestia/celestiacore.cpp:4354
-#, fuzzy, c-format
+#, c-format
 msgid "Loaded cross index %s\n"
-msgstr "跨索引文件已加载"
+msgstr "已加载跨索引文件 %s\n"
 
 #: ../src/celestia/celestiacore.cpp:4368 ../src/celestia/celestiacore.cpp:4390
-#, fuzzy, c-format
+#, c-format
 msgid "Error opening %s\n"
-msgstr "读取发生错误"
+msgstr "打开 %s 时出错\n"
 
 #: ../src/celestia/celestiacore.cpp:4375
 msgid "Error reading star names file\n"
@@ -2119,19 +2101,18 @@ msgid "Error reading stars file\n"
 msgstr "读取恒星文件时出错\n"
 
 #: ../src/celestia/celestiacore.cpp:4426
-#, fuzzy, c-format
+#, c-format
 msgid "Error opening star catalog %s\n"
-msgstr "读取恒星目录文件"
+msgstr "读取恒星目录文件 %s 时出错\n"
 
 #: ../src/celestia/celestiacore.cpp:4957
-#, fuzzy, c-format
+#, c-format
 msgid "Error opening LuaHook '%s'"
-msgstr "打开脚本文件'%s'时出现错误"
+msgstr "打开 LuaHook %s 时出错"
 
 #: ../src/celestia/celestiacore.cpp:4976
-#, fuzzy
 msgid "Unknown error loading hook script"
-msgstr "打开脚本文件出现未知错误"
+msgstr "打开脚本文件时出现未知错误"
 
 #: ../src/celestia/celx.cpp:1066
 msgid ""
@@ -2144,6 +2125,13 @@ msgid ""
 "\n"
 "y = yes, ESC = cancel script, any other key = no"
 msgstr ""
+"警告：\n"
+"\n"
+"当前脚本正在请求读取/写入文件权限，并请求执行外部程序。\n"
+"允许该行为可能会对您的计算机产生危害。\n"
+"是否信任该脚本并允许该行为？\n"
+"\n"
+"Y - 是，Esc - 取消，其他任意键 - 否"
 
 #: ../src/celestia/celx.cpp:1077
 msgid ""
@@ -2154,183 +2142,176 @@ msgid ""
 "dangerous.\n"
 "Do you trust the script and want to allow this?"
 msgstr ""
+"警告：\n"
+"\n"
+"当前脚本正在请求读取/写入文件权限，并请求执行外部程序。\n"
+"允许该行为可能会对您的计算机产生危害。\n"
+"是否信任该脚本并允许该行为？"
 
 #: ../src/celestia/glutmain.cpp:520
 #, c-format
 msgid ""
 "Celestia was unable to initialize OpenGL extensions (error %i). Graphics "
 "quality will be reduced."
-msgstr ""
+msgstr "Celestia 无法初始化 OpenGL 扩展（错误 %i）。图像质量将降低。"
 
 #. if (glGetError())
-#. result = [NSString stringWithFormat:NSLocalizedString(@"%@: --not available--",""), desc];
+#. result = [NSString stringWithFormat:NSLocalizedString(@"%@: --not
+#. available--",""), desc];
 #. else
 #: ../src/celestia/macosx/CGLInfo.m:53
 #, objc-format
 msgid "%@: %d"
-msgstr ""
+msgstr "%@：%d"
 
 #: ../src/celestia/macosx/CGLInfo.m:60
 #, objc-format
 msgid "%s:  %@"
-msgstr ""
+msgstr "%s：%@"
 
 #: ../src/celestia/macosx/CGLInfo.m:60
-#, fuzzy
 msgid "Supported"
-msgstr "支持的扩展:"
+msgstr "支持"
 
 #: ../src/celestia/macosx/CGLInfo.m:72
-#, fuzzy, objc-format
+#, objc-format
 msgid "Vendor: %@"
-msgstr "制造商:"
+msgstr "制造商：%@"
 
 #: ../src/celestia/macosx/CGLInfo.m:75
-#, fuzzy, objc-format
+#, objc-format
 msgid "Renderer: %@"
-msgstr "渲染器:"
+msgstr "渲染器：%@"
 
 #: ../src/celestia/macosx/CGLInfo.m:77
-#, fuzzy, objc-format
+#, objc-format
 msgid "Version: %@"
-msgstr "版本:"
+msgstr "版本：%@"
 
 #: ../src/celestia/macosx/CGLInfo.m:97 ../src/celestia/macosx/CGLInfo.m:98
-#, fuzzy
 msgid "Max simultaneous textures"
-msgstr "最大同时纹理"
+msgstr "最大实时纹理"
 
 #: ../src/celestia/macosx/CGLInfo.m:99
-#, fuzzy
 msgid "Max texture size"
-msgstr "最大纹理尺寸:"
+msgstr "最大纹理尺寸"
 
 #: ../src/celestia/macosx/CGLInfo.m:122
-#, fuzzy
 msgid "Extensions:"
-msgstr "支持的扩展:"
+msgstr "扩展："
 
 #: ../src/celestia/macosx/CelestiaController.m:161
 msgid ""
-"It appears that the \"CelestiaResources\" directory has not been properly "
-"installed in the correct location as indicated in the installation "
-"instructions. \n"
+"It appears that the \"CelestiaResources\" directory has not been properly installed in the correct location as indicated in the installation instructions. \n"
 "\n"
 "Please correct this and try again."
 msgstr ""
+"CelestiaResources 目录没有被安装在说明中指示的正确位置。\n"
+"\n"
+"请纠正该错误并重试。"
 
 #: ../src/celestia/macosx/CelestiaController.m:181
-#, fuzzy
 msgid "Error loading data files. Celestia will now quit."
-msgstr "读取字体时出错；文字将无法显示。\n"
+msgstr "加载数据文件时出错，Celestia 即将退出。"
 
 #: ../src/celestia/macosx/CelestiaController.m:213
 msgid "Fatal Error"
-msgstr ""
+msgstr "致命错误"
 
 #: ../src/celestia/macosx/CelestiaController.m:323
 #, objc-format
 msgid ""
-"It appears you are running Celestia on %s hardware. Do you wish to install a "
-"workaround?"
-msgstr ""
+"It appears you are running Celestia on %s hardware. Do you wish to install a"
+" workaround?"
+msgstr "您正尝试在 %s 的硬件上运行 Celestia。是否需要安装一个工作区？"
 
 #: ../src/celestia/macosx/CelestiaController.m:324
 #, objc-format
 msgid ""
 "A shell script will be run to modify your %@, adding an IgnoreGLExtensions "
 "directive. This can prevent freezing issues."
-msgstr ""
+msgstr "我们将运行一个 Shell 脚本来修改您的 %@，并添加一个 IgnoreGLExtensions 指令。这可以防止冻结问题。"
 
 #: ../src/celestia/macosx/CelestiaController.m:325
 msgid "Yes"
-msgstr ""
+msgstr "是"
 
 #: ../src/celestia/macosx/CelestiaController.m:326
-#, fuzzy
 msgid "No"
-msgstr "当前"
+msgstr "否"
 
 #: ../src/celestia/macosx/CelestiaController.m:351
 msgid "Workaround successfully installed."
-msgstr ""
+msgstr "工作区成功安装"
 
 #: ../src/celestia/macosx/CelestiaController.m:352
 #, objc-format
 msgid "Your original %@ has been backed up."
-msgstr ""
+msgstr "您的原始 %@ 已经备份。"
 
 #: ../src/celestia/macosx/CelestiaController.m:357
 msgid ""
 "There was a problem installing the workaround. You can attempt to perform "
 "the workaround manually by following the instructions in the README."
-msgstr ""
+msgstr "安装工作区时出现了一个问题。您可以尝试按照 ReadMe 文件去执行工作区手册。"
 
 #: ../src/celestia/macosx/CelestiaController.m:467
-#, fuzzy
 msgid "Quit Celestia?"
-msgstr "关于 Celestia"
+msgstr "退出 Celestia？"
 
 #: ../src/celestia/macosx/CelestiaController.m:468
 msgid "Are you sure you want to quit Celestia?"
-msgstr ""
+msgstr "确定退出 Celestia？"
 
 #: ../src/celestia/macosx/CelestiaController.m:469
-#, fuzzy
 msgid "Quit"
-msgstr "基多"
+msgstr "退出"
 
 #: ../src/celestia/macosx/CelestiaController.m:649
-#, fuzzy
 msgid "Unable to properly exit full screen mode. Celestia will now quit."
-msgstr "读取字体时出错；文字将无法显示。\n"
+msgstr "无法正常退出全屏模式，Celestia 即将退出。"
 
 #: ../src/celestia/macosx/CelestiaController.m:797
 msgid "Movie capture is not available in this version of Celestia."
-msgstr ""
+msgstr "此版本的 Celestia 不提供屏幕录制功能。"
 
 #. Remove following line to enable movie capture...
 #: ../src/celestia/macosx/CelestiaController.m:797
-#, fuzzy
 msgid "No Movie Capture"
-msgstr "捕捉影像"
+msgstr "无屏幕录制功能"
 
 #: ../src/celestia/macosx/CelestiaController.m:803
-#, fuzzy
 msgid "Capture Movie"
-msgstr "捕捉屏幕影像"
+msgstr "屏幕录制"
 
 #. NSLog(@"[FavoritesDrawerController addNewFavorite:%@]",sender);
 #: ../src/celestia/macosx/FavoritesDrawerController.m:117
 msgid "untitled folder"
-msgstr ""
+msgstr "无标题文件夹"
 
 #: ../src/celestia/macosx/GotoWindowController.m:59
-#, fuzzy
 msgid "No Object Name Entered"
-msgstr "物体名称"
+msgstr "未输入天体名称"
 
 #: ../src/celestia/macosx/GotoWindowController.m:60
 msgid "Please enter an object name."
-msgstr ""
+msgstr "请输入天体名称"
 
 #: ../src/celestia/macosx/GotoWindowController.m:67
-#, fuzzy
 msgid "Object Not Found"
-msgstr "物体"
+msgstr "找不到天体"
 
 #: ../src/celestia/macosx/GotoWindowController.m:68
 msgid "Please check that the object name is correct."
-msgstr ""
+msgstr "请检查天体名称是否正确"
 
 #: ../src/celestia/macosx/Menu_Extensions.m:173
-#, fuzzy
 msgid "Show Alternate Surface"
-msgstr "替代表面(&A)"
+msgstr "显示可替代表面"
 
 #: ../src/celestia/macosx/Menu_Extensions.m:269
 msgid "default"
-msgstr ""
+msgstr "默认"
 
 #: ../src/celestia/macosx/RenderPanelController.m:42
 #, objc-format
@@ -2338,76 +2319,79 @@ msgid ""
 "Your system does not support\n"
 "%@"
 msgstr ""
+"您的系统不支持\n"
+"%@"
 
 #: ../src/celestia/macosx/SetTimeWindowController.m:63
-#, fuzzy
 msgid "No Date or Time Entered"
-msgstr "物体名称"
+msgstr "未输入日期或时间"
 
 #: ../src/celestia/macosx/SetTimeWindowController.m:64
 msgid "Please enter a date and/or time."
-msgstr ""
+msgstr "请输入日期或时间"
 
 #: ../src/celestia/macosx/SetTimeWindowController.m:212
 msgid "Improper Date or Time Format"
-msgstr ""
+msgstr "日期或时间格式错误"
 
 #: ../src/celestia/macosx/SetTimeWindowController.m:213
 msgid "Please enter the date as \"mm/dd/yyyy\" and the time as \"hh:mm:ss\"."
 msgstr ""
+"请按照相应的格式输入日期和时间。\n"
+"日期格式：\"mm/dd/yyyy\"\n"
+"时间格式：\"mm/dd/yyyy\""
 
 #: ../src/celestia/oggtheoracapture.cpp:162
 #, c-format
 msgid "Error in creating ogg file %s for capture.\n"
-msgstr "创建捕捉使用的 Ogg 文件 %s 发生错误\n"
+msgstr "创建屏幕录制使用的 OGG 文件 %s 出错。\n"
 
 #. can't get here
 #: ../src/celestia/oggtheoracapture.cpp:256
 #: ../src/celestia/oggtheoracapture.cpp:276
-#, fuzzy
 msgid "Internal Ogg library error.\n"
-msgstr "内建 Ogg 库错误。"
+msgstr "内部 OGG 库出错\n"
 
 #: ../src/celestia/oggtheoracapture.cpp:311
 #, c-format
 msgid ""
-"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx"
-"%d offset (%dx%d)\n"
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d "
+"%dx%d offset (%dx%d)\n"
 msgstr ""
-"OggTheoraCapture::start() - Theora 影像:%s %.2f(%d/%d) 帧/秒 质量 %d %dx%d 位"
-"移(%dx%d)\n"
+"OggTheoraCapture::start() - Theora 影像：%s %.2f（%d/%d）FPS 质量 %d %d×%d 位移 "
+"(%d×%d)\n"
 
 #: ../src/celestia/oggtheoracapture.cpp:426
 #, c-format
 msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
-msgstr "OggTheoraCapture::cleanup() - 已写入%d 帧\n"
+msgstr "OggTheoraCapture::cleanup() - 已写入 %d 帧\n"
 
 #: ../src/celestia/qt/qtappwin.cpp:162
 msgid "Auto"
-msgstr ""
+msgstr "自动"
 
 #: ../src/celestia/qt/qtappwin.cpp:168
 msgid "Custom"
-msgstr ""
+msgstr "自定义"
 
 #: ../src/celestia/qt/qtappwin.cpp:212
 msgid ""
-"Celestia is unable to run because the data directroy was not found, probably "
-"due to improper installation."
-msgstr ""
+"Celestia is unable to run because the data directroy was not found, probably"
+" due to improper installation."
+msgstr "可能由于安装不当，Celestia 无法找到数据目录，无法运行。"
 
 #: ../src/celestia/qt/qtappwin.cpp:249
 msgid ""
 "Celestia is unable to run because the CelestiaResources folder was not "
 "found, probably due to improper installation."
-msgstr ""
+msgstr "可能由于安装不当，Celestia 找不到 CelestiaResources 文件夹，无法运行。"
 
 #: ../src/celestia/qt/qtappwin.cpp:291
 #, qt-format
 msgid ""
 "Celestia was unable to initialize OpenGL extensions (error %1). Graphics "
 "quality will be reduced."
-msgstr ""
+msgstr "Celestia 无法初始化 OpenGL 扩展（错误 %1）。图像质量将降低。"
 
 #: ../src/celestia/qt/qtappwin.cpp:309
 msgid "Celestial Browser"
@@ -2415,9 +2399,8 @@ msgstr "天体浏览器"
 
 #. Info browser for a selected object
 #: ../src/celestia/qt/qtappwin.cpp:315
-#, fuzzy
 msgid "Info Browser"
-msgstr "天体浏览器"
+msgstr "信息浏览器"
 
 #. Set up the browser tabs
 #: ../src/celestia/qt/qtappwin.cpp:344
@@ -2440,15 +2423,14 @@ msgid "Stars"
 msgstr "恒星"
 
 #: ../src/celestia/qt/qtappwin.cpp:346
-#, fuzzy
 msgid "Deep Sky Objects"
-msgstr " 个深空间物体"
+msgstr "深空天体"
 
-#: ../src/celestia/qt/qtappwin.cpp:353 ../src/celestia/qt/qteventfinder.cpp:662
+#: ../src/celestia/qt/qtappwin.cpp:353
+#: ../src/celestia/qt/qteventfinder.cpp:662
 #: ../src/celestia/qt/qteventfinder.cpp:673
-#, fuzzy
 msgid "Event Finder"
-msgstr "星月食查找"
+msgstr "事件查找器"
 
 #. addDockWidget(Qt::DockWidgetArea, eventFinder);
 #. Create the time toolbar
@@ -2462,142 +2444,129 @@ msgstr "时间"
 #. i18n: file: ../src/celestia/qt/preferences.ui:228
 #. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
 #: ../src/celestia/qt/qtappwin.cpp:369 ../src/celestia/qt/rc.cpp:138
-#, fuzzy
 msgid "Guides"
 msgstr "向导"
 
 #: ../src/celestia/qt/qtappwin.cpp:419
-#, fuzzy
 msgid "Full screen"
-msgstr "切换全屏"
+msgstr "全屏"
 
 #: ../src/celestia/qt/qtappwin.cpp:421
-#, fuzzy
 msgid "Shift+F11"
-msgstr "捕捉影像(&M)...\tShift+F10"
+msgstr "Shift+F11"
 
 #: ../src/celestia/qt/qtappwin.cpp:612
-#, fuzzy
 msgid "Error opening bookmarks file"
-msgstr "打开星群文件时出错。"
+msgstr "打开书签时出错"
 
 #: ../src/celestia/qt/qtappwin.cpp:631
-#, fuzzy
 msgid "Error Saving Bookmarks"
-msgstr "标记书签(&A)..."
+msgstr "保存书签时出错"
 
 #: ../src/celestia/qt/qtappwin.cpp:673
-#, fuzzy
 msgid "Save Image"
-msgstr "另存为:"
+msgstr "保存图像"
 
 #: ../src/celestia/qt/qtappwin.cpp:675
-#, fuzzy
 msgid "Images (*.png *.jpg)"
-msgstr " 不是PNG图像文件。\n"
+msgstr "图像（*.png *.jpg）"
 
 #: ../src/celestia/qt/qtappwin.cpp:723 ../src/celestia/qt/qtappwin.cpp:728
 msgid "Capture Video"
-msgstr "捕捉屏幕影像"
+msgstr "屏幕录制"
 
 #: ../src/celestia/qt/qtappwin.cpp:725
-#, fuzzy
 msgid "Video (*.avi)"
-msgstr "捕捉屏幕影像"
+msgstr "视频（*.avi）"
 
 #: ../src/celestia/qt/qtappwin.cpp:730
-#, fuzzy
 msgid "Video (*.ogv)"
-msgstr "捕捉屏幕影像"
+msgstr "视频（*.ogv）"
 
 #: ../src/celestia/qt/qtappwin.cpp:740
-#, fuzzy
 msgid "Resolution:"
-msgstr "分辨率:"
+msgstr "分辨率："
 
 #: ../src/celestia/qt/qtappwin.cpp:744
 #, qt-format
 msgid "%1 x %2"
-msgstr ""
+msgstr "%1×%2"
 
 #: ../src/celestia/qt/qtappwin.cpp:748
 #: ../src/celestia/win32/res/resource_strings.cpp:143
-#, fuzzy
 msgid "Frame rate:"
-msgstr "帧速率:"
+msgstr "帧率："
 
 #: ../src/celestia/qt/qtappwin.cpp:795
 msgid "Captured screen shot to clipboard"
-msgstr ""
+msgstr "截取屏幕快照到剪贴板"
 
 #: ../src/celestia/qt/qtappwin.cpp:806 ../src/celestia/win32/winmain.cpp:3896
 msgid "Copied URL"
-msgstr "已复制网址"
+msgstr "已复制 URL"
 
 #: ../src/celestia/qt/qtappwin.cpp:816
-#, fuzzy
 msgid "Pasting URL"
-msgstr "载入网址"
+msgstr "加载 URL"
 
 #: ../src/celestia/qt/qtappwin.cpp:940
-#, fuzzy
 msgid "Open Script"
-msgstr "打开脚本(&O)..."
+msgstr "打开脚本"
 
 #: ../src/celestia/qt/qtappwin.cpp:942
 msgid "Celestia Scripts (*.celx *.cel)"
-msgstr ""
+msgstr "Celestia 脚本（*.celx *.cel）"
 
 #: ../src/celestia/qt/qtappwin.cpp:1012
-#, fuzzy
 msgid "New bookmark"
-msgstr "在当前菜单中建立书签文件夹"
+msgstr "新建书签"
 
 #: ../src/celestia/qt/qtappwin.cpp:1068
 #, qt-format
 msgid ""
-"<html><p><b>Celestia 1.7.0 (Qt5 beta version, git commit %1)</b></"
-"p><p>Copyright (C) 2001-2018 by the Celestia Development Team. Celestia is "
-"free software. You can redistribute it and/or modify it under the terms of "
-"the GNU General Public License version&nbsp;2.</p><b>Celestia on the web</"
-"b><br>Main site: <a href=\"https://celestia.space/\">https://celestia.space/"
-"</a><br>Forum: <a href=\"https://celestia.space/forum/\">https://celestia."
-"space/forum/</a><br>GitHub project: <a href=\"https://github.com/"
-"CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</"
-"a><br></html>"
+"<html><p><b>Celestia 1.7.0 (Qt5 beta version, git commit "
+"%1)</b></p><p>Copyright (C) 2001-2018 by the Celestia Development Team. "
+"Celestia is free software. You can redistribute it and/or modify it under "
+"the terms of the GNU General Public License version&nbsp;2.</p><b>Celestia "
+"on the web</b><br>Main site: <a "
+"href=\"https://celestia.space/\">https://celestia.space/</a><br>Forum: <a "
+"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a><br></html>"
 msgstr ""
+"<html><p><b>Celestia 1.7.0（Qt5 beta 版本，Git 提交 %1）</b></p><p>Copyright:  (C) "
+"2001-2018 by the Celestia Development Team。Celestia 是免费软件。您可以根据 GNU 通用公共许 2 "
+"可对其进行修改。</p><b>Celestia 官网网站</b><br>主页：<a "
+"href=\"https://celestia.space/\">https://celestia.space/</a><br>论坛：<a "
+"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</a><br>GitHub"
+" 项目：<a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a><br></html>"
 
 #. Get the version string
 #. QTextStream::operator<<(const char *string) assumes that the string has
 #. ISO-8859-1 encoding, so we need to convert in to QString
 #: ../src/celestia/qt/qtappwin.cpp:1097
-#, fuzzy
 msgid "<b>OpenGL version: </b>"
-msgstr "<b>OpenGL 2.0 Shading 语言</b>"
+msgstr "<b>OpenGL 版本：</b>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1105
-#, fuzzy
 msgid "<b>Renderer: </b>"
-msgstr "<b>未扩展 OpenGL 1.1</b>"
+msgstr "<b>渲染器：</b>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1115
-#, fuzzy
 msgid "<b>GLSL Version: </b>"
-msgstr "GLSL 版本:"
+msgstr "<b>GLSL 版本：</b>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1121
-#, fuzzy
 msgid "<b>Maximum texture size: </b>"
-msgstr "最大纹理尺寸:"
+msgstr "<b>最大纹理尺寸：</b>"
 
 #. Show all supported extensions
 #: ../src/celestia/qt/qtappwin.cpp:1126
-#, fuzzy
 msgid "<b>Extensions:</b><br>\n"
-msgstr "<b>未扩展 OpenGL 1.1</b>"
+msgstr "<b>扩展：</b><br>\n"
 
 #: ../src/celestia/qt/qtappwin.cpp:1139 ../src/celestia/qt/qtappwin.cpp:1471
-#, fuzzy
 msgid "OpenGL Info"
 msgstr "OpenGL 信息"
 
@@ -2608,44 +2577,36 @@ msgid "&File"
 msgstr "文件(&F)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1166
-#, fuzzy
 msgid "&Grab image"
-msgstr "捕捉屏幕图像"
+msgstr "捕捉图像(&G)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1167
-#, fuzzy
 msgid "F10"
-msgstr "捕捉图像(&I)...\tF10"
+msgstr "F10"
 
 #: ../src/celestia/qt/qtappwin.cpp:1172
-#, fuzzy
 msgid "Capture &video"
-msgstr "捕捉屏幕影像"
+msgstr "屏幕录制(&V)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1177
-#, fuzzy
 msgid "Shift+F10"
-msgstr "捕捉影像(&M)...\tShift+F10"
+msgstr "Shift+F10"
 
 #: ../src/celestia/qt/qtappwin.cpp:1181
-#, fuzzy
 msgid "&Copy image"
-msgstr "复制网址"
+msgstr "复制图像"
 
 #: ../src/celestia/qt/qtappwin.cpp:1182
-#, fuzzy
 msgid "Ctrl+Shift+C"
-msgstr "Alt+C"
+msgstr "Ctrl+Shift+C"
 
 #: ../src/celestia/qt/qtappwin.cpp:1186
-#, fuzzy
 msgid "Copy &URL"
-msgstr "复制网址"
+msgstr "复制 URL(&U)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1191
-#, fuzzy
 msgid "&Paste URL"
-msgstr "已复制网址"
+msgstr "粘贴 URL(&P)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1198
 #: ../src/celestia/win32/res/resource_strings.cpp:2
@@ -2653,9 +2614,8 @@ msgid "&Open Script..."
 msgstr "打开脚本(&O)..."
 
 #: ../src/celestia/qt/qtappwin.cpp:1209
-#, fuzzy
 msgid "&Preferences..."
-msgstr "Celestia 偏好设置"
+msgstr "偏好(&P)..."
 
 #: ../src/celestia/qt/qtappwin.cpp:1213
 #: ../src/celestia/win32/res/resource_strings.cpp:7
@@ -2663,9 +2623,8 @@ msgid "E&xit"
 msgstr "退出(&X)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1214
-#, fuzzy
 msgid "Ctrl+Q"
-msgstr "反锯齿\tCtrl+X"
+msgstr "Ctrl+Q"
 
 #. ***** Navigation menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1219
@@ -2674,26 +2633,21 @@ msgid "&Navigation"
 msgstr "导航(&N)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1221
-#, fuzzy
 msgid "Select Sun"
-msgstr "选择(&S)"
+msgstr "选择太阳"
 
 #: ../src/celestia/qt/qtappwin.cpp:1225
-#, fuzzy
 msgid "Center Selection"
-msgstr "置中所选物体(&C)\tC"
+msgstr "置中所选天体"
 
 #: ../src/celestia/qt/qtappwin.cpp:1229
-#, fuzzy
 msgid "Goto Selection"
-msgstr ""
-"\n"
-"选择:"
+msgstr "前往所选天体"
 
 #: ../src/celestia/qt/qtappwin.cpp:1233
 #: ../src/celestia/win32/res/resource_strings.cpp:12
 msgid "Goto Object..."
-msgstr "驶向物体..."
+msgstr "驶向天体..."
 
 #. ***** Time menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1238
@@ -2702,25 +2656,21 @@ msgid "&Time"
 msgstr "时间(&T)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1240
-#, fuzzy
 msgid "Set &time"
-msgstr "设置时间..."
+msgstr "设置时间(&T)"
 
 #. ***** Display menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1248
-#, fuzzy
 msgid "&Display"
-msgstr "显示"
+msgstr "显示(&D)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1254
-#, fuzzy
 msgid "Dee&p Sky Objects"
-msgstr "已标记物体"
+msgstr "深空天体(&P)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1260
-#, fuzzy
 msgid "&Shadows"
-msgstr "显示云层投影"
+msgstr "阴影"
 
 #: ../src/celestia/qt/qtappwin.cpp:1271
 #: ../src/celestia/win32/res/resource_strings.cpp:37
@@ -2728,14 +2678,12 @@ msgid "Star St&yle"
 msgstr "恒星样式(&Y)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1278
-#, fuzzy
 msgid "Texture &Resolution"
 msgstr "纹理分辨率(&T)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1283
-#, fuzzy
 msgid "&FPS control"
-msgstr "键盘操作帮助(&C)"
+msgstr "FPS 控制(&F)"
 
 #. ***** Bookmark menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1300
@@ -2751,51 +2699,42 @@ msgstr "视窗(&V)"
 
 #. ***** MultiView menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1306
-#, fuzzy
 msgid "&MultiView"
-msgstr "多视窗"
+msgstr "多重视窗(&M)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1309
-#, fuzzy
 msgid "Split view vertically"
 msgstr "垂直分割视窗"
 
 #: ../src/celestia/qt/qtappwin.cpp:1310
-#, fuzzy
 msgid "Ctrl+R"
-msgstr "水平分割视窗(&H)\tCtrl+R"
+msgstr "Ctrl+R"
 
 #: ../src/celestia/qt/qtappwin.cpp:1315
-#, fuzzy
 msgid "Split view horizontally"
 msgstr "水平分割视窗"
 
 #: ../src/celestia/qt/qtappwin.cpp:1316
-#, fuzzy
 msgid "Ctrl+U"
-msgstr "垂直分割视窗(&V)\tCtrl+U"
+msgstr "Ctrl+U"
 
 #: ../src/celestia/qt/qtappwin.cpp:1321
-#, fuzzy
 msgid "Cycle views"
 msgstr "切换视窗"
 
 #: ../src/celestia/qt/qtappwin.cpp:1322
 msgid "Tab"
-msgstr ""
+msgstr "Tab"
 
 #: ../src/celestia/qt/qtappwin.cpp:1327
-#, fuzzy
 msgid "Single view"
 msgstr "单视窗"
 
 #: ../src/celestia/qt/qtappwin.cpp:1328
-#, fuzzy
 msgid "Ctrl+D"
-msgstr "单视窗(&S)\tCtrl+D"
+msgstr "Ctrl+D"
 
 #: ../src/celestia/qt/qtappwin.cpp:1333
-#, fuzzy
 msgid "Delete view"
 msgstr "删除视窗"
 
@@ -2805,17 +2744,14 @@ msgid "Delete"
 msgstr "删除"
 
 #: ../src/celestia/qt/qtappwin.cpp:1340
-#, fuzzy
 msgid "Frames visible"
 msgstr "显示视窗框架"
 
 #: ../src/celestia/qt/qtappwin.cpp:1373
-#, fuzzy
 msgid "Active frame visible"
 msgstr "激活视窗框架显示"
 
 #: ../src/celestia/qt/qtappwin.cpp:1389
-#, fuzzy
 msgid "Synchronize time"
 msgstr "同步时间"
 
@@ -2826,9 +2762,8 @@ msgid "&Help"
 msgstr "帮助(&H)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1466
-#, fuzzy
 msgid "Celestia Manual"
-msgstr "Celestia 偏好设置"
+msgstr "Celestia 手册"
 
 #: ../src/celestia/qt/qtappwin.cpp:1475
 #: ../src/celestia/win32/res/resource_strings.cpp:70
@@ -2836,29 +2771,29 @@ msgid "About Celestia"
 msgstr "关于 Celestia"
 
 #: ../src/celestia/qt/qtappwin.cpp:1491
-#, fuzzy
 msgid "Add Bookmark..."
-msgstr "加入书签(&A)"
+msgstr "添加书签..."
 
 #: ../src/celestia/qt/qtappwin.cpp:1495
-#, fuzzy
 msgid "Organize Bookmarks..."
-msgstr "管理书签(&O)..."
+msgstr "管理书签..."
 
 #: ../src/celestia/qt/qtappwin.cpp:1533
 msgid "Set custom FPS"
-msgstr ""
+msgstr "设置自定义 FPS"
 
 #: ../src/celestia/qt/qtappwin.cpp:1534
 msgid "FPS value"
-msgstr ""
+msgstr "FPS 值"
 
 #: ../src/celestia/qt/qtappwin.cpp:1554
-#, fuzzy, qt-format
+#, qt-format
 msgid ""
 "Loading data files: %1\n"
 "\n"
-msgstr "加载中:"
+msgstr ""
+"正在加载数据文件：%1\n"
+"\n"
 
 #: ../src/celestia/qt/qtappwin.cpp:1565
 #: ../src/celestia/win32/res/resource_strings.cpp:3
@@ -2867,117 +2802,104 @@ msgstr "脚本"
 
 #: ../src/celestia/qt/qtbookmark.cpp:394
 msgid "Title"
-msgstr ""
+msgstr "标题"
 
 #: ../src/celestia/qt/qtbookmark.cpp:396
-#, fuzzy
 msgid "Description"
-msgstr "持续时间"
+msgstr "描述"
 
 #: ../src/celestia/qt/qtbookmark.cpp:581
-#, fuzzy
 msgid "Bookmarks Menu"
-msgstr "书签(&B)"
+msgstr "书签菜单"
 
 #: ../src/celestia/qt/qtbookmark.cpp:582
 msgid "Add bookmarks to this folder to see them in the bookmarks menu."
-msgstr ""
+msgstr "将书签添加到此文件夹以便在书签菜单中查看。"
 
 #: ../src/celestia/qt/qtbookmark.cpp:587
-#, fuzzy
 msgid "Bookmarks Toolbar"
-msgstr "主工具栏"
+msgstr "书签工具栏"
 
 #: ../src/celestia/qt/qtbookmark.cpp:588
 msgid "Add bookmarks to this folder to see them in the bookmarks toolbar."
-msgstr ""
+msgstr "将书签添加到此文件夹以便在书签工具栏中查看。"
 
 #: ../src/celestia/qt/qtbookmark.cpp:602
-#, fuzzy
 msgid "Error reading bookmarks file"
-msgstr "读出收藏夹中的文件时出错。"
+msgstr "读取书签文件时出错。"
 
 #: ../src/celestia/qt/qtbookmark.cpp:719
 msgid "Bookmarks"
 msgstr "书签"
 
 #: ../src/celestia/qt/qtbookmark.cpp:832
-#, fuzzy
 msgid "Current simulation time"
-msgstr "设置模拟时间"
+msgstr "当前模拟时间"
 
 #: ../src/celestia/qt/qtbookmark.cpp:833
-#, fuzzy
 msgid "Simulation time at activation"
-msgstr "设置模拟时间"
+msgstr "激活的模拟时间"
 
 #: ../src/celestia/qt/qtbookmark.cpp:834
-#, fuzzy
 msgid "System time at activation"
-msgstr "时间"
+msgstr "激活的系统时间"
 
 #. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, newBookmarkFolderDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. newBookmarkFolderDialog)
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:24
 #. i18n: ectx: property (text), widget (QPushButton, newFolderButton)
 #: ../src/celestia/qt/qtbookmark.cpp:879 ../src/celestia/qt/rc.cpp:39
 #: ../src/celestia/qt/rc.cpp:54
-#, fuzzy
 msgid "New Folder"
-msgstr "新建文件夹..."
+msgstr "新建文件夹"
 
 #. Create the render flags actions
 #: ../src/celestia/qt/qtcelestiaactions.cpp:25
 msgid "Eq"
-msgstr ""
+msgstr "Eq"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:26
-#, fuzzy
 msgid "Equatorial coordinate grid"
-msgstr "显示赤道坐标网格"
+msgstr "赤道坐标网格"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:30
 msgid "Ga"
-msgstr ""
+msgstr "Ga"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:31
-#, fuzzy
 msgid "Galactic coordinate grid"
-msgstr "银道座标系"
+msgstr "银河坐标网格"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:35
 msgid "Ec"
-msgstr ""
+msgstr "Ec"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:36
-#, fuzzy
 msgid "Ecliptic coordinate grid"
-msgstr "黄道线"
+msgstr "黄道坐标网格"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:40
 msgid "Hz"
-msgstr ""
+msgstr "Hz"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:41
-#, fuzzy
 msgid "Horizontal coordinate grid"
-msgstr "地平座标系"
+msgstr "地平座标网格"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:45
 msgid "Ecl"
-msgstr ""
+msgstr "Ecl"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:461
 #. i18n: ectx: property (text), widget (QCheckBox, eclipticLineCheck)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:46 ../src/celestia/qt/rc.cpp:210
-#, fuzzy
 msgid "Ecliptic line"
 msgstr "黄道线"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:50
-#, fuzzy
 msgid "M"
-msgstr "米/秒"
+msgstr "M"
 
 #. Controls for marking selected objects
 #. i18n: file: ../src/celestia/qt/preferences.ui:454
@@ -2993,9 +2915,8 @@ msgid "Markers"
 msgstr "标记"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:55
-#, fuzzy
 msgid "C"
-msgstr "置中所选物体(&C)\tC"
+msgstr "C"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:405
 #. i18n: ectx: property (title), widget (QGroupBox, constellationsGroupBox)
@@ -3009,19 +2930,16 @@ msgid "Constellations"
 msgstr "星座"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:60
-#, fuzzy
 msgid "B"
-msgstr "<b>NVIDIA 组合渲染, 无顶点程序</b>"
+msgstr "B"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:61
-#, fuzzy
 msgid "Constellation boundaries"
-msgstr "星座边界线"
+msgstr "星座边界"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:65
-#, fuzzy
 msgid "O"
-msgstr "确定"
+msgstr "O"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:236
 #. i18n: ectx: property (title), widget (QGroupBox, orbitsGroupBox)
@@ -3040,8 +2958,9 @@ msgstr "轨道"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:83
 #: ../src/celestia/qt/qtcelestiaactions.cpp:110
 #: ../src/celestia/qt/qtselectionpopup.cpp:383
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:545 ../src/celestia/qt/rc.cpp:75
-#: ../src/celestia/qt/rc.cpp:156 ../src/celestia/qt/rc.cpp:222
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:545
+#: ../src/celestia/qt/rc.cpp:75 ../src/celestia/qt/rc.cpp:156
+#: ../src/celestia/qt/rc.cpp:222
 #: ../src/celestia/win32/res/resource_strings.cpp:168
 #: ../src/celestia/win32/winmain.cpp:1531
 #: ../src/celestia/win32/winmain.cpp:1566
@@ -3064,8 +2983,9 @@ msgstr "矮行星"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:85
 #: ../src/celestia/qt/qtcelestiaactions.cpp:112
 #: ../src/celestia/qt/qtselectionpopup.cpp:386
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:547 ../src/celestia/qt/rc.cpp:81
-#: ../src/celestia/qt/rc.cpp:162 ../src/celestia/qt/rc.cpp:228
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:547
+#: ../src/celestia/qt/rc.cpp:81 ../src/celestia/qt/rc.cpp:162
+#: ../src/celestia/qt/rc.cpp:228
 #: ../src/celestia/win32/res/resource_strings.cpp:170
 #: ../src/celestia/win32/winmain.cpp:1529
 msgid "Moons"
@@ -3121,9 +3041,8 @@ msgstr "航天器"
 
 #. Label actions
 #: ../src/celestia/qt/qtcelestiaactions.cpp:105
-#, fuzzy
 msgid "L"
-msgstr "加快10倍(&F)\tL"
+msgstr "L"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:487
 #. i18n: ectx: attribute (title), widget (QWidget, labelsTab)
@@ -3162,7 +3081,6 @@ msgstr "球状星团"
 #. i18n: ectx: property (text), widget (QCheckBox, openClusterLabelsCheck)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:119 ../src/celestia/qt/rc.cpp:102
 #: ../src/celestia/qt/rc.cpp:249
-#, fuzzy
 msgid "Open clusters"
 msgstr "疏散星团"
 
@@ -3219,12 +3137,12 @@ msgstr "大气层"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:164
 #: ../src/celestia/win32/res/resource_strings.cpp:153
 msgid "Ring Shadows"
-msgstr "星环投影"
+msgstr "光环投影"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:165
 #: ../src/celestia/win32/res/resource_strings.cpp:154
 msgid "Eclipse Shadows"
-msgstr "星月食投影"
+msgstr "日食投影"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:167
 #: ../src/celestia/win32/res/resource_strings.cpp:152
@@ -3250,62 +3168,54 @@ msgid "High"
 msgstr "高"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:184
-#, fuzzy
 msgid "Auto Magnitude"
-msgstr "星等自动调节\tCtrl+Y"
+msgstr "星等自动调节"
 
 #. toggleVSyncAction->setShortcut(QKeySequence("Ctrl+Y"));
 #: ../src/celestia/qt/qtcelestiaactions.cpp:186
 #: ../src/celestia/qt/qtcelestiaactions.cpp:217
 msgid "Faintest visible magnitude based on field of view"
-msgstr ""
+msgstr "基于视窗的最小可见幅度"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:189
-#, fuzzy
 msgid "More Stars Visible"
-msgstr "显示更多星体\t]"
+msgstr "显示更多星体"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:192
-#, fuzzy
 msgid "Fewer Stars Visible"
-msgstr "显示更少星体\t["
+msgstr "显示更少星体"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:946
 #. i18n: ectx: property (text), widget (QRadioButton, pointStarsButton)
 #: ../src/celestia/qt/qtcelestiaactions.cpp:198 ../src/celestia/qt/rc.cpp:333
-#, fuzzy
 msgid "Points"
-msgstr "点(&P)"
+msgstr "点"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:199
-#, fuzzy
 msgid "Fuzzy Points"
-msgstr "模糊点(&F)"
+msgstr "模糊点"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:200
-#, fuzzy
 msgid "Scaled Discs"
-msgstr "缩放点(&D)"
+msgstr "缩放点"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:210
-#, fuzzy
 msgid "Light Time Delay"
-msgstr "关闭光的传播时间延迟"
+msgstr "光传播时间延迟"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:215
-#, fuzzy
 msgid "Enable Vsync"
-msgstr "经纬仪模式已开启"
+msgstr "启用垂直同步"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:389
-#, fuzzy, qt-format
+#, qt-format
 msgid "Auto magnitude limit at 45 degrees: %L1"
-msgstr "45度视野区内星等自动调节:%.2f"
+msgstr "45° 视野区内星等自动调节：%L1"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:396
-#, fuzzy, qt-format
+#, qt-format
 msgid "Magnitude limit: %L1"
-msgstr "极限星等:%.2f"
+msgstr "极限星等：%L1"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:218
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:189
@@ -3319,7 +3229,7 @@ msgstr "名称"
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:191
 #: ../src/celestia/win32/winstarbrowser.cpp:63
 msgid "Distance (ly)"
-msgstr "距离 (光年)"
+msgstr "距离（ly）"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:222
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:193
@@ -3342,40 +3252,34 @@ msgstr "类型"
 
 #. Buttons to select filtering criterion for stars
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:512
-#, fuzzy
 msgid "Closest Stars"
-msgstr "显示恒星"
+msgstr "最近的恒星"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:516
-#, fuzzy
 msgid "Brightest Stars"
-msgstr "恒星"
+msgstr "最亮的恒星"
 
 #. Additional filtering controls
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:526
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:456
-#, fuzzy
 msgid "Filter"
-msgstr "恒星筛选"
+msgstr "过滤器"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:529
 msgid "With Planets"
 msgstr "拥有行星"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:533
-#, fuzzy
 msgid "Multiple Stars"
-msgstr "显示恒星"
+msgstr "多重恒星"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:536
-#, fuzzy
 msgid "Barycenters"
-msgstr "质心 "
+msgstr "质心"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:542
-#, fuzzy
 msgid "Spectral Type"
-msgstr "恒星数据库中的恒星光谱类型不正确，恒星编号#"
+msgstr "光谱型"
 
 #. End filtering controls
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:551
@@ -3387,39 +3291,35 @@ msgstr "刷新"
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:559
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:476
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:710
-#, fuzzy
 msgid "Mark Selected"
-msgstr "标记(&M)"
+msgstr "标记所选天体"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:561
-#, fuzzy
 msgid "Mark stars selected in list view"
-msgstr "列表中可显示最多恒星数"
+msgstr "标记在列表视图中所选的恒星"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:564
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:481
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:715
-#, fuzzy
 msgid "Unmark Selected"
-msgstr "标记(&M)"
+msgstr "取消标记所选天体"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:565
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:716
 msgid "Unmark stars selected in list view"
-msgstr ""
+msgstr "取消标记在列表视图中选择的恒星"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:569
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:486
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:720
-#, fuzzy
 msgid "Clear Markers"
-msgstr "标记"
+msgstr "清除标记"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:571
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:488
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:722
 msgid "Remove all existing markers"
-msgstr ""
+msgstr "移除所有现有标记"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:576
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:493
@@ -3454,7 +3354,7 @@ msgstr "正方形"
 #: ../src/celestia/qt/qtselectionpopup.cpp:243
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:731
 msgid "Plus"
-msgstr "加号"
+msgstr "+"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:581
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:498
@@ -3501,59 +3401,52 @@ msgstr "下箭头"
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:588
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:505
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:739
-#, fuzzy
 msgid "Select marker symbol"
-msgstr "选择&物体(&O)..."
+msgstr "选择标记样式"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:601
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:518
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:752
-#, fuzzy
 msgid "Select marker size"
-msgstr "大小:"
+msgstr "选择标记大小"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:605
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:522
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:756
-#, fuzzy
 msgid "Click to select marker color"
-msgstr "选择&物体(&O)..."
+msgstr "单击以选择标记颜色"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:608
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:525
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:759
-#, fuzzy
 msgid "Label"
-msgstr "标签显示"
+msgstr "标签"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:672
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:577
-#, fuzzy, qt-format
+#, qt-format
 msgid "%1 objects found"
-msgstr "物体"
+msgstr "%1 个天体被找到"
 
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:477
 msgid "Mark DSOs selected in list view"
-msgstr ""
+msgstr "标记在列表视图中所选的深空天体"
 
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:482
-#, fuzzy
 msgid "Unmark DSOs selected in list view"
-msgstr "标记(&M)"
+msgstr "取消标记在列表视图中所选的深空天体"
 
 #: ../src/celestia/qt/qteventfinder.cpp:473
-#, fuzzy
 msgid "Eclipsed body"
-msgstr "母天体 '"
+msgstr "被遮挡天体"
 
 #: ../src/celestia/qt/qteventfinder.cpp:475
 msgid "Occulter"
-msgstr ""
+msgstr "掩盖"
 
 #: ../src/celestia/qt/qteventfinder.cpp:477
-#, fuzzy
 msgid "Start time"
-msgstr "以全屏模式启动系统"
+msgstr "开始时间"
 
 #: ../src/celestia/qt/qteventfinder.cpp:479
 #: ../src/celestia/win32/wineclipses.cpp:67
@@ -3561,196 +3454,186 @@ msgid "Duration"
 msgstr "持续时间"
 
 #: ../src/celestia/qt/qteventfinder.cpp:566
-#, fuzzy
 msgid "Solar eclipses"
 msgstr "日食"
 
 #: ../src/celestia/qt/qteventfinder.cpp:567
-#, fuzzy
 msgid "Lunar eclipses"
 msgstr "月食"
 
 #: ../src/celestia/qt/qteventfinder.cpp:568
-#, fuzzy
 msgid "All eclipses"
-msgstr "取消所有标记(&A)"
+msgstr "所有日月食"
 
 #. Search the search range box
 #: ../src/celestia/qt/qteventfinder.cpp:576
-#, fuzzy
 msgid "Search range"
-msgstr "点大小范围:"
+msgstr "搜索范围"
 
 #: ../src/celestia/qt/qteventfinder.cpp:606
-#, fuzzy
 msgid "Find eclipses"
-msgstr "月食"
+msgstr "查找日食"
 
 #: ../src/celestia/qt/qteventfinder.cpp:663
-#, fuzzy, qt-format
+#, qt-format
 msgid "%1 is not a valid object"
-msgstr "选择&物体(&O)..."
+msgstr "%1 不是有效的天体"
 
 #: ../src/celestia/qt/qteventfinder.cpp:674
 msgid "End date is earlier than start date."
-msgstr ""
+msgstr "结束日期早于开始日期"
 
 #: ../src/celestia/qt/qteventfinder.cpp:688
-#, fuzzy
 msgid "Finding eclipses..."
-msgstr "日食"
+msgstr "正在查找日食..."
 
 #: ../src/celestia/qt/qteventfinder.cpp:720
-#, fuzzy
 msgid "Set time to mid-eclipse"
-msgstr "将时间设置为当前时间"
+msgstr "设定时间到日食中旬"
 
 #: ../src/celestia/qt/qteventfinder.cpp:724
-#, fuzzy, qt-format
+#, qt-format
 msgid "Near %1"
-msgstr "大小:%1 MB"
+msgstr "接近 %1"
 
 #: ../src/celestia/qt/qteventfinder.cpp:728
 #: ../src/celestia/qt/qteventfinder.cpp:732
-#, fuzzy, qt-format
+#, qt-format
 msgid "From surface of %1"
-msgstr "从文件加载图像 "
+msgstr "从 %1 的表面"
 
 #: ../src/celestia/qt/qteventfinder.cpp:736
-#, fuzzy, qt-format
+#, qt-format
 msgid "Behind %1"
-msgstr "大小:%1 MB"
+msgstr "在 %1 后"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:75
 msgid "Error: no object selected!\n"
-msgstr ""
+msgstr "错误：未选择天体\n"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:86
 #: ../src/celestia/qt/qtselectionpopup.cpp:159
-#, fuzzy
 msgid "Info"
-msgstr "信息(&I)"
+msgstr "信息"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:111
-#, fuzzy, qt-format
+#, qt-format
 msgid "Web info: %1"
-msgstr "OpenGL 信息"
+msgstr "Web 信息：%1"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:127
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Equatorial radius:</b> %L1 %2"
-msgstr "赤道坐标系"
+msgstr "<b>赤道半径：</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:129
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Size:</b> %L1 %2"
-msgstr "大小:%1 MB"
+msgstr "<b>大小：</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:134
 msgid "<b>Oblateness: "
-msgstr ""
+msgstr "<b>扁率："
 
 #: ../src/celestia/qt/qtinfopanel.cpp:169
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
-msgstr "自转周期:"
+msgstr "<b>自转周期：</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:172
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
-msgstr "距离 (光年)"
+msgstr "<b>太阳日：</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:194
 msgid "years"
-msgstr ""
+msgstr "yr"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:198
-#, fuzzy
 msgid "Orbit information"
-msgstr "文字信息"
+msgstr "轨道信息"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:199
 #, qt-format
 msgid "Osculating elements for %1"
-msgstr ""
+msgstr "密切元素 %1"
 
 #. stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
 #: ../src/celestia/qt/qtinfopanel.cpp:202
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Period:</b> %L1 %2"
-msgstr "大小:%1 MB"
+msgstr "<b>周期：</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:207
-#, fuzzy
 msgid "AU"
-msgstr "天文单位"
+msgstr "AU"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:215
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Semi-major axis:</b> %L1 %2"
-msgstr "赤道坐标系"
+msgstr "<b>半长轴：</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:216
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Eccentricity:</b> %L1"
-msgstr "距离 (光年)"
+msgstr "<b>离心率：</b> %L1"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:217
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Inclination:</b> %L1%2"
-msgstr "大小:%1 MB"
+msgstr "<b>倾角：</b> %L1%2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:218
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
-msgstr "距离 (光年)"
+msgstr "<b>近心点距离：</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:219
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
-msgstr "距离 (光年)"
+msgstr "<b>远心点距离：</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:221
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Ascending node:</b> %L1%2"
-msgstr "距离 (光年)"
+msgstr "<b>升交点经度：</b> %L1%2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:222
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Argument of periapsis:</b> %L1%2"
-msgstr "赤道坐标系"
+msgstr "<b>近心点幅角：</b> %L1%2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:223
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Mean anomaly:</b> %L1%2"
-msgstr "大小:%1 MB"
+msgstr "<b>平近点角：</b> %L1%2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:224
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
-msgstr "自转周期:"
+msgstr "<b>周期（计算结果）：</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:264
 #: ../src/celestia/qt/qtinfopanel.cpp:287
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
-msgstr "大小:%1 MB"
+msgstr "<b>赤经：</b> %L1h %L2m %L3s"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:268
 #: ../src/celestia/qt/qtinfopanel.cpp:291
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
-msgstr "大小:%1 MB"
+msgstr "<b>赤纬：</b> %L1%2 %L3' %L4\""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:298
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>L:</b> %L1%2 %L3' %L4\""
-msgstr "大小:%1 MB"
+msgstr "<b>L：</b> %L1%2 %L3' %L4\""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:301
-#, fuzzy, qt-format
+#, qt-format
 msgid "<b>B:</b> %L1%2 %L3' %L4\""
-msgstr "大小:%1 MB"
+msgstr "<b>B：</b> %L1%2 %L3' %L4\""
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:168
 msgid "OpenGL 2.0"
@@ -3758,39 +3641,35 @@ msgstr "OpenGL 2.0"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:208
 msgid "Blackbody D65"
-msgstr ""
+msgstr "黑体 D65"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:209
-#, fuzzy
 msgid "Classic colors"
-msgstr "恒星样式(&Y)"
+msgstr "传统着色"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:215
-#, fuzzy
 msgid "Local format"
 msgstr "本地格式"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:217
-#, fuzzy
 msgid "Time zone name"
 msgstr "时区名称"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:218
-#, fuzzy
 msgid "UTC offset"
-msgstr "与世界标准时的差异"
+msgstr "与 UTC 的差异"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:116
 msgid "Distance: "
-msgstr "距离:"
+msgstr "距离："
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:122
 msgid "Abs (app) mag: "
-msgstr "绝对星等(视星等):"
+msgstr "绝对星等（视星等）："
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:125
 msgid "Class: "
-msgstr "天体类别:"
+msgstr "类别："
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:136
 msgid "&Select"
@@ -3820,9 +3699,8 @@ msgid "S&ynch Orbit"
 msgstr "同步轨道(&Y)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:165
-#, fuzzy
 msgid "Visible"
-msgstr "激活视窗框架显示"
+msgstr "可见"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:178
 #: ../src/celestia/win32/winmain.cpp:1708
@@ -3835,7 +3713,7 @@ msgstr "填充的正方形"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:250
 msgid "Disk"
-msgstr "填充的圆"
+msgstr "盘"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:253
 #: ../src/celestia/win32/winmain.cpp:1710
@@ -3845,55 +3723,48 @@ msgstr "标记(&M)"
 #: ../src/celestia/qt/qtselectionpopup.cpp:270
 #: ../src/celestia/win32/winmain.cpp:1628
 msgid "&Reference Marks"
-msgstr "参考向量(&R)"
+msgstr "参考标记(&R)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:272
-#, fuzzy
 msgid "Show &Body Axes"
-msgstr "显示赤道轴"
+msgstr "显示赤道轴(&B)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:278
-#, fuzzy
 msgid "Show &Frame Axes"
-msgstr "显示黄道轴"
+msgstr "显示黄道轴(&F)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:284
-#, fuzzy
 msgid "Show &Sun Direction"
-msgstr "显示太阳方向"
+msgstr "显示太阳方向(&S)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:290
-#, fuzzy
 msgid "Show &Velocity Vector"
-msgstr "显示速度向量"
+msgstr "显示速度矢量(&V)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:296
-#, fuzzy
 msgid "Show S&pin Vector"
-msgstr "显示速度向量"
+msgstr "显示旋转矢量(&P)"
 
 #. Only show the frame center menu item if the selection orbits another
 #. a non-stellar object. If it orbits a star, this is generally identical
 #. to the sun direction entry.
 #: ../src/celestia/qt/qtselectionpopup.cpp:308
-#, fuzzy, qt-format
+#, qt-format
 msgid "Show &Direction to %1"
-msgstr "显示太阳方向"
+msgstr "显示 %1 方向(&D)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:315
-#, fuzzy
 msgid "Show Planetographic &Grid"
-msgstr "显示经纬网格"
+msgstr "显示经纬网格(&G)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:321
-#, fuzzy
 msgid "Show &Terminator"
-msgstr "显示明暗边界线"
+msgstr "显示晨昏线(&T)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:339
 #: ../src/celestia/win32/winmain.cpp:1658
 msgid "&Alternate Surfaces"
-msgstr "替代表面(&A)"
+msgstr "替换表面(&A)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:340
 msgid "Normal"
@@ -3909,19 +3780,17 @@ msgstr "航天器"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:398
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:561
-#, fuzzy
 msgid "Other objects"
-msgstr "物体"
+msgstr "其他天体"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:48
-#, fuzzy
 msgid "Set Time"
-msgstr "设置时间..."
+msgstr "设置时间"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:54
 #: ../src/celestia/win32/res/resource_strings.cpp:100
 msgid "Time Zone: "
-msgstr "时区:"
+msgstr "时区："
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:59
 #: ../src/celestia/win32/wintime.cpp:95
@@ -3934,79 +3803,66 @@ msgid "Local Time"
 msgstr "本地时间"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:65
-#, fuzzy
 msgid "Select Time Zone"
-msgstr "时区名称"
+msgstr "选择时区"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:69
-#, fuzzy
 msgid "Date: "
-msgstr "日期"
+msgstr "日期："
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:87
-#, fuzzy
 msgid "Set Year"
-msgstr "设置时间..."
+msgstr "设置年份"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:90
-#, fuzzy
 msgid "Set Month"
-msgstr "设置时间..."
+msgstr "设置月份"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:93
-#, fuzzy
 msgid "Set Day"
-msgstr "设置时间..."
+msgstr "设置天数"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:97
-#, fuzzy
 msgid "Time: "
-msgstr "时间(&T)"
+msgstr "时间："
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:116
-#, fuzzy
 msgid "Set Hours"
-msgstr " 小时"
+msgstr "设置小时"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:119
 #: ../src/celestia/qt/qtsettimedialog.cpp:123
 msgid ":"
-msgstr ""
+msgstr "："
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:120
-#, fuzzy
 msgid "Set Minutes"
-msgstr " 分"
+msgstr "设置分钟"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:124
-#, fuzzy
 msgid "Set Seconds"
-msgstr " 秒"
+msgstr "设置秒钟"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:128
 #: ../src/celestia/win32/res/resource_strings.cpp:102
 msgid "Julian Date: "
-msgstr "儒略日: "
+msgstr "儒略日："
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:140
-#, fuzzy
 msgid "Set Julian Date"
-msgstr "儒略日: "
+msgstr "设置儒略日"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:149
-#, fuzzy
 msgid "Set time"
-msgstr "设置时间..."
+msgstr "设置时间"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:504
-#, fuzzy
 msgid "Barycenter"
 msgstr "质心 "
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:506
-#, fuzzy
 msgid "Star"
-msgstr "恒星数据库中的恒星光谱类型不正确，恒星编号#"
+msgstr "恒星"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:514
 #: ../src/celestia/win32/wineclipses.cpp:59
@@ -4014,12 +3870,10 @@ msgid "Planet"
 msgstr "行星"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:516
-#, fuzzy
 msgid "Dwarf planet"
 msgstr "矮行星"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:520
-#, fuzzy
 msgid "Minor moon"
 msgstr "子卫星"
 
@@ -4032,34 +3886,28 @@ msgid "Comet"
 msgstr "彗星"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:528
-#, fuzzy
 msgid "Reference point"
-msgstr "参考向量(&R)"
+msgstr "参考点"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:530
-#, fuzzy
 msgid "Component"
-msgstr "计算"
+msgstr "成分"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:532
-#, fuzzy
 msgid "Surface feature"
-msgstr "前往物体表面"
+msgstr "表面特征"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:536
-#, fuzzy
 msgid "Unknown"
-msgstr "打开脚本文件出现未知错误"
+msgstr "未知"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:551
-#, fuzzy
 msgid "Asteroids & comets"
-msgstr "小行星"
+msgstr "小行星&彗星"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:553
-#, fuzzy
 msgid "Reference points"
-msgstr "参考向量(&R)"
+msgstr "参考点"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:70
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonsCheck)
@@ -4067,134 +3915,117 @@ msgstr "参考向量(&R)"
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:527
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:555 ../src/celestia/qt/rc.cpp:84
-#: ../src/celestia/qt/rc.cpp:165 ../src/celestia/qt/rc.cpp:231
-#, fuzzy
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:555
+#: ../src/celestia/qt/rc.cpp:84 ../src/celestia/qt/rc.cpp:165
+#: ../src/celestia/qt/rc.cpp:231
 msgid "Minor moons"
 msgstr "子卫星"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:557
 msgid "Components"
-msgstr ""
+msgstr "成分"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:559
-#, fuzzy
 msgid "Surface features"
-msgstr "其它"
+msgstr "表面特征"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:701
-#, fuzzy
 msgid "Group objects by class"
-msgstr "物体"
+msgstr "按类别对天体分组"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:712
 msgid "Mark bodies selected in list view"
-msgstr ""
+msgstr "标记在列表中所选的天体"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:30
 #: ../src/celestia/qt/qttimetoolbar.cpp:45
-#, fuzzy
 msgid "Reverse time"
-msgstr "时间倒退"
+msgstr "反转时间"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:32
 #: ../src/celestia/qt/qttimetoolbar.cpp:47
-#, fuzzy
 msgid "10x slower"
-msgstr "减慢10倍(&S)\tK"
+msgstr "减慢至 1/10"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:34
 #: ../src/celestia/qt/qttimetoolbar.cpp:49
-#, fuzzy
 msgid "2x slower"
-msgstr " 减慢"
+msgstr "减慢至 1/2"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:36
 #: ../src/celestia/qt/qttimetoolbar.cpp:51
-#, fuzzy
 msgid "Pause time"
 msgstr "暂停时间流逝"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:40
 #: ../src/celestia/qt/qttimetoolbar.cpp:55
-#, fuzzy
 msgid "2x faster"
-msgstr " 加快"
+msgstr "加快 2 倍"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:42
 #: ../src/celestia/qt/qttimetoolbar.cpp:57
-#, fuzzy
 msgid "10x faster"
-msgstr "加快10倍(&F)\tL"
+msgstr "加快 10 倍"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:59
-#, fuzzy
 msgid "Set to current time"
 msgstr "设置为当前时间"
 
 #. i18n: file: ../src/celestia/qt/addbookmark.ui:16
 #. i18n: ectx: property (windowTitle), widget (QDialog, addBookmarkDialog)
 #: ../src/celestia/qt/rc.cpp:3
-#, fuzzy
 msgid "Bookmark Location"
-msgstr "显示地理位置标记"
+msgstr "位置书签"
 
 #. i18n: file: ../src/celestia/qt/addbookmark.ui:24
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: ../src/celestia/qt/rc.cpp:6
-#, fuzzy
 msgid "Bookmark name:"
-msgstr "目标物体名称:"
+msgstr "书签名称："
 
 #. i18n: file: ../src/celestia/qt/addbookmark.ui:37
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:44
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: ../src/celestia/qt/rc.cpp:9 ../src/celestia/qt/rc.cpp:45
-#, fuzzy
 msgid "Create in:"
-msgstr "建立于 >>"
+msgstr "创建于："
 
 #. i18n: file: ../src/celestia/qt/addbookmark.ui:44
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: ../src/celestia/qt/rc.cpp:12
-#, fuzzy
 msgid "Time source:"
-msgstr "时间已暂停"
+msgstr "时间源："
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:14
 #. i18n: ectx: property (windowTitle), widget (QDialog, gotoObjectDialog)
 #: ../src/celestia/qt/rc.cpp:15
 msgid "Dialog"
-msgstr ""
+msgstr "对话框"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:56
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: ../src/celestia/qt/rc.cpp:18
-#, fuzzy
 msgid "Object name:"
-msgstr "物体名称"
+msgstr "天体名称："
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:75
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: ../src/celestia/qt/rc.cpp:21
-#, fuzzy
 msgid "Longitude:"
-msgstr "经度:"
+msgstr "经度："
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:88
 #. i18n: ectx: property (text), widget (QLabel, label_4)
 #: ../src/celestia/qt/rc.cpp:24
-#, fuzzy
 msgid "Distance:"
-msgstr "距离:"
+msgstr "距离："
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:166
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: ../src/celestia/qt/rc.cpp:27
-#, fuzzy
 msgid "Latitude:"
-msgstr "纬度:"
+msgstr "纬度："
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:187
 #. i18n: ectx: property (text), widget (QRadioButton, radiiButton)
@@ -4206,19 +4037,18 @@ msgstr "半径"
 #. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:21
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: ../src/celestia/qt/rc.cpp:42
-#, fuzzy
 msgid "Name:"
-msgstr "名称"
+msgstr "名称："
 
 #. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:63
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: ../src/celestia/qt/rc.cpp:48
-#, fuzzy
 msgid "Description:"
-msgstr "分辨率:"
+msgstr "描述："
 
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, organizeBookmarksDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. organizeBookmarksDialog)
 #: ../src/celestia/qt/rc.cpp:51
 #: ../src/celestia/win32/res/resource_strings.cpp:212
 msgid "Organize Bookmarks"
@@ -4227,22 +4057,20 @@ msgstr "管理书签"
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:31
 #. i18n: ectx: property (text), widget (QPushButton, newSeparatorButton)
 #: ../src/celestia/qt/rc.cpp:57
-#, fuzzy
 msgid "New Separator"
-msgstr "新建文件夹..."
+msgstr "新建分隔符"
 
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:38
 #. i18n: ectx: property (text), widget (QPushButton, removeItemButton)
 #: ../src/celestia/qt/rc.cpp:60
 msgid "Remove Item"
-msgstr ""
+msgstr "移除项目"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:14
 #. i18n: ectx: property (windowTitle), widget (QDialog, preferencesDialog)
 #: ../src/celestia/qt/rc.cpp:63
-#, fuzzy
 msgid "Preferences"
-msgstr "Celestia 偏好设置"
+msgstr "偏好"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:27
 #. i18n: ectx: attribute (title), widget (QWidget, objectsTab)
@@ -4250,7 +4078,7 @@ msgstr "Celestia 偏好设置"
 #. i18n: ectx: property (title), widget (QGroupBox, objectsGroupBox)
 #: ../src/celestia/qt/rc.cpp:66 ../src/celestia/qt/rc.cpp:69
 msgid "Objects"
-msgstr "物体"
+msgstr "天体"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:56
 #. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetsCheck)
@@ -4260,7 +4088,6 @@ msgstr "物体"
 #. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetLabelsCheck)
 #: ../src/celestia/qt/rc.cpp:78 ../src/celestia/qt/rc.cpp:159
 #: ../src/celestia/qt/rc.cpp:225
-#, fuzzy
 msgid "Dwarf planets"
 msgstr "矮行星"
 
@@ -4269,84 +4096,72 @@ msgstr "矮行星"
 #. i18n: file: ../src/celestia/qt/preferences.ui:576
 #. i18n: ectx: property (text), widget (QCheckBox, globularClusterLabelsCheck)
 #: ../src/celestia/qt/rc.cpp:105 ../src/celestia/qt/rc.cpp:252
-#, fuzzy
 msgid "Globular clusters"
-msgstr "显示球状星团标记"
+msgstr "球状星团"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:142
 #. i18n: ectx: property (title), widget (QGroupBox, featuresGroupBox)
 #: ../src/celestia/qt/rc.cpp:108
-#, fuzzy
 msgid "Features"
-msgstr "显示"
+msgstr "特征"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:162
 #. i18n: ectx: property (text), widget (QCheckBox, cloudShadowsCheck)
 #: ../src/celestia/qt/rc.cpp:117
-#, fuzzy
 msgid "Cloud shadows"
-msgstr "云层投影"
+msgstr "云层阴影"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:169
 #. i18n: ectx: property (text), widget (QCheckBox, eclipseShadowsCheck)
 #: ../src/celestia/qt/rc.cpp:120
-#, fuzzy
 msgid "Eclipse shadows"
-msgstr "星月食投影"
+msgstr "日食阴影"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:176
 #. i18n: ectx: property (text), widget (QCheckBox, ringShadowsCheck)
 #: ../src/celestia/qt/rc.cpp:123
-#, fuzzy
 msgid "Ring shadows"
-msgstr "星环投影"
+msgstr "光环阴影"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:183
 #. i18n: ectx: property (text), widget (QCheckBox, planetRingsCheck)
 #: ../src/celestia/qt/rc.cpp:126
-#, fuzzy
 msgid "Planet's rings"
-msgstr "行星"
+msgstr "行星光环"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:190
 #. i18n: ectx: property (text), widget (QCheckBox, nightsideLightsCheck)
 #: ../src/celestia/qt/rc.cpp:129
-#, fuzzy
 msgid "Nightside lights"
 msgstr "夜视光"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:197
 #. i18n: ectx: property (text), widget (QCheckBox, cometTailsCheck)
 #: ../src/celestia/qt/rc.cpp:132
-#, fuzzy
 msgid "Comet tails"
 msgstr "彗尾"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:204
 #. i18n: ectx: property (text), widget (QCheckBox, limitOfKnowledgeCheck)
 #: ../src/celestia/qt/rc.cpp:135
-#, fuzzy
 msgid "Limit of knowledge textures"
-msgstr "调用知识界限表面纹理。"
+msgstr "调用知识界限表面纹理"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:242
 #. i18n: ectx: property (text), widget (QCheckBox, orbitsCheck)
 #: ../src/celestia/qt/rc.cpp:144
-#, fuzzy
 msgid "Show orbits"
 msgstr "显示轨道"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:249
 #. i18n: ectx: property (text), widget (QCheckBox, fadingOrbitsCheck)
 #: ../src/celestia/qt/rc.cpp:147
-#, fuzzy
 msgid "Fading orbits"
-msgstr "着陆点"
+msgstr "渐变轨道"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:256
 #. i18n: ectx: property (text), widget (QCheckBox, partialTrajectoriesCheck)
 #: ../src/celestia/qt/rc.cpp:150
-#, fuzzy
 msgid "Partial trajectories"
 msgstr "部分轨道"
 
@@ -4355,35 +4170,35 @@ msgstr "部分轨道"
 #: ../src/celestia/qt/rc.cpp:177
 #: ../src/celestia/win32/res/resource_strings.cpp:161
 msgid "Grids"
-msgstr "坐标系"
+msgstr "网格"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:361
 #. i18n: ectx: property (text), widget (QCheckBox, equatorialGridCheck)
 #: ../src/celestia/qt/rc.cpp:180
 #: ../src/celestia/win32/res/resource_strings.cpp:162
 msgid "Equatorial"
-msgstr "赤道坐标系"
+msgstr "赤道"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:368
 #. i18n: ectx: property (text), widget (QCheckBox, eclipticGridCheck)
 #: ../src/celestia/qt/rc.cpp:183
 #: ../src/celestia/win32/res/resource_strings.cpp:165
 msgid "Ecliptic"
-msgstr "黄道座标系"
+msgstr "黄道"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:375
 #. i18n: ectx: property (text), widget (QCheckBox, galacticGridCheck)
 #: ../src/celestia/qt/rc.cpp:186
 #: ../src/celestia/win32/res/resource_strings.cpp:164
 msgid "Galactic"
-msgstr "银道座标系"
+msgstr "银道"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:382
 #. i18n: ectx: property (text), widget (QCheckBox, horizontalGridCheck)
 #: ../src/celestia/qt/rc.cpp:189
 #: ../src/celestia/win32/res/resource_strings.cpp:163
 msgid "Horizontal"
-msgstr "地平座标系"
+msgstr "地平线"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:411
 #. i18n: ectx: property (text), widget (QCheckBox, diagramsCheck)
@@ -4397,12 +4212,11 @@ msgstr "星座线"
 #: ../src/celestia/qt/rc.cpp:198
 #: ../src/celestia/win32/res/resource_strings.cpp:181
 msgid "Boundaries"
-msgstr "星座边界线"
+msgstr "星座边界"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:425
 #. i18n: ectx: property (text), widget (QCheckBox, latinNamesCheck)
 #: ../src/celestia/qt/rc.cpp:201
-#, fuzzy
 msgid "Latin names"
 msgstr "拉丁名"
 
@@ -4410,21 +4224,19 @@ msgstr "拉丁名"
 #. i18n: ectx: property (title), widget (QGroupBox, miscellaneousGroupBox)
 #: ../src/celestia/qt/rc.cpp:204
 msgid "Miscellaneous"
-msgstr ""
+msgstr "混合"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:615
 #. i18n: ectx: property (text), widget (QCheckBox, locationsCheck)
 #: ../src/celestia/qt/rc.cpp:261
-#, fuzzy
 msgid "Show locations"
-msgstr "显示城市位置"
+msgstr "显示位置"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:638
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: ../src/celestia/qt/rc.cpp:264
-#, fuzzy
 msgid "Location types:"
-msgstr "显示地理位置标记"
+msgstr "位置类型："
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:647
 #. i18n: ectx: property (text), widget (QCheckBox, citiesCheck)
@@ -4436,7 +4248,6 @@ msgstr "城市"
 #. i18n: file: ../src/celestia/qt/preferences.ui:654
 #. i18n: ectx: property (text), widget (QCheckBox, landingSitesCheck)
 #: ../src/celestia/qt/rc.cpp:270
-#, fuzzy
 msgid "Landing sites"
 msgstr "着陆点"
 
@@ -4464,138 +4275,121 @@ msgstr "陨石坑"
 #. i18n: file: ../src/celestia/qt/preferences.ui:682
 #. i18n: ectx: property (text), widget (QCheckBox, montesCheck)
 #: ../src/celestia/qt/rc.cpp:282
-#, fuzzy
 msgid "Montes (mountains)"
-msgstr "Montes (山脉)"
+msgstr "山脉"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:689
 #. i18n: ectx: property (text), widget (QCheckBox, terraeCheck)
 #: ../src/celestia/qt/rc.cpp:285
-#, fuzzy
 msgid "Terrae (land masses)"
-msgstr "Terrae (陆地)"
+msgstr "陆地"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:696
 #. i18n: ectx: property (text), widget (QCheckBox, vallesCheck)
 #: ../src/celestia/qt/rc.cpp:288
-#, fuzzy
 msgid "Valles (valleys)"
-msgstr "Valles (峡谷)"
+msgstr "峡谷"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:703
 #. i18n: ectx: property (text), widget (QCheckBox, mariaCheck)
 #: ../src/celestia/qt/rc.cpp:291
-#, fuzzy
 msgid "Maria (seas)"
-msgstr "Maria (海洋)"
+msgstr "海洋"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:710
 #. i18n: ectx: property (text), widget (QCheckBox, otherLocationsCheck)
 #: ../src/celestia/qt/rc.cpp:294
 #: ../src/celestia/win32/res/resource_strings.cpp:201
 msgid "Other features"
-msgstr "其它"
+msgstr "其它特征"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:735
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: ../src/celestia/qt/rc.cpp:297
-#, fuzzy
 msgid "Minimum labelled feature size:"
-msgstr "最小标签大小"
+msgstr "最小标签大小："
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:772
 #. i18n: ectx: property (inputMask), widget (QLineEdit, featureSizeEdit)
 #: ../src/celestia/qt/rc.cpp:300
 msgid "000; "
-msgstr ""
+msgstr "000；"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:801
 #. i18n: ectx: attribute (title), widget (QWidget, renderTab)
 #: ../src/celestia/qt/rc.cpp:303
-#, fuzzy
 msgid "Render"
-msgstr "渲染(&R)"
+msgstr "渲染"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:809
 #. i18n: ectx: property (title), widget (QGroupBox, textureResolutionGroupBox)
 #: ../src/celestia/qt/rc.cpp:306
-#, fuzzy
 msgid "Texture resolution"
-msgstr "纹理分辨率(&T)"
+msgstr "纹理分辨率"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:852
 #. i18n: ectx: property (title), widget (QGroupBox, ambientLightGroupBox)
 #: ../src/celestia/qt/rc.cpp:318
-#, fuzzy
 msgid "Ambient light"
 msgstr "环境光"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:874
 #. i18n: ectx: property (text), widget (QCheckBox, tintedIlluminationCheck)
 #: ../src/celestia/qt/rc.cpp:321
-#, fuzzy
 msgid "Tinted illumination"
-msgstr "星座"
+msgstr "着色照明"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:900
 #. i18n: ectx: property (title), widget (QGroupBox, renderPathGroupBox)
 #: ../src/celestia/qt/rc.cpp:324
-#, fuzzy
 msgid "Render path"
-msgstr "渲染通道:"
+msgstr "渲染通道"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:913
 #. i18n: ectx: property (text), widget (QCheckBox, antialiasLinesCheck)
 #: ../src/celestia/qt/rc.cpp:327
-#, fuzzy
 msgid "Antialiased lines"
-msgstr "光滑轨道线"
+msgstr "抗锯齿"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:940
 #. i18n: ectx: property (title), widget (QGroupBox, starStyleGroupBox)
 #: ../src/celestia/qt/rc.cpp:330
-#, fuzzy
 msgid "Star style"
-msgstr "星点渲染:正常点"
+msgstr "恒星风格"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:953
 #. i18n: ectx: property (text), widget (QRadioButton, fuzzyPointStarsButton)
 #: ../src/celestia/qt/rc.cpp:336
-#, fuzzy
 msgid "Fuzzy points"
-msgstr "模糊点(&F)"
+msgstr "模糊点"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:960
 #. i18n: ectx: property (text), widget (QRadioButton, scaledDiscsButton)
 #: ../src/celestia/qt/rc.cpp:339
-#, fuzzy
 msgid "Scaled discs"
-msgstr "缩放点(&D)"
+msgstr "缩放点"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:983
 #. i18n: ectx: property (text), widget (QCheckBox, autoMagnitudeCheck)
 #: ../src/celestia/qt/rc.cpp:342
-#, fuzzy
 msgid "Auto-magnitude"
-msgstr "星等自动调节\tCtrl+Y"
+msgstr "星等自动调节"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:1006
 #. i18n: ectx: property (title), widget (QGroupBox, starColorGroupBox)
 #: ../src/celestia/qt/rc.cpp:345
-#, fuzzy
 msgid "Star colors"
-msgstr "恒星样式(&Y)"
+msgstr "恒星着色"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:1043
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: ../src/celestia/qt/rc.cpp:351
-#, fuzzy
 msgid "Date display format:"
-msgstr "显示"
+msgstr "日期显示格式："
 
 #: ../src/celestia/qt/xbel.cpp:64
 msgid "Not an XBEL version 1.0 file."
-msgstr ""
+msgstr "XBEL 1.0 版本文件不存在"
 
 #: ../src/celestia/url.cpp:655
 msgid "Settings"
@@ -4607,11 +4401,11 @@ msgstr "占位符"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
-msgstr "捕捉图像(&I)...\tF10"
+msgstr "屏幕快照(&I)...\tF10"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:6
 msgid "Capture &Movie...\tShift+F10"
-msgstr "捕捉影像(&M)...\tShift+F10"
+msgstr "屏幕录制(&M)...\tShift+F10"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:9
 msgid "Select &Sol\tH"
@@ -4619,31 +4413,31 @@ msgstr "选择太阳(&S)\tH"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:10
 msgid "Tour G&uide..."
-msgstr "向导(&G)..."
+msgstr "游览向导(&G)..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:11
 msgid "Select &Object..."
-msgstr "选择&物体(&O)..."
+msgstr "选择天体(&O)..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:13
 msgid "&Center Selection\tC"
-msgstr "置中所选物体(&C)\tC"
+msgstr "置中所选天体(&C)\tC"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:14
 msgid "&Go to Selection\tG"
-msgstr "驶向选择物体(&G)\tG"
+msgstr "前往所选天体(&G)\tG"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:15
 msgid "&Follow Selection\tF"
-msgstr "跟随选择物体(&F)\tF"
+msgstr "跟随所选天体(&F)\tF"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:16
 msgid "S&ync Orbit Selection\tY"
-msgstr "同步轨道于所选物体(&Y)\tY"
+msgstr "同步轨道于所选天体(&Y)\tY"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:17
 msgid "&Track Selection\tT"
-msgstr "追踪选择物体(&T)\tT"
+msgstr "追踪所选天体(&T)\tT"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:18
 msgid "Solar System &Browser..."
@@ -4651,19 +4445,19 @@ msgstr "太阳系浏览器(&B)..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:19
 msgid "Star B&rowser..."
-msgstr "恒星浏览器(&R)..."
+msgstr "恒星浏览器..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:20
 msgid "&Eclipse Finder"
-msgstr "星月食查找(&E)"
+msgstr "日食查找(&E)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:22
 msgid "10x &Faster\tL"
-msgstr "加快10倍(&F)\tL"
+msgstr "加快 10 倍(&F)\tL"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:23
 msgid "10x &Slower\tK"
-msgstr "减慢10倍(&S)\tK"
+msgstr "减慢至 1/10(&S)\tK"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:24
 msgid "Free&ze\tSpace"
@@ -4675,7 +4469,7 @@ msgstr "实时(&R)\t\\"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:26
 msgid "Re&verse Time\tJ"
-msgstr "时间倒退(&V)\tJ"
+msgstr "反转时间流逝(&V)\tJ"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:27
 msgid "Set &Time..."
@@ -4730,36 +4524,32 @@ msgid "Scaled &Discs"
 msgstr "缩放点(&D)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:41
-#, fuzzy
 msgid "Star &Color"
-msgstr "恒星样式(&Y)"
+msgstr "恒星着色(&C)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:42
-#, fuzzy
 msgid "&Disabled"
-msgstr "经纬仪模式已关闭"
+msgstr "已禁用"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:43
-#, fuzzy
 msgid "&Enabled"
-msgstr "经纬仪模式已开启"
+msgstr "已启用"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:44
 msgid "&Ambient Light"
 msgstr "环境光(&A)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:45
-#, fuzzy
 msgid "&No"
-msgstr "当前"
+msgstr "无(&N)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:46
 msgid "&Weakly"
-msgstr ""
+msgstr "弱(&W)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:47
 msgid "&Moderately"
-msgstr ""
+msgstr "中(&M)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:48
 msgid "&Texture Resolution"
@@ -4779,7 +4569,7 @@ msgstr "高(&H)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:52
 msgid "Antialiasing\tCtrl+X"
-msgstr "反锯齿\tCtrl+X"
+msgstr "抗锯齿\tCtrl+X"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:54
 msgid "Split &Horizontally\tCtrl+R"
@@ -4807,7 +4597,7 @@ msgstr "同步时间(&T)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:61
 msgid "&Add Bookmarks..."
-msgstr "标记书签(&A)..."
+msgstr "添加书签(&A)..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:62
 msgid "&Organize Bookmarks..."
@@ -4861,13 +4651,12 @@ msgid "Celestia"
 msgstr "Celestia"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:73
-#, fuzzy
 msgid "Copyright (C) 2001-2019, Celestia Development Team"
-msgstr "版权所有（C）2001-2009, Celestia 开发团队"
+msgstr "Copyright (C) 2001-2019, Celestia Development Team"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:74
 msgid "https://celestia.space/"
-msgstr ""
+msgstr "https://celestia.space/"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:75
 msgid "Celestia is free software and comes with absolutely no warranty."
@@ -4927,11 +4716,11 @@ msgstr "Andrew Tribick"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:89
 msgid "Select Object"
-msgstr "选择物体"
+msgstr "选择天体"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:92
 msgid "Object Name"
-msgstr "物体名称"
+msgstr "天体名称"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:93
 msgid "License"
@@ -4939,7 +4728,7 @@ msgstr "许可"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:95
 msgid "Celestia Controls"
-msgstr "Celestia 常用控制方法"
+msgstr "Celestia 控制"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:97
 msgid "OpenGL Driver Info"
@@ -4951,7 +4740,7 @@ msgstr "设置模拟时间"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:101
 msgid "Format: "
-msgstr "显示格式:"
+msgstr "格式："
 
 #: ../src/celestia/win32/res/resource_strings.cpp:103
 msgid "Set To Current Time"
@@ -4972,7 +4761,7 @@ msgstr "新建文件夹..."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:112
 msgid "Solar System Browser"
-msgstr "太阳系浏览器"
+msgstr "类太阳系浏览器"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:116
 #: ../src/celestia/win32/res/resource_strings.cpp:123
@@ -4981,7 +4770,7 @@ msgstr "前往(&G)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:117
 msgid "Solar System Objects"
-msgstr "太阳系物体"
+msgstr "类太阳系天体"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:118
 msgid "Star Browser"
@@ -4996,7 +4785,6 @@ msgid "Brightest"
 msgstr "按最大亮度"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:121
-#, fuzzy
 msgid "With planets"
 msgstr "拥有行星"
 
@@ -5006,7 +4794,7 @@ msgstr "刷新(&R)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:126
 msgid "Star Search Criteria"
-msgstr "恒星查找规则"
+msgstr "恒星查找标准"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:127
 msgid "Maximum Stars Displayed in List"
@@ -5023,15 +4811,15 @@ msgstr "前往"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:131
 msgid "Select your destination:"
-msgstr "选择目标:"
+msgstr "选择目标："
 
 #: ../src/celestia/win32/res/resource_strings.cpp:132
 msgid "Go to Object"
-msgstr "前往物体"
+msgstr "前往天体"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:138
 msgid "Object"
-msgstr "物体"
+msgstr "天体"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:139
 msgid "Long."
@@ -5048,7 +4836,7 @@ msgstr "距离"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:142
 msgid "Size:"
-msgstr "大小:"
+msgstr "大小："
 
 #: ../src/celestia/win32/res/resource_strings.cpp:144
 msgid "Select Display Mode"
@@ -5063,23 +4851,20 @@ msgid "View Options"
 msgstr "显示设置"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:149
-#, fuzzy
 msgid "Show:"
-msgstr "显示"
+msgstr "显示："
 
 #: ../src/celestia/win32/res/resource_strings.cpp:157
-#, fuzzy
 msgid "Display:"
-msgstr "显示"
+msgstr "显示："
 
 #: ../src/celestia/win32/res/resource_strings.cpp:160
 msgid "Ecliptic Line"
 msgstr "黄道线"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:166
-#, fuzzy
 msgid "Body / Orbit / Label display"
-msgstr "轨道 / 标签"
+msgstr "天体/轨道/标签显示"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:183
 msgid "Latin Names"
@@ -5103,32 +4888,31 @@ msgstr "着陆点"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:195
 msgid "Montes (Mountains)"
-msgstr "Montes (山脉)"
+msgstr "山脉"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:196
 msgid "Maria (Seas)"
-msgstr "Maria (海洋)"
+msgstr "海洋"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:198
 msgid "Valles (Valleys)"
-msgstr "Valles (峡谷)"
+msgstr "峡谷"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:199
 msgid "Terrae (Land masses)"
-msgstr "Terrae (陆地)"
+msgstr "陆地"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:202
 msgid "Label Features"
-msgstr "标签显示"
+msgstr "标签特征"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:205
 msgid "Show Features"
-msgstr "显示"
+msgstr "显示特征"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:206
-#, fuzzy
 msgid "Show Label"
-msgstr "标签显示"
+msgstr "显示标签"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:207
 msgid "Minimum Labeled Feature Size"
@@ -5156,7 +4940,7 @@ msgstr "新名称"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:222
 msgid "Eclipse Finder"
-msgstr "星月食查找"
+msgstr "日食查找"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:223
 msgid "Compute"
@@ -5172,15 +4956,15 @@ msgstr "关闭"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:226
 msgid "From:"
-msgstr "从:"
+msgstr "从："
 
 #: ../src/celestia/win32/res/resource_strings.cpp:227
 msgid "To:"
-msgstr ""
+msgstr "到："
 
 #: ../src/celestia/win32/res/resource_strings.cpp:228
 msgid "On:"
-msgstr ""
+msgstr "在："
 
 #: ../src/celestia/win32/res/resource_strings.cpp:229
 msgid "Search parameters"
@@ -5257,46 +5041,46 @@ msgstr "日期"
 
 #: ../src/celestia/win32/wineclipses.cpp:65
 msgid "Start"
-msgstr "开始时间"
+msgstr "开始"
 
 #: ../src/celestia/win32/winmain.cpp:640
 msgid "Vendor: "
-msgstr "制造商:"
+msgstr "制造商："
 
 #: ../src/celestia/win32/winmain.cpp:645
 msgid "Renderer: "
-msgstr "渲染器:"
+msgstr "渲染器："
 
 #. string s;
 #. s += UTF8ToCurrentCP(_("Version: "));
 #: ../src/celestia/win32/winmain.cpp:650
 #: ../src/celestia/win32/winsplash.cpp:138
 msgid "Version: "
-msgstr "版本:"
+msgstr "版本："
 
 #: ../src/celestia/win32/winmain.cpp:660
 msgid "GLSL version: "
-msgstr "GLSL 版本:"
+msgstr "GLSL 版本："
 
 #: ../src/celestia/win32/winmain.cpp:671
 msgid "Max simultaneous textures: "
-msgstr "最大同时纹理"
+msgstr "最大实时纹理："
 
 #: ../src/celestia/win32/winmain.cpp:678
 msgid "Max texture size: "
-msgstr "最大纹理尺寸:"
+msgstr "最大纹理尺寸："
 
 #: ../src/celestia/win32/winmain.cpp:687
 msgid "Max cube map size: "
-msgstr "最大立方体地图尺寸:"
+msgstr "最大立方体截图尺寸："
 
 #: ../src/celestia/win32/winmain.cpp:695
 msgid "Point size range: "
-msgstr "点大小范围:"
+msgstr "点大小范围："
 
 #: ../src/celestia/win32/winmain.cpp:700
 msgid "Supported Extensions:"
-msgstr "支持的扩展:"
+msgstr "支持的扩展："
 
 #: ../src/celestia/win32/winmain.cpp:1401
 msgid "Windowed Mode"
@@ -5330,7 +5114,7 @@ msgstr "显示太阳方向"
 
 #: ../src/celestia/win32/winmain.cpp:1632
 msgid "Show Velocity Vector"
-msgstr "显示速度向量"
+msgstr "显示速度矢量"
 
 #: ../src/celestia/win32/winmain.cpp:1633
 msgid "Show Planetographic Grid"
@@ -5346,11 +5130,11 @@ msgstr "卫星(&S)"
 
 #: ../src/celestia/win32/winmain.cpp:1681
 msgid "Orbiting Bodies"
-msgstr "绕行的天体"
+msgstr "环绕的天体"
 
 #: ../src/celestia/win32/winmain.cpp:3194
 msgid "Loading: "
-msgstr "加载:"
+msgstr "正在加载："
 
 #: ../src/celestia/win32/winmain.cpp:3364 ../src/celutil/util.cpp:69
 #: ../src/celutil/util.cpp:73
@@ -5359,7 +5143,7 @@ msgstr "zh_CN"
 
 #: ../src/celestia/win32/winmain.cpp:3994
 msgid "Loading URL"
-msgstr "载入网址"
+msgstr "加载 URL"
 
 #: ../src/celestia/win32/winmain.cpp:4006
 msgid "Error opening script"
@@ -5379,885 +5163,9 @@ msgstr "时区名称"
 
 #: ../src/celestia/win32/wintime.cpp:98
 msgid "UTC Offset"
-msgstr "与世界标准时的差异"
+msgstr "与 UTC 的差异"
 
 #: ../src/tools/xyzv2bin/bin2xyzv.cpp:18
-#, fuzzy, c-format
+#, c-format
 msgid "Error openning %s or .\n"
-msgstr "读取发生错误"
-
-#~ msgid "Invisible"
-#~ msgstr "不可见的"
-
-#~ msgid "Small Body"
-#~ msgstr "小天体"
-
-#~ msgid "Dwarf Planet"
-#~ msgstr "矮行星"
-
-#~ msgid "&Add Bookmark"
-#~ msgstr "加入书签(&A)"
-
-#~ msgid "Add a bookmark for the current document"
-#~ msgstr "对当前文档添加书签"
-
-#~ msgid "Add &Relative Bookmark"
-#~ msgstr "添加相关书签(&R)"
-
-#~ msgid "Add a relative bookmark for the current document"
-#~ msgstr "对当前文档添加相关书签"
-
-#~ msgid "Add &Settings Bookmark"
-#~ msgstr "添加设置标记书签(&S)"
-
-#~ msgid "Add a settings bookmark for the current document"
-#~ msgstr "对当前文档添加设置书签"
-
-#~ msgid "Edit your bookmark collection in a separate window"
-#~ msgstr "在另一窗口里编辑书签文件"
-
-#~ msgid "&New Folder..."
-#~ msgstr "新建文件夹(&N)..."
-
-#~ msgid "Create a new bookmark folder in this menu"
-#~ msgstr "在当前菜单中建立书签文件夹"
-
-#~ msgid "Can't add bookmark with empty URL"
-#~ msgstr "空网址不能添加到书签中"
-
-#~ msgid ""
-#~ "Something seems to be wrong with your installation of Celestia. The "
-#~ "splash screen directory couldn't be found. \n"
-#~ "Start-up will continue, but Celestia will probably be missing some data "
-#~ "files and may not work correctly, please check your installation."
-#~ msgstr ""
-#~ "您安装的 Celestia 可能存在问题。启动时找不到启动画面所在的文件夹\n"
-#~ "启动过程将继续，但Celestia系统可能无法加载某些数据文件并且可能不能正常运"
-#~ "行。请检查您的安装是否正确。"
-
-#~ msgid "Go to &URL..."
-#~ msgstr "转到网址(&U)..."
-
-#~ msgid "Go to &Long/Lat..."
-#~ msgstr "驶向经纬度(&L)..."
-
-#~ msgid "&Back"
-#~ msgstr "后退(&B)"
-
-#~ msgid "&Forward"
-#~ msgstr "前进(&F)"
-
-#~ msgid "Home"
-#~ msgstr "首页"
-
-#~ msgid "Full Screen"
-#~ msgstr "切换全屏"
-
-#~ msgid "Copy URL"
-#~ msgstr "复制网址"
-
-#~ msgid "Set Time..."
-#~ msgstr "设置时间..."
-
-#~ msgid "Set Time to Now"
-#~ msgstr "将时间设置为当前时间"
-
-#~ msgid "Accelerate Time"
-#~ msgstr "加快时间流逝"
-
-#~ msgid "Decelerate Time"
-#~ msgstr "减慢时间流逝"
-
-#~ msgid "Accelerate Time (x2)"
-#~ msgstr "加快时间流逝 (x2)"
-
-#~ msgid "Decelerate Time (/2)"
-#~ msgstr "减慢时间流逝 (/2)"
-
-#~ msgid "Pause Time"
-#~ msgstr "暂停时间流逝"
-
-#~ msgid "Reverse Time"
-#~ msgstr "时间倒退"
-
-#~ msgid "Split View Vertically"
-#~ msgstr "垂直分割视窗"
-
-#~ msgid "Split View Horizontally"
-#~ msgstr "水平分割视窗"
-
-#~ msgid "Cycle View"
-#~ msgstr "切换视窗"
-
-#~ msgid "Single View"
-#~ msgstr "单视窗"
-
-#~ msgid "Delete View"
-#~ msgstr "删除视窗"
-
-#~ msgid "Frames Visible"
-#~ msgstr "显示视窗框架"
-
-#~ msgid "Active Frame Visible"
-#~ msgstr "激活视窗框架显示"
-
-#~ msgid "Synchronize Time"
-#~ msgstr "同步时间"
-
-#~ msgid "Alt-Azimuth Mode"
-#~ msgstr "经纬仪模式"
-
-#~ msgid "Go To Surface"
-#~ msgstr "前往物体表面"
-
-#~ msgid "Show Stars"
-#~ msgstr "显示恒星"
-
-#~ msgid "Show Planets"
-#~ msgstr "显示行星"
-
-#~ msgid "Show Galaxies"
-#~ msgstr "显示银河系"
-
-#~ msgid "Show Globulars"
-#~ msgstr "显示球状星团"
-
-#~ msgid "Show Partial Trajectories"
-#~ msgstr "显示部分轨道"
-
-#~ msgid "Show Nebulae"
-#~ msgstr "显示星云"
-
-#~ msgid "Show Open Clusters"
-#~ msgstr "显示疏散星团"
-
-#~ msgid "Show Constellations"
-#~ msgstr "显示星座"
-
-#~ msgid "Show CloudMaps"
-#~ msgstr "显示云图"
-
-#~ msgid "Show Cloud Shadows"
-#~ msgstr "显示云层投影"
-
-#~ msgid "Show Orbits"
-#~ msgstr "显示轨道"
-
-#~ msgid "Show Asteroid Orbits"
-#~ msgstr "显示小行星轨道"
-
-#~ msgid "Show Comet Orbits"
-#~ msgstr "显示彗星轨道"
-
-#~ msgid "Show Moon Orbits"
-#~ msgstr "显示卫星轨道"
-
-#~ msgid "Show Star Orbits"
-#~ msgstr "显示恒星轨道"
-
-#~ msgid "Show Planet Orbits"
-#~ msgstr "显示行星轨道"
-
-#~ msgid "Show Spacecraft Orbits"
-#~ msgstr "显示航天器轨道"
-
-#~ msgid "Show Equatorial Grid"
-#~ msgstr "显示赤道坐标网格"
-
-#~ msgid "Show Night Side Lights"
-#~ msgstr "显示夜视光"
-
-#~ msgid "Show Markers"
-#~ msgstr "显示标记"
-
-#~ msgid "Show Atmospheres"
-#~ msgstr "显示大气"
-
-#~ msgid "Show Smooth Orbit Lines"
-#~ msgstr "显示光滑轨道线"
-
-#~ msgid "Show Eclipse Shadows"
-#~ msgstr "显示星月食投影"
-
-#~ msgid "Cycle Star Mode"
-#~ msgstr "切换恒星模式"
-
-#~ msgid "Show Ring Shadows"
-#~ msgstr "显示星环投影"
-
-#~ msgid "Show Boundaries"
-#~ msgstr "显示边界"
-
-#~ msgid "Auto Magnitudes"
-#~ msgstr "星等自动调节"
-
-#~ msgid "Show Comet Tails"
-#~ msgstr "显示彗尾"
-
-#~ msgid "Show Star Labels"
-#~ msgstr "显示恒星标记"
-
-#~ msgid "Show Planet Labels"
-#~ msgstr "显示行星标记"
-
-#~ msgid "Show Moon Labels"
-#~ msgstr "显示卫星标记"
-
-#~ msgid "Show Comet Labels"
-#~ msgstr "显示彗星标记"
-
-#~ msgid "Show Constellation Labels"
-#~ msgstr "显示星座标记"
-
-#~ msgid "Constellation Labels in Latin"
-#~ msgstr "拉丁名星座标记"
-
-#~ msgid "Show Galaxy Labels"
-#~ msgstr "显示星系标记"
-
-#~ msgid "Show Globular Labels"
-#~ msgstr "显示球状星团标记"
-
-#~ msgid "Show Nebula Labels"
-#~ msgstr "显示星云标记"
-
-#~ msgid "Show Open Cluster Labels"
-#~ msgstr "显示疏散星团标记"
-
-#~ msgid "Show Asteroid Labels"
-#~ msgstr "显示小行星标记"
-
-#~ msgid "Show Spacecraft Labels"
-#~ msgstr "显示航天器标记"
-
-#~ msgid "Show Location Labels"
-#~ msgstr "显示地理位置标记"
-
-#~ msgid "Display Local Time"
-#~ msgstr "显示本地时间"
-
-#~ msgid "Show City Locations"
-#~ msgstr "显示城市位置"
-
-#~ msgid "Show Observatory Locations"
-#~ msgstr "显示观测站位置"
-
-#~ msgid "Show Landing Sites Locations"
-#~ msgstr "显示着陆地点位置"
-
-#~ msgid "Show Crater Locations"
-#~ msgstr "显示陨石坑位置"
-
-#~ msgid "Show Mons Locations"
-#~ msgstr "显示山脉位置"
-
-#~ msgid "Show Terra Locations"
-#~ msgstr "显示陆地位置"
-
-#~ msgid "Show Vallis Locations"
-#~ msgstr "显示峡谷位置"
-
-#~ msgid "Show Mare Locations"
-#~ msgstr "显示海洋位置"
-
-#~ msgid "Show Other Locations"
-#~ msgstr "显示其它位置"
-
-#~ msgid "Wireframe Mode"
-#~ msgstr "线框模型显示"
-
-#~ msgid "Center on Orbit"
-#~ msgstr "置中于轨道"
-
-#~ msgid "Basic"
-#~ msgstr "基本"
-
-#~ msgid "Multitexture"
-#~ msgstr "多重纹理"
-
-#~ msgid "NvCombiners"
-#~ msgstr "NvCombiners"
-
-#~ msgid "DOT3 ARBVP"
-#~ msgstr "DOT3 ARBVP"
-
-#~ msgid "NvCombiner NvVP"
-#~ msgstr "NvCombiner NvVP"
-
-#~ msgid "NvCombiner ARBVP"
-#~ msgstr "NvCombiner ARBVP"
-
-#~ msgid "ARBFP ARBVP"
-#~ msgstr "ARBFP ARBVP"
-
-#~ msgid "NV30"
-#~ msgstr "NV30"
-
-#~ msgid "Cycle OpenGL Render Path"
-#~ msgstr "切换 OpenGL 渲染通道"
-
-#~ msgid "Sync framerate to video refresh rate"
-#~ msgstr "将帧速率与影像刷新率同步"
-
-#~ msgid "Grab Image"
-#~ msgstr "捕捉屏幕图像"
-
-#~ msgid "OpenGL info"
-#~ msgstr "OpenGL 信息"
-
-#~ msgid "Show Bookmark Toolbar"
-#~ msgstr "显示书签工具栏"
-
-#~ msgid "UTC"
-#~ msgstr "国际统一标准时间"
-
-#~ msgid ""
-#~ "This version of Celestia was not built with support for movie recording."
-#~ msgstr "此版本 Celestia 系统不支持影像录制功能。"
-
-#~ msgid "Enter URL"
-#~ msgstr "输入地址"
-
-#, fuzzy
-#~ msgid "Go to URL"
-#~ msgstr "转到网址(&U)..."
-
-#~ msgid "Object: "
-#~ msgstr "物体:"
-
-#~ msgid "Longitude: "
-#~ msgstr "经度:"
-
-#~ msgid "East"
-#~ msgstr "东"
-
-#~ msgid "West"
-#~ msgstr "西"
-
-#~ msgid "Latitude: "
-#~ msgstr "纬度:"
-
-#~ msgid "North"
-#~ msgstr "北"
-
-#~ msgid "South"
-#~ msgstr "南"
-
-#~ msgid "Altitude: "
-#~ msgstr "高度:"
-
-#~ msgid "Celestia encountered an error while processing your script"
-#~ msgstr "Celestia 系统在处理脚本时出现错误"
-
-#~ msgid "Celestia Preferences"
-#~ msgstr "Celestia 偏好设置"
-
-#~ msgid "Rendering"
-#~ msgstr "渲染"
-
-#~ msgid "Show"
-#~ msgstr "显示"
-
-#~ msgid "Partial Trajectories"
-#~ msgstr "部分轨道"
-
-#~ msgid "Smooth Orbit Lines"
-#~ msgstr "光滑轨道线"
-
-#~ msgid "Equatorial Grid"
-#~ msgstr "赤道坐标网格"
-
-#~ msgid "Constellation Boundaries"
-#~ msgstr "星座边界线"
-
-#~ msgid "Orbits / Labels"
-#~ msgstr "轨道 / 标签"
-
-#~ msgid "Constellations in Latin"
-#~ msgstr "拉丁名星座标记"
-
-#~ msgid "Ambient Light"
-#~ msgstr "环境光"
-
-#~ msgid "Limiting Magnitude"
-#~ msgstr "极限星等"
-
-#~ msgid "Info Text"
-#~ msgstr "文字信息"
-
-#~ msgid "Level: "
-#~ msgstr "等级:"
-
-#~ msgid "Textures"
-#~ msgstr "纹理"
-
-#~ msgid "Resolution: "
-#~ msgstr "分辨率:"
-
-#~ msgid "Automatic FOV"
-#~ msgstr "自动调节视野"
-
-#~ msgid "Screen DPI: "
-#~ msgstr "屏幕分辨率:"
-
-#~ msgid "Viewing Distance (cm): "
-#~ msgstr "观测距离(厘米):"
-
-#~ msgid "Mons"
-#~ msgstr "山脉"
-
-#~ msgid "Terra"
-#~ msgstr "陆地"
-
-#~ msgid "Vallis"
-#~ msgstr "峡谷"
-
-#~ msgid "Mare"
-#~ msgstr "海洋"
-
-#~ msgid "Other"
-#~ msgstr "其它"
-
-#~ msgid "Minimum Feature Size"
-#~ msgstr "最小显示大小"
-
-#~ msgid "Date/Time"
-#~ msgstr "日期/时间"
-
-#~ msgid "Display"
-#~ msgstr "显示"
-
-#~ msgid "Timezone: "
-#~ msgstr "时区:"
-
-#~ msgid "Local Format"
-#~ msgstr "本地格式"
-
-#~ msgid "Set"
-#~ msgstr "设置"
-
-#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
-#~ msgstr "本地时间只能设置在 1902 和 2037 年之间.\n"
-
-#~ msgid "Now"
-#~ msgstr "当前"
-
-#~ msgid ""
-#~ "\n"
-#~ "Selection: "
-#~ msgstr ""
-#~ "\n"
-#~ "选择:"
-
-#~ msgid "Include Light Travel Time"
-#~ msgstr "包含光传播时间"
-
-#~ msgid "Ignore Light Travel Time "
-#~ msgstr "忽略光传播时间"
-
-#~ msgid "OpenGL"
-#~ msgstr "OpenGL"
-
-#~ msgid "Key Bindings"
-#~ msgstr "按键组合"
-
-#~ msgid "<b>Unextended OpenGL 1.1</b>"
-#~ msgstr "<b>未扩展 OpenGL 1.1</b>"
-
-#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
-#~ msgstr "<b>多重纹理和 ARB_texenv_combine 扩展</b>"
-
-#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
-#~ msgstr "<b>NVIDIA 组合渲染, 无顶点程序</b>"
-
-#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
-#~ msgstr "<b>ARB_texenv_DOT3 扩展, ARB 顶点程序扩展</b>"
-
-#~ msgid ""
-#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
-#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
-#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
-#~ "for Geforce users"
-#~ msgstr ""
-#~ "<b>NVIDIA 组合渲染, NV顶点程序扩展</b><br>对于 Geforce 或 ATI Radeon 显卡"
-#~ "提供特效，包括凹凸映射（bump mapping），环状阴影（ring shadows）和反射突显"
-#~ "（specular highlights）。即使你是 Geforce 用户，选用 NvCombiner ARBVP 效果"
-#~ "会稍好一点。"
-
-#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
-#~ msgstr "<b>NVIDIA 组合渲染, ARB 顶点程序扩展</b>"
-
-#~ msgid ""
-#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
-#~ "advanced effects on Geforce FX and Radeon 9700 cards"
-#~ msgstr ""
-#~ "<b>ARB 片段程序与 ARB 顶点程序扩展</b><br>为 Geforce FX 和 Radeon 9700系列"
-#~ "显卡提供更高级绘图效果"
-
-#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
-#~ msgstr "<b>NV 片段程序和 ARB 顶点程序扩展</b>"
-
-#~ msgid "<b>OpenGL 2.0 Shading Language</b>"
-#~ msgstr "<b>OpenGL 2.0 Shading 语言</b>"
-
-#~ msgid ""
-#~ "File %1 does not exist, using default configuration file %2/celestia.cfg"
-#~ msgstr "文件 %1 不存在，使用默认设置文件 %2/celestia.cfg"
-
-#~ msgid "Directory %1 does not exist, using default %2"
-#~ msgstr "文件路径 %1 不存在，使用默认路径 %2"
-
-#~ msgid "Extras directory %1 does not exist"
-#~ msgstr "附加路径 %1 不存在"
-
-#, fuzzy
-#~ msgid "Surface Temp: "
-#~ msgstr "表面温度:"
-
-#~ msgid "Radius: "
-#~ msgstr "半径:"
-
-#~ msgid "Rsun"
-#~ msgstr "倍太阳半径"
-
-#~ msgid "Marked objects"
-#~ msgstr "已标记物体"
-
-#~ msgid "Unmark &All"
-#~ msgstr "取消所有标记(&A)"
-
-#, fuzzy
-#~ msgid "&Reference Vectors"
-#~ msgstr "参考向量(&R)"
-
-#~ msgid "Small Bodies"
-#~ msgstr "小天体"
-
-#~ msgid "Duration: %1"
-#~ msgstr "持续时间:%1"
-
-#~ msgid "Size: %1 MB"
-#~ msgstr "大小:%1 MB"
-
-#~ msgid "  Paused"
-#~ msgstr " 已暂停"
-
-#~ msgid "Current size: %1 x %2"
-#~ msgstr "当前大小:%1 x %2"
-
-#~ msgid "Current width: %1 x %2"
-#~ msgstr "当前宽度:%1 x %2"
-
-#~ msgid "Current height: %1 x %2"
-#~ msgstr "当前高度:%1 x %2"
-
-#~ msgid "You must specify a file name."
-#~ msgstr "您必须指定文件名。"
-
-#~ msgid "Error initializing movie capture."
-#~ msgstr "影像捕捉初始化发生错误。"
-
-#~ msgid "  Recording"
-#~ msgstr "  录像中"
-
-#~ msgid "License file 'License.txt' is missing!"
-#~ msgstr "找不到许可文件 'License.txt'!"
-
-#, fuzzy
-#~ msgid "render path: %i\n"
-#~ msgstr "渲染通道:"
-
-#~ msgid "DSO Labels"
-#~ msgstr "深空间物体标签"
-
-#~ msgid "Filter Stars"
-#~ msgstr "恒星筛选"
-
-#, fuzzy
-#~ msgid "Coordinate grids"
-#~ msgstr "坐标系"
-
-#~ msgid "Loaded "
-#~ msgstr "已加载 "
-
-#~ msgid "Error: "
-#~ msgstr "错误:"
-
-#~ msgid "   Model statistics: "
-#~ msgstr "   模型统计数据:"
-
-#~ msgid " vertices, "
-#~ msgstr " 顶点,"
-
-#~ msgid " primitives, "
-#~ msgstr " 原始,"
-
-#~ msgid " materials "
-#~ msgstr " 材料 "
-
-#~ msgid " unique)\n"
-#~ msgstr " 唯一的)\n"
-
-#~ msgid "' not found."
-#~ msgstr "' 找不到。"
-
-#~ msgid "parent body '"
-#~ msgstr "母天体 '"
-
-#~ msgid "' not found.\n"
-#~ msgstr "' 找不到。\n"
-
-#~ msgid "Barycenter "
-#~ msgstr "质心 "
-
-#~ msgid ", max="
-#~ msgstr ",最大="
-
-#~ msgid "Orientation: "
-#~ msgstr "方向:"
-
-#~ msgid "Render path: Basic"
-#~ msgstr "渲染通道:基本"
-
-#~ msgid "Render path: Multitexture"
-#~ msgstr "渲染通道:多重纹理"
-
-#~ msgid "Render path: NVIDIA combiners"
-#~ msgstr "渲染通道: NVIDIA 组合渲染"
-
-#~ msgid "Render path: OpenGL vertex program"
-#~ msgstr "渲染通道: OpenGL 顶点程序"
-
-#~ msgid "Render path: NVIDIA vertex program and combiners"
-#~ msgstr "渲染通道: NVIDIA 顶点程序及组合渲染"
-
-#~ msgid "Render path: OpenGL vertex program/NVIDIA combiners"
-#~ msgstr "渲染通道: OpenGL 顶点程序/NVIDIA 组合渲染"
-
-#~ msgid "Render path: OpenGL 1.5 vertex/fragment program"
-#~ msgstr "渲染通道: OpenGL 1.5 顶点/片段程序"
-
-#~ msgid "Render path: NVIDIA GeForce FX"
-#~ msgstr "渲染通道: NVIDIA GeForce FX"
-
-#~ msgid " days"
-#~ msgstr " 天"
-
-#~ msgid " hours"
-#~ msgstr " 小时"
-
-#~ msgid "RA: "
-#~ msgstr "赤经: "
-
-#~ msgid "Dec: "
-#~ msgstr "赤纬: "
-
-#~ msgid "x Sun"
-#~ msgstr "倍太阳光度"
-
-#~ msgid " faster"
-#~ msgstr " 加快"
-
-#~ msgid " slower"
-#~ msgstr " 减慢"
-
-#, fuzzy
-#~ msgid "Lock "
-#~ msgstr "锁定"
-
-#~ msgid "FOV: "
-#~ msgstr "视野:"
-
-#~ msgid " fps"
-#~ msgstr " 帧/秒"
-
-#~ msgid "Loading "
-#~ msgstr "加载中:"
-
-#, fuzzy
-#~ msgid "Bookmarks file %1 does not exist."
-#~ msgstr "附加路径 %1 不存在"
-
-#, fuzzy
-#~ msgid "No Bookmarks File"
-#~ msgstr "书签(&B)"
-
-#, fuzzy
-#~ msgid "Toggle star style"
-#~ msgstr "星点渲染:正常点"
-
-#, fuzzy
-#~ msgid "Size: "
-#~ msgstr "大小:"
-
-#, fuzzy
-#~ msgid "Period: "
-#~ msgstr "自转周期:"
-
-#, fuzzy
-#~ msgid "days<br>\n"
-#~ msgstr " 天"
-
-#, fuzzy
-#~ msgid "NVIDIA combiners"
-#~ msgstr "渲染通道: OpenGL 顶点程序/NVIDIA 组合渲染"
-
-#, fuzzy
-#~ msgid "OpenGL vertex program"
-#~ msgstr "渲染通道: OpenGL 顶点程序/NVIDIA 组合渲染"
-
-#, fuzzy
-#~ msgid "NVIDIA vertex program and combiners"
-#~ msgstr "渲染通道: NVIDIA 顶点程序及组合渲染"
-
-#, fuzzy
-#~ msgid "OpenGL vertex program/NVIDIA combiners"
-#~ msgstr "渲染通道: OpenGL 顶点程序/NVIDIA 组合渲染"
-
-#, fuzzy
-#~ msgid "OpenGL 1.5 vertex/fragment program"
-#~ msgstr "渲染通道: OpenGL 1.5 顶点/片段程序"
-
-#, fuzzy
-#~ msgid "NVIDIA GeForce FX"
-#~ msgstr "渲染通道: NVIDIA GeForce FX"
-
-#~ msgid "Save As:"
-#~ msgstr "另存为:"
-
-#~ msgid "*.ogg"
-#~ msgstr "*.ogg"
-
-#~ msgid "Aspect Ratio:"
-#~ msgstr "长宽比:"
-
-#~ msgid "Current"
-#~ msgstr "当前"
-
-#~ msgid "11:9"
-#~ msgstr "11:9"
-
-#~ msgid "4:3"
-#~ msgstr "4:3"
-
-#~ msgid "16:9"
-#~ msgstr "16:9"
-
-#~ msgid "Image Size:"
-#~ msgstr "图像尺寸:"
-
-#~ msgid "Frame Rate:"
-#~ msgstr "帧速率:"
-
-#~ msgid "Video Quality:"
-#~ msgstr "影像质量:"
-
-#~ msgid "Play Video when capture is done"
-#~ msgstr "录制完毕后播放影像"
-
-#~ msgid "Usage"
-#~ msgstr "使用"
-
-#~ msgid ""
-#~ "<p>Press <b>F11</b> to start/pause recording<br>\n"
-#~ "Press <b>F12</b> to stop</p>\n"
-#~ "\n"
-#~ "<p>Note that resizing the main window will not be possible until the end "
-#~ "of the capture</p>"
-#~ msgstr ""
-#~ "<p>按<b>F11</b>键开始/暂停录像<br>\n"
-#~ "按<b>F12</b>键停止录像</p>\n"
-#~ "\n"
-#~ "<p>注意:录像结束以前您无法改变视窗大小</p>"
-
-#~ msgid "&OK"
-#~ msgstr "确定(&O)"
-
-#~ msgid "&Cancel"
-#~ msgstr "取消(&C)"
-
-#~ msgid "Options"
-#~ msgstr "选项"
-
-#~ msgid "OpenGL Render Path"
-#~ msgstr "OpenGL 渲染通道"
-
-#~ msgid "MultiView"
-#~ msgstr "多视窗"
-
-#~ msgid "Main Toolbar"
-#~ msgstr "主工具栏"
-
-#~ msgid "Dist."
-#~ msgstr "距离"
-
-#, fuzzy
-#~ msgid "App. Mag."
-#~ msgstr "视星等"
-
-#, fuzzy
-#~ msgid "Abs. Mag."
-#~ msgstr "绝对星等"
-
-#~ msgid "Brightest (Abs.)"
-#~ msgstr "按最大星等(绝对星等)"
-
-#~ msgid "Brightest (App.)"
-#~ msgstr "按最大星等(视星等)"
-
-#~ msgid "&Close"
-#~ msgstr "关闭(&C)"
-
-#~ msgid "Alt+C"
-#~ msgstr "Alt+C"
-
-#~ msgid "End"
-#~ msgstr "结束"
-
-#~ msgid "Moon Eclipses"
-#~ msgstr "月食"
-
-#~ msgid "Search"
-#~ msgstr "查找"
-
-#, fuzzy
-#~ msgid "Star color: enhanced"
-#~ msgstr "总计恒星数:"
-
-#, fuzzy
-#~ msgid "Star color: normal"
-#~ msgstr "调用一般表面纹理。"
-
-#~ msgid "Apparent mag: %.2f\n"
-#~ msgstr "视星等:%.2f\n"
-
-#~ msgid "Use alternate configuration file"
-#~ msgstr "使用不同的设置文件"
-
-#~ msgid "Use alternate installation directory"
-#~ msgstr "使用不同的安装目录"
-
-#~ msgid "Use as additional \"extras\" directory"
-#~ msgstr "作为附加 \"extras\" 文件目录"
-
-#~ msgid "Start fullscreen"
-#~ msgstr "以全屏模式启动系统"
-
-#~ msgid "Disable splash screen"
-#~ msgstr "关闭启动画面"
-
-#~ msgid "Start and go to url"
-#~ msgstr "启动时前往网址"
-
-#~ msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
-#~ msgstr "zhaozhengxu@yahoo.com markerzli@gmail.com"
-
-#~ msgid "_: NAME OF TRANSLATORS\\nYour names"
-#~ msgstr "ZhaoZhengxu,Markerz Li"
-
-#, fuzzy
-#~ msgid "Manual Celestia"
-#~ msgstr "Celestia 偏好设置"
-
-#~ msgid "&None"
-#~ msgstr "无(&N)"
+msgstr "错误打开 %s 或 。\n"
