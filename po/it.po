@@ -2,14 +2,15 @@
 # Copyright (C) YEAR Chris Laurel
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# ALBANO BATTISTELLA <albano_battistella@hotmail.com>,2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
 "POT-Creation-Date: 2019-02-14 21:37+0300\n"
-"PO-Revision-Date: 2018-05-28 20:47+0300\n"
-"Last-Translator: Alexell <alexell@alexell.ru>\n"
+"PO-Revision-Date: 2020-05-17 14:47+0100\n"
+"Last-Translator: Albano Battistella <albano battistella@hotmail.com>\n"
 "Language-Team: \n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -1295,6 +1296,7 @@ msgstr "Caricamento del modello: "
 msgid ""
 "   Model statistics: %u vertices, %u primitives, %u materials (%u unique)\n"
 msgstr ""
+"   Statistiche del modello: %u vertici, %u primitivi, %u materiali (%u unico)\n"
 
 #: ../src/celengine/meshmanager.cpp:203
 #, fuzzy, c-format
@@ -1317,7 +1319,7 @@ msgstr "Errore nel file .ssc (linea "
 #: ../src/celengine/solarsys.cpp:1218 ../src/celengine/solarsys.cpp:1286
 #, c-format
 msgid "parent body '%s' of '%s' not found.\n"
-msgstr ""
+msgstr "corpo principale '%s' di '%s' non trovato.\n"
 
 #: ../src/celengine/solarsys.cpp:1229
 #, fuzzy, c-format
@@ -1405,7 +1407,7 @@ msgstr ""
 #: ../src/celengine/stardb.cpp:1397
 #, c-format
 msgid "Level %i, %.5f ly, %i nodes, %i  stars\n"
-msgstr ""
+msgstr "Livello %i,% .5f ly, %i nodi, %i stelle\n"
 
 #: ../src/celengine/texture.cpp:929
 #, fuzzy, c-format
@@ -1470,17 +1472,17 @@ msgstr "Errore di lettura del file di immagine PNG "
 #: ../src/celephem/samporbit.cpp:845 ../src/tools/xyzv2bin/bin2xyzv.cpp:31
 #, c-format
 msgid "Bad binary xyzv file %s.\n"
-msgstr ""
+msgstr "File binario xyzv errato %s.\n"
 
 #: ../src/celephem/samporbit.cpp:851 ../src/tools/xyzv2bin/bin2xyzv.cpp:37
 #, c-format
 msgid "Unsupported byte order %i, expected %i.\n"
-msgstr ""
+msgstr "Ordine byte previsto %i, non supportato%i.\n"
 
 #: ../src/celephem/samporbit.cpp:859 ../src/tools/xyzv2bin/bin2xyzv.cpp:44
 #, c-format
 msgid "Unsupported digits number %i, expected %i.\n"
-msgstr ""
+msgstr "Numero previsto di cifre %i, non supportato%i.\n"
 
 #: ../src/celestia/celestiacore.cpp:333
 msgid "Error reading favorites file."
@@ -1492,6 +1494,9 @@ msgid ""
 "%s\n"
 "Orientation: [%f, %f, %f], %.1f\n"
 msgstr ""
+msgstr ""
+"%s\n"
+"Orientamento: [% f,% f,% f],% .1f\n"
 
 #: ../src/celestia/celestiacore.cpp:469
 msgid "Error opening script file."
@@ -1923,12 +1928,12 @@ msgstr "Angolo di fase: %.1f%s\n"
 #: ../src/celestia/celestiacore.cpp:3180
 #, c-format
 msgid "Mass: %.2f Me\n"
-msgstr ""
+msgstr "Massa: %.2f Me\n"
 
 #: ../src/celestia/celestiacore.cpp:3186
 #, c-format
 msgid "Density: %.2f x 1000 kg/m^3\n"
-msgstr ""
+msgstr "Densità: %.2f x 1000 kg/m^3\n"
 
 #: ../src/celestia/celestiacore.cpp:3192
 #, fuzzy, c-format
@@ -2000,7 +2005,7 @@ msgstr "Sincronizza Orbita"
 #: ../src/celestia/celestiacore.cpp:3540
 #, c-format
 msgid "Lock %s -> %s\n"
-msgstr ""
+msgstr "BloccA %s -> %s\n"
 
 #: ../src/celestia/celestiacore.cpp:3546
 #, fuzzy, c-format
@@ -2028,7 +2033,7 @@ msgstr ""
 #: ../src/celestia/celestiacore.cpp:3852
 #, fuzzy
 msgid "Paused"
-msgstr "  In pausa"
+msgstr "In pausa"
 
 #: ../src/celestia/celestiacore.cpp:3852
 #, fuzzy
@@ -2147,6 +2152,14 @@ msgid ""
 "\n"
 "y = yes, ESC = cancel script, any other key = no"
 msgstr ""
+"ATTENZIONE:\n"
+"\n"
+"Questo script richiede l'autorizzazione a leggere/scrivere file\n"
+"ed esegui programmi esterni. Consentire questo può essere\n"
+"Pericoloso.\n"
+"Ti fidi dello script e vuoi permetterlo?\n"
+"\n"
+"y = sì, ESC = annulla script, qualsiasi altra chiave = no"
 
 #: ../src/celestia/celx.cpp:1077
 msgid ""
@@ -2157,6 +2170,12 @@ msgid ""
 "dangerous.\n"
 "Do you trust the script and want to allow this?"
 msgstr ""
+"ATTENZIONE:\n"
+"\n"
+"Questo script richiede l'autorizzazione a leggere/scrivere file\n"
+"ed esegui programmi esterni. Consentire questo può essere\n"
+"Pericoloso.\n"
+"Ti fidi dello script e vuoi eseguirlo?"
 
 #: ../src/celestia/glutmain.cpp:520
 #, c-format
@@ -2164,6 +2183,8 @@ msgid ""
 "Celestia was unable to initialize OpenGL extensions (error %i). Graphics "
 "quality will be reduced."
 msgstr ""
+"Celestia non è stato in grado di inizializzare le estensioni OpenGL (errore i). Grafica "
+"la qualità sarà ridotta."
 
 #. if (glGetError())
 #. result = [NSString stringWithFormat:NSLocalizedString(@"%@: --not available--",""), desc];
@@ -2221,6 +2242,11 @@ msgid ""
 "\n"
 "Please correct this and try again."
 msgstr ""
+"Sembra che la directory \"CelestiaResources\"non sia stata correttamente "
+"installata nella posizione corretta come indicato nelle istruzioni di "
+"installazione.\n"
+"\n"
+"Correggi e riprova."
 
 #: ../src/celestia/macosx/CelestiaController.m:181
 #, fuzzy
@@ -2229,7 +2255,7 @@ msgstr "Errore nel caricamento del font. Il testo non sarà visibile.\n"
 
 #: ../src/celestia/macosx/CelestiaController.m:213
 msgid "Fatal Error"
-msgstr ""
+msgstr "Errore irreversibile"
 
 #: ../src/celestia/macosx/CelestiaController.m:323
 #, objc-format
@@ -2237,6 +2263,8 @@ msgid ""
 "It appears you are running Celestia on %s hardware. Do you wish to install a "
 "workaround?"
 msgstr ""
+"Sembra che tu stia eseguendo Celestia su% s hardware. Desideri installarlo isoluzione"
+"Alternativa?"
 
 #: ../src/celestia/macosx/CelestiaController.m:324
 #, objc-format
@@ -2244,44 +2272,45 @@ msgid ""
 "A shell script will be run to modify your %@, adding an IgnoreGLExtensions "
 "directive. This can prevent freezing issues."
 msgstr ""
+"Verrà eseguito uno script di shell per modificare il tuo %@, aggiungendo un Ignora "
+"GLExtensions. Questo può prevenire problemi di freezing."
 
 #: ../src/celestia/macosx/CelestiaController.m:325
 msgid "Yes"
-msgstr ""
+msgstr "Si"
 
 #: ../src/celestia/macosx/CelestiaController.m:326
-#, fuzzy
 msgid "No"
-msgstr "Adesso"
+msgstr "No"
 
 #: ../src/celestia/macosx/CelestiaController.m:351
 msgid "Workaround successfully installed."
-msgstr ""
+msgstr "Soluzione alternativa installata correttamente."
 
 #: ../src/celestia/macosx/CelestiaController.m:352
 #, objc-format
 msgid "Your original %@ has been backed up."
-msgstr ""
+msgstr "È stato eseguito il backup del tuo %@ originale."
 
 #: ../src/celestia/macosx/CelestiaController.m:357
 msgid ""
 "There was a problem installing the workaround. You can attempt to perform "
 "the workaround manually by following the instructions in the README."
 msgstr ""
+"Si è verificato un problema durante l'installazione della soluzione alternativa. Puoi provare a eseguire"
+"la soluzione alternativa manualmente seguendo le istruzioni nel file README."
 
 #: ../src/celestia/macosx/CelestiaController.m:467
-#, fuzzy
 msgid "Quit Celestia?"
-msgstr "A proposito di Celestia"
+msgstr "Uscire da Celestia?"
 
 #: ../src/celestia/macosx/CelestiaController.m:468
 msgid "Are you sure you want to quit Celestia?"
-msgstr ""
+msgstr "Sei sicuro di voler uscire da Celestia?"
 
 #: ../src/celestia/macosx/CelestiaController.m:469
-#, fuzzy
 msgid "Quit"
-msgstr "Quito"
+msgstr "Esci"
 
 #: ../src/celestia/macosx/CelestiaController.m:649
 #, fuzzy
@@ -2290,50 +2319,45 @@ msgstr "Errore nel caricamento del font. Il testo non sarà visibile.\n"
 
 #: ../src/celestia/macosx/CelestiaController.m:797
 msgid "Movie capture is not available in this version of Celestia."
-msgstr ""
+msgstr "L'acquisizione di filmati non è disponibile in questa versione di Celestia."
 
 #. Remove following line to enable movie capture...
 #: ../src/celestia/macosx/CelestiaController.m:797
-#, fuzzy
 msgid "No Movie Capture"
-msgstr "Cattura video"
+msgstr "Nessuna Cattura video"
 
 #: ../src/celestia/macosx/CelestiaController.m:803
-#, fuzzy
 msgid "Capture Movie"
-msgstr "Cattura video"
+msgstr "Cattura Video"
 
 #. NSLog(@"[FavoritesDrawerController addNewFavorite:%@]",sender);
 #: ../src/celestia/macosx/FavoritesDrawerController.m:117
 msgid "untitled folder"
-msgstr ""
+msgstr "Cartella senza nome"
 
 #: ../src/celestia/macosx/GotoWindowController.m:59
-#, fuzzy
 msgid "No Object Name Entered"
-msgstr "Nome dell'Oggetto"
+msgstr "Nessun nome oggetto inserito"
 
 #: ../src/celestia/macosx/GotoWindowController.m:60
 msgid "Please enter an object name."
-msgstr ""
+msgstr "Inserisci un nome oggetto."
 
 #: ../src/celestia/macosx/GotoWindowController.m:67
-#, fuzzy
 msgid "Object Not Found"
-msgstr "Oggetti"
+msgstr "Oggetto no trovato"
 
 #: ../src/celestia/macosx/GotoWindowController.m:68
 msgid "Please check that the object name is correct."
-msgstr ""
+msgstr "Verificare che il nome dell'oggetto sia corretto."
 
 #: ../src/celestia/macosx/Menu_Extensions.m:173
-#, fuzzy
 msgid "Show Alternate Surface"
-msgstr "Superfici alternative (&A)"
+msgstr "Mostra Superfici Alternative"
 
 #: ../src/celestia/macosx/Menu_Extensions.m:269
 msgid "default"
-msgstr ""
+msgstr "Predefinito"
 
 #: ../src/celestia/macosx/RenderPanelController.m:42
 #, objc-format
@@ -2341,23 +2365,24 @@ msgid ""
 "Your system does not support\n"
 "%@"
 msgstr ""
+"Il tuo sistema non lo supporta\n"
+"%@"
 
 #: ../src/celestia/macosx/SetTimeWindowController.m:63
-#, fuzzy
 msgid "No Date or Time Entered"
-msgstr "Nome dell'Oggetto"
+msgstr "Nessuna data o ora immesse"
 
 #: ../src/celestia/macosx/SetTimeWindowController.m:64
 msgid "Please enter a date and/or time."
-msgstr ""
+msgstr "Inserisci una data e/o ora."
 
 #: ../src/celestia/macosx/SetTimeWindowController.m:212
 msgid "Improper Date or Time Format"
-msgstr ""
+msgstr "Formato data o ora non corretto"
 
 #: ../src/celestia/macosx/SetTimeWindowController.m:213
 msgid "Please enter the date as \"mm/dd/yyyy\" and the time as \"hh:mm:ss\"."
-msgstr ""
+msgstr "Inserisci la data come \"mm/gg/aaaa\" e l'ora come \"hh:mm:ss\"."
 
 #: ../src/celestia/oggtheoracapture.cpp:162
 #, c-format
@@ -2387,23 +2412,27 @@ msgstr "OggTheoraCapture::pulizia() - ha scritto %d fotogrammi\n"
 
 #: ../src/celestia/qt/qtappwin.cpp:162
 msgid "Auto"
-msgstr ""
+msgstr "Automatico"
 
 #: ../src/celestia/qt/qtappwin.cpp:168
 msgid "Custom"
-msgstr ""
+msgstr "Personalizzato"
 
 #: ../src/celestia/qt/qtappwin.cpp:212
 msgid ""
 "Celestia is unable to run because the data directroy was not found, probably "
 "due to improper installation."
 msgstr ""
+"Impossibile eseguire Celestia perché la directory di dati non è stata trovata, probabilmente"
+"a causa di installazione errata."
 
 #: ../src/celestia/qt/qtappwin.cpp:249
 msgid ""
 "Celestia is unable to run because the CelestiaResources folder was not "
 "found, probably due to improper installation."
 msgstr ""
+"Impossibile eseguire Celestia perché la cartella CelestiaResources non è stata"
+"trovato, probabilmente a causa di un'installazione errata."
 
 #: ../src/celestia/qt/qtappwin.cpp:291
 #, qt-format
@@ -2411,6 +2440,8 @@ msgid ""
 "Celestia was unable to initialize OpenGL extensions (error %1). Graphics "
 "quality will be reduced."
 msgstr ""
+"Celestia non è stato in grado di inizializzare le estensioni OpenGL (errore% 1). Grafica"
+"la qualità sarà ridotta."
 
 #: ../src/celestia/qt/qtappwin.cpp:309
 msgid "Celestial Browser"
@@ -2850,11 +2881,11 @@ msgstr "Organizza i segnalibri... (&O)"
 
 #: ../src/celestia/qt/qtappwin.cpp:1533
 msgid "Set custom FPS"
-msgstr ""
+msgstr "Impostazione predefinita FPS"
 
 #: ../src/celestia/qt/qtappwin.cpp:1534
 msgid "FPS value"
-msgstr ""
+msgstr "ValorE FPS"
 
 #: ../src/celestia/qt/qtappwin.cpp:1554
 #, fuzzy, qt-format
@@ -2870,7 +2901,7 @@ msgstr "Scripts"
 
 #: ../src/celestia/qt/qtbookmark.cpp:394
 msgid "Title"
-msgstr ""
+msgstr "Titolo"
 
 #: ../src/celestia/qt/qtbookmark.cpp:396
 #, fuzzy
@@ -2884,7 +2915,7 @@ msgstr "Segnalibri (&b)"
 
 #: ../src/celestia/qt/qtbookmark.cpp:582
 msgid "Add bookmarks to this folder to see them in the bookmarks menu."
-msgstr ""
+msgstr "Aggiungi i segnalibri a questa cartella per vederli nel menu dei segnalibri."
 
 #: ../src/celestia/qt/qtbookmark.cpp:587
 #, fuzzy
@@ -2893,7 +2924,7 @@ msgstr "Barra strumenti principale"
 
 #: ../src/celestia/qt/qtbookmark.cpp:588
 msgid "Add bookmarks to this folder to see them in the bookmarks toolbar."
-msgstr ""
+msgstr "Aggiungi i segnalibri a questa cartella per vederli nella barra degli strumenti dei segnalibri"
 
 #: ../src/celestia/qt/qtbookmark.cpp:602
 #, fuzzy
@@ -3409,7 +3440,7 @@ msgstr "Marca (&M) "
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:565
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:716
 msgid "Unmark stars selected in list view"
-msgstr ""
+msgstr "Deseleziona le stelle selezionate nella vista elenco"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:569
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:486
@@ -3422,7 +3453,7 @@ msgstr "Marcatori"
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:488
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:722
 msgid "Remove all existing markers"
-msgstr ""
+msgstr "Rimuovi tutti i marcatori esistenti"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:576
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:493
@@ -3537,7 +3568,7 @@ msgstr "Oggetti"
 
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:477
 msgid "Mark DSOs selected in list view"
-msgstr ""
+msgstr "Contrassegna i DSO selezionati nella vista elenco"
 
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:482
 #, fuzzy
@@ -3551,7 +3582,7 @@ msgstr "oggetto genitore '"
 
 #: ../src/celestia/qt/qteventfinder.cpp:475
 msgid "Occulter"
-msgstr ""
+msgstr "Nascondi"
 
 #: ../src/celestia/qt/qteventfinder.cpp:477
 #, fuzzy
@@ -3596,7 +3627,7 @@ msgstr "Oggetto: "
 
 #: ../src/celestia/qt/qteventfinder.cpp:674
 msgid "End date is earlier than start date."
-msgstr ""
+msgstr "La data di fine è precedente alla data di inizio."
 
 #: ../src/celestia/qt/qteventfinder.cpp:688
 #, fuzzy
@@ -3626,7 +3657,7 @@ msgstr "Durata: %1"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:75
 msgid "Error: no object selected!\n"
-msgstr ""
+msgstr "Errore: nessun oggetto selezionato!\n"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:86
 #: ../src/celestia/qt/qtselectionpopup.cpp:159
@@ -3651,7 +3682,7 @@ msgstr "Dimensione: %1 MB"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:134
 msgid "<b>Oblateness: "
-msgstr ""
+msgstr "<B> schiacciamento:"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:169
 #, fuzzy, qt-format
@@ -3665,7 +3696,7 @@ msgstr "Distanza: "
 
 #: ../src/celestia/qt/qtinfopanel.cpp:194
 msgid "years"
-msgstr ""
+msgstr "anni"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:198
 #, fuzzy
@@ -3675,7 +3706,7 @@ msgstr "Testo informativo"
 #: ../src/celestia/qt/qtinfopanel.cpp:199
 #, qt-format
 msgid "Osculating elements for %1"
-msgstr ""
+msgstr "Elementi oscillanti per %1"
 
 #. stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
 #: ../src/celestia/qt/qtinfopanel.cpp:202
@@ -3962,29 +3993,25 @@ msgid "Set Day"
 msgstr "Imposta"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:97
-#, fuzzy
 msgid "Time: "
-msgstr "Tempo (&T)"
+msgstr "Tempo:"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:116
-#, fuzzy
 msgid "Set Hours"
-msgstr " ore"
+msgstr "Imposta Ore"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:119
 #: ../src/celestia/qt/qtsettimedialog.cpp:123
 msgid ":"
-msgstr ""
+msgstr ":"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:120
-#, fuzzy
 msgid "Set Minutes"
-msgstr " minuti"
+msgstr " Imposta Minuti"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:124
-#, fuzzy
 msgid "Set Seconds"
-msgstr " secondi"
+msgstr " Imposta Secondi"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:128
 #: ../src/celestia/win32/res/resource_strings.cpp:102
@@ -3992,9 +4019,8 @@ msgid "Julian Date: "
 msgstr "Data Giuliana: "
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:140
-#, fuzzy
 msgid "Set Julian Date"
-msgstr "Data Giuliana: "
+msgstr "imposta Data Giuliana: "
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:149
 #, fuzzy
@@ -4006,9 +4032,8 @@ msgid "Barycenter"
 msgstr "Baricentro"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:506
-#, fuzzy
 msgid "Star"
-msgstr "Tipo spettrale errato nel database delle stelle, stella nº"
+msgstr "Stella"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:514
 #: ../src/celestia/win32/wineclipses.cpp:59
@@ -4049,9 +4074,8 @@ msgid "Surface feature"
 msgstr "Vai alla superficie"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:536
-#, fuzzy
 msgid "Unknown"
-msgstr "Errore sconosciuto in apertura dello script"
+msgstr "Sconosciuto"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:551
 #, fuzzy
@@ -4077,7 +4101,7 @@ msgstr "Lune minori"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:557
 msgid "Components"
-msgstr ""
+msgstr "Componenti"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:559
 #, fuzzy
@@ -4091,7 +4115,7 @@ msgstr "Oggetti"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:712
 msgid "Mark bodies selected in list view"
-msgstr ""
+msgstr "Contrassegna i corpi selezionati nella vista elenco"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:30
 #: ../src/celestia/qt/qttimetoolbar.cpp:45
@@ -4168,7 +4192,7 @@ msgstr "Tempo (&T)"
 #. i18n: ectx: property (windowTitle), widget (QDialog, gotoObjectDialog)
 #: ../src/celestia/qt/rc.cpp:15
 msgid "Dialog"
-msgstr ""
+msgstr "Dialogo"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:56
 #. i18n: ectx: property (text), widget (QLabel, label)
@@ -4237,7 +4261,7 @@ msgstr "Nuova cartella..."
 #. i18n: ectx: property (text), widget (QPushButton, removeItemButton)
 #: ../src/celestia/qt/rc.cpp:60
 msgid "Remove Item"
-msgstr ""
+msgstr "Rimuovi oggetto"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:14
 #. i18n: ectx: property (windowTitle), widget (QDialog, preferencesDialog)
@@ -4597,7 +4621,7 @@ msgstr "Display"
 
 #: ../src/celestia/qt/xbel.cpp:64
 msgid "Not an XBEL version 1.0 file."
-msgstr ""
+msgstr "Non è un file XBEL versione 1.0."
 
 #: ../src/celestia/url.cpp:655
 msgid "Settings"
@@ -4753,15 +4777,15 @@ msgstr "Luce ambiente (&A)"
 #: ../src/celestia/win32/res/resource_strings.cpp:45
 #, fuzzy
 msgid "&No"
-msgstr "Adesso"
+msgstr "&No"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:46
 msgid "&Weakly"
-msgstr ""
+msgstr "&Debolmente"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:47
 msgid "&Moderately"
-msgstr ""
+msgstr "&Moderatamente"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:48
 msgid "&Texture Resolution"
@@ -5180,11 +5204,11 @@ msgstr "Da:"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:227
 msgid "To:"
-msgstr ""
+msgstr "a"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:228
 msgid "On:"
-msgstr ""
+msgstr "Su:"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:229
 msgid "Search parameters"
@@ -5359,7 +5383,7 @@ msgstr "Caricamento di: "
 #: ../src/celestia/win32/winmain.cpp:3364 ../src/celutil/util.cpp:69
 #: ../src/celutil/util.cpp:73
 msgid "LANGUAGE"
-msgstr "it"
+msgstr "LINGUA"
 
 #: ../src/celestia/win32/winmain.cpp:3994
 msgid "Loading URL"
@@ -6260,14 +6284,17 @@ msgstr "Errore in apertura di "
 #~ "pangeli70@virgilio.it \n"
 #~ "mc3657@mclink.it \n"
 #~ "mausan66@tiscali.it \n"
-#~ "piellepi@yahoo.com"
+#~ "piellepi@yahoo.com \n"
+#~ "albano_battistella@hotmail.com"
 
 #~ msgid "_: NAME OF TRANSLATORS\\nYour names"
 #~ msgstr ""
 #~ "Paolo Angeli \n"
 #~ "Andrea Pelloni \n"
 #~ "Mauro Santandrea \n"
-#~ "Pierluigi Panunzi"
+#~ "Pierluigi Panunzi\n"
+#~ "Albano Battistella"
+
 
 #, fuzzy
 #~ msgid "Manual Celestia"
