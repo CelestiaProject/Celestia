@@ -292,7 +292,7 @@ struct GalaxyVertex
     Matrix<GLshort, 4, 1> texCoord; // texCoord.x = x, texCoord.y = y, texCoord.z = color index, texCoord.w = alpha
 };
 
-static void draw(const GalaxyVertex *v, size_t count, void *indices)
+static void draw(const GalaxyVertex *v, size_t count, const GLushort *indices)
 {
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
                           4, GL_FLOAT, GL_FALSE,
@@ -302,6 +302,10 @@ static void draw(const GalaxyVertex *v, size_t count, void *indices)
                           sizeof(GalaxyVertex), &v->texCoord);
     glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, indices);
 }
+
+static GalaxyVertex *g_vertices = nullptr;
+static GLushort *g_indices = nullptr;
+constexpr const size_t maxPoints = 8192; // 256k buffer
 
 void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
                                       const Quaternionf& viewerOrientation,
@@ -399,16 +403,18 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
 
-    vector<GalaxyVertex, aligned_allocator<GalaxyVertex>> vertices;
-    vertices.reserve(4096 / sizeof(GalaxyVertex));
-    vector<short> indices;
-    indices.reserve(4096 / sizeof(GalaxyVertex) / 4 * 6); // 6 indices per 4 vertices
-    unsigned short j = 0;
+    if (g_vertices == nullptr)
+        g_vertices = new GalaxyVertex[maxPoints];
+    if (g_indices == nullptr)
+        g_indices = new GLushort[(maxPoints / 4 + 1) * 6];
+
+    GLushort j = 0;
 
     prog->use();
     prog->samplerParam("galaxyTex") = 0;
     prog->samplerParam("colorTex") = 1;
 
+    size_t vertex = 0, index = 0;
     for (unsigned int i = 0; i < nPoints; ++i)
     {
         if ((i & pow2) != 0)
@@ -432,41 +438,32 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
         {
             float a = (4.0f * lightGain + 1.0f) * btot * (0.1f - screenFrac) * brightness_corr * brightness * br;
             short alpha = (short) (a * 65535.99f);
-            short color = (short)b.colorIndex;
-            GalaxyVertex vtx;
-            vtx.position = p + v0;
-            vtx.texCoord = { 0, 0, color, alpha };
-            vertices.push_back(vtx);
-            vtx.position = p + v1;
-            vtx.texCoord = { 1, 0, color, alpha  };
-            vertices.push_back(vtx);
-            vtx.position = p + v2;
-            vtx.texCoord = { 1, 1, color, alpha  };
-            vertices.push_back(vtx);
-            vtx.position = p + v3;
-            vtx.texCoord = { 0, 1, color, alpha  };
-            vertices.push_back(vtx);
+            short color = (short) b.colorIndex;
+            g_vertices[vertex++] = { p + v0, { 0, 0, color, alpha } };
+            g_vertices[vertex++] = { p + v1, { 1, 0, color, alpha } };
+            g_vertices[vertex++] = { p + v2, { 1, 1, color, alpha } };
+            g_vertices[vertex++] = { p + v3, { 0, 1, color, alpha } };
 
-            indices.push_back(j+0);
-            indices.push_back(j+1);
-            indices.push_back(j+2);
-            indices.push_back(j+0);
-            indices.push_back(j+2);
-            indices.push_back(j+3);
+            g_indices[index++] = j;
+            g_indices[index++] = j + 1;
+            g_indices[index++] = j + 2;
+            g_indices[index++] = j;
+            g_indices[index++] = j + 2;
+            g_indices[index++] = j + 3;
             j += 4;
 
-            if ((vertices.size() + 4) * sizeof(GalaxyVertex) > 4096)
+            if (vertex + 4 > maxPoints)
             {
-                draw(&vertices[0], indices.size(), indices.data());
-                vertices.clear();
-                indices.clear();
+                draw(g_vertices, index, g_indices);
+                index = 0;
+                vertex = 0;
                 j = 0;
             }
         }
     }
 
-    if (indices.size() > 0)
-        draw(&vertices[0], indices.size(), indices.data());
+    if (index > 0)
+        draw(g_vertices, index, g_indices);
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
