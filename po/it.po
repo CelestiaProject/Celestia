@@ -1494,9 +1494,8 @@ msgid ""
 "%s\n"
 "Orientation: [%f, %f, %f], %.1f\n"
 msgstr ""
-msgstr ""
 "%s\n"
-"Orientamento: [% f,% f,% f],% .1f\n"
+"Orientamento: [%f,%f,% f], %.1f\n"
 
 #: ../src/celestia/celestiacore.cpp:469
 msgid "Error opening script file."
