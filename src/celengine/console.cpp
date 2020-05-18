@@ -96,11 +96,11 @@ void Console::begin()
 
 void Console::end()
 {
+    font->unbind();
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
-    font->unbind();
 }
 
 
