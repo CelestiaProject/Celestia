@@ -3560,17 +3560,17 @@ msgstr "<b>Размер:</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:134
 msgid "<b>Oblateness: "
-msgstr "<b>Сжатие: "
+msgstr "<b>Полярное сжатие: "
 
 #: ../src/celestia/qt/qtinfopanel.cpp:169
 #, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
-msgstr "<b>Сидерический период вращения:</b> %L1 %2"
+msgstr "<b>Звёздные сутки:</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:172
 #, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
-msgstr "<b>Продолжительность суток:</b> %L1 %2"
+msgstr "<b>Солнечные сутки:</b> %L1 %2"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:194
 msgid "years"
@@ -3644,13 +3644,13 @@ msgstr "<b>Период обращения (вычисленный):</b> %L1 %2"
 #: ../src/celestia/qt/qtinfopanel.cpp:287
 #, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
-msgstr "<b>RA:</b> %L1h %L2m %L3s"
+msgstr "<b>Прямое восхождение:</b> %L1h %L2m %L3s"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:268
 #: ../src/celestia/qt/qtinfopanel.cpp:291
 #, qt-format
 msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
-msgstr "<b>Dec:</b> %L1%2 %L3' %L4\""
+msgstr "<b>Склонение:</b> %L1%2 %L3' %L4\""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:298
 #, qt-format
