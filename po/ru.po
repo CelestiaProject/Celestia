@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
 "POT-Creation-Date: 2019-02-14 21:37+0300\n"
-"PO-Revision-Date: 2020-05-19 19:24+0300\n"
+"PO-Revision-Date: 2020-05-19 20:37+0300\n"
 "Last-Translator: Askaniy Anpilogov <aaskaniy@gmail.com>\n"
 "Language-Team: Russian (https://www.transifex.com/celestia/teams/93131/ru/)\n"
 "Language: ru\n"
@@ -1700,7 +1700,7 @@ msgstr "Блокировка фазы"
 
 #: ../src/celestia/celestiacore.cpp:1911
 msgid "Chase"
-msgstr "Сопровождение"
+msgstr "Следовать"
 
 #: ../src/celestia/celestiacore.cpp:1924 ../src/celestia/celestiacore.cpp:1955
 #, c-format
@@ -2713,7 +2713,7 @@ msgstr "&Разрешение текстур"
 
 #: ../src/celestia/qt/qtappwin.cpp:1283
 msgid "&FPS control"
-msgstr "Контроль FPS"
+msgstr "Контроль &FPS"
 
 #. ***** Bookmark menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1300
@@ -2730,11 +2730,11 @@ msgstr "&Вид"
 #. ***** MultiView menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1306
 msgid "&MultiView"
-msgstr "&Разделение просмотра"
+msgstr "&Экраны"
 
 #: ../src/celestia/qt/qtappwin.cpp:1309
 msgid "Split view vertically"
-msgstr "Разделить по вертикали"
+msgstr "Разделить экран вертикально"
 
 #: ../src/celestia/qt/qtappwin.cpp:1310
 msgid "Ctrl+R"
@@ -2742,7 +2742,7 @@ msgstr "Ctrl+R"
 
 #: ../src/celestia/qt/qtappwin.cpp:1315
 msgid "Split view horizontally"
-msgstr "Разделить по горизонтали"
+msgstr "Разделить экран горизонтально"
 
 #: ../src/celestia/qt/qtappwin.cpp:1316
 msgid "Ctrl+U"
@@ -2750,7 +2750,7 @@ msgstr "Ctrl+U"
 
 #: ../src/celestia/qt/qtappwin.cpp:1321
 msgid "Cycle views"
-msgstr "Переключить вид"
+msgstr "Переключить экран"
 
 #: ../src/celestia/qt/qtappwin.cpp:1322
 msgid "Tab"
@@ -2758,7 +2758,7 @@ msgstr "Tab"
 
 #: ../src/celestia/qt/qtappwin.cpp:1327
 msgid "Single view"
-msgstr "Удалить все"
+msgstr "Один экран"
 
 #: ../src/celestia/qt/qtappwin.cpp:1328
 msgid "Ctrl+D"
@@ -2766,7 +2766,7 @@ msgstr "Ctrl+D"
 
 #: ../src/celestia/qt/qtappwin.cpp:1333
 msgid "Delete view"
-msgstr "Удалить вид"
+msgstr "Удалить экран"
 
 #: ../src/celestia/qt/qtappwin.cpp:1334
 #: ../src/celestia/win32/res/resource_strings.cpp:217
@@ -2779,7 +2779,7 @@ msgstr "Показывать рамки"
 
 #: ../src/celestia/qt/qtappwin.cpp:1373
 msgid "Active frame visible"
-msgstr "Выделить вид рамкой"
+msgstr "Выделить экран рамкой"
 
 #: ../src/celestia/qt/qtappwin.cpp:1389
 msgid "Synchronize time"
