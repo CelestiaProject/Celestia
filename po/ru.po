@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
 "POT-Creation-Date: 2019-02-14 21:37+0300\n"
-"PO-Revision-Date: 2020-05-19 19:00+0300\n"
+"PO-Revision-Date: 2020-05-19 19:24+0300\n"
 "Last-Translator: Askaniy Anpilogov <aaskaniy@gmail.com>\n"
 "Language-Team: Russian (https://www.transifex.com/celestia/teams/93131/ru/)\n"
 "Language: ru\n"
@@ -1156,7 +1156,7 @@ msgstr "Варшава"
 
 #: ../data/data.cpp:284
 msgid "Washington D.C."
-msgstr "Вашингтон"
+msgstr "Вашингтон, DC"
 
 #: ../data/data.cpp:285
 msgid "Wellington"
@@ -1300,7 +1300,7 @@ msgstr "Загрузка 3D модели: %s\n"
 msgid ""
 "   Model statistics: %u vertices, %u primitives, %u materials (%u unique)\n"
 msgstr ""
-"   Статистика 3D модели: %u верш., %u полиг., %u матер. (%u уникальных)\n"
+"   У 3D модели вершин: %u, полигонов: %u, материалов: %u (%u уникальных)\n"
 
 #: ../src/celengine/meshmanager.cpp:203
 #, c-format
@@ -1361,7 +1361,7 @@ msgstr "Неверный спектральный тип звезды %u\n"
 #: ../src/celengine/stardb.cpp:691
 #, c-format
 msgid "%d stars in binary database\n"
-msgstr "%d звёзд в двоичной базе данных\n"
+msgstr "Звёзд в двоичной базе данных: %d\n"
 
 #: ../src/celengine/stardb.cpp:715
 #, c-format
@@ -1412,7 +1412,7 @@ msgstr ""
 #: ../src/celengine/stardb.cpp:1397
 #, c-format
 msgid "Level %i, %.5f ly, %i nodes, %i  stars\n"
-msgstr "Уровень %i, %.5f св. л., %i нод., %i  зв.\n"
+msgstr "Уровень %i, %.5f св. л., нодов: %i, звёзд: %i\n"
 
 #: ../src/celengine/texture.cpp:929
 #, c-format
@@ -1710,7 +1710,7 @@ msgstr "Предел звёздной величины:  %.2f"
 #: ../src/celestia/celestiacore.cpp:1935 ../src/celestia/celestiacore.cpp:1966
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
-msgstr "Предел автоматической зв. вел. при 45°:  %.2f"
+msgstr "Предел автонастройки зв. величины для поля зрения 45 градусов:  %.2f"
 
 #: ../src/celestia/celestiacore.cpp:1985 ../src/celestia/celestiacore.cpp:2000
 #, c-format
@@ -2035,7 +2035,7 @@ msgstr "Режим правки"
 #: ../src/celestia/celestiacore.cpp:3954
 #, c-format
 msgid "Loading solar system catalog: %s\n"
-msgstr "Загрузка каталога Солнечной системы: %s\n"
+msgstr "Загрузка каталога системы: %s\n"
 
 #: ../src/celestia/celestiacore.cpp:3995
 #, c-format
