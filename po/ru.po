@@ -2,7 +2,7 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Hleb Valoshka <375gnu@gmail.com>, 2019
 # AlexL <loginov.alex.valer@gmail.com>, 2019
@@ -2159,7 +2159,7 @@ msgstr ""
 "Этот скрипт запрашивает разрешение на чтение/запись\n"
 "файлов и запуск внешних программ. Данное разрешение\n"
 "может нести опасность.\n"
-"Вы доверяете скрипту и хотите продолжить?\n"
+"Вы доверяете скрипту и хотите продолжить?"
 
 #: ../src/celestia/glutmain.cpp:520
 #, c-format
