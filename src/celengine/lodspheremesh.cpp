@@ -111,7 +111,8 @@ LODSphereMesh::LODSphereMesh()
     maxVertices = (maxPhiSteps + 1) * (maxThetaSteps + 1);
     vertices = new float[MaxVertexSize * maxVertices];
 
-    nIndices = maxPhiSteps * 2 * (maxThetaSteps + 1);
+    nIndices = maxPhiSteps * 2 * (maxThetaSteps + 2) - 2;
+    assert(nIndices < numeric_limits<unsigned short>::max());
     indices = new unsigned short[nIndices];
 }
 
@@ -267,11 +268,21 @@ void LODSphereMesh::render(unsigned int attributes,
     int n2 = 0;
     for (i = 0; i < nRings; i++)
     {
+        if (i > 0)
+        {
+            indices[n2 + 0] = i * (nSlices + 1) + 0;
+            n2++;
+        }
         for (int j = 0; j <= nSlices; j++)
         {
             indices[n2 + 0] = i * (nSlices + 1) + j;
             indices[n2 + 1] = (i + 1) * (nSlices + 1) + j;
             n2 += 2;
+        }
+        if (i < nRings - 1)
+        {
+            indices[n2] = (i + 1) * (nSlices + 1) + nSlices;
+            n2++;
         }
     }
 
@@ -605,14 +616,10 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
 
     int nRings = phiExtent / ri.step;
     int nSlices = thetaExtent / ri.step;
-    unsigned short* indexBase = nullptr;
-    for (int i = 0; i < nRings; i++)
-    {
-        glDrawElements(GL_TRIANGLE_STRIP,
-                       (nSlices + 1) * 2,
-                       GL_UNSIGNED_SHORT,
-                       indexBase + (nSlices + 1) * 2 * i);
-    }
+    glDrawElements(GL_TRIANGLE_STRIP,
+                   nRings * (nSlices + 2) * 2 - 2,
+                   GL_UNSIGNED_SHORT,
+                   nullptr);
 
     // Cycle through the vertex buffers
     currentVB++;
