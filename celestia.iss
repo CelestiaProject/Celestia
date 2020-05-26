@@ -69,6 +69,8 @@ Name: "{app}\help\CelestiaGuide"
 [Files]
 Source: "x64\Release\celestia.exe";                              DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "win32\Release\celestia.exe";                            DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x64-windows\bin\cspice.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "c:\tools\vcpkg\installed\x86-windows\bin\cspice.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "c:\tools\vcpkg\installed\x64-windows\bin\jpeg62.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "c:\tools\vcpkg\installed\x86-windows\bin\jpeg62.dll";   DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "c:\tools\vcpkg\installed\x64-windows\bin\libintl.dll";  DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
