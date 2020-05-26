@@ -1703,3 +1703,59 @@ Scripting
 
 Translations:
 * Add Norwegian Bokmål translation
+
+1.6.2~beta2
+Bug fixes
+* Use "kpc" instead of "Kpc"
+* Fix markers rendering in multiview mode
+* Fix scripted orbits and rotations (broken by update to lua 5.2)
+* Fix compilation with MinGW
+
+Platform-specific changes
+* macOS: add means to migrate preferences created by old version
+* macOS: migrate memry management to ARC
+* macOS: better support for dark mode
+* macOS: update icons
+* macOS: remove own code to setup fullscreen mode
+* macOS: do not change app time zone when transforming date
+* macOS: use gettext instead of localized string
+* macOS: allow more alternative surfaces in menu
+* macOS: switch to LUA 5.1
+* Unix: fix celestia.desktop to reference celestia-gtk instead of celestia-gnome
+* Unix: fix speed in "Time" menu (10x -> 2x)
+* Windows: use SHGetFolderPathA to get Application Data directory
+* Windows: convert messages written to console to OEM CP
+* Windows: fix bug in favorites file directory construction
+* Windows: allow to create portable builds
+* Windows: don't make splash topmost window
+* Windows: make "Resolution" text in "Display mode" dialog wider
+* Windows: update to support CSPICE & LuaJIT
+* Windows: fix sorting in a star browser
+
+Translations
+* Fix incorrect translation of Sol to Seoul
+* Update French translation
+* Update Belarusian translation
+
+Documentation
+* Update INSTALL
+
+1.6.2~beta3
+Features, backported from 1.7
+* Update bolometric correction and temperature for T class
+* Add Brown Dwarf spectral class Y
+* Update temperatures for cool stars
+* Don't render corona for T5-T9 and Y class stars
+* Add binary XYZV format for sampled orbits
+
+Bug fixes
+* Fix failure if an incorrect URL is pasted
+* Don't abort if starnames.dat has not been loaded
+
+Platform-specific changes
+* Windows: fix installer script to include required *.dll
+* Windows: copy old favorites file to the new location
+* Unix: restore incorrectly removed GtkWatcher
+
+Documentation
+* Update sites in documentation (shatters.net -> celestia.space)
