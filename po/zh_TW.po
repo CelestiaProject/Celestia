@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.6.1\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2020-04-27 18:51+0300\n"
+"POT-Creation-Date: 2020-05-26 23:04+0300\n"
 "PO-Revision-Date: 2010-03-13 10:12+0800\n"
 "Last-Translator: Markerz Li <markerzli@gmail.com>\n"
 "Language-Team: Tryneeds in Taiwan <tryneeds@gmail.com>\n"
@@ -1316,7 +1316,7 @@ msgstr "OpenGL 資訊"
 
 #: src/celestia/gtk/actions.cpp:728
 #, fuzzy
-msgid "Copyright © 2001-2019 Celestia Development Team"
+msgid "Copyright © 2001-2020 Celestia Development Team"
 msgstr "Copyright (C) 2001-2009, Celestia 開發團隊"
 
 #: src/celestia/gtk/actions.cpp:1046
@@ -1788,36 +1788,36 @@ msgstr ""
 msgid "Failed to initialize renderer.\n"
 msgstr "初始化成像器失敗。"
 
-#: src/celestia/gtk/main.cpp:314
+#: src/celestia/gtk/main.cpp:317
 msgid "Error in command line options. Use --help for full list.\n"
 msgstr ""
 
-#: src/celestia/gtk/main.cpp:331
+#: src/celestia/gtk/main.cpp:334
 msgid "Cannot chdir to '"
 msgstr ""
 
-#: src/celestia/gtk/main.cpp:331
+#: src/celestia/gtk/main.cpp:334
 msgid "', probably due to improper installation.\n"
 msgstr ""
 
-#: src/celestia/gtk/main.cpp:345
+#: src/celestia/gtk/main.cpp:348
 msgid "Initializing..."
 msgstr ""
 
-#: src/celestia/gtk/main.cpp:352
+#: src/celestia/gtk/main.cpp:355
 #, fuzzy
 msgid "Failed to initialize Celestia core.\n"
 msgstr "初始化成像器失敗。"
 
-#: src/celestia/gtk/main.cpp:413
+#: src/celestia/gtk/main.cpp:416
 msgid "*** Cannot find the double-buffered visual.\n"
 msgstr ""
 
-#: src/celestia/gtk/main.cpp:414
+#: src/celestia/gtk/main.cpp:417
 msgid "*** Trying single-buffered visual.\n"
 msgstr ""
 
-#: src/celestia/gtk/main.cpp:421
+#: src/celestia/gtk/main.cpp:424
 msgid "*** No appropriate OpenGL-capable visual found.\n"
 msgstr ""
 
@@ -4640,7 +4640,7 @@ msgstr "確定"
 
 #: src/celestia/res/resource_strings.cpp:70
 #, fuzzy
-msgid "Copyright © 2001-2020, Celestia Development Team"
+msgid "Copyright (C) 2001-2020, Celestia Development Team"
 msgstr "Copyright (C) 2001-2009, Celestia 開發團隊"
 
 #: src/celestia/res/resource_strings.cpp:71
@@ -5011,7 +5011,7 @@ msgid "Dec"
 msgstr "12"
 
 #, fuzzy
-#~ msgid "Copyright (C) 2001-2010, Celestia Development Team"
+#~ msgid "Copyright © 2001-2019 Celestia Development Team"
 #~ msgstr "Copyright (C) 2001-2009, Celestia 開發團隊"
 
 #~ msgid "http://www.shatters.net/celestia"
