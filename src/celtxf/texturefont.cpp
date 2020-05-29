@@ -45,43 +45,11 @@ struct FontVertex
     float u, v;
 };
 
-/** Render a single character of the font. The modelview transform is
- *  automatically updated to advance to the next character.
- */
-void TextureFont::render(wchar_t ch) const
-{
-    const Glyph* glyph = getGlyph(ch);
-    if (glyph == nullptr) glyph = getGlyph((wchar_t)'?');
-    if (glyph != nullptr)
-    {
-        const float x1 = glyph->xoff;
-        const float y1 = glyph->yoff;
-        const float x2 = glyph->xoff + glyph->width;
-        const float y2 = glyph->yoff + glyph->height;
-        FontVertex vertices[4] = {
-            {x1, y1, glyph->texCoords[0].u, glyph->texCoords[0].v},
-            {x2, y1, glyph->texCoords[1].u, glyph->texCoords[1].v},
-            {x2, y2, glyph->texCoords[2].u, glyph->texCoords[2].v},
-            {x1, y2, glyph->texCoords[3].u, glyph->texCoords[3].v}
-        };
-        glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-        glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].x);
-        glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                              2, GL_FLOAT, GL_FALSE, sizeof(FontVertex), &vertices[0].u);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-        glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-        glTranslatef(glyph->advance, 0.0f, 0.0f);
-    }
-}
-
 
 /** Render a single character of the font, adding the specified offset
  *  to the location.
  */
-void TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
+float TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
 {
     const Glyph* glyph = getGlyph(ch);
     if (glyph == nullptr) glyph = getGlyph((wchar_t)'?');
@@ -106,46 +74,21 @@ void TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
         glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+        return glyph->advance;
     }
-}
-
-
-/** Render a string and automatically update the modelview transform for the
-  * string width.
-  */
-void TextureFont::render(const string& s) const
-{
-    int len = s.length();
-    bool validChar = true;
-    int i = 0;
-
-    float xoffset = 0.0f;
-
-    while (i < len && validChar) {
-        wchar_t ch = 0;
-        validChar = UTF8Decode(s, i, ch);
-        i += UTF8EncodedSize(ch);
-
-        render(ch, xoffset, 0.0f);
-
-        const Glyph* glyph = getGlyph(ch);
-        if (glyph == nullptr)
-            glyph = getGlyph((wchar_t)'?');
-        xoffset += glyph->advance;
-    }
-
-    glTranslatef(xoffset, 0.0f, 0.0f);
+    return 0;
 }
 
 
 /** Render a string with the specified offset. Do *not* automatically update
  *  the modelview transform.
  */
-void TextureFont::render(const string& s, float xoffset, float yoffset) const
+float TextureFont::render(const string& s, float xoffset, float yoffset) const
 {
     int len = s.length();
     bool validChar = true;
     int i = 0;
+    float width = 0;
 
     while (i < len && validChar) {
         wchar_t ch = 0;
@@ -158,7 +101,9 @@ void TextureFont::render(const string& s, float xoffset, float yoffset) const
         if (glyph == nullptr)
             glyph = getGlyph((wchar_t)'?');
         xoffset += glyph->advance;
+        width += glyph->advance;
     }
+    return width;
 }
 
 
