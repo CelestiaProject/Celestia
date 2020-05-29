@@ -25,11 +25,8 @@ class TextureFont
     TextureFont() = delete;
     ~TextureFont();
 
-    void render(wchar_t ch) const;
-    void render(const std::string& s) const;
-
-    void render(wchar_t ch, float xoffset, float yoffset) const;
-    void render(const std::string& s, float xoffset, float yoffset) const;
+    float render(wchar_t ch, float xoffset = 0.0f, float yoffset = 0.0f) const;
+    float render(const std::string& s, float xoffset = 0.0f, float yoffset = 0.0f) const;
 
     int getWidth(const std::string&) const;
     int getWidth(int c) const;
