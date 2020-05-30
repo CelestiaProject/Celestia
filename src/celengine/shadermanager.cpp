@@ -21,6 +21,7 @@
 #include "glsupport.h"
 #include "vecgl.h"
 #include "shadermanager.h"
+#include "shadowmap.h"
 
 using namespace celestia;
 using namespace Eigen;
@@ -29,14 +30,6 @@ using namespace std;
 // GLSL on Mac OS X appears to have a bug that precludes us from using structs
 #define USE_GLSL_STRUCTS
 #define POINT_FADE 0
-
-#ifndef GL_ONLY_SHADOWS
-#ifndef GL_ES
-#define GL_ONLY_SHADOWS 1
-#else
-#define GL_ONLY_SHADOWS 0
-#endif
-#endif
 
 constexpr const int ShadowSampleKernelWidth = 2;
 
@@ -2359,9 +2352,11 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             source += "spec.rgb += " + illum + " * pow(NH, shininess) * " + FragLightProperty(i, "specColor") + ";\n";
             if (props.hasShadowMap() && i == 0)
             {
-                source += "shadowMapCoeff = calculateShadow();\n";
-                source += "diff.rgb *= shadowMapCoeff;\n";
-                source += "spec.rgb *= shadowMapCoeff;\n";
+                source += "if (cosNormalLightDir > 0.0)\n{\n";
+                source += "    shadowMapCoeff = calculateShadow();\n";
+                source += "    diff.rgb *= shadowMapCoeff;\n";
+                source += "    spec.rgb *= shadowMapCoeff;\n";
+                source += "}\n";
             }
         }
     }
@@ -2383,10 +2378,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             }
             if (props.hasShadowMap() && i == 0)
             {
-                source += "shadowMapCoeff = calculateShadow();\n";
-                source += "diff.rgb *= shadowMapCoeff;\n";
+                source += "if (cosNormalLightDir > 0.0)\n{\n";
+                source += "    shadowMapCoeff = calculateShadow();\n";
+                source += "    diff.rgb *= shadowMapCoeff;\n";
                 if (props.lightModel == ShaderProperties::SpecularModel)
-                    source += "spec.rgb *= shadowMapCoeff;\n";
+                    source += "    spec.rgb *= shadowMapCoeff;\n";
+                source += "}\n";
             }
         }
     }

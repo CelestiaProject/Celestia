@@ -31,20 +31,13 @@
 #include <celmath/intersect.h>
 #include <celutil/utf8.h>
 #include <celutil/util.h>
+#include "shadowmap.h"
 
 using namespace cmod;
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
 using namespace celestia;
-
-#ifndef GL_ONLY_SHADOWS
-#ifndef GL_ES
-#define GL_ONLY_SHADOWS 1
-#else
-#define GL_ONLY_SHADOWS 0
-#endif
-#endif
 
 static
 void renderGeometryShadow_GLSL(Geometry* geometry,
