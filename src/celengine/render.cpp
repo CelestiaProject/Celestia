@@ -4784,7 +4784,7 @@ Renderer::renderAnnotationMarker(const Annotation &a,
 
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
     glPushMatrix();
-    glTranslatef(a.position.x(), a.position.y(), depth);
+    glTranslatef((int)a.position.x(), (int)a.position.y(), depth);
 
     if (markerRep.symbol() == MarkerRepresentation::Crosshair)
         renderCrosshair(size, realTime, a.color);
@@ -4812,8 +4812,8 @@ Renderer::renderAnnotationLabel(const Annotation &a,
 {
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
     glPushMatrix();
-    glTranslatef(a.position.x() + hOffset + PixelOffset,
-                 a.position.y() + vOffset + PixelOffset,
+    glTranslatef((int)a.position.x() + hOffset + PixelOffset,
+                 (int)a.position.y() + vOffset + PixelOffset,
                  depth);
     font[fs]->bind();
     font[fs]->render(a.labelText, 0.0f, 0.0f);
