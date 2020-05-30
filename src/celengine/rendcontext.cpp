@@ -16,18 +16,11 @@
 #include "glsupport.h"
 #include <celmath/geomutil.h>
 #include "render.h"
+#include "shadowmap.h"
 
 using namespace cmod;
 using namespace Eigen;
 using namespace std;
-
-#ifndef GL_ONLY_SHADOWS
-#ifndef GL_ES
-#define GL_ONLY_SHADOWS 1
-#else
-#define GL_ONLY_SHADOWS 0
-#endif
-#endif
 
 static Material defaultMaterial;
 
