@@ -1,3 +1,9 @@
 print(_VERSION)
 print(_RELEASE)
 print(_LUAJIT_VERSION)
+
+if type(celestia['version']) == 'function' then
+  print(celestia:version())
+else
+  print("No celestia:version defined")
+end
