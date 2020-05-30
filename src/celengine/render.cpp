@@ -866,6 +866,12 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                       pos.y() * m_modelMatrix(2, 1) +
                       pos.z() * m_modelMatrix(2, 2);
         win.z() = -depth;
+        // use round to remove precision error (+/- 0.0000x)
+        // which causes label jittering
+        float x = round(win.x());
+        float y = round(win.y());
+        if (abs(x - win.x()) < 0.001) win.x() = x;
+        if (abs(y - win.y()) < 0.001) win.y() = y;
 
         Annotation a;
         if (!special || markerRep == nullptr)
