@@ -284,6 +284,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setScreenDpi(int);
     int getDistanceToScreen() const;
     void setDistanceToScreen(int);
+    void setSafeAreaInsets(int left, int top, int right, int bottom);
 
     void setFOVFromZoom();
     void setZoomFromFOV();
@@ -460,6 +461,16 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     int screenDpi{ 96 };
     int distanceToScreen{ 400 };
+
+    struct EdgeInsets
+    {
+        int left;
+        int top;
+        int right;
+        int bottom;
+    };
+
+    EdgeInsets safeAreaInsets { 0, 0, 0, 0 };
 
     Selection lastSelection;
     string selectionNames;

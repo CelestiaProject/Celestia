@@ -2171,6 +2171,11 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
 }
 
 
+void CelestiaCore::setSafeAreaInsets(int left, int top, int right, int bottom)
+{
+    safeAreaInsets = { left, top, right, bottom };
+}
+
 // Return true if anything changed that requires re-rendering. Otherwise, we
 // can skip rendering, keep the GPU idle, and save power.
 bool CelestiaCore::viewUpdateRequired() const
@@ -3011,7 +3016,7 @@ void CelestiaCore::renderOverlay()
         // Time and date
         overlay->savePos();
         overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
-        overlay->moveBy(width - dateStrWidth, height - fontHeight);
+        overlay->moveBy(width - safeAreaInsets.right - dateStrWidth, height - safeAreaInsets.top - fontHeight);
         overlay->beginText();
 
         overlay->print(dateStr);
@@ -3060,7 +3065,7 @@ void CelestiaCore::renderOverlay()
     {
         // Speed
         overlay->savePos();
-        overlay->moveBy(0.0f, fontHeight * 2 + 5);
+        overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + fontHeight * 2 + 5);
         overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
 
         overlay->beginText();
@@ -3093,7 +3098,7 @@ void CelestiaCore::renderOverlay()
     {
         // Field of view and camera mode in lower right corner
         overlay->savePos();
-        overlay->moveBy(width - emWidth * 15, fontHeight * 3 + 5);
+        overlay->moveBy(width - safeAreaInsets.right - emWidth * 15, safeAreaInsets.bottom + fontHeight * 3 + 5);
         overlay->beginText();
         overlay->setColor(0.6f, 0.6f, 1.0f, 1);
 
@@ -3169,7 +3174,7 @@ void CelestiaCore::renderOverlay()
     {
         overlay->savePos();
         overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
-        overlay->moveBy(0.0f, height - titleFont->getHeight());
+        overlay->moveBy(safeAreaInsets.left, height - safeAreaInsets.top - titleFont->getHeight());
 
         overlay->beginText();
         Vector3d v = sel.getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
@@ -3358,7 +3363,7 @@ void CelestiaCore::renderOverlay()
         Rect r(0, 0, width, 100);
         r.setColor(consoleColor);
         overlay->drawRectangle(r);
-        overlay->moveBy(0.0f, fontHeight * 3.0f + 35.0f);
+        overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + fontHeight * 3.0f + 35.0f);
         overlay->setColor(0.6f, 0.6f, 1.0f, 1.0f);
         overlay->beginText();
         fmt::fprintf(*overlay, _("Target name: %s"), typedText);
@@ -3423,7 +3428,7 @@ void CelestiaCore::renderOverlay()
         if (currentTime > messageStart + messageDuration - 0.5)
             alpha = (float) ((messageStart + messageDuration - currentTime) / 0.5);
         overlay->setColor(textColor.red(), textColor.green(), textColor.blue(), alpha);
-        overlay->moveBy(x, y);
+        overlay->moveBy(safeAreaInsets.left + x, safeAreaInsets.bottom + y);
         overlay->beginText();
         *overlay << messageText;
         overlay->endText();
