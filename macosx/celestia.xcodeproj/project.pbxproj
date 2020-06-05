@@ -224,7 +224,6 @@
 		E5A994750B1482FE009F40FA /* scriptrotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5A994710B1482FE009F40FA /* scriptrotation.cpp */; };
 		E5A994770B1482FE009F40FA /* scriptobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5A994730B1482FE009F40FA /* scriptobject.cpp */; };
 		E5B48EBA0C22065E00C6FBD7 /* MacInputWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5B48EB80C22065E00C6FBD7 /* MacInputWatcher.mm */; };
-		E5C9ADE10848FFEF0071B1EE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5040B0602A47B91014901DC /* Carbon.framework */; };
 		E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E5CC204509AA843300CFFF2C /* Localizable.strings */; };
 		E5D3E6550D1EA18A00214838 /* axisarrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D3E6530D1EA18A00214838 /* axisarrow.cpp */; };
 		E5D446660777291700A1577D /* utf8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D446640777291700A1577D /* utf8.cpp */; };
@@ -479,7 +478,6 @@
 		9708E6A12312A8310015C9F4 /* jpeglib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jpeglib.h; path = include/jpeglib.h; sourceTree = "<group>"; };
 		9708E6A22312A8310015C9F4 /* jconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jconfig.h; path = include/jconfig.h; sourceTree = "<group>"; };
 		9708E6A72312A8B00015C9F4 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = lib/libjpeg.a; sourceTree = "<group>"; };
-		970AEE8D2329417000E9ED22 /* liblua5.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblua5.3.a; path = lib/liblua5.3.a; sourceTree = "<group>"; };
 		970AEE8F232943D300E9ED22 /* libintl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libintl.a; path = lib/libintl.a; sourceTree = "<group>"; };
 		970AEE91232943DC00E9ED22 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		9717E96C234B641E00AAD7D1 /* Migrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Migrator.h; sourceTree = "<group>"; };
@@ -991,7 +989,6 @@
 				E564312B07769C9000E2C4A3 /* Cocoa.framework in Frameworks */,
 				97FE30EF23BA2F40002ADDF0 /* liblua5.1.a in Frameworks */,
 				E564312C07769C9000E2C4A3 /* OpenGL.framework in Frameworks */,
-				E5C9ADE10848FFEF0071B1EE /* Carbon.framework in Frameworks */,
 				970AEE90232943D300E9ED22 /* libintl.a in Frameworks */,
 				9708E6A92312A8BB0015C9F4 /* libjpeg.a in Frameworks */,
 				97E4018323101501002013C7 /* libpng.a in Frameworks */,
@@ -1136,7 +1133,6 @@
 			children = (
 				970AEE91232943DC00E9ED22 /* libiconv.tbd */,
 				970AEE8F232943D300E9ED22 /* libintl.a */,
-				970AEE8D2329417000E9ED22 /* liblua5.3.a */,
 				97E40188231015AD002013C7 /* liblua5.1.a */,
 				9708E6A72312A8B00015C9F4 /* libjpeg.a */,
 				97E401842310150F002013C7 /* libz.tbd */,
