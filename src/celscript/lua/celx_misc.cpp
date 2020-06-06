@@ -200,10 +200,7 @@ static int font_render(lua_State* l)
 
     const char* s = celx.safeGetString(2, AllErrors, "First argument to font:render must be a string");
     auto font = *celx.getThis<TextureFont*>();
-    float xoffset = font->render(s);
-    glTranslatef(xoffset, 0, 0);
-
-    return 0;
+    return celx.push(font->render(s));
 }
 
 static int font_getwidth(lua_State* l)
