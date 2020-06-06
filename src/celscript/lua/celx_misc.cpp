@@ -181,6 +181,17 @@ static int font_bind(lua_State* l)
     return 0;
 }
 
+static int font_unbind(lua_State* l)
+{
+    CelxLua celx(l);
+
+    celx.checkArgs(1, 1, "No arguments expected for font:unbind()");
+
+    auto font = *celx.getThis<TextureFont*>();
+    font->unbind();
+    return 0;
+}
+
 static int font_render(lua_State* l)
 {
     CelxLua celx(l);
@@ -231,6 +242,7 @@ void CreateFontMetaTable(lua_State* l)
     celx.registerMethod("__tostring", font_tostring);
     celx.registerMethod("bind", font_bind);
     celx.registerMethod("render", font_render);
+    celx.registerMethod("unbind", font_unbind);
     celx.registerMethod("getwidth", font_getwidth);
     celx.registerMethod("getheight", font_getheight);
 
