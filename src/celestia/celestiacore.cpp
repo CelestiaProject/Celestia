@@ -4055,6 +4055,30 @@ CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
     return contextMenuHandler;
 }
 
+#ifndef NO_TTF
+void CelestiaCore::setFont(const fs::path& fontPath, int collectionIndex, int fontSize)
+{
+    font = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize);
+    if (font != nullptr)
+        font->buildTexture();
+}
+
+void CelestiaCore::setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize)
+{
+    titleFont = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize);
+    if (titleFont != nullptr)
+        titleFont->buildTexture();
+}
+
+void CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle)
+{
+    auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize);
+    if (f != nullptr)
+        f->buildTexture();
+    renderer->setFont(fontStyle, f);
+}
+#endif
+
 int CelestiaCore::getTimeZoneBias() const
 {
     return timeZoneBias;
