@@ -25,6 +25,30 @@
 #include <fstream>
 #endif
 
+#ifdef __APPLE__
+#include <CoreText/CoreText.h>
+
+extern "C" {
+extern CTFontRef CTFontCreateForCharactersWithLanguage(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CFIndex *coveredLength);
+extern CTFontDescriptorRef CTFontDescriptorCreateForUIType(CTFontUIFontType, CGFloat size, CFStringRef language);
+}
+
+#define SYSTEM_FONT_LOOKUP_AVAILABLE    1
+
+#elif defined(ANDROID) && __ANDROID_API__ >= 29 // System font API is added in Android 10
+#include <android/font.h>
+#include <android/font_matcher.h>
+
+#define SYSTEM_FONT_LOOKUP_AVAILABLE    1
+
+#else
+#define SYSTEM_FONT_LOOKUP_AVAILABLE    0
+#endif
+
+#if SYSTEM_FONT_LOOKUP_AVAILABLE
+#include <celutil/gettext.h>
+#endif
+
 using namespace std;
 
 static FT_Library ft = nullptr;
@@ -617,11 +641,11 @@ void TextureFont::flush()
     impl->flush();
 }
 
-TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int size, int dpi)
+TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int index, int size, int dpi)
 {
     FT_Face face;
 
-    if (FT_New_Face(ft, path.string().c_str(), 0, &face) != 0)
+    if (FT_New_Face(ft, path.string().c_str(), index, &face) != 0)
     {
         fmt::fprintf(cerr, "Could not open font %s\n", path);
         return nullptr;
@@ -681,5 +705,69 @@ TextureFont* LoadTextureFont(const Renderer *r, const fs::path &filename, int si
 
     int psize = 0;
     auto nameonly = ParseFontName(filename, psize);
-    return TextureFont::load(r, nameonly, psize, dpi);
+    int index = 0;
+#if SYSTEM_FONT_LOOKUP_AVAILABLE
+    string lang = _("LANGUAGE");
+
+    // Probe to find font
+    UniChar c = 0x0061; // a
+    if (lang == "zh_CN" || lang == "zh_TW" || lang == "ja")
+        c = 0x4E00; // A common character in Japanese and Chinese.
+    else if (lang == "ko")
+        c = 0xAC00;
+
+#ifdef __APPLE__
+    CTFontDescriptorRef defaultFontDes = CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, 0, NULL);
+    if (defaultFontDes)
+    {
+        CTFontRef defaultFont = CTFontCreateWithFontDescriptor(defaultFontDes, 0, NULL);
+        CTFontRef fb = CTFontCreateForCharactersWithLanguage(defaultFont, &c, 1, NULL, NULL);
+        if (fb)
+        {
+            CFURLRef url = (CFURLRef)CTFontCopyAttribute(fb, kCTFontURLAttribute); // Font path
+            CFStringRef name = (CFStringRef)CTFontCopyAttribute(fb, kCTFontNameAttribute); // Font name
+            if (url && name)
+            {
+                CFStringRef urlString = CFURLCreateStringByReplacingPercentEscapesUsingEncoding(CFAllocatorGetDefault(), CFURLCopyPath(url), CFSTR(""), kCFStringEncodingUTF8);
+                nameonly = CFStringGetCStringPtr(urlString, kCFStringEncodingUTF8);
+
+                // Find index in the font file
+                CFArrayRef fontDescs = CTFontManagerCreateFontDescriptorsFromURL(url);
+                CFIndex count = CFArrayGetCount(fontDescs);
+                for (CFIndex i = 0; i < count; i++)
+                {
+                    CTFontDescriptorRef des = (CTFontDescriptorRef)CFArrayGetValueAtIndex(fontDescs, i);
+                    CFStringRef currentName = (CFStringRef)CTFontDescriptorCopyAttribute(des, kCTFontNameAttribute);
+                    if (CFStringCompare(name, currentName, 0) == kCFCompareEqualTo)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+                CFRelease(fontDescs);
+                CFRelease(urlString);
+            }
+            CFRelease(fb);
+        }
+        CFRelease(defaultFont);
+        CFRelease(defaultFontDes);
+    }
+#elif defined(ANDROID)
+    AFontMatcher *matcher = AFontMatcher_create();
+    if (matcher)
+    {
+        AFont *font = AFontMatcher_match(matcher, "sans-serif", &c, 1, nullptr);
+
+        if (font)
+        {
+            nameonly = AFont_getFontFilePath(font); // Font path
+            index = AFont_getCollectionIndex(font); // Font index
+            AFont_close(font);
+        }
+
+        AFontMatcher_destroy(matcher);
+    }
+#endif
+#endif
+    return TextureFont::load(r, nameonly, index, psize, dpi);
 }
