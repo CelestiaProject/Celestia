@@ -617,11 +617,11 @@ void TextureFont::flush()
     impl->flush();
 }
 
-TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int size, int dpi)
+TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int index, int size, int dpi)
 {
     FT_Face face;
 
-    if (FT_New_Face(ft, path.string().c_str(), 0, &face) != 0)
+    if (FT_New_Face(ft, path.string().c_str(), index, &face) != 0)
     {
         fmt::fprintf(cerr, "Could not open font %s\n", path);
         return nullptr;
@@ -668,7 +668,7 @@ static fs::path ParseFontName(const fs::path &filename, int &size)
     }
 }
 
-TextureFont* LoadTextureFont(const Renderer *r, const fs::path &filename, int size, int dpi)
+TextureFont* LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size, int dpi)
 {
     if (ft == nullptr)
     {
@@ -681,5 +681,5 @@ TextureFont* LoadTextureFont(const Renderer *r, const fs::path &filename, int si
 
     int psize = 0;
     auto nameonly = ParseFontName(filename, psize);
-    return TextureFont::load(r, nameonly, psize, dpi);
+    return TextureFont::load(r, nameonly, index, size > 0 ? size : psize, dpi);
 }
