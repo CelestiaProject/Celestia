@@ -3482,10 +3482,12 @@ void CelestiaCore::renderOverlay()
     if (editMode)
     {
         overlay->savePos();
+        overlay->beginText();
         overlay->moveBy((float) ((width - font->getWidth(_("Edit Mode"))) / 2),
                         (float) (height - fontHeight));
         overlay->setColor(1, 0, 1, 1);
         *overlay << _("Edit Mode");
+        overlay->endText();
         overlay->restorePos();
     }
 
