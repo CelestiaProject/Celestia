@@ -4060,21 +4060,21 @@ CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
 #ifndef NO_TTF
 void CelestiaCore::setFont(const fs::path& fontPath, int collectionIndex, int fontSize)
 {
-    font = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize);
+    font = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize, screenDpi);
     if (font != nullptr)
         font->buildTexture();
 }
 
 void CelestiaCore::setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize)
 {
-    titleFont = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize);
+    titleFont = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize, screenDpi);
     if (titleFont != nullptr)
         titleFont->buildTexture();
 }
 
 void CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle)
 {
-    auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize);
+    auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize, screenDpi);
     if (f != nullptr)
         f->buildTexture();
     renderer->setFont(fontStyle, f);
