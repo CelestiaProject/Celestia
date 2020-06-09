@@ -2429,13 +2429,11 @@ static string DistanceLyToStr(double distance)
     {
         units = _("km");
         distance = astro::lightYearsToKilometers(distance);
-        return fmt::sprintf("%.2f %s", distance, units);
     }
     else
     {
         units = _("m");
         distance = astro::lightYearsToKilometers(distance) * 1000.0f;
-        return fmt::sprintf("%.2f %s", distance, units);
     }
 
     return fmt::sprintf("%s %s", SigDigitNum(distance, 5), units);
