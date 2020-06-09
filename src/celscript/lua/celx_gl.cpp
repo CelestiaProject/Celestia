@@ -13,6 +13,7 @@
 #include "celx_internal.h"
 #include "celx_object.h"
 #include <celengine/glsupport.h>
+#include <celengine/shadermanager.h>
 
 
 // ==================== OpenGL ====================
@@ -118,6 +119,7 @@ static int gl_Color(lua_State* l)
     float a = (float)celx.safeGetNumber(4, WrongType, "argument 4 to gl.Color must be a number", 0.0);
     glColor4f(r,g,b,a);
     //    glColor4f(0.8f, 0.5f, 0.5f, 1.0f);
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, r, g, b, a);
     return 0;
 }
 
