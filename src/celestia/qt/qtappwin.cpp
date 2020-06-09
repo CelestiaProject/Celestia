@@ -211,7 +211,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
         QDir::setCurrent(celestia_data_dir);
     } else {
         QMessageBox::critical(0, "Celestia",
-            _("Celestia is unable to run because the data directroy was not "
+            _("Celestia is unable to run because the data directory was not "
               "found, probably due to improper installation."));
             exit(1);
     }
