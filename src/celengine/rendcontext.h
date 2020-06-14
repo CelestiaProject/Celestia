@@ -23,7 +23,7 @@ class RenderContext
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     RenderContext(const cmod::Material*);
-    RenderContext(const Renderer*);
+    RenderContext(Renderer*);
     virtual ~RenderContext() = default;
 
     virtual void makeCurrent(const cmod::Material&) = 0;
@@ -63,7 +63,7 @@ class RenderContext
     Eigen::Quaternionf cameraOrientation;  // required for drawing billboards
 
  protected:
-    const Renderer* renderer { nullptr };
+    Renderer* renderer { nullptr };
     bool usePointSize{ false };
     bool useNormals{ true };
     bool useColors{ false };
@@ -76,7 +76,7 @@ class RenderContext
 class Shadow_RenderContext : public RenderContext
 {
  public:
-    Shadow_RenderContext(const Renderer *r) :
+    Shadow_RenderContext(Renderer *r) :
         RenderContext(r)
     {
     }
@@ -91,8 +91,8 @@ class GLSL_RenderContext : public RenderContext
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    GLSL_RenderContext(const Renderer* r, const LightingState& ls, float _objRadius, const Eigen::Quaternionf& orientation);
-    GLSL_RenderContext(const Renderer* r, const LightingState& ls, const Eigen::Vector3f& _objScale, const Eigen::Quaternionf& orientation);
+    GLSL_RenderContext(Renderer* r, const LightingState& ls, float _objRadius, const Eigen::Quaternionf& orientation);
+    GLSL_RenderContext(Renderer* r, const LightingState& ls, const Eigen::Vector3f& _objScale, const Eigen::Quaternionf& orientation);
     ~GLSL_RenderContext() override;
 
     void makeCurrent(const cmod::Material&) override;
@@ -126,7 +126,7 @@ class GLSL_RenderContext : public RenderContext
 class GLSLUnlit_RenderContext : public RenderContext
 {
  public:
-    GLSLUnlit_RenderContext(const Renderer* r, float _objRadius);
+    GLSLUnlit_RenderContext(Renderer* r, float _objRadius);
     ~GLSLUnlit_RenderContext() override;
 
     void makeCurrent(const cmod::Material&) override;

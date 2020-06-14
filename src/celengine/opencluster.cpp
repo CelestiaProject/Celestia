@@ -68,7 +68,7 @@ void OpenCluster::render(const Vector3f& /*unused*/,
                          float /*unused*/,
                          float /*unused*/,
                          const Matrices& /*m*/,
-                         const Renderer* /*unused*/)
+                         Renderer* /*unused*/)
 {
     // Nothing to do right now; open clusters are only visible as their
     // constituent stars and a label when labels are turned on.  A good idea

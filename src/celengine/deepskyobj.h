@@ -92,7 +92,7 @@ class DeepSkyObject : public AstroObject
                         float brightness,
                         float pixelSize,
                         const Matrices& m,
-                        const Renderer*) = 0;
+                        Renderer*) = 0;
 
     virtual uint64_t getRenderMask() const { return 0; }
     virtual unsigned int getLabelMask() const { return 0; }

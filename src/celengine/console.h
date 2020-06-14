@@ -42,14 +42,16 @@ class ConsoleStreamBuf : public std::streambuf
     unsigned int decodeShift{ 0 };
 };
 
-
+class Renderer;
 class Console : public std::ostream
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     static constexpr const int PageRows = 10;
 
 
-    Console(int _nRows, int _nColumns);
+    Console(Renderer& renderer, int _nRows, int _nColumns);
     ~Console();
 
     bool setRowCount(int _nRows);
@@ -98,6 +100,7 @@ class Console : public std::ostream
     int xscale{ 1 };
     int yscale{ 1 };
     TextureFont* font{ nullptr };
+    Renderer& renderer;
 
     ConsoleStreamBuf sbuf;
 

@@ -33,7 +33,7 @@ class Nebula : public DeepSkyObject
                 float brightness,
                 float pixelSize,
                 const Matrices& m,
-                const Renderer* renderer) override;
+                Renderer* renderer) override;
 
     uint64_t getRenderMask() const override;
     unsigned int getLabelMask() const override;

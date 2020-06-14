@@ -992,16 +992,16 @@ void Renderer::addObjectAnnotation(const MarkerRepresentation* markerRep,
 }
 
 void
-Renderer::enableSmoothLines() const
+Renderer::enableSmoothLines()
 {
     if ((renderFlags & ShowSmoothLines) == 0)
         return;
 
-    // glEnable(GL_BLEND);
+    // enableBlending();
 #ifdef USE_HDR
-    glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+    setBlendingFactors(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
 #else
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
 #ifndef GL_ES
     glEnable(GL_LINE_SMOOTH);
@@ -1010,13 +1010,13 @@ Renderer::enableSmoothLines() const
 }
 
 void
-Renderer::disableSmoothLines() const
+Renderer::disableSmoothLines()
 {
     if ((renderFlags & Renderer::ShowSmoothLines) == 0)
         return;
 
-    // glDisable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    // disableBlending();
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 #ifndef GL_ES
     glDisable(GL_LINE_SMOOTH);
 #endif
@@ -1509,7 +1509,7 @@ void Renderer::render(const Observer& observer,
     //------------- Post processing from here ------------//
     glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
+    disableBlending();
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
@@ -1529,8 +1529,8 @@ void Renderer::render(const Observer& observer,
 
     drawSceneTexture();
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE);
+    enableBlending();
+    setBlendingFactors(GL_ONE, GL_ONE);
 
 #ifdef HDR_COMPRESS
     // Assume luminance 1.0 mapped to 128 previously
@@ -1690,7 +1690,7 @@ void Renderer::draw(const Observer& observer,
     enableSmoothLines();
     renderSkyGrids(observer);
     disableSmoothLines();
-    glEnable(GL_BLEND);
+    enableBlending();
 
     // Render deep sky objects
     if ((renderFlags & ShowDeepSpaceObjects) != 0 && universe.getDSOCatalog() != nullptr)
@@ -1702,7 +1702,7 @@ void Renderer::draw(const Observer& observer,
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 #endif
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != nullptr)
     {
@@ -1781,8 +1781,8 @@ void Renderer::draw(const Observer& observer,
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_BLEND);
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    disableBlending();
     glDepthMask(GL_TRUE);
 }
 
@@ -2644,7 +2644,7 @@ void Renderer::renderObject(const Vector3f& pos,
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
 
-    glDisable(GL_BLEND);
+    disableBlending();
 
     // Get the object's geometry; nullptr indicates that object is an
     // ellipsoid.
@@ -2910,8 +2910,8 @@ void Renderer::renderObject(const Vector3f& pos,
             {
                 Matrix4f mv = vecgl::rotate(getCameraOrientation());
                 Matrices mvp = { m.projection, &mv };
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                enableBlending();
+                setBlendingFactors(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
                 renderEllipsoidAtmosphere(*atmosphere,
                                           pos,
@@ -2938,8 +2938,8 @@ void Renderer::renderObject(const Vector3f& pos,
 
             glDepthMask(GL_FALSE);
             cloudTex->bind();
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            enableBlending();
+            setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             // Cloud layers can be trouble for the depth buffer, since they tend
             // to be very close to the surface of a planet relative to the radius
@@ -2999,7 +2999,7 @@ void Renderer::renderObject(const Vector3f& pos,
 
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glEnable(GL_BLEND);
+    enableBlending();
 }
 
 
@@ -3403,7 +3403,7 @@ void Renderer::renderPlanet(Body& body,
 
             glEnable(GL_DEPTH_TEST);
             glDepthMask(GL_FALSE);
-            glDisable(GL_BLEND);
+            disableBlending();
 
             // We need a double precision body-relative position of the
             // observer, otherwise location labels will tend to jitter.
@@ -3414,8 +3414,8 @@ void Renderer::renderPlanet(Body& body,
         }
     }
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    enableBlending();
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 #endif
@@ -3506,7 +3506,7 @@ void Renderer::renderStar(const Star& star,
                      rp, LightingState(), m);
     }
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 #endif
@@ -3683,8 +3683,8 @@ void Renderer::renderCometTail(const Body& body,
 
     glDepthMask(GL_FALSE);
     glDisable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    enableBlending();
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 
     prog->use();
     prog->mat4Param("MVPMatrix") = (*m.projection) * (*m.modelview) * vecgl::translate(pos);
@@ -3736,7 +3736,7 @@ void Renderer::renderCometTail(const Body& body,
     glVertexPointer(3, GL_FLOAT, 0, cometPoints);
     glDrawArrays(GL_LINE_STRIP, 0, nTailPoints);
     glDisableClientState(GL_VERTEX_ARRAY);
-    glEnable(GL_BLEND);
+    enableBlending();
 #endif
 }
 
@@ -3760,8 +3760,8 @@ void Renderer::renderReferenceMark(const ReferenceMark& refMark,
 
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    enableBlending();
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }
 
 
@@ -4609,7 +4609,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     // (mostly to make graticules look good.)
     enableSmoothLines();
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 
 #ifdef OCTREE_DEBUG
     m_dsoProcStats.objects = 0;
@@ -4869,8 +4869,8 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 #endif
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    enableBlending();
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     Matrix4f mv = Matrix4f::Identity();
     Matrices m = { &m_orthoProjMatrix, &mv };
@@ -4975,8 +4975,8 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
         return endIter;
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    enableBlending();
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     Matrix4f mv = Matrix4f::Identity();
     Matrices m = { &m_orthoProjMatrix, &mv };
@@ -5230,47 +5230,75 @@ void Renderer::setViewport(const std::array<int, 4>& viewport) const
 
 void Renderer::setScissor(int x, int y, int w, int h)
 {
-    if ((m_GLStateFlag & ScissorTest) == 0)
+    if (!m_GLState.scissor)
     {
         glEnable(GL_SCISSOR_TEST);
-        m_GLStateFlag |= ScissorTest;
+        m_GLState.scissor = true;
     }
     glScissor(x, y, w, h);
 }
 
 void Renderer::removeScissor()
 {
-    if ((m_GLStateFlag & ScissorTest) != 0)
+    if (m_GLState.scissor)
     {
         glDisable(GL_SCISSOR_TEST);
-        m_GLStateFlag &= ~ScissorTest;
+        m_GLState.scissor = false;
     }
 }
 
-void Renderer::enableMSAA()
+void Renderer::enableMSAA() noexcept
 {
 #ifndef GL_ES
-    if ((m_GLStateFlag & Multisaple) == 0)
+    if (!m_GLState.multisample)
     {
         glEnable(GL_MULTISAMPLE);
-        m_GLStateFlag |= Multisaple;
+        m_GLState.multisample = true;
     }
 #endif
 }
-void Renderer::disableMSAA()
+void Renderer::disableMSAA() noexcept
 {
 #ifndef GL_ES
-    if ((m_GLStateFlag & Multisaple) != 0)
+    if (m_GLState.multisample)
     {
         glDisable(GL_MULTISAMPLE);
-        m_GLStateFlag &= ~Multisaple;
+        m_GLState.multisample = false;
     }
 #endif
 }
 
-bool Renderer::isMSAAEnabled() const
+bool Renderer::isMSAAEnabled() const noexcept
 {
-    return (m_GLStateFlag & Multisaple) != 0;;
+    return m_GLState.multisample;
+}
+
+void Renderer::enableBlending() noexcept
+{
+    if (!m_GLState.blending)
+    {
+        glEnable(GL_BLEND);
+        m_GLState.blending = true;
+    }
+}
+
+void Renderer::disableBlending() noexcept
+{
+    if (m_GLState.blending)
+    {
+        glDisable(GL_BLEND);
+        m_GLState.blending = false;
+    }
+}
+
+void Renderer::setBlendingFactors(GLenum sfactor, GLenum dfactor) noexcept
+{
+    if (m_GLState.sfactor != sfactor || m_GLState.dfactor != dfactor)
+    {
+        glBlendFunc(sfactor, dfactor);
+        m_GLState.sfactor = sfactor;
+        m_GLState.dfactor = dfactor;
+    }
 }
 
 constexpr GLenum toGLFormat(Renderer::PixelFormat format)
@@ -5976,9 +6004,9 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
             glEnable(GL_DEPTH_TEST);
             glDepthMask(GL_FALSE);
 #ifdef USE_HDR
-            glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+            setBlendingFactors(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
 #else
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
             enableSmoothLines();
 

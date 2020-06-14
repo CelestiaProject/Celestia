@@ -8,15 +8,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <vector>
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
-#include "glsupport.h"
-#include <vector>
-#include "render.h"
-#include "vertexobject.h"
 #include "marker.h"
+#include "render.h"
 #include "vecgl.h"
+#include "vertexobject.h"
 
 
 using namespace std;
@@ -337,8 +336,8 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 #endif
     glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    enableBlending();
+    setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     float vfov = (float) observer.getFOV();
     float h = tan(vfov / 2);

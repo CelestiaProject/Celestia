@@ -35,11 +35,10 @@
 #include <celscript/common/scriptmaps.h>
 
 class Url;
-
 // class CelestiaWatcher;
 class CelestiaCore;
-
 // class astro::Date;
+class Console;
 
 typedef Watcher<CelestiaCore> CelestiaWatcher;
 
@@ -478,6 +477,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     Selection lastSelection;
     string selectionNames;
+
+    std::unique_ptr<Console> console;
 
 #ifdef CELX
     friend View* getViewByObserver(CelestiaCore*, Observer*);
