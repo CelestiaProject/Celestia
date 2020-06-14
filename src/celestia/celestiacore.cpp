@@ -2119,7 +2119,7 @@ void CelestiaCore::draw()
         console.setFont(font);
         console.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         console.begin();
-        console.moveBy(0.0f, 200.0f);
+        console.moveBy(safeAreaInsets.left, screenDpi / 25.4f * 53.0f);
         console.render(ConsolePageRows);
         console.end();
     }
@@ -3065,7 +3065,7 @@ void CelestiaCore::renderOverlay()
     {
         // Speed
         overlay->savePos();
-        overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + fontHeight * 2 + 5);
+        overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + fontHeight * 2 + screenDpi / 25.4f * 1.3f);
         overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
 
         overlay->beginText();
@@ -3098,7 +3098,7 @@ void CelestiaCore::renderOverlay()
     {
         // Field of view and camera mode in lower right corner
         overlay->savePos();
-        overlay->moveBy(width - safeAreaInsets.right - emWidth * 15, safeAreaInsets.bottom + fontHeight * 3 + 5);
+        overlay->moveBy(width - safeAreaInsets.right - emWidth * 15, safeAreaInsets.bottom + fontHeight * 3 + screenDpi / 25.4f * 1.3f);
         overlay->beginText();
         overlay->setColor(0.6f, 0.6f, 1.0f, 1);
 
@@ -3360,10 +3360,10 @@ void CelestiaCore::renderOverlay()
     {
         overlay->setFont(titleFont);
         overlay->savePos();
-        Rect r(0, 0, width, 100);
+        Rect r(0, 0, width, screenDpi / 25.4f * 26.5f);
         r.setColor(consoleColor);
         overlay->drawRectangle(r);
-        overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + fontHeight * 3.0f + 35.0f);
+        overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + fontHeight * 3.0f + screenDpi / 25.4f * 9.3f);
         overlay->setColor(0.6f, 0.6f, 1.0f, 1.0f);
         overlay->beginText();
         fmt::fprintf(*overlay, _("Target name: %s"), typedText);
