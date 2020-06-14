@@ -11,18 +11,18 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "astro.h"
-#include "render.h"
-#include "globular.h"
-#include "texture.h"
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <fstream>
 #include <celmath/perlin.h>
 #include <celmath/intersect.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
-#include <cmath>
-#include <fstream>
-#include <algorithm>
-#include <cassert>
+#include "astro.h"
+#include "globular.h"
+#include "render.h"
+#include "texture.h"
 #include "vecgl.h"
 
 using namespace Eigen;
@@ -302,7 +302,7 @@ void Globular::render(const Vector3f& offset,
                       float brightness,
                       float pixelSize,
                       const Matrices& m,
-                      const Renderer* r)
+                      Renderer* r)
 {
     renderGlobularPointSprites(offset, viewerOrientation, brightness, pixelSize, m, r);
 }
@@ -381,7 +381,7 @@ void Globular::renderGlobularPointSprites(
                                       float brightness,
                                       float pixelSize,
                                       const Matrices& m,
-                                      const Renderer* renderer)
+                                      Renderer* renderer)
 {
     if (form == nullptr)
         return;
@@ -442,8 +442,8 @@ void Globular::renderGlobularPointSprites(
     }
     assert(globularTex != nullptr);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    renderer->enableBlending();
+    renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 #ifndef GL_ES
     glEnable(GL_POINT_SPRITE);

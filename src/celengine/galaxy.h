@@ -48,7 +48,7 @@ class Galaxy : public DeepSkyObject
                 float brightness,
                 float pixelSize,
                 const Matrices& m,
-                const Renderer* r) override;
+                Renderer* r) override;
 
     GalacticForm* getForm() const;
 
@@ -88,7 +88,7 @@ class Galaxy : public DeepSkyObject
                                   float brightness,
                                   float pixelSize,
                                   const Matrices& mvp,
-                                  const Renderer* r);
+                                  Renderer* r);
 #if 0
     void renderGalaxyEllipsoid(const Eigen::Vector3f& offset,
                                const Eigen::Quaternionf& viewerOrientation,

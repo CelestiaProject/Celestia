@@ -8,17 +8,16 @@
 // of the License, or (at your option) any later version.
 
 #include <cstring>
-#include <cstdarg>
 #include <cassert>
 #include <algorithm>
 #include <iostream>
-#include <celutil/utf8.h>
 #include <celmath/geomutil.h>
-#include "glsupport.h"
-#include "vecgl.h"
-#include "console.h"
-#include "shadermanager.h"
 #include <celttf/truetypefont.h>
+#include <celutil/utf8.h>
+#include "console.h"
+#include "render.h"
+#include "shadermanager.h"
+#include "vecgl.h"
 
 using namespace std;
 using namespace celmath;
@@ -29,7 +28,8 @@ static int pmod(int n, int m)
 }
 
 
-Console::Console(int _nRows, int _nColumns) :
+Console::Console(Renderer& _renderer, int _nRows, int _nColumns) :
+    renderer(_renderer),
     ostream(&sbuf),
     nRows(_nRows),
     nColumns(_nColumns)
@@ -78,8 +78,8 @@ void Console::begin()
 {
     mpv = Ortho2D(0.0f, (float)xscale, 0.0f, (float)yscale);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    renderer.enableBlending();
+    renderer.setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     global.reset();
 }

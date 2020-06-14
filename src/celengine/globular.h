@@ -63,7 +63,7 @@ class Globular : public DeepSkyObject
                 float brightness,
                 float pixelSize,
                 const Matrices& m,
-                const Renderer* r) override;
+                Renderer* r) override;
 
     GlobularForm* getForm() const;
 
@@ -77,7 +77,7 @@ class Globular : public DeepSkyObject
                                     float brightness,
                                     float pixelSize,
                                     const Matrices& m,
-                                    const Renderer* r);
+                                    Renderer* r);
 
    // Reference values ( = data base averages) of core radius, King concentration
    // and mu25 isophote radius:

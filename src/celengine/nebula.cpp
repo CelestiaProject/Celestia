@@ -7,16 +7,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "vecgl.h"
-#include "render.h"
-#include "astro.h"
-#include "nebula.h"
-#include "meshmanager.h"
-#include "rendcontext.h"
+#include <algorithm>
 #include <celmath/mathlib.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
-#include <algorithm>
+#include "astro.h"
+#include "meshmanager.h"
+#include "nebula.h"
+#include "rendcontext.h"
+#include "render.h"
+#include "vecgl.h"
 
 using namespace Eigen;
 using namespace std;
@@ -87,7 +87,7 @@ void Nebula::render(const Vector3f& /*offset*/,
                     float /*unused*/,
                     float pixelSize,
                     const Matrices& m,
-                    const Renderer* renderer)
+                    Renderer* renderer)
 {
     Geometry* g = nullptr;
     if (geometry != InvalidResource)
@@ -95,7 +95,7 @@ void Nebula::render(const Vector3f& /*offset*/,
     if (g == nullptr)
         return;
 
-    glDisable(GL_BLEND);
+    renderer->disableBlending();
 
     Matrix4f mv = vecgl::rotate(vecgl::scale(*m.modelview, getRadius()),
                                 getOrientation());
@@ -107,7 +107,7 @@ void Nebula::render(const Vector3f& /*offset*/,
     g->render(rc);
     glUseProgram(0);
 
-    glEnable(GL_BLEND);
+    renderer->enableBlending();
 }
 
 

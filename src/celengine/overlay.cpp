@@ -8,20 +8,18 @@
 // of the License, or (at your option) any later version.
 
 #include <cstring>
-#include <cstdarg>
 #include <iostream>
-#include "glsupport.h"
 #include <Eigen/Core>
+#include <celmath/geomutil.h>
+#include <celttf/truetypefont.h>
 #include <celutil/color.h>
 #include <celutil/debug.h>
 #include <celutil/utf8.h>
-#include <celmath/geomutil.h>
-#include "vecgl.h"
 #include "overlay.h"
 #include "rectangle.h"
 #include "render.h"
 #include "texture.h"
-#include <celttf/truetypefont.h>
+#include "vecgl.h"
 
 using namespace std;
 using namespace Eigen;
@@ -39,8 +37,8 @@ void Overlay::begin()
     mvp = Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
     // ModelView is Identity
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    renderer.enableBlending();
+    renderer.setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     global.reset();
     useTexture = false;

@@ -272,7 +272,7 @@ void Galaxy::render(const Vector3f& offset,
                     float brightness,
                     float pixelSize,
                     const Matrices& m,
-                    const Renderer* renderer)
+                    Renderer* renderer)
 {
     if (form == nullptr)
     {
@@ -312,7 +312,7 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
                                       float brightness,
                                       float pixelSize,
                                       const Matrices& ms,
-                                      const Renderer* renderer)
+                                      Renderer* renderer)
 {
     if (form == nullptr)
         return;

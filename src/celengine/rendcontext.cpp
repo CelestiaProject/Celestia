@@ -9,14 +9,13 @@
 // of the License, or (at your option) any later version.
 
 #include <vector>
-#include "rendcontext.h"
-#include "texmanager.h"
-#include "modelgeometry.h"
-#include "body.h"
-#include "glsupport.h"
 #include <celmath/geomutil.h>
+#include "body.h"
+#include "modelgeometry.h"
+#include "rendcontext.h"
 #include "render.h"
 #include "shadowmap.h"
+#include "texmanager.h"
 
 using namespace cmod;
 using namespace Eigen;
@@ -71,7 +70,7 @@ GetTextureHandle(Material::TextureResource* texResource)
 }
 
 
-RenderContext::RenderContext(const Renderer* _renderer) :
+RenderContext::RenderContext(Renderer* _renderer) :
     material(&defaultMaterial),
     renderer(_renderer)
 {
@@ -348,7 +347,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 
 /***** GLSL render context ******/
 
-GLSL_RenderContext::GLSL_RenderContext(const Renderer* renderer,
+GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
                                        const LightingState& ls,
                                        float _objRadius,
                                        const Quaternionf& orientation) :
@@ -362,7 +361,7 @@ GLSL_RenderContext::GLSL_RenderContext(const Renderer* renderer,
 }
 
 
-GLSL_RenderContext::GLSL_RenderContext(const Renderer* renderer,
+GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
                                        const LightingState& ls,
                                        const Eigen::Vector3f& _objScale,
                                        const Quaternionf& orientation) :
@@ -654,22 +653,22 @@ GLSL_RenderContext::makeCurrent(const Material& m)
         switch (blendMode)
         {
         case Material::NormalBlend:
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            renderer->enableBlending();
+            renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glDepthMask(disableDepthWriteOnBlend ? GL_FALSE : GL_TRUE);
             break;
         case Material::AdditiveBlend:
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            renderer->enableBlending();
+            renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
             glDepthMask(disableDepthWriteOnBlend ? GL_FALSE : GL_TRUE);
             break;
         case Material::PremultipliedAlphaBlend:
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            renderer->enableBlending();
+            renderer->setBlendingFactors(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             glDepthMask(disableDepthWriteOnBlend ? GL_FALSE : GL_TRUE);
             break;
         default:
-            glDisable(GL_BLEND);
+            renderer->disableBlending();
             glDepthMask(GL_TRUE);
             break;
         }
@@ -700,7 +699,7 @@ GLSL_RenderContext::setShadowMap(GLuint _shadowMap, GLuint _width, const Eigen::
 
 /***** GLSL-Unlit render context ******/
 
-GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(const Renderer* renderer, float _objRadius) :
+GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(Renderer* renderer, float _objRadius) :
     RenderContext(renderer),
     blendMode(Material::InvalidBlend),
     objRadius(_objRadius)
@@ -800,22 +799,22 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
         switch (blendMode)
         {
         case Material::NormalBlend:
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            renderer->enableBlending();
+            renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glDepthMask(GL_FALSE);
             break;
         case Material::AdditiveBlend:
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            renderer->enableBlending();
+            renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
             glDepthMask(GL_FALSE);
             break;
         case Material::PremultipliedAlphaBlend:
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            renderer->enableBlending();
+            renderer->setBlendingFactors(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             glDepthMask(GL_FALSE);
             break;
         default:
-            glDisable(GL_BLEND);
+            renderer->disableBlending();
             glDepthMask(GL_TRUE);
             break;
         }

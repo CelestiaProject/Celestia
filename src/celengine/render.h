@@ -252,9 +252,15 @@ class Renderer
     void setViewport(const std::array<int, 4>& viewport) const;
     void setScissor(int x, int y, int w, int h);
     void removeScissor();
-    void enableMSAA();
-    void disableMSAA();
-    bool isMSAAEnabled() const;
+
+    void enableMSAA() noexcept;
+    void disableMSAA() noexcept;
+    bool isMSAAEnabled() const noexcept;
+
+    void enableBlending() noexcept;
+    void disableBlending() noexcept;
+    void setBlendingFactors(GLenum, GLenum) noexcept;
+
     void drawRectangle(const Rect& r, const Eigen::Matrix4f& mvp);
     void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
 
@@ -694,8 +700,8 @@ class Renderer
 
     void createShadowFBO();
 
-    void enableSmoothLines() const;
-    void disableSmoothLines() const;
+    void enableSmoothLines();
+    void disableSmoothLines();
 
 #ifdef USE_HDR
  private:
@@ -794,13 +800,16 @@ class Renderer
     uint32_t frameCount;
 
     int currentIntervalIndex{ 0 };
-    enum GLStateFlags
-    {
-        ScissorTest     = 0x0001,
-        Multisaple      = 0x0002,
-    };
 
-    int m_GLStateFlag { 0 };
+    struct State
+    {
+        bool blending    : 1;
+        bool scissor     : 1;
+        bool multisample : 1;
+
+        GLenum sfactor, dfactor; // blending
+    };
+    State m_GLState { false, false, false };
 
  private:
     typedef std::map<const Orbit*, CurvePlot*> OrbitCache;

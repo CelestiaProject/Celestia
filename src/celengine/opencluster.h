@@ -34,7 +34,7 @@ class OpenCluster : public DeepSkyObject
                 float brightness,
                 float pixelSize,
                 const Matrices& m,
-                const Renderer* r = nullptr) override;
+                Renderer* r = nullptr) override;
 
     uint64_t getRenderMask() const override;
     unsigned int getLabelMask() const override;

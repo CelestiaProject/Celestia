@@ -10,15 +10,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "render.h"
-#include "planetgrid.h"
-#include "body.h"
-#include "vecgl.h"
-#include <celmath/intersect.h>
-#include <Eigen/Core>
-#include <Eigen/Geometry>
 #include <cmath>
+#include <Eigen/Geometry>
+#include <celmath/intersect.h>
 #include <celutil/debug.h>
+#include "body.h"
+#include "planetgrid.h"
+#include "render.h"
+#include "vecgl.h"
 
 using namespace Eigen;
 using namespace celmath;
@@ -123,7 +122,7 @@ PlanetographicGrid::render(Renderer* renderer,
     // Enable depth buffering
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
-    glDisable(GL_BLEND);
+    renderer->disableBlending();
 
     Affine3f transform = Translation3f(pos) * qf.conjugate() * Scaling(scale * semiAxes);
     Matrix4f mvp = (*m.projection) * (*m.modelview) * transform.matrix();
@@ -251,8 +250,8 @@ PlanetographicGrid::render(Renderer* renderer,
     glUseProgram(0);
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    renderer->enableBlending();
+    renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }
 
 

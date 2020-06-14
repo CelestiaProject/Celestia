@@ -83,7 +83,6 @@ static const float MinimumFOV = degToRad(0.001f);
 static float KeyRotationAccel = degToRad(120.0f);
 static float MouseRotationSensitivity = degToRad(1.0f);
 
-static Console console(200, 120);
 
 static void warning(string s)
 {
@@ -146,7 +145,8 @@ CelestiaCore::CelestiaCore() :
     m_luaPlugin(new LuaScriptPlugin(this)),
 #endif
     m_scriptMaps(new ScriptMaps()),
-    oldFOV(stdFOV)
+    oldFOV(stdFOV),
+    console(new Console(*renderer, 200, 120))
 {
 
     for (int i = 0; i < KeyCount; i++)
@@ -157,9 +157,9 @@ CelestiaCore::CelestiaCore() :
     for (int i = 0; i < JoyButtonCount; i++)
         joyButtonsPressed[i] = false;
 
-    clog.rdbuf(console.rdbuf());
-    cerr.rdbuf(console.rdbuf());
-    console.setWindowHeight(Console::PageRows);
+    clog.rdbuf(console->rdbuf());
+    cerr.rdbuf(console->rdbuf());
+    console->setWindowHeight(Console::PageRows);
 }
 
 CelestiaCore::~CelestiaCore()
@@ -784,24 +784,24 @@ void CelestiaCore::keyDown(int key, int modifiers)
 
     case Key_Down:
         if (showConsole)
-            console.scroll(1);
+            console->scroll(1);
         break;
 
     case Key_Up:
         if (showConsole)
-            console.scroll(-1);
+            console->scroll(-1);
         break;
 
     case Key_PageDown:
         if (showConsole)
-            console.scroll(Console::PageRows);
+            console->scroll(Console::PageRows);
         else
             back();
         break;
 
     case Key_PageUp:
         if (showConsole)
-            console.scroll(-Console::PageRows);
+            console->scroll(-Console::PageRows);
         else
             forward();
         break;
@@ -2089,12 +2089,12 @@ void CelestiaCore::draw()
     renderOverlay();
     if (showConsole)
     {
-        console.setFont(font);
-        console.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        console.begin();
-        console.moveBy(safeAreaInsets.left, screenDpi / 25.4f * 53.0f);
-        console.render(Console::PageRows);
-        console.end();
+        console->setFont(font);
+        console->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        console->begin();
+        console->moveBy(safeAreaInsets.left, screenDpi / 25.4f * 53.0f);
+        console->render(Console::PageRows);
+        console->end();
     }
 
     if (toggleAA)
@@ -2134,7 +2134,7 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
     }
     if (overlay != nullptr)
         overlay->setWindowSize(w, h);
-    console.setScale(w, h);
+    console->setScale(w, h);
     width = w;
     height = h;
 
@@ -3567,7 +3567,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     // Set the console log size; ignore any request to use less than 100 lines
     if (config->consoleLogRows > 100)
-        console.setRowCount(config->consoleLogRows);
+        console->setRowCount(config->consoleLogRows);
 
 #ifdef USE_SPICE
     if (!InitializeSpice())
