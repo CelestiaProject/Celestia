@@ -95,7 +95,7 @@ struct TextureFontPrivate
     int m_texWidth;
     int m_texHeight;
 
-    GLuint m_texName;       // texture object
+    GLuint m_texName { 0 };       // texture object
     vector<Glyph> m_glyphs; // character information
     GLint m_maxTextureSize; // max supported texture size
 
