@@ -339,6 +339,8 @@ Glyph& TextureFontPrivate::getGlyph(wchar_t ch)
     if (!loadGlyphInfo(ch, c))
         return g_badGlyph;
 
+    flush(); // render text to avoid garbled output due to changed texture
+
     m_glyphs.push_back(c);
     if (++m_inserted == 10)
         optimize();
