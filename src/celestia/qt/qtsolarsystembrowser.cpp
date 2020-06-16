@@ -526,7 +526,7 @@ QModelIndex SolarSystemTreeModel::parent(const QModelIndex& index) const
 Qt::ItemFlags SolarSystemTreeModel::flags(const QModelIndex& index) const
 {
     if (!index.isValid())
-        return 0;
+        return {};
 
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }

@@ -272,11 +272,15 @@ void CelestiaGlWidget::mouseReleaseEvent( QMouseEvent* m )
 
 void CelestiaGlWidget::wheelEvent( QWheelEvent* w )
 {
-    if (w->delta() > 0 )
+    QPoint numDegrees = w->angleDelta();
+    if (numDegrees.isNull() || numDegrees.y() == 0)
+        return;
+
+    if (numDegrees.y() > 0 )
     {
         appCore->mouseWheel(-1.0f, 0);
     }
-    else if (w->delta() < 0)
+    else
     {
         appCore->mouseWheel(1.0f, 0);
     }
