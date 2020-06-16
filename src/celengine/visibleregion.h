@@ -35,7 +35,7 @@ public:
                 float discSizeInPixels,
                 double tdb,
                 const Matrices& m) const override;
-    float boundingSphereRadius() const;
+    float boundingSphereRadius() const override;
 
     Color color() const;
     void setColor(Color color);

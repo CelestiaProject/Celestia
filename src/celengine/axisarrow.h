@@ -34,12 +34,12 @@ class ArrowReferenceMark : public ReferenceMark
                 float discSize,
                 double tdb,
                 const Matrices& m) const override;
-    float boundingSphereRadius() const
+    float boundingSphereRadius() const override
     {
         return size;
     }
 
-    bool isOpaque() const
+    bool isOpaque() const override
     {
         return opacity == 1.0f;
     }
@@ -70,12 +70,12 @@ class AxesReferenceMark : public ReferenceMark
                 float discSize,
                 double tdb,
                 const Matrices& m) const override;
-    float boundingSphereRadius() const
+    float boundingSphereRadius() const override
     {
         return size;
     }
 
-    bool isOpaque() const
+    bool isOpaque() const override
     {
         return opacity == 1.0f;
     }

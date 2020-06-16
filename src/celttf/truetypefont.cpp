@@ -211,7 +211,6 @@ void TextureFontPrivate::computeTextureSize()
 bool TextureFontPrivate::buildAtlas()
 {
     FT_GlyphSlot g = m_face->glyph;
-    Glyph c;
 
     initCommonGlyphs();
     computeTextureSize();
@@ -255,7 +254,7 @@ bool TextureFontPrivate::buildAtlas()
            continue;
         }
 
-        if (ox + g->bitmap.width > m_texWidth)
+        if (ox + int(g->bitmap.width) > int(m_texWidth))
         {
             oy += rowh;
             rowh = 0;
@@ -354,15 +353,6 @@ void TextureFontPrivate::optimize()
     m_inserted = 0;
 }
 
-
-struct FontVertex
-{
-    FontVertex(float _x, float _y, float _u, float _v) :
-        x(_x), y(_y), u(_u), v(_v)
-    {}
-    float x, y;
-    float u, v;
-};
 /*
  * Render text using the currently loaded font and currently set font size.
  * Rendering starts at coordinates (x, y), z is always 0.

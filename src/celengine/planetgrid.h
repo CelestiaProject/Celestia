@@ -54,7 +54,7 @@ public:
                 float discSizeInPixels,
                 double tdb,
                 const Matrices& m) const override;
-    float boundingSphereRadius() const;
+    float boundingSphereRadius() const override;
 
     void setIAULongLatConvention();
 
