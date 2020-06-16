@@ -426,18 +426,17 @@ ModelViewWidget::mouseMoveEvent(QMouseEvent *event)
 void
 ModelViewWidget::wheelEvent(QWheelEvent* event)
 {
-    if (event->orientation() != Qt::Vertical)
-    {
+    QPoint numDegrees = event->angleDelta();
+    if (numDegrees.isNull() || numDegrees.y() == 0)
         return;
-    }
 
     // Mouse wheel controls camera dolly
 #if LINEAR_DOLLY
-    double adjust = m_modelBoundingRadius * event->delta() / 1000.0;
+    double adjust = m_modelBoundingRadius * numDegrees.y() / 1000.0;
     double newDistance = m_cameraPosition.norm() + adjust;
     m_cameraPosition = m_cameraPosition.normalized() * newDistance;
 #else
-    double adjust = std::pow(2.0, event->delta() / 1000.0);
+    double adjust = std::pow(2.0, numDegrees.y() / 1000.0);
     double newDistance = m_cameraPosition.norm() * adjust;
     m_cameraPosition = m_cameraPosition.normalized() * newDistance;
 #endif
