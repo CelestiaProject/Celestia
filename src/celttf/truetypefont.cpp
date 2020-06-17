@@ -97,7 +97,7 @@ struct TextureFontPrivate
     int m_texWidth;
     int m_texHeight;
 
-    GLuint m_texName { 0 };       // texture object
+    GLuint m_texName;       // texture object
     vector<Glyph> m_glyphs; // character information
     GLint m_maxTextureSize; // max supported texture size
 
@@ -126,6 +126,8 @@ TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) :
 {
     m_unicodeBlocks[0] = { 0x0020, 0x007E }; // Basic Latin
     m_unicodeBlocks[1] = { 0x03B1, 0x03CF }; // Lower case Greek
+
+    m_texName = 0;
 
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxTextureSize);
 }
