@@ -53,6 +53,8 @@ struct UnicodeBlock
 
 struct TextureFontPrivate
 {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     struct FontVertex
     {
         FontVertex(float _x, float _y, float _u, float _v) :
