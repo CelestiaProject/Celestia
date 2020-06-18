@@ -3360,7 +3360,7 @@ void CelestiaCore::renderOverlay()
     {
         overlay->setFont(titleFont);
         overlay->savePos();
-        Rect r(0, 0, width, screenDpi / 25.4f * 26.5f);
+        Rect r(0, 0, width, safeAreaInsets.bottom + screenDpi / 25.4f * 26.5f);
         r.setColor(consoleColor);
         overlay->drawRectangle(r);
         overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + fontHeight * 3.0f + screenDpi / 25.4f * 9.3f);
