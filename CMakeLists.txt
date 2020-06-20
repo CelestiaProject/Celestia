@@ -364,7 +364,7 @@ check_include_files(byteswap.h HAVE_BYTESWAP_H)
 check_include_file_cxx(experimental/filesystem HAVE_EXPERIMENTAL_FILESYSTEM)
 
 if(HAVE_EXPERIMENTAL_FILESYSTEM)
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     find_library(CLANG_FS_LIBRARY "c++fs")
     if(CLANG_FS_LIBRARY)
       set(FS_LIBRARY c++fs)
