@@ -74,42 +74,44 @@ string CurrentCPToUTF8(const string& str)
     return WideToUTF8(CurrentCPToWide(str));
 }
 
-string WideToCurrentCP(const wstring& ws)
-{
-    if (ws.empty())
-        return {};
-    string out(ws.length(), 0);
-    WideCharToMultiByte(CP_ACP, 0, ws.c_str(), -1, &out[0], ws.length(), nullptr, nullptr);
-    return out;
-}
-
-wstring CurrentCPToWide(const string& str)
-{
-    if (str.empty())
-        return {};
-    wstring w(str.length(), 0);
-    MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, &w[0], str.length());
-    return w;
-}
-
-string WideToUTF8(const wstring& ws)
+string WStringToString(UINT codePage, const wstring& ws)
 {
     if (ws.empty())
         return {};
     // get a converted string length
-    auto len = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), ws.length(), nullptr, 0, nullptr, nullptr);
+    auto len = WideCharToMultiByte(codePage, 0, ws.c_str(), ws.length(), NULL, 0, nullptr, nullptr);
     string out(len, 0);
-    WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), ws.length(), &out[0], len, nullptr, nullptr);
+    WideCharToMultiByte(codePage, 0, ws.c_str(), ws.length(), &out[0], len, nullptr, nullptr);
     return out;
 }
 
-wstring UTF8ToWide(const string& s)
+wstring StringToWString(UINT codePage, const string& s)
 {
     if (s.empty())
         return {};
     // get a converted string length
-    auto len = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), s.length(), nullptr, 0);
+    auto len = MultiByteToWideChar(codePage, 0, s.c_str(), s.length(), nullptr, 0);
     wstring out(len, 0);
-    MultiByteToWideChar(CP_UTF8, 0, s.c_str(), s.length(), &out[0], len);
+    MultiByteToWideChar(codePage, 0, s.c_str(), s.length(), &out[0], len);
     return out;
+}
+
+string WideToCurrentCP(const wstring& ws)
+{
+    return WStringToString(CP_ACP, ws);
+}
+
+wstring CurrentCPToWide(const string& s)
+{
+    return StringToWString(CP_ACP, s);
+}
+
+string WideToUTF8(const wstring& ws)
+{
+    return WStringToString(CP_UTF8, ws);
+}
+
+wstring UTF8ToWide(const string& s)
+{
+    return StringToWString(CP_UTF8, s);
 }
