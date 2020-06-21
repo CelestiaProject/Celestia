@@ -17,6 +17,7 @@
 #include "windows.h"
 #include "winuser.h"
 #include "windef.h"
+#include "commctrl.h"
 #ifndef IDC_STATIC
 #define IDC_STATIC -1
 #endif
@@ -570,6 +571,9 @@ FONT 8, "Segoe UI", 0, 0, 0x0
 BEGIN
 
 
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
+
+
     EDITTEXT        IDC_FINDOBJECT_EDIT,77,9,78,12,ES_AUTOHSCROLL
 
 
@@ -603,6 +607,9 @@ FONT 8, "Segoe UI"
 BEGIN
 
 
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
+
+
     DEFPUSHBUTTON   "OK",IDOK,117,228,50,14
 
 
@@ -628,6 +635,9 @@ FONT 8, "Segoe UI"
 
 
 BEGIN
+
+
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
 
 
     DEFPUSHBUTTON   "OK",IDOK,138,279,50,14
@@ -657,6 +667,9 @@ FONT 8, "Segoe UI"
 BEGIN
 
 
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
+
+
     DEFPUSHBUTTON   "OK",IDOK,117,228,50,14
 
 
@@ -682,6 +695,9 @@ FONT 8, "Segoe UI", 0, 0, 0x1
 
 
 BEGIN
+
+
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
 
 
     LTEXT           "Time Zone: ",IDC_STATIC,7,10,58,10
@@ -738,6 +754,9 @@ FONT 8, "Segoe UI", 0, 0, 0x1
 BEGIN
 
 
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
+
+
     EDITTEXT        IDC_BOOKMARK_EDIT,6,21,116,12,ES_AUTOHSCROLL
 
 
@@ -780,6 +799,9 @@ FONT 8, "Segoe UI", 0, 0, 0x0
 BEGIN
 
 
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
+
+
     DEFPUSHBUTTON   "OK",IDOK,168,154,60,14
 
 
@@ -814,6 +836,9 @@ FONT 8, "Segoe UI", 0, 0, 0x1
 
 
 BEGIN
+
+
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
 
 
     CONTROL         "List3",IDC_STARBROWSER_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP,7,7,253,148,WS_EX_CLIENTEDGE
@@ -873,6 +898,9 @@ FONT 8, "Segoe UI", 0, 0, 0x0
 BEGIN
 
 
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
+
+
     DEFPUSHBUTTON   "OK",IDOK,173,124,60,14
 
 
@@ -907,6 +935,9 @@ FONT 8, "Segoe UI", 0, 0, 0x0
 
 
 BEGIN
+
+
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
 
 
     EDITTEXT        IDC_EDIT_OBJECTNAME,46,11,160,12,ES_AUTOHSCROLL
@@ -966,6 +997,9 @@ FONT 8, "Segoe UI"
 BEGIN
 
 
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
+
+
     LTEXT           "Size:",IDC_STATIC,6,4,40,8
 
 
@@ -999,6 +1033,9 @@ FONT 8, "Segoe UI", 0, 0, 0x0
 BEGIN
 
 
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
+
+
     COMBOBOX        IDC_COMBO_RESOLUTION,77,18,90,90,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
 
 
@@ -1030,6 +1067,9 @@ FONT 8, "Segoe UI", 0, 0, 0x0
 
 
 BEGIN
+
+
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
 
 
     GROUPBOX        "Show",IDC_STATIC,7,7,228,117
@@ -1233,6 +1273,9 @@ FONT 8, "Segoe UI", 0, 0, 0x0
 BEGIN
 
 
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
+
+
     CONTROL         "Cities",IDC_SHOW_CITIES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,18,100,10
 
 
@@ -1308,6 +1351,9 @@ FONT 8, "Segoe UI", 0, 0, 0x0
 BEGIN
 
 
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
+
+
     EDITTEXT        IDC_BOOKMARKFOLDER,76,13,84,12,ES_AUTOHSCROLL
 
 
@@ -1339,6 +1385,9 @@ FONT 8, "Segoe UI", 0, 0, 0x1
 
 
 BEGIN
+
+
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
 
 
     CONTROL         "Tree1",IDC_ORGANIZE_BOOKMARK_TREE,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | TVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,5,7,115,107,WS_EX_CLIENTEDGE
@@ -1380,6 +1429,9 @@ FONT 8, "Segoe UI", 0, 0, 0x0
 BEGIN
 
 
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
+
+
     EDITTEXT        IDC_NEWBOOKMARK,69,13,84,12,ES_AUTOHSCROLL
 
 
@@ -1411,6 +1463,9 @@ FONT 8, "Segoe UI", 0, 0, 0x1
 
 
 BEGIN
+
+
+    CONTROL         "", -1, WC_NATIVEFONTCTL, NFS_ALL, 0, 0, 0, 0
 
 
     CONTROL         "List2",IDC_ECLIPSES_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP,5,7,201,146,WS_EX_CLIENTEDGE
