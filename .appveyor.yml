@@ -73,21 +73,21 @@ build_script:
 
     cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TTF=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF ..
 
-    cmake --build . --config Release -- /maxcpucount:4 /nologo
+    cmake --build . --config RelWithDebInfo -- /maxcpucount:4 /nologo
 
     set CTEST_OUTPUT_ON_FAILURE=1
 
-    ctest -C Release
+    ctest -C RelWithDebInfo
 
 after_build:
   - cmd: >-
       cd c:\projects\celestia\build\src\celestia
 
-      7z a celestia-win.x86.7z win32\Release\*
+      7z a celestia-win.x86.7z win32\RelWithDebInfo\*
 
-      windeployqt --no-angle --no-opengl-sw --no-translations --no-system-d3d-compiler qt\Release\
+      windeployqt --no-angle --no-opengl-sw --no-translations --no-system-d3d-compiler qt\RelWithDebInfo\
 
-      7z a celestia-qt.x86.7z qt\Release\*
+      7z a celestia-qt.x86.7z qt\RelWithDebInfo\*
 
 #on_failure:
 #- type "c:\projects\celestia\build\CMakeFiles\CMakeOutput.log"
