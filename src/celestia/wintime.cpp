@@ -91,13 +91,16 @@ SetTimeDialog::init(HWND _hDlg)
     useLocalTime = appCore->getTimeZoneBias() != 0;
     useUTCOffset = appCore->getDateFormat() == 2;
 
-    bind_textdomain_codeset("celestia", CurrentCP());
-    SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, (LPARAM) _("Universal Time"));
-    SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, (LPARAM) _("Local Time"));
-    SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_ADDSTRING, 0, (LPARAM) _("Time Zone Name"));
-    SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_ADDSTRING, 0, (LPARAM) _("UTC Offset"));
-    bind_textdomain_codeset("celestia", "UTF8");
-    
+    string item0 = UTF8ToCurrentCP(_("Universal Time"));
+    string item1 = UTF8ToCurrentCP(_("Local Time"));
+    string item2 = UTF8ToCurrentCP(_("Time Zone Name"));
+    string item3 = UTF8ToCurrentCP(_("UTC Offset"));
+
+    SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item0.c_str()));
+    SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item1.c_str()));
+    SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item2.c_str()));
+    SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_ADDSTRING, 0,  reinterpret_cast<LPARAM>(item3.c_str()));
+
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_SETCURSEL, useLocalTime ? 1 : 0, 0);
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_SETCURSEL, useUTCOffset ? 1 : 0, 0);
 

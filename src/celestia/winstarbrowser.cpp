@@ -65,20 +65,24 @@ bool InitStarBrowserColumns(HWND listView)
     for (i = 0; i < nColumns; i++)
         columns[i] = lvc;
 
-    bind_textdomain_codeset("celestia", CurrentCP());
+    string header0 = UTF8ToCurrentCP(_("Name"));
+    string header1 = UTF8ToCurrentCP(_("Distance (ly)"));
+    string header2 = UTF8ToCurrentCP(_("App. mag"));
+    string header3 = UTF8ToCurrentCP(_("Abs. mag"));
+    string header4 = UTF8ToCurrentCP(_("Type"));
 
-    columns[0].pszText = _("Name");
+    columns[0].pszText = const_cast<char*>(header0.c_str());
     columns[0].cx = 100;
-    columns[1].pszText = _("Distance (ly)");
+    columns[1].pszText = const_cast<char*>(header1.c_str());
     columns[1].fmt = LVCFMT_RIGHT;
-    columns[1].cx = 75;
-    columns[2].pszText = _("App. mag");
+    columns[1].cx = 115;
+    columns[2].pszText = const_cast<char*>(header2.c_str());
     columns[2].fmt = LVCFMT_RIGHT;
-    columns[3].pszText = _("Abs. mag");
+    columns[2].cx = 65;
+    columns[3].pszText = const_cast<char*>(header3.c_str());
     columns[3].fmt = LVCFMT_RIGHT;
-    columns[4].pszText = _("Type");
-
-    bind_textdomain_codeset("celestia", "UTF8");
+    columns[3].cx = 65;
+    columns[4].pszText = const_cast<char*>(header4.c_str());
 
     for (i = 0; i < nColumns; i++)
     {

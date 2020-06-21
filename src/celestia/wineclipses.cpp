@@ -52,18 +52,22 @@ bool InitEclipseFinderColumns(HWND listView)
     for (i = 0; i < nColumns; i++)
         columns[i] = lvc;
 
-    bind_textdomain_codeset("celestia", CurrentCP());
-    columns[0].pszText = _("Planet");
-    columns[0].cx = 50;
-    columns[1].pszText = _("Satellite");
+    string header0 = UTF8ToCurrentCP(_("Planet"));
+    string header1 = UTF8ToCurrentCP(_("Satellite"));
+    string header2 = UTF8ToCurrentCP(_("Date"));
+    string header3 = UTF8ToCurrentCP(_("Start"));
+    string header4 = UTF8ToCurrentCP(_("Duration"));
+
+    columns[0].pszText = const_cast<char*>(header0.c_str());
+    columns[0].cx = 65;
+    columns[1].pszText = const_cast<char*>(header1.c_str());
     columns[1].cx = 65;
-    columns[2].pszText = _("Date");
+    columns[2].pszText = const_cast<char*>(header2.c_str());
     columns[2].cx = 80;
-    columns[3].pszText = _("Start");
+    columns[3].pszText = const_cast<char*>(header3.c_str());
     columns[3].cx = 55;
-    columns[4].pszText = _("Duration");
-    columns[4].cx = 55;
-    bind_textdomain_codeset("celestia", "UTF8");
+    columns[4].pszText = const_cast<char*>(header4.c_str());
+    columns[4].cx = 135;
 
     for (i = 0; i < nColumns; i++)
     {
@@ -134,17 +138,13 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
 
     case 2:
         {
-            bind_textdomain_codeset("celestia", CurrentCP());
             astro::Date startDate(eclipse->startTime);
-            if (!strcmp(eclipse->planete.c_str(),"None"))
-                sprintf(callbackScratch,"");
-            else
-                sprintf(callbackScratch, "%2d %s %4d",
-                        startDate.day,
-                        _(MonthNames[startDate.month - 1]),
-                        startDate.year);
+            string monthStr = UTF8ToCurrentCP(_(MonthNames[startDate.month - 1]));
+            sprintf(callbackScratch, "%2d %s %4d",
+                    startDate.day,
+                    monthStr.c_str(),
+                    startDate.year);
             nm->item.pszText = callbackScratch;
-            bind_textdomain_codeset("celestia", "UTF8");
         }
         break;
             
@@ -311,19 +311,24 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             InitEclipseFinderColumns(hwnd);
             SendDlgItemMessage(hDlg, IDC_ECLIPSES_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
 
-            bind_textdomain_codeset("celestia", CurrentCP());
             CheckRadioButton(hDlg, IDC_SOLARECLIPSE, IDC_LUNARECLIPSE, IDC_SOLARECLIPSE);
             efd->bSolar = true;
 
-            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)_("Earth"));
-            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)_("Jupiter"));
-            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)_("Saturn"));
-            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)_("Uranus"));
-            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)_("Neptune"));
-            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)_("Pluto"));
+            string item0 = UTF8ToCurrentCP(_("Earth"));
+            string item1 = UTF8ToCurrentCP(_("Jupiter"));
+            string item2 = UTF8ToCurrentCP(_("Saturn"));
+            string item3 = UTF8ToCurrentCP(_("Uranus"));
+            string item4 = UTF8ToCurrentCP(_("Neptune"));
+            string item5 = UTF8ToCurrentCP(_("Pluto"));
+
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item0.c_str()));
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item1.c_str()));
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item2.c_str()));
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item3.c_str()));
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item4.c_str()));
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item5.c_str()));
             SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_SETCURSEL, 0, 0);
             efd->strPlaneteToFindOn = "Earth";
-            bind_textdomain_codeset("celestia", "UTF8");
 
             InitDateControls(hDlg, astro::Date(efd->appCore->getSimulation()->getTime()), efd->fromTime, efd->toTime);
 
