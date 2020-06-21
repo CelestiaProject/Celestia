@@ -51,6 +51,8 @@ class OverlayStreamBuf : public std::streambuf
 class Overlay : public std::ostream
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     Overlay(Renderer&);
     Overlay() = delete;
     ~Overlay() = default;
