@@ -108,7 +108,9 @@ if(MSVC)
   # C4800: forcing value to bool
   # Additional options
   # bigobj: generate more object sections than allowed by default
-  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/bigobj")
+  # Promoted to errors
+  # C4316: object allocated on the heap may not be aligned 16
+  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/bigobj" "/we4316")
 endif()
 
 if(NOT WIN32)
