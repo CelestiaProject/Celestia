@@ -670,14 +670,26 @@ TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int inde
 }
 
 // temporary while no fontconfig support
-static fs::path ParseFontName(const fs::path &filename, int &size)
+static fs::path ParseFontName(const fs::path &filename, int &collectionIndex, int &size)
 {
+    // Format with font path/collection index(if any)/font size(if any)
     auto fn = filename.string();
     auto pos = fn.rfind(',');
     if (pos != string::npos)
     {
         size = (int) stof(fn.substr(pos + 1));
-        return fn.substr(0, pos);
+        auto rest = fn.substr(0, pos);
+
+        pos = rest.rfind(',');
+        if (pos != string::npos)
+        {
+            collectionIndex = stof(rest.substr(pos + 1));
+            return rest.substr(0, pos);
+        }
+        else
+        {
+            return rest;
+        }
     }
     else
     {
@@ -698,6 +710,7 @@ TextureFont* LoadTextureFont(const Renderer *r, const fs::path &filename, int in
     }
 
     int psize = 0;
-    auto nameonly = ParseFontName(filename, psize);
-    return TextureFont::load(r, nameonly, index, size > 0 ? size : psize, dpi);
+    int pcollectionIndex = 0;
+    auto nameonly = ParseFontName(filename, pcollectionIndex, psize);
+    return TextureFont::load(r, nameonly, index > 0 ? index : pcollectionIndex, size > 0 ? size : psize, dpi);
 }
