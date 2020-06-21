@@ -260,7 +260,7 @@ recursive_directory_iterator& recursive_directory_iterator::operator++()
         return *this;
 
     auto& p = m_iter->path();
-    if (m_pending && is_directory(p))
+    if (m_pending && (p.empty() || is_directory(p)))
     {
         m_dirs->m_dirIters.emplace_back(m_iter);
         m_iter = directory_iterator(p);
