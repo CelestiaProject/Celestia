@@ -87,7 +87,7 @@ public:
         {
             m_planeNormals[i] = zeroExtend(planeNormals[i]);
         }
-    }      
+    }
 
     inline bool cullSphere(const Vector3d& center,
                            double radius) const
@@ -340,12 +340,13 @@ public:
         glColor4fv(aColor.data());
 #endif
     }
-        
+
 private:
     unsigned int currentPosition;
     unsigned int capacity;
     struct Vertex
     {
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
         Vector4f position;
         Vector4f color;
     };
