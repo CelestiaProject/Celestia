@@ -26,8 +26,6 @@
 
 using namespace std;
 
-WNDPROC oldListViewProc;
-
 static vector<Eclipse> eclipseList;
 
 extern void SetMouseCursor(LPCTSTR lpCursor);
@@ -266,10 +264,12 @@ int CALLBACK EclipseFinderCompareFunc(LPARAM lParam0, LPARAM lParam1,
     }
 }
 
-BOOL APIENTRY EclipseListViewProc(HWND hWnd,
-                                  UINT message,
-                                  UINT wParam,
-                                  LONG lParam)
+LRESULT CALLBACK EclipseListViewProc(HWND hWnd,
+                                     UINT message,
+                                     WPARAM wParam,
+                                     LPARAM lParam,
+                                     UINT_PTR uIdSubclass,
+                                     DWORD_PTR dwRefData)
 {
     switch(message)
     {
@@ -287,7 +287,7 @@ BOOL APIENTRY EclipseListViewProc(HWND hWnd,
         break;
     }
 
-    return CallWindowProc(oldListViewProc, hWnd, message, wParam, lParam);
+    return DefSubclassProc(hWnd, message, wParam, lParam);
 }
 
 BOOL APIENTRY EclipseFinderProc(HWND hDlg,
@@ -328,10 +328,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             InitDateControls(hDlg, astro::Date(efd->appCore->getSimulation()->getTime()), efd->fromTime, efd->toTime);
 
             // Subclass the ListView to intercept WM_LBUTTONUP messages
-            HWND hCtrl;
-            if (hCtrl = GetDlgItem(hDlg, IDC_ECLIPSES_LIST))
-				oldListViewProc = (WNDPROC)SetWindowLongPtr(hCtrl, GWLP_WNDPROC, (LPARAM)EclipseListViewProc);
-			    //oldListViewProc = (WNDPROC) SetWindowLong(hCtrl, GWL_WNDPROC, (DWORD) EclipseListViewProc);
+            SetWindowSubclass(hwnd, EclipseListViewProc, 0, 0);
         }
         return(TRUE);
 
