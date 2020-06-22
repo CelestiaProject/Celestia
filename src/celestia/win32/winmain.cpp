@@ -623,6 +623,13 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
     case WM_INITDIALOG:
         {
             string s = Helper::getRenderInfo(appCore->getRenderer());
+            // Replace LF with CRLF
+            size_t startPos = 0;
+            while((startPos = s.find("\n", startPos)) != string::npos)
+            {
+                s.replace(startPos, 1, "\r\n");
+                startPos += 2;
+            }
             s = UTF8ToCurrentCP(s);
             SetDlgItemText(hDlg, IDC_GLINFO_TEXT, s.c_str());
         }
