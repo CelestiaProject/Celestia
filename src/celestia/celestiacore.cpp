@@ -88,7 +88,6 @@ static const float MinimumFOV = degToRad(0.001f);
 static float KeyRotationAccel = degToRad(120.0f);
 static float MouseRotationSensitivity = degToRad(1.0f);
 
-static const int ConsolePageRows = 10;
 static Console console(200, 120);
 
 static void warning(string s)
@@ -164,7 +163,7 @@ CelestiaCore::CelestiaCore() :
 
     clog.rdbuf(console.rdbuf());
     cerr.rdbuf(console.rdbuf());
-    console.setWindowHeight(ConsolePageRows);
+    console.setWindowHeight(Console::PageRows);
 }
 
 CelestiaCore::~CelestiaCore()
@@ -735,28 +734,6 @@ void CelestiaCore::joystickButton(int button, bool down)
 }
 
 
-static void scrollConsole(Console& con, int lines)
-{
-    int topRow = con.getWindowRow();
-    int height = con.getHeight();
-
-    if (lines < 0)
-    {
-        if (topRow + lines > -height)
-            console.setWindowRow(topRow + lines);
-        else
-            console.setWindowRow(-(height - 1));
-    }
-    else
-    {
-        if (topRow + lines <= -ConsolePageRows)
-            console.setWindowRow(topRow + lines);
-        else
-            console.setWindowRow(-ConsolePageRows);
-    }
-}
-
-
 void CelestiaCore::keyDown(int key, int modifiers)
 {
     setViewChanged();
@@ -811,24 +788,24 @@ void CelestiaCore::keyDown(int key, int modifiers)
 
     case Key_Down:
         if (showConsole)
-            scrollConsole(console, 1);
+            console.scroll(1);
         break;
 
     case Key_Up:
         if (showConsole)
-            scrollConsole(console, -1);
+            console.scroll(-1);
         break;
 
     case Key_PageDown:
         if (showConsole)
-            scrollConsole(console, ConsolePageRows);
+            console.scroll(Console::PageRows);
         else
             back();
         break;
 
     case Key_PageUp:
         if (showConsole)
-            scrollConsole(console, -ConsolePageRows);
+            console.scroll(-Console::PageRows);
         else
             forward();
         break;
@@ -2120,7 +2097,7 @@ void CelestiaCore::draw()
         console.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         console.begin();
         console.moveBy(safeAreaInsets.left, screenDpi / 25.4f * 53.0f);
-        console.render(ConsolePageRows);
+        console.render(Console::PageRows);
         console.end();
     }
 

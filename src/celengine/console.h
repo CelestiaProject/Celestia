@@ -46,6 +46,9 @@ class ConsoleStreamBuf : public std::streambuf
 class Console : public std::ostream
 {
  public:
+    static constexpr const int PageRows = 10;
+
+
     Console(int _nRows, int _nColumns);
     ~Console();
 
@@ -75,6 +78,8 @@ class Console : public std::ostream
 
     int getHeight() const;
     int getWidth() const;
+
+    void scroll(int lines);
 
  private:
     void savePos();

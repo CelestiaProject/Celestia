@@ -274,6 +274,28 @@ void Console::restorePos()
 }
 
 
+void Console::scroll(int lines)
+{
+    int topRow = getWindowRow();
+    int height = getHeight();
+
+    if (lines < 0)
+    {
+        if (topRow + lines > -height)
+            setWindowRow(topRow + lines);
+        else
+            setWindowRow(-(height - 1));
+    }
+    else
+    {
+        if (topRow + lines <= -Console::PageRows)
+            setWindowRow(topRow + lines);
+        else
+            setWindowRow(-Console::PageRows);
+    }
+}
+
+
 //
 // ConsoleStreamBuf implementation
 //
