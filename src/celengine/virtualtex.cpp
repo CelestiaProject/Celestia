@@ -261,7 +261,8 @@ void VirtualTexture::populateTileTree()
     for (int i = 0; i < MaxResolutionLevels; i++)
     {
         fs::path path = tilePath / fmt::sprintf("level%d", i);
-        if (fs::is_directory(path))
+        std::error_code ec;
+        if (fs::is_directory(path, ec))
         {
             maxLevel = i + baseSplit;
             int uLimit = 2 << maxLevel;
