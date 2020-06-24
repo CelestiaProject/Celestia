@@ -326,11 +326,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setContextMenuHandler(ContextMenuHandler*);
     ContextMenuHandler* getContextMenuHandler() const;
 
-#ifndef NO_TTF
     void setFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     void setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     void setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
-#endif
 
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
     bool referenceMarkEnabled(const std::string& refMark, Selection sel = Selection()) const;

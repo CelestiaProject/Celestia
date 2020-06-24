@@ -18,11 +18,7 @@
 #include "vecgl.h"
 #include "console.h"
 #include "shadermanager.h"
-#if NO_TTF
-#include <celtxf/texturefont.h>
-#else
 #include <celttf/truetypefont.h>
-#endif
 
 using namespace std;
 using namespace celmath;

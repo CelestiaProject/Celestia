@@ -75,11 +75,7 @@ std::ofstream hdrlog;
 #include <celutil/utf8.h>
 #include <celutil/util.h>
 #include <celutil/timer.h>
-#if NO_TTF
-#include <celtxf/texturefont.h>
-#else
 #include <celttf/truetypefont.h>
-#endif
 #include "glsupport.h"
 #include <algorithm>
 #include <cstring>
