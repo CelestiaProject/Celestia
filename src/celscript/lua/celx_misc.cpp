@@ -13,11 +13,7 @@
 #include <celscript/legacy/cmdparser.h>
 #include <celscript/legacy/execution.h>
 #include <celestia/celestiacore.h>
-#if NO_TTF
-#include <celtxf/texturefont.h>
-#else
 #include <celttf/truetypefont.h>
-#endif
 
 using namespace celestia::scripts;
 

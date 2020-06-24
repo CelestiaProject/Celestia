@@ -55,11 +55,7 @@
 #ifdef CELX
 #include <celephem/scriptobject.h>
 #endif
-#if NO_TTF
-#include <celtxf/texturefont.h>
-#else
 #include <celttf/truetypefont.h>
-#endif
 
 #include "imagecapture.h"
 
@@ -3824,11 +3820,7 @@ bool CelestiaCore::initRenderer()
     }
 
     if (config->mainFont.empty())
-#if NO_TTF
-        font = LoadTextureFont(renderer, "fonts/default.txf");
-#else
         font = LoadTextureFont(renderer, "fonts/DejaVuSans.ttf,12");
-#endif
     else
         font = LoadFontHelper(renderer, config->mainFont);
 
@@ -4035,7 +4027,6 @@ CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
     return contextMenuHandler;
 }
 
-#ifndef NO_TTF
 void CelestiaCore::setFont(const fs::path& fontPath, int collectionIndex, int fontSize)
 {
     font = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize, screenDpi);
@@ -4057,7 +4048,6 @@ void CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex
         f->buildTexture();
     renderer->setFont(fontStyle, f);
 }
-#endif
 
 int CelestiaCore::getTimeZoneBias() const
 {

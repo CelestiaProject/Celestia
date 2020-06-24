@@ -336,7 +336,6 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_WIN           | bool | \*\*\*ON   | Build Windows native frontend
 | ENABLE_THEORA        | bool | \*\*ON    | Support video capture to OGG Theora
 | ENABLE_TOOLS         | bool | OFF     | Build tools for Celestia data files
-| ENABLE_TTF           | bool | \*\*\*\*OFF | Build with FreeType support
 | ENABLE_DATA          | bool | OFF     | Use CelestiaContent submodule for data
 | ENABLE_GLES          | bool | OFF     | Use OpenGL ES 2.0 in rendering code
 | NATIVE_OSX_APP       | bool | OFF     | Support native OSX data paths

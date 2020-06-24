@@ -182,16 +182,8 @@ set_target_properties(celengine PROPERTIES
 )
 ]]#
 
-add_dependencies(celengine cel3ds celmath celmodel celutil)
-target_link_libraries(celengine cel3ds celmath celmodel celutil)
-
-if (ENABLE_TTF)
-  add_dependencies(celengine celttf)
-  target_link_libraries(celengine celttf)
-else()
-  add_dependencies(celengine celtxf)
-  target_link_libraries(celengine celtxf)
-endif()
+add_dependencies(celengine cel3ds celmath celmodel celutil celttf)
+target_link_libraries(celengine cel3ds celmath celmodel celutil celttf)
 
 # Some celephem objects depend on Spice
 if(ENABLE_SPICE)

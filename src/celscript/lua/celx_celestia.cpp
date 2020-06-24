@@ -11,11 +11,7 @@
 
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
-#if NO_TTF
-#include "celtxf/texturefont.h"
-#else
 #include "celttf/truetypefont.h"
-#endif
 #include <fmt/printf.h>
 #include <celengine/category.h>
 #include <celengine/texture.h>
