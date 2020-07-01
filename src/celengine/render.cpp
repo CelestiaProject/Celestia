@@ -1806,11 +1806,17 @@ void renderPoint(const Renderer &renderer,
     glEnable(GL_POINT_SPRITE);
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
-    glVertexAttrib3fv(CelestiaGLProgram::VertexCoordAttributeIndex, position.data());
+    // Workaround for macOS to pass a single vertex coord
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE, sizeof(position), position.data());
+
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
     glVertexAttrib1f(CelestiaGLProgram::PointSizeAttributeIndex, useSprite ? size : 1.0f);
 
     glDrawArrays(GL_POINTS, 0, 1);
+
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
 
 #ifndef GL_ES
     if (useSprite)
