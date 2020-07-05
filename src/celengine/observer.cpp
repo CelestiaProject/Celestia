@@ -1522,25 +1522,25 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
 
     case PhaseLock:
     {
-        return make_shared<TwoVectorFrame>(_refObject,
-                                  FrameVector::createRelativePositionVector(_refObject, _targetObject), 1,
-                                  FrameVector::createRelativeVelocityVector(_refObject, _targetObject), 2);
+        return shared_ptr<TwoVectorFrame>(new TwoVectorFrame(_refObject,
+                                                             FrameVector::createRelativePositionVector(_refObject, _targetObject), 1,
+                                                             FrameVector::createRelativeVelocityVector(_refObject, _targetObject), 2));
     }
 
     case Chase:
     {
-        return make_shared<TwoVectorFrame>(_refObject,
-                                  FrameVector::createRelativeVelocityVector(_refObject, _refObject.parent()), 1,
-                                  FrameVector::createRelativePositionVector(_refObject, _refObject.parent()), 2);
+        return shared_ptr<TwoVectorFrame>(new TwoVectorFrame(_refObject,
+                                                             FrameVector::createRelativeVelocityVector(_refObject, _refObject.parent()), 1,
+                                                             FrameVector::createRelativePositionVector(_refObject, _refObject.parent()), 2));
     }
 
     case PhaseLock_Old:
     {
         FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
                                                               make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
-        return make_shared<TwoVectorFrame>(_refObject,
-                                  FrameVector::createRelativePositionVector(_refObject, _targetObject), 3,
-                                  rotAxis, 2);
+        return shared_ptr<TwoVectorFrame>(new TwoVectorFrame(_refObject,
+                                                             FrameVector::createRelativePositionVector(_refObject, _targetObject), 3,
+                                                             rotAxis, 2));
     }
 
     case Chase_Old:
@@ -1548,9 +1548,9 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
         FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
                                                               make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
 
-        return make_shared<TwoVectorFrame>(_refObject,
-                                  FrameVector::createRelativeVelocityVector(_refObject.parent(), _refObject), 3,
-                                  rotAxis, 2);
+        return shared_ptr<TwoVectorFrame>(new TwoVectorFrame(_refObject,
+                                                             FrameVector::createRelativeVelocityVector(_refObject.parent(), _refObject), 3,
+                                                             rotAxis, 2));
     }
 
     case ObserverLocal:

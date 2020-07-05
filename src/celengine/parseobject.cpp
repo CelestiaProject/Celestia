@@ -1626,9 +1626,9 @@ CreateTwoVectorFrame(const Universe& universe,
     shared_ptr<const TwoVectorFrame> frame;
     if (primaryVector != nullptr && secondaryVector != nullptr)
     {
-        frame = make_shared<TwoVectorFrame>(center,
-                                   *primaryVector, primaryAxis,
-                                   *secondaryVector, secondaryAxis);
+        frame = shared_ptr<TwoVectorFrame>(new TwoVectorFrame(center,
+                                                              *primaryVector, primaryAxis,
+                                                              *secondaryVector, secondaryAxis));
     }
 
     return frame;
@@ -1676,7 +1676,7 @@ CreateTopocentricFrame(const Selection& center,
     FrameVector north = FrameVector::createConstantVector(Vector3d::UnitY(), eqFrame);
     FrameVector up = FrameVector::createRelativePositionVector(observer, target);
 
-    return make_shared<TwoVectorFrame>(center, up, -2, north, -3);
+    return shared_ptr<TwoVectorFrame>(new TwoVectorFrame(center, up, -2, north, -3));
 }
 
 
