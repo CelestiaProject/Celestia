@@ -56,7 +56,8 @@ static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
  *  updates due to an active goto operation.
  */
 
-Observer::Observer() : frame(make_shared<ObserverFrame>())
+Observer::Observer() :
+    frame(new ObserverFrame)
 {
     updateUniversal();
 }
@@ -768,7 +769,7 @@ void Observer::convertFrameCoordinates(const ObserverFrame::SharedConstPtr &newF
 */
 void Observer::setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj, const Selection& targetObj)
 {
-    auto newFrame = make_shared<ObserverFrame>(cs, refObj, targetObj);
+    auto newFrame = shared_ptr<ObserverFrame>(new ObserverFrame(cs, refObj, targetObj));
     convertFrameCoordinates(newFrame);
     frame = newFrame;
 }
@@ -1509,16 +1510,16 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
     switch (_coordSys)
     {
     case Universal:
-        return make_shared<J2000EclipticFrame>(Selection());
+        return shared_ptr<J2000EclipticFrame>(new J2000EclipticFrame(Selection()));
 
     case Ecliptical:
-        return make_shared<J2000EclipticFrame>(_refObject);
+        return shared_ptr<J2000EclipticFrame>(new J2000EclipticFrame(_refObject));
 
     case Equatorial:
-        return make_shared<BodyMeanEquatorFrame>(_refObject, _refObject);
+        return shared_ptr<BodyMeanEquatorFrame>(new BodyMeanEquatorFrame(_refObject, _refObject));
 
     case BodyFixed:
-        return make_shared<BodyFixedFrame>(_refObject, _refObject);
+        return shared_ptr<BodyFixedFrame>(new BodyFixedFrame(_refObject, _refObject));
 
     case PhaseLock:
     {
@@ -1537,7 +1538,7 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
     case PhaseLock_Old:
     {
         FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
-                                                              make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
+                                                              shared_ptr<BodyMeanEquatorFrame>(new BodyMeanEquatorFrame(_refObject, _refObject))));
         return shared_ptr<TwoVectorFrame>(new TwoVectorFrame(_refObject,
                                                              FrameVector::createRelativePositionVector(_refObject, _targetObject), 3,
                                                              rotAxis, 2));
@@ -1546,7 +1547,7 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
     case Chase_Old:
     {
         FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
-                                                              make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
+                                                              shared_ptr<BodyMeanEquatorFrame>(new BodyMeanEquatorFrame(_refObject, _refObject))));
 
         return shared_ptr<TwoVectorFrame>(new TwoVectorFrame(_refObject,
                                                              FrameVector::createRelativeVelocityVector(_refObject.parent(), _refObject), 3,
@@ -1556,10 +1557,10 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
     case ObserverLocal:
         // TODO: This is only used for computing up vectors for orientation; it does
         // define a proper frame for the observer position orientation.
-        return make_shared<J2000EclipticFrame>(Selection());
+        return shared_ptr<J2000EclipticFrame>(new J2000EclipticFrame(Selection()));
 
     default:
-        return make_shared<J2000EclipticFrame>(_refObject);
+        return shared_ptr<J2000EclipticFrame>(new J2000EclipticFrame(_refObject));
     }
 }
 

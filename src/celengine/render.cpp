@@ -65,7 +65,6 @@ std::ofstream hdrlog;
 #include "boundariesrenderer.h"
 #include "rendcontext.h"
 #include "vertexobject.h"
-#include <celcompat/memory.h>
 #include <celengine/observer.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -5451,7 +5450,9 @@ Renderer::getShadowFBO(int index) const
 void
 Renderer::createShadowFBO()
 {
-    m_shadowFBO = make_unique<FramebufferObject>(m_shadowMapSize, m_shadowMapSize, FramebufferObject::DepthAttachment);
+    m_shadowFBO = unique_ptr<FramebufferObject>(new FramebufferObject(m_shadowMapSize,
+                                                                      m_shadowMapSize,
+                                                                      FramebufferObject::DepthAttachment));
     if (!m_shadowFBO->isValid())
     {
         clog << "Error creating shadow FBO.\n";

@@ -27,7 +27,7 @@ class FrameTree
 public:
     FrameTree(Star*);
     FrameTree(Body*);
-    ~FrameTree();
+    ~FrameTree() = default;
 
     /*! Return the star that this tree is associated with; it will be
      *  nullptr for frame trees associated with solar system bodies.

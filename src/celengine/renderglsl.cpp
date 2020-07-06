@@ -868,7 +868,7 @@ void renderRings_GLSL(RingSystem& rings,
         ringsTex->bind();
 
     if (rings.renderData == nullptr)
-        rings.renderData = make_shared<GLRingRenderData>();
+        rings.renderData = shared_ptr<GLRingRenderData>(new GLRingRenderData);
     auto data = reinterpret_cast<GLRingRenderData*>(rings.renderData.get());
 
     unsigned nSections = 180;

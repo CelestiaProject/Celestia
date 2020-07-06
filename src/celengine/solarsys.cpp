@@ -454,7 +454,7 @@ static bool CreateTimeline(Body* body,
     ReferenceFrame::SharedConstPtr defaultBodyFrame;
     if (bodyType == SurfaceObject)
     {
-        defaultOrbitFrame = make_shared<BodyFixedFrame>(parentObject, parentObject);
+        defaultOrbitFrame = shared_ptr<BodyFixedFrame>(new BodyFixedFrame(parentObject, parentObject));
         defaultBodyFrame = CreateTopocentricFrame(parentObject, parentObject, Selection(body));
     }
     else

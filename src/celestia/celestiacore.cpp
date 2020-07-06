@@ -38,7 +38,6 @@
 #include <celutil/gettext.h>
 #include <celutil/utf8.h>
 #include <celcompat/filesystem.h>
-#include <celcompat/memory.h>
 #include <Eigen/Geometry>
 #include <iostream>
 #include <fstream>
@@ -142,11 +141,11 @@ CelestiaCore::CelestiaCore() :
        routine will be called much later. */
     renderer(new Renderer()),
     timer(new Timer()),
-    m_legacyPlugin(make_unique<LegacyScriptPlugin>(this)),
+    m_legacyPlugin(new LegacyScriptPlugin(this)),
 #ifdef CELX
-    m_luaPlugin(make_unique<LuaScriptPlugin>(this)),
+    m_luaPlugin(new LuaScriptPlugin(this)),
 #endif
-    m_scriptMaps(make_shared<ScriptMaps>()),
+    m_scriptMaps(new ScriptMaps()),
     oldFOV(stdFOV)
 {
 

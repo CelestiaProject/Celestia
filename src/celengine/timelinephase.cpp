@@ -80,14 +80,14 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
         return nullptr;
     }
 
-    auto phase = make_shared<const TimelinePhase>(body,
-                                                  startTime,
-                                                  endTime,
-                                                  orbitFrame,
-                                                  &orbit,
-                                                  bodyFrame,
-                                                  &rotationModel,
-                                                  frameTree);
+    auto phase = shared_ptr<const TimelinePhase>(new TimelinePhase(body,
+                                                                   startTime,
+                                                                   endTime,
+                                                                   orbitFrame,
+                                                                   &orbit,
+                                                                   bodyFrame,
+                                                                   &rotationModel,
+                                                                   frameTree));
 
     frameTree->addChild(phase);
 

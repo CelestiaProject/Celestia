@@ -10,7 +10,6 @@
 #include <fstream>
 #include <string>
 #include <celcompat/filesystem.h>
-#include <celcompat/memory.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 #include "legacyscript.h"
@@ -60,7 +59,7 @@ public:
 
 LegacyScript::LegacyScript(CelestiaCore *core) :
     m_appCore(core),
-    m_execEnv(make_unique<CoreExecutionEnvironment>(*core))
+    m_execEnv(new CoreExecutionEnvironment(*core))
 {
 }
 
@@ -75,7 +74,7 @@ bool LegacyScript::load(ifstream &scriptfile, const fs::path &/*path*/, string &
             errorMsg = (*errors)[0];
         return false;
     }
-    m_runningScript = make_unique<Execution>(*script, *m_execEnv);
+    m_runningScript = unique_ptr<Execution>(new Execution(*script, *m_execEnv));
     return true;
 }
 
@@ -98,7 +97,7 @@ unique_ptr<IScript> LegacyScriptPlugin::loadScript(const fs::path &path)
         return nullptr;
     }
 
-    auto script = make_unique<LegacyScript>(appCore());
+    auto script = unique_ptr<LegacyScript>(new LegacyScript(appCore()));
     string errorMsg;
     if (!script->load(scriptfile, path, errorMsg))
     {
