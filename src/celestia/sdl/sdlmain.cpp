@@ -95,7 +95,7 @@ SDL_Application::init(const std::string name, int w, int h)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
-    return std::make_shared<SDL_Application>(std::move(name), w, h);
+    return std::shared_ptr<SDL_Application>(new SDL_Application(std::move(name), w, h));
 }
 
 SDL_Application::~SDL_Application()
@@ -329,7 +329,7 @@ SDL_Application::handleKeyReleaseEvent(const SDL_KeyboardEvent &event)
         }
         if ((event.keysym.mod & KMOD_SHIFT) != 0)
             mod |= CelestiaCore::ShiftKey;
-            
+
         m_appCore->keyUp(key, 0);
     }
 }

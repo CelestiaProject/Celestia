@@ -206,7 +206,7 @@ directory_iterator::directory_iterator(const path& p) :
 directory_iterator::directory_iterator(const path& p, std::error_code& ec) :
     m_path(p),
     m_ec(ec),
-    m_search(std::make_shared<SearchImpl>(p))
+    m_search(new SearchImpl(p))
 {
     if (!m_search->advance(m_entry))
         reset();
@@ -239,7 +239,7 @@ struct recursive_directory_iterator::DirStack
 recursive_directory_iterator::recursive_directory_iterator(const path& p)
 {
     if (m_dirs == nullptr)
-        m_dirs = std::make_shared<DirStack>();
+        m_dirs = std::shared_ptr<DirStack>(new DirStack);
 
     m_iter = directory_iterator(p);
 }

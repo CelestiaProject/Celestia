@@ -1316,7 +1316,7 @@ CreateBodyFixedFrame(const Universe& universe,
     if (center.empty())
         return nullptr;
 
-    return make_shared<BodyFixedFrame>(center, center);
+    return shared_ptr<BodyFixedFrame>(new BodyFixedFrame(center, center));
 }
 
 
@@ -1344,14 +1344,16 @@ CreateMeanEquatorFrame(const Universe& universe,
     clog << "CreateMeanEquatorFrame " << center.getName() << ", " << obj.getName() << "\n";
 
     double freezeEpoch = 0.0;
+    BodyMeanEquatorFrame *ptr;
     if (ParseDate(frameData, "Freeze", freezeEpoch))
     {
-        return make_shared<BodyMeanEquatorFrame>(center, obj, freezeEpoch);
+        ptr = new BodyMeanEquatorFrame(center, obj, freezeEpoch);
     }
     else
     {
-        return make_shared<BodyMeanEquatorFrame>(center, obj);
+        ptr = new BodyMeanEquatorFrame(center, obj);
     }
+    return shared_ptr<BodyMeanEquatorFrame>(ptr);
 }
 
 
@@ -1623,15 +1625,15 @@ CreateTwoVectorFrame(const Universe& universe,
                                                      center,
                                                      secondaryData);
 
-    shared_ptr<const TwoVectorFrame> frame;
+    TwoVectorFrame *frame = nullptr;
     if (primaryVector != nullptr && secondaryVector != nullptr)
     {
-        frame = shared_ptr<TwoVectorFrame>(new TwoVectorFrame(center,
-                                                              *primaryVector, primaryAxis,
-                                                              *secondaryVector, secondaryAxis));
+        frame = new TwoVectorFrame(center,
+                                   *primaryVector, primaryAxis,
+                                   *secondaryVector, secondaryAxis);
     }
 
-    return frame;
+    return shared_ptr<const TwoVectorFrame>(frame);
 }
 
 
@@ -1645,7 +1647,7 @@ CreateJ2000EclipticFrame(const Universe& universe,
     if (center.empty())
         return nullptr;
 
-    return make_shared<J2000EclipticFrame>(center);
+    return shared_ptr<J2000EclipticFrame>(new J2000EclipticFrame(center));
 }
 
 
@@ -1659,7 +1661,7 @@ CreateJ2000EquatorFrame(const Universe& universe,
     if (center.empty())
         return nullptr;
 
-    return make_shared<J2000EquatorFrame>(center);
+    return shared_ptr<J2000EquatorFrame>(new J2000EquatorFrame(center));
 }
 
 
@@ -1672,7 +1674,7 @@ CreateTopocentricFrame(const Selection& center,
                        const Selection& target,
                        const Selection& observer)
 {
-    shared_ptr<const BodyMeanEquatorFrame> eqFrame = make_shared<BodyMeanEquatorFrame>(target, target);
+    auto eqFrame = shared_ptr<BodyMeanEquatorFrame>(new BodyMeanEquatorFrame(target, target));
     FrameVector north = FrameVector::createConstantVector(Vector3d::UnitY(), eqFrame);
     FrameVector up = FrameVector::createRelativePositionVector(observer, target);
 
