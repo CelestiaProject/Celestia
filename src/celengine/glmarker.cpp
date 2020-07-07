@@ -335,7 +335,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 #endif
-    glDisable(GL_DEPTH_TEST);
+    disableDepthTest();
     enableBlending();
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

@@ -120,8 +120,8 @@ PlanetographicGrid::render(Renderer* renderer,
     Vector3d viewNormal = vn.cast<double>();
 
     // Enable depth buffering
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
+    renderer->enableDepthTest();
+    renderer->enableDepthMask();
     renderer->disableBlending();
 
     Affine3f transform = Translation3f(pos) * qf.conjugate() * Scaling(scale * semiAxes);
@@ -248,8 +248,8 @@ PlanetographicGrid::render(Renderer* renderer,
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
 
     glUseProgram(0);
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+    renderer->disableDepthTest();
+    renderer->disableDepthMask();
     renderer->enableBlending();
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }
