@@ -655,21 +655,30 @@ GLSL_RenderContext::makeCurrent(const Material& m)
         case Material::NormalBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glDepthMask(disableDepthWriteOnBlend ? GL_FALSE : GL_TRUE);
+            if (disableDepthWriteOnBlend)
+                renderer->disableDepthMask();
+            else
+                renderer->enableDepthMask();
             break;
         case Material::AdditiveBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
-            glDepthMask(disableDepthWriteOnBlend ? GL_FALSE : GL_TRUE);
+            if (disableDepthWriteOnBlend)
+                renderer->disableDepthMask();
+            else
+                renderer->enableDepthMask();
             break;
         case Material::PremultipliedAlphaBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glDepthMask(disableDepthWriteOnBlend ? GL_FALSE : GL_TRUE);
+            if (disableDepthWriteOnBlend)
+                renderer->disableDepthMask();
+            else
+                renderer->enableDepthMask();
             break;
         default:
             renderer->disableBlending();
-            glDepthMask(GL_TRUE);
+            renderer->enableDepthMask();
             break;
         }
     }
@@ -801,21 +810,21 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
         case Material::NormalBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glDepthMask(GL_FALSE);
+            renderer->disableDepthMask();
             break;
         case Material::AdditiveBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
-            glDepthMask(GL_FALSE);
+            renderer->disableDepthMask();
             break;
         case Material::PremultipliedAlphaBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glDepthMask(GL_FALSE);
+            renderer->disableDepthMask();
             break;
         default:
             renderer->disableBlending();
-            glDepthMask(GL_TRUE);
+            renderer->enableDepthMask();
             break;
         }
     }

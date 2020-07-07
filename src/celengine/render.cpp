@@ -1684,7 +1684,7 @@ void Renderer::draw(const Observer& observer,
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 #endif
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDepthMask(GL_FALSE);
+    disableDepthMask();
 
     // Render sky grids first--these will always be in the background
     enableSmoothLines();
@@ -1783,7 +1783,7 @@ void Renderer::draw(const Observer& observer,
 
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     disableBlending();
-    glDepthMask(GL_TRUE);
+    enableDepthMask();
 }
 
 void renderPoint(const Renderer &renderer,
@@ -1909,7 +1909,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             glareAlpha *= fade;
         }
 
-        glEnable(GL_DEPTH_TEST);
+        enableDepthTest();
         bool useSprites = starStyle != PointStars;
         if (useSprites)
             gaussianDiscTex->bind();
@@ -1927,7 +1927,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             renderPoint(*this, position, {color, glareAlpha}, glareSize, true, m);
         }
 
-        glDisable(GL_DEPTH_TEST);
+        disableDepthTest();
     }
 }
 
@@ -1967,7 +1967,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     if (prog == nullptr)
         return;
 
-    glDepthMask(GL_FALSE);
+    disableDepthMask();
 
     // Gradually fade in the atmosphere if it's thickness on screen is just
     // over one pixel.
@@ -2641,8 +2641,8 @@ void Renderer::renderObject(const Vector3f& pos,
     }
 
     // Enable depth buffering
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
+    enableDepthTest();
+    enableDepthMask();
 
     disableBlending();
 
@@ -2936,7 +2936,7 @@ void Renderer::renderObject(const Vector3f& pos,
             if (distance - radius < atmosphere->cloudHeight)
                 glFrontFace(GL_CW);
 
-            glDepthMask(GL_FALSE);
+            disableDepthMask();
             cloudTex->bind();
             enableBlending();
             setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -2971,7 +2971,7 @@ void Renderer::renderObject(const Vector3f& pos,
             }
 
             glDisable(GL_POLYGON_OFFSET_FILL);
-            glDepthMask(GL_TRUE);
+            enableDepthMask();
             glFrontFace(GL_CCW);
         }
     }
@@ -2987,7 +2987,7 @@ void Renderer::renderObject(const Vector3f& pos,
 
         if (distance > obj.rings->innerRadius)
         {
-            glDepthMask(GL_FALSE);
+            disableDepthMask();
             renderRings_GLSL(*obj.rings, ri, ls,
                              radius, 1.0f - obj.semiAxes.y(),
                              textureResolution,
@@ -2997,8 +2997,8 @@ void Renderer::renderObject(const Vector3f& pos,
         }
     }
 
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+    disableDepthTest();
+    disableDepthMask();
     enableBlending();
 }
 
@@ -3401,8 +3401,8 @@ void Renderer::renderPlanet(Body& body,
             cityRep        = MarkerRepresentation(MarkerRepresentation::X,        3.0f, LocationLabelColor);
             genericLocationRep = MarkerRepresentation(MarkerRepresentation::Square, 8.0f, LocationLabelColor);
 
-            glEnable(GL_DEPTH_TEST);
-            glDepthMask(GL_FALSE);
+            enableDepthTest();
+            disableDepthMask();
             disableBlending();
 
             // We need a double precision body-relative position of the
@@ -3410,7 +3410,7 @@ void Renderer::renderPlanet(Body& body,
             Vector3d posd = body.getPosition(observer.getTime()).offsetFromKm(observer.getPosition());
             locationsToAnnotations(body, posd, q);
 
-            glDisable(GL_DEPTH_TEST);
+            disableDepthTest();
         }
     }
 
@@ -3681,7 +3681,7 @@ void Renderer::renderCometTail(const Body& body,
         }
     }
 
-    glDepthMask(GL_FALSE);
+    disableDepthMask();
     glDisable(GL_CULL_FACE);
     enableBlending();
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
@@ -3758,8 +3758,8 @@ void Renderer::renderReferenceMark(const ReferenceMark& refMark,
 
     refMark.render(this, pos, discSizeInPixels, now, m);
 
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+    disableDepthTest();
+    disableDepthMask();
     enableBlending();
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }
@@ -4934,9 +4934,9 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
 void
 Renderer::renderBackgroundAnnotations(FontStyle fs)
 {
-    glEnable(GL_DEPTH_TEST);
+    enableDepthTest();
     renderAnnotations(backgroundAnnotations, fs);
-    glDisable(GL_DEPTH_TEST);
+    disableDepthTest();
 
     clearAnnotations(backgroundAnnotations);
 }
@@ -4945,7 +4945,7 @@ Renderer::renderBackgroundAnnotations(FontStyle fs)
 void
 Renderer::renderForegroundAnnotations(FontStyle fs)
 {
-    glDisable(GL_DEPTH_TEST);
+    disableDepthTest();
     renderAnnotations(foregroundAnnotations, fs);
 
     clearAnnotations(foregroundAnnotations);
@@ -4974,7 +4974,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     if (font[fs] == nullptr)
         return endIter;
 
-    glEnable(GL_DEPTH_TEST);
+    enableDepthTest();
     enableBlending();
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -5012,7 +5012,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
         }
     }
 
-    glDisable(GL_DEPTH_TEST);
+    disableDepthTest();
     font[fs]->unbind();
 
     return iter;
@@ -5298,6 +5298,42 @@ void Renderer::setBlendingFactors(GLenum sfactor, GLenum dfactor) noexcept
         glBlendFunc(sfactor, dfactor);
         m_GLState.sfactor = sfactor;
         m_GLState.dfactor = dfactor;
+    }
+}
+
+void Renderer::enableDepthMask() noexcept
+{
+    if (!m_GLState.depthMask)
+    {
+        glDepthMask(GL_TRUE);
+        m_GLState.depthMask = true;
+    }
+}
+
+void Renderer::disableDepthMask() noexcept
+{
+    if (m_GLState.depthMask)
+    {
+        glDepthMask(GL_FALSE);
+        m_GLState.depthMask = false;
+    }
+}
+
+void Renderer::enableDepthTest() noexcept
+{
+    if (!m_GLState.depthTest)
+    {
+        glEnable(GL_DEPTH_TEST);
+        m_GLState.depthTest = true;
+    }
+}
+
+void Renderer::disableDepthTest() noexcept
+{
+    if (m_GLState.depthTest)
+    {
+        glDisable(GL_DEPTH_TEST);
+        m_GLState.depthTest = false;
     }
 }
 
@@ -6001,8 +6037,8 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         // Render orbit paths
         if (!orbitPathList.empty())
         {
-            glEnable(GL_DEPTH_TEST);
-            glDepthMask(GL_FALSE);
+            enableDepthTest();
+            disableDepthMask();
 #ifdef USE_HDR
             setBlendingFactors(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
 #else
@@ -6031,7 +6067,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
             }
 
             disableSmoothLines();
-            glDepthMask(GL_FALSE);
+            disableDepthMask();
         }
 
         // Render transparent objects in the second pass
@@ -6052,7 +6088,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
                                              FontNormal);
         endObjectAnnotations();
         disableSmoothLines();
-        glDisable(GL_DEPTH_TEST);
+        disableDepthTest();
     }
 
     // reset the depth range

@@ -260,14 +260,14 @@ ArrowReferenceMark::render(Renderer* renderer,
     if (opacity == 1.0f)
     {
         // Enable depth buffering
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
+        renderer->enableDepthTest();
+        renderer->enableDepthMask();
         renderer->disableBlending();
     }
     else
     {
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
+        renderer->enableDepthTest();
+        renderer->disableDepthMask();
         renderer->enableBlending();
 #ifdef USE_HDR
         renderer->setBlendingFactors(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
@@ -292,8 +292,8 @@ ArrowReferenceMark::render(Renderer* renderer,
     RenderArrow(vo);
 
     glUseProgram(0);
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+    renderer->disableDepthTest();
+    renderer->disableDepthMask();
     renderer->enableBlending();
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }
@@ -344,14 +344,14 @@ AxesReferenceMark::render(Renderer* renderer,
     if (opacity == 1.0f)
     {
         // Enable depth buffering
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
+        renderer->enableDepthTest();
+        renderer->enableDepthMask();
         renderer->disableBlending();
     }
     else
     {
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
+        renderer->enableDepthTest();
+        renderer->disableDepthMask();
         renderer->enableBlending();
 #ifdef USE_HDR
         renderer->setBlendingFactors(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
@@ -420,8 +420,8 @@ AxesReferenceMark::render(Renderer* renderer,
     RenderZ(vo);
 
     glUseProgram(0);
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+    renderer->disableDepthTest();
+    renderer->disableDepthMask();
     renderer->enableBlending();
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }

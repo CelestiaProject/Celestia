@@ -165,8 +165,8 @@ VisibleRegion::render(Renderer* renderer,
     Vector3f semiAxes = m_body.getSemiAxes();
 
     // Enable depth buffering
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
+    renderer->enableDepthTest();
+    renderer->enableDepthMask();
     renderer->enableBlending();
 #ifdef USE_HDR
     renderer->setBlendingFactors(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
@@ -216,8 +216,8 @@ VisibleRegion::render(Renderer* renderer,
     Matrix4f mvp = (*m.projection) * (*m.modelview) * transform.matrix();
     renderTerminator(renderer, pos, Color(m_color, opacity), mvp);
 
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+    renderer->disableDepthTest();
+    renderer->disableDepthMask();
     renderer->enableBlending();
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }

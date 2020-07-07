@@ -338,7 +338,7 @@ void renderGeometry_GLSL(Geometry* geometry,
                                   tsec, renderer, &lightMatrix);
         renderer->setViewport(viewport);
 #ifdef DEPTH_BUFFER_DEBUG
-        glDisable(GL_DEPTH_TEST);
+        renderer->disableDepthTest();
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
         glLoadMatrixf(Ortho2D(0.0f, (float)viewport[2], 0.0f, (float)viewport[3]).data());
@@ -373,7 +373,7 @@ void renderGeometry_GLSL(Geometry* geometry,
         glPopMatrix();
         glBindTexture(GL_TEXTURE_2D, 0);
         glDisable(GL_TEXTURE_2D);
-        glEnable(GL_DEPTH_TEST);
+        renderer->enableDepthTest();
 #endif
         glDepthRange(range[0], range[1]);
     }
@@ -652,7 +652,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
 
     glFrontFace(GL_CW);
     renderer->enableBlending();
-    glDepthMask(GL_FALSE);
+    renderer->disableDepthMask();
     renderer->setBlendingFactors(GL_ONE, GL_SRC_ALPHA);
 
     g_lodSphere->render(LODSphereMesh::Normals,
@@ -661,7 +661,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
                         nullptr);
 
     renderer->disableBlending();
-    glDepthMask(GL_TRUE);
+    renderer->enableDepthMask();
     glFrontFace(GL_CCW);
     glUseProgram(0);
 }
@@ -926,8 +926,8 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
 
     // Write only to the depth buffer
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glDepthMask(GL_TRUE);
-    glEnable(GL_DEPTH_TEST);
+    renderer->enableDepthMask();
+    renderer->enableDepthTest();
     glClear(GL_DEPTH_BUFFER_BIT);
     // Render backfaces only in order to reduce self-shadowing artifacts
     glCullFace(GL_FRONT);

@@ -261,6 +261,12 @@ class Renderer
     void disableBlending() noexcept;
     void setBlendingFactors(GLenum, GLenum) noexcept;
 
+    void enableDepthMask() noexcept;
+    void disableDepthMask() noexcept;
+
+    void enableDepthTest() noexcept;
+    void disableDepthTest() noexcept;
+
     void drawRectangle(const Rect& r, const Eigen::Matrix4f& mvp);
     void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
 
@@ -806,10 +812,12 @@ class Renderer
         bool blending    : 1;
         bool scissor     : 1;
         bool multisample : 1;
+        bool depthMask   : 1;
+        bool depthTest   : 1;
 
         GLenum sfactor, dfactor; // blending
     };
-    State m_GLState { false, false, false };
+    State m_GLState { false, false, false, false, false };
 
  private:
     typedef std::map<const Orbit*, CurvePlot*> OrbitCache;
