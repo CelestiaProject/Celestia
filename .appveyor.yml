@@ -77,11 +77,15 @@ build_script:
 
     set CTEST_OUTPUT_ON_FAILURE=1
 
+    copy src\celestia\RelWithDebInfo\*.dll test\unit\RelWithDebInfo\
+
     ctest -C RelWithDebInfo
 
 after_build:
   - cmd: >-
       cd c:\projects\celestia\build\src\celestia
+
+      7z a celestia-dep.x86.7z RelWithDebInfo\*
 
       7z a celestia-win.x86.7z win32\RelWithDebInfo\*
 

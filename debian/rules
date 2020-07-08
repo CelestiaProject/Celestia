@@ -26,6 +26,8 @@ override_dh_auto_configure:
 
 
 override_dh_install:
+	find debian/tmp/usr/bin/ -type f ! -name *.pl -exec chrpath --delete {} ';'
+	chrpath --delete debian/tmp/usr/lib/*/libcelestia.so.*
 	dh_install --fail-missing
 	mv debian/celestia-common/usr/share/celestia/celestia.cfg \
 	   debian/celestia-common/etc/celestia.cfg

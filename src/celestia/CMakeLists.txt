@@ -39,22 +39,24 @@ if(ENABLE_CELX)
   set(SCRIPT_LIBS ${SCRIPT_LIBS} $<TARGET_OBJECTS:celluascript>)
 endif()
 
-add_library(celestia STATIC ${CELESTIA_SOURCES} ${SCRIPT_LIBS})
+string(REPLACE "." ";" PROJECT_VERSION_LIST ${PROJECT_VERSION})
+list(GET PROJECT_VERSION_LIST 0 PROJECT_VERSION_MAJOR)
+list(GET PROJECT_VERSION_LIST 1 PROJECT_VERSION_MINOR)
+set(CELSO "celestia-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
-#[[
-add_library(celestia SHARED ${CELESTIA_SOURCES})
+add_library(celestia SHARED ${CELESTIA_SOURCES} ${SCRIPT_LIBS})
 set_target_properties(celestia PROPERTIES
-  VERSION ${VERSION}
-  SOVERSION ${VERSION}
+  VERSION ${PROJECT_VERSION}
+  SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+  WINDOWS_EXPORT_ALL_SYMBOLS TRUE
 )
-]]#
 
 add_dependencies(celestia celengine celmath celutil)
 target_link_libraries(celestia celengine celmath celutil)
 
 cotire(celestia)
 
-#install(TARGETS celestia LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS celestia LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} NAMELINK_SKIP)
 
 add_subdirectory(glut)
 add_subdirectory(gtk)
