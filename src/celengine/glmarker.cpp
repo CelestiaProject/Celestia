@@ -363,7 +363,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
 
     prog->use();
     const Vector3f &center = cameraMatrix.col(2);
-    prog->mat4Param("MVPMatrix") = getProjectionMatrix() * getModelViewMatrix() * vecgl::translate(Vector3f(-center));
+    prog->MVPMatrix = getProjectionMatrix() * getModelViewMatrix() * vecgl::translate(Vector3f(-center));
     prog->vec4Param("color") = Color(SelectionCursorColor, 0.6f).toVector4();
     prog->floatParam("pixelSize") = pixelSize;
     prog->floatParam("s") = s;
@@ -401,7 +401,7 @@ void Renderer::renderEclipticLine()
         initVO(markerVO);
 
     prog->use();
-    prog->mat4Param("MVPMatrix") = getProjectionMatrix() * getModelViewMatrix();
+    prog->MVPMatrix = getProjectionMatrix() * getModelViewMatrix();
     prog->vec4Param("color") = EclipticColor.toVector4();
     markerVO.draw(GL_LINE_LOOP, EclipticCount, EclipticOffset);
 
@@ -437,7 +437,7 @@ void Renderer::renderCrosshair(float selectionSizeInPixels,
     float cursorGrow = max(1.0f, min(2.5f, (selectionSizeInPixels - 10.0f) / 100.0f));
 
     prog->use();
-    prog->mat4Param("MVPMatrix") = (*m.projection) * (*m.modelview);
+    prog->MVPMatrix = (*m.projection) * (*m.modelview);
     prog->vec4Param("color") = color.toVector4();
     prog->floatParam("radius") = cursorRadius;
     prog->floatParam("width") = minCursorWidth * cursorGrow;

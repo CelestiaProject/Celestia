@@ -84,82 +84,79 @@ class GLProgram
  friend class GLShaderLoader;
 };
 
-
-class FloatShaderParameter
+class ShaderParameter
 {
  public:
-    FloatShaderParameter();
-    FloatShaderParameter(GLuint obj, const char* name);
+    ShaderParameter() = default;
+    ~ShaderParameter() = default;
+    ShaderParameter(const ShaderParameter&) = default;
+    ShaderParameter(ShaderParameter&&) = default;
+    ShaderParameter& operator=(const ShaderParameter&) = default;
+    ShaderParameter& operator=(ShaderParameter&&) = default;
 
+    ShaderParameter(GLuint obj, const char* name)
+    {
+        slot = glGetUniformLocation(obj, name);
+    }
+
+    bool valid() const noexcept
+    {
+        return slot != -1;
+    };
+
+    operator bool() const noexcept
+    {
+        return valid();
+    }
+ protected:
+    int slot { -1 };
+};
+
+class FloatShaderParameter : public ShaderParameter
+{
+ public:
+    using ShaderParameter::ShaderParameter;
     FloatShaderParameter& operator=(float);
-
- private:
-    int slot;
 };
 
 
-class Vec3ShaderParameter
+class Vec3ShaderParameter : public ShaderParameter
 {
  public:
-    Vec3ShaderParameter();
-    Vec3ShaderParameter(GLuint obj, const char* name);
-
+    using ShaderParameter::ShaderParameter;
     Vec3ShaderParameter& operator=(const Eigen::Vector3f&);
-
- private:
-    int slot;
 };
 
 
-class Vec4ShaderParameter
+class Vec4ShaderParameter : public ShaderParameter
 {
  public:
-    Vec4ShaderParameter();
-    Vec4ShaderParameter(GLuint obj, const char* name);
-
+    using ShaderParameter::ShaderParameter;
     Vec4ShaderParameter& operator=(const Eigen::Vector4f&);
-
- private:
-    int slot;
 };
 
 
-class IntegerShaderParameter
+class IntegerShaderParameter : public ShaderParameter
 {
  public:
-    IntegerShaderParameter();
-    IntegerShaderParameter(GLuint obj, const char* name);
-
+    using ShaderParameter::ShaderParameter;
     IntegerShaderParameter& operator=(int);
-
- private:
-    int slot;
 };
 
 
-class Mat3ShaderParameter
+class Mat3ShaderParameter : public ShaderParameter
 {
  public:
-    Mat3ShaderParameter();
-    Mat3ShaderParameter(GLuint obj, const char* name);
-
+    using ShaderParameter::ShaderParameter;
     Mat3ShaderParameter& operator=(const Eigen::Matrix3f&);
-
- private:
-    int slot;
 };
 
 
-class Mat4ShaderParameter
+class Mat4ShaderParameter : public ShaderParameter
 {
  public:
-    Mat4ShaderParameter();
-    Mat4ShaderParameter(GLuint obj, const char* name);
-
+    using ShaderParameter::ShaderParameter;
     Mat4ShaderParameter& operator=(const Eigen::Matrix4f&);
-
- private:
-    int slot;
 };
 
 

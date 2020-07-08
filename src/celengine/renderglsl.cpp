@@ -943,7 +943,7 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
     Matrix4f projMat = Ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
     Matrix4f modelViewMat = directionalLightMatrix(ls.lights[lightIndex].direction_obj);
     *lightMatrix = projMat * modelViewMat;
-    prog->mat4Param("MVPMatrix") = *lightMatrix;
+    prog->MVPMatrix = *lightMatrix;
 
     geometry->render(rc, tsec);
 

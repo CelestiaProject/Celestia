@@ -120,6 +120,7 @@ class GLSL_RenderContext : public RenderContext
     const Eigen::Matrix4f *lightMatrix { nullptr };
     GLuint shadowMap { 0 };
     GLuint shadowMapWidth { 0 };
+    FloatShaderParameter shadowMapSizeParam;
 };
 
 

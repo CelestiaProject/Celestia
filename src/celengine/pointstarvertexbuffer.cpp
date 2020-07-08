@@ -36,8 +36,10 @@ void PointStarVertexBuffer::startSprites()
     if (prog == nullptr)
         return;
     prog->use();
-    prog->mat4Param("MVPMatrix") = renderer.getProjectionMatrix() * renderer.getModelViewMatrix();
-    prog->samplerParam("starTex") = 0;
+    prog->MVPMatrix = renderer.getProjectionMatrix() * renderer.getModelViewMatrix();
+    if (!starTexParam)
+        starTexParam = prog->samplerParam("starTex");
+    starTexParam = 0;
 
     unsigned int stride = sizeof(StarVertex);
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
@@ -106,7 +108,7 @@ void PointStarVertexBuffer::render()
             glPointSize(1.0f);
         }
 #endif
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex, 
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
                               3, GL_FLOAT, GL_FALSE,
                               stride, &vertices[0].position);
         glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,

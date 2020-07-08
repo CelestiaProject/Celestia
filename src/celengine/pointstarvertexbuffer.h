@@ -11,6 +11,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include "glshader.h"
 
 class Color;
 class Renderer;
@@ -53,6 +54,7 @@ private:
     StarVertex* vertices    { nullptr };
     Texture* texture        { nullptr };
     bool useSprites         { false };
+    IntegerShaderParameter starTexParam;
 };
 
 inline void PointStarVertexBuffer::addStar(const Eigen::Vector3f& pos,

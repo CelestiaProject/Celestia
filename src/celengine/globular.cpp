@@ -468,7 +468,7 @@ void Globular::renderGlobularPointSprites(
     centerTex[ic]->bind();
 
     Matrix4f mvp = (*m.projection) * (*m.modelview);
-    tidalProg->mat4Param("MVPMatrix") = mvp;
+    tidalProg->MVPMatrix = mvp;
 
     Matrix3f viewMat = viewerOrientation.conjugate().toRotationMatrix();
     tidalProg->vec4Param("color")       = Vector4f(Rr, Gg, Bb, min(2 * brightness * pixelWeight, 1.0f));
@@ -492,8 +492,8 @@ void Globular::renderGlobularPointSprites(
     globProg->use();
 
     globularTex->bind();
-    globProg->mat4Param("MVPMatrix") = mvp;
-    globProg->mat4Param("ModelViewMatrix") = vecgl::translate(*m.modelview, offset);
+    globProg->MVPMatrix = mvp;
+    globProg->ModelViewMatrix = vecgl::translate(*m.modelview, offset);
     Matrix3f mx = Scaling(form->scale) * getOrientation().toRotationMatrix() * Scaling(tidalSize);
     globProg->mat3Param("m")            = mx;
     globProg->vec3Param("offset")       = offset;

@@ -270,6 +270,7 @@ class CelestiaGLProgram
     int attribIndex(const std::string&) const;
 
  private:
+    void initCommonParameters();
     void initParameters();
     void initSamplers();
 

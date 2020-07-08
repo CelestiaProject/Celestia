@@ -577,7 +577,9 @@ GLSL_RenderContext::makeCurrent(const Material& m)
         shadowBias.diagonal() = Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
         shadowBias.col(3) = Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
         prog->ShadowMatrix0 = shadowBias * (*lightMatrix);
-        prog->floatParam("shadowMapSize") = static_cast<float>(shadowMapWidth);
+        if (!shadowMapSizeParam)
+            shadowMapSizeParam = prog->floatParam("shadowMapSize");
+        shadowMapSizeParam = static_cast<float>(shadowMapWidth);
     }
 
     // setLightParameters() expects opacity in the alpha channel of the diffuse color

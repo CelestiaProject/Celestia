@@ -414,7 +414,7 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     GLushort j = 0;
 
     prog->use();
-    prog->mat4Param("MVPMatrix") = (*ms.projection) * mv;
+    prog->MVPMatrix = (*ms.projection) * mv;
     prog->samplerParam("galaxyTex") = 0;
     prog->samplerParam("colorTex") = 1;
 

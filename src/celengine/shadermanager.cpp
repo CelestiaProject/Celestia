@@ -3352,6 +3352,7 @@ CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program,
 CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program) :
     program(&_program)
 {
+    initCommonParameters();
 }
 
 CelestiaGLProgram::~CelestiaGLProgram()
@@ -3417,10 +3418,17 @@ CelestiaGLProgram::attribIndex(const std::string& paramName) const
 
 
 void
-CelestiaGLProgram::initParameters()
+CelestiaGLProgram::initCommonParameters()
 {
     ModelViewMatrix = mat4Param("ModelViewMatrix");
     MVPMatrix       = mat4Param("MVPMatrix");
+}
+
+
+void
+CelestiaGLProgram::initParameters()
+{
+    initCommonParameters();
 
     for (unsigned int i = 0; i < props.nLights; i++)
     {
