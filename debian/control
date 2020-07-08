@@ -50,7 +50,10 @@ Description: real-time visual space simulation
 Package: celestia-qt
 Section: science
 Architecture: any
-Depends: celestia-common (>= 1.7.0~), celestia-data (>= 1.7.0~), ${shlibs:Depends}, ${misc:Depends}
+Depends: libcelestia1.7 (= ${binary:Version}),
+         celestia-common (= ${binary:Version}),
+         celestia-data (>= 1.7.0~),
+         ${shlibs:Depends}, ${misc:Depends}
 Conflicts: celestia (<< 1.4.1)
 Replaces: celestia (<< 1.4.1)
 Suggests: stellarium
@@ -66,7 +69,10 @@ Description: real-time visual space simulation (Qt frontend)
 Package: celestia-gtk
 Section: science
 Architecture: any
-Depends: celestia-common (>= 1.7.0~), celestia-data (>= 1.7.0~), ${shlibs:Depends}, ${misc:Depends}
+Depends: libcelestia1.7 (= ${binary:Version}),
+         celestia-common (= ${binary:Version}),
+         celestia-data (>= 1.7.0~),
+         ${shlibs:Depends}, ${misc:Depends}
 Conflicts: celestia (<< 1.4.1), celestia-gnome (<< 1.7.0~)
 Replaces: celestia (<< 1.4.1), celestia-gnome (<< 1.7.0~)
 Suggests: stellarium
@@ -81,7 +87,10 @@ Description: real-time visual space simulation (Gtk frontend)
 
 Package: celestia-glut
 Architecture: any
-Depends: celestia-common (>= 1.7.0~), celestia-data (>= 1.7.0~), ${shlibs:Depends}, ${misc:Depends}
+Depends: libcelestia1.7 (= ${binary:Version}),
+         celestia-common (= ${binary:Version}),
+         celestia-data (>= 1.7.0~),
+         ${shlibs:Depends}, ${misc:Depends}
 Conflicts: celestia (<< 1.4.1)
 Replaces: celestia (<< 1.4.1)
 Suggests: stellarium
@@ -94,9 +103,16 @@ Description: real-time visual space simulation (GLUT frontend)
  .
  This package contains a minimal frontend for Celestia.
 
+Package: libcelestia1.7
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Library for the Celestia space simulator
+ This package includes the libcelestia library, which is
+ necessary to run Celestia.
+
 Package: celestia-tools
 Architecture: any
-Depends: celestia-common (>= 1.4.1), ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: celestia (<< 1.4.1)
 Replaces: celestia (<< 1.4.1)
 Suggests: stellarium
