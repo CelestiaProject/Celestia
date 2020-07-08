@@ -30,3 +30,8 @@ override_dh_install:
 	mv debian/celestia-common/usr/share/celestia/celestia.cfg \
 	   debian/celestia-common/etc/celestia.cfg
 	ln -s /etc/celestia.cfg debian/celestia-common/usr/share/celestia/
+	rm debian/celestia-common/usr/share/celestia/fonts/*
+	ln -s /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf \
+	      debian/celestia-common/usr/share/celestia/fonts/
+	ln -s /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf \
+	      debian/celestia-common/usr/share/celestia/fonts/
