@@ -44,15 +44,27 @@ list(GET PROJECT_VERSION_LIST 0 PROJECT_VERSION_MAJOR)
 list(GET PROJECT_VERSION_LIST 1 PROJECT_VERSION_MINOR)
 set(CELSO "celestia-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
-add_library(celestia SHARED ${CELESTIA_SOURCES} ${SCRIPT_LIBS})
+add_library(celestia SHARED ${CELESTIA_SOURCES}
+                            ${SCRIPT_LIBS}
+                            $<TARGET_OBJECTS:cel3ds>
+                            $<TARGET_OBJECTS:celcompat>
+                            $<TARGET_OBJECTS:celengine>
+                            $<TARGET_OBJECTS:celephem>
+                            $<TARGET_OBJECTS:celmath>
+                            $<TARGET_OBJECTS:celmodel>
+                            $<TARGET_OBJECTS:celttf>
+                            $<TARGET_OBJECTS:celutil>
+)
+
 set_target_properties(celestia PROPERTIES
   VERSION ${PROJECT_VERSION}
   SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
   WINDOWS_EXPORT_ALL_SYMBOLS TRUE
 )
 
-add_dependencies(celestia celengine celmath celutil)
-target_link_libraries(celestia celengine celmath celutil)
+if(ENABLE_SPICE)
+  target_link_libraries(celestia CSPICE::CSPICE)
+endif()
 
 cotire(celestia)
 

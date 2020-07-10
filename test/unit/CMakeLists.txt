@@ -1,8 +1,8 @@
 include(TestCase)
 
-test_case(hash celengine)
-test_case(fs celengine)
-test_case(stellarclass celengine)
+test_case(hash)
+test_case(fs)
+test_case(stellarclass)
 if(WIN32)
-  test_case(winutil celutil)
+  test_case(winutil)
 endif()

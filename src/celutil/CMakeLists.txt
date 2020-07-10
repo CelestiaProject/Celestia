@@ -31,19 +31,5 @@ if (WIN32)
   )
 endif()
 
-add_library(celutil STATIC ${CELUTIL_SOURCES} $<TARGET_OBJECTS:celcompat>)
-
-#[[
-add_library(celutil SHARED ${CELUTIL_SOURCES})
-set_target_properties(celutil PROPERTIES
-  VERSION ${VERSION}
-  SOVERSION ${VERSION}
-)
-]]#
-
-add_dependencies(celutil celmath)
-target_link_libraries(celutil celmath)
-
+add_library(celutil OBJECT ${CELUTIL_SOURCES})
 cotire(celutil)
-
-#install(TARGETS celutil LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})

@@ -171,25 +171,5 @@ set(CELENGINE_SOURCES
   visibleregion.h
 )
 
-# The object files in the celephem directory are merged in the celengine library
-add_library(celengine STATIC ${CELENGINE_SOURCES} $<TARGET_OBJECTS:celephem>)
-
-#[[
-add_library(celengine SHARED ${CELENGINE_SOURCES})
-set_target_properties(celengine PROPERTIES
-  VERSION ${VERSION}
-  SOVERSION ${VERSION}
-)
-]]#
-
-add_dependencies(celengine cel3ds celmath celmodel celutil celttf)
-target_link_libraries(celengine cel3ds celmath celmodel celutil celttf)
-
-# Some celephem objects depend on Spice
-if(ENABLE_SPICE)
-  target_link_libraries(celengine CSPICE::CSPICE)
-endif()
-
+add_library(celengine OBJECT ${CELENGINE_SOURCES})
 cotire(celengine)
-
-#install(TARGETS celengine LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
