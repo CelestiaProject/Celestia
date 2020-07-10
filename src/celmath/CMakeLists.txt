@@ -13,16 +13,5 @@ set(CELMATH_SOURCES
   sphere.h
 )
 
-add_library(celmath STATIC ${CELMATH_SOURCES})
-
-#[[
-add_library(celmath SHARED ${CELMATH_SOURCES})
-set_target_properties(celmath PROPERTIES
-  VERSION ${VERSION}
-  SOVERSION ${VERSION}
-)
-]]#
-
+add_library(celmath OBJECT ${CELMATH_SOURCES})
 cotire(celmath)
-
-#install(TARGETS celmath LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})

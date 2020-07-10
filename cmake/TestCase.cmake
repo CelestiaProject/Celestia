@@ -4,7 +4,7 @@ macro(test_case)
   list(REMOVE_AT libs 0 0)
 
   add_executable(${trgt} "${trgt}_test.cpp")
-  target_link_libraries(${trgt} PRIVATE ${libs})
+  target_link_libraries(${trgt} PRIVATE celestia ${libs})
   add_test(${trgt} ${trgt})
   set_target_properties(${trgt} PROPERTIES FOLDER test/unit)
 endmacro()

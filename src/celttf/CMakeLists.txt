@@ -3,4 +3,4 @@ set(CELTTF_SOURCES
   truetypefont.h
 )
 
-add_library(celttf STATIC ${CELTTF_SOURCES})
+add_library(celttf OBJECT ${CELTTF_SOURCES})
