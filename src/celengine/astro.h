@@ -11,11 +11,10 @@
 #ifndef _CELENGINE_ASTRO_H_
 #define _CELENGINE_ASTRO_H_
 
-#include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <iostream>
+#include <iosfwd>
 #include <string>
-#include <cmath>
+#include <celmath/mathlib.h>
 
 #define SOLAR_ABSMAG   4.83f
 #define LN_MAG         1.085736
@@ -223,18 +222,22 @@ namespace astro
                  double& trueAnomaly, double& eccentricAnomaly);
     double meanEclipticObliquity(double jd);
 
-    extern const double J2000;
-    extern const double speedOfLight; // km/s
-    extern const double G; // gravitational constant
-    extern const double SolarMass;
-    extern const double EarthMass;
-    extern const double LunarMass;
-    extern const double JupiterMass;
+    // epoch J2000: 12 UT on 1 Jan 2000
+    constexpr const double J2000            = 2451545.0;
+    constexpr const double speedOfLight     = 299792.458; // km/s
+    constexpr const double G                = 6.672e-11; // N m^2 / kg^2; gravitational constant
+    constexpr const double SolarMass        = 1.989e30;
+    constexpr const double EarthMass        = 5.972e24;
+    constexpr const double LunarMass        = 7.346e22;
+    constexpr const double JupiterMass      = 1.898e27;
 
-    extern const double J2000Obliquity;
+    // Angle between J2000 mean equator and the ecliptic plane.
+    // 23 deg 26' 21".448 (Seidelmann, _Explanatory Supplement to the
+    // Astronomical Almanac_ (1992), eqn 3.222-1.
+    constexpr const double J2000Obliquity   = 23.4392911_deg;
 
-    extern const double SOLAR_IRRADIANCE;
-    extern const double SOLAR_POWER;  // in Watts
+    constexpr const double SOLAR_IRRADIANCE = 1367.6; // Watts / m^2
+    constexpr const double SOLAR_POWER      = 3.8462e26;  // in Watts
 }
 
 // Convert a date structure to a Julian date
