@@ -106,7 +106,7 @@ void PointStarVertexBuffer::render()
             glPointSize(1.0f);
         }
 #endif
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex, 
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
                               3, GL_FLOAT, GL_FALSE,
                               stride, &vertices[0].position);
         glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
@@ -140,7 +140,6 @@ void PointStarVertexBuffer::finish()
         glDisable(GL_POINT_SPRITE);
 #endif
     }
-    glUseProgram(0);
 }
 
 void PointStarVertexBuffer::setTexture(Texture* _texture)

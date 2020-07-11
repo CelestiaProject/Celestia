@@ -105,7 +105,6 @@ void Nebula::render(const Vector3f& /*offset*/,
     rc.setProjectionMatrix(m.projection);
     rc.setModelViewMatrix(&mv);
     g->render(rc);
-    glUseProgram(0);
 
     renderer->enableBlending();
 }

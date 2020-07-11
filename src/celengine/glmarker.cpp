@@ -300,7 +300,6 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
         break;
     }
 
-    glUseProgram(0);
     markerVO.unbind();
 }
 
@@ -374,7 +373,6 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     prog->vec3Param("v") = v;
     markerVO.draw(GL_TRIANGLES, SelPointerCount, SelPointerOffset);
 
-    glUseProgram(0);
     markerVO.unbind();
 
 #ifdef USE_HDR
@@ -405,7 +403,6 @@ void Renderer::renderEclipticLine()
     prog->vec4Param("color") = EclipticColor.toVector4();
     markerVO.draw(GL_LINE_LOOP, EclipticCount, EclipticOffset);
 
-    glUseProgram(0);
     markerVO.unbind();
 }
 
@@ -450,6 +447,5 @@ void Renderer::renderCrosshair(float selectionSizeInPixels,
         prog->floatParam("angle") = theta;
         markerVO.draw(GL_TRIANGLES, CrosshairCount, CrosshairOffset);
     }
-    glUseProgram(0);
     markerVO.unbind();
 }

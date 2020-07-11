@@ -504,7 +504,6 @@ void Globular::renderGlobularPointSprites(
 
     vo.draw(GL_POINTS, count, 4);
 
-    glUseProgram(0);
     vo.unbind();
 #ifndef GL_ES
     glDisable(GL_POINT_SPRITE);

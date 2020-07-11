@@ -715,6 +715,5 @@ SkyGrid::render(Renderer& renderer,
     glDrawArrays(GL_LINES, 0, 8);
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glUseProgram(0);
     delete[] buffer;
 }

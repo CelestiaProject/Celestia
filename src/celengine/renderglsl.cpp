@@ -289,8 +289,6 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     g_lodSphere->render(attributes,
                         frustum, ri.pixWidth,
                         textures[0], textures[1], textures[2], textures[3]);
-
-    glUseProgram(0);
 }
 
 
@@ -418,8 +416,6 @@ void renderGeometry_GLSL(Geometry* geometry,
     {
         geometry->render(rc, tsec);
     }
-
-    glUseProgram(0);
 }
 
 
@@ -463,8 +459,6 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
     {
         geometry->render(rc, tsec);
     }
-
-    glUseProgram(0);
 }
 
 
@@ -598,8 +592,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
                         textures[0], textures[1], textures[2], textures[3]);
 
     prog->textureOffset = 0.0f;
-
-    glUseProgram(0);
 }
 
 
@@ -663,7 +655,6 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     renderer->disableBlending();
     renderer->enableDepthMask();
     glFrontFace(GL_CCW);
-    glUseProgram(0);
 }
 
 static void renderRingSystem(GLuint *vboId,
@@ -883,8 +874,6 @@ void renderRings_GLSL(RingSystem& rings,
     renderRingSystem(&data->vboId[i], inner, outer, nSections);
 
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
-
-    glUseProgram(0);
 }
 
 // Calculate the matrix used to render the model from the
@@ -947,7 +936,6 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
 
     geometry->render(rc, tsec);
 
-    glUseProgram(0);
     glDisable(GL_POLYGON_OFFSET_FILL);
     // Re-enable the color buffer
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);

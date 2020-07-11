@@ -1342,8 +1342,6 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
 #ifdef STIPPLED_LINES
     glDisable(GL_LINE_STIPPLE);
 #endif
-
-    glUseProgram(0);
 }
 
 
@@ -1822,7 +1820,6 @@ void renderPoint(const Renderer &renderer,
         glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
     glDisable(GL_POINT_SPRITE);
 #endif
-    glUseProgram(0);
 }
 
 // If the an object occupies a pixel or less of screen space, we don't
@@ -2217,7 +2214,6 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 
     glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glUseProgram(0);
 }
 
 
@@ -2262,8 +2258,6 @@ static void renderSphereUnlit(const RenderInfo& ri,
     prog->nightLightScale = ri.nightLightScale;
 #endif
     g_lodSphere->render(frustum, ri.pixWidth, textures, nTextures);
-
-    glUseProgram(0);
 }
 
 
@@ -2287,8 +2281,6 @@ static void renderCloudsUnlit(const RenderInfo& ri,
     prog->textureOffset = cloudTexOffset;
 
     g_lodSphere->render(frustum, ri.pixWidth, &cloudTex, 1);
-
-    glUseProgram(0);
 }
 
 void
@@ -3728,7 +3720,6 @@ void Renderer::renderCometTail(const Body& body,
     if (brightness != -1)
         glDisableVertexAttribArray(brightness);
     glEnable(GL_CULL_FACE);
-    glUseProgram(0);
 
 #ifdef DEBUG_COMET_TAIL
     glColor4f(0.0f, 1.0f, 1.0f, 0.5f);
@@ -4798,7 +4789,6 @@ void Renderer::renderParticles(const vector<Particle>& particles)
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-    glUseProgram(0);
 #ifndef GL_ES
     glDisable(GL_POINT_SPRITE);
 #endif
@@ -5406,7 +5396,6 @@ void Renderer::drawRectangle(const Rect &r, const Matrix4f &mvp)
             glLineWidth(1.0f);
     }
 
-    glUseProgram(0);
     glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);

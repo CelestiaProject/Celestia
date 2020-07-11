@@ -73,7 +73,6 @@ void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColo
         offset += m_vtxCount[i];
     }
 
-    glUseProgram(0);
     m_vo.unbind();
 }
 
