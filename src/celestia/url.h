@@ -72,7 +72,7 @@ public:
     std::string getName() const;
     bool goTo();
 
-    static const unsigned int CurrentVersion;
+    constexpr const static unsigned int CurrentVersion = 4;
 
     static std::string decodeString(const std::string& str);
     static std::string encodeString(const std::string& str);

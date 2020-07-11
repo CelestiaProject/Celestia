@@ -30,7 +30,6 @@ using namespace Eigen;
 using namespace std;
 using namespace celmath;
 
-const unsigned int Url::CurrentVersion = 4;
 constexpr const uint64_t NewRenderFlags = Renderer::ShowDwarfPlanets |
                                           Renderer::ShowMoons        |
                                           Renderer::ShowMinorMoons   |

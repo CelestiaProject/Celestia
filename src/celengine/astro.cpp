@@ -8,9 +8,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <cstring>
 #include <cmath>
+#include <iostream>
 #include <iomanip>
 #include <cstdio>
 #include <utility>
@@ -19,32 +19,11 @@
 #include "univcoord.h"
 #include <celutil/gettext.h>
 #include <celmath/geomutil.h>
-#include <celmath/mathlib.h>
 
 
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
-
-const double astro::speedOfLight = 299792.458; // km/s
-
-// epoch J2000: 12 UT on 1 Jan 2000
-const double astro::J2000 = 2451545.0;
-
-const double astro::G = 6.672e-11; // N m^2 / kg^2
-
-const double astro::SolarMass   = 1.989e30;
-const double astro::EarthMass   = 5.972e24;
-const double astro::LunarMass   = 7.346e22;
-const double astro::JupiterMass = 1.898e27;
-
-const double astro::SOLAR_IRRADIANCE  = 1367.6;        // Watts / m^2
-const double astro::SOLAR_POWER       = 3.8462e26;  // Watts
-
-// Angle between J2000 mean equator and the ecliptic plane.
-// 23 deg 26' 21".448 (Seidelmann, _Explanatory Supplement to the
-// Astronomical Almanac_ (1992), eqn 3.222-1.
-const double astro::J2000Obliquity = degToRad(23.4392911);
 
 static const Quaterniond ECLIPTIC_TO_EQUATORIAL_ROTATION = XRotation(-astro::J2000Obliquity);
 static const Matrix3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toRotationMatrix();
@@ -347,30 +326,21 @@ Vector3d astro::equatorialToGalactic(const Vector3d& v)
 
 
 
-astro::Date::Date()
+astro::Date::Date() : Date(0, 0, 0)
 {
-    year = 0;
-    month = 0;
-    day = 0;
-    hour = 0;
-    minute = 0;
-    seconds = 0.0;
-    wday = 0;
-    utc_offset = 0;
-    tzname = "UTC";
 }
 
-astro::Date::Date(int Y, int M, int D)
+astro::Date::Date(int Y, int M, int D) :
+    year(Y),
+    month(M),
+    day(D),
+    hour(0),
+    minute(0),
+    seconds(0.0),
+    wday(0),
+    utc_offset(0),
+    tzname("UTC")
 {
-    year = Y;
-    month = M;
-    day = D;
-    hour = 0;
-    minute = 0;
-    seconds = 0.0;
-    wday = 0;
-    utc_offset = 0;
-    tzname = "UTC";
 }
 
 astro::Date::Date(double jd)
