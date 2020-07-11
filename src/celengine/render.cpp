@@ -2838,12 +2838,6 @@ void Renderer::renderObject(const Vector3f& pos,
                                           astro::daysToSecs(now - astro::J2000),
                                           mvp, this);
             }
-
-            for (unsigned int i = 0; i < 8;/*context->getMaxTextures();*/ i++)
-            {
-                glActiveTexture(GL_TEXTURE0 + i);
-                glBindTexture(GL_TEXTURE_2D, 0);
-            }
             glActiveTexture(GL_TEXTURE0);
         }
     }

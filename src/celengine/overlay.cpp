@@ -169,10 +169,7 @@ void Overlay::print(const char* s)
 void Overlay::drawRectangle(const Rect& r)
 {
     if (useTexture && r.tex == nullptr)
-    {
-        glBindTexture(GL_TEXTURE_2D, 0);
         useTexture = false;
-    }
 
     renderer.drawRectangle(r, mvp);
 }
