@@ -1765,6 +1765,9 @@ void Renderer::draw(const Observer& observer,
     glPolygonMode(GL_FRONT_AND_BACK, (GLenum) renderMode);
 #endif
 
+    enableDepthTest();
+    enableDepthMask();
+
     int nIntervals = buildDepthPartitions();
     renderSolarSystemObjects(observer, nIntervals, now);
 
@@ -1923,8 +1926,6 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
             gaussianGlareTex->bind();
             renderPoint(*this, position, {color, glareAlpha}, glareSize, true, m);
         }
-
-        disableDepthTest();
     }
 }
 
@@ -2983,8 +2984,6 @@ void Renderer::renderObject(const Vector3f& pos,
         }
     }
 
-    disableDepthTest();
-    disableDepthMask();
     enableBlending();
 }
 
@@ -3387,16 +3386,10 @@ void Renderer::renderPlanet(Body& body,
             cityRep        = MarkerRepresentation(MarkerRepresentation::X,        3.0f, LocationLabelColor);
             genericLocationRep = MarkerRepresentation(MarkerRepresentation::Square, 8.0f, LocationLabelColor);
 
-            enableDepthTest();
-            disableDepthMask();
-            disableBlending();
-
             // We need a double precision body-relative position of the
             // observer, otherwise location labels will tend to jitter.
             Vector3d posd = body.getPosition(observer.getTime()).offsetFromKm(observer.getPosition());
             locationsToAnnotations(body, posd, q);
-
-            disableDepthTest();
         }
     }
 
@@ -3667,6 +3660,7 @@ void Renderer::renderCometTail(const Body& body,
         }
     }
 
+    disableDepthTest();
     disableDepthMask();
     glDisable(GL_CULL_FACE);
     enableBlending();
@@ -3723,6 +3717,8 @@ void Renderer::renderCometTail(const Body& body,
     glDisableClientState(GL_VERTEX_ARRAY);
     enableBlending();
 #endif
+    enableDepthTest();
+    enableDepthMask();
 }
 
 
@@ -6020,7 +6016,6 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         // Render orbit paths
         if (!orbitPathList.empty())
         {
-            enableDepthTest();
             disableDepthMask();
 #ifdef USE_HDR
             setBlendingFactors(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
@@ -6050,7 +6045,6 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
             }
 
             disableSmoothLines();
-            disableDepthMask();
         }
 
         // Render transparent objects in the second pass
@@ -6071,7 +6065,6 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
                                              FontNormal);
         endObjectAnnotations();
         disableSmoothLines();
-        disableDepthTest();
     }
 
     // reset the depth range

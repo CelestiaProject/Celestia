@@ -247,8 +247,6 @@ PlanetographicGrid::render(Renderer* renderer,
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
 
-    renderer->disableDepthTest();
-    renderer->disableDepthMask();
     renderer->enableBlending();
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }

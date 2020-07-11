@@ -215,8 +215,6 @@ VisibleRegion::render(Renderer* renderer,
     Matrix4f mvp = (*m.projection) * (*m.modelview) * transform.matrix();
     renderTerminator(renderer, pos, Color(m_color, opacity), mvp);
 
-    renderer->disableDepthTest();
-    renderer->disableDepthMask();
     renderer->enableBlending();
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 }
