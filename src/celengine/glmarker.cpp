@@ -374,6 +374,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     markerVO.draw(GL_TRIANGLES, SelPointerCount, SelPointerOffset);
 
     markerVO.unbind();
+    enableDepthTest();
 
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
