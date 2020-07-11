@@ -471,7 +471,6 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    glUseProgram(0);
     glActiveTexture(GL_TEXTURE0);
 }
 

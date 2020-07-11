@@ -120,7 +120,6 @@ renderTerminator(Renderer* renderer,
     vo.draw(GL_LINE_LOOP, pos.size());
 
     vo.unbind();
-    glUseProgram(0);
 }
 
 

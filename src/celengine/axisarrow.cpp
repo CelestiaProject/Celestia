@@ -291,7 +291,6 @@ ArrowReferenceMark::render(Renderer* renderer,
     auto &vo = renderer->getVertexObject(VOType::AxisArrow, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
     RenderArrow(vo);
 
-    glUseProgram(0);
     renderer->disableDepthTest();
     renderer->disableDepthMask();
     renderer->enableBlending();
@@ -419,7 +418,6 @@ AxesReferenceMark::render(Renderer* renderer,
     prog->MVPMatrix = t * labelTransformMatrix;
     RenderZ(vo);
 
-    glUseProgram(0);
     renderer->disableDepthTest();
     renderer->disableDepthMask();
     renderer->enableBlending();
