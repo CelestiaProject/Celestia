@@ -4434,9 +4434,9 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 {
 #ifndef GL_ES
     // Disable multisample rendering when drawing point stars
-    bool toggleAA = (starStyle == Renderer::PointStars && glIsEnabled(GL_MULTISAMPLE));
+    bool toggleAA = (starStyle == Renderer::PointStars && isMSAAEnabled());
     if (toggleAA)
-        glDisable(GL_MULTISAMPLE);
+        disableMSAA();
 #endif
 
     Vector3d obsPos = observer.getPosition().toLy();
@@ -4531,7 +4531,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
 #ifndef GL_ES
     if (toggleAA)
-        glEnable(GL_MULTISAMPLE);
+        enableMSAA();
 #endif
 }
 
