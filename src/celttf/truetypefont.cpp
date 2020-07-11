@@ -614,8 +614,6 @@ void TextureFont::unbind()
 {
     flush();
     impl->m_shaderInUse = false;
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 short TextureFont::getAdvance(wchar_t ch) const
