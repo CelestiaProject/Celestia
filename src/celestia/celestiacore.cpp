@@ -3647,16 +3647,15 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // Next, read all the deep sky files in the extras directories
     {
         vector<fs::path> entries;
+        DeepSkyLoader loader(dsoDB, "deep sky object",
+                             Content_CelestiaDeepSkyCatalog,
+                             progressNotifier);
         for (const auto& dir : config->extrasDirs)
         {
             if (!is_valid_directory(dir))
                 continue;
 
             entries.clear();
-            DeepSkyLoader loader(dsoDB,
-                                 "deep sky object",
-                                 Content_CelestiaDeepSkyCatalog,
-                                 progressNotifier);
             for (const auto& fn : fs::recursive_directory_iterator(dir))
             {
                 if (!fs::is_directory(fn.path()))
@@ -3696,13 +3695,13 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // Next, read all the solar system files in the extras directories
     {
         vector<fs::path> entries;
+        SolarSystemLoader loader(universe, progressNotifier);
         for (const auto& dir : config->extrasDirs)
         {
             if (!is_valid_directory(dir))
                 continue;
 
             entries.clear();
-            SolarSystemLoader loader(universe, progressNotifier);
             for (const auto& fn : fs::recursive_directory_iterator(dir))
             {
                 if (!fs::is_directory(fn.path()))
@@ -3966,13 +3965,13 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     // Now, read supplemental star files from the extras directories
     {
         vector<fs::path> entries;
+        StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
         for (const auto& dir : config->extrasDirs)
         {
             if (!is_valid_directory(dir))
                 continue;
 
             entries.clear();
-            StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
             for (const auto& fn : fs::recursive_directory_iterator(dir))
             {
                 if (!fs::is_directory(fn.path()))
