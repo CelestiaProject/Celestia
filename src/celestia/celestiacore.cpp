@@ -3645,17 +3645,26 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     }
 
     // Next, read all the deep sky files in the extras directories
-    for (const auto& dir : config->extrasDirs)
     {
-        if (!is_valid_directory(dir))
-            continue;
+        vector<fs::path> entries;
+        for (const auto& dir : config->extrasDirs)
+        {
+            if (!is_valid_directory(dir))
+                continue;
 
-        DeepSkyLoader loader(dsoDB,
-                             "deep sky object",
-                             Content_CelestiaDeepSkyCatalog,
-                             progressNotifier);
-        for (const auto& fn : fs::recursive_directory_iterator(dir))
-            loader.process(fn);
+            entries.clear();
+            DeepSkyLoader loader(dsoDB,
+                                 "deep sky object",
+                                 Content_CelestiaDeepSkyCatalog,
+                                 progressNotifier);
+            for (const auto& fn : fs::recursive_directory_iterator(dir))
+            {
+                if (!fs::is_directory(fn.path()))
+                    entries.push_back(fn.path());
+            }
+            for (const auto& fn : entries)
+                loader.process(fn);
+        }
     }
     dsoDB->finish();
     universe->setDSOCatalog(dsoDB);
@@ -3686,13 +3695,21 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     // Next, read all the solar system files in the extras directories
     {
+        vector<fs::path> entries;
         for (const auto& dir : config->extrasDirs)
         {
             if (!is_valid_directory(dir))
                 continue;
 
+            entries.clear();
             SolarSystemLoader loader(universe, progressNotifier);
             for (const auto& fn : fs::recursive_directory_iterator(dir))
+            {
+                if (!fs::is_directory(fn.path()))
+                    entries.push_back(fn.path());
+            }
+            sort(begin(entries), end(entries));
+            for(const auto& fn : entries)
                 loader.process(fn);
         }
     }
@@ -3947,14 +3964,24 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     }
 
     // Now, read supplemental star files from the extras directories
-    for (const auto& dir : config->extrasDirs)
     {
-        if (!is_valid_directory(dir))
-            continue;
+        vector<fs::path> entries;
+        for (const auto& dir : config->extrasDirs)
+        {
+            if (!is_valid_directory(dir))
+                continue;
 
-        StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
-        for (const auto& fn : fs::recursive_directory_iterator(dir))
-            loader.process(fn);
+            entries.clear();
+            StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
+            for (const auto& fn : fs::recursive_directory_iterator(dir))
+            {
+                if (!fs::is_directory(fn.path()))
+                    entries.push_back(fn.path());
+            }
+            std::sort(begin(entries), end(entries));
+            for (const auto& fn : entries)
+                loader.process(fn);
+        }
     }
 
     starDB->finish();
