@@ -22,8 +22,8 @@ macro(build_cmod_tool)
   include_directories("../common")
 
   add_executable(${__target} ${__win32} ${__sources})
-  target_link_libraries(${__target} celmodel cel3ds cmodcommon)
-  add_dependencies(${__target} celmodel cel3ds cmodcommon)
+  target_link_libraries(${__target} celestia cmodcommon)
+  add_dependencies(${__target} celestia cmodcommon)
 
   install(TARGETS ${__target} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endmacro()
