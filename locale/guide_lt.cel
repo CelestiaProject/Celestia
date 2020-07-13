@@ -1,7 +1,7 @@
 {
 	Name   "Jupiteris"
 	Target "Sol/Jupiter"
-	Description "Jupiteris penktoji pagal nuotolá nuo Saulës planeta, dujinë milþinë. Kaip ir kitos dujinës milþinës neturi kieto pavirðiaus. Iðskirtinis akcentas Raudonoji dëmë daugiau kaip 300 metø Jupiteryje vykstantis audros sûkurys."
+	Description "Jupiteris penktoji pagal nuotolį nuo Saulės planeta, dujinė milžinė. Kaip ir kitos dujinės milžinės Jupiteris neturi kieto paviršiaus. Išskirtinis milžino akcentas: Raudonoji dėmė - daugiau kaip 300 metų Jupiteryje vykstantis audros sūkurys."
 }
 
 {
@@ -9,13 +9,13 @@
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "Plutonas ir Charonas aplink Saulæ skrieja iðtásusia elipsine orbita. Tai Saulës sistemos nykðtukinë planeta. Turi palydovà Charonas, kuris panaðaus dydþio, todël neretai ðie dankaus kûnai vadinami dvinare sistema"
+	Description "Plutonas ir jo palydovas Charonas aplink Saulę skrieja ištįsusia elipsine orbita. Plutonas nėra įprasta Saulės sistemos planeta - jis kartu su kitomis mažytėmis Eride ir Cerera planetomis patenka į naują nykštukinių planetų kategoriją. Palydovas Charonas yra panašaus dydžio, todėl neretai šie dangaus kūnai vadinami dvinare sistema"
 }
 
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros apytiksliai yra 33 km ilgio bulvës formos asteroidas skriejantis santykinai netoli Þemës orbitos. Kosminio aparato NEAR dëka buvo daugiau suþinota apie ðá ir kitus asteroidus.  2001 m. vasario 14 d. NEAR tapo pirmuoju kosminiu aparatu praskriejusiu ðalia asteroido ir pateikusio á þemæ daugiau informacijos."
+	Description "Eros apytiksliai yra 33 km ilgio bulvės formos asteroidas skriejantis santykinai netoli Žemės orbitos. Kosminio aparato NEAR dėka buvo daugiau sužinota apie šį ir kitus asteroidus.  2001 m. vasario 14 d. NEAR tapo pirmuoju kosminiu aparatu praskriejusiu šalia asteroido ir pateikusio į žemę daugiau informacijos."
 }
 
 {
@@ -23,29 +23,29 @@
 	Target "Alpha Centauri"
 	Distance 90
 	DistanceUnits "au"
-	Description "Kentauro alfa – treèia pagal ryðká þvaigþdþiø sistema,ðviesiausia Kentauro þvaigþdyne.Nors þiûrint plika akimi Kentauro Alfa atrodo kaip vienas taðkas,ið tikrøjø tai yra þvaigþdþiø sistema,sudaryta ið trijø þvaigþdþiø.Kentauro Alfa yra artimiausia þvaigþdþiø sistema Saulei."
+	Description "Kentauro alfa – trečia pagal ryškį žvaigždžių sistema, šviesiausia Kentauro žvaigždyne. Nors žiūrint plika akimi Kentauro Alfa atrodo kaip vienas taškas, iš tikrųjų tai yra žvaigždžių sistema, sudaryta iš trijų žvaigždžių. Kentauro Alfa yra artimiausia žvaigždžių sistema Saulei."
 }
 
 {
-	Name "Plejadës"
+	Name "Plejadės (Sietynas)"
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "Plejados – labai jaunas ir nespëjæs iðsisklaidyti spieèius. Jame gausu baltøjø milþiniø ir raudonøjø nykðtukiø. Tarp spieèiaus þvaigþdþiø yra apyskaidris atspindþio ûkas"
+	Description "Plejadės, Sietynas – ryškus, labai jaunas ir nespėjęs išsisklaidyti padrikasis žvaigždžių spiečius Tauro žvaigždyne. Matomas plika akimi (7-10 žvaigždžių, viso spiečiuje virš 1000 žvaigdžių). Pavadinimas Plejadės kilo iš graikų mitologijos – tai septynios seserys nimfos. Spiečiuje gausu baltųjų milžinių ir raudonųjų nykštukių. Tarp spiečiaus žvaigždžių yra apyskaidris atspindžio ūkas."
 }
 
 {
-	Name "Hajadës"
+	Name "Hiados"
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Hajadës graikø mitologijoje - nimfos, neðanèios lietø, Hijo ir plejadþiø seserys, Atlanto ir Plejonës. Hajadës yra vienos ið ádomiausiø þvaigþdþiø spieèiø danguje. Manoma, kad Hajadës yra apytiksliai 660 milijonø metø senesnës nei Plajedës."
+	Description "Hiadės graikų mitologijoje - nimfos, nešančios lietų. Hiados yra vienos iš įdomiausių žvaigždžių spiečių danguje. Manoma, kad Hiadų amžius yra apytiksliai 660 milijonų metų - jos daugiau nei šešis kartus senesnės už Plejedes - karštesnes, šviesesnes žvaigždes, esančias šalia, tame pačiame Tauro žvaigždyne."
 }
 
 {
 	Name "Gliese 876 b"
 	Target "Gliese 876/b"
-	Description "Gliese 876 b planeta gigantas raudonosios nykðtukës sistemoje.  Ji yra 2:1 masës kitai ðios sistemos planetai"
+	Description "Gliese 876 b planeta gigantas raudonosios nykštukės sistemoje.  Ji skrieja apie raudonąją nykštukę. Atrasta 1998 metais dviejų nepriklausomų komandų, ji buvo pirmoji pastebėta planeta, skriejanti apie raudonąją nykštukę. Tarp Gliese 876 b ir kitos sistemos planetos Gliese 876 c yra orbitinis rezonansas, vedantis prie abiejų planetų gravitacinių sąveikų."
 }
 
 {
@@ -53,24 +53,24 @@
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "Atrado ir nufotografavo  Galilëjo zondas 1993 metais skriedamas pakeliui link Jupiterio. Nuotraukose paaiðkëjo, kad Ida turi maþà palydovà, kurá vëliau pavadino Daktiliu. Vëliau buvo atrasta dar keletas asteroidø turinèiø palydovus."
+	Description "Asteroidą Ida atrado ir nufotografavo  Galilėjo zondas 1993 metais skriedamas pakeliui link Jupiterio. Nuotraukose paaiškėjo, kad Ida turi mažą palydovą, kurį vėliau pavadino Daktiliu. Vėliau buvo atrasta dar keletas asteroidų turinčių palydovus."
 }
 
 {
 	Name "51 Peg b"
 	Target "51 Peg/b"
-	Description "51 Pegasi b pirmoji atrasta planeta kitose sistemose. Tai dujø milþinas su ekstremaliai artima savo þvaigþdei orbita-atstumas maþesnis nei Merkurijaus ir Saulës. Toks netipiðkai artimas dujø milþino egziztavimas prie þvaigþdës privertë astronomus perþiûrëti Saulës sistemos formavimosi teoremas."
+	Description "51 Pegasi b pirmoji atrasta planeta kitose sistemose. Tai dujų milžinas su ekstremaliai artima savo žvaigždei orbita-atstumas mažesnis nei Merkurijaus ir Saulės. Toks netipiškai artimas dujų milžino egzistavimas prie žvaigždės privertė astronomus peržiūrėti Saulės sistemos formavimosi teoremas."
 }
 
 {
 	Name "Albireo"
 	Target "Albireo"
 	Distance 0.6
-	Description "Dël orandþiniø ir baltai mëlynø spalvø ði dvinariø þvaigþdþiø sistema danguje laikoma vienu graþiausiø dariniø. Orandþinë þvaigþdë K klasës milþinë, o jos kompanjonë B tipo nykðtukë"
+	Description "Dėl oranžinių ir baltai mėlynų spalvų ši dvinarių žvaigždžių sistema danguje laikoma vienu gražiausių darinių. Oranžinė žvaigždė yra K klasės milžinė, o jos kompanjonė - B tipo nykštukė"
 }
 
 {
 	Name "Boreli kometa"
 	Target "Sol/Borrelly"
-	Description "2001 metø spalio 22 dienà Boreli kometa tapo antràja kometa, kurià ið arti nufotografavo kosminis zondas. Kosminis zondas Deep Space 1 priartëjo iki 2200 kilometrø ir padarë aukðtos rezoliucijos itin detaliø kometos branduolio nuotraukø."
+	Description "2001 metų spalio 22 dieną Boreli kometa tapo antrąja kometa, kurią iš arti nufotografavo kosminis zondas. Kosminis zondas Deep Space 1 priartėjo iki 2200 kilometrų ir padarė aukštos raiškos itin detalių kometos branduolio nuotraukų."
 }
