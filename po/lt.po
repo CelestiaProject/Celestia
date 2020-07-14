@@ -3,15 +3,14 @@ msgstr ""
 "Project-Id-Version: celestia lt\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2020-05-26 23:04+0300\n"
-"PO-Revision-Date: 2010-03-02 20:59+0200\n"
-"Last-Translator: Marius Mikalainis <neoromancer@gmail.com>\n"
+"PO-Revision-Date: 2020-07-14 06:47+0300\n"
+"Last-Translator: Mantas Kriaučiūnas <baltix@gmail.com>\n"
 "Language-Team: \n"
-"Language: \n"
+"Language: lt_LT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Lithuanian\n"
-"X-Poedit-Country: LITHUANIA\n"
+"X-Generator: Poedit 2.3\n"
 
 #: src/celengine/astro.cpp:830
 msgid "DST"
@@ -23,11 +22,11 @@ msgstr "STD"
 
 #: src/celengine/dsodb.cpp:388
 msgid "Loaded "
-msgstr "Pakrautas"
+msgstr "Įkelta "
 
 #: src/celengine/dsodb.cpp:388
 msgid " deep space objects"
-msgstr "Gilaus dangaus objektai"
+msgstr " gilaus dangaus objektai"
 
 #: src/celengine/fragmentprog.cpp:94
 msgid "Loading NV fragment program: "
@@ -66,35 +65,35 @@ msgstr ""
 
 #: src/celengine/image.cpp:369
 msgid "Loading image from file "
-msgstr "Atvaizdas pakraunamas iš rinkmenos"
+msgstr "Įkeliamas paveikslas iš failo "
 
 #: src/celengine/image.cpp:387
 msgid ": unrecognized or unsupported image file type.\n"
-msgstr ": nežinomas arba nepalaikomas atvaizdo rinkmenos tipas.\n"
+msgstr ": nežinomas arba nepalaikomas atvaizdo failo tipas.\n"
 
 #: src/celengine/image.cpp:584
 msgid "Error opening image file "
-msgstr "Klaida įkeliant atvaizdo rinkmeną"
+msgstr "Klaida įkeliant atvaizdo failą "
 
 #: src/celengine/image.cpp:591
 msgid "Error: "
-msgstr "Klaida:"
+msgstr "Klaida: "
 
 #: src/celengine/image.cpp:591
 msgid " is not a PNG file.\n"
-msgstr "tai ne PNG rinkmena.\n"
+msgstr " tai ne PNG failas.\n"
 
 #: src/celengine/image.cpp:618
 msgid "Error reading PNG image file "
-msgstr "Klaida skaitant PNG atvaizdo rinkmeną"
+msgstr "Klaida skaitant PNG atvaizdo failą "
 
 #: src/celengine/meshmanager.cpp:85
 msgid "Loading model: "
-msgstr "Modelio krovimas:"
+msgstr "Įkeliamas modelis: "
 
 #: src/celengine/meshmanager.cpp:163
 msgid "   Model statistics: "
-msgstr "Modelio statistika:"
+msgstr "  Modelio statistika: "
 
 #: src/celengine/meshmanager.cpp:164
 msgid " vertices, "
@@ -106,7 +105,7 @@ msgstr " primityvai, "
 
 #: src/celengine/meshmanager.cpp:166
 msgid " materials "
-msgstr " medžiagos"
+msgstr " medžiagos "
 
 #: src/celengine/meshmanager.cpp:167
 msgid " unique)\n"
@@ -126,7 +125,7 @@ msgstr "Padrikasis spiečius"
 
 #: src/celengine/solarsys.cpp:95
 msgid "Error in .ssc file (line "
-msgstr "Klaida .ssc rinkmenoje (eilutė  "
+msgstr "Klaida .ssc faile (eilutė  "
 
 #: src/celengine/solarsys.cpp:1202 src/celengine/solarsys.cpp:1269
 msgid "parent body '"
@@ -142,7 +141,7 @@ msgstr "' nerasta."
 
 #: src/celengine/solarsys.cpp:1213
 msgid "warning duplicate definition of "
-msgstr "Įspėjimas, rasta vienodumų iš"
+msgstr "Įspėjimas, besidubliuojantis apibūdinimas objekto "
 
 #: src/celengine/solarsys.cpp:1249
 msgid "bad alternate surface"
@@ -178,11 +177,11 @@ msgstr "žvaigždžių dvejetainėje bazėje yra\n"
 
 #: src/celengine/stardb.cpp:740
 msgid "Total star count: "
-msgstr "Viso suskaičiuota žvaigždžių:"
+msgstr "Viso žvaigždžių: "
 
 #: src/celengine/stardb.cpp:774
 msgid "Error in .stc file (line "
-msgstr "Klaida .stc rinkmenoje (eilutėje  "
+msgstr "Klaida .stc faile (eilutėje  "
 
 #: src/celengine/stardb.cpp:811
 msgid "Invalid star: bad spectral type.\n"
@@ -258,7 +257,7 @@ msgstr "Klaida pakraunant ARB vertex programą:"
 
 #: src/celengine/vertexprog.cpp:204
 msgid ", line "
-msgstr ", eilutė"
+msgstr ", eilutė "
 
 #: src/celengine/vertexprog.cpp:216
 msgid "Initializing NV vertex programs . . .\n"
@@ -278,7 +277,7 @@ msgstr "Visos ARB programos pakrautos sėkmingai.\n"
 
 #: src/celestia/celestiacore.cpp:437
 msgid "Error reading favorites file."
-msgstr "Klaida nuskaitant mėgiamiausių rinkmeną."
+msgstr "Klaida nuskaitant mėgiamiausių failą."
 
 #: src/celestia/celestiacore.cpp:458
 msgid "Failed to create a directory for favorites file "
@@ -286,17 +285,17 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:555
 msgid "Orientation: "
-msgstr "Orientacija:"
+msgstr "Orientacija: "
 
 #: src/celestia/celestiacore.cpp:602 src/celestia/celestiacore.cpp:604
 #: src/celestia/gtk/actions.cpp:1029
 msgid "Error opening script file."
-msgstr "Klaida atidarant scenarijaus rinkmeną."
+msgstr "Klaida atveriant scenarijaus failą."
 
 #: src/celestia/celestiacore.cpp:635
 #, c-format
 msgid "Error opening script '%s'"
-msgstr "Klaida atidarant scenarijų '%s'"
+msgstr "Klaida atveriant scenarijų '%s'"
 
 #: src/celestia/celestiacore.cpp:653
 msgid "Unknown error opening script"
@@ -308,7 +307,7 @@ msgstr "Scenarijaus coroutine iniciacijos nepavyko"
 
 #: src/celestia/celestiacore.cpp:681 src/celestia/celestiacore.cpp:683
 msgid "Invalid filetype"
-msgstr "Netinkamas rinkmenos tipas"
+msgstr "Netinkamas failo tipas"
 
 #: src/celestia/celestiacore.cpp:1028 src/celestia/celestiacore.cpp:1826
 #: src/celestia/celestiacore.cpp:1844 src/celestia/celestiacore.cpp:2085
@@ -412,7 +411,7 @@ msgstr "Auto-ryškis išjungta"
 #: src/celestia/res/resource_strings.cpp:220
 #: src/celestia/res/resource_strings.cpp:226
 msgid "Cancel"
-msgstr "Atšaukti"
+msgstr "Atsisakyti"
 
 #: src/celestia/celestiacore.cpp:1691
 msgid "Time and script are paused"
@@ -517,7 +516,7 @@ msgstr "Ekspozicija"
 
 #: src/celestia/celestiacore.cpp:2570
 msgid "GL error: "
-msgstr "GL klaida:"
+msgstr "GL klaida: "
 
 #: src/celestia/celestiacore.cpp:2670
 msgid "View too small to be split"
@@ -554,9 +553,8 @@ msgid "km"
 msgstr "km"
 
 #: src/celestia/celestiacore.cpp:2943
-#, fuzzy
 msgid "m"
-msgstr "km"
+msgstr ""
 
 #: src/celestia/celestiacore.cpp:2954
 msgid " days"
@@ -598,7 +596,7 @@ msgstr "Dec: "
 #: src/celestia/celestiacore.cpp:3269 src/celestia/celestiacore.cpp:3370
 #: src/celestia/kde/selectionpopup.cpp:88
 msgid "Distance: "
-msgstr "Atstumas:"
+msgstr "Atstumas: "
 
 #: src/celestia/celestiacore.cpp:3169
 msgid "Star system barycenter\n"
@@ -619,7 +617,7 @@ msgstr "x Saulė"
 
 #: src/celestia/celestiacore.cpp:3180 src/celestia/kde/selectionpopup.cpp:98
 msgid "Class: "
-msgstr "Klasė:"
+msgstr "Klasė: "
 
 #: src/celestia/celestiacore.cpp:3182
 msgid "Neutron star"
@@ -631,25 +629,24 @@ msgstr "Juodoji bedugnė"
 
 #: src/celestia/celestiacore.cpp:3194
 msgid "Surface temp: "
-msgstr "Paviršiaus temperatūra:"
+msgstr "Paviršiaus temp.: "
 
 #: src/celestia/celestiacore.cpp:3197 src/celestia/celestiacore.cpp:3246
 #: src/celestia/celestiacore.cpp:3279 src/celestia/kde/selectionpopup.cpp:106
 msgid "Radius: "
-msgstr "Spindulys:"
+msgstr "Skersmuo: "
 
 #: src/celestia/celestiacore.cpp:3200 src/celestia/kde/selectionpopup.cpp:107
 msgid "Rsun"
 msgstr "Rsun"
 
 #: src/celestia/celestiacore.cpp:3201 src/celestia/celestiacore.cpp:3205
-#, fuzzy
 msgid " km"
-msgstr "km"
+msgstr " km"
 
 #: src/celestia/celestiacore.cpp:3210 src/celestia/celestiacore.cpp:3331
 msgid "Rotation period: "
-msgstr "Apsisukimo periodas:"
+msgstr "Apsisukimo periodas: "
 
 #: src/celestia/celestiacore.cpp:3224
 msgid "Planetary companions present\n"
@@ -657,7 +654,7 @@ msgstr "Dabartiniai planetų palydovai\n"
 
 #: src/celestia/celestiacore.cpp:3242
 msgid "Distance from center: "
-msgstr "Atstumas nuo centro:"
+msgstr "Atstumas nuo centro: "
 
 #: src/celestia/celestiacore.cpp:3323
 #, c-format
@@ -666,7 +663,7 @@ msgstr "Fazės kampas: %.1f%s\n"
 
 #: src/celestia/celestiacore.cpp:3347
 msgid "Temperature: "
-msgstr "Temperatūra:"
+msgstr "Temperatūra: "
 
 #: src/celestia/celestiacore.cpp:3359
 #, c-format
@@ -675,7 +672,7 @@ msgstr "Menamas ryšk: %.2f\n"
 
 #: src/celestia/celestiacore.cpp:3516
 msgid "  LT"
-msgstr "LT"
+msgstr ""
 
 #: src/celestia/celestiacore.cpp:3525
 msgid "Real time"
@@ -691,15 +688,15 @@ msgstr "Laikas sustabdytas"
 
 #: src/celestia/celestiacore.cpp:3536
 msgid " faster"
-msgstr "greičiau"
+msgstr " greičiau"
 
 #: src/celestia/celestiacore.cpp:3541
 msgid " slower"
-msgstr "lėčiau"
+msgstr " lėčiau"
 
 #: src/celestia/celestiacore.cpp:3547
 msgid " (Paused)"
-msgstr "(Sustabdyta)"
+msgstr " (Sustabdyta)"
 
 #: src/celestia/celestiacore.cpp:3565
 msgid "FPS: "
@@ -731,7 +728,7 @@ msgstr " šm/s"
 
 #: src/celestia/celestiacore.cpp:3596
 msgid "Travelling "
-msgstr "Keliaujama"
+msgstr "Keliaujama "
 
 #: src/celestia/celestiacore.cpp:3609
 msgid "Track "
@@ -774,13 +771,14 @@ msgid " fps"
 msgstr "fps"
 
 #: src/celestia/celestiacore.cpp:3950 src/celestia/kde/videocapturedlg.cpp:283
+#, fuzzy
 msgid "  Recording"
-msgstr "Įrašinėjama"
+msgstr " Įrašymas"
 
 #: src/celestia/celestiacore.cpp:3952 src/celestia/kde/videocapturedlg.cpp:66
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Paused"
-msgstr "Sustabdyta"
+msgstr " Sustabdyta"
 
 #: src/celestia/celestiacore.cpp:3971
 msgid "F11 Start/Pause    F12 Stop"
@@ -796,15 +794,15 @@ msgstr "Įkeliamas saulės sistemos katalogas:"
 
 #: src/celestia/celestiacore.cpp:4090
 msgid "Loading "
-msgstr "Įkeliama"
+msgstr "Įkeliama "
 
 #: src/celestia/celestiacore.cpp:4125
 msgid "License file 'License.txt' is missing!"
-msgstr "Prarasta 'License.txt' rinkmena!"
+msgstr "Nėra 'License.txt' failo!"
 
 #: src/celestia/celestiacore.cpp:4146
 msgid "Error reading configuration file."
-msgstr "Klaida nuskaitant konfigūracijos rinkmeną."
+msgstr "Klaida nuskaitant konfigūracijos failą."
 
 #: src/celestia/celestiacore.cpp:4157
 msgid "Initialization of SPICE library failed."
@@ -816,19 +814,19 @@ msgstr "Neįmanoma nuskaityti žvaigždžių duomenų bazės."
 
 #: src/celestia/celestiacore.cpp:4226
 msgid "Error opening deepsky catalog file."
-msgstr "Klaida atidarant gilaus dangaus katalogo rinkmeną."
+msgstr "Klaida atveriant gilaus dangaus katalogo failą."
 
 #: src/celestia/celestiacore.cpp:4278
 msgid "Error opening solar system catalog.\n"
-msgstr "Klaida atidarant saulės sistemos katalogo bylą.\n"
+msgstr "Klaida atveriant saulės sistemos katalogą.\n"
 
 #: src/celestia/celestiacore.cpp:4311
 msgid "Error opening asterisms file."
-msgstr "Klaida atidarant asterisms rinkmeną."
+msgstr "Klaida atveriant asterisms failą."
 
 #: src/celestia/celestiacore.cpp:4326
 msgid "Error opening constellation boundaries files."
-msgstr "Klaida atidarant žvaigždynų rinkmeną."
+msgstr "Klaida atveriant žvaigždynų failą."
 
 #: src/celestia/celestiacore.cpp:4393
 msgid "render path: "
@@ -852,19 +850,19 @@ msgstr "Pakrautas cross rodiklis"
 
 #: src/celestia/celestiacore.cpp:4494 src/celestia/celestiacore.cpp:4516
 msgid "Error opening "
-msgstr "Klaida atidarant"
+msgstr "Klaida atveriant"
 
 #: src/celestia/celestiacore.cpp:4501
 msgid "Error reading star names file\n"
-msgstr "Klaida nuskaitant žvaigždžių pavadinimų rinkmeną\n"
+msgstr "Klaida nuskaitant žvaigždžių pavadinimų failą\n"
 
 #: src/celestia/celestiacore.cpp:4524
 msgid "Error reading stars file\n"
-msgstr "Klaida nuskaitant žvaigždžių rinkmeną\n"
+msgstr "Klaida nuskaitant žvaigždžių failą\n"
 
 #: src/celestia/celestiacore.cpp:4553
 msgid "Error opening star catalog "
-msgstr "Klaida atidarant žvaigždžių katalogą"
+msgstr "Klaida atveriant žvaigždžių katalogą "
 
 #: src/celestia/celestiacore.cpp:4838
 msgid "Invalid URL"
@@ -873,7 +871,7 @@ msgstr ""
 #: src/celestia/oggtheoracapture.cpp:162
 #, c-format
 msgid "Error in creating ogg file %s for capture.\n"
-msgstr "Klaida sukuriant ogg rinkmeną %s įrašymui.\n"
+msgstr "Klaida sukuriant ogg failą %s įrašymui.\n"
 
 #: src/celestia/oggtheoracapture.cpp:256 src/celestia/oggtheoracapture.cpp:276
 msgid "Internal Ogg library error."
@@ -900,7 +898,7 @@ msgstr "Nustatymai"
 #: src/celestia/winmain.cpp:629 src/celestia/gtk/actions.cpp:662
 #: src/celestia/kde/kdeapp.cpp:955
 msgid "Vendor: "
-msgstr "Gamintojas:"
+msgstr "Tiekėjas: "
 
 #: src/celestia/winmain.cpp:634 src/celestia/gtk/actions.cpp:667
 #: src/celestia/kde/kdeapp.cpp:960
@@ -910,11 +908,11 @@ msgstr "Plokštė:"
 #: src/celestia/winmain.cpp:639 src/celestia/gtk/actions.cpp:672
 #: src/celestia/kde/kdeapp.cpp:965
 msgid "Version: "
-msgstr "Versija:"
+msgstr "Versija: "
 
 #: src/celestia/winmain.cpp:649
 msgid "GLSL version: "
-msgstr "GLSL versija:"
+msgstr "GLSL versija: "
 
 #: src/celestia/winmain.cpp:660 src/celestia/kde/kdeapp.cpp:974
 msgid "Max simultaneous textures: "
@@ -1059,7 +1057,7 @@ msgstr "&Žymėti"
 
 #: src/celestia/winmain.cpp:3153
 msgid "Loading: "
-msgstr "Įkeliama:"
+msgstr "Įkeliama: "
 
 #: src/celestia/winmain.cpp:3327 src/celutil/util.cpp:73
 #: src/celutil/util.cpp:77
@@ -1186,30 +1184,27 @@ msgstr "Vietinis laikas"
 
 #: src/celestia/wintime.cpp:97
 msgid "Time Zone Name"
-msgstr "Laiko zonos pavadinimas"
+msgstr "Laiko juostos pavadinimas"
 
 #: src/celestia/wintime.cpp:98
 msgid "UTC Offset"
 msgstr "UTC kompensacija"
 
 #: src/celestia/gtk/actions.cpp:82
-#, fuzzy
 msgid "Enter cel:// URL"
-msgstr "Įveskite URL"
+msgstr "Įveskite cel:// URL"
 
 #: src/celestia/gtk/actions.cpp:109
-#, fuzzy
 msgid "Open Script."
-msgstr "&Atidaryti scenarijų..."
+msgstr "Atverti scenarijų."
 
 #: src/celestia/gtk/actions.cpp:124
-#, fuzzy
 msgid "Celestia Scripts"
-msgstr "Celestia valdymas"
+msgstr "Celestia scenarijai"
 
 #: src/celestia/gtk/actions.cpp:149
 msgid "Save Image to File"
-msgstr ""
+msgstr "Įrašyti paveikslėlį į failą"
 
 #: src/celestia/gtk/actions.cpp:157
 msgid "PNG and JPEG Images"
@@ -1225,7 +1220,7 @@ msgstr ""
 
 #: src/celestia/gtk/actions.cpp:213
 msgid "Ogg Files"
-msgstr ""
+msgstr "Ogg failai"
 
 #: src/celestia/gtk/actions.cpp:227
 msgid "Aspect Ratio:"
@@ -1265,7 +1260,6 @@ msgid "Select Object"
 msgstr "Pasirinkite objektą"
 
 #: src/celestia/gtk/actions.cpp:322
-#, fuzzy
 msgid "Object name"
 msgstr "Objekto pavadinimas"
 
@@ -1305,11 +1299,12 @@ msgid ""
 msgstr "Maksimalus tekstūros dydis:"
 
 #: src/celestia/gtk/actions.cpp:689
-#, fuzzy
 msgid ""
 "Supported Extensions:\n"
 "    "
-msgstr "Palaikomos plėtros:"
+msgstr ""
+"Palaikomi plėtiniai:\n"
+"    "
 
 #: src/celestia/gtk/actions.cpp:702
 #, fuzzy
@@ -1358,54 +1353,52 @@ msgid "', probably due to improper installation !\n"
 msgstr ""
 
 #: src/celestia/gtk/common.h:108
-#, fuzzy
 msgid "January"
-msgstr "Janas"
+msgstr "Sausis"
 
 #: src/celestia/gtk/common.h:109
 msgid "February"
-msgstr ""
+msgstr "Vasaris"
 
 #: src/celestia/gtk/common.h:110
-#, fuzzy
 msgid "March"
-msgstr "Ieškoti"
+msgstr "Kovas"
 
 #: src/celestia/gtk/common.h:111
 msgid "April"
-msgstr ""
+msgstr "Balandis"
 
 #: src/celestia/gtk/common.h:112 src/celestia/res/resource_strings.cpp:239
 msgid "May"
-msgstr "Geg"
+msgstr "Gegužė"
 
 #: src/celestia/gtk/common.h:113
 msgid "June"
-msgstr ""
+msgstr "Birželis"
 
 #: src/celestia/gtk/common.h:114
 msgid "July"
-msgstr ""
+msgstr "Liepa"
 
 #: src/celestia/gtk/common.h:115
 msgid "August"
-msgstr ""
+msgstr "Rugpjūtis"
 
 #: src/celestia/gtk/common.h:116
 msgid "September"
-msgstr ""
+msgstr "Rugsėjis"
 
 #: src/celestia/gtk/common.h:117
 msgid "October"
-msgstr ""
+msgstr "Spalis"
 
 #: src/celestia/gtk/common.h:118
 msgid "November"
-msgstr ""
+msgstr "Lapkritis"
 
 #: src/celestia/gtk/common.h:119
 msgid "December"
-msgstr ""
+msgstr "Gruodis"
 
 #: src/celestia/gtk/dialog-eclipse.cpp:53
 #: src/celestia/kde/eclipsefinderdlg.cpp:21 src/celestia/kde/kdeapp.cpp:507
@@ -1441,15 +1434,15 @@ msgid "End"
 msgstr "Pabaiga"
 
 #: src/celestia/gtk/dialog-eclipse.h:68
+#, fuzzy
 msgid "solar"
-msgstr ""
+msgstr "saulė"
 
 #: src/celestia/gtk/dialog-eclipse.h:69
 msgid "moon"
-msgstr ""
+msgstr "mėnulis"
 
 #: src/celestia/gtk/dialog-goto.cpp:38
-#, fuzzy
 msgid "Goto Object"
 msgstr "Aplankyti objektą"
 
@@ -1461,22 +1454,18 @@ msgid "Go To"
 msgstr "Aplankyti"
 
 #: src/celestia/gtk/dialog-goto.cpp:90
-#, fuzzy
 msgid "Object name:"
-msgstr "Objekto pavadinimas"
+msgstr "Objekto pavadinimas:"
 
 #: src/celestia/gtk/dialog-goto.cpp:99
-#, fuzzy
 msgid "Latitude:"
 msgstr "Platuma:"
 
 #: src/celestia/gtk/dialog-goto.cpp:107
-#, fuzzy
 msgid "Longitude:"
 msgstr "Ilguma:"
 
 #: src/celestia/gtk/dialog-goto.cpp:116
-#, fuzzy
 msgid "Distance:"
 msgstr "Atstumas:"
 
@@ -1503,7 +1492,6 @@ msgid "Orbits"
 msgstr "Orbitos"
 
 #: src/celestia/gtk/dialog-options.cpp:63
-#, fuzzy
 msgid "Label"
 msgstr "Pavadinimai"
 
@@ -1549,9 +1537,8 @@ msgid "High"
 msgstr "Aukšta"
 
 #: src/celestia/gtk/dialog-options.cpp:204
-#, fuzzy
 msgid "Error"
-msgstr "Klaida:"
+msgstr "Klaida"
 
 #: src/celestia/gtk/dialog-options.h:25 src/celestia/gtk/dialog-options.h:33
 #: src/celestia/kde/kdepreferencesdialog.cpp:282
@@ -1577,9 +1564,8 @@ msgid "Solar System Browser"
 msgstr "Saulės sistemos naršyklė"
 
 #: src/celestia/gtk/dialog-solar.cpp:89 src/celestia/gtk/dialog-star.cpp:144
-#, fuzzy
 msgid "Center"
-msgstr "&Centre"
+msgstr "Centruoti"
 
 #: src/celestia/gtk/dialog-solar.cpp:135
 msgid "Unexpected selection type selected."
@@ -1606,16 +1592,15 @@ msgid "-"
 msgstr "-"
 
 #: src/celestia/gtk/dialog-solar.cpp:218
-#, fuzzy, c-format
+#, c-format
 msgid "%s Star"
-msgstr "Pradžia"
+msgstr "%s Žvaigždė"
 
 #: src/celestia/gtk/dialog-solar.cpp:237
 msgid "No Planetary Bodies"
 msgstr ""
 
 #: src/celestia/gtk/dialog-star.cpp:49
-#, fuzzy
 msgid "Star System Browser"
 msgstr "Saulės sistemos naršyklė"
 
@@ -1634,7 +1619,6 @@ msgid "Refresh"
 msgstr "Atnaujinti"
 
 #: src/celestia/gtk/dialog-star.h:45
-#, fuzzy
 msgid "Distance(LY)"
 msgstr "Atstumas (šm)"
 
@@ -1676,12 +1660,10 @@ msgid "Local"
 msgstr "Vietinis laikas"
 
 #: src/celestia/gtk/dialog-time.cpp:43
-#, fuzzy
 msgid "Set Time"
-msgstr "Nustatyti laiką..."
+msgstr "Nustatyti laiką"
 
 #: src/celestia/gtk/dialog-time.cpp:48
-#, fuzzy
 msgid "Set Current Time"
 msgstr "Nustatyti dabartinį laiką"
 
@@ -1691,40 +1673,35 @@ msgstr "Laikas"
 
 #: src/celestia/gtk/dialog-time.cpp:72
 msgid "Hour"
-msgstr ""
+msgstr "Valanda"
 
 #: src/celestia/gtk/dialog-time.cpp:72 src/celestia/gtk/dialog-time.cpp:73
 msgid ":"
 msgstr ""
 
 #: src/celestia/gtk/dialog-time.cpp:73
-#, fuzzy
 msgid "Minute"
-msgstr "minutės"
+msgstr "Minutė"
 
 #: src/celestia/gtk/dialog-time.cpp:74
-#, fuzzy
 msgid "Second"
-msgstr " sekundės"
+msgstr "Sekundė"
 
 #: src/celestia/gtk/dialog-time.cpp:74
-#, fuzzy
 msgid "  "
-msgstr "LT"
+msgstr ""
 
 #: src/celestia/gtk/dialog-time.cpp:77
-#, fuzzy
 msgid "Timezone"
-msgstr "Laiko zona:"
+msgstr "Laiko juosta"
 
 #: src/celestia/gtk/dialog-time.cpp:89
 msgid "Month"
-msgstr ""
+msgstr "Mėnuo"
 
 #: src/celestia/gtk/dialog-time.cpp:95
-#, fuzzy
 msgid "Day"
-msgstr "Geg"
+msgstr "Diena"
 
 #: src/celestia/gtk/dialog-time.cpp:95
 msgid ","
@@ -1732,30 +1709,28 @@ msgstr ""
 
 #: src/celestia/gtk/dialog-time.cpp:96
 msgid "Year"
-msgstr ""
+msgstr "Metai"
 
 #: src/celestia/gtk/dialog-time.cpp:96
 msgid " "
 msgstr ""
 
 #: src/celestia/gtk/dialog-tour.cpp:35
-#, fuzzy
 msgid "Tour Guide..."
-msgstr "Kelionių g&idas..."
+msgstr "Kelionė su gidu..."
 
 #: src/celestia/gtk/dialog-tour.cpp:45
 #: src/celestia/res/resource_strings.cpp:131
 msgid "Select your destination:"
-msgstr "Pasirinkite savo paskirties vietą:"
+msgstr "Pasirinkit kelionės tikslą:"
 
 #: src/celestia/gtk/main.cpp:86
-#, fuzzy
 msgid "Alternate configuration file"
-msgstr "Naudoti alternatyvią konfiguracijos rinkmeną"
+msgstr "Alternatyvus konfigūracijos failas"
 
 #: src/celestia/gtk/main.cpp:86
 msgid "file"
-msgstr ""
+msgstr "failas"
 
 #: src/celestia/gtk/main.cpp:87
 #, fuzzy
@@ -1772,9 +1747,8 @@ msgid "Additional \"extras\" directory"
 msgstr "Naudoti kaip papildomą \"extras\" aplanką"
 
 #: src/celestia/gtk/main.cpp:89
-#, fuzzy
 msgid "Start full-screen"
-msgstr "Pradėti per visą ekraną"
+msgstr "Pradėti visame ekrane"
 
 #: src/celestia/gtk/main.cpp:90 src/celestia/kde/kdemain.cpp:36
 msgid "Disable splash screen"
@@ -1825,14 +1799,12 @@ msgstr ""
 
 #: src/celestia/gtk/menu-context.cpp:64 src/celestia/gtk/menu-context.cpp:96
 #: src/celestia/gtk/menu-context.cpp:118
-#, fuzzy
 msgid "_Goto"
-msgstr "&Aplankyti"
+msgstr "_Aplankyti"
 
 #: src/celestia/gtk/menu-context.cpp:65 src/celestia/gtk/menu-context.cpp:119
-#, fuzzy
 msgid "_Follow"
-msgstr "Sekti"
+msgstr "_Sekti"
 
 #: src/celestia/gtk/menu-context.cpp:66
 #, fuzzy
@@ -1840,9 +1812,8 @@ msgid "S_ync Orbit"
 msgstr "Sinchronizuoti orbitą"
 
 #: src/celestia/gtk/menu-context.cpp:74
-#, fuzzy
 msgid "_Satellites"
-msgstr "&Palydovai"
+msgstr "_Palydovai"
 
 #: src/celestia/gtk/menu-context.cpp:83
 #, fuzzy
@@ -1871,22 +1842,21 @@ msgstr "Normalus"
 #: src/celestia/gtk/settings-file.cpp:41
 #, fuzzy, c-format
 msgid "Error reading '%s': %s.\n"
-msgstr "Klaida nuskaitant žvaigždžių rinkmeną\n"
+msgstr "Klaida nuskaitant žvaigždžių failą\n"
 
 #: src/celestia/gtk/settings-file.cpp:303
-#, fuzzy, c-format
+#, c-format
 msgid "Error writing '%s'.\n"
-msgstr "Klaida atidarant scenarijų '%s'"
+msgstr "Klaida įrašant '%s'.\n"
 
 #: src/celestia/gtk/splash.cpp:128
-#, fuzzy, c-format
+#, c-format
 msgid "Version "
-msgstr "Versija:"
+msgstr "Versija "
 
 #: src/celestia/gtk/ui.h:25
-#, fuzzy
 msgid "_File"
-msgstr "&Failas"
+msgstr "_Failas"
 
 #: src/celestia/gtk/ui.h:26
 #, fuzzy
@@ -1899,9 +1869,8 @@ msgid "Open UR_L"
 msgstr "OpenGL"
 
 #: src/celestia/gtk/ui.h:28
-#, fuzzy
 msgid "_Open Script..."
-msgstr "&Atidaryti scenarijų..."
+msgstr "Atverti _scenarijų..."
 
 #: src/celestia/gtk/ui.h:29
 #, fuzzy
@@ -1914,24 +1883,20 @@ msgid "Capture _Movie..."
 msgstr "Sukurti &filmą...\tShift+F10"
 
 #: src/celestia/gtk/ui.h:31
-#, fuzzy
 msgid "_Quit"
-msgstr "Kitas"
+msgstr "_Baigti"
 
 #: src/celestia/gtk/ui.h:33
-#, fuzzy
 msgid "_Navigation"
-msgstr "&Navigacija"
+msgstr "Ž_valgymas"
 
 #: src/celestia/gtk/ui.h:34
-#, fuzzy
 msgid "Select _Sol"
-msgstr "Pasirinkti &Saulę\tH"
+msgstr "Pasirinkti _Saulę"
 
 #: src/celestia/gtk/ui.h:35
-#, fuzzy
 msgid "Tour G_uide..."
-msgstr "Kelionių g&idas..."
+msgstr "Kelionė su _gidu..."
 
 #: src/celestia/gtk/ui.h:36
 #, fuzzy
@@ -1939,24 +1904,20 @@ msgid "Search for _Object..."
 msgstr "Pasirinkti &objektą..."
 
 #: src/celestia/gtk/ui.h:37
-#, fuzzy
 msgid "Go to Object..."
 msgstr "Aplankyti objektą..."
 
 #: src/celestia/gtk/ui.h:38
-#, fuzzy
 msgid "_Center Selection"
-msgstr "&Pasirinkimą į centrą\tC"
+msgstr "_Pasirinktą į centrą"
 
 #: src/celestia/gtk/ui.h:39
-#, fuzzy
 msgid "_Go to Selection"
-msgstr "&Aplankyti pasirinkimą\tG"
+msgstr "_Aplankyti pasirinktą"
 
 #: src/celestia/gtk/ui.h:40
-#, fuzzy
 msgid "_Follow Selection"
-msgstr "&Sekti pasirinkimą\tF"
+msgstr "_Sekti pasirinktą"
 
 #: src/celestia/gtk/ui.h:41
 #, fuzzy
@@ -1969,14 +1930,12 @@ msgid "_Track Selection"
 msgstr "&Tako pasirinkimas\tT"
 
 #: src/celestia/gtk/ui.h:43
-#, fuzzy
 msgid "Solar System _Browser..."
-msgstr "Saulės sistemos &naršyklė..."
+msgstr "Saulės sistemos _naršyklė..."
 
 #: src/celestia/gtk/ui.h:44
-#, fuzzy
 msgid "Star B_rowser..."
-msgstr "Žvaigždžių n&aršyklė..."
+msgstr "Žvaigždžių _naršyklė..."
 
 #: src/celestia/gtk/ui.h:45
 #, fuzzy
@@ -1984,19 +1943,16 @@ msgid "_Eclipse Finder..."
 msgstr "Užtemimų paiška"
 
 #: src/celestia/gtk/ui.h:47
-#, fuzzy
 msgid "_Time"
-msgstr "Laikas"
+msgstr "_Laikas"
 
 #: src/celestia/gtk/ui.h:48
-#, fuzzy
 msgid "2x _Faster"
-msgstr "10x &greičiau\tL"
+msgstr "2x _greičiau"
 
 #: src/celestia/gtk/ui.h:49
-#, fuzzy
 msgid "2x _Slower"
-msgstr "10x &lėčiau\tK"
+msgstr "2x _lėčiau"
 
 #: src/celestia/gtk/ui.h:50
 #, fuzzy
@@ -2004,9 +1960,8 @@ msgid "Free_ze"
 msgstr "Sustab&dyti\tSpase"
 
 #: src/celestia/gtk/ui.h:51
-#, fuzzy
 msgid "_Real Time"
-msgstr "Realus laikas"
+msgstr "_Realus laikas"
 
 #: src/celestia/gtk/ui.h:52
 #, fuzzy
@@ -2014,24 +1969,20 @@ msgid "Re_verse Time"
 msgstr "Laiko reversas"
 
 #: src/celestia/gtk/ui.h:53
-#, fuzzy
 msgid "Set _Time..."
-msgstr "Nustatyti laiką..."
+msgstr "Nustatyti _laiką..."
 
 #: src/celestia/gtk/ui.h:56
-#, fuzzy
 msgid "_Options"
-msgstr "Funkcijos"
+msgstr "_Nustatymai"
 
 #: src/celestia/gtk/ui.h:57
-#, fuzzy
 msgid "View _Options..."
-msgstr "Rodymo parinktys"
+msgstr "_Rodymo nustatymai..."
 
 #: src/celestia/gtk/ui.h:58
-#, fuzzy
 msgid "Show Objects"
-msgstr "Rodyti orbitas"
+msgstr "Rodyti objektus"
 
 #: src/celestia/gtk/ui.h:59
 #, fuzzy
@@ -2039,18 +1990,16 @@ msgid "Show Grids"
 msgstr "Rodyti orbitas"
 
 #: src/celestia/gtk/ui.h:60
-#, fuzzy
 msgid "Show Labels"
-msgstr "Rodyti žvaigždžių pavadinimus"
+msgstr "Rodyti pavadinimus"
 
 #: src/celestia/gtk/ui.h:61 src/celestia/kde/kdeapp.cpp:581
 msgid "Show Orbits"
 msgstr "Rodyti orbitas"
 
 #: src/celestia/gtk/ui.h:64
-#, fuzzy
 msgid "Star St_yle"
-msgstr "Žvaigždžių st&iliai"
+msgstr "Žvaigždžių _stilius"
 
 #: src/celestia/gtk/ui.h:66
 #, fuzzy
@@ -2068,9 +2017,8 @@ msgid "_Fewer Stars Visible"
 msgstr "Mažiau žvaigždžių\t["
 
 #: src/celestia/gtk/ui.h:72
-#, fuzzy
 msgid "_Window"
-msgstr "Vindhokas"
+msgstr "_Langas"
 
 #: src/celestia/gtk/ui.h:73
 #, fuzzy
@@ -2102,19 +2050,16 @@ msgid "_Single View"
 msgstr "Vientisas vaizdas"
 
 #: src/celestia/gtk/ui.h:83
-#, fuzzy
 msgid "_Help"
-msgstr "&Pagalba"
+msgstr "_Pagalba"
 
 #: src/celestia/gtk/ui.h:84
-#, fuzzy
 msgid "Run _Demo"
-msgstr "Leisti &Demo"
+msgstr "Rodyti _Demo"
 
 #: src/celestia/gtk/ui.h:85
-#, fuzzy
 msgid "_Controls"
-msgstr "&Valdymas"
+msgstr "_Valdymas"
 
 #: src/celestia/gtk/ui.h:87 src/celestia/gtk/ui.h:89
 #, fuzzy
@@ -2123,31 +2068,28 @@ msgstr "OpenGL info"
 
 #: src/celestia/gtk/ui.h:91
 msgid "_About"
-msgstr ""
+msgstr "_Apie"
 
 #: src/celestia/gtk/ui.h:97
-#, fuzzy
 msgid "Show _Local Time"
-msgstr "Rodyti vietinį laiką"
+msgstr "Rodyti _vietinį laiką"
 
 #: src/celestia/gtk/ui.h:99 src/celestia/gtk/ui.h:101
-#, fuzzy
 msgid "_Full Screen"
-msgstr "Pilnas ekranas"
+msgstr "_Visame ekrane"
 
 #: src/celestia/gtk/ui.h:103
 msgid "_Menu Bar"
-msgstr ""
+msgstr "_Meniu juosta"
 
 #: src/celestia/gtk/ui.h:104
-#, fuzzy
 msgid "Show _Frames"
-msgstr "Rodyti &rėmelius"
+msgstr ""
 
 #: src/celestia/gtk/ui.h:105
 #, fuzzy
 msgid "Active Frame Highlighted"
-msgstr "Matomas aktyvus rėmelis"
+msgstr ""
 
 #: src/celestia/gtk/ui.h:106
 #, fuzzy
@@ -2157,32 +2099,27 @@ msgstr "Sinchronizuoti laiką"
 #: src/celestia/gtk/ui.h:107
 #, fuzzy
 msgid "_Limit Frame Rate"
-msgstr "Rėmelio norma:"
+msgstr ""
 
 #: src/celestia/gtk/ui.h:113 src/celestia/gtk/ui.h:125
-#, fuzzy
 msgid "_None"
-msgstr "Nėra"
+msgstr "_Nėra"
 
 #: src/celestia/gtk/ui.h:114
-#, fuzzy
 msgid "_Terse"
-msgstr "Glaustas"
+msgstr "_Glaustai"
 
 #: src/celestia/gtk/ui.h:115
-#, fuzzy
 msgid "_Verbose"
-msgstr "Pilnas"
+msgstr "_Išsamiai"
 
 #: src/celestia/gtk/ui.h:119
-#, fuzzy
 msgid "_Fuzzy Points"
-msgstr "&Išplaukę taškai"
+msgstr "_Išplaukę taškai"
 
 #: src/celestia/gtk/ui.h:120
-#, fuzzy
 msgid "_Points"
-msgstr "&Taškai"
+msgstr "_Taškai"
 
 #: src/celestia/gtk/ui.h:121
 #, fuzzy
@@ -2199,9 +2136,8 @@ msgid "_Medium"
 msgstr "Vidutinė"
 
 #: src/celestia/gtk/ui.h:133
-#, fuzzy
 msgid "Antialiasing"
-msgstr "Išlyginimas\tCtrl+X"
+msgstr "Grafinis glotninimas"
 
 #: src/celestia/gtk/ui.h:134 src/celestia/kde/kdepreferencesdialog.cpp:98
 #: src/celestia/res/resource_strings.cpp:156
@@ -2789,11 +2725,11 @@ msgstr "Įveskite URL"
 
 #: src/celestia/kde/kdeapp.cpp:1592
 msgid "Object: "
-msgstr "Objektas:"
+msgstr "Objektas: "
 
 #: src/celestia/kde/kdeapp.cpp:1597
 msgid "Longitude: "
-msgstr "Ilguma:"
+msgstr "Ilguma: "
 
 #: src/celestia/kde/kdeapp.cpp:1603
 msgid "East"
@@ -2805,7 +2741,7 @@ msgstr "Vakarai"
 
 #: src/celestia/kde/kdeapp.cpp:1606
 msgid "Latitude: "
-msgstr "Platuma:"
+msgstr "Platuma: "
 
 #: src/celestia/kde/kdeapp.cpp:1612
 msgid "North"
@@ -2817,7 +2753,7 @@ msgstr "Pietūs"
 
 #: src/celestia/kde/kdeapp.cpp:1615
 msgid "Altitude: "
-msgstr "Aukštis:"
+msgstr "Aukštis: "
 
 #: src/celestia/kde/kdeapp.cpp:1690
 msgid "Celestia encountered an error while processing your script"
@@ -2830,7 +2766,7 @@ msgstr "Celestia"
 
 #: src/celestia/kde/kdemain.cpp:31
 msgid "Use alternate configuration file"
-msgstr "Naudoti alternatyvią konfiguracijos rinkmeną"
+msgstr "Naudoti alternatyvų konfigūracijos failą"
 
 #: src/celestia/kde/kdemain.cpp:32
 msgid "Use alternate installation directory"
@@ -2842,7 +2778,7 @@ msgstr "Naudoti kaip papildomą \"extras\" aplanką"
 
 #: src/celestia/kde/kdemain.cpp:34
 msgid "Start fullscreen"
-msgstr "Pradėti per visą ekraną"
+msgstr "Pradėti visame ekrane"
 
 #: src/celestia/kde/kdemain.cpp:37
 msgid "Start and go to url"
@@ -2879,7 +2815,7 @@ msgstr "Oorbitų linijas"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:134
 msgid "Equatorial Grid"
-msgstr "Pusiaujo tinklas"
+msgstr "Pusiaujo tinklelis"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:161
 #: src/celestia/res/resource_strings.cpp:171
@@ -2905,7 +2841,7 @@ msgstr "Ribinis ryškis"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:280
 msgid "Level: "
-msgstr "Lygiai:"
+msgstr "Lygis: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:289
 msgid "Textures"
@@ -2913,7 +2849,7 @@ msgstr "Tekstūros"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:290
 msgid "Resolution: "
-msgstr "Skyros:"
+msgstr "Raiška: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:299
 msgid "Automatic FOV"
@@ -2969,7 +2905,7 @@ msgstr "Kiti"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:354
 msgid "Minimum Feature Size"
-msgstr "Mažiausias elemento matmuo"
+msgstr ""
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:368
 msgid "Date/Time"
@@ -2978,12 +2914,12 @@ msgstr "Data/Laikas"
 #: src/celestia/kde/kdepreferencesdialog.cpp:374
 #: src/celestia/kde/kdepreferencesdialog.cpp:395
 msgid "Timezone: "
-msgstr "Laiko zona:"
+msgstr "Laiko juosta: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:383
 #: src/celestia/res/resource_strings.cpp:101
 msgid "Format: "
-msgstr "Formatas:"
+msgstr "Formatas: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:385
 msgid "Local Format"
@@ -3020,7 +2956,7 @@ msgstr "Įtraukti šviesos kelionės laiką"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:486
 msgid "Ignore Light Travel Time "
-msgstr "Ignoruoti šviesos kelionės laiką"
+msgstr "Ignoruoti šviesos kelionės laiką "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:493
 msgid "OpenGL"
@@ -3028,7 +2964,7 @@ msgstr "OpenGL"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:548
 msgid "Key Bindings"
-msgstr "Raktinės jungtys"
+msgstr "Klavišų susiejimai"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:788
 msgid "<b>Unextended OpenGL 1.1</b>"
@@ -3081,7 +3017,7 @@ msgstr "<b>OpenGL 2.0 Shading kalba</b>"
 #: src/celestia/kde/kdeuniquecelestia.cpp:45
 msgid ""
 "File %1 does not exist, using default configuration file %2/celestia.cfg"
-msgstr "Rinkmena %1 neegzistuoja, naudojama rinkmena %2/celestia.cfg"
+msgstr "Failas %1 neegzistuoja, naudojamas failas %2/celestia.cfg"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:55
 msgid "Directory %1 does not exist, using default %2"
@@ -3111,7 +3047,7 @@ msgstr "&Parinkti"
 #: src/celestia/res/resource_strings.cpp:115
 #: src/celestia/res/resource_strings.cpp:122
 msgid "&Center"
-msgstr "&Centre"
+msgstr "&Centruoti"
 
 #: src/celestia/kde/selectionpopup.cpp:304
 msgid "S&ynch Orbit"
@@ -3206,7 +3142,7 @@ msgstr "Dabartinis aukštis: %1 x %2"
 
 #: src/celestia/kde/videocapturedlg.cpp:233
 msgid "You must specify a file name."
-msgstr "Turite parinkti rinkmenos pavadinimą"
+msgstr "Turite parinkti failo pavadinimą."
 
 #: data/data.cpp:1
 msgid "Mercury"
@@ -3658,7 +3594,7 @@ msgstr "Doha"
 
 #: data/data.cpp:120
 msgid "Douglas"
-msgstr "Doglasas"
+msgstr ""
 
 #: data/data.cpp:121
 msgid "Dublin"
@@ -4010,7 +3946,7 @@ msgstr "Panama"
 
 #: data/data.cpp:209
 msgid "Papeete"
-msgstr "Papytė"
+msgstr ""
 
 #: data/data.cpp:210
 msgid "Paramaribo"
@@ -4306,7 +4242,7 @@ msgstr "Varšuva"
 
 #: data/data.cpp:284
 msgid "Washington D.C."
-msgstr "Vašingtonas"
+msgstr "Vašingtonas D.C."
 
 #: data/data.cpp:285
 msgid "Wellington"
@@ -4354,7 +4290,7 @@ msgstr "Mažasis Magelano debesis"
 
 #: data/data.cpp:296
 msgid "LMC"
-msgstr "Didysis Magelano debesisi"
+msgstr "Didysis Magelano debesis"
 
 #: data/data.cpp:297
 msgid "Solar System Barycenter"
@@ -4390,7 +4326,7 @@ msgstr "I&šeiti"
 
 #: src/celestia/res/resource_strings.cpp:8
 msgid "&Navigation"
-msgstr "&Navigacija"
+msgstr "Ž&valgymas"
 
 #: src/celestia/res/resource_strings.cpp:9
 msgid "Select &Sol\tH"
@@ -4398,7 +4334,7 @@ msgstr "Pasirinkti &Saulę\tH"
 
 #: src/celestia/res/resource_strings.cpp:10
 msgid "Tour G&uide..."
-msgstr "Kelionių g&idas..."
+msgstr "Kelionė su &gidu..."
 
 #: src/celestia/res/resource_strings.cpp:11
 msgid "Select &Object..."
@@ -4414,7 +4350,7 @@ msgstr "&Pasirinkimą į centrą\tC"
 
 #: src/celestia/res/resource_strings.cpp:14
 msgid "&Go to Selection\tG"
-msgstr "&Aplankyti pasirinkimą\tG"
+msgstr "&Aplankyti pasirinktą\tG"
 
 #: src/celestia/res/resource_strings.cpp:15
 msgid "&Follow Selection\tF"
@@ -4474,7 +4410,7 @@ msgstr "Rodyti vietinį laiką"
 
 #: src/celestia/res/resource_strings.cpp:29
 msgid "&Render"
-msgstr "&Nustatymai"
+msgstr ""
 
 #: src/celestia/res/resource_strings.cpp:30
 msgid "Select Display Mode..."
@@ -4486,7 +4422,7 @@ msgstr "Per visą ekraną\tAlt+Enter"
 
 #: src/celestia/res/resource_strings.cpp:32
 msgid "View Options..."
-msgstr "Rodymo parinktys"
+msgstr "Rodymo nustatymai..."
 
 #: src/celestia/res/resource_strings.cpp:33
 msgid "Locations..."
@@ -4548,7 +4484,7 @@ msgstr "&Aukštas"
 
 #: src/celestia/res/resource_strings.cpp:49
 msgid "Antialiasing\tCtrl+X"
-msgstr "Išlyginimas\tCtrl+X"
+msgstr "Glotininimas\tCtrl+X"
 
 #: src/celestia/res/resource_strings.cpp:50
 msgid "&View"
@@ -4596,11 +4532,11 @@ msgstr "&Pagalba"
 
 #: src/celestia/res/resource_strings.cpp:61
 msgid "Run &Demo"
-msgstr "Leisti &Demo"
+msgstr "Rodyti &Demo"
 
 #: src/celestia/res/resource_strings.cpp:62
 msgid "User &Guide"
-msgstr "Vartotojo &gidas"
+msgstr "Naudotojo &gidas"
 
 #: src/celestia/res/resource_strings.cpp:63
 msgid "&Controls"
@@ -4642,9 +4578,8 @@ msgid "OK"
 msgstr "Gerai"
 
 #: src/celestia/res/resource_strings.cpp:70
-#, fuzzy
 msgid "Copyright (C) 2001-2020, Celestia Development Team"
-msgstr "Autorinės teisės (C) 2001-2008, Celestia programuotojų komanda"
+msgstr "Autorinės teisės (C) 2001-2020, Celestia kūrėjų komanda"
 
 #: src/celestia/res/resource_strings.cpp:71
 msgid "https://celestia.space"
@@ -4652,7 +4587,7 @@ msgstr ""
 
 #: src/celestia/res/resource_strings.cpp:72
 msgid "Celestia is free software and comes with absolutely no warranty."
-msgstr "Celestia yra nemokama programa ir neturi jokios garantijos."
+msgstr "Celestia yra laisva programa, autoriai nesuteikia jokios garantijos."
 
 #: src/celestia/res/resource_strings.cpp:73
 msgid "Authors"
@@ -4740,7 +4675,7 @@ msgstr "Nustatykite modeliavimo laiką"
 
 #: src/celestia/res/resource_strings.cpp:100
 msgid "Time Zone: "
-msgstr "Laiko zona:"
+msgstr "Laiko juosta:"
 
 #: src/celestia/res/resource_strings.cpp:103
 msgid "Set To Current Time"
@@ -4790,7 +4725,7 @@ msgstr "&Atnaujinti"
 
 #: src/celestia/res/resource_strings.cpp:128
 msgid "Tour Guide"
-msgstr "Kelionių gidas"
+msgstr "Kelionė su gidu"
 
 #: src/celestia/res/resource_strings.cpp:132
 msgid "Go to Object"
@@ -4943,7 +4878,7 @@ msgstr "Naujas pavadinimas"
 
 #: src/celestia/res/resource_strings.cpp:231
 msgid "Close"
-msgstr "Uždaryti"
+msgstr "Užverti"
 
 #: src/celestia/res/resource_strings.cpp:232
 msgid "From:"
@@ -4995,7 +4930,7 @@ msgstr "Lie"
 
 #: src/celestia/res/resource_strings.cpp:240
 msgid "Aug"
-msgstr "Rug"
+msgstr "Rugp"
 
 #: src/celestia/res/resource_strings.cpp:240
 msgid "Sep"
@@ -5013,15 +4948,6 @@ msgstr "Lap"
 msgid "Dec"
 msgstr "Gru"
 
-#, fuzzy
-#~ msgid "Copyright © 2001-2019 Celestia Development Team"
-#~ msgstr "Autorinės teisės (C) 2001-2008, Celestia programuotojų komanda"
-
-#~ msgid "http://www.shatters.net/celestia"
-#~ msgstr "http://www.shatters.net/celestia"
-
-#~ msgid "Objects"
-#~ msgstr "Objektai"
 
 #~ msgid "OpenGL Render Path"
 #~ msgstr "OpenGL vaizdavimo režimas"
@@ -5082,6 +5008,3 @@ msgstr "Gru"
 
 #~ msgid "&OK"
 #~ msgstr "&Gerai"
-
-#~ msgid "&Cancel"
-#~ msgstr "&Atšaukti"
