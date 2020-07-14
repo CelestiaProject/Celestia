@@ -3,8 +3,8 @@
 	labels { clear "planets|minorplanets|stars|constellations" }
 	renderflags { set "stars|planets"
                       clear "constellations|orbits|cloudmaps" }
-	print { text "Demonstracijs pradžia . . .\nSpauskite ESC norėdami nutraukti demonstraciją." origin "center" duration 2 }
-	wait { duration 2.0 }
+	print { text "Pradedame demonstraciją . . .\nNutraukti galite paspaudę ESC klavišą." origin "center" duration 3 }
+	wait { duration 3.0 }
 
 	print { text "Pradėkime nuo gimtųjų namų . . ." row -3 }
 	select { object "Sol/Earth" }
@@ -20,7 +20,7 @@
 
 	print { text "Atstumas iki Žemės apie 12,500km " row -3 duration 5 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
-	print { text "Su debesimis Žemė atrodo žymiai įspūdingiau." row -3}
+	print { text "Su debesimis Žemė atrodo dar įspūdingiau." row -3}
 	wait { duration 0.1 }
 	renderflags { set "cloudmaps" }
 	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
@@ -30,7 +30,7 @@
 	goto { time 5 distance 4 upframe "equatorial" }
 	wait { duration 5.5 }
 	print { text "Pažvelkite į Žemę ir Saulę iš Mėnulio orbitos" row -3}
-	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 15 }
 	
 	print { text "Aplankykime Saulę." row -3}
 	select { object "Sol" }
@@ -39,14 +39,14 @@
 	print { text "Iš šio atstumo puikiai matosi tamsiosios Saulės dėmės." row -3}
 	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
 
-	print { text "Nutolkime nuo Saulės sistemos, kad galėtume ją apžvelgti." row -3}
+	print { text "Nutolkime nuo Saulės, kad galėtume apžvelgti vidinę Saulės sistemą." row -3}
 	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
 	renderflags { set "orbits" }
 	changedistance { duration 4.0 rate 1.0 }
 	
 	print { text "Įjunkime planetų pavadinimus . . ." row -3}
 	labels { set "planets" }
-	wait { duration 1.0 }
+	wait { duration 2.0 }
 	print { text "Mes galime paspartinti laiką, kad išvystume planetų judėjimą." row -3}
 	timerate { rate 2592000 }
 	wait { duration 3.0 }
@@ -56,7 +56,7 @@
 	print { text "Laikas visiškai sustabdytas." row -3}
 
 	wait { duration 1.0 }
-	print { text "Sekanti stotelė Saturnas." row -3}
+	print { text "Sekanti stotelė - Saturnas." row -3}
 	select { object "Saturn" }
 	center { time 2 }
 	wait { duration 2 }
@@ -64,42 +64,43 @@
 	wait { duration 6.5 }
 	renderflags { clear "orbits" }
 	labels { clear "planets" }
-	print { text "Keletas Saturno palydovų matomi kaip ryškūs taškai" row -3 duration 3}
+	print { text "Keletas Saturno palydovų matomi kaip ryškūs taškai" row -3 duration 4}
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
 	
 	select { object "Mimas" }
 	goto { time 5 distance 4 upframe "equatorial" }
-	print { text "Vienas įdomesnių Saturno palydovų yra Mimas turintis įspūdingą kraterį Heršelis." row - duration 9 }
+	print { text "Vienas įdomesnių Saturno palydovų yra Mimas turintis įspūdingą kraterį Heršelį." row -3 duration 9 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
 	changedistance { duration 6.0 rate 0.5 }
 
 	select { object "Sol" }
 	center { time 2 }
 	print { text "Atkreipkime dėmesį, kaip atrodo mūsų Saulė iš tokio atstumo." row -3 }
-	wait { duration 2 }
+	wait { duration 3 }
 
 	print { text "Pasižvalgykime po žvaigždes." row -3 duration 2 }
 	wait { duration 2 }
 	select { object "Alpha UMa" }
 	center { time 2 }
-	print { text "Šiauriniame dangaus skliaute matomas Didžiųjų Grįžulo ratų žvaigždynas." row -3 duration 3 }
+	print { text "Šiauriniame dangaus skliaute matomas Didžiųjų Grįžulo ratų žvaigždynas." row -3 duration 4 }
 	wait { duration 4 }
+	changedistance { duration 3.0 rate 1.0 }
 
 	select { object "Polaris" }
 	center { time 2 }
 	wait { duration 2 }
-	print { text "Centre Poleris, Šiaurinė žvaigždė." row -3}
-	wait { duration 1 }
+	print { text "Dabar centre - Šiaurinė žvaigždė, dar vadinama Poliarine." row -3 }
+	wait { duration 2 }
 	labels { set "stars" }
 	wait { duration 2 }
 	print { text "Polaris įeina į Mažųjų Grįžulo ratų žvaigždyną." row -3}
-	wait { duration 2 }
-	print { text "Kad geriau orientuotumėmės danguje, Celestia gali parodyti žvaigždynų kontūrus . . ." row -3}
+	wait { duration 3 }
+	print { text "Kad geriau orientuotumėmės danguje, Celestia gali parodyti žvaigždynų kontūrus . . ." row -3 }
 	renderflags { set "constellations" }
-	wait { duration 2 }
-	print { text ". . . ir žvaigždynų pavadinimus" row -3}
+	wait { duration 3 }
+	print { text ". . . ir žvaigždynų pavadinimus" row -3 }
 	labels { set "constellations" }
-	wait { duration 2 }
+	wait { duration 3 }
 
 	select { object "Alnilam" }
 	center { time 4 }
