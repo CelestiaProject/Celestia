@@ -16,23 +16,12 @@ what you need to do to build and run Celestia:
 	make
 	make install
 
-[*] INTERFACE must be replaced with one of "kde", "gtk", "gnome", or "glut".
+[*] INTERFACE must be replaced with one of "gtk" or "glut".
 
 Four interfaces are available for Celestia:
 - glut: minimal interface, barebone Celestia core with no toolbar or menu...
 - GTK: A full interface with minimal dependencies, adds a menu, a configuration
        dialog some other utilities.
-- Gnome: The full GTK interface plus a few Gnome integration goodies, such as
-         preference saving in GConf. This looks and works very much like the
-         Windows interface.
-- KDE3: brings contextual menus, toolbars, KDE integration,
-        internationalization, bookmarks...
-
-To build the KDE interface (requires various kde-devel packages):
-	configure --with-kde
-
-To build the Gnome interface (requires gnome-devel and all GTK requirements):
-	configure --with-gnome
 
 To build the GTK interface (requires gtkglext and gtkglext-devel):
 	configure --with-gtk
@@ -48,7 +37,7 @@ the old homegrown scripting engine is still available. By default Lua support
 will NOT be compiled in, to enable it you need to download the Lua library
 from:
 	http://www.lua.org/
-Version 5.0 or newer is required.
+Version 5.1 or newer is required.
 
 Once Lua has been installed on your system, you need to run:
 	configure --with-lua=/path/to/lua
