@@ -148,17 +148,37 @@ string StellarClass::str() const
 
 
 uint16
-StellarClass::pack() const
+StellarClass::packV1() const
 {
+    // StarDB Ver. 0x0100 doesn't support Spectral_Y.
+    // Classes following Spectral_Y are shifted by 1.
+    uint16_t sc;
+    if (specClass == Spectral_Y)
+        sc = (uint16_t) Spectral_Unknown;
+    else
+        sc = (uint16_t) specClass > Spectral_Y ? specClass - 1 : specClass;
+
     return (((uint16) starType << 12) |
-	    (((uint16) specClass & 0xf) << 8) |
-	    ((uint16) subclass << 4) |
-	    ((uint16) lumClass));
+           (((uint16) sc & 0x0f) << 8) |
+           ((uint16) subclass << 4) |
+           ((uint16) lumClass));
+}
+
+
+uint16
+StellarClass::packV2() const
+{
+    uint16_t sc = (starType == StellarClass::WhiteDwarf ? specClass - 1 : specClass);
+
+    return (((uint16) starType         << 13) |
+           (((uint16) sc       & 0x1f) << 8)  |
+           (((uint16) subclass & 0x0f) << 4)  |
+           ((uint16)  lumClass & 0x0f));
 }
 
 
 bool
-StellarClass::unpack(uint16 st)
+StellarClass::unpackV1(uint16 st)
 {
     starType = static_cast<StellarClass::StarType>(st >> 12);
 
@@ -166,6 +186,43 @@ StellarClass::unpack(uint16 st)
     {
     case NormalStar:
         specClass = static_cast<SpectralClass>(st >> 8 & 0xf);
+        // StarDB Ver. 0x0100 doesn't support Spectral_Y
+        // Spectral_Y has the value Spectral_C had earlier.
+        if (specClass == Spectral_Y)
+            specClass = Spectral_C;
+        subclass = st >> 4 & 0xf;
+        lumClass = static_cast<LuminosityClass>(st & 0xf);
+        break;
+    case WhiteDwarf:
+        if ((st >> 8 & 0xf) >= WDClassCount)
+            return false;
+        specClass = static_cast<SpectralClass>((st >> 8 & 0xf) + Spectral_DA);
+        subclass = st >> 4 & 0xf;
+        lumClass = Lum_Unknown;
+        break;
+    case NeutronStar:
+    case BlackHole:
+        specClass = Spectral_Unknown;
+        subclass = Subclass_Unknown;
+        lumClass = Lum_Unknown;
+        break;
+    default:
+        return false;
+    }
+
+    return true;
+}
+
+
+bool
+StellarClass::unpackV2(uint16_t st)
+{
+    starType = static_cast<StellarClass::StarType>(st >> 13);
+
+    switch (starType)
+    {
+    case NormalStar:
+        specClass = static_cast<SpectralClass>(st >> 8 & 0x1f);
         subclass = st >> 4 & 0xf;
         lumClass = static_cast<LuminosityClass>(st & 0xf);
         break;
@@ -204,7 +261,7 @@ ostream& operator<<(ostream& os, const StellarClass& sc)
 
 bool operator<(const StellarClass& sc0, const StellarClass& sc1)
 {
-    return sc0.pack() < sc1.pack();
+    return sc0.packV2() < sc1.packV2();
 }
 
 
