@@ -26,6 +26,7 @@ public:
     std::vector<fs::path> starCatalogFiles;
     std::vector<fs::path> dsoCatalogFiles;
     std::vector<fs::path> extrasDirs;
+    std::vector<fs::path> skipExtras;
     fs::path deepSkyCatalog;
     fs::path asterismsFile;
     fs::path boundariesFile;

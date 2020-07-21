@@ -239,7 +239,37 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            DPRINTF(LOG_LEVEL_ERROR, "%s: ExtrasDirectories must be an array or string.\n", filename);
+            DPRINTF(LOG_LEVEL_ERROR, "%s: ExtrasDirectories must be an array or a string.\n", filename);
+        }
+    }
+
+    Value* skipExtrasVal = configParams->getValue("SkipExtras");
+    if (skipExtrasVal != nullptr)
+    {
+        if (skipExtrasVal->getType() == Value::ArrayType)
+        {
+            Array* skipExtras = skipExtrasVal->getArray();
+            assert(skipExtras != nullptr);
+
+            for (const auto fileNameVal : *skipExtras)
+            {
+                if (fileNameVal->getType() == Value::StringType)
+                {
+                    config->skipExtras.push_back(PathExp(fileNameVal->getString()));
+                }
+                else
+                {
+                    DPRINTF(LOG_LEVEL_ERROR, "%s: Skipped file name must be a string.\n", filename);
+                }
+            }
+        }
+        else if (skipExtrasVal->getType() == Value::StringType)
+        {
+            config->skipExtras.push_back(PathExp(skipExtrasVal->getString()));
+        }
+        else
+        {
+            DPRINTF(LOG_LEVEL_ERROR, "%s: SkipExtras must be an array or a string.\n", filename);
         }
     }
 

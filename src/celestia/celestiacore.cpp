@@ -3478,15 +3478,28 @@ class SolarSystemLoader
 {
     Universe* universe;
     ProgressNotifier* notifier;
+    const vector<fs::path>& skip;
 
  public:
-    SolarSystemLoader(Universe* u, ProgressNotifier* pn) : universe(u), notifier(pn) {};
+    SolarSystemLoader(Universe* u,
+                      ProgressNotifier* pn,
+                      const vector<fs::path>& skip) :
+        universe(u),
+        notifier(pn),
+        skip(skip)
+    {
+    }
 
     void process(const fs::path& filepath)
     {
         if (DetermineFileType(filepath) != Content_CelestiaCatalog)
             return;
 
+        if (find(begin(skip), end(skip), filepath) != end(skip))
+        {
+            fmt::fprintf(clog, _("Skipping skiped solar system catalog: %s\n"), filepath.string());
+            return;
+        }
         fmt::fprintf(clog, _("Loading solar system catalog: %s\n"), filepath.string());
         if (notifier != nullptr)
             notifier->update(filepath.filename().string());
@@ -3498,7 +3511,7 @@ class SolarSystemLoader
                                    *universe,
                                    filepath.parent_path());
         }
-    };
+    }
 };
 
 template <class OBJDB> class CatalogLoader
@@ -3507,16 +3520,19 @@ template <class OBJDB> class CatalogLoader
     string      typeDesc;
     ContentType contentType;
     ProgressNotifier* notifier;
+    const vector<fs::path>& skip;
 
  public:
     CatalogLoader(OBJDB* db,
                   const std::string& typeDesc,
                   const ContentType& contentType,
-                  ProgressNotifier* pn) :
+                  ProgressNotifier* pn,
+                  const vector<fs::path>& skip) :
         objDB      (db),
         typeDesc   (typeDesc),
         contentType(contentType),
-        notifier(pn)
+        notifier   (pn),
+        skip       (skip)
     {
     }
 
@@ -3525,6 +3541,11 @@ template <class OBJDB> class CatalogLoader
         if (DetermineFileType(filepath) != contentType)
             return;
 
+        if (find(begin(skip), end(skip), filepath) != end(skip))
+        {
+            fmt::fprintf(clog, _("Skipping skiped %s catalog: %s\n"), typeDesc, filepath.string());
+            return;
+        }
         fmt::fprintf(clog, _("Loading %s catalog: %s\n"), typeDesc, filepath.string());
         if (notifier != nullptr)
             notifier->update(filepath.filename().string());
@@ -3533,7 +3554,7 @@ template <class OBJDB> class CatalogLoader
         if (catalogFile.good())
         {
             if (!objDB->load(catalogFile, filepath.parent_path()))
-                DPRINTF(LOG_LEVEL_ERROR, "Error reading %s catalog file: %s\n", typeDesc.c_str(), filepath.string());
+                DPRINTF(LOG_LEVEL_ERROR, "Error reading %s catalog file: %s\n", typeDesc, filepath.string());
         }
     }
 };
@@ -3649,7 +3670,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         vector<fs::path> entries;
         DeepSkyLoader loader(dsoDB, "deep sky object",
                              Content_CelestiaDeepSkyCatalog,
-                             progressNotifier);
+                             progressNotifier,
+                             config->skipExtras);
         for (const auto& dir : config->extrasDirs)
         {
             if (!is_valid_directory(dir))
@@ -3695,7 +3717,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // Next, read all the solar system files in the extras directories
     {
         vector<fs::path> entries;
-        SolarSystemLoader loader(universe, progressNotifier);
+        SolarSystemLoader loader(universe, progressNotifier, config->skipExtras);
         for (const auto& dir : config->extrasDirs)
         {
             if (!is_valid_directory(dir))
@@ -3965,7 +3987,11 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     // Now, read supplemental star files from the extras directories
     {
         vector<fs::path> entries;
-        StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
+        StarLoader loader(starDB,
+                          "star",
+                          Content_CelestiaStarCatalog,
+                          progressNotifier,
+                          config->skipExtras);
         for (const auto& dir : config->extrasDirs)
         {
             if (!is_valid_directory(dir))
