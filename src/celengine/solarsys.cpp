@@ -1072,6 +1072,13 @@ static Body* CreateReferencePoint(const string& name,
         body->setClickable(clickable);
     }
 
+    Color orbitColor;
+    if (refPointData->getColor("OrbitColor", orbitColor))
+    {
+        body->setOrbitColorOverridden(true);
+        body->setOrbitColor(orbitColor);
+    }
+
     return body;
 }
 
