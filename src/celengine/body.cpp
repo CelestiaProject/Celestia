@@ -858,12 +858,12 @@ int Body::getOrbitClassification() const
         return Planet;
     if ((orbitClass & DwarfPlanet) != 0)
         return DwarfPlanet;
+    if ((orbitClass & Asteroid) != 0)
+        return Asteroid;
     if ((orbitClass & Moon) != 0)
         return Moon;
     if ((orbitClass & MinorMoon) != 0)
         return MinorMoon;
-    if ((orbitClass & Asteroid) != 0)
-        return Asteroid;
     if ((orbitClass & Spacecraft) != 0)
         return Spacecraft;
     return Invisible;
