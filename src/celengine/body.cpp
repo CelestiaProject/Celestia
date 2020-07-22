@@ -347,6 +347,13 @@ void Body::setBondAlbedo(float _bondAlbedo)
 }
 
 
+static float calcTemperature(const Body *body, const Star *sun, double distFromSun)
+{
+    return sun->getTemperature() *
+           (float) (::pow(1.0 - body->getBondAlbedo(), 0.25) *
+           sqrt(sun->getRadius() / (2.0 * distFromSun)));
+}
+
 float Body::getTemperature(double time) const
 {
     if (temperature > 0)
@@ -360,11 +367,25 @@ float Body::getTemperature(double time) const
     if (sun == nullptr)
         return 0;
 
-    double distFromSun = getAstrocentricPosition(time).norm();
-    return getTempDiscrepancy() +
-           sun->getTemperature() *
-           (float) (::pow(1.0 - getBondAlbedo(), 0.25) *
-           sqrt(sun->getRadius() / (2.0 * distFromSun)));
+    float temp = 0.0f;
+    if (sun->getVisibility()) // the sun is a star
+    {
+        double distFromSun = getAstrocentricPosition(time).norm();
+        temp = calcTemperature(this, sun, distFromSun);
+    }
+    else // the sun is a barycenter
+    {
+        if (sun->getOrbitingStars() == nullptr)
+            return 0;
+
+        const UniversalCoord bodyPos = getPosition(time);
+        for (const auto *s : *sun->getOrbitingStars())
+        {
+            double distFromSun = s->getPosition(time).distanceFromKm(bodyPos);
+            temp += calcTemperature(this, s, distFromSun);
+        }
+    }
+    return getTempDiscrepancy() + temp;
 }
 
 
