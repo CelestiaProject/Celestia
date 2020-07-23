@@ -2928,6 +2928,7 @@ void CelestiaCore::renderOverlay()
     overlay->setFont(font);
 
     int fontHeight = font->getHeight();
+    int titleFontHeight = titleFont->getHeight();
     int emWidth = font->getWidth("M");
     assert(emWidth > 0);
 
@@ -3333,10 +3334,11 @@ void CelestiaCore::renderOverlay()
     {
         overlay->setFont(titleFont);
         overlay->savePos();
-        Rect r(0, 0, width, safeAreaInsets.bottom + screenDpi / 25.4f * 26.5f);
+        int rectHeight = fontHeight * 3.0f + screenDpi / 25.4f * 9.3f + titleFontHeight;
+        Rect r(0, 0, width, safeAreaInsets.bottom + rectHeight);
         r.setColor(consoleColor);
         overlay->drawRectangle(r);
-        overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + fontHeight * 3.0f + screenDpi / 25.4f * 9.3f);
+        overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + rectHeight - titleFontHeight);
         overlay->setColor(0.6f, 0.6f, 1.0f, 1.0f);
         overlay->beginText();
         fmt::fprintf(*overlay, _("Target name: %s"), typedText);
