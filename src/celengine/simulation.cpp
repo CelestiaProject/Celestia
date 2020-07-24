@@ -11,6 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <celutil/strnatcmp.h>
 #include "render.h"
 #include "simulation.h"
 
@@ -445,7 +446,8 @@ vector<std::string> Simulation::getObjectCompletion(string s, bool withLocations
     Selection path[2];
     int nPathEntries = 0;
 
-    if (!selection.empty()) {
+    if (!selection.empty())
+    {
         if (selection.getType() == Selection::Type_Location)
         {
             path[nPathEntries++] = Selection(selection.location()->getParentBody());
@@ -462,7 +464,12 @@ vector<std::string> Simulation::getObjectCompletion(string s, bool withLocations
         path[nPathEntries++] = Selection(closestSolarSystem->getStar());
     }
 
-    return universe->getCompletionPath(s, path, nPathEntries, withLocations);
+    auto completion = universe->getCompletionPath(s, path, nPathEntries, withLocations);
+
+    sort(begin(completion), end(completion),
+         [](const string &s1, const string &s2) { return strnatcmp(s1, s2) < 0; });
+
+    return completion;
 }
 
 
