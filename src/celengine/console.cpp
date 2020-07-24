@@ -277,10 +277,11 @@ void Console::scroll(int lines)
 
     if (lines < 0)
     {
-        if (topRow + lines > -height)
+        int scrollLimit = -min(height - 1, row);
+        if (topRow + lines >= scrollLimit)
             setWindowRow(topRow + lines);
         else
-            setWindowRow(-(height - 1));
+            setWindowRow(scrollLimit);
     }
     else
     {
