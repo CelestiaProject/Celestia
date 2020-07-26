@@ -1088,7 +1088,7 @@ bool StarDatabase::createStar(Star* star,
     }
     else
     {
-        double magnitude = 0.0;
+        float magnitude = 0.0f;
         bool magnitudeModified = true;
         if (!starData->getNumber("AbsMag", magnitude))
         {
@@ -1116,12 +1116,16 @@ bool StarDatabase::createStar(Star* star,
                     clog << _("Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n");
                     return false;
                 }
-                magnitude = astro::appToAbsMag((float) magnitude, distance);
+                magnitude = astro::appToAbsMag(magnitude, distance);
             }
         }
 
         if (magnitudeModified)
-            star->setAbsoluteMagnitude((float) magnitude);
+            star->setAbsoluteMagnitude(magnitude);
+
+        float extinction = 0.0f;
+        if (starData->getNumber("Extinction", extinction))
+            star->setAbsoluteMagnitude(star->getAbsoluteMagnitude() - extinction);
     }
 
     return true;
