@@ -1128,7 +1128,11 @@ bool StarDatabase::createStar(Star* star,
         float extinction = 0.0f;
         if (starData->getNumber("Extinction", extinction))
         {
-            star->setExtinction(extinction);
+            float distance = star->getPosition().norm();
+            if (distance != 0.0f)
+                star->setExtinction(extinction / distance);
+            else
+                extinction = 0.0f;
             if (!absoluteDefined)
                 star->setAbsoluteMagnitude(star->getAbsoluteMagnitude() - extinction);
         }
