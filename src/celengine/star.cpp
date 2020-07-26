@@ -1127,7 +1127,7 @@ void Star::setAbsoluteMagnitude(float mag)
 
 float Star::getApparentMagnitude(float ly) const
 {
-    return astro::absToAppMag(absMag, ly);
+    return astro::absToAppMag(absMag, ly) + extinction;
 }
 
 
@@ -1195,4 +1195,9 @@ Selection Star::toSelection()
 {
 //    std::cout << "Star::toSelection()\n";
     return Selection(this);
+}
+
+void Star::setExtinction(float _extinction)
+{
+    extinction = _extinction;
 }

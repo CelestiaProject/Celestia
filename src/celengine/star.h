@@ -262,6 +262,12 @@ public:
     float getLuminosity() const;
     float getBolometricLuminosity() const;
 
+    void setExtinction(float);
+    float getExtinction() const
+    {
+        return extinction;
+    }
+
     // Return the exact position of the star, accounting for its orbit
     UniversalCoord getPosition(double t) const;
     UniversalCoord getOrbitBarycenterPosition(double t) const;
@@ -308,6 +314,7 @@ public:
 private:
     Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
     float absMag{ 4.83f };
+    float extinction{ 0.0f };
     StarDetails* details{ nullptr };
 };
 
