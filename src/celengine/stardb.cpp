@@ -1090,8 +1090,10 @@ bool StarDatabase::createStar(Star* star,
     {
         float magnitude = 0.0f;
         bool magnitudeModified = true;
+        bool absoluteDefined = true;
         if (!starData->getNumber("AbsMag", magnitude))
         {
+            absoluteDefined = false;
             if (!starData->getNumber("AppMag", magnitude))
             {
                 if (disposition != DataDisposition::Modify)
@@ -1125,7 +1127,11 @@ bool StarDatabase::createStar(Star* star,
 
         float extinction = 0.0f;
         if (starData->getNumber("Extinction", extinction))
-            star->setAbsoluteMagnitude(star->getAbsoluteMagnitude() - extinction);
+        {
+            star->setExtinction(extinction);
+            if (!absoluteDefined)
+                star->setAbsoluteMagnitude(star->getAbsoluteMagnitude() - extinction);
+        }
     }
 
     return true;
