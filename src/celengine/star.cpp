@@ -1127,7 +1127,7 @@ void Star::setAbsoluteMagnitude(float mag)
 
 float Star::getApparentMagnitude(float ly) const
 {
-    return astro::absToAppMag(absMag, ly) + extinction;
+    return astro::absToAppMag(absMag, ly) + extinction * ly;
 }
 
 
