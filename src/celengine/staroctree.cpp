@@ -130,7 +130,7 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
         if (obj.getAbsoluteMagnitude() < dimmest)
         {
             float distance    = (obsPosition - obj.getPosition()).norm();
-            float appMag      = astro::absToAppMag(obj.getAbsoluteMagnitude(), distance);
+            float appMag      = obj.getApparentMagnitude(distance);
 
             if (appMag < limitingFactor || (distance < MAX_STAR_ORBIT_RADIUS && obj.getOrbit()))
                 processor.process(obj, distance, appMag);
@@ -195,7 +195,7 @@ void StarOctree::processCloseObjects(StarHandler&    processor,
         if ((obsPosition - obj.getPosition()).squaredNorm() < radiusSquared)
         {
             float distance    = (obsPosition - obj.getPosition()).norm();
-            float appMag      = astro::absToAppMag(obj.getAbsoluteMagnitude(), distance);
+            float appMag      = obj.getApparentMagnitude(distance);
 
             processor.process(obj, distance, appMag);
         }

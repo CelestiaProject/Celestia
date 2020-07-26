@@ -92,7 +92,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             distance = relPos.norm();
 
             // Recompute apparent magnitude using new distance computation
-            appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
+            appMag = star.getApparentMagnitude((float)distance);
 
             discSizeInPixels = star.getRadius() / astro::lightYearsToKilometers(distance) / pixelSize;
             ++nClose;

@@ -116,9 +116,8 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         addAction(italicTextItem(_("Distance: ") + QString::fromStdString(buff)));
 
         buff = fmt::sprintf("%.2f (%.2f)",
-                sel.star()->getAbsoluteMagnitude(),
-                astro::absToAppMag(sel.star()->getAbsoluteMagnitude(),
-                                   (float) distance));
+                            sel.star()->getAbsoluteMagnitude(),
+                            sel.star()->getApparentMagnitude((float) distance));
         addAction(italicTextItem(_("Abs (app) mag: ") + QString::fromStdString(buff)));
 
         buff = fmt::sprintf("%s", sel.star()->getSpectralType());

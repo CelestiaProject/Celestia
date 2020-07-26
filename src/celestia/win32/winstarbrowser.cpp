@@ -305,8 +305,8 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
                 d0 = sortInfo->ucPos.offsetFromLy(star0->getPosition()).norm();
             if (d1 < 1.0f)
                 d1 = sortInfo->ucPos.offsetFromLy(star1->getPosition()).norm();
-            return (int) celmath::sign(astro::absToAppMag(star0->getAbsoluteMagnitude(), d0) -
-                                       astro::absToAppMag(star1->getAbsoluteMagnitude(), d1));
+            return (int) celmath::sign(star0->getApparentMagnitude(d0) -
+                                       star1->getApparentMagnitude(d1));
         }
 
     case 3:
@@ -353,8 +353,7 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
     case 2:
         {
             Vector3d r = star->getPosition(tdb).offsetFromKm(browser->ucPos);
-            double appMag = astro::absToAppMag((double) star->getAbsoluteMagnitude(),
-                                               astro::kilometersToLightYears(r.norm()));
+            float appMag = star->getApparentMagnitude(astro::kilometersToLightYears(r.norm()));
             sprintf(callbackScratch, "%.2f", appMag);
             nm->item.pszText = callbackScratch;
         }

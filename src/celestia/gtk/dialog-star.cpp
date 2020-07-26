@@ -281,7 +281,7 @@ static void addStars(sbData* sb)
         sprintf(buf, " %.3f ", d);
         values[1] = g_strdup(buf);
 
-        sprintf(buf, " %.2f ", astro::absToAppMag(star->getAbsoluteMagnitude(), d));
+        sprintf(buf, " %.2f ", star->getApparentMagnitude(d));
         values[2] = g_strdup(buf);
 
         sprintf(buf, " %.2f ", star->getAbsoluteMagnitude());
