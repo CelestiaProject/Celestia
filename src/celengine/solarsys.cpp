@@ -809,7 +809,7 @@ static Body* CreateBody(const string& name,
     double t;
     if (planetData->getNumber("Albedo", t))
     {
-        DPRINTF("Deprecated parameter Albedo used in %s definition.\nUse GeomAlbedo & BondAlbedo instead.\n", name);
+        DPRINTF(LOG_LEVEL_WARNING, "Deprecated parameter Albedo used in %s definition.\nUse GeomAlbedo & BondAlbedo instead.\n", name);
         body->setGeomAlbedo((float) t);
     }
 
