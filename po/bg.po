@@ -1,19 +1,16 @@
-# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
 # Hleb Valoshka <375gnu@gmail.com>, 2020
 # Georgi Georgiev <georgiev_1994@abv.bg>, 2020
 # 
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
 "POT-Creation-Date: 2020-07-14 09:41+0300\n"
-"PO-Revision-Date: 2018-11-02 18:33+0000\n"
+"PO-Revision-Date: 2020-07-30 19:12+0200\n"
 "Last-Translator: Georgi Georgiev <georgiev_1994@abv.bg>, 2020\n"
 "Language-Team: Bulgarian (https://www.transifex.com/celestia/teams/93131/bg/)\n"
 "MIME-Version: 1.0\n"
@@ -1513,7 +1510,8 @@ msgstr "Зареждане на модел: %s\n"
 #, c-format
 msgid ""
 "   Model statistics: %u vertices, %u primitives, %u materials (%u unique)\n"
-msgstr "Данни за модела: %u върхове, %u примитиви, %u материали (%u уникални)\n"
+msgstr ""
+"   Данни за модела: %u върхове, %u примитиви, %u материали (%u уникални)\n"
 
 #: ../src/celengine/meshmanager.cpp:211
 #, c-format
@@ -1753,11 +1751,11 @@ msgstr "Отказ"
 
 #: ../src/celestia/celestiacore.cpp:1234
 msgid "Time and script are paused"
-msgstr "Времето и скрипта са спрени"
+msgstr "Времето и скрипта са на пауза"
 
 #: ../src/celestia/celestiacore.cpp:1236
 msgid "Time is paused"
-msgstr "Времето е спряно"
+msgstr "Времето е на пауза"
 
 #: ../src/celestia/celestiacore.cpp:1240
 msgid "Resume"
@@ -1775,17 +1773,17 @@ msgstr "Звезден цвят: Засилен"
 #: ../src/celestia/celestiacore.cpp:1317
 #, c-format
 msgid "Light travel time:  %.4f yr"
-msgstr "Време за пътуване на светлината: %.4f год."
+msgstr "Време за пътуване на светлината:  %.4f год."
 
 #: ../src/celestia/celestiacore.cpp:1326
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
-msgstr "Време за пътуване на светлината: %d мин. %.1f сек."
+msgstr "Време за пътуване на светлината:  %d мин.  %.1f сек."
 
 #: ../src/celestia/celestiacore.cpp:1331
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
-msgstr "Време за пътуване на светлината: %d ч.  %d мин.  %.1f сек."
+msgstr "Време за пътуване на светлината:  %d ч.  %d мин.  %.1f сек."
 
 #: ../src/celestia/celestiacore.cpp:1349
 msgid "Light travel delay included"
@@ -1805,7 +1803,7 @@ msgstr "Използване на нормални повърхностни те
 
 #: ../src/celestia/celestiacore.cpp:1408
 msgid "Using limit of knowledge surface textures."
-msgstr "Използване на ограничени повърхностни текстури"
+msgstr "Използване на ограничени повърхностни текстури."
 
 #: ../src/celestia/celestiacore.cpp:1475
 msgid "Follow"
@@ -1851,17 +1849,17 @@ msgstr "Преследвай"
 #: ../src/celestia/celestiacore.cpp:1647 ../src/celestia/celestiacore.cpp:1678
 #, c-format
 msgid "Magnitude limit:  %.2f"
-msgstr "Лимит на звездна величина: %.2f"
+msgstr "Лимит на звездна величина:  %.2f"
 
 #: ../src/celestia/celestiacore.cpp:1658 ../src/celestia/celestiacore.cpp:1689
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
-msgstr "Автоматичен лимит на звездната величина при 45 градуса: %.2f"
+msgstr "Автоматичен лимит на звездната величина при 45 градуса:  %.2f"
 
 #: ../src/celestia/celestiacore.cpp:1708 ../src/celestia/celestiacore.cpp:1723
 #, c-format
 msgid "Ambient light level:  %.2f"
-msgstr "Яркост на фоновата светлина: %.2f"
+msgstr "Яркост на фоновата светлина:  %.2f"
 
 #: ../src/celestia/celestiacore.cpp:1734 ../src/celestia/celestiacore.cpp:1745
 #, c-format
@@ -2049,7 +2047,7 @@ msgstr "Температура на повърхността: %s К\n"
 #: ../src/celestia/celestiacore.cpp:2721
 #, c-format
 msgid "Radius: %s Rsun  (%s km)\n"
-msgstr "Радиус: %s Сл. рад. (%s км)\n"
+msgstr "Радиус: %s Сл. рад.  (%s км)\n"
 
 #: ../src/celestia/celestiacore.cpp:2727
 #, c-format
@@ -2083,11 +2081,11 @@ msgstr "Плътност: %.2f х 1000 кг/м^3\n"
 #: ../src/celestia/celestiacore.cpp:2849
 #, c-format
 msgid "Temperature: %.0f K\n"
-msgstr "Temperatura: %.0f K\n"
+msgstr "Температура: %.0f K\n"
 
 #: ../src/celestia/celestiacore.cpp:3000
 msgid "  LT"
-msgstr " LT"
+msgstr "  LT"
 
 #: ../src/celestia/celestiacore.cpp:3009
 #: ../src/celestia/qt/qttimetoolbar.cpp:39
@@ -2195,7 +2193,7 @@ msgstr "Записване"
 
 #: ../src/celestia/celestiacore.cpp:3453
 msgid "F11 Start/Pause    F12 Stop"
-msgstr "F11 за Старт и Пауза, F12 за Спиране"
+msgstr "F11 за Старт и Пауза    F12 за Спиране"
 
 #: ../src/celestia/celestiacore.cpp:3464 ../src/celestia/celestiacore.cpp:3467
 msgid "Edit Mode"
@@ -2358,7 +2356,7 @@ msgstr "%@: %d"
 #: ../src/celestia/macosx/CGLInfo.m:60
 #, objc-format
 msgid "%s:  %@"
-msgstr "%s: %@"
+msgstr "%s:  %@"
 
 #: ../src/celestia/macosx/CGLInfo.m:60
 msgid "Supported"
@@ -2414,7 +2412,9 @@ msgstr "Фатална грешка"
 msgid ""
 "It appears you are running Celestia on %s hardware. Do you wish to install a"
 " workaround?"
-msgstr "Използвате Celestia на %s хардуер. Искате ли да заобиколите проблема?"
+msgstr ""
+"Използвате Celestia на %s хардуер. Искате ли да заобиколите"
+" проблема?"
 
 #: ../src/celestia/macosx/CelestiaController.m:324
 #, objc-format
@@ -2469,7 +2469,7 @@ msgstr "Неуспешен изход от режим на цял екран. Ce
 
 #: ../src/celestia/macosx/CelestiaController.m:797
 msgid "Movie capture is not available in this version of Celestia."
-msgstr "Прихващането на филм не е налично в тази версия на Celestia."
+msgstr "Прихващането на видео не е налично в тази версия на Celestia."
 
 #. Remove following line to enable movie capture...
 #: ../src/celestia/macosx/CelestiaController.m:797
@@ -2726,8 +2726,8 @@ msgstr ""
 "<b>%1</b>.</p><p>За %2 битови CPU<br>Използва %3 %4<br>Работи с Qt "
 "библиотека: %5<br>NAIF кърнърите са %7<br>Работна Qt версия: "
 "%6</p><p>Авторско право (C) 2001-2020 от Екипа на Celestia.<br>Celestia е "
-"безплатен софтуер. YМоже да се разпространява и/или модифицира под условията"
-" на GNU General Public License, който е публикуван от Free Software "
+"безплатен софтуер. Може да се разпространява и/или модифицира под условията "
+"на GNU General Public License, който е публикуван от Free Software "
 "Foundation; версия 2 или всяка по-нова версия на Лиценза (по Ваша "
 "преценка).</p><p>Сайт: <a "
 "href=\"https://celestia.space/\">https://celestia.space/</a><br>Форум: <a "
@@ -3078,7 +3078,7 @@ msgstr "Отметки"
 
 #: ../src/celestia/qt/qtbookmark.cpp:833
 msgid "Current simulation time"
-msgstr "Задай време за симулация"
+msgstr "Текущо време за симулация"
 
 #: ../src/celestia/qt/qtbookmark.cpp:834
 msgid "Simulation time at activation"
@@ -3495,7 +3495,7 @@ msgstr "Няколко звезди"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:541
 msgid "Barycenters"
-msgstr "Център на масите"
+msgstr "Центрове на масата"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:547
 msgid "Spectral Type"
@@ -4102,7 +4102,7 @@ msgstr "Задай ден"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:98
 msgid "Time: "
-msgstr "Време:"
+msgstr "Време: "
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:117
 msgid "Set Hours"
@@ -4637,7 +4637,7 @@ msgstr "Формат на датата:"
 
 #: ../src/celestia/qt/xbel.cpp:64
 msgid "Not an XBEL version 1.0 file."
-msgstr "Не е XBEL файл версия 1.0."
+msgstr "Не е версия 1.0 на XBEL файл."
 
 #: ../src/celestia/url.cpp:659
 msgid "Settings"
@@ -4653,7 +4653,7 @@ msgstr "Прихвани Изображение...\tF10"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:6
 msgid "Capture &Movie...\tShift+F10"
-msgstr "Прихвани Филм...\tShift+F10"
+msgstr "Прихвани Видео...\tShift+F10"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:9
 msgid "Select &Sol\tH"
