@@ -1,19 +1,16 @@
-# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
 # Hleb Valoshka <375gnu@gmail.com>, 2019
 # Georgi Georgiev <georgiev_1994@abv.bg>, 2020
 # 
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
 "POT-Creation-Date: 2018-12-01 14:09+0300\n"
-"PO-Revision-Date: 2018-11-02 18:33+0000\n"
+"PO-Revision-Date: 2020-07-30 18:14+0200\n"
 "Last-Translator: Georgi Georgiev <georgiev_1994@abv.bg>, 2020\n"
 "Language-Team: Bulgarian (https://www.transifex.com/celestia/teams/93131/bg/)\n"
 "MIME-Version: 1.0\n"
