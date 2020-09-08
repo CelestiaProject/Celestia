@@ -159,6 +159,10 @@ static int object_setvisible(lua_State* l)
     {
         sel->deepsky()->setVisible(visible);
     }
+    else if (sel->star() != nullptr)
+    {
+        sel->star()->getDetails()->setVisibility(visible);
+    }
 
     return 0;
 }
