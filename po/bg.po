@@ -878,7 +878,7 @@ msgstr "Грешка при създаване на ogg файла %s за пр�
 
 #: src/celestia/oggtheoracapture.cpp:256 src/celestia/oggtheoracapture.cpp:276
 msgid "Internal Ogg library error."
-msgstr "Вътрешна грешка на Ogg библиотеката.\n"
+msgstr "Вътрешна грешка на Ogg библиотеката."
 
 #: src/celestia/oggtheoracapture.cpp:311
 #, c-format
@@ -1274,7 +1274,7 @@ msgstr "Задай размер на изгледа..."
 
 #: src/celestia/gtk/actions.cpp:467
 msgid "Dimensions for Main Window:"
-msgstr "Размер на основния прозорец""
+msgstr "Размер на основния прозорец:"
 
 #: src/celestia/gtk/actions.cpp:479
 #, c-format
@@ -1284,7 +1284,7 @@ msgstr "%d x %d (текущ)"
 #: src/celestia/gtk/actions.cpp:484
 #, c-format
 msgid "%d x %d"
-msgstr "d x %d"
+msgstr "%d x %d"
 
 #: src/celestia/gtk/actions.cpp:648
 msgid "Mouse and Keyboard Controls"
