@@ -113,6 +113,11 @@ GLvoid *decompressDXTc(GLsizei width, GLsizei height, GLenum format, int transpa
     uintptr_t *block = (uintptr_t *)malloc(sizeof(blocksize));
     for (int y=0; y<height; y+=4) {
         for (int x=0; x<width; x+=4) {
+            if (!in.good()) {
+                free(block);
+                free(pixels);
+                return nullptr;
+            }
             in.read(reinterpret_cast<char*>(block), blocksize);
             switch(format) {
                 case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
@@ -255,19 +260,28 @@ Image* LoadDDSImage(const fs::path& filename)
                 if (nw < 4) nw = 4;
                 if (nh < 4) nh = 4;
                 tmp = decompressDXTc(nw, nh, format, transparent0, &simpleAlpha, &complexAlpha, in);
-                pixels = malloc(4*ddsd.width*ddsd.height);
-                // crop
-                for (int y=0; y<ddsd.height; y++)
-                    memcpy((char *)pixels+y*ddsd.width*4, (char *)tmp+y*nw*4, ddsd.width*4);
-                free(tmp);
+                if (tmp != nullptr)
+                {
+                    pixels = malloc(4*ddsd.width*ddsd.height);
+                    // crop
+                    for (int y=0; y<ddsd.height; y++)
+                        memcpy((char *)pixels+y*ddsd.width*4, (char *)tmp+y*nw*4, ddsd.width*4);
+                    free(tmp);
+                }
             }
             else
             {
                 pixels = decompressDXTc(ddsd.width, ddsd.height, format, transparent0, &simpleAlpha, &complexAlpha, in);
             }
 
+            if (pixels == nullptr)
+            {
+                DPRINTF(LOG_LEVEL_ERROR, "Failed to decompress DDS texture file %s.\n", filename);
+                return nullptr;
+            }
+
             Image *img = new Image(GL_RGBA, ddsd.width, ddsd.height);
-            memcpy(img->getPixels(), pixels, 4*ddsd.width*ddsd.height);
+            memcpy(img->getPixels(), pixels, 4 * ddsd.width * ddsd.height);
             free(pixels);
             return img;
         }
