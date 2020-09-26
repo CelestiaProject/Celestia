@@ -14,6 +14,7 @@
 #include <celutil/bytes.h>
 #include <celengine/image.h>
 #include "glsupport.h"
+#include "dds_decompress.h"
 
 using namespace celestia;
 using namespace std;
@@ -82,6 +83,58 @@ static uint32_t FourCC(const char* s)
 #define DDPF_RGB    0x40
 #define DDPF_FOURCC 0x04
 
+
+// decompress a DXTc texture, taken from https://github.com/ptitSeb/gl4es
+GLvoid *decompressDXTc(GLsizei width, GLsizei height, GLenum format, int transparent0, int* simpleAlpha, int* complexAlpha, ifstream &in) {
+    // decompress a DXTc image
+    // get pixel size of decompressed image => fixed RGBA
+    int pixelsize = 4;
+/*    if (format==COMPRESSED_RGB_S3TC_DXT1_EXT)
+        pixelsize = 3;*/
+    // TODO: check with the size of the input data stream if the stream is in fact decompressed
+    // alloc memory
+    GLvoid *pixels = malloc(((width+3)&~3)*((height+3)&~3)*pixelsize);
+    // decompress loop
+    int blocksize = 0;
+    switch (format) {
+        case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_SRGB_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT:
+            blocksize = 8;
+            break;
+        case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT:
+        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT:
+            blocksize = 16;
+            break;
+    }
+    uintptr_t *block = (uintptr_t *)malloc(sizeof(blocksize));
+    for (int y=0; y<height; y+=4) {
+        for (int x=0; x<width; x+=4) {
+            in.read(reinterpret_cast<char*>(block), blocksize);
+            switch(format) {
+                case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+                case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+                case GL_COMPRESSED_SRGB_S3TC_DXT1_EXT:
+                case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT:
+                    DecompressBlockDXT1(x, y, width, (uint8_t*)block, transparent0, simpleAlpha, complexAlpha, (uint32_t *)pixels);
+                    break;
+                case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+                case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT:
+                    DecompressBlockDXT3(x, y, width, (uint8_t*)block, transparent0, simpleAlpha, complexAlpha, (uint32_t *)pixels);
+                    break;
+                case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+                case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT:
+                    DecompressBlockDXT5(x, y, width, (uint8_t*)block, transparent0, simpleAlpha, complexAlpha, (uint32_t *)pixels);
+                    break;
+            }
+        }
+    }
+    free(block);
+    return pixels;
+}
 
 Image* LoadDDSImage(const fs::path& filename)
 {
@@ -182,14 +235,42 @@ Image* LoadDDSImage(const fs::path& filename)
         return nullptr;
     }
 
-    // If we have a compressed format, give up if S3 texture compression
-    // isn't supported
+    // Check if the platform supports compressed DTXc textures
     if (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ||
         format == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT ||
         format == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
     {
         if (!gl::EXT_texture_compression_s3tc)
-            return nullptr;
+        {
+            // DXTc texture not supported, decompress DXTc to RGBA
+            GLvoid *pixels = NULL;
+            int simpleAlpha = 0;
+            int complexAlpha = 0;
+            int transparent0 = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 1 : 0;
+            if ((ddsd.width & 3) || (ddsd.height & 3))
+            {
+                GLvoid *tmp;
+                GLsizei nw = ddsd.width;
+                GLsizei nh = ddsd.height;
+                if (nw < 4) nw = 4;
+                if (nh < 4) nh = 4;
+                tmp = decompressDXTc(nw, nh, format, transparent0, &simpleAlpha, &complexAlpha, in);
+                pixels = malloc(4*ddsd.width*ddsd.height);
+                // crop
+                for (int y=0; y<ddsd.height; y++)
+                    memcpy((char *)pixels+y*ddsd.width*4, (char *)tmp+y*nw*4, ddsd.width*4);
+                free(tmp);
+            }
+            else
+            {
+                pixels = decompressDXTc(ddsd.width, ddsd.height, format, transparent0, &simpleAlpha, &complexAlpha, in);
+            }
+
+            Image *img = new Image(GL_RGBA, ddsd.width, ddsd.height);
+            memcpy(img->getPixels(), pixels, 4*ddsd.width*ddsd.height);
+            free(pixels);
+            return img;
+        }
     }
 
     // TODO: Verify that the reported texture size matches the amount of

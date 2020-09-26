@@ -27,6 +27,8 @@ set(CELENGINE_SOURCES
   curveplot.cpp
   curveplot.h
   dds.cpp
+  dds_decompress.cpp
+  dds_decompress.h
   deepskyobj.cpp
   deepskyobj.h
   dispmap.cpp
@@ -141,6 +143,7 @@ set(CELENGINE_SOURCES
   starname.h
   staroctree.cpp
   staroctree.h
+  stb_dxt_104.h
   stellarclass.cpp
   stellarclass.h
   surface.h
