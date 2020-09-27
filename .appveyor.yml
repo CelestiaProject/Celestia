@@ -59,6 +59,7 @@ install:
 - vcpkg install freetype:x86-windows
 - vcpkg install sdl2:x86-windows
 - git pull
+- .\bootstrap-vcpkg.bat
 - vcpkg install cspice:x86-windows
 - vcpkg integrate install
 - cd %APPVEYOR_BUILD_FOLDER%
