@@ -2984,6 +2984,8 @@ void Renderer::renderObject(const Vector3f& pos,
         }
     }
 
+    disableDepthTest();
+    disableDepthMask();
     enableBlending();
 }
 
