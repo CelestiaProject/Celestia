@@ -555,7 +555,7 @@ SkyGrid::render(Renderer& renderer,
     Matrix4f m = renderer.getModelViewMatrix() *
                  vecgl::rotate((xrot90 * m_orientation.conjugate() * xrot90.conjugate()).cast<float>()) *
                  vecgl::scale(1000.0f);
-    prog->MVPMatrix = renderer.getProjectionMatrix() * m;
+    prog->setMVPMatrices(renderer.getProjectionMatrix(), m);
 
     double arcStep = (maxTheta - minTheta) / (double) ARC_SUBDIVISIONS;
     double theta0 = minTheta;

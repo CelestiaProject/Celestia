@@ -15,6 +15,7 @@
 class Color;
 class ConstellationBoundaries;
 class Renderer;
+struct Matrices;
 
 class BoundariesRenderer
 {
@@ -27,7 +28,7 @@ class BoundariesRenderer
     BoundariesRenderer& operator=(const BoundariesRenderer&) = delete;
     BoundariesRenderer& operator=(BoundariesRenderer&&) = delete;
 
-    void render(const Renderer &renderer, const Color &color, const Eigen::Matrix4f &mvp);
+    void render(const Renderer &renderer, const Color &color, const Matrices &mvp);
     bool sameBoundaries(const ConstellationBoundaries*) const;
 
  private:

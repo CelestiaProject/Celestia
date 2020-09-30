@@ -237,7 +237,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         return;
 
     prog->use();
-    prog->MVPMatrix = (*m.projection) * (*m.modelview);
+    prog->setMVPMatrices(*m.projection, *m.modelview);
 
 #ifdef USE_HDR
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black, ri.nightLightScale);
@@ -555,7 +555,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
         return;
 
     prog->use();
-    prog->MVPMatrix = (*m.projection) * (*m.modelview);
+    prog->setMVPMatrices(*m.projection, *m.modelview);
 
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
     prog->eyePosition = ls.eyePos_obj;
@@ -640,7 +640,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
         prog->setEclipseShadowParameters(ls, radius, planetOrientation);
 #endif
 
-    prog->MVPMatrix = (*m.projection) * (*m.modelview) * vecgl::scale(atmScale);
+    prog->setMVPMatrices(*m.projection, (*m.modelview) * vecgl::scale(atmScale));
 
     glFrontFace(GL_CW);
     renderer->enableBlending();
@@ -785,7 +785,7 @@ void renderRings_GLSL(RingSystem& rings,
         return;
 
     prog->use();
-    prog->MVPMatrix = (*m.projection) * (*m.modelview);
+    prog->setMVPMatrices(*m.projection, *m.modelview);
 
     prog->eyePosition = ls.eyePos_obj;
     prog->ambientColor = ri.ambientColor.toVector3();
@@ -932,8 +932,7 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
     Matrix4f projMat = Ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
     Matrix4f modelViewMat = directionalLightMatrix(ls.lights[lightIndex].direction_obj);
     *lightMatrix = projMat * modelViewMat;
-    prog->mat4Param("MVPMatrix") = *lightMatrix;
-
+    prog->setMVPMatrices(projMat, modelViewMat);
     geometry->render(rc, tsec);
 
     glDisable(GL_POLYGON_OFFSET_FILL);

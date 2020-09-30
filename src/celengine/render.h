@@ -44,8 +44,8 @@ class Frustum;
 
 struct Matrices
 {
-    Eigen::Matrix4f *projection;
-    Eigen::Matrix4f *modelview;
+    const Eigen::Matrix4f *projection;
+    const Eigen::Matrix4f *modelview;
 };
 
 struct LightSource
@@ -267,7 +267,7 @@ class Renderer
     void enableDepthTest() noexcept;
     void disableDepthTest() noexcept;
 
-    void drawRectangle(const Rect& r, const Eigen::Matrix4f& mvp);
+    void drawRectangle(const Rect& r, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
     void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
 
     const ColorTemperatureTable* getStarColorTable() const;
@@ -527,8 +527,8 @@ class Renderer
                                 const celmath::Frustum& viewFrustum,
                                 const Selection& sel);
 
-    void renderAsterisms(const Universe&, float, const Eigen::Matrix4f&);
-    void renderBoundaries(const Universe&, float, const Eigen::Matrix4f&);
+    void renderAsterisms(const Universe&, float, const Matrices&);
+    void renderBoundaries(const Universe&, float, const Matrices&);
     void renderEclipticLine();
     void renderCrosshair(float size, double tsec, const Color &color, const Matrices &m);
 

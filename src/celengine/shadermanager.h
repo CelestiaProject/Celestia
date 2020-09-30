@@ -170,6 +170,7 @@ class CelestiaGLProgram
     void setAtmosphereParameters(const Atmosphere& atmosphere,
                                  float atmPlanetRadius,
                                  float objRadius);
+    void setMVPMatrices(const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
 
     enum
     {
@@ -265,11 +266,13 @@ class CelestiaGLProgram
     Mat4ShaderParameter mat4Param(const std::string&);
 
     Mat4ShaderParameter ModelViewMatrix;
+    Mat4ShaderParameter ProjectionMatrix;
     Mat4ShaderParameter MVPMatrix;
 
     int attribIndex(const std::string&) const;
 
  private:
+    void initCommonParameters();
     void initParameters();
     void initSamplers();
 

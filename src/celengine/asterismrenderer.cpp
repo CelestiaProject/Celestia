@@ -28,7 +28,7 @@ bool AsterismRenderer::sameAsterisms(const AsterismList *asterisms) const
 
 /*! Draw visible asterisms.
  */
-void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColor, const Eigen::Matrix4f &mvp)
+void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColor, const Matrices &mvp)
 {
     auto *prog = renderer.getShaderManager().getShader(m_shadprop);
     if (prog == nullptr)
@@ -50,7 +50,7 @@ void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColo
     }
 
     prog->use();
-    prog->MVPMatrix = mvp;
+    prog->setMVPMatrices(*mvp.projection, *mvp.modelview);
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, defaultColor);
     m_vo.draw(GL_LINES, m_vtxTotal);
 

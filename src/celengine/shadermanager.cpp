@@ -66,6 +66,7 @@ static const char* CommonHeader = "#version 100\nprecision highp float;\n";
 #endif
 static const char* VertexHeader = R"glsl(
 uniform mat4 ModelViewMatrix;
+uniform mat4 ProjectionMatrix;
 uniform mat4 MVPMatrix;
 
 invariant gl_Position;
@@ -3352,6 +3353,7 @@ CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program,
 CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program) :
     program(&_program)
 {
+    initCommonParameters();
 }
 
 CelestiaGLProgram::~CelestiaGLProgram()
@@ -3415,13 +3417,18 @@ CelestiaGLProgram::attribIndex(const std::string& paramName) const
     return glGetAttribLocation(program->getID(), paramName.c_str());
 }
 
+void
+CelestiaGLProgram::initCommonParameters()
+{
+    ModelViewMatrix = mat4Param("ModelViewMatrix");
+    ProjectionMatrix = mat4Param("ProjectionMatrix");
+    MVPMatrix = mat4Param("MVPMatrix");
+}
 
 void
 CelestiaGLProgram::initParameters()
 {
-    ModelViewMatrix = mat4Param("ModelViewMatrix");
-    MVPMatrix       = mat4Param("MVPMatrix");
-
+    initCommonParameters();
     for (unsigned int i = 0; i < props.nLights; i++)
     {
         lights[i].direction  = vec3Param(LightProperty(i, "direction"));
@@ -3765,3 +3772,12 @@ CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
     invScatterCoeffSum = tScatterCoeffSum.cwiseInverse();
     extinctionCoeff = tScatterCoeffSum + tAbsorptionCoeff;
 }
+
+void
+CelestiaGLProgram::setMVPMatrices(const Matrix4f& p, const Matrix4f& m)
+{
+    ProjectionMatrix = p;
+    ModelViewMatrix = m;
+    MVPMatrix = p * m;
+}
+

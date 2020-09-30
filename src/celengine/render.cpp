@@ -1291,7 +1291,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     }
 
     prog->use();
-    prog->MVPMatrix = *m.projection; // Skip MV as it's Identity
+    prog->setMVPMatrices(*m.projection);
     if (orbit->isPeriodic())
     {
         double period = orbit->getPeriod();
@@ -1715,9 +1715,11 @@ void Renderer::draw(const Observer& observer,
     // Set up the camera for star rendering; the units of this phase
     // are light years.
     Vector3f observerPosLY = -observer.getPosition().offsetFromLy(Vector3f::Zero());
-    Matrix4f asterismMVP = getProjectionMatrix() *
-                           getModelViewMatrix()  *
-                           vecgl::translate(observerPosLY);
+
+    Matrix4f projection = getProjectionMatrix();
+    Matrix4f modelView = getModelViewMatrix() * vecgl::translate(observerPosLY);
+
+    Matrices asterismMVP = { &projection, &modelView };
 
     float dist = observerPosLY.norm() * 1.6e4f;
     renderAsterisms(universe, dist, asterismMVP);
@@ -1800,7 +1802,7 @@ void renderPoint(const Renderer &renderer,
 
     prog->use();
     prog->samplerParam("starTex") = 0;
-    prog->mat4Param("MVPMatrix") = (*m.projection) * (*m.modelview);
+    prog->setMVPMatrices(*m.projection, *m.modelview);
 
 #ifndef GL_ES
     glEnable(GL_POINT_SPRITE);
@@ -2204,7 +2206,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
                           4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(SkyVertex),
                           static_cast<void*>(&skyVertices[0].color));
     prog->use();
-    prog->MVPMatrix = (*m.projection) * (*m.modelview);
+    prog->setMVPMatrices(*m.projection, *m.modelview);
     for (int i = 0; i < nRings; i++)
     {
         glDrawElements(GL_TRIANGLE_STRIP,
@@ -2251,7 +2253,7 @@ static void renderSphereUnlit(const RenderInfo& ri,
         return;
     prog->use();
 
-    prog->MVPMatrix = (*m.projection) * (*m.modelview);
+    prog->setMVPMatrices(*m.projection, *m.modelview);
     prog->textureOffset = 0.0f;
     prog->ambientColor = ri.color.toVector3();
     prog->opacity = 1.0f;
@@ -2278,7 +2280,7 @@ static void renderCloudsUnlit(const RenderInfo& ri,
     if (prog == nullptr)
         return;
     prog->use();
-    prog->MVPMatrix = (*m.projection) * (*m.modelview);
+    prog->setMVPMatrices(*m.projection, *m.modelview);
     prog->textureOffset = cloudTexOffset;
 
     g_lodSphere->render(frustum, ri.pixWidth, &cloudTex, 1);
@@ -2896,7 +2898,6 @@ void Renderer::renderObject(const Vector3f& pos,
             else
             {
                 Matrix4f mv = vecgl::rotate(getCameraOrientation());
-                Matrices mvp = { m.projection, &mv };
                 enableBlending();
                 setBlendingFactors(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -2907,7 +2908,8 @@ void Renderer::renderObject(const Vector3f& pos,
                                           ri.sunDir_eye,
                                           ls,
                                           thicknessInPixels,
-                                          lit, mvp);
+                                          lit,
+                                          { m.projection, &mv });
             }
         }
 
@@ -3669,7 +3671,7 @@ void Renderer::renderCometTail(const Body& body,
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 
     prog->use();
-    prog->mat4Param("MVPMatrix") = (*m.projection) * (*m.modelview) * vecgl::translate(pos);
+    prog->setMVPMatrices(*m.projection, (*m.modelview) * vecgl::translate(pos));
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glEnableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
@@ -3748,7 +3750,7 @@ void Renderer::renderReferenceMark(const ReferenceMark& refMark,
 }
 
 
-void Renderer::renderAsterisms(const Universe& universe, float dist, const Matrix4f& mvp)
+void Renderer::renderAsterisms(const Universe& universe, float dist, const Matrices& mvp)
 {
     auto *asterisms = universe.getAsterisms();
 
@@ -3778,7 +3780,7 @@ void Renderer::renderAsterisms(const Universe& universe, float dist, const Matri
 }
 
 
-void Renderer::renderBoundaries(const Universe& universe, float dist, const Matrix4f& mvp)
+void Renderer::renderBoundaries(const Universe& universe, float dist, const Matrices& mvp)
 {
     auto boundaries = universe.getBoundaries();
     if ((renderFlags & ShowBoundaries) == 0 || boundaries == nullptr)
@@ -4811,7 +4813,7 @@ Renderer::renderAnnotationMarker(const Annotation &a,
         float x = labelOffset + PixelOffset;
         float y = -labelOffset - font[fs]->getHeight() + PixelOffset;
         font[fs]->bind();
-        font[fs]->setMVPMatrix((*m.projection) * mv);
+        font[fs]->setMVPMatrices(*m.projection, mv);
         font[fs]->render(markerRep.label(), x, y);
         font[fs]->flush();
     }
@@ -4833,7 +4835,7 @@ Renderer::renderAnnotationLabel(const Annotation &a,
                                    depth);
 
     font[fs]->bind();
-    font[fs]->setMVPMatrix((*m.projection) * mv);
+    font[fs]->setMVPMatrices(*m.projection, mv);
     font[fs]->render(a.labelText, 0.0f, 0.0f);
     font[fs]->flush();
 }
@@ -5334,7 +5336,7 @@ bool Renderer::captureFrame(int x, int y, int w, int h, Renderer::PixelFormat fo
     return glGetError() == GL_NO_ERROR;
 }
 
-void Renderer::drawRectangle(const Rect &r, const Matrix4f &mvp)
+void Renderer::drawRectangle(const Rect &r, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m)
 {
     ShaderProperties shadprop;
     shadprop.lightModel = ShaderProperties::UnlitModel;
@@ -5373,7 +5375,7 @@ void Renderer::drawRectangle(const Rect &r, const Matrix4f &mvp)
     }
 
     prog->use();
-    prog->MVPMatrix = mvp;
+    prog->setMVPMatrices(p, m);
 
     if (r.type != Rect::Type::BorderOnly)
     {
