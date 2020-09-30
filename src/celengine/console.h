@@ -117,7 +117,7 @@ class Console : public std::ostream
     };
     CursorPosition global { 0.0f, 0.0f };
     std::vector<CursorPosition> posStack;
-    Eigen::Matrix4f mpv;
+    Eigen::Matrix4f projection;
 };
 
 #endif // _CELENGINE_CONSOLE_H_

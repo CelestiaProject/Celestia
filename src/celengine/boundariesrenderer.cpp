@@ -30,7 +30,7 @@ bool BoundariesRenderer::sameBoundaries(const ConstellationBoundaries *boundarie
     return m_boundaries == boundaries;
 }
 
-void BoundariesRenderer::render(const Renderer &renderer, const Color &color, const Eigen::Matrix4f &mvp)
+void BoundariesRenderer::render(const Renderer &renderer, const Color &color, const Matrices &mvp)
 {
     auto *prog = renderer.getShaderManager().getShader(m_shadprop);
     if (prog == nullptr)
@@ -51,7 +51,7 @@ void BoundariesRenderer::render(const Renderer &renderer, const Color &color, co
     }
 
     prog->use();
-    prog->MVPMatrix = mvp;
+    prog->setMVPMatrices(*mvp.projection, *mvp.modelview);
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
     m_vo.draw(GL_LINES, m_vtxTotal);
 

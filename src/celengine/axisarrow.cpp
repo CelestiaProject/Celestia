@@ -283,7 +283,7 @@ ArrowReferenceMark::render(Renderer* renderer,
     if (prog == nullptr)
         return;
     prog->use();
-    prog->MVPMatrix = (*m.projection) * mv;
+    prog->setMVPMatrices(*m.projection, mv);
 
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
 		     color.red(), color.green(), color.blue(), opacity);
@@ -358,7 +358,8 @@ AxesReferenceMark::render(Renderer* renderer,
     }
 
     Affine3f transform = Translation3f(position) * q.cast<float>() * Scaling(size);
-    Matrix4f mvp = (*m.projection) * (*m.modelview) * transform.matrix();
+    Matrix4f projection = *m.projection;
+    Matrix4f modelView = (*m.modelview) * transform.matrix();
 
 #if 0
     // Simple line axes
@@ -390,30 +391,30 @@ AxesReferenceMark::render(Renderer* renderer,
 
     Affine3f labelTransform = Translation3f(Vector3f(0.1f, 0.0f, 0.75f)) * Scaling(labelScale);
     Matrix4f labelTransformMatrix = labelTransform.matrix();
-    Matrix4f t;
+    Matrix4f tModelView;
 
     // x-axis
-    t = mvp * vecgl::rotate(AngleAxisf(90.0_deg, Vector3f::UnitY()));
+    tModelView = modelView * vecgl::rotate(AngleAxisf(90.0_deg, Vector3f::UnitY()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
-    prog->MVPMatrix = t;
+    prog->setMVPMatrices(projection, tModelView);
     RenderArrow(vo);
-    prog->MVPMatrix = t * labelTransformMatrix;
+    prog->setMVPMatrices(projection, tModelView * labelTransformMatrix);
     RenderX(vo);
 
     // y-axis
-    t = mvp * vecgl::rotate(AngleAxisf(180.0_deg, Vector3f::UnitY()));
+    tModelView = modelView * vecgl::rotate(AngleAxisf(180.0_deg, Vector3f::UnitY()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
-    prog->MVPMatrix = t;
+    prog->setMVPMatrices(projection, tModelView);
     RenderArrow(vo);
-    prog->MVPMatrix = t * labelTransformMatrix;
+    prog->setMVPMatrices(projection, tModelView * labelTransformMatrix);
     RenderY(vo);
 
     // z-axis
-    t = mvp *vecgl::rotate(AngleAxisf(-90.0_deg, Vector3f::UnitX()));
+    tModelView = modelView *vecgl::rotate(AngleAxisf(-90.0_deg, Vector3f::UnitX()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
-    prog->MVPMatrix = t;
+    prog->setMVPMatrices(projection, tModelView);
     RenderArrow(vo);
-    prog->MVPMatrix = t * labelTransformMatrix;
+    prog->setMVPMatrices(projection, tModelView * labelTransformMatrix);
     RenderZ(vo);
 
     renderer->enableBlending();

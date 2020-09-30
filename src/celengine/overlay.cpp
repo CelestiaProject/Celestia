@@ -34,7 +34,7 @@ Overlay::Overlay(Renderer& r) :
 
 void Overlay::begin()
 {
-    mvp = Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
+    projection = Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
     // ModelView is Identity
 
     renderer.enableBlending();
@@ -74,7 +74,7 @@ void Overlay::beginText()
     if (font != nullptr)
     {
         font->bind();
-        font->setMVPMatrix(mvp);
+        font->setMVPMatrices(projection);
         useTexture = true;
         fontChanged = false;
     }
@@ -98,7 +98,7 @@ void Overlay::print(wchar_t c)
         if (!useTexture || fontChanged)
         {
             font->bind();
-            font->setMVPMatrix(mvp);
+            font->setMVPMatrices(projection);
             useTexture = true;
             fontChanged = false;
         }
@@ -129,7 +129,7 @@ void Overlay::print(char c)
         if (!useTexture || fontChanged)
         {
             font->bind();
-            font->setMVPMatrix(mvp);
+            font->setMVPMatrices(projection);
             useTexture = true;
             fontChanged = false;
         }
@@ -171,7 +171,7 @@ void Overlay::drawRectangle(const Rect& r)
     if (useTexture && r.tex == nullptr)
         useTexture = false;
 
-    renderer.drawRectangle(r, mvp);
+    renderer.drawRectangle(r, projection);
 }
 
 void Overlay::setColor(float r, float g, float b, float a)

@@ -86,7 +86,7 @@ static void
 renderTerminator(Renderer* renderer,
                  const vector<Vector3f>& pos,
                  const Color& color,
-                 const Matrix4f& mvp)
+                 const Matrices& mvp)
 {
     /*!
      * Proper terminator calculation requires double precision floats in GLSL
@@ -114,7 +114,7 @@ renderTerminator(Renderer* renderer,
     vo.setBufferData(pos.data(), 0, pos.size() * sizeof(Vector3f));
 
     prog->use();
-    prog->MVPMatrix = mvp;
+    prog->setMVPMatrices(*mvp.projection, *mvp.modelview);
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
 
     vo.draw(GL_LINE_LOOP, pos.size());
@@ -212,8 +212,8 @@ VisibleRegion::render(Renderer* renderer,
     }
 
     Affine3f transform = Translation3f(position) * qf.conjugate();
-    Matrix4f mvp = (*m.projection) * (*m.modelview) * transform.matrix();
-    renderTerminator(renderer, pos, Color(m_color, opacity), mvp);
+    Matrix4f modelView = (*m.modelview) * transform.matrix();
+    renderTerminator(renderer, pos, Color(m_color, opacity), { m.projection, &modelView });
 
     renderer->enableBlending();
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);

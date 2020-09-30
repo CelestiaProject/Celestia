@@ -27,7 +27,7 @@ class TextureFont
     TextureFont& operator=(const TextureFont&) = delete;
     TextureFont& operator=(TextureFont&&) = delete;
 
-    void setMVPMatrix(const Eigen::Matrix4f& m);
+    void setMVPMatrices(const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
 
     float render(wchar_t c, float xoffset = 0.0f, float yoffset = 0.0f) const;
     float render(const std::string& str, float xoffset = 0.0f, float yoffset = 0.0f) const;

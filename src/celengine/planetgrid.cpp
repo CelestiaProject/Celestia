@@ -125,7 +125,8 @@ PlanetographicGrid::render(Renderer* renderer,
     renderer->disableBlending();
 
     Affine3f transform = Translation3f(pos) * qf.conjugate() * Scaling(scale * semiAxes);
-    Matrix4f mvp = (*m.projection) * (*m.modelview) * transform.matrix();
+    Matrix4f projection = *m.projection;
+    Matrix4f modelView = *m.modelview * transform.matrix();
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
@@ -162,7 +163,7 @@ PlanetographicGrid::render(Renderer* renderer,
             glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex,
                            Renderer::PlanetographicGridColor);
         }
-        prog->MVPMatrix = mvp * vecgl::translate(0.0f, sin(phi), 0.0f) * vecgl::scale(r);;
+        prog->setMVPMatrices(projection, modelView * vecgl::translate(0.0f, sin(phi), 0.0f) * vecgl::scale(r));
         glDrawArrays(GL_LINE_LOOP, 0, circleSubdivisions);
 
         glLineWidth(1.0f);
@@ -191,7 +192,7 @@ PlanetographicGrid::render(Renderer* renderer,
                    Renderer::PlanetographicGridColor);
     for (float longitude = 0.0f; longitude <= 180.0f; longitude += longitudeStep)
     {
-        prog->MVPMatrix = mvp * vecgl::rotate(AngleAxisf(degToRad(longitude), Vector3f::UnitY()));
+        prog->setMVPMatrices(projection, modelView * vecgl::rotate(AngleAxisf(degToRad(longitude), Vector3f::UnitY())));
         glDrawArrays(GL_LINE_LOOP, 0, circleSubdivisions);
 
         if (showCoordinateLabels)

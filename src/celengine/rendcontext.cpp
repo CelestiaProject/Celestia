@@ -558,7 +558,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
         return;
 
     prog->use();
-    prog->MVPMatrix = (*projectionMatrix) * (*modelViewMatrix);
+    prog->setMVPMatrices(*projectionMatrix, *modelViewMatrix);
 
     for (unsigned int i = 0; i < nTextures; i++)
     {
@@ -772,9 +772,7 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
         return;
 
     prog->use();
-    prog->MVPMatrix = (*projectionMatrix) * (*modelViewMatrix);
-    if (usePointSize)
-        prog->ModelViewMatrix = *modelViewMatrix;
+    prog->setMVPMatrices(*projectionMatrix, *modelViewMatrix);
 
     for (unsigned int i = 0; i < nTextures; i++)
     {

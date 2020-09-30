@@ -76,7 +76,7 @@ bool Console::setRowCount(int _nRows)
 
 void Console::begin()
 {
-    mpv = Ortho2D(0.0f, (float)xscale, 0.0f, (float)yscale);
+    projection = Ortho2D(0.0f, (float)xscale, 0.0f, (float)yscale);
 
     renderer.enableBlending();
     renderer.setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -98,7 +98,7 @@ void Console::render(int rowHeight)
         return;
 
     font->bind();
-    font->setMVPMatrix(mpv);
+    font->setMVPMatrices(projection);
     savePos();
     for (int i = 0; i < rowHeight; i++)
     {

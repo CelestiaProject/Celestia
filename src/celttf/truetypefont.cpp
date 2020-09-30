@@ -108,7 +108,8 @@ struct TextureFontPrivate
 
     int m_inserted { 0 };
 
-    Eigen::Matrix4f m_MVP;
+    Eigen::Matrix4f m_projection;
+    Eigen::Matrix4f m_modelView;
     bool m_shaderInUse { false };
     vector<FontVertex> m_fontVertices;
 };
@@ -595,18 +596,19 @@ void TextureFont::bind()
         prog->use();
         prog->samplerParam("atlasTex") = 0;
         impl->m_shaderInUse = true;
-        prog->mat4Param("MVPMatrix") = impl->m_MVP;
+        prog->setMVPMatrices(impl->m_projection, impl->m_modelView);
     }
 }
 
-void TextureFont::setMVPMatrix(const Eigen::Matrix4f& mvp)
+void TextureFont::setMVPMatrices(const Eigen::Matrix4f& p, const Eigen::Matrix4f& m)
 {
-    impl->m_MVP = mvp;
+    impl->m_projection = p;
+    impl->m_modelView = m;
     auto *prog = impl->getProgram();
     if (prog != nullptr && impl->m_shaderInUse)
     {
         flush();
-        prog->mat4Param("MVPMatrix") = mvp;
+        prog->setMVPMatrices(p, m);
     }
 }
 

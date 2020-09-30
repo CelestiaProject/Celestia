@@ -200,7 +200,7 @@ static int font_render(lua_State* l)
     Eigen::Matrix4f p, m;
     glGetFloatv(GL_PROJECTION_MATRIX, p.data());
     glGetFloatv(GL_MODELVIEW_MATRIX, m.data());
-    font->setMVPMatrix(p * m);
+    font->setMVPMatrices(p, m);
 #endif
     return celx.push(font->render(s));
 }
