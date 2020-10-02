@@ -9,7 +9,6 @@ varying vec2 texCoord;
 void main(void)
 {
     vec3 p = viewMat * in_Position.xyz * tidalSize;
-    gl_Position = MVPMatrix * vec4(p, 1.0);
-
     texCoord = in_TexCoord0.st;
+    set_vp(vec4(p, 1.0));
 }

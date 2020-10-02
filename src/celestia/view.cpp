@@ -256,7 +256,7 @@ void View::drawBorder(int gWidth, int gHeight, const Color &color, float linewid
     r.setColor(color);
     r.setType(Rect::Type::BorderOnly);
     r.setLineWidth(linewidth);
-    renderer->drawRectangle(r, renderer->getOrthoProjectionMatrix());
+    renderer->drawRectangle(r, ShaderProperties::FisheyeOverrideModeDisabled, renderer->getOrthoProjectionMatrix());
 }
 
 void View::updateFBO(int gWidth, int gHeight)

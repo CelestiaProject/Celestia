@@ -93,6 +93,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     configParams->getString("TitleFont", config->titleFont);
     configParams->getPath("LogoTexture", config->logoTextureFile);
     configParams->getString("Cursor", config->cursor);
+    configParams->getString("ProjectionMode", config->projectionMode);
     configParams->getString("ViewportEffect", config->viewportEffect);
     configParams->getString("WarpMeshFile", config->warpMeshFile);
 

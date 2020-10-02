@@ -11,5 +11,5 @@ varying float shade;
 void main(void)
 {
     shade = abs(dot(viewDir.xyz, in_Normal.xyz) * brightness * fadeFactor);
-    gl_Position = MVPMatrix * in_Position;
+    set_vp(in_Position);
 }

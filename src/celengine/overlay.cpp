@@ -171,7 +171,7 @@ void Overlay::drawRectangle(const Rect& r)
     if (useTexture && r.tex == nullptr)
         useTexture = false;
 
-    renderer.drawRectangle(r, projection);
+    renderer.drawRectangle(r, ShaderProperties::FisheyeOverrideModeDisabled, projection);
 }
 
 void Overlay::setColor(float r, float g, float b, float a)

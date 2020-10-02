@@ -1,10 +1,16 @@
 attribute vec3 in_Position;
 attribute vec2 in_TexCoord0;
 
+uniform float pointWidth;
+uniform float pointHeight;
+uniform vec3 center;
+
 varying vec2 texCoord;
 
 void main(void)
 {
     texCoord = in_TexCoord0.st;
-    gl_Position = MVPMatrix * vec4(in_Position, 1.0);
+    set_vp(vec4(center, 1.0));
+    vec2 transformed = vec2((texCoord.x - 0.5) * pointWidth, (texCoord.y - 0.5) * pointHeight);
+    gl_Position.xy += transformed * gl_Position.w;
 }

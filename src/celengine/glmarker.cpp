@@ -225,6 +225,7 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
     ShaderProperties shadprop;
     shadprop.texUsage = ShaderProperties::VertexColors;
     shadprop.lightModel = ShaderProperties::UnlitModel;
+    shadprop.fishEyeOverride = ShaderProperties::FisheyeOverrideModeDisabled;
     auto* prog = shaderManager->getShader(shadprop);
     if (prog == nullptr)
         return;

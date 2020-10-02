@@ -10,5 +10,5 @@ void main(void)
     float x = in_Position.x * pixelSize;
     float y = in_Position.y * pixelSize;
     vec3 pos = (x * c - y * s + x0) * u + (x * s + y * c + y0) * v;
-    gl_Position = MVPMatrix * vec4(pos, 1.0);
+    set_vp(vec4(pos, 1.0));
 }

@@ -1352,6 +1352,21 @@ Vector3f Observer::getPickRay(float x, float y) const
     return pickDirection.normalized();
 }
 
+Vector3f Observer::getPickRayFisheye(float x, float y) const
+{
+    float r = hypot(x, y);
+    float phi = float(PI) * r;
+    float sin_phi = sin(phi);
+    float theta = atan2(y, x);
+    float newX = sin_phi * cos(theta);
+    float newY = sin_phi * sin(theta);
+    float newZ = cos(phi);
+    Vector3f pickDirection = Vector3f(newX, newY, -newZ);
+    pickDirection.normalize();
+
+    return pickDirection;
+}
+
 
 // Internal method to update the position and orientation of the observer in
 // universal coordinates.

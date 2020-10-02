@@ -65,10 +65,10 @@ LookAt(const Eigen::Matrix<T, 3, 1>& from, const Eigen::Matrix<T, 3, 1>& to, con
 /*! Project to screen space
  */
 template<class T> bool
-Project(const Eigen::Matrix<T, 3, 1>& from,
-        const Eigen::Matrix<T, 4, 4>& modelViewProjectionMatrix,
-        const int viewport[4],
-        Eigen::Matrix<T, 3, 1>& to)
+ProjectPerspective(const Eigen::Matrix<T, 3, 1>& from,
+                   const Eigen::Matrix<T, 4, 4>& modelViewProjectionMatrix,
+                   const int viewport[4],
+                   Eigen::Matrix<T, 3, 1>& to)
 {
     Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), T(1.0));
     Eigen::Matrix<T, 4, 1> out = modelViewProjectionMatrix * in;
@@ -87,14 +87,46 @@ Project(const Eigen::Matrix<T, 3, 1>& from,
 }
 
 template<class T> bool
-Project(const Eigen::Matrix<T, 3, 1>& from,
-        const Eigen::Matrix<T, 4, 4>& modelViewMatrix,
-        const Eigen::Matrix<T, 4, 4>& projMatrix,
-        const int viewport[4],
-        Eigen::Matrix<T, 3, 1>& to)
+ProjectPerspective(const Eigen::Matrix<T, 3, 1>& from,
+                   const Eigen::Matrix<T, 4, 4>& modelViewMatrix,
+                   const Eigen::Matrix<T, 4, 4>& projMatrix,
+                   const int viewport[4],
+                   Eigen::Matrix<T, 3, 1>& to)
 {
     Eigen::Matrix<T, 4, 4> m = projMatrix * modelViewMatrix;
     return Project(from, m, viewport, to);
+}
+
+template<class T> bool
+ProjectFisheye(const Eigen::Matrix<T, 3, 1>& from,
+               const Eigen::Matrix<T, 4, 4>& modelViewMatrix,
+               const Eigen::Matrix<T, 4, 4>& projMatrix,
+               const int viewport[4],
+               Eigen::Matrix<T, 3, 1>& to)
+{
+    Eigen::Matrix<T, 4, 1> inPos = modelViewMatrix * Eigen::Matrix<T, 4, 1>(from.x(), from.y(), from.z(), T(1.0));
+    T l = hypot(inPos.x(), inPos.y());
+    if (l != T(0.0))
+    {
+        T phi = atan2(l, -inPos.z());
+        T ratio = phi / T(M_PI_2) / l;
+        inPos.x() *= ratio;
+        inPos.y() *= ratio;
+    }
+
+    Eigen::Matrix<T, 4, 1> out = projMatrix * inPos;
+    if (out.w() == T(0.0))
+        return false;
+
+    out = out.array() / out.w();
+    // Map x, y and z to range 0-1
+    out = T(0.5) + out.array() * T(0.5);
+    // Map x,y to viewport
+    out.x() = viewport[0] + out.x() * viewport[2];
+    out.y() = viewport[1] + out.y() * viewport[3];
+
+    to = { out.x(), out.y(), out.z() };
+    return true;
 }
 
 

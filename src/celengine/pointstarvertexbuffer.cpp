@@ -70,7 +70,6 @@ void PointStarVertexBuffer::startPoints()
     if (prog == nullptr)
         return;
     prog->use();
-    prog->setMVPMatrices(renderer.getProjectionMatrix(), renderer.getModelViewMatrix());
 
     unsigned int stride = sizeof(StarVertex);
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);

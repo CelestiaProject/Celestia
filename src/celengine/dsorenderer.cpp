@@ -104,7 +104,10 @@ void DSORenderer::process(DeepSkyObject* const &dso,
             }
 
             float t = (float)wWidth / (float)wHeight;
-            pr = Perspective(fov, t, nearZ, farZ);
+            if (renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
+                pr = Ortho(-t, t, -1.0f, 1.0f, nearZ, farZ);
+            else
+                pr = Perspective(fov, t, nearZ, farZ);
         }
         else
         {

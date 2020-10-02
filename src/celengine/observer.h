@@ -135,6 +135,7 @@ public:
     void           update(double dt, double timeScale);
 
     Eigen::Vector3f getPickRay(float x, float y) const;
+    Eigen::Vector3f getPickRayFisheye(float x, float y) const;
 
 
     void orbit(const Selection&, const Eigen::Quaternionf &q);
