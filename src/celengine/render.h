@@ -72,7 +72,8 @@ enum class VOType
     AxisArrow  = 1,
     Rectangle  = 2,
     Terminator = 3,
-    Count      = 4
+    LargeStar  = 4,
+    Count      = 5
 };
 
 enum class RenderMode
@@ -98,6 +99,12 @@ class Renderer
         double orbitWindowEnd;
         double orbitPeriodsShown;
         double linearFadeFraction;
+    };
+
+    enum class ProjectionMode
+    {
+        PerspectiveMode = 0,
+        FisheyeMode     = 1
     };
 
 #ifdef USE_GLCONTEXT
@@ -233,6 +240,8 @@ class Renderer
     void setRenderFlags(uint64_t);
     int getLabelMode() const;
     void setLabelMode(int);
+    ProjectionMode getProjectionMode() const;
+    void setProjectionMode(ProjectionMode);
     float getAmbientLightLevel() const;
     void setAmbientLightLevel(float);
     float getMinimumOrbitSize() const;
@@ -245,6 +254,8 @@ class Renderer
     void setOrbitMask(int);
     int getScreenDpi() const;
     void setScreenDpi(int);
+    int getWindowWidth() const;
+    int getWindowHeight() const;
 
     // GL wrappers
     void getViewport(int* x, int* y, int* w, int* h) const;
@@ -268,7 +279,7 @@ class Renderer
     void enableDepthTest() noexcept;
     void disableDepthTest() noexcept;
 
-    void drawRectangle(const Rect& r, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
+    void drawRectangle(const Rect& r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
     void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
 
     const ColorTemperatureTable* getStarColorTable() const;
@@ -758,6 +769,7 @@ class Renderer
     float faintestAutoMag45deg;
     TextureFont* font[FontCount];
 
+    ProjectionMode projectionMode;
     int renderMode;
     int labelMode;
     uint64_t renderFlags;

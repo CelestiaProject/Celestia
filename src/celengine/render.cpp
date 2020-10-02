@@ -244,6 +244,7 @@ Renderer::Renderer() :
     screenDpi(96),
     corrFac(1.12f),
     faintestAutoMag45deg(8.0f), //def. 7.0f
+    projectionMode(ProjectionMode::PerspectiveMode),
 #ifndef GL_ES
     renderMode(GL_FILL),
 #endif
@@ -668,6 +669,8 @@ void Renderer::resize(int width, int height)
 
 float Renderer::calcPixelSize(float fovY, float windowHeight)
 {
+    if (getProjectionMode() == ProjectionMode::FisheyeMode)
+        return 2.0f / windowHeight;
     return 2 * (float) tan(degToRad(fovY / 2.0)) / (float) windowHeight;
 }
 
@@ -681,6 +684,16 @@ void Renderer::setFieldOfView(float _fov)
 int Renderer::getScreenDpi() const
 {
     return screenDpi;
+}
+
+int Renderer::getWindowWidth() const
+{
+    return windowWidth;
+}
+
+int Renderer::getWindowHeight() const
+{
+    return windowHeight;
 }
 
 void Renderer::setScreenDpi(int _dpi)
@@ -762,6 +775,18 @@ int Renderer::getLabelMode() const
 void Renderer::setLabelMode(int _labelMode)
 {
     labelMode = _labelMode;
+    markSettingsChanged();
+}
+
+Renderer::ProjectionMode Renderer::getProjectionMode() const
+{
+    return projectionMode;
+}
+
+void Renderer::setProjectionMode(ProjectionMode _projectionMode)
+{
+    projectionMode = _projectionMode;
+    shaderManager->setFisheyeEnabled(projectionMode == ProjectionMode::FisheyeMode);
     markSettingsChanged();
 }
 
@@ -867,7 +892,9 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
 {
     GLint view[4] = { 0, 0, windowWidth, windowHeight };
     Vector3f win;
-    if (Project(pos, m_MVPMatrix, view, win))
+    bool fisheye = projectionMode == ProjectionMode::FisheyeMode;
+    bool success = fisheye ? ProjectFisheye(pos, m_modelMatrix, m_projMatrix, view, win) : ProjectPerspective(pos, m_MVPMatrix, view, win);
+    if (success)
     {
         float depth = pos.x() * m_modelMatrix(2, 0) +
                       pos.y() * m_modelMatrix(2, 1) +
@@ -1357,9 +1384,13 @@ static Vector3d astrocentricPosition(const UniversalCoord& pos,
 
 void Renderer::autoMag(float& faintestMag)
 {
-      float fieldCorr = 2.0f * FOV/(fov + FOV);
-      faintestMag = (float) (faintestAutoMag45deg * sqrt(fieldCorr));
-      saturationMag = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
+    float fieldCorr;
+    if (getProjectionMode() == ProjectionMode::FisheyeMode)
+        fieldCorr = 2.0f - 2000.0f / (windowHeight / (screenDpi / 25.4f / 3.78f) + 1000.0f); // larger window height = more stars to display
+    else
+        fieldCorr= 2.0f * FOV / (fov + FOV);
+    faintestMag = (float) (faintestAutoMag45deg * sqrt(fieldCorr));
+    saturationMag = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
 }
 
 
@@ -1587,7 +1618,11 @@ void Renderer::draw(const Observer& observer,
 
     // Set up the projection and modelview matrices.
     // We'll usethem for positioning star and planet labels.
-    m_projMatrix = Perspective(fov, getAspectRatio(), NEAR_DIST, FAR_DIST);
+    float aspectRatio = getAspectRatio();
+    if (getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
+        m_projMatrix = Ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, NEAR_DIST, FAR_DIST);
+    else
+        m_projMatrix = Perspective(fov, aspectRatio, NEAR_DIST, FAR_DIST);
     m_modelMatrix = Affine3f(getCameraOrientation()).matrix();
     m_MVPMatrix = m_projMatrix * m_modelMatrix;
 
@@ -1827,51 +1862,46 @@ void renderPoint(const Renderer &renderer,
 #endif
 }
 
-void renderLargePoint(const Renderer &renderer,
+void renderLargePoint(Renderer &renderer,
                       const Vector3f &position,
                       const Color &color,
                       float size,
-                      float pixelSize,
-                      const Matrix3f &cameraOrientation,
                       const Matrices &mvp)
 {
     auto *prog = renderer.getShaderManager().getShader("largestar");
     if (prog == nullptr)
         return;
 
+    // Draw billboard for large points
     prog->use();
     prog->samplerParam("starTex") = 0;
     prog->setMVPMatrices(*mvp.projection, *mvp.modelview);
     prog->vec4Param("color") = color.toVector4();
+    prog->vec3Param("center") = position;
+    prog->floatParam("pointWidth") = size / renderer.getWindowWidth() * 2.0f;
+    prog->floatParam("pointHeight") = size / renderer.getWindowHeight() * 2.0f;
 
-    float distanceAdjust = pixelSize * position.norm() * 0.5f;
-    size *= distanceAdjust;
+    auto &vo = renderer.getVertexObject(VOType::LargeStar, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
+    vo.bind();
+    if (!vo.initialized())
+    {
+        const float texCoords[] = {
+                              // texCoords
+            0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 
-    auto m = renderer.getCameraOrientation().conjugate().toRotationMatrix();
-    Vector3f v0 = position + (cameraOrientation * Vector3f(-1, -1, 0) * size);
-    Vector3f v1 = position + (cameraOrientation * Vector3f( 1, -1, 0) * size);
-    Vector3f v2 = position + (cameraOrientation * Vector3f( 1,  1, 0) * size);
-    Vector3f v3 = position + (cameraOrientation * Vector3f(-1,  1, 0) * size);
+            0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f, 1.0f
+        };
+        vo.allocate(sizeof(texCoords), texCoords);
+        vo.setVertices(3, GL_FLOAT, false, 5 * sizeof(float), 0); // Vertices are useless, but required to set somehow on Mac...
+        vo.setTextureCoords(2, GL_FLOAT, false, 5 * sizeof(float), 3 * sizeof(float));
+    }
 
-    float quadVertices[] = {
-        // positions            // texCoords
-        v0.x(), v0.y(), v0.z(), 0.0f, 0.0f,
-        v1.x(), v1.y(), v1.z(), 1.0f, 0.0f,
-        v2.x(), v2.y(), v2.z(), 1.0f, 1.0f,
-        v3.x(), v3.y(), v3.z(), 0.0f, 1.0f
-    };
-
-    static GLubyte indices[] = { 0, 1, 2, 0, 2, 3 };
-
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), quadVertices);
-    glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                          2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), quadVertices + 3);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+    vo.draw(GL_TRIANGLES, 6);
+    vo.unbind();
 }
 
 
@@ -1974,7 +2004,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         if (useSprites)
             gaussianDiscTex->bind();
         if (pointSize > gl::maxPointSize)
-            renderLargePoint(*this, center, {color, alpha}, pointSize, pixelSize, m, mvp);
+            renderLargePoint(*this, center, {color, alpha}, pointSize, mvp);
         else
             renderPoint(*this, center, {color, alpha}, pointSize, useSprites, mvp);
 
@@ -1988,7 +2018,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         {
             gaussianGlareTex->bind();
             if (glareSize > gl::maxPointSize)
-                renderLargePoint(*this, center, {color, glareAlpha}, glareSize, pixelSize, m, mvp);
+                renderLargePoint(*this, center, {color, glareAlpha}, glareSize, mvp);
             else
                 renderPoint(*this, center, {color, glareAlpha}, glareSize, true, mvp);
         }
@@ -5032,15 +5062,19 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     // Precompute values that will be used to generate the normalized device z value;
     // we're effectively just handling the projection instead of OpenGL. We use an orthographic
     // projection matrix in order to get the label text position exactly right but need to mimic
-    // the depth coordinate generation of a perspective projection.
-    float d1 = -(farDist + nearDist) / (farDist - nearDist);
-    float d2 = -2.0f * nearDist * farDist / (farDist - nearDist);
+    // the depth coordinate generation of a perspective projection. For fisheye, just apply a
+    // linear transformation since fisheye uses orthographic projection already.
+    float d0 = farDist - nearDist;
+    float d1 = -(farDist + nearDist) / d0; // Used in perspective projection
+    float d2 = -2.0f * nearDist * farDist / d0; // Used in perspective projection
+    bool fisheye = projectionMode == ProjectionMode::FisheyeMode;
 
     vector<Annotation>::iterator iter = startIter;
     for (; iter != endIter && iter->position.z() > nearDist; iter++)
     {
         // Compute normalized device z
-        float ndc_z = clamp(d1 + d2 / -iter->position.z(), -1.0f, 1.0f);
+        float z = fisheye ? (1.0f - (iter->position.z() - nearDist) / d0 * 2.0f) : (d1 + d2 / -iter->position.z());
+        float ndc_z = clamp(z, -1.0f, 1.0f);
 
         // Offsets to left align label
         int labelHOffset = 0;
@@ -5400,7 +5434,7 @@ bool Renderer::captureFrame(int x, int y, int w, int h, Renderer::PixelFormat fo
     return glGetError() == GL_NO_ERROR;
 }
 
-void Renderer::drawRectangle(const Rect &r, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m)
+void Renderer::drawRectangle(const Rect &r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m)
 {
     ShaderProperties shadprop;
     shadprop.lightModel = ShaderProperties::UnlitModel;
@@ -5409,6 +5443,8 @@ void Renderer::drawRectangle(const Rect &r, const Eigen::Matrix4f& p, const Eige
         shadprop.texUsage |= ShaderProperties::VertexColors;
     if (r.tex != nullptr)
         shadprop.texUsage |= ShaderProperties::DiffuseTexture;
+
+    shadprop.fishEyeOverride = fishEyeOverrideMode;
 
     auto *prog = getShaderManager().getShader(shadprop);
     if (prog == nullptr)
@@ -6062,11 +6098,16 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
 
         // Set up a perspective projection using the current interval's near and
         // far clip planes.
-        Matrix4f proj = Perspective(fov, getAspectRatio(), nearPlaneDistance, farPlaneDistance);
+        float aspectRatio = getAspectRatio();
+        Matrix4f proj;
+        if (getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
+            proj = Ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, nearPlaneDistance, farPlaneDistance);
+        else
+            proj = Perspective(fov, aspectRatio, nearPlaneDistance, farPlaneDistance);
         Matrices m = { &proj, &m_modelMatrix };
 
         Frustum intervalFrustum(degToRad(fov),
-                                getAspectRatio(),
+                                aspectRatio,
                                 nearPlaneDistance,
                                 farPlaneDistance);
 

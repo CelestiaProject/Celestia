@@ -80,7 +80,8 @@ static const float RotationDecay = 2.0f;
 static const double MaximumTimeRate = 1.0e15;
 static const double MinimumTimeRate = 1.0e-15;
 static const float stdFOV = degToRad(45.0f);
-static const float MaximumFOV = degToRad(120.0f);
+static const float MaximumFOVPerspective = degToRad(120.0f);
+static const float MaximumFOVFisheye = degToRad(179.99f);
 static const float MinimumFOV = degToRad(0.001f);
 static float KeyRotationAccel = degToRad(120.0f);
 static float MouseRotationSensitivity = degToRad(1.0f);
@@ -430,7 +431,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             if (isViewportEffectUsed)
                 viewportEffect->distortXY(pickX, pickY);
 
-            Vector3f pickRay = sim->getActiveObserver()->getPickRay(pickX, pickY);
+            Vector3f pickRay = renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode ? sim->getActiveObserver()->getPickRayFisheye(pickX, pickY) : sim->getActiveObserver()->getPickRay(pickX, pickY);
 
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
@@ -450,7 +451,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             if (isViewportEffectUsed)
                 viewportEffect->distortXY(pickX, pickY);
 
-            Vector3f pickRay = sim->getActiveObserver()->getPickRay(pickX, pickY);
+            Vector3f pickRay = renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode ? sim->getActiveObserver()->getPickRayFisheye(pickX, pickY) : sim->getActiveObserver()->getPickRay(pickX, pickY);
 
             Selection sel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
             if (!sel.empty())
@@ -632,7 +633,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             // Mouse zoom control
             float amount = dy / height;
             float minFOV = MinimumFOV;
-            float maxFOV = MaximumFOV;
+            float maxFOV = getMaximumFOV();
             float fov = sim->getActiveObserver()->getFOV();
 
             // In order for the zoom to have the right feel, it should be
@@ -1388,7 +1389,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '.':
         addToHistory();
-        if (observer->getFOV() < MaximumFOV)
+        if (observer->getFOV() < getMaximumFOV())
         {
             observer->setFOV(observer->getFOV() * 1.05f);
             setZoomFromFOV();
@@ -2279,13 +2280,26 @@ void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
     flash(_("Added view"));
 }
 
+float CelestiaCore::getMaximumFOV() const
+{
+    if (renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
+        return MaximumFOVFisheye;
+    else
+        return MaximumFOVPerspective;
+}
+
 void CelestiaCore::setFOVFromZoom()
 {
     for (const auto v : views)
         if (v->type == View::ViewWindow)
         {
-            double fov = 2 * atan(height * v->height / (screenDpi / 25.4) / 2. / distanceToScreen) / v->zoom;
-            v->observer->setFOV((float) fov);
+            if (renderer->getProjectionMode() == Renderer::ProjectionMode::FisheyeMode)
+                v->observer->setFOV(MaximumFOVFisheye);
+            else
+            {
+                double fov = 2 * atan(height * v->height / (screenDpi / 25.4) / 2. / distanceToScreen) / v->zoom;
+                v->observer->setFOV((float) fov);
+            }
         }
 }
 
@@ -3839,6 +3853,16 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         {
             destinations = ReadDestinationList(destfile);
         }
+    }
+
+    if (!config->projectionMode.empty())
+    {
+        if (config->projectionMode == "perspective")
+            renderer->setProjectionMode(Renderer::ProjectionMode::PerspectiveMode);
+        else if (config->projectionMode == "fisheye")
+            renderer->setProjectionMode(Renderer::ProjectionMode::FisheyeMode);
+        else
+            DPRINTF(LOG_LEVEL_WARNING, "Unknown projection mode %s\n", config->projectionMode);
     }
 
     if (!config->viewportEffect.empty() && config->viewportEffect != "none")

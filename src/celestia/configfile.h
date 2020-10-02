@@ -79,6 +79,7 @@ public:
     float SolarSystemMaxDistance;
     unsigned ShadowMapSize;
 
+    std::string projectionMode;
     std::string viewportEffect;
     std::string warpMeshFile;
 };

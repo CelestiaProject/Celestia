@@ -19,7 +19,6 @@
 
 #define ADVANCED_CLOUD_SHADOWS 0
 
-
 class ShaderProperties
 {
  public:
@@ -90,6 +89,13 @@ class ShaderProperties
      VolumetricEmissionEffect        = 0x0004,
  };
 
+ enum
+ {
+     FisheyeOverrideModeNone     = 0,
+     FisheyeOverrideModeEnabled  = 1,
+     FisheyeOverrideModeDisabled = 2,
+ };
+
  public:
     unsigned short nLights{ 0 };
     unsigned short texUsage{ 0 };
@@ -105,6 +111,8 @@ class ShaderProperties
     //   Bit  3,   on for self shadowing
     //   Bit  4,   on for cloud shadows
     uint32_t shadowCounts{ 0 };
+
+    int fishEyeOverride { FisheyeOverrideModeNone };
 
  private:
     enum
@@ -292,6 +300,8 @@ class ShaderManager
     CelestiaGLProgram* getShader(const std::string&);
     CelestiaGLProgram* getShader(const std::string&, const std::string&, const std::string&);
 
+    void setFisheyeEnabled(bool enabled);
+
  private:
     CelestiaGLProgram* buildProgram(const ShaderProperties&);
     CelestiaGLProgram* buildProgram(const std::string&, const std::string&);
@@ -313,6 +323,8 @@ class ShaderManager
 
     std::map<ShaderProperties, CelestiaGLProgram*> dynamicShaders;
     std::map<std::string, CelestiaGLProgram*> staticShaders;
+
+    bool fisheyeEnabled { false };
 };
 
 #endif // _CELENGINE_SHADERMANAGER_H_

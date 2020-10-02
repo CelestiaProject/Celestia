@@ -72,6 +72,28 @@ uniform mat4 MVPMatrix;
 invariant gl_Position;
 )glsl";
 
+static const char *VPFunction =
+    "#ifdef FISHEYE\n"
+    "void set_vp(vec4 in_Position) {\n"
+    "    float PID2 = 1.570796326794896619231322;\n"
+    "    vec4 inPos = ModelViewMatrix * in_Position;\n"
+    "    float l = length(inPos.xy);\n"
+    "    if (l != 0.0)\n{\n"
+    "        float phi = atan(l, -inPos.z);\n"
+    "        float lensR = phi / PID2;\n"
+    "        inPos.xy *= (lensR / l);\n"
+    "    }\n"
+    "    gl_Position = ProjectionMatrix * inPos;\n"
+    "}\n"
+    "#else\n"
+    "void set_vp(vec4 in_Position) {\n"
+    "    gl_Position = MVPMatrix * in_Position;\n"
+    "}\n"
+    "#endif\n";
+
+static const char* VertexPosition =
+    "set_vp(in_Position);\n";
+
 static const char* FragmentHeader = "";
 
 static const char* CommonAttribs = R"glsl(
@@ -293,6 +315,11 @@ bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
     if (p0.effects < p1.effects)
         return true;
     if (p1.effects < p0.effects)
+        return false;
+
+    if (p0.fishEyeOverride < p1.fishEyeOverride)
+        return true;
+    if (p1.fishEyeOverride < p0.fishEyeOverride)
         return false;
 
     return (p0.lightModel < p1.lightModel);
@@ -1807,6 +1834,11 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.hasShadowMap())
         source += "uniform mat4 ShadowMatrix0;\n";
 
+    if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
+        source += "#define FISHEYE\n";
+
+    source += VPFunction;
+
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
     if (props.isViewDependent() || props.hasScattering())
@@ -2022,7 +2054,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.hasShadowMap())
         source += "shadowTexCoord0 = ShadowMatrix0 * vec4(in_Position.xyz, 1.0);\n";
 
-    source += "gl_Position = MVPMatrix * in_Position;\n";
+    source += VertexPosition;
     source += "}\n";
 
     DumpVSSource(source);
@@ -2532,7 +2564,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
         }
     }
 
-    source += "gl_Position = MVPMatrix * in_Position;\n";
+    source += VertexPosition;
     source += "}\n";
 
     DumpVSSource(source);
@@ -2647,6 +2679,11 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::DiffuseTexture)
         source += "varying vec2 diffTexCoord;\n";
 
+    if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
+        source += "#define FISHEYE\n";
+
+    source += VPFunction;
+
     source += "\nvoid main(void)\n{\n";
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
@@ -2662,7 +2699,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
         }
     }
 
-    source += "gl_Position = MVPMatrix * in_Position;\n";
+    source += VertexPosition;
     source += "}\n";
 
     DumpVSSource(source);
@@ -2801,6 +2838,11 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
     source += "varying vec3 scatterEx;\n";
     source += "varying vec3 eyeDir_obj;\n";
 
+    if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
+        source += "#define FISHEYE\n";
+
+    source += VPFunction;
+
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
     source += "float NL;\n";
@@ -2810,7 +2852,7 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
     source += AtmosphericEffects(props);
 
     source += "eyeDir_obj = eyeDir;\n";
-    source += "gl_Position = MVPMatrix * in_Position;\n";
+    source += VertexPosition;
     source += "}\n";
 
     DumpVSSource(source);
@@ -2909,6 +2951,11 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     source += DeclareVarying("v_Color", Shader_Vector4);
     source += DeclareVarying("v_TexCoord0", Shader_Vector2);
 
+    if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
+        source += "#define FISHEYE\n";
+
+    source += VPFunction;
+
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
 
@@ -2933,8 +2980,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     if ((props.texUsage & ShaderProperties::PointSprite) != 0)
         source += PointSizeCalculation();
 
-    source += "    gl_Position = MVPMatrix * in_Position;\n";
-
+    source += VertexPosition;
     source += "}\n";
     // End of main()
 
@@ -3035,6 +3081,11 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
         source << "varying vec3 position_obj;\n";
     }
 
+    if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
+        source << "#define FISHEYE\n";
+
+    source << VPFunction;
+
     // Begin main() function
     source << "\nvoid main(void)\n{\n";
 
@@ -3065,8 +3116,7 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     if ((props.texUsage & ShaderProperties::PointSprite) != 0)
         source << PointSizeCalculation();
 
-    source << "    gl_Position = MVPMatrix * in_Position;\n";
-
+    source << VertexPosition;
     source << "}\n";
     // End of main()
 
@@ -3271,8 +3321,7 @@ ShaderManager::buildProgram(const std::string& vs, const std::string& fs)
 {
     GLProgram* prog = nullptr;
     GLShaderStatus status;
-
-    string _vs = fmt::sprintf("%s%s%s\n", CommonHeader, VertexHeader, vs);
+    string _vs = fmt::sprintf("%s%s%s%s%s\n", CommonHeader, VertexHeader, fisheyeEnabled ? "#define FISHEYE\n" : "", VPFunction, vs);
     string _fs = fmt::sprintf("%s%s%s\n", CommonHeader, FragmentHeader, fs);
 
     DumpVSSource(_vs);
@@ -3348,6 +3397,11 @@ ShaderManager::buildProgram(const std::string& vs, const std::string& fs)
     return new CelestiaGLProgram(*prog);
 }
 
+void ShaderManager::setFisheyeEnabled(bool enabled)
+{
+    fisheyeEnabled = enabled;
+}
+
 CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program,
                                      const ShaderProperties& _props) :
     program(&_program),
@@ -3382,7 +3436,6 @@ CelestiaGLProgram::intParam(const string& paramName)
 {
     return IntegerShaderParameter(program->getID(), paramName.c_str());
 }
-
 
 IntegerShaderParameter
 CelestiaGLProgram::samplerParam(const string& paramName)
@@ -3788,4 +3841,3 @@ CelestiaGLProgram::setMVPMatrices(const Matrix4f& p, const Matrix4f& m)
     ModelViewMatrix = m;
     MVPMatrix = p * m;
 }
-

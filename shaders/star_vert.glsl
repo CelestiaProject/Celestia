@@ -7,5 +7,5 @@ void main(void)
 {
     gl_PointSize = in_PointSize;
     color = in_Color;
-    gl_Position = MVPMatrix * vec4(in_Position, 1.0);
+    set_vp(vec4(in_Position, 1.0));
 }

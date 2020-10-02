@@ -52,5 +52,5 @@ void main(void)
     gl_PointSize = s * min(obsDistanceToStarRatio, 1.0);
 
     color = vec4(in_Color.rgb, min(1.0, br * (1.0 - pixelWeight * relStarDensity())));
-    gl_Position = MVPMatrix * vec4(p, 1.0);
+    set_vp(vec4(p, 1.0));
 }

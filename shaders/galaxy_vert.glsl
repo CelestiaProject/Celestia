@@ -20,5 +20,5 @@ void main(void)
     float a = in_TexCoord0.w / 65535.0; // [0, 65535] -> [0, 1]
     color = vec4(texture2D(colorTex, vec2(t, 0.0)).rgb, a);
     texCoord = in_TexCoord0.st;
-    gl_Position = MVPMatrix * in_Position;
+    set_vp(in_Position);
 }
