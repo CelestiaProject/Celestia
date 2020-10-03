@@ -78,6 +78,9 @@ public:
 
     float SolarSystemMaxDistance;
     unsigned ShadowMapSize;
+
+    std::string viewportEffect;
+    std::string warpMeshFile;
 };
 
 CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig* config = nullptr);

@@ -30,6 +30,7 @@
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
 #include <celengine/visibleregion.h>
+#include <celengine/framebuffer.h>
 #include <celmath/geomutil.h>
 #include <celutil/color.h>
 #include <celutil/filetype.h>
@@ -50,6 +51,7 @@
 #include <ctime>
 #include <set>
 #include <celengine/rectangle.h>
+#include <celengine/mapmanager.h>
 
 #ifdef CELX
 #include <celephem/scriptobject.h>
@@ -424,8 +426,11 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             (*activeView)->mapWindowToView((float) x / (float) width,
                                            (float) y / (float) height,
                                            pickX, pickY);
-            Vector3f pickRay =
-                sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
+            pickX *= aspectRatio;
+            if (isViewportEffectUsed)
+                viewportEffect->distortXY(pickX, pickY);
+
+            Vector3f pickRay = sim->getActiveObserver()->getPickRay(pickX, pickY);
 
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
@@ -441,8 +446,11 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             (*activeView)->mapWindowToView((float) x / (float) width,
                                            (float) y / (float) height,
                                            pickX, pickY);
-            Vector3f pickRay =
-                sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
+            pickX *= aspectRatio;
+            if (isViewportEffectUsed)
+                viewportEffect->distortXY(pickX, pickY);
+
+            Vector3f pickRay = sim->getActiveObserver()->getPickRay(pickX, pickY);
 
             Selection sel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
             if (!sel.empty())
@@ -2057,30 +2065,13 @@ void CelestiaCore::draw()
         return;
     viewChanged = false;
 
-    if (views.size() == 1)
-    {
-        // I'm not certain that a special case for one view is required; but,
-        // it's possible that there exists some broken hardware out there
-        // that has to fall back to software rendering if the scissor test
-        // is enabled. To keep performance on this hypothetical hardware
-        // reasonable in the typical single view case, we'll use this
-        // scissorless special case. I'm only paranoid because I've been
-        // burned by crap hardware so many times. cjl
+    // Render each view
+    for (const auto view : views)
+        draw(view);
+
+    // Reset to render to the main window
+    if (views.size() > 1)
         renderer->setRenderRegion(0, 0, width, height, false);
-        sim->render(*renderer);
-    }
-    else
-    {
-        for (const auto view : views)
-        {
-            if (view->type == View::ViewWindow)
-            {
-                view->switchTo(width, height);
-                sim->render(*renderer, *view->observer);
-            }
-        }
-        renderer->setRenderRegion(0, 0, width, height, false);
-    }
 
     bool toggleAA = renderer->isMSAAEnabled();
     if (toggleAA && (renderer->getRenderFlags() & Renderer::ShowCloudMaps))
@@ -2141,6 +2132,47 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
     setFOVFromZoom();
     if (m_scriptHook != nullptr && m_scriptHook->call("resize", float(w), float(h)))
         return;
+}
+
+void CelestiaCore::draw(View* view)
+{
+    if (view->type != View::ViewWindow) return;
+
+    bool viewportEffectUsed = false;
+
+    FramebufferObject *fbo = nullptr;
+    if (viewportEffect != nullptr)
+    {
+        // create/update FBO for viewport effect
+        view->updateFBO(width, height);
+        fbo = view->getFBO();
+    }
+    bool process = fbo != nullptr && viewportEffect->preprocess(renderer, fbo);
+
+    int x = view->x * width;
+    int y = view->y * height;
+    int viewWidth = view->width * width;
+    int viewHeight = view->height * height;
+    // If we need to process, we draw to the FBO which starts at point zero
+    renderer->setRenderRegion(process ? 0 : x, process ? 0 : y, viewWidth, viewHeight, !view->isRootView());
+
+    if (view->isRootView())
+        sim->render(*renderer);
+    else
+        sim->render(*renderer, *view->observer);
+
+    // Viewport need to be reset to start from (x,y) instead of point zero
+    if (process && (x != 0 || y != 0))
+        renderer->setRenderRegion(x, y, viewWidth, viewHeight);
+
+    if (process && viewportEffect->prerender(renderer, fbo))
+    {
+        if (viewportEffect->render(renderer, fbo, viewWidth, viewHeight))
+            viewportEffectUsed = true;
+        else
+            DPRINTF(LOG_LEVEL_ERROR, "Unable to render viewport effect.\n");
+    }
+    isViewportEffectUsed = viewportEffectUsed;
 }
 
 
@@ -3779,6 +3811,30 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         {
             destinations = ReadDestinationList(destfile);
         }
+    }
+
+    if (!config->viewportEffect.empty() && config->viewportEffect != "none")
+    {
+        if (config->viewportEffect == "passthrough")
+            viewportEffect = unique_ptr<ViewportEffect>(new PassthroughViewportEffect);
+        else if (config->viewportEffect == "warpmesh")
+        {
+            if (config->warpMeshFile.empty())
+            {
+                DPRINTF(LOG_LEVEL_WARNING, "No warp mesh file specified for this effect\n");
+            }
+            else
+            {
+                WarpMeshManager *manager = GetWarpMeshManager();
+                WarpMesh *mesh = manager->find(manager->getHandle(WarpMeshInfo(config->warpMeshFile)));
+                if (mesh != nullptr)
+                    viewportEffect = unique_ptr<ViewportEffect>(new WarpMeshViewportEffect(mesh));
+                else
+                    DPRINTF(LOG_LEVEL_WARNING, "Failed to read warp mesh file %s\n", config->warpMeshFile);
+            }
+        }
+        else
+            DPRINTF(LOG_LEVEL_WARNING, "Unknown viewport effect %s\n", config->viewportEffect);
     }
 
     sim = new Simulation(universe);

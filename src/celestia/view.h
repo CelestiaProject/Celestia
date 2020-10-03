@@ -38,7 +38,6 @@ class View
     void walkTreeResize(View*, int);
     bool walkTreeResizeDelta(View*, float, bool);
 
-    void switchTo(int gWidth, int gHeight);
     Observer* getObserver() const;
     bool isRootView() const;
     bool isSplittable(Type type) const;
@@ -46,6 +45,8 @@ class View
     void reset();
     static View* remove(View*);
     void drawBorder(int gWidth, int gHeight, const Color &color, float linewidth = 1.0f);
+    void updateFBO(int gWidth, int gHeight);
+    FramebufferObject *getFBO() const;
 
  public:
     Type      type;
@@ -63,6 +64,9 @@ class View
     int       labelMode       { 0 };
     float     zoom            { 1.0f };
     float     alternateZoom   { 1.0f };
+
+private:
+    std::unique_ptr<FramebufferObject> fbo;
 };
 
 //}

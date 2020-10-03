@@ -69,6 +69,8 @@ set(CELENGINE_SOURCES
   location.h
   lodspheremesh.cpp
   lodspheremesh.h
+  mapmanager.cpp
+  mapmanager.h
   marker.cpp
   marker.h
   meshmanager.cpp
@@ -168,6 +170,8 @@ set(CELENGINE_SOURCES
   vecgl.h
   vertexobject.cpp
   vertexobject.h
+  viewporteffect.h
+  viewporteffect.cpp
   virtualtex.cpp
   virtualtex.h
   visibleregion.cpp

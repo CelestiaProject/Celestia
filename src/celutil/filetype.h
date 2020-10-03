@@ -35,6 +35,7 @@ enum ContentType
     Content_CelestiaXYZTrajectory  = 18,
     Content_CelestiaXYZVTrajectory = 19,
     Content_CelestiaParticleSystem = 20,
+    Content_WarpMesh               = 21,
     Content_Unknown                = -1,
 };
 
