@@ -183,6 +183,7 @@ class CelestiaGLProgram
         TangentAttributeIndex       = 6,
         PointSizeAttributeIndex     = 7,
         ColorAttributeIndex         = 8,
+        IntensityAttributeIndex     = 9,
     };
 
  public:

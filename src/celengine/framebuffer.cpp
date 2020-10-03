@@ -138,6 +138,8 @@ FramebufferObject::generateFbo(unsigned int attachments)
 {
     // Create the FBO
     glGenFramebuffers(1, &m_fboId);
+    GLint oldFboId;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFboId);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fboId);
 
 #ifndef GL_ES
@@ -151,7 +153,7 @@ FramebufferObject::generateFbo(unsigned int attachments)
         m_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (m_status != GL_FRAMEBUFFER_COMPLETE)
         {
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, oldFboId);
             cleanup();
             return;
         }
@@ -171,7 +173,7 @@ FramebufferObject::generateFbo(unsigned int attachments)
         m_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (m_status != GL_FRAMEBUFFER_COMPLETE)
         {
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, oldFboId);
             cleanup();
             return;
         }
@@ -182,7 +184,7 @@ FramebufferObject::generateFbo(unsigned int attachments)
     }
 
     // Restore default frame buffer
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, oldFboId);
 }
 
 // Delete all GL objects associated with this framebuffer object
@@ -218,9 +220,8 @@ FramebufferObject::bind()
 }
 
 bool
-FramebufferObject::unbind()
+FramebufferObject::unbind(GLint oldfboId)
 {
-    // Restore default frame buffer
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, oldfboId);
     return true;
 }

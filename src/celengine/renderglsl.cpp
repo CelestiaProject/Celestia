@@ -910,6 +910,8 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
     if (prog == nullptr)
         return;
 
+    GLint oldFboId;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFboId);
     shadowFbo->bind();
     glViewport(0, 0, shadowFbo->width(), shadowFbo->height());
 
@@ -939,5 +941,5 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
     // Re-enable the color buffer
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glCullFace(GL_BACK);
-    shadowFbo->unbind();
+    shadowFbo->unbind(oldFboId);
 }

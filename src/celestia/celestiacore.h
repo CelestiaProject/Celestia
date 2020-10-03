@@ -21,6 +21,7 @@
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 #include <celengine/overlayimage.h>
+#include <celengine/viewporteffect.h>
 #include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
@@ -210,6 +211,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void joystickButton(int button, bool down);
     void resize(GLsizei w, GLsizei h);
     void draw();
+    void draw(View*);
     void tick();
 
     Simulation* getSimulation() const;
@@ -464,6 +466,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     int screenDpi{ 96 };
     int distanceToScreen{ 400 };
+
+    unique_ptr<ViewportEffect> viewportEffect { nullptr };
+    bool isViewportEffectUsed { false };
 
     struct EdgeInsets
     {

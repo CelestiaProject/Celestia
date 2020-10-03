@@ -3213,6 +3213,10 @@ ShaderManager::buildProgram(const ShaderProperties& props)
                                  CelestiaGLProgram::ColorAttributeIndex,
                                  "in_Color");
 
+            glBindAttribLocation(prog->getID(),
+                                 CelestiaGLProgram::IntensityAttributeIndex,
+                                 "in_Intensity");
+
             if (props.texUsage & ShaderProperties::NormalTexture)
             {
                 glBindAttribLocation(prog->getID(),
@@ -3312,6 +3316,10 @@ ShaderManager::buildProgram(const std::string& vs, const std::string& fs)
         glBindAttribLocation(prog->getID(),
                              CelestiaGLProgram::PointSizeAttributeIndex,
                              "in_PointSize");
+
+        glBindAttribLocation(prog->getID(),
+                             CelestiaGLProgram::IntensityAttributeIndex,
+                             "in_Intensity");
 
         status = prog->link();
     }

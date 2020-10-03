@@ -9,6 +9,7 @@
 
 #include <celengine/rectangle.h>
 #include <celengine/render.h>
+#include <celengine/framebuffer.h>
 #include <celutil/color.h>
 #include "view.h"
 
@@ -150,14 +151,6 @@ Observer* View::getObserver() const
     return observer;
 }
 
-void View::switchTo(int gWidth, int gHeight)
-{
-    renderer->setRenderRegion(int(x * gWidth),
-                              int(y * gHeight),
-                              int(width * gWidth),
-                              int(height * gHeight));
-}
-
 bool View::isSplittable(Type type) const
 {
     // If active view is too small, don't split it.
@@ -254,6 +247,7 @@ void View::reset()
     parent = nullptr;
     child1 = nullptr;
     child2 = nullptr;
+    fbo = nullptr;
 }
 
 void View::drawBorder(int gWidth, int gHeight, const Color &color, float linewidth)
@@ -263,4 +257,26 @@ void View::drawBorder(int gWidth, int gHeight, const Color &color, float linewid
     r.setType(Rect::Type::BorderOnly);
     r.setLineWidth(linewidth);
     renderer->drawRectangle(r, renderer->getOrthoProjectionMatrix());
+}
+
+void View::updateFBO(int gWidth, int gHeight)
+{
+    int newWidth = width * gWidth;
+    int newHeight = height * gHeight;
+    if (fbo && fbo.get()->width() == newWidth && fbo.get()->height() == newHeight)
+        return;
+
+    // recreate FBO when FBO not exisits or on size change
+    fbo = unique_ptr<FramebufferObject>(new FramebufferObject(newWidth, newHeight,
+                                                              FramebufferObject::ColorAttachment | FramebufferObject::DepthAttachment));
+    if (!fbo->isValid())
+    {
+        DPRINTF(LOG_LEVEL_ERROR, "Error creating view FBO.\n");
+        fbo = nullptr;
+    }
+}
+
+FramebufferObject *View::getFBO() const
+{
+    return fbo.get();
 }
