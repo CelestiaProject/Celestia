@@ -14,6 +14,7 @@ bool EXT_framebuffer_object         = false;
 bool ARB_shader_texture_lod         = false;
 bool EXT_texture_compression_s3tc   = false;
 bool EXT_texture_filter_anisotropic = false;
+GLint maxPointSize                  = 0;
 
 namespace
 {
@@ -34,6 +35,14 @@ bool init() noexcept
     ARB_shader_texture_lod         = has_extension("GL_ARB_shader_texture_lod");
     EXT_texture_compression_s3tc   = has_extension("GL_EXT_texture_compression_s3tc");
     EXT_texture_filter_anisotropic = has_extension("GL_EXT_texture_filter_anisotropic");
+
+    GLint pointSizeRange[2];
+#ifdef GL_ES
+    glGetIntegerv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
+#else
+    glGetIntegerv(GL_SMOOTH_POINT_SIZE_RANGE, pointSizeRange);
+#endif
+    maxPointSize = pointSizeRange[1];
 
     return true;
 }

@@ -42,6 +42,7 @@ extern bool OES_vertex_array_object;
 extern bool ARB_vertex_array_object;
 extern bool EXT_framebuffer_object;
 #endif
+extern GLint maxPointSize;
 
 bool init() noexcept;
 bool checkVersion(int) noexcept;
