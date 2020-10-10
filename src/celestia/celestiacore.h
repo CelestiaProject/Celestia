@@ -286,6 +286,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int getDistanceToScreen() const;
     void setDistanceToScreen(int);
     void setSafeAreaInsets(int left, int top, int right, int bottom);
+    float getPickTolerance() const;
+    void setPickTolerance(float);
 
     void setFOVFromZoom();
     void setZoomFromFOV();
@@ -466,6 +468,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     int screenDpi{ 96 };
     int distanceToScreen{ 400 };
+
+    float pickTolerance { 4.0f };
 
     unique_ptr<ViewportEffect> viewportEffect { nullptr };
     bool isViewportEffectUsed { false };
