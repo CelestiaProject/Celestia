@@ -394,7 +394,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
     setViewChanged();
 
     // Four pixel tolerance for picking
-    float pickTolerance = sim->getActiveObserver()->getFOV() / height * 4.0f;
+    float pickTolerance = sim->getActiveObserver()->getFOV() / height * this->pickTolerance;
 
     if (resizeSplit != nullptr)
     {
@@ -2179,6 +2179,16 @@ void CelestiaCore::draw(View* view)
 void CelestiaCore::setSafeAreaInsets(int left, int top, int right, int bottom)
 {
     safeAreaInsets = { left, top, right, bottom };
+}
+
+float CelestiaCore::getPickTolerance() const
+{
+    return pickTolerance;
+}
+
+void CelestiaCore::setPickTolerance(float newPickTolerance)
+{
+    pickTolerance = newPickTolerance;
 }
 
 // Return true if anything changed that requires re-rendering. Otherwise, we
