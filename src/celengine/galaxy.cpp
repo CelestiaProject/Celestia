@@ -230,6 +230,9 @@ bool Galaxy::pick(const Ray3d& ray,
                   double& distanceToPicker,
                   double& cosAngleToBoundCenter) const
 {
+    if (form == nullptr)
+        return false;
+
     if (!isVisible())
         return false;
 
