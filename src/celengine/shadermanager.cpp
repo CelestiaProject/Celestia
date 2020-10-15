@@ -939,7 +939,7 @@ string
 PointSizeCalculation()
 {
     string source;
-    source += "float ptSize = pointScale * in_PointSize / length(vec3(gl_ModelViewMatrix * gl_Vertex));\n";
+    source += "float ptSize = pointScale * pointSize / length(vec3(gl_ModelViewMatrix * gl_Vertex));\n";
     source += "pointFade = min(1.0, ptSize * ptSize);\n";
     source += "gl_PointSize = ptSize;\n";
 
