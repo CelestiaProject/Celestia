@@ -938,7 +938,12 @@ TextureCoordDeclarations(const ShaderProperties& props)
 string
 PointSizeCalculation()
 {
-    return string("gl_PointSize = pointScale * pointSize / length(vec3(gl_ModelViewMatrix * gl_Vertex));\n");
+    string source;
+    source += "float ptSize = pointScale * in_PointSize / length(vec3(gl_ModelViewMatrix * gl_Vertex));\n";
+    source += "pointFade = min(1.0, ptSize * ptSize);\n";
+    source += "gl_PointSize = ptSize;\n";
+
+    return source;
 }
 
 
@@ -972,6 +977,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     {
         source += "uniform float pointScale;\n";
         source += "attribute float pointSize;\n";
+        source += "varying float pointFade;\n";
     }
 
     if (props.usesTangentSpaceLighting())
@@ -1576,6 +1582,11 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "color = vec4(1.0, 1.0, 1.0, 1.0);\n";
     }
 
+    if (props.texUsage & ShaderProperties::PointSprite)
+    {
+        source += "color.a *= pointFade;\n";
+    }
+
     // Mix in the overlay color with the base color
     if (props.texUsage & ShaderProperties::OverlayTexture)
     {
@@ -1946,6 +1957,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     {
         source += "uniform float pointScale;\n";
         source += "attribute float pointSize;\n";
+        source += "varying float pointFade;\n";
     }
 
     // Begin main() function
@@ -2056,6 +2068,7 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     {
         source << "uniform float pointScale;\n";
         source << "attribute float pointSize;\n";
+        source << "varying float pointFade;\n";
     }
     
     // Shadow parameters
