@@ -362,11 +362,11 @@ msgstr "小熊座"
 
 #: data/constellations.cpp:86
 msgid "Vela"
-msgstr "室女座"
+msgstr "船帆座"
 
 #: data/constellations.cpp:87
 msgid "Virgo"
-msgstr "船帆座"
+msgstr "室女座"
 
 #: data/constellations.cpp:88
 msgid "Volans"
