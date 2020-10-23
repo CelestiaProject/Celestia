@@ -299,10 +299,10 @@ static void draw(const GalaxyVertex *v, size_t count, const GLushort *indices)
 {
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
                           4, GL_FLOAT, GL_FALSE,
-                          sizeof(GalaxyVertex), &v->position);
+                          sizeof(GalaxyVertex), v->position.data());
     glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
                           4, GL_SHORT, GL_FALSE,
-                          sizeof(GalaxyVertex), &v->texCoord);
+                          sizeof(GalaxyVertex), v->texCoord.data());
     glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, indices);
 }
 
