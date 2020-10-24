@@ -8,6 +8,7 @@ uniform vec3 offset;
 uniform float brightness;
 uniform float pixelWeight;
 uniform float RRatio;
+uniform float scale;
 
 const float RRatio_min   = pow(10.0, 1.7);
 const float clipDistance = 100.0; // observer distance [ly] from globular, where we
@@ -43,7 +44,7 @@ void main(void)
     float br = 2.0 * brightness;
 
     vec4 mod = ModelViewMatrix * vec4(in_Position, 1.0);
-    float s = 2000.0 / -mod.z * br * starSize;
+    float s = 2000.0 / -mod.z * br * starSize * scale;
 
     float obsDistanceToStarRatio = length(p + offset) / clipDistance;
     // "Morph" the star-sprite sizes at close observer distance such that

@@ -500,6 +500,7 @@ void Globular::renderGlobularPointSprites(
     globProg->floatParam("brightness")  = brightness;
     globProg->floatParam("pixelWeight") = pixelWeight;
     globProg->floatParam("RRatio")      = RRatio;
+    globProg->floatParam("scale")       = renderer->getScreenDpi() / 25.4f / 3.78f;
     globProg->samplerParam("starTex")   = 0;
 
     vo.draw(GL_POINTS, count, 4);
