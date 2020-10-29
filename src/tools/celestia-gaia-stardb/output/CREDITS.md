@@ -1,65 +1,7 @@
-Gaia DR2 for celestia.Sci/Celestia
-==================================
+# Credits
 
-This repository contains Python scripts to generate a celestia.Sci/Celestia
-star database from the *Gaia* Data Release 2 data, supplemented by the XHIP
-catalogue.
-
-In order to limit the download size required and to maintain compatibility
-with the use of HIP/TYC2 identifiers as the primary key for stars in
-celestia.Sci/Celestia, only Gaia data for HIP and TYC2 stars is processed.
-
-**Unless you are editing the code, it is recommended to use the pre-built
-files in the release rather than running these scripts manually.** The data
-files in the release may be used under a CC-BY-SA 4.0 license
-(https://creativecommons.org/licenses/by-sa/4.0/legalcode)
-
-## Prerequisites
-
--  Internet connection for downloading the data
--  *Gaia* archive account (https://gea.esac.esa.int/archive/)
--  Python 3.6 or higher (preferably 64-bit, as the memory usage can be quite
-   high)
--  celestia.Sci/Celestia
-
-## Folder contents
-
--  `download_data.py`: script to download the data files
--  `make_stardb.py`: script to build the star database and cross-index files
-
-## How to use
-
-Please ensure you have read through the Prerequisites section and all the
-steps below **before** you begin.
-
-1.  Clone or download this repository
-2.  Open a command window in the repository directory
-3.  Set up a Python 3 virtual environment
-
-    `python3 -m venv myenv`
-
-4.  Switch to the virtual environment and install the requirements
-
-    `source myenv/bin/activate`
-
-5.  Install the requirements:
-
-    `python -m pip install -r requirements.txt`
-
-6.  Run the download script. You will need your *Gaia* archive login.
-    **This step may take several hours!**
-
-    python download_data.py
-
-7.  Run the build script.
-
-    python make_stardb.py
-
-8.  The stars.dat, hdxindex.dat and saoxindex.dat files will be written into
-    the output folder
-
-9.  Copy the files into the `data` folder of the celestia.Sci/Celestia
-    distribution.
+These files were generated with the celestia-gaia-stardb application available
+at https://github.com/ajtribick/celestia-gaia-stardb.
 
 ## References
 

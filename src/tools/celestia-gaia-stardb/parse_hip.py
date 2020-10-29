@@ -23,20 +23,20 @@ import tarfile
 import warnings
 
 import numpy as np
+import astropy.io.ascii as io_ascii
 import astropy.units as u
 
-from astropy import io
 from astropy.coordinates import ICRS, SkyCoord
-from astropy.table import join, unique
+from astropy.table import Table, join, unique
 from astropy.time import Time
 from astropy.units import UnitsWarning
 
-def load_gaia_hip():
+def load_gaia_hip() -> Table:
     """Load the Gaia DR2 HIP sources."""
     print('Loading Gaia DR2 sources for HIP')
     col_names = ['source_id', 'hip_id', 'ra', 'dec', 'phot_g_mean_mag', 'bp_rp',
                  'teff_val', 'r_est']
-    gaia = io.ascii.read(os.path.join('gaia', 'gaiadr2_hip-result.csv'),
+    gaia = io_ascii.read(os.path.join('gaia', 'gaiadr2_hip-result.csv'),
                          include_names=col_names,
                          format='csv')
     gaia.rename_column('hip_id', 'HIP')
@@ -50,7 +50,7 @@ def load_gaia_hip():
 
     return gaia
 
-def load_xhip():
+def load_xhip() -> Table:
     """Load the XHIP catalogue from the VizieR archive."""
     print('Loading XHIP')
     with tarfile.open(os.path.join('vizier', 'xhip.tar.gz'), 'r:gz') as tf:
@@ -62,7 +62,7 @@ def load_xhip():
                 ('', '-1', 'Tc', 'Lc'),
                 ('', 'NaN', 'phi')
             ]
-            reader = io.ascii.get_reader(io.ascii.Cds,
+            reader = io_ascii.get_reader(io_ascii.Cds,
                                          readme=readme,
                                          include_names=col_names,
                                          # workaround for bug in astropy where nullability is
@@ -82,7 +82,7 @@ def load_xhip():
         with tf.extractfile('./ReadMe') as readme:
             col_names = ['HIP', 'Vmag', 'Jmag', 'Hmag', 'Kmag', 'e_Jmag',
                          'e_Hmag', 'e_Kmag', 'B-V', 'V-I', 'e_B-V', 'e_V-I']
-            reader = io.ascii.get_reader(io.ascii.Cds,
+            reader = io_ascii.get_reader(io_ascii.Cds,
                                          readme=readme,
                                          include_names=col_names)
             reader.data.table_name = 'photo.dat'
@@ -96,7 +96,7 @@ def load_xhip():
         print('  Loading bibliographic data')
         with tf.extractfile('./ReadMe') as readme:
             col_names = ['HIP', 'HD']
-            reader = io.ascii.get_reader(io.ascii.Cds,
+            reader = io_ascii.get_reader(io_ascii.Cds,
                                          readme=readme,
                                          include_names=col_names)
             reader.data.table_name = 'biblio.dat'
@@ -107,10 +107,27 @@ def load_xhip():
 
         return join(hip_data, biblio_data, join_type='left', keys='HIP')
 
-def load_sao():
+def load_tyc2specnew() -> Table:
+    """Load revised spectral types."""
+    print("Loading revised TYC2 spectral types")
+    with tarfile.open(os.path.join('vizier', 'tyc2specnew.tar.gz')) as tf:
+        with tf.extractfile('./ReadMe') as readme:
+            reader = io_ascii.get_reader(io_ascii.Cds,
+                                         readme=readme,
+                                         include_names=['HIP', 'SpType1'])
+            reader.data.table_name = 'table2.dat'
+            with tf.extractfile('./table2.dat') as f:
+                # Suppress a warning because reader does not handle logarithmic units
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", UnitsWarning)
+                    data = reader.read(f)
+                    return data[data['SpType1'] != '']
+
+
+def load_sao() -> Table:
     """Load the SAO-HIP cross match."""
     print('Loading SAO-HIP cross match')
-    data = io.ascii.read(os.path.join('xmatch', 'sao_hip_xmatch.csv'),
+    data = io_ascii.read(os.path.join('xmatch', 'sao_hip_xmatch.csv'),
                          include_names=['HIP', 'SAO', 'angDist', 'delFlag'],
                          format='csv')
 
@@ -123,7 +140,7 @@ def load_sao():
     data.add_index('HIP')
     return data
 
-def compute_distances(hip_data, length_kpc=1.35):
+def compute_distances(hip_data: Table, length_kpc: float=1.35) -> None:
     """Compute the distance using an exponentially-decreasing prior.
 
     The method is described in:
@@ -162,7 +179,7 @@ def compute_distances(hip_data, length_kpc=1.35):
 HIP_TIME = Time('J1991.25')
 GAIA_TIME = Time('J2015.5')
 
-def update_coordinates(hip_data):
+def update_coordinates(hip_data: Table) -> None:
     """Update the coordinates from J1991.25 to J2015.5 to match Gaia."""
     print('Updating coordinates to J2015.5')
     coords = SkyCoord(frame=ICRS,
@@ -179,15 +196,20 @@ def update_coordinates(hip_data):
     hip_data['dec'] = coords.dec / u.deg
     hip_data['dec'].unit = u.deg
 
-def process_xhip():
+def process_xhip() -> Table:
     """Processes the XHIP data."""
     xhip = load_xhip()
+    sptypes = load_tyc2specnew()
+    xhip = join(xhip, sptypes, keys=['HIP'], join_type='left', metadata_conflicts='silent')
+    xhip['SpType'] = xhip['SpType1'].filled(xhip['SpType'])
+    xhip.remove_column('SpType1')
+
     compute_distances(xhip)
     update_coordinates(xhip)
     xhip.remove_columns(['RAdeg', 'DEdeg', 'Plx', 'e_Plx', 'pmRA', 'pmDE', 'RV', 'Dist', 'e_Dist'])
     return xhip
 
-def process_hip():
+def process_hip() -> Table:
     """Process the Gaia and HIP data."""
     data = join(load_gaia_hip(),
                 process_xhip(),
@@ -197,7 +219,7 @@ def process_hip():
 
     data = join(data, load_sao(), keys=['HIP'], join_type='left')
 
-    data['dist_use'] = data['r_est_gaia'].filled(data['r_est_xhip'].filled(np.nan))
+    data['dist_use'] = data['r_est_gaia'].filled(data['r_est_xhip'])
     data['ra'] = data['ra_gaia'].filled(data['ra_xhip'])
     data['dec'] = data['dec_gaia'].filled(data['dec_xhip'])
 
