@@ -302,9 +302,11 @@ good-names=f,
            y,
            z,
            ex,
+           hd,
            ra,
            rv,
            tf,
+           zf,
            Run,
            _
 

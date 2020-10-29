@@ -380,7 +380,7 @@ PARSER = ParserPython(spectrum, skipws=False)
 VISITOR = SpecVisitor()
 MULTISEPARATOR = re.compile(r'\+\ *(?:\.{2,}|(?:\(?(?:sd|d|g|c|k|h|m|g|He)?[OBAFGKM]|W[DNOCR]|wd))')
 
-def parse_spectrum(sptype):
+def parse_spectrum(sptype: str) -> int:
     """Parse a spectral type string into a Celestia spectral type."""
 
     # resolve ambiguity in grammar: B 0-Ia could be interpreted as (B 0-) Ia or B (0-Ia)
