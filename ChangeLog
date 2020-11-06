@@ -1759,3 +1759,16 @@ Platform-specific changes
 
 Documentation
 * Update sites in documentation (shatters.net -> celestia.space)
+
+1.6.2
+Features, backported from 1.7
+* StarDB Ver. 0x0200 support, required for spectral class Y
+
+Translations
+* Update Lithuanian, Bulgarian and Chinese translations
+
+Documentation
+* Don't mention kde3, gnome and update minimal lua version to 5.1
+
+Platform-specific changes
+* macOS: bump minimal supported version to 10.10
