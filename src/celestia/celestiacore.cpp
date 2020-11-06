@@ -2402,6 +2402,8 @@ void CelestiaCore::showText(string s,
     messageVOffset = voff;
     messageStart = currentTime;
     messageDuration = duration;
+    if (textDisplayCallback)
+        textDisplayCallback->willShowText(s, duration);
 }
 
 int CelestiaCore::getTextWidth(string s) const
@@ -4146,6 +4148,16 @@ void CelestiaCore::setContextMenuHandler(ContextMenuHandler* handler)
 CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
 {
     return contextMenuHandler;
+}
+
+void CelestiaCore::setTextDisplayCallback(CelestiaCore::TextDisplayCallback* handler)
+{
+    textDisplayCallback = handler;
+}
+
+CelestiaCore::TextDisplayCallback* CelestiaCore::getTextDisplayCallback() const
+{
+    return textDisplayCallback;
 }
 
 void CelestiaCore::setFont(const fs::path& fontPath, int collectionIndex, int fontSize)
