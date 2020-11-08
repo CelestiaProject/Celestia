@@ -329,15 +329,18 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setContextMenuHandler(ContextMenuHandler*);
     ContextMenuHandler* getContextMenuHandler() const;
 
-    class TextDisplayCallback
+    class TextDisplayHandler
     {
     public:
-        virtual ~TextDisplayCallback() = default;
-        virtual void willShowText(const std::string&, double) = 0;
+        virtual ~TextDisplayHandler() = default;
+        virtual bool shouldShowText(const std::string& text,
+                                    int horig, int vorig,
+                                    int hoff, int voff,
+                                    double duration) = 0;
     };
 
-    void setTextDisplayCallback(TextDisplayCallback*);
-    TextDisplayCallback* getTextDisplayCallback() const;
+    void setTextDisplayHandler(TextDisplayHandler*);
+    TextDisplayHandler* getTextDisplayHandler() const;
 
     void setFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     void setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
@@ -378,6 +381,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     Overlay* overlay{ nullptr };
     int width{ 1 };
     int height{ 1 };
+
+    int getSafeAreaWidth() const;
+    int getSafeAreaHeight() const;
 
     TextureFont* font{ nullptr };
     TextureFont* titleFont{ nullptr };
@@ -465,7 +471,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
     ContextMenuHandler* contextMenuHandler{ nullptr };
-    TextDisplayCallback* textDisplayCallback{ nullptr };
+    TextDisplayHandler* textDisplayHandler{ nullptr };
 
     std::vector<Url*> history;
     std::vector<Url*>::size_type historyCurrent{ 0 };

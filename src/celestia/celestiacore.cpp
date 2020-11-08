@@ -2175,6 +2175,15 @@ void CelestiaCore::draw(View* view)
     isViewportEffectUsed = viewportEffectUsed;
 }
 
+int CelestiaCore::getSafeAreaWidth() const
+{
+    return width - safeAreaInsets.left - safeAreaInsets.right;
+}
+
+int CelestiaCore::getSafeAreaHeight() const
+{
+    return height - safeAreaInsets.top - safeAreaInsets.bottom;
+}
 
 void CelestiaCore::setSafeAreaInsets(int left, int top, int right, int bottom)
 {
@@ -2395,6 +2404,13 @@ void CelestiaCore::showText(string s,
                             int hoff, int voff,
                             double duration)
 {
+    bool shouldShowText = true;
+    if (textDisplayHandler)
+        shouldShowText = textDisplayHandler->shouldShowText(s, horig, vorig, hoff, voff, duration);
+
+    if (!shouldShowText)
+        return;
+
     messageText = s;
     messageHOrigin = horig;
     messageVOrigin = vorig;
@@ -2402,8 +2418,6 @@ void CelestiaCore::showText(string s,
     messageVOffset = voff;
     messageStart = currentTime;
     messageDuration = duration;
-    if (textDisplayCallback)
-        textDisplayCallback->willShowText(s, duration);
 }
 
 int CelestiaCore::getTextWidth(string s) const
@@ -3413,7 +3427,7 @@ void CelestiaCore::renderOverlay()
                 }
                 overlay->endText();
                 overlay->restorePos();
-                overlay->moveBy((float) (width/nb_cols), 0.0f);
+                overlay->moveBy((float) (getSafeAreaWidth()/nb_cols), 0.0f);
            }
         }
         overlay->restorePos();
@@ -3429,13 +3443,13 @@ void CelestiaCore::renderOverlay()
         int y = messageVOffset * fontHeight;
 
         if (messageHOrigin == 0)
-            x += width / 2;
+            x += getSafeAreaWidth() / 2;
         else if (messageHOrigin > 0)
-            x += width;
+            x += getSafeAreaWidth();
         if (messageVOrigin == 0)
-            y += height / 2;
+            y += getSafeAreaHeight() / 2;
         else if (messageVOrigin > 0)
-            y += height;
+            y += getSafeAreaHeight();
         else if (messageVOrigin < 0)
             y -= fontHeight;
 
@@ -3506,8 +3520,10 @@ void CelestiaCore::renderOverlay()
     {
         overlay->savePos();
         overlay->beginText();
-        overlay->moveBy((float) ((width - font->getWidth(_("Edit Mode"))) / 2),
-                        (float) (height - fontHeight));
+        int x = (getSafeAreaWidth() - font->getWidth(_("Edit Mode"))) / 2;
+        int y = getSafeAreaHeight() - fontHeight;
+        overlay->moveBy((float) (safeAreaInsets.left + x),
+                        (float) (safeAreaInsets.bottom + y));
         overlay->setColor(1, 0, 1, 1);
         *overlay << _("Edit Mode");
         overlay->endText();
@@ -4150,14 +4166,14 @@ CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
     return contextMenuHandler;
 }
 
-void CelestiaCore::setTextDisplayCallback(CelestiaCore::TextDisplayCallback* handler)
+void CelestiaCore::setTextDisplayHandler(CelestiaCore::TextDisplayHandler* handler)
 {
-    textDisplayCallback = handler;
+    textDisplayHandler = handler;
 }
 
-CelestiaCore::TextDisplayCallback* CelestiaCore::getTextDisplayCallback() const
+CelestiaCore::TextDisplayHandler* CelestiaCore::getTextDisplayHandler() const
 {
-    return textDisplayCallback;
+    return textDisplayHandler;
 }
 
 void CelestiaCore::setFont(const fs::path& fontPath, int collectionIndex, int fontSize)
