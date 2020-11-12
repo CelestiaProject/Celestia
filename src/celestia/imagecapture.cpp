@@ -25,12 +25,19 @@ bool CaptureGLBufferToJPEG(const fs::path& filename,
                            int width, int height,
                            const Renderer *renderer)
 {
+#ifdef GL_ES
+    int rowStride = width * 4;
+    int imageSize = height * rowStride;
+    Renderer::PixelFormat format = Renderer::PixelFormat::RGBA;
+#else
     int rowStride = (width * 3 + 3) & ~0x3;
     int imageSize = height * rowStride;
+    Renderer::PixelFormat format = Renderer::PixelFormat::RGB;
+#endif
     auto* pixels = new unsigned char[imageSize];
 
     if (!renderer->captureFrame(x, y, width, height,
-                                Renderer::PixelFormat::RGB,
+                                format,
                                 pixels, true))
     {
         return false;
@@ -72,7 +79,20 @@ bool CaptureGLBufferToJPEG(const fs::path& filename,
 
     while (cinfo.next_scanline < cinfo.image_height)
     {
-        row[0] = &pixels[rowStride * (cinfo.image_height - cinfo.next_scanline - 1)];
+        unsigned char *rowHead = &pixels[rowStride * (cinfo.image_height - cinfo.next_scanline - 1)];
+        // Strip alpha values if we are in RGBA format
+        if (format == Renderer::PixelFormat::RGBA)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                const unsigned char* pixelIn = &rowHead[x * 4];
+                unsigned char* pixelOut = &rowHead[x * 3];
+                pixelOut[0] = pixelIn[0];
+                pixelOut[1] = pixelIn[1];
+                pixelOut[2] = pixelIn[2];
+            }
+        }
+        row[0] = rowHead;
         (void) jpeg_write_scanlines(&cinfo, row, 1);
     }
 
@@ -98,12 +118,21 @@ bool CaptureGLBufferToPNG(const fs::path& filename,
                            int width, int height,
                            const Renderer *renderer)
 {
+#ifdef GL_ES
+    int rowStride = width * 4;
+    int imageSize = height * rowStride;
+    Renderer::PixelFormat format = Renderer::PixelFormat::RGBA;
+    int pngColorType = PNG_COLOR_TYPE_RGBA;
+#else
     int rowStride = (width * 3 + 3) & ~0x3;
     int imageSize = height * rowStride;
+    Renderer::PixelFormat format = Renderer::PixelFormat::RGB;
+    int pngColorType = PNG_COLOR_TYPE_RGB;
+#endif
     auto* pixels = new unsigned char[imageSize];
 
     if (!renderer->captureFrame(x, y, width, height,
-                                Renderer::PixelFormat::RGB,
+                                format,
                                 pixels, true))
     {
         return false;
@@ -168,7 +197,7 @@ bool CaptureGLBufferToPNG(const fs::path& filename,
     png_set_IHDR(png_ptr, info_ptr,
                  width, height,
                  8,
-                 PNG_COLOR_TYPE_RGB,
+                 pngColorType,
                  PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_DEFAULT,
                  PNG_FILTER_TYPE_DEFAULT);

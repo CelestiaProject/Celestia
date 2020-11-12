@@ -222,6 +222,7 @@ class Renderer
     // Currently we map them 1:1 to GL
     enum class PixelFormat
     {
+        RGBA = GL_RGBA,
         RGB = GL_RGB,
 #ifndef GL_ES
         BGR_EXT = GL_BGR_EXT
