@@ -122,12 +122,10 @@ bool CaptureGLBufferToPNG(const fs::path& filename,
     int rowStride = width * 4;
     int imageSize = height * rowStride;
     Renderer::PixelFormat format = Renderer::PixelFormat::RGBA;
-    int pngColorType = PNG_COLOR_TYPE_RGBA;
 #else
     int rowStride = (width * 3 + 3) & ~0x3;
     int imageSize = height * rowStride;
     Renderer::PixelFormat format = Renderer::PixelFormat::RGB;
-    int pngColorType = PNG_COLOR_TYPE_RGB;
 #endif
     auto* pixels = new unsigned char[imageSize];
 
@@ -152,7 +150,22 @@ bool CaptureGLBufferToPNG(const fs::path& filename,
 
     auto* row_pointers = new png_bytep[height];
     for (int i = 0; i < height; i++)
-        row_pointers[i] = (png_bytep) &pixels[rowStride * (height - i - 1)];
+    {
+        unsigned char *rowHead = &pixels[rowStride * (height - i - 1)];
+        // Strip alpha values if we are in RGBA format
+        if (format == Renderer::PixelFormat::RGBA)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                const unsigned char* pixelIn = &rowHead[x * 4];
+                unsigned char* pixelOut = &rowHead[x * 3];
+                pixelOut[0] = pixelIn[0];
+                pixelOut[1] = pixelIn[1];
+                pixelOut[2] = pixelIn[2];
+            }
+        }
+        row_pointers[i] = (png_bytep) rowHead;
+    }
 
     png_structp png_ptr;
     png_infop info_ptr;
@@ -197,7 +210,7 @@ bool CaptureGLBufferToPNG(const fs::path& filename,
     png_set_IHDR(png_ptr, info_ptr,
                  width, height,
                  8,
-                 pngColorType,
+                 PNG_COLOR_TYPE_RGB,
                  PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_DEFAULT,
                  PNG_FILTER_TYPE_DEFAULT);
