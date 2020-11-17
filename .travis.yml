@@ -1,5 +1,5 @@
 dist: xenial
-osx_image: xcode11.4
+osx_image: xcode12.2
 language: cpp
 sudo: true
 
@@ -66,4 +66,3 @@ addons:
     - freetype
     - libepoxy
     - sdl2
-    update: true
