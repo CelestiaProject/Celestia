@@ -33,6 +33,7 @@
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
 #include <celutil/debug.h>
+#include <celutil/gettext.h>
 
 /* Includes for the GNOME front-end */
 #ifdef GNOME
