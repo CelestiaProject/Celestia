@@ -2,7 +2,7 @@
 
 #include <config.h>
 
-#if __cplusplus >= 201703L
+#ifdef HAVE_FILESYSTEM
 #include <filesystem>
 namespace fs = std::filesystem;
 #elif defined(HAVE_EXPERIMENTAL_FILESYSTEM)

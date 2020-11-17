@@ -358,11 +358,12 @@ include_directories("${CMAKE_SOURCE_DIR}/src" ${CMAKE_BINARY_DIR})
 include(CheckSymbolExists)
 check_symbol_exists(wordexp wordexp.h HAVE_WORDEXP)
 check_include_files(byteswap.h HAVE_BYTESWAP_H)
+try_compile(HAVE_FILESYSTEM ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxfs.cpp")
 check_include_file_cxx(experimental/filesystem HAVE_EXPERIMENTAL_FILESYSTEM)
 
-if(HAVE_EXPERIMENTAL_FILESYSTEM)
+if((NOT HAVE_FILESYSTEM) AND HAVE_EXPERIMENTAL_FILESYSTEM)
   # Try compile without linking against any library
-  try_compile(CXXFSLIB ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxfs.cpp")
+  try_compile(CXXFSLIB ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxfsexp.cpp")
 
   if(CXXFSLIB)
     # Nothing to do, linking is not explicitly required
