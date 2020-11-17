@@ -97,7 +97,7 @@ class M3DTriangleMesh
 
  private:
     std::vector<Eigen::Vector3f> points;
-    std::vector<Eigen::Vector2f> texCoords;
+    std::vector<Eigen::Vector2f, Eigen::aligned_allocator<Eigen::Vector2f>> texCoords;
     std::vector<uint16_t> faces;
     std::vector<uint32_t> smoothingGroups;
     std::vector<M3DMeshMaterialGroup*> meshMaterialGroups;
