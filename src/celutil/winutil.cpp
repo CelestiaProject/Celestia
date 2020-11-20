@@ -64,17 +64,50 @@ const char* CurrentCP()
 
 string UTF8ToCurrentCP(const string& str)
 {
-    string localeStr;
-    LPWSTR wout = new wchar_t[str.length() + 1];
-    LPSTR out = new char[str.length() + 1];
-    int wlength = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wout, str.length() + 1);
-    WideCharToMultiByte(CP_ACP, 0, wout, -1, out, str.length() + 1, NULL, NULL);
-    localeStr = out;
-    delete [] wout;
-    delete [] out;
-    return localeStr;
+    return WideToCurrentCP(UTF8ToWide(str));
 }
 
+string CurrentCPToUTF8(const string& str)
+{
+    return WideToUTF8(CurrentCPToWide(str));
+}
+
+string WStringToString(UINT codePage, const wstring& ws)
+{
+    if (ws.empty())
+        return string();
+    // get a converted string length
+    int len = WideCharToMultiByte(codePage, 0, ws.c_str(), ws.length(), NULL, 0, NULL, NULL);
+    string out(len, 0);
+    WideCharToMultiByte(codePage, 0, ws.c_str(), ws.length(), &out[0], len, NULL, NULL);
+    return out;
+}
+
+wstring StringToWString(UINT codePage, const string& s)
+{
+    if (s.empty())
+        return wstring();
+    // get a converted string length
+    int len = MultiByteToWideChar(codePage, 0, s.c_str(), s.length(), NULL, 0);
+    wstring out(len, 0);
+    MultiByteToWideChar(codePage, 0, s.c_str(), s.length(), &out[0], len);
+    return out;
+}
+
+string WideToCurrentCP(const wstring& ws)
+{
+    return WStringToString(CP_ACP, ws);
+}
+
+wstring CurrentCPToWide(const string& s)
+{
+    return StringToWString(CP_ACP, s);
+}
+
+string WideToUTF8(const wstring& ws)
+{
+    return WStringToString(CP_UTF8, ws);
+}
 
 string UTF8ToCurrentOEMCP(const string& str)
 {
@@ -87,4 +120,15 @@ string UTF8ToCurrentOEMCP(const string& str)
     delete [] wout;
     delete [] out;
     return localeStr;
+}
+
+wstring UTF8ToWide(const string& s)
+{
+    if (s.empty())
+        return wstring();
+    // get a converted string length
+    int len = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), s.length(), NULL, 0);
+    wstring out(len, 0);
+    MultiByteToWideChar(CP_UTF8, 0, s.c_str(), s.length(), &out[0], len);
+    return out;
 }
