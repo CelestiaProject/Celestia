@@ -26,8 +26,8 @@ using namespace std;
 HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
                         HTREEITEM parent)
 {
-    TVITEM tvi;
-    TVINSERTSTRUCT tvins;
+    TVITEMW tvi;
+    TVINSERTSTRUCTW tvins;
     static HTREEITEM hPrev = (HTREEITEM) TVI_FIRST;
 
 #if 0
@@ -36,7 +36,8 @@ HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
     tvi.mask = TVIF_TEXT | TVIF_PARAM;
 
     // Set the text of the item.
-    tvi.pszText = lpszItem;
+    wstring itemText = CurrentCPToWide(lpszItem);
+    tvi.pszText = const_cast<wchar_t *>(itemText.c_str());
     tvi.cchTextMax = lstrlen(lpszItem);
 
     // Save the heading level in the item's application-defined
@@ -48,8 +49,7 @@ HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
     tvins.hParent = parent;
 
     // Add the item to the tree view control.
-    hPrev = (HTREEITEM) SendMessage(hwndTV, TVM_INSERTITEM, 0,
-                                    (LPARAM) (LPTVINSERTSTRUCT) &tvins);
+    hPrev = (HTREEITEM) SendMessage(hwndTV, TVM_INSERTITEMW, 0, (LPARAM)&tvins);
 
 #if 0
     // The new item is a child item. Give the parent item a

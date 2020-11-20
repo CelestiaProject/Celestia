@@ -1174,14 +1174,15 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
             if (hBookmarkTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
             {
                 HTREEITEM hItem;
-                TVITEM tvItem;
+                TVITEMW tvItem;
                 if (hItem = TreeView_GetSelection(hBookmarkTree))
                 {
                     tvItem.hItem = hItem;
                     tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-                    tvItem.pszText = bookmarkName;
+                    wstring itemName = CurrentCPToWide(bookmarkName);
+                    tvItem.pszText = const_cast<wchar_t*>(itemName.c_str());
                     tvItem.cchTextMax = sizeof(bookmarkName);
-                    if (TreeView_GetItem(hBookmarkTree, &tvItem))
+                    if (SendMessage(hBookmarkTree, TVM_GETITEMW, 0, (LPARAM)&tvItem))
                     {
                         DialogBox(hRes,
                                   MAKEINTRESOURCE(IDD_RENAME_BOOKMARK),
@@ -1232,7 +1233,7 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
             {
                 //Do not allow folders to be dragged
                 HWND hTree;
-                TVITEM tvItem;
+                TVITEMW tvItem;
                 LPNMTREEVIEW nm = (LPNMTREEVIEW)lParam;
                 HTREEITEM hItem = nm->itemNew.hItem;
 
@@ -1240,7 +1241,7 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
                 {
                     tvItem.hItem = hItem;
                     tvItem.mask = TVIF_PARAM | TVIF_HANDLE;
-                    if (TreeView_GetItem(hTree, &tvItem))
+                    if (SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&tvItem))
                     {
                         if(tvItem.lParam != 1)
                         {

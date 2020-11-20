@@ -43,13 +43,13 @@ enum {
 
 bool InitStarBrowserColumns(HWND listView)
 {
-    LVCOLUMN lvc;
-    LVCOLUMN columns[5];
+    LVCOLUMNW lvc;
+    LVCOLUMNW columns[5];
 
     lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
     lvc.fmt = LVCFMT_LEFT;
     lvc.cx = 60;
-    lvc.pszText = const_cast<char*>("");
+    lvc.pszText = L"";
 
     int nColumns = sizeof(columns) / sizeof(columns[0]);
     int i;
@@ -61,18 +61,24 @@ bool InitStarBrowserColumns(HWND listView)
     bind_textdomain_codeset("celestia", CurrentCP());
 #endif
 
-    columns[0].pszText = _("Name");
+    wstring header0 = CurrentCPToWide(_("Name"));
+    wstring header1 = CurrentCPToWide(_("Distance (ly)"));
+    wstring header2 = CurrentCPToWide(_("App. mag"));
+    wstring header3 = CurrentCPToWide(_("Abs. mag"));
+    wstring header4 = CurrentCPToWide(_("Type"));
+
+    columns[0].pszText = const_cast<wchar_t*>(header0.c_str());
     columns[0].cx = 100;
-    columns[1].pszText = _("Distance (ly)");
+    columns[1].pszText = const_cast<wchar_t*>(header1.c_str());
     columns[1].fmt = LVCFMT_RIGHT;
     columns[1].cx = 115;
-    columns[2].pszText = _("App. mag");
+    columns[2].pszText = const_cast<wchar_t*>(header2.c_str());
     columns[2].fmt = LVCFMT_RIGHT;
     columns[2].cx = 65;
-    columns[3].pszText = _("Abs. mag");
+    columns[3].pszText = const_cast<wchar_t*>(header3.c_str());
     columns[3].fmt = LVCFMT_RIGHT;
     columns[3].cx = 65;
-    columns[4].pszText = _("Type");
+    columns[4].pszText = const_cast<wchar_t*>(header4.c_str());
 
 #ifdef ENABLE_NLS
     bind_textdomain_codeset("celestia", "UTF8");
@@ -81,7 +87,7 @@ bool InitStarBrowserColumns(HWND listView)
     for (i = 0; i < nColumns; i++)
     {
         columns[i].iSubItem = i;
-        if (ListView_InsertColumn(listView, i, &columns[i]) == -1)
+        if (SendMessage(listView, LVM_INSERTCOLUMNW, (WPARAM)i, (LPARAM)&columns[i]) == -1)
             return false;
     }
 
@@ -201,12 +207,12 @@ FindStars(const StarDatabase& stardb, Pred pred, int nStars)
 
 bool InitStarBrowserLVItems(HWND listView, vector<const Star*>& stars)
 {
-    LVITEM lvi;
+    LVITEMW lvi;
 
     lvi.mask = LVIF_TEXT | LVIF_PARAM | LVIF_STATE;
     lvi.state = 0;
     lvi.stateMask = 0;
-    lvi.pszText = LPSTR_TEXTCALLBACK;
+    lvi.pszText = LPSTR_TEXTCALLBACKW;
 
     for (unsigned int i = 0; i < stars.size(); i++)
     {
@@ -271,7 +277,7 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
 
 // Crud used for the list item display callbacks
 static string starNameString("");
-static char callbackScratch[256];
+static wchar_t callbackScratch[256];
 
 struct StarBrowserSortInfo
 {
@@ -323,32 +329,31 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
 }
 
 
-void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
+void StarBrowserDisplayItem(LPNMLVDISPINFOW nm, StarBrowser* browser)
 {
     double tdb = browser->appCore->getSimulation()->getTime();
 
     Star* star = reinterpret_cast<Star*>(nm->item.lParam);
     if (star == NULL)
     {
-        nm->item.pszText = const_cast<char*>("");
+        nm->item.pszText = L"";
         return;
     }
 
+    size_t maxCount = sizeof(callbackScratch) / sizeof(wchar_t) - 1;
     switch (nm->item.iSubItem)
     {
     case 0:
         {
             Universe* u = browser->appCore->getSimulation()->getUniverse();
-            starNameString = UTF8ToCurrentCP(u->getStarCatalog()->getStarName(*star));
-            nm->item.pszText = const_cast<char*>(starNameString.c_str());
+            wcsncpy(callbackScratch, CurrentCPToWide(u->getStarCatalog()->getStarName(*star)).c_str(), maxCount);
         }
         break;
 
     case 1:
         {
             Vector3d r = star->getPosition(tdb).offsetFromKm(browser->ucPos);
-            sprintf(callbackScratch, "%.4g", astro::kilometersToLightYears(r.norm()));
-            nm->item.pszText = callbackScratch;
+            swprintf(callbackScratch, L"%.4g", astro::kilometersToLightYears(r.norm()));
         }
         break;
 
@@ -356,23 +361,19 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
         {
             Vector3d r = star->getPosition(tdb).offsetFromKm(browser->ucPos);
             float appMag = star->getApparentMagnitude(astro::kilometersToLightYears(r.norm()));
-            sprintf(callbackScratch, "%.2f", appMag);
-            nm->item.pszText = callbackScratch;
+            swprintf(callbackScratch, L"%.2f", appMag);
         }
         break;
 
     case 3:
-        sprintf(callbackScratch, "%.2f", star->getAbsoluteMagnitude());
-        nm->item.pszText = callbackScratch;
+        swprintf(callbackScratch, L"%.2f", star->getAbsoluteMagnitude());
         break;
 
     case 4:
-        strncpy(callbackScratch, star->getSpectralType(),
-                sizeof(callbackScratch));
-        callbackScratch[sizeof(callbackScratch) - 1] = '\0';
-        nm->item.pszText = callbackScratch;
+        wcsncpy(callbackScratch, CurrentCPToWide(star->getSpectralType()).c_str(), maxCount);
         break;
     }
+    nm->item.pszText = callbackScratch;
 }
 
 void RefreshItems(HWND hDlg, StarBrowser* browser)
@@ -531,8 +532,8 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
             {
                 switch(hdr->code)
                 {
-                case LVN_GETDISPINFO:
-                    StarBrowserDisplayItem((LPNMLVDISPINFOA) lParam, browser);
+                case LVN_GETDISPINFOW:
+                    StarBrowserDisplayItem((LPNMLVDISPINFOW) lParam, browser);
                     break;
                 case LVN_ITEMCHANGED:
                     {
