@@ -26,17 +26,18 @@ using namespace std;
 HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
                         HTREEITEM parent)
 { 
-    TVITEM tvi; 
-    TVINSERTSTRUCT tvins; 
-    static HTREEITEM hPrev = (HTREEITEM) TVI_FIRST; 
+    TVITEMW tvi;
+    TVINSERTSTRUCTW tvins;
+    static HTREEITEM hPrev = (HTREEITEM) TVI_FIRST;
 
 #if 0 
     tvi.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM; 
 #endif
     tvi.mask = TVIF_TEXT | TVIF_PARAM;
  
-    // Set the text of the item. 
-    tvi.pszText = lpszItem; 
+    // Set the text of the item.
+    wstring itemText = CurrentCPToWide(lpszItem);
+    tvi.pszText = const_cast<wchar_t *>(itemText.c_str());
     tvi.cchTextMax = lstrlen(lpszItem); 
 
     // Save the heading level in the item's application-defined 
@@ -48,8 +49,7 @@ HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
     tvins.hParent = parent;
  
     // Add the item to the tree view control. 
-    hPrev = (HTREEITEM) SendMessage(hwndTV, TVM_INSERTITEM, 0, 
-                                    (LPARAM) (LPTVINSERTSTRUCT) &tvins); 
+    hPrev = (HTREEITEM) SendMessage(hwndTV, TVM_INSERTITEMW, 0, (LPARAM)&tvins);
  
 #if 0 
     // The new item is a child item. Give the parent item a 
@@ -57,10 +57,10 @@ HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
     if (nLevel > 1)
     { 
         hti = TreeView_GetParent(hwndTV, hPrev); 
-        tvi.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE; 
+        tvi.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE; s
         tvi.hItem = hti; 
         // tvi.iImage = g_nClosed; 
-        // tvi.iSelectedImage = g_nClosed; 
+        // tvi.iSelectedImage = g_nClosed; i
         TreeView_SetItem(hwndTV, &tvi); 
     }
 #endif 

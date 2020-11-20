@@ -41,12 +41,12 @@ char* MonthNames[12] =
 
 bool InitEclipseFinderColumns(HWND listView)
 {
-    LVCOLUMN lvc;
-    LVCOLUMN columns[5];
+    LVCOLUMNW lvc;
+    LVCOLUMNW columns[5];
 
     lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
     lvc.fmt = LVCFMT_CENTER;
-    lvc.pszText = "";
+    lvc.pszText = L"";
 
     int nColumns = sizeof(columns) / sizeof(columns[0]);
     int i;
@@ -55,22 +55,28 @@ bool InitEclipseFinderColumns(HWND listView)
         columns[i] = lvc;
 
     bind_textdomain_codeset("celestia", CurrentCP());
-    columns[0].pszText = _("Planet");
+    wstring header0 = CurrentCPToWide(_("Planet"));
+    wstring header1 = CurrentCPToWide(_("Satellite"));
+    wstring header2 = CurrentCPToWide(_("Date"));
+    wstring header3 = CurrentCPToWide(_("Start"));
+    wstring header4 = CurrentCPToWide(_("Duration"));
+
+    columns[0].pszText = const_cast<wchar_t*>(header0.c_str());
     columns[0].cx = 50;
-    columns[1].pszText = _("Satellite");
+    columns[1].pszText = const_cast<wchar_t*>(header1.c_str());
     columns[1].cx = 65;
-    columns[2].pszText = _("Date");
+    columns[2].pszText = const_cast<wchar_t*>(header2.c_str());
     columns[2].cx = 80;
-    columns[3].pszText = _("Start");
+    columns[3].pszText = const_cast<wchar_t*>(header3.c_str());
     columns[3].cx = 55;
-    columns[4].pszText = _("Duration");
+    columns[4].pszText = const_cast<wchar_t*>(header4.c_str());
     columns[4].cx = 55;
     bind_textdomain_codeset("celestia", "UTF8");
 
     for (i = 0; i < nColumns; i++)
     {
         columns[i].iSubItem = i;
-        if (ListView_InsertColumn(listView, i, &columns[i]) == -1)
+        if (SendMessage(listView, LVM_INSERTCOLUMNW, (WPARAM)i, (LPARAM)&columns[i]) == -1)
             return false;
     }
 
@@ -99,22 +105,23 @@ bool InitEclipseFinderItems(HWND listView, const vector<Eclipse>& eclipses)
 }
 
 
-static char callbackScratch[256];
-void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
+static wchar_t callbackScratch[256];
+void EclipseFinderDisplayItem(LPNMLVDISPINFOW nm)
 {
 
     Eclipse* eclipse = reinterpret_cast<Eclipse*>(nm->item.lParam);
     if (eclipse == NULL)
     {
-        nm->item.pszText = "";
+        nm->item.pszText = L"";
         return;
     }
 
+    size_t maxCount = sizeof(callbackScratch) / sizeof(wchar_t) - 1;
     switch (nm->item.iSubItem)
     {
     case 0:
         {
-            strncpy(callbackScratch, UTF8ToCurrentCP(_(eclipse->planete.c_str())).c_str(), sizeof(callbackScratch) - 1);
+            wcsncpy(callbackScratch, UTF8ToWide(_(eclipse->planete.c_str())).c_str(), maxCount);
             nm->item.pszText = callbackScratch;
         }
         break;
@@ -122,15 +129,9 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
     case 1:
         {
             if (!strcmp(eclipse->planete.c_str(),"None")) 
-            {
-                sprintf(callbackScratch,"");
-                nm->item.pszText = callbackScratch;
-            }
+                wcsncpy(callbackScratch, L"", maxCount);
             else
-            {
-                strncpy(callbackScratch, UTF8ToCurrentCP(_(eclipse->sattelite.c_str())).c_str(), sizeof(callbackScratch) - 1);
-                nm->item.pszText = callbackScratch;
-            }
+                wcsncpy(callbackScratch, UTF8ToWide(_(eclipse->sattelite.c_str())).c_str(), maxCount);
         }
         break;
 
@@ -139,13 +140,12 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
             bind_textdomain_codeset("celestia", CurrentCP());
             astro::Date startDate(eclipse->startTime);
             if (!strcmp(eclipse->planete.c_str(),"None"))
-                sprintf(callbackScratch,"");
+                wcsncpy(callbackScratch, L"", maxCount);
             else
-                sprintf(callbackScratch, "%2d %s %4d",
-                        startDate.day,
-                        _(MonthNames[startDate.month - 1]),
-                        startDate.year);
-            nm->item.pszText = callbackScratch;
+                swprintf(callbackScratch, L"%2d %s %4d",
+                         startDate.day,
+                         CurrentCPToWide(_(MonthNames[startDate.month - 1])).c_str(),
+                         startDate.year);
             bind_textdomain_codeset("celestia", "UTF8");
         }
         break;
@@ -154,33 +154,27 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
         {
             astro::Date startDate(eclipse->startTime);
             if (!strcmp(eclipse->planete.c_str(),"None"))
-                sprintf(callbackScratch,"");
+                wcsncpy(callbackScratch, L"", maxCount);
             else
-            {
-                sprintf(callbackScratch, "%02d:%02d",
+                swprintf(callbackScratch, L"%02d:%02d",
                         startDate.hour, startDate.minute);
-            }
-            nm->item.pszText = callbackScratch;
         }
         break;
 
     case 4:
         {
             if (!strcmp(eclipse->planete.c_str(),"None")) 
-            {
-                sprintf(callbackScratch,"");
-                nm->item.pszText = callbackScratch;
-            }
+                wcsncpy(callbackScratch, L"", maxCount);
             else
             {
                 int minutes = (int) ((eclipse->endTime - eclipse->startTime) *
                                     24 * 60);
-                sprintf(callbackScratch, "%02d:%02d", minutes / 60, minutes % 60);
-                nm->item.pszText = callbackScratch;
+                swprintf(callbackScratch, L"%02d:%02d", minutes / 60, minutes % 60);
             }
         }
         break;
     }
+    nm->item.pszText = callbackScratch;
 }
 
 
@@ -308,6 +302,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             //SetWindowLong(hDlg, DWL_USER, lParam);
 			SetWindowLongPtr(hDlg, DWLP_USER, lParam);
             HWND hwnd = GetDlgItem(hDlg, IDC_ECLIPSES_LIST);
+            ListView_SetUnicodeFormat(hwnd, TRUE);
             InitEclipseFinderColumns(hwnd);
             SendDlgItemMessage(hDlg, IDC_ECLIPSES_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
 
@@ -446,8 +441,8 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             {
                 switch(hdr->code)
                 {
-                case LVN_GETDISPINFO:
-                    EclipseFinderDisplayItem((LPNMLVDISPINFOA) lParam);
+                case LVN_GETDISPINFOW:
+                    EclipseFinderDisplayItem((LPNMLVDISPINFOW) lParam);
                     break;
                 case LVN_ITEMCHANGED:
                     {
