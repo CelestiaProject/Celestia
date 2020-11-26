@@ -1772,3 +1772,7 @@ Documentation
 
 Platform-specific changes
 * macOS: bump minimal supported version to 10.10
+
+1.6.2.1
+Bug fixes
+* Windows: fix text display in dialog boxes in non-latin locales
