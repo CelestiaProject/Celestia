@@ -153,7 +153,7 @@ static bool ignoreNextMoveEvent = false;
 static const WPARAM ID_GOTO_URL = 62000;
 
 HWND hBookmarkTree;
-char bookmarkName[33];
+wchar_t bookmarkName[33];
 
 static const char ScriptsDirectory[] = "scripts";
 static vector<ScriptMenuItem>* ScriptMenuItems = NULL;
@@ -1041,7 +1041,7 @@ BOOL APIENTRY RenameBookmarkProc(HWND hDlg,
         SendMessage(hEdit, EM_LIMITTEXT, 32, 0);
 
         //Set text in edit control to current bookmark name
-        SetWindowText(hEdit, bookmarkName);
+        SetWindowTextW(hEdit, bookmarkName);
 
         return(TRUE);
         }
@@ -1179,9 +1179,8 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
                 {
                     tvItem.hItem = hItem;
                     tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-                    wstring itemName = CurrentCPToWide(bookmarkName);
-                    tvItem.pszText = const_cast<wchar_t*>(itemName.c_str());
-                    tvItem.cchTextMax = sizeof(bookmarkName);
+                    tvItem.pszText = bookmarkName;
+                    tvItem.cchTextMax = sizeof(bookmarkName) / sizeof(wchar_t);
                     if (SendMessage(hBookmarkTree, TVM_GETITEMW, 0, (LPARAM)&tvItem))
                     {
                         DialogBox(hRes,
