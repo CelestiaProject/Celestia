@@ -425,7 +425,7 @@ void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
     FavoritesList::iterator iter;
     TVITEMW tvItem;
     HTREEITEM hItem, hParent;
-    char itemName[33];
+    wchar_t itemName[33];
     bool found;
 
     if (favorites != NULL)
@@ -440,16 +440,15 @@ void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
                 // Get information on item
                 tvItem.hItem = hItem;
                 tvItem.mask = TVIF_TEXT | TVIF_PARAM | TVIF_HANDLE;
-                wstring name = CurrentCPToWide(itemName);
-                tvItem.pszText = const_cast<wchar_t*>(name.c_str());
-                tvItem.cchTextMax = sizeof(itemName);
+                tvItem.pszText = itemName;
+                tvItem.cchTextMax = sizeof(itemName) / sizeof(wchar_t);
                 if (SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&tvItem))
                 {
                     // Skip non-folders.
                     if(tvItem.lParam == 0)
                         continue;
 
-                    string name(itemName);
+                    string name(WideToCurrentCP(itemName));
                     if (favorites->size() == 0)
                     {
                         // Just append the folder
@@ -462,7 +461,7 @@ void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
                     iter = favorites->begin();
                     while (iter != favorites->end())
                     {
-                        if ((*iter)->isFolder && (*iter)->name == itemName)
+                        if ((*iter)->isFolder && (*iter)->name == name)
                         {
                             found = true;
                             break;
@@ -506,7 +505,7 @@ void InsertBookmarkInFavorites(HWND hTree, char* name, CelestiaCore* appCore)
     FavoritesList* favorites = appCore->getFavorites();
     TVITEMW tvItem;
     HTREEITEM hItem;
-    char itemName[33];
+    wchar_t itemName[33];
     string newBookmark(name);
 
     // SyncTreeFoldersWithFavoriteFolders(hTree, appCore);
@@ -520,15 +519,14 @@ void InsertBookmarkInFavorites(HWND hTree, char* name, CelestiaCore* appCore)
     {
         tvItem.hItem = hItem;
         tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-        wstring name = CurrentCPToWide(itemName);
-        tvItem.pszText = const_cast<wchar_t*>(name.c_str());
-        tvItem.cchTextMax = sizeof(itemName);
+        tvItem.pszText = itemName;
+        tvItem.cchTextMax = sizeof(itemName) / sizeof(wchar_t);
         if (SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&tvItem))
         {
             FavoritesEntry* fav = reinterpret_cast<FavoritesEntry*>(tvItem.lParam);
             if (fav != NULL && fav->isFolder)
             {
-                appCore->addFavorite(newBookmark, string(itemName));
+                appCore->addFavorite(newBookmark, WideToCurrentCP(itemName));
             }
         }
     }
@@ -545,7 +543,7 @@ void DeleteBookmarkFromFavorites(HWND hTree, CelestiaCore* appCore)
     FavoritesList* favorites = appCore->getFavorites();
     TVITEMW tvItem;
     HTREEITEM hItem;
-    char itemName[33];
+    wchar_t itemName[33];
 
     hItem = TreeView_GetSelection(hTree);
     if (!hItem)
@@ -554,9 +552,8 @@ void DeleteBookmarkFromFavorites(HWND hTree, CelestiaCore* appCore)
     // Get the selected item text (which is the bookmark name)
     tvItem.hItem = hItem;
     tvItem.mask = TVIF_TEXT | TVIF_PARAM | TVIF_HANDLE;
-    wstring name = CurrentCPToWide(itemName);
-    tvItem.pszText = const_cast<wchar_t*>(name.c_str());
-    tvItem.cchTextMax = sizeof(itemName);
+    tvItem.pszText = itemName;
+    tvItem.cchTextMax = sizeof(itemName) / sizeof(wchar_t);
     if (!SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&tvItem))
         return;
 
@@ -573,7 +570,7 @@ void DeleteBookmarkFromFavorites(HWND hTree, CelestiaCore* appCore)
     for (int i = favorites->size() - 1; i >= 0; --i)
     {
         FavoritesEntry *cur = favorites->at(i);
-        if (cur == fav || (fav->isFolder && cur->parentFolder == itemName))
+        if (cur == fav || (fav->isFolder && cur->parentFolder == WideToCurrentCP(itemName)))
         {
             favorites->erase(favorites->begin() + i);
         }
@@ -635,9 +632,9 @@ void MoveBookmarkInFavorites(HWND hTree, CelestiaCore* appCore)
     TVITEMW tvItem;
     TVINSERTSTRUCTW tvis;
     HTREEITEM hDragItemFolder, hDropItem;
-    char dragItemName[33];
-    char dragItemFolderName[33];
-    char dropFolderName[33];
+    wchar_t dragItemName[33];
+    wchar_t dragItemFolderName[33];
+    wchar_t dropFolderName[33];
     bool bMovedInTree = false;
     FavoritesEntry* draggedFav = NULL;
     FavoritesEntry* dropFolderFav = NULL;
@@ -645,9 +642,8 @@ void MoveBookmarkInFavorites(HWND hTree, CelestiaCore* appCore)
     // First get the target folder name
     tvItem.hItem = hDropTargetItem;
     tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-    wstring itemName = CurrentCPToWide(dropFolderName);
-    tvis.item.pszText = const_cast<wchar_t*>(itemName.c_str());
-    tvItem.cchTextMax = sizeof(dropFolderName);
+    tvItem.pszText = dropFolderName;
+    tvItem.cchTextMax = sizeof(dropFolderName) / sizeof(wchar_t);
     if (!SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&tvItem))
         return;
 
@@ -658,9 +654,8 @@ void MoveBookmarkInFavorites(HWND hTree, CelestiaCore* appCore)
     tvItem.lParam = NULL;
     tvItem.hItem = hDragItem;
     tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-    itemName = CurrentCPToWide(dragItemName);
-    tvis.item.pszText = const_cast<wchar_t*>(itemName.c_str());
-    tvItem.cchTextMax = sizeof(dragItemName);
+    tvItem.pszText = dragItemName;
+    tvItem.cchTextMax = sizeof(dragItemName) / sizeof(wchar_t);
     if (SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&tvItem))
     {
         draggedFav = reinterpret_cast<FavoritesEntry*>(tvItem.lParam);
@@ -670,16 +665,15 @@ void MoveBookmarkInFavorites(HWND hTree, CelestiaCore* appCore)
         {
             tvItem.hItem = hDragItemFolder;
             tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-            wstring itemName = CurrentCPToWide(dragItemFolderName);
-            tvItem.pszText = const_cast<wchar_t*>(itemName.c_str());
-            tvItem.cchTextMax = sizeof(dragItemFolderName);
+            tvItem.pszText = dragItemFolderName;
+            tvItem.cchTextMax = sizeof(dragItemFolderName) / sizeof(wchar_t);
             if (SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&tvItem))
             {
                 if (!TreeView_GetParent(hTree, hDragItemFolder))
                     dragItemFolderName[0] = '\0';
 
                 // Make sure drag and target folders are different
-                if (strcmp(dragItemFolderName, dropFolderName))
+                if (wcscmp(dragItemFolderName, dropFolderName))
                 {
                     // Delete tree item from source bookmark
                     if (TreeView_DeleteItem(hTree, hDragItem))
@@ -688,7 +682,7 @@ void MoveBookmarkInFavorites(HWND hTree, CelestiaCore* appCore)
                         tvis.hParent = hDropTargetItem;
                         tvis.hInsertAfter = TVI_LAST;
                         tvis.item.mask = StdItemMask;
-                        wstring itemName = CurrentCPToWide(dragItemName);
+                        wstring itemName = dragItemName;
                         tvis.item.pszText = const_cast<wchar_t*>(itemName.c_str());
                         tvis.item.lParam = reinterpret_cast<LPARAM>(draggedFav);
                         tvis.item.iImage = 3;
@@ -711,7 +705,7 @@ void MoveBookmarkInFavorites(HWND hTree, CelestiaCore* appCore)
     // Now perform the move in favorites
     if (bMovedInTree && draggedFav != NULL)
     {
-        draggedFav->parentFolder = dropFolderName;
+        draggedFav->parentFolder = WideToCurrentCP(dropFolderName);
     }
 }
 
@@ -875,7 +869,7 @@ HTREEITEM GetTreeViewItemHandle(HWND hTree, char* path, HTREEITEM hParent)
         return NULL;
 
     char* cP;
-    char itemName[33];
+    char_t itemName[33];
     char pathBuf[66];
     TVITEMW Item;
     HTREEITEM hItem;
