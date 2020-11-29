@@ -162,8 +162,10 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
         return;
     }
 
-    if (group.prim == Mesh::SpriteList)
+    if (group.prim == Mesh::SpriteList || group.prim == Mesh::PointList)
     {
+        if (group.prim == Mesh::PointList)
+            glVertexAttrib1f(CelestiaGLProgram::PointSizeAttributeIndex, 1.0f);
 #ifndef GL_ES
         glEnable(GL_POINT_SPRITE);
         glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -176,7 +178,7 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
                    GL_UNSIGNED_INT,
                    group.indices);
 #ifndef GL_ES
-    if (group.prim == Mesh::SpriteList)
+    if (group.prim == Mesh::SpriteList || group.prim == Mesh::PointList)
     {
         glDisable(GL_POINT_SPRITE);
         glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -191,7 +193,11 @@ RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
 {
     setStandardVertexArrays(desc, vertexData);
     setExtendedVertexArrays(desc, vertexData);
+}
 
+void
+RenderContext::updateShader(const cmod::Mesh::VertexDescription& desc, Mesh::PrimitiveGroupType primType)
+{
     // Normally, the shader that will be used depends only on the material.
     // But the presence of point size and normals can also affect the
     // shader, so force an update of the material if those attributes appear
@@ -200,13 +206,16 @@ RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
     bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
     bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
     bool useTexCoordsNow = (desc.getAttribute(Mesh::Texture0).format != Mesh::InvalidFormat);
+    bool useStaticPointSizeNow = primType == Mesh::PointList;
 
-    if (usePointSizeNow != usePointSize ||
-        useNormalsNow   != useNormals   ||
-        useColorsNow    != useColors    ||
-        useTexCoordsNow != useTexCoords)
+    if (usePointSizeNow         != usePointSize       ||
+        useStaticPointSizeNow   != useStaticPointSize ||
+        useNormalsNow           != useNormals         ||
+        useColorsNow            != useColors          ||
+        useTexCoordsNow         != useTexCoords)
     {
         usePointSize = usePointSizeNow;
+        useStaticPointSize = useStaticPointSizeNow;
         useNormals = useNormalsNow;
         useColors = useColorsNow;
         useTexCoords = useTexCoordsNow;
@@ -537,6 +546,9 @@ GLSL_RenderContext::makeCurrent(const Material& m)
 
     if (usePointSize)
         shaderProps.texUsage |= ShaderProperties::PointSprite;
+    else if (useStaticPointSize)
+        shaderProps.texUsage |= ShaderProperties::StaticPointSize;
+
     if (useColors)
         shaderProps.texUsage |= ShaderProperties::VertexColors;
 
@@ -615,9 +627,13 @@ GLSL_RenderContext::makeCurrent(const Material& m)
         disableDepthWriteOnBlend = false;
     }
 
-    if ((shaderProps.texUsage & ShaderProperties::PointSprite) != 0)
+    if (usePointSize)
     {
         prog->pointScale = getPointScale();
+    }
+    else if (useStaticPointSize)
+    {
+        prog->pointScale = renderer->getScreenDpi() / 96.0f;
     }
 
     // Ring shadow parameters
@@ -762,6 +778,9 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
 
     if (usePointSize)
         shaderProps.texUsage |= ShaderProperties::PointSprite;
+    else if (useStaticPointSize)
+        shaderProps.texUsage |= ShaderProperties::StaticPointSize;
+
     if (useColors)
         shaderProps.texUsage |= ShaderProperties::VertexColors;
 
@@ -787,9 +806,13 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
 #endif
     prog->opacity = m.opacity;
 
-    if ((shaderProps.texUsage & ShaderProperties::PointSprite) != 0)
+    if (usePointSize)
     {
         prog->pointScale = getPointScale();
+    }
+    else if (useStaticPointSize)
+    {
+        prog->pointScale = renderer->getScreenDpi() / 96.0f;
     }
 
     Material::BlendMode newBlendMode = Material::InvalidBlend;

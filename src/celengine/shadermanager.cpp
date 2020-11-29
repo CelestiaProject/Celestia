@@ -295,6 +295,12 @@ ShaderProperties::usesTangentSpaceLighting() const
 }
 
 
+bool ShaderProperties::usePointSize() const
+{
+    return (texUsage & (PointSprite | StaticPointSize)) != 0;
+}
+
+
 bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 {
     if (p0.texUsage < p1.texUsage)
@@ -1653,6 +1659,15 @@ TextureCoordDeclarations(const ShaderProperties& props)
     return source;
 }
 
+string
+PointSizeDeclaration()
+{
+    string source;
+    source += DeclareVarying("pointFade", Shader_Float);
+    source += DeclareUniform("pointScale", Shader_Float);
+    source += DeclareAttribute("in_PointSize", Shader_Float);
+    return source;
+}
 
 string
 PointSizeCalculation()
@@ -1662,6 +1677,15 @@ PointSizeCalculation()
     source += "pointFade = min(1.0, ptSize * ptSize);\n";
     source += "gl_PointSize = ptSize;\n";
 
+    return source;
+}
+
+string
+StaticPointSize()
+{
+    string source;
+    source += "pointFade = 1.0;\n";
+    source += "gl_PointSize = in_PointSize * pointScale;\n";
     return source;
 }
 
@@ -1729,12 +1753,8 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += ScatteringConstantDeclarations(props);
     }
 
-    if (props.texUsage & ShaderProperties::PointSprite)
-    {
-        source += DeclareUniform("pointScale", Shader_Float);
-        source += DeclareAttribute("in_PointSize", Shader_Float);
-        source += DeclareVarying("pointFade", Shader_Float);
-    }
+    if (props.usePointSize())
+        source += PointSizeDeclaration();
 
     if (props.usesTangentSpaceLighting())
     {
@@ -2048,8 +2068,10 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += "position_obj = in_Position.xyz;\n";
     }
 
-    if ((props.texUsage & ShaderProperties::PointSprite) != 0)
+    if (props.texUsage & ShaderProperties::PointSprite)
         source += PointSizeCalculation();
+    else if (props.texUsage & ShaderProperties::StaticPointSize)
+        source += StaticPointSize();
 
     if (props.hasShadowMap())
         source += "shadowTexCoord0 = ShadowMatrix0 * vec4(in_Position.xyz, 1.0);\n";
@@ -2230,10 +2252,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             source += "varying vec2 " + CloudShadowTexCoord(i) + ";\n";
     }
 
-    if (props.texUsage & ShaderProperties::PointSprite)
-    {
+    if (props.usePointSize())
         source += DeclareVarying("pointFade", Shader_Float);
-    }
 
     if (props.hasShadowMap())
     {
@@ -2423,7 +2443,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        if (props.texUsage & ShaderProperties::PointSprite)
+        if (props.usePointSize())
             source += "color = texture2D(diffTex, gl_PointCoord);\n";
         else
             source += "color = texture2D(diffTex, " + diffTexCoord + ".st);\n";
@@ -2434,7 +2454,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     }
 
 #if POINT_FADE
-    if (props.texUsage & ShaderProperties::PointSprite)
+    if (props.usePointSize())
     {
         source += "color.a *= pointFade;\n";
     }
@@ -2941,12 +2961,8 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     source += string("uniform struct {\n   vec3 diffuse;\n} lights[1];\n");
 #endif
 
-    if (props.texUsage & ShaderProperties::PointSprite)
-    {
-        source += "uniform float pointScale;\n";
-        source += "attribute float in_PointSize;\n";
-        source += "varying float pointFade;\n";
-    }
+    if (props.usePointSize())
+        source += PointSizeDeclaration();
 
     source += DeclareVarying("v_Color", Shader_Vector4);
     source += DeclareVarying("v_TexCoord0", Shader_Vector2);
@@ -2962,7 +2978,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     // Optional texture coordinates (generated automatically for point
     // sprites.)
     if ((props.texUsage & ShaderProperties::DiffuseTexture) &&
-        !(props.texUsage & ShaderProperties::PointSprite))
+        !props.usePointSize())
     {
         source += "    v_TexCoord0.st = " + TexCoord2D(0) + ";\n";
     }
@@ -2977,8 +2993,10 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     source += "    v_Color = vec4(" + colorSource + ", opacity);\n";
 
     // Optional point size
-    if ((props.texUsage & ShaderProperties::PointSprite) != 0)
+    if (props.texUsage & ShaderProperties::PointSprite)
         source += PointSizeCalculation();
+    else if (props.texUsage & ShaderProperties::StaticPointSize)
+        source += StaticPointSize();
 
     source += VertexPosition;
     source += "}\n";
@@ -3002,7 +3020,7 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
         source += "uniform sampler2D diffTex;\n";
     }
 
-    if (props.texUsage & ShaderProperties::PointSprite)
+    if (props.usePointSize())
     {
         source += "varying float pointFade;\n";
     }
@@ -3015,7 +3033,7 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
     source += "{\n";
 
     string colorSource = "v_Color";
-    if (props.texUsage & ShaderProperties::PointSprite)
+    if (props.usePointSize())
     {
         source += "    vec4 color = v_Color;\n";
 #if POINT_FADE
@@ -3026,7 +3044,7 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        if (props.texUsage & ShaderProperties::PointSprite)
+        if (props.usePointSize())
             source += "    gl_FragColor = " + colorSource + " * texture2D(diffTex, gl_PointCoord);\n";
         else
             source += "    gl_FragColor = " + colorSource + " * texture2D(diffTex, v_TexCoord0.st);\n";
@@ -3066,12 +3084,8 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
 
     // TODO: scattering constants
 
-    if (props.texUsage & ShaderProperties::PointSprite)
-    {
-        source << "uniform float pointScale;\n";
-        source << "attribute float in_PointSize;\n";
-        source << DeclareVarying("pointFade", Shader_Float);
-    }
+    if (props.usePointSize())
+        source << PointSizeDeclaration();
 
      source << DeclareVarying("v_Color", Shader_Vector4);
 
@@ -3113,8 +3127,10 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     source << "    v_Color = in_Color * brightness;\n";
 
     // Optional point size
-    if ((props.texUsage & ShaderProperties::PointSprite) != 0)
+    if (props.texUsage & ShaderProperties::PointSprite)
         source << PointSizeCalculation();
+    else if (props.texUsage & ShaderProperties::StaticPointSize)
+        source << StaticPointSize();
 
     source << VertexPosition;
     source << "}\n";
@@ -3140,7 +3156,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
         source << "uniform sampler2D diffTex;\n";
     }
 
-    if (props.texUsage & ShaderProperties::PointSprite)
+    if (props.usePointSize())
     {
         source << DeclareVarying("pointFade", Shader_Float);
     }
@@ -3274,7 +3290,7 @@ ShaderManager::buildProgram(const ShaderProperties& props)
                                      "in_Tangent");
             }
 
-            if (props.texUsage & ShaderProperties::PointSprite)
+            if (props.usePointSize())
             {
                 glBindAttribLocation(prog->getID(),
                                      CelestiaGLProgram::PointSizeAttributeIndex,
@@ -3573,7 +3589,7 @@ CelestiaGLProgram::initParameters()
         lunarLambert         = floatParam("lunarLambert");
     }
 
-    if ((props.texUsage & ShaderProperties::PointSprite) != 0)
+    if (props.usePointSize())
     {
         pointScale           = floatParam("pointScale");
     }

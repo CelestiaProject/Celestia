@@ -136,6 +136,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
         {
             const Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+            rc.updateShader(mesh->getVertexDescription(), group->prim);
 
             // Set up the material
             const Material* material = nullptr;

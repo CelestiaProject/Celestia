@@ -1851,15 +1851,14 @@ void renderPoint(const Renderer &renderer,
                           3, GL_FLOAT, GL_FALSE, sizeof(position), position.data());
 
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
-    glVertexAttrib1f(CelestiaGLProgram::PointSizeAttributeIndex, useSprite ? size : 1.0f);
+    glVertexAttrib1f(CelestiaGLProgram::PointSizeAttributeIndex, useSprite ? size : renderer.getScreenDpi() / 96.0f);
 
     glDrawArrays(GL_POINTS, 0, 1);
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
 
 #ifndef GL_ES
-    if (useSprite)
-        glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
     glDisable(GL_POINT_SPRITE);
 #endif
 }
@@ -1888,18 +1887,18 @@ void renderLargePoint(Renderer &renderer,
     if (!vo.initialized())
     {
         const float texCoords[] = {
-                              // texCoords
-            0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+            // offset     // texCoords
+            -0.5f,  0.5f, 0.0f, 0.0f,
+            -0.5f, -0.5f, 0.0f, 1.0f,
+             0.5f, -0.5f, 1.0f, 1.0f,
 
-            0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f, 1.0f
+            -0.5f,  0.5f, 0.0f, 0.0f,
+             0.5f, -0.5f, 1.0f, 1.0f,
+             0.5f,  0.5f, 1.0f, 0.0f,
         };
         vo.allocate(sizeof(texCoords), texCoords);
-        vo.setVertices(3, GL_FLOAT, false, 5 * sizeof(float), 0); // Vertices are useless, but required to set somehow on Mac...
-        vo.setTextureCoords(2, GL_FLOAT, false, 5 * sizeof(float), 3 * sizeof(float));
+        vo.setVertices(2, GL_FLOAT, false, 4 * sizeof(float), 0);
+        vo.setTextureCoords(2, GL_FLOAT, false, 4 * sizeof(float), 2 * sizeof(float));
     }
 
     vo.draw(GL_TRIANGLES, 6);
@@ -2772,13 +2771,13 @@ void Renderer::renderObject(const Vector3f& pos,
     {
         geometryScale = obj.radius;
         scaleFactors = obj.radius * obj.semiAxes;
-        ri.pointScale = 2.0f * obj.radius / pixelSize;
+        ri.pointScale = 2.0f * obj.radius / pixelSize * screenDpi / 96.0f;
     }
     else
     {
         geometryScale = obj.geometryScale;
         scaleFactors = Vector3f::Constant(geometryScale);
-        ri.pointScale = 2.0f * geometryScale / pixelSize;
+        ri.pointScale = 2.0f * geometryScale / pixelSize * screenDpi / 96.0f;
     }
     // Apply the modelview transform for the object
     Affine3f transform = Translation3f(pos) * obj.orientation.conjugate() * Scaling(scaleFactors);
@@ -4599,11 +4598,14 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     gaussianDiscTex->bind();
     starRenderer.starVertexBuffer->setTexture(gaussianDiscTex);
+    starRenderer.starVertexBuffer->setPointScale(screenDpi / 96.0f);
     starRenderer.glareVertexBuffer->setTexture(gaussianGlareTex);
+    starRenderer.glareVertexBuffer->setPointScale(screenDpi / 96.0f);
 
+    PointStarVertexBuffer::enable();
     starRenderer.glareVertexBuffer->startSprites();
     if (starStyle == PointStars)
-        starRenderer.starVertexBuffer->startPoints();
+        starRenderer.starVertexBuffer->startBasicPoints();
     else
         starRenderer.starVertexBuffer->startSprites();
 
@@ -4628,6 +4630,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.glareVertexBuffer->render();
     starRenderer.starVertexBuffer->finish();
     starRenderer.glareVertexBuffer->finish();
+    PointStarVertexBuffer::disable();
 
 #ifndef GL_ES
     if (toggleAA)

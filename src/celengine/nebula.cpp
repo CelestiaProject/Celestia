@@ -101,7 +101,7 @@ void Nebula::render(const Vector3f& /*offset*/,
                                 getOrientation());
 
     GLSLUnlit_RenderContext rc(renderer, getRadius());
-    rc.setPointScale(2.0f * getRadius() / pixelSize);
+    rc.setPointScale(2.0f * getRadius() / pixelSize * renderer->getScreenDpi() / 96.0f);
     rc.setProjectionMatrix(m.projection);
     rc.setModelViewMatrix(&mv);
     g->render(rc);

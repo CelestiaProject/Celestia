@@ -29,6 +29,7 @@ class RenderContext
     virtual void makeCurrent(const cmod::Material&) = 0;
     virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
                                  const void* vertexData);
+    virtual void updateShader(const cmod::Mesh::VertexDescription& desc, cmod::Mesh::PrimitiveGroupType primType);
     virtual void drawGroup(const cmod::Mesh::PrimitiveGroup& group);
 
     const cmod::Material* getMaterial() const;
@@ -65,6 +66,7 @@ class RenderContext
  protected:
     Renderer* renderer { nullptr };
     bool usePointSize{ false };
+    bool useStaticPointSize{ false };
     bool useNormals{ true };
     bool useColors{ false };
     bool useTexCoords{ true };

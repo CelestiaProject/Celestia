@@ -26,6 +26,7 @@ class ShaderProperties
     bool usesShadows() const;
     bool usesFragmentLighting() const;
     bool usesTangentSpaceLighting() const;
+    bool usePointSize() const;
 
     unsigned int getEclipseShadowCountForLight(unsigned int lightIndex) const;
     void setEclipseShadowCountForLight(unsigned int lightIndex, unsigned int shadowCount);
@@ -49,22 +50,23 @@ class ShaderProperties
 
  enum
  {
-     DiffuseTexture          =   0x01,
-     SpecularTexture         =   0x02,
-     NormalTexture           =   0x04,
-     NightTexture            =   0x08,
-     SpecularInDiffuseAlpha  =   0x10,
-     RingShadowTexture       =   0x20,
-     OverlayTexture          =   0x40,
-     CloudShadowTexture      =   0x80,
-     CompressedNormalTexture =  0x100,
-     EmissiveTexture         =  0x200,
-     ShadowMapTexture        =  0x400,
-     VertexOpacities         =  0x800,
-     VertexColors            = 0x1000,
-     Scattering              = 0x2000,
-     PointSprite             = 0x4000,
-     SharedTextureCoords     = 0x8000,
+     DiffuseTexture          =    0x01,
+     SpecularTexture         =    0x02,
+     NormalTexture           =    0x04,
+     NightTexture            =    0x08,
+     SpecularInDiffuseAlpha  =    0x10,
+     RingShadowTexture       =    0x20,
+     OverlayTexture          =    0x40,
+     CloudShadowTexture      =    0x80,
+     CompressedNormalTexture =   0x100,
+     EmissiveTexture         =   0x200,
+     ShadowMapTexture        =   0x400,
+     VertexOpacities         =   0x800,
+     VertexColors            =  0x1000,
+     Scattering              =  0x2000,
+     PointSprite             =  0x4000,
+     SharedTextureCoords     =  0x8000,
+     StaticPointSize         = 0x10000,
  };
 
  enum
@@ -98,8 +100,8 @@ class ShaderProperties
 
  public:
     unsigned short nLights{ 0 };
-    unsigned short texUsage{ 0 };
     unsigned short lightModel{ DiffuseModel };
+    unsigned long texUsage{ 0 };
 
     // Effects that may be applied with any light model
     unsigned short effects{ 0 };

@@ -15,6 +15,7 @@
 class Color;
 class Renderer;
 class Texture;
+class CelestiaGLProgram;
 
 // PointStarVertexBuffer is used when hardware supports point sprites.
 class PointStarVertexBuffer
@@ -30,12 +31,16 @@ public:
     PointStarVertexBuffer& operator=(const PointStarVertexBuffer&) = delete;
     PointStarVertexBuffer& operator=(PointStarVertexBuffer&&) = delete;
 
-    void startPoints();
+    void startBasicPoints();
     void startSprites();
     void render();
     void finish();
     inline void addStar(const Eigen::Vector3f& pos, const Color&, float);
     void setTexture(Texture* /*_texture*/);
+    void setPointScale(float);
+
+    static void enable();
+    static void disable();
 
 private:
     struct StarVertex
@@ -49,10 +54,16 @@ private:
     const Renderer& renderer;
     capacity_t capacity;
 
-    capacity_t nStars       { 0 };
-    StarVertex* vertices    { nullptr };
-    Texture* texture        { nullptr };
-    bool useSprites         { false };
+    capacity_t nStars           { 0 };
+    StarVertex* vertices        { nullptr };
+    Texture* texture            { nullptr };
+    bool pointSizeFromVertex    { false };
+    float pointScale            { 1.0f };
+    CelestiaGLProgram* program  { nullptr };
+
+    static PointStarVertexBuffer* current;
+
+    void makeCurrent();
 };
 
 inline void PointStarVertexBuffer::addStar(const Eigen::Vector3f& pos,
