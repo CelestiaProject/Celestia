@@ -1033,7 +1033,7 @@ Renderer::enableSmoothLines()
 #ifndef GL_ES
     glEnable(GL_LINE_SMOOTH);
 #endif
-    glLineWidth(1.5f);
+    glLineWidth(1.5f * screenDpi / 96.0f);
 }
 
 void
@@ -1047,7 +1047,7 @@ Renderer::disableSmoothLines()
 #ifndef GL_ES
     glDisable(GL_LINE_SMOOTH);
 #endif
-    glLineWidth(1.0f);
+    glLineWidth(1.0f * screenDpi / 96.0f);
 }
 
 Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
@@ -5486,10 +5486,10 @@ void Renderer::drawRectangle(const Rect &r, int fishEyeOverrideMode, const Eigen
     else
     {
         if (r.lw != 1.0f)
-            glLineWidth(r.lw);
+            glLineWidth(r.lw * screenDpi / 96.0f);
         glDrawArrays(GL_LINE_LOOP, 0, 4);
         if (r.lw != 1.0f)
-            glLineWidth(1.0f);
+            glLineWidth(1.0f * screenDpi / 96.0f);
     }
 
     glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);

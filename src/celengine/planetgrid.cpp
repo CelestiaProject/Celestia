@@ -156,7 +156,7 @@ PlanetographicGrid::render(Renderer* renderer,
         {
             glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex,
                            Renderer::PlanetEquatorColor);
-            glLineWidth(2.0f);
+            glLineWidth(2.0f * renderer->getScreenDpi() / 96.0f);
         }
         else
         {
@@ -166,7 +166,7 @@ PlanetographicGrid::render(Renderer* renderer,
         prog->setMVPMatrices(projection, modelView * vecgl::translate(0.0f, sin(phi), 0.0f) * vecgl::scale(r));
         glDrawArrays(GL_LINE_LOOP, 0, circleSubdivisions);
 
-        glLineWidth(1.0f);
+        glLineWidth(1.0f * renderer->getScreenDpi() / 96.0f);
 
         if (showCoordinateLabels)
         {
