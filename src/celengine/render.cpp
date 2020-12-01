@@ -1308,6 +1308,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     glLineStipple(3, 0x5555);
     glEnable(GL_LINE_STIPPLE);
 #endif
+    enableDepthTest();
 
     double subdivisionThreshold = pixelSize * 40.0;
 
@@ -1366,6 +1367,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         }
     }
 
+    disableDepthTest();
 #ifdef STIPPLED_LINES
     glDisable(GL_LINE_STIPPLE);
 #endif
