@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # gaia-stardb: Processing Gaia DR2 for celestia.Sci/Celestia
-# Copyright (C) 2019  Andrew Tribick
+# Copyright (C) 2019–2020  Andrew Tribick
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,9 +21,7 @@
 
 import contextlib
 import getpass
-import gzip
 import os
-import tarfile
 
 from zipfile import ZipFile
 
@@ -38,6 +36,8 @@ from astroquery.gaia import Gaia
 from astroquery.utils.tap import Tap
 from astroquery.xmatch import XMatch
 
+from parse_utils import open_cds_tarfile
+
 def yesno(prompt: str, default: bool=False) -> bool:
     """Prompt the user for yes/no input."""
     if default:
@@ -49,9 +49,9 @@ def yesno(prompt: str, default: bool=False) -> bool:
         answer = input(new_prompt)
         if answer == '':
             return default
-        elif answer == 'y' or answer == 'Y':
+        if answer in ('y', 'Y'):
             return True
-        elif answer == 'n' or answer == 'N':
+        if answer in ('n', 'N'):
             return False
 
 def proceed_checkfile(filename: str) -> bool:
@@ -117,16 +117,9 @@ def download_gaia_hip(username: str) -> None:
     # the gaiadr2.hipparcos2_best_neighbour table misses a large number of HIP stars that are
     # actually present, so use the mapping from Kervella et al. (2019) "Binarity of Hipparcos
     # stars from Gaia pm anomaly" instead.
-    with tarfile.open(os.path.join('vizier', 'hipgpma.tar.gz'), 'r:gz') as tf:
-        with tf.extractfile('./ReadMe') as readme:
-            reader = io_ascii.get_reader(io_ascii.Cds,
-                                            readme=readme,
-                                            include_names=['HIP', 'GDR2'])
-            reader.data.table_name = 'hipgpma.dat'
-            with tf.extractfile('./hipgpma.dat.gz') as gzf, gzip.open(gzf, 'rb') as f:
-                hip_map = reader.read(f)
 
-    hip_map = unique(hip_map)
+    with open_cds_tarfile(os.path.join('vizier', 'hipgpma.tar.gz')) as tf:
+        hip_map = unique(tf.read_gzip('hipgpma.dat', ['HIP', 'GDR2']))
 
     with ZipFile(conesearch_file, 'r') as csz:
         with csz.open('Hipparcos2GaiaDR2coneSearch.csv', 'r') as f:
@@ -149,53 +142,50 @@ def download_gaia_hip(username: str) -> None:
     finally:
         Gaia.delete_user_table('hipgpma')
 
+def _load_gaia_tyc_ids(filename: str) -> Table:
+    with open(filename, 'r') as f:
+        header = f.readline().split(',')
+        col_idx = header.index('tyc2_id')
+        tyc1 = []
+        tyc2 = []
+        tyc3 = []
+        for line in f:
+            try:
+                tyc2_id = line.split(',')[col_idx]
+            except IndexError:
+                continue
+
+            tyc = tyc2_id.split('-')
+            tyc1.append(int(tyc[0]))
+            tyc2.append(int(tyc[1]))
+            tyc3.append(int(tyc[2]))
+
+        return Table([tyc1, tyc2, tyc3], names=['TYC1','TYC2','TYC3'], dtype=('i4', 'i4', 'i4'))
+
+def _load_ascc_tyc_ids(filename: str) -> Table:
+    data = None
+    with open_cds_tarfile(filename) as tf:
+        for data_file in tf.tf:
+            sections = os.path.split(data_file.name)
+            if len(sections) != 2 or sections[0] != '.' or not sections[1].startswith('cc'):
+                continue
+            section_data = tf.read_gzip(
+                os.path.splitext(sections[1])[0],
+                ['TYC1', 'TYC2', 'TYC3'],
+                readme_name='cc*.dat')
+
+            if data is None:
+                data = section_data
+            else:
+                data = vstack([data, section_data], join_type='exact')
+
+    return data
+
 def get_missing_tyc_ids(tyc_file: str, ascc_file: str) -> Table:
     """Finds the ASCC TYC ids that are not present in Gaia cross-match."""
-    def load_tyc(filename: str) -> Table:
-        with open(filename, 'r') as f:
-            header = f.readline().split(',')
-            col_idx = header.index('tyc2_id')
-            tyc1 = []
-            tyc2 = []
-            tyc3 = []
-            for line in f:
-                try:
-                    tyc2_id = line.split(',')[col_idx]
-                except IndexError:
-                    continue
-
-                tyc = tyc2_id.split('-')
-                tyc1.append(int(tyc[0]))
-                tyc2.append(int(tyc[1]))
-                tyc3.append(int(tyc[2]))
-
-            return Table([tyc1, tyc2, tyc3], names=['TYC1','TYC2','TYC3'], dtype=('i4', 'i4', 'i4'))
-
-
-    def load_ascc(filename: str) -> Table:
-        data = None
-        with tarfile.open(filename, 'r:gz') as tf:
-
-            for data_file in tf:
-                sections = os.path.split(data_file.name)
-                if len(sections) != 2 or sections[0] != '.' or not sections[1].startswith('cc'):
-                    continue
-                with tf.extractfile('./ReadMe') as readme:
-                    reader = io_ascii.get_reader(io_ascii.Cds,
-                                                 readme=readme,
-                                                 include_names=['TYC1', 'TYC2', 'TYC3'])
-                    reader.data.table_name = 'cc*.dat'
-                    with tf.extractfile(data_file) as gzf, gzip.open(gzf, 'rb') as f:
-                        if data is None:
-                            data = reader.read(f)
-                        else:
-                            data = vstack([data, reader.read(f)], join_type='exact')
-
-        return data
-
     print("Finding missing TYC ids in ASCC")
-    t_asc = unique(load_ascc(ascc_file))
-    t_gai = load_tyc(tyc_file)
+    t_asc = unique(_load_ascc_tyc_ids(ascc_file))
+    t_gai = _load_gaia_tyc_ids(tyc_file)
 
     t_gai['in_gaia'] = True
 

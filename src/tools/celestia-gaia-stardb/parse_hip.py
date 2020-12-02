@@ -1,5 +1,5 @@
 # gaia-stardb: Processing Gaia DR2 for celestia.Sci/Celestia
-# Copyright (C) 2019  Andrew Tribick
+# Copyright (C) 2019–2020  Andrew Tribick
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,10 +17,7 @@
 
 """Routines for parsing the HIP data."""
 
-import gzip
 import os
-import tarfile
-import warnings
 
 import numpy as np
 import astropy.io.ascii as io_ascii
@@ -29,100 +26,51 @@ import astropy.units as u
 from astropy.coordinates import ICRS, SkyCoord
 from astropy.table import Table, join, unique
 from astropy.time import Time
-from astropy.units import UnitsWarning
+
+from parse_utils import open_cds_tarfile, read_gaia
 
 def load_gaia_hip() -> Table:
     """Load the Gaia DR2 HIP sources."""
     print('Loading Gaia DR2 sources for HIP')
-    col_names = ['source_id', 'hip_id', 'ra', 'dec', 'phot_g_mean_mag', 'bp_rp',
-                 'teff_val', 'r_est']
-    gaia = io_ascii.read(os.path.join('gaia', 'gaiadr2_hip-result.csv'),
-                         include_names=col_names,
-                         format='csv')
+
+    gaia = read_gaia(os.path.join('gaia', 'gaiadr2_hip-result.csv'),
+                     'hip_id',
+                     extra_fields=['parallax', 'parallax_error'])
     gaia.rename_column('hip_id', 'HIP')
-
-    gaia['ra'].unit = u.deg
-    gaia['dec'].unit = u.deg
-    gaia['phot_g_mean_mag'].unit = u.mag
-    gaia['bp_rp'].unit = u.mag
-    gaia['teff_val'].unit = u.K
-    gaia['r_est'].unit = u.pc
-
     return gaia
 
 def load_xhip() -> Table:
     """Load the XHIP catalogue from the VizieR archive."""
     print('Loading XHIP')
-    with tarfile.open(os.path.join('vizier', 'xhip.tar.gz'), 'r:gz') as tf:
+    with open_cds_tarfile(os.path.join('vizier', 'xhip.tar.gz')) as tf:
         print('  Loading main catalog')
-        with tf.extractfile('./ReadMe') as readme:
-            col_names = ['HIP', 'Comp', 'RAdeg', 'DEdeg', 'Plx', 'pmRA', 'pmDE',
-                         'e_Plx', 'Dist', 'e_Dist', 'SpType', 'RV']
-            fill_values = [
-                ('', '-1', 'Tc', 'Lc'),
-                ('', 'NaN', 'phi')
-            ]
-            reader = io_ascii.get_reader(io_ascii.Cds,
-                                         readme=readme,
-                                         include_names=col_names,
-                                         # workaround for bug in astropy where nullability is
-                                         # ignored for columns with limits, see
-                                         # https://github.com/astropy/astropy/issues/9291
-                                         fill_values=fill_values)
-            reader.data.table_name = 'main.dat'
-            with tf.extractfile('./main.dat.gz') as gzf, gzip.open(gzf, 'rb') as f:
-                # Suppress a warning generated because the reader does not handle logarithmic units
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore", UnitsWarning)
-                    hip_data = reader.read(f)
-
+        hip_data = tf.read_gzip(
+            'main.dat',
+            ['HIP', 'Comp', 'RAdeg', 'DEdeg', 'Plx', 'pmRA', 'pmDE',
+             'e_Plx', 'Dist', 'e_Dist', 'SpType', 'RV'],
+            fill_values=[('', '-1', 'Tc', 'Lc'), ('', 'NaN', 'phi')])
         hip_data.add_index('HIP')
 
         print('  Loading photometric data')
-        with tf.extractfile('./ReadMe') as readme:
-            col_names = ['HIP', 'Vmag', 'Jmag', 'Hmag', 'Kmag', 'e_Jmag',
-                         'e_Hmag', 'e_Kmag', 'B-V', 'V-I', 'e_B-V', 'e_V-I']
-            reader = io_ascii.get_reader(io_ascii.Cds,
-                                         readme=readme,
-                                         include_names=col_names)
-            reader.data.table_name = 'photo.dat'
-            with tf.extractfile('./photo.dat.gz') as gzf, gzip.open(gzf, 'rb') as f:
-                photo_data = reader.read(f)
-
+        photo_data = tf.read_gzip(
+            'photo.dat',
+            ['HIP', 'Vmag', 'Jmag', 'Hmag', 'Kmag', 'e_Jmag', 'e_Hmag', 'e_Kmag',
+             'B-V', 'V-I', 'e_B-V', 'e_V-I'])
         photo_data['HIP'].unit = None # for some reason it is set to parsecs in the ReadMe
         photo_data.add_index('HIP')
         hip_data = join(hip_data, photo_data, join_type='left', keys='HIP')
 
         print('  Loading bibliographic data')
-        with tf.extractfile('./ReadMe') as readme:
-            col_names = ['HIP', 'HD']
-            reader = io_ascii.get_reader(io_ascii.Cds,
-                                         readme=readme,
-                                         include_names=col_names)
-            reader.data.table_name = 'biblio.dat'
-            with tf.extractfile('./biblio.dat.gz') as gzf, gzip.open(gzf, 'rb') as f:
-                biblio_data = reader.read(f)
-
+        biblio_data = tf.read_gzip('biblio.dat', ['HIP', 'HD'])
         biblio_data.add_index('HIP')
-
         return join(hip_data, biblio_data, join_type='left', keys='HIP')
 
 def load_tyc2specnew() -> Table:
     """Load revised spectral types."""
     print("Loading revised TYC2 spectral types")
-    with tarfile.open(os.path.join('vizier', 'tyc2specnew.tar.gz')) as tf:
-        with tf.extractfile('./ReadMe') as readme:
-            reader = io_ascii.get_reader(io_ascii.Cds,
-                                         readme=readme,
-                                         include_names=['HIP', 'SpType1'])
-            reader.data.table_name = 'table2.dat'
-            with tf.extractfile('./table2.dat') as f:
-                # Suppress a warning because reader does not handle logarithmic units
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore", UnitsWarning)
-                    data = reader.read(f)
-                    return data[data['SpType1'] != '']
-
+    with open_cds_tarfile(os.path.join('vizier', 'tyc2specnew.tar.gz')) as tf:
+        data = tf.read('table2.dat', ['HIP', 'SpType1'])
+        return data[data['SpType1'] != '']
 
 def load_sao() -> Table:
     """Load the SAO-HIP cross match."""
@@ -206,7 +154,7 @@ def process_xhip() -> Table:
 
     compute_distances(xhip)
     update_coordinates(xhip)
-    xhip.remove_columns(['RAdeg', 'DEdeg', 'Plx', 'e_Plx', 'pmRA', 'pmDE', 'RV', 'Dist', 'e_Dist'])
+    xhip.remove_columns(['RAdeg', 'DEdeg', 'pmRA', 'pmDE', 'RV', 'Dist', 'e_Dist'])
     return xhip
 
 def process_hip() -> Table:
@@ -219,10 +167,26 @@ def process_hip() -> Table:
 
     data = join(data, load_sao(), keys=['HIP'], join_type='left')
 
-    data['dist_use'] = data['r_est_gaia'].filled(data['r_est_xhip'])
+    data['r_gaia_score'] = np.where(data['r_est_gaia'].mask,
+                                    -20000.0,
+                                    np.where(data['parallax'] <= 0,
+                                             -10000.0,
+                                             data['parallax'] / data['parallax_error']))
+
+    data['r_xhip_score'] = np.where(data['Plx'] <= 0,
+                                    -10000.0,
+                                    data['Plx'] / data['e_Plx'])
+
+    data['dist_use'] = np.where(data['r_gaia_score'] >= data['r_xhip_score'],
+                                data['r_est_gaia'],
+                                data['r_est_xhip'])
+    data['dist_use'].unit = u.pc
+
     data['ra'] = data['ra_gaia'].filled(data['ra_xhip'])
     data['dec'] = data['dec_gaia'].filled(data['dec_xhip'])
 
-    data.remove_columns(['ra_gaia', 'dec_gaia', 'r_est_gaia', 'ra_xhip', 'dec_xhip', 'r_est_xhip'])
+    data.remove_columns(['ra_gaia', 'dec_gaia', 'r_est_gaia', 'ra_xhip', 'dec_xhip', 'r_est_xhip',
+                         'parallax', 'parallax_error', 'Plx', 'e_Plx',
+                         'r_gaia_score', 'r_xhip_score'])
 
     return data
