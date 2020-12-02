@@ -1,5 +1,5 @@
 # gaia-stardb: Processing Gaia DR2 for celestia.Sci/Celestia
-# Copyright (C) 2019  Andrew Tribick
+# Copyright (C) 2019–2020  Andrew Tribick
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,17 +19,17 @@
 
 import gzip
 import os
-import re
 import tarfile
 
-from tarfile import TarFile, TarInfo
-from typing import Tuple
+from typing import Dict, IO, Tuple
 
 import numpy as np
 import astropy.io.ascii as io_ascii
 import astropy.units as u
 
 from astropy.table import MaskedColumn, Table, join, unique, vstack
+
+from parse_utils import TarCds, WorkaroundCDSReader, open_cds_tarfile, read_gaia
 
 def make_tyc(tyc1: int, tyc2: int, tyc3: int) -> int:
     """Build a synthetic HIP identifier from TYC parts."""
@@ -111,85 +111,58 @@ def parse_tyc_cols(data: Table,
 def load_gaia_tyc() -> Table:
     """Load the Gaia DR2 TYC2 sources."""
     print('Loading Gaia DR2 sources for TYC2')
-    col_names = ['source_id', 'tyc2_id', 'ra', 'dec', 'phot_g_mean_mag', 'bp_rp',
-                 'teff_val', 'r_est']
+
     file_names = ['gaiadr2_tyc-result.csv', 'gaiadr2_tyc-result-extra.csv']
-    gaia = vstack([io_ascii.read(os.path.join('gaia', f),
-                                 include_names=col_names,
-                                 format='csv')
-                   for f in file_names], join_type='exact')
+    gaia = read_gaia([os.path.join('gaia', f) for f in file_names], 'tyc2_id')
 
     parse_tyc_string(gaia, 'tyc2_id')
     gaia.add_index('TYC')
-
-    gaia['ra'].unit = u.deg
-    gaia['dec'].unit = u.deg
-    gaia['phot_g_mean_mag'].unit = u.mag
-    gaia['bp_rp'].unit = u.mag
-    gaia['teff_val'].unit = u.K
-    gaia['r_est'].unit = u.pc
 
     return unique(gaia.group_by('TYC'), keys=['source_id'])
 
 def load_tyc_spec() -> Table:
     """Load the TYC2 spectral type catalogue."""
     print('Loading TYC2 spectral types')
-    with tarfile.open(os.path.join('vizier', 'tyc2spec.tar.gz')) as tf:
-        with tf.extractfile('./ReadMe') as readme:
-            col_names = ['TYC1', 'TYC2', 'TYC3', 'SpType']
-            reader = io_ascii.get_reader(io_ascii.Cds,
-                                         readme=readme,
-                                         include_names=col_names)
-            reader.data.table_name = 'catalog.dat'
-            with tf.extractfile('./catalog.dat.gz') as gzf, gzip.open(gzf, 'rb') as f:
-                data = reader.read(f)
+    with open_cds_tarfile(os.path.join('vizier', 'tyc2spec.tar.gz')) as tf:
+        data = tf.read_gzip('catalog.dat', ['TYC1', 'TYC2', 'TYC3', 'SpType'])
 
     parse_tyc_cols(data)
     data.add_index('TYC')
     return data
 
+def _load_ascc_section(tf: TarCds, table: str) -> Table:
+    print(f'  Loading {table}')
+    section = tf.read_gzip(table,
+                           ['Bmag', 'Vmag', 'e_Bmag', 'e_Vmag', 'd3', 'TYC1', 'TYC2', 'TYC3',
+                            'Jmag', 'e_Jmag', 'Hmag', 'e_Hmag', 'Kmag', 'e_Kmag', 'SpType'])
+
+    section = section[section['TYC1'] != 0]
+    parse_tyc_cols(section)
+
+    convert_cols = ['Bmag', 'Vmag', 'e_Bmag', 'e_Vmag', 'Jmag', 'e_Jmag', 'Hmag', 'e_Hmag',
+                    'Kmag', 'e_Kmag']
+    for col in convert_cols:
+        section[col] = section[col].astype(np.float64)
+        section[col].convert_unit_to(u.mag)
+        section[col].format = '.3f'
+
+    return section
+
 def load_ascc() -> Table:
     """Load ASCC from VizieR archive."""
-    def load_section(tf: TarFile, info: TarInfo) -> Table:
-        with tf.extractfile('./ReadMe') as readme:
-            col_names = ['Bmag', 'Vmag', 'e_Bmag', 'e_Vmag', 'd3', 'TYC1', 'TYC2', 'TYC3',
-                         'Jmag', 'e_Jmag', 'Hmag', 'e_Hmag', 'Kmag', 'e_Kmag', 'SpType']
-            reader = io_ascii.get_reader(io_ascii.Cds,
-                                         readme=readme,
-                                         include_names=col_names)
-            reader.data.table_name = 'cc*.dat'
-            print('  Loading ' + os.path.basename(info.name))
-            with tf.extractfile(info) as gzf, gzip.open(gzf, 'rb') as f:
-                section = reader.read(f)
-
-        section = section[section['TYC1'] != 0]
-        parse_tyc_cols(section)
-
-        convert_cols = ['Bmag', 'Vmag', 'e_Bmag', 'e_Vmag', 'Jmag', 'e_Jmag', 'Hmag', 'e_Hmag',
-                        'Kmag', 'e_Kmag']
-        for col in convert_cols:
-            section[col] = section[col].astype(np.float64)
-            section[col].convert_unit_to(u.mag)
-            section[col].format = '.3f'
-
-        return section
-
-    def is_data(info: TarInfo) -> bool:
-        sections = os.path.split(info.name)
-        return (len(sections) == 2 and
-                sections[0] == '.' and
-                sections[1].startswith('cc'))
 
     print('Loading ASCC')
-    with tarfile.open(os.path.join('vizier', 'ascc.tar.gz'), 'r:gz') as tf:
+    with open_cds_tarfile(os.path.join('vizier', 'ascc.tar.gz')) as tf:
         data = None
-        for data_file in tf:
-            if not is_data(data_file):
+        for data_file in tf.tf:
+            sections = os.path.split(data_file.name)
+            if (len(sections) != 2 or sections[0] != '.' or not sections[1].startswith('cc')):
                 continue
+            section_data = _load_ascc_section(tf, os.path.splitext(sections[1])[0])
             if data is None:
-                data = load_section(tf, data_file)
+                data = section_data
             else:
-                data = vstack([data, load_section(tf, data_file)], join_type='exact')
+                data = vstack([data, section_data], join_type='exact')
 
     data = unique(data.group_by(['TYC', 'd3']), keys=['TYC'])
     data.rename_column('d3', 'Comp')
@@ -199,15 +172,8 @@ def load_ascc() -> Table:
 def load_tyc_hd() -> Table:
     """Load the Tycho-HD cross index."""
     print('Loading TYC-HD cross index')
-    with tarfile.open(os.path.join('vizier', 'tyc2hd.tar.gz'), 'r:gz') as tf:
-        with tf.extractfile('./ReadMe') as readme:
-            col_names = ['TYC1', 'TYC2', 'TYC3', 'HD']
-            reader = io_ascii.get_reader(io_ascii.Cds,
-                                         readme=readme,
-                                         include_names=col_names)
-            reader.data.table_name = 'tyc2_hd.dat'
-            with tf.extractfile('./tyc2_hd.dat.gz') as gzf, gzip.open(gzf, 'rb') as f:
-                data = reader.read(f)
+    with open_cds_tarfile(os.path.join('vizier', 'tyc2hd.tar.gz')) as tf:
+        data = tf.read_gzip('tyc2_hd.dat', ['TYC1', 'TYC2', 'TYC3', 'HD'])
 
     parse_tyc_cols(data)
 
@@ -225,69 +191,48 @@ def load_tyc_hd() -> Table:
 
     return data
 
+class TYCTeffReader(WorkaroundCDSReader):
+    """Custom CDS loader for the TYC Teff table to reduce memory usage."""
+
+    def __init__(self, readme: IO):
+        super().__init__('tycall.dat', ['Tycho', 'Teff'], [], readme)
+
+    def create_table(self) -> Table:
+        """Creates the table."""
+        return Table(
+            [
+                np.empty(self.record_count, np.int64),
+                np.empty(self.record_count, np.float64)
+            ],
+            names=['TYC', 'teff_val'])
+
+    def process_line(self, table: Table, record: int, fields: Dict[str, str]) -> bool:
+        """Processes fields from a line of the input file."""
+        try:
+            tycsplit = fields['Tycho'].split('-')
+            tyc = int(tycsplit[0]) + int(tycsplit[1])*10000 + int(tycsplit[2])*1000000000
+            teff = float(fields['Teff'])
+        except ValueError:
+            tyc = 0
+            teff = 99999
+
+        if teff != 99999:
+            table['TYC'][record] = tyc
+            table['teff_val'][record] = teff
+            return True
+
+        return False
+
 def load_tyc_teff() -> Table:
     """Load the Tycho-2 effective temperatures."""
     print('Loading TYC2 effective temperatures')
     with tarfile.open(os.path.join('vizier', 'tyc2teff.tar.gz'), 'r:gz') as tf:
-        # unfortunately the behaviour of the CDS reader results in high memory
-        # usage during loading due to parsing non-used fields, so use a custom
-        # implementation
-        tyc_range = None
-        teff_range = None
         with tf.extractfile('./ReadMe') as readme:
-            re_file = re.compile(r'tycall.dat\ +[0-9]+\ +(?P<length>[0-9]+)')
-            re_table = re.compile(r'Byte-by-byte Description of file: (?P<name>\S+)$')
-            re_field = re.compile(r'''\ *(?P<start>[0-9]+)\ *-\ *(?P<end>[0-9]+) # range
-                                  \ +\S+ # format
-                                  \ +\S+ # units
-                                  \ +(?P<label>\S+) # label''', re.X)
-            record_count = None
-            current_table = None
-            for bline in readme:
-                line = bline.decode('ascii')
-                match = re_file.match(line)
-                if match:
-                    record_count = int(match.group('length'))
-                    continue
-                match = re_table.match(line)
-                if match:
-                    current_table = match.group('name')
-                    continue
-                if current_table != 'tycall.dat':
-                    continue
-                match = re_field.match(line)
-                if not match:
-                    continue
-                if match.group('label') == 'Tycho':
-                    tyc_range = int(match.group('start'))-1, int(match.group('end'))
-                elif match.group('label') == 'Teff':
-                    teff_range = int(match.group('start'))-1, int(match.group('end'))
-                if tyc_range is not None and teff_range is not None:
-                    break
-
-        if record_count is None:
-            raise RuntimeError('Could not get record count')
-        if tyc_range is None or teff_range is None:
-            raise RuntimeError('Could not find Tycho, Teff fields')
+            reader = TYCTeffReader(readme)
 
         with tf.extractfile('./tycall.dat.gz') as gzf, gzip.open(gzf, 'rt', encoding='ascii') as f:
-            tycs = np.empty(record_count, dtype=np.int64)
-            teffs = np.empty(record_count, dtype=np.float64)
-            record = 0
-            for line in f:
-                try:
-                    tycsplit = line[tyc_range[0]:tyc_range[1]].split('-')
-                    tyc = int(tycsplit[0]) + int(tycsplit[1])*10000 + int(tycsplit[2])*1000000000
-                    teff = float(line[teff_range[0]:teff_range[1]])
-                except ValueError:
-                    pass
-                else:
-                    if teff != 99999:
-                        tycs[record] = tyc
-                        teffs[record] = teff
-                        record += 1
+            data = reader.read(f)
 
-        data = Table([tycs[:record], teffs[:record]], names=('TYC', 'teff_val'))
         data['teff_val'].unit = u.K
         data.add_index('TYC')
         return unique(data, keys=['TYC'])
@@ -298,11 +243,13 @@ def load_sao() -> Table:
     xmatch_files = ['sao_tyc2_xmatch.csv',
                     'sao_tyc2_suppl1_xmatch.csv',
                     'sao_tyc2_suppl2_xmatch.csv']
-    data = vstack([io_ascii.read(os.path.join('xmatch', f),
-                                 include_names=['SAO', 'TYC1', 'TYC2', 'TYC3', 'angDist', 'delFlag'],
-                                 format='csv',
-                                 converters={'delFlag': [io_ascii.convert_numpy(np.str)]})
-                   for f in xmatch_files], join_type='exact')
+    data = vstack(
+        [io_ascii.read(os.path.join('xmatch', f),
+                       include_names=['SAO', 'TYC1', 'TYC2', 'TYC3', 'angDist', 'delFlag'],
+                       format='csv',
+                       converters={'delFlag': [io_ascii.convert_numpy(np.str)]})
+         for f in xmatch_files],
+        join_type='exact')
 
     data = data[data['delFlag'].mask]
     data.remove_column('delFlag')

@@ -1,5 +1,5 @@
 # gaia-stardb: Processing Gaia DR2 for celestia.Sci/Celestia
-# Copyright (C) 2019  Andrew Tribick
+# Copyright (C) 2019–2020  Andrew Tribick
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,6 @@
 import re
 
 from enum import IntEnum
-
-import numpy as np
 
 from arpeggio import (NoMatch, OneOrMore, Optional, ParserPython, PTNodeVisitor, RegExMatch,
                       ZeroOrMore, visit_parse_tree)
@@ -164,12 +162,10 @@ def spectrum():
         ('(', starspectrum, ')'),
         ('[', starspectrum, ']')]
 
-# pylint: enable=multiple-statements
-
 class SpecVisitor(PTNodeVisitor):
     """Parse tree visitor to compute Celestia spectral type."""
 
-    # pylint: disable=unused-argument,no-self-use,redefined-outer-name
+    # pylint: disable=unused-argument,no-self-use,redefined-outer-name,too-many-public-methods
 
     def visit_spacer(self, node, children):
         return None
@@ -185,21 +181,21 @@ class SpecVisitor(PTNodeVisitor):
 
     def visit_prefix(self, node, children):
         if str(node) == 'esd' or str(node) == 'sd':
-            return CelLumClass.VI
+            lclass = CelLumClass.VI
         elif str(node) == 'd':
-            return CelLumClass.V
+            lclass = CelLumClass.V
         elif str(node) == 'g':
-            return CelLumClass.III
+            lclass = CelLumClass.III
         elif str(node) == 'c':
-            return CelLumClass.Ib
+            lclass = CelLumClass.Ib
         else:
             raise ValueError
+        return lclass
 
     def visit_msnorange(self, node, children):
         if len(children.numeric) > 0:
             return 'M', children.numeric[0]
-        else:
-            return 'M', None
+        return 'M', None
 
     def visit_msrange(self, node, children):
         return 'M', children.numeric[0]
@@ -207,8 +203,7 @@ class SpecVisitor(PTNodeVisitor):
     def visit_mknorange(self, node, children):
         if len(children.numeric) > 0:
             return children.mkclass[0], children.numeric[0]
-        else:
-            return children.mkclass[0], None
+        return children.mkclass[0], None
 
     def visit_mkrange(self, node, children):
         return children.mkclass[0], children.numeric[0]
@@ -226,36 +221,36 @@ class SpecVisitor(PTNodeVisitor):
 
         if mkclass == 'Y':
             return CelMkClass.T, 0x90
-        elif mkclass == 'WR' or mkclass == 'WO':
+        if mkclass in ('WR', 'WO'):
             return CelMkClass.WC, subclass
-        else:
-            return CelMkClass[mkclass], subclass
+        return CelMkClass[mkclass], subclass
 
     def visit_lumrange(self, node, children):
         if (len(children) == 2
-                and (children[0] == 'Ia' or children[0] == 'IA')
+                and (children[0] in ('Ia', 'IA'))
                 and children[1] == '0'):
-            return CelLumClass.Ia0
-        elif children[0] == 'Ia0' or children[0] == 'IA0' or children[0] == '0':
-            return CelLumClass.Ia0
+            lclass = CelLumClass.Ia0
+        elif children[0] in ('Ia0', 'IA0', '0'):
+            lclass = CelLumClass.Ia0
         elif children[0].startswith('III'):
-            return CelLumClass.III
+            lclass = CelLumClass.III
         elif children[0].startswith('II'):
-            return CelLumClass.II
+            lclass = CelLumClass.II
         elif children[0].startswith('IV'):
-            return CelLumClass.IV
+            lclass = CelLumClass.IV
         elif children[0].startswith('IX'):
-            return CelLumClass.VI
-        elif children[0] == 'Ia' or children[0] == 'IA':
-            return CelLumClass.Ia
+            lclass = CelLumClass.VI
+        elif children[0] in ('Ia', 'IA'):
+            lclass = CelLumClass.Ia
         elif children[0].startswith('I'):
-            return CelLumClass.Ib
+            lclass = CelLumClass.Ib
         elif children[0].startswith('VI'): # VII, VIII as well
-            return CelLumClass.VI
+            lclass = CelLumClass.VI
         elif children[0].startswith('V'):
-            return CelLumClass.V
+            lclass = CelLumClass.V
         else:
             raise ValueError
+        return lclass
 
     def visit_lumtype(self, node, children):
         return children.lumrange[0]
@@ -264,8 +259,7 @@ class SpecVisitor(PTNodeVisitor):
         mkclass, mksubclass = children.mktype[0]
         if len(children.lumtype) > 0:
             return mkclass, mksubclass, children.lumtype[0]
-        else:
-            return mkclass, mksubclass, CelLumClass.Unknown
+        return mkclass, mksubclass, CelLumClass.Unknown
 
     def visit_normalstar(self, node, children):
         mkclass, mksubclass, lclass = children.noprefixstar[0]
@@ -300,8 +294,7 @@ class SpecVisitor(PTNodeVisitor):
 
         if selected[2] is None:
             return selected[0], selected[1], overall_lclass
-        else:
-            return selected
+        return selected
 
     def visit_cclass(self, node, children):
         return children[0]
@@ -315,15 +308,13 @@ class SpecVisitor(PTNodeVisitor):
     def visit_scnosuffix(self, node, children):
         if len(children.scindices) > 0:
             return children.scclass[0], children.scindices[0]
-        else:
-            return children.scclass[0], None
+        return children.scclass[0], None
 
     def visit_scsuffixed(self, node, children):
         ctype = 'C-' + children.scsuffix[0]
         if len(children.scindices) > 0:
             return ctype, children.scindices[0]
-        else:
-            return ctype, None
+        return ctype, None
 
     def visit_scstar(self, node, children):
         scclass, scsubclass = children.sctype[0]
@@ -345,14 +336,13 @@ class SpecVisitor(PTNodeVisitor):
 
         if scclass in ('C-R', 'R'):
             return CelMkClass.R, scsubclass, lclass
-        elif scclass in ('C-N', 'N'):
+        if scclass in ('C-N', 'N'):
             return CelMkClass.N, scsubclass, lclass
-        elif scclass == 'SC':
+        if scclass == 'SC':
             return CelMkClass.S, scsubclass, lclass
-        elif scclass.startswith('C'):
+        if scclass.startswith('C'):
             return CelMkClass.C, scsubclass, lclass
-        else:
-            return CelMkClass[scclass], scsubclass, lclass
+        return CelMkClass[scclass], scsubclass, lclass
 
     def visit_wdstar(self, node, children):
         try:
@@ -420,5 +410,3 @@ def parse_spectrum(sptype: str) -> int:
         return CEL_UNKNOWN_STAR
 
     return sum(visit_parse_tree(parse_tree, VISITOR))
-
-parse_spectrum_vec = np.vectorize(parse_spectrum, otypes=[np.uint16]) # pylint: disable=invalid-name

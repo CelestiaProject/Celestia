@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # gaia-stardb: Processing Gaia DR2 for celestia.Sci/Celestia
-# Copyright (C) 2019  Andrew Tribick
+# Copyright (C) 2019–2020  Andrew Tribick
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,25 +22,21 @@
 import contextlib
 import gzip
 import os
-import re
 import struct
-import tarfile
-import warnings
 
 from zipfile import ZipFile, ZIP_DEFLATED
 
 import numpy as np
-import astropy.io.ascii as io_ascii
 import astropy.units as u
 
 from astropy.table import MaskedColumn, Table, join, unique, vstack
-from astropy.units import UnitsWarning
 
 from parse_hip import process_hip
 from parse_tyc import process_tyc
-from spparse import CEL_UNKNOWN_STAR, parse_spectrum_vec
+from parse_utils import WorkaroundCDSReader, open_cds_tarfile
+from spparse import CEL_UNKNOWN_STAR, parse_spectrum
 
-VERSION = "1.0.3"
+VERSION = "1.0.4"
 
 # remove the following objects from the output
 
@@ -63,23 +59,15 @@ TEFF_SPEC = np.array([
 
 TEFF_BINS = (TEFF_SPEC[:-1] + TEFF_SPEC[1:]) // 2
 
+parse_spectrum_vec = np.vectorize(parse_spectrum, otypes=[np.uint16]) # pylint: disable=invalid-name
+
 CEL_SPECS = parse_spectrum_vec(['OBAFGKM'[i//10]+str(i%10) for i in range(3, 70)])
 
 def load_ubvri() -> Table:
     """Load UBVRI Teff calibration from VizieR archive."""
     print('Loading UBVRI calibration')
-    with tarfile.open(os.path.join('vizier', 'ubvriteff.tar.gz'), 'r:gz') as tf:
-        with tf.extractfile('./ReadMe') as readme:
-            col_names = ['V-K', 'B-V', 'V-I', 'J-K', 'H-K', 'Teff']
-            reader = io_ascii.get_reader(io_ascii.Cds,
-                                         readme=readme,
-                                         include_names=col_names)
-            reader.data.table_name = 'table3.dat'
-            with tf.extractfile('./table3.dat.gz') as gzf, gzip.open(gzf, 'rb') as f:
-                # Suppress a warning generated because the reader does not handle logarithmic units
-                with warnings.catch_warnings():
-                    warnings.simplefilter('ignore', UnitsWarning)
-                    return reader.read(f)
+    with open_cds_tarfile(os.path.join('vizier', 'ubvriteff.tar.gz')) as tf:
+        return tf.read_gzip('table3.dat', ['V-K', 'B-V', 'V-I', 'J-K', 'H-K', 'Teff'])
 
 def parse_spectra(data: Table) -> Table:
     """Parse the spectral types into the celestia.Sci format."""
@@ -101,10 +89,8 @@ def estimate_magnitudes(data: Table) -> None:
     bp_rp2 = bp_rp**2
 
     data['Vmag'] = MaskedColumn(
-        data['Vmag'].filled(data['phot_g_mean_mag'].filled(np.nan)
-                            + 0.01760
-                            + bp_rp*0.006860
-                            + bp_rp2*0.1732))
+        data['Vmag'].filled(
+            data['phot_g_mean_mag'].filled(np.nan) + 0.01760 + bp_rp*0.006860 + bp_rp2*0.1732))
     data['e_Vmag'] = MaskedColumn(data['e_Vmag'].filled(0.045858))
     data['Vmag'].mask = np.isnan(data['Vmag'])
     data['e_Vmag'].mask = data['Vmag'].mask
@@ -156,26 +142,31 @@ def estimate_temperatures(data: Table) -> None:
     ubvri_data = load_ubvri()
     print('Estimating temperatures from color indices')
 
-    data_bv = data['B-V'].filled(np.nan)
-    data_vi = data['V-I'].filled(np.nan)
-    data_vk = data['V-K'].filled(np.nan)
-    data_jk = data['J-K'].filled(np.nan)
-    data_hk = data['H-K'].filled(np.nan)
-
-    data_e_bv = np.maximum(data['e_B-V'].filled(np.nan), 0.001)
-    data_e_vi = np.maximum(data['e_V-I'].filled(np.nan), 0.001)
-    data_e_vk = np.maximum(data['e_V-K'].filled(np.nan), 0.001)
-    data_e_jk = np.maximum(data['e_J-K'].filled(np.nan), 0.001)
-    data_e_hk = np.maximum(data['e_H-K'].filled(np.nan), 0.001)
+    indices = Table(
+        [
+            data['B-V'].filled(np.nan),
+            data['V-I'].filled(np.nan),
+            data['V-K'].filled(np.nan),
+            data['J-K'].filled(np.nan),
+            data['H-K'].filled(np.nan),
+            np.maximum(data['e_B-V'].filled(np.nan), 0.001),
+            np.maximum(data['e_V-I'].filled(np.nan), 0.001),
+            np.maximum(data['e_V-K'].filled(np.nan), 0.001),
+            np.maximum(data['e_J-K'].filled(np.nan), 0.001),
+            np.maximum(data['e_H-K'].filled(np.nan), 0.001),
+        ],
+        names=['B-V','V-I','V-K','J-K','H-K',
+               'e_B-V','e_V-I','e_V-K','e_J-K','e_H-K'])
 
     weights = np.full_like(data['HIP'], 0, dtype=np.float64)
     teffs = np.full_like(data['HIP'], 0, dtype=np.float64)
     for row in ubvri_data:
-        sumsq = np.maximum(np.nan_to_num(((data_bv-row['B-V'])/data_e_bv)**2)
-                           + np.nan_to_num(((data_vk-row['V-K'])/data_e_vk)**2)
-                           + np.nan_to_num(((data_jk-row['J-K'])/data_e_jk)**2)
-                           + np.nan_to_num(((data_vi-row['V-I'])/data_e_vi)**2)
-                           + np.nan_to_num(((data_hk-row['H-K'])/data_e_hk)**2), 0.001)
+        sumsq = np.maximum(
+            np.nan_to_num(((indices['B-V']-row['B-V'])/indices['e_B-V'])**2)
+            + np.nan_to_num(((indices['V-K']-row['V-K'])/indices['e_V-K'])**2)
+            + np.nan_to_num(((indices['J-K']-row['J-K'])/indices['e_J-K'])**2)
+            + np.nan_to_num(((indices['V-I']-row['V-I'])/indices['e_V-I'])**2)
+            + np.nan_to_num(((indices['H-K']-row['H-K'])/indices['e_H-K'])**2), 0.001)
         teffs += row['Teff'] / sumsq
         weights += 1.0 / sumsq
 
@@ -208,61 +199,12 @@ def load_sao() -> Table:
     """Loads the SAO catalog."""
     print("Loading SAO")
 
-    sao_range = None
-    hd_range = None
-
-    # due to SAO using non-standard format codes, we parse this ourselves
-    with open(os.path.join('vizier', 'sao.readme'), 'r') as f:
-        re_file = re.compile(r'sao.dat\ +[0-9]+\ +(?P<length>[0-9]+)')
-        re_table = re.compile(r'Byte-by-byte Description of file: (?P<name>\S+)$')
-        re_field = re.compile(r'''\ *(?P<start>[0-9]+)\ *-\ *(?P<end>[0-9]+) # range
-                                  \ +\S+ # format
-                                  \ +\S+ # units
-                                  \ +(?P<label>\S+) # label''', re.X)
-        record_count = None
-        current_table = None
-        for line in f:
-            match = re_file.match(line)
-            if match:
-                record_count = int(match.group('length'))
-                continue
-            match = re_table.match(line)
-            if match:
-                current_table = match.group('name')
-                continue
-            if current_table != 'sao.dat':
-                continue
-            match = re_field.match(line)
-            if not match:
-                continue
-            if match.group('label') == 'SAO':
-                sao_range = int(match.group('start'))-1, int(match.group('end'))
-            elif match.group('label') == 'HD':
-                hd_range = int(match.group('start'))-1, int(match.group('end'))
-            if sao_range is not None and hd_range is not None:
-                break
-
-    if record_count is None:
-        raise RuntimeError("Could not get record count")
-    if sao_range is None or hd_range is None:
-        raise RuntimeError("Could not find SAO, HD fields")
+    with open(os.path.join('vizier', 'sao.readme'), 'r') as readme:
+        reader = WorkaroundCDSReader('sao.dat', ['SAO', 'HD'], [np.int64, np.int64], readme)
 
     with gzip.open(os.path.join('vizier', 'sao.dat.gz'), 'rt', encoding='ascii') as f:
-        saos = np.empty(record_count, dtype=np.int64)
-        hds = np.empty(record_count, dtype=np.int64)
-        record = 0
-        for line in f:
-            try:
-                sao = int(line[sao_range[0]:sao_range[1]])
-                hd = int(line[hd_range[0]:hd_range[1]])
-            except ValueError:
-                pass
-            else:
-                saos[record] = sao
-                hds[record] = hd
-                record += 1
+        data = reader.read(f)
 
-    data = Table([saos[:record], hds[:record]], names=['SAO', 'HD'])
     data = unique(data.group_by('SAO'), keys=['HD'])
     data = unique(data.group_by('HD'), keys=['SAO'])
     return data
