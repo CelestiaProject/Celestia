@@ -1,0 +1,60 @@
+trigger:
+- main
+
+strategy:
+ matrix:
+   Linux:
+     imageName: 'ubuntu-latest'
+   Mac:
+     imageName: 'macos-latest'
+
+pool:
+  vmImage: $(imageName)
+
+steps:
+- checkout: self
+  submodules: true
+
+- bash:  echo "##vso[task.setvariable variable=shellopts]errexit"
+  displayName: "Force exit on error (bash)"
+
+- script: |
+    sudo apt install -y libeigen3-dev \
+                        libepoxy-dev \
+                        libtheora-dev \
+                        libjpeg-dev \
+                        libpng-dev \
+                        libglu1-mesa-dev \
+                        qtbase5-dev \
+                        qtbase5-dev-tools \
+                        libqt5opengl5-dev \
+                        libfreetype6-dev \
+                        libsdl2-dev \
+                        libluajit-5.1-dev
+  displayName: 'Install Linux dependencies'
+  condition: eq( variables['Agent.OS'], 'Linux' )
+
+- script: |
+    brew install eigen \
+                 cspice \
+                 fmt \
+                 jpeg \
+                 gettext \
+                 libpng \
+                 lua \
+                 qt5 \
+                 freetype \
+                 libepoxy \
+                 sdl2
+    brew link gettext --force
+  displayName: 'Install macOS dependencies'
+  condition: eq( variables['Agent.OS'], 'Darwin' )
+
+- script: |
+    mkdir build
+    cd build
+    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON ..
+    make -j $(nproc || echo 4)
+    CTEST_OUTPUT_ON_FAILURE=1 ctest
+  workingDirectory: "$(system.defaultworkingdirectory)"
+  displayName: "Build and test"
