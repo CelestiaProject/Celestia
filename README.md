@@ -1,6 +1,6 @@
 | **`Release`** | **`Localized`** | **`License`** | **`Contribute`** |
 |-------------------|---------------|---------------|---------------|
-|[![GitHub release](https://img.shields.io/badge/Release-v1.6.1-blue.svg)](https://celestiaproject.net/download.html) | [![Localization](https://img.shields.io/badge/Localized-85%25-green.svg)](#) | [![License](https://img.shields.io/badge/License-GPLv2-blue.svg)](https://github.com/CelestiaProject/Celestia/blob/master/COPYING) | [![Contribute](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](#contributing) |
+|[![GitHub release](https://img.shields.io/badge/Release-v1.6.2-blue)](https://celestia.space/download.html) | [![Localization](https://img.shields.io/badge/Localized-85%25-green.svg)](#) | [![License](https://img.shields.io/badge/License-GPLv2-blue.svg)](https://github.com/CelestiaProject/Celestia/blob/master/COPYING) | [![Contribute](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](#contributing) |
 
 # Celestia
 ![Celestia](celestia-logo.png)<br>
