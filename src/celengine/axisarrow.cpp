@@ -37,7 +37,7 @@ constexpr const float headRadius   = 0.025f;
 constexpr const unsigned nSections = 30;
 
 
-static size_t initArrowAndLetters(VertexObject &vo)
+static size_t initArrow(VertexObject &vo)
 {
     static_assert(sizeof(Vector3f) == 3*sizeof(GLfloat), "sizeof(Vector3f) != 3*sizeof(GLfloat)");
     static size_t count = 0; // number of vertices in the arrow
@@ -122,31 +122,9 @@ static size_t initArrowAndLetters(VertexObject &vo)
 #endif
     head.push_back(head[1]);
 
-
-    GLfloat lettersVtx[] =
-    {
-        // X
-        0,    0,    0,
-        1,    0,    1,
-        1,    0,    0,
-        0,    0,    1,
-        // Y
-        0,    0,    1,
-        0.5f, 0,    0.5f,
-        1,    0,    1,
-        0.5f, 0,    0.5f,
-        0.5f, 0,    0,
-        0.5f, 0,    0.5f,
-        // Z
-        0,    0,    1,
-        1,    0,    1,
-        0,    0,    0,
-        1,    0,    0
-    };
-
     GLintptr offset = 0;
     count = circle.size() + shaft.size() + annulus.size() + head.size();
-    GLsizeiptr size = sizeof(lettersVtx) + count * sizeof(GLfloat) * 3;
+    GLsizeiptr size = count * sizeof(GLfloat) * 3;
     GLsizeiptr s = 0;
 
     vo.allocate(size);
@@ -167,16 +145,88 @@ static size_t initArrowAndLetters(VertexObject &vo)
     vo.setBufferData(head.data(), offset, s);
     offset += s;
 
-    vo.setBufferData(lettersVtx, offset, sizeof(lettersVtx));
-
     vo.setVertices(3, GL_FLOAT, GL_FALSE, 0, 0);
 
     return count;
 }
 
+static void initLetters(VertexObject &vo)
+{
+    vo.bind();
+    if (vo.initialized())
+        return;
+
+    GLfloat lettersVtx[] =
+    {
+        // X
+        0,    0,    0,    1,    0,    1,    -0.5f,
+        0,    0,    0,    1,    0,    1,    0.5f,
+        1,    0,    1,    0,    0,    0,    -0.5f,
+        1,    0,    1,    0,    0,    0,    -0.5f,
+        1,    0,    1,    0,    0,    0,    0.5f,
+        0,    0,    0,    1,    0,    1,    -0.5f,
+
+        1,    0,    0,    0,    0,    1,    -0.5f,
+        1,    0,    0,    0,    0,    1,    0.5f,
+        0,    0,    1,    1,    0,    0,    -0.5f,
+        0,    0,    1,    1,    0,    0,    -0.5f,
+        0,    0,    1,    1,    0,    0,    0.5f,
+        1,    0,    0,    0,    0,    1,    -0.5f,
+        // Y
+        0,    0,    1,    0.5f, 0,    0.5f, -0.5f,
+        0,    0,    1,    0.5f, 0,    0.5f, 0.5f,
+        0.5f, 0,    0.5f, 0,    0,    1,    -0.5f,
+        0.5f, 0,    0.5f, 0,    0,    1,    -0.5f,
+        0.5f, 0,    0.5f, 0,    0,    1,    0.5f,
+        0,    0,    1,    0.5f, 0,    0.5f, -0.5f,
+
+        1,    0,    1,    0.5f, 0,    0.5f, -0.5f,
+        1,    0,    1,    0.5f, 0,    0.5f, 0.5f,
+        0.5f, 0,    0.5f, 1,    0,    1,    -0.5f,
+        0.5f, 0,    0.5f, 1,    0,    1,    -0.5f,
+        0.5f, 0,    0.5f, 1,    0,    1,    0.5f,
+        1,    0,    1,    0.5f, 0,    0.5f, -0.5f,
+
+        0.5f, 0,    0,    0.5f, 0,    0.5f, -0.5f,
+        0.5f, 0,    0,    0.5f, 0,    0.5f, 0.5f,
+        0.5f, 0,    0.5f, 0.5f, 0,    0,    -0.5f,
+        0.5f, 0,    0.5f, 0.5f, 0,    0,    -0.5f,
+        0.5f, 0,    0.5f, 0.5f, 0,    0,    0.5f,
+        0.5f, 0,    0,    0.5f, 0,    0.5f, -0.5f,
+        // Z
+        0,    0,    1,    1,    0,    1,    -0.5f,
+        0,    0,    1,    1,    0,    1,    0.5f,
+        1,    0,    1,    0,    0,    1,    -0.5f,
+        1,    0,    1,    0,    0,    1,    -0.5f,
+        1,    0,    1,    0,    0,    1,    0.5f,
+        0,    0,    1,    1,    0,    1,    -0.5f,
+
+        1,    0,    1,    0,    0,    0,    -0.5f,
+        1,    0,    1,    0,    0,    0,    0.5f,
+        0,    0,    0,    1,    0,    1,    -0.5f,
+        0,    0,    0,    1,    0,    1,    -0.5f,
+        0,    0,    0,    1,    0,    1,    0.5f,
+        1,    0,    1,    0,    0,    0,    -0.5f,
+
+        0,    0,    0,    1,    0,    0,    -0.5f,
+        0,    0,    0,    1,    0,    0,    0.5f,
+        1,    0,    0,    0,    0,    0,    -0.5f,
+        1,    0,    0,    0,    0,    0,    -0.5f,
+        1,    0,    0,    0,    0,    0,    0.5f,
+        0,    0,    0,    1,    0,    0,    -0.5f,
+    };
+
+    vo.allocate(sizeof(lettersVtx));
+
+    vo.setBufferData(lettersVtx, 0, sizeof(lettersVtx));
+    vo.setVertices(3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, 0);
+    vo.setVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, sizeof(float) * 3);
+    vo.setVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 7, sizeof(float) * 6);
+}
+
 static void RenderArrow(VertexObject& vo)
 {
-    auto count = initArrowAndLetters(vo);
+    auto count = initArrow(vo);
     vo.draw(GL_TRIANGLES, count);
     vo.unbind();
 }
@@ -184,8 +234,8 @@ static void RenderArrow(VertexObject& vo)
 // Draw letter x in xz plane
 static void RenderX(VertexObject& vo)
 {
-    auto offset = initArrowAndLetters(vo);
-    vo.draw(GL_LINES, 4, offset);
+    initLetters(vo);
+    vo.draw(GL_TRIANGLES, 12);
     vo.unbind();
 }
 
@@ -193,8 +243,8 @@ static void RenderX(VertexObject& vo)
 // Draw letter y in xz plane
 static void RenderY(VertexObject& vo)
 {
-    auto offset = initArrowAndLetters(vo);
-    vo.draw(GL_LINES, 6, offset+4);
+    initLetters(vo);
+    vo.draw(GL_TRIANGLES, 18, 12);
     vo.unbind();
 }
 
@@ -202,8 +252,8 @@ static void RenderY(VertexObject& vo)
 // Draw letter z in xz plane
 static void RenderZ(VertexObject& vo)
 {
-    auto offset = initArrowAndLetters(vo);
-    vo.draw(GL_LINE_STRIP, 4, offset+10);
+    initLetters(vo);
+    vo.draw(GL_TRIANGLES, 18, 30);
     vo.unbind();
 }
 
@@ -387,35 +437,49 @@ AxesReferenceMark::render(Renderer* renderer,
         return;
     prog->use();
 
-    auto &vo = renderer->getVertexObject(VOType::AxisArrow, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
+    auto &arrowVo = renderer->getVertexObject(VOType::AxisArrow, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
 
     Affine3f labelTransform = Translation3f(Vector3f(0.1f, 0.0f, 0.75f)) * Scaling(labelScale);
     Matrix4f labelTransformMatrix = labelTransform.matrix();
-    Matrix4f tModelView;
 
     // x-axis
-    tModelView = modelView * vecgl::rotate(AngleAxisf(90.0_deg, Vector3f::UnitY()));
+    Matrix4f xModelView = modelView * vecgl::rotate(AngleAxisf(90.0_deg, Vector3f::UnitY()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
-    prog->setMVPMatrices(projection, tModelView);
-    RenderArrow(vo);
-    prog->setMVPMatrices(projection, tModelView * labelTransformMatrix);
-    RenderX(vo);
+    prog->setMVPMatrices(projection, xModelView);
+    RenderArrow(arrowVo);
 
     // y-axis
-    tModelView = modelView * vecgl::rotate(AngleAxisf(180.0_deg, Vector3f::UnitY()));
+    Matrix4f yModelView = modelView * vecgl::rotate(AngleAxisf(180.0_deg, Vector3f::UnitY()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
-    prog->setMVPMatrices(projection, tModelView);
-    RenderArrow(vo);
-    prog->setMVPMatrices(projection, tModelView * labelTransformMatrix);
-    RenderY(vo);
+    prog->setMVPMatrices(projection, yModelView);
+    RenderArrow(arrowVo);
 
     // z-axis
-    tModelView = modelView *vecgl::rotate(AngleAxisf(-90.0_deg, Vector3f::UnitX()));
+    Matrix4f zModelView = modelView *vecgl::rotate(AngleAxisf(-90.0_deg, Vector3f::UnitX()));
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
-    prog->setMVPMatrices(projection, tModelView);
-    RenderArrow(vo);
-    prog->setMVPMatrices(projection, tModelView * labelTransformMatrix);
-    RenderZ(vo);
+    prog->setMVPMatrices(projection, zModelView);
+    RenderArrow(arrowVo);
+
+    ShaderProperties letterProp = shadprop;
+    letterProp.texUsage |= ShaderProperties::LineAsTriangles;
+    prog = renderer->getShaderManager().getShader(letterProp);
+    if (prog == nullptr)
+        return;
+
+    prog->use();
+    prog->lineWidthX = renderer->getLineWidthX();
+    prog->lineWidthY = renderer->getLineWidthY();
+
+    auto &letterVo = renderer->getVertexObject(VOType::AxisLetter, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
+    prog->setMVPMatrices(projection, xModelView * labelTransformMatrix);
+    RenderX(letterVo);
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
+    prog->setMVPMatrices(projection, yModelView * labelTransformMatrix);
+    RenderY(letterVo);
+    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
+    prog->setMVPMatrices(projection, zModelView * labelTransformMatrix);
+    RenderZ(letterVo);
 
     renderer->enableBlending();
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);

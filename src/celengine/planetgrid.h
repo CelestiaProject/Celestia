@@ -16,7 +16,7 @@
 #include <celengine/referencemark.h>
 
 class Body;
-
+struct LineStripEnd;
 
 class PlanetographicGrid : public ReferenceMark
 {
@@ -71,8 +71,8 @@ private:
     NorthDirection northDirection{ NorthNormal };
 
     static unsigned int circleSubdivisions;
-    static float* xyCircle;
-    static float* xzCircle;
+    static std::vector<LineStripEnd> xyCircle;
+    static std::vector<LineStripEnd> xzCircle;
 };
 
 #endif // _CELENGINE_PLANETGRID_H_

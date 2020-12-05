@@ -162,8 +162,11 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
         return;
     }
 
+    bool drawPoints = false;
+    bool drawLines = false;
     if (group.prim == Mesh::SpriteList || group.prim == Mesh::PointList)
     {
+        drawPoints = true;
         if (group.prim == Mesh::PointList)
             glVertexAttrib1f(CelestiaGLProgram::PointSizeAttributeIndex, 1.0f);
 #ifndef GL_ES
@@ -172,16 +175,25 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 #endif
         glActiveTexture(GL_TEXTURE0);
     }
+    else if (group.prim == Mesh::LineList || group.prim == Mesh::LineStrip)
+    {
+        drawLines = true;
+        renderer->enableSmoothLines();
+    }
 
     glDrawElements(GLPrimitiveModes[(int) group.prim],
                    group.nIndices,
                    GL_UNSIGNED_INT,
                    group.indices);
 #ifndef GL_ES
-    if (group.prim == Mesh::SpriteList || group.prim == Mesh::PointList)
+    if (drawPoints)
     {
         glDisable(GL_POINT_SPRITE);
         glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    }
+    else if (drawLines)
+    {
+        renderer->disableSmoothLines();
     }
 #endif
 }

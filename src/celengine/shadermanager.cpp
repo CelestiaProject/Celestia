@@ -74,7 +74,7 @@ invariant gl_Position;
 
 static const char *VPFunction =
     "#ifdef FISHEYE\n"
-    "void set_vp(vec4 in_Position) {\n"
+    "vec4 calc_vp(vec4 in_Position) {\n"
     "    float PID2 = 1.570796326794896619231322;\n"
     "    vec4 inPos = ModelViewMatrix * in_Position;\n"
     "    float l = length(inPos.xy);\n"
@@ -83,16 +83,37 @@ static const char *VPFunction =
     "        float lensR = phi / PID2;\n"
     "        inPos.xy *= (lensR / l);\n"
     "    }\n"
-    "    gl_Position = ProjectionMatrix * inPos;\n"
+    "    return ProjectionMatrix * inPos;\n"
     "}\n"
     "#else\n"
-    "void set_vp(vec4 in_Position) {\n"
-    "    gl_Position = MVPMatrix * in_Position;\n"
+    "vec4 calc_vp(vec4 in_Position) {\n"
+    "    return MVPMatrix * in_Position;\n"
     "}\n"
-    "#endif\n";
+    "#endif\n"
+    "void set_vp(vec4 in_Position) {\n"
+    "    gl_Position = calc_vp(in_Position);\n"
+    "}\n";
 
-static const char* VertexPosition =
+static const char* NormalVertexPosition =
     "set_vp(in_Position);\n";
+
+static const char* LineVertexPosition =
+    "vec4 thisPos = calc_vp(in_Position);\n"
+    "vec4 nextPos = calc_vp(in_PositionNext);\n"
+    "float w = thisPos.w;\n"
+    "thisPos /= w;\n"
+    "nextPos /= nextPos.w;\n"
+    "vec2 transform = normalize(nextPos.xy - thisPos.xy);\n"
+    "transform = vec2(transform.y * lineWidthX, -transform.x * lineWidthY) * in_ScaleFactor;\n"
+    "gl_Position = thisPos;\n"
+    "gl_Position.xy += transform;\n"
+    "gl_Position *= w;\n";
+
+
+static string VertexPosition(const ShaderProperties& props)
+{
+    return (props.texUsage & ShaderProperties::LineAsTriangles) ? LineVertexPosition : NormalVertexPosition;
+}
 
 static const char* FragmentHeader = "";
 
@@ -1690,6 +1711,17 @@ StaticPointSize()
 }
 
 static string
+LineDeclaration()
+{
+    string source;
+    source += DeclareAttribute("in_PositionNext", Shader_Vector4);
+    source += DeclareAttribute("in_ScaleFactor", Shader_Float);
+    source += DeclareUniform("lineWidthX", Shader_Float);
+    source += DeclareUniform("lineWidthY", Shader_Float);
+    return source;
+}
+
+static string
 CalculateShadow()
 {
     string source;
@@ -1853,6 +1885,9 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     if (props.hasShadowMap())
         source += "uniform mat4 ShadowMatrix0;\n";
+
+    if (props.texUsage & ShaderProperties::LineAsTriangles)
+        source += LineDeclaration();
 
     if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
         source += "#define FISHEYE\n";
@@ -2076,7 +2111,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.hasShadowMap())
         source += "shadowTexCoord0 = ShadowMatrix0 * vec4(in_Position.xyz, 1.0);\n";
 
-    source += VertexPosition;
+    source += VertexPosition(props);
     source += "}\n";
 
     DumpVSSource(source);
@@ -2699,6 +2734,9 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::DiffuseTexture)
         source += "varying vec2 diffTexCoord;\n";
 
+    if (props.texUsage & ShaderProperties::LineAsTriangles)
+        source += LineDeclaration();
+
     if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
         source += "#define FISHEYE\n";
 
@@ -2719,7 +2757,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
         }
     }
 
-    source += VertexPosition;
+    source += VertexPosition(props);
     source += "}\n";
 
     DumpVSSource(source);
@@ -2858,6 +2896,9 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
     source += "varying vec3 scatterEx;\n";
     source += "varying vec3 eyeDir_obj;\n";
 
+    if (props.texUsage & ShaderProperties::LineAsTriangles)
+        source += LineDeclaration();
+
     if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
         source += "#define FISHEYE\n";
 
@@ -2872,7 +2913,7 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
     source += AtmosphericEffects(props);
 
     source += "eyeDir_obj = eyeDir;\n";
-    source += VertexPosition;
+    source += VertexPosition(props);
     source += "}\n";
 
     DumpVSSource(source);
@@ -2967,6 +3008,9 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     source += DeclareVarying("v_Color", Shader_Vector4);
     source += DeclareVarying("v_TexCoord0", Shader_Vector2);
 
+    if (props.texUsage & ShaderProperties::LineAsTriangles)
+        source += LineDeclaration();
+
     if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
         source += "#define FISHEYE\n";
 
@@ -2998,7 +3042,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     else if (props.texUsage & ShaderProperties::StaticPointSize)
         source += StaticPointSize();
 
-    source += VertexPosition;
+    source += VertexPosition(props);
     source += "}\n";
     // End of main()
 
@@ -3095,6 +3139,9 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
         source << "varying vec3 position_obj;\n";
     }
 
+    if (props.texUsage & ShaderProperties::LineAsTriangles)
+        source << LineDeclaration();
+
     if (props.fishEyeOverride != ShaderProperties::FisheyeOverrideModeDisabled && fisheyeEnabled)
         source << "#define FISHEYE\n";
 
@@ -3132,7 +3179,7 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
     else if (props.texUsage & ShaderProperties::StaticPointSize)
         source << StaticPointSize();
 
-    source << VertexPosition;
+    source << VertexPosition(props);
     source << "}\n";
     // End of main()
 
@@ -3282,6 +3329,17 @@ ShaderManager::buildProgram(const ShaderProperties& props)
             glBindAttribLocation(prog->getID(),
                                  CelestiaGLProgram::IntensityAttributeIndex,
                                  "in_Intensity");
+
+            if (props.texUsage & ShaderProperties::LineAsTriangles)
+            {
+                glBindAttribLocation(prog->getID(),
+                                     CelestiaGLProgram::NextVCoordAttributeIndex,
+                                     "in_PositionNext");
+
+                glBindAttribLocation(prog->getID(),
+                                     CelestiaGLProgram::ScaleFactorAttributeIndex,
+                                     "in_ScaleFactor");
+            }
 
             if (props.texUsage & ShaderProperties::NormalTexture)
             {
@@ -3592,6 +3650,12 @@ CelestiaGLProgram::initParameters()
     if (props.usePointSize())
     {
         pointScale           = floatParam("pointScale");
+    }
+
+    if (props.texUsage & ShaderProperties::LineAsTriangles)
+    {
+        lineWidthX           = floatParam("lineWidthX");
+        lineWidthY           = floatParam("lineWidthY");
     }
 }
 

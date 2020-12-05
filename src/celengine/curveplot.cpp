@@ -165,7 +165,7 @@ public:
         vbobj(0),
         currentStripLength(0)
     {
-        data = new Vertex[capacity];
+        data = new Vertex[(capacity + 1) * 2];
     }
 
     ~HighPrec_VertexBuffer()
@@ -183,6 +183,8 @@ public:
 
         glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
         glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+        glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+        glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
 
         Vector4f* vertexBase = vbobj ? (Vector4f*) offsetof(Vertex, position) : &data[0].position;
         glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
@@ -191,6 +193,14 @@ public:
         Vector4f* colorBase = vbobj ? (Vector4f*) offsetof(Vertex, color) : &data[0].color;
         glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
                               4, GL_FLOAT, GL_FALSE, sizeof(Vertex), colorBase);
+
+        float* scaleBase = vbobj ? (float*) offsetof(Vertex, scale) : &data[0].scale;
+        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
+                              1, GL_FLOAT, GL_FALSE, sizeof(Vertex), scaleBase);
+
+        Vector4f* nextVertexBase = vbobj ? (Vector4f*) (offsetof(Vertex, position) + (2 * sizeof(Vertex))) : &data[2].position;
+        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
+                              4, GL_FLOAT, GL_FALSE, sizeof(Vertex), nextVertexBase);
 
         stripLengths.clear();
         currentStripLength = 0;
@@ -205,6 +215,8 @@ public:
         {
             glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
             glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+            glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+            glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
 #endif
@@ -213,16 +225,26 @@ public:
     inline void vertex(const Vector3d& v)
     {
 #if USE_VERTEX_BUFFER
-        data[currentPosition].position.segment<3>(0) = v.cast<float>();
-        data[currentPosition].color = color;
+        Vector3f pos = v.cast<float>();
+        int index = currentPosition * 2;
+        data[index].position.segment<3>(0) = pos;
+        data[index].color = color;
+        data[index].scale = -0.5f;
+        data[index + 1].position.segment<3>(0) = pos;
+        data[index + 1].color = color;
+        data[index + 1].scale = 0.5f;
         ++currentPosition;
         ++currentStripLength;
         if (currentPosition == capacity)
         {
             flush();
 
-            data[0].position.segment<3>(0) = v.cast<float>();
+            data[0].position.segment<3>(0) = pos;
             data[0].color = color;
+            data[0].scale = -0.5f;
+            data[1].position.segment<3>(0) = pos;
+            data[1].color = color;
+            data[1].scale = 0.5f;
             currentPosition = 1;
             currentStripLength = 1;
         }
@@ -233,38 +255,32 @@ public:
 
     inline void vertex(const Vector4d& v)
     {
-#if USE_VERTEX_BUFFER
-        data[currentPosition].position = v.cast<float>();
-        data[currentPosition].color = color;
-        ++currentPosition;
-        ++currentStripLength;
-        if (currentPosition == capacity)
-        {
-            flush();
-
-            data[0].position = v.cast<float>();
-            data[0].color = color;
-            currentPosition = 1;
-            currentStripLength = 1;
-        }
-#else
-        glVertex3dv(v.data());
-#endif
+        vertex(v, color);
     }
 
     inline void vertex(const Vector4d& v, const Vector4f& color)
     {
 #if USE_VERTEX_BUFFER
-        data[currentPosition].position = v.cast<float>();
-        data[currentPosition].color = color;
+        Vector4f pos = v.cast<float>();
+        int index = currentPosition * 2;
+        data[index].position = pos;
+        data[index].color = color;
+        data[index].scale = -0.5f;
+        data[index + 1].position = pos;
+        data[index + 1].color = color;
+        data[index + 1].scale = 0.5f;
         ++currentPosition;
         ++currentStripLength;
         if (currentPosition == capacity)
         {
             flush();
 
-            data[0].position = v.cast<float>();
+            data[0].position = pos;
             data[0].color = color;
+            data[0].scale = -0.5f;
+            data[1].position = pos;
+            data[1].color = color;
+            data[1].scale = 0.5f;
             currentPosition = 1;
             currentStripLength = 1;
         }
@@ -284,6 +300,12 @@ public:
     inline void end()
     {
 #if USE_VERTEX_BUFFER
+        if (currentPosition > 1)
+        {
+            int index = currentPosition * 2;
+            memcpy(&data[index], &data[index - 4], 2 * sizeof(Vertex));
+            currentPosition += 1;
+        }
         stripLengths.push_back(currentStripLength);
         currentStripLength = 0;
 #else
@@ -296,7 +318,7 @@ public:
 #if USE_VERTEX_BUFFER
         if (currentPosition > 0)
         {
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * currentPosition, data);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * (currentPosition + 1) * 2, data);
 
             // Finish the current line strip
             if (currentStripLength > 1)
@@ -305,8 +327,9 @@ public:
             unsigned int startIndex = 0;
             for (vector<unsigned int>::const_iterator iter = stripLengths.begin(); iter != stripLengths.end(); ++iter)
             {
-                glDrawArrays(GL_LINE_STRIP, startIndex, *iter);
-                startIndex += *iter;
+                unsigned int drawCount = *iter * 2;
+                glDrawArrays(GL_TRIANGLE_STRIP, startIndex, drawCount);
+                startIndex += drawCount + 2;
             }
 
             currentPosition = 0;
@@ -325,7 +348,7 @@ public:
             glGenBuffers(1, &vbobj);
             glBindBuffer(GL_ARRAY_BUFFER, vbobj);
             glBufferData(GL_ARRAY_BUFFER,
-                         capacity * sizeof(Vertex),
+                         (2 * (capacity + 1)) * sizeof(Vertex),
                          nullptr,
                          GL_STREAM_DRAW);
         }
@@ -349,6 +372,7 @@ private:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
         Vector4f position;
         Vector4f color;
+        float scale;
     };
     Vertex* data;
     GLuint vbobj;
