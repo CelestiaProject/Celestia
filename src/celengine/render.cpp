@@ -1404,6 +1404,7 @@ setupLightSources(const vector<const Star*>& nearStars,
                   const UniversalCoord& observerPos,
                   double t,
                   vector<LightSource>& lightSources,
+                  const ColorTemperatureTable& colorTempTable,
                   uint64_t renderFlags)
 {
     lightSources.clear();
@@ -1428,18 +1429,7 @@ setupLightSources(const vector<const Star*>& nearStars,
                 // though these will almost never have planets for their light
                 // to shine upon.
                 float temp = star->getTemperature();
-                if (temp > 30000.0f)
-                    ls.color = Color(0.8f, 0.8f, 1.0f);
-                else if (temp > 10000.0f)
-                    ls.color = Color(0.9f, 0.9f, 1.0f);
-                else if (temp > 5400.0f)
-                    ls.color = Color(1.0f, 1.0f, 1.0f);
-                else if (temp > 3900.0f)
-                    ls.color = Color(1.0f, 0.9f, 0.8f);
-                else if (temp > 2000.0f)
-                    ls.color = Color(1.0f, 0.7f, 0.7f);
-                else
-                    ls.color = Color(1.0f, 0.4f, 0.4f);
+                ls.color = colorTempTable.lookupColor(temp);
             }
             else
             {
@@ -5892,7 +5882,7 @@ Renderer::buildNearSystemsLists(const Universe &universe,
     // Set up direct light sources (i.e. just stars at the moment)
     // Skip if only star orbits to be shown
     if ((renderFlags & ShowSolarSystemObjects) != 0)
-        setupLightSources(nearStars, observerPos, now, lightSourceList, renderFlags);
+        setupLightSources(nearStars, observerPos, now, lightSourceList, *colorTemp, renderFlags);
 
     // Traverse the frame trees of each nearby solar system and
     // build the list of objects to be rendered.
