@@ -122,6 +122,9 @@ std::string Helper::getRenderInfo(const Renderer *r)
     if (info.count("PointSizeMax") > 0 && info.count("PointSizeMin") > 0)
         s += fmt::sprintf(_("Point size range: %s - %s\n"), info["PointSizeMin"], info["PointSizeMax"]);
 
+    if (info.count("LineWidthMax") > 0 && info.count("LineWidthMin") > 0)
+        s += fmt::sprintf(_("Line width range: %s - %s\n"), info["LineWidthMin"], info["LineWidthMax"]);
+
     if (info.count("PointSizeGran") > 0)
         s += fmt::sprintf(_("Point size granularity: %s\n"), info["PointSizeGran"]);
 

@@ -15,6 +15,7 @@ bool ARB_shader_texture_lod         = false;
 bool EXT_texture_compression_s3tc   = false;
 bool EXT_texture_filter_anisotropic = false;
 GLint maxPointSize                  = 0;
+GLfloat maxLineWidth                = 0;
 
 namespace
 {
@@ -37,12 +38,16 @@ bool init() noexcept
     EXT_texture_filter_anisotropic = has_extension("GL_EXT_texture_filter_anisotropic");
 
     GLint pointSizeRange[2];
+    GLfloat lineWidthRange[2];
 #ifdef GL_ES
     glGetIntegerv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
+    glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange);
 #else
     glGetIntegerv(GL_SMOOTH_POINT_SIZE_RANGE, pointSizeRange);
+    glGetFloatv(GL_SMOOTH_LINE_WIDTH_RANGE, lineWidthRange);
 #endif
     maxPointSize = pointSizeRange[1];
+    maxLineWidth = lineWidthRange[1];
 
     return true;
 }
