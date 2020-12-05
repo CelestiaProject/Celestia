@@ -701,6 +701,31 @@ void Renderer::setScreenDpi(int _dpi)
     screenDpi = _dpi;
 }
 
+float Renderer::getScaleFactor() const
+{
+    return screenDpi / 96.0f;
+}
+
+float Renderer::getPointWidth() const
+{
+    return 2.0f / windowWidth * getScaleFactor();
+}
+
+float Renderer::getPointHeight() const
+{
+    return 2.0f / windowHeight * getScaleFactor();
+}
+
+float Renderer::getLineWidthX() const
+{
+    return ((renderFlags | ShowSmoothLines) ? 1.5f : 1.0f) * getPointWidth();
+}
+
+float Renderer::getLineWidthY() const
+{
+    return ((renderFlags | ShowSmoothLines) ? 1.5f : 1.0f) * getPointHeight();
+}
+
 void Renderer::setFaintestAM45deg(float _faintestAutoMag45deg)
 {
     faintestAutoMag45deg = _faintestAutoMag45deg;
@@ -1033,7 +1058,7 @@ Renderer::enableSmoothLines()
 #ifndef GL_ES
     glEnable(GL_LINE_SMOOTH);
 #endif
-    glLineWidth(1.5f * screenDpi / 96.0f);
+    glLineWidth(1.5f * getScaleFactor());
 }
 
 void
@@ -1047,7 +1072,7 @@ Renderer::disableSmoothLines()
 #ifndef GL_ES
     glDisable(GL_LINE_SMOOTH);
 #endif
-    glLineWidth(1.0f * screenDpi / 96.0f);
+    glLineWidth(1.0f * getScaleFactor());
 }
 
 Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
@@ -1117,7 +1142,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                            const Matrices& m)
 {
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors;
+    shadprop.texUsage = ShaderProperties::VertexColors | ShaderProperties::LineAsTriangles;
     shadprop.lightModel = ShaderProperties::UnlitModel;
     auto *prog = shaderManager->getShader(shadprop);
     if (prog == nullptr)
@@ -1320,6 +1345,8 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
 
     prog->use();
     prog->setMVPMatrices(*m.projection);
+    prog->lineWidthX = getPointWidth();
+    prog->lineWidthY = getPointHeight();
     if (orbit->isPeriodic())
     {
         double period = orbit->getPeriod();
@@ -1722,9 +1749,7 @@ void Renderer::draw(const Observer& observer,
     disableDepthMask();
 
     // Render sky grids first--these will always be in the background
-    enableSmoothLines();
     renderSkyGrids(observer);
-    disableSmoothLines();
     enableBlending();
 
     // Render deep sky objects
@@ -3869,9 +3894,7 @@ void Renderer::renderAsterisms(const Universe& universe, float dist, const Matri
                         (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1);
     }
 
-    enableSmoothLines();
     m_asterismRenderer->render(*this, Color(ConstellationColor, opacity), mvp);
-    disableSmoothLines();
 }
 
 
@@ -3900,9 +3923,7 @@ void Renderer::renderBoundaries(const Universe& universe, float dist, const Matr
                         (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
     }
 
-    enableSmoothLines();
     m_boundariesRenderer->render(*this, Color(BoundaryColor, opacity), mvp);
-    disableSmoothLines();
 }
 
 
@@ -4689,10 +4710,6 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     openClusterRep = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, OpenClusterLabelColor);
     globularRep    = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, GlobularLabelColor);
 
-    // Render any line primitives with smooth lines
-    // (mostly to make graticules look good.)
-    enableSmoothLines();
-
     setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
 
 #ifdef OCTREE_DEBUG
@@ -4713,8 +4730,6 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
 #endif
 
     // clog << "DSOs processed: " << dsoRenderer.dsosProcessed << endl;
-
-    disableSmoothLines();
 }
 
 
@@ -4946,9 +4961,6 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
     if (font[fs] == nullptr)
         return;
 
-    // Enable line smoothing for rendering symbols
-    enableSmoothLines();
-
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 #endif
@@ -5010,7 +5022,6 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
 #endif
 
     font[fs]->unbind();
-    disableSmoothLines();
 }
 
 
@@ -5444,10 +5455,14 @@ void Renderer::drawRectangle(const Rect &r, int fishEyeOverrideMode, const Eigen
     ShaderProperties shadprop;
     shadprop.lightModel = ShaderProperties::UnlitModel;
 
+    bool solid = r.type != Rect::Type::BorderOnly;
+
     if (r.nColors > 0)
         shadprop.texUsage |= ShaderProperties::VertexColors;
     if (r.tex != nullptr)
         shadprop.texUsage |= ShaderProperties::DiffuseTexture;
+    if (!solid)
+        shadprop.texUsage |= ShaderProperties::LineAsTriangles;
 
     shadprop.fishEyeOverride = fishEyeOverrideMode;
 
@@ -5457,10 +5472,55 @@ void Renderer::drawRectangle(const Rect &r, int fishEyeOverrideMode, const Eigen
 
     constexpr array<short, 8> texels = {0, 1,  1, 1,  1, 0,  0, 0};
     array<float, 8> vertices = { r.x, r.y,  r.x+r.w, r.y, r.x+r.w, r.y+r.h, r.x, r.y+r.h };
+    array<float, 80> lineAsTriangleVertices = {
+        r.x,       r.y,       r.x + r.w, r.y,       -0.5,
+        r.x,       r.y,       r.x + r.w, r.y,        0.5,
+
+        r.x + r.w, r.y,       r.x,       r.y,       -0.5,
+        r.x + r.w, r.y,       r.x,       r.y,        0.5,
+
+        r.x + r.w, r.y,       r.x + r.w, r.y + r.h, -0.5,
+        r.x + r.w, r.y,       r.x + r.w, r.y + r.h,  0.5,
+
+        r.x + r.w, r.y + r.h, r.x + r.w, r.y,       -0.5,
+        r.x + r.w, r.y + r.h, r.x + r.w, r.y,        0.5,
+
+        r.x + r.w, r.y + r.h, r.x,       r.y + r.h, -0.5,
+        r.x + r.w, r.y + r.h, r.x,       r.y + r.h,  0.5,
+
+        r.x,       r.y + r.h, r.x + r.w, r.y + r.h, -0.5,
+        r.x,       r.y + r.h, r.x + r.w, r.y + r.h,  0.5,
+
+        r.x,       r.y + r.h, r.x,       r.y,       -0.5,
+        r.x,       r.y + r.h, r.x,       r.y,        0.5,
+
+        r.x,       r.y,       r.x,       r.y + r.h, -0.5,
+        r.x,       r.y,       r.x,       r.y + r.h,  0.5,
+    };
+    constexpr array<short, 24> lineAsTriangleIndcies = {
+        0,  1,  2,   2,  3,  0,
+        4,  5,  6,   6,  7,  4,
+        8,  9,  10,  10, 11, 8,
+        12, 13, 14,  14, 15, 12
+    };
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          2, GL_FLOAT, GL_FALSE, 0, vertices.data());
+    if (solid)
+    {
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                                  2, GL_FLOAT, GL_FALSE, 0, vertices.data());
+    }
+    else
+    {
+        glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+        glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, lineAsTriangleVertices.data());
+        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
+                              2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, lineAsTriangleVertices.data() + 2);
+        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
+                              1, GL_FLOAT, GL_FALSE, sizeof(float) * 5, lineAsTriangleVertices.data() + 4);
+    }
     if (r.tex != nullptr)
     {
         glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
@@ -5482,22 +5542,22 @@ void Renderer::drawRectangle(const Rect &r, int fishEyeOverrideMode, const Eigen
     prog->use();
     prog->setMVPMatrices(p, m);
 
-    if (r.type != Rect::Type::BorderOnly)
+    if (solid)
     {
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
     else
     {
-        if (r.lw != 1.0f)
-            glLineWidth(r.lw * screenDpi / 96.0f);
-        glDrawArrays(GL_LINE_LOOP, 0, 4);
-        if (r.lw != 1.0f)
-            glLineWidth(1.0f * screenDpi / 96.0f);
+        prog->lineWidthX = getLineWidthX() * r.lw;
+        prog->lineWidthY = getLineWidthY() * r.lw;
+        glDrawElements(GL_TRIANGLES, lineAsTriangleIndcies.size(), GL_UNSIGNED_SHORT, lineAsTriangleIndcies.data());
     }
 
     glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
 }
 
 void Renderer::setRenderRegion(int x, int y, int width, int height, bool withScissor)
@@ -5551,13 +5611,18 @@ bool Renderer::getInfo(map<string, string>& info) const
 #endif
 
     GLint pointSizeRange[2];
+    GLfloat lineWidthRange[2];
 #ifdef GL_ES
     glGetIntegerv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
+    glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange);
 #else
     glGetIntegerv(GL_SMOOTH_POINT_SIZE_RANGE, pointSizeRange);
+    glGetFloatv(GL_SMOOTH_LINE_WIDTH_RANGE, lineWidthRange);
 #endif
     info["PointSizeMin"] = to_string(pointSizeRange[0]);
     info["PointSizeMax"] = to_string(pointSizeRange[1]);
+    info["LineWidthMin"] = to_string(lineWidthRange[0]);
+    info["LineWidthMax"] = to_string(lineWidthRange[1]);
 
 #ifndef GL_ES
     GLfloat pointSizeGran = 0;
@@ -6142,8 +6207,6 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
 #else
             setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
-            enableSmoothLines();
-
             // Scan through the list of orbits and render any that overlap this interval
             for (const auto& orbit : orbitPathList)
             {
@@ -6163,8 +6226,6 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
                                 m);
                 }
             }
-
-            disableSmoothLines();
         }
 
         // Render transparent objects in the second pass
@@ -6178,13 +6239,11 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         }
 
         // Render annotations in this interval
-        enableSmoothLines();
         annotation = renderSortedAnnotations(annotation,
                                              nearPlaneDistance,
                                              farPlaneDistance,
                                              FontNormal);
         endObjectAnnotations();
-        disableSmoothLines();
     }
 
     // reset the depth range

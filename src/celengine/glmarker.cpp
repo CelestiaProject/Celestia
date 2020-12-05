@@ -24,38 +24,7 @@ using namespace celmath;
 using namespace celestia;
 using namespace Eigen;
 
-
-constexpr const int DiamondOffset = 0;
-constexpr const int DiamondCount  = 4;
-static GLfloat Diamond[DiamondCount * 2] =
-{
-     0.0f,  1.0f,
-     1.0f,  0.0f,
-     0.0f, -1.0f,
-    -1.0f,  0.0f
-};
-
-constexpr const int PlusOffset = DiamondOffset + DiamondCount;
-constexpr const int PlusCount  = 4;
-static GLfloat Plus[PlusCount * 2] =
-{
-     0.0f,  1.0f,
-     0.0f, -1.0f,
-     1.0f,  0.0f,
-    -1.0f,  0.0f
-};
-
-constexpr const int XOffset = PlusOffset + PlusCount;
-constexpr const int XCount  = 4;
-static GLfloat X[XCount * 2] =
-{
-    -1.0f, -1.0f,
-     1.0f,  1.0f,
-     1.0f, -1.0f,
-    -1.0f,  1.0f
-};
-
-constexpr const int SquareOffset = XOffset + XCount;
+constexpr const int SquareOffset = 0;
 constexpr const int SquareCount  = 4;
 static GLfloat Square[SquareCount * 2] =
 {
@@ -145,7 +114,7 @@ static GLfloat SelPointer[SelPointerCount * 2] =
 
 constexpr const int CrosshairOffset = SelPointerOffset + SelPointerCount;
 constexpr const int CrosshairCount  = 3;
-static GLfloat Crosshair[CrosshairCount * 2 ] =
+static GLfloat Crosshair[CrosshairCount * 2] =
 {
     0.0f,       0.0f,
     1.0f,      -1.0f,
@@ -155,49 +124,117 @@ static GLfloat Crosshair[CrosshairCount * 2 ] =
 constexpr const int StaticVtxCount = CrosshairOffset + CrosshairCount;
 
 constexpr const int SmallCircleOffset = StaticVtxCount;
-static int SmallCircleCount  = 0;
-static int LargeCircleOffset = 0;
-static int LargeCircleCount  = 0;
-static int EclipticOffset    = 0;
-constexpr const int EclipticCount = 200;
+constexpr const int SmallCircleCount  = 10;
+constexpr const int LargeCircleOffset = SmallCircleOffset + SmallCircleCount;
+constexpr const int LargeCircleCount  = 60;
+
+static int DiamondLineOffset = 0;
+static int DiamondLineCount = 0;
+static int PlusLineOffset = 0;
+static int PlusLineCount = 0;
+static int XLineOffset = 0;
+static int XLineCount = 0;
+static int TriangleLineOffset = 0;
+static int TriangleLineCount = 0;
+static int SquareLineOffset = 0;
+static int SquareLineCount = 0;
+static int SmallCircleLineOffset = 0;
+static int SmallCircleLineCount = 0;
+static int LargeCircleLineOffset = 0;
+static int LargeCircleLineCount = 0;
+static int EclipticLineCount = 0;
+
+static void fillCircleValue(GLfloat* data, int size, float scale)
+{
+    float s, c;
+    for (int i = 0; i < size; i++)
+    {
+        sincos((float) (2 * i) / (float) size * ((float) PI), s, c);
+        data[i * 2] = c * scale;
+        data[i * 2 + 1] = s * scale;
+    }
+}
+
+static int bufferVertices(VertexObject& vo, GLfloat* data, int vertexCount, int& offset)
+{
+    int dataSize = vertexCount * 2 * sizeof(GLfloat);
+    vo.setBufferData(data, offset, dataSize);
+    offset += dataSize;
+    return vertexCount;
+}
+
+static int bufferLineVertices(VertexObject& vo, GLfloat* data, int vertexSize, int vertexCount, int& offset)
+{
+    int dataSize = vertexCount * 3 * (2 * vertexSize + 1) * sizeof(GLfloat);
+    GLfloat* tranformed = new GLfloat[dataSize];
+    GLfloat* ptr = tranformed;
+    for (int i = 0; i < vertexCount; i += 2)
+    {
+        int index = i * vertexSize;
+        GLfloat* thisVert = &data[index];
+        GLfloat* nextVert = &data[index + vertexSize];
+#define STREAM_AND_ADVANCE(firstVertex, secondVertex, scale) do {\
+memcpy(ptr, firstVertex, vertexSize * sizeof(GLfloat));\
+memcpy(ptr + vertexSize, secondVertex, vertexSize * sizeof(GLfloat));\
+ptr[2 * vertexSize] = scale;\
+ptr += 2 * vertexSize + 1;\
+} while (0)
+        STREAM_AND_ADVANCE(thisVert, nextVert, -0.5);
+        STREAM_AND_ADVANCE(thisVert, nextVert,  0.5);
+        STREAM_AND_ADVANCE(nextVert, thisVert, -0.5);
+        STREAM_AND_ADVANCE(nextVert, thisVert, -0.5);
+        STREAM_AND_ADVANCE(nextVert, thisVert,  0.5);
+        STREAM_AND_ADVANCE(thisVert, nextVert, -0.5);
+#undef STREAM_AND_ADVANCE
+    }
+    vo.setBufferData(tranformed, offset, dataSize);
+    offset += dataSize;
+    delete[] tranformed;
+    return vertexCount * 3;
+}
+
+static int bufferLineLoopVertices(VertexObject& vo, GLfloat* data, int vertexSize, int vertexCount, int& offset)
+{
+    int dataSize = vertexCount * 6 * (2 * vertexSize + 1) * sizeof(GLfloat);
+    GLfloat* tranformed = new GLfloat[dataSize];
+    GLfloat* ptr = tranformed;
+    for (int i = 0; i < vertexCount; i += 1)
+    {
+        int index = i * vertexSize;
+        int nextIndex = ((i + 1) % vertexCount) * vertexSize;
+        GLfloat* thisVert = &data[index];
+        GLfloat* nextVert = &data[nextIndex];
+#define STREAM_AND_ADVANCE(firstVertex, secondVertex, scale) do {\
+memcpy(ptr, firstVertex, vertexSize * sizeof(GLfloat));\
+memcpy(ptr + vertexSize, secondVertex, vertexSize * sizeof(GLfloat));\
+ptr[2 * vertexSize] = scale;\
+ptr += 2 * vertexSize + 1;\
+} while (0)
+        STREAM_AND_ADVANCE(thisVert, nextVert, -0.5);
+        STREAM_AND_ADVANCE(thisVert, nextVert,  0.5);
+        STREAM_AND_ADVANCE(nextVert, thisVert, -0.5);
+        STREAM_AND_ADVANCE(nextVert, thisVert, -0.5);
+        STREAM_AND_ADVANCE(nextVert, thisVert,  0.5);
+        STREAM_AND_ADVANCE(thisVert, nextVert, -0.5);
+#undef STREAM_AND_ADVANCE
+    }
+    vo.setBufferData(tranformed, offset, dataSize);
+    offset += dataSize;
+    delete[] tranformed;
+    return vertexCount * 6;
+}
 
 static void initVO(VertexObject& vo)
 {
-    float c, s;
+    GLfloat SmallCircle[SmallCircleCount * 2];
+    GLfloat LargeCircle[LargeCircleCount * 2];
+    fillCircleValue(SmallCircle, SmallCircleCount, 1.0f);
+    fillCircleValue(LargeCircle, LargeCircleCount, 1.0f);
 
-    vector<GLfloat> small, large;
-    for (int i = 0; i < 360; i += 36)
-    {
-        sincos(degToRad(static_cast<float>(i)), s, c);
-        small.push_back(c); small.push_back(s);
-        large.push_back(c); large.push_back(s);
-        for (int j = i+6; j < i+36; j += 6)
-        {
-            sincos(degToRad(static_cast<float>(j)), s, c);
-            large.push_back(c); large.push_back(s);
-        }
-    };
+    vo.allocate((LargeCircleOffset + LargeCircleCount) * sizeof(GLfloat) * 2);
 
-    SmallCircleCount = small.size() / 2;
-    LargeCircleCount = large.size() / 2;
-    LargeCircleOffset = SmallCircleOffset + SmallCircleCount;
-
-    vector<GLfloat> ecliptic;
-    for (int i = 0; i < EclipticCount; i++)
-    {
-        sincos((float) (2 * i) / (float) EclipticCount * ((float) PI), s, c);
-        ecliptic.push_back(c * 1000.0f);
-        ecliptic.push_back(s * 1000.0f);
-    }
-    EclipticOffset = LargeCircleOffset + LargeCircleCount;
-
-#define VTXTOMEM(a) ((a) * sizeof(GLfloat) * 2)
-    vo.allocate(VTXTOMEM(StaticVtxCount + SmallCircleCount + LargeCircleCount + EclipticCount));
-
-#define VOSTREAM(a) vo.setBufferData(a, VTXTOMEM(a ## Offset), sizeof(a))
-    VOSTREAM(Diamond);
-    VOSTREAM(Plus);
-    VOSTREAM(X);
+    int offset = 0;
+#define VOSTREAM(a) bufferVertices(vo, a, a##Count, offset)
     VOSTREAM(Square);
     VOSTREAM(Triangle);
     VOSTREAM(RightArrow);
@@ -206,14 +243,96 @@ static void initVO(VertexObject& vo)
     VOSTREAM(DownArrow);
     VOSTREAM(SelPointer);
     VOSTREAM(Crosshair);
+    VOSTREAM(SmallCircle);
+    VOSTREAM(LargeCircle);
 #undef VOSTREAM
 
-    vo.setBufferData(small.data(), VTXTOMEM(SmallCircleOffset), memsize(small));
-    vo.setBufferData(large.data(), VTXTOMEM(LargeCircleOffset), memsize(large));
-    vo.setBufferData(ecliptic.data(), VTXTOMEM(EclipticOffset), memsize(ecliptic));
-#undef VTXTOMEM
-
     vo.setVertices(2, GL_FLOAT, false, 0, 0);
+}
+
+static void initLineVO(VertexObject& vo)
+{
+    constexpr const int DiamondCount  = 4;
+    static GLfloat Diamond[DiamondCount * 2] =
+    {
+         0.0f,  1.0f,
+         1.0f,  0.0f,
+         0.0f, -1.0f,
+        -1.0f,  0.0f
+    };
+    constexpr const int PlusCount  = 4;
+    GLfloat Plus[PlusCount * 2] =
+    {
+         0.0f,  1.0f,
+         0.0f, -1.0f,
+         1.0f,  0.0f,
+        -1.0f,  0.0f
+    };
+    constexpr const int XCount  = 4;
+    GLfloat X[XCount * 2] =
+    {
+        -1.0f, -1.0f,
+         1.0f,  1.0f,
+         1.0f, -1.0f,
+        -1.0f,  1.0f
+    };
+
+    GLfloat SmallCircle[SmallCircleCount * 2];
+    GLfloat LargeCircle[LargeCircleCount * 2];
+    fillCircleValue(SmallCircle, SmallCircleCount, 1.0f);
+    fillCircleValue(LargeCircle, LargeCircleCount, 1.0f);
+
+    int stride = sizeof(GLfloat) * 5;
+    int size = ((DiamondCount + SquareCount + TriangleCount + SmallCircleCount + LargeCircleCount) * 6 + (PlusCount + XCount) * 3) * stride;
+
+    vo.allocate(size);
+
+    int offset = 0;
+#define VOSTREAM_LINES(a) do { \
+a##LineOffset = offset / stride;\
+a##LineCount = bufferLineVertices(vo, a, 2, a##Count, offset); \
+} while (0)
+#define VOSTREAM_LINE_LOOP(a) do { \
+a##LineOffset = offset / stride;\
+a##LineCount = bufferLineLoopVertices(vo, a, 2, a##Count, offset); \
+} while (0)
+    VOSTREAM_LINE_LOOP(Diamond);
+    VOSTREAM_LINES(Plus);
+    VOSTREAM_LINES(X);
+    VOSTREAM_LINE_LOOP(Square);
+    VOSTREAM_LINE_LOOP(Triangle);
+    VOSTREAM_LINE_LOOP(SmallCircle);
+    VOSTREAM_LINE_LOOP(LargeCircle);
+#undef VOSTREAM_LINES
+#undef VOSTREAM_LINE_LOOP
+
+    vo.setVertices(2, GL_FLOAT, false, stride, 0);
+    vo.setVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex, 2, GL_FLOAT, false, stride, sizeof(GLfloat) * 2);
+    vo.setVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex, 1, GL_FLOAT, false, stride, sizeof(GLfloat) * 4);
+}
+
+static void initEclipticVO(VertexObject& vo)
+{
+    constexpr const int eclipticCount = 200;
+    GLfloat ecliptic[eclipticCount * 3];
+    float s, c;
+    float scale = 1000.0f;
+    for (int i = 0; i < eclipticCount; i++)
+    {
+        sincos((float) (2 * i) / (float) eclipticCount * ((float) PI), s, c);
+        ecliptic[i * 3] = c * scale;
+        ecliptic[i * 3 + 1] = 0;
+        ecliptic[i * 3 + 2] = s * scale;
+    }
+
+    int stride = sizeof(GLfloat) * 7;
+    vo.allocate(eclipticCount * 6 * stride);
+    int offset = 0;
+    EclipticLineCount = bufferLineLoopVertices(vo, ecliptic, 3, eclipticCount, offset);
+
+    vo.setVertices(3, GL_FLOAT, false, stride, 0);
+    vo.setVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex, 3, GL_FLOAT, false, stride, sizeof(GLfloat) * 3);
+    vo.setVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex, 1, GL_FLOAT, false, stride, sizeof(GLfloat) * 6);
 }
 
 void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
@@ -222,41 +341,64 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
                             const Matrices &m)
 {
     assert(shaderManager != nullptr);
+
+    bool solid = true;
+
+    switch (symbol)
+    {
+    case MarkerRepresentation::Diamond:
+    case MarkerRepresentation::Plus:
+    case MarkerRepresentation::X:
+    case MarkerRepresentation::Square:
+    case MarkerRepresentation::Triangle:
+    case MarkerRepresentation::Circle:
+        solid = false;
+    default:
+        break;
+    }
+
     ShaderProperties shadprop;
     shadprop.texUsage = ShaderProperties::VertexColors;
+    if (!solid)
+        shadprop.texUsage |= ShaderProperties::LineAsTriangles;
     shadprop.lightModel = ShaderProperties::UnlitModel;
     shadprop.fishEyeOverride = ShaderProperties::FisheyeOverrideModeDisabled;
     auto* prog = shaderManager->getShader(shadprop);
     if (prog == nullptr)
         return;
 
-    auto &markerVO = getVertexObject(VOType::Marker, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
+    auto &markerVO = getVertexObject(solid ? VOType::Marker : VOType::MarkerLine, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
     markerVO.bind();
     if (!markerVO.initialized())
-        initVO(markerVO);
+        solid ? initVO(markerVO) : initLineVO(markerVO);
 
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
 
     prog->use();
-    float s = size / 2.0f;
+    float s = size / 2.0f * getScaleFactor();
     prog->setMVPMatrices(*m.projection, (*m.modelview) * vecgl::scale(Vector3f(s, s, 0)));
+    if (!solid)
+    {
+        prog->lineWidthX = getLineWidthX();
+        prog->lineWidthY = getLineWidthY();
+    }
 
     switch (symbol)
     {
     case MarkerRepresentation::Diamond:
-        markerVO.draw(GL_LINE_LOOP, DiamondCount, DiamondOffset);
+        markerVO.draw(GL_TRIANGLES, DiamondLineCount, DiamondLineOffset);
         break;
 
     case MarkerRepresentation::Plus:
-        markerVO.draw(GL_LINES, PlusCount, PlusOffset);
+        markerVO.draw(GL_TRIANGLES, PlusLineCount, PlusLineOffset);
         break;
 
     case MarkerRepresentation::X:
-        markerVO.draw(GL_LINES, XCount, XOffset);
+        markerVO.draw(GL_TRIANGLES, XLineCount, XLineOffset);
         break;
 
     case MarkerRepresentation::Square:
-        markerVO.draw(GL_LINE_LOOP, SquareCount, SquareOffset);
+        markerVO.draw(GL_TRIANGLES, SquareLineCount, SquareLineOffset);
         break;
 
     case MarkerRepresentation::FilledSquare:
@@ -264,7 +406,7 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
         break;
 
     case MarkerRepresentation::Triangle:
-        markerVO.draw(GL_LINE_LOOP, TriangleCount, TriangleOffset);
+        markerVO.draw(GL_TRIANGLES, TriangleLineCount, TriangleLineOffset);
         break;
 
     case MarkerRepresentation::RightArrow:
@@ -284,14 +426,14 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
         break;
 
     case MarkerRepresentation::Circle:
-        if (s <= 20)
-            markerVO.draw(GL_LINE_LOOP, SmallCircleCount, SmallCircleOffset);
+        if (size <= 40.0f) // TODO: this should be configurable
+            markerVO.draw(GL_TRIANGLES, SmallCircleLineCount, SmallCircleLineOffset);
         else
-            markerVO.draw(GL_LINE_LOOP, LargeCircleCount, LargeCircleOffset);
+            markerVO.draw(GL_TRIANGLES, LargeCircleLineCount, LargeCircleLineOffset);
         break;
 
     case MarkerRepresentation::Disk:
-        if (s <= 20) // TODO: this should be configurable
+        if (size <= 40.0f) // TODO: this should be configurable
             markerVO.draw(GL_TRIANGLE_FAN, SmallCircleCount, SmallCircleOffset);
         else
             markerVO.draw(GL_TRIANGLE_FAN, LargeCircleCount, LargeCircleOffset);
@@ -365,7 +507,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     const Vector3f &center = cameraMatrix.col(2);
     prog->setMVPMatrices(getProjectionMatrix(), getModelViewMatrix() * vecgl::translate(Vector3f(-center)));
     prog->vec4Param("color") = Color(SelectionCursorColor, 0.6f).toVector4();
-    prog->floatParam("pixelSize") = pixelSize;
+    prog->floatParam("pixelSize") = pixelSize * getScaleFactor();
     prog->floatParam("s") = s;
     prog->floatParam("c") = c;
     prog->floatParam("x0") = x0;
@@ -390,22 +532,27 @@ void Renderer::renderEclipticLine()
     if ((renderFlags & ShowEcliptic) == 0)
         return;
 
-    assert(shaderManager != nullptr);
-    auto* prog = shaderManager->getShader("ecliptic");
+    ShaderProperties shadprop;
+    shadprop.texUsage = ShaderProperties::VertexColors | ShaderProperties::LineAsTriangles;
+    shadprop.lightModel = ShaderProperties::UnlitModel;
+    auto* prog = shaderManager->getShader(shadprop);
     if (prog == nullptr)
         return;
 
-    auto &markerVO = getVertexObject(VOType::Marker, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
-    markerVO.bind();
-    if (!markerVO.initialized())
-        initVO(markerVO);
+    auto &eclipticVO = getVertexObject(VOType::Ecliptic, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
+    eclipticVO.bind();
+    if (!eclipticVO.initialized())
+        initEclipticVO(eclipticVO);
+
+    glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, EclipticColor);
 
     prog->use();
     prog->setMVPMatrices(getProjectionMatrix(), getModelViewMatrix());
-    prog->vec4Param("color") = EclipticColor.toVector4();
-    markerVO.draw(GL_LINE_LOOP, EclipticCount, EclipticOffset);
+    prog->lineWidthX = getLineWidthX();
+    prog->lineWidthY = getLineWidthY();
+    eclipticVO.draw(GL_TRIANGLES, EclipticLineCount, 0);
 
-    markerVO.unbind();
+    eclipticVO.unbind();
 }
 
 void Renderer::renderCrosshair(float selectionSizeInPixels,
@@ -439,8 +586,9 @@ void Renderer::renderCrosshair(float selectionSizeInPixels,
     prog->setMVPMatrices(*m.projection, *m.modelview);
     prog->vec4Param("color") = color.toVector4();
     prog->floatParam("radius") = cursorRadius;
-    prog->floatParam("width") = minCursorWidth * cursorGrow;
-    prog->floatParam("h") = 2.0f * cursorGrow;
+    float scaleFactor = getScaleFactor();
+    prog->floatParam("width") = minCursorWidth * cursorGrow * scaleFactor;
+    prog->floatParam("h") = 2.0f * cursorGrow * scaleFactor;
 
     const unsigned int markCount = 4;
     for (unsigned int i = 0; i < markCount; i++)

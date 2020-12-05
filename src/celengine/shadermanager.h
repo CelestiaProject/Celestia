@@ -67,6 +67,7 @@ class ShaderProperties
      PointSprite             =  0x4000,
      SharedTextureCoords     =  0x8000,
      StaticPointSize         = 0x10000,
+     LineAsTriangles         = 0x20000,
  };
 
  enum
@@ -194,6 +195,8 @@ class CelestiaGLProgram
         PointSizeAttributeIndex     = 7,
         ColorAttributeIndex         = 8,
         IntensityAttributeIndex     = 9,
+        NextVCoordAttributeIndex    = 10,
+        ScaleFactorAttributeIndex   = 11,
     };
 
  public:
@@ -259,6 +262,10 @@ class CelestiaGLProgram
 
     // Scale factor for point sprites
     FloatShaderParameter pointScale;
+
+    // Used to draw line as triangles
+    FloatShaderParameter lineWidthX;
+    FloatShaderParameter lineWidthY;
 
     // Color sent as a uniform
     Vec4ShaderParameter color;

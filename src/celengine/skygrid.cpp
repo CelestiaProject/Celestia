@@ -392,7 +392,7 @@ SkyGrid::render(Renderer& renderer,
                 int windowHeight)
 {
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors;
+    shadprop.texUsage = ShaderProperties::VertexColors | ShaderProperties::LineAsTriangles;
     shadprop.lightModel = ShaderProperties::UnlitModel;
     auto *prog = renderer.getShaderManager().getShader(shadprop);
     if (prog == nullptr)
@@ -556,14 +556,23 @@ SkyGrid::render(Renderer& renderer,
                  vecgl::rotate((xrot90 * m_orientation.conjugate() * xrot90.conjugate()).cast<float>()) *
                  vecgl::scale(1000.0f);
     prog->setMVPMatrices(renderer.getProjectionMatrix(), m);
+    prog->lineWidthX = renderer.getLineWidthX();
+    prog->lineWidthY = renderer.getLineWidthY();
 
     double arcStep = (maxTheta - minTheta) / (double) ARC_SUBDIVISIONS;
     double theta0 = minTheta;
 
-    auto buffer = new Vector3f[ARC_SUBDIVISIONS+1];
+    vector<LineStripEnd> buffer;
+    buffer.reserve(2 * (ARC_SUBDIVISIONS + 2));
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+    glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, 0, buffer);
+                          3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[0].point);
+    glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[2].point);
+    glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
+                          1, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[0].scale);
 
     for (int dec = startDec; dec <= endDec; dec += decIncrement)
     {
@@ -571,15 +580,17 @@ SkyGrid::render(Renderer& renderer,
         double cosPhi = cos(phi);
         double sinPhi = sin(phi);
 
-        for (int j = 0; j <= ARC_SUBDIVISIONS; j++)
+        for (int j = 0; j <= ARC_SUBDIVISIONS + 1; j++)
         {
             double theta = theta0 + j * arcStep;
             auto x = (float) (cosPhi * std::cos(theta));
             auto y = (float) (cosPhi * std::sin(theta));
             auto z = (float) sinPhi;
-            buffer[j] = {x, z, -y};  // convert to Celestia coords
+            Vector3f position = {x, z, -y};  // convert to Celestia coords
+            buffer[2 * j] = {position, -0.5f};
+            buffer[2 * j + 1] =  {position, 0.5f};
         }
-        glDrawArrays(GL_LINE_STRIP, 0, ARC_SUBDIVISIONS+1);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * (ARC_SUBDIVISIONS + 1));
 
         // Place labels at the intersections of the view frustum planes
         // and the parallels.
@@ -646,15 +657,17 @@ SkyGrid::render(Renderer& renderer,
         double cosTheta = cos(theta);
         double sinTheta = sin(theta);
 
-        for (int j = 0; j <= ARC_SUBDIVISIONS; j++)
+        for (int j = 0; j <= ARC_SUBDIVISIONS + 1; j++)
         {
             double phi = phi0 + j * arcStep;
             auto x = (float) (cos(phi) * cosTheta);
             auto y = (float) (cos(phi) * sinTheta);
             auto z = (float) sin(phi);
-            buffer[j] = {x, z, -y};  // convert to Celestia coords
+            Vector3f position = {x, z, -y};  // convert to Celestia coords
+            buffer[2 * j] = {position, -0.5f};
+            buffer[2 * j + 1] =  {position, 0.5f};
         }
-        glDrawArrays(GL_LINE_STRIP, 0, ARC_SUBDIVISIONS+1);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * (ARC_SUBDIVISIONS + 1));
 
         // Place labels at the intersections of the view frustum planes
         // and the meridians.
@@ -704,16 +717,47 @@ SkyGrid::render(Renderer& renderer,
     }
 
     // Draw crosses indicating the north and south poles
-    buffer[0] = {-polarCrossSize, 1.0f,  0.0f};
-    buffer[1] = { polarCrossSize, 1.0f,  0.0f};
-    buffer[2] = {0.0f, 1.0f, -polarCrossSize};
-    buffer[3] = {0.0f, 1.0f,  polarCrossSize};
-    buffer[4] = {-polarCrossSize, -1.0f,  0.0f};
-    buffer[5] = { polarCrossSize, -1.0f,  0.0f};
-    buffer[6] = {0.0f, -1.0f, -polarCrossSize};
-    buffer[7] = {0.0f, -1.0f,  polarCrossSize};
-    glDrawArrays(GL_LINES, 0, 8);
+    array<float, 112> lineAsTriangleVertices = {
+        -polarCrossSize, 1.0f, 0.0f,   polarCrossSize, 1.0f, 0.0f,   -0.5,
+        -polarCrossSize, 1.0f, 0.0f,   polarCrossSize, 1.0f, 0.0f,    0.5,
+
+        polarCrossSize, 1.0f, 0.0f,    -polarCrossSize, 1.0f, 0.0f,  -0.5,
+        polarCrossSize, 1.0f, 0.0f,    -polarCrossSize, 1.0f, 0.0f,   0.5,
+
+        0.0f, 1.0f, -polarCrossSize,   0.0f, 1.0f, polarCrossSize,   -0.5,
+        0.0f, 1.0f, -polarCrossSize,   0.0f, 1.0f, polarCrossSize,    0.5,
+
+        0.0f, 1.0f, polarCrossSize,    0.0f, 1.0f, -polarCrossSize,  -0.5,
+        0.0f, 1.0f, polarCrossSize,    0.0f, 1.0f, -polarCrossSize,   0.5,
+
+        -polarCrossSize, -1.0f, 0.0f,  polarCrossSize, -1.0f, 0.0f,  -0.5,
+        -polarCrossSize, -1.0f, 0.0f,  polarCrossSize, -1.0f, 0.0f,   0.5,
+
+        polarCrossSize, -1.0f, 0.0f,   -polarCrossSize, -1.0f, 0.0f, -0.5,
+        polarCrossSize, -1.0f, 0.0f,   -polarCrossSize, -1.0f, 0.0f,  0.5,
+
+        0.0f, -1.0f, -polarCrossSize,  0.0f, -1.0f, polarCrossSize,  -0.5,
+        0.0f, -1.0f, -polarCrossSize,  0.0f, -1.0f, polarCrossSize,   0.5,
+
+        0.0f, -1.0f, polarCrossSize,   0.0f, -1.0f, -polarCrossSize, -0.5,
+        0.0f, -1.0f, polarCrossSize,   0.0f, -1.0f, -polarCrossSize,  0.5,
+    };
+    constexpr array<short, 24> lineAsTriangleIndcies = {
+        0,  1,  2,   2,  3,  0,
+        4,  5,  6,   6,  7,  4,
+        8,  9,  10,  10, 11, 8,
+        12, 13, 14,  14, 15, 12
+    };
+
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data());
+    glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data() + 3);
+    glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
+                          1, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data() + 6);
+    glDrawElements(GL_TRIANGLES, lineAsTriangleIndcies.size(), GL_UNSIGNED_SHORT, lineAsTriangleIndcies.data());
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    delete[] buffer;
+    glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+    glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
 }

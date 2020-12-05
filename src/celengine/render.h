@@ -48,6 +48,21 @@ struct Matrices
     const Eigen::Matrix4f *modelview;
 };
 
+struct LineStripEnd
+{
+    LineStripEnd(Eigen::Vector3f point, float scale) : point(point), scale(scale) {};
+    Eigen::Vector3f point;
+    float scale;
+};
+
+struct LineEnds
+{
+    LineEnds(Eigen::Vector3f point1, Eigen::Vector3f point2, float scale) : point1(point1), point2(point2), scale(scale) {};
+    Eigen::Vector3f point1;
+    Eigen::Vector3f point2;
+    float scale;
+};
+
 struct LightSource
 {
     Eigen::Vector3d position;
@@ -73,7 +88,10 @@ enum class VOType
     Rectangle  = 2,
     Terminator = 3,
     LargeStar  = 4,
-    Count      = 5
+    AxisLetter = 5,
+    MarkerLine = 6,
+    Ecliptic   = 7,
+    Count      = 8,
 };
 
 enum class RenderMode
@@ -257,6 +275,12 @@ class Renderer
     int getWindowWidth() const;
     int getWindowHeight() const;
 
+    float getScaleFactor() const;
+    float getPointWidth() const;
+    float getPointHeight() const;
+    float getLineWidthX() const;
+    float getLineWidthY() const;
+
     // GL wrappers
     void getViewport(int* x, int* y, int* w, int* h) const;
     void getViewport(std::array<int, 4>& viewport) const;
@@ -278,6 +302,9 @@ class Renderer
 
     void enableDepthTest() noexcept;
     void disableDepthTest() noexcept;
+
+    void enableSmoothLines();
+    void disableSmoothLines();
 
     void drawRectangle(const Rect& r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
     void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
@@ -717,9 +744,6 @@ class Renderer
     void updateBodyVisibilityMask();
 
     void createShadowFBO();
-
-    void enableSmoothLines();
-    void disableSmoothLines();
 
 #ifdef USE_HDR
  private:

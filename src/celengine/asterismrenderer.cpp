@@ -17,7 +17,7 @@ using namespace std;
 AsterismRenderer::AsterismRenderer(const AsterismList *asterisms) :
     m_asterisms(asterisms)
 {
-    m_shadprop.texUsage = ShaderProperties::VertexColors;
+    m_shadprop.texUsage = ShaderProperties::VertexColors | ShaderProperties::LineAsTriangles;
     m_shadprop.lightModel = ShaderProperties::UnlitModel;
 }
 
@@ -37,22 +37,25 @@ void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColo
     m_vo.bind();
     if (!m_vo.initialized())
     {
-        auto *vtxBuf = prepare();
-        if (vtxBuf == nullptr)
+        std::vector<LineEnds> data;
+        if (!prepare(data))
         {
             m_vo.unbind();
             return;
         }
 
-        m_vo.allocate(m_vtxTotal * 3 * sizeof(GLfloat), vtxBuf);
-        m_vo.setVertices(3, GL_FLOAT, false, 0, 0);
-        delete[] vtxBuf;
+        m_vo.allocate(data.size() * sizeof(LineEnds), data.data());
+        m_vo.setVertices(3, GL_FLOAT, false, sizeof(LineEnds), offsetof(LineEnds, point1));
+        m_vo.setVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex, 3, GL_FLOAT, false, sizeof(LineEnds), offsetof(LineEnds, point2));
+        m_vo.setVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex, 1, GL_FLOAT, false, sizeof(LineEnds), offsetof(LineEnds, scale));
     }
 
     prog->use();
     prog->setMVPMatrices(*mvp.projection, *mvp.modelview);
+    prog->lineWidthX = renderer.getLineWidthX();
+    prog->lineWidthY = renderer.getLineWidthY();
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, defaultColor);
-    m_vo.draw(GL_LINES, m_vtxTotal);
+    m_vo.draw(GL_TRIANGLES, m_vtxTotal);
 
     assert(m_asterisms->size() == m_vtxCount.size());
 
@@ -67,16 +70,16 @@ void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColo
             continue;
         }
 
-	Color color = {ast->getOverrideColor(), opacity};
+        Color color = {ast->getOverrideColor(), opacity};
         glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
-        m_vo.draw(GL_LINES, m_vtxCount[i], offset);
+        m_vo.draw(GL_TRIANGLES, m_vtxCount[i], offset);
         offset += m_vtxCount[i];
     }
 
     m_vo.unbind();
 }
 
-GLfloat* AsterismRenderer::prepare()
+bool AsterismRenderer::prepare(std::vector<LineEnds> &data)
 {
     // calculate required vertices number
     GLsizei vtx_num = 0;
@@ -85,12 +88,12 @@ GLfloat* AsterismRenderer::prepare()
         GLsizei ast_vtx_num = 0;
         for (int k = 0; k < ast->getChainCount(); k++)
         {
-            // as we use GL_LINES we should double the number of vertices
-            // as we don't need closed figures we have only one copy of
-            // the 1st and last vertexes
+            // as we use GL_TRIANGLES we should six times the number of
+            // vertices as we don't need closed figures we have only one
+            // copy of the 1st and last vertexes
             GLsizei s = ast->getChain(k).size();
             if (s > 1)
-                ast_vtx_num += 2 * s - 2;
+                ast_vtx_num += (s - 1) * 6;
         }
 
         m_vtxCount.push_back(ast_vtx_num);
@@ -98,11 +101,9 @@ GLfloat* AsterismRenderer::prepare()
     }
 
     if (vtx_num == 0)
-        return nullptr;
+        return false;
     m_vtxTotal = vtx_num;
-
-    GLfloat* vtx_buf = new GLfloat[vtx_num * 3];
-    GLfloat* ptr = vtx_buf;
+    data.reserve(m_vtxTotal);
 
     for (const auto ast : *m_asterisms)
     {
@@ -114,17 +115,18 @@ GLfloat* AsterismRenderer::prepare()
             if (chain.size() <= 1)
                 continue;
 
-            memcpy(ptr, chain[0].data(), 3 * sizeof(float));
-            ptr += 3;
-            for (unsigned i = 1; i < chain.size() - 1; i++)
+            for (unsigned i = 1; i < chain.size(); i++)
             {
-                memcpy(ptr,     chain[i].data(), 3 * sizeof(float));
-                memcpy(ptr + 3, chain[i].data(), 3 * sizeof(float));
-                ptr += 6;
+                Eigen::Vector3f prev = chain[i - 1];
+                Eigen::Vector3f cur = chain[i];
+                data.emplace_back(prev, cur, -0.5);
+                data.emplace_back(prev ,cur, 0.5);
+                data.emplace_back(cur, prev, -0.5);
+                data.emplace_back(cur, prev, -0.5);
+                data.emplace_back(cur, prev, 0.5);
+                data.emplace_back(prev, cur, -0.5);
             }
-            memcpy(ptr, chain[chain.size() - 1].data(), 3 * sizeof(float));
-            ptr += 3;
         }
     }
-    return vtx_buf;
+    return true;
 }
