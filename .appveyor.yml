@@ -59,6 +59,7 @@ install:
 - vcpkg install freetype:x86-windows
 - vcpkg install sdl2:x86-windows
 - git pull
+- git checkout 99cfc38036f330a035b57aa67f661526153e31c7
 - .\bootstrap-vcpkg.bat
 - vcpkg install cspice:x86-windows
 - vcpkg integrate install
