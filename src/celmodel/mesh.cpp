@@ -109,6 +109,23 @@ Mesh::VertexDescription::validate() const
     return true;
 }
 
+Mesh::VertexDescription Mesh::VertexDescription::appendingAttributes(const VertexAttribute* newAttributes, int count) const
+{
+    unsigned int totalAttributeCount = nAttributes + count;
+    VertexAttribute* allAttributes = new VertexAttribute[totalAttributeCount];
+    memcpy(allAttributes, attributes, sizeof(VertexAttribute) * nAttributes);
+    unsigned int newStride = stride;
+    for (int i = 0; i < count; ++i)
+    {
+        VertexAttribute attribute = newAttributes[i];
+        allAttributes[nAttributes + i] = attribute;
+        newStride += Mesh::getVertexAttributeSize(attribute.format);
+    }
+    memcpy(allAttributes + nAttributes, newAttributes, sizeof(VertexAttribute) * count);
+    VertexDescription desc = VertexDescription(newStride, totalAttributeCount, allAttributes);
+    delete[] allAttributes;
+    return desc;
+}
 
 Mesh::VertexDescription::~VertexDescription()
 {
@@ -236,17 +253,113 @@ Mesh::addGroup(PrimitiveGroup* group)
 }
 
 
+Mesh::PrimitiveGroup* Mesh::createLinePrimitiveGroup(bool lineStrip, unsigned int nIndices, index32* indices)
+{
+    // Transform LINE_STRIP/LINES to triangle vertices
+    int transformedVertCount = lineStrip ? (nIndices - 1) * 4 : nIndices * 2;
+    // Get information of the position attributes
+    auto positionAttributes = vertexDesc.getAttribute(Position);
+    int positionSize = getVertexAttributeSize(positionAttributes.format);
+    int positionOffset = positionAttributes.offset;
+
+    int originalStride = vertexDesc.stride;
+    // Add another position (next line end), and scale factor
+    // ORIGINAL ATTRIBUTES | NextVCoordAttributeIndex | ScaleFactorAttributeIndex
+    int stride = originalStride + positionSize + sizeof(float);
+
+    // Get line count
+    int lineCount = lineStrip ? nIndices - 1 : nIndices / 2;
+    int lineIndexCount = 6 * lineCount;
+    int lineVertexCount = 4 * lineCount;
+
+    // Create buffer to hold the transformed vertices/indices
+    unsigned char* data = new unsigned char[stride * lineVertexCount];
+    index32* newIndices = new index32[lineIndexCount];
+
+    unsigned char* originalData = (unsigned char *)vertices;
+    auto ptr = data;
+    for (int i = 0; i < lineCount; ++i)
+    {
+        int thisIndex = indices[lineStrip ? i : i * 2];
+        int nextIndex = indices[lineStrip ? i + 1 : i * 2 + 1];
+
+        unsigned char* origThisVertLoc = originalData + thisIndex * originalStride;
+        unsigned char* origNextVertLoc = originalData + nextIndex * originalStride;
+        float *ff = (float *)origThisVertLoc;
+        float *ffn = (float *)origNextVertLoc;
+
+        // Fill the info for the 4 vertices
+        memcpy(ptr, origThisVertLoc, originalStride);
+        memcpy(ptr + originalStride, origNextVertLoc + positionOffset, positionSize);
+        *(float *)&ptr[originalStride + positionSize] = -0.5f;
+        ptr += stride;
+
+        memcpy(ptr, origThisVertLoc, originalStride);
+        memcpy(ptr + originalStride, origNextVertLoc + positionOffset, positionSize);
+        *(float *)&ptr[originalStride + positionSize] = 0.5f;
+        ptr += stride;
+
+        memcpy(ptr, origNextVertLoc, originalStride);
+        memcpy(ptr + originalStride, origThisVertLoc + positionOffset, positionSize);
+        *(float *)&ptr[originalStride + positionSize] = -0.5f;
+        ptr += stride;
+
+        memcpy(ptr, origNextVertLoc, originalStride);
+        memcpy(ptr + originalStride, origThisVertLoc + positionOffset, positionSize);
+        *(float *)&ptr[originalStride + positionSize] = 0.5f;
+        ptr += stride;
+
+        int lineIndex = 6 * i;
+        index32 newIndex = 4 * i;
+
+        // Fill info for the 6 indices
+        newIndices[lineIndex] = newIndex;
+        newIndices[lineIndex + 1] = newIndex + 1;
+        newIndices[lineIndex + 2] = newIndex + 2;
+        newIndices[lineIndex + 3] = newIndex + 2;
+        newIndices[lineIndex + 4] = newIndex + 3;
+        newIndices[lineIndex + 5] = newIndex;
+    }
+
+    array<VertexAttribute, 2> newAttributes = {
+        VertexAttribute(NextPosition, positionAttributes.format, originalStride),
+        VertexAttribute(ScaleFactor, Float1, originalStride + positionSize),
+    };
+    auto* g = new PrimitiveGroup();
+    g->vertexOverride = data;
+    g->vertexCountOverride = lineVertexCount;
+    g->vertexDescriptionOverride = vertexDesc.appendingAttributes(newAttributes.data(), 2);
+    g->indicesOverride = newIndices;
+    g->nIndicesOverride = lineIndexCount;
+    g->primOverride = PrimitiveGroupType::TriList;
+    return g;
+}
+
+
 unsigned int
 Mesh::addGroup(PrimitiveGroupType prim,
                unsigned int materialIndex,
                unsigned int nIndices,
                index32* indices)
 {
-    auto* g = new PrimitiveGroup();
-    g->prim = prim;
-    g->materialIndex = materialIndex;
+    PrimitiveGroup* g;
+    if (prim == LineStrip || prim == LineList)
+    {
+        g = createLinePrimitiveGroup(prim == LineStrip, nIndices, indices);
+    }
+    else
+    {
+        g = new PrimitiveGroup;
+        g->vertexOverride = nullptr;
+        g->vertexCountOverride = 0;
+        g->indicesOverride = nullptr;
+        g->nIndicesOverride = 0;
+        g->primOverride = prim;
+    }
     g->nIndices = nIndices;
     g->indices = indices;
+    g->prim = prim;
+    g->materialIndex = materialIndex;
 
     return addGroup(g);
 }
@@ -516,6 +629,27 @@ Mesh::transform(const Vector3f& translation, float scale)
     {
         const Vector3f tv = (Map<Vector3f>(reinterpret_cast<float*>(vdata)) + translation) * scale;
         Map<Vector3f>(reinterpret_cast<float*>(vdata)) = tv;
+    }
+
+    // Scale and translate the overriden vertex values
+    for (i = 0; i < getGroupCount(); i++)
+    {
+        PrimitiveGroup* group = getGroup(i);
+        char* vdata = reinterpret_cast<char*>(group->vertexOverride);
+        if (!vdata)
+            return;
+
+        auto vertexDesc = group->vertexDescriptionOverride;
+        int positionOffset = vertexDesc.getAttribute(Position).offset;
+        int nextPositionOffset = vertexDesc.getAttribute(NextPosition).offset;
+        for (int j = 0; j < group->vertexCountOverride; j++, vdata += vertexDesc.stride)
+        {
+            Vector3f tv = (Map<Vector3f>(reinterpret_cast<float*>(vdata + positionOffset)) + translation) * scale;
+            Map<Vector3f>(reinterpret_cast<float*>(vdata + positionOffset)) = tv;
+
+            tv = (Map<Vector3f>(reinterpret_cast<float*>(vdata + nextPositionOffset)) + translation) * scale;
+            Map<Vector3f>(reinterpret_cast<float*>(vdata + nextPositionOffset)) = tv;
+        }
     }
 
     // Point sizes need to be scaled as well
