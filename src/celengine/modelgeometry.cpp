@@ -37,14 +37,14 @@ public:
     {
         for (auto vboId : vbos)
         {
-            if (vboId != 0)
+            if (vboId.second)
             {
-                glDeleteBuffers(1, &vboId);
+                glDeleteBuffers(1, &vboId.second);
             }
         }
     }
 
-    std::vector<GLuint> vbos; // vertex buffer objects
+    std::map<const void*, GLuint> vbos; // vertex buffer objects
 };
 
 
@@ -99,10 +99,27 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
                                     mesh->getVertexData(),
                                     GL_STATIC_DRAW);
                     glBindBuffer(GL_ARRAY_BUFFER, 0);
+                    m_glData->vbos[mesh->getVertexData()] = vboId;
                 }
             }
 
-            m_glData->vbos.push_back(vboId);
+            for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
+            {
+                const Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+                if (group->vertexOverride != nullptr && group->vertexCountOverride * group->vertexDescriptionOverride.stride > MinVBOSize)
+                {
+                    glGenBuffers(1, &vboId);
+                    if (vboId != 0)
+                    {
+                        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+                        glBufferData(GL_ARRAY_BUFFER,
+                                     group->vertexCountOverride * group->vertexDescriptionOverride.stride,
+                                     group->vertexOverride, GL_STATIC_DRAW);
+                        glBindBuffer(GL_ARRAY_BUFFER, 0);
+                        m_glData->vbos[group->vertexOverride] = vboId;
+                    }
+                }
+            }
         }
     }
 
@@ -113,30 +130,42 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
     for (unsigned int meshIndex = 0; meshIndex < m_model->getMeshCount(); ++meshIndex)
     {
         Mesh* mesh = m_model->getMesh(meshIndex);
-        GLuint vboId = 0;
 
-        if (meshIndex < m_glData->vbos.size())
-        {
-            vboId = m_glData->vbos[meshIndex];
-        }
-
-        if (vboId != 0)
-        {
-            // Bind the vertex buffer object.
-            glBindBuffer(GL_ARRAY_BUFFER, vboId);
-            rc.setVertexArrays(mesh->getVertexDescription(), nullptr);
-        }
-        else
-        {
-            // No vertex buffer object; just use normal vertex arrays
-            rc.setVertexArrays(mesh->getVertexDescription(), mesh->getVertexData());
-        }
+        const void* currentData = nullptr;
+        GLuint currentVboId = 0;
 
         // Iterate over all primitive groups in the mesh
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
         {
             const Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
-            rc.updateShader(mesh->getVertexDescription(), group->prim);
+            bool useOverrideValue = group->vertexOverride != nullptr && rc.shouldDrawLineAsTriangles();
+
+            const void* data = useOverrideValue ? group->vertexOverride : mesh->getVertexData();
+            auto vertexDescription = useOverrideValue ? group->vertexDescriptionOverride : mesh->getVertexDescription();
+
+            if (currentData != data)
+            {
+                GLuint vboId = m_glData->vbos[data];
+                if (vboId != 0)
+                {
+                    // Bind the vertex buffer object.
+                    glBindBuffer(GL_ARRAY_BUFFER, vboId);
+                    rc.setVertexArrays(vertexDescription, nullptr);
+                }
+                else
+                {
+                    if (currentVboId != 0)
+                    {
+                        glBindBuffer(GL_ARRAY_BUFFER, 0);
+                    }
+                    // No vertex buffer object; just use normal vertex arrays
+                    rc.setVertexArrays(vertexDescription, data);
+                }
+                currentData = data;
+                currentVboId = vboId;
+            }
+
+            rc.updateShader(vertexDescription, group->prim);
 
             // Set up the material
             const Material* material = nullptr;
@@ -147,11 +176,11 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             }
 
             rc.setMaterial(material);
-            rc.drawGroup(*group);
+            rc.drawGroup(*group, useOverrideValue);
         }
 
         // If we set a VBO, unbind it.
-        if (vboId != 0)
+        if (currentVboId != 0)
         {
             glBindBuffer(GL_ARRAY_BUFFER, 0);
         }

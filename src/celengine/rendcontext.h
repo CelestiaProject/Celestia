@@ -30,13 +30,14 @@ class RenderContext
     virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
                                  const void* vertexData);
     virtual void updateShader(const cmod::Mesh::VertexDescription& desc, cmod::Mesh::PrimitiveGroupType primType);
-    virtual void drawGroup(const cmod::Mesh::PrimitiveGroup& group);
+    virtual void drawGroup(const cmod::Mesh::PrimitiveGroup& group, bool useOverride);
 
     const cmod::Material* getMaterial() const;
     void setMaterial(const cmod::Material*);
     void lock() { locked = true; }
     void unlock() { locked = false; }
     bool isLocked() const { return locked; }
+    bool shouldDrawLineAsTriangles() const;
 
     enum RenderPass
     {
@@ -70,6 +71,7 @@ class RenderContext
     bool useNormals{ true };
     bool useColors{ false };
     bool useTexCoords{ true };
+    bool drawLine { false };
     const Eigen::Matrix4f *modelViewMatrix;
     const Eigen::Matrix4f *projectionMatrix;
 };

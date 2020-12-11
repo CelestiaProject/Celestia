@@ -42,7 +42,9 @@ class Mesh
         Texture2     = 7,
         Texture3     = 8,
         PointSize    = 9,
-        SemanticMax  = 10,
+        NextPosition = 10,
+        ScaleFactor  = 11,
+        SemanticMax  = 12,
         InvalidSemantic  = -1,
     };
 
@@ -93,6 +95,8 @@ class Mesh
             return semanticMap[semantic];
         }
 
+        VertexDescription appendingAttributes(const VertexAttribute* newAttributes, int count) const;
+
         bool validate() const;
 
         VertexDescription& operator=(const VertexDescription&);
@@ -134,6 +138,12 @@ class Mesh
         unsigned int materialIndex;
         index32* indices;
         unsigned int nIndices;
+        PrimitiveGroupType primOverride;
+        void* vertexOverride;
+        unsigned int vertexCountOverride;
+        index32* indicesOverride;
+        unsigned int nIndicesOverride;
+        VertexDescription vertexDescriptionOverride { 0, 0, nullptr };
     };
 
     class PickResult
@@ -154,6 +164,7 @@ class Mesh
     bool setVertexDescription(const VertexDescription& desc);
     const VertexDescription& getVertexDescription() const;
 
+    PrimitiveGroup* createLinePrimitiveGroup(bool lineStrip, unsigned int nIndices, Mesh::index32* indices);
     const PrimitiveGroup* getGroup(unsigned int index) const;
     PrimitiveGroup* getGroup(unsigned int index);
     unsigned int addGroup(PrimitiveGroup* group);
