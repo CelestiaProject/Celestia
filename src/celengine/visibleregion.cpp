@@ -94,21 +94,29 @@ renderTerminator(Renderer* renderer,
      * Because of this we make calculations on a CPU and stream results to GPU.
      */
 
-    float lineWidth = renderer->getScreenDpi() / 96.0f;
+    using AttributesType = celgl::VertexObject::AttributesType;
+
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors | ShaderProperties::LineAsTriangles;
+    shadprop.texUsage = ShaderProperties::VertexColors;
     shadprop.lightModel = ShaderProperties::UnlitModel;
+
+    bool lineAsTriangles = renderer->shouldDrawLineAsTriangles();
+    if (lineAsTriangles)
+        shadprop.texUsage |= ShaderProperties::LineAsTriangles;
+
     auto *prog = renderer->getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
 
     auto &vo = renderer->getVertexObject(VOType::Terminator, GL_ARRAY_BUFFER, 0, GL_STREAM_DRAW);
 
-    vo.bindWritable();
+    vo.bindWritable(lineAsTriangles ? AttributesType::Default : AttributesType::Alternative1);
     if (!vo.initialized())
     {
         vo.setBufferSize((maxSections + 2) * 2 * sizeof(LineStripEnd));
         vo.allocate();
+
+        // Attributes for lines drawn as triangles
         vo.setVertices(3, GL_FLOAT, false, sizeof(LineStripEnd), 0);
         vo.setVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex,
                                 3, GL_FLOAT, false, sizeof(LineStripEnd)
@@ -116,17 +124,26 @@ renderTerminator(Renderer* renderer,
         vo.setVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex,
                                 1, GL_FLOAT, false, sizeof(LineStripEnd)
                                 , offsetof(LineStripEnd, scale));
+
+        // Attributes for lines drawn as lines
+        vo.setVertices(3, GL_FLOAT, false, 2 * sizeof(LineStripEnd), 0, AttributesType::Alternative1);
     }
 
     vo.setBufferData(pos.data(), 0, pos.size() * sizeof(LineStripEnd));
 
     prog->use();
-    prog->lineWidthX = renderer->getLineWidthX();
-    prog->lineWidthY = renderer->getLineWidthY();
     prog->setMVPMatrices(*mvp.projection, *mvp.modelview);
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
-
-    vo.draw(GL_TRIANGLE_STRIP, pos.size() - 2);
+    if (lineAsTriangles)
+    {
+        prog->lineWidthX = renderer->getLineWidthX();
+        prog->lineWidthY = renderer->getLineWidthY();
+        vo.draw(GL_TRIANGLE_STRIP, pos.size() - 2);
+    }
+    else
+    {
+        vo.draw(GL_LINE_STRIP, (pos.size() - 2) / 2, 0);
+    }
 
     vo.unbind();
 }

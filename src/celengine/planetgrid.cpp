@@ -93,8 +93,11 @@ PlanetographicGrid::render(Renderer* renderer,
                            const Matrices& m) const
 {
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors | ShaderProperties::LineAsTriangles;
+    shadprop.texUsage = ShaderProperties::VertexColors;
     shadprop.lightModel = ShaderProperties::UnlitModel;
+    bool lineAsTriangles = renderer->shouldDrawLineAsTriangles(2.0f);
+    if (lineAsTriangles)
+        shadprop.texUsage |= ShaderProperties::LineAsTriangles;
     auto *prog = renderer->getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
@@ -129,14 +132,22 @@ PlanetographicGrid::render(Renderer* renderer,
     Matrix4f modelView = *m.modelview * transform.matrix();
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-    glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xzCircle[0].point);
-    glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xzCircle[2].point);
-    glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                          1, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xzCircle[0].scale);
+    if (lineAsTriangles)
+    {
+        glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+        glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xzCircle[0].point);
+        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xzCircle[2].point);
+        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
+                              1, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xzCircle[0].scale);
+    }
+    else
+    {
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd) * 2, &xzCircle[0].point);
+    }
 
     // Only show the coordinate labels if the body is sufficiently large on screen
     bool showCoordinateLabels = false;
@@ -164,18 +175,37 @@ PlanetographicGrid::render(Renderer* renderer,
         {
             glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex,
                            Renderer::PlanetEquatorColor);
-            prog->lineWidthX = 2.0f * lineWidthX;
-            prog->lineWidthY = 2.0f * lineWidthY;
+            if (lineAsTriangles)
+            {
+                prog->lineWidthX = 2.0f * lineWidthX;
+                prog->lineWidthY = 2.0f * lineWidthY;
+            }
+            else
+            {
+                glLineWidth(renderer->getRasterizedLineWidth(2.0f));
+            }
         }
         else
         {
             glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex,
                            Renderer::PlanetographicGridColor);
-            prog->lineWidthX = lineWidthX;
-            prog->lineWidthY = lineWidthY;
+            if (lineAsTriangles)
+            {
+                prog->lineWidthX = lineWidthX;
+                prog->lineWidthY = lineWidthY;
+            }
         }
         prog->setMVPMatrices(projection, modelView * vecgl::translate(0.0f, sin(phi), 0.0f) * vecgl::scale(r));
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, xzCircle.size() - 2);
+        if (lineAsTriangles)
+        {
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, xzCircle.size() - 2);
+        }
+        else
+        {
+            glDrawArrays(GL_LINE_STRIP, 0, (xzCircle.size() - 2) / 2);
+            if (latitude == 0.0f)
+                glLineWidth(renderer->getRasterizedLineWidth(1.0f));
+        }
 
         if (showCoordinateLabels)
         {
@@ -194,19 +224,30 @@ PlanetographicGrid::render(Renderer* renderer,
         }
     }
 
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xyCircle[0].point);
-    glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xyCircle[2].point);
-    glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                          1, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xyCircle[0].scale);
+    if (lineAsTriangles)
+    {
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xyCircle[0].point);
+        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xyCircle[2].point);
+        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
+                              1, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &xyCircle[0].scale);
+    }
+    else
+    {
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd) * 2, &xyCircle[0].point);
+    }
 
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex,
                    Renderer::PlanetographicGridColor);
     for (float longitude = 0.0f; longitude <= 180.0f; longitude += longitudeStep)
     {
         prog->setMVPMatrices(projection, modelView * vecgl::rotate(AngleAxisf(degToRad(longitude), Vector3f::UnitY())));
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, xyCircle.size() - 2);
+        if (lineAsTriangles)
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, xyCircle.size() - 2);
+        else
+            glDrawArrays(GL_LINE_STRIP, 0, (xyCircle.size() - 2) / 2);
 
         if (showCoordinateLabels)
         {
@@ -260,8 +301,11 @@ PlanetographicGrid::render(Renderer* renderer,
     }
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
+    if (lineAsTriangles)
+    {
+        glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+        glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
+    }
 
     renderer->enableBlending();
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);

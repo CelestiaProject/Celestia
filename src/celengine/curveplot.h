@@ -74,7 +74,8 @@ class CurvePlot
                 double farZ,
                 const Eigen::Vector3d viewFrustumPlaneNormals[],
                 double subdivisionThreshold,
-                const Eigen::Vector4f& color) const;
+                const Eigen::Vector4f& color,
+                bool lineAsTriangles) const;
     void render(const Eigen::Affine3d& modelview,
                 double nearZ,
                 double farZ,
@@ -82,7 +83,8 @@ class CurvePlot
                 double subdivisionThreshold,
                 double startTime,
                 double endTime,
-                const Eigen::Vector4f& color) const;
+                const Eigen::Vector4f& color,
+                bool lineAsTriangles) const;
     void renderFaded(const Eigen::Affine3d& modelview,
                      double nearZ,
                      double farZ,
@@ -92,7 +94,8 @@ class CurvePlot
                      double endTime,
                      const Eigen::Vector4f& color,
                      double fadeStartTime,
-                     double fadeEndTime) const;
+                     double fadeEndTime,
+                     bool lineAsTriangles) const;
 
     unsigned int lastUsed() const { return m_lastUsed; }
     void setLastUsed(unsigned int lastUsed) { m_lastUsed = lastUsed; }
