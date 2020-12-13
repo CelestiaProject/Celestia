@@ -289,12 +289,12 @@ static void initLineVO(VertexObject& vo)
 
     int offset = 0;
 #define VOSTREAM_LINES(a) do { \
-a##LineOffset = offset / stride;\
-a##LineCount = bufferLineVertices(vo, a, 2, a##Count, offset); \
+a##LineOffset = offset / stride / 6;\
+a##LineCount = bufferLineVertices(vo, a, 2, a##Count, offset) / 6; \
 } while (0)
 #define VOSTREAM_LINE_LOOP(a) do { \
-a##LineOffset = offset / stride;\
-a##LineCount = bufferLineLoopVertices(vo, a, 2, a##Count, offset); \
+a##LineOffset = offset / stride / 6;\
+a##LineCount = bufferLineLoopVertices(vo, a, 2, a##Count, offset) / 6; \
 } while (0)
     VOSTREAM_LINE_LOOP(Diamond);
     VOSTREAM_LINES(Plus);
@@ -309,6 +309,8 @@ a##LineCount = bufferLineLoopVertices(vo, a, 2, a##Count, offset); \
     vo.setVertices(2, GL_FLOAT, false, stride, 0);
     vo.setVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex, 2, GL_FLOAT, false, stride, sizeof(GLfloat) * 2);
     vo.setVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex, 1, GL_FLOAT, false, stride, sizeof(GLfloat) * 4);
+
+    vo.setVertices(2, GL_FLOAT, false, stride * 3, 0, VertexObject::AttributesType::Alternative1);
 }
 
 static void initEclipticVO(VertexObject& vo)
@@ -328,11 +330,13 @@ static void initEclipticVO(VertexObject& vo)
     int stride = sizeof(GLfloat) * 7;
     vo.allocate(eclipticCount * 6 * stride);
     int offset = 0;
-    EclipticLineCount = bufferLineLoopVertices(vo, ecliptic, 3, eclipticCount, offset);
+    EclipticLineCount = bufferLineLoopVertices(vo, ecliptic, 3, eclipticCount, offset) / 6;
 
     vo.setVertices(3, GL_FLOAT, false, stride, 0);
     vo.setVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex, 3, GL_FLOAT, false, stride, sizeof(GLfloat) * 3);
     vo.setVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex, 1, GL_FLOAT, false, stride, sizeof(GLfloat) * 6);
+
+    vo.setVertices(3, GL_FLOAT, false, stride * 3, 0, VertexObject::AttributesType::Alternative1);
 }
 
 void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
@@ -342,8 +346,9 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
 {
     assert(shaderManager != nullptr);
 
-    bool solid = true;
+    using AttributesType = celgl::VertexObject::AttributesType;
 
+    bool solid = true;
     switch (symbol)
     {
     case MarkerRepresentation::Diamond:
@@ -359,8 +364,14 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
 
     ShaderProperties shadprop;
     shadprop.texUsage = ShaderProperties::VertexColors;
+
+    bool lineAsTriangles = false;
     if (!solid)
-        shadprop.texUsage |= ShaderProperties::LineAsTriangles;
+    {
+        lineAsTriangles = shouldDrawLineAsTriangles();
+        if (lineAsTriangles)
+            shadprop.texUsage |= ShaderProperties::LineAsTriangles;
+    }
     shadprop.lightModel = ShaderProperties::UnlitModel;
     shadprop.fishEyeOverride = ShaderProperties::FisheyeOverrideModeDisabled;
     auto* prog = shaderManager->getShader(shadprop);
@@ -368,7 +379,10 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
         return;
 
     auto &markerVO = getVertexObject(solid ? VOType::Marker : VOType::MarkerLine, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
-    markerVO.bind();
+    if (solid)
+        markerVO.bind();
+    else
+        markerVO.bind(lineAsTriangles ? AttributesType::Default : AttributesType::Alternative1);
     if (!markerVO.initialized())
         solid ? initVO(markerVO) : initLineVO(markerVO);
 
@@ -377,28 +391,34 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
     prog->use();
     float s = size / 2.0f * getScaleFactor();
     prog->setMVPMatrices(*m.projection, (*m.modelview) * vecgl::scale(Vector3f(s, s, 0)));
-    if (!solid)
+    if (lineAsTriangles)
     {
         prog->lineWidthX = getLineWidthX();
         prog->lineWidthY = getLineWidthY();
     }
 
+#define DRAW_LINE(type) do { \
+if (lineAsTriangles) \
+    markerVO.draw(GL_TRIANGLES, type##LineCount * 6, type##LineOffset * 6); \
+else \
+    markerVO.draw(GL_LINES, type##LineCount * 2, type##LineOffset * 2); \
+} while (0)
     switch (symbol)
     {
     case MarkerRepresentation::Diamond:
-        markerVO.draw(GL_TRIANGLES, DiamondLineCount, DiamondLineOffset);
+        DRAW_LINE(Diamond);
         break;
 
     case MarkerRepresentation::Plus:
-        markerVO.draw(GL_TRIANGLES, PlusLineCount, PlusLineOffset);
+        DRAW_LINE(Plus);
         break;
 
     case MarkerRepresentation::X:
-        markerVO.draw(GL_TRIANGLES, XLineCount, XLineOffset);
+        DRAW_LINE(X);
         break;
 
     case MarkerRepresentation::Square:
-        markerVO.draw(GL_TRIANGLES, SquareLineCount, SquareLineOffset);
+        DRAW_LINE(Square);
         break;
 
     case MarkerRepresentation::FilledSquare:
@@ -406,7 +426,7 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
         break;
 
     case MarkerRepresentation::Triangle:
-        markerVO.draw(GL_TRIANGLES, TriangleLineCount, TriangleLineOffset);
+        DRAW_LINE(Triangle);
         break;
 
     case MarkerRepresentation::RightArrow:
@@ -427,9 +447,9 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
 
     case MarkerRepresentation::Circle:
         if (size <= 40.0f) // TODO: this should be configurable
-            markerVO.draw(GL_TRIANGLES, SmallCircleLineCount, SmallCircleLineOffset);
+            DRAW_LINE(SmallCircle);
         else
-            markerVO.draw(GL_TRIANGLES, LargeCircleLineCount, LargeCircleLineOffset);
+            DRAW_LINE(LargeCircle);
         break;
 
     case MarkerRepresentation::Disk:
@@ -442,6 +462,7 @@ void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
     default:
         break;
     }
+#undef DRAW_LINE
 
     markerVO.unbind();
 }
@@ -532,15 +553,22 @@ void Renderer::renderEclipticLine()
     if ((renderFlags & ShowEcliptic) == 0)
         return;
 
+    using AttributesType = celgl::VertexObject::AttributesType;
+
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors | ShaderProperties::LineAsTriangles;
+    shadprop.texUsage = ShaderProperties::VertexColors;
     shadprop.lightModel = ShaderProperties::UnlitModel;
+
+    bool lineAsTriangles = shouldDrawLineAsTriangles();
+    if (lineAsTriangles)
+        shadprop.texUsage |= ShaderProperties::LineAsTriangles;
+
     auto* prog = shaderManager->getShader(shadprop);
     if (prog == nullptr)
         return;
 
     auto &eclipticVO = getVertexObject(VOType::Ecliptic, GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW);
-    eclipticVO.bind();
+    eclipticVO.bind(lineAsTriangles ? AttributesType::Default : AttributesType::Alternative1);
     if (!eclipticVO.initialized())
         initEclipticVO(eclipticVO);
 
@@ -548,9 +576,16 @@ void Renderer::renderEclipticLine()
 
     prog->use();
     prog->setMVPMatrices(getProjectionMatrix(), getModelViewMatrix());
-    prog->lineWidthX = getLineWidthX();
-    prog->lineWidthY = getLineWidthY();
-    eclipticVO.draw(GL_TRIANGLES, EclipticLineCount, 0);
+    if (lineAsTriangles)
+    {
+        prog->lineWidthX = getLineWidthX();
+        prog->lineWidthY = getLineWidthY();
+        eclipticVO.draw(GL_TRIANGLES, EclipticLineCount * 6);
+    }
+    else
+    {
+        eclipticVO.draw(GL_LINES, EclipticLineCount * 2);
+    }
 
     eclipticVO.unbind();
 }

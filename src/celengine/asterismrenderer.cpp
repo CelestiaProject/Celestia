@@ -17,7 +17,7 @@ using namespace std;
 AsterismRenderer::AsterismRenderer(const AsterismList *asterisms) :
     m_asterisms(asterisms)
 {
-    m_shadprop.texUsage = ShaderProperties::VertexColors | ShaderProperties::LineAsTriangles;
+    m_shadprop.texUsage = ShaderProperties::VertexColors;
     m_shadprop.lightModel = ShaderProperties::UnlitModel;
 }
 
@@ -30,11 +30,18 @@ bool AsterismRenderer::sameAsterisms(const AsterismList *asterisms) const
  */
 void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColor, const Matrices &mvp)
 {
-    auto *prog = renderer.getShaderManager().getShader(m_shadprop);
+    using AttributesType = celgl::VertexObject::AttributesType;
+
+    ShaderProperties props = m_shadprop;
+    bool lineAsTriangles = renderer.shouldDrawLineAsTriangles();
+    if (lineAsTriangles)
+        props.texUsage |= ShaderProperties::LineAsTriangles;
+
+    auto *prog = renderer.getShaderManager().getShader(props);
     if (prog == nullptr)
         return;
 
-    m_vo.bind();
+    m_vo.bind(lineAsTriangles ? AttributesType::Default : AttributesType::Alternative1);
     if (!m_vo.initialized())
     {
         std::vector<LineEnds> data;
@@ -44,20 +51,31 @@ void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColo
             return;
         }
 
+        // Attributes for lines drawn as triangles
         m_vo.allocate(data.size() * sizeof(LineEnds), data.data());
         m_vo.setVertices(3, GL_FLOAT, false, sizeof(LineEnds), offsetof(LineEnds, point1));
         m_vo.setVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex, 3, GL_FLOAT, false, sizeof(LineEnds), offsetof(LineEnds, point2));
         m_vo.setVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex, 1, GL_FLOAT, false, sizeof(LineEnds), offsetof(LineEnds, scale));
+
+        // Attributes for lines drawn as lines
+        m_vo.setVertices(3, GL_FLOAT, false, sizeof(LineEnds) * 3, offsetof(LineEnds, point1), AttributesType::Alternative1);
     }
 
     prog->use();
     prog->setMVPMatrices(*mvp.projection, *mvp.modelview);
-    prog->lineWidthX = renderer.getLineWidthX();
-    prog->lineWidthY = renderer.getLineWidthY();
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, defaultColor);
-    m_vo.draw(GL_TRIANGLES, m_vtxTotal);
+    if (lineAsTriangles)
+    {
+        prog->lineWidthX = renderer.getLineWidthX();
+        prog->lineWidthY = renderer.getLineWidthY();
+        m_vo.draw(GL_TRIANGLES, m_totalLineCount * 6);
+    }
+    else
+    {
+        m_vo.draw(GL_LINES, m_totalLineCount * 2);
+    }
 
-    assert(m_asterisms->size() == m_vtxCount.size());
+    assert(m_asterisms->size() == m_lineCount.size());
 
     ptrdiff_t offset = 0;
     float opacity = defaultColor.alpha();
@@ -66,14 +84,17 @@ void AsterismRenderer::render(const Renderer &renderer, const Color &defaultColo
         auto *ast = (*m_asterisms)[i];
         if (!ast->getActive() || !ast->isColorOverridden())
         {
-            offset += m_vtxCount[i];
+            offset += m_lineCount[i];
             continue;
         }
 
         Color color = {ast->getOverrideColor(), opacity};
         glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, color);
-        m_vo.draw(GL_TRIANGLES, m_vtxCount[i], offset);
-        offset += m_vtxCount[i];
+        if (lineAsTriangles)
+            m_vo.draw(GL_TRIANGLES, m_lineCount[i] * 6, offset * 6);
+        else
+            m_vo.draw(GL_LINES, m_lineCount[i] * 2, offset * 2);
+        offset += m_lineCount[i];
     }
 
     m_vo.unbind();
@@ -93,18 +114,21 @@ bool AsterismRenderer::prepare(std::vector<LineEnds> &data)
             // copy of the 1st and last vertexes
             GLsizei s = ast->getChain(k).size();
             if (s > 1)
-                ast_vtx_num += (s - 1) * 6;
+                ast_vtx_num += s - 1;
         }
 
-        m_vtxCount.push_back(ast_vtx_num);
+        m_lineCount.push_back(ast_vtx_num);
         vtx_num += ast_vtx_num;
     }
 
     if (vtx_num == 0)
         return false;
-    m_vtxTotal = vtx_num;
-    data.reserve(m_vtxTotal);
 
+    m_totalLineCount = vtx_num;
+
+    // we reserve 6 times the space so we can allow to
+    // draw a line segment with two triangles
+    data.reserve(m_totalLineCount * 6);
     for (const auto ast : *m_asterisms)
     {
         for (int k = 0; k < ast->getChainCount(); k++)

@@ -392,8 +392,13 @@ SkyGrid::render(Renderer& renderer,
                 int windowHeight)
 {
     ShaderProperties shadprop;
-    shadprop.texUsage = ShaderProperties::VertexColors | ShaderProperties::LineAsTriangles;
+    shadprop.texUsage = ShaderProperties::VertexColors;
     shadprop.lightModel = ShaderProperties::UnlitModel;
+
+    bool lineAsTriangles = renderer.shouldDrawLineAsTriangles();
+    if (lineAsTriangles)
+        shadprop.texUsage |= ShaderProperties::LineAsTriangles;
+
     auto *prog = renderer.getShaderManager().getShader(shadprop);
     if (prog == nullptr)
         return;
@@ -556,8 +561,11 @@ SkyGrid::render(Renderer& renderer,
                  vecgl::rotate((xrot90 * m_orientation.conjugate() * xrot90.conjugate()).cast<float>()) *
                  vecgl::scale(1000.0f);
     prog->setMVPMatrices(renderer.getProjectionMatrix(), m);
-    prog->lineWidthX = renderer.getLineWidthX();
-    prog->lineWidthY = renderer.getLineWidthY();
+    if (lineAsTriangles)
+    {
+        prog->lineWidthX = renderer.getLineWidthX();
+        prog->lineWidthY = renderer.getLineWidthY();
+    }
 
     double arcStep = (maxTheta - minTheta) / (double) ARC_SUBDIVISIONS;
     double theta0 = minTheta;
@@ -565,14 +573,23 @@ SkyGrid::render(Renderer& renderer,
     vector<LineStripEnd> buffer;
     buffer.reserve(2 * (ARC_SUBDIVISIONS + 2));
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-    glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[0].point);
-    glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[2].point);
-    glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                          1, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[0].scale);
+    if (lineAsTriangles)
+    {
+        glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+        glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
+
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[0].point);
+        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[2].point);
+        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
+                              1, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd), &buffer[0].scale);
+    }
+    else
+    {
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(LineStripEnd) * 2, &buffer[0].point);
+    }
 
     for (int dec = startDec; dec <= endDec; dec += decIncrement)
     {
@@ -590,7 +607,10 @@ SkyGrid::render(Renderer& renderer,
             buffer[2 * j] = {position, -0.5f};
             buffer[2 * j + 1] =  {position, 0.5f};
         }
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * (ARC_SUBDIVISIONS + 1));
+        if (lineAsTriangles)
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * (ARC_SUBDIVISIONS + 1));
+        else
+            glDrawArrays(GL_LINE_STRIP, 0, ARC_SUBDIVISIONS + 1);
 
         // Place labels at the intersections of the view frustum planes
         // and the parallels.
@@ -667,7 +687,10 @@ SkyGrid::render(Renderer& renderer,
             buffer[2 * j] = {position, -0.5f};
             buffer[2 * j + 1] =  {position, 0.5f};
         }
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * (ARC_SUBDIVISIONS + 1));
+        if (lineAsTriangles)
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * (ARC_SUBDIVISIONS + 1));
+        else
+            glDrawArrays(GL_LINE_STRIP, 0, ARC_SUBDIVISIONS + 1);
 
         // Place labels at the intersections of the view frustum planes
         // and the meridians.
@@ -749,15 +772,27 @@ SkyGrid::render(Renderer& renderer,
         12, 13, 14,  14, 15, 12
     };
 
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data());
-    glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data() + 3);
-    glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                          1, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data() + 6);
-    glDrawElements(GL_TRIANGLES, lineAsTriangleIndcies.size(), GL_UNSIGNED_SHORT, lineAsTriangleIndcies.data());
+    if (lineAsTriangles)
+    {
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data());
+        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data() + 3);
+        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
+                              1, GL_FLOAT, GL_FALSE, sizeof(float) * 7, lineAsTriangleVertices.data() + 6);
+        glDrawElements(GL_TRIANGLES, lineAsTriangleIndcies.size(), GL_UNSIGNED_SHORT, lineAsTriangleIndcies.data());
+    }
+    else
+    {
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, sizeof(float) * 7 * 2, lineAsTriangleVertices.data());
+        glDrawArrays(GL_LINES, 0, 8);
+    }
 
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-    glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
+    if (lineAsTriangles)
+    {
+        glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+        glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
+    }
 }

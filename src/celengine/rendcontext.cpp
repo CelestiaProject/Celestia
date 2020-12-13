@@ -163,7 +163,6 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
     }
 
     bool drawPoints = false;
-    bool drawLines = false;
     if (group.prim == Mesh::SpriteList || group.prim == Mesh::PointList)
     {
         drawPoints = true;
@@ -175,11 +174,6 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 #endif
         glActiveTexture(GL_TEXTURE0);
     }
-    else if (group.prim == Mesh::LineList || group.prim == Mesh::LineStrip)
-    {
-        drawLines = true;
-        renderer->enableSmoothLines();
-    }
 
     glDrawElements(GLPrimitiveModes[(int) group.prim],
                    group.nIndices,
@@ -190,10 +184,6 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
     {
         glDisable(GL_POINT_SPRITE);
         glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
-    }
-    else if (drawLines)
-    {
-        renderer->disableSmoothLines();
     }
 #endif
 }

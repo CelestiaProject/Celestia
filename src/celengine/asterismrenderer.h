@@ -38,8 +38,8 @@ class AsterismRenderer
 
     celgl::VertexObject     m_vo        { GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
     ShaderProperties        m_shadprop;
-    std::vector<GLsizei>    m_vtxCount;
+    std::vector<GLsizei>    m_lineCount;
 
     const AsterismList     *m_asterisms { nullptr };
-    GLsizei                 m_vtxTotal  { 0 };
+    GLsizei                 m_totalLineCount  { 0 };
 };

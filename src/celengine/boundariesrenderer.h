@@ -38,5 +38,5 @@ class BoundariesRenderer
     celgl::VertexObject            m_vo         { GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
     ShaderProperties               m_shadprop;
     const ConstellationBoundaries *m_boundaries { nullptr };
-    GLsizei                        m_vtxTotal   { 0 };
+    GLsizei                        m_lineCount  { 0 };
 };

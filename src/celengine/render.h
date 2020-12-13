@@ -280,6 +280,8 @@ class Renderer
     float getPointHeight() const;
     float getLineWidthX() const;
     float getLineWidthY() const;
+    float getRasterizedLineWidth(float multiplier) const;
+    bool shouldDrawLineAsTriangles(float multiplier = 1.0f) const;
 
     // GL wrappers
     void getViewport(int* x, int* y, int* w, int* h) const;
@@ -302,9 +304,6 @@ class Renderer
 
     void enableDepthTest() noexcept;
     void disableDepthTest() noexcept;
-
-    void enableSmoothLines();
-    void disableSmoothLines();
 
     void drawRectangle(const Rect& r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
     void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
@@ -744,6 +743,9 @@ class Renderer
     void updateBodyVisibilityMask();
 
     void createShadowFBO();
+
+    void enableSmoothLines();
+    void disableSmoothLines();
 
 #ifdef USE_HDR
  private:
