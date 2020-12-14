@@ -292,7 +292,7 @@ struct GalaxyVertex
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     Vector4f position;
-    Matrix<GLshort, 4, 1> texCoord; // texCoord.x = x, texCoord.y = y, texCoord.z = color index, texCoord.w = alpha
+    Matrix<GLushort, 4, 1> texCoord; // texCoord.x = x, texCoord.y = y, texCoord.z = color index, texCoord.w = alpha
 };
 
 typedef vector<GalaxyVertex, aligned_allocator<GalaxyVertex>> AlignedGalaxyVertices;
@@ -303,7 +303,7 @@ static void draw(const AlignedGalaxyVertices& v, size_t count, const GLushort *i
                           4, GL_FLOAT, GL_FALSE,
                           sizeof(GalaxyVertex), v[0].position.data());
     glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                          4, GL_SHORT, GL_FALSE,
+                          4, GL_UNSIGNED_SHORT, GL_FALSE,
                           sizeof(GalaxyVertex), v[0].texCoord.data());
     glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, indices);
 }
@@ -446,8 +446,8 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
         if (screenFrac < 0.1f)
         {
             float a = (4.0f * lightGain + 1.0f) * btot * (0.1f - screenFrac) * brightness_corr * brightness * br;
-            short alpha = (short) (a * 65535.99f);
-            short color = (short) b.colorIndex;
+            GLushort alpha = (GLushort) (min(1.0f, a) * 65535.99f);
+            GLushort color = (GLushort) b.colorIndex;
             g_vertices[vertex++] = { p + v0, { 0, 0, color, alpha } };
             g_vertices[vertex++] = { p + v1, { 1, 0, color, alpha } };
             g_vertices[vertex++] = { p + v2, { 1, 1, color, alpha } };
