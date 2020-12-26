@@ -19,6 +19,7 @@ steps:
   displayName: "Force exit on error (bash)"
 
 - script: |
+    sudo apt update
     sudo apt install -y libeigen3-dev \
                         libepoxy-dev \
                         libtheora-dev \
@@ -41,12 +42,13 @@ steps:
                  jpeg \
                  gettext \
                  libpng \
-                 lua \
+                 lua@5.3 \
                  qt5 \
                  freetype \
                  libepoxy \
                  sdl2
     brew link gettext --force
+    brew link lua@5.3 --force
   displayName: 'Install macOS dependencies'
   condition: eq( variables['Agent.OS'], 'Darwin' )
 
