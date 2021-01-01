@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <memory>
 #include <celutil/debug.h>
 #include <celutil/bytes.h>
 #include <celengine/image.h>
@@ -71,7 +72,10 @@ struct DDSurfaceDesc
 };
 
 
-static uint32_t FourCC(const char* s)
+namespace
+{
+
+constexpr uint32_t FourCC(const char* s)
 {
     return (((uint32_t) s[3] << 24) |
             ((uint32_t) s[2] << 16) |
@@ -79,20 +83,13 @@ static uint32_t FourCC(const char* s)
             (uint32_t) s[0]);
 }
 
-
-#define DDPF_RGB    0x40
-#define DDPF_FOURCC 0x04
-
-
-// decompress a DXTc texture, taken from https://github.com/ptitSeb/gl4es
-GLvoid *decompressDXTc(GLsizei width, GLsizei height, GLenum format, int transparent0, int* simpleAlpha, int* complexAlpha, ifstream &in) {
-    // decompress a DXTc image
-    // get pixel size of decompressed image => fixed RGBA
-    int pixelsize = 4;
+// decompress a DXTc texture to a RGBA texture, taken from https://github.com/ptitSeb/gl4es
+uint32_t* decompressDXTc(uint32_t width, uint32_t height, GLenum format, bool transparent0, ifstream &in)
+{
     // TODO: check with the size of the input data stream if the stream is in fact decompressed
     // alloc memory
-    GLvoid *pixels = malloc(((width + 3) & ~3) * ((height + 3) & ~3) * pixelsize);
-    // decompress loop
+    auto *pixels = new uint32_t[((width + 3) & ~3) * ((height + 3) & ~3)];
+
     int blocksize = 0;
 #define DDS_MAX_BLOCK_SIZE      16
     switch (format)
@@ -105,33 +102,35 @@ GLvoid *decompressDXTc(GLsizei width, GLsizei height, GLenum format, int transpa
         blocksize = 16;
         break;
     }
-    char block[DDS_MAX_BLOCK_SIZE]; // enough to hold DXT1/3/5 blocks
+    uint8_t block[DDS_MAX_BLOCK_SIZE]; // enough to hold DXT1/3/5 blocks
     for (int y = 0; y < height; y += 4)
     {
         for (int x = 0; x < width; x += 4)
         {
             if (!in.good())
             {
-                free(pixels);
+                delete[] pixels;
                 return nullptr;
             }
-            in.read(block, blocksize);
+            in.read((char*)block, blocksize);
             switch(format)
             {
             case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-                DecompressBlockDXT1(x, y, width, (uint8_t*)block, transparent0, simpleAlpha, complexAlpha, (uint32_t *)pixels);
+                DecompressBlockDXT1(x, y, width, block, transparent0, pixels);
                 break;
             case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-                DecompressBlockDXT3(x, y, width, (uint8_t*)block, transparent0, simpleAlpha, complexAlpha, (uint32_t *)pixels);
+                DecompressBlockDXT3(x, y, width, block, transparent0, pixels);
                 break;
             case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-                DecompressBlockDXT5(x, y, width, (uint8_t*)block, transparent0, simpleAlpha, complexAlpha, (uint32_t *)pixels);
+                DecompressBlockDXT5(x, y, width, block, transparent0, pixels);
                 break;
             }
         }
     }
     return pixels;
 }
+
+} // anonymous namespace
 
 Image* LoadDDSImage(const fs::path& filename)
 {
@@ -240,30 +239,25 @@ Image* LoadDDSImage(const fs::path& filename)
         if (!gl::EXT_texture_compression_s3tc)
         {
             // DXTc texture not supported, decompress DXTc to RGBA
-            GLvoid *pixels = NULL;
-            int simpleAlpha = 0;
-            int complexAlpha = 0;
-            int transparent0 = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 1 : 0;
-            if ((ddsd.width & 3) || (ddsd.height & 3))
+            uint32_t *pixels = nullptr;
+            bool transparent0 = format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+            if ((ddsd.width & 3 != 0) || (ddsd.height & 3 != 0))
             {
-                GLvoid *tmp;
-                GLsizei nw = ddsd.width;
-                GLsizei nh = ddsd.height;
-                if (nw < 4) nw = 4;
-                if (nh < 4) nh = 4;
-                tmp = decompressDXTc(nw, nh, format, transparent0, &simpleAlpha, &complexAlpha, in);
+                uint32_t nw = max(ddsd.width, 4u);
+                uint32_t nh = max(ddsd.height, 4u);
+                auto *tmp = decompressDXTc(nw, nh, format, transparent0, in);
                 if (tmp != nullptr)
                 {
-                    pixels = malloc(4 * ddsd.width * ddsd.height);
+                    pixels = new uint32_t[ddsd.width * ddsd.height];
                     // crop
-                    for (int y=0; y<ddsd.height; y++)
+                    for (uint32_t y = 0; y < ddsd.height; y++)
                         memcpy((char *)pixels + y * ddsd.width * 4, (char *)tmp + y * nw * 4, ddsd.width * 4);
-                    free(tmp);
+                    delete[] tmp;
                 }
             }
             else
             {
-                pixels = decompressDXTc(ddsd.width, ddsd.height, format, transparent0, &simpleAlpha, &complexAlpha, in);
+                pixels = decompressDXTc(ddsd.width, ddsd.height, format, transparent0, in);
             }
 
             if (pixels == nullptr)
@@ -274,7 +268,7 @@ Image* LoadDDSImage(const fs::path& filename)
 
             Image *img = new Image(GL_RGBA, ddsd.width, ddsd.height);
             memcpy(img->getPixels(), pixels, 4 * ddsd.width * ddsd.height);
-            free(pixels);
+            delete[] pixels;
             return img;
         }
     }
