@@ -10,6 +10,7 @@
 #ifndef _CELESTIACORE_H_
 #define _CELESTIACORE_H_
 
+#include <fstream>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
@@ -22,6 +23,7 @@
 #include <celengine/simulation.h>
 #include <celengine/overlayimage.h>
 #include <celengine/viewporteffect.h>
+#include <celutil/tee.h>
 #include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
@@ -299,6 +301,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void notifyWatchers(int);
 
+    void setLogFile(fs::path&);
+
     class Alerter
     {
     public:
@@ -506,6 +510,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     string selectionNames;
 
     std::unique_ptr<Console> console;
+    std::ofstream m_logfile;
+    teestream m_tee;
 
 #ifdef CELX
     friend View* getViewByObserver(CelestiaCore*, Observer*);

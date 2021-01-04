@@ -194,7 +194,8 @@ CelestiaAppWindow::~CelestiaAppWindow()
 
 
 void CelestiaAppWindow::init(const QString& qConfigFileName,
-                             const QStringList& qExtrasDirectories)
+                             const QStringList& qExtrasDirectories,
+                             const QString& logFilename)
 {
     QString celestia_data_dir = QString::fromLocal8Bit(::getenv("CELESTIA_DATA_DIR"));
 
@@ -236,6 +237,12 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     setWindowIcon(QIcon(":/icons/celestia.png"));
 
+    if (!logFilename.isEmpty())
+    {
+        fs::path fn(logFilename.toStdString());
+        m_appCore->setLogFile(fn);
+    }
+
     if (!m_appCore->initSimulation(configFileName,
                                    extrasDirectories,
                                    progress))
@@ -261,7 +268,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     if (!gl::init() || !gl::checkVersion(gl::GL_2_1))
     {
         QMessageBox::critical(0, "Celestia", _("Celestia was unable to initialize OpenGL 2.1."));
-	exit(1);
+        exit(1);
     }
 
     m_appCore->setCursorHandler(glWidget);
