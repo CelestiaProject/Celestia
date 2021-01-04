@@ -39,6 +39,7 @@ using namespace std;
 static bool startFullscreen = false;
 static bool runOnce = false;
 static QString startURL;
+static QString logFilename;
 static QString startDirectory;
 static QString startScript;
 static QStringList extrasDirectories;
@@ -111,7 +112,7 @@ int main(int argc, char *argv[])
     QObject::connect(&window, SIGNAL(progressUpdate(const QString&, int, const QColor&)),
                      &splash, SLOT(showMessage(const QString&, int, const QColor&)));
 
-    window.init(configFileName, extrasDirectories);
+    window.init(configFileName, extrasDirectories, logFilename);
     window.show();
 
     splash.finish(&window);
@@ -198,6 +199,16 @@ bool ParseCommandLine()
         else if (args.at(i) == "-s" || args.at(i) == "--nosplash")
         {
             skipSplashScreen = true;
+        }
+        else if (args.at(i) == "-l" || args.at(i) == "--log")
+        {
+            if (isLastArg)
+            {
+                CommandLineError("A filename expected after --log/-l");
+                return false;
+            }
+            i++;
+            logFilename = args.at(i);
         }
         else
         {

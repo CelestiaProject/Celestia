@@ -149,7 +149,8 @@ CelestiaCore::CelestiaCore() :
 #endif
     m_scriptMaps(new ScriptMaps()),
     oldFOV(stdFOV),
-    console(new Console(*renderer, 200, 120))
+    console(new Console(*renderer, 200, 120)),
+    m_tee(std::cout, std::cerr)
 {
 
     for (int i = 0; i < KeyCount; i++)
@@ -172,6 +173,9 @@ CelestiaCore::~CelestiaCore()
 
     delete timer;
     delete renderer;
+
+    if (m_logfile.good())
+        m_logfile.close();
 }
 
 void CelestiaCore::readFavoritesFile()
@@ -4665,4 +4669,19 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
     }
 
     return false;
+}
+
+void CelestiaCore::setLogFile(fs::path &fn)
+{
+    m_logfile = std::ofstream(fn.string());
+    if (m_logfile.good())
+    {
+        m_tee = teestream(m_logfile, *console);
+        clog.rdbuf(m_tee.rdbuf());
+        cerr.rdbuf(m_tee.rdbuf());
+    }
+    else
+    {
+        fmt::fprintf(cerr, "Unable to open log file %s\n", fn);
+    }
 }
