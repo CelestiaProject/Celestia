@@ -31,7 +31,8 @@ steps:
                         libqt5opengl5-dev \
                         libfreetype6-dev \
                         libsdl2-dev \
-                        libluajit-5.1-dev
+                        libluajit-5.1-dev \
+                        libfmt-dev
   displayName: 'Install Linux dependencies'
   condition: eq( variables['Agent.OS'], 'Linux' )
 

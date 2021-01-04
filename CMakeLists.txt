@@ -211,23 +211,12 @@ find_package(Libepoxy REQUIRED)
 link_libraries(libepoxy::libepoxy)
 include_directories(${LIBEPOXY_INCLUDE_DIR})
 
-find_package(Eigen3 3.3 NO_MODULE) # -DEigen3_DIR=...
-if(TARGET Eigen3::Eigen)
-  message(STATUS "Found Eigen3 ${EIGEN3_VERSION_STRING}")
-  link_libraries(Eigen3::Eigen)
-else()
-  message(STATUS "Using Eigen submodule")
-  include_directories("${CMAKE_SOURCE_DIR}/thirdparty/Eigen")
-endif()
+find_package(Eigen3 3.3 REQUIRED NO_MODULE) # -DEigen3_DIR=...
+message(STATUS "Found Eigen3 ${EIGEN3_VERSION_STRING}")
+link_libraries(Eigen3::Eigen)
 
-find_package(fmt 4.0.0 CONFIG QUIET)
-if(fmt_FOUND)
-  link_libraries(fmt::fmt)
-else()
-  message(STATUS "Using fmt submodule")
-  add_subdirectory("${CMAKE_SOURCE_DIR}/thirdparty/fmt")
-  link_libraries(fmt::fmt)
-endif()
+find_package(fmt REQUIRED)
+link_libraries(fmt::fmt)
 
 find_package(PNG REQUIRED)
 add_definitions(${PNG_DEFINITIONS})
