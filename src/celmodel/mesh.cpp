@@ -637,7 +637,7 @@ Mesh::transform(const Vector3f& translation, float scale)
         PrimitiveGroup* group = getGroup(i);
         char* vdata = reinterpret_cast<char*>(group->vertexOverride);
         if (!vdata)
-            return;
+            continue;
 
         auto vertexDesc = group->vertexDescriptionOverride;
         int positionOffset = vertexDesc.getAttribute(Position).offset;
