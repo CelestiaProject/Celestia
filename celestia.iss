@@ -5,8 +5,8 @@
 
 [Setup]
 AppName=Celestia
-AppVersion=1.6.2.1
-VersionInfoVersion=1.6.2.1
+AppVersion=1.6.2.2
+VersionInfoVersion=1.6.2.2
 AppPublisher=Celestia Development Team
 AppPublisherURL=https://celestia.space/
 AppSupportURL=https://celestia.space/

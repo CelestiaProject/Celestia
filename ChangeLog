@@ -1776,3 +1776,7 @@ Platform-specific changes
 1.6.2.1
 Bug fixes
 * Windows: fix text display in dialog boxes in non-latin locales
+
+1.6.2.2
+Bug fixes
+* Windows: fix bookmark manager
