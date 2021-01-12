@@ -725,7 +725,7 @@ void actionHelpAbout(GtkAction*, AppData* app)
 	gtk_show_about_dialog(GTK_WINDOW(app->mainWindow),
 	                     "name", "Celestia",
 	                     "version", VERSION,
-	                     "copyright", _("Copyright \xc2\xa9 2001-2020 Celestia Development Team"),
+	                     "copyright", _("Copyright \xc2\xa9 2001-2021 Celestia Development Team"),
 	                     "comments", FRONTEND " Front-End",
 	                     "website", "https://celestia.space",
 	                     "authors", authors,

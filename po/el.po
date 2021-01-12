@@ -1322,7 +1322,7 @@ msgstr "Πληροφορίες OpenGL"
 
 #: src/celestia/gtk/actions.cpp:728
 #, fuzzy
-msgid "Copyright © 2001-2020 Celestia Development Team"
+msgid "Copyright © 2001-2021 Celestia Development Team"
 msgstr "Πνευματική Ιδιοκτησία (C) 2001-2009, Η Ομάδα Συγγραφής του Celestia"
 
 #: src/celestia/gtk/actions.cpp:1046
@@ -4779,7 +4779,7 @@ msgstr "Εντάξει"
 
 #: src/celestia/res/resource_strings.cpp:70
 #, fuzzy
-msgid "Copyright (C) 2001-2020, Celestia Development Team"
+msgid "Copyright (C) 2001-2021, Celestia Development Team"
 msgstr "Πνευματική Ιδιοκτησία (C) 2001-2009, Η Ομάδα Συγγραφής του Celestia"
 
 #: src/celestia/res/resource_strings.cpp:71

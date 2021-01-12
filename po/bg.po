@@ -1317,8 +1317,8 @@ msgid "Open GL Info"
 msgstr "Информация за OpenGL"
 
 #: src/celestia/gtk/actions.cpp:728
-msgid "Copyright © 2001-2020 Celestia Development Team"
-msgstr "Авторско право © 2001-2020, Екипа на Celestia"
+msgid "Copyright © 2001-2021 Celestia Development Team"
+msgstr "Авторско право © 2001-2021, Екипа на Celestia"
 
 #: src/celestia/gtk/actions.cpp:1046
 #, c-format
@@ -4541,8 +4541,8 @@ msgid "OK"
 msgstr "ОК"
 
 #: src/celestia/res/resource_strings.cpp:70
-msgid "Copyright (C) 2001-2020, Celestia Development Team"
-msgstr "Авторско право (С) 2001-2020, Екипа на Celestia"
+msgid "Copyright (C) 2001-2021, Celestia Development Team"
+msgstr "Авторско право (С) 2001-2021, Екипа на Celestia"
 
 #: src/celestia/res/resource_strings.cpp:71
 msgid "https://celestia.space"

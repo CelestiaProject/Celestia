@@ -1319,7 +1319,7 @@ msgstr "Зьвесткі OpenGL"
 
 #: src/celestia/gtk/actions.cpp:728
 msgid "Copyright © 2001-2020 Celestia Development Team"
-msgstr "Аўтарскія правы © 2001-2020, Каманда распрацоўкі Celestia"
+msgstr "Аўтарскія правы © 2001-2021, Каманда распрацоўкі Celestia"
 
 #: src/celestia/gtk/actions.cpp:1046
 #, c-format
@@ -4546,7 +4546,7 @@ msgstr "Так"
 
 #: src/celestia/res/resource_strings.cpp:70
 msgid "Copyright (C) 2001-2020, Celestia Development Team"
-msgstr "Аўтарскія правы (C) 2001-2020, Каманда распрацоўкі Celestia"
+msgstr "Аўтарскія правы (C) 2001-2021, Каманда распрацоўкі Celestia"
 
 #: src/celestia/res/resource_strings.cpp:71
 msgid "https://celestia.space"
