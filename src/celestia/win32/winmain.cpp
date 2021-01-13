@@ -19,6 +19,7 @@
 #include <cctype>
 #include <cstring>
 #include <cassert>
+#include <tuple>
 #include <process.h>
 #include <time.h>
 #include <windows.h>
@@ -2792,13 +2793,8 @@ static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
 
 bool operator<(const DEVMODE& a, const DEVMODE& b)
 {
-    if (a.dmBitsPerPel != b.dmBitsPerPel)
-        return a.dmBitsPerPel < b.dmBitsPerPel;
-    if (a.dmPelsWidth != b.dmPelsWidth)
-        return a.dmPelsWidth < b.dmPelsWidth;
-    if (a.dmPelsHeight != b.dmPelsHeight)
-        return a.dmPelsHeight < b.dmPelsHeight;
-    return a.dmDisplayFrequency < b.dmDisplayFrequency;
+    return std::tie(a.dmBitsPerPel, a.dmPelsWidth, a.dmPelsHeight, a.dmDisplayFrequency)
+         < std::tie(b.dmBitsPerPel, b.dmPelsWidth, b.dmPelsHeight, b.dmDisplayFrequency);
 }
 
 vector<DEVMODE>* EnumerateDisplayModes(unsigned int minBPP)

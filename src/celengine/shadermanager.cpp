@@ -14,6 +14,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <tuple>
 #include <Eigen/Geometry>
 #include <celcompat/filesystem.h>
 #include <celmath/geomutil.h>
@@ -324,32 +325,8 @@ bool ShaderProperties::usePointSize() const
 
 bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 {
-    if (p0.texUsage < p1.texUsage)
-        return true;
-    if (p1.texUsage < p0.texUsage)
-        return false;
-
-    if (p0.nLights < p1.nLights)
-        return true;
-    if (p1.nLights < p0.nLights)
-        return false;
-
-    if (p0.shadowCounts < p1.shadowCounts)
-        return true;
-    if (p1.shadowCounts < p0.shadowCounts)
-        return false;
-
-    if (p0.effects < p1.effects)
-        return true;
-    if (p1.effects < p0.effects)
-        return false;
-
-    if (p0.fishEyeOverride < p1.fishEyeOverride)
-        return true;
-    if (p1.fishEyeOverride < p0.fishEyeOverride)
-        return false;
-
-    return (p0.lightModel < p1.lightModel);
+    return std::tie(p0.texUsage, p0.nLights, p0.shadowCounts, p0.effects, p0.fishEyeOverride, p0.lightModel)
+         < std::tie(p1.texUsage, p1.nLights, p1.shadowCounts, p1.effects, p1.fishEyeOverride, p1.lightModel);
 }
 
 
