@@ -338,11 +338,3 @@ void DecompressBlockDXT3(uint32_t x, uint32_t y, uint32_t width,
     DecompressBlockDXT1Internal (blockStorage,
         image + x + (y * width), width, transparent0, simpleAlpha, complexAlpha, alphaValues);
 }
-
-// Texture DXT1 / DXT5 compression
-// Using STB "on file" library
-// go there https://github.com/nothings/stb
-// for more details and other libs
-
-#define STB_DXT_IMPLEMENTATION
-#include "stb_dxt_104.h"
