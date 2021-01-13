@@ -145,7 +145,6 @@ set(CELENGINE_SOURCES
   starname.h
   staroctree.cpp
   staroctree.h
-  stb_dxt_104.h
   stellarclass.cpp
   stellarclass.h
   surface.h
