@@ -111,6 +111,7 @@ static float tempWN[10] =
     185000, 158000, 140000, 115000, 89000, 75000, 65000, 56000, 50000, 45000
 };
 
+// Note: The temperatures for early and late WCs are mostly for CSPNe.
 static float tempWC[10] =
 {
     225000, 190000, 165000, 140000, 125000, 105000, 83000, 70000, 60000, 50000
