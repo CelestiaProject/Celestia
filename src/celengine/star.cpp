@@ -105,16 +105,15 @@ static float tempM[3][10] =
     { 3650, 3550, 3450, 3200, 2980, 2800, 2600, 2600, 2600, 2600 },
 };
 
-// Wolf-Rayet temperatures. From Lang's Astrophysical Data: Planets and
-// Stars.
+// Wolf-Rayet temperatures.
 static float tempWN[10] =
 {
-    50000, 50000, 50000, 50000, 47000, 43000, 39000, 32000, 29000, 29000
+    185000, 158000, 140000, 115000, 89000, 75000, 65000, 56000, 50000, 45000
 };
 
 static float tempWC[10] =
 {
-    60000, 60000, 60000, 60000, 60000, 60000, 60000, 54000, 46000, 38000
+    225000, 190000, 165000, 140000, 125000, 105000, 83000, 70000, 60000, 50000
 };
 
 // These values are based on extrapolation of 6 samples.
