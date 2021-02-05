@@ -106,9 +106,12 @@ static float tempM[3][10] =
 };
 
 // Wolf-Rayet temperatures.
-static float tempWN[10] =
+static float tempWN[3][10] =
 {
-    185000, 158000, 140000, 115000, 89000, 75000, 65000, 56000, 50000, 45000
+    { 185000, 158000, 140000, 115000, 89000, 75000, 65000, 56000, 50000, 45000 },
+    { 185000, 158000, 140000, 115000, 89000, 75000, 65000, 56000, 50000, 45000 },
+    // WNh stars. Currently as a workaround until its split into its own class.
+    { 133000, 106000, 92000, 72000, 61000, 51000, 42000, 36000, 31000, 27000 },
 };
 
 // Note: The temperatures for early and late WCs are mostly for CSPNe.
@@ -566,7 +569,7 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
             temp = tempM[lumIndex][subclass];
             break;
         case StellarClass::Spectral_WN:
-            temp = tempWN[subclass];
+            temp = tempWN[lumIndex][subclass];
             break;
         case StellarClass::Spectral_WC:
             temp = tempWC[subclass];
