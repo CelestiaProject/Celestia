@@ -40,7 +40,7 @@ LuaScript::~LuaScript()
 
 bool LuaScript::load(ifstream &scriptfile, const fs::path &path, string &errorMsg)
 {
-    if (m_celxScript->loadScript(scriptfile, path.string()) != 0)
+    if (m_celxScript->loadScript(scriptfile, path) != 0)
     {
         errorMsg = m_celxScript->getErrorMessage();
         return false;

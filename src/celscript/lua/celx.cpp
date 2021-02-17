@@ -651,9 +651,9 @@ int LuaState::loadScript(istream& in, const fs::path& streamname)
     return status;
 }
 
-int LuaState::loadScript(const fs::path& s)
+int LuaState::loadScript(const std::string& s)
 {
-    istringstream in(s.string());
+    istringstream in(s);
     return loadScript(in, "string");
 }
 
