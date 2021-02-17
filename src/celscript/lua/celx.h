@@ -40,7 +40,7 @@ public:
     lua_State* getState() const;
 
     int loadScript(std::istream&, const fs::path&);
-    int loadScript(const fs::path&);
+    int loadScript(const std::string&);
     bool init(CelestiaCore*);
 
     std::string getErrorMessage();
