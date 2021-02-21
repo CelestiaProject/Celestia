@@ -1,4 +1,6 @@
 #cmakedefine HAVE_BYTESWAP_H
 #cmakedefine HAVE_FILESYSTEM
 #cmakedefine HAVE_EXPERIMENTAL_FILESYSTEM
+#cmakedefine HAVE_STRING_VIEW
+#cmakedefine HAVE_EXPERIMENTAL_STRING_VIEW
 #cmakedefine HAVE_WORDEXP

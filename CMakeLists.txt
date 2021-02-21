@@ -390,6 +390,9 @@ if((NOT HAVE_FILESYSTEM) AND HAVE_EXPERIMENTAL_FILESYSTEM)
   endif()
 endif()
 
+try_compile(HAVE_STRING_VIEW ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxsv.cpp")
+try_compile(HAVE_EXPERIMENTAL_STRING_VIEW ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxsvexp.cpp")
+
 configure_file("config.h.in" "config.h")
 
 set(BASE_DATA_SOURCES
