@@ -66,6 +66,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace astro::literals;
 using namespace celmath;
 using namespace celestia::scripts;
 
@@ -762,16 +763,16 @@ void CelestiaCore::keyDown(int key, int modifiers)
         sim->setTargetSpeed(1000.0f);
         break;
     case Key_F4:
-        sim->setTargetSpeed((float) astro::speedOfLight);
+        sim->setTargetSpeed(1.0_c);
         break;
     case Key_F5:
-        sim->setTargetSpeed((float) astro::speedOfLight * 10.0f);
+        sim->setTargetSpeed(10.0_c);
         break;
     case Key_F6:
-        sim->setTargetSpeed(astro::AUtoKilometers(1.0f));
+        sim->setTargetSpeed(1.0_au);
         break;
     case Key_F7:
-        sim->setTargetSpeed(astro::lightYearsToKilometers(1.0f));
+        sim->setTargetSpeed(1.0_ly);
         break;
     case Key_F11:
         if (movieCapture != nullptr)
@@ -1324,7 +1325,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             int hours, mins;
             float secs;
             string buf;
-            if (v.norm() >= 86400.0 * astro::speedOfLight)
+            if (v.norm() >= 86400.0_c)
             {
                 // Light travel time in years, if >= 1day
                 buf = fmt::sprintf(_("Light travel time:  %.4f yr"),
@@ -1353,7 +1354,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         addToHistory();
 
         if (sim->getSelection().body() &&
-            (sim->getTargetSpeed() < 0.99 * astro::speedOfLight))
+            (sim->getTargetSpeed() < 0.99_c))
         {
             Vector3d v = sim->getSelection().getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
             lightTravelFlag = !lightTravelFlag;
@@ -1804,7 +1805,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 void CelestiaCore::getLightTravelDelay(double distanceKm, int& hours, int& mins, float& secs)
 {
     // light travel time in hours
-    double lt = distanceKm / (3600.0 * astro::speedOfLight);
+    double lt = distanceKm / (3600.0_c);
     hours = (int) lt;
     double mm = (lt - hours) * 60;
     mins = (int) mm;
@@ -1815,7 +1816,7 @@ void CelestiaCore::getLightTravelDelay(double distanceKm, int& hours, int& mins,
 void CelestiaCore::setLightTravelDelay(double distanceKm)
 {
     // light travel time in days
-    double lt = distanceKm / (86400.0 * astro::speedOfLight);
+    double lt = distanceKm / (86400.0_c);
     sim->setTime(sim->getTime() - lt);
 }
 
@@ -2551,12 +2552,12 @@ static void displaySpeed(Overlay& overlay, float speed)
         n = SigDigitNum(speed, 3);
         u = _("km/s");
     }
-    else if (speed < (float) astro::speedOfLight * 100.0f)
+    else if (speed < (float) 100.0_c)
     {
         n = SigDigitNum(speed / astro::speedOfLight, 3);
         u = "c";
     }
-    else if (speed < astro::AUtoKilometers(1000.0f))
+    else if (speed < (float) 1000.0_au)
     {
         n = SigDigitNum(astro::kilometersToAU(speed), 3);
         u = _("AU/s");
@@ -3046,13 +3047,13 @@ void CelestiaCore::renderOverlay()
         double lt = 0.0;
 
         if (sim->getSelection().getType() == Selection::Type_Body &&
-            (sim->getTargetSpeed() < 0.99 * astro::speedOfLight))
+            (sim->getTargetSpeed() < 0.99_c))
         {
             if (lightTravelFlag)
             {
                 Vector3d v = sim->getSelection().getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
                 // light travel time in days
-                lt = v.norm() / (86400.0 * astro::speedOfLight);
+                lt = v.norm() / (86400.0_c);
             }
         }
 

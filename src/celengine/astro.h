@@ -238,6 +238,23 @@ namespace astro
 
     constexpr const double SOLAR_IRRADIANCE = 1367.6; // Watts / m^2
     constexpr const double SOLAR_POWER      = 3.8462e26;  // in Watts
+
+
+    namespace literals
+    {
+    constexpr long double operator "" _au (long double au)
+    {
+        return AUtoKilometers(au);
+    }
+    constexpr long double operator "" _ly (long double ly)
+    {
+        return lightYearsToKilometers(ly);
+    }
+    constexpr long double operator "" _c (long double n)
+    {
+        return astro::speedOfLight * n;
+    }
+    }
 }
 
 // Convert a date structure to a Julian date
