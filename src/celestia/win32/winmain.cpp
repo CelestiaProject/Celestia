@@ -31,6 +31,7 @@
 #include <celengine/glsupport.h>
 
 #include <celmath/mathlib.h>
+#include <celutil/array_view.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include <celutil/winutil.h>
@@ -1854,7 +1855,8 @@ bool SetDCPixelFormat(HDC hDC)
 
 
 HWND CreateOpenGLWindow(int x, int y, int width, int height,
-                        int mode, int& newMode)
+                        int mode, int& newMode,
+                        util::array_view<string> ignoreGLExtensions = {})
 {
     assert(mode >= 0 && mode <= displayModes->size());
     if (mode != 0)
@@ -1950,7 +1952,7 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
 
     if (firstContext)
     {
-        if (!gl::init() || !gl::checkVersion(gl::GL_2_1))
+        if (!gl::init(ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
         {
             MessageBox(NULL,
                        _("You system doesn't support OpenGL 2.1!"),
@@ -3251,18 +3253,23 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     acceleratorTable = LoadAccelerators(hRes,
                                         MAKEINTRESOURCE(IDR_ACCELERATORS));
 
-    if (appCore->getConfig() != NULL)
+    if (appCore->getConfig() == NULL)
     {
-        if (!compareIgnoringCase(appCore->getConfig()->cursor, "arrow"))
-            hDefaultCursor = LoadCursor(NULL, IDC_ARROW);
-        else if (!compareIgnoringCase(appCore->getConfig()->cursor, "inverting crosshair"))
-            hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR));
-        else
-            hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
-
-        appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
-        appCore->getRenderer()->setShadowMapSize(appCore->getConfig()->ShadowMapSize);
+        MessageBox(NULL,
+                   "Configuration file missing!",
+                   "Fatal Error",
+                   MB_OK | MB_ICONERROR);
+        return 1;
     }
+    if (!compareIgnoringCase(appCore->getConfig()->cursor, "arrow"))
+        hDefaultCursor = LoadCursor(NULL, IDC_ARROW);
+    else if (!compareIgnoringCase(appCore->getConfig()->cursor, "inverting crosshair"))
+        hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR));
+    else
+        hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
+
+    appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
+    appCore->getRenderer()->setShadowMapSize(appCore->getConfig()->ShadowMapSize);
 
     cursorHandler = new WinCursorHandler(hDefaultCursor);
     appCore->setCursorHandler(cursorHandler);
@@ -3273,7 +3280,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (startFullscreen)
     {
         hWnd = CreateOpenGLWindow(0, 0, 800, 600,
-                                  lastFullScreenMode, currentScreenMode);
+                                  lastFullScreenMode, currentScreenMode,
+                                  appCore->getConfig()->ignoreGLExtensions);
 
         // Prevent unnecessary destruction and recreation of OpenGLWindow in
         // while() loop below.
@@ -3283,7 +3291,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     {
         hWnd = CreateOpenGLWindow(prefs.winX, prefs.winY,
                                   prefs.winWidth, prefs.winHeight,
-                                  0, currentScreenMode);
+                                  0, currentScreenMode,
+                                  appCore->getConfig()->ignoreGLExtensions);
     }
 
     if (hWnd == NULL)
