@@ -516,10 +516,10 @@ int main(int argc, char* argv[])
     initMenus();
     #endif
 
-    if (!gl::init() || !gl::checkVersion(gl::GL_2_1))
+    if (!gl::init(appCore->getConfig()->ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
     {
         cout << _("Celestia was unable to initialize OpenGL 2.1.\n");
-	return 1;
+        return 1;
     }
 
     // GL should be all set up, now initialize the renderer.

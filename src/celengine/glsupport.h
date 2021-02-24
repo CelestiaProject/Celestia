@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <celutil/array_view.h>
+
 #ifdef GL_ES
 #include <epoxy/gl.h>
 /*
@@ -45,7 +48,7 @@ extern bool EXT_framebuffer_object;
 extern GLint maxPointSize;
 extern GLfloat maxLineWidth;
 
-bool init() noexcept;
+bool init(util::array_view<std::string> = {}) noexcept;
 bool checkVersion(int) noexcept;
 } // gl
 } // celestia

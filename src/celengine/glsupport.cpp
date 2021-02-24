@@ -1,4 +1,5 @@
 #include "glsupport.h"
+#include <algorithm>
 
 namespace celestia
 {
@@ -15,7 +16,7 @@ bool ARB_shader_texture_lod         = false;
 bool EXT_texture_compression_s3tc   = false;
 bool EXT_texture_filter_anisotropic = false;
 GLint maxPointSize                  = 0;
-GLfloat maxLineWidth                = 0;
+GLfloat maxLineWidth                = 0.0f;
 
 namespace
 {
@@ -23,19 +24,24 @@ namespace
     {
         return epoxy_has_gl_extension(name);
     }
+
+    bool check_extension(util::array_view<std::string> list, const char* name) noexcept
+    {
+        return std::find(list.begin(), list.end(), std::string(name)) == list.end() && has_extension(name);
+    }
 }
 
-bool init() noexcept
+bool init(util::array_view<std::string> ignore) noexcept
 {
 #ifdef GL_ES
-    OES_vertex_array_object        = has_extension("GL_OES_vertex_array_object");
+    OES_vertex_array_object        = check_extension(ignore, "GL_OES_vertex_array_object");
 #else
-    ARB_vertex_array_object        = has_extension("GL_ARB_vertex_array_object");
-    EXT_framebuffer_object         = has_extension("GL_EXT_framebuffer_object");
+    ARB_vertex_array_object        = check_extension(ignore, "GL_ARB_vertex_array_object");
+    EXT_framebuffer_object         = check_extension(ignore, "GL_EXT_framebuffer_object");
 #endif
-    ARB_shader_texture_lod         = has_extension("GL_ARB_shader_texture_lod");
-    EXT_texture_compression_s3tc   = has_extension("GL_EXT_texture_compression_s3tc");
-    EXT_texture_filter_anisotropic = has_extension("GL_EXT_texture_filter_anisotropic");
+    ARB_shader_texture_lod         = check_extension(ignore, "GL_ARB_shader_texture_lod");
+    EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");
+    EXT_texture_filter_anisotropic = check_extension(ignore, "GL_EXT_texture_filter_anisotropic");
 
     GLint pointSizeRange[2];
     GLfloat lineWidthRange[2];

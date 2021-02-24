@@ -244,7 +244,7 @@ public:
  *           that require the glArea to be set up. */
 static void initRealize(GtkWidget* widget, AppData* app)
 {
-    if (!gl::init() || !gl::checkVersion(gl::GL_2_1))
+    if (!gl::init(app->core->getConfig()->ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
     {
         GtkWidget *message;
         message = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
@@ -254,7 +254,7 @@ static void initRealize(GtkWidget* widget, AppData* app)
                                          "Celestia was unable to initialize OpenGL 2.1.");
         gtk_dialog_run(GTK_DIALOG(message));
         gtk_widget_destroy(message);
-	exit(1);
+        exit(1);
     }
 
     app->core->setAlerter(new GtkAlerter(app));
