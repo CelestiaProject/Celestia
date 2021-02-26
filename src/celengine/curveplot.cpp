@@ -330,11 +330,11 @@ public:
 #if USE_VERTEX_BUFFER
         if (currentPosition > 0)
         {
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * (currentPosition + 1) * 2, data);
-
             // Finish the current line strip
             if (endIfNeeded && currentStripLength > 1)
                 end(false);
+
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * currentPosition * 2, data);
 
             unsigned int startIndex = 0;
             for (vector<unsigned int>::const_iterator iter = stripLengths.begin(); iter != stripLengths.end(); ++iter)
