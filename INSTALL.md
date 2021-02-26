@@ -3,18 +3,24 @@
 Stable version installation on Unix-like systems (e.g. GNU/Linux or *BSD):
 * Check your OS repository for already built packages.
 * Check https://celestia.space/download.html.
-* Check https://bintray.com/celestia if it contains packages for your system.
 
 Stable version installation on Windows and OSX:
 * Check https://celestia.space/download.html.
 
 Development snapshots installation on Unix-like systems:
-### On Debian 10 and derived systems:
+### On Debian 10 (buster) and derived systems:
 
 ```
-curl https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/Release.key | sudo apt-key add -
-echo "deb https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
-sudo apt update && sudo apt install celestia
+❯ curl -fsSL -o celestia.gpg https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/Release.key
+❯ gpg --keyid-format long celestia.gpg
+gpg: WARNING: no command supplied.  Trying to guess what you mean ...
+pub   rsa2048/BDF3F6ACD4D81407 2014-06-09 [SC] [expires: 2023-02-14]
+      3FE0C0AC1FD6F1034B818A14BDF3F6ACD4D81407
+uid                           home:munix9 OBS Project <home:munix9@build.opensuse.org>
+❯ sudo mv celestia.gpg /usr/share/keyrings/celestia.asc
+
+❯ echo "deb [signed-by=/usr/share/keyrings/celestia.asc] https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
+❯ sudo apt update && sudo apt install celestia
 ```
 
 ### On Ubuntu 18.04/20.04 and derived systems:
