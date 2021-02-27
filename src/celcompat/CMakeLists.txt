@@ -1,4 +1,6 @@
 set(CELCOMPAT_SOURCES
+  cc.cpp
+  cc.h
   fs.cpp
   fs.h
 )
