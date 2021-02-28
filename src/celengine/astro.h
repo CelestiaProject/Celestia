@@ -58,6 +58,7 @@ namespace astro
             Locale          = 0,
             TZName          = 1,
             UTCOffset       = 2,
+            ISO8601         = 3,
         };
 
         const char* toCStr(Format format = Locale) const;

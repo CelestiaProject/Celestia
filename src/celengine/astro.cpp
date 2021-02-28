@@ -382,11 +382,16 @@ const char* astro::Date::toCStr(Format format) const
 {
     static char date[255];
 
+    if (format == ISO8601)
+    {
+        snprintf(date, sizeof(date), "%04d-%02d-%02dT%02d:%02d:%08.5fZ",
+                 year, month, day, hour, minute, seconds);
+        return date;
+    }
     // MinGW's libraries don't have the tm_gmtoff and tm_zone fields for
     // struct tm.
 #if defined(__GNUC__) && !defined(_WIN32)
-    struct tm cal_time;
-    memset(&cal_time, 0, sizeof(cal_time));
+    struct tm cal_time {};
     cal_time.tm_year = year-1900;
     cal_time.tm_mon = month-1;
     cal_time.tm_mday = day;
@@ -477,7 +482,9 @@ bool astro::parseDate(const string& s, astro::Date& date)
     unsigned int minute = 0;
     double second = 0.0;
 
-    if (sscanf(s.c_str(), " %d %u %u %u:%u:%lf ",
+    if (sscanf(s.c_str(), "%d-%u-%uT%u:%u:%lf",
+               &year, &month, &day, &hour, &minute, &second) == 6 ||
+        sscanf(s.c_str(), " %d %u %u %u:%u:%lf ",
                &year, &month, &day, &hour, &minute, &second) == 6 ||
         sscanf(s.c_str(), " %d %u %u %u:%u ",
                &year, &month, &day, &hour, &minute) == 5 ||
