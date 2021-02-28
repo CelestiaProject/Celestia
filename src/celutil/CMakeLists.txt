@@ -15,6 +15,8 @@ set(CELUTIL_SOURCES
   #memorypool.h
   reshandle.h
   resmanager.h
+  stringutils.cpp
+  stringutils.h
   strnatcmp.cpp
   strnatcmp.h
   timer.cpp

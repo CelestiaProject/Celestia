@@ -7,13 +7,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "utf8.h"
 #include <cctype>
 #include <cstring>
-#include "util.h"
 #include <wchar.h>
 #include <climits>
 #include <fmt/printf.h>
+#include "stringutils.h"
+#include "utf8.h"
 
 uint16_t WGL4_Normalization_00[256] = {
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007,

@@ -9,6 +9,7 @@
 
 #include <celutil/gettext.h>
 #include <celutil/debug.h>
+#include <celutil/util.h>
 #include "stardb.h"
 #include "asterism.h"
 #include "parser.h"

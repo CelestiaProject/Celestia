@@ -43,6 +43,7 @@
 #include <string>
 #include <cassert>
 #include <celutil/gettext.h>
+#include <celutil/util.h>
 #include "qtappwin.h"
 #include "qtglwidget.h"
 #include "qtpreferencesdialog.h"
