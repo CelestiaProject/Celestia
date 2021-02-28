@@ -16,15 +16,9 @@
 #include <iostream>
 #include <functional>
 #include <celcompat/filesystem.h>
+#include <celcompat/string_view.h>
 
-extern int compareIgnoringCase(const std::string& s1, const std::string& s2);
-extern int compareIgnoringCase(const std::string& s1, const std::string& s2, int n);
-extern fs::path LocaleFilename(const fs::path& filename);
-
-struct CompareIgnoringCasePredicate
-{
-    bool operator()(const std::string&, const std::string&) const;
-};
+fs::path LocaleFilename(const fs::path& filename);
 
 template <class T> struct printlineFunc
 {
@@ -47,6 +41,6 @@ template<typename T> constexpr typename T::size_type memsize(const T &c)
 fs::path PathExp(const fs::path& filename);
 fs::path homeDir();
 
-bool GetTZInfo(std::string&, int&);
+bool GetTZInfo(std::string_view, int&);
 
 #endif // _CELUTIL_UTIL_H_

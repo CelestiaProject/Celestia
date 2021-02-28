@@ -35,6 +35,7 @@
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include <celutil/winutil.h>
+#include <celutil/util.h>
 #include <celutil/filetype.h>
 #include <celengine/astro.h>
 #include <celscript/legacy/cmdparser.h>

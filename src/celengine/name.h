@@ -17,7 +17,7 @@
 #include <map>
 #include <vector>
 #include <celutil/debug.h>
-#include <celutil/util.h>
+#include <celutil/stringutils.h>
 #include <celutil/utf8.h>
 #include <celengine/astroobj.h>
 

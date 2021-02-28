@@ -6,6 +6,7 @@
 #include <fmt/printf.h>
 #include <celengine/glsupport.h>
 #include <celutil/gettext.h>
+#include <celutil/util.h>
 #include <SDL.h>
 #ifdef GL_ES
 #include <SDL_opengles2.h>
