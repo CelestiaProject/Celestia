@@ -87,7 +87,7 @@ class VertexObject
         bool       normalized;
     };
 
-    void enableAttribArrays(AttributesType attributes) noexcept;
+    void enableAttribArrays() noexcept;
     void disableAttribArrays() noexcept;
 
     GLuint     m_vboId{ 0 };

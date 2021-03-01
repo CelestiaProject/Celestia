@@ -61,7 +61,7 @@ void VertexObject::bind(AttributesType attributes) noexcept
         else
         {
             glBindBuffer(m_bufferType, m_vboId);
-            enableAttribArrays(attributes);
+            enableAttribArrays();
         }
     }
 }
@@ -118,12 +118,12 @@ bool VertexObject::setBufferData(const void* data, GLintptr offset, GLsizeiptr s
 void VertexObject::draw(GLenum primitive, GLsizei count, GLint first) noexcept
 {
     if ((m_state & State::Initialize) != 0)
-        enableAttribArrays(m_currentAttributes);
+        enableAttribArrays();
 
     glDrawArrays(primitive, first, count);
 }
 
-void VertexObject::enableAttribArrays(AttributesType attributes) noexcept
+void VertexObject::enableAttribArrays() noexcept
 {
     glBindBuffer(m_bufferType, m_vboId);
     for (const auto& t : m_attribParams[(unsigned int)m_currentAttributes])
