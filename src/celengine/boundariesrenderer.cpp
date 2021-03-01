@@ -83,13 +83,13 @@ void BoundariesRenderer::render(const Renderer &renderer, const Color &color, co
 bool BoundariesRenderer::prepare(std::vector<LineEnds> &data)
 {
     auto chains = m_boundaries->getChains();
-    auto vtx_num = accumulate(chains.begin(), chains.end(), 0,
-                              [](int a, ConstellationBoundaries::Chain* b) { return a + b->size(); });
+    auto lineCount = accumulate(chains.begin(), chains.end(), 0,
+                                [](int a, ConstellationBoundaries::Chain* b) { return a + b->size() - 1; });
 
-    if (vtx_num == 0)
+    if (lineCount == 0)
         return false;
 
-    m_lineCount = vtx_num;
+    m_lineCount = lineCount;
 
     // we reserve 6 times the space so we can allow to
     // draw a line segment with two triangles
