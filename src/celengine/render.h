@@ -185,7 +185,8 @@ class Renderer
         ShowAtmospheres         = 0x0000000000000100,
         ShowSmoothLines         = 0x0000000000000200,
         ShowEclipseShadows      = 0x0000000000000400,
-        ShowPlanetRings         = 0x0000000000000800,
+        // the next one is unused in 1.7, kept for compatibility with 1.6
+        ShowStarsAsPoints       = 0x0000000000000800,
         ShowRingShadows         = 0x0000000000001000,
         ShowBoundaries          = 0x0000000000002000,
         ShowAutoMag             = 0x0000000000004000,
@@ -201,6 +202,7 @@ class Renderer
         ShowHorizonGrid         = 0x0000000001000000,
         ShowEcliptic            = 0x0000000002000000,
         ShowTintedIllumination  = 0x0000000004000000,
+        // options added in 1.7
         ShowDwarfPlanets        = 0x0000000008000000,
         ShowMoons               = 0x0000000010000000,
         ShowMinorMoons          = 0x0000000020000000,
@@ -208,6 +210,7 @@ class Renderer
         ShowComets              = 0x0000000080000000,
         ShowSpacecrafts         = 0x0000000100000000,
         ShowFadingOrbits        = 0x0000000200000000,
+        ShowPlanetRings         = 0x0000000400000000,
         ShowSolarSystemObjects  = ShowPlanets           |
                                   ShowDwarfPlanets      |
                                   ShowMoons             |
@@ -231,6 +234,7 @@ class Renderer
                                   ShowCloudShadows      |
                                   ShowCometTails        |
                                   ShowAutoMag           |
+                                  ShowPlanetRings       |
                                   ShowFadingOrbits      |
                                   ShowSmoothLines
     };
