@@ -34,7 +34,7 @@ public:
 
 private:
     HWND hwnd;
-    char* className;
+    const char* className;
     std::string imageFileName;
     Image* image;
     HBITMAP hBitmap;

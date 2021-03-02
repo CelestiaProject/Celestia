@@ -31,7 +31,7 @@ static bool GetDialogFloat(HWND hDlg, int id, float& f)
         return false;
 }
 
-static bool SetDialogFloat(HWND hDlg, int id, char* format, float f)
+static bool SetDialogFloat(HWND hDlg, int id, const char* format, float f)
 {
     char buf[128];
 

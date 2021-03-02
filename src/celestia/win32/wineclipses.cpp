@@ -32,7 +32,7 @@ static vector<Eclipse> eclipseList;
 
 extern void SetMouseCursor(LPCTSTR lpCursor);
 
-char* MonthNames[12] =
+const char* MonthNames[12] =
 {
     "Jan", "Feb", "Mar", "Apr",
     "May", "Jun", "Jul", "Aug",
@@ -46,7 +46,7 @@ bool InitEclipseFinderColumns(HWND listView)
 
     lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
     lvc.fmt = LVCFMT_CENTER;
-    lvc.pszText = "";
+    lvc.pszText = const_cast<char*>("");
 
     int nColumns = sizeof(columns) / sizeof(columns[0]);
     int i;
@@ -110,7 +110,7 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
     Eclipse* eclipse = reinterpret_cast<Eclipse*>(nm->item.lParam);
     if (eclipse == NULL)
     {
-        nm->item.pszText = "";
+        nm->item.pszText = const_cast<char*>("");
         return;
     }
 
@@ -253,7 +253,7 @@ LRESULT CALLBACK EclipseListViewProc(HWND hWnd,
             int listIndex = ListView_HitTest(hWnd, &lvHit);
             if (listIndex >= 0)
             {
-                SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(IDSETDATEANDGO, 0), NULL);
+                SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(IDSETDATEANDGO, 0), 0);
             }
         }
         break;
