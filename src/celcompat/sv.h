@@ -18,6 +18,8 @@
 #if defined(_MSC_VER) && !defined(__clang__)
 // M$VC++ 2015 doesn't have required features
 #define CEL_CPP_VER (_MSC_VER == 1900 ? 201103L : _MSVC_LANG)
+// M$VC++ build without C++ exceptions are not supported yet
+#define __cpp_exceptions 1
 #else
 #define CEL_CPP_VER __cplusplus
 #endif
@@ -26,6 +28,10 @@
 #define CEL_constexpr constexpr
 #else
 #define CEL_constexpr /* constexpr */
+#endif
+
+#if ! __cpp_exceptions
+#include <cstdlib>
 #endif
 
 namespace std
@@ -101,8 +107,11 @@ template<
     {
         if (pos < size())
             return m_data[pos];
-
+#if __cpp_exceptions
         throw std::out_of_range("pos >= size()");
+#else
+        std::abort();
+#endif
     }
     constexpr const_reference front() const
     {
@@ -166,7 +175,11 @@ template<
     size_type copy(CharT* dest, size_type count, size_type pos = 0) const
     {
         if (pos > m_size)
+#if __cpp_exceptions
             throw std::out_of_range("pos >= size()");
+#else
+            std::abort();
+#endif
 
         auto rcount = std::min(count, m_size - pos);
         return Traits::copy(dest, m_data + pos, rcount);
@@ -174,7 +187,11 @@ template<
     CEL_constexpr basic_string_view substr(size_type pos = 0, size_type count = npos ) const
     {
         if (pos > m_size)
+#if __cpp_exceptions
             throw std::out_of_range("pos >= size()");
+#else
+            std::abort();
+#endif
 
         auto rcount = std::min(count, m_size - pos);
         return { m_data + pos, rcount };

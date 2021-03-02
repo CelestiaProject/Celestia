@@ -20,3 +20,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 build_cmod_tool(cmodview WIN32 cmodview.cpp glframebuffer.cpp  glshader.cpp  mainwindow.cpp  materialwidget.cpp  modelviewwidget.cpp glsupport.cpp)
 qt5_use_modules(cmodview ${QT_LIBS})
+
+if(NOT MSVC)
+  target_compile_options(cmodview PRIVATE "-frtti")
+endif()
