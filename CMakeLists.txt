@@ -118,6 +118,12 @@ if(NOT WIN32)
   add_compile_options(-fPIC)
 endif()
 
+if(MINGW)
+  # MinGW has a bug which causes too many false-positive warnings
+  # for 'operator!='
+  add_compile_options(-Wno-attributes)
+endif()
+
 EnableFastMath(${FAST_MATH})
 
 #

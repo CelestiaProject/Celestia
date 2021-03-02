@@ -91,7 +91,7 @@ static HDC deviceContext;
 
 static bool bReady = false;
 
-static LPTSTR CelestiaRegKey = "Software\\celestia.space\\Celestia1.7-dev";
+static LPCTSTR CelestiaRegKey = "Software\\celestia.space\\Celestia1.7-dev";
 
 HINSTANCE appInstance;
 HMODULE hRes;
@@ -1571,7 +1571,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             vector<string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
             if (altSurfaces != NULL)
             {
-                if (altSurfaces->size() != NULL)
+                if (!altSurfaces->empty())
                 {
                     HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
                     AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) surfMenu,
@@ -2316,7 +2316,7 @@ static void HandleJoystick()
     }
 }
 
-static bool GetRegistryValue(HKEY hKey, LPSTR cpValueName, LPVOID lpBuf, DWORD iBufSize)
+static bool GetRegistryValue(HKEY hKey, LPCTSTR cpValueName, LPVOID lpBuf, DWORD iBufSize)
 {
 /*
     Function retrieves a value from the registry.
@@ -2381,7 +2381,7 @@ static bool SetRegistry(HKEY key, LPCTSTR value, const string& strVal)
     return err == ERROR_SUCCESS;
 }
 
-static bool SetRegistryBin(HKEY hKey, LPSTR cpValueName, LPVOID lpData, int iDataSize)
+static bool SetRegistryBin(HKEY hKey, LPCTSTR cpValueName, LPVOID lpData, int iDataSize)
 {
 /*
     Function sets BINARY data in the registry.
@@ -2413,7 +2413,7 @@ static bool SetRegistryBin(HKEY hKey, LPSTR cpValueName, LPVOID lpData, int iDat
 }
 
 
-static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
+static bool LoadPreferencesFromRegistry(LPCTSTR regkey, AppPreferences& prefs)
 {
     LONG err;
     HKEY key;
@@ -2477,7 +2477,7 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
 }
 
 
-static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
+static bool SavePreferencesToRegistry(LPCTSTR regkey, AppPreferences& prefs)
 {
     LONG err;
     HKEY key;
@@ -3951,7 +3951,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                               MAKEINTRESOURCE(IDD_DISPLAYMODE),
                               hWnd,
                               (DLGPROC)SelectDisplayModeProc,
-                              NULL);
+                              0);
             break;
 
         case ID_RENDER_FULLSCREEN:
@@ -4155,7 +4155,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                               MAKEINTRESOURCE(IDD_CONTROLSHELP),
                               hWnd,
                               (DLGPROC)ControlsHelpProc,
-                              NULL);
+                              0);
             break;
 
         case ID_HELP_ABOUT:

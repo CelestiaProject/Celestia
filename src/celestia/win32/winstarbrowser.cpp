@@ -49,7 +49,7 @@ bool InitStarBrowserColumns(HWND listView)
     lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
     lvc.fmt = LVCFMT_LEFT;
     lvc.cx = 60;
-    lvc.pszText = "";
+    lvc.pszText = const_cast<char*>("");
 
     int nColumns = sizeof(columns) / sizeof(columns[0]);
     int i;
@@ -328,7 +328,7 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
     Star* star = reinterpret_cast<Star*>(nm->item.lParam);
     if (star == NULL)
     {
-        nm->item.pszText = "";
+        nm->item.pszText = const_cast<char*>("");
         return;
     }
 

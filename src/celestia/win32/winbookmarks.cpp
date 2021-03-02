@@ -62,8 +62,8 @@ HTREEITEM PopulateBookmarksTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
         tvis.hParent = TVI_ROOT;
         tvis.hInsertAfter = TVI_LAST;
         tvis.item.mask = StdItemMask;
-        tvis.item.pszText = "Bookmarks";
-        tvis.item.lParam = NULL;
+        tvis.item.pszText = const_cast<char*>("Bookmarks");
+        tvis.item.lParam = 0;
         tvis.item.iImage = 2;
         tvis.item.iSelectedImage = 2;
         if (hParent = TreeView_InsertItem(hTree, &tvis))
@@ -167,7 +167,7 @@ HTREEITEM PopulateBookmarkFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
         tvis.hParent = TVI_ROOT;
         tvis.hInsertAfter = TVI_LAST;
         tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-        tvis.item.pszText = "Bookmarks";
+        tvis.item.pszText = const_cast<char*>("Bookmarks");
         tvis.item.lParam = 0;
         tvis.item.iImage = 2;
         tvis.item.iSelectedImage = 2;
@@ -319,7 +319,7 @@ void BuildFavoritesMenu(HMENU menuBar,
                             menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
                             menuInfo.fType = MFT_STRING;
                             menuInfo.fState = MFS_DISABLED;
-                            menuInfo.dwTypeData = "(empty)";
+                            menuInfo.dwTypeData = const_cast<char*>("(empty)");
                             if (InsertMenuItem(subMenu, subMenuIndex, TRUE, &menuInfo))
                             {
                                 odMenu->AddItem(subMenu, subMenuIndex);
@@ -653,7 +653,7 @@ void MoveBookmarkInFavorites(HWND hTree, CelestiaCore* appCore)
         dropFolderName[0] = '\0';
 
     // Get the dragged item text
-    tvItem.lParam = NULL;
+    tvItem.lParam = 0;
     tvItem.hItem = hDragItem;
     tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
     tvItem.pszText = dragItemName;
