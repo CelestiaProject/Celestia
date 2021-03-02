@@ -2037,10 +2037,10 @@ static int celestia_geturl(lua_State* l)
     View* view = getViewByObserver(appCore, obs);
     appCore->setActiveView(view);
 
-    CelestiaState appState;
-    appState.captureState(appCore);
+    CelestiaState appState(appCore);
+    appState.captureState();
 
-    Url url(appState, 3);
+    Url url(appState);
     lua_pushstring(l, url.getAsString().c_str());
 
     return 1;

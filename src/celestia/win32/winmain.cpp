@@ -447,10 +447,10 @@ static bool CopyStateURLToClipboard()
     if (!b)
         return false;
 
-    CelestiaState appState;
-    appState.captureState(appCore);
+    CelestiaState appState(appCore);
+    appState.captureState();
 
-    Url url(appState, Url::CurrentVersion);
+    Url url(appState);
     string urlString = url.getAsString();
 
     char* s = const_cast<char*>(urlString.c_str());

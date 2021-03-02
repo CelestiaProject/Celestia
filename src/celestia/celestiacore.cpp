@@ -4427,13 +4427,15 @@ void CelestiaCore::notifyWatchers(int property)
 
 bool CelestiaCore::goToUrl(const string& urlStr)
 {
-    Url url(urlStr, this);
-    bool ret = url.goTo();
-    if (ret)
-        notifyWatchers(RenderFlagsChanged | LabelFlagsChanged);
-    else
+    Url url(this);
+    if (!url.parse(urlStr))
+    {
         fatalError(_("Invalid URL"));
-    return ret;
+        return false;
+    }
+    url.goTo();
+    notifyWatchers(RenderFlagsChanged | LabelFlagsChanged);
+    return true;
 }
 
 

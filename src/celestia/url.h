@@ -1,44 +1,31 @@
-/***************************************************************************
-                          url.h  -  description
-                             -------------------
-    begin                : Wed Aug 7 2002
-    copyright            : (C) 2002 by chris
-    email                : chris@tux.teyssier.org
- ***************************************************************************/
+// url.h
+//
+// Copyright (C) 2002-present, the Celestia Development Team
+// Original version written by Chris Teyssier (chris@tux.teyssier.org)
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
-#ifndef _URL_H_
-#define _URL_H_
+#pragma once
 
-#include <string>
 #include <map>
-#include "celestiacore.h"
-#include "celengine/astro.h"
-#include <Eigen/Core>
+#include <string>
 #include <Eigen/Geometry>
+#include <celengine/observer.h>
+#include <celengine/astro.h>
+#include <celcompat/string_view.h>
+#include "celestiastate.h"
 
 class CelestiaCore;
-class CelestiaState;
-
 
 class Url
 {
-public:
+ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    enum UrlType
-    {
-        Absolute = 0,
-        Relative = 1,
-        Settings = 2,
-    };
+    constexpr static int CurrentVersion = 3;
 
     /*! The TimeSource specifies what the time will be set to when the user
      *  activates the URL.
@@ -57,117 +44,48 @@ public:
         TimeSourceCount   = 3,
     };
 
-    Url() = default;
-
-    // parses str
-    Url(std::string  str, CelestiaCore *core);
-    // current url of appCore
-    Url(CelestiaCore* appCore, UrlType type = Absolute);
+    Url(CelestiaCore *core);
     Url(const CelestiaState& appState,
-        unsigned int _version = CurrentVersion,
-        TimeSource _timeSource = UseUrlTime);
+        int version = CurrentVersion,
+        TimeSource timeSource = UseUrlTime);
+    Url(const Url&) = default;
+    Url(Url&&) = default;
+    Url& operator=(const Url&) = default;
+    Url& operator=(Url&&) = default;
     ~Url() = default;
 
-    std::string getAsString() const;
-    std::string getName() const;
+    static std::string getEncodedObjectName(const Selection& sel, const CelestiaCore* appCore);
+    static constexpr std::string_view proto();
+    static std::string decodeString(std::string_view);
+    static std::string encodeString(std::string_view);
+
+    bool parse(std::string_view);
     bool goTo();
+    std::string getAsString() const;
 
-    constexpr const static unsigned int CurrentVersion = 4;
-
-    static std::string decodeString(const std::string& str);
-    static std::string encodeString(const std::string& str);
-
-private:
-    void initVersion2(std::map<std::string, std::string>& params, const std::string& timeString);
-    void initVersion3(std::map<std::string, std::string>& params, const std::string& timeString);
-
-private:
-    std::string urlStr;
-    std::string name;
-    std::string modeStr;
-    std::string body1;
-    std::string body2;
-    std::string selectedStr;
-    std::string trackedStr;
-
-    CelestiaCore *appCore;
-
-    ObserverFrame ref;
-    Selection selected;
-    Selection tracked;
-
-    ObserverFrame::CoordinateSystem mode{ ObserverFrame::Universal };
-    int nbBodies{ -1 };
-    float fieldOfView{ 0.0f };
-    float timeScale{ 0.0f };
-    uint64_t renderFlags{ 0 };
-    int labelMode{ 0 };
-    bool lightTimeDelay{ false };
-    bool pauseState{ false };
-
-    std::map<std::string, std::string> parseUrlParams(const std::string& url) const;
-    std::string getCoordSysName(ObserverFrame::CoordinateSystem mode) const;
-    std::string getBodyShortName(const std::string& body) const;
-    std::string getEncodedObjectName(const Selection& selection);
-
-    bool fromString{ false };
-    UrlType type{ Absolute };
-    TimeSource timeSource{ UseUrlTime };
-    unsigned int version{ 4 };
-
+ private:
+    bool initVersion3(std::map<std::string_view, std::string> &params, std::string_view timeStr);
     void evalName();
 
-    // Variables specific to Global Urls
-    UniversalCoord coord;
-    astro::Date date;
-    Eigen::Quaternionf orientation;
+    CelestiaState   m_state;
 
-    // Variables specific to Relative Urls
-    double distance{ 0.0};
-    double longitude{ 0.0 };
-    double latitude{ 0.0 };
+    std::string     m_url;
+    std::string     m_name;
+    astro::Date     m_date;
+    CelestiaCore   *m_appCore       { nullptr };
+
+    ObserverFrame   m_ref;
+    Selection       m_selected;
+    Selection       m_tracked;
+
+    int             m_version       { CurrentVersion };
+    TimeSource      m_timeSource    { UseUrlTime };
+
+    int             m_nBodies       { -1 };
+    bool            m_valid         { false };
 };
 
-
-/*! The CelestiaState class holds the current observer position, orientation,
- *  frame, time, and render settings. It is designed to be serialized as a cel
- *  URL, thus strings are stored for bodies instead of Selections.
- *
- *  Some information is *not* stored in cel URLs, including the current
- *  lists of reference marks and markers. Such lists can be arbitrarily long,
- *  and thus not practical to store in a URL.
- */
-class CelestiaState
+constexpr std::string_view Url::proto()
 {
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-    CelestiaState() = default;
-
-    bool loadState(std::map<std::string, std::string>& params);
-    void saveState(std::map<std::string, std::string>& params);
-    void captureState(CelestiaCore* appCore);
-
-    // Observer frame, position, and orientation. For multiview, there needs
-    // be one instance of these parameters per view saved.
-    ObserverFrame::CoordinateSystem coordSys{ ObserverFrame::Universal };
-    std::string refBodyName;
-    std::string targetBodyName;
-    std::string trackedBodyName;
-    UniversalCoord observerPosition{ 0.0, 0.0, 0.0 };
-    Eigen::Quaternionf observerOrientation{ Eigen::Quaternionf::Identity() };
-    float fieldOfView{ 45.0f };
-
-    // Time parameters
-    double tdb{ 0.0 };
-    float timeScale{ 1.0f };
-    bool pauseState{ false };
-    bool lightTimeDelay{ false };
-
-    std::string selectedBodyName;
-
-    int labelMode{ 0 };
-    uint64_t renderFlags{ 0 };
-};
-
-#endif
+    return "cel://";
+}
