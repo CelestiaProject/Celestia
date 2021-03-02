@@ -350,6 +350,9 @@ if("${build_type_lc}" STREQUAL "debug")
   add_definitions(-D_DEBUG -DDEBUG)
 else()
   add_definitions(-DNO_DEBUG -DEIGEN_NO_DEBUG)
+  if(NOT MSVC)
+    add_compile_options(-fno-rtti -fno-exceptions)
+  endif()
 endif()
 
 # Turning all debug on dramatically decreases performance

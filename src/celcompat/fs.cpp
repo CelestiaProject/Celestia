@@ -6,7 +6,14 @@
 #else
 #include <sys/stat.h>
 #endif
+#if defined(_MSC_VER) && !defined(__clang__)
+// M$VC++ build without C++ exceptions are not supported yet
+#define __cpp_exceptions 1
+#endif
 
+#if ! __cpp_exceptions
+#include <cstdlib>
+#endif
 
 namespace celestia
 {
@@ -339,7 +346,11 @@ uintmax_t file_size(const path& p)
     std::error_code ec;
     uintmax_t s = file_size(p, ec);
     if (ec)
+#if __cpp_exceptions
         throw filesystem_error(ec, "celfs::file_size error");
+#else
+        std::abort();
+#endif
     return s;
 }
 
@@ -383,7 +394,11 @@ bool exists(const path& p)
     std::error_code ec;
     bool r = exists(p, ec);
     if (ec)
+#if __cpp_exceptions
         throw filesystem_error(ec, "celfs::exists error");
+#else
+        std::abort();
+#endif
     return r;
 }
 
@@ -415,7 +430,11 @@ bool is_directory(const path& p)
     std::error_code ec;
     bool r = is_directory(p, ec);
     if (ec)
+#if __cpp_exceptions
         throw filesystem_error(ec, "celfs::is_directory error");
+#else
+        std::abort();
+#endif
     return r;
 }
 
