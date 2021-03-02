@@ -1,6 +1,8 @@
 set(CELESTIA_SOURCES
   celestiacore.cpp
   celestiacore.h
+  celestiastate.cpp
+  celestiastate.h
   configfile.cpp
   configfile.h
   destination.cpp

@@ -58,8 +58,9 @@
 #include "qtsettimedialog.h"
 #include "qtgotoobjectdialog.h"
 //#include "qtvideocapturedialog.h"
-#include "celestia/scriptmenu.h"
-#include "celestia/url.h"
+#include <celestia/celestiastate.h>
+#include <celestia/scriptmenu.h>
+#include <celestia/url.h>
 #include "qtbookmark.h"
 
 #if defined(_WIN32)
@@ -743,10 +744,10 @@ void CelestiaAppWindow::slotCopyImage()
 
 void CelestiaAppWindow::slotCopyURL()
 {
-    CelestiaState appState;
-    appState.captureState(m_appCore);
+    CelestiaState appState(m_appCore);
+    appState.captureState();
 
-    Url url(appState, Url::CurrentVersion);
+    Url url(appState);
     QApplication::clipboard()->setText(url.getAsString().c_str());
     m_appCore->flash(_("Copied URL"));
 }
@@ -956,8 +957,8 @@ void CelestiaAppWindow::slotAddBookmark()
     if (defaultTitle.isEmpty())
         defaultTitle = _("New bookmark");
 
-    CelestiaState appState;
-    appState.captureState(m_appCore);
+    CelestiaState appState(m_appCore);
+    appState.captureState();
 
     // Capture the current frame buffer to use as a bookmark icon.
     QImage grabbedImage = glWidget->grabFrameBuffer();
