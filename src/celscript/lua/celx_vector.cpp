@@ -15,6 +15,7 @@
 #include <celutil/align.h>
 #include <Eigen/Geometry>
 
+using namespace std;
 using namespace Eigen;
 
 int vector_new(lua_State* l, const Vector3d& v)

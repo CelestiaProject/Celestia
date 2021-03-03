@@ -5,6 +5,7 @@
 #include <celutil/gettext.h>
 #include "helper.h"
 
+using namespace std;
 
 constexpr const int SpacecraftPrimaryBody = Body::Planet | Body::DwarfPlanet | Body::Moon |
                                             Body::MinorMoon | Body::Asteroid | Body::Comet;

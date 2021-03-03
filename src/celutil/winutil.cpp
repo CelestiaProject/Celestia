@@ -10,6 +10,8 @@
 
 #include "winutil.h"
 
+using namespace std;
+
 void SetMouseCursor(LPCTSTR lpCursor)
 {
     HCURSOR hNewCrsr;

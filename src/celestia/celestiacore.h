@@ -11,6 +11,7 @@
 #define _CELESTIACORE_H_
 
 #include <fstream>
+#include <string>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
@@ -189,7 +190,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setLightTravelDelay(double distanceKm);
 
     // URLs and history navigation
-    void setStartURL(std::string url);
+    void setStartURL(const std::string& url);
     bool goToUrl(const std::string& urlStr);
     void addToHistory();
     void back();
@@ -218,17 +219,17 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     Simulation* getSimulation() const;
     Renderer* getRenderer() const;
-    void showText(std::string s,
+    void showText(const std::string &s,
                   int horig = 0, int vorig = 0,
                   int hoff = 0, int voff = 0,
                   double duration = 1.0e9);
-    int getTextWidth(string s) const;
+    int getTextWidth(const std::string &s) const;
 
     void readFavoritesFile();
     void writeFavoritesFile();
     void activateFavorite(FavoritesEntry&);
-    void addFavorite(std::string, std::string, FavoritesList::iterator* iter=nullptr);
-    void addFavoriteFolder(std::string, FavoritesList::iterator* iter=nullptr);
+    void addFavorite(const std::string&, const std::string&, FavoritesList::iterator* iter=nullptr);
+    void addFavoriteFolder(const std::string&, FavoritesList::iterator* iter=nullptr);
     FavoritesList* getFavorites();
 
     bool viewUpdateRequired() const;
@@ -493,7 +494,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     float pickTolerance { 4.0f };
 
-    unique_ptr<ViewportEffect> viewportEffect { nullptr };
+    std::unique_ptr<ViewportEffect> viewportEffect { nullptr };
     bool isViewportEffectUsed { false };
 
     struct EdgeInsets
@@ -507,7 +508,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     EdgeInsets safeAreaInsets { 0, 0, 0, 0 };
 
     Selection lastSelection;
-    string selectionNames;
+    std::string selectionNames;
 
     std::unique_ptr<Console> console;
     std::ofstream m_logfile;

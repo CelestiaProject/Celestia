@@ -32,6 +32,7 @@
 #include <celestia/view.h>
 #include <celscript/common/scriptmaps.h>
 
+using namespace std;
 using namespace Eigen;
 using namespace celestia::scripts;
 

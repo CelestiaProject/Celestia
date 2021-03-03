@@ -8,11 +8,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cstring>
 #include <cmath>
 #include <iostream>
-#include <iomanip>
-#include <cstdio>
 #include <utility>
 #include <ctime>
 #include "astro.h"

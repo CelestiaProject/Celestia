@@ -23,11 +23,11 @@ void CenterWindow(HWND hParent, HWND hWnd);
 void RemoveButtonDefaultStyle(HWND hWnd);
 void AddButtonDefaultStyle(HWND hWnd);
 const char* CurrentCP();
-string UTF8ToCurrentCP(const string& str);
-string CurrentCPToUTF8(const string& str);
-string WideToCurrentCP(const wstring& ws);
-wstring CurrentCPToWide(const string& str);
-string WideToUTF8(const wstring& ws);
-wstring UTF8ToWide(const string& str);
+std::string UTF8ToCurrentCP(const std::string& str);
+std::string CurrentCPToUTF8(const std::string& str);
+std::string WideToCurrentCP(const std::wstring& ws);
+std::wstring CurrentCPToWide(const std::string& str);
+std::string WideToUTF8(const std::wstring& ws);
+std::wstring UTF8ToWide(const std::string& str);
 
 #endif

@@ -11,9 +11,12 @@
 #include <cctype>
 #include <cmath>
 #include <iomanip>
+#include <iostream>
 #include <celutil/utf8.h>
 #include "tokenizer.h"
 
+
+using namespace std;
 
 static bool issep(char c)
 {

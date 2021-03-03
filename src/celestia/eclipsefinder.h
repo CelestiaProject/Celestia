@@ -52,7 +52,7 @@ class EclipseFinder
     void findEclipses(double startDate,
                       double endDate,
                       int eclipseTypeMask,
-                      vector<Eclipse>& eclipses);
+                      std::vector<Eclipse>& eclipses);
  private:
     Body* body;
     EclipseFinderWatcher* watcher;

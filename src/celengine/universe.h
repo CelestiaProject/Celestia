@@ -62,10 +62,10 @@ class Universe
                        int nContexts = 0,
                        bool i18n = false) const;
     Selection findChildObject(const Selection& sel,
-                              const string& name,
+                              const std::string& name,
                               bool i18n = false) const;
     Selection findObjectInContext(const Selection& sel,
-                                  const string& name,
+                                  const std::string& name,
                                   bool i18n = false) const;
 
     std::vector<std::string> getCompletion(const std::string& s,

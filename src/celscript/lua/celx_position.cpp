@@ -15,6 +15,7 @@
 #include <Eigen/Geometry>
 
 
+using namespace std;
 using namespace Eigen;
 
 // ==================== Position ====================

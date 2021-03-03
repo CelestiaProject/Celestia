@@ -14,6 +14,7 @@
 #include "celx_vector.h"
 #include <celutil/align.h>
 
+using namespace std;
 using namespace Eigen;
 
 int rotation_new(lua_State* l, const Quaterniond& qd)

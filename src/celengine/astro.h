@@ -42,8 +42,6 @@
 #define JUPITER_RADIUS 71492.0
 #define SOLAR_RADIUS   696000.0
 
-using namespace std;
-
 class UniversalCoord;
 
 namespace astro
