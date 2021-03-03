@@ -29,6 +29,26 @@ using namespace Eigen;
 using namespace celmath;
 
 
+double InstantaneousCommand::getDuration() const
+{
+    return 0.0;
+}
+
+void InstantaneousCommand::process(ExecutionEnvironment& env, double /*t*/, double /*dt*/)
+{
+    process(env);
+}
+
+TimedCommand::TimedCommand(double duration) :
+    duration(duration)
+{
+}
+
+double TimedCommand::getDuration() const
+{
+    return duration;
+}
+
 ////////////////
 // Wait command: a no-op with no side effect other than its duration
 
@@ -61,9 +81,12 @@ void CommandSelect::process(ExecutionEnvironment& env)
 
 CommandGoto::CommandGoto(double t,
                          double dist,
-                         Eigen::Vector3f _up,
+                         const Eigen::Vector3f &_up,
                          ObserverFrame::CoordinateSystem _upFrame) :
-    gotoTime(t), distance(dist), up(_up), upFrame(_upFrame)
+    gotoTime(t),
+    distance(dist),
+    up(_up),
+    upFrame(_upFrame)
 {
 }
 
@@ -83,7 +106,7 @@ CommandGotoLongLat::CommandGotoLongLat(double t,
                                        double dist,
                                        float _longitude,
                                        float _latitude,
-                                       Eigen::Vector3f _up) :
+                                       const Eigen::Vector3f &_up) :
     gotoTime(t),
     distance(dist),
     longitude(_longitude),
@@ -243,11 +266,11 @@ void CommandCancel::process(ExecutionEnvironment& env)
 
 CommandPrint::CommandPrint(string _text,
                            int horig, int vorig, int hoff, int voff,
-                           double _duration
-                           ) : text(std::move(_text)),
-                               hOrigin(horig), vOrigin(vorig),
-                               hOffset(hoff), vOffset(voff),
-                               duration(_duration)
+                           float _duration) :
+    text(std::move(_text)),
+    hOrigin(horig), vOrigin(vorig),
+    hOffset(hoff), vOffset(voff),
+    duration(_duration)
 {
 }
 
@@ -803,7 +826,7 @@ void CommandSetRadius::process(ExecutionEnvironment& env)
 ////////////////
 // SetLineColor command
 
-CommandSetLineColor::CommandSetLineColor(string _item, Color _color) :
+CommandSetLineColor::CommandSetLineColor(string _item, const Color& _color) :
     item(std::move(_item)),
     color(_color)
 {
@@ -826,7 +849,7 @@ void CommandSetLineColor::process(ExecutionEnvironment& env)
 ////////////////
 // SetLabelColor command
 
-CommandSetLabelColor::CommandSetLabelColor(string _item, Color _color) :
+CommandSetLabelColor::CommandSetLabelColor(string _item, const Color& _color) :
     item(std::move(_item)),
     color(_color)
 {
@@ -849,7 +872,7 @@ void CommandSetLabelColor::process(ExecutionEnvironment& env)
 ////////////////
 // SetTextColor command
 
-CommandSetTextColor::CommandSetTextColor(Color _color) :
+CommandSetTextColor::CommandSetTextColor(const Color& _color) :
     color(_color)
 {
 }
@@ -919,14 +942,14 @@ double RepeatCommand::getDuration() const
 // ScriptImage command
 CommandScriptImage::CommandScriptImage(float _duration, float _fadeafter,
                                        float _xoffset, float _yoffset,
-                                       fs::path _filename,
+                                       const fs::path &_filename,
                                        bool _fitscreen,
                                        array<Color,4> &_colors) :
     duration(_duration),
     fadeafter(_fadeafter),
     xoffset(_xoffset),
     yoffset(_yoffset),
-    filename(std::move(_filename)),
+    filename(_filename),
     fitscreen(_fitscreen)
 {
     copy(_colors.begin(), _colors.end(), colors.begin());
@@ -961,7 +984,7 @@ void CommandVerbosity::process(ExecutionEnvironment& env)
 void CommandConstellations::process(ExecutionEnvironment& env)
 {
     Universe* u = env.getSimulation()->getUniverse();
-    if (!u)
+    if (u == nullptr)
         return;
 
     AsterismList& asterisms = *u->getAsterisms();
@@ -969,11 +992,11 @@ void CommandConstellations::process(ExecutionEnvironment& env)
     {
         if (flags.none)
         {
-            ast->setActive(0);
+            ast->setActive(false);
         }
         else if (flags.all)
         {
-            ast->setActive(1);
+            ast->setActive(true);
         }
         else
         {
@@ -982,33 +1005,34 @@ void CommandConstellations::process(ExecutionEnvironment& env)
                                    [&name](Cons& c){ return compareIgnoringCase(c.name, name) == 0; });
 
             if (it != constellations.end())
-                ast->setActive(it->active != 0);
+                ast->setActive(it->active);
         }
     }
 }
 
-void CommandConstellations::setValues(string cons, int act)
+void CommandConstellations::setValues(string_view _cons, bool act)
 {
     // ignore all above 99 constellations
     if (constellations.size() == MAX_CONSTELLATIONS)
         return;
 
+    string cons(_cons);
     std::replace(cons.begin(), cons.end(), '_', ' ');
 
     auto it = std::find_if(constellations.begin(), constellations.end(),
-                                   [&cons](Cons& c){ return compareIgnoringCase(c.name, cons) == 0; });
+                           [&cons](Cons& c){ return compareIgnoringCase(c.name, cons) == 0; });
 
     if (it != constellations.end())
         it->active = act;
     else
-        constellations.push_back({cons, act}); // If not found then add a new constellation
+        constellations.emplace_back(cons, act); // If not found then add a new constellation
 }
 
 
 void CommandConstellationColor::process(ExecutionEnvironment& env)
 {
     Universe* u = env.getSimulation()->getUniverse();
-    if (!u)
+    if (u == nullptr)
         return;
 
     AsterismList& asterisms = *u->getAsterisms();
@@ -1025,7 +1049,6 @@ void CommandConstellationColor::process(ExecutionEnvironment& env)
         else
         {
             auto name = ast->getName(false);
-            //std::vector<std::string>::iterator it;
             auto it = std::find_if(constellations.begin(), constellations.end(),
                                    [&name](string& c){ return compareIgnoringCase(c, name) == 0; });
 
@@ -1053,12 +1076,13 @@ void CommandConstellationColor::unsetColor()
     flags.unset = true;
 }
 
-void CommandConstellationColor::setConstellations(string cons)
+void CommandConstellationColor::setConstellations(string_view _cons)
 {
     // ignore all above 99 constellations
     if (constellations.size() == MAX_CONSTELLATIONS)
        return;
 
+    string cons(_cons);
     std::replace(cons.begin(), cons.end(), '_', ' ');
 
     // If not found then add a new constellation

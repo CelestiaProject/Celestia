@@ -13,8 +13,8 @@
 #define MAX_CONSTELLATIONS 100
 
 #include <array>
-#include <iostream>
-#include <celengine/astro.h>
+#include <iosfwd>
+#include <celcompat/string_view.h>
 #include <celutil/color.h>
 #include "execenv.h"
 
@@ -22,8 +22,9 @@
 class Command
 {
  public:
-    Command() {};
-    virtual ~Command() {};
+    Command() = default;
+    virtual ~Command() = default;
+
     virtual void process(ExecutionEnvironment&, double t, double dt) = 0;
     virtual double getDuration() const = 0;
 };
@@ -34,23 +35,17 @@ typedef std::vector<Command*> CommandSequence;
 class InstantaneousCommand : public Command
 {
  public:
-    InstantaneousCommand() {};
-    virtual ~InstantaneousCommand() {};
-    virtual double getDuration() const { return 0.0; };
+    double getDuration() const override;
+    void process(ExecutionEnvironment& env, double /*t*/, double /*dt*/) override;
     virtual void process(ExecutionEnvironment&) = 0;
-    void process(ExecutionEnvironment& env, double /*t*/, double /*dt*/)
-    {
-        process(env);
-    };
 };
-
 
 class TimedCommand : public Command
 {
  public:
-    TimedCommand(double _duration) : duration(_duration) {};
-    virtual ~TimedCommand() {};
-    double getDuration() const { return duration; };
+    TimedCommand(double _duration);
+
+    double getDuration() const override;
 
  private:
     double duration;
@@ -61,8 +56,8 @@ class CommandWait : public TimedCommand
 {
  public:
     CommandWait(double _duration);
-    ~CommandWait() = default;
-    void process(ExecutionEnvironment&, double t, double dt);
+
+    void process(ExecutionEnvironment&, double t, double dt) override;
 };
 
 
@@ -70,8 +65,8 @@ class CommandSelect : public InstantaneousCommand
 {
  public:
     CommandSelect(std::string _target);
-    ~CommandSelect() = default;
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string target;
@@ -81,11 +76,12 @@ class CommandSelect : public InstantaneousCommand
 class CommandGoto : public InstantaneousCommand
 {
  public:
-    CommandGoto(double t, double dist,
-                Eigen::Vector3f _up,
+    CommandGoto(double t,
+                double dist,
+                const Eigen::Vector3f &_up,
                 ObserverFrame::CoordinateSystem _upFrame);
-    ~CommandGoto() = default;
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     double gotoTime;
@@ -100,10 +96,11 @@ class CommandGotoLongLat : public InstantaneousCommand
  public:
     CommandGotoLongLat(double t,
                        double dist,
-                       float _longitude, float _latitude,
-                       Eigen::Vector3f _up);
-    ~CommandGotoLongLat() = default;
-    void process(ExecutionEnvironment&);
+                       float _longitude,
+                       float _latitude,
+                       const Eigen::Vector3f &_up);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     double gotoTime;
@@ -123,8 +120,7 @@ class CommandGotoLocation : public InstantaneousCommand
                         const Eigen::Vector3d& translation,
                         const Eigen::Quaterniond& rotation);
 
-    ~CommandGotoLocation() = default;
-    void process(ExecutionEnvironment&);
+    void process(ExecutionEnvironment&) override;
 
  private:
     double gotoTime;
@@ -135,8 +131,9 @@ class CommandGotoLocation : public InstantaneousCommand
 class CommandSetUrl : public InstantaneousCommand
 {
  public:
-    CommandSetUrl(std::string  _url);
-    void process(ExecutionEnvironment&);
+    CommandSetUrl(std::string);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string url;
@@ -147,8 +144,7 @@ class CommandCenter : public InstantaneousCommand
 {
  public:
     CommandCenter(double t);
-    ~CommandCenter() = default;
-    void process(ExecutionEnvironment&);
+    void process(ExecutionEnvironment&) override;
 
  private:
     double centerTime;
@@ -158,55 +154,35 @@ class CommandCenter : public InstantaneousCommand
 class CommandFollow : public InstantaneousCommand
 {
  public:
-    CommandFollow() = default;
-    void process(ExecutionEnvironment&);
-
- private:
-    int dummy;   // Keep the class from having zero size
+    void process(ExecutionEnvironment&) override;
 };
 
 
 class CommandSynchronous : public InstantaneousCommand
 {
  public:
-    CommandSynchronous() = default;
-    void process(ExecutionEnvironment&);
-
- private:
-    int dummy;   // Keep the class from having zero size
+    void process(ExecutionEnvironment&) override;
 };
 
 
 class CommandLock : public InstantaneousCommand
 {
  public:
-    CommandLock() = default;
-    void process(ExecutionEnvironment&);
-
- private:
-    int dummy;
+    void process(ExecutionEnvironment&) override;
 };
 
 
 class CommandChase : public InstantaneousCommand
 {
  public:
-    CommandChase() = default;
-    void process(ExecutionEnvironment&);
-
- private:
-    int dummy;
+    void process(ExecutionEnvironment&) override;
 };
 
 
 class CommandTrack : public InstantaneousCommand
 {
  public:
-    CommandTrack() = default;
-    void process(ExecutionEnvironment&);
-
- private:
-    int dummy;
+    void process(ExecutionEnvironment&) override;
 };
 
 
@@ -215,7 +191,8 @@ class CommandSetFrame : public InstantaneousCommand
  public:
     CommandSetFrame(ObserverFrame::CoordinateSystem,
                     std::string, std::string);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     ObserverFrame::CoordinateSystem coordSys;
@@ -228,7 +205,8 @@ class CommandSetSurface : public InstantaneousCommand
 {
  public:
     CommandSetSurface(std::string);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string surfaceName;
@@ -238,22 +216,14 @@ class CommandSetSurface : public InstantaneousCommand
 class CommandCancel : public InstantaneousCommand
 {
  public:
-    CommandCancel() = default;
-    void process(ExecutionEnvironment&);
-
- private:
-    int dummy;   // Keep the class from having zero size
+    void process(ExecutionEnvironment&) override;
 };
 
 
 class CommandExit : public InstantaneousCommand
 {
  public:
-    CommandExit() = default;
-    void process(ExecutionEnvironment&);
-
- private:
-    int dummy;   // Keep the class from having zero size
+    void process(ExecutionEnvironment&) override;
 };
 
 
@@ -261,8 +231,9 @@ class CommandPrint : public InstantaneousCommand
 {
  public:
     CommandPrint(std::string, int horig, int vorig, int hoff, int voff,
-                 double _duration);
-    void process(ExecutionEnvironment&);
+                 float _duration);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string text;
@@ -277,11 +248,7 @@ class CommandPrint : public InstantaneousCommand
 class CommandClearScreen : public InstantaneousCommand
 {
  public:
-    CommandClearScreen() = default;
-    void process(ExecutionEnvironment&);
-
- private:
-    int dummy;   // Keep the class from having zero size
+    void process(ExecutionEnvironment&) override;
 };
 
 
@@ -289,7 +256,8 @@ class CommandSetTime : public InstantaneousCommand
 {
  public:
     CommandSetTime(double _jd);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     double jd;
@@ -300,7 +268,8 @@ class CommandSetTimeRate : public InstantaneousCommand
 {
  public:
     CommandSetTimeRate(double);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     double rate;
@@ -311,7 +280,8 @@ class CommandChangeDistance : public TimedCommand
 {
  public:
     CommandChangeDistance(double _duration, double _rate);
-    void process(ExecutionEnvironment&, double t, double dt);
+
+    void process(ExecutionEnvironment&, double t, double dt) override;
 
  private:
     double rate;
@@ -322,7 +292,8 @@ class CommandOrbit : public TimedCommand
 {
  public:
     CommandOrbit(double _duration, const Eigen::Vector3f& axis, float rate);
-    void process(ExecutionEnvironment&, double t, double dt);
+
+    void process(ExecutionEnvironment&, double t, double dt) override;
 
  private:
     Eigen::Vector3f spin;
@@ -333,7 +304,8 @@ class CommandRotate : public TimedCommand
 {
  public:
     CommandRotate(double _duration, const Eigen::Vector3f& axis, float rate);
-    void process(ExecutionEnvironment&, double t, double dt);
+
+    void process(ExecutionEnvironment&, double t, double dt) override;
 
  private:
     Eigen::Vector3f spin;
@@ -344,7 +316,8 @@ class CommandMove : public TimedCommand
 {
  public:
     CommandMove(double _duration, const Eigen::Vector3d& _velocity);
-    void process(ExecutionEnvironment&, double t, double dt);
+
+    void process(ExecutionEnvironment&, double t, double dt) override;
 
  private:
     Eigen::Vector3d velocity;
@@ -355,7 +328,8 @@ class CommandSetPosition : public InstantaneousCommand
 {
  public:
     CommandSetPosition(const UniversalCoord&);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     UniversalCoord pos;
@@ -365,10 +339,11 @@ class CommandSetPosition : public InstantaneousCommand
 class CommandSetOrientation : public InstantaneousCommand
 {
  public:
-     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     CommandSetOrientation(const Eigen::Quaternionf&);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     Eigen::Quaternionf orientation;
@@ -377,11 +352,7 @@ class CommandSetOrientation : public InstantaneousCommand
 class CommandLookBack : public InstantaneousCommand
 {
  public:
-    CommandLookBack() = default;
-    void process(ExecutionEnvironment&);
-
- private:
-    int dummy;   // Keep the class from having zero size
+    void process(ExecutionEnvironment&) override;
 };
 
 
@@ -389,7 +360,8 @@ class CommandRenderFlags : public InstantaneousCommand
 {
  public:
     CommandRenderFlags(uint64_t _setFlags, uint64_t _clearFlags);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     uint64_t setFlags;
@@ -406,17 +378,21 @@ class CommandConstellations : public InstantaneousCommand
     };
 
  public:
-    CommandConstellations() = default;
-    void process(ExecutionEnvironment&);
-    void setValues(string cons, int act);
+    void process(ExecutionEnvironment&) override;
+
+    void setValues(std::string_view cons, bool act);
 
     Flags flags { false, false };
 
  private:
     struct Cons
     {
-       std::string name;
-       int active;
+        Cons(std::string name, bool active) :
+            name(std::move(name)),
+            active(active)
+        {}
+        std::string name;
+        bool active;
     };
     std::vector<Cons> constellations;
 };
@@ -432,9 +408,8 @@ class CommandConstellationColor : public InstantaneousCommand
     };
 
  public:
-    CommandConstellationColor() = default;
-    void process(ExecutionEnvironment&);
-    void setConstellations(string cons);
+    void process(ExecutionEnvironment&) override;
+    void setConstellations(std::string_view cons);
     void setColor(float r, float g, float b);
     void unsetColor();
 
@@ -450,7 +425,8 @@ class CommandLabels : public InstantaneousCommand
 {
  public:
     CommandLabels(int _setFlags, int _clearFlags);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     int setFlags;
@@ -462,7 +438,8 @@ class CommandOrbitFlags : public InstantaneousCommand
 {
  public:
     CommandOrbitFlags(int _setFlags, int _clearFlags);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     int setFlags;
@@ -474,7 +451,8 @@ class CommandSetVisibilityLimit : public InstantaneousCommand
 {
  public:
     CommandSetVisibilityLimit(double);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     double magnitude;
@@ -484,7 +462,8 @@ class CommandSetFaintestAutoMag45deg : public InstantaneousCommand
 {
  public:
     CommandSetFaintestAutoMag45deg(double);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     double magnitude;
@@ -494,7 +473,8 @@ class CommandSetAmbientLight : public InstantaneousCommand
 {
  public:
     CommandSetAmbientLight(float);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     float lightLevel;
@@ -505,7 +485,8 @@ class CommandSetGalaxyLightGain : public InstantaneousCommand
 {
  public:
     CommandSetGalaxyLightGain(float);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     float lightGain;
@@ -516,7 +497,8 @@ class CommandSet : public InstantaneousCommand
 {
  public:
     CommandSet(std::string, double);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string name;
@@ -528,7 +510,8 @@ class CommandPreloadTextures : public InstantaneousCommand
 {
  public:
     CommandPreloadTextures(std::string);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string name;
@@ -539,7 +522,8 @@ class CommandMark : public InstantaneousCommand
 {
  public:
     CommandMark(std::string, MarkerRepresentation, bool);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string target;
@@ -552,7 +536,8 @@ class CommandUnmark : public InstantaneousCommand
 {
  public:
     CommandUnmark(std::string);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string target;
@@ -562,11 +547,7 @@ class CommandUnmark : public InstantaneousCommand
 class CommandUnmarkAll : public InstantaneousCommand
 {
  public:
-    CommandUnmarkAll() = default;
-    void process(ExecutionEnvironment&);
-
- private:
-    int dummy;   // Keep the class from having zero size
+    void process(ExecutionEnvironment&) override;
 };
 
 
@@ -574,7 +555,7 @@ class CommandCapture : public InstantaneousCommand
 {
  public:
     CommandCapture(std::string, std::string);
-    void process(ExecutionEnvironment&);
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string type;
@@ -586,7 +567,8 @@ class CommandSetTextureResolution : public InstantaneousCommand
 {
  public:
     CommandSetTextureResolution(unsigned int);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     unsigned int res;
@@ -598,7 +580,7 @@ class CommandRenderPath : public InstantaneousCommand
 {
  public:
     CommandRenderPath(GLContext::GLRenderPath);
-    void process(ExecutionEnvironment&);
+    void process(ExecutionEnvironment&) override;
 
  private:
     GLContext::GLRenderPath path;
@@ -610,7 +592,8 @@ class CommandSplitView : public InstantaneousCommand
 {
  public:
     CommandSplitView(unsigned int, std::string, double);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     unsigned int view;
@@ -623,7 +606,8 @@ class CommandDeleteView : public InstantaneousCommand
 {
  public:
     CommandDeleteView(unsigned int);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     unsigned int view;
@@ -633,8 +617,7 @@ class CommandDeleteView : public InstantaneousCommand
 class CommandSingleView : public InstantaneousCommand
 {
  public:
-    CommandSingleView() = default;
-    void process(ExecutionEnvironment&);
+    void process(ExecutionEnvironment&) override;
 };
 
 
@@ -642,7 +625,7 @@ class CommandSetActiveView : public InstantaneousCommand
 {
  public:
     CommandSetActiveView(unsigned int);
-    void process(ExecutionEnvironment&);
+    void process(ExecutionEnvironment&) override;
 
  private:
     unsigned int view;
@@ -653,7 +636,8 @@ class CommandSetRadius : public InstantaneousCommand
 {
  public:
     CommandSetRadius(std::string, double);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string object;
@@ -664,8 +648,9 @@ class CommandSetRadius : public InstantaneousCommand
 class CommandSetLineColor : public InstantaneousCommand
 {
  public:
-    CommandSetLineColor(std::string, Color);
-    void process(ExecutionEnvironment&);
+    CommandSetLineColor(std::string, const Color&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string item;
@@ -676,8 +661,9 @@ class CommandSetLineColor : public InstantaneousCommand
 class CommandSetLabelColor : public InstantaneousCommand
 {
  public:
-    CommandSetLabelColor(std::string, Color);
-    void process(ExecutionEnvironment&);
+    CommandSetLabelColor(std::string, const Color&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string item;
@@ -688,8 +674,9 @@ class CommandSetLabelColor : public InstantaneousCommand
 class CommandSetTextColor : public InstantaneousCommand
 {
  public:
-    CommandSetTextColor(Color);
-    void process(ExecutionEnvironment&);
+    CommandSetTextColor(const Color&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     Color color;
@@ -702,9 +689,10 @@ class RepeatCommand : public Command
 {
  public:
     RepeatCommand(CommandSequence* _body, int _repeatCount);
-    ~RepeatCommand();
-    void process(ExecutionEnvironment&, double t, double dt) = 0;
-    double getDuration() const;
+    ~RepeatCommand() override;
+
+    double getDuration() const override;
+    void process(ExecutionEnvironment& env, double t, double dt) override;
 
  private:
     CommandSequence* body;
@@ -717,11 +705,12 @@ class RepeatCommand : public Command
 class CommandScriptImage : public InstantaneousCommand
 {
  public:
-    CommandScriptImage(float, float, float, float, fs::path, bool, std::array<Color, 4>&);
-    void process(ExecutionEnvironment&);
+    CommandScriptImage(float, float, float, float, const fs::path&, bool, std::array<Color, 4>&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
-    float duration;
+    double duration;
     float fadeafter;
     float xoffset;
     float yoffset;
@@ -734,7 +723,8 @@ class CommandVerbosity : public InstantaneousCommand
 {
  public:
     CommandVerbosity(int _level);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     int level;
@@ -745,7 +735,8 @@ class CommandSetWindowBordersVisible : public InstantaneousCommand
 {
  public:
     CommandSetWindowBordersVisible(bool _visible) : visible(_visible) {};
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     bool visible;
@@ -756,7 +747,8 @@ class CommandSetRingsTexture : public InstantaneousCommand
 {
  public:
     CommandSetRingsTexture(std::string, std::string, std::string);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string object, textureName, path;
@@ -767,7 +759,8 @@ class CommandLoadFragment : public InstantaneousCommand
 {
  public:
     CommandLoadFragment(std::string, std::string, std::string);
-    void process(ExecutionEnvironment&);
+
+    void process(ExecutionEnvironment&) override;
 
  private:
     std::string type, fragment, dir;
