@@ -4441,17 +4441,13 @@ bool CelestiaCore::goToUrl(const string& urlStr)
 
 void CelestiaCore::addToHistory()
 {
-    Url* url = new Url(this);
     if (!history.empty() && historyCurrent < history.size() - 1)
     {
         // truncating history to current position
         while (historyCurrent != history.size() - 1)
-        {
-            delete history.back();
             history.pop_back();
-        }
     }
-    history.push_back(url);
+    history.emplace_back(this);
     historyCurrent = history.size() - 1;
     notifyWatchers(HistoryChanged);
 }
@@ -4468,7 +4464,7 @@ void CelestiaCore::back()
         historyCurrent = history.size()-1;
     }
     historyCurrent--;
-    history[historyCurrent]->goTo();
+    history[historyCurrent].goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
@@ -4478,29 +4474,29 @@ void CelestiaCore::forward()
     if (history.size() == 0) return;
     if (historyCurrent == history.size()-1) return;
     historyCurrent++;
-    history[historyCurrent]->goTo();
+    history[historyCurrent].goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
 
-const vector<Url*>& CelestiaCore::getHistory() const
+const vector<Url>& CelestiaCore::getHistory() const
 {
     return history;
 }
 
-vector<Url*>::size_type CelestiaCore::getHistoryCurrent() const
+vector<Url>::size_type CelestiaCore::getHistoryCurrent() const
 {
     return historyCurrent;
 }
 
-void CelestiaCore::setHistoryCurrent(vector<Url*>::size_type curr)
+void CelestiaCore::setHistoryCurrent(vector<Url>::size_type curr)
 {
     if (curr >= history.size()) return;
     if (historyCurrent == history.size()) {
         addToHistory();
     }
     historyCurrent = curr;
-    history[curr]->goTo();
+    history[curr].goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 

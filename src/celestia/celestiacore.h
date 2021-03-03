@@ -195,9 +195,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void addToHistory();
     void back();
     void forward();
-    const std::vector<Url*>& getHistory() const;
-    std::vector<Url*>::size_type getHistoryCurrent() const;
-    void setHistoryCurrent(std::vector<Url*>::size_type curr);
+    const std::vector<Url>& getHistory() const;
+    std::vector<Url>::size_type getHistoryCurrent() const;
+    void setHistoryCurrent(std::vector<Url>::size_type curr);
 
     // event processing methods
     void charEntered(const char*, int modifiers = 0);
@@ -479,8 +479,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     ContextMenuHandler* contextMenuHandler{ nullptr };
     TextDisplayHandler* textDisplayHandler{ nullptr };
 
-    std::vector<Url*> history;
-    std::vector<Url*>::size_type historyCurrent{ 0 };
+    std::vector<Url> history;
+    std::vector<Url>::size_type historyCurrent{ 0 };
     std::string startURL;
 
     std::list<View*> views;
