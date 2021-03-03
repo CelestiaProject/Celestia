@@ -35,9 +35,9 @@ class CelScriptWrapper : public ExecutionEnvironment
         }
         else
         {
-            const vector<string>* errors = parser.getErrors();
-            if (errors->size() > 0)
-                errorMessage = "Error while parsing CEL-script: " + (*errors)[0];
+            auto errors = parser.getErrors();
+            if (!errors.empty())
+                errorMessage = "Error while parsing CEL-script: " + errors[0];
             else
                 errorMessage = "Error while parsing CEL-script.";
         }
