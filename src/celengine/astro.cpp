@@ -106,7 +106,7 @@ static const char* MonthAbbrList[12] =
 
 struct UnitDefinition
 {
-    const char* name;
+    string_view name;
     double conversion;
 };
 
@@ -759,7 +759,7 @@ astro::TAItoJDUTC(double tai)
 
 
 // Get scale of given length unit in kilometers
-bool astro::getLengthScale(const string& unitName, double& scale)
+bool astro::getLengthScale(string_view unitName, double& scale)
 {
     unsigned int nUnits = sizeof(lengthUnits) / sizeof(lengthUnits[0]);
     bool foundMatch = false;
@@ -778,7 +778,7 @@ bool astro::getLengthScale(const string& unitName, double& scale)
 
 
 // Get scale of given time unit in days
-bool astro::getTimeScale(const string& unitName, double& scale)
+bool astro::getTimeScale(string_view unitName, double& scale)
 {
     for (const auto& timeUnit : timeUnits)
     {
@@ -794,7 +794,7 @@ bool astro::getTimeScale(const string& unitName, double& scale)
 
 
 // Get scale of given angle unit in degrees
-bool astro::getAngleScale(const string& unitName, double& scale)
+bool astro::getAngleScale(string_view unitName, double& scale)
 {
     for (const auto& angleUnit : angleUnits)
     {
@@ -809,7 +809,7 @@ bool astro::getAngleScale(const string& unitName, double& scale)
 }
 
 
-bool astro::getMassScale(const string& unitName, double& scale)
+bool astro::getMassScale(string_view unitName, double& scale)
 {
     for (const auto& massUnit : massUnits)
     {
@@ -825,31 +825,31 @@ bool astro::getMassScale(const string& unitName, double& scale)
 
 
 // Check if unit is a length unit
-bool astro::isLengthUnit(string unitName)
+bool astro::isLengthUnit(string_view unitName)
 {
     double dummy;
-    return getLengthScale(std::move(unitName), dummy);
+    return getLengthScale(unitName, dummy);
 }
 
 
 // Check if unit is a time unit
-bool astro::isTimeUnit(string unitName)
+bool astro::isTimeUnit(string_view unitName)
 {
     double dummy;
-    return getTimeScale(std::move(unitName), dummy);
+    return getTimeScale(unitName, dummy);
 }
 
 
 // Check if unit is an angle unit
-bool astro::isAngleUnit(string unitName)
+bool astro::isAngleUnit(string_view unitName)
 {
     double dummy;
-    return getAngleScale(std::move(unitName), dummy);
+    return getAngleScale(unitName, dummy);
 }
 
 
-bool astro::isMassUnit(string unitName)
+bool astro::isMassUnit(string_view unitName)
 {
     double dummy;
-    return getMassScale(std::move(unitName), dummy);
+    return getMassScale(unitName, dummy);
 }
