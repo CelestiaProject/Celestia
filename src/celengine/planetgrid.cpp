@@ -19,6 +19,7 @@
 #include "render.h"
 #include "vecgl.h"
 
+using namespace std;
 using namespace Eigen;
 using namespace celmath;
 using namespace celestia;

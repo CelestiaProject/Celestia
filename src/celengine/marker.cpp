@@ -108,9 +108,9 @@ void MarkerRepresentation::setSize(float size)
 }
 
 
-void MarkerRepresentation::setLabel(const std::string& label)
+void MarkerRepresentation::setLabel(std::string label)
 {
-    m_label = label;
+    m_label = std::move(label);
 }
 
 

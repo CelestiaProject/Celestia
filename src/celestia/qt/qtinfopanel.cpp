@@ -20,6 +20,7 @@
 #include <QItemSelection>
 #include "qtinfopanel.h"
 
+using namespace std;
 using namespace Eigen;
 using namespace celmath;
 

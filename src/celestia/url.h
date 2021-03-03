@@ -151,9 +151,9 @@ public:
     // Observer frame, position, and orientation. For multiview, there needs
     // be one instance of these parameters per view saved.
     ObserverFrame::CoordinateSystem coordSys{ ObserverFrame::Universal };
-    string refBodyName;
-    string targetBodyName;
-    string trackedBodyName;
+    std::string refBodyName;
+    std::string targetBodyName;
+    std::string trackedBodyName;
     UniversalCoord observerPosition{ 0.0, 0.0, 0.0 };
     Eigen::Quaternionf observerOrientation{ Eigen::Quaternionf::Identity() };
     float fieldOfView{ 45.0f };
@@ -164,7 +164,7 @@ public:
     bool pauseState{ false };
     bool lightTimeDelay{ false };
 
-    string selectedBodyName;
+    std::string selectedBodyName;
 
     int labelMode{ 0 };
     uint64_t renderFlags{ 0 };

@@ -15,6 +15,7 @@
 #include <celestia/celestiacore.h>
 #include <celttf/truetypefont.h>
 
+using namespace std;
 using namespace celestia::scripts;
 
 LuaState *getLuaStateObject(lua_State*);

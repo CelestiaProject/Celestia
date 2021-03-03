@@ -64,7 +64,7 @@ public:
     bool handleTickEvent(double dt);
 
     // Lua hook handling
-    void setLuaPath(const string& s);
+    void setLuaPath(const std::string& s);
     void allowSystemAccess();
     void allowLuaPackageAccess();
     void setLuaHookEventHandlerEnabled(bool);

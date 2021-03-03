@@ -217,7 +217,7 @@ void CelestiaCore::activateFavorite(FavoritesEntry& fav)
     sim->setFrame(fav.coordSys, sim->getSelection());
 }
 
-void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::iterator* iter)
+void CelestiaCore::addFavorite(const string &name, const string &parentFolder, FavoritesList::iterator* iter)
 {
     FavoritesList::iterator pos;
     if(!iter)
@@ -243,7 +243,7 @@ void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::
     favorites->insert(pos, fav);
 }
 
-void CelestiaCore::addFavoriteFolder(string name, FavoritesList::iterator* iter)
+void CelestiaCore::addFavoriteFolder(const string &name, FavoritesList::iterator* iter)
 {
     FavoritesList::iterator pos;
     if(!iter)
@@ -1839,12 +1839,12 @@ void CelestiaCore::start()
 
 void CelestiaCore::start(double t)
 {
-    if (config->initScriptFile != "")
+    if (!config->initScriptFile.empty())
     {
         // using the KdeAlerter in runScript would create an infinite loop,
         // break it here by resetting config->initScriptFile:
         fs::path filename(config->initScriptFile);
-        config->initScriptFile = "";
+        config->initScriptFile = {};
         runScript(filename);
     }
 
@@ -1854,16 +1854,16 @@ void CelestiaCore::start(double t)
 
     sysTime = timer->getTime();
 
-    if (startURL != "")
+    if (!startURL.empty())
         goToUrl(startURL);
 }
 
-void CelestiaCore::setStartURL(string url)
+void CelestiaCore::setStartURL(const string &url)
 {
-    if (!url.substr(0,4).compare("cel:"))
+    if (!url.substr(0, 4).compare("cel:"))
     {
         startURL = url;
-        config->initScriptFile = "";
+        config->initScriptFile = {};
     }
     else
     {
@@ -2418,7 +2418,7 @@ Simulation* CelestiaCore::getSimulation() const
     return sim;
 }
 
-void CelestiaCore::showText(string s,
+void CelestiaCore::showText(const std::string &s,
                             int horig, int vorig,
                             int hoff, int voff,
                             double duration)
@@ -2439,7 +2439,7 @@ void CelestiaCore::showText(string s,
     messageDuration = duration;
 }
 
-int CelestiaCore::getTextWidth(string s) const
+int CelestiaCore::getTextWidth(const std::string &s) const
 {
     return titleFont->getWidth(s);
 }
@@ -2918,7 +2918,7 @@ static void displayPlanetInfo(Overlay& overlay,
 
         float density = body.getDensity();
         if (density > 0)
-            fmt::fprintf(overlay, _("Density: %.2f x 1000 kg/m^3\n"), density / 1000.0);
+            fmt::fprintf(overlay, _("Density: %.2f x 1000 kg/m^3\n"), density / 1000.0f);
 
         float planetTemp = body.getTemperature(t);
         if (planetTemp > 0)
@@ -2956,7 +2956,7 @@ static string getSelectionName(const Selection& sel, const Universe& univ)
     case Selection::Type_Location:
         return sel.location()->getName(false);
     default:
-        return "";
+        return {};
     }
 }
 
