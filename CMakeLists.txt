@@ -105,11 +105,13 @@ if(MSVC)
   # C4244, C4267, C4503: implicit type conversion to a smaller type
   # C4786: long names in templates
   # C4800: forcing value to bool
+  # C4455: reserved literals (no undescore at the beginning)
+  # C5030: not recognized attribute
   # Additional options
   # bigobj: generate more object sections than allowed by default
   # Promoted to errors
   # C4316: object allocated on the heap may not be aligned 16
-  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/bigobj" "/we4316")
+  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/wd4455" "/wd5030" "/bigobj" "/we4316")
 endif()
 
 if(NOT WIN32)
