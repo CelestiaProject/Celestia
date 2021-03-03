@@ -511,7 +511,7 @@ struct hash<string_view>
         }
         return _hash;
 #else
-        fnv1a_loop_helper(sv.data(), sv.data() + sv.length());
+        return fnv1a_loop_helper(sv.data(), sv.data() + sv.length());
 #endif
     }
 };
