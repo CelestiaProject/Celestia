@@ -2602,10 +2602,8 @@ static void displayDeclination(Overlay& overlay, double angle)
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
-    const char sign = angle < 0.0 ? '-' : '+';
-
-    fmt::fprintf(overlay, "Dec: %c%d%s %02d' %.1f\"\n",
-                          sign, abs(degrees), UTF8_DEGREE_SIGN,
+    fmt::fprintf(overlay, _("Dec: %+d%s %02d' %.1f\"\n"),
+                          abs(degrees), UTF8_DEGREE_SIGN,
                           abs(minutes), abs(seconds));
 }
 
@@ -2616,7 +2614,7 @@ static void displayRightAscension(Overlay& overlay, double angle)
     double seconds;
     astro::decimalToHourMinSec(angle, hours, minutes, seconds);
 
-    fmt::fprintf(overlay, "RA: %dh %02dm %.1fs\n",
+    fmt::fprintf(overlay, _("RA: %dh %02dm %.1fs\n"),
                           hours, abs(minutes), abs(seconds));
 }
 
