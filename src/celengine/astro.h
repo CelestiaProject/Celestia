@@ -14,6 +14,7 @@
 #include <Eigen/Geometry>
 #include <iosfwd>
 #include <string>
+#include <celcompat/string_view.h>
 #include <celmath/mathlib.h>
 
 #define SOLAR_ABSMAG   4.83f
@@ -195,14 +196,14 @@ namespace astro
         return jd * SECONDS_PER_DAY;
     }
 
-    bool isLengthUnit(string unitName);
-    bool isTimeUnit(string unitName);
-    bool isAngleUnit(string unitName);
-    bool isMassUnit(string unitName);
-    bool getLengthScale(const string& unitName, double& scale);
-    bool getTimeScale(const string& unitName, double& scale);
-    bool getAngleScale(const string& unitName, double& scale);
-    bool getMassScale(const string& unitName, double& scale);
+    bool isLengthUnit(std::string_view unitName);
+    bool isTimeUnit(std::string_view unitName);
+    bool isAngleUnit(std::string_view unitName);
+    bool isMassUnit(std::string_view unitName);
+    bool getLengthScale(std::string_view unitName, double& scale);
+    bool getTimeScale(std::string_view unitName, double& scale);
+    bool getAngleScale(std::string_view unitName, double& scale);
+    bool getMassScale(std::string_view unitName, double& scale);
 
     void decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds);
     double degMinSecToDecimal(int degrees, int minutes, double seconds);
