@@ -15,6 +15,12 @@
 #include <cstdlib>
 #endif
 
+#ifdef _WIN32
+#define W(s) L##s
+#else
+#define W(s) s
+#endif
+
 namespace celestia
 {
 namespace filesystem
@@ -83,7 +89,7 @@ path path::filename() const
 path path::stem() const
 {
     auto fn = filename().native();
-    auto pos = fn.rfind('.');
+    auto pos = fn.rfind(W('.'));
 
     if (pos == 0 || pos == string_type::npos)
         return fn;
@@ -94,7 +100,7 @@ path path::stem() const
 path path::extension() const
 {
     auto fn = filename().native();
-    auto pos = fn.rfind('.');
+    auto pos = fn.rfind(W('.'));
 
     if (pos == 0 || pos == string_type::npos)
         return path();
@@ -112,6 +118,34 @@ path path::parent_path() const
         return path();
 
     return path(m_path.substr(0, pos));
+}
+
+path& path::replace_extension(const path& replacement)
+{
+    auto pos = m_path.rfind(W('.'));
+
+    if (pos != (m_path.length() - 1))
+    {
+        if (pos != 0 && pos != string_type::npos)
+            m_path.resize(pos);
+    }
+    else
+    {
+        // special case for "/dir/" or "/dir/."
+        path basename = filename();
+        if (!(basename.empty() || basename == W(".")))
+            m_path.resize(pos);
+    }
+
+    if (replacement.empty())
+        return *this;
+
+    if (replacement.m_path[0] != W('.'))
+        m_path += W('.');
+
+    m_path += replacement.m_path;
+
+    return *this;
 }
 
 

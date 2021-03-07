@@ -187,6 +187,8 @@ class path
     path extension() const;
     path parent_path() const;
 
+    path& replace_extension(const path& replacement = path());
+
     bool is_relative() const
     {
         return !is_absolute();
