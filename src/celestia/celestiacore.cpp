@@ -191,8 +191,10 @@ void CelestiaCore::readFavoritesFile()
     else
         path = "favorites.cel";
 
+#ifndef PORTABLE_BUILD
     if (path.is_relative())
         path = WriteableDataPath() / path;
+#endif
 
     ifstream in(path.string(), ios::in);
     if (in.good())
@@ -212,8 +214,10 @@ void CelestiaCore::writeFavoritesFile()
     else
         path = "favorites.cel";
 
+#ifndef PORTABLE_BUILD
     if (path.is_relative())
         path = WriteableDataPath() / path;
+#endif
 
     error_code ec;
     bool isDir = fs::is_directory(path.parent_path(), ec);
