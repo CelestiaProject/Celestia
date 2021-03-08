@@ -409,5 +409,8 @@ bool exists(const path& p, std::error_code& ec) noexcept;
 
 bool is_directory(const path& p);
 bool is_directory(const path& p, std::error_code& ec) noexcept;
+
+bool create_directory(const path& p);
+bool create_directory(const path& p, std::error_code& ec) noexcept;
 }
 }

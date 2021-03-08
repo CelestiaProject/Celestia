@@ -11,6 +11,8 @@ set(CELUTIL_SOURCES
   filetype.h
   formatnum.cpp
   formatnum.h
+  fsutils.cpp
+  fsutils.h
   #memorypool.cpp
   #memorypool.h
   reshandle.h

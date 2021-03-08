@@ -12,13 +12,14 @@
 #include <fstream>
 #include <cassert>
 #include <celutil/debug.h>
+#include <celutil/fsutils.h>
 #include <celutil/util.h>
 #include <celengine/texmanager.h>
 #include <celengine/tokenizer.h>
 #include "configfile.h"
 
 using namespace std;
-
+using namespace celestia::util;
 
 static unsigned int getUint(Hash* params,
                             const string& paramName,

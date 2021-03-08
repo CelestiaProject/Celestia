@@ -12,13 +12,9 @@
 #ifndef _CELUTIL_UTIL_H_
 #define _CELUTIL_UTIL_H_
 
-#include <string>
-#include <iostream>
+#include <iosfwd>
 #include <functional>
-#include <celcompat/filesystem.h>
 #include <celcompat/string_view.h>
-
-fs::path LocaleFilename(const fs::path& filename);
 
 template <class T> struct printlineFunc
 {
@@ -37,9 +33,6 @@ template<typename T> constexpr typename T::size_type memsize(const T &c)
 {
     return c.size() * sizeof(typename T::value_type);
 }
-
-fs::path PathExp(const fs::path& filename);
-fs::path homeDir();
 
 bool GetTZInfo(std::string_view, int&);
 
