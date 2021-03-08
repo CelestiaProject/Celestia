@@ -21,6 +21,7 @@
 
 #include "common.h"
 
+using namespace std;
 
 /* Returns the offset of the timezone at date */
 gint tzOffsetAtDate(astro::Date date)

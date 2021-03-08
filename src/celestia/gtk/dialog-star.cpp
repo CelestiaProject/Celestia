@@ -25,6 +25,7 @@
 #include "actions.h"
 #include "common.h"
 
+using namespace std;
 
 /* Declarations: Callbacks */
 static void listStarSelect(GtkTreeSelection* sel, AppData* app);

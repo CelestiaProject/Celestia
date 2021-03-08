@@ -22,7 +22,7 @@
 
 using namespace Eigen;
 using namespace celmath;
-
+using namespace std;
 
 /* Definitions: Callbacks */
 static void calDateSelect(GtkCalendar *calendar, GtkToggleButton *button);

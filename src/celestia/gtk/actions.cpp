@@ -49,6 +49,7 @@
 #include "settings-file.h"
 #endif /* GNOME */
 
+using namespace std;
 
 /* Declarations: Action Helpers */
 static void openScript(const char* filename, AppData* app);
@@ -66,9 +67,9 @@ static void setLabelMode(AppData* a, int mode, gboolean state);
 void actionCopyURL(GtkAction*, AppData* app)
 {
     GtkClipboard* cb = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-    CelestiaState appState;
-    appState.captureState(app->core);
-    Url url(appState, Url::CurrentVersion);
+    CelestiaState appState(app->core);
+    appState.captureState();
+    Url url(appState);
     gtk_clipboard_set_text(cb, url.getAsString().c_str(), -1);
 }
 
