@@ -29,6 +29,8 @@ steps:
                         qtbase5-dev \
                         qtbase5-dev-tools \
                         libqt5opengl5-dev \
+                        libgtk2.0-dev \
+                        libgtkglext1-dev \
                         libfreetype6-dev \
                         libsdl2-dev \
                         libluajit-5.1-dev
@@ -55,7 +57,8 @@ steps:
 - script: |
     mkdir build
     cd build
-    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON ..
+    [ "$(uname)" = "Linux" ] && GTK=ON || GTK=OFF
+    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON -SENABLE_GTK=$GTK ..
     make -j $(nproc || echo 4)
     CTEST_OUTPUT_ON_FAILURE=1 ctest
   workingDirectory: "$(system.defaultworkingdirectory)"
