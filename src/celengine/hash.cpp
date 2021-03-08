@@ -10,6 +10,7 @@
 
 #include <utility>
 #include <celutil/color.h>
+#include <celutil/fsutils.h>
 #include <celutil/util.h>
 #include <celmath/mathlib.h>
 #include "astro.h"
@@ -19,7 +20,7 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
-
+using namespace celestia::util;
 
 AssociativeArray::~AssociativeArray()
 {

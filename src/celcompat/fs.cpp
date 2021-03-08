@@ -438,5 +438,31 @@ bool is_directory(const path& p)
     return r;
 }
 
+bool create_directory(const path& p, std::error_code& ec) noexcept
+{
+    bool r;
+#ifdef _WIN32
+    r = _wmkdir(p.c_str()) == 0;
+#else
+    r = mkdir(p.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
+#endif
+    if (!r)
+        ec = std::error_code(errno, std::system_category());
+    return r;
+}
+
+bool create_directory(const path& p)
+{
+    std::error_code ec;
+    bool r = create_directory(p, ec);
+    if (ec)
+#if __cpp_exceptions
+        throw filesystem_error(ec, "celfs::create_directory error");
+#else
+        std::abort();
+#endif
+    return r;
+}
+
 }
 }
