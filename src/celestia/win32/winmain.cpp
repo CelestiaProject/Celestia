@@ -9,7 +9,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -34,6 +33,7 @@
 #include <celutil/array_view.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
+#include <celutil/fsutils.h>
 #include <celutil/winutil.h>
 #include <celutil/util.h>
 #include <celutil/filetype.h>
@@ -65,6 +65,7 @@
 #include <fmt/printf.h>
 
 using namespace celestia;
+using namespace celestia::util;
 using namespace std;
 
 typedef pair<int,string> IntStrPair;
@@ -167,6 +168,8 @@ static LRESULT CALLBACK MainWindowProc(HWND hWnd,
 #define MENU_CHOOSE_PLANET   32000
 #define MENU_CHOOSE_SURFACE  31000
 
+
+bool ignoreOldFavorites = false;
 
 struct AppPreferences
 {
@@ -2472,6 +2475,10 @@ static bool LoadPreferencesFromRegistry(LPCTSTR regkey, AppPreferences& prefs)
         prefs.renderFlags |= Renderer::ShowRingShadows;
     }
 
+    int fav = 0;
+    GetRegistryValue(key, "IgnoreOldFavorites", &fav, sizeof(fav));
+    ignoreOldFavorites = fav != 0;
+
     RegCloseKey(key);
 
     return true;
@@ -2519,6 +2526,7 @@ static bool SavePreferencesToRegistry(LPCTSTR regkey, AppPreferences& prefs)
 #endif
     SetRegistry(key, "AltSurface", prefs.altSurfaceName);
     SetRegistryInt(key, "TextureResolution", prefs.textureResolution);
+    SetRegistryInt(key, "IgnoreOldFavorites", ignoreOldFavorites);
 
     RegCloseKey(key);
 
@@ -3276,6 +3284,37 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore->setCursorHandler(cursorHandler);
 
     InitWGLExtensions(appInstance);
+
+#ifndef PORTABLE_BUILD
+    if (!ignoreOldFavorites)
+    { // move favorites to the new location
+        fs::path path;
+        if (appCore->getConfig() != nullptr && !appCore->getConfig()->favoritesFile.empty())
+            path = appCore->getConfig()->favoritesFile;
+        else
+            path = L"favorites.cel";
+
+        if (path.is_relative())
+            path = WriteableDataPath() / path;
+
+        error_code ec;
+        if (fs::exists(L"favorites.cel", ec)) // old exists
+        {
+            if (!fs::exists(path)) // new does not
+            {
+                int resp = MessageBox(NULL,
+                                      _("Old favorites file detected.\nCopy to the new location?"),
+                                      _("Copy favorites?"),
+                                      MB_YESNO);
+                if (resp == IDYES)
+                {
+                    CopyFileW(L"favorites.cel", path.c_str(), true);
+                    ignoreOldFavorites = true;
+                }
+            }
+        }
+    }
+#endif
 
     HWND hWnd;
     if (startFullscreen)
