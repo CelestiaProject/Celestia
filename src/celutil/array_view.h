@@ -11,6 +11,9 @@
 
 #pragma once
 
+#include <type_traits> // std::remove_cv
+#include <cstddef>     // std::size_t
+
 namespace celestia
 {
 namespace util
@@ -33,6 +36,8 @@ class array_view
         m_size(0)
     {};
 
+    ~array_view() noexcept = default;
+
     /**
      * Wrap a C-style array.
      */
@@ -49,6 +54,30 @@ class array_view
         m_ptr(ary.data()),
         m_size(ary.size())
     {};
+
+    /** @copydoc array_view::array_view(const C &ary) */
+    template<typename C> constexpr array_view(C &&ary) noexcept :
+        m_ptr(ary.data()),
+        m_size(ary.size())
+    {}
+
+    /**
+     * Assign another view or an object convertable to a view.
+     */
+    array_view<T>& operator=(const array_view<T> &ary) noexcept
+    {
+        m_ptr = ary.data();
+        m_size = ary.size();
+        return *this;
+    }
+
+    /** @copydoc array_view::operator=(const array_view<T> &ary) */
+    array_view<T>& operator=(array_view<T> &&ary) noexcept
+    {
+        m_ptr = ary.data();
+        m_size = ary.size();
+        return *this;
+    }
 
     /**
      * Direct access to the underlying array.
@@ -143,7 +172,7 @@ class array_view
 
  private:
     const element_type* m_ptr;
-    const size_t m_size;
+    size_t m_size;
 };
 }
 }
