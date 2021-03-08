@@ -35,6 +35,7 @@
 #include <celutil/color.h>
 #include <celutil/filetype.h>
 #include <celutil/formatnum.h>
+#include <celutil/fsutils.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include <celutil/utf8.h>
@@ -70,6 +71,7 @@ using namespace std;
 using namespace astro::literals;
 using namespace celmath;
 using namespace celestia::scripts;
+using namespace celestia::util;
 
 static const int DragThreshold = 3;
 
@@ -183,29 +185,58 @@ CelestiaCore::~CelestiaCore()
 void CelestiaCore::readFavoritesFile()
 {
     // Set up favorites list
+    fs::path path;
     if (!config->favoritesFile.empty())
-    {
-        ifstream in(config->favoritesFile.string(), ios::in);
+        path = config->favoritesFile;
+    else
+        path = "favorites.cel";
 
-        if (in.good())
-        {
-            favorites = ReadFavoritesList(in);
-            if (favorites == nullptr)
-            {
-                warning(_("Error reading favorites file."));
-            }
-        }
+    if (path.is_relative())
+        path = WriteableDataPath() / path;
+
+    ifstream in(path.string(), ios::in);
+    if (in.good())
+    {
+        favorites = ReadFavoritesList(in);
+        if (favorites == nullptr)
+            warning(fmt::format(_("Error reading favorites file {}.\n"),
+                                path.string()));
     }
 }
 
 void CelestiaCore::writeFavoritesFile()
 {
+    fs::path path;
     if (!config->favoritesFile.empty())
+        path = config->favoritesFile;
+    else
+        path = "favorites.cel";
+
+    if (path.is_relative())
+        path = WriteableDataPath() / path;
+
+    error_code ec;
+    bool isDir = fs::is_directory(path.parent_path(), ec);
+    if (ec)
     {
-        ofstream out(config->favoritesFile.string(), ios::out);
-        if (out.good())
-            WriteFavoritesList(*favorites, out);
+        warning(fmt::format(_("Failed to check directory existance for favorites file {}\n"),
+                            path.string()));
+        return;
     }
+    if (!isDir)
+    {
+        fs::create_directory(path.parent_path(), ec);
+        if (ec)
+        {
+            warning(fmt::format(_("Failed to create a directory for favorites file {}\n"),
+                                path.string()));
+            return;
+        }
+    }
+
+    ofstream out(path.string(), ios::out);
+    if (out.good())
+        WriteFavoritesList(*favorites, out);
 }
 
 void CelestiaCore::activateFavorite(FavoritesEntry& fav)
