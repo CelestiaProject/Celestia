@@ -233,12 +233,14 @@ class Body : public AstroObject
     void setDensity(float);
 
     // Albedo functions and temperature
-    /* [[deprecated]] */ float getAlbedo() const;
-    /* [[deprecated]] */ void setAlbedo(float);
+    [[deprecated]] float getAlbedo() const;
+    [[deprecated]] void setAlbedo(float);
     float getGeomAlbedo() const;
     void setGeomAlbedo(float);
     float getBondAlbedo() const;
     void setBondAlbedo(float);
+    float getReflectivity() const;
+    void setReflectivity(float);
     float getTemperature(double t = 0) const;
     void setTemperature(float);
     float getTempDiscrepancy() const;
@@ -392,6 +394,7 @@ class Body : public AstroObject
     float density{ 0.0f };
     float geomAlbedo{ 0.5f };
     float bondAlbedo{ 0.5f };
+    float reflectivity{ 0.5f };
     float temperature{ 0.0f };
     float tempDiscrepancy{ 0.0f };
 

@@ -79,6 +79,7 @@ void Body::setDefaultProperties()
     density = 0.0f;
     bondAlbedo = 0.5f;
     geomAlbedo = 0.5f;
+    reflectivity = 0.5f;
     temperature = 0.0f;
     tempDiscrepancy = 0.0f;
     geometryOrientation = Quaternionf::Identity();
@@ -344,6 +345,18 @@ float Body::getBondAlbedo() const
 void Body::setBondAlbedo(float _bondAlbedo)
 {
     bondAlbedo = _bondAlbedo;
+}
+
+
+float Body::getReflectivity() const
+{
+    return reflectivity;
+}
+
+
+void Body::setReflectivity(float _reflectivity)
+{
+    reflectivity = _reflectivity;
 }
 
 
@@ -789,7 +802,7 @@ float Body::getLuminosity(float sunLuminosity,
     // Compute the total energy hitting the planet
     double incidentEnergy = satIrradiance * circleArea(radius * 1000);
 
-    double reflectedEnergy = incidentEnergy * geomAlbedo;
+    double reflectedEnergy = incidentEnergy * getReflectivity();
 
     // Compute the luminosity (i.e. power relative to solar power)
     return (float) (reflectedEnergy / astro::SOLAR_POWER);

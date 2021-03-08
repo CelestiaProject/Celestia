@@ -1513,7 +1513,7 @@ setupSecondaryLightSources(vector<SecondaryIlluminator>& secondaryIlluminators,
             i.reflectedIrradiance += j.luminosity / ((float) (i.position_v - j.position).squaredNorm() * au2);
         }
 
-        i.reflectedIrradiance *= i.body->getAlbedo();
+        i.reflectedIrradiance *= i.body->getReflectivity();
     }
 }
 
