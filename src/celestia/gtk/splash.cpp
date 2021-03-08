@@ -20,6 +20,7 @@
 #include "splash.h"
 #include "common.h"
 
+using namespace std;
 
 /* Declarations */
 static gboolean splashExpose(GtkWidget* win, GdkEventExpose *event, SplashData* ss);

@@ -22,6 +22,7 @@
 #include "actions.h"
 #include "common.h"
 
+using namespace std;
 
 /* Definitions: Callbacks */
 static void wrapAction(GtkAction* action);
