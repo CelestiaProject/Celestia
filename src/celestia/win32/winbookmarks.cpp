@@ -364,7 +364,7 @@ void BuildFavoritesMenu(HMENU menuBar,
 void AddNewBookmarkFolderInTree(HWND hTree, CelestiaCore* appCore, char* folderName)
 {
     // Add new item to bookmark item after other folders but before root items
-    HTREEITEM hParent, hItem, hInsertAfter = nullptr;
+    HTREEITEM hParent, hItem, hInsertAfter;
     TVINSERTSTRUCT tvis;
     TVITEM tvItem;
 

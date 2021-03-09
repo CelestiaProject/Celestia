@@ -1318,9 +1318,14 @@ BOOL APIENTRY SelectDisplayModeProc(HWND hDlg,
             HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_RESOLUTION);
 
             // Add windowed mode as the first item on the menu
-            string str = UTF8ToCurrentCP(_("Windowed Mode"));
+#ifdef ENABLE_NLS
+            bind_textdomain_codeset("celestia", CurrentCP());
+#endif
             SendMessage(hwnd, CB_INSERTSTRING, -1,
-                        reinterpret_cast<LPARAM>(str.c_str()));
+                        reinterpret_cast<LPARAM>(_("Windowed Mode")));
+#ifdef ENABLE_NLS
+            bind_textdomain_codeset("celestia", "UTF8");
+#endif
 
             for (vector<DEVMODE>::const_iterator iter= displayModes->begin();
                  iter != displayModes->end(); iter++)

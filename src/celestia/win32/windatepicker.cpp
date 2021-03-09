@@ -154,15 +154,22 @@ DatePicker::redraw(HDC hdc)
     SetBkMode(hdc, TRANSPARENT);
 
     char dayBuf[32];
+    char monthBuf[32];
     char yearBuf[32];
 
-    string monthStr = UTF8ToCurrentCP(_(Months[date.month - 1]));
+#ifdef ENABLE_NLS
+    bind_textdomain_codeset("celestia", CurrentCP());
+#endif
     sprintf(dayBuf, "%02d", date.day);
+    sprintf(monthBuf, "%s", _(Months[date.month - 1]));
     sprintf(yearBuf, "%5d", date.year);
+#ifdef ENABLE_NLS
+    bind_textdomain_codeset("celestia", "UTF8");
+#endif
 
     char* fieldText[NumFields];
     fieldText[DayField] = dayBuf;
-    fieldText[MonthField] = const_cast<char *>(monthStr.c_str());
+    fieldText[MonthField] = monthBuf;
     fieldText[YearField] = yearBuf;
 
     int right = 2;
