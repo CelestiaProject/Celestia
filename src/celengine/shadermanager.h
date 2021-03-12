@@ -278,6 +278,7 @@ class CelestiaGLProgram
     FloatShaderParameter floatParam(const std::string&);
     IntegerShaderParameter intParam(const std::string&);
     IntegerShaderParameter samplerParam(const std::string&);
+    Vec2ShaderParameter vec2Param(const std::string&);
     Vec3ShaderParameter vec3Param(const std::string&);
     Vec4ShaderParameter vec4Param(const std::string&);
     Mat3ShaderParameter mat3Param(const std::string&);

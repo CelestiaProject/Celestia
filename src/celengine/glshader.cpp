@@ -87,6 +87,24 @@ FloatShaderParameter::operator=(float f)
 }
 
 
+Vec2ShaderParameter::Vec2ShaderParameter() :
+    slot(-1)
+{
+}
+
+Vec2ShaderParameter::Vec2ShaderParameter(GLuint obj, const char* name)
+{
+    slot = glGetUniformLocation(obj, name);
+}
+
+Vec2ShaderParameter&
+Vec2ShaderParameter::operator=(const Eigen::Vector2f& v)
+{
+    if (slot != -1)
+        glUniform2fv(slot, 1, v.data());
+    return *this;
+}
+
 Vec3ShaderParameter::Vec3ShaderParameter() :
     slot(-1)
 {
