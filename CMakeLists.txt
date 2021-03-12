@@ -112,6 +112,11 @@ if(MSVC)
   # Promoted to errors
   # C4316: object allocated on the heap may not be aligned 16
   add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/wd4455" "/wd5030" "/bigobj" "/we4316")
+
+  if(MSVC_VERSION GREATER_EQUAL 1914)
+    # /Zc:__cplusplus: correctly set __cplusplus macro value
+    add_compile_options("/Zc:__cplusplus")
+  endif()
 endif()
 
 if(NOT WIN32)
