@@ -27,7 +27,7 @@ set(CELENGINE_SOURCES
   curveplot.cpp
   curveplot.h
   dds.cpp
-  dds_decompress.c
+  dds_decompress.cpp
   dds_decompress.h
   deepskyobj.cpp
   deepskyobj.h
