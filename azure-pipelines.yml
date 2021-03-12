@@ -44,13 +44,13 @@ steps:
                  jpeg \
                  gettext \
                  libpng \
-                 lua@5.3 \
+                 lua \
                  qt5 \
                  freetype \
                  libepoxy \
                  sdl2
     brew link gettext --force
-    brew link lua@5.3 --force
+    brew link lua --force
   displayName: 'Install macOS dependencies'
   condition: eq( variables['Agent.OS'], 'Darwin' )
 
