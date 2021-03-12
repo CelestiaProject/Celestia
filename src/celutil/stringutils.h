@@ -26,13 +26,13 @@ struct CompareIgnoringCasePredicate
 template <typename T>
 [[nodiscard]] bool to_number(std::string_view p, T &result)
 {
-    auto r = std::from_chars(p.begin(), p.end(), result);
+    auto r = std::from_chars(p.data(), p.data() + p.size(), result);
     return r.ec == std::errc();
 }
 
 template <typename T>
 [[nodiscard]] bool to_number(std::string_view p, T &result, int base)
 {
-    auto r = std::from_chars(p.begin(), p.end(), result, base);
+    auto r = std::from_chars(p.data(), p.data() + p.size(), result, base);
     return r.ec == std::errc();
 }
