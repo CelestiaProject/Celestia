@@ -155,7 +155,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 
                     alpha = 1.0f;
                 }
-                starVertexBuffer->addStar(relPos, Color(starColor, alpha), discSize);
+                starVertexBuffer->addStar(relPos, Color(starColor, alpha), /*discSize*/appMag);
             }
             else
             {
@@ -172,7 +172,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                     maxSize = max(maxSize, 2.0f * discScale * size);
 #endif
                 }
-                starVertexBuffer->addStar(relPos, Color(starColor, alpha), size);
+                starVertexBuffer->addStar(relPos, Color(starColor, alpha), /*size*/appMag);
             }
 
             ++nRendered;

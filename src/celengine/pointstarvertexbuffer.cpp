@@ -33,7 +33,7 @@ PointStarVertexBuffer::~PointStarVertexBuffer()
 
 void PointStarVertexBuffer::startSprites()
 {
-    program = renderer.getShaderManager().getShader("star");
+    program = renderer.getShaderManager().getShader("star_new");
     pointSizeFromVertex = true;
 }
 
@@ -78,6 +78,10 @@ void PointStarVertexBuffer::makeCurrent()
 
     program->use();
     program->setMVPMatrices(renderer.getProjectionMatrix(), renderer.getModelViewMatrix());
+    std::array<int, 4> viewport;
+    renderer.getViewport(viewport);
+    program->vec2Param("viewportSize") = Eigen::Vector2f(viewport[2], viewport[3]);
+    program->vec2Param("viewportCoord") = Eigen::Vector2f(viewport[0], viewport[1]);
     if (pointSizeFromVertex)
     {
         program->samplerParam("starTex") = 0;
