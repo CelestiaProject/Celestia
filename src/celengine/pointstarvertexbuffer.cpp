@@ -31,10 +31,11 @@ PointStarVertexBuffer::~PointStarVertexBuffer()
     delete[] vertices;
 }
 
-void PointStarVertexBuffer::startSprites()
+void PointStarVertexBuffer::startSprites(float _limitingMagnitude)
 {
     program = renderer.getShaderManager().getShader("star_new");
     pointSizeFromVertex = true;
+    limitingMagnitude = _limitingMagnitude;
 }
 
 void PointStarVertexBuffer::startBasicPoints()
@@ -82,6 +83,14 @@ void PointStarVertexBuffer::makeCurrent()
     renderer.getViewport(viewport);
     program->vec2Param("viewportSize") = Eigen::Vector2f(viewport[2], viewport[3]);
     program->vec2Param("viewportCoord") = Eigen::Vector2f(viewport[0], viewport[1]);
+    float visibilityThreshold = 1.0f / 255.0f;
+    float logMVisThreshold = log(visibilityThreshold) / log(2.512f);
+    float saturationMag = limitingMagnitude - 4.5f; //+ logMVisThreshold;
+    float magScale = (logMVisThreshold) / (saturationMag - limitingMagnitude);
+    program->floatParam("thresholdBrightness") = visibilityThreshold;
+    program->floatParam("exposure") = pow(2.512f, magScale * saturationMag);
+    program->floatParam("magScale") = magScale;
+
     if (pointSizeFromVertex)
     {
         program->samplerParam("starTex") = 0;

@@ -4649,11 +4649,11 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.glareVertexBuffer->setPointScale(screenDpi / 96.0f);
 
     PointStarVertexBuffer::enable();
-    starRenderer.glareVertexBuffer->startSprites();
+    starRenderer.glareVertexBuffer->startSprites(faintestMag);
     if (starStyle == PointStars)
         starRenderer.starVertexBuffer->startBasicPoints();
     else
-        starRenderer.starVertexBuffer->startSprites();
+        starRenderer.starVertexBuffer->startSprites(faintestMag);
 
 #ifdef OCTREE_DEBUG
     m_starProcStats.nodes = 0;

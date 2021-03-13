@@ -11,12 +11,12 @@ attribute vec4 in_Color;
 uniform vec2 viewportSize;
 uniform vec2 viewportCoord;
 
-/*uniform*/ const float magScale = 1.3369011415551906;
+uniform /*const*/ float magScale/* = 1.3369011415551906*/;
 /*uniform*/ const float sigma2 = 0.35;
 /*uniform highp*/ const float glareFalloff = 1.0 / 15.0;
 /*uniform highp*/ const float glareBrightness = 0.003;
-/*uniform*/ const float exposure = 21.72534925735687;
-/*uniform*/ const float thresholdBrightness = 1.0 / 255.0;
+uniform /*const*/ float exposure /*= 21.72534925735687|74.430977*/;
+uniform /*const*/ float thresholdBrightness/* = 1.0 / 255.0*/;
 
 varying vec2 pointCenter;
 varying vec4 color;

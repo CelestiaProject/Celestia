@@ -32,7 +32,7 @@ public:
     PointStarVertexBuffer& operator=(PointStarVertexBuffer&&) = delete;
 
     void startBasicPoints();
-    void startSprites();
+    void startSprites(float);
     void render();
     void finish();
     inline void addStar(const Eigen::Vector3f& pos, const Color&, float);
@@ -59,6 +59,7 @@ private:
     Texture* texture            { nullptr };
     bool pointSizeFromVertex    { false };
     float pointScale            { 1.0f };
+    float limitingMagnitude     { 7.0f };
     CelestiaGLProgram* program  { nullptr };
 
     static PointStarVertexBuffer* current;
