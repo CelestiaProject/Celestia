@@ -85,7 +85,7 @@ void PointStarVertexBuffer::makeCurrent()
     program->vec2Param("viewportCoord") = Eigen::Vector2f(viewport[0], viewport[1]);
     float visibilityThreshold = 1.0f / 255.0f;
     float logMVisThreshold = log(visibilityThreshold) / log(2.512f);
-    float saturationMag = limitingMagnitude - 4.5f; //+ logMVisThreshold;
+    float saturationMag = limitingMagnitude - 4.5f/* + logMVisThreshold*/;
     float magScale = (logMVisThreshold) / (saturationMag - limitingMagnitude);
     program->floatParam("thresholdBrightness") = visibilityThreshold;
     program->floatParam("exposure") = pow(2.512f, magScale * saturationMag);

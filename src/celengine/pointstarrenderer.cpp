@@ -69,7 +69,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         if (hasOrbit)
             orbitSizeInPixels = orbitalRadius / (distance * pixelSize);
 
-        // Special handling for stars less than one light year away . . .
+        // Special handling for stars less than SolarSystemMaxDistance away
         // We can't just go ahead and render a nearby star in the usual way
         // for two reasons:
         //   * It may be clipped by the near plane
@@ -79,7 +79,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         // further than one light year away if the star is huge, the fov is
         // very small and the resolution is high.  We'll ignore this for now
         // and use the most inexpensive test possible . . .
-        if (distance < 1.0f || orbitSizeInPixels > 1.0f)
+        if (distance < SolarSystemMaxDistance || orbitSizeInPixels > 1.0f)
         {
             // Compute the position of the observer relative to the star.
             // This is a much more accurate (and expensive) distance
@@ -172,7 +172,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                     maxSize = max(maxSize, 2.0f * discScale * size);
 #endif
                 }
-                starVertexBuffer->addStar(relPos, Color(starColor, alpha), /*size*/appMag);
+                starVertexBuffer->addStar(relPos, Color(starColor, alpha), size);
             }
 
             ++nRendered;

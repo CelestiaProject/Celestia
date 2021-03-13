@@ -11,7 +11,7 @@ varying highp float brightness;
 /*uniform highp*/ const float glareFalloff = 1.0 / 15.0;
 /*uniform highp*/ const float glareBrightness = 0.003;
 /*uniform*/ const float diffSpikeBrightness = 0.9;
-uniform /*const*/ float exposure/* = 21.72534925735687|74.430977*/;
+uniform float exposure;
 
 mediump vec3 linearToSRGB(mediump vec3 c)
 {
