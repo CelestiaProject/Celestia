@@ -17,6 +17,9 @@
 #include <shlobj.h>
 #include "winutil.h"
 #else
+#ifdef __APPLE__
+#include "appleutils.h"
+#endif
 #include <unistd.h>
 #include <pwd.h>
 #ifdef HAVE_WORDEXP
@@ -57,6 +60,7 @@ fs::path LocaleFilename(const fs::path &p)
 
 fs::path PathExp(const fs::path& filename)
 {
+#ifndef PORTABLE_BUILD
 #ifdef _WIN32
     auto str = filename.native();
     if (str[0] == '~')
@@ -92,11 +96,14 @@ fs::path PathExp(const fs::path& filename)
     fs::path::string_type expanded(result.we_wordv[0]);
     wordfree(&result);
     return expanded;
-#else
+#endif
+    return filename;
+#else // !PORTABLE_BUILD
     return filename;
 #endif
 }
 
+#ifndef PORTABLE_BUILD
 fs::path HomeDir()
 {
 #ifdef _WIN32
@@ -120,6 +127,8 @@ fs::path HomeDir()
     s = _wgetenv(L"HOME");
     if (s != nullptr)
         return fs::path(s);
+#elif defined(__APPLE__)
+    return AppleHomeDirectory();
 #else
     const auto *home = getenv("HOME");
     if (home != nullptr)
@@ -148,7 +157,7 @@ fs::path WriteableDataPath()
     return PathExp(p) / "Celestia";
 
 #elif defined(__APPLE__)
-    return PathExp("~/Library/Application Support/Celestia");
+    return PathExp(AppleApplicationSupportDirectory()) / "Celestia";
 
 #else
     const char *p = getenv("XDG_DATA_HOME");
@@ -156,6 +165,7 @@ fs::path WriteableDataPath()
     return PathExp(p) / "Celestia";
 #endif
 }
+#endif // !PORTABLE_BUILD
 
 }
 }
