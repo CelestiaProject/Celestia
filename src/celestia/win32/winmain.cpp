@@ -57,6 +57,7 @@
 #include "wintime.h"
 #include "winsplash.h"
 #include "odmenu.h"
+#include "winuiutils.h"
 
 #include "res/resource.h"
 #include "wglext.h"
