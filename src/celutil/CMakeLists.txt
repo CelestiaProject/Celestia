@@ -37,5 +37,12 @@ if (WIN32)
   )
 endif()
 
+if (APPLE)
+  list(APPEND CELUTIL_SOURCES
+    appleutils.h
+    appleutils.mm
+  )
+endif()
+
 add_library(celutil OBJECT ${CELUTIL_SOURCES})
 cotire(celutil)

@@ -68,6 +68,10 @@ if(ENABLE_SPICE)
   target_link_libraries(celestia CSPICE::CSPICE)
 endif()
 
+if(APPLE)
+  target_link_libraries(celestia "-framework Foundation")
+endif()
+
 cotire(celestia)
 
 install(TARGETS celestia LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} NAMELINK_SKIP)

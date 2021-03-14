@@ -20,7 +20,9 @@ namespace util
 {
 fs::path LocaleFilename(const fs::path& filename);
 fs::path PathExp(const fs::path& filename);
+#ifndef PORTABLE_BUILD
 fs::path HomeDir();
 fs::path WriteableDataPath();
+#endif
 }
 }
