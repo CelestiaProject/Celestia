@@ -295,9 +295,7 @@ struct GalaxyVertex
     Matrix<GLushort, 4, 1> texCoord; // texCoord.x = x, texCoord.y = y, texCoord.z = color index, texCoord.w = alpha
 };
 
-typedef vector<GalaxyVertex, aligned_allocator<GalaxyVertex>> AlignedGalaxyVertices;
-
-static void draw(const AlignedGalaxyVertices& v, size_t count, const GLushort *indices)
+static void draw(const GalaxyVertex *v, size_t count, const GLushort *indices)
 {
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
                           4, GL_FLOAT, GL_FALSE,
@@ -308,7 +306,7 @@ static void draw(const AlignedGalaxyVertices& v, size_t count, const GLushort *i
     glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, indices);
 }
 
-static AlignedGalaxyVertices g_vertices;
+static GalaxyVertex *g_vertices = nullptr;
 static GLushort *g_indices = nullptr;
 constexpr const size_t maxPoints = 8192; // 256k buffer
 
@@ -411,8 +409,8 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
 
-    if (g_vertices.empty())
-        g_vertices.reserve(maxPoints);
+    if (g_vertices == nullptr)
+        g_vertices = new GalaxyVertex[maxPoints];
     if (g_indices == nullptr)
         g_indices = new GLushort[(maxPoints / 4 + 1) * 6];
 
