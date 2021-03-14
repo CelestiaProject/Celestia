@@ -17,6 +17,7 @@
 #include <cstring>
 #include <celutil/gettext.h>
 #include <celutil/winutil.h>
+#include "winuiutils.h"
 #include <celmath/mathlib.h>
 #include "winstarbrowser.h"
 #include "res/resource.h"

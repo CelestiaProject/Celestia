@@ -15,12 +15,13 @@
 #include <cassert>
 #include <windows.h>
 #include <commctrl.h>
-#include "celestia/eclipsefinder.h"
+#include <celestia/eclipsefinder.h>
 #include "wineclipses.h"
 #include "res/resource.h"
-#include "celmath/geomutil.h"
-#include "celutil/gettext.h"
-#include "celutil/winutil.h"
+#include <celmath/geomutil.h>
+#include <celutil/gettext.h>
+#include <celutil/winutil.h>
+#include "winuiutils.h"
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
