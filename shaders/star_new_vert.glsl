@@ -32,7 +32,7 @@ void main()
     vec2 devicePosition = projectedPosition.xy / projectedPosition.w;
     pointCenter = (devicePosition * 0.5 + vec2(0.5, 0.5)) * viewportSize + viewportCoord;
     color = in_Color;
-    float b = pow(2.512, min(-3.5, -appMag * magScale));
+    float b = pow(2.512, -appMag * magScale);
     float r2 = -log(thresholdBrightness / (exposure * b)) * 2.0 * sigma2;
     float rGlare2 = (exposure * glareBrightness * b / thresholdBrightness - 1.0) / glareFalloff;
     gl_PointSize = 2.0 * sqrt(max(r2, rGlare2));

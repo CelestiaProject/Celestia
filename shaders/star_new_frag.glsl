@@ -31,5 +31,5 @@ void main()
     float spikes = (max(0.0, 1.0 - abs(offset.x + offset.y)) + max(0.0, 1.0 - abs(offset.x - offset.y))) * diffSpikeBrightness;
     b += glareBrightness / (glareFalloff * pow(r2, 1.5) + 1.0) * (spikes + 0.5);
 #endif
-    gl_FragColor = vec4(linearToSRGB(b * exposure * color.rgb * brightness * 5.0), 1.0);
+    gl_FragColor = vec4(linearToSRGB(b * min(500.0, exposure) * color.rgb * brightness * 5.0), 1.0);
 }
