@@ -15,6 +15,7 @@
 #include "celutil/gettext.h"
 #include "celutil/winutil.h"
 
+using namespace std;
 
 // DatePicker is a Win32 control for setting the date. It replaces the
 // date picker from commctl, adding a number of features appropriate

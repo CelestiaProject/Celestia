@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <string>
+#include <celcompat/filesystem.h>
 
-std::string AppleHomeDirectory();
-std::string AppleApplicationSupportDirectory();
+fs::path AppleHomeDirectory();
+fs::path AppleApplicationSupportDirectory();

@@ -12,12 +12,12 @@
 #include <Foundation/Foundation.h>
 #include "appleutils.h"
 
-std::string AppleHomeDirectory()
+fs::path AppleHomeDirectory()
 {
     return [NSHomeDirectory() UTF8String];
 }
 
-std::string AppleApplicationSupportDirectory()
+fs::path AppleApplicationSupportDirectory()
 {
     NSArray *directories = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     if ([directories count] > 0)
