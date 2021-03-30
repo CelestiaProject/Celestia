@@ -241,7 +241,7 @@ Image* LoadDDSImage(const fs::path& filename)
             // DXTc texture not supported, decompress DXTc to RGBA
             uint32_t *pixels = nullptr;
             bool transparent0 = format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-            if ((ddsd.width & 3 != 0) || (ddsd.height & 3 != 0))
+            if ((ddsd.width & 3) != 0 || (ddsd.height & 3) != 0)
             {
                 uint32_t nw = max(ddsd.width, 4u);
                 uint32_t nh = max(ddsd.height, 4u);
