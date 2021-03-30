@@ -43,7 +43,7 @@ struct _EclipseData {
 	selDate* d2;
 
 	bool bSolar;
-	char body[7];
+	const char* body;
 	GtkTreeSelection* sel;
 
 	GtkWidget *eclipseList;
