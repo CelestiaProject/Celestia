@@ -51,7 +51,7 @@ void dialogEclipseFinder(AppData* app)
     ed->eclipseList = NULL;
     ed->eclipseListStore = NULL;
     ed->type = Eclipse::Solar;
-    sprintf(ed->body, "%s", eclipsePlanetTitles[0]);
+    ed->body = eclipsePlanetTitles[0];
     ed->sel = NULL;
 
     ed->window = GTK_DIALOG(gtk_dialog_new_with_buttons("Eclipse Finder",
@@ -440,7 +440,7 @@ static void eclipseBodySelect(GtkMenuShell* menu, EclipseData* ed)
     int itemIndex = g_list_index(list, item);
 
     /* Set string according to body array */
-    sprintf(ed->body, "%s", eclipsePlanetTitles[itemIndex]);
+    ed->body = eclipsePlanetTitles[itemIndex];
 }
 
 
