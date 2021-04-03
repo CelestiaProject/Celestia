@@ -1,30 +1,37 @@
 // imagecapture.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
-#include <celutil/debug.h>
+#include <iostream>
+#include <memory>
+#include <fmt/format.h>
+#include <celengine/render.h>
+#include <celimage/imageformats.h>
+#include <celutil/gettext.h>
 #include "imagecapture.h"
 
-extern "C" {
-#include <jpeglib.h>
-}
-#include <png.h>
-#include <zlib.h>
+using fmt::print;
+using std::cerr;
+using std::unique_ptr;
 
-using namespace std;
-
-
-bool CaptureGLBufferToJPEG(const fs::path& filename,
-                           int x, int y,
-                           int width, int height,
-                           const Renderer *renderer)
+bool CaptureBufferToFile(const fs::path& filename,
+                         int x, int y,
+                         int width, int height,
+                         const Renderer *renderer,
+                         ContentType type)
 {
+    if (type != Content_JPEG && type != Content_PNG)
+    {
+        print(cerr, "Unsupported image type: {}!\n", filename.string());
+        return false;
+    }
+
 #ifdef GL_ES
     int rowStride = width * 4;
     int imageSize = height * rowStride;
@@ -34,196 +41,25 @@ bool CaptureGLBufferToJPEG(const fs::path& filename,
     int imageSize = height * rowStride;
     Renderer::PixelFormat format = Renderer::PixelFormat::RGB;
 #endif
-    auto* pixels = new unsigned char[imageSize];
+    auto pixels = unique_ptr<unsigned char[]>(new unsigned char[imageSize]);
 
     if (!renderer->captureFrame(x, y, width, height,
-                                format,
-                                pixels, true))
+                                format, pixels.get(), true))
     {
+        print(cerr, _("Unable to capture a frame!\n"));
         return false;
     }
 
-    FILE* out;
-#ifdef _WIN32
-    out = _wfopen(filename.c_str(), L"wb");
-#else
-    out = fopen(filename.c_str(), "wb");
-#endif
-    if (out == nullptr)
+    bool removeAlpha = format == Renderer::PixelFormat::RGBA;
+
+    switch (type)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Can't open screen capture file '%s'\n", filename);
-        delete[] pixels;
-        return false;
+    case Content_JPEG:
+        return SaveJPEGImage(filename, width, height, rowStride, pixels.get(), removeAlpha);
+    case Content_PNG:
+        return SavePNGImage(filename, width, height, rowStride, pixels.get(), removeAlpha);
+    default:
+        break;
     }
-
-    struct jpeg_compress_struct cinfo;
-
-    struct jpeg_error_mgr jerr;
-    JSAMPROW row[1];
-
-    cinfo.err = jpeg_std_error(&jerr);
-    jpeg_create_compress(&cinfo);
-
-    jpeg_stdio_dest(&cinfo, out);
-
-    cinfo.image_width = width;
-    cinfo.image_height = height;
-    cinfo.input_components = 3;
-    cinfo.in_color_space = JCS_RGB;
-
-    jpeg_set_defaults(&cinfo);
-
-    jpeg_set_quality(&cinfo, 90, TRUE);
-
-    jpeg_start_compress(&cinfo, TRUE);
-
-    while (cinfo.next_scanline < cinfo.image_height)
-    {
-        unsigned char *rowHead = &pixels[rowStride * (cinfo.image_height - cinfo.next_scanline - 1)];
-        // Strip alpha values if we are in RGBA format
-        if (format == Renderer::PixelFormat::RGBA)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                const unsigned char* pixelIn = &rowHead[x * 4];
-                unsigned char* pixelOut = &rowHead[x * 3];
-                pixelOut[0] = pixelIn[0];
-                pixelOut[1] = pixelIn[1];
-                pixelOut[2] = pixelIn[2];
-            }
-        }
-        row[0] = rowHead;
-        (void) jpeg_write_scanlines(&cinfo, row, 1);
-    }
-
-    jpeg_finish_compress(&cinfo);
-    fclose(out);
-    jpeg_destroy_compress(&cinfo);
-
-    delete[] pixels;
-
-    return true;
-}
-
-
-void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
-{
-    auto* fp = (FILE*) png_get_io_ptr(png_ptr);
-    fwrite((void*) data, 1, length, fp);
-}
-
-
-bool CaptureGLBufferToPNG(const fs::path& filename,
-                           int x, int y,
-                           int width, int height,
-                           const Renderer *renderer)
-{
-#ifdef GL_ES
-    int rowStride = width * 4;
-    int imageSize = height * rowStride;
-    Renderer::PixelFormat format = Renderer::PixelFormat::RGBA;
-#else
-    int rowStride = (width * 3 + 3) & ~0x3;
-    int imageSize = height * rowStride;
-    Renderer::PixelFormat format = Renderer::PixelFormat::RGB;
-#endif
-    auto* pixels = new unsigned char[imageSize];
-
-    if (!renderer->captureFrame(x, y, width, height,
-                                format,
-                                pixels, true))
-    {
-        return false;
-    }
-
-#ifdef _WIN32
-    FILE* out = _wfopen(filename.c_str(), L"wb");
-#else
-    FILE* out = fopen(filename.c_str(), "wb");
-#endif
-    if (out == nullptr)
-    {
-        DPRINTF(LOG_LEVEL_ERROR, "Can't open screen capture file '%s'\n", filename);
-        delete[] pixels;
-        return false;
-    }
-
-    auto* row_pointers = new png_bytep[height];
-    for (int i = 0; i < height; i++)
-    {
-        unsigned char *rowHead = &pixels[rowStride * (height - i - 1)];
-        // Strip alpha values if we are in RGBA format
-        if (format == Renderer::PixelFormat::RGBA)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                const unsigned char* pixelIn = &rowHead[x * 4];
-                unsigned char* pixelOut = &rowHead[x * 3];
-                pixelOut[0] = pixelIn[0];
-                pixelOut[1] = pixelIn[1];
-                pixelOut[2] = pixelIn[2];
-            }
-        }
-        row_pointers[i] = (png_bytep) rowHead;
-    }
-
-    png_structp png_ptr;
-    png_infop info_ptr;
-
-    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-                                      nullptr, nullptr, nullptr);
-
-    if (png_ptr == nullptr)
-    {
-        DPRINTF(LOG_LEVEL_ERROR, "Screen capture: error allocating png_ptr\n");
-        fclose(out);
-        delete[] pixels;
-        delete[] row_pointers;
-        return false;
-    }
-
-    info_ptr = png_create_info_struct(png_ptr);
-    if (info_ptr == nullptr)
-    {
-        DPRINTF(LOG_LEVEL_ERROR, "Screen capture: error allocating info_ptr\n");
-        fclose(out);
-        delete[] pixels;
-        delete[] row_pointers;
-        png_destroy_write_struct(&png_ptr, (png_infopp) nullptr);
-        return false;
-    }
-
-    if (setjmp(png_jmpbuf(png_ptr)))
-    {
-        DPRINTF(LOG_LEVEL_ERROR, "Error writing PNG file '%s'\n", filename);
-        fclose(out);
-        delete[] pixels;
-        delete[] row_pointers;
-        png_destroy_write_struct(&png_ptr, &info_ptr);
-        return false;
-    }
-
-    // png_init_io(png_ptr, out);
-    png_set_write_fn(png_ptr, (void*) out, PNGWriteData, nullptr);
-
-    png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
-    png_set_IHDR(png_ptr, info_ptr,
-                 width, height,
-                 8,
-                 PNG_COLOR_TYPE_RGB,
-                 PNG_INTERLACE_NONE,
-                 PNG_COMPRESSION_TYPE_DEFAULT,
-                 PNG_FILTER_TYPE_DEFAULT);
-
-    png_write_info(png_ptr, info_ptr);
-    png_write_image(png_ptr, row_pointers);
-    png_write_end(png_ptr, info_ptr);
-
-    // Clean up everything . . .
-    png_destroy_write_struct(&png_ptr, &info_ptr);
-    delete[] row_pointers;
-    delete[] pixels;
-    fclose(out);
-
-    return true;
+    return false;
 }

@@ -1,6 +1,7 @@
 // dds.cpp
 //
-// Copyright (C) 2001, Chris Laurel
+// Copyright (C) 2001-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -11,10 +12,10 @@
 #include <fstream>
 #include <algorithm>
 #include <memory>
+#include <celengine/glsupport.h>
+#include <celengine/image.h>
 #include <celutil/debug.h>
 #include <celutil/bytes.h>
-#include <celengine/image.h>
-#include "glsupport.h"
 #include "dds_decompress.h"
 
 using namespace celestia;

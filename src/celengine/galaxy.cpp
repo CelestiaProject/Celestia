@@ -588,8 +588,7 @@ GalacticForm* buildGalacticForms(const fs::path& filename)
     int width, height, rgb, j = 0, kmin = 9;
     unsigned char value;
     float h = 0.75f;
-    Image* img;
-    img = LoadPNGImage(filename);
+    Image* img = LoadImageFromFile(filename);
     if (img == nullptr)
     {
         cout<<"\nThe galaxy template *** "<<filename<<" *** could not be loaded!\n\n";

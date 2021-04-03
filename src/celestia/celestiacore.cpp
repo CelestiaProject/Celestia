@@ -4688,22 +4688,11 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
     array<int, 4> viewport;
     getRenderer()->getViewport(viewport);
 
-    if (type == Content_JPEG)
-    {
-        return CaptureGLBufferToJPEG(filename,
-                                     viewport[0], viewport[1],
-                                     viewport[2], viewport[3],
-                                     getRenderer());
-    }
-    if (type == Content_PNG)
-    {
-        return CaptureGLBufferToPNG(filename,
-                                    viewport[0], viewport[1],
-                                    viewport[2], viewport[3],
-                                    getRenderer());
-    }
-
-    return false;
+    return CaptureBufferToFile(filename,
+                               viewport[0], viewport[1],
+                               viewport[2], viewport[3],
+                               getRenderer(),
+                               type);
 }
 
 void CelestiaCore::setLogFile(fs::path &fn)

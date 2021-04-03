@@ -26,9 +26,6 @@ set(CELENGINE_SOURCES
   constellation.h
   curveplot.cpp
   curveplot.h
-  dds.cpp
-  dds_decompress.cpp
-  dds_decompress.h
   deepskyobj.cpp
   deepskyobj.h
   dispmap.cpp
