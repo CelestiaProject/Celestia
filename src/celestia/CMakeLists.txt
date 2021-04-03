@@ -52,6 +52,7 @@ add_library(celestia SHARED ${CELESTIA_SOURCES}
                             $<TARGET_OBJECTS:celcompat>
                             $<TARGET_OBJECTS:celengine>
                             $<TARGET_OBJECTS:celephem>
+                            $<TARGET_OBJECTS:celimage>
                             $<TARGET_OBJECTS:celmath>
                             $<TARGET_OBJECTS:celmodel>
                             $<TARGET_OBJECTS:celttf>

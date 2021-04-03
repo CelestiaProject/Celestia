@@ -1,7 +1,10 @@
 set(CELESTIA_LIBS
   cel3ds
+  celcompat
   celengine
+  celephem
   celestia
+  celimage
   celmath
   celmodel
   celttf
@@ -13,10 +16,6 @@ foreach(lib ${CELESTIA_LIBS})
 endforeach()
 
 add_subdirectory(celscript)
-
-# These compiled objects are merged with the celengine library
-add_subdirectory(celephem)
-add_subdirectory(celcompat)
 
 if (ENABLE_TOOLS)
   add_subdirectory(tools)
