@@ -474,9 +474,8 @@ static Texture* BuildGaussianDiscTexture(unsigned int log2size)
     }
 
     ImageTexture* texture = new ImageTexture(*img,
-                                             Texture::BorderClamp,
+                                             Texture::EdgeClamp,
                                              Texture::DefaultMipMaps);
-    texture->setBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
 
     delete img;
 
@@ -512,9 +511,8 @@ static Texture* BuildGaussianGlareTexture(unsigned int log2size)
     }
 
     ImageTexture* texture = new ImageTexture(*img,
-                                             Texture::BorderClamp,
+                                             Texture::EdgeClamp,
                                              Texture::DefaultMipMaps);
-    texture->setBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
 
     delete img;
 
