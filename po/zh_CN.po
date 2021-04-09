@@ -2,10 +2,11 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
-# LBV 2012-26 <lbv2012-26@outlook.com>, 2020
-#
+# LBV 2012-26 <lbv2012-26@outlook.com>, 2021
+# Hleb Valoshka <375gnu@gmail.com>, 2021
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -13,7 +14,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: team@celestia.space\n"
 "POT-Creation-Date: 2020-07-14 09:41+0300\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
-"Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2020\n"
+"Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2021\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/celestia/teams/93131/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -176,7 +177,7 @@ msgstr "海卫二"
 
 #: ../data/data.cpp:38
 msgid "Ceres"
-msgstr ""
+msgstr "谷神星"
 
 #: ../data/data.cpp:39
 msgid "Pluto-Charon"
@@ -193,15 +194,15 @@ msgstr "冥卫一"
 
 #: ../data/data.cpp:42
 msgid "Styx"
-msgstr ""
+msgstr "冥卫五"
 
 #: ../data/data.cpp:43
 msgid "Nix"
-msgstr ""
+msgstr "冥卫二"
 
 #: ../data/data.cpp:44
 msgid "Kerberos"
-msgstr ""
+msgstr "冥卫四"
 
 #: ../data/data.cpp:45
 msgid "Hydra"
@@ -209,39 +210,39 @@ msgstr "长蛇座"
 
 #: ../data/data.cpp:46
 msgid "Haumea"
-msgstr ""
+msgstr "妊神星"
 
 #: ../data/data.cpp:47
 msgid "Namaka"
-msgstr ""
+msgstr "妊卫二"
 
 #: ../data/data.cpp:48
 msgid "Hi'iaka"
-msgstr ""
+msgstr "妊卫一"
 
 #: ../data/data.cpp:49
 msgid "Makemake"
-msgstr ""
+msgstr "鸟神星"
 
 #: ../data/data.cpp:50
 msgid "S-2015 136472 I"
-msgstr ""
+msgstr "S-2015 136472 I"
 
 #: ../data/data.cpp:51
 msgid "Eris"
-msgstr ""
+msgstr "阋神星"
 
 #: ../data/data.cpp:52
 msgid "Dysnomia"
-msgstr ""
+msgstr "阋卫一"
 
 #: ../data/data.cpp:53
 msgid "Metis"
-msgstr ""
+msgstr "木卫十六"
 
 #: ../data/data.cpp:54
 msgid "Adrastea"
-msgstr ""
+msgstr "木卫十五"
 
 #: ../data/data.cpp:55
 msgid "Amalthea"
@@ -249,179 +250,179 @@ msgstr "木卫五"
 
 #: ../data/data.cpp:56
 msgid "Thebe"
-msgstr ""
+msgstr "木卫十四"
 
 #: ../data/data.cpp:57
 msgid "Themisto"
-msgstr ""
+msgstr "木卫十八"
 
 #: ../data/data.cpp:58
 msgid "Leda"
-msgstr ""
+msgstr "木卫十八"
 
 #: ../data/data.cpp:59
 msgid "Himalia"
-msgstr ""
+msgstr "木卫六"
 
 #: ../data/data.cpp:60
 msgid "Lysithea"
-msgstr ""
+msgstr "木卫十"
 
 #: ../data/data.cpp:61
 msgid "Elara"
-msgstr ""
+msgstr "木卫七"
 
 #: ../data/data.cpp:62
 msgid "Iocaste"
-msgstr ""
+msgstr "木卫二十四"
 
 #: ../data/data.cpp:63
 msgid "Praxidike"
-msgstr ""
+msgstr "木卫二十七"
 
 #: ../data/data.cpp:64
 msgid "Harpalyke"
-msgstr ""
+msgstr "木卫二十二"
 
 #: ../data/data.cpp:65
 msgid "Ananke"
-msgstr ""
+msgstr "木卫十二"
 
 #: ../data/data.cpp:66
 msgid "Isonoe"
-msgstr ""
+msgstr "木卫二十六"
 
 #: ../data/data.cpp:67
 msgid "Erinome"
-msgstr ""
+msgstr "木卫二十五"
 
 #: ../data/data.cpp:68
 msgid "Taygete"
-msgstr ""
+msgstr "木卫二十"
 
 #: ../data/data.cpp:69
 msgid "Chaldene"
-msgstr ""
+msgstr "木卫二十一"
 
 #: ../data/data.cpp:70
 msgid "Carme"
-msgstr ""
+msgstr "木卫十一"
 
 #: ../data/data.cpp:71
 msgid "Pasiphae"
-msgstr ""
+msgstr "木卫八"
 
 #: ../data/data.cpp:72
 msgid "Kalyke"
-msgstr ""
+msgstr "木卫二十三"
 
 #: ../data/data.cpp:73
 msgid "Megaclite"
-msgstr ""
+msgstr "木卫十九"
 
 #: ../data/data.cpp:74
 msgid "Sinope"
-msgstr ""
+msgstr "木卫九"
 
 #: ../data/data.cpp:75
 msgid "Callirrhoe"
-msgstr ""
+msgstr "木卫十七"
 
 #: ../data/data.cpp:76
 msgid "Pan"
-msgstr ""
+msgstr "土卫十八"
 
 #: ../data/data.cpp:77
 msgid "Atlas"
-msgstr ""
+msgstr "土卫十五"
 
 #: ../data/data.cpp:78
 msgid "Telesto"
-msgstr ""
+msgstr "土卫十三"
 
 #: ../data/data.cpp:79
 msgid "Calypso"
-msgstr ""
+msgstr "土卫十四"
 
 #: ../data/data.cpp:80
 msgid "Helene"
-msgstr ""
+msgstr "土卫十二"
 
 #: ../data/data.cpp:81
 msgid "Cordelia"
-msgstr ""
+msgstr "天卫六"
 
 #: ../data/data.cpp:82
 msgid "Ophelia"
-msgstr ""
+msgstr "天卫七"
 
 #: ../data/data.cpp:83
 msgid "Bianca"
-msgstr ""
+msgstr "天卫八"
 
 #: ../data/data.cpp:84
 msgid "Cressida"
-msgstr ""
+msgstr "天卫九"
 
 #: ../data/data.cpp:85
 msgid "Desdemona"
-msgstr ""
+msgstr "天卫十"
 
 #: ../data/data.cpp:86
 msgid "Juliet"
-msgstr ""
+msgstr "天卫十一"
 
 #: ../data/data.cpp:87
 msgid "Portia"
-msgstr ""
+msgstr "天卫十二"
 
 #: ../data/data.cpp:88
 msgid "Rosalind"
-msgstr ""
+msgstr "天卫十三"
 
 #: ../data/data.cpp:89
 msgid "Belinda"
-msgstr ""
+msgstr "天卫十四"
 
 #: ../data/data.cpp:90
 msgid "Puck"
-msgstr ""
+msgstr "天卫十五"
 
 #: ../data/data.cpp:91
 msgid "Caliban"
-msgstr ""
+msgstr "天卫十六"
 
 #: ../data/data.cpp:92
 msgid "Stephano"
-msgstr ""
+msgstr "天卫二十"
 
 #: ../data/data.cpp:93
 msgid "Sycorax"
-msgstr ""
+msgstr "天卫十七"
 
 #: ../data/data.cpp:94
 msgid "Prospero"
-msgstr ""
+msgstr "天卫十八"
 
 #: ../data/data.cpp:95
 msgid "Setebos"
-msgstr ""
+msgstr "天卫十九"
 
 #: ../data/data.cpp:96
 msgid "Naiad"
-msgstr ""
+msgstr "海卫三"
 
 #: ../data/data.cpp:97
 msgid "Thalassa"
-msgstr ""
+msgstr "海卫四"
 
 #: ../data/data.cpp:98
 msgid "Despina"
-msgstr ""
+msgstr "海卫五"
 
 #: ../data/data.cpp:99
 msgid "Galatea"
-msgstr ""
+msgstr "海卫六"
 
 #: ../data/data.cpp:100
 msgid "NORTH AMERICA"
@@ -1450,17 +1451,17 @@ msgstr "标准时间"
 #: ../src/celengine/configreader.cpp:19
 #, c-format
 msgid "Error opening config file '%s'.\n"
-msgstr ""
+msgstr "打开配置文件 %s 时出错。\n"
 
 #: ../src/celengine/configreader.cpp:29
 #, c-format
 msgid "%s:%d 'Configuration' expected.\n"
-msgstr ""
+msgstr "%s：预期的 %d 配置。\n"
 
 #: ../src/celengine/configreader.cpp:37
 #, c-format
 msgid "%s: Bad configuration file.\n"
-msgstr ""
+msgstr "%s：损坏的配置文件。\n"
 
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
 #. for (int i = 0; i < nDSOs; ++i)
@@ -1952,12 +1953,12 @@ msgstr "自转周期：%s %s\n"
 #: ../src/celestia/celestiacore.cpp:2456
 #, c-format
 msgid "Mass: %.6g kg\n"
-msgstr ""
+msgstr "质量：%.6g kg\n"
 
 #: ../src/celestia/celestiacore.cpp:2458
 #, c-format
 msgid "Mass: %.2f Mj\n"
-msgstr ""
+msgstr "质量：%.2f Mj\n"
 
 #: ../src/celestia/celestiacore.cpp:2460
 #, c-format
@@ -2119,7 +2120,7 @@ msgstr "（已暂停）"
 msgid ""
 "FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : "
 "%zu : %zu ]\n"
-msgstr ""
+msgstr "FPS：%.1f，可见恒星统计：[ %zu : %zu : %zu ]，可见深空天体统计：[ %zu : %zu : %zu ]\n"
 
 #: ../src/celestia/celestiacore.cpp:3057
 #, c-format
@@ -2173,7 +2174,7 @@ msgstr "太阳"
 #: ../src/celestia/celestiacore.cpp:3342
 #, c-format
 msgid "Target name: %s"
-msgstr ""
+msgstr "目标名称：%s"
 
 #: ../src/celestia/celestiacore.cpp:3429
 #, c-format
@@ -2281,65 +2282,65 @@ msgstr "读取恒星目录文件 %s 时出错\n"
 
 #: ../src/celestia/celestiacore.cpp:4283
 msgid "Invalid URL"
-msgstr ""
+msgstr "无效 URL"
 
 #: ../src/celestia/glut/glutmain.cpp:521
 msgid "Celestia was unable to initialize OpenGL 2.1.\n"
-msgstr ""
+msgstr "Celestia 无法初始化 OpenGL 2.1。\n"
 
 #: ../src/celestia/gtk/actions.cpp:1023 ../src/celestia/win32/winmain.cpp:2621
 msgid "Please use a name ending in '.jpg' or '.png'."
-msgstr ""
+msgstr "请使用以“.jpg”或“.png”结尾的名称。"
 
 #: ../src/celestia/helper.cpp:105 ../src/celestia/helper.cpp:114
 #, c-format
 msgid "%s Version: %s\n"
-msgstr ""
+msgstr "%s 版本：%s\n"
 
 #: ../src/celestia/helper.cpp:108
 #, c-format
 msgid "Vendor: %s\n"
-msgstr ""
+msgstr "制造商：%s\n"
 
 #: ../src/celestia/helper.cpp:111
 #, c-format
 msgid "Renderer: %s\n"
-msgstr ""
+msgstr "渲染器：%s\n"
 
 #: ../src/celestia/helper.cpp:117
 #, c-format
 msgid "Max simultaneous textures: %s\n"
-msgstr ""
+msgstr "最大实时纹理：%s\n"
 
 #: ../src/celestia/helper.cpp:120
 #, c-format
 msgid "Max texture size: %s\n"
-msgstr ""
+msgstr "最大纹理尺寸：%s\n"
 
 #: ../src/celestia/helper.cpp:123
 #, c-format
 msgid "Point size range: %s - %s\n"
-msgstr ""
+msgstr "点大小范围：%s - %s\n"
 
 #: ../src/celestia/helper.cpp:126
 #, c-format
 msgid "Point size granularity: %s\n"
-msgstr ""
+msgstr "点大小颗粒度：%s\n"
 
 #: ../src/celestia/helper.cpp:129
 #, c-format
 msgid "Max cube map size: %s\n"
-msgstr ""
+msgstr "最大立方体贴图尺寸：%s\n"
 
 #: ../src/celestia/helper.cpp:132
 #, c-format
 msgid "Number of interpolators: %s\n"
-msgstr ""
+msgstr "插入器数量：%s\n"
 
 #: ../src/celestia/helper.cpp:135
 #, c-format
 msgid "Max anisotropy filtering: %s\n"
-msgstr ""
+msgstr "最大各项异性过滤：%s\n"
 
 #. if (glGetError())
 #. result = [NSString stringWithFormat:NSLocalizedString(@"%@: --not
@@ -2564,11 +2565,11 @@ msgstr "自定义"
 msgid ""
 "Celestia is unable to run because the data directory was not found, probably"
 " due to improper installation."
-msgstr ""
+msgstr "Celestia 无法运行，因为找不到数据目录，可能是安装不当。"
 
 #: ../src/celestia/qt/qtappwin.cpp:263
 msgid "Celestia was unable to initialize OpenGL 2.1."
-msgstr ""
+msgstr "Celestia 无法初始化 OpenGL 2.1。"
 
 #: ../src/celestia/qt/qtappwin.cpp:281
 msgid "Celestial Browser"
@@ -2713,18 +2714,22 @@ msgid ""
 " project: <a "
 "href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
+"<html><h1>Celestia 1.7</h1><p>开发快照，<b>%1</b>提交。</p><p>为 %2 bit CPU 构建<br>使用 "
+"%3 %4<br>基于 Qt Library：%5<br>NAIF 内核：%7<br>Qt 运行时版本：%6</p><p>Copyright (C) "
+"2001-2020 by Celestia 开发团队。<br>Celestia 是一款自由软件，你可以根据自由软件基金会发布的 GNU "
+"通用公共许可证的条款（该许可证的第 2 版或（由你选择）任何更新的版本）重新发布或修改它。</p>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1039
 msgid "Unknown compiler"
-msgstr ""
+msgstr "未知编译器"
 
 #: ../src/celestia/qt/qtappwin.cpp:1043
 msgid "supported"
-msgstr ""
+msgstr "支持"
 
 #: ../src/celestia/qt/qtappwin.cpp:1045
 msgid "not supported"
-msgstr ""
+msgstr "不支持"
 
 #: ../src/celestia/qt/qtappwin.cpp:1048 ../src/celestia/qt/qtappwin.cpp:1443
 #: ../src/celestia/win32/res/resource_strings.cpp:70
@@ -2734,65 +2739,65 @@ msgstr "关于 Celestia"
 #: ../src/celestia/qt/qtappwin.cpp:1067
 #, qt-format
 msgid "<b>%1 version:</b> %2"
-msgstr ""
+msgstr "<b>%1 版本：</b>%2"
 
 #: ../src/celestia/qt/qtappwin.cpp:1073
 #, qt-format
 msgid "<b>Vendor</b>: %1"
-msgstr ""
+msgstr "<b>制造商：</b>%1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1079
 #, qt-format
 msgid "<b>Renderer:</b> %1"
-msgstr ""
+msgstr "<b>渲染器：</b>%1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1086
 #, qt-format
 msgid "<b>%1 Version:</b> %2"
-msgstr ""
+msgstr "<b>%1 版本：</b>%2"
 
 #: ../src/celestia/qt/qtappwin.cpp:1093
 #, qt-format
 msgid "<b>Max simultaneous textures:</b> %1"
-msgstr ""
+msgstr "<b>最大同步纹理</b> %1："
 
 #: ../src/celestia/qt/qtappwin.cpp:1099
 #, qt-format
 msgid "<b>Maximum texture size:</b> %1"
-msgstr ""
+msgstr "<b>最大纹理尺寸：</b>%1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1105
 #, qt-format
 msgid "<b>Point size range</b>: %1 - %2"
-msgstr ""
+msgstr "<b>点尺寸范围</b>：%1 ~ %2"
 
 #: ../src/celestia/qt/qtappwin.cpp:1111
 #, qt-format
 msgid "<b>Point size granularity</b>: %1"
-msgstr ""
+msgstr "<b>点粒度</b>：%1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1117
 #, qt-format
 msgid "<b>Max cube map size</b>: %1"
-msgstr ""
+msgstr "<b>最大立方体纹理尺寸</b>：%1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1123
 #, qt-format
 msgid "<b>Number of interpolators</b>: %1"
-msgstr ""
+msgstr "<b>最大插值</b>：%1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1129
 #, qt-format
 msgid "<b>Max anisotropy filtering</b>: %1"
-msgstr ""
+msgstr "<b>最大各向异性过滤</b>：%1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1139
 msgid "<b>Supported extensions:</b><br>\n"
-msgstr ""
+msgstr "<b>支持的扩展：</b><br>\n"
 
 #: ../src/celestia/qt/qtappwin.cpp:1153
 msgid "Renderer Info"
-msgstr ""
+msgstr "渲染器信息"
 
 #. ***** File menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1177
@@ -2867,11 +2872,11 @@ msgstr "转到天体..."
 
 #: ../src/celestia/qt/qtappwin.cpp:1241
 msgid "Copy URL / console text"
-msgstr ""
+msgstr "复制 URL/控制台文本"
 
 #: ../src/celestia/qt/qtappwin.cpp:1246
 msgid "Paste URL / console text"
-msgstr ""
+msgstr "粘贴 URL/控制台文本"
 
 #. ***** Time menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1252
@@ -3749,21 +3754,21 @@ msgstr "yr"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:205
 msgid "<b>Has rings</b>"
-msgstr ""
+msgstr "<b>拥有光环</b>"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:207
 msgid "<b>Has atmosphere</b>"
-msgstr ""
+msgstr "<b>拥有大气层</b>"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:215
 #, qt-format
 msgid "<b>Start:</b> %1"
-msgstr ""
+msgstr "<b>开始：</b>%1"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:218
 #, qt-format
 msgid "<b>End:</b> %1"
-msgstr ""
+msgstr "<b>结束：</b>%1"
 
 #: ../src/celestia/qt/qtinfopanel.cpp:220
 msgid "Orbit information"
@@ -3857,7 +3862,7 @@ msgstr "OpenGL 2.0"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:178
 msgid "OpenGL 2.1"
-msgstr ""
+msgstr "OpenGL 2.1"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:217
 msgid "Blackbody D65"
@@ -3882,12 +3887,12 @@ msgstr "与 UTC 的差异"
 #: ../src/celestia/qt/qtselectionpopup.cpp:77
 #, qt-format
 msgid "Start: %1"
-msgstr ""
+msgstr "开始：%1"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:86
 #, qt-format
 msgid "End: %1"
-msgstr ""
+msgstr "结束：%1"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:116
 msgid "Distance: "
@@ -3939,7 +3944,7 @@ msgstr "取消标记(&U)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:196
 msgid "Select Primary Body"
-msgstr ""
+msgstr "选择主体"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:246
 msgid "Filled Square"
@@ -4177,7 +4182,7 @@ msgstr "表面特征"
 #. Buttons to select filtering criterion for objects
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:738
 msgid "Planets and moons"
-msgstr ""
+msgstr "行星和卫星"
 
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:769
 msgid "Group objects by class"
@@ -4879,7 +4884,7 @@ msgstr "Celestia"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:73
 msgid "1.7.0"
-msgstr ""
+msgstr "1.7.0"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:74
 msgid "Copyright (C) 2001-2019, Celestia Development Team"
@@ -5267,7 +5272,7 @@ msgstr "环绕的天体"
 
 #: ../src/celestia/win32/winmain.cpp:1955
 msgid "You system doesn't support OpenGL 2.1!"
-msgstr ""
+msgstr "您的系统不支持 OpenGL 2.1。"
 
 #: ../src/celestia/win32/winmain.cpp:3048
 msgid "Loading: "
@@ -5303,7 +5308,7 @@ msgstr "打开脚本文件时出错。"
 #: ../src/celscript/legacy/legacyscript.cpp:105
 #: ../src/celscript/lua/luascript.cpp:96
 msgid "Unknown error loading script"
-msgstr ""
+msgstr "加载脚本时出现未知错误"
 
 #: ../src/celscript/lua/celx.cpp:761
 msgid ""
@@ -5360,7 +5365,7 @@ msgstr "打开脚本文件时出现未知错误"
 
 #: ../src/celutil/util.cpp:197
 msgid "Unknown value returned by GetTimeZoneInformation()\n"
-msgstr ""
+msgstr "GetTimeZoneInformation() 函数返回了一个未知数值\n"
 
 #: ../src/tools/xyzv2bin/bin2xyzv.cpp:18
 #, c-format
