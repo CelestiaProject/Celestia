@@ -10,6 +10,7 @@
 
 #include <cstdio>  // fopen, fclose
 #include <cstring> // memcpy
+#include <setjmp.h>
 extern "C" {
 #include <jpeglib.h>
 }
