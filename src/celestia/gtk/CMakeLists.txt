@@ -39,10 +39,16 @@ set(GTK_HEADERS
 
 pkg_check_modules(GTK2 gtk+-2.0 REQUIRED)
 pkg_check_modules(GTK2GLEXT gtkglext-1.0 REQUIRED)
+pkg_check_modules(CAIRO cairo)
 
 add_executable(celestia-gtk ${GTK_SOURCES})
 add_dependencies(celestia-gtk celestia)
 cotire(celestia-gtk)
+if (CAIRO_FOUND)
+  target_include_directories(celestia-gtk PRIVATE ${CAIRO_INCLUDE_DIRS})
+  target_link_libraries(celestia-gtk ${CAIRO_LIBRARIES})
+  target_compile_definitions(celestia-gtk PRIVATE CAIRO)
+endif()
 target_include_directories(celestia-gtk PRIVATE ${GTK2_INCLUDE_DIRS} ${GTK2GLEXT_INCLUDE_DIRS})
 target_link_libraries(celestia-gtk celestia ${GTK2_LIBRARIES} ${GTK2GLEXT_LIBRARIES})
 install(TARGETS celestia-gtk RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
