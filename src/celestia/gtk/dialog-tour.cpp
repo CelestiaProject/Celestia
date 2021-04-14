@@ -61,6 +61,7 @@ void dialogTourGuide(AppData* app)
     td->descLabel = gtk_label_new("");
     gtk_label_set_line_wrap(GTK_LABEL(td->descLabel), TRUE);
     gtk_label_set_justify(GTK_LABEL(td->descLabel), GTK_JUSTIFY_FILL);
+    gtk_label_set_max_width_chars(GTK_LABEL(td->descLabel), 40);
     gtk_box_pack_start(GTK_BOX(content_area), td->descLabel, FALSE, FALSE, 0);
 
     const DestinationList* destinations = app->core->getDestinations();
