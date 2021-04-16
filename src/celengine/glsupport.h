@@ -35,6 +35,7 @@ namespace gl
 {
 
 constexpr const int GL_2_1 = 21;
+constexpr const int GLES_2 = 20;
 
 extern bool ARB_shader_texture_lod;
 extern bool EXT_texture_compression_s3tc;
