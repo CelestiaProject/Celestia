@@ -45,7 +45,7 @@ set(DISPLAY_NAME "Celestia")
 option(ENABLE_CELX    "Enable celx scripting, requires Lua library? (Default: on)" ON)
 option(ENABLE_SPICE   "Use spice library? (Default: off)" OFF)
 option(ENABLE_NLS     "Enable interface translation? (Default: on)" ON)
-option(ENABLE_GLUT    "Build simple Glut frontend? (Default: on)" OFF)
+option(ENABLE_GLUT    "Build simple Glut frontend? (Default: off)" OFF)
 option(ENABLE_GTK     "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
 option(ENABLE_QT      "Build Qt frontend? (Default: on)" ON)
 option(ENABLE_SDL     "Build SDL frontend? (Default: off)" OFF)
@@ -57,9 +57,12 @@ option(FAST_MATH      "Build with unsafe fast-math compiller option (Default: of
 option(ENABLE_TESTS   "Enable unit tests? (Default: off)" OFF)
 option(ENABLE_DATA    "Install data from content submodule? (Default: on)" ON)
 option(ENABLE_GLES    "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
+option(USE_GTKGLEXT   "Use libgtkglext1 for GTK2 frontend (Default: on)" ON)
 
 if(ENABLE_GLES)
   add_definitions(-DGL_ES)
+  # Disable USE_GTKGLEXT if using OpenGL ES
+  set(USE_GTKGLEXT OFF)
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)

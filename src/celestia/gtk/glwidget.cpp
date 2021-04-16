@@ -12,7 +12,11 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+#ifdef GTKGLEXT
 #include <gtk/gtkgl.h>
+#else
+#include "gtkegl.h"
+#endif
 
 #include <celestia/celestiacore.h>
 
@@ -74,11 +78,16 @@ static gint glarea_idle(AppData* app)
 /* CALLBACK: GL Function for event "configure_event" */
 static gint glarea_configure(GtkWidget* widget, GdkEventConfigure*, AppData* app)
 {
+#ifdef GTKGLEXT
     GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
     GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
 
     if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
         return FALSE;
+#else
+    if (!gtk_egl_drawable_make_current(widget))
+        return FALSE;
+#endif
 
     GtkAllocation allocation;
     gtk_widget_get_allocation(GTK_WIDGET(widget), &allocation);
@@ -86,8 +95,9 @@ static gint glarea_configure(GtkWidget* widget, GdkEventConfigure*, AppData* app
 
     /* GConf changes only saved upon exit, since caused a lot of CPU activity
      * while saving intermediate steps. */
-
+#ifdef GTKGLEXT
     gdk_gl_drawable_gl_end (gldrawable);
+#endif
     return TRUE;
 }
 
@@ -241,19 +251,30 @@ static gint glarea_key_release(GtkWidget* widget, GdkEventKey* event, AppData* a
  *         If everything checks out, call appCore->draw() */
 static gint glDrawFrame(AppData* app)
 {
+#ifdef GTKGLEXT
     GdkGLContext *glcontext = gtk_widget_get_gl_context(app->glArea);
     GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable(app->glArea);
 
     if (!gdk_gl_drawable_gl_begin(gldrawable, glcontext))
         return FALSE;
+#else
+    if (!gtk_egl_drawable_make_current(app->glArea))
+        return FALSE;
+#endif
 
     if (app->bReady)
     {
         app->core->draw();
+#ifdef GTKGLEXT
         gdk_gl_drawable_swap_buffers(GDK_GL_DRAWABLE(gldrawable));
+#else
+        gtk_egl_drawable_swap_buffers(app->glArea);
+#endif
     }
 
+#ifdef GTKGLEXT
     gdk_gl_drawable_gl_end(gldrawable);
+#endif
     return TRUE;
 }
 
