@@ -23,7 +23,9 @@
 using namespace std;
 
 /* Declarations */
+#if GTK_MAJOR_VERSION == 2
 static gboolean splashExpose(GtkWidget* win, GdkEventExpose *event, SplashData* ss);
+#endif
 
 
 /* OBJECT: Overrides ProgressNotifier to receive feedback from core */
@@ -58,7 +60,7 @@ SplashData* splashStart(AppData* app, gboolean showSplash)
     gtk_window_set_position(GTK_WINDOW(ss->splash), GTK_WIN_POS_CENTER);
     gtk_widget_set_app_paintable(ss->splash, TRUE);
 
-    #ifdef CAIRO
+    #if defined(CAIRO) && GTK_MAJOR_VERSION == 2
     /* Colormap Magic */
     GdkScreen* screen = gtk_widget_get_screen(ss->splash);
     GdkColormap* colormap = gdk_screen_get_rgba_colormap(screen);
@@ -93,9 +95,11 @@ SplashData* splashStart(AppData* app, gboolean showSplash)
     gtk_fixed_put(GTK_FIXED(gf), ss->label, 40, allocation.height / 2 - 40);
     gtk_widget_show(ss->label);
 
+#if GTK_MAJOR_VERSION == 2
     g_signal_connect (ss->splash, "expose_event",
                       G_CALLBACK (splashExpose),
                       ss);
+#endif
 
     while (gtk_events_pending()) gtk_main_iteration();
 
@@ -133,7 +137,7 @@ void splashSetText(SplashData* ss, const char* text)
     while (gtk_events_pending()) gtk_main_iteration();
 }
 
-
+#if GTK_MAJOR_VERSION == 2
 /* CALLBACK: Called when the splash screen is exposed */
 static gboolean splashExpose(GtkWidget* win, GdkEventExpose *event, SplashData* ss)
 {
@@ -190,3 +194,4 @@ static gboolean splashExpose(GtkWidget* win, GdkEventExpose *event, SplashData* 
 
     return FALSE;
 }
+#endif

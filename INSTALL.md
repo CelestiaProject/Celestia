@@ -345,6 +345,8 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_DATA          | bool | OFF     | Use CelestiaContent submodule for data
 | ENABLE_GLES          | bool | OFF     | Use OpenGL ES 2.0 in rendering code
 | NATIVE_OSX_APP       | bool | OFF     | Support native OSX data paths
+| USE_GTKGLEXT         | bool | ON      | Use libgtkglext1 in GTK2 frontend
+| USE_GTK3             | bool | OFF     | Use Gtk3 instead of Gtk2 in GTK2 frontend
 
 Notes:
  \* /usr/local on Unix-like systems, c:\Program Files or c:\Program Files (x86)
@@ -362,6 +364,11 @@ On Windows systems two additonal options are supported:
   64-bit Celestia. To build 32-bit Celestia it should be omitted.
 - `CMAKE_TOOLCHAIN_FILE` - location of vcpkg.cmake if vcpkg is used.
 
+Please note that not all options are compatible:
+- `USE_GTKGLEXT` is not compatible with `ENABLE_GLES` and `USE_GTK3` and will
+  be disabled if any of this is set.
+- `ENABLE_GLES` is not compatible with `ENABLE_GLUT` and with `ENABLE_QT` if
+  your `glut` or Qt5 installation don't support OpenGL ES.
 
 Executable files
 ----------------
