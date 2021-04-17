@@ -42,7 +42,11 @@ if (NOT USE_GTKGLEXT)
   set(GTK_HEADERS ${GTK_HEADERS} gtkegl.h)
 endif()
 
-pkg_check_modules(GTK2 gtk+-2.0 REQUIRED)
+if (USE_GTK3)
+  pkg_check_modules(GTK gtk+-3.0 REQUIRED)
+else()
+  pkg_check_modules(GTK gtk+-2.0 REQUIRED)
+endif()
 pkg_check_modules(CAIRO cairo)
 
 if (ENABLE_GLES)
@@ -59,8 +63,8 @@ add_executable(celestia-gtk ${GTK_SOURCES})
 add_dependencies(celestia-gtk celestia)
 cotire(celestia-gtk)
 
-target_include_directories(celestia-gtk PRIVATE ${GTK2_INCLUDE_DIRS})
-target_link_libraries(celestia-gtk celestia ${GTK2_LIBRARIES})
+target_include_directories(celestia-gtk PRIVATE ${GTK_INCLUDE_DIRS})
+target_link_libraries(celestia-gtk celestia ${GTK_LIBRARIES})
 
 if (CAIRO_FOUND)
   target_include_directories(celestia-gtk PRIVATE ${CAIRO_INCLUDE_DIRS})

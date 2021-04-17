@@ -28,7 +28,11 @@
 /* Declarations: Callbacks */
 static gint glarea_idle(AppData* app);
 static gint glarea_configure(GtkWidget* widget, GdkEventConfigure*, AppData* app);
+#if GTK_MAJOR_VERSION == 2
 static gint glarea_expose(GtkWidget* widget, GdkEventExpose* event, AppData* app);
+#else
+static gint glarea_draw(GtkWidget*, cairo_t*, AppData* app);
+#endif
 static gint glarea_motion_notify(GtkWidget*, GdkEventMotion* event, AppData* app);
 static gint glarea_mouse_scroll(GtkWidget*, GdkEventScroll* event, AppData* app);
 static gint glarea_button_press(GtkWidget*, GdkEventButton* event, AppData* app);
@@ -44,8 +48,13 @@ static bool handleSpecialKey(int key, int state, bool down, AppData* app);
 /* ENTRY: Initialize/Bind all glArea Callbacks */
 void initGLCallbacks(AppData* app)
 {
+#if GTK_MAJOR_VERSION == 2
     g_signal_connect(G_OBJECT(app->glArea), "expose_event",
                      G_CALLBACK(glarea_expose), app);
+#else
+    g_signal_connect(G_OBJECT(app->glArea), "draw",
+                     G_CALLBACK(glarea_draw), app);
+#endif
     g_signal_connect(G_OBJECT(app->glArea), "configure_event",
                      G_CALLBACK(glarea_configure), app);
     g_signal_connect(G_OBJECT(app->glArea), "button_press_event",
@@ -102,6 +111,7 @@ static gint glarea_configure(GtkWidget* widget, GdkEventConfigure*, AppData* app
 }
 
 
+#if GTK_MAJOR_VERSION == 2
 /* CALLBACK: GL Function for event "expose_event" */
 static gint glarea_expose(GtkWidget*, GdkEventExpose* event, AppData* app)
 {
@@ -112,6 +122,13 @@ static gint glarea_expose(GtkWidget*, GdkEventExpose* event, AppData* app)
     /* Redraw -- draw checks are made in function */
     return glDrawFrame(app);
 }
+#else
+/* CALLBACK: GL Function for event "draw" */
+static gint glarea_draw(GtkWidget*, cairo_t*, AppData* app)
+{
+    return glDrawFrame(app);
+}
+#endif
 
 
 /* CALLBACK: GL Function for event "motion_notify_event" */
