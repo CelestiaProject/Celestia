@@ -71,12 +71,6 @@ chmod 755 celestia-1.7.0-git-x86_64.AppImage
 mkdir celestia-1.7.home
 ```
 
-Development snapshots installation on Windows:
-
-* https://bintray.com/celestia/celestia-builds/snapshots contains
-  official 32/64 bit development snapshots for Windows.
-
-
 To build from sources please follow instructions below.
 
 
