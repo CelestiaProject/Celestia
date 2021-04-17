@@ -498,6 +498,7 @@ int main(int argc, char* argv[])
                           GDK_KEY_RELEASE_MASK |
                           GDK_BUTTON_PRESS_MASK |
                           GDK_BUTTON_RELEASE_MASK |
+                          GDK_SCROLL_MASK |
                           GDK_POINTER_MOTION_MASK);
 
     /* Load settings the can be applied before the simulation is initialized */
