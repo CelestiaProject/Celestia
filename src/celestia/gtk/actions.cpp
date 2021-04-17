@@ -14,7 +14,7 @@
 #include <cstring>
 #include <fstream>
 #include <gtk/gtk.h>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 
 #ifdef GNOME
 #include <gconf/gconf-client.h>
@@ -666,12 +666,16 @@ void actionHelpAbout(GtkAction*, AppData* app)
 
     GdkPixbuf *logo = gdk_pixbuf_new_from_file ("celestia-logo.png", NULL);
 
+    string comments = fmt::format("GTK+ Front-End, built using gtk+ version {}.{}",
+                                  GTK_MAJOR_VERSION,
+                                  GTK_MINOR_VERSION);
+
     gtk_show_about_dialog(GTK_WINDOW(app->mainWindow),
                          "name", "Celestia",
                          "version", VERSION,
-                         "copyright", "Copyright \xc2\xa9 2001-2011 Celestia Development Team",
-                         "comments", FRONTEND " Front-End",
-                         "website", "http://celestia.sf.net",
+                         "copyright", "Copyright \xc2\xa9 2001-2021 Celestia Development Team",
+                         "comments", comments.c_str(),
+                         "website", "https://celestia.space",
                          "authors", authors,
                          "license", readFromFile("COPYING"),
                          "logo", logo,
