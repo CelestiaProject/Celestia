@@ -2045,6 +2045,8 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         center = center + direction * (radius / (m * Vector3f::UnitZ()).dot(direction));
 
         enableDepthTest();
+        disableDepthMask();
+
         bool useSprites = starStyle != PointStars;
         if (useSprites)
             gaussianDiscTex->bind();
