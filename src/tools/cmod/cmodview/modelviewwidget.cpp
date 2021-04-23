@@ -39,6 +39,16 @@ enum {
 };
 
 
+inline QString toQString(const wchar_t *s)
+{
+    return QString::fromWCharArray(s);
+}
+
+inline QString toQString(const char *s)
+{
+    return QString::fromLocal8Bit(s);
+}
+
 class MaterialLibrary
 {
 public:
@@ -184,7 +194,7 @@ ShaderKey::Create(const Material* material, const LightingEnvironment* lighting,
         // Bit 16 is set if the normal map is compressed
         if (material->maps[Material::NormalMap] && hasTangents)
         {
-            if (material->maps[Material::NormalMap]->source().rfind(".dxt5nm") != std::string::npos)
+            if (material->maps[Material::NormalMap]->source().extension() == ".dxt5nm")
             {
                 info |= CompressedNormalMapMask;
             }
@@ -286,19 +296,19 @@ ModelViewWidget::setModel(cmod::Model* model, const QString& modelDirPath)
             const Material* material = m_model->getMaterial(i);
             if (material->maps[Material::DiffuseMap])
             {
-                m_materialLibrary->getTexture(QString(material->maps[Material::DiffuseMap]->source().c_str()));
+                m_materialLibrary->getTexture(toQString(material->maps[Material::DiffuseMap]->source().c_str()));
             }
             if (material->maps[Material::NormalMap])
             {
-                m_materialLibrary->getTexture(QString(material->maps[Material::NormalMap]->source().c_str()));
+                m_materialLibrary->getTexture(toQString(material->maps[Material::NormalMap]->source().c_str()));
             }
             if (material->maps[Material::SpecularMap])
             {
-                m_materialLibrary->getTexture(QString(material->maps[Material::SpecularMap]->source().c_str()));
+                m_materialLibrary->getTexture(toQString(material->maps[Material::SpecularMap]->source().c_str()));
             }
             if (material->maps[Material::EmissiveMap])
             {
-                m_materialLibrary->getTexture(QString(material->maps[Material::EmissiveMap]->source().c_str()));
+                m_materialLibrary->getTexture(toQString(material->maps[Material::EmissiveMap]->source().c_str()));
             }
         }
     }
@@ -943,7 +953,7 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         if (shaderKey.hasDiffuseMap())
         {
-            GLuint diffuseMapId = m_materialLibrary->getTexture(material->maps[Material::DiffuseMap]->source().c_str());
+            GLuint diffuseMapId = m_materialLibrary->getTexture(toQString(material->maps[Material::DiffuseMap]->source().c_str()));
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, diffuseMapId);
             shader->setSampler("diffuseMap", 0);
@@ -951,7 +961,7 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         if (shaderKey.hasNormalMap())
         {
-            GLuint normalMapId = m_materialLibrary->getTexture(material->maps[Material::NormalMap]->source().c_str());
+            GLuint normalMapId = m_materialLibrary->getTexture(toQString(material->maps[Material::NormalMap]->source().c_str()));
             glActiveTexture(GL_TEXTURE1);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, normalMapId);
@@ -961,7 +971,7 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         if (shaderKey.hasSpecularMap())
         {
-            GLuint specularMapId = m_materialLibrary->getTexture(material->maps[Material::SpecularMap]->source().c_str());
+            GLuint specularMapId = m_materialLibrary->getTexture(toQString(material->maps[Material::SpecularMap]->source().c_str()));
             glActiveTexture(GL_TEXTURE2);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, specularMapId);
@@ -971,7 +981,7 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         if (shaderKey.hasEmissiveMap())
         {
-            GLuint emissiveMapId = m_materialLibrary->getTexture(material->maps[Material::EmissiveMap]->source().c_str());
+            GLuint emissiveMapId = m_materialLibrary->getTexture(toQString(material->maps[Material::EmissiveMap]->source().c_str()));
             glActiveTexture(GL_TEXTURE3);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, emissiveMapId);
@@ -1072,7 +1082,7 @@ ModelViewWidget::bindMaterial(const Material* material,
         GLuint baseTexId = 0;
         if (material->maps[Material::DiffuseMap])
         {
-            baseTexId = m_materialLibrary->getTexture(QString(material->maps[Material::DiffuseMap]->source().c_str()));
+            baseTexId = m_materialLibrary->getTexture(toQString(material->maps[Material::DiffuseMap]->source().c_str()));
         }
 
         if (baseTexId != 0)

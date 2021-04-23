@@ -11,6 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include <config.h>
+#include <fstream>
 #include <fmt/printf.h>
 #include "gettext.h"
 #ifdef _WIN32
@@ -101,6 +102,22 @@ fs::path PathExp(const fs::path& filename)
 #else // !PORTABLE_BUILD
     return filename;
 #endif
+}
+
+fs::path ResolveWildcard(const fs::path& wildcard,
+                         array_view<const char*> extensions)
+{
+    fs::path filename(wildcard);
+
+    for (const auto *ext : extensions)
+    {
+        filename.replace_extension(ext);
+        ifstream in(filename.string());
+        if (in.good())
+            return filename;
+    }
+
+    return fs::path();
 }
 
 #ifndef PORTABLE_BUILD
