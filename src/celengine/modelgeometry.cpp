@@ -228,12 +228,12 @@ ModelGeometry::loadTextures()
 }
 
 
-string
+fs::path
 CelestiaTextureResource::source() const
 {
     if (m_textureHandle == InvalidResource)
-        return "";
+        return fs::path();
 
     const TextureInfo* t = GetTextureManager()->getResourceInfo(textureHandle());
-    return t ? t->source : "";
+    return t ? t->source : fs::path();
 }

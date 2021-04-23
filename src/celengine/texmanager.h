@@ -10,8 +10,6 @@
 #ifndef _TEXMANAGER_H_
 #define _TEXMANAGER_H_
 
-#include <string>
-#include <map>
 #include <celutil/resmanager.h>
 #include <celengine/texture.h>
 #include "multitexture.h"
@@ -20,7 +18,7 @@
 class TextureInfo : public ResourceInfo<Texture>
 {
  public:
-    std::string source;
+    fs::path source;
     fs::path path;
     unsigned int flags;
     float bumpHeight;
@@ -35,7 +33,7 @@ class TextureInfo : public ResourceInfo<Texture>
         BorderClamp      = 0x20,
     };
 
-    TextureInfo(const std::string& _source,
+    TextureInfo(const fs::path& _source,
                 const fs::path& _path,
                 unsigned int _flags,
                 unsigned int _resolution = medres) :
@@ -45,7 +43,7 @@ class TextureInfo : public ResourceInfo<Texture>
         bumpHeight(0.0f),
         resolution(_resolution) {};
 
-    TextureInfo(const std::string& _source,
+    TextureInfo(const fs::path& _source,
                 const fs::path& _path,
                 float _bumpHeight,
                 unsigned int _flags,
@@ -56,7 +54,7 @@ class TextureInfo : public ResourceInfo<Texture>
         bumpHeight(_bumpHeight),
         resolution(_resolution) {};
 
-    TextureInfo(const std::string& _source,
+    TextureInfo(const fs::path& _source,
                 unsigned int _flags,
                 unsigned int _resolution = medres) :
         source(_source),

@@ -9,10 +9,15 @@
 // of the License, or (at your option) any later version.
 
 #include <celutil/debug.h>
+#include <celutil/fsutils.h>
+#include <array>
 #include <fstream>
 #include "mapmanager.h"
 
 using namespace std;
+using namespace celestia;
+
+static std::array<const char*, 1> extensions = {"map"};
 
 WarpMesh::WarpMesh(int nx, int ny, float *data) :
     nx(nx),
@@ -113,31 +118,16 @@ WarpMeshManager* GetWarpMeshManager()
     return warpMeshManager;
 }
 
-static string resolveWildcard(const string& filename)
-{
-    string base(filename, 0, filename.length() - 1);
-
-    string mapfile = base + "map";
-    ifstream in(mapfile);
-    if (in.good())
-        return mapfile;
-
-    return {};
-}
-
 fs::path WarpMeshInfo::resolve(const fs::path& baseDir)
 {
-    bool wildcard = false;
-    if (!source.empty() && source.at(source.length() - 1) == '*')
-        wildcard = true;
+    bool wildcard = source.extension() == ".*";
 
     fs::path filename = baseDir / source;
+
     if (wildcard)
     {
-        string matched = resolveWildcard(filename.string());
-        if (matched.empty())
-            return filename; // . . . for lack of any better way to handle it.
-        else
+        fs::path matched = util::ResolveWildcard(filename, extensions);
+        if (!matched.empty())
             return matched;
     }
 

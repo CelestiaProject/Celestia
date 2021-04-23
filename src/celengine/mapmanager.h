@@ -10,8 +10,6 @@
 
 #pragma once
 
-#include <string>
-#include <map>
 #include <functional>
 #include <celutil/resmanager.h>
 
@@ -39,9 +37,9 @@ class WarpMesh
 class WarpMeshInfo : public ResourceInfo<WarpMesh>
 {
  public:
-    std::string source;
+    fs::path source;
 
-    WarpMeshInfo(const std::string& source) : source(source) {};
+    WarpMeshInfo(const fs::path& source) : source(source) {};
 
     fs::path resolve(const fs::path&) override;
     WarpMesh* load(const fs::path&) override;

@@ -30,7 +30,7 @@ public:
         return m_textureHandle;
     }
 
-    std::string source() const;
+    fs::path source() const;
 
 private:
     ResourceHandle m_textureHandle;

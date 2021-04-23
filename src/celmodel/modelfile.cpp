@@ -1562,7 +1562,7 @@ AsciiModelWriter::writeMaterial(const Material& material)
 
     for (int i = 0; i < Material::TextureSemanticMax; i++)
     {
-        string texSource;
+        fs::path texSource;
         if (material.maps[i] != nullptr)
         {
             texSource = material.maps[i]->source();
@@ -1588,7 +1588,7 @@ AsciiModelWriter::writeMaterial(const Material& material)
                 assert(0);
             }
 
-            out << " \"" << texSource << "\"\n";
+            out << " \"" << texSource.string() << "\"\n";
         }
     }
 
@@ -2345,12 +2345,12 @@ BinaryModelWriter::writeMaterial(const Material& material)
     {
         if (material.maps[i])
         {
-            string texSource = material.maps[i]->source();
+            fs::path texSource = material.maps[i]->source();
             if (!texSource.empty())
             {
                 writeToken(out, CMOD_Texture);
                 writeInt16(out, (int16_t) i);
-                writeTypeString(out, texSource);
+                writeTypeString(out, texSource.string());
             }
         }
     }
