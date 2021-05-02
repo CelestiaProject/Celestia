@@ -678,7 +678,7 @@ bool StarDatabase::loadBinary(istream& in)
 
         StarDetails* details = nullptr;
         StellarClass sc;
-        if (sc.unpack(spectralType))
+        if (sc.unpackV1(spectralType))
             details = StarDetails::GetStarDetails(sc);
 
         if (details == nullptr)

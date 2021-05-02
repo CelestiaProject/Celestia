@@ -206,7 +206,7 @@ bool WriteStarDatabase(istream& in, ostream& out, bool sphericalCoords)
         writeFloat(out, y);
         writeFloat(out, z);
         writeShort(out, (int16_t) (absMag * 256.0f));
-        writeUshort(out, sc.pack());
+        writeUshort(out, sc.packV1());
     }
 
     return true;
