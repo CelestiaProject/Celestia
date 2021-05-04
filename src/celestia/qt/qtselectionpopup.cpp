@@ -401,7 +401,7 @@ QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
                         title = _("Comets");
                         break;
                     case Body::Spacecraft:
-                        title = _("Spacecraft");
+                        title = C_("plural", "Spacecraft");
                         break;
                     default:
                         title = _("Other objects");
