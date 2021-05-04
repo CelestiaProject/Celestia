@@ -62,10 +62,6 @@
 
 #include "imagecapture.h"
 
-// TODO: proper gettext
-#define C_(a, b) (b)
-
-
 using namespace Eigen;
 using namespace std;
 using namespace astro::literals;
@@ -3205,7 +3201,7 @@ void CelestiaCore::renderOverlay()
         if (!sim->getTrackedObject().empty())
         {
             fmt::fprintf(*overlay, _("Track %s\n"),
-                         C_("Track", getSelectionName(sim->getTrackedObject(), *u)));
+                         CX_("Track", getSelectionName(sim->getTrackedObject(), *u)));
         }
         else
         {
@@ -3221,21 +3217,21 @@ void CelestiaCore::renderOverlay()
             {
             case ObserverFrame::Ecliptical:
                 fmt::fprintf(*overlay, _("Follow %s\n"),
-                             C_("Follow", getSelectionName(refObject, *u)));
+                             CX_("Follow", getSelectionName(refObject, *u)));
                 break;
             case ObserverFrame::BodyFixed:
                 fmt::fprintf(*overlay, _("Sync Orbit %s\n"),
-                             C_("Sync", getSelectionName(refObject, *u)));
+                             CX_("Sync", getSelectionName(refObject, *u)));
                 break;
             case ObserverFrame::PhaseLock:
                 fmt::fprintf(*overlay, _("Lock %s -> %s\n"),
-                             C_("Lock", getSelectionName(refObject, *u)),
-                             C_("LockTo", getSelectionName(sim->getFrame()->getTargetObject(), *u)));
+                             CX_("Lock", getSelectionName(refObject, *u)),
+                             CX_("LockTo", getSelectionName(sim->getFrame()->getTargetObject(), *u)));
                 break;
 
             case ObserverFrame::Chase:
                 fmt::fprintf(*overlay, _("Chase %s\n"),
-                             C_("Chase", getSelectionName(refObject, *u)));
+                             CX_("Chase", getSelectionName(refObject, *u)));
                 break;
 
             default:
