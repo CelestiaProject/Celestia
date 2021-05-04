@@ -1079,7 +1079,7 @@ void CelestiaAppWindow::slotShowGLInfo()
 
     if (info.count("Vendor") > 0)
     {
-        out << QString(_("<b>Vendor</b>: %1")).arg(info["Vendor"].c_str());
+        out << QString(_("<b>Vendor:</b> %1")).arg(info["Vendor"].c_str());
         out << "<br>\n";
     }
 
@@ -1111,31 +1111,31 @@ void CelestiaAppWindow::slotShowGLInfo()
 
     if (info.count("PointSizeMax") > 0 && info.count("PointSizeMin") > 0)
     {
-        out << QString(_("<b>Point size range</b>: %1 - %2")).arg(info["PointSizeMin"].c_str(), info["PointSizeMax"].c_str());
+        out << QString(_("<b>Point size range:</b> %1 - %2")).arg(info["PointSizeMin"].c_str(), info["PointSizeMax"].c_str());
         out << "<br>\n";
     }
 
     if (info.count("PointSizeGran") > 0)
     {
-        out << QString(_("<b>Point size granularity</b>: %1")).arg(info["PointSizeGran"].c_str());
+        out << QString(_("<b>Point size granularity:</b> %1")).arg(info["PointSizeGran"].c_str());
         out << "<br>\n";
     }
 
     if (info.count("MaxCubeMapSize") > 0)
     {
-        out << QString(_("<b>Max cube map size</b>: %1")).arg(info["MaxCubeMapSize"].c_str());
+        out << QString(_("<b>Max cube map size:</b> %1")).arg(info["MaxCubeMapSize"].c_str());
         out << "<br>\n";
     }
 
     if (info.count("MaxVaryingFloats") > 0)
     {
-        out << QString(_("<b>Number of interpolators</b>: %1")).arg(info["MaxVaryingFloats"].c_str());
+        out << QString(_("<b>Number of interpolators:</b> %1")).arg(info["MaxVaryingFloats"].c_str());
         out << "<br>\n";
     }
 
     if (info.count("MaxAnisotropy") > 0)
     {
-        out << QString(_("<b>Max anisotropy filtering</b>: %1")).arg(info["MaxAnisotropy"].c_str());
+        out << QString(_("<b>Max anisotropy filtering:</b> %1")).arg(info["MaxAnisotropy"].c_str());
         out << "<br>\n";
     }
 
