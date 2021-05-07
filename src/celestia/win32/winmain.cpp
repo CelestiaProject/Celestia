@@ -502,7 +502,7 @@ bool LoadItemTextFromFile(HWND hWnd,
 
     if (!textFile.good())
     {
-        SetDlgItemText(hWnd, item, "License file missing!\r\r\nSee http://www.gnu.org/copyleft/gpl.html");
+        SetDlgItemText(hWnd, item, _("License file missing!\nSee http://www.gnu.org/copyleft/gpl.html"));
         return true;
     }
 
@@ -1455,7 +1455,8 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
     objects.push_back(planets);
     menuNames.push_back(UTF8ToCurrentCP(_("Planets")));
     objects.push_back(spacecraft);
-    menuNames.push_back(UTF8ToCurrentCP(_("Spacecraft")));
+    // TRANSLATORS: translate this as plural
+    menuNames.push_back(UTF8ToCurrentCP(C_("plural", "Spacecraft")));
 
     // Now sort each vector and generate submenus
     IntStrPairComparePredicate pred;
@@ -1519,7 +1520,8 @@ static HMENU CreateAlternateSurfaceMenu(const vector<string>& surfaces)
 {
     HMENU menu = CreatePopupMenu();
 
-    AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE, "Normal");
+    // TRANSLATORS: normal texture in an alternative surface menu
+    AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE, _("Normal"));
     for (unsigned int i = 0; i < surfaces.size(); i++)
     {
         AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE + i + 1,
@@ -1722,8 +1724,8 @@ bool EnableFullScreen(const DEVMODE& dm)
         DISP_CHANGE_SUCCESSFUL)
     {
         MessageBox(NULL,
-                   "Unable to switch to full screen mode; running in window mode",
-                   "Error",
+                   _("Unable to switch to full screen mode; running in window mode"),
+                   _("Error"),
                    MB_OK | MB_ICONERROR);
         return false;
     }
@@ -1887,7 +1889,8 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     if (RegisterClass(&wc) == 0)
     {
         MessageBox(NULL,
-                   "Failed to register the window class.", "Fatal Error",
+                   _("Failed to register the window class."),
+                   _("Fatal Error"),
                    MB_OK | MB_ICONERROR);
     return NULL;
     }
@@ -1937,7 +1940,8 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     if (!SetDCPixelFormat(deviceContext))
     {
         MessageBox(NULL,
-                   "Could not get appropriate pixel format for OpenGL rendering.", "Fatal Error",
+                   _("Could not get appropriate pixel format for OpenGL rendering."),
+                   _("Fatal Error"),
                    MB_OK | MB_ICONERROR);
         return NULL;
     }
@@ -1960,8 +1964,8 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
         if (!gl::init(ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
         {
             MessageBox(NULL,
-                       _("You system doesn't support OpenGL 2.1!"),
-                       "Fatal Error",
+                       _("Your system doesn't support OpenGL 2.1!"),
+                       _("Fatal Error"),
                        MB_OK | MB_ICONERROR);
             return NULL;
         }
@@ -1992,7 +1996,8 @@ void DestroyOpenGLWindow()
         if (!ReleaseDC(mainWindow, deviceContext))
         {
             MessageBox(NULL,
-                       "Releasing device context failed.", "Error",
+                       _("Releasing device context failed."),
+                       _("Error"),
                        MB_OK | MB_ICONERROR);
         }
         deviceContext = NULL;
@@ -2262,7 +2267,7 @@ public:
 
         MessageBox(NULL,
                    msg.c_str(),
-                   "Fatal Error",
+                   _("Fatal Error"),
                    MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
     }
 };
@@ -2598,7 +2603,7 @@ static void HandleCaptureImage(HWND hWnd)
     Ofn.lpstrInitialDir = (LPSTR)NULL;
 
     // Comment this out if you just want the standard "Save As" caption.
-    Ofn.lpstrTitle = "Save As - Specify File to Capture Image";
+    Ofn.lpstrTitle = _("Save As - Specify File to Capture Image");
 
     // OFN_HIDEREADONLY - Do not display read-only JPEG or PNG files
     // OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
@@ -2632,7 +2637,7 @@ static void HandleCaptureImage(HWND hWnd)
         {
             MessageBox(hWnd,
                        _("Please use a name ending in '.jpg' or '.png'."),
-                       "Error",
+                       _("Error"),
                        MB_OK | MB_ICONERROR);
             return;
         }
@@ -2641,7 +2646,10 @@ static void HandleCaptureImage(HWND hWnd)
         appCore->draw();
         if (!appCore->saveScreenShot(Ofn.lpstrFile))
         {
-            MessageBox(hWnd, "Could not save image file.", "Error", MB_OK | MB_ICONERROR);
+            MessageBox(hWnd,
+                       _("Could not save image file."),
+                       _("Error"),
+                       MB_OK | MB_ICONERROR);
         }
     }
 }
@@ -2655,7 +2663,10 @@ static void HandleCaptureMovie(HWND hWnd)
     // is complete.
     if (appCore->isCaptureActive())
     {
-        MessageBox(hWnd, "Stop current movie capture before starting another one.", "Error", MB_OK | MB_ICONERROR);
+        MessageBox(hWnd,
+                   _("Stop current movie capture before starting another one."),
+                   _("Error"),
+                   MB_OK | MB_ICONERROR);
         return;
     }
 
@@ -2679,7 +2690,7 @@ static void HandleCaptureMovie(HWND hWnd)
     Ofn.lpstrInitialDir = (LPSTR)NULL;
 
     // Comment this out if you just want the standard "Save As" caption.
-    Ofn.lpstrTitle = "Save As - Specify Output File for Capture Movie";
+    Ofn.lpstrTitle = _("Save As - Specify Output File for Capture Movie");
 
     // OFN_HIDEREADONLY - Do not display read-only video files
     // OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
@@ -2746,14 +2757,14 @@ static void HandleCaptureMovie(HWND hWnd)
 
         if (!success)
         {
-            char errorMsg[64];
+            const char *errorMsg;
 
             if (nFileType == 0)
-                sprintf(errorMsg, "Specified file extension is not recognized.");
+                errorMsg = _("Specified file extension is not recognized.");
             else
-                sprintf(errorMsg, "Could not capture movie.");
+                errorMsg = _("Could not capture movie.");
 
-            MessageBox(hWnd, errorMsg, "Error", MB_OK | MB_ICONERROR);
+            MessageBox(hWnd, errorMsg, _("Error"), MB_OK | MB_ICONERROR);
         }
     }
 }
@@ -2978,7 +2989,8 @@ static bool parseCommandLine(int argc, char* argv[])
             if (isLastArg)
             {
                 MessageBox(NULL,
-                           "Directory expected after --dir", "Celestia Command Line Error",
+                           _("Directory expected after --dir"),
+                           _("Celestia Command Line Error"),
                            MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -2990,8 +3002,8 @@ static bool parseCommandLine(int argc, char* argv[])
             if (isLastArg)
             {
                 MessageBox(NULL,
-                           "Configuration file name expected after --conf",
-                           "Celestia Command Line Error",
+                           _("Configuration file name expected after --conf"),
+                           _("Celestia Command Line Error"),
                            MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -3004,7 +3016,8 @@ static bool parseCommandLine(int argc, char* argv[])
             if (isLastArg)
             {
                 MessageBox(NULL,
-                           "Directory expected after --extrasdir", "Celestia Command Line Error",
+                           _("Directory expected after --extrasdir"),
+                           _("Celestia Command Line Error"),
                            MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -3016,7 +3029,8 @@ static bool parseCommandLine(int argc, char* argv[])
             if (isLastArg)
             {
                 MessageBox(NULL,
-                           "URL expected after --url", "Celestia Command Line Error",
+                           _("URL expected after --url"),
+                           _("Celestia Command Line Error"),
                            MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -3030,9 +3044,9 @@ static bool parseCommandLine(int argc, char* argv[])
         else
         {
             char* buf = new char[strlen(argv[i]) + 256];
-            sprintf(buf, "Invalid command line option '%s'", argv[i]);
+            sprintf(buf, _("Invalid command line option '%s'"), argv[i]);
             MessageBox(NULL,
-                       buf, "Celestia Command Line Error",
+                       buf, _("Celestia Command Line Error"),
                        MB_OK | MB_ICONERROR);
             delete[] buf;
             return false;
@@ -3111,7 +3125,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         SetCurrentDirectory(startDirectory.c_str());
 
     s_splash = new SplashWindow(SPLASH_DIR "\\" "splash.png");
-    s_splash->setMessage("Loading data files...");
+    s_splash->setMessage(_("Loading data files..."));
     if (!skipSplashScreen)
         s_splash->showSplash();
 
@@ -3202,9 +3216,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
-    bindtextdomain("celestia","locale");
+    bindtextdomain("celestia", "locale");
     bind_textdomain_codeset("celestia", "UTF-8");
-    bindtextdomain("celestia_constellations","locale");
+    bindtextdomain("celestia_constellations", "locale");
     bind_textdomain_codeset("celestia_constellations", "UTF-8");
     textdomain("celestia");
 
@@ -3252,8 +3266,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (appCore->getConfig() == NULL)
     {
         MessageBox(NULL,
-                   "Configuration file missing!",
-                   "Fatal Error",
+                   _("Configuration file missing!"),
+                   _("Fatal Error"),
                    MB_OK | MB_ICONERROR);
         return 1;
     }
@@ -3325,8 +3339,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (hWnd == NULL)
     {
         MessageBox(NULL,
-                   "Failed to create the application window.",
-                   "Fatal Error",
+                   _("Failed to create the application window."),
+                   _("Fatal Error"),
                    MB_OK | MB_ICONERROR);
         return FALSE;
     }

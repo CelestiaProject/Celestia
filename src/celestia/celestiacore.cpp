@@ -100,7 +100,7 @@ static bool is_valid_directory(const fs::path& dir)
     std::error_code ec;
     if (!fs::is_directory(dir, ec))
     {
-        fmt::fprintf(cerr, "Path %s doesn't exist or isn't a directory", dir);
+        fmt::fprintf(cerr, _("Path %s doesn't exist or isn't a directory"), dir);
         return false;
     }
 
@@ -1185,7 +1185,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 switch (newPath)
                 {
                 case GLContext::GLPath_GLSL:
-                    flash(_("Render path: OpenGL 2.0"));
+                    flash(_("Render path: OpenGL 2.1"));
                     break;
                 }
                 context->setRenderPath(newPath);

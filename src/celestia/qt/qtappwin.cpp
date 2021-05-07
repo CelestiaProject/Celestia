@@ -1020,7 +1020,7 @@ void CelestiaAppWindow::slotShowAbout()
         "NAIF kerners are %7<br>"
         "Runtime Qt version: %6</p>"
 
-        "<p>Copyright (C) 2001-2020 by the Celestia Development Team.<br>"
+        "<p>Copyright (C) 2001-2021 by the Celestia Development Team.<br>"
         "Celestia is free software. You can redistribute it and/or modify "
         "it under the terms of the GNU General Public License as published "
         "by the Free Software Foundation; either version 2 of the License, "
