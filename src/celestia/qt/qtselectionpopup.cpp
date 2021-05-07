@@ -109,9 +109,9 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
             buff = fmt::sprintf("%.3f %s", astro::lightYearsToAU(distance), _("au"));
         else if (abs(distance) > astro::kilometersToLightYears(1.0f))
-            buff = fmt::sprintf("%.3f km", astro::lightYearsToKilometers(distance));
+            buff = fmt::sprintf(_("%.3f km"), astro::lightYearsToKilometers(distance));
         else
-            buff = fmt::sprintf("%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
+            buff = fmt::sprintf(_("%.3f m"), astro::lightYearsToKilometers(distance) * 1000.0f);
 
         addAction(italicTextItem(_("Distance: ") + QString::fromStdString(buff)));
 

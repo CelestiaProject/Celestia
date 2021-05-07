@@ -203,9 +203,9 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
         }
 
         if (body->getRings() != nullptr)
-            stream << _("<b>Has rings</b>") << "<br>\n";
+            stream << QString(_("<b>Has rings</b>")) << "<br>\n";
         if (body->getAtmosphere() != nullptr)
-            stream << _("<b>Has atmosphere</b>") << "<br>\n";
+            stream << QString(_("<b>Has atmosphere</b>")) << "<br>\n";
 
         // Start and end dates
         double startTime = 0.0;
@@ -318,9 +318,11 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
     sph = rectToSpherical(galPos);
 
     astro::decimalToDegMinSec(radToDeg(sph.x()), degrees, minutes, seconds);
+    // TRANSLATORS: Galactic longitude
     stream << QString(_("<b>L:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(QString::fromUtf8(UTF8_DEGREE_SIGN))
                                                       .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
     astro::decimalToDegMinSec(radToDeg(sph.y()), degrees, minutes, seconds);
+    // TRANSLATORS: Galactic latitude
     stream << QString(_("<b>B:</b> %L1%2 %L3' %L4\"")).arg(degrees).arg(QString::fromUtf8(UTF8_DEGREE_SIGN))
                                                       .arg(abs(minutes)).arg(abs(seconds)) << "<br>\n";
 }
