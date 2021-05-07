@@ -3197,20 +3197,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     appCore = new CelestiaCore();
-    if (appCore == NULL)
-    {
-        if (s_splash != NULL)
-        {
-            s_splash->close();
-            delete s_splash;
-            s_splash = NULL;
-        }
-
-        MessageBox(NULL,
-                   "Out of memory.", "Fatal Error",
-                   MB_OK | MB_ICONERROR | MB_TOPMOST);
-        return false;
-    }
 
     // Gettext integration
     setlocale(LC_ALL, "");
