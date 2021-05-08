@@ -3148,7 +3148,7 @@ msgstr "Комети"
 #: ../src/celestia/win32/winmain.cpp:1459
 msgctxt "plural"
 msgid "Spacecraft"
-msgstr "Космически апарат"
+msgstr "Космически апарати"
 
 #. Label actions
 #: ../src/celestia/qt/qtcelestiaactions.cpp:106
