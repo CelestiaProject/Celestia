@@ -2,27 +2,24 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
-# Hleb Valoshka <375gnu@gmail.com>, 2018
-#
+# Hleb Valoshka <375gnu@gmail.com>, 2021
+# 
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
 "POT-Creation-Date: 2021-05-07 20:40+0300\n"
-"PO-Revision-Date: 2021-05-07 20:40+0300\n"
-"Last-Translator: Hleb Valoshka <375gnu@gmail.com>\n"
-"Language-Team: Belarusian (https://www.transifex.com/celestia/teams/93131/"
-"be/)\n"
-"Language: be\n"
+"PO-Revision-Date: 2018-11-02 18:33+0000\n"
+"Last-Translator: Hleb Valoshka <375gnu@gmail.com>, 2021\n"
+"Language-Team: Belarusian (https://www.transifex.com/celestia/teams/93131/be/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
-"%100>=11 && n%100<=14)? 2 : 3);\n"
-"X-Generator: Poedit 2.0.6\n"
+"Language: be\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: ../data/data.cpp:1
 msgid "Mercury"
@@ -624,7 +621,7 @@ msgstr "Блюмфантэйн"
 
 #: ../data/data.cpp:149
 msgid "Bogota"
-msgstr "Ба…ота"
+msgstr "Баґота"
 
 #: ../data/data.cpp:150
 msgid "Brasilia"
@@ -1465,14 +1462,12 @@ msgstr "%s:%d чакаецца 'Configuration'.\n"
 msgid "%s: Bad configuration file.\n"
 msgstr "%s: кепскі файл настаўленьняў.\n"
 
-#.
 #. // Put AbsMag = avgAbsMag for Add-ons without AbsMag entry
 #. for (int i = 0; i < nDSOs; ++i)
 #. {
 #. if(DSOs[i]->getAbsoluteMagnitude() == DSO_DEFAULT_ABS_MAGNITUDE)
 #. DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
 #. }
-#.
 #: ../src/celengine/dsodb.cpp:375
 #, c-format
 msgid "Loaded %i deep space objects\n"
@@ -1931,23 +1926,27 @@ msgstr "аа"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/celestiacore.cpp:2514 ../src/celestia/qt/qtinfopanel.cpp:121
+#: ../src/celestia/celestiacore.cpp:2514
+#: ../src/celestia/qt/qtinfopanel.cpp:121
 #: ../src/celestia/qt/qtinfopanel.cpp:235 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:123
 msgid "km"
 msgstr "км"
 
-#: ../src/celestia/celestiacore.cpp:2520 ../src/celestia/qt/qtinfopanel.cpp:125
+#: ../src/celestia/celestiacore.cpp:2520
+#: ../src/celestia/qt/qtinfopanel.cpp:125
 msgid "m"
 msgstr "м"
 
-#: ../src/celestia/celestiacore.cpp:2543 ../src/celestia/qt/qtinfopanel.cpp:169
+#: ../src/celestia/celestiacore.cpp:2543
+#: ../src/celestia/qt/qtinfopanel.cpp:169
 #: ../src/celestia/qt/qtinfopanel.cpp:197
 #: ../src/celestia/qt/qtinfopanel.cpp:247
 msgid "days"
 msgstr "дзён"
 
-#: ../src/celestia/celestiacore.cpp:2548 ../src/celestia/qt/qtinfopanel.cpp:165
+#: ../src/celestia/celestiacore.cpp:2548
+#: ../src/celestia/qt/qtinfopanel.cpp:165
 #: ../src/celestia/qt/qtinfopanel.cpp:193
 msgid "hours"
 msgstr "гадзін"
@@ -2405,8 +2404,8 @@ msgstr "Унутраная памылка бібліятэкі Ogg.\n"
 #: ../src/celestia/oggtheoracapture.cpp:311
 #, c-format
 msgid ""
-"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx"
-"%d offset (%dx%d)\n"
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d "
+"%dx%d offset (%dx%d)\n"
 msgstr ""
 "OggTheoraCapture::start() — Відэа Theora: %s %.2f(%d/%d) кадр/с якасьць %d "
 "%d×%d зрух (%d×%d)\n"
@@ -2426,8 +2425,8 @@ msgstr "Свая"
 
 #: ../src/celestia/qt/qtappwin.cpp:217
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
 "Celestia ня можа працаваць, бо каталёґ за зьвесткамі адсутнічае, магчыма "
 "праз няправільнае ўсталяваньне."
@@ -2469,7 +2468,8 @@ msgstr "Зоркі"
 msgid "Deep Sky Objects"
 msgstr "Аб'екты глыбокага космасу"
 
-#: ../src/celestia/qt/qtappwin.cpp:334 ../src/celestia/qt/qteventfinder.cpp:335
+#: ../src/celestia/qt/qtappwin.cpp:334
+#: ../src/celestia/qt/qteventfinder.cpp:335
 #: ../src/celestia/qt/qteventfinder.cpp:345
 msgid "Event Finder"
 msgstr "Пошук падзей"
@@ -2566,29 +2566,30 @@ msgstr "Новая закладка"
 #: ../src/celestia/qt/qtappwin.cpp:1013
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kerners are %7<br>Runtime Qt version: %6</p><p>Copyright (C) "
-"2001-2021 by the Celestia Development Team.<br>Celestia is free software. "
-"You can redistribute it and/or modify it under the terms of the GNU General "
-"Public License as published by the Free Software Foundation; either version "
-"2 of the License, or (at your option) any later version.</p><p>Main site: <a "
+"<html><h1>Celestia 1.7</h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kerners are %7<br>Runtime Qt version: %6</p><p>Copyright"
+" (C) 2001-2021 by the Celestia Development Team.<br>Celestia is free "
+"software. You can redistribute it and/or modify it under the terms of the "
+"GNU General Public License as published by the Free Software Foundation; "
+"either version 2 of the License, or (at your option) any later "
+"version.</p><p>Main site: <a "
 "href=\"https://celestia.space/\">https://celestia.space/</a><br>Forum: <a "
-"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</"
-"a><br>GitHub project: <a href=\"https://github.com/CelestiaProject/Celestia"
-"\">https://github.com/CelestiaProject/Celestia</a></p></html>"
+"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>Celestia 1.7</h1><p>Вэрсія ў распрацоўцы, каміт git <b>%1</b>.</"
-"p><p>Сабраны для %2 бітавага ЦП<br>Выкарыстоўваючы  %3 %4<br>Пры зборцы "
-"выкарыстоўвалі Qt:  %5<br>Загрузка NAIF %7<br>Загружаная вэрсія Qt: %6</"
-"p><p>Copyright (C) 2001-2021 Каманда распрацоўкі Celestia.<br>Celestia — "
-"свабоднае праграмнае забесьпячэньне. Яго можна распаўсюджваць і/ці зьмяняць "
-"на ўмовах Агульнай грамадзкай ліцэнзіі GNU вэрсіі&nbsp;2 або (на тваё "
-"гледзішча) больш новай вэрсіі.</p><p>Галоўная пляцоўка: <a href=\"https://"
-"celestia.space/\">https://celestia.space/</a><br>Форум: <a href=\"https://"
-"celestia.space/forum/\">https://celestia.space/forum/</a><br>Праект GitHub: "
-"<a href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7</h1><p>Вэрсія ў распрацоўцы, каміт git "
+"<b>%1</b>.</p><p>Сабраны для %2 бітавага ЦП<br>Выкарыстоўваючы  %3 %4<br>Пры"
+" зборцы выкарыстоўвалі Qt:  %5<br>Загрузка NAIF %7<br>Загружаная вэрсія Qt: "
+"%6</p><p>Copyright (C) 2001-2021 Каманда распрацоўкі Celestia.<br>Celestia —"
+" свабоднае праграмнае забесьпячэньне. Яго можна распаўсюджваць і/ці зьмяняць"
+" на ўмовах Агульнай грамадзкай ліцэнзіі GNU вэрсіі&nbsp;2 або (на тваё "
+"гледзішча) больш новай вэрсіі.</p><p>Галоўная пляцоўка: <a "
+"href=\"https://celestia.space/\">https://celestia.space/</a><br>Форум: <a "
+"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</a><br>Праект"
+" GitHub: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1048
 msgid "Unknown compiler"
@@ -2944,7 +2945,8 @@ msgid "System time at activation"
 msgstr "Сыстэмныя дата й час пры актывацыі"
 
 #. i18n: file: ../src/celestia/qt/newbookmarkfolder.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, newBookmarkFolderDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. newBookmarkFolderDialog)
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:24
 #. i18n: ectx: property (text), widget (QPushButton, newFolderButton)
 #: ../src/celestia/qt/qtbookmark.cpp:880 ../src/celestia/qt/rc.cpp:39
@@ -3055,8 +3057,9 @@ msgstr "Арбіты"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:84
 #: ../src/celestia/qt/qtcelestiaactions.cpp:111
 #: ../src/celestia/qt/qtselectionpopup.cpp:386
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:581 ../src/celestia/qt/rc.cpp:75
-#: ../src/celestia/qt/rc.cpp:157 ../src/celestia/qt/rc.cpp:224
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:581
+#: ../src/celestia/qt/rc.cpp:75 ../src/celestia/qt/rc.cpp:157
+#: ../src/celestia/qt/rc.cpp:224
 #: ../src/celestia/win32/res/resource_strings.cpp:213
 #: ../src/celestia/win32/winmain.cpp:1456
 #: ../src/celestia/win32/winmain.cpp:1492
@@ -3079,8 +3082,9 @@ msgstr "Карлікавыя плянэты"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:86
 #: ../src/celestia/qt/qtcelestiaactions.cpp:113
 #: ../src/celestia/qt/qtselectionpopup.cpp:392
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:583 ../src/celestia/qt/rc.cpp:81
-#: ../src/celestia/qt/rc.cpp:163 ../src/celestia/qt/rc.cpp:230
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:583
+#: ../src/celestia/qt/rc.cpp:81 ../src/celestia/qt/rc.cpp:163
+#: ../src/celestia/qt/rc.cpp:230
 #: ../src/celestia/win32/res/resource_strings.cpp:215
 #: ../src/celestia/win32/winmain.cpp:1454
 msgid "Moons"
@@ -3101,8 +3105,9 @@ msgstr "Малыя месяцы"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:88
 #: ../src/celestia/qt/qtcelestiaactions.cpp:115
 #: ../src/celestia/qt/qtselectionpopup.cpp:398
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:742 ../src/celestia/qt/rc.cpp:87
-#: ../src/celestia/qt/rc.cpp:169 ../src/celestia/qt/rc.cpp:236
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:742
+#: ../src/celestia/qt/rc.cpp:87 ../src/celestia/qt/rc.cpp:169
+#: ../src/celestia/qt/rc.cpp:236
 #: ../src/celestia/win32/res/resource_strings.cpp:217
 #: ../src/celestia/win32/winmain.cpp:1448
 msgid "Asteroids"
@@ -3117,8 +3122,9 @@ msgstr "Астэроіды"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:89
 #: ../src/celestia/qt/qtcelestiaactions.cpp:116
 #: ../src/celestia/qt/qtselectionpopup.cpp:401
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:750 ../src/celestia/qt/rc.cpp:90
-#: ../src/celestia/qt/rc.cpp:172 ../src/celestia/qt/rc.cpp:239
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:750
+#: ../src/celestia/qt/rc.cpp:90 ../src/celestia/qt/rc.cpp:172
+#: ../src/celestia/qt/rc.cpp:239
 #: ../src/celestia/win32/res/resource_strings.cpp:218
 #: ../src/celestia/win32/winmain.cpp:1450
 msgid "Comets"
@@ -3138,8 +3144,9 @@ msgstr "Камэты"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:117
 #: ../src/celestia/qt/qtselectionpopup.cpp:404
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:585
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:746 ../src/celestia/qt/rc.cpp:94
-#: ../src/celestia/qt/rc.cpp:176 ../src/celestia/qt/rc.cpp:243
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:746
+#: ../src/celestia/qt/rc.cpp:94 ../src/celestia/qt/rc.cpp:176
+#: ../src/celestia/qt/rc.cpp:243
 #: ../src/celestia/win32/res/resource_strings.cpp:219
 #: ../src/celestia/win32/winmain.cpp:1459
 msgctxt "plural"
@@ -3962,8 +3969,9 @@ msgstr "Карлікавыя плянэты"
 #. i18n: file: ../src/celestia/qt/preferences.ui:527
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
 #: ../src/celestia/qt/qtselectionpopup.cpp:395
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:591 ../src/celestia/qt/rc.cpp:84
-#: ../src/celestia/qt/rc.cpp:166 ../src/celestia/qt/rc.cpp:233
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:591
+#: ../src/celestia/qt/rc.cpp:84 ../src/celestia/qt/rc.cpp:166
+#: ../src/celestia/qt/rc.cpp:233
 msgid "Minor moons"
 msgstr "Малыя месяцы"
 
@@ -4233,7 +4241,8 @@ msgid "Description:"
 msgstr "Апісаньне:"
 
 #. i18n: file: ../src/celestia/qt/organizebookmarks.ui:13
-#. i18n: ectx: property (windowTitle), widget (QDialog, organizeBookmarksDialog)
+#. i18n: ectx: property (windowTitle), widget (QDialog,
+#. organizeBookmarksDialog)
 #: ../src/celestia/qt/rc.cpp:51
 #: ../src/celestia/win32/res/resource_strings.cpp:153
 msgid "Organize Bookmarks"
@@ -4887,8 +4896,8 @@ msgstr "https://celestia.space/"
 #: ../src/celestia/win32/res/resource_strings.cpp:76
 msgid "Celestia is free software and comes with absolutely no warranty."
 msgstr ""
-"Celestia зьяўляецца свабоднай праґрамай і пастаўляецца абсалютна без аніякае "
-"ґарантыі."
+"Celestia зьяўляецца свабоднай праґрамай і пастаўляецца абсалютна без аніякае"
+" ґарантыі."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:77
 msgid "Authors"
@@ -5063,15 +5072,15 @@ msgstr "Месцы пасадкі"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:138
 msgid "Montes (Mountains)"
-msgstr "Горы"
+msgstr "Montes (Горы)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:139
 msgid "Maria (Seas)"
-msgstr "Моры й акіяны"
+msgstr "Maria (Моры)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:141
 msgid "Valles (Valleys)"
-msgstr "Даліны"
+msgstr "Valles (Даліны)"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:142
 msgid "Terrae (Land masses)"
@@ -5543,675 +5552,3 @@ msgstr "GetTimeZoneInformation() вернула невядомае значэн�
 #, c-format
 msgid "Error openning %s or .\n"
 msgstr "Памылка адкрыцьця %s ці .\n"
-
-#~ msgid "OpenGL 2.0"
-#~ msgstr "OpenGL 2.0"
-
-#~ msgid "Loading NV fragment program: "
-#~ msgstr "Загрузка фраґмэнтавых праґрамаў NV: "
-
-#~ msgid "Error loading NV fragment program: "
-#~ msgstr "Памылка падчас загрузкі фраґмэнтавай праґрамы NV: "
-
-#~ msgid "Error in fragment program "
-#~ msgstr "Памылка ў праґраме фраґмэнтаў"
-
-#~ msgid "Initializing NV fragment programs . . .\n"
-#~ msgstr "Ініцыялізаваньне фраґмэнтавых праґрамаў NV . . .\n"
-
-#~ msgid "All NV fragment programs loaded successfully.\n"
-#~ msgstr "Усе фраґмэнтавыя праґрамы NV загружаныя ўдала.\n"
-
-#~ msgid "Initializing ARB fragment programs . . .\n"
-#~ msgstr "Ініцыялізаваньне праґрамаў фраґмэнтаў ARB . . .\n"
-
-#~ msgid "%s: unrecognized or unsupported image file type.\n"
-#~ msgstr "%s: тып відарысаў не распазнаны або не падтрымліваецца.\n"
-
-#~ msgid "Loading NV vertex program: "
-#~ msgstr "Загрузка вяршыневых праґрамаў NV: "
-
-#~ msgid "Error loading NV vertex program: "
-#~ msgstr "Памылка падчас загрузкі вяршыневай праґрамы NV: "
-
-#~ msgid "Error in vertex program "
-#~ msgstr "Памылка ў вяршыневай праґраме"
-
-#~ msgid "Loading ARB vertex program: "
-#~ msgstr "Загрузка вяршыневых праґрамаў ARB: "
-
-#~ msgid "Error loading ARB vertex program: "
-#~ msgstr "Памылка падчас загрузкі вяршыневай праґрамы ARB: "
-
-#~ msgid ", line "
-#~ msgstr ", радок "
-
-#~ msgid "Initializing NV vertex programs . . .\n"
-#~ msgstr "Ініцыялізаваньне вяршыневых праґрамаў NV . . .\n"
-
-#~ msgid "All NV vertex programs loaded successfully.\n"
-#~ msgstr "Усе вяршыневыя праґрамы NV загружаныя ўдала.\n"
-
-#~ msgid "Initializing ARB vertex programs . . .\n"
-#~ msgstr "Ініцыялізаваньне вяршыневых праґрамаў ARB . . .\n"
-
-#~ msgid "All ARB vertex programs loaded successfully.\n"
-#~ msgstr "Усе вяршыневыя праґрамы ARB загружаныя ўдала.\n"
-
-#~ msgid ""
-#~ "%s\n"
-#~ "Orientation: [%f, %f, %f], %.1f\n"
-#~ msgstr ""
-#~ "%s\n"
-#~ "Арыентацыя: [%f, %f, %f], %.1f\n"
-
-#~ msgid "Yes"
-#~ msgstr "Так"
-
-#~ msgid "No"
-#~ msgstr "Не"
-
-#~ msgid "Copy &URL"
-#~ msgstr "К&апіваць URL"
-
-#~ msgid "&Paste URL"
-#~ msgstr "&Уставіць URL"
-
-#~ msgid "Spacecrafts"
-#~ msgstr "Караблі"
-
-#~ msgid "Enable Vsync"
-#~ msgstr "Задзейнічаць Vsync"
-
-#~ msgid "GLSL version: "
-#~ msgstr "Вэрсія GLSL: "
-
-#~ msgid "Error opening script"
-#~ msgstr "Памылка падчас адкрыцьця файла"
-
-#~ msgid "Error loading script"
-#~ msgstr "Памылка падчас загрузкі сцэнара"
-
-#~ msgid "Running script"
-#~ msgstr "Выконваньне сцэнара"
-
-#~ msgid "Kpc"
-#~ msgstr "кпк"
-
-#~ msgid "License file 'License.txt' is missing!"
-#~ msgstr "Файл ліцэнзіі 'License.txt' адсутнічае!"
-
-#~ msgid "Invisible"
-#~ msgstr "Нябачны"
-
-#~ msgid "Small Body"
-#~ msgstr "Малое цела"
-
-#~ msgid "Dwarf Planet"
-#~ msgstr "Карлікавая плянэта"
-
-#~ msgid "-"
-#~ msgstr "-"
-
-#~ msgid "&Add Bookmark"
-#~ msgstr "&Дадаць закладку"
-
-#~ msgid "Add a bookmark for the current document"
-#~ msgstr "Дадаць закладку для бягучага дакумэнта"
-
-#~ msgid "Add &Relative Bookmark"
-#~ msgstr "Дадаць &адносную закладку"
-
-#~ msgid "Add a relative bookmark for the current document"
-#~ msgstr "Дадаць адносную закладку для бягучага дакумэнта"
-
-#~ msgid "Add &Settings Bookmark"
-#~ msgstr "Дадаць закладку &настаўленьняў"
-
-#~ msgid "Add a settings bookmark for the current document"
-#~ msgstr "Дадаць закладку настаўленьняў для бягучага дакумэнта"
-
-#~ msgid "Edit your bookmark collection in a separate window"
-#~ msgstr "Правіць тваю калекцыю закладак у асобным вакне"
-
-#~ msgid "&New Folder..."
-#~ msgstr "&Новы каталёґ…"
-
-#~ msgid "Create a new bookmark folder in this menu"
-#~ msgstr "Стварыць новы каталёґ закладак у гэтым мэню"
-
-#~ msgid "Can't add bookmark with empty URL"
-#~ msgstr "Немагчыма дадаць закладку з пустым URL"
-
-#~ msgid ""
-#~ "Something seems to be wrong with your installation of Celestia. The "
-#~ "splash screen directory couldn't be found. \n"
-#~ "Start-up will continue, but Celestia will probably be missing some data "
-#~ "files and may not work correctly, please check your installation."
-#~ msgstr ""
-#~ "Здаецца нешта няправільна з тваёй усталёўкай Celestia. Немагчыма адшукаць "
-#~ "каталёґ пачатковага экрана. \n"
-#~ "Праца працягнецца, але, найхутчэй, у Celestia адсутнічаюць некаторыя "
-#~ "файлы зьвестак, і яна ня прадзе спраўна працаваць, правер сваю ўсталёўку."
-
-#~ msgid "Go to &URL..."
-#~ msgstr "Перайсьці да &URL…"
-
-#~ msgid "Go to &Long/Lat..."
-#~ msgstr "Перайсьці да &Даўг/Шыр…"
-
-#~ msgid "&Back"
-#~ msgstr "На&зад"
-
-#~ msgid "&Forward"
-#~ msgstr "На&перад"
-
-#~ msgid "Home"
-#~ msgstr "Дахаты"
-
-#~ msgid "Full Screen"
-#~ msgstr "На ўвесь экран"
-
-#~ msgid "Copy URL"
-#~ msgstr "Капіяваць URL"
-
-#~ msgid "Set Time..."
-#~ msgstr "Задаць час…"
-
-#~ msgid "Set Time to Now"
-#~ msgstr "Вернуцца да цяперашняга часу"
-
-#~ msgid "Accelerate Time"
-#~ msgstr "Паскорыць хаду часу"
-
-#~ msgid "Decelerate Time"
-#~ msgstr "Запаволіць хаду часу"
-
-#~ msgid "Accelerate Time (x2)"
-#~ msgstr "Паскорыць час (×2)"
-
-#~ msgid "Decelerate Time (/2)"
-#~ msgstr "Запаволіць час (/2)"
-
-#~ msgid "Pause Time"
-#~ msgstr "Прыпыніць хаду часу"
-
-#~ msgid "Reverse Time"
-#~ msgstr "Зьмяніць кірунак часу"
-
-#~ msgid "Split View Vertically"
-#~ msgstr "Падзяліць па вэртыкалі"
-
-#~ msgid "Split View Horizontally"
-#~ msgstr "Падзяліць па гарызанталі"
-
-#~ msgid "Cycle View"
-#~ msgstr "Зьмяніць актыўны прагляд"
-
-#~ msgid "Single View"
-#~ msgstr "Адзін прагляд"
-
-#~ msgid "Delete View"
-#~ msgstr "Выдаліць прагляд"
-
-#~ msgid "Frames Visible"
-#~ msgstr "Бачныя межы"
-
-#~ msgid "Active Frame Visible"
-#~ msgstr "Бачныя межы актыўнага "
-
-#~ msgid "Synchronize Time"
-#~ msgstr "Сынхранізаваць час"
-
-#~ msgid "Alt-Azimuth Mode"
-#~ msgstr "Рэжым «Вышыня-Азімут»"
-
-#~ msgid "Go To Surface"
-#~ msgstr "Перайсьці на паверхню"
-
-#~ msgid "Show Stars"
-#~ msgstr "Паказваць зоркі"
-
-#~ msgid "Show Planets"
-#~ msgstr "Паказваць плянэты"
-
-#~ msgid "Show Galaxies"
-#~ msgstr "Паказваць ґаляктыкі"
-
-#~ msgid "Show Globulars"
-#~ msgstr "Паказваць шаравыя скопішчы"
-
-#~ msgid "Show Partial Trajectories"
-#~ msgstr "Паказваць частковыя траекторыі"
-
-#~ msgid "Show Nebulae"
-#~ msgstr "Паказваць туманнасьці"
-
-#~ msgid "Show Open Clusters"
-#~ msgstr "Паказваць адкрытыя скопішчы"
-
-#~ msgid "Show Constellations"
-#~ msgstr "Паказваць сузор'і"
-
-#~ msgid "Show CloudMaps"
-#~ msgstr "Паказваць аблокі"
-
-#~ msgid "Show Cloud Shadows"
-#~ msgstr "Паказваць цені аблокаў"
-
-#~ msgid "Show Orbits"
-#~ msgstr "Паказваць арбіты"
-
-#~ msgid "Show Asteroid Orbits"
-#~ msgstr "Паказваць арбіты астэроідаў"
-
-#~ msgid "Show Comet Orbits"
-#~ msgstr "Паказваць арбіты камэт"
-
-#~ msgid "Show Moon Orbits"
-#~ msgstr "Паказваць арбіты месяцаў"
-
-#~ msgid "Show Star Orbits"
-#~ msgstr "Паказваць арбіты зорак"
-
-#~ msgid "Show Planet Orbits"
-#~ msgstr "Паказваць арбіты плянэт"
-
-#~ msgid "Show Spacecraft Orbits"
-#~ msgstr "Паказваць арбіты караблёў"
-
-#~ msgid "Show Equatorial Grid"
-#~ msgstr "Паказваць экватарыяльную сетку"
-
-#~ msgid "Show Night Side Lights"
-#~ msgstr "Паказваць сьвятло начной часткі"
-
-#~ msgid "Show Markers"
-#~ msgstr "Паказваць пазнакі"
-
-#~ msgid "Show Atmospheres"
-#~ msgstr "Паказваць атмасфэры"
-
-#~ msgid "Show Smooth Orbit Lines"
-#~ msgstr "Паказваць гладкія лініі арбіт"
-
-#~ msgid "Show Eclipse Shadows"
-#~ msgstr "Паказваць цені зацьменьняў"
-
-#~ msgid "Cycle Star Mode"
-#~ msgstr "Зьмяніць стыль зорак"
-
-#~ msgid "Show Ring Shadows"
-#~ msgstr "Паказваць цені ад колцаў"
-
-#~ msgid "Show Boundaries"
-#~ msgstr "Паказваць межы"
-
-#~ msgid "Auto Magnitudes"
-#~ msgstr "Аўтаяркасьць"
-
-#~ msgid "Show Comet Tails"
-#~ msgstr "Паказваць хвасты камэт"
-
-#~ msgid "Show Star Labels"
-#~ msgstr "Паказваць назвы зорак"
-
-#~ msgid "Show Planet Labels"
-#~ msgstr "Паказваць назвы плянэт"
-
-#~ msgid "Show Moon Labels"
-#~ msgstr "Паказваць назвы месяцаў"
-
-#~ msgid "Show Comet Labels"
-#~ msgstr "Паказваць назвы камэт"
-
-#~ msgid "Show Constellation Labels"
-#~ msgstr "Паказваць назвы сузор'яў"
-
-#~ msgid "Constellation Labels in Latin"
-#~ msgstr "Назвы сузор'яў лацінай"
-
-#~ msgid "Show Galaxy Labels"
-#~ msgstr "Паказваць назвы ґаляктык"
-
-#~ msgid "Show Globular Labels"
-#~ msgstr "Паказваць назвы шаравых скопішчаў"
-
-#~ msgid "Show Nebula Labels"
-#~ msgstr "Паказваць назвы туманнасьцяў"
-
-#~ msgid "Show Open Cluster Labels"
-#~ msgstr "Паказваць назвы адкрытых скопішчаў"
-
-#~ msgid "Show Asteroid Labels"
-#~ msgstr "Паказваць назвы астэроідаў"
-
-#~ msgid "Show Spacecraft Labels"
-#~ msgstr "Паказваць назвы караблёў"
-
-#~ msgid "Show Location Labels"
-#~ msgstr "Паказваць назвы месцаў"
-
-#~ msgid "Display Local Time"
-#~ msgstr "Паказваць мясцовы час"
-
-#~ msgid "Show City Locations"
-#~ msgstr "Паказваць месцы гарадоў"
-
-#~ msgid "Show Observatory Locations"
-#~ msgstr "Паказваць месцы абсэрваторый"
-
-#~ msgid "Show Landing Sites Locations"
-#~ msgstr "Паказваць месцы пасадкі"
-
-#~ msgid "Show Crater Locations"
-#~ msgstr "Паказваць месцы кратэраў"
-
-#~ msgid "Show Mons Locations"
-#~ msgstr "Паказваць месцы гор"
-
-#~ msgid "Show Terra Locations"
-#~ msgstr "Паказваць месцы кантынэнтаў"
-
-#~ msgid "Show Vallis Locations"
-#~ msgstr "Паказваць месцы далін"
-
-#~ msgid "Show Mare Locations"
-#~ msgstr "Паказваць месцы мораў"
-
-#~ msgid "Show Other Locations"
-#~ msgstr "Паказваць іншыя месцы "
-
-#~ msgid "Wireframe Mode"
-#~ msgstr "Каркасны рэжым"
-
-#~ msgid "Center on Orbit"
-#~ msgstr "Цэнтраваць на арбіце"
-
-#~ msgid "Basic"
-#~ msgstr "Асноўны"
-
-#~ msgid "Multitexture"
-#~ msgstr "Мультытэкстура"
-
-#~ msgid "NvCombiners"
-#~ msgstr "NvCombiners"
-
-#~ msgid "DOT3 ARBVP"
-#~ msgstr "DOT3 ARBVP"
-
-#~ msgid "NvCombiner NvVP"
-#~ msgstr "NvCombiner NvVP"
-
-#~ msgid "NvCombiner ARBVP"
-#~ msgstr "NvCombiner ARBVP"
-
-#~ msgid "ARBFP ARBVP"
-#~ msgstr "ARBFP ARBVP"
-
-#~ msgid "NV30"
-#~ msgstr "NV30"
-
-#~ msgid "Cycle OpenGL Render Path"
-#~ msgstr "Зьмяніць па цыклі спосабы пабудовы"
-
-#~ msgid "Sync framerate to video refresh rate"
-#~ msgstr "Сынхранізаваць часьціню кадраў з часьцінёй экрана"
-
-#~ msgid "Grab Image"
-#~ msgstr "Захапіць відарыс"
-
-#~ msgid "OpenGL info"
-#~ msgstr "Зьвесткі OpenGL"
-
-#~ msgid "Show Bookmark Toolbar"
-#~ msgstr "Паказваць панэль закладак"
-
-#~ msgid "UTC"
-#~ msgstr "UTC"
-
-#~ msgid ""
-#~ "This version of Celestia was not built with support for movie recording."
-#~ msgstr "Гэтая вэрсія Celestia была збудаваная без падтрымкі запісу відэа."
-
-#~ msgid "Enter URL"
-#~ msgstr "Увядзі URL"
-
-#~ msgid "Go to URL"
-#~ msgstr "Перайсьці да URL"
-
-#~ msgid "Object: "
-#~ msgstr "Аб'ект:"
-
-#~ msgid "Longitude: "
-#~ msgstr "Даўгата: "
-
-#~ msgid "East"
-#~ msgstr "Усх"
-
-#~ msgid "West"
-#~ msgstr "Зах"
-
-#~ msgid "Latitude: "
-#~ msgstr "Шырата: "
-
-#~ msgid "North"
-#~ msgstr "Пн"
-
-#~ msgid "South"
-#~ msgstr "Пд"
-
-#~ msgid "Altitude: "
-#~ msgstr "Вышыня: "
-
-#~ msgid "Celestia encountered an error while processing your script"
-#~ msgstr ""
-#~ "Celestia нечакана сустрэлася з памылкай падчас апрацоўкі твайго сцэнара"
-
-#~ msgid "Celestia Preferences"
-#~ msgstr "Настаўленьні Celestia"
-
-#~ msgid "Rendering"
-#~ msgstr "Будаваньне"
-
-#~ msgid "Partial Trajectories"
-#~ msgstr "Частковыя траекторыі"
-
-#~ msgid "Smooth Orbit Lines"
-#~ msgstr "Гладкія лініі арбіт"
-
-#~ msgid "Equatorial Grid"
-#~ msgstr "Экватарыяльная сетка"
-
-#~ msgid "Constellation Boundaries"
-#~ msgstr "Межы сузор'яў"
-
-#~ msgid "Constellations in Latin"
-#~ msgstr "Сузор'і лацінай"
-
-#~ msgid "Ambient Light"
-#~ msgstr "Расьсеянае сьвятло"
-
-#~ msgid "Limiting Magnitude"
-#~ msgstr "Гранічная яркасьць"
-
-#~ msgid "Info Text"
-#~ msgstr "Тэкст зьвестак"
-
-#~ msgid "Level: "
-#~ msgstr "Ровень:"
-
-#~ msgid "Textures"
-#~ msgstr "Тэкстуры"
-
-#~ msgid "Resolution: "
-#~ msgstr "Разрозьненьне:"
-
-#~ msgid "Automatic FOV"
-#~ msgstr "Аўтаматычнае поле зроку"
-
-#~ msgid "Screen DPI: "
-#~ msgstr "Разрозьненьне (п/ц): "
-
-#~ msgid "Viewing Distance (cm): "
-#~ msgstr "Адлегласьць глядзеньня (см):"
-
-#~ msgid "Mons"
-#~ msgstr "Горы"
-
-#~ msgid "Terra"
-#~ msgstr "Кантынэнты"
-
-#~ msgid "Vallis"
-#~ msgstr "Даліны"
-
-#~ msgid "Mare"
-#~ msgstr "Моры й акіяны"
-
-#~ msgid "Other"
-#~ msgstr "Іншае"
-
-#~ msgid "Minimum Feature Size"
-#~ msgstr "Найменшы памер дэталі"
-
-#~ msgid "Date/Time"
-#~ msgstr "Дата й час"
-
-#~ msgid "Timezone: "
-#~ msgstr "Часавы пояс:"
-
-#~ msgid "Local Format"
-#~ msgstr "Мясцовы фармат"
-
-#~ msgid "Set"
-#~ msgstr "Вызначэньне"
-
-#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
-#~ msgstr "Мясцовы час падтрымліваецца толькі для дат між 1902 і 2037.\n"
-
-#~ msgid "Now"
-#~ msgstr "Цяпер"
-
-#~ msgid ""
-#~ "\n"
-#~ "Selection: "
-#~ msgstr ""
-#~ "\n"
-#~ "Вылучэньне: "
-
-#~ msgid "Include Light Travel Time"
-#~ msgstr "Уключаць час руху сьвятла"
-
-#~ msgid "Ignore Light Travel Time "
-#~ msgstr "Іґнараваць час руху сьвятла"
-
-#~ msgid "OpenGL"
-#~ msgstr "OpenGL"
-
-#~ msgid "Key Bindings"
-#~ msgstr "Гарачыя клявішы"
-
-#~ msgid "<b>Unextended OpenGL 1.1</b>"
-#~ msgstr "<b>OpenGL 1.1 без пашыральнікаў</b>"
-
-#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
-#~ msgstr "<b>Некалькі тэкстур і пышыральнік ARB_texenv_combine</b>"
-
-#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
-#~ msgstr "<b>Суматары NVIDIA, без вяршыневых праґрамаў</b>"
-
-#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
-#~ msgstr "<b>Пашыральнікі ARB_texenv_DOT3 і ARB_vertex_program</b>"
-
-#~ msgid ""
-#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
-#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
-#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
-#~ "for Geforce users"
-#~ msgstr ""
-#~ "<b>Суматары NVIDIA й пашыральнік NV_vertex_program</b><br> забясьпечваюць "
-#~ "эфэкт ґузаватай паверхні, целі ад колцаў і адбітае падсьвечваньне на "
-#~ "любых ґрафічных картах Geforce ці ATI Radeon, хаця NvCombiner ARBVP ёсьць "
-#~ "круху лепшым варыянтам для карыстальнікаў Geforce"
-
-#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
-#~ msgstr "<b>Суматары NVIDIA, пашыральнік ARB_vertex_program</b>"
-
-#~ msgid ""
-#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
-#~ "advanced effects on Geforce FX and Radeon 9700 cards"
-#~ msgstr ""
-#~ "<b>Пашыральнікі ARB_fragment_program і ARB_vertex_program</b><br> дадаюць "
-#~ "палепшаныя эфэкты на картах  Geforce FX і Radeon 9700"
-
-#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
-#~ msgstr "<b>Пашыральнікі NV_fragment_program і ARB_vertex_program</b>"
-
-#~ msgid "<b>OpenGL 2.0 Shading Language</b>"
-#~ msgstr "<b>Мова шэйдэраў OpenGL 2.0</b>"
-
-#~ msgid ""
-#~ "File %1 does not exist, using default configuration file %2/celestia.cfg"
-#~ msgstr ""
-#~ "Файл %1 не існуе, выкарыстоўваецца прадвызначаны йал настаўленьняў %2/"
-#~ "celestia.cfg"
-
-#~ msgid "Directory %1 does not exist, using default %2"
-#~ msgstr "Каталёґ %1 не існуе, выкарыстаны прадвызначаны %2"
-
-#~ msgid "Extras directory %1 does not exist"
-#~ msgstr "Каталёґ «extras» %1 не існуе"
-
-#~ msgid "Surface Temp: "
-#~ msgstr "Тэмпэратура паверхні: "
-
-#~ msgid "Radius: "
-#~ msgstr "Радыюс: "
-
-#~ msgid "Rsun"
-#~ msgstr "сонечных"
-
-#~ msgid "Marked objects"
-#~ msgstr "Пазначаныя аб'екты"
-
-#~ msgid "Unmark &All"
-#~ msgstr "Зьняць &усе пазнакі"
-
-#~ msgid "&Reference Vectors"
-#~ msgstr "&Арыенцірныя вэктары"
-
-#~ msgid "Small Bodies"
-#~ msgstr "Малыя целы"
-
-#~ msgid "Duration: %1"
-#~ msgstr "Працягласьць: %1"
-
-#~ msgid "Size: %1 MB"
-#~ msgstr "Памер: %1 МБ"
-
-#~ msgid "  Paused"
-#~ msgstr "  Прыпынена"
-
-#~ msgid "Current size: %1 x %2"
-#~ msgstr "Бягучы памер: %1 × %2"
-
-#~ msgid "Current width: %1 x %2"
-#~ msgstr "Бягучая шырыня: %1 × %2"
-
-#~ msgid "Current height: %1 x %2"
-#~ msgstr "Бягучая вышыня: %1 × %2"
-
-#~ msgid "You must specify a file name."
-#~ msgstr "Мусіш задаць назву файла."
-
-#~ msgid "Error initializing movie capture."
-#~ msgstr "Памылка падчас ініцыялізаваньня захопу відэа."
-
-#~ msgid "  Recording"
-#~ msgstr "  Запіс"
-
-#~ msgid "DSO Labels"
-#~ msgstr "Назвы АГК"
-
-#~ msgid "Filter Stars"
-#~ msgstr "Фільтар зорак"
