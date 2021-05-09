@@ -34,29 +34,17 @@ sudo apt update && sudo apt install celestia
 Where VERSION is 18.04 or 20.04.
 
 
-### On openSUSE Leap 15.1:
+### On openSUSE Leap/Tumbleweed:
 
 ```
-sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Leap_15.1/home:munix9:unstable.repo
+sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_${VERSION}/home:munix9:unstable.repo
 sudo zypper refresh
 sudo zypper install celestia
 ```
 
-### On openSUSE Leap 15.2:
+Where VERSION is 'Leap_15.2', 'Leap_15.3' or 'Tumbleweed'.
 
-```
-sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Leap_15.2/home:munix9:unstable.repo
-sudo zypper refresh
-sudo zypper install celestia
-```
-
-### On openSUSE Tumbleweed:
-
-```
-sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Tumbleweed/home:munix9:unstable.repo
-sudo zypper refresh
-sudo zypper install celestia
-```
+See also the download package sites on OBS for [celestia](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia) and [celestia-data](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia-data).
 
 ### On other GNU/Linux distributions:
 
