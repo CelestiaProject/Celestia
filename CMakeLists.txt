@@ -77,7 +77,7 @@ endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if(UNIX AND (NOT APPLE) AND (NOT CYGWIN))
+if(UNIX AND (NOT CYGWIN))
   set(_UNIX true)
 endif()
 
@@ -215,6 +215,7 @@ endif()
 if(_UNIX AND ENABLE_THEORA)
   pkg_search_module(THEORA theora REQUIRED)
   include_directories(${THEORA_INCLUDE_DIRS})
+  link_directories(${THEORA_LIBRARY_DIRS})
   link_libraries(${THEORA_LIBRARIES})
   add_definitions(-DTHEORA)
 endif()
