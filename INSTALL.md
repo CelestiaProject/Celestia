@@ -281,7 +281,7 @@ Install Homebrew
 Install required packages:
 
 ```
-brew install cmake fmt gettext libepoxy libpng lua qt5 jpeg eigen freetype
+brew install pkg-config cmake fmt gettext libepoxy libpng lua qt5 jpeg eigen freetype theora
 ```
 
 Install optional packages:

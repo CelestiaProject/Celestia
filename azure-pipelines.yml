@@ -39,7 +39,11 @@ steps:
   condition: eq( variables['Agent.OS'], 'Linux' )
 
 - script: |
-    brew install eigen \
+    brew install pkg-config \
+                 eigen \
+                 theora \
+                 gtk+ \
+                 gtkglext \
                  cspice \
                  fmt \
                  jpeg \
@@ -58,8 +62,7 @@ steps:
 - script: |
     mkdir build
     cd build
-    [ "$(uname)" = "Linux" ] && GTK=ON || GTK=OFF
-    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON -SENABLE_GTK=$GTK ..
+    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON -DENABLE_GTK=ON ..
     make -j $(nproc || echo 4)
     CTEST_OUTPUT_ON_FAILURE=1 ctest
   workingDirectory: "$(system.defaultworkingdirectory)"
