@@ -3609,7 +3609,7 @@ class SolarSystemLoader
 
         if (find(begin(skip), end(skip), filepath) != end(skip))
         {
-            fmt::fprintf(clog, _("Skipping skiped solar system catalog: %s\n"), filepath.string());
+            fmt::fprintf(clog, _("Skipping solar system catalog: %s\n"), filepath.string());
             return;
         }
         fmt::fprintf(clog, _("Loading solar system catalog: %s\n"), filepath.string());
@@ -3655,7 +3655,7 @@ template <class OBJDB> class CatalogLoader
 
         if (find(begin(skip), end(skip), filepath) != end(skip))
         {
-            fmt::fprintf(clog, _("Skipping skiped %s catalog: %s\n"), typeDesc, filepath.string());
+            fmt::fprintf(clog, _("Skipping %s catalog: %s\n"), typeDesc, filepath.string());
             return;
         }
         fmt::fprintf(clog, _("Loading %s catalog: %s\n"), typeDesc, filepath.string());
