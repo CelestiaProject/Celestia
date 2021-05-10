@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
-"POT-Creation-Date: 2021-05-07 20:40+0300\n"
+"POT-Creation-Date: 2021-05-10 22:35+0300\n"
 "PO-Revision-Date: 2018-05-28 20:49+0300\n"
 "Last-Translator: Alexell <alexell@alexell.ru>\n"
 "Language-Team: \n"
@@ -2254,7 +2254,7 @@ msgstr "Rediģēšanas režīms"
 
 #: ../src/celestia/celestiacore.cpp:3612
 #, fuzzy, c-format
-msgid "Skipping skiped solar system catalog: %s\n"
+msgid "Skipping solar system catalog: %s\n"
 msgstr "Ielādē zvaigžņu sistēmas katalogu: "
 
 #: ../src/celestia/celestiacore.cpp:3615
@@ -2264,7 +2264,7 @@ msgstr "Ielādē zvaigžņu sistēmas katalogu: "
 
 #: ../src/celestia/celestiacore.cpp:3658
 #, fuzzy, c-format
-msgid "Skipping skiped %s catalog: %s\n"
+msgid "Skipping %s catalog: %s\n"
 msgstr "Ielādē zvaigžņu sistēmas katalogu: "
 
 #: ../src/celestia/celestiacore.cpp:3661
@@ -2609,7 +2609,7 @@ msgstr "Radīt jaunu grāmatzīmju mapi šai izvēlnē"
 msgid ""
 "<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
 "p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kerners are %7<br>Runtime Qt version: %6</p><p>Copyright (C) "
+"%5<br>NAIF kernels are %7<br>Runtime Qt version: %6</p><p>Copyright (C) "
 "2001-2021 by the Celestia Development Team.<br>Celestia is free software. "
 "You can redistribute it and/or modify it under the terms of the GNU General "
 "Public License as published by the Free Software Foundation; either version "

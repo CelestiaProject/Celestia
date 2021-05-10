@@ -1017,7 +1017,7 @@ void CelestiaAppWindow::slotShowAbout()
         "<p>Built for %2 bit CPU<br>"
         "Using %3 %4<br>"
         "Built against Qt library: %5<br>"
-        "NAIF kerners are %7<br>"
+        "NAIF kernels are %7<br>"
         "Runtime Qt version: %6</p>"
 
         "<p>Copyright (C) 2001-2021 by the Celestia Development Team.<br>"
