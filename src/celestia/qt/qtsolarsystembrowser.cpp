@@ -582,7 +582,7 @@ static QString classificationName(int classification)
     case Body::Moon:
         return _("Moons");
     case Body::Spacecraft:
-        return _("Spacecraft");
+        return C_("plural", "Spacecraft");
     case Body::Asteroid:
         return _("Asteroids & comets");
     case Body::Invisible:
@@ -743,7 +743,7 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, 
     connect(asteroidsButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
     objGroupLayout->addWidget(asteroidsButton, 0, 1);
 
-    spacecraftsButton = new QCheckBox(_("Spacecrafts"));
+    spacecraftsButton = new QCheckBox(C_("plural", "Spacecraft"));
     connect(spacecraftsButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
     objGroupLayout->addWidget(spacecraftsButton, 1, 0);
 

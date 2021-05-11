@@ -18,6 +18,7 @@
 #include "celephem/rotation.h"
 #include <cassert>
 
+using namespace std;
 
 TimelinePhase::TimelinePhase(Body* _body,
                              double _startTime,

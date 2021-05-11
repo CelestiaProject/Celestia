@@ -1,6 +1,6 @@
 // star.cpp
 //
-// Copyright (C) 2001-2019, the Celestia Development Team
+// Copyright (C) 2001-2021, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -23,13 +23,9 @@ using namespace std;
 using namespace celmath;
 
 
-// The value of the temperature of the sun is actually 5780, but the
-// stellar class tables list the temperature of a G2V star as 5860.  We
-// use the latter value so that the radius of the sun is computed correctly
-// as one times SOLAR_RADIUS . . .  the high metallicity of the Sun is
-// probably what accounts for the discrepancy in temperature.
 // #define SOLAR_TEMPERATURE    5780.0f
-#define SOLAR_TEMPERATURE    5780.0f
+// https://arxiv.org/abs/1510.07674
+#define SOLAR_TEMPERATURE    5772.0f
 #define SOLAR_BOLOMETRIC_MAG 4.75f
 
 // moved the following to astro.h
@@ -52,55 +48,57 @@ static StarDetails*  barycenterDetails = nullptr;
 
 StarDetails::StarTextureSet StarDetails::starTextures;
 
-// Star temperature data from Lang's _Astrophysical Data: Planets and Stars_
-// Temperatures from missing (and typically not used) types in those
-// tables were just interpolated. M dwarf temperatures are taken from:
+// Star temperature data for main-sequence stars from Eric Mamajek,
+// "A Modern Mean Dwarf Stellar Color and Effective Temperature Sequence"
 // https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt
+// Temperature data for giants and supergiants from Lang's
+// _Astrophysical Data: Planets and Stars_. Temperatures from missing
+// (and typically not used) types in those tables were just interpolated.
 static float tempO[3][10] =
 {
-    { 52500, 52500, 52500, 52500, 48000, 44500, 41000, 38000, 35800, 33000 },
+    { 52500, 52500, 52500, 44900, 42900, 41400, 39500, 37100, 35100, 33300 },
     { 50000, 50000, 50000, 50000, 45500, 42500, 39500, 37000, 34700, 32000 },
     { 47300, 47300, 47300, 47300, 44100, 42500, 39500, 37000, 34700, 32000 },
 };
 
 static float tempB[3][10] =
 {
-    { 30000, 25400, 22000, 18700, 17000, 15400, 14000, 13000, 11900, 10500 },
+    { 31400, 26000, 20600, 17000, 16400, 15700, 14500, 14000, 12300, 10700 },
     { 29000, 24000, 20300, 17100, 16000, 15000, 14100, 13200, 12400, 11000 },
     { 26000, 20800, 18500, 16200, 15100, 13600, 13000, 12200, 11200, 10300 },
 };
 
 static float tempA[3][10] =
 {
-    {  9520, 9230, 8970, 8720, 8460, 8200, 8020, 7850, 7580, 7390 },
+    {  9700, 9300, 8800, 8600, 8250, 8100, 7910, 7760, 7590, 7400 },
     { 10100, 9480, 9000, 8600, 8300, 8100, 7850, 7650, 7450, 7250 },
     {  9730, 9230, 9080, 8770, 8610, 8510, 8310, 8150, 7950, 7800 },
 };
 
 static float tempF[3][10] =
 {
-    { 7200, 7050, 6890, 6740, 6590, 6440, 6360, 6280, 6200, 6110 },
+    { 7220, 7020, 6820, 6750, 6670, 6550, 6350, 6280, 6180, 6050 },
     { 7150, 7000, 6870, 6720, 6570, 6470, 6350, 6250, 6150, 6080 },
     { 7700, 7500, 7350, 7150, 7000, 6900, 6500, 6300, 6100, 5800 },
 };
 
 static float tempG[3][10] =
 {
-    { 6030, 5940, 5860, 5830, 5800, 5770, 5700, 5630, 5570, 5410 },
+    { 5930, 5860, 5770, 5720, 5680, 5660, 5600, 5550, 5480, 5380 },
     { 5850, 5650, 5450, 5350, 5250, 5150, 5050, 5070, 4900, 4820 },
     { 5550, 5350, 5200, 5050, 4950, 4850, 4750, 4660, 4600, 4500 },
 };
 
 static float tempK[3][10] =
 {
-    { 5250, 5080, 4900, 4730, 4590, 4350, 4200, 4060, 3990, 3920 },
+    { 5270, 5170, 5100, 4830, 4600, 4440, 4300, 4100, 3990, 3930 },
     { 4750, 4600, 4420, 4200, 4000, 3950, 3900, 3850, 3830, 3810 },
     { 4420, 4330, 4250, 4080, 3950, 3850, 3760, 3700, 3680, 3660 },
 };
 
 static float tempM[3][10] =
 {
-    { 3870, 3700, 3550, 3410, 3200, 3030, 2850, 2650, 2500, 2400 },
+    { 3850, 3660, 3560, 3430, 3210, 3060, 2810, 2680, 2570, 2380 },
     { 3800, 3720, 3620, 3530, 3430, 3330, 3240, 3240, 3240, 3240 },
     { 3650, 3550, 3450, 3200, 2980, 2800, 2600, 2600, 2600, 2600 },
 };
@@ -123,22 +121,23 @@ static float tempWO[10] =
     210000, 210000, 200000, 160000, 140000, 130000, 130000, 130000, 130000, 130000
 };
 
-// Brown dwarf temperatures. From this website:
+// Brown dwarf temperatures. From Eric Mamajek,
+// "A Modern Mean Dwarf Stellar Color and Effective Temperature Sequence"
 // https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt
-// Data for types after Y2 (which are not actually used) is extrapolated.
+// Data for types after Y4 (which are not actually used) is extrapolated.
 static float tempL[10] =
 {
-    2250, 2100, 1960, 1830, 1700, 1590, 1490, 1410, 1350, 1300
+    2270, 2160, 2060, 1920, 1870, 1710, 1550, 1530, 1420, 1370
 };
 
 static float tempT[10] =
 {
-    1260, 1230, 1200, 1160, 1120, 1050, 960, 840, 700, 530
+    1255, 1240, 1220, 1200, 1180, 1160, 950, 825, 680, 560
 };
 
 static float tempY[10] =
 {
-    420, 350, 250, 200, 150, 100, 50, 25, 3, 3
+    450, 360, 320, 280, 250, 200, 150, 100, 50, 3
 };
 
 // White dwarf temperatures
@@ -150,7 +149,10 @@ static float tempWD[10] =
 
 
 // Tables with adjustments for estimating absolute bolometric magnitude from
-// visual magnitude, from Lang's "Astrophysical Data: Planets and Stars".
+// visual magnitude. Data for main-sequence stars from Eric Mamajek,
+// "A Modern Mean Dwarf Stellar Color and Effective Temperature Sequence"
+// https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt
+// Data for giants and supergiants from Lang's "Astrophysical Data: Planets and Stars".
 // Gaps in the tables from unused spectral classes were filled in with linear
 // interpolation--not accurate, but these shouldn't appear in real catalog
 // data anyway.
@@ -158,8 +160,8 @@ static float bmag_correctionO[3][10] =
 {
     // Lum class V (main sequence)
     {
-        -4.75f, -4.75f, -4.75f, -4.75f, -4.45f,
-        -4.40f, -3.93f, -3.68f, -3.54f, -3.33f,
+        -4.75f, -4.75f, -4.75f, -4.01f, -3.89f,
+        -3.76f, -3.57f, -3.41f, -3.24f, -3.11f,
     },
     // Lum class III
     {
@@ -177,8 +179,8 @@ static float bmag_correctionB[3][10] =
 {
     // Lum class V (main sequence)
     {
-        -3.16f, -2.70f, -2.35f, -1.94f, -1.70f,
-        -1.46f, -1.21f, -1.02f, -0.80f, -0.51f,
+        -2.99f, -2.58f, -2.03f, -1.54f, -1.49f,
+        -1.34f, -1.13f, -1.05f, -0.73f, -0.42f,
     },
     // Lum class III
     {
@@ -196,8 +198,8 @@ static float bmag_correctionA[3][10] =
 {
     // Lum class V (main sequence)
     {
-        -0.30f, -0.23f, -0.20f, -0.17f, -0.16f,
-        -0.15f, -0.13f, -0.12f, -0.10f, -0.09f,
+        -0.21f, -0.14f, -0.07f, -0.04f, -0.02f,
+         0.00f, 0.005f,  0.01f,  0.02f,  0.02f,
     },
     // Lum class III
     {
@@ -215,8 +217,8 @@ static float bmag_correctionF[3][10] =
 {
     // Lum class V (main sequence)
     {
-        -0.09f, -0.10f, -0.11f, -0.12f, -0.13f,
-        -0.14f, -0.14f, -0.15f, -0.16f, -0.17f,
+         0.01f, 0.005f, -0.005f, -0.01f, -0.015f,
+        -0.02f, -0.03f, -0.035f, -0.04f, -0.05f,
     },
     // Lum class III
     {
@@ -234,8 +236,8 @@ static float bmag_correctionG[3][10] =
 {
     // Lum class V (main sequence)
     {
-        -0.18f, -0.19f, -0.20f, -0.20f, -0.21f,
-        -0.21f, -0.27f, -0.33f, -0.40f, -0.36f,
+        -0.065f, -0.073f, -0.085f, -0.095f, -0.10f,
+        -0.105f, -0.115f, -0.125f, -0.14f,  -0.16f,
     },
     // Lum class III
     {
@@ -253,8 +255,8 @@ static float bmag_correctionK[3][10] =
 {
     // Lum class V (main sequence)
     {
-        -0.31f, -0.37f, -0.42f, -0.50f, -0.55f,
-        -0.72f, -0.89f, -1.01f, -1.13f, -1.26f,
+        -0.195f, -0.23f, -0.26f, -0.375f, -0.52f,
+        -0.63f,  -0.75f, -0.93f, -1.03f,  -1.07f,
     },
     // Lum class III
     {
@@ -272,8 +274,8 @@ static float bmag_correctionM[3][10] =
 {
     // Lum class V (main sequence)
     {
-        -1.38f, -1.62f, -1.89f, -2.15f, -2.38f,
-        -2.73f, -3.21f, -3.46f, -4.10f, -4.40f,
+        -1.15f, -1.42f, -1.62f, -1.93f, -2.51f,
+        -3.11f, -4.13f, -4.99f, -5.65f, -5.86f,
     },
     // Lum class III
     {
@@ -287,10 +289,13 @@ static float bmag_correctionM[3][10] =
     }
 };
 
-// Brown dwarf data from Grant Hutchison
+// Brown dwarf data from Eric Mamajek,
+// "A Modern Mean Dwarf Stellar Color and Effective Temperature Sequence"
+// https://www.pas.rochester.edu/~emamajek/EEM_dwarf_UBVIJHK_colors_Teff.txt
+// Data for types after L5 is extrapolated.
 static float bmag_correctionL[10] =
 {
-    -4.6f, -4.9f, -5.0f, -5.2f, -5.4f, -5.9f, -6.1f, -6.7f, -7.4f, -8.2f,
+    -6.25f, -6.48f, -6.62f, -7.05f, -7.53f, -7.87f, -7.9f, -8.0f, -8.1f, -8.2f,
 };
 
 static float bmag_correctionT[10] =
@@ -298,7 +303,6 @@ static float bmag_correctionT[10] =
     -8.9f, -9.6f, -10.8f, -11.9f, -13.1f, -14.4f, -16.1f, -17.9f, -19.6f, -21.7f,
 };
 
-// Bolometric correction for Brown dwarf Y is an extrapolation of the L & T data
 static float bmag_correctionY[10] =
 {
     -23.9f, -26.2f, -28.8f, -31.5f, -34.5f, -37.6f, -41.0f, -44.6f, -48.4f, -52.5f,

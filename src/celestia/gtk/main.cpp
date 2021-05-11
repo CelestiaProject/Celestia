@@ -16,7 +16,7 @@
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
-#include <time.h>
+#include <ctime>
 
 #ifdef WIN32
 #include <direct.h>
@@ -25,7 +25,11 @@
 #endif /* WIN32 */
 
 #include <gtk/gtk.h>
+#ifdef GTKGLEXT
 #include <gtk/gtkgl.h>
+#else
+#include "gtkegl.h"
+#endif
 
 #include <celengine/astro.h>
 #include <celengine/galaxy.h>
@@ -244,17 +248,23 @@ public:
  *           that require the glArea to be set up. */
 static void initRealize(GtkWidget* widget, AppData* app)
 {
-    if (!gl::init() || !gl::checkVersion(gl::GL_2_1))
+#ifdef GL_ES
+    constexpr int reqVersion = gl::GLES_2;
+#else
+    constexpr int reqVersion = gl::GL_2_1;
+#endif
+    bool ok = gl::init(app->core->getConfig()->ignoreGLExtensions) && gl::checkVersion(reqVersion);
+    if (!ok)
     {
         GtkWidget *message;
         message = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
                                          GTK_DIALOG_DESTROY_WITH_PARENT,
                                          GTK_MESSAGE_ERROR,
                                          GTK_BUTTONS_CLOSE,
-                                         "Celestia was unable to initialize OpenGL 2.1.");
+                                         "Celestia was unable to initialize OpenGL");
         gtk_dialog_run(GTK_DIALOG(message));
         gtk_widget_destroy(message);
-	exit(1);
+        exit(1);
     }
 
     app->core->setAlerter(new GtkAlerter(app));
@@ -296,7 +306,7 @@ static void initRealize(GtkWidget* widget, AppData* app)
     app->core->setTimeZoneName("UTC");
 
     /* Set the cursor to a crosshair */
-    gdk_window_set_cursor(widget->window, gdk_cursor_new(GDK_CROSSHAIR));
+    gdk_window_set_cursor(gtk_widget_get_window(widget), gdk_cursor_new(GDK_CROSSHAIR));
 }
 
 
@@ -426,9 +436,10 @@ int main(int argc, char* argv[])
     GtkWidget* mainBox = GTK_WIDGET(gtk_vbox_new(FALSE, 0));
     gtk_container_set_border_width(GTK_CONTAINER(mainBox), 0);
 
-    g_signal_connect(GTK_OBJECT(app->mainWindow), "destroy",
+    g_signal_connect(G_OBJECT(app->mainWindow), "destroy",
                      G_CALLBACK(actionQuit), app);
 
+#ifdef GTKGLEXT
     /* Initialize the OpenGL widget */
     gtk_gl_init (&argc, &argv);
 
@@ -450,6 +461,7 @@ int main(int argc, char* argv[])
             exit(1);
         }
     }
+#endif
 
     /* Initialize settings system */
     #ifdef GNOME
@@ -462,11 +474,23 @@ int main(int argc, char* argv[])
     app->glArea = gtk_drawing_area_new();
 
     /* Set OpenGL-capability to the widget. */
+#ifdef GTKGLEXT
     gtk_widget_set_gl_capability(app->glArea,
                                  glconfig,
                                  NULL,
                                  TRUE,
                                  GDK_GL_RGBA_TYPE);
+#else
+    gtk_widget_set_egl_capability(app->glArea);
+#ifdef GL_ES
+    gtk_egl_drawable_set_require_es(app->glArea, TRUE);
+    gtk_egl_drawable_set_require_version(app->glArea, 2, 0);
+#endif
+    //gtk_egl_drawable_set_require_stencil_size(app->glArea, 1);
+    gtk_egl_drawable_set_require_depth_size(app->glArea, 24);
+    gtk_egl_drawable_set_require_msaa_samples(app->glArea, 8);
+    gtk_egl_drawable_set_require_rgba_sizes(app->glArea, 8, 8, 8, 8);
+#endif
 
     gtk_widget_set_events(GTK_WIDGET(app->glArea),
                           GDK_EXPOSURE_MASK |
@@ -474,6 +498,7 @@ int main(int argc, char* argv[])
                           GDK_KEY_RELEASE_MASK |
                           GDK_BUTTON_PRESS_MASK |
                           GDK_BUTTON_RELEASE_MASK |
+                          GDK_SCROLL_MASK |
                           GDK_POINTER_MOTION_MASK);
 
     /* Load settings the can be applied before the simulation is initialized */
@@ -491,7 +516,7 @@ int main(int argc, char* argv[])
     initGLCallbacks(app);
 
     /* Handler than completes initialization when the glArea is realized */
-    g_signal_connect(GTK_OBJECT(app->glArea), "realize",
+    g_signal_connect(G_OBJECT(app->glArea), "realize",
                      G_CALLBACK(initRealize), app);
 
     /* Create the main menu bar */
@@ -517,7 +542,7 @@ int main(int argc, char* argv[])
     gtk_window_set_default_icon_from_file("celestia-logo.png", NULL);
 
     /* Set focus to glArea widget */
-    GTK_WIDGET_SET_FLAGS(app->glArea, GTK_CAN_FOCUS);
+    gtk_widget_set_can_focus(GTK_WIDGET(app->glArea), true);
     gtk_widget_grab_focus(GTK_WIDGET(app->glArea));
 
     /* Initialize the Watcher */

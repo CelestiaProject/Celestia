@@ -11,10 +11,14 @@ set(CELUTIL_SOURCES
   filetype.h
   formatnum.cpp
   formatnum.h
+  fsutils.cpp
+  fsutils.h
   #memorypool.cpp
   #memorypool.h
   reshandle.h
   resmanager.h
+  stringutils.cpp
+  stringutils.h
   strnatcmp.cpp
   strnatcmp.h
   timer.cpp
@@ -30,6 +34,13 @@ if (WIN32)
   list(APPEND CELUTIL_SOURCES
     winutil.cpp
     winutil.h
+  )
+endif()
+
+if (APPLE)
+  list(APPEND CELUTIL_SOURCES
+    appleutils.h
+    appleutils.mm
   )
 endif()
 

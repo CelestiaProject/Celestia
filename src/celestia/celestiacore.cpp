@@ -35,9 +35,11 @@
 #include <celutil/color.h>
 #include <celutil/filetype.h>
 #include <celutil/formatnum.h>
+#include <celutil/fsutils.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include <celutil/utf8.h>
+#include <celutil/util.h>
 #include <celcompat/filesystem.h>
 #include <Eigen/Geometry>
 #include <iostream>
@@ -60,14 +62,12 @@
 
 #include "imagecapture.h"
 
-// TODO: proper gettext
-#define C_(a, b) (b)
-
-
 using namespace Eigen;
 using namespace std;
+using namespace astro::literals;
 using namespace celmath;
 using namespace celestia::scripts;
+using namespace celestia::util;
 
 static const int DragThreshold = 3;
 
@@ -100,7 +100,7 @@ static bool is_valid_directory(const fs::path& dir)
     std::error_code ec;
     if (!fs::is_directory(dir, ec))
     {
-        fmt::fprintf(cerr, "Path %s doesn't exist or isn't a directory", dir);
+        fmt::fprintf(cerr, _("Path %s doesn't exist or isn't a directory"), dir);
         return false;
     }
 
@@ -181,29 +181,62 @@ CelestiaCore::~CelestiaCore()
 void CelestiaCore::readFavoritesFile()
 {
     // Set up favorites list
+    fs::path path;
     if (!config->favoritesFile.empty())
-    {
-        ifstream in(config->favoritesFile.string(), ios::in);
+        path = config->favoritesFile;
+    else
+        path = "favorites.cel";
 
-        if (in.good())
-        {
-            favorites = ReadFavoritesList(in);
-            if (favorites == nullptr)
-            {
-                warning(_("Error reading favorites file."));
-            }
-        }
+#ifndef PORTABLE_BUILD
+    if (path.is_relative())
+        path = WriteableDataPath() / path;
+#endif
+
+    ifstream in(path.string(), ios::in);
+    if (in.good())
+    {
+        favorites = ReadFavoritesList(in);
+        if (favorites == nullptr)
+            warning(fmt::format(_("Error reading favorites file {}.\n"),
+                                path.string()));
     }
 }
 
 void CelestiaCore::writeFavoritesFile()
 {
+    fs::path path;
     if (!config->favoritesFile.empty())
+        path = config->favoritesFile;
+    else
+        path = "favorites.cel";
+
+#ifndef PORTABLE_BUILD
+    if (path.is_relative())
+        path = WriteableDataPath() / path;
+#endif
+
+    error_code ec;
+    bool isDir = fs::is_directory(path.parent_path(), ec);
+    if (ec)
     {
-        ofstream out(config->favoritesFile.string(), ios::out);
-        if (out.good())
-            WriteFavoritesList(*favorites, out);
+        warning(fmt::format(_("Failed to check directory existance for favorites file {}\n"),
+                            path.string()));
+        return;
     }
+    if (!isDir)
+    {
+        fs::create_directory(path.parent_path(), ec);
+        if (ec)
+        {
+            warning(fmt::format(_("Failed to create a directory for favorites file {}\n"),
+                                path.string()));
+            return;
+        }
+    }
+
+    ofstream out(path.string(), ios::out);
+    if (out.good())
+        WriteFavoritesList(*favorites, out);
 }
 
 void CelestiaCore::activateFavorite(FavoritesEntry& fav)
@@ -216,7 +249,7 @@ void CelestiaCore::activateFavorite(FavoritesEntry& fav)
     sim->setFrame(fav.coordSys, sim->getSelection());
 }
 
-void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::iterator* iter)
+void CelestiaCore::addFavorite(const string &name, const string &parentFolder, FavoritesList::iterator* iter)
 {
     FavoritesList::iterator pos;
     if(!iter)
@@ -242,7 +275,7 @@ void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::
     favorites->insert(pos, fav);
 }
 
-void CelestiaCore::addFavoriteFolder(string name, FavoritesList::iterator* iter)
+void CelestiaCore::addFavoriteFolder(const string &name, FavoritesList::iterator* iter)
 {
     FavoritesList::iterator pos;
     if(!iter)
@@ -762,16 +795,16 @@ void CelestiaCore::keyDown(int key, int modifiers)
         sim->setTargetSpeed(1000.0f);
         break;
     case Key_F4:
-        sim->setTargetSpeed((float) astro::speedOfLight);
+        sim->setTargetSpeed(1.0_c);
         break;
     case Key_F5:
-        sim->setTargetSpeed((float) astro::speedOfLight * 10.0f);
+        sim->setTargetSpeed(10.0_c);
         break;
     case Key_F6:
-        sim->setTargetSpeed(astro::AUtoKilometers(1.0f));
+        sim->setTargetSpeed(1.0_au);
         break;
     case Key_F7:
-        sim->setTargetSpeed(astro::lightYearsToKilometers(1.0f));
+        sim->setTargetSpeed(1.0_ly);
         break;
     case Key_F11:
         if (movieCapture != nullptr)
@@ -1152,7 +1185,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 switch (newPath)
                 {
                 case GLContext::GLPath_GLSL:
-                    flash(_("Render path: OpenGL 2.0"));
+                    flash(_("Render path: OpenGL 2.1"));
                     break;
                 }
                 context->setRenderPath(newPath);
@@ -1324,7 +1357,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             int hours, mins;
             float secs;
             string buf;
-            if (v.norm() >= 86400.0 * astro::speedOfLight)
+            if (v.norm() >= 86400.0_c)
             {
                 // Light travel time in years, if >= 1day
                 buf = fmt::sprintf(_("Light travel time:  %.4f yr"),
@@ -1353,7 +1386,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         addToHistory();
 
         if (sim->getSelection().body() &&
-            (sim->getTargetSpeed() < 0.99 * astro::speedOfLight))
+            (sim->getTargetSpeed() < 0.99_c))
         {
             Vector3d v = sim->getSelection().getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
             lightTravelFlag = !lightTravelFlag;
@@ -1804,7 +1837,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 void CelestiaCore::getLightTravelDelay(double distanceKm, int& hours, int& mins, float& secs)
 {
     // light travel time in hours
-    double lt = distanceKm / (3600.0 * astro::speedOfLight);
+    double lt = distanceKm / (3600.0_c);
     hours = (int) lt;
     double mm = (lt - hours) * 60;
     mins = (int) mm;
@@ -1815,7 +1848,7 @@ void CelestiaCore::getLightTravelDelay(double distanceKm, int& hours, int& mins,
 void CelestiaCore::setLightTravelDelay(double distanceKm)
 {
     // light travel time in days
-    double lt = distanceKm / (86400.0 * astro::speedOfLight);
+    double lt = distanceKm / (86400.0_c);
     sim->setTime(sim->getTime() - lt);
 }
 
@@ -1838,12 +1871,13 @@ void CelestiaCore::start()
 
 void CelestiaCore::start(double t)
 {
-    if (config->initScriptFile != "")
+    if (!config->initScriptFile.empty())
     {
         // using the KdeAlerter in runScript would create an infinite loop,
         // break it here by resetting config->initScriptFile:
         fs::path filename(config->initScriptFile);
-        config->initScriptFile = "";
+        // Don't use {} as it will throw error C2593 on MSVC
+        config->initScriptFile = fs::path();
         runScript(filename);
     }
 
@@ -1853,16 +1887,17 @@ void CelestiaCore::start(double t)
 
     sysTime = timer->getTime();
 
-    if (startURL != "")
+    if (!startURL.empty())
         goToUrl(startURL);
 }
 
-void CelestiaCore::setStartURL(string url)
+void CelestiaCore::setStartURL(const string &url)
 {
-    if (!url.substr(0,4).compare("cel:"))
+    if (!url.substr(0, 4).compare("cel:"))
     {
         startURL = url;
-        config->initScriptFile = "";
+        // Don't use {} as it will throw error C2593 on MSVC
+        config->initScriptFile = fs::path();
     }
     else
     {
@@ -2417,7 +2452,7 @@ Simulation* CelestiaCore::getSimulation() const
     return sim;
 }
 
-void CelestiaCore::showText(string s,
+void CelestiaCore::showText(const std::string &s,
                             int horig, int vorig,
                             int hoff, int voff,
                             double duration)
@@ -2438,7 +2473,7 @@ void CelestiaCore::showText(string s,
     messageDuration = duration;
 }
 
-int CelestiaCore::getTextWidth(string s) const
+int CelestiaCore::getTextWidth(const std::string &s) const
 {
     return titleFont->getWidth(s);
 }
@@ -2551,12 +2586,12 @@ static void displaySpeed(Overlay& overlay, float speed)
         n = SigDigitNum(speed, 3);
         u = _("km/s");
     }
-    else if (speed < (float) astro::speedOfLight * 100.0f)
+    else if (speed < (float) 100.0_c)
     {
         n = SigDigitNum(speed / astro::speedOfLight, 3);
         u = "c";
     }
-    else if (speed < astro::AUtoKilometers(1000.0f))
+    else if (speed < (float) 1000.0_au)
     {
         n = SigDigitNum(astro::kilometersToAU(speed), 3);
         u = _("AU/s");
@@ -2601,10 +2636,8 @@ static void displayDeclination(Overlay& overlay, double angle)
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
-    const char sign = angle < 0.0 ? '-' : '+';
-
-    fmt::fprintf(overlay, "Dec: %c%d%s %02d' %.1f\"\n",
-                          sign, abs(degrees), UTF8_DEGREE_SIGN,
+    fmt::fprintf(overlay, _("Dec: %+d%s %02d' %.1f\"\n"),
+                          abs(degrees), UTF8_DEGREE_SIGN,
                           abs(minutes), abs(seconds));
 }
 
@@ -2615,7 +2648,7 @@ static void displayRightAscension(Overlay& overlay, double angle)
     double seconds;
     astro::decimalToHourMinSec(angle, hours, minutes, seconds);
 
-    fmt::fprintf(overlay, "RA: %dh %02dm %.1fs\n",
+    fmt::fprintf(overlay, _("RA: %dh %02dm %.1fs\n"),
                           hours, abs(minutes), abs(seconds));
 }
 
@@ -2917,7 +2950,7 @@ static void displayPlanetInfo(Overlay& overlay,
 
         float density = body.getDensity();
         if (density > 0)
-            fmt::fprintf(overlay, _("Density: %.2f x 1000 kg/m^3\n"), density / 1000.0);
+            fmt::fprintf(overlay, _("Density: %.2f x 1000 kg/m^3\n"), density / 1000.0f);
 
         float planetTemp = body.getTemperature(t);
         if (planetTemp > 0)
@@ -2955,7 +2988,7 @@ static string getSelectionName(const Selection& sel, const Universe& univ)
     case Selection::Type_Location:
         return sel.location()->getName(false);
     default:
-        return "";
+        return {};
     }
 }
 
@@ -3046,13 +3079,13 @@ void CelestiaCore::renderOverlay()
         double lt = 0.0;
 
         if (sim->getSelection().getType() == Selection::Type_Body &&
-            (sim->getTargetSpeed() < 0.99 * astro::speedOfLight))
+            (sim->getTargetSpeed() < 0.99_c))
         {
             if (lightTravelFlag)
             {
                 Vector3d v = sim->getSelection().getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
                 // light travel time in days
-                lt = v.norm() / (86400.0 * astro::speedOfLight);
+                lt = v.norm() / (86400.0_c);
             }
         }
 
@@ -3168,7 +3201,7 @@ void CelestiaCore::renderOverlay()
         if (!sim->getTrackedObject().empty())
         {
             fmt::fprintf(*overlay, _("Track %s\n"),
-                         C_("Track", getSelectionName(sim->getTrackedObject(), *u)));
+                         CX_("Track", getSelectionName(sim->getTrackedObject(), *u)));
         }
         else
         {
@@ -3184,21 +3217,21 @@ void CelestiaCore::renderOverlay()
             {
             case ObserverFrame::Ecliptical:
                 fmt::fprintf(*overlay, _("Follow %s\n"),
-                             C_("Follow", getSelectionName(refObject, *u)));
+                             CX_("Follow", getSelectionName(refObject, *u)));
                 break;
             case ObserverFrame::BodyFixed:
                 fmt::fprintf(*overlay, _("Sync Orbit %s\n"),
-                             C_("Sync", getSelectionName(refObject, *u)));
+                             CX_("Sync", getSelectionName(refObject, *u)));
                 break;
             case ObserverFrame::PhaseLock:
                 fmt::fprintf(*overlay, _("Lock %s -> %s\n"),
-                             C_("Lock", getSelectionName(refObject, *u)),
-                             C_("LockTo", getSelectionName(sim->getFrame()->getTargetObject(), *u)));
+                             CX_("Lock", getSelectionName(refObject, *u)),
+                             CX_("LockTo", getSelectionName(sim->getFrame()->getTargetObject(), *u)));
                 break;
 
             case ObserverFrame::Chase:
                 fmt::fprintf(*overlay, _("Chase %s\n"),
-                             C_("Chase", getSelectionName(refObject, *u)));
+                             CX_("Chase", getSelectionName(refObject, *u)));
                 break;
 
             default:
@@ -3576,7 +3609,7 @@ class SolarSystemLoader
 
         if (find(begin(skip), end(skip), filepath) != end(skip))
         {
-            fmt::fprintf(clog, _("Skipping skiped solar system catalog: %s\n"), filepath.string());
+            fmt::fprintf(clog, _("Skipping solar system catalog: %s\n"), filepath.string());
             return;
         }
         fmt::fprintf(clog, _("Loading solar system catalog: %s\n"), filepath.string());
@@ -3622,7 +3655,7 @@ template <class OBJDB> class CatalogLoader
 
         if (find(begin(skip), end(skip), filepath) != end(skip))
         {
-            fmt::fprintf(clog, _("Skipping skiped %s catalog: %s\n"), typeDesc, filepath.string());
+            fmt::fprintf(clog, _("Skipping %s catalog: %s\n"), typeDesc, filepath.string());
             return;
         }
         fmt::fprintf(clog, _("Loading %s catalog: %s\n"), typeDesc, filepath.string());
@@ -3763,6 +3796,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
                 if (!fs::is_directory(fn.path(), ec))
                     entries.push_back(fn.path());
             }
+            std::sort(begin(entries), end(entries));
             for (const auto& fn : entries)
                 loader.process(fn);
         }
@@ -4427,29 +4461,27 @@ void CelestiaCore::notifyWatchers(int property)
 
 bool CelestiaCore::goToUrl(const string& urlStr)
 {
-    Url url(urlStr, this);
-    bool ret = url.goTo();
-    if (ret)
-        notifyWatchers(RenderFlagsChanged | LabelFlagsChanged);
-    else
+    Url url(this);
+    if (!url.parse(urlStr))
+    {
         fatalError(_("Invalid URL"));
-    return ret;
+        return false;
+    }
+    url.goTo();
+    notifyWatchers(RenderFlagsChanged | LabelFlagsChanged);
+    return true;
 }
 
 
 void CelestiaCore::addToHistory()
 {
-    Url* url = new Url(this);
     if (!history.empty() && historyCurrent < history.size() - 1)
     {
         // truncating history to current position
         while (historyCurrent != history.size() - 1)
-        {
-            delete history.back();
             history.pop_back();
-        }
     }
-    history.push_back(url);
+    history.emplace_back(this);
     historyCurrent = history.size() - 1;
     notifyWatchers(HistoryChanged);
 }
@@ -4466,7 +4498,7 @@ void CelestiaCore::back()
         historyCurrent = history.size()-1;
     }
     historyCurrent--;
-    history[historyCurrent]->goTo();
+    history[historyCurrent].goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
@@ -4476,29 +4508,29 @@ void CelestiaCore::forward()
     if (history.size() == 0) return;
     if (historyCurrent == history.size()-1) return;
     historyCurrent++;
-    history[historyCurrent]->goTo();
+    history[historyCurrent].goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
 
-const vector<Url*>& CelestiaCore::getHistory() const
+const vector<Url>& CelestiaCore::getHistory() const
 {
     return history;
 }
 
-vector<Url*>::size_type CelestiaCore::getHistoryCurrent() const
+vector<Url>::size_type CelestiaCore::getHistoryCurrent() const
 {
     return historyCurrent;
 }
 
-void CelestiaCore::setHistoryCurrent(vector<Url*>::size_type curr)
+void CelestiaCore::setHistoryCurrent(vector<Url>::size_type curr)
 {
     if (curr >= history.size()) return;
     if (historyCurrent == history.size()) {
         addToHistory();
     }
     historyCurrent = curr;
-    history[curr]->goTo();
+    history[curr].goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
@@ -4653,22 +4685,11 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
     array<int, 4> viewport;
     getRenderer()->getViewport(viewport);
 
-    if (type == Content_JPEG)
-    {
-        return CaptureGLBufferToJPEG(filename,
-                                     viewport[0], viewport[1],
-                                     viewport[2], viewport[3],
-                                     getRenderer());
-    }
-    if (type == Content_PNG)
-    {
-        return CaptureGLBufferToPNG(filename,
-                                    viewport[0], viewport[1],
-                                    viewport[2], viewport[3],
-                                    getRenderer());
-    }
-
-    return false;
+    return CaptureBufferToFile(filename,
+                               viewport[0], viewport[1],
+                               viewport[2], viewport[3],
+                               getRenderer(),
+                               type);
 }
 
 void CelestiaCore::setLogFile(fs::path &fn)

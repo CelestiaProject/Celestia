@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <celutil/array_view.h>
+
 #ifdef GL_ES
 #include <epoxy/gl.h>
 /*
@@ -32,6 +35,7 @@ namespace gl
 {
 
 constexpr const int GL_2_1 = 21;
+constexpr const int GLES_2 = 20;
 
 extern bool ARB_shader_texture_lod;
 extern bool EXT_texture_compression_s3tc;
@@ -45,7 +49,7 @@ extern bool EXT_framebuffer_object;
 extern GLint maxPointSize;
 extern GLfloat maxLineWidth;
 
-bool init() noexcept;
+bool init(util::array_view<std::string> = {}) noexcept;
 bool checkVersion(int) noexcept;
 } // gl
 } // celestia

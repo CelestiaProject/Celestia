@@ -74,8 +74,8 @@ struct _AppData {
 /* Helper functions used throughout */
 gint tzOffsetAtDate(astro::Date date);
 void updateTimeZone(AppData* app, gboolean local);
-gint buttonMake(GtkWidget *hbox, const char *txt, GtkSignalFunc func, gpointer data);
-void makeRadioItems(const char* const *labels, GtkWidget *box, GtkSignalFunc sigFunc, GtkToggleButton **gads, gpointer data);
+gint buttonMake(GtkWidget *hbox, const char *txt, GCallback func, gpointer data);
+void makeRadioItems(const char* const *labels, GtkWidget *box, GCallback sigFunc, GtkToggleButton **gads, gpointer data);
 char* readFromFile(const char *fname);
 
 /* Functions to get window properties regardless of window state */

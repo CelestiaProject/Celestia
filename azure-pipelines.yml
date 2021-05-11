@@ -29,33 +29,40 @@ steps:
                         qtbase5-dev \
                         qtbase5-dev-tools \
                         libqt5opengl5-dev \
+                        libgtk2.0-dev \
+                        libgtkglext1-dev \
                         libfreetype6-dev \
                         libsdl2-dev \
-                        libluajit-5.1-dev
+                        libluajit-5.1-dev \
+                        libfmt-dev
   displayName: 'Install Linux dependencies'
   condition: eq( variables['Agent.OS'], 'Linux' )
 
 - script: |
-    brew install eigen \
+    brew install pkg-config \
+                 eigen \
+                 theora \
+                 gtk+ \
+                 gtkglext \
                  cspice \
                  fmt \
                  jpeg \
                  gettext \
                  libpng \
-                 lua@5.3 \
+                 lua \
                  qt5 \
                  freetype \
                  libepoxy \
                  sdl2
     brew link gettext --force
-    brew link lua@5.3 --force
+    brew link lua --force
   displayName: 'Install macOS dependencies'
   condition: eq( variables['Agent.OS'], 'Darwin' )
 
 - script: |
     mkdir build
     cd build
-    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON ..
+    cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=ON -DENABLE_GTK=ON ..
     make -j $(nproc || echo 4)
     CTEST_OUTPUT_ON_FAILURE=1 ctest
   workingDirectory: "$(system.defaultworkingdirectory)"

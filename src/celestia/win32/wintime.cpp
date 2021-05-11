@@ -19,7 +19,7 @@
 #include <celutil/gettext.h>
 #include <celutil/winutil.h>
 
-
+using namespace std;
 
 class SetTimeDialog
 {

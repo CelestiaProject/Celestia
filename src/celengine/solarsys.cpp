@@ -13,6 +13,8 @@
 #include <config.h>
 #include <cassert>
 #include <limits>
+#include <fmt/format.h>
+#include <fmt/printf.h>
 #include <celmath/mathlib.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
@@ -796,7 +798,7 @@ static Body* CreateBody(const string& name,
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory
-            const string p = path.string();
+            const string &p = path.string();
             if (p[1] == ':')
                 // Absolute Windows path, file:/// is required
                 infoURL = "file:///" + p + "/" + infoURL;
@@ -814,14 +816,36 @@ static Body* CreateBody(const string& name,
     }
 
     if (planetData->getNumber("GeomAlbedo", t))
-        body->setGeomAlbedo((float) t);
+    {
+        if (t > 0.0)
+        {
+            body->setGeomAlbedo((float) t);
+            // Set the BondAlbedo and Reflectivity values if it is <1, otherwise as 1.
+            if (t > 1.0)
+                t = 1.0;
+            body->setBondAlbedo((float) t);
+            body->setReflectivity((float) t);
+        }
+        else
+        {
+            fmt::print(cerr, _("Incorrect GeomAlbedo value: {}\n"), t);
+        }
+    }
+
+    if (planetData->getNumber("Reflectivity", t))
+    {
+        if (t >= 0.0 && t <= 1.0)
+            body->setReflectivity((float) t);
+        else
+            fmt::print(cerr, _("Incorrect Reflectivity value: {}\n"), t);
+    }
 
     if (planetData->getNumber("BondAlbedo", t))
     {
         if (t >= 0.0 && t <= 1.0)
             body->setBondAlbedo((float) t);
         else
-            fmt::fprintf(cerr, "Incorrect BondAlbedo value: %lf\n", t);
+            fmt::print(cerr, _("Incorrect BondAlbedo value: {}\n"), t);
     }
 
     if (planetData->getNumber("Temperature", t))

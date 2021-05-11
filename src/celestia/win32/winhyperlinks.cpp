@@ -12,10 +12,10 @@
 #include "winhyperlinks.h"
 #include "res/resource.h"
 
-static LPTSTR hyperLinkFromStatic = "_Hyperlink_From_Static_";
-static LPTSTR hyperLinkOriginalProc = "_Hyperlink_Original_Proc_";
-static LPTSTR hyperLinkOriginalFont = "_Hyperlink_Original_Font_";
-static LPTSTR hyperLinkUnderlineFont = "_Hyperlink_Underline_Font_";
+static LPCTSTR hyperLinkFromStatic = "_Hyperlink_From_Static_";
+static LPCTSTR hyperLinkOriginalProc = "_Hyperlink_Original_Proc_";
+static LPCTSTR hyperLinkOriginalFont = "_Hyperlink_Original_Font_";
+static LPCTSTR hyperLinkUnderlineFont = "_Hyperlink_Underline_Font_";
 
 bool GetTextRect(HWND hWnd, RECT* rectText)
 {

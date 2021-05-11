@@ -171,7 +171,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
 #ifdef USE_GLCONTEXT
     if (glContext->renderPathSupported(GLContext::GLPath_GLSL))
-        ui.renderPathBox->addItem(_("OpenGL 2.0"), GLContext::GLPath_GLSL);
+        ui.renderPathBox->addItem(_("OpenGL 2.1"), GLContext::GLPath_GLSL);
 
     SetComboBoxValue(ui.renderPathBox, renderPath);
 #else

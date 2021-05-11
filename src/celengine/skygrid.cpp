@@ -569,9 +569,7 @@ SkyGrid::render(Renderer& renderer,
 
     double arcStep = (maxTheta - minTheta) / (double) ARC_SUBDIVISIONS;
     double theta0 = minTheta;
-
-    vector<LineStripEnd> buffer;
-    buffer.reserve(2 * (ARC_SUBDIVISIONS + 2));
+    static vector<LineStripEnd> buffer(2 * (ARC_SUBDIVISIONS + 2), { Vector3f::Identity(), 1.0f });
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     if (lineAsTriangles)
     {

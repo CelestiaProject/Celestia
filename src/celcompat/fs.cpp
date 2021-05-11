@@ -6,7 +6,20 @@
 #else
 #include <sys/stat.h>
 #endif
+#if defined(_MSC_VER) && !defined(__clang__)
+// M$VC++ build without C++ exceptions are not supported yet
+#define __cpp_exceptions 1
+#endif
 
+#if ! __cpp_exceptions
+#include <cstdlib>
+#endif
+
+#ifdef _WIN32
+#define W(s) L##s
+#else
+#define W(s) s
+#endif
 
 namespace celestia
 {
@@ -76,7 +89,7 @@ path path::filename() const
 path path::stem() const
 {
     auto fn = filename().native();
-    auto pos = fn.rfind('.');
+    auto pos = fn.rfind(W('.'));
 
     if (pos == 0 || pos == string_type::npos)
         return fn;
@@ -87,7 +100,7 @@ path path::stem() const
 path path::extension() const
 {
     auto fn = filename().native();
-    auto pos = fn.rfind('.');
+    auto pos = fn.rfind(W('.'));
 
     if (pos == 0 || pos == string_type::npos)
         return path();
@@ -105,6 +118,34 @@ path path::parent_path() const
         return path();
 
     return path(m_path.substr(0, pos));
+}
+
+path& path::replace_extension(const path& replacement)
+{
+    auto pos = m_path.rfind(W('.'));
+
+    if (pos != (m_path.length() - 1))
+    {
+        if (pos != 0 && pos != string_type::npos)
+            m_path.resize(pos);
+    }
+    else
+    {
+        // special case for "/dir/" or "/dir/."
+        path basename = filename();
+        if (!(basename.empty() || basename == W(".")))
+            m_path.resize(pos);
+    }
+
+    if (replacement.empty())
+        return *this;
+
+    if (replacement.m_path[0] != W('.'))
+        m_path += W('.');
+
+    m_path += replacement.m_path;
+
+    return *this;
 }
 
 
@@ -339,7 +380,11 @@ uintmax_t file_size(const path& p)
     std::error_code ec;
     uintmax_t s = file_size(p, ec);
     if (ec)
+#if __cpp_exceptions
         throw filesystem_error(ec, "celfs::file_size error");
+#else
+        std::abort();
+#endif
     return s;
 }
 
@@ -383,7 +428,11 @@ bool exists(const path& p)
     std::error_code ec;
     bool r = exists(p, ec);
     if (ec)
+#if __cpp_exceptions
         throw filesystem_error(ec, "celfs::exists error");
+#else
+        std::abort();
+#endif
     return r;
 }
 
@@ -415,7 +464,37 @@ bool is_directory(const path& p)
     std::error_code ec;
     bool r = is_directory(p, ec);
     if (ec)
+#if __cpp_exceptions
         throw filesystem_error(ec, "celfs::is_directory error");
+#else
+        std::abort();
+#endif
+    return r;
+}
+
+bool create_directory(const path& p, std::error_code& ec) noexcept
+{
+    bool r;
+#ifdef _WIN32
+    r = _wmkdir(p.c_str()) == 0;
+#else
+    r = mkdir(p.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
+#endif
+    if (!r)
+        ec = std::error_code(errno, std::system_category());
+    return r;
+}
+
+bool create_directory(const path& p)
+{
+    std::error_code ec;
+    bool r = create_directory(p, ec);
+    if (ec)
+#if __cpp_exceptions
+        throw filesystem_error(ec, "celfs::create_directory error");
+#else
+        std::abort();
+#endif
     return r;
 }
 

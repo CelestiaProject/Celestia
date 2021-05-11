@@ -148,8 +148,17 @@ MaterialWidget::MaterialWidget(QWidget* parent) :
     this->setLayout(layout);
 }
 
+inline QString toQString(const wchar_t *s)
+{
+    return QString::fromWCharArray(s);
+}
 
-static void selectComboBoxItem(QComboBox* combo, const QString text)
+inline QString toQString(const char *s)
+{
+    return QString::fromLocal8Bit(s);
+}
+
+static void selectComboBoxItem(QComboBox* combo, const QString &text)
 {
     int itemIndex = combo->findText(text);
     if (itemIndex < 0)
@@ -161,6 +170,10 @@ static void selectComboBoxItem(QComboBox* combo, const QString text)
     combo->setCurrentIndex(itemIndex);
 }
 
+static void selectComboBoxItem(QComboBox* combo, const fs::path &path)
+{
+    selectComboBoxItem(combo, toQString(path.c_str()));
+}
 
 void
 MaterialWidget::setMaterial(const Material& material)
@@ -174,19 +187,19 @@ MaterialWidget::setMaterial(const Material& material)
     m_specularPower->setText(QString::number(m_material.specularPower));
 
     if (m_material.maps[Material::DiffuseMap])
-        selectComboBoxItem(m_baseTexture, m_material.maps[Material::DiffuseMap]->source().c_str());
+        selectComboBoxItem(m_baseTexture, m_material.maps[Material::DiffuseMap]->source());
     else
         m_baseTexture->setCurrentIndex(0);
     if (m_material.maps[Material::SpecularMap])
-        selectComboBoxItem(m_specularMap, m_material.maps[Material::SpecularMap]->source().c_str());
+        selectComboBoxItem(m_specularMap, m_material.maps[Material::SpecularMap]->source());
     else
         m_specularMap->setCurrentIndex(0);
     if (m_material.maps[Material::EmissiveMap])
-        selectComboBoxItem(m_emissiveMap, m_material.maps[Material::EmissiveMap]->source().c_str());
+        selectComboBoxItem(m_emissiveMap, m_material.maps[Material::EmissiveMap]->source());
     else
         m_emissiveMap->setCurrentIndex(0);
     if (m_material.maps[Material::NormalMap])
-        selectComboBoxItem(m_normalMap, m_material.maps[Material::NormalMap]->source().c_str());
+        selectComboBoxItem(m_normalMap, m_material.maps[Material::NormalMap]->source());
     else
         m_normalMap->setCurrentIndex(0);
 

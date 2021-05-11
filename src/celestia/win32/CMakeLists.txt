@@ -18,6 +18,7 @@ set(WIN32_SOURCES
   winstarbrowser.cpp
   wintime.cpp
   wintourguide.cpp
+  winuiutils.cpp
   winviewoptsdlg.cpp
 )
 
@@ -34,6 +35,7 @@ set(WIN32_HEADERS
   winstarbrowser.h
   wintime.h
   wintourguide.h
+  winuiutils.h
   winviewoptsdlg.h
 )
 

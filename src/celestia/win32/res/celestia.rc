@@ -12,6 +12,10 @@
 #endif
 
 
+#ifndef NC_
+#define NC_(c, s) s
+#endif
+
 //
 // Bitmap resources
 //
@@ -275,7 +279,7 @@ FONT 8, "Segoe UI", 0, 0, 0
     DEFPUSHBUTTON   "OK", IDOK, 131, 175, 50, 14, 0, WS_EX_LEFT
     LTEXT           "Celestia", IDC_STATIC, 56, 17, 30, 9, SS_LEFT, WS_EX_LEFT
     LTEXT           "1.7.0", IDC_STATIC, 90, 17, 40, 9, SS_LEFT, WS_EX_LEFT
-    LTEXT           "Copyright (C) 2001-2019, Celestia Development Team", IDC_STATIC, 56, 26, 247, 9, SS_LEFT, WS_EX_LEFT
+    LTEXT           "Copyright (C) 2001-2021, Celestia Development Team", IDC_STATIC, 56, 26, 247, 9, SS_LEFT, WS_EX_LEFT
     LTEXT           "https://celestia.space/", IDC_CELESTIALINK, 56, 43, 150, 9, SS_LEFT, WS_EX_LEFT
     LTEXT           "Celestia is free software and comes with absolutely no warranty.", IDC_STATIC, 56, 66, 247, 17, SS_LEFT, WS_EX_LEFT
     LTEXT           "Authors", IDC_STATIC, 56, 90, 100, 9, SS_LEFT, WS_EX_LEFT
@@ -644,7 +648,7 @@ FONT 8, "Segoe UI", 0, 0, 0
     AUTOCHECKBOX    "Minor Moons", IDC_LABELMINORMOONS, 60, 72, 59, 10, 0, WS_EX_LEFT
     AUTOCHECKBOX    "Asteroids", IDC_LABELASTEROIDS, 60, 84, 60, 10, 0, WS_EX_LEFT
     AUTOCHECKBOX    "Comets", IDC_LABELCOMETS, 60, 96, 62, 10, 0, WS_EX_LEFT
-    AUTOCHECKBOX    "Spacecraft", IDC_LABELSPACECRAFT, 60, 108, 59, 10, 0, WS_EX_LEFT
+    AUTOCHECKBOX    NC_("plural", "Spacecraft"), IDC_LABELSPACECRAFT, 60, 108, 59, 10, 0, WS_EX_LEFT
     AUTOCHECKBOX    " ", IDC_STARORBITS, 42, 24, 14, 10, 0, WS_EX_LEFT
     AUTOCHECKBOX    " ", IDC_PLANETORBITS, 42, 36, 14, 10, 0, WS_EX_LEFT
     AUTOCHECKBOX    " ", IDC_DWARFPLANETORBITS, 42, 47, 14, 10, 0, WS_EX_LEFT
@@ -759,7 +763,7 @@ VS_VERSION_INFO VERSIONINFO
             VALUE "FileDescription", "Celestia - A real-time 3D space simulation"
             VALUE "FileVersion", "1, 7, 0, 0"
             VALUE "InternalName", "celestia"
-            VALUE "LegalCopyright", "Copyright  2001-2019, Celestia Development Team"
+            VALUE "LegalCopyright", "Copyright  2001-2021, Celestia Development Team"
             VALUE "OriginalFilename", "celestia.exe"
             VALUE "ProductName", "celestia"
             VALUE "ProductVersion", "1, 7, 0, 0"

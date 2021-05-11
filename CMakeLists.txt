@@ -45,7 +45,7 @@ set(DISPLAY_NAME "Celestia")
 option(ENABLE_CELX    "Enable celx scripting, requires Lua library? (Default: on)" ON)
 option(ENABLE_SPICE   "Use spice library? (Default: off)" OFF)
 option(ENABLE_NLS     "Enable interface translation? (Default: on)" ON)
-option(ENABLE_GLUT    "Build simple Glut frontend? (Default: on)" OFF)
+option(ENABLE_GLUT    "Build simple Glut frontend? (Default: off)" OFF)
 option(ENABLE_GTK     "Build GTK2 frontend (Unix only)? (Default: off)" OFF)
 option(ENABLE_QT      "Build Qt frontend? (Default: on)" ON)
 option(ENABLE_SDL     "Build SDL frontend? (Default: off)" OFF)
@@ -57,9 +57,18 @@ option(FAST_MATH      "Build with unsafe fast-math compiller option (Default: of
 option(ENABLE_TESTS   "Enable unit tests? (Default: off)" OFF)
 option(ENABLE_DATA    "Install data from content submodule? (Default: on)" ON)
 option(ENABLE_GLES    "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
+option(USE_GTKGLEXT   "Use libgtkglext1 for GTK2 frontend (Default: on)" ON)
+option(USE_GTK3       "Use Gtk3 in GTK2 frontend (Default: off)" OFF)
 
 if(ENABLE_GLES)
   add_definitions(-DGL_ES)
+  # Disable USE_GTKGLEXT if using OpenGL ES
+  set(USE_GTKGLEXT OFF)
+endif()
+
+if(USE_GTK3)
+  # Disable USE_GTKGLEXT if using Gtk+3
+  set(USE_GTKGLEXT OFF)
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -68,7 +77,7 @@ endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if(UNIX AND (NOT APPLE) AND (NOT CYGWIN))
+if(UNIX AND (NOT CYGWIN))
   set(_UNIX true)
 endif()
 
@@ -105,17 +114,30 @@ if(MSVC)
   # C4244, C4267, C4503: implicit type conversion to a smaller type
   # C4786: long names in templates
   # C4800: forcing value to bool
+  # C4455: reserved literals (no undescore at the beginning)
+  # C5030: not recognized attribute
   # Additional options
   # bigobj: generate more object sections than allowed by default
   # Promoted to errors
   # C4316: object allocated on the heap may not be aligned 16
-  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/bigobj" "/we4316")
+  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/wd4455" "/wd5030" "/bigobj" "/we4316")
+
+  if(MSVC_VERSION GREATER_EQUAL 1914)
+    # /Zc:__cplusplus: correctly set __cplusplus macro value
+    add_compile_options("/Zc:__cplusplus")
+  endif()
 endif()
 
 if(NOT WIN32)
   # Qt requires -fPIC, so build all code with it
   # It's always set on windows
   add_compile_options(-fPIC)
+endif()
+
+if(MINGW)
+  # MinGW has a bug which causes too many false-positive warnings
+  # for 'operator!='
+  add_compile_options(-Wno-attributes)
 endif()
 
 EnableFastMath(${FAST_MATH})
@@ -193,6 +215,7 @@ endif()
 if(_UNIX AND ENABLE_THEORA)
   pkg_search_module(THEORA theora REQUIRED)
   include_directories(${THEORA_INCLUDE_DIRS})
+  link_directories(${THEORA_LIBRARY_DIRS})
   link_libraries(${THEORA_LIBRARIES})
   add_definitions(-DTHEORA)
 endif()
@@ -211,23 +234,12 @@ find_package(Libepoxy REQUIRED)
 link_libraries(libepoxy::libepoxy)
 include_directories(${LIBEPOXY_INCLUDE_DIR})
 
-find_package(Eigen3 3.3 NO_MODULE) # -DEigen3_DIR=...
-if(TARGET Eigen3::Eigen)
-  message(STATUS "Found Eigen3 ${EIGEN3_VERSION_STRING}")
-  link_libraries(Eigen3::Eigen)
-else()
-  message(STATUS "Using Eigen submodule")
-  include_directories("${CMAKE_SOURCE_DIR}/thirdparty/Eigen")
-endif()
+find_package(Eigen3 3.3 REQUIRED NO_MODULE) # -DEigen3_DIR=...
+message(STATUS "Found Eigen3 ${EIGEN3_VERSION_STRING}")
+link_libraries(Eigen3::Eigen)
 
-find_package(fmt 4.0.0 CONFIG QUIET)
-if(fmt_FOUND)
-  link_libraries(fmt::fmt)
-else()
-  message(STATUS "Using fmt submodule")
-  add_subdirectory("${CMAKE_SOURCE_DIR}/thirdparty/fmt")
-  link_libraries(fmt::fmt)
-endif()
+find_package(fmt REQUIRED)
+link_libraries(fmt::fmt)
 
 find_package(PNG REQUIRED)
 add_definitions(${PNG_DEFINITIONS})
@@ -344,6 +356,9 @@ if("${build_type_lc}" STREQUAL "debug")
   add_definitions(-D_DEBUG -DDEBUG)
 else()
   add_definitions(-DNO_DEBUG -DEIGEN_NO_DEBUG)
+  if(NOT MSVC)
+    add_compile_options(-fno-rtti -fno-exceptions)
+  endif()
 endif()
 
 # Turning all debug on dramatically decreases performance
@@ -389,6 +404,9 @@ if((NOT HAVE_FILESYSTEM) AND HAVE_EXPERIMENTAL_FILESYSTEM)
     endif()
   endif()
 endif()
+
+try_compile(HAVE_STRING_VIEW ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxsv.cpp")
+try_compile(HAVE_EXPERIMENTAL_STRING_VIEW ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxsvexp.cpp")
 
 configure_file("config.h.in" "config.h")
 

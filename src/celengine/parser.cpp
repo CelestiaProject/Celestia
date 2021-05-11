@@ -13,6 +13,7 @@
 #include "tokenizer.h"
 #include "value.h"
 
+using namespace std;
 using namespace Eigen;
 using namespace celmath;
 

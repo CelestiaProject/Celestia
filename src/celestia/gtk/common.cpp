@@ -21,6 +21,7 @@
 
 #include "common.h"
 
+using namespace std;
 
 /* Returns the offset of the timezone at date */
 gint tzOffsetAtDate(astro::Date date)
@@ -50,19 +51,19 @@ void updateTimeZone(AppData* app, gboolean local)
 
 
 /* Creates a button. Used in several dialogs. */
-gint buttonMake(GtkWidget *hbox, const char *txt, GtkSignalFunc func, gpointer data)
+gint buttonMake(GtkWidget *hbox, const char *txt, GCallback func, gpointer data)
 {
     GtkWidget* button = gtk_button_new_with_label(txt);
 
     gtk_box_pack_start(GTK_BOX (hbox), button, TRUE, TRUE, 0);
-    g_signal_connect(GTK_OBJECT(button), "pressed", func, data);
+    g_signal_connect(G_OBJECT(button), "pressed", func, data);
 
     return 0;
 }
 
 
 /* creates a group of radioButtons. Used in several dialogs. */
-void makeRadioItems(const char* const *labels, GtkWidget *box, GtkSignalFunc sigFunc, GtkToggleButton **gads, gpointer data)
+void makeRadioItems(const char* const *labels, GtkWidget *box, GCallback sigFunc, GtkToggleButton **gads, gpointer data)
 {
     GSList *group = NULL;
 
@@ -73,12 +74,12 @@ void makeRadioItems(const char* const *labels, GtkWidget *box, GtkSignalFunc sig
         if (gads)
             gads[i] = GTK_TOGGLE_BUTTON(button);
 
-        group = gtk_radio_button_group(GTK_RADIO_BUTTON(button));
+        group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(button));
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), (i == 0)?1:0);
 
         gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
         gtk_widget_show (button);
-        g_signal_connect(GTK_OBJECT(button), "pressed", sigFunc, GINT_TO_POINTER(i));
+        g_signal_connect(G_OBJECT(button), "pressed", sigFunc, GINT_TO_POINTER(i));
 
         if (data != NULL)
             g_object_set_data(G_OBJECT(button), "data", data);
@@ -117,8 +118,10 @@ int getWinWidth(AppData* app)
 {
     if (app->fullScreen)
         return GPOINTER_TO_INT(g_object_get_data(G_OBJECT(app->mainWindow), "sizeX"));
-    else
-        return app->glArea->allocation.width;
+
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(GTK_WIDGET(app->glArea), &allocation);
+    return allocation.width;
 }
 
 
@@ -127,8 +130,10 @@ int getWinHeight(AppData* app)
 {
     if (app->fullScreen)
         return GPOINTER_TO_INT(g_object_get_data(G_OBJECT(app->mainWindow), "sizeY"));
-    else
-        return app->glArea->allocation.height;
+
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(GTK_WIDGET(app->glArea), &allocation);
+    return allocation.height;
 }
 
 

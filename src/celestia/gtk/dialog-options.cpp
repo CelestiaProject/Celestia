@@ -76,22 +76,22 @@ void dialogViewOptions(AppData* app)
     GtkWidget* ambientBox = gtk_vbox_new(FALSE, 0);
 
     /* Set border padding on the boxes */
-    gtk_container_border_width(GTK_CONTAINER(showBox), CELSPACING);
-    gtk_container_border_width(GTK_CONTAINER(labelBox), CELSPACING);
-    gtk_container_border_width(GTK_CONTAINER(orbitBox), CELSPACING);
-    gtk_container_border_width(GTK_CONTAINER(limitBox), CELSPACING);
-    gtk_container_border_width(GTK_CONTAINER(textureBox), CELSPACING);
-    gtk_container_border_width(GTK_CONTAINER(ambientBox), CELSPACING);
-    gtk_container_border_width(GTK_CONTAINER(infoBox), CELSPACING);
+    gtk_container_set_border_width(GTK_CONTAINER(showBox), CELSPACING);
+    gtk_container_set_border_width(GTK_CONTAINER(labelBox), CELSPACING);
+    gtk_container_set_border_width(GTK_CONTAINER(orbitBox), CELSPACING);
+    gtk_container_set_border_width(GTK_CONTAINER(limitBox), CELSPACING);
+    gtk_container_set_border_width(GTK_CONTAINER(textureBox), CELSPACING);
+    gtk_container_set_border_width(GTK_CONTAINER(ambientBox), CELSPACING);
+    gtk_container_set_border_width(GTK_CONTAINER(infoBox), CELSPACING);
 
     /* Set border padding on the frames */
-    gtk_container_border_width(GTK_CONTAINER(showFrame), 0);
-    gtk_container_border_width(GTK_CONTAINER(labelFrame), 0);
-    gtk_container_border_width(GTK_CONTAINER(orbitFrame), 0);
-    gtk_container_border_width(GTK_CONTAINER(limitFrame), 0);
-    gtk_container_border_width(GTK_CONTAINER(textureFrame), 0);
-    gtk_container_border_width(GTK_CONTAINER(ambientFrame), 0);
-    gtk_container_border_width(GTK_CONTAINER(infoFrame), 0);
+    gtk_container_set_border_width(GTK_CONTAINER(showFrame), 0);
+    gtk_container_set_border_width(GTK_CONTAINER(labelFrame), 0);
+    gtk_container_set_border_width(GTK_CONTAINER(orbitFrame), 0);
+    gtk_container_set_border_width(GTK_CONTAINER(limitFrame), 0);
+    gtk_container_set_border_width(GTK_CONTAINER(textureFrame), 0);
+    gtk_container_set_border_width(GTK_CONTAINER(ambientFrame), 0);
+    gtk_container_set_border_width(GTK_CONTAINER(infoFrame), 0);
 
     /* Place the boxes in the frames */
     gtk_container_add(GTK_CONTAINER(showFrame), GTK_WIDGET(showBox));
@@ -112,8 +112,8 @@ void dialogViewOptions(AppData* app)
     gtk_box_pack_start(GTK_BOX(miscBox), infoFrame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), midBox, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), miscBox, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG (app->optionDialog)->vbox), hbox, TRUE,
-                       TRUE, 0);
+    GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(app->optionDialog));
+    gtk_container_add(GTK_CONTAINER(content_area), hbox);
 
     gtk_container_set_border_width(GTK_CONTAINER(hbox), CELSPACING);
 
@@ -129,7 +129,7 @@ void dialogViewOptions(AppData* app)
     gtk_scale_set_draw_value(GTK_SCALE(slider), 0);
     gtk_box_pack_start(GTK_BOX(limitBox), slider, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(limitBox), magLabel, TRUE, TRUE, 0);
-    g_signal_connect(GTK_OBJECT(slider), "value-changed", G_CALLBACK(changeDistanceLimit), app);
+    g_signal_connect(G_OBJECT(slider), "value-changed", G_CALLBACK(changeDistanceLimit), app);
     changeDistanceLimit(GTK_RANGE(GTK_HSCALE(slider)), app);
 
     /* Texture resolution slider */
@@ -137,10 +137,9 @@ void dialogViewOptions(AppData* app)
     gtk_scale_set_value_pos(GTK_SCALE(textureSlider), GTK_POS_BOTTOM);
     gtk_range_set_increments(GTK_RANGE(textureSlider), 1, 1);
     gtk_range_set_value(GTK_RANGE(textureSlider), app->renderer->getResolution());
-    gtk_range_set_update_policy(GTK_RANGE(textureSlider), GTK_UPDATE_DISCONTINUOUS);
     gtk_box_pack_start(GTK_BOX(textureBox), textureSlider, TRUE, TRUE, 0);
-    g_signal_connect(GTK_OBJECT(textureSlider), "value-changed", G_CALLBACK(changeTextureResolution), app);
-    g_signal_connect(GTK_OBJECT(textureSlider), "format-value", G_CALLBACK(formatTextureSlider), NULL);
+    g_signal_connect(G_OBJECT(textureSlider), "value-changed", G_CALLBACK(changeTextureResolution), app);
+    g_signal_connect(G_OBJECT(textureSlider), "format-value", G_CALLBACK(formatTextureSlider), NULL);
 
     checkButtonsFromAG(actionsRenderFlags, G_N_ELEMENTS(actionsRenderFlags), app->agRender, showBox);
     checkButtonsFromAG(actionsOrbitFlags, G_N_ELEMENTS(actionsOrbitFlags), app->agOrbit, orbitBox);
@@ -148,6 +147,8 @@ void dialogViewOptions(AppData* app)
     toggleButtonsFromAG(actionsVerbosity, G_N_ELEMENTS(actionsVerbosity), app->agVerbosity, infoBox);
     toggleButtonsFromAG(actionsAmbientLight, G_N_ELEMENTS(actionsAmbientLight), app->agAmbient, ambientBox);
 
+    g_signal_connect(app->optionDialog, "delete-event",
+                     G_CALLBACK(gtk_widget_hide_on_delete), GTK_WIDGET(app->optionDialog));
     g_signal_connect(app->optionDialog, "response",
                      G_CALLBACK(gtk_widget_hide), GTK_WIDGET(app->optionDialog));
 
@@ -213,7 +214,7 @@ static void checkButtonsFromAG(const GtkToggleActionEntry actions[], int size, G
          * is not set with action proxy. */
         GtkWidget* w = gtk_check_button_new_with_mnemonic(actions[i].label);
 
-        gtk_action_connect_proxy(action, w);
+        gtk_activatable_set_related_action(GTK_ACTIVATABLE(w), action);
         gtk_box_pack_start(GTK_BOX(box), w, TRUE, TRUE, 0);
     }
 }
@@ -230,7 +231,7 @@ static void toggleButtonsFromAG(const GtkRadioActionEntry actions[], int size, G
          * is not set with action proxy. */
         GtkWidget* w = gtk_toggle_button_new_with_mnemonic(actions[i].label);
 
-        gtk_action_connect_proxy(action, w);
+        gtk_activatable_set_related_action(GTK_ACTIVATABLE(w), action);
         gtk_box_pack_start(GTK_BOX(box), w, TRUE, TRUE, 0);
     }
 }

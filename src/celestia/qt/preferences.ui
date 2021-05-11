@@ -88,7 +88,7 @@
           <item>
            <widget class="QCheckBox" name="spacecraftsCheck">
             <property name="text">
-             <string>Spacecrafts</string>
+             <string comment="plural" extracomment="TRANSLATORS: translate this as plural">Spacecraft</string>
             </property>
            </widget>
           </item>
@@ -325,7 +325,7 @@
             <item>
              <widget class="QCheckBox" name="spacecraftOrbitsCheck">
               <property name="text">
-               <string>Spacecrafts</string>
+               <string comment="plural" extracomment="TRANSLATORS: translate this as plural">Spacecraft</string>
               </property>
              </widget>
             </item>
@@ -545,7 +545,7 @@
           <item>
            <widget class="QCheckBox" name="spacecraftLabelsCheck">
             <property name="text">
-             <string>Spacecrafts</string>
+             <string comment="plural" extracomment="TRANSLATORS: translate this as plural">Spacecraft</string>
             </property>
            </widget>
           </item>

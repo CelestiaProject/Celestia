@@ -12,11 +12,15 @@
 #ifndef _CMDPARSER_H_
 #define _CMDPARSER_H_
 
-#include "command.h"
-#include <iostream>
-#include <celengine/parser.h>
-#include <celengine/render.h>
+#include <iosfwd>
+#include <celcompat/string_view.h>
 #include <celscript/common/scriptmaps.h>
+#include <celutil/array_view.h>
+#include "command.h" // CommandSequence
+
+class Command;
+class Parser;
+class Tokenizer;
 
 
 class CommandParser
@@ -27,11 +31,11 @@ class CommandParser
     ~CommandParser();
 
     CommandSequence* parse();
-    const std::vector<std::string>* getErrors() const;
+    celestia::util::array_view<std::string> getErrors() const;
 
  private:
     Command* parseCommand();
-    void error(const string);
+    void error(std::string);
 
     Parser* parser;
     Tokenizer* tokenizer;

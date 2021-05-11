@@ -13,7 +13,7 @@
 #include <celutil/color.h>
 #include "view.h"
 
-#include<iostream>
+using namespace std;
 
 View::View(View::Type _type,
            Renderer *_renderer,

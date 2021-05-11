@@ -9,7 +9,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -19,6 +18,7 @@
 #include <cctype>
 #include <cstring>
 #include <cassert>
+#include <tuple>
 #include <process.h>
 #include <time.h>
 #include <windows.h>
@@ -30,9 +30,12 @@
 #include <celengine/glsupport.h>
 
 #include <celmath/mathlib.h>
+#include <celutil/array_view.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
+#include <celutil/fsutils.h>
 #include <celutil/winutil.h>
+#include <celutil/util.h>
 #include <celutil/filetype.h>
 #include <celengine/astro.h>
 #include <celscript/legacy/cmdparser.h>
@@ -54,6 +57,7 @@
 #include "wintime.h"
 #include "winsplash.h"
 #include "odmenu.h"
+#include "winuiutils.h"
 
 #include "res/resource.h"
 #include "wglext.h"
@@ -62,6 +66,7 @@
 #include <fmt/printf.h>
 
 using namespace celestia;
+using namespace celestia::util;
 using namespace std;
 
 typedef pair<int,string> IntStrPair;
@@ -89,7 +94,7 @@ static HDC deviceContext;
 
 static bool bReady = false;
 
-static LPTSTR CelestiaRegKey = "Software\\celestia.space\\Celestia1.7-dev";
+static LPCTSTR CelestiaRegKey = "Software\\celestia.space\\Celestia1.7-dev";
 
 HINSTANCE appInstance;
 HMODULE hRes;
@@ -164,6 +169,8 @@ static LRESULT CALLBACK MainWindowProc(HWND hWnd,
 #define MENU_CHOOSE_PLANET   32000
 #define MENU_CHOOSE_SURFACE  31000
 
+
+bool ignoreOldFavorites = false;
 
 struct AppPreferences
 {
@@ -444,10 +451,10 @@ static bool CopyStateURLToClipboard()
     if (!b)
         return false;
 
-    CelestiaState appState;
-    appState.captureState(appCore);
+    CelestiaState appState(appCore);
+    appState.captureState();
 
-    Url url(appState, Url::CurrentVersion);
+    Url url(appState);
     string urlString = url.getAsString();
 
     char* s = const_cast<char*>(urlString.c_str());
@@ -495,7 +502,7 @@ bool LoadItemTextFromFile(HWND hWnd,
 
     if (!textFile.good())
     {
-        SetDlgItemText(hWnd, item, "License file missing!\r\r\nSee http://www.gnu.org/copyleft/gpl.html");
+        SetDlgItemText(hWnd, item, _("License file missing!\nSee http://www.gnu.org/copyleft/gpl.html"));
         return true;
     }
 
@@ -1448,7 +1455,8 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
     objects.push_back(planets);
     menuNames.push_back(UTF8ToCurrentCP(_("Planets")));
     objects.push_back(spacecraft);
-    menuNames.push_back(UTF8ToCurrentCP(_("Spacecraft")));
+    // TRANSLATORS: translate this as plural
+    menuNames.push_back(UTF8ToCurrentCP(C_("plural", "Spacecraft")));
 
     // Now sort each vector and generate submenus
     IntStrPairComparePredicate pred;
@@ -1512,7 +1520,8 @@ static HMENU CreateAlternateSurfaceMenu(const vector<string>& surfaces)
 {
     HMENU menu = CreatePopupMenu();
 
-    AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE, "Normal");
+    // TRANSLATORS: normal texture in an alternative surface menu
+    AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE, _("Normal"));
     for (unsigned int i = 0; i < surfaces.size(); i++)
     {
         AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE + i + 1,
@@ -1569,7 +1578,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             vector<string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
             if (altSurfaces != NULL)
             {
-                if (altSurfaces->size() != NULL)
+                if (!altSurfaces->empty())
                 {
                     HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
                     AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) surfMenu,
@@ -1715,8 +1724,8 @@ bool EnableFullScreen(const DEVMODE& dm)
         DISP_CHANGE_SUCCESSFUL)
     {
         MessageBox(NULL,
-                   "Unable to switch to full screen mode; running in window mode",
-                   "Error",
+                   _("Unable to switch to full screen mode; running in window mode"),
+                   _("Error"),
                    MB_OK | MB_ICONERROR);
         return false;
     }
@@ -1853,7 +1862,8 @@ bool SetDCPixelFormat(HDC hDC)
 
 
 HWND CreateOpenGLWindow(int x, int y, int width, int height,
-                        int mode, int& newMode)
+                        int mode, int& newMode,
+                        util::array_view<string> ignoreGLExtensions = {})
 {
     assert(mode >= 0 && mode <= displayModes->size());
     if (mode != 0)
@@ -1879,7 +1889,8 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     if (RegisterClass(&wc) == 0)
     {
         MessageBox(NULL,
-                   "Failed to register the window class.", "Fatal Error",
+                   _("Failed to register the window class."),
+                   _("Fatal Error"),
                    MB_OK | MB_ICONERROR);
     return NULL;
     }
@@ -1929,7 +1940,8 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     if (!SetDCPixelFormat(deviceContext))
     {
         MessageBox(NULL,
-                   "Could not get appropriate pixel format for OpenGL rendering.", "Fatal Error",
+                   _("Could not get appropriate pixel format for OpenGL rendering."),
+                   _("Fatal Error"),
                    MB_OK | MB_ICONERROR);
         return NULL;
     }
@@ -1949,11 +1961,11 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
 
     if (firstContext)
     {
-        if (!gl::init() || !gl::checkVersion(gl::GL_2_1))
+        if (!gl::init(ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
         {
             MessageBox(NULL,
-                       _("You system doesn't support OpenGL 2.1!"),
-                       "Fatal Error",
+                       _("Your system doesn't support OpenGL 2.1!"),
+                       _("Fatal Error"),
                        MB_OK | MB_ICONERROR);
             return NULL;
         }
@@ -1984,7 +1996,8 @@ void DestroyOpenGLWindow()
         if (!ReleaseDC(mainWindow, deviceContext))
         {
             MessageBox(NULL,
-                       "Releasing device context failed.", "Error",
+                       _("Releasing device context failed."),
+                       _("Error"),
                        MB_OK | MB_ICONERROR);
         }
         deviceContext = NULL;
@@ -2254,7 +2267,7 @@ public:
 
         MessageBox(NULL,
                    msg.c_str(),
-                   "Fatal Error",
+                   _("Fatal Error"),
                    MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
     }
 };
@@ -2313,7 +2326,7 @@ static void HandleJoystick()
     }
 }
 
-static bool GetRegistryValue(HKEY hKey, LPSTR cpValueName, LPVOID lpBuf, DWORD iBufSize)
+static bool GetRegistryValue(HKEY hKey, LPCTSTR cpValueName, LPVOID lpBuf, DWORD iBufSize)
 {
 /*
     Function retrieves a value from the registry.
@@ -2378,7 +2391,7 @@ static bool SetRegistry(HKEY key, LPCTSTR value, const string& strVal)
     return err == ERROR_SUCCESS;
 }
 
-static bool SetRegistryBin(HKEY hKey, LPSTR cpValueName, LPVOID lpData, int iDataSize)
+static bool SetRegistryBin(HKEY hKey, LPCTSTR cpValueName, LPVOID lpData, int iDataSize)
 {
 /*
     Function sets BINARY data in the registry.
@@ -2410,7 +2423,7 @@ static bool SetRegistryBin(HKEY hKey, LPSTR cpValueName, LPVOID lpData, int iDat
 }
 
 
-static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
+static bool LoadPreferencesFromRegistry(LPCTSTR regkey, AppPreferences& prefs)
 {
     LONG err;
     HKEY key;
@@ -2468,13 +2481,17 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
         prefs.renderFlags |= Renderer::ShowRingShadows;
     }
 
+    int fav = 0;
+    GetRegistryValue(key, "IgnoreOldFavorites", &fav, sizeof(fav));
+    ignoreOldFavorites = fav != 0;
+
     RegCloseKey(key);
 
     return true;
 }
 
 
-static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
+static bool SavePreferencesToRegistry(LPCTSTR regkey, AppPreferences& prefs)
 {
     LONG err;
     HKEY key;
@@ -2515,6 +2532,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
 #endif
     SetRegistry(key, "AltSurface", prefs.altSurfaceName);
     SetRegistryInt(key, "TextureResolution", prefs.textureResolution);
+    SetRegistryInt(key, "IgnoreOldFavorites", ignoreOldFavorites);
 
     RegCloseKey(key);
 
@@ -2585,7 +2603,7 @@ static void HandleCaptureImage(HWND hWnd)
     Ofn.lpstrInitialDir = (LPSTR)NULL;
 
     // Comment this out if you just want the standard "Save As" caption.
-    Ofn.lpstrTitle = "Save As - Specify File to Capture Image";
+    Ofn.lpstrTitle = _("Save As - Specify File to Capture Image");
 
     // OFN_HIDEREADONLY - Do not display read-only JPEG or PNG files
     // OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
@@ -2619,7 +2637,7 @@ static void HandleCaptureImage(HWND hWnd)
         {
             MessageBox(hWnd,
                        _("Please use a name ending in '.jpg' or '.png'."),
-                       "Error",
+                       _("Error"),
                        MB_OK | MB_ICONERROR);
             return;
         }
@@ -2628,7 +2646,10 @@ static void HandleCaptureImage(HWND hWnd)
         appCore->draw();
         if (!appCore->saveScreenShot(Ofn.lpstrFile))
         {
-            MessageBox(hWnd, "Could not save image file.", "Error", MB_OK | MB_ICONERROR);
+            MessageBox(hWnd,
+                       _("Could not save image file."),
+                       _("Error"),
+                       MB_OK | MB_ICONERROR);
         }
     }
 }
@@ -2642,7 +2663,10 @@ static void HandleCaptureMovie(HWND hWnd)
     // is complete.
     if (appCore->isCaptureActive())
     {
-        MessageBox(hWnd, "Stop current movie capture before starting another one.", "Error", MB_OK | MB_ICONERROR);
+        MessageBox(hWnd,
+                   _("Stop current movie capture before starting another one."),
+                   _("Error"),
+                   MB_OK | MB_ICONERROR);
         return;
     }
 
@@ -2666,7 +2690,7 @@ static void HandleCaptureMovie(HWND hWnd)
     Ofn.lpstrInitialDir = (LPSTR)NULL;
 
     // Comment this out if you just want the standard "Save As" caption.
-    Ofn.lpstrTitle = "Save As - Specify Output File for Capture Movie";
+    Ofn.lpstrTitle = _("Save As - Specify Output File for Capture Movie");
 
     // OFN_HIDEREADONLY - Do not display read-only video files
     // OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
@@ -2733,14 +2757,14 @@ static void HandleCaptureMovie(HWND hWnd)
 
         if (!success)
         {
-            char errorMsg[64];
+            const char *errorMsg;
 
             if (nFileType == 0)
-                sprintf(errorMsg, "Specified file extension is not recognized.");
+                errorMsg = _("Specified file extension is not recognized.");
             else
-                sprintf(errorMsg, "Could not capture movie.");
+                errorMsg = _("Could not capture movie.");
 
-            MessageBox(hWnd, errorMsg, "Error", MB_OK | MB_ICONERROR);
+            MessageBox(hWnd, errorMsg, _("Error"), MB_OK | MB_ICONERROR);
         }
     }
 }
@@ -2792,13 +2816,8 @@ static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
 
 bool operator<(const DEVMODE& a, const DEVMODE& b)
 {
-    if (a.dmBitsPerPel != b.dmBitsPerPel)
-        return a.dmBitsPerPel < b.dmBitsPerPel;
-    if (a.dmPelsWidth != b.dmPelsWidth)
-        return a.dmPelsWidth < b.dmPelsWidth;
-    if (a.dmPelsHeight != b.dmPelsHeight)
-        return a.dmPelsHeight < b.dmPelsHeight;
-    return a.dmDisplayFrequency < b.dmDisplayFrequency;
+    return std::tie(a.dmBitsPerPel, a.dmPelsWidth, a.dmPelsHeight, a.dmDisplayFrequency)
+         < std::tie(b.dmBitsPerPel, b.dmPelsWidth, b.dmPelsHeight, b.dmDisplayFrequency);
 }
 
 vector<DEVMODE>* EnumerateDisplayModes(unsigned int minBPP)
@@ -2970,7 +2989,8 @@ static bool parseCommandLine(int argc, char* argv[])
             if (isLastArg)
             {
                 MessageBox(NULL,
-                           "Directory expected after --dir", "Celestia Command Line Error",
+                           _("Directory expected after --dir"),
+                           _("Celestia Command Line Error"),
                            MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -2982,8 +3002,8 @@ static bool parseCommandLine(int argc, char* argv[])
             if (isLastArg)
             {
                 MessageBox(NULL,
-                           "Configuration file name expected after --conf",
-                           "Celestia Command Line Error",
+                           _("Configuration file name expected after --conf"),
+                           _("Celestia Command Line Error"),
                            MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -2996,7 +3016,8 @@ static bool parseCommandLine(int argc, char* argv[])
             if (isLastArg)
             {
                 MessageBox(NULL,
-                           "Directory expected after --extrasdir", "Celestia Command Line Error",
+                           _("Directory expected after --extrasdir"),
+                           _("Celestia Command Line Error"),
                            MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -3008,7 +3029,8 @@ static bool parseCommandLine(int argc, char* argv[])
             if (isLastArg)
             {
                 MessageBox(NULL,
-                           "URL expected after --url", "Celestia Command Line Error",
+                           _("URL expected after --url"),
+                           _("Celestia Command Line Error"),
                            MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -3022,9 +3044,9 @@ static bool parseCommandLine(int argc, char* argv[])
         else
         {
             char* buf = new char[strlen(argv[i]) + 256];
-            sprintf(buf, "Invalid command line option '%s'", argv[i]);
+            sprintf(buf, _("Invalid command line option '%s'"), argv[i]);
             MessageBox(NULL,
-                       buf, "Celestia Command Line Error",
+                       buf, _("Celestia Command Line Error"),
                        MB_OK | MB_ICONERROR);
             delete[] buf;
             return false;
@@ -3103,7 +3125,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         SetCurrentDirectory(startDirectory.c_str());
 
     s_splash = new SplashWindow(SPLASH_DIR "\\" "splash.png");
-    s_splash->setMessage("Loading data files...");
+    s_splash->setMessage(_("Loading data files..."));
     if (!skipSplashScreen)
         s_splash->showSplash();
 
@@ -3189,28 +3211,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     appCore = new CelestiaCore();
-    if (appCore == NULL)
-    {
-        if (s_splash != NULL)
-        {
-            s_splash->close();
-            delete s_splash;
-            s_splash = NULL;
-        }
-
-        MessageBox(NULL,
-                   "Out of memory.", "Fatal Error",
-                   MB_OK | MB_ICONERROR | MB_TOPMOST);
-        return false;
-    }
 
     // Gettext integration
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
-    bindtextdomain("celestia","locale");
+    bindtextdomain("celestia", "locale");
     bind_textdomain_codeset("celestia", "UTF-8");
-    bindtextdomain("celestia_constellations","locale");
+    bindtextdomain("celestia_constellations", "locale");
     bind_textdomain_codeset("celestia_constellations", "UTF-8");
     textdomain("celestia");
 
@@ -3255,29 +3263,66 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     acceleratorTable = LoadAccelerators(hRes,
                                         MAKEINTRESOURCE(IDR_ACCELERATORS));
 
-    if (appCore->getConfig() != NULL)
+    if (appCore->getConfig() == NULL)
     {
-        if (!compareIgnoringCase(appCore->getConfig()->cursor, "arrow"))
-            hDefaultCursor = LoadCursor(NULL, IDC_ARROW);
-        else if (!compareIgnoringCase(appCore->getConfig()->cursor, "inverting crosshair"))
-            hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR));
-        else
-            hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
-
-        appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
-        appCore->getRenderer()->setShadowMapSize(appCore->getConfig()->ShadowMapSize);
+        MessageBox(NULL,
+                   _("Configuration file missing!"),
+                   _("Fatal Error"),
+                   MB_OK | MB_ICONERROR);
+        return 1;
     }
+    if (!compareIgnoringCase(appCore->getConfig()->cursor, "arrow"))
+        hDefaultCursor = LoadCursor(NULL, IDC_ARROW);
+    else if (!compareIgnoringCase(appCore->getConfig()->cursor, "inverting crosshair"))
+        hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR));
+    else
+        hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
+
+    appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
+    appCore->getRenderer()->setShadowMapSize(appCore->getConfig()->ShadowMapSize);
 
     cursorHandler = new WinCursorHandler(hDefaultCursor);
     appCore->setCursorHandler(cursorHandler);
 
     InitWGLExtensions(appInstance);
 
+#ifndef PORTABLE_BUILD
+    if (!ignoreOldFavorites)
+    { // move favorites to the new location
+        fs::path path;
+        if (appCore->getConfig() != nullptr && !appCore->getConfig()->favoritesFile.empty())
+            path = appCore->getConfig()->favoritesFile;
+        else
+            path = L"favorites.cel";
+
+        if (path.is_relative())
+            path = WriteableDataPath() / path;
+
+        error_code ec;
+        if (fs::exists(L"favorites.cel", ec)) // old exists
+        {
+            if (!fs::exists(path)) // new does not
+            {
+                int resp = MessageBox(NULL,
+                                      _("Old favorites file detected.\nCopy to the new location?"),
+                                      _("Copy favorites?"),
+                                      MB_YESNO);
+                if (resp == IDYES)
+                {
+                    CopyFileW(L"favorites.cel", path.c_str(), true);
+                    ignoreOldFavorites = true;
+                }
+            }
+        }
+    }
+#endif
+
     HWND hWnd;
     if (startFullscreen)
     {
         hWnd = CreateOpenGLWindow(0, 0, 800, 600,
-                                  lastFullScreenMode, currentScreenMode);
+                                  lastFullScreenMode, currentScreenMode,
+                                  appCore->getConfig()->ignoreGLExtensions);
 
         // Prevent unnecessary destruction and recreation of OpenGLWindow in
         // while() loop below.
@@ -3287,14 +3332,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     {
         hWnd = CreateOpenGLWindow(prefs.winX, prefs.winY,
                                   prefs.winWidth, prefs.winHeight,
-                                  0, currentScreenMode);
+                                  0, currentScreenMode,
+                                  appCore->getConfig()->ignoreGLExtensions);
     }
 
     if (hWnd == NULL)
     {
         MessageBox(NULL,
-                   "Failed to create the application window.",
-                   "Fatal Error",
+                   _("Failed to create the application window."),
+                   _("Fatal Error"),
                    MB_OK | MB_ICONERROR);
         return FALSE;
     }
@@ -3946,7 +3992,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                               MAKEINTRESOURCE(IDD_DISPLAYMODE),
                               hWnd,
                               (DLGPROC)SelectDisplayModeProc,
-                              NULL);
+                              0);
             break;
 
         case ID_RENDER_FULLSCREEN:
@@ -4150,7 +4196,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                               MAKEINTRESOURCE(IDD_CONTROLSHELP),
                               hWnd,
                               (DLGPROC)ControlsHelpProc,
-                              NULL);
+                              0);
             break;
 
         case ID_HELP_ABOUT:

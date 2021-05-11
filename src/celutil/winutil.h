@@ -1,5 +1,6 @@
 // winutil.h
 //
+// Copyright (C) 2019-present, Celestia Development Team
 // Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
 //
 // Miscellaneous useful Windows-related functions.
@@ -9,25 +10,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _WINUTIL_H_
-#define _WINUTIL_H_
+#pragma once
 
-#include <windows.h>
-#include <commctrl.h>
 #include <string>
 
-using namespace std;
-
-void SetMouseCursor(LPCTSTR lpCursor);
-void CenterWindow(HWND hParent, HWND hWnd);
-void RemoveButtonDefaultStyle(HWND hWnd);
-void AddButtonDefaultStyle(HWND hWnd);
 const char* CurrentCP();
-string UTF8ToCurrentCP(const string& str);
-string CurrentCPToUTF8(const string& str);
-string WideToCurrentCP(const wstring& ws);
-wstring CurrentCPToWide(const string& str);
-string WideToUTF8(const wstring& ws);
-wstring UTF8ToWide(const string& str);
-
-#endif
+std::string UTF8ToCurrentCP(const std::string& str);
+std::string CurrentCPToUTF8(const std::string& str);
+std::string WideToCurrentCP(const std::wstring& ws);
+std::wstring CurrentCPToWide(const std::string& str);
+std::string WideToUTF8(const std::wstring& ws);
+std::wstring UTF8ToWide(const std::string& str);

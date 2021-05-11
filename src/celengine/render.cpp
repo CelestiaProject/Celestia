@@ -474,9 +474,8 @@ static Texture* BuildGaussianDiscTexture(unsigned int log2size)
     }
 
     ImageTexture* texture = new ImageTexture(*img,
-                                             Texture::BorderClamp,
+                                             Texture::EdgeClamp,
                                              Texture::DefaultMipMaps);
-    texture->setBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
 
     delete img;
 
@@ -512,9 +511,8 @@ static Texture* BuildGaussianGlareTexture(unsigned int log2size)
     }
 
     ImageTexture* texture = new ImageTexture(*img,
-                                             Texture::BorderClamp,
+                                             Texture::EdgeClamp,
                                              Texture::DefaultMipMaps);
-    texture->setBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
 
     delete img;
 
@@ -1513,7 +1511,7 @@ setupSecondaryLightSources(vector<SecondaryIlluminator>& secondaryIlluminators,
             i.reflectedIrradiance += j.luminosity / ((float) (i.position_v - j.position).squaredNorm() * au2);
         }
 
-        i.reflectedIrradiance *= i.body->getAlbedo();
+        i.reflectedIrradiance *= i.body->getReflectivity();
     }
 }
 
@@ -2047,6 +2045,8 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         center = center + direction * (radius / (m * Vector3f::UnitZ()).dot(direction));
 
         enableDepthTest();
+        disableDepthMask();
+
         bool useSprites = starStyle != PointStars;
         if (useSprites)
             gaussianDiscTex->bind();
@@ -2812,24 +2812,35 @@ void Renderer::renderObject(const Vector3f& pos,
     // support.)
     float radius = obj.radius;
     Vector3f scaleFactors;
+    float ringsScaleFactor;
     float geometryScale;
     if (geometry == nullptr || geometry->isNormalized())
     {
         geometryScale = obj.radius;
         scaleFactors = obj.radius * obj.semiAxes;
+        ringsScaleFactor = obj.radius * obj.semiAxes.maxCoeff();
         ri.pointScale = 2.0f * obj.radius / pixelSize * screenDpi / 96.0f;
     }
     else
     {
         geometryScale = obj.geometryScale;
         scaleFactors = Vector3f::Constant(geometryScale);
+        ringsScaleFactor = geometryScale;
         ri.pointScale = 2.0f * geometryScale / pixelSize * screenDpi / 96.0f;
     }
     // Apply the modelview transform for the object
-    Affine3f transform = Translation3f(pos) * obj.orientation.conjugate() * Scaling(scaleFactors);
-    Matrix4f mv = (*m.modelview) * transform.matrix();
+    Affine3f transform = Translation3f(pos) * obj.orientation.conjugate();
+    Matrix4f planetMV  = (*m.modelview) * (transform * Scaling(scaleFactors)).matrix();
+    Matrices planetMVP = { m.projection, &planetMV };
 
-    Matrices mvp = { m.projection, &mv };
+    Matrices ringsMVP;
+    Matrix4f ringsMV;
+    bool showRings = obj.rings != nullptr && (renderFlags & ShowPlanetRings) != 0;
+    if (showRings)
+    {
+        ringsMV  = (*m.modelview) * (transform * Scaling(ringsScaleFactor)).matrix();
+        ringsMVP = { m.projection, &ringsMV  };
+    }
 
     Matrix3f planetRotation = obj.orientation.toRotationMatrix();
 
@@ -2945,11 +2956,11 @@ void Renderer::renderObject(const Vector3f& pos,
                                  renderFlags,
                                  obj.orientation,
                                  viewFrustum,
-                                 mvp, this);
+                                 planetMVP, this);
         }
         else
         {
-            renderSphereUnlit(ri, viewFrustum, mvp, this);
+            renderSphereUnlit(ri, viewFrustum, planetMVP, this);
         }
     }
     else
@@ -2969,7 +2980,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                     renderFlags,
                                     obj.orientation,
                                     astro::daysToSecs(now - astro::J2000),
-                                    mvp, this);
+                                    planetMVP, this);
             }
             else
             {
@@ -2980,14 +2991,14 @@ void Renderer::renderObject(const Vector3f& pos,
                                           renderFlags,
                                           obj.orientation,
                                           astro::daysToSecs(now - astro::J2000),
-                                          mvp, this);
+                                          planetMVP, this);
             }
             glActiveTexture(GL_TEXTURE0);
         }
     }
 
     float segmentSizeInPixels = 0.0f;
-    if (obj.rings != nullptr && (renderFlags & ShowPlanetRings) != 0)
+    if (showRings)
     {
         // calculate ring segment size in pixels, actual size is segmentSizeInPixels * tan(segmentAngle)
         segmentSizeInPixels = 2.0f * obj.rings->outerRadius / (max(nearPlaneDistance, altitude) * pixelSize);
@@ -2998,7 +3009,7 @@ void Renderer::renderObject(const Vector3f& pos,
                              textureResolution,
                              (renderFlags & ShowRingShadows) != 0 && lit,
                              segmentSizeInPixels,
-                             mvp, this);
+                             ringsMVP, this);
         }
     }
 
@@ -3034,7 +3045,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                       radius * atmScale,
                                       obj.orientation,
                                       viewFrustum,
-                                      mvp, this);
+                                      planetMVP, this);
             }
             else
             {
@@ -3058,7 +3069,7 @@ void Renderer::renderObject(const Vector3f& pos,
         if (cloudTex != nullptr)
         {
             float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
-            Matrix4f cmv = vecgl::scale(mv, cloudScale);
+            Matrix4f cmv = vecgl::scale(planetMV, cloudScale);
             Matrices mvp = { m.projection, &cmv };
 
             // If we're beneath the cloud level, render the interior of
@@ -3106,7 +3117,7 @@ void Renderer::renderObject(const Vector3f& pos,
         }
     }
 
-    if (obj.rings != nullptr && (renderFlags & ShowPlanetRings) != 0)
+    if (showRings)
     {
         if (lit && (renderFlags & ShowRingShadows) != 0)
         {
@@ -3123,7 +3134,7 @@ void Renderer::renderObject(const Vector3f& pos,
                              textureResolution,
                              (renderFlags & ShowRingShadows) != 0 && lit,
                              segmentSizeInPixels,
-                             mvp, this);
+                             ringsMVP, this);
         }
     }
 

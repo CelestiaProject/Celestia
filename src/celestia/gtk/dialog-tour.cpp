@@ -23,7 +23,7 @@ using namespace Eigen;
 
 
 /* Declarations: Callbacks */
-static gint TourGuideSelect(GtkWidget* w, TourData* td);
+static gint TourGuideSelect(GtkComboBox* comboBox, TourData* td);
 static gint TourGuideGoto(GtkWidget*, TourData* td);
 static void TourGuideDestroy(GtkWidget* w, gint, TourData* td);
 
@@ -45,25 +45,27 @@ void dialogTourGuide(AppData* app)
     gtk_container_set_border_width(GTK_CONTAINER(hbox), CELSPACING);
 
     GtkWidget* label = gtk_label_new("Select your destination:");
-    gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-    GtkWidget* menubox = gtk_option_menu_new();
-    gtk_box_pack_start(GTK_BOX(hbox), menubox, TRUE, TRUE, 0);
+    GtkWidget* comboBox = gtk_combo_box_text_new();
+    gtk_box_pack_start(GTK_BOX(hbox), comboBox, FALSE, FALSE, 0);
 
     GtkWidget* gotoButton = gtk_button_new_with_label("Go To");
-    gtk_box_pack_start(GTK_BOX(hbox), gotoButton, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), gotoButton, FALSE, FALSE, 0);
 
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, TRUE, 0);
+    GtkWidget* content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+    gtk_box_pack_start(GTK_BOX(content_area), hbox, FALSE, FALSE, 0);
 
     gtk_widget_show(hbox);
 
     td->descLabel = gtk_label_new("");
     gtk_label_set_line_wrap(GTK_LABEL(td->descLabel), TRUE);
     gtk_label_set_justify(GTK_LABEL(td->descLabel), GTK_JUSTIFY_FILL);
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), td->descLabel, TRUE, TRUE, 0);
+    gtk_label_set_max_width_chars(GTK_LABEL(td->descLabel), 40);
+    gtk_box_pack_start(GTK_BOX(content_area), td->descLabel, FALSE, FALSE, 0);
 
-    GtkWidget* menu = gtk_menu_new();
     const DestinationList* destinations = app->core->getDestinations();
+    int index = -1;
     if (destinations != NULL)
     {
         for (DestinationList::const_iterator iter = destinations->begin();
@@ -72,18 +74,17 @@ void dialogTourGuide(AppData* app)
             Destination* dest = *iter;
             if (dest != NULL)
             {
-                GtkWidget* item = gtk_menu_item_new_with_label(dest->name.c_str());
-                gtk_menu_append(GTK_MENU(menu), item);
-                gtk_widget_show(item);
+                index = 0;
+                gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(comboBox), dest->name.c_str());
             }
         }
     }
 
-    g_signal_connect(GTK_OBJECT(menu),
-                     "selection-done",
+    g_signal_connect(G_OBJECT(comboBox),
+                     "changed",
                      G_CALLBACK(TourGuideSelect),
                      td);
-    g_signal_connect(GTK_OBJECT(gotoButton),
+    g_signal_connect(G_OBJECT(gotoButton),
                      "pressed",
                      G_CALLBACK(TourGuideGoto),
                      td);
@@ -92,28 +93,18 @@ void dialogTourGuide(AppData* app)
                      G_CALLBACK(TourGuideDestroy),
                      td);
 
-    gtk_option_menu_set_menu(GTK_OPTION_MENU(menubox), menu);
-
-    gtk_widget_set_usize(dialog, 440, 300);
+    gtk_widget_set_size_request(dialog, -1, 300);
 
     gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(comboBox), index);
     gtk_widget_show_all(dialog);
 }
 
 
 /* CALLBACK: tour list object selected */
-static gint TourGuideSelect(GtkWidget* w, TourData* td)
+static gint TourGuideSelect(GtkComboBox* comboBox, TourData* td)
 {
-    GtkMenu* menu = GTK_MENU(w);
-    if (menu == NULL)
-        return FALSE;
-
-    GtkWidget* item = gtk_menu_get_active(GTK_MENU(menu));
-    if (item == NULL)
-        return FALSE;
-
-    GList* list = gtk_container_children(GTK_CONTAINER(menu));
-    int itemIndex = g_list_index(list, item);
+    int itemIndex = gtk_combo_box_get_active(comboBox);
 
     const DestinationList* destinations = td->app->core->getDestinations();
     if (destinations != NULL &&

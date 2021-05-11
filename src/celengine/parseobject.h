@@ -34,7 +34,7 @@ enum class DataDisposition
 };
 
 
-bool ParseDate(Hash* hash, const string& name, double& jd);
+bool ParseDate(Hash* hash, const std::string& name, double& jd);
 
 Orbit* CreateOrbit(const Selection& centralObject,
                    Hash* planetData,

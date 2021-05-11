@@ -3,18 +3,24 @@
 Stable version installation on Unix-like systems (e.g. GNU/Linux or *BSD):
 * Check your OS repository for already built packages.
 * Check https://celestia.space/download.html.
-* Check https://bintray.com/celestia if it contains packages for your system.
 
 Stable version installation on Windows and OSX:
 * Check https://celestia.space/download.html.
 
 Development snapshots installation on Unix-like systems:
-### On Debian 10 and derived systems:
+### On Debian 10 (buster) and derived systems:
 
 ```
-curl https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/Release.key | sudo apt-key add -
-echo "deb https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
-sudo apt update && sudo apt install celestia
+❯ curl -fsSL -o celestia.gpg https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/Release.key
+❯ gpg --keyid-format long celestia.gpg
+gpg: WARNING: no command supplied.  Trying to guess what you mean ...
+pub   rsa2048/BDF3F6ACD4D81407 2014-06-09 [SC] [expires: 2023-02-14]
+      3FE0C0AC1FD6F1034B818A14BDF3F6ACD4D81407
+uid                           home:munix9 OBS Project <home:munix9@build.opensuse.org>
+❯ sudo mv celestia.gpg /usr/share/keyrings/celestia.asc
+
+❯ echo "deb [signed-by=/usr/share/keyrings/celestia.asc] https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_10/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
+❯ sudo apt update && sudo apt install celestia
 ```
 
 ### On Ubuntu 18.04/20.04 and derived systems:
@@ -28,29 +34,17 @@ sudo apt update && sudo apt install celestia
 Where VERSION is 18.04 or 20.04.
 
 
-### On openSUSE Leap 15.1:
+### On openSUSE Leap/Tumbleweed:
 
 ```
-sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Leap_15.1/home:munix9:unstable.repo
+sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_${VERSION}/home:munix9:unstable.repo
 sudo zypper refresh
 sudo zypper install celestia
 ```
 
-### On openSUSE Leap 15.2:
+Where VERSION is 'Leap_15.2', 'Leap_15.3' or 'Tumbleweed'.
 
-```
-sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Leap_15.2/home:munix9:unstable.repo
-sudo zypper refresh
-sudo zypper install celestia
-```
-
-### On openSUSE Tumbleweed:
-
-```
-sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/openSUSE_Tumbleweed/home:munix9:unstable.repo
-sudo zypper refresh
-sudo zypper install celestia
-```
+See also the download package sites on OBS for [celestia](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia) and [celestia-data](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia-data).
 
 ### On other GNU/Linux distributions:
 
@@ -64,12 +58,6 @@ chmod 755 celestia-1.7.0-git-x86_64.AppImage
 ```
 mkdir celestia-1.7.home
 ```
-
-Development snapshots installation on Windows:
-
-* https://bintray.com/celestia/celestia-builds/snapshots contains
-  official 32/64 bit development snapshots for Windows.
-
 
 To build from sources please follow instructions below.
 
@@ -281,7 +269,7 @@ Install Homebrew
 Install required packages:
 
 ```
-brew install cmake fmt gettext libepoxy libpng lua qt5 jpeg eigen freetype
+brew install pkg-config cmake fmt gettext libepoxy libpng lua qt5 jpeg eigen freetype theora
 ```
 
 Install optional packages:
@@ -339,6 +327,8 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_DATA          | bool | OFF     | Use CelestiaContent submodule for data
 | ENABLE_GLES          | bool | OFF     | Use OpenGL ES 2.0 in rendering code
 | NATIVE_OSX_APP       | bool | OFF     | Support native OSX data paths
+| USE_GTKGLEXT         | bool | ON      | Use libgtkglext1 in GTK2 frontend
+| USE_GTK3             | bool | OFF     | Use Gtk3 instead of Gtk2 in GTK2 frontend
 
 Notes:
  \* /usr/local on Unix-like systems, c:\Program Files or c:\Program Files (x86)
@@ -356,6 +346,11 @@ On Windows systems two additonal options are supported:
   64-bit Celestia. To build 32-bit Celestia it should be omitted.
 - `CMAKE_TOOLCHAIN_FILE` - location of vcpkg.cmake if vcpkg is used.
 
+Please note that not all options are compatible:
+- `USE_GTKGLEXT` is not compatible with `ENABLE_GLES` and `USE_GTK3` and will
+  be disabled if any of this is set.
+- `ENABLE_GLES` is not compatible with `ENABLE_GLUT` and with `ENABLE_QT` if
+  your `glut` or Qt5 installation don't support OpenGL ES.
 
 Executable files
 ----------------

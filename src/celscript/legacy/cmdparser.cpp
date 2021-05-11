@@ -9,20 +9,19 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <algorithm>
+#include <iostream>
 #include <sstream>
 #include <Eigen/Geometry>
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
-#include <celengine/render.h>
+#include <celengine/parser.h>
 #include <celengine/tokenizer.h>
 #ifdef USE_GLCONTEXT
 #include <celengine/glcontext.h>
 #endif
-#include <celscript/common/scriptmaps.h>
 #include "cmdparser.h"
 
 using namespace std;
@@ -99,15 +98,16 @@ CommandSequence* CommandParser::parse()
 }
 
 
-const vector<string>* CommandParser::getErrors() const
+auto CommandParser::getErrors() const
+    -> celestia::util::array_view<std::string>
 {
-    return &errorList;
+    return errorList;
 }
 
 
-void CommandParser::error(const string errMsg)
+void CommandParser::error(string errMsg)
 {
-    errorList.push_back(errMsg);
+    errorList.emplace_back(std::move(errMsg));
 }
 
 
@@ -399,7 +399,7 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "time")
     {
-        double jd = 2451545;
+        double jd = 2451545.0;
         if (!paramList->getNumber("jd", jd))
         {
             std::string utc;

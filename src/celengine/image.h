@@ -1,16 +1,15 @@
 // image.h
 //
-// Copyright (C) 2001, Chris Laurel
+// Copyright (C) 2001-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_IMAGE_H_
-#define _CELENGINE_IMAGE_H_
+#pragma once
 
-#include <string>
 #include <celcompat/filesystem.h>
 
 // The image class supports multiple GL formats, including compressed ones.
@@ -43,7 +42,8 @@ class Image
 
     Image* computeNormalMap(float scale, bool wrap) const;
 
-    enum {
+    enum
+    {
         ColorChannel = 1,
         AlphaChannel = 2
     };
@@ -59,12 +59,4 @@ class Image
     unsigned char* pixels{ nullptr };
 };
 
-extern Image* LoadJPEGImage(const fs::path& filename,
-                            int channels = Image::ColorChannel);
-extern Image* LoadBMPImage(const fs::path& filename);
-extern Image* LoadPNGImage(const fs::path& filename);
-extern Image* LoadDDSImage(const fs::path& filename);
-
-extern Image* LoadImageFromFile(const fs::path& filename);
-
-#endif // _CELENGINE_IMAGE_H_
+Image* LoadImageFromFile(const fs::path& filename);

@@ -25,6 +25,7 @@
 #include "actions.h"
 #include "common.h"
 
+using namespace std;
 
 /* Declarations: Callbacks */
 static void listStarSelect(GtkTreeSelection* sel, AppData* app);
@@ -53,9 +54,8 @@ void dialogStarBrowser(AppData* app)
     app->simulation->setSelection(Selection((Star *) NULL));
 
     /* Star System Browser */
-    GtkWidget *mainbox = gtk_vbox_new(FALSE, CELSPACING);
+    GtkWidget *mainbox = gtk_dialog_get_content_area(GTK_DIALOG(browser));
     gtk_container_set_border_width(GTK_CONTAINER(mainbox), CELSPACING);
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(browser)->vbox), mainbox, TRUE, TRUE, 0);
 
     GtkWidget *scrolled_win = gtk_scrolled_window_new (NULL, NULL);
 
@@ -112,13 +112,13 @@ void dialogStarBrowser(AppData* app)
     GtkWidget *hbox2 = gtk_hbox_new(FALSE, CELSPACING);
     GtkWidget *label = gtk_label_new("Maximum Stars Displayed in List");
     gtk_box_pack_start(GTK_BOX(hbox2), label, TRUE, FALSE, 0);
-    sb->entry = gtk_entry_new_with_max_length(3);
+    sb->entry = gtk_entry_new();
+    gtk_entry_set_max_length(GTK_ENTRY(sb->entry), 3);
     gtk_entry_set_width_chars(GTK_ENTRY(sb->entry), 5);
     gtk_box_pack_start(GTK_BOX(hbox2), sb->entry, TRUE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), hbox2, TRUE, FALSE, 0);
     sb->scale = gtk_hscale_new_with_range(MINLISTSTARS, MAXLISTSTARS, 1);
     gtk_scale_set_draw_value(GTK_SCALE(sb->scale), FALSE);
-    gtk_range_set_update_policy(GTK_RANGE(sb->scale), GTK_UPDATE_DISCONTINUOUS);
     g_signal_connect(sb->scale, "value-changed", G_CALLBACK(listStarSliderChange), sb);
     g_signal_connect(sb->entry, "focus-out-event", G_CALLBACK(listStarEntryChange), sb);
     gtk_box_pack_start(GTK_BOX(vbox), sb->scale, TRUE, FALSE, 0);
@@ -135,22 +135,22 @@ void dialogStarBrowser(AppData* app)
 
     /* Radio Buttons */
     vbox = gtk_vbox_new(TRUE, 0);
-    makeRadioItems(sbRadioLabels, vbox, GTK_SIGNAL_FUNC(radioClicked), NULL, sb);
+    makeRadioItems(sbRadioLabels, vbox, G_CALLBACK(radioClicked), NULL, sb);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
     /* Common Buttons */
     hbox = gtk_hbox_new(TRUE, CELSPACING);
-    if (buttonMake(hbox, "Center", (GtkSignalFunc)actionCenterSelection, app))
+    if (buttonMake(hbox, "Center", (GCallback)actionCenterSelection, app))
         return;
-    if (buttonMake(hbox, "Go To", (GtkSignalFunc)actionGotoSelection, app))
+    if (buttonMake(hbox, "Go To", (GCallback)actionGotoSelection, app))
         return;
-    if (buttonMake(hbox, "Refresh", (GtkSignalFunc)refreshBrowser, sb))
+    if (buttonMake(hbox, "Refresh", (GCallback)refreshBrowser, sb))
         return;
     gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
 
     g_signal_connect(browser, "response", G_CALLBACK(starDestroy), browser);
 
-    gtk_widget_set_usize(browser, 500, 400); /* Absolute Size, urghhh */
+    gtk_widget_set_size_request(browser, -1, 400); /* Absolute Size, urghhh */
     gtk_widget_show_all(browser);
 }
 

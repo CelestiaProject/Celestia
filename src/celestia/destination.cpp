@@ -10,6 +10,7 @@
 #include <config.h>
 #include <algorithm>
 #include <celutil/debug.h>
+#include <celutil/stringutils.h>
 #include <celutil/util.h>
 #include <celengine/astro.h>
 #include <celengine/parser.h>

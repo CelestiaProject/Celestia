@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Extract translatable strings from a windows resource files 
+# Extract translatable strings from a windows resource files
 # and outputs them in a C like format for use by gettext.
 
 use strict;
@@ -17,17 +17,27 @@ my %keywords = (
     'CTEXT' => 1,
     'LTEXT' => 1,
     'GROUPBOX' => 1,
-    'CONTROL' => 1
+    'CONTROL' => 1,
+    'GROUPBOX' => 1,
+    'AUTOCHECKBOX' => 1,
+    'AUTORADIOBUTTON' => 1
 );
 
 while (<>) {
     # Matches lines:
     #   KEYWORD  "String" ...
-    if ( $_ =~ /^\s*(\w+)\s+"(.+?)"/ && $_ !~ /^\s*(\w+)\s+""/) {
+    next if ($_ =~ /^\s*(\w+)\s+""/);
+
+    if ($_ =~ /^\s*(\w+)\s+"(.+?)"/) {
         # Excludes blank strings and strings of the form word followed by digit
         # which are control names (e.g. DateTimePicker3)
         if (exists($keywords{$1}) && $2 !~ /^ *$/ && $2 !~ /^\w+\d$/ && $2 !~ /^""/) {
             print qq{_("$2");\n};
+        }
+    }
+    elsif ($_ =~ /^\s*(\w+)\s+NC_\(\s*"(.+?)"\s*,\s*"(.+?)"\s*\)/) {
+        if (exists($keywords{$1}) && $2 !~ /^ *$/ && $2 !~ /^\w+\d$/ && $2 !~ /^""/) {
+            print qq{NC_("$2", "$3");\n};
         }
     }
 }

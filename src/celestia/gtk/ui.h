@@ -45,8 +45,8 @@ static const GtkActionEntry actionsPlain[] = {
     { "EclipseFinder", NULL, "_Eclipse Finder...", NULL, NULL, G_CALLBACK(actionEclipseFinder) },
 
     { "TimeMenu", NULL, "_Time", NULL, NULL, NULL },
-    { "TimeFaster", NULL, "10x _Faster", "L", NULL, G_CALLBACK(actionTimeFaster) },
-    { "TimeSlower", NULL, "10x _Slower", "K", NULL, G_CALLBACK(actionTimeSlower) },
+    { "TimeFaster", NULL, "2x _Faster", "L", NULL, G_CALLBACK(actionTimeFaster) },
+    { "TimeSlower", NULL, "2x _Slower", "K", NULL, G_CALLBACK(actionTimeSlower) },
     { "TimeFreeze", NULL, "Free_ze", "space", NULL, G_CALLBACK(actionTimeFreeze) },
     { "TimeReal", NULL, "_Real Time", "backslash", NULL, G_CALLBACK(actionTimeReal) },
     { "TimeReverse", NULL, "Re_verse Time", "J", NULL, G_CALLBACK(actionTimeReverse) },
@@ -154,7 +154,7 @@ static const GtkToggleActionEntry actionsRenderFlags[] = {
     { "RenderMinorMoons", NULL, "Minor Moons", NULL, NULL, G_CALLBACK(actionRenderMinorMoons), FALSE },
     { "RenderComets", NULL, "Comets", NULL, NULL, G_CALLBACK(actionRenderComets), FALSE },
     { "RenderAsteroids", NULL, "Asteroids", NULL, NULL, G_CALLBACK(actionRenderAsteroids), FALSE },
-    { "RenderSpacecrafts", NULL, "Spacecrafts", NULL, NULL, G_CALLBACK(actionRenderSpacecrafts), FALSE },
+    { "RenderSpacecrafts", NULL, "Spacecraft", NULL, NULL, G_CALLBACK(actionRenderSpacecrafts), FALSE },
     { "RenderRingShadows", NULL, "Ring Shadows", NULL, NULL, G_CALLBACK(actionRenderRingShadows), FALSE },
     { "RenderStars", NULL, "Stars", NULL, NULL, G_CALLBACK(actionRenderStars), FALSE },
 };

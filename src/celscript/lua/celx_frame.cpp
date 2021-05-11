@@ -16,6 +16,7 @@
 #include <celengine/observer.h>
 #include <Eigen/Geometry>
 
+using namespace std;
 using namespace Eigen;
 
 

@@ -12,10 +12,7 @@
 #define _TOKENIZER_H_
 
 #include <string>
-#include <iostream>
-
-using namespace std;
-
+#include <iosfwd>
 
 class Tokenizer
 {
@@ -39,14 +36,14 @@ public:
         TokenEndUnits       = 14,
     };
 
-    Tokenizer(istream*);
+    Tokenizer(std::istream*);
 
     TokenType nextToken();
     TokenType getTokenType();
     void pushBack();
     double getNumberValue();
-    string getNameValue();
-    string getStringValue();
+    std::string getNameValue();
+    std::string getStringValue();
 
     int getLineNumber() const;
 
@@ -67,7 +64,7 @@ private:
         UnicodeEscapeState  = 11,
     };
 
-    istream* in;
+    std::istream* in;
 
     int nextChar { 0 };
     TokenType tokenType{ TokenBegin };
@@ -85,7 +82,7 @@ private:
 
     double numberValue{ 0.0 };
 
-    string textToken;
+    std::string textToken;
 
     int lineNum{ 1 };
 };

@@ -69,9 +69,9 @@ bool LegacyScript::load(ifstream &scriptfile, const fs::path &/*path*/, string &
     CommandSequence* script = parser.parse();
     if (script == nullptr)
     {
-        const vector<string>* errors = parser.getErrors();
-        if (errors->size() > 0)
-            errorMsg = (*errors)[0];
+        auto errors = parser.getErrors();
+        if (!errors.empty())
+            errorMsg = errors[0];
         return false;
     }
     m_runningScript = unique_ptr<Execution>(new Execution(*script, *m_execEnv));

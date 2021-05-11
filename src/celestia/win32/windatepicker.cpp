@@ -15,6 +15,7 @@
 #include "celutil/gettext.h"
 #include "celutil/winutil.h"
 
+using namespace std;
 
 // DatePicker is a Win32 control for setting the date. It replaces the
 // date picker from commctl, adding a number of features appropriate
@@ -37,7 +38,7 @@
 // - No invalid date is permitted, including the skipped days in
 //   October 1582.
 
-static char* Months[12] =
+static const char* Months[12] =
 {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -479,7 +480,7 @@ DatePicker::notifyDateChanged()
 int
 DatePicker::getFieldWidth(DatePickerField field, HDC hdc)
 {
-    char* maxWidthText = "\0";
+    const char* maxWidthText = "\0";
 
     switch (field)
     {

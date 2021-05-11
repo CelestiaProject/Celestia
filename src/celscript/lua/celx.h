@@ -9,13 +9,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELESTIA_CELX_H_
-#define _CELESTIA_CELX_H_
+#pragma once
 
 #include <iostream>
 #include <string>
 #include <vector>
-#include "lua.hpp"
+#include <lua.hpp>
 #include <celcompat/filesystem.h>
 #include <celutil/timer.h>
 #include <celengine/observer.h>
@@ -40,7 +39,7 @@ public:
     lua_State* getState() const;
 
     int loadScript(std::istream&, const fs::path&);
-    int loadScript(const fs::path&);
+    int loadScript(const std::string&);
     bool init(CelestiaCore*);
 
     std::string getErrorMessage();
@@ -64,7 +63,7 @@ public:
     bool handleTickEvent(double dt);
 
     // Lua hook handling
-    void setLuaPath(const string& s);
+    void setLuaPath(const std::string& s);
     void allowSystemAccess();
     void allowLuaPackageAccess();
     void setLuaHookEventHandlerEnabled(bool);
@@ -93,5 +92,3 @@ private:
 
 View* getViewByObserver(CelestiaCore*, Observer*);
 void getObservers(CelestiaCore*, std::vector<Observer*>&);
-
-#endif // _CELESTIA_CELX_H_

@@ -8,11 +8,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cstring>
 #include <cmath>
 #include <iostream>
-#include <iomanip>
-#include <cstdio>
 #include <utility>
 #include <ctime>
 #include "astro.h"
@@ -106,7 +103,7 @@ static const char* MonthAbbrList[12] =
 
 struct UnitDefinition
 {
-    const char* name;
+    string_view name;
     double conversion;
 };
 
@@ -385,11 +382,16 @@ const char* astro::Date::toCStr(Format format) const
 {
     static char date[255];
 
+    if (format == ISO8601)
+    {
+        snprintf(date, sizeof(date), "%04d-%02d-%02dT%02d:%02d:%08.5fZ",
+                 year, month, day, hour, minute, seconds);
+        return date;
+    }
     // MinGW's libraries don't have the tm_gmtoff and tm_zone fields for
     // struct tm.
 #if defined(__GNUC__) && !defined(_WIN32)
-    struct tm cal_time;
-    memset(&cal_time, 0, sizeof(cal_time));
+    struct tm cal_time {};
     cal_time.tm_year = year-1900;
     cal_time.tm_mon = month-1;
     cal_time.tm_mday = day;
@@ -480,7 +482,9 @@ bool astro::parseDate(const string& s, astro::Date& date)
     unsigned int minute = 0;
     double second = 0.0;
 
-    if (sscanf(s.c_str(), " %d %u %u %u:%u:%lf ",
+    if (sscanf(s.c_str(), "%d-%u-%uT%u:%u:%lf",
+               &year, &month, &day, &hour, &minute, &second) == 6 ||
+        sscanf(s.c_str(), " %d %u %u %u:%u:%lf ",
                &year, &month, &day, &hour, &minute, &second) == 6 ||
         sscanf(s.c_str(), " %d %u %u %u:%u ",
                &year, &month, &day, &hour, &minute) == 5 ||
@@ -759,7 +763,7 @@ astro::TAItoJDUTC(double tai)
 
 
 // Get scale of given length unit in kilometers
-bool astro::getLengthScale(const string& unitName, double& scale)
+bool astro::getLengthScale(string_view unitName, double& scale)
 {
     unsigned int nUnits = sizeof(lengthUnits) / sizeof(lengthUnits[0]);
     bool foundMatch = false;
@@ -778,7 +782,7 @@ bool astro::getLengthScale(const string& unitName, double& scale)
 
 
 // Get scale of given time unit in days
-bool astro::getTimeScale(const string& unitName, double& scale)
+bool astro::getTimeScale(string_view unitName, double& scale)
 {
     for (const auto& timeUnit : timeUnits)
     {
@@ -794,7 +798,7 @@ bool astro::getTimeScale(const string& unitName, double& scale)
 
 
 // Get scale of given angle unit in degrees
-bool astro::getAngleScale(const string& unitName, double& scale)
+bool astro::getAngleScale(string_view unitName, double& scale)
 {
     for (const auto& angleUnit : angleUnits)
     {
@@ -809,7 +813,7 @@ bool astro::getAngleScale(const string& unitName, double& scale)
 }
 
 
-bool astro::getMassScale(const string& unitName, double& scale)
+bool astro::getMassScale(string_view unitName, double& scale)
 {
     for (const auto& massUnit : massUnits)
     {
@@ -825,31 +829,31 @@ bool astro::getMassScale(const string& unitName, double& scale)
 
 
 // Check if unit is a length unit
-bool astro::isLengthUnit(string unitName)
+bool astro::isLengthUnit(string_view unitName)
 {
     double dummy;
-    return getLengthScale(std::move(unitName), dummy);
+    return getLengthScale(unitName, dummy);
 }
 
 
 // Check if unit is a time unit
-bool astro::isTimeUnit(string unitName)
+bool astro::isTimeUnit(string_view unitName)
 {
     double dummy;
-    return getTimeScale(std::move(unitName), dummy);
+    return getTimeScale(unitName, dummy);
 }
 
 
 // Check if unit is an angle unit
-bool astro::isAngleUnit(string unitName)
+bool astro::isAngleUnit(string_view unitName)
 {
     double dummy;
-    return getAngleScale(std::move(unitName), dummy);
+    return getAngleScale(unitName, dummy);
 }
 
 
-bool astro::isMassUnit(string unitName)
+bool astro::isMassUnit(string_view unitName)
 {
     double dummy;
-    return getMassScale(std::move(unitName), dummy);
+    return getMassScale(unitName, dummy);
 }

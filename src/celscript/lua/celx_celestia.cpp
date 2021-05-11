@@ -32,6 +32,7 @@
 #include <celestia/view.h>
 #include <celscript/common/scriptmaps.h>
 
+using namespace std;
 using namespace Eigen;
 using namespace celestia::scripts;
 
@@ -2036,10 +2037,10 @@ static int celestia_geturl(lua_State* l)
     View* view = getViewByObserver(appCore, obs);
     appCore->setActiveView(view);
 
-    CelestiaState appState;
-    appState.captureState(appCore);
+    CelestiaState appState(appCore);
+    appState.captureState();
 
-    Url url(appState, 3);
+    Url url(appState);
     lua_pushstring(l, url.getAsString().c_str());
 
     return 1;

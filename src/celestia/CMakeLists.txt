@@ -1,6 +1,8 @@
 set(CELESTIA_SOURCES
   celestiacore.cpp
   celestiacore.h
+  celestiastate.cpp
+  celestiastate.h
   configfile.cpp
   configfile.h
   destination.cpp
@@ -50,6 +52,7 @@ add_library(celestia SHARED ${CELESTIA_SOURCES}
                             $<TARGET_OBJECTS:celcompat>
                             $<TARGET_OBJECTS:celengine>
                             $<TARGET_OBJECTS:celephem>
+                            $<TARGET_OBJECTS:celimage>
                             $<TARGET_OBJECTS:celmath>
                             $<TARGET_OBJECTS:celmodel>
                             $<TARGET_OBJECTS:celttf>
@@ -64,6 +67,10 @@ set_target_properties(celestia PROPERTIES
 
 if(ENABLE_SPICE)
   target_link_libraries(celestia CSPICE::CSPICE)
+endif()
+
+if(APPLE)
+  target_link_libraries(celestia "-framework Foundation")
 endif()
 
 cotire(celestia)

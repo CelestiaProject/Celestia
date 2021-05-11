@@ -14,7 +14,7 @@
 #include <cstring>
 #include <fstream>
 #include <gtk/gtk.h>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 
 #ifdef GNOME
 #include <gconf/gconf-client.h>
@@ -49,6 +49,7 @@
 #include "settings-file.h"
 #endif /* GNOME */
 
+using namespace std;
 
 /* Declarations: Action Helpers */
 static void openScript(const char* filename, AppData* app);
@@ -66,9 +67,9 @@ static void setLabelMode(AppData* a, int mode, gboolean state);
 void actionCopyURL(GtkAction*, AppData* app)
 {
     GtkClipboard* cb = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-    CelestiaState appState;
-    appState.captureState(app->core);
-    Url url(appState, Url::CurrentVersion);
+    CelestiaState appState(app->core);
+    appState.captureState();
+    Url url(appState);
     gtk_clipboard_set_text(cb, url.getAsString().c_str(), -1);
 }
 
@@ -89,7 +90,8 @@ void actionOpenURL(GtkAction*, AppData* app)
     gtk_entry_set_text(GTK_ENTRY(entry), "cel://");
     gtk_editable_select_region(GTK_EDITABLE(entry), 0, -1);
 
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), entry, TRUE, TRUE, CELSPACING);
+    GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG (dialog));
+    gtk_box_pack_start(GTK_BOX(content_area), entry, TRUE, TRUE, CELSPACING);
     gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
     gtk_widget_show_all(dialog);
 
@@ -224,11 +226,11 @@ void actionCaptureMovie(GtkAction*, AppData* app)
     GtkWidget* rlabel = gtk_label_new("Aspect Ratio:");
     gtk_box_pack_start(GTK_BOX(hbox), rlabel, TRUE, TRUE, 0);
 
-    GtkWidget* aspectmenubox = gtk_combo_box_new_text();
-    gtk_combo_box_append_text(GTK_COMBO_BOX(aspectmenubox), "1:1");
-    gtk_combo_box_append_text(GTK_COMBO_BOX(aspectmenubox), "4:3");
-    gtk_combo_box_append_text(GTK_COMBO_BOX(aspectmenubox), "16:9");
-    gtk_combo_box_append_text(GTK_COMBO_BOX(aspectmenubox), "Display");
+    GtkWidget* aspectmenubox = gtk_combo_box_text_new();
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(aspectmenubox), "1:1");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(aspectmenubox), "4:3");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(aspectmenubox), "16:9");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(aspectmenubox), "Display");
     gtk_combo_box_set_active(GTK_COMBO_BOX(aspectmenubox), 0);
     gtk_box_pack_start(GTK_BOX(hbox), aspectmenubox, FALSE, FALSE, 0);
 
@@ -314,7 +316,8 @@ void actionSearchObject(GtkAction*, AppData* app)
 
     GtkWidget* box = gtk_hbox_new(FALSE, CELSPACING);
     gtk_container_set_border_width(GTK_CONTAINER(box), CELSPACING);
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), box, TRUE, TRUE, 0);
+    GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    gtk_box_pack_start(GTK_BOX(content_area), box, TRUE, TRUE, 0);
 
     GtkWidget* label = gtk_label_new("Object name");
     gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 0);
@@ -448,8 +451,10 @@ void actionViewerSize(GtkAction*, AppData* app)
     char res[32];
 
     screenX = gdk_screen_get_width(gdk_screen_get_default());
-    currentX = app->glArea->allocation.width;
-    currentY = app->glArea->allocation.height;
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(GTK_WIDGET(app->glArea), &allocation);
+    currentX = allocation.width;
+    currentY = allocation.height;
 
     dialog = gtk_dialog_new_with_buttons("Set Viewer Size...",
                                          GTK_WINDOW(app->mainWindow),
@@ -458,16 +463,12 @@ void actionViewerSize(GtkAction*, AppData* app)
                                          GTK_STOCK_OK, GTK_RESPONSE_OK,
                                          NULL);
 
-    GtkWidget* vbox = gtk_vbox_new(FALSE, CELSPACING);
-    gtk_container_set_border_width(GTK_CONTAINER(vbox), CELSPACING);
-
     GtkWidget* label = gtk_label_new("Dimensions for Main Window:");
-    gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+    GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    gtk_box_pack_start(GTK_BOX(content_area), label, TRUE, TRUE, 0);
 
-    GtkWidget* menubox = gtk_combo_box_new_text();
-    gtk_box_pack_start(GTK_BOX(vbox), menubox, FALSE, FALSE, 0);
-
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox, TRUE, TRUE, 0);
+    GtkWidget* menubox = gtk_combo_box_text_new();
+    gtk_box_pack_start(GTK_BOX(content_area), menubox, TRUE, TRUE, 0);
 
     while (resolutions[i] != -1)
     {
@@ -484,7 +485,7 @@ void actionViewerSize(GtkAction*, AppData* app)
         else
             break;
 
-        gtk_combo_box_append_text(GTK_COMBO_BOX(menubox), res);
+        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(menubox), res);
     }
 
     gtk_combo_box_set_active(GTK_COMBO_BOX(menubox), position);
@@ -522,8 +523,10 @@ void actionFullScreen(GtkAction* action, AppData* app)
     if (app->fullScreen)
     {
         /* Save size/position, so original numbers are available for prefs */
-        g_object_set_data(G_OBJECT(app->mainWindow), "sizeX", GINT_TO_POINTER(app->glArea->allocation.width));
-        g_object_set_data(G_OBJECT(app->mainWindow), "sizeY", GINT_TO_POINTER(app->glArea->allocation.height));
+        GtkAllocation allocation;
+        gtk_widget_get_allocation(GTK_WIDGET(app->glArea), &allocation);
+        g_object_set_data(G_OBJECT(app->mainWindow), "sizeX", GINT_TO_POINTER(allocation.width));
+        g_object_set_data(G_OBJECT(app->mainWindow), "sizeY", GINT_TO_POINTER(allocation.height));
         gtk_window_get_position(GTK_WINDOW(app->mainWindow), &positionX, &positionY);
         g_object_set_data(G_OBJECT(app->mainWindow), "positionX", GINT_TO_POINTER(positionX));
         g_object_set_data(G_OBJECT(app->mainWindow), "positionY", GINT_TO_POINTER(positionY));
@@ -663,12 +666,16 @@ void actionHelpAbout(GtkAction*, AppData* app)
 
     GdkPixbuf *logo = gdk_pixbuf_new_from_file ("celestia-logo.png", NULL);
 
+    string comments = fmt::format("GTK+ Front-End, built using gtk+ version {}.{}",
+                                  GTK_MAJOR_VERSION,
+                                  GTK_MINOR_VERSION);
+
     gtk_show_about_dialog(GTK_WINDOW(app->mainWindow),
                          "name", "Celestia",
                          "version", VERSION,
-                         "copyright", "Copyright \xc2\xa9 2001-2011 Celestia Development Team",
-                         "comments", FRONTEND " Front-End",
-                         "website", "http://celestia.sf.net",
+                         "copyright", "Copyright \xc2\xa9 2001-2021 Celestia Development Team",
+                         "comments", comments.c_str(),
+                         "website", "https://celestia.space",
                          "authors", authors,
                          "license", readFromFile("COPYING"),
                          "logo", logo,
@@ -1095,9 +1102,10 @@ static void textInfoDialog(const char *txt, const char *title, AppData* app)
                                                     GTK_STOCK_OK, GTK_RESPONSE_OK,
                                                     NULL);
 
-    GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), scrolled_window, TRUE, TRUE, 0);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_window),
+    GtkWidget* scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    gtk_box_pack_start(GTK_BOX(content_area), scrolled_window, TRUE, TRUE, 0);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
                                    GTK_POLICY_AUTOMATIC,
                                    GTK_POLICY_AUTOMATIC);
     gtk_widget_show(scrolled_window);

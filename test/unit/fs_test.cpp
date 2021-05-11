@@ -53,4 +53,27 @@ TEST_CASE("filesystem", "[filesystem]")
         REQUIRE(fs::path(L"c:\\foo\\bar.txt") == "c:/foo/bar.txt");
 #endif
     }
+
+    SECTION("fs::path::replace_extension()")
+    {
+        REQUIRE(fs::path("/foo/bar.jpg").replace_extension(".png") == "/foo/bar.png");
+        REQUIRE(fs::path("/foo/bar.jpg").replace_extension("png") == "/foo/bar.png");
+        REQUIRE(fs::path("/foo/bar.jpg").replace_extension(".") == "/foo/bar.");
+        REQUIRE(fs::path("/foo/bar.jpg").replace_extension("") == "/foo/bar");
+
+        REQUIRE(fs::path("/foo/bar.").replace_extension("png") == "/foo/bar.png");
+
+        REQUIRE(fs::path("/foo/bar").replace_extension(".png") == "/foo/bar.png");
+        REQUIRE(fs::path("/foo/bar").replace_extension("png") == "/foo/bar.png");
+        REQUIRE(fs::path("/foo/bar").replace_extension(".") == "/foo/bar.");
+        REQUIRE(fs::path("/foo/bar").replace_extension("") == "/foo/bar");
+
+        REQUIRE(fs::path("/foo/.").replace_extension(".png") == "/foo/..png");
+        REQUIRE(fs::path("/foo/.").replace_extension("png") == "/foo/..png");
+        REQUIRE(fs::path("/foo/.").replace_extension(".") == "/foo/..");
+        REQUIRE(fs::path("/foo/.").replace_extension("") == "/foo/.");
+
+        REQUIRE(fs::path("/foo/").replace_extension(".png") == "/foo/.png");
+        REQUIRE(fs::path("/foo/").replace_extension("png") == "/foo/.png");
+    }
 }

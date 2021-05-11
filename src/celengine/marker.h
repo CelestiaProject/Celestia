@@ -14,7 +14,6 @@
 #include <string>
 #include <celutil/color.h>
 #include <celengine/selection.h>
-#include <celutil/debug.h>
 
 class Renderer;
 struct Matrices;
@@ -42,11 +41,11 @@ public:
     MarkerRepresentation(Symbol symbol = MarkerRepresentation::Diamond,
                          float size = 10.0f,
                          Color color = Color::White,
-                         const std::string& label = "") :
+                         std::string label = {}) :
         m_symbol(symbol),
         m_size(size),
         m_color(color),
-        m_label(label)
+        m_label(std::move(label))
     {
     }
 
@@ -59,8 +58,8 @@ public:
     void setColor(Color);
     float size() const { return m_size; }
     void setSize(float size);
-    string label() const { return m_label; }
-    void setLabel(const std::string&);
+    const std::string& label() const { return m_label; }
+    void setLabel(std::string);
 
     void render(Renderer &r, float size, const Matrices &m) const;
 
@@ -68,7 +67,7 @@ private:
     Symbol m_symbol;
     float m_size;
     Color m_color;
-    string m_label;
+    std::string m_label;
 };
 
 

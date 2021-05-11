@@ -14,6 +14,7 @@
 #include <Eigen/Geometry>
 #include <iosfwd>
 #include <string>
+#include <celcompat/string_view.h>
 #include <celmath/mathlib.h>
 
 #define SOLAR_ABSMAG   4.83f
@@ -41,8 +42,6 @@
 #define JUPITER_RADIUS 71492.0
 #define SOLAR_RADIUS   696000.0
 
-using namespace std;
-
 class UniversalCoord;
 
 namespace astro
@@ -59,6 +58,7 @@ namespace astro
             Locale          = 0,
             TZName          = 1,
             UTCOffset       = 2,
+            ISO8601         = 3,
         };
 
         const char* toCStr(Format format = Locale) const;
@@ -195,14 +195,14 @@ namespace astro
         return jd * SECONDS_PER_DAY;
     }
 
-    bool isLengthUnit(string unitName);
-    bool isTimeUnit(string unitName);
-    bool isAngleUnit(string unitName);
-    bool isMassUnit(string unitName);
-    bool getLengthScale(const string& unitName, double& scale);
-    bool getTimeScale(const string& unitName, double& scale);
-    bool getAngleScale(const string& unitName, double& scale);
-    bool getMassScale(const string& unitName, double& scale);
+    bool isLengthUnit(std::string_view unitName);
+    bool isTimeUnit(std::string_view unitName);
+    bool isAngleUnit(std::string_view unitName);
+    bool isMassUnit(std::string_view unitName);
+    bool getLengthScale(std::string_view unitName, double& scale);
+    bool getTimeScale(std::string_view unitName, double& scale);
+    bool getAngleScale(std::string_view unitName, double& scale);
+    bool getMassScale(std::string_view unitName, double& scale);
 
     void decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds);
     double degMinSecToDecimal(int degrees, int minutes, double seconds);
@@ -238,6 +238,23 @@ namespace astro
 
     constexpr const double SOLAR_IRRADIANCE = 1367.6; // Watts / m^2
     constexpr const double SOLAR_POWER      = 3.8462e26;  // in Watts
+
+
+    namespace literals
+    {
+    constexpr long double operator "" _au (long double au)
+    {
+        return AUtoKilometers(au);
+    }
+    constexpr long double operator "" _ly (long double ly)
+    {
+        return lightYearsToKilometers(ly);
+    }
+    constexpr long double operator "" _c (long double n)
+    {
+        return astro::speedOfLight * n;
+    }
+    }
 }
 
 // Convert a date structure to a Julian date

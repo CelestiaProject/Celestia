@@ -15,6 +15,7 @@
 #include <string>
 #include <array>
 #include <celutil/color.h>
+#include <celcompat/filesystem.h>
 
 
 namespace cmod
@@ -89,18 +90,18 @@ public:
     class TextureResource
     {
     public:
-        virtual ~TextureResource() {};
-        virtual std::string source() const = 0;
+        virtual ~TextureResource() = default;
+        virtual fs::path source() const = 0;
     };
 
     class DefaultTextureResource : public TextureResource
     {
     public:
-        DefaultTextureResource(const std::string& source) : m_source(source) {};
-        std::string source() const { return m_source; }
+        DefaultTextureResource(const fs::path& source) : m_source(source) {};
+        fs::path source() const override { return m_source; }
 
     private:
-        std::string m_source;
+        fs::path m_source;
     };
 
     enum BlendMode

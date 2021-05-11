@@ -176,12 +176,44 @@ public:
         delete[] data;
     }
 
-    void setup()
+    void setup(bool lineAsTriangles)
     {
 #if USE_VERTEX_BUFFER
         stripLengths.clear();
         currentStripLength = 0;
         currentPosition = 0;
+
+        this->lineAsTriangles = lineAsTriangles;
+        if (vbobj)
+        {
+            glBindBuffer(GL_ARRAY_BUFFER, vbobj);
+        }
+
+        glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+        glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+        int stride = lineAsTriangles ? sizeof(Vertex) :  sizeof(Vertex) * 2;
+
+        Vector4f* vertexBase = vbobj ? (Vector4f*) offsetof(Vertex, position) : &data[0].position;
+        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, stride, vertexBase);
+
+        Vector4f* colorBase = vbobj ? (Vector4f*) offsetof(Vertex, color) : &data[0].color;
+        glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
+                              4, GL_FLOAT, GL_FALSE, stride, colorBase);
+        if (lineAsTriangles)
+        {
+
+            glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+            glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
+
+            float* scaleBase = vbobj ? (float*) offsetof(Vertex, scale) : &data[0].scale;
+            glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
+                                  1, GL_FLOAT, GL_FALSE, stride, scaleBase);
+
+            Vector4f* nextVertexBase = vbobj ? (Vector4f*) (offsetof(Vertex, position) + (2 * sizeof(Vertex))) : &data[2].position;
+            glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
+                                  4, GL_FLOAT, GL_FALSE, stride, nextVertexBase);
+        }
 #endif
     }
 
@@ -268,46 +300,14 @@ public:
 #endif
     }
 
-    inline void begin(bool lineAsTriangles)
+    inline void begin()
     {
-#if USE_VERTEX_BUFFER
-        this->lineAsTriangles = lineAsTriangles;
-        if (vbobj)
-        {
-            glBindBuffer(GL_ARRAY_BUFFER, vbobj);
-        }
-
-        glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-        glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-        int stride = lineAsTriangles ? sizeof(Vertex) :  sizeof(Vertex) * 2;
-
-        Vector4f* vertexBase = vbobj ? (Vector4f*) offsetof(Vertex, position) : &data[0].position;
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, stride, vertexBase);
-
-        Vector4f* colorBase = vbobj ? (Vector4f*) offsetof(Vertex, color) : &data[0].color;
-        glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
-                              4, GL_FLOAT, GL_FALSE, stride, colorBase);
-        if (lineAsTriangles)
-        {
-
-            glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-            glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-
-            float* scaleBase = vbobj ? (float*) offsetof(Vertex, scale) : &data[0].scale;
-            glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                                  1, GL_FLOAT, GL_FALSE, stride, scaleBase);
-
-            Vector4f* nextVertexBase = vbobj ? (Vector4f*) (offsetof(Vertex, position) + (2 * sizeof(Vertex))) : &data[2].position;
-            glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                                  4, GL_FLOAT, GL_FALSE, stride, nextVertexBase);
-        }
-#else
+#if !USE_VERTEX_BUFFER
         glBegin(GL_LINE_STRIP);
 #endif
     }
 
-    inline void end()
+    inline void end(bool flushIfNeeded = true)
     {
 #if USE_VERTEX_BUFFER
         if (currentPosition > 1)
@@ -318,21 +318,23 @@ public:
         }
         stripLengths.push_back(currentStripLength);
         currentStripLength = 0;
+        if (flushIfNeeded && currentPosition == capacity)
+            flush(false);
 #else
         glEnd();
 #endif
     }
 
-    inline void flush()
+    inline void flush(bool endIfNeeded = true)
     {
 #if USE_VERTEX_BUFFER
         if (currentPosition > 0)
         {
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * (currentPosition + 1) * 2, data);
-
             // Finish the current line strip
-            if (currentStripLength > 1)
-                end();
+            if (endIfNeeded && currentStripLength > 1)
+                end(false);
+
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * currentPosition * 2, data);
 
             unsigned int startIndex = 0;
             for (vector<unsigned int>::const_iterator iter = stripLengths.begin(); iter != stripLengths.end(); ++iter)
@@ -401,12 +403,10 @@ class HighPrec_RenderContext
 public:
     HighPrec_RenderContext(HighPrec_VertexBuffer& vbuf,
                            HighPrec_Frustum& viewFrustum,
-                           double subdivisionThreshold,
-                           bool lineAsTriangles) :
+                           double subdivisionThreshold) :
         m_vbuf(vbuf),
         m_viewFrustum(viewFrustum),
-        m_subdivisionThreshold(subdivisionThreshold),
-        m_lineAsTriangles(lineAsTriangles)
+        m_subdivisionThreshold(subdivisionThreshold)
     {
     }
 
@@ -476,7 +476,7 @@ public:
 
                 if (restartCurve)
                 {
-                    m_vbuf.begin(m_lineAsTriangles);
+                    m_vbuf.begin();
                     m_vbuf.vertex(lastP);
                     restartCurve = false;
                 }
@@ -554,7 +554,7 @@ public:
 
                 if (restartCurve)
                 {
-                    m_vbuf.begin(m_lineAsTriangles);
+                    m_vbuf.begin();
                     m_vbuf.vertex(lastP, Vector4f(color.x(), color.y(), color.z(), color.w() * float(lastOpacity)));
                     restartCurve = false;
                 }
@@ -572,7 +572,6 @@ private:
     HighPrec_VertexBuffer& m_vbuf;
     HighPrec_Frustum& m_viewFrustum;
     double m_subdivisionThreshold;
-    bool m_lineAsTriangles;
 };
 
 
@@ -704,7 +703,7 @@ CurvePlot::render(const Affine3d& modelview,
     Vector4d v0 = modelview * Vector4d(v0_.x(), v0_.y(), v0_.z(), 0.0);
 
     HighPrec_Frustum viewFrustum(nearZ, farZ, viewFrustumPlaneNormals);
-    HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold, lineAsTriangles);
+    HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold);
 
 #if DEBUG_ADAPTIVE_SPLINE
     for (unsigned int i = 0; i < sizeof(SegmentCounts) / sizeof(SegmentCounts[0]); i++)
@@ -712,7 +711,7 @@ CurvePlot::render(const Affine3d& modelview,
 #endif
 
     vbuf.createVertexBuffer();
-    vbuf.setup();
+    vbuf.setup(lineAsTriangles);
     vbuf.setColor(color);
 
     for (unsigned int i = 1; i < m_samples.size(); i++)
@@ -789,7 +788,7 @@ CurvePlot::render(const Affine3d& modelview,
             {
                 if (restartCurve)
                 {
-                    vbuf.begin(lineAsTriangles);
+                    vbuf.begin();
                     vbuf.vertex(p0);
                     restartCurve = false;
                 }
@@ -861,10 +860,10 @@ CurvePlot::render(const Affine3d& modelview,
     Vector4d v0 = modelview * Vector4d(v0_.x(), v0_.y(), v0_.z(), 0.0);
 
     HighPrec_Frustum viewFrustum(nearZ, farZ, viewFrustumPlaneNormals);
-    HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold, lineAsTriangles);
+    HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold);
 
     vbuf.createVertexBuffer();
-    vbuf.setup();
+    vbuf.setup(lineAsTriangles);
     vbuf.setColor(color);
 
     bool firstSegment = true;
@@ -958,7 +957,7 @@ CurvePlot::render(const Affine3d& modelview,
             {
                 if (restartCurve)
                 {
-                    vbuf.begin(lineAsTriangles);
+                    vbuf.begin();
                     vbuf.vertex(p0);
                     restartCurve = false;
                 }
@@ -1035,10 +1034,10 @@ CurvePlot::renderFaded(const Eigen::Affine3d& modelview,
     opacity0 = max(0.0, min(1.0, opacity0));
 
     HighPrec_Frustum viewFrustum(nearZ, farZ, viewFrustumPlaneNormals);
-    HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold, lineAsTriangles);
+    HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold);
 
     vbuf.createVertexBuffer();
-    vbuf.setup();
+    vbuf.setup(lineAsTriangles);
 
     bool firstSegment = true;
     bool lastSegment = false;
@@ -1137,7 +1136,7 @@ CurvePlot::renderFaded(const Eigen::Affine3d& modelview,
             {
                 if (restartCurve)
                 {
-                    vbuf.begin(lineAsTriangles);
+                    vbuf.begin();
                     vbuf.vertex(p0, Vector4f(color.x(), color.y(), color.z(), color.w() * float(opacity0)));
                     restartCurve = false;
                 }

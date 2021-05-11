@@ -26,7 +26,7 @@ class GtkSplashProgressNotifier : public ProgressNotifier
         GtkSplashProgressNotifier(SplashData* _splash);
         virtual ~GtkSplashProgressNotifier();
 
-        virtual void update(const string& filename);
+        virtual void update(const std::string& filename);
 
     private:
         SplashData* splash;

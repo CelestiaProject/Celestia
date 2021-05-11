@@ -27,7 +27,7 @@ BEGIN
             VALUE "FileDescription", "Celestia QT - A real-time 3D space simulation"
             VALUE "FileVersion", "1.7.0.0"
             VALUE "InternalName", "Celestia QT"
-            VALUE "LegalCopyright", "Copyright  2001-2017, Celestia Development Team"
+            VALUE "LegalCopyright", "Copyright  2001-2021, Celestia Development Team"
             VALUE "OriginalFilename", "Celestia QT.exe"
             VALUE "PrivateBuild", ""
             VALUE "ProductName", "Celestia QT"

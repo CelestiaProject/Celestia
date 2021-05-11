@@ -159,7 +159,7 @@ bool ParseCommandLine()
         {
             if (isLastArg)
             {
-                CommandLineError("Directory expected after --dir");
+                CommandLineError(_("Directory expected after --dir"));
                 return false;
             }
             i++;
@@ -169,7 +169,7 @@ bool ParseCommandLine()
         {
             if (isLastArg)
             {
-                CommandLineError("Configuration file name expected after --conf");
+                CommandLineError(_("Configuration file name expected after --conf"));
                 return false;
             }
             i++;
@@ -180,7 +180,7 @@ bool ParseCommandLine()
         {
             if (isLastArg)
             {
-                CommandLineError("Directory expected after --extrasdir");
+                CommandLineError(_("Directory expected after --extrasdir"));
                 return false;
             }
             i++;
@@ -190,7 +190,7 @@ bool ParseCommandLine()
         {
             if (isLastArg)
             {
-                CommandLineError("URL expected after --url");
+                CommandLineError(_("URL expected after --url"));
                 return false;
             }
             i++;
@@ -204,7 +204,7 @@ bool ParseCommandLine()
         {
             if (isLastArg)
             {
-                CommandLineError("A filename expected after --log/-l");
+                CommandLineError(_("A filename expected after --log/-l"));
                 return false;
             }
             i++;
@@ -212,7 +212,7 @@ bool ParseCommandLine()
         }
         else
         {
-            string buf = fmt::sprintf("Invalid command line option '%s'", args.at(i).toUtf8().data());
+            string buf = fmt::sprintf(_("Invalid command line option '%s'"), args.at(i).toUtf8().data());
             CommandLineError(buf.c_str());
             return false;
         }

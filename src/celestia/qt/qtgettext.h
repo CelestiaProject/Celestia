@@ -22,9 +22,8 @@ class CelestiaQTranslator : public QTranslator
 QString
 CelestiaQTranslator::translate(const char*,
                                const char *msgid,
-                               const char*,
+                               const char *disambiguation,
                                int) const
 {
-    return QString(_(msgid));
-    return QString(msgid);
+    return disambiguation != nullptr ? CX_(disambiguation, msgid) : _(msgid);
 }

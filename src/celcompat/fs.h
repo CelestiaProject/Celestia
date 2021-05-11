@@ -187,6 +187,8 @@ class path
     path extension() const;
     path parent_path() const;
 
+    path& replace_extension(const path& replacement = path());
+
     bool is_relative() const
     {
         return !is_absolute();
@@ -409,5 +411,8 @@ bool exists(const path& p, std::error_code& ec) noexcept;
 
 bool is_directory(const path& p);
 bool is_directory(const path& p, std::error_code& ec) noexcept;
+
+bool create_directory(const path& p);
+bool create_directory(const path& p, std::error_code& ec) noexcept;
 }
 }
