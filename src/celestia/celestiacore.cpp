@@ -3796,6 +3796,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
                 if (!fs::is_directory(fn.path(), ec))
                     entries.push_back(fn.path());
             }
+            std::sort(begin(entries), end(entries));
             for (const auto& fn : entries)
                 loader.process(fn);
         }
