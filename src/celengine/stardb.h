@@ -36,10 +36,10 @@ class StarDatabase
     inline uint32_t size() const;
 
     Star* find(AstroCatalog::IndexNumber catalogNumber) const;
-    Star* find(const std::string&) const;
-    AstroCatalog::IndexNumber findCatalogNumberByName(const std::string&) const;
+    Star* find(const std::string&, bool i18n) const;
+    AstroCatalog::IndexNumber findCatalogNumberByName(const std::string&, bool i18n) const;
 
-    std::vector<std::string> getCompletion(const std::string&) const;
+    std::vector<std::string> getCompletion(const std::string&, bool i18n) const;
 
     void findVisibleStars(StarHandler& starHandler,
                           const Eigen::Vector3f& obsPosition,

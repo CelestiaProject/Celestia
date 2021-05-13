@@ -955,7 +955,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                     typedText = string(typedText, 0, typedText.size() - 1);
                     if (typedText.size() > 0)
                     {
-                        typedTextCompletion = sim->getObjectCompletion(typedText, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
+                        typedTextCompletion = sim->getObjectCompletion(typedText, true, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
                     } else {
                         typedTextCompletion.clear();
                     }
@@ -3269,20 +3269,6 @@ void CelestiaCore::renderOverlay()
                 {
                     lastSelection = sel;
                     selectionNames = sim->getUniverse()->getStarCatalog()->getStarNameList(*sel.star());
-                    // Skip displaying the English name if a localized version is present.
-                    string starName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star());
-                    string locStarName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true);
-                    if (sel.star()->getIndex() == 0 && selectionNames.find("Sun") != string::npos && strcmp("Sun", _("Sun")) != 0)
-                    {
-                        string::size_type startPos = selectionNames.find("Sun");
-                        string::size_type endPos = selectionNames.find(_("Sun"));
-                        selectionNames = selectionNames.erase(startPos, endPos - startPos);
-                    }
-                    else if (selectionNames.find(starName) != string::npos && starName != locStarName)
-                    {
-                        string::size_type startPos = selectionNames.find(locStarName);
-                        selectionNames = selectionNames.substr(startPos);
-                    }
                 }
 
                 overlay->setFont(titleFont);
@@ -4654,7 +4640,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
 void CelestiaCore::setTypedText(const char *c_p)
 {
     typedText += string(c_p);
-    typedTextCompletion = sim->getObjectCompletion(typedText, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
+    typedTextCompletion = sim->getObjectCompletion(typedText, true, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
     typedTextCompletionIdx = -1;
 #ifdef AUTO_COMPLETION
     if (typedTextCompletion.size() == 1)

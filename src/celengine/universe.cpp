@@ -1011,20 +1011,20 @@ Selection Universe::find(const string& s,
 {
     if (starCatalog != nullptr)
     {
-        Star* star = starCatalog->find(s);
+        Star* star = starCatalog->find(s, i18n);
         if (star != nullptr)
             return Selection(star);
-        star = starCatalog->find(ReplaceGreekLetterAbbr(s));
+        star = starCatalog->find(ReplaceGreekLetterAbbr(s), i18n);
         if (star != nullptr)
             return Selection(star);
     }
 
     if (dsoCatalog != nullptr)
     {
-        DeepSkyObject* dso = dsoCatalog->find(s);
+        DeepSkyObject* dso = dsoCatalog->find(s, i18n);
         if (dso != nullptr)
             return Selection(dso);
-        dso = dsoCatalog->find(ReplaceGreekLetterAbbr(s));
+        dso = dsoCatalog->find(ReplaceGreekLetterAbbr(s), i18n);
         if (dso != nullptr)
             return Selection(dso);
     }
@@ -1082,9 +1082,10 @@ Selection Universe::findPath(const string& s,
 
 
 vector<string> Universe::getCompletion(const string& s,
-                                                 Selection* contexts,
-                                                 int nContexts,
-                                                 bool withLocations)
+                                       bool i18n,
+                                       Selection* contexts,
+                                       int nContexts,
+                                       bool withLocations)
 {
     vector<string> completion;
     int s_length = UTF8Length(s);
@@ -1099,8 +1100,15 @@ vector<string> Universe::getCompletion(const string& s,
             {
                 for (const auto location : *locations)
                 {
-                    if (!UTF8StringCompare(s, location->getName(true), s_length))
-                        completion.push_back(location->getName(true));
+                    std::string name = location->getName(false);
+                    if (!UTF8StringCompare(s, name, s_length))
+                        completion.push_back(name);
+                    else if (i18n)
+                    {
+                        std::string lname = location->getName(true);
+                        if (lname != name && !UTF8StringCompare(s, lname, s_length))
+                            completion.push_back(lname);
+                    }
                 }
             }
         }
@@ -1111,7 +1119,7 @@ vector<string> Universe::getCompletion(const string& s,
             PlanetarySystem* planets = sys->getPlanets();
             if (planets != nullptr)
             {
-                vector<string> bodies = planets->getCompletion(s);
+                vector<string> bodies = planets->getCompletion(s, i18n);
                 completion.insert(completion.end(),
                                   bodies.begin(), bodies.end());
             }
@@ -1121,14 +1129,14 @@ vector<string> Universe::getCompletion(const string& s,
     // Deep sky objects:
     if (dsoCatalog != nullptr)
     {
-        vector<string> dsos  = dsoCatalog->getCompletion(s);
+        vector<string> dsos  = dsoCatalog->getCompletion(s, i18n);
         completion.insert(completion.end(), dsos.begin(), dsos.end());
     }
 
     // and finally stars;
     if (starCatalog != nullptr)
     {
-        vector<string> stars  = starCatalog->getCompletion(s);
+        vector<string> stars  = starCatalog->getCompletion(s, i18n);
         completion.insert(completion.end(), stars.begin(), stars.end());
     }
 
@@ -1137,6 +1145,7 @@ vector<string> Universe::getCompletion(const string& s,
 
 
 vector<string> Universe::getCompletionPath(const string& s,
+                                           bool i18n,
                                            Selection* contexts,
                                            int nContexts,
                                            bool withLocations)
@@ -1146,10 +1155,10 @@ vector<string> Universe::getCompletionPath(const string& s,
     string::size_type pos = s.rfind('/', s.length());
 
     if (pos == string::npos)
-        return getCompletion(s, contexts, nContexts, withLocations);
+        return getCompletion(s, i18n, contexts, nContexts, withLocations);
 
     string base(s, 0, pos);
-    Selection sel = findPath(base, contexts, nContexts, true);
+    Selection sel = findPath(base, contexts, nContexts, i18n);
 
     if (sel.empty())
     {
@@ -1172,10 +1181,14 @@ vector<string> Universe::getCompletionPath(const string& s,
             string search = s.substr(pos + 1);
             for (const auto location : *locations)
             {
-                if (!UTF8StringCompare(search, location->getName(true),
-                                       search.length()))
+                std::string name = location->getName(false);
+                if (!UTF8StringCompare(search, name, search.length()))
+                    locationCompletion.push_back(name);
+                else if (i18n)
                 {
-                    locationCompletion.push_back(location->getName(true));
+                    std::string lname = location->getName(true);
+                    if (lname != name && !UTF8StringCompare(search, lname, search.length()))
+                        locationCompletion.push_back(lname);
                 }
             }
         }
@@ -1188,7 +1201,7 @@ vector<string> Universe::getCompletionPath(const string& s,
     }
 
     if (worlds != nullptr)
-        completion = worlds->getCompletion(s.substr(pos + 1), false);
+        completion = worlds->getCompletion(s.substr(pos + 1), i18n, false);
 
     completion.insert(completion.end(), locationCompletion.begin(), locationCompletion.end());
 

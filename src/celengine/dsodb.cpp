@@ -85,14 +85,14 @@ DeepSkyObject* DSODatabase::find(const AstroCatalog::IndexNumber catalogNumber) 
 }
 
 
-DeepSkyObject* DSODatabase::find(const string& name) const
+DeepSkyObject* DSODatabase::find(const string& name, bool i18n) const
 {
     if (name.empty())
         return nullptr;
 
     if (namesDB != nullptr)
     {
-        AstroCatalog::IndexNumber catalogNumber   = namesDB->findCatalogNumberByName(name);
+        AstroCatalog::IndexNumber catalogNumber   = namesDB->findCatalogNumberByName(name, i18n);
         if (catalogNumber != AstroCatalog::InvalidIndex)
             return find(catalogNumber);
     }
@@ -101,13 +101,13 @@ DeepSkyObject* DSODatabase::find(const string& name) const
 }
 
 
-vector<string> DSODatabase::getCompletion(const string& name) const
+vector<string> DSODatabase::getCompletion(const string& name, bool i18n) const
 {
     vector<string> completion;
 
     // only named DSOs are supported by completion.
     if (!name.empty() && namesDB != nullptr)
-        return namesDB->getCompletion(name);
+        return namesDB->getCompletion(name, i18n);
     else
         return completion;
 }

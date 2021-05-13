@@ -214,7 +214,7 @@ Star* StarDatabase::find(AstroCatalog::IndexNumber catalogNumber) const
 }
 
 
-AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(const string& name) const
+AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(const string& name, bool i18n) const
 {
     if (name.empty())
         return AstroCatalog::InvalidIndex;
@@ -223,7 +223,7 @@ AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(const string& na
 
     if (namesDB != nullptr)
     {
-        catalogNumber = namesDB->findCatalogNumberByName(name);
+        catalogNumber = namesDB->findCatalogNumberByName(name, i18n);
         if (catalogNumber != AstroCatalog::InvalidIndex)
             return catalogNumber;
     }
@@ -256,9 +256,9 @@ AstroCatalog::IndexNumber StarDatabase::findCatalogNumberByName(const string& na
 }
 
 
-Star* StarDatabase::find(const string& name) const
+Star* StarDatabase::find(const string& name, bool i18n) const
 {
-    AstroCatalog::IndexNumber catalogNumber = findCatalogNumberByName(name);
+    AstroCatalog::IndexNumber catalogNumber = findCatalogNumberByName(name, i18n);
     if (catalogNumber != AstroCatalog::InvalidIndex)
         return find(catalogNumber);
     else
@@ -319,13 +319,13 @@ Star* StarDatabase::searchCrossIndex(const Catalog catalog, const AstroCatalog::
 }
 
 
-vector<string> StarDatabase::getCompletion(const string& name) const
+vector<string> StarDatabase::getCompletion(const string& name, bool i18n) const
 {
     vector<string> completion;
 
     // only named stars are supported by completion.
     if (!name.empty() && namesDB != nullptr)
-        return namesDB->getCompletion(name);
+        return namesDB->getCompletion(name, i18n);
     else
         return completion;
 }
@@ -440,7 +440,7 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
             if (count != 0)
                 starNames += " / ";
 
-            starNames += iter->second;
+            starNames += _(iter->second.c_str());
             ++iter;
             ++count;
         }
@@ -949,7 +949,7 @@ bool StarDatabase::createStar(Star* star,
             string barycenterName;
             if (starData->getString("OrbitBarycenter", barycenterName))
             {
-                barycenterCatNo   = findCatalogNumberByName(barycenterName);
+                barycenterCatNo   = findCatalogNumberByName(barycenterName, false);
                 barycenterDefined = true;
             }
             else if (starData->getNumber("OrbitBarycenter", barycenterCatNo))
@@ -1276,7 +1276,7 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
             {
                 if (!firstName.empty())
                 {
-                    catalogNumber = findCatalogNumberByName(firstName);
+                    catalogNumber = findCatalogNumberByName(firstName, false);
                 }
             }
 
@@ -1294,7 +1294,7 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
             // If no catalog number was specified, try looking up the star by name
             if (catalogNumber == AstroCatalog::InvalidIndex && !firstName.empty())
             {
-                catalogNumber = findCatalogNumberByName(firstName);
+                catalogNumber = findCatalogNumberByName(firstName, false);
             }
 
             if (catalogNumber != AstroCatalog::InvalidIndex)
