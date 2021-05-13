@@ -23,7 +23,7 @@ class DSONameDatabase: public NameDatabase
     DSONameDatabase() {};
 
 
-    uint32_t findCatalogNumberByName(const std::string&) const;
+    uint32_t findCatalogNumberByName(const std::string&, bool i18n) const;
 };
 
 #endif  // _DSONAME_H_

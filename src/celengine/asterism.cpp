@@ -151,9 +151,9 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
                 {
                     if (i->getType() == Value::StringType)
                     {
-                        Star* star = stardb.find(i->getString());
+                        Star* star = stardb.find(i->getString(), false);
                         if (star == nullptr)
-                            star = stardb.find(ReplaceGreekLetterAbbr(i->getString()));
+                            star = stardb.find(ReplaceGreekLetterAbbr(i->getString()), false);
                         if (star != nullptr)
                             new_chain->push_back(star->getPosition());
                         else

@@ -975,7 +975,9 @@ Location* Body::findLocation(const string& name, bool i18n) const
 
     for (const auto location : *locations)
     {
-        if (!UTF8StringCompare(name, location->getName(i18n)))
+        if (!UTF8StringCompare(name, location->getName(false)))
+            return location;
+        if (i18n && !UTF8StringCompare(name, location->getName(true)))
             return location;
     }
 
@@ -1332,7 +1334,9 @@ Body* PlanetarySystem::find(const string& _name, bool deepSearch, bool i18n) con
     {
         for (const auto sat : satellites)
         {
-            if (UTF8StringCompare(sat->getName(i18n), _name) == 0)
+            if (!UTF8StringCompare(sat->getName(false), _name))
+                return sat;
+            if (i18n && !UTF8StringCompare(sat->getName(true), _name))
                 return sat;
             if (sat->getSatellites())
             {
@@ -1365,7 +1369,7 @@ bool PlanetarySystem::traverse(TraversalFunc func, void* info) const
     return true;
 }
 
-std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name, bool deepSearch) const
+std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name, bool i18n, bool deepSearch) const
 {
     std::vector<std::string> completion;
     int _name_length = UTF8Length(_name);
@@ -1375,9 +1379,13 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
     {
         const string& alias = index.first;
 
-        if (UTF8StringCompare(alias, _name, _name_length) == 0)
-        {
+        if (!UTF8StringCompare(alias, _name, _name_length))
             completion.push_back(alias);
+        else if (i18n)
+        {
+            std::string lname = _(alias.c_str());
+            if (lname != alias && !UTF8StringCompare(lname, _name, _name_length))
+                completion.push_back(lname);
         }
     }
 
@@ -1388,7 +1396,7 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
         {
             if (sat->getSatellites())
             {
-                auto bodies = sat->getSatellites()->getCompletion(_name);
+                auto bodies = sat->getSatellites()->getCompletion(_name, i18n);
                 completion.insert(completion.end(), bodies.begin(), bodies.end());
             }
         }

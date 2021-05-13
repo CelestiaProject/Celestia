@@ -16,9 +16,9 @@
 using namespace std;
 
 
-uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
+uint32_t StarNameDatabase::findCatalogNumberByName(const string& name, bool i18n) const
 {
-    auto catalogNumber = getCatalogNumberByName(name);
+    auto catalogNumber = getCatalogNumberByName(name, i18n);
     if (catalogNumber != AstroCatalog::InvalidIndex)
         return catalogNumber;
 
@@ -74,23 +74,23 @@ uint32_t StarNameDatabase::findCatalogNumberByName(const string& name) const
         }
     }
 
-    catalogNumber = getCatalogNumberByName(priName);
+    catalogNumber = getCatalogNumberByName(priName, i18n);
     if (catalogNumber != AstroCatalog::InvalidIndex)
         return catalogNumber;
 
     priName += " A";  // try by appending an A
-    catalogNumber = getCatalogNumberByName(priName);
+    catalogNumber = getCatalogNumberByName(priName, i18n);
     if (catalogNumber != AstroCatalog::InvalidIndex)
         return catalogNumber;
 
     // If the first search failed, try using the alternate name
     if (altName.length() != 0)
     {
-        catalogNumber = getCatalogNumberByName(altName);
+        catalogNumber = getCatalogNumberByName(altName, i18n);
         if (catalogNumber == AstroCatalog::InvalidIndex)
         {
             altName += " A";
-            catalogNumber = getCatalogNumberByName(altName);
+            catalogNumber = getCatalogNumberByName(altName, i18n);
         }   // Intentional fallthrough.
     }
 

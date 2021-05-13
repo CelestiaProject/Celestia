@@ -69,10 +69,12 @@ class Universe
                                   bool i18n = false) const;
 
     std::vector<std::string> getCompletion(const std::string& s,
+                                           bool i18n,
                                            Selection* contexts = nullptr,
                                            int nContexts = 0,
                                            bool withLocations = false);
     std::vector<std::string> getCompletionPath(const std::string& s,
+                                               bool i18n,
                                                Selection* contexts = nullptr,
                                                int nContexts = 0,
                                                bool withLocations = false);

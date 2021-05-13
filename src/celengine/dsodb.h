@@ -38,9 +38,9 @@ class DSODatabase
     inline uint32_t size() const;
 
     DeepSkyObject* find(const AstroCatalog::IndexNumber catalogNumber) const;
-    DeepSkyObject* find(const std::string&) const;
+    DeepSkyObject* find(const std::string&, bool i18n) const;
 
-    std::vector<std::string> getCompletion(const std::string&) const;
+    std::vector<std::string> getCompletion(const std::string&, bool i18n) const;
 
     void findVisibleDSOs(DSOHandler& dsoHandler,
                          const Eigen::Vector3d& obsPosition,
