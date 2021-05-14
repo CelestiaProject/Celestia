@@ -117,6 +117,8 @@ static GLContext::GLRenderPath getBestAvailableRenderPath(const GLContext& /*glc
 
 void CelestiaGlWidget::initializeGL()
 {
+    appCore->setScreenDpi(logicalDpiY() * devicePixelRatioF());
+
     if (!appCore->initRenderer())
     {
         // cerr << "Failed to initialize renderer.\n";
@@ -156,8 +158,6 @@ void CelestiaGlWidget::initializeGL()
 
     appRenderer->getGLContext()->setRenderPath(usePath);
 #endif
-
-    appCore->setScreenDpi(logicalDpiY());
 
     appRenderer->setSolarSystemMaxDistance(appCore->getConfig()->SolarSystemMaxDistance);
     appRenderer->setShadowMapSize(appCore->getConfig()->ShadowMapSize);
