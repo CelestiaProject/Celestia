@@ -172,8 +172,9 @@ void CelestiaGlWidget::resizeGL(int w, int h)
 
 void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
 {
-    int x = (int) m->x();
-    int y = (int) m->y();
+    float scale = devicePixelRatioF();
+    int x = (int)(m->x() * scale);
+    int y = (int)(m->y() * scale);
 
     int buttons = 0;
     if (m->buttons() & LeftButton)
@@ -208,8 +209,8 @@ void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
 
             // Save the cursor position
             QPoint pt;
-            pt.setX(x);
-            pt.setY(y);
+            pt.setX(m->x());
+            pt.setY(m->y());
 
             // Store a local and global location
             saveLocalCursorPos = pt;
@@ -218,7 +219,7 @@ void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
         }
 
         // Calculate mouse delta from local coordinate then move it back to the saved location
-        appCore->mouseMove(x - saveLocalCursorPos.rx(), y - saveLocalCursorPos.ry(), buttons);
+        appCore->mouseMove((m->x() - saveLocalCursorPos.rx()) * scale, (m->y() - saveLocalCursorPos.ry()) * scale, buttons);
         QCursor::setPos(saveGlobalCursorPos);
     }
     else
@@ -230,17 +231,25 @@ void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
 
 void CelestiaGlWidget::mousePressEvent( QMouseEvent* m )
 {
+    float scale = devicePixelRatioF();
+    int x = (int)(m->x() * scale);
+    int y = (int)(m->y() * scale);
+
     if (m->button() == LeftButton)
-        appCore->mouseButtonDown(m->x(), m->y(), CelestiaCore::LeftButton);
+        appCore->mouseButtonDown(x, y, CelestiaCore::LeftButton);
     else if (m->button() == MidButton)
-        appCore->mouseButtonDown(m->x(), m->y(), CelestiaCore::MiddleButton);
+        appCore->mouseButtonDown(x, y, CelestiaCore::MiddleButton);
     else if (m->button() == RightButton)
-        appCore->mouseButtonDown(m->x(), m->y(), CelestiaCore::RightButton);
+        appCore->mouseButtonDown(x, y, CelestiaCore::RightButton);
 }
 
 
 void CelestiaGlWidget::mouseReleaseEvent( QMouseEvent* m )
 {
+    float scale = devicePixelRatioF();
+    int x = (int)(m->x() * scale);
+    int y = (int)(m->y() * scale);
+
     if (m->button() == LeftButton)
     {
         if (!cursorVisible)
@@ -250,11 +259,11 @@ void CelestiaGlWidget::mouseReleaseEvent( QMouseEvent* m )
             cursorVisible = true;
             QCursor::setPos(saveGlobalCursorPos);
         }
-        appCore->mouseButtonUp(m->x(), m->y(), CelestiaCore::LeftButton);
+        appCore->mouseButtonUp(x, y, CelestiaCore::LeftButton);
     }
     else if (m->button() == MidButton)
     {
-        appCore->mouseButtonUp(m->x(), m->y(), CelestiaCore::MiddleButton);
+        appCore->mouseButtonUp(x, y, CelestiaCore::MiddleButton);
     }
     else if (m->button() == RightButton)
     {
@@ -265,7 +274,7 @@ void CelestiaGlWidget::mouseReleaseEvent( QMouseEvent* m )
             cursorVisible = true;
             QCursor::setPos(saveGlobalCursorPos);
         }
-        appCore->mouseButtonUp(m->x(), m->y(), CelestiaCore::RightButton);
+        appCore->mouseButtonUp(x, y, CelestiaCore::RightButton);
     }
 }
 
