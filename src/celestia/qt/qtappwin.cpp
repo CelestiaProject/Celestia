@@ -1519,10 +1519,11 @@ void CelestiaAppWindow::setCustomFPS()
 
 void CelestiaAppWindow::requestContextMenu(float x, float y, Selection sel)
 {
+    float scale = devicePixelRatioF();
     SelectionPopup* menu = new SelectionPopup(sel, m_appCore, this);
     connect(menu, SIGNAL(selectionInfoRequested(Selection&)),
             this, SLOT(slotShowObjectInfo(Selection&)));
-    menu->popupAtCenter(centralWidget()->mapToGlobal(QPoint((int) x, (int) y)));
+    menu->popupAtCenter(centralWidget()->mapToGlobal(QPoint((int)(x / scale), (int)(y / scale))));
 }
 
 
