@@ -268,7 +268,7 @@ void VirtualTexture::populateTileTree()
             int uLimit = 2 << maxLevel;
             int vLimit = 1 << maxLevel;
 
-            for (auto& d : fs::directory_iterator(path))
+            for (auto& d : fs::directory_iterator(path, ec))
             {
                 int u = -1, v = -1;
                 if (sscanf(d.path().filename().string().c_str(), pattern.c_str(), &u, &v) == 2)

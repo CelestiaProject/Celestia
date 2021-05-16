@@ -10,8 +10,11 @@
 // of the License, or (at your option) any later version.
 
 #include "scriptmenu.h"
+#include <iostream>
+#include <fmt/printf.h>
 #include <celcompat/filesystem.h>
 #include <celutil/filetype.h>
+#include <celutil/gettext.h>
 #include <fstream>
 
 using namespace std;
@@ -75,14 +78,29 @@ ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
 {
     vector<ScriptMenuItem>* scripts = new vector<ScriptMenuItem>;
 
+    if (scriptsDir.empty())
+        return scripts;
+
+    std::error_code ec;
+    if (!fs::is_directory(scriptsDir, ec))
+    {
+        fmt::fprintf(cerr, _("Path %s doesn't exist or isn't a directory"), scriptsDir);
+        return scripts;
+    }
+
     if (deep)
     {
-        for (const auto& p : fs::recursive_directory_iterator(scriptsDir))
-            process(p, scripts);
+        auto iter = fs::recursive_directory_iterator(scriptsDir, ec);
+        for (; iter != end(iter); iter.increment(ec))
+        {
+            if (ec)
+                continue;
+            process(*iter, scripts);
+        }
     }
     else
     {
-        for (const auto& p : fs::directory_iterator(scriptsDir))
+        for (const auto& p : fs::directory_iterator(scriptsDir, ec))
             process(p, scripts);
     }
 

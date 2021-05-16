@@ -172,8 +172,13 @@ static string lua_path(const CelestiaConfig *config)
         }
 
         LuaPathFinder loader;
-        for (const auto& fn : fs::recursive_directory_iterator(dir))
-            loader.process(fn);
+        auto iter = fs::recursive_directory_iterator(dir, ec);
+        for (; iter != end(iter); iter.increment(ec))
+        {
+            if (ec)
+                continue;
+            loader.process(*iter);
+        }
         LuaPath += loader.getLuaPath();
     }
     return LuaPath;

@@ -227,6 +227,48 @@ std::ostream& operator<<(std::ostream& os, const path& p);
 
 path u8path(const std::string& source);
 
+enum class directory_options : unsigned char {
+    none = 0,
+    follow_directory_symlink = 1, // Not implemented
+    skip_permission_denied = 2
+};
+
+inline constexpr directory_options operator&(directory_options _LHS,
+                                             directory_options _RHS) {
+    return static_cast<directory_options>(static_cast<unsigned char>(_LHS) &
+                                          static_cast<unsigned char>(_RHS));
+}
+
+inline constexpr directory_options operator|(directory_options _LHS,
+                                             directory_options _RHS) {
+    return static_cast<directory_options>(static_cast<unsigned char>(_LHS) |
+                                          static_cast<unsigned char>(_RHS));
+}
+
+inline constexpr directory_options operator^(directory_options _LHS,
+                                             directory_options _RHS) {
+    return static_cast<directory_options>(static_cast<unsigned char>(_LHS) ^
+                                          static_cast<unsigned char>(_RHS));
+}
+
+inline constexpr directory_options operator~(directory_options _LHS) {
+    return static_cast<directory_options>(~static_cast<unsigned char>(_LHS));
+}
+
+inline directory_options& operator&=(directory_options& _LHS,
+                                     directory_options _RHS) {
+    return _LHS = _LHS & _RHS;
+}
+
+inline directory_options& operator|=(directory_options& _LHS,
+                                     directory_options _RHS) {
+    return _LHS = _LHS | _RHS;
+}
+
+inline directory_options& operator^=(directory_options& _LHS,
+                                     directory_options _RHS) {
+    return _LHS = _LHS ^ _RHS;
+}
 
 class directory_iterator;
 class recursive_directory_iterator;
@@ -280,7 +322,9 @@ class directory_iterator
 
     directory_iterator() = default;
     explicit directory_iterator(const path& p);
+    directory_iterator(const path& p, directory_options options);
     directory_iterator(const path& p, std::error_code& ec);
+    directory_iterator(const path& p, directory_options options, std::error_code& ec);
 
     directory_iterator(const directory_iterator&) = default;
     directory_iterator(directory_iterator&&) = default;
@@ -290,6 +334,7 @@ class directory_iterator
     directory_iterator& operator=(directory_iterator&&) = default;
 
     directory_iterator& operator++();
+    directory_iterator& increment(std::error_code&);
 
     const directory_entry& operator*() const noexcept
     {
@@ -308,12 +353,17 @@ class directory_iterator
     }
 
  private:
+    friend class recursive_directory_iterator;
+
+    directory_iterator(const path& p, directory_options options, std::error_code* ec, bool advance = true);
+
+    directory_iterator& __increment(std::error_code* ec = nullptr);
+
     struct SearchImpl;
     void reset();
 
     path                        m_path      {};
     directory_entry             m_entry     {};
-    std::error_code             m_ec        {};
     std::shared_ptr<SearchImpl> m_search    { nullptr };
 }; // directory_iterator
 
@@ -341,9 +391,9 @@ class recursive_directory_iterator
     recursive_directory_iterator(const recursive_directory_iterator&) = default;
     recursive_directory_iterator(recursive_directory_iterator&&) noexcept = default;
     explicit recursive_directory_iterator(const path& p);
-//    recursive_directory_iterator(const path&, directory_options);
-//    recursive_directory_iterator(const path&, directory_options, std::error_code&);
+    recursive_directory_iterator(const path& p, directory_options options);
     recursive_directory_iterator(const path& p, std::error_code& ec);
+    recursive_directory_iterator(const path& p, directory_options options, std::error_code& ec);
     ~recursive_directory_iterator() = default;
 
     recursive_directory_iterator& operator=(const recursive_directory_iterator&) = default;
@@ -363,6 +413,7 @@ class recursive_directory_iterator
     void pop(std::error_code& ec);
 
     recursive_directory_iterator& operator++();
+    recursive_directory_iterator& increment(std::error_code&);
 
     const directory_entry& operator*() const noexcept
     {
@@ -381,11 +432,16 @@ class recursive_directory_iterator
     }
 
  private:
+    recursive_directory_iterator(const path& p, directory_options options, std::error_code* ec);
+
+    recursive_directory_iterator& __increment(std::error_code* ec = nullptr);
+
     void reset();
 
-    std::error_code m_ec                {};
-    int             m_depth             { 0 };
-    bool            m_pending           { true };
+    directory_options   m_options       { directory_options::none };
+    std::error_code     m_ec            {};
+    int                 m_depth         { 0 };
+    bool                m_pending       { true };
 
     struct DirStack;
     std::shared_ptr<DirStack>   m_dirs  { nullptr };
