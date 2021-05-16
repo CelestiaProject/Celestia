@@ -48,11 +48,12 @@ fs::path LocaleFilename(const fs::path &p)
 #endif
     fs::path locPath = p.parent_path() / fmt::sprintf(format, p.stem().native(), lang, p.extension().native());
 
-    if (fs::exists(locPath))
+    std::error_code ec;
+    if (fs::exists(locPath, ec))
         return locPath;
 
     locPath = fs::path("locale") / locPath;
-    if (fs::exists(locPath))
+    if (fs::exists(locPath, ec))
         return locPath;
 
     return p;

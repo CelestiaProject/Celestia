@@ -251,7 +251,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool isCaptureActive();
     bool isRecording();
 
-    void runScript(const fs::path& filename);
+    void runScript(const fs::path& filename, bool i18n = true);
     void cancelScript();
     void resumeScript();
 
