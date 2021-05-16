@@ -3790,11 +3790,14 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
                 continue;
 
             entries.clear();
-            for (const auto& fn : fs::recursive_directory_iterator(dir))
+            std::error_code ec;
+            auto iter = fs::recursive_directory_iterator(dir, ec);
+            for (; iter != end(iter); iter.increment(ec))
             {
-                std::error_code ec;
-                if (!fs::is_directory(fn.path(), ec))
-                    entries.push_back(fn.path());
+                if (ec)
+                    continue;
+                if (!fs::is_directory(iter->path(), ec))
+                    entries.push_back(iter->path());
             }
             std::sort(begin(entries), end(entries));
             for (const auto& fn : entries)
@@ -3838,11 +3841,14 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
                 continue;
 
             entries.clear();
-            for (const auto& fn : fs::recursive_directory_iterator(dir))
+            std::error_code ec;
+            auto iter = fs::recursive_directory_iterator(dir, ec);
+            for (; iter != end(iter); iter.increment(ec))
             {
-                std::error_code ec;
-                if (!fs::is_directory(fn.path(), ec))
-                    entries.push_back(fn.path());
+                if (ec)
+                    continue;
+                if (!fs::is_directory(iter->path(), ec))
+                    entries.push_back(iter->path());
             }
             sort(begin(entries), end(entries));
             for(const auto& fn : entries)
@@ -4147,11 +4153,14 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
                 continue;
 
             entries.clear();
-            for (const auto& fn : fs::recursive_directory_iterator(dir))
+            std::error_code ec;
+            auto iter = fs::recursive_directory_iterator(dir, ec);
+            for (; iter != end(iter); iter.increment(ec))
             {
-                std::error_code ec;
-                if (!fs::is_directory(fn.path(), ec))
-                    entries.push_back(fn.path());
+                if (ec)
+                    continue;
+                if (!fs::is_directory(iter->path(), ec))
+                    entries.push_back(iter->path());
             }
             std::sort(begin(entries), end(entries));
             for (const auto& fn : entries)

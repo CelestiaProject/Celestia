@@ -160,19 +160,21 @@ bool path::is_absolute() const
 
 struct directory_iterator::SearchImpl
 {
-    path    m_path      {};
+    path                m_path      {};
+    directory_options   m_options   { directory_options::none };
 #ifdef _WIN32
-    HANDLE  m_handle    { INVALID_HANDLE_VALUE };
+    HANDLE  m_handle                { INVALID_HANDLE_VALUE };
 #else
-    DIR    *m_dir       { nullptr };
+    DIR    *m_dir                   { nullptr };
 #endif
-    explicit SearchImpl(const path& p) :
+    explicit SearchImpl(const path& p, directory_options options) :
+        m_options(options),
         m_path(p)
     {
     };
     ~SearchImpl();
 
-    bool advance(directory_entry&);
+    bool advance(directory_entry&, std::error_code*);
 };
 
 directory_iterator::SearchImpl::~SearchImpl()
@@ -192,8 +194,11 @@ directory_iterator::SearchImpl::~SearchImpl()
 #endif
 }
 
-bool directory_iterator::SearchImpl::advance(directory_entry& entry)
+bool directory_iterator::SearchImpl::advance(directory_entry& entry, std::error_code* ec)
 {
+    if (ec != nullptr)
+        ec->clear();
+
 #ifdef _WIN32
     WIN32_FIND_DATAW findData;
 
@@ -201,7 +206,24 @@ bool directory_iterator::SearchImpl::advance(directory_entry& entry)
     {
         m_handle = FindFirstFileW((m_path / L"*").c_str(), &findData);
         if (m_handle == INVALID_HANDLE_VALUE)
+        {
+            std::error_code m_ec = std::error_code(GetLastError(), std::system_category());
+            m_ec = std::error_code(GetLastError(), std::system_category());
+            if (m_ec.value() == ERROR_ACCESS_DENIED && bool(m_options & directory_options::skip_permission_denied))
+                m_ec.clear();
+            if (m_ec)
+            {
+                if (ec != nullptr)
+                    *ec = m_ec;
+                else
+#if __cpp_exceptions
+                    throw filesystem_error(m_ec, "celfs::directory_iterator::SearchImpl::advance error");
+#else
+                    std::abort();
+#endif
+            }
             return false;
+        }
     }
     else
     {
@@ -222,7 +244,23 @@ bool directory_iterator::SearchImpl::advance(directory_entry& entry)
     {
         m_dir = opendir(m_path.c_str());
         if (m_dir == nullptr)
+        {
+            std::error_code m_ec = std::error_code(errno, std::system_category());
+            if (m_ec.value() == EACCES && bool(m_options & directory_options::skip_permission_denied))
+                m_ec.clear();
+            if (m_ec)
+            {
+                if (ec != nullptr)
+                    *ec = m_ec;
+                else
+#if __cpp_exceptions
+                    throw filesystem_error(m_ec, "celfs::directory_iterator::SearchImpl::advance error");
+#else
+                    std::abort();
+#endif
+            }
             return false;
+        }
     }
 
     struct dirent* ent = nullptr;
@@ -240,17 +278,33 @@ bool directory_iterator::SearchImpl::advance(directory_entry& entry)
 }
 
 directory_iterator::directory_iterator(const path& p) :
-    directory_iterator::directory_iterator(p, m_ec)
+    directory_iterator::directory_iterator(p, directory_options::none, nullptr)
+{
+}
+
+directory_iterator::directory_iterator(const path& p, directory_options options) :
+    directory_iterator::directory_iterator(p, options, nullptr)
 {
 }
 
 directory_iterator::directory_iterator(const path& p, std::error_code& ec) :
-    m_path(p),
-    m_ec(ec),
-    m_search(new SearchImpl(p))
+    directory_iterator::directory_iterator(p, directory_options::none, &ec)
 {
-    if (!m_search->advance(m_entry))
-        reset();
+}
+
+directory_iterator::directory_iterator(const path& p, directory_options options, std::error_code& ec) :
+    directory_iterator::directory_iterator(p, directory_options::none, &ec)
+{
+}
+
+directory_iterator::directory_iterator(const path& p, directory_options options, std::error_code* ec, bool advance) :
+    m_path(p),
+    m_search(new SearchImpl(p, options))
+{
+    if (advance)
+        __increment(ec);
+    else
+        m_entry = directory_entry(p);
 }
 
 void directory_iterator::reset()
@@ -265,8 +319,17 @@ bool directory_iterator::operator==(const directory_iterator& other) const noexc
 
 directory_iterator& directory_iterator::operator++()
 {
-    //  *this != end(*this) ...
-    if (m_search != nullptr && !m_search->advance(m_entry))
+    return __increment();
+}
+
+directory_iterator& directory_iterator::increment(std::error_code &ec)
+{
+    return __increment(&ec);
+}
+
+directory_iterator& directory_iterator::__increment(std::error_code *ec)
+{
+    if (m_search != nullptr && !m_search->advance(m_entry, ec))
         reset();
     return *this;
 }
@@ -277,12 +340,34 @@ struct recursive_directory_iterator::DirStack
     std::vector<directory_iterator> m_dirIters;
 };
 
-recursive_directory_iterator::recursive_directory_iterator(const path& p)
+
+recursive_directory_iterator::recursive_directory_iterator(const path& p) : recursive_directory_iterator(p, directory_options::none, nullptr)
 {
+}
+
+recursive_directory_iterator::recursive_directory_iterator(const path& p, directory_options options) : recursive_directory_iterator(p, options, nullptr)
+{
+}
+
+recursive_directory_iterator::recursive_directory_iterator(const path& p, std::error_code& ec) : recursive_directory_iterator(p, directory_options::none, &ec)
+{
+}
+
+recursive_directory_iterator::recursive_directory_iterator(const path& p, directory_options options, std::error_code& ec) : recursive_directory_iterator(p, options, &ec)
+{
+}
+
+recursive_directory_iterator::recursive_directory_iterator(const path& p, directory_options options, std::error_code* ec)
+{
+    m_options = options;
+
     if (m_dirs == nullptr)
         m_dirs = std::shared_ptr<DirStack>(new DirStack);
 
-    m_iter = directory_iterator(p);
+    m_iter = directory_iterator(p, options, ec);
+
+    if (m_iter == end(m_iter))
+        reset();
 }
 
 bool recursive_directory_iterator::operator==(const recursive_directory_iterator& other) const noexcept
@@ -296,20 +381,20 @@ bool recursive_directory_iterator::operator==(const recursive_directory_iterator
 
 recursive_directory_iterator& recursive_directory_iterator::operator++()
 {
-    // *this == end(*this)
+    return __increment();
+}
+
+recursive_directory_iterator& recursive_directory_iterator::increment(std::error_code &ec)
+{
+    return __increment(&ec);
+}
+
+recursive_directory_iterator& recursive_directory_iterator::__increment(std::error_code *ec)
+{
     if (m_dirs == nullptr)
         return *this;
 
-    auto& p = m_iter->path();
-    if (m_pending && (p.empty() || is_directory(p)))
-    {
-        m_dirs->m_dirIters.emplace_back(m_iter);
-        m_iter = directory_iterator(p);
-    }
-    else
-    {
-        ++m_iter;
-    }
+    m_iter.__increment(ec);
 
     while (m_iter == end(m_iter))
     {
@@ -319,8 +404,15 @@ recursive_directory_iterator& recursive_directory_iterator::operator++()
             return *this;
         }
         m_iter = std::move(m_dirs->m_dirIters.back());
-        ++m_iter;
+        m_iter.__increment(ec);
         m_dirs->m_dirIters.pop_back();
+    }
+
+    auto path = m_iter->path();
+    if (m_pending && (path.empty() || is_directory(path)))
+    {
+        m_dirs->m_dirIters.emplace_back(m_iter);
+        m_iter = directory_iterator(path, m_options, ec, false);
     }
 
     return *this;
@@ -391,6 +483,7 @@ uintmax_t file_size(const path& p)
 
 bool exists(const path& p, std::error_code& ec) noexcept
 {
+    ec.clear();
 #ifdef _WIN32
     DWORD attr = GetFileAttributesW(&p.native()[0]);
     if (attr != INVALID_FILE_ATTRIBUTES)
@@ -439,6 +532,7 @@ bool exists(const path& p)
 
 bool is_directory(const path& p, std::error_code& ec) noexcept
 {
+    ec.clear();
 #ifdef _WIN32
     DWORD attr = GetFileAttributesW(&p.native()[0]);
     if (attr == INVALID_FILE_ATTRIBUTES)
