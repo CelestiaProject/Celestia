@@ -81,7 +81,7 @@ auto int_from_chars(const char* first, const char* last, T& value, int base) noe
     char last_ul = 'A' + base - 10;
 
     bool overflow = false;
-    T result = 0;
+    U result = 0;
     for (; p < last; p++)
     {
         U digit;

@@ -104,9 +104,9 @@ uint32_t* decompressDXTc(uint32_t width, uint32_t height, GLenum format, bool tr
         break;
     }
     uint8_t block[DDS_MAX_BLOCK_SIZE]; // enough to hold DXT1/3/5 blocks
-    for (int y = 0; y < height; y += 4)
+    for (uint32_t y = 0; y < height; y += 4)
     {
-        for (int x = 0; x < width; x += 4)
+        for (uint32_t x = 0; x < width; x += 4)
         {
             if (!in.good())
             {
