@@ -642,7 +642,7 @@ Mesh::transform(const Vector3f& translation, float scale)
         auto vertexDesc = group->vertexDescriptionOverride;
         int positionOffset = vertexDesc.getAttribute(Position).offset;
         int nextPositionOffset = vertexDesc.getAttribute(NextPosition).offset;
-        for (int j = 0; j < group->vertexCountOverride; j++, vdata += vertexDesc.stride)
+        for (unsigned int j = 0; j < group->vertexCountOverride; j++, vdata += vertexDesc.stride)
         {
             Vector3f tv = (Map<Vector3f>(reinterpret_cast<float*>(vdata + positionOffset)) + translation) * scale;
             Map<Vector3f>(reinterpret_cast<float*>(vdata + positionOffset)) = tv;
