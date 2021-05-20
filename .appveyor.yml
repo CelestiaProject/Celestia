@@ -95,6 +95,10 @@ after_build:
 
       7z a celestia-qt.x86.7z qt\RelWithDebInfo\*
 
+      cd ..\tools
+
+      7z a celestia-tools.x86.7z xyzv2bin\RelWithDebInfo\*.exe spice2xyzv\RelWithDebInfo\*.exe
+
 #on_failure:
 #- type "c:\projects\celestia\build\CMakeFiles\CMakeOutput.log"
 #- type "c:\projects\celestia\build\CMakeFiles\CMakeError.log"
