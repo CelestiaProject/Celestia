@@ -223,6 +223,8 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
 QMenu* SelectionPopup::createMarkMenu()
 {
+    using namespace celestia;
+
     const MarkerRepresentation::Symbol MARKER_SYMBOLS[] = {
         MarkerRepresentation::Diamond,
         MarkerRepresentation::Triangle,
@@ -565,6 +567,8 @@ void SelectionPopup::slotSelectChildObject()
 
 void SelectionPopup::slotMark()
 {
+    using namespace celestia;
+
     QAction* action = qobject_cast<QAction*>(sender());
     if (action)
     {
