@@ -32,7 +32,7 @@ using namespace celmath;
 
 Universe::Universe()
 {
-    markers = new MarkerList();
+    markers = new celestia::MarkerList();
 }
 
 Universe::~Universe()
@@ -159,20 +159,20 @@ SolarSystem* Universe::createSolarSystem(Star* star) const
 }
 
 
-MarkerList* Universe::getMarkers() const
+celestia::MarkerList* Universe::getMarkers() const
 {
     return markers;
 }
 
 
 void Universe::markObject(const Selection& sel,
-                          const MarkerRepresentation& rep,
+                          const celestia::MarkerRepresentation& rep,
                           int priority,
                           bool occludable,
-                          MarkerSizing sizing)
+                          celestia::MarkerSizing sizing)
 {
     auto iter = std::find_if(markers->begin(), markers->end(),
-                             [&sel](Marker& m) { return m.object() == sel; });
+                             [&sel](celestia::Marker& m) { return m.object() == sel; });
     if (iter != markers->end())
     {
         // Handle the case when the object is already marked.  If the
@@ -184,7 +184,7 @@ void Universe::markObject(const Selection& sel,
             return;
     }
 
-    Marker marker(sel);
+    celestia::Marker marker(sel);
     marker.setRepresentation(rep);
     marker.setPriority(priority);
     marker.setOccludable(occludable);
@@ -196,7 +196,7 @@ void Universe::markObject(const Selection& sel,
 void Universe::unmarkObject(const Selection& sel, int priority)
 {
     auto iter = std::find_if(markers->begin(), markers->end(),
-                            [&sel](Marker& m) { return m.object() == sel; });
+                             [&sel](celestia::Marker& m) { return m.object() == sel; });
     if (iter != markers->end() && priority >= iter->priority())
         markers->erase(iter);
 }
@@ -211,7 +211,7 @@ void Universe::unmarkAll()
 bool Universe::isMarked(const Selection& sel, int priority) const
 {
     auto iter = std::find_if(markers->begin(), markers->end(),
-                             [&sel](Marker& m) { return m.object() == sel; });
+                             [&sel](celestia::Marker& m) { return m.object() == sel; });
     if (iter != markers->end())
         return iter->priority() >= priority;
 

@@ -339,13 +339,14 @@ static void initEclipticVO(VertexObject& vo)
     vo.setVertices(3, GL_FLOAT, false, stride * 3, 0, VertexObject::AttributesType::Alternative1);
 }
 
-void Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
+void Renderer::renderMarker(celestia::MarkerRepresentation::Symbol symbol,
                             float size,
                             const Color &color,
                             const Matrices &m)
 {
     assert(shaderManager != nullptr);
 
+    using namespace celestia;
     using AttributesType = celgl::VertexObject::AttributesType;
 
     bool solid = true;

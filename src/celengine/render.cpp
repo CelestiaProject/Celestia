@@ -914,7 +914,7 @@ void Renderer::setDistanceLimit(float distanceLimit_)
 
 
 void Renderer::addAnnotation(vector<Annotation>& annotations,
-                             const MarkerRepresentation* markerRep,
+                             const celestia::MarkerRepresentation* markerRep,
                              const string& labelText,
                              Color color,
                              const Vector3f& pos,
@@ -954,7 +954,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
 }
 
 
-void Renderer::addForegroundAnnotation(const MarkerRepresentation* markerRep,
+void Renderer::addForegroundAnnotation(const celestia::MarkerRepresentation* markerRep,
                                        const string& labelText,
                                        Color color,
                                        const Vector3f& pos,
@@ -966,7 +966,7 @@ void Renderer::addForegroundAnnotation(const MarkerRepresentation* markerRep,
 }
 
 
-void Renderer::addBackgroundAnnotation(const MarkerRepresentation* markerRep,
+void Renderer::addBackgroundAnnotation(const celestia::MarkerRepresentation* markerRep,
                                        const string& labelText,
                                        Color color,
                                        const Vector3f& pos,
@@ -978,7 +978,7 @@ void Renderer::addBackgroundAnnotation(const MarkerRepresentation* markerRep,
 }
 
 
-void Renderer::addSortedAnnotation(const MarkerRepresentation* markerRep,
+void Renderer::addSortedAnnotation(const celestia::MarkerRepresentation* markerRep,
                                    const string& labelText,
                                    Color color,
                                    const Vector3f& pos,
@@ -1039,7 +1039,7 @@ void Renderer::endObjectAnnotations()
 }
 
 
-void Renderer::addObjectAnnotation(const MarkerRepresentation* markerRep,
+void Renderer::addObjectAnnotation(const celestia::MarkerRepresentation* markerRep,
                                    const string& labelText,
                                    Color color,
                                    const Vector3f& pos)
@@ -2511,7 +2511,7 @@ Renderer::locationsToAnnotations(const Body& body,
                     double z = viewNormal.dot(labelPos);
                     labelPos *= planetZ / z;
 
-                    MarkerRepresentation* locationMarker = nullptr;
+                    celestia::MarkerRepresentation* locationMarker = nullptr;
                     if (featureType & Location::City)
                         locationMarker = &cityRep;
                     else if (featureType & (Location::LandingSite | Location::Observatory))
@@ -3536,6 +3536,7 @@ void Renderer::renderPlanet(Body& body,
         if (body.getLocations() != nullptr && (labelMode & LocationLabels) != 0)
         {
             // Set up location markers for this body
+            using namespace celestia;
             mountainRep    = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, LocationLabelColor);
             craterRep      = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, LocationLabelColor);
             observatoryRep = MarkerRepresentation(MarkerRepresentation::Plus,     8.0f, LocationLabelColor);
@@ -4741,6 +4742,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
 
     dsoRenderer.labelThresholdMag = 2.0f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
 
+    using namespace celestia;
     galaxyRep      = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, GalaxyLabelColor);
     nebulaRep      = MarkerRepresentation(MarkerRepresentation::Square,   8.0f, NebulaLabelColor);
     openClusterRep = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, OpenClusterLabelColor);
@@ -4950,7 +4952,7 @@ Renderer::renderAnnotationMarker(const Annotation &a,
                                  float depth,
                                  const Matrices &m)
 {
-    const MarkerRepresentation& markerRep = *a.markerRep;
+    const celestia::MarkerRepresentation& markerRep = *a.markerRep;
     float size = a.size > 0.0f ? a.size : markerRep.size();
 
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
@@ -4958,7 +4960,7 @@ Renderer::renderAnnotationMarker(const Annotation &a,
     Matrix4f mv = vecgl::translate(*m.modelview, (float)(int)a.position.x(), (float)(int)a.position.y(), depth);
     Matrices mm = { m.projection, &mv };
 
-    if (markerRep.symbol() == MarkerRepresentation::Crosshair)
+    if (markerRep.symbol() == celestia::MarkerRepresentation::Crosshair)
         renderCrosshair(size, realTime, a.color, mm);
     else
         markerRep.render(*this, size, mm);
@@ -5163,7 +5165,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
 }
 
 
-void Renderer::markersToAnnotations(const MarkerList& markers,
+void Renderer::markersToAnnotations(const celestia::MarkerList& markers,
                                     const Observer& observer,
                                     double jd)
 {
@@ -5180,7 +5182,7 @@ void Renderer::markersToAnnotations(const MarkerList& markers,
         if ((offset.dot(viewVector)) > cosViewConeAngle * distance)
         {
             float symbolSize = 0.0f;
-            if (marker.sizing() == DistanceBasedSize)
+            if (marker.sizing() == celestia::DistanceBasedSize)
             {
                 symbolSize = (float) (marker.representation().size() / distance) / pixelSize;
             }
@@ -5496,12 +5498,12 @@ bool Renderer::captureFrame(int x, int y, int w, int h, Renderer::PixelFormat fo
     return glGetError() == GL_NO_ERROR;
 }
 
-void Renderer::drawRectangle(const Rect &r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m)
+void Renderer::drawRectangle(const celestia::Rect &r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m)
 {
     ShaderProperties shadprop;
     shadprop.lightModel = ShaderProperties::UnlitModel;
 
-    bool solid = r.type != Rect::Type::BorderOnly;
+    bool solid = r.type != celestia::Rect::Type::BorderOnly;
     bool lineAsTriangles = false;
     if (!solid)
     {
@@ -5899,7 +5901,7 @@ Renderer::selectionToAnnotation(const Selection &sel,
 {
     Vector3d offset = sel.getPosition(jd).offsetFromKm(observer.getPosition());
 
-    static MarkerRepresentation cursorRep(MarkerRepresentation::Crosshair);
+    static celestia::MarkerRepresentation cursorRep(celestia::MarkerRepresentation::Crosshair);
     if (xfrustum.testSphere(offset, sel.radius()) == Frustum::Outside)
         return false;
 

@@ -18,8 +18,12 @@
 class Color;
 class Overlay;
 class Renderer;
-class Rect;
 class TextureFont;
+
+namespace celestia
+{
+class Rect;
+}
 
 // Custom streambuf class to support C++ operator style output.  The
 // output is completely unbuffered so that it can coexist with printf
@@ -75,7 +79,7 @@ class Overlay : public std::ostream
         return renderer;
     };
 
-    void drawRectangle(const Rect&);
+    void drawRectangle(const celestia::Rect&);
 
     void beginText();
     void endText();

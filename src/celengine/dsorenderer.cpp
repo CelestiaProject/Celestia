@@ -130,7 +130,7 @@ void DSORenderer::process(DeepSkyObject* const &dso,
         float appMagEff = 6.0f;
         float step = 6.0f;
         float symbolSize = 0.0f;
-        MarkerRepresentation* rep = nullptr;
+        celestia::MarkerRepresentation* rep = nullptr;
 
         // Use magnitude based fading for galaxies, and distance based
         // fading for nebulae and open clusters.
