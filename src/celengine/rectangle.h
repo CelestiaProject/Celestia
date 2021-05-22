@@ -16,6 +16,8 @@
 class Renderer;
 class Texture;
 
+namespace celestia
+{
 class Rect
 {
  public:
@@ -59,3 +61,4 @@ class Rect
     Type type       { Type::Filled };
     int nColors     { 0 };
 };
+}

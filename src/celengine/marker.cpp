@@ -13,7 +13,7 @@
 
 
 using namespace std;
-
+using namespace celestia;
 
 UniversalCoord Marker::position(double jd) const
 {

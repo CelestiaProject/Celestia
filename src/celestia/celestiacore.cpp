@@ -1120,7 +1120,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             }
             else
             {
-                MarkerRepresentation markerRep(MarkerRepresentation::Diamond);
+                celestia::MarkerRepresentation markerRep(celestia::MarkerRepresentation::Diamond);
                 markerRep.setSize(10.0f);
                 markerRep.setColor({0.0f, 1.0f, 0.0f, 0.9f});
 
@@ -3429,7 +3429,7 @@ void CelestiaCore::renderOverlay()
         overlay->setFont(titleFont);
         overlay->savePos();
         int rectHeight = fontHeight * 3.0f + screenDpi / 25.4f * 9.3f + titleFontHeight;
-        Rect r(0, 0, width, safeAreaInsets.bottom + rectHeight);
+        celestia::Rect r(0, 0, width, safeAreaInsets.bottom + rectHeight);
         r.setColor(consoleColor);
         overlay->drawRectangle(r);
         overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + rectHeight - titleFontHeight);
@@ -3512,12 +3512,12 @@ void CelestiaCore::renderOverlay()
         overlay->savePos();
         Color color(1.0f, 0.0f, 0.0f, 1.0f);
         overlay->setColor(color);
-        Rect r((width - movieWidth) / 2 - 1,
+        celestia::Rect r((width - movieWidth) / 2 - 1,
                (height - movieHeight) / 2 - 1,
                movieWidth + 1,
                movieHeight + 1);
         r.setColor(color);
-        r.setType(Rect::Type::BorderOnly);
+        r.setType(celestia::Rect::Type::BorderOnly);
         overlay->drawRectangle(r);
         overlay->moveBy((float) ((width - movieWidth) / 2),
                         (float) ((height + movieHeight) / 2 + 2));

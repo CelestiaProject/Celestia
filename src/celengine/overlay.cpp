@@ -166,7 +166,7 @@ void Overlay::print(const char* s)
     }
 }
 
-void Overlay::drawRectangle(const Rect& r)
+void Overlay::drawRectangle(const celestia::Rect& r)
 {
     if (useTexture && r.tex == nullptr)
         useTexture = false;

@@ -57,8 +57,10 @@ static const char* bodyTypeName(int cl)
     return "unknown";
 }
 
-static MarkerRepresentation::Symbol parseMarkerSymbol(const string& name)
+static celestia::MarkerRepresentation::Symbol parseMarkerSymbol(const string& name)
 {
+    using namespace celestia;
+
     if (compareIgnoringCase(name, "diamond") == 0)
         return MarkerRepresentation::Diamond;
     if (compareIgnoringCase(name, "triangle") == 0)
@@ -761,7 +763,7 @@ static int object_mark(lua_State* l)
     if (colorString != nullptr)
         Color::parse(colorString, markColor);
 
-    MarkerRepresentation::Symbol markSymbol = MarkerRepresentation::Diamond;
+    celestia::MarkerRepresentation::Symbol markSymbol = celestia::MarkerRepresentation::Diamond;
     const char* markerString = celx.safeGetString(3, WrongType, "Second argument to object:mark must be a string");
     if (markerString != nullptr)
         markSymbol = parseMarkerSymbol(markerString);
@@ -789,7 +791,7 @@ static int object_mark(lua_State* l)
 
     Simulation* sim = appCore->getSimulation();
 
-    MarkerRepresentation markerRep(markSymbol);
+    celestia::MarkerRepresentation markerRep(markSymbol);
     markerRep.setSize(markSize);
     markerRep.setColor(markColorAlpha);
     markerRep.setLabel(markLabel);

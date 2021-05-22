@@ -56,7 +56,7 @@ void OverlayImage::render(float curr_time, int width, int height)
         alpha = clamp(start + duration - curr_time);
     }
 
-    Rect r(left, bottom, xSize, ySize);
+    celestia::Rect r(left, bottom, xSize, ySize);
     r.tex = texture.get();
     for (size_t i = 0; i < colors.size(); i++)
     {

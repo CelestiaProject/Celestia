@@ -624,6 +624,8 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("alpha", alpha);
         Color color((float) colorv.x(), (float) colorv.y(), (float) colorv.z(), (float) alpha);
 
+        using namespace celestia;
+
         MarkerRepresentation rep(MarkerRepresentation::Diamond);
         string symbolString;
         if (paramList->getString("symbol", symbolString))

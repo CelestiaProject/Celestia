@@ -580,7 +580,7 @@ void CommandSet::process(ExecutionEnvironment& env)
 // Mark object command
 
 CommandMark::CommandMark(string _target,
-                         MarkerRepresentation _rep,
+                         celestia::MarkerRepresentation _rep,
                          bool _occludable) :
     target(std::move(_target)),
     rep(_rep),

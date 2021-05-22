@@ -252,9 +252,9 @@ void View::reset()
 
 void View::drawBorder(int gWidth, int gHeight, const Color &color, float linewidth)
 {
-    Rect r(x * gWidth, y * gHeight, width * gWidth - 1, height * gHeight - 1);
+    celestia::Rect r(x * gWidth, y * gHeight, width * gWidth - 1, height * gHeight - 1);
     r.setColor(color);
-    r.setType(Rect::Type::BorderOnly);
+    r.setType(celestia::Rect::Type::BorderOnly);
     r.setLineWidth(linewidth);
     renderer->drawRectangle(r, ShaderProperties::FisheyeOverrideModeDisabled, renderer->getOrthoProjectionMatrix());
 }

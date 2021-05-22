@@ -90,14 +90,14 @@ class Universe
                       std::vector<const Star*>& stars) const;
 
     void markObject(const Selection&,
-                    const MarkerRepresentation& rep,
+                    const celestia::MarkerRepresentation& rep,
                     int priority,
                     bool occludable = true,
-                    MarkerSizing sizing = ConstantSize);
+                    celestia::MarkerSizing sizing = celestia::ConstantSize);
     void unmarkObject(const Selection&, int priority);
     void unmarkAll();
     bool isMarked(const Selection&, int priority) const;
-    MarkerList* getMarkers() const;
+    celestia::MarkerList* getMarkers() const;
 
  private:
     Selection pickPlanet(SolarSystem& solarSystem,
@@ -125,7 +125,7 @@ class Universe
     SolarSystemCatalog* solarSystemCatalog{nullptr};
     AsterismList* asterisms{nullptr};
     ConstellationBoundaries* boundaries{nullptr};
-    MarkerList* markers;
+    celestia::MarkerList* markers;
 
     std::vector<const Star*> closeStars;
 };

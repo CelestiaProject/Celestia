@@ -30,13 +30,18 @@ class RendererWatcher;
 class FrameTree;
 class ReferenceMark;
 class CurvePlot;
-class Rect;
 class PointStarVertexBuffer;
 class AsterismRenderer;
 class BoundariesRenderer;
 class Observer;
 class TextureFont;
 class FramebufferObject;
+
+namespace celestia
+{
+class Rect;
+}
+
 namespace celmath
 {
 class Frustum;
@@ -309,7 +314,7 @@ class Renderer
     void enableDepthTest() noexcept;
     void disableDepthTest() noexcept;
 
-    void drawRectangle(const Rect& r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
+    void drawRectangle(const celestia::Rect& r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
     void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
 
     const ColorTemperatureTable* getStarColorTable() const;
@@ -321,7 +326,7 @@ class Renderer
 
     bool captureFrame(int, int, int, int, PixelFormat format, unsigned char*, bool = false) const;
 
-    void renderMarker(MarkerRepresentation::Symbol symbol,
+    void renderMarker(celestia::MarkerRepresentation::Symbol symbol,
                       float size,
                       const Color &color,
                       const Matrices &m);
@@ -396,7 +401,7 @@ class Renderer
     struct Annotation
     {
         std::string labelText;
-        const MarkerRepresentation* markerRep;
+        const celestia::MarkerRepresentation* markerRep;
         Color color;
         Eigen::Vector3f position;
         LabelAlignment halign : 3;
@@ -406,21 +411,21 @@ class Renderer
         bool operator<(const Annotation&) const;
     };
 
-    void addForegroundAnnotation(const MarkerRepresentation* markerRep,
+    void addForegroundAnnotation(const celestia::MarkerRepresentation* markerRep,
                                  const std::string& labelText,
                                  Color color,
                                  const Eigen::Vector3f& position,
                                  LabelAlignment halign = AlignLeft,
                                  LabelVerticalAlignment valign = VerticalAlignBottom,
                                  float size = 0.0f);
-    void addBackgroundAnnotation(const MarkerRepresentation* markerRep,
+    void addBackgroundAnnotation(const celestia::MarkerRepresentation* markerRep,
                                  const std::string& labelText,
                                  Color color,
                                  const Eigen::Vector3f& position,
                                  LabelAlignment halign = AlignLeft,
                                  LabelVerticalAlignment valign = VerticalAlignBottom,
                                  float size = 0.0f);
-    void addSortedAnnotation(const MarkerRepresentation* markerRep,
+    void addSortedAnnotation(const celestia::MarkerRepresentation* markerRep,
                              const std::string& labelText,
                              Color color,
                              const Eigen::Vector3f& position,
@@ -435,7 +440,7 @@ class Renderer
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
     void beginObjectAnnotations();
-    void addObjectAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Eigen::Vector3f&);
+    void addObjectAnnotation(const celestia::MarkerRepresentation* markerRep, const std::string& labelText, Color, const Eigen::Vector3f&);
     void endObjectAnnotations();
     const Eigen::Quaternionf& getCameraOrientation() const;
     float getNearPlaneDistance() const;
@@ -687,7 +692,7 @@ class Renderer
 
 
     void addAnnotation(std::vector<Annotation>&,
-                       const MarkerRepresentation*,
+                       const celestia::MarkerRepresentation*,
                        const std::string& labelText,
                        Color color,
                        const Eigen::Vector3f& position,
@@ -719,7 +724,7 @@ class Renderer
                                                         float farDist,
                                                         FontStyle fs);
 
-    void markersToAnnotations(const MarkerList &markers,
+    void markersToAnnotations(const celestia::MarkerList &markers,
                               const Observer &observer,
                               double now);
 
@@ -903,15 +908,15 @@ class Renderer
 
     // Location markers
  public:
-    MarkerRepresentation mountainRep;
-    MarkerRepresentation craterRep;
-    MarkerRepresentation observatoryRep;
-    MarkerRepresentation cityRep;
-    MarkerRepresentation genericLocationRep;
-    MarkerRepresentation galaxyRep;
-    MarkerRepresentation nebulaRep;
-    MarkerRepresentation openClusterRep;
-    MarkerRepresentation globularRep;
+    celestia::MarkerRepresentation mountainRep;
+    celestia::MarkerRepresentation craterRep;
+    celestia::MarkerRepresentation observatoryRep;
+    celestia::MarkerRepresentation cityRep;
+    celestia::MarkerRepresentation genericLocationRep;
+    celestia::MarkerRepresentation galaxyRep;
+    celestia::MarkerRepresentation nebulaRep;
+    celestia::MarkerRepresentation openClusterRep;
+    celestia::MarkerRepresentation globularRep;
 
     std::list<RendererWatcher*> watchers;
 

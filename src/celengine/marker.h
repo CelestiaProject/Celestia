@@ -18,6 +18,8 @@
 class Renderer;
 struct Matrices;
 
+namespace celestia
+{
 class MarkerRepresentation
 {
 public:
@@ -116,5 +118,6 @@ class Marker
 };
 
 typedef std::vector<Marker> MarkerList;
+}
 
 #endif // CELENGINE_MARKER_H_
