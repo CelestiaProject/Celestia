@@ -10,8 +10,7 @@ if(APPLE AND EXISTS /usr/local/opt/qt5)
   list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt5")
 endif()
 
-set(QT_LIBS Widgets OpenGL)
-find_package(Qt5 COMPONENTS ${QT_LIBS} CONFIG REQUIRED)
+find_package(Qt5 COMPONENTS Widgets OpenGL CONFIG REQUIRED)
 
 set(QT_SOURCES
   qtappwin.cpp
@@ -68,8 +67,7 @@ endif()
 add_executable(celestia-qt WIN32 ${QT_SOURCES} ${RC_SRC} ${RES})
 add_dependencies(celestia-qt celestia)
 cotire(celestia-qt)
-qt5_use_modules(celestia-qt ${QT_LIBS})
-target_link_libraries(celestia-qt celestia)
+target_link_libraries(celestia-qt Qt5::Widgets Qt5::OpenGL celestia)
 if(APPLE)
   set_property(TARGET celestia-qt APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreFoundation")
   set_property(TARGET celestia-qt APPEND_STRING PROPERTY LINK_FLAGS " -framework CoreServices")
