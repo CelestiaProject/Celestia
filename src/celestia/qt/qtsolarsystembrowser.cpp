@@ -789,6 +789,8 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, 
     clearMarkersButton->setToolTip(_("Remove all existing markers"));
     markGroupLayout->addWidget(clearMarkersButton, 0, 5, 1, 2);
 
+    using namespace celestia;
+
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
     markerSymbolBox->addItem(_("None"));
@@ -905,6 +907,8 @@ void SolarSystemBrowser::slotContextMenu(const QPoint& pos)
 
 void SolarSystemBrowser::slotMarkSelected()
 {
+    using namespace celestia;
+
     QItemSelectionModel* sm = treeView->selectionModel();
     QModelIndexList rows = sm->selectedRows();
 

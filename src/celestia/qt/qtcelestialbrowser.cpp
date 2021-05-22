@@ -576,6 +576,8 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent, Info
     clearMarkersButton->setToolTip(_("Remove all existing markers"));
     markGroupLayout->addWidget(clearMarkersButton, 0, 5, 1, 2);
 
+    using namespace celestia;
+
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
     markerSymbolBox->addItem(_("None"));
@@ -692,6 +694,8 @@ void CelestialBrowser::slotContextMenu(const QPoint& pos)
 
 void CelestialBrowser::slotMarkSelected()
 {
+    using namespace celestia;
+
     QItemSelectionModel* sm = treeView->selectionModel();
     bool labelMarker = labelMarkerBox->checkState() == Qt::Checked;
     bool convertOK = false;

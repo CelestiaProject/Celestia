@@ -164,6 +164,7 @@ static void menuMark()
     Simulation* sim = app->simulation;
     if (sim->getUniverse() != NULL)
     {
+        using namespace celestia;
         MarkerRepresentation markerRep(MarkerRepresentation::Diamond, 10.0f, Color(0.0f, 1.0f, 0.0f, 0.9f));
         sim->getUniverse()->markObject(sim->getSelection(), markerRep, 1);
     }
