@@ -401,7 +401,7 @@ BookmarkTreeModel::headerData(int section, Qt::Orientation /* orientation */, in
 Qt::ItemFlags
 BookmarkTreeModel::flags(const QModelIndex& index) const
 {
-    Qt::ItemFlags flags = 0;
+    Qt::ItemFlags flags{QFlag{0}};
     if (index.isValid())
     {
         const BookmarkItem* item = getItem(index);

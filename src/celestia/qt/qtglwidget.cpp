@@ -179,7 +179,7 @@ void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
     int buttons = 0;
     if (m->buttons() & LeftButton)
         buttons |= CelestiaCore::LeftButton;
-    if (m->buttons() & MidButton)
+    if (m->buttons() & MiddleButton)
         buttons |= CelestiaCore::MiddleButton;
     if (m->buttons() & RightButton)
         buttons |= CelestiaCore::RightButton;
@@ -237,7 +237,7 @@ void CelestiaGlWidget::mousePressEvent( QMouseEvent* m )
 
     if (m->button() == LeftButton)
         appCore->mouseButtonDown(x, y, CelestiaCore::LeftButton);
-    else if (m->button() == MidButton)
+    else if (m->button() == MiddleButton)
         appCore->mouseButtonDown(x, y, CelestiaCore::MiddleButton);
     else if (m->button() == RightButton)
         appCore->mouseButtonDown(x, y, CelestiaCore::RightButton);
@@ -261,7 +261,7 @@ void CelestiaGlWidget::mouseReleaseEvent( QMouseEvent* m )
         }
         appCore->mouseButtonUp(x, y, CelestiaCore::LeftButton);
     }
-    else if (m->button() == MidButton)
+    else if (m->button() == MiddleButton)
     {
         appCore->mouseButtonUp(x, y, CelestiaCore::MiddleButton);
     }
