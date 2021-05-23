@@ -113,11 +113,13 @@ std::vector<std::string> NameDatabase::getCompletion(const std::string& name, bo
     {
         if (!UTF8StringCompare(iter->first, name, name_length, true))
             completion.push_back(iter->first);
-        else if (i18n)
+    }
+    if (i18n)
+    {
+        for (NameIndex::const_iterator iter = localizedNameIndex.begin(); iter != localizedNameIndex.end(); ++iter)
         {
-            std::string lname = _(iter->first.c_str());
-            if (lname != iter->first && !UTF8StringCompare(lname, name, name_length, true))
-                completion.push_back(lname);
+            if (!UTF8StringCompare(iter->first, name, name_length, true))
+                completion.push_back(iter->first);
         }
     }
     return completion;
