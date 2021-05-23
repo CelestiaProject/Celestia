@@ -351,6 +351,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     void setTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
     void setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
+    void clearFonts();
 
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
     bool referenceMarkEnabled(const std::string& refMark, Selection sel = Selection()) const;
@@ -391,8 +392,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int getSafeAreaWidth() const;
     int getSafeAreaHeight() const;
 
-    TextureFont* font{ nullptr };
-    TextureFont* titleFont{ nullptr };
+    std::shared_ptr<TextureFont> font{ nullptr };
+    std::shared_ptr<TextureFont> titleFont{ nullptr };
 
     std::string messageText;
     int messageHOrigin{ 0 };
@@ -517,8 +518,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 #ifdef CELX
     friend View* getViewByObserver(CelestiaCore*, Observer*);
     friend void getObservers(CelestiaCore*, std::vector<Observer*>&);
-    friend TextureFont* getFont(CelestiaCore*);
-    friend TextureFont* getTitleFont(CelestiaCore*);
+    friend std::shared_ptr<TextureFont> getFont(CelestiaCore*);
+    friend std::shared_ptr<TextureFont> getTitleFont(CelestiaCore*);
 #endif
 };
 

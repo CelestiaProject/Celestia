@@ -61,7 +61,7 @@ class Console : public std::ostream
     void render(int rowHeight);
 
     void setScale(int, int);
-    void setFont(TextureFont*);
+    void setFont(const std::shared_ptr<TextureFont>&);
 
     void setColor(float r, float g, float b, float a) const;
     void setColor(const Color& c) const;
@@ -99,7 +99,7 @@ class Console : public std::ostream
 
     int xscale{ 1 };
     int yscale{ 1 };
-    TextureFont* font{ nullptr };
+    std::shared_ptr<TextureFont> font{ nullptr };
     Renderer& renderer;
 
     ConsoleStreamBuf sbuf;

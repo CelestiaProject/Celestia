@@ -55,7 +55,7 @@ void Overlay::setWindowSize(int w, int h)
     windowHeight = h;
 }
 
-void Overlay::setFont(TextureFont* f)
+void Overlay::setFont(const std::shared_ptr<TextureFont>& f)
 {
     if (f != font)
     {

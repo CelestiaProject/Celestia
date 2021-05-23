@@ -299,7 +299,7 @@ Renderer::Renderer() :
 
     for (int i = 0; i < (int) FontCount; i++)
     {
-        font[i] = nullptr;
+        fonts[i] = nullptr;
     }
 
     shaderManager = new ShaderManager();
@@ -759,14 +759,14 @@ void Renderer::setResolution(unsigned int resolution)
 }
 
 
-TextureFont* Renderer::getFont(FontStyle fs) const
+std::shared_ptr<TextureFont> Renderer::getFont(FontStyle fs) const
 {
-    return font[(int) fs];
+    return fonts[(int) fs];
 }
 
-void Renderer::setFont(FontStyle fs, TextureFont* txf)
+void Renderer::setFont(FontStyle fs, const std::shared_ptr<TextureFont>& font)
 {
-    font[(int) fs] = txf;
+    fonts[(int) fs] = font;
     markSettingsChanged();
 }
 
@@ -4967,13 +4967,17 @@ Renderer::renderAnnotationMarker(const Annotation &a,
 
     if (!markerRep.label().empty())
     {
-        int labelOffset = (int)markerRep.size() / 2;
-        float x = labelOffset + PixelOffset;
-        float y = -labelOffset - font[fs]->getHeight() + PixelOffset;
-        font[fs]->bind();
-        font[fs]->setMVPMatrices(*m.projection, mv);
-        font[fs]->render(markerRep.label(), x, y);
-        font[fs]->flush();
+        auto font = getFont(fs);
+        if (font)
+        {
+            int labelOffset = (int)markerRep.size() / 2;
+            float x = labelOffset + PixelOffset;
+            float y = -labelOffset - font->getHeight() + PixelOffset;
+            font->bind();
+            font->setMVPMatrices(*m.projection, mv);
+            font->render(markerRep.label(), x, y);
+            font->flush();
+        }
     }
 }
 
@@ -4992,17 +4996,22 @@ Renderer::renderAnnotationLabel(const Annotation &a,
                                    (int)a.position.y() + vOffset + PixelOffset,
                                    depth);
 
-    font[fs]->bind();
-    font[fs]->setMVPMatrices(*m.projection, mv);
-    font[fs]->render(a.labelText, 0.0f, 0.0f);
-    font[fs]->flush();
+    auto font = getFont(fs);
+    if (!font)
+        return;
+
+    font->bind();
+    font->setMVPMatrices(*m.projection, mv);
+    font->render(a.labelText, 0.0f, 0.0f);
+    font->flush();
 }
 
 // stars and constellations. DSOs
 void Renderer::renderAnnotations(const vector<Annotation>& annotations,
                                  FontStyle fs)
 {
-    if (font[fs] == nullptr)
+    auto font = getFont(fs);
+    if (!font)
         return;
 
     // Enable line smoothing for rendering symbols
@@ -5033,12 +5042,12 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
             switch (annotations[i].halign)
             {
             case AlignCenter:
-                labelWidth = (font[fs]->getWidth(annotations[i].labelText));
+                labelWidth = (font->getWidth(annotations[i].labelText));
                 hOffset = -labelWidth / 2;
                 break;
 
             case AlignRight:
-                labelWidth = (font[fs]->getWidth(annotations[i].labelText));
+                labelWidth = (font->getWidth(annotations[i].labelText));
                 hOffset = -(labelWidth + 2);
                 break;
 
@@ -5051,10 +5060,10 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
             switch (annotations[i].valign)
             {
             case VerticalAlignCenter:
-                vOffset = -font[fs]->getHeight() / 2;
+                vOffset = -font->getHeight() / 2;
                 break;
             case VerticalAlignTop:
-                vOffset = -font[fs]->getHeight();
+                vOffset = -font->getHeight();
                 break;
             case VerticalAlignBottom:
                 vOffset = 0;
@@ -5068,7 +5077,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 #endif
 
-    font[fs]->unbind();
+    font->unbind();
     disableSmoothLines();
 }
 
@@ -5113,7 +5122,8 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
                             float farDist,
                             FontStyle fs)
 {
-    if (font[fs] == nullptr)
+    auto font = getFont(fs);
+    if (!font)
         return endIter;
 
     enableDepthTest();
@@ -5159,7 +5169,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     }
 
     disableDepthTest();
-    font[fs]->unbind();
+    font->unbind();
 
     return iter;
 }

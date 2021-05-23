@@ -173,7 +173,7 @@ static int font_bind(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:bind()");
 
-    auto font = *celx.getThis<TextureFont*>();
+    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
     font->bind();
     return 0;
 }
@@ -184,7 +184,7 @@ static int font_unbind(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:unbind()");
 
-    auto font = *celx.getThis<TextureFont*>();
+    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
     font->unbind();
     return 0;
 }
@@ -196,7 +196,7 @@ static int font_render(lua_State* l)
     celx.checkArgs(2, 2, "One argument required for font:render");
 
     const char* s = celx.safeGetString(2, AllErrors, "First argument to font:render must be a string");
-    auto font = *celx.getThis<TextureFont*>();
+    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
 #ifndef GL_ES
     Eigen::Matrix4f p, m;
     glGetFloatv(GL_PROJECTION_MATRIX, p.data());
@@ -212,7 +212,7 @@ static int font_getwidth(lua_State* l)
 
     celx.checkArgs(2, 2, "One argument expected for font:getwidth");
     const char* s = celx.safeGetString(2, AllErrors, "Argument to font:getwidth must be a string");
-    auto font = *celx.getThis<TextureFont*>();
+    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
     return celx.push(font->getWidth(s));
 }
 
@@ -222,7 +222,7 @@ static int font_getheight(lua_State* l)
 
     celx.checkArgs(1, 1, "No arguments expected for font:getheight()");
 
-    auto font = *celx.getThis<TextureFont*>();
+    auto font = *celx.getThis<std::shared_ptr<TextureFont>>();
     lua_pushnumber(l, font->getHeight());
     return 1;
 }

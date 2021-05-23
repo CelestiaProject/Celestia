@@ -9,4 +9,4 @@ set(CELIMAGE_SOURCES
 )
 
 add_library(celimage OBJECT ${CELIMAGE_SOURCES})
-cotire(celimage)
+#cotire(celimage)
