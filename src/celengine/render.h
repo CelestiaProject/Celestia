@@ -463,8 +463,8 @@ class Renderer
         FontCount  = 2,
     };
 
-    void setFont(FontStyle, TextureFont*);
-    TextureFont* getFont(FontStyle) const;
+    void setFont(FontStyle, const std::shared_ptr<TextureFont>&);
+    std::shared_ptr<TextureFont> getFont(FontStyle) const;
 
     bool settingsHaveChanged() const;
     void markSettingsChanged();
@@ -797,7 +797,7 @@ class Renderer
     float corrFac;
     float pixelSize{ 1.0f };
     float faintestAutoMag45deg;
-    TextureFont* font[FontCount];
+    std::vector<std::shared_ptr<TextureFont>> fonts{FontCount, nullptr};
 
     ProjectionMode projectionMode;
     int renderMode;

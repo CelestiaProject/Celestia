@@ -61,7 +61,7 @@ class Overlay : public std::ostream
     void end();
 
     void setWindowSize(int, int);
-    void setFont(TextureFont*);
+    void setFont(const std::shared_ptr<TextureFont>&);
 
     void setColor(float r, float g, float b, float a);
     void setColor(const Color& c);
@@ -86,7 +86,7 @@ class Overlay : public std::ostream
  private:
     int windowWidth{ 1 };
     int windowHeight{ 1 };
-    TextureFont* font{ nullptr };
+    std::shared_ptr<TextureFont> font{ nullptr };
     bool useTexture{ false };
     bool fontChanged{ false };
     int textBlock{ 0 };

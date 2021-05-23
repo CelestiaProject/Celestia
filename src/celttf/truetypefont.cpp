@@ -697,7 +697,7 @@ static fs::path ParseFontName(const fs::path &filename, int &collectionIndex, in
     }
 }
 
-TextureFont* LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size)
+std::shared_ptr<TextureFont> LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size)
 {
     if (ft == nullptr)
     {
@@ -711,5 +711,5 @@ TextureFont* LoadTextureFont(const Renderer *r, const fs::path &filename, int in
     int psize = 0;
     int pcollectionIndex = 0;
     auto nameonly = ParseFontName(filename, pcollectionIndex, psize);
-    return TextureFont::load(r, nameonly, index > 0 ? index : pcollectionIndex, size > 0 ? size : psize, r->getScreenDpi());
+    return std::shared_ptr<TextureFont>(TextureFont::load(r, nameonly, index > 0 ? index : pcollectionIndex, size > 0 ? size : psize, r->getScreenDpi()));
 }

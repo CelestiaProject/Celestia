@@ -3947,7 +3947,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     return true;
 }
 
-static TextureFont*
+static std::shared_ptr<TextureFont>
 LoadFontHelper(const Renderer* renderer, const fs::path& p)
 {
     if (p.is_absolute())
@@ -4024,7 +4024,7 @@ bool CelestiaCore::initRenderer()
     }
     else
     {
-        TextureFont* labelFont = LoadFontHelper(renderer, config->labelFont);
+        auto labelFont = LoadFontHelper(renderer, config->labelFont);
         if (labelFont == nullptr)
         {
             renderer->setFont(Renderer::FontNormal, font);
@@ -4253,6 +4253,25 @@ void CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex
     if (f != nullptr)
         f->buildTexture();
     renderer->setFont(fontStyle, f);
+}
+
+void CelestiaCore::clearFonts()
+{
+    if (overlay)
+        overlay->setFont(nullptr);
+    if (console)
+        console->setFont(nullptr);
+
+    titleFont = nullptr;
+    font = nullptr;
+
+    if (renderer)
+    {
+        for (int i = Renderer::FontNormal; i < Renderer::FontCount; i += 1)
+        {
+            renderer->setFont((Renderer::FontStyle)i, nullptr);
+        }
+    }
 }
 
 int CelestiaCore::getTimeZoneBias() const

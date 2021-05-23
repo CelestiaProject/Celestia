@@ -2291,13 +2291,13 @@ static int celestia_loadfont(lua_State* l)
     celx.checkArgs(2, 2, "Need one argument for celestia:loadtexture()");
     string s = celx.safeGetString(2, AllErrors, "Argument to celestia:loadfont() must be a string");
     CelestiaCore* appCore = getAppCore(l, AllErrors);
-    TextureFont* font = LoadTextureFont(appCore->getRenderer(), s);
+    auto font = LoadTextureFont(appCore->getRenderer(), s);
     if (font == nullptr) return 0;
     font->buildTexture();
     return celx.pushClass(font);
 }
 
-TextureFont* getFont(CelestiaCore* appCore)
+std::shared_ptr<TextureFont> getFont(CelestiaCore* appCore)
 {
     return appCore->font;
 }
@@ -2309,13 +2309,13 @@ static int celestia_getfont(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to function celestia:getTitleFont");
 
     CelestiaCore* appCore = getAppCore(l, AllErrors);
-    TextureFont* font = getFont(appCore);
+    auto font = getFont(appCore);
     if (font == nullptr)
         return 0;
     return celx.pushClass(font);
 }
 
-TextureFont* getTitleFont(CelestiaCore* appCore)
+std::shared_ptr<TextureFont> getTitleFont(CelestiaCore* appCore)
 {
     return appCore->titleFont;
 }
@@ -2327,7 +2327,7 @@ static int celestia_gettitlefont(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to function celestia:getTitleFont");
 
     CelestiaCore* appCore = getAppCore(l, AllErrors);
-    TextureFont* font = getTitleFont(appCore);
+    auto font = getTitleFont(appCore);
     if (font == nullptr)
         return 0;
     return celx.pushClass(font);

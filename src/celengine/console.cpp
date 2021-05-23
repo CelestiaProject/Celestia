@@ -129,7 +129,7 @@ void Console::setScale(int w, int h)
 }
 
 
-void Console::setFont(TextureFont* f)
+void Console::setFont(const std::shared_ptr<TextureFont>& f)
 {
     if (f != font)
     {
