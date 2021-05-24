@@ -99,6 +99,10 @@ NSString* fatalErrorMessage;
     [self setupResourceDirectory];
     [scriptsController buildScriptMenuWithScriptDir:[extraDataDirPath path]];
 
+    NSView *mainView = [glView superview];
+    [mainView setWantsLayer:YES];
+    [[mainView layer] setBackgroundColor:[[NSColor blackColor] CGColor]];
+
     //  hide main window until ready
     [[glView window] setAlphaValue: 0.0f];  //  not  [[glView window] orderOut: nil];
     [[glView window] setIgnoresMouseEvents:YES];
