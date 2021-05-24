@@ -77,7 +77,7 @@ private:
 GeometryManager* GetGeometryManager()
 {
     if (geometryManager == nullptr)
-        geometryManager = new GeometryManager("models");
+        geometryManager = new GeometryManager("content/models");
     return geometryManager;
 }
 

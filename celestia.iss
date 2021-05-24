@@ -32,11 +32,13 @@ Name: "urlassoc";    Description: "Associate cel:// &URLs";            GroupDesc
 Name: "fileassoc";   Description: "Associate .cel and .celx &scripts"; GroupDescription: "Other tasks:"
 
 [Dirs]
-Name: "{app}\extras"
-Name: "{app}\textures"
-Name: "{app}\textures\hires"
-Name: "{app}\textures\medres"
-Name: "{app}\textures\lores"
+Name: "{app}\content"
+Name: "{app}\content\extras"
+Name: "{app}\content\models"
+Name: "{app}\content\textures"
+Name: "{app}\content\textures\hires"
+Name: "{app}\content\textures\medres"
+Name: "{app}\content\textures\lores"
 Name: "{app}\tools\binaries"
 Name: "{app}\tools\galaxies"
 Name: "{app}\tools\globulars"
@@ -44,24 +46,24 @@ Name: "{app}\tools\xindex"
 Name: "{app}\tools\stardb"
 Name: "{app}\tools\charm2"
 Name: "{app}\scripts"
-Name: "{app}\extras-standard"
-Name: "{app}\extras-standard\cassini"
-Name: "{app}\extras-standard\cassini\models"
-Name: "{app}\extras-standard\cassini\data"
-Name: "{app}\extras-standard\galileo"
-Name: "{app}\extras-standard\galileo\models"
-Name: "{app}\extras-standard\galileo\data"
-Name: "{app}\extras-standard\hubble"
-Name: "{app}\extras-standard\hubble\models"
-Name: "{app}\extras-standard\iss"
-Name: "{app}\extras-standard\iss\models"
-Name: "{app}\extras-standard\iss\textures"
-Name: "{app}\extras-standard\iss\textures\medres"
-Name: "{app}\extras-standard\mir"
-Name: "{app}\extras-standard\mir\models"
+Name: "{app}\content\extras-standard"
+Name: "{app}\content\extras-standard\cassini"
+Name: "{app}\content\extras-standard\cassini\models"
+Name: "{app}\content\extras-standard\cassini\data"
+Name: "{app}\content\extras-standard\galileo"
+Name: "{app}\content\extras-standard\galileo\models"
+Name: "{app}\content\extras-standard\galileo\data"
+Name: "{app}\content\extras-standard\hubble"
+Name: "{app}\content\extras-standard\hubble\models"
+Name: "{app}\content\extras-standard\iss"
+Name: "{app}\content\extras-standard\iss\models"
+Name: "{app}\content\extras-standard\iss\textures"
+Name: "{app}\content\extras-standard\iss\textures\medres"
+Name: "{app}\content\extras-standard\mir"
+Name: "{app}\content\extras-standard\mir\models"
 Name: "{app}\locale"
 Name: "{app}\help"
-Name: "{app}\help\CelestiaGuide" 
+Name: "{app}\help\CelestiaGuide"
 
 [Files]
 Source: "celestia.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -282,215 +284,215 @@ Source: "locale\start_zh_TW.cel";       DestDir: "{app}/locale"; Flags: ignoreve
 
 
 ; Data
-Source: "data\asterisms.dat";      DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\boundaries.dat";     DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\starnames.dat";      DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\stars.dat";          DestDir: "{app}/data"; Flags: ignoreversion
+Source: "content\data\asterisms.dat";      DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\boundaries.dat";     DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\starnames.dat";      DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\stars.dat";          DestDir: "{app}/content/data"; Flags: ignoreversion
 
-Source: "data\hdxindex.dat";       DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\saoxindex.dat";      DestDir: "{app}/data"; Flags: ignoreversion
+Source: "content\data\hdxindex.dat";       DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\saoxindex.dat";      DestDir: "{app}/content/data"; Flags: ignoreversion
 
-Source: "data\revised.stc";        DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\extrasolar.stc";     DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\nearstars.stc";      DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\visualbins.stc";     DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\spectbins.stc";      DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\charm2.stc";         DestDir: "{app}/data"; Flags: ignoreversion
+Source: "content\data\revised.stc";        DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\extrasolar.stc";     DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\nearstars.stc";      DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\visualbins.stc";     DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\spectbins.stc";      DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\charm2.stc";         DestDir: "{app}/content/data"; Flags: ignoreversion
 
-Source: "data\galaxies.dsc";       DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\globulars.dsc";      DestDir: "{app}/data"; Flags: ignoreversion
+Source: "content\data\galaxies.dsc";       DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\globulars.dsc";      DestDir: "{app}/content/data"; Flags: ignoreversion
 
-Source: "data\asteroids.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\comets.ssc";         DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\extrasolar.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\outersys.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\solarsys.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\minormoons.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\numberedmoons.ssc";  DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\merc_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\venus_locs.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\earth_locs.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\mars_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\moon_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\marsmoons_locs.ssc"; DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\jupitermoons_locs.ssc"; DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\saturnmoons_locs.ssc";  DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\uranusmoons_locs.ssc";  DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\neptunemoons_locs.ssc"; DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\ring_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\eros_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\gaspra_locs.ssc";    DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\ida_locs.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
-;Source: "data\itokawa_locs.ssc";   DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\world-capitals.ssc"; DestDir: "{app}/data"; Flags: ignoreversion
+Source: "content\data\asteroids.ssc";      DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\comets.ssc";         DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\extrasolar.ssc";     DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\outersys.ssc";       DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\solarsys.ssc";       DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\minormoons.ssc";     DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\numberedmoons.ssc";  DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\merc_locs.ssc";      DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\venus_locs.ssc";     DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\earth_locs.ssc";     DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\mars_locs.ssc";      DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\moon_locs.ssc";      DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\marsmoons_locs.ssc"; DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\jupitermoons_locs.ssc"; DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\saturnmoons_locs.ssc";  DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\uranusmoons_locs.ssc";  DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\neptunemoons_locs.ssc"; DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\ring_locs.ssc";      DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\eros_locs.ssc";      DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\gaspra_locs.ssc";    DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\ida_locs.ssc";       DestDir: "{app}/content/data"; Flags: ignoreversion
+;Source: "content\data\itokawa_locs.ssc";   DestDir: "{app}/content/data"; Flags: ignoreversion
+Source: "content\data\world-capitals.ssc"; DestDir: "{app}/content/data"; Flags: ignoreversion
 
 ; Textures (General)
-Source: "textures\flare.jpg";      DestDir: "{app}/textures"; Flags: ignoreversion
-Source: "textures\logo.png";       DestDir: "{app}/textures"; Flags: ignoreversion
+Source: "content\textures\flare.jpg";      DestDir: "{app}/content/textures"; Flags: ignoreversion
+Source: "content\textures\logo.png";       DestDir: "{app}/content/textures"; Flags: ignoreversion
 
 
 ; Textures (Low resolution)
-Source: "textures\lores\astar.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\bstar.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\gstar.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\mstar.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\astar.jpg";             DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\bstar.jpg";             DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\gstar.jpg";             DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\mstar.jpg";             DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
 
-Source: "textures\lores\amalthea.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\ariel.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\ariel-lok-mask.png";    DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\asteroid.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\browndwarf.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\callisto.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\callisto-lok-mask.png"; DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\charon-lok.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\charon-lok-spec.jpg";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\deimos.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\dione.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\earth.png";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\earth-clouds.png";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\earthnight.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\enceladus.jpg";         DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\epimetheus.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\epimetheus-lok.jpg";    DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\eros.jpg";              DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\europa.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\europa-lok-mask.png";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\exo-class1.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\exo-class2.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\exo-class3.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\exo-class4.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\exo-class4night.jpg";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\exo-class5.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\exo-class5night.jpg";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\extrasolar-lok.jpg";    DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\ganymede.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\ganymede-lok-mask.png"; DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\gaspramosaic.jpg";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\hyperion.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\hyperion-lok.jpg";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\iapetus.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\idamosaic.jpg";         DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\io.jpg";                DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\io-lok-mask.png";       DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\janus.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\jupiter.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\mars.jpg";              DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\marsbump.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\mercury.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\mimas.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\miranda.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\miranda-lok-mask.png";  DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\moon.jpg";              DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\moonbump.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\neptune.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\neptune-rings.png";     DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\oberon.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\oberon-lok-mask.png";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\phobos.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\phoebe.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\pluto-lok.jpg";         DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\pluto-lok-spec.jpg";    DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\proteus.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\prometheus.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\rhea.jpg";              DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\saturn.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\saturn-rings.png";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\tethys.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\titania.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\titania-lok-mask.png";  DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\titan.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\titan-clouds.jpg";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\triton.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\triton-lok-mask.png";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\umbriel.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\umbriel-lok-mask.png";  DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\uranus.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\uranus-rings.png";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\venus.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\venuslike.jpg";         DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\venuslikenight.jpg";    DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\venussurface.jpg";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\amalthea.jpg";          DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\ariel.jpg";             DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\ariel-lok-mask.png";    DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\asteroid.jpg";          DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\browndwarf.jpg";        DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\callisto.jpg";          DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\callisto-lok-mask.png"; DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\charon-lok.jpg";        DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\charon-lok-spec.jpg";   DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\deimos.jpg";            DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\dione.jpg";             DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\earth.png";             DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\earth-clouds.png";      DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\earthnight.jpg";        DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\enceladus.jpg";         DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\epimetheus.jpg";        DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\epimetheus-lok.jpg";    DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\eros.jpg";              DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\europa.jpg";            DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\europa-lok-mask.png";   DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\exo-class1.jpg";        DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\exo-class2.jpg";        DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\exo-class3.jpg";        DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\exo-class4.jpg";        DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\exo-class4night.jpg";   DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\exo-class5.jpg";        DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\exo-class5night.jpg";   DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\extrasolar-lok.jpg";    DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\ganymede.jpg";          DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\ganymede-lok-mask.png"; DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\gaspramosaic.jpg";      DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\hyperion.jpg";          DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\hyperion-lok.jpg";      DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\iapetus.jpg";           DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\idamosaic.jpg";         DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\io.jpg";                DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\io-lok-mask.png";       DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\janus.jpg";             DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\jupiter.jpg";           DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\mars.jpg";              DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\marsbump.jpg";          DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\mercury.jpg";           DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\mimas.jpg";             DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\miranda.jpg";           DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\miranda-lok-mask.png";  DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\moon.jpg";              DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\moonbump.jpg";          DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\neptune.jpg";           DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\neptune-rings.png";     DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\oberon.jpg";            DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\oberon-lok-mask.png";   DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\phobos.jpg";            DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\phoebe.jpg";            DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\pluto-lok.jpg";         DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\pluto-lok-spec.jpg";    DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\proteus.jpg";           DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\prometheus.jpg";        DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\rhea.jpg";              DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\saturn.jpg";            DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\saturn-rings.png";      DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\tethys.jpg";            DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\titania.jpg";           DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\titania-lok-mask.png";  DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\titan.jpg";             DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\titan-clouds.jpg";      DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\triton.jpg";            DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\triton-lok-mask.png";   DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\umbriel.jpg";           DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\umbriel-lok-mask.png";  DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\uranus.jpg";            DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\uranus-rings.png";      DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\venus.jpg";             DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\venuslike.jpg";         DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\venuslikenight.jpg";    DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
+Source: "content\textures\lores\venussurface.jpg";      DestDir: "{app}/content/textures/lores"; Flags: ignoreversion
 
 
 ; Textures (Medium resolution)
-Source: "textures\medres\astar.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\bstar.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\gstar.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\mstar.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\astar.jpg";           DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\bstar.jpg";           DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\gstar.jpg";           DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\mstar.jpg";           DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
 
-Source: "textures\medres\amalthea.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\ariel.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\asteroid.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\browndwarf.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\callisto.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\charon-lok.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\charon-lok-spec.jpg"; DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\deimos.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\dione.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\earth.png";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\earth-clouds.png";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\earthnight.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\enceladus.jpg";       DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\epimetheus.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\epimetheus-lok.jpg";  DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\eros.jpg";            DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\europa.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\exo-class1.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\exo-class2.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\exo-class3.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\exo-class4.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\exo-class4night.jpg"; DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\exo-class5.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\exo-class5night.jpg"; DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\ganymede.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\gaspramosaic.jpg";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\hyperion.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\hyperion-lok.jpg";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\iapetus.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\idamosaic.jpg";       DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\io.jpg";              DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\janus.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\jupiter.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\mars.jpg";            DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\marsbump.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\mercury.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\mimas.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\miranda.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\moon.jpg";            DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\moonbump.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\neptune.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\oberon.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\phobos.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\phoebe.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\pluto-lok.jpg";       DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\pluto-lok-spec.jpg";  DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\prometheus.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\proteus.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\rhea.jpg";            DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\saturn.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\tethys.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\titan.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\titan-clouds.jpg";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\titania.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\triton.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\umbriel.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\venus.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\venuslike.jpg";       DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\venuslikenight.jpg";  DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\venussurface.jpg";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\amalthea.jpg";        DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\ariel.jpg";           DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\asteroid.jpg";        DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\browndwarf.jpg";      DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\callisto.jpg";        DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\charon-lok.jpg";      DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\charon-lok-spec.jpg"; DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\deimos.jpg";          DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\dione.jpg";           DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\earth.png";           DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\earth-clouds.png";    DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\earthnight.jpg";      DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\enceladus.jpg";       DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\epimetheus.jpg";      DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\epimetheus-lok.jpg";  DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\eros.jpg";            DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\europa.jpg";          DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\exo-class1.jpg";      DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\exo-class2.jpg";      DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\exo-class3.jpg";      DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\exo-class4.jpg";      DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\exo-class4night.jpg"; DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\exo-class5.jpg";      DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\exo-class5night.jpg"; DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\ganymede.jpg";        DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\gaspramosaic.jpg";    DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\hyperion.jpg";        DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\hyperion-lok.jpg";    DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\iapetus.jpg";         DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\idamosaic.jpg";       DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\io.jpg";              DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\janus.jpg";           DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\jupiter.jpg";         DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\mars.jpg";            DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\marsbump.jpg";        DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\mercury.jpg";         DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\mimas.jpg";           DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\miranda.jpg";         DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\moon.jpg";            DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\moonbump.jpg";        DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\neptune.jpg";         DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\oberon.jpg";          DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\phobos.jpg";          DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\phoebe.jpg";          DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\pluto-lok.jpg";       DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\pluto-lok-spec.jpg";  DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\prometheus.jpg";      DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\proteus.jpg";         DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\rhea.jpg";            DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\saturn.jpg";          DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\tethys.jpg";          DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\titan.jpg";           DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\titan-clouds.jpg";    DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\titania.jpg";         DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\triton.jpg";          DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\umbriel.jpg";         DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\venus.jpg";           DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\venuslike.jpg";       DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\venuslikenight.jpg";  DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
+Source: "content\textures\medres\venussurface.jpg";    DestDir: "{app}/content/textures/medres"; Flags: ignoreversion
 
 ; Textures (High resolution)
-Source: "textures\hires\dione.jpg";            DestDir: "{app}/textures/hires"; Flags: ignoreversion
-Source: "textures\hires\enceladus.jpg";        DestDir: "{app}/textures/hires"; Flags: ignoreversion
-Source: "textures\hires\iapetus.jpg";          DestDir: "{app}/textures/hires"; Flags: ignoreversion
-Source: "textures\hires\mercury.jpg";          DestDir: "{app}/textures/hires"; Flags: ignoreversion
-Source: "textures\hires\mimas.jpg";            DestDir: "{app}/textures/hires"; Flags: ignoreversion
-Source: "textures\hires\moon.jpg";             DestDir: "{app}/textures/hires"; Flags: ignoreversion
-Source: "textures\hires\moonbump.jpg";         DestDir: "{app}/textures/hires"; Flags: ignoreversion
-Source: "textures\hires\phoebe.jpg";           DestDir: "{app}/textures/hires"; Flags: ignoreversion
-Source: "textures\hires\rhea.jpg";             DestDir: "{app}/textures/hires"; Flags: ignoreversion
-Source: "textures\hires\tethys.jpg";           DestDir: "{app}/textures/hires"; Flags: ignoreversion
-Source: "textures\hires\titan.jpg";            DestDir: "{app}/textures/hires"; Flags: ignoreversion
+Source: "content\textures\hires\dione.jpg";            DestDir: "{app}/content/textures/hires"; Flags: ignoreversion
+Source: "content\textures\hires\enceladus.jpg";        DestDir: "{app}/content/textures/hires"; Flags: ignoreversion
+Source: "content\textures\hires\iapetus.jpg";          DestDir: "{app}/content/textures/hires"; Flags: ignoreversion
+Source: "content\textures\hires\mercury.jpg";          DestDir: "{app}/content/textures/hires"; Flags: ignoreversion
+Source: "content\textures\hires\mimas.jpg";            DestDir: "{app}/content/textures/hires"; Flags: ignoreversion
+Source: "content\textures\hires\moon.jpg";             DestDir: "{app}/content/textures/hires"; Flags: ignoreversion
+Source: "content\textures\hires\moonbump.jpg";         DestDir: "{app}/content/textures/hires"; Flags: ignoreversion
+Source: "content\textures\hires\phoebe.jpg";           DestDir: "{app}/content/textures/hires"; Flags: ignoreversion
+Source: "content\textures\hires\rhea.jpg";             DestDir: "{app}/content/textures/hires"; Flags: ignoreversion
+Source: "content\textures\hires\tethys.jpg";           DestDir: "{app}/content/textures/hires"; Flags: ignoreversion
+Source: "content\textures\hires\titan.jpg";            DestDir: "{app}/content/textures/hires"; Flags: ignoreversion
 
 
 ; Shaders (NV)
@@ -543,43 +545,43 @@ Source: "shaders\texphong_alpha_nv.fp";  DestDir: "{app}/shaders"; Flags: ignore
 
 
 ; Models
-Source: "models\E0.png";          DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\S0.png";          DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\Sa.png";          DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\Sb.png";          DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\Sc.png";          DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\SBa.png";         DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\SBb.png";         DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\SBc.png";         DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\MilkyWay.png";    DestDir: "{app}/models"; Flags: ignoreversion
+Source: "content\models\E0.png";          DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\S0.png";          DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\Sa.png";          DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\Sb.png";          DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\Sc.png";          DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\SBa.png";         DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\SBb.png";         DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\SBc.png";         DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\MilkyWay.png";    DestDir: "{app}/content/models"; Flags: ignoreversion
 
-Source: "models\amalthea.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\asteroid.cms";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\bacchus.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\borrelly.cms";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\castalia.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\deimos.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\epimetheus.cmod";  DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\eros.cmod";        DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\gaspra.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\geographos.cmod";  DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\golevka.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\halley.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\hyperion.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\ida.cmod";         DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\itokawa.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\janus.cmod";       DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\kleopatra.cmod";   DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\ky26.cmod";        DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\larissa.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\pandora.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\phobos.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\phoebe.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\prometheus.cmod";  DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\proteus.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\roughsphere.cms";  DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\toutatis.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\vesta.cmod";       DestDir: "{app}/models"; Flags: ignoreversion
+Source: "content\models\amalthea.cmod";    DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\asteroid.cms";     DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\bacchus.cmod";     DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\borrelly.cms";     DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\castalia.cmod";    DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\deimos.cmod";      DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\epimetheus.cmod";  DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\eros.cmod";        DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\gaspra.cmod";      DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\geographos.cmod";  DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\golevka.cmod";     DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\halley.cmod";      DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\hyperion.cmod";    DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\ida.cmod";         DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\itokawa.cmod";     DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\janus.cmod";       DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\kleopatra.cmod";   DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\ky26.cmod";        DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\larissa.cmod";     DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\pandora.cmod";     DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\phobos.cmod";      DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\phoebe.cmod";      DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\prometheus.cmod";  DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\proteus.cmod";     DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\roughsphere.cms";  DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\toutatis.cmod";    DestDir: "{app}/content/models"; Flags: ignoreversion
+Source: "content\models\vesta.cmod";       DestDir: "{app}/content/models"; Flags: ignoreversion
 
 
 ; Fonts
@@ -622,28 +624,28 @@ Source: "fonts\sans14_zh_TW.txf";      DestDir: "{app}/fonts"; Flags: ignorevers
 Source: "fonts\sansbold20_zh_TW.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 
 ; Standard extras
-Source: "extras-standard\cassini\cassini.ssc"; DestDir: "{app}/extras-standard/cassini"; Flags: ignoreversion
-Source: "extras-standard\cassini\models\cassini.3ds"; DestDir: "{app}/extras-standard/cassini/models"; Flags: ignoreversion
-Source: "extras-standard\cassini\models\huygens.3ds"; DestDir: "{app}/extras-standard/cassini/models"; Flags: ignoreversion
-Source: "extras-standard\cassini\data\cassini-cruise.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
-Source: "extras-standard\cassini\data\cassini-orbit.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
-Source: "extras-standard\cassini\data\cassini-solstice.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
-Source: "extras-standard\cassini\data\huygens.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
+Source: "content\extras-standard\cassini\cassini.ssc"; DestDir: "{app}/content/extras-standard/cassini"; Flags: ignoreversion
+Source: "content\extras-standard\cassini\models\cassini.3ds"; DestDir: "{app}/content/extras-standard/cassini/models"; Flags: ignoreversion
+Source: "content\extras-standard\cassini\models\huygens.3ds"; DestDir: "{app}/content/extras-standard/cassini/models"; Flags: ignoreversion
+Source: "content\extras-standard\cassini\data\cassini-cruise.xyzv"; DestDir: "{app}/content/extras-standard/cassini/data"; Flags: ignoreversion
+Source: "content\extras-standard\cassini\data\cassini-orbit.xyzv"; DestDir: "{app}/content/extras-standard/cassini/data"; Flags: ignoreversion
+Source: "content\extras-standard\cassini\data\cassini-solstice.xyzv"; DestDir: "{app}/content/extras-standard/cassini/data"; Flags: ignoreversion
+Source: "content\extras-standard\cassini\data\huygens.xyzv"; DestDir: "{app}/content/extras-standard/cassini/data"; Flags: ignoreversion
 
-Source: "extras-standard\galileo\galileo.ssc"; DestDir: "{app}/extras-standard/galileo"; Flags: ignoreversion
-Source: "extras-standard\galileo\models\galileo.3ds"; DestDir: "{app}/extras-standard/galileo/models"; Flags: ignoreversion
-Source: "extras-standard\galileo\data\galileo-cruise.xyzv"; DestDir: "{app}/extras-standard/galileo/data"; Flags: ignoreversion
-Source: "extras-standard\galileo\data\galileo-orbit.xyzv"; DestDir: "{app}/extras-standard/galileo/data"; Flags: ignoreversion
+Source: "content\extras-standard\galileo\galileo.ssc"; DestDir: "{app}/content/extras-standard/galileo"; Flags: ignoreversion
+Source: "content\extras-standard\galileo\models\galileo.3ds"; DestDir: "{app}/content/extras-standard/galileo/models"; Flags: ignoreversion
+Source: "content\extras-standard\galileo\data\galileo-cruise.xyzv"; DestDir: "{app}/content/extras-standard/galileo/data"; Flags: ignoreversion
+Source: "content\extras-standard\galileo\data\galileo-orbit.xyzv"; DestDir: "{app}/content/extras-standard/galileo/data"; Flags: ignoreversion
 
-Source: "extras-standard\hubble\hubble.ssc"; DestDir: "{app}/extras-standard/hubble"; Flags: ignoreversion
-Source: "extras-standard\hubble\models\hubble.cmod"; DestDir: "{app}/extras-standard/hubble/models"; Flags: ignoreversion
+Source: "content\extras-standard\hubble\hubble.ssc"; DestDir: "{app}/content/extras-standard/hubble"; Flags: ignoreversion
+Source: "content\extras-standard\hubble\models\hubble.cmod"; DestDir: "{app}/content/extras-standard/hubble/models"; Flags: ignoreversion
 
-Source: "extras-standard\iss\iss.ssc"; DestDir: "{app}/extras-standard/iss"; Flags: ignoreversion
-Source: "extras-standard\iss\models\iss.cmod"; DestDir: "{app}/extras-standard/iss/models"; Flags: ignoreversion
-Source: "extras-standard\iss\textures\medres\*.jpg"; DestDir: "{app}/extras-standard/iss/textures/medres"; Flags: ignoreversion
+Source: "content\extras-standard\iss\iss.ssc"; DestDir: "{app}/content/extras-standard/iss"; Flags: ignoreversion
+Source: "content\extras-standard\iss\models\iss.cmod"; DestDir: "{app}/content/extras-standard/iss/models"; Flags: ignoreversion
+Source: "content\extras-standard\iss\textures\medres\*.jpg"; DestDir: "{app}/content/extras-standard/iss/textures/medres"; Flags: ignoreversion
 
-Source: "extras-standard\mir\mir.ssc"; DestDir: "{app}/extras-standard/mir"; Flags: ignoreversion
-Source: "extras-standard\mir\models\mir.3ds"; DestDir: "{app}/extras-standard/mir/models"; Flags: ignoreversion
+Source: "content\extras-standard\mir\mir.ssc"; DestDir: "{app}/content/extras-standard/mir"; Flags: ignoreversion
+Source: "content\extras-standard\mir\models\mir.3ds"; DestDir: "{app}/content/extras-standard/mir/models"; Flags: ignoreversion
 
 ; celx scripts
 Source: "scripts\mark-lg.celx";      DestDir: "{app}/scripts"; Flags: ignoreversion

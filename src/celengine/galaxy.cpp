@@ -170,7 +170,7 @@ void Galaxy::setType(const string& typeStr)
 
     if (customTmpName != nullptr)
     {
-        form = buildGalacticForms(fs::path("models") / *customTmpName);
+        form = buildGalacticForms(fs::path("content/models") / *customTmpName);
     }
     else
     {
@@ -612,7 +612,7 @@ GalacticForm* buildGalacticForms(const fs::path& filename)
             z  += sfrand<float>() * 0.008f;
             r2 = x * x + z * z;
 
-            if (filename != "models/E0.png")
+            if (filename != "content/models/E0.png")
             {
                 float y0 = 0.5f * MAX_SPIRAL_THICKNESS * sqrt((float)value/256.0f) * exp(- 5.0f * r2);
                 float B, yr;
@@ -681,13 +681,13 @@ void InitializeForms()
 
     spiralForms   = new GalacticForm*[7];
 
-    spiralForms[Galaxy::S0]   = buildGalacticForms("models/S0.png");
-    spiralForms[Galaxy::Sa]   = buildGalacticForms("models/Sa.png");
-    spiralForms[Galaxy::Sb]   = buildGalacticForms("models/Sb.png");
-    spiralForms[Galaxy::Sc]   = buildGalacticForms("models/Sc.png");
-    spiralForms[Galaxy::SBa]  = buildGalacticForms("models/SBa.png");
-    spiralForms[Galaxy::SBb]  = buildGalacticForms("models/SBb.png");
-    spiralForms[Galaxy::SBc]  = buildGalacticForms("models/SBc.png");
+    spiralForms[Galaxy::S0]   = buildGalacticForms("content/models/S0.png");
+    spiralForms[Galaxy::Sa]   = buildGalacticForms("content/models/Sa.png");
+    spiralForms[Galaxy::Sb]   = buildGalacticForms("content/models/Sb.png");
+    spiralForms[Galaxy::Sc]   = buildGalacticForms("content/models/Sc.png");
+    spiralForms[Galaxy::SBa]  = buildGalacticForms("content/models/SBa.png");
+    spiralForms[Galaxy::SBb]  = buildGalacticForms("content/models/SBb.png");
+    spiralForms[Galaxy::SBc]  = buildGalacticForms("content/models/SBc.png");
 
     // Elliptical Galaxies , 8 classical Hubble types, E0..E7,
     //
@@ -702,7 +702,7 @@ void InitializeForms()
         // note the correct x,y-alignment of 'ell' scaling!!
         // build all elliptical templates from rescaling E0
 
-        ellipticalForms[eform] = buildGalacticForms("models/E0.png");
+        ellipticalForms[eform] = buildGalacticForms("content/models/E0.png");
         if (*ellipticalForms)
             ellipticalForms[eform]->scale = Vector3f(ell, ell, 1.0f);
 

@@ -114,7 +114,7 @@ WarpMeshManager* GetWarpMeshManager()
 {
     static WarpMeshManager* warpMeshManager = nullptr;
     if (warpMeshManager == nullptr)
-        warpMeshManager = new WarpMeshManager("warp");
+        warpMeshManager = new WarpMeshManager("content/warp");
     return warpMeshManager;
 }
 

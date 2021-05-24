@@ -23,7 +23,7 @@ static RotationModelManager* rotationModelManager = nullptr;
 RotationModelManager* GetRotationModelManager()
 {
     if (rotationModelManager == nullptr)
-        rotationModelManager = new RotationModelManager("data");
+        rotationModelManager = new RotationModelManager("content/data");
     return rotationModelManager;
 }
 

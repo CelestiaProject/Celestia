@@ -28,7 +28,7 @@ constexpr const fs::path::value_type UniqueSuffixChar = '!';
 TrajectoryManager* GetTrajectoryManager()
 {
     if (trajectoryManager == nullptr)
-        trajectoryManager = new TrajectoryManager("data");
+        trajectoryManager = new TrajectoryManager("content/data");
     return trajectoryManager;
 }
 

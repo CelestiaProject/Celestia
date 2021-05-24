@@ -39,7 +39,7 @@ static std::array<const char*, 6> extensions =
 TextureManager* GetTextureManager()
 {
     if (textureManager == nullptr)
-        textureManager = new TextureManager("textures");
+        textureManager = new TextureManager("content/textures");
     return textureManager;
 }
 
