@@ -660,7 +660,6 @@
 		E5D446650777291700A1577D /* utf8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utf8.h; path = ../src/celutil/utf8.h; sourceTree = SOURCE_ROOT; };
 		E5D4467307772B6C00A1577D /* CelestiaSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestiaSettings.h; sourceTree = "<group>"; };
 		E5D4467407772B6C00A1577D /* CelestiaSettings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CelestiaSettings.mm; sourceTree = "<group>"; };
-		E5D471260778E33C007731C3 /* libpng.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng.dylib; path = Frameworks/libpng.dylib; sourceTree = "<group>"; };
 		E5D5425E0D0B86B200E8C513 /* Menu_Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Menu_Extensions.h; sourceTree = "<group>"; };
 		E5D5425F0D0B86B200E8C513 /* Menu_Extensions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Menu_Extensions.mm; sourceTree = "<group>"; };
 		E5D7660B0982B15C0099DBBD /* es */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = es; path = es.lproj/Credits.rtf; sourceTree = "<group>"; };
@@ -725,10 +724,8 @@
 		E5EAAE550A1A0B4600848446 /* ja */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ja; path = ja.lproj/HelpWindow.nib; sourceTree = "<group>"; };
 		E5EAAE650A1A0E9700848446 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E5EAAE660A1A0E9B00848446 /* ja */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
-		E5F8C9E30795235E00D1DAF2 /* liblua.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblua.dylib; path = Frameworks/liblua.dylib; sourceTree = "<group>"; };
 		E5FB63B20A0F80FA00A60759 /* es */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F5040AF602A46404014901DC /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
-		F5040B0602A47B91014901DC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F5040B0E02A484DA014901DC /* CelestiaController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CelestiaController.h; sourceTree = "<group>"; };
 		F5040B0F02A484DA014901DC /* CelestiaController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CelestiaController.m; sourceTree = "<group>"; };
 		F505BFFA02CA9DAE0100020A /* CGLInfo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CGLInfo.mm; sourceTree = "<group>"; };
@@ -1049,11 +1046,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CE4EEA6D0F50144A003341A2 /* cspice.a */,
-				E5F8C9E30795235E00D1DAF2 /* liblua.dylib */,
-				E5D471260778E33C007731C3 /* libpng.dylib */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
-				F5040B0602A47B91014901DC /* Carbon.framework */,
 				F5040AF602A46404014901DC /* OpenGL.framework */,
 			);
 			name = "Linked Frameworks";
@@ -1132,6 +1125,7 @@
 			isa = PBXGroup;
 			children = (
 				970AEE91232943DC00E9ED22 /* libiconv.tbd */,
+				CE4EEA6D0F50144A003341A2 /* cspice.a */,
 				970AEE8F232943D300E9ED22 /* libintl.a */,
 				97E40188231015AD002013C7 /* liblua5.1.a */,
 				9708E6A72312A8B00015C9F4 /* libjpeg.a */,
@@ -2231,7 +2225,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -2326,7 +2320,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -2474,7 +2468,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -2524,7 +2518,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = YES;
