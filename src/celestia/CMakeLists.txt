@@ -25,8 +25,7 @@ set(CELESTIA_SOURCES
 
 if(ENABLE_FFMPEG)
   list(APPEND CELESTIA_SOURCES
-    ffmpegcapture.cpp
-    ffmpegcapture.h
+    moviecapture.cpp
     moviecapture.h
   )
 endif()

@@ -11,7 +11,6 @@
 // of the License, or (at your option) any later version.
 
 
-//#include <ctime>
 #include <memory>
 
 #include <QStandardPaths>
@@ -65,10 +64,6 @@
 #include <celestia/url.h>
 #include "qtbookmark.h"
 
-#ifdef USE_FFMPEG
-#include "celestia/ffmpegcapture.h"
-#endif
-
 #ifndef CONFIG_DATA_DIR
 #define CONFIG_DATA_DIR "./"
 #endif
@@ -88,22 +83,6 @@ static const int CELESTIA_MAIN_WINDOW_VERSION = 12;
 
 static int fps_to_ms(int fps) { return fps > 0 ? 1000 / fps : 0; }
 static int ms_to_fps(int ms) { return ms > 0? 1000 / ms : 0; }
-
-#ifdef USE_FFMPEG
-static const int videoSizes[][2] =
-{
-    { 160,  120  },
-    { 320,  240  },
-    { 640,  480  },
-    { 720,  480  },
-    { 720,  576  },
-    { 1024, 768  },
-    { 1280, 720  },
-    { 1920, 1080 }
-};
-
-static const float videoFrameRates[] = { 15.0f, 23.976f, 24.0f, 25.0f, 29.97f, 30.0f, 60.0f };
-#endif
 
 // Progress notifier class receives update messages from CelestiaCore
 // at startup. This simple implementation just forwards messages on
@@ -666,20 +645,27 @@ void CelestiaAppWindow::slotCaptureVideo()
         QComboBox* resolutionCombo = new QComboBox(&videoInfoDialog);
         layout->addWidget(new QLabel(_("Resolution:"), &videoInfoDialog), 0, 0);
         layout->addWidget(resolutionCombo, 0, 1);
+        auto videoSizes = m_appCore->getSupportedMovieSizes();
         for (const auto& size : videoSizes)
-            resolutionCombo->addItem(QString(_("%1 x %2")).arg(size[0]).arg(size[1]), QSize(size[0], size[1]));
+        {
+            int w = size.width;
+            int h = size.height;
+            resolutionCombo->addItem(QString(_("%1 x %2")).arg(w).arg(h), QSize(w, h));
+        }
 
         QComboBox* frameRateCombo = new QComboBox(&videoInfoDialog);
         layout->addWidget(new QLabel(_("Frame rate:"), &videoInfoDialog), 1, 0);
         layout->addWidget(frameRateCombo, 1, 1);
+        auto videoFrameRates = m_appCore->getSupportedMovieFramerates();
         for (float i : videoFrameRates)
             frameRateCombo->addItem(QString::number(i), i);
 
         QComboBox* codecCombo = new QComboBox(&videoInfoDialog);
         layout->addWidget(new QLabel(_("Video codec:"), &videoInfoDialog), 2, 0);
         layout->addWidget(codecCombo, 2, 1);
-        codecCombo->addItem(_("Lossless"), AV_CODEC_ID_FFVHUFF);
-        codecCombo->addItem(_("Lossy (H.264)"), AV_CODEC_ID_H264);
+        auto videoCodecs = m_appCore->getSupportedMovieCodecs();
+        for (const auto &c : videoCodecs)
+            codecCombo->addItem(_(c.codecDescr), c.codecId);
 
         QLineEdit* bitrateEdit = new QLineEdit("400000", &videoInfoDialog);
         bitrateEdit->setInputMask("D000000000");
@@ -697,24 +683,12 @@ void CelestiaAppWindow::slotCaptureVideo()
         {
             QSize videoSize = resolutionCombo->itemData(resolutionCombo->currentIndex()).toSize();
             float frameRate = frameRateCombo->itemData(frameRateCombo->currentIndex()).toFloat();
-            AVCodecID vc = static_cast<AVCodecID>(codecCombo->itemData(codecCombo->currentIndex()).toInt());
-            int br = bitrateEdit->text().toLongLong();
+            int codec = codecCombo->itemData(codecCombo->currentIndex()).toInt();
+            int64_t bitrate = bitrateEdit->text().toLongLong();
 
-            auto *movieCapture = new FFMPEGCapture(m_appCore->getRenderer());
-            movieCapture->setVideoCodec(vc);
-            movieCapture->setBitRate(br);
-            if (vc == AV_CODEC_ID_H264)
-                movieCapture->setEncoderOptions(m_appCore->getConfig()->x264EncoderOptions);
-            else
-                movieCapture->setEncoderOptions(m_appCore->getConfig()->ffvhEncoderOptions);
-
-            bool ok = movieCapture->start(saveAsName.toStdString(),
-                                          videoSize.width(), videoSize.height(),
-                                          frameRate);
-            if (ok)
-                m_appCore->initMovieCapture(movieCapture);
-            else
-                delete movieCapture;
+            m_appCore->initMovieCapture(saveAsName.toStdString(),
+                                        videoSize.width(), videoSize.height(),
+                                        frameRate, bitrate, codec);
         }
 
         settings.beginGroup("Preferences");
