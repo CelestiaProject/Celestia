@@ -493,7 +493,7 @@ bool Url::parse(std::string_view urlStr)
         }
     }
 
-    if (version != 3)
+    if (version != 3 && version != 4)
     {
         fmt::fprintf(std::cerr, _("Unsupported URL version: %i\n"), version);
         return false;
@@ -502,7 +502,9 @@ bool Url::parse(std::string_view urlStr)
     m_ref = ref;
     m_state = state;
     m_nBodies = nBodies;
-    if (!initVersion3(params, timeStr))
+    if (version == 4 && !initVersion4(params, timeStr))
+        return false;
+    else if (!initVersion3(params, timeStr))
         return false;
     m_valid = true;
     evalName();
@@ -623,6 +625,23 @@ bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::str
         m_timeSource = static_cast<TimeSource>(tsrc);
 
     return true;
+}
+
+bool Url::initVersion4(std::map<std::string_view, std::string> &params, std::string_view timeStr)
+{
+    if (params.count("rf") != 0)
+    {
+        uint64_t rf;
+        if (!to_number(params["rf"], rf))
+            return false;
+        int nrf = rf >> 27;
+        int _rf = rf & 0x07ffffff;
+        if ((rf & Renderer::ShowPlanets) != 0)
+            _rf |= (1 << 27); // Set the 27th bits to ShowPlanets
+        params["nrf"] = std::to_string(nrf);
+        params["rf"] = std::to_string(_rf);
+    }
+    return initVersion3(params, timeStr);
 }
 
 void Url::evalName()

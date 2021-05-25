@@ -65,6 +65,7 @@ class Url
 
  private:
     bool initVersion3(std::map<std::string_view, std::string> &params, std::string_view timeStr);
+    bool initVersion4(std::map<std::string_view, std::string> &params, std::string_view timeStr);
     void evalName();
 
     CelestiaState   m_state;
