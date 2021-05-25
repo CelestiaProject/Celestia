@@ -1,6 +1,8 @@
 #define AVCODEC_DEBUG 0
 
-#include "ffmpegcapture.h"
+#include <iostream>
+#include <vector>
+#include <fmt/format.h>
 
 #define __STDC_CONSTANT_MACROS
 extern "C"
@@ -12,17 +14,18 @@ extern "C"
 #include <libswscale/swscale.h>
 }
 
-#include <iostream>
-#include <vector>
-#include <fmt/format.h>
+#include <celengine/render.h>
+#include "moviecapture.h"
 
 using namespace std;
 
-// a wrapper around a single output AVStream
-class FFMPEGCapturePrivate
+namespace celestia
 {
-    FFMPEGCapturePrivate() = default;
-    ~FFMPEGCapturePrivate();
+// a wrapper around a single output AVStream
+class MovieCapturePrivate
+{
+    MovieCapturePrivate() = default;
+    ~MovieCapturePrivate();
 
     bool init(const fs::path& fn);
     bool addStream(int w, int h, float fps);
@@ -50,7 +53,7 @@ class FFMPEGCapturePrivate
     // pts of the next frame that will be generated
     int64_t         nextPts   { 0       };
     // requested bitrate
-    int64_t         bit_rate  { 400000  };
+    int64_t         bitrate  { 400000  };
 
     AVCodecID       vc_id     { AV_CODEC_ID_FFVHUFF };
     float           fps       { 0       };
@@ -63,22 +66,22 @@ class FFMPEGCapturePrivate
 #if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58, 10, 100)) // ffmpeg < 4.0
     static bool     registered;
 #endif
-    friend class FFMPEGCapture;
+    friend class MovieCapture;
 };
 
 #if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58, 10, 100)) // ffmpeg < 4.0
-bool FFMPEGCapturePrivate::registered = false;
+bool MovieCapturePrivate::registered = false;
 #endif
 
-bool FFMPEGCapturePrivate::init(const fs::path& filename)
+bool MovieCapturePrivate::init(const fs::path& filename)
 {
     this->filename = filename;
 
 #if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58, 10, 100)) // ffmpeg < 4.0
-    if (!FFMPEGCapturePrivate::registered)
+    if (!MovieCapturePrivate::registered)
     {
         av_register_all();
-        FFMPEGCapturePrivate::registered = true;
+        MovieCapturePrivate::registered = true;
     }
 #endif
 
@@ -88,7 +91,7 @@ bool FFMPEGCapturePrivate::init(const fs::path& filename)
     return oc != nullptr;
 }
 
-bool FFMPEGCapturePrivate::isSupportedPixelFormat(enum AVPixelFormat format) const
+bool MovieCapturePrivate::isSupportedPixelFormat(enum AVPixelFormat format) const
 {
     const enum AVPixelFormat *p = vc->pix_fmts;
     if (p == nullptr)
@@ -185,7 +188,7 @@ static void listEncoderParameters(const AVCodec *vc)
 }
 #endif
 
-int FFMPEGCapturePrivate::writePacket()
+int MovieCapturePrivate::writePacket()
 {
     // rescale output packet timestamp values from codec to stream timebase
     av_packet_rescale_ts(pkt, enc->time_base, st->time_base);
@@ -196,7 +199,7 @@ int FFMPEGCapturePrivate::writePacket()
 }
 
 // add an output stream
-bool FFMPEGCapturePrivate::addStream(int width, int height, float fps)
+bool MovieCapturePrivate::addStream(int width, int height, float fps)
 {
     this->fps = fps;
 
@@ -229,11 +232,11 @@ bool FFMPEGCapturePrivate::addStream(int width, int height, float fps)
 
     enc->codec_id = oc->oformat->video_codec = vc_id;
 
-    enc->bit_rate = bit_rate;
+    enc->bit_rate = bitrate;
 #if 0
     enc->rc_min_rate = ...;
     enc->rc_max_rate = ...;
-    enc->bit_rate_tolerance = 0;
+    enc->bitrate_tolerance = 0;
 #endif
     // Resolution must be a multiple of two
     enc->width     = width;
@@ -283,7 +286,7 @@ bool FFMPEGCapturePrivate::addStream(int width, int height, float fps)
     return true;
 }
 
-bool FFMPEGCapturePrivate::start()
+bool MovieCapturePrivate::start()
 {
     // open the output file, if needed
     if ((oc->oformat->flags & AVFMT_NOFILE) == 0)
@@ -313,7 +316,7 @@ bool FFMPEGCapturePrivate::start()
     return true;
 }
 
-bool FFMPEGCapturePrivate::openVideo()
+bool MovieCapturePrivate::openVideo()
 {
     AVDictionary *opts = nullptr;
     const char *str = "";
@@ -424,7 +427,7 @@ static void captureImage(AVFrame *pict, int width, int height, const Renderer *r
 
 // encode one video frame and send it to the muxer
 // return 1 when encoding is finished, 0 otherwise
-bool FFMPEGCapturePrivate::writeVideoFrame(bool finalize)
+bool MovieCapturePrivate::writeVideoFrame(bool finalize)
 {
     AVFrame *frame = finalize ? nullptr : this->frame;
 
@@ -488,7 +491,7 @@ bool FFMPEGCapturePrivate::writeVideoFrame(bool finalize)
     return true;
 }
 
-void FFMPEGCapturePrivate::finish()
+void MovieCapturePrivate::finish()
 {
     writeVideoFrame(true);
 
@@ -502,7 +505,7 @@ void FFMPEGCapturePrivate::finish()
         avio_closep(&oc->pb);
 }
 
-FFMPEGCapturePrivate::~FFMPEGCapturePrivate()
+MovieCapturePrivate::~MovieCapturePrivate()
 {
     avcodec_free_context(&enc);
     av_frame_free(&frame);
@@ -512,39 +515,38 @@ FFMPEGCapturePrivate::~FFMPEGCapturePrivate()
     av_packet_free(&pkt);
 }
 
-FFMPEGCapture::FFMPEGCapture(const Renderer *r) :
-    MovieCapture(r),
-    d(new FFMPEGCapturePrivate)
+MovieCapture::MovieCapture(const Renderer *r) :
+    d(new MovieCapturePrivate)
 {
     d->renderer = r;
 }
 
-FFMPEGCapture::~FFMPEGCapture()
+MovieCapture::~MovieCapture()
 {
     delete d;
 }
 
-int FFMPEGCapture::getFrameCount() const
+int MovieCapture::getFrameCount() const
 {
     return d->nextPts;
 }
 
-int FFMPEGCapture::getWidth() const
+int MovieCapture::getWidth() const
 {
     return d->enc->width;
 }
 
-int FFMPEGCapture::getHeight() const
+int MovieCapture::getHeight() const
 {
     return d->enc->height;
 }
 
-float FFMPEGCapture::getFrameRate() const
+float MovieCapture::getFrameRate() const
 {
     return d->fps;
 }
 
-bool FFMPEGCapture::start(const fs::path& filename, int width, int height, float fps)
+bool MovieCapture::start(const fs::path& filename, int width, int height, float fps)
 {
     if (!d->init(filename) ||
         !d->addStream(width, height, fps) ||
@@ -559,7 +561,7 @@ bool FFMPEGCapture::start(const fs::path& filename, int width, int height, float
     return true;
 }
 
-bool FFMPEGCapture::end()
+bool MovieCapture::end()
 {
     if (!d->capturing)
         return false;
@@ -571,22 +573,23 @@ bool FFMPEGCapture::end()
     return true;
 }
 
-bool FFMPEGCapture::captureFrame()
+bool MovieCapture::captureFrame()
 {
     return d->capturing && d->writeVideoFrame();
 }
 
-void FFMPEGCapture::setVideoCodec(AVCodecID vc_id)
+void MovieCapture::setVideoCodec(AVCodecID vc_id)
 {
     d->vc_id = vc_id;
 }
 
-void FFMPEGCapture::setBitRate(int64_t bit_rate)
+void MovieCapture::setBitRate(int64_t bitrate)
 {
-    d->bit_rate = bit_rate;
+    d->bitrate = bitrate;
 }
 
-void FFMPEGCapture::setEncoderOptions(const std::string &s)
+void MovieCapture::setEncoderOptions(const std::string &s)
 {
     d->vc_options = s;
+}
 }

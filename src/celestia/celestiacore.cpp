@@ -86,6 +86,11 @@ static const float MinimumFOV = degToRad(0.001f);
 static float KeyRotationAccel = degToRad(120.0f);
 static float MouseRotationSensitivity = degToRad(1.0f);
 
+enum CodecID
+{
+    CEL_CODEC_ID_FFVHUFF = AV_CODEC_ID_FFVHUFF,
+    CEL_CODEC_ID_H264    = AV_CODEC_ID_H264,
+};
 
 static void warning(string s)
 {
@@ -4395,25 +4400,32 @@ void CelestiaCore::setOverlayElements(int _overlayElements)
     overlayElements = _overlayElements;
 }
 
-void CelestiaCore::initMovieCapture(MovieCapture* mc)
+bool CelestiaCore::initMovieCapture(const fs::path &path, int width, int height,
+                                    float fps, int64_t bitrate, int codec)
 {
-    if (movieCapture == nullptr)
-        movieCapture = mc;
+    if (movieCapture != nullptr)
+        return false;
+
+    movieCapture = make_unique<celestia::MovieCapture>(getRenderer());
+    movieCapture->setVideoCodec(static_cast<AVCodecID>(codec));
+    movieCapture->setBitRate(bitrate);
+    if (codec == CEL_CODEC_ID_H264)
+        movieCapture->setEncoderOptions(getConfig()->x264EncoderOptions);
+    else
+        movieCapture->setEncoderOptions(getConfig()->ffvhEncoderOptions);
+
+    return movieCapture->start(path, width, height, fps);
 }
 
 void CelestiaCore::recordBegin()
 {
     if (movieCapture != nullptr)
-    {
         recording = true;
-        movieCapture->recordingStatus(true);
-    }
 }
 
 void CelestiaCore::recordPause()
 {
     recording = false;
-    if (movieCapture != nullptr) movieCapture->recordingStatus(false);
 }
 
 void CelestiaCore::recordEnd()
@@ -4422,7 +4434,6 @@ void CelestiaCore::recordEnd()
     {
         recordPause();
         movieCapture->end();
-        delete movieCapture;
         movieCapture = nullptr;
     }
 }
@@ -4719,4 +4730,42 @@ void CelestiaCore::setLogFile(fs::path &fn)
     {
         fmt::fprintf(cerr, "Unable to open log file %s\n", fn);
     }
+}
+
+auto CelestiaCore::getSupportedMovieSizes() const
+    -> celestia::util::array_view<MovieSize>
+{
+    static std::array<MovieSize, 8> MovieSizes =
+    {{
+        { 320,  240  },
+        { 640,  480  },
+        { 720,  480  },
+        { 720,  576  },
+        { 1024, 768  },
+        { 1280, 720  },
+        { 1920, 1080 },
+        { 3840, 2160 }
+    }};
+    return MovieSizes;
+}
+
+auto CelestiaCore::getSupportedMovieFramerates() const
+    -> celestia::util::array_view<float>
+{
+    static std::array<float, 5> MovieFramerates =
+    {
+        15.0f, 24.0f, 25.0f, 29.97f, 30.0f
+    };
+    return MovieFramerates;
+}
+
+auto CelestiaCore::getSupportedMovieCodecs() const
+    -> celestia::util::array_view<MovieCodec>
+{
+    static std::array<MovieCodec, 2> MovieCodecs =
+    {{
+        { CEL_CODEC_ID_FFVHUFF, N_("Lossless")      },
+        { CEL_CODEC_ID_H264,    N_("Lossy (H.264)") }
+    }};
+    return MovieCodecs;
 }
