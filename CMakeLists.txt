@@ -110,11 +110,12 @@ if(MSVC)
   # C4800: forcing value to bool
   # C4455: reserved literals (no undescore at the beginning)
   # C5030: not recognized attribute
+  # C5105: macro expansion producing 'defined' has undefined behavior
   # Additional options
   # bigobj: generate more object sections than allowed by default
   # Promoted to errors
   # C4316: object allocated on the heap may not be aligned 16
-  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/wd4455" "/wd5030" "/bigobj" "/we4316")
+  add_compile_options("/wd4244" "/wd4267" "/wd4503" "/wd4800" "/wd4455" "/wd5030" "/wd5105" "/bigobj" "/we4316")
 
   if(MSVC_VERSION GREATER_EQUAL 1914)
     # /Zc:__cplusplus: correctly set __cplusplus macro value
@@ -399,6 +400,8 @@ endif()
 
 try_compile(HAVE_STRING_VIEW ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxsv.cpp")
 try_compile(HAVE_EXPERIMENTAL_STRING_VIEW ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxsvexp.cpp")
+
+try_compile(HAVE_MAKE_UNIQUE ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/unique.cpp")
 
 configure_file("config.h.in" "config.h")
 

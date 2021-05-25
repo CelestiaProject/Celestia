@@ -1,44 +1,34 @@
-// moviecapture.h
-//
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+#pragma once
 
-#ifndef _MOVIECAPTURE_H_
-#define _MOVIECAPTURE_H_
+#define __STDC_CONSTANT_MACROS
+extern "C"
+{
+#include <libavformat/avformat.h>
+}
 
-#include <string>
-#include <vector>
-#include <celengine/render.h>
-#include <celcompat/filesystem.h>
-
+namespace celestia
+{
+class MovieCapturePrivate;
 class MovieCapture
 {
  public:
-    MovieCapture(const Renderer *r) : renderer(r) {};
-    virtual ~MovieCapture() {};
+    MovieCapture(const Renderer *r);
+    ~MovieCapture();
 
-    virtual bool start(const fs::path& filename,
-                       int width, int height,
-                       float fps) = 0;
-    virtual bool end() = 0;
-    virtual bool captureFrame() = 0;
+    bool start(const fs::path&, int, int, float);
+    bool end();
+    bool captureFrame();
 
-    virtual int getFrameCount() const = 0;
-    virtual int getWidth() const = 0;
-    virtual int getHeight() const = 0;
-    virtual float getFrameRate() const = 0;
+    int getFrameCount() const;
+    int getWidth() const;
+    int getHeight() const;
+    float getFrameRate() const;
 
-    virtual void setAspectRatio(int aspectNumerator, int aspectDenominator) = 0;
-    virtual void setQuality(float) = 0;
-    virtual void recordingStatus(bool started) = 0; /* to update UI recording status indicator */
+    void setVideoCodec(AVCodecID);
+    void setBitRate(int64_t);
+    void setEncoderOptions(const std::string&);
 
- protected:
-    const Renderer *renderer{ nullptr };
+ private:
+    MovieCapturePrivate *d{ nullptr };
 };
-
-#endif // _MOVIECAPTURE_H_
-
+}

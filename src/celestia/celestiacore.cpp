@@ -86,6 +86,13 @@ static const float MinimumFOV = degToRad(0.001f);
 static float KeyRotationAccel = degToRad(120.0f);
 static float MouseRotationSensitivity = degToRad(1.0f);
 
+#ifdef USE_FFMPEG
+enum CodecID
+{
+    CEL_CODEC_ID_FFVHUFF = AV_CODEC_ID_FFVHUFF,
+    CEL_CODEC_ID_H264    = AV_CODEC_ID_H264,
+};
+#endif
 
 static void warning(string s)
 {
@@ -168,8 +175,10 @@ CelestiaCore::CelestiaCore() :
 
 CelestiaCore::~CelestiaCore()
 {
+#ifdef USE_FFMPEG
     if (movieCapture != nullptr)
         recordEnd();
+#endif
 
     delete timer;
     delete renderer;
@@ -806,6 +815,7 @@ void CelestiaCore::keyDown(int key, int modifiers)
     case Key_F7:
         sim->setTargetSpeed(1.0_ly);
         break;
+#ifdef USE_FFMPEG
     case Key_F11:
         if (movieCapture != nullptr)
         {
@@ -819,6 +829,7 @@ void CelestiaCore::keyDown(int key, int modifiers)
         if (movieCapture != nullptr)
             recordEnd();
         break;
+#endif
     case Key_NumPad2:
     case Key_NumPad4:
     case Key_NumPad6:
@@ -1914,6 +1925,7 @@ void CelestiaCore::tick()
     // The time step is normally driven by the system clock; however, when
     // recording a movie, we fix the time step the frame rate of the movie.
     double dt = 0.0;
+#ifdef USE_FFMPEG
     if (movieCapture != nullptr && recording)
     {
         dt = 1.0 / movieCapture->getFrameRate();
@@ -1922,6 +1934,9 @@ void CelestiaCore::tick()
     {
         dt = sysTime - lastTime;
     }
+#else
+    dt = sysTime - lastTime;
+#endif
 
     // Pause script execution
     if (scriptState == ScriptPaused)
@@ -2131,8 +2146,10 @@ void CelestiaCore::draw()
     if (toggleAA)
         renderer->enableMSAA();
 
+#ifdef USE_FFMPEG
     if (movieCapture != nullptr && recording)
         movieCapture->captureFrame();
+#endif
 
     // Frame rate counter
     nFrames++;
@@ -3505,6 +3522,7 @@ void CelestiaCore::renderOverlay()
         overlay->setFont(font);
     }
 
+#ifdef USE_FFMPEG
     if (movieCapture != nullptr)
     {
         int movieWidth = movieCapture->getWidth();
@@ -3552,6 +3570,7 @@ void CelestiaCore::renderOverlay()
 
         overlay->restorePos();
     }
+#endif
 
     if (editMode)
     {
@@ -4397,25 +4416,33 @@ void CelestiaCore::setOverlayElements(int _overlayElements)
     overlayElements = _overlayElements;
 }
 
-void CelestiaCore::initMovieCapture(MovieCapture* mc)
+#ifdef USE_FFMPEG
+bool CelestiaCore::initMovieCapture(const fs::path &path, int width, int height,
+                                    float fps, int64_t bitrate, int codec)
 {
-    if (movieCapture == nullptr)
-        movieCapture = mc;
+    if (movieCapture != nullptr)
+        return false;
+
+    movieCapture = make_unique<celestia::MovieCapture>(getRenderer());
+    movieCapture->setVideoCodec(static_cast<AVCodecID>(codec));
+    movieCapture->setBitRate(bitrate);
+    if (codec == CEL_CODEC_ID_H264)
+        movieCapture->setEncoderOptions(getConfig()->x264EncoderOptions);
+    else
+        movieCapture->setEncoderOptions(getConfig()->ffvhEncoderOptions);
+
+    return movieCapture->start(path, width, height, fps);
 }
 
 void CelestiaCore::recordBegin()
 {
     if (movieCapture != nullptr)
-    {
         recording = true;
-        movieCapture->recordingStatus(true);
-    }
 }
 
 void CelestiaCore::recordPause()
 {
     recording = false;
-    if (movieCapture != nullptr) movieCapture->recordingStatus(false);
 }
 
 void CelestiaCore::recordEnd()
@@ -4424,7 +4451,6 @@ void CelestiaCore::recordEnd()
     {
         recordPause();
         movieCapture->end();
-        delete movieCapture;
         movieCapture = nullptr;
     }
 }
@@ -4438,6 +4464,7 @@ bool CelestiaCore::isRecording()
 {
     return recording;
 }
+#endif
 
 void CelestiaCore::flash(const string& s, double duration)
 {
@@ -4722,3 +4749,43 @@ void CelestiaCore::setLogFile(fs::path &fn)
         fmt::fprintf(cerr, "Unable to open log file %s\n", fn);
     }
 }
+
+#ifdef USE_FFMPEG
+auto CelestiaCore::getSupportedMovieSizes() const
+    -> celestia::util::array_view<MovieSize>
+{
+    static std::array<MovieSize, 8> MovieSizes =
+    {{
+        { 320,  240  },
+        { 640,  480  },
+        { 720,  480  },
+        { 720,  576  },
+        { 1024, 768  },
+        { 1280, 720  },
+        { 1920, 1080 },
+        { 3840, 2160 }
+    }};
+    return MovieSizes;
+}
+
+auto CelestiaCore::getSupportedMovieFramerates() const
+    -> celestia::util::array_view<float>
+{
+    static std::array<float, 5> MovieFramerates =
+    {
+        15.0f, 24.0f, 25.0f, 29.97f, 30.0f
+    };
+    return MovieFramerates;
+}
+
+auto CelestiaCore::getSupportedMovieCodecs() const
+    -> celestia::util::array_view<MovieCodec>
+{
+    static std::array<MovieCodec, 2> MovieCodecs =
+    {{
+        { CEL_CODEC_ID_FFVHUFF, N_("Lossless")      },
+        { CEL_CODEC_ID_H264,    N_("Lossy (H.264)") }
+    }};
+    return MovieCodecs;
+}
+#endif
