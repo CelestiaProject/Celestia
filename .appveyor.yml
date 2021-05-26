@@ -26,7 +26,7 @@ artifacts:
   name: win
 
 # Build worker image (VM template)
-image: "Visual Studio 2015"
+image: "Visual Studio 2019"
 
 # clone directory
 clone_folder: c:\projects\celestia
@@ -48,22 +48,7 @@ init:
 
 install:
 - cd c:\tools\vcpkg
-- vcpkg install libpng:x86-windows
-- vcpkg install gettext:x86-windows
-- vcpkg install libjpeg-turbo:x86-windows
-- vcpkg remove lua:x86-windows
-- vcpkg install luajit:x86-windows
-- vcpkg install fmt:x86-windows
-- vcpkg install libepoxy:x86-windows
-- vcpkg install eigen3:x86-windows
-- vcpkg install freetype:x86-windows
-- vcpkg install sdl2:x86-windows
-- vcpkg install ffmpeg:x86-windows
-- git pull
-- git checkout 99cfc38036f330a035b57aa67f661526153e31c7
-- .\bootstrap-vcpkg.bat
-- vcpkg install cspice:x86-windows
-- vcpkg integrate install
+- vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype ffmpeg cspice
 - cd %APPVEYOR_BUILD_FOLDER%
 
 build_script:
