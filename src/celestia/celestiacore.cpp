@@ -4257,6 +4257,8 @@ void CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex
 
 void CelestiaCore::clearFonts()
 {
+    dateStrWidth = 0;
+
     if (overlay)
         overlay->setFont(nullptr);
     if (console)
