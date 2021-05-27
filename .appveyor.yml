@@ -48,8 +48,6 @@ init:
 
 install:
 - cd c:\tools\vcpkg
-- vcpkg remove sdl2 glew
-- vcpkg upgrade --no-dry-run
 - vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 brotli bzip2 zlib freetype ffmpeg cspice
 - cd %APPVEYOR_BUILD_FOLDER%
 
