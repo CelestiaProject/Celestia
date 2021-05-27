@@ -48,43 +48,13 @@ init:
 
 install:
 - cd c:\tools\vcpkg
+- vcpkg remove sdl2 glew
 - vcpkg upgrade --no-dry-run
-- vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 brotli bzip2 zlib freetype ffmpeg cspice
+#- vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 brotli bzip2 zlib freetype ffmpeg cspice
 - cd %APPVEYOR_BUILD_FOLDER%
 
 build_script:
-- cmd: >-
-    git submodule update --init
-
-    mkdir build
-
-    cd build
-
-    cmake -DCMAKE_PREFIX_PATH=%Qt5_DIR% -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF ..
-
-    cmake --build . --config RelWithDebInfo -- /maxcpucount:4 /nologo
-
-    set CTEST_OUTPUT_ON_FAILURE=1
-
-    copy src\celestia\RelWithDebInfo\*.dll test\unit\RelWithDebInfo\
-
-    ctest -C RelWithDebInfo
-
-after_build:
-  - cmd: >-
-      cd c:\projects\celestia\build\src\celestia
-
-      7z a celestia-dep.x86.7z RelWithDebInfo\*
-
-      7z a celestia-win.x86.7z win32\RelWithDebInfo\*
-
-      windeployqt --no-angle --no-opengl-sw --no-translations --no-system-d3d-compiler qt\RelWithDebInfo\
-
-      7z a celestia-qt.x86.7z qt\RelWithDebInfo\*
-
-      cd ..\tools
-
-      7z a celestia-tools.x86.7z xyzv2bin\RelWithDebInfo\*.exe spice2xyzv\RelWithDebInfo\*.exe
+  - cmd: echo ok
 
 #on_failure:
 #- type "c:\projects\celestia\build\CMakeFiles\CMakeOutput.log"
