@@ -48,7 +48,7 @@ init:
 
 install:
 - cd c:\tools\vcpkg
-- vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice ffmpeg
+- vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice
 - cd %APPVEYOR_BUILD_FOLDER%
 
 build_script:
