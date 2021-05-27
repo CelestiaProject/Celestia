@@ -48,7 +48,7 @@ init:
 
 install:
 - cd c:\tools\vcpkg
-- vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 brotli bzip2 zlib freetype ffmpeg cspice
+- vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice
 - cd %APPVEYOR_BUILD_FOLDER%
 
 build_script:
@@ -60,4 +60,4 @@ build_script:
 #- type "c:\projects\celestia\build\CMakeCache.txt"
 
 # build cache to preserve files/folders between builds
-cache: c:\tools\vcpkg\installed\
+#cache: c:\tools\vcpkg\installed\
