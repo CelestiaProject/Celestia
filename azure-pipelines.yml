@@ -77,15 +77,17 @@ steps:
     make -j $(nproc || echo 4)
     CTEST_OUTPUT_ON_FAILURE=1 ctest
   workingDirectory: "$(system.defaultworkingdirectory)"
-  displayName: "Build and test"
+  displayName: "Build and test on GNU/Linux and macOS"
   condition: not( eq( variables['Agent.OS'], 'Windows_NT' ) )
 
 - script: |
     mkdir build
     cd build
-    cmake -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=OFF ..
+    cmake -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=OFF ..
     cmake --build . --config RelWithDebInfo -- /maxcpucount:4 /nologo
     set CTEST_OUTPUT_ON_FAILURE=1
     copy src\celestia\RelWithDebInfo\*.dll test\unit\RelWithDebInfo\
     ctest -C RelWithDebInfo
-    condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  workingDirectory: "$(system.defaultworkingdirectory)"
+  displayName: "Build and test on Windows"
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
