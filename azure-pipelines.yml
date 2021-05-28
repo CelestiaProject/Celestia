@@ -81,9 +81,10 @@ steps:
   condition: not( eq( variables['Agent.OS'], 'Windows_NT' ) )
 
 - script: |
+    call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
     mkdir build
     cd build
-    cmake -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=OFF -DENABLE_NLS=OFF ..
+    cmake -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=OFF ..
     type CMakeFiles\CMakeOutput.log
     type CMakeFiles\CMakeError.log
     type CMakeCache.txt
