@@ -84,6 +84,10 @@ steps:
     mkdir build
     cd build
     cmake -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=OFF -DENABLE_NLS=OFF ..
+    type CMakeFiles\CMakeOutput.log
+    type CMakeFiles\CMakeError.log
+    type CMakeCache.txt
+
     cmake --build . --config RelWithDebInfo -- /maxcpucount:4 /nologo
     set CTEST_OUTPUT_ON_FAILURE=1
     copy src\celestia\RelWithDebInfo\*.dll test\unit\RelWithDebInfo\
