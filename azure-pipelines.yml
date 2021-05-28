@@ -19,7 +19,7 @@ steps:
 
 - bash:  echo "##vso[task.setvariable variable=shellopts]errexit"
   displayName: "Force exit on error (bash)"
-  condition: not( eq( variables['Agent.OS'], 'Windows' ) )
+  condition: not( eq( variables['Agent.OS'], 'Windows_NT' ) )
 
 - script: |
     sudo apt update
@@ -68,7 +68,7 @@ steps:
 - script: |
     vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice
   displayName: 'Install Windows dependencies'
-  condition: eq( variables['Agent.OS'], 'Windows' )
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
 
 - script: |
     mkdir build
@@ -78,7 +78,7 @@ steps:
     CTEST_OUTPUT_ON_FAILURE=1 ctest
   workingDirectory: "$(system.defaultworkingdirectory)"
   displayName: "Build and test"
-  condition: not( eq( variables['Agent.OS'], 'Windows' ) )
+  condition: not( eq( variables['Agent.OS'], 'Windows_NT' ) )
 
 - script: |
     mkdir build
@@ -88,4 +88,4 @@ steps:
     set CTEST_OUTPUT_ON_FAILURE=1
     copy src\celestia\RelWithDebInfo\*.dll test\unit\RelWithDebInfo\
     ctest -C RelWithDebInfo
-    condition: eq( variables['Agent.OS'], 'Windows' )
+    condition: eq( variables['Agent.OS'], 'Windows_NT' )
