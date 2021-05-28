@@ -15,7 +15,6 @@ pool:
 
 steps:
 - checkout: self
-  submodules: true
 
 - bash:  echo "##vso[task.setvariable variable=shellopts]errexit"
   displayName: "Force exit on error (bash)"
