@@ -4748,6 +4748,7 @@ void CelestiaCore::setLogFile(fs::path &fn)
     }
 }
 
+#ifdef USE_FFMPEG
 auto CelestiaCore::getSupportedMovieSizes() const
     -> celestia::util::array_view<MovieSize>
 {
@@ -4765,7 +4766,6 @@ auto CelestiaCore::getSupportedMovieSizes() const
     return MovieSizes;
 }
 
-#ifdef USE_FFMPEG
 auto CelestiaCore::getSupportedMovieFramerates() const
     -> celestia::util::array_view<float>
 {
