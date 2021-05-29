@@ -40,7 +40,7 @@ steps:
                         libsdl2-dev \
                         libluajit-5.1-dev \
                         libfmt-dev
-  displayName: 'Install Linux dependencies'
+  displayName: 'Install GNU/Linux dependencies'
   condition: eq( variables['Agent.OS'], 'Linux' )
 
 - script: |
@@ -64,8 +64,16 @@ steps:
   displayName: 'Install macOS dependencies'
   condition: eq( variables['Agent.OS'], 'Darwin' )
 
+
+# Cache/restore the vcpkg's build artifacts.
+- task: Cache@2
+  displayName: "Cache vcpkg's artifacts"
+  inputs:
+    key: vcpkg
+    path: 'c:/vcpkg/installed'
+
 - script: |
-    vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice
+    vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice ffmpeg
   displayName: 'Install Windows dependencies'
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
 
@@ -80,10 +88,9 @@ steps:
   condition: not( eq( variables['Agent.OS'], 'Windows_NT' ) )
 
 - script: |
-    @rem call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86
     mkdir build
     cd build
-    cmake -DCMAKE_FIND_DEBUG_MODE=ON -DCMAKE_GENERATOR_PLATFORM=WIN32 -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=OFF -DENABLE_DATA=OFF ..
+    cmake -DCMAKE_FIND_DEBUG_MODE=ON -DCMAKE_GENERATOR_PLATFORM=WIN32 -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=OFF -DENABLE_FFMPEG=ON -DENABLE_DATA=OFF ..
     type CMakeFiles\CMakeOutput.log
     type CMakeFiles\CMakeError.log
     type CMakeCache.txt
