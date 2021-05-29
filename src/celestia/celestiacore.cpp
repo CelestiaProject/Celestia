@@ -86,11 +86,13 @@ static const float MinimumFOV = degToRad(0.001f);
 static float KeyRotationAccel = degToRad(120.0f);
 static float MouseRotationSensitivity = degToRad(1.0f);
 
+#ifdef USE_FFMPEG
 enum CodecID
 {
     CEL_CODEC_ID_FFVHUFF = AV_CODEC_ID_FFVHUFF,
     CEL_CODEC_ID_H264    = AV_CODEC_ID_H264,
 };
+#endif
 
 static void warning(string s)
 {
@@ -173,8 +175,10 @@ CelestiaCore::CelestiaCore() :
 
 CelestiaCore::~CelestiaCore()
 {
+#ifdef USE_FFMPEG
     if (movieCapture != nullptr)
         recordEnd();
+#endif
 
     delete timer;
     delete renderer;
@@ -811,6 +815,7 @@ void CelestiaCore::keyDown(int key, int modifiers)
     case Key_F7:
         sim->setTargetSpeed(1.0_ly);
         break;
+#ifdef USE_FFMPEG
     case Key_F11:
         if (movieCapture != nullptr)
         {
@@ -824,6 +829,7 @@ void CelestiaCore::keyDown(int key, int modifiers)
         if (movieCapture != nullptr)
             recordEnd();
         break;
+#endif
     case Key_NumPad2:
     case Key_NumPad4:
     case Key_NumPad6:
@@ -1919,6 +1925,7 @@ void CelestiaCore::tick()
     // The time step is normally driven by the system clock; however, when
     // recording a movie, we fix the time step the frame rate of the movie.
     double dt = 0.0;
+#ifdef USE_FFMPEG
     if (movieCapture != nullptr && recording)
     {
         dt = 1.0 / movieCapture->getFrameRate();
@@ -1927,6 +1934,9 @@ void CelestiaCore::tick()
     {
         dt = sysTime - lastTime;
     }
+#else
+    dt = sysTime - lastTime;
+#endif
 
     // Pause script execution
     if (scriptState == ScriptPaused)
@@ -2136,8 +2146,10 @@ void CelestiaCore::draw()
     if (toggleAA)
         renderer->enableMSAA();
 
+#ifdef USE_FFMPEG
     if (movieCapture != nullptr && recording)
         movieCapture->captureFrame();
+#endif
 
     // Frame rate counter
     nFrames++;
@@ -3510,6 +3522,7 @@ void CelestiaCore::renderOverlay()
         overlay->setFont(font);
     }
 
+#ifdef USE_FFMPEG
     if (movieCapture != nullptr)
     {
         int movieWidth = movieCapture->getWidth();
@@ -3557,6 +3570,7 @@ void CelestiaCore::renderOverlay()
 
         overlay->restorePos();
     }
+#endif
 
     if (editMode)
     {
@@ -4751,6 +4765,7 @@ auto CelestiaCore::getSupportedMovieSizes() const
     return MovieSizes;
 }
 
+#ifdef USE_FFMPEG
 auto CelestiaCore::getSupportedMovieFramerates() const
     -> celestia::util::array_view<float>
 {
@@ -4771,3 +4786,4 @@ auto CelestiaCore::getSupportedMovieCodecs() const
     }};
     return MovieCodecs;
 }
+#endif
