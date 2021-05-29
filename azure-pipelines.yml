@@ -67,10 +67,11 @@ steps:
 
 # Cache/restore the vcpkg's build artifacts.
 - task: Cache@2
-  displayName: "Cache vcpkg's artifacts"
   inputs:
     key: vcpkg
     path: 'c:/vcpkg/installed'
+  displayName: "Cache vcpkg's artifacts"
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
 
 - script: |
     vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice ffmpeg
