@@ -150,6 +150,7 @@ if(ENABLE_NLS)
   include_directories(${Intl_INCLUDE_DIRS})
   link_libraries(${Intl_LIBRARIES})
 
+  #[[
   # begin static libintl support
   # libintl.a may depend on libiconv.a and libcharset.a
   # this is the case of vcpkg + mingw, for example
@@ -179,6 +180,7 @@ if(ENABLE_NLS)
     endif()
   endif()
   # end static libintl support
+  #]]
 
   add_definitions(-DENABLE_NLS)
 else()
