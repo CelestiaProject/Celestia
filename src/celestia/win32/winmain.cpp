@@ -2665,6 +2665,7 @@ static void HandleCaptureImage(HWND hWnd)
 }
 
 
+#ifdef USE_FFMPEG
 static void HandleCaptureMovie(HWND hWnd)
 {
     // TODO: The menu item should be disable so that the user doesn't even
@@ -2782,6 +2783,7 @@ static void HandleCaptureMovie(HWND hWnd)
         }
     }
 }
+#endif
 
 
 static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
@@ -4237,9 +4239,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             HandleCaptureImage(hWnd);
             break;
 
+#ifdef USE_FFMPEG
         case ID_FILE_CAPTUREMOVIE:
             HandleCaptureMovie(hWnd);
             break;
+#endif
 
         case ID_FILE_EXIT:
             SendMessage(hWnd, WM_CLOSE, 0, 0);
