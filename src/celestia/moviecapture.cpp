@@ -86,7 +86,9 @@ bool MovieCapturePrivate::init(const fs::path& filename)
 #endif
 
     // always use matroska (*.mkv) as a container
-    avformat_alloc_output_context2(&oc, nullptr, "matroska", filename.c_str());
+    // don't change filename.string().c_str() -> filename.c_str()!
+    // on windows c_str() return wchar_t*
+    avformat_alloc_output_context2(&oc, nullptr, "matroska", filename.string().c_str());
 
     return oc != nullptr;
 }
@@ -291,7 +293,7 @@ bool MovieCapturePrivate::start()
     // open the output file, if needed
     if ((oc->oformat->flags & AVFMT_NOFILE) == 0)
     {
-        if (avio_open(&oc->pb, filename.c_str(), AVIO_FLAG_WRITE) < 0)
+        if (avio_open(&oc->pb, filename.string().c_str(), AVIO_FLAG_WRITE) < 0)
         {
             cout << "Failed to open video file\n";
             return false;
@@ -305,7 +307,7 @@ bool MovieCapturePrivate::start()
         return false;
     }
 
-    av_dump_format(oc, 0, filename.c_str(), 1);
+    av_dump_format(oc, 0, filename.string().c_str(), 1);
 
     if ((pkt = av_packet_alloc()) == nullptr)
     {
@@ -415,7 +417,7 @@ static void captureImage(AVFrame *pict, int width, int height, const Renderer *r
     // Read image is vertically flipped
     // TODO: this should go to Renderer::captureFrame()
     int realWidth = width * 3; // 3 bytes per pixel
-    uint8_t tempLine[realWidth];
+    uint8_t *tempLine = new uint8_t[realWidth];
     uint8_t *fb = pict->data[0];
     for (int i = 0, p = realWidth * (height - 1); i < p; i += realWidth, p -= realWidth)
     {
@@ -423,6 +425,7 @@ static void captureImage(AVFrame *pict, int width, int height, const Renderer *r
         memcpy(&fb[i],   &fb[p],   realWidth);
         memcpy(&fb[p],   tempLine, realWidth);
     }
+    delete[] tempLine;
 }
 
 // encode one video frame and send it to the muxer
