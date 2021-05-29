@@ -83,7 +83,7 @@ steps:
     @rem call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86
     mkdir build
     cd build
-    cmake -DCMAKE_FIND_DEBUG_MODE=ON -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=OFF -DENABLE_DATA=OFF ..
+    cmake -DCMAKE_FIND_DEBUG_MODE=ON -DCMAKE_GENERATOR_PLATFORM=x86 -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=OFF -DENABLE_DATA=OFF ..
     type CMakeFiles\CMakeOutput.log
     type CMakeFiles\CMakeError.log
     type CMakeCache.txt
