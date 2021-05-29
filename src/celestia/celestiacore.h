@@ -29,7 +29,9 @@
 #include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
+#ifdef USE_FFMPEG
 #include "moviecapture.h"
+#endif
 #include "view.h"
 #ifdef CELX
 #include <celscript/lua/celx.h>
@@ -257,6 +259,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setTextEnterMode(int);
     int getTextEnterMode() const;
 
+#ifdef USE_FFMPEG
     bool initMovieCapture(const fs::path &path, int width, int height, float fps, int64_t bitrate, int codec);
     void recordBegin();
     void recordPause();
@@ -266,6 +269,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     celestia::util::array_view<MovieSize>  getSupportedMovieSizes() const;
     celestia::util::array_view<float>      getSupportedMovieFramerates() const;
     celestia::util::array_view<MovieCodec> getSupportedMovieCodecs() const;
+#endif
 
     void runScript(const fs::path& filename, bool i18n = true);
     void cancelScript();
@@ -486,8 +490,10 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool shiftKeysPressed[KeyCount];
     double KeyAccel{ 1.0 };
 
+#ifdef USE_FFMPEG
     std::unique_ptr<celestia::MovieCapture> movieCapture;
     bool recording{ false };
+#endif
 
     Alerter* alerter{ nullptr };
     std::vector<CelestiaWatcher*> watchers;

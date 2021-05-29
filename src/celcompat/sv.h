@@ -19,7 +19,9 @@
 // M$VC++ 2015 doesn't have required features
 #define CEL_CPP_VER (_MSC_VER == 1900 ? 201103L : _MSVC_LANG)
 // M$VC++ build without C++ exceptions are not supported yet
+#ifndef __cpp_exceptions
 #define __cpp_exceptions 1
+#endif
 #else
 #define CEL_CPP_VER __cplusplus
 #endif

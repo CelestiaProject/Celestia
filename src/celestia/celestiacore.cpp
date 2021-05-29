@@ -4400,6 +4400,7 @@ void CelestiaCore::setOverlayElements(int _overlayElements)
     overlayElements = _overlayElements;
 }
 
+#ifdef USE_FFMPEG
 bool CelestiaCore::initMovieCapture(const fs::path &path, int width, int height,
                                     float fps, int64_t bitrate, int codec)
 {
@@ -4447,6 +4448,7 @@ bool CelestiaCore::isRecording()
 {
     return recording;
 }
+#endif
 
 void CelestiaCore::flash(const string& s, double duration)
 {

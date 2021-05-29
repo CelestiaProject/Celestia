@@ -42,7 +42,6 @@
 #include <celscript/legacy/cmdparser.h>
 
 #include "celestia/celestiacore.h"
-#include "celestia/moviecapture.h"
 #include "celestia/helper.h"
 #include "celestia/scriptmenu.h"
 #include "celestia/url.h"
