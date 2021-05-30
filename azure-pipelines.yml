@@ -69,7 +69,7 @@ steps:
 - task: Cache@2
   inputs:
     key: vcpkg
-    path: 'c:/vcpkg/installed'
+    path: '$(Build.BinariesDirectory)/vcpkg'
   displayName: "Cache vcpkg's artifacts"
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
 
