@@ -428,31 +428,38 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
 {
     string starNames;
     unsigned int catalogNumber = star.getIndex();
+    std::set<std::string> nameSet;
+    bool isNameSetEmpty = true;
 
-    unsigned int count = 0;
+    auto append = [&] (const string &str)
+    {
+        auto inserted = nameSet.insert(str);
+        if (inserted.second)
+        {
+            if (isNameSetEmpty)
+                isNameSetEmpty = false;
+            else
+                starNames += " / ";
+            starNames += str;
+        }
+    };
 
     if (namesDB != nullptr)
     {
         StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
 
-        while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
+        while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && nameSet.size() < maxNames)
         {
-            if (count != 0)
-                starNames += " / ";
-
-            starNames += _(iter->second.c_str());
+            append(_(iter->second.c_str()));
             ++iter;
-            ++count;
         }
     }
 
     AstroCatalog::IndexNumber hip  = catalogNumber;
-    if (hip != AstroCatalog::InvalidIndex && hip != 0 && count < maxNames)
+    if (hip != AstroCatalog::InvalidIndex && hip != 0 && nameSet.size() < maxNames)
     {
         if (hip <= Star::MaxTychoCatalogNumber)
         {
-            if (count != 0)
-                starNames += " / ";
             if (hip >= 1000000)
             {
                 AstroCatalog::IndexNumber h = hip;
@@ -462,31 +469,25 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
                        h     -= tyc2 * 10000;
                 AstroCatalog::IndexNumber tyc1   = h;
 
-                starNames += fmt::sprintf("TYC %u-%u-%u", tyc1, tyc2, tyc3);
+                append(fmt::sprintf("TYC %u-%u-%u", tyc1, tyc2, tyc3));
             }
             else
             {
-                starNames += fmt::sprintf("HIP %u", hip);
+                append(fmt::sprintf("HIP %u", hip));
             }
-
-            ++count;
         }
     }
 
     AstroCatalog::IndexNumber hd   = crossIndex(StarDatabase::HenryDraper, hip);
-    if (count < maxNames && hd != AstroCatalog::InvalidIndex)
+    if (nameSet.size() < maxNames && hd != AstroCatalog::InvalidIndex)
     {
-        if (count != 0)
-            starNames += " / ";
-        starNames += fmt::sprintf("HD %u", hd);
+        append(fmt::sprintf("HD %u", hd));
     }
 
     AstroCatalog::IndexNumber sao   = crossIndex(StarDatabase::SAO, hip);
-    if (count < maxNames && sao != AstroCatalog::InvalidIndex)
+    if (nameSet.size() < maxNames && sao != AstroCatalog::InvalidIndex)
     {
-        if (count != 0)
-            starNames += " / ";
-        starNames += fmt::sprintf("SAO %u", sao);
+        append(fmt::sprintf("SAO %u", sao));
     }
 
     return starNames;
