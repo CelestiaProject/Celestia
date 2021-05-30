@@ -13,6 +13,8 @@
 
 #include <ctime>
 
+#include <QStandardPaths>
+#include <QActionGroup>
 #include <QIcon>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -35,7 +37,6 @@
 #include <QApplication>
 #include <QProcess>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QInputDialog>
 #include <QUrl>
 #include <QScreen>
@@ -265,13 +266,6 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     }
 
     glWidget = new CelestiaGlWidget(nullptr, "Celestia", m_appCore);
-    glWidget->makeCurrent();
-
-    if (!gl::init(m_appCore->getConfig()->ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
-    {
-        QMessageBox::critical(0, "Celestia", _("Celestia was unable to initialize OpenGL 2.1."));
-        exit(1);
-    }
 
     m_appCore->setCursorHandler(glWidget);
     m_appCore->setContextMenuHandler(this);
@@ -445,8 +439,6 @@ void CelestiaAppWindow::initAppDataDirectory()
 
 void CelestiaAppWindow::readSettings()
 {
-    QDesktopWidget desktop;
-
     QSettings settings;
 
     settings.beginGroup("MainWindow");

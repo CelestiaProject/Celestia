@@ -24,6 +24,7 @@
 #include <QPaintDevice>
 #include <QMouseEvent>
 #include <QSettings>
+#include <QMessageBox>
 
 #ifndef DEBUG
 #  define G_DISABLE_ASSERT
@@ -33,6 +34,7 @@
 #include "celutil/util.h"
 #include "celutil/filetype.h"
 #include "celutil/debug.h"
+#include "celutil/gettext.h"
 #include "celestia/imagecapture.h"
 #include "celestia/celestiacore.h"
 #include "celengine/simulation.h"
@@ -117,6 +119,13 @@ static GLContext::GLRenderPath getBestAvailableRenderPath(const GLContext& /*glc
 
 void CelestiaGlWidget::initializeGL()
 {
+    using namespace celestia;
+    if (!gl::init(appCore->getConfig()->ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
+    {
+        QMessageBox::critical(0, "Celestia", _("Celestia was unable to initialize OpenGL 2.1."));
+        exit(1);
+    }
+
     appCore->setScreenDpi(logicalDpiY() * devicePixelRatioF());
 
     if (!appCore->initRenderer())
@@ -442,18 +451,18 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
     default:
         if (!handleSpecialKey(e, true))
         {
-            if ((e->text() != 0) && (e->text() != ""))
+            if (!e->text().isEmpty())
             {
                 QString input = e->text();
 #ifdef __APPLE__
                 // Taken from the macOS project
                 if (input.length() == 1)
                 {
-                    QChar c = input.at(0);
+                    uint16_t c = input.at(0).unicode();
                     if (c == 0x7f /* NSDeleteCharacter */)
-                        input.replace(0, 1, 0x08 /* NSBackspaceCharacter */); // delete = backspace
+                        input.replace(0, 1, QChar((uint16_t)0x08) /* NSBackspaceCharacter */); // delete = backspace
                     else if (c == 0x19 /* NSBackTabCharacter */)
-                        input.replace(0, 1, 0x7f /* NSDeleteCharacter */);
+                        input.replace(0, 1, QChar((uint16_t)0x7f) /* NSDeleteCharacter */);
                 }
 #endif
                 appCore->charEntered(input.toUtf8().data(), modifiers);
