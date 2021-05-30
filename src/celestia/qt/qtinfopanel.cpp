@@ -17,6 +17,7 @@
 #include <celutil/utf8.h>
 #include <celengine/universe.h>
 #include <QTextBrowser>
+#include <QIODevice>
 #include <QItemSelection>
 #include "qtinfopanel.h"
 

@@ -57,8 +57,8 @@ XbelReader::read()
 
         if (isStartElement())
         {
-            QStringRef version = attributes().value("version");
-            if (name() == "xbel" && (version == "1.0" || version.isEmpty()))
+            QString version = attributes().value("version").toString();
+            if (name().toString() == "xbel" && (version == "1.0" || version.isEmpty()))
                 readXbel(rootItem);
             else
                 raiseError(QString(_("Not an XBEL version 1.0 file.")));
