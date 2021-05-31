@@ -78,7 +78,7 @@ steps:
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
 
 - script: |
-    vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice
+    vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype
   displayName: 'Install Windows dependencies'
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
 
