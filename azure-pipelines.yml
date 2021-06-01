@@ -75,7 +75,6 @@ steps:
     restoreKeys: vcpkg
     path: 'c:/vcpkg/installed'
   displayName: "Cache vcpkg's artifacts"
-  condition: eq( variables['Agent.OS'], 'Windows_NT' )
 
 - script: |
     vcpkg --triplet=x86-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice
