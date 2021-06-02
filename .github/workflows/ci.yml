@@ -77,4 +77,4 @@ jobs:
       if: success()
       with:
         name: celestia-${{matrix.platform}}
-        path: ${{github.workspace}}/build/src/celestia/*.7z
+        path: ${{github.workspace}}/build/src/*/*.7z
