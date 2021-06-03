@@ -8,7 +8,9 @@
 #endif
 #if defined(_MSC_VER) && !defined(__clang__)
 // M$VC++ build without C++ exceptions are not supported yet
+#ifndef __cpp_exceptions
 #define __cpp_exceptions 1
+#endif
 #endif
 
 #if ! __cpp_exceptions
