@@ -12,7 +12,7 @@ jeepney==0.4.3
 keyring==21.3.0
 numpy==1.19.1
 pycparser==2.20
-requests==2.24.0
+requests==2.25.1
 SecretStorage==3.1.2
 six==1.15.0
 soupsieve==2.0.1
