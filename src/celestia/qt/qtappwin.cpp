@@ -600,13 +600,11 @@ void CelestiaAppWindow::slotGrabImage()
 
     if (!saveAsName.isEmpty())
     {
-        QFileInfo saveAsFile(saveAsName);
-
         //glWidget->repaint();
         QImage grabbedImage = glWidget->grabFrameBuffer();
         grabbedImage.save(saveAsName);
 
-        settings.setValue("GrabImageDir", saveAsFile.absolutePath());
+        settings.setValue("GrabImageDir", QFileInfo(saveAsName).absolutePath());
     }
     settings.endGroup();
 }
@@ -624,11 +622,10 @@ void CelestiaAppWindow::slotCaptureVideo()
         dir = QDir::current().path();
     settings.endGroup();
 
-    QFileDialog fileDialog(this, _("Capture Video"), dir, _("Matroska Video (*.mkv)"));
-
-    QString saveAsName;
-    if (fileDialog.exec())
-        saveAsName = fileDialog.selectedFiles().at(0);
+    QString saveAsName = QFileDialog::getSaveFileName(this,
+                                                      _("Capture Video"),
+                                                      dir,
+                                                      _("Matroska Video (*.mkv)"));
 
     if (!saveAsName.isEmpty())
     {
