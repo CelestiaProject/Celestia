@@ -300,7 +300,7 @@ Url::decodeString(std::string_view str)
         auto s = str.substr(a, b - a);
         out.append(s.data(), s.length());
         auto c_code = str.substr(b + 1, 2);
-        int8_t c;
+        uint8_t c;
         if (to_number(c_code, c, 16))
         {
             out += static_cast<std::string::value_type>(c);
