@@ -1104,11 +1104,13 @@ LightDir_tan(unsigned int i)
 }
 
 
+#if 0
 static string
 LightHalfVector(unsigned int i)
 {
     return fmt::sprintf("lightHalfVec%d", i);
 }
+#endif
 
 
 static string
@@ -1210,9 +1212,6 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
     else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
     {
         source += SeparateDiffuse(i) + " = NL;\n";
-        // Specular is computed in the fragment shader; half vectors are required
-        // for the calculation
-        source += LightHalfVector(i) + " = " + LightProperty(i, "direction") + " + eyeDir;\n";
     }
     else if (props.lightModel == ShaderProperties::OrenNayarModel)
     {
@@ -1783,10 +1782,6 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     {
         source += "varying vec4 diffFactors;\n";
         source += "varying vec3 normal;\n";
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            source += "varying vec3 " + LightHalfVector(i) + ";\n";
-        }
     }
     else if (props.usesShadows())
     {
@@ -2175,7 +2170,6 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += "varying vec3 " + LightHalfVector(i) + ";\n";
             source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
             source += "uniform vec3 " + FragLightProperty(i, "specColor") + ";\n";
         }
@@ -2272,6 +2266,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += DeclareUniform("shadowMapSize", Shader_Float);
         source += CalculateShadow();
     }
+
+    source += DeclareLights(props);
 
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
@@ -2413,7 +2409,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += ShadowsForLightSource(props, i);
 
             source += "diff.rgb += " + illum + " * " + FragLightProperty(i, "color") + ";\n";
-            source += "NH = max(0.0, dot(n, normalize(" + LightHalfVector(i) + ")));\n";
+            source += "NH = max(0.0, dot(n, normalize(" + LightProperty(i, "halfVector") + ")));\n";
             source += "spec.rgb += " + illum + " * pow(NH, shininess) * " + FragLightProperty(i, "specColor") + ";\n";
             if (props.hasShadowMap() && i == 0)
             {
