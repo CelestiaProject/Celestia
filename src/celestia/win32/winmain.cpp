@@ -1594,6 +1594,8 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             CheckMenuItem(refVectorMenu, ID_RENDER_PLANETOGRAPHIC_GRID, sel.body()->findReferenceMark("planetographic grid") ? MF_CHECKED : MF_UNCHECKED);
             CheckMenuItem(refVectorMenu, ID_RENDER_TERMINATOR, sel.body()->findReferenceMark("terminator") ? MF_CHECKED : MF_UNCHECKED);
 
+            AppendMenu(hMenu, MF_STRING, ID_SELECT_PRIMARY_BODY, UTF8ToCurrentCP(_("Select &Primary Body")).c_str());
+
             const PlanetarySystem* satellites = sel.body()->getSatellites();
             if (satellites != NULL && satellites->getSystemSize() != 0)
             {
@@ -2275,6 +2277,14 @@ static void syncMenusWithRendererState()
         ((renderFlags & Renderer::ShowSmoothLines) != 0)? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_AUTOMAG,
         ((renderFlags & Renderer::ShowAutoMag) != 0) ? MF_CHECKED : MF_UNCHECKED);
+}
+
+
+static void HandleSelectPrimary()
+{
+    Selection sel = appCore->getSimulation()->getSelection();
+    if (sel.body() != nullptr)
+        appCore->getSimulation()->setSelection(Helper::getPrimary(sel.body()));
 }
 
 
@@ -3953,6 +3963,9 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_NAVIGATION_GOTO_OBJECT:
             if (gotoObjectDlg == NULL)
                 gotoObjectDlg = new GotoObjectDialog(hRes, hWnd, appCore);
+            break;
+        case ID_SELECT_PRIMARY_BODY:
+            HandleSelectPrimary();
             break;
         case IDCLOSE:
             if (reinterpret_cast<LPARAM>(gotoObjectDlg) == lParam &&

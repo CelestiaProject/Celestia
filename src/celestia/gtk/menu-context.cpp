@@ -73,7 +73,7 @@ void GTKContextMenuHandler::requestContextMenu(float, float, Selection sel)
              * AppendMenu(popup, NULL, "_Info", 0); */
             if (Helper::hasPrimary(sel.body()))
             {
-                AppendMenu(popup, G_CALLBACK(handleContextPrimary), "Select Primary Body", NULL);
+                AppendMenu(popup, G_CALLBACK(handleContextPrimary), "Select _Primary Body", NULL);
             }
 
             const PlanetarySystem* satellites = sel.body()->getSatellites();
