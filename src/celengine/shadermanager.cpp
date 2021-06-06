@@ -75,11 +75,12 @@ invariant gl_Position;
 
 static const char *VPFunction =
     "#ifdef FISHEYE\n"
-    "vec4 calc_vp(vec4 in_Position) {\n"
+    "vec4 calc_vp(vec4 in_Position)\n{\n"
     "    float PID2 = 1.570796326794896619231322;\n"
     "    vec4 inPos = ModelViewMatrix * in_Position;\n"
     "    float l = length(inPos.xy);\n"
-    "    if (l != 0.0)\n{\n"
+    "    if (l != 0.0)\n"
+    "    {\n"
     "        float phi = atan(l, -inPos.z);\n"
     "        float lensR = phi / PID2;\n"
     "        inPos.xy *= (lensR / l);\n"
@@ -87,11 +88,11 @@ static const char *VPFunction =
     "    return ProjectionMatrix * inPos;\n"
     "}\n"
     "#else\n"
-    "vec4 calc_vp(vec4 in_Position) {\n"
+    "vec4 calc_vp(vec4 in_Position)\n{\n"
     "    return MVPMatrix * in_Position;\n"
     "}\n"
     "#endif\n"
-    "void set_vp(vec4 in_Position) {\n"
+    "void set_vp(vec4 in_Position)\n{\n"
     "    gl_Position = calc_vp(in_Position);\n"
     "}\n";
 
