@@ -3158,8 +3158,16 @@ Orbit* GetCustomOrbit(const string& name)
             jpleph = JPLEphemeris::load(in);
         if (jpleph != nullptr)
         {
-           fmt::fprintf(clog, "Loaded DE%u ephemeris. Valid from JD %.8lf to JD %.8lf\n",
-                        jpleph->getDENumber(), jpleph->getStartDate(), jpleph->getEndDate());
+            string ephemType;
+            if (jpleph->getDENumber() != 100)
+                ephemType = fmt::format("DE{}", jpleph->getDENumber());
+            else
+                ephemType = "INPOP";
+            fmt::print(clog, "Loaded {} ephemeris. Valid from JD {:.8f} to JD {:.8f}\n",
+                             ephemType, jpleph->getStartDate(), jpleph->getEndDate());
+            fmt::print(clog, "Ephemeris record size: {} doubles, with {} endianess.\n",
+                             jpleph->getRecordSize(),
+                             jpleph->getByteSwap() ? "non-native" : "native");
         }
     }
 
