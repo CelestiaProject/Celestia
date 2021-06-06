@@ -1420,7 +1420,9 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
     vector<IntStrPair> comets;
     vector<IntStrPair> invisibles;
     vector<IntStrPair> moons;
+    vector<IntStrPair> minorMoons;
     vector<IntStrPair> planets;
+    vector<IntStrPair> dwarfPlanets;
     vector<IntStrPair> spacecraft;
 
     // We will use these objects to iterate over all the above vectors
@@ -1448,8 +1450,14 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
             case Body::Moon:
                 moons.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
                 break;
+            case Body::MinorMoon:
+                minorMoons.push_back(make_pair(i, UTF8ToCurrentCP(body->getName())));
+                break;
             case Body::Planet:
                 planets.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
+                break;
+            case Body::DwarfPlanet:
+                dwarfPlanets.push_back(make_pair(i, UTF8ToCurrentCP(body->getName())));
                 break;
             case Body::Spacecraft:
                 spacecraft.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
@@ -1467,8 +1475,12 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
     menuNames.push_back(UTF8ToCurrentCP(_("Invisibles")));
     objects.push_back(moons);
     menuNames.push_back(UTF8ToCurrentCP(_("Moons")));
+    objects.push_back(minorMoons);
+    menuNames.push_back(_("Minor moons"));
     objects.push_back(planets);
     menuNames.push_back(UTF8ToCurrentCP(_("Planets")));
+    objects.push_back(dwarfPlanets);
+    menuNames.push_back(_("Dwarf planets"));
     objects.push_back(spacecraft);
     // TRANSLATORS: translate this as plural
     menuNames.push_back(UTF8ToCurrentCP(C_("plural", "Spacecraft")));
