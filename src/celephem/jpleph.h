@@ -71,6 +71,8 @@ public:
     unsigned int getDENumber() const;
     double getStartDate() const;
     double getEndDate() const;
+    bool getByteSwap() const;
+    unsigned int getRecordSize() const;
 
 private:
     JPLEphCoeffInfo coeffInfo[JPLEph_NItems];
@@ -85,6 +87,7 @@ private:
 
     unsigned int DENum;       // ephemeris version
     unsigned int recordSize;  // number of doubles per record
+    bool swapBytes;
 
     std::vector<JPLEphRecord> records;
 };
