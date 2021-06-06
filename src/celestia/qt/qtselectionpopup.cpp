@@ -192,7 +192,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
         if (Helper::hasPrimary(selection.body()))
         {
-            QAction *action = new QAction(_("Select Primary Body"), this);
+            QAction *action = new QAction(_("Select &Primary Body"), this);
             connect(action, SIGNAL(triggered()), this, SLOT(slotSelectPrimary()));
             addAction(action);
         }
