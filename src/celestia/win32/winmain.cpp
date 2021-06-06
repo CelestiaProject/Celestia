@@ -628,6 +628,7 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
 }
 
 
+#ifdef USE_FFMPEG
 UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
                                     WPARAM wParam, LPARAM lParam)
 {
@@ -728,6 +729,7 @@ UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
 
     return FALSE;
 }
+#endif
 
 
 BOOL APIENTRY FindObjectProc(HWND hDlg,
