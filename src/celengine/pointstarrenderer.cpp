@@ -98,22 +98,6 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             ++nClose;
         }
 
-        // Place labels for stars brighter than the specified label threshold brightness
-        if (((labelMode & Renderer::StarLabels) != 0) && appMag < labelThresholdMag)
-        {
-            Vector3f starDir = relPos;
-            starDir.normalize();
-            if (starDir.dot(viewNormal) > cosFOV)
-            {
-                float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
-                if (distr > 1.0f)
-                    distr = 1.0f;
-                renderer->addBackgroundAnnotation(nullptr, starDB->getStarName(star, true),
-                                                  Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
-                                                  relPos);
-                nLabelled++;
-            }
-        }
         // Stars closer than the maximum solar system size are actually
         // added to the render list and depth sorted, since they may occlude
         // planets.
@@ -176,6 +160,22 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             }
 
             ++nRendered;
+
+            // Place labels for stars brighter than the specified label threshold brightness
+            if (((labelMode & Renderer::StarLabels) != 0) && appMag < labelThresholdMag)
+            {
+                Vector3f starDir = relPos.normalized();
+                if (starDir.dot(viewNormal) > cosFOV)
+                {
+                    float distr = min(1.0f, 3.5f * (labelThresholdMag - appMag)/labelThresholdMag);
+                    Color color = Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha());
+                    renderer->addBackgroundAnnotation(nullptr,
+                                                      starDB->getStarName(star, true),
+                                                      color,
+                                                      relPos);
+                    nLabelled++;
+                }
+            }
         }
         else
         {
@@ -198,6 +198,19 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             rle.appMag = appMag;
             rle.isOpaque = true;
             renderList->push_back(rle);
+
+            if ((labelMode & Renderer::StarLabels) != 0)
+            {
+                // Position the label slightly in front of the object along a line from
+                // object center to viewer.
+                Vector3f pos = rle.position;
+                pos = pos * (1.0f - star.getRadius() * 1.01f / pos.norm());
+
+                renderer->addSortedAnnotation(nullptr,
+                                              starDB->getStarName(star, true),
+                                              Renderer::StarLabelColor,
+                                              pos);
+            }
         }
     }
 }
