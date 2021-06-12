@@ -1430,11 +1430,11 @@ msgstr "Млечен път"
 
 #: ../data/data.cpp:353
 msgid "SMC"
-msgstr "SMC"
+msgstr "ММО"
 
 #: ../data/data.cpp:354
 msgid "LMC"
-msgstr "LMC"
+msgstr "ГМО"
 
 #: ../data/data.cpp:355
 msgid "Solar System Barycenter"
@@ -1442,7 +1442,7 @@ msgstr "Център на масата на Слънчевата система"
 
 #: ../src/celengine/astro.cpp:707
 msgid "DST"
-msgstr "DST"
+msgstr "ЛЧВ"
 
 #: ../src/celengine/astro.cpp:707
 msgid "STD"
