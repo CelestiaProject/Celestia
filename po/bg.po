@@ -1430,11 +1430,11 @@ msgstr "Млечен път"
 
 #: ../data/data.cpp:353
 msgid "SMC"
-msgstr "SMC"
+msgstr "ММО"
 
 #: ../data/data.cpp:354
 msgid "LMC"
-msgstr "LMC"
+msgstr "ГМО"
 
 #: ../data/data.cpp:355
 msgid "Solar System Barycenter"
@@ -1442,11 +1442,11 @@ msgstr "Център на масата на Слънчевата система"
 
 #: ../src/celengine/astro.cpp:707
 msgid "DST"
-msgstr "DST"
+msgstr "ЛЧВ"
 
 #: ../src/celengine/astro.cpp:707
 msgid "STD"
-msgstr "STD"
+msgstr "СЧВ"
 
 #: ../src/celengine/configreader.cpp:19
 #, c-format
@@ -2326,7 +2326,7 @@ msgstr "Celestia не успя да стартира OpenGL 2.1.\n"
 
 #: ../src/celestia/gtk/actions.cpp:1030 ../src/celestia/win32/winmain.cpp:2639
 msgid "Please use a name ending in '.jpg' or '.png'."
-msgstr "Моля, използвайте име, завършващо с '.jpg' или '.png'."
+msgstr "Моля, използвайте име, завършващо с „.jpg“ или „.png“."
 
 #: ../src/celestia/helper.cpp:106 ../src/celestia/helper.cpp:115
 #, c-format
@@ -2390,7 +2390,7 @@ msgstr "Неуспешно прихващане на кадъра!\n"
 #: ../src/celestia/oggtheoracapture.cpp:161
 #, c-format
 msgid "Error in creating ogg file %s for capture.\n"
-msgstr "Грешка при създаването на ogg файла %s за прихващане.\n"
+msgstr "Грешка при създаването на „ogg“ файла %s за прихващане.\n"
 
 #. can't get here
 #: ../src/celestia/oggtheoracapture.cpp:255
@@ -2861,7 +2861,7 @@ msgstr "&Помощ"
 
 #: ../src/celestia/qt/qtappwin.cpp:1443
 msgid "Celestia Manual"
-msgstr "Ръководство за Celestia"
+msgstr "Ръководство за „Celestia“"
 
 #: ../src/celestia/qt/qtappwin.cpp:1448
 msgid "OpenGL Info"
@@ -3763,23 +3763,23 @@ msgstr "<b>B:</b> %L1%2 %L3' %L4\""
 
 #: ../src/celestia/qt/qtmain.cpp:162 ../src/celestia/win32/winmain.cpp:2992
 msgid "Directory expected after --dir"
-msgstr "Очаква се директория след --dir"
+msgstr "Очаква се директория след параметъра „--dir“"
 
 #: ../src/celestia/qt/qtmain.cpp:172 ../src/celestia/win32/winmain.cpp:3005
 msgid "Configuration file name expected after --conf"
-msgstr "Очаква се име на конфигурационния файл след --conf"
+msgstr "Очаква се име на конфигурационния файл след параметъра „--conf“"
 
 #: ../src/celestia/qt/qtmain.cpp:183 ../src/celestia/win32/winmain.cpp:3019
 msgid "Directory expected after --extrasdir"
-msgstr "Очаква се директория след --extrasdir"
+msgstr "Очаква се директория след параметъра „--extrasdir“"
 
 #: ../src/celestia/qt/qtmain.cpp:193 ../src/celestia/win32/winmain.cpp:3032
 msgid "URL expected after --url"
-msgstr "Очаква се връзка след --url"
+msgstr "Очаква се връзка след параметъра „--url“"
 
 #: ../src/celestia/qt/qtmain.cpp:207
 msgid "A filename expected after --log/-l"
-msgstr "Очаква се име на файла след --log/-l"
+msgstr "Очаква се име на файла след параметъра „--log/-l“"
 
 #: ../src/celestia/qt/qtmain.cpp:215 ../src/celestia/win32/winmain.cpp:3047
 #, c-format
@@ -3809,7 +3809,7 @@ msgstr "Име на часовата зона"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:227
 msgid "UTC offset"
-msgstr "UTC отклонение"
+msgstr "Отклонение по UTC"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:77
 #, qt-format
@@ -4845,7 +4845,7 @@ msgstr "Контроли"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:67
 msgid "&OpenGL Info"
-msgstr "Информация за OpenGL"
+msgstr "Информация за „OpenGL“"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:68
 msgid "&License"
@@ -4853,7 +4853,7 @@ msgstr "Лиценз"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:69
 msgid "&About Celestia"
-msgstr "За Celestia"
+msgstr "За „Celestia“"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:71
 #: ../src/celestia/win32/res/resource_strings.cpp:92
@@ -4876,7 +4876,7 @@ msgstr "ОК"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:72
 msgid "Celestia"
-msgstr "Celestia"
+msgstr "„Celestia“"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:73
 msgid "1.7.0"
