@@ -3653,7 +3653,7 @@ void Renderer::renderStar(const Star& star,
                         faintestMag,
                         discSizeInPixels,
                         color,
-                        true, true,
+                        star.hasCorona(), true,
                         m);
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
