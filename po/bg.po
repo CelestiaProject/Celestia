@@ -1430,11 +1430,11 @@ msgstr "Млечен път"
 
 #: ../data/data.cpp:353
 msgid "SMC"
-msgstr "SMC"
+msgstr "ММО"
 
 #: ../data/data.cpp:354
 msgid "LMC"
-msgstr "LMC"
+msgstr "ГМО"
 
 #: ../data/data.cpp:355
 msgid "Solar System Barycenter"
@@ -1442,11 +1442,11 @@ msgstr "Център на масата на Слънчевата система"
 
 #: ../src/celengine/astro.cpp:707
 msgid "DST"
-msgstr "DST"
+msgstr "ЛЧВ"
 
 #: ../src/celengine/astro.cpp:707
 msgid "STD"
-msgstr "STD"
+msgstr "СЧВ"
 
 #: ../src/celengine/configreader.cpp:19
 #, c-format
@@ -1517,7 +1517,7 @@ msgstr "Разсеян звезден куп"
 #: ../src/celengine/solarsys.cpp:82
 #, c-format
 msgid "Error in .ssc file (line %d): "
-msgstr "Грешка в .ssc файла (линия %d): "
+msgstr "Грешка в „.ssc“ файла (линия %d): "
 
 #: ../src/celengine/solarsys.cpp:831
 msgid "Incorrect GeomAlbedo value: {}\n"
@@ -1729,7 +1729,7 @@ msgstr "Опашките на кометите са изключени"
 
 #: ../src/celestia/celestiacore.cpp:1188
 msgid "Render path: OpenGL 2.1"
-msgstr "Възпроизвеждане с: OpenGL 2.1"
+msgstr "Възпроизвеждане с: „OpenGL 2.1“"
 
 #: ../src/celestia/celestiacore.cpp:1207
 msgid "Anti-aliasing enabled"
@@ -2322,11 +2322,11 @@ msgstr "Невалидна връзка"
 
 #: ../src/celestia/glut/glutmain.cpp:522
 msgid "Celestia was unable to initialize OpenGL 2.1.\n"
-msgstr "Celestia не успя да стартира OpenGL 2.1.\n"
+msgstr "„Celestia“ не успя да стартира „OpenGL“ 2.1.\n"
 
 #: ../src/celestia/gtk/actions.cpp:1030 ../src/celestia/win32/winmain.cpp:2639
 msgid "Please use a name ending in '.jpg' or '.png'."
-msgstr "Моля, използвайте име, завършващо с '.jpg' или '.png'."
+msgstr "Моля, използвайте име, завършващо с „.jpg“ или „.png“."
 
 #: ../src/celestia/helper.cpp:106 ../src/celestia/helper.cpp:115
 #, c-format
@@ -2390,7 +2390,7 @@ msgstr "Неуспешно прихващане на кадъра!\n"
 #: ../src/celestia/oggtheoracapture.cpp:161
 #, c-format
 msgid "Error in creating ogg file %s for capture.\n"
-msgstr "Грешка при създаването на ogg файла %s за прихващане.\n"
+msgstr "Грешка при създаването на „ogg“ файла %s за прихващане.\n"
 
 #. can't get here
 #: ../src/celestia/oggtheoracapture.cpp:255
@@ -2425,12 +2425,12 @@ msgid ""
 "Celestia is unable to run because the data directory was not found, probably"
 " due to improper installation."
 msgstr ""
-"Celestia не успя да стартира, защото директорията с данните липсва, "
+"„Celestia“ не успя да стартира, защото директорията с данните липсва, "
 "вероятната причина е неправилна инсталация."
 
 #: ../src/celestia/qt/qtappwin.cpp:272
 msgid "Celestia was unable to initialize OpenGL 2.1."
-msgstr "Celestia не успя да стартира OpenGL 2.1."
+msgstr "„Celestia“ не успя да стартира „OpenGL“ 2.1."
 
 #: ../src/celestia/qt/qtappwin.cpp:290
 msgid "Celestial Browser"
@@ -2554,7 +2554,7 @@ msgstr "Отвори скрипт"
 
 #: ../src/celestia/qt/qtappwin.cpp:888
 msgid "Celestia Scripts (*.celx *.cel)"
-msgstr "Скриптове на Celestia (*.celx *.cel)"
+msgstr "Скриптове на „Celestia“ (*.celx *.cel)"
 
 #: ../src/celestia/qt/qtappwin.cpp:958
 msgid "New bookmark"
@@ -2576,15 +2576,15 @@ msgid ""
 " project: <a "
 "href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>Celestia 1.7</h1><p>В процес на разработка, компилация "
+"<html><h1>„Celestia“ 1.7</h1><p>В процес на разработка, компилация "
 "<b>%1</b>.</p><p>За %2 битови процесори<br>Използва %3 %4<br>Създадена е с "
-"Qt: %5<br>Ядрата „NAIF“ са %7<br>Версия на Qt: %6</p><p>Авторско право (C) "
-"2001-2021, Екипа на Celestia.<br>Celestia е безплатен софтуер. Може да се "
-"разпространява и/или модифицира под условията на GNU General Public License,"
-" който е публикуван от Фондацията за свободен софтуер, версия 2 или всяка "
-"по-нова версия на Лиценза (по Ваша преценка).</p><p>Сайт: <a "
+"„Qt“: %5<br>Ядрата „NAIF“ са %7<br>Версия на „Qt“: %6</p><p>Авторско право "
+"(C) 2001-2021, Екипа на „Celestia“.<br>„Celestia“ е безплатен софтуер. Може "
+"да се разпространява и/или модифицира под условията на „GNU General Public "
+"License“, който е публикуван от „Фондацията за свободен софтуер“, версия 2 "
+"или всяка по-нова версия на Лиценза (по Ваша преценка).</p><p>Сайт: <a "
 "href=\"https://celestia.space/\">https://celestia.space/</a><br>Форум: <a "
-"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</a><br>GitHub:"
+"href=\"https://celestia.space/forum/\">https://celestia.space/forum/</a><br>„GitHub“:"
 " <a "
 "href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 
@@ -2603,7 +2603,7 @@ msgstr "не се поддържа"
 #: ../src/celestia/qt/qtappwin.cpp:1057 ../src/celestia/qt/qtappwin.cpp:1452
 #: ../src/celestia/win32/res/resource_strings.cpp:70
 msgid "About Celestia"
-msgstr "За Celestia"
+msgstr "За „Celestia“"
 
 #: ../src/celestia/qt/qtappwin.cpp:1076
 #, qt-format
@@ -2861,11 +2861,11 @@ msgstr "&Помощ"
 
 #: ../src/celestia/qt/qtappwin.cpp:1443
 msgid "Celestia Manual"
-msgstr "Ръководство за Celestia"
+msgstr "Ръководство за „Celestia“"
 
 #: ../src/celestia/qt/qtappwin.cpp:1448
 msgid "OpenGL Info"
-msgstr "Информация за OpenGL"
+msgstr "Информация за „OpenGL“"
 
 #: ../src/celestia/qt/qtappwin.cpp:1468
 msgid "Add Bookmark..."
@@ -3763,23 +3763,23 @@ msgstr "<b>B:</b> %L1%2 %L3' %L4\""
 
 #: ../src/celestia/qt/qtmain.cpp:162 ../src/celestia/win32/winmain.cpp:2992
 msgid "Directory expected after --dir"
-msgstr "Очаква се директория след --dir"
+msgstr "Очаква се директория след параметъра „--dir“"
 
 #: ../src/celestia/qt/qtmain.cpp:172 ../src/celestia/win32/winmain.cpp:3005
 msgid "Configuration file name expected after --conf"
-msgstr "Очаква се име на конфигурационния файл след --conf"
+msgstr "Очаква се име на конфигурационния файл след параметъра „--conf“"
 
 #: ../src/celestia/qt/qtmain.cpp:183 ../src/celestia/win32/winmain.cpp:3019
 msgid "Directory expected after --extrasdir"
-msgstr "Очаква се директория след --extrasdir"
+msgstr "Очаква се директория след параметъра „--extrasdir“"
 
 #: ../src/celestia/qt/qtmain.cpp:193 ../src/celestia/win32/winmain.cpp:3032
 msgid "URL expected after --url"
-msgstr "Очаква се връзка след --url"
+msgstr "Очаква се връзка след параметъра „--url“"
 
 #: ../src/celestia/qt/qtmain.cpp:207
 msgid "A filename expected after --log/-l"
-msgstr "Очаква се име на файла след --log/-l"
+msgstr "Очаква се име на файла след параметъра „--log/-l“"
 
 #: ../src/celestia/qt/qtmain.cpp:215 ../src/celestia/win32/winmain.cpp:3047
 #, c-format
@@ -3789,7 +3789,7 @@ msgstr "Невалидна опция на командния ред „%s“"
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:174
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:178
 msgid "OpenGL 2.1"
-msgstr "OpenGL 2.1"
+msgstr "„OpenGL“ 2.1"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:217
 msgid "Blackbody D65"
@@ -3809,7 +3809,7 @@ msgstr "Име на часовата зона"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:227
 msgid "UTC offset"
-msgstr "UTC отклонение"
+msgstr "Отклонение по UTC"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:77
 #, qt-format
@@ -4845,7 +4845,7 @@ msgstr "Контроли"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:67
 msgid "&OpenGL Info"
-msgstr "Информация за OpenGL"
+msgstr "Информация за „OpenGL“"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:68
 msgid "&License"
@@ -4853,7 +4853,7 @@ msgstr "Лиценз"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:69
 msgid "&About Celestia"
-msgstr "За Celestia"
+msgstr "За „Celestia“"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:71
 #: ../src/celestia/win32/res/resource_strings.cpp:92
@@ -4876,7 +4876,7 @@ msgstr "ОК"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:72
 msgid "Celestia"
-msgstr "Celestia"
+msgstr "„Celestia“"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:73
 msgid "1.7.0"
@@ -4884,7 +4884,7 @@ msgstr "1.7.0"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:74
 msgid "Copyright (C) 2001-2021, Celestia Development Team"
-msgstr "Авторско право (С) 2001-2021, Екипа на Celestia"
+msgstr "Авторско право (С) 2001-2021, Екипа на „Celestia“"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:75
 msgid "https://celestia.space/"
@@ -4892,7 +4892,7 @@ msgstr "https://celestia.space/"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:76
 msgid "Celestia is free software and comes with absolutely no warranty."
-msgstr "Celestia е безплатен софтуер и се предлага без никаква гаранция."
+msgstr "„Celestia“ е безплатен софтуер и се предлага без никаква гаранция."
 
 #: ../src/celestia/win32/res/resource_strings.cpp:77
 msgid "Authors"
@@ -4969,7 +4969,7 @@ msgstr "Име на папката"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:100
 msgid "Celestia Controls"
-msgstr "Контроли на Celestia"
+msgstr "Контроли на „Celestia“"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:102
 msgid "Select Display Mode"
@@ -5029,7 +5029,7 @@ msgstr "Име на обект"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:120
 msgid "OpenGL Driver Info"
-msgstr "Информация за драйвъра на OpenGL"
+msgstr "Информация за драйвъра на „OpenGL“"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:122
 msgid "Go to Object"
@@ -5368,11 +5368,11 @@ msgstr "Фатална грешка"
 msgid "Could not get appropriate pixel format for OpenGL rendering."
 msgstr ""
 "Не може да бъде избран подходящ формат на пикселите за възпроизвеждане с "
-"OpenGL."
+"„OpenGL“."
 
 #: ../src/celestia/win32/winmain.cpp:1967
 msgid "Your system doesn't support OpenGL 2.1!"
-msgstr "Вашата система не поддържа OpenGL 2.1!"
+msgstr "Вашата система не поддържа „OpenGL“ 2.1!"
 
 #: ../src/celestia/win32/winmain.cpp:1999
 msgid "Releasing device context failed."
@@ -5410,7 +5410,7 @@ msgstr "Видеото не може да бъде прихванато."
 #: ../src/celestia/win32/winmain.cpp:3033
 #: ../src/celestia/win32/winmain.cpp:3049
 msgid "Celestia Command Line Error"
-msgstr "Грешка в командния ред на Celestia"
+msgstr "Грешка в командния ред на „Celestia“"
 
 #: ../src/celestia/win32/winmain.cpp:3070
 msgid "Loading: "
@@ -5461,7 +5461,7 @@ msgstr "Име на часовата зона"
 
 #: ../src/celestia/win32/wintime.cpp:97
 msgid "UTC Offset"
-msgstr "UTC отклонение"
+msgstr "Отклонение по UTC"
 
 #: ../src/celimage/png.cpp:56
 #, c-format
@@ -5471,12 +5471,12 @@ msgstr "Грешка при отваряне на изображение %s\n"
 #: ../src/celimage/png.cpp:64
 #, c-format
 msgid "Error: %s is not a PNG file.\n"
-msgstr "Грешка: %s не е PNG файл.\n"
+msgstr "Грешка: %s не е „PNG“ файл.\n"
 
 #: ../src/celimage/png.cpp:90
 #, c-format
 msgid "Error reading PNG image file %s\n"
-msgstr "Грешка при четене на PNG изображението %s\n"
+msgstr "Грешка при четене на „PNG“ изображението %s\n"
 
 #: ../src/celscript/legacy/legacyscript.cpp:96
 msgid "Error opening script file."
