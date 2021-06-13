@@ -33,7 +33,6 @@ std::ofstream hdrlog;
 #define EXPOSURE_HALFLIFE   0.4f
 #endif
 
-#include <config.h>
 #include "render.h"
 #include "boundaries.h"
 #include "dsorenderer.h"
@@ -84,6 +83,10 @@ std::ofstream hdrlog;
 #include <numeric>
 #ifdef USE_GLCONTEXT
 #include "glcontext.h"
+#endif
+#ifdef _MSC_VER
+#include <malloc.h>
+#define alloca(s) _alloca(s)
 #endif
 
 using namespace cmod;
@@ -462,7 +465,7 @@ static void BuildGlareMipLevel2(unsigned char* mipPixels,
 static Texture* BuildGaussianDiscTexture(unsigned int log2size)
 {
     unsigned int size = 1 << log2size;
-    Image* img = new Image(GL_LUMINANCE, size, size, log2size + 1);
+    Image* img = new Image(PixelFormat::LUMINANCE, size, size, log2size + 1);
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
@@ -486,7 +489,7 @@ static Texture* BuildGaussianDiscTexture(unsigned int log2size)
 static Texture* BuildGaussianGlareTexture(unsigned int log2size)
 {
     unsigned int size = 1 << log2size;
-    Image* img = new Image(GL_LUMINANCE, size, size, log2size + 1);
+    Image* img = new Image(PixelFormat::LUMINANCE, size, size, log2size + 1);
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
@@ -600,7 +603,7 @@ bool Renderer::init(
     }
 
 #ifdef USE_HDR
-    Image        *testImg = new Image(GL_LUMINANCE_ALPHA, 1, 1);
+    Image        *testImg = new Image(PixelFormat::LUM_ALPHA, 1, 1);
     ImageTexture *testTex = new ImageTexture(*testImg,
                                              Texture::EdgeClamp,
                                              Texture::NoMipMaps);
@@ -634,6 +637,9 @@ bool Renderer::init(
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+
+    if (gl::MESA_pack_invert)
+        glPixelStorei(GL_PACK_INVERT_MESA, GL_TRUE);
 
     // LEQUAL rather than LESS required for multipass rendering
     glDepthFunc(GL_LEQUAL);
@@ -5493,19 +5499,54 @@ void Renderer::disableDepthTest() noexcept
     }
 }
 
-constexpr GLenum toGLFormat(Renderer::PixelFormat format)
+constexpr GLenum toGLFormat(PixelFormat format)
 {
     return (GLenum) format;
 }
 
-bool Renderer::captureFrame(int x, int y, int w, int h, Renderer::PixelFormat format, unsigned char* buffer, bool back) const
+constexpr int formatWidth(PixelFormat format)
 {
+    return format == PixelFormat::RGB
 #ifndef GL_ES
-    glReadBuffer(back ? GL_BACK : GL_FRONT);
+           || format == PixelFormat::BGR
 #endif
-    glReadPixels(x, y, w, h, toGLFormat(format), GL_UNSIGNED_BYTE, (void*) buffer);
+           ? 3 : 4;
+}
 
-    return glGetError() == GL_NO_ERROR;
+PixelFormat
+Renderer::getPreferredCaptureFormat() const noexcept
+{
+#ifdef GL_ES
+    return PixelFormat::RGBA;
+#else
+    return PixelFormat::RGB;
+#endif
+}
+
+bool Renderer::captureFrame(int x, int y, int w, int h, PixelFormat format, unsigned char* buffer) const
+{
+    glReadPixels(x, y, w, h, toGLFormat(format), GL_UNSIGNED_BYTE, (void*) buffer);
+    bool ok = glGetError() == GL_NO_ERROR;
+    if (!ok)
+        return false;
+
+    if (!gl::MESA_pack_invert)
+    {
+        int realWidth = w * formatWidth(format);
+#if defined(__GNUC__) && !defined(__STRICT_ANSI__)
+        uint8_t tempLine[realWidth]; // G++ supports VLA as an extension
+#else
+        uint8_t *tempLine = static_cast<uint8_t*>(alloca(realWidth));
+#endif
+        uint8_t *fb = buffer;
+        for (int i = 0, p = realWidth * (h - 1); i < p; i += realWidth, p -= realWidth)
+        {
+            memcpy(tempLine, &fb[i],   realWidth);
+            memcpy(&fb[i],   &fb[p],   realWidth);
+            memcpy(&fb[p],   tempLine, realWidth);
+        }
+    }
+    return ok;
 }
 
 void Renderer::drawRectangle(const celestia::Rect &r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m)

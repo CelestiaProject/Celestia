@@ -13,8 +13,6 @@ set(CELESTIA_SOURCES
   favorites.h
   helper.cpp
   helper.h
-  imagecapture.cpp
-  imagecapture.h
   scriptmenu.cpp
   scriptmenu.h
   url.cpp

@@ -168,16 +168,16 @@ class CubeMap : public Texture
 
 
 extern Texture* CreateProceduralTexture(int width, int height,
-                                        int format,
+                                        celestia::PixelFormat format,
                                         ProceduralTexEval func,
                                         Texture::AddressMode addressMode = Texture::EdgeClamp,
                                         Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
 extern Texture* CreateProceduralTexture(int width, int height,
-                                        int format,
+                                        celestia::PixelFormat format,
                                         TexelFunctionObject& func,
                                         Texture::AddressMode addressMode = Texture::EdgeClamp,
                                         Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
-extern Texture* CreateProceduralCubeMap(int size, int format,
+extern Texture* CreateProceduralCubeMap(int size, celestia::PixelFormat format,
                                         ProceduralTexEval func);
 
 extern Texture* LoadTextureFromFile(const fs::path& filename,

@@ -25,7 +25,6 @@
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include <celestia/celestiacore.h>
-#include <celestia/imagecapture.h>
 #include <celestia/url.h>
 
 #include "celx_internal.h"

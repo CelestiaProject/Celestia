@@ -43,6 +43,7 @@
 #include <vector>
 #include <string>
 #include <cassert>
+#include <celengine/glsupport.h>
 #include <celutil/gettext.h>
 #include <celutil/util.h>
 #include "qtappwin.h"
@@ -58,7 +59,6 @@
 #include "qteventfinder.h"
 #include "qtsettimedialog.h"
 #include "qtgotoobjectdialog.h"
-//#include "qtvideocapturedialog.h"
 #include <celestia/celestiastate.h>
 #include <celestia/scriptmenu.h>
 #include <celestia/url.h>
@@ -600,10 +600,7 @@ void CelestiaAppWindow::slotGrabImage()
 
     if (!saveAsName.isEmpty())
     {
-        //glWidget->repaint();
-        QImage grabbedImage = glWidget->grabFrameBuffer();
-        grabbedImage.save(saveAsName);
-
+        m_appCore->saveScreenShot(saveAsName.toStdString());
         settings.setValue("GrabImageDir", QFileInfo(saveAsName).absolutePath());
     }
     settings.endGroup();
@@ -695,13 +692,30 @@ void CelestiaAppWindow::slotCaptureVideo()
 #endif
 }
 
+static QImage::Format toQFormat(PixelFormat format)
+{
+    switch (format)
+    {
+    case PixelFormat::RGB:
+        return QImage::Format_RGB888;
+    case PixelFormat::RGBA:
+        return QImage::Format_RGBA8888;
+    default:
+        return QImage::Format_Invalid;
+    }
+}
 
 void CelestiaAppWindow::slotCopyImage()
 {
     //glWidget->repaint();
-    QImage grabbedImage = glWidget->grabFrameBuffer();
+    Image image = m_appCore->captureImage();
+    QImage grabbedImage = QImage(image.getPixels(),
+                                 image.getWidth(),
+                                 image.getHeight(),
+                                 image.getPitch(),
+                                 toQFormat(image.getFormat()));
     QApplication::clipboard()->setImage(grabbedImage);
-    m_appCore->flash(QString(_("Captured screen shot to clipboard")).toStdString());
+    m_appCore->flash(_("Captured screen shot to clipboard"));
 }
 
 
@@ -1156,7 +1170,6 @@ void CelestiaAppWindow::createMenus()
 
     QAction* captureVideoAction = new QAction(QIcon(":/icons/capture-video.png"),
                                               _("Capture &video"), this);
-    // TODO: Add Mac support for video capture
 #ifndef USE_FFMPEG
     captureVideoAction->setEnabled(false);
 #endif

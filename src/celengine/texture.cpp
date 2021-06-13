@@ -7,7 +7,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
@@ -117,40 +116,37 @@ static const TextureCaps& GetTextureCaps()
 }
 
 
-
-static int getInternalFormat(int format)
+static int getInternalFormat(PixelFormat format)
 {
 #ifdef GL_ES
     switch (format)
     {
-    case GL_RGBA:
-    case GL_RGB:
-    case GL_LUMINANCE_ALPHA:
-    case GL_ALPHA:
-    case GL_LUMINANCE:
-    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-        return format;
+    case PixelFormat::RGBA:
+    case PixelFormat::RGB:
+    case PixelFormat::LUM_ALPHA:
+    case PixelFormat::ALPHA:
+    case PixelFormat::LUMINANCE:
+    case PixelFormat::DXT1:
+    case PixelFormat::DXT3:
+    case PixelFormat::DXT5:
+        return (int) format;
     default:
         return 0;
     }
 #else
     switch (format)
     {
-    case GL_RGBA:
-    case GL_BGRA:
-    case GL_RGB:
-    case GL_BGR:
-    case GL_LUMINANCE_ALPHA:
-    case GL_ALPHA:
-    case GL_INTENSITY:
-    case GL_LUMINANCE:
-    case GL_DSDT_NV:
-    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-        return format;
+    case PixelFormat::RGBA:
+    case PixelFormat::BGRA:
+    case PixelFormat::RGB:
+    case PixelFormat::BGR:
+    case PixelFormat::LUM_ALPHA:
+    case PixelFormat::ALPHA:
+    case PixelFormat::LUMINANCE:
+    case PixelFormat::DXT1:
+    case PixelFormat::DXT3:
+    case PixelFormat::DXT5:
+        return (int) format;
     default:
         return 0;
     }
@@ -190,9 +186,9 @@ static int getCompressedInternalFormat(int format)
 #endif
 
 
-static int getCompressedBlockSize(int format)
+static int getCompressedBlockSize(PixelFormat format)
 {
-    return format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ? 8 : 16;
+    return format == PixelFormat::DXT1 ? 8 : 16;
 }
 
 
@@ -738,14 +734,13 @@ const TextureTile TiledTexture::getTile(int lod, int u, int v)
 }
 
 
-
 CubeMap::CubeMap(Image* faces[]) :
     Texture(faces[0]->getWidth(), faces[0]->getHeight()),
     glName(0)
 {
     // Verify that all the faces are square and have the same size
     int width = faces[0]->getWidth();
-    int format = faces[0]->getFormat();
+    PixelFormat format = faces[0]->getFormat();
     int i = 0;
     for (i = 0; i < 6; i++)
     {
@@ -855,7 +850,7 @@ void CubeMap::setBorderColor(Color borderColor)
 
 
 Texture* CreateProceduralTexture(int width, int height,
-                                 int format,
+                                 PixelFormat format,
                                  ProceduralTexEval func,
                                  Texture::AddressMode addressMode,
                                  Texture::MipMapMode mipMode)
@@ -880,7 +875,7 @@ Texture* CreateProceduralTexture(int width, int height,
 
 
 Texture* CreateProceduralTexture(int width, int height,
-                                 int format,
+                                 PixelFormat format,
                                  TexelFunctionObject& func,
                                  Texture::AddressMode addressMode,
                                  Texture::MipMapMode mipMode)
@@ -940,8 +935,9 @@ static Vector3f cubeVector(int face, float s, float t)
 }
 
 
-extern Texture* CreateProceduralCubeMap(int size, int format,
-                                        ProceduralTexEval func)
+Texture* CreateProceduralCubeMap(int size,
+                                 PixelFormat format,
+                                 ProceduralTexEval func)
 {
     Image* faces[6];
 
@@ -1056,7 +1052,7 @@ Texture* LoadTextureFromFile(const fs::path& filename,
         // compressed normal map. There's no separate OpenGL format for dxt5
         // normal maps, so the file extension is the only thing that
         // distinguishes it from a plain old dxt5 texture.
-        if (img->getFormat() == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+        if (img->getFormat() == PixelFormat::DXT5)
         {
             tex->setFormatOptions(Texture::DXT5NormalMap);
         }

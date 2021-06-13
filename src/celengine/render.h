@@ -252,17 +252,6 @@ class Renderer
         StarStyleCount   = 3,
     };
 
-    // Pixel formats for image and video capture.
-    // Currently we map them 1:1 to GL
-    enum class PixelFormat
-    {
-        RGBA = GL_RGBA,
-        RGB = GL_RGB,
-#ifndef GL_ES
-        BGR_EXT = GL_BGR_EXT
-#endif
-    };
-
     uint64_t getRenderFlags() const;
     void setRenderFlags(uint64_t);
     int getLabelMode() const;
@@ -314,6 +303,8 @@ class Renderer
     void enableDepthTest() noexcept;
     void disableDepthTest() noexcept;
 
+    celestia::PixelFormat getPreferredCaptureFormat() const noexcept;
+
     void drawRectangle(const celestia::Rect& r, int fishEyeOverrideMode, const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
     void setRenderRegion(int x, int y, int width, int height, bool withScissor = true);
 
@@ -324,7 +315,7 @@ class Renderer
     void setSolarSystemMaxDistance(float);
     void setShadowMapSize(unsigned);
 
-    bool captureFrame(int, int, int, int, PixelFormat format, unsigned char*, bool = false) const;
+    bool captureFrame(int, int, int, int, celestia::PixelFormat format, unsigned char*) const;
 
     void renderMarker(celestia::MarkerRepresentation::Symbol symbol,
                       float size,

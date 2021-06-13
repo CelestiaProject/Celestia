@@ -15,6 +15,7 @@ bool EXT_framebuffer_object         = false;
 bool ARB_shader_texture_lod         = false;
 bool EXT_texture_compression_s3tc   = false;
 bool EXT_texture_filter_anisotropic = false;
+bool MESA_pack_invert               = false;
 GLint maxPointSize                  = 0;
 GLfloat maxLineWidth                = 0.0f;
 
@@ -42,6 +43,7 @@ bool init(util::array_view<std::string> ignore) noexcept
     ARB_shader_texture_lod         = check_extension(ignore, "GL_ARB_shader_texture_lod");
     EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");
     EXT_texture_filter_anisotropic = check_extension(ignore, "GL_EXT_texture_filter_anisotropic");
+    MESA_pack_invert               = check_extension(ignore, "GL_MESA_pack_invert");
 
     GLint pointSizeRange[2];
     GLfloat lineWidthRange[2];

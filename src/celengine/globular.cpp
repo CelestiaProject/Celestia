@@ -430,14 +430,16 @@ void Globular::renderGlobularPointSprites(
 
     if(centerTex[ic] == nullptr)
     {
-        centerTex[ic] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight, GL_RGBA,
+        centerTex[ic] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
+                                                PixelFormat::RGBA,
                                                 CenterCloudTexEval);
     }
     assert(centerTex[ic] != nullptr);
 
     if (globularTex == nullptr)
     {
-        globularTex = CreateProceduralTexture(starTexWidth, starTexHeight, GL_RGBA,
+        globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
+                                              PixelFormat::RGBA,
                                               GlobularTextureEval);
     }
     assert(globularTex != nullptr);

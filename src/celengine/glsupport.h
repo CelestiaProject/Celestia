@@ -40,6 +40,7 @@ constexpr const int GLES_2 = 20;
 extern bool ARB_shader_texture_lod;
 extern bool EXT_texture_compression_s3tc;
 extern bool EXT_texture_filter_anisotropic;
+extern bool MESA_pack_invert;
 #ifdef GL_ES
 extern bool OES_vertex_array_object;
 #else

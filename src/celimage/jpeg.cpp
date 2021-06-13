@@ -14,9 +14,10 @@
 extern "C" {
 #include <jpeglib.h>
 }
-#include <celengine/glsupport.h>
 #include <celengine/image.h>
 #include <celutil/debug.h>
+
+using celestia::PixelFormat;
 
 namespace
 {
@@ -130,9 +131,9 @@ Image* LoadJPEGImage(const fs::path& filename, int /*unused*/)
     // Here we use the library's state variable cinfo.output_scanline as the
     // loop counter, so that we don't have to keep track ourselves.
 
-    int format = GL_RGB;
+    PixelFormat format = PixelFormat::RGB;
     if (cinfo.output_components == 1)
-        format = GL_LUMINANCE;
+        format = PixelFormat::LUMINANCE;
 
     img = new Image(format, cinfo.image_width, cinfo.image_height);
 
@@ -216,7 +217,7 @@ bool SaveJPEGImage(const fs::path& filename,
 
     while (cinfo.next_scanline < cinfo.image_height)
     {
-        unsigned char *rowHead = &pixels[rowStride * (cinfo.image_height - cinfo.next_scanline - 1)];
+        unsigned char *rowHead = &pixels[rowStride * cinfo.next_scanline];
         // Strip alpha values if we are in RGBA format
         if (removeAlpha)
         {
@@ -238,4 +239,14 @@ bool SaveJPEGImage(const fs::path& filename,
     jpeg_destroy_compress(&cinfo);
 
     return true;
+}
+
+bool SaveJPEGImage(const fs::path& filename, Image& image)
+{
+    return SaveJPEGImage(filename,
+                         image.getWidth(),
+                         image.getHeight(),
+                         image.getPitch(),
+                         image.getPixels(),
+                         image.hasAlpha());
 }

@@ -35,7 +35,6 @@
 #include "celutil/filetype.h"
 #include "celutil/debug.h"
 #include "celutil/gettext.h"
-#include "celestia/imagecapture.h"
 #include "celestia/celestiacore.h"
 #include "celengine/simulation.h"
 #ifdef USE_GLCONTEXT

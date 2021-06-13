@@ -18,6 +18,9 @@ Image* LoadBMPImage(const fs::path& filename);
 Image* LoadPNGImage(const fs::path& filename);
 Image* LoadDDSImage(const fs::path& filename);
 
+bool SaveJPEGImage(const fs::path& filename, Image& image);
+bool SavePNGImage(const fs::path& filename, Image& image);
+
 bool SaveJPEGImage(const fs::path& filename,
                    int width, int height,
                    int rowStride,

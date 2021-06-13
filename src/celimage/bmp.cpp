@@ -11,13 +11,13 @@
 #include <cstdint>
 #include <fstream>  // ifstream
 #include <iostream> // ios
-#include <celengine/glsupport.h>
 #include <celengine/image.h>
 #include <celutil/bytes.h>
 #include <celutil/debug.h>
 
 using std::ifstream;
 using std::ios;
+using celestia::PixelFormat;
 
 namespace
 {
@@ -126,7 +126,7 @@ Image* LoadBMPImage(ifstream& in)
 
     // check for truncated file
 
-    auto* img = new Image(GL_RGB, imageHeader.width, imageHeader.height);
+    auto* img = new Image(PixelFormat::RGB, imageHeader.width, imageHeader.height);
 
     // Copy the image and perform any necessary conversions
     for (int32_t y = 0; y < imageHeader.height; y++)
