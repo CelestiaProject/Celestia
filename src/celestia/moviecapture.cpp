@@ -411,21 +411,8 @@ static void captureImage(AVFrame *pict, int width, int height, const Renderer *r
     x += (w - width) / 2;
     y += (h - height) / 2;
     r->captureFrame(x, y, width, height,
-                    Renderer::PixelFormat::RGB,
+                    r->getPreferredCaptureFormat(),
                     pict->data[0]);
-
-    // Read image is vertically flipped
-    // TODO: this should go to Renderer::captureFrame()
-    int realWidth = width * 3; // 3 bytes per pixel
-    uint8_t *tempLine = new uint8_t[realWidth];
-    uint8_t *fb = pict->data[0];
-    for (int i = 0, p = realWidth * (height - 1); i < p; i += realWidth, p -= realWidth)
-    {
-        memcpy(tempLine, &fb[i],   realWidth);
-        memcpy(&fb[i],   &fb[p],   realWidth);
-        memcpy(&fb[p],   tempLine, realWidth);
-    }
-    delete[] tempLine;
 }
 
 // encode one video frame and send it to the muxer

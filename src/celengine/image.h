@@ -10,7 +10,9 @@
 
 #pragma once
 
+#include <memory>
 #include <celcompat/filesystem.h>
+#include <celengine/pixelformat.h>
 
 // The image class supports multiple GL formats, including compressed ones.
 // Mipmaps may be stored within an image as well.  The mipmaps are stored in
@@ -21,19 +23,24 @@
 class Image
 {
  public:
-    Image(int fmt, int w, int h, int mip = 1);
-    ~Image();
+    Image(celestia::PixelFormat format, int w, int h, int mip = 1);
+    ~Image() = default;
+    Image(Image&&) = default;
+    Image(const Image&) = delete;
+    Image& operator=(Image&&) = default;
+    Image& operator=(const Image&) = delete;
 
+    bool isValid() const noexcept;
     int getWidth() const;
     int getHeight() const;
     int getPitch() const;
     int getMipLevelCount() const;
-    int getFormat() const;
+    celestia::PixelFormat getFormat() const;
     int getComponents() const;
-    unsigned char* getPixels();
-    unsigned char* getPixelRow(int row);
-    unsigned char* getPixelRow(int mip, int row);
-    unsigned char* getMipLevel(int mip);
+    uint8_t* getPixels();
+    uint8_t* getPixelRow(int row);
+    uint8_t* getPixelRow(int mip, int row);
+    uint8_t* getMipLevel(int mip);
     int getSize() const;
     int getMipLevelSize(int mip) const;
 
@@ -54,9 +61,9 @@ class Image
     int pitch;
     int mipLevels;
     int components;
-    int format;
+    celestia::PixelFormat format;
     int size;
-    unsigned char* pixels{ nullptr };
+    std::unique_ptr<uint8_t[]> pixels;
 };
 
 Image* LoadImageFromFile(const fs::path& filename);

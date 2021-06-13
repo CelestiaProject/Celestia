@@ -280,7 +280,7 @@ Image* LoadDDSImage(const fs::path& filename)
                 }
             }
 
-            Image *img = new Image(transparent0 ? GL_RGB : GL_RGBA, ddsd.width, ddsd.height);
+            Image *img = new Image(transparent0 ? PixelFormat::RGB : PixelFormat::RGBA, ddsd.width, ddsd.height);
             memcpy(img->getPixels(), pixels, (transparent0 ? 3 : 4) * ddsd.width * ddsd.height);
             delete[] pixels;
             return img;
@@ -290,7 +290,7 @@ Image* LoadDDSImage(const fs::path& filename)
     // TODO: Verify that the reported texture size matches the amount of
     // data expected.
 
-    Image* img = new Image(format,
+    Image* img = new Image(static_cast<PixelFormat>(format),
                            (int) ddsd.width,
                            (int) ddsd.height,
                            max(ddsd.mipMapLevels, 1u));

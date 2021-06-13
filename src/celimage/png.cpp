@@ -12,13 +12,13 @@
 #include <png.h>
 #include <zlib.h>
 #include <fmt/printf.h>
-#include <celengine/glsupport.h>
 #include <celengine/image.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
 
 using std::cerr;
 using std::clog;
+using celestia::PixelFormat;
 
 namespace
 {
@@ -102,28 +102,28 @@ Image* LoadPNGImage(const fs::path& filename)
                  &color_type, &interlace_type,
                  nullptr, nullptr);
 
-    GLenum glformat = GL_RGB;
+    PixelFormat format = PixelFormat::RGB;
     switch (color_type)
     {
     case PNG_COLOR_TYPE_GRAY:
-        glformat = GL_LUMINANCE;
+        format = PixelFormat::LUMINANCE;
         break;
     case PNG_COLOR_TYPE_GRAY_ALPHA:
-        glformat = GL_LUMINANCE_ALPHA;
+        format = PixelFormat::LUM_ALPHA;
         break;
     case PNG_COLOR_TYPE_RGB:
-        glformat = GL_RGB;
+        format = PixelFormat::RGB;
         break;
     case PNG_COLOR_TYPE_PALETTE:
     case PNG_COLOR_TYPE_RGB_ALPHA:
-        glformat = GL_RGBA;
+        format = PixelFormat::RGBA;
         break;
     default:
         // badness
         break;
     }
 
-    img = new Image(glformat, width, height);
+    img = new Image(format, width, height);
 
     // TODO: consider using paletted textures if they're available
     if (color_type == PNG_COLOR_TYPE_PALETTE)
@@ -184,7 +184,7 @@ bool SavePNGImage(const fs::path& filename,
     auto* row_pointers = new png_bytep[height];
     for (int i = 0; i < height; i++)
     {
-        unsigned char *rowHead = &pixels[rowStride * (height - i - 1)];
+        unsigned char *rowHead = &pixels[rowStride * i];
         // Strip alpha values if we are in RGBA format
         if (removeAlpha)
         {
@@ -256,3 +256,14 @@ bool SavePNGImage(const fs::path& filename,
 
     return true;
 }
+
+bool SavePNGImage(const fs::path& filename, Image& image)
+{
+    return SavePNGImage(filename,
+                        image.getWidth(),
+                        image.getHeight(),
+                        image.getPitch(),
+                        image.getPixels(),
+                        image.hasAlpha());
+}
+

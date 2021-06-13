@@ -340,7 +340,7 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
 
     if (galaxyTex == nullptr)
     {
-        galaxyTex = CreateProceduralTexture(width, height, GL_RGBA,
+        galaxyTex = CreateProceduralTexture(width, height, PixelFormat::RGBA,
                                             GalaxyTextureEval);
     }
     assert(galaxyTex != nullptr);
@@ -349,7 +349,7 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
 
     if (colorTex == nullptr)
     {
-        colorTex = CreateProceduralTexture(256, 1, GL_RGBA,
+        colorTex = CreateProceduralTexture(256, 1, PixelFormat::RGBA,
                                            ColorTextureEval,
                                            Texture::EdgeClamp,
                                            Texture::NoMipMaps);

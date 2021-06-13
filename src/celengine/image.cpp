@@ -19,6 +19,7 @@
 #include "image.h"
 
 using namespace std;
+using celestia::PixelFormat;
 
 namespace
 {
@@ -28,32 +29,27 @@ int pad(int n)
     return (n + 3) & ~0x3;
 }
 
-int formatComponents(int fmt)
+int formatComponents(PixelFormat fmt)
 {
     switch (fmt)
     {
-    case GL_RGBA:
-    case GL_BGRA_EXT:
+    case PixelFormat::RGBA:
+    case PixelFormat::BGRA:
         return 4;
-    case GL_RGB:
-#ifndef GL_ES
-    case GL_BGR_EXT:
-#endif
+    case PixelFormat::RGB:
+    case PixelFormat::BGR:
         return 3;
-    case GL_LUMINANCE_ALPHA:
-#ifndef GL_ES
-    case GL_DSDT_NV:
-#endif
+    case PixelFormat::LUM_ALPHA:
         return 2;
-    case GL_ALPHA:
-    case GL_LUMINANCE:
+    case PixelFormat::ALPHA:
+    case PixelFormat::LUMINANCE:
         return 1;
 
     // Compressed formats
-    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+    case PixelFormat::DXT1:
         return 3;
-    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+    case PixelFormat::DXT3:
+    case PixelFormat::DXT5:
         return 4;
 
     // Unknown format
@@ -62,18 +58,18 @@ int formatComponents(int fmt)
     }
 }
 
-int calcMipLevelSize(int fmt, int w, int h, int mip)
+int calcMipLevelSize(PixelFormat fmt, int w, int h, int mip)
 {
     w = max(w >> mip, 1);
     h = max(h >> mip, 1);
 
     switch (fmt)
     {
-    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+    case PixelFormat::DXT1:
         // 4x4 blocks, 8 bytes per block
         return ((w + 3) / 4) * ((h + 3) / 4) * 8;
-    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+    case PixelFormat::DXT3:
+    case PixelFormat::DXT5:
         // 4x4 blocks, 16 bytes per block
         return ((w + 3) / 4) * ((h + 3) / 4) * 16;
     default:
@@ -82,7 +78,7 @@ int calcMipLevelSize(int fmt, int w, int h, int mip)
 }
 } // anonymous namespace
 
-Image::Image(int fmt, int w, int h, int mip) :
+Image::Image(PixelFormat fmt, int w, int h, int mip) :
     width(w),
     height(h),
     mipLevels(mip),
@@ -96,12 +92,12 @@ Image::Image(int fmt, int w, int h, int mip) :
     size = 1;
     for (int i = 0; i < mipLevels; i++)
         size += calcMipLevelSize(fmt, w, h, i);
-    pixels = new unsigned char[size];
+    pixels = make_unique<uint8_t[]>(size);
 }
 
-Image::~Image()
+bool Image::isValid() const noexcept
 {
-    delete[] pixels;
+    return pixels != nullptr;
 }
 
 int Image::getWidth() const
@@ -129,7 +125,7 @@ int Image::getSize() const
     return size;
 }
 
-int Image::getFormat() const
+PixelFormat Image::getFormat() const
 {
     return format;
 }
@@ -139,12 +135,12 @@ int Image::getComponents() const
     return components;
 }
 
-unsigned char* Image::getPixels()
+uint8_t* Image::getPixels()
 {
-    return pixels;
+    return pixels.get();
 }
 
-unsigned char* Image::getPixelRow(int mip, int row)
+uint8_t* Image::getPixelRow(int mip, int row)
 {
     /*int w = max(width >> mip, 1); Unused*/
     int h = max(height >> mip, 1);
@@ -158,12 +154,12 @@ unsigned char* Image::getPixelRow(int mip, int row)
     return getMipLevel(mip) + row * pitch;
 }
 
-unsigned char* Image::getPixelRow(int row)
+uint8_t* Image::getPixelRow(int row)
 {
     return getPixelRow(0, row);
 }
 
-unsigned char* Image::getMipLevel(int mip)
+uint8_t* Image::getMipLevel(int mip)
 {
     if (mip >= mipLevels)
         return nullptr;
@@ -172,7 +168,7 @@ unsigned char* Image::getMipLevel(int mip)
     for (int i = 0; i < mip; i++)
         offset += calcMipLevelSize(format, width, height, i);
 
-    return pixels + offset;
+    return pixels.get() + offset;
 }
 
 int Image::getMipLevelSize(int mip) const
@@ -187,9 +183,9 @@ bool Image::isCompressed() const
 {
     switch (format)
     {
-    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+    case PixelFormat::DXT1:
+    case PixelFormat::DXT3:
+    case PixelFormat::DXT5:
         return true;
     default:
         return false;
@@ -200,12 +196,12 @@ bool Image::hasAlpha() const
 {
     switch (format)
     {
-    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-    case GL_RGBA:
-    case GL_BGRA_EXT:
-    case GL_LUMINANCE_ALPHA:
-    case GL_ALPHA:
+    case PixelFormat::DXT3:
+    case PixelFormat::DXT5:
+    case PixelFormat::RGBA:
+    case PixelFormat::BGRA:
+    case PixelFormat::LUM_ALPHA:
+    case PixelFormat::ALPHA:
         return true;
     default:
         return false;
@@ -225,9 +221,9 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
     if (isCompressed())
         return nullptr;
 
-    auto* normalMap = new Image(GL_RGBA, width, height);
+    auto* normalMap = new Image(PixelFormat::RGBA, width, height);
 
-    unsigned char* nmPixels = normalMap->getPixels();
+    uint8_t* nmPixels = normalMap->getPixels();
     int nmPitch = normalMap->getPitch();
 
     // Compute normals using differences between adjacent texels.
@@ -275,9 +271,9 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
             float rmag = 1.0f / mag;
 
             int n = i * nmPitch + j * 4;
-            nmPixels[n]     = (unsigned char) (128 + 127 * dx * rmag);
-            nmPixels[n + 1] = (unsigned char) (128 + 127 * dy * rmag);
-            nmPixels[n + 2] = (unsigned char) (128 + 127 * rmag);
+            nmPixels[n]     = (uint8_t) (128 + 127 * dx * rmag);
+            nmPixels[n + 1] = (uint8_t) (128 + 127 * dy * rmag);
+            nmPixels[n + 2] = (uint8_t) (128 + 127 * rmag);
             nmPixels[n + 3] = 255;
         }
     }
