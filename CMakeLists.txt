@@ -86,7 +86,7 @@ endif()
 add_definitions(-D_USE_MATH_DEFINES)
 
 # Let CMake handle setting C++11 (since 3.1)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_STANDARD 11)
 
 # Use our cmake files
