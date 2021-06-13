@@ -16,20 +16,10 @@
 #include <algorithm>
 
 #if defined(_MSC_VER) && !defined(__clang__)
-// M$VC++ 2015 doesn't have required features
-#define CEL_CPP_VER (_MSC_VER == 1900 ? 201103L : _MSVC_LANG)
 // M$VC++ build without C++ exceptions are not supported yet
 #ifndef __cpp_exceptions
 #define __cpp_exceptions 1
 #endif
-#else
-#define CEL_CPP_VER __cplusplus
-#endif
-
-#if CEL_CPP_VER == 201402L
-#define CEL_constexpr constexpr
-#else
-#define CEL_constexpr /* constexpr */
 #endif
 
 #if ! __cpp_exceptions
@@ -78,7 +68,7 @@ template<
         m_size { Traits::length(s) }
     {}
 
-    CEL_constexpr basic_string_view& operator=(const basic_string_view&) noexcept = default;
+    constexpr basic_string_view& operator=(const basic_string_view&) noexcept = default;
 
     explicit operator basic_string<CharT, Traits>() const
     {
@@ -105,7 +95,7 @@ template<
     {
         return m_data[pos];
     }
-    CEL_constexpr const_reference at(size_type pos) const
+    constexpr const_reference at(size_type pos) const
     {
         if (pos < size())
             return m_data[pos];
@@ -159,16 +149,16 @@ template<
     {
         return const_reverse_iterator(begin());
     }
-    CEL_constexpr void remove_prefix(size_type n)
+    constexpr void remove_prefix(size_type n)
     {
         m_data += n;
 	m_size -= n;
     }
-    CEL_constexpr void remove_suffix(size_type n)
+    constexpr void remove_suffix(size_type n)
     {
 	m_size -= n;
     }
-    CEL_constexpr void swap(basic_string_view& v) noexcept
+    constexpr void swap(basic_string_view& v) noexcept
     {
         auto t = *this;
         this = v;
@@ -186,7 +176,7 @@ template<
         auto rcount = std::min(count, m_size - pos);
         return Traits::copy(dest, m_data + pos, rcount);
     }
-    CEL_constexpr basic_string_view substr(size_type pos = 0, size_type count = npos ) const
+    constexpr basic_string_view substr(size_type pos = 0, size_type count = npos ) const
     {
         if (pos > m_size)
 #if __cpp_exceptions
@@ -198,7 +188,7 @@ template<
         auto rcount = std::min(count, m_size - pos);
         return { m_data + pos, rcount };
     }
-    CEL_constexpr int compare(basic_string_view v) const noexcept
+    constexpr int compare(basic_string_view v) const noexcept
     {
         auto r = Traits::compare(data(), v.data(), std::min(size(), v.size()));
         return r == 0 ? size() - v.size() : r;
@@ -239,7 +229,7 @@ template<
     {
         return find(basic_string_view(s), pos);
     }
-    CEL_constexpr size_type rfind(basic_string_view v, size_type pos = npos) const noexcept
+    constexpr size_type rfind(basic_string_view v, size_type pos = npos) const noexcept
     {
         if (v.size() > size())
             return npos;
@@ -263,7 +253,7 @@ template<
     {
         return rfind(basic_string_view(s), pos);
     }
-    CEL_constexpr size_type find_first_of(basic_string_view v, size_type pos = 0) const noexcept
+    constexpr size_type find_first_of(basic_string_view v, size_type pos = 0) const noexcept
     {
         for (size_type i = pos; i < m_size; i++)
             for (auto c : v)
@@ -271,19 +261,19 @@ template<
                     return i;
         return npos;
     }
-    CEL_constexpr size_type find_first_of(CharT c, size_type pos = 0) const noexcept
+    constexpr size_type find_first_of(CharT c, size_type pos = 0) const noexcept
     {
         return find_first_of(basic_string_view(std::addressof(c), 1), pos);
     }
-    CEL_constexpr size_type find_first_of(const CharT* s, size_type pos, size_type count) const
+    constexpr size_type find_first_of(const CharT* s, size_type pos, size_type count) const
     {
         return find_first_of(basic_string_view(s, count), pos);
     }
-    CEL_constexpr size_type find_first_of(const CharT* s, size_type pos = 0) const
+    constexpr size_type find_first_of(const CharT* s, size_type pos = 0) const
     {
         return find_first_of(basic_string_view(s), pos);
     }
-    CEL_constexpr size_type find_last_of(basic_string_view v, size_type pos = npos) const noexcept
+    constexpr size_type find_last_of(basic_string_view v, size_type pos = npos) const noexcept
     {
         for (auto iter = cbegin() + std::min(m_size - 1, pos); iter >= cbegin(); iter--)
             for (auto c : v)
@@ -291,53 +281,53 @@ template<
                     return iter - cbegin();
         return npos;
     }
-    CEL_constexpr size_type find_last_of(CharT c, size_type pos = npos) const noexcept
+    constexpr size_type find_last_of(CharT c, size_type pos = npos) const noexcept
     {
         return find_last_of(basic_string_view(std::addressof(c), 1), pos);
     }
-    CEL_constexpr size_type find_last_of(const CharT* s, size_type pos, size_type count) const
+    constexpr size_type find_last_of(const CharT* s, size_type pos, size_type count) const
     {
         return find_last_of(basic_string_view(s, count), pos);
     }
-    CEL_constexpr size_type find_last_of(const CharT* s, size_type pos = npos) const
+    constexpr size_type find_last_of(const CharT* s, size_type pos = npos) const
     {
         return find_last_of(basic_string_view(s), pos);
     }
-    CEL_constexpr size_type find_first_not_of(basic_string_view v, size_type pos = 0) const noexcept
+    constexpr size_type find_first_not_of(basic_string_view v, size_type pos = 0) const noexcept
     {
         for (size_type i = pos; i < m_size; i++)
             if (v.find(m_data[i]) == npos)
                 return i;
         return npos;
     }
-    CEL_constexpr size_type find_first_not_of(CharT c, size_type pos = 0) const noexcept
+    constexpr size_type find_first_not_of(CharT c, size_type pos = 0) const noexcept
     {
         return find_first_not_of(basic_string_view(std::addressof(c), 1), pos);
     }
-    CEL_constexpr size_type find_first_not_of(const CharT* s, size_type pos, size_type count) const
+    constexpr size_type find_first_not_of(const CharT* s, size_type pos, size_type count) const
     {
         return find_first_not_of(basic_string_view(s, count), pos);
     }
-    CEL_constexpr size_type find_first_not_of(const CharT* s, size_type pos = 0) const
+    constexpr size_type find_first_not_of(const CharT* s, size_type pos = 0) const
     {
         return find_first_not_of(basic_string_view(s), pos);
     }
-    CEL_constexpr size_type find_last_not_of(basic_string_view v, size_type pos = npos) const noexcept
+    constexpr size_type find_last_not_of(basic_string_view v, size_type pos = npos) const noexcept
     {
         for (auto iter = cbegin() + std::min(m_size - 1, pos); iter >= cbegin(); iter--)
             if (v.find(*iter) == npos)
                 return iter - cbegin();
         return npos;
     }
-    CEL_constexpr size_type find_last_not_of(CharT c, size_type pos = npos) const noexcept
+    constexpr size_type find_last_not_of(CharT c, size_type pos = npos) const noexcept
     {
         return find_last_not_of(basic_string_view(std::addressof(c), 1), pos);
     }
-    CEL_constexpr size_type find_last_not_of(const CharT* s, size_type pos, size_type count) const
+    constexpr size_type find_last_not_of(const CharT* s, size_type pos, size_type count) const
     {
         return find_last_not_of(basic_string_view(s, count), pos);
     }
-    CEL_constexpr size_type find_last_not_of(const CharT* s, size_type pos = npos) const
+    constexpr size_type find_last_not_of(const CharT* s, size_type pos = npos) const
     {
         return find_last_not_of(basic_string_view(s), pos);
     }
@@ -551,6 +541,3 @@ constexpr std::wstring_view operator "" _sv(const wchar_t *str, size_t len)
 #elif defined(__GNUC__)
 #pragma GCC diagnostic pop
 #endif
-
-
-#undef CEL_constexpr
