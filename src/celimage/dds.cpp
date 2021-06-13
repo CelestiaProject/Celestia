@@ -239,7 +239,7 @@ Image* LoadDDSImage(const fs::path& filename)
     {
         if (!gl::EXT_texture_compression_s3tc)
         {
-            // DXTc texture not supported, decompress DXTc to RGBA
+            // DXTc texture not supported, decompress DXTc to RGB/RGBA
             uint32_t *pixels = nullptr;
             bool transparent0 = format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
             if ((ddsd.width & 3) != 0 || (ddsd.height & 3) != 0)
@@ -267,8 +267,21 @@ Image* LoadDDSImage(const fs::path& filename)
                 return nullptr;
             }
 
-            Image *img = new Image(GL_RGBA, ddsd.width, ddsd.height);
-            memcpy(img->getPixels(), pixels, 4 * ddsd.width * ddsd.height);
+            if (transparent0)
+            {
+                // Remove the alpha channel for DXT1 since DXT1 textures
+                // are deemed not to contain alpha values in Celestia
+                // https://github.com/CelestiaProject/Celestia/pull/1086
+                char *ptr = reinterpret_cast<char*>(pixels);
+                uint32_t numberOfPixels = ddsd.width * ddsd.height;
+                for (uint32_t index = 0; index < numberOfPixels; ++index)
+                {
+                    memcpy(&ptr[3 * index], &ptr[4 * index], sizeof(char) * 3);
+                }
+            }
+
+            Image *img = new Image(transparent0 ? GL_RGB : GL_RGBA, ddsd.width, ddsd.height);
+            memcpy(img->getPixels(), pixels, (transparent0 ? 3 : 4) * ddsd.width * ddsd.height);
             delete[] pixels;
             return img;
         }
