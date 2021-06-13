@@ -56,8 +56,10 @@ class MovieCapturePrivate
     int64_t         bitrate  { 400000  };
 
     AVCodecID       vc_id     { AV_CODEC_ID_FFVHUFF };
+    AVPixelFormat   format    { AV_PIX_FMT_NONE     };
     float           fps       { 0       };
     bool            capturing { false   };
+    bool            hasAlpha  { false   };
 
     fs::path        filename;
     std::string     vc_options;
@@ -258,14 +260,14 @@ bool MovieCapturePrivate::addStream(int width, int height, float fps)
     enc->framerate = st->avg_frame_rate = { st->time_base.den, st->time_base.num };
     enc->gop_size  = 12; // emit one intra frame every twelve frames at most
 
-    // find a best pixel format to convert to from AV_PIX_FMT_RGB24
+    // find a best pixel format to convert to from `format`
     if (isSupportedPixelFormat(AV_PIX_FMT_YUV420P))
     {
         enc->pix_fmt = AV_PIX_FMT_YUV420P;
     }
     else
     {
-        enc->pix_fmt = avcodec_find_best_pix_fmt_of_list(vc->pix_fmts, AV_PIX_FMT_RGB24, 0, nullptr);
+        enc->pix_fmt = avcodec_find_best_pix_fmt_of_list(vc->pix_fmts, format, 0, nullptr);
         if (enc->pix_fmt == AV_PIX_FMT_NONE)
             avcodec_default_get_format(enc, &(enc->pix_fmt));
     }
@@ -361,11 +363,11 @@ bool MovieCapturePrivate::openVideo()
         return false;
     }
 
-    if (enc->pix_fmt != AV_PIX_FMT_RGB24)
+    if (enc->pix_fmt != format)
     {
         // as we only grab a RGB24 picture, we must convert it
         // to the codec pixel format if needed
-        swsc = sws_getContext(enc->width, enc->height, AV_PIX_FMT_RGB24,
+        swsc = sws_getContext(enc->width, enc->height, format,
                               enc->width, enc->height, enc->pix_fmt,
                               SWS_BITEXACT, nullptr, nullptr, nullptr);
         if (swsc == nullptr)
@@ -381,7 +383,7 @@ bool MovieCapturePrivate::openVideo()
             return false;
         }
 
-        tmpfr->format = AV_PIX_FMT_RGB24;
+        tmpfr->format = format;
         tmpfr->width  = enc->width;
         tmpfr->height = enc->height;
 
@@ -420,6 +422,7 @@ static void captureImage(AVFrame *pict, int width, int height, const Renderer *r
 bool MovieCapturePrivate::writeVideoFrame(bool finalize)
 {
     AVFrame *frame = finalize ? nullptr : this->frame;
+    const int bytesPerPixel = hasAlpha ? 4 : 3;
 
     // check if we want to generate more frames
     if (!finalize)
@@ -432,12 +435,11 @@ bool MovieCapturePrivate::writeVideoFrame(bool finalize)
             return false;
         }
 
-        if (enc->pix_fmt != AV_PIX_FMT_RGB24)
+        if (enc->pix_fmt != format)
         {
             captureImage(tmpfr, enc->width, enc->height, renderer);
-            // we need to compute the correct line width of our source
-            // data. as we grab as RGB24, we multiply the width by 3.
-            const int linesize = 3 * enc->width;
+            // we need to compute the correct line width of our source data
+            const int linesize = bytesPerPixel * enc->width;
             sws_scale(swsc, tmpfr->data, &linesize, 0, enc->height,
                       frame->data, frame->linesize);
         }
@@ -509,6 +511,8 @@ MovieCapture::MovieCapture(const Renderer *r) :
     d(new MovieCapturePrivate)
 {
     d->renderer = r;
+    d->hasAlpha = r->getPreferredCaptureFormat() == PixelFormat::RGBA;
+    d->format   = d->hasAlpha ? AV_PIX_FMT_RGBA : AV_PIX_FMT_RGB24;
 }
 
 MovieCapture::~MovieCapture()
