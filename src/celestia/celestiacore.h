@@ -12,7 +12,7 @@
 
 #include <fstream>
 #include <string>
-#include <celcompat/memory.h>
+#include <memory>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
