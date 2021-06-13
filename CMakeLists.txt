@@ -401,8 +401,6 @@ endif()
 try_compile(HAVE_STRING_VIEW ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxsv.cpp")
 try_compile(HAVE_EXPERIMENTAL_STRING_VIEW ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxsvexp.cpp")
 
-try_compile(HAVE_MAKE_UNIQUE ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/unique.cpp")
-
 configure_file("config.h.in" "config.h")
 
 set(BASE_DATA_SOURCES
