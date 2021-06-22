@@ -187,7 +187,7 @@ else()
 endif()
 
 if(ENABLE_SPICE)
-  find_package(Cspice)
+  find_package(CSPICE)
   if(NOT CSPICE_FOUND)
     message(STATUS "Using cspice submodule")
     add_subdirectory("${CMAKE_SOURCE_DIR}/thirdparty/Spice")
