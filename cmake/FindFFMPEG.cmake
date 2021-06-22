@@ -8,11 +8,14 @@ macro(find_ffmpeg_lib)
   set(__lib    ${ARGV2})
 
   find_library(${__name}_LIBRARY ${__lib})
-  find_path(${__name}_INCLUDE_DIR ${__header})
+  find_path(${__name}_INCLUDE_DIR ${__header}
+    HINTS /usr/include/ffmpeg)
+  set(FPHSA_NAME_MISMATCHED 1)
   find_package_handle_standard_args(${__name}
                                   FOUND_VAR ${__name}_FOUND
                                   REQUIRED_VARS ${__name}_INCLUDE_DIR ${__name}_LIBRARY
                                   FAIL_MESSAGE "Failed to find ${__name}")
+  unset(FPHSA_NAME_MISMATCHED)
 
   set(${__name}_INCLUDE_DIRS ${${__name}_INCLUDE_DIR})
   set(${__name}_LIBRARIES ${${__name}_LIBRARY})
@@ -62,15 +65,17 @@ endif()
 
 if(NOT TARGET FFMPEG::FFMPEG)
   add_library(FFMPEG::FFMPEG UNKNOWN IMPORTED)
-  set_target_properties(FFMPEG::FFMPEG PROPERTIES IMPORTED_LINK_INTERFACE_LANGUAGES "C")
+  set_target_properties(FFMPEG::FFMPEG PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+    INTERFACE_INCLUDE_DIRECTORIES "${FFMPEG_INCLUDE_DIR}")
   if(TARGET FFMPEG::AVCODEC)
     set_target_properties(FFMPEG::FFMPEG PROPERTIES INTERFACE_LINK_LIBRARIES FFMPEG::AVCODEC)
   endif()
   if(TARGET FFMPEG::AVUTIL)
     set_target_properties(FFMPEG::FFMPEG PROPERTIES INTERFACE_LINK_LIBRARIES FFMPEG::AVUTIL)
   endif()
-  if(TARGET FFMPEG::AVUTIL)
-    set_target_properties(FFMPEG::FFMPEG PROPERTIES INTERFACE_LINK_LIBRARIES FFMPEG::AVUTIL)
+  if(TARGET FFMPEG::AVDEVICE)
+    set_target_properties(FFMPEG::FFMPEG PROPERTIES INTERFACE_LINK_LIBRARIES FFMPEG::AVDEVICE)
   endif()
   if(TARGET FFMPEG::AVFORMAT)
    set_target_properties(FFMPEG::FFMPEG PROPERTIES INTERFACE_LINK_LIBRARIES FFMPEG::AVFORMAT)

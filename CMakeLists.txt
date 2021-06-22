@@ -206,6 +206,7 @@ endif()
 if(ENABLE_FFMPEG)
   include(FindFFMPEG)
   find_package(FFMPEG REQUIRED COMPONENTS avcodec avutil avformat swscale)
+  include_directories(${FFMPEG_INCLUDE_DIRS})
   add_definitions(-DUSE_FFMPEG)
 endif()
 
