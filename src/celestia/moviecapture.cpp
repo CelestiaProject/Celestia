@@ -7,6 +7,7 @@
 #define __STDC_CONSTANT_MACROS
 extern "C"
 {
+#include <libavcodec/avcodec.h>
 #include <libavutil/timestamp.h>
 #include <libavutil/pixdesc.h>
 #include <libavutil/opt.h>
@@ -44,7 +45,7 @@ class MovieCapturePrivate
     AVFrame         *tmpfr    { nullptr };
     AVCodecContext  *enc      { nullptr };
     AVFormatContext *oc       { nullptr };
-    AVCodec         *vc       { nullptr };
+    const AVCodec   *vc       { nullptr };
     AVPacket        *pkt      { nullptr };
     SwsContext      *swsc     { nullptr };
 
@@ -234,8 +235,7 @@ bool MovieCapturePrivate::addStream(int width, int height, float fps)
         return false;
     }
 
-    enc->codec_id = oc->oformat->video_codec = vc_id;
-
+    enc->codec_id = vc_id;
     enc->bit_rate = bitrate;
 #if 0
     enc->rc_min_rate = ...;
@@ -451,7 +451,9 @@ bool MovieCapturePrivate::writeVideoFrame(bool finalize)
         frame->pts = nextPts++;
     }
 
+#if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58, 133, 100))
     av_init_packet(pkt);
+#endif
 
     // encode the image
     if (avcodec_send_frame(enc, frame) < 0)
