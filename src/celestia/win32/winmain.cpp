@@ -662,8 +662,7 @@ UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
             auto movieCodecs = appCore->getSupportedMovieCodecs();
             for (auto &c : movieCodecs)
             {
-                SendMessage(hwnd, CB_INSERTSTRING,
-                            static_cast<WPARAM>(c.codecId),
+                SendMessage(hwnd, CB_INSERTSTRING, -1,
                             reinterpret_cast<LPARAM>(_(c.codecDescr)));
             }
             SendMessage(hwnd, CB_SETCURSEL, movieCodec, 0);
