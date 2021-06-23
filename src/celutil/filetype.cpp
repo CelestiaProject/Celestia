@@ -35,7 +35,8 @@ static const char CelestiaModelExt[] = ".cmod";
 static const char CelestiaParticleSystemExt[] = ".cpart";
 static const char CelestiaXYZTrajectoryExt[] = ".xyz";
 static const char CelestiaXYZVTrajectoryExt[] = ".xyzv";
-static const char Content_WarpMeshExt[] = ".map";
+static const char ContentXYZVBinaryExt[] = ".xyzvbin";
+static const char ContentWarpMeshExt[] = ".map";
 
 ContentType DetermineFileType(const fs::path& filename)
 {
@@ -82,8 +83,9 @@ ContentType DetermineFileType(const fs::path& filename)
         return Content_CelestiaXYZTrajectory;
     if (compareIgnoringCase(CelestiaXYZVTrajectoryExt, ext) == 0)
         return Content_CelestiaXYZVTrajectory;
-    if (compareIgnoringCase(Content_WarpMeshExt, ext) == 0)
+    if (compareIgnoringCase(ContentWarpMeshExt, ext) == 0)
         return Content_WarpMesh;
-    else
-        return Content_Unknown;
+    if (compareIgnoringCase(ContentXYZVBinaryExt, ext) == 0)
+        return Content_CelestiaXYZVBinary;
+    return Content_Unknown;
 }

@@ -29,5 +29,6 @@ extern Orbit* LoadSampledTrajectoryDoublePrec(const fs::path& filename, Trajecto
 extern Orbit* LoadSampledTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
 extern Orbit* LoadXYZVTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
 extern Orbit* LoadXYZVTrajectorySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
-
+extern Orbit* LoadXYZVBinarySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
+extern Orbit* LoadXYZVBinaryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation);
 #endif // _CELENGINE_SAMPORBIT_H_

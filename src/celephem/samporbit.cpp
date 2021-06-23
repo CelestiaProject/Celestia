@@ -934,3 +934,18 @@ Orbit* LoadXYZVTrajectoryDoublePrec(const fs::path& filename, TrajectoryInterpol
 
     return LoadSampledOrbitXYZV(filename, interpolation, 0.0);
 }
+
+/*! Load a binary trajectory file with single precision positions and velocities.
+ */
+Orbit* LoadXYZVBinarySinglePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
+{
+    return LoadSampledOrbitXYZVBinary(filename, interpolation, 0.0f);
+}
+
+
+/*! Load a trajectory file with double precision positions and velocities.
+ */
+Orbit* LoadXYZVBinaryDoublePrec(const fs::path& filename, TrajectoryInterpolation interpolation)
+{
+    return LoadSampledOrbitXYZVBinary(filename, interpolation, 0.0);
+}

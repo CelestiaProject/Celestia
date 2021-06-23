@@ -83,6 +83,21 @@ Orbit* TrajectoryInfo::load(const fs::path& filename)
             break;
         }
     }
+    else if (filetype == Content_CelestiaXYZVBinary)
+    {
+        switch (precision)
+        {
+        case TrajectoryPrecisionSingle:
+            sampTrajectory = LoadXYZVBinarySinglePrec(strippedFilename, interpolation);
+            break;
+        case TrajectoryPrecisionDouble:
+            sampTrajectory = LoadXYZVBinaryDoublePrec(strippedFilename, interpolation);
+            break;
+        default:
+            assert(0);
+            break;
+        }
+    }
     else
     {
         switch (precision)
