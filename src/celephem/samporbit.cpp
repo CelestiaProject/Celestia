@@ -830,20 +830,20 @@ LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation int
     ifstream in(filename.string(), ios::binary);
     if (!in.good())
     {
-        fmt::fprintf(cerr, _("Error openning %s.\n"), filename);
+        fmt::fprintf(cerr, _("Error openning %s.\n"), filename.string());
         return nullptr;
     }
 
     XYZVBinaryHeader header;
     if (!in.read(reinterpret_cast<char*>(&header), sizeof(header)))
     {
-        fmt::fprintf(cerr, _("Error reading header of %s.\n"), filename);
+        fmt::fprintf(cerr, _("Error reading header of %s.\n"), filename.string());
         return nullptr;
     }
 
     if (string(header.magic) != "CELXYZV")
     {
-        fmt::fprintf(cerr, _("Bad binary xyzv file %s.\n"), filename);
+        fmt::fprintf(cerr, _("Bad binary xyzv file %s.\n"), filename.string());
         return nullptr;
     }
 

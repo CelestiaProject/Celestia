@@ -17,6 +17,7 @@
 #include <vector>
 #include <fstream>
 #include <celutil/debug.h>
+#include <fmt/ostream.h>
 
 using namespace Eigen;
 using namespace std;
