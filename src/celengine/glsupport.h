@@ -43,6 +43,7 @@ extern bool EXT_texture_filter_anisotropic;
 extern bool MESA_pack_invert;
 #ifdef GL_ES
 extern bool OES_vertex_array_object;
+extern bool OES_texture_border_clamp;
 #else
 extern bool ARB_vertex_array_object;
 extern bool EXT_framebuffer_object;
