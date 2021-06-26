@@ -15,6 +15,7 @@
 #include <limits>
 #include <fmt/format.h>
 #include <fmt/printf.h>
+#include <fmt/ostream.h>
 #include <celmath/mathlib.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>

@@ -53,7 +53,7 @@ Image* LoadPNGImage(const fs::path& filename)
 #endif
     if (fp == nullptr)
     {
-        fmt::fprintf(clog, _("Error opening image file %s\n"), filename);
+        fmt::fprintf(clog, _("Error opening image file %s\n"), filename.string());
         return nullptr;
     }
 
@@ -61,7 +61,7 @@ Image* LoadPNGImage(const fs::path& filename)
     elements_read = fread(header, 1, sizeof(header), fp);
     if (elements_read == 0 || png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
     {
-        fmt::fprintf(clog, _("Error: %s is not a PNG file.\n"), filename);
+        fmt::fprintf(clog, _("Error: %s is not a PNG file.\n"), filename.string());
         fclose(fp);
         return nullptr;
     }
@@ -87,7 +87,7 @@ Image* LoadPNGImage(const fs::path& filename)
         fclose(fp);
         delete img;
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) nullptr);
-        fmt::fprintf(clog, _("Error reading PNG image file %s\n"), filename);
+        fmt::fprintf(clog, _("Error reading PNG image file %s\n"), filename.string());
         return nullptr;
     }
 

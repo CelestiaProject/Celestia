@@ -117,7 +117,7 @@ Geometry* GeometryInfo::load(const fs::path& resolvedFilename)
     fs::path::string_type::size_type uniquifyingSuffixStart = resolvedFilename.native().rfind(UniqueSuffixChar);
     fs::path filename = resolvedFilename.native().substr(0, uniquifyingSuffixStart);
 
-    fmt::fprintf(clog, _("Loading model: %s\n"), filename);
+    fmt::fprintf(clog, _("Loading model: %s\n"), filename.string());
     Model* model = nullptr;
     ContentType fileType = DetermineFileType(filename);
 
@@ -208,7 +208,7 @@ Geometry* GeometryInfo::load(const fs::path& resolvedFilename)
     }
     else
     {
-        fmt::fprintf(clog, _("Error loading model '%s'\n"), filename);
+        fmt::fprintf(clog, _("Error loading model '%s'\n"), filename.string());
         return nullptr;
     }
 }

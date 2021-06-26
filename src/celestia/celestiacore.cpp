@@ -55,6 +55,7 @@
 #include <set>
 #include <celengine/rectangle.h>
 #include <celengine/mapmanager.h>
+#include <fmt/ostream.h>
 
 #ifdef CELX
 #include <celephem/scriptobject.h>
@@ -107,7 +108,7 @@ static bool is_valid_directory(const fs::path& dir)
     std::error_code ec;
     if (!fs::is_directory(dir, ec))
     {
-        fmt::fprintf(cerr, _("Path %s doesn't exist or isn't a directory"), dir);
+        fmt::fprintf(cerr, _("Path %s doesn't exist or isn't a directory"), dir.string());
         return false;
     }
 
@@ -3774,11 +3775,11 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         ifstream dsoFile(file.string(), ios::in);
         if (!dsoFile.good())
         {
-            warning(fmt::sprintf(_("Error opening deepsky catalog file %s.\n"), file));
+            warning(fmt::sprintf(_("Error opening deepsky catalog file %s.\n"), file.string()));
         }
         if (!dsoDB->load(dsoFile, ""))
         {
-            warning(fmt::sprintf(_("Cannot read Deep Sky Objects database %s.\n"), file));
+            warning(fmt::sprintf(_("Cannot read Deep Sky Objects database %s.\n"), file.string()));
         }
     }
 
@@ -4775,7 +4776,7 @@ void CelestiaCore::setLogFile(fs::path &fn)
     }
     else
     {
-        fmt::fprintf(cerr, "Unable to open log file %s\n", fn);
+        fmt::fprintf(cerr, "Unable to open log file %s\n", fn.string());
     }
 }
 

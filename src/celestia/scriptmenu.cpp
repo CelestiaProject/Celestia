@@ -12,6 +12,7 @@
 #include "scriptmenu.h"
 #include <iostream>
 #include <fmt/printf.h>
+#include <fmt/ostream.h>
 #include <celcompat/filesystem.h>
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
@@ -84,7 +85,7 @@ ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
     std::error_code ec;
     if (!fs::is_directory(scriptsDir, ec))
     {
-        fmt::fprintf(cerr, _("Path %s doesn't exist or isn't a directory"), scriptsDir);
+        fmt::fprintf(cerr, _("Path %s doesn't exist or isn't a directory"), scriptsDir.string());
         return scripts;
     }
 
