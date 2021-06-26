@@ -562,15 +562,23 @@ GLSL_RenderContext::makeCurrent(const Material& m)
             ringsTex->bind();
             textures[nTextures++] = ringsTex;
 
-            // Tweak the texture--set clamp to border and a border color with
-            // a zero alpha.
-            float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+#ifdef GL_ES
+            if (celestia::gl::OES_texture_border_clamp)
+            {
+#endif
+                // Tweak the texture--set clamp to border and a border color with
+                // a zero alpha.
+                float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 #ifndef GL_ES
-            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+                glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 #else
-            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR_OES, bc);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_OES);
+                glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR_OES, bc);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_OES);
+#endif
+
+#ifdef GL_ES
+            }
 #endif
             glActiveTexture(GL_TEXTURE0);
 

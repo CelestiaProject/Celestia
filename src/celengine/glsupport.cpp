@@ -8,6 +8,7 @@ namespace gl
 
 #ifdef GL_ES
 bool OES_vertex_array_object        = false;
+bool OES_texture_border_clamp       = false;
 #else
 bool ARB_vertex_array_object        = false;
 bool EXT_framebuffer_object         = false;
@@ -36,6 +37,7 @@ bool init(util::array_view<std::string> ignore) noexcept
 {
 #ifdef GL_ES
     OES_vertex_array_object        = check_extension(ignore, "GL_OES_vertex_array_object");
+    OES_texture_border_clamp       = check_extension(ignore, "GL_OES_texture_border_clamp") || check_extension(ignore, "GL_EXT_texture_border_clamp") ;
 #else
     ARB_vertex_array_object        = check_extension(ignore, "GL_ARB_vertex_array_object");
     EXT_framebuffer_object         = check_extension(ignore, "GL_EXT_framebuffer_object");
