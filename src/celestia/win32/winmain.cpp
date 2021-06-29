@@ -76,6 +76,11 @@ typedef vector<IntStrPair> IntStrPairVec;
 
 char AppName[] = "Celestia";
 
+// command line options
+static bool startFullscreen = false;
+static bool runOnce = false;
+static bool skipSplashScreen = false;
+
 static CelestiaCore* appCore = NULL;
 
 // Display modes for full screen operation
@@ -2997,110 +3002,6 @@ static char** splitCommandLine(LPSTR cmdLine,
 }
 
 
-static bool startFullscreen = false;
-static bool runOnce = false;
-static string startURL;
-static string startDirectory;
-static string startScript;
-static vector<fs::path> extrasDirectories;
-static string configFileName;
-static bool useAlternateConfigFile = false;
-static bool skipSplashScreen = false;
-
-static bool parseCommandLine(int argc, char* argv[])
-{
-    int i = 0;
-
-    while (i < argc)
-    {
-        bool isLastArg = (i == argc - 1);
-        if (strcmp(argv[i], "--verbose") == 0)
-        {
-            SetDebugVerbosity(1);
-        }
-        else if (strcmp(argv[i], "--fullscreen") == 0)
-        {
-            startFullscreen = true;
-        }
-        else if (strcmp(argv[i], "--once") == 0)
-        {
-            runOnce = true;
-        }
-        else if (strcmp(argv[i], "--dir") == 0)
-        {
-            if (isLastArg)
-            {
-                MessageBox(NULL,
-                           _("Directory expected after --dir"),
-                           _("Celestia Command Line Error"),
-                           MB_OK | MB_ICONERROR);
-                return false;
-            }
-            i++;
-            startDirectory = string(argv[i]);
-        }
-        else if (strcmp(argv[i], "--conf") == 0)
-        {
-            if (isLastArg)
-            {
-                MessageBox(NULL,
-                           _("Configuration file name expected after --conf"),
-                           _("Celestia Command Line Error"),
-                           MB_OK | MB_ICONERROR);
-                return false;
-            }
-            i++;
-            configFileName = string(argv[i]);
-            useAlternateConfigFile = true;
-        }
-        else if (strcmp(argv[i], "--extrasdir") == 0)
-        {
-            if (isLastArg)
-            {
-                MessageBox(NULL,
-                           _("Directory expected after --extrasdir"),
-                           _("Celestia Command Line Error"),
-                           MB_OK | MB_ICONERROR);
-                return false;
-            }
-            i++;
-            extrasDirectories.push_back(string(argv[i]));
-        }
-        else if (strcmp(argv[i], "-u") == 0 || strcmp(argv[i], "--url") == 0)
-        {
-            if (isLastArg)
-            {
-                MessageBox(NULL,
-                           _("URL expected after --url"),
-                           _("Celestia Command Line Error"),
-                           MB_OK | MB_ICONERROR);
-                return false;
-            }
-            i++;
-            startURL = string(argv[i]);
-        }
-        else if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "--nosplash") == 0)
-        {
-            skipSplashScreen = true;
-        }
-        else
-        {
-            char* buf = new char[strlen(argv[i]) + 256];
-            sprintf(buf, _("Invalid command line option '%s'"), argv[i]);
-            MessageBox(NULL,
-                       buf, _("Celestia Command Line Error"),
-                       MB_OK | MB_ICONERROR);
-            delete[] buf;
-            return false;
-        }
-
-        i++;
-    }
-
-    return true;
-}
-
-
 class WinSplashProgressNotifier : public ProgressNotifier
 {
 public:
@@ -3130,9 +3031,19 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     int argc;
     char** argv;
     argv = splitCommandLine(lpCmdLine, argc);
-    bool cmdLineOK = parseCommandLine(argc, argv);
-    if (!cmdLineOK)
-        return 1;
+
+    appCore = new CelestiaCore();
+    auto parser = appCore->getCommandLineParser();
+    parser.on("fullscreen", 'f', false,
+              _("Start full-screen"),
+              [](bool) { startFullscreen = true; });
+    parser.on("nosplash", 's', false,
+              _("Disable splash screen"),
+              [](bool) { skipSplashScreen = true; });
+    parser.on("once", 'o', false,
+              _("Run only one Celestia instance"),
+              [](bool) { runOnce = true; });
+    parser.parse(argc, argv);
 
     // If Celestia was invoked with the --once command line parameter,
     // check to see if there's already an instance of Celestia running.
@@ -3251,8 +3162,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     {
         lastFullScreenMode = fallbackFullScreenMode;
     }
-
-    appCore = new CelestiaCore();
 
     // Gettext integration
     setlocale(LC_ALL, "");

@@ -3,6 +3,8 @@ set(CELUTIL_SOURCES
   bigfix.h
   blockarray.h
   bytes.h
+  cmdline.cpp
+  cmdline.h
   color.cpp
   color.h
   debug.cpp

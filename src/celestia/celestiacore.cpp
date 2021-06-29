@@ -3680,13 +3680,15 @@ using StarLoader = CatalogLoader<StarDatabase>;
 using DeepSkyLoader = CatalogLoader<DSODatabase>;
 
 
-bool CelestiaCore::initSimulation(const fs::path& configFileName,
-                                  const vector<fs::path>& extrasDirs,
-                                  ProgressNotifier* progressNotifier)
+bool CelestiaCore::initSimulation(ProgressNotifier* progressNotifier)
 {
-    if (!configFileName.empty())
+    initDataPath();
+    std::error_code ec;
+    fs::current_path(m_dataPath, ec);
+
+    if (!m_configFileName.empty())
     {
-        config = ReadCelestiaConfig(configFileName);
+        config = ReadCelestiaConfig(m_configFileName);
     }
     else
     {
@@ -3723,12 +3725,12 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // after the ones from the config file and the order in which they were
     // specified is preserved. This process in O(N*M), but the number of
     // additional extras directories should be small.
-    for (const auto& dir : extrasDirs)
+    for (const auto& dir : m_extrasDirs)
     {
-        if (find(config->extrasDirs.begin(), config->extrasDirs.end(), dir.string()) ==
+        if (find(config->extrasDirs.begin(), config->extrasDirs.end(), dir) ==
             config->extrasDirs.end())
         {
-            config->extrasDirs.push_back(dir.string());
+            config->extrasDirs.push_back(dir);
         }
     }
 
@@ -4764,7 +4766,7 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
     return false;
 }
 
-void CelestiaCore::setLogFile(fs::path &fn)
+void CelestiaCore::setLogFile(const fs::path &fn)
 {
     m_logfile = std::ofstream(fn.string());
     if (m_logfile.good())
@@ -4777,6 +4779,39 @@ void CelestiaCore::setLogFile(fs::path &fn)
     {
         fmt::fprintf(cerr, "Unable to open log file %s\n", fn);
     }
+}
+
+bool CelestiaCore::initDataPath()
+{
+    // was set using command line
+    if (!m_dataPath.empty())
+        return true;
+
+#ifdef _WIN32
+    const wchar_t *d = _wgetenv(L"CELESTIA_DATA_DIR");
+#else
+    const char *d = getenv("CELESTIA_DATA_DIR");
+#endif
+    if (d != nullptr)
+    {
+        m_dataPath = fs::path(d);
+        return true;
+    }
+
+#ifdef NATIVE_OSX_APP
+    // On macOS data directory is in a fixed position relative to the
+    // application bundle
+    error_code ec;
+    auto curDir = fs::current_path(ec);
+    if (ec != error_code())
+        return false;
+    assert(curDir.is_absolute());
+    m_dataPath = curDir.parent_path() / "Resources";
+#else
+    m_dataPath = fs::path(CONFIG_DATA_DIR);
+#endif
+
+    return true;
 }
 
 #ifdef USE_FFMPEG
@@ -4800,9 +4835,9 @@ auto CelestiaCore::getSupportedMovieSizes() const
 auto CelestiaCore::getSupportedMovieFramerates() const
     -> celestia::util::array_view<float>
 {
-    static std::array<float, 5> MovieFramerates =
+    static std::array<float, 6> MovieFramerates =
     {
-        15.0f, 24.0f, 25.0f, 29.97f, 30.0f
+        15.0f, 24.0f, 25.0f, 29.97f, 30.0f, 60.0f
     };
     return MovieFramerates;
 }
@@ -4818,3 +4853,30 @@ auto CelestiaCore::getSupportedMovieCodecs() const
     return MovieCodecs;
 }
 #endif
+
+static void CommandLineError(const char *message)
+{
+    cout << message << '\n';
+}
+
+util::CmdLineParser CelestiaCore::getCommandLineParser()
+{
+    util::CmdLineParser parser;
+    parser.on("conf", 'c', true,
+              _("Configuration file name expected after --conf/-c"),
+              [this](const char *v) { m_configFileName = v; return true; });
+    parser.on("dir", 'd', true,
+              _("Directory expected after --dir/-d"),
+              [this](const char *v) { m_dataPath = v; return true; });
+    parser.on("extrasdir", 'e', true,
+              _("Directory expected after --extrasdir/-e"),
+              [this](const char *v) { m_extrasDirs.push_back(v); return true; });
+    parser.on("url", 'u', true,
+              _("URL expected after --url/-u"),
+              [this](const char *v) { setStartURL(v); return true; });
+    parser.on("log", 'l', true,
+              _("A filename expected after --log/-l"),
+              [this](const char *v) { setLogFile(v); return true; });
+
+    return parser;
+}

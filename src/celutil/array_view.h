@@ -39,11 +39,20 @@ class array_view
     ~array_view() noexcept = default;
 
     /**
-     * Wrap a C-style array.
+     * Wrap a compile-time C-style array.
      */
     template<size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
         m_ptr(ary),
         m_size(N)
+    {};
+
+
+    /**
+     * Wrap a run-time C-style array.
+     */
+    constexpr array_view(const T ary[], size_t n) noexcept :
+        m_ptr(ary),
+        m_size(n)
     {};
 
     /**

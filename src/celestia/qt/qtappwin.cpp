@@ -187,43 +187,12 @@ CelestiaAppWindow::~CelestiaAppWindow()
 }
 
 
-void CelestiaAppWindow::init(const QString& qConfigFileName,
-                             const QStringList& qExtrasDirectories,
-                             const QString& logFilename)
+void CelestiaAppWindow::init(int argc, char *argv[])
 {
-    QString celestia_data_dir = QString::fromLocal8Bit(::getenv("CELESTIA_DATA_DIR"));
-
-    if (celestia_data_dir.isEmpty()) {
-#ifdef NATIVE_OSX_APP
-        // On macOS data directory is in a fixed position relative to the application bundle
-        QString dataDir = QApplication::applicationDirPath() + "/../Resources";
-#else
-        QString dataDir = CONFIG_DATA_DIR;
-#endif
-        QString celestia_data_dir = dataDir;
-        QDir::setCurrent(celestia_data_dir);
-    } else if (QDir(celestia_data_dir).isReadable()) {
-        QDir::setCurrent(celestia_data_dir);
-    } else {
-        QMessageBox::critical(0, "Celestia",
-            _("Celestia is unable to run because the data directory was not "
-              "found, probably due to improper installation."));
-            exit(1);
-    }
-
-    // Get the config file name
-    string configFileName;
-    if (!qConfigFileName.isEmpty())
-        configFileName = qConfigFileName.toStdString();
-
-    // Translate extras directories from QString -> std::string
-    vector<fs::path> extrasDirectories;
-    for (const auto& dir : qExtrasDirectories)
-        extrasDirectories.push_back(dir.toUtf8().data());
-
     initAppDataDirectory();
 
     m_appCore = new CelestiaCore();
+    m_appCore->getCommandLineParser().parse(argc, argv);
 
     auto* progress = new AppProgressNotifier(this);
     alerter = new AppAlerter(this);
@@ -231,15 +200,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     setWindowIcon(QIcon(":/icons/celestia.png"));
 
-    if (!logFilename.isEmpty())
-    {
-        fs::path fn(logFilename.toStdString());
-        m_appCore->setLogFile(fn);
-    }
-
-    if (!m_appCore->initSimulation(configFileName,
-                                   extrasDirectories,
-                                   progress))
+    if (!m_appCore->initSimulation(progress))
     {
          // Error message is shown by celestiacore so we silently exit here.
          exit(1);

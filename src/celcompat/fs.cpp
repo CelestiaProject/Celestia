@@ -5,6 +5,7 @@
 #include <celutil/winutil.h>
 #else
 #include <sys/stat.h>
+#include <unistd.h>
 #endif
 #if defined(_MSC_VER) && !defined(__clang__)
 // M$VC++ build without C++ exceptions are not supported yet
@@ -594,5 +595,66 @@ bool create_directory(const path& p)
     return r;
 }
 
+path current_path()
+{
+    std::error_code ec;
+    path p = current_path(ec);
+
+    if (ec)
+#if __cpp_exceptions
+        throw filesystem_error(ec, "celfs::current_path error");
+#else
+        std::abort();
+#endif
+    return p;
+}
+path current_path(std::error_code& ec)
+{
+#ifdef _WIN32
+    std::wstring p(MAX_PATH + 1, 0);
+    DWORD r = GetModuleFileNameW(nullptr, &p[0], MAX_PATH);
+    if (r == 0)
+    {
+        ec = std::error_code(errno, std::system_category());
+        return path();
+    }
+    auto pos = buffer.find_last_of(L"\\/");
+    return buffer.substr(0, pos);
+#else
+    std::string p(256, 0);
+    char *r = getcwd(&p[0], p.size());
+    if (r == nullptr)
+    {
+        ec = std::error_code(errno, std::system_category());
+        return path();
+    }
+    return p;
+#endif
+}
+
+void current_path(const path& p)
+{
+    std::error_code ec;
+    current_path(p, ec);
+    if (ec)
+#if __cpp_exceptions
+        throw filesystem_error(ec, "celfs::current_path error");
+#else
+        std::abort();
+#endif
+}
+
+void current_path(const path& p, std::error_code& ec) noexcept
+{
+#ifdef _WIN32
+    BOOL ret = SetCurrentDirectoryW(p.c_str());
+    if (!ret)
+        ec = std::error_code(errno, std::system_category());
+#else
+    int ret = chdir(p.c_str());
+    if (ret != 0)
+        ec = std::error_code(errno, std::system_category());
+#endif
+}
 }
 }
