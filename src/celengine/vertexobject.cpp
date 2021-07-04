@@ -131,7 +131,7 @@ void VertexObject::enableAttribArrays() noexcept
         auto  n = t.first;
         auto& p = t.second;
         glEnableVertexAttribArray(n);
-        glVertexAttribPointer(n, p.count, p.type, p.normalized, p.stride, (GLvoid*) p.offset);
+        glVertexAttribPointer(n, p.count, p.type, p.normalized, p.stride, (GLvoid*) (size_t) p.offset);
     }
 }
 

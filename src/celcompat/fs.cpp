@@ -611,8 +611,8 @@ path current_path()
 path current_path(std::error_code& ec)
 {
 #ifdef _WIN32
-    std::wstring p(MAX_PATH + 1, 0);
-    DWORD r = GetModuleFileNameW(nullptr, &p[0], MAX_PATH);
+    std::wstring buffer(MAX_PATH + 1, 0);
+    DWORD r = GetModuleFileNameW(nullptr, &buffer[0], MAX_PATH);
     if (r == 0)
     {
         ec = std::error_code(errno, std::system_category());
@@ -621,14 +621,14 @@ path current_path(std::error_code& ec)
     auto pos = buffer.find_last_of(L"\\/");
     return buffer.substr(0, pos);
 #else
-    std::string p(256, 0);
-    char *r = getcwd(&p[0], p.size());
+    std::string buffer(256, 0);
+    char *r = getcwd(&buffer[0], p.size());
     if (r == nullptr)
     {
         ec = std::error_code(errno, std::system_category());
         return path();
     }
-    return p;
+    return buffer;
 #endif
 }
 
