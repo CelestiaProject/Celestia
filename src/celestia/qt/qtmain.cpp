@@ -33,22 +33,6 @@
 
 using namespace std;
 
-//static const char *description = "Celestia";
-
-// Command line options
-static bool startFullscreen = false;
-static bool runOnce = false;
-static QString startURL;
-static QString logFilename;
-static QString startDirectory;
-static QString startScript;
-static QStringList extrasDirectories;
-static QString configFileName;
-static bool useAlternateConfigFile = false;
-static bool skipSplashScreen = false;
-
-static bool ParseCommandLine();
-
 int main(int argc, char *argv[])
 {
 #ifndef GL_ES
@@ -70,8 +54,6 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setOrganizationName("Celestia Development Team");
     QCoreApplication::setApplicationName("Celestia QT");
-
-    ParseCommandLine();
 
 #ifdef NATIVE_OSX_APP
     // On macOS data directory is in a fixed position relative to the application bundle
@@ -112,7 +94,7 @@ int main(int argc, char *argv[])
     QObject::connect(&window, SIGNAL(progressUpdate(const QString&, int, const QColor&)),
                      &splash, SLOT(showMessage(const QString&, int, const QColor&)));
 
-    window.init(configFileName, extrasDirectories, logFilename);
+    window.init(argc, argv);
     window.show();
 
     splash.finish(&window);
@@ -121,104 +103,4 @@ int main(int argc, char *argv[])
     QDesktopServices::setUrlHandler("cel", &window, "handleCelUrl");
 
     return app.exec();
-}
-
-
-
-static void CommandLineError(const char* /*unused*/)
-{
-}
-
-
-
-bool ParseCommandLine()
-{
-    QStringList args = QCoreApplication::arguments();
-
-    int i = 1;
-
-    while (i < args.size())
-    {
-        bool isLastArg = (i == args.size() - 1);
-#if 0
-        if (strcmp(argv[i], "--verbose") == 0)
-        {
-            SetDebugVerbosity(1);
-        }
-        else
-#endif
-        if (args.at(i) == "--fullscreen")
-        {
-            startFullscreen = true;
-        }
-        else if (args.at(i) == "--once")
-        {
-            runOnce = true;
-        }
-        else if (args.at(i) == "--dir")
-        {
-            if (isLastArg)
-            {
-                CommandLineError(_("Directory expected after --dir"));
-                return false;
-            }
-            i++;
-            startDirectory = args.at(i);
-        }
-        else if (args.at(i) == "--conf")
-        {
-            if (isLastArg)
-            {
-                CommandLineError(_("Configuration file name expected after --conf"));
-                return false;
-            }
-            i++;
-            configFileName = args.at(i);
-            useAlternateConfigFile = true;
-        }
-        else if (args.at(i) == "--extrasdir")
-        {
-            if (isLastArg)
-            {
-                CommandLineError(_("Directory expected after --extrasdir"));
-                return false;
-            }
-            i++;
-            extrasDirectories.push_back(args.at(i));
-        }
-        else if (args.at(i) == "-u" || args.at(i) == "--url")
-        {
-            if (isLastArg)
-            {
-                CommandLineError(_("URL expected after --url"));
-                return false;
-            }
-            i++;
-            startURL = args.at(i);
-        }
-        else if (args.at(i) == "-s" || args.at(i) == "--nosplash")
-        {
-            skipSplashScreen = true;
-        }
-        else if (args.at(i) == "-l" || args.at(i) == "--log")
-        {
-            if (isLastArg)
-            {
-                CommandLineError(_("A filename expected after --log/-l"));
-                return false;
-            }
-            i++;
-            logFilename = args.at(i);
-        }
-        else
-        {
-            string buf = fmt::sprintf(_("Invalid command line option '%s'"), args.at(i).toUtf8().data());
-            CommandLineError(buf.c_str());
-            return false;
-        }
-
-        i++;
-    }
-
-    return true;
 }

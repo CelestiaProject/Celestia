@@ -13,10 +13,14 @@
 #include <fstream>
 #include <string>
 #include <memory>
+#include <celutil/array_view.h>
+#include <celutil/cmdline.h>
 #include <celutil/filetype.h>
+#include <celutil/tee.h>
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
 // #include <celutil/watchable.h>
+#include <celcompat/string_view.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
 #include <celengine/texture.h>
@@ -25,7 +29,6 @@
 #include <celengine/simulation.h>
 #include <celengine/overlayimage.h>
 #include <celengine/viewporteffect.h>
-#include <celutil/tee.h>
 #include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
@@ -195,9 +198,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CelestiaCore();
     ~CelestiaCore();
 
-    bool initSimulation(const fs::path& configFileName = fs::path(),
-                        const std::vector<fs::path>& extrasDirs = {},
-                        ProgressNotifier* progressNotifier = nullptr);
+    bool initSimulation(ProgressNotifier* progressNotifier = nullptr);
     bool initRenderer();
     void start(double t);
     void start();
@@ -206,6 +207,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     // URLs and history navigation
     void setStartURL(const std::string& url);
+    std::string_view getStartURL() const;
     bool goToUrl(const std::string& urlStr);
     void addToHistory();
     void back();
@@ -322,12 +324,12 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void notifyWatchers(int);
 
-    void setLogFile(fs::path&);
+    void setLogFile(const fs::path&);
 
     class Alerter
     {
     public:
-        virtual ~Alerter() {};
+        virtual ~Alerter() = default;
         virtual void fatalError(const std::string&) = 0;
     };
 
@@ -337,7 +339,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     class CursorHandler
     {
     public:
-        virtual ~CursorHandler() {};
+        virtual ~CursorHandler() = default;
         virtual void setCursorShape(CursorShape) = 0;
         virtual CursorShape getCursorShape() const = 0;
     };
@@ -389,6 +391,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     Image captureImage() const;
     bool saveScreenShot(const fs::path&, ContentType = Content_Unknown) const;
 
+    celestia::util::CmdLineParser getCommandLineParser();
+
  protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
@@ -397,6 +401,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 #endif // CELX
 
  private:
+    bool initDataPath();
+
     CelestiaConfig* config{ nullptr };
 
     Universe* universe{ nullptr };
@@ -537,6 +543,12 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::unique_ptr<Console> console;
     std::ofstream m_logfile;
     teestream m_tee;
+
+    // options passed through command line
+    fs::path m_dataPath;
+    fs::path m_configFileName;
+    fs::path m_logFilename;
+    std::vector<fs::path> m_extrasDirs;
 
 #ifdef CELX
     friend View* getViewByObserver(CelestiaCore*, Observer*);

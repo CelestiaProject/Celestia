@@ -75,23 +75,8 @@ static void initRealize(GtkWidget* widget, AppData* app);
 
 
 /* Command-Line Options */
-static gchar* configFile = NULL;
-static gchar* installDir = NULL;
-static gchar** extrasDir = NULL;
 static gboolean fullScreen = FALSE;
 static gboolean noSplash = FALSE;
-
-/* Command-Line Options specification */
-static GOptionEntry optionEntries[] =
-{
-    { "conf", 'c', 0, G_OPTION_ARG_FILENAME, &configFile, "Alternate configuration file", "file" },
-    { "dir", 'd', 0, G_OPTION_ARG_FILENAME, &installDir, "Alternate installation directory", "directory" },
-    { "extrasdir", 'e', 0, G_OPTION_ARG_FILENAME_ARRAY, &extrasDir, "Additional \"extras\" directory", "directory" },
-    { "fullscreen", 'f', 0, G_OPTION_ARG_NONE, &fullScreen, "Start full-screen", NULL },
-    { "nosplash", 's', 0, G_OPTION_ARG_NONE, &noSplash, "Disable splash screen", NULL },
-    { NULL, '\0', 0, G_OPTION_ARG_NONE, NULL, NULL, NULL }
-};
-
 
 /* Initializes GtkActions and creates main menu */
 static void createMainMenu(GtkWidget* window, AppData* app)
@@ -339,34 +324,6 @@ int main(int argc, char* argv[])
     /* Watcher enables sending signals from inside of core */
     GtkWatcher* gtkWatcher;
 
-    /* Command line option parsing */
-    GError *error = NULL;
-    GOptionContext* context = g_option_context_new("");
-    g_option_context_add_main_entries(context, optionEntries, NULL);
-    g_option_context_add_group(context, gtk_get_option_group(TRUE));
-    g_option_context_parse(context, &argc, &argv, &error);
-
-    if (error != NULL)
-    {
-        g_print("Error in command line options. Use --help for full list.\n");
-        exit(1);
-    }
-
-    /* At this point, the argument count should be 1 or 2, with the lastX
-     * potentially being a cel:// URL. */
-
-    /* If there's an argument left, assume it's a URL. This happens here
-     * because it's after the saved prefs are applied. The appCore gets
-     * initialized elsewhere. */
-    if (argc > 1)
-        app->startURL = argv[argc - 1];
-
-    if (installDir == NULL)
-        installDir = (gchar*)CONFIG_DATA_DIR;
-
-    if (chdir(installDir) == -1)
-        cerr << "Cannot chdir to '" << installDir << "', probably due to improper installation.\n";
-
     #ifdef GNOME
     /* GNOME Initialization */
     GnomeProgram *program;
@@ -384,34 +341,20 @@ int main(int argc, char* argv[])
     SetDebugVerbosity(0);
 
     app->core = new CelestiaCore();
-    if (app->core == NULL)
-    {
-        cerr << "Failed to initialize Celestia core.\n";
-        return 1;
-    }
+    auto parser = app->core->getCommandLineParser();
+    parser.on("fullscreen", 'f', false,
+              _("Start full-screen"),
+              [](bool) { fullScreen = TRUE; });
+    parser.on("nosplash", 's', false,
+              _("Disable splash screen"),
+              [](bool) { noSplash = TRUE; });
+    parser.parse(argc, argv);
 
     app->renderer = app->core->getRenderer();
     g_assert(app->renderer);
 
-    /* Parse simulation arguments */
-    string altConfig;
-    if (configFile != NULL)
-        altConfig = string(configFile);
-
-    vector<fs::path> configDirs;
-    if (extrasDir != NULL)
-    {
-        /* Add each extrasDir to the vector */
-        int i = 0;
-        while (extrasDir[i] != NULL)
-        {
-            configDirs.push_back(extrasDir[i]);
-            i++;
-        }
-    }
-
     /* Initialize the simulation */
-    if (!app->core->initSimulation(altConfig, configDirs, ss->notifier))
+    if (!app->core->initSimulation(ss->notifier))
         return 1;
 
     app->simulation = app->core->getSimulation();
