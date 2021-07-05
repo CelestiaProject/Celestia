@@ -622,7 +622,7 @@ path current_path(std::error_code& ec)
     return buffer.substr(0, pos);
 #else
     std::string buffer(256, 0);
-    char *r = getcwd(&buffer[0], p.size());
+    char *r = getcwd(&buffer[0], buffer.size());
     if (r == nullptr)
     {
         ec = std::error_code(errno, std::system_category());

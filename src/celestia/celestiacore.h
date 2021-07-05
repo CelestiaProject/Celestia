@@ -20,6 +20,7 @@
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
 // #include <celutil/watchable.h>
+#include <celcompat/string_view.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
 #include <celengine/texture.h>
@@ -206,6 +207,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     // URLs and history navigation
     void setStartURL(const std::string& url);
+    std::string_view getStartURL() const;
     bool goToUrl(const std::string& urlStr);
     void addToHistory();
     void back();

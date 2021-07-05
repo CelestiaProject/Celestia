@@ -1916,6 +1916,10 @@ void CelestiaCore::setStartURL(const string &url)
     }
 }
 
+std::string_view CelestiaCore::getStartURL() const
+{
+    return startURL;
+}
 
 void CelestiaCore::tick()
 {

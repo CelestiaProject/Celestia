@@ -3058,7 +3058,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             // If there's an existing instance and we've been given a
             // URL on the command line, send the URL to the running instance
             // of Celestia before terminating.
-            if (startURL != "")
+            auto startURL = appCore.getStartURL();
+            if (!startURL().empty())
             {
                 COPYDATASTRUCT cd;
                 cd.dwData = 0;
@@ -3071,11 +3072,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             exit(0);
         }
     }
-
-    // If a start directory was given on the command line, switch to it
-    // now.
-    if (startDirectory != "")
-        SetCurrentDirectory(startDirectory.c_str());
 
     s_splash = new SplashWindow(SPLASH_DIR "\\" "splash.png");
     s_splash->setMessage(_("Loading data files..."));
@@ -3191,8 +3187,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (!skipSplashScreen)
         progressNotifier = new WinSplashProgressNotifier(s_splash);
 
-    bool initSucceeded = appCore->initSimulation(configFileName, extrasDirectories, progressNotifier);
-
+    bool initSucceeded = appCore->initSimulation(progressNotifier);
     delete progressNotifier;
 
     // Close the splash screen after all data has been loaded
@@ -3206,9 +3201,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     // Give up now if we failed initialization
     if (!initSucceeded)
         return 1;
-
-    if (startURL != "")
-        appCore->setStartURL(startURL);
 
     menuBar = CreateMenuBar();
     acceleratorTable = LoadAccelerators(hRes,
@@ -3372,15 +3364,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     bReady = true;
 
     appCore->start();
-
-    if (startURL != "")
-    {
-        COPYDATASTRUCT cd;
-        cd.dwData = 0;
-        cd.cbData = startURL.length();
-        cd.lpData = reinterpret_cast<void*>(const_cast<char*>(startURL.c_str()));
-        SendMessage(mainWindow, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cd));
-    }
 
     // Initial tick required before first frame is rendered; this gives
     // start up scripts a chance to run.
