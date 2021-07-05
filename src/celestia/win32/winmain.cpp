@@ -3058,7 +3058,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             // If there's an existing instance and we've been given a
             // URL on the command line, send the URL to the running instance
             // of Celestia before terminating.
-            auto startURL = appCore.getStartURL();
+            auto startURL = appCore->getStartURL();
             if (!startURL().empty())
             {
                 COPYDATASTRUCT cd;
