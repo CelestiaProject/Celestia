@@ -3059,12 +3059,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             // URL on the command line, send the URL to the running instance
             // of Celestia before terminating.
             auto startURL = appCore->getStartURL();
-            if (!startURL().empty())
+            if (!startURL.empty())
             {
                 COPYDATASTRUCT cd;
                 cd.dwData = 0;
                 cd.cbData = startURL.length();
-                cd.lpData = reinterpret_cast<void*>(const_cast<char*>(startURL.c_str()));
+                cd.lpData = reinterpret_cast<void*>(const_cast<char*>(startURL.data()));
                 SendMessage(existingWnd, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cd));
             }
             SetForegroundWindow(existingWnd);
