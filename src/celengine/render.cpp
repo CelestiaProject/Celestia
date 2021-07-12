@@ -86,7 +86,9 @@ std::ofstream hdrlog;
 #endif
 #ifdef _MSC_VER
 #include <malloc.h>
+#ifndef alloca
 #define alloca(s) _alloca(s)
+#endif
 #endif
 
 using namespace cmod;
