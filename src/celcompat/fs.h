@@ -470,5 +470,10 @@ bool is_directory(const path& p, std::error_code& ec) noexcept;
 
 bool create_directory(const path& p);
 bool create_directory(const path& p, std::error_code& ec) noexcept;
+
+path current_path();
+path current_path(std::error_code& ec);
+void current_path(const path& p);
+void current_path(const path& p, std::error_code& ec) noexcept;
 }
 }
