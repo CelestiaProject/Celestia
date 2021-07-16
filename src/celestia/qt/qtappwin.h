@@ -15,6 +15,7 @@
 
 #include <celestia/celestiacore.h>
 #include <QMainWindow>
+#include "qttimetoolbar.h"
 
 
 class QMenu;
@@ -121,6 +122,9 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
 
     void closeEvent(QCloseEvent* event);
 
+    void switchToNormal();
+    void switchToFullscreen();
+
  private:
     CelestiaGlWidget* glWidget{ nullptr };
     QDockWidget* toolsDock{ nullptr };
@@ -139,6 +143,8 @@ class CelestiaAppWindow : public QMainWindow, public CelestiaCore::ContextMenuHa
     QMenu* bookmarkMenu{ nullptr };
     QMenu* viewMenu{ nullptr };
     QMenu* helpMenu{ nullptr };
+    TimeToolBar* timeToolBar{ nullptr };
+    QToolBar* guidesToolBar{ nullptr };
 
     InfoPanel* infoPanel{ nullptr };
     EventFinder* eventFinder{ nullptr };

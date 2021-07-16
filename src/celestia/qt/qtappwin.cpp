@@ -325,14 +325,14 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     //addDockWidget(Qt::DockWidgetArea, eventFinder);
 
     // Create the time toolbar
-    TimeToolBar* timeToolBar = new TimeToolBar(m_appCore, _("Time"));
+    timeToolBar = new TimeToolBar(m_appCore, _("Time"));
     timeToolBar->setObjectName("time-toolbar");
     timeToolBar->setFloatable(true);
     timeToolBar->setMovable(true);
     addToolBar(Qt::TopToolBarArea, timeToolBar);
 
     // Create the guides toolbar
-    QToolBar* guidesToolBar = new QToolBar(_("Guides"));
+    guidesToolBar = new QToolBar(_("Guides"));
     guidesToolBar->setObjectName("guides-toolbar");
     guidesToolBar->setFloatable(true);
     guidesToolBar->setMovable(true);
@@ -457,7 +457,7 @@ void CelestiaAppWindow::readSettings()
     if (settings.contains("State"))
         restoreState(settings.value("State").toByteArray(), CELESTIA_MAIN_WINDOW_VERSION);
     if (settings.value("Fullscreen", false).toBool())
-        showFullScreen();
+        switchToFullscreen();
 
     settings.endGroup();
 
@@ -483,8 +483,9 @@ void CelestiaAppWindow::writeSettings()
     {
         settings.setValue("Size", size());
         settings.setValue("Pos", pos());
+        // save state if we have no fullscreen!
+        settings.setValue("State", saveState(CELESTIA_MAIN_WINDOW_VERSION));
     }
-    settings.setValue("State", saveState(CELESTIA_MAIN_WINDOW_VERSION));
     settings.setValue("Fullscreen", isFullScreen());
     settings.endGroup();
 
@@ -900,9 +901,52 @@ void CelestiaAppWindow::slotShowTimeDialog()
 void CelestiaAppWindow::slotToggleFullScreen()
 {
     if (isFullScreen())
-        showNormal();
+    {
+        switchToNormal();
+    }
     else
-        showFullScreen();
+    {
+        // save window state only when switching to fullscreen
+        QSettings settings;
+        settings.setValue("State", saveState(CELESTIA_MAIN_WINDOW_VERSION));
+        switchToFullscreen();
+    }
+}
+
+
+void CelestiaAppWindow::switchToNormal()
+{
+    // Switch to window
+    menuBar()->setFixedHeight(menuBar()->sizeHint().height());
+    showNormal();
+
+    QSettings settings;
+    settings.beginGroup("MainWindow");
+    settings.setValue("Fullscreen", false);
+    settings.endGroup();
+
+    // restore last windowed settings
+    readSettings();
+}
+
+
+void CelestiaAppWindow::switchToFullscreen()
+{
+    QSettings settings;
+    settings.beginGroup("MainWindow");
+    settings.setValue("Fullscreen", true);
+    settings.endGroup();
+
+    // set menu bar to zero size to keep shortcuts enabled
+    menuBar()->setFixedHeight(0);
+    toolsDock->setVisible(false);
+    infoPanel->setVisible(false);
+    eventFinder->setVisible(false);
+    // toolbars
+    timeToolBar->setVisible(false);
+    guidesToolBar->setVisible(false);
+    m_bookmarkToolBar->setVisible(false);
+    showFullScreen();
 }
 
 
