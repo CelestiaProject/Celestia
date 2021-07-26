@@ -157,6 +157,7 @@ static int gl_Begin(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "One argument expected for gl.Begin()");
     int i = (int)celx.safeGetNumber(1, WrongType, "argument 1 to gl.Begin must be a number", 0.0);
+    glUseProgram(0);
     glBegin(i);
     return 0;
 }
