@@ -4765,7 +4765,7 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
     return false;
 }
 
-void CelestiaCore::setLogFile(fs::path &fn)
+void CelestiaCore::setLogFile(const fs::path &fn)
 {
     m_logfile = std::ofstream(fn.string());
     if (m_logfile.good())
