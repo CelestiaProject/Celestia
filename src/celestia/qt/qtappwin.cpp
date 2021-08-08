@@ -191,6 +191,10 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
                              const QStringList& qExtrasDirectories,
                              const QString& logFilename)
 {
+    QDir logPath = QDir(logFilename);
+    if (!logPath.makeAbsolute())
+        QMessageBox::warning(0, "Celestia", _("Error getting path for log filename!"));
+
     QString celestia_data_dir = QString::fromLocal8Bit(::getenv("CELESTIA_DATA_DIR"));
 
     if (celestia_data_dir.isEmpty()) {
@@ -233,7 +237,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     if (!logFilename.isEmpty())
     {
-        fs::path fn(logFilename.toStdString());
+        fs::path fn = logPath.absolutePath().toStdString();
         m_appCore->setLogFile(fn);
     }
 

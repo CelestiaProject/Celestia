@@ -322,7 +322,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void notifyWatchers(int);
 
-    void setLogFile(fs::path&);
+    void setLogFile(const fs::path&);
 
     class Alerter
     {
