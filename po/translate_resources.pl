@@ -8,24 +8,44 @@
 #
 # - Loads translations from the po files and produces translated .rc files in src/celestia/res
 # - Produces a dll with the translated resources for each po file in the locale/ dir
-# - Produces a list of unicode codepoints for each language in the current dir
-#   (to generate txf font textures)
 # - Compiles .po files and installs catalogs under locale/
 #
 # Requirements:
-# - rc.exe link.exe and msgfmt.exe must be in the PATH
+# - rc.exe link.exe must be in the PATH
 ################################################################
 
 use Encode;
 use File::Basename;
 use File::Path qw(make_path);
+use Cwd qw(getcwd);
+
+sub compile_rc {
+    my $windres = "i686-w64-mingw32-windres";
+    my $language = shift;
+    my $in = shift;
+    my $out = shift;
+    my $include = dirname $in;
+    print qq{$windres -l $language -D NDEBUG -o $out -I $include -i $in};
+    print "\n";
+    #system qq{rc /l $language /d NDEBUG /fo $out /i $include $in};
+}
+
+sub link_dll {
+    my $machine = shift;
+    my $in = shift;
+    my $out = shift;
+    #system qq{link /nologo /noentry /dll /machine:$machine /out:$out $in};
+}
 
 my $platform = $#ARGV == -1 ? 'win32' : $ARGV[0];
 my $machine = $platform == 'win32' ? 'X86' : $platform;
 
 my $po_dir = dirname $0;
-my $resource_file = "$po_dir/../src/celestia/res/celestia.rc";
-my $res_dir = "$po_dir/../src/celestia/win32/res";
+my $resource_file = "$po_dir/../src/celestia/win32/res/celestia.rc";
+my $build_dir = getcwd;
+my $res_dir = "$build_dir/src/celestia/win32/res";
+
+make_path($res_dir) if ! -d $res_dir;
 
 opendir(DIR, $po_dir);
 my @po_files = sort (grep( /\.po$/, readdir(DIR) ));
@@ -73,64 +93,34 @@ zh_CN => [ '804', 936 ],
 zh_TW => [ '404', 950 ],
 );
 
-my $locale_dir = "$po_dir/../locale";
+my $locale_dir = "$build_dir/locale";
 my $dll_dir = "$locale_dir/$platform";
 
 make_path($dll_dir) if ! -d $dll_dir;
 
-my %codepoints; # hash holds unicode codepoints used by language
-
 foreach my $po (@po_files) {
+    my $lang = basename($po, ".po");
+    next unless $lang{$lang};
     my $strings = load_po_strings("$po_dir/$po");
     my $res = $resource;
-    my $lang = basename $po;
-    $lang =~ s/\..*//o;
+    my $lang_id = $lang{$lang}[0];
+    my $codepade = $lang{$lang}[1];
 
     while (my ($k, $v) = each %$strings) {
-        map { $codepoints{$lang}{$_} = 1; } map { sprintf '%04X', ord($_); } split //, Encode::decode_utf8($v);
-        Encode::from_to($v, 'UTF-8', "CP$lang{$lang}[1]");
+        Encode::from_to($v, 'UTF-8', "CP$codepade");
         map { $c{ord($_)} = 1; } split //, Encode::decode("UTF-8", $v);
         $res =~ s/"\Q$k\E"/"$v"/g;
     }
 
     make_path("$locale_dir/$lang/LC_MESSAGES") if ! -d "$locale_dir/$lang/LC_MESSAGES";
 
-    if ($lang{$lang}) {
-        $res=~ s/\Q#pragma code_page(1252)\E/#pragma code_page($lang{$lang}[1])/;
-        $res=~ s/VALUE "Translation", 0x409, 1252/VALUE "Translation", 0x$lang{$lang}[0], $lang{$lang}[1]/;
-        open OUT, "> $res_dir/celestia_$lang.rc";
-        print OUT $res;
-        close OUT;
-        system qq{rc /l $lang{$lang}[0] /d NDEBUG /fo $res_dir/celestia_$lang.res /i $res_dir $res_dir/celestia_$lang.rc};
-        system qq{link /nologo /noentry /dll /machine:$machine /out:$dll_dir/res_$lang.dll $res_dir/celestia_$lang.res};
-    }
-    system qq{msgfmt $po_dir/$lang.po -o $locale_dir/$lang/LC_MESSAGES/celestia.mo};
-}
-
-my $po2dir = "$po_dir/../po2";
-opendir(DIR, $po2dir);
-my @po_files = sort (grep( /\.po$/, readdir(DIR) ));
-closedir DIR;
-foreach my $po (@po_files) {
-    my $lang = basename $po;
-    $lang =~ s/\..*//o;
-
-    my $strings = load_po_strings("$po2dir/$po");
-    while (my ($k, $v) = each %$strings) {
-        map { $codepoints{$lang}{$_} = 1; } map { sprintf '%04X', ord($_); } split //, Encode::decode_utf8($v);
-    }
-
-    make_path("$locale_dir/$lang/LC_MESSAGES") if ! -d "$locale_dir/$lang/LC_MESSAGES";
-    system qq{msgfmt $po2dir/$po -o $locale_dir/$lang/LC_MESSAGES/celestia_constellations.mo};
-}
-
-foreach my $lang (keys %codepoints) {
-    # list of unicode codepoints to generate font textures
-    my $chr;
-    map { $chr .= "$_ \n"; } sort keys %{$codepoints{$lang}};
-    open CHR, "> $po_dir/codepoints_$lang.txt";
-    print CHR $chr;
-    close CHR;
+    $res =~ s/\Q#pragma code_page(1252)\E/#pragma code_page($codepade)/;
+    $res =~ s/VALUE "Translation", 0x409, 1252/VALUE "Translation", 0x$lang_id, $codepade/;
+    open OUT, "> $res_dir/celestia_$lang.rc";
+    print OUT $res;
+    close OUT;
+    compile_rc($lang_id, "$res_dir/celestia_$lang.rc", "$res_dir/celestia_$lang.res");
+    link_dll($machine, "$res_dir/celestia_$lang.res", "$dll_dir/res_$lang.dll");
 }
 
 sub load_po_strings {
