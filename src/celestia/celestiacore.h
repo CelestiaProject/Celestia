@@ -12,7 +12,6 @@
 
 #include <fstream>
 #include <string>
-#include <memory>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
@@ -29,9 +28,7 @@
 #include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
-#ifdef USE_FFMPEG
 #include "moviecapture.h"
-#endif
 #include "view.h"
 #ifdef CELX
 #include <celscript/lua/celx.h>
@@ -56,18 +53,6 @@ public:
     virtual ~ProgressNotifier() = default;
 
     virtual void update(const std::string&) = 0;
-};
-
-struct MovieSize
-{
-    int width;
-    int height;
-};
-
-struct MovieCodec
-{
-    int         codecId;
-    const char *codecDescr;
 };
 
 class CelestiaCore // : public Watchable<CelestiaCore>
@@ -259,17 +244,12 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setTextEnterMode(int);
     int getTextEnterMode() const;
 
-#ifdef USE_FFMPEG
-    bool initMovieCapture(const fs::path &path, int width, int height, float fps, int64_t bitrate, int codec);
+    void initMovieCapture(MovieCapture*);
     void recordBegin();
     void recordPause();
     void recordEnd();
     bool isCaptureActive();
     bool isRecording();
-    celestia::util::array_view<MovieSize>  getSupportedMovieSizes() const;
-    celestia::util::array_view<float>      getSupportedMovieFramerates() const;
-    celestia::util::array_view<MovieCodec> getSupportedMovieCodecs() const;
-#endif
 
     void runScript(const fs::path& filename, bool i18n = true);
     void cancelScript();
@@ -491,10 +471,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool shiftKeysPressed[KeyCount];
     double KeyAccel{ 1.0 };
 
-#ifdef USE_FFMPEG
-    std::unique_ptr<celestia::MovieCapture> movieCapture;
+    MovieCapture* movieCapture{ nullptr };
     bool recording{ false };
-#endif
 
     Alerter* alerter{ nullptr };
     std::vector<CelestiaWatcher*> watchers;
