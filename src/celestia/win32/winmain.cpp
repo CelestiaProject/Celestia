@@ -22,10 +22,8 @@
 #include <process.h>
 #include <time.h>
 #include <windows.h>
-#include <windowsx.h> // GET_X_LPARAM, GET_Y_LPARAM
 #include <commctrl.h>
 #include <mmsystem.h>
-#include <oleidl.h> // IDropTarget
 #include <commdlg.h>
 #include <shellapi.h>
 
@@ -44,6 +42,7 @@
 #include <celscript/legacy/cmdparser.h>
 
 #include "celestia/celestiacore.h"
+#include "celestia/ffmpegcapture.h"
 #include "celestia/helper.h"
 #include "celestia/scriptmenu.h"
 #include "celestia/url.h"
@@ -127,6 +126,31 @@ static POINT saveCursorPos;
 static POINT lastMouseMove;
 class WinCursorHandler;
 WinCursorHandler* cursorHandler = NULL;
+
+static int MovieSizes[8][2] = {
+                                { 160, 120 },
+                                { 320, 240 },
+                                { 640, 480 },
+                                { 720, 480 },
+                                { 720, 576 },
+                                { 1024, 768 },
+                                { 1280, 720 },
+                                { 1920, 1080 }
+                              };
+
+static float MovieFramerates[5] = { 15.0f, 24.0f, 25.0f, 29.97f, 30.0f };
+
+struct MovieCodec
+{
+    AVCodecID   codecId;
+    const char *codecDesc;
+};
+
+static MovieCodec MovieCodecs[2] =
+{
+    { AV_CODEC_ID_FFVHUFF, N_("Lossless")      },
+    { AV_CODEC_ID_H264,    N_("Lossy (H.264)") }
+};
 
 static int movieSize = 1;
 static int movieFramerate = 1;
@@ -417,6 +441,31 @@ static void ShowLocalTime(CelestiaCore* appCore)
 }
 
 
+static bool BeginMovieCapture(const Renderer* renderer,
+                              const std::string& filename,
+                              int width, int height,
+                              float framerate,
+                              AVCodecID codec,
+                              int64_t bitrate)
+{
+    auto* movieCapture = new FFMPEGCapture(renderer);
+    movieCapture->setVideoCodec(codec);
+    movieCapture->setBitRate(bitrate);
+    if (vc == AV_CODEC_ID_H264)
+        movieCapture->setEncoderOptions(appCore->getConfig()->x264EncoderOptions);
+    else
+        movieCapture->setEncoderOptions(appCore->getConfig()->ffvhEncoderOptions);
+
+    bool success = movieCapture->start(filename, width, height, framerate);
+    if (success)
+        appCore->initMovieCapture(movieCapture);
+    else
+        delete movieCapture;
+
+    return success;
+}
+
+
 static bool CopyStateURLToClipboard()
 {
     BOOL b;
@@ -628,7 +677,6 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
 }
 
 
-#ifdef USE_FFMPEG
 UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
                                     WPARAM wParam, LPARAM lParam)
 {
@@ -638,32 +686,33 @@ UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
         {
             char buf[100];
             HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_SIZE);
+            int nSizes = sizeof MovieSizes / sizeof MovieSizes[0];
 
-            auto movieSizes = appCore->getSupportedMovieSizes();
-            for (auto const &s : movieSizes)
+            for (int i = 0; i < nSizes; i++)
             {
-                sprintf(buf, _("%d x %d"), s.width, s.height);
+                sprintf(buf, _("%d x %d"), MovieSizes[i][0], MovieSizes[i][1]);
                 SendMessage(hwnd, CB_INSERTSTRING, -1,
                             reinterpret_cast<LPARAM>(buf));
             }
             SendMessage(hwnd, CB_SETCURSEL, movieSize, 0);
 
             hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_FRAMERATE);
-            auto movieFramerates = appCore->getSupportedMovieFramerates();
-            for (float fps : movieFramerates)
+            int nFramerates = sizeof MovieFramerates / sizeof MovieFramerates[0];
+            for (int i = 0; i < nFramerates; i++)
             {
-                sprintf(buf, "%.2f", fps);
+                sprintf(buf, "%.2f", MovieFramerates[i]);
                 SendMessage(hwnd, CB_INSERTSTRING, -1,
                             reinterpret_cast<LPARAM>(buf));
             }
             SendMessage(hwnd, CB_SETCURSEL, movieFramerate, 0);
 
             hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_CODEC);
-            auto movieCodecs = appCore->getSupportedMovieCodecs();
-            for (auto &c : movieCodecs)
+            int nCodecs = sizeof MovieCodecs / sizeof MovieCodecs[0];
+            for (int i = 0; i < nCodecs; i++)
             {
-                SendMessage(hwnd, CB_INSERTSTRING, -1,
-                            reinterpret_cast<LPARAM>(_(c.codecDescr)));
+                SendMessage(hwnd, CB_INSERTSTRING,
+                            reinterpret_cast<WPARAM>(MovieCodecs[i].codecId),
+                            reinterpret_cast<LPARAM>(_(MovieCodecs[i].codecDesc)));
             }
             SendMessage(hwnd, CB_SETCURSEL, movieCodec, 0);
 
@@ -705,15 +754,14 @@ UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
                     movieCodec = item;
             }
         }
-        else if (LOWORD(wParam) == IDOK)
+        else if (LOWORD(wParam) == IDOK IDC_EDIT_MOVIE_BITRATE)
         {
             char buf[24], out[24];
             wchar_t wbuff[48];
-            int wlen = 0;
             int len = GetDlgItemText(hDlg, IDC_EDIT_MOVIE_BITRATE, buf, sizeof(buf));
             if (len > 0)
             {
-                wlen = MultiByteToWideChar(CP_ACP, 0, buf, -1, wbuff, sizeof(wbuff));
+                int wlen = MultiByteToWideChar(CP_ACP, 0, buf, -1, wbuff, sizeof(wbuff));
                 WideCharToMultiByte(CP_UTF8, 0, wbuff, wlen, out, sizeof(out), NULL, NULL);
 
             }
@@ -728,7 +776,6 @@ UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
 
     return FALSE;
 }
-#endif
 
 
 BOOL APIENTRY FindObjectProc(HWND hDlg,
@@ -2691,7 +2738,6 @@ static void HandleCaptureImage(HWND hWnd)
 }
 
 
-#ifdef USE_FFMPEG
 static void HandleCaptureMovie(HWND hWnd)
 {
     // TODO: The menu item should be disable so that the user doesn't even
@@ -2785,15 +2831,13 @@ static void HandleCaptureMovie(HWND hWnd)
         }
         else
         {
-            auto movieSizes = appCore->getSupportedMovieSizes();
-            auto movieFramerates = appCore->getSupportedMovieFramerates();
-            auto movieCodecs = appCore->getSupportedMovieCodecs();
-            success = appCore->initMovieCapture(Ofn.lpstrFile,
-                                                movieSizes[movieSize].width,
-                                                movieSizes[movieSize].height,
-                                                movieFramerates[movieFramerate],
-                                                movieBitrate,
-                                                movieCodecs[movieCodec].codecId);
+            success = BeginMovieCapture(appCore->getRenderer(),
+                                        string(Ofn.lpstrFile),
+                                        MovieSizes[movieSize][0],
+                                        MovieSizes[movieSize][1],
+                                        MovieFramerates[movieFramerate],
+                                        MovieCodecs[movieCodec],
+                                        movieBitrate);
         }
 
         if (!success)
@@ -2809,7 +2853,6 @@ static void HandleCaptureMovie(HWND hWnd)
         }
     }
 }
-#endif
 
 
 static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
@@ -4268,11 +4311,9 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             HandleCaptureImage(hWnd);
             break;
 
-#ifdef USE_FFMPEG
         case ID_FILE_CAPTUREMOVIE:
             HandleCaptureMovie(hWnd);
             break;
-#endif
 
         case ID_FILE_EXIT:
             SendMessage(hWnd, WM_CLOSE, 0, 0);

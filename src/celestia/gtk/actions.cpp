@@ -30,6 +30,9 @@
 #include <celcompat/charconv.h>
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
+#ifdef USE_FFMPEG
+#include <celestia/ffmpegcapture.h>
+#endif
 
 #include "actions.h"
 #include "common.h"
@@ -53,13 +56,40 @@ using namespace std;
 static void openScript(const char* filename, AppData* app);
 static void captureImage(const char* filename, AppData* app);
 #ifdef USE_FFMPEG
-static void captureMovie(const char* filename, int w, int h, float fps,
-                         int codec, int64_t bitrate, AppData* app);
+static void captureMovie(const char* filename, const int resolution[], float fps,
+                         AVCodecID codec, float bitrate, AppData* app);
 #endif
 static void textInfoDialog(const char *txt, const char *title, AppData* app);
 static void setRenderFlag(AppData* a, uint64_t flag, gboolean state);
 static void setOrbitMask(AppData* a, int mask, gboolean state);
 static void setLabelMode(AppData* a, int mode, gboolean state);
+
+#ifdef USE_FFMPEG
+static const int MovieSizes[][2] =
+{
+    { 160,  120  },
+    { 320,  240  },
+    { 640,  480  },
+    { 720,  480  },
+    { 720,  576  },
+    { 1024, 768  },
+    { 1280, 720  },
+    { 1920, 1080 }
+};
+
+static const float MovieFramerates[] = { 15.0f, 23.976f, 24.0f, 25.0f, 29.97f, 30.0f, 60.0f };
+
+struct MovieCodec
+{
+    AVCodecID   codecId;
+    const char *codecDesc;
+};
+
+static MovieCodec MovieCodecs[2] =
+{
+    { AV_CODEC_ID_FFVHUFF, N_("Lossless")      },
+    { AV_CODEC_ID_H264,    N_("Lossy (H.264)") }
+};
 
 static void insert_text_event(GtkEditable *editable, const gchar *text, gint length, gint *position, gpointer data)
 {
@@ -72,6 +102,7 @@ static void insert_text_event(GtkEditable *editable, const gchar *text, gint len
         }
     }
 }
+#endif
 
 /* File -> Copy URL */
 void actionCopyURL(GtkAction*, AppData* app)
@@ -237,12 +268,10 @@ void actionCaptureMovie(GtkAction*, AppData* app)
     gtk_box_pack_start(GTK_BOX(hbox), rlabel, TRUE, TRUE, 0);
 
     GtkWidget* vscombo = gtk_combo_box_text_new();
-    auto movieSizes = app->core->getSupportedMovieSizes();
-    for (const auto& size : movieSizes)
+    for (const auto& size : MovieSizes)
     {
-        auto s = fmt::format("{} x {}", size.width, size.height);
         gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(vscombo),
-                                       s.c_str());
+                                       fmt::format("{} x {}", size[0], size[1]).c_str());
     }
     gtk_combo_box_set_active(GTK_COMBO_BOX(vscombo), 0);
     gtk_box_pack_start(GTK_BOX(hbox), vscombo, FALSE, FALSE, 0);
@@ -251,8 +280,7 @@ void actionCaptureMovie(GtkAction*, AppData* app)
     gtk_box_pack_start(GTK_BOX(hbox), flabel, TRUE, TRUE, 0);
 
     GtkWidget* frcombo = gtk_combo_box_text_new();
-    auto movieFramerates = app->core->getSupportedMovieFramerates();
-    for (float i : movieFramerates)
+    for (float i : MovieFramerates)
     {
         gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(frcombo),
                                        fmt::format("{:.3f}", i).c_str());
@@ -264,11 +292,10 @@ void actionCaptureMovie(GtkAction*, AppData* app)
     gtk_box_pack_start(GTK_BOX(hbox), vclabel, TRUE, TRUE, 0);
 
     GtkWidget* vccombo = gtk_combo_box_text_new();
-    auto movieCodecs = app->core->getSupportedMovieCodecs();
-    for (const auto &mcodec : movieCodecs)
+    for (const auto &mcodec : MovieCodecs)
     {
         gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(vccombo),
-                                       mcodec.codecDescr);
+                                       mcodec.codecDesc);
     }
     gtk_combo_box_set_active(GTK_COMBO_BOX(vccombo), 0);
     gtk_box_pack_start(GTK_BOX(hbox), vccombo, FALSE, FALSE, 0);
@@ -290,17 +317,17 @@ void actionCaptureMovie(GtkAction*, AppData* app)
         int fridx = gtk_combo_box_get_active(GTK_COMBO_BOX(frcombo));
         int vcidx = gtk_combo_box_get_active(GTK_COMBO_BOX(vccombo));
         const gchar *brtext = gtk_entry_get_text(GTK_ENTRY(brentry));
-        const auto &dim = movieSizes[vsidx];
-        float fps = movieFramerates[fridx];
-        int codec = movieCodecs[vcidx].codecId;
-        int64_t bitrate = 400000;
+        const int *resolution = MovieSizes[vsidx];
+        float fps = MovieFramerates[fridx];
+        AVCodecID codec = MovieCodecs[vcidx].codecId;
+        float bitrate = 400000;
         const gchar *last = &brtext[gtk_entry_get_text_length(GTK_ENTRY(brentry))];
         std::from_chars(brtext, last, bitrate);
 
         gtk_widget_destroy(fs);
         for (int i=0; i < 10 && gtk_events_pending ();i++)
             gtk_main_iteration ();
-        captureMovie(filename, dim.width, dim.height, fps, codec, bitrate, app);
+        captureMovie(filename, resolution, fps, codec, bitrate, app);
         g_free(filename);
     }
     else
@@ -1085,17 +1112,26 @@ static void captureImage(const char* filename, AppData* app)
 
 /* Image capturing helper called by actionCaptureImage() */
 #ifdef USE_FFMPEG
-static void captureMovie(const char* filename,
-                         int width, int height,
-                         float fps, int codec,
-                         int64_t bitrate, AppData* app)
+static void captureMovie(const char* filename, const int resolution[], float fps,
+                         AVCodecID codec, float bitrate, AppData* app)
 {
-    bool ok = app->core->initMovieCapture(filename,
-                                          width, height,
-                                          fps, bitrate,
-                                          codec);
-    if (!ok)
+    auto* movieCapture = new FFMPEGCapture(app->renderer);
+    movieCapture->setVideoCodec(codec);
+    movieCapture->setBitRate(bitrate);
+    if (codec == AV_CODEC_ID_H264)
+        movieCapture->setEncoderOptions(app->core->getConfig()->x264EncoderOptions);
+    else
+        movieCapture->setEncoderOptions(app->core->getConfig()->ffvhEncoderOptions);
+
+    bool success = movieCapture->start(filename, resolution[0], resolution[1], fps);
+    if (success)
     {
+        app->core->initMovieCapture(movieCapture);
+    }
+    else
+    {
+        delete movieCapture;
+
         GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
                                                    GTK_MESSAGE_ERROR,
