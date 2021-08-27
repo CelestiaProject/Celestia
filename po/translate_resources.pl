@@ -98,26 +98,65 @@ my $dll_dir = "$locale_dir/$platform";
 
 make_path($dll_dir) if ! -d $dll_dir;
 
+my @keywords = qw{
+    POPUP
+    MENUITEM
+    DEFPUSHBUTTON
+    LTEXT
+    CAPTION
+    PUSHBUTTON
+    RTEXT
+    CTEXT
+    LTEXT
+    GROUPBOX
+    CONTROL
+    GROUPBOX
+    AUTOCHECKBOX
+    AUTORADIOBUTTON
+};
+
+my $keys = join('|', @keywords);
+
 foreach my $po (@po_files) {
     my $lang = basename($po, ".po");
     next unless $lang{$lang};
     my $strings = load_po_strings("$po_dir/$po");
-    my $res = $resource;
+    my @res = split(/\n|\r\n/, $resource);
     my $lang_id = $lang{$lang}[0];
     my $codepade = $lang{$lang}[1];
 
     while (my ($k, $v) = each %$strings) {
+        next if $k !~ /^(.+)\004(.+)$/;
+        my $msgctxt = $1;
+        my $msgid = $2;
         Encode::from_to($v, 'UTF-8', "CP$codepade");
-        map { $c{ord($_)} = 1; } split //, Encode::decode("UTF-8", $v);
-        $res =~ s/"\Q$k\E"/"$v"/g;
+
+        foreach my $line (@res) {
+            if ($line =~ /^\s*(?:$keys)/) {
+                $line =~ s/\bNC_\(\s*"\Q$msgctxt\E"\s*,\s*"\Q$msgid\E"\s*\)/"$v"/g;
+            }
+        }
+
+    }
+
+    while (my ($k, $v) = each %$strings) {
+        next if $k =~ /^(.+)\004(.+)$/;
+        Encode::from_to($v, 'UTF-8', "CP$codepade");
+        foreach my $line (@res) {
+            if ($line =~ /^\s*(?:$keys)/) {
+                $line =~ s/"\Q$k\E"/"$v"/g;
+            }
+        }
     }
 
     make_path("$locale_dir/$lang/LC_MESSAGES") if ! -d "$locale_dir/$lang/LC_MESSAGES";
 
-    $res =~ s/\Q#pragma code_page(1252)\E/#pragma code_page($codepade)/;
-    $res =~ s/VALUE "Translation", 0x409, 1252/VALUE "Translation", 0x$lang_id, $codepade/;
+    foreach my $line (@res) {
+        $line =~ s/\Q#pragma code_page(1252)\E/#pragma code_page($codepade)/;
+        $line =~ s/VALUE "Translation", 0x409, 1252/VALUE "Translation", 0x$lang_id, $codepade/;
+    }
     open OUT, "> $res_dir/celestia_$lang.rc";
-    print OUT $res;
+    print OUT join("\r\n", @res);
     close OUT;
     compile_rc($lang_id, "$res_dir/celestia_$lang.rc", "$res_dir/celestia_$lang.res");
     link_dll($machine, "$res_dir/celestia_$lang.res", "$dll_dir/res_$lang.dll");
@@ -131,18 +170,28 @@ sub load_po_strings {
     my $l1;
     my $l2;
     my $l3;
-    while ($l3 = <PO>) {
+    my $l4;
+    while ($l4 = <PO>) {
         # The po file is read by groups of three lines.
         # we can safely ignore multiline msgids since resource files
         # use only single line strings
-        if ($l2 =~ /^msgid\s+"(.*)"/) {
+        if ($l3 =~ /^msgid\s+"(.*)"/) {
             my $msgid = $1;
-            if ($l3 =~ /^msgstr\s+"(.+)"/ && $l1 !~ /fuzzy/ ) {
-                $strings{$msgid} = $1;
+            if ($l4 =~ /^msgstr\s+"(.+)"/) {
+                my $translation = $1;
+                if ($l2 =~ /^msgctxt\s+"(.+)"/) {
+                    my $context = $1;
+                    if ($l1 !~ /fuzzy/) {
+                        $strings{"$context\004$msgid"} = $translation;
+                    }
+                } elsif ($l2 !~ /fuzzy/) {
+                    $strings{$msgid} = $translation;
+                }
             }
         }
         $l1 = $l2;
         $l2 = $l3;
+        $l3 = $l4;
     }
     close PO;
     return \%strings;
