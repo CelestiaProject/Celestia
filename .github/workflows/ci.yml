@@ -31,14 +31,11 @@ jobs:
             generator_platform: x64
 
     steps:
-    - name: path
+    - name: 'Translate UI'
       env:
-        PATH: "C:/Program Files (x86)/Windows Kits/10/bin/${{matrix.platform}};${{env.PATH}}"
-      run: echo %path%
-    - name: link
-      run: |
-        "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/link.exe /?"
-        "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x86/cl.exe"
+        PATH: "C:/Program Files (x86)/Windows Kits/10/bin/${{matrix.platform}};C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.29.30133/bin/Hostx64/${{matrix.platform}}/"
+      working-directory: ${{github.workspace}}/build
+      run: perl ../po/translate_resources.pl --platform=${{matrix.generator_platform}}
 
     - name: 'Setup NuGet Credentials'
       shell: 'bash'
@@ -64,6 +61,8 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -- /maxcpucount:2 /nologo
 
     - name: 'Translate UI'
+      env:
+        PATH: "C:/Program Files (x86)/Windows Kits/10/bin/${{matrix.platform}};C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.29.30133/bin/Hostx64/${{matrix.platform}}/"
       working-directory: ${{github.workspace}}/build
       run: perl ../po/translate_resources.pl --platform=${{matrix.generator_platform}}
 
