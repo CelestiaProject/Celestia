@@ -71,7 +71,9 @@ jobs:
     - name: 'ls -lR'
       shell: bash
       working-directory: ${{github.workspace}}/build/
-      run: ls -lR . ../po ../locale
+      run: |
+        find .. -name "*.dll"
+        ls -lR . ../po ../locale
 
     - name: Package artifacts
       working-directory: ${{github.workspace}}/build/src/celestia

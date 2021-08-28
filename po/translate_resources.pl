@@ -209,6 +209,7 @@ sub link_dll {
     if ($mingw) {
         system qq{$linker -shared -o $out $in};
     } else {
+        print qq{$linker /nologo /noentry /dll /machine:$machine /out:$out $in};
         system qq{$linker /nologo /noentry /dll /machine:$machine /out:$out $in};
     }
 }
