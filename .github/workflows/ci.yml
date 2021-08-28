@@ -49,10 +49,14 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 'Configure CMake'
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=${{matrix.generator_platform}} -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DENABLE_FFMPEG=ON -DENABLE_DATA=OFF
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=${{matrix.generator_platform}} -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DENABLE_FFMPEG=OFF -DENABLE_DATA=OFF
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -- /maxcpucount:2 /nologo
+
+    - name: 'Translate UI'
+      working-directory: ${{github.workspace}}/build
+      run: perl ../po/translate_resources.pl --platform=${{matrix.generator_platform}}
 
     - name: 'Copy DLL for tests'
       working-directory: ${{github.workspace}}/build
