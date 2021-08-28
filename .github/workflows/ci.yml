@@ -61,9 +61,10 @@ jobs:
 
     - name: 'Translate UI'
       env:
-        PATH: "C:/Program Files (x86)/Windows Kits/10/bin/${{matrix.platform}};C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.29.30133/bin/Hostx64/${{matrix.platform}}/"
       working-directory: ${{github.workspace}}/build
-      run: ../po/translate_resources.pl --platform=${{matrix.generator_platform}}
+      run: |
+        $Env:Path = "C:/Program Files (x86)/Windows Kits/10/bin/${{matrix.platform}};C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.29.30133/bin/Hostx64/${{matrix.platform}};" + $Env:Path
+        perl ../po/translate_resources.pl --platform=${{matrix.generator_platform}}
 
     - name: 'Copy DLL for tests'
       working-directory: ${{github.workspace}}/build
