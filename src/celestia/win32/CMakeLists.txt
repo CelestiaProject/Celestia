@@ -1,4 +1,4 @@
-if(NOT WIN32 OR NOT ENABLE_WIN)
+if(NOT ENABLE_WIN)
   message(STATUS "Either not Windows or Windows frontend is disabled.")
   return()
 endif()
@@ -47,3 +47,5 @@ add_executable(celestia-win WIN32 ${WIN32_SOURCES} ${RESOURCES})
 add_dependencies(celestia-win celestia)
 target_link_libraries(celestia-win celestia)
 install(TARGETS celestia-win RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+add_subdirectory(res)

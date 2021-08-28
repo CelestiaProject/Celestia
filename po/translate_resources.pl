@@ -140,12 +140,12 @@ foreach my $po (@po_files) {
         $line =~ s/\Q#pragma code_page(1252)\E/#pragma code_page($codepade)/;
         $line =~ s/VALUE "Translation", 0x409, 1252/VALUE "Translation", 0x$lang_id, $codepade/;
     }
-    print "Saving as $res_dir/celestia_$lang.rc";
+    #print "Saving as $res_dir/celestia_$lang.rc";
     open OUT, "> $res_dir/celestia_$lang.rc";
     print OUT join("\r\n", @res);
     close OUT;
-    my $outfile = compile_rc($lang_id, "$res_dir/celestia_$lang.rc");
-    link_dll($machine, $outfile, "$dll_dir/res_$lang.dll");
+    #my $outfile = compile_rc($lang_id, "$res_dir/celestia_$lang.rc");
+    #link_dll($machine, $outfile, "$dll_dir/res_$lang.dll");
 }
 
 sub load_po_strings {
