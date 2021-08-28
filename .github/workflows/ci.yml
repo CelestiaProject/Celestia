@@ -32,8 +32,8 @@ jobs:
 
     steps:
     - name: ls
-      run: |
-        dir "C:\Program Files (x86)\Windows Kits\10\bin\*"
+      shell: bash
+      run: ls "C:/Program Files (x86)/Windows Kits/10/bin/*/*"
 
 
     - name: 'Setup NuGet Credentials'
