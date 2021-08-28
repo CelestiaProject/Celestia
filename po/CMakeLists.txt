@@ -13,6 +13,7 @@ if(ENABLE_WIN)
   if(MINGW)
     set(OPTIONS "${OPTIONS} --mingw")
   endif()
+  message("${CMAKE_CURRENT_SOURCE_DIR}/translate_resources.pl")
   execute_process(COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/translate_resources.pl" "${OPTIONS}"
                   WORKING_DIRECTORY CMAKE_BINARY_DIR)
 endif()
