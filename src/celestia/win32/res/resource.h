@@ -193,8 +193,6 @@
 #define IDC_SHOWFADINGORBITS            1163
 #define IDC_SHOWRINGS                   1164
 #define IDC_SHOWPARTIALTRAJECTORIES     1165
-#define IDC_COMBO_MOVIE_CODEC           1166
-#define IDC_EDIT_MOVIE_BITRATE          1167
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
