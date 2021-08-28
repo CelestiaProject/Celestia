@@ -18,30 +18,19 @@ use Encode;
 use File::Basename;
 use File::Path qw(make_path);
 use Cwd qw(getcwd);
+use Getopt::Long;
 
-sub compile_rc {
-    my $windres = "i686-w64-mingw32-windres";
-    my $language = shift;
-    my $in = shift;
-    my $out = shift;
-    my $include = dirname $in;
-    print qq{$windres -l $language -D NDEBUG -o $out -I $include -i $in};
-    print "\n";
-    #system qq{rc /l $language /d NDEBUG /fo $out /i $include $in};
-}
+my $platform = 'win32';
+my $mingw = 0;
+GetOptions('platform=s' => \$platform,
+           'mingw'      => \$mingw)
+or die ("Error in command line arguments!\n");
 
-sub link_dll {
-    my $machine = shift;
-    my $in = shift;
-    my $out = shift;
-    #system qq{link /nologo /noentry /dll /machine:$machine /out:$out $in};
-}
-
-my $platform = $#ARGV == -1 ? 'win32' : $ARGV[0];
-my $machine = $platform == 'win32' ? 'X86' : $platform;
+my $machine = $platform == 'win32' ? 'x86' : $platform;
 
 my $po_dir = dirname $0;
 my $resource_file = "$po_dir/../src/celestia/win32/res/celestia.rc";
+my $rc_dir = dirname $resource_file;
 my $build_dir = getcwd;
 my $res_dir = "$build_dir/src/celestia/win32/res";
 
@@ -124,24 +113,22 @@ foreach my $po (@po_files) {
     my @res = split(/\n|\r\n/, $resource);
     my $lang_id = $lang{$lang}[0];
     my $codepade = $lang{$lang}[1];
+    Encode::from_to($v, 'UTF-8', "CP$codepade");
 
     while (my ($k, $v) = each %$strings) {
         next if $k !~ /^(.+)\004(.+)$/;
         my $msgctxt = $1;
         my $msgid = $2;
-        Encode::from_to($v, 'UTF-8', "CP$codepade");
 
         foreach my $line (@res) {
             if ($line =~ /^\s*(?:$keys)/) {
                 $line =~ s/\bNC_\(\s*"\Q$msgctxt\E"\s*,\s*"\Q$msgid\E"\s*\)/"$v"/g;
             }
         }
-
     }
 
     while (my ($k, $v) = each %$strings) {
         next if $k =~ /^(.+)\004(.+)$/;
-        Encode::from_to($v, 'UTF-8', "CP$codepade");
         foreach my $line (@res) {
             if ($line =~ /^\s*(?:$keys)/) {
                 $line =~ s/"\Q$k\E"/"$v"/g;
@@ -158,8 +145,8 @@ foreach my $po (@po_files) {
     open OUT, "> $res_dir/celestia_$lang.rc";
     print OUT join("\r\n", @res);
     close OUT;
-    compile_rc($lang_id, "$res_dir/celestia_$lang.rc", "$res_dir/celestia_$lang.res");
-    link_dll($machine, "$res_dir/celestia_$lang.res", "$dll_dir/res_$lang.dll");
+    my $outfile = compile_rc($lang_id, "$res_dir/celestia_$lang.rc");
+    link_dll($machine, $outfile, "$dll_dir/res_$lang.dll");
 }
 
 sub load_po_strings {
@@ -195,4 +182,33 @@ sub load_po_strings {
     }
     close PO;
     return \%strings;
+}
+
+sub compile_rc {
+    my $windres = $ENV{'RC'} || 'rc';
+    my $language = shift;
+    my $in = shift;
+    my $include = dirname $in;
+    my $outfile;
+    my $out = $in;
+    if ($mingw) {
+        $out =~ s/rc$/o/;
+        system qq{$windres -l $language -D NDEBUG -o $out -I $include -I $rc_dir -i $in};
+    } else {
+        $out =~ s/rc$/res/;
+        system qq{$windres /l $language /d NDEBUG /fo $out /i $include $in};
+    }
+    return $out;
+}
+
+sub link_dll {
+    my $linker = $ENV{'LINKER'} || 'link';
+    my $machine = shift;
+    my $in = shift;
+    my $out = shift;
+    if ($mingw) {
+        system qq{$linker -shared -o $out $in};
+    } else {
+        system qq{$linker /nologo /noentry /dll /machine:$machine /out:$out $in};
+    }
 }
