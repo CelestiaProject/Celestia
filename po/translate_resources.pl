@@ -136,12 +136,11 @@ foreach my $po (@po_files) {
         }
     }
 
-    make_path("$locale_dir/$lang/LC_MESSAGES") if ! -d "$locale_dir/$lang/LC_MESSAGES";
-
     foreach my $line (@res) {
         $line =~ s/\Q#pragma code_page(1252)\E/#pragma code_page($codepade)/;
         $line =~ s/VALUE "Translation", 0x409, 1252/VALUE "Translation", 0x$lang_id, $codepade/;
     }
+    print "Saving as $res_dir/celestia_$lang.rc";
     open OUT, "> $res_dir/celestia_$lang.rc";
     print OUT join("\r\n", @res);
     close OUT;
@@ -196,6 +195,7 @@ sub compile_rc {
         system qq{$windres -l $language -D NDEBUG -o $out -I $include -I $rc_dir -i $in};
     } else {
         $out =~ s/rc$/res/;
+        print qq{$windres /l $language /d NDEBUG /fo $out /i $include $in};
         system qq{$windres /l $language /d NDEBUG /fo $out /i $include $in};
     }
     return $out;
