@@ -193,11 +193,9 @@ sub compile_rc {
     my $out = $in;
     if ($mingw) {
         $out =~ s/rc$/o/;
-        print "Compiling $in to $out\n"
         system qq{$windres -l $language -D NDEBUG -o $out -I $include -I $rc_dir -i $in};
     } else {
         $out =~ s/rc$/res/;
-        print "Compiling $in to $out\n"
         system qq{$windres /l $language /d NDEBUG /fo $out /i $include $in};
     }
     return $out;
@@ -208,7 +206,6 @@ sub link_dll {
     my $machine = shift;
     my $in = shift;
     my $out = shift;
-    print "Linking $in to $out\n"
     if ($mingw) {
         system qq{$linker -shared -o $out $in};
     } else {
