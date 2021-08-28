@@ -34,7 +34,7 @@ jobs:
     - name: path
       env:
         PATH: "C:/Program Files (x86)/Windows Kits/10/bin/${{matrix.platform}};${{env.PATH}}"
-      run: path
+      run: echo %path%
     - name: link
       run: |
         "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/link.exe /?"
