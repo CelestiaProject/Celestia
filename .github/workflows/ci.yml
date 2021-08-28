@@ -31,6 +31,11 @@ jobs:
             generator_platform: x64
 
     steps:
+    - name: 'perl'
+      shell: bash
+      run: |
+        which perl
+        echo $PATH
     - name: 'Setup NuGet Credentials'
       shell: 'bash'
       run: >
