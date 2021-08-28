@@ -7,7 +7,7 @@ gettext_create_translations2("celestia.pot" ALL ${PO_FILES})
 
 if(ENABLE_WIN)
   set(OPTIONS "")
-  if("${CMAKE_GENERATOR_PLATFORM}" STREQUAL "Win64")
+  if("${CMAKE_GENERATOR_PLATFORM}" STREQUAL "x64")
     set(OPTIONS "${OPTIONS} --platform=x64")
   endif()
   if(MINGW)
