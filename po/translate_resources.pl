@@ -3,33 +3,29 @@
 ################################################################
 #           Utility for i18n on Win32
 #
-#   Author: Christophe Teyssier <chris@teyssier.org>
-#   date: July 2006
+#   Copyright: 2006-2021, Celestia Development Team
+#   Original author: Christophe Teyssier <chris@teyssier.org>
+#   Original date: July 2006
 #
-# - Loads translations from the po files and produces translated .rc files in src/celestia/res
-# - Produces a dll with the translated resources for each po file in the locale/ dir
-# - Produces a list of unicode codepoints for each language in the current dir 
-#   (to generate txf font textures)
-# - Compiles .po files and installs catalogs under locale/
-#
-# Requirements:
-# - rc.exe link.exe and msgfmt.exe must be in the PATH
+# - Loads translations from the po files and produces translated .rc
+#   files in src/celestia/win32/res
 ################################################################
 
 use Encode;
 use File::Basename;
+use File::Path qw(make_path);
+use Cwd qw(getcwd);
 
-my $dir = dirname $0;
-my $resource_file = "$dir/../src/celestia/win32/res/celestia.rc";
-my $output_dir = "$dir/../src/celestia/win32/res/";
+my $lang = $ARGV[0];
 
-opendir(DIR, $dir);
-my @po_files = sort (grep( /\.po$/, readdir(DIR) ));
-closedir DIR;
+my $po_dir = dirname $0;
+my $resource_file = "$po_dir/../src/celestia/win32/res/celestia.rc";
+my $rc_dir = dirname $resource_file;
+my $build_dir = getcwd;
 
 open RES, "< $resource_file";
 my $resource;
-{ 
+{
     local $/;
     $resource = <RES>;
 }
@@ -38,89 +34,92 @@ close RES;
 # LangID and code page
 # http://msdn.microsoft.com/en-us/library/dd318693
 my %lang = (
-ar => [ '401', 1256 ],
-be => [ '423', 1251 ],
-bg => [ '402', 1251 ],
-de => [ '407', 1252 ],
-el => [ '408', 1253 ],
-en => [ '409', 1252 ],
-es => [ '40a', 1252 ],
-fr => [ '40c', 1252 ],
-gl => [ '456', 1252 ],
-hu => [ '40e', 1250 ],
-it => [ '410', 1252 ],
-ja => [ '411',  932 ],
-ko => [ '412',  949 ],
-lt => [ '427',  1257 ],
-lv => [ '426', 1257 ],
-nl => [ '413', 1252 ],
-no => [ '414', 1252 ],
-pl => [ '415', 1250 ],
-pt_BR => [ '416', 1252 ],
-pt => [ '816', 1252 ],
-ro =>  [ '418', 1250 ],
-ru =>  [ '419', 1251 ],
-sk =>  [ '41b', 1250 ],
-sv => [ '41d', 1252 ],
-tr => [ '41f', 1254 ],
-uk => [ '422', 1251 ],
-zh_CN => [ '804', 936 ],
-zh_TW => [ '404', 950 ],
+ar => [ '401', 1256, 'LANG_ARABIC, SUBLANG_DEFAULT'],
+be => [ '423', 1251, 'LANG_BELARUSIAN, SUBLANG_DEFAULT'],
+bg => [ '402', 1251, 'LANG_BULGARIAN, SUBLANG_DEFAULT'],
+de => [ '407', 1252, 'LANG_GERMAN, SUBLANG_DEFAULT'],
+el => [ '408', 1253, 'LANG_GREEK, SUBLANG_DEFAULT'],
+en => [ '409', 1252, 'LANG_ENGLISH, SUBLANG_DEFAULT'],
+es => [ '40a', 1252, 'LANG_SPANISH, SUBLANG_DEFAULT'],
+fr => [ '40c', 1252, 'LANG_FRENCH, SUBLANG_DEFAULT'],
+gl => [ '456', 1252, 'LANG_GALICIAN, SUBLANG_DEFAULT' ],
+hu => [ '40e', 1250, 'LANG_HUNGARIAN, SUBLANG_DEFAULT'],
+it => [ '410', 1252, 'LANG_ITALIAN, SUBLANG_DEFAULT'],
+ja => [ '411',  932, 'LANG_JAPANESE, SUBLANG_DEFAULT'],
+ko => [ '412',  949, 'LANG_KOREAN, SUBLANG_DEFAULT'],
+lt => [ '427', 1257, 'LANG_LITHUANIAN, SUBLANG_DEFAULT'],
+lv => [ '426', 1257, 'LANG_LATVIAN, SUBLANG_DEFAULT'],
+nb => [ '414', 1252, 'LANG_NORWEGIAN, SUBLANG_NORWEGIAN_BOKMAL'],
+nl => [ '413', 1252, 'LANG_DUTCH, SUBLANG_DEFAULT'],
+no => [ '814', 1252, 'LANG_NORWEGIAN, SUBLANG_NORWEGIAN_NYNORSK'],
+pl => [ '415', 1250, 'LANG_POLISH, SUBLANG_DEFAULT'],
+pt_BR => [ '416', 1252, 'LANG_PORTUGUESE, SUBLANG_PORTUGUESE_BRAZILIAN'],
+pt => [ '816', 1252, 'LANG_PORTUGUESE, SUBLANG_PORTUGUESE_PORTUGAL'],
+ro => [ '418', 1250, 'LANG_ROMANIAN, SUBLANG_DEFAULT'],
+ru => [ '419', 1251, 'LANG_RUSSIAN, SUBLANG_DEFAULT'],
+sk => [ '41b', 1250, 'LANG_SLOVAK, SUBLANG_DEFAULT'],
+sv => [ '41d', 1252, 'LANG_SWEDISH, SUBLANG_DEFAULT'],
+tr => [ '41f', 1254, 'LANG_TURKISH, SUBLANG_DEFAULT'],
+uk => [ '422', 1251, 'LANG_UKRAINIAN, SUBLANG_DEFAULT'],
+zh_CN => [ '804', 936, 'LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL'],
+zh_TW => [ '404', 950, 'LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED'],
 );
 
-mkdir "$dir\\..\\locale" if ! -d "$dir\\..\\locale";
+my @keywords = qw{
+    POPUP
+    MENUITEM
+    DEFPUSHBUTTON
+    LTEXT
+    CAPTION
+    PUSHBUTTON
+    RTEXT
+    CTEXT
+    LTEXT
+    GROUPBOX
+    CONTROL
+    GROUPBOX
+    AUTOCHECKBOX
+    AUTORADIOBUTTON
+};
 
-my %codepoints; # hash holds unicode codepoints used by language
+my $keys = join('|', @keywords);
 
-foreach my $po (@po_files) {
-    my $strings = load_po_strings("$dir\\$po");
-    my $res = $resource;
-    my $lang = basename $po;
-    $lang =~ s/\..*//o;
-    mkdir "$dir\\..\\locale\\$lang" if ! -d "$dir\\..\\locale\\$lang";
-    mkdir "$dir\\..\\locale\\$lang\\LC_MESSAGES" if ! -d "$dir\\..\\locale\\$lang\\LC_MESSAGES";
+my $strings = load_po_strings("$po_dir/$lang.po");
+my @res = split(/\n|\r\n/, $resource);
+my $lang_id = $lang{$lang}[0];
+my $codepade = $lang{$lang}[1];
+my $lang_name =  $lang{$lang}[2];
+Encode::from_to($v, 'UTF-8', "CP$codepade");
 
-    while (my ($k, $v) = each %$strings) {
-        map { $codepoints{$lang}{$_} = 1; } map { sprintf '%04X', ord($_); } split //, Encode::decode_utf8($v);
-        Encode::from_to($v, 'UTF-8', "CP$lang{$lang}[1]");
-        map { $c{ord($_)} = 1; } split //, Encode::decode("UTF-8", $v);
-        $res =~ s/"\Q$k\E"/"$v"/g;
+while (my ($k, $v) = each %$strings) {
+    next if $k !~ /^(.+)\004(.+)$/;
+    my $msgctxt = $1;
+    my $msgid = $2;
+
+    foreach my $line (@res) {
+        if ($line =~ /^\s*(?:$keys)/) {
+            $line =~ s/\bNC_\(\s*"\Q$msgctxt\E"\s*,\s*"\Q$msgid\E"\s*\)/"$v"/g;
+        }
     }
-
-    $res=~ s/\Q#pragma code_page(1252)\E/#pragma code_page($lang{$lang}[1])/;
-    open OUT, "> $output_dir/celestia_$lang.rc";
-    print OUT $res;
-    close OUT;
-    system qq{rc /l $lang{$lang}[0] /d "NDEBUG" /fo $dir\\..\\src\\celestia\\win32\\celestia_$lang.res /i "$dir\\..\\src\\celestia\\win32\\res" $dir\\..\\src\\celestia\\win32\\res\\celestia_$lang.rc};
-    system qq{link /nologo /noentry /dll /machine:I386 /out:$dir\\..\\locale\\res_$lang.dll $dir\\..\\src\\celestia\\win32\\celestia_$lang.res};
-    system qq{msgfmt $dir\\$lang.po -o $dir\\..\\locale\\$lang\\LC_MESSAGES\\celestia.mo};
 }
 
-opendir(DIR, "$dir\\..\\po2");
-my @po_files = sort (grep( /\.po$/, readdir(DIR) ));
-closedir DIR;
-foreach my $po (@po_files) {
-    my $lang = basename $po;
-    $lang =~ s/\..*//o;
-
-    my $strings = load_po_strings("$dir\\..\\po2\\$po");
-    while (my ($k, $v) = each %$strings) {
-        map { $codepoints{$lang}{$_} = 1; } map { sprintf '%04X', ord($_); } split //, Encode::decode_utf8($v);
+while (my ($k, $v) = each %$strings) {
+    next if $k =~ /^(.+)\004(.+)$/;
+    foreach my $line (@res) {
+        if ($line =~ /^\s*(?:$keys)/) {
+            $line =~ s/"\Q$k\E"/"$v"/g;
+        }
     }
-
-    mkdir "$dir\\..\\locale\\$lang" if ! -d "$dir\\..\\locale\\$lang";
-    mkdir "$dir\\..\\locale\\$lang\\LC_MESSAGES" if ! -d "$dir\\..\\locale\\$lang\\LC_MESSAGES";
-    system qq{msgfmt $dir\\..\\po2\\$lang.po -o $dir\\..\\locale\\$lang\\LC_MESSAGES\\celestia_constellations.mo};
 }
 
-foreach my $lang (keys %codepoints) {
-    # list of unicode codepoints to generate font textures
-    my $chr;
-    map { $chr .= "$_ \n"; } sort keys %{$codepoints{$lang}};
-    open CHR, "> $dir/codepoints_$lang.txt";
-    print CHR $chr;
-    close CHR;
+foreach my $line (@res) {
+    $line =~ s/LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US/\/\/LANGUAGE $lang_name/;
+    $line =~ s/\Q#pragma code_page(1252)\E/#pragma code_page($codepade)/;
+    $line =~ s/VALUE "Translation", 0x0?409, (?:1252|0x04B0)/VALUE "Translation", 0x$lang_id, $codepade/;
 }
+open OUT, "> celestia_$lang.rc";
+print OUT join("\r\n", @res);
+close OUT;
 
 sub load_po_strings {
     my $po = shift;
@@ -130,18 +129,28 @@ sub load_po_strings {
     my $l1;
     my $l2;
     my $l3;
-    while ($l3 = <PO>) {
+    my $l4;
+    while ($l4 = <PO>) {
         # The po file is read by groups of three lines.
         # we can safely ignore multiline msgids since resource files
         # use only single line strings
-        if ($l2 =~ /^msgid\s+"(.*)"/) {
+        if ($l3 =~ /^msgid\s+"(.*)"/) {
             my $msgid = $1;
-            if ($l3 =~ /^msgstr\s+"(.+)"/ && $l1 !~ /fuzzy/ ) {
-                $strings{$msgid} = $1;
+            if ($l4 =~ /^msgstr\s+"(.+)"/) {
+                my $translation = $1;
+                if ($l2 =~ /^msgctxt\s+"(.+)"/) {
+                    my $context = $1;
+                    if ($l1 !~ /fuzzy/) {
+                        $strings{"$context\004$msgid"} = $translation;
+                    }
+                } elsif ($l2 !~ /fuzzy/) {
+                    $strings{$msgid} = $translation;
+                }
             }
         }
         $l1 = $l2;
         $l2 = $l3;
+        $l3 = $l4;
     }
     close PO;
     return \%strings;
