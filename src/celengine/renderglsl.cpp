@@ -101,10 +101,9 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             textures[nTextures++] = ri.glossTex;
         }
     }
-    else if (ri.lunarLambert != 0.0f)
+    if (ri.lunarLambert != 0.0f)
     {
-        // TODO: Lunar-Lambert model and specular color should not be mutually exclusive
-        shadprop.lightModel = ShaderProperties::LunarLambertModel;
+        shadprop.lightModel |= ShaderProperties::LunarLambertModel;
     }
 
     if (ri.nightTex != nullptr)
@@ -255,7 +254,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
     prog->eyePosition = ls.eyePos_obj;
     prog->shininess = ri.specularPower;
-    if (shadprop.lightModel == ShaderProperties::LunarLambertModel)
+    if ((shadprop.lightModel & ShaderProperties::LunarLambertModel) != 0)
         prog->lunarLambert = ri.lunarLambert;
 
     if ((shadprop.texUsage & ShaderProperties::RingShadowTexture) != 0)
