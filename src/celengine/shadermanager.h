@@ -72,17 +72,17 @@ class ShaderProperties
 
  enum
  {
-     DiffuseModel          = 0,
-     SpecularModel         = 1,
-     RingIllumModel        = 2,
-     PerPixelSpecularModel = 3,
-     OrenNayarModel        = 4,
-     AtmosphereModel       = 5,
-     LunarLambertModel     = 6,
-     ParticleDiffuseModel  = 7,
-     EmissiveModel         = 8,
-     ParticleModel         = 9,
-     UnlitModel            = 10,
+     DiffuseModel          = 0x0001,
+     SpecularModel         = 0x0002,
+     RingIllumModel        = 0x0004,
+     PerPixelSpecularModel = 0x0008,
+     OrenNayarModel        = 0x0010,
+     AtmosphereModel       = 0x0020,
+     LunarLambertModel     = 0x0040,
+     ParticleDiffuseModel  = 0x0080,
+     EmissiveModel         = 0x0100,
+     ParticleModel         = 0x0200,
+     UnlitModel            = 0x0400,
  };
 
  enum

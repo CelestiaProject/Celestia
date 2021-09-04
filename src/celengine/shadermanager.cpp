@@ -139,7 +139,7 @@ ShaderProperties::usesShadows() const
 bool
 ShaderProperties::usesFragmentLighting() const
 {
-    return (texUsage & NormalTexture) != 0 || lightModel == PerPixelSpecularModel;
+    return (texUsage & NormalTexture) != 0 || (lightModel & PerPixelSpecularModel) != 0;
 }
 
 
@@ -277,14 +277,7 @@ ShaderProperties::hasSharedTextureCoords() const
 bool
 ShaderProperties::hasSpecular() const
 {
-    switch (lightModel)
-    {
-    case SpecularModel:
-    case PerPixelSpecularModel:
-        return true;
-    default:
-        return false;
-    }
+    return lightModel == SpecularModel || (lightModel & PerPixelSpecularModel) != 0;
 }
 
 
@@ -1153,7 +1146,7 @@ NightTextureBlend()
 static bool
 VSComputesColorSum(const ShaderProperties& props)
 {
-    return !props.usesShadows() && props.lightModel != ShaderProperties::PerPixelSpecularModel;
+    return !props.usesShadows() && (props.lightModel & ShaderProperties::PerPixelSpecularModel) == 0;
 }
 
 
@@ -1210,9 +1203,12 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         source += TangentSpaceTransform(LightDir_tan(i), LightProperty(i, "direction"));
         // Diffuse color is computed in the fragment shader
     }
-    else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
+    else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
     {
-        source += SeparateDiffuse(i) + " = NL;\n";
+        if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
+            source += AssignDiffuse(i, props) + " mix(NL, NL / (max(NV, 0.001) + NL), lunarLambert);\n";
+        else
+            source += SeparateDiffuse(i) + " = NL;\n";
     }
     else if (props.lightModel == ShaderProperties::OrenNayarModel)
     {
@@ -1238,7 +1234,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
             source += "diff.rgb += " + LightProperty(i, "diffuse") + " * d;\n";
         }
     }
-    else if (props.lightModel == ShaderProperties::LunarLambertModel)
+    else if ((props.lightModel == ShaderProperties::LunarLambertModel) != 0)
     {
         source += AssignDiffuse(i, props) + " mix(NL, NL / (max(NV, 0.001) + NL), lunarLambert);\n";
     }
@@ -1790,7 +1786,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += "varying vec3 eyeDir_tan;\n";
         }
     }
-    else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
+    else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
     {
         source += "varying vec4 diffFactors;\n";
         source += "varying vec3 normal;\n";
@@ -1822,7 +1818,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     // the lunar-Lambert term here in the vertex shader.
     if (!props.usesTangentSpaceLighting())
     {
-        if (props.lightModel == ShaderProperties::LunarLambertModel)
+        if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
             source += "uniform float lunarLambert;\n";
     }
 
@@ -1914,7 +1910,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += TangentSpaceTransform("eyeDir_tan", "eyeDir");
         }
     }
-    else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
+    else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
     {
         source += "normal = in_Normal;\n";
     }
@@ -2154,7 +2150,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             }
         }
 
-        if (props.lightModel == ShaderProperties::LunarLambertModel)
+        if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
             source += "uniform float lunarLambert;\n";
 
         for (unsigned int i = 0; i < props.nLights; i++)
@@ -2171,7 +2167,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             }
         }
     }
-    else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
+    else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
     {
         source += "uniform vec3 ambientColor;\n";
         source += "uniform float opacity;\n";
@@ -2284,7 +2280,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
     if (props.usesTangentSpaceLighting() ||
-        props.lightModel == ShaderProperties::PerPixelSpecularModel ||
+        (props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0 ||
         props.usesShadows())
     {
         source += "vec4 diff = vec4(ambientColor, opacity);\n";
@@ -2335,12 +2331,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         {
             source += "vec3 V = normalize(eyeDir_tan);\n";
 
-            if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
+            if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
             {
                 source += "vec3 H;\n";
                 source += "float NH;\n";
             }
-            else if (props.lightModel == ShaderProperties::LunarLambertModel)
+            if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
             {
                 source += "float NV = dot(n, V);\n";
             }
@@ -2355,7 +2351,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             // geometry like planet spheres.)
             // source += LightDir_tan(i) + " = normalize(" + LightDir(i)_tan + ");\n";
             source += "NL = dot(" + LightDir_tan(i) + ", n);\n";
-            if (props.lightModel == ShaderProperties::LunarLambertModel)
+            if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
             {
                 source += "NL = max(0.0, NL);\n";
                 source += "l = mix(NL, (NL / (max(NV, 0.001) + NL)), lunarLambert) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
@@ -2393,7 +2389,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                     " * " + FragLightProperty(i, "specColor") +
                     ";\n";
             }
-            else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
+            else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
             {
                 source += "H = normalize(eyeDir_tan + " + LightDir_tan(i) + ");\n";
                 source += "NH = max(0.0, dot(n, H));\n";
@@ -2401,7 +2397,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             }
         }
     }
-    else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
+    else if ((props.lightModel & ShaderProperties::PerPixelSpecularModel) != 0)
     {
         source += "float NH;\n";
         source += "vec3 n = normalize(normal);\n";
@@ -3627,7 +3623,7 @@ CelestiaGLProgram::initParameters()
         extinctionCoeff      = vec3Param("extinctionCoeff");
     }
 
-    if (props.lightModel == ShaderProperties::LunarLambertModel)
+    if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
     {
         lunarLambert         = floatParam("lunarLambert");
     }
@@ -3748,7 +3744,7 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
         // Include a phase-based normalization factor to prevent planets from appearing
         // too dim when rendered with non-Lambertian photometric functions.
         float cosPhaseAngle = light.direction_obj.dot(ls.eyeDir_obj);
-        if (props.lightModel == ShaderProperties::LunarLambertModel)
+        if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
         {
             float photometricNormFactor = std::max(1.0f, 1.0f + cosPhaseAngle * 0.5f);
             lightColor *= photometricNormFactor;
