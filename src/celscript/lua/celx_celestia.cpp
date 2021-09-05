@@ -52,6 +52,17 @@ void PushClass(lua_State*, int);
 void setTable(lua_State*, const char*, lua_Number);
 ObserverFrame::CoordinateSystem parseCoordSys(const string&);
 
+static fs::path GetScriptPath(lua_State* l)
+{
+    lua_Debug ar;
+    lua_getstack(l, 1, &ar);
+    lua_getinfo(l, "S", &ar);
+    auto* base_dir = ar.source; // Lua file from which we are called
+    if (base_dir[0] == '@')
+        base_dir++;
+    return fs::path(base_dir).parent_path();
+}
+
 // ==================== Celestia-object ====================
 int celestia_new(lua_State* l, CelestiaCore* appCore)
 {
@@ -1959,25 +1970,9 @@ static int celestia_runscript(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:runscript");
     string scriptfile = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:runscript must be a string");
 
-    lua_Debug ar;
-    lua_getstack(l, 1, &ar);
-    lua_getinfo(l, "S", &ar);
-    string base_dir = ar.source; // Script file from which we are called
-    if (base_dir[0] == '@') base_dir = base_dir.substr(1);
-#ifdef _WIN32
-    // Replace all backslashes with forward in base dir path
-    size_t pos = base_dir.find('\\');
-    while (pos != string::npos)
-    {
-        base_dir.replace(pos, 1, "/");
-        pos = base_dir.find('\\');
-    }
-#endif
-    // Remove script filename from path
-    base_dir = base_dir.substr(0, base_dir.rfind('/')) + '/';
-
+    fs::path base_dir = GetScriptPath(l);
     CelestiaCore* appCore = this_celestia(l);
-    appCore->runScript(base_dir + scriptfile);
+    appCore->runScript(base_dir / scriptfile);
     return 0;
 }
 
@@ -2273,13 +2268,8 @@ static int celestia_loadtexture(lua_State* l)
 
     celx.checkArgs(2, 2, "Need one argument for celestia:loadtexture()");
     string s = celx.safeGetString(2, AllErrors, "Argument to celestia:loadtexture() must be a string");
-    lua_Debug ar;
-    lua_getstack(l, 1, &ar);
-    lua_getinfo(l, "S", &ar);
-    string base_dir = ar.source; // Lua file from which we are called
-    if (base_dir[0] == '@') base_dir = base_dir.substr(1);
-    base_dir = base_dir.substr(0, base_dir.rfind('/')) + '/';
-    Texture* t = LoadTextureFromFile(base_dir + s);
+    fs::path base_dir = GetScriptPath(l);
+    Texture* t = LoadTextureFromFile(base_dir / s);
     if (t == nullptr) return 0;
     return celx.pushClass(t);
 }
