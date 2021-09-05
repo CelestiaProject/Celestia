@@ -367,7 +367,8 @@ recursive_directory_iterator::recursive_directory_iterator(const path& p, direct
     if (m_dirs == nullptr)
         m_dirs = std::shared_ptr<DirStack>(new DirStack);
 
-    m_iter = directory_iterator(p, options, ec);
+    m_iter = directory_iterator(p, options, ec, false);
+    __increment(ec); // advance to the first element
 
     if (m_iter == end(m_iter))
         reset();
