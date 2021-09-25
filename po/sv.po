@@ -33,7 +33,7 @@ msgstr "Jorden"
 
 #: ../data/data.cpp:4 ../src/celestia/qt/qtsolarsystembrowser.cpp:554
 msgid "Moon"
-msgstr "Måne"
+msgstr "Månen"
 
 #: ../data/data.cpp:5
 msgid "Mars"
@@ -62,7 +62,7 @@ msgstr "Europa"
 
 #: ../data/data.cpp:11
 msgid "Ganymede"
-msgstr "Ganymede"
+msgstr "Ganymedes"
 
 #: ../data/data.cpp:12
 msgid "Callisto"
@@ -119,11 +119,11 @@ msgstr "Hyperion"
 
 #: ../data/data.cpp:25
 msgid "Iapetus"
-msgstr "Iapetus"
+msgstr "Japetus"
 
 #: ../data/data.cpp:26
 msgid "Phoebe"
-msgstr "Phobos"
+msgstr "Phoebe"
 
 #: ../data/data.cpp:27 ../src/celestia/qt/qteventfinder.cpp:274
 #: ../src/celestia/win32/wineclipses.cpp:293
@@ -207,12 +207,12 @@ msgstr ""
 #: ../data/data.cpp:46
 #, fuzzy
 msgid "Haumea"
-msgstr "Noumea"
+msgstr "Haumea"
 
 #: ../data/data.cpp:47
 #, fuzzy
 msgid "Namaka"
-msgstr "Bamako"
+msgstr "Namaka"
 
 #: ../data/data.cpp:48
 msgid "Hi'iaka"
