@@ -86,7 +86,10 @@ static const float MaximumFOVFisheye = degToRad(179.99f);
 static const float MinimumFOV = degToRad(0.001f);
 static float KeyRotationAccel = degToRad(120.0f);
 static float MouseRotationSensitivity = degToRad(1.0f);
-
+static const double OneMiInKm = 1.609344;
+static const double OneFtInKm = 0.0003048;
+static const double OneLbInKg = 0.45359237;
+static const double OneLbPerFt3InKgPerM3 = OneLbInKg / pow(OneFtInKm * 1000.0, 3);
 
 static void warning(string s)
 {
@@ -2487,7 +2490,7 @@ static FormattedNumber SigDigitNum(double v, int digits)
 }
 
 
-static string DistanceLyToStr(double distance)
+static string DistanceLyToStr(double distance, int digits, CelestiaCore::MeasurementSystem measurement)
 {
     const char* units = "";
 
@@ -2510,26 +2513,40 @@ static string DistanceLyToStr(double distance)
         units = _("au");
         distance = astro::lightYearsToAU(distance);
     }
-    else if (abs(distance) > astro::kilometersToLightYears(1.0f))
+    else if (measurement == CelestiaCore::Imperial)
     {
-        units = _("km");
-        distance = astro::lightYearsToKilometers(distance);
-        return fmt::sprintf("%.2f %s", distance, units);
+        if (abs(distance) > astro::kilometersToLightYears(OneMiInKm))
+        {
+            units = _("mi");
+            distance = astro::lightYearsToKilometers(distance) / OneMiInKm;
+        }
+        else
+        {
+            units = _("ft");
+            distance = astro::lightYearsToKilometers(distance) / OneFtInKm;
+        }
     }
     else
     {
-        units = _("m");
-        distance = astro::lightYearsToKilometers(distance) * 1000.0f;
-        return fmt::sprintf("%.2f %s", distance, units);
+        if (abs(distance) > astro::kilometersToLightYears(1.0f))
+        {
+            units = _("km");
+            distance = astro::lightYearsToKilometers(distance);
+        }
+        else
+        {
+            units = _("m");
+            distance = astro::lightYearsToKilometers(distance) * 1000.0f;
+        }
     }
 
-    return fmt::sprintf("%s %s", SigDigitNum(distance, 5), units);
+    return fmt::sprintf("%s %s", SigDigitNum(distance, digits), units);
 }
 
 
-static string DistanceKmToStr(double distance)
+static string DistanceKmToStr(double distance, int digits, CelestiaCore::MeasurementSystem measurement)
 {
-    return DistanceLyToStr(astro::kilometersToLightYears(distance));
+    return DistanceLyToStr(astro::kilometersToLightYears(distance), digits, measurement);
 }
 
 
@@ -2562,47 +2579,67 @@ static void displayRotationPeriod(Overlay& overlay, double days)
     fmt::fprintf(overlay, _("Rotation period: %s %s\n"), n, p);
 }
 
-static void displayMass(Overlay& overlay, float mass)
+static void displayMass(Overlay& overlay, float mass, CelestiaCore::MeasurementSystem measurement)
 {
     if (mass < 0.001f)
-        fmt::fprintf(overlay, _("Mass: %.6g kg\n"), mass * astro::EarthMass);
+    {
+        if (measurement == CelestiaCore::Imperial)
+            fmt::fprintf(overlay, _("Mass: %.6g lb\n"), mass * astro::EarthMass / (float) OneLbInKg);
+        else
+            fmt::fprintf(overlay, _("Mass: %.6g kg\n"), mass * astro::EarthMass);
+    }
     else if (mass > 50)
         fmt::fprintf(overlay, _("Mass: %.2f Mj\n"), mass * astro::EarthMass / astro::JupiterMass);
     else
         fmt::fprintf(overlay, _("Mass: %.2f Me\n"), mass);
 }
 
-static void displaySpeed(Overlay& overlay, float speed)
+static void displaySpeed(Overlay& overlay, float speed, CelestiaCore::MeasurementSystem measurement)
 {
     FormattedNumber n;
     const char *u;
 
-    if (speed < 1.0f)
-    {
-        n = SigDigitNum(speed * 1000.0f, 3);
-        u = _("m/s");
-    }
-    else if (speed < 10000.0f)
-    {
-        n = SigDigitNum(speed, 3);
-        u = _("km/s");
-    }
-    else if (speed < (float) 100.0_c)
-    {
-        n = SigDigitNum(speed / astro::speedOfLight, 3);
-        u = "c";
-    }
-    else if (speed < (float) 1000.0_au)
-    {
-        n = SigDigitNum(astro::kilometersToAU(speed), 3);
-        u = _("AU/s");
-    }
-    else
+    if (speed >= (float) 1000.0_au)
     {
         n = SigDigitNum(astro::kilometersToLightYears(speed), 3);
         u = _("ly/s");
     }
-
+    else if (speed >= (float) 100.0_c)
+    {
+        n = SigDigitNum(astro::kilometersToAU(speed), 3);
+        u = _("AU/s");
+    }
+    else if (speed >= 10000.0f)
+    {
+        n = SigDigitNum(speed / astro::speedOfLight, 3);
+        u = "c";
+    }
+    else if (measurement == CelestiaCore::Imperial)
+    {
+        if (speed >= (float) OneMiInKm)
+        {
+            n = SigDigitNum(speed / (float) OneMiInKm, 3);
+            u = _("mi/s");
+        }
+        else
+        {
+            n = SigDigitNum(speed / (float) OneFtInKm, 3);
+            u = _("ft/s");
+        }
+    }
+    else
+    {
+        if (speed >= 1.0f)
+        {
+            n = SigDigitNum(speed, 3);
+            u = _("km/s");
+        }
+        else
+        {
+            n = SigDigitNum(speed * 1000.0f, 3);
+            u = _("m/s");
+        }
+    }
     fmt::fprintf(overlay, _("Speed: %s %s\n"), n, u);
 }
 
@@ -2713,7 +2750,8 @@ static void displayPlanetocentricCoords(Overlay& overlay,
                                         double longitude,
                                         double latitude,
                                         double altitude,
-                                        bool showAltitude)
+                                        bool showAltitude,
+                                        CelestiaCore::MeasurementSystem measurement)
 {
     char ewHemi = ' ';
     char nsHemi = ' ';
@@ -2762,7 +2800,7 @@ static void displayPlanetocentricCoords(Overlay& overlay,
     if (showAltitude)
         fmt::fprintf(overlay, "%.6f%c %.6f%c", lat, nsHemi, lon, ewHemi);
     else
-        fmt::fprintf(overlay, _("%.6f%c %.6f%c %f km"), lat, nsHemi, lon, ewHemi, altitude);
+        fmt::fprintf(overlay, _("%.6f%c %.6f%c %s"), lat, nsHemi, lon, ewHemi, DistanceKmToStr(altitude, 5, measurement));
 }
 
 
@@ -2786,9 +2824,10 @@ static void displayStarInfo(Overlay& overlay,
                             int detail,
                             Star& star,
                             const Universe& universe,
-                            double distance)
+                            double distance,
+                            CelestiaCore::MeasurementSystem measurement)
 {
-    fmt::fprintf(overlay, _("Distance: %s\n"), DistanceLyToStr(distance));
+    fmt::fprintf(overlay, _("Distance: %s\n"), DistanceLyToStr(distance, 5, measurement));
 
     if (!star.getVisibility())
     {
@@ -2827,14 +2866,14 @@ static void displayStarInfo(Overlay& overlay,
 
             if (solarRadii > 0.01f)
             {
-                fmt::fprintf(overlay, _("Radius: %s Rsun  (%s km)\n"),
+                fmt::fprintf(overlay, _("Radius: %s Rsun  (%s)\n"),
                              SigDigitNum(star.getRadius() / 696000.0f, 2),
-                             SigDigitNum(star.getRadius(), 3));
+                             DistanceKmToStr(star.getRadius(), 3, measurement));
             }
             else
             {
-                fmt::fprintf(overlay, _("Radius: %s km\n"),
-                             SigDigitNum(star.getRadius(), 3));
+                fmt::fprintf(overlay, _("Radius: %s\n"),
+                             DistanceKmToStr(star.getRadius(), 3, measurement));
             }
 
             if (star.getRotationModel()->isPeriodic())
@@ -2854,22 +2893,22 @@ static void displayStarInfo(Overlay& overlay,
 }
 
 
-static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double distance)
+static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double distance, CelestiaCore::MeasurementSystem measurement)
 {
     overlay << dso.getDescription() << '\n';
 
     if (distance >= 0)
     {
         fmt::fprintf(overlay, _("Distance: %s\n"),
-                     DistanceLyToStr(distance));
+                     DistanceLyToStr(distance, 5, measurement));
     }
     else
     {
         fmt::fprintf(overlay, _("Distance from center: %s\n"),
-                     DistanceLyToStr(distance + dso.getRadius()));
+                     DistanceLyToStr(distance + dso.getRadius(), 5, measurement));
      }
     fmt::fprintf(overlay, _("Radius: %s\n"),
-                 DistanceLyToStr(dso.getRadius()));
+                 DistanceLyToStr(dso.getRadius(), 5, measurement));
 
     displayApparentDiameter(overlay, dso.getRadius(), distance);
     if (dso.getAbsoluteMagnitude() > DSO_DEFAULT_ABS_MAGNITUDE)
@@ -2886,17 +2925,18 @@ static void displayPlanetInfo(Overlay& overlay,
                               Body& body,
                               double t,
                               double distanceKm,
-                              const Vector3d& viewVec)
+                              const Vector3d& viewVec,
+                              CelestiaCore::MeasurementSystem measurement)
 {
     double distance = distanceKm - body.getRadius();
-    fmt::fprintf(overlay, _("Distance: %s\n"), DistanceKmToStr(distance));
+    fmt::fprintf(overlay, _("Distance: %s\n"), DistanceKmToStr(distance, 5, measurement));
 
     if (body.getClassification() == Body::Invisible)
     {
         return;
     }
 
-    fmt::fprintf(overlay, _("Radius: %s\n"), DistanceKmToStr(body.getRadius()));
+    fmt::fprintf(overlay, _("Radius: %s\n"), DistanceKmToStr(body.getRadius(), 5, measurement));
 
     displayApparentDiameter(overlay, body.getRadius(), distanceKm);
 
@@ -2947,11 +2987,16 @@ static void displayPlanetInfo(Overlay& overlay,
             displayRotationPeriod(overlay, body.getRotationModel(t)->getPeriod());
 
         if (body.getName() != "Earth" && body.getMass() > 0)
-            displayMass(overlay, body.getMass());
+            displayMass(overlay, body.getMass(), measurement);
 
         float density = body.getDensity();
         if (density > 0)
-            fmt::fprintf(overlay, _("Density: %.2f x 1000 kg/m^3\n"), density / 1000.0f);
+        {
+            if (measurement == CelestiaCore::Imperial)
+                fmt::fprintf(overlay, _("Density: %.2f x 1000 lb/ft^3\n"), density / (float) OneLbPerFt3InKgPerM3 / 1000.0f);
+            else
+                fmt::fprintf(overlay, _("Density: %.2f x 1000 kg/m^3\n"), density / 1000.0f);
+        }
 
         float planetTemp = body.getTemperature(t);
         if (planetTemp > 0)
@@ -2962,9 +3007,10 @@ static void displayPlanetInfo(Overlay& overlay,
 
 static void displayLocationInfo(Overlay& overlay,
                                 Location& location,
-                                double distanceKm)
+                                double distanceKm,
+                                CelestiaCore::MeasurementSystem measurement)
 {
-    fmt::fprintf(overlay, _("Distance: %s\n"), DistanceKmToStr(distanceKm));
+    fmt::fprintf(overlay, _("Distance: %s\n"), DistanceKmToStr(distanceKm, 5, measurement));
 
     Body* body = location.getParentBody();
     if (body != nullptr)
@@ -2972,7 +3018,7 @@ static void displayLocationInfo(Overlay& overlay,
         Vector3f locPos = location.getPosition();
         Vector3d lonLatAlt = body->cartesianToPlanetocentric(locPos.cast<double>());
         displayPlanetocentricCoords(overlay, *body,
-                                    lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z(), false);
+                                    lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z(), false, measurement);
     }
 }
 
@@ -3169,7 +3215,7 @@ void CelestiaCore::renderOverlay()
         else
             *overlay << '\n';
 
-        displaySpeed(*overlay, sim->getObserver().getVelocity().norm());
+        displaySpeed(*overlay, sim->getObserver().getVelocity().norm(), measurement);
 
         overlay->endText();
         overlay->restorePos();
@@ -3280,7 +3326,8 @@ void CelestiaCore::renderOverlay()
                                 hudDetail,
                                 *(sel.star()),
                                 *(sim->getUniverse()),
-                                astro::kilometersToLightYears(v.norm()));
+                                astro::kilometersToLightYears(v.norm()),
+                                measurement);
             }
             break;
 
@@ -3306,7 +3353,8 @@ void CelestiaCore::renderOverlay()
                 *overlay << '\n';
                 displayDSOinfo(*overlay,
                                *sel.deepsky(),
-                               astro::kilometersToLightYears(v.norm()) - sel.deepsky()->getRadius());
+                               astro::kilometersToLightYears(v.norm()) - sel.deepsky()->getRadius(),
+                               measurement);
             }
             break;
 
@@ -3355,7 +3403,8 @@ void CelestiaCore::renderOverlay()
                                   *(sel.body()),
                                   sim->getTime(),
                                   v.norm(),
-                                  v);
+                                  v,
+                                  measurement);
             }
             break;
 
@@ -3364,7 +3413,7 @@ void CelestiaCore::renderOverlay()
             *overlay << sel.location()->getName(true).c_str();
             overlay->setFont(font);
             *overlay << '\n';
-            displayLocationInfo(*overlay, *(sel.location()), v.norm());
+            displayLocationInfo(*overlay, *(sel.location()), v.norm(), measurement);
             break;
 
         default:
@@ -4736,6 +4785,20 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
         break;
     }
     return false;
+}
+
+void CelestiaCore::setMeasurementSystem(CelestiaCore::MeasurementSystem newMeasurement)
+{
+    if (measurement != newMeasurement)
+    {
+        measurement = newMeasurement;
+        notifyWatchers(MeasurementSystemChanged);
+    }
+}
+
+CelestiaCore::MeasurementSystem CelestiaCore::getMeasurementSystem() const
+{
+    return measurement;
 }
 
 void CelestiaCore::setLogFile(const fs::path &fn)
