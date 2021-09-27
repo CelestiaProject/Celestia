@@ -5800,3 +5800,978 @@ msgstr "%sのオープンでエラーが発生しました。\n"
 
 #~ msgid "Running script"
 #~ msgstr "スクリプトを実行しています..."
+
+msgid "Sol"
+msgstr "太陽"
+
+msgid "Alpheratz"
+msgstr "アルフェラッツ"
+
+msgid "Sirrah"
+msgstr "シラー"
+
+msgid "Caph"
+msgstr "カフ"
+
+msgid "Algenib"
+msgstr "アルゲニブ"
+
+msgid "Schemali"
+msgstr "シェマリ"
+
+msgid "Ankaa"
+msgstr "アンカー"
+
+msgid "Shedir"
+msgstr "セディル"
+
+msgid "Schedar"
+msgstr "スケダル"
+
+msgid "Diphda"
+msgstr "ディフダ"
+
+msgid "Deneb Kaitos"
+msgstr "デネブ・カイトス"
+
+msgid "Achird"
+msgstr "アキルド"
+
+msgid "Van Maanen 2"
+msgstr "ファン・マーネン2"
+
+msgid "Mirach"
+msgstr "ミラク"
+
+msgid "Adhil"
+msgstr "アディル"
+
+msgid "Ruchbah"
+msgstr "ルクバー"
+
+msgid "Achernar"
+msgstr "アケルナル"
+
+msgid "Baten Kaitos"
+msgstr "バテン・カイトス"
+
+msgid "Caput Trianguli"
+msgstr "カプト・トリアングリ"
+
+msgid "Mesarthim"
+msgstr "メサルティム"
+
+msgid "Segin"
+msgstr "セギン"
+
+msgid "Navi"
+msgstr "ナビ"
+
+msgid "Sheratan"
+msgstr "シェラタン"
+
+msgid "Al Rescha"
+msgstr "アル・レカ"
+
+msgid "Almaak"
+msgstr "アルマーク"
+
+msgid "Almach"
+msgstr "アルマク"
+
+msgid "Alamak"
+msgstr "アラマク"
+
+msgid "Hamal"
+msgstr "ハマル"
+
+msgid "Mira"
+msgstr "ミラ"
+
+msgid "Polaris"
+msgstr "北極星(ポラリス)"
+
+msgid "Angetenar"
+msgstr "アンゲテナール"
+
+msgid "Azha"
+msgstr "アザー"
+
+msgid "Acamar"
+msgstr "アカマル"
+
+msgid "Menkar"
+msgstr "メンカル"
+
+msgid "Menkab"
+msgstr "メンカブ"
+
+msgid "Algol"
+msgstr "アルゴル"
+
+msgid "Botein"
+msgstr "ボテイン"
+
+msgid "Mirphak"
+msgstr "ミルファク"
+
+msgid "Mirfak"
+msgstr "ミルファク"
+
+msgid "Marfak"
+msgstr "マルファク"
+
+msgid "Rana"
+msgstr "ラナ"
+
+msgid "Atik"
+msgstr "アティク"
+
+msgid "Celaeno"
+msgstr "ケレノ"
+
+msgid "Electra"
+msgstr "エレクトラ"
+
+msgid "Taygeta"
+msgstr "タイゲタ"
+
+msgid "Maia"
+msgstr "マイア"
+
+msgid "Asterope"
+msgstr "アステローペ"
+
+msgid "Merope"
+msgstr "メローペ"
+
+msgid "Alcyone"
+msgstr "アルキオーネ"
+
+msgid "Pleione"
+msgstr "プレイオネ"
+
+msgid "Zaurak"
+msgstr "ザウラク"
+
+msgid "Menkib"
+msgstr "メンキブ"
+
+msgid "Beid"
+msgstr "ベイド"
+
+msgid "Keid"
+msgstr "ケイド"
+
+msgid "Ain"
+msgstr "アイン"
+
+msgid "Aldebaran"
+msgstr "アルデバラン"
+
+msgid "Hind's Crimson Star"
+msgstr "ハインドの深紅色星(クリムソン・スター)"
+
+msgid "Sadatoni"
+msgstr "サダトニ"
+
+msgid "Cursa"
+msgstr "クルサ"
+
+msgid "Kapteyn's Star"
+msgstr "カプテイン星"
+
+msgid "Rigel"
+msgstr "リゲル"
+
+msgid "Capella"
+msgstr "カペラ"
+
+msgid "Bellatrix"
+msgstr "ベラトリックス"
+
+msgid "Alnath"
+msgstr "アルナト"
+
+msgid "Elnath"
+msgstr "エルナト"
+
+msgid "Nihal"
+msgstr "ニハル"
+
+msgid "Thabit"
+msgstr "タビト"
+
+msgid "Mintaka"
+msgstr "ミンタカ"
+
+msgid "Arneb"
+msgstr "アルネブ"
+
+msgid "Heka"
+msgstr "ヘカ"
+
+msgid "Meissa"
+msgstr "メイサ"
+
+msgid "Alnilam"
+msgstr "アルニラム"
+
+msgid "Phact"
+msgstr "ファクト"
+
+msgid "Alnitak"
+msgstr "アルニタク"
+
+msgid "Saiph"
+msgstr "サイフ"
+
+msgid "Wazn"
+msgstr "ワズン"
+
+msgid "Betelgeuse"
+msgstr "ベテルギウス"
+
+msgid "Prijipati"
+msgstr "Prijipati"
+
+msgid "Menkalinan"
+msgstr "メンカリナン"
+
+msgid "Tejat"
+msgstr "タヤト"
+
+msgid "Red Rectangle"
+msgstr "赤い長方形"
+
+msgid "Furud"
+msgstr "フルド"
+
+msgid "Mirzam"
+msgstr "ミルザム"
+
+msgid "Murzim"
+msgstr "ムルジム"
+
+msgid "Canopus"
+msgstr "カノープス"
+
+msgid "Suhel"
+msgstr "スヘル"
+
+msgid "Alhena"
+msgstr "アルヘナ"
+
+msgid "Almeisan"
+msgstr "アルメイサン"
+
+msgid "Mebsuta"
+msgstr "メブスタ"
+
+msgid "Sirius"
+msgstr "シリウス"
+
+msgid "Adara"
+msgstr "アダラ"
+
+msgid "Adhara"
+msgstr "アダラ"
+
+msgid "Muliphein"
+msgstr "ムリフェイン"
+
+msgid "Mekbuda"
+msgstr "メクブダ"
+
+msgid "Wezen"
+msgstr "ウェゼン"
+
+msgid "Bernes 135"
+msgstr "バーンズ135"
+
+msgid "Wasat"
+msgstr "ワサト"
+
+msgid "Aludra"
+msgstr "アルドラ"
+
+msgid "Gomeisa"
+msgstr "ゴメイサ"
+
+msgid "Luyten's Star"
+msgstr "ルイテン星"
+
+msgid "Castor"
+msgstr "カストル"
+
+msgid "Procyon"
+msgstr "プロキオン"
+
+msgid "Elgomaisa"
+msgstr "エルゴマイサ"
+
+msgid "Pollux"
+msgstr "ポルックス"
+
+msgid "Asmidiske"
+msgstr "アスミディスケ"
+
+msgid "Naos"
+msgstr "ナオス"
+
+msgid "Regor"
+msgstr "レゴル"
+
+msgid "Tegmine"
+msgstr "テグミン"
+
+msgid "Al Tarf"
+msgstr "アル・タルフ"
+
+msgid "Avior"
+msgstr "アウィオル"
+
+msgid "Muscida"
+msgstr "ムシダ"
+
+msgid "Asellus Borealis"
+msgstr "アセルス・ボレアリス"
+
+msgid "Asellus Australis"
+msgstr "アルセス・アウストラリス"
+
+msgid "Acubens"
+msgstr "アクベンス"
+
+msgid "Dnoces"
+msgstr "ドゥノケス"
+
+msgid "Talitha Australis"
+msgstr "Talitha Australis"
+
+msgid "Suhail"
+msgstr "スハイル"
+
+msgid "Miaplacidus"
+msgstr "ミアプラキドス"
+
+msgid "Aspidiske"
+msgstr "アスピディスケ"
+
+msgid "Alphard"
+msgstr "アルファルド"
+
+msgid "Cor Hydrae"
+msgstr "コル・ヒドラエ(蛇の心臓)"
+
+msgid "Ukdah"
+msgstr "ウクダ"
+
+msgid "Alterf"
+msgstr "アルテルフ"
+
+msgid "Subra"
+msgstr "スブラ"
+
+msgid "Ras Elased Australis"
+msgstr "ラス・エルアセド・アウストラリス"
+
+msgid "Rasalas"
+msgstr "ラサラス"
+
+msgid "Ras Elased Borealis"
+msgstr "ラス・エルアセド・ボレアリス"
+
+msgid "Regulus"
+msgstr "レグルス"
+
+msgid "Kabeleced"
+msgstr "カベレケド"
+
+msgid "Cor Leonis"
+msgstr "コル・レオニス"
+
+msgid "Adhafera"
+msgstr "アダフェラ"
+
+msgid "Aldhafera"
+msgstr "アルダフェラ"
+
+msgid "Tania Borealis"
+msgstr "タニア・ボレアリス"
+
+msgid "Algieba"
+msgstr "アルギエバ"
+
+msgid "Tania Australis"
+msgstr "タニア・アウストラリス"
+
+msgid "Alkes"
+msgstr "アルケス"
+
+msgid "Merak"
+msgstr "メラク"
+
+msgid "Lalande 21185"
+msgstr "ラランド21185"
+
+msgid "Dubhe"
+msgstr "ドゥベー"
+
+msgid "Dubb"
+msgstr "デゥッブ"
+
+msgid "Zosma"
+msgstr "ゾスマ"
+
+msgid "Duhr"
+msgstr "ドゥール"
+
+msgid "Chertan"
+msgstr "シェルタン"
+
+msgid "Coxa"
+msgstr "コクサ"
+
+msgid "Chort"
+msgstr "コルト"
+
+msgid "Alula Australis"
+msgstr "アルラ・アウストラリス"
+
+msgid "Alula Borealis"
+msgstr "アルラ・ボレアリス"
+
+msgid "Tsze Tseang"
+msgstr "Tsze Tseang"
+
+msgid "Giausar"
+msgstr "ギャウサル"
+
+msgid "Denebola"
+msgstr "デネボラ"
+
+msgid "Zavijava"
+msgstr "ザウィヤワ"
+
+msgid "Alaraph"
+msgstr "アルアラフ"
+
+msgid "Groombridge 1830"
+msgstr "グルームブリッジ1830"
+
+msgid "Phecda"
+msgstr "フェクダ"
+
+msgid "Phad"
+msgstr "ファド"
+
+msgid "Alchiba"
+msgstr "アルキバ"
+
+msgid "Megrez"
+msgstr "メグレズ"
+
+msgid "Gienah"
+msgstr "ギエナ"
+
+msgid "Zaniah"
+msgstr "ザニア"
+
+msgid "Acrux"
+msgstr "アクルクス"
+
+msgid "Algorab"
+msgstr "アルゴラブ"
+
+msgid "Gacrux"
+msgstr "ガクルクス"
+
+msgid "Chara"
+msgstr "カラ"
+
+msgid "Kraz"
+msgstr "クラズ"
+
+msgid "Muhlifain"
+msgstr "ムフリファイン"
+
+msgid "Porrima"
+msgstr "ポリマ"
+
+msgid "Mimosa"
+msgstr "ミモザ"
+
+msgid "Alioth"
+msgstr "アリオト"
+
+msgid "Minelauva"
+msgstr "ミネラウバ"
+
+msgid "Auva"
+msgstr "アウバ"
+
+msgid "Cor Caroli"
+msgstr "コルカロリ"
+
+msgid "Vindemiatrix"
+msgstr "ウィンデミアトリクス"
+
+msgid "Almuredin"
+msgstr "アルムレディン"
+
+msgid "Mizar"
+msgstr "ミザール"
+
+msgid "Spica"
+msgstr "スピカ"
+
+msgid "Azimech"
+msgstr "アジメク"
+
+msgid "Alcor"
+msgstr "アルコル"
+
+msgid "Heze"
+msgstr "ヘゼ"
+
+msgid "Benetnasch"
+msgstr "ベネトナッシュ"
+
+msgid "Alkaid"
+msgstr "アルカイド"
+
+msgid "Muphrid"
+msgstr "ムフリド"
+
+msgid "Agena"
+msgstr "アゲナ"
+
+msgid "Hadar"
+msgstr "ハダル"
+
+msgid "Thuban"
+msgstr "ツバン"
+
+msgid "Menkent"
+msgstr "メンケント"
+
+msgid "Arcturus"
+msgstr "アルクトゥルス"
+
+msgid "Syrma"
+msgstr "シルマ"
+
+msgid "Proxima"
+msgstr "プロキシマ"
+
+msgid "Seginus"
+msgstr "セギヌス"
+
+msgid "Ceginus"
+msgstr "ケギヌス"
+
+msgid "Izar"
+msgstr "イザル"
+
+msgid "Mirak"
+msgstr "ミラク"
+
+msgid "Pulcherrima"
+msgstr "プルケリマ"
+
+msgid "Kocab"
+msgstr "コカブ"
+
+msgid "Kochab"
+msgstr "コカブ"
+
+msgid "Zubenelgenubi"
+msgstr "ズベネルゲヌビ"
+
+msgid "Zuben Elakribi"
+msgstr "ズベン・エルアクリビ"
+
+msgid "Nekkar"
+msgstr "ネッカル"
+
+msgid "Zubeneschamali"
+msgstr "ズベネスカマリ"
+
+msgid "Pherkad"
+msgstr "フェルカド"
+
+msgid "Alkalurops"
+msgstr "アルカルロプス"
+
+msgid "Edasich"
+msgstr "エダシク"
+
+msgid "Nusakan"
+msgstr "ヌサカン"
+
+msgid "Alphecca"
+msgstr "アルフェッカ"
+
+msgid "Gemma"
+msgstr "ゲンマ"
+
+msgid "Zuben Elakrab"
+msgstr "ズベン・エルアクラブ"
+
+msgid "Unukalhai"
+msgstr "ウヌカルハイ"
+
+msgid "Chow"
+msgstr "Chow"
+
+msgid "Dschubba"
+msgstr "ドゥスクッバ"
+
+msgid "Graffias"
+msgstr "グラフィアス"
+
+msgid "Akrab"
+msgstr "アクラブ"
+
+msgid "Jabbah"
+msgstr "ヤッバ"
+
+msgid "Al Niyat"
+msgstr "アル・ニヤト"
+
+msgid "Cujam"
+msgstr "クヤム"
+
+msgid "Antares"
+msgstr "アンタレス"
+
+msgid "Kornephoros"
+msgstr "コルネポロス"
+
+msgid "Marfik"
+msgstr "マルフィク"
+
+msgid "Atria"
+msgstr "アトリア"
+
+msgid "Arrakis"
+msgstr "アラキス"
+
+msgid "Sabik"
+msgstr "サビク"
+
+msgid "Rasalgethi"
+msgstr "ラスアルゲティ"
+
+msgid "Ras Algethi"
+msgstr "ラス・アルゲティ"
+
+msgid "Sarin"
+msgstr "サリン"
+
+msgid "Rastaban"
+msgstr "ラスタバン"
+
+msgid "Maasym"
+msgstr "マシム"
+
+msgid "Lesath"
+msgstr "レサート"
+
+msgid "Lesuth"
+msgstr "レスート"
+
+msgid "Kuma"
+msgstr "クマ"
+
+msgid "Yildun"
+msgstr "イルドゥン"
+
+msgid "Shaula"
+msgstr "シャウラ"
+
+msgid "Rasalhague"
+msgstr "ラスアルハゲ"
+
+msgid "Ras Alhague"
+msgstr "ラス・アルハグエ"
+
+msgid "Sargas"
+msgstr "サルガズ"
+
+msgid "Dziban"
+msgstr "ジバン"
+
+msgid "Cebalrai"
+msgstr "ケバルライ"
+
+msgid "Grumium"
+msgstr "グルミウム"
+
+msgid "Etamin"
+msgstr "エタミン"
+
+msgid "Eltanin"
+msgstr "エルタニン"
+
+msgid "Barnard's Star"
+msgstr "バーナード星"
+
+msgid "Alnasl"
+msgstr "アルナスル"
+
+msgid "Kaus Media"
+msgstr "カウス・メディア"
+
+msgid "Kaus Australis"
+msgstr "カウス・アウストラリス"
+
+msgid "Al Athfar"
+msgstr "アル・アトファル"
+
+msgid "Kaus Borealis"
+msgstr "カウス・ボレアリス"
+
+msgid "Vega"
+msgstr "ベガ"
+
+msgid "Sheliak"
+msgstr "シェリアク"
+
+msgid "Nunki"
+msgstr "ヌンキ"
+
+msgid "Alya"
+msgstr "アリア"
+
+msgid "Sulafat"
+msgstr "スラファト"
+
+msgid "Ascella"
+msgstr "アスケラ"
+
+msgid "Deneb el Okab"
+msgstr "デネブ・エル・オカブ"
+
+msgid "Altais"
+msgstr "アルタイス"
+
+msgid "Al Tais"
+msgstr "アル・タイス"
+
+msgid "Nodus Secundus"
+msgstr "ノドゥス・セクンドゥス"
+
+msgid "Aladfar"
+msgstr "アラドファル"
+
+msgid "Arkab"
+msgstr "アルカブ"
+
+msgid "Rukbat"
+msgstr "ルクバト"
+
+msgid "Albireo"
+msgstr "アルビレオ"
+
+msgid "Alsafi"
+msgstr "アルサフィ"
+
+msgid "Campbell's Star"
+msgstr "キャンベル星"
+
+msgid "Sham"
+msgstr "シャム"
+
+msgid "Tarazed"
+msgstr "タラゼド"
+
+msgid "Tyl"
+msgstr "ティル"
+
+msgid "Altair"
+msgstr "アルタイル"
+
+msgid "Atair"
+msgstr "Atair"
+
+msgid "Alshain"
+msgstr "アルシャイン"
+
+msgid "Algedi"
+msgstr "アルゲディ"
+
+msgid "Dabih"
+msgstr "ダビー"
+
+msgid "Sadr"
+msgstr "サドル"
+
+msgid "Peacock"
+msgstr "ピーコック"
+
+msgid "Rotanev"
+msgstr "ロタネウ"
+
+msgid "Sualocin"
+msgstr "スワロキン"
+
+msgid "Deneb"
+msgstr "デネブ"
+
+msgid "Albali"
+msgstr "アルバリ"
+
+msgid "Kitalpha"
+msgstr "キタルファ"
+
+msgid "Lacaille 8760"
+msgstr "ラカイユ8760"
+
+msgid "Alderamin"
+msgstr "アルデラミン"
+
+msgid "Alfirk"
+msgstr "アルフィルク"
+
+msgid "Sadalsuud"
+msgstr "サダルスウド"
+
+msgid "Nashira"
+msgstr "ナシラ"
+
+msgid "Azelfafage"
+msgstr "アゼルファファゲ"
+
+msgid "The Garnet Star"
+msgstr "ガーネット・スター"
+
+msgid "Herschel's Garnet Star"
+msgstr "ハーシェルのガーネット・スター"
+
+msgid "Enif"
+msgstr "エニフ"
+
+msgid "Deneb Algedi"
+msgstr "デネブ・アルゲディ"
+
+msgid "Al Dhanab"
+msgstr "アル・ダナブ"
+
+msgid "Kurhah"
+msgstr "クラー"
+
+msgid "Sadalmelik"
+msgstr "サダルメリク"
+
+msgid "Alnair"
+msgstr "アルナイル"
+
+msgid "Al Nair"
+msgstr "アル・ナイル"
+
+msgid "Biham"
+msgstr "ビハム"
+
+msgid "Ancha"
+msgstr "アンカ"
+
+msgid "Sadachbia"
+msgstr "サドアクビア"
+
+msgid "Seat"
+msgstr "セアト"
+
+msgid "Kruger 60"
+msgstr "クルーガー60"
+
+msgid "Homam"
+msgstr "ホマム"
+
+msgid "Matar"
+msgstr "マタール"
+
+msgid "Babcock's Star"
+msgstr "バブコック星"
+
+msgid "Sadalbari"
+msgstr "サダルバリ"
+
+msgid "Skat"
+msgstr "スカット"
+
+msgid "Fomalhaut"
+msgstr "フォーマルハウト"
+
+msgid "Scheat"
+msgstr "シェアト"
+
+msgid "Fum al Samakah"
+msgstr "フム・アル・サマカー"
+
+msgid "Markab"
+msgstr "マルカブ"
+
+msgid "Marchab"
+msgstr "マルカブ"
+
+msgid "Bradley 3077"
+msgstr "ブラッドレー3077"
+
+msgid "Situla"
+msgstr "シトゥラ"
+
+msgid "Errai"
+msgstr "エライ"
+
+msgid "Pleiades"
+msgstr "プレアデス"
+
+msgid "Hyades"
+msgstr "ヒアデス"
+
+msgid "Praesepe"
+msgstr "プレセペ"
+
+msgid "Beehive Cluster"
+msgstr "はちの巣(ビーハイブ)"
+
+msgid "Maffei 1"
+msgstr "マフェイ1"
+
+msgid "Maffei 2"
+msgstr "マフェイ2"
+
+msgid "Leo A"
+msgstr "しし座A"
+
+msgid "Sextans B"
+msgstr "ろくぶんぎ座B"
+
+msgid "Leo I"
+msgstr "しし座I"
+
+msgid "Sextans A"
+msgstr "ろくぶんぎ座A"
+
+msgid "Circinus"
+msgstr "コンパス"
+
+msgid "Holmberg VI"
+msgstr "ホルムベルクVI"
+
+msgid "Fath 703"
+msgstr "Fath 703"
+
+msgid "47 Tuc"
+msgstr "きょしちょう座47(NGC 104)"
+
+msgid "Eridanus"
+msgstr "エリダヌス"
+
+msgid "Pyxis"
+msgstr "らしんばん"
+
+msgid "Tonantzintla 2"
+msgstr "トナンツィントラ2"
