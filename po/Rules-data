@@ -4,14 +4,16 @@ Makefile: Rules-data
 
 celestia.pot-update: ../data/data.cpp
 
-../data/data.cpp: ../data/solarsys.ssc ../data/earth_locs.ssc ../data/world-capitals.ssc ../data/galaxies.dsc ../data/nearstars.stc ../data/dwarfplanets.ssc ../data/minormoons.ssc
-	egrep '^(\"|ReferencePoint)' ../data/solarsys.ssc | awk -F'\"|:' '{ print "_(\"" $$2 "\");" }' > ../data/data.cpp
-	egrep '^(\"|ReferencePoint)' ../data/dwarfplanets.ssc | awk -F'\"|:' '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
-	egrep '^(\"|ReferencePoint)' ../data/minormoons.ssc | awk -F'\"|:' '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
-	grep \"Sol/Earth\" ../data/earth_locs.ssc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
-	grep \"Sol/Earth\" ../data/world-capitals.ssc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
-	egrep '\"Milky Way\"|\"LMC\"|\"SMC\"' ../data/galaxies.dsc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
-	egrep '\"Solar System Barycenter\"' ../data/nearstars.stc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
+../data/data.cpp: ../content/data/solarsys.ssc ../content/data/earth_locs.ssc ../content/data/world-capitals.ssc ../content/data/galaxies.dsc ../content/data/nearstars.stc ../content/data/dwarfplanets.ssc ../content/data/minormoons.ssc ../content/data/well-known-starnames.txt ../content/data/well-known-dsonames.txt
+	egrep '^(\"|ReferencePoint)' ../content/data/solarsys.ssc | awk -F'\"|:' '{ print "_(\"" $$2 "\");" }' > ../data/data.cpp
+	egrep '^(\"|ReferencePoint)' ../content/data/dwarfplanets.ssc | awk -F'\"|:' '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
+	egrep '^(\"|ReferencePoint)' ../content/data/minormoons.ssc | awk -F'\"|:' '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
+	grep \"Sol/Earth\" ../content/data/earth_locs.ssc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
+	grep \"Sol/Earth\" ../content/data/world-capitals.ssc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
+	egrep '\"Milky Way\"|\"LMC\"|\"SMC\"' ../content/data/galaxies.dsc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
+	egrep '\"Solar System Barycenter\"' ../content/data/nearstars.stc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
+	cat ../content/data/well-known-starnames.txt | awk '{ print "_(\"" $$0 "\");" }' >> ../data/data.cpp
+	cat ../content/data/well-known-dsonames.txt | awk '{ print "_(\"" $$0 "\");" }' >> ../data/data.cpp
 
 clean: clean-data
 

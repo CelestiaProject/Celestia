@@ -6764,3 +6764,978 @@ msgstr "Feil ved åpning av "
 
 #~ msgid "&None"
 #~ msgstr "&Ingen"
+
+msgid "Sol"
+msgstr ""
+
+msgid "Alpheratz"
+msgstr ""
+
+msgid "Sirrah"
+msgstr ""
+
+msgid "Caph"
+msgstr ""
+
+msgid "Algenib"
+msgstr ""
+
+msgid "Schemali"
+msgstr ""
+
+msgid "Ankaa"
+msgstr ""
+
+msgid "Shedir"
+msgstr ""
+
+msgid "Schedar"
+msgstr ""
+
+msgid "Diphda"
+msgstr ""
+
+msgid "Deneb Kaitos"
+msgstr ""
+
+msgid "Achird"
+msgstr ""
+
+msgid "Van Maanen 2"
+msgstr ""
+
+msgid "Mirach"
+msgstr ""
+
+msgid "Adhil"
+msgstr ""
+
+msgid "Ruchbah"
+msgstr ""
+
+msgid "Achernar"
+msgstr ""
+
+msgid "Baten Kaitos"
+msgstr ""
+
+msgid "Caput Trianguli"
+msgstr ""
+
+msgid "Mesarthim"
+msgstr ""
+
+msgid "Segin"
+msgstr ""
+
+msgid "Navi"
+msgstr ""
+
+msgid "Sheratan"
+msgstr ""
+
+msgid "Al Rescha"
+msgstr ""
+
+msgid "Almaak"
+msgstr ""
+
+msgid "Almach"
+msgstr ""
+
+msgid "Alamak"
+msgstr ""
+
+msgid "Hamal"
+msgstr ""
+
+msgid "Mira"
+msgstr ""
+
+msgid "Polaris"
+msgstr ""
+
+msgid "Angetenar"
+msgstr ""
+
+msgid "Azha"
+msgstr ""
+
+msgid "Acamar"
+msgstr ""
+
+msgid "Menkar"
+msgstr ""
+
+msgid "Menkab"
+msgstr ""
+
+msgid "Algol"
+msgstr ""
+
+msgid "Botein"
+msgstr ""
+
+msgid "Mirphak"
+msgstr ""
+
+msgid "Mirfak"
+msgstr ""
+
+msgid "Marfak"
+msgstr ""
+
+msgid "Rana"
+msgstr ""
+
+msgid "Atik"
+msgstr ""
+
+msgid "Celaeno"
+msgstr ""
+
+msgid "Electra"
+msgstr ""
+
+msgid "Taygeta"
+msgstr ""
+
+msgid "Maia"
+msgstr ""
+
+msgid "Asterope"
+msgstr ""
+
+msgid "Merope"
+msgstr ""
+
+msgid "Alcyone"
+msgstr ""
+
+msgid "Pleione"
+msgstr ""
+
+msgid "Zaurak"
+msgstr ""
+
+msgid "Menkib"
+msgstr ""
+
+msgid "Beid"
+msgstr ""
+
+msgid "Keid"
+msgstr ""
+
+msgid "Ain"
+msgstr ""
+
+msgid "Aldebaran"
+msgstr ""
+
+msgid "Hind's Crimson Star"
+msgstr ""
+
+msgid "Sadatoni"
+msgstr ""
+
+msgid "Cursa"
+msgstr ""
+
+msgid "Kapteyn's Star"
+msgstr ""
+
+msgid "Rigel"
+msgstr ""
+
+msgid "Capella"
+msgstr ""
+
+msgid "Bellatrix"
+msgstr ""
+
+msgid "Alnath"
+msgstr ""
+
+msgid "Elnath"
+msgstr ""
+
+msgid "Nihal"
+msgstr ""
+
+msgid "Thabit"
+msgstr ""
+
+msgid "Mintaka"
+msgstr ""
+
+msgid "Arneb"
+msgstr ""
+
+msgid "Heka"
+msgstr ""
+
+msgid "Meissa"
+msgstr ""
+
+msgid "Alnilam"
+msgstr ""
+
+msgid "Phact"
+msgstr ""
+
+msgid "Alnitak"
+msgstr ""
+
+msgid "Saiph"
+msgstr ""
+
+msgid "Wazn"
+msgstr ""
+
+msgid "Betelgeuse"
+msgstr ""
+
+msgid "Prijipati"
+msgstr ""
+
+msgid "Menkalinan"
+msgstr ""
+
+msgid "Tejat"
+msgstr ""
+
+msgid "Red Rectangle"
+msgstr ""
+
+msgid "Furud"
+msgstr ""
+
+msgid "Mirzam"
+msgstr ""
+
+msgid "Murzim"
+msgstr ""
+
+msgid "Canopus"
+msgstr ""
+
+msgid "Suhel"
+msgstr ""
+
+msgid "Alhena"
+msgstr ""
+
+msgid "Almeisan"
+msgstr ""
+
+msgid "Mebsuta"
+msgstr ""
+
+msgid "Sirius"
+msgstr ""
+
+msgid "Adara"
+msgstr ""
+
+msgid "Adhara"
+msgstr ""
+
+msgid "Muliphein"
+msgstr ""
+
+msgid "Mekbuda"
+msgstr ""
+
+msgid "Wezen"
+msgstr ""
+
+msgid "Bernes 135"
+msgstr ""
+
+msgid "Wasat"
+msgstr ""
+
+msgid "Aludra"
+msgstr ""
+
+msgid "Gomeisa"
+msgstr ""
+
+msgid "Luyten's Star"
+msgstr ""
+
+msgid "Castor"
+msgstr ""
+
+msgid "Procyon"
+msgstr ""
+
+msgid "Elgomaisa"
+msgstr ""
+
+msgid "Pollux"
+msgstr ""
+
+msgid "Asmidiske"
+msgstr ""
+
+msgid "Naos"
+msgstr ""
+
+msgid "Regor"
+msgstr ""
+
+msgid "Tegmine"
+msgstr ""
+
+msgid "Al Tarf"
+msgstr ""
+
+msgid "Avior"
+msgstr ""
+
+msgid "Muscida"
+msgstr ""
+
+msgid "Asellus Borealis"
+msgstr ""
+
+msgid "Asellus Australis"
+msgstr ""
+
+msgid "Acubens"
+msgstr ""
+
+msgid "Dnoces"
+msgstr ""
+
+msgid "Talitha Australis"
+msgstr ""
+
+msgid "Suhail"
+msgstr ""
+
+msgid "Miaplacidus"
+msgstr ""
+
+msgid "Aspidiske"
+msgstr ""
+
+msgid "Alphard"
+msgstr ""
+
+msgid "Cor Hydrae"
+msgstr ""
+
+msgid "Ukdah"
+msgstr ""
+
+msgid "Alterf"
+msgstr ""
+
+msgid "Subra"
+msgstr ""
+
+msgid "Ras Elased Australis"
+msgstr ""
+
+msgid "Rasalas"
+msgstr ""
+
+msgid "Ras Elased Borealis"
+msgstr ""
+
+msgid "Regulus"
+msgstr ""
+
+msgid "Kabeleced"
+msgstr ""
+
+msgid "Cor Leonis"
+msgstr ""
+
+msgid "Adhafera"
+msgstr ""
+
+msgid "Aldhafera"
+msgstr ""
+
+msgid "Tania Borealis"
+msgstr ""
+
+msgid "Algieba"
+msgstr ""
+
+msgid "Tania Australis"
+msgstr ""
+
+msgid "Alkes"
+msgstr ""
+
+msgid "Merak"
+msgstr ""
+
+msgid "Lalande 21185"
+msgstr ""
+
+msgid "Dubhe"
+msgstr ""
+
+msgid "Dubb"
+msgstr ""
+
+msgid "Zosma"
+msgstr ""
+
+msgid "Duhr"
+msgstr ""
+
+msgid "Chertan"
+msgstr ""
+
+msgid "Coxa"
+msgstr ""
+
+msgid "Chort"
+msgstr ""
+
+msgid "Alula Australis"
+msgstr ""
+
+msgid "Alula Borealis"
+msgstr ""
+
+msgid "Tsze Tseang"
+msgstr ""
+
+msgid "Giausar"
+msgstr ""
+
+msgid "Denebola"
+msgstr ""
+
+msgid "Zavijava"
+msgstr ""
+
+msgid "Alaraph"
+msgstr ""
+
+msgid "Groombridge 1830"
+msgstr ""
+
+msgid "Phecda"
+msgstr ""
+
+msgid "Phad"
+msgstr ""
+
+msgid "Alchiba"
+msgstr ""
+
+msgid "Megrez"
+msgstr ""
+
+msgid "Gienah"
+msgstr ""
+
+msgid "Zaniah"
+msgstr ""
+
+msgid "Acrux"
+msgstr ""
+
+msgid "Algorab"
+msgstr ""
+
+msgid "Gacrux"
+msgstr ""
+
+msgid "Chara"
+msgstr ""
+
+msgid "Kraz"
+msgstr ""
+
+msgid "Muhlifain"
+msgstr ""
+
+msgid "Porrima"
+msgstr ""
+
+msgid "Mimosa"
+msgstr ""
+
+msgid "Alioth"
+msgstr ""
+
+msgid "Minelauva"
+msgstr ""
+
+msgid "Auva"
+msgstr ""
+
+msgid "Cor Caroli"
+msgstr ""
+
+msgid "Vindemiatrix"
+msgstr ""
+
+msgid "Almuredin"
+msgstr ""
+
+msgid "Mizar"
+msgstr ""
+
+msgid "Spica"
+msgstr ""
+
+msgid "Azimech"
+msgstr ""
+
+msgid "Alcor"
+msgstr ""
+
+msgid "Heze"
+msgstr ""
+
+msgid "Benetnasch"
+msgstr ""
+
+msgid "Alkaid"
+msgstr ""
+
+msgid "Muphrid"
+msgstr ""
+
+msgid "Agena"
+msgstr ""
+
+msgid "Hadar"
+msgstr ""
+
+msgid "Thuban"
+msgstr ""
+
+msgid "Menkent"
+msgstr ""
+
+msgid "Arcturus"
+msgstr ""
+
+msgid "Syrma"
+msgstr ""
+
+msgid "Proxima"
+msgstr ""
+
+msgid "Seginus"
+msgstr ""
+
+msgid "Ceginus"
+msgstr ""
+
+msgid "Izar"
+msgstr ""
+
+msgid "Mirak"
+msgstr ""
+
+msgid "Pulcherrima"
+msgstr ""
+
+msgid "Kocab"
+msgstr ""
+
+msgid "Kochab"
+msgstr ""
+
+msgid "Zubenelgenubi"
+msgstr ""
+
+msgid "Zuben Elakribi"
+msgstr ""
+
+msgid "Nekkar"
+msgstr ""
+
+msgid "Zubeneschamali"
+msgstr ""
+
+msgid "Pherkad"
+msgstr ""
+
+msgid "Alkalurops"
+msgstr ""
+
+msgid "Edasich"
+msgstr ""
+
+msgid "Nusakan"
+msgstr ""
+
+msgid "Alphecca"
+msgstr ""
+
+msgid "Gemma"
+msgstr ""
+
+msgid "Zuben Elakrab"
+msgstr ""
+
+msgid "Unukalhai"
+msgstr ""
+
+msgid "Chow"
+msgstr ""
+
+msgid "Dschubba"
+msgstr ""
+
+msgid "Graffias"
+msgstr ""
+
+msgid "Akrab"
+msgstr ""
+
+msgid "Jabbah"
+msgstr ""
+
+msgid "Al Niyat"
+msgstr ""
+
+msgid "Cujam"
+msgstr ""
+
+msgid "Antares"
+msgstr ""
+
+msgid "Kornephoros"
+msgstr ""
+
+msgid "Marfik"
+msgstr ""
+
+msgid "Atria"
+msgstr ""
+
+msgid "Arrakis"
+msgstr ""
+
+msgid "Sabik"
+msgstr ""
+
+msgid "Rasalgethi"
+msgstr ""
+
+msgid "Ras Algethi"
+msgstr ""
+
+msgid "Sarin"
+msgstr ""
+
+msgid "Rastaban"
+msgstr ""
+
+msgid "Maasym"
+msgstr ""
+
+msgid "Lesath"
+msgstr ""
+
+msgid "Lesuth"
+msgstr ""
+
+msgid "Kuma"
+msgstr ""
+
+msgid "Yildun"
+msgstr ""
+
+msgid "Shaula"
+msgstr ""
+
+msgid "Rasalhague"
+msgstr ""
+
+msgid "Ras Alhague"
+msgstr ""
+
+msgid "Sargas"
+msgstr ""
+
+msgid "Dziban"
+msgstr ""
+
+msgid "Cebalrai"
+msgstr ""
+
+msgid "Grumium"
+msgstr ""
+
+msgid "Etamin"
+msgstr ""
+
+msgid "Eltanin"
+msgstr ""
+
+msgid "Barnard's Star"
+msgstr ""
+
+msgid "Alnasl"
+msgstr ""
+
+msgid "Kaus Media"
+msgstr ""
+
+msgid "Kaus Australis"
+msgstr ""
+
+msgid "Al Athfar"
+msgstr ""
+
+msgid "Kaus Borealis"
+msgstr ""
+
+msgid "Vega"
+msgstr ""
+
+msgid "Sheliak"
+msgstr ""
+
+msgid "Nunki"
+msgstr ""
+
+msgid "Alya"
+msgstr ""
+
+msgid "Sulafat"
+msgstr ""
+
+msgid "Ascella"
+msgstr ""
+
+msgid "Deneb el Okab"
+msgstr ""
+
+msgid "Altais"
+msgstr ""
+
+msgid "Al Tais"
+msgstr ""
+
+msgid "Nodus Secundus"
+msgstr ""
+
+msgid "Aladfar"
+msgstr ""
+
+msgid "Arkab"
+msgstr ""
+
+msgid "Rukbat"
+msgstr ""
+
+msgid "Albireo"
+msgstr ""
+
+msgid "Alsafi"
+msgstr ""
+
+msgid "Campbell's Star"
+msgstr ""
+
+msgid "Sham"
+msgstr ""
+
+msgid "Tarazed"
+msgstr ""
+
+msgid "Tyl"
+msgstr ""
+
+msgid "Altair"
+msgstr ""
+
+msgid "Atair"
+msgstr ""
+
+msgid "Alshain"
+msgstr ""
+
+msgid "Algedi"
+msgstr ""
+
+msgid "Dabih"
+msgstr ""
+
+msgid "Sadr"
+msgstr ""
+
+msgid "Peacock"
+msgstr ""
+
+msgid "Rotanev"
+msgstr ""
+
+msgid "Sualocin"
+msgstr ""
+
+msgid "Deneb"
+msgstr ""
+
+msgid "Albali"
+msgstr ""
+
+msgid "Kitalpha"
+msgstr ""
+
+msgid "Lacaille 8760"
+msgstr ""
+
+msgid "Alderamin"
+msgstr ""
+
+msgid "Alfirk"
+msgstr ""
+
+msgid "Sadalsuud"
+msgstr ""
+
+msgid "Nashira"
+msgstr ""
+
+msgid "Azelfafage"
+msgstr ""
+
+msgid "The Garnet Star"
+msgstr ""
+
+msgid "Herschel's Garnet Star"
+msgstr ""
+
+msgid "Enif"
+msgstr ""
+
+msgid "Deneb Algedi"
+msgstr ""
+
+msgid "Al Dhanab"
+msgstr ""
+
+msgid "Kurhah"
+msgstr ""
+
+msgid "Sadalmelik"
+msgstr ""
+
+msgid "Alnair"
+msgstr ""
+
+msgid "Al Nair"
+msgstr ""
+
+msgid "Biham"
+msgstr ""
+
+msgid "Ancha"
+msgstr ""
+
+msgid "Sadachbia"
+msgstr ""
+
+msgid "Seat"
+msgstr ""
+
+msgid "Kruger 60"
+msgstr ""
+
+msgid "Homam"
+msgstr ""
+
+msgid "Matar"
+msgstr ""
+
+msgid "Babcock's Star"
+msgstr ""
+
+msgid "Sadalbari"
+msgstr ""
+
+msgid "Skat"
+msgstr ""
+
+msgid "Fomalhaut"
+msgstr ""
+
+msgid "Scheat"
+msgstr ""
+
+msgid "Fum al Samakah"
+msgstr ""
+
+msgid "Markab"
+msgstr ""
+
+msgid "Marchab"
+msgstr ""
+
+msgid "Bradley 3077"
+msgstr ""
+
+msgid "Situla"
+msgstr ""
+
+msgid "Errai"
+msgstr ""
+
+msgid "Pleiades"
+msgstr ""
+
+msgid "Hyades"
+msgstr ""
+
+msgid "Praesepe"
+msgstr ""
+
+msgid "Beehive Cluster"
+msgstr ""
+
+msgid "Maffei 1"
+msgstr ""
+
+msgid "Maffei 2"
+msgstr ""
+
+msgid "Leo A"
+msgstr ""
+
+msgid "Sextans B"
+msgstr ""
+
+msgid "Leo I"
+msgstr ""
+
+msgid "Sextans A"
+msgstr ""
+
+msgid "Circinus"
+msgstr ""
+
+msgid "Holmberg VI"
+msgstr ""
+
+msgid "Fath 703"
+msgstr ""
+
+msgid "47 Tuc"
+msgstr ""
+
+msgid "Eridanus"
+msgstr ""
+
+msgid "Pyxis"
+msgstr ""
+
+msgid "Tonantzintla 2"
+msgstr ""

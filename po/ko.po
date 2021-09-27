@@ -6765,3 +6765,978 @@ msgstr "파일 열기 오류: "
 
 #~ msgid "&None"
 #~ msgstr "없음(&N)"
+
+msgid "Sol"
+msgstr "태양"
+
+msgid "Alpheratz"
+msgstr "알페라츠"
+
+msgid "Sirrah"
+msgstr "시라흐"
+
+msgid "Caph"
+msgstr "카프"
+
+msgid "Algenib"
+msgstr "알게니브"
+
+msgid "Schemali"
+msgstr "셰말리"
+
+msgid "Ankaa"
+msgstr "안카"
+
+msgid "Shedir"
+msgstr "쉐다르"
+
+msgid "Schedar"
+msgstr "Schedar"
+
+msgid "Diphda"
+msgstr "디프다"
+
+msgid "Deneb Kaitos"
+msgstr "데네브 칼토스"
+
+msgid "Achird"
+msgstr "아키르드"
+
+msgid "Van Maanen 2"
+msgstr "반 마넨 2"
+
+msgid "Mirach"
+msgstr "미라크"
+
+msgid "Adhil"
+msgstr "아딜"
+
+msgid "Ruchbah"
+msgstr "루크바"
+
+msgid "Achernar"
+msgstr "아케르나르"
+
+msgid "Baten Kaitos"
+msgstr "바텐 카이토스"
+
+msgid "Caput Trianguli"
+msgstr "삼각형자리 머리"
+
+msgid "Mesarthim"
+msgstr "메사르팀"
+
+msgid "Segin"
+msgstr "세긴"
+
+msgid "Navi"
+msgstr "나비"
+
+msgid "Sheratan"
+msgstr "셰라탄"
+
+msgid "Al Rescha"
+msgstr "알 레스챠"
+
+msgid "Almaak"
+msgstr "알마크"
+
+msgid "Almach"
+msgstr "알마크"
+
+msgid "Alamak"
+msgstr "Alamak"
+
+msgid "Hamal"
+msgstr "하말"
+
+msgid "Mira"
+msgstr "미라"
+
+msgid "Polaris"
+msgstr "폴라리스 (북극성)"
+
+msgid "Angetenar"
+msgstr "안게테나르"
+
+msgid "Azha"
+msgstr "아자"
+
+msgid "Acamar"
+msgstr "아카마"
+
+msgid "Menkar"
+msgstr "멘카르"
+
+msgid "Menkab"
+msgstr "멘카브"
+
+msgid "Algol"
+msgstr "알골"
+
+msgid "Botein"
+msgstr "보테인"
+
+msgid "Mirphak"
+msgstr "미르팍"
+
+msgid "Mirfak"
+msgstr "미르팍"
+
+msgid "Marfak"
+msgstr "마르팍"
+
+msgid "Rana"
+msgstr "라나"
+
+msgid "Atik"
+msgstr "아틱"
+
+msgid "Celaeno"
+msgstr "켈라에노"
+
+msgid "Electra"
+msgstr "엘렉트라"
+
+msgid "Taygeta"
+msgstr "타이게타"
+
+msgid "Maia"
+msgstr "마이아"
+
+msgid "Asterope"
+msgstr "아스테로페"
+
+msgid "Merope"
+msgstr "메로페"
+
+msgid "Alcyone"
+msgstr "알키오네"
+
+msgid "Pleione"
+msgstr "플레이오네"
+
+msgid "Zaurak"
+msgstr "자우락"
+
+msgid "Menkib"
+msgstr "멘키브"
+
+msgid "Beid"
+msgstr "베이드"
+
+msgid "Keid"
+msgstr "케이드"
+
+msgid "Ain"
+msgstr "아인"
+
+msgid "Aldebaran"
+msgstr "알데바란"
+
+msgid "Hind's Crimson Star"
+msgstr "힌드의 진홍색 별"
+
+msgid "Sadatoni"
+msgstr "사다토니"
+
+msgid "Cursa"
+msgstr "쿠르사"
+
+msgid "Kapteyn's Star"
+msgstr "캅테인의 별"
+
+msgid "Rigel"
+msgstr "리겔"
+
+msgid "Capella"
+msgstr "카펠라"
+
+msgid "Bellatrix"
+msgstr "벨라트릭스"
+
+msgid "Alnath"
+msgstr "엘나스"
+
+msgid "Elnath"
+msgstr "엘나스"
+
+msgid "Nihal"
+msgstr "니할"
+
+msgid "Thabit"
+msgstr "타비트"
+
+msgid "Mintaka"
+msgstr "민타카"
+
+msgid "Arneb"
+msgstr "아르네브"
+
+msgid "Heka"
+msgstr "헤카"
+
+msgid "Meissa"
+msgstr "메이사"
+
+msgid "Alnilam"
+msgstr "알닐람"
+
+msgid "Phact"
+msgstr "팍트"
+
+msgid "Alnitak"
+msgstr "알니탁"
+
+msgid "Saiph"
+msgstr "사이프"
+
+msgid "Wazn"
+msgstr "와즌"
+
+msgid "Betelgeuse"
+msgstr "베텔게우스"
+
+msgid "Prijipati"
+msgstr "Prijipati"
+
+msgid "Menkalinan"
+msgstr "멘칼리난"
+
+msgid "Tejat"
+msgstr "테얏"
+
+msgid "Red Rectangle"
+msgstr "붉은 삼각형"
+
+msgid "Furud"
+msgstr "퍼러드"
+
+msgid "Mirzam"
+msgstr "미르잠"
+
+msgid "Murzim"
+msgstr "머르짐"
+
+msgid "Canopus"
+msgstr "카노푸스"
+
+msgid "Suhel"
+msgstr "수헬"
+
+msgid "Alhena"
+msgstr "알레나"
+
+msgid "Almeisan"
+msgstr "알메이산"
+
+msgid "Mebsuta"
+msgstr "멥수타"
+
+msgid "Sirius"
+msgstr "시리우스"
+
+msgid "Adara"
+msgstr "Adara"
+
+msgid "Adhara"
+msgstr "아다라"
+
+msgid "Muliphein"
+msgstr "무리훼인"
+
+msgid "Mekbuda"
+msgstr "메크부다"
+
+msgid "Wezen"
+msgstr "웨젠"
+
+msgid "Bernes 135"
+msgstr "버너스 135"
+
+msgid "Wasat"
+msgstr "와사트"
+
+msgid "Aludra"
+msgstr "알루드라"
+
+msgid "Gomeisa"
+msgstr "고메이사"
+
+msgid "Luyten's Star"
+msgstr "루이텐의 별"
+
+msgid "Castor"
+msgstr "카스토르"
+
+msgid "Procyon"
+msgstr "프로키온"
+
+msgid "Elgomaisa"
+msgstr "엘고메이사"
+
+msgid "Pollux"
+msgstr "폴룩스"
+
+msgid "Asmidiske"
+msgstr "아스미디스케"
+
+msgid "Naos"
+msgstr "나오스"
+
+msgid "Regor"
+msgstr "레고르"
+
+msgid "Tegmine"
+msgstr "테그미네"
+
+msgid "Al Tarf"
+msgstr "알 타르프"
+
+msgid "Avior"
+msgstr "아비오르"
+
+msgid "Muscida"
+msgstr "머스시다"
+
+msgid "Asellus Borealis"
+msgstr "북쪽 아셀루스"
+
+msgid "Asellus Australis"
+msgstr "남쪽 아셀루스"
+
+msgid "Acubens"
+msgstr "아쿠벤스"
+
+msgid "Dnoces"
+msgstr "드노세스"
+
+msgid "Talitha Australis"
+msgstr "Talitha Australis"
+
+msgid "Suhail"
+msgstr "수하일"
+
+msgid "Miaplacidus"
+msgstr "미아플라시두스"
+
+msgid "Aspidiske"
+msgstr "아스피디스케"
+
+msgid "Alphard"
+msgstr "알파드"
+
+msgid "Cor Hydrae"
+msgstr "코르 히드라에"
+
+msgid "Ukdah"
+msgstr "우크다흐"
+
+msgid "Alterf"
+msgstr "알터프"
+
+msgid "Subra"
+msgstr "수브라"
+
+msgid "Ras Elased Australis"
+msgstr "남쪽 라스 엘라세드"
+
+msgid "Rasalas"
+msgstr "라살라스"
+
+msgid "Ras Elased Borealis"
+msgstr "북쪽 라스 엘라세드"
+
+msgid "Regulus"
+msgstr "레굴루스"
+
+msgid "Kabeleced"
+msgstr "카벨레세드"
+
+msgid "Cor Leonis"
+msgstr "코 레오니스"
+
+msgid "Adhafera"
+msgstr "아드하페라"
+
+msgid "Aldhafera"
+msgstr "알드하페라"
+
+msgid "Tania Borealis"
+msgstr "북쪽 타니아"
+
+msgid "Algieba"
+msgstr "알기에바"
+
+msgid "Tania Australis"
+msgstr "남쪽 타니아"
+
+msgid "Alkes"
+msgstr "알케스"
+
+msgid "Merak"
+msgstr "메라크"
+
+msgid "Lalande 21185"
+msgstr "랄랑드 21185"
+
+msgid "Dubhe"
+msgstr "두베"
+
+msgid "Dubb"
+msgstr "두브"
+
+msgid "Zosma"
+msgstr "조스마"
+
+msgid "Duhr"
+msgstr "뒤르"
+
+msgid "Chertan"
+msgstr "셰르탄"
+
+msgid "Coxa"
+msgstr "코사"
+
+msgid "Chort"
+msgstr "초트"
+
+msgid "Alula Australis"
+msgstr "남쪽 알룰라"
+
+msgid "Alula Borealis"
+msgstr "북쪽 알룰라"
+
+msgid "Tsze Tseang"
+msgstr "Tsze Tseang"
+
+msgid "Giausar"
+msgstr "쟈우사르"
+
+msgid "Denebola"
+msgstr "데네볼라"
+
+msgid "Zavijava"
+msgstr "자비야바"
+
+msgid "Alaraph"
+msgstr "Alaraph"
+
+msgid "Groombridge 1830"
+msgstr "그룸브릿지 1830"
+
+msgid "Phecda"
+msgstr "펙다"
+
+msgid "Phad"
+msgstr "파드"
+
+msgid "Alchiba"
+msgstr "알키바"
+
+msgid "Megrez"
+msgstr "메그레즈"
+
+msgid "Gienah"
+msgstr "기에나흐"
+
+msgid "Zaniah"
+msgstr "자니아흐"
+
+msgid "Acrux"
+msgstr "아크룩스"
+
+msgid "Algorab"
+msgstr "알고라브"
+
+msgid "Gacrux"
+msgstr "가크룩스"
+
+msgid "Chara"
+msgstr "차라"
+
+msgid "Kraz"
+msgstr "크라즈"
+
+msgid "Muhlifain"
+msgstr "물리파인"
+
+msgid "Porrima"
+msgstr "포리마"
+
+msgid "Mimosa"
+msgstr "미모사"
+
+msgid "Alioth"
+msgstr "알리오스"
+
+msgid "Minelauva"
+msgstr "미네로바"
+
+msgid "Auva"
+msgstr "아우바"
+
+msgid "Cor Caroli"
+msgstr "코르 카롤리"
+
+msgid "Vindemiatrix"
+msgstr "반데미아트릭스"
+
+msgid "Almuredin"
+msgstr "알무레딘"
+
+msgid "Mizar"
+msgstr "미자르"
+
+msgid "Spica"
+msgstr "스피카"
+
+msgid "Azimech"
+msgstr "아지멕"
+
+msgid "Alcor"
+msgstr "알코르"
+
+msgid "Heze"
+msgstr "헤제"
+
+msgid "Benetnasch"
+msgstr "베넷나쉬"
+
+msgid "Alkaid"
+msgstr "알카이드"
+
+msgid "Muphrid"
+msgstr "무프리드"
+
+msgid "Agena"
+msgstr "아제나"
+
+msgid "Hadar"
+msgstr "하다르"
+
+msgid "Thuban"
+msgstr "투반"
+
+msgid "Menkent"
+msgstr "멘켄트"
+
+msgid "Arcturus"
+msgstr "아크투루스"
+
+msgid "Syrma"
+msgstr "시르마"
+
+msgid "Proxima"
+msgstr "프록시마"
+
+msgid "Seginus"
+msgstr "세기너스"
+
+msgid "Ceginus"
+msgstr "세그누스"
+
+msgid "Izar"
+msgstr "이자르"
+
+msgid "Mirak"
+msgstr "미라크"
+
+msgid "Pulcherrima"
+msgstr "풀체리마"
+
+msgid "Kocab"
+msgstr "코카브"
+
+msgid "Kochab"
+msgstr "코카브"
+
+msgid "Zubenelgenubi"
+msgstr "주벤엘게누비"
+
+msgid "Zuben Elakribi"
+msgstr "주벤 엘라크리비"
+
+msgid "Nekkar"
+msgstr "네카르"
+
+msgid "Zubeneschamali"
+msgstr "주벤에샤마리"
+
+msgid "Pherkad"
+msgstr "페르카드"
+
+msgid "Alkalurops"
+msgstr "알카루롭스"
+
+msgid "Edasich"
+msgstr "에다시크"
+
+msgid "Nusakan"
+msgstr "누사칸"
+
+msgid "Alphecca"
+msgstr "알페카"
+
+msgid "Gemma"
+msgstr "겜마"
+
+msgid "Zuben Elakrab"
+msgstr "주벤 엘라크라브"
+
+msgid "Unukalhai"
+msgstr "우누칼하이"
+
+msgid "Chow"
+msgstr "Chow"
+
+msgid "Dschubba"
+msgstr "드슈바"
+
+msgid "Graffias"
+msgstr "그라피아스"
+
+msgid "Akrab"
+msgstr "아크라브"
+
+msgid "Jabbah"
+msgstr "야바흐"
+
+msgid "Al Niyat"
+msgstr "알 니얏"
+
+msgid "Cujam"
+msgstr "쿠잠"
+
+msgid "Antares"
+msgstr "안타레스"
+
+msgid "Kornephoros"
+msgstr "코르네포러스"
+
+msgid "Marfik"
+msgstr "마르픽"
+
+msgid "Atria"
+msgstr "아트리아"
+
+msgid "Arrakis"
+msgstr "아라키스"
+
+msgid "Sabik"
+msgstr "사비크"
+
+msgid "Rasalgethi"
+msgstr "라스알게티"
+
+msgid "Ras Algethi"
+msgstr "라스 알게티"
+
+msgid "Sarin"
+msgstr "사린"
+
+msgid "Rastaban"
+msgstr "라스타반"
+
+msgid "Maasym"
+msgstr "마심"
+
+msgid "Lesath"
+msgstr "레사스"
+
+msgid "Lesuth"
+msgstr "레수스"
+
+msgid "Kuma"
+msgstr "쿠마"
+
+msgid "Yildun"
+msgstr "일둔"
+
+msgid "Shaula"
+msgstr "샤울라"
+
+msgid "Rasalhague"
+msgstr "라스알하게"
+
+msgid "Ras Alhague"
+msgstr "Ras Alhague"
+
+msgid "Sargas"
+msgstr "사르가스"
+
+msgid "Dziban"
+msgstr "드지반"
+
+msgid "Cebalrai"
+msgstr "세발라이"
+
+msgid "Grumium"
+msgstr "그루미움"
+
+msgid "Etamin"
+msgstr "엘타닌"
+
+msgid "Eltanin"
+msgstr "엘타닌"
+
+msgid "Barnard's Star"
+msgstr "버나드별"
+
+msgid "Alnasl"
+msgstr "알나슬"
+
+msgid "Kaus Media"
+msgstr "중앙 카우스"
+
+msgid "Kaus Australis"
+msgstr "남쪽 카우스"
+
+msgid "Al Athfar"
+msgstr "알 아트파르"
+
+msgid "Kaus Borealis"
+msgstr "북쪽 카우스"
+
+msgid "Vega"
+msgstr "베가 (직녀성)"
+
+msgid "Sheliak"
+msgstr "셸리아크"
+
+msgid "Nunki"
+msgstr "눈키"
+
+msgid "Alya"
+msgstr "알야"
+
+msgid "Sulafat"
+msgstr "술라파트"
+
+msgid "Ascella"
+msgstr "아셀라"
+
+msgid "Deneb el Okab"
+msgstr "데네브 알 오카브"
+
+msgid "Altais"
+msgstr "알타이스"
+
+msgid "Al Tais"
+msgstr "알 타이스"
+
+msgid "Nodus Secundus"
+msgstr "둘째 노두스"
+
+msgid "Aladfar"
+msgstr "알라드파르"
+
+msgid "Arkab"
+msgstr "아르카브"
+
+msgid "Rukbat"
+msgstr "루크바트"
+
+msgid "Albireo"
+msgstr "알비레오"
+
+msgid "Alsafi"
+msgstr "알사피"
+
+msgid "Campbell's Star"
+msgstr "캠벨의 별"
+
+msgid "Sham"
+msgstr "샴"
+
+msgid "Tarazed"
+msgstr "타라제드"
+
+msgid "Tyl"
+msgstr "틸"
+
+msgid "Altair"
+msgstr "알타이르 (견우성)"
+
+msgid "Atair"
+msgstr "Atair"
+
+msgid "Alshain"
+msgstr "알샤인"
+
+msgid "Algedi"
+msgstr "알게디"
+
+msgid "Dabih"
+msgstr "다비흐"
+
+msgid "Sadr"
+msgstr "사드르"
+
+msgid "Peacock"
+msgstr "피콕"
+
+msgid "Rotanev"
+msgstr "로타네브"
+
+msgid "Sualocin"
+msgstr "수알로신"
+
+msgid "Deneb"
+msgstr "데네브"
+
+msgid "Albali"
+msgstr "알발리"
+
+msgid "Kitalpha"
+msgstr "키탈파"
+
+msgid "Lacaille 8760"
+msgstr "Lacaille 8760"
+
+msgid "Alderamin"
+msgstr "알데라민"
+
+msgid "Alfirk"
+msgstr "알피르크"
+
+msgid "Sadalsuud"
+msgstr "사달수드"
+
+msgid "Nashira"
+msgstr "나시라"
+
+msgid "Azelfafage"
+msgstr "아젤파파게"
+
+msgid "The Garnet Star"
+msgstr "석류의 별"
+
+msgid "Herschel's Garnet Star"
+msgstr "Herschel's Garnet Star"
+
+msgid "Enif"
+msgstr "에니프"
+
+msgid "Deneb Algedi"
+msgstr "데네브 알게디"
+
+msgid "Al Dhanab"
+msgstr "알 드하나브"
+
+msgid "Kurhah"
+msgstr "쿠르하"
+
+msgid "Sadalmelik"
+msgstr "사달멜리크"
+
+msgid "Alnair"
+msgstr "알나이르"
+
+msgid "Al Nair"
+msgstr "Al Nair"
+
+msgid "Biham"
+msgstr "비함"
+
+msgid "Ancha"
+msgstr "안차"
+
+msgid "Sadachbia"
+msgstr "사다크비아"
+
+msgid "Seat"
+msgstr "시트"
+
+msgid "Kruger 60"
+msgstr "크루거 60"
+
+msgid "Homam"
+msgstr "호맘"
+
+msgid "Matar"
+msgstr "마타르"
+
+msgid "Babcock's Star"
+msgstr "밥콕의 별"
+
+msgid "Sadalbari"
+msgstr "사달바리"
+
+msgid "Skat"
+msgstr "스캇"
+
+msgid "Fomalhaut"
+msgstr "포말하우트"
+
+msgid "Scheat"
+msgstr "쉬트"
+
+msgid "Fum al Samakah"
+msgstr "품 알 사마카흐"
+
+msgid "Markab"
+msgstr "마르카브"
+
+msgid "Marchab"
+msgstr "마르챠브"
+
+msgid "Bradley 3077"
+msgstr "Bradley 3077"
+
+msgid "Situla"
+msgstr "시툴라"
+
+msgid "Errai"
+msgstr "엘라이"
+
+msgid "Pleiades"
+msgstr "플레이아데스"
+
+msgid "Hyades"
+msgstr "히아데스"
+
+msgid "Praesepe"
+msgstr "프레세페"
+
+msgid "Beehive Cluster"
+msgstr "벌집 성단"
+
+msgid "Maffei 1"
+msgstr "마페이 1"
+
+msgid "Maffei 2"
+msgstr "마페이 2"
+
+msgid "Leo A"
+msgstr "사자자리 A"
+
+msgid "Sextans B"
+msgstr "육분의자리 B"
+
+msgid "Leo I"
+msgstr "사자자리 I"
+
+msgid "Sextans A"
+msgstr "육분의자리 A"
+
+msgid "Circinus"
+msgstr "컴퍼스"
+
+msgid "Holmberg VI"
+msgstr "홈버그 VI"
+
+msgid "Fath 703"
+msgstr "패덤 703"
+
+msgid "47 Tuc"
+msgstr "큰부리새자리 47"
+
+msgid "Eridanus"
+msgstr "에리다누스"
+
+msgid "Pyxis"
+msgstr "나침반"
+
+msgid "Tonantzintla 2"
+msgstr "토난친틀라 2"

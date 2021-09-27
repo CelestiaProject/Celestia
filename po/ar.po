@@ -6708,3 +6708,978 @@ msgstr "خطأ في الفتح "
 
 #~ msgid "&None"
 #~ msgstr "&لا شيء"
+
+msgid "Sol"
+msgstr "‎الشمس‎"
+
+msgid "Alpheratz"
+msgstr "‎‎الفرس‎‎"
+
+msgid "Sirrah"
+msgstr "‎‎سرة الفرس‎‎"
+
+msgid "Caph"
+msgstr "‎‎الكف الخضيب ‎‎‎"
+
+msgid "Algenib"
+msgstr "‎‎الجنب‎‎"
+
+msgid "Schemali"
+msgstr "‎‎ذنب قيطس الشمالي‎‎"
+
+msgid "Ankaa"
+msgstr "‎‎العنقاء ‎‎‎"
+
+msgid "Shedir"
+msgstr "‎‎الصدر‎‎"
+
+msgid "Schedar"
+msgstr "‎صدر‎"
+
+msgid "Diphda"
+msgstr "‎‎الضفدع الثاني ‎‎‎"
+
+msgid "Deneb Kaitos"
+msgstr "‎‎ذنب قيطس‎‎"
+
+msgid "Achird"
+msgstr "‎‎‎منطقة ذات الكرسي‎‎‎"
+
+msgid "Van Maanen 2"
+msgstr "‎‎فان مانن 2 ‏‎‎"
+
+msgid "Mirach"
+msgstr "‎‎الرشا‎‎"
+
+msgid "Adhil"
+msgstr "‎‎الذيل - ذيل ثوب المسلسلة ‎‎‎"
+
+msgid "Ruchbah"
+msgstr "‎‎ركبة ذات الكرسي‎‎"
+
+msgid "Achernar"
+msgstr "‎‎آخر النهر _ المحلف ‎‎‎"
+
+msgid "Baten Kaitos"
+msgstr "‎‎بطن قيطس ‎‎‎"
+
+msgid "Caput Trianguli"
+msgstr "‎‎كابوت تراينجولي‎‎"
+
+msgid "Mesarthim"
+msgstr "‎‎الشرطان 2 ‏‎‎‎"
+
+msgid "Segin"
+msgstr "‎‎سيجين‎‎"
+
+msgid "Navi"
+msgstr "‎‎نافي‎‎"
+
+msgid "Sheratan"
+msgstr "‎‎الشرطان 1 ‎‎‎"
+
+msgid "Al Rescha"
+msgstr "‎‎الرشا‎‎"
+
+msgid "Almaak"
+msgstr "‎‎‎عناق الأرض‎‎"
+
+msgid "Almach"
+msgstr "‎‎عناق الأرض‎‎"
+
+msgid "Alamak"
+msgstr "العناق"
+
+msgid "Hamal"
+msgstr "‎‎الأشراط 1 ‎‎‎"
+
+msgid "Mira"
+msgstr "‎‎ميرا ‎‎‎"
+
+msgid "Polaris"
+msgstr "‎‎الجدي ‎‎‎"
+
+msgid "Angetenar"
+msgstr "‎‎رجعة النهر‎‎"
+
+msgid "Azha"
+msgstr "‎‎أدحي النعام‎‎"
+
+msgid "Acamar"
+msgstr "‎‎آخر النهر م ‎‎‎"
+
+msgid "Menkar"
+msgstr "‎‎المنخر - منخر قيطس ‎‎‎"
+
+msgid "Menkab"
+msgstr "‎‎منقار قيطس 2‎‎"
+
+msgid "Algol"
+msgstr "‎‎الغول ‎‎‎"
+
+msgid "Botein"
+msgstr "‎‎البطين ‎‎‎"
+
+msgid "Mirphak"
+msgstr "‎‎المرفق ‎‎‎"
+
+msgid "Mirfak"
+msgstr "‎‎مرفق الثريا‎‎"
+
+msgid "Marfak"
+msgstr "‎‎مرفق الثريا‎‎"
+
+msgid "Rana"
+msgstr "‎‎رنا‎‎"
+
+msgid "Atik"
+msgstr "‎‎العاتق ‎‎‎"
+
+msgid "Celaeno"
+msgstr "‎‎سيلاينو ‎‎‎"
+
+msgid "Electra"
+msgstr "‎‎إلكترا ‎‎‎"
+
+msgid "Taygeta"
+msgstr "‎‎تيجيتا ‎‎‎"
+
+msgid "Maia"
+msgstr "‎‎مايا ‎‎‎"
+
+msgid "Asterope"
+msgstr "‎‎أستيروب ‎‎‎"
+
+msgid "Merope"
+msgstr "‎‎ميروب  ‎‎‎"
+
+msgid "Alcyone"
+msgstr "‎‎السيون ‎‎‎"
+
+msgid "Pleione"
+msgstr "‎‎بليون ‎‎‎"
+
+msgid "Zaurak"
+msgstr "‎‎الزورق  ‎‎‎"
+
+msgid "Menkib"
+msgstr "‎‎المنكب  ‎‎‎"
+
+msgid "Beid"
+msgstr "‎‎البيض ‎‎‎"
+
+msgid "Keid"
+msgstr "‎‎القيض ‎‎‎"
+
+msgid "Ain"
+msgstr "‎‎العين - عين الثور ‎‎‎"
+
+msgid "Aldebaran"
+msgstr "‎‎الدبران ‎‎‎"
+
+msgid "Hind's Crimson Star"
+msgstr "‎‎نجم هند كريمزون‎‎"
+
+msgid "Sadatoni"
+msgstr "‎ساداتوني‎"
+
+msgid "Cursa"
+msgstr "‎‎كرسي الجوزاء المقدم‎‎"
+
+msgid "Kapteyn's Star"
+msgstr "‎‎نجمة كابتين ‎‎‎"
+
+msgid "Rigel"
+msgstr "‎‎رجل الجوزاء ‎‎‎"
+
+msgid "Capella"
+msgstr "‎‎العيوق ‎‎‎"
+
+msgid "Bellatrix"
+msgstr "‎‎الناجذ ‎‎‎"
+
+msgid "Alnath"
+msgstr "‎‎الناطح ‎‎‎"
+
+msgid "Elnath"
+msgstr "‎‎النطح‎‎"
+
+msgid "Nihal"
+msgstr "‎‎النهال ‎‎‎"
+
+msgid "Thabit"
+msgstr "‎‎الثابت‎‎"
+
+msgid "Mintaka"
+msgstr "‎‎نظم الجوزاء 1‎‎"
+
+msgid "Arneb"
+msgstr "‎‎الأرنب ‎‎‎"
+
+msgid "Heka"
+msgstr "‎‎الهقعة‎‎"
+
+msgid "Meissa"
+msgstr "‎‎الهقعة‎‎"
+
+msgid "Alnilam"
+msgstr "‎‎نظم الجوزاء 2‎‎"
+
+msgid "Phact"
+msgstr "‎‎حضار‎‎"
+
+msgid "Alnitak"
+msgstr "‎‎نظم الجوزاء 3‎‎"
+
+msgid "Saiph"
+msgstr "‎‎السيف - سيف الجبار ‎‎‎"
+
+msgid "Wazn"
+msgstr "‎‎الوزن ‏‎‎‎"
+
+msgid "Betelgeuse"
+msgstr "‎‎منكب الجوزاء ‎‎‎"
+
+msgid "Prijipati"
+msgstr "Prijipati"
+
+msgid "Menkalinan"
+msgstr "‎‎منكب ذي العنان ‎‎‎"
+
+msgid "Tejat"
+msgstr "‎‎التحائي ‎‎‎"
+
+msgid "Red Rectangle"
+msgstr "‎‎المربع الأحمر ‎‎‎"
+
+msgid "Furud"
+msgstr "‎‎الفرود ‎‎‎"
+
+msgid "Mirzam"
+msgstr "‎‎مرزم الشعرى اليمانية‎‎"
+
+msgid "Murzim"
+msgstr "‎مرزم‎"
+
+msgid "Canopus"
+msgstr "‎‎سهيل ‎‎‎"
+
+msgid "Suhel"
+msgstr "‎‎سهيل اليماني‎‎"
+
+msgid "Alhena"
+msgstr "‎‎الهنعة ‎‎‎"
+
+msgid "Almeisan"
+msgstr "‎‎الميسان‎‎"
+
+msgid "Mebsuta"
+msgstr "‎‎الأظفار 1 ‎‎‎"
+
+msgid "Sirius"
+msgstr "‎‎الشعرى اليمانية‎‎"
+
+msgid "Adara"
+msgstr "العذارى"
+
+msgid "Adhara"
+msgstr "‎‎العذارى 1 ‎‎‎"
+
+msgid "Muliphein"
+msgstr "‎‎المحلفان أ‎‎"
+
+msgid "Mekbuda"
+msgstr "‎‎الأظفار 2 ‎‎‎"
+
+msgid "Wezen"
+msgstr "‎‎العذارى 2‎‎"
+
+msgid "Bernes 135"
+msgstr "‎‎بيرنز 135 ‏‎‎‎"
+
+msgid "Wasat"
+msgstr "‎‎الأظفار 3‎‎"
+
+msgid "Aludra"
+msgstr "‎‎العذرة ‎‎‎"
+
+msgid "Gomeisa"
+msgstr "‎‎مرزم الغميصاء ‎‎‎"
+
+msgid "Luyten's Star"
+msgstr "‎‎نجمة لويتين ‎‎‎"
+
+msgid "Castor"
+msgstr "‎‎رأس التوأم المقدم ‎‎‎"
+
+msgid "Procyon"
+msgstr "‎‎الشعرى الشامية‎‎"
+
+msgid "Elgomaisa"
+msgstr "‎الغميصاء‎"
+
+msgid "Pollux"
+msgstr "‎‎رأس التوأم المؤخر ‎‎‎"
+
+msgid "Asmidiske"
+msgstr "‎‎التريس‎‎"
+
+msgid "Naos"
+msgstr "‎‎سهيل حضار ‎‎‎"
+
+msgid "Regor"
+msgstr "‎‎سهيل الوزن ‎‎‎"
+
+msgid "Tegmine"
+msgstr "‎‎صدفة السرطان ‎‎‎"
+
+msgid "Al Tarf"
+msgstr "‎‎الطرف 1‎‎"
+
+msgid "Avior"
+msgstr "‎‎آفيور ‎‎‎"
+
+msgid "Muscida"
+msgstr "‎‎الظباء ‎‎‎"
+
+msgid "Asellus Borealis"
+msgstr "‎‎الحمار الشمالي ‎‎‎"
+
+msgid "Asellus Australis"
+msgstr "‎‎الحمار الجنوبي ‎‎‎"
+
+msgid "Acubens"
+msgstr "‎‎مخلب سرطان البحر‎‎"
+
+msgid "Dnoces"
+msgstr "noces‎"
+
+msgid "Talitha Australis"
+msgstr "Talitha Australis"
+
+msgid "Suhail"
+msgstr "‎‎سهيل رقاس‎‎"
+
+msgid "Miaplacidus"
+msgstr "‎‎المياه الهادئة ‎‎‎"
+
+msgid "Aspidiske"
+msgstr "‎‎التريس ‎‎‎"
+
+msgid "Alphard"
+msgstr "‎‎الفرد ‎‎‎"
+
+msgid "Cor Hydrae"
+msgstr "‎قلب الشجاع‎"
+
+msgid "Ukdah"
+msgstr "‎العقدة‎"
+
+msgid "Alterf"
+msgstr "‎‎الطرف ‎‎‎"
+
+msgid "Subra"
+msgstr "‎‎الزبرة خ‎‎"
+
+msgid "Ras Elased Australis"
+msgstr "‎رأس الأسد الجنوبي‎"
+
+msgid "Rasalas"
+msgstr "‎‎رأس الأسد الشمالي ‎‎‎"
+
+msgid "Ras Elased Borealis"
+msgstr "‎رأس الأسد الشمالي‎"
+
+msgid "Regulus"
+msgstr "‎‎قلب الأسد ‎‎‎"
+
+msgid "Kabeleced"
+msgstr "‎قلب الأسد‎"
+
+msgid "Cor Leonis"
+msgstr "‎قلب الأسد‎"
+
+msgid "Adhafera"
+msgstr "‎‎الجبهة 1‎‎‎"
+
+msgid "Aldhafera"
+msgstr "‎الضفيرة‎"
+
+msgid "Tania Borealis"
+msgstr "‎‎القفزة الثانية الشمالية ‎‎‎"
+
+msgid "Algieba"
+msgstr "‎‎الجبهة 2 ‎‎‎"
+
+msgid "Tania Australis"
+msgstr "‎‎القفزة الثانية الجنوبية ‎‎‎"
+
+msgid "Alkes"
+msgstr "‎‎الكأس ‎‎‎"
+
+msgid "Merak"
+msgstr "‎‎المراق‎‎"
+
+msgid "Lalande 21185"
+msgstr "Lalande 21185"
+
+msgid "Dubhe"
+msgstr "‎‎الدب‎‎"
+
+msgid "Dubb"
+msgstr "‎الدب‎"
+
+msgid "Zosma"
+msgstr "‎‎الزبرة ، الخراتان 1 ‎‎‎"
+
+msgid "Duhr"
+msgstr "‎‎ظهر الأسد‎‎"
+
+msgid "Chertan"
+msgstr "‎‎الزبرة ، الخراتان 2‎‎"
+
+msgid "Coxa"
+msgstr "‎‎كوكسا‎‎"
+
+msgid "Chort"
+msgstr "‎الخرت‎"
+
+msgid "Alula Australis"
+msgstr "‎‎القفزة الأولى الجنوبية‎‎"
+
+msgid "Alula Borealis"
+msgstr "‎‎القفزة الأولى الشمالية‎‎"
+
+msgid "Tsze Tseang"
+msgstr "Tsze Tseang"
+
+msgid "Giausar"
+msgstr "‎‎جوزهر ‎‎‎"
+
+msgid "Denebola"
+msgstr "‎‎الصرفة ‎‎‎"
+
+msgid "Zavijava"
+msgstr "‎‎العوا 1‎‎"
+
+msgid "Alaraph"
+msgstr "الأعراف"
+
+msgid "Groombridge 1830"
+msgstr "‎‎جروم بردج 1830‎‎"
+
+msgid "Phecda"
+msgstr "‎‎فخذ الدب‎‎"
+
+msgid "Phad"
+msgstr "‎‎فخذ الدب‎‎"
+
+msgid "Alchiba"
+msgstr "‎‎الخباء ‎‎‎"
+
+msgid "Megrez"
+msgstr "‎‎المغرز‎‎"
+
+msgid "Gienah"
+msgstr "‎‎الجناح‎ ‎‎‎"
+
+msgid "Zaniah"
+msgstr "‎‎العوا 2‎‎"
+
+msgid "Acrux"
+msgstr "‎‎ألفا الصليب ‎‎‎"
+
+msgid "Algorab"
+msgstr "‎‎الغراب ‎‎‎"
+
+msgid "Gacrux"
+msgstr "‎‎جاما الصليب ‎‎‎"
+
+msgid "Chara"
+msgstr "‎‎تشارا ‎‎‎"
+
+msgid "Kraz"
+msgstr "‎‎عرش السماك الأعزل‎‎"
+
+msgid "Muhlifain"
+msgstr "‎‎المحلفان ب‎‎"
+
+msgid "Porrima"
+msgstr "‎‎العوا 3 ‎‎‎"
+
+msgid "Mimosa"
+msgstr "‎‎ميموسا ‎‎‎"
+
+msgid "Alioth"
+msgstr "‎‎الجون ‎‎‎"
+
+msgid "Minelauva"
+msgstr "‎‎العوا 4‎‎"
+
+msgid "Auva"
+msgstr "‎‎العوا 4‎‎"
+
+msgid "Cor Caroli"
+msgstr "‎‎كبد الأسد ‎‎‎"
+
+msgid "Vindemiatrix"
+msgstr "‎‎العوا 5 ‎‎‎"
+
+msgid "Almuredin"
+msgstr "‎‎المريدون‎‎"
+
+msgid "Mizar"
+msgstr "‎‎العناق ‎‎‎"
+
+msgid "Spica"
+msgstr "‎‎السماك الأعزل ‎‎‎"
+
+msgid "Azimech"
+msgstr "‎‎السماك الأعزل‎‎"
+
+msgid "Alcor"
+msgstr "‎‎السها ‎‎‎"
+
+msgid "Heze"
+msgstr "‎‎هيزي‎‎"
+
+msgid "Benetnasch"
+msgstr "‎‎بنات نعش‎‎"
+
+msgid "Alkaid"
+msgstr "‎‎القائد ‎‎‎"
+
+msgid "Muphrid"
+msgstr "‎‎مفرد الرامح ‎‎‎"
+
+msgid "Agena"
+msgstr "‎‎أجينا‎‎"
+
+msgid "Hadar"
+msgstr "‎‎حضار ‎‎‎"
+
+msgid "Thuban"
+msgstr "‎‎الثعبان ‎‎‎"
+
+msgid "Menkent"
+msgstr "‎‎منكب قنطورس ‎‎‎"
+
+msgid "Arcturus"
+msgstr "‎‎السماك الرامح ‎‎‎"
+
+msgid "Syrma"
+msgstr "‎‎الغفر 1 ‎‎‎"
+
+msgid "Proxima"
+msgstr "‎‎بروكسيما ‎‎‎"
+
+msgid "Seginus"
+msgstr "‎‎الراعي م ‎‎‎"
+
+msgid "Ceginus"
+msgstr "‎‎الراعي‎‎"
+
+msgid "Izar"
+msgstr "‎‎الإزار - إزار الراعي ‎‎‎"
+
+msgid "Mirak"
+msgstr "‎المراق‎"
+
+msgid "Pulcherrima"
+msgstr "‎‎بولتشيريما‎‎"
+
+msgid "Kocab"
+msgstr "‎‎أنور الفرقدين‎‎"
+
+msgid "Kochab"
+msgstr "‎‎أنور الفرقدين‎‎"
+
+msgid "Zubenelgenubi"
+msgstr "‎‎الزبانا الجنوبي‎‎"
+
+msgid "Zuben Elakribi"
+msgstr "‎‎زبانا العقرب 3‎‎"
+
+msgid "Nekkar"
+msgstr "‎‎البقار ‎‎‎"
+
+msgid "Zubeneschamali"
+msgstr "‎‎الزبانا الشمالي‎‎"
+
+msgid "Pherkad"
+msgstr "‎‎أخفى الفرقدين‎‎"
+
+msgid "Alkalurops"
+msgstr "‎‎عصا الراعي ‎‎‎"
+
+msgid "Edasich"
+msgstr "‎‎الذيخ ‎‎‎"
+
+msgid "Nusakan"
+msgstr "‎‎قصعة المساكين‎‎"
+
+msgid "Alphecca"
+msgstr "‎‎نيّر الفكة‎‎"
+
+msgid "Gemma"
+msgstr "‎‎جيما‎‎"
+
+msgid "Zuben Elakrab"
+msgstr "‎‎زبانا العقرب 4‎‎"
+
+msgid "Unukalhai"
+msgstr "‎‎عنق الحية ‎‎‎"
+
+msgid "Chow"
+msgstr "Chow"
+
+msgid "Dschubba"
+msgstr "‎‎الإكليل 2‎‎"
+
+msgid "Graffias"
+msgstr "‎‎زبانا العقرب‎‎"
+
+msgid "Akrab"
+msgstr "العقرب"
+
+msgid "Jabbah"
+msgstr "‎‎جبهة العقرب‎‎"
+
+msgid "Al Niyat"
+msgstr "‎‎النياط 2 ‎‎‎"
+
+msgid "Cujam"
+msgstr "‎‎الهراوة ‎‎‎"
+
+msgid "Antares"
+msgstr "‎‎قلب العقرب ‎‎‎"
+
+msgid "Kornephoros"
+msgstr "‎‎حامل الهراوة ‎‎‎"
+
+msgid "Marfik"
+msgstr "‎‎مرفق الحواء ‎‎‎"
+
+msgid "Atria"
+msgstr "‎‎ألفا المثلث الجنوبي ‎‎‎"
+
+msgid "Arrakis"
+msgstr "‎‎الراقص‎‎"
+
+msgid "Sabik"
+msgstr "‎‎السابق الثاني ‎‎‎"
+
+msgid "Rasalgethi"
+msgstr "‎‎رأس الجاثي ‎‎‎"
+
+msgid "Ras Algethi"
+msgstr "‎‎رأس الجاثي‎‎"
+
+msgid "Sarin"
+msgstr "‎‎سارن‎‎"
+
+msgid "Rastaban"
+msgstr "‎‎العوائذ 1 ‎‎‎"
+
+msgid "Maasym"
+msgstr "‎‎معصم الجاثي ‎‎‎"
+
+msgid "Lesath"
+msgstr "‎‎الشولة 2‎‎"
+
+msgid "Lesuth"
+msgstr "‎اللسعة‎"
+
+msgid "Kuma"
+msgstr "‎‎العوائذ 4‎‎"
+
+msgid "Yildun"
+msgstr "‎‎فأس الرحا‎‎‎"
+
+msgid "Shaula"
+msgstr "‎‎الشولة 1 ‎‎‎"
+
+msgid "Rasalhague"
+msgstr "‎‎رأس الحواء ‎‎‎"
+
+msgid "Ras Alhague"
+msgstr "Ras Alhague"
+
+msgid "Sargas"
+msgstr "‎‎سارجاس‎‎"
+
+msgid "Dziban"
+msgstr "‎‎الذئبان‎‎"
+
+msgid "Cebalrai"
+msgstr "‎‎كلب الراعي ‎‎‎"
+
+msgid "Grumium"
+msgstr "‎‎العوائذ 3‎‎"
+
+msgid "Etamin"
+msgstr "‎‎العوائذ 2 ‎‎‎"
+
+msgid "Eltanin"
+msgstr "‎‎التنين‎‎"
+
+msgid "Barnard's Star"
+msgstr "‎‎نجمة بارنارد ‎‎‎"
+
+msgid "Alnasl"
+msgstr "‎‎النعائم الواردة 1‎‎"
+
+msgid "Kaus Media"
+msgstr "‎‎القوس المتوسط‎‎"
+
+msgid "Kaus Australis"
+msgstr "‎‎القوس الجنوبي‎‎"
+
+msgid "Al Athfar"
+msgstr "‎‎الأظفار‎‎"
+
+msgid "Kaus Borealis"
+msgstr "‎‎القوس الشمالي‎‎"
+
+msgid "Vega"
+msgstr "‎‎النسر الواقع ‎‎‎"
+
+msgid "Sheliak"
+msgstr "‎‎الشلياق ‎‎‎"
+
+msgid "Nunki"
+msgstr "‎‎ننكي‎‎"
+
+msgid "Alya"
+msgstr "‎‎-‎‎"
+
+msgid "Sulafat"
+msgstr "‎‎السلحفاة ‎‎‎"
+
+msgid "Ascella"
+msgstr "‎‎إبط الرامي‎‎"
+
+msgid "Deneb el Okab"
+msgstr "‎‎ذنب العقاب‎‎"
+
+msgid "Altais"
+msgstr "‎‎التنين ‎‎‎"
+
+msgid "Al Tais"
+msgstr "‎‎التيس‎‎"
+
+msgid "Nodus Secundus"
+msgstr "‎‎العقدة الثانية‎‎"
+
+msgid "Aladfar"
+msgstr "‎‎الأظفار م‎‎"
+
+msgid "Arkab"
+msgstr "‎‎العرقوب - عرقوب الرامي ‎‎‎"
+
+msgid "Rukbat"
+msgstr "‎‎ركبة الرامي ‎‎‎"
+
+msgid "Albireo"
+msgstr "‎‎منقار الدجاجة ‎‎‎"
+
+msgid "Alsafi"
+msgstr "‎‎الأثافي‎‎"
+
+msgid "Campbell's Star"
+msgstr "‎‎نجمة كامبل ‎‎‎"
+
+msgid "Sham"
+msgstr "‎‎السهم ‎‎‎"
+
+msgid "Tarazed"
+msgstr "‎‎الميزان ‎‎‎"
+
+msgid "Tyl"
+msgstr "‎‎التنين م‎‎"
+
+msgid "Altair"
+msgstr "‎‎النسر الطائر ‎‎‎"
+
+msgid "Atair"
+msgstr "Atair"
+
+msgid "Alshain"
+msgstr "‎‎عمود الميزان ‎‎‎"
+
+msgid "Algedi"
+msgstr "‎‎سعد الذابح 1 ‏‎‎‎"
+
+msgid "Dabih"
+msgstr "‎‎سعد الذابح 2 ‏‎‎‎"
+
+msgid "Sadr"
+msgstr "‎‎صدر الدجاجة ‎‎‎"
+
+msgid "Peacock"
+msgstr "‎‎الطاووس ‎‎‎"
+
+msgid "Rotanev"
+msgstr "‎‎روتانيف‎‎"
+
+msgid "Sualocin"
+msgstr "‎‎سوالوكين‎‎"
+
+msgid "Deneb"
+msgstr "‎‎ذنب الدجاجة‎‎"
+
+msgid "Albali"
+msgstr "‎سعد بلع 1‎‎"
+
+msgid "Kitalpha"
+msgstr "‎‎قطعة الفرس ‎‎‎"
+
+msgid "Lacaille 8760"
+msgstr "‎Lacaille 8760‎"
+
+msgid "Alderamin"
+msgstr "‎‎كوكبا الفرق 1‎‎"
+
+msgid "Alfirk"
+msgstr "‎‎كوكبا الفرق 2‎‎"
+
+msgid "Sadalsuud"
+msgstr "‎‎سعد السعود 1‎ ‎‎‎"
+
+msgid "Nashira"
+msgstr "‎‎سعد ناشرة 1 ‏‎‎‎"
+
+msgid "Azelfafage"
+msgstr "‎‎ذيل الدجاجة‎‎"
+
+msgid "The Garnet Star"
+msgstr "‎‎نجم العقيق‎‎"
+
+msgid "Herschel's Garnet Star"
+msgstr "‎نجم جارنت هرشل‎"
+
+msgid "Enif"
+msgstr "‎‎جحفلة الفرس ‎‎‎"
+
+msgid "Deneb Algedi"
+msgstr "‎‎سعد ناشرة 2 ‏‎‎‎"
+
+msgid "Al Dhanab"
+msgstr "‎‎ذنب السمكة‎‎"
+
+msgid "Kurhah"
+msgstr "‎‎القرحة ‎‎‎"
+
+msgid "Sadalmelik"
+msgstr "‎‎سعد الملك 1‎‎‎‎"
+
+msgid "Alnair"
+msgstr "‎‎اليمامتان 1‎‎"
+
+msgid "Al Nair"
+msgstr "Al Nair"
+
+msgid "Biham"
+msgstr "‎‎سعد البهام ‎‎‎"
+
+msgid "Ancha"
+msgstr "‎‎الورك - ورك ساقي الماء ‎‎‎"
+
+msgid "Sadachbia"
+msgstr "‎‎سعد الأخبية 1‎ ‎‎‎"
+
+msgid "Seat"
+msgstr "‎‎سعد الأخبية 4‎‎"
+
+msgid "Kruger 60"
+msgstr "‎‎كروجر 60 ‏‎‎‎"
+
+msgid "Homam"
+msgstr "‎‎سعد الهمام‎‎"
+
+msgid "Matar"
+msgstr "‎‎سعد مطر ‎‎‎"
+
+msgid "Babcock's Star"
+msgstr "‎‎نجمة بابكوك ‎‎‎"
+
+msgid "Sadalbari"
+msgstr "‎‎سعد البارع ‎‎‎"
+
+msgid "Skat"
+msgstr "‎‎الساق - ساق ساقي الماء ‎‎‎"
+
+msgid "Fomalhaut"
+msgstr "‎‎فم الحوت - الضفدع الأول ‎‎‎"
+
+msgid "Scheat"
+msgstr "‎‎ساعد الفرس‎‎"
+
+msgid "Fum al Samakah"
+msgstr "‎‎فم السمكة‎‎"
+
+msgid "Markab"
+msgstr "‎‎المركب‎‎"
+
+msgid "Marchab"
+msgstr "منكب الفرس"
+
+msgid "Bradley 3077"
+msgstr "Bradley 3077"
+
+msgid "Situla"
+msgstr "‎‎الجرة‎‎"
+
+msgid "Errai"
+msgstr "‎‎الراعي ‎‎‎"
+
+msgid "Pleiades"
+msgstr "‎‎الثريا‎‎"
+
+msgid "Hyades"
+msgstr "‎‎القلاص‎‎"
+
+msgid "Praesepe"
+msgstr "‎‎النثرة‎‎"
+
+msgid "Beehive Cluster"
+msgstr "‎‎حشد النثرة‎‎"
+
+msgid "Maffei 1"
+msgstr "‎‎مافي_1‎‎"
+
+msgid "Maffei 2"
+msgstr "‎‎مافي_2‎‎"
+
+msgid "Leo A"
+msgstr "‎‎الأسد أ‎‎"
+
+msgid "Sextans B"
+msgstr "‎‎السدس ب‎‎"
+
+msgid "Leo I"
+msgstr "‎‎الأسد 1‎‎"
+
+msgid "Sextans A"
+msgstr "‎‎السدس أ‎‎"
+
+msgid "Circinus"
+msgstr "‎‎الفرجار‎‎"
+
+msgid "Holmberg VI"
+msgstr "‎‎هولمبرج 6‎‎"
+
+msgid "Fath 703"
+msgstr "‎‎فاذ 703‎‎"
+
+msgid "47 Tuc"
+msgstr "‎‎47 الطوقان‎‎"
+
+msgid "Eridanus"
+msgstr "‎‎النهر‎‎"
+
+msgid "Pyxis"
+msgstr "‎‎البوصلة‎‎"
+
+msgid "Tonantzintla 2"
+msgstr "‎تونانتزينتلا 2‎"
