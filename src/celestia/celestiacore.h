@@ -149,15 +149,16 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     enum
     {
-        LabelFlagsChanged       = 1,
-        RenderFlagsChanged      = 2,
-        VerbosityLevelChanged   = 4,
-        TimeZoneChanged         = 8,
-        AmbientLightChanged     = 16,
-        FaintestChanged         = 32,
-        HistoryChanged          = 64,
-        TextEnterModeChanged    = 128,
-        GalaxyLightGainChanged  = 256,
+        LabelFlagsChanged           = 0x0001,
+        RenderFlagsChanged          = 0x0002,
+        VerbosityLevelChanged       = 0x0004,
+        TimeZoneChanged             = 0x0008,
+        AmbientLightChanged         = 0x0010,
+        FaintestChanged             = 0x0020,
+        HistoryChanged              = 0x0040,
+        TextEnterModeChanged        = 0x0080,
+        GalaxyLightGainChanged      = 0x0100,
+        MeasurementSystemChanged    = 0x0200,
     };
 
     enum
@@ -174,6 +175,12 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         ShowVelocity  = 0x004,
         ShowSelection = 0x008,
         ShowFrame     = 0x010,
+    };
+
+    enum MeasurementSystem
+    {
+        Metric      = 0,
+        Imperial    = 1,
     };
 
  public:
@@ -369,6 +376,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     Image captureImage() const;
     bool saveScreenShot(const fs::path&, ContentType = Content_Unknown) const;
 
+    void setMeasurementSystem(MeasurementSystem);
+    MeasurementSystem getMeasurementSystem() const;
+
  protected:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
@@ -508,6 +518,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     };
 
     EdgeInsets safeAreaInsets { 0, 0, 0, 0 };
+
+    MeasurementSystem measurement { Metric };
 
     Selection lastSelection;
     std::string selectionNames;
