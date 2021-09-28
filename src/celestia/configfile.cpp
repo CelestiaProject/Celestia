@@ -99,6 +99,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     configParams->getString("WarpMeshFile", config->warpMeshFile);
     configParams->getString("X264EncoderOptions", config->x264EncoderOptions);
     configParams->getString("FFVHEncoderOptions", config->ffvhEncoderOptions);
+    configParams->getString("MeasurementSystem", config->measurementSystem);
 
     float maxDist = 1.0;
     configParams->getNumber("SolarSystemMaxDistance", maxDist);
