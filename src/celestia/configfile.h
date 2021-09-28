@@ -82,6 +82,7 @@ public:
     std::string projectionMode;
     std::string viewportEffect;
     std::string warpMeshFile;
+    std::string measurementSystem;
 
     std::string x264EncoderOptions;
     std::string ffvhEncoderOptions;

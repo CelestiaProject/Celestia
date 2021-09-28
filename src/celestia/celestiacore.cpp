@@ -3969,6 +3969,16 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
             DPRINTF(LOG_LEVEL_WARNING, "Unknown viewport effect %s\n", config->viewportEffect);
     }
 
+    if (!config->measurementSystem.empty())
+    {
+        if (compareIgnoringCase(config->measurementSystem, "imperial") == 0)
+            measurement = Imperial;
+        else if (compareIgnoringCase(config->measurementSystem, "metric") == 0)
+            measurement = Metric;
+        else
+            DPRINTF(LOG_LEVEL_WARNING, "Unknown measurement system %s\n", config->measurementSystem);
+    }
+
     sim = new Simulation(universe);
     if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
