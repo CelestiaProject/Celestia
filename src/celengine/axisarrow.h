@@ -93,7 +93,7 @@ class BodyAxisArrows : public AxesReferenceMark
 {
 public:
     BodyAxisArrows(const Body& _body);
-    Eigen::Quaterniond getOrientation(double tdb) const;
+    Eigen::Quaterniond getOrientation(double tdb) const override;
 };
 
 
@@ -101,7 +101,7 @@ class FrameAxisArrows : public AxesReferenceMark
 {
 public:
     FrameAxisArrows(const Body& _body);
-    Eigen::Quaterniond getOrientation(double tdb) const;
+    Eigen::Quaterniond getOrientation(double tdb) const override;
 };
 
 
@@ -109,7 +109,7 @@ class SunDirectionArrow : public ArrowReferenceMark
 {
 public:
     SunDirectionArrow(const Body& _body);
-    Eigen::Vector3d getDirection(double tdb) const;
+    Eigen::Vector3d getDirection(double tdb) const override;
 };
 
 
@@ -117,7 +117,7 @@ class VelocityVectorArrow : public ArrowReferenceMark
 {
 public:
     VelocityVectorArrow(const Body& _body);
-    Eigen::Vector3d getDirection(double tdb) const;
+    Eigen::Vector3d getDirection(double tdb) const override;
 };
 
 
@@ -125,7 +125,7 @@ class SpinVectorArrow : public ArrowReferenceMark
 {
 public:
     SpinVectorArrow(const Body& _body);
-    Eigen::Vector3d getDirection(double tdb) const;
+    Eigen::Vector3d getDirection(double tdb) const override;
 };
 
 
@@ -136,7 +136,7 @@ class BodyToBodyDirectionArrow : public ArrowReferenceMark
 {
 public:
     BodyToBodyDirectionArrow(const Body& _body, const Selection& _target);
-    Eigen::Vector3d getDirection(double tdb) const;
+    Eigen::Vector3d getDirection(double tdb) const override;
 
 private:
     Selection target;

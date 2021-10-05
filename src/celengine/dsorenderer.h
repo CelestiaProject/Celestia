@@ -22,7 +22,7 @@ class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
 public:
     DSORenderer();
 
-    void process(DeepSkyObject* const &, double, float);
+    void process(DeepSkyObject* const &, double, float) override;
 
     Eigen::Vector3d     obsPos;
     Eigen::Matrix3f     orientationMatrixT;

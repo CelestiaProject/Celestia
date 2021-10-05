@@ -118,11 +118,11 @@ class J2000EquatorFrame : public ReferenceFrame
 
     J2000EquatorFrame(Selection center);
     virtual ~J2000EquatorFrame() = default;
-    Eigen::Quaterniond getOrientation(double tjd) const;
-    virtual bool isInertial() const;
-    virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth,
-                                      FrameType frameType) const;
+    Eigen::Quaterniond getOrientation(double tjd) const override;
+    bool isInertial() const override;
+    unsigned int nestingDepth(unsigned int depth,
+                              unsigned int maxDepth,
+                              FrameType frameType) const override;
 };
 
 
@@ -139,12 +139,12 @@ class BodyFixedFrame : public ReferenceFrame
 
     BodyFixedFrame(Selection center, Selection obj);
     virtual ~BodyFixedFrame() = default;
-    Eigen::Quaterniond getOrientation(double tjd) const;
-    virtual Eigen::Vector3d getAngularVelocity(double tjd) const;
-    virtual bool isInertial() const;
-    virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth,
-                                      FrameType frameType) const;
+    Eigen::Quaterniond getOrientation(double tjd) const override;
+    Eigen::Vector3d getAngularVelocity(double tjd) const override;
+    bool isInertial() const override;
+    unsigned int nestingDepth(unsigned int depth,
+                              unsigned int maxDepth,
+                              FrameType frameType) const override;
 
  private:
     Selection fixObject;
@@ -159,12 +159,12 @@ class BodyMeanEquatorFrame : public ReferenceFrame
     BodyMeanEquatorFrame(Selection center, Selection obj, double freeze);
     BodyMeanEquatorFrame(Selection center, Selection obj);
     virtual ~BodyMeanEquatorFrame() = default;
-    Eigen::Quaterniond getOrientation(double tjd) const;
-    virtual Eigen::Vector3d getAngularVelocity(double tjd) const;
-    virtual bool isInertial() const;
-    virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth,
-                                      FrameType frameType) const;
+    Eigen::Quaterniond getOrientation(double tjd) const override;
+    Eigen::Vector3d getAngularVelocity(double tjd) const override;
+    bool isInertial() const override;
+    unsigned int nestingDepth(unsigned int depth,
+                              unsigned int maxDepth,
+                              FrameType frameType) const override;
 
  private:
     Selection equatorObject;

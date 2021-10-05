@@ -40,7 +40,7 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
 #endif
 
     PointStarRenderer();
-    void process(const Star &star, float distance, float appMag);
+    void process(const Star &star, float distance, float appMag) override;
 
     Eigen::Vector3d obsPos;
     Eigen::Vector3f viewNormal;

@@ -48,16 +48,16 @@ class SpiceRotation : public CachingRotationModel
         return init();
     }
 
-    bool isPeriodic() const;
-    double getPeriod() const;
+    bool isPeriodic() const override;
+    double getPeriod() const override;
 
     // No notion of an equator for SPICE rotation models
-    Eigen::Quaterniond computeEquatorOrientation(double /* tdb */) const
+    Eigen::Quaterniond computeEquatorOrientation(double /* tdb */) const override
     {
         return Eigen::Quaterniond::Identity();
     }
 
-    Eigen::Quaterniond computeSpin(double jd) const;
+    Eigen::Quaterniond computeSpin(double jd) const override;
 
  private:
     const std::string m_frameName;
