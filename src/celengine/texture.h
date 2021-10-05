@@ -122,9 +122,9 @@ class ImageTexture : public Texture
     ImageTexture(const Image& img, AddressMode, MipMapMode);
     ~ImageTexture();
 
-    virtual const TextureTile getTile(int lod, int u, int v);
-    virtual void bind();
-    virtual void setBorderColor(Color);
+    const TextureTile getTile(int lod, int u, int v) override;
+    void bind() override;
+    void setBorderColor(Color) override;
 
     unsigned int getName() const;
 
@@ -139,12 +139,12 @@ class TiledTexture : public Texture
     TiledTexture(const Image& img, int _uSplit, int _vSplit, MipMapMode);
     ~TiledTexture();
 
-    virtual const TextureTile getTile(int lod, int u, int v);
-    virtual void bind();
-    virtual void setBorderColor(Color);
+    const TextureTile getTile(int lod, int u, int v) override;
+    void bind() override;
+    void setBorderColor(Color) override;
 
-    virtual int getUTileCount(int lod) const;
-    virtual int getVTileCount(int lod) const;
+    int getUTileCount(int lod) const override;
+    int getVTileCount(int lod) const override;
 
  private:
     int uSplit;
@@ -159,9 +159,9 @@ class CubeMap : public Texture
     explicit CubeMap(celestia::util::array_view<const Image*>);
     ~CubeMap();
 
-    virtual const TextureTile getTile(int lod, int u, int v);
-    virtual void bind();
-    virtual void setBorderColor(Color);
+    const TextureTile getTile(int lod, int u, int v) override;
+    void bind() override;
+    void setBorderColor(Color) override;
 
  private:
     unsigned int glName;

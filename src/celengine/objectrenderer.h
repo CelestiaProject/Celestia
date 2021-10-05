@@ -19,8 +19,14 @@ class Renderer;
 template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<OBJ, PREC>
 {
  public:
-    ObjectRenderer(PREC _distanceLimit) : distanceLimit((float) _distanceLimit) {};
-    void process(const OBJ& /*unused*/, PREC /*unused*/, float /*unused*/) {};
+    ObjectRenderer(PREC _distanceLimit) :
+        distanceLimit((float) _distanceLimit)
+    {
+    };
+
+    void process(const OBJ& /*unused*/, PREC /*unused*/, float /*unused*/) override
+    {
+    };
 
     const Observer* observer    { nullptr };
     Renderer*  renderer         { nullptr };
