@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia lt\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
-"POT-Creation-Date: 2021-05-10 22:35+0300\n"
+"POT-Creation-Date: 2021-10-06 15:59+0400\n"
 "PO-Revision-Date: 2020-07-14 06:47+0300\n"
 "Last-Translator: Mantas Kriaučiūnas <baltix@gmail.com>\n"
 "Language-Team: \n"
@@ -530,284 +530,284 @@ msgid "Asmara"
 msgstr "Asmara"
 
 #: ../data/data.cpp:127
-msgid "Astana"
-msgstr "Astana"
-
-#: ../data/data.cpp:128
 msgid "Asuncion"
 msgstr "Asunsjonas"
 
-#: ../data/data.cpp:129
+#: ../data/data.cpp:128
 msgid "Athens"
 msgstr "Atėnai"
 
-#: ../data/data.cpp:130
+#: ../data/data.cpp:129
 msgid "Avarua"
 msgstr "Avauja"
 
-#: ../data/data.cpp:131
+#: ../data/data.cpp:130
 msgid "Baghdad"
 msgstr "Bagdadas"
 
-#: ../data/data.cpp:132
+#: ../data/data.cpp:131
 msgid "Baku"
 msgstr "Baku"
 
-#: ../data/data.cpp:133
+#: ../data/data.cpp:132
 msgid "Bamako"
 msgstr "Bamako"
 
-#: ../data/data.cpp:134
+#: ../data/data.cpp:133
 msgid "Bandar Seri Begawan"
 msgstr "Bandar Seri Bedžavanas"
 
-#: ../data/data.cpp:135
+#: ../data/data.cpp:134
 msgid "Bangkok"
 msgstr "Bankokas"
 
-#: ../data/data.cpp:136
+#: ../data/data.cpp:135
 msgid "Bangui"
 msgstr "Bangis"
 
-#: ../data/data.cpp:137
+#: ../data/data.cpp:136
 msgid "Banjul"
 msgstr "Bandžulis"
 
-#: ../data/data.cpp:138
+#: ../data/data.cpp:137
 msgid "Basse-Terre"
 msgstr "Base Tera"
 
-#: ../data/data.cpp:139
+#: ../data/data.cpp:138
 msgid "Basseterre"
 msgstr "Basteras"
 
-#: ../data/data.cpp:140
+#: ../data/data.cpp:139
 msgid "Beijing"
 msgstr "Pekinas"
 
-#: ../data/data.cpp:141
+#: ../data/data.cpp:140
 msgid "Beirut"
 msgstr "Beirutas"
 
-#: ../data/data.cpp:142
+#: ../data/data.cpp:141
 msgid "Belgrade"
 msgstr "Belgradas"
 
-#: ../data/data.cpp:143
+#: ../data/data.cpp:142
 msgid "Belmopan"
 msgstr "Belmopanas"
 
-#: ../data/data.cpp:144
+#: ../data/data.cpp:143
 msgid "Berlin"
 msgstr "Berlynas"
 
-#: ../data/data.cpp:145
+#: ../data/data.cpp:144
 msgid "Bern"
 msgstr "Bernas"
 
-#: ../data/data.cpp:146
+#: ../data/data.cpp:145
 msgid "Bishkek"
 msgstr "Biškekas"
 
-#: ../data/data.cpp:147
+#: ../data/data.cpp:146
 msgid "Bissau"
 msgstr "Gvinėja"
 
-#: ../data/data.cpp:148
+#: ../data/data.cpp:147
 msgid "Bloemfontein"
 msgstr "Bliūfonteinas"
 
-#: ../data/data.cpp:149
+#: ../data/data.cpp:148
 msgid "Bogota"
 msgstr "Bogota"
 
-#: ../data/data.cpp:150
+#: ../data/data.cpp:149
 msgid "Brasilia"
 msgstr "Brazilija"
 
-#: ../data/data.cpp:151
+#: ../data/data.cpp:150
 msgid "Bratislava"
 msgstr "Bratislava"
 
-#: ../data/data.cpp:152
+#: ../data/data.cpp:151
 msgid "Brazzaville"
 msgstr "Brazavilis"
 
-#: ../data/data.cpp:153
+#: ../data/data.cpp:152
 msgid "Bridgetown"
 msgstr "Bridžtounas"
 
-#: ../data/data.cpp:154
+#: ../data/data.cpp:153
 msgid "Brussels"
 msgstr "Briuselis"
 
-#: ../data/data.cpp:155
+#: ../data/data.cpp:154
 msgid "Bucharest"
 msgstr "Bukareštas"
 
-#: ../data/data.cpp:156
+#: ../data/data.cpp:155
 msgid "Budapest"
 msgstr "Budapeštas"
 
-#: ../data/data.cpp:157
+#: ../data/data.cpp:156
 msgid "Buenos Aires"
 msgstr "Buenos Airės"
 
-#: ../data/data.cpp:158
+#: ../data/data.cpp:157
 msgid "Bujumbura"
 msgstr "Bujambara"
 
-#: ../data/data.cpp:159
+#: ../data/data.cpp:158
 msgid "Cairo"
 msgstr "Kairas"
 
-#: ../data/data.cpp:160
+#: ../data/data.cpp:159
 msgid "Canberra"
 msgstr "Kanbera"
 
-#: ../data/data.cpp:161
+#: ../data/data.cpp:160
 msgid "Cape Town"
 msgstr "Keiptaunas"
 
-#: ../data/data.cpp:162
+#: ../data/data.cpp:161
 msgid "Caracas"
 msgstr "Karakasas"
 
-#: ../data/data.cpp:163
+#: ../data/data.cpp:162
 msgid "Castries"
 msgstr "Kastris"
 
-#: ../data/data.cpp:164
+#: ../data/data.cpp:163
 msgid "Cayenne"
 msgstr "Kaena"
 
-#: ../data/data.cpp:165
+#: ../data/data.cpp:164
 msgid "Charlotte Amalie"
 msgstr "Šarlote Amali"
 
-#: ../data/data.cpp:166
+#: ../data/data.cpp:165
 msgid "Chisinau"
 msgstr "Kišiniovas"
 
-#: ../data/data.cpp:167
+#: ../data/data.cpp:166
 msgid "Colombo"
 msgstr "Kolumbija"
 
-#: ../data/data.cpp:168
+#: ../data/data.cpp:167
 msgid "Conakry"
 msgstr "Konakris"
 
-#: ../data/data.cpp:169
+#: ../data/data.cpp:168
 msgid "Copenhagen"
 msgstr "Kopenhaga"
 
-#: ../data/data.cpp:170
+#: ../data/data.cpp:169
 msgid "Cotonou"
 msgstr "Kotonu"
 
-#: ../data/data.cpp:171
+#: ../data/data.cpp:170
 msgid "Dakar"
 msgstr "Dakaras"
 
-#: ../data/data.cpp:172
+#: ../data/data.cpp:171
 msgid "Damascus"
 msgstr "Damaskas"
 
-#: ../data/data.cpp:173
+#: ../data/data.cpp:172
 msgid "Dar es Salaam"
 msgstr "Dar el Salamas"
 
-#: ../data/data.cpp:174
+#: ../data/data.cpp:173
 msgid "Dhaka"
 msgstr "Daka"
 
-#: ../data/data.cpp:175
+#: ../data/data.cpp:174
 msgid "Dili"
 msgstr "Dili"
 
-#: ../data/data.cpp:176
+#: ../data/data.cpp:175
 msgid "Djibouti"
 msgstr "Džibutis"
 
-#: ../data/data.cpp:177
+#: ../data/data.cpp:176
 msgid "Doha"
 msgstr "Doha"
 
-#: ../data/data.cpp:178
+#: ../data/data.cpp:177
 msgid "Douglas"
 msgstr ""
 
-#: ../data/data.cpp:179
+#: ../data/data.cpp:178
 msgid "Dublin"
 msgstr "Dublinas"
 
-#: ../data/data.cpp:180
+#: ../data/data.cpp:179
 msgid "Dushanbe"
 msgstr "Dušambė"
 
-#: ../data/data.cpp:181
+#: ../data/data.cpp:180
 msgid "Fongafale"
 msgstr "Fongafalė"
 
-#: ../data/data.cpp:182
+#: ../data/data.cpp:181
 msgid "Fort-de-France"
 msgstr "Prancūzijos uostas"
 
-#: ../data/data.cpp:183
+#: ../data/data.cpp:182
 msgid "Freetown"
 msgstr "Frytounas"
 
-#: ../data/data.cpp:184
+#: ../data/data.cpp:183
 msgid "Gaborone"
 msgstr "Džaborone"
 
-#: ../data/data.cpp:185
+#: ../data/data.cpp:184
 msgid "George Town"
 msgstr "Džordžtaunas"
 
-#: ../data/data.cpp:186
+#: ../data/data.cpp:185
 msgid "Georgetown"
 msgstr "Džordžtounas"
 
-#: ../data/data.cpp:187
+#: ../data/data.cpp:186
 msgid "Gibraltar"
 msgstr "Gibraltaras"
 
-#: ../data/data.cpp:188
+#: ../data/data.cpp:187
 msgid "Grand Turk"
 msgstr "Did. Turkija"
 
-#: ../data/data.cpp:189
+#: ../data/data.cpp:188
 msgid "Guatemala"
 msgstr "Gvatemala"
 
-#: ../data/data.cpp:190
+#: ../data/data.cpp:189
 msgid "Hagatna"
 msgstr "Hagatna"
 
-#: ../data/data.cpp:191
+#: ../data/data.cpp:190
 msgid "The Hague"
 msgstr "Haga"
 
-#: ../data/data.cpp:192
+#: ../data/data.cpp:191
 msgid "Hamilton"
 msgstr "Hamiltonas"
 
-#: ../data/data.cpp:193
+#: ../data/data.cpp:192
 msgid "Hanoi"
 msgstr "Hanojus"
 
-#: ../data/data.cpp:194
+#: ../data/data.cpp:193
 msgid "Harare"
 msgstr "Hararė"
 
-#: ../data/data.cpp:195
+#: ../data/data.cpp:194
 msgid "Havana"
 msgstr "Havana"
 
-#: ../data/data.cpp:196
+#: ../data/data.cpp:195
 msgid "Helsinki"
 msgstr "Helsinkis"
+
+#: ../data/data.cpp:196
+msgid "Hong Kong"
+msgstr ""
 
 #: ../data/data.cpp:197
 msgid "Honiara"
@@ -1054,314 +1054,318 @@ msgid "Nuku'alofa"
 msgstr "Nukalofa"
 
 #: ../data/data.cpp:259
+msgid "Nur-Sultan"
+msgstr ""
+
+#: ../data/data.cpp:260
 msgid "Nuuk"
 msgstr "Nuukas"
 
-#: ../data/data.cpp:260
+#: ../data/data.cpp:261
 msgid "Oranjestad"
 msgstr "Orandžestadas"
 
-#: ../data/data.cpp:261
+#: ../data/data.cpp:262
 msgid "Oslo"
 msgstr "Oslas"
 
-#: ../data/data.cpp:262
+#: ../data/data.cpp:263
 msgid "Ottawa"
 msgstr "Otava"
 
-#: ../data/data.cpp:263
+#: ../data/data.cpp:264
 msgid "Ouagadougou"
 msgstr "Uagadugu"
 
-#: ../data/data.cpp:264
+#: ../data/data.cpp:265
 msgid "Pago Pago"
 msgstr "Pago Pago"
 
-#: ../data/data.cpp:265
+#: ../data/data.cpp:266
 msgid "Palikir"
 msgstr "Palikir"
 
-#: ../data/data.cpp:266
+#: ../data/data.cpp:267
 msgid "Panama"
 msgstr "Panama"
 
-#: ../data/data.cpp:267
+#: ../data/data.cpp:268
 msgid "Papeete"
 msgstr ""
 
-#: ../data/data.cpp:268
+#: ../data/data.cpp:269
 msgid "Paramaribo"
 msgstr "Paramaribas"
 
-#: ../data/data.cpp:269
+#: ../data/data.cpp:270
 msgid "Paris"
 msgstr "Paryžius"
 
-#: ../data/data.cpp:270
+#: ../data/data.cpp:271
 msgid "Phnom Penh"
 msgstr "Pnompenis"
 
-#: ../data/data.cpp:271
+#: ../data/data.cpp:272
 msgid "Plymouth"
 msgstr "Plimutas"
 
-#: ../data/data.cpp:272
+#: ../data/data.cpp:273
 msgid "Port Louis"
 msgstr "Port Liuisas"
 
-#: ../data/data.cpp:273
+#: ../data/data.cpp:274
 msgid "Port Moresby"
 msgstr "Port Morsbis"
 
-#: ../data/data.cpp:274
+#: ../data/data.cpp:275
 msgid "Port-au-Prince"
 msgstr "Port-a-Princas"
 
-#: ../data/data.cpp:275
+#: ../data/data.cpp:276
 msgid "Port-of-Spain"
 msgstr "Ispanijos uostas"
 
-#: ../data/data.cpp:276
+#: ../data/data.cpp:277
 msgid "Porto-Novo"
 msgstr "Porto Novas"
 
-#: ../data/data.cpp:277
+#: ../data/data.cpp:278
 msgid "Port-Vila"
 msgstr "Port Vila"
 
-#: ../data/data.cpp:278
+#: ../data/data.cpp:279
 msgid "Prague"
 msgstr "Praha"
 
-#: ../data/data.cpp:279
+#: ../data/data.cpp:280
 msgid "Praia"
 msgstr "Praja"
 
-#: ../data/data.cpp:280
+#: ../data/data.cpp:281
 msgid "Pretoria"
 msgstr "Pretorija"
 
-#: ../data/data.cpp:281
+#: ../data/data.cpp:282
 msgid "P'yongyang"
 msgstr "Pijongjanas"
 
-#: ../data/data.cpp:282
+#: ../data/data.cpp:283
 msgid "Quito"
 msgstr "Kitas"
 
-#: ../data/data.cpp:283
+#: ../data/data.cpp:284
 msgid "Rabat"
 msgstr "Rabatas"
 
-#: ../data/data.cpp:284
+#: ../data/data.cpp:285
 msgid "Rangoon"
 msgstr "Rangūnas"
 
-#: ../data/data.cpp:285
+#: ../data/data.cpp:286
 msgid "Reykjavik"
 msgstr "Reikjavíkas"
 
-#: ../data/data.cpp:286
+#: ../data/data.cpp:287
 msgid "Riga"
 msgstr "Ryga"
 
-#: ../data/data.cpp:287
+#: ../data/data.cpp:288
 msgid "Riyadh"
 msgstr "Rijadas"
 
-#: ../data/data.cpp:288
+#: ../data/data.cpp:289
 msgid "Road Town"
 msgstr "Roadtovnas"
 
-#: ../data/data.cpp:289
+#: ../data/data.cpp:290
 msgid "Rome"
 msgstr "Roma"
 
-#: ../data/data.cpp:290
+#: ../data/data.cpp:291
 msgid "Roseau"
 msgstr "Roseu"
 
-#: ../data/data.cpp:291
+#: ../data/data.cpp:292
 msgid "Saint George's"
 msgstr "Senžordžas"
 
-#: ../data/data.cpp:292
+#: ../data/data.cpp:293
 msgid "Saint Helier"
 msgstr "Saint Heleris"
 
-#: ../data/data.cpp:293
+#: ../data/data.cpp:294
 msgid "Saint John's"
 msgstr "Saint John"
 
-#: ../data/data.cpp:294
+#: ../data/data.cpp:295
 msgid "Saint Peter Port"
 msgstr "Šventasis Peterio uostas"
 
-#: ../data/data.cpp:295
+#: ../data/data.cpp:296
 msgid "Saint-Denis"
 msgstr "Saint Denisas"
 
-#: ../data/data.cpp:296
+#: ../data/data.cpp:297
 msgid "Saint-Pierre"
 msgstr "Saint Pjeras"
 
-#: ../data/data.cpp:297
+#: ../data/data.cpp:298
 msgid "Saipan"
 msgstr "Ispanija"
 
-#: ../data/data.cpp:298
+#: ../data/data.cpp:299
 msgid "San Jose"
 msgstr "San Chosė"
 
-#: ../data/data.cpp:299
+#: ../data/data.cpp:300
 msgid "San Juan"
 msgstr "San Juanis"
 
-#: ../data/data.cpp:300
+#: ../data/data.cpp:301
 msgid "San Marino"
 msgstr "San Marinas"
 
-#: ../data/data.cpp:301
+#: ../data/data.cpp:302
 msgid "San Salvador"
 msgstr "Salvadoras"
 
-#: ../data/data.cpp:302
+#: ../data/data.cpp:303
 msgid "Sanaa"
 msgstr "Sana"
 
-#: ../data/data.cpp:303
+#: ../data/data.cpp:304
 msgid "Santiago"
 msgstr "Sandjiegas"
 
-#: ../data/data.cpp:304
+#: ../data/data.cpp:305
 msgid "Santo Domingo"
 msgstr "Santa Domingas"
 
-#: ../data/data.cpp:305
+#: ../data/data.cpp:306
 msgid "Sao Tome"
 msgstr "Sao Tomė"
 
-#: ../data/data.cpp:306
+#: ../data/data.cpp:307
 msgid "Sarajevo"
 msgstr "Sarajevas"
 
-#: ../data/data.cpp:307
+#: ../data/data.cpp:308
 msgid "Seoul"
 msgstr "Seulas"
 
-#: ../data/data.cpp:308
+#: ../data/data.cpp:309
 msgid "The Settlement"
 msgstr "Setlementas"
 
-#: ../data/data.cpp:309
+#: ../data/data.cpp:310
 msgid "Singapore"
 msgstr "Singapūras"
 
-#: ../data/data.cpp:310
+#: ../data/data.cpp:311
 msgid "Skopje"
 msgstr "Skopjė"
 
-#: ../data/data.cpp:311
+#: ../data/data.cpp:312
 msgid "Sofia"
 msgstr "Sofija"
 
-#: ../data/data.cpp:312
+#: ../data/data.cpp:313
 msgid "Sri Jayewardenepura Kotte"
 msgstr "Šri Džeivardepura Kota"
 
-#: ../data/data.cpp:313
+#: ../data/data.cpp:314
 msgid "Stanley"
 msgstr "Stenlis"
 
-#: ../data/data.cpp:314
+#: ../data/data.cpp:315
 msgid "Stockholm"
 msgstr "Stokholmas"
 
-#: ../data/data.cpp:315
+#: ../data/data.cpp:316
 msgid "Sucre"
 msgstr "Sukrė"
 
-#: ../data/data.cpp:316
+#: ../data/data.cpp:317
 msgid "Suva"
 msgstr "Suva"
 
-#: ../data/data.cpp:317
+#: ../data/data.cpp:318
 msgid "Taipei"
 msgstr "Taipėjus"
 
-#: ../data/data.cpp:318
+#: ../data/data.cpp:319
 msgid "Tallinn"
 msgstr "Talinas"
 
-#: ../data/data.cpp:319
+#: ../data/data.cpp:320
 msgid "Tarawa"
 msgstr "Tarava"
 
-#: ../data/data.cpp:320
+#: ../data/data.cpp:321
 msgid "Tashkent"
 msgstr "Taškentas"
 
-#: ../data/data.cpp:321
+#: ../data/data.cpp:322
 msgid "T'bilisi"
 msgstr "Tbilisis"
 
-#: ../data/data.cpp:322
+#: ../data/data.cpp:323
 msgid "Tegucigalpa"
 msgstr "Tegucigalpa"
 
-#: ../data/data.cpp:323
+#: ../data/data.cpp:324
 msgid "Tehran"
 msgstr "Teheranas"
 
-#: ../data/data.cpp:324
+#: ../data/data.cpp:325
 msgid "Tel Aviv"
 msgstr "Tel Avivas"
 
-#: ../data/data.cpp:325
+#: ../data/data.cpp:326
 msgid "Thimphu"
 msgstr "Timpu"
 
-#: ../data/data.cpp:326
+#: ../data/data.cpp:327
 msgid "Tirana"
 msgstr "Tirana"
 
-#: ../data/data.cpp:327
+#: ../data/data.cpp:328
 msgid "Tokyo"
 msgstr "Tokijas"
 
-#: ../data/data.cpp:328
+#: ../data/data.cpp:329
 msgid "Torshavn"
 msgstr "Toršuvanas"
 
-#: ../data/data.cpp:329
+#: ../data/data.cpp:330
 msgid "Tripoli"
 msgstr "Tripolis"
 
-#: ../data/data.cpp:330
+#: ../data/data.cpp:331
 msgid "Tunis"
 msgstr "Tunisas"
 
-#: ../data/data.cpp:331
+#: ../data/data.cpp:332
 msgid "Ulaanbaatar"
 msgstr "Ulan Batoras"
 
-#: ../data/data.cpp:332
+#: ../data/data.cpp:333
 msgid "Vaduz"
 msgstr "Vaducas"
 
-#: ../data/data.cpp:333
+#: ../data/data.cpp:334
 msgid "Valletta"
 msgstr "Valeta"
 
-#: ../data/data.cpp:334
+#: ../data/data.cpp:335
 msgid "The Valley"
 msgstr "Slėnis"
 
-#: ../data/data.cpp:335
+#: ../data/data.cpp:336
 msgid "Vatican City"
 msgstr "Vatikanas"
 
-#: ../data/data.cpp:336 ../data/data.cpp:337
+#: ../data/data.cpp:337
 msgid "Victoria"
 msgstr "Viktorija"
 
@@ -1437,6 +1441,2156 @@ msgstr "Didysis Magelano debesis"
 msgid "Solar System Barycenter"
 msgstr "Saulės sistemos baricentras"
 
+#: ../data/data.cpp:356
+msgid "Sol"
+msgstr "Saulė"
+
+#: ../data/data.cpp:357
+msgid "Alpheratz"
+msgstr "Alferatas"
+
+#: ../data/data.cpp:358
+msgid "Sirrah"
+msgstr "Sirrah"
+
+#: ../data/data.cpp:359
+msgid "Caph"
+msgstr "Kafas"
+
+#: ../data/data.cpp:360
+msgid "Algenib"
+msgstr "Algenibas"
+
+#: ../data/data.cpp:361
+msgid "Citadelle"
+msgstr ""
+
+#: ../data/data.cpp:362
+msgid "Schemali"
+msgstr "Schemali"
+
+#: ../data/data.cpp:363
+msgid "Ankaa"
+msgstr "Anka"
+
+#: ../data/data.cpp:364
+msgid "Felixvarela"
+msgstr ""
+
+#: ../data/data.cpp:365
+msgid "Fulu"
+msgstr ""
+
+#: ../data/data.cpp:366
+msgid "Schedar"
+msgstr "Schedar"
+
+#: ../data/data.cpp:367
+msgid "Shedir"
+msgstr "Shedir"
+
+#: ../data/data.cpp:368
+msgid "Diphda"
+msgstr "Difda"
+
+#: ../data/data.cpp:369
+msgid "Deneb Kaitos"
+msgstr "Deneb Kaitos"
+
+#: ../data/data.cpp:370
+msgid "Cocibolca"
+msgstr ""
+
+#: ../data/data.cpp:371
+msgid "Achird"
+msgstr "Achird"
+
+#: ../data/data.cpp:372
+msgid "Van Maanen 2"
+msgstr "Van Maanen 2"
+
+#: ../data/data.cpp:373
+#, fuzzy
+msgid "Castula"
+msgstr "Kastoras"
+
+#: ../data/data.cpp:374
+msgid "Navi"
+msgstr "Navi"
+
+#: ../data/data.cpp:375
+msgid "Nenque"
+msgstr ""
+
+#: ../data/data.cpp:376
+#, fuzzy
+msgid "Wurren"
+msgstr "Dabartinis"
+
+#: ../data/data.cpp:377
+msgid "Mirach"
+msgstr "Mirakas"
+
+#: ../data/data.cpp:378
+msgid "Emiw"
+msgstr ""
+
+#: ../data/data.cpp:379
+msgid "Revati"
+msgstr ""
+
+#: ../data/data.cpp:380
+msgid "Adhil"
+msgstr "Adhil"
+
+#: ../data/data.cpp:381
+msgid "Bélénos"
+msgstr ""
+
+#: ../data/data.cpp:382
+msgid "Ruchbah"
+msgstr "Rukba"
+
+#: ../data/data.cpp:383
+#, fuzzy
+msgid "Alpherg"
+msgstr "Alferatas"
+
+#: ../data/data.cpp:384
+#, fuzzy
+msgid "Titawin"
+msgstr "Titanas"
+
+#: ../data/data.cpp:385
+msgid "Achernar"
+msgstr "Achernaras"
+
+#: ../data/data.cpp:386
+msgid "Nembus"
+msgstr ""
+
+#: ../data/data.cpp:387
+msgid "Torcular"
+msgstr ""
+
+#: ../data/data.cpp:388
+msgid "Torcularis Septentrionalis"
+msgstr ""
+
+#: ../data/data.cpp:389
+msgid "Baten Kaitos"
+msgstr "Baten Kaitos"
+
+#: ../data/data.cpp:390
+msgid "Mothallah"
+msgstr ""
+
+#: ../data/data.cpp:391
+msgid "Caput Trianguli"
+msgstr "Caput Trianguli"
+
+#: ../data/data.cpp:392
+msgid "Mesarthim"
+msgstr "Mesarthim"
+
+#: ../data/data.cpp:393
+msgid "Segin"
+msgstr "Segin"
+
+#: ../data/data.cpp:394
+msgid "Sheratan"
+msgstr "Šeratanas"
+
+#: ../data/data.cpp:395
+#, fuzzy
+msgid "Alrescha"
+msgstr "Al Rescha"
+
+#: ../data/data.cpp:396
+msgid "Al Rescha"
+msgstr "Al Rescha"
+
+#: ../data/data.cpp:397
+msgid "Almach"
+msgstr "Almach"
+
+#: ../data/data.cpp:398
+msgid "Almaak"
+msgstr "Almaak"
+
+#: ../data/data.cpp:399
+msgid "Alamak"
+msgstr "Alamak"
+
+#: ../data/data.cpp:400
+msgid "Hamal"
+msgstr "Hamalis"
+
+#: ../data/data.cpp:401
+msgid "Mira"
+msgstr "Mira"
+
+#: ../data/data.cpp:402
+msgid "Polaris"
+msgstr "Šiaurinė žvaigždė"
+
+#: ../data/data.cpp:403
+msgid "Buna"
+msgstr ""
+
+#: ../data/data.cpp:404
+msgid "Kaffaljidhma"
+msgstr ""
+
+#: ../data/data.cpp:405
+msgid "Koeia"
+msgstr ""
+
+#: ../data/data.cpp:406
+msgid "Lilii Borea"
+msgstr ""
+
+#: ../data/data.cpp:407
+msgid "Nushagak"
+msgstr ""
+
+#: ../data/data.cpp:408
+#, fuzzy
+msgid "Bharani"
+msgstr "Chara"
+
+#: ../data/data.cpp:409
+#, fuzzy
+msgid "Miram"
+msgstr "Mira"
+
+#: ../data/data.cpp:410
+msgid "Angetenar"
+msgstr "Angetenar"
+
+#: ../data/data.cpp:411
+msgid "Azha"
+msgstr "Azha"
+
+#: ../data/data.cpp:412
+msgid "Acamar"
+msgstr "Acamar"
+
+#: ../data/data.cpp:413
+msgid "Ayeyarwady"
+msgstr ""
+
+#: ../data/data.cpp:414
+msgid "Menkar"
+msgstr "Menkar"
+
+#: ../data/data.cpp:415
+msgid "Menkab"
+msgstr "Menkab"
+
+#: ../data/data.cpp:416
+msgid "Algol"
+msgstr "Algolis"
+
+#: ../data/data.cpp:417
+msgid "Misam"
+msgstr ""
+
+#: ../data/data.cpp:418
+msgid "Botein"
+msgstr "Botein"
+
+#: ../data/data.cpp:419
+msgid "Dalim"
+msgstr ""
+
+#: ../data/data.cpp:420
+msgid "Zibal"
+msgstr ""
+
+#: ../data/data.cpp:421
+msgid "Intan"
+msgstr ""
+
+#: ../data/data.cpp:422
+msgid "Mirfak"
+msgstr "Mirfak"
+
+#: ../data/data.cpp:423
+msgid "Mirphak"
+msgstr "Mirfakas"
+
+#: ../data/data.cpp:424
+msgid "Marfak"
+msgstr "Marfak"
+
+#: ../data/data.cpp:425
+#, fuzzy
+msgid "Ran"
+msgstr "Rana"
+
+#: ../data/data.cpp:426
+msgid "Tupi"
+msgstr ""
+
+#: ../data/data.cpp:427
+msgid "Rana"
+msgstr "Rana"
+
+#: ../data/data.cpp:428
+msgid "Atik"
+msgstr "Atik"
+
+#: ../data/data.cpp:429
+msgid "Celaeno"
+msgstr "Celaeno"
+
+#: ../data/data.cpp:430
+msgid "Electra"
+msgstr "Electra"
+
+#: ../data/data.cpp:431
+msgid "Taygeta"
+msgstr "Taygeta"
+
+#: ../data/data.cpp:432
+msgid "Maia"
+msgstr "Maia"
+
+#: ../data/data.cpp:433
+msgid "Asterope"
+msgstr "Asteropė"
+
+#: ../data/data.cpp:434
+msgid "Merope"
+msgstr "Meropė"
+
+#: ../data/data.cpp:435
+msgid "Alcyone"
+msgstr "Alkionė"
+
+#: ../data/data.cpp:436
+msgid "Pleione"
+msgstr "Plejonė"
+
+#: ../data/data.cpp:437
+msgid "Zaurak"
+msgstr "Zaurakas"
+
+#: ../data/data.cpp:438
+msgid "Menkib"
+msgstr "Menkib"
+
+#: ../data/data.cpp:439
+msgid "Beid"
+msgstr "Beid"
+
+#: ../data/data.cpp:440
+msgid "Keid"
+msgstr "Keid"
+
+#: ../data/data.cpp:441
+msgid "Prima Hyadum"
+msgstr ""
+
+#: ../data/data.cpp:442
+msgid "Secunda Hyadum"
+msgstr ""
+
+#: ../data/data.cpp:443
+msgid "Beemim"
+msgstr ""
+
+#: ../data/data.cpp:444
+msgid "Ain"
+msgstr "Ainė"
+
+#: ../data/data.cpp:445
+msgid "Chamukuy"
+msgstr ""
+
+#: ../data/data.cpp:446
+msgid "Hoggar"
+msgstr ""
+
+#: ../data/data.cpp:447
+msgid "Theemin"
+msgstr ""
+
+#: ../data/data.cpp:448
+msgid "Aldebaran"
+msgstr "Aldebaranas"
+
+#: ../data/data.cpp:449
+msgid "Sceptrum"
+msgstr ""
+
+#: ../data/data.cpp:450
+#, fuzzy
+msgid "Tabit"
+msgstr "Thabit"
+
+#: ../data/data.cpp:451
+msgid "Mouhoun"
+msgstr ""
+
+#: ../data/data.cpp:452
+msgid "Hassaleh"
+msgstr ""
+
+#: ../data/data.cpp:453
+msgid "Hind's Crimson Star"
+msgstr "Hind's Crimson Star"
+
+#: ../data/data.cpp:454
+#, fuzzy
+msgid "Almaaz"
+msgstr "Almaak"
+
+#: ../data/data.cpp:455
+#, fuzzy
+msgid "Saclateni"
+msgstr "Galaktikos"
+
+#: ../data/data.cpp:456
+msgid "Sadatoni"
+msgstr "Sadatoni"
+
+#: ../data/data.cpp:457
+msgid "Haedus"
+msgstr ""
+
+#: ../data/data.cpp:458
+msgid "Cursa"
+msgstr "Kursa"
+
+#: ../data/data.cpp:459
+msgid "Mago"
+msgstr ""
+
+#: ../data/data.cpp:460
+msgid "Kapteyn's Star"
+msgstr "Kapteino žvaigždė"
+
+#: ../data/data.cpp:461
+msgid "Rigel"
+msgstr "Rigelis"
+
+#: ../data/data.cpp:462
+msgid "Capella"
+msgstr "Kapela"
+
+#: ../data/data.cpp:463
+msgid "Bellatrix"
+msgstr "Belatriksė"
+
+#: ../data/data.cpp:464
+msgid "Elnath"
+msgstr "Elnath"
+
+#: ../data/data.cpp:465
+msgid "Alnath"
+msgstr "Alnatas"
+
+#: ../data/data.cpp:466
+msgid "Nihal"
+msgstr "Nihalas"
+
+#: ../data/data.cpp:467
+msgid "Thabit"
+msgstr "Thabit"
+
+#: ../data/data.cpp:468
+msgid "Mintaka"
+msgstr "Mintaka"
+
+#: ../data/data.cpp:469
+msgid "Arneb"
+msgstr "Arnebas"
+
+#: ../data/data.cpp:470
+msgid "Meissa"
+msgstr "Meissa"
+
+#: ../data/data.cpp:471
+msgid "Heka"
+msgstr "Heka"
+
+#: ../data/data.cpp:472
+msgid "Hatysa"
+msgstr ""
+
+#: ../data/data.cpp:473
+msgid "Alnilam"
+msgstr "Alnilamas"
+
+#: ../data/data.cpp:474
+msgid "Bubup"
+msgstr ""
+
+#: ../data/data.cpp:475
+#, fuzzy
+msgid "Tianguan"
+msgstr "Trikampis"
+
+#: ../data/data.cpp:476
+msgid "Phact"
+msgstr "Phact"
+
+#: ../data/data.cpp:477
+msgid "Alnitak"
+msgstr "Alnitakas"
+
+#: ../data/data.cpp:478
+msgid "Saiph"
+msgstr "Saifas"
+
+#: ../data/data.cpp:479
+msgid "Wazn"
+msgstr "Wazn"
+
+#: ../data/data.cpp:480
+msgid "Betelgeuse"
+msgstr "Betelgeizė"
+
+#: ../data/data.cpp:481
+msgid "Prijipati"
+msgstr "Prijipati"
+
+#: ../data/data.cpp:482
+msgid "Menkalinan"
+msgstr "Menkalinanas"
+
+#: ../data/data.cpp:483
+msgid "Mahasim"
+msgstr ""
+
+#: ../data/data.cpp:484
+#, fuzzy
+msgid "Elkurud"
+msgstr "Furud"
+
+#: ../data/data.cpp:485
+msgid "Amadioha"
+msgstr ""
+
+#: ../data/data.cpp:486
+#, fuzzy
+msgid "Propus"
+msgstr "Kanopas"
+
+#: ../data/data.cpp:487
+msgid "Red Rectangle"
+msgstr "Raudonasis stačiakampis"
+
+#: ../data/data.cpp:488
+msgid "Furud"
+msgstr "Furud"
+
+#: ../data/data.cpp:489
+msgid "Mirzam"
+msgstr "Mirzamas"
+
+#: ../data/data.cpp:490
+msgid "Murzim"
+msgstr "Murzim"
+
+#: ../data/data.cpp:491
+msgid "Tejat"
+msgstr "Tejat"
+
+#: ../data/data.cpp:492
+msgid "Canopus"
+msgstr "Kanopas"
+
+#: ../data/data.cpp:493
+msgid "Suhel"
+msgstr "Suhel"
+
+#: ../data/data.cpp:494
+msgid "Lucilinburhuc"
+msgstr ""
+
+#: ../data/data.cpp:495
+msgid "Lusitânia"
+msgstr ""
+
+#: ../data/data.cpp:496
+#, fuzzy
+msgid "Plaskett's Star"
+msgstr "Filtruoti žvaigždes"
+
+#: ../data/data.cpp:497
+msgid "Alhena"
+msgstr "Alhena"
+
+#: ../data/data.cpp:498
+msgid "Almeisan"
+msgstr "Almeisan"
+
+#: ../data/data.cpp:499
+msgid "Nosaxa"
+msgstr ""
+
+#: ../data/data.cpp:500
+msgid "Mebsuta"
+msgstr "Mebsuta"
+
+#: ../data/data.cpp:501
+msgid "Sirius"
+msgstr "Sirijus"
+
+#: ../data/data.cpp:502
+msgid "Alzirr"
+msgstr ""
+
+#: ../data/data.cpp:503
+msgid "Nervia"
+msgstr ""
+
+#: ../data/data.cpp:504
+msgid "Adhara"
+msgstr "Adara"
+
+#: ../data/data.cpp:505
+msgid "Adara"
+msgstr "Adara"
+
+#: ../data/data.cpp:506
+msgid "Citalá"
+msgstr ""
+
+#: ../data/data.cpp:507
+msgid "Unurgunite"
+msgstr ""
+
+#: ../data/data.cpp:508
+msgid "Muliphein"
+msgstr "Muliphein"
+
+#: ../data/data.cpp:509
+msgid "Mekbuda"
+msgstr "Mekbuda"
+
+#: ../data/data.cpp:510
+msgid "Wezen"
+msgstr "Alvazas"
+
+#: ../data/data.cpp:511
+msgid "Bernes 135"
+msgstr "Bernes 135"
+
+#: ../data/data.cpp:512
+msgid "Wasat"
+msgstr "Wasat"
+
+#: ../data/data.cpp:513
+msgid "Aludra"
+msgstr "Aludra"
+
+#: ../data/data.cpp:514
+msgid "Gomeisa"
+msgstr "Gomeisa"
+
+#: ../data/data.cpp:515
+msgid "Luyten's Star"
+msgstr "Luyten's Star"
+
+#: ../data/data.cpp:516
+msgid "Castor"
+msgstr "Kastoras"
+
+#: ../data/data.cpp:517
+msgid "Jishui"
+msgstr ""
+
+#: ../data/data.cpp:518
+msgid "Procyon"
+msgstr "Prokionas"
+
+#: ../data/data.cpp:519
+msgid "Elgomaisa"
+msgstr "Elgomaisa"
+
+#: ../data/data.cpp:520
+msgid "Ceibo"
+msgstr ""
+
+#: ../data/data.cpp:521
+msgid "Pollux"
+msgstr "Poluksas"
+
+#: ../data/data.cpp:522
+msgid "Tapecue"
+msgstr ""
+
+#: ../data/data.cpp:523
+#, fuzzy
+msgid "Azmidi"
+msgstr "Asmidiske"
+
+#: ../data/data.cpp:524
+msgid "Asmidiske"
+msgstr "Asmidiske"
+
+#: ../data/data.cpp:525
+msgid "Naos"
+msgstr "Naosas"
+
+#: ../data/data.cpp:526
+msgid "Tureis"
+msgstr ""
+
+#: ../data/data.cpp:527
+msgid "Regor"
+msgstr "Regoras"
+
+#: ../data/data.cpp:528
+msgid "Tegmine"
+msgstr "Tegmine"
+
+#: ../data/data.cpp:529
+#, fuzzy
+msgid "Tarf"
+msgstr "Al Tarf"
+
+#: ../data/data.cpp:530
+msgid "Al Tarf"
+msgstr "Al Tarf"
+
+#: ../data/data.cpp:531
+msgid "Násti"
+msgstr ""
+
+#: ../data/data.cpp:532
+msgid "Piautos"
+msgstr ""
+
+#: ../data/data.cpp:533
+msgid "Avior"
+msgstr "Avioras"
+
+#: ../data/data.cpp:534
+msgid "Alsciaukat"
+msgstr ""
+
+#: ../data/data.cpp:535
+msgid "Muscida"
+msgstr "Muscida"
+
+#: ../data/data.cpp:536
+#, fuzzy
+msgid "Minchir"
+msgstr "Achird"
+
+#: ../data/data.cpp:537
+msgid "Gakyid"
+msgstr ""
+
+#: ../data/data.cpp:538
+msgid "Meleph"
+msgstr ""
+
+#: ../data/data.cpp:539
+msgid "Asellus Borealis"
+msgstr "Asellus Borealis"
+
+#: ../data/data.cpp:540
+msgid "Asellus Australis"
+msgstr "Asellus Australis"
+
+#: ../data/data.cpp:541
+msgid "Alsephina"
+msgstr ""
+
+#: ../data/data.cpp:542
+msgid "Ashlesha"
+msgstr ""
+
+#: ../data/data.cpp:543
+msgid "Copernicus"
+msgstr ""
+
+#: ../data/data.cpp:544
+msgid "Stribor"
+msgstr ""
+
+#: ../data/data.cpp:545
+msgid "Acubens"
+msgstr "Akubenas"
+
+#: ../data/data.cpp:546
+msgid "Talitha"
+msgstr ""
+
+#: ../data/data.cpp:547
+msgid "Dnoces"
+msgstr "Dnoces"
+
+#: ../data/data.cpp:548
+msgid "Alkaphrah"
+msgstr ""
+
+#: ../data/data.cpp:549
+msgid "Talitha Australis"
+msgstr "Talitha Australis"
+
+#: ../data/data.cpp:550
+msgid "Suhail"
+msgstr "Suhail"
+
+#: ../data/data.cpp:551
+msgid "Nahn"
+msgstr ""
+
+#: ../data/data.cpp:552
+msgid "Miaplacidus"
+msgstr "Miaplacidas"
+
+#: ../data/data.cpp:553
+msgid "Aspidiske"
+msgstr "Turajas"
+
+#: ../data/data.cpp:554
+#, fuzzy
+msgid "Markeb"
+msgstr "Markabas"
+
+#: ../data/data.cpp:555
+msgid "Alphard"
+msgstr "Alfardas"
+
+#: ../data/data.cpp:556
+msgid "Cor Hydrae"
+msgstr "Cor Hydrae"
+
+#: ../data/data.cpp:557
+msgid "Intercrus"
+msgstr ""
+
+#: ../data/data.cpp:558
+msgid "Alterf"
+msgstr "Alterf"
+
+#: ../data/data.cpp:559
+msgid "Illyrian"
+msgstr ""
+
+#: ../data/data.cpp:560
+msgid "Kalausi"
+msgstr ""
+
+#: ../data/data.cpp:561
+msgid "Ukdah"
+msgstr "Ukdah"
+
+#: ../data/data.cpp:562
+msgid "Subra"
+msgstr "Subra"
+
+#: ../data/data.cpp:563
+msgid "Ras Elased Australis"
+msgstr "Ras Elased Australis"
+
+#: ../data/data.cpp:564
+msgid "Natasha"
+msgstr ""
+
+#: ../data/data.cpp:565
+msgid "Zhang"
+msgstr ""
+
+#: ../data/data.cpp:566
+msgid "Rasalas"
+msgstr "Rasalas"
+
+#: ../data/data.cpp:567
+msgid "Ras Elased Borealis"
+msgstr "Ras Elased Borealis"
+
+#: ../data/data.cpp:568
+msgid "Felis"
+msgstr ""
+
+#: ../data/data.cpp:569
+msgid "Bibhā"
+msgstr ""
+
+#: ../data/data.cpp:570
+msgid "Regulus"
+msgstr "Regulas"
+
+#: ../data/data.cpp:571
+msgid "Kabeleced"
+msgstr "Kabeleced"
+
+#: ../data/data.cpp:572
+msgid "Cor Leonis"
+msgstr "Cor Leonis"
+
+#: ../data/data.cpp:573
+msgid "Adhafera"
+msgstr "Adhafera"
+
+#: ../data/data.cpp:574
+msgid "Aldhafera"
+msgstr "Aldhafera"
+
+#: ../data/data.cpp:575
+msgid "Tania Borealis"
+msgstr "Tania Borealis"
+
+#: ../data/data.cpp:576
+msgid "Algieba"
+msgstr "Algieba"
+
+#: ../data/data.cpp:577
+msgid "Tania Australis"
+msgstr "Tania Australis"
+
+#: ../data/data.cpp:578
+#, fuzzy
+msgid "Macondo"
+msgstr "Londonas"
+
+#: ../data/data.cpp:579
+msgid "Praecipua"
+msgstr ""
+
+#: ../data/data.cpp:580
+msgid "Chalawan"
+msgstr ""
+
+#: ../data/data.cpp:581
+msgid "Alkes"
+msgstr "Alkes"
+
+#: ../data/data.cpp:582
+msgid "Merak"
+msgstr "Merakas"
+
+#: ../data/data.cpp:583
+msgid "Lalande 21185"
+msgstr "Lalande 21185"
+
+#: ../data/data.cpp:584
+msgid "Dubhe"
+msgstr "Dubhė"
+
+#: ../data/data.cpp:585
+msgid "Dubb"
+msgstr "Dubb"
+
+#: ../data/data.cpp:586
+msgid "Dingolay"
+msgstr ""
+
+#: ../data/data.cpp:587
+msgid "Zosma"
+msgstr "Zosma"
+
+#: ../data/data.cpp:588
+msgid "Duhr"
+msgstr "Duhr"
+
+#: ../data/data.cpp:589
+msgid "Chertan"
+msgstr "Chertan"
+
+#: ../data/data.cpp:590
+msgid "Coxa"
+msgstr "Coxa"
+
+#: ../data/data.cpp:591
+msgid "Chort"
+msgstr "Chort"
+
+#: ../data/data.cpp:592
+#, fuzzy
+msgid "Innes' Star"
+msgstr "%s Žvaigždė"
+
+#: ../data/data.cpp:593
+msgid "Hunahpú"
+msgstr ""
+
+#: ../data/data.cpp:594
+msgid "Alula Australis"
+msgstr "Alula Australis"
+
+#: ../data/data.cpp:595
+msgid "Alula Borealis"
+msgstr "Alula Borealis"
+
+#: ../data/data.cpp:596
+msgid "Tsze Tseang"
+msgstr "Tsze Tseang"
+
+#: ../data/data.cpp:597
+#, fuzzy
+msgid "Shama"
+msgstr "Sham"
+
+#: ../data/data.cpp:598
+msgid "Giausar"
+msgstr "Giausar"
+
+#: ../data/data.cpp:599
+#, fuzzy
+msgid "Formosa"
+msgstr "Formatas: "
+
+#: ../data/data.cpp:600
+msgid "Sagarmatha"
+msgstr ""
+
+#: ../data/data.cpp:601
+msgid "Przybylski's Star"
+msgstr ""
+
+#: ../data/data.cpp:602
+msgid "Uklun"
+msgstr ""
+
+#: ../data/data.cpp:603
+#, fuzzy
+msgid "Flegetonte"
+msgstr "Džordžtounas"
+
+#: ../data/data.cpp:604
+msgid "Taiyangshou"
+msgstr ""
+
+#: ../data/data.cpp:605
+msgid "Denebola"
+msgstr "Denebola"
+
+#: ../data/data.cpp:606
+msgid "Zavijava"
+msgstr "Zavijava"
+
+#: ../data/data.cpp:607
+msgid "Alaraph"
+msgstr "Alaraph"
+
+#: ../data/data.cpp:608
+#, fuzzy
+msgid "Aniara"
+msgstr "Honiara"
+
+#: ../data/data.cpp:609
+msgid "Groombridge 1830"
+msgstr "Groombridge 1830"
+
+#: ../data/data.cpp:610
+msgid "Phecda"
+msgstr "Phecda"
+
+#: ../data/data.cpp:611
+msgid "Phad"
+msgstr "Phad"
+
+#: ../data/data.cpp:612
+msgid "Tonatiuh"
+msgstr ""
+
+#: ../data/data.cpp:613
+msgid "Alchiba"
+msgstr "Alchiba"
+
+#: ../data/data.cpp:614
+msgid "Imai"
+msgstr ""
+
+#: ../data/data.cpp:615
+msgid "Megrez"
+msgstr "Megrecas"
+
+#: ../data/data.cpp:616
+msgid "Gienah"
+msgstr "Gienachas"
+
+#: ../data/data.cpp:617
+msgid "Zaniah"
+msgstr "Zaniah"
+
+#: ../data/data.cpp:618
+msgid "Ginan"
+msgstr ""
+
+#: ../data/data.cpp:619
+msgid "Tupã"
+msgstr ""
+
+#: ../data/data.cpp:620
+msgid "Acrux"
+msgstr "Akruksas"
+
+#: ../data/data.cpp:621
+msgid "Algorab"
+msgstr "Algorab"
+
+#: ../data/data.cpp:622
+msgid "Gacrux"
+msgstr "Gakruksas"
+
+#: ../data/data.cpp:623
+msgid "Funi"
+msgstr ""
+
+#: ../data/data.cpp:624
+msgid "Chara"
+msgstr "Chara"
+
+#: ../data/data.cpp:625
+msgid "Kraz"
+msgstr "Kraz"
+
+#: ../data/data.cpp:626
+msgid "Muhlifain"
+msgstr "Muhlifain"
+
+#: ../data/data.cpp:627
+msgid "Porrima"
+msgstr "Porrima"
+
+#: ../data/data.cpp:628
+msgid "La Superba"
+msgstr ""
+
+#: ../data/data.cpp:629
+msgid "Tianyi"
+msgstr ""
+
+#: ../data/data.cpp:630
+msgid "Mimosa"
+msgstr "Mimoza"
+
+#: ../data/data.cpp:631
+msgid "Alioth"
+msgstr "Aliotas"
+
+#: ../data/data.cpp:632
+msgid "Taiyi"
+msgstr ""
+
+#: ../data/data.cpp:633
+msgid "Minelauva"
+msgstr "Minelauva"
+
+#: ../data/data.cpp:634
+msgid "Auva"
+msgstr "Auva"
+
+#: ../data/data.cpp:635
+msgid "Cor Caroli"
+msgstr "Karolio Širdis"
+
+#: ../data/data.cpp:636
+msgid "Vindemiatrix"
+msgstr "Vindemiatriksė"
+
+#: ../data/data.cpp:637
+msgid "Almuredin"
+msgstr "Almuredin"
+
+#: ../data/data.cpp:638
+msgid "Diadem"
+msgstr ""
+
+#: ../data/data.cpp:639
+msgid "Mizar"
+msgstr "Micaras"
+
+#: ../data/data.cpp:640
+msgid "Spica"
+msgstr "Spika"
+
+#: ../data/data.cpp:641
+msgid "Azimech"
+msgstr "Azimech"
+
+#: ../data/data.cpp:642
+msgid "Alcor"
+msgstr "Alkoras"
+
+#: ../data/data.cpp:643
+msgid "Dofida"
+msgstr ""
+
+#: ../data/data.cpp:644
+msgid "Liesma"
+msgstr ""
+
+#: ../data/data.cpp:645
+msgid "Heze"
+msgstr "Heze"
+
+#: ../data/data.cpp:646
+msgid "Alkaid"
+msgstr "Alkaidas"
+
+#: ../data/data.cpp:647
+msgid "Benetnasch"
+msgstr "Benetnasch"
+
+#: ../data/data.cpp:648
+msgid "Muphrid"
+msgstr "Mufridas"
+
+#: ../data/data.cpp:649
+msgid "Hadar"
+msgstr "Hadar"
+
+#: ../data/data.cpp:650
+msgid "Agena"
+msgstr "Agena"
+
+#: ../data/data.cpp:651
+msgid "Thuban"
+msgstr "Thuban"
+
+#: ../data/data.cpp:652
+msgid "Menkent"
+msgstr "Menkentas"
+
+#: ../data/data.cpp:653
+msgid "Kang"
+msgstr ""
+
+#: ../data/data.cpp:654
+msgid "Arcturus"
+msgstr "Arktūras"
+
+#: ../data/data.cpp:655
+msgid "Syrma"
+msgstr "Syrma"
+
+#: ../data/data.cpp:656
+msgid "Xuange"
+msgstr ""
+
+#: ../data/data.cpp:657
+msgid "Elgafar"
+msgstr ""
+
+#: ../data/data.cpp:658
+msgid "Proxima"
+msgstr "Proksima"
+
+#: ../data/data.cpp:659
+msgid "Seginus"
+msgstr "Seginas"
+
+#: ../data/data.cpp:660
+msgid "Ceginus"
+msgstr "Ceginus"
+
+#: ../data/data.cpp:661
+msgid "Toliman"
+msgstr ""
+
+#: ../data/data.cpp:662
+msgid "Rigil Kentaurus"
+msgstr ""
+
+#: ../data/data.cpp:663
+msgid "Izar"
+msgstr "Izar"
+
+#: ../data/data.cpp:664
+msgid "Mirak"
+msgstr "Mirak"
+
+#: ../data/data.cpp:665
+msgid "Pulcherrima"
+msgstr "Pulcherrima"
+
+#: ../data/data.cpp:666
+msgid "Mönch"
+msgstr ""
+
+#: ../data/data.cpp:667
+msgid "Merga"
+msgstr ""
+
+#: ../data/data.cpp:668
+msgid "Kochab"
+msgstr "Kochab"
+
+#: ../data/data.cpp:669
+msgid "Kocab"
+msgstr "Kocha­bas"
+
+#: ../data/data.cpp:670
+msgid "Zubenelgenubi"
+msgstr "Zubenelgenubi"
+
+#: ../data/data.cpp:671
+msgid "Arcalís"
+msgstr ""
+
+#: ../data/data.cpp:672
+msgid "Baekdu"
+msgstr ""
+
+#: ../data/data.cpp:673
+msgid "Zuben Elakribi"
+msgstr "Zuben Elakribi"
+
+#: ../data/data.cpp:674
+msgid "Nekkar"
+msgstr "Nekaras"
+
+#: ../data/data.cpp:675
+msgid "Brachium"
+msgstr ""
+
+#: ../data/data.cpp:676
+msgid "Zubeneschamali"
+msgstr "Zubeneschamali"
+
+#: ../data/data.cpp:677
+#, fuzzy
+msgid "Pherkad Minor"
+msgstr "Pherkad"
+
+#: ../data/data.cpp:678
+msgid "Nikawiy"
+msgstr ""
+
+#: ../data/data.cpp:679
+msgid "Pherkad"
+msgstr "Pherkad"
+
+#: ../data/data.cpp:680
+msgid "Alkalurops"
+msgstr "Alkalurops"
+
+#: ../data/data.cpp:681
+msgid "Edasich"
+msgstr "Edasich"
+
+#: ../data/data.cpp:682
+msgid "Nusakan"
+msgstr "Nusakan"
+
+#: ../data/data.cpp:683
+msgid "Alphecca"
+msgstr "Alphecca"
+
+#: ../data/data.cpp:684
+msgid "Gemma"
+msgstr "Gemma"
+
+#: ../data/data.cpp:685
+#, fuzzy
+msgid "Zubenelhakrabi"
+msgstr "Zuben Elakrab"
+
+#: ../data/data.cpp:686
+msgid "Zuben Elakrab"
+msgstr "Zuben Elakrab"
+
+#: ../data/data.cpp:687
+msgid "Karaka"
+msgstr ""
+
+#: ../data/data.cpp:688
+msgid "Unukalhai"
+msgstr "Unukas"
+
+#: ../data/data.cpp:689
+msgid "Chow"
+msgstr "Chow"
+
+#: ../data/data.cpp:690
+msgid "Gudja"
+msgstr ""
+
+#: ../data/data.cpp:691
+msgid "Iklil"
+msgstr ""
+
+#: ../data/data.cpp:692
+msgid "Fang"
+msgstr ""
+
+#: ../data/data.cpp:693
+msgid "Dschubba"
+msgstr "Dšuba"
+
+#: ../data/data.cpp:694
+msgid "Acrab"
+msgstr ""
+
+#: ../data/data.cpp:695
+msgid "Graffias"
+msgstr "Graffias"
+
+#: ../data/data.cpp:696
+msgid "Akrab"
+msgstr "Akrab"
+
+#: ../data/data.cpp:697
+#, fuzzy
+msgid "Marsic"
+msgstr "Marsas"
+
+#: ../data/data.cpp:698
+msgid "Jabbah"
+msgstr "Jabbah"
+
+#: ../data/data.cpp:699
+msgid "Sharjah"
+msgstr ""
+
+#: ../data/data.cpp:700
+msgid "Yed Prior"
+msgstr ""
+
+#: ../data/data.cpp:701
+msgid "Yed Posterior"
+msgstr ""
+
+#: ../data/data.cpp:702
+msgid "Hunor"
+msgstr ""
+
+#: ../data/data.cpp:703
+#, fuzzy
+msgid "Alniyat"
+msgstr "Alniatas"
+
+#: ../data/data.cpp:704
+msgid "Al Niyat"
+msgstr "Alniatas"
+
+#: ../data/data.cpp:705
+#, fuzzy
+msgid "Athebyne"
+msgstr "Atėnai"
+
+#: ../data/data.cpp:706
+msgid "Cujam"
+msgstr "Cujam"
+
+#: ../data/data.cpp:707
+msgid "Timir"
+msgstr ""
+
+#: ../data/data.cpp:708
+msgid "Antares"
+msgstr "Antaris"
+
+#: ../data/data.cpp:709
+msgid "Kornephoros"
+msgstr "Korneforas"
+
+#: ../data/data.cpp:710
+msgid "Ogma"
+msgstr ""
+
+#: ../data/data.cpp:711
+msgid "Marfik"
+msgstr "Marfik"
+
+#: ../data/data.cpp:712
+msgid "Rosalíadecastro"
+msgstr ""
+
+#: ../data/data.cpp:713
+msgid "Paikauhale"
+msgstr ""
+
+#: ../data/data.cpp:714
+msgid "Atria"
+msgstr "Atria"
+
+#: ../data/data.cpp:715
+#, fuzzy
+msgid "Larawag"
+msgstr "Tarava"
+
+#: ../data/data.cpp:716
+msgid "Xamidimura"
+msgstr ""
+
+#: ../data/data.cpp:717
+#, fuzzy
+msgid "Pipirima"
+msgstr "Porrima"
+
+#: ../data/data.cpp:718
+msgid "Mahsati"
+msgstr ""
+
+#: ../data/data.cpp:719
+#, fuzzy
+msgid "Rapeto"
+msgstr "Japetas"
+
+#: ../data/data.cpp:720
+#, fuzzy
+msgid "Alrakis"
+msgstr "Arrakis"
+
+#: ../data/data.cpp:721
+msgid "Arrakis"
+msgstr "Arrakis"
+
+#: ../data/data.cpp:722
+#, fuzzy
+msgid "Aldhibah"
+msgstr "Alchiba"
+
+#: ../data/data.cpp:723
+msgid "Sabik"
+msgstr "Sabik"
+
+#: ../data/data.cpp:724
+msgid "Rasalgethi"
+msgstr "Ras Algetis"
+
+#: ../data/data.cpp:725
+msgid "Ras Algethi"
+msgstr "Ras Algethi"
+
+#: ../data/data.cpp:726
+msgid "Sarin"
+msgstr "Sarin"
+
+#: ../data/data.cpp:727
+msgid "Guniibuu"
+msgstr ""
+
+#: ../data/data.cpp:728
+msgid "Inquill"
+msgstr ""
+
+#: ../data/data.cpp:729
+msgid "Rastaban"
+msgstr "Rastabanas"
+
+#: ../data/data.cpp:730
+msgid "Maasym"
+msgstr "Maasym"
+
+#: ../data/data.cpp:731
+msgid "Lesath"
+msgstr "Lesath"
+
+#: ../data/data.cpp:732
+msgid "Lesuth"
+msgstr "Lesuth"
+
+#: ../data/data.cpp:733
+msgid "Kuma"
+msgstr "Kuma"
+
+#: ../data/data.cpp:734
+msgid "Yildun"
+msgstr "Yildun"
+
+#: ../data/data.cpp:735
+msgid "Shaula"
+msgstr "Šaulė"
+
+#: ../data/data.cpp:736
+msgid "Rasalhague"
+msgstr "Ras Alhagas"
+
+#: ../data/data.cpp:737
+msgid "Ras Alhague"
+msgstr "Ras Alhague"
+
+#: ../data/data.cpp:738
+msgid "Sargas"
+msgstr "Sargas"
+
+#: ../data/data.cpp:739
+msgid "Dziban"
+msgstr "Dziban"
+
+#: ../data/data.cpp:740
+msgid "Girtab"
+msgstr ""
+
+#: ../data/data.cpp:741
+msgid "Cebalrai"
+msgstr "Cebalrai"
+
+#: ../data/data.cpp:742
+msgid "Alruba"
+msgstr ""
+
+#: ../data/data.cpp:743
+#, fuzzy
+msgid "Cervantes"
+msgstr "Observatorijos"
+
+#: ../data/data.cpp:744
+msgid "Fuyue"
+msgstr ""
+
+#: ../data/data.cpp:745
+msgid "Grumium"
+msgstr "Grumium"
+
+#: ../data/data.cpp:746
+msgid "Eltanin"
+msgstr "Eltanin"
+
+#: ../data/data.cpp:747
+msgid "Etamin"
+msgstr "Etamin"
+
+#: ../data/data.cpp:748
+msgid "Barnard's Star"
+msgstr "Barnardo žvaigždė"
+
+#: ../data/data.cpp:749
+msgid "Pincoya"
+msgstr ""
+
+#: ../data/data.cpp:750
+msgid "Alnasl"
+msgstr "Alnasl"
+
+#: ../data/data.cpp:751
+msgid "Polis"
+msgstr ""
+
+#: ../data/data.cpp:752
+msgid "Kaus Media"
+msgstr "Kaus Media"
+
+#: ../data/data.cpp:753
+msgid "Alasia"
+msgstr ""
+
+#: ../data/data.cpp:754
+msgid "Kaus Australis"
+msgstr "Kaus Australis"
+
+#: ../data/data.cpp:755
+msgid "Al Athfar"
+msgstr "Al Athfar"
+
+#: ../data/data.cpp:756
+msgid "Fafnir"
+msgstr ""
+
+#: ../data/data.cpp:757
+msgid "Kaus Borealis"
+msgstr "Kaus Borealis"
+
+#: ../data/data.cpp:758
+msgid "Vega"
+msgstr "Vega"
+
+#: ../data/data.cpp:759
+msgid "Xihe"
+msgstr ""
+
+#: ../data/data.cpp:760
+msgid "Sheliak"
+msgstr "Šeliakas"
+
+#: ../data/data.cpp:761
+#, fuzzy
+msgid "Ainalrami"
+msgstr "Alderaminas"
+
+#: ../data/data.cpp:762
+msgid "Nunki"
+msgstr "Sadira"
+
+#: ../data/data.cpp:763
+msgid "Kaveh"
+msgstr ""
+
+#: ../data/data.cpp:764
+msgid "Alya"
+msgstr "Alya"
+
+#: ../data/data.cpp:765
+msgid "Sulafat"
+msgstr "Sulafat"
+
+#: ../data/data.cpp:766
+msgid "Ascella"
+msgstr "Ascella"
+
+#: ../data/data.cpp:767
+msgid "Okab"
+msgstr ""
+
+#: ../data/data.cpp:768
+msgid "Deneb el Okab"
+msgstr "Deneb el Okab"
+
+#: ../data/data.cpp:769
+msgid "Meridiana"
+msgstr ""
+
+#: ../data/data.cpp:770
+#, fuzzy
+msgid "Albaldah"
+msgstr "Albali"
+
+#: ../data/data.cpp:771
+msgid "Altais"
+msgstr "Altajas"
+
+#: ../data/data.cpp:772
+msgid "Al Tais"
+msgstr "Al Tais"
+
+#: ../data/data.cpp:773
+msgid "Nodus Secundus"
+msgstr "Nodus Secundus"
+
+#: ../data/data.cpp:774
+msgid "Aladfar"
+msgstr "Aladfar"
+
+#: ../data/data.cpp:775
+#, fuzzy
+msgid "Gumala"
+msgstr "Gvatemala"
+
+#: ../data/data.cpp:776
+msgid "Belel"
+msgstr ""
+
+#: ../data/data.cpp:777
+#, fuzzy
+msgid "Arkab Prior"
+msgstr "Arkabas"
+
+#: ../data/data.cpp:778
+msgid "Arkab"
+msgstr "Arkabas"
+
+#: ../data/data.cpp:779
+msgid "Sika"
+msgstr ""
+
+#: ../data/data.cpp:780
+msgid "Arkab Posterior"
+msgstr ""
+
+#: ../data/data.cpp:781
+msgid "Rukbat"
+msgstr "Rukbat"
+
+#: ../data/data.cpp:782
+msgid "Anser"
+msgstr ""
+
+#: ../data/data.cpp:783
+msgid "Albireo"
+msgstr "Albirėjas"
+
+#: ../data/data.cpp:784
+msgid "Uruk"
+msgstr ""
+
+#: ../data/data.cpp:785
+msgid "Alsafi"
+msgstr "Alsafi"
+
+#: ../data/data.cpp:786
+msgid "Campbell's Star"
+msgstr "Campbell's Star"
+
+#: ../data/data.cpp:787
+msgid "Sham"
+msgstr "Sham"
+
+#: ../data/data.cpp:788
+#, fuzzy
+msgid "Fawaris"
+msgstr "Paryžius"
+
+#: ../data/data.cpp:789
+msgid "Tarazed"
+msgstr "Tarazedas"
+
+#: ../data/data.cpp:790
+msgid "Tyl"
+msgstr "Tyl"
+
+#: ../data/data.cpp:791
+msgid "Altair"
+msgstr "Altayras"
+
+#: ../data/data.cpp:792
+msgid "Atair"
+msgstr "Atair"
+
+#: ../data/data.cpp:793
+msgid "Libertas"
+msgstr ""
+
+#: ../data/data.cpp:794
+msgid "Alshain"
+msgstr "Alšainas"
+
+#: ../data/data.cpp:795
+msgid "Terebellum"
+msgstr ""
+
+#: ../data/data.cpp:796
+msgid "Phoenicia"
+msgstr ""
+
+#: ../data/data.cpp:797
+msgid "Chechia"
+msgstr ""
+
+#: ../data/data.cpp:798
+msgid "Algedi"
+msgstr "Algedi"
+
+#: ../data/data.cpp:799
+#, fuzzy
+msgid "Alshat"
+msgstr "Alšainas"
+
+#: ../data/data.cpp:800
+msgid "Dabih"
+msgstr "Dabihas"
+
+#: ../data/data.cpp:801
+msgid "Sadr"
+msgstr "Sadiras"
+
+#: ../data/data.cpp:802
+msgid "Peacock"
+msgstr "Povas"
+
+#: ../data/data.cpp:803
+msgid "Aldulfin"
+msgstr ""
+
+#: ../data/data.cpp:804
+msgid "Rotanev"
+msgstr "Rotanev"
+
+#: ../data/data.cpp:805
+msgid "Sualocin"
+msgstr "Sualocin"
+
+#: ../data/data.cpp:806
+msgid "Deneb"
+msgstr "Denebas"
+
+#: ../data/data.cpp:807
+#, fuzzy
+msgid "Aljanah"
+msgstr "Liublijana"
+
+#: ../data/data.cpp:808
+msgid "Albali"
+msgstr "Albali"
+
+#: ../data/data.cpp:809
+msgid "Musica"
+msgstr ""
+
+#: ../data/data.cpp:810
+#, fuzzy
+msgid "Polaris Australis"
+msgstr "Kaus Australis"
+
+#: ../data/data.cpp:811
+#, fuzzy
+msgid "Solaris"
+msgstr "Šiaurinė žvaigždė"
+
+#: ../data/data.cpp:812
+msgid "Kitalpha"
+msgstr "Kitalpha"
+
+#: ../data/data.cpp:813
+msgid "Lacaille 8760"
+msgstr "Lacaille 8760"
+
+#: ../data/data.cpp:814
+msgid "Alderamin"
+msgstr "Alderaminas"
+
+#: ../data/data.cpp:815
+msgid "Alfirk"
+msgstr "Alfirk"
+
+#: ../data/data.cpp:816
+msgid "Sadalsuud"
+msgstr "Sadalsuud"
+
+#: ../data/data.cpp:817
+#, fuzzy
+msgid "Bunda"
+msgstr "Ribos"
+
+#: ../data/data.cpp:818
+msgid "Sāmaya"
+msgstr ""
+
+#: ../data/data.cpp:819
+msgid "Nashira"
+msgstr "Nashira"
+
+#: ../data/data.cpp:820
+msgid "Azelfafage"
+msgstr "Azelfafage"
+
+#: ../data/data.cpp:821
+msgid "Bosona"
+msgstr ""
+
+#: ../data/data.cpp:822
+msgid "Herschel's Garnet Star"
+msgstr "Herschel's Garnet Star"
+
+#: ../data/data.cpp:823
+#, fuzzy
+msgid "Erakis"
+msgstr "Arrakis"
+
+#: ../data/data.cpp:824
+msgid "Enif"
+msgstr "Enifas"
+
+#: ../data/data.cpp:825
+msgid "Deneb Algedi"
+msgstr "Deneb Algedi"
+
+#: ../data/data.cpp:826
+#, fuzzy
+msgid "Aldhanab"
+msgstr "Al Dhanab"
+
+#: ../data/data.cpp:827
+msgid "Al Dhanab"
+msgstr "Al Dhanab"
+
+#: ../data/data.cpp:828
+msgid "Itonda"
+msgstr ""
+
+#: ../data/data.cpp:829
+msgid "Kurhah"
+msgstr "Kurhah"
+
+#: ../data/data.cpp:830
+msgid "Sadalmelik"
+msgstr "Sadalmelikė"
+
+#: ../data/data.cpp:831
+msgid "Alnair"
+msgstr "Alnair"
+
+#: ../data/data.cpp:832
+msgid "Al Nair"
+msgstr "Al Nair"
+
+#: ../data/data.cpp:833
+msgid "Biham"
+msgstr "Biham"
+
+#: ../data/data.cpp:834
+msgid "Ancha"
+msgstr "Ancha"
+
+#: ../data/data.cpp:835
+msgid "Sadachbia"
+msgstr "Sadachbia"
+
+#: ../data/data.cpp:836
+msgid "Seat"
+msgstr "Seat"
+
+#: ../data/data.cpp:837
+msgid "Lionrock"
+msgstr ""
+
+#: ../data/data.cpp:838
+msgid "Kruger 60"
+msgstr "Kruger 60"
+
+#: ../data/data.cpp:839
+msgid "Situla"
+msgstr "Situla"
+
+#: ../data/data.cpp:840
+msgid "Homam"
+msgstr "Homam"
+
+#: ../data/data.cpp:841
+msgid "Tiaki"
+msgstr ""
+
+#: ../data/data.cpp:842
+msgid "Matar"
+msgstr "Matar"
+
+#: ../data/data.cpp:843
+msgid "Babcock's Star"
+msgstr "Babcock's Star"
+
+#: ../data/data.cpp:844
+msgid "Sadalbari"
+msgstr "Sadalbari"
+
+#: ../data/data.cpp:845
+msgid "Hydor"
+msgstr ""
+
+#: ../data/data.cpp:846
+msgid "Skat"
+msgstr "Skat"
+
+#: ../data/data.cpp:847
+msgid "Helvetios"
+msgstr ""
+
+#: ../data/data.cpp:848
+msgid "Fomalhaut"
+msgstr "Fomalhautas"
+
+#: ../data/data.cpp:849
+msgid "Scheat"
+msgstr "Šeatas"
+
+#: ../data/data.cpp:850
+#, fuzzy
+msgid "Fumalsamakah"
+msgstr "Fum al Samakah"
+
+#: ../data/data.cpp:851
+msgid "Fum al Samakah"
+msgstr "Fum al Samakah"
+
+#: ../data/data.cpp:852
+msgid "Markab"
+msgstr "Markabas"
+
+#: ../data/data.cpp:853
+msgid "Marchab"
+msgstr "Marchab"
+
+#: ../data/data.cpp:854
+msgid "Ebla"
+msgstr ""
+
+#: ../data/data.cpp:855
+msgid "Bradley 3077"
+msgstr "Bradley 3077"
+
+#: ../data/data.cpp:856
+msgid "Salm"
+msgstr ""
+
+#: ../data/data.cpp:857
+#, fuzzy
+msgid "Alkarab"
+msgstr "Ankara"
+
+#: ../data/data.cpp:858
+msgid "Veritate"
+msgstr ""
+
+#: ../data/data.cpp:859
+msgid "Poerava"
+msgstr ""
+
+#: ../data/data.cpp:860
+msgid "Errai"
+msgstr "Errai"
+
+#: ../data/data.cpp:861
+msgid "Axólotl"
+msgstr ""
+
+#: ../data/data.cpp:862
+msgid "Pleiades"
+msgstr "Sietynas"
+
+#: ../data/data.cpp:863
+msgid "Hyades"
+msgstr "Hyades"
+
+#: ../data/data.cpp:864
+msgid "Praesepe"
+msgstr "Praesepe"
+
+#: ../data/data.cpp:865
+msgid "Beehive Cluster"
+msgstr "Beehive Cluster"
+
+#: ../data/data.cpp:866
+msgid "Maffei 1"
+msgstr "Maffei 1"
+
+#: ../data/data.cpp:867
+msgid "Maffei 2"
+msgstr "Maffei 2"
+
+#: ../data/data.cpp:868
+msgid "Leo A"
+msgstr "Leo A"
+
+#: ../data/data.cpp:869
+msgid "Sextans B"
+msgstr "Sextans B"
+
+#: ../data/data.cpp:870
+msgid "Leo I"
+msgstr "Leo I"
+
+#: ../data/data.cpp:871
+msgid "Sextans A"
+msgstr "Sextans A"
+
+#: ../data/data.cpp:872
+msgid "Circinus"
+msgstr "Skriestuvas"
+
+#: ../data/data.cpp:873
+msgid "Andromeda Galaxy"
+msgstr ""
+
+#: ../data/data.cpp:874
+msgid "Triangulum Galaxy"
+msgstr ""
+
+#: ../data/data.cpp:875
+msgid "Holmberg VI"
+msgstr "Holmberg VI"
+
+#: ../data/data.cpp:876
+msgid "Fath 703"
+msgstr "Fath 703"
+
+#: ../data/data.cpp:877
+msgid "47 Tuc"
+msgstr "47 Tuc"
+
+#: ../data/data.cpp:878
+msgid "Eridanus"
+msgstr "Eridanas"
+
+#: ../data/data.cpp:879
+msgid "Pyxis"
+msgstr "Kompasas"
+
+#: ../data/data.cpp:880
+msgid "Tonantzintla 2"
+msgstr "Tonantzintla 2"
+
 #: ../src/celengine/astro.cpp:707
 msgid "DST"
 msgstr "DST"
@@ -1484,7 +3638,7 @@ msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
 msgstr ""
 "Kamuoliniai (branduolio spindulys: %4.2f', pagrindinė koncentracija: %4.2f)"
 
-#: ../src/celengine/image.cpp:293
+#: ../src/celengine/image.cpp:289
 #, fuzzy, c-format
 msgid "Loading image from file %s\n"
 msgstr "Įkeliamas paveikslas iš failo "
@@ -1513,104 +3667,104 @@ msgstr "Ūkas"
 msgid "Open cluster"
 msgstr "Padrikasis spiečius"
 
-#: ../src/celengine/solarsys.cpp:82
+#: ../src/celengine/solarsys.cpp:83
 #, fuzzy, c-format
 msgid "Error in .ssc file (line %d): "
 msgstr "Klaida .ssc faile (eilutė  "
 
-#: ../src/celengine/solarsys.cpp:831
+#: ../src/celengine/solarsys.cpp:832
 msgid "Incorrect GeomAlbedo value: {}\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:840
+#: ../src/celengine/solarsys.cpp:841
 msgid "Incorrect Reflectivity value: {}\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:848
+#: ../src/celengine/solarsys.cpp:849
 msgid "Incorrect BondAlbedo value: {}\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:1252 ../src/celengine/solarsys.cpp:1315
+#: ../src/celengine/solarsys.cpp:1253 ../src/celengine/solarsys.cpp:1316
 #, c-format
 msgid "parent body '%s' of '%s' not found.\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:1263
+#: ../src/celengine/solarsys.cpp:1264
 #, fuzzy, c-format
 msgid "warning duplicate definition of %s %s\n"
 msgstr "Įspėjimas, besidubliuojantis apibūdinimas objekto "
 
-#: ../src/celengine/solarsys.cpp:1294
+#: ../src/celengine/solarsys.cpp:1295
 msgid "bad alternate surface"
 msgstr "blogas alternatyvus paviršius"
 
-#: ../src/celengine/solarsys.cpp:1309
+#: ../src/celengine/solarsys.cpp:1310
 msgid "bad location"
 msgstr "bloga vieta"
 
-#: ../src/celengine/stardb.cpp:568
+#: ../src/celengine/stardb.cpp:569
 msgid "Bad header for cross index\n"
 msgstr "Bloga antraštė cross rodikliui\n"
 
-#: ../src/celengine/stardb.cpp:582
+#: ../src/celengine/stardb.cpp:583
 msgid "Bad version for cross index\n"
 msgstr "Bloga versija cross rodikliui\n"
 
-#: ../src/celengine/stardb.cpp:602
+#: ../src/celengine/stardb.cpp:603
 #, fuzzy, c-format
 msgid "Loading cross index failed at record %u\n"
 msgstr "Įvyko klaida įkeliant ir įrašant cross rodiklius"
 
-#: ../src/celengine/stardb.cpp:686
+#: ../src/celengine/stardb.cpp:687
 #, fuzzy, c-format
 msgid "Bad spectral type in star database, star #%u\n"
 msgstr "Blogas spektrinis tipas žvaigždžių  bazėje, žvaigždė #"
 
-#: ../src/celengine/stardb.cpp:701
+#: ../src/celengine/stardb.cpp:702
 #, fuzzy, c-format
 msgid "%d stars in binary database\n"
 msgstr "žvaigždžių dvejetainėje bazėje yra\n"
 
-#: ../src/celengine/stardb.cpp:725
+#: ../src/celengine/stardb.cpp:726
 #, fuzzy, c-format
 msgid "Total star count: %d\n"
 msgstr "Viso žvaigždžių: "
 
-#: ../src/celengine/stardb.cpp:759
+#: ../src/celengine/stardb.cpp:760
 #, fuzzy, c-format
 msgid "Error in .stc file (line %i): %s\n"
 msgstr "Klaida .stc faile (eilutėje  "
 
-#: ../src/celengine/stardb.cpp:789
+#: ../src/celengine/stardb.cpp:790
 msgid "Invalid star: bad spectral type.\n"
 msgstr "Negaliojanti žvaigždė: blogas spektrinis tipas.\n"
 
-#: ../src/celengine/stardb.cpp:798
+#: ../src/celengine/stardb.cpp:799
 msgid "Invalid star: missing spectral type.\n"
 msgstr "Negaliojanti žvaigždė: prarastas spektrinis tipas.\n"
 
-#: ../src/celengine/stardb.cpp:985
+#: ../src/celengine/stardb.cpp:986
 #, fuzzy, c-format
 msgid "Barycenter %s does not exist.\n"
 msgstr " neegzistuoja.\n"
 
-#: ../src/celengine/stardb.cpp:1041
+#: ../src/celengine/stardb.cpp:1042
 msgid "Invalid star: missing right ascension\n"
 msgstr "Negaliojanti žvaigždė: prarasta prieeiga\n"
 
-#: ../src/celengine/stardb.cpp:1054
+#: ../src/celengine/stardb.cpp:1055
 msgid "Invalid star: missing declination.\n"
 msgstr "Negaliojanti žvaigždė: prarasta deklinacija.\n"
 
-#: ../src/celengine/stardb.cpp:1067
+#: ../src/celengine/stardb.cpp:1068
 msgid "Invalid star: missing distance.\n"
 msgstr "Negaliojanti žvaigždė: prarastas atstumas.\n"
 
-#: ../src/celengine/stardb.cpp:1101
+#: ../src/celengine/stardb.cpp:1102
 msgid "Invalid star: missing magnitude.\n"
 msgstr "Negaliojanti žvaigždė: prarastas ryškis.\n"
 
-#: ../src/celengine/stardb.cpp:1118
+#: ../src/celengine/stardb.cpp:1119
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
@@ -1618,17 +3772,17 @@ msgstr ""
 "Negaliojanti žvaigždė: turi būti nurodytas absoliutus (neįžiūrimas) "
 "žvaigždės ryškis\n"
 
-#: ../src/celengine/stardb.cpp:1425
+#: ../src/celengine/stardb.cpp:1426
 #, c-format
 msgid "Level %i, %.5f ly, %i nodes, %i  stars\n"
 msgstr ""
 
-#: ../src/celengine/texture.cpp:1019
+#: ../src/celengine/texture.cpp:1015
 #, fuzzy, c-format
 msgid "Creating tiled texture. Width=%i, max=%i\n"
 msgstr "Sukuriama skaidyta tekstūra. Plotis="
 
-#: ../src/celengine/texture.cpp:1024
+#: ../src/celengine/texture.cpp:1020
 #, fuzzy, c-format
 msgid "Creating ordinary texture: %ix%i\n"
 msgstr "Kuriama paprastoji tekstūra:"
@@ -1658,99 +3812,99 @@ msgstr ""
 msgid "Unsupported digits number %i, expected %i.\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:103
+#: ../src/celestia/celestiacore.cpp:107 ../src/celestia/scriptmenu.cpp:88
 #, c-format
 msgid "Path %s doesn't exist or isn't a directory"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:200
+#: ../src/celestia/celestiacore.cpp:204
 #, fuzzy
 msgid "Error reading favorites file {}.\n"
 msgstr "Klaida nuskaitant mėgiamiausių failą."
 
-#: ../src/celestia/celestiacore.cpp:222
+#: ../src/celestia/celestiacore.cpp:226
 msgid "Failed to check directory existance for favorites file {}\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:231
+#: ../src/celestia/celestiacore.cpp:235
 msgid "Failed to create a directory for favorites file {}\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:352
+#: ../src/celestia/celestiacore.cpp:356
 msgid "Invalid filetype"
 msgstr "Netinkamas failo tipas"
 
-#: ../src/celestia/celestiacore.cpp:690 ../src/celestia/celestiacore.cpp:1420
-#: ../src/celestia/celestiacore.cpp:1437
+#: ../src/celestia/celestiacore.cpp:694 ../src/celestia/celestiacore.cpp:1424
+#: ../src/celestia/celestiacore.cpp:1441
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "Ryškumo limitas: %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1067
+#: ../src/celestia/celestiacore.cpp:1071
 msgid "Markers enabled"
 msgstr "Žymekliai įjungti"
 
-#: ../src/celestia/celestiacore.cpp:1070
+#: ../src/celestia/celestiacore.cpp:1074
 msgid "Markers disabled"
 msgstr "Žymekliai išjungti"
 
 #. Ctrl+G
-#: ../src/celestia/celestiacore.cpp:1080
+#: ../src/celestia/celestiacore.cpp:1084
 msgid "Goto surface"
 msgstr "Aplankyti paviršių"
 
-#: ../src/celestia/celestiacore.cpp:1091
+#: ../src/celestia/celestiacore.cpp:1095
 msgid "Alt-azimuth mode enabled"
 msgstr "Alt-azimuth režimas įjungtas"
 
-#: ../src/celestia/celestiacore.cpp:1094
+#: ../src/celestia/celestiacore.cpp:1098
 msgid "Alt-azimuth mode disabled"
 msgstr "Alt-azimuth režimas išjungtas"
 
-#: ../src/celestia/celestiacore.cpp:1150
+#: ../src/celestia/celestiacore.cpp:1154
 msgid "Star style: fuzzy points"
 msgstr "Žvaigždžių tipas: išplaukę taškai"
 
-#: ../src/celestia/celestiacore.cpp:1153
+#: ../src/celestia/celestiacore.cpp:1157
 msgid "Star style: points"
 msgstr "Žvaigždžių tipas: taškai"
 
-#: ../src/celestia/celestiacore.cpp:1156
+#: ../src/celestia/celestiacore.cpp:1160
 msgid "Star style: scaled discs"
 msgstr "Žvaigždžių tipas: grūdėti diskai"
 
-#: ../src/celestia/celestiacore.cpp:1169
+#: ../src/celestia/celestiacore.cpp:1173
 msgid "Comet tails enabled"
 msgstr "Kometų uodegos įjungtos"
 
-#: ../src/celestia/celestiacore.cpp:1172
+#: ../src/celestia/celestiacore.cpp:1176
 msgid "Comet tails disabled"
 msgstr "Kometų uodegos išjungtos"
 
-#: ../src/celestia/celestiacore.cpp:1188
+#: ../src/celestia/celestiacore.cpp:1192
 #, fuzzy
 msgid "Render path: OpenGL 2.1"
 msgstr "Atvaizdavimas: OpenGL ."
 
-#: ../src/celestia/celestiacore.cpp:1207
+#: ../src/celestia/celestiacore.cpp:1211
 #, fuzzy
 msgid "Anti-aliasing enabled"
 msgstr "Grafinis glotninimas"
 
-#: ../src/celestia/celestiacore.cpp:1212
+#: ../src/celestia/celestiacore.cpp:1216
 #, fuzzy
 msgid "Anti-aliasing disabled"
 msgstr "Grafinis glotninimas"
 
-#: ../src/celestia/celestiacore.cpp:1221
+#: ../src/celestia/celestiacore.cpp:1225
 msgid "Auto-magnitude enabled"
 msgstr "Auto-ryškis įjungta"
 
-#: ../src/celestia/celestiacore.cpp:1226
+#: ../src/celestia/celestiacore.cpp:1230
 msgid "Auto-magnitude disabled"
 msgstr "Auto-ryškis išjungta"
 
-#: ../src/celestia/celestiacore.cpp:1248
+#: ../src/celestia/celestiacore.cpp:1252
 #: ../src/celestia/win32/res/resource_strings.cpp:93
 #: ../src/celestia/win32/res/resource_strings.cpp:98
 #: ../src/celestia/win32/res/resource_strings.cpp:105
@@ -1764,578 +3918,604 @@ msgstr "Auto-ryškis išjungta"
 msgid "Cancel"
 msgstr "Atsisakyti"
 
-#: ../src/celestia/celestiacore.cpp:1280
+#: ../src/celestia/celestiacore.cpp:1284
 msgid "Time and script are paused"
 msgstr "Laikas ir scenarijus sustabdyti"
 
-#: ../src/celestia/celestiacore.cpp:1282
+#: ../src/celestia/celestiacore.cpp:1286
 msgid "Time is paused"
 msgstr "Laikas sustabdytas"
 
-#: ../src/celestia/celestiacore.cpp:1286
+#: ../src/celestia/celestiacore.cpp:1290
 msgid "Resume"
 msgstr "Tęsti"
 
-#: ../src/celestia/celestiacore.cpp:1320
+#: ../src/celestia/celestiacore.cpp:1324
 msgid "Star color: Blackbody D65"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:1326
+#: ../src/celestia/celestiacore.cpp:1330
 msgid "Star color: Enhanced"
 msgstr ""
 
 #. Light travel time in years, if >= 1day
-#: ../src/celestia/celestiacore.cpp:1363
+#: ../src/celestia/celestiacore.cpp:1367
 #, fuzzy, c-format
 msgid "Light travel time:  %.4f yr"
 msgstr "Šviesos kelionės trukmė:  %.4f yr "
 
-#: ../src/celestia/celestiacore.cpp:1372
+#: ../src/celestia/celestiacore.cpp:1376
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "Šviesos kelionės trukmė: %d min  %.1f s"
 
-#: ../src/celestia/celestiacore.cpp:1377
+#: ../src/celestia/celestiacore.cpp:1381
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "Šviesos kelionės trukmė: %d h  %d min  %.1f s"
 
-#: ../src/celestia/celestiacore.cpp:1395
+#: ../src/celestia/celestiacore.cpp:1399
 msgid "Light travel delay included"
 msgstr "Šviesos kelionės delsimas įtraukti"
 
-#: ../src/celestia/celestiacore.cpp:1400
+#: ../src/celestia/celestiacore.cpp:1404
 msgid "Light travel delay switched off"
 msgstr "Šviesos kelionės delsimas išjungtas"
 
-#: ../src/celestia/celestiacore.cpp:1406
+#: ../src/celestia/celestiacore.cpp:1410
 msgid "Light travel delay ignored"
 msgstr "Šviesos kelionės delsimas ignoruojamas"
 
-#: ../src/celestia/celestiacore.cpp:1449
+#: ../src/celestia/celestiacore.cpp:1453
 msgid "Using normal surface textures."
 msgstr "Naudojamos normalios paviršiaus tekstūros."
 
-#: ../src/celestia/celestiacore.cpp:1454
+#: ../src/celestia/celestiacore.cpp:1458
 msgid "Using limit of knowledge surface textures."
 msgstr "Naudojamos ribotų žinių paviršiaus tekstūros."
 
-#: ../src/celestia/celestiacore.cpp:1521
+#: ../src/celestia/celestiacore.cpp:1525
 msgid "Follow"
 msgstr "Sekti"
 
-#: ../src/celestia/celestiacore.cpp:1546
+#: ../src/celestia/celestiacore.cpp:1550
 msgid "Time: Forward"
 msgstr "Laikas: pirmyn"
 
-#: ../src/celestia/celestiacore.cpp:1548
+#: ../src/celestia/celestiacore.cpp:1552
 msgid "Time: Backward"
 msgstr "Laikas: atgal"
 
-#: ../src/celestia/celestiacore.cpp:1560 ../src/celestia/celestiacore.cpp:1575
+#: ../src/celestia/celestiacore.cpp:1564 ../src/celestia/celestiacore.cpp:1579
 #, fuzzy, c-format
 msgid "Time rate: %.6g"
 msgstr "Laiko norma"
 
-#: ../src/celestia/celestiacore.cpp:1615
+#: ../src/celestia/celestiacore.cpp:1619
 #, fuzzy
 msgid "Low res textures"
 msgstr "Rodyti savybes"
 
-#: ../src/celestia/celestiacore.cpp:1618
+#: ../src/celestia/celestiacore.cpp:1622
 #, fuzzy
 msgid "Medium res textures"
 msgstr "Maksimalus tekstūrų kiekis:"
 
-#: ../src/celestia/celestiacore.cpp:1621
+#: ../src/celestia/celestiacore.cpp:1625
 msgid "High res textures"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:1668
+#: ../src/celestia/celestiacore.cpp:1672
 msgid "Sync Orbit"
 msgstr "Sinchronizuoti orbitą"
 
-#: ../src/celestia/celestiacore.cpp:1674
+#: ../src/celestia/celestiacore.cpp:1678
 msgid "Lock"
 msgstr "Užrakinti"
 
-#: ../src/celestia/celestiacore.cpp:1680
+#: ../src/celestia/celestiacore.cpp:1684
 msgid "Chase"
 msgstr "Surišti"
 
-#: ../src/celestia/celestiacore.cpp:1693 ../src/celestia/celestiacore.cpp:1724
+#: ../src/celestia/celestiacore.cpp:1697 ../src/celestia/celestiacore.cpp:1728
 #, fuzzy, c-format
 msgid "Magnitude limit:  %.2f"
 msgstr "Ryškumo limitas: %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1704 ../src/celestia/celestiacore.cpp:1735
+#: ../src/celestia/celestiacore.cpp:1708 ../src/celestia/celestiacore.cpp:1739
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "Auto ryškio limitas ties 45 laipsniais:  %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1754 ../src/celestia/celestiacore.cpp:1769
+#: ../src/celestia/celestiacore.cpp:1758 ../src/celestia/celestiacore.cpp:1773
 #, c-format
 msgid "Ambient light level:  %.2f"
 msgstr "Aplinkos šviesos lygis:  %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1780 ../src/celestia/celestiacore.cpp:1791
+#: ../src/celestia/celestiacore.cpp:1784 ../src/celestia/celestiacore.cpp:1795
 #, c-format
 msgid "Light gain"
 msgstr "Šviesos lygis"
 
-#: ../src/celestia/celestiacore.cpp:1812
+#: ../src/celestia/celestiacore.cpp:1816
 msgid "Bloom enabled"
 msgstr "Bloom įjungtas"
 
-#: ../src/celestia/celestiacore.cpp:1814
+#: ../src/celestia/celestiacore.cpp:1818
 msgid "Bloom disabled"
 msgstr "Bloom išjungtas"
 
-#: ../src/celestia/celestiacore.cpp:1820 ../src/celestia/celestiacore.cpp:1828
+#: ../src/celestia/celestiacore.cpp:1824 ../src/celestia/celestiacore.cpp:1832
 #, c-format
 msgid "Exposure"
 msgstr "Ekspozicija"
 
-#: ../src/celestia/celestiacore.cpp:2150
+#: ../src/celestia/celestiacore.cpp:2154
 msgid "GL error: "
 msgstr "GL klaida: "
 
-#: ../src/celestia/celestiacore.cpp:2299
+#: ../src/celestia/celestiacore.cpp:2303
 msgid "View too small to be split"
 msgstr "Vaizdas per mažas padalinimui"
 
-#: ../src/celestia/celestiacore.cpp:2319
+#: ../src/celestia/celestiacore.cpp:2323
 msgid "Added view"
 msgstr "Vaizdas įtrauktas"
 
-#: ../src/celestia/celestiacore.cpp:2495
+#: ../src/celestia/celestiacore.cpp:2499
 msgid "Mpc"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2500
+#: ../src/celestia/celestiacore.cpp:2504
 msgid "kpc"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2505
+#: ../src/celestia/celestiacore.cpp:2509
 #: ../src/celestia/qt/qtselectionpopup.cpp:108
 msgid "ly"
 msgstr "šm"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:194
 #. i18n: ectx: property (text), widget (QRadioButton, auButton)
-#: ../src/celestia/celestiacore.cpp:2509
+#: ../src/celestia/celestiacore.cpp:2513
 #: ../src/celestia/qt/qtselectionpopup.cpp:110 ../src/celestia/qt/rc.cpp:36
 #: ../src/celestia/win32/res/resource_strings.cpp:125
 msgid "au"
 msgstr "av"
 
+#: ../src/celestia/celestiacore.cpp:2520
+msgid "mi"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2525
+msgid "ft"
+msgstr ""
+
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/celestiacore.cpp:2514 ../src/celestia/qt/qtinfopanel.cpp:121
-#: ../src/celestia/qt/qtinfopanel.cpp:235 ../src/celestia/qt/rc.cpp:30
+#: ../src/celestia/celestiacore.cpp:2533 ../src/celestia/qt/qtinfopanel.cpp:122
+#: ../src/celestia/qt/qtinfopanel.cpp:236 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:123
 msgid "km"
 msgstr "km"
 
-#: ../src/celestia/celestiacore.cpp:2520 ../src/celestia/qt/qtinfopanel.cpp:125
+#: ../src/celestia/celestiacore.cpp:2538 ../src/celestia/qt/qtinfopanel.cpp:126
 msgid "m"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2543 ../src/celestia/qt/qtinfopanel.cpp:169
-#: ../src/celestia/qt/qtinfopanel.cpp:197
-#: ../src/celestia/qt/qtinfopanel.cpp:247
+#: ../src/celestia/celestiacore.cpp:2561 ../src/celestia/qt/qtinfopanel.cpp:170
+#: ../src/celestia/qt/qtinfopanel.cpp:198
+#: ../src/celestia/qt/qtinfopanel.cpp:248
 #, fuzzy
 msgid "days"
 msgstr "dienos"
 
-#: ../src/celestia/celestiacore.cpp:2548 ../src/celestia/qt/qtinfopanel.cpp:165
-#: ../src/celestia/qt/qtinfopanel.cpp:193
+#: ../src/celestia/celestiacore.cpp:2566 ../src/celestia/qt/qtinfopanel.cpp:166
+#: ../src/celestia/qt/qtinfopanel.cpp:194
 #, fuzzy
 msgid "hours"
 msgstr "valandos"
 
-#: ../src/celestia/celestiacore.cpp:2553
+#: ../src/celestia/celestiacore.cpp:2571
 #, fuzzy
 msgid "minutes"
 msgstr "minutės"
 
-#: ../src/celestia/celestiacore.cpp:2558
+#: ../src/celestia/celestiacore.cpp:2576
 #, fuzzy
 msgid "seconds"
 msgstr " sekundės"
 
-#: ../src/celestia/celestiacore.cpp:2561
+#: ../src/celestia/celestiacore.cpp:2579
 #, fuzzy, c-format
 msgid "Rotation period: %s %s\n"
 msgstr "Apsisukimo periodas: "
 
-#: ../src/celestia/celestiacore.cpp:2567
+#: ../src/celestia/celestiacore.cpp:2587
+#, c-format
+msgid "Mass: %.6g lb\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2589
 #, c-format
 msgid "Mass: %.6g kg\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2569
+#: ../src/celestia/celestiacore.cpp:2592
 #, c-format
 msgid "Mass: %.2f Mj\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2571
+#: ../src/celestia/celestiacore.cpp:2594
 #, c-format
 msgid "Mass: %.2f Me\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2582
-#, fuzzy
-msgid "m/s"
-msgstr " m/s"
-
-#: ../src/celestia/celestiacore.cpp:2587
-#, fuzzy
-msgid "km/s"
-msgstr " km/s"
-
-#: ../src/celestia/celestiacore.cpp:2597
-#, fuzzy
-msgid "AU/s"
-msgstr " AV/s"
-
-#: ../src/celestia/celestiacore.cpp:2602
+#: ../src/celestia/celestiacore.cpp:2605
 #, fuzzy
 msgid "ly/s"
 msgstr " šm/s"
 
-#: ../src/celestia/celestiacore.cpp:2605
+#: ../src/celestia/celestiacore.cpp:2610
+#, fuzzy
+msgid "AU/s"
+msgstr " AV/s"
+
+#: ../src/celestia/celestiacore.cpp:2622
+msgid "mi/s"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2627
+msgid "ft/s"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2635
+#, fuzzy
+msgid "km/s"
+msgstr " km/s"
+
+#: ../src/celestia/celestiacore.cpp:2640
+#, fuzzy
+msgid "m/s"
+msgstr " m/s"
+
+#: ../src/celestia/celestiacore.cpp:2643
 #, fuzzy, c-format
 msgid "Speed: %s %s\n"
 msgstr ""
 "\n"
 "Greitis: "
 
-#: ../src/celestia/celestiacore.cpp:2639
+#: ../src/celestia/celestiacore.cpp:2677
 #, c-format, qt-format
 msgid "Dec: %+d%s %02d' %.1f\"\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2651
+#: ../src/celestia/celestiacore.cpp:2689
 #, c-format, qt-format
 msgid "RA: %dh %02dm %.1fs\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2667
+#: ../src/celestia/celestiacore.cpp:2705
 #, fuzzy, c-format
 msgid "Apparent diameter: %s\n"
 msgstr "Regimasis skersmuo:"
 
-#: ../src/celestia/celestiacore.cpp:2680
+#: ../src/celestia/celestiacore.cpp:2718
 #, fuzzy, c-format
 msgid "Apparent magnitude: %.1f\n"
 msgstr "Regimasis ryškis:"
 
-#: ../src/celestia/celestiacore.cpp:2684
+#: ../src/celestia/celestiacore.cpp:2722
 #, fuzzy, c-format
 msgid "Absolute magnitude: %.1f\n"
 msgstr "Absoliutus ryškis:"
 
-#: ../src/celestia/celestiacore.cpp:2764
+#: ../src/celestia/celestiacore.cpp:2803
 #, c-format
-msgid "%.6f%c %.6f%c %f km"
+msgid "%.6f%c %.6f%c %s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2790 ../src/celestia/celestiacore.cpp:2862
-#: ../src/celestia/celestiacore.cpp:2891 ../src/celestia/celestiacore.cpp:2966
+#: ../src/celestia/celestiacore.cpp:2830 ../src/celestia/celestiacore.cpp:2902
+#: ../src/celestia/celestiacore.cpp:2932 ../src/celestia/celestiacore.cpp:3013
 #, fuzzy, c-format
 msgid "Distance: %s\n"
 msgstr "Atstumas: "
 
-#: ../src/celestia/celestiacore.cpp:2794
+#: ../src/celestia/celestiacore.cpp:2834
 msgid "Star system barycenter\n"
 msgstr "Žvaigždžių sistemos baricentras\n"
 
-#: ../src/celestia/celestiacore.cpp:2798
+#: ../src/celestia/celestiacore.cpp:2838
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "Abs (app) ryšk: %.2f (%.2f)\n"
 
-#: ../src/celestia/celestiacore.cpp:2803
+#: ../src/celestia/celestiacore.cpp:2843
 #, fuzzy, c-format
 msgid "Luminosity: %sx Sun\n"
 msgstr "Šviesumas:"
 
-#: ../src/celestia/celestiacore.cpp:2809
+#: ../src/celestia/celestiacore.cpp:2849
 msgid "Neutron star"
 msgstr "Neutroninė žvaigždė"
 
-#: ../src/celestia/celestiacore.cpp:2812
+#: ../src/celestia/celestiacore.cpp:2852
 msgid "Black hole"
 msgstr "Juodoji bedugnė"
 
-#: ../src/celestia/celestiacore.cpp:2817
+#: ../src/celestia/celestiacore.cpp:2857
 #, fuzzy, c-format
 msgid "Class: %s\n"
 msgstr "Klasė: "
 
-#: ../src/celestia/celestiacore.cpp:2824
+#: ../src/celestia/celestiacore.cpp:2864
 #, fuzzy, c-format
 msgid "Surface temp: %s K\n"
 msgstr "Paviršiaus temp.: "
 
-#: ../src/celestia/celestiacore.cpp:2829
-#, c-format
-msgid "Radius: %s Rsun  (%s km)\n"
-msgstr ""
-
-#: ../src/celestia/celestiacore.cpp:2835
+#: ../src/celestia/celestiacore.cpp:2869
 #, fuzzy, c-format
-msgid "Radius: %s km\n"
+msgid "Radius: %s Rsun  (%s)\n"
 msgstr "Skersmuo: "
 
-#: ../src/celestia/celestiacore.cpp:2851
-msgid "Planetary companions present\n"
-msgstr "Dabartiniai planetų palydovai\n"
-
-#: ../src/celestia/celestiacore.cpp:2867
-#, fuzzy, c-format
-msgid "Distance from center: %s\n"
-msgstr "Atstumas nuo centro: "
-
-#: ../src/celestia/celestiacore.cpp:2870 ../src/celestia/celestiacore.cpp:2898
+#: ../src/celestia/celestiacore.cpp:2875 ../src/celestia/celestiacore.cpp:2910
+#: ../src/celestia/celestiacore.cpp:2939
 #, fuzzy, c-format
 msgid "Radius: %s\n"
 msgstr "Skersmuo: "
 
-#: ../src/celestia/celestiacore.cpp:2939
+#: ../src/celestia/celestiacore.cpp:2891
+msgid "Planetary companions present\n"
+msgstr "Dabartiniai planetų palydovai\n"
+
+#: ../src/celestia/celestiacore.cpp:2907
+#, fuzzy, c-format
+msgid "Distance from center: %s\n"
+msgstr "Atstumas nuo centro: "
+
+#: ../src/celestia/celestiacore.cpp:2980
 #, c-format
 msgid "Phase angle: %.1f%s\n"
 msgstr "Fazės kampas: %.1f%s\n"
 
-#: ../src/celestia/celestiacore.cpp:2953
+#: ../src/celestia/celestiacore.cpp:2996
+#, c-format
+msgid "Density: %.2f x 1000 lb/ft^3\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2998
 #, c-format
 msgid "Density: %.2f x 1000 kg/m^3\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2957
+#: ../src/celestia/celestiacore.cpp:3003
 #, fuzzy, c-format
 msgid "Temperature: %.0f K\n"
 msgstr "Temperatūra: "
 
-#: ../src/celestia/celestiacore.cpp:3109
+#: ../src/celestia/celestiacore.cpp:3156
 msgid "  LT"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3118
+#: ../src/celestia/celestiacore.cpp:3165
 #: ../src/celestia/qt/qttimetoolbar.cpp:39
 #: ../src/celestia/qt/qttimetoolbar.cpp:54
 msgid "Real time"
 msgstr "Realus laikas"
 
-#: ../src/celestia/celestiacore.cpp:3120
+#: ../src/celestia/celestiacore.cpp:3167
 msgid "-Real time"
 msgstr "-Realus laikas"
 
-#: ../src/celestia/celestiacore.cpp:3124
+#: ../src/celestia/celestiacore.cpp:3171
 msgid "Time stopped"
 msgstr "Laikas sustabdytas"
 
-#: ../src/celestia/celestiacore.cpp:3128
+#: ../src/celestia/celestiacore.cpp:3175
 #, fuzzy, c-format
 msgid "%.6g x faster"
 msgstr " greičiau"
 
-#: ../src/celestia/celestiacore.cpp:3132
+#: ../src/celestia/celestiacore.cpp:3179
 #, fuzzy, c-format
 msgid "%.6g x slower"
 msgstr " lėčiau"
 
-#: ../src/celestia/celestiacore.cpp:3138
+#: ../src/celestia/celestiacore.cpp:3185
 msgid " (Paused)"
 msgstr " (Sustabdyta)"
 
-#: ../src/celestia/celestiacore.cpp:3157
+#: ../src/celestia/celestiacore.cpp:3204
 #, c-format
 msgid ""
 "FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : "
 "%zu : %zu ]\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3166
+#: ../src/celestia/celestiacore.cpp:3213
 #, fuzzy, c-format
 msgid "FPS: %.1f\n"
 msgstr "FPS: "
 
-#: ../src/celestia/celestiacore.cpp:3191
+#: ../src/celestia/celestiacore.cpp:3238
 #, fuzzy, c-format
 msgid "Travelling (%s)\n"
 msgstr "Keliaujama "
 
-#: ../src/celestia/celestiacore.cpp:3194
+#: ../src/celestia/celestiacore.cpp:3241
 #, fuzzy, c-format
 msgid "Travelling\n"
 msgstr "Keliaujama "
 
-#: ../src/celestia/celestiacore.cpp:3203
+#: ../src/celestia/celestiacore.cpp:3250
 #, fuzzy, c-format
 msgid "Track %s\n"
 msgstr "Takas"
 
-#: ../src/celestia/celestiacore.cpp:3219
+#: ../src/celestia/celestiacore.cpp:3266
 #, fuzzy, c-format
 msgid "Follow %s\n"
 msgstr "Sekti "
 
-#: ../src/celestia/celestiacore.cpp:3223
+#: ../src/celestia/celestiacore.cpp:3270
 #, fuzzy, c-format
 msgid "Sync Orbit %s\n"
 msgstr "Sinchronizuoti orbitą"
 
-#: ../src/celestia/celestiacore.cpp:3227
+#: ../src/celestia/celestiacore.cpp:3274
 #, c-format
 msgid "Lock %s -> %s\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3233
+#: ../src/celestia/celestiacore.cpp:3280
 #, fuzzy, c-format
 msgid "Chase %s\n"
 msgstr "Persekioti"
 
-#: ../src/celestia/celestiacore.cpp:3247
+#: ../src/celestia/celestiacore.cpp:3294
 #, c-format
 msgid "FOV: %s (%.2fx)\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3275 ../src/celestia/celestiacore.cpp:3278
-msgid "Sun"
-msgstr "Saulė"
-
-#: ../src/celestia/celestiacore.cpp:3452
+#: ../src/celestia/celestiacore.cpp:3488
 #, fuzzy, c-format
 msgid "Target name: %s"
 msgstr "Taikinio pavadinimas:"
 
-#: ../src/celestia/celestiacore.cpp:3539
+#: ../src/celestia/celestiacore.cpp:3575
 #, c-format
-msgid "%dx%d at %f fps  %s"
+msgid "%dx%d at %.2f fps  %s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3542
+#: ../src/celestia/celestiacore.cpp:3578
 #, fuzzy
 msgid "Paused"
 msgstr " Sustabdyta"
 
-#: ../src/celestia/celestiacore.cpp:3542
+#: ../src/celestia/celestiacore.cpp:3578
 #, fuzzy
 msgid "Recording"
 msgstr " Įrašymas"
 
-#: ../src/celestia/celestiacore.cpp:3563
+#: ../src/celestia/celestiacore.cpp:3599
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 Pradėti/Pauzė    F12 Sustabdyti"
 
-#: ../src/celestia/celestiacore.cpp:3574 ../src/celestia/celestiacore.cpp:3579
+#: ../src/celestia/celestiacore.cpp:3610 ../src/celestia/celestiacore.cpp:3615
 msgid "Edit Mode"
 msgstr "Redagavimo režimas"
 
-#: ../src/celestia/celestiacore.cpp:3612
+#: ../src/celestia/celestiacore.cpp:3648
 #, fuzzy, c-format
 msgid "Skipping solar system catalog: %s\n"
 msgstr "Įkeliamas saulės sistemos katalogas:"
 
-#: ../src/celestia/celestiacore.cpp:3615
+#: ../src/celestia/celestiacore.cpp:3651
 #, fuzzy, c-format
 msgid "Loading solar system catalog: %s\n"
 msgstr "Įkeliamas saulės sistemos katalogas:"
 
-#: ../src/celestia/celestiacore.cpp:3658
+#: ../src/celestia/celestiacore.cpp:3694
 #, fuzzy, c-format
 msgid "Skipping %s catalog: %s\n"
 msgstr "Įkeliamas saulės sistemos katalogas:"
 
-#: ../src/celestia/celestiacore.cpp:3661
+#: ../src/celestia/celestiacore.cpp:3697
 #, fuzzy, c-format
 msgid "Loading %s catalog: %s\n"
 msgstr "Įkeliamas saulės sistemos katalogas:"
 
-#: ../src/celestia/celestiacore.cpp:3697
+#: ../src/celestia/celestiacore.cpp:3733
 msgid "Error reading configuration file."
 msgstr "Klaida nuskaitant konfigūracijos failą."
 
-#: ../src/celestia/celestiacore.cpp:3708
+#: ../src/celestia/celestiacore.cpp:3744
 msgid "Initialization of SPICE library failed."
 msgstr "Nesėkmingas SPICE bibliotekos inicijavimas."
 
-#: ../src/celestia/celestiacore.cpp:3751
+#: ../src/celestia/celestiacore.cpp:3787
 msgid "Cannot read star database."
 msgstr "Neįmanoma nuskaityti žvaigždžių duomenų bazės."
 
-#: ../src/celestia/celestiacore.cpp:3772
+#: ../src/celestia/celestiacore.cpp:3808
 #, fuzzy, c-format
 msgid "Error opening deepsky catalog file %s.\n"
 msgstr "Klaida atveriant gilaus dangaus katalogo failą."
 
-#: ../src/celestia/celestiacore.cpp:3776
+#: ../src/celestia/celestiacore.cpp:3812
 #, fuzzy, c-format
 msgid "Cannot read Deep Sky Objects database %s.\n"
 msgstr "Neįmanoma nuskaityti žvaigždžių duomenų bazės."
 
-#: ../src/celestia/celestiacore.cpp:3821
+#: ../src/celestia/celestiacore.cpp:3861
 #, fuzzy, c-format
 msgid "Error opening solar system catalog %s.\n"
 msgstr "Klaida atveriant saulės sistemos katalogą.\n"
 
-#: ../src/celestia/celestiacore.cpp:3858
+#: ../src/celestia/celestiacore.cpp:3901
 #, fuzzy, c-format
 msgid "Error opening asterisms file %s.\n"
 msgstr "Klaida atveriant asterisms failą."
 
-#: ../src/celestia/celestiacore.cpp:3874
+#: ../src/celestia/celestiacore.cpp:3917
 #, fuzzy, c-format
 msgid "Error opening constellation boundaries file %s.\n"
 msgstr "Klaida atveriant žvaigždynų failą."
 
-#: ../src/celestia/celestiacore.cpp:3997
+#: ../src/celestia/celestiacore.cpp:4050
 msgid "Failed to initialize renderer"
 msgstr "Nesėkmingas atvaizdavimo inicijavimas"
 
-#: ../src/celestia/celestiacore.cpp:4013
+#: ../src/celestia/celestiacore.cpp:4066
 msgid "Error loading font; text will not be visible.\n"
 msgstr "Klaida įkeliant simbolius; tekstas nebus matomas.\n"
 
-#: ../src/celestia/celestiacore.cpp:4061
+#: ../src/celestia/celestiacore.cpp:4114
 #, fuzzy, c-format
 msgid "Error reading cross index %s\n"
 msgstr "Klaida skaitant cross rodiklius"
 
-#: ../src/celestia/celestiacore.cpp:4063
+#: ../src/celestia/celestiacore.cpp:4116
 #, fuzzy, c-format
 msgid "Loaded cross index %s\n"
 msgstr "Pakrautas cross rodiklis"
 
-#: ../src/celestia/celestiacore.cpp:4080
+#: ../src/celestia/celestiacore.cpp:4133
 msgid "Error reading star names file\n"
 msgstr "Klaida nuskaitant žvaigždžių pavadinimų failą\n"
 
-#: ../src/celestia/celestiacore.cpp:4084 ../src/celestia/celestiacore.cpp:4098
+#: ../src/celestia/celestiacore.cpp:4137 ../src/celestia/celestiacore.cpp:4151
 #, fuzzy, c-format
 msgid "Error opening %s\n"
 msgstr "Klaida atveriant"
 
-#: ../src/celestia/celestiacore.cpp:4106
+#: ../src/celestia/celestiacore.cpp:4159
 msgid "Error reading stars file\n"
 msgstr "Klaida nuskaitant žvaigždžių failą\n"
 
-#: ../src/celestia/celestiacore.cpp:4132
+#: ../src/celestia/celestiacore.cpp:4185
 #, fuzzy, c-format
 msgid "Error opening star catalog %s\n"
 msgstr "Klaida atveriant žvaigždžių katalogą "
 
-#: ../src/celestia/celestiacore.cpp:4466
+#: ../src/celestia/celestiacore.cpp:4543
 msgid "Invalid URL"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:4768
+msgid "Unable to capture a frame!\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:4780
+msgid "Unsupported image type: {}!\n"
 msgstr ""
 
 #: ../src/celestia/glut/glutmain.cpp:522
 msgid "Celestia was unable to initialize OpenGL 2.1.\n"
 msgstr ""
 
-#: ../src/celestia/gtk/actions.cpp:1030 ../src/celestia/win32/winmain.cpp:2639
+#: ../src/celestia/gtk/actions.cpp:1095 ../src/celestia/win32/winmain.cpp:2661
 msgid "Please use a name ending in '.jpg' or '.png'."
 msgstr ""
 
@@ -2394,10 +4574,6 @@ msgstr ""
 msgid "Max anisotropy filtering: %s\n"
 msgstr ""
 
-#: ../src/celestia/imagecapture.cpp:49
-msgid "Unable to capture a frame!\n"
-msgstr ""
-
 #: ../src/celestia/oggtheoracapture.cpp:161
 #, c-format
 msgid "Error in creating ogg file %s for capture.\n"
@@ -2424,36 +4600,36 @@ msgstr ""
 msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
 msgstr "OggTheoraCapture:: išvalymas () - parašė %d frames\n"
 
-#: ../src/celestia/qt/qtappwin.cpp:159
+#: ../src/celestia/qt/qtappwin.cpp:169
 msgid "Auto"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:165
+#: ../src/celestia/qt/qtappwin.cpp:175
 msgid "Custom"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:217
+#: ../src/celestia/qt/qtappwin.cpp:214
+msgid "Error getting path for log filename!"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:231
 msgid ""
 "Celestia is unable to run because the data directory was not found, probably "
 "due to improper installation."
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:272
-msgid "Celestia was unable to initialize OpenGL 2.1."
-msgstr ""
-
-#: ../src/celestia/qt/qtappwin.cpp:290
+#: ../src/celestia/qt/qtappwin.cpp:297
 msgid "Celestial Browser"
 msgstr "Dangaus naršyklė"
 
 #. Info browser for a selected object
-#: ../src/celestia/qt/qtappwin.cpp:296
+#: ../src/celestia/qt/qtappwin.cpp:303
 #, fuzzy
 msgid "Info Browser"
 msgstr "Žvaigždžių naršyklė"
 
 #. Set up the browser tabs
-#: ../src/celestia/qt/qtappwin.cpp:325
+#: ../src/celestia/qt/qtappwin.cpp:332
 #: ../src/celestia/win32/res/resource_strings.cpp:172
 msgid "Solar System"
 msgstr "Saulės sistema"
@@ -2464,20 +4640,20 @@ msgstr "Saulės sistema"
 #. i18n: ectx: property (text), widget (QCheckBox, starOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:499
 #. i18n: ectx: property (text), widget (QCheckBox, starLabelsCheck)
-#: ../src/celestia/qt/qtappwin.cpp:326
-#: ../src/celestia/qt/qtcelestiaactions.cpp:83
-#: ../src/celestia/qt/qtcelestiaactions.cpp:110 ../src/celestia/qt/rc.cpp:72
+#: ../src/celestia/qt/qtappwin.cpp:333
+#: ../src/celestia/qt/qtcelestiaactions.cpp:84
+#: ../src/celestia/qt/qtcelestiaactions.cpp:111 ../src/celestia/qt/rc.cpp:72
 #: ../src/celestia/qt/rc.cpp:154 ../src/celestia/qt/rc.cpp:221
 #: ../src/celestia/win32/res/resource_strings.cpp:212
 msgid "Stars"
 msgstr "Žvaigždės"
 
-#: ../src/celestia/qt/qtappwin.cpp:327
+#: ../src/celestia/qt/qtappwin.cpp:334
 #, fuzzy
 msgid "Deep Sky Objects"
 msgstr "Rodyti objektus"
 
-#: ../src/celestia/qt/qtappwin.cpp:334 ../src/celestia/qt/qteventfinder.cpp:335
+#: ../src/celestia/qt/qtappwin.cpp:341 ../src/celestia/qt/qteventfinder.cpp:335
 #: ../src/celestia/qt/qteventfinder.cpp:345
 #, fuzzy
 msgid "Event Finder"
@@ -2487,102 +4663,119 @@ msgstr "Užtemimų paiška"
 #. Create the time toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:1034
 #. i18n: ectx: attribute (title), widget (QWidget, timeTab)
-#: ../src/celestia/qt/qtappwin.cpp:343 ../src/celestia/qt/rc.cpp:351
+#: ../src/celestia/qt/qtappwin.cpp:350 ../src/celestia/qt/rc.cpp:351
 msgid "Time"
 msgstr "Laikas"
 
 #. Create the guides toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:228
 #. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
-#: ../src/celestia/qt/qtappwin.cpp:350 ../src/celestia/qt/rc.cpp:139
+#: ../src/celestia/qt/qtappwin.cpp:357 ../src/celestia/qt/rc.cpp:139
 #, fuzzy
 msgid "Guides"
 msgstr "Kelionė su gidu"
 
-#: ../src/celestia/qt/qtappwin.cpp:400
+#: ../src/celestia/qt/qtappwin.cpp:407
 #, fuzzy
 msgid "Full screen"
 msgstr "Pilnas ekranas"
 
-#: ../src/celestia/qt/qtappwin.cpp:402
+#: ../src/celestia/qt/qtappwin.cpp:409
 msgid "Shift+F11"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:558
+#: ../src/celestia/qt/qtappwin.cpp:564
 #, fuzzy
 msgid "Error opening bookmarks file"
 msgstr "Klaida įkeliant atvaizdo failą "
 
-#: ../src/celestia/qt/qtappwin.cpp:577
+#: ../src/celestia/qt/qtappwin.cpp:583
 #, fuzzy
 msgid "Error Saving Bookmarks"
 msgstr "Rūšiuoti žymeles"
 
-#: ../src/celestia/qt/qtappwin.cpp:619
+#: ../src/celestia/qt/qtappwin.cpp:620
 #, fuzzy
 msgid "Save Image"
 msgstr "Įrašyti paveikslėlį į failą"
 
-#: ../src/celestia/qt/qtappwin.cpp:621
+#: ../src/celestia/qt/qtappwin.cpp:622
 msgid "Images (*.png *.jpg)"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:669 ../src/celestia/qt/qtappwin.cpp:674
+#: ../src/celestia/qt/qtappwin.cpp:647 ../src/celestia/qt/qtappwin.cpp:652
+#: ../src/celestia/qt/qtappwin.cpp:665
 msgid "Capture Video"
 msgstr "Įrašyti video"
 
-#: ../src/celestia/qt/qtappwin.cpp:671
+#: ../src/celestia/qt/qtappwin.cpp:649
 msgid "Video (*.avi)"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:676
-msgid "Video (*.ogv)"
+#: ../src/celestia/qt/qtappwin.cpp:654
+msgid "Matroska Video (*.mkv)"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:686
+#: ../src/celestia/qt/qtappwin.cpp:670
 #, fuzzy
 msgid "Resolution:"
 msgstr "Raiška: "
 
-#: ../src/celestia/qt/qtappwin.cpp:690
+#: ../src/celestia/qt/qtappwin.cpp:673
 #, qt-format
 msgid "%1 x %2"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:694
+#: ../src/celestia/qt/qtappwin.cpp:676
 #: ../src/celestia/win32/res/resource_strings.cpp:152
 msgid "Frame rate:"
 msgstr "Rėmelio norma:"
 
-#: ../src/celestia/qt/qtappwin.cpp:741
+#: ../src/celestia/qt/qtappwin.cpp:683
+msgid "Video codec:"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:685
+msgid "Lossless"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:686
+msgid "Lossy (H.264)"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:690
+msgid "Bitrate:"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:763
 msgid "Captured screen shot to clipboard"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:752 ../src/celestia/win32/winmain.cpp:3786
+#: ../src/celestia/qt/qtappwin.cpp:774 ../src/celestia/win32/winmain.cpp:3808
 msgid "Copied URL"
 msgstr "Kopijuojamas URL"
 
-#: ../src/celestia/qt/qtappwin.cpp:762
+#: ../src/celestia/qt/qtappwin.cpp:784
 #, fuzzy
 msgid "Pasting URL"
 msgstr "Įkeliamas URL"
 
-#: ../src/celestia/qt/qtappwin.cpp:886
+#: ../src/celestia/qt/qtappwin.cpp:908
 #, fuzzy
 msgid "Open Script"
 msgstr "Atverti scenarijų."
 
-#: ../src/celestia/qt/qtappwin.cpp:888
+#: ../src/celestia/qt/qtappwin.cpp:910
 #, fuzzy
 msgid "Celestia Scripts (*.celx *.cel)"
 msgstr "Celestia scenarijai"
 
-#: ../src/celestia/qt/qtappwin.cpp:958
+#: ../src/celestia/qt/qtappwin.cpp:1023
 #, fuzzy
 msgid "New bookmark"
 msgstr "Žymelės"
 
-#: ../src/celestia/qt/qtappwin.cpp:1013
+#: ../src/celestia/qt/qtappwin.cpp:1078
 #, qt-format
 msgid ""
 "<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
@@ -2598,335 +4791,335 @@ msgid ""
 "\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1048
+#: ../src/celestia/qt/qtappwin.cpp:1113
 msgid "Unknown compiler"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1052
+#: ../src/celestia/qt/qtappwin.cpp:1117
 msgid "supported"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1054
+#: ../src/celestia/qt/qtappwin.cpp:1119
 msgid "not supported"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1057 ../src/celestia/qt/qtappwin.cpp:1452
+#: ../src/celestia/qt/qtappwin.cpp:1122 ../src/celestia/qt/qtappwin.cpp:1516
 #: ../src/celestia/win32/res/resource_strings.cpp:70
 msgid "About Celestia"
 msgstr "Apie Celestia"
 
-#: ../src/celestia/qt/qtappwin.cpp:1076
+#: ../src/celestia/qt/qtappwin.cpp:1141
 #, qt-format
 msgid "<b>%1 version:</b> %2"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1082
+#: ../src/celestia/qt/qtappwin.cpp:1147
 #, fuzzy, qt-format
 msgid "<b>Vendor:</b> %1"
 msgstr "Tiekėjas: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1088
+#: ../src/celestia/qt/qtappwin.cpp:1153
 #, fuzzy, qt-format
 msgid "<b>Renderer:</b> %1"
 msgstr "Plokštė:"
 
-#: ../src/celestia/qt/qtappwin.cpp:1095
+#: ../src/celestia/qt/qtappwin.cpp:1160
 #, fuzzy, qt-format
 msgid "<b>%1 Version:</b> %2"
 msgstr "Versija: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1102
+#: ../src/celestia/qt/qtappwin.cpp:1167
 #, fuzzy, qt-format
 msgid "<b>Max simultaneous textures:</b> %1"
 msgstr "Maksimalus tekstūrų kiekis:"
 
-#: ../src/celestia/qt/qtappwin.cpp:1108
+#: ../src/celestia/qt/qtappwin.cpp:1173
 #, fuzzy, qt-format
 msgid "<b>Maximum texture size:</b> %1"
 msgstr "Maksimalus tekstūros dydis:"
 
-#: ../src/celestia/qt/qtappwin.cpp:1114
+#: ../src/celestia/qt/qtappwin.cpp:1179
 #, fuzzy, qt-format
 msgid "<b>Point size range:</b> %1 - %2"
 msgstr "Taško dydžio diapazonas:"
 
-#: ../src/celestia/qt/qtappwin.cpp:1120
+#: ../src/celestia/qt/qtappwin.cpp:1185
 #, fuzzy, qt-format
 msgid "<b>Point size granularity:</b> %1"
 msgstr "Taško dydžio diapazonas:"
 
-#: ../src/celestia/qt/qtappwin.cpp:1126
+#: ../src/celestia/qt/qtappwin.cpp:1191
 #, fuzzy, qt-format
 msgid "<b>Max cube map size:</b> %1"
 msgstr "Maksimalus žemėlapio dydis:"
 
-#: ../src/celestia/qt/qtappwin.cpp:1132
+#: ../src/celestia/qt/qtappwin.cpp:1197
 #, fuzzy, qt-format
 msgid "<b>Number of interpolators:</b> %1"
 msgstr "Plokštė:"
 
-#: ../src/celestia/qt/qtappwin.cpp:1138
+#: ../src/celestia/qt/qtappwin.cpp:1203
 #, fuzzy, qt-format
 msgid "<b>Max anisotropy filtering:</b> %1"
 msgstr "Maksimalus tekstūrų kiekis:"
 
-#: ../src/celestia/qt/qtappwin.cpp:1148
+#: ../src/celestia/qt/qtappwin.cpp:1213
 #, fuzzy
 msgid "<b>Supported extensions:</b><br>\n"
 msgstr "Palaikomos plėtros:"
 
-#: ../src/celestia/qt/qtappwin.cpp:1162
+#: ../src/celestia/qt/qtappwin.cpp:1227
 #, fuzzy
 msgid "Renderer Info"
 msgstr "Plokštė:"
 
 #. ***** File menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1186
+#: ../src/celestia/qt/qtappwin.cpp:1251
 #: ../src/celestia/win32/res/resource_strings.cpp:1
 msgid "&File"
 msgstr "&Failas"
 
-#: ../src/celestia/qt/qtappwin.cpp:1189
+#: ../src/celestia/qt/qtappwin.cpp:1254
 #, fuzzy
 msgid "&Grab image"
 msgstr "Padaryti ekr. atvaizdą"
 
-#: ../src/celestia/qt/qtappwin.cpp:1190
+#: ../src/celestia/qt/qtappwin.cpp:1255
 msgid "F10"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1195
+#: ../src/celestia/qt/qtappwin.cpp:1260
 #, fuzzy
 msgid "Capture &video"
 msgstr "Įrašyti video"
 
-#: ../src/celestia/qt/qtappwin.cpp:1200
+#: ../src/celestia/qt/qtappwin.cpp:1264
 msgid "Shift+F10"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1204
+#: ../src/celestia/qt/qtappwin.cpp:1268
 msgid "&Copy image"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1205
+#: ../src/celestia/qt/qtappwin.cpp:1269
 msgid "Ctrl+Shift+C"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1211
+#: ../src/celestia/qt/qtappwin.cpp:1275
 #: ../src/celestia/win32/res/resource_strings.cpp:2
 msgid "&Open Script..."
 msgstr "&Atidaryti scenarijų..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1222
+#: ../src/celestia/qt/qtappwin.cpp:1286
 #, fuzzy
 msgid "&Preferences..."
 msgstr "&Informaciniai ženklai"
 
-#: ../src/celestia/qt/qtappwin.cpp:1226
+#: ../src/celestia/qt/qtappwin.cpp:1290
 #: ../src/celestia/win32/res/resource_strings.cpp:7
 msgid "E&xit"
 msgstr "I&šeiti"
 
-#: ../src/celestia/qt/qtappwin.cpp:1227
+#: ../src/celestia/qt/qtappwin.cpp:1291
 msgid "Ctrl+Q"
 msgstr ""
 
 #. ***** Navigation menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1232
+#: ../src/celestia/qt/qtappwin.cpp:1296
 #: ../src/celestia/win32/res/resource_strings.cpp:8
 msgid "&Navigation"
 msgstr "Ž&valgymas"
 
-#: ../src/celestia/qt/qtappwin.cpp:1234
+#: ../src/celestia/qt/qtappwin.cpp:1298
 #, fuzzy
 msgid "Select Sun"
 msgstr "Pasirinkti _Saulę"
 
-#: ../src/celestia/qt/qtappwin.cpp:1238
+#: ../src/celestia/qt/qtappwin.cpp:1302
 #, fuzzy
 msgid "Center Selection"
 msgstr "_Pasirinktą į centrą"
 
-#: ../src/celestia/qt/qtappwin.cpp:1242
+#: ../src/celestia/qt/qtappwin.cpp:1306
 #, fuzzy
 msgid "Goto Selection"
 msgstr "_Aplankyti pasirinktą"
 
-#: ../src/celestia/qt/qtappwin.cpp:1246
+#: ../src/celestia/qt/qtappwin.cpp:1310
 #: ../src/celestia/win32/res/resource_strings.cpp:12
 msgid "Goto Object..."
 msgstr "Aplankyti objektą..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1250
+#: ../src/celestia/qt/qtappwin.cpp:1314
 msgid "Copy URL / console text"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1255
+#: ../src/celestia/qt/qtappwin.cpp:1319
 msgid "Paste URL / console text"
 msgstr ""
 
 #. ***** Time menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1261
+#: ../src/celestia/qt/qtappwin.cpp:1325
 #: ../src/celestia/win32/res/resource_strings.cpp:21
 msgid "&Time"
 msgstr "&Laikas"
 
-#: ../src/celestia/qt/qtappwin.cpp:1263
+#: ../src/celestia/qt/qtappwin.cpp:1327
 #, fuzzy
 msgid "Set &time"
 msgstr "Nustatyti laiką"
 
 #. ***** Display menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1271
+#: ../src/celestia/qt/qtappwin.cpp:1335
 #, fuzzy
 msgid "&Display"
 msgstr "Rodyti"
 
-#: ../src/celestia/qt/qtappwin.cpp:1277
+#: ../src/celestia/qt/qtappwin.cpp:1341
 #, fuzzy
 msgid "Dee&p Sky Objects"
 msgstr "Rodyti objektus"
 
-#: ../src/celestia/qt/qtappwin.cpp:1283
+#: ../src/celestia/qt/qtappwin.cpp:1347
 #, fuzzy
 msgid "&Shadows"
 msgstr "Žiedų šešėliai"
 
-#: ../src/celestia/qt/qtappwin.cpp:1294
+#: ../src/celestia/qt/qtappwin.cpp:1358
 #: ../src/celestia/win32/res/resource_strings.cpp:37
 msgid "Star St&yle"
 msgstr "Žvaigždžių st&iliai"
 
-#: ../src/celestia/qt/qtappwin.cpp:1301
+#: ../src/celestia/qt/qtappwin.cpp:1365
 #, fuzzy
 msgid "Texture &Resolution"
 msgstr "&Tekstūrų rezoliucijos"
 
-#: ../src/celestia/qt/qtappwin.cpp:1306
+#: ../src/celestia/qt/qtappwin.cpp:1370
 #, fuzzy
 msgid "&FPS control"
 msgstr "&Valdymas"
 
 #. ***** Bookmark menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1323
+#: ../src/celestia/qt/qtappwin.cpp:1387
 #: ../src/celestia/win32/res/resource_strings.cpp:60
 msgid "&Bookmarks"
 msgstr "&Žymelės"
 
 #. ***** View menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1326
+#: ../src/celestia/qt/qtappwin.cpp:1390
 #: ../src/celestia/win32/res/resource_strings.cpp:53
 msgid "&View"
 msgstr "&Rodymas"
 
 #. ***** MultiView menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1329
+#: ../src/celestia/qt/qtappwin.cpp:1393
 #, fuzzy
 msgid "&MultiView"
 msgstr "Multivaizdas"
 
-#: ../src/celestia/qt/qtappwin.cpp:1332
+#: ../src/celestia/qt/qtappwin.cpp:1396
 #, fuzzy
 msgid "Split view vertically"
 msgstr "Padalinti vaizdą vertikaliai"
 
-#: ../src/celestia/qt/qtappwin.cpp:1333
+#: ../src/celestia/qt/qtappwin.cpp:1397
 msgid "Ctrl+R"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1338
+#: ../src/celestia/qt/qtappwin.cpp:1402
 #, fuzzy
 msgid "Split view horizontally"
 msgstr "Padalinti vaizdą horizontaliai"
 
-#: ../src/celestia/qt/qtappwin.cpp:1339
+#: ../src/celestia/qt/qtappwin.cpp:1403
 msgid "Ctrl+U"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1344
+#: ../src/celestia/qt/qtappwin.cpp:1408
 #, fuzzy
 msgid "Cycle views"
 msgstr "Ciklinis vaizdas"
 
-#: ../src/celestia/qt/qtappwin.cpp:1345
+#: ../src/celestia/qt/qtappwin.cpp:1409
 msgid "Tab"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1350
+#: ../src/celestia/qt/qtappwin.cpp:1414
 #, fuzzy
 msgid "Single view"
 msgstr "Vientisas vaizdas"
 
-#: ../src/celestia/qt/qtappwin.cpp:1351
+#: ../src/celestia/qt/qtappwin.cpp:1415
 msgid "Ctrl+D"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1356
+#: ../src/celestia/qt/qtappwin.cpp:1420
 #, fuzzy
 msgid "Delete view"
 msgstr "Ištrinti vaizdą"
 
-#: ../src/celestia/qt/qtappwin.cpp:1357
+#: ../src/celestia/qt/qtappwin.cpp:1421
 #: ../src/celestia/win32/res/resource_strings.cpp:158
 msgid "Delete"
 msgstr "Trinti"
 
-#: ../src/celestia/qt/qtappwin.cpp:1363
+#: ../src/celestia/qt/qtappwin.cpp:1427
 #, fuzzy
 msgid "Frames visible"
 msgstr "Matomas rėmelis"
 
-#: ../src/celestia/qt/qtappwin.cpp:1384
+#: ../src/celestia/qt/qtappwin.cpp:1448
 #, fuzzy
 msgid "Active frame visible"
 msgstr "Matomas aktyvus rėmelis"
 
-#: ../src/celestia/qt/qtappwin.cpp:1400
+#: ../src/celestia/qt/qtappwin.cpp:1464
 #, fuzzy
 msgid "Synchronize time"
 msgstr "Sinchronizuoti laiką"
 
 #. ***** Help Menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1441
+#: ../src/celestia/qt/qtappwin.cpp:1505
 #: ../src/celestia/win32/res/resource_strings.cpp:63
 msgid "&Help"
 msgstr "&Pagalba"
 
-#: ../src/celestia/qt/qtappwin.cpp:1443
+#: ../src/celestia/qt/qtappwin.cpp:1507
 #, fuzzy
 msgid "Celestia Manual"
 msgstr "Celestia"
 
-#: ../src/celestia/qt/qtappwin.cpp:1448
+#: ../src/celestia/qt/qtappwin.cpp:1512
 msgid "OpenGL Info"
 msgstr "OpenGL info"
 
-#: ../src/celestia/qt/qtappwin.cpp:1468
+#: ../src/celestia/qt/qtappwin.cpp:1532
 #, fuzzy
 msgid "Add Bookmark..."
 msgstr "&Įtraukti žymeles..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1472
+#: ../src/celestia/qt/qtappwin.cpp:1536
 #, fuzzy
 msgid "Organize Bookmarks..."
 msgstr "&Rūšiuoti žymeles..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1510
+#: ../src/celestia/qt/qtappwin.cpp:1574
 msgid "Set custom FPS"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1511
+#: ../src/celestia/qt/qtappwin.cpp:1575
 msgid "FPS value"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1531
+#: ../src/celestia/qt/qtappwin.cpp:1596
 #, fuzzy, qt-format
 msgid ""
 "Loading data files: %1\n"
 "\n"
 msgstr "Įkeliamas paveikslas iš failo "
 
-#: ../src/celestia/qt/qtappwin.cpp:1542
+#: ../src/celestia/qt/qtappwin.cpp:1607
 #: ../src/celestia/win32/res/resource_strings.cpp:3
 msgid "Scripts"
 msgstr "Scenarijai"
@@ -2991,59 +5184,59 @@ msgid "New Folder"
 msgstr "Naujas aplankas..."
 
 #. Create the render flags actions
-#: ../src/celestia/qt/qtcelestiaactions.cpp:26
+#: ../src/celestia/qt/qtcelestiaactions.cpp:27
 msgid "Eq"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:27
+#: ../src/celestia/qt/qtcelestiaactions.cpp:28
 #, fuzzy
 msgid "Equatorial coordinate grid"
 msgstr "Pusiaujo tinklelis"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:31
+#: ../src/celestia/qt/qtcelestiaactions.cpp:32
 msgid "Ga"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:32
+#: ../src/celestia/qt/qtcelestiaactions.cpp:33
 msgid "Galactic coordinate grid"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:36
+#: ../src/celestia/qt/qtcelestiaactions.cpp:37
 msgid "Ec"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:37
+#: ../src/celestia/qt/qtcelestiaactions.cpp:38
 #, fuzzy
 msgid "Ecliptic coordinate grid"
 msgstr "Ekliptikos linija"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:41
+#: ../src/celestia/qt/qtcelestiaactions.cpp:42
 msgid "Hz"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:42
+#: ../src/celestia/qt/qtcelestiaactions.cpp:43
 msgid "Horizontal coordinate grid"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:46
+#: ../src/celestia/qt/qtcelestiaactions.cpp:47
 msgid "Ecl"
 msgstr ""
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:461
 #. i18n: ectx: property (text), widget (QCheckBox, eclipticLineCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:47 ../src/celestia/qt/rc.cpp:212
+#: ../src/celestia/qt/qtcelestiaactions.cpp:48 ../src/celestia/qt/rc.cpp:212
 #, fuzzy
 msgid "Ecliptic line"
 msgstr "Ekliptikos linija"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:51
+#: ../src/celestia/qt/qtcelestiaactions.cpp:52
 msgid "M"
 msgstr ""
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:454
 #. i18n: ectx: property (text), widget (QCheckBox, markersCheck)
 #. Controls for marking selected objects
-#: ../src/celestia/qt/qtcelestiaactions.cpp:52
+#: ../src/celestia/qt/qtcelestiaactions.cpp:53
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:561
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:481
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:774
@@ -3052,7 +5245,7 @@ msgstr ""
 msgid "Markers"
 msgstr "Žymekliai"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:56
+#: ../src/celestia/qt/qtcelestiaactions.cpp:57
 msgid "C"
 msgstr ""
 
@@ -3060,30 +5253,30 @@ msgstr ""
 #. i18n: ectx: property (title), widget (QGroupBox, constellationsGroupBox)
 #. i18n: file: ../src/celestia/qt/preferences.ui:583
 #. i18n: ectx: property (text), widget (QCheckBox, constellationLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:57
-#: ../src/celestia/qt/qtcelestiaactions.cpp:123 ../src/celestia/qt/rc.cpp:194
+#: ../src/celestia/qt/qtcelestiaactions.cpp:58
+#: ../src/celestia/qt/qtcelestiaactions.cpp:124 ../src/celestia/qt/rc.cpp:194
 #: ../src/celestia/qt/rc.cpp:258
 #: ../src/celestia/win32/res/resource_strings.cpp:224
 msgid "Constellations"
 msgstr "Žvaigždynai"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:61
+#: ../src/celestia/qt/qtcelestiaactions.cpp:62
 msgid "B"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:62
+#: ../src/celestia/qt/qtcelestiaactions.cpp:63
 #, fuzzy
 msgid "Constellation boundaries"
 msgstr "Žvaigždynų kontūrai"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:66
+#: ../src/celestia/qt/qtcelestiaactions.cpp:67
 #, fuzzy
 msgid "O"
 msgstr "Gerai"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:236
 #. i18n: ectx: property (title), widget (QGroupBox, orbitsGroupBox)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:67 ../src/celestia/qt/rc.cpp:142
+#: ../src/celestia/qt/qtcelestiaactions.cpp:68 ../src/celestia/qt/rc.cpp:142
 #: ../src/celestia/win32/res/resource_strings.cpp:201
 msgid "Orbits"
 msgstr "Orbitos"
@@ -3095,20 +5288,20 @@ msgstr "Orbitos"
 #. i18n: ectx: property (text), widget (QCheckBox, planetOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:506
 #. i18n: ectx: property (text), widget (QCheckBox, planetLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:84
-#: ../src/celestia/qt/qtcelestiaactions.cpp:111
-#: ../src/celestia/qt/qtselectionpopup.cpp:386
+#: ../src/celestia/qt/qtcelestiaactions.cpp:85
+#: ../src/celestia/qt/qtcelestiaactions.cpp:112
+#: ../src/celestia/qt/qtselectionpopup.cpp:388
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:581 ../src/celestia/qt/rc.cpp:75
 #: ../src/celestia/qt/rc.cpp:157 ../src/celestia/qt/rc.cpp:224
 #: ../src/celestia/win32/res/resource_strings.cpp:213
-#: ../src/celestia/win32/winmain.cpp:1456
-#: ../src/celestia/win32/winmain.cpp:1492
-#: ../src/celestia/win32/winmain.cpp:1610
+#: ../src/celestia/win32/winmain.cpp:1466
+#: ../src/celestia/win32/winmain.cpp:1504
+#: ../src/celestia/win32/winmain.cpp:1624
 msgid "Planets"
 msgstr "Planetos"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:85
-#: ../src/celestia/qt/qtcelestiaactions.cpp:112
+#: ../src/celestia/qt/qtcelestiaactions.cpp:86
+#: ../src/celestia/qt/qtcelestiaactions.cpp:113
 #: ../src/celestia/win32/res/resource_strings.cpp:214
 msgid "Dwarf Planets"
 msgstr "Nykštukinės planetos"
@@ -3119,18 +5312,18 @@ msgstr "Nykštukinės planetos"
 #. i18n: ectx: property (text), widget (QCheckBox, moonOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:520
 #. i18n: ectx: property (text), widget (QCheckBox, moonLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:86
-#: ../src/celestia/qt/qtcelestiaactions.cpp:113
-#: ../src/celestia/qt/qtselectionpopup.cpp:392
+#: ../src/celestia/qt/qtcelestiaactions.cpp:87
+#: ../src/celestia/qt/qtcelestiaactions.cpp:114
+#: ../src/celestia/qt/qtselectionpopup.cpp:394
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:583 ../src/celestia/qt/rc.cpp:81
 #: ../src/celestia/qt/rc.cpp:163 ../src/celestia/qt/rc.cpp:230
 #: ../src/celestia/win32/res/resource_strings.cpp:215
-#: ../src/celestia/win32/winmain.cpp:1454
+#: ../src/celestia/win32/winmain.cpp:1462
 msgid "Moons"
 msgstr "Palydovai"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:87
-#: ../src/celestia/qt/qtcelestiaactions.cpp:114
+#: ../src/celestia/qt/qtcelestiaactions.cpp:88
+#: ../src/celestia/qt/qtcelestiaactions.cpp:115
 #: ../src/celestia/win32/res/resource_strings.cpp:216
 msgid "Minor Moons"
 msgstr "Mažieji palydovai"
@@ -3141,13 +5334,13 @@ msgstr "Mažieji palydovai"
 #. i18n: ectx: property (text), widget (QCheckBox, asteroidOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:534
 #. i18n: ectx: property (text), widget (QCheckBox, asteroidLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:88
-#: ../src/celestia/qt/qtcelestiaactions.cpp:115
-#: ../src/celestia/qt/qtselectionpopup.cpp:398
+#: ../src/celestia/qt/qtcelestiaactions.cpp:89
+#: ../src/celestia/qt/qtcelestiaactions.cpp:116
+#: ../src/celestia/qt/qtselectionpopup.cpp:400
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:742 ../src/celestia/qt/rc.cpp:87
 #: ../src/celestia/qt/rc.cpp:169 ../src/celestia/qt/rc.cpp:236
 #: ../src/celestia/win32/res/resource_strings.cpp:217
-#: ../src/celestia/win32/winmain.cpp:1448
+#: ../src/celestia/win32/winmain.cpp:1456
 msgid "Asteroids"
 msgstr "Asteroidai"
 
@@ -3157,13 +5350,13 @@ msgstr "Asteroidai"
 #. i18n: ectx: property (text), widget (QCheckBox, cometOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:541
 #. i18n: ectx: property (text), widget (QCheckBox, cometLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:89
-#: ../src/celestia/qt/qtcelestiaactions.cpp:116
-#: ../src/celestia/qt/qtselectionpopup.cpp:401
+#: ../src/celestia/qt/qtcelestiaactions.cpp:90
+#: ../src/celestia/qt/qtcelestiaactions.cpp:117
+#: ../src/celestia/qt/qtselectionpopup.cpp:403
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:750 ../src/celestia/qt/rc.cpp:90
 #: ../src/celestia/qt/rc.cpp:172 ../src/celestia/qt/rc.cpp:239
 #: ../src/celestia/win32/res/resource_strings.cpp:218
-#: ../src/celestia/win32/winmain.cpp:1450
+#: ../src/celestia/win32/winmain.cpp:1458
 msgid "Comets"
 msgstr "Kometos"
 
@@ -3177,21 +5370,21 @@ msgstr "Kometos"
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:548
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:90
-#: ../src/celestia/qt/qtcelestiaactions.cpp:117
-#: ../src/celestia/qt/qtselectionpopup.cpp:404
+#: ../src/celestia/qt/qtcelestiaactions.cpp:91
+#: ../src/celestia/qt/qtcelestiaactions.cpp:118
+#: ../src/celestia/qt/qtselectionpopup.cpp:406
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:585
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:746 ../src/celestia/qt/rc.cpp:94
 #: ../src/celestia/qt/rc.cpp:176 ../src/celestia/qt/rc.cpp:243
 #: ../src/celestia/win32/res/resource_strings.cpp:219
-#: ../src/celestia/win32/winmain.cpp:1459
+#: ../src/celestia/win32/winmain.cpp:1471
 #, fuzzy
 msgctxt "plural"
 msgid "Spacecraft"
 msgstr "Kosminiai aparatai"
 
 #. Label actions
-#: ../src/celestia/qt/qtcelestiaactions.cpp:106
+#: ../src/celestia/qt/qtcelestiaactions.cpp:107
 msgid "L"
 msgstr ""
 
@@ -3199,7 +5392,7 @@ msgstr ""
 #. i18n: ectx: attribute (title), widget (QWidget, labelsTab)
 #. i18n: file: ../src/celestia/qt/preferences.ui:493
 #. i18n: ectx: property (title), widget (QGroupBox, labelsGroupBox)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:107 ../src/celestia/qt/rc.cpp:215
+#: ../src/celestia/qt/qtcelestiaactions.cpp:108 ../src/celestia/qt/rc.cpp:215
 #: ../src/celestia/qt/rc.cpp:218
 #: ../src/celestia/win32/res/resource_strings.cpp:227
 msgid "Labels"
@@ -3209,8 +5402,8 @@ msgstr "Pavadinimai"
 #. i18n: ectx: property (text), widget (QCheckBox, galaxiesCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:555
 #. i18n: ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:118
-#: ../src/celestia/qt/qtcelestiaactions.cpp:142
+#: ../src/celestia/qt/qtcelestiaactions.cpp:119
+#: ../src/celestia/qt/qtcelestiaactions.cpp:143
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:443 ../src/celestia/qt/rc.cpp:97
 #: ../src/celestia/qt/rc.cpp:246
 #: ../src/celestia/win32/res/resource_strings.cpp:220
@@ -3219,8 +5412,8 @@ msgstr "Galaktikos"
 
 #. galaxiesAction->setShortcut(QString("U"));
 #. Buttons to select filtering criterion for dsos
-#: ../src/celestia/qt/qtcelestiaactions.cpp:119
-#: ../src/celestia/qt/qtcelestiaactions.cpp:144
+#: ../src/celestia/qt/qtcelestiaactions.cpp:120
+#: ../src/celestia/qt/qtcelestiaactions.cpp:145
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:439
 #: ../src/celestia/win32/res/resource_strings.cpp:221
 msgid "Globulars"
@@ -3230,7 +5423,7 @@ msgstr "Kamuoliniai spiečiai"
 #. i18n: ectx: property (text), widget (QCheckBox, openClustersCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:569
 #. i18n: ectx: property (text), widget (QCheckBox, openClusterLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:120 ../src/celestia/qt/rc.cpp:103
+#: ../src/celestia/qt/qtcelestiaactions.cpp:121 ../src/celestia/qt/rc.cpp:103
 #: ../src/celestia/qt/rc.cpp:252
 #, fuzzy
 msgid "Open clusters"
@@ -3240,8 +5433,8 @@ msgstr "Padrikasis spiečius"
 #. i18n: ectx: property (text), widget (QCheckBox, nebulaeCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:562
 #. i18n: ectx: property (text), widget (QCheckBox, nebulaLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:121
-#: ../src/celestia/qt/qtcelestiaactions.cpp:146
+#: ../src/celestia/qt/qtcelestiaactions.cpp:122
+#: ../src/celestia/qt/qtcelestiaactions.cpp:147
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:447 ../src/celestia/qt/rc.cpp:100
 #: ../src/celestia/qt/rc.cpp:249
 #: ../src/celestia/win32/res/resource_strings.cpp:223
@@ -3250,12 +5443,12 @@ msgstr "Ūkai"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:606
 #. i18n: ectx: property (title), widget (QGroupBox, locationsGroupBox)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:122 ../src/celestia/qt/rc.cpp:261
+#: ../src/celestia/qt/qtcelestiaactions.cpp:123 ../src/celestia/qt/rc.cpp:261
 #: ../src/celestia/win32/res/resource_strings.cpp:134
 msgid "Locations"
 msgstr "Vietovės"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:145
+#: ../src/celestia/qt/qtcelestiaactions.cpp:146
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:451
 #: ../src/celestia/win32/res/resource_strings.cpp:222
 msgid "Open Clusters"
@@ -3263,108 +5456,108 @@ msgstr "Padrikieji spiečiai"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:155
 #. i18n: ectx: property (text), widget (QCheckBox, cloudsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:153 ../src/celestia/qt/rc.cpp:115
+#: ../src/celestia/qt/qtcelestiaactions.cpp:154 ../src/celestia/qt/rc.cpp:115
 #: ../src/celestia/win32/res/resource_strings.cpp:193
 msgid "Clouds"
 msgstr "Debesys"
 
 #. cloudsAction->setShortcut(QString("I"));
-#: ../src/celestia/qt/qtcelestiaactions.cpp:155
+#: ../src/celestia/qt/qtcelestiaactions.cpp:156
 #: ../src/celestia/win32/res/resource_strings.cpp:197
 msgid "Night Side Lights"
 msgstr "Naktinė pusė"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:157
+#: ../src/celestia/qt/qtcelestiaactions.cpp:158
 #: ../src/celestia/win32/res/resource_strings.cpp:198
 msgid "Comet Tails"
 msgstr "Kometų uodegos"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:148
 #. i18n: ectx: property (text), widget (QCheckBox, atmospheresCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:158 ../src/celestia/qt/rc.cpp:112
+#: ../src/celestia/qt/qtcelestiaactions.cpp:159 ../src/celestia/qt/rc.cpp:112
 #: ../src/celestia/win32/res/resource_strings.cpp:192
 msgid "Atmospheres"
 msgstr "Atmosfera"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:165
+#: ../src/celestia/qt/qtcelestiaactions.cpp:166
 #: ../src/celestia/win32/res/resource_strings.cpp:195
 msgid "Ring Shadows"
 msgstr "Žiedų šešėliai"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:166
+#: ../src/celestia/qt/qtcelestiaactions.cpp:167
 #: ../src/celestia/win32/res/resource_strings.cpp:196
 msgid "Eclipse Shadows"
 msgstr "Užtemimų šešėliai"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:168
+#: ../src/celestia/qt/qtcelestiaactions.cpp:169
 #: ../src/celestia/win32/res/resource_strings.cpp:194
 msgid "Cloud Shadows"
 msgstr "Debesų šešėliai"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:815
 #. i18n: ectx: property (text), widget (QRadioButton, lowResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:173 ../src/celestia/qt/rc.cpp:312
+#: ../src/celestia/qt/qtcelestiaactions.cpp:174 ../src/celestia/qt/rc.cpp:312
 msgid "Low"
 msgstr "Žema"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:822
 #. i18n: ectx: property (text), widget (QRadioButton, mediumResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:174 ../src/celestia/qt/rc.cpp:315
+#: ../src/celestia/qt/qtcelestiaactions.cpp:175 ../src/celestia/qt/rc.cpp:315
 msgid "Medium"
 msgstr "Vidutinė"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:829
 #. i18n: ectx: property (text), widget (QRadioButton, highResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:175 ../src/celestia/qt/rc.cpp:318
+#: ../src/celestia/qt/qtcelestiaactions.cpp:176 ../src/celestia/qt/rc.cpp:318
 msgid "High"
 msgstr "Aukšta"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:185
+#: ../src/celestia/qt/qtcelestiaactions.cpp:186
 #, fuzzy
 msgid "Auto Magnitude"
 msgstr "Auto ryškis"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:187
+#: ../src/celestia/qt/qtcelestiaactions.cpp:188
 msgid "Faintest visible magnitude based on field of view"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:190
+#: ../src/celestia/qt/qtcelestiaactions.cpp:191
 #, fuzzy
 msgid "More Stars Visible"
 msgstr "Daugiau žvaigždžių\t]"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:193
+#: ../src/celestia/qt/qtcelestiaactions.cpp:194
 #, fuzzy
 msgid "Fewer Stars Visible"
 msgstr "Mažiau žvaigždžių\t["
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:946
 #. i18n: ectx: property (text), widget (QRadioButton, pointStarsButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:199 ../src/celestia/qt/rc.cpp:336
+#: ../src/celestia/qt/qtcelestiaactions.cpp:200 ../src/celestia/qt/rc.cpp:336
 #, fuzzy
 msgid "Points"
 msgstr "_Taškai"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:200
+#: ../src/celestia/qt/qtcelestiaactions.cpp:201
 #, fuzzy
 msgid "Fuzzy Points"
 msgstr "_Išplaukę taškai"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:201
+#: ../src/celestia/qt/qtcelestiaactions.cpp:202
 #, fuzzy
 msgid "Scaled Discs"
 msgstr "Scaled &diskai"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:211
+#: ../src/celestia/qt/qtcelestiaactions.cpp:212
 msgid "Light Time Delay"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:393
+#: ../src/celestia/qt/qtcelestiaactions.cpp:394
 #, fuzzy, qt-format
 msgid "Auto magnitude limit at 45 degrees: %L1"
 msgstr "Auto ryškio limitas ties 45 laipsniais:  %.2f"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:400
+#: ../src/celestia/qt/qtcelestiaactions.cpp:401
 #, fuzzy, qt-format
 msgid "Magnitude limit: %L1"
 msgstr "Ryškumo limitas: %.2f"
@@ -3483,109 +5676,109 @@ msgstr "Žymekliai"
 msgid "Remove all existing markers"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:581
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:501
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:794
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:583
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:503
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:796
 #: ../src/celestia/win32/res/resource_strings.cpp:230
 msgid "None"
 msgstr "Nėra"
-
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:582
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:502
-#: ../src/celestia/qt/qtselectionpopup.cpp:242
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:795
-msgid "Diamond"
-msgstr "Deimantas"
-
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:583
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:503
-#: ../src/celestia/qt/qtselectionpopup.cpp:243
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:796
-msgid "Triangle"
-msgstr "Trikampis"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:584
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:504
 #: ../src/celestia/qt/qtselectionpopup.cpp:244
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:797
-msgid "Square"
-msgstr "Aikštė"
+msgid "Diamond"
+msgstr "Deimantas"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:585
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:505
-#: ../src/celestia/qt/qtselectionpopup.cpp:246
+#: ../src/celestia/qt/qtselectionpopup.cpp:245
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:798
-msgid "Plus"
-msgstr "Plius"
+msgid "Triangle"
+msgstr "Trikampis"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:586
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:506
-#: ../src/celestia/qt/qtselectionpopup.cpp:247
+#: ../src/celestia/qt/qtselectionpopup.cpp:246
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:799
-msgid "X"
-msgstr "X"
+msgid "Square"
+msgstr "Aikštė"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:587
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:507
-#: ../src/celestia/qt/qtselectionpopup.cpp:252
+#: ../src/celestia/qt/qtselectionpopup.cpp:248
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:800
-msgid "Circle"
-msgstr "Apskritimas"
+msgid "Plus"
+msgstr "Plius"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:588
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:508
-#: ../src/celestia/qt/qtselectionpopup.cpp:248
+#: ../src/celestia/qt/qtselectionpopup.cpp:249
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:801
-msgid "Left Arrow"
-msgstr "Rodyklę kairėn"
+msgid "X"
+msgstr "X"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:589
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:509
-#: ../src/celestia/qt/qtselectionpopup.cpp:249
+#: ../src/celestia/qt/qtselectionpopup.cpp:254
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:802
-msgid "Right Arrow"
-msgstr "Rodyklę dešinėn"
+msgid "Circle"
+msgstr "Apskritimas"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:590
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:510
 #: ../src/celestia/qt/qtselectionpopup.cpp:250
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:803
-msgid "Up Arrow"
-msgstr "Rodyklę aukštyn"
+msgid "Left Arrow"
+msgstr "Rodyklę kairėn"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:591
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:511
 #: ../src/celestia/qt/qtselectionpopup.cpp:251
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:804
-msgid "Down Arrow"
-msgstr "Rodyklę žemyn"
+msgid "Right Arrow"
+msgstr "Rodyklę dešinėn"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:592
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:512
+#: ../src/celestia/qt/qtselectionpopup.cpp:252
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:805
+msgid "Up Arrow"
+msgstr "Rodyklę aukštyn"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:593
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:513
+#: ../src/celestia/qt/qtselectionpopup.cpp:253
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:806
+msgid "Down Arrow"
+msgstr "Rodyklę žemyn"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:595
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:515
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:808
 msgid "Select marker symbol"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:606
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:526
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:819
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:608
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:528
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:821
 msgid "Select marker size"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:610
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:530
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:823
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:612
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:532
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:825
 msgid "Click to select marker color"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:613
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:533
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:826
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:615
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:535
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:828
 msgid "Label"
 msgstr "Pavadinimai"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:677
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:585
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:679
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:587
 #, fuzzy, qt-format
 msgid "%1 objects found"
 msgstr "' nerasta."
@@ -3676,169 +5869,173 @@ msgstr "Aplankyti paviršių"
 msgid "Behind %1"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:78
+#: ../src/celestia/qt/qtglwidget.cpp:124
+msgid "Celestia was unable to initialize OpenGL 2.1."
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:79
 msgid "Error: no object selected!\n"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:89
+#: ../src/celestia/qt/qtinfopanel.cpp:90
 #: ../src/celestia/qt/qtselectionpopup.cpp:158
 #, fuzzy
 msgid "Info"
 msgstr "&Info"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:114
+#: ../src/celestia/qt/qtinfopanel.cpp:115
 #, qt-format
 msgid "Web info: %1"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:130
+#: ../src/celestia/qt/qtinfopanel.cpp:131
 #, qt-format
 msgid "<b>Equatorial radius:</b> %L1 %2"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:132
+#: ../src/celestia/qt/qtinfopanel.cpp:133
 #, fuzzy, qt-format
 msgid "<b>Size:</b> %L1 %2"
 msgstr "Didis:  %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:137
+#: ../src/celestia/qt/qtinfopanel.cpp:138
 msgid "<b>Oblateness: "
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:172
+#: ../src/celestia/qt/qtinfopanel.cpp:173
 #, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:175
+#: ../src/celestia/qt/qtinfopanel.cpp:176
 #, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:201
+#: ../src/celestia/qt/qtinfopanel.cpp:202
 msgid "years"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:206
+#: ../src/celestia/qt/qtinfopanel.cpp:207
 msgid "<b>Has rings</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:208
+#: ../src/celestia/qt/qtinfopanel.cpp:209
 msgid "<b>Has atmosphere</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:216
+#: ../src/celestia/qt/qtinfopanel.cpp:217
 #, qt-format
 msgid "<b>Start:</b> %1"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:219
+#: ../src/celestia/qt/qtinfopanel.cpp:220
 #, qt-format
 msgid "<b>End:</b> %1"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:221
+#: ../src/celestia/qt/qtinfopanel.cpp:222
 #, fuzzy
 msgid "Orbit information"
 msgstr "Informacinis tekstas"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:222
+#: ../src/celestia/qt/qtinfopanel.cpp:223
 #, qt-format
 msgid "Osculating elements for %1"
 msgstr ""
 
 #. stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
-#: ../src/celestia/qt/qtinfopanel.cpp:225
+#: ../src/celestia/qt/qtinfopanel.cpp:226
 #, qt-format
 msgid "<b>Period:</b> %L1 %2"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:230
+#: ../src/celestia/qt/qtinfopanel.cpp:231
 msgid "AU"
-msgstr ""
-
-#: ../src/celestia/qt/qtinfopanel.cpp:238
-#, qt-format
-msgid "<b>Semi-major axis:</b> %L1 %2"
 msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:239
 #, qt-format
-msgid "<b>Eccentricity:</b> %L1"
+msgid "<b>Semi-major axis:</b> %L1 %2"
 msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:240
 #, qt-format
-msgid "<b>Inclination:</b> %L1%2"
+msgid "<b>Eccentricity:</b> %L1"
 msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:241
 #, qt-format
-msgid "<b>Pericenter distance:</b> %L1 %2"
+msgid "<b>Inclination:</b> %L1%2"
 msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:242
 #, qt-format
-msgid "<b>Apocenter distance:</b> %L1 %2"
+msgid "<b>Pericenter distance:</b> %L1 %2"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:244
+#: ../src/celestia/qt/qtinfopanel.cpp:243
 #, qt-format
-msgid "<b>Ascending node:</b> %L1%2"
+msgid "<b>Apocenter distance:</b> %L1 %2"
 msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:245
 #, qt-format
-msgid "<b>Argument of periapsis:</b> %L1%2"
+msgid "<b>Ascending node:</b> %L1%2"
 msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:246
 #, qt-format
-msgid "<b>Mean anomaly:</b> %L1%2"
+msgid "<b>Argument of periapsis:</b> %L1%2"
 msgstr ""
 
 #: ../src/celestia/qt/qtinfopanel.cpp:247
 #, qt-format
+msgid "<b>Mean anomaly:</b> %L1%2"
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:248
+#, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:287
-#: ../src/celestia/qt/qtinfopanel.cpp:310
+#: ../src/celestia/qt/qtinfopanel.cpp:288
+#: ../src/celestia/qt/qtinfopanel.cpp:311
 #, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:291
-#: ../src/celestia/qt/qtinfopanel.cpp:314
+#: ../src/celestia/qt/qtinfopanel.cpp:292
+#: ../src/celestia/qt/qtinfopanel.cpp:315
 #, qt-format
 msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
 msgstr ""
 
 #. TRANSLATORS: Galactic longitude
-#: ../src/celestia/qt/qtinfopanel.cpp:322
+#: ../src/celestia/qt/qtinfopanel.cpp:323
 #, qt-format
 msgid "<b>L:</b> %L1%2 %L3' %L4\""
 msgstr ""
 
 #. TRANSLATORS: Galactic latitude
-#: ../src/celestia/qt/qtinfopanel.cpp:326
+#: ../src/celestia/qt/qtinfopanel.cpp:327
 #, qt-format
 msgid "<b>B:</b> %L1%2 %L3' %L4\""
 msgstr ""
 
-#: ../src/celestia/qt/qtmain.cpp:162 ../src/celestia/win32/winmain.cpp:2992
+#: ../src/celestia/qt/qtmain.cpp:162 ../src/celestia/win32/winmain.cpp:3014
 msgid "Directory expected after --dir"
 msgstr ""
 
-#: ../src/celestia/qt/qtmain.cpp:172 ../src/celestia/win32/winmain.cpp:3005
+#: ../src/celestia/qt/qtmain.cpp:172 ../src/celestia/win32/winmain.cpp:3027
 msgid "Configuration file name expected after --conf"
 msgstr ""
 
-#: ../src/celestia/qt/qtmain.cpp:183 ../src/celestia/win32/winmain.cpp:3019
+#: ../src/celestia/qt/qtmain.cpp:183 ../src/celestia/win32/winmain.cpp:3041
 msgid "Directory expected after --extrasdir"
 msgstr ""
 
-#: ../src/celestia/qt/qtmain.cpp:193 ../src/celestia/win32/winmain.cpp:3032
+#: ../src/celestia/qt/qtmain.cpp:193 ../src/celestia/win32/winmain.cpp:3054
 msgid "URL expected after --url"
 msgstr ""
 
@@ -3846,7 +6043,7 @@ msgstr ""
 msgid "A filename expected after --log/-l"
 msgstr ""
 
-#: ../src/celestia/qt/qtmain.cpp:215 ../src/celestia/win32/winmain.cpp:3047
+#: ../src/celestia/qt/qtmain.cpp:215 ../src/celestia/win32/winmain.cpp:3069
 #, c-format
 msgid "Invalid command line option '%s'"
 msgstr ""
@@ -3923,15 +6120,15 @@ msgid "&Center"
 msgstr "&Centruoti"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:143
-#: ../src/celestia/win32/winmain.cpp:1550
-#: ../src/celestia/win32/winmain.cpp:1598
-#: ../src/celestia/win32/winmain.cpp:1621
+#: ../src/celestia/win32/winmain.cpp:1562
+#: ../src/celestia/win32/winmain.cpp:1612
+#: ../src/celestia/win32/winmain.cpp:1635
 msgid "&Goto"
 msgstr "&Aplankyti"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:147
-#: ../src/celestia/win32/winmain.cpp:1551
-#: ../src/celestia/win32/winmain.cpp:1622
+#: ../src/celestia/win32/winmain.cpp:1563
+#: ../src/celestia/win32/winmain.cpp:1636
 msgid "&Follow"
 msgstr "&Sekti"
 
@@ -3945,54 +6142,55 @@ msgid "Visible"
 msgstr "Nematomi"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:177
-#: ../src/celestia/win32/winmain.cpp:1635
+#: ../src/celestia/win32/winmain.cpp:1649
 msgid "&Unmark"
 msgstr "&Nuimti žym."
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:195
+#: ../src/celestia/win32/winmain.cpp:1582
 #, fuzzy
-msgid "Select Primary Body"
+msgid "Select &Primary Body"
 msgstr "Pasirinkti ekrano režimą"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:245
+#: ../src/celestia/qt/qtselectionpopup.cpp:247
 msgid "Filled Square"
 msgstr "Miesto aikštė"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:253
+#: ../src/celestia/qt/qtselectionpopup.cpp:255
 msgid "Disk"
 msgstr "Diskas"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:256
-#: ../src/celestia/win32/winmain.cpp:1637
+#: ../src/celestia/qt/qtselectionpopup.cpp:258
+#: ../src/celestia/win32/winmain.cpp:1651
 msgid "&Mark"
 msgstr "&Žymėti"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:273
-#: ../src/celestia/win32/winmain.cpp:1555
+#: ../src/celestia/qt/qtselectionpopup.cpp:275
+#: ../src/celestia/win32/winmain.cpp:1567
 msgid "&Reference Marks"
 msgstr "&Informaciniai ženklai"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:275
+#: ../src/celestia/qt/qtselectionpopup.cpp:277
 #, fuzzy
 msgid "Show &Body Axes"
 msgstr "Rodyti kūno ašis"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:281
+#: ../src/celestia/qt/qtselectionpopup.cpp:283
 #, fuzzy
 msgid "Show &Frame Axes"
 msgstr "Rodyti rėmelio ašis"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:287
+#: ../src/celestia/qt/qtselectionpopup.cpp:289
 #, fuzzy
 msgid "Show &Sun Direction"
 msgstr "Rodyti saulės kryptį"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:293
+#: ../src/celestia/qt/qtselectionpopup.cpp:295
 #, fuzzy
 msgid "Show &Velocity Vector"
 msgstr "Rodyti greičio vektorių"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:299
+#: ../src/celestia/qt/qtselectionpopup.cpp:301
 #, fuzzy
 msgid "Show S&pin Vector"
 msgstr "Rodyti greičio vektorių"
@@ -4000,29 +6198,29 @@ msgstr "Rodyti greičio vektorių"
 #. Only show the frame center menu item if the selection orbits another
 #. a non-stellar object. If it orbits a star, this is generally identical
 #. to the sun direction entry.
-#: ../src/celestia/qt/qtselectionpopup.cpp:311
+#: ../src/celestia/qt/qtselectionpopup.cpp:313
 #, fuzzy, qt-format
 msgid "Show &Direction to %1"
 msgstr "Rodyti saulės kryptį"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:318
+#: ../src/celestia/qt/qtselectionpopup.cpp:320
 #, fuzzy
 msgid "Show Planetographic &Grid"
 msgstr "Rodyti planetografinį tinklelį"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:324
+#: ../src/celestia/qt/qtselectionpopup.cpp:326
 #, fuzzy
 msgid "Show &Terminator"
 msgstr "Rodyti terminatorių"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:342
-#: ../src/celestia/win32/winmain.cpp:1585
+#: ../src/celestia/qt/qtselectionpopup.cpp:344
+#: ../src/celestia/win32/winmain.cpp:1599
 msgid "&Alternate Surfaces"
 msgstr "&Alternatyvus paviršius"
 
 #. TRANSLATORS: normal texture in an alternative surface menu
-#: ../src/celestia/qt/qtselectionpopup.cpp:343
-#: ../src/celestia/win32/winmain.cpp:1524
+#: ../src/celestia/qt/qtselectionpopup.cpp:345
+#: ../src/celestia/win32/winmain.cpp:1536
 msgid "Normal"
 msgstr "Normalus"
 
@@ -4032,8 +6230,9 @@ msgstr "Normalus"
 #. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:513
 #. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetLabelsCheck)
-#: ../src/celestia/qt/qtselectionpopup.cpp:389 ../src/celestia/qt/rc.cpp:78
+#: ../src/celestia/qt/qtselectionpopup.cpp:391 ../src/celestia/qt/rc.cpp:78
 #: ../src/celestia/qt/rc.cpp:160 ../src/celestia/qt/rc.cpp:227
+#: ../src/celestia/win32/winmain.cpp:1468
 #, fuzzy
 msgid "Dwarf planets"
 msgstr "Nykštukinės planetos"
@@ -4044,14 +6243,15 @@ msgstr "Nykštukinės planetos"
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:527
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
-#: ../src/celestia/qt/qtselectionpopup.cpp:395
+#: ../src/celestia/qt/qtselectionpopup.cpp:397
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:591 ../src/celestia/qt/rc.cpp:84
 #: ../src/celestia/qt/rc.cpp:166 ../src/celestia/qt/rc.cpp:233
+#: ../src/celestia/win32/winmain.cpp:1464
 #, fuzzy
 msgid "Minor moons"
 msgstr "Mažieji palydovai"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:407
+#: ../src/celestia/qt/qtselectionpopup.cpp:409
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:597
 #, fuzzy
 msgid "Other objects"
@@ -4718,7 +6918,7 @@ msgstr ""
 msgid "Not an XBEL version 1.0 file."
 msgstr ""
 
-#: ../src/celestia/url.cpp:310 ../src/celestia/url2.cpp:181
+#: ../src/celestia/url.cpp:310
 #, c-format
 msgid "Incorrect hex value \"%s\"\n"
 msgstr ""
@@ -4728,45 +6928,36 @@ msgstr ""
 msgid "URL must start with \"%s\"!\n"
 msgstr ""
 
-#. XXX: Should decide whether Settings must have Time
-#: ../src/celestia/url.cpp:409 ../src/celestia/url2.cpp:263
+#: ../src/celestia/url.cpp:409
 msgid "URL must have at least mode and time!\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:420 ../src/celestia/url2.cpp:292
+#: ../src/celestia/url.cpp:420
 #, c-format
 msgid "Unsupported URL mode \"%s\"!\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:438 ../src/celestia/url2.cpp:316
+#: ../src/celestia/url.cpp:438
 msgid "URL must contain only one body\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:450 ../src/celestia/url2.cpp:326
+#: ../src/celestia/url.cpp:450
 msgid "URL must contain 2 bodies\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:491 ../src/celestia/url2.cpp:369
+#: ../src/celestia/url.cpp:491
 #, c-format
 msgid "Invalid URL version \"%s\"!\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:498 ../src/celestia/url2.cpp:388
+#: ../src/celestia/url.cpp:498
 #, c-format
 msgid "Unsupported URL version: %i\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:528 ../src/celestia/url2.cpp:410
+#: ../src/celestia/url.cpp:530
 msgid "URL parameter must look like key=value\n"
 msgstr ""
-
-#: ../src/celestia/url2.cpp:244
-msgid "URL must start with \"cel://\"!\n"
-msgstr ""
-
-#: ../src/celestia/url2.cpp:552
-msgid "Settings"
-msgstr "Nustatymai"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:4
 msgid "Placeholder"
@@ -5379,7 +7570,7 @@ msgid "Verbose"
 msgstr "Pilnas"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:236
-#: ../src/celestia/win32/winmain.cpp:3229
+#: ../src/celestia/win32/winmain.cpp:3251
 msgid "WinLangID"
 msgstr "WinKalbID"
 
@@ -5454,162 +7645,162 @@ msgstr ""
 msgid "Windowed Mode"
 msgstr "Lango režimas"
 
-#: ../src/celestia/win32/winmain.cpp:1452
+#: ../src/celestia/win32/winmain.cpp:1460
 msgid "Invisibles"
 msgstr "Nematomi"
 
-#: ../src/celestia/win32/winmain.cpp:1552
+#: ../src/celestia/win32/winmain.cpp:1564
 msgid "S&ync Orbit"
 msgstr "S&inch orbitą"
 
-#: ../src/celestia/win32/winmain.cpp:1553
-#: ../src/celestia/win32/winmain.cpp:1599
-#: ../src/celestia/win32/winmain.cpp:1623
+#: ../src/celestia/win32/winmain.cpp:1565
+#: ../src/celestia/win32/winmain.cpp:1613
+#: ../src/celestia/win32/winmain.cpp:1637
 msgid "&Info"
 msgstr "&Info"
 
-#: ../src/celestia/win32/winmain.cpp:1556
+#: ../src/celestia/win32/winmain.cpp:1568
 msgid "Show Body Axes"
 msgstr "Rodyti kūno ašis"
 
-#: ../src/celestia/win32/winmain.cpp:1557
+#: ../src/celestia/win32/winmain.cpp:1569
 msgid "Show Frame Axes"
 msgstr "Rodyti rėmelio ašis"
 
-#: ../src/celestia/win32/winmain.cpp:1558
+#: ../src/celestia/win32/winmain.cpp:1570
 msgid "Show Sun Direction"
 msgstr "Rodyti saulės kryptį"
 
-#: ../src/celestia/win32/winmain.cpp:1559
+#: ../src/celestia/win32/winmain.cpp:1571
 msgid "Show Velocity Vector"
 msgstr "Rodyti greičio vektorių"
 
-#: ../src/celestia/win32/winmain.cpp:1560
+#: ../src/celestia/win32/winmain.cpp:1572
 msgid "Show Planetographic Grid"
 msgstr "Rodyti planetografinį tinklelį"
 
-#: ../src/celestia/win32/winmain.cpp:1561
+#: ../src/celestia/win32/winmain.cpp:1573
 msgid "Show Terminator"
 msgstr "Rodyti terminatorių"
 
-#: ../src/celestia/win32/winmain.cpp:1575
+#: ../src/celestia/win32/winmain.cpp:1589
 msgid "&Satellites"
 msgstr "&Palydovai"
 
-#: ../src/celestia/win32/winmain.cpp:1608
+#: ../src/celestia/win32/winmain.cpp:1622
 msgid "Orbiting Bodies"
 msgstr "Kūnai orbitoje"
 
-#: ../src/celestia/win32/winmain.cpp:1727
+#: ../src/celestia/win32/winmain.cpp:1741
 msgid "Unable to switch to full screen mode; running in window mode"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:1728
-#: ../src/celestia/win32/winmain.cpp:2000
-#: ../src/celestia/win32/winmain.cpp:2640
-#: ../src/celestia/win32/winmain.cpp:2651
-#: ../src/celestia/win32/winmain.cpp:2668
-#: ../src/celestia/win32/winmain.cpp:2767
+#: ../src/celestia/win32/winmain.cpp:1742
+#: ../src/celestia/win32/winmain.cpp:2014
+#: ../src/celestia/win32/winmain.cpp:2662
+#: ../src/celestia/win32/winmain.cpp:2673
+#: ../src/celestia/win32/winmain.cpp:2690
+#: ../src/celestia/win32/winmain.cpp:2789
 #, fuzzy
 msgid "Error"
 msgstr "Klaida: "
 
-#: ../src/celestia/win32/winmain.cpp:1892
+#: ../src/celestia/win32/winmain.cpp:1906
 msgid "Failed to register the window class."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:1893
-#: ../src/celestia/win32/winmain.cpp:1944
-#: ../src/celestia/win32/winmain.cpp:1968
-#: ../src/celestia/win32/winmain.cpp:2270
-#: ../src/celestia/win32/winmain.cpp:3270
-#: ../src/celestia/win32/winmain.cpp:3343
+#: ../src/celestia/win32/winmain.cpp:1907
+#: ../src/celestia/win32/winmain.cpp:1958
+#: ../src/celestia/win32/winmain.cpp:1982
+#: ../src/celestia/win32/winmain.cpp:2292
+#: ../src/celestia/win32/winmain.cpp:3292
+#: ../src/celestia/win32/winmain.cpp:3365
 #, fuzzy
 msgid "Fatal Error"
 msgstr "Klaida"
 
-#: ../src/celestia/win32/winmain.cpp:1943
+#: ../src/celestia/win32/winmain.cpp:1957
 msgid "Could not get appropriate pixel format for OpenGL rendering."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:1967
+#: ../src/celestia/win32/winmain.cpp:1981
 msgid "Your system doesn't support OpenGL 2.1!"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:1999
+#: ../src/celestia/win32/winmain.cpp:2013
 msgid "Releasing device context failed."
 msgstr ""
 
 #. Comment this out if you just want the standard "Save As" caption.
-#: ../src/celestia/win32/winmain.cpp:2606
+#: ../src/celestia/win32/winmain.cpp:2628
 msgid "Save As - Specify File to Capture Image"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:2650
+#: ../src/celestia/win32/winmain.cpp:2672
 msgid "Could not save image file."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:2667
+#: ../src/celestia/win32/winmain.cpp:2689
 msgid "Stop current movie capture before starting another one."
 msgstr ""
 
 #. Comment this out if you just want the standard "Save As" caption.
-#: ../src/celestia/win32/winmain.cpp:2693
+#: ../src/celestia/win32/winmain.cpp:2715
 msgid "Save As - Specify Output File for Capture Movie"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:2763
+#: ../src/celestia/win32/winmain.cpp:2785
 msgid "Specified file extension is not recognized."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:2765
+#: ../src/celestia/win32/winmain.cpp:2787
 #, fuzzy
 msgid "Could not capture movie."
 msgstr "Sukurti &filmą...\tShift+F10"
 
-#: ../src/celestia/win32/winmain.cpp:2993
-#: ../src/celestia/win32/winmain.cpp:3006
-#: ../src/celestia/win32/winmain.cpp:3020
-#: ../src/celestia/win32/winmain.cpp:3033
-#: ../src/celestia/win32/winmain.cpp:3049
+#: ../src/celestia/win32/winmain.cpp:3015
+#: ../src/celestia/win32/winmain.cpp:3028
+#: ../src/celestia/win32/winmain.cpp:3042
+#: ../src/celestia/win32/winmain.cpp:3055
+#: ../src/celestia/win32/winmain.cpp:3071
 #, fuzzy
 msgid "Celestia Command Line Error"
 msgstr "Celestia valdymas"
 
-#: ../src/celestia/win32/winmain.cpp:3070
+#: ../src/celestia/win32/winmain.cpp:3092
 msgid "Loading: "
 msgstr "Įkeliama: "
 
-#: ../src/celestia/win32/winmain.cpp:3128
+#: ../src/celestia/win32/winmain.cpp:3150
 #, fuzzy
 msgid "Loading data files..."
 msgstr "Įkeliamas paveikslas iš failo "
 
-#: ../src/celestia/win32/winmain.cpp:3227 ../src/celutil/fsutils.cpp:44
+#: ../src/celestia/win32/winmain.cpp:3249 ../src/celutil/fsutils.cpp:44
 #: ../src/celutil/fsutils.cpp:47
 msgid "LANGUAGE"
 msgstr "lt"
 
-#: ../src/celestia/win32/winmain.cpp:3269
+#: ../src/celestia/win32/winmain.cpp:3291
 #, fuzzy
 msgid "Configuration file missing!"
 msgstr "Klaida nuskaitant konfigūracijos failą."
 
-#: ../src/celestia/win32/winmain.cpp:3307
+#: ../src/celestia/win32/winmain.cpp:3329
 msgid ""
 "Old favorites file detected.\n"
 "Copy to the new location?"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3308
+#: ../src/celestia/win32/winmain.cpp:3330
 msgid "Copy favorites?"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3342
+#: ../src/celestia/win32/winmain.cpp:3364
 msgid "Failed to create the application window."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3884
+#: ../src/celestia/win32/winmain.cpp:3906
 msgid "Loading URL"
 msgstr "Įkeliamas URL"
 
@@ -5652,7 +7843,7 @@ msgstr "Klaida atveriant scenarijaus failą."
 msgid "Unknown error loading script"
 msgstr "Nežinoma klaida atidarant scenarijų"
 
-#: ../src/celscript/lua/celx.cpp:764
+#: ../src/celscript/lua/celx.cpp:763
 msgid ""
 "WARNING:\n"
 "\n"
@@ -5664,7 +7855,7 @@ msgid ""
 "y = yes, ESC = cancel script, any other key = no"
 msgstr ""
 
-#: ../src/celscript/lua/celx.cpp:775
+#: ../src/celscript/lua/celx.cpp:774
 msgid ""
 "WARNING:\n"
 "\n"
@@ -5680,16 +7871,16 @@ msgid "Error opening script '%s'"
 msgstr "Klaida atveriant scenarijų '%s'"
 
 #: ../src/celscript/lua/luascript.cpp:104
-#: ../src/celscript/lua/luascript.cpp:234
+#: ../src/celscript/lua/luascript.cpp:239
 msgid "Script coroutine initialization failed"
 msgstr "Scenarijaus coroutine iniciacijos nepavyko"
 
-#: ../src/celscript/lua/luascript.cpp:206
+#: ../src/celscript/lua/luascript.cpp:211
 #, fuzzy, c-format
 msgid "Error opening LuaHook '%s'"
 msgstr "Klaida atveriant scenarijų '%s'"
 
-#: ../src/celscript/lua/luascript.cpp:223
+#: ../src/celscript/lua/luascript.cpp:228
 #, fuzzy
 msgid "Unknown error loading hook script"
 msgstr "Nežinoma klaida atidarant scenarijų"
@@ -5702,6 +7893,15 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error openning %s or .\n"
 msgstr "Klaida atveriant"
+
+#~ msgid "Astana"
+#~ msgstr "Astana"
+
+#~ msgid "Sun"
+#~ msgstr "Saulė"
+
+#~ msgid "Settings"
+#~ msgstr "Nustatymai"
 
 #~ msgid "OpenGL 2.0"
 #~ msgstr "OpenGL 2.0"
@@ -6039,9 +8239,6 @@ msgstr "Klaida atveriant"
 
 #~ msgid "-"
 #~ msgstr "-"
-
-#~ msgid "%s Star"
-#~ msgstr "%s Žvaigždė"
 
 #~ msgid "Star System Browser"
 #~ msgstr "Saulės sistemos naršyklė"
@@ -6812,9 +9009,6 @@ msgstr "Klaida atveriant"
 #~ msgid "*.ogg"
 #~ msgstr "*.ogg"
 
-#~ msgid "Current"
-#~ msgstr "Dabartinis"
-
 #~ msgid "11:9"
 #~ msgstr "11:9"
 
@@ -6842,977 +9036,5 @@ msgstr "Klaida atveriant"
 #~ msgid "&OK"
 #~ msgstr "&Gerai"
 
-msgid "Sol"
-msgstr "Saulė"
-
-msgid "Alpheratz"
-msgstr "Alferatas"
-
-msgid "Sirrah"
-msgstr "Sirrah"
-
-msgid "Caph"
-msgstr "Kafas"
-
-msgid "Algenib"
-msgstr "Algenibas"
-
-msgid "Schemali"
-msgstr "Schemali"
-
-msgid "Ankaa"
-msgstr "Anka"
-
-msgid "Shedir"
-msgstr "Shedir"
-
-msgid "Schedar"
-msgstr "Schedar"
-
-msgid "Diphda"
-msgstr "Difda"
-
-msgid "Deneb Kaitos"
-msgstr "Deneb Kaitos"
-
-msgid "Achird"
-msgstr "Achird"
-
-msgid "Van Maanen 2"
-msgstr "Van Maanen 2"
-
-msgid "Mirach"
-msgstr "Mirakas"
-
-msgid "Adhil"
-msgstr "Adhil"
-
-msgid "Ruchbah"
-msgstr "Rukba"
-
-msgid "Achernar"
-msgstr "Achernaras"
-
-msgid "Baten Kaitos"
-msgstr "Baten Kaitos"
-
-msgid "Caput Trianguli"
-msgstr "Caput Trianguli"
-
-msgid "Mesarthim"
-msgstr "Mesarthim"
-
-msgid "Segin"
-msgstr "Segin"
-
-msgid "Navi"
-msgstr "Navi"
-
-msgid "Sheratan"
-msgstr "Šeratanas"
-
-msgid "Al Rescha"
-msgstr "Al Rescha"
-
-msgid "Almaak"
-msgstr "Almaak"
-
-msgid "Almach"
-msgstr "Almach"
-
-msgid "Alamak"
-msgstr "Alamak"
-
-msgid "Hamal"
-msgstr "Hamalis"
-
-msgid "Mira"
-msgstr "Mira"
-
-msgid "Polaris"
-msgstr "Šiaurinė žvaigždė"
-
-msgid "Angetenar"
-msgstr "Angetenar"
-
-msgid "Azha"
-msgstr "Azha"
-
-msgid "Acamar"
-msgstr "Acamar"
-
-msgid "Menkar"
-msgstr "Menkar"
-
-msgid "Menkab"
-msgstr "Menkab"
-
-msgid "Algol"
-msgstr "Algolis"
-
-msgid "Botein"
-msgstr "Botein"
-
-msgid "Mirphak"
-msgstr "Mirfakas"
-
-msgid "Mirfak"
-msgstr "Mirfak"
-
-msgid "Marfak"
-msgstr "Marfak"
-
-msgid "Rana"
-msgstr "Rana"
-
-msgid "Atik"
-msgstr "Atik"
-
-msgid "Celaeno"
-msgstr "Celaeno"
-
-msgid "Electra"
-msgstr "Electra"
-
-msgid "Taygeta"
-msgstr "Taygeta"
-
-msgid "Maia"
-msgstr "Maia"
-
-msgid "Asterope"
-msgstr "Asteropė"
-
-msgid "Merope"
-msgstr "Meropė"
-
-msgid "Alcyone"
-msgstr "Alkionė"
-
-msgid "Pleione"
-msgstr "Plejonė"
-
-msgid "Zaurak"
-msgstr "Zaurakas"
-
-msgid "Menkib"
-msgstr "Menkib"
-
-msgid "Beid"
-msgstr "Beid"
-
-msgid "Keid"
-msgstr "Keid"
-
-msgid "Ain"
-msgstr "Ainė"
-
-msgid "Aldebaran"
-msgstr "Aldebaranas"
-
-msgid "Hind's Crimson Star"
-msgstr "Hind's Crimson Star"
-
-msgid "Sadatoni"
-msgstr "Sadatoni"
-
-msgid "Cursa"
-msgstr "Kursa"
-
-msgid "Kapteyn's Star"
-msgstr "Kapteino žvaigždė"
-
-msgid "Rigel"
-msgstr "Rigelis"
-
-msgid "Capella"
-msgstr "Kapela"
-
-msgid "Bellatrix"
-msgstr "Belatriksė"
-
-msgid "Alnath"
-msgstr "Alnatas"
-
-msgid "Elnath"
-msgstr "Elnath"
-
-msgid "Nihal"
-msgstr "Nihalas"
-
-msgid "Thabit"
-msgstr "Thabit"
-
-msgid "Mintaka"
-msgstr "Mintaka"
-
-msgid "Arneb"
-msgstr "Arnebas"
-
-msgid "Heka"
-msgstr "Heka"
-
-msgid "Meissa"
-msgstr "Meissa"
-
-msgid "Alnilam"
-msgstr "Alnilamas"
-
-msgid "Phact"
-msgstr "Phact"
-
-msgid "Alnitak"
-msgstr "Alnitakas"
-
-msgid "Saiph"
-msgstr "Saifas"
-
-msgid "Wazn"
-msgstr "Wazn"
-
-msgid "Betelgeuse"
-msgstr "Betelgeizė"
-
-msgid "Prijipati"
-msgstr "Prijipati"
-
-msgid "Menkalinan"
-msgstr "Menkalinanas"
-
-msgid "Tejat"
-msgstr "Tejat"
-
-msgid "Red Rectangle"
-msgstr "Raudonasis stačiakampis"
-
-msgid "Furud"
-msgstr "Furud"
-
-msgid "Mirzam"
-msgstr "Mirzamas"
-
-msgid "Murzim"
-msgstr "Murzim"
-
-msgid "Canopus"
-msgstr "Kanopas"
-
-msgid "Suhel"
-msgstr "Suhel"
-
-msgid "Alhena"
-msgstr "Alhena"
-
-msgid "Almeisan"
-msgstr "Almeisan"
-
-msgid "Mebsuta"
-msgstr "Mebsuta"
-
-msgid "Sirius"
-msgstr "Sirijus"
-
-msgid "Adara"
-msgstr "Adara"
-
-msgid "Adhara"
-msgstr "Adara"
-
-msgid "Muliphein"
-msgstr "Muliphein"
-
-msgid "Mekbuda"
-msgstr "Mekbuda"
-
-msgid "Wezen"
-msgstr "Alvazas"
-
-msgid "Bernes 135"
-msgstr "Bernes 135"
-
-msgid "Wasat"
-msgstr "Wasat"
-
-msgid "Aludra"
-msgstr "Aludra"
-
-msgid "Gomeisa"
-msgstr "Gomeisa"
-
-msgid "Luyten's Star"
-msgstr "Luyten's Star"
-
-msgid "Castor"
-msgstr "Kastoras"
-
-msgid "Procyon"
-msgstr "Prokionas"
-
-msgid "Elgomaisa"
-msgstr "Elgomaisa"
-
-msgid "Pollux"
-msgstr "Poluksas"
-
-msgid "Asmidiske"
-msgstr "Asmidiske"
-
-msgid "Naos"
-msgstr "Naosas"
-
-msgid "Regor"
-msgstr "Regoras"
-
-msgid "Tegmine"
-msgstr "Tegmine"
-
-msgid "Al Tarf"
-msgstr "Al Tarf"
-
-msgid "Avior"
-msgstr "Avioras"
-
-msgid "Muscida"
-msgstr "Muscida"
-
-msgid "Asellus Borealis"
-msgstr "Asellus Borealis"
-
-msgid "Asellus Australis"
-msgstr "Asellus Australis"
-
-msgid "Acubens"
-msgstr "Akubenas"
-
-msgid "Dnoces"
-msgstr "Dnoces"
-
-msgid "Talitha Australis"
-msgstr "Talitha Australis"
-
-msgid "Suhail"
-msgstr "Suhail"
-
-msgid "Miaplacidus"
-msgstr "Miaplacidas"
-
-msgid "Aspidiske"
-msgstr "Turajas"
-
-msgid "Alphard"
-msgstr "Alfardas"
-
-msgid "Cor Hydrae"
-msgstr "Cor Hydrae"
-
-msgid "Ukdah"
-msgstr "Ukdah"
-
-msgid "Alterf"
-msgstr "Alterf"
-
-msgid "Subra"
-msgstr "Subra"
-
-msgid "Ras Elased Australis"
-msgstr "Ras Elased Australis"
-
-msgid "Rasalas"
-msgstr "Rasalas"
-
-msgid "Ras Elased Borealis"
-msgstr "Ras Elased Borealis"
-
-msgid "Regulus"
-msgstr "Regulas"
-
-msgid "Kabeleced"
-msgstr "Kabeleced"
-
-msgid "Cor Leonis"
-msgstr "Cor Leonis"
-
-msgid "Adhafera"
-msgstr "Adhafera"
-
-msgid "Aldhafera"
-msgstr "Aldhafera"
-
-msgid "Tania Borealis"
-msgstr "Tania Borealis"
-
-msgid "Algieba"
-msgstr "Algieba"
-
-msgid "Tania Australis"
-msgstr "Tania Australis"
-
-msgid "Alkes"
-msgstr "Alkes"
-
-msgid "Merak"
-msgstr "Merakas"
-
-msgid "Lalande 21185"
-msgstr "Lalande 21185"
-
-msgid "Dubhe"
-msgstr "Dubhė"
-
-msgid "Dubb"
-msgstr "Dubb"
-
-msgid "Zosma"
-msgstr "Zosma"
-
-msgid "Duhr"
-msgstr "Duhr"
-
-msgid "Chertan"
-msgstr "Chertan"
-
-msgid "Coxa"
-msgstr "Coxa"
-
-msgid "Chort"
-msgstr "Chort"
-
-msgid "Alula Australis"
-msgstr "Alula Australis"
-
-msgid "Alula Borealis"
-msgstr "Alula Borealis"
-
-msgid "Tsze Tseang"
-msgstr "Tsze Tseang"
-
-msgid "Giausar"
-msgstr "Giausar"
-
-msgid "Denebola"
-msgstr "Denebola"
-
-msgid "Zavijava"
-msgstr "Zavijava"
-
-msgid "Alaraph"
-msgstr "Alaraph"
-
-msgid "Groombridge 1830"
-msgstr "Groombridge 1830"
-
-msgid "Phecda"
-msgstr "Phecda"
-
-msgid "Phad"
-msgstr "Phad"
-
-msgid "Alchiba"
-msgstr "Alchiba"
-
-msgid "Megrez"
-msgstr "Megrecas"
-
-msgid "Gienah"
-msgstr "Gienachas"
-
-msgid "Zaniah"
-msgstr "Zaniah"
-
-msgid "Acrux"
-msgstr "Akruksas"
-
-msgid "Algorab"
-msgstr "Algorab"
-
-msgid "Gacrux"
-msgstr "Gakruksas"
-
-msgid "Chara"
-msgstr "Chara"
-
-msgid "Kraz"
-msgstr "Kraz"
-
-msgid "Muhlifain"
-msgstr "Muhlifain"
-
-msgid "Porrima"
-msgstr "Porrima"
-
-msgid "Mimosa"
-msgstr "Mimoza"
-
-msgid "Alioth"
-msgstr "Aliotas"
-
-msgid "Minelauva"
-msgstr "Minelauva"
-
-msgid "Auva"
-msgstr "Auva"
-
-msgid "Cor Caroli"
-msgstr "Karolio Širdis"
-
-msgid "Vindemiatrix"
-msgstr "Vindemiatriksė"
-
-msgid "Almuredin"
-msgstr "Almuredin"
-
-msgid "Mizar"
-msgstr "Micaras"
-
-msgid "Spica"
-msgstr "Spika"
-
-msgid "Azimech"
-msgstr "Azimech"
-
-msgid "Alcor"
-msgstr "Alkoras"
-
-msgid "Heze"
-msgstr "Heze"
-
-msgid "Benetnasch"
-msgstr "Benetnasch"
-
-msgid "Alkaid"
-msgstr "Alkaidas"
-
-msgid "Muphrid"
-msgstr "Mufridas"
-
-msgid "Agena"
-msgstr "Agena"
-
-msgid "Hadar"
-msgstr "Hadar"
-
-msgid "Thuban"
-msgstr "Thuban"
-
-msgid "Menkent"
-msgstr "Menkentas"
-
-msgid "Arcturus"
-msgstr "Arktūras"
-
-msgid "Syrma"
-msgstr "Syrma"
-
-msgid "Proxima"
-msgstr "Proksima"
-
-msgid "Seginus"
-msgstr "Seginas"
-
-msgid "Ceginus"
-msgstr "Ceginus"
-
-msgid "Izar"
-msgstr "Izar"
-
-msgid "Mirak"
-msgstr "Mirak"
-
-msgid "Pulcherrima"
-msgstr "Pulcherrima"
-
-msgid "Kocab"
-msgstr "Kocha­bas"
-
-msgid "Kochab"
-msgstr "Kochab"
-
-msgid "Zubenelgenubi"
-msgstr "Zubenelgenubi"
-
-msgid "Zuben Elakribi"
-msgstr "Zuben Elakribi"
-
-msgid "Nekkar"
-msgstr "Nekaras"
-
-msgid "Zubeneschamali"
-msgstr "Zubeneschamali"
-
-msgid "Pherkad"
-msgstr "Pherkad"
-
-msgid "Alkalurops"
-msgstr "Alkalurops"
-
-msgid "Edasich"
-msgstr "Edasich"
-
-msgid "Nusakan"
-msgstr "Nusakan"
-
-msgid "Alphecca"
-msgstr "Alphecca"
-
-msgid "Gemma"
-msgstr "Gemma"
-
-msgid "Zuben Elakrab"
-msgstr "Zuben Elakrab"
-
-msgid "Unukalhai"
-msgstr "Unukas"
-
-msgid "Chow"
-msgstr "Chow"
-
-msgid "Dschubba"
-msgstr "Dšuba"
-
-msgid "Graffias"
-msgstr "Graffias"
-
-msgid "Akrab"
-msgstr "Akrab"
-
-msgid "Jabbah"
-msgstr "Jabbah"
-
-msgid "Al Niyat"
-msgstr "Alniatas"
-
-msgid "Cujam"
-msgstr "Cujam"
-
-msgid "Antares"
-msgstr "Antaris"
-
-msgid "Kornephoros"
-msgstr "Korneforas"
-
-msgid "Marfik"
-msgstr "Marfik"
-
-msgid "Atria"
-msgstr "Atria"
-
-msgid "Arrakis"
-msgstr "Arrakis"
-
-msgid "Sabik"
-msgstr "Sabik"
-
-msgid "Rasalgethi"
-msgstr "Ras Algetis"
-
-msgid "Ras Algethi"
-msgstr "Ras Algethi"
-
-msgid "Sarin"
-msgstr "Sarin"
-
-msgid "Rastaban"
-msgstr "Rastabanas"
-
-msgid "Maasym"
-msgstr "Maasym"
-
-msgid "Lesath"
-msgstr "Lesath"
-
-msgid "Lesuth"
-msgstr "Lesuth"
-
-msgid "Kuma"
-msgstr "Kuma"
-
-msgid "Yildun"
-msgstr "Yildun"
-
-msgid "Shaula"
-msgstr "Šaulė"
-
-msgid "Rasalhague"
-msgstr "Ras Alhagas"
-
-msgid "Ras Alhague"
-msgstr "Ras Alhague"
-
-msgid "Sargas"
-msgstr "Sargas"
-
-msgid "Dziban"
-msgstr "Dziban"
-
-msgid "Cebalrai"
-msgstr "Cebalrai"
-
-msgid "Grumium"
-msgstr "Grumium"
-
-msgid "Etamin"
-msgstr "Etamin"
-
-msgid "Eltanin"
-msgstr "Eltanin"
-
-msgid "Barnard's Star"
-msgstr "Barnardo žvaigždė"
-
-msgid "Alnasl"
-msgstr "Alnasl"
-
-msgid "Kaus Media"
-msgstr "Kaus Media"
-
-msgid "Kaus Australis"
-msgstr "Kaus Australis"
-
-msgid "Al Athfar"
-msgstr "Al Athfar"
-
-msgid "Kaus Borealis"
-msgstr "Kaus Borealis"
-
-msgid "Vega"
-msgstr "Vega"
-
-msgid "Sheliak"
-msgstr "Šeliakas"
-
-msgid "Nunki"
-msgstr "Sadira"
-
-msgid "Alya"
-msgstr "Alya"
-
-msgid "Sulafat"
-msgstr "Sulafat"
-
-msgid "Ascella"
-msgstr "Ascella"
-
-msgid "Deneb el Okab"
-msgstr "Deneb el Okab"
-
-msgid "Altais"
-msgstr "Altajas"
-
-msgid "Al Tais"
-msgstr "Al Tais"
-
-msgid "Nodus Secundus"
-msgstr "Nodus Secundus"
-
-msgid "Aladfar"
-msgstr "Aladfar"
-
-msgid "Arkab"
-msgstr "Arkabas"
-
-msgid "Rukbat"
-msgstr "Rukbat"
-
-msgid "Albireo"
-msgstr "Albirėjas"
-
-msgid "Alsafi"
-msgstr "Alsafi"
-
-msgid "Campbell's Star"
-msgstr "Campbell's Star"
-
-msgid "Sham"
-msgstr "Sham"
-
-msgid "Tarazed"
-msgstr "Tarazedas"
-
-msgid "Tyl"
-msgstr "Tyl"
-
-msgid "Altair"
-msgstr "Altayras"
-
-msgid "Atair"
-msgstr "Atair"
-
-msgid "Alshain"
-msgstr "Alšainas"
-
-msgid "Algedi"
-msgstr "Algedi"
-
-msgid "Dabih"
-msgstr "Dabihas"
-
-msgid "Sadr"
-msgstr "Sadiras"
-
-msgid "Peacock"
-msgstr "Povas"
-
-msgid "Rotanev"
-msgstr "Rotanev"
-
-msgid "Sualocin"
-msgstr "Sualocin"
-
-msgid "Deneb"
-msgstr "Denebas"
-
-msgid "Albali"
-msgstr "Albali"
-
-msgid "Kitalpha"
-msgstr "Kitalpha"
-
-msgid "Lacaille 8760"
-msgstr "Lacaille 8760"
-
-msgid "Alderamin"
-msgstr "Alderaminas"
-
-msgid "Alfirk"
-msgstr "Alfirk"
-
-msgid "Sadalsuud"
-msgstr "Sadalsuud"
-
-msgid "Nashira"
-msgstr "Nashira"
-
-msgid "Azelfafage"
-msgstr "Azelfafage"
-
-msgid "The Garnet Star"
-msgstr "The Garnet Star"
-
-msgid "Herschel's Garnet Star"
-msgstr "Herschel's Garnet Star"
-
-msgid "Enif"
-msgstr "Enifas"
-
-msgid "Deneb Algedi"
-msgstr "Deneb Algedi"
-
-msgid "Al Dhanab"
-msgstr "Al Dhanab"
-
-msgid "Kurhah"
-msgstr "Kurhah"
-
-msgid "Sadalmelik"
-msgstr "Sadalmelikė"
-
-msgid "Alnair"
-msgstr "Alnair"
-
-msgid "Al Nair"
-msgstr "Al Nair"
-
-msgid "Biham"
-msgstr "Biham"
-
-msgid "Ancha"
-msgstr "Ancha"
-
-msgid "Sadachbia"
-msgstr "Sadachbia"
-
-msgid "Seat"
-msgstr "Seat"
-
-msgid "Kruger 60"
-msgstr "Kruger 60"
-
-msgid "Homam"
-msgstr "Homam"
-
-msgid "Matar"
-msgstr "Matar"
-
-msgid "Babcock's Star"
-msgstr "Babcock's Star"
-
-msgid "Sadalbari"
-msgstr "Sadalbari"
-
-msgid "Skat"
-msgstr "Skat"
-
-msgid "Fomalhaut"
-msgstr "Fomalhautas"
-
-msgid "Scheat"
-msgstr "Šeatas"
-
-msgid "Fum al Samakah"
-msgstr "Fum al Samakah"
-
-msgid "Markab"
-msgstr "Markabas"
-
-msgid "Marchab"
-msgstr "Marchab"
-
-msgid "Bradley 3077"
-msgstr "Bradley 3077"
-
-msgid "Situla"
-msgstr "Situla"
-
-msgid "Errai"
-msgstr "Errai"
-
-msgid "Pleiades"
-msgstr "Sietynas"
-
-msgid "Hyades"
-msgstr "Hyades"
-
-msgid "Praesepe"
-msgstr "Praesepe"
-
-msgid "Beehive Cluster"
-msgstr "Beehive Cluster"
-
-msgid "Maffei 1"
-msgstr "Maffei 1"
-
-msgid "Maffei 2"
-msgstr "Maffei 2"
-
-msgid "Leo A"
-msgstr "Leo A"
-
-msgid "Sextans B"
-msgstr "Sextans B"
-
-msgid "Leo I"
-msgstr "Leo I"
-
-msgid "Sextans A"
-msgstr "Sextans A"
-
-msgid "Circinus"
-msgstr "Skriestuvas"
-
-msgid "Holmberg VI"
-msgstr "Holmberg VI"
-
-msgid "Fath 703"
-msgstr "Fath 703"
-
-msgid "47 Tuc"
-msgstr "47 Tuc"
-
-msgid "Eridanus"
-msgstr "Eridanas"
-
-msgid "Pyxis"
-msgstr "Kompasas"
-
-msgid "Tonantzintla 2"
-msgstr "Tonantzintla 2"
+#~ msgid "The Garnet Star"
+#~ msgstr "The Garnet Star"
