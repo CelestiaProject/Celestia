@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.7.0\n"
 "Report-Msgid-Bugs-To: team@celestia.space\n"
-"POT-Creation-Date: 2021-05-10 22:35+0300\n"
+"POT-Creation-Date: 2021-10-06 15:59+0400\n"
 "PO-Revision-Date: 2018-05-28 20:48+0300\n"
 "Last-Translator: Alexell <alexell@alexell.ru>\n"
 "Language-Team: \n"
@@ -536,284 +536,284 @@ msgid "Asmara"
 msgstr "아스마라"
 
 #: ../data/data.cpp:127
-msgid "Astana"
-msgstr "아스타나"
-
-#: ../data/data.cpp:128
 msgid "Asuncion"
 msgstr "아순시온"
 
-#: ../data/data.cpp:129
+#: ../data/data.cpp:128
 msgid "Athens"
 msgstr "아테네"
 
-#: ../data/data.cpp:130
+#: ../data/data.cpp:129
 msgid "Avarua"
 msgstr "아바루아"
 
-#: ../data/data.cpp:131
+#: ../data/data.cpp:130
 msgid "Baghdad"
 msgstr "바그다드"
 
-#: ../data/data.cpp:132
+#: ../data/data.cpp:131
 msgid "Baku"
 msgstr "바쿠"
 
-#: ../data/data.cpp:133
+#: ../data/data.cpp:132
 msgid "Bamako"
 msgstr "바마코"
 
-#: ../data/data.cpp:134
+#: ../data/data.cpp:133
 msgid "Bandar Seri Begawan"
 msgstr "반다르스리브가완"
 
-#: ../data/data.cpp:135
+#: ../data/data.cpp:134
 msgid "Bangkok"
 msgstr "방콕"
 
-#: ../data/data.cpp:136
+#: ../data/data.cpp:135
 msgid "Bangui"
 msgstr "방기"
 
-#: ../data/data.cpp:137
+#: ../data/data.cpp:136
 msgid "Banjul"
 msgstr "반줄"
 
-#: ../data/data.cpp:138
+#: ../data/data.cpp:137
 msgid "Basse-Terre"
 msgstr "바스테르"
 
-#: ../data/data.cpp:139
+#: ../data/data.cpp:138
 msgid "Basseterre"
 msgstr "바스테르"
 
-#: ../data/data.cpp:140
+#: ../data/data.cpp:139
 msgid "Beijing"
 msgstr "베이징"
 
-#: ../data/data.cpp:141
+#: ../data/data.cpp:140
 msgid "Beirut"
 msgstr "베이루트"
 
-#: ../data/data.cpp:142
+#: ../data/data.cpp:141
 msgid "Belgrade"
 msgstr "베오그라드"
 
-#: ../data/data.cpp:143
+#: ../data/data.cpp:142
 msgid "Belmopan"
 msgstr "벨모판"
 
-#: ../data/data.cpp:144
+#: ../data/data.cpp:143
 msgid "Berlin"
 msgstr "베를린"
 
-#: ../data/data.cpp:145
+#: ../data/data.cpp:144
 msgid "Bern"
 msgstr "베른"
 
-#: ../data/data.cpp:146
+#: ../data/data.cpp:145
 msgid "Bishkek"
 msgstr "비슈케크"
 
-#: ../data/data.cpp:147
+#: ../data/data.cpp:146
 msgid "Bissau"
 msgstr "비사우"
 
-#: ../data/data.cpp:148
+#: ../data/data.cpp:147
 msgid "Bloemfontein"
 msgstr "블룸 폰 테인"
 
-#: ../data/data.cpp:149
+#: ../data/data.cpp:148
 msgid "Bogota"
 msgstr "보고타"
 
-#: ../data/data.cpp:150
+#: ../data/data.cpp:149
 msgid "Brasilia"
 msgstr "브라질리아"
 
-#: ../data/data.cpp:151
+#: ../data/data.cpp:150
 msgid "Bratislava"
 msgstr "블라티슬라바"
 
-#: ../data/data.cpp:152
+#: ../data/data.cpp:151
 msgid "Brazzaville"
 msgstr "브라자빌"
 
-#: ../data/data.cpp:153
+#: ../data/data.cpp:152
 msgid "Bridgetown"
 msgstr "비리지타운"
 
-#: ../data/data.cpp:154
+#: ../data/data.cpp:153
 msgid "Brussels"
 msgstr "브뤼셀"
 
-#: ../data/data.cpp:155
+#: ../data/data.cpp:154
 msgid "Bucharest"
 msgstr "부카레스트"
 
-#: ../data/data.cpp:156
+#: ../data/data.cpp:155
 msgid "Budapest"
 msgstr "부다페스트"
 
-#: ../data/data.cpp:157
+#: ../data/data.cpp:156
 msgid "Buenos Aires"
 msgstr "부에노스아이레스"
 
-#: ../data/data.cpp:158
+#: ../data/data.cpp:157
 msgid "Bujumbura"
 msgstr "부줌부라"
 
-#: ../data/data.cpp:159
+#: ../data/data.cpp:158
 msgid "Cairo"
 msgstr "카이로"
 
-#: ../data/data.cpp:160
+#: ../data/data.cpp:159
 msgid "Canberra"
 msgstr "캔버라"
 
-#: ../data/data.cpp:161
+#: ../data/data.cpp:160
 msgid "Cape Town"
 msgstr "케이프타운"
 
-#: ../data/data.cpp:162
+#: ../data/data.cpp:161
 msgid "Caracas"
 msgstr "카라카스"
 
-#: ../data/data.cpp:163
+#: ../data/data.cpp:162
 msgid "Castries"
 msgstr "캐스트리스"
 
-#: ../data/data.cpp:164
+#: ../data/data.cpp:163
 msgid "Cayenne"
 msgstr "카옌"
 
-#: ../data/data.cpp:165
+#: ../data/data.cpp:164
 msgid "Charlotte Amalie"
 msgstr "샬롯아말리에"
 
-#: ../data/data.cpp:166
+#: ../data/data.cpp:165
 msgid "Chisinau"
 msgstr "키시나우"
 
-#: ../data/data.cpp:167
+#: ../data/data.cpp:166
 msgid "Colombo"
 msgstr "콜롬보"
 
-#: ../data/data.cpp:168
+#: ../data/data.cpp:167
 msgid "Conakry"
 msgstr "코나크리"
 
-#: ../data/data.cpp:169
+#: ../data/data.cpp:168
 msgid "Copenhagen"
 msgstr "코펜하겐"
 
-#: ../data/data.cpp:170
+#: ../data/data.cpp:169
 msgid "Cotonou"
 msgstr "코토누"
 
-#: ../data/data.cpp:171
+#: ../data/data.cpp:170
 msgid "Dakar"
 msgstr "다카르"
 
-#: ../data/data.cpp:172
+#: ../data/data.cpp:171
 msgid "Damascus"
 msgstr "다마스쿠스"
 
-#: ../data/data.cpp:173
+#: ../data/data.cpp:172
 msgid "Dar es Salaam"
 msgstr "다르에스살람"
 
-#: ../data/data.cpp:174
+#: ../data/data.cpp:173
 msgid "Dhaka"
 msgstr "다카"
 
-#: ../data/data.cpp:175
+#: ../data/data.cpp:174
 msgid "Dili"
 msgstr "딜리"
 
-#: ../data/data.cpp:176
+#: ../data/data.cpp:175
 msgid "Djibouti"
 msgstr "지부티"
 
-#: ../data/data.cpp:177
+#: ../data/data.cpp:176
 msgid "Doha"
 msgstr "도하"
 
-#: ../data/data.cpp:178
+#: ../data/data.cpp:177
 msgid "Douglas"
 msgstr "더글라스"
 
-#: ../data/data.cpp:179
+#: ../data/data.cpp:178
 msgid "Dublin"
 msgstr "더블린"
 
-#: ../data/data.cpp:180
+#: ../data/data.cpp:179
 msgid "Dushanbe"
 msgstr "두샨베"
 
-#: ../data/data.cpp:181
+#: ../data/data.cpp:180
 msgid "Fongafale"
 msgstr "퐁아팔레"
 
-#: ../data/data.cpp:182
+#: ../data/data.cpp:181
 msgid "Fort-de-France"
 msgstr "포르드프랑스"
 
-#: ../data/data.cpp:183
+#: ../data/data.cpp:182
 msgid "Freetown"
 msgstr "프리타운"
 
-#: ../data/data.cpp:184
+#: ../data/data.cpp:183
 msgid "Gaborone"
 msgstr "가보로네"
 
-#: ../data/data.cpp:185
+#: ../data/data.cpp:184
 msgid "George Town"
 msgstr "조지타운"
 
-#: ../data/data.cpp:186
+#: ../data/data.cpp:185
 msgid "Georgetown"
 msgstr "조지타운"
 
-#: ../data/data.cpp:187
+#: ../data/data.cpp:186
 msgid "Gibraltar"
 msgstr "지브롤터"
 
-#: ../data/data.cpp:188
+#: ../data/data.cpp:187
 msgid "Grand Turk"
 msgstr "그랜드터크"
 
-#: ../data/data.cpp:189
+#: ../data/data.cpp:188
 msgid "Guatemala"
 msgstr "과테말라"
 
-#: ../data/data.cpp:190
+#: ../data/data.cpp:189
 msgid "Hagatna"
 msgstr "하갓냐"
 
-#: ../data/data.cpp:191
+#: ../data/data.cpp:190
 msgid "The Hague"
 msgstr "헤이그"
 
-#: ../data/data.cpp:192
+#: ../data/data.cpp:191
 msgid "Hamilton"
 msgstr "해밀턴"
 
-#: ../data/data.cpp:193
+#: ../data/data.cpp:192
 msgid "Hanoi"
 msgstr "하노이"
 
-#: ../data/data.cpp:194
+#: ../data/data.cpp:193
 msgid "Harare"
 msgstr "하라레"
 
-#: ../data/data.cpp:195
+#: ../data/data.cpp:194
 msgid "Havana"
 msgstr "하바나"
 
-#: ../data/data.cpp:196
+#: ../data/data.cpp:195
 msgid "Helsinki"
 msgstr "헬싱키"
+
+#: ../data/data.cpp:196
+msgid "Hong Kong"
+msgstr ""
 
 #: ../data/data.cpp:197
 msgid "Honiara"
@@ -1060,314 +1060,318 @@ msgid "Nuku'alofa"
 msgstr "누쿠알로파"
 
 #: ../data/data.cpp:259
+msgid "Nur-Sultan"
+msgstr ""
+
+#: ../data/data.cpp:260
 msgid "Nuuk"
 msgstr "누크"
 
-#: ../data/data.cpp:260
+#: ../data/data.cpp:261
 msgid "Oranjestad"
 msgstr "오란예스타트"
 
-#: ../data/data.cpp:261
+#: ../data/data.cpp:262
 msgid "Oslo"
 msgstr "오슬로"
 
-#: ../data/data.cpp:262
+#: ../data/data.cpp:263
 msgid "Ottawa"
 msgstr "오타와"
 
-#: ../data/data.cpp:263
+#: ../data/data.cpp:264
 msgid "Ouagadougou"
 msgstr "와가두구"
 
-#: ../data/data.cpp:264
+#: ../data/data.cpp:265
 msgid "Pago Pago"
 msgstr "파고파고"
 
-#: ../data/data.cpp:265
+#: ../data/data.cpp:266
 msgid "Palikir"
 msgstr "팔라키르"
 
-#: ../data/data.cpp:266
+#: ../data/data.cpp:267
 msgid "Panama"
 msgstr "파나마"
 
-#: ../data/data.cpp:267
+#: ../data/data.cpp:268
 msgid "Papeete"
 msgstr "파페에테"
 
-#: ../data/data.cpp:268
+#: ../data/data.cpp:269
 msgid "Paramaribo"
 msgstr ""
 
-#: ../data/data.cpp:269
+#: ../data/data.cpp:270
 msgid "Paris"
 msgstr "파리"
 
-#: ../data/data.cpp:270
+#: ../data/data.cpp:271
 msgid "Phnom Penh"
 msgstr "프놈펜"
 
-#: ../data/data.cpp:271
+#: ../data/data.cpp:272
 msgid "Plymouth"
 msgstr "플리머스"
 
-#: ../data/data.cpp:272
+#: ../data/data.cpp:273
 msgid "Port Louis"
 msgstr "포트루이스"
 
-#: ../data/data.cpp:273
+#: ../data/data.cpp:274
 msgid "Port Moresby"
 msgstr "포트모르즈비"
 
-#: ../data/data.cpp:274
+#: ../data/data.cpp:275
 msgid "Port-au-Prince"
 msgstr "포토프린스"
 
-#: ../data/data.cpp:275
+#: ../data/data.cpp:276
 msgid "Port-of-Spain"
 msgstr "포트오브스페인"
 
-#: ../data/data.cpp:276
+#: ../data/data.cpp:277
 msgid "Porto-Novo"
 msgstr "포르토노보"
 
-#: ../data/data.cpp:277
+#: ../data/data.cpp:278
 msgid "Port-Vila"
 msgstr "포트빌라"
 
-#: ../data/data.cpp:278
+#: ../data/data.cpp:279
 msgid "Prague"
 msgstr "프라하"
 
-#: ../data/data.cpp:279
+#: ../data/data.cpp:280
 msgid "Praia"
 msgstr "프라이아"
 
-#: ../data/data.cpp:280
+#: ../data/data.cpp:281
 msgid "Pretoria"
 msgstr "프레토리아"
 
-#: ../data/data.cpp:281
+#: ../data/data.cpp:282
 msgid "P'yongyang"
 msgstr "평양"
 
-#: ../data/data.cpp:282
+#: ../data/data.cpp:283
 msgid "Quito"
 msgstr "퀴토"
 
-#: ../data/data.cpp:283
+#: ../data/data.cpp:284
 msgid "Rabat"
 msgstr "라바트"
 
-#: ../data/data.cpp:284
+#: ../data/data.cpp:285
 msgid "Rangoon"
 msgstr "양곤"
 
-#: ../data/data.cpp:285
+#: ../data/data.cpp:286
 msgid "Reykjavik"
 msgstr "레이캬비크"
 
-#: ../data/data.cpp:286
+#: ../data/data.cpp:287
 msgid "Riga"
 msgstr "리가"
 
-#: ../data/data.cpp:287
+#: ../data/data.cpp:288
 msgid "Riyadh"
 msgstr "리야드"
 
-#: ../data/data.cpp:288
+#: ../data/data.cpp:289
 msgid "Road Town"
 msgstr "로드타운"
 
-#: ../data/data.cpp:289
+#: ../data/data.cpp:290
 msgid "Rome"
 msgstr "로마"
 
-#: ../data/data.cpp:290
+#: ../data/data.cpp:291
 msgid "Roseau"
 msgstr "로조"
 
-#: ../data/data.cpp:291
+#: ../data/data.cpp:292
 msgid "Saint George's"
 msgstr "세인트조지스"
 
-#: ../data/data.cpp:292
+#: ../data/data.cpp:293
 msgid "Saint Helier"
 msgstr "세인트헬리어"
 
-#: ../data/data.cpp:293
+#: ../data/data.cpp:294
 msgid "Saint John's"
 msgstr "세인트존스"
 
-#: ../data/data.cpp:294
+#: ../data/data.cpp:295
 msgid "Saint Peter Port"
 msgstr "세인트피터포트"
 
-#: ../data/data.cpp:295
+#: ../data/data.cpp:296
 msgid "Saint-Denis"
 msgstr "생드니"
 
-#: ../data/data.cpp:296
+#: ../data/data.cpp:297
 msgid "Saint-Pierre"
 msgstr "쌩삐에르"
 
-#: ../data/data.cpp:297
+#: ../data/data.cpp:298
 msgid "Saipan"
 msgstr "사이판"
 
-#: ../data/data.cpp:298
+#: ../data/data.cpp:299
 msgid "San Jose"
 msgstr "산호세"
 
-#: ../data/data.cpp:299
+#: ../data/data.cpp:300
 msgid "San Juan"
 msgstr "산후안"
 
-#: ../data/data.cpp:300
+#: ../data/data.cpp:301
 msgid "San Marino"
 msgstr "산마리노"
 
-#: ../data/data.cpp:301
+#: ../data/data.cpp:302
 msgid "San Salvador"
 msgstr "산살바도르"
 
-#: ../data/data.cpp:302
+#: ../data/data.cpp:303
 msgid "Sanaa"
 msgstr "사나"
 
-#: ../data/data.cpp:303
+#: ../data/data.cpp:304
 msgid "Santiago"
 msgstr "산티아고"
 
-#: ../data/data.cpp:304
+#: ../data/data.cpp:305
 msgid "Santo Domingo"
 msgstr "산토도밍고"
 
-#: ../data/data.cpp:305
+#: ../data/data.cpp:306
 msgid "Sao Tome"
 msgstr "상투메"
 
-#: ../data/data.cpp:306
+#: ../data/data.cpp:307
 msgid "Sarajevo"
 msgstr "사라예보"
 
-#: ../data/data.cpp:307
+#: ../data/data.cpp:308
 msgid "Seoul"
 msgstr "서울"
 
-#: ../data/data.cpp:308
+#: ../data/data.cpp:309
 msgid "The Settlement"
 msgstr "더세틀먼트"
 
-#: ../data/data.cpp:309
+#: ../data/data.cpp:310
 msgid "Singapore"
 msgstr "싱가폴"
 
-#: ../data/data.cpp:310
+#: ../data/data.cpp:311
 msgid "Skopje"
 msgstr "스코페"
 
-#: ../data/data.cpp:311
+#: ../data/data.cpp:312
 msgid "Sofia"
 msgstr "소피아"
 
-#: ../data/data.cpp:312
+#: ../data/data.cpp:313
 msgid "Sri Jayewardenepura Kotte"
 msgstr "스리자야와르데네푸라코테"
 
-#: ../data/data.cpp:313
+#: ../data/data.cpp:314
 msgid "Stanley"
 msgstr "스탠리"
 
-#: ../data/data.cpp:314
+#: ../data/data.cpp:315
 msgid "Stockholm"
 msgstr "스톡홀름"
 
-#: ../data/data.cpp:315
+#: ../data/data.cpp:316
 msgid "Sucre"
 msgstr "수크레"
 
-#: ../data/data.cpp:316
+#: ../data/data.cpp:317
 msgid "Suva"
 msgstr "수바"
 
-#: ../data/data.cpp:317
+#: ../data/data.cpp:318
 msgid "Taipei"
 msgstr "타이베이"
 
-#: ../data/data.cpp:318
+#: ../data/data.cpp:319
 msgid "Tallinn"
 msgstr "탈린"
 
-#: ../data/data.cpp:319
+#: ../data/data.cpp:320
 msgid "Tarawa"
 msgstr "타라와"
 
-#: ../data/data.cpp:320
+#: ../data/data.cpp:321
 msgid "Tashkent"
 msgstr "타슈켄트"
 
-#: ../data/data.cpp:321
+#: ../data/data.cpp:322
 msgid "T'bilisi"
 msgstr "트빌리시"
 
-#: ../data/data.cpp:322
+#: ../data/data.cpp:323
 msgid "Tegucigalpa"
 msgstr "테구시갈파"
 
-#: ../data/data.cpp:323
+#: ../data/data.cpp:324
 msgid "Tehran"
 msgstr "테헤란"
 
-#: ../data/data.cpp:324
+#: ../data/data.cpp:325
 msgid "Tel Aviv"
 msgstr "텔아비브"
 
-#: ../data/data.cpp:325
+#: ../data/data.cpp:326
 msgid "Thimphu"
 msgstr "팀푸"
 
-#: ../data/data.cpp:326
+#: ../data/data.cpp:327
 msgid "Tirana"
 msgstr "티라나"
 
-#: ../data/data.cpp:327
+#: ../data/data.cpp:328
 msgid "Tokyo"
 msgstr "도쿄"
 
-#: ../data/data.cpp:328
+#: ../data/data.cpp:329
 msgid "Torshavn"
 msgstr "토르스하운"
 
-#: ../data/data.cpp:329
+#: ../data/data.cpp:330
 msgid "Tripoli"
 msgstr "트리폴리"
 
-#: ../data/data.cpp:330
+#: ../data/data.cpp:331
 msgid "Tunis"
 msgstr "튀니스"
 
-#: ../data/data.cpp:331
+#: ../data/data.cpp:332
 msgid "Ulaanbaatar"
 msgstr "울란바토르"
 
-#: ../data/data.cpp:332
+#: ../data/data.cpp:333
 msgid "Vaduz"
 msgstr "파두츠"
 
-#: ../data/data.cpp:333
+#: ../data/data.cpp:334
 msgid "Valletta"
 msgstr "발레타"
 
-#: ../data/data.cpp:334
+#: ../data/data.cpp:335
 msgid "The Valley"
 msgstr "더밸리"
 
-#: ../data/data.cpp:335
+#: ../data/data.cpp:336
 msgid "Vatican City"
 msgstr "비티칸 시국"
 
-#: ../data/data.cpp:336 ../data/data.cpp:337
+#: ../data/data.cpp:337
 msgid "Victoria"
 msgstr "빅토리아"
 
@@ -1443,6 +1447,2155 @@ msgstr "LMC"
 msgid "Solar System Barycenter"
 msgstr "태양계 중심"
 
+#: ../data/data.cpp:356
+msgid "Sol"
+msgstr "태양"
+
+#: ../data/data.cpp:357
+msgid "Alpheratz"
+msgstr "알페라츠"
+
+#: ../data/data.cpp:358
+msgid "Sirrah"
+msgstr "시라흐"
+
+#: ../data/data.cpp:359
+msgid "Caph"
+msgstr "카프"
+
+#: ../data/data.cpp:360
+msgid "Algenib"
+msgstr "알게니브"
+
+#: ../data/data.cpp:361
+msgid "Citadelle"
+msgstr ""
+
+#: ../data/data.cpp:362
+msgid "Schemali"
+msgstr "셰말리"
+
+#: ../data/data.cpp:363
+msgid "Ankaa"
+msgstr "안카"
+
+#: ../data/data.cpp:364
+msgid "Felixvarela"
+msgstr ""
+
+#: ../data/data.cpp:365
+msgid "Fulu"
+msgstr ""
+
+#: ../data/data.cpp:366
+msgid "Schedar"
+msgstr "Schedar"
+
+#: ../data/data.cpp:367
+msgid "Shedir"
+msgstr "쉐다르"
+
+#: ../data/data.cpp:368
+msgid "Diphda"
+msgstr "디프다"
+
+#: ../data/data.cpp:369
+msgid "Deneb Kaitos"
+msgstr "데네브 칼토스"
+
+#: ../data/data.cpp:370
+msgid "Cocibolca"
+msgstr ""
+
+#: ../data/data.cpp:371
+msgid "Achird"
+msgstr "아키르드"
+
+#: ../data/data.cpp:372
+msgid "Van Maanen 2"
+msgstr "반 마넨 2"
+
+#: ../data/data.cpp:373
+#, fuzzy
+msgid "Castula"
+msgstr "카스토르"
+
+#: ../data/data.cpp:374
+msgid "Navi"
+msgstr "나비"
+
+#: ../data/data.cpp:375
+msgid "Nenque"
+msgstr ""
+
+#: ../data/data.cpp:376
+#, fuzzy
+msgid "Wurren"
+msgstr "현재"
+
+#: ../data/data.cpp:377
+msgid "Mirach"
+msgstr "미라크"
+
+#: ../data/data.cpp:378
+msgid "Emiw"
+msgstr ""
+
+#: ../data/data.cpp:379
+msgid "Revati"
+msgstr ""
+
+#: ../data/data.cpp:380
+msgid "Adhil"
+msgstr "아딜"
+
+#: ../data/data.cpp:381
+msgid "Bélénos"
+msgstr ""
+
+#: ../data/data.cpp:382
+msgid "Ruchbah"
+msgstr "루크바"
+
+#: ../data/data.cpp:383
+#, fuzzy
+msgid "Alpherg"
+msgstr "알페라츠"
+
+#: ../data/data.cpp:384
+#, fuzzy
+msgid "Titawin"
+msgstr "타이탄"
+
+#: ../data/data.cpp:385
+msgid "Achernar"
+msgstr "아케르나르"
+
+#: ../data/data.cpp:386
+msgid "Nembus"
+msgstr ""
+
+#: ../data/data.cpp:387
+msgid "Torcular"
+msgstr ""
+
+#: ../data/data.cpp:388
+msgid "Torcularis Septentrionalis"
+msgstr ""
+
+#: ../data/data.cpp:389
+msgid "Baten Kaitos"
+msgstr "바텐 카이토스"
+
+#: ../data/data.cpp:390
+msgid "Mothallah"
+msgstr ""
+
+#: ../data/data.cpp:391
+msgid "Caput Trianguli"
+msgstr "삼각형자리 머리"
+
+#: ../data/data.cpp:392
+msgid "Mesarthim"
+msgstr "메사르팀"
+
+#: ../data/data.cpp:393
+msgid "Segin"
+msgstr "세긴"
+
+#: ../data/data.cpp:394
+msgid "Sheratan"
+msgstr "셰라탄"
+
+#: ../data/data.cpp:395
+#, fuzzy
+msgid "Alrescha"
+msgstr "알 레스챠"
+
+#: ../data/data.cpp:396
+msgid "Al Rescha"
+msgstr "알 레스챠"
+
+#: ../data/data.cpp:397
+msgid "Almach"
+msgstr "알마크"
+
+#: ../data/data.cpp:398
+msgid "Almaak"
+msgstr "알마크"
+
+#: ../data/data.cpp:399
+msgid "Alamak"
+msgstr "Alamak"
+
+#: ../data/data.cpp:400
+msgid "Hamal"
+msgstr "하말"
+
+#: ../data/data.cpp:401
+msgid "Mira"
+msgstr "미라"
+
+#: ../data/data.cpp:402
+msgid "Polaris"
+msgstr "폴라리스 (북극성)"
+
+#: ../data/data.cpp:403
+msgid "Buna"
+msgstr ""
+
+#: ../data/data.cpp:404
+msgid "Kaffaljidhma"
+msgstr ""
+
+#: ../data/data.cpp:405
+msgid "Koeia"
+msgstr ""
+
+#: ../data/data.cpp:406
+msgid "Lilii Borea"
+msgstr ""
+
+#: ../data/data.cpp:407
+msgid "Nushagak"
+msgstr ""
+
+#: ../data/data.cpp:408
+#, fuzzy
+msgid "Bharani"
+msgstr "차라"
+
+#: ../data/data.cpp:409
+#, fuzzy
+msgid "Miram"
+msgstr "미라"
+
+#: ../data/data.cpp:410
+msgid "Angetenar"
+msgstr "안게테나르"
+
+#: ../data/data.cpp:411
+msgid "Azha"
+msgstr "아자"
+
+#: ../data/data.cpp:412
+msgid "Acamar"
+msgstr "아카마"
+
+#: ../data/data.cpp:413
+msgid "Ayeyarwady"
+msgstr ""
+
+#: ../data/data.cpp:414
+msgid "Menkar"
+msgstr "멘카르"
+
+#: ../data/data.cpp:415
+msgid "Menkab"
+msgstr "멘카브"
+
+#: ../data/data.cpp:416
+msgid "Algol"
+msgstr "알골"
+
+#: ../data/data.cpp:417
+msgid "Misam"
+msgstr ""
+
+#: ../data/data.cpp:418
+msgid "Botein"
+msgstr "보테인"
+
+#: ../data/data.cpp:419
+msgid "Dalim"
+msgstr ""
+
+#: ../data/data.cpp:420
+msgid "Zibal"
+msgstr ""
+
+#: ../data/data.cpp:421
+msgid "Intan"
+msgstr ""
+
+#: ../data/data.cpp:422
+msgid "Mirfak"
+msgstr "미르팍"
+
+#: ../data/data.cpp:423
+msgid "Mirphak"
+msgstr "미르팍"
+
+#: ../data/data.cpp:424
+msgid "Marfak"
+msgstr "마르팍"
+
+#: ../data/data.cpp:425
+#, fuzzy
+msgid "Ran"
+msgstr "라나"
+
+#: ../data/data.cpp:426
+msgid "Tupi"
+msgstr ""
+
+#: ../data/data.cpp:427
+msgid "Rana"
+msgstr "라나"
+
+#: ../data/data.cpp:428
+msgid "Atik"
+msgstr "아틱"
+
+#: ../data/data.cpp:429
+msgid "Celaeno"
+msgstr "켈라에노"
+
+#: ../data/data.cpp:430
+msgid "Electra"
+msgstr "엘렉트라"
+
+#: ../data/data.cpp:431
+msgid "Taygeta"
+msgstr "타이게타"
+
+#: ../data/data.cpp:432
+msgid "Maia"
+msgstr "마이아"
+
+#: ../data/data.cpp:433
+msgid "Asterope"
+msgstr "아스테로페"
+
+#: ../data/data.cpp:434
+msgid "Merope"
+msgstr "메로페"
+
+#: ../data/data.cpp:435
+msgid "Alcyone"
+msgstr "알키오네"
+
+#: ../data/data.cpp:436
+msgid "Pleione"
+msgstr "플레이오네"
+
+#: ../data/data.cpp:437
+msgid "Zaurak"
+msgstr "자우락"
+
+#: ../data/data.cpp:438
+msgid "Menkib"
+msgstr "멘키브"
+
+#: ../data/data.cpp:439
+msgid "Beid"
+msgstr "베이드"
+
+#: ../data/data.cpp:440
+msgid "Keid"
+msgstr "케이드"
+
+#: ../data/data.cpp:441
+msgid "Prima Hyadum"
+msgstr ""
+
+#: ../data/data.cpp:442
+msgid "Secunda Hyadum"
+msgstr ""
+
+#: ../data/data.cpp:443
+msgid "Beemim"
+msgstr ""
+
+#: ../data/data.cpp:444
+msgid "Ain"
+msgstr "아인"
+
+#: ../data/data.cpp:445
+msgid "Chamukuy"
+msgstr ""
+
+#: ../data/data.cpp:446
+msgid "Hoggar"
+msgstr ""
+
+#: ../data/data.cpp:447
+msgid "Theemin"
+msgstr ""
+
+#: ../data/data.cpp:448
+msgid "Aldebaran"
+msgstr "알데바란"
+
+#: ../data/data.cpp:449
+msgid "Sceptrum"
+msgstr ""
+
+#: ../data/data.cpp:450
+#, fuzzy
+msgid "Tabit"
+msgstr "타비트"
+
+#: ../data/data.cpp:451
+msgid "Mouhoun"
+msgstr ""
+
+#: ../data/data.cpp:452
+msgid "Hassaleh"
+msgstr ""
+
+#: ../data/data.cpp:453
+msgid "Hind's Crimson Star"
+msgstr "힌드의 진홍색 별"
+
+#: ../data/data.cpp:454
+#, fuzzy
+msgid "Almaaz"
+msgstr "알마크"
+
+#: ../data/data.cpp:455
+#, fuzzy
+msgid "Saclateni"
+msgstr "은하"
+
+#: ../data/data.cpp:456
+msgid "Sadatoni"
+msgstr "사다토니"
+
+#: ../data/data.cpp:457
+msgid "Haedus"
+msgstr ""
+
+#: ../data/data.cpp:458
+msgid "Cursa"
+msgstr "쿠르사"
+
+#: ../data/data.cpp:459
+msgid "Mago"
+msgstr ""
+
+#: ../data/data.cpp:460
+msgid "Kapteyn's Star"
+msgstr "캅테인의 별"
+
+#: ../data/data.cpp:461
+msgid "Rigel"
+msgstr "리겔"
+
+#: ../data/data.cpp:462
+msgid "Capella"
+msgstr "카펠라"
+
+#: ../data/data.cpp:463
+msgid "Bellatrix"
+msgstr "벨라트릭스"
+
+#: ../data/data.cpp:464
+msgid "Elnath"
+msgstr "엘나스"
+
+#: ../data/data.cpp:465
+msgid "Alnath"
+msgstr "엘나스"
+
+#: ../data/data.cpp:466
+msgid "Nihal"
+msgstr "니할"
+
+#: ../data/data.cpp:467
+msgid "Thabit"
+msgstr "타비트"
+
+#: ../data/data.cpp:468
+msgid "Mintaka"
+msgstr "민타카"
+
+#: ../data/data.cpp:469
+msgid "Arneb"
+msgstr "아르네브"
+
+#: ../data/data.cpp:470
+msgid "Meissa"
+msgstr "메이사"
+
+#: ../data/data.cpp:471
+msgid "Heka"
+msgstr "헤카"
+
+#: ../data/data.cpp:472
+msgid "Hatysa"
+msgstr ""
+
+#: ../data/data.cpp:473
+msgid "Alnilam"
+msgstr "알닐람"
+
+#: ../data/data.cpp:474
+msgid "Bubup"
+msgstr ""
+
+#: ../data/data.cpp:475
+#, fuzzy
+msgid "Tianguan"
+msgstr "삼각형(△)"
+
+#: ../data/data.cpp:476
+msgid "Phact"
+msgstr "팍트"
+
+#: ../data/data.cpp:477
+msgid "Alnitak"
+msgstr "알니탁"
+
+#: ../data/data.cpp:478
+msgid "Saiph"
+msgstr "사이프"
+
+#: ../data/data.cpp:479
+msgid "Wazn"
+msgstr "와즌"
+
+#: ../data/data.cpp:480
+msgid "Betelgeuse"
+msgstr "베텔게우스"
+
+#: ../data/data.cpp:481
+msgid "Prijipati"
+msgstr "Prijipati"
+
+#: ../data/data.cpp:482
+msgid "Menkalinan"
+msgstr "멘칼리난"
+
+#: ../data/data.cpp:483
+msgid "Mahasim"
+msgstr ""
+
+#: ../data/data.cpp:484
+#, fuzzy
+msgid "Elkurud"
+msgstr "퍼러드"
+
+#: ../data/data.cpp:485
+msgid "Amadioha"
+msgstr ""
+
+#: ../data/data.cpp:486
+#, fuzzy
+msgid "Propus"
+msgstr "카노푸스"
+
+#: ../data/data.cpp:487
+msgid "Red Rectangle"
+msgstr "붉은 삼각형"
+
+#: ../data/data.cpp:488
+msgid "Furud"
+msgstr "퍼러드"
+
+#: ../data/data.cpp:489
+msgid "Mirzam"
+msgstr "미르잠"
+
+#: ../data/data.cpp:490
+msgid "Murzim"
+msgstr "머르짐"
+
+#: ../data/data.cpp:491
+msgid "Tejat"
+msgstr "테얏"
+
+#: ../data/data.cpp:492
+msgid "Canopus"
+msgstr "카노푸스"
+
+#: ../data/data.cpp:493
+msgid "Suhel"
+msgstr "수헬"
+
+#: ../data/data.cpp:494
+msgid "Lucilinburhuc"
+msgstr ""
+
+#: ../data/data.cpp:495
+msgid "Lusitânia"
+msgstr ""
+
+#: ../data/data.cpp:496
+#, fuzzy
+msgid "Plaskett's Star"
+msgstr "항성 보기"
+
+#: ../data/data.cpp:497
+msgid "Alhena"
+msgstr "알레나"
+
+#: ../data/data.cpp:498
+msgid "Almeisan"
+msgstr "알메이산"
+
+#: ../data/data.cpp:499
+msgid "Nosaxa"
+msgstr ""
+
+#: ../data/data.cpp:500
+msgid "Mebsuta"
+msgstr "멥수타"
+
+#: ../data/data.cpp:501
+msgid "Sirius"
+msgstr "시리우스"
+
+#: ../data/data.cpp:502
+msgid "Alzirr"
+msgstr ""
+
+#: ../data/data.cpp:503
+msgid "Nervia"
+msgstr ""
+
+#: ../data/data.cpp:504
+msgid "Adhara"
+msgstr "아다라"
+
+#: ../data/data.cpp:505
+msgid "Adara"
+msgstr "Adara"
+
+#: ../data/data.cpp:506
+msgid "Citalá"
+msgstr ""
+
+#: ../data/data.cpp:507
+msgid "Unurgunite"
+msgstr ""
+
+#: ../data/data.cpp:508
+msgid "Muliphein"
+msgstr "무리훼인"
+
+#: ../data/data.cpp:509
+msgid "Mekbuda"
+msgstr "메크부다"
+
+#: ../data/data.cpp:510
+msgid "Wezen"
+msgstr "웨젠"
+
+#: ../data/data.cpp:511
+msgid "Bernes 135"
+msgstr "버너스 135"
+
+#: ../data/data.cpp:512
+msgid "Wasat"
+msgstr "와사트"
+
+#: ../data/data.cpp:513
+msgid "Aludra"
+msgstr "알루드라"
+
+#: ../data/data.cpp:514
+msgid "Gomeisa"
+msgstr "고메이사"
+
+#: ../data/data.cpp:515
+msgid "Luyten's Star"
+msgstr "루이텐의 별"
+
+#: ../data/data.cpp:516
+msgid "Castor"
+msgstr "카스토르"
+
+#: ../data/data.cpp:517
+msgid "Jishui"
+msgstr ""
+
+#: ../data/data.cpp:518
+msgid "Procyon"
+msgstr "프로키온"
+
+#: ../data/data.cpp:519
+msgid "Elgomaisa"
+msgstr "엘고메이사"
+
+#: ../data/data.cpp:520
+msgid "Ceibo"
+msgstr ""
+
+#: ../data/data.cpp:521
+msgid "Pollux"
+msgstr "폴룩스"
+
+#: ../data/data.cpp:522
+msgid "Tapecue"
+msgstr ""
+
+#: ../data/data.cpp:523
+#, fuzzy
+msgid "Azmidi"
+msgstr "아스미디스케"
+
+#: ../data/data.cpp:524
+msgid "Asmidiske"
+msgstr "아스미디스케"
+
+#: ../data/data.cpp:525
+msgid "Naos"
+msgstr "나오스"
+
+#: ../data/data.cpp:526
+msgid "Tureis"
+msgstr ""
+
+#: ../data/data.cpp:527
+msgid "Regor"
+msgstr "레고르"
+
+#: ../data/data.cpp:528
+msgid "Tegmine"
+msgstr "테그미네"
+
+#: ../data/data.cpp:529
+#, fuzzy
+msgid "Tarf"
+msgstr "알 타르프"
+
+#: ../data/data.cpp:530
+msgid "Al Tarf"
+msgstr "알 타르프"
+
+#: ../data/data.cpp:531
+msgid "Násti"
+msgstr ""
+
+#: ../data/data.cpp:532
+msgid "Piautos"
+msgstr ""
+
+#: ../data/data.cpp:533
+msgid "Avior"
+msgstr "아비오르"
+
+#: ../data/data.cpp:534
+msgid "Alsciaukat"
+msgstr ""
+
+#: ../data/data.cpp:535
+msgid "Muscida"
+msgstr "머스시다"
+
+#: ../data/data.cpp:536
+#, fuzzy
+msgid "Minchir"
+msgstr "아키르드"
+
+#: ../data/data.cpp:537
+msgid "Gakyid"
+msgstr ""
+
+#: ../data/data.cpp:538
+msgid "Meleph"
+msgstr ""
+
+#: ../data/data.cpp:539
+msgid "Asellus Borealis"
+msgstr "북쪽 아셀루스"
+
+#: ../data/data.cpp:540
+msgid "Asellus Australis"
+msgstr "남쪽 아셀루스"
+
+#: ../data/data.cpp:541
+msgid "Alsephina"
+msgstr ""
+
+#: ../data/data.cpp:542
+msgid "Ashlesha"
+msgstr ""
+
+#: ../data/data.cpp:543
+msgid "Copernicus"
+msgstr ""
+
+#: ../data/data.cpp:544
+msgid "Stribor"
+msgstr ""
+
+#: ../data/data.cpp:545
+msgid "Acubens"
+msgstr "아쿠벤스"
+
+#: ../data/data.cpp:546
+msgid "Talitha"
+msgstr ""
+
+#: ../data/data.cpp:547
+msgid "Dnoces"
+msgstr "드노세스"
+
+#: ../data/data.cpp:548
+msgid "Alkaphrah"
+msgstr ""
+
+#: ../data/data.cpp:549
+msgid "Talitha Australis"
+msgstr "Talitha Australis"
+
+#: ../data/data.cpp:550
+msgid "Suhail"
+msgstr "수하일"
+
+#: ../data/data.cpp:551
+msgid "Nahn"
+msgstr ""
+
+#: ../data/data.cpp:552
+msgid "Miaplacidus"
+msgstr "미아플라시두스"
+
+#: ../data/data.cpp:553
+msgid "Aspidiske"
+msgstr "아스피디스케"
+
+#: ../data/data.cpp:554
+#, fuzzy
+msgid "Markeb"
+msgstr "마르카브"
+
+#: ../data/data.cpp:555
+msgid "Alphard"
+msgstr "알파드"
+
+#: ../data/data.cpp:556
+msgid "Cor Hydrae"
+msgstr "코르 히드라에"
+
+#: ../data/data.cpp:557
+msgid "Intercrus"
+msgstr ""
+
+#: ../data/data.cpp:558
+msgid "Alterf"
+msgstr "알터프"
+
+#: ../data/data.cpp:559
+msgid "Illyrian"
+msgstr ""
+
+#: ../data/data.cpp:560
+msgid "Kalausi"
+msgstr ""
+
+#: ../data/data.cpp:561
+msgid "Ukdah"
+msgstr "우크다흐"
+
+#: ../data/data.cpp:562
+msgid "Subra"
+msgstr "수브라"
+
+#: ../data/data.cpp:563
+msgid "Ras Elased Australis"
+msgstr "남쪽 라스 엘라세드"
+
+#: ../data/data.cpp:564
+msgid "Natasha"
+msgstr ""
+
+#: ../data/data.cpp:565
+msgid "Zhang"
+msgstr ""
+
+#: ../data/data.cpp:566
+msgid "Rasalas"
+msgstr "라살라스"
+
+#: ../data/data.cpp:567
+msgid "Ras Elased Borealis"
+msgstr "북쪽 라스 엘라세드"
+
+#: ../data/data.cpp:568
+msgid "Felis"
+msgstr ""
+
+#: ../data/data.cpp:569
+msgid "Bibhā"
+msgstr ""
+
+#: ../data/data.cpp:570
+msgid "Regulus"
+msgstr "레굴루스"
+
+#: ../data/data.cpp:571
+msgid "Kabeleced"
+msgstr "카벨레세드"
+
+#: ../data/data.cpp:572
+msgid "Cor Leonis"
+msgstr "코 레오니스"
+
+#: ../data/data.cpp:573
+msgid "Adhafera"
+msgstr "아드하페라"
+
+#: ../data/data.cpp:574
+msgid "Aldhafera"
+msgstr "알드하페라"
+
+#: ../data/data.cpp:575
+msgid "Tania Borealis"
+msgstr "북쪽 타니아"
+
+#: ../data/data.cpp:576
+msgid "Algieba"
+msgstr "알기에바"
+
+#: ../data/data.cpp:577
+msgid "Tania Australis"
+msgstr "남쪽 타니아"
+
+#: ../data/data.cpp:578
+#, fuzzy
+msgid "Macondo"
+msgstr "런던"
+
+#: ../data/data.cpp:579
+msgid "Praecipua"
+msgstr ""
+
+#: ../data/data.cpp:580
+msgid "Chalawan"
+msgstr ""
+
+#: ../data/data.cpp:581
+msgid "Alkes"
+msgstr "알케스"
+
+#: ../data/data.cpp:582
+msgid "Merak"
+msgstr "메라크"
+
+#: ../data/data.cpp:583
+msgid "Lalande 21185"
+msgstr "랄랑드 21185"
+
+#: ../data/data.cpp:584
+msgid "Dubhe"
+msgstr "두베"
+
+#: ../data/data.cpp:585
+msgid "Dubb"
+msgstr "두브"
+
+#: ../data/data.cpp:586
+msgid "Dingolay"
+msgstr ""
+
+#: ../data/data.cpp:587
+msgid "Zosma"
+msgstr "조스마"
+
+#: ../data/data.cpp:588
+msgid "Duhr"
+msgstr "뒤르"
+
+#: ../data/data.cpp:589
+msgid "Chertan"
+msgstr "셰르탄"
+
+#: ../data/data.cpp:590
+msgid "Coxa"
+msgstr "코사"
+
+#: ../data/data.cpp:591
+msgid "Chort"
+msgstr "초트"
+
+#: ../data/data.cpp:592
+msgid "Innes' Star"
+msgstr ""
+
+#: ../data/data.cpp:593
+msgid "Hunahpú"
+msgstr ""
+
+#: ../data/data.cpp:594
+msgid "Alula Australis"
+msgstr "남쪽 알룰라"
+
+#: ../data/data.cpp:595
+msgid "Alula Borealis"
+msgstr "북쪽 알룰라"
+
+#: ../data/data.cpp:596
+msgid "Tsze Tseang"
+msgstr "Tsze Tseang"
+
+#: ../data/data.cpp:597
+#, fuzzy
+msgid "Shama"
+msgstr "샴"
+
+#: ../data/data.cpp:598
+msgid "Giausar"
+msgstr "쟈우사르"
+
+#: ../data/data.cpp:599
+#, fuzzy
+msgid "Formosa"
+msgstr "초당 프레임수:"
+
+#: ../data/data.cpp:600
+msgid "Sagarmatha"
+msgstr ""
+
+#: ../data/data.cpp:601
+msgid "Przybylski's Star"
+msgstr ""
+
+#: ../data/data.cpp:602
+msgid "Uklun"
+msgstr ""
+
+#: ../data/data.cpp:603
+#, fuzzy
+msgid "Flegetonte"
+msgstr "조지타운"
+
+#: ../data/data.cpp:604
+msgid "Taiyangshou"
+msgstr ""
+
+#: ../data/data.cpp:605
+msgid "Denebola"
+msgstr "데네볼라"
+
+#: ../data/data.cpp:606
+msgid "Zavijava"
+msgstr "자비야바"
+
+#: ../data/data.cpp:607
+msgid "Alaraph"
+msgstr "Alaraph"
+
+#: ../data/data.cpp:608
+#, fuzzy
+msgid "Aniara"
+msgstr "호니아라"
+
+#: ../data/data.cpp:609
+msgid "Groombridge 1830"
+msgstr "그룸브릿지 1830"
+
+#: ../data/data.cpp:610
+msgid "Phecda"
+msgstr "펙다"
+
+#: ../data/data.cpp:611
+msgid "Phad"
+msgstr "파드"
+
+#: ../data/data.cpp:612
+msgid "Tonatiuh"
+msgstr ""
+
+#: ../data/data.cpp:613
+msgid "Alchiba"
+msgstr "알키바"
+
+#: ../data/data.cpp:614
+msgid "Imai"
+msgstr ""
+
+#: ../data/data.cpp:615
+msgid "Megrez"
+msgstr "메그레즈"
+
+#: ../data/data.cpp:616
+msgid "Gienah"
+msgstr "기에나흐"
+
+#: ../data/data.cpp:617
+msgid "Zaniah"
+msgstr "자니아흐"
+
+#: ../data/data.cpp:618
+msgid "Ginan"
+msgstr ""
+
+#: ../data/data.cpp:619
+msgid "Tupã"
+msgstr ""
+
+#: ../data/data.cpp:620
+msgid "Acrux"
+msgstr "아크룩스"
+
+#: ../data/data.cpp:621
+msgid "Algorab"
+msgstr "알고라브"
+
+#: ../data/data.cpp:622
+msgid "Gacrux"
+msgstr "가크룩스"
+
+#: ../data/data.cpp:623
+msgid "Funi"
+msgstr ""
+
+#: ../data/data.cpp:624
+msgid "Chara"
+msgstr "차라"
+
+#: ../data/data.cpp:625
+msgid "Kraz"
+msgstr "크라즈"
+
+#: ../data/data.cpp:626
+msgid "Muhlifain"
+msgstr "물리파인"
+
+#: ../data/data.cpp:627
+msgid "Porrima"
+msgstr "포리마"
+
+#: ../data/data.cpp:628
+msgid "La Superba"
+msgstr ""
+
+#: ../data/data.cpp:629
+msgid "Tianyi"
+msgstr ""
+
+#: ../data/data.cpp:630
+msgid "Mimosa"
+msgstr "미모사"
+
+#: ../data/data.cpp:631
+msgid "Alioth"
+msgstr "알리오스"
+
+#: ../data/data.cpp:632
+msgid "Taiyi"
+msgstr ""
+
+#: ../data/data.cpp:633
+msgid "Minelauva"
+msgstr "미네로바"
+
+#: ../data/data.cpp:634
+msgid "Auva"
+msgstr "아우바"
+
+#: ../data/data.cpp:635
+msgid "Cor Caroli"
+msgstr "코르 카롤리"
+
+#: ../data/data.cpp:636
+msgid "Vindemiatrix"
+msgstr "반데미아트릭스"
+
+#: ../data/data.cpp:637
+msgid "Almuredin"
+msgstr "알무레딘"
+
+#: ../data/data.cpp:638
+msgid "Diadem"
+msgstr ""
+
+#: ../data/data.cpp:639
+msgid "Mizar"
+msgstr "미자르"
+
+#: ../data/data.cpp:640
+msgid "Spica"
+msgstr "스피카"
+
+#: ../data/data.cpp:641
+msgid "Azimech"
+msgstr "아지멕"
+
+#: ../data/data.cpp:642
+msgid "Alcor"
+msgstr "알코르"
+
+#: ../data/data.cpp:643
+msgid "Dofida"
+msgstr ""
+
+#: ../data/data.cpp:644
+msgid "Liesma"
+msgstr ""
+
+#: ../data/data.cpp:645
+msgid "Heze"
+msgstr "헤제"
+
+#: ../data/data.cpp:646
+msgid "Alkaid"
+msgstr "알카이드"
+
+#: ../data/data.cpp:647
+msgid "Benetnasch"
+msgstr "베넷나쉬"
+
+#: ../data/data.cpp:648
+msgid "Muphrid"
+msgstr "무프리드"
+
+#: ../data/data.cpp:649
+msgid "Hadar"
+msgstr "하다르"
+
+#: ../data/data.cpp:650
+msgid "Agena"
+msgstr "아제나"
+
+#: ../data/data.cpp:651
+msgid "Thuban"
+msgstr "투반"
+
+#: ../data/data.cpp:652
+msgid "Menkent"
+msgstr "멘켄트"
+
+#: ../data/data.cpp:653
+msgid "Kang"
+msgstr ""
+
+#: ../data/data.cpp:654
+msgid "Arcturus"
+msgstr "아크투루스"
+
+#: ../data/data.cpp:655
+msgid "Syrma"
+msgstr "시르마"
+
+#: ../data/data.cpp:656
+msgid "Xuange"
+msgstr ""
+
+#: ../data/data.cpp:657
+msgid "Elgafar"
+msgstr ""
+
+#: ../data/data.cpp:658
+msgid "Proxima"
+msgstr "프록시마"
+
+#: ../data/data.cpp:659
+msgid "Seginus"
+msgstr "세기너스"
+
+#: ../data/data.cpp:660
+msgid "Ceginus"
+msgstr "세그누스"
+
+#: ../data/data.cpp:661
+msgid "Toliman"
+msgstr ""
+
+#: ../data/data.cpp:662
+msgid "Rigil Kentaurus"
+msgstr ""
+
+#: ../data/data.cpp:663
+msgid "Izar"
+msgstr "이자르"
+
+#: ../data/data.cpp:664
+msgid "Mirak"
+msgstr "미라크"
+
+#: ../data/data.cpp:665
+msgid "Pulcherrima"
+msgstr "풀체리마"
+
+#: ../data/data.cpp:666
+msgid "Mönch"
+msgstr ""
+
+#: ../data/data.cpp:667
+msgid "Merga"
+msgstr ""
+
+#: ../data/data.cpp:668
+msgid "Kochab"
+msgstr "코카브"
+
+#: ../data/data.cpp:669
+msgid "Kocab"
+msgstr "코카브"
+
+#: ../data/data.cpp:670
+msgid "Zubenelgenubi"
+msgstr "주벤엘게누비"
+
+#: ../data/data.cpp:671
+msgid "Arcalís"
+msgstr ""
+
+#: ../data/data.cpp:672
+msgid "Baekdu"
+msgstr ""
+
+#: ../data/data.cpp:673
+msgid "Zuben Elakribi"
+msgstr "주벤 엘라크리비"
+
+#: ../data/data.cpp:674
+msgid "Nekkar"
+msgstr "네카르"
+
+#: ../data/data.cpp:675
+msgid "Brachium"
+msgstr ""
+
+#: ../data/data.cpp:676
+msgid "Zubeneschamali"
+msgstr "주벤에샤마리"
+
+#: ../data/data.cpp:677
+#, fuzzy
+msgid "Pherkad Minor"
+msgstr "페르카드"
+
+#: ../data/data.cpp:678
+msgid "Nikawiy"
+msgstr ""
+
+#: ../data/data.cpp:679
+msgid "Pherkad"
+msgstr "페르카드"
+
+#: ../data/data.cpp:680
+msgid "Alkalurops"
+msgstr "알카루롭스"
+
+#: ../data/data.cpp:681
+msgid "Edasich"
+msgstr "에다시크"
+
+#: ../data/data.cpp:682
+msgid "Nusakan"
+msgstr "누사칸"
+
+#: ../data/data.cpp:683
+msgid "Alphecca"
+msgstr "알페카"
+
+#: ../data/data.cpp:684
+msgid "Gemma"
+msgstr "겜마"
+
+#: ../data/data.cpp:685
+#, fuzzy
+msgid "Zubenelhakrabi"
+msgstr "주벤 엘라크라브"
+
+#: ../data/data.cpp:686
+msgid "Zuben Elakrab"
+msgstr "주벤 엘라크라브"
+
+#: ../data/data.cpp:687
+msgid "Karaka"
+msgstr ""
+
+#: ../data/data.cpp:688
+msgid "Unukalhai"
+msgstr "우누칼하이"
+
+#: ../data/data.cpp:689
+msgid "Chow"
+msgstr "Chow"
+
+#: ../data/data.cpp:690
+msgid "Gudja"
+msgstr ""
+
+#: ../data/data.cpp:691
+msgid "Iklil"
+msgstr ""
+
+#: ../data/data.cpp:692
+msgid "Fang"
+msgstr ""
+
+#: ../data/data.cpp:693
+msgid "Dschubba"
+msgstr "드슈바"
+
+#: ../data/data.cpp:694
+msgid "Acrab"
+msgstr ""
+
+#: ../data/data.cpp:695
+msgid "Graffias"
+msgstr "그라피아스"
+
+#: ../data/data.cpp:696
+msgid "Akrab"
+msgstr "아크라브"
+
+#: ../data/data.cpp:697
+#, fuzzy
+msgid "Marsic"
+msgstr "화성"
+
+#: ../data/data.cpp:698
+msgid "Jabbah"
+msgstr "야바흐"
+
+#: ../data/data.cpp:699
+msgid "Sharjah"
+msgstr ""
+
+#: ../data/data.cpp:700
+msgid "Yed Prior"
+msgstr ""
+
+#: ../data/data.cpp:701
+msgid "Yed Posterior"
+msgstr ""
+
+#: ../data/data.cpp:702
+msgid "Hunor"
+msgstr ""
+
+#: ../data/data.cpp:703
+#, fuzzy
+msgid "Alniyat"
+msgstr "알 니얏"
+
+#: ../data/data.cpp:704
+msgid "Al Niyat"
+msgstr "알 니얏"
+
+#: ../data/data.cpp:705
+#, fuzzy
+msgid "Athebyne"
+msgstr "아테네"
+
+#: ../data/data.cpp:706
+msgid "Cujam"
+msgstr "쿠잠"
+
+#: ../data/data.cpp:707
+msgid "Timir"
+msgstr ""
+
+#: ../data/data.cpp:708
+msgid "Antares"
+msgstr "안타레스"
+
+#: ../data/data.cpp:709
+msgid "Kornephoros"
+msgstr "코르네포러스"
+
+#: ../data/data.cpp:710
+msgid "Ogma"
+msgstr ""
+
+#: ../data/data.cpp:711
+msgid "Marfik"
+msgstr "마르픽"
+
+#: ../data/data.cpp:712
+msgid "Rosalíadecastro"
+msgstr ""
+
+#: ../data/data.cpp:713
+msgid "Paikauhale"
+msgstr ""
+
+#: ../data/data.cpp:714
+msgid "Atria"
+msgstr "아트리아"
+
+#: ../data/data.cpp:715
+#, fuzzy
+msgid "Larawag"
+msgstr "타라와"
+
+#: ../data/data.cpp:716
+msgid "Xamidimura"
+msgstr ""
+
+#: ../data/data.cpp:717
+#, fuzzy
+msgid "Pipirima"
+msgstr "포리마"
+
+#: ../data/data.cpp:718
+msgid "Mahsati"
+msgstr ""
+
+#: ../data/data.cpp:719
+#, fuzzy
+msgid "Rapeto"
+msgstr "이아페투스"
+
+#: ../data/data.cpp:720
+#, fuzzy
+msgid "Alrakis"
+msgstr "아라키스"
+
+#: ../data/data.cpp:721
+msgid "Arrakis"
+msgstr "아라키스"
+
+#: ../data/data.cpp:722
+#, fuzzy
+msgid "Aldhibah"
+msgstr "알키바"
+
+#: ../data/data.cpp:723
+msgid "Sabik"
+msgstr "사비크"
+
+#: ../data/data.cpp:724
+msgid "Rasalgethi"
+msgstr "라스알게티"
+
+#: ../data/data.cpp:725
+msgid "Ras Algethi"
+msgstr "라스 알게티"
+
+#: ../data/data.cpp:726
+msgid "Sarin"
+msgstr "사린"
+
+#: ../data/data.cpp:727
+msgid "Guniibuu"
+msgstr ""
+
+#: ../data/data.cpp:728
+msgid "Inquill"
+msgstr ""
+
+#: ../data/data.cpp:729
+msgid "Rastaban"
+msgstr "라스타반"
+
+#: ../data/data.cpp:730
+msgid "Maasym"
+msgstr "마심"
+
+#: ../data/data.cpp:731
+msgid "Lesath"
+msgstr "레사스"
+
+#: ../data/data.cpp:732
+msgid "Lesuth"
+msgstr "레수스"
+
+#: ../data/data.cpp:733
+msgid "Kuma"
+msgstr "쿠마"
+
+#: ../data/data.cpp:734
+msgid "Yildun"
+msgstr "일둔"
+
+#: ../data/data.cpp:735
+msgid "Shaula"
+msgstr "샤울라"
+
+#: ../data/data.cpp:736
+msgid "Rasalhague"
+msgstr "라스알하게"
+
+#: ../data/data.cpp:737
+msgid "Ras Alhague"
+msgstr "Ras Alhague"
+
+#: ../data/data.cpp:738
+msgid "Sargas"
+msgstr "사르가스"
+
+#: ../data/data.cpp:739
+msgid "Dziban"
+msgstr "드지반"
+
+#: ../data/data.cpp:740
+msgid "Girtab"
+msgstr ""
+
+#: ../data/data.cpp:741
+msgid "Cebalrai"
+msgstr "세발라이"
+
+#: ../data/data.cpp:742
+msgid "Alruba"
+msgstr ""
+
+#: ../data/data.cpp:743
+#, fuzzy
+msgid "Cervantes"
+msgstr "관측소·천문대"
+
+#: ../data/data.cpp:744
+msgid "Fuyue"
+msgstr ""
+
+#: ../data/data.cpp:745
+msgid "Grumium"
+msgstr "그루미움"
+
+#: ../data/data.cpp:746
+msgid "Eltanin"
+msgstr "엘타닌"
+
+#: ../data/data.cpp:747
+msgid "Etamin"
+msgstr "엘타닌"
+
+#: ../data/data.cpp:748
+msgid "Barnard's Star"
+msgstr "버나드별"
+
+#: ../data/data.cpp:749
+msgid "Pincoya"
+msgstr ""
+
+#: ../data/data.cpp:750
+msgid "Alnasl"
+msgstr "알나슬"
+
+#: ../data/data.cpp:751
+msgid "Polis"
+msgstr ""
+
+#: ../data/data.cpp:752
+msgid "Kaus Media"
+msgstr "중앙 카우스"
+
+#: ../data/data.cpp:753
+msgid "Alasia"
+msgstr ""
+
+#: ../data/data.cpp:754
+msgid "Kaus Australis"
+msgstr "남쪽 카우스"
+
+#: ../data/data.cpp:755
+msgid "Al Athfar"
+msgstr "알 아트파르"
+
+#: ../data/data.cpp:756
+msgid "Fafnir"
+msgstr ""
+
+#: ../data/data.cpp:757
+msgid "Kaus Borealis"
+msgstr "북쪽 카우스"
+
+#: ../data/data.cpp:758
+msgid "Vega"
+msgstr "베가 (직녀성)"
+
+#: ../data/data.cpp:759
+msgid "Xihe"
+msgstr ""
+
+#: ../data/data.cpp:760
+msgid "Sheliak"
+msgstr "셸리아크"
+
+#: ../data/data.cpp:761
+#, fuzzy
+msgid "Ainalrami"
+msgstr "알데라민"
+
+#: ../data/data.cpp:762
+msgid "Nunki"
+msgstr "눈키"
+
+#: ../data/data.cpp:763
+msgid "Kaveh"
+msgstr ""
+
+#: ../data/data.cpp:764
+msgid "Alya"
+msgstr "알야"
+
+#: ../data/data.cpp:765
+msgid "Sulafat"
+msgstr "술라파트"
+
+#: ../data/data.cpp:766
+msgid "Ascella"
+msgstr "아셀라"
+
+#: ../data/data.cpp:767
+msgid "Okab"
+msgstr ""
+
+#: ../data/data.cpp:768
+msgid "Deneb el Okab"
+msgstr "데네브 알 오카브"
+
+#: ../data/data.cpp:769
+msgid "Meridiana"
+msgstr ""
+
+#: ../data/data.cpp:770
+#, fuzzy
+msgid "Albaldah"
+msgstr "알발리"
+
+#: ../data/data.cpp:771
+msgid "Altais"
+msgstr "알타이스"
+
+#: ../data/data.cpp:772
+msgid "Al Tais"
+msgstr "알 타이스"
+
+#: ../data/data.cpp:773
+msgid "Nodus Secundus"
+msgstr "둘째 노두스"
+
+#: ../data/data.cpp:774
+msgid "Aladfar"
+msgstr "알라드파르"
+
+#: ../data/data.cpp:775
+#, fuzzy
+msgid "Gumala"
+msgstr "과테말라"
+
+#: ../data/data.cpp:776
+msgid "Belel"
+msgstr ""
+
+#: ../data/data.cpp:777
+#, fuzzy
+msgid "Arkab Prior"
+msgstr "아르카브"
+
+#: ../data/data.cpp:778
+msgid "Arkab"
+msgstr "아르카브"
+
+#: ../data/data.cpp:779
+msgid "Sika"
+msgstr ""
+
+#: ../data/data.cpp:780
+msgid "Arkab Posterior"
+msgstr ""
+
+#: ../data/data.cpp:781
+msgid "Rukbat"
+msgstr "루크바트"
+
+#: ../data/data.cpp:782
+msgid "Anser"
+msgstr ""
+
+#: ../data/data.cpp:783
+msgid "Albireo"
+msgstr "알비레오"
+
+#: ../data/data.cpp:784
+msgid "Uruk"
+msgstr ""
+
+#: ../data/data.cpp:785
+msgid "Alsafi"
+msgstr "알사피"
+
+#: ../data/data.cpp:786
+msgid "Campbell's Star"
+msgstr "캠벨의 별"
+
+#: ../data/data.cpp:787
+msgid "Sham"
+msgstr "샴"
+
+#: ../data/data.cpp:788
+#, fuzzy
+msgid "Fawaris"
+msgstr "파리"
+
+#: ../data/data.cpp:789
+msgid "Tarazed"
+msgstr "타라제드"
+
+#: ../data/data.cpp:790
+msgid "Tyl"
+msgstr "틸"
+
+#: ../data/data.cpp:791
+msgid "Altair"
+msgstr "알타이르 (견우성)"
+
+#: ../data/data.cpp:792
+msgid "Atair"
+msgstr "Atair"
+
+#: ../data/data.cpp:793
+msgid "Libertas"
+msgstr ""
+
+#: ../data/data.cpp:794
+msgid "Alshain"
+msgstr "알샤인"
+
+#: ../data/data.cpp:795
+msgid "Terebellum"
+msgstr ""
+
+#: ../data/data.cpp:796
+msgid "Phoenicia"
+msgstr ""
+
+#: ../data/data.cpp:797
+msgid "Chechia"
+msgstr ""
+
+#: ../data/data.cpp:798
+msgid "Algedi"
+msgstr "알게디"
+
+#: ../data/data.cpp:799
+#, fuzzy
+msgid "Alshat"
+msgstr "알샤인"
+
+#: ../data/data.cpp:800
+msgid "Dabih"
+msgstr "다비흐"
+
+#: ../data/data.cpp:801
+msgid "Sadr"
+msgstr "사드르"
+
+#: ../data/data.cpp:802
+msgid "Peacock"
+msgstr "피콕"
+
+#: ../data/data.cpp:803
+msgid "Aldulfin"
+msgstr ""
+
+#: ../data/data.cpp:804
+msgid "Rotanev"
+msgstr "로타네브"
+
+#: ../data/data.cpp:805
+msgid "Sualocin"
+msgstr "수알로신"
+
+#: ../data/data.cpp:806
+msgid "Deneb"
+msgstr "데네브"
+
+#: ../data/data.cpp:807
+#, fuzzy
+msgid "Aljanah"
+msgstr "류블랴나"
+
+#: ../data/data.cpp:808
+msgid "Albali"
+msgstr "알발리"
+
+#: ../data/data.cpp:809
+msgid "Musica"
+msgstr ""
+
+#: ../data/data.cpp:810
+#, fuzzy
+msgid "Polaris Australis"
+msgstr "남쪽 카우스"
+
+#: ../data/data.cpp:811
+#, fuzzy
+msgid "Solaris"
+msgstr "폴라리스 (북극성)"
+
+#: ../data/data.cpp:812
+msgid "Kitalpha"
+msgstr "키탈파"
+
+#: ../data/data.cpp:813
+msgid "Lacaille 8760"
+msgstr "Lacaille 8760"
+
+#: ../data/data.cpp:814
+msgid "Alderamin"
+msgstr "알데라민"
+
+#: ../data/data.cpp:815
+msgid "Alfirk"
+msgstr "알피르크"
+
+#: ../data/data.cpp:816
+msgid "Sadalsuud"
+msgstr "사달수드"
+
+#: ../data/data.cpp:817
+#, fuzzy
+msgid "Bunda"
+msgstr "별자리 경계선 보기"
+
+#: ../data/data.cpp:818
+msgid "Sāmaya"
+msgstr ""
+
+#: ../data/data.cpp:819
+msgid "Nashira"
+msgstr "나시라"
+
+#: ../data/data.cpp:820
+msgid "Azelfafage"
+msgstr "아젤파파게"
+
+#: ../data/data.cpp:821
+msgid "Bosona"
+msgstr ""
+
+#: ../data/data.cpp:822
+msgid "Herschel's Garnet Star"
+msgstr "Herschel's Garnet Star"
+
+#: ../data/data.cpp:823
+#, fuzzy
+msgid "Erakis"
+msgstr "아라키스"
+
+#: ../data/data.cpp:824
+msgid "Enif"
+msgstr "에니프"
+
+#: ../data/data.cpp:825
+msgid "Deneb Algedi"
+msgstr "데네브 알게디"
+
+#: ../data/data.cpp:826
+#, fuzzy
+msgid "Aldhanab"
+msgstr "알 드하나브"
+
+#: ../data/data.cpp:827
+msgid "Al Dhanab"
+msgstr "알 드하나브"
+
+#: ../data/data.cpp:828
+msgid "Itonda"
+msgstr ""
+
+#: ../data/data.cpp:829
+msgid "Kurhah"
+msgstr "쿠르하"
+
+#: ../data/data.cpp:830
+msgid "Sadalmelik"
+msgstr "사달멜리크"
+
+#: ../data/data.cpp:831
+msgid "Alnair"
+msgstr "알나이르"
+
+#: ../data/data.cpp:832
+msgid "Al Nair"
+msgstr "Al Nair"
+
+#: ../data/data.cpp:833
+msgid "Biham"
+msgstr "비함"
+
+#: ../data/data.cpp:834
+msgid "Ancha"
+msgstr "안차"
+
+#: ../data/data.cpp:835
+msgid "Sadachbia"
+msgstr "사다크비아"
+
+#: ../data/data.cpp:836
+msgid "Seat"
+msgstr "시트"
+
+#: ../data/data.cpp:837
+msgid "Lionrock"
+msgstr ""
+
+#: ../data/data.cpp:838
+msgid "Kruger 60"
+msgstr "크루거 60"
+
+#: ../data/data.cpp:839
+msgid "Situla"
+msgstr "시툴라"
+
+#: ../data/data.cpp:840
+msgid "Homam"
+msgstr "호맘"
+
+#: ../data/data.cpp:841
+msgid "Tiaki"
+msgstr ""
+
+#: ../data/data.cpp:842
+msgid "Matar"
+msgstr "마타르"
+
+#: ../data/data.cpp:843
+msgid "Babcock's Star"
+msgstr "밥콕의 별"
+
+#: ../data/data.cpp:844
+msgid "Sadalbari"
+msgstr "사달바리"
+
+#: ../data/data.cpp:845
+msgid "Hydor"
+msgstr ""
+
+#: ../data/data.cpp:846
+msgid "Skat"
+msgstr "스캇"
+
+#: ../data/data.cpp:847
+msgid "Helvetios"
+msgstr ""
+
+#: ../data/data.cpp:848
+msgid "Fomalhaut"
+msgstr "포말하우트"
+
+#: ../data/data.cpp:849
+msgid "Scheat"
+msgstr "쉬트"
+
+#: ../data/data.cpp:850
+#, fuzzy
+msgid "Fumalsamakah"
+msgstr "품 알 사마카흐"
+
+#: ../data/data.cpp:851
+msgid "Fum al Samakah"
+msgstr "품 알 사마카흐"
+
+#: ../data/data.cpp:852
+msgid "Markab"
+msgstr "마르카브"
+
+#: ../data/data.cpp:853
+msgid "Marchab"
+msgstr "마르챠브"
+
+#: ../data/data.cpp:854
+msgid "Ebla"
+msgstr ""
+
+#: ../data/data.cpp:855
+msgid "Bradley 3077"
+msgstr "Bradley 3077"
+
+#: ../data/data.cpp:856
+msgid "Salm"
+msgstr ""
+
+#: ../data/data.cpp:857
+#, fuzzy
+msgid "Alkarab"
+msgstr "앙카라"
+
+#: ../data/data.cpp:858
+msgid "Veritate"
+msgstr ""
+
+#: ../data/data.cpp:859
+msgid "Poerava"
+msgstr ""
+
+#: ../data/data.cpp:860
+msgid "Errai"
+msgstr "엘라이"
+
+#: ../data/data.cpp:861
+msgid "Axólotl"
+msgstr ""
+
+#: ../data/data.cpp:862
+msgid "Pleiades"
+msgstr "플레이아데스"
+
+#: ../data/data.cpp:863
+msgid "Hyades"
+msgstr "히아데스"
+
+#: ../data/data.cpp:864
+msgid "Praesepe"
+msgstr "프레세페"
+
+#: ../data/data.cpp:865
+msgid "Beehive Cluster"
+msgstr "벌집 성단"
+
+#: ../data/data.cpp:866
+msgid "Maffei 1"
+msgstr "마페이 1"
+
+#: ../data/data.cpp:867
+msgid "Maffei 2"
+msgstr "마페이 2"
+
+#: ../data/data.cpp:868
+msgid "Leo A"
+msgstr "사자자리 A"
+
+#: ../data/data.cpp:869
+msgid "Sextans B"
+msgstr "육분의자리 B"
+
+#: ../data/data.cpp:870
+msgid "Leo I"
+msgstr "사자자리 I"
+
+#: ../data/data.cpp:871
+msgid "Sextans A"
+msgstr "육분의자리 A"
+
+#: ../data/data.cpp:872
+msgid "Circinus"
+msgstr "컴퍼스"
+
+#: ../data/data.cpp:873
+msgid "Andromeda Galaxy"
+msgstr ""
+
+#: ../data/data.cpp:874
+msgid "Triangulum Galaxy"
+msgstr ""
+
+#: ../data/data.cpp:875
+msgid "Holmberg VI"
+msgstr "홈버그 VI"
+
+#: ../data/data.cpp:876
+msgid "Fath 703"
+msgstr "패덤 703"
+
+#: ../data/data.cpp:877
+msgid "47 Tuc"
+msgstr "큰부리새자리 47"
+
+#: ../data/data.cpp:878
+msgid "Eridanus"
+msgstr "에리다누스"
+
+#: ../data/data.cpp:879
+msgid "Pyxis"
+msgstr "나침반"
+
+#: ../data/data.cpp:880
+msgid "Tonantzintla 2"
+msgstr "토난친틀라 2"
+
 #: ../src/celengine/astro.cpp:707
 msgid "DST"
 msgstr "일광절약시간"
@@ -1489,7 +3642,7 @@ msgstr "은하(형태: %s)"
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
 msgstr "구상 성단 (핵 반경: %4.2f', King 집중도: %4.2f)"
 
-#: ../src/celengine/image.cpp:293
+#: ../src/celengine/image.cpp:289
 #, fuzzy, c-format
 msgid "Loading image from file %s\n"
 msgstr "이미지 파일 읽는 중: "
@@ -1518,104 +3671,104 @@ msgstr "성운"
 msgid "Open cluster"
 msgstr "산개성단"
 
-#: ../src/celengine/solarsys.cpp:82
+#: ../src/celengine/solarsys.cpp:83
 #, fuzzy, c-format
 msgid "Error in .ssc file (line %d): "
 msgstr ". ssc 파일에 에러가 있습니다. (행 "
 
-#: ../src/celengine/solarsys.cpp:831
+#: ../src/celengine/solarsys.cpp:832
 msgid "Incorrect GeomAlbedo value: {}\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:840
+#: ../src/celengine/solarsys.cpp:841
 msgid "Incorrect Reflectivity value: {}\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:848
+#: ../src/celengine/solarsys.cpp:849
 msgid "Incorrect BondAlbedo value: {}\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:1252 ../src/celengine/solarsys.cpp:1315
+#: ../src/celengine/solarsys.cpp:1253 ../src/celengine/solarsys.cpp:1316
 #, c-format
 msgid "parent body '%s' of '%s' not found.\n"
 msgstr ""
 
-#: ../src/celengine/solarsys.cpp:1263
+#: ../src/celengine/solarsys.cpp:1264
 #, fuzzy, c-format
 msgid "warning duplicate definition of %s %s\n"
 msgstr "중복 정의: "
 
-#: ../src/celengine/solarsys.cpp:1294
+#: ../src/celengine/solarsys.cpp:1295
 msgid "bad alternate surface"
 msgstr "AltSurface 오류"
 
-#: ../src/celengine/solarsys.cpp:1309
+#: ../src/celengine/solarsys.cpp:1310
 msgid "bad location"
 msgstr "지명 오류"
 
-#: ../src/celengine/stardb.cpp:568
+#: ../src/celengine/stardb.cpp:569
 msgid "Bad header for cross index\n"
 msgstr "크로스 인덱스 헤더 오류\n"
 
-#: ../src/celengine/stardb.cpp:582
+#: ../src/celengine/stardb.cpp:583
 msgid "Bad version for cross index\n"
 msgstr "크로스 인덱스 버젼 오류\n"
 
-#: ../src/celengine/stardb.cpp:602
+#: ../src/celengine/stardb.cpp:603
 #, fuzzy, c-format
 msgid "Loading cross index failed at record %u\n"
 msgstr "크로스 인덱스 읽기 실패:레코드 "
 
-#: ../src/celengine/stardb.cpp:686
+#: ../src/celengine/stardb.cpp:687
 #, fuzzy, c-format
 msgid "Bad spectral type in star database, star #%u\n"
 msgstr "잘못된 항성 분광형, 항성 #"
 
-#: ../src/celengine/stardb.cpp:701
+#: ../src/celengine/stardb.cpp:702
 #, fuzzy, c-format
 msgid "%d stars in binary database\n"
 msgstr " 개 항성을 읽었습니다.\n"
 
-#: ../src/celengine/stardb.cpp:725
+#: ../src/celengine/stardb.cpp:726
 #, fuzzy, c-format
 msgid "Total star count: %d\n"
 msgstr "항성 총수: "
 
-#: ../src/celengine/stardb.cpp:759
+#: ../src/celengine/stardb.cpp:760
 #, fuzzy, c-format
 msgid "Error in .stc file (line %i): %s\n"
 msgstr ".stc 파일 오류 (행 "
 
-#: ../src/celengine/stardb.cpp:789
+#: ../src/celengine/stardb.cpp:790
 msgid "Invalid star: bad spectral type.\n"
 msgstr "잘못된 항성: 분광형 오류\n"
 
-#: ../src/celengine/stardb.cpp:798
+#: ../src/celengine/stardb.cpp:799
 msgid "Invalid star: missing spectral type.\n"
 msgstr "잘못된 항성: 분광형이 없습니다.\n"
 
-#: ../src/celengine/stardb.cpp:985
+#: ../src/celengine/stardb.cpp:986
 #, fuzzy, c-format
 msgid "Barycenter %s does not exist.\n"
 msgstr " 파일을 찾을 수 없습니다.\n"
 
-#: ../src/celengine/stardb.cpp:1041
+#: ../src/celengine/stardb.cpp:1042
 msgid "Invalid star: missing right ascension\n"
 msgstr "잘못된 항성: 적경이 없습니다.\n"
 
-#: ../src/celengine/stardb.cpp:1054
+#: ../src/celengine/stardb.cpp:1055
 msgid "Invalid star: missing declination.\n"
 msgstr "잘못된 항성: 적위가 없습니다.\n"
 
-#: ../src/celengine/stardb.cpp:1067
+#: ../src/celengine/stardb.cpp:1068
 msgid "Invalid star: missing distance.\n"
 msgstr "잘못된 항성: 거리가 없습니다.\n"
 
-#: ../src/celengine/stardb.cpp:1101
+#: ../src/celengine/stardb.cpp:1102
 msgid "Invalid star: missing magnitude.\n"
 msgstr "잘못된 항성: 등급이 없습니다.\n"
 
-#: ../src/celengine/stardb.cpp:1118
+#: ../src/celengine/stardb.cpp:1119
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
@@ -1623,17 +3776,17 @@ msgstr ""
 "잘못된 항성: 원점부근의 항성은 겉보기 등급이 아니라 절대등급이 설정되어 있어"
 "야 합니다.\n"
 
-#: ../src/celengine/stardb.cpp:1425
+#: ../src/celengine/stardb.cpp:1426
 #, c-format
 msgid "Level %i, %.5f ly, %i nodes, %i  stars\n"
 msgstr ""
 
-#: ../src/celengine/texture.cpp:1019
+#: ../src/celengine/texture.cpp:1015
 #, fuzzy, c-format
 msgid "Creating tiled texture. Width=%i, max=%i\n"
 msgstr "타일 텍스처 생성중. 폭="
 
-#: ../src/celengine/texture.cpp:1024
+#: ../src/celengine/texture.cpp:1020
 #, fuzzy, c-format
 msgid "Creating ordinary texture: %ix%i\n"
 msgstr "일반 텍스처 생성중: "
@@ -1663,99 +3816,99 @@ msgstr ""
 msgid "Unsupported digits number %i, expected %i.\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:103
+#: ../src/celestia/celestiacore.cpp:107 ../src/celestia/scriptmenu.cpp:88
 #, c-format
 msgid "Path %s doesn't exist or isn't a directory"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:200
+#: ../src/celestia/celestiacore.cpp:204
 #, fuzzy
 msgid "Error reading favorites file {}.\n"
 msgstr "북마크 파일 읽는 중 오류가 발생하였습니다."
 
-#: ../src/celestia/celestiacore.cpp:222
+#: ../src/celestia/celestiacore.cpp:226
 msgid "Failed to check directory existance for favorites file {}\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:231
+#: ../src/celestia/celestiacore.cpp:235
 msgid "Failed to create a directory for favorites file {}\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:352
+#: ../src/celestia/celestiacore.cpp:356
 msgid "Invalid filetype"
 msgstr "잘못된 파일형식"
 
-#: ../src/celestia/celestiacore.cpp:690 ../src/celestia/celestiacore.cpp:1420
-#: ../src/celestia/celestiacore.cpp:1437
+#: ../src/celestia/celestiacore.cpp:694 ../src/celestia/celestiacore.cpp:1424
+#: ../src/celestia/celestiacore.cpp:1441
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "한계등급: %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1067
+#: ../src/celestia/celestiacore.cpp:1071
 msgid "Markers enabled"
 msgstr "마커: ON"
 
-#: ../src/celestia/celestiacore.cpp:1070
+#: ../src/celestia/celestiacore.cpp:1074
 msgid "Markers disabled"
 msgstr "마커: OFF"
 
 #. Ctrl+G
-#: ../src/celestia/celestiacore.cpp:1080
+#: ../src/celestia/celestiacore.cpp:1084
 msgid "Goto surface"
 msgstr "천체 표면으로 이동"
 
-#: ../src/celestia/celestiacore.cpp:1091
+#: ../src/celestia/celestiacore.cpp:1095
 msgid "Alt-azimuth mode enabled"
 msgstr "고도각·방위각 모드 켜기"
 
-#: ../src/celestia/celestiacore.cpp:1094
+#: ../src/celestia/celestiacore.cpp:1098
 msgid "Alt-azimuth mode disabled"
 msgstr "고도각·방위각 모드 끄기"
 
-#: ../src/celestia/celestiacore.cpp:1150
+#: ../src/celestia/celestiacore.cpp:1154
 msgid "Star style: fuzzy points"
 msgstr "항성표시: 희미한 점"
 
-#: ../src/celestia/celestiacore.cpp:1153
+#: ../src/celestia/celestiacore.cpp:1157
 msgid "Star style: points"
 msgstr "항성표시: 점"
 
-#: ../src/celestia/celestiacore.cpp:1156
+#: ../src/celestia/celestiacore.cpp:1160
 msgid "Star style: scaled discs"
 msgstr "항성표시: 등급에 따른 원"
 
-#: ../src/celestia/celestiacore.cpp:1169
+#: ../src/celestia/celestiacore.cpp:1173
 msgid "Comet tails enabled"
 msgstr "혜성꼬리: ON"
 
-#: ../src/celestia/celestiacore.cpp:1172
+#: ../src/celestia/celestiacore.cpp:1176
 msgid "Comet tails disabled"
 msgstr "혜성꼬리: OFF"
 
-#: ../src/celestia/celestiacore.cpp:1188
+#: ../src/celestia/celestiacore.cpp:1192
 #, fuzzy
 msgid "Render path: OpenGL 2.1"
 msgstr "렌더링 패스: OpenGL 2.0"
 
-#: ../src/celestia/celestiacore.cpp:1207
+#: ../src/celestia/celestiacore.cpp:1211
 #, fuzzy
 msgid "Anti-aliasing enabled"
 msgstr "고도각·방위각 모드 켜기"
 
-#: ../src/celestia/celestiacore.cpp:1212
+#: ../src/celestia/celestiacore.cpp:1216
 #, fuzzy
 msgid "Anti-aliasing disabled"
 msgstr "고도각·방위각 모드 끄기"
 
-#: ../src/celestia/celestiacore.cpp:1221
+#: ../src/celestia/celestiacore.cpp:1225
 msgid "Auto-magnitude enabled"
 msgstr "자동 한계등급 조정: ON"
 
-#: ../src/celestia/celestiacore.cpp:1226
+#: ../src/celestia/celestiacore.cpp:1230
 msgid "Auto-magnitude disabled"
 msgstr "자동 한계등급 조정: OFF"
 
-#: ../src/celestia/celestiacore.cpp:1248
+#: ../src/celestia/celestiacore.cpp:1252
 #: ../src/celestia/win32/res/resource_strings.cpp:93
 #: ../src/celestia/win32/res/resource_strings.cpp:98
 #: ../src/celestia/win32/res/resource_strings.cpp:105
@@ -1769,582 +3922,610 @@ msgstr "자동 한계등급 조정: OFF"
 msgid "Cancel"
 msgstr "취소"
 
-#: ../src/celestia/celestiacore.cpp:1280
+#: ../src/celestia/celestiacore.cpp:1284
 msgid "Time and script are paused"
 msgstr "시간·스크립트: 정지"
 
-#: ../src/celestia/celestiacore.cpp:1282
+#: ../src/celestia/celestiacore.cpp:1286
 msgid "Time is paused"
 msgstr "시간: 정지"
 
-#: ../src/celestia/celestiacore.cpp:1286
+#: ../src/celestia/celestiacore.cpp:1290
 msgid "Resume"
 msgstr "계속"
 
-#: ../src/celestia/celestiacore.cpp:1320
+#: ../src/celestia/celestiacore.cpp:1324
 #, fuzzy
 msgid "Star color: Blackbody D65"
 msgstr "항성 총수: "
 
-#: ../src/celestia/celestiacore.cpp:1326
+#: ../src/celestia/celestiacore.cpp:1330
 #, fuzzy
 msgid "Star color: Enhanced"
 msgstr "항성 총수: "
 
 #. Light travel time in years, if >= 1day
-#: ../src/celestia/celestiacore.cpp:1363
+#: ../src/celestia/celestiacore.cpp:1367
 #, fuzzy, c-format
 msgid "Light travel time:  %.4f yr"
 msgstr "광속도달시간: %.4f 년"
 
-#: ../src/celestia/celestiacore.cpp:1372
+#: ../src/celestia/celestiacore.cpp:1376
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "광속도달시간: %d 분  %.1f 초"
 
-#: ../src/celestia/celestiacore.cpp:1377
+#: ../src/celestia/celestiacore.cpp:1381
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "광속도달시간: %d 시간  %d 분  %.1f 초"
 
-#: ../src/celestia/celestiacore.cpp:1395
+#: ../src/celestia/celestiacore.cpp:1399
 msgid "Light travel delay included"
 msgstr "광속고려: ON"
 
-#: ../src/celestia/celestiacore.cpp:1400
+#: ../src/celestia/celestiacore.cpp:1404
 msgid "Light travel delay switched off"
 msgstr "광속고려: OFF"
 
-#: ../src/celestia/celestiacore.cpp:1406
+#: ../src/celestia/celestiacore.cpp:1410
 msgid "Light travel delay ignored"
 msgstr "광속고려는 무시됩니다."
 
-#: ../src/celestia/celestiacore.cpp:1449
+#: ../src/celestia/celestiacore.cpp:1453
 msgid "Using normal surface textures."
 msgstr "일반 텍스처를 사용"
 
-#: ../src/celestia/celestiacore.cpp:1454
+#: ../src/celestia/celestiacore.cpp:1458
 msgid "Using limit of knowledge surface textures."
 msgstr "limit of knowledge 텍스처를 사용"
 
-#: ../src/celestia/celestiacore.cpp:1521
+#: ../src/celestia/celestiacore.cpp:1525
 msgid "Follow"
 msgstr "천체 추적"
 
-#: ../src/celestia/celestiacore.cpp:1546
+#: ../src/celestia/celestiacore.cpp:1550
 msgid "Time: Forward"
 msgstr "시간흐름: 순방향"
 
-#: ../src/celestia/celestiacore.cpp:1548
+#: ../src/celestia/celestiacore.cpp:1552
 msgid "Time: Backward"
 msgstr "시간흐름: 역방향"
 
-#: ../src/celestia/celestiacore.cpp:1560 ../src/celestia/celestiacore.cpp:1575
+#: ../src/celestia/celestiacore.cpp:1564 ../src/celestia/celestiacore.cpp:1579
 #, fuzzy, c-format
 msgid "Time rate: %.6g"
 msgstr "초당 프레임수:"
 
-#: ../src/celestia/celestiacore.cpp:1615
+#: ../src/celestia/celestiacore.cpp:1619
 #, fuzzy
 msgid "Low res textures"
 msgstr "보통"
 
-#: ../src/celestia/celestiacore.cpp:1618
+#: ../src/celestia/celestiacore.cpp:1622
 #, fuzzy
 msgid "Medium res textures"
 msgstr "보통"
 
-#: ../src/celestia/celestiacore.cpp:1621
+#: ../src/celestia/celestiacore.cpp:1625
 #, fuzzy
 msgid "High res textures"
 msgstr "보통"
 
-#: ../src/celestia/celestiacore.cpp:1668
+#: ../src/celestia/celestiacore.cpp:1672
 msgid "Sync Orbit"
 msgstr "자전 동기"
 
-#: ../src/celestia/celestiacore.cpp:1674
+#: ../src/celestia/celestiacore.cpp:1678
 msgid "Lock"
 msgstr "2천체 참조 동기"
 
-#: ../src/celestia/celestiacore.cpp:1680
+#: ../src/celestia/celestiacore.cpp:1684
 msgid "Chase"
 msgstr "공전 동기"
 
-#: ../src/celestia/celestiacore.cpp:1693 ../src/celestia/celestiacore.cpp:1724
+#: ../src/celestia/celestiacore.cpp:1697 ../src/celestia/celestiacore.cpp:1728
 #, fuzzy, c-format
 msgid "Magnitude limit:  %.2f"
 msgstr "한계등급: %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1704 ../src/celestia/celestiacore.cpp:1735
+#: ../src/celestia/celestiacore.cpp:1708 ../src/celestia/celestiacore.cpp:1739
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "시야 45°에서의 한계 등급: %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1754 ../src/celestia/celestiacore.cpp:1769
+#: ../src/celestia/celestiacore.cpp:1758 ../src/celestia/celestiacore.cpp:1773
 #, c-format
 msgid "Ambient light level:  %.2f"
 msgstr "주변빛의 세기:  %.2f"
 
-#: ../src/celestia/celestiacore.cpp:1780 ../src/celestia/celestiacore.cpp:1791
+#: ../src/celestia/celestiacore.cpp:1784 ../src/celestia/celestiacore.cpp:1795
 #, c-format
 msgid "Light gain"
 msgstr "광도 이득"
 
-#: ../src/celestia/celestiacore.cpp:1812
+#: ../src/celestia/celestiacore.cpp:1816
 msgid "Bloom enabled"
 msgstr "블룸 필터 적용"
 
-#: ../src/celestia/celestiacore.cpp:1814
+#: ../src/celestia/celestiacore.cpp:1818
 msgid "Bloom disabled"
 msgstr "블룸 필터 해제"
 
-#: ../src/celestia/celestiacore.cpp:1820 ../src/celestia/celestiacore.cpp:1828
+#: ../src/celestia/celestiacore.cpp:1824 ../src/celestia/celestiacore.cpp:1832
 #, c-format
 msgid "Exposure"
 msgstr "노출"
 
-#: ../src/celestia/celestiacore.cpp:2150
+#: ../src/celestia/celestiacore.cpp:2154
 msgid "GL error: "
 msgstr "GL에러: "
 
-#: ../src/celestia/celestiacore.cpp:2299
+#: ../src/celestia/celestiacore.cpp:2303
 msgid "View too small to be split"
 msgstr "화면이 너무 작습니다."
 
-#: ../src/celestia/celestiacore.cpp:2319
+#: ../src/celestia/celestiacore.cpp:2323
 msgid "Added view"
 msgstr "화면 분할"
 
-#: ../src/celestia/celestiacore.cpp:2495
+#: ../src/celestia/celestiacore.cpp:2499
 msgid "Mpc"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2500
+#: ../src/celestia/celestiacore.cpp:2504
 msgid "kpc"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2505
+#: ../src/celestia/celestiacore.cpp:2509
 #: ../src/celestia/qt/qtselectionpopup.cpp:108
 msgid "ly"
 msgstr "광년"
 
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:194
 #. i18n: ectx: property (text), widget (QRadioButton, auButton)
-#: ../src/celestia/celestiacore.cpp:2509
+#: ../src/celestia/celestiacore.cpp:2513
 #: ../src/celestia/qt/qtselectionpopup.cpp:110 ../src/celestia/qt/rc.cpp:36
 #: ../src/celestia/win32/res/resource_strings.cpp:125
 msgid "au"
 msgstr "AU"
 
+#: ../src/celestia/celestiacore.cpp:2520
+#, fuzzy
+msgid "mi"
+msgstr " m/s"
+
+#: ../src/celestia/celestiacore.cpp:2525
+msgid "ft"
+msgstr ""
+
 #. i18n: file: ../src/celestia/qt/gotoobjectdialog.ui:180
 #. i18n: ectx: property (text), widget (QRadioButton, kmButton)
-#: ../src/celestia/celestiacore.cpp:2514 ../src/celestia/qt/qtinfopanel.cpp:121
-#: ../src/celestia/qt/qtinfopanel.cpp:235 ../src/celestia/qt/rc.cpp:30
+#: ../src/celestia/celestiacore.cpp:2533 ../src/celestia/qt/qtinfopanel.cpp:122
+#: ../src/celestia/qt/qtinfopanel.cpp:236 ../src/celestia/qt/rc.cpp:30
 #: ../src/celestia/win32/res/resource_strings.cpp:123
 msgid "km"
 msgstr "km"
 
-#: ../src/celestia/celestiacore.cpp:2520 ../src/celestia/qt/qtinfopanel.cpp:125
+#: ../src/celestia/celestiacore.cpp:2538 ../src/celestia/qt/qtinfopanel.cpp:126
 #, fuzzy
 msgid "m"
 msgstr " m/s"
 
-#: ../src/celestia/celestiacore.cpp:2543 ../src/celestia/qt/qtinfopanel.cpp:169
-#: ../src/celestia/qt/qtinfopanel.cpp:197
-#: ../src/celestia/qt/qtinfopanel.cpp:247
+#: ../src/celestia/celestiacore.cpp:2561 ../src/celestia/qt/qtinfopanel.cpp:170
+#: ../src/celestia/qt/qtinfopanel.cpp:198
+#: ../src/celestia/qt/qtinfopanel.cpp:248
 #, fuzzy
 msgid "days"
 msgstr " 일"
 
-#: ../src/celestia/celestiacore.cpp:2548 ../src/celestia/qt/qtinfopanel.cpp:165
-#: ../src/celestia/qt/qtinfopanel.cpp:193
+#: ../src/celestia/celestiacore.cpp:2566 ../src/celestia/qt/qtinfopanel.cpp:166
+#: ../src/celestia/qt/qtinfopanel.cpp:194
 #, fuzzy
 msgid "hours"
 msgstr " 시간"
 
-#: ../src/celestia/celestiacore.cpp:2553
+#: ../src/celestia/celestiacore.cpp:2571
 #, fuzzy
 msgid "minutes"
 msgstr " 분"
 
-#: ../src/celestia/celestiacore.cpp:2558
+#: ../src/celestia/celestiacore.cpp:2576
 #, fuzzy
 msgid "seconds"
 msgstr " 초"
 
-#: ../src/celestia/celestiacore.cpp:2561
+#: ../src/celestia/celestiacore.cpp:2579
 #, fuzzy, c-format
 msgid "Rotation period: %s %s\n"
 msgstr "자전주기: "
 
-#: ../src/celestia/celestiacore.cpp:2567
+#: ../src/celestia/celestiacore.cpp:2587
+#, c-format
+msgid "Mass: %.6g lb\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2589
 #, c-format
 msgid "Mass: %.6g kg\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2569
+#: ../src/celestia/celestiacore.cpp:2592
 #, c-format
 msgid "Mass: %.2f Mj\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2571
+#: ../src/celestia/celestiacore.cpp:2594
 #, c-format
 msgid "Mass: %.2f Me\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2582
-#, fuzzy
-msgid "m/s"
-msgstr " m/s"
-
-#: ../src/celestia/celestiacore.cpp:2587
-#, fuzzy
-msgid "km/s"
-msgstr " km/s"
-
-#: ../src/celestia/celestiacore.cpp:2597
-#, fuzzy
-msgid "AU/s"
-msgstr " AU/s"
-
-#: ../src/celestia/celestiacore.cpp:2602
+#: ../src/celestia/celestiacore.cpp:2605
 #, fuzzy
 msgid "ly/s"
 msgstr " ly/s"
 
-#: ../src/celestia/celestiacore.cpp:2605
+#: ../src/celestia/celestiacore.cpp:2610
+#, fuzzy
+msgid "AU/s"
+msgstr " AU/s"
+
+#: ../src/celestia/celestiacore.cpp:2622
+msgid "mi/s"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2627
+msgid "ft/s"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2635
+#, fuzzy
+msgid "km/s"
+msgstr " km/s"
+
+#: ../src/celestia/celestiacore.cpp:2640
+#, fuzzy
+msgid "m/s"
+msgstr " m/s"
+
+#: ../src/celestia/celestiacore.cpp:2643
 #, fuzzy, c-format
 msgid "Speed: %s %s\n"
 msgstr ""
 "\n"
 "속도: "
 
-#: ../src/celestia/celestiacore.cpp:2639
+#: ../src/celestia/celestiacore.cpp:2677
 #, c-format, qt-format
 msgid "Dec: %+d%s %02d' %.1f\"\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2651
+#: ../src/celestia/celestiacore.cpp:2689
 #, c-format, qt-format
 msgid "RA: %dh %02dm %.1fs\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2667
+#: ../src/celestia/celestiacore.cpp:2705
 #, fuzzy, c-format
 msgid "Apparent diameter: %s\n"
 msgstr "시직경: "
 
-#: ../src/celestia/celestiacore.cpp:2680
+#: ../src/celestia/celestiacore.cpp:2718
 #, fuzzy, c-format
 msgid "Apparent magnitude: %.1f\n"
 msgstr "겉보기 등급: "
 
-#: ../src/celestia/celestiacore.cpp:2684
+#: ../src/celestia/celestiacore.cpp:2722
 #, fuzzy, c-format
 msgid "Absolute magnitude: %.1f\n"
 msgstr "절대등급: "
 
-#: ../src/celestia/celestiacore.cpp:2764
+#: ../src/celestia/celestiacore.cpp:2803
 #, c-format
-msgid "%.6f%c %.6f%c %f km"
+msgid "%.6f%c %.6f%c %s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2790 ../src/celestia/celestiacore.cpp:2862
-#: ../src/celestia/celestiacore.cpp:2891 ../src/celestia/celestiacore.cpp:2966
+#: ../src/celestia/celestiacore.cpp:2830 ../src/celestia/celestiacore.cpp:2902
+#: ../src/celestia/celestiacore.cpp:2932 ../src/celestia/celestiacore.cpp:3013
 #, fuzzy, c-format
 msgid "Distance: %s\n"
 msgstr "거리: "
 
-#: ../src/celestia/celestiacore.cpp:2794
+#: ../src/celestia/celestiacore.cpp:2834
 msgid "Star system barycenter\n"
 msgstr "중심\n"
 
-#: ../src/celestia/celestiacore.cpp:2798
+#: ../src/celestia/celestiacore.cpp:2838
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "절대등급: %.2f 겉보기 등급: %.2f\n"
 
-#: ../src/celestia/celestiacore.cpp:2803
+#: ../src/celestia/celestiacore.cpp:2843
 #, fuzzy, c-format
 msgid "Luminosity: %sx Sun\n"
 msgstr "밝기: "
 
-#: ../src/celestia/celestiacore.cpp:2809
+#: ../src/celestia/celestiacore.cpp:2849
 msgid "Neutron star"
 msgstr "중성자 별"
 
-#: ../src/celestia/celestiacore.cpp:2812
+#: ../src/celestia/celestiacore.cpp:2852
 msgid "Black hole"
 msgstr "블랙홀"
 
-#: ../src/celestia/celestiacore.cpp:2817
+#: ../src/celestia/celestiacore.cpp:2857
 #, fuzzy, c-format
 msgid "Class: %s\n"
 msgstr "분광형: "
 
-#: ../src/celestia/celestiacore.cpp:2824
+#: ../src/celestia/celestiacore.cpp:2864
 #, fuzzy, c-format
 msgid "Surface temp: %s K\n"
 msgstr "표면온도: "
 
-#: ../src/celestia/celestiacore.cpp:2829
+#: ../src/celestia/celestiacore.cpp:2869
 #, fuzzy, c-format
-msgid "Radius: %s Rsun  (%s km)\n"
+msgid "Radius: %s Rsun  (%s)\n"
 msgstr "반지름: "
 
-#: ../src/celestia/celestiacore.cpp:2835
-#, fuzzy, c-format
-msgid "Radius: %s km\n"
-msgstr "반지름: "
-
-#: ../src/celestia/celestiacore.cpp:2851
-msgid "Planetary companions present\n"
-msgstr "행성 존재\n"
-
-#: ../src/celestia/celestiacore.cpp:2867
-#, fuzzy, c-format
-msgid "Distance from center: %s\n"
-msgstr "중심에서의 거리: "
-
-#: ../src/celestia/celestiacore.cpp:2870 ../src/celestia/celestiacore.cpp:2898
+#: ../src/celestia/celestiacore.cpp:2875 ../src/celestia/celestiacore.cpp:2910
+#: ../src/celestia/celestiacore.cpp:2939
 #, fuzzy, c-format
 msgid "Radius: %s\n"
 msgstr "반지름: "
 
-#: ../src/celestia/celestiacore.cpp:2939
+#: ../src/celestia/celestiacore.cpp:2891
+msgid "Planetary companions present\n"
+msgstr "행성 존재\n"
+
+#: ../src/celestia/celestiacore.cpp:2907
+#, fuzzy, c-format
+msgid "Distance from center: %s\n"
+msgstr "중심에서의 거리: "
+
+#: ../src/celestia/celestiacore.cpp:2980
 #, c-format
 msgid "Phase angle: %.1f%s\n"
 msgstr "위상각: : %.1f%s\n"
 
-#: ../src/celestia/celestiacore.cpp:2953
+#: ../src/celestia/celestiacore.cpp:2996
+#, c-format
+msgid "Density: %.2f x 1000 lb/ft^3\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:2998
 #, c-format
 msgid "Density: %.2f x 1000 kg/m^3\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:2957
+#: ../src/celestia/celestiacore.cpp:3003
 #, fuzzy, c-format
 msgid "Temperature: %.0f K\n"
 msgstr "온도: "
 
-#: ../src/celestia/celestiacore.cpp:3109
+#: ../src/celestia/celestiacore.cpp:3156
 msgid "  LT"
 msgstr "  광속"
 
-#: ../src/celestia/celestiacore.cpp:3118
+#: ../src/celestia/celestiacore.cpp:3165
 #: ../src/celestia/qt/qttimetoolbar.cpp:39
 #: ../src/celestia/qt/qttimetoolbar.cpp:54
 msgid "Real time"
 msgstr "실시간"
 
-#: ../src/celestia/celestiacore.cpp:3120
+#: ../src/celestia/celestiacore.cpp:3167
 msgid "-Real time"
 msgstr "-실시간"
 
-#: ../src/celestia/celestiacore.cpp:3124
+#: ../src/celestia/celestiacore.cpp:3171
 msgid "Time stopped"
 msgstr "시간멈춤"
 
-#: ../src/celestia/celestiacore.cpp:3128
+#: ../src/celestia/celestiacore.cpp:3175
 #, fuzzy, c-format
 msgid "%.6g x faster"
 msgstr " 배속"
 
-#: ../src/celestia/celestiacore.cpp:3132
+#: ../src/celestia/celestiacore.cpp:3179
 #, fuzzy, c-format
 msgid "%.6g x slower"
 msgstr " 분의 1배속"
 
-#: ../src/celestia/celestiacore.cpp:3138
+#: ../src/celestia/celestiacore.cpp:3185
 msgid " (Paused)"
 msgstr "(멈춤)"
 
-#: ../src/celestia/celestiacore.cpp:3157
+#: ../src/celestia/celestiacore.cpp:3204
 #, c-format
 msgid ""
 "FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : "
 "%zu : %zu ]\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3166
+#: ../src/celestia/celestiacore.cpp:3213
 #, fuzzy, c-format
 msgid "FPS: %.1f\n"
 msgstr "FPS: "
 
-#: ../src/celestia/celestiacore.cpp:3191
+#: ../src/celestia/celestiacore.cpp:3238
 #, fuzzy, c-format
 msgid "Travelling (%s)\n"
 msgstr "이동중 "
 
-#: ../src/celestia/celestiacore.cpp:3194
+#: ../src/celestia/celestiacore.cpp:3241
 #, fuzzy, c-format
 msgid "Travelling\n"
 msgstr "이동중 "
 
-#: ../src/celestia/celestiacore.cpp:3203
+#: ../src/celestia/celestiacore.cpp:3250
 #, fuzzy, c-format
 msgid "Track %s\n"
 msgstr "화면중앙에 유지: "
 
-#: ../src/celestia/celestiacore.cpp:3219
+#: ../src/celestia/celestiacore.cpp:3266
 #, fuzzy, c-format
 msgid "Follow %s\n"
 msgstr "추적: "
 
-#: ../src/celestia/celestiacore.cpp:3223
+#: ../src/celestia/celestiacore.cpp:3270
 #, fuzzy, c-format
 msgid "Sync Orbit %s\n"
 msgstr "자전 동기: "
 
-#: ../src/celestia/celestiacore.cpp:3227
+#: ../src/celestia/celestiacore.cpp:3274
 #, c-format
 msgid "Lock %s -> %s\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3233
+#: ../src/celestia/celestiacore.cpp:3280
 #, fuzzy, c-format
 msgid "Chase %s\n"
 msgstr "공전 동기: "
 
-#: ../src/celestia/celestiacore.cpp:3247
+#: ../src/celestia/celestiacore.cpp:3294
 #, c-format
 msgid "FOV: %s (%.2fx)\n"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3275 ../src/celestia/celestiacore.cpp:3278
-msgid "Sun"
-msgstr "태양"
-
-#: ../src/celestia/celestiacore.cpp:3452
+#: ../src/celestia/celestiacore.cpp:3488
 #, fuzzy, c-format
 msgid "Target name: %s"
 msgstr "천체명을 입력하세요: "
 
-#: ../src/celestia/celestiacore.cpp:3539
+#: ../src/celestia/celestiacore.cpp:3575
 #, c-format
-msgid "%dx%d at %f fps  %s"
+msgid "%dx%d at %.2f fps  %s"
 msgstr ""
 
-#: ../src/celestia/celestiacore.cpp:3542
+#: ../src/celestia/celestiacore.cpp:3578
 #, fuzzy
 msgid "Paused"
 msgstr " 멈춤"
 
-#: ../src/celestia/celestiacore.cpp:3542
+#: ../src/celestia/celestiacore.cpp:3578
 #, fuzzy
 msgid "Recording"
 msgstr " 동영상 저장중"
 
-#: ../src/celestia/celestiacore.cpp:3563
+#: ../src/celestia/celestiacore.cpp:3599
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 녹화시작/일시정지    F12 정지"
 
-#: ../src/celestia/celestiacore.cpp:3574 ../src/celestia/celestiacore.cpp:3579
+#: ../src/celestia/celestiacore.cpp:3610 ../src/celestia/celestiacore.cpp:3615
 msgid "Edit Mode"
 msgstr "편집 모드"
 
-#: ../src/celestia/celestiacore.cpp:3612
+#: ../src/celestia/celestiacore.cpp:3648
 #, fuzzy, c-format
 msgid "Skipping solar system catalog: %s\n"
 msgstr "항성계 카탈로그 로딩중: "
 
-#: ../src/celestia/celestiacore.cpp:3615
+#: ../src/celestia/celestiacore.cpp:3651
 #, fuzzy, c-format
 msgid "Loading solar system catalog: %s\n"
 msgstr "항성계 카탈로그 로딩중: "
 
-#: ../src/celestia/celestiacore.cpp:3658
+#: ../src/celestia/celestiacore.cpp:3694
 #, fuzzy, c-format
 msgid "Skipping %s catalog: %s\n"
 msgstr "항성계 카탈로그 로딩중: "
 
-#: ../src/celestia/celestiacore.cpp:3661
+#: ../src/celestia/celestiacore.cpp:3697
 #, fuzzy, c-format
 msgid "Loading %s catalog: %s\n"
 msgstr "항성계 카탈로그 로딩중: "
 
-#: ../src/celestia/celestiacore.cpp:3697
+#: ../src/celestia/celestiacore.cpp:3733
 msgid "Error reading configuration file."
 msgstr "설정 파일 읽는 중 오류가 발생했습니다."
 
-#: ../src/celestia/celestiacore.cpp:3708
+#: ../src/celestia/celestiacore.cpp:3744
 msgid "Initialization of SPICE library failed."
 msgstr "SPICE 라이브러리 초기화에 실패했습니다."
 
-#: ../src/celestia/celestiacore.cpp:3751
+#: ../src/celestia/celestiacore.cpp:3787
 msgid "Cannot read star database."
 msgstr "항성 데이타베이스를 읽을 수 없습니다."
 
-#: ../src/celestia/celestiacore.cpp:3772
+#: ../src/celestia/celestiacore.cpp:3808
 #, fuzzy, c-format
 msgid "Error opening deepsky catalog file %s.\n"
 msgstr "항성 카탈로그 파일 읽는 중 에러: "
 
-#: ../src/celestia/celestiacore.cpp:3776
+#: ../src/celestia/celestiacore.cpp:3812
 #, fuzzy, c-format
 msgid "Cannot read Deep Sky Objects database %s.\n"
 msgstr "항성 데이타베이스를 읽을 수 없습니다."
 
-#: ../src/celestia/celestiacore.cpp:3821
+#: ../src/celestia/celestiacore.cpp:3861
 #, fuzzy, c-format
 msgid "Error opening solar system catalog %s.\n"
 msgstr "항성계 카탈로그의 여는 중 오류 발생.\n"
 
-#: ../src/celestia/celestiacore.cpp:3858
+#: ../src/celestia/celestiacore.cpp:3901
 #, fuzzy, c-format
 msgid "Error opening asterisms file %s.\n"
 msgstr "별자리 파일 여는 중 오류가 발생했습니다."
 
-#: ../src/celestia/celestiacore.cpp:3874
+#: ../src/celestia/celestiacore.cpp:3917
 #, fuzzy, c-format
 msgid "Error opening constellation boundaries file %s.\n"
 msgstr "별자리 경계선 파일을 여는 중 오류가 발생"
 
-#: ../src/celestia/celestiacore.cpp:3997
+#: ../src/celestia/celestiacore.cpp:4050
 msgid "Failed to initialize renderer"
 msgstr "렌더링 엔진 초기화 실패"
 
-#: ../src/celestia/celestiacore.cpp:4013
+#: ../src/celestia/celestiacore.cpp:4066
 msgid "Error loading font; text will not be visible.\n"
 msgstr "폰트 읽기 에러, 텍스트가 표시되지 않습니다.\n"
 
-#: ../src/celestia/celestiacore.cpp:4061
+#: ../src/celestia/celestiacore.cpp:4114
 #, fuzzy, c-format
 msgid "Error reading cross index %s\n"
 msgstr "크로스 인덱스 파일 읽기 에러: "
 
-#: ../src/celestia/celestiacore.cpp:4063
+#: ../src/celestia/celestiacore.cpp:4116
 #, fuzzy, c-format
 msgid "Loaded cross index %s\n"
 msgstr "크로스 인덱스 파일 읽음: "
 
-#: ../src/celestia/celestiacore.cpp:4080
+#: ../src/celestia/celestiacore.cpp:4133
 msgid "Error reading star names file\n"
 msgstr "항성이름 파일 읽는 중 에러\n"
 
-#: ../src/celestia/celestiacore.cpp:4084 ../src/celestia/celestiacore.cpp:4098
+#: ../src/celestia/celestiacore.cpp:4137 ../src/celestia/celestiacore.cpp:4151
 #, fuzzy, c-format
 msgid "Error opening %s\n"
 msgstr "파일 열기 오류: "
 
-#: ../src/celestia/celestiacore.cpp:4106
+#: ../src/celestia/celestiacore.cpp:4159
 msgid "Error reading stars file\n"
 msgstr "항성 파일 읽는 중 에러\n"
 
-#: ../src/celestia/celestiacore.cpp:4132
+#: ../src/celestia/celestiacore.cpp:4185
 #, fuzzy, c-format
 msgid "Error opening star catalog %s\n"
 msgstr "항성 카탈로그 파일 읽는 중 에러: "
 
-#: ../src/celestia/celestiacore.cpp:4466
+#: ../src/celestia/celestiacore.cpp:4543
 msgid "Invalid URL"
 msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:4768
+msgid "Unable to capture a frame!\n"
+msgstr ""
+
+#: ../src/celestia/celestiacore.cpp:4780
+#, fuzzy
+msgid "Unsupported image type: {}!\n"
+msgstr "지원되는 확장"
 
 #: ../src/celestia/glut/glutmain.cpp:522
 msgid "Celestia was unable to initialize OpenGL 2.1.\n"
 msgstr ""
 
-#: ../src/celestia/gtk/actions.cpp:1030 ../src/celestia/win32/winmain.cpp:2639
+#: ../src/celestia/gtk/actions.cpp:1095 ../src/celestia/win32/winmain.cpp:2661
 msgid "Please use a name ending in '.jpg' or '.png'."
 msgstr ""
 
@@ -2403,10 +4584,6 @@ msgstr ""
 msgid "Max anisotropy filtering: %s\n"
 msgstr ""
 
-#: ../src/celestia/imagecapture.cpp:49
-msgid "Unable to capture a frame!\n"
-msgstr ""
-
 #: ../src/celestia/oggtheoracapture.cpp:161
 #, c-format
 msgid "Error in creating ogg file %s for capture.\n"
@@ -2433,36 +4610,36 @@ msgstr ""
 msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
 msgstr "OggTheoraCapture::cleanup() - %d 프레임 저장되었습니다.\n"
 
-#: ../src/celestia/qt/qtappwin.cpp:159
+#: ../src/celestia/qt/qtappwin.cpp:169
 msgid "Auto"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:165
+#: ../src/celestia/qt/qtappwin.cpp:175
 msgid "Custom"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:217
+#: ../src/celestia/qt/qtappwin.cpp:214
+msgid "Error getting path for log filename!"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:231
 msgid ""
 "Celestia is unable to run because the data directory was not found, probably "
 "due to improper installation."
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:272
-msgid "Celestia was unable to initialize OpenGL 2.1."
-msgstr ""
-
-#: ../src/celestia/qt/qtappwin.cpp:290
+#: ../src/celestia/qt/qtappwin.cpp:297
 msgid "Celestial Browser"
 msgstr "천체브라우저"
 
 #. Info browser for a selected object
-#: ../src/celestia/qt/qtappwin.cpp:296
+#: ../src/celestia/qt/qtappwin.cpp:303
 #, fuzzy
 msgid "Info Browser"
 msgstr "천체브라우저"
 
 #. Set up the browser tabs
-#: ../src/celestia/qt/qtappwin.cpp:325
+#: ../src/celestia/qt/qtappwin.cpp:332
 #: ../src/celestia/win32/res/resource_strings.cpp:172
 msgid "Solar System"
 msgstr "태양계"
@@ -2473,20 +4650,20 @@ msgstr "태양계"
 #. i18n: ectx: property (text), widget (QCheckBox, starOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:499
 #. i18n: ectx: property (text), widget (QCheckBox, starLabelsCheck)
-#: ../src/celestia/qt/qtappwin.cpp:326
-#: ../src/celestia/qt/qtcelestiaactions.cpp:83
-#: ../src/celestia/qt/qtcelestiaactions.cpp:110 ../src/celestia/qt/rc.cpp:72
+#: ../src/celestia/qt/qtappwin.cpp:333
+#: ../src/celestia/qt/qtcelestiaactions.cpp:84
+#: ../src/celestia/qt/qtcelestiaactions.cpp:111 ../src/celestia/qt/rc.cpp:72
 #: ../src/celestia/qt/rc.cpp:154 ../src/celestia/qt/rc.cpp:221
 #: ../src/celestia/win32/res/resource_strings.cpp:212
 msgid "Stars"
 msgstr "항성"
 
-#: ../src/celestia/qt/qtappwin.cpp:327
+#: ../src/celestia/qt/qtappwin.cpp:334
 #, fuzzy
 msgid "Deep Sky Objects"
 msgstr " 먼 우주 천체(DSO)"
 
-#: ../src/celestia/qt/qtappwin.cpp:334 ../src/celestia/qt/qteventfinder.cpp:335
+#: ../src/celestia/qt/qtappwin.cpp:341 ../src/celestia/qt/qteventfinder.cpp:335
 #: ../src/celestia/qt/qteventfinder.cpp:345
 #, fuzzy
 msgid "Event Finder"
@@ -2496,106 +4673,123 @@ msgstr "식 찾기"
 #. Create the time toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:1034
 #. i18n: ectx: attribute (title), widget (QWidget, timeTab)
-#: ../src/celestia/qt/qtappwin.cpp:343 ../src/celestia/qt/rc.cpp:351
+#: ../src/celestia/qt/qtappwin.cpp:350 ../src/celestia/qt/rc.cpp:351
 msgid "Time"
 msgstr "현재 시각"
 
 #. Create the guides toolbar
 #. i18n: file: ../src/celestia/qt/preferences.ui:228
 #. i18n: ectx: attribute (title), widget (QWidget, guidesTab)
-#: ../src/celestia/qt/qtappwin.cpp:350 ../src/celestia/qt/rc.cpp:139
+#: ../src/celestia/qt/qtappwin.cpp:357 ../src/celestia/qt/rc.cpp:139
 #, fuzzy
 msgid "Guides"
 msgstr "길잡이"
 
-#: ../src/celestia/qt/qtappwin.cpp:400
+#: ../src/celestia/qt/qtappwin.cpp:407
 #, fuzzy
 msgid "Full screen"
 msgstr "전체화면"
 
-#: ../src/celestia/qt/qtappwin.cpp:402
+#: ../src/celestia/qt/qtappwin.cpp:409
 #, fuzzy
 msgid "Shift+F11"
 msgstr "동영상 캡춰(&M)...\tShift+F10"
 
-#: ../src/celestia/qt/qtappwin.cpp:558
+#: ../src/celestia/qt/qtappwin.cpp:564
 #, fuzzy
 msgid "Error opening bookmarks file"
 msgstr "별자리 파일 여는 중 오류가 발생했습니다."
 
-#: ../src/celestia/qt/qtappwin.cpp:577
+#: ../src/celestia/qt/qtappwin.cpp:583
 #, fuzzy
 msgid "Error Saving Bookmarks"
 msgstr "북마크 추가(&A)"
 
-#: ../src/celestia/qt/qtappwin.cpp:619
+#: ../src/celestia/qt/qtappwin.cpp:620
 #, fuzzy
 msgid "Save Image"
 msgstr "다른 이름으로 저장:"
 
-#: ../src/celestia/qt/qtappwin.cpp:621
+#: ../src/celestia/qt/qtappwin.cpp:622
 #, fuzzy
 msgid "Images (*.png *.jpg)"
 msgstr " 는 PNG파일이 아닙니다.\n"
 
-#: ../src/celestia/qt/qtappwin.cpp:669 ../src/celestia/qt/qtappwin.cpp:674
+#: ../src/celestia/qt/qtappwin.cpp:647 ../src/celestia/qt/qtappwin.cpp:652
+#: ../src/celestia/qt/qtappwin.cpp:665
 msgid "Capture Video"
 msgstr "비디오 캡춰"
 
-#: ../src/celestia/qt/qtappwin.cpp:671
+#: ../src/celestia/qt/qtappwin.cpp:649
 #, fuzzy
 msgid "Video (*.avi)"
 msgstr "비디오 캡춰"
 
-#: ../src/celestia/qt/qtappwin.cpp:676
+#: ../src/celestia/qt/qtappwin.cpp:654
 #, fuzzy
-msgid "Video (*.ogv)"
+msgid "Matroska Video (*.mkv)"
 msgstr "비디오 캡춰"
 
-#: ../src/celestia/qt/qtappwin.cpp:686
+#: ../src/celestia/qt/qtappwin.cpp:670
 #, fuzzy
 msgid "Resolution:"
 msgstr "해상도"
 
-#: ../src/celestia/qt/qtappwin.cpp:690
+#: ../src/celestia/qt/qtappwin.cpp:673
 #, qt-format
 msgid "%1 x %2"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:694
+#: ../src/celestia/qt/qtappwin.cpp:676
 #: ../src/celestia/win32/res/resource_strings.cpp:152
 #, fuzzy
 msgid "Frame rate:"
 msgstr "초당 프레임수:"
 
-#: ../src/celestia/qt/qtappwin.cpp:741
+#: ../src/celestia/qt/qtappwin.cpp:683
+msgid "Video codec:"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:685
+msgid "Lossless"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:686
+msgid "Lossy (H.264)"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:690
+msgid "Bitrate:"
+msgstr ""
+
+#: ../src/celestia/qt/qtappwin.cpp:763
 msgid "Captured screen shot to clipboard"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:752 ../src/celestia/win32/winmain.cpp:3786
+#: ../src/celestia/qt/qtappwin.cpp:774 ../src/celestia/win32/winmain.cpp:3808
 msgid "Copied URL"
 msgstr "URL 복사"
 
-#: ../src/celestia/qt/qtappwin.cpp:762
+#: ../src/celestia/qt/qtappwin.cpp:784
 #, fuzzy
 msgid "Pasting URL"
 msgstr "URL 로딩중"
 
-#: ../src/celestia/qt/qtappwin.cpp:886
+#: ../src/celestia/qt/qtappwin.cpp:908
 #, fuzzy
 msgid "Open Script"
 msgstr "스크립트 열기(&O)..."
 
-#: ../src/celestia/qt/qtappwin.cpp:888
+#: ../src/celestia/qt/qtappwin.cpp:910
 msgid "Celestia Scripts (*.celx *.cel)"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:958
+#: ../src/celestia/qt/qtappwin.cpp:1023
 #, fuzzy
 msgid "New bookmark"
 msgstr "메뉴에 새 폴더 추가"
 
-#: ../src/celestia/qt/qtappwin.cpp:1013
+#: ../src/celestia/qt/qtappwin.cpp:1078
 #, qt-format
 msgid ""
 "<html><h1>Celestia 1.7</h1><p>Development snapshot, commit <b>%1</b>.</"
@@ -2611,349 +4805,349 @@ msgid ""
 "\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1048
+#: ../src/celestia/qt/qtappwin.cpp:1113
 #, fuzzy
 msgid "Unknown compiler"
 msgstr "스크립트 파일 여는 중 알수없는 오류가 발생하였습니다."
 
-#: ../src/celestia/qt/qtappwin.cpp:1052
+#: ../src/celestia/qt/qtappwin.cpp:1117
 #, fuzzy
 msgid "supported"
 msgstr "지원되는 확장"
 
-#: ../src/celestia/qt/qtappwin.cpp:1054
+#: ../src/celestia/qt/qtappwin.cpp:1119
 #, fuzzy
 msgid "not supported"
 msgstr "지원되는 확장"
 
-#: ../src/celestia/qt/qtappwin.cpp:1057 ../src/celestia/qt/qtappwin.cpp:1452
+#: ../src/celestia/qt/qtappwin.cpp:1122 ../src/celestia/qt/qtappwin.cpp:1516
 #: ../src/celestia/win32/res/resource_strings.cpp:70
 msgid "About Celestia"
 msgstr "셀레스티아에 대하여"
 
-#: ../src/celestia/qt/qtappwin.cpp:1076
+#: ../src/celestia/qt/qtappwin.cpp:1141
 #, fuzzy, qt-format
 msgid "<b>%1 version:</b> %2"
 msgstr "<b>OpenGL 2.0 Shading Language</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1082
+#: ../src/celestia/qt/qtappwin.cpp:1147
 #, fuzzy, qt-format
 msgid "<b>Vendor:</b> %1"
 msgstr "<b>미확장 OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1088
+#: ../src/celestia/qt/qtappwin.cpp:1153
 #, fuzzy, qt-format
 msgid "<b>Renderer:</b> %1"
 msgstr "<b>미확장 OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1095
+#: ../src/celestia/qt/qtappwin.cpp:1160
 #, fuzzy, qt-format
 msgid "<b>%1 Version:</b> %2"
 msgstr "GLSL 버전: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1102
+#: ../src/celestia/qt/qtappwin.cpp:1167
 #, fuzzy, qt-format
 msgid "<b>Max simultaneous textures:</b> %1"
 msgstr "최대 동시 텍스처수"
 
-#: ../src/celestia/qt/qtappwin.cpp:1108
+#: ../src/celestia/qt/qtappwin.cpp:1173
 #, fuzzy, qt-format
 msgid "<b>Maximum texture size:</b> %1"
 msgstr "최대 텍스처 크기: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1114
+#: ../src/celestia/qt/qtappwin.cpp:1179
 #, fuzzy, qt-format
 msgid "<b>Point size range:</b> %1 - %2"
 msgstr "포인트 크기 범위"
 
-#: ../src/celestia/qt/qtappwin.cpp:1120
+#: ../src/celestia/qt/qtappwin.cpp:1185
 #, fuzzy, qt-format
 msgid "<b>Point size granularity:</b> %1"
 msgstr "포인트 크기 범위"
 
-#: ../src/celestia/qt/qtappwin.cpp:1126
+#: ../src/celestia/qt/qtappwin.cpp:1191
 #, fuzzy, qt-format
 msgid "<b>Max cube map size:</b> %1"
 msgstr "최대 큐브 맵 크기: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1132
+#: ../src/celestia/qt/qtappwin.cpp:1197
 #, fuzzy, qt-format
 msgid "<b>Number of interpolators:</b> %1"
 msgstr "적도"
 
-#: ../src/celestia/qt/qtappwin.cpp:1138
+#: ../src/celestia/qt/qtappwin.cpp:1203
 #, qt-format
 msgid "<b>Max anisotropy filtering:</b> %1"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1148
+#: ../src/celestia/qt/qtappwin.cpp:1213
 #, fuzzy
 msgid "<b>Supported extensions:</b><br>\n"
 msgstr "<b>미확장 OpenGL 1.1</b>"
 
-#: ../src/celestia/qt/qtappwin.cpp:1162
+#: ../src/celestia/qt/qtappwin.cpp:1227
 #, fuzzy
 msgid "Renderer Info"
 msgstr "렌더링 엔진:"
 
 #. ***** File menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1186
+#: ../src/celestia/qt/qtappwin.cpp:1251
 #: ../src/celestia/win32/res/resource_strings.cpp:1
 msgid "&File"
 msgstr "파일(&F)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1189
+#: ../src/celestia/qt/qtappwin.cpp:1254
 #, fuzzy
 msgid "&Grab image"
 msgstr "이미지 캡춰"
 
-#: ../src/celestia/qt/qtappwin.cpp:1190
+#: ../src/celestia/qt/qtappwin.cpp:1255
 #, fuzzy
 msgid "F10"
 msgstr "이미지 캡춰(&I)...\tF10"
 
-#: ../src/celestia/qt/qtappwin.cpp:1195
+#: ../src/celestia/qt/qtappwin.cpp:1260
 #, fuzzy
 msgid "Capture &video"
 msgstr "비디오 캡춰"
 
-#: ../src/celestia/qt/qtappwin.cpp:1200
+#: ../src/celestia/qt/qtappwin.cpp:1264
 #, fuzzy
 msgid "Shift+F10"
 msgstr "동영상 캡춰(&M)...\tShift+F10"
 
-#: ../src/celestia/qt/qtappwin.cpp:1204
+#: ../src/celestia/qt/qtappwin.cpp:1268
 #, fuzzy
 msgid "&Copy image"
 msgstr "URL 복사"
 
-#: ../src/celestia/qt/qtappwin.cpp:1205
+#: ../src/celestia/qt/qtappwin.cpp:1269
 #, fuzzy
 msgid "Ctrl+Shift+C"
 msgstr "Alt+C"
 
-#: ../src/celestia/qt/qtappwin.cpp:1211
+#: ../src/celestia/qt/qtappwin.cpp:1275
 #: ../src/celestia/win32/res/resource_strings.cpp:2
 msgid "&Open Script..."
 msgstr "스크립트 열기(&O)..."
 
-#: ../src/celestia/qt/qtappwin.cpp:1222
+#: ../src/celestia/qt/qtappwin.cpp:1286
 #, fuzzy
 msgid "&Preferences..."
 msgstr "셀레스티아 설정"
 
-#: ../src/celestia/qt/qtappwin.cpp:1226
+#: ../src/celestia/qt/qtappwin.cpp:1290
 #: ../src/celestia/win32/res/resource_strings.cpp:7
 msgid "E&xit"
 msgstr "종료(&X)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1227
+#: ../src/celestia/qt/qtappwin.cpp:1291
 #, fuzzy
 msgid "Ctrl+Q"
 msgstr "앤티앨리어싱\tCtrl+X"
 
 #. ***** Navigation menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1232
+#: ../src/celestia/qt/qtappwin.cpp:1296
 #: ../src/celestia/win32/res/resource_strings.cpp:8
 msgid "&Navigation"
 msgstr "네비게이션(&N)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1234
+#: ../src/celestia/qt/qtappwin.cpp:1298
 #, fuzzy
 msgid "Select Sun"
 msgstr "천체 선택(&S)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1238
+#: ../src/celestia/qt/qtappwin.cpp:1302
 #, fuzzy
 msgid "Center Selection"
 msgstr "선택한 천체를 가운데로(&C)\tC"
 
-#: ../src/celestia/qt/qtappwin.cpp:1242
+#: ../src/celestia/qt/qtappwin.cpp:1306
 #, fuzzy
 msgid "Goto Selection"
 msgstr ""
 "\n"
 "선택: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1246
+#: ../src/celestia/qt/qtappwin.cpp:1310
 #: ../src/celestia/win32/res/resource_strings.cpp:12
 msgid "Goto Object..."
 msgstr "천체로 이동"
 
-#: ../src/celestia/qt/qtappwin.cpp:1250
+#: ../src/celestia/qt/qtappwin.cpp:1314
 msgid "Copy URL / console text"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1255
+#: ../src/celestia/qt/qtappwin.cpp:1319
 msgid "Paste URL / console text"
 msgstr ""
 
 #. ***** Time menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1261
+#: ../src/celestia/qt/qtappwin.cpp:1325
 #: ../src/celestia/win32/res/resource_strings.cpp:21
 msgid "&Time"
 msgstr "시간(&T)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1263
+#: ../src/celestia/qt/qtappwin.cpp:1327
 #, fuzzy
 msgid "Set &time"
 msgstr "시간 설정..."
 
 #. ***** Display menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1271
+#: ../src/celestia/qt/qtappwin.cpp:1335
 #, fuzzy
 msgid "&Display"
 msgstr "표시"
 
-#: ../src/celestia/qt/qtappwin.cpp:1277
+#: ../src/celestia/qt/qtappwin.cpp:1341
 #, fuzzy
 msgid "Dee&p Sky Objects"
 msgstr "선택한 천체"
 
-#: ../src/celestia/qt/qtappwin.cpp:1283
+#: ../src/celestia/qt/qtappwin.cpp:1347
 #, fuzzy
 msgid "&Shadows"
 msgstr "구름 그림자 보기"
 
-#: ../src/celestia/qt/qtappwin.cpp:1294
+#: ../src/celestia/qt/qtappwin.cpp:1358
 #: ../src/celestia/win32/res/resource_strings.cpp:37
 msgid "Star St&yle"
 msgstr "항성 모양(&Y)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1301
+#: ../src/celestia/qt/qtappwin.cpp:1365
 #, fuzzy
 msgid "Texture &Resolution"
 msgstr "해상도"
 
-#: ../src/celestia/qt/qtappwin.cpp:1306
+#: ../src/celestia/qt/qtappwin.cpp:1370
 #, fuzzy
 msgid "&FPS control"
 msgstr "사용법(&C)"
 
 #. ***** Bookmark menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1323
+#: ../src/celestia/qt/qtappwin.cpp:1387
 #: ../src/celestia/win32/res/resource_strings.cpp:60
 msgid "&Bookmarks"
 msgstr "북마크(&B)"
 
 #. ***** View menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1326
+#: ../src/celestia/qt/qtappwin.cpp:1390
 #: ../src/celestia/win32/res/resource_strings.cpp:53
 msgid "&View"
 msgstr "창(&V)"
 
 #. ***** MultiView menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1329
+#: ../src/celestia/qt/qtappwin.cpp:1393
 #, fuzzy
 msgid "&MultiView"
 msgstr "멀티뷰"
 
-#: ../src/celestia/qt/qtappwin.cpp:1332
+#: ../src/celestia/qt/qtappwin.cpp:1396
 #, fuzzy
 msgid "Split view vertically"
 msgstr "수직분할"
 
-#: ../src/celestia/qt/qtappwin.cpp:1333
+#: ../src/celestia/qt/qtappwin.cpp:1397
 #, fuzzy
 msgid "Ctrl+R"
 msgstr "수평분할(&H)\tCtrl+R"
 
-#: ../src/celestia/qt/qtappwin.cpp:1338
+#: ../src/celestia/qt/qtappwin.cpp:1402
 #, fuzzy
 msgid "Split view horizontally"
 msgstr "수평분할"
 
-#: ../src/celestia/qt/qtappwin.cpp:1339
+#: ../src/celestia/qt/qtappwin.cpp:1403
 #, fuzzy
 msgid "Ctrl+U"
 msgstr "수직분할(&V)\tCtrl+U"
 
-#: ../src/celestia/qt/qtappwin.cpp:1344
+#: ../src/celestia/qt/qtappwin.cpp:1408
 #, fuzzy
 msgid "Cycle views"
 msgstr "화면 전환"
 
-#: ../src/celestia/qt/qtappwin.cpp:1345
+#: ../src/celestia/qt/qtappwin.cpp:1409
 msgid "Tab"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1350
+#: ../src/celestia/qt/qtappwin.cpp:1414
 #, fuzzy
 msgid "Single view"
 msgstr "단일창"
 
-#: ../src/celestia/qt/qtappwin.cpp:1351
+#: ../src/celestia/qt/qtappwin.cpp:1415
 #, fuzzy
 msgid "Ctrl+D"
 msgstr "단일 창(&S)\tCtrl+D"
 
-#: ../src/celestia/qt/qtappwin.cpp:1356
+#: ../src/celestia/qt/qtappwin.cpp:1420
 #, fuzzy
 msgid "Delete view"
 msgstr "활성창 닫기"
 
-#: ../src/celestia/qt/qtappwin.cpp:1357
+#: ../src/celestia/qt/qtappwin.cpp:1421
 #: ../src/celestia/win32/res/resource_strings.cpp:158
 msgid "Delete"
 msgstr "삭제"
 
-#: ../src/celestia/qt/qtappwin.cpp:1363
+#: ../src/celestia/qt/qtappwin.cpp:1427
 #, fuzzy
 msgid "Frames visible"
 msgstr "분할선 보기"
 
-#: ../src/celestia/qt/qtappwin.cpp:1384
+#: ../src/celestia/qt/qtappwin.cpp:1448
 #, fuzzy
 msgid "Active frame visible"
 msgstr "활성창 분할선 보기"
 
-#: ../src/celestia/qt/qtappwin.cpp:1400
+#: ../src/celestia/qt/qtappwin.cpp:1464
 #, fuzzy
 msgid "Synchronize time"
 msgstr "시간 동기화"
 
 #. ***** Help Menu *****
-#: ../src/celestia/qt/qtappwin.cpp:1441
+#: ../src/celestia/qt/qtappwin.cpp:1505
 #: ../src/celestia/win32/res/resource_strings.cpp:63
 msgid "&Help"
 msgstr "도움말(&H)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1443
+#: ../src/celestia/qt/qtappwin.cpp:1507
 #, fuzzy
 msgid "Celestia Manual"
 msgstr "셀레스티아 설정"
 
-#: ../src/celestia/qt/qtappwin.cpp:1448
+#: ../src/celestia/qt/qtappwin.cpp:1512
 #, fuzzy
 msgid "OpenGL Info"
 msgstr "OpenGL정보"
 
-#: ../src/celestia/qt/qtappwin.cpp:1468
+#: ../src/celestia/qt/qtappwin.cpp:1532
 #, fuzzy
 msgid "Add Bookmark..."
 msgstr "북마크 추가(&A)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1472
+#: ../src/celestia/qt/qtappwin.cpp:1536
 #, fuzzy
 msgid "Organize Bookmarks..."
 msgstr "북마크 구성(&O)"
 
-#: ../src/celestia/qt/qtappwin.cpp:1510
+#: ../src/celestia/qt/qtappwin.cpp:1574
 msgid "Set custom FPS"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1511
+#: ../src/celestia/qt/qtappwin.cpp:1575
 msgid "FPS value"
 msgstr ""
 
-#: ../src/celestia/qt/qtappwin.cpp:1531
+#: ../src/celestia/qt/qtappwin.cpp:1596
 #, fuzzy, qt-format
 msgid ""
 "Loading data files: %1\n"
 "\n"
 msgstr "로딩중: "
 
-#: ../src/celestia/qt/qtappwin.cpp:1542
+#: ../src/celestia/qt/qtappwin.cpp:1607
 #: ../src/celestia/win32/res/resource_strings.cpp:3
 msgid "Scripts"
 msgstr "스크립트"
@@ -3020,54 +5214,54 @@ msgid "New Folder"
 msgstr "새폴더..."
 
 #. Create the render flags actions
-#: ../src/celestia/qt/qtcelestiaactions.cpp:26
+#: ../src/celestia/qt/qtcelestiaactions.cpp:27
 msgid "Eq"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:27
+#: ../src/celestia/qt/qtcelestiaactions.cpp:28
 #, fuzzy
 msgid "Equatorial coordinate grid"
 msgstr "천구좌표 보기"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:31
+#: ../src/celestia/qt/qtcelestiaactions.cpp:32
 msgid "Ga"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:32
+#: ../src/celestia/qt/qtcelestiaactions.cpp:33
 #, fuzzy
 msgid "Galactic coordinate grid"
 msgstr "은하"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:36
+#: ../src/celestia/qt/qtcelestiaactions.cpp:37
 msgid "Ec"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:37
+#: ../src/celestia/qt/qtcelestiaactions.cpp:38
 #, fuzzy
 msgid "Ecliptic coordinate grid"
 msgstr "천구좌표"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:41
+#: ../src/celestia/qt/qtcelestiaactions.cpp:42
 msgid "Hz"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:42
+#: ../src/celestia/qt/qtcelestiaactions.cpp:43
 #, fuzzy
 msgid "Horizontal coordinate grid"
 msgstr "수평분할"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:46
+#: ../src/celestia/qt/qtcelestiaactions.cpp:47
 msgid "Ecl"
 msgstr ""
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:461
 #. i18n: ectx: property (text), widget (QCheckBox, eclipticLineCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:47 ../src/celestia/qt/rc.cpp:212
+#: ../src/celestia/qt/qtcelestiaactions.cpp:48 ../src/celestia/qt/rc.cpp:212
 #, fuzzy
 msgid "Ecliptic line"
 msgstr "황도"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:51
+#: ../src/celestia/qt/qtcelestiaactions.cpp:52
 #, fuzzy
 msgid "M"
 msgstr " m/s"
@@ -3075,7 +5269,7 @@ msgstr " m/s"
 #. i18n: file: ../src/celestia/qt/preferences.ui:454
 #. i18n: ectx: property (text), widget (QCheckBox, markersCheck)
 #. Controls for marking selected objects
-#: ../src/celestia/qt/qtcelestiaactions.cpp:52
+#: ../src/celestia/qt/qtcelestiaactions.cpp:53
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:561
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:481
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:774
@@ -3084,7 +5278,7 @@ msgstr " m/s"
 msgid "Markers"
 msgstr "마커"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:56
+#: ../src/celestia/qt/qtcelestiaactions.cpp:57
 #, fuzzy
 msgid "C"
 msgstr "선택한 천체를 가운데로(&C)\tC"
@@ -3093,31 +5287,31 @@ msgstr "선택한 천체를 가운데로(&C)\tC"
 #. i18n: ectx: property (title), widget (QGroupBox, constellationsGroupBox)
 #. i18n: file: ../src/celestia/qt/preferences.ui:583
 #. i18n: ectx: property (text), widget (QCheckBox, constellationLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:57
-#: ../src/celestia/qt/qtcelestiaactions.cpp:123 ../src/celestia/qt/rc.cpp:194
+#: ../src/celestia/qt/qtcelestiaactions.cpp:58
+#: ../src/celestia/qt/qtcelestiaactions.cpp:124 ../src/celestia/qt/rc.cpp:194
 #: ../src/celestia/qt/rc.cpp:258
 #: ../src/celestia/win32/res/resource_strings.cpp:224
 msgid "Constellations"
 msgstr "별자리"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:61
+#: ../src/celestia/qt/qtcelestiaactions.cpp:62
 #, fuzzy
 msgid "B"
 msgstr "<b>NVIDIA combiners, no vertex programs</b>"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:62
+#: ../src/celestia/qt/qtcelestiaactions.cpp:63
 #, fuzzy
 msgid "Constellation boundaries"
 msgstr "별자리 경계선"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:66
+#: ../src/celestia/qt/qtcelestiaactions.cpp:67
 #, fuzzy
 msgid "O"
 msgstr "확인"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:236
 #. i18n: ectx: property (title), widget (QGroupBox, orbitsGroupBox)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:67 ../src/celestia/qt/rc.cpp:142
+#: ../src/celestia/qt/qtcelestiaactions.cpp:68 ../src/celestia/qt/rc.cpp:142
 #: ../src/celestia/win32/res/resource_strings.cpp:201
 msgid "Orbits"
 msgstr "궤도"
@@ -3129,20 +5323,20 @@ msgstr "궤도"
 #. i18n: ectx: property (text), widget (QCheckBox, planetOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:506
 #. i18n: ectx: property (text), widget (QCheckBox, planetLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:84
-#: ../src/celestia/qt/qtcelestiaactions.cpp:111
-#: ../src/celestia/qt/qtselectionpopup.cpp:386
+#: ../src/celestia/qt/qtcelestiaactions.cpp:85
+#: ../src/celestia/qt/qtcelestiaactions.cpp:112
+#: ../src/celestia/qt/qtselectionpopup.cpp:388
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:581 ../src/celestia/qt/rc.cpp:75
 #: ../src/celestia/qt/rc.cpp:157 ../src/celestia/qt/rc.cpp:224
 #: ../src/celestia/win32/res/resource_strings.cpp:213
-#: ../src/celestia/win32/winmain.cpp:1456
-#: ../src/celestia/win32/winmain.cpp:1492
-#: ../src/celestia/win32/winmain.cpp:1610
+#: ../src/celestia/win32/winmain.cpp:1466
+#: ../src/celestia/win32/winmain.cpp:1504
+#: ../src/celestia/win32/winmain.cpp:1624
 msgid "Planets"
 msgstr "행성"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:85
-#: ../src/celestia/qt/qtcelestiaactions.cpp:112
+#: ../src/celestia/qt/qtcelestiaactions.cpp:86
+#: ../src/celestia/qt/qtcelestiaactions.cpp:113
 #: ../src/celestia/win32/res/resource_strings.cpp:214
 msgid "Dwarf Planets"
 msgstr "왜소행성"
@@ -3153,18 +5347,18 @@ msgstr "왜소행성"
 #. i18n: ectx: property (text), widget (QCheckBox, moonOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:520
 #. i18n: ectx: property (text), widget (QCheckBox, moonLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:86
-#: ../src/celestia/qt/qtcelestiaactions.cpp:113
-#: ../src/celestia/qt/qtselectionpopup.cpp:392
+#: ../src/celestia/qt/qtcelestiaactions.cpp:87
+#: ../src/celestia/qt/qtcelestiaactions.cpp:114
+#: ../src/celestia/qt/qtselectionpopup.cpp:394
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:583 ../src/celestia/qt/rc.cpp:81
 #: ../src/celestia/qt/rc.cpp:163 ../src/celestia/qt/rc.cpp:230
 #: ../src/celestia/win32/res/resource_strings.cpp:215
-#: ../src/celestia/win32/winmain.cpp:1454
+#: ../src/celestia/win32/winmain.cpp:1462
 msgid "Moons"
 msgstr "위성"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:87
-#: ../src/celestia/qt/qtcelestiaactions.cpp:114
+#: ../src/celestia/qt/qtcelestiaactions.cpp:88
+#: ../src/celestia/qt/qtcelestiaactions.cpp:115
 #: ../src/celestia/win32/res/resource_strings.cpp:216
 msgid "Minor Moons"
 msgstr "소 위성"
@@ -3175,13 +5369,13 @@ msgstr "소 위성"
 #. i18n: ectx: property (text), widget (QCheckBox, asteroidOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:534
 #. i18n: ectx: property (text), widget (QCheckBox, asteroidLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:88
-#: ../src/celestia/qt/qtcelestiaactions.cpp:115
-#: ../src/celestia/qt/qtselectionpopup.cpp:398
+#: ../src/celestia/qt/qtcelestiaactions.cpp:89
+#: ../src/celestia/qt/qtcelestiaactions.cpp:116
+#: ../src/celestia/qt/qtselectionpopup.cpp:400
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:742 ../src/celestia/qt/rc.cpp:87
 #: ../src/celestia/qt/rc.cpp:169 ../src/celestia/qt/rc.cpp:236
 #: ../src/celestia/win32/res/resource_strings.cpp:217
-#: ../src/celestia/win32/winmain.cpp:1448
+#: ../src/celestia/win32/winmain.cpp:1456
 msgid "Asteroids"
 msgstr "소행성"
 
@@ -3191,13 +5385,13 @@ msgstr "소행성"
 #. i18n: ectx: property (text), widget (QCheckBox, cometOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:541
 #. i18n: ectx: property (text), widget (QCheckBox, cometLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:89
-#: ../src/celestia/qt/qtcelestiaactions.cpp:116
-#: ../src/celestia/qt/qtselectionpopup.cpp:401
+#: ../src/celestia/qt/qtcelestiaactions.cpp:90
+#: ../src/celestia/qt/qtcelestiaactions.cpp:117
+#: ../src/celestia/qt/qtselectionpopup.cpp:403
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:750 ../src/celestia/qt/rc.cpp:90
 #: ../src/celestia/qt/rc.cpp:172 ../src/celestia/qt/rc.cpp:239
 #: ../src/celestia/win32/res/resource_strings.cpp:218
-#: ../src/celestia/win32/winmain.cpp:1450
+#: ../src/celestia/win32/winmain.cpp:1458
 msgid "Comets"
 msgstr "혜성"
 
@@ -3211,21 +5405,21 @@ msgstr "혜성"
 #. i18n: TRANSLATORS: translate this as plural
 #. i18n: file: ../src/celestia/qt/preferences.ui:548
 #. i18n: ectx: property (text), widget (QCheckBox, spacecraftLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:90
-#: ../src/celestia/qt/qtcelestiaactions.cpp:117
-#: ../src/celestia/qt/qtselectionpopup.cpp:404
+#: ../src/celestia/qt/qtcelestiaactions.cpp:91
+#: ../src/celestia/qt/qtcelestiaactions.cpp:118
+#: ../src/celestia/qt/qtselectionpopup.cpp:406
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:585
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:746 ../src/celestia/qt/rc.cpp:94
 #: ../src/celestia/qt/rc.cpp:176 ../src/celestia/qt/rc.cpp:243
 #: ../src/celestia/win32/res/resource_strings.cpp:219
-#: ../src/celestia/win32/winmain.cpp:1459
+#: ../src/celestia/win32/winmain.cpp:1471
 #, fuzzy
 msgctxt "plural"
 msgid "Spacecraft"
 msgstr "우주선"
 
 #. Label actions
-#: ../src/celestia/qt/qtcelestiaactions.cpp:106
+#: ../src/celestia/qt/qtcelestiaactions.cpp:107
 #, fuzzy
 msgid "L"
 msgstr "10x 빠르게(&F)\tL"
@@ -3234,7 +5428,7 @@ msgstr "10x 빠르게(&F)\tL"
 #. i18n: ectx: attribute (title), widget (QWidget, labelsTab)
 #. i18n: file: ../src/celestia/qt/preferences.ui:493
 #. i18n: ectx: property (title), widget (QGroupBox, labelsGroupBox)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:107 ../src/celestia/qt/rc.cpp:215
+#: ../src/celestia/qt/qtcelestiaactions.cpp:108 ../src/celestia/qt/rc.cpp:215
 #: ../src/celestia/qt/rc.cpp:218
 #: ../src/celestia/win32/res/resource_strings.cpp:227
 msgid "Labels"
@@ -3244,8 +5438,8 @@ msgstr "이름"
 #. i18n: ectx: property (text), widget (QCheckBox, galaxiesCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:555
 #. i18n: ectx: property (text), widget (QCheckBox, galaxyLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:118
-#: ../src/celestia/qt/qtcelestiaactions.cpp:142
+#: ../src/celestia/qt/qtcelestiaactions.cpp:119
+#: ../src/celestia/qt/qtcelestiaactions.cpp:143
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:443 ../src/celestia/qt/rc.cpp:97
 #: ../src/celestia/qt/rc.cpp:246
 #: ../src/celestia/win32/res/resource_strings.cpp:220
@@ -3254,8 +5448,8 @@ msgstr "은하"
 
 #. galaxiesAction->setShortcut(QString("U"));
 #. Buttons to select filtering criterion for dsos
-#: ../src/celestia/qt/qtcelestiaactions.cpp:119
-#: ../src/celestia/qt/qtcelestiaactions.cpp:144
+#: ../src/celestia/qt/qtcelestiaactions.cpp:120
+#: ../src/celestia/qt/qtcelestiaactions.cpp:145
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:439
 #: ../src/celestia/win32/res/resource_strings.cpp:221
 msgid "Globulars"
@@ -3265,7 +5459,7 @@ msgstr "구상성단"
 #. i18n: ectx: property (text), widget (QCheckBox, openClustersCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:569
 #. i18n: ectx: property (text), widget (QCheckBox, openClusterLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:120 ../src/celestia/qt/rc.cpp:103
+#: ../src/celestia/qt/qtcelestiaactions.cpp:121 ../src/celestia/qt/rc.cpp:103
 #: ../src/celestia/qt/rc.cpp:252
 #, fuzzy
 msgid "Open clusters"
@@ -3275,8 +5469,8 @@ msgstr "산개성단"
 #. i18n: ectx: property (text), widget (QCheckBox, nebulaeCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:562
 #. i18n: ectx: property (text), widget (QCheckBox, nebulaLabelsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:121
-#: ../src/celestia/qt/qtcelestiaactions.cpp:146
+#: ../src/celestia/qt/qtcelestiaactions.cpp:122
+#: ../src/celestia/qt/qtcelestiaactions.cpp:147
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:447 ../src/celestia/qt/rc.cpp:100
 #: ../src/celestia/qt/rc.cpp:249
 #: ../src/celestia/win32/res/resource_strings.cpp:223
@@ -3285,12 +5479,12 @@ msgstr "성운"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:606
 #. i18n: ectx: property (title), widget (QGroupBox, locationsGroupBox)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:122 ../src/celestia/qt/rc.cpp:261
+#: ../src/celestia/qt/qtcelestiaactions.cpp:123 ../src/celestia/qt/rc.cpp:261
 #: ../src/celestia/win32/res/resource_strings.cpp:134
 msgid "Locations"
 msgstr "지명"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:145
+#: ../src/celestia/qt/qtcelestiaactions.cpp:146
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:451
 #: ../src/celestia/win32/res/resource_strings.cpp:222
 msgid "Open Clusters"
@@ -3298,109 +5492,109 @@ msgstr "산개성단"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:155
 #. i18n: ectx: property (text), widget (QCheckBox, cloudsCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:153 ../src/celestia/qt/rc.cpp:115
+#: ../src/celestia/qt/qtcelestiaactions.cpp:154 ../src/celestia/qt/rc.cpp:115
 #: ../src/celestia/win32/res/resource_strings.cpp:193
 msgid "Clouds"
 msgstr "구름"
 
 #. cloudsAction->setShortcut(QString("I"));
-#: ../src/celestia/qt/qtcelestiaactions.cpp:155
+#: ../src/celestia/qt/qtcelestiaactions.cpp:156
 #: ../src/celestia/win32/res/resource_strings.cpp:197
 msgid "Night Side Lights"
 msgstr "야간맵"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:157
+#: ../src/celestia/qt/qtcelestiaactions.cpp:158
 #: ../src/celestia/win32/res/resource_strings.cpp:198
 msgid "Comet Tails"
 msgstr "혜성꼬리"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:148
 #. i18n: ectx: property (text), widget (QCheckBox, atmospheresCheck)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:158 ../src/celestia/qt/rc.cpp:112
+#: ../src/celestia/qt/qtcelestiaactions.cpp:159 ../src/celestia/qt/rc.cpp:112
 #: ../src/celestia/win32/res/resource_strings.cpp:192
 msgid "Atmospheres"
 msgstr "대기"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:165
+#: ../src/celestia/qt/qtcelestiaactions.cpp:166
 #: ../src/celestia/win32/res/resource_strings.cpp:195
 msgid "Ring Shadows"
 msgstr "고리 그림자"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:166
+#: ../src/celestia/qt/qtcelestiaactions.cpp:167
 #: ../src/celestia/win32/res/resource_strings.cpp:196
 msgid "Eclipse Shadows"
 msgstr "식 그림자"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:168
+#: ../src/celestia/qt/qtcelestiaactions.cpp:169
 #: ../src/celestia/win32/res/resource_strings.cpp:194
 msgid "Cloud Shadows"
 msgstr "구름 그림자"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:815
 #. i18n: ectx: property (text), widget (QRadioButton, lowResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:173 ../src/celestia/qt/rc.cpp:312
+#: ../src/celestia/qt/qtcelestiaactions.cpp:174 ../src/celestia/qt/rc.cpp:312
 msgid "Low"
 msgstr "낮음"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:822
 #. i18n: ectx: property (text), widget (QRadioButton, mediumResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:174 ../src/celestia/qt/rc.cpp:315
+#: ../src/celestia/qt/qtcelestiaactions.cpp:175 ../src/celestia/qt/rc.cpp:315
 msgid "Medium"
 msgstr "중간"
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:829
 #. i18n: ectx: property (text), widget (QRadioButton, highResolutionButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:175 ../src/celestia/qt/rc.cpp:318
+#: ../src/celestia/qt/qtcelestiaactions.cpp:176 ../src/celestia/qt/rc.cpp:318
 msgid "High"
 msgstr "높음"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:185
+#: ../src/celestia/qt/qtcelestiaactions.cpp:186
 #, fuzzy
 msgid "Auto Magnitude"
 msgstr "자동 등급 조정\tCtrl+Y"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:187
+#: ../src/celestia/qt/qtcelestiaactions.cpp:188
 msgid "Faintest visible magnitude based on field of view"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:190
+#: ../src/celestia/qt/qtcelestiaactions.cpp:191
 #, fuzzy
 msgid "More Stars Visible"
 msgstr "항성을 많이 보이게\t]"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:193
+#: ../src/celestia/qt/qtcelestiaactions.cpp:194
 #, fuzzy
 msgid "Fewer Stars Visible"
 msgstr "항성을 적게 보이게\t["
 
 #. i18n: file: ../src/celestia/qt/preferences.ui:946
 #. i18n: ectx: property (text), widget (QRadioButton, pointStarsButton)
-#: ../src/celestia/qt/qtcelestiaactions.cpp:199 ../src/celestia/qt/rc.cpp:336
+#: ../src/celestia/qt/qtcelestiaactions.cpp:200 ../src/celestia/qt/rc.cpp:336
 #, fuzzy
 msgid "Points"
 msgstr "점(&P)"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:200
+#: ../src/celestia/qt/qtcelestiaactions.cpp:201
 #, fuzzy
 msgid "Fuzzy Points"
 msgstr "희미한 점(&F)"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:201
+#: ../src/celestia/qt/qtcelestiaactions.cpp:202
 #, fuzzy
 msgid "Scaled Discs"
 msgstr "등급에 따른 원(&D)"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:211
+#: ../src/celestia/qt/qtcelestiaactions.cpp:212
 #, fuzzy
 msgid "Light Time Delay"
 msgstr "광속고려: OFF"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:393
+#: ../src/celestia/qt/qtcelestiaactions.cpp:394
 #, fuzzy, qt-format
 msgid "Auto magnitude limit at 45 degrees: %L1"
 msgstr "시야 45°에서의 한계 등급: %.2f"
 
-#: ../src/celestia/qt/qtcelestiaactions.cpp:400
+#: ../src/celestia/qt/qtcelestiaactions.cpp:401
 #, fuzzy, qt-format
 msgid "Magnitude limit: %L1"
 msgstr "한계등급: %.2f"
@@ -3520,113 +5714,113 @@ msgstr "마커"
 msgid "Remove all existing markers"
 msgstr ""
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:581
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:501
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:794
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:583
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:503
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:796
 #: ../src/celestia/win32/res/resource_strings.cpp:230
 msgid "None"
 msgstr "없음"
-
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:582
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:502
-#: ../src/celestia/qt/qtselectionpopup.cpp:242
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:795
-msgid "Diamond"
-msgstr "마름모(◇)"
-
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:583
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:503
-#: ../src/celestia/qt/qtselectionpopup.cpp:243
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:796
-msgid "Triangle"
-msgstr "삼각형(△)"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:584
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:504
 #: ../src/celestia/qt/qtselectionpopup.cpp:244
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:797
-msgid "Square"
-msgstr "사각형(□)"
+msgid "Diamond"
+msgstr "마름모(◇)"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:585
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:505
-#: ../src/celestia/qt/qtselectionpopup.cpp:246
+#: ../src/celestia/qt/qtselectionpopup.cpp:245
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:798
-msgid "Plus"
-msgstr "십자"
+msgid "Triangle"
+msgstr "삼각형(△)"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:586
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:506
-#: ../src/celestia/qt/qtselectionpopup.cpp:247
+#: ../src/celestia/qt/qtselectionpopup.cpp:246
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:799
-msgid "X"
-msgstr "X자"
+msgid "Square"
+msgstr "사각형(□)"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:587
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:507
-#: ../src/celestia/qt/qtselectionpopup.cpp:252
+#: ../src/celestia/qt/qtselectionpopup.cpp:248
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:800
-msgid "Circle"
-msgstr "원(○)"
+msgid "Plus"
+msgstr "십자"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:588
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:508
-#: ../src/celestia/qt/qtselectionpopup.cpp:248
+#: ../src/celestia/qt/qtselectionpopup.cpp:249
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:801
-msgid "Left Arrow"
-msgstr "왼쪽화살표(←)"
+msgid "X"
+msgstr "X자"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:589
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:509
-#: ../src/celestia/qt/qtselectionpopup.cpp:249
+#: ../src/celestia/qt/qtselectionpopup.cpp:254
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:802
-msgid "Right Arrow"
-msgstr "오른쪽화살표(→)"
+msgid "Circle"
+msgstr "원(○)"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:590
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:510
 #: ../src/celestia/qt/qtselectionpopup.cpp:250
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:803
-msgid "Up Arrow"
-msgstr "위쪽화살표(↑)"
+msgid "Left Arrow"
+msgstr "왼쪽화살표(←)"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:591
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:511
 #: ../src/celestia/qt/qtselectionpopup.cpp:251
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:804
-msgid "Down Arrow"
-msgstr "아랫쪽화살표(↓)"
+msgid "Right Arrow"
+msgstr "오른쪽화살표(→)"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:592
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:512
+#: ../src/celestia/qt/qtselectionpopup.cpp:252
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:805
+msgid "Up Arrow"
+msgstr "위쪽화살표(↑)"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:593
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:513
+#: ../src/celestia/qt/qtselectionpopup.cpp:253
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:806
+msgid "Down Arrow"
+msgstr "아랫쪽화살표(↓)"
+
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:595
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:515
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:808
 #, fuzzy
 msgid "Select marker symbol"
 msgstr "천체 선택(&O)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:606
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:526
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:819
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:608
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:528
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:821
 #, fuzzy
 msgid "Select marker size"
 msgstr "동영상 크기:"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:610
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:530
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:823
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:612
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:532
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:825
 #, fuzzy
 msgid "Click to select marker color"
 msgstr "천체 선택(&O)"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:613
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:533
-#: ../src/celestia/qt/qtsolarsystembrowser.cpp:826
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:615
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:535
+#: ../src/celestia/qt/qtsolarsystembrowser.cpp:828
 #, fuzzy
 msgid "Label"
 msgstr "지명 보기"
 
-#: ../src/celestia/qt/qtcelestialbrowser.cpp:677
-#: ../src/celestia/qt/qtdeepskybrowser.cpp:585
+#: ../src/celestia/qt/qtcelestialbrowser.cpp:679
+#: ../src/celestia/qt/qtdeepskybrowser.cpp:587
 #, fuzzy, qt-format
 msgid "%1 objects found"
 msgstr "천체"
@@ -3720,170 +5914,174 @@ msgstr "이미지 파일 읽는 중: "
 msgid "Behind %1"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:78
+#: ../src/celestia/qt/qtglwidget.cpp:124
+msgid "Celestia was unable to initialize OpenGL 2.1."
+msgstr ""
+
+#: ../src/celestia/qt/qtinfopanel.cpp:79
 msgid "Error: no object selected!\n"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:89
+#: ../src/celestia/qt/qtinfopanel.cpp:90
 #: ../src/celestia/qt/qtselectionpopup.cpp:158
 #, fuzzy
 msgid "Info"
 msgstr "천체정보(&I)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:114
+#: ../src/celestia/qt/qtinfopanel.cpp:115
 #, fuzzy, qt-format
 msgid "Web info: %1"
 msgstr "OpenGL정보"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:130
+#: ../src/celestia/qt/qtinfopanel.cpp:131
 #, fuzzy, qt-format
 msgid "<b>Equatorial radius:</b> %L1 %2"
 msgstr "적도"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:132
+#: ../src/celestia/qt/qtinfopanel.cpp:133
 #, fuzzy, qt-format
 msgid "<b>Size:</b> %L1 %2"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:137
+#: ../src/celestia/qt/qtinfopanel.cpp:138
 msgid "<b>Oblateness: "
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:172
+#: ../src/celestia/qt/qtinfopanel.cpp:173
 #, fuzzy, qt-format
 msgid "<b>Sidereal rotation period:</b> %L1 %2"
 msgstr "자전주기: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:175
+#: ../src/celestia/qt/qtinfopanel.cpp:176
 #, fuzzy, qt-format
 msgid "<b>Length of day:</b> %L1 %2"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:201
+#: ../src/celestia/qt/qtinfopanel.cpp:202
 msgid "years"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:206
+#: ../src/celestia/qt/qtinfopanel.cpp:207
 msgid "<b>Has rings</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:208
+#: ../src/celestia/qt/qtinfopanel.cpp:209
 msgid "<b>Has atmosphere</b>"
 msgstr ""
 
-#: ../src/celestia/qt/qtinfopanel.cpp:216
+#: ../src/celestia/qt/qtinfopanel.cpp:217
 #, fuzzy, qt-format
 msgid "<b>Start:</b> %1"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:219
+#: ../src/celestia/qt/qtinfopanel.cpp:220
 #, fuzzy, qt-format
 msgid "<b>End:</b> %1"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:221
+#: ../src/celestia/qt/qtinfopanel.cpp:222
 #, fuzzy
 msgid "Orbit information"
 msgstr "천체 정보 표시"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:222
+#: ../src/celestia/qt/qtinfopanel.cpp:223
 #, qt-format
 msgid "Osculating elements for %1"
 msgstr ""
 
 #. stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
-#: ../src/celestia/qt/qtinfopanel.cpp:225
+#: ../src/celestia/qt/qtinfopanel.cpp:226
 #, fuzzy, qt-format
 msgid "<b>Period:</b> %L1 %2"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:230
+#: ../src/celestia/qt/qtinfopanel.cpp:231
 #, fuzzy
 msgid "AU"
 msgstr "AU"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:238
+#: ../src/celestia/qt/qtinfopanel.cpp:239
 #, fuzzy, qt-format
 msgid "<b>Semi-major axis:</b> %L1 %2"
 msgstr "적도"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:239
+#: ../src/celestia/qt/qtinfopanel.cpp:240
 #, fuzzy, qt-format
 msgid "<b>Eccentricity:</b> %L1"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:240
+#: ../src/celestia/qt/qtinfopanel.cpp:241
 #, fuzzy, qt-format
 msgid "<b>Inclination:</b> %L1%2"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:241
+#: ../src/celestia/qt/qtinfopanel.cpp:242
 #, fuzzy, qt-format
 msgid "<b>Pericenter distance:</b> %L1 %2"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:242
+#: ../src/celestia/qt/qtinfopanel.cpp:243
 #, fuzzy, qt-format
 msgid "<b>Apocenter distance:</b> %L1 %2"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:244
+#: ../src/celestia/qt/qtinfopanel.cpp:245
 #, fuzzy, qt-format
 msgid "<b>Ascending node:</b> %L1%2"
 msgstr "거리(광년)"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:245
+#: ../src/celestia/qt/qtinfopanel.cpp:246
 #, fuzzy, qt-format
 msgid "<b>Argument of periapsis:</b> %L1%2"
 msgstr "적도"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:246
+#: ../src/celestia/qt/qtinfopanel.cpp:247
 #, fuzzy, qt-format
 msgid "<b>Mean anomaly:</b> %L1%2"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:247
+#: ../src/celestia/qt/qtinfopanel.cpp:248
 #, fuzzy, qt-format
 msgid "<b>Period (calculated):</b> %L1 %2"
 msgstr "자전주기: "
 
-#: ../src/celestia/qt/qtinfopanel.cpp:287
-#: ../src/celestia/qt/qtinfopanel.cpp:310
+#: ../src/celestia/qt/qtinfopanel.cpp:288
+#: ../src/celestia/qt/qtinfopanel.cpp:311
 #, fuzzy, qt-format
 msgid "<b>RA:</b> %L1h %L2m %L3s"
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtinfopanel.cpp:291
-#: ../src/celestia/qt/qtinfopanel.cpp:314
+#: ../src/celestia/qt/qtinfopanel.cpp:292
+#: ../src/celestia/qt/qtinfopanel.cpp:315
 #, fuzzy, qt-format
 msgid "<b>Dec:</b> %L1%2 %L3' %L4\""
 msgstr "크기: %1 MB"
 
 #. TRANSLATORS: Galactic longitude
-#: ../src/celestia/qt/qtinfopanel.cpp:322
+#: ../src/celestia/qt/qtinfopanel.cpp:323
 #, fuzzy, qt-format
 msgid "<b>L:</b> %L1%2 %L3' %L4\""
 msgstr "크기: %1 MB"
 
 #. TRANSLATORS: Galactic latitude
-#: ../src/celestia/qt/qtinfopanel.cpp:326
+#: ../src/celestia/qt/qtinfopanel.cpp:327
 #, fuzzy, qt-format
 msgid "<b>B:</b> %L1%2 %L3' %L4\""
 msgstr "크기: %1 MB"
 
-#: ../src/celestia/qt/qtmain.cpp:162 ../src/celestia/win32/winmain.cpp:2992
+#: ../src/celestia/qt/qtmain.cpp:162 ../src/celestia/win32/winmain.cpp:3014
 msgid "Directory expected after --dir"
 msgstr ""
 
-#: ../src/celestia/qt/qtmain.cpp:172 ../src/celestia/win32/winmain.cpp:3005
+#: ../src/celestia/qt/qtmain.cpp:172 ../src/celestia/win32/winmain.cpp:3027
 msgid "Configuration file name expected after --conf"
 msgstr ""
 
-#: ../src/celestia/qt/qtmain.cpp:183 ../src/celestia/win32/winmain.cpp:3019
+#: ../src/celestia/qt/qtmain.cpp:183 ../src/celestia/win32/winmain.cpp:3041
 msgid "Directory expected after --extrasdir"
 msgstr ""
 
-#: ../src/celestia/qt/qtmain.cpp:193 ../src/celestia/win32/winmain.cpp:3032
+#: ../src/celestia/qt/qtmain.cpp:193 ../src/celestia/win32/winmain.cpp:3054
 msgid "URL expected after --url"
 msgstr ""
 
@@ -3891,7 +6089,7 @@ msgstr ""
 msgid "A filename expected after --log/-l"
 msgstr ""
 
-#: ../src/celestia/qt/qtmain.cpp:215 ../src/celestia/win32/winmain.cpp:3047
+#: ../src/celestia/qt/qtmain.cpp:215 ../src/celestia/win32/winmain.cpp:3069
 #, c-format
 msgid "Invalid command line option '%s'"
 msgstr ""
@@ -3969,15 +6167,15 @@ msgid "&Center"
 msgstr "가운데로(&C)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:143
-#: ../src/celestia/win32/winmain.cpp:1550
-#: ../src/celestia/win32/winmain.cpp:1598
-#: ../src/celestia/win32/winmain.cpp:1621
+#: ../src/celestia/win32/winmain.cpp:1562
+#: ../src/celestia/win32/winmain.cpp:1612
+#: ../src/celestia/win32/winmain.cpp:1635
 msgid "&Goto"
 msgstr "이동(&G)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:147
-#: ../src/celestia/win32/winmain.cpp:1551
-#: ../src/celestia/win32/winmain.cpp:1622
+#: ../src/celestia/win32/winmain.cpp:1563
+#: ../src/celestia/win32/winmain.cpp:1636
 msgid "&Follow"
 msgstr "추적(&F)"
 
@@ -3991,54 +6189,55 @@ msgid "Visible"
 msgstr "활성창 분할선 보기"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:177
-#: ../src/celestia/win32/winmain.cpp:1635
+#: ../src/celestia/win32/winmain.cpp:1649
 msgid "&Unmark"
 msgstr "마커 해제(&U)"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:195
+#: ../src/celestia/win32/winmain.cpp:1582
 #, fuzzy
-msgid "Select Primary Body"
+msgid "Select &Primary Body"
 msgstr "화면모드 선택"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:245
+#: ../src/celestia/qt/qtselectionpopup.cpp:247
 msgid "Filled Square"
 msgstr "사각형(■)"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:253
+#: ../src/celestia/qt/qtselectionpopup.cpp:255
 msgid "Disk"
 msgstr "원(●)"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:256
-#: ../src/celestia/win32/winmain.cpp:1637
+#: ../src/celestia/qt/qtselectionpopup.cpp:258
+#: ../src/celestia/win32/winmain.cpp:1651
 msgid "&Mark"
 msgstr "마커(&M)"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:273
-#: ../src/celestia/win32/winmain.cpp:1555
+#: ../src/celestia/qt/qtselectionpopup.cpp:275
+#: ../src/celestia/win32/winmain.cpp:1567
 msgid "&Reference Marks"
 msgstr "벡터 참조(&R)"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:275
+#: ../src/celestia/qt/qtselectionpopup.cpp:277
 #, fuzzy
 msgid "Show &Body Axes"
 msgstr "천체 축 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:281
+#: ../src/celestia/qt/qtselectionpopup.cpp:283
 #, fuzzy
 msgid "Show &Frame Axes"
 msgstr "프레임 축 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:287
+#: ../src/celestia/qt/qtselectionpopup.cpp:289
 #, fuzzy
 msgid "Show &Sun Direction"
 msgstr "태양 방향 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:293
+#: ../src/celestia/qt/qtselectionpopup.cpp:295
 #, fuzzy
 msgid "Show &Velocity Vector"
 msgstr "속도 벡터 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:299
+#: ../src/celestia/qt/qtselectionpopup.cpp:301
 #, fuzzy
 msgid "Show S&pin Vector"
 msgstr "속도 벡터 보기"
@@ -4046,29 +6245,29 @@ msgstr "속도 벡터 보기"
 #. Only show the frame center menu item if the selection orbits another
 #. a non-stellar object. If it orbits a star, this is generally identical
 #. to the sun direction entry.
-#: ../src/celestia/qt/qtselectionpopup.cpp:311
+#: ../src/celestia/qt/qtselectionpopup.cpp:313
 #, fuzzy, qt-format
 msgid "Show &Direction to %1"
 msgstr "태양 방향 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:318
+#: ../src/celestia/qt/qtselectionpopup.cpp:320
 #, fuzzy
 msgid "Show Planetographic &Grid"
 msgstr "행성그리드 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:324
+#: ../src/celestia/qt/qtselectionpopup.cpp:326
 #, fuzzy
 msgid "Show &Terminator"
 msgstr "밤낮 경계선 보기"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:342
-#: ../src/celestia/win32/winmain.cpp:1585
+#: ../src/celestia/qt/qtselectionpopup.cpp:344
+#: ../src/celestia/win32/winmain.cpp:1599
 msgid "&Alternate Surfaces"
 msgstr "표면 교체(&A)"
 
 #. TRANSLATORS: normal texture in an alternative surface menu
-#: ../src/celestia/qt/qtselectionpopup.cpp:343
-#: ../src/celestia/win32/winmain.cpp:1524
+#: ../src/celestia/qt/qtselectionpopup.cpp:345
+#: ../src/celestia/win32/winmain.cpp:1536
 msgid "Normal"
 msgstr "일반"
 
@@ -4078,8 +6277,9 @@ msgstr "일반"
 #. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:513
 #. i18n: ectx: property (text), widget (QCheckBox, dwarfPlanetLabelsCheck)
-#: ../src/celestia/qt/qtselectionpopup.cpp:389 ../src/celestia/qt/rc.cpp:78
+#: ../src/celestia/qt/qtselectionpopup.cpp:391 ../src/celestia/qt/rc.cpp:78
 #: ../src/celestia/qt/rc.cpp:160 ../src/celestia/qt/rc.cpp:227
+#: ../src/celestia/win32/winmain.cpp:1468
 #, fuzzy
 msgid "Dwarf planets"
 msgstr "왜소행성"
@@ -4090,14 +6290,15 @@ msgstr "왜소행성"
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonOrbitsCheck)
 #. i18n: file: ../src/celestia/qt/preferences.ui:527
 #. i18n: ectx: property (text), widget (QCheckBox, minorMoonLabelsCheck)
-#: ../src/celestia/qt/qtselectionpopup.cpp:395
+#: ../src/celestia/qt/qtselectionpopup.cpp:397
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:591 ../src/celestia/qt/rc.cpp:84
 #: ../src/celestia/qt/rc.cpp:166 ../src/celestia/qt/rc.cpp:233
+#: ../src/celestia/win32/winmain.cpp:1464
 #, fuzzy
 msgid "Minor moons"
 msgstr "소 위성"
 
-#: ../src/celestia/qt/qtselectionpopup.cpp:407
+#: ../src/celestia/qt/qtselectionpopup.cpp:409
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:597
 #, fuzzy
 msgid "Other objects"
@@ -4775,7 +6976,7 @@ msgstr "표시"
 msgid "Not an XBEL version 1.0 file."
 msgstr ""
 
-#: ../src/celestia/url.cpp:310 ../src/celestia/url2.cpp:181
+#: ../src/celestia/url.cpp:310
 #, c-format
 msgid "Incorrect hex value \"%s\"\n"
 msgstr ""
@@ -4785,45 +6986,36 @@ msgstr ""
 msgid "URL must start with \"%s\"!\n"
 msgstr ""
 
-#. XXX: Should decide whether Settings must have Time
-#: ../src/celestia/url.cpp:409 ../src/celestia/url2.cpp:263
+#: ../src/celestia/url.cpp:409
 msgid "URL must have at least mode and time!\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:420 ../src/celestia/url2.cpp:292
+#: ../src/celestia/url.cpp:420
 #, c-format
 msgid "Unsupported URL mode \"%s\"!\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:438 ../src/celestia/url2.cpp:316
+#: ../src/celestia/url.cpp:438
 msgid "URL must contain only one body\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:450 ../src/celestia/url2.cpp:326
+#: ../src/celestia/url.cpp:450
 msgid "URL must contain 2 bodies\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:491 ../src/celestia/url2.cpp:369
+#: ../src/celestia/url.cpp:491
 #, c-format
 msgid "Invalid URL version \"%s\"!\n"
 msgstr ""
 
-#: ../src/celestia/url.cpp:498 ../src/celestia/url2.cpp:388
+#: ../src/celestia/url.cpp:498
 #, fuzzy, c-format
 msgid "Unsupported URL version: %i\n"
 msgstr "지원되는 확장"
 
-#: ../src/celestia/url.cpp:528 ../src/celestia/url2.cpp:410
+#: ../src/celestia/url.cpp:530
 msgid "URL parameter must look like key=value\n"
 msgstr ""
-
-#: ../src/celestia/url2.cpp:244
-msgid "URL must start with \"cel://\"!\n"
-msgstr ""
-
-#: ../src/celestia/url2.cpp:552
-msgid "Settings"
-msgstr "설정"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:4
 msgid "Placeholder"
@@ -5432,7 +7624,7 @@ msgid "Verbose"
 msgstr "많이"
 
 #: ../src/celestia/win32/res/resource_strings.cpp:236
-#: ../src/celestia/win32/winmain.cpp:3229
+#: ../src/celestia/win32/winmain.cpp:3251
 msgid "WinLangID"
 msgstr "412"
 
@@ -5507,163 +7699,163 @@ msgstr ""
 msgid "Windowed Mode"
 msgstr "윈도우 모드"
 
-#: ../src/celestia/win32/winmain.cpp:1452
+#: ../src/celestia/win32/winmain.cpp:1460
 msgid "Invisibles"
 msgstr "안보임"
 
-#: ../src/celestia/win32/winmain.cpp:1552
+#: ../src/celestia/win32/winmain.cpp:1564
 msgid "S&ync Orbit"
 msgstr "자전 동기(&Y)"
 
-#: ../src/celestia/win32/winmain.cpp:1553
-#: ../src/celestia/win32/winmain.cpp:1599
-#: ../src/celestia/win32/winmain.cpp:1623
+#: ../src/celestia/win32/winmain.cpp:1565
+#: ../src/celestia/win32/winmain.cpp:1613
+#: ../src/celestia/win32/winmain.cpp:1637
 msgid "&Info"
 msgstr "천체정보(&I)"
 
-#: ../src/celestia/win32/winmain.cpp:1556
+#: ../src/celestia/win32/winmain.cpp:1568
 msgid "Show Body Axes"
 msgstr "천체 축 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1557
+#: ../src/celestia/win32/winmain.cpp:1569
 msgid "Show Frame Axes"
 msgstr "프레임 축 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1558
+#: ../src/celestia/win32/winmain.cpp:1570
 msgid "Show Sun Direction"
 msgstr "태양 방향 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1559
+#: ../src/celestia/win32/winmain.cpp:1571
 msgid "Show Velocity Vector"
 msgstr "속도 벡터 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1560
+#: ../src/celestia/win32/winmain.cpp:1572
 msgid "Show Planetographic Grid"
 msgstr "행성그리드 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1561
+#: ../src/celestia/win32/winmain.cpp:1573
 msgid "Show Terminator"
 msgstr "밤낮 경계선 보기"
 
-#: ../src/celestia/win32/winmain.cpp:1575
+#: ../src/celestia/win32/winmain.cpp:1589
 msgid "&Satellites"
 msgstr "위성"
 
-#: ../src/celestia/win32/winmain.cpp:1608
+#: ../src/celestia/win32/winmain.cpp:1622
 msgid "Orbiting Bodies"
 msgstr "순환 천체"
 
-#: ../src/celestia/win32/winmain.cpp:1727
+#: ../src/celestia/win32/winmain.cpp:1741
 #, fuzzy
 msgid "Unable to switch to full screen mode; running in window mode"
 msgstr "폰트 읽기 에러, 텍스트가 표시되지 않습니다.\n"
 
-#: ../src/celestia/win32/winmain.cpp:1728
-#: ../src/celestia/win32/winmain.cpp:2000
-#: ../src/celestia/win32/winmain.cpp:2640
-#: ../src/celestia/win32/winmain.cpp:2651
-#: ../src/celestia/win32/winmain.cpp:2668
-#: ../src/celestia/win32/winmain.cpp:2767
+#: ../src/celestia/win32/winmain.cpp:1742
+#: ../src/celestia/win32/winmain.cpp:2014
+#: ../src/celestia/win32/winmain.cpp:2662
+#: ../src/celestia/win32/winmain.cpp:2673
+#: ../src/celestia/win32/winmain.cpp:2690
+#: ../src/celestia/win32/winmain.cpp:2789
 #, fuzzy
 msgid "Error"
 msgstr "에러: "
 
-#: ../src/celestia/win32/winmain.cpp:1892
+#: ../src/celestia/win32/winmain.cpp:1906
 msgid "Failed to register the window class."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:1893
-#: ../src/celestia/win32/winmain.cpp:1944
-#: ../src/celestia/win32/winmain.cpp:1968
-#: ../src/celestia/win32/winmain.cpp:2270
-#: ../src/celestia/win32/winmain.cpp:3270
-#: ../src/celestia/win32/winmain.cpp:3343
+#: ../src/celestia/win32/winmain.cpp:1907
+#: ../src/celestia/win32/winmain.cpp:1958
+#: ../src/celestia/win32/winmain.cpp:1982
+#: ../src/celestia/win32/winmain.cpp:2292
+#: ../src/celestia/win32/winmain.cpp:3292
+#: ../src/celestia/win32/winmain.cpp:3365
 msgid "Fatal Error"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:1943
+#: ../src/celestia/win32/winmain.cpp:1957
 msgid "Could not get appropriate pixel format for OpenGL rendering."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:1967
+#: ../src/celestia/win32/winmain.cpp:1981
 msgid "Your system doesn't support OpenGL 2.1!"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:1999
+#: ../src/celestia/win32/winmain.cpp:2013
 msgid "Releasing device context failed."
 msgstr ""
 
 #. Comment this out if you just want the standard "Save As" caption.
-#: ../src/celestia/win32/winmain.cpp:2606
+#: ../src/celestia/win32/winmain.cpp:2628
 msgid "Save As - Specify File to Capture Image"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:2650
+#: ../src/celestia/win32/winmain.cpp:2672
 msgid "Could not save image file."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:2667
+#: ../src/celestia/win32/winmain.cpp:2689
 msgid "Stop current movie capture before starting another one."
 msgstr ""
 
 #. Comment this out if you just want the standard "Save As" caption.
-#: ../src/celestia/win32/winmain.cpp:2693
+#: ../src/celestia/win32/winmain.cpp:2715
 msgid "Save As - Specify Output File for Capture Movie"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:2763
+#: ../src/celestia/win32/winmain.cpp:2785
 msgid "Specified file extension is not recognized."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:2765
+#: ../src/celestia/win32/winmain.cpp:2787
 #, fuzzy
 msgid "Could not capture movie."
 msgstr "비디오 캡춰"
 
-#: ../src/celestia/win32/winmain.cpp:2993
-#: ../src/celestia/win32/winmain.cpp:3006
-#: ../src/celestia/win32/winmain.cpp:3020
-#: ../src/celestia/win32/winmain.cpp:3033
-#: ../src/celestia/win32/winmain.cpp:3049
+#: ../src/celestia/win32/winmain.cpp:3015
+#: ../src/celestia/win32/winmain.cpp:3028
+#: ../src/celestia/win32/winmain.cpp:3042
+#: ../src/celestia/win32/winmain.cpp:3055
+#: ../src/celestia/win32/winmain.cpp:3071
 #, fuzzy
 msgid "Celestia Command Line Error"
 msgstr "셀레스티아 사용법"
 
-#: ../src/celestia/win32/winmain.cpp:3070
+#: ../src/celestia/win32/winmain.cpp:3092
 #, fuzzy
 msgid "Loading: "
 msgstr "로딩중: "
 
-#: ../src/celestia/win32/winmain.cpp:3128
+#: ../src/celestia/win32/winmain.cpp:3150
 #, fuzzy
 msgid "Loading data files..."
 msgstr "로딩중: "
 
-#: ../src/celestia/win32/winmain.cpp:3227 ../src/celutil/fsutils.cpp:44
+#: ../src/celestia/win32/winmain.cpp:3249 ../src/celutil/fsutils.cpp:44
 #: ../src/celutil/fsutils.cpp:47
 msgid "LANGUAGE"
 msgstr "ko"
 
-#: ../src/celestia/win32/winmain.cpp:3269
+#: ../src/celestia/win32/winmain.cpp:3291
 #, fuzzy
 msgid "Configuration file missing!"
 msgstr "설정 파일 읽는 중 오류가 발생했습니다."
 
-#: ../src/celestia/win32/winmain.cpp:3307
+#: ../src/celestia/win32/winmain.cpp:3329
 msgid ""
 "Old favorites file detected.\n"
 "Copy to the new location?"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3308
+#: ../src/celestia/win32/winmain.cpp:3330
 msgid "Copy favorites?"
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3342
+#: ../src/celestia/win32/winmain.cpp:3364
 msgid "Failed to create the application window."
 msgstr ""
 
-#: ../src/celestia/win32/winmain.cpp:3884
+#: ../src/celestia/win32/winmain.cpp:3906
 msgid "Loading URL"
 msgstr "URL 로딩중"
 
@@ -5706,7 +7898,7 @@ msgstr "스크립트 파일 여는 중 오류가 발생하였습니다."
 msgid "Unknown error loading script"
 msgstr "스크립트 파일 여는 중 알수없는 오류가 발생하였습니다."
 
-#: ../src/celscript/lua/celx.cpp:764
+#: ../src/celscript/lua/celx.cpp:763
 msgid ""
 "WARNING:\n"
 "\n"
@@ -5718,7 +7910,7 @@ msgid ""
 "y = yes, ESC = cancel script, any other key = no"
 msgstr ""
 
-#: ../src/celscript/lua/celx.cpp:775
+#: ../src/celscript/lua/celx.cpp:774
 msgid ""
 "WARNING:\n"
 "\n"
@@ -5734,16 +7926,16 @@ msgid "Error opening script '%s'"
 msgstr "스크립트 파일'%s'에서 에러가 발생했습니다."
 
 #: ../src/celscript/lua/luascript.cpp:104
-#: ../src/celscript/lua/luascript.cpp:234
+#: ../src/celscript/lua/luascript.cpp:239
 msgid "Script coroutine initialization failed"
 msgstr "스크립트 coroutine의 초기화에 실패하였습니다."
 
-#: ../src/celscript/lua/luascript.cpp:206
+#: ../src/celscript/lua/luascript.cpp:211
 #, fuzzy, c-format
 msgid "Error opening LuaHook '%s'"
 msgstr "스크립트 파일'%s'에서 에러가 발생했습니다."
 
-#: ../src/celscript/lua/luascript.cpp:223
+#: ../src/celscript/lua/luascript.cpp:228
 #, fuzzy
 msgid "Unknown error loading hook script"
 msgstr "스크립트 파일 여는 중 알수없는 오류가 발생하였습니다."
@@ -5756,6 +7948,23 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error openning %s or .\n"
 msgstr "파일 열기 오류: "
+
+#~ msgid "Astana"
+#~ msgstr "아스타나"
+
+#, fuzzy
+#~ msgid "Radius: %s km\n"
+#~ msgstr "반지름: "
+
+#~ msgid "Sun"
+#~ msgstr "태양"
+
+#, fuzzy
+#~ msgid "Video (*.ogv)"
+#~ msgstr "비디오 캡춰"
+
+#~ msgid "Settings"
+#~ msgstr "설정"
 
 #~ msgid "OpenGL 2.0"
 #~ msgstr "OpenGL 2.0"
@@ -6634,9 +8843,6 @@ msgstr "파일 열기 오류: "
 #~ msgid "Aspect Ratio:"
 #~ msgstr "종횡비"
 
-#~ msgid "Current"
-#~ msgstr "현재"
-
 #~ msgid "11:9"
 #~ msgstr "11:9"
 
@@ -6766,977 +8972,5 @@ msgstr "파일 열기 오류: "
 #~ msgid "&None"
 #~ msgstr "없음(&N)"
 
-msgid "Sol"
-msgstr "태양"
-
-msgid "Alpheratz"
-msgstr "알페라츠"
-
-msgid "Sirrah"
-msgstr "시라흐"
-
-msgid "Caph"
-msgstr "카프"
-
-msgid "Algenib"
-msgstr "알게니브"
-
-msgid "Schemali"
-msgstr "셰말리"
-
-msgid "Ankaa"
-msgstr "안카"
-
-msgid "Shedir"
-msgstr "쉐다르"
-
-msgid "Schedar"
-msgstr "Schedar"
-
-msgid "Diphda"
-msgstr "디프다"
-
-msgid "Deneb Kaitos"
-msgstr "데네브 칼토스"
-
-msgid "Achird"
-msgstr "아키르드"
-
-msgid "Van Maanen 2"
-msgstr "반 마넨 2"
-
-msgid "Mirach"
-msgstr "미라크"
-
-msgid "Adhil"
-msgstr "아딜"
-
-msgid "Ruchbah"
-msgstr "루크바"
-
-msgid "Achernar"
-msgstr "아케르나르"
-
-msgid "Baten Kaitos"
-msgstr "바텐 카이토스"
-
-msgid "Caput Trianguli"
-msgstr "삼각형자리 머리"
-
-msgid "Mesarthim"
-msgstr "메사르팀"
-
-msgid "Segin"
-msgstr "세긴"
-
-msgid "Navi"
-msgstr "나비"
-
-msgid "Sheratan"
-msgstr "셰라탄"
-
-msgid "Al Rescha"
-msgstr "알 레스챠"
-
-msgid "Almaak"
-msgstr "알마크"
-
-msgid "Almach"
-msgstr "알마크"
-
-msgid "Alamak"
-msgstr "Alamak"
-
-msgid "Hamal"
-msgstr "하말"
-
-msgid "Mira"
-msgstr "미라"
-
-msgid "Polaris"
-msgstr "폴라리스 (북극성)"
-
-msgid "Angetenar"
-msgstr "안게테나르"
-
-msgid "Azha"
-msgstr "아자"
-
-msgid "Acamar"
-msgstr "아카마"
-
-msgid "Menkar"
-msgstr "멘카르"
-
-msgid "Menkab"
-msgstr "멘카브"
-
-msgid "Algol"
-msgstr "알골"
-
-msgid "Botein"
-msgstr "보테인"
-
-msgid "Mirphak"
-msgstr "미르팍"
-
-msgid "Mirfak"
-msgstr "미르팍"
-
-msgid "Marfak"
-msgstr "마르팍"
-
-msgid "Rana"
-msgstr "라나"
-
-msgid "Atik"
-msgstr "아틱"
-
-msgid "Celaeno"
-msgstr "켈라에노"
-
-msgid "Electra"
-msgstr "엘렉트라"
-
-msgid "Taygeta"
-msgstr "타이게타"
-
-msgid "Maia"
-msgstr "마이아"
-
-msgid "Asterope"
-msgstr "아스테로페"
-
-msgid "Merope"
-msgstr "메로페"
-
-msgid "Alcyone"
-msgstr "알키오네"
-
-msgid "Pleione"
-msgstr "플레이오네"
-
-msgid "Zaurak"
-msgstr "자우락"
-
-msgid "Menkib"
-msgstr "멘키브"
-
-msgid "Beid"
-msgstr "베이드"
-
-msgid "Keid"
-msgstr "케이드"
-
-msgid "Ain"
-msgstr "아인"
-
-msgid "Aldebaran"
-msgstr "알데바란"
-
-msgid "Hind's Crimson Star"
-msgstr "힌드의 진홍색 별"
-
-msgid "Sadatoni"
-msgstr "사다토니"
-
-msgid "Cursa"
-msgstr "쿠르사"
-
-msgid "Kapteyn's Star"
-msgstr "캅테인의 별"
-
-msgid "Rigel"
-msgstr "리겔"
-
-msgid "Capella"
-msgstr "카펠라"
-
-msgid "Bellatrix"
-msgstr "벨라트릭스"
-
-msgid "Alnath"
-msgstr "엘나스"
-
-msgid "Elnath"
-msgstr "엘나스"
-
-msgid "Nihal"
-msgstr "니할"
-
-msgid "Thabit"
-msgstr "타비트"
-
-msgid "Mintaka"
-msgstr "민타카"
-
-msgid "Arneb"
-msgstr "아르네브"
-
-msgid "Heka"
-msgstr "헤카"
-
-msgid "Meissa"
-msgstr "메이사"
-
-msgid "Alnilam"
-msgstr "알닐람"
-
-msgid "Phact"
-msgstr "팍트"
-
-msgid "Alnitak"
-msgstr "알니탁"
-
-msgid "Saiph"
-msgstr "사이프"
-
-msgid "Wazn"
-msgstr "와즌"
-
-msgid "Betelgeuse"
-msgstr "베텔게우스"
-
-msgid "Prijipati"
-msgstr "Prijipati"
-
-msgid "Menkalinan"
-msgstr "멘칼리난"
-
-msgid "Tejat"
-msgstr "테얏"
-
-msgid "Red Rectangle"
-msgstr "붉은 삼각형"
-
-msgid "Furud"
-msgstr "퍼러드"
-
-msgid "Mirzam"
-msgstr "미르잠"
-
-msgid "Murzim"
-msgstr "머르짐"
-
-msgid "Canopus"
-msgstr "카노푸스"
-
-msgid "Suhel"
-msgstr "수헬"
-
-msgid "Alhena"
-msgstr "알레나"
-
-msgid "Almeisan"
-msgstr "알메이산"
-
-msgid "Mebsuta"
-msgstr "멥수타"
-
-msgid "Sirius"
-msgstr "시리우스"
-
-msgid "Adara"
-msgstr "Adara"
-
-msgid "Adhara"
-msgstr "아다라"
-
-msgid "Muliphein"
-msgstr "무리훼인"
-
-msgid "Mekbuda"
-msgstr "메크부다"
-
-msgid "Wezen"
-msgstr "웨젠"
-
-msgid "Bernes 135"
-msgstr "버너스 135"
-
-msgid "Wasat"
-msgstr "와사트"
-
-msgid "Aludra"
-msgstr "알루드라"
-
-msgid "Gomeisa"
-msgstr "고메이사"
-
-msgid "Luyten's Star"
-msgstr "루이텐의 별"
-
-msgid "Castor"
-msgstr "카스토르"
-
-msgid "Procyon"
-msgstr "프로키온"
-
-msgid "Elgomaisa"
-msgstr "엘고메이사"
-
-msgid "Pollux"
-msgstr "폴룩스"
-
-msgid "Asmidiske"
-msgstr "아스미디스케"
-
-msgid "Naos"
-msgstr "나오스"
-
-msgid "Regor"
-msgstr "레고르"
-
-msgid "Tegmine"
-msgstr "테그미네"
-
-msgid "Al Tarf"
-msgstr "알 타르프"
-
-msgid "Avior"
-msgstr "아비오르"
-
-msgid "Muscida"
-msgstr "머스시다"
-
-msgid "Asellus Borealis"
-msgstr "북쪽 아셀루스"
-
-msgid "Asellus Australis"
-msgstr "남쪽 아셀루스"
-
-msgid "Acubens"
-msgstr "아쿠벤스"
-
-msgid "Dnoces"
-msgstr "드노세스"
-
-msgid "Talitha Australis"
-msgstr "Talitha Australis"
-
-msgid "Suhail"
-msgstr "수하일"
-
-msgid "Miaplacidus"
-msgstr "미아플라시두스"
-
-msgid "Aspidiske"
-msgstr "아스피디스케"
-
-msgid "Alphard"
-msgstr "알파드"
-
-msgid "Cor Hydrae"
-msgstr "코르 히드라에"
-
-msgid "Ukdah"
-msgstr "우크다흐"
-
-msgid "Alterf"
-msgstr "알터프"
-
-msgid "Subra"
-msgstr "수브라"
-
-msgid "Ras Elased Australis"
-msgstr "남쪽 라스 엘라세드"
-
-msgid "Rasalas"
-msgstr "라살라스"
-
-msgid "Ras Elased Borealis"
-msgstr "북쪽 라스 엘라세드"
-
-msgid "Regulus"
-msgstr "레굴루스"
-
-msgid "Kabeleced"
-msgstr "카벨레세드"
-
-msgid "Cor Leonis"
-msgstr "코 레오니스"
-
-msgid "Adhafera"
-msgstr "아드하페라"
-
-msgid "Aldhafera"
-msgstr "알드하페라"
-
-msgid "Tania Borealis"
-msgstr "북쪽 타니아"
-
-msgid "Algieba"
-msgstr "알기에바"
-
-msgid "Tania Australis"
-msgstr "남쪽 타니아"
-
-msgid "Alkes"
-msgstr "알케스"
-
-msgid "Merak"
-msgstr "메라크"
-
-msgid "Lalande 21185"
-msgstr "랄랑드 21185"
-
-msgid "Dubhe"
-msgstr "두베"
-
-msgid "Dubb"
-msgstr "두브"
-
-msgid "Zosma"
-msgstr "조스마"
-
-msgid "Duhr"
-msgstr "뒤르"
-
-msgid "Chertan"
-msgstr "셰르탄"
-
-msgid "Coxa"
-msgstr "코사"
-
-msgid "Chort"
-msgstr "초트"
-
-msgid "Alula Australis"
-msgstr "남쪽 알룰라"
-
-msgid "Alula Borealis"
-msgstr "북쪽 알룰라"
-
-msgid "Tsze Tseang"
-msgstr "Tsze Tseang"
-
-msgid "Giausar"
-msgstr "쟈우사르"
-
-msgid "Denebola"
-msgstr "데네볼라"
-
-msgid "Zavijava"
-msgstr "자비야바"
-
-msgid "Alaraph"
-msgstr "Alaraph"
-
-msgid "Groombridge 1830"
-msgstr "그룸브릿지 1830"
-
-msgid "Phecda"
-msgstr "펙다"
-
-msgid "Phad"
-msgstr "파드"
-
-msgid "Alchiba"
-msgstr "알키바"
-
-msgid "Megrez"
-msgstr "메그레즈"
-
-msgid "Gienah"
-msgstr "기에나흐"
-
-msgid "Zaniah"
-msgstr "자니아흐"
-
-msgid "Acrux"
-msgstr "아크룩스"
-
-msgid "Algorab"
-msgstr "알고라브"
-
-msgid "Gacrux"
-msgstr "가크룩스"
-
-msgid "Chara"
-msgstr "차라"
-
-msgid "Kraz"
-msgstr "크라즈"
-
-msgid "Muhlifain"
-msgstr "물리파인"
-
-msgid "Porrima"
-msgstr "포리마"
-
-msgid "Mimosa"
-msgstr "미모사"
-
-msgid "Alioth"
-msgstr "알리오스"
-
-msgid "Minelauva"
-msgstr "미네로바"
-
-msgid "Auva"
-msgstr "아우바"
-
-msgid "Cor Caroli"
-msgstr "코르 카롤리"
-
-msgid "Vindemiatrix"
-msgstr "반데미아트릭스"
-
-msgid "Almuredin"
-msgstr "알무레딘"
-
-msgid "Mizar"
-msgstr "미자르"
-
-msgid "Spica"
-msgstr "스피카"
-
-msgid "Azimech"
-msgstr "아지멕"
-
-msgid "Alcor"
-msgstr "알코르"
-
-msgid "Heze"
-msgstr "헤제"
-
-msgid "Benetnasch"
-msgstr "베넷나쉬"
-
-msgid "Alkaid"
-msgstr "알카이드"
-
-msgid "Muphrid"
-msgstr "무프리드"
-
-msgid "Agena"
-msgstr "아제나"
-
-msgid "Hadar"
-msgstr "하다르"
-
-msgid "Thuban"
-msgstr "투반"
-
-msgid "Menkent"
-msgstr "멘켄트"
-
-msgid "Arcturus"
-msgstr "아크투루스"
-
-msgid "Syrma"
-msgstr "시르마"
-
-msgid "Proxima"
-msgstr "프록시마"
-
-msgid "Seginus"
-msgstr "세기너스"
-
-msgid "Ceginus"
-msgstr "세그누스"
-
-msgid "Izar"
-msgstr "이자르"
-
-msgid "Mirak"
-msgstr "미라크"
-
-msgid "Pulcherrima"
-msgstr "풀체리마"
-
-msgid "Kocab"
-msgstr "코카브"
-
-msgid "Kochab"
-msgstr "코카브"
-
-msgid "Zubenelgenubi"
-msgstr "주벤엘게누비"
-
-msgid "Zuben Elakribi"
-msgstr "주벤 엘라크리비"
-
-msgid "Nekkar"
-msgstr "네카르"
-
-msgid "Zubeneschamali"
-msgstr "주벤에샤마리"
-
-msgid "Pherkad"
-msgstr "페르카드"
-
-msgid "Alkalurops"
-msgstr "알카루롭스"
-
-msgid "Edasich"
-msgstr "에다시크"
-
-msgid "Nusakan"
-msgstr "누사칸"
-
-msgid "Alphecca"
-msgstr "알페카"
-
-msgid "Gemma"
-msgstr "겜마"
-
-msgid "Zuben Elakrab"
-msgstr "주벤 엘라크라브"
-
-msgid "Unukalhai"
-msgstr "우누칼하이"
-
-msgid "Chow"
-msgstr "Chow"
-
-msgid "Dschubba"
-msgstr "드슈바"
-
-msgid "Graffias"
-msgstr "그라피아스"
-
-msgid "Akrab"
-msgstr "아크라브"
-
-msgid "Jabbah"
-msgstr "야바흐"
-
-msgid "Al Niyat"
-msgstr "알 니얏"
-
-msgid "Cujam"
-msgstr "쿠잠"
-
-msgid "Antares"
-msgstr "안타레스"
-
-msgid "Kornephoros"
-msgstr "코르네포러스"
-
-msgid "Marfik"
-msgstr "마르픽"
-
-msgid "Atria"
-msgstr "아트리아"
-
-msgid "Arrakis"
-msgstr "아라키스"
-
-msgid "Sabik"
-msgstr "사비크"
-
-msgid "Rasalgethi"
-msgstr "라스알게티"
-
-msgid "Ras Algethi"
-msgstr "라스 알게티"
-
-msgid "Sarin"
-msgstr "사린"
-
-msgid "Rastaban"
-msgstr "라스타반"
-
-msgid "Maasym"
-msgstr "마심"
-
-msgid "Lesath"
-msgstr "레사스"
-
-msgid "Lesuth"
-msgstr "레수스"
-
-msgid "Kuma"
-msgstr "쿠마"
-
-msgid "Yildun"
-msgstr "일둔"
-
-msgid "Shaula"
-msgstr "샤울라"
-
-msgid "Rasalhague"
-msgstr "라스알하게"
-
-msgid "Ras Alhague"
-msgstr "Ras Alhague"
-
-msgid "Sargas"
-msgstr "사르가스"
-
-msgid "Dziban"
-msgstr "드지반"
-
-msgid "Cebalrai"
-msgstr "세발라이"
-
-msgid "Grumium"
-msgstr "그루미움"
-
-msgid "Etamin"
-msgstr "엘타닌"
-
-msgid "Eltanin"
-msgstr "엘타닌"
-
-msgid "Barnard's Star"
-msgstr "버나드별"
-
-msgid "Alnasl"
-msgstr "알나슬"
-
-msgid "Kaus Media"
-msgstr "중앙 카우스"
-
-msgid "Kaus Australis"
-msgstr "남쪽 카우스"
-
-msgid "Al Athfar"
-msgstr "알 아트파르"
-
-msgid "Kaus Borealis"
-msgstr "북쪽 카우스"
-
-msgid "Vega"
-msgstr "베가 (직녀성)"
-
-msgid "Sheliak"
-msgstr "셸리아크"
-
-msgid "Nunki"
-msgstr "눈키"
-
-msgid "Alya"
-msgstr "알야"
-
-msgid "Sulafat"
-msgstr "술라파트"
-
-msgid "Ascella"
-msgstr "아셀라"
-
-msgid "Deneb el Okab"
-msgstr "데네브 알 오카브"
-
-msgid "Altais"
-msgstr "알타이스"
-
-msgid "Al Tais"
-msgstr "알 타이스"
-
-msgid "Nodus Secundus"
-msgstr "둘째 노두스"
-
-msgid "Aladfar"
-msgstr "알라드파르"
-
-msgid "Arkab"
-msgstr "아르카브"
-
-msgid "Rukbat"
-msgstr "루크바트"
-
-msgid "Albireo"
-msgstr "알비레오"
-
-msgid "Alsafi"
-msgstr "알사피"
-
-msgid "Campbell's Star"
-msgstr "캠벨의 별"
-
-msgid "Sham"
-msgstr "샴"
-
-msgid "Tarazed"
-msgstr "타라제드"
-
-msgid "Tyl"
-msgstr "틸"
-
-msgid "Altair"
-msgstr "알타이르 (견우성)"
-
-msgid "Atair"
-msgstr "Atair"
-
-msgid "Alshain"
-msgstr "알샤인"
-
-msgid "Algedi"
-msgstr "알게디"
-
-msgid "Dabih"
-msgstr "다비흐"
-
-msgid "Sadr"
-msgstr "사드르"
-
-msgid "Peacock"
-msgstr "피콕"
-
-msgid "Rotanev"
-msgstr "로타네브"
-
-msgid "Sualocin"
-msgstr "수알로신"
-
-msgid "Deneb"
-msgstr "데네브"
-
-msgid "Albali"
-msgstr "알발리"
-
-msgid "Kitalpha"
-msgstr "키탈파"
-
-msgid "Lacaille 8760"
-msgstr "Lacaille 8760"
-
-msgid "Alderamin"
-msgstr "알데라민"
-
-msgid "Alfirk"
-msgstr "알피르크"
-
-msgid "Sadalsuud"
-msgstr "사달수드"
-
-msgid "Nashira"
-msgstr "나시라"
-
-msgid "Azelfafage"
-msgstr "아젤파파게"
-
-msgid "The Garnet Star"
-msgstr "석류의 별"
-
-msgid "Herschel's Garnet Star"
-msgstr "Herschel's Garnet Star"
-
-msgid "Enif"
-msgstr "에니프"
-
-msgid "Deneb Algedi"
-msgstr "데네브 알게디"
-
-msgid "Al Dhanab"
-msgstr "알 드하나브"
-
-msgid "Kurhah"
-msgstr "쿠르하"
-
-msgid "Sadalmelik"
-msgstr "사달멜리크"
-
-msgid "Alnair"
-msgstr "알나이르"
-
-msgid "Al Nair"
-msgstr "Al Nair"
-
-msgid "Biham"
-msgstr "비함"
-
-msgid "Ancha"
-msgstr "안차"
-
-msgid "Sadachbia"
-msgstr "사다크비아"
-
-msgid "Seat"
-msgstr "시트"
-
-msgid "Kruger 60"
-msgstr "크루거 60"
-
-msgid "Homam"
-msgstr "호맘"
-
-msgid "Matar"
-msgstr "마타르"
-
-msgid "Babcock's Star"
-msgstr "밥콕의 별"
-
-msgid "Sadalbari"
-msgstr "사달바리"
-
-msgid "Skat"
-msgstr "스캇"
-
-msgid "Fomalhaut"
-msgstr "포말하우트"
-
-msgid "Scheat"
-msgstr "쉬트"
-
-msgid "Fum al Samakah"
-msgstr "품 알 사마카흐"
-
-msgid "Markab"
-msgstr "마르카브"
-
-msgid "Marchab"
-msgstr "마르챠브"
-
-msgid "Bradley 3077"
-msgstr "Bradley 3077"
-
-msgid "Situla"
-msgstr "시툴라"
-
-msgid "Errai"
-msgstr "엘라이"
-
-msgid "Pleiades"
-msgstr "플레이아데스"
-
-msgid "Hyades"
-msgstr "히아데스"
-
-msgid "Praesepe"
-msgstr "프레세페"
-
-msgid "Beehive Cluster"
-msgstr "벌집 성단"
-
-msgid "Maffei 1"
-msgstr "마페이 1"
-
-msgid "Maffei 2"
-msgstr "마페이 2"
-
-msgid "Leo A"
-msgstr "사자자리 A"
-
-msgid "Sextans B"
-msgstr "육분의자리 B"
-
-msgid "Leo I"
-msgstr "사자자리 I"
-
-msgid "Sextans A"
-msgstr "육분의자리 A"
-
-msgid "Circinus"
-msgstr "컴퍼스"
-
-msgid "Holmberg VI"
-msgstr "홈버그 VI"
-
-msgid "Fath 703"
-msgstr "패덤 703"
-
-msgid "47 Tuc"
-msgstr "큰부리새자리 47"
-
-msgid "Eridanus"
-msgstr "에리다누스"
-
-msgid "Pyxis"
-msgstr "나침반"
-
-msgid "Tonantzintla 2"
-msgstr "토난친틀라 2"
+#~ msgid "The Garnet Star"
+#~ msgstr "석류의 별"
