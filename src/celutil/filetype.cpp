@@ -19,6 +19,7 @@ static const char JFIFExt[] = ".jif";
 static const char BMPExt[] = ".bmp";
 static const char TargaExt[] = ".tga";
 static const char PNGExt[] = ".png";
+static const char AVIFExt[] = ".avif";
 static const char ThreeDSExt[] = ".3ds";
 static const char CelestiaTextureExt[] = ".ctx";
 static const char CelestiaMeshExt[] = ".cms";
@@ -52,6 +53,8 @@ ContentType DetermineFileType(const fs::path& filename)
         return Content_Targa;
     if (compareIgnoringCase(PNGExt, ext) == 0)
         return Content_PNG;
+    if (compareIgnoringCase(AVIFExt, ext) == 0)
+        return Content_AVIF;
     if (compareIgnoringCase(ThreeDSExt, ext) == 0)
         return Content_3DStudio;
     if (compareIgnoringCase(CelestiaTextureExt, ext) == 0)
