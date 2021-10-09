@@ -299,6 +299,9 @@ Image* LoadImageFromFile(const fs::path& filename)
     case Content_PNG:
         img = LoadPNGImage(filename);
         break;
+    case Content_AVIF:
+        img = LoadAVIFImage(filename);
+        break;
     case Content_DDS:
     case Content_DXT5NormalMap:
         img = LoadDDSImage(filename);

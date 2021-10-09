@@ -26,14 +26,15 @@ static std::array<const char*, 3> directories =
     "hires"
 };
 
-static std::array<const char*, 6> extensions =
+static std::array<const char*, 7> extensions =
 {
     "png",
     "jpg",
     "jpeg",
     "dds",
     "dxt5nm",
-    "ctx"
+    "ctx",
+    "avif"
 };
 
 TextureManager* GetTextureManager()
