@@ -43,7 +43,7 @@ jobs:
         -password "${{ secrets.GITHUB_TOKEN }}"
 
     - name: 'Install dependencies'
-      run: vcpkg --triplet=${{matrix.platform}}-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice qt5-base
+      run: vcpkg --triplet=${{matrix.platform}}-windows install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype cspice qt5-base libavif
 
     - name: 'Checkout source code'
       uses: actions/checkout@v2
