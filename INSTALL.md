@@ -83,11 +83,11 @@ First you need a C++ compiler able to compile C++11 code (GCC 4.8.1 or later,
 Clang 3.3 or later), CMake, GNU Make or Ninja.
 
 Then you need to have the following devel components installed before Celestia
-will build: OpenGL, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and libpng.
+will build: OpenGL, libepoxy, fmtlib, Eigen3, freetype, libjpeg, libpng and libavif
 Optional packages are gettext, Qt5, Gtk2 or Gtk3, sdl2, ffmpeg, glu and glut.
 
 For example on modern Debian-derived system you need to install the following
-packages: libepoxy-dev, libjpeg-dev, libpng-dev, libgl1-mesa-dev,
+packages: libepoxy-dev, libjpeg-dev, libpng-dev, libgl1-mesa-dev, libavif-dev
 libeigen3-dev, libfmt-dev, libfreetype6-dev. Then you may want to install
 libglu1-mesa-dev, required by some tools; qtbase5-dev, qtbase5-dev-tools and
 libqt5opengl5-dev if you want to build with Qt5 interface; libgtk2.0-dev and
@@ -155,7 +155,7 @@ and vcpkg (*).
 Install required packages:
 
 ```
-vcpkg --triplet=TRIPLET install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype
+vcpkg --triplet=TRIPLET install --recurse libpng libjpeg-turbo gettext luajit fmt libepoxy eigen3 freetype libavif
 ```
 
 Install optional packages:
@@ -281,7 +281,7 @@ Install Homebrew
 Install required packages:
 
 ```
-brew install pkg-config cmake fmt gettext libepoxy libpng lua qt5 jpeg eigen freetype ffmpeg
+brew install pkg-config cmake fmt gettext libepoxy libpng lua qt5 jpeg eigen freetype ffmpeg libavif
 ```
 
 Install optional packages:
