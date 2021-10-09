@@ -1,4 +1,5 @@
 set(CELIMAGE_SOURCES
+  avif.cpp
   bmp.cpp
   dds.cpp
   dds_decompress.cpp
