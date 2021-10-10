@@ -179,6 +179,13 @@ if(ENABLE_FFMPEG)
   add_definitions(-DUSE_FFMPEG)
 endif()
 
+if(ENABLE_LIBAVIF)
+  find_package(Libavif REQUIRED)
+  link_libraries(libavif::libavif)
+  include_directories(${LIBAVIF_INCLUDE_DIR})
+  add_definitions(-DUSE_LIBAVIF)
+endif()
+
 if(_UNIX)
   find_package(PkgConfig)
 endif()
@@ -211,10 +218,6 @@ link_libraries(PNG::PNG)
 find_package(JPEG REQUIRED) # -DJPEG_LIBRARY=...
 include_directories(${JPEG_INCLUDE_DIRS})
 link_libraries(${JPEG_LIBRARIES})
-
-find_package(Libavif REQUIRED)
-link_libraries(libavif::libavif)
-include_directories(${LIBAVIF_INCLUDE_DIR})
 
 if(ENABLE_CELX)
   add_definitions(-DCELX)

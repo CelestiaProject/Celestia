@@ -17,7 +17,9 @@ Image* LoadJPEGImage(const fs::path& filename,
 Image* LoadBMPImage(const fs::path& filename);
 Image* LoadPNGImage(const fs::path& filename);
 Image* LoadDDSImage(const fs::path& filename);
+#ifdef USE_LIBAVIF
 Image* LoadAVIFImage(const fs::path& filename);
+#endif
 
 bool SaveJPEGImage(const fs::path& filename, Image& image);
 bool SavePNGImage(const fs::path& filename, Image& image);

@@ -1,5 +1,4 @@
 set(CELIMAGE_SOURCES
-  avif.cpp
   bmp.cpp
   dds.cpp
   dds_decompress.cpp
@@ -8,5 +7,11 @@ set(CELIMAGE_SOURCES
   jpeg.cpp
   png.cpp
 )
+
+if(ENABLE_LIBAVIF)
+  list(APPEND CELIMAGE_SOURCES
+    avif.cpp
+  )
+endif()
 
 add_library(celimage OBJECT ${CELIMAGE_SOURCES})
