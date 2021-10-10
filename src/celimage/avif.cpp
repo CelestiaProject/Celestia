@@ -15,14 +15,12 @@ extern "C" {
 #include <avif/avif.h>
 }
 
-using std::ifstream;
-using std::ios;
 using celestia::PixelFormat;
 
 Image* LoadAVIFImage(const fs::path& filename)
 {
     avifDecoder* decoder = avifDecoderCreate();
-    avifResult result = avifDecoderSetIOFile(decoder, filename.c_str());
+    avifResult result = avifDecoderSetIOFile(decoder, filename.string().c_str());
     if (result != AVIF_RESULT_OK)
     {
         DPRINTF(LOG_LEVEL_ERROR, "Cannot open file for read: '%s'\n", filename);
@@ -46,6 +44,7 @@ Image* LoadAVIFImage(const fs::path& filename)
     }
 
     avifRGBImage rgb;
+    rgb.format = AVIF_RGB_FORMAT_RGBA;
     avifRGBImageSetDefaults(&rgb, decoder->image);
 
     Image* image = new Image(PixelFormat::RGBA, rgb.width, rgb.height);

@@ -667,8 +667,10 @@ void CommandCapture::process(ExecutionEnvironment& env)
         _type = Content_JPEG;
     else if (type == "png")
         _type = Content_PNG;
+#ifdef USE_LIBAVIF
     else if (type == "avif")
         _type = Content_AVIF;
+#endif
     env.getCelestiaCore()->saveScreenShot(filename, _type);
 }
 
