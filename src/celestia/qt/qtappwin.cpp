@@ -1083,6 +1083,7 @@ void CelestiaAppWindow::slotShowAbout()
         "Using %3 %4<br>"
         "Built against Qt library: %5<br>"
         "NAIF kernels are %7<br>"
+        "AVIF images are %8</p>"
         "Runtime Qt version: %6</p>"
 
         "<p>Copyright (C) 2001-2021 by the Celestia Development Team.<br>"
@@ -1114,6 +1115,11 @@ void CelestiaAppWindow::slotShowAbout()
 #endif
                                 .arg(QT_VERSION_STR, qVersion())
 #if defined(USE_SPICE)
+                                .arg(_("supported"))
+#else
+                                .arg(_("not supported"))
+#endif
+#if defined(USE_LIBAVIF)
                                 .arg(_("supported"))
 #else
                                 .arg(_("not supported"))
