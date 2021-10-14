@@ -1234,7 +1234,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
             source += "diff.rgb += " + LightProperty(i, "diffuse") + " * d;\n";
         }
     }
-    else if ((props.lightModel == ShaderProperties::LunarLambertModel) != 0)
+    else if ((props.lightModel & ShaderProperties::LunarLambertModel) != 0)
     {
         source += AssignDiffuse(i, props) + " mix(NL, NL / (max(NV, 0.001) + NL), lunarLambert);\n";
     }
