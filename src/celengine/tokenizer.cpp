@@ -60,6 +60,16 @@ Tokenizer::TokenType Tokenizer::nextToken()
         return tokenType;
     }
 
+    if (isStart)
+    {
+        isStart = false;
+        if (!skipUtf8Bom())
+        {
+            tokenType = TokenError;
+            return tokenType;
+        }
+    }
+
     textToken.clear();
     tokenValue = std::nan("");
     State state = State::Start;
@@ -427,4 +437,44 @@ std::string Tokenizer::getStringValue() const
 int Tokenizer::getLineNumber() const
 {
     return lineNumber;
+}
+
+
+bool Tokenizer::skipUtf8Bom()
+{
+    for (int i = 0; i < 3; ++i)
+    {
+        in->get(nextChar);
+        if (in->eof())
+        {
+            if (i == 0)
+            {
+                return true;
+            }
+
+            reportError("Incomplete UTF-8 sequence");
+            return false;
+        }
+        else if (in->fail())
+        {
+            reportError("Unexpected error reading stream");
+            return false;
+        }
+        else if (i == 0)
+        {
+            if (nextChar != '\357')
+            {
+                lineNumber += nextChar == '\n' ? 1 : 0;
+                reprocess = true;
+                return true;
+            }
+        }
+        else if ((i == 1 && nextChar != '\273') || (i == 2 && nextChar != '\277'))
+        {
+            reportError("Bad character in stream");
+            return false;
+        }
+    }
+
+    return true;
 }

@@ -51,12 +51,15 @@ public:
 private:
     std::istream* in;
     TokenType tokenType{ TokenBegin };
+    bool isStart{ true };
     bool isPushedBack{ false };
     std::string textToken{};
     double tokenValue{ std::nan("") };
     int lineNumber{ 1 };
     char nextChar{ '\0' };
     bool reprocess{ false };
+
+    bool skipUtf8Bom();
 };
 
 #endif // _TOKENIZER_H_
