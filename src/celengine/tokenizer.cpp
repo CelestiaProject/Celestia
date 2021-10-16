@@ -1,6 +1,6 @@
 // tokenizer.cpp
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-2021, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -9,22 +9,44 @@
 // of the License, or (at your option) any later version.
 
 #include <cctype>
-#include <cmath>
-#include <iomanip>
+#include <cerrno>
+#include <cstdint>
+#include <cstdlib>
 #include <iostream>
-#include <celutil/utf8.h>
+
+#include "celutil/utf8.h"
+
 #include "tokenizer.h"
 
-
-using namespace std;
-
-static bool issep(char c)
+namespace
 {
-    return !isdigit(c) && !isalpha(c) && c != '.';
+enum class State
+{
+    Start,
+    Number,
+    Fraction,
+    ExponentStart,
+    Exponent,
+    Name,
+    String,
+    StringEscape,
+    UnicodeEscape,
+    Comment,
+};
+
+void reportError(const char* message)
+{
+    std::cerr << message << '\n';
+}
+
+bool isSeparator(char c)
+{
+    return !std::isdigit(c) && !std::isalpha(c) && c != '.';
+}
 }
 
 
-Tokenizer::Tokenizer(istream* _in) :
+Tokenizer::Tokenizer(std::istream* _in) :
     in(_in)
 {
 }
@@ -32,357 +54,347 @@ Tokenizer::Tokenizer(istream* _in) :
 
 Tokenizer::TokenType Tokenizer::nextToken()
 {
-    State state = StartState;
-
-    if (pushedBack)
+    if (isPushedBack)
     {
-        pushedBack = false;
+        isPushedBack = false;
         return tokenType;
     }
 
-    textToken = "";
-    haveValidNumber = false;
-    haveValidName = false;
-    haveValidString = false;
-
-    if (tokenType == TokenBegin)
-    {
-        nextChar = readChar();
-        if (in->eof())
-            return TokenEnd;
-    }
-    else if (tokenType == TokenEnd)
-    {
-        return tokenType;
-    }
-
-    double integerValue = 0;
-    double fractionValue = 0;
-    double sign = 1;
-    double fracExp = 1;
-    double exponentValue = 0;
-    double exponentSign = 1;
-
+    textToken.clear();
+    tokenValue = std::nan("");
+    State state = State::Start;
     TokenType newToken = TokenBegin;
+    int unicodeDigits = 0;
+    char unicode[5] = {};
+
     while (newToken == TokenBegin)
     {
+        bool isEof = false;
+        if (reprocess)
+        {
+            reprocess = false;
+        }
+        else
+        {
+            in->get(nextChar);
+            if (in->eof())
+            {
+                isEof = true;
+            }
+            else if (in->fail())
+            {
+                reportError("Unexpected error reading stream");
+                newToken = TokenError;
+                break;
+            }
+            else if (nextChar == '\n')
+            {
+                ++lineNumber;
+            }
+        }
+
         switch (state)
         {
-        case StartState:
-            if (isspace(nextChar))
+        case State::Start:
+            if (isEof)
             {
-                state = StartState;
+                newToken = TokenEnd;
             }
-            else if (isdigit(nextChar))
+            else if (std::isspace(nextChar))
             {
-                state = NumberState;
-                integerValue = (int) nextChar - (int) '0';
+                // no-op
             }
-            else if (nextChar == '-')
+            else if (std::isdigit(nextChar) || nextChar == '-')
             {
-                state = NumberState;
-                sign = -1;
-                integerValue = 0;
+                textToken.push_back(nextChar);
+                state = State::Number;
             }
             else if (nextChar == '+')
             {
-                state = NumberState;
-                sign = +1;
-                integerValue = 0;
+                state = State::Number;
             }
             else if (nextChar == '.')
             {
-                state = FractionState;
-                sign = +1;
-                integerValue = 0;
+                textToken.append("0.");
+                state = State::Fraction;
             }
-            else if (isalpha(nextChar) || nextChar == '_')
+            else if (std::isalpha(nextChar) || nextChar == '_')
             {
-                state = NameState;
-                textToken += (char) nextChar;
-            }
-            else if (nextChar == '#')
-            {
-                state = CommentState;
+                textToken.push_back(nextChar);
+                state = State::Name;
             }
             else if (nextChar == '"')
             {
-                state = StringState;
+                state = State::String;
+            }
+            else if (nextChar == '#')
+            {
+                state = State::Comment;
             }
             else if (nextChar == '{')
             {
                 newToken = TokenBeginGroup;
-                nextChar = readChar();
             }
             else if (nextChar == '}')
             {
                 newToken = TokenEndGroup;
-                nextChar = readChar();
             }
             else if (nextChar == '[')
             {
                 newToken = TokenBeginArray;
-                nextChar = readChar();
             }
             else if (nextChar == ']')
             {
                 newToken = TokenEndArray;
-                nextChar = readChar();
             }
             else if (nextChar == '=')
             {
                 newToken = TokenEquals;
-                nextChar = readChar();
             }
             else if (nextChar == '|')
             {
                 newToken = TokenBar;
-                nextChar = readChar();
             }
             else if (nextChar == '<')
             {
                 newToken = TokenBeginUnits;
-                nextChar = readChar();
             }
             else if (nextChar == '>')
             {
                 newToken = TokenEndUnits;
-                nextChar = readChar();
-            }
-            else if (nextChar == -1)
-            {
-                newToken = TokenEnd;
             }
             else
             {
+                reportError("Bad character in stream");
                 newToken = TokenError;
-                syntaxError("Bad character in stream");
             }
             break;
 
-        case NameState:
-            if (isalpha(nextChar) || isdigit(nextChar) || nextChar == '_')
+        case State::Number:
+            if (isEof)
             {
-                state = NameState;
-                textToken += (char) nextChar;
+                newToken = TokenNumber;
+            }
+            else if (std::isdigit(nextChar))
+            {
+                textToken.push_back(nextChar);
+            }
+            else if (nextChar == '.')
+            {
+                textToken.push_back(nextChar);
+                state = State::Fraction;
+            }
+            else if (nextChar == 'e' || nextChar == 'E')
+            {
+                textToken.push_back('e');
+                state = State::ExponentStart;
+            }
+            else if (isSeparator(nextChar))
+            {
+                newToken = TokenNumber;
+                reprocess = true;
+            }
+            else
+            {
+                reportError("Bad character in number");
+                newToken = TokenError;
+            }
+            break;
+
+        case State::Fraction:
+            if (isEof)
+            {
+                newToken = TokenNumber;
+            }
+            else if (std::isdigit(nextChar))
+            {
+                textToken.push_back(nextChar);
+            }
+            else if (nextChar == 'e' || nextChar == 'E')
+            {
+                textToken.push_back('e');
+                state = State::ExponentStart;
+            }
+            else if (isSeparator(nextChar))
+            {
+                newToken = TokenNumber;
+                reprocess = true;
+            }
+            else
+            {
+                reportError("Bad character in number");
+                newToken = TokenError;
+            }
+            break;
+
+        case State::ExponentStart:
+            if (isEof)
+            {
+                reportError("Unexpected EOF");
+                newToken = TokenError;
+            }
+            else if (std::isdigit(nextChar) || nextChar == '+' || nextChar == '-')
+            {
+                textToken.push_back(nextChar);
+                state = State::Exponent;
+            }
+            else
+            {
+                reportError("Bad character in number");
+                newToken = TokenError;
+            }
+            break;
+
+        case State::Exponent:
+            if (isEof)
+            {
+                newToken = TokenNumber;
+            }
+            else if (std::isdigit(nextChar))
+            {
+                textToken.push_back(nextChar);
+            }
+            else if (isSeparator(nextChar))
+            {
+                newToken = TokenNumber;
+                reprocess = true;
+            }
+            else
+            {
+                reportError("Bad character in number");
+                newToken = TokenError;
+            }
+            break;
+
+        case State::Name:
+            if (isEof)
+            {
+                newToken = TokenName;
+            }
+            else if (std::isalpha(nextChar) || std::isdigit(nextChar) || nextChar == '_')
+            {
+                textToken.push_back(nextChar);
             }
             else
             {
                 newToken = TokenName;
-                haveValidName = true;
+                reprocess = true;
             }
             break;
 
-        case CommentState:
-            if (nextChar == '\n' || nextChar == '\r' || nextChar == char_traits<char>::eof())
-                state = StartState;
-            break;
-
-        case StringState:
-            if (nextChar == '"')
+        case State::String:
+            if (isEof)
             {
-                newToken = TokenString;
-                haveValidString = true;
-                nextChar = readChar();
+                reportError("Unterminated string");
+                newToken = TokenError;
             }
             else if (nextChar == '\\')
             {
-                state = StringEscapeState;
-            }
-            else if (nextChar == char_traits<char>::eof())
-            {
-                newToken = TokenError;
-                syntaxError("Unterminated string");
-            }
-            else
-            {
-                state = StringState;
-                textToken += (char) nextChar;
-            }
-            break;
-
-        case StringEscapeState:
-            if (nextChar == '\\')
-            {
-                textToken += '\\';
-                state = StringState;
-            }
-            else if (nextChar == 'n')
-            {
-                textToken += '\n';
-                state = StringState;
+                state = State::StringEscape;
             }
             else if (nextChar == '"')
             {
-                textToken += '"';
-                state = StringState;
+                newToken = TokenString;
+            }
+            else
+            {
+                textToken.push_back(nextChar);
+            }
+            break;
+
+        case State::StringEscape:
+            if (isEof)
+            {
+                reportError("Unterminated string");
+                newToken = TokenError;
+            }
+            else if (nextChar == '\\')
+            {
+                textToken.push_back('\\');
+                state = State::String;
+            }
+            else if (nextChar == 'n')
+            {
+                textToken.push_back('\n');
+                state = State::String;
+            }
+            else if (nextChar == '"')
+            {
+                textToken.push_back('"');
+                state = State::String;
             }
             else if (nextChar == 'u')
             {
-                unicodeValue = 0;
-                unicodeEscapeDigits = 0;
-                state = UnicodeEscapeState;
+                state = State::UnicodeEscape;
+                unicodeDigits = 0;
             }
-            else
+            break;
+
+        case State::UnicodeEscape:
+            if (isEof)
             {
+                reportError("Unterminated string");
                 newToken = TokenError;
-                syntaxError("Unknown escape code in string");
-                state = StringState;
             }
-            break;
-
-        case NumberState:
-            if (isdigit(nextChar))
+            else if (std::isxdigit(nextChar))
             {
-                state = NumberState;
-                integerValue = integerValue * 10 + (int) nextChar - (int) '0';
-            }
-            else if (nextChar == '.')
-            {
-                state = FractionState;
-            }
-            else if (nextChar == 'e' || nextChar == 'E')
-            {
-                state = ExponentFirstState;
-            }
-            else if (issep(nextChar))
-            {
-                newToken = TokenNumber;
-                haveValidNumber = true;
-            }
-            else
-            {
-                newToken = TokenError;
-                syntaxError("Bad character in number");
-            }
-            break;
-
-        case FractionState:
-            if (isdigit(nextChar))
-            {
-                state = FractionState;
-                fractionValue = fractionValue * 10 + nextChar - (int) '0';
-                fracExp *= 10;
-            }
-            else if (nextChar == 'e' || nextChar == 'E')
-            {
-                state = ExponentFirstState;
-            }
-            else if (issep(nextChar))
-            {
-                newToken = TokenNumber;
-                haveValidNumber = true;
-            } else {
-                newToken = TokenError;
-                syntaxError("Bad character in number");
-            }
-            break;
-
-        case ExponentFirstState:
-            if (isdigit(nextChar))
-            {
-                state = ExponentState;
-                exponentValue = (int) nextChar - (int) '0';
-            }
-            else if (nextChar == '-')
-            {
-                state = ExponentState;
-                exponentSign = -1;
-            }
-            else if (nextChar == '+')
-            {
-                state = ExponentState;
-            }
-            else
-            {
-                state = ErrorState;
-                syntaxError("Bad character in number");
-            }
-            break;
-
-        case ExponentState:
-            if (isdigit(nextChar))
-            {
-                state = ExponentState;
-                exponentValue = exponentValue * 10 + (int) nextChar - (int) '0';
-            }
-            else if (issep(nextChar))
-            {
-                newToken = TokenNumber;
-                haveValidNumber = true;
-            }
-            else
-            {
-                state = ErrorState;
-                syntaxError("Bad character in number");
-            }
-            break;
-
-        case DotState:
-            if (isdigit(nextChar))
-            {
-                state = FractionState;
-                fractionValue = fractionValue * 10 + (int) nextChar - (int) '0';
-                fracExp = 10;
-            }
-            else
-            {
-                state = ErrorState;
-                syntaxError("'.' in stupid place");
-            }
-            break;
-
-        case UnicodeEscapeState:
-            if (isxdigit(nextChar))
-            {
-                unsigned int digitValue;
-                if (nextChar >= 'a' && nextChar <= 'f')
-                    digitValue = nextChar - 'a' + 10;
-                else if (nextChar >= 'A' && nextChar <= 'F')
-                    digitValue = nextChar - 'A' + 10;
-                else
-                    digitValue = nextChar - '0';
-                unicodeValue = (unicodeValue << 4) + digitValue;
-                unicodeEscapeDigits++;
-                if (unicodeEscapeDigits == 4)
+                unicode[unicodeDigits++] = nextChar;
+                if (unicodeDigits == 4)
                 {
-                    char utf8Encoded[7];
-                    UTF8Encode((wchar_t) unicodeValue, utf8Encoded);
-                    textToken += utf8Encoded;
-                    state = StringState;
+                    auto unicodeValue = static_cast<std::uint32_t>(std::strtoul(unicode, nullptr, 16));
+                    UTF8Encode(unicodeValue, textToken);
+                    state = State::String;
                 }
             }
             else
             {
-                state = ErrorState;
-                syntaxError("Bad Unicode escape in string");
+                reportError("Bad character in Unicode escape");
+                newToken = TokenError;
             }
             break;
 
-        case ErrorState:    break;  // Prevent GCC4 warnings; do nothing
+        case State::Comment:
+            if (isEof)
+            {
+                newToken = TokenEnd;
+            }
+            else if (nextChar == '\n' || nextChar == '\r')
+            {
+                state = State::Start;
+            }
+            break;
+        }
+    }
 
-        } // Switch
-
-        if (newToken == TokenBegin)
+    if (newToken == TokenNumber)
+    {
+        const char* start = textToken.c_str();
+        char* end;
+        errno = 0;
+        double value = std::strtod(start, &end);
+        if (end == start)
         {
-            nextChar = readChar();
+            reportError("Could not parse number");
+            newToken = TokenError;
+        }
+        else if (errno == ERANGE)
+        {
+            reportError("Number out of range");
+            newToken = TokenError;
+            errno = 0;
+        }
+        else
+        {
+            tokenValue = value;
         }
     }
 
     tokenType = newToken;
-    if (haveValidNumber)
-    {
-        numberValue = integerValue + fractionValue / fracExp;
-        if (exponentValue != 0)
-            numberValue *= pow(10.0, exponentValue * exponentSign);
-        numberValue *= sign;
-    }
-
     return tokenType;
 }
 
 
-Tokenizer::TokenType Tokenizer::getTokenType()
+Tokenizer::TokenType Tokenizer::getTokenType() const
 {
     return tokenType;
 }
@@ -390,92 +402,29 @@ Tokenizer::TokenType Tokenizer::getTokenType()
 
 void Tokenizer::pushBack()
 {
-    pushedBack = true;
+    isPushedBack = true;
 }
 
 
-double Tokenizer::getNumberValue()
+double Tokenizer::getNumberValue() const
 {
-    return numberValue;
+    return tokenValue;
 }
 
 
-string Tokenizer::getNameValue()
-{
-    return textToken;
-}
-
-
-string Tokenizer::getStringValue()
+std::string Tokenizer::getNameValue() const
 {
     return textToken;
 }
 
 
-int Tokenizer::readChar()
+std::string Tokenizer::getStringValue() const
 {
-    auto c = (int) in->get();
-    if (c == '\n')
-        lineNum++;
-
-    return c;
-}
-
-void Tokenizer::syntaxError(const char* message)
-{
-    cerr << message << '\n';
+    return textToken;
 }
 
 
 int Tokenizer::getLineNumber() const
 {
-    return lineNum;
+    return lineNumber;
 }
-
-#if 0
-// Tokenizer test
-int main(int argc, char *argv[])
-{
-    Tokenizer tokenizer(&cin);
-    Tokenizer::TokenType tok = Tokenizer::TokenBegin;
-
-    while (tok != Tokenizer::TokenEnd)
-    {
-        tok = tokenizer.nextToken();
-        switch (tok)
-        {
-        case Tokenizer::TokenBegin:
-            cout << "Begin";
-            break;
-        case Tokenizer::TokenEnd:
-            cout << "End";
-            break;
-        case Tokenizer::TokenName:
-            cout << "Name = " << tokenizer.getNameValue();
-            break;
-        case Tokenizer::TokenNumber:
-            cout << "Number = " << tokenizer.getNumberValue();
-            break;
-        case Tokenizer::TokenString:
-            cout << "String = " << '"' << tokenizer.getStringValue() << '"';
-            break;
-        case Tokenizer::TokenBeginGroup:
-            cout << '{';
-            break;
-        case Tokenizer::TokenEndGroup:
-            cout << '}';
-            break;
-        case Tokenizer::TokenEquals:
-            cout << '=';
-            break;
-        default:
-            cout << "Other";
-            break;
-        }
-
-        cout << '\n';
-    }
-
-    return 0;
-}
-#endif

@@ -425,66 +425,40 @@ bool UTF8Decode(const char* str, int pos, int length, wchar_t& ch)
 }
 
 
-//! UTF-8 encode the Unicode character ch into the string s and return the
-//! encoded length.  There should be space for at least 7 characters in s--up
-//! to six encoded bytes, plus one byte for the terminating null character.
-int UTF8Encode(wchar_t ch, char* s)
+//! Appends the UTF-8 encoded version of the code point ch to the
+//! destination string
+void UTF8Encode(std::uint32_t ch, std::string& dest)
 {
     if (ch < 0x80)
     {
-        s[0] = (char) ch;
-        s[1] = '\0';
-        return 1;
+        dest.push_back(static_cast<char>(ch));
     }
-    if (ch < 0x800)
+    else if (ch < 0x800)
     {
-        s[0] = (char) (0xc0 | ((ch & 0x7c0) >> 6));
-        s[1] = (char) (0x80 | (ch & 0x3f));
-        s[2] = '\0';
-        return 2;
+        dest.push_back(static_cast<char>(0xc0 | (ch >> 6)));
+        dest.push_back(static_cast<char>(0x80 | (ch & 0x3f)));
+    }
+    else if (ch < 0x10000)
+    {
+        dest.push_back(static_cast<char>(0xe0 | (ch >> 12)));
+        dest.push_back(static_cast<char>(0x80 | ((ch & 0xfff) >> 6)));
+        dest.push_back(static_cast<char>(0x80 | (ch & 0x3f)));
     }
 #if WCHAR_MAX > 0xFFFFu
-    if (ch < 0x10000)
+    else if (ch < 0x110000)
     {
+        dest.push_back(static_cast<char>(0xf0 | (ch >> 18)));
+        dest.push_back(static_cast<char>(0x80 | ((ch & 0x3ffff) >> 12)));
+        dest.push_back(static_cast<char>(0x80 | ((ch & 0xfff) >> 6)));
+        dest.push_back(static_cast<char>(0x80 | (ch & 0x3f)));
+    }
 #endif
-        s[0] = (char) (0xe0 | ((ch & 0xf000) >> 12));
-        s[1] = (char) (0x80 | ((ch & 0x0fc0) >> 6));
-        s[2] = (char) (0x80 | ((ch & 0x003f)));
-        s[3] = '\0';
-        return 3;
-#if WCHAR_MAX > 0xFFFFu
-    }
-    if (ch < 0x200000)
-    {
-        s[0] = (char) (0xf0 | ((ch & 0x1c0000) >> 18));
-        s[1] = (char) (0x80 | ((ch & 0x03f000) >> 12));
-        s[2] = (char) (0x80 | ((ch & 0x000fc0) >>  6));
-        s[3] = (char) (0x80 | ((ch & 0x00003f)));
-        s[4] = '\0';
-        return 4;
-    }
-    if (ch < 0x4000000)
-    {
-        s[0] = (char) (0xf8 | ((ch & 0x3000000) >> 24));
-        s[1] = (char) (0x80 | ((ch & 0x0fc0000) >> 18));
-        s[2] = (char) (0x80 | ((ch & 0x003f000) >> 12));
-        s[3] = (char) (0x80 | ((ch & 0x0000fc0) >>  6));
-        s[4] = (char) (0x80 | ((ch & 0x000003f)));
-        s[5] = '\0';
-        return 5;
-    }
     else
     {
-        s[0] = (char) (0xfc | ((ch & 0x40000000) >> 30));
-        s[1] = (char) (0x80 | ((ch & 0x3f000000) >> 24));
-        s[2] = (char) (0x80 | ((ch & 0x00fc0000) >> 18));
-        s[3] = (char) (0x80 | ((ch & 0x0003f000) >> 12));
-        s[4] = (char) (0x80 | ((ch & 0x00000fc0) >>  6));
-        s[5] = (char) (0x80 | ((ch & 0x0000003f)));
-        s[6] = '\0';
-        return 6;
+        // not a valid Unicode code point, or we only support BMP characters,
+        // so fall back to U+FFFD REPLACEMENT CHARACTER
+        dest.append("\357\277\275");
     }
-#endif
 }
 
 

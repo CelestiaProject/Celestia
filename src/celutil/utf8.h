@@ -10,6 +10,7 @@
 #ifndef _CELUTIL_UTF8_
 #define _CELUTIL_UTF8_
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -29,7 +30,7 @@
 
 bool UTF8Decode(const std::string& str, int pos, wchar_t& ch);
 bool UTF8Decode(const char* str, int pos, int length, wchar_t& ch);
-int UTF8Encode(wchar_t ch, char* s);
+void UTF8Encode(std::uint32_t ch, std::string& dest);
 int UTF8StringCompare(const std::string& s0, const std::string& s1);
 int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n, bool ignoreCase = false);
 
