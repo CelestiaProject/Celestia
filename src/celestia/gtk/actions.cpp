@@ -322,7 +322,7 @@ void actionCaptureMovie(GtkAction*, AppData* app)
         AVCodecID codec = MovieCodecs[vcidx].codecId;
         float bitrate = 400000;
         const gchar *last = &brtext[gtk_entry_get_text_length(GTK_ENTRY(brentry))];
-        std::from_chars(brtext, last, bitrate);
+        celestia::compat::from_chars(brtext, last, bitrate);
 
         gtk_widget_destroy(fs);
         for (int i=0; i < 10 && gtk_events_pending ();i++)

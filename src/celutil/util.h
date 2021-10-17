@@ -34,6 +34,6 @@ template<typename T> constexpr typename T::size_type memsize(const T &c)
     return c.size() * sizeof(typename T::value_type);
 }
 
-bool GetTZInfo(std::string_view, int&);
+bool GetTZInfo(celestia::compat::string_view, int&);
 
 #endif // _CELUTIL_UTIL_H_

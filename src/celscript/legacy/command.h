@@ -380,7 +380,7 @@ class CommandConstellations : public InstantaneousCommand
  public:
     void process(ExecutionEnvironment&) override;
 
-    void setValues(std::string_view cons, bool act);
+    void setValues(celestia::compat::string_view cons, bool act);
 
     Flags flags { false, false };
 
@@ -409,7 +409,7 @@ class CommandConstellationColor : public InstantaneousCommand
 
  public:
     void process(ExecutionEnvironment&) override;
-    void setConstellations(std::string_view cons);
+    void setConstellations(celestia::compat::string_view cons);
     void setColor(float r, float g, float b);
     void unsetColor();
 

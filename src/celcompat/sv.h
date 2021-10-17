@@ -26,7 +26,9 @@
 #include <cstdlib>
 #endif
 
-namespace std
+namespace celestia
+{
+namespace compat
 {
 template<
     typename CharT,
@@ -70,7 +72,7 @@ template<
 
     constexpr basic_string_view& operator=(const basic_string_view&) noexcept = default;
 
-    explicit operator basic_string<CharT, Traits>() const
+    explicit operator std::basic_string<CharT, Traits>() const
     {
         return { m_data, m_size };
     }
@@ -352,12 +354,12 @@ constexpr bool operator==(basic_string_view <CharT, Traits> lhs,
  */
 template<class CharT, class Traits>
 constexpr bool operator==(basic_string_view <CharT, Traits> lhs,
-                          basic_string <CharT, Traits> rhs) noexcept
+                          std::basic_string <CharT, Traits> rhs) noexcept
 {
     return lhs == basic_string_view<CharT, Traits>(rhs);
 }
 template<class CharT, class Traits>
-constexpr bool operator==(basic_string <CharT, Traits> lhs,
+constexpr bool operator==(std::basic_string <CharT, Traits> lhs,
                           basic_string_view <CharT, Traits> rhs) noexcept
 {
     return rhs == lhs;
@@ -399,12 +401,12 @@ constexpr bool operator!=(basic_string_view <CharT, Traits> lhs,
  */
 template<class CharT, class Traits>
 constexpr bool operator!=(basic_string_view <CharT, Traits> lhs,
-                          basic_string <CharT, Traits> rhs) noexcept
+                          std::basic_string <CharT, Traits> rhs) noexcept
 {
     return !(lhs == rhs);
 }
 template<class CharT, class Traits>
-constexpr bool operator!=(basic_string <CharT, Traits> lhs,
+constexpr bool operator!=(std::basic_string <CharT, Traits> lhs,
                           basic_string_view <CharT, Traits> rhs) noexcept
 {
     return !(lhs == rhs);
@@ -449,7 +451,7 @@ constexpr bool operator>=(basic_string_view <CharT, Traits> lhs,
 
 template <class CharT, class Traits>
 std::basic_ostream <CharT, Traits>& operator<<(std::basic_ostream <CharT, Traits>& os,
-                                              std::basic_string_view <CharT, Traits> v)
+                                              celestia::compat::basic_string_view <CharT, Traits> v)
 {
     os.write(v.data(), v.size());
     return os;
@@ -508,6 +510,7 @@ struct hash<string_view>
     }
 };
 }
+}
 
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wreserved-user-defined-literal"
@@ -517,25 +520,26 @@ struct hash<string_view>
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wliteral-suffix"
 #endif
-constexpr std::string_view operator "" sv(const char *str, size_t len)
+constexpr celestia::compat::string_view operator "" sv(const char *str, std::size_t len)
 {
     return { str, len };
 }
 
-constexpr std::wstring_view operator "" sv(const wchar_t *str, size_t len)
+constexpr celestia::compat::wstring_view operator "" sv(const wchar_t *str, std::size_t len)
 {
     return { str, len };
 }
 
-constexpr std::string_view operator "" _sv(const char *str, size_t len)
+constexpr celestia::compat::string_view operator "" _sv(const char *str, std::size_t len)
 {
     return { str, len };
 }
 
-constexpr std::wstring_view operator "" _sv(const wchar_t *str, size_t len)
+constexpr celestia::compat::wstring_view operator "" _sv(const wchar_t *str, std::size_t len)
 {
     return { str, len };
 }
+
 #if defined(__clang__)
 //#pragma clang diagnostic pop
 #elif defined(__GNUC__)

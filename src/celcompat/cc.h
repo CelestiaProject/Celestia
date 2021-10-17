@@ -15,7 +15,9 @@
 #include <system_error>
 #include <type_traits>
 
-namespace std
+namespace celestia
+{
+namespace compat
 {
 struct from_chars_result
 {
@@ -33,25 +35,25 @@ enum class chars_format
 
 template <typename T, typename std::enable_if<std::numeric_limits<T>::is_integer, T>::type = 0>
 auto from_chars(const char* first, const char* last, T& value, int base = 10)
-    -> std::from_chars_result;
+    -> celestia::compat::from_chars_result;
 
 auto from_chars(const char* first, const char* last, float &value,
-                std::chars_format fmt = std::chars_format::general)
-    -> std::from_chars_result;
+                celestia::compat::chars_format fmt = celestia::compat::chars_format::general)
+    -> celestia::compat::from_chars_result;
 
 auto from_chars(const char* first, const char* last, double &value,
-                std::chars_format fmt = std::chars_format::general)
-    -> std::from_chars_result;
+                celestia::compat::chars_format fmt = celestia::compat::chars_format::general)
+    -> celestia::compat::from_chars_result;
 
 auto from_chars(const char* first, const char* last, long double &value,
-                std::chars_format fmt = std::chars_format::general)
-    -> std::from_chars_result;
+                celestia::compat::chars_format fmt = celestia::compat::chars_format::general)
+    -> celestia::compat::from_chars_result;
 
 namespace
 {
 template <typename T>
 auto int_from_chars(const char* first, const char* last, T& value, int base) noexcept
-    -> std::from_chars_result
+    -> celestia::compat::from_chars_result
 {
     auto p = first;
     bool has_minus = false;
@@ -61,7 +63,7 @@ auto int_from_chars(const char* first, const char* last, T& value, int base) noe
         p++;
     }
 
-    using U = typename make_unsigned<T>::type;
+    using U = typename std::make_unsigned<T>::type;
 
     U risky_value;
     U max_digit;
@@ -125,8 +127,9 @@ auto int_from_chars(const char* first, const char* last, T& value, int base) noe
 
 template <typename T, typename std::enable_if<std::numeric_limits<T>::is_integer, T>::type>
 auto from_chars(const char* first, const char* last, T& value, int base)
-    -> std::from_chars_result
+    -> celestia::compat::from_chars_result
 {
     return int_from_chars(first, last, value, base);
+}
 }
 }

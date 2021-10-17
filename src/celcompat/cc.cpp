@@ -11,12 +11,14 @@
 
 #include "cc.h"
 
-namespace std
+namespace celestia
+{
+namespace compat
 {
 
 auto from_chars(const char* first, const char* last, float &value,
-                std::chars_format fmt)
-    -> std::from_chars_result
+                celestia::compat::chars_format fmt)
+    -> celestia::compat::from_chars_result
 {
     char *end;
     errno = 0;
@@ -33,8 +35,8 @@ auto from_chars(const char* first, const char* last, float &value,
 }
 
 auto from_chars(const char* first, const char* last, double &value,
-                std::chars_format fmt)
-    -> std::from_chars_result
+                celestia::compat::chars_format fmt)
+    -> celestia::compat::from_chars_result
 {
     char *end;
     errno = 0;
@@ -51,8 +53,8 @@ auto from_chars(const char* first, const char* last, double &value,
 }
 
 auto from_chars(const char* first, const char* last, long double &value,
-                std::chars_format fmt)
-    -> std::from_chars_result
+                celestia::compat::chars_format fmt)
+    -> celestia::compat::from_chars_result
 {
     char *end;
     errno = 0;
@@ -68,4 +70,5 @@ auto from_chars(const char* first, const char* last, long double &value,
     return { end, std::errc() };
 }
 
+}
 }
