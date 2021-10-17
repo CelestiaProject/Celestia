@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <iostream>
+#include <fmt/ostream.h>
 #include <fmt/printf.h>
 #include <celcompat/charconv.h>
 #include <celutil/bigfix.h>
@@ -16,6 +17,7 @@
 #include <celutil/stringutils.h>
 #include "celestiacore.h"
 #include "url.h"
+
 
 namespace
 {
@@ -55,13 +57,13 @@ std::string getBodyShortName(const std::string &body)
     if (!body.empty())
     {
         auto pos = body.rfind(":");
-        if (pos != std::string_view::npos)
+        if (pos != celestia::compat::string_view::npos)
             return body.substr(pos + 1);
     }
     return body;
 }
 
-std::string_view
+celestia::compat::string_view
 getCoordSysName(ObserverFrame::CoordinateSystem mode)
 {
     switch (mode)
@@ -289,17 +291,17 @@ Url::getEncodedObjectName(const Selection& selection, const CelestiaCore* appCor
 }
 
 std::string
-Url::decodeString(std::string_view str)
+Url::decodeString(celestia::compat::string_view str)
 {
-    std::string_view::size_type a = 0, b = 0;
+    celestia::compat::string_view::size_type a = 0, b = 0;
     std::string out;
 
     b = str.find('%');
-    while (b != std::string_view::npos && a < str.length())
+    while (b != celestia::compat::string_view::npos && a < str.length())
     {
         auto s = str.substr(a, b - a);
         out.append(s.data(), s.length());
-        auto c_code = str.substr(b + 1, 2);
+        celestia::compat::string_view c_code = str.substr(b + 1, 2);
         uint8_t c;
         if (to_number(c_code, c, 16))
         {
@@ -307,7 +309,7 @@ Url::decodeString(std::string_view str)
         }
         else
         {
-            fmt::fprintf(std::cerr, _("Incorrect hex value \"%s\"\n"), c_code);
+            fmt::print(std::cerr, _("Incorrect hex value \"{}\"\n"), c_code);
             out += '%';
             out.append(c_code.data(), c_code.length());
         }
@@ -324,7 +326,7 @@ Url::decodeString(std::string_view str)
 }
 
 std::string
-Url::encodeString(std::string_view str)
+Url::encodeString(celestia::compat::string_view str)
 {
     std::ostringstream enc;
 
@@ -366,7 +368,7 @@ Url::encodeString(std::string_view str)
 
 struct Mode
 {
-    std::string_view                modeStr;
+    celestia::compat::string_view                 modeStr;
     ObserverFrame::CoordinateSystem mode;
     int                             nBodies;
 };
@@ -380,12 +382,12 @@ static Mode modes[] =
     { "PhaseLock",  ObserverFrame::PhaseLock,   2 },
 };
 
-auto ParseURLParams(std::string_view paramsStr)
-    -> std::map<std::string_view, std::string>;
+auto ParseURLParams(celestia::compat::string_view paramsStr)
+    -> std::map<celestia::compat::string_view, std::string>;
 
-bool Url::parse(std::string_view urlStr)
+bool Url::parse(celestia::compat::string_view urlStr)
 {
-    constexpr auto npos = std::string_view::npos;
+    constexpr auto npos = celestia::compat::string_view::npos;
 
     // proper URL string must start with protocol (cel://)
     if (urlStr.compare(0, Url::proto().length(), Url::proto()) != 0)
@@ -399,7 +401,7 @@ bool Url::parse(std::string_view urlStr)
     auto pathStr = urlStr.substr(Url::proto().length(), pos - Url::proto().length());
     while (pathStr.back() == '/')
         pathStr.remove_suffix(1);
-    std::string_view paramsStr;
+    celestia::compat::string_view paramsStr;
     if (pos != npos)
         paramsStr = urlStr.substr(pos + 1);
 
@@ -512,14 +514,14 @@ bool Url::parse(std::string_view urlStr)
     return true;
 }
 
-auto ParseURLParams(std::string_view paramsStr)
-   -> std::map<std::string_view, std::string>
+auto ParseURLParams(celestia::compat::string_view paramsStr)
+   -> std::map<celestia::compat::string_view, std::string>
 {
-    std::map<std::string_view, std::string> params;
+    std::map<celestia::compat::string_view, std::string> params;
     if (paramsStr.empty())
         return params;
 
-    constexpr auto npos = std::string_view::npos;
+    constexpr auto npos = celestia::compat::string_view::npos;
     for (auto iter = paramsStr;;)
     {
         auto pos = iter.find('&');
@@ -539,7 +541,7 @@ auto ParseURLParams(std::string_view paramsStr)
     return params;
 }
 
-bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::string_view timeStr)
+bool Url::initVersion3(std::map<celestia::compat::string_view, std::string> &params, celestia::compat::string_view timeStr)
 {
     m_version = 3;
 
@@ -627,7 +629,7 @@ bool Url::initVersion3(std::map<std::string_view, std::string> &params, std::str
     return true;
 }
 
-bool Url::initVersion4(std::map<std::string_view, std::string> &params, std::string_view timeStr)
+bool Url::initVersion4(std::map<celestia::compat::string_view, std::string> &params, celestia::compat::string_view timeStr)
 {
     if (params.count("rf") != 0)
     {

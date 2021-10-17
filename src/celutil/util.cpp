@@ -19,7 +19,7 @@
 
 using namespace std;
 
-bool GetTZInfo(std::string_view tzName, int &dstBias)
+bool GetTZInfo(celestia::compat::string_view tzName, int &dstBias)
 {
 #ifdef _WIN32
     TIME_ZONE_INFORMATION tzi;

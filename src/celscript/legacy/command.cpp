@@ -1014,7 +1014,7 @@ void CommandConstellations::process(ExecutionEnvironment& env)
     }
 }
 
-void CommandConstellations::setValues(string_view _cons, bool act)
+void CommandConstellations::setValues(celestia::compat::string_view _cons, bool act)
 {
     // ignore all above 99 constellations
     if (constellations.size() == MAX_CONSTELLATIONS)
@@ -1080,7 +1080,7 @@ void CommandConstellationColor::unsetColor()
     flags.unset = true;
 }
 
-void CommandConstellationColor::setConstellations(string_view _cons)
+void CommandConstellationColor::setConstellations(celestia::compat::string_view _cons)
 {
     // ignore all above 99 constellations
     if (constellations.size() == MAX_CONSTELLATIONS)

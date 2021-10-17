@@ -195,14 +195,14 @@ namespace astro
         return jd * SECONDS_PER_DAY;
     }
 
-    bool isLengthUnit(std::string_view unitName);
-    bool isTimeUnit(std::string_view unitName);
-    bool isAngleUnit(std::string_view unitName);
-    bool isMassUnit(std::string_view unitName);
-    bool getLengthScale(std::string_view unitName, double& scale);
-    bool getTimeScale(std::string_view unitName, double& scale);
-    bool getAngleScale(std::string_view unitName, double& scale);
-    bool getMassScale(std::string_view unitName, double& scale);
+    bool isLengthUnit(celestia::compat::string_view unitName);
+    bool isTimeUnit(celestia::compat::string_view unitName);
+    bool isAngleUnit(celestia::compat::string_view unitName);
+    bool isMassUnit(celestia::compat::string_view unitName);
+    bool getLengthScale(celestia::compat::string_view unitName, double& scale);
+    bool getTimeScale(celestia::compat::string_view unitName, double& scale);
+    bool getAngleScale(celestia::compat::string_view unitName, double& scale);
+    bool getMassScale(celestia::compat::string_view unitName, double& scale);
 
     void decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds);
     double degMinSecToDecimal(int degrees, int minutes, double seconds);
@@ -262,4 +262,3 @@ namespace astro
 std::ostream& operator<<(std::ostream& s, const astro::Date&);
 
 #endif // _CELENGINE_ASTRO_H_
-

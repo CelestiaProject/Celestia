@@ -15,7 +15,7 @@
 
 using namespace std;
 
-int compareIgnoringCase(string_view s1, string_view s2)
+int compareIgnoringCase(celestia::compat::string_view s1, celestia::compat::string_view s2)
 {
     auto i1 = s1.begin();
     auto i2 = s2.begin();
@@ -31,7 +31,7 @@ int compareIgnoringCase(string_view s1, string_view s2)
     return s2.size() - s1.size();
 }
 
-int compareIgnoringCase(string_view s1, string_view s2, int n)
+int compareIgnoringCase(celestia::compat::string_view s1, celestia::compat::string_view s2, int n)
 {
     auto i1 = s1.begin();
     auto i2 = s2.begin();
@@ -48,8 +48,8 @@ int compareIgnoringCase(string_view s1, string_view s2, int n)
     return n > 0 ? s2.size() - s1.size() : 0;
 }
 
-bool CompareIgnoringCasePredicate::operator()(string_view s1,
-                                              string_view s2) const
+bool CompareIgnoringCasePredicate::operator()(celestia::compat::string_view s1,
+                                              celestia::compat::string_view s2) const
 {
     return compareIgnoringCase(s1, s2) < 0;
 }

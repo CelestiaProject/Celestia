@@ -103,7 +103,7 @@ static const char* MonthAbbrList[12] =
 
 struct UnitDefinition
 {
-    string_view name;
+    celestia::compat::string_view name;
     double conversion;
 };
 
@@ -763,7 +763,7 @@ astro::TAItoJDUTC(double tai)
 
 
 // Get scale of given length unit in kilometers
-bool astro::getLengthScale(string_view unitName, double& scale)
+bool astro::getLengthScale(celestia::compat::string_view unitName, double& scale)
 {
     unsigned int nUnits = sizeof(lengthUnits) / sizeof(lengthUnits[0]);
     bool foundMatch = false;
@@ -782,7 +782,7 @@ bool astro::getLengthScale(string_view unitName, double& scale)
 
 
 // Get scale of given time unit in days
-bool astro::getTimeScale(string_view unitName, double& scale)
+bool astro::getTimeScale(celestia::compat::string_view unitName, double& scale)
 {
     for (const auto& timeUnit : timeUnits)
     {
@@ -798,7 +798,7 @@ bool astro::getTimeScale(string_view unitName, double& scale)
 
 
 // Get scale of given angle unit in degrees
-bool astro::getAngleScale(string_view unitName, double& scale)
+bool astro::getAngleScale(celestia::compat::string_view unitName, double& scale)
 {
     for (const auto& angleUnit : angleUnits)
     {
@@ -813,7 +813,7 @@ bool astro::getAngleScale(string_view unitName, double& scale)
 }
 
 
-bool astro::getMassScale(string_view unitName, double& scale)
+bool astro::getMassScale(celestia::compat::string_view unitName, double& scale)
 {
     for (const auto& massUnit : massUnits)
     {
@@ -829,7 +829,7 @@ bool astro::getMassScale(string_view unitName, double& scale)
 
 
 // Check if unit is a length unit
-bool astro::isLengthUnit(string_view unitName)
+bool astro::isLengthUnit(celestia::compat::string_view unitName)
 {
     double dummy;
     return getLengthScale(unitName, dummy);
@@ -837,7 +837,7 @@ bool astro::isLengthUnit(string_view unitName)
 
 
 // Check if unit is a time unit
-bool astro::isTimeUnit(string_view unitName)
+bool astro::isTimeUnit(celestia::compat::string_view unitName)
 {
     double dummy;
     return getTimeScale(unitName, dummy);
@@ -845,14 +845,14 @@ bool astro::isTimeUnit(string_view unitName)
 
 
 // Check if unit is an angle unit
-bool astro::isAngleUnit(string_view unitName)
+bool astro::isAngleUnit(celestia::compat::string_view unitName)
 {
     double dummy;
     return getAngleScale(unitName, dummy);
 }
 
 
-bool astro::isMassUnit(string_view unitName)
+bool astro::isMassUnit(celestia::compat::string_view unitName)
 {
     double dummy;
     return getMassScale(unitName, dummy);
