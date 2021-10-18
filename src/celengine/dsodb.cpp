@@ -335,8 +335,6 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
                     }
                     string DSOName = objName.substr(startPos, length);
                     namesDB->add(objCatalogNumber, DSOName);
-                    if (DSOName != _(DSOName.c_str()))
-                        namesDB->add(objCatalogNumber, _(DSOName.c_str()));
                     startPos   = next;
                 }
             }

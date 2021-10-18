@@ -1373,8 +1373,6 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
                     }
                     string starName = objName.substr(startPos, length);
                     namesDB->add(catalogNumber, starName);
-                    if (starName != _(starName.c_str()))
-                        namesDB->add(catalogNumber, _(starName.c_str()));
                     startPos = next;
                 }
             }
