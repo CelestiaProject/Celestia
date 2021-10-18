@@ -3364,19 +3364,16 @@ void CelestiaCore::renderOverlay()
                 if (sel != lastSelection)
                 {
                     lastSelection = sel;
-                    selectionNames = "";
-                    const vector<string>& names = sel.body()->getNames();
+                    auto body = sel.body();
+                    selectionNames = body->getLocalizedName(); // Primary name, might be localized
+                    const vector<string>& names = body->getNames();
 
-                    // Skip displaying the primary name if there's a localized version
-                    // of the name.
-                    auto firstName = names.begin();
-                    if (sel.body()->hasLocalizedName())
-                        ++firstName;
+                    // Start from the second one because primary name is already in the string
+                    auto secondName = names.begin() + 1;
 
-                    for (auto iter = firstName; iter != names.end(); ++iter)
+                    for (auto iter = secondName; iter != names.end(); ++iter)
                     {
-                        if (iter != firstName)
-                            selectionNames += " / ";
+                        selectionNames += " / ";
 
                         // Use localized version of parent name in alternative names.
                         string alias = *iter;
