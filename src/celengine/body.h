@@ -377,7 +377,7 @@ class Body : public AstroObject
 
  private:
     std::vector<std::string> names{ 1 };
-    unsigned int localizedNameIndex{ 0 };
+    std::string localizedName;
 
     // Parent in the name hierarchy
     PlanetarySystem* system;
@@ -430,6 +430,7 @@ class Body : public AstroObject
     bool overrideOrbitColor{ false };
     VisibilityPolicy orbitVisibility : 3;
     bool secondaryIlluminator{ true };
+    bool primaryNameLocalized { false };
 };
 
 #endif // _CELENGINE_BODY_H_

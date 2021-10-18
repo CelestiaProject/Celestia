@@ -113,10 +113,9 @@ const vector<string>& Body::getNames() const
  */
 string Body::getName(bool i18n) const
 {
-    if (!i18n)
-        return names[0];
-    else
-        return names[localizedNameIndex];
+    if (i18n && hasLocalizedName())
+        return localizedName;
+    return names[0];
 }
 
 
@@ -125,13 +124,13 @@ string Body::getName(bool i18n) const
  */
 string Body::getLocalizedName() const
 {
-    return names[localizedNameIndex];
+    return hasLocalizedName() ? localizedName : names[0];
 }
 
 
 bool Body::hasLocalizedName() const
 {
-    return localizedNameIndex != 0;
+    return primaryNameLocalized;
 }
 
 
@@ -148,12 +147,12 @@ void Body::setName(const string& name)
     {
         // No localized name; set the localized name index to zero to
         // indicate this.
-        localizedNameIndex = 0;
+        primaryNameLocalized = false;
     }
     else
     {
-        names.push_back(localizedName);
-        localizedNameIndex = names.size() - 1;
+        this->localizedName = localizedName;
+        primaryNameLocalized = true;
     }
 }
 
