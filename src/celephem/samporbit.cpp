@@ -830,35 +830,35 @@ LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation int
     ifstream in(filename.string(), ios::binary);
     if (!in.good())
     {
-        fmt::fprintf(cerr, _("Error openning %s.\n"), filename.string());
+        cerr << fmt::sprintf(_("Error openning %s.\n"), filename.string());
         return nullptr;
     }
 
     XYZVBinaryHeader header;
     if (!in.read(reinterpret_cast<char*>(&header), sizeof(header)))
     {
-        fmt::fprintf(cerr, _("Error reading header of %s.\n"), filename.string());
+        cerr << fmt::sprintf(_("Error reading header of %s.\n"), filename.string());
         return nullptr;
     }
 
     if (string(header.magic) != "CELXYZV")
     {
-        fmt::fprintf(cerr, _("Bad binary xyzv file %s.\n"), filename.string());
+        cerr << fmt::sprintf(_("Bad binary xyzv file %s.\n"), filename.string());
         return nullptr;
     }
 
     if (header.byteOrder != __BYTE_ORDER__)
     {
-        fmt::fprintf(cerr, _("Unsupported byte order %i, expected %i.\n"),
-                     header.byteOrder, __BYTE_ORDER__);
+        cerr << fmt::sprintf(_("Unsupported byte order %i, expected %i.\n"),
+                             header.byteOrder, __BYTE_ORDER__);
         return nullptr;
     }
 
 
     if (header.digits != std::numeric_limits<double>::digits)
     {
-        fmt::fprintf(cerr, _("Unsupported digits number %i, expected %i.\n"),
-                     header.digits, std::numeric_limits<double>::digits);
+        cerr << fmt::sprintf(_("Unsupported digits number %i, expected %i.\n"),
+                             header.digits, std::numeric_limits<double>::digits);
         return nullptr;
     }
 

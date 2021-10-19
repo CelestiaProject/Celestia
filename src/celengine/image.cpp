@@ -286,7 +286,7 @@ Image* LoadImageFromFile(const fs::path& filename)
     ContentType type = DetermineFileType(filename);
     Image* img = nullptr;
 
-    fmt::fprintf(clog, _("Loading image from file %s\n"), filename.string());
+    clog << fmt::sprintf(_("Loading image from file %s\n"), filename.string());
 
     switch (type)
     {

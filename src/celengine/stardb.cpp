@@ -600,7 +600,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
         LE_TO_CPU_INT32(ent.celCatalogNumber, ent.celCatalogNumber);
         if (in.fail())
         {
-            fmt::fprintf(cerr, _("Loading cross index failed at record %u\n"), record);
+            cerr << fmt::sprintf(_("Loading cross index failed at record %u\n"), record);
             delete xindex;
             return false;
         }
@@ -684,7 +684,7 @@ bool StarDatabase::loadBinary(istream& in)
 
         if (details == nullptr)
         {
-            fmt::fprintf(cerr, _("Bad spectral type in star database, star #%u\n"), nStars);
+            cerr << fmt::sprintf(_("Bad spectral type in star database, star #%u\n"), nStars);
             return false;
         }
 
@@ -699,7 +699,7 @@ bool StarDatabase::loadBinary(istream& in)
         return false;
 
     DPRINTF(LOG_LEVEL_ERROR, "StarDatabase::read: nStars = %d\n", nStarsInFile);
-    fmt::fprintf(clog, _("%d stars in binary database\n"), nStars);
+    clog << fmt::sprintf(_("%d stars in binary database\n"), nStars);
 
     // Create the temporary list of stars sorted by catalog number; this
     // will be used to lookup stars during file loading. After loading is
@@ -723,7 +723,7 @@ bool StarDatabase::loadBinary(istream& in)
 
 void StarDatabase::finish()
 {
-    fmt::fprintf(clog, _("Total star count: %d\n"), nStars);
+    clog << fmt::sprintf(_("Total star count: %d\n"), nStars);
 
     buildOctree();
     buildIndexes();
@@ -757,7 +757,7 @@ void StarDatabase::finish()
 static void stcError(const Tokenizer& tok,
                      const string& msg)
 {
-    fmt::fprintf(cerr,  _("Error in .stc file (line %i): %s\n"), tok.getLineNumber(), msg);
+    cerr << fmt::sprintf( _("Error in .stc file (line %i): %s\n"), tok.getLineNumber(), msg);
 }
 
 
@@ -983,7 +983,7 @@ bool StarDatabase::createStar(Star* star,
 
                 if (!hasBarycenter)
                 {
-                    fmt::fprintf(cerr, _("Barycenter %s does not exist.\n"), barycenterName);
+                    cerr << fmt::sprintf(_("Barycenter %s does not exist.\n"), barycenterName);
                     delete rm;
                     if (free_details)
                         delete details;
@@ -1420,7 +1420,7 @@ void StarDatabase::buildOctree()
     for (const auto& stat : stats)
     {
         level++;
-        fmt::fprintf(clog,
+        clog << fmt::sprintf(
                      _("Level %i, %.5f ly, %i nodes, %i  stars\n"),
                      level,
                      STAR_OCTREE_ROOT_SIZE / pow(2.0, (double) level),

@@ -11,7 +11,7 @@
 #include <array>
 #include <iostream>
 #include <vector>
-#include <fmt/printf.h>
+#include <fmt/ostream.h>
 #include <celutil/utf8.h>
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
@@ -173,7 +173,7 @@ void TextureFontPrivate::initCommonGlyphs()
         {
             Glyph c;
             if (!loadGlyphInfo(ch, c))
-                fmt::fprintf(cerr, "Loading character %x failed!\n", (unsigned)ch);
+                fmt::print(cerr, "Loading character {:x} failed!\n", (unsigned)ch);
             m_glyphs.push_back(c); // still pushing empty
         }
     }
@@ -250,7 +250,7 @@ bool TextureFontPrivate::buildAtlas()
 
         if (FT_Load_Char(m_face, c.ch, FT_LOAD_RENDER))
         {
-           fmt::fprintf(cerr, "Loading character %x failed!\n", (unsigned)c.ch);
+           fmt::print(cerr, "Loading character {:x} failed!\n", (unsigned)c.ch);
            c.ch = 0;
            continue;
         }
@@ -271,11 +271,11 @@ bool TextureFontPrivate::buildAtlas()
     }
 
 #if DUMP_TEXTURE
-    fmt::fprintf(cout/*cerr*/, "Generated a %d x %d (%d kb) texture atlas\n", m_texWidth, m_texHeight, m_texWidth * m_texHeight / 1024);
+    fmt::printf(cout/*cerr*/, "Generated a {} x {} ({} kb) texture atlas\n", m_texWidth, m_texHeight, m_texWidth * m_texHeight / 1024);
     size_t img_size = sizeof(uint8_t) * m_texWidth * m_texHeight * 4;
     uint8_t *raw_img = new uint8_t[img_size];
     glGetTexImage(GL_TEXTURE_2D, 0, GL_BGRA, GL_UNSIGNED_BYTE, raw_img);
-    ofstream f(fmt::sprintf("/tmp/texture_%ix%i.data", m_texWidth, m_texHeight), ios::binary);
+    ofstream f(fmt::format("/tmp/texture_{}x{}.data", m_texWidth, m_texHeight), ios::binary);
     f.write(reinterpret_cast<char*>(raw_img), img_size);
     f.close();
     delete[] raw_img;
@@ -640,19 +640,19 @@ TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int inde
 
     if (FT_New_Face(ft, path.string().c_str(), index, &face) != 0)
     {
-        fmt::fprintf(cerr, "Could not open font %s\n", path.string());
+        fmt::print(cerr, "Could not open font {}\n", path.string());
         return nullptr;
     }
 
     if (!FT_IS_SCALABLE(face))
     {
-        fmt::fprintf(cerr, "Font is not scalable: %s\n", path.string());
+        fmt::print(cerr, "Font is not scalable: {}\n", path.string());
         return nullptr;
     }
 
     if (FT_Set_Char_Size(face, 0, size << 6, dpi, dpi) != 0)
     {
-        fmt::fprintf(cerr, "Could not font size %i\n", size);
+        fmt::print(cerr, "Could not font size {}\n", size);
         return nullptr;
     }
 

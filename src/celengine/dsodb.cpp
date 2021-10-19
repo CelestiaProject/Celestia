@@ -370,7 +370,7 @@ void DSODatabase::finish()
             DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
     }
     */
-    fmt::fprintf(clog, _("Loaded %i deep space objects\n"), nDSOs);
+    clog << fmt::sprintf(_("Loaded %i deep space objects\n"), nDSOs);
 }
 
 

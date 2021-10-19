@@ -85,7 +85,7 @@ ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
     std::error_code ec;
     if (!fs::is_directory(scriptsDir, ec))
     {
-        fmt::fprintf(cerr, _("Path %s doesn't exist or isn't a directory"), scriptsDir.string());
+        cerr << fmt::sprintf(_("Path %s doesn't exist or isn't a directory"), scriptsDir.string());
         return scripts;
     }
 

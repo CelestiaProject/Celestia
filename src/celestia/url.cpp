@@ -392,7 +392,7 @@ bool Url::parse(celestia::compat::string_view urlStr)
     // proper URL string must start with protocol (cel://)
     if (urlStr.compare(0, Url::proto().length(), Url::proto()) != 0)
     {
-        fmt::fprintf(std::cerr, _("URL must start with \"%s\"!\n"), Url::proto());
+        std::cerr << fmt::sprintf(_("URL must start with \"%s\"!\n"), Url::proto());
         return false;
     }
 
@@ -419,7 +419,7 @@ bool Url::parse(celestia::compat::string_view urlStr)
     auto it = std::find_if(std::begin(modes), std::end(modes), lambda);
     if (it == std::end(modes))
     {
-        fmt::fprintf(std::cerr, _("Unsupported URL mode \"%s\"!\n"), modeStr);
+        std::cerr << fmt::sprintf(_("Unsupported URL mode \"%s\"!\n"), modeStr);
         return false;
     }
     state.m_coordSys = it->mode;
@@ -490,14 +490,14 @@ bool Url::parse(celestia::compat::string_view urlStr)
         auto &p = params["ver"];
         if (!to_number(p, version))
         {
-            fmt::fprintf(std::cerr, _("Invalid URL version \"%s\"!\n"), p);
+            std::cerr << fmt::sprintf(_("Invalid URL version \"%s\"!\n"), p);
             return false;
         }
     }
 
     if (version != 3 && version != 4)
     {
-        fmt::fprintf(std::cerr, _("Unsupported URL version: %i\n"), version);
+        std::cerr << fmt::sprintf(_("Unsupported URL version: %i\n"), version);
         return false;
     }
 
