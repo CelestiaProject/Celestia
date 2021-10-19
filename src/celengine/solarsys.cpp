@@ -80,7 +80,7 @@ enum BodyType
 
 static void errorMessagePrelude(const Tokenizer& tok)
 {
-    fmt::fprintf(cerr,_("Error in .ssc file (line %d): "), tok.getLineNumber());
+    cerr << fmt::sprintf(_("Error in .ssc file (line %d): "), tok.getLineNumber());
 }
 
 static void sscError(const Tokenizer& tok,
@@ -1250,7 +1250,7 @@ bool LoadSolarSystemObjects(istream& in,
             else
             {
                 errorMessagePrelude(tokenizer);
-                fmt::fprintf(cerr, _("parent body '%s' of '%s' not found.\n"), parentName, primaryName);
+                cerr << fmt::sprintf(_("parent body '%s' of '%s' not found.\n"), parentName, primaryName);
             }
 
             if (parentSystem != nullptr)
@@ -1261,7 +1261,7 @@ bool LoadSolarSystemObjects(istream& in,
                     if (disposition == DataDisposition::Add)
                     {
                         errorMessagePrelude(tokenizer);
-                        fmt::fprintf(cerr, _("warning duplicate definition of %s %s\n"), parentName, primaryName);
+                        cerr << fmt::sprintf(_("warning duplicate definition of %s %s\n"), parentName, primaryName);
                     }
                     else if (disposition == DataDisposition::Replace)
                     {
@@ -1313,7 +1313,7 @@ bool LoadSolarSystemObjects(istream& in,
             else
             {
                 errorMessagePrelude(tokenizer);
-                fmt::fprintf(cerr, _("parent body '%s' of '%s' not found.\n"), parentName, primaryName);
+                cerr << fmt::sprintf(_("parent body '%s' of '%s' not found.\n"), parentName, primaryName);
             }
         }
         delete objectDataValue;

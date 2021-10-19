@@ -43,10 +43,10 @@ void DPRINTF(int level, const char *format, const T & ... args)
         }
         else
         {
-            fmt::fprintf(std::cerr, format, args...);
+            std::cerr << fmt::sprintf(format, args...);
         }
 #else
-        fmt::fprintf(std::cerr, format, args...);
+        std::cerr << fmt::sprintf(format, args...);
 #endif
     }
 }

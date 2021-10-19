@@ -1,6 +1,6 @@
 #include <celephem/xyzvbinary.h>
 #include <celutil/bytes.h> // __BYTE_ORDER__
-#include <fmt/printf.h>
+#include <fmt/ostream.h>
 #include <cstring> // memcpy
 #include <fstream>
 #include <iostream>
@@ -108,13 +108,13 @@ int main(int argc, char* argv[])
 {
     if (argc < 3)
     {
-        fmt::fprintf(cerr, "Usage: %s infile.xyzv outfile.bin\n", argv[0]);
+        fmt::print(cerr, "Usage: {} infile.xyzv outfile.bin\n", argv[0]);
         return 1;
     }
 
     if (!xyzvToBinary(argv[1], argv[2]))
     {
-        fmt::fprintf(cerr, "Error converting %s to %s.\n", argv[1], argv[2]);
+        fmt::print(cerr, "Error converting {} to {}.\n", argv[1], argv[2]);
         return 1;
     }
 
