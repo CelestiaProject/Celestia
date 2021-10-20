@@ -1,7 +1,9 @@
 include(TestCase)
 
 test_case(hash)
-test_case(fs)
+if ((NOT HAVE_EXPERIMENTAL_FILESYSTEM) AND (NOT HAVE_FILESYSTEM))
+  test_case(fs)
+endif()
 test_case(stellarclass)
 if(WIN32)
   test_case(winutil)
