@@ -78,3 +78,44 @@ jobs:
       with:
         name: celestia-${{matrix.platform}}
         path: ${{github.workspace}}/build/src/*/*.7z
+
+  build-gnu-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Install dependencies'
+      run: |
+        sudo apt update
+        sudo apt install -y libeigen3-dev \
+                            libepoxy-dev \
+                            libavcodec-dev \
+                            libavformat-dev \
+                            libavutil-dev \
+                            libswscale-dev \
+                            libjpeg-dev \
+                            libpng-dev \
+                            libglu1-mesa-dev \
+                            qtbase5-dev \
+                            qtbase5-dev-tools \
+                            libqt5opengl5-dev \
+                            libgtk-3-dev \
+                            libfreetype6-dev \
+                            libsdl2-dev \
+                            libluajit-5.1-dev \
+                            libfmt-dev \
+                            ninja-build
+
+    - name: 'Checkout source code'
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: 'Configure CMake'
+      run: cmake -B ${{github.workspace}}/build -G Ninja -DCMAKE_CXX_STANDARD=17 -DENABLE_GLES=ON -DENABLE_SPICE=ON -DENABLE_TOOLS=OFF -DENABLE_TESTS=ON -DENABLE_SDL=ON -DENABLE_GTK=ON -DUSE_GTK3=ON -DENABLE_FFMPEG=ON -DENABLE_DATA=OFF
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      run: ninja
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest
