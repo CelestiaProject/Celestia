@@ -1,8 +1,12 @@
 set(CELCOMPAT_SOURCES
   cc.cpp
   cc.h
-  fs.cpp
-  fs.h
 )
+if ((NOT HAVE_EXPERIMENTAL_FILESYSTEM) AND (NOT HAVE_FILESYSTEM))
+  set(CELCOMPAT_SOURCES ${CELCOMPAT_SOURCES}
+    fs.cpp
+    fs.h
+  )
+endif()
 
 add_library(celcompat OBJECT ${CELCOMPAT_SOURCES})
