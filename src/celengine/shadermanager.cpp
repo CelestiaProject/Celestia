@@ -409,21 +409,21 @@ ShaderManager::getShader(const string& name)
     uintmax_t fsSize = fs::file_size(fsName, ecf);
     if (ecv || ecf)
     {
-        fmt::print(cerr, "Failed to get file size of {} or {}\n", vsName.string(), fsName.string());
+        fmt::print(cerr, "Failed to get file size of {} or {}\n", vsName, fsName);
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
     }
 
     ifstream vsf(vsName.string());
     if (!vsf.good())
     {
-        fmt::print(cerr, "Failed to open {}\n", vsName.string());
+        fmt::print(cerr, "Failed to open {}\n", vsName);
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
     }
 
     ifstream fsf(fsName.string());
     if (!fsf.good())
     {
-        fmt::print(cerr, "Failed to open {}\n", fsName.string());
+        fmt::print(cerr, "Failed to open {}\n", fsName);
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
     }
 

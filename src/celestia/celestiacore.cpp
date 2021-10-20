@@ -104,7 +104,7 @@ static bool is_valid_directory(const fs::path& dir)
     std::error_code ec;
     if (!fs::is_directory(dir, ec))
     {
-        cerr << fmt::sprintf(_("Path %s doesn't exist or isn't a directory"), dir.string());
+        cerr << fmt::sprintf(_("Path %s doesn't exist or isn't a directory"), dir);
         return false;
     }
 
@@ -201,8 +201,7 @@ void CelestiaCore::readFavoritesFile()
     {
         favorites = ReadFavoritesList(in);
         if (favorites == nullptr)
-            warning(fmt::format(_("Error reading favorites file {}.\n"),
-                                path.string()));
+            warning(fmt::format(_("Error reading favorites file {}.\n"), path));
     }
 }
 
@@ -223,8 +222,7 @@ void CelestiaCore::writeFavoritesFile()
     bool isDir = fs::is_directory(path.parent_path(), ec);
     if (ec)
     {
-        warning(fmt::format(_("Failed to check directory existance for favorites file {}\n"),
-                            path.string()));
+        warning(fmt::format(_("Failed to check directory existance for favorites file {}\n"), path));
         return;
     }
     if (!isDir)
@@ -232,8 +230,7 @@ void CelestiaCore::writeFavoritesFile()
         fs::create_directory(path.parent_path(), ec);
         if (ec)
         {
-            warning(fmt::format(_("Failed to create a directory for favorites file {}\n"),
-                                path.string()));
+            warning(fmt::format(_("Failed to create a directory for favorites file {}\n"), path));
             return;
         }
     }
@@ -3642,10 +3639,10 @@ class SolarSystemLoader
 
         if (find(begin(skip), end(skip), filepath) != end(skip))
         {
-            clog << fmt::sprintf(_("Skipping solar system catalog: %s\n"), filepath.string());
+            clog << fmt::sprintf(_("Skipping solar system catalog: %s\n"), filepath);
             return;
         }
-        clog << fmt::sprintf(_("Loading solar system catalog: %s\n"), filepath.string());
+        clog << fmt::sprintf(_("Loading solar system catalog: %s\n"), filepath);
         if (notifier != nullptr)
             notifier->update(filepath.filename().string());
 
@@ -3688,10 +3685,10 @@ template <class OBJDB> class CatalogLoader
 
         if (find(begin(skip), end(skip), filepath) != end(skip))
         {
-            clog << fmt::sprintf(_("Skipping %s catalog: %s\n"), typeDesc, filepath.string());
+            clog << fmt::sprintf(_("Skipping %s catalog: %s\n"), typeDesc, filepath);
             return;
         }
-        clog << fmt::sprintf(_("Loading %s catalog: %s\n"), typeDesc, filepath.string());
+        clog << fmt::sprintf(_("Loading %s catalog: %s\n"), typeDesc, filepath);
         if (notifier != nullptr)
             notifier->update(filepath.filename().string());
 
@@ -3699,7 +3696,7 @@ template <class OBJDB> class CatalogLoader
         if (catalogFile.good())
         {
             if (!objDB->load(catalogFile, filepath.parent_path()))
-                DPRINTF(LOG_LEVEL_ERROR, "Error reading %s catalog file: %s\n", typeDesc, filepath.string());
+                DPRINTF(LOG_LEVEL_ERROR, "Error reading %s catalog file: %s\n", typeDesc, filepath);
         }
     }
 };
@@ -3753,10 +3750,10 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // additional extras directories should be small.
     for (const auto& dir : extrasDirs)
     {
-        if (find(config->extrasDirs.begin(), config->extrasDirs.end(), dir.string()) ==
+        if (find(config->extrasDirs.begin(), config->extrasDirs.end(), dir) ==
             config->extrasDirs.end())
         {
-            config->extrasDirs.push_back(dir.string());
+            config->extrasDirs.push_back(dir);
         }
     }
 
@@ -3802,11 +3799,11 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         ifstream dsoFile(file.string(), ios::in);
         if (!dsoFile.good())
         {
-            warning(fmt::sprintf(_("Error opening deepsky catalog file %s.\n"), file.string()));
+            warning(fmt::sprintf(_("Error opening deepsky catalog file %s.\n"), file));
         }
         if (!dsoDB->load(dsoFile, ""))
         {
-            warning(fmt::sprintf(_("Cannot read Deep Sky Objects database %s.\n"), file.string()));
+            warning(fmt::sprintf(_("Cannot read Deep Sky Objects database %s.\n"), file));
         }
     }
 
@@ -4774,7 +4771,7 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
 
     if (type != Content_JPEG && type != Content_PNG)
     {
-        fmt::print(cerr, _("Unsupported image type: {}!\n"), filename.string());
+        fmt::print(cerr, _("Unsupported image type: {}!\n"), filename);
         return false;
     }
 
@@ -4819,6 +4816,6 @@ void CelestiaCore::setLogFile(const fs::path &fn)
     }
     else
     {
-        fmt::print(cerr, "Unable to open log file {}\n", fn.string());
+        fmt::print(cerr, "Unable to open log file {}\n", fn);
     }
 }

@@ -1,6 +1,5 @@
 #include "fs.h"
 #include <vector>
-#include <memory>
 #ifdef _WIN32
 #include <celutil/winutil.h>
 #else
@@ -38,12 +37,6 @@ template<typename CharT> static bool is_special_dir(const CharT s[])
 path operator/(const path& lhs, const path& rhs)
 {
     return path(lhs) /= rhs;
-}
-
-std::ostream& operator<<(std::ostream& os, const path& p)
-{
-    os << '"' << p.string() << '"';
-    return os;
 }
 
 path u8path(const std::string& source)

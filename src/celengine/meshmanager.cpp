@@ -38,6 +38,7 @@
 #include <cassert>
 #include <utility>
 #include <memory>
+#include <fmt/ostream.h>
 
 
 using namespace cmod;
@@ -117,7 +118,7 @@ Geometry* GeometryInfo::load(const fs::path& resolvedFilename)
     fs::path::string_type::size_type uniquifyingSuffixStart = resolvedFilename.native().rfind(UniqueSuffixChar);
     fs::path filename = resolvedFilename.native().substr(0, uniquifyingSuffixStart);
 
-    clog << fmt::sprintf(_("Loading model: %s\n"), filename.string());
+    clog << fmt::sprintf(_("Loading model: %s\n"), filename);
     Model* model = nullptr;
     ContentType fileType = DetermineFileType(filename);
 
@@ -208,7 +209,7 @@ Geometry* GeometryInfo::load(const fs::path& resolvedFilename)
     }
     else
     {
-        clog << fmt::sprintf(_("Error loading model '%s'\n"), filename.string());
+        clog << fmt::sprintf(_("Error loading model '%s'\n"), filename);
         return nullptr;
     }
 }

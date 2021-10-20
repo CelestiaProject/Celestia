@@ -14,6 +14,7 @@
 #include <fstream>
 #include <string>
 #include <utility>
+#include <fmt/format.h>
 #include <celutil/debug.h>
 #include "glsupport.h"
 #include <celutil/debug.h>
@@ -72,7 +73,7 @@ VirtualTexture::VirtualTexture(const fs::path& _tilePath,
     assert(tileSize != 0 && isPow2(tileSize));
     tileTree[0] = new TileQuadtreeNode();
     tileTree[1] = new TileQuadtreeNode();
-    tileExt = fmt::sprintf(".%s", _tileType);
+    tileExt = fmt::format(".{:s}", _tileType);
     populateTileTree();
 
     if (DetermineFileType(tileExt) == Content_DXT5NormalMap)
@@ -206,8 +207,8 @@ ImageTexture* VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, 
     assert(lod < (unsigned)MaxResolutionLevels);
 
     auto path = tilePath /
-                fmt::sprintf("level%d", lod) /
-                fmt::sprintf("%s%d_%d%s", tilePrefix, u, v, tileExt.string());
+                fmt::format("level{:d}", lod) /
+                fmt::format("{:s}{:d}_{:d}{:s}", tilePrefix, u, v, tileExt.string());
 
     Image* img = LoadImageFromFile(path);
     if (img == nullptr)
@@ -260,7 +261,7 @@ void VirtualTexture::populateTileTree()
 
     for (int i = 0; i < MaxResolutionLevels; i++)
     {
-        fs::path path = tilePath / fmt::sprintf("level%d", i);
+        fs::path path = tilePath / fmt::format("level{:d}", i);
         std::error_code ec;
         if (fs::is_directory(path, ec))
         {
