@@ -2573,7 +2573,7 @@ static void displayRotationPeriod(Overlay& overlay, double days)
         p = _("seconds");
     }
 
-    overlay << fmt::sprintf(_("Rotation period: %s %s\n"), n, p);
+    overlay.printf(_("Rotation period: %s %s\n"), n, p);
 }
 
 static void displayMass(Overlay& overlay, float mass, CelestiaCore::MeasurementSystem measurement)
@@ -2581,14 +2581,14 @@ static void displayMass(Overlay& overlay, float mass, CelestiaCore::MeasurementS
     if (mass < 0.001f)
     {
         if (measurement == CelestiaCore::Imperial)
-            overlay << fmt::sprintf(_("Mass: %.6g lb\n"), mass * astro::EarthMass / (float) OneLbInKg);
+            overlay.printf(_("Mass: %.6g lb\n"), mass * astro::EarthMass / (float) OneLbInKg);
         else
-            overlay << fmt::sprintf(_("Mass: %.6g kg\n"), mass * astro::EarthMass);
+            overlay.printf(_("Mass: %.6g kg\n"), mass * astro::EarthMass);
     }
     else if (mass > 50)
-        overlay << fmt::sprintf(_("Mass: %.2f Mj\n"), mass * astro::EarthMass / astro::JupiterMass);
+        overlay.printf(_("Mass: %.2f Mj\n"), mass * astro::EarthMass / astro::JupiterMass);
     else
-        overlay << fmt::sprintf(_("Mass: %.2f Me\n"), mass);
+        overlay.printf(_("Mass: %.2f Me\n"), mass);
 }
 
 static void displaySpeed(Overlay& overlay, float speed, CelestiaCore::MeasurementSystem measurement)
@@ -2637,7 +2637,7 @@ static void displaySpeed(Overlay& overlay, float speed, CelestiaCore::Measuremen
             u = _("m/s");
         }
     }
-    overlay << fmt::sprintf(_("Speed: %s %s\n"), n, u);
+    overlay.printf(_("Speed: %s %s\n"), n, u);
 }
 
 // Display a positive angle as degrees, minutes, and seconds. If the angle is less than one
@@ -2671,7 +2671,7 @@ static void displayDeclination(Overlay& overlay, double angle)
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
-    overlay << fmt::sprintf(_("Dec: %+d%s %02d' %.1f\"\n"),
+    overlay.printf(_("Dec: %+d%s %02d' %.1f\"\n"),
                           abs(degrees), UTF8_DEGREE_SIGN,
                           abs(minutes), abs(seconds));
 }
@@ -2683,7 +2683,7 @@ static void displayRightAscension(Overlay& overlay, double angle)
     double seconds;
     astro::decimalToHourMinSec(angle, hours, minutes, seconds);
 
-    overlay << fmt::sprintf(_("RA: %dh %02dm %.1fs\n"),
+    overlay.printf(_("RA: %dh %02dm %.1fs\n"),
                           hours, abs(minutes), abs(seconds));
 }
 
@@ -2699,7 +2699,7 @@ static void displayApparentDiameter(Overlay& overlay,
         // than one second--otherwise, it's probably not interesting data.
         if (arcSize < 160.0 && arcSize > 1.0 / 3600.0)
         {
-            overlay << fmt::sprintf(_("Apparent diameter: %s\n"),
+            overlay.printf(_("Apparent diameter: %s\n"),
                                  angleToStr(arcSize));
         }
     }
@@ -2712,11 +2712,11 @@ static void displayApparentMagnitude(Overlay& overlay,
     if (distance > 32.6167)
     {
         float appMag = astro::absToAppMag(absMag, (float) distance);
-        overlay << fmt::sprintf(_("Apparent magnitude: %.1f\n"), appMag);
+        overlay.printf(_("Apparent magnitude: %.1f\n"), appMag);
     }
     else
     {
-        overlay << fmt::sprintf(_("Absolute magnitude: %.1f\n"), absMag);
+        overlay.printf(_("Absolute magnitude: %.1f\n"), absMag);
     }
 }
 
@@ -2795,9 +2795,9 @@ static void displayPlanetocentricCoords(Overlay& overlay,
     }
 
     if (showAltitude)
-        overlay << fmt::sprintf("%.6f%c %.6f%c", lat, nsHemi, lon, ewHemi);
+        overlay.printf("%.6f%c %.6f%c", lat, nsHemi, lon, ewHemi);
     else
-        overlay << fmt::sprintf(_("%.6f%c %.6f%c %s"), lat, nsHemi, lon, ewHemi, DistanceKmToStr(altitude, 5, measurement));
+        overlay.printf(_("%.6f%c %.6f%c %s"), lat, nsHemi, lon, ewHemi, DistanceKmToStr(altitude, 5, measurement));
 }
 
 
@@ -2824,7 +2824,7 @@ static void displayStarInfo(Overlay& overlay,
                             double distance,
                             CelestiaCore::MeasurementSystem measurement)
 {
-    overlay << fmt::sprintf(_("Distance: %s\n"), DistanceLyToStr(distance, 5, measurement));
+    overlay.printf(_("Distance: %s\n"), DistanceLyToStr(distance, 5, measurement));
 
     if (!star.getVisibility())
     {
@@ -2832,12 +2832,12 @@ static void displayStarInfo(Overlay& overlay,
     }
     else
     {
-        overlay << fmt::sprintf(_("Abs (app) mag: %.2f (%.2f)\n"),
+        overlay.printf(_("Abs (app) mag: %.2f (%.2f)\n"),
                                 star.getAbsoluteMagnitude(),
                                 star.getApparentMagnitude(float(distance)));
 
         if (star.getLuminosity() > 1.0e-10f)
-            overlay << fmt::sprintf(_("Luminosity: %sx Sun\n"), SigDigitNum(star.getLuminosity(), 3));
+            overlay.printf(_("Luminosity: %sx Sun\n"), SigDigitNum(star.getLuminosity(), 3));
 
         const char* star_class;
         switch (star.getSpectralType()[0])
@@ -2851,25 +2851,25 @@ static void displayStarInfo(Overlay& overlay,
         default:
             star_class = star.getSpectralType();
         };
-        overlay << fmt::sprintf(_("Class: %s\n"), star_class);
+        overlay.printf(_("Class: %s\n"), star_class);
 
         displayApparentDiameter(overlay, star.getRadius(),
                                 astro::lightYearsToKilometers(distance));
 
         if (detail > 1)
         {
-            overlay << fmt::sprintf(_("Surface temp: %s K\n"), SigDigitNum(star.getTemperature(), 3));
+            overlay.printf(_("Surface temp: %s K\n"), SigDigitNum(star.getTemperature(), 3));
             float solarRadii = star.getRadius() / 6.96e5f;
 
             if (solarRadii > 0.01f)
             {
-                overlay << fmt::sprintf(_("Radius: %s Rsun  (%s)\n"),
+                overlay.printf(_("Radius: %s Rsun  (%s)\n"),
                              SigDigitNum(star.getRadius() / 696000.0f, 2),
                              DistanceKmToStr(star.getRadius(), 3, measurement));
             }
             else
             {
-                overlay << fmt::sprintf(_("Radius: %s\n"),
+                overlay.printf(_("Radius: %s\n"),
                              DistanceKmToStr(star.getRadius(), 3, measurement));
             }
 
@@ -2896,15 +2896,15 @@ static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double di
 
     if (distance >= 0)
     {
-        overlay << fmt::sprintf(_("Distance: %s\n"),
+        overlay.printf(_("Distance: %s\n"),
                      DistanceLyToStr(distance, 5, measurement));
     }
     else
     {
-        overlay << fmt::sprintf(_("Distance from center: %s\n"),
+        overlay.printf(_("Distance from center: %s\n"),
                      DistanceLyToStr(distance + dso.getRadius(), 5, measurement));
      }
-    overlay << fmt::sprintf(_("Radius: %s\n"),
+    overlay.printf(_("Radius: %s\n"),
                  DistanceLyToStr(dso.getRadius(), 5, measurement));
 
     displayApparentDiameter(overlay, dso.getRadius(), distance);
@@ -2926,14 +2926,14 @@ static void displayPlanetInfo(Overlay& overlay,
                               CelestiaCore::MeasurementSystem measurement)
 {
     double distance = distanceKm - body.getRadius();
-    overlay << fmt::sprintf(_("Distance: %s\n"), DistanceKmToStr(distance, 5, measurement));
+    overlay.printf(_("Distance: %s\n"), DistanceKmToStr(distance, 5, measurement));
 
     if (body.getClassification() == Body::Invisible)
     {
         return;
     }
 
-    overlay << fmt::sprintf(_("Radius: %s\n"), DistanceKmToStr(body.getRadius(), 5, measurement));
+    overlay.printf(_("Radius: %s\n"), DistanceKmToStr(body.getRadius(), 5, measurement));
 
     displayApparentDiameter(overlay, body.getRadius(), distanceKm);
 
@@ -2974,7 +2974,7 @@ static void displayPlanetInfo(Overlay& overlay,
             sunVec.normalize();
             double cosPhaseAngle = sunVec.dot(viewVec.normalized());
             double phaseAngle = acos(cosPhaseAngle);
-            overlay << fmt::sprintf(_("Phase angle: %.1f%s\n"), radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
+            overlay.printf(_("Phase angle: %.1f%s\n"), radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
         }
     }
 
@@ -2990,14 +2990,14 @@ static void displayPlanetInfo(Overlay& overlay,
         if (density > 0)
         {
             if (measurement == CelestiaCore::Imperial)
-                overlay << fmt::sprintf(_("Density: %.2f x 1000 lb/ft^3\n"), density / (float) OneLbPerFt3InKgPerM3 / 1000.0f);
+                overlay.printf(_("Density: %.2f x 1000 lb/ft^3\n"), density / (float) OneLbPerFt3InKgPerM3 / 1000.0f);
             else
-                overlay << fmt::sprintf(_("Density: %.2f x 1000 kg/m^3\n"), density / 1000.0f);
+                overlay.printf(_("Density: %.2f x 1000 kg/m^3\n"), density / 1000.0f);
         }
 
         float planetTemp = body.getTemperature(t);
         if (planetTemp > 0)
-            overlay << fmt::sprintf(_("Temperature: %.0f K\n"), planetTemp);
+            overlay.printf(_("Temperature: %.0f K\n"), planetTemp);
     }
 }
 
@@ -3007,7 +3007,7 @@ static void displayLocationInfo(Overlay& overlay,
                                 double distanceKm,
                                 CelestiaCore::MeasurementSystem measurement)
 {
-    overlay << fmt::sprintf(_("Distance: %s\n"), DistanceKmToStr(distanceKm, 5, measurement));
+    overlay.printf(_("Distance: %s\n"), DistanceKmToStr(distanceKm, 5, measurement));
 
     Body* body = location.getParentBody();
     if (body != nullptr)
@@ -3145,7 +3145,7 @@ void CelestiaCore::renderOverlay()
         overlay->moveBy(width - safeAreaInsets.right - dateStrWidth, height - safeAreaInsets.top - fontHeight);
         overlay->beginText();
 
-        overlay->print(dateStr);
+        overlay->printf(dateStr);
 
         if (lightTravelFlag && lt > 0.0)
         {
@@ -3169,11 +3169,11 @@ void CelestiaCore::renderOverlay()
             }
             else if (abs(sim->getTimeScale()) > 1.0)
             {
-                *overlay << fmt::sprintf(_("%.6g x faster"), sim->getTimeScale()); // XXX: %'.12g
+                overlay->printf(_("%.6g x faster"), sim->getTimeScale()); // XXX: %'.12g
             }
             else
             {
-                *overlay << fmt::sprintf(_("%.6g x slower"), 1.0 / sim->getTimeScale()); // XXX: %'.12g
+                overlay->printf(_("%.6g x slower"), 1.0 / sim->getTimeScale()); // XXX: %'.12g
             }
 
             if (sim->getPauseState() == true)
@@ -3198,7 +3198,7 @@ void CelestiaCore::renderOverlay()
         *overlay << '\n';
         if (showFPSCounter)
 #ifdef OCTREE_DEBUG
-            *overlay << fmt::sprintf(_("FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : %zu : %zu ]\n"),
+            overlay->printf(_("FPS: %.1f, vis. stars stats: [ %zu : %zu : %zu ], vis. DSOs stats: [ %zu : %zu : %zu ]\n"),
                          fps,
                          getRenderer()->m_starProcStats.objects,
                          getRenderer()->m_starProcStats.nodes,
@@ -3207,7 +3207,7 @@ void CelestiaCore::renderOverlay()
                          getRenderer()->m_dsoProcStats.nodes,
                          getRenderer()->m_dsoProcStats.height);
 #else
-            *overlay << fmt::sprintf(_("FPS: %.1f\n"), fps);
+            overlay->printf(_("FPS: %.1f\n"), fps);
 #endif
         else
             *overlay << '\n';
@@ -3232,10 +3232,10 @@ void CelestiaCore::renderOverlay()
         {
             double timeLeft = sim->getArrivalTime() - sim->getRealTime();
             if (timeLeft >= 1)
-                *overlay << fmt::sprintf(_("Travelling (%s)\n"),
+                overlay->printf(_("Travelling (%s)\n"),
                              FormattedNumber(timeLeft, 0, FormattedNumber::GroupThousands));
             else
-                *overlay << fmt::sprintf(_("Travelling\n"));
+                overlay->printf(_("Travelling\n"));
         }
         else
         {
@@ -3244,7 +3244,7 @@ void CelestiaCore::renderOverlay()
 
         if (!sim->getTrackedObject().empty())
         {
-            *overlay << fmt::sprintf(_("Track %s\n"),
+            overlay->printf(_("Track %s\n"),
                          CX_("Track", getSelectionName(sim->getTrackedObject(), *u)));
         }
         else
@@ -3260,21 +3260,21 @@ void CelestiaCore::renderOverlay()
             switch (coordSys)
             {
             case ObserverFrame::Ecliptical:
-                *overlay << fmt::sprintf(_("Follow %s\n"),
+                overlay->printf(_("Follow %s\n"),
                              CX_("Follow", getSelectionName(refObject, *u)));
                 break;
             case ObserverFrame::BodyFixed:
-                *overlay << fmt::sprintf(_("Sync Orbit %s\n"),
+                overlay->printf(_("Sync Orbit %s\n"),
                              CX_("Sync", getSelectionName(refObject, *u)));
                 break;
             case ObserverFrame::PhaseLock:
-                *overlay << fmt::sprintf(_("Lock %s -> %s\n"),
+                overlay->printf(_("Lock %s -> %s\n"),
                              CX_("Lock", getSelectionName(refObject, *u)),
                              CX_("LockTo", getSelectionName(sim->getFrame()->getTargetObject(), *u)));
                 break;
 
             case ObserverFrame::Chase:
-                *overlay << fmt::sprintf(_("Chase %s\n"),
+                overlay->printf(_("Chase %s\n"),
                              CX_("Chase", getSelectionName(refObject, *u)));
                 break;
 
@@ -3288,7 +3288,7 @@ void CelestiaCore::renderOverlay()
 
         // Field of view
         float fov = radToDeg(sim->getActiveObserver()->getFOV());
-        *overlay << fmt::sprintf(_("FOV: %s (%.2fx)\n"),
+        overlay->printf(_("FOV: %s (%.2fx)\n"),
                               angleToStr(fov), (*activeView)->zoom);
         overlay->endText();
         overlay->restorePos();
@@ -3479,7 +3479,7 @@ void CelestiaCore::renderOverlay()
         overlay->moveBy(safeAreaInsets.left, safeAreaInsets.bottom + rectHeight - titleFontHeight);
         overlay->setColor(0.6f, 0.6f, 1.0f, 1.0f);
         overlay->beginText();
-        *overlay << fmt::sprintf(_("Target name: %s"), typedText);
+        overlay->printf(_("Target name: %s"), typedText);
         overlay->endText();
         overlay->setFont(font);
         if (typedTextCompletion.size() >= 1)
@@ -3566,7 +3566,7 @@ void CelestiaCore::renderOverlay()
         overlay->moveBy((float) ((width - movieWidth) / 2),
                         (float) ((height + movieHeight) / 2 + 2));
         overlay->beginText();
-        *overlay << fmt::sprintf(_("%dx%d at %.2f fps  %s"),
+        overlay->printf(_("%dx%d at %.2f fps  %s"),
                               movieWidth, movieHeight,
                               movieCapture->getFrameRate(),
                               recording ? _("Recording") : _("Paused"));
@@ -3582,7 +3582,7 @@ void CelestiaCore::renderOverlay()
         auto min = (int) (sec / 60);
         sec -= min * 60.0f;
         overlay->beginText();
-        *overlay << fmt::sprintf("%3d:%05.2f", min, sec);
+        overlay->printf("%3d:%05.2f", min, sec);
         overlay->endText();
         overlay->restorePos();
 
