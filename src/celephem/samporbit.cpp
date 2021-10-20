@@ -13,6 +13,7 @@
 #include "orbit.h"
 #include "samporbit.h"
 #include "xyzvbinary.h"
+#include <fmt/ostream.h>
 #include <celengine/astro.h>
 #include <celmath/mathlib.h>
 #include <celutil/bytes.h>
@@ -830,20 +831,20 @@ LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation int
     ifstream in(filename.string(), ios::binary);
     if (!in.good())
     {
-        cerr << fmt::sprintf(_("Error openning %s.\n"), filename.string());
+        cerr << fmt::sprintf(_("Error openning %s.\n"), filename);
         return nullptr;
     }
 
     XYZVBinaryHeader header;
     if (!in.read(reinterpret_cast<char*>(&header), sizeof(header)))
     {
-        cerr << fmt::sprintf(_("Error reading header of %s.\n"), filename.string());
+        cerr << fmt::sprintf(_("Error reading header of %s.\n"), filename);
         return nullptr;
     }
 
     if (string(header.magic) != "CELXYZV")
     {
-        cerr << fmt::sprintf(_("Bad binary xyzv file %s.\n"), filename.string());
+        cerr << fmt::sprintf(_("Bad binary xyzv file %s.\n"), filename);
         return nullptr;
     }
 

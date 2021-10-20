@@ -8,6 +8,7 @@
 #include <system_error>
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <memory>
 #ifdef _WIN32
 #include <celutil/winutil.h>
@@ -219,11 +220,21 @@ class path
 
     string_type m_path;
     format      m_fmt       { auto_format };
+
+    template<class CharT, class Traits>
+    friend std::basic_ostream<CharT,Traits>&
+    operator<<(std::basic_ostream<CharT,Traits>& os, const path& p);
 }; // path
 
 path operator/(const path& lhs, const path& rhs);
 
-std::ostream& operator<<(std::ostream& os, const path& p);
+template<class CharT, class Traits>
+std::basic_ostream<CharT,Traits>&
+operator<<(std::basic_ostream<CharT,Traits>& os, const path& p)
+{
+    os << std::quoted(p.string());
+    return os;
+}
 
 path u8path(const std::string& source);
 

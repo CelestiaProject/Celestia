@@ -10,7 +10,7 @@
 #include <set>
 #include <string>
 #include <fstream>
-#include <fmt/printf.h>
+#include <fmt/ostream.h>
 #include <celcompat/filesystem.h>
 #include <celephem/scriptobject.h>
 #include <celestia/configfile.h>
@@ -84,7 +84,7 @@ unique_ptr<IScript> LuaScriptPlugin::loadScript(const fs::path &path)
     ifstream scriptfile(path.string());
     if (!scriptfile.good())
     {
-        appCore()->fatalError(fmt::sprintf(_("Error opening script '%s'"), path.string()));
+        appCore()->fatalError(fmt::sprintf(_("Error opening script '%s'"), path));
         return nullptr;
     }
 
@@ -167,7 +167,7 @@ static string lua_path(const CelestiaConfig *config)
         std::error_code ec;
         if (!fs::is_directory(dir, ec))
         {
-            cerr << fmt::sprintf("Path %s doesn't exist or isn't a directory", dir.string());
+            cerr << fmt::sprintf("Path %s doesn't exist or isn't a directory", dir);
             continue;
         }
 
@@ -208,7 +208,7 @@ bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, P
     {
         ifstream scriptfile(config->luaHook.string());
         if (!scriptfile.good())
-            appCore->fatalError(fmt::sprintf(_("Error opening LuaHook '%s'"), config->luaHook.string()));
+            appCore->fatalError(fmt::sprintf(_("Error opening LuaHook '%s'"), config->luaHook));
 
         if (progressNotifier != nullptr)
             progressNotifier->update(config->luaHook.string());

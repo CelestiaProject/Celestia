@@ -11,6 +11,7 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
+#include <fmt/ostream.h>
 #include <celengine/glsupport.h>
 #include <celutil/debug.h>
 #include <celutil/filetype.h>
@@ -286,7 +287,7 @@ Image* LoadImageFromFile(const fs::path& filename)
     ContentType type = DetermineFileType(filename);
     Image* img = nullptr;
 
-    clog << fmt::sprintf(_("Loading image from file %s\n"), filename.string());
+    clog << fmt::sprintf(_("Loading image from file %s\n"), filename);
 
     switch (type)
     {
@@ -309,7 +310,7 @@ Image* LoadImageFromFile(const fs::path& filename)
         img = LoadDDSImage(filename);
         break;
     default:
-        DPRINTF(LOG_LEVEL_ERROR, "%s: unrecognized or unsupported image file type.\n", filename.string());
+        DPRINTF(LOG_LEVEL_ERROR, "%s: unrecognized or unsupported image file type.\n", filename);
         break;
     }
 

@@ -640,13 +640,13 @@ TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int inde
 
     if (FT_New_Face(ft, path.string().c_str(), index, &face) != 0)
     {
-        fmt::print(cerr, "Could not open font {}\n", path.string());
+        fmt::print(cerr, "Could not open font {}\n", path);
         return nullptr;
     }
 
     if (!FT_IS_SCALABLE(face))
     {
-        fmt::print(cerr, "Font is not scalable: {}\n", path.string());
+        fmt::print(cerr, "Font is not scalable: {}\n", path);
         return nullptr;
     }
 
