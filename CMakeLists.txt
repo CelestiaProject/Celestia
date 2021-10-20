@@ -34,7 +34,7 @@ endif()
 
 # Remove leading and trailing whitespace from libraries linked
 if(POLICY CMP0004)
-  cmake_policy(SET CMP0004 OLD)
+  cmake_policy(SET CMP0004 NEW)
 endif()
 
 project(celestia VERSION 1.7.0 LANGUAGES C CXX)
