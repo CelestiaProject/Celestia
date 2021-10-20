@@ -13,6 +13,7 @@
 #include <iosfwd>
 #include <string>
 #include <vector>
+#include <fmt/printf.h>
 #include <Eigen/Core>
 
 class Color;
@@ -85,9 +86,20 @@ class Overlay : public std::ostream
     void endText();
     void print(wchar_t);
     void print(char);
-    void print(const char*);
+    template <typename... T>
+    void print(const char* format, const T&... args)
+    {
+        print_impl(fmt::format(format, args...));
+    }
+    template <typename... T>
+    void printf(const char* format, const T&... args)
+    {
+        print_impl(fmt::sprintf(format, args...));
+    }
 
  private:
+    void print_impl(const std::string&);
+
     int windowWidth{ 1 };
     int windowHeight{ 1 };
     std::shared_ptr<TextureFont> font{ nullptr };

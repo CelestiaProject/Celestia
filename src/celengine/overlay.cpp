@@ -152,15 +152,15 @@ void Overlay::print(char c)
     }
 }
 
-void Overlay::print(const char* s)
+void Overlay::print_impl(const std::string& s)
 {
-    int length = strlen(s);
+    size_t length = s.length();
     bool validChar = true;
-    int i = 0;
+    size_t i = 0;
     while (i < length && validChar)
     {
         wchar_t ch = 0;
-        validChar = UTF8Decode(s, i, length, ch);
+        validChar = UTF8Decode(s.c_str(), i, length, ch);
         i += UTF8EncodedSize(ch);
         print(ch);
     }
