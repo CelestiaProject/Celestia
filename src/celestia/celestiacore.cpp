@@ -104,7 +104,7 @@ static bool is_valid_directory(const fs::path& dir)
     std::error_code ec;
     if (!fs::is_directory(dir, ec))
     {
-        cerr << fmt::sprintf(_("Path %s doesn't exist or isn't a directory"), dir);
+        cerr << fmt::sprintf(_("Path %s doesn't exist or isn't a directory\n"), dir);
         return false;
     }
 
