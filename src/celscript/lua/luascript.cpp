@@ -167,7 +167,7 @@ static string lua_path(const CelestiaConfig *config)
         std::error_code ec;
         if (!fs::is_directory(dir, ec))
         {
-            cerr << fmt::sprintf("Path %s doesn't exist or isn't a directory", dir);
+            cerr << fmt::sprintf(_("Path %s doesn't exist or isn't a directory\n"), dir);
             continue;
         }
 
