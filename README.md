@@ -6,12 +6,12 @@
 ![Celestia](celestia-logo.png)<br>
 **A real-time space simulation that lets you experience our universe in three dimensions.**
 
-**Copyright © 2001-2020, Celestia Development Team**<br>
+**Copyright © 2001-2021, Celestia Development Team**<br>
 **Celestia website: https://celestia.space**<br>
-**Celestia WikiBook: https://en.wikibooks.org/wiki/Celestia**<br>
+**Celestia Wikibook: https://en.wikibooks.org/wiki/Celestia**<br>
 **Celestia forums: https://celestia.space/forum/**<br>
 **Celestia Discord Server: https://discordapp.com/invite/WEWDcJh**<br>
-**Celestia SubReddit: https://www.reddit.com/r/Celestiasoftware/**<br>
+**Celestia Subreddit: https://www.reddit.com/r/Celestiasoftware/**<br>
 **Celestia Archive Repository: https://github.com/Anthony-B-Russo10/Celestia-Archive**
 ## License
 
