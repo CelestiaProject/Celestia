@@ -1,17 +1,17 @@
 ***************************************************************************
-*                             Celestia                                    *
+*                                 Celestia                                *
 *                                                                         *
 *  A real-time space simulation that lets you experience our universe in  *
 *  three dimensions.                                                      *
 *                                                                         *
-*  Copyright (c) 2001-2020, Celestia Development Team                     *
+*  Copyright (c) 2001-2021, Celestia Development Team                     *
 *                                                                         *
 *-------------------------------------------------------------------------*
-*  Celestia web site: https://celestia.space                              *
+*  Celestia web site: https://celestia.space/                             *
 *                                                                         *
 *  Celestia documentation:                                                *
-*    http://celestiamotherlode.net/catalog/documentation.html             *
-*    Celestia WikiBook: http://en.wikibooks.org/wiki/Celestia             *
+*    https://celestia.space/guides.html                                   *
+*    Celestia WikiBook: https://en.wikibooks.org/wiki/Celestia            *
 *                                                                         *
 *  Celestia forums: https://celestia.space/forum/                         *
 *                                                                         *
@@ -87,7 +87,7 @@ button, and you're off.
 That covers the very basics.  For a more in-depth look at Celestia and the
 controls available to you, download the "Celestia User's Guide" (written by
 Frank Gregorio), available in several languages, from:
-  http://celestiamotherlode.net/catalog/documentation.html
+  https://celestia.space/guides.html
 This web page also includes links to the Celestia README file translated into
 Japanese.
 
@@ -171,16 +171,16 @@ favorite text editing program.
 CELESTIA RESOURCES
 ------------------
 Celestia Web Site:
-  https://celestia.space
+  https://celestia.space/
 
 Celestia User Forums:
   https://celestia.space/forum/
 
 Selden's List of Resources for Celestia:
-  http://www.lepp.cornell.edu/~seb/celestia/
+  https://www.classe.cornell.edu/~seb/celestia/
 
-Celestia WikiBook:
-  http://en.wikibooks.org/wiki/Celestia
+Celestia Wikibook:
+  https://en.wikibooks.org/wiki/Celestia
 
 Celestial Matters Website and Forums:
   http://www.celestialmatters.org/
@@ -192,21 +192,20 @@ Celestia Motherlode:
 Celestia Source Repository:
   https://github.com/CelestiaProject/Celestia
 
-Celestia Binary Repository:
-  https://bintray.com/celestia
-
 Celestia Bug Tracking:
-  https://github.com/CelestiaProject/celestia/issues
+  https://github.com/CelestiaProject/Celestia/issues
 
 Celestia Feature Requests:
-  https://github.com/CelestiaProject/celestia/issues
+  https://github.com/CelestiaProject/Celestia/issues
 
 Celestia Discord Server:
   https://discordapp.com/invite/WEWDcJh
 
-Celestia SubReddit:
+Celestia Subreddit:
   https://www.reddit.com/r/Celestiasoftware/
 
+Celestia Archive Repository:
+  https://github.com/Anthony-B-Russo10/Celestia-Archive
 
 BUILDING FROM SOURCES
 ---------------------
@@ -235,7 +234,7 @@ Authors
 
 Contributors
 ------------
-  Deon Ramsey ........... original GTK1 interface
+  Deon Ramsey ........... Original GTK1 interface
   Christopher Andre ..... Eclipse Finder
   Colin Walters ......... Endianness fixes
   Peter Chapman ......... Orbit path rendering changes
@@ -526,8 +525,7 @@ ACKNOWLEDGEMENTS
 A very big thank you for creating Celestia goes to Chris Laurel who started this
 program in the year 2001.
   <claurel@gmail.com>
-  http://www.shatters.net/~claurel/
-  http://www.shatters.net/celestia/
+  https://celestia.space/
 
 Special thanks go to all Celestia users who submit bug reports, suggestions, and
 fixes. Celestia wouldn't be the program it is today, without their help.
