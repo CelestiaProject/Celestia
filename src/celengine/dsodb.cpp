@@ -147,7 +147,7 @@ string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsig
         if (count != 0)
             dsoNames   += " / ";
 
-        dsoNames   += iter->second;
+        dsoNames   += _(iter->second.c_str());
         ++iter;
         ++count;
     }

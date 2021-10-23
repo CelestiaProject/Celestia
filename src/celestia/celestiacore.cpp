@@ -3334,14 +3334,6 @@ void CelestiaCore::renderOverlay()
                 {
                     lastSelection = sel;
                     selectionNames = sim->getUniverse()->getDSOCatalog()->getDSONameList(sel.deepsky());
-                    // Skip displaying the English name if a localized version is present.
-                    string DSOName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
-                    string locDSOName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky(), true);
-                    if (selectionNames.find(DSOName) != string::npos && DSOName != locDSOName)
-                    {
-                        string::size_type startPos = selectionNames.find(locDSOName);
-                        selectionNames = selectionNames.substr(startPos);
-                    }
                 }
 
                 overlay->setFont(titleFont);
