@@ -140,22 +140,30 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
 #endif
 
     double orbitalPeriod = 0.0;
-    if (body->getOrbit(t)->isPeriodic())
-        orbitalPeriod = body->getOrbit(t)->getPeriod();
+    const Orbit* orbit = body->getOrbit(t);
+    if (orbit->isPeriodic())
+        orbitalPeriod = orbit->getPeriod();
 
     // Show rotation information for natural, periodic rotators
     if (body->getRotationModel(t)->isPeriodic() && !isArtificial)
     {
-        double rotPeriod = body->getRotationModel(t)->getPeriod();
+        const RotationModel* rotationModel = body->getRotationModel(t);
+        double rotPeriod = rotationModel->getPeriod();
 
         double dayLength = 0.0;
-        if (body->getOrbit(t)->isPeriodic())
+        bool prograde = false;
+        if (orbitalPeriod > 0.0)
         {
+            Vector3d axis = AngleAxisd(rotationModel->equatorOrientationAtTime(t)
+                                       * body->getBodyFrame(t)->getOrientation(t)).axis();
+            Vector3d orbitNormal = body->getOrbitFrame(t)->getOrientation(t)
+                                   * orbit->positionAtTime(t).cross(orbit->velocityAtTime(t));
+            prograde = axis.dot(orbitNormal) >= 0;
             double siderealDaysPerYear = orbitalPeriod / rotPeriod;
-            double solarDaysPerYear = siderealDaysPerYear - 1.0;
-            if (solarDaysPerYear > 0.0001)
+            double solarDaysPerYear = prograde ? siderealDaysPerYear - 1.0 : siderealDaysPerYear + 1.0;
+            if (std::abs(solarDaysPerYear) > 0.0001)
             {
-                dayLength = orbitalPeriod / (siderealDaysPerYear - 1.0);
+                dayLength = std::abs(orbitalPeriod / solarDaysPerYear);
             }
         }
 
@@ -171,6 +179,11 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
         }
 
         stream << QString(_("<b>Sidereal rotation period:</b> %L1 %2")).arg(rotPeriod).arg(units) << "<br>\n";
+        if (orbitalPeriod > 0.0)
+        {
+            QString direction = prograde ? _("Prograde") : _("Retrograde");
+            stream << QString(_("<b>Rotation direction:</b> %1")).arg(direction) << "<br>\n";
+        }
         if (dayLength != 0.0)
         {
             stream << QString(_("<b>Length of day:</b> %L1 %2")).arg(dayLength).arg(units) << "<br>\n";
@@ -184,7 +197,7 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
             orbitalPeriod = 365.25;
 
         OrbitalElements elements;
-        CalculateOsculatingElements(*body->getOrbit(t),
+        CalculateOsculatingElements(*orbit,
                                     t,
                                     orbitalPeriod * 1.0e-6,
                                     &elements);
