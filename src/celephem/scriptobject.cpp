@@ -10,6 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include <celutil/debug.h>
+#include <fmt/printf.h>
 
 #include "scriptobject.h"
 

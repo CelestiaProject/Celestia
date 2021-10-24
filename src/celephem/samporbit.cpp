@@ -14,6 +14,7 @@
 #include "samporbit.h"
 #include "xyzvbinary.h"
 #include <fmt/ostream.h>
+#include <fmt/printf.h>
 #include <celengine/astro.h>
 #include <celmath/mathlib.h>
 #include <celutil/bytes.h>

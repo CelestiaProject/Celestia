@@ -8,10 +8,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <array>
+#include <cmath>
+#include <cstring>
+#include <fstream>
 #include <celutil/debug.h>
 #include <celutil/fsutils.h>
-#include <array>
-#include <fstream>
 #include "mapmanager.h"
 
 using namespace std;

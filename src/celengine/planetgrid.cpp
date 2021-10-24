@@ -18,6 +18,7 @@
 #include "planetgrid.h"
 #include "render.h"
 #include "vecgl.h"
+#include <fmt/printf.h>
 
 using namespace std;
 using namespace Eigen;

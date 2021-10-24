@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <random>
 #include <cassert>
+#include <fmt/printf.h>
 
 using namespace Eigen;
 using namespace std;

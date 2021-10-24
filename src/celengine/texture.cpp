@@ -14,6 +14,7 @@
 #include <fstream>
 #include <iostream>
 
+#include <fmt/printf.h>
 #include <Eigen/Core>
 #include "glsupport.h"
 

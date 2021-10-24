@@ -17,6 +17,7 @@
 #include "star.h"
 #include "texmanager.h"
 #include "celephem/orbit.h"
+#include <fmt/printf.h>
 
 using namespace Eigen;
 using namespace std;

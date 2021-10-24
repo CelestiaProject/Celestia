@@ -24,6 +24,7 @@
 #include "render.h"
 #include "texture.h"
 #include "vecgl.h"
+#include <fmt/printf.h>
 
 using namespace Eigen;
 using namespace std;

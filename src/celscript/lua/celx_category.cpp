@@ -1,8 +1,11 @@
+#include <string>
+
+#include <fmt/printf.h>
 
 #include <celutil/debug.h>
 #include "celx.h"
 #include "celx_internal.h"
-#include "celx_category.h" 
+#include "celx_category.h"
 #include "celx_object.h"
 #include <celengine/category.h>
 #include <celengine/selection.h>
