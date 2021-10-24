@@ -17,6 +17,7 @@
 #include <celengine/body.h>
 #include <celengine/location.h>
 #include <celengine/deepskyobj.h>
+#include <fmt/printf.h>
 
 using namespace Eigen;
 using namespace std;

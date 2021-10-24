@@ -39,6 +39,7 @@
 #include <utility>
 #include <memory>
 #include <fmt/ostream.h>
+#include <fmt/printf.h>
 
 
 using namespace cmod;

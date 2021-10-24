@@ -12,6 +12,7 @@
 #include <fstream>
 #include <iostream>
 #include <fmt/ostream.h>
+#include <fmt/printf.h>
 #include <celengine/glsupport.h>
 #include <celutil/debug.h>
 #include <celutil/filetype.h>

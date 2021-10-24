@@ -14,6 +14,9 @@
 #include <cstdlib>
 #include <cassert>
 #include <algorithm>
+
+#include <fmt/printf.h>
+
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celutil/gettext.h>

@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <tuple>
 #include <fmt/ostream.h>
+#include <fmt/printf.h>
 #include <Eigen/Geometry>
 #include <celcompat/filesystem.h>
 #include <celmath/geomutil.h>

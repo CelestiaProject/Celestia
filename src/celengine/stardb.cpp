@@ -25,6 +25,7 @@
 #include "multitexture.h"
 #include "meshmanager.h"
 #include "tokenizer.h"
+#include <fmt/printf.h>
 
 using namespace Eigen;
 using namespace std;
@@ -1491,4 +1492,3 @@ Star* StarDatabase::findWhileLoading(AstroCatalog::IndexNumber catalogNumber) co
     // Star not found
     return nullptr;
 }
-

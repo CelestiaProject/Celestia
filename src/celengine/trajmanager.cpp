@@ -16,6 +16,7 @@
 #include <fstream>
 #include <cassert>
 #include <celutil/debug.h>
+#include <fmt/printf.h>
 
 using namespace std;
 

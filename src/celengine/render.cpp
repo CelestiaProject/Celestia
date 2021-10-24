@@ -33,6 +33,8 @@ std::ofstream hdrlog;
 #define EXPOSURE_HALFLIFE   0.4f
 #endif
 
+#include <fmt/printf.h>
+
 #include "render.h"
 #include "boundaries.h"
 #include "dsorenderer.h"

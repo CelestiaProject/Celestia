@@ -12,6 +12,7 @@
 #include <png.h>
 #include <zlib.h>
 #include <fmt/ostream.h>
+#include <fmt/printf.h>
 #include <celengine/image.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
@@ -266,4 +267,3 @@ bool SavePNGImage(const fs::path& filename, Image& image)
                         image.getPixels(),
                         image.hasAlpha());
 }
-
