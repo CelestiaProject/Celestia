@@ -10,6 +10,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -29,8 +30,6 @@ class M3DColor
 class M3DMaterial
 {
  public:
-    M3DMaterial() = default;
-
     std::string getName() const;
     void setName(std::string);
     M3DColor getAmbientColor() const;
@@ -47,8 +46,8 @@ class M3DMaterial
     void setTextureMap(const std::string&);
 
  private:
-    std::string name;
-    std::string texmap;
+    std::string name{};
+    std::string texmap{};
     M3DColor ambient{ 0, 0, 0 };
     M3DColor diffuse{ 0, 0, 0 };
     M3DColor specular{ 0, 0, 0 };
@@ -70,9 +69,6 @@ class M3DTriangleMesh
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    M3DTriangleMesh();
-    ~M3DTriangleMesh() = default;
-
     Eigen::Matrix4f getMatrix() const;
     void setMatrix(const Eigen::Matrix4f&);
 
@@ -92,57 +88,51 @@ class M3DTriangleMesh
     std::uint32_t getSmoothingGroups(std::uint16_t) const;
     std::uint16_t getSmoothingGroupCount() const;
 
-    void addMeshMaterialGroup(M3DMeshMaterialGroup* matGroup);
+    void addMeshMaterialGroup(std::unique_ptr<M3DMeshMaterialGroup> matGroup);
     M3DMeshMaterialGroup* getMeshMaterialGroup(std::uint32_t) const;
     std::uint32_t getMeshMaterialGroupCount() const;
 
  private:
-    std::vector<Eigen::Vector3f> points;
-    std::vector<Eigen::Vector2f, Eigen::aligned_allocator<Eigen::Vector2f>> texCoords;
-    std::vector<std::uint16_t> faces;
-    std::vector<std::uint32_t> smoothingGroups;
-    std::vector<M3DMeshMaterialGroup*> meshMaterialGroups;
-    Eigen::Matrix4f matrix;
+    std::vector<Eigen::Vector3f> points{};
+    std::vector<Eigen::Vector2f, Eigen::aligned_allocator<Eigen::Vector2f>> texCoords{};
+    std::vector<std::uint16_t> faces{};
+    std::vector<std::uint32_t> smoothingGroups{};
+    std::vector<std::unique_ptr<M3DMeshMaterialGroup>> meshMaterialGroups{};
+    Eigen::Matrix4f matrix{ Eigen::Matrix4f::Identity() };
 };
 
 
 class M3DModel
 {
  public:
-    M3DModel() = default;
-    ~M3DModel();
-
-    M3DTriangleMesh* getTriMesh(uint32_t);
-    uint32_t getTriMeshCount();
-    void addTriMesh(M3DTriangleMesh*);
+    M3DTriangleMesh* getTriMesh(std::uint32_t);
+    std::uint32_t getTriMeshCount();
+    void addTriMesh(std::unique_ptr<M3DTriangleMesh>);
     void setName(const std::string&);
     const std::string getName() const;
 
  private:
-    std::string name;
-    std::vector<M3DTriangleMesh*> triMeshes;
+    std::string name{};
+    std::vector<std::unique_ptr<M3DTriangleMesh>> triMeshes{};
 };
 
 
 class M3DScene
 {
  public:
-    M3DScene() = default;
-    ~M3DScene();
-
     M3DModel* getModel(std::uint32_t) const;
     std::uint32_t getModelCount() const;
-    void addModel(M3DModel*);
+    void addModel(std::unique_ptr<M3DModel>);
 
     M3DMaterial* getMaterial(std::uint32_t) const;
     std::uint32_t getMaterialCount() const;
-    void addMaterial(M3DMaterial*);
+    void addMaterial(std::unique_ptr<M3DMaterial>);
 
     M3DColor getBackgroundColor() const;
     void setBackgroundColor(M3DColor);
 
  private:
-    std::vector<M3DModel*> models;
-    std::vector<M3DMaterial*> materials;
-    M3DColor backgroundColor;
+    std::vector<std::unique_ptr<M3DModel>> models{};
+    std::vector<std::unique_ptr<M3DMaterial>> materials{};
+    M3DColor backgroundColor{};
 };
