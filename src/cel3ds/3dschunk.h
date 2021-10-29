@@ -7,8 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _3DSCHUNK_H_
-#define _3DSCHUNK_H_
+#pragma once
 
 enum M3DChunkType
 {
@@ -56,5 +55,3 @@ enum M3DChunkType
 
     M3DCHUNK_KFDATA              = 0xb000,
 };
-
-#endif // _3DSCHUNK_H_

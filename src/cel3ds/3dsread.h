@@ -7,15 +7,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _3DSREAD_H_
-#define _3DSREAD_H_
+#pragma once
 
-#include <iostream>
-#include <fstream>
-#include <cel3ds/3dsmodel.h>
+#include <iosfwd>
 #include <celcompat/filesystem.h>
 
-M3DScene* Read3DSFile(std::ifstream& in);
-M3DScene* Read3DSFile(const fs::path& filename);
+class M3DScene;
 
-#endif // _3DSREAD_H_
+M3DScene* Read3DSFile(std::istream& in);
+M3DScene* Read3DSFile(const fs::path& filename);
