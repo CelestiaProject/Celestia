@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -17,7 +18,7 @@
 #include <Eigen/Core>
 #include <fmt/ostream.h>
 
-#include "celutil/bytes.h"
+#include <celutil/bytes.h>
 #include "3dschunk.h"
 #include "3dsmodel.h"
 #include "3dsread.h"
@@ -34,8 +35,9 @@ using ProcessChunkFunc = std::int32_t (*)(std::istream &, std::uint16_t, std::in
 
 bool readInt(std::istream& in, std::int32_t& value)
 {
-    in.read(reinterpret_cast<char*>(&value), sizeof(std::int32_t));
-    if (!in.good()) { return false; }
+    char buffer[sizeof(value)];
+    if (!in.read(buffer, sizeof(buffer)).good()) { return false; }
+    std::memcpy(&value, buffer, sizeof(value));
     LE_TO_CPU_INT32(value, value);
     return true;
 }
@@ -43,8 +45,9 @@ bool readInt(std::istream& in, std::int32_t& value)
 
 bool readShort(std::istream& in, std::int16_t& value)
 {
-    in.read(reinterpret_cast<char*>(&value), sizeof(std::int16_t));
-    if (!in.good()) { return false; }
+    char buffer[sizeof(value)];
+    if (!in.read(buffer, sizeof(buffer)).good()) { return false; }
+    std::memcpy(&value, buffer, sizeof(value));
     LE_TO_CPU_INT16(value, value);
     return true;
 }
@@ -52,8 +55,9 @@ bool readShort(std::istream& in, std::int16_t& value)
 
 bool readUshort(std::istream& in, std::uint16_t& value)
 {
-    in.read(reinterpret_cast<char*>(&value), sizeof(std::uint16_t));
-    if (!in.good()) { return false; }
+    char buffer[sizeof(value)];
+    if (!in.read(buffer, sizeof(buffer)).good()) { return false; }
+    std::memcpy(&value, buffer, sizeof(value));
     LE_TO_CPU_INT16(value, value);
     return true;
 }
@@ -61,8 +65,9 @@ bool readUshort(std::istream& in, std::uint16_t& value)
 
 bool readFloat(std::istream& in, float& value)
 {
-    in.read(reinterpret_cast<char*>(&value), sizeof(float));
-    if (!in.good()) { return false; }
+    char buffer[sizeof(value)];
+    if (!in.read(buffer, sizeof(buffer)).good()) { return false; }
+    std::memcpy(&value, buffer, sizeof(value));
     LE_TO_CPU_FLOAT(value, value);
     return true;
 }
