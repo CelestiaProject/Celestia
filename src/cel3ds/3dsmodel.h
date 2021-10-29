@@ -130,12 +130,12 @@ class M3DScene
     M3DScene() = default;
     ~M3DScene();
 
-    M3DModel* getModel(uint32_t) const;
-    uint32_t getModelCount() const;
+    M3DModel* getModel(std::uint32_t) const;
+    std::uint32_t getModelCount() const;
     void addModel(M3DModel*);
 
-    M3DMaterial* getMaterial(uint32_t) const;
-    uint32_t getMaterialCount() const;
+    M3DMaterial* getMaterial(std::uint32_t) const;
+    std::uint32_t getMaterialCount() const;
     void addMaterial(M3DMaterial*);
 
     M3DColor getBackgroundColor() const;
