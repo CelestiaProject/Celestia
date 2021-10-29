@@ -7,11 +7,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _3DSMODEL_H_
-#define _3DSMODEL_H_
+#pragma once
 
-#include <vector>
+#include <cstdint>
 #include <string>
+#include <vector>
+
 #include <Eigen/Core>
 
 class M3DColor
@@ -60,7 +61,7 @@ class M3DMeshMaterialGroup
 {
 public:
     std::string materialName;
-    std::vector<uint16_t> faces;
+    std::vector<std::uint16_t> faces;
 };
 
 
@@ -75,31 +76,31 @@ class M3DTriangleMesh
     Eigen::Matrix4f getMatrix() const;
     void setMatrix(const Eigen::Matrix4f&);
 
-    Eigen::Vector3f getVertex(uint16_t) const;
-    uint16_t getVertexCount() const;
+    Eigen::Vector3f getVertex(std::uint16_t) const;
+    std::uint16_t getVertexCount() const;
     void addVertex(const Eigen::Vector3f&);
 
-    Eigen::Vector2f getTexCoord(uint16_t) const;
-    uint16_t getTexCoordCount() const;
+    Eigen::Vector2f getTexCoord(std::uint16_t) const;
+    std::uint16_t getTexCoordCount() const;
     void addTexCoord(const Eigen::Vector2f&);
 
-    void getFace(uint16_t, uint16_t&, uint16_t&, uint16_t&) const;
-    uint16_t getFaceCount() const;
-    void addFace(uint16_t, uint16_t, uint16_t);
+    void getFace(std::uint16_t, std::uint16_t&, std::uint16_t&, std::uint16_t&) const;
+    std::uint16_t getFaceCount() const;
+    void addFace(std::uint16_t, std::uint16_t, std::uint16_t);
 
-    void addSmoothingGroups(uint32_t);
-    uint32_t getSmoothingGroups(uint16_t) const;
-    uint16_t getSmoothingGroupCount() const;
+    void addSmoothingGroups(std::uint32_t);
+    std::uint32_t getSmoothingGroups(std::uint16_t) const;
+    std::uint16_t getSmoothingGroupCount() const;
 
     void addMeshMaterialGroup(M3DMeshMaterialGroup* matGroup);
-    M3DMeshMaterialGroup* getMeshMaterialGroup(uint32_t) const;
-    uint32_t getMeshMaterialGroupCount() const;
+    M3DMeshMaterialGroup* getMeshMaterialGroup(std::uint32_t) const;
+    std::uint32_t getMeshMaterialGroupCount() const;
 
  private:
     std::vector<Eigen::Vector3f> points;
     std::vector<Eigen::Vector2f, Eigen::aligned_allocator<Eigen::Vector2f>> texCoords;
-    std::vector<uint16_t> faces;
-    std::vector<uint32_t> smoothingGroups;
+    std::vector<std::uint16_t> faces;
+    std::vector<std::uint32_t> smoothingGroups;
     std::vector<M3DMeshMaterialGroup*> meshMaterialGroups;
     Eigen::Matrix4f matrix;
 };
@@ -145,5 +146,3 @@ class M3DScene
     std::vector<M3DMaterial*> materials;
     M3DColor backgroundColor;
 };
-
-#endif // _3DSMODEL_H_

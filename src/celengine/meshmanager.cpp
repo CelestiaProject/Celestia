@@ -23,6 +23,7 @@
 #include "modelgeometry.h"
 #include "tokenizer.h"
 
+#include <cel3ds/3dsmodel.h>
 #include <cel3ds/3dsread.h>
 #include <celmodel/modelfile.h>
 
