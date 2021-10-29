@@ -22,19 +22,14 @@
 
 namespace
 {
-
-using ProcessChunkFunc = bool (*)(std::istream &, unsigned short, int, void *);
-
-
-int read3DSChunk(std::istream& in,
-                 ProcessChunkFunc chunkFunc,
-                 void* obj);
+template<typename T>
+using ProcessChunkFunc = bool (*)(std::istream &, std::uint16_t, std::int32_t, T*);
 
 
 std::int32_t readInt(std::istream& in)
 {
     std::int32_t ret;
-    in.read((char *) &ret, sizeof(int32_t));
+    in.read((char *) &ret, sizeof(std::int32_t));
     LE_TO_CPU_INT32(ret, ret);
     return ret;
 }
@@ -43,7 +38,7 @@ std::int32_t readInt(std::istream& in)
 std::int16_t readShort(std::istream& in)
 {
     std::int16_t ret;
-    in.read((char *) &ret, sizeof(int16_t));
+    in.read((char *) &ret, sizeof(std::int16_t));
     LE_TO_CPU_INT16(ret, ret);
     return ret;
 }
@@ -52,7 +47,7 @@ std::int16_t readShort(std::istream& in)
 std::uint16_t readUshort(std::istream& in)
 {
     std::uint16_t ret;
-    in.read((char *) &ret, sizeof(uint16_t));
+    in.read((char *) &ret, sizeof(std::uint16_t));
     LE_TO_CPU_INT16(ret, ret);
     return ret;
 }
@@ -99,13 +94,14 @@ void skipBytes(std::istream& in, int count)
 }
 
 
-int read3DSChunk(std::istream& in,
-                 ProcessChunkFunc chunkFunc,
-                 void* obj)
+template<typename T>
+std::int32_t read3DSChunk(std::istream& in,
+                          ProcessChunkFunc<T> chunkFunc,
+                          T* obj)
 {
-    unsigned short chunkType = readUshort(in);
+    std::uint16_t chunkType = readUshort(in);
     std::int32_t chunkSize = readInt(in);
-    int contentSize = chunkSize - 6;
+    std::int32_t contentSize = chunkSize - 6;
 
     bool chunkWasRead = chunkFunc(in, chunkType, contentSize, obj);
 
@@ -118,10 +114,11 @@ int read3DSChunk(std::istream& in,
 }
 
 
+template<typename T>
 int read3DSChunks(std::istream& in,
                   int nBytes,
-                  ProcessChunkFunc chunkFunc,
-                  void* obj)
+                  ProcessChunkFunc<T> chunkFunc,
+                  T* obj)
 {
     int bytesRead = 0;
 
@@ -190,15 +187,6 @@ Eigen::Matrix4f readMeshMatrix(std::istream& in/*, int nBytes*/)
 }
 
 
-bool stubProcessChunk(/* ifstream& in,
-                         unsigned short chunkType,
-                         int contentSize,
-                         void* obj */)
-{
-    return false;
-}
-
-
 void readPointArray(std::istream& in, M3DTriangleMesh* triMesh)
 {
     std::uint16_t nPoints = readUshort(in);
@@ -227,11 +215,10 @@ void readTextureCoordArray(std::istream& in, M3DTriangleMesh* triMesh)
 
 
 bool processFaceArrayChunk(std::istream& in,
-                           unsigned short chunkType,
-                           int /*contentSize*/,
-                           void* obj)
+                           std::uint16_t chunkType,
+                           std::int32_t /*contentSize*/,
+                           M3DTriangleMesh* triMesh)
 {
-    auto* triMesh = (M3DTriangleMesh*) obj;
     std::uint16_t nFaces;
     M3DMeshMaterialGroup* matGroup;
 
@@ -266,7 +253,7 @@ bool processFaceArrayChunk(std::istream& in,
 }
 
 
-void readFaceArray(std::istream& in, M3DTriangleMesh* triMesh, int contentSize)
+void readFaceArray(std::istream& in, M3DTriangleMesh* triMesh, std::int32_t contentSize)
 {
     std::uint16_t nFaces = readUshort(in);
 
@@ -279,24 +266,22 @@ void readFaceArray(std::istream& in, M3DTriangleMesh* triMesh, int contentSize)
         triMesh->addFace(v0, v1, v2);
     }
 
-    int bytesLeft = contentSize - (8 * nFaces + 2);
+    std::int32_t bytesLeft = contentSize - (8 * nFaces + 2);
     if (bytesLeft > 0)
     {
         read3DSChunks(in,
                       bytesLeft,
                       processFaceArrayChunk,
-                      (void*) triMesh);
+                      triMesh);
     }
 }
 
 
 bool processTriMeshChunk(std::istream& in,
-                         unsigned short chunkType,
-                         int contentSize,
-                         void* obj)
+                         std::uint16_t chunkType,
+                         std::int32_t contentSize,
+                         M3DTriangleMesh* triMesh)
 {
-    auto* triMesh = (M3DTriangleMesh*) obj;
-
     switch (chunkType)
     {
     case M3DCHUNK_POINT_ARRAY:
@@ -318,16 +303,14 @@ bool processTriMeshChunk(std::istream& in,
 
 
 bool processModelChunk(std::istream& in,
-                       unsigned short chunkType,
-                       int contentSize,
-                       void* obj)
+                       std::uint16_t chunkType,
+                       std::int32_t contentSize,
+                       M3DModel* model)
 {
-    auto* model = (M3DModel*) obj;
-
     if (chunkType == M3DCHUNK_TRIANGLE_MESH)
     {
         auto* triMesh = new M3DTriangleMesh();
-        read3DSChunks(in, contentSize, processTriMeshChunk, (void*) triMesh);
+        read3DSChunks(in, contentSize, processTriMeshChunk, triMesh);
         model->addTriMesh(triMesh);
         return true;
     }
@@ -337,12 +320,10 @@ bool processModelChunk(std::istream& in,
 
 
 bool processColorChunk(std::istream& in,
-                       unsigned short chunkType,
-                       int /*contentSize*/,
-                       void* obj)
+                       std::uint16_t chunkType,
+                       std::int32_t /*contentSize*/,
+                       M3DColor* color)
 {
-    auto* color = (M3DColor*) obj;
-
     switch (chunkType)
     {
     case M3DCHUNK_COLOR_24:
@@ -358,12 +339,10 @@ bool processColorChunk(std::istream& in,
 
 
 static bool processPercentageChunk(std::istream& in,
-                                   unsigned short chunkType,
-                                   int /*contentSize*/,
-                                   void* obj)
+                                   std::uint16_t chunkType,
+                                   std::int32_t /*contentSize*/,
+                                   float* percent)
 {
-    auto* percent = (float*) obj;
-
     switch (chunkType)
     {
     case M3DCHUNK_INT_PERCENTAGE:
@@ -379,12 +358,10 @@ static bool processPercentageChunk(std::istream& in,
 
 
 static bool processTexmapChunk(std::istream& in,
-                               unsigned short chunkType,
-                               int /*contentSize*/,
-                               void* obj)
+                               std::uint16_t chunkType,
+                               std::int32_t /*contentSize*/,
+                               M3DMaterial* material)
 {
-    auto* material = (M3DMaterial*) obj;
-
     if (chunkType == M3DCHUNK_MATERIAL_MAPNAME)
     {
         std::string name = readString(in);
@@ -397,11 +374,10 @@ static bool processTexmapChunk(std::istream& in,
 
 
 bool processMaterialChunk(std::istream& in,
-                          unsigned short chunkType,
-                          int contentSize,
-                          void* obj)
+                          std::uint16_t chunkType,
+                          std::int32_t contentSize,
+                          M3DMaterial* material)
 {
-    auto* material = (M3DMaterial*) obj;
     std::string name;
     M3DColor color;
     float t;
@@ -413,27 +389,27 @@ bool processMaterialChunk(std::istream& in,
         material->setName(name);
         return true;
     case M3DCHUNK_MATERIAL_AMBIENT:
-        read3DSChunks(in, contentSize, processColorChunk, (void*) &color);
+        read3DSChunks(in, contentSize, processColorChunk, &color);
         material->setAmbientColor(color);
         return true;
     case M3DCHUNK_MATERIAL_DIFFUSE:
-        read3DSChunks(in, contentSize, processColorChunk, (void*) &color);
+        read3DSChunks(in, contentSize, processColorChunk, &color);
         material->setDiffuseColor(color);
         return true;
     case M3DCHUNK_MATERIAL_SPECULAR:
-        read3DSChunks(in, contentSize, processColorChunk, (void*) &color);
+        read3DSChunks(in, contentSize, processColorChunk, &color);
         material->setSpecularColor(color);
         return true;
     case M3DCHUNK_MATERIAL_SHININESS:
-        read3DSChunks(in, contentSize, processPercentageChunk, (void*) &t);
+        read3DSChunks(in, contentSize, processPercentageChunk, &t);
         material->setShininess(t);
         return true;
     case M3DCHUNK_MATERIAL_TRANSPARENCY:
-        read3DSChunks(in, contentSize, processPercentageChunk, (void*) &t);
+        read3DSChunks(in, contentSize, processPercentageChunk, &t);
         material->setOpacity(1.0f - t / 100.0f);
         return true;
     case M3DCHUNK_MATERIAL_TEXMAP:
-        read3DSChunks(in, contentSize, processTexmapChunk, (void*) material);
+        read3DSChunks(in, contentSize, processTexmapChunk, material);
         return true;
     }
 
@@ -442,11 +418,10 @@ bool processMaterialChunk(std::istream& in,
 
 
 bool processSceneChunk(std::istream& in,
-                       unsigned short chunkType,
-                       int contentSize,
-                       void* obj)
+                       std::uint16_t chunkType,
+                       std::int32_t contentSize,
+                       M3DScene* scene)
 {
-    auto* scene = (M3DScene*) obj;
     M3DModel* model;
     M3DMaterial* material;
     M3DColor color;
@@ -461,7 +436,7 @@ bool processSceneChunk(std::istream& in,
         read3DSChunks(in,
                       contentSize - (name.length() + 1),
                       processModelChunk,
-                      (void*) model);
+                      model);
         scene->addModel(model);
 
         return true;
@@ -470,12 +445,12 @@ bool processSceneChunk(std::istream& in,
         read3DSChunks(in,
                       contentSize,
                       processMaterialChunk,
-                      (void*) material);
+                      material);
         scene->addMaterial(material);
 
         return true;
     case M3DCHUNK_BACKGROUND_COLOR:
-        read3DSChunks(in, contentSize, processColorChunk, (void*) &color);
+        read3DSChunks(in, contentSize, processColorChunk, &color);
         scene->setBackgroundColor(color);
         return true;
     default:
@@ -485,15 +460,13 @@ bool processSceneChunk(std::istream& in,
 
 
 bool processTopLevelChunk(std::istream& in,
-                          unsigned short chunkType,
-                          int contentSize,
-                          void* obj)
+                          std::uint16_t chunkType,
+                          std::int32_t contentSize,
+                          M3DScene* scene)
 {
-    auto* scene = (M3DScene*) obj;
-
     if (chunkType == M3DCHUNK_MESHDATA)
     {
-        read3DSChunks(in, contentSize, processSceneChunk, (void*) scene);
+        read3DSChunks(in, contentSize, processSceneChunk, scene);
         return true;
     }
 
@@ -505,7 +478,7 @@ bool processTopLevelChunk(std::istream& in,
 
 M3DScene* Read3DSFile(std::istream& in)
 {
-    unsigned short chunkType = readUshort(in);
+    std::uint16_t chunkType = readUshort(in);
     if (chunkType != M3DCHUNK_MAGIC)
     {
         DPRINTF(LOG_LEVEL_ERROR, "Read3DSFile: Wrong magic number in header\n");
@@ -522,9 +495,9 @@ M3DScene* Read3DSFile(std::istream& in)
     DPRINTF(LOG_LEVEL_INFO, "3DS file, %d bytes\n", chunkSize);
 
     auto* scene = new M3DScene();
-    int contentSize = chunkSize - 6;
+    std::int32_t contentSize = chunkSize - 6;
 
-    read3DSChunks(in, contentSize, processTopLevelChunk, (void*) scene);
+    read3DSChunks(in, contentSize, processTopLevelChunk, scene);
 
     return scene;
 }
