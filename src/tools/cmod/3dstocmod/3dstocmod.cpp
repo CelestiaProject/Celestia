@@ -18,6 +18,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdio>
+#include <memory>
 
 using namespace cmod;
 using namespace std;
@@ -41,7 +42,7 @@ int main(int argc, char* argv[])
     string inputFileName = argv[1];
 
     cerr << "Reading...\n";
-    M3DScene* scene = Read3DSFile(inputFileName);
+    std::unique_ptr<M3DScene> scene = Read3DSFile(inputFileName);
     if (scene == nullptr)
     {
         cerr << "Error reading 3DS file '" << inputFileName << "'\n";

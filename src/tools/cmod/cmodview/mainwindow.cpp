@@ -8,6 +8,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <fstream>
+#include <memory>
 #include "mainwindow.h"
 #include "materialwidget.h"
 #include "convert3ds.h"
@@ -382,7 +384,7 @@ MainWindow::openModel(const QString& fileName)
 
         if (info.suffix().toLower() == "3ds")
         {
-            M3DScene* scene = Read3DSFile(fileNameStd);
+            std::unique_ptr<M3DScene> scene = Read3DSFile(fileNameStd);
             if (scene == nullptr)
             {
                 QMessageBox::warning(this, "Load error", tr("Error reading 3DS file %1").arg(fileName));
@@ -395,8 +397,6 @@ MainWindow::openModel(const QString& fileName)
                 QMessageBox::warning(this, "Load error", tr("Internal error converting 3DS file %1").arg(fileName));
                 return;
             }
-
-            delete scene;
 
             // Generate normals for the model
             double smoothAngle = 45.0; // degrees
