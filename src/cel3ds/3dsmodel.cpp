@@ -7,6 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <utility>
+
 #include "3dsmodel.h"
 
 M3DColor::M3DColor() :
@@ -90,11 +92,6 @@ void M3DMaterial::setTextureMap(const std::string& _texmap)
 }
 
 
-M3DTriangleMesh::M3DTriangleMesh()
-{
-    matrix = Eigen::Matrix4f::Identity();
-}
-
 Eigen::Matrix4f M3DTriangleMesh::getMatrix() const
 {
     return matrix;
@@ -112,7 +109,7 @@ Eigen::Vector3f M3DTriangleMesh::getVertex(std::uint16_t n) const
 
 std::uint16_t M3DTriangleMesh::getVertexCount() const
 {
-    return (std::uint16_t) (points.size());
+    return static_cast<std::uint16_t>(points.size());
 }
 
 void M3DTriangleMesh::addVertex(const Eigen::Vector3f& p)
@@ -127,7 +124,7 @@ Eigen::Vector2f M3DTriangleMesh::getTexCoord(std::uint16_t n) const
 
 std::uint16_t M3DTriangleMesh::getTexCoordCount() const
 {
-    return (uint16_t) (texCoords.size());
+    return static_cast<std::uint16_t>(texCoords.size());
 }
 
 void M3DTriangleMesh::addTexCoord(const Eigen::Vector2f& p)
@@ -137,7 +134,7 @@ void M3DTriangleMesh::addTexCoord(const Eigen::Vector2f& p)
 
 void M3DTriangleMesh::getFace(std::uint16_t n, std::uint16_t& v0, std::uint16_t& v1, std::uint16_t& v2) const
 {
-    int m = (int) n * 3;
+    int m = static_cast<int>(n) * 3;
     v0 = faces[m];
     v1 = faces[m + 1];
     v2 = faces[m + 2];
@@ -145,7 +142,7 @@ void M3DTriangleMesh::getFace(std::uint16_t n, std::uint16_t& v0, std::uint16_t&
 
 std::uint16_t M3DTriangleMesh::getFaceCount() const
 {
-    return (std::uint16_t) (faces.size() / 3);
+    return static_cast<std::uint16_t>(faces.size() / 3);
 }
 
 void M3DTriangleMesh::addFace(std::uint16_t v0, std::uint16_t v1, std::uint16_t v2)
@@ -155,7 +152,7 @@ void M3DTriangleMesh::addFace(std::uint16_t v0, std::uint16_t v1, std::uint16_t 
     faces.push_back(v2);
 }
 
-std::uint32_t M3DTriangleMesh::getSmoothingGroups(uint16_t face) const
+std::uint32_t M3DTriangleMesh::getSmoothingGroups(std::uint16_t face) const
 {
     return face < smoothingGroups.size() ? smoothingGroups[face] : 0;
 }
@@ -167,17 +164,17 @@ void M3DTriangleMesh::addSmoothingGroups(std::uint32_t smGroups)
 
 std::uint16_t M3DTriangleMesh::getSmoothingGroupCount() const
 {
-    return (std::uint16_t) (smoothingGroups.size());
+    return static_cast<std::uint16_t>(smoothingGroups.size());
 }
 
-void M3DTriangleMesh::addMeshMaterialGroup(M3DMeshMaterialGroup* matGroup)
+void M3DTriangleMesh::addMeshMaterialGroup(std::unique_ptr<M3DMeshMaterialGroup> matGroup)
 {
-    meshMaterialGroups.push_back(matGroup);
+    meshMaterialGroups.push_back(std::move(matGroup));
 }
 
 M3DMeshMaterialGroup* M3DTriangleMesh::getMeshMaterialGroup(std::uint32_t index) const
 {
-    return meshMaterialGroups[index];
+    return index < meshMaterialGroups.size() ? meshMaterialGroups[index].get() : nullptr;
 }
 
 std::uint32_t M3DTriangleMesh::getMeshMaterialGroupCount() const
@@ -186,15 +183,9 @@ std::uint32_t M3DTriangleMesh::getMeshMaterialGroupCount() const
 }
 
 
-M3DModel::~M3DModel()
-{
-    for (auto triMesh : triMeshes)
-        delete triMesh;
-}
-
 M3DTriangleMesh* M3DModel::getTriMesh(std::uint32_t n)
 {
-    return n < triMeshes.size() ? triMeshes[n] : nullptr;
+    return n < triMeshes.size() ? triMeshes[n].get() : nullptr;
 }
 
 std::uint32_t M3DModel::getTriMeshCount()
@@ -202,9 +193,9 @@ std::uint32_t M3DModel::getTriMeshCount()
     return triMeshes.size();
 }
 
-void M3DModel::addTriMesh(M3DTriangleMesh* triMesh)
+void M3DModel::addTriMesh(std::unique_ptr<M3DTriangleMesh> triMesh)
 {
-    triMeshes.push_back(triMesh);
+    triMeshes.push_back(std::move(triMesh));
 }
 
 void M3DModel::setName(const std::string& _name)
@@ -218,17 +209,9 @@ const std::string M3DModel::getName() const
 }
 
 
-M3DScene::~M3DScene()
-{
-    for (auto model : models)
-        delete model;
-    for (auto material : materials)
-        delete material;
-}
-
 M3DModel* M3DScene::getModel(std::uint32_t n) const
 {
-    return n < models.size() ? models[n] : nullptr;
+    return n < models.size() ? models[n].get() : nullptr;
 }
 
 std::uint32_t M3DScene::getModelCount() const
@@ -236,14 +219,14 @@ std::uint32_t M3DScene::getModelCount() const
     return models.size();
 }
 
-void M3DScene::addModel(M3DModel* model)
+void M3DScene::addModel(std::unique_ptr<M3DModel> model)
 {
-    models.push_back(model);
+    models.push_back(std::move(model));
 }
 
 M3DMaterial* M3DScene::getMaterial(std::uint32_t n) const
 {
-    return n < materials.size() ? materials[n] : nullptr;
+    return n < materials.size() ? materials[n].get() : nullptr;
 }
 
 std::uint32_t M3DScene::getMaterialCount() const
@@ -251,9 +234,9 @@ std::uint32_t M3DScene::getMaterialCount() const
     return materials.size();
 }
 
-void M3DScene::addMaterial(M3DMaterial* material)
+void M3DScene::addMaterial(std::unique_ptr<M3DMaterial> material)
 {
-    materials.push_back(material);
+    materials.push_back(std::move(material));
 }
 
 M3DColor M3DScene::getBackgroundColor() const

@@ -11,8 +11,8 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
-#include <memory>
 #include <string>
+#include <utility>
 
 #include <Eigen/Core>
 #include <fmt/ostream.h>
@@ -200,13 +200,13 @@ std::int32_t readPointArray(std::istream& in, M3DTriangleMesh* triMesh)
 {
     std::uint16_t nPoints;
     if (!readUshort(in, nPoints)) { return READ_FAILURE; }
-    std::int32_t bytesRead = static_cast<int>(sizeof(nPoints));
+    std::int32_t bytesRead = static_cast<std::int32_t>(sizeof(nPoints));
 
     for (int i = 0; i < static_cast<int>(nPoints); i++)
     {
         float x, y, z;
         if (!readFloat(in, x) || !readFloat(in, y) || !readFloat(in, z)) { return READ_FAILURE; }
-        bytesRead += static_cast<int>(3 * sizeof(float));
+        bytesRead += static_cast<std::int32_t>(3 * sizeof(float));
         triMesh->addVertex(Eigen::Vector3f(x, y, z));
     }
 
@@ -220,13 +220,13 @@ std::int32_t readTextureCoordArray(std::istream& in, M3DTriangleMesh* triMesh)
 
     std::uint16_t nPoints;
     if (!readUshort(in, nPoints)) { return READ_FAILURE; }
-    bytesRead += static_cast<int>(sizeof(nPoints));
+    bytesRead += static_cast<std::int32_t>(sizeof(nPoints));
 
     for (int i = 0; i < static_cast<int>(nPoints); i++)
     {
         float u, v;
         if (!readFloat(in, u) || !readFloat(in, v)) { return READ_FAILURE; }
-        bytesRead += static_cast<int>(2 * sizeof(float));
+        bytesRead += static_cast<std::int32_t>(2 * sizeof(float));
         triMesh->addTexCoord(Eigen::Vector2f(u, -v));
     }
 
@@ -250,17 +250,17 @@ std::int32_t processFaceArrayChunk(std::istream& in,
 
         bytesRead = readString(in, matGroup->materialName);
         if (bytesRead == READ_FAILURE || !readUshort(in, nFaces)) { return READ_FAILURE; }
-        bytesRead += static_cast<int>(sizeof(nFaces));
+        bytesRead += static_cast<std::int32_t>(sizeof(nFaces));
 
         for (std::uint16_t i = 0; i < nFaces; i++)
         {
             std::uint16_t faceIndex;
             if (!readUshort(in, faceIndex)) { return READ_FAILURE; }
-            bytesRead += static_cast<int>(sizeof(faceIndex));
+            bytesRead += static_cast<std::int32_t>(sizeof(faceIndex));
             matGroup->faces.push_back(faceIndex);
         }
 
-        triMesh->addMeshMaterialGroup(matGroup.release());
+        triMesh->addMeshMaterialGroup(std::move(matGroup));
 
         return bytesRead;
 
@@ -271,7 +271,7 @@ std::int32_t processFaceArrayChunk(std::istream& in,
         {
             std::int32_t groups;
             if (!readInt(in, groups) || groups < 0) { return READ_FAILURE; }
-            bytesRead += static_cast<int>(sizeof(groups));
+            bytesRead += static_cast<std::int32_t>(sizeof(groups));
             triMesh->addSmoothingGroups(static_cast<std::uint32_t>(groups));
         }
         return bytesRead;
@@ -286,7 +286,7 @@ std::int32_t readFaceArray(std::istream& in, M3DTriangleMesh* triMesh, std::int3
 {
     std::uint16_t nFaces;
     if (!readUshort(in, nFaces)) { return READ_FAILURE; }
-    std::int32_t bytesRead = static_cast<int>(sizeof(nFaces));
+    std::int32_t bytesRead = static_cast<std::int32_t>(sizeof(nFaces));
 
     for (int i = 0; i < static_cast<int>(nFaces); i++)
     {
@@ -295,7 +295,7 @@ std::int32_t readFaceArray(std::istream& in, M3DTriangleMesh* triMesh, std::int3
         {
             return READ_FAILURE;
         }
-        bytesRead += static_cast<int>(4 * sizeof(std::uint16_t));
+        bytesRead += static_cast<std::int32_t>(4 * sizeof(std::uint16_t));
         triMesh->addFace(v0, v1, v2);
     }
 
@@ -351,7 +351,7 @@ std::int32_t processModelChunk(std::istream& in,
         auto triMesh = std::make_unique<M3DTriangleMesh>();
         std::int32_t bytesRead = read3DSChunks(in, contentSize, processTriMeshChunk, triMesh.get());
         if (bytesRead == READ_FAILURE) { return READ_FAILURE; }
-        model->addTriMesh(triMesh.release());
+        model->addTriMesh(std::move(triMesh));
         return bytesRead;
     }
 
@@ -489,7 +489,7 @@ std::int32_t processSceneChunk(std::istream& in,
                                    processModelChunk,
                                    model.get());
         if (chunksSize < 0) { return READ_FAILURE; }
-        scene->addModel(model.release());
+        scene->addModel(std::move(model));
 
         return bytesRead + chunksSize;
     case M3DCHUNK_MATERIAL_ENTRY:
@@ -499,7 +499,7 @@ std::int32_t processSceneChunk(std::istream& in,
                                   processMaterialChunk,
                                   material.get());
         if (bytesRead < 0) { return READ_FAILURE; }
-        scene->addMaterial(material.release());
+        scene->addMaterial(std::move(material));
 
         return bytesRead;
     case M3DCHUNK_BACKGROUND_COLOR:
@@ -529,7 +529,7 @@ std::int32_t processTopLevelChunk(std::istream& in,
 } // end namespace
 
 
-M3DScene* Read3DSFile(std::istream& in)
+std::unique_ptr<M3DScene> Read3DSFile(std::istream& in)
 {
     std::uint16_t chunkType;
     if (!readUshort(in, chunkType) || chunkType != M3DCHUNK_MAGIC)
@@ -557,11 +557,11 @@ M3DScene* Read3DSFile(std::istream& in)
         return nullptr;
     }
 
-    return scene.release();
+    return scene;
 }
 
 
-M3DScene* Read3DSFile(const fs::path& filename)
+std::unique_ptr<M3DScene> Read3DSFile(const fs::path& filename)
 {
     std::ifstream in(filename.string(), std::ios::in | std::ios::binary);
     if (!in.good())
@@ -570,7 +570,7 @@ M3DScene* Read3DSFile(const fs::path& filename)
         return nullptr;
     }
 
-    M3DScene* scene = Read3DSFile(in);
+    std::unique_ptr<M3DScene> scene = Read3DSFile(in);
     in.close();
     return scene;
 }

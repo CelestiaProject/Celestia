@@ -126,7 +126,7 @@ Geometry* GeometryInfo::load(const fs::path& resolvedFilename)
 
     if (fileType == Content_3DStudio)
     {
-        M3DScene* scene = Read3DSFile(filename);
+        std::unique_ptr<M3DScene> scene = Read3DSFile(filename);
         if (scene != nullptr)
         {
             if (resolvedToPath)
@@ -138,8 +138,6 @@ Geometry* GeometryInfo::load(const fs::path& resolvedFilename)
                 model->normalize(center);
             else
                 model->transform(center, scale);
-
-            delete scene;
         }
     }
     else if (fileType == Content_CelestiaModel)
