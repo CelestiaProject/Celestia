@@ -5,24 +5,22 @@
 #include <map>
 #include <string>
 
-using namespace std;
-
 enum bitmapType {eNormal, eDisabled, eShadow, eFaded};
 
 typedef struct tagODMENUITEM
 {
     UINT dwType;
     UINT wID;
-    string rawText;
-    string displayText;
-    string rawDisplayText;
-    string shortcutText;
+    std::string rawText;
+    std::string displayText;
+    std::string rawDisplayText;
+    std::string shortcutText;
     HBITMAP hBitmap;
     bool topMost;
 
 } ODMENUITEM;
 
-typedef map<UINT, ODMENUITEM> ODMENUITEMS;
+typedef std::map<UINT, ODMENUITEM> ODMENUITEMS;
 
 class ODMenu
 {

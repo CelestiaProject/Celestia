@@ -342,17 +342,17 @@ void SphereMesh::displace(DisplacementMapFunc func, void* info)
 }
 
 
-Mesh* SphereMesh::convertToMesh() const
+cmod::Mesh* SphereMesh::convertToMesh() const
 {
     uint32_t stride = 32;
-    Mesh::VertexAttribute attributes[3];
-    attributes[0] = Mesh::VertexAttribute(Mesh::Position, Mesh::Float3, 0);
-    attributes[1] = Mesh::VertexAttribute(Mesh::Normal, Mesh::Float3, 12);
-    attributes[2] = Mesh::VertexAttribute(Mesh::Texture0, Mesh::Float2, 24);
+    cmod::Mesh::VertexAttribute attributes[3];
+    attributes[0] = cmod::Mesh::VertexAttribute(cmod::Mesh::Position, cmod::Mesh::Float3, 0);
+    attributes[1] = cmod::Mesh::VertexAttribute(cmod::Mesh::Normal, cmod::Mesh::Float3, 12);
+    attributes[2] = cmod::Mesh::VertexAttribute(cmod::Mesh::Texture0, cmod::Mesh::Float2, 24);
 
-    Mesh* mesh = new Mesh();
+    cmod::Mesh* mesh = new cmod::Mesh();
 
-    mesh->setVertexDescription(Mesh::VertexDescription(stride, 3, attributes));
+    mesh->setVertexDescription(cmod::Mesh::VertexDescription(stride, 3, attributes));
 
     // Copy the vertex data from the separate position, normal, and texture coordinate
     // arrays into a single array.
@@ -382,7 +382,7 @@ Mesh* SphereMesh::convertToMesh() const
             indexData[j * 2 + 1] = (i + 1) * (nSlices + 1) + j;
         }
 
-        mesh->addGroup(Mesh::TriStrip, ~0u, (nSlices + 1) * 2, indexData);
+        mesh->addGroup(cmod::Mesh::TriStrip, ~0u, (nSlices + 1) * 2, indexData);
     }
 
     return mesh;
