@@ -8,35 +8,110 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cassert>
+#include <cstring>
+#include <iostream>
+
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 
-#include "modelfile.h"
-#include <celutil/bytes.h>
-#include <cassert>
-#include <cmath>
-#include <cstring>
-#include <vector>
 #include <celutil/binaryread.h>
 #include <celutil/binarywrite.h>
-#include <celutil/debug.h>
 #include <celutil/tokenizer.h>
+#include "mesh.h"
+#include "model.h"
+#include "modelfile.h"
 
-
-using namespace cmod;
-using namespace std;
 namespace celutil = celestia::util;
 
 
+namespace cmod
+{
+namespace
+{
+constexpr std::size_t CEL_MODEL_HEADER_LENGTH = 16;
+constexpr const char CEL_MODEL_HEADER_ASCII[] = "#celmodel__ascii";
+constexpr const char CEL_MODEL_HEADER_BINARY[] = "#celmodel_binary";
+
 // Material default values
-static Material::Color DefaultDiffuse(0.0f, 0.0f, 0.0f);
-static Material::Color DefaultSpecular(0.0f, 0.0f, 0.0f);
-static Material::Color DefaultEmissive(0.0f, 0.0f, 0.0f);
-static float DefaultSpecularPower = 1.0f;
-static float DefaultOpacity = 1.0f;
-static Material::BlendMode DefaultBlend = Material::NormalBlend;
+constexpr Material::Color DefaultDiffuse(0.0f, 0.0f, 0.0f);
+constexpr Material::Color DefaultSpecular(0.0f, 0.0f, 0.0f);
+constexpr Material::Color DefaultEmissive(0.0f, 0.0f, 0.0f);
+constexpr float DefaultSpecularPower = 1.0f;
+constexpr float DefaultOpacity = 1.0f;
+constexpr Material::BlendMode DefaultBlend = Material::NormalBlend;
+
+// Standard tokens for ASCII model loader
+constexpr const char MeshToken[] = "mesh";
+constexpr const char EndMeshToken[] = "end_mesh";
+constexpr const char VertexDescToken[] = "vertexdesc";
+constexpr const char EndVertexDescToken[] = "end_vertexdesc";
+constexpr const char VerticesToken[] = "vertices";
+constexpr const char MaterialToken[] = "material";
+constexpr const char EndMaterialToken[] = "end_material";
+
+// Binary file tokens
+enum ModelFileToken
+{
+    CMOD_Material       = 1001,
+    CMOD_EndMaterial    = 1002,
+    CMOD_Diffuse        = 1003,
+    CMOD_Specular       = 1004,
+    CMOD_SpecularPower  = 1005,
+    CMOD_Opacity        = 1006,
+    CMOD_Texture        = 1007,
+    CMOD_Mesh           = 1009,
+    CMOD_EndMesh        = 1010,
+    CMOD_VertexDesc     = 1011,
+    CMOD_EndVertexDesc  = 1012,
+    CMOD_Vertices       = 1013,
+    CMOD_Emissive       = 1014,
+    CMOD_Blend          = 1015,
+};
+
+enum ModelFileType
+{
+    CMOD_Float1         = 1,
+    CMOD_Float2         = 2,
+    CMOD_Float3         = 3,
+    CMOD_Float4         = 4,
+    CMOD_String         = 5,
+    CMOD_Uint32         = 6,
+    CMOD_Color          = 7,
+};
 
 
+class ModelLoader
+{
+public:
+    ModelLoader() = default;
+    virtual ~ModelLoader() = default;
+
+    virtual Model* load() = 0;
+
+    const std::string& getErrorMessage() const { return errorMessage; }
+    TextureLoader* getTextureLoader() const { return textureLoader; }
+    void setTextureLoader(TextureLoader* _textureLoader) { textureLoader = _textureLoader; }
+
+protected:
+    virtual void reportError(const std::string& msg) { errorMessage = msg; }
+
+private:
+    std::string errorMessage;
+    TextureLoader* textureLoader{ nullptr };
+};
+
+
+class ModelWriter
+{
+public:
+    virtual ~ModelWriter() = default;
+
+    virtual bool write(const Model&) = 0;
+};
+
+
+/***** ASCII loader *****/
 
 /*!
 This is an approximate Backus Naur form for the contents of ASCII cmod
@@ -110,199 +185,27 @@ defined here--they have the obvious definitions.
 class AsciiModelLoader : public ModelLoader
 {
 public:
-    AsciiModelLoader(istream& _in);
+    explicit AsciiModelLoader(std::istream& _in) : tok(&_in) {}
     ~AsciiModelLoader() override = default;
 
     Model* load() override;
-    void reportError(const string& /*msg*/) override;
+    void reportError(const std::string& /*msg*/) override;
 
-    Material*               loadMaterial();
+    Material* loadMaterial();
     Mesh::VertexDescription* loadVertexDescription();
-    Mesh*                    loadMesh();
-    char*                    loadVertices(const Mesh::VertexDescription& vertexDesc,
-                                          unsigned int& vertexCount);
+    Mesh* loadMesh();
+    char* loadVertices(const Mesh::VertexDescription& vertexDesc,
+                       unsigned int& vertexCount);
 
 private:
     Tokenizer tok;
 };
 
 
-// Standard tokens for ASCII model loader
-static constexpr const char MeshToken[] = "mesh";
-static constexpr const char EndMeshToken[] = "end_mesh";
-static constexpr const char VertexDescToken[] = "vertexdesc";
-static constexpr const char EndVertexDescToken[] = "end_vertexdesc";
-static constexpr const char VerticesToken[] = "vertices";
-static constexpr const char MaterialToken[] = "material";
-static constexpr const char EndMaterialToken[] = "end_material";
-
-
-class AsciiModelWriter : public ModelWriter
-{
-public:
-    AsciiModelWriter(ostream& /*_out*/);
-    ~AsciiModelWriter() override = default;
-
-    bool write(const Model& /*model*/) override;
-
-private:
-    bool writeMesh(const Mesh& /*mesh*/);
-    bool writeMaterial(const Material& /*material*/);
-    bool writeGroup(const Mesh::PrimitiveGroup& /*group*/);
-    bool writeVertexDescription(const Mesh::VertexDescription& /*desc*/);
-    bool writeVertices(const void* vertexData,
-                       unsigned int nVertices,
-                       unsigned int stride,
-                       const Mesh::VertexDescription& desc);
-
-    ostream& out;
-};
-
-
-class BinaryModelLoader : public ModelLoader
-{
-public:
-    BinaryModelLoader(istream& _in);
-    ~BinaryModelLoader() override = default;
-
-    Model* load() override;
-    void reportError(const string& /*msg*/) override;
-
-    Material*                loadMaterial();
-    Mesh::VertexDescription* loadVertexDescription();
-    Mesh*                    loadMesh();
-    char*                    loadVertices(const Mesh::VertexDescription& vertexDesc,
-                                          unsigned int& vertexCount);
-
-private:
-    istream& in;
-};
-
-
-class BinaryModelWriter : public ModelWriter
-{
-public:
-    BinaryModelWriter(ostream& /*_out*/);
-    ~BinaryModelWriter() override = default;
-
-    bool write(const Model& /*model*/) override;
-
-private:
-    bool writeMesh(const Mesh& /*mesh*/);
-    bool writeMaterial(const Material& /*material*/);
-    bool writeGroup(const Mesh::PrimitiveGroup& /*group*/);
-    bool writeVertexDescription(const Mesh::VertexDescription& /*desc*/);
-    bool writeVertices(const void* vertexData,
-                       unsigned int nVertices,
-                       unsigned int stride,
-                       const Mesh::VertexDescription& desc);
-
-    ostream& out;
-};
-
-
 void
-ModelLoader::reportError(const string& msg)
+AsciiModelLoader::reportError(const std::string& msg)
 {
-    errorMessage = msg;
-}
-
-
-const string&
-ModelLoader::getErrorMessage() const
-{
-    return errorMessage;
-}
-
-
-void
-ModelLoader::setTextureLoader(TextureLoader* _textureLoader)
-{
-    textureLoader = _textureLoader;
-}
-
-
-TextureLoader*
-ModelLoader::getTextureLoader() const
-{
-    return textureLoader;
-}
-
-
-Model* cmod::LoadModel(istream& in, TextureLoader* textureLoader)
-{
-    ModelLoader* loader = ModelLoader::OpenModel(in);
-    if (loader == nullptr)
-        return nullptr;
-
-    loader->setTextureLoader(textureLoader);
-
-    Model* model = loader->load();
-    if (model == nullptr)
-    {
-        cerr << "Error in model file: " << loader->getErrorMessage() << '\n';
-    }
-
-    delete loader;
-
-    return model;
-}
-
-
-ModelLoader*
-ModelLoader::OpenModel(istream& in)
-{
-    char header[CEL_MODEL_HEADER_LENGTH + 1];
-    memset(header, '\0', sizeof(header));
-
-    if (!in.read(header, CEL_MODEL_HEADER_LENGTH).good())
-    {
-        std::cerr << "Could not read model header\n";
-        return nullptr;
-    }
-
-    if (strcmp(header, CEL_MODEL_HEADER_ASCII) == 0)
-    {
-        return new AsciiModelLoader(in);
-    }
-    if (strcmp(header, CEL_MODEL_HEADER_BINARY) == 0)
-    {
-        return new BinaryModelLoader(in);
-    }
-    else
-    {
-        cerr << "Model file has invalid header.\n";
-        return nullptr;
-    }
-}
-
-
-bool
-cmod::SaveModelAscii(const Model* model, std::ostream& out)
-{
-    if (model == nullptr) { return false; }
-    return AsciiModelWriter(out).write(*model);
-}
-
-
-bool
-cmod::SaveModelBinary(const Model* model, std::ostream& out)
-{
-    if (model == nullptr) { return false; }
-    return BinaryModelWriter(out).write(*model);
-}
-
-
-AsciiModelLoader::AsciiModelLoader(istream& _in) :
-    tok(&_in)
-{
-}
-
-
-void
-AsciiModelLoader::reportError(const string& msg)
-{
-    string s = fmt::format("{} (line {})", msg, tok.getLineNumber());
+    std::string s = fmt::format("{} (line {})", msg, tok.getLineNumber());
     ModelLoader::reportError(s);
 }
 
@@ -326,7 +229,7 @@ AsciiModelLoader::loadMaterial()
 
     while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndMaterialToken)
     {
-        string property = tok.getStringValue();
+        std::string property = tok.getStringValue();
         Material::TextureSemantic texType = Mesh::parseTextureSemantic(property);
 
         if (texType != Material::InvalidTextureSemantic)
@@ -338,7 +241,7 @@ AsciiModelLoader::loadMaterial()
                 return nullptr;
             }
 
-            string textureName = tok.getStringValue();
+            std::string textureName = tok.getStringValue();
 
             Material::TextureResource* tex = nullptr;
             if (getTextureLoader())
@@ -358,7 +261,7 @@ AsciiModelLoader::loadMaterial()
 
             if (tok.nextToken() == Tokenizer::TokenName)
             {
-                string blendModeName = tok.getStringValue();
+                std::string blendModeName = tok.getStringValue();
                 if (blendModeName == "normal")
                     blendMode = Material::NormalBlend;
                 else if (blendModeName == "add")
@@ -453,8 +356,8 @@ AsciiModelLoader::loadVertexDescription()
 
     while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndVertexDescToken)
     {
-        string semanticName;
-        string formatName;
+        std::string semanticName;
+        std::string formatName;
         bool valid = false;
 
         if (nAttributes == maxAttributes)
@@ -485,8 +388,7 @@ AsciiModelLoader::loadVertexDescription()
             Mesh::parseVertexAttributeSemantic(semanticName);
         if (semantic == Mesh::InvalidSemantic)
         {
-            reportError(string("Invalid vertex attribute semantic '") +
-                        semanticName + "'");
+            reportError(fmt::format("Invalid vertex attribute semantic '{}'", semanticName));
             delete[] attributes;
             return nullptr;
         }
@@ -495,8 +397,7 @@ AsciiModelLoader::loadVertexDescription()
             Mesh::parseVertexAttributeFormat(formatName);
         if (format == Mesh::InvalidFormat)
         {
-            reportError(string("Invalid vertex attribute format '") +
-                        formatName + "'");
+            reportError(fmt::format("Invalid vertex attribute format '{}'", formatName));
             delete[] attributes;
             return nullptr;
         }
@@ -607,14 +508,16 @@ AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
             {
                 for (int k = 0; k < readCount; k++)
                 {
-                    reinterpret_cast<unsigned char*>(vertexData + base)[k] =
-                        (unsigned char) (data[k]);
+                    *(vertexData + base + k) = static_cast<char>(static_cast<unsigned char>(data[k]));
                 }
             }
             else
             {
                 for (int k = 0; k < readCount; k++)
-                    reinterpret_cast<float*>(vertexData + base)[k] = (float) data[k];
+                {
+                    float value = static_cast<float>(data[k]);
+                    std::memcpy(vertexData + base + sizeof(float) * k, &value, sizeof(float));
+                }
             }
         }
     }
@@ -690,7 +593,7 @@ AsciiModelLoader::loadMesh()
 
         for (unsigned int i = 0; i < indexCount; i++)
         {
-            if (!tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
+            if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
             {
                 reportError("Incomplete index list in primitive group");
                 delete[] indices;
@@ -728,7 +631,7 @@ AsciiModelLoader::load()
     {
         if (token == Tokenizer::TokenName)
         {
-            string name = tok.getStringValue();
+            std::string name = tok.getStringValue();
             tok.pushBack();
 
             if (name == "material")
@@ -764,7 +667,7 @@ AsciiModelLoader::load()
             }
             else
             {
-                reportError(string("Error: Unknown block type ") + name);
+                reportError(fmt::format("Error: Unknown block type {}", name));
                 delete model;
                 return nullptr;
             }
@@ -781,11 +684,29 @@ AsciiModelLoader::load()
 }
 
 
+/***** ASCII writer *****/
 
-AsciiModelWriter::AsciiModelWriter(ostream& _out) :
-    out(_out)
+class AsciiModelWriter : public ModelWriter
 {
-}
+public:
+    explicit AsciiModelWriter(std::ostream& _out) : out(_out) {}
+    ~AsciiModelWriter() override = default;
+
+    bool write(const Model& /*model*/) override;
+
+private:
+    bool writeMesh(const Mesh& /*mesh*/);
+    bool writeMaterial(const Material& /*material*/);
+    bool writeGroup(const Mesh::PrimitiveGroup& /*group*/);
+    bool writeVertexDescription(const Mesh::VertexDescription& /*desc*/);
+    bool writeVertices(const void* vertexData,
+                       unsigned int nVertices,
+                       unsigned int stride,
+                       const Mesh::VertexDescription& desc);
+
+    std::ostream& out;
+};
+
 
 bool
 AsciiModelWriter::write(const Model& model)
@@ -1128,21 +1049,7 @@ AsciiModelWriter::writeMaterial(const Material& material)
 
 /***** Binary loader *****/
 
-BinaryModelLoader::BinaryModelLoader(istream& _in) :
-    in(_in)
-{
-}
-
-
-void
-BinaryModelLoader::reportError(const string& msg)
-{
-    string s = fmt::format("{} (offset {})", msg, 0);
-    ModelLoader::reportError(s);
-}
-
-
-static bool readToken(istream& in, ModelFileToken& value)
+bool readToken(std::istream& in, ModelFileToken& value)
 {
     std::int16_t num;
     if (!celutil::readLE<std::int16_t>(in, num)) { return false; }
@@ -1151,7 +1058,7 @@ static bool readToken(istream& in, ModelFileToken& value)
 }
 
 
-static bool readType(istream& in, ModelFileType& value)
+bool readType(std::istream& in, ModelFileType& value)
 {
     std::int16_t num;
     if (!celutil::readLE<std::int16_t>(in, num)) { return false; }
@@ -1160,7 +1067,7 @@ static bool readType(istream& in, ModelFileType& value)
 }
 
 
-static bool readTypeFloat1(istream& in, float& f)
+bool readTypeFloat1(std::istream& in, float& f)
 {
     ModelFileType cmodType;
     return readType(in, cmodType)
@@ -1169,7 +1076,7 @@ static bool readTypeFloat1(istream& in, float& f)
 }
 
 
-static bool readTypeColor(istream& in, Material::Color& c)
+bool readTypeColor(std::istream& in, Material::Color& c)
 {
     ModelFileType cmodType;
     float r, g, b;
@@ -1187,7 +1094,7 @@ static bool readTypeColor(istream& in, Material::Color& c)
 }
 
 
-static bool readTypeString(istream& in, string& s)
+bool readTypeString(std::istream& in, std::string& s)
 {
     ModelFileType cmodType;
     uint16_t len;
@@ -1206,14 +1113,14 @@ static bool readTypeString(istream& in, string& s)
     {
         std::vector<char> buf(len);
         if (!in.read(buf.data(), len).good()) { return false; }
-        s = string(buf.cbegin(), buf.cend());
+        s = std::string(buf.cbegin(), buf.cend());
     }
 
     return true;
 }
 
 
-static bool ignoreValue(istream& in)
+bool ignoreValue(std::istream& in)
 {
     ModelFileType type;
     if (!readType(in, type)) { return false; }
@@ -1255,6 +1162,34 @@ static bool ignoreValue(istream& in)
 }
 
 
+class BinaryModelLoader : public ModelLoader
+{
+public:
+    explicit BinaryModelLoader(std::istream& _in) : in(_in) {}
+    ~BinaryModelLoader() override = default;
+
+    Model* load() override;
+    void reportError(const std::string& /*msg*/) override;
+
+    Material* loadMaterial();
+    Mesh::VertexDescription* loadVertexDescription();
+    Mesh* loadMesh();
+    char* loadVertices(const Mesh::VertexDescription& vertexDesc,
+                       unsigned int& vertexCount);
+
+private:
+    std::istream& in;
+};
+
+
+void
+BinaryModelLoader::reportError(const std::string& msg)
+{
+    std::string s = fmt::format("{} (offset {})", msg, 0);
+    ModelLoader::reportError(s);
+}
+
+
 Model*
 BinaryModelLoader::load()
 {
@@ -1267,7 +1202,10 @@ BinaryModelLoader::load()
         ModelFileToken tok;
         if (!readToken(in, tok))
         {
-            break;
+            if (in.eof()) { break; }
+            reportError("Failed to read token");
+            delete model;
+            return nullptr;
         }
 
         if (tok == CMOD_Material)
@@ -1406,7 +1344,7 @@ BinaryModelLoader::loadMaterial()
                     return nullptr;
                 }
 
-                string texfile;
+                std::string texfile;
                 if (!readTypeString(in, texfile))
                 {
                     reportError("String expected for texture filename");
@@ -1697,33 +1635,27 @@ BinaryModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
 }
 
 
-
 /***** Binary writer *****/
 
-BinaryModelWriter::BinaryModelWriter(ostream& _out) :
-    out(_out)
-{
-}
-
-// Utility functions for writing binary values to a file
-static bool writeToken(ostream& out, ModelFileToken val)
-{
-    return celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(val));
-}
-
-static bool writeType(ostream& out, ModelFileType val)
+bool writeToken(std::ostream& out, ModelFileToken val)
 {
     return celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(val));
 }
 
 
-static bool writeTypeFloat1(ostream& out, float f)
+bool writeType(std::ostream& out, ModelFileType val)
+{
+    return celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(val));
+}
+
+
+bool writeTypeFloat1(std::ostream& out, float f)
 {
     return writeType(out, CMOD_Float1) && celutil::writeLE<float>(out, f);
 }
 
 
-static bool writeTypeColor(ostream& out, const Material::Color& c)
+bool writeTypeColor(std::ostream& out, const Material::Color& c)
 {
     return writeType(out, CMOD_Color)
         && celutil::writeLE<float>(out, c.red())
@@ -1732,13 +1664,35 @@ static bool writeTypeColor(ostream& out, const Material::Color& c)
 }
 
 
-static bool writeTypeString(ostream& out, const string& s)
+bool writeTypeString(std::ostream& out, const std::string& s)
 {
     return s.length() <= INT16_MAX
         && writeType(out, CMOD_String)
         && celutil::writeLE<std::int16_t>(out, s.length())
         && out.write(s.c_str(), s.length()).good();
 }
+
+
+class BinaryModelWriter : public ModelWriter
+{
+public:
+    explicit BinaryModelWriter(std::ostream& _out) : out(_out) {}
+    ~BinaryModelWriter() override = default;
+
+    bool write(const Model& /*model*/) override;
+
+private:
+    bool writeMesh(const Mesh& /*mesh*/);
+    bool writeMaterial(const Material& /*material*/);
+    bool writeGroup(const Mesh::PrimitiveGroup& /*group*/);
+    bool writeVertexDescription(const Mesh::VertexDescription& /*desc*/);
+    bool writeVertices(const void* vertexData,
+                       unsigned int nVertices,
+                       unsigned int stride,
+                       const Mesh::VertexDescription& desc);
+
+    std::ostream& out;
+};
 
 
 bool
@@ -1940,17 +1894,66 @@ BinaryModelWriter::writeMaterial(const Material& material)
 }
 
 
-#ifdef CMOD_LOAD_TEST
-
-int main(int argc, char* argv[])
+ModelLoader* OpenModel(std::istream& in)
 {
-    Model* model = LoadModel(cin);
-    if (model)
+    char header[CEL_MODEL_HEADER_LENGTH];
+    if (!in.read(header, CEL_MODEL_HEADER_LENGTH).good())
     {
-        SaveModelAscii(model, cout);
+        std::cerr << "Could not read model header\n";
+        return nullptr;
     }
 
-    return 0;
+    if (std::strncmp(header, CEL_MODEL_HEADER_ASCII, CEL_MODEL_HEADER_LENGTH) == 0)
+    {
+        return new AsciiModelLoader(in);
+    }
+    if (std::strncmp(header, CEL_MODEL_HEADER_BINARY, CEL_MODEL_HEADER_LENGTH) == 0)
+    {
+        return new BinaryModelLoader(in);
+    }
+    else
+    {
+        std::cerr << "Model file has invalid header.\n";
+        return nullptr;
+    }
 }
 
-#endif
+
+} // end unnamed namespace
+
+
+Model* LoadModel(std::istream& in, TextureLoader* textureLoader)
+{
+    ModelLoader* loader = OpenModel(in);
+    if (loader == nullptr)
+        return nullptr;
+
+    loader->setTextureLoader(textureLoader);
+
+    Model* model = loader->load();
+    if (model == nullptr)
+    {
+        std::cerr << "Error in model file: " << loader->getErrorMessage() << '\n';
+    }
+
+    delete loader;
+
+    return model;
+}
+
+
+bool
+SaveModelAscii(const Model* model, std::ostream& out)
+{
+    if (model == nullptr) { return false; }
+    return AsciiModelWriter(out).write(*model);
+}
+
+
+bool
+SaveModelBinary(const Model* model, std::ostream& out)
+{
+    if (model == nullptr) { return false; }
+    return BinaryModelWriter(out).write(*model);
+}
+} // end namespace cmod

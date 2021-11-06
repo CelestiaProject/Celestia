@@ -14,6 +14,7 @@
 #include <celmath/mathlib.h>
 #include <Eigen/Core>
 #include <algorithm>
+#include <iostream>
 #include <vector>
 #ifdef TRISTRIP
 #include <NvTriStrip.h>
