@@ -30,14 +30,14 @@ public:
     class Color
     {
     public:
-        Color() :
+        constexpr Color() :
             m_red(0.0f),
             m_green(0.0f),
             m_blue(0.0f)
         {
         }
 
-        Color(float r, float g, float b) :
+        constexpr Color(float r, float g, float b) :
             m_red(r),
             m_green(g),
             m_blue(b)
@@ -51,17 +51,17 @@ public:
         {
         }
 
-        float red() const
+        constexpr float red() const
         {
             return m_red;
         }
 
-        float green() const
+        constexpr float green() const
         {
             return m_green;
         }
 
-        float blue() const
+        constexpr float blue() const
         {
             return m_blue;
         }
@@ -71,12 +71,12 @@ public:
             return Eigen::Vector3f(m_red, m_green, m_blue);
         }
 
-        bool operator==(const Color& other) const
+        constexpr bool operator==(const Color& other) const
         {
             return m_red == other.m_red && m_green == other.m_green && m_blue == other.m_blue;
         }
 
-        bool operator!=(const Color& other) const
+        constexpr bool operator!=(const Color& other) const
         {
             return !(*this == other);
         }

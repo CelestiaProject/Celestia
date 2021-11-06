@@ -18,6 +18,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdio>
+#include <iostream>
 #include <memory>
 
 using namespace cmod;

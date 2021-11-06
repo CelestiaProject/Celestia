@@ -9,6 +9,8 @@
 //
 // Perform various adjustments to a cmod file
 
+#include <celmodel/mesh.h>
+#include <celmodel/model.h>
 #include <celmodel/modelfile.h>
 #include <celmath/mathlib.h>
 #include <Eigen/Core>
@@ -18,6 +20,7 @@
 #include <cmath>
 #include <cstdio>
 #include <algorithm>
+#include <iostream>
 #include <vector>
 #ifdef TRISTRIP
 #include <NvTriStrip.h>
