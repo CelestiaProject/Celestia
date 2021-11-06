@@ -18,10 +18,12 @@
 #include <Eigen/Core>
 #include <fmt/ostream.h>
 
-#include <celutil/bytes.h>
+#include <celutil/binaryread.h>
 #include "3dschunk.h"
 #include "3dsmodel.h"
 #include "3dsread.h"
+
+namespace celutil = celestia::util;
 
 namespace
 {
@@ -31,56 +33,6 @@ constexpr std::int32_t UNKNOWN_CHUNK = -2;
 
 template<typename T>
 using ProcessChunkFunc = std::int32_t (*)(std::istream &, std::uint16_t, std::int32_t, T*);
-
-
-bool readInt(std::istream& in, std::int32_t& value)
-{
-    char buffer[sizeof(value)];
-    if (!in.read(buffer, sizeof(buffer)).good()) { return false; }
-    std::memcpy(&value, buffer, sizeof(value));
-    LE_TO_CPU_INT32(value, value);
-    return true;
-}
-
-
-bool readShort(std::istream& in, std::int16_t& value)
-{
-    char buffer[sizeof(value)];
-    if (!in.read(buffer, sizeof(buffer)).good()) { return false; }
-    std::memcpy(&value, buffer, sizeof(value));
-    LE_TO_CPU_INT16(value, value);
-    return true;
-}
-
-
-bool readUshort(std::istream& in, std::uint16_t& value)
-{
-    char buffer[sizeof(value)];
-    if (!in.read(buffer, sizeof(buffer)).good()) { return false; }
-    std::memcpy(&value, buffer, sizeof(value));
-    LE_TO_CPU_INT16(value, value);
-    return true;
-}
-
-
-bool readFloat(std::istream& in, float& value)
-{
-    char buffer[sizeof(value)];
-    if (!in.read(buffer, sizeof(buffer)).good()) { return false; }
-    std::memcpy(&value, buffer, sizeof(value));
-    LE_TO_CPU_FLOAT(value, value);
-    return true;
-}
-
-
-bool readUchar(std::istream& in, unsigned char& value)
-{
-    char c;
-    in.get(c);
-    if (!in.good()) { return false; }
-    value = static_cast<unsigned char>(c);
-    return true;
-}
 
 
 std::int32_t readString(std::istream& in, std::string& value)
@@ -109,9 +61,9 @@ std::int32_t read3DSChunk(std::istream& in,
                           T* obj)
 {
     std::uint16_t chunkType;
-    if (!readUshort(in, chunkType)) { return READ_FAILURE; }
+    if (!celutil::readLE<std::uint16_t>(in, chunkType)) { return READ_FAILURE; }
     std::int32_t chunkSize;
-    if (!readInt(in, chunkSize) || chunkSize < 6) { return READ_FAILURE; }
+    if (!celutil::readLE<std::int32_t>(in, chunkSize) || chunkSize < 6) { return READ_FAILURE; }
 
     std::int32_t contentSize = chunkSize - 6;
     std::int32_t processedSize = chunkFunc(in, chunkType, contentSize, obj);
@@ -163,8 +115,13 @@ std::int32_t read3DSChunks(std::istream& in,
 
 std::int32_t readColor(std::istream& in, M3DColor& color)
 {
-    unsigned char r, g, b;
-    if (!readUchar(in, r) || !readUchar(in, g) || !readUchar(in, b)) { return READ_FAILURE; }
+    std::uint8_t r, g, b;
+    if (!celutil::readLE<std::uint8_t>(in, r)
+        || !celutil::readLE<std::uint8_t>(in, g)
+        || !celutil::readLE<std::uint8_t>(in, b))
+    {
+        return READ_FAILURE;
+    }
 
     color = {static_cast<float>(r) / 255.0f,
              static_cast<float>(g) / 255.0f,
@@ -177,7 +134,12 @@ std::int32_t readColor(std::istream& in, M3DColor& color)
 std::int32_t readFloatColor(std::istream& in, M3DColor& color)
 {
     float r, g, b;
-    if (!readFloat(in, r) || !readFloat(in, g) || !readFloat(in, b)) { return READ_FAILURE; }
+    if (!celutil::readLE<float>(in, r)
+        || !celutil::readLE<float>(in, g)
+        || !celutil::readLE<float>(in, b))
+    {
+        return READ_FAILURE;
+    }
 
     color = { r, g, b };
     return static_cast<std::int32_t>(3 * sizeof(float));
@@ -189,7 +151,7 @@ std::int32_t readMeshMatrix(std::istream& in, Eigen::Matrix4f& m)
     float elements[12];
     for (std::size_t i = 0; i < 12; ++i)
     {
-        if (!readFloat(in, elements[i])) { return READ_FAILURE; }
+        if (!celutil::readLE<float>(in, elements[i])) { return READ_FAILURE; }
     }
 
     m << elements[0], elements[1], elements[2], 0,
@@ -204,13 +166,18 @@ std::int32_t readMeshMatrix(std::istream& in, Eigen::Matrix4f& m)
 std::int32_t readPointArray(std::istream& in, M3DTriangleMesh* triMesh)
 {
     std::uint16_t nPoints;
-    if (!readUshort(in, nPoints)) { return READ_FAILURE; }
+    if (!celutil::readLE<std::uint16_t>(in, nPoints)) { return READ_FAILURE; }
     std::int32_t bytesRead = static_cast<std::int32_t>(sizeof(nPoints));
 
     for (int i = 0; i < static_cast<int>(nPoints); i++)
     {
         float x, y, z;
-        if (!readFloat(in, x) || !readFloat(in, y) || !readFloat(in, z)) { return READ_FAILURE; }
+        if (!celutil::readLE<float>(in, x)
+            || !celutil::readLE<float>(in, y)
+            || !celutil::readLE<float>(in, z))
+        {
+            return READ_FAILURE;
+        }
         bytesRead += static_cast<std::int32_t>(3 * sizeof(float));
         triMesh->addVertex(Eigen::Vector3f(x, y, z));
     }
@@ -224,13 +191,16 @@ std::int32_t readTextureCoordArray(std::istream& in, M3DTriangleMesh* triMesh)
     std::int32_t bytesRead = 0;
 
     std::uint16_t nPoints;
-    if (!readUshort(in, nPoints)) { return READ_FAILURE; }
+    if (!celutil::readLE<std::uint16_t>(in, nPoints)) { return READ_FAILURE; }
     bytesRead += static_cast<std::int32_t>(sizeof(nPoints));
 
     for (int i = 0; i < static_cast<int>(nPoints); i++)
     {
         float u, v;
-        if (!readFloat(in, u) || !readFloat(in, v)) { return READ_FAILURE; }
+        if (!celutil::readLE<float>(in, u) || !celutil::readLE<float>(in, v))
+        {
+            return READ_FAILURE;
+        }
         bytesRead += static_cast<std::int32_t>(2 * sizeof(float));
         triMesh->addTexCoord(Eigen::Vector2f(u, -v));
     }
@@ -254,13 +224,16 @@ std::int32_t processFaceArrayChunk(std::istream& in,
         matGroup = std::make_unique<M3DMeshMaterialGroup>();
 
         bytesRead = readString(in, matGroup->materialName);
-        if (bytesRead == READ_FAILURE || !readUshort(in, nFaces)) { return READ_FAILURE; }
+        if (bytesRead == READ_FAILURE || !celutil::readLE<std::uint16_t>(in, nFaces))
+        {
+            return READ_FAILURE;
+        }
         bytesRead += static_cast<std::int32_t>(sizeof(nFaces));
 
         for (std::uint16_t i = 0; i < nFaces; i++)
         {
             std::uint16_t faceIndex;
-            if (!readUshort(in, faceIndex)) { return READ_FAILURE; }
+            if (!celutil::readLE<std::uint16_t>(in, faceIndex)) { return READ_FAILURE; }
             bytesRead += static_cast<std::int32_t>(sizeof(faceIndex));
             matGroup->faces.push_back(faceIndex);
         }
@@ -275,7 +248,7 @@ std::int32_t processFaceArrayChunk(std::istream& in,
         for (std::uint16_t i = 0; i < nFaces; i++)
         {
             std::int32_t groups;
-            if (!readInt(in, groups) || groups < 0) { return READ_FAILURE; }
+            if (!celutil::readLE<std::int32_t>(in, groups) || groups < 0){ return READ_FAILURE; }
             bytesRead += static_cast<std::int32_t>(sizeof(groups));
             triMesh->addSmoothingGroups(static_cast<std::uint32_t>(groups));
         }
@@ -290,13 +263,16 @@ std::int32_t processFaceArrayChunk(std::istream& in,
 std::int32_t readFaceArray(std::istream& in, M3DTriangleMesh* triMesh, std::int32_t contentSize)
 {
     std::uint16_t nFaces;
-    if (!readUshort(in, nFaces)) { return READ_FAILURE; }
+    if (!celutil::readLE<std::uint16_t>(in, nFaces)) { return READ_FAILURE; }
     std::int32_t bytesRead = static_cast<std::int32_t>(sizeof(nFaces));
 
     for (int i = 0; i < static_cast<int>(nFaces); i++)
     {
         std::uint16_t v0, v1, v2, flags;
-        if (!readUshort(in, v0) || !readUshort(in, v1) || !readUshort(in, v2) || !readUshort(in, flags))
+        if (!celutil::readLE<std::uint16_t>(in, v0)
+            || !celutil::readLE<std::uint16_t>(in, v1)
+            || !celutil::readLE<std::uint16_t>(in, v2)
+            || !celutil::readLE<std::uint16_t>(in, flags))
         {
             return READ_FAILURE;
         }
@@ -391,12 +367,12 @@ std::int32_t processPercentageChunk(std::istream& in,
     case M3DCHUNK_INT_PERCENTAGE:
         {
             std::int16_t value;
-            if (!readShort(in, value)) { return READ_FAILURE; }
+            if (!celutil::readLE<std::int16_t>(in, value)) { return READ_FAILURE; }
             *percent = static_cast<float>(value);
             return sizeof(value);
         }
     case M3DCHUNK_FLOAT_PERCENTAGE:
-        return readFloat(in, *percent) ? sizeof(float) : READ_FAILURE;
+        return celutil::readLE<float>(in, *percent) ? sizeof(float) : READ_FAILURE;
     default:
         return UNKNOWN_CHUNK;
     }
@@ -537,14 +513,14 @@ std::int32_t processTopLevelChunk(std::istream& in,
 std::unique_ptr<M3DScene> Read3DSFile(std::istream& in)
 {
     std::uint16_t chunkType;
-    if (!readUshort(in, chunkType) || chunkType != M3DCHUNK_MAGIC)
+    if (!celutil::readLE<std::uint16_t>(in, chunkType) || chunkType != M3DCHUNK_MAGIC)
     {
         fmt::print(std::clog, "Read3DSFile: Wrong magic number in header\n");
         return nullptr;
     }
 
     std::int32_t chunkSize;
-    if (!readInt(in, chunkSize) || chunkSize < 6)
+    if (!celutil::readLE<std::int32_t>(in, chunkSize) || chunkSize < 6)
     {
         fmt::print(std::clog, "Read3DSFile: Error reading 3DS file top level chunk size\n");
         return nullptr;

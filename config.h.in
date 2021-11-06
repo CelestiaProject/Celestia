@@ -4,3 +4,4 @@
 #cmakedefine HAVE_STRING_VIEW
 #cmakedefine HAVE_EXPERIMENTAL_STRING_VIEW
 #cmakedefine HAVE_WORDEXP
+#cmakedefine WORDS_BIGENDIAN

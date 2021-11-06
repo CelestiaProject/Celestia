@@ -11,13 +11,14 @@
 #include <cstdint>
 #include <fstream>  // ifstream
 #include <iostream> // ios
+#include <memory>
+#include <vector>
+
 #include <celengine/image.h>
-#include <celutil/bytes.h>
+#include <celutil/binaryread.h>
 #include <celutil/debug.h>
 
-using std::ifstream;
-using std::ios;
-using celestia::PixelFormat;
+namespace celutil = celestia::util;
 
 namespace
 {
@@ -26,120 +27,100 @@ namespace
 typedef struct
 {
     unsigned char magic[2];
-    uint32_t size;
-    uint32_t reserved;
-    uint32_t offset;
+    std::uint32_t size;
+    std::uint32_t reserved;
+    std::uint32_t offset;
 } BMPFileHeader;
 
 typedef struct
 {
-    uint32_t size;
-    int32_t width;
-    int32_t height;
-    uint16_t planes;
-    uint16_t bpp;
-    uint32_t compression;
-    uint32_t imageSize;
-    int32_t widthPPM;
-    int32_t heightPPM;
-    uint32_t colorsUsed;
-    uint32_t colorsImportant;
+    std::uint32_t size;
+    std::int32_t width;
+    std::int32_t height;
+    std::uint16_t planes;
+    std::uint16_t bpp;
+    std::uint32_t compression;
+    std::uint32_t imageSize;
+    std::int32_t widthPPM;
+    std::int32_t heightPPM;
+    std::uint32_t colorsUsed;
+    std::uint32_t colorsImportant;
 } BMPImageHeader;
 
 
-int32_t readInt32(ifstream& in)
-{
-    uint8_t b[4];
-    in.read(reinterpret_cast<char*>(b), 4);
-    int32_t val = ((int32_t) b[3] << 24) +
-                  ((int32_t) b[2] << 16) +
-                  ((int32_t) b[1] << 8) +
-                  ((int32_t) b[0]);
-    LE_TO_CPU_INT32(val, val);
-    return val;
-}
-
-int16_t readInt16(ifstream& in)
-{
-    uint8_t b[2];
-    in.read(reinterpret_cast<char*>(b), 2);
-    int16_t val = ((int16_t) b[1] << 8) + (int16_t) b[0];
-    LE_TO_CPU_INT16(val, val);
-    return val;
-}
-
-
-Image* LoadBMPImage(ifstream& in)
+Image* LoadBMPImage(std::istream& in)
 {
     BMPFileHeader fileHeader;
     BMPImageHeader imageHeader;
-    uint8_t* pixels;
 
-    in >> fileHeader.magic[0];
-    in >> fileHeader.magic[1];
-    fileHeader.size = readInt32(in);
-    fileHeader.reserved = readInt32(in);
-    fileHeader.offset = readInt32(in);
-
-    if (fileHeader.magic[0] != 'B' || fileHeader.magic[1] != 'M')
+    if (!celutil::readLE<unsigned char>(in, fileHeader.magic[0])
+        || fileHeader.magic[0] != 'B'
+        || !celutil::readLE<unsigned char>(in, fileHeader.magic[1])
+        || fileHeader.magic[1] != 'M'
+        || !celutil::readLE<std::uint32_t>(in, fileHeader.size)
+        || !celutil::readLE<std::uint32_t>(in, fileHeader.reserved)
+        || !celutil::readLE<std::uint32_t>(in, fileHeader.offset)
+        || !celutil::readLE<std::uint32_t>(in, imageHeader.size)
+        || !celutil::readLE<std::int32_t>(in, imageHeader.width)
+        || imageHeader.width <= 0
+        || !celutil::readLE<std::int32_t>(in, imageHeader.height)
+        || imageHeader.height <= 0
+        || !celutil::readLE<std::uint16_t>(in, imageHeader.planes)
+        || !celutil::readLE<std::uint16_t>(in, imageHeader.bpp)
+        // We don't handle 1-, 2-, or 4-bpp images
+        || (imageHeader.bpp != 8 && imageHeader.bpp != 24 && imageHeader.bpp != 32)
+        || !celutil::readLE<std::uint32_t>(in, imageHeader.compression)
+        // We currently don't support compressed BMPs
+        || imageHeader.compression != 0
+        || !celutil::readLE<std::uint32_t>(in, imageHeader.imageSize)
+        || !celutil::readLE<std::int32_t>(in, imageHeader.widthPPM)
+        || !celutil::readLE<std::int32_t>(in, imageHeader.heightPPM)
+        || !celutil::readLE<std::uint32_t>(in, imageHeader.colorsUsed)
+        || !celutil::readLE<std::uint32_t>(in, imageHeader.colorsImportant))
+    {
         return nullptr;
+    }
 
-    imageHeader.size = readInt32(in);
-    imageHeader.width = readInt32(in);
-    imageHeader.height = readInt32(in);
-    imageHeader.planes = readInt16(in);
-    imageHeader.bpp = readInt16(in);
-    imageHeader.compression = readInt32(in);
-    imageHeader.imageSize = readInt32(in);
-    imageHeader.widthPPM = readInt32(in);
-    imageHeader.heightPPM = readInt32(in);
-    imageHeader.colorsUsed = readInt32(in);
-    imageHeader.colorsImportant = readInt32(in);
-
-    if (imageHeader.width <= 0 || imageHeader.height <= 0)
-        return nullptr;
-
-    // We currently don't support compressed BMPs
-    if (imageHeader.compression != 0)
-        return nullptr;
-    // We don't handle 1-, 2-, or 4-bpp images
-    if (imageHeader.bpp != 8 && imageHeader.bpp != 24 && imageHeader.bpp != 32)
-        return nullptr;
-
-    uint8_t* palette = nullptr;
+    std::vector<uint8_t> palette;
     if (imageHeader.bpp == 8)
     {
         DPRINTF(LOG_LEVEL_DEBUG, "Reading %u color palette\n", imageHeader.colorsUsed);
-        palette = new uint8_t[imageHeader.colorsUsed * 4];
-        in.read(reinterpret_cast<char*>(palette), imageHeader.colorsUsed * 4);
+        palette.resize(imageHeader.colorsUsed * 4);
+        if (!in.read(reinterpret_cast<char*>(palette.data()), imageHeader.colorsUsed * 4).good())
+        {
+            return nullptr;
+        }
     }
 
-    in.seekg(fileHeader.offset, ios::beg);
+    if (!in.seekg(fileHeader.offset, std::ios::beg)) { return nullptr; }
 
-    uint32_t bytesPerRow =
+    std::size_t bytesPerRow =
         (imageHeader.width * imageHeader.bpp / 8 + 1) & ~1;
-    uint32_t imageBytes = bytesPerRow * imageHeader.height;
+    std::size_t imageBytes = bytesPerRow * imageHeader.height;
 
     // slurp the image data
-    pixels = new uint8_t[imageBytes];
-    in.read(reinterpret_cast<char*>(pixels), imageBytes);
+    std::vector<std::uint8_t> pixels(imageBytes);
+    if (!in.read(reinterpret_cast<char*>(pixels.data()), imageBytes).good())
+    {
+        return nullptr;
+    }
 
     // check for truncated file
 
-    auto* img = new Image(PixelFormat::RGB, imageHeader.width, imageHeader.height);
+    auto img = std::make_unique<Image>(celestia::PixelFormat::RGB, imageHeader.width, imageHeader.height);
 
     // Copy the image and perform any necessary conversions
-    for (int32_t y = 0; y < imageHeader.height; y++)
+    for (std::int32_t y = 0; y < imageHeader.height; y++)
     {
-        uint8_t* src = &pixels[y * bytesPerRow];
+        const std::uint8_t* src = pixels.data() + y * bytesPerRow;
         uint8_t* dst = img->getPixelRow(y);
 
         switch (imageHeader.bpp)
         {
         case 8:
-            for (int32_t x = 0; x < imageHeader.width; x++)
+            for (std::int32_t x = 0; x < imageHeader.width; x++)
             {
-                uint8_t* color = palette + (*src << 2);
+                const uint8_t* color = palette.data() + (*src << 2);
                 dst[0] = color[2];
                 dst[1] = color[1];
                 dst[2] = color[0];
@@ -148,7 +129,7 @@ Image* LoadBMPImage(ifstream& in)
             }
             break;
         case 24:
-            for (int32_t x = 0; x < imageHeader.width; x++)
+            for (std::int32_t x = 0; x < imageHeader.width; x++)
             {
                 dst[0] = src[2];
                 dst[1] = src[1];
@@ -158,7 +139,7 @@ Image* LoadBMPImage(ifstream& in)
             }
             break;
         case 32:
-            for (int32_t x = 0; x < imageHeader.width; x++)
+            for (std::int32_t x = 0; x < imageHeader.width; x++)
             {
                 dst[0] = src[2];
                 dst[1] = src[1];
@@ -170,16 +151,13 @@ Image* LoadBMPImage(ifstream& in)
         }
     }
 
-    delete[] pixels;
-    delete[] palette;
-
-    return img;
+    return img.release();
 }
 } // anonymous namespace
 
 Image* LoadBMPImage(const fs::path& filename)
 {
-    ifstream bmpFile(filename.string(), ios::in | ios::binary);
+    std::ifstream bmpFile(filename.string(), std::ios::in | std::ios::binary);
 
     if (bmpFile.good())
     {
