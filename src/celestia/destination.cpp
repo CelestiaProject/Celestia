@@ -14,7 +14,7 @@
 #include <celutil/util.h>
 #include <celengine/astro.h>
 #include <celengine/parser.h>
-#include <celengine/tokenizer.h>
+#include <celutil/tokenizer.h>
 #include "destination.h"
 
 using namespace std;

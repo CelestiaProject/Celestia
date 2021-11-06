@@ -15,7 +15,7 @@
 #include <celutil/fsutils.h>
 #include <celutil/util.h>
 #include <celengine/texmanager.h>
-#include <celengine/tokenizer.h>
+#include <celutil/tokenizer.h>
 #include "configfile.h"
 
 using namespace std;

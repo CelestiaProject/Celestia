@@ -8,10 +8,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _TOKENIZER_H_
-#define _TOKENIZER_H_
+#pragma once
 
 #include <cmath>
+#include <cstdint>
 #include <iosfwd>
 #include <string>
 
@@ -43,6 +43,8 @@ public:
     TokenType getTokenType() const;
     void pushBack();
     double getNumberValue() const;
+    bool isInteger() const;
+    std::int32_t getIntegerValue() const;
     std::string getNameValue() const;
     std::string getStringValue() const;
 
@@ -61,5 +63,3 @@ private:
 
     bool skipUtf8Bom();
 };
-
-#endif // _TOKENIZER_H_

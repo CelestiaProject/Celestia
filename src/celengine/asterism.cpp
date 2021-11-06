@@ -9,11 +9,12 @@
 
 #include <celutil/gettext.h>
 #include <celutil/debug.h>
+#include <celutil/tokenizer.h>
 #include <celutil/util.h>
 #include "stardb.h"
 #include "asterism.h"
 #include "parser.h"
-#include "tokenizer.h"
+
 
 using namespace std;
 

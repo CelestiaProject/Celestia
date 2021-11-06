@@ -18,13 +18,14 @@
 #include <celutil/binaryread.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
+#include <celutil/tokenizer.h>
 #include "stardb.h"
 #include "astro.h"
 #include "parser.h"
 #include "parseobject.h"
 #include "multitexture.h"
 #include "meshmanager.h"
-#include "tokenizer.h"
+
 #include <fmt/printf.h>
 
 using namespace Eigen;
