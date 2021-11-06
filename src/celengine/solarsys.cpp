@@ -21,7 +21,7 @@
 #include <celutil/gettext.h>
 #include "astro.h"
 #include "parser.h"
-#include "tokenizer.h"
+#include <celutil/tokenizer.h>
 #include "texmanager.h"
 #include "meshmanager.h"
 #include "universe.h"

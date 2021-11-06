@@ -15,6 +15,7 @@
 #include <cassert>
 #include <cmath>
 #include <celutil/debug.h>
+#include <celutil/tokenizer.h>
 
 
 using namespace cmod;
@@ -29,513 +30,6 @@ static float DefaultSpecularPower = 1.0f;
 static float DefaultOpacity = 1.0f;
 static Material::BlendMode DefaultBlend = Material::NormalBlend;
 
-
-
-namespace cmod
-{
-
-class Token
-{
-public:
-    enum TokenType
-    {
-        Name,
-        String,
-        Number,
-        End,
-        Invalid
-    };
-
-    Token() = default;
-    Token(const Token& other) = default;
-
-    Token& operator=(const Token& other) = default;
-
-    bool operator==(const Token& other) const
-    {
-        if (m_type == other.m_type)
-        {
-            switch (m_type)
-            {
-            case Name:
-            case String:
-                return m_stringValue == other.m_stringValue;
-            case Number:
-                return m_numberValue == other.m_numberValue;
-            case End:
-            case Invalid:
-                return true;
-            default:
-                return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    bool operator!=(const Token& other) const
-    {
-        return !(*this == other);
-    }
-
-    ~Token() = default;
-
-    TokenType type() const
-    {
-        return m_type;
-    }
-
-    bool isValid() const
-    {
-        return m_type != Invalid;
-    }
-
-    bool isNumber() const
-    {
-        return m_type == Number;
-    }
-
-    bool isInteger() const
-    {
-        return m_type == Number;
-    }
-
-    bool isName() const
-    {
-        return m_type == Name;
-    }
-
-    bool isString() const
-    {
-        return m_type == String;
-    }
-
-    double numberValue() const
-    {
-        assert(type() == Number);
-        if (type() == Number)
-            return m_numberValue;
-
-        return 0.0;
-    }
-
-    int integerValue() const
-    {
-        assert(type() == Number);
-        //assert(std::floor(m_numberValue) == m_numberValue);
-
-        if (type() == Number)
-            return (int) m_numberValue;
-
-        return 0;
-    }
-
-    std::string stringValue() const
-    {
-        if (type() == Name || type() == String)
-            return m_stringValue;
-
-       return string();
-    }
-
-public:
-    static Token NumberToken(double value)
-    {
-        Token token;
-        token.m_type = Number;
-        token.m_numberValue = value;
-        return token;
-    }
-
-    static Token NameToken(const string& value)
-    {
-        Token token;
-        token.m_type = Name;
-        token.m_stringValue = value;
-        return token;
-    }
-
-    static Token StringToken(const string& value)
-    {
-        Token token;
-        token.m_type = String;
-        token.m_stringValue = value;
-        return token;
-    }
-
-    static Token EndToken()
-    {
-        Token token;
-        token.m_type = End;
-        return token;
-    }
-
-private:
-    TokenType m_type{Invalid};
-    double m_numberValue{0.0};
-    string m_stringValue;
-};
-
-
-class TokenStream
-{
-public:
-    TokenStream(istream* in) :
-        m_in(in),
-        m_pushedBack(false),
-        m_lineNumber(1),
-        m_parseError(false),
-        m_nextChar(' ')
-    {
-    }
-
-    bool issep(char c)
-    {
-        return (isdigit(c) == 0) && (isalpha(c) == 0) && c != '.';
-    }
-
-    void syntaxError(const std::string& message)
-    {
-        cerr << message << '\n';
-        m_parseError = true;
-    }
-
-    Token nextToken();
-
-    Token currentToken() const
-    {
-        return m_currentToken;
-    }
-
-    void pushBack()
-    {
-        m_pushedBack = true;
-    }
-
-    int readChar()
-    {
-        int c = (int) m_in->get();
-        if (c == '\n')
-            m_lineNumber++;
-
-        return c;
-    }
-
-    int getLineNumber() const
-    {
-        return m_lineNumber;
-    }
-
-    bool hasError() const
-    {
-        return m_parseError;
-    }
-
-private:
-    double numberFromParts(double integerValue, double fractionValue, double fracExp,
-                           double exponentValue, double exponentSign,
-                           double sign) const
-    {
-        double x = integerValue + fractionValue / fracExp;
-        if (exponentValue != 0)
-        {
-            x *= pow(10.0, exponentValue * exponentSign);
-        }
-
-        return x * sign;
-    }
-
-    enum State
-    {
-        StartState          = 0,
-        NameState           = 1,
-        NumberState         = 2,
-        FractionState       = 3,
-        ExponentState       = 4,
-        ExponentFirstState  = 5,
-        DotState            = 6,
-        CommentState        = 7,
-        StringState         = 8,
-        ErrorState          = 9,
-        StringEscapeState   = 10,
-    };
-
-private:
-    istream* m_in;
-    Token m_currentToken;
-    bool m_pushedBack;
-    int m_lineNumber;
-    bool m_parseError;
-    int m_nextChar;
-};
-
-} // namespace
-
-
-
-Token TokenStream::nextToken()
-{
-    State state = StartState;
-
-    if (m_pushedBack)
-    {
-        m_pushedBack = false;
-        return m_currentToken;
-    }
-
-    if (m_currentToken.type() == Token::End)
-    {
-        // Already at end of stream
-        return m_currentToken;
-    }
-
-    double integerValue = 0;
-    double fractionValue = 0;
-    double sign = 1;
-    double fracExp = 1;
-    double exponentValue = 0;
-    double exponentSign = 1;
-
-    Token newToken;
-
-    string textValue;
-
-    while (!hasError() && !newToken.isValid())
-    {
-        switch (state)
-        {
-        case StartState:
-            if (isspace(m_nextChar) != 0)
-            {
-                state = StartState;
-            }
-            else if (isdigit(m_nextChar) != 0)
-            {
-                state = NumberState;
-                integerValue = m_nextChar - (int) '0';
-            }
-            else if (m_nextChar == '-')
-            {
-                state = NumberState;
-                sign = -1;
-                integerValue = 0;
-            }
-            else if (m_nextChar == '+')
-            {
-                state = NumberState;
-                sign = +1;
-                integerValue = 0;
-            }
-            else if (m_nextChar == '.')
-            {
-                state = FractionState;
-                sign = +1;
-                integerValue = 0;
-            }
-            else if ((isalpha(m_nextChar) != 0) || m_nextChar == '_')
-            {
-                state = NameState;
-                textValue += (char) m_nextChar;
-            }
-            else if (m_nextChar == '#')
-            {
-                state = CommentState;
-            }
-            else if (m_nextChar == '"')
-            {
-                state = StringState;
-            }
-            else if (m_nextChar == -1)
-            {
-                newToken = Token::EndToken();
-            }
-            else
-            {
-                syntaxError("Bad character in stream");
-            }
-            break;
-
-        case NameState:
-            if ((isalpha(m_nextChar) != 0) || (isdigit(m_nextChar) != 0) || m_nextChar == '_')
-            {
-                state = NameState;
-                textValue += (char) m_nextChar;
-            }
-            else
-            {
-                newToken = Token::NameToken(textValue);
-            }
-            break;
-
-        case CommentState:
-            if (m_nextChar == '\n' || m_nextChar == '\r' || m_nextChar == char_traits<char>::eof())
-            {
-                state = StartState;
-            }
-            break;
-
-        case StringState:
-            if (m_nextChar == '"')
-            {
-                newToken = Token::StringToken(textValue);
-                m_nextChar = readChar();
-            }
-            else if (m_nextChar == '\\')
-            {
-                state = StringEscapeState;
-            }
-            else if (m_nextChar == char_traits<char>::eof())
-            {
-                syntaxError("Unterminated string");
-            }
-            else
-            {
-                state = StringState;
-                textValue += (char) m_nextChar;
-            }
-            break;
-
-        case StringEscapeState:
-            if (m_nextChar == '\\')
-            {
-                textValue += '\\';
-                state = StringState;
-            }
-            else if (m_nextChar == 'n')
-            {
-                textValue += '\n';
-                state = StringState;
-            }
-            else if (m_nextChar == '"')
-            {
-                textValue += '"';
-                state = StringState;
-            }
-            else
-            {
-                syntaxError("Unknown escape code in string");
-                state = StringState;
-            }
-            break;
-
-        case NumberState:
-            if (isdigit(m_nextChar) != 0)
-            {
-                state = NumberState;
-                integerValue = integerValue * 10 + m_nextChar - (int) '0';
-            }
-            else if (m_nextChar == '.')
-            {
-                state = FractionState;
-            }
-            else if (m_nextChar == 'e' || m_nextChar == 'E')
-            {
-                state = ExponentFirstState;
-            }
-            else if (issep(m_nextChar))
-            {
-                double x = numberFromParts(integerValue, fractionValue, fracExp, exponentValue, exponentSign, sign);
-                newToken = Token::NumberToken(x);
-            }
-            else
-            {
-                syntaxError("Bad character in number");
-            }
-            break;
-
-        case FractionState:
-            if (isdigit(m_nextChar) != 0)
-            {
-                state = FractionState;
-                fractionValue = fractionValue * 10 + m_nextChar - (int) '0';
-                fracExp *= 10;
-            }
-            else if (m_nextChar == 'e' || m_nextChar == 'E')
-            {
-                state = ExponentFirstState;
-            }
-            else if (issep(m_nextChar))
-            {
-                double x = numberFromParts(integerValue, fractionValue, fracExp, exponentValue, exponentSign, sign);
-                newToken = Token::NumberToken(x);
-            }
-            else
-            {
-                syntaxError("Bad character in number");
-            }
-            break;
-
-        case ExponentFirstState:
-            if (isdigit(m_nextChar) != 0)
-            {
-                state = ExponentState;
-                exponentValue = (int) m_nextChar - (int) '0';
-            }
-            else if (m_nextChar == '-')
-            {
-                state = ExponentState;
-                exponentSign = -1;
-            }
-            else if (m_nextChar == '+')
-            {
-                state = ExponentState;
-            }
-            else
-            {
-                state = ErrorState;
-                syntaxError("Bad character in number");
-            }
-            break;
-
-        case ExponentState:
-            if (isdigit(m_nextChar) != 0)
-            {
-                state = ExponentState;
-                exponentValue = exponentValue * 10 + (int) m_nextChar - (int) '0';
-            }
-            else if (issep(m_nextChar))
-            {
-                double x = numberFromParts(integerValue, fractionValue, fracExp, exponentValue, exponentSign, sign);
-                newToken = Token::NumberToken(x);
-            }
-            else
-            {
-                state = ErrorState;
-                syntaxError("Bad character in number");
-            }
-            break;
-
-        case DotState:
-            if (isdigit(m_nextChar) != 0)
-            {
-                state = FractionState;
-                fractionValue = fractionValue * 10 + (int) m_nextChar - (int) '0';
-                fracExp = 10;
-            }
-            else
-            {
-                state = ErrorState;
-                syntaxError("'.' in stupid place");
-            }
-            break;
-
-        case ErrorState:
-            break;  // Prevent GCC4 warnings; do nothing
-
-        } // Switch
-
-        if (!hasError() && !newToken.isValid())
-        {
-            m_nextChar = readChar();
-        }
-    }
-
-    m_currentToken = newToken;
-
-    return newToken;
-}
 
 
 /*!
@@ -623,18 +117,18 @@ public:
                                           unsigned int& vertexCount);
 
 private:
-    TokenStream tok;
+    Tokenizer tok;
 };
 
 
 // Standard tokens for ASCII model loader
-static Token MeshToken = Token::NameToken("mesh");
-static Token EndMeshToken = Token::NameToken("end_mesh");
-static Token VertexDescToken = Token::NameToken("vertexdesc");
-static Token EndVertexDescToken = Token::NameToken("end_vertexdesc");
-static Token VerticesToken = Token::NameToken("vertices");
-static Token MaterialToken = Token::NameToken("material");
-static Token EndMaterialToken = Token::NameToken("end_material");
+static constexpr const char MeshToken[] = "mesh";
+static constexpr const char EndMeshToken[] = "end_mesh";
+static constexpr const char VertexDescToken[] = "vertexdesc";
+static constexpr const char EndVertexDescToken[] = "end_vertexdesc";
+static constexpr const char VerticesToken[] = "vertices";
+static constexpr const char MaterialToken[] = "material";
+static constexpr const char EndMaterialToken[] = "end_material";
 
 
 class AsciiModelWriter : public ModelWriter
@@ -814,7 +308,7 @@ AsciiModelLoader::reportError(const string& msg)
 Material*
 AsciiModelLoader::loadMaterial()
 {
-    if (tok.nextToken() != MaterialToken)
+    if (tok.nextToken() != Tokenizer::TokenName || tok.getNameValue() != MeshToken)
     {
         reportError("Material definition expected");
         return nullptr;
@@ -828,22 +322,21 @@ AsciiModelLoader::loadMaterial()
     material->specularPower = DefaultSpecularPower;
     material->opacity = DefaultOpacity;
 
-    while (tok.nextToken().isName() && tok.currentToken() != EndMaterialToken)
+    while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndMaterialToken)
     {
-        string property = tok.currentToken().stringValue();
+        string property = tok.getStringValue();
         Material::TextureSemantic texType = Mesh::parseTextureSemantic(property);
 
         if (texType != Material::InvalidTextureSemantic)
         {
-            Token t = tok.nextToken();
-            if (t.type() != Token::String)
+            if (tok.nextToken() != Tokenizer::TokenString)
             {
                 reportError("Texture name expected");
                 delete material;
                 return nullptr;
             }
 
-            string textureName = t.stringValue();
+            string textureName = tok.getStringValue();
 
             Material::TextureResource* tex = nullptr;
             if (getTextureLoader())
@@ -861,10 +354,9 @@ AsciiModelLoader::loadMaterial()
         {
             Material::BlendMode blendMode = Material::InvalidBlend;
 
-            Token t = tok.nextToken();
-            if (t.isName())
+            if (tok.nextToken() == Tokenizer::TokenName)
             {
-                string blendModeName = tok.currentToken().stringValue();
+                string blendModeName = tok.getStringValue();
                 if (blendModeName == "normal")
                     blendMode = Material::NormalBlend;
                 else if (blendModeName == "add")
@@ -895,14 +387,13 @@ AsciiModelLoader::loadMaterial()
 
             for (int i = 0; i < nValues; i++)
             {
-                Token t = tok.nextToken();
-                if (t.type() != Token::Number)
+                if (tok.nextToken() != Tokenizer::TokenNumber)
                 {
                     reportError("Bad property value in material");
                     delete material;
                     return nullptr;
                 }
-                data[i] = t.numberValue();
+                data[i] = tok.getNumberValue();
             }
 
             Material::Color colorVal;
@@ -934,7 +425,7 @@ AsciiModelLoader::loadMaterial()
         }
     }
 
-    if (tok.currentToken().type() != Token::Name)
+    if (tok.getTokenType() != Tokenizer::TokenName)
     {
         delete material;
         return nullptr;
@@ -947,7 +438,7 @@ AsciiModelLoader::loadMaterial()
 Mesh::VertexDescription*
 AsciiModelLoader::loadVertexDescription()
 {
-    if (tok.nextToken() != VertexDescToken)
+    if (tok.nextToken() != Tokenizer::TokenName || tok.getNameValue() != VertexDescToken)
     {
         reportError("Vertex description expected");
         return nullptr;
@@ -958,7 +449,7 @@ AsciiModelLoader::loadVertexDescription()
     unsigned int offset = 0;
     auto* attributes = new Mesh::VertexAttribute[maxAttributes];
 
-    while (tok.nextToken().isName() && tok.currentToken() != EndVertexDescToken)
+    while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndVertexDescToken)
     {
         string semanticName;
         string formatName;
@@ -973,11 +464,11 @@ AsciiModelLoader::loadVertexDescription()
             return nullptr;
         }
 
-        semanticName = tok.currentToken().stringValue();
+        semanticName = tok.getStringValue();
 
-        if (tok.nextToken().isName())
+        if (tok.nextToken() == Tokenizer::TokenName)
         {
-            formatName = tok.currentToken().stringValue();
+            formatName = tok.getStringValue();
             valid = true;
         }
 
@@ -1016,7 +507,7 @@ AsciiModelLoader::loadVertexDescription()
         nAttributes++;
     }
 
-    if (tok.currentToken().type() != Token::Name)
+    if (tok.getTokenType() != Tokenizer::TokenName)
     {
         reportError("Invalid vertex description");
         delete[] attributes;
@@ -1041,20 +532,20 @@ char*
 AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
                                unsigned int& vertexCount)
 {
-    if (tok.nextToken() != VerticesToken)
+    if (tok.nextToken() != Tokenizer::TokenName && tok.getNameValue() != VerticesToken)
     {
         reportError("Vertex data expected");
         return nullptr;
     }
 
-    if (tok.nextToken().type() != Token::Number)
+    if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
     {
         reportError("Vertex count expected");
         return nullptr;
     }
 
-    double num = tok.currentToken().numberValue();
-    if (num != floor(num) || num <= 0.0)
+    std::int32_t num = tok.getIntegerValue();
+    if (num <= 0)
     {
         reportError("Bad vertex count for mesh");
         return nullptr;
@@ -1097,14 +588,14 @@ AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
 
             for (int j = 0; j < readCount; j++)
             {
-                if (!tok.nextToken().isNumber())
+                if (tok.nextToken() != Tokenizer::TokenNumber)
                 {
                     reportError("Error in vertex data");
                     data[j] = 0.0;
                 }
                 else
                 {
-                    data[j] = tok.currentToken().numberValue();
+                    data[j] = tok.getNumberValue();
                 }
                 // TODO: range check unsigned byte values
             }
@@ -1133,7 +624,7 @@ AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
 Mesh*
 AsciiModelLoader::loadMesh()
 {
-    if (tok.nextToken() != MeshToken)
+    if (tok.nextToken() != Tokenizer::TokenName && tok.getNameValue() != MeshToken)
     {
         reportError("Mesh definition expected");
         return nullptr;
@@ -1156,18 +647,18 @@ AsciiModelLoader::loadMesh()
     mesh->setVertices(vertexCount, vertexData);
     delete vertexDesc;
 
-    while (tok.nextToken().isName() && tok.currentToken() != EndMeshToken)
+    while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndMeshToken)
     {
         Mesh::PrimitiveGroupType type =
-            Mesh::parsePrimitiveGroupType(tok.currentToken().stringValue());
+            Mesh::parsePrimitiveGroupType(tok.getStringValue());
         if (type == Mesh::InvalidPrimitiveGroupType)
         {
-            reportError("Bad primitive group type: " + tok.currentToken().stringValue());
+            reportError("Bad primitive group type: " + tok.getStringValue());
             delete mesh;
             return nullptr;
         }
 
-        if (!tok.nextToken().isInteger())
+        if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
         {
             reportError("Material index expected in primitive group");
             delete mesh;
@@ -1175,29 +666,29 @@ AsciiModelLoader::loadMesh()
         }
 
         unsigned int materialIndex;
-        if (tok.currentToken().integerValue() == -1)
+        if (tok.getIntegerValue() == -1)
         {
             materialIndex = ~0u;
         }
         else
         {
-            materialIndex = (unsigned int) tok.currentToken().integerValue();
+            materialIndex = (unsigned int) tok.getIntegerValue();
         }
 
-        if (!tok.nextToken().isInteger())
+        if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
         {
             reportError("Index count expected in primitive group");
             delete mesh;
             return nullptr;
         }
 
-        unsigned int indexCount = (unsigned int) tok.currentToken().integerValue();
+        unsigned int indexCount = (unsigned int) tok.getIntegerValue();
 
         auto* indices = new Mesh::index32[indexCount];
 
         for (unsigned int i = 0; i < indexCount; i++)
         {
-            if (!tok.nextToken().isInteger())
+            if (!tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
             {
                 reportError("Incomplete index list in primitive group");
                 delete[] indices;
@@ -1205,7 +696,7 @@ AsciiModelLoader::loadMesh()
                 return nullptr;
             }
 
-            unsigned int index = (unsigned int) tok.currentToken().integerValue();
+            unsigned int index = (unsigned int) tok.getIntegerValue();
             if (index >= vertexCount)
             {
                 reportError("Index out of range");
@@ -1231,11 +722,11 @@ AsciiModelLoader::load()
     bool seenMeshes = false;
 
     // Parse material and mesh definitions
-    for (Token token = tok.nextToken(); token.type() != Token::End; token = tok.nextToken())
+    for (Tokenizer::TokenType token = tok.nextToken(); token != Tokenizer::TokenEnd; token = tok.nextToken())
     {
-        if (token.isName())
+        if (token == Tokenizer::TokenName)
         {
-            string name = tok.currentToken().stringValue();
+            string name = tok.getStringValue();
             tok.pushBack();
 
             if (name == "material")

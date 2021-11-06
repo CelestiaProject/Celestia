@@ -18,7 +18,7 @@
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include <celengine/parser.h>
-#include <celengine/tokenizer.h>
+#include <celutil/tokenizer.h>
 #ifdef USE_GLCONTEXT
 #include <celengine/glcontext.h>
 #endif

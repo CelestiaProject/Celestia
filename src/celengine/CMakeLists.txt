@@ -151,8 +151,6 @@ set(CELENGINE_SOURCES
   timeline.h
   timelinephase.cpp
   timelinephase.h
-  tokenizer.cpp
-  tokenizer.h
   trajmanager.cpp
   trajmanager.h
   univcoord.cpp

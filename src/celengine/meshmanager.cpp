@@ -21,7 +21,7 @@
 #include "texmanager.h"
 #include "meshmanager.h"
 #include "modelgeometry.h"
-#include "tokenizer.h"
+#include <celutil/tokenizer.h>
 
 #include <cel3ds/3dsmodel.h>
 #include <cel3ds/3dsread.h>

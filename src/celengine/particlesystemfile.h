@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include <string>
-#include "tokenizer.h"
+#include <celutil/tokenizer.h>
 #include "parser.h"
 
 class ParticleSystem;

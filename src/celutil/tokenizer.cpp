@@ -10,12 +10,10 @@
 
 #include <cctype>
 #include <cerrno>
-#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 
-#include "celutil/utf8.h"
-
+#include "utf8.h"
 #include "tokenizer.h"
 
 namespace
@@ -419,6 +417,20 @@ void Tokenizer::pushBack()
 double Tokenizer::getNumberValue() const
 {
     return tokenValue;
+}
+
+
+bool Tokenizer::isInteger() const
+{
+    return tokenType == TokenNumber
+        && textToken.find_first_of(".eE") == std::string::npos
+        && tokenValue >= INT32_MIN && tokenValue <= INT32_MAX;
+}
+
+
+std::int32_t Tokenizer::getIntegerValue() const
+{
+    return static_cast<std::int32_t>(tokenValue);
 }
 
 

@@ -21,7 +21,7 @@
 #include <celcompat/filesystem.h>
 #include <celutil/filetype.h>
 #include "parser.h"
-#include "tokenizer.h"
+#include <celutil/tokenizer.h>
 #include "virtualtex.h"
 
 
