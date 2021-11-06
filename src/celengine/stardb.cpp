@@ -15,7 +15,7 @@
 #include <cassert>
 #include <algorithm>
 #include <celmath/mathlib.h>
-#include <celutil/bytes.h>
+#include <celutil/binaryread.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include "stardb.h"
@@ -30,6 +30,8 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+
+namespace celutil = celestia::util;
 
 
 constexpr const char HDCatalogPrefix[]        = "HD ";
@@ -564,8 +566,8 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
     {
         int headerLength = strlen(CROSSINDEX_FILE_HEADER);
         char* header = new char[headerLength];
-        in.read(header, headerLength);
-        if (strncmp(header, CROSSINDEX_FILE_HEADER, headerLength))
+        if (!in.read(header, headerLength).good()
+            || strncmp(header, CROSSINDEX_FILE_HEADER, headerLength))
         {
             cerr << _("Bad header for cross index\n");
             delete[] header;
@@ -576,12 +578,10 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
 
     // Verify the version
     {
-        uint16_t version;
-        in.read((char*) &version, sizeof version);
-        LE_TO_CPU_INT16(version, version);
-        if (version != 0x0100)
+        std::uint16_t version;
+        if (!celutil::readLE<std::uint16_t>(in, version) || version != 0x0100)
         {
-            cerr << _("Bad version for cross index\n");
+            std::cerr << _("Bad version for cross index\n");
             return false;
         }
     }
@@ -592,16 +592,17 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
     for (;;)
     {
         CrossIndexEntry ent;
-        in.read((char *) &ent.catalogNumber, sizeof ent.catalogNumber);
-        LE_TO_CPU_INT32(ent.catalogNumber, ent.catalogNumber);
-        if (in.eof())
-            break;
-
-        in.read((char *) &ent.celCatalogNumber, sizeof ent.celCatalogNumber);
-        LE_TO_CPU_INT32(ent.celCatalogNumber, ent.celCatalogNumber);
-        if (in.fail())
+        if (!celutil::readLE<AstroCatalog::IndexNumber>(in, ent.catalogNumber))
         {
-            cerr << fmt::sprintf(_("Loading cross index failed at record %u\n"), record);
+            if (in.eof()) { break; }
+            std::cerr << _("Loading cross index failed\n");
+            delete xindex;
+            return false;
+        }
+
+        if (!celutil::readLE<AstroCatalog::IndexNumber>(in, ent.celCatalogNumber))
+        {
+            std::cerr << fmt::sprintf(_("Loading cross index failed at record %u\n"), record);
             delete xindex;
             return false;
         }
@@ -627,8 +628,7 @@ bool StarDatabase::loadBinary(istream& in)
     {
         int headerLength = strlen(FILE_HEADER);
         char* header = new char[headerLength];
-        in.read(header, headerLength);
-        if (strncmp(header, FILE_HEADER, headerLength)) {
+        if (!in.read(header, headerLength).good() || strncmp(header, FILE_HEADER, headerLength)) {
             delete[] header;
             return false;
         }
@@ -637,18 +637,18 @@ bool StarDatabase::loadBinary(istream& in)
 
     // Verify the version
     {
-        uint16_t version;
-        in.read((char*) &version, sizeof version);
-        LE_TO_CPU_INT16(version, version);
-        if (version != 0x0100)
+        std::uint16_t version;
+        if (!celutil::readLE<std::uint16_t>(in, version) || version != 0x0100)
+        {
             return false;
+        }
     }
 
     // Read the star count
-    in.read((char *) &nStarsInFile, sizeof nStarsInFile);
-    LE_TO_CPU_INT32(nStarsInFile, nStarsInFile);
-    if (!in.good())
+    if (!celutil::readLE<std::uint32_t>(in, nStarsInFile))
+    {
         return false;
+    }
 
     unsigned int totalStars = nStars + nStarsInFile;
 
@@ -659,20 +659,15 @@ bool StarDatabase::loadBinary(istream& in)
         int16_t absMag;
         uint16_t spectralType;
 
-        in.read((char *) &catNo, sizeof catNo);
-        LE_TO_CPU_INT32(catNo, catNo);
-        in.read((char *) &x, sizeof x);
-        LE_TO_CPU_FLOAT(x, x);
-        in.read((char *) &y, sizeof y);
-        LE_TO_CPU_FLOAT(y, y);
-        in.read((char *) &z, sizeof z);
-        LE_TO_CPU_FLOAT(z, z);
-        in.read((char *) &absMag, sizeof absMag);
-        LE_TO_CPU_INT16(absMag, absMag);
-        in.read((char *) &spectralType, sizeof spectralType);
-        LE_TO_CPU_INT16(spectralType, spectralType);
-        if (in.bad())
-        break;
+        if (!celutil::readLE<AstroCatalog::IndexNumber>(in, catNo)
+            || !celutil::readLE<float>(in, x)
+            || !celutil::readLE<float>(in, y)
+            || !celutil::readLE<float>(in, z)
+            || !celutil::readLE<std::int16_t>(in, absMag)
+            || !celutil::readLE<std::uint16_t>(in, spectralType))
+        {
+            return false;
+        }
 
         Star star;
         star.setPosition(x, y, z);
