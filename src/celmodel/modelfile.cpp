@@ -8,18 +8,24 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <fmt/printf.h>
+#include <fmt/core.h>
+#include <fmt/ostream.h>
 
 #include "modelfile.h"
 #include <celutil/bytes.h>
 #include <cassert>
 #include <cmath>
+#include <cstring>
+#include <vector>
+#include <celutil/binaryread.h>
+#include <celutil/binarywrite.h>
 #include <celutil/debug.h>
 #include <celutil/tokenizer.h>
 
 
 using namespace cmod;
 using namespace std;
+namespace celutil = celestia::util;
 
 
 // Material default values
@@ -140,11 +146,11 @@ public:
     bool write(const Model& /*model*/) override;
 
 private:
-    void writeMesh(const Mesh& /*mesh*/);
-    void writeMaterial(const Material& /*material*/);
-    void writeGroup(const Mesh::PrimitiveGroup& /*group*/);
-    void writeVertexDescription(const Mesh::VertexDescription& /*desc*/);
-    void writeVertices(const void* vertexData,
+    bool writeMesh(const Mesh& /*mesh*/);
+    bool writeMaterial(const Material& /*material*/);
+    bool writeGroup(const Mesh::PrimitiveGroup& /*group*/);
+    bool writeVertexDescription(const Mesh::VertexDescription& /*desc*/);
+    bool writeVertices(const void* vertexData,
                        unsigned int nVertices,
                        unsigned int stride,
                        const Mesh::VertexDescription& desc);
@@ -182,11 +188,11 @@ public:
     bool write(const Model& /*model*/) override;
 
 private:
-    void writeMesh(const Mesh& /*mesh*/);
-    void writeMaterial(const Material& /*material*/);
-    void writeGroup(const Mesh::PrimitiveGroup& /*group*/);
-    void writeVertexDescription(const Mesh::VertexDescription& /*desc*/);
-    void writeVertices(const void* vertexData,
+    bool writeMesh(const Mesh& /*mesh*/);
+    bool writeMaterial(const Material& /*material*/);
+    bool writeGroup(const Mesh::PrimitiveGroup& /*group*/);
+    bool writeVertexDescription(const Mesh::VertexDescription& /*desc*/);
+    bool writeVertices(const void* vertexData,
                        unsigned int nVertices,
                        unsigned int stride,
                        const Mesh::VertexDescription& desc);
@@ -249,7 +255,12 @@ ModelLoader::OpenModel(istream& in)
     char header[CEL_MODEL_HEADER_LENGTH + 1];
     memset(header, '\0', sizeof(header));
 
-    in.read(header, CEL_MODEL_HEADER_LENGTH);
+    if (!in.read(header, CEL_MODEL_HEADER_LENGTH).good())
+    {
+        std::cerr << "Could not read model header\n";
+        return nullptr;
+    }
+
     if (strcmp(header, CEL_MODEL_HEADER_ASCII) == 0)
     {
         return new AsciiModelLoader(in);
@@ -269,24 +280,16 @@ ModelLoader::OpenModel(istream& in)
 bool
 cmod::SaveModelAscii(const Model* model, std::ostream& out)
 {
-    if (model == nullptr)
-        return false;
-
-    AsciiModelWriter(out).write(*model);
-
-    return true;
+    if (model == nullptr) { return false; }
+    return AsciiModelWriter(out).write(*model);
 }
 
 
 bool
 cmod::SaveModelBinary(const Model* model, std::ostream& out)
 {
-    if (model == nullptr)
-        return false;
-
-    BinaryModelWriter(out).write(*model);
-
-    return true;
+    if (model == nullptr) { return false; }
+    return BinaryModelWriter(out).write(*model);
 }
 
 
@@ -299,8 +302,7 @@ AsciiModelLoader::AsciiModelLoader(istream& _in) :
 void
 AsciiModelLoader::reportError(const string& msg)
 {
-    string s;
-    s = fmt::sprintf("%s (line %d)", msg, tok.getLineNumber());
+    string s = fmt::format("{} (line {})", msg, tok.getLineNumber());
     ModelLoader::reportError(s);
 }
 
@@ -788,93 +790,109 @@ AsciiModelWriter::AsciiModelWriter(ostream& _out) :
 bool
 AsciiModelWriter::write(const Model& model)
 {
-    out << CEL_MODEL_HEADER_ASCII << "\n\n";
+    fmt::print(out, "{}\n\n", CEL_MODEL_HEADER_ASCII);
+    if (!out.good()) { return false; }
 
     for (unsigned int matIndex = 0; model.getMaterial(matIndex) != nullptr; matIndex++)
     {
-        writeMaterial(*model.getMaterial(matIndex));
-        out << '\n';
+        if (!writeMaterial(*model.getMaterial(matIndex))) { return false; }
+        if (!(out << '\n').good()) { return false; }
     }
 
     for (unsigned int meshIndex = 0; model.getMesh(meshIndex) != nullptr; meshIndex++)
     {
-        writeMesh(*model.getMesh(meshIndex));
-        out << '\n';
+        if (!writeMesh(*model.getMesh(meshIndex))) { return false; }
+        if (!(out << '\n').good()) { return false; }
     }
 
     return true;
 }
 
 
-void
+bool
 AsciiModelWriter::writeGroup(const Mesh::PrimitiveGroup& group)
 {
     switch (group.prim)
     {
     case Mesh::TriList:
-        out << "trilist"; break;
+        fmt::print(out, "trilist"); break;
     case Mesh::TriStrip:
-        out << "tristrip"; break;
+        fmt::print(out, "tristrip"); break;
     case Mesh::TriFan:
-        out << "trifan"; break;
+        fmt::print(out, "trifan"); break;
     case Mesh::LineList:
-        out << "linelist"; break;
+        fmt::print(out, "linelist"); break;
     case Mesh::LineStrip:
-        out << "linestrip"; break;
+        fmt::print(out, "linestrip"); break;
     case Mesh::PointList:
-        out << "points"; break;
+        fmt::print(out, "points"); break;
     case Mesh::SpriteList:
-        out << "sprites"; break;
+        fmt::print(out, "sprites"); break;
     default:
-        return;
+        return false;
     }
+    if (!out.good()) { return false; }
 
     if (group.materialIndex == ~0u)
         out << " -1";
     else
-        out << ' ' << group.materialIndex;
-    out << ' ' << group.nIndices << '\n';
+        fmt::print(out, " {}", group.materialIndex);
+    if (!out.good()) { return false; }
+
+    fmt::print(out, " {}\n", group.nIndices);
+    if (!out.good()) { return false;}
 
     // Print the indices, twelve per line
     for (unsigned int i = 0; i < group.nIndices; i++)
     {
-        out << group.indices[i];
-        if (i % 12 == 11 || i == group.nIndices - 1)
-            out << '\n';
-        else
-            out << ' ';
+        fmt::print(out, "{}{}",
+            group.indices[i],
+            i % 12 == 11 || i == group.nIndices - 1 ? '\n' : ' ');
+        if (!out.good()) { return false; }
     }
+
+    return true;
 }
 
 
-void
+bool
 AsciiModelWriter::writeMesh(const Mesh& mesh)
 {
-    out << "mesh\n";
+    if (!(out << "mesh\n").good()) { return false; }
 
     if (!mesh.getName().empty())
-        out << "# " << mesh.getName() << '\n';
+    {
+        fmt::print(out, "# {}\n", mesh.getName());
+        if (!out.good()) { return false; }
+    }
 
-    writeVertexDescription(mesh.getVertexDescription());
-    out << '\n';
+    if (!writeVertexDescription(mesh.getVertexDescription())) { return false; }
+    if (!(out << '\n').good()) { return false; }
 
-    writeVertices(mesh.getVertexData(),
-                  mesh.getVertexCount(),
-                  mesh.getVertexStride(),
-                  mesh.getVertexDescription());
-    out << '\n';
+    if (!writeVertices(mesh.getVertexData(),
+                       mesh.getVertexCount(),
+                       mesh.getVertexStride(),
+                       mesh.getVertexDescription()))
+    {
+        return false;
+    }
+
+    if (!(out << '\n').good()) { return false; }
 
     for (unsigned int groupIndex = 0; mesh.getGroup(groupIndex) != nullptr; groupIndex++)
     {
-        writeGroup(*mesh.getGroup(groupIndex));
-        out << '\n';
+        if (!writeGroup(*mesh.getGroup(groupIndex))
+            || !(out << '\n').good())
+        {
+            return false;
+        }
     }
 
-    out << "end_mesh\n";
+    return (out << "end_mesh\n").good();
 }
 
 
-void
+bool
 AsciiModelWriter::writeVertices(const void* vertexData,
                                 unsigned int nVertices,
                                 unsigned int stride,
@@ -882,50 +900,56 @@ AsciiModelWriter::writeVertices(const void* vertexData,
 {
     const auto* vertex = reinterpret_cast<const unsigned char*>(vertexData);
 
-    out << "vertices " << nVertices << '\n';
+    fmt::print(out, "vertices {}\n", nVertices);
+    if (!out.good()) { return false; }
+
     for (unsigned int i = 0; i < nVertices; i++, vertex += stride)
     {
         for (unsigned int attr = 0; attr < desc.nAttributes; attr++)
         {
             const unsigned char* ubdata = vertex + desc.attributes[attr].offset;
-            const auto* fdata = reinterpret_cast<const float*>(ubdata);
+            //const auto* fdata = reinterpret_cast<const float*>(ubdata);
+            float fdata[4];
 
             switch (desc.attributes[attr].format)
             {
             case Mesh::Float1:
-                out << fdata[0];
+                std::memcpy(fdata, ubdata, sizeof(float));
+                fmt::print(out, "{}", fdata[0]);
                 break;
             case Mesh::Float2:
-                out << fdata[0] << ' ' << fdata[1];
+                std::memcpy(fdata, ubdata, sizeof(float) * 2);
+                fmt::print(out, "{} {}", fdata[0], fdata[1]);
                 break;
             case Mesh::Float3:
-                out << fdata[0] << ' ' << fdata[1] << ' ' << fdata[2];
+                std::memcpy(fdata, ubdata, sizeof(float) * 3);
+                fmt::print(out, "{} {} {}", fdata[0], fdata[1], fdata[2]);
                 break;
             case Mesh::Float4:
-                out << fdata[0] << ' ' << fdata[1] << ' ' <<
-                       fdata[2] << ' ' << fdata[3];
+                std::memcpy(fdata, ubdata, sizeof(float) * 4);
+                fmt::print(out, "{} {} {} {}", fdata[0], fdata[1], fdata[2], fdata[3]);
                 break;
             case Mesh::UByte4:
-                out << (int) ubdata[0] << ' ' << (int) ubdata[1] << ' ' <<
-                       (int) ubdata[2] << ' ' << (int) ubdata[3];
+                fmt::print(out, "{} {} {} {}", +ubdata[0], +ubdata[1], +ubdata[2], +ubdata[3]);
                 break;
             default:
                 assert(0);
                 break;
             }
-
-            out << ' ';
+            if (!out.good() || !(out << ' ').good()) { return false; }
         }
 
-        out << '\n';
+        if (!(out << '\n').good()) { return false; }
     }
+
+    return true;
 }
 
 
-void
+bool
 AsciiModelWriter::writeVertexDescription(const Mesh::VertexDescription& desc)
 {
-    out << "vertexdesc\n";
+    if (!(out << "vertexdesc\n").good()) { return false; }
     for (unsigned int attr = 0; attr < desc.nAttributes; attr++)
     {
         // We should never have a vertex description with invalid
@@ -968,7 +992,7 @@ AsciiModelWriter::writeVertexDescription(const Mesh::VertexDescription& desc)
             break;
         }
 
-        out << ' ';
+        if (!out.good() || !(out << ' ').good()) { return false; }
 
         switch (desc.attributes[attr].format)
         {
@@ -992,49 +1016,58 @@ AsciiModelWriter::writeVertexDescription(const Mesh::VertexDescription& desc)
             break;
         }
 
-        out << '\n';
+        if (!out.good() || !(out << '\n').good()) { return false; }
     }
-    out << "end_vertexdesc\n";
+    return (out << "end_vertexdesc\n").good();
 }
 
 
-void
+bool
 AsciiModelWriter::writeMaterial(const Material& material)
 {
-    out << "material\n";
+    if (!(out << "material\n").good()) { return false; }
     if (material.diffuse != DefaultDiffuse)
     {
-        out << "diffuse " <<
-            material.diffuse.red() << ' ' <<
-            material.diffuse.green() << ' ' <<
-            material.diffuse.blue() << '\n';
+        fmt::print(out, "diffuse {} {} {}\n",
+            material.diffuse.red(),
+            material.diffuse.green(),
+            material.diffuse.blue());
+        if (!out.good()) { return false; }
     }
 
     if (material.emissive != DefaultEmissive)
     {
-        out << "emissive " <<
-            material.emissive.red() << ' ' <<
-            material.emissive.green() << ' ' <<
-            material.emissive.blue() << '\n';
+        fmt::print(out, "emissive {} {} {}\n",
+            material.emissive.red(),
+            material.emissive.green(),
+            material.emissive.blue());
+        if (!out.good()) { return false; }
     }
 
     if (material.specular != DefaultSpecular)
     {
-        out << "specular " <<
-            material.specular.red() << ' ' <<
-            material.specular.green() << ' ' <<
-            material.specular.blue() << '\n';
+        fmt::print(out, "specular {} {} {}\n",
+            material.specular.red(),
+            material.specular.green(),
+            material.specular.blue());
+        if (!out.good()) { return false; }
     }
 
     if (material.specularPower != DefaultSpecularPower)
-        out << "specpower " << material.specularPower << '\n';
+    {
+        fmt::print(out, "specpower {}\n", material.specularPower);
+        if (!out.good()) { return false; }
+    }
 
     if (material.opacity != DefaultOpacity)
-        out << "opacity " << material.opacity << '\n';
+    {
+        fmt::print(out, "opacity {}\n", material.opacity);
+        if (!out.good()) { return false; }
+    }
 
     if (material.blend != DefaultBlend)
     {
-        out << "blend ";
+        if (!(out << "blend ").good()) { return false; }
         switch (material.blend)
         {
         case Material::NormalBlend:
@@ -1050,7 +1083,8 @@ AsciiModelWriter::writeMaterial(const Material& material)
             assert(0);
             break;
         }
-        out << "\n";
+
+        if (!out.good() || !(out << '\n').good()) { return false; }
     }
 
     for (int i = 0; i < Material::TextureSemanticMax; i++)
@@ -1081,11 +1115,14 @@ AsciiModelWriter::writeMaterial(const Material& material)
                 assert(0);
             }
 
-            out << " \"" << texSource.string() << "\"\n";
+            if (!out.good()) { return false; }
+
+            fmt::print(out, " \"{}\"\n", texSource.string());
+            if (!out.good()) { return false; }
         }
     }
 
-    out << "end_material\n";
+    return (out << "end_material\n").good();
 }
 
 
@@ -1100,83 +1137,66 @@ BinaryModelLoader::BinaryModelLoader(istream& _in) :
 void
 BinaryModelLoader::reportError(const string& msg)
 {
-    string s;
-    s = fmt::sprintf("%s (offset %d)", msg, 0);
+    string s = fmt::format("{} (offset {})", msg, 0);
     ModelLoader::reportError(s);
 }
 
 
-// Read a big-endian 32-bit unsigned integer
-static uint32_t readUint(istream& in)
+static bool readToken(istream& in, ModelFileToken& value)
 {
-    int32_t ret;
-    in.read((char*) &ret, sizeof(int32_t));
-    LE_TO_CPU_INT32(ret, ret);
-    return (uint32_t) ret;
+    std::int16_t num;
+    if (!celutil::readLE<std::int16_t>(in, num)) { return false; }
+    value = static_cast<ModelFileToken>(num);
+    return true;
 }
 
 
-static float readFloat(istream& in)
+static bool readType(istream& in, ModelFileType& value)
 {
-    float f;
-    in.read((char*) &f, sizeof(float));
-    LE_TO_CPU_FLOAT(f, f);
-    return f;
-}
-
-
-static int16_t readInt16(istream& in)
-{
-    int16_t ret;
-    in.read((char *) &ret, sizeof(int16_t));
-    LE_TO_CPU_INT16(ret, ret);
-    return ret;
-}
-
-
-static ModelFileToken readToken(istream& in)
-{
-    return (ModelFileToken) readInt16(in);
-}
-
-
-static ModelFileType readType(istream& in)
-{
-    return (ModelFileType) readInt16(in);
+    std::int16_t num;
+    if (!celutil::readLE<std::int16_t>(in, num)) { return false; }
+    value = static_cast<ModelFileType>(num);
+    return true;
 }
 
 
 static bool readTypeFloat1(istream& in, float& f)
 {
-    if (readType(in) != CMOD_Float1)
-        return false;
-    f = readFloat(in);
-    return true;
+    ModelFileType cmodType;
+    return readType(in, cmodType)
+        && cmodType == CMOD_Float1
+        && celutil::readLE<float>(in, f);
 }
 
 
 static bool readTypeColor(istream& in, Material::Color& c)
 {
-    if (readType(in) != CMOD_Color)
+    ModelFileType cmodType;
+    float r, g, b;
+    if (!readType(in, cmodType)
+        || cmodType != CMOD_Color
+        || !celutil::readLE<float>(in, r)
+        || !celutil::readLE<float>(in, g)
+        || !celutil::readLE<float>(in, b))
+    {
         return false;
+    }
 
-    float r = readFloat(in);
-    float g = readFloat(in);
-    float b = readFloat(in);
     c = Material::Color(r, g, b);
-
     return true;
 }
 
 
 static bool readTypeString(istream& in, string& s)
 {
-    if (readType(in) != CMOD_String)
-        return false;
-
+    ModelFileType cmodType;
     uint16_t len;
-    in.read((char*) &len, sizeof(uint16_t));
-    LE_TO_CPU_INT16(len, len);
+    if (!readType(in, cmodType)
+        || cmodType != CMOD_String
+        || !celutil::readLE<std::uint16_t>(in, len))
+    {
+        return false;
+    }
 
     if (len == 0)
     {
@@ -1184,10 +1204,9 @@ static bool readTypeString(istream& in, string& s)
     }
     else
     {
-        auto* buf = new char[len];
-        in.read(buf, len);
-        s = string(buf, len);
-        delete[] buf;
+        std::vector<char> buf(len);
+        if (!in.read(buf.data(), len).good()) { return false; }
+        s = string(buf.cbegin(), buf.cend());
     }
 
     return true;
@@ -1196,8 +1215,9 @@ static bool readTypeString(istream& in, string& s)
 
 static bool ignoreValue(istream& in)
 {
-    ModelFileType type = readType(in);
-    int size = 0;
+    ModelFileType type;
+    if (!readType(in, type)) { return false; }
+    std::streamsize size = 0;
 
     switch (type)
     {
@@ -1221,9 +1241,8 @@ static bool ignoreValue(istream& in)
         break;
     case CMOD_String:
         {
-            uint16_t len;
-            in.read((char*) &len, sizeof(uint16_t));
-            LE_TO_CPU_INT16(len, len);
+            std::uint16_t len;
+            if (!celutil::readLE<std::uint16_t>(in, len)) { return false; }
             size = len;
         }
         break;
@@ -1232,9 +1251,7 @@ static bool ignoreValue(istream& in)
         return false;
     }
 
-    in.ignore(size);
-
-    return true;
+    return in.ignore(size).good();
 }
 
 
@@ -1247,12 +1264,12 @@ BinaryModelLoader::load()
     // Parse material and mesh definitions
     for (;;)
     {
-        ModelFileToken tok = readToken(in);
-
-        if (in.eof())
+        ModelFileToken tok;
+        if (!readToken(in, tok))
         {
             break;
         }
+
         if (tok == CMOD_Material)
         {
             if (seenMeshes)
@@ -1309,7 +1326,14 @@ BinaryModelLoader::loadMaterial()
 
     for (;;)
     {
-        ModelFileToken tok = readToken(in);
+        ModelFileToken tok;
+        if (!readToken(in, tok))
+        {
+            reportError("Error reading token type");
+            delete material;
+            return nullptr;
+        }
+
         switch (tok)
         {
         case CMOD_Diffuse:
@@ -1359,8 +1383,9 @@ BinaryModelLoader::loadMaterial()
 
         case CMOD_Blend:
             {
-                int16_t blendMode = readInt16(in);
-                if (blendMode < 0 || blendMode >= Material::BlendMax)
+                std::int16_t blendMode;
+                if (!celutil::readLE<std::int16_t>(in, blendMode)
+                    || blendMode < 0 || blendMode >= Material::BlendMax)
                 {
                     reportError("Bad blend mode");
                     delete material;
@@ -1372,8 +1397,9 @@ BinaryModelLoader::loadMaterial()
 
         case CMOD_Texture:
             {
-                int16_t texType = readInt16(in);
-                if (texType < 0 || texType >= Material::TextureSemanticMax)
+                std::int16_t texType;
+                if (!celutil::readLE<std::int16_t>(in, texType)
+                    || texType < 0 || texType >= Material::TextureSemanticMax)
                 {
                     reportError("Bad texture type");
                     delete material;
@@ -1427,7 +1453,8 @@ BinaryModelLoader::loadMaterial()
 Mesh::VertexDescription*
 BinaryModelLoader::loadVertexDescription()
 {
-    if (readToken(in) != CMOD_VertexDesc)
+    ModelFileToken tok;
+    if (!readToken(in, tok) || tok != CMOD_VertexDesc)
     {
         reportError("Vertex description expected");
         return nullptr;
@@ -1440,7 +1467,13 @@ BinaryModelLoader::loadVertexDescription()
 
     for (;;)
     {
-        int16_t tok = readInt16(in);
+        std::int16_t tok;
+        if (!celutil::readLE<std::int16_t>(in, tok))
+        {
+            reportError("Could not read token");
+            delete[] attributes;
+            return nullptr;
+        }
 
         if (tok == CMOD_EndVertexDesc)
         {
@@ -1448,31 +1481,30 @@ BinaryModelLoader::loadVertexDescription()
         }
         if (tok >= 0 && tok < Mesh::SemanticMax)
         {
-            int16_t fmt = readInt16(in);
-            if (fmt < 0 || fmt >= Mesh::FormatMax)
+            std::int16_t fmt;
+            if (!celutil::readLE<std::int16_t>(in, fmt)
+                || fmt < 0 || fmt >= Mesh::FormatMax)
             {
                 reportError("Invalid vertex attribute type");
                 delete[] attributes;
                 return nullptr;
             }
 
+            if (nAttributes == maxAttributes)
+            {
+                reportError("Too many attributes in vertex description");
+                delete[] attributes;
+                return nullptr;
+            }
 
-                if (nAttributes == maxAttributes)
-                {
-                    reportError("Too many attributes in vertex description");
-                    delete[] attributes;
-                    return nullptr;
-                }
+            attributes[nAttributes].semantic =
+                static_cast<Mesh::VertexAttributeSemantic>(tok);
+            attributes[nAttributes].format =
+                static_cast<Mesh::VertexAttributeFormat>(fmt);
+            attributes[nAttributes].offset = offset;
 
-                attributes[nAttributes].semantic =
-                    static_cast<Mesh::VertexAttributeSemantic>(tok);
-                attributes[nAttributes].format =
-                    static_cast<Mesh::VertexAttributeFormat>(fmt);
-                attributes[nAttributes].offset = offset;
-
-                offset += Mesh::getVertexAttributeSize(attributes[nAttributes].format);
-                nAttributes++;
-
+            offset += Mesh::getVertexAttributeSize(attributes[nAttributes].format);
+            nAttributes++;
         }
         else
         {
@@ -1518,7 +1550,13 @@ BinaryModelLoader::loadMesh()
 
     for (;;)
     {
-        int16_t tok = readInt16(in);
+        std::int16_t tok;
+        if (!celutil::readLE<std::int16_t>(in, tok))
+        {
+            reportError("Failed to read token type");
+            delete mesh;
+            return nullptr;
+        }
 
         if (tok == CMOD_EndMesh)
         {
@@ -1533,15 +1571,21 @@ BinaryModelLoader::loadMesh()
 
         Mesh::PrimitiveGroupType type =
             static_cast<Mesh::PrimitiveGroupType>(tok);
-        unsigned int materialIndex = readUint(in);
-        unsigned int indexCount = readUint(in);
+        std::uint32_t materialIndex, indexCount;
+        if (!celutil::readLE<std::uint32_t>(in, materialIndex)
+            || !celutil::readLE<std::uint32_t>(in, indexCount))
+        {
+            reportError("Could not read primitive indices");
+            delete mesh;
+            return nullptr;
+        }
 
         auto* indices = new uint32_t[indexCount];
 
         for (unsigned int i = 0; i < indexCount; i++)
         {
-            uint32_t index = readUint(in);
-            if (index >= vertexCount)
+            std::uint32_t index;
+            if (!celutil::readLE<std::uint32_t>(in, index) || index >= vertexCount)
             {
                 reportError("Index out of range");
                 delete[] indices;
@@ -1563,13 +1607,18 @@ char*
 BinaryModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
                                 unsigned int& vertexCount)
 {
-    if (readToken(in) != CMOD_Vertices)
+    ModelFileToken tok;
+    if (!readToken(in, tok) || tok != CMOD_Vertices)
     {
         reportError("Vertex data expected");
         return nullptr;
     }
 
-    vertexCount = readUint(in);
+    if (!celutil::readLE<std::uint32_t>(in, vertexCount))
+    {
+        reportError("Vertex count expected");
+        return nullptr;
+    }
     unsigned int vertexDataSize = vertexDesc.stride * vertexCount;
     auto* vertexData = new char[vertexDataSize];
 
@@ -1582,29 +1631,59 @@ BinaryModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
         {
             unsigned int base = offset + vertexDesc.attributes[attr].offset;
             Mesh::VertexAttributeFormat fmt = vertexDesc.attributes[attr].format;
+            float f[4];
             /*int readCount = 0;    Unused*/
             switch (fmt)
             {
             case Mesh::Float1:
-                reinterpret_cast<float*>(vertexData + base)[0] = readFloat(in);
+                if (!celutil::readLE<float>(in, f[0]))
+                {
+                    reportError("Failed to read Float1");
+                    delete[] vertexData;
+                    return nullptr;
+                }
+                std::memcpy(vertexData + base, f, sizeof(float));
                 break;
             case Mesh::Float2:
-                reinterpret_cast<float*>(vertexData + base)[0] = readFloat(in);
-                reinterpret_cast<float*>(vertexData + base)[1] = readFloat(in);
+                if (!celutil::readLE<float>(in, f[0])
+                    || !celutil::readLE<float>(in, f[1]))
+                {
+                    reportError("Failed to read Float2");
+                    delete[] vertexData;
+                    return nullptr;
+                }
+                std::memcpy(vertexData + base, f, sizeof(float) * 2);
                 break;
             case Mesh::Float3:
-                reinterpret_cast<float*>(vertexData + base)[0] = readFloat(in);
-                reinterpret_cast<float*>(vertexData + base)[1] = readFloat(in);
-                reinterpret_cast<float*>(vertexData + base)[2] = readFloat(in);
+                if (!celutil::readLE<float>(in, f[0])
+                    || !celutil::readLE<float>(in, f[1])
+                    || !celutil::readLE<float>(in, f[2]))
+                {
+                    reportError("Failed to read Float3");
+                    delete[] vertexData;
+                    return nullptr;
+                }
+                std::memcpy(vertexData + base, f, sizeof(float) * 3);
                 break;
             case Mesh::Float4:
-                reinterpret_cast<float*>(vertexData + base)[0] = readFloat(in);
-                reinterpret_cast<float*>(vertexData + base)[1] = readFloat(in);
-                reinterpret_cast<float*>(vertexData + base)[2] = readFloat(in);
-                reinterpret_cast<float*>(vertexData + base)[3] = readFloat(in);
+                if (!celutil::readLE<float>(in, f[0])
+                    || !celutil::readLE<float>(in, f[1])
+                    || !celutil::readLE<float>(in, f[2])
+                    || !celutil::readLE<float>(in, f[3]))
+                {
+                    reportError("Failed to read Float4");
+                    delete[] vertexData;
+                    return nullptr;
+                }
+                std::memcpy(vertexData + base, f, sizeof(float) * 4);
                 break;
             case Mesh::UByte4:
-                in.get(reinterpret_cast<char*>(vertexData + base), 4);
+                if (!in.get(reinterpret_cast<char*>(vertexData + base), 4).good())
+                {
+                    reportError("failed to read UByte4");
+                    delete[] vertexData;
+                    return nullptr;
+                }
                 break;
             default:
                 assert(0);
@@ -1627,108 +1706,102 @@ BinaryModelWriter::BinaryModelWriter(ostream& _out) :
 }
 
 // Utility functions for writing binary values to a file
-static void writeUint32(ostream& out, uint32_t val)
+static bool writeToken(ostream& out, ModelFileToken val)
 {
-    LE_TO_CPU_INT32(val, val);
-    out.write(reinterpret_cast<char*>(&val), sizeof(uint32_t));
+    return celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(val));
 }
 
-static void writeFloat(ostream& out, float val)
+static bool writeType(ostream& out, ModelFileType val)
 {
-    LE_TO_CPU_FLOAT(val, val);
-    out.write(reinterpret_cast<char*>(&val), sizeof(float));
-}
-
-static void writeInt16(ostream& out, int16_t val)
-{
-    LE_TO_CPU_INT16(val, val);
-    out.write(reinterpret_cast<char*>(&val), sizeof(int16_t));
-}
-
-static void writeToken(ostream& out, ModelFileToken val)
-{
-    writeInt16(out, static_cast<int16_t>(val));
-}
-
-static void writeType(ostream& out, ModelFileType val)
-{
-    writeInt16(out, static_cast<int16_t>(val));
+    return celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(val));
 }
 
 
-static void writeTypeFloat1(ostream& out, float f)
+static bool writeTypeFloat1(ostream& out, float f)
 {
-    writeType(out, CMOD_Float1);
-    writeFloat(out, f);
+    return writeType(out, CMOD_Float1) && celutil::writeLE<float>(out, f);
 }
 
 
-static void writeTypeColor(ostream& out, const Material::Color& c)
+static bool writeTypeColor(ostream& out, const Material::Color& c)
 {
-    writeType(out, CMOD_Color);
-    writeFloat(out, c.red());
-    writeFloat(out, c.green());
-    writeFloat(out, c.blue());
+    return writeType(out, CMOD_Color)
+        && celutil::writeLE<float>(out, c.red())
+        && celutil::writeLE<float>(out, c.green())
+        && celutil::writeLE<float>(out, c.blue());
 }
 
 
-static void writeTypeString(ostream& out, const string& s)
+static bool writeTypeString(ostream& out, const string& s)
 {
-    writeType(out, CMOD_String);
-    writeInt16(out, static_cast<int16_t>(s.length()));
-    out.write(s.c_str(), s.length());
+    return s.length() <= INT16_MAX
+        && writeType(out, CMOD_String)
+        && celutil::writeLE<std::int16_t>(out, s.length())
+        && out.write(s.c_str(), s.length()).good();
 }
 
 
 bool
 BinaryModelWriter::write(const Model& model)
 {
-    out << CEL_MODEL_HEADER_BINARY;
+    if (!out.write(CEL_MODEL_HEADER_BINARY, CEL_MODEL_HEADER_LENGTH).good()) { return false; }
 
     for (unsigned int matIndex = 0; model.getMaterial(matIndex) != nullptr; matIndex++)
-        writeMaterial(*model.getMaterial(matIndex));
+    {
+        if (!writeMaterial(*model.getMaterial(matIndex))) { return false; }
+    }
 
     for (unsigned int meshIndex = 0; model.getMesh(meshIndex) != nullptr; meshIndex++)
-        writeMesh(*model.getMesh(meshIndex));
+    {
+        if (!writeMesh(*model.getMesh(meshIndex))) { return false; }
+    }
 
     return true;
 }
 
 
-void
+bool
 BinaryModelWriter::writeGroup(const Mesh::PrimitiveGroup& group)
 {
-    writeInt16(out, static_cast<int16_t>(group.prim));
-    writeUint32(out, group.materialIndex);
-    writeUint32(out, group.nIndices);
+    if (!celutil::writeLE<std::int16_t>(out, group.prim)
+        || !celutil::writeLE<std::uint32_t>(out, group.materialIndex)
+        || !celutil::writeLE<std::uint32_t>(out, group.nIndices))
+    {
+        return false;
+    }
 
     for (unsigned int i = 0; i < group.nIndices; i++)
     {
-        writeUint32(out, group.indices[i]);
+        if (!celutil::writeLE<std::uint32_t>(out, group.indices[i])) { return false; }
     }
+
+    return true;
 }
 
 
-void
+bool
 BinaryModelWriter::writeMesh(const Mesh& mesh)
 {
-    writeToken(out, CMOD_Mesh);
-
-    writeVertexDescription(mesh.getVertexDescription());
-
-    writeVertices(mesh.getVertexData(),
-                  mesh.getVertexCount(),
-                  mesh.getVertexStride(),
-                  mesh.getVertexDescription());
+    if (!writeToken(out, CMOD_Mesh)
+        || !writeVertexDescription(mesh.getVertexDescription())
+        || !writeVertices(mesh.getVertexData(),
+                          mesh.getVertexCount(),
+                          mesh.getVertexStride(),
+                          mesh.getVertexDescription()))
+    {
+        return false;
+    }
 
     for (unsigned int groupIndex = 0; mesh.getGroup(groupIndex) != nullptr; groupIndex++)
-        writeGroup(*mesh.getGroup(groupIndex));
+    {
+        if (!writeGroup(*mesh.getGroup(groupIndex))) { return false; }
+    }
 
-    writeToken(out, CMOD_EndMesh);
+    return writeToken(out, CMOD_EndMesh);
 }
 
 
-void
+bool
 BinaryModelWriter::writeVertices(const void* vertexData,
                                  unsigned int nVertices,
                                  unsigned int stride,
@@ -1736,102 +1809,116 @@ BinaryModelWriter::writeVertices(const void* vertexData,
 {
     const auto* vertex = reinterpret_cast<const char*>(vertexData);
 
-    writeToken(out, CMOD_Vertices);
-    writeUint32(out, nVertices);
+    if (!writeToken(out, CMOD_Vertices) || !celutil::writeLE<std::uint32_t>(out, nVertices))
+    {
+        return false;
+    }
 
     for (unsigned int i = 0; i < nVertices; i++, vertex += stride)
     {
         for (unsigned int attr = 0; attr < desc.nAttributes; attr++)
         {
             const char* cdata = vertex + desc.attributes[attr].offset;
-            const auto* fdata = reinterpret_cast<const float*>(cdata);
+            float fdata[4];
 
+            bool result;
             switch (desc.attributes[attr].format)
             {
             case Mesh::Float1:
-                writeFloat(out, fdata[0]);
+                std::memcpy(fdata, cdata, sizeof(float));
+                result = celutil::writeLE<float>(out, fdata[0]);
                 break;
             case Mesh::Float2:
-                writeFloat(out, fdata[0]);
-                writeFloat(out, fdata[1]);
+                std::memcpy(fdata, cdata, sizeof(float) * 2);
+                result = celutil::writeLE<float>(out, fdata[0])
+                    && celutil::writeLE<float>(out, fdata[1]);
                 break;
             case Mesh::Float3:
-                writeFloat(out, fdata[0]);
-                writeFloat(out, fdata[1]);
-                writeFloat(out, fdata[2]);
+                std::memcpy(fdata, cdata, sizeof(float) * 3);
+                result = celutil::writeLE<float>(out, fdata[0])
+                    && celutil::writeLE<float>(out, fdata[1])
+                    && celutil::writeLE<float>(out, fdata[2]);
                 break;
             case Mesh::Float4:
-                writeFloat(out, fdata[0]);
-                writeFloat(out, fdata[1]);
-                writeFloat(out, fdata[2]);
-                writeFloat(out, fdata[3]);
+                std::memcpy(fdata, cdata, sizeof(float) * 4);
+                result = celutil::writeLE<float>(out, fdata[0])
+                    && celutil::writeLE<float>(out, fdata[1])
+                    && celutil::writeLE<float>(out, fdata[2])
+                    && celutil::writeLE<float>(out, fdata[3]);
                 break;
             case Mesh::UByte4:
-                out.write(cdata, 4);
+                result = out.write(cdata, 4).good();
                 break;
             default:
                 assert(0);
                 break;
             }
+
+            if (!result) { return false; }
         }
     }
+
+    return true;
 }
 
 
-void
+bool
 BinaryModelWriter::writeVertexDescription(const Mesh::VertexDescription& desc)
 {
-    writeToken(out, CMOD_VertexDesc);
+    if (!writeToken(out, CMOD_VertexDesc)) { return false; }
 
     for (unsigned int attr = 0; attr < desc.nAttributes; attr++)
     {
-        writeInt16(out, static_cast<int16_t>(desc.attributes[attr].semantic));
-        writeInt16(out, static_cast<int16_t>(desc.attributes[attr].format));
+        if (!celutil::writeLE<std::int16_t>(out, desc.attributes[attr].semantic)
+            || !celutil::writeLE<std::int16_t>(out, desc.attributes[attr].format))
+        {
+            return false;
+        }
     }
 
-    writeToken(out, CMOD_EndVertexDesc);
+    return writeToken(out, CMOD_EndVertexDesc);
 }
 
 
-void
+bool
 BinaryModelWriter::writeMaterial(const Material& material)
 {
-    writeToken(out, CMOD_Material);
+    if (!writeToken(out, CMOD_Material)) { return false; }
 
-    if (material.diffuse != DefaultDiffuse)
+    if (material.diffuse != DefaultDiffuse
+        && (!writeToken(out, CMOD_Diffuse) || !writeTypeColor(out, material.diffuse)))
     {
-        writeToken(out, CMOD_Diffuse);
-        writeTypeColor(out, material.diffuse);
+        return false;
     }
 
-    if (material.emissive != DefaultEmissive)
+    if (material.emissive != DefaultEmissive
+        && (!writeToken(out, CMOD_Emissive) || !writeTypeColor(out, material.emissive)))
     {
-        writeToken(out, CMOD_Emissive);
-        writeTypeColor(out, material.emissive);
+        return false;
     }
 
-    if (material.specular != DefaultSpecular)
+    if (material.specular != DefaultSpecular
+        && (!writeToken(out, CMOD_Specular) || !writeTypeColor(out, material.specular)))
     {
-        writeToken(out, CMOD_Specular);
-        writeTypeColor(out, material.specular);
+        return false;
     }
 
-    if (material.specularPower != DefaultSpecularPower)
+    if (material.specularPower != DefaultSpecularPower
+        && (!writeToken(out, CMOD_SpecularPower) || !writeTypeFloat1(out, material.specularPower)))
     {
-        writeToken(out, CMOD_SpecularPower);
-        writeTypeFloat1(out, material.specularPower);
+        return false;
     }
 
-    if (material.opacity != DefaultOpacity)
+    if (material.opacity != DefaultOpacity
+        && (!writeToken(out, CMOD_Opacity) || !writeTypeFloat1(out, material.opacity)))
     {
-        writeToken(out, CMOD_Opacity);
-        writeTypeFloat1(out, material.opacity);
+        return false;
     }
 
-    if (material.blend != DefaultBlend)
+    if (material.blend != DefaultBlend
+        && (!writeToken(out, CMOD_Blend) || !celutil::writeLE<std::int16_t>(out, material.blend)))
     {
-        writeToken(out, CMOD_Blend);
-        writeInt16(out, (int16_t) material.blend);
+        return false;
     }
 
     for (int i = 0; i < Material::TextureSemanticMax; i++)
@@ -1839,16 +1926,17 @@ BinaryModelWriter::writeMaterial(const Material& material)
         if (material.maps[i])
         {
             fs::path texSource = material.maps[i]->source();
-            if (!texSource.empty())
+            if (!texSource.empty()
+                && (!writeToken(out, CMOD_Texture)
+                    || !celutil::writeLE<std::int16_t>(out, i)
+                    || !writeTypeString(out, texSource.string())))
             {
-                writeToken(out, CMOD_Texture);
-                writeInt16(out, (int16_t) i);
-                writeTypeString(out, texSource.string());
+                return false;
             }
         }
     }
 
-    writeToken(out, CMOD_EndMaterial);
+    return writeToken(out, CMOD_EndMaterial);
 }
 
 
