@@ -106,18 +106,9 @@ File Overview
   Astronomical conversions and a Date class for converting from dd/mm/yyyy
   to Julian date.
 
-* vecmath.h
-  Templatized classes for Points, Vectors, and Matrices
-
-* quaternion.h
-  Templatized quaternion class
-
 * vecgl.h
   A handful of template functions which make it easy to use types from
-  vecmath.h with OpenGL
-
-* aabox.h
-  Axis-aligned bounding box class.
+  Eigen with OpenGL
 
 * glext.h
 * glext.cpp
@@ -162,7 +153,7 @@ a pointer to a star from the database.
 Stars
 -----
 Since there are so many stars in a star database, it's important that the
-size of the Star class be kept to a minimum.  Thus, in order to avoid the 
+size of the Star class be kept to a minimum.  Thus, in order to avoid the
 4 byte vtable overhead Star is not a derived class, even though it might
 be somewhat useful to have a common base class for stars and planets.  All
 stars have a unique catalog number, a position, a stellar class, and a

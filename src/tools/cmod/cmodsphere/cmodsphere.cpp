@@ -8,7 +8,8 @@
 #endif
 #include <fcntl.h>
 
-#include <celmath/vecmath.h>
+#include <Eigen/Core>
+
 
 using namespace std;
 
@@ -103,8 +104,8 @@ inline float sampleBilinear(const float samples[],
 
 // subdiv is the number of rows in the triangle
 void triangleSection(unsigned int subdiv,
-                     Vec3f v0, Vec3f v1, Vec3f v2,
-                     Vec2f tex0, Vec2f tex1, Vec2f tex2)
+                     Eigen::Vector3f v0, Eigen::Vector3f v1, Eigen::Vector3f v2,
+                     Eigen::Vector2f tex0, Eigen::Vector2f tex1, Eigen::Vector2f tex2)
 {
     float ssamp = (float) (longSamples - 1) + 0.99f;
     float tsamp = (float) (latSamples - 1) + 0.99f;
@@ -116,19 +117,19 @@ void triangleSection(unsigned int subdiv,
             float u = (i == 0) ? 0.0f : (float) j / (float) i;
             float v = (float) i / (float) subdiv;
 
-            Vec3f w0 = (1.0f - v) * v0 + v * v1;
-            Vec3f w1 = (1.0f - v) * v0 + v * v2;
-            Vec3f w = (1.0f - u) * w0 + u * w1;
+            Eigen::Vector3f w0 = (1.0f - v) * v0 + v * v1;
+            Eigen::Vector3f w1 = (1.0f - v) * v0 + v * v2;
+            Eigen::Vector3f w = (1.0f - u) * w0 + u * w1;
 
-            Vec2f t((1.0f - u) * tex1.x + u * tex2.x,
-                    (1.0f - v) * tex0.y + v * tex1.y);
+            Eigen::Vector2f t((1.0f - u) * tex1.x() + u * tex2.x(),
+                    (1.0f - v) * tex0.y() + v * tex1.y());
 
             w.normalize();
 
             if (samples != nullptr)
             {
-                float theta = (float) acos(w.y);
-                float phi = (float) atan2(-w.z, w.x);
+                float theta = (float) acos(w.y());
+                float phi = (float) atan2(-w.z(), w.x());
                 float s = phi / (2.0f * pi) + 0.5f;
                 float t = theta / pi;
 
@@ -137,8 +138,8 @@ void triangleSection(unsigned int subdiv,
                 w = w * r;
             }
 
-            cout << w.x << " " << w.y << " " << w.z << " "
-                 << t.x << " " << t.y << "\n";
+            cout << w.x() << " " << w.y() << " " << w.z() << " "
+                 << t.x() << " " << t.y() << "\n";
         }
     }
 }
@@ -237,62 +238,62 @@ int main(int argc, char* argv[])
     cout << "vertices " << vertexCount << "\n";
 
     triangleSection(subdiv,
-                    Vec3f(0.0f, 1.0f, 0.0f),
-                    Vec3f(1.0f, 0.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, -1.0f),
-                    Vec2f(0.0f, 0.0f),
-                    Vec2f(0.00f, 0.5f),
-                    Vec2f(0.25f, 0.5f));
+                    Eigen::Vector3f(0.0f, 1.0f, 0.0f),
+                    Eigen::Vector3f(1.0f, 0.0f, 0.0f),
+                    Eigen::Vector3f(0.0f, 0.0f, -1.0f),
+                    Eigen::Vector2f(0.0f, 0.0f),
+                    Eigen::Vector2f(0.00f, 0.5f),
+                    Eigen::Vector2f(0.25f, 0.5f));
     triangleSection(subdiv,
-                    Vec3f(0.0f, 1.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, 1.0f),
-                    Vec3f(1.0f, 0.0f, 0.0f),
-                    Vec2f(0.0f, 0.0f),
-                    Vec2f(0.75f, 0.5f),
-                    Vec2f(1.00f, 0.5f));;
+                    Eigen::Vector3f(0.0f, 1.0f, 0.0f),
+                    Eigen::Vector3f(0.0f, 0.0f, 1.0f),
+                    Eigen::Vector3f(1.0f, 0.0f, 0.0f),
+                    Eigen::Vector2f(0.0f, 0.0f),
+                    Eigen::Vector2f(0.75f, 0.5f),
+                    Eigen::Vector2f(1.00f, 0.5f));;
     triangleSection(subdiv,
-                    Vec3f(0.0f, 1.0f, 0.0f),
-                    Vec3f(-1.0f, 0.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, 1.0f),
-                    Vec2f(0.0f, 0.0f),
-                    Vec2f(0.50f, 0.5f),
-                    Vec2f(0.75f, 0.5f));
+                    Eigen::Vector3f(0.0f, 1.0f, 0.0f),
+                    Eigen::Vector3f(-1.0f, 0.0f, 0.0f),
+                    Eigen::Vector3f(0.0f, 0.0f, 1.0f),
+                    Eigen::Vector2f(0.0f, 0.0f),
+                    Eigen::Vector2f(0.50f, 0.5f),
+                    Eigen::Vector2f(0.75f, 0.5f));
     triangleSection(subdiv,
-                    Vec3f(0.0f, 1.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, -1.0f),
-                    Vec3f(-1.0f, 0.0f, 0.0f),
-                    Vec2f(0.0f, 0.0f),
-                    Vec2f(0.25f, 0.5f),
-                    Vec2f(0.50f, 0.5f));
+                    Eigen::Vector3f(0.0f, 1.0f, 0.0f),
+                    Eigen::Vector3f(0.0f, 0.0f, -1.0f),
+                    Eigen::Vector3f(-1.0f, 0.0f, 0.0f),
+                    Eigen::Vector2f(0.0f, 0.0f),
+                    Eigen::Vector2f(0.25f, 0.5f),
+                    Eigen::Vector2f(0.50f, 0.5f));
 
     triangleSection(subdiv,
-                    Vec3f(0.0f, -1.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, -1.0f),
-                    Vec3f(1.0f, 0.0f, 0.0f),
-                    Vec2f(0.0f, 1.0f),
-                    Vec2f(0.25f, 0.5f),
-                    Vec2f(0.00f, 0.5f));
+                    Eigen::Vector3f(0.0f, -1.0f, 0.0f),
+                    Eigen::Vector3f(0.0f, 0.0f, -1.0f),
+                    Eigen::Vector3f(1.0f, 0.0f, 0.0f),
+                    Eigen::Vector2f(0.0f, 1.0f),
+                    Eigen::Vector2f(0.25f, 0.5f),
+                    Eigen::Vector2f(0.00f, 0.5f));
     triangleSection(subdiv,
-                    Vec3f(0.0f, -1.0f, 0.0f),
-                    Vec3f(1.0f, 0.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, 1.0f),
-                    Vec2f(0.0f, 1.0f),
-                    Vec2f(1.00f, 0.5f),
-                    Vec2f(0.75f, 0.5f));
+                    Eigen::Vector3f(0.0f, -1.0f, 0.0f),
+                    Eigen::Vector3f(1.0f, 0.0f, 0.0f),
+                    Eigen::Vector3f(0.0f, 0.0f, 1.0f),
+                    Eigen::Vector2f(0.0f, 1.0f),
+                    Eigen::Vector2f(1.00f, 0.5f),
+                    Eigen::Vector2f(0.75f, 0.5f));
     triangleSection(subdiv,
-                    Vec3f(0.0f, -1.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, 1.0f),
-                    Vec3f(-1.0f, 0.0f, 0.0f),
-                    Vec2f(0.0f, 1.0f),
-                    Vec2f(0.75f, 0.5f),
-                    Vec2f(0.50f, 0.5f));
+                    Eigen::Vector3f(0.0f, -1.0f, 0.0f),
+                    Eigen::Vector3f(0.0f, 0.0f, 1.0f),
+                    Eigen::Vector3f(-1.0f, 0.0f, 0.0f),
+                    Eigen::Vector2f(0.0f, 1.0f),
+                    Eigen::Vector2f(0.75f, 0.5f),
+                    Eigen::Vector2f(0.50f, 0.5f));
     triangleSection(subdiv,
-                    Vec3f(0.0f, -1.0f, 0.0f),
-                    Vec3f(-1.0f, 0.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, -1.0f),
-                    Vec2f(0.0f, 1.0f),
-                    Vec2f(0.50f, 0.5f),
-                    Vec2f(0.25f, 0.5f));
+                    Eigen::Vector3f(0.0f, -1.0f, 0.0f),
+                    Eigen::Vector3f(-1.0f, 0.0f, 0.0f),
+                    Eigen::Vector3f(0.0f, 0.0f, -1.0f),
+                    Eigen::Vector2f(0.0f, 1.0f),
+                    Eigen::Vector2f(0.50f, 0.5f),
+                    Eigen::Vector2f(0.25f, 0.5f));
 
     cout << "trilist 0 " << triangleCount * 3 << "\n";
 
