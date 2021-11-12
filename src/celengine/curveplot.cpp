@@ -310,13 +310,18 @@ public:
     inline void end(bool flushIfNeeded = true)
     {
 #if USE_VERTEX_BUFFER
-        if (currentPosition > 1)
+        if (currentStripLength > 1)
         {
             int index = currentPosition * 2;
             memcpy(&data[index], &data[index - 4], 2 * sizeof(Vertex));
             currentPosition += 1;
+            stripLengths.push_back(currentStripLength);
         }
-        stripLengths.push_back(currentStripLength);
+        else
+        {
+            // Abandon line strips that only contains zero/one point
+            currentPosition -= currentStripLength;
+        }
         currentStripLength = 0;
         if (flushIfNeeded && currentPosition == capacity)
             flush(false);
