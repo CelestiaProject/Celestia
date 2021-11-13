@@ -832,7 +832,7 @@ LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation int
     ifstream in(filename.string(), ios::binary);
     if (!in.good())
     {
-        cerr << fmt::sprintf(_("Error openning %s.\n"), filename);
+        cerr << fmt::sprintf(_("Error opening %s.\n"), filename);
         return nullptr;
     }
 

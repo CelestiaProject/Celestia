@@ -15,7 +15,7 @@ static bool binaryToText(const string& infilename, const string& outfilename)
     ofstream out(outfilename);
     if (!in.good() || !out.good())
     {
-        fmt::print(cerr, _("Error openning {} or .\n"), infilename, outfilename);
+        fmt::print(cerr, _("Error opening {} or .\n"), infilename, outfilename);
         return false;
     }
 
