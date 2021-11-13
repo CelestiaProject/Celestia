@@ -440,9 +440,17 @@ void UTF8Encode(std::uint32_t ch, std::string& dest)
     }
     else if (ch < 0x10000)
     {
-        dest.push_back(static_cast<char>(0xe0 | (ch >> 12)));
-        dest.push_back(static_cast<char>(0x80 | ((ch & 0xfff) >> 6)));
-        dest.push_back(static_cast<char>(0x80 | (ch & 0x3f)));
+        if (ch < 0xd800 || ch >= 0xe000)
+        {
+            dest.push_back(static_cast<char>(0xe0 | (ch >> 12)));
+            dest.push_back(static_cast<char>(0x80 | ((ch & 0xfff) >> 6)));
+            dest.push_back(static_cast<char>(0x80 | (ch & 0x3f)));
+        }
+        else
+        {
+            // disallow surrogates
+            dest.append(UTF8_REPLACEMENT_CHAR);
+        }
     }
 #if WCHAR_MAX > 0xFFFFu
     else if (ch < 0x110000)
@@ -457,7 +465,7 @@ void UTF8Encode(std::uint32_t ch, std::string& dest)
     {
         // not a valid Unicode code point, or we only support BMP characters,
         // so fall back to U+FFFD REPLACEMENT CHARACTER
-        dest.append("\357\277\275");
+        dest.append(UTF8_REPLACEMENT_CHAR);
     }
 }
 
@@ -998,4 +1006,52 @@ std::vector<std::string> getGreekCompletion(const std::string &s)
     }
 
     return ret;
+}
+
+bool
+UTF8Validator::check(char c)
+{
+    return check(static_cast<unsigned char>(c));
+}
+
+bool
+UTF8Validator::check(unsigned char c)
+{
+    switch (state)
+    {
+    case State::Initial:
+        if (c < 0x80) { return true; }
+        if (c < 0xc2) { return false; }
+        if (c < 0xe0) { state = State::Continuation1; return true; }
+        if (c == 0xe0) { state = State::E0Continuation; return true; }
+        if (c < 0xed) { state = State::Continuation2; return true; }
+        if (c== 0xed) { state = State::EDContinuation; return true; }
+        if (c < 0xf0) { state = State::Continuation2; return true; }
+        if (c == 0xf0) { state = State::F0Continuation; return true; }
+        if (c < 0xf4) { state = State::Continuation3; return true; }
+        if (c == 0xf4) { state = State::F4Continuation; return true; }
+        return false;
+    case State::Continuation1:
+        if (c >= 0x80 && c < 0xc0) { state = State::Initial; return true; }
+        break;
+    case State::Continuation2:
+        if (c >= 0x80 && c < 0xc0) { state = State::Continuation1; return true; }
+        break;
+    case State::Continuation3:
+        if (c >= 0x80 && c < 0xc0) { state = State::Continuation2; return true; }
+        break;
+    case State::E0Continuation: // disallow overlong sequences
+        if (c >= 0xa0 && c < 0xc0) { state = State::Continuation1; return true; }
+        break;
+    case State::EDContinuation: // disallow surrogate pairs
+        if (c >= 0x80 && c < 0xa0) { state = State::Continuation1; return true; }
+        break;
+    case State::F0Continuation: // disallow overlong sequences
+        if (c >= 0x90 && c < 0xc0) { state = State::Continuation2; return true; }
+        break;
+    case State::F4Continuation: // disallow out-of-range
+        if (c >= 0x80 && c < 0x90) { state = State::Continuation2; return true; }
+    }
+    state = State::Initial;
+    return false;
 }

@@ -7,8 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELUTIL_UTF8_
-#define _CELUTIL_UTF8_
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -26,6 +25,7 @@
 #define UTF8_SUPERSCRIPT_7       "\342\201\267"
 #define UTF8_SUPERSCRIPT_8       "\342\201\270"
 #define UTF8_SUPERSCRIPT_9       "\342\201\271"
+#define UTF8_REPLACEMENT_CHAR    "\357\277\275"
 
 
 bool UTF8Decode(const std::string& str, int pos, wchar_t& ch);
@@ -136,4 +136,27 @@ class Greek
 
 std::vector<std::string> getGreekCompletion(const std::string &);
 
-#endif // _CELUTIL_UTF8_
+class UTF8Validator
+{
+public:
+    UTF8Validator() = default;
+    ~UTF8Validator() = default;
+
+    bool check(char c);
+    bool check(unsigned char c);
+
+private:
+    enum class State
+    {
+        Initial,
+        Continuation1,
+        Continuation2,
+        Continuation3,
+        E0Continuation,
+        EDContinuation,
+        F0Continuation,
+        F4Continuation,
+    };
+
+    State state{ State::Initial };
+};
