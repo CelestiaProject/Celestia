@@ -430,7 +430,7 @@ static Vector3d findMaxEclipsePoint(const Vector3d& toCasterDir,
                                     double eclipsedBodyRadius)
 {
     double distance = 0.0;
-    bool intersect = testIntersection(Ray3d(Vector3d::Zero(), toCasterDir),
+    bool intersect = testIntersection(Eigen::ParametrizedLine<double, 3>(Vector3d::Zero(), toCasterDir),
                                       Sphered(toReceiver, eclipsedBodyRadius),
                                       distance);
 

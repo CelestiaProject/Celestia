@@ -20,6 +20,7 @@
 #include "frametree.h"
 #include <celmath/mathlib.h>
 #include <celmath/intersect.h>
+#include <celmath/ray.h>
 #include <celutil/utf8.h>
 #include <cassert>
 
@@ -290,7 +291,7 @@ struct PlanetPickInfo
     double closestDistance;
     double closestApproxDistance;
     Body* closestBody;
-    Ray3d pickRay;
+    Eigen::ParametrizedLine<double, 3> pickRay;
     double jd;
     float atanTolerance;
 };
@@ -305,7 +306,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
         return true;
 
     Vector3d bpos = body->getAstrocentricPosition(pickInfo->jd);
-    Vector3d bodyDir = bpos - pickInfo->pickRay.origin;
+    Vector3d bodyDir = bpos - pickInfo->pickRay.origin();
     double distance = bodyDir.norm();
 
     // Check the apparent radius of the orbit against our tolerance factor.
@@ -319,7 +320,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
     }
 
     bodyDir.normalize();
-    Vector3d bodyMiss = bodyDir - pickInfo->pickRay.direction;
+    Vector3d bodyMiss = bodyDir - pickInfo->pickRay.direction();
     double sinAngle2 = bodyMiss.norm() / 2.0;
 
     if (sinAngle2 <= pickInfo->sinAngle2Closest)
@@ -358,8 +359,8 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
 
                 // Transform rotate the pick ray into object coordinates
                 Matrix3d m = body->getEclipticToEquatorial(pickInfo->jd).toRotationMatrix();
-                Ray3d r(pickInfo->pickRay.origin - bpos, pickInfo->pickRay.direction);
-                r = r.transform(m);
+                Eigen::ParametrizedLine<double, 3> r(pickInfo->pickRay.origin() - bpos, pickInfo->pickRay.direction());
+                r = transformRay(r, m);
                 if (!testIntersection(r, Ellipsoidd(ellipsoidAxes), distance))
                     distance = -1.0;
             }
@@ -369,8 +370,8 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             // Transform rotate the pick ray into object coordinates
             Quaterniond qd = body->getGeometryOrientation().cast<double>();
             Matrix3d m = (qd * body->getEclipticToBodyFixed(pickInfo->jd)).toRotationMatrix();
-            Ray3d r(pickInfo->pickRay.origin - bpos, pickInfo->pickRay.direction);
-            r = r.transform(m);
+            Eigen::ParametrizedLine<double, 3> r(pickInfo->pickRay.origin() - bpos, pickInfo->pickRay.direction());
+            r = transformRay(r, m);
 
             Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
             float scaleFactor = body->getGeometryScale();
@@ -381,8 +382,8 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             // factor.  Thus, the ray needs to be multiplied by the inverse of
             // the mesh scale factor.
             double is = 1.0 / scaleFactor;
-            r.origin *= is;
-            r.direction *= is;
+            r.origin() *= is;
+            r.direction() *= is;
 
             if (geometry != nullptr)
             {
@@ -393,9 +394,9 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
         // Make also sure that the pickRay does not intersect the body in the
         // opposite hemisphere! Hence, need again the "bodyMiss" angle
 
-        Vector3d bodyDir = bpos - pickInfo->pickRay.origin;
+        Vector3d bodyDir = bpos - pickInfo->pickRay.origin();
         bodyDir.normalize();
-        Vector3d bodyMiss = bodyDir - pickInfo->pickRay.direction;
+        Vector3d bodyMiss = bodyDir - pickInfo->pickRay.direction();
         double sinAngle2 = bodyMiss.norm() / 2.0;
 
 
@@ -459,7 +460,7 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
     // Transform the pick ray origin into astrocentric coordinates
     Vector3d astrocentricOrigin = origin.offsetFromKm(star->getPosition(when));
 
-    pickInfo.pickRay = Ray3d(astrocentricOrigin, direction.cast<double>());
+    pickInfo.pickRay = Eigen::ParametrizedLine<double, 3>(astrocentricOrigin, direction.cast<double>());
     pickInfo.sinAngle2Closest = 1.0;
     pickInfo.closestDistance = 1.0e50;
     pickInfo.closestApproxDistance = 1.0e50;
@@ -555,7 +556,7 @@ void StarPicker::process(const Star& star, float /*unused*/, float /*unused*/)
         // no intersection, then just use normal calculation.  We actually test
         // intersection with a larger sphere to make sure we don't miss a star
         // right on the edge of the sphere.
-        if (testIntersection(Ray3f(Vector3f::Zero(), pickRay),
+        if (testIntersection(Eigen::ParametrizedLine<float, 3>(Vector3f::Zero(), pickRay),
                              Spheref(relativeStarPos, orbitalRadius * 2.0f),
                              distance))
         {
@@ -627,7 +628,7 @@ void CloseStarPicker::process(const Star& star,
 
     float distance = 0.0f;
 
-     if (testIntersection(Ray3f(Vector3f::Zero(), pickDir),
+     if (testIntersection(Eigen::ParametrizedLine<float, 3>(Vector3f::Zero(), pickDir),
                           Spheref(starDir, star.getRadius()), distance))
     {
         if (distance > 0.0f)
@@ -740,7 +741,7 @@ void DSOPicker::process(DeepSkyObject* const & dso, double /*unused*/, float /*u
     Vector3d dsoDir = relativeDSOPos;
 
     double distance2 = 0.0;
-    if (testIntersection(Ray3d(Vector3d::Zero(), pickDir),
+    if (testIntersection(Eigen::ParametrizedLine<double, 3>(Vector3d::Zero(), pickDir),
                          Sphered(relativeDSOPos, (double) dso->getRadius()), distance2))
     {
         Vector3d dsoPos = dso->getPosition();
@@ -806,7 +807,7 @@ void CloseDSOPicker::process(DeepSkyObject* const & dso,
 
     double  distanceToPicker       = 0.0;
     double  cosAngleToBoundCenter  = 0.0;
-    if (dso->pick(Ray3d(pickOrigin, pickDir), distanceToPicker, cosAngleToBoundCenter))
+    if (dso->pick(Eigen::ParametrizedLine<double, 3>(pickOrigin, pickDir), distanceToPicker, cosAngleToBoundCenter))
     {
         // Don't select the object the observer is currently in:
         if ((pickOrigin - dso->getPosition()).norm() > dso->getRadius() &&

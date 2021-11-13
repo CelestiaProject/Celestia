@@ -177,7 +177,7 @@ void LODSphereMesh::render(unsigned int attributes,
         lod /= (1 << (-lodBias));
     else if (lodBias > 0)
         lod *= (1 << lodBias);
-    lod = clamp(lod, 2, maxDivisions);
+    lod = celmath::clamp(lod, 2, maxDivisions);
 
     int step = maxDivisions / lod;
     int thetaExtent = maxDivisions;

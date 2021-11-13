@@ -8,12 +8,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELMATH_GEOMUTIL_H_
-#define _CELMATH_GEOMUTIL_H_
+#pragma once
+
+#include <cmath>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <cmath>
 
 namespace celmath
 {
@@ -21,24 +21,30 @@ namespace celmath
 template<class T> Eigen::Quaternion<T>
 XRotation(T radians)
 {
-    T halfAngle = radians * T(0.5);
-    return Eigen::Quaternion<T>(std::cos(halfAngle), std::sin(halfAngle), 0, 0);
+    using std::cos;
+    using std::sin;
+    T halfAngle = radians * static_cast<T>(0.5);
+    return Eigen::Quaternion<T>(cos(halfAngle), sin(halfAngle), 0, 0);
 }
 
 
 template<class T> Eigen::Quaternion<T>
 YRotation(T radians)
 {
-    T halfAngle = radians * T(0.5);
-    return Eigen::Quaternion<T>(std::cos(halfAngle), 0, std::sin(halfAngle), 0);
+    using std::cos;
+    using std::sin;
+    T halfAngle = radians * static_cast<T>(0.5);
+    return Eigen::Quaternion<T>(cos(halfAngle), 0, sin(halfAngle), 0);
 }
 
 
 template<class T> Eigen::Quaternion<T>
 ZRotation(T radians)
 {
-    T halfAngle = radians * T(0.5);
-    return Eigen::Quaternion<T>(std::cos(halfAngle), 0, 0, std::sin(halfAngle));
+    using std::cos;
+    using std::sin;
+    T halfAngle = radians * static_cast<T>(0.5);
+    return Eigen::Quaternion<T>(cos(halfAngle), 0, 0, sin(halfAngle));
 }
 
 
@@ -70,14 +76,14 @@ ProjectPerspective(const Eigen::Matrix<T, 3, 1>& from,
                    const int viewport[4],
                    Eigen::Matrix<T, 3, 1>& to)
 {
-    Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), T(1.0));
+    Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), static_cast<T>(1));
     Eigen::Matrix<T, 4, 1> out = modelViewProjectionMatrix * in;
-    if (out.w() == T(0.0))
+    if (out.w() == static_cast<T>(0))
         return false;
 
     out = out.array() / out.w();
     // Map x, y and z to range 0-1
-    out = T(0.5) + out.array() * T(0.5);
+    out = static_cast<T>(0.5) + out.array() * static_cast<T>(0.5);
     // Map x,y to viewport
     out.x() = viewport[0] + out.x() * viewport[2];
     out.y() = viewport[1] + out.y() * viewport[3];
@@ -104,23 +110,28 @@ ProjectFisheye(const Eigen::Matrix<T, 3, 1>& from,
                const int viewport[4],
                Eigen::Matrix<T, 3, 1>& to)
 {
-    Eigen::Matrix<T, 4, 1> inPos = modelViewMatrix * Eigen::Matrix<T, 4, 1>(from.x(), from.y(), from.z(), T(1.0));
+    using std::atan2;
+    using std::hypot;
+    Eigen::Matrix<T, 4, 1> inPos = modelViewMatrix * Eigen::Matrix<T, 4, 1>(from.x(),
+                                                                            from.y(),
+                                                                            from.z(),
+                                                                            static_cast<T>(1));
     T l = hypot(inPos.x(), inPos.y());
-    if (l != T(0.0))
+    if (l != static_cast<T>(0))
     {
         T phi = atan2(l, -inPos.z());
-        T ratio = phi / T(M_PI_2) / l;
+        T ratio = phi / static_cast<T>(M_PI_2) / l;
         inPos.x() *= ratio;
         inPos.y() *= ratio;
     }
 
     Eigen::Matrix<T, 4, 1> out = projMatrix * inPos;
-    if (out.w() == T(0.0))
+    if (out.w() == static_cast<T>(0))
         return false;
 
     out = out.array() / out.w();
     // Map x, y and z to range 0-1
-    out = T(0.5) + out.array() * T(0.5);
+    out = static_cast<T>(0.5) + out.array() * static_cast<T>(0.5);
     // Map x,y to viewport
     out.x() = viewport[0] + out.x() * viewport[2];
     out.y() = viewport[1] + out.y() * viewport[3];
@@ -135,16 +146,19 @@ ProjectFisheye(const Eigen::Matrix<T, 3, 1>& from,
 template<class T> Eigen::Matrix<T, 4, 4>
 Perspective(T fovy, T aspect, T nearZ, T farZ)
 {
-    if (aspect == T(0.0))
+    using std::cos;
+    using std::sin;
+
+    if (aspect == static_cast<T>(0))
         return Eigen::Matrix<T, 4, 4>::Identity();
 
     T deltaZ = farZ - nearZ;
-    if (deltaZ == T(0.0))
+    if (deltaZ == static_cast<T>(0))
         return Eigen::Matrix<T, 4, 4>::Identity();
 
-    T angle = degToRad(fovy / 2);
+    T angle = degToRad(fovy / static_cast<T>(2));
     T sine = sin(angle);
-    if (sine == T(0.0))
+    if (sine == static_cast<T>(0))
         return Eigen::Matrix<T, 4, 4>::Identity();
     T ctg = cos(angle) / sine;
 
@@ -152,9 +166,9 @@ Perspective(T fovy, T aspect, T nearZ, T farZ)
     m(0, 0) = ctg / aspect;
     m(1, 1) = ctg;
     m(2, 2) = -(farZ + nearZ) / deltaZ;
-    m(2, 3) = T(-2.0) * nearZ * farZ / deltaZ;
-    m(3, 2) = T(-1.0);
-    m(3, 3) = T(0.0);
+    m(2, 3) = static_cast<T>(-2) * nearZ * farZ / deltaZ;
+    m(3, 2) = static_cast<T>(-1);
+    m(3, 3) = static_cast<T>(0);
     return m;
 }
 
@@ -167,18 +181,17 @@ Ortho(T left, T right, T bottom, T top, T nearZ, T farZ)
     T tb = top - bottom;
     T fn = farZ - nearZ;
     Eigen::Matrix<T, 4, 4> m;
-    m << 2/rl,    0,     0, - (right + left) / rl,
-            0, 2/tb,     0, - (top + bottom) / tb,
-            0,    0, -2/fn, - (farZ + nearZ) / fn,
-            0,    0,     0,                     1;
+    m << static_cast<T>(2)/rl,    static_cast<T>(0),     static_cast<T>(0), -(right + left)/rl,
+            static_cast<T>(0), static_cast<T>(2)/tb,     static_cast<T>(0), -(top + bottom)/tb,
+            static_cast<T>(0),    static_cast<T>(0), static_cast<T>(-2)/fn, -(farZ + nearZ)/fn,
+            static_cast<T>(0),    static_cast<T>(0),     static_cast<T>(0),  static_cast<T>(1);
     return m;
 }
 
 template<class T> Eigen::Matrix<T, 4, 4>
 Ortho2D(T left, T right, T bottom, T top)
 {
-    return Ortho(left, right, bottom, top, T(-1), T(1));
+    return Ortho(left, right, bottom, top, static_cast<T>(-1), static_cast<T>(1));
 }
 
 } // namespace celmath
-#endif // _CELMATH_GEOMUTIL_H_

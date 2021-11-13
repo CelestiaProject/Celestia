@@ -1015,7 +1015,7 @@ void Body::computeLocations()
             v.normalize();
         v *= (float) boundingRadius;
 
-        Ray3d ray(v.cast<double>(), -v.cast<double>());
+        Eigen::ParametrizedLine<double, 3> ray(v.cast<double>(), -v.cast<double>());
         double t = 0.0;
         if (g->pick(ray, t))
         {

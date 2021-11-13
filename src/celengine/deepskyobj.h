@@ -13,7 +13,6 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <celmath/ray.h>
 #include <celengine/astroobj.h>
 #ifdef USE_GLCONTEXT
 #include <celengine/glcontext.h>
@@ -83,7 +82,7 @@ class DeepSkyObject : public AstroObject
 
     virtual const char* getObjTypeName() const = 0;
 
-    virtual bool pick(const celmath::Ray3d& ray,
+    virtual bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const = 0;
     virtual bool load(AssociativeArray*, const fs::path& resPath);

@@ -7,11 +7,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "frustum.h"
-#include <Eigen/LU>
 #include <cmath>
 
-using namespace Eigen;
+#include <Eigen/LU>
+
+#include "frustum.h"
+
 
 namespace celmath
 {
@@ -35,18 +36,18 @@ void Frustum::init(float fov, float aspectRatio, float n, float f)
     float h = std::tan(fov / 2.0f);
     float w = h * aspectRatio;
 
-    Vector3f normals[4];
-    normals[Bottom] = Vector3f( 0.0f,  1.0f, -h);
-    normals[Top]    = Vector3f( 0.0f, -1.0f, -h);
-    normals[Left]   = Vector3f( 1.0f,  0.0f, -w);
-    normals[Right]  = Vector3f(-1.0f,  0.0f, -w);
+    Eigen::Vector3f normals[4];
+    normals[Bottom] = Eigen::Vector3f( 0.0f,  1.0f, -h);
+    normals[Top]    = Eigen::Vector3f( 0.0f, -1.0f, -h);
+    normals[Left]   = Eigen::Vector3f( 1.0f,  0.0f, -w);
+    normals[Right]  = Eigen::Vector3f(-1.0f,  0.0f, -w);
     for (unsigned int i = 0; i < 4; i++)
     {
-        planes[i] = Hyperplane<float, 3>(normals[i].normalized(), 0.0f);
+        planes[i] = Eigen::Hyperplane<float, 3>(normals[i].normalized(), 0.0f);
     }
 
-    planes[Near] = Hyperplane<float, 3>(Vector3f(0.0f, 0.0f, -1.0f), -n);
-    planes[Far]  = Hyperplane<float, 3>(Vector3f(0.0f, 0.0f,  1.0f),  f);
+    planes[Near] = Eigen::Hyperplane<float, 3>(Eigen::Vector3f(0.0f, 0.0f, -1.0f), -n);
+    planes[Far]  = Eigen::Hyperplane<float, 3>(Eigen::Vector3f(0.0f, 0.0f,  1.0f),  f);
 }
 
 
@@ -108,54 +109,8 @@ Frustum::testSphere(const Eigen::Vector3d& center, double radius) const
 }
 
 
-/*
-Frustum::Aspect Frustum::testCapsule(const Capsulef& capsule) const
-{
-    int nPlanes = infinite ? 5 : 6;
-    int intersections = 0;
-    float r2 = capsule.radius * capsule.radius;
-
-    // TODO: Unnecessary after Eigen conversion of Capsule class
-    Vector3f capsuleOrigin(capsule.origin.x, capsule.origin.y, capsule.origin.z);
-    Vector3f capsuleAxis(capsule.axis.x, capsule.axis.y, capsule.axis.z);
-
-    for (int i = 0; i < nPlanes; i++)
-    {
-        float signedDist0 = planes[i].signedDistance(capsuleOrigin);
-        float signedDist1 = planes[i].signedDistance(capsuleOrigin + capsuleAxis);
-        //float signedDist1 = signedDist0 + planes[i].normal * capsule.axis;
-        if (signedDist0 * signedDist1 > r2)
-        {
-            // Endpoints of capsule are on same side of plane; test closest endpoint to see if it
-            // lies closer to the plane than radius
-            if (abs(signedDist0) <= abs(signedDist1))
-            {
-                if (signedDist0 < -capsule.radius)
-                    return Outside;
-                if (signedDist0 < capsule.radius)
-                    intersections |= (1 << i);
-            }
-            else
-            {
-                if (signedDist1 < -capsule.radius)
-                    return Outside;
-                if (signedDist1 < capsule.radius)
-                    intersections |= (1 << i);
-            }
-        }
-        else
-        {
-            // Capsule endpoints are on different sides of the plane, so we have an intersection
-            intersections |= (1 << i);
-        }
-    }
-
-    return (intersections == 0) ? Inside : Intersect;
-}
-*/
-
 void
-Frustum::transform(const Matrix3f& m)
+Frustum::transform(const Eigen::Matrix3f& m)
 {
     unsigned int nPlanes = infinite ? 5 : 6;
 
@@ -167,24 +122,15 @@ Frustum::transform(const Matrix3f& m)
 
 
 void
-Frustum::transform(const Matrix4f& m)
+Frustum::transform(const Eigen::Matrix4f& m)
 {
     unsigned int nPlanes = infinite ? 5 : 6;
-    Matrix4f invTranspose = m.inverse().transpose();
+    Eigen::Matrix4f invTranspose = m.inverse().transpose();
 
     for (unsigned int i = 0; i < nPlanes; i++)
     {
         planes[i].coeffs() = invTranspose * planes[i].coeffs();
         planes[i].normalize();
-
-        //float s = 1.0f / planes[i].normal().norm();
-        //planes[i].normal() *= s;
-        //planes[i].offset() *= s;
-
-        //planes[i] = planes[i] * invTranspose;
-        //float s = 1.0f / planes[i].normal().norm();
-        //planes[i].normal = planes[i].normal * s;
-        //planes[i].d *= s;
     }
 }
 

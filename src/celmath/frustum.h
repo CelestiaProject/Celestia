@@ -7,13 +7,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELMATH_FRUSTUM_H_
-#define _CELMATH_FRUSTUM_H_
+#pragma once
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-//#include <celmath/capsule.h>
 
 namespace celmath
 {
@@ -23,7 +21,7 @@ class Frustum
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    typedef Eigen::Hyperplane<float, 3> PlaneType;
+    using PlaneType = Eigen::Hyperplane<float, 3>;
 
     Frustum(float fov, float aspectRatio, float nearDist);
     Frustum(float fov, float aspectRatio, float nearDist, float farDist);
@@ -54,7 +52,6 @@ class Frustum
     Aspect test(const Eigen::Vector3f& point) const;
     Aspect testSphere(const Eigen::Vector3f& center, float radius) const;
     Aspect testSphere(const Eigen::Vector3d& center, double radius) const;
-//    Aspect testCapsule(const Capsulef&) const;
 
  private:
     void init(float, float, float, float);
@@ -64,5 +61,3 @@ class Frustum
 };
 
 } // namespace celmath
-
-#endif // _CELMATH_FRUSTUM_H_

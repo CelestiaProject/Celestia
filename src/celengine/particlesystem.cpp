@@ -488,7 +488,7 @@ ParticleSystem::render(RenderContext& rc, double tsec)
 
 
 bool
-ParticleSystem::pick(const Ray3d& /* r */, double& /* distance */) const
+ParticleSystem::pick(const Eigen::ParametrizedLine<double, 3>& /* r */, double& /* distance */) const
 {
     // Pick selection for particle systems not supported (because it's
     // not typically desirable.)

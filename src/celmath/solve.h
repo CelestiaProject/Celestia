@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cmath>
 #include <utility>
 
 #pragma once
@@ -16,12 +17,13 @@ namespace celmath
 
 // Solve a function using the bisection method.  Returns a pair
 // with the solution as the first element and the error as the second.
-template<class T, class F> std::pair<T, T> solve_bisection(F f,
-                                                           T lower, T upper,
-                                                           T err,
-                                                           int maxIter = 100)
+template<class T, class F>
+std::pair<T, T> solve_bisection(F f,
+                                T lower, T upper,
+                                T err,
+                                int maxIter = 100)
 {
-    T x = 0.0;
+    T x = static_cast<T>(0);
 
     for (int i = 0; i < maxIter; i++)
     {
@@ -30,7 +32,7 @@ template<class T, class F> std::pair<T, T> solve_bisection(F f,
             break;
 
         T y = f(x);
-        if (y < 0)
+        if (y < static_cast<T>(0))
             lower = x;
         else
             upper = x;
@@ -42,12 +44,15 @@ template<class T, class F> std::pair<T, T> solve_bisection(F f,
 
 // Solve using iteration; terminate when error is below err or the maximum
 // number of iterations is reached.
-template<class T, class F> std::pair<T, T> solve_iteration(F f,
-                                                           T x0,
-                                                           T err,
-                                                           int maxIter = 100)
+template<class T, class F>
+std::pair<T, T> solve_iteration(F f,
+                                T x0,
+                                T err,
+                                int maxIter = 100)
 {
-    T x = 0;
+    using std::abs;
+
+    T x = static_cast<T>(0);
     T x2 = x0;
 
     for (int i = 0; i < maxIter; i++)
@@ -63,11 +68,12 @@ template<class T, class F> std::pair<T, T> solve_iteration(F f,
 
 
 // Solve using iteration method and a fixed number of steps.
-template<class T, class F> std::pair<T, T> solve_iteration_fixed(F f,
-                                                                 T x0,
-                                                                 int maxIter)
+template<class T, class F>
+std::pair<T, T> solve_iteration_fixed(F f,
+                                      T x0,
+                                      int maxIter)
 {
-    T x = 0;
+    T x = static_cast<T>(0);
     T x2 = x0;
 
     for (int i = 0; i < maxIter; i++)

@@ -46,7 +46,7 @@ const char* OpenCluster::getObjTypeName() const
 }
 
 
-bool OpenCluster::pick(const Ray3d& ray,
+bool OpenCluster::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                        double& distanceToPicker,
                        double& cosAngleToBoundCenter) const
 {

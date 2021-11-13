@@ -1,7 +1,6 @@
 // perlin.h
 
-#ifndef _PERLIN_H_
-#define _PERLIN_H_
+#pragma once
 
 #include <Eigen/Core>
 
@@ -18,5 +17,3 @@ extern float turbulence(const Eigen::Vector3f& p, float freq);
 extern float fractalsum(const float v[], float freq);
 extern float fractalsum(const Eigen::Vector2f& p, float freq);
 extern float fractalsum(const Eigen::Vector3f& p, float freq);
-
-#endif // _PERLIN_H_

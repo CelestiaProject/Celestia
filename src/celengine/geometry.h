@@ -8,11 +8,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_GEOMETRY_H_
-#define _CELENGINE_GEOMETRY_H_
+#pragma once
+
+#include <Eigen/Geometry>
 
 #include <celmodel/material.h>
-#include <celmath/ray.h>
 
 class RenderContext;
 
@@ -31,7 +31,7 @@ public:
      *  and set distance; otherwise return false and leave
      *  distance unmodified.
      */
-    virtual bool pick(const celmath::Ray3d& r, double& distance) const = 0;
+    virtual bool pick(const Eigen::ParametrizedLine<double, 3>& r, double& distance) const = 0;
 
     virtual bool isOpaque() const = 0;
 
@@ -54,5 +54,3 @@ public:
     {
     }
 };
-
-#endif // _CELENGINE_GEOMETRY_H_

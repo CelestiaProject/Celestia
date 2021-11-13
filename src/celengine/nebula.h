@@ -24,7 +24,7 @@ class Nebula : public DeepSkyObject
     void setType(const std::string&) override;
     std::string getDescription() const override;
 
-    bool pick(const celmath::Ray3d& ray,
+    bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
     bool load(AssociativeArray*, const fs::path&) override;
