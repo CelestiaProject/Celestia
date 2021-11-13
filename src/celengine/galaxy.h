@@ -8,10 +8,21 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _GALAXY_H_
-#define _GALAXY_H_
+#pragma once
 
-#include <celengine/deepskyobj.h>
+#include <cstdint>
+#include <string>
+
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
+#include <celcompat/filesystem.h>
+#include "deepskyobj.h"
+
+
+class AssociativeArray;
+struct Matrices;
+class Renderer;
 
 
 struct Blob
@@ -39,7 +50,7 @@ class Galaxy : public DeepSkyObject
     float getDetail() const;
     void setDetail(float);
 
-    bool pick(const celmath::Ray3d& ray,
+    bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
     bool load(AssociativeArray*, const fs::path&) override;
@@ -57,7 +68,7 @@ class Galaxy : public DeepSkyObject
     static float getLightGain();
     static void  setLightGain(float);
 
-    uint64_t getRenderMask() const override;
+    std::uint64_t getRenderMask() const override;
     unsigned int getLabelMask() const override;
 
     const char* getObjTypeName() const override;
@@ -103,4 +114,3 @@ class Galaxy : public DeepSkyObject
 
     static float  lightGain;
 };
-#endif // _GALAXY_H_

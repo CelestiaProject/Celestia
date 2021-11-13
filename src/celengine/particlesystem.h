@@ -98,7 +98,7 @@ class ParticleSystem : public Geometry
     virtual ~ParticleSystem();
 
     virtual void render(RenderContext& rc, double tsec = 0.0);
-    virtual bool pick(const celmath::Ray3d& r, double& distance) const;
+    virtual bool pick(const Eigen::ParametrizedLine<double, 3>& r, double& distance) const;
     virtual bool isOpaque() const;
 
     void addEmitter(ParticleEmitter* emitter);

@@ -7,8 +7,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef CELENGINE_OPENCLUSTER_H_
-#define CELENGINE_OPENCLUSTER_H_
+#pragma once
+
+#include <Eigen/Geometry>
 
 #include <celutil/reshandle.h>
 #include <celengine/deepskyobj.h>
@@ -25,7 +26,7 @@ class OpenCluster : public DeepSkyObject
     void setType(const std::string&) override;
     std::string getDescription() const override;
 
-    bool pick(const celmath::Ray3d& ray,
+    bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
     bool load(AssociativeArray*, const fs::path&) override;
@@ -53,5 +54,3 @@ class OpenCluster : public DeepSkyObject
     // TODO: It could be very useful to have a list of stars that are members
     // of the cluster.
 };
-
-#endif // CELENGINE_OPENCLUSTER_H_

@@ -66,7 +66,8 @@ static void longLatLabel(const string& labelText,
 
     // Draw the label only if it isn't obscured by the body ellipsoid
     double t = 0.0;
-    if (testIntersection(Ray3d(viewRayOrigin, pos - viewRayOrigin), Ellipsoidd(semiAxes.cast<double>()), t) && t >= 1.0)
+    if (testIntersection(Eigen::ParametrizedLine<double, 3>(viewRayOrigin, pos - viewRayOrigin),
+                         Ellipsoidd(semiAxes.cast<double>()), t) && t >= 1.0)
     {
         // Compute the position of the label
         Vector3d labelPos = bodyCenter +

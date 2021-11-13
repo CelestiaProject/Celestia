@@ -12,12 +12,20 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _GLOBULAR_H_
-#define _GLOBULAR_H_
+#pragma once
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include <Eigen/Core>
 #include <Eigen/Geometry>
-#include <celengine/deepskyobj.h>
-#include <celengine/vertexobject.h>
+
+#include "deepskyobj.h"
+#include "vertexobject.h"
+
+struct Matrices;
+class Renderer;
 
 
 struct GBlob
@@ -54,7 +62,7 @@ class Globular : public DeepSkyObject
 
     float getBoundingSphereRadius() const override { return tidalRadius; }
 
-    bool pick(const celmath::Ray3d& ray,
+    bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
     bool load(AssociativeArray*, const fs::path&) override;
@@ -67,7 +75,7 @@ class Globular : public DeepSkyObject
 
     GlobularForm* getForm() const;
 
-    uint64_t getRenderMask() const override;
+    std::uint64_t getRenderMask() const override;
     unsigned int getLabelMask() const override;
     const char* getObjTypeName() const override;
 
@@ -93,5 +101,3 @@ class Globular : public DeepSkyObject
 
     celgl::VertexObject vo{ GL_ARRAY_BUFFER, 0, GL_STATIC_DRAW };
 };
-
-#endif // _GLOBULAR_H_

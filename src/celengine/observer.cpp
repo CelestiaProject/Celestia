@@ -266,7 +266,7 @@ void Observer::update(double dt, double timeScale)
         // durations correctly by skipping directly to the destination.
         float t = 1.0;
         if (journey.duration > 0)
-            t = (float) clamp((realTime - journey.startTime) / journey.duration);
+            t = (float) celmath::clamp((realTime - journey.startTime) / journey.duration);
 
         Vector3d jv = journey.to.offsetFromKm(journey.from);
         UniversalCoord p;
@@ -419,7 +419,7 @@ void Observer::update(double dt, double timeScale)
 
     if (getVelocity() != targetVelocity)
     {
-        double t = clamp((realTime - beginAccelTime) / VELOCITY_CHANGE_TIME);
+        double t = celmath::clamp((realTime - beginAccelTime) / VELOCITY_CHANGE_TIME);
         Vector3d v = getVelocity() * (1.0 - t) + targetVelocity * t;
 
         // At some threshold, we just set the velocity to zero; otherwise,

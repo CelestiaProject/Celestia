@@ -477,7 +477,7 @@ void Renderer::adjustEclipsedStarExposure(double now)
 
         if (lightToBodyDir * bodyToEyeDir > 0.0)
         {
-            double dist = distance(posEye, Ray3d(posBody, lightToBodyDir));
+            double dist = distance(posEye, Eigen::ParametrizedLine<double, 3>(posBody, lightToBodyDir));
             if (dist < body->getRadius())
                 eyeNotEclipsed = false;
         }

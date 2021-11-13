@@ -33,6 +33,8 @@ std::ofstream hdrlog;
 #define EXPOSURE_HALFLIFE   0.4f
 #endif
 
+#include <Eigen/Geometry>
+
 #include <fmt/printf.h>
 
 #include "render.h"
@@ -2122,7 +2124,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 
     // Gradually fade in the atmosphere if it's thickness on screen is just
     // over one pixel.
-    float fade = clamp(pixSize - 2);
+    float fade = celmath::clamp(pixSize - 2);
 
     Matrix3f rot = orientation.toRotationMatrix();
     Matrix3f irot = orientation.conjugate().toRotationMatrix();
@@ -2508,7 +2510,7 @@ Renderer::locationsToAnnotations(const Body& body,
                 // the label is obscured by the planet.  An exact calculation
                 // for irregular objects would be too expensive, and the
                 // ellipsoid approximation works reasonably well for them.
-                Ray3d testRay(viewRayOrigin, pcLabelPos - viewRayOrigin);
+                Eigen::ParametrizedLine<double, 3> testRay(viewRayOrigin, pcLabelPos - viewRayOrigin);
                 bool hit = testIntersection(testRay, bodyEllipsoid, t);
 
                 if (!hit || t >= 1.0)
@@ -3035,7 +3037,7 @@ void Renderer::renderObject(const Vector3f& pos,
         {
             thicknessInPixels = atmosphere->height /
                 ((distance - radius) * pixelSize);
-            fade = clamp(thicknessInPixels - 2);
+            fade = celmath::clamp(thicknessInPixels - 2);
         }
         else
         {
@@ -3220,7 +3222,7 @@ bool Renderer::testEclipse(const Body& receiver,
         Vector3d receiverToCasterDir = posReceiver - posCaster;
 
         double dist = distance(posReceiver,
-                               Ray3d(posCaster, lightToCasterDir));
+                               Eigen::ParametrizedLine<double, 3>(posCaster, lightToCasterDir));
         if (dist < R && lightToCasterDir.dot(receiverToCasterDir) > 0.0)
         {
             Vector3d sunDir = lightToCasterDir.normalized();
@@ -3933,8 +3935,8 @@ void Renderer::renderAsterisms(const Universe& universe, float dist, const Matri
     float opacity = 1.0f;
     if (dist > MaxAsterismLinesConstDist)
     {
-        opacity = clamp((MaxAsterismLinesConstDist - dist) /
-                        (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1);
+        opacity = celmath::clamp((MaxAsterismLinesConstDist - dist) /
+                                 (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1);
     }
 
     enableSmoothLines();
@@ -3964,8 +3966,8 @@ void Renderer::renderBoundaries(const Universe& universe, float dist, const Matr
     float opacity = 1.0f;
     if (dist > MaxAsterismLabelsConstDist)
     {
-        opacity = clamp((MaxAsterismLabelsConstDist - dist) /
-                        (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
+        opacity = celmath::clamp((MaxAsterismLabelsConstDist - dist) /
+                                 (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
     }
 
     enableSmoothLines();
@@ -4501,7 +4503,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                 lastPrimary = primary;
             }
 
-            Ray3d testRay(Vector3d::Zero(), pos.cast<double>());
+            Eigen::ParametrizedLine<double, 3> testRay(Vector3d::Zero(), pos.cast<double>());
 
             // Test the viewer-to-labeled object ray against
             // the primary sphere (TODO: handle ellipsoids)
@@ -4905,8 +4907,8 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                     float dist = observerPos.norm();
                     if (dist > MaxAsterismLabelsConstDist)
                     {
-                        opacity = clamp((MaxAsterismLabelsConstDist - dist) /
-                                        (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
+                        opacity = celmath::clamp((MaxAsterismLabelsConstDist - dist) /
+                                                 (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
                     }
 
                     // Use the default label color unless the constellation has an
@@ -5158,7 +5160,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     {
         // Compute normalized device z
         float z = fisheye ? (1.0f - (iter->position.z() - nearDist) / d0 * 2.0f) : (d1 + d2 / -iter->position.z());
-        float ndc_z = clamp(z, -1.0f, 1.0f);
+        float ndc_z = celmath::clamp(z, -1.0f, 1.0f);
 
         // Offsets to left align label
         int labelHOffset = 0;
@@ -5361,7 +5363,7 @@ void Renderer::updateBodyVisibilityMask()
 
 void Renderer::setSolarSystemMaxDistance(float t)
 {
-    SolarSystemMaxDistance = clamp(t, 1.0f, 10.0f);
+    SolarSystemMaxDistance = celmath::clamp(t, 1.0f, 10.0f);
 }
 
 void Renderer::getViewport(int* x, int* y, int* w, int* h) const
@@ -5802,7 +5804,7 @@ Renderer::setShadowMapSize(unsigned size)
         return;
     GLint t = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &t);
-    m_shadowMapSize = clamp(size, 0u, static_cast<unsigned>(t));
+    m_shadowMapSize = celmath::clamp(size, 0u, static_cast<unsigned>(t));
     if (m_shadowFBO != nullptr && m_shadowMapSize == m_shadowFBO->width())
         return;
     if (m_shadowMapSize == 0)
@@ -6047,7 +6049,7 @@ Renderer::adjustMagnitudeInsideAtmosphere(float &faintestMag,
         maxBodyMag = maxBodyMagPrev;
         saturationMag = maxBodyMag;
 #endif
-        float illumination = clamp(sunDir.dot(normal) + 0.2f);
+        float illumination = celmath::clamp(sunDir.dot(normal) + 0.2f);
 
         float lightness = illumination * density;
         faintestMag = faintestMag - 15.0f * lightness;

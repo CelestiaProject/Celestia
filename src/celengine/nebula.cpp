@@ -58,7 +58,7 @@ const char* Nebula::getObjTypeName() const
 }
 
 
-bool Nebula::pick(const Ray3d& ray,
+bool Nebula::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                   double& distanceToPicker,
                   double& cosAngleToBoundCenter) const
 {

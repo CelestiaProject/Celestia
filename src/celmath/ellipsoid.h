@@ -7,15 +7,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELMATH_ELLIPSOID_H_
-#define _CELMATH_ELLIPSOID_H_
+#pragma once
 
 #include <Eigen/Core>
 
 namespace celmath
 {
-
-template<class T> class Ellipsoid
+template<class T>
+class Ellipsoid
 {
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -24,8 +23,8 @@ template<class T> class Ellipsoid
      *  at the origin.
      */
     Ellipsoid() :
-        center(0, 0, 0),
-        axes(1, 1, 1)
+        center(Eigen::Matrix<T, 3, 1>::Zero()),
+        axes(Eigen::Matrix<T, 3, 1>::Ones())
     {
     }
 
@@ -33,7 +32,7 @@ template<class T> class Ellipsoid
      *  at the origin.
      */
     Ellipsoid(const Eigen::Matrix<T, 3, 1>& _axes) :
-        center(0, 0, 0),
+        center(Eigen::Matrix<T, 3, 1>::Zero()),
         axes(_axes)
     {
     }
@@ -53,7 +52,7 @@ template<class T> class Ellipsoid
     {
         Eigen::Matrix<T, 3, 1> v = p - center;
         v = v.cwise() / axes;
-        return v * v <= (T) 1.0;
+        return v * v <= static_cast<T>(1);
     }
 
 
@@ -62,9 +61,6 @@ template<class T> class Ellipsoid
     Eigen::Matrix<T, 3, 1> axes;
 };
 
-typedef Ellipsoid<float>   Ellipsoidf;
-typedef Ellipsoid<double>  Ellipsoidd;
-
+using Ellipsoidf = Ellipsoid<float>;
+using Ellipsoidd = Ellipsoid<double>;
 } // namespace celmath
-
-#endif // _CELMATH_ELLIPSOID_H_

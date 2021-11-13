@@ -17,6 +17,7 @@
 #include <fstream>
 #include <celmath/perlin.h>
 #include <celmath/intersect.h>
+#include <celmath/ray.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include "astro.h"
@@ -250,7 +251,7 @@ const char* Globular::getObjTypeName() const
 }
 
 constexpr const float RADIUS_CORRECTION = 0.025f;
-bool Globular::pick(const Ray3d& ray,
+bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                     double& distanceToPicker,
                     double& cosAngleToBoundCenter) const
 {
@@ -266,7 +267,8 @@ bool Globular::pick(const Ray3d& ray,
                            getRadius() * (form->scale.z() + RADIUS_CORRECTION));
 
     Vector3d p = getPosition();
-    return testIntersection(Ray3d(ray.origin - p, ray.direction).transform(getOrientation().cast<double>().toRotationMatrix()),
+    return testIntersection(transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - p, ray.direction()),
+                                         getOrientation().cast<double>().toRotationMatrix()),
                             Ellipsoidd(ellipsoidAxes),
                             distanceToPicker,
                             cosAngleToBoundCenter);
@@ -487,9 +489,9 @@ void Globular::renderGlobularPointSprites(
      * or when distance from globular center decreases.
      */
 
-    GLsizei count = (GLsizei) (form->gblobs->size() * clamp(getDetail()));
+    GLsizei count = (GLsizei) (form->gblobs->size() * celmath::clamp(getDetail()));
     float t = pow(2, 1 + log2(minimumFeatureSize / brightness) / log2(1/1.25f));
-    count = min(count, (GLsizei) clamp(t, 128.0f, (float) max(count, 128)));
+    count = min(count, (GLsizei) celmath::clamp(t, 128.0f, (float) max(count, 128)));
 
     globProg->use();
 

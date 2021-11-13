@@ -9,24 +9,19 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELMATH_DISTANCE_H_
-#define _CELMATH_DISTANCE_H_
+#pragma once
 
-#include "mathlib.h"
-#include "ray.h"
-#include "sphere.h"
-#include "ellipsoid.h"
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
 namespace celmath
 {
-template<class T> T distance(const Eigen::Matrix<T, 3, 1>& p, const Ray3<T>& r)
+template<class T> T distance(const Eigen::Matrix<T, 3, 1>& p, const Eigen::ParametrizedLine<T, 3>& r)
 {
-    T t = ((p - r.origin).dot(r.direction)) / r.direction.squaredNorm();
-    if (t <= 0)
-        return (p - r.origin).norm();
+    T t = ((p - r.origin()).dot(r.direction())) / r.direction().squaredNorm();
+    if (t <= static_cast<T>(0))
+        return (p - r.origin()).norm();
     else
-        return (p - r.point(t)).norm();
+        return (p - r.pointAt(t)).norm();
 }
 }
-#endif // _CELMATH_DISTANCE_H_

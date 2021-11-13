@@ -53,7 +53,7 @@ void OverlayImage::render(float curr_time, int width, int height)
     float alpha = 1.0f;
     if (curr_time > start + fadeafter)
     {
-        alpha = clamp(start + duration - curr_time);
+        alpha = celmath::clamp(start + duration - curr_time);
     }
 
     celestia::Rect r(left, bottom, xSize, ySize);

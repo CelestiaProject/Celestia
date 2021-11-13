@@ -15,6 +15,10 @@
 #include <cmath>
 #include <algorithm>
 #include <map>
+
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
 #include <celmath/mathlib.h>
 #include <celmath/geomutil.h>
 #include <celmath/ray.h>
@@ -122,7 +126,8 @@ public:
 
     Camera() = default;
 
-    Ray3d getViewRay(double viewportX, double viewportY) const
+    Eigen::ParametrizedLine<double, 3>
+    getViewRay(double viewportX, double viewportY) const
     {
         Vector3d viewDir;
 
@@ -144,8 +149,8 @@ public:
             viewDir.normalize();
         }
 
-        Ray3d viewRay(Vector3d::Zero(), viewDir);
-        return viewRay.transform(transform);
+        Eigen::ParametrizedLine<double, 3> viewRay(Vector3d::Zero(), viewDir);
+        return transformRay(viewRay, transform);
     }
 
     double fov{PI / 2.0};
@@ -285,8 +290,8 @@ public:
 
     void setParameters(ParameterSet& params);
 
-    Color raytrace(const Ray3d& ray) const;
-    Color raytrace_LUT(const Ray3d& ray) const;
+    Color raytrace(const Eigen::ParametrizedLine<double, 3>& ray) const;
+    Color raytrace_LUT(const Eigen::ParametrizedLine<double, 3>& ray) const;
 
     Color background;
     Light light;
@@ -654,15 +659,15 @@ LUT3::lookup(double x, double y, double z) const
 }
 
 
-template<class T> bool raySphereIntersect(const Ray3<T>& ray,
+template<class T> bool raySphereIntersect(const Eigen::ParametrizedLine<T, 3>& ray,
                                           const Sphere<T>& sphere,
                                           T& dist0,
                                           T& dist1)
 {
-    Matrix<T, 3, 1> diff = ray.origin - sphere.center;
+    Matrix<T, 3, 1> diff = ray.origin() - sphere.center;
     T s = (T) 1.0 / square(sphere.radius);
-    T a = ray.direction.dot(ray.direction) * s;
-    T b = ray.direction.dot(diff) * s;
+    T a = ray.direction().squaredNorm() * s;
+    T b = ray.direction().dot(diff) * s;
     T c = diff.dot(diff) * s - (T) 1.0;
     T disc = b * b - a * c;
     if (disc < 0.0)
@@ -695,15 +700,15 @@ template<class T> bool raySphereIntersect(const Ray3<T>& ray,
 }
 
 
-template<class T> bool raySphereIntersect2(const Ray3<T>& ray,
+template<class T> bool raySphereIntersect2(const Eigen::ParametrizedLine<T, 3>& ray,
                                            const Sphere<T>& sphere,
                                            T& dist0,
                                            T& dist1)
 {
-    Matrix<T, 3, 1> diff = ray.origin - sphere.center;
+    Matrix<T, 3, 1> diff = ray.origin() - sphere.center;
     T s = (T) 1.0 / square(sphere.radius);
-    T a = ray.direction.dot(ray.direction) * s;
-    T b = ray.direction.dot(diff) * s;
+    T a = ray.direction().squaredNorm() * s;
+    T b = ray.direction().dot(diff) * s;
     T c = diff.dot(diff) * s - (T) 1.0;
     T disc = b * b - a * c;
     if (disc < 0.0)
@@ -913,12 +918,12 @@ Vector3d integrateInscattering(const Scene& scene,
 
     for (unsigned int i = 0; i < nSteps; i++)
     {
-        Ray3d sunRay(samplePoint, lightDir);
+        Eigen::ParametrizedLine<double, 3> sunRay(samplePoint, lightDir);
         double sunDist = 0.0;
         testIntersection(sunRay, shell, sunDist);
 
         // Compute the optical depth along path from sample point to the sun
-        OpticalDepths sunDepth = integrateOpticalDepth(scene, samplePoint, sunRay.point(sunDist));
+        OpticalDepths sunDepth = integrateOpticalDepth(scene, samplePoint, sunRay.pointAt(sunDist));
         // Compute the optical depth along the path from the sample point to the eye
         OpticalDepths eyeDepth = integrateOpticalDepth(scene, samplePoint, atmStart);
 
@@ -971,12 +976,12 @@ Vector4d integrateInscatteringFactors(const Scene& scene,
 
     for (unsigned int i = 0; i < nSteps; i++)
     {
-        Ray3d sunRay(samplePoint, lightDir);
+        Eigen::ParametrizedLine<double, 3> sunRay(samplePoint, lightDir);
         double sunDist = 0.0;
         testIntersection(sunRay, shell, sunDist);
 
         // Compute the optical depth along path from sample point to the sun
-        OpticalDepths sunDepth = integrateOpticalDepth(scene, samplePoint, sunRay.point(sunDist));
+        OpticalDepths sunDepth = integrateOpticalDepth(scene, samplePoint, sunRay.pointAt(sunDist));
         // Compute the optical depth along the path from the sample point to the eye
         OpticalDepths eyeDepth = integrateOpticalDepth(scene, samplePoint, atmStart);
 
@@ -1043,14 +1048,14 @@ buildExtinctionLUT(const Scene& scene)
             double sinAngle = sqrt(1.0 - min(1.0, cosAngle * cosAngle));
             Vector3d viewDir(cosAngle, sinAngle, 0.0);
 
-            Ray3d ray(atmStart, viewDir);
+            Eigen::ParametrizedLine<double, 3> ray(atmStart, viewDir);
             double dist = 0.0;
 
             if (!testIntersection(ray, shell, dist))
                 dist = 0.0;
 
             OpticalDepths depth = integrateOpticalDepth(scene, atmStart,
-                                                        ray.point(dist));
+                                                        ray.pointAt(dist));
             depth.rayleigh *= 4.0 * PI;
             depth.mie      *= 4.0 * PI;
             Vector3d ext = scene.atmosphere.computeExtinction(depth);
@@ -1103,14 +1108,14 @@ buildOpticalDepthLUT(const Scene& scene)
             double sinAngle = sqrt(1.0 - min(1.0, cosAngle * cosAngle));
             Vector3d dir(cosAngle, sinAngle, 0.0);
 
-            Ray3d ray(atmStart, dir);
+            Eigen::ParametrizedLine<double, 3> ray(atmStart, dir);
             double dist = 0.0;
 
             if (!testIntersection(ray, shell, dist))
                 dist = 0.0;
 
             OpticalDepths depth = integrateOpticalDepth(scene, atmStart,
-                                                        ray.point(dist));
+                                                        ray.pointAt(dist));
             depth.rayleigh *= 4.0 * PI;
             depth.mie      *= 4.0 * PI;
 
@@ -1172,11 +1177,11 @@ Vector3d integrateInscattering_LUT(const Scene& scene,
 
     for (unsigned int i = 0; i < nSteps; i++)
     {
-        Ray3d sunRay(samplePoint, lightDir);
+        Eigen::ParametrizedLine<double, 3> sunRay(samplePoint, lightDir);
         double sunDist = 0.0;
         testIntersection(sunRay, shell, sunDist);
 
-        Vector3d sunExt = lookupExtinction(scene, samplePoint, sunRay.point(sunDist));
+        Vector3d sunExt = lookupExtinction(scene, samplePoint, sunRay.pointAt(sunDist));
         Vector3d eyeExt;
         if (!eyeInsideAtmosphere)
         {
@@ -1254,11 +1259,11 @@ Vector4d integrateInscatteringFactors_LUT(const Scene& scene,
 
     for (unsigned int i = 0; i < nSteps; i++)
     {
-        Ray3d sunRay(samplePoint, lightDir);
+        Eigen::ParametrizedLine<double, 3> sunRay(samplePoint, lightDir);
         double sunDist = 0.0;
         testIntersection(sunRay, shell, sunDist);
 
-        Vector3d sunExt = lookupExtinction(scene, samplePoint, sunRay.point(sunDist));
+        Vector3d sunExt = lookupExtinction(scene, samplePoint, sunRay.pointAt(sunDist));
         Vector3d eyeExt;
         Vector3d subExt;
         if (planetHit)
@@ -1320,12 +1325,12 @@ buildScatteringLUT(const Scene& scene)
             double sinAngle = sqrt(1.0 - min(1.0, cosAngle * cosAngle));
             Vector3d viewDir(cosAngle, sinAngle, 0.0);
 
-            Ray3d viewRay(atmStart, viewDir);
+            Eigen::ParametrizedLine<double, 3> viewRay(atmStart, viewDir);
             double dist = 0.0;
             if (!testIntersection(viewRay, shell, dist))
                 dist = 0.0;
 
-            Vector3d atmEnd = viewRay.point(dist);
+            Vector3d atmEnd = viewRay.pointAt(dist);
 
             for (unsigned int k = 0; k < ScatteringLUTLightAngleSteps; k++)
             {
@@ -1392,7 +1397,7 @@ Color getPlanetColor(const Scene& scene, const Vector3d& p)
 }
 
 
-Color Scene::raytrace(const Ray3d& ray) const
+Color Scene::raytrace(const Eigen::ParametrizedLine<double, 3>& ray) const
 {
     double dist = 0.0;
     double atmEnter = 0.0;
@@ -1401,7 +1406,7 @@ Color Scene::raytrace(const Ray3d& ray) const
     double shellRadius = planet.radius + atmosphereShellHeight;
 
     Color color = background;
-    if (ray.direction.dot(-light.direction) > cos(sunAngularDiameter / 2.0))
+    if (ray.direction().dot(-light.direction) > cos(sunAngularDiameter / 2.0))
         color = light.color;
 
     if (raySphereIntersect(ray,
@@ -1410,12 +1415,12 @@ Color Scene::raytrace(const Ray3d& ray) const
                            atmExit))
     {
         Color baseColor = color;
-        Vector3d atmStart = ray.origin + atmEnter * ray.direction;
-        Vector3d atmEnd = ray.origin + atmExit * ray.direction;
+        Vector3d atmStart = ray.origin() + atmEnter * ray.direction();
+        Vector3d atmEnd = ray.origin() + atmExit * ray.direction();
 
         if (testIntersection(ray, planet, dist))
         {
-            Vector3d intersectPoint = ray.point(dist);
+            Vector3d intersectPoint = ray.pointAt(dist);
             Vector3d normal = intersectPoint - planet.center;
             normal.normalize();
             Vector3d lightDir = -light.direction;
@@ -1428,13 +1433,13 @@ Color Scene::raytrace(const Ray3d& ray) const
 
             // Compute ray from surface point to edge of the atmosphere in the direction
             // of the sun.
-            Ray3d sunRay(surfacePt, lightDir);
+            Eigen::ParametrizedLine<double, 3> sunRay(surfacePt, lightDir);
             double sunDist = 0.0;
             testIntersection(sunRay, shell, sunDist);
 
             // Compute color of sunlight filtered by the atmosphere; consider extinction
             // along both the sun-to-surface and surface-to-eye paths.
-            OpticalDepths sunDepth = integrateOpticalDepth(*this, surfacePt, sunRay.point(sunDist));
+            OpticalDepths sunDepth = integrateOpticalDepth(*this, surfacePt, sunRay.pointAt(sunDist));
             OpticalDepths eyeDepth = integrateOpticalDepth(*this, atmStart, surfacePt);
             OpticalDepths totalDepth = sumOpticalDepths(sunDepth, eyeDepth);
             totalDepth.rayleigh *= 4.0 * PI;
@@ -1445,7 +1450,7 @@ Color Scene::raytrace(const Ray3d& ray) const
             //   surface color * sun color * atmospheric extinction
             baseColor = (planetColor * extinction) * light.color * diffuse;
 
-            atmEnd = ray.origin + dist * ray.direction;
+            atmEnd = ray.origin() + dist * ray.direction();
         }
 
         Vector3d inscatter = integrateInscattering(*this, atmStart, atmEnd) * 4.0 * PI;
@@ -1459,21 +1464,21 @@ Color Scene::raytrace(const Ray3d& ray) const
 
 
 Color
-Scene::raytrace_LUT(const Ray3d& ray) const
+Scene::raytrace_LUT(const Eigen::ParametrizedLine<double, 3>& ray) const
 {
     double atmEnter = 0.0;
     double atmExit = 0.0;
 
     double  shellRadius = planet.radius + atmosphereShellHeight;
     Sphered shell(shellRadius);
-    Vector3d eyePt = Vector3d::Zero() + (ray.origin - planet.center);
+    Vector3d eyePt = Vector3d::Zero() + (ray.origin() - planet.center);
 
     Color color = background;
-    if (ray.direction.dot(-light.direction) > cos(sunAngularDiameter / 2.0))
+    if (ray.direction().dot(-light.direction) > cos(sunAngularDiameter / 2.0))
         color = light.color;
 
     // Transform ray to model space
-    Ray3d mray(eyePt, ray.direction);
+    Eigen::ParametrizedLine<double, 3> mray(eyePt, ray.direction());
 
     bool hit = raySphereIntersect2(mray, shell, atmEnter, atmExit);
     if (hit && atmExit > 0.0)
@@ -1481,18 +1486,18 @@ Scene::raytrace_LUT(const Ray3d& ray) const
         Color baseColor = color;
 
         bool eyeInsideAtmosphere = atmEnter < 0.0;
-        Vector3d atmStart = mray.origin + atmEnter * mray.direction;
-        Vector3d atmEnd = mray.origin + atmExit * mray.direction;
+        Vector3d atmStart = mray.origin() + atmEnter * mray.direction();
+        Vector3d atmEnd = mray.origin() + atmExit * mray.direction();
 
         double planetEnter = 0.0;
         double planetExit = 0.0;
         hit = raySphereIntersect2(mray,
-                                 Sphered(planet.radius),
-                                 planetEnter,
-                                 planetExit);
+                                  Sphered(planet.radius),
+                                  planetEnter,
+                                  planetExit);
         if (hit && planetEnter > 0.0)
         {
-            Vector3d surfacePt = mray.point(planetEnter);
+            Vector3d surfacePt = mray.pointAt(planetEnter);
 
             // Lambert lighting
             Vector3d normal = surfacePt - Vector3d::Zero();
@@ -1504,13 +1509,13 @@ Scene::raytrace_LUT(const Ray3d& ray) const
 
             // Compute ray from surface point to edge of the atmosphere in the direction
             // of the sun.
-            Ray3d sunRay(surfacePt, lightDir);
+            Eigen::ParametrizedLine<double, 3> sunRay(surfacePt, lightDir);
             double sunDist = 0.0;
             testIntersection(sunRay, shell, sunDist);
 
             // Compute color of sunlight filtered by the atmosphere; consider extinction
             // along both the sun-to-surface and surface-to-eye paths.
-            Vector3d sunExt = lookupExtinction(*this, surfacePt, sunRay.point(sunDist));
+            Vector3d sunExt = lookupExtinction(*this, surfacePt, sunRay.pointAt(sunDist));
             Vector3d eyeExt = lookupExtinction(*this, surfacePt, atmStart);
             if (eyeInsideAtmosphere)
             {
@@ -1524,7 +1529,7 @@ Scene::raytrace_LUT(const Ray3d& ray) const
             //   surface color * sun color * atmospheric extinction
             baseColor = (planetColor * extinction) * light.color * diffuse;
 
-            atmEnd = mray.point(planetEnter);
+            atmEnd = mray.pointAt(planetEnter);
         }
 
         Vector3d inscatter;
@@ -1550,7 +1555,7 @@ Scene::raytrace_LUT(const Ray3d& ray) const
                 else
                 {
                     atmEnd = atmStart;
-                    atmStart = mray.point(planetEnter);
+                    atmStart = mray.pointAt(planetEnter);
                     //cout << atmEnter << ", " << planetEnter << ", " << atmExit << "\n";
                     rayleighScatter =
                         lookupScattering(*this, atmStart, atmEnd, -light.direction) -
@@ -1572,7 +1577,7 @@ Scene::raytrace_LUT(const Ray3d& ray) const
             }
 
             const Vector3d& rayleigh = atmosphere.rayleighCoeff;
-            double cosSunAngle = mray.direction.dot(-light.direction);
+            double cosSunAngle = mray.direction().dot(-light.direction);
             inscatter = phaseRayleigh(cosSunAngle) * rayleighScatter.cwiseProduct(rayleigh);
             inscatter = inscatter * 4.0 * PI;
         }
@@ -1613,7 +1618,7 @@ void render(const Scene& scene,
             double viewportX = ((double) (j - viewport.x) / (double) (viewport.width - 1) - 0.5) * aspectRatio;
             double viewportY ((double) (i - viewport.y) / (double) (viewport.height - 1) - 0.5);
 
-            Ray3d viewRay = camera.getViewRay(viewportX, viewportY);
+            Eigen::ParametrizedLine<double, 3> viewRay = camera.getViewRay(viewportX, viewportY);
 
             Color color;
             if (LUTUsage != NoLUT)

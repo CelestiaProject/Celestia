@@ -78,7 +78,7 @@ void DeepSkyObject::setInfoURL(const string& s)
 }
 
 
-bool DeepSkyObject::pick(const Ray3d& ray,
+bool DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                          double& distanceToPicker,
                          double& cosAngleToBoundCenter) const
 {

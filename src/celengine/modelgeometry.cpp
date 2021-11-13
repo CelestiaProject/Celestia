@@ -59,9 +59,9 @@ ModelGeometry::ModelGeometry(unique_ptr<cmod::Model>&& model) :
 
 
 bool
-ModelGeometry::pick(const Ray3d& r, double& distance) const
+ModelGeometry::pick(const Eigen::ParametrizedLine<double, 3>& r, double& distance) const
 {
-    return m_model->pick(r.origin, r.direction, distance);
+    return m_model->pick(r.origin(), r.direction(), distance);
 }
 
 

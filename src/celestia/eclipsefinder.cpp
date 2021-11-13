@@ -12,6 +12,9 @@
 
 #include <cstring>
 #include <cassert>
+
+#include <Eigen/Geometry>
+
 #include "eclipsefinder.h"
 #include "celmath/ray.h"
 #include "celmath/distance.h"
@@ -85,7 +88,7 @@ bool testEclipse(const Body& receiver, const Body& caster, double now)
         // If the distance is less than the sum of the caster's and receiver's
         // radii, then we have an eclipse.
         float R = receiver.getRadius() + shadowRadius;
-        double dist = distance(posReceiver, Ray3d(posCaster, posCaster));
+        double dist = distance(posReceiver, Eigen::ParametrizedLine<double, 3>(posCaster, posCaster));
         if (dist < R)
         {
             // Ignore "eclipses" where the caster and receiver have

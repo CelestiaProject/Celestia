@@ -16,6 +16,7 @@
 #include <celmath/mathlib.h>
 #include <celmath/perlin.h>
 #include <celmath/intersect.h>
+#include <celmath/ray.h>
 #include <celutil/gettext.h>
 #include <celutil/debug.h>
 #include <celcompat/filesystem.h>
@@ -227,7 +228,7 @@ const char* Galaxy::getObjTypeName() const
 static const float RADIUS_CORRECTION     = 0.025f;
 static const float MAX_SPIRAL_THICKNESS  = 0.06f;
 
-bool Galaxy::pick(const Ray3d& ray,
+bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                   double& distanceToPicker,
                   double& cosAngleToBoundCenter) const
 {
@@ -246,7 +247,8 @@ bool Galaxy::pick(const Ray3d& ray,
                            getRadius()*(form->scale.z() + RADIUS_CORRECTION));
 
     Matrix3d rotation = getOrientation().cast<double>().toRotationMatrix();
-    return testIntersection(Ray3d(ray.origin - getPosition(), ray.direction).transform(rotation),
+    return testIntersection(transformRay(Eigen::ParametrizedLine<double, 3>(ray.origin() - getPosition(), ray.direction()),
+                                          rotation),
                             Ellipsoidd(ellipsoidAxes),
                             distanceToPicker,
                             cosAngleToBoundCenter);
@@ -380,7 +382,7 @@ void Galaxy::renderGalaxyPointSprites(const Vector3f& offset,
     int pow2 = 1;
 
     BlobVector* points = form->blobs;
-    unsigned int nPoints = (unsigned int) (points->size() * clamp(getDetail()));
+    unsigned int nPoints = (unsigned int) (points->size() * celmath::clamp(getDetail()));
     // corrections to avoid excessive brightening if viewed e.g. edge-on
 
     float brightness_corr = 1.0f;
@@ -576,7 +578,7 @@ float Galaxy::getLightGain()
 
 void Galaxy::setLightGain(float lg)
 {
-    lightGain = clamp(lg);
+    lightGain = celmath::clamp(lg);
 }
 
 
