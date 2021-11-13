@@ -18,6 +18,8 @@
 
 namespace
 {
+constexpr std::string::size_type maxTokenLength = 1024;
+
 enum class State
 {
     Start,
@@ -41,12 +43,25 @@ bool isSeparator(char c)
 {
     return !std::isdigit(c) && !std::isalpha(c) && c != '.';
 }
+
+bool tryPushBack(std::string& s, char c)
+{
+    if (s.size() < maxTokenLength)
+    {
+        s.push_back(c);
+        return true;
+    }
+
+    reportError("Token too long");
+    return false;
+}
 }
 
 
 Tokenizer::Tokenizer(std::istream* _in) :
     in(_in)
 {
+    textToken.reserve(maxTokenLength);
 }
 
 
@@ -68,6 +83,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         }
     }
 
+    UTF8Validator validator;
     textToken.clear();
     tokenValue = std::nan("");
     State state = State::Start;
@@ -92,6 +108,12 @@ Tokenizer::TokenType Tokenizer::nextToken()
             else if (in->fail())
             {
                 reportError("Unexpected error reading stream");
+                newToken = TokenError;
+                break;
+            }
+            else if (!validator.check(nextChar))
+            {
+                reportError("Invalid UTF-8 sequence detected");
                 newToken = TokenError;
                 break;
             }
@@ -185,16 +207,16 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else if (std::isdigit(nextChar))
             {
-                textToken.push_back(nextChar);
+                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
             }
             else if (nextChar == '.')
             {
-                textToken.push_back(nextChar);
+                if (!tryPushBack(textToken, '.')) { newToken = TokenError; }
                 state = State::Fraction;
             }
             else if (nextChar == 'e' || nextChar == 'E')
             {
-                textToken.push_back('e');
+                if (!tryPushBack(textToken, 'e')) { newToken = TokenError; }
                 state = State::ExponentStart;
             }
             else if (isSeparator(nextChar))
@@ -216,11 +238,11 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else if (std::isdigit(nextChar))
             {
-                textToken.push_back(nextChar);
+                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
             }
             else if (nextChar == 'e' || nextChar == 'E')
             {
-                textToken.push_back('e');
+                if (!tryPushBack(textToken, 'e')) { newToken = TokenError; }
                 state = State::ExponentStart;
             }
             else if (isSeparator(nextChar))
@@ -243,7 +265,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else if (std::isdigit(nextChar) || nextChar == '+' || nextChar == '-')
             {
-                textToken.push_back(nextChar);
+                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
                 state = State::Exponent;
             }
             else
@@ -260,7 +282,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else if (std::isdigit(nextChar))
             {
-                textToken.push_back(nextChar);
+                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
             }
             else if (isSeparator(nextChar))
             {
@@ -281,7 +303,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else if (std::isalpha(nextChar) || std::isdigit(nextChar) || nextChar == '_')
             {
-                textToken.push_back(nextChar);
+                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
             }
             else
             {
@@ -306,7 +328,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else
             {
-                textToken.push_back(nextChar);
+                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
             }
             break;
 
@@ -318,17 +340,17 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else if (nextChar == '\\')
             {
-                textToken.push_back('\\');
+                if (!tryPushBack(textToken, '\\')) { newToken = TokenError; }
                 state = State::String;
             }
             else if (nextChar == 'n')
             {
-                textToken.push_back('\n');
+                if (!tryPushBack(textToken, '\n')) { newToken = TokenError; }
                 state = State::String;
             }
             else if (nextChar == '"')
             {
-                textToken.push_back('"');
+                if (!tryPushBack(textToken, '"')) { newToken = TokenError; }
                 state = State::String;
             }
             else if (nextChar == 'u')
@@ -350,8 +372,16 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 if (unicodeDigits == 4)
                 {
                     auto unicodeValue = static_cast<std::uint32_t>(std::strtoul(unicode, nullptr, 16));
-                    UTF8Encode(unicodeValue, textToken);
-                    state = State::String;
+                    if (textToken.size() + UTF8EncodedSize(unicodeValue) <= maxTokenLength)
+                    {
+                        UTF8Encode(unicodeValue, textToken);
+                        state = State::String;
+                    }
+                    else
+                    {
+                        reportError("Token too long");
+                        newToken = TokenError;
+                    }
                 }
             }
             else
@@ -416,7 +446,7 @@ void Tokenizer::pushBack()
 
 double Tokenizer::getNumberValue() const
 {
-    return tokenValue;
+    return tokenType == TokenNumber ? tokenValue : std::nan("");
 }
 
 
