@@ -28,7 +28,7 @@
 #include <celmodel/modelfile.h>
 
 #include <celmath/mathlib.h>
-#include <celmath/perlin.h>
+#include <celmath/randutils.h>
 #include <celutil/debug.h>
 #include <celutil/filetype.h>
 #include <celutil/debug.h>
@@ -238,7 +238,7 @@ static float NoiseDisplacementFunc(float u, float v, void* info)
     auto* params = (NoiseMeshParameters*) info;
 
     Vector3f p = Vector3f(x, y, z) + params->offset;
-    return fractalsum(p, params->octaves) * params->featureHeight;
+    return celmath::fractalsum(p, params->octaves) * params->featureHeight;
 }
 
 

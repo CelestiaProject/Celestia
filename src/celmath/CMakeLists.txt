@@ -6,8 +6,8 @@ set(CELMATH_SOURCES
   geomutil.h
   intersect.h
   mathlib.h
-  perlin.cpp
-  perlin.h
+  randutils.cpp
+  randutils.h
   ray.h
   solve.h
   sphere.h
