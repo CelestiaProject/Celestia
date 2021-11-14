@@ -15,9 +15,10 @@
 #include <cassert>
 #include <cmath>
 #include <fstream>
-#include <celmath/perlin.h>
+#include <random>
 #include <celmath/intersect.h>
 #include <celmath/ray.h>
+#include <celmath/randutils.h>
 #include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include "astro.h"
@@ -562,6 +563,7 @@ GlobularForm* buildGlobularForms(float c)
      *  coreRadius r_c, tidalRadius r_t, King concentration c = log10(r_t/r_c).
      */
 
+    auto& rng = getRNG();
     while (i < GLOBULAR_POINTS)
     {
         /*!
@@ -573,7 +575,7 @@ GlobularForm* buildGlobularForms(float c)
          * parameters and variables!
          */
 
-        float uu = frand<float>();
+        float uu = RealDists<float>::Unit(rng);
 
         /* First step: eta distributed as inverse power distribution (~1/Z^2)
          * that majorizes the exact King profile. Compute eta in terms of uniformly
@@ -598,15 +600,15 @@ GlobularForm* buildGlobularForms(float c)
 
         k++;
 
-        if (frand<float>() < prob / cH)
+        if (RealDists<float>::Unit(rng) < prob / cH)
         {
             /* Generate 3d points of globular cluster stars in polar coordinates:
              * Distribution in eta (<=> r) according to King's profile.
              * Uniform distribution on any spherical surface for given eta.
              * Note: u = cos(phi) must be used as a stochastic variable to get uniformity in angle!
              */
-            float u = sfrand<float>();
-            float theta = 2 * (float) PI * frand<float>();
+            float u = RealDists<float>::SignedUnit(rng);
+            float theta = RealDists<float>::SignedFullAngle(rng);
             float sthetu2 = sin(theta) * sqrt(1.0f - u * u);
 
             // x,y,z points within -0.5..+0.5, as required for consistency:

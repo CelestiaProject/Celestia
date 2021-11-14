@@ -10,7 +10,6 @@
 #pragma once
 
 #include <cmath>
-#include <cstdlib>
 #include <Eigen/Core>
 
 #define PI 3.14159265358979323846
@@ -23,18 +22,6 @@ template<typename T> inline void sincos(T angle, T& s, T& c)
     using std::sin;
     s = sin(angle);
     c = cos(angle);
-}
-
-// return a random float in [0, 1]
-template<typename T> inline T frand()
-{
-    return (T) (rand() & 0x7fff) / (T) 32767;
-}
-
-// return a random float in [-1, 1]
-template<typename T> inline T sfrand()
-{
-    return (T) (rand() & 0x7fff) / (T) 32767 * 2 - 1;
 }
 
 #ifndef HAVE_LERP
