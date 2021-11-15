@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
-#include <cstdint>
 #include <numeric>
 
 #include "randutils.h"
@@ -10,17 +9,6 @@ namespace celmath
 {
 namespace
 {
-std::mt19937 createRNG()
-{
-    std::random_device rd;
-    std::uniform_int_distribution<std::uint_least32_t> dist{0, UINT32_C(0xffffffff)};
-    constexpr std::size_t seedSize = std::mt19937::state_size * (std::mt19937::word_size / 32);
-    std::array<std::uint_least32_t, seedSize> seedData;
-    std::generate(seedData.begin(), seedData.end(), [&] { return dist(rd); });
-    std::seed_seq rngSeed(seedData.begin(), seedData.end());
-    return std::mt19937{ rngSeed };
-}
-
 // utility functions for Perlin noise
 struct PerlinData
 {
@@ -34,7 +22,7 @@ struct PerlinData
 
     PerlinData()
     {
-        auto& rng = getRNG();
+        Jsf32 rng(UINT32_C(0x3bafd0d8));
         auto permutationMid = permutation.begin() + TableSize;
         std::iota(permutation.begin(), permutationMid, 0);
         std::shuffle(permutation.begin(), permutationMid, rng);
@@ -87,7 +75,35 @@ constexpr inline float smooth(float t)
     return t * t * (3.0f - 2.0f * t);
 }
 
+constexpr inline std::uint32_t rot(std::uint32_t x, int k)
+{
+    return (x << k) | (x >> (32 - k));
+}
+
 } // end of anonymous namespace
+
+
+Jsf32::Jsf32(std::uint32_t seed) :
+    a(UINT32_C(0xf1ea5eed)), b(seed), c(seed), d(seed)
+{
+    for (int i = 0; i < 20; ++i)
+    {
+        (void)this->operator()();
+    }
+}
+
+
+Jsf32::result_type
+Jsf32::operator()()
+{
+    std::uint32_t e = a - rot(b, 27);
+    a = b ^ rot(c, 17);
+    b = c + d;
+    c = d + e;
+    d = e + a;
+    return d;
+}
+
 
 float noise(float arg)
 {
@@ -100,6 +116,7 @@ float noise(float arg)
     float g1 = perlinData.gradientAt(x1);
     return lerp(smooth(dx0), dx0 * g0, dx1 * g1);
 }
+
 
 float noise(const Eigen::Vector2f& arg)
 {
@@ -124,6 +141,7 @@ float noise(const Eigen::Vector2f& arg)
                  lerp(t[0], g01.dot(v01), g11.dot(v11))};
     return lerp(t[1], nx[0], nx[1]);
 }
+
 
 float noise(const Eigen::Vector3f& arg)
 {
@@ -163,6 +181,7 @@ float noise(const Eigen::Vector3f& arg)
                  lerp(t[1], nx[2], nx[3])};
     return lerp(t[2], ny[0], ny[1]);
 }
+
 
 float turbulence(const Eigen::Vector2f& p, float freq)
 {
@@ -218,11 +237,5 @@ float fractalsum(const Eigen::Vector3f& p, float freq)
     }
 
     return t;
-}
-
-std::mt19937& getRNG()
-{
-    static std::mt19937 rng = createRNG();
-    return rng;
 }
 } // end namespace celmath

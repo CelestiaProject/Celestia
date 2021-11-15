@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstdint>
 #include <random>
 
 #include <Eigen/Core>
@@ -9,6 +10,27 @@
 
 namespace celmath
 {
+
+// Small noncryptographic pseudorandom number generator by Bob Jenkins
+// http://burtleburtle.net/bob/rand/talksmall.html
+class Jsf32
+{
+public:
+    using result_type = std::uint32_t;
+    Jsf32(std::uint32_t seed);
+
+    static constexpr result_type min() { return 0; }
+    static constexpr result_type max() { return UINT32_MAX; }
+
+    result_type operator()();
+
+private:
+    std::uint32_t a;
+    std::uint32_t b;
+    std::uint32_t c;
+    std::uint32_t d;
+};
+
 extern float turbulence(const Eigen::Vector2f& p, float freq);
 extern float turbulence(const Eigen::Vector3f& p, float freq);
 extern float fractalsum(const Eigen::Vector2f& p, float freq);
@@ -38,7 +60,7 @@ template<typename T>
 std::uniform_real_distribution<T>
 RealDists<T>::SignedFullAngle{static_cast<T>(-PI), static_cast<T>(PI)};
 
-template<typename T, typename RNG = std::mt19937>
+template<typename T, typename RNG = Jsf32>
 Eigen::Matrix<T, 2, 1> randomOnCircle(RNG&& rng)
 {
     using std::cos;
@@ -47,7 +69,7 @@ Eigen::Matrix<T, 2, 1> randomOnCircle(RNG&& rng)
     return Eigen::Matrix<T, 2, 1>{cos(phi), sin(phi)};
 }
 
-template<typename T, typename RNG = std::mt19937>
+template<typename T, typename RNG = Jsf32>
 Eigen::Matrix<T, 3, 1> randomOnSphere(RNG&& rng)
 {
     using std::cos;
@@ -60,6 +82,4 @@ Eigen::Matrix<T, 3, 1> randomOnSphere(RNG&& rng)
                                   xyScale * sin(phi),
                                   cosTheta};
 }
-
-std::mt19937& getRNG();
 }

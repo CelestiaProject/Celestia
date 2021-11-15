@@ -563,7 +563,7 @@ GlobularForm* buildGlobularForms(float c)
      *  coreRadius r_c, tidalRadius r_t, King concentration c = log10(r_t/r_c).
      */
 
-    auto& rng = getRNG();
+    celmath::Jsf32 rng(UINT32_C(0xd3f1c5e9));
     while (i < GLOBULAR_POINTS)
     {
         /*!

@@ -602,7 +602,7 @@ GalacticForm* buildGalacticForms(const fs::path& filename)
     height = img->getHeight();
     rgb    = img->getComponents();
 
-    auto& rng = getRNG();
+    celmath::Jsf32 rng(UINT32_C(0xa0030c29));
     for (int i = 0; i < width * height; i++)
     {
         value = img->getPixels()[rgb * i];
@@ -667,7 +667,7 @@ GalacticForm* buildGalacticForms(const fs::path& filename)
     // reshuffle the galaxy points randomly...except the first kmin+1 in the center!
     // the higher that number the stronger the central "glow"
 
-    shuffle(galacticPoints->begin() + kmin, galacticPoints->end(), getRNG());
+    shuffle(galacticPoints->begin() + kmin, galacticPoints->end(), celmath::Jsf32(UINT32_C(0x29bf0617)));
 
     auto* galacticForm  = new GalacticForm();
     galacticForm->blobs = galacticPoints;
@@ -726,7 +726,7 @@ void InitializeForms()
     BlobVector* irregularPoints = new BlobVector;
     irregularPoints->reserve(galaxySize);
 
-    auto& rng = getRNG();
+    celmath::Jsf32 rng(UINT32_C(0xa24af6d3));
     while (ip < galaxySize)
     {
         p = Vector3f(RealDists<float>::SignedUnit(rng),
