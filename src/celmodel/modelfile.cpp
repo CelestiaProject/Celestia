@@ -12,7 +12,7 @@
 #include <cstring>
 #include <iostream>
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <fmt/ostream.h>
 
 #include <celutil/binaryread.h>
