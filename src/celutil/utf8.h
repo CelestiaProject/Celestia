@@ -66,6 +66,24 @@ inline int UTF8EncodedSize(wchar_t ch)
 #endif
 }
 
+constexpr inline int UTF8EncodedSizeChecked(std::uint32_t ch)
+{
+    if (ch < 0x80)
+        return 1;
+    if (ch < 0x800)
+        return 2;
+#if WCHAR_MAX > 0xFFFFu
+    if (ch < 0x10000)
+#endif
+        return 3;
+#if WCHAR_MAX > 0xFFFFu
+    if (ch < 0x110000)
+        return 4;
+    // out-of-range: assume U+FFFD REPLACEMENT CHARACTER
+    return 3;
+#endif
+}
+
 inline int UTF8EncodedSizeFromFirstByte(unsigned int ch)
 {
     if (ch < 0x80)
@@ -136,14 +154,21 @@ class Greek
 
 std::vector<std::string> getGreekCompletion(const std::string &);
 
+enum class UTF8Status
+{
+    Ok,
+    InvalidFirstByte,
+    InvalidTrailingByte,
+};
+
 class UTF8Validator
 {
 public:
     UTF8Validator() = default;
     ~UTF8Validator() = default;
 
-    bool check(char c);
-    bool check(unsigned char c);
+    UTF8Status check(char c);
+    UTF8Status check(unsigned char c);
 
 private:
     enum class State

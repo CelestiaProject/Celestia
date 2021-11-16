@@ -60,6 +60,7 @@ private:
     int lineNumber{ 1 };
     char nextChar{ '\0' };
     bool reprocess{ false };
+    bool hasUtf8Errors{ false };
 
     bool skipUtf8Bom();
 };

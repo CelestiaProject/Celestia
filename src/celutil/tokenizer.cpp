@@ -11,6 +11,7 @@
 #include <cctype>
 #include <cerrno>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 #include "utf8.h"
@@ -36,15 +37,18 @@ enum class State
     Comment,
 };
 
+
 void reportError(const char* message)
 {
     std::cerr << message << '\n';
 }
 
+
 bool isSeparator(char c)
 {
     return !std::isdigit(c) && !std::isalpha(c) && c != '.';
 }
+
 
 bool tryPushBack(std::string& s, char c)
 {
@@ -57,7 +61,33 @@ bool tryPushBack(std::string& s, char c)
     reportError("Token too long");
     return false;
 }
+
+
+bool handleUtf8Error(std::string& s, UTF8Status status)
+{
+    if (status == UTF8Status::InvalidTrailingByte)
+    {
+        // remove the partial UTF-8 sequence
+        std::string::size_type pos = s.size();
+        while (pos > 0)
+        {
+            unsigned char u = static_cast<unsigned char>(s[--pos]);
+            if (u >= 0xc0) { break; }
+        }
+
+        s.resize(pos);
+    }
+
+    if (s.size() <= maxTokenLength - std::strlen(UTF8_REPLACEMENT_CHAR))
+    {
+        s.append(UTF8_REPLACEMENT_CHAR);
+        return true;
+    }
+
+    reportError("Token too long");
+    return false;
 }
+} // end unnamed namespace
 
 
 Tokenizer::Tokenizer(std::istream* _in) :
@@ -92,6 +122,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
     TokenType newToken = TokenBegin;
     int unicodeDigits = 0;
     char unicode[5] = {};
+    UTF8Status utf8Status = UTF8Status::Ok;
 
     while (newToken == TokenBegin)
     {
@@ -102,6 +133,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         }
         else
         {
+            utf8Status = UTF8Status::Ok;
             in->get(nextChar);
             if (in->eof())
             {
@@ -113,15 +145,18 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 newToken = TokenError;
                 break;
             }
-            else if (!validator.check(nextChar))
+            else
             {
-                reportError("Invalid UTF-8 sequence detected");
-                newToken = TokenError;
-                break;
-            }
-            else if (nextChar == '\n')
-            {
-                ++lineNumber;
+                utf8Status = validator.check(nextChar);
+                if (utf8Status != UTF8Status::Ok && !hasUtf8Errors)
+                {
+                    reportError("Invalid UTF-8 sequence detected");
+                    hasUtf8Errors = true;
+                }
+                else if (nextChar == '\n')
+                {
+                    ++lineNumber;
+                }
             }
         }
 
@@ -378,6 +413,10 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 reportError("Unexpected EOF in string");
                 newToken = TokenError;
             }
+            else if (utf8Status != UTF8Status::Ok)
+            {
+                if (!handleUtf8Error(textToken, utf8Status)) { newToken = TokenError; }
+            }
             else if (nextChar == '\\')
             {
                 state = State::StringEscape;
@@ -437,7 +476,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 if (unicodeDigits == 4)
                 {
                     auto unicodeValue = static_cast<std::uint32_t>(std::strtoul(unicode, nullptr, 16));
-                    if (textToken.size() + UTF8EncodedSize(unicodeValue) <= maxTokenLength)
+                    if (textToken.size() <= maxTokenLength - UTF8EncodedSizeChecked(unicodeValue))
                     {
                         UTF8Encode(unicodeValue, textToken);
                         state = State::String;
