@@ -144,7 +144,6 @@ Image* LoadDDSImage(const fs::path& filename)
     }
 
     char header[4];
-    in.read(header, sizeof header);
     if (!in.read(header, sizeof(header)).good()
         || header[0] != 'D' || header[1] != 'D'
         || header[2] != 'S' || header[3] != ' ')
@@ -301,7 +300,7 @@ Image* LoadDDSImage(const fs::path& filename)
                            (int) ddsd.height,
                            max(ddsd.mipMapLevels, 1u));
     in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize());
-    if (!in.good())
+    if (!in.eof() && !in.good())
     {
         DPRINTF(LOG_LEVEL_ERROR, "Failed reading data from DDS texture file %s.\n", filename);
         delete img;
