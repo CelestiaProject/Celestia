@@ -23,9 +23,11 @@ constexpr std::string::size_type maxTokenLength = 1024;
 enum class State
 {
     Start,
+    NumberSigned,
     Number,
     Fraction,
     ExponentStart,
+    ExponentSigned,
     Exponent,
     Name,
     String,
@@ -134,14 +136,19 @@ Tokenizer::TokenType Tokenizer::nextToken()
             {
                 // no-op
             }
-            else if (std::isdigit(nextChar) || nextChar == '-')
+            else if (std::isdigit(nextChar))
             {
                 textToken.push_back(nextChar);
                 state = State::Number;
             }
+            else if (nextChar == '-')
+            {
+                textToken.push_back(nextChar);
+                state = State::NumberSigned;
+            }
             else if (nextChar == '+')
             {
-                state = State::Number;
+                state = State::NumberSigned;
             }
             else if (nextChar == '.')
             {
@@ -196,6 +203,36 @@ Tokenizer::TokenType Tokenizer::nextToken()
             else
             {
                 reportError("Bad character in stream");
+                newToken = TokenError;
+            }
+            break;
+
+        case State::NumberSigned:
+            if (isEof)
+            {
+                reportError("Unexpected EOF in number");
+            }
+            else if (std::isdigit(nextChar))
+            {
+                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
+                state = State::Number;
+            }
+            else if (nextChar == '.')
+            {
+                if (textToken.size() + 2 <= maxTokenLength)
+                {
+                    textToken.append("0.");
+                    state = State::Fraction;
+                }
+                else
+                {
+                    reportError("Token too long");
+                    newToken = TokenError;
+                }
+            }
+            else
+            {
+                reportError("Bad character in number");
                 newToken = TokenError;
             }
             break;
@@ -260,10 +297,33 @@ Tokenizer::TokenType Tokenizer::nextToken()
         case State::ExponentStart:
             if (isEof)
             {
-                reportError("Unexpected EOF");
+                reportError("Unexpected EOF in number");
                 newToken = TokenError;
             }
-            else if (std::isdigit(nextChar) || nextChar == '+' || nextChar == '-')
+            else if (std::isdigit(nextChar))
+            {
+                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
+                state = State::Exponent;
+            }
+            else if (nextChar == '+' || nextChar == '-')
+            {
+                if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
+                state = State::ExponentSigned;
+            }
+            else
+            {
+                reportError("Bad character in number");
+                newToken = TokenError;
+            }
+            break;
+
+        case State::ExponentSigned:
+            if (isEof)
+            {
+                reportError("Unexpected EOF in number");
+                newToken = TokenError;
+            }
+            else if (std::isdigit(nextChar))
             {
                 if (!tryPushBack(textToken, nextChar)) { newToken = TokenError; }
                 state = State::Exponent;
@@ -315,7 +375,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         case State::String:
             if (isEof)
             {
-                reportError("Unterminated string");
+                reportError("Unexpected EOF in string");
                 newToken = TokenError;
             }
             else if (nextChar == '\\')
@@ -335,7 +395,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         case State::StringEscape:
             if (isEof)
             {
-                reportError("Unterminated string");
+                reportError("Unexpected EOF in string");
                 newToken = TokenError;
             }
             else if (nextChar == '\\')
@@ -358,12 +418,17 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 state = State::UnicodeEscape;
                 unicodeDigits = 0;
             }
+            else
+            {
+                reportError("Invalid string escape sequence");
+                newToken = TokenError;
+            }
             break;
 
         case State::UnicodeEscape:
             if (isEof)
             {
-                reportError("Unterminated string");
+                reportError("Unexpected EOF in string");
                 newToken = TokenError;
             }
             else if (std::isxdigit(nextChar))
