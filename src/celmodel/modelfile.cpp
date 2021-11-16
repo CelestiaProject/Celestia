@@ -213,7 +213,7 @@ AsciiModelLoader::reportError(const std::string& msg)
 Material*
 AsciiModelLoader::loadMaterial()
 {
-    if (tok.nextToken() != Tokenizer::TokenName || tok.getNameValue() != MeshToken)
+    if (tok.nextToken() != Tokenizer::TokenName || tok.getNameValue() != MaterialToken)
     {
         reportError("Material definition expected");
         return nullptr;
