@@ -80,7 +80,11 @@ jobs:
         path: ${{github.workspace}}/build/src/*/*.7z
 
   build-gnu-linux:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ ubuntu-latest, ubuntu-18.04 ]
+    runs-on: ${{matrix.platform}}
     steps:
     - name: 'Install dependencies'
       run: |
