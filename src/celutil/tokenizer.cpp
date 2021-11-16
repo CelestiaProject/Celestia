@@ -11,6 +11,7 @@
 #include <cctype>
 #include <cerrno>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 #include "utf8.h"
@@ -92,6 +93,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
     TokenType newToken = TokenBegin;
     int unicodeDigits = 0;
     char unicode[5] = {};
+    bool isInvalidUtf8 = false;
 
     while (newToken == TokenBegin)
     {
@@ -102,6 +104,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         }
         else
         {
+            isInvalidUtf8 = false;
             in->get(nextChar);
             if (in->eof())
             {
@@ -115,9 +118,13 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else if (!validator.check(nextChar))
             {
-                reportError("Invalid UTF-8 sequence detected");
-                newToken = TokenError;
-                break;
+                // avoid spamming the log with UTF-8 errors
+                if (!hasUtf8Errors)
+                {
+                    reportError("Invalid UTF-8 sequence detected");
+                    hasUtf8Errors = true;
+                }
+                isInvalidUtf8 = true;
             }
             else if (nextChar == '\n')
             {
@@ -377,6 +384,18 @@ Tokenizer::TokenType Tokenizer::nextToken()
             {
                 reportError("Unexpected EOF in string");
                 newToken = TokenError;
+            }
+            else if (isInvalidUtf8)
+            {
+                if (textToken.size() + std::strlen(UTF8_REPLACEMENT_CHAR) <= maxTokenLength)
+                {
+                    textToken.append(UTF8_REPLACEMENT_CHAR);
+                }
+                else
+                {
+                    reportError("Token too long");
+                    newToken = TokenError;
+                }
             }
             else if (nextChar == '\\')
             {
