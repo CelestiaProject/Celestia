@@ -114,7 +114,19 @@ jobs:
         submodules: true
 
     - name: 'Configure CMake'
-      run: cmake -B ${{github.workspace}}/build -G Ninja -DCMAKE_CXX_STANDARD=17 -DENABLE_GLES=ON -DENABLE_SPICE=ON -DENABLE_TOOLS=OFF -DENABLE_TESTS=ON -DENABLE_SDL=ON -DENABLE_GTK=ON -DUSE_GTK3=ON -DENABLE_FFMPEG=ON -DENABLE_DATA=OFF
+      run: |
+        cmake -B ${{github.workspace}}/build  \
+              -G Ninja                        \
+              -DCMAKE_CXX_STANDARD=17         \
+              -DENABLE_GLES=ON                \
+              -DENABLE_SPICE=ON               \
+              -DENABLE_TOOLS=OFF              \
+              -DENABLE_TESTS=ON               \
+              -DENABLE_SDL=ON                 \
+              -DENABLE_GTK=ON                 \
+              -DUSE_GTK3=ON                   \
+              -DENABLE_FFMPEG=ON              \
+              -DENABLE_DATA=OFF
 
     - name: Build
       working-directory: ${{github.workspace}}/build
