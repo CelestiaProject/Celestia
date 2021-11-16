@@ -1988,7 +1988,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
     {
         float alpha = 1.0f;
         float fade = 1.0f;
-        float size = BaseStarDiscSize * screenDpi / 96;
+        float size = BaseStarDiscSize * screenDpi / 96.0f;
 #ifdef USE_HDR
         float fieldCorr = 2.0f * FOV/(fov + FOV);
         float satPoint = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
@@ -4652,7 +4652,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
     starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
 
-    starRenderer.size = BaseStarDiscSize * screenDpi / 96;
+    starRenderer.size = BaseStarDiscSize * screenDpi / 96.0f;
     if (starStyle == ScaledDiscStars)
     {
         starRenderer.useScaledDiscs = true;

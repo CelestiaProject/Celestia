@@ -76,6 +76,9 @@ void PointStarVertexBuffer::makeCurrent()
     if (current == this || program == nullptr)
         return;
 
+    if (current != nullptr)
+        current->finish();
+
     program->use();
     program->setMVPMatrices(renderer.getProjectionMatrix(), renderer.getModelViewMatrix());
     if (pointSizeFromVertex)
@@ -101,6 +104,7 @@ void PointStarVertexBuffer::finish()
     glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     if (pointSizeFromVertex)
         glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
+    current = nullptr;
 }
 
 void PointStarVertexBuffer::enable()
