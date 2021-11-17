@@ -710,15 +710,15 @@ static int object_getinfo(lua_State* l)
         celx.setTable("importance", (lua_Number)location->getImportance());
         celx.setTable("infoURL", location->getInfoURL().c_str());
 
-        uint32_t featureType = location->getFeatureType();
-        string featureName("Unknown");
+        auto featureType = location->getFeatureType();
         auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps()->LocationFlagMap;
         auto iter = std::find_if(LocationFlagMap.begin(),
                                  LocationFlagMap.end(),
-                                 [&featureType](pair<const string, uint64_t>& it){ return it.second == featureType; });
+                                 [&featureType](auto& it){ return it.second == featureType; });
         if (iter != LocationFlagMap.end())
-            featureName = iter->first;
-        celx.setTable("featureType", featureName.c_str());
+             celx.setTable("featureType", iter->first.c_str());
+        else
+             celx.setTable("featureType", "Unknown");
 
         Body* parent = location->getParentBody();
         if (parent != nullptr)
