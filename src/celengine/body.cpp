@@ -1174,14 +1174,11 @@ void Body::recomputeCullingRadius()
 {
     float r = getBoundingRadius();
 
+    if (atmosphere)
+        r += max(atmosphere->height, atmosphere->cloudHeight);
+
     if (rings)
         r = max(r, rings->outerRadius);
-
-    if (atmosphere)
-    {
-        r = max(r, atmosphere->height);
-        r = max(r, atmosphere->cloudHeight);
-    }
 
     if (referenceMarks)
     {
