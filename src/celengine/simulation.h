@@ -50,7 +50,10 @@ class Simulation
     void rotate(const Eigen::Quaternionf& q);
     void changeOrbitDistance(float d);
     void setTargetSpeed(float s);
-    float getTargetSpeed();
+    float getTargetSpeed() const;
+
+    void setDefaultGoToTime(double);
+    void setDefaultCenterTime(double);
 
     Selection getSelection() const;
     void setSelection(const Selection&);
@@ -78,8 +81,8 @@ class Simulation
                              double& longitude,
                              double& latitude);
     void gotoSurface(double duration);
-    void centerSelection(double centerTime = 0.5);
-    void centerSelectionCO(double centerTime = 0.5);
+    void centerSelection(double centerTime = -1.0);
+    void centerSelectionCO(double centerTime = -1.0);
     void follow();
     void geosynchronousFollow();
     void phaseLock();

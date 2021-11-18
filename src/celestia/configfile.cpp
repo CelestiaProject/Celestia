@@ -124,12 +124,16 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     config->scriptSystemAccessPolicy = "ask";
     configParams->getString("ScriptSystemAccessPolicy", config->scriptSystemAccessPolicy);
 
-    config->orbitWindowEnd = 0.5f;
+    config->orbitWindowEnd = 0.5;
     configParams->getNumber("OrbitWindowEnd", config->orbitWindowEnd);
-    config->orbitPeriodsShown = 1.0f;
+    config->orbitPeriodsShown = 1.0;
     configParams->getNumber("OrbitPeriodsShown", config->orbitPeriodsShown);
-    config->linearFadeFraction = 0.0f;
+    config->linearFadeFraction = 0.0;
     configParams->getNumber("LinearFadeFraction", config->linearFadeFraction);
+    config->defaultGoToTime = -1.0;
+    configParams->getNumber("DefaultGoToTime", config->defaultGoToTime);
+    config->defaultCenterTime = -1.0;
+    configParams->getNumber("DefaultCenterTime", config->defaultCenterTime);
 
     config->orbitPathSamplePoints = getUint(configParams, "OrbitPathSamplePoints", 100);
     config->shadowTextureSize = getUint(configParams, "ShadowTextureSize", 256);

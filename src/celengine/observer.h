@@ -142,7 +142,12 @@ public:
     void rotate(const Eigen::Quaternionf &q);
     void changeOrbitDistance(const Selection&, float d);
     void setTargetSpeed(float s);
-    float getTargetSpeed();
+    float getTargetSpeed() const;
+
+    void setDefaultGoToTime(double);
+    double getDefaultGoToTime() const;
+    void setDefaultCenterTime(double);
+    double getDefaultCenterTime() const;
 
     Selection getTrackedObject() const;
     void setTrackedObject(const Selection&);
@@ -305,6 +310,8 @@ public:
     Eigen::Vector3d 	targetVelocity{ 0.0, 0.0, 0.0 };
     Eigen::Vector3d 	initialVelocity{ 0.0, 0.0, 0.0 };
     double          	beginAccelTime{ 0.0 };
+    double              defaultGoToTime{ 5.0 };
+    double              defaultCenterTime{ 0.5 };
 
     ObserverMode     	observerMode{ Free };
     JourneyParams    	journey;

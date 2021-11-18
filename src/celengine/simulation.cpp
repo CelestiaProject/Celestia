@@ -173,6 +173,8 @@ Observer& Simulation::getObserver()
 Observer* Simulation::addObserver()
 {
     Observer* o = new Observer();
+    o->setDefaultGoToTime(activeObserver->getDefaultGoToTime());
+    o->setDefaultCenterTime(activeObserver->getDefaultCenterTime());
     observers.push_back(o);
     return o;
 }
@@ -266,9 +268,21 @@ void Simulation::setTargetSpeed(float s)
     activeObserver->setTargetSpeed(s);
 }
 
-float Simulation::getTargetSpeed()
+float Simulation::getTargetSpeed() const
 {
     return activeObserver->getTargetSpeed();
+}
+
+void Simulation::setDefaultGoToTime(double g)
+{
+    for (const auto observer : observers)
+        observer->setDefaultGoToTime(g);
+}
+
+void Simulation::setDefaultCenterTime(double c)
+{
+    for (const auto observer : observers)
+        observer->setDefaultCenterTime(c);
 }
 
 void Simulation::gotoSelection(double gotoTime,

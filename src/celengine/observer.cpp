@@ -537,7 +537,7 @@ void Observer::computeGotoParameters(const Selection& destination,
     //Vector3d v = targetPosition.offsetFromKm(getPosition()).normalized();
 
     jparams.traj = Linear;
-    jparams.duration = gotoTime;
+    jparams.duration = gotoTime < 0.0 ? defaultGoToTime : gotoTime;
     jparams.startTime = realTime;
 
     // Right where we are now . . .
@@ -653,7 +653,7 @@ void Observer::computeCenterParameters(const Selection& destination,
 {
     UniversalCoord targetPosition = destination.getPosition(getTime());
 
-    jparams.duration = centerTime;
+    jparams.duration = centerTime < 0.0 ? defaultCenterTime : centerTime;
     jparams.startTime = realTime;
     jparams.traj = Linear;
 
@@ -684,7 +684,7 @@ void Observer::computeCenterCOParameters(const Selection& destination,
                                          JourneyParams& jparams,
                                          double centerTime)
 {
-    jparams.duration = centerTime;
+    jparams.duration = centerTime < 0.0 ? defaultCenterTime : centerTime;
     jparams.startTime = realTime;
     jparams.traj = CircularOrbit;
 
@@ -939,9 +939,31 @@ void Observer::setTargetSpeed(float s)
 }
 
 
-float Observer::getTargetSpeed()
+float Observer::getTargetSpeed() const
 {
     return (float) targetSpeed;
+}
+
+
+void Observer::setDefaultGoToTime(double g)
+{
+    defaultGoToTime = g;
+}
+
+double Observer::getDefaultGoToTime() const
+{
+    return defaultGoToTime;
+}
+
+
+void Observer::setDefaultCenterTime(double c)
+{
+    defaultCenterTime = c;
+}
+
+double Observer::getDefaultCenterTime() const
+{
+    return defaultCenterTime;
 }
 
 
@@ -1197,7 +1219,7 @@ void Observer::gotoLocation(const UniversalCoord& toPosition,
                             double duration)
 {
     journey.startTime = realTime;
-    journey.duration = duration;
+    journey.duration = duration < 0.0 ? defaultGoToTime : duration;
 
     journey.from = position;
     journey.initialOrientation = orientation;

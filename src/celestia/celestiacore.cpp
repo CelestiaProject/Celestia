@@ -1081,7 +1081,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         flash(_("Goto surface"));
         addToHistory();
         sim->geosynchronousFollow();
-        sim->gotoSurface(5.0);
+        sim->gotoSurface(-1.0);
         break;
 
     case '\006': // Ctrl+F
@@ -1527,7 +1527,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         addToHistory();
         if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::Universal)
             sim->follow();
-        sim->gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
+        sim->gotoSelection(-1.0, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
         break;
 
     case 'H':
@@ -3966,6 +3966,17 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     }
 
     sim = new Simulation(universe);
+
+    if (config->defaultGoToTime >= 0.0)
+    {
+        sim->setDefaultGoToTime(config->defaultGoToTime);
+    }
+
+    if (config->defaultCenterTime >= 0.0)
+    {
+        sim->setDefaultCenterTime(config->defaultCenterTime);
+    }
+
     if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
         sim->setFaintestVisible(config->faintestVisible);

@@ -47,6 +47,8 @@ public:
     double orbitWindowEnd;
     double orbitPeriodsShown;
     double linearFadeFraction;
+    double defaultGoToTime;
+    double defaultCenterTime;
     fs::path scriptScreenshotDirectory;
     std::string scriptSystemAccessPolicy;
 #ifdef CELX

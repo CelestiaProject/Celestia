@@ -239,7 +239,7 @@ static int observer_gototable(lua_State* l)
     }
 
     Observer::JourneyParams jparams;
-    jparams.duration = 5.0;
+    jparams.duration = o->getDefaultGoToTime();
     jparams.from = o->getPosition();
     jparams.to = o->getPosition();
     jparams.initialOrientation = o->getOrientation();
@@ -251,7 +251,7 @@ static int observer_gototable(lua_State* l)
 
     lua_pushstring(l, "duration");
     lua_gettable(l, 2);
-    jparams.duration = celx.safeGetNumber(3, NoErrors, "", 5.0);
+    jparams.duration = celx.safeGetNumber(3, NoErrors, "", o->getDefaultGoToTime());
     lua_settop(l, 2);
 
     lua_pushstring(l, "from");
@@ -333,7 +333,7 @@ static int observer_goto(lua_State* l)
         return 0;
     }
 
-    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:goto must be a number", 5.0);
+    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:goto must be a number", o->getDefaultGoToTime());
     double startInter = celx.safeGetNumber(4, WrongType, "Third arg to observer:goto must be a number", 0.25);
     double endInter = celx.safeGetNumber(5, WrongType, "Fourth arg to observer:goto must be a number", 0.75);
     if (startInter < 0 || startInter > 1) startInter = 0.25;
@@ -370,7 +370,7 @@ static int observer_gotolonglat(lua_State* l)
     double longitude  = celx.safeGetNumber(3, WrongType, "Second arg to observer:gotolonglat must be a number", 0.0);
     double latitude   = celx.safeGetNumber(4, WrongType, "Third arg to observer:gotolonglat must be a number", 0.0);
     double distance   = celx.safeGetNumber(5, WrongType, "Fourth arg to observer:gotolonglat must be a number", defaultDistance);
-    double travelTime = celx.safeGetNumber(6, WrongType, "Fifth arg to observer:gotolonglat must be a number", 5.0);
+    double travelTime = celx.safeGetNumber(6, WrongType, "Fifth arg to observer:gotolonglat must be a number", o->getDefaultGoToTime());
 
     //distance = distance / KM_PER_LY;
 
@@ -398,7 +398,7 @@ static int observer_gotolocation(lua_State* l)
 
     Observer* o = this_observer(l);
 
-    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:gotolocation must be a number", 5.0);
+    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:gotolocation must be a number", o->getDefaultGoToTime());
     if (travelTime < 0)
         travelTime = 0.0;
 
@@ -429,7 +429,7 @@ static int observer_gotodistance(lua_State* l)
     }
 
     double distance = celx.safeGetNumber(3, WrongType, "Second arg to observer:gotodistance must be a number", 20000);
-    double travelTime = celx.safeGetNumber(4, WrongType, "Third arg to observer:gotodistance must be a number", 5.0);
+    double travelTime = celx.safeGetNumber(4, WrongType, "Third arg to observer:gotodistance must be a number", o->getDefaultGoToTime());
 
     Vector3f up = Vector3f::UnitY();
     if (lua_gettop(l) > 4)
@@ -462,7 +462,7 @@ static int observer_gotosurface(lua_State* l)
         return 0;
     }
 
-    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:gotosurface must be a number", 5.0);
+    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:gotosurface must be a number", o->getDefaultGoToTime());
 
     // This is needed because gotoSurface expects frame to be geosync:
     o->geosynchronousFollow(*sel);
@@ -483,7 +483,7 @@ static int observer_center(lua_State* l)
         celx.doError("First argument to observer:center must be an object");
         return 0;
     }
-    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:center must be a number", 5.0);
+    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:center must be a number", o->getDefaultCenterTime());
 
     o->centerSelection(*sel, travelTime);
 
@@ -502,7 +502,7 @@ static int observer_centerorbit(lua_State* l)
         celx.doError("First argument to observer:centerorbit must be an object");
         return 0;
     }
-    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:centerorbit must be a number", 5.0);
+    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:centerorbit must be a number", o->getDefaultCenterTime());
 
     o->centerSelectionCO(*sel, travelTime);
 
