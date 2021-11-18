@@ -1,5 +1,3 @@
-include(TestCase)
-
 test_case(hash)
 if ((NOT HAVE_EXPERIMENTAL_FILESYSTEM) AND (NOT HAVE_FILESYSTEM))
   test_case(fs)

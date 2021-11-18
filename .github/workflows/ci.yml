@@ -47,6 +47,8 @@ jobs:
 
     - name: 'Checkout source code'
       uses: actions/checkout@v2
+      with:
+        submodules: true
 
     - name: 'Configure CMake'
       run: cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=c:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows -DCMAKE_GENERATOR_PLATFORM=${{matrix.generator_platform}} -DENABLE_SPICE=ON -DENABLE_TOOLS=ON -DENABLE_TESTS=ON -DENABLE_SDL=OFF -DENABLE_QT=ON -DENABLE_DATA=OFF
@@ -56,7 +58,9 @@ jobs:
 
     - name: 'Copy DLL for tests'
       working-directory: ${{github.workspace}}/build
-      run: copy src\celestia\${{env.BUILD_TYPE}}\*.dll test\unit\${{env.BUILD_TYPE}}\
+      run: |
+        copy src\celestia\${{env.BUILD_TYPE}}\*.dll test\unit\${{env.BUILD_TYPE}}\
+        copy src\celestia\${{env.BUILD_TYPE}}\*.dll test\integration\${{env.BUILD_TYPE}}\
 
     - name: Test
       working-directory: ${{github.workspace}}/build
