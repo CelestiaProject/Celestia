@@ -886,7 +886,7 @@ static string getKeyName(const char* c, int modifiers)
     // Translate control characters
     if (length == 1 && c[0] >= '\001' && c[0] <= '\032')
     {
-        return fmt::format("C-{:c}", '\140' + c[0]);
+        return fmt::format("C-{:c}", static_cast<char>('\140' + c[0]));
     }
 
     if (modifiers & CelestiaCore::ControlKey)
