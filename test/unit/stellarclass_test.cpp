@@ -1,6 +1,5 @@
 #include <celengine/stellarclass.h>
 
-#define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
 #define CHECK_NORMAL_STAR(u, _class, _str)                              \
@@ -55,14 +54,14 @@ TEST_CASE("StellarClass", "[StellarClass]")
         StellarClass u;
 
         SECTION("Packed as V1")
-        {   
+        {
             packed = sc.packV1();
             REQUIRE(u.unpackV1(packed));
             CHECK_NORMAL_STAR(u, StellarClass::Spectral_Unknown, "?5 I-a0");
-        }   
+        }
 
         SECTION("Packed as V2")
-        {   
+        {
             packed = sc.packV2();
             REQUIRE(u.unpackV2(packed));
             CHECK_NORMAL_STAR(u, StellarClass::Spectral_Y, "Y5 I-a0");
@@ -98,7 +97,7 @@ TEST_CASE("StellarClass", "[StellarClass]")
     {
         StellarClass sc(StellarClass::NormalStar,
                         StellarClass::Spectral_C,
-                        5,    
+                        5,
                         StellarClass::Lum_Ia0);
 
         uint16_t packed;
@@ -146,7 +145,7 @@ TEST_CASE("StellarClass", "[StellarClass]")
 
 
     SECTION("StellarClass::Spectral_T")
-    { 
+    {
         StellarClass sc(StellarClass::NormalStar,
                         StellarClass::Spectral_T,
                         5,

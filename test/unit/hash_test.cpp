@@ -2,7 +2,6 @@
 #include <celengine/value.h>
 #include <celutil/color.h>
 
-#define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
 constexpr const double EPSILON = 1.0 / 255.0;

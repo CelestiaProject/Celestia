@@ -246,6 +246,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             if (isEof)
             {
                 reportError("Unexpected EOF in number");
+                newToken = TokenError;
             }
             else if (std::isdigit(nextChar))
             {
