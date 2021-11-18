@@ -6,7 +6,6 @@ namespace fs = celestia::filesystem;
 namespace fs = std::filesystem;
 #endif
 
-#define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
 TEST_CASE("filesystem", "[filesystem]")
