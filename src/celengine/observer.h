@@ -148,6 +148,12 @@ public:
     double getDefaultGoToTime() const;
     void setDefaultCenterTime(double);
     double getDefaultCenterTime() const;
+    void setDefaultInterpolation(double, double);
+    void getDefaultInterpolation(double&, double&) const;
+    void setAlternativeInterpolation(double, double);
+    void getAlternativeInterpolation(double&, double&) const;
+    void setDefaultAccelerationTime(double);
+    double getDefaultAccelerationTime() const;
 
     Selection getTrackedObject() const;
     void setTrackedObject(const Selection&);
@@ -170,8 +176,6 @@ public:
                        ObserverFrame::CoordinateSystem upFrame);
     void gotoSelectionGC(const Selection&,
                          double gotoTime,
-                         double startInter,
-                         double endInter,
                          const Eigen::Vector3f &up,
                          ObserverFrame::CoordinateSystem upFrame);
     void gotoSelection(const Selection&,
@@ -256,7 +260,9 @@ public:
     };
 
     void gotoJourney(const JourneyParams&);
-    // void setSimulation(Simulation* _sim) { sim = _sim; };
+
+    static const double defaultAccelTimeMin;
+    static const double defaultAccelTimeMax;
 
  private:
     void computeGotoParameters(const Selection &sel,
@@ -306,18 +312,23 @@ public:
 
     double              realTime{ 0.0 };
 
-    double          	targetSpeed{ 0.0 };
-    Eigen::Vector3d 	targetVelocity{ 0.0, 0.0, 0.0 };
-    Eigen::Vector3d 	initialVelocity{ 0.0, 0.0, 0.0 };
-    double          	beginAccelTime{ 0.0 };
+    double              targetSpeed{ 0.0 };
+    Eigen::Vector3d     targetVelocity{ 0.0, 0.0, 0.0 };
+    Eigen::Vector3d     initialVelocity{ 0.0, 0.0, 0.0 };
+    double              beginAccelTime{ 0.0 };
     double              defaultGoToTime{ 5.0 };
     double              defaultCenterTime{ 0.5 };
+    double              defaultInterpolationStart{ 0.25 };
+    double              defaultInterpolationEnd{ 0.75 };
+    double              altInterpolationStart{ 0.0 };
+    double              altInterpolationEnd{ 0.5 };
+    double              defaultAccelTime{ 0.5 };
 
-    ObserverMode     	observerMode{ Free };
-    JourneyParams    	journey;
-    Selection        	trackObject;
+    ObserverMode        observerMode{ Free };
+    JourneyParams       journey;
+    Selection           trackObject;
 
-    Eigen::Quaterniond 	trackingOrientation{ Eigen::Quaternionf::Identity() };   // orientation prior to selecting tracking
+    Eigen::Quaterniond  trackingOrientation{ Eigen::Quaternionf::Identity() };   // orientation prior to selecting tracking
 
     float fov{ (float) (PI / 4.0) };
     bool reverseFlag{ false };

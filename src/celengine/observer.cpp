@@ -18,6 +18,9 @@
 static const double maximumSimTime = 730486721060.00073; // 2000000000 Jan 01 12:00:00 UTC
 static const double minimumSimTime = -730498278941.99951; // -2000000000 Jan 01 12:00:00 UTC
 
+const double Observer::defaultAccelTimeMin = 0.1;
+const double Observer::defaultAccelTimeMax = 1.0;
+
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
@@ -567,10 +570,10 @@ void Observer::computeGotoParameters(const Selection& destination,
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
     jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, upd);
-    jparams.startInterpolation = min(startInter, endInter);
-    jparams.endInterpolation   = max(startInter, endInter);
+    jparams.startInterpolation = celmath::clamp(min(startInter, endInter));
+    jparams.endInterpolation   = celmath::clamp(max(startInter, endInter));
 
-    jparams.accelTime = 0.5;
+    jparams.accelTime = celmath::clamp(defaultAccelTime, defaultAccelTimeMin, defaultAccelTimeMax);
     double distance = jparams.from.offsetFromKm(jparams.to).norm() / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
                                                0.0001, 100.0,
@@ -629,10 +632,10 @@ void Observer::computeGotoParametersGC(const Selection& destination,
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
     jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, upd);
-    jparams.startInterpolation = min(startInter, endInter);
-    jparams.endInterpolation   = max(startInter, endInter);
+    jparams.startInterpolation = celmath::clamp(min(startInter, endInter));
+    jparams.endInterpolation   = celmath::clamp(max(startInter, endInter));
 
-    jparams.accelTime = 0.5;
+    jparams.accelTime = celmath::clamp(defaultAccelTime, defaultAccelTimeMin, defaultAccelTimeMax);
     double distance = jparams.from.offsetFromKm(jparams.to).norm() / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
                                                0.0001, 100.0,
@@ -669,7 +672,7 @@ void Observer::computeCenterParameters(const Selection& destination,
     jparams.startInterpolation = 0;
     jparams.endInterpolation   = 1;
 
-    jparams.accelTime = 0.5;
+    jparams.accelTime = celmath::clamp(defaultAccelTime, defaultAccelTimeMin, defaultAccelTimeMax);
     jparams.expFactor = 0;
 
     // Convert to frame coordinates
@@ -966,6 +969,39 @@ double Observer::getDefaultCenterTime() const
     return defaultCenterTime;
 }
 
+void Observer::setDefaultInterpolation(double s, double e)
+{
+    defaultInterpolationStart = celmath::clamp(min(s, e));
+    defaultInterpolationEnd = celmath::clamp(max(s, e));
+}
+
+void Observer::getDefaultInterpolation(double &s, double &e) const
+{
+    s = defaultInterpolationStart;
+    e = defaultInterpolationEnd;
+}
+
+void Observer::setAlternativeInterpolation(double s, double e)
+{
+    altInterpolationStart = celmath::clamp(min(s, e));
+    altInterpolationEnd = celmath::clamp(max(s, e));
+}
+
+void Observer::getAlternativeInterpolation(double &s, double &e) const
+{
+    s = altInterpolationStart;
+    e = altInterpolationEnd;
+}
+
+void Observer::setDefaultAccelerationTime(double a)
+{
+    defaultAccelTime = a;
+}
+
+double Observer::getDefaultAccelerationTime() const
+{
+    return defaultAccelTime;
+}
 
 void Observer::gotoJourney(const JourneyParams& params)
 {
@@ -984,7 +1020,7 @@ void Observer::gotoSelection(const Selection& selection,
                              const Vector3f& up,
                              ObserverFrame::CoordinateSystem upFrame)
 {
-    gotoSelection(selection, gotoTime, 0.0, 0.5, up, upFrame);
+    gotoSelection(selection, gotoTime, altInterpolationStart, altInterpolationEnd, up, upFrame);
 }
 
 
@@ -1098,8 +1134,6 @@ void Observer::gotoSelection(const Selection& selection,
  */
 void Observer::gotoSelectionGC(const Selection& selection,
                                double gotoTime,
-                               double /*startInter*/,       //TODO: remove parameter??
-                               double /*endInter*/,         //TODO: remove parameter??
                                const Vector3f& up,
                                ObserverFrame::CoordinateSystem upFrame)
 {
@@ -1127,8 +1161,7 @@ void Observer::gotoSelectionGC(const Selection& selection,
         }
 
         computeGotoParametersGC(selection, journey, gotoTime,
-                                //startInter, endInter,
-                                0.25, 0.75,
+                                defaultInterpolationStart, defaultInterpolationEnd,
                                 v * (orbitDistance / distanceToCenter),
                                 ObserverFrame::Universal,
                                 up, upFrame,
@@ -1152,7 +1185,7 @@ void Observer::gotoSelection(const Selection& selection,
         Vector3d v = pos.offsetFromKm(getPosition());
         v.normalize();
 
-        computeGotoParameters(selection, journey, gotoTime, 0.25, 0.75,
+        computeGotoParameters(selection, journey, gotoTime, defaultInterpolationStart, defaultInterpolationEnd,
                               v * -distance, ObserverFrame::Universal,
                               up, upFrame);
         observerMode = Travelling;
@@ -1176,7 +1209,7 @@ void Observer::gotoSelectionGC(const Selection& selection,
 
         // The destination position lies along a line extended from the center
         // object to the target object
-        computeGotoParametersGC(selection, journey, gotoTime, 0.25, 0.75,
+        computeGotoParametersGC(selection, journey, gotoTime, defaultInterpolationStart, defaultInterpolationEnd,
                                 v * -distance, ObserverFrame::Universal,
                                 up, upFrame,
                                 centerObj);
@@ -1206,7 +1239,7 @@ void Observer::gotoSelectionLongLat(const Selection& selection,
         double x = cos(theta) * sin(phi);
         double y = cos(phi);
         double z = -sin(theta) * sin(phi);
-        computeGotoParameters(selection, journey, gotoTime, 0.25, 0.75,
+        computeGotoParameters(selection, journey, gotoTime, defaultInterpolationStart, defaultInterpolationEnd,
                               Vector3d(x, y, z) * distance, ObserverFrame::BodyFixed,
                               up, ObserverFrame::BodyFixed);
         observerMode = Travelling;
@@ -1226,10 +1259,10 @@ void Observer::gotoLocation(const UniversalCoord& toPosition,
     journey.to = toPosition;
     journey.finalOrientation = toOrientation;
 
-    journey.startInterpolation = 0.25f;
-    journey.endInterpolation   = 0.75f;
+    journey.startInterpolation = defaultInterpolationStart;
+    journey.endInterpolation   = defaultInterpolationEnd;
 
-    journey.accelTime = 0.5;
+    journey.accelTime = celmath::clamp(defaultAccelTime, defaultAccelTimeMin, defaultAccelTimeMax);
     double distance = journey.from.offsetFromKm(journey.to).norm() / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, journey.accelTime),
                                                0.0001, 100.0,

@@ -54,6 +54,9 @@ class Simulation
 
     void setDefaultGoToTime(double);
     void setDefaultCenterTime(double);
+    void setDefaultInterpolation(double, double);
+    void setAlternativeInterpolation(double, double);
+    void setDefaultAccelerationTime(double);
 
     Selection getSelection() const;
     void setSelection(const Selection&);

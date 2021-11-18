@@ -175,6 +175,12 @@ Observer* Simulation::addObserver()
     Observer* o = new Observer();
     o->setDefaultGoToTime(activeObserver->getDefaultGoToTime());
     o->setDefaultCenterTime(activeObserver->getDefaultCenterTime());
+    double s, e;
+    activeObserver->getDefaultInterpolation(s, e);
+    o->setDefaultInterpolation(s, e);
+    activeObserver->getAlternativeInterpolation(s, e);
+    o->setAlternativeInterpolation(s, e);
+    o->setDefaultAccelerationTime(activeObserver->getDefaultAccelerationTime());
     observers.push_back(o);
     return o;
 }
@@ -285,6 +291,24 @@ void Simulation::setDefaultCenterTime(double c)
         observer->setDefaultCenterTime(c);
 }
 
+void Simulation::setDefaultInterpolation(double s, double e)
+{
+    for (const auto observer : observers)
+        observer->setDefaultInterpolation(s, e);
+}
+
+void Simulation::setAlternativeInterpolation(double s, double e)
+{
+    for (const auto observer : observers)
+        observer->setAlternativeInterpolation(s, e);
+}
+
+void Simulation::setDefaultAccelerationTime(double a)
+{
+    for (const auto observer : observers)
+        observer->setDefaultAccelerationTime(a);
+}
+
 void Simulation::gotoSelection(double gotoTime,
                                const Vector3f& up,
                                ObserverFrame::CoordinateSystem upFrame)
@@ -292,7 +316,7 @@ void Simulation::gotoSelection(double gotoTime,
     if (selection.getType() == Selection::Type_Location)
     {
         activeObserver->gotoSelectionGC(selection,
-                                        gotoTime, 0.0, 0.5,
+                                        gotoTime,
                                         up, upFrame);
     }
     else

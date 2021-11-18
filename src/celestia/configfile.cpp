@@ -134,6 +134,16 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     configParams->getNumber("DefaultGoToTime", config->defaultGoToTime);
     config->defaultCenterTime = -1.0;
     configParams->getNumber("DefaultCenterTime", config->defaultCenterTime);
+    config->defaultInterpolationStart = -1.0;
+    configParams->getNumber("DefaultInterpolationStart", config->defaultInterpolationStart);
+    config->defaultInterpolationEnd = -1.0;
+    configParams->getNumber("DefaultInterpolationEnd", config->defaultInterpolationEnd);
+    config->altInterpolationStart = -1.0;
+    configParams->getNumber("AlternativeInterpolationStart", config->altInterpolationStart);
+    config->altInterpolationEnd = -1.0;
+    configParams->getNumber("AlternativeInterpolationEnd", config->altInterpolationEnd);
+    config->defaultAccelTime = -1.0;
+    configParams->getNumber("DefaultAccelerationTime", config->defaultAccelTime);
 
     config->orbitPathSamplePoints = getUint(configParams, "OrbitPathSamplePoints", 100);
     config->shadowTextureSize = getUint(configParams, "ShadowTextureSize", 256);

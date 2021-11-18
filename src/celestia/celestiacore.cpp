@@ -3977,6 +3977,21 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         sim->setDefaultCenterTime(config->defaultCenterTime);
     }
 
+    if (config->defaultInterpolationStart >= 0.0 && config->defaultInterpolationEnd <= 1.0 && config->defaultInterpolationEnd >= config->defaultInterpolationStart)
+    {
+        sim->setDefaultInterpolation(config->defaultInterpolationStart, config->defaultInterpolationEnd);
+    }
+
+    if (config->altInterpolationStart >= 0.0 && config->altInterpolationEnd <= 1.0 && config->altInterpolationEnd >= config->altInterpolationStart)
+    {
+        sim->setAlternativeInterpolation(config->altInterpolationStart, config->altInterpolationEnd);
+    }
+
+    if (config->defaultAccelTime >= Observer::defaultAccelTimeMin && config->defaultAccelTime <= Observer::defaultAccelTimeMax)
+    {
+        sim->setDefaultAccelerationTime(config->defaultAccelTime);
+    }
+
     if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
         sim->setFaintestVisible(config->faintestVisible);

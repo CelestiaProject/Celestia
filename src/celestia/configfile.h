@@ -49,6 +49,11 @@ public:
     double linearFadeFraction;
     double defaultGoToTime;
     double defaultCenterTime;
+    double defaultInterpolationStart;
+    double defaultInterpolationEnd;
+    double altInterpolationStart;
+    double altInterpolationEnd;
+    double defaultAccelTime;
     fs::path scriptScreenshotDirectory;
     std::string scriptSystemAccessPolicy;
 #ifdef CELX

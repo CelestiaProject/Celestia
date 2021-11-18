@@ -238,15 +238,18 @@ static int observer_gototable(lua_State* l)
         lua_pushstring(l, "Argument to goto must be a table");
     }
 
+    double defaultStartInter, defaultEndInter;
+    o->getDefaultInterpolation(defaultStartInter, defaultEndInter);
+
     Observer::JourneyParams jparams;
     jparams.duration = o->getDefaultGoToTime();
     jparams.from = o->getPosition();
     jparams.to = o->getPosition();
     jparams.initialOrientation = o->getOrientation();
     jparams.finalOrientation = o->getOrientation();
-    jparams.startInterpolation = 0.25;
-    jparams.endInterpolation = 0.75;
-    jparams.accelTime = 0.5;
+    jparams.startInterpolation = defaultStartInter;
+    jparams.endInterpolation = defaultEndInter;
+    jparams.accelTime = o->getDefaultAccelerationTime();
     jparams.traj = Observer::Linear;
 
     lua_pushstring(l, "duration");
@@ -284,23 +287,23 @@ static int observer_gototable(lua_State* l)
 
     lua_pushstring(l, "startInterpolation");
     lua_gettable(l, 2);
-    jparams.startInterpolation = celx.safeGetNumber(3, NoErrors, "", 0.25);
+    jparams.startInterpolation = celx.safeGetNumber(3, NoErrors, "", defaultStartInter);
     lua_settop(l, 2);
 
     lua_pushstring(l, "endInterpolation");
     lua_gettable(l, 2);
-    jparams.endInterpolation = celx.safeGetNumber(3, NoErrors, "", 0.75);
+    jparams.endInterpolation = celx.safeGetNumber(3, NoErrors, "", defaultEndInter);
     lua_settop(l, 2);
 
     lua_pushstring(l, "accelTime");
     lua_gettable(l, 2);
-    jparams.accelTime = celx.safeGetNumber(3, NoErrors, "", 0.5);
+    jparams.accelTime = celx.safeGetNumber(3, NoErrors, "", o->getDefaultAccelerationTime());
     lua_settop(l, 2);
 
     jparams.duration = max(0.0, jparams.duration);
-    jparams.accelTime = min(1.0, max(0.1, jparams.accelTime));
-    jparams.startInterpolation = min(1.0, max(0.0, jparams.startInterpolation));
-    jparams.endInterpolation = min(1.0, max(0.0, jparams.endInterpolation));
+    jparams.accelTime = celmath::clamp(jparams.accelTime, Observer::defaultAccelTimeMin, Observer::defaultAccelTimeMax);
+    jparams.startInterpolation = celmath::clamp(jparams.startInterpolation);
+    jparams.endInterpolation = celmath::clamp(jparams.endInterpolation);
 
     // args are in universal coords, let setFrame handle conversion:
     auto tmp = o->getFrame();
@@ -333,11 +336,14 @@ static int observer_goto(lua_State* l)
         return 0;
     }
 
+    double defaultStartInter, defaultEndInter;
+    o->getDefaultInterpolation(defaultStartInter, defaultEndInter);
+
     double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:goto must be a number", o->getDefaultGoToTime());
-    double startInter = celx.safeGetNumber(4, WrongType, "Third arg to observer:goto must be a number", 0.25);
-    double endInter = celx.safeGetNumber(5, WrongType, "Fourth arg to observer:goto must be a number", 0.75);
-    if (startInter < 0 || startInter > 1) startInter = 0.25;
-    if (endInter < 0 || endInter > 1) endInter = 0.75;
+    double startInter = celx.safeGetNumber(4, WrongType, "Third arg to observer:goto must be a number", defaultStartInter);
+    double endInter = celx.safeGetNumber(5, WrongType, "Fourth arg to observer:goto must be a number", defaultEndInter);
+    if (startInter < 0 || startInter > 1) startInter = defaultStartInter;
+    if (endInter < 0 || endInter > 1) endInter = defaultEndInter;
 
     // The first argument may be either an object or a position
     if (sel != nullptr)
