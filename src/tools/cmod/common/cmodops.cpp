@@ -1290,7 +1290,7 @@ GenerateModelNormals(const Model& model, float smoothAngle, bool weldVertices, f
 
 #ifdef TRISTRIP
 bool
-convertToStrips(Mesh& mesh)
+ConvertToStrips(Mesh& mesh)
 {
     vector<Mesh::PrimitiveGroup*> groups;
 
