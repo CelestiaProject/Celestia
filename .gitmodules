@@ -4,3 +4,6 @@
 [submodule "content"]
 	path = content
 	url = https://github.com/CelestiaProject/CelestiaContent.git
+[submodule "thirdparty/fmt"]
+	path = thirdparty/fmt
+	url = https://github.com/fmtlib/fmt.git
