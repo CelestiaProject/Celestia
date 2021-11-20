@@ -46,7 +46,9 @@ extern bool UniquifyVertices(cmod::Mesh& mesh);
 // Model operations
 extern cmod::Model* MergeModelMeshes(const cmod::Model& model);
 extern cmod::Model* GenerateModelNormals(const cmod::Model& model, float smoothAngle, bool weldVertices, float weldTolerance);
-
+#ifdef TRISTRIP
+extern bool ConvertToStrips(cmod::Mesh& mesh);
+#endif
 
 template<typename T, typename U> void
 JoinVertices(std::vector<Face>& faces,
