@@ -210,7 +210,11 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE) # -DEigen3_DIR=...
 message(STATUS "Found Eigen3 ${EIGEN3_VERSION_STRING}")
 link_libraries(Eigen3::Eigen)
 
-find_package(fmt REQUIRED)
+find_package(fmt 6.1.0 CONFIG QUIET)
+if(NOT fmt_FOUND)
+  message(STATUS "Using fmt submodule")
+  add_subdirectory("${CMAKE_SOURCE_DIR}/thirdparty/fmt")
+endif()
 link_libraries(fmt::fmt)
 
 find_package(PNG REQUIRED)
