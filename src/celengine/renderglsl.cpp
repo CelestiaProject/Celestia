@@ -412,12 +412,10 @@ void renderGeometry_GLSL(Geometry* geometry,
         m.specular = Material::Color(ri.specularColor);
         m.specularPower = ri.specularPower;
 
-        CelestiaTextureResource textureResource(texOverride);
-        m.maps[Material::DiffuseMap] = &textureResource;
+        m.maps[Material::DiffuseMap] = texOverride;
         rc.setMaterial(&m);
         rc.lock();
         geometry->render(rc, tsec);
-        m.maps[Material::DiffuseMap] = nullptr; // prevent Material destructor from deleting the texture resource
     }
     else
     {
@@ -455,12 +453,10 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
         m.specular = Material::Color(ri.specularColor);
         m.specularPower = ri.specularPower;
 
-        CelestiaTextureResource textureResource(texOverride);
-        m.maps[Material::DiffuseMap] = &textureResource;
+        m.maps[Material::DiffuseMap] = texOverride;
         rc.setMaterial(&m);
         rc.lock();
         geometry->render(rc, tsec);
-        m.maps[Material::DiffuseMap] = nullptr; // prevent Material destructor from deleting the texture resource
     }
     else
     {

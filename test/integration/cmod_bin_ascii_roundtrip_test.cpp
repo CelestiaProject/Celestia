@@ -3,29 +3,49 @@
 #include <ios>
 #include <iterator>
 #include <sstream>
-
-#include <celmodel/modelfile.h>
+#include <vector>
 
 #include <catch.hpp>
 
+#include <celcompat/filesystem.h>
+#include <celmodel/modelfile.h>
+#include <celutil/reshandle.h>
+
+
 TEST_CASE("CMOD binary to ASCII roundtrip", "[cmod] [integration]")
 {
+    std::vector<fs::path> paths;
+    cmod::HandleGetter handleGetter = [&](const fs::path& path)
+    {
+        auto it = std::find(paths.cbegin(), paths.cend(), path);
+        if (it == paths.cend())
+        {
+            paths.push_back(path);
+            return static_cast<ResourceHandle>(paths.size() - 1);
+        }
+        else
+        {
+            return static_cast<ResourceHandle>(it - paths.cbegin());
+        }
+    };
+    cmod::SourceGetter sourceGetter = [&](ResourceHandle handle) { return paths[handle]; };
+
     std::ifstream f("iss.cmod", std::ios::in | std::ios::binary);
     REQUIRE(f.good());
     std::stringstream sourceData;
     sourceData << f.rdbuf();
 
-    cmod::Model* modelFromBinary = cmod::LoadModel(sourceData, nullptr);
+    cmod::Model* modelFromBinary = cmod::LoadModel(sourceData, handleGetter);
     REQUIRE(modelFromBinary != nullptr);
 
     std::stringstream asciiData;
-    REQUIRE(cmod::SaveModelAscii(modelFromBinary, asciiData));
+    REQUIRE(cmod::SaveModelAscii(modelFromBinary, asciiData, sourceGetter));
 
-    cmod::Model* modelFromAscii = cmod::LoadModel(asciiData);
+    cmod::Model* modelFromAscii = cmod::LoadModel(asciiData, handleGetter);
     REQUIRE(modelFromAscii != nullptr);
 
     std::stringstream roundtrippedData;
-    REQUIRE(cmod::SaveModelBinary(modelFromAscii, roundtrippedData));
+    REQUIRE(cmod::SaveModelBinary(modelFromAscii, roundtrippedData, sourceGetter));
 
     sourceData.clear();
     REQUIRE(sourceData.seekg(0, std::ios_base::beg).good());

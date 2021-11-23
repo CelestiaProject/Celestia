@@ -9,6 +9,7 @@
 
 #include "glsupport.h"
 #include "materialwidget.h"
+#include "pathmanager.h"
 #include <celmodel/material.h>
 #include <QGridLayout>
 #include <QPushButton>
@@ -38,20 +39,7 @@ static void copyMaterial(Material& dest, const Material& src)
     dest.opacity       = src.opacity;
     dest.specularPower = src.specularPower;
     dest.blend         = src.blend;
-
-    for (unsigned int i = 0; i < Material::TextureSemanticMax; ++i)
-    {
-        if (dest.maps[i])
-        {
-            delete dest.maps[i];
-            dest.maps[i] = nullptr;
-        }
-
-        if (src.maps[i])
-        {
-            dest.maps[i] = new Material::DefaultTextureResource(src.maps[i]->source());
-        }
-    }
+    dest.maps          = src.maps;
 }
 
 
@@ -186,20 +174,20 @@ MaterialWidget::setMaterial(const Material& material)
     m_opacity->setText(QString::number(m_material.opacity));
     m_specularPower->setText(QString::number(m_material.specularPower));
 
-    if (m_material.maps[Material::DiffuseMap])
-        selectComboBoxItem(m_baseTexture, m_material.maps[Material::DiffuseMap]->source());
+    if (m_material.maps[Material::DiffuseMap] != InvalidResource)
+        selectComboBoxItem(m_baseTexture, GetPathManager()->getSource(m_material.maps[Material::DiffuseMap]));
     else
         m_baseTexture->setCurrentIndex(0);
-    if (m_material.maps[Material::SpecularMap])
-        selectComboBoxItem(m_specularMap, m_material.maps[Material::SpecularMap]->source());
+    if (m_material.maps[Material::SpecularMap] != InvalidResource)
+        selectComboBoxItem(m_specularMap, GetPathManager()->getSource(m_material.maps[Material::SpecularMap]));
     else
         m_specularMap->setCurrentIndex(0);
-    if (m_material.maps[Material::EmissiveMap])
-        selectComboBoxItem(m_emissiveMap, m_material.maps[Material::EmissiveMap]->source());
+    if (m_material.maps[Material::EmissiveMap] != InvalidResource)
+        selectComboBoxItem(m_emissiveMap, GetPathManager()->getSource(m_material.maps[Material::EmissiveMap]));
     else
         m_emissiveMap->setCurrentIndex(0);
-    if (m_material.maps[Material::NormalMap])
-        selectComboBoxItem(m_normalMap, m_material.maps[Material::NormalMap]->source());
+    if (m_material.maps[Material::NormalMap] != InvalidResource)
+        selectComboBoxItem(m_normalMap, GetPathManager()->getSource(m_material.maps[Material::NormalMap]));
     else
         m_normalMap->setCurrentIndex(0);
 
@@ -291,32 +279,28 @@ MaterialWidget::changeMaterialParameters()
     m_material.opacity = m_opacity->text().toFloat();
     m_material.specularPower = m_specularPower->text().toFloat();
 
-    delete m_material.maps[Material::DiffuseMap];
-    m_material.maps[Material::DiffuseMap] = 0;
+    m_material.maps[Material::DiffuseMap] = InvalidResource;
     if (!m_baseTexture->itemData(m_baseTexture->currentIndex()).isNull())
     {
-        m_material.maps[Material::DiffuseMap] = new Material::DefaultTextureResource(m_baseTexture->currentText().toStdString());
+        m_material.maps[Material::DiffuseMap] = GetPathManager()->getHandle(m_baseTexture->currentText().toStdString());
     }
 
-    delete m_material.maps[Material::SpecularMap];
-    m_material.maps[Material::SpecularMap] = 0;
+    m_material.maps[Material::SpecularMap] = InvalidResource;
     if (!m_specularMap->itemData(m_specularMap->currentIndex()).isNull())
     {
-        m_material.maps[Material::SpecularMap] = new Material::DefaultTextureResource(m_specularMap->currentText().toStdString());
+        m_material.maps[Material::SpecularMap] = GetPathManager()->getHandle(m_specularMap->currentText().toStdString());
     }
 
-    delete m_material.maps[Material::NormalMap];
-    m_material.maps[Material::NormalMap] = 0;
+    m_material.maps[Material::NormalMap] = InvalidResource;
     if (!m_normalMap->itemData(m_normalMap->currentIndex()).isNull())
     {
-        m_material.maps[Material::NormalMap] = new Material::DefaultTextureResource(m_normalMap->currentText().toStdString());
+        m_material.maps[Material::NormalMap] = GetPathManager()->getHandle(m_normalMap->currentText().toStdString());
     }
 
-    delete m_material.maps[Material::EmissiveMap];
-    m_material.maps[Material::EmissiveMap] = 0;
+    m_material.maps[Material::EmissiveMap] = InvalidResource;
     if (!m_emissiveMap->itemData(m_emissiveMap->currentIndex()).isNull())
     {
-        m_material.maps[Material::EmissiveMap] = new Material::DefaultTextureResource(m_emissiveMap->currentText().toStdString());
+        m_material.maps[Material::EmissiveMap] = GetPathManager()->getHandle(m_emissiveMap->currentText().toStdString());
     }
 
     emit materialEdited(m_material);

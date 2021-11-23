@@ -62,14 +62,6 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
                         const void* vertexData);
 
 
-static ResourceHandle
-GetTextureHandle(Material::TextureResource* texResource)
-{
-    CelestiaTextureResource* t = reinterpret_cast<CelestiaTextureResource*>(texResource);
-    return t ? t->textureHandle() : InvalidResource;
-}
-
-
 RenderContext::RenderContext(Renderer* _renderer) :
     material(&defaultMaterial),
     renderer(_renderer)
@@ -162,7 +154,7 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group, bool useOverride)
 {
     // Skip rendering if this is the emissive pass but there's no
     // emissive texture.
-    ResourceHandle emissiveMap = GetTextureHandle(material->maps[Material::EmissiveMap]);
+    ResourceHandle emissiveMap = material->maps[Material::EmissiveMap];
 
     if (renderPass == EmissivePass && emissiveMap == InvalidResource)
     {
@@ -498,10 +490,10 @@ GLSL_RenderContext::makeCurrent(const Material& m)
             shaderProps.lightModel = ShaderProperties::ParticleDiffuseModel;
     }
 
-    ResourceHandle diffuseMap  = GetTextureHandle(m.maps[Material::DiffuseMap]);
-    ResourceHandle normalMap   = GetTextureHandle(m.maps[Material::NormalMap]);
-    ResourceHandle specularMap = GetTextureHandle(m.maps[Material::SpecularMap]);
-    ResourceHandle emissiveMap = GetTextureHandle(m.maps[Material::EmissiveMap]);
+    ResourceHandle diffuseMap  = m.maps[Material::DiffuseMap];
+    ResourceHandle normalMap   = m.maps[Material::NormalMap];
+    ResourceHandle specularMap = m.maps[Material::SpecularMap];
+    ResourceHandle emissiveMap = m.maps[Material::EmissiveMap];
 
     if (diffuseMap != InvalidResource && (useTexCoords || usePointSize))
     {
@@ -828,7 +820,7 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
     shaderProps.lightModel = ShaderProperties::EmissiveModel;
     shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
 
-    ResourceHandle diffuseMap = GetTextureHandle(m.maps[Material::DiffuseMap]);
+    ResourceHandle diffuseMap = m.maps[Material::DiffuseMap];
     if (diffuseMap != InvalidResource && (useTexCoords || usePointSize))
     {
         baseTex = GetTextureManager()->find(diffuseMap);

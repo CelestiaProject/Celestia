@@ -10,16 +10,10 @@
 
 #include "material.h"
 
-using namespace cmod;
-
+namespace cmod
+{
 Material::Material()
 {
-  maps.fill(nullptr);
+    maps.fill(InvalidResource);
 }
-
-
-Material::~Material()
-{
-    for (const auto map : maps)
-        delete map;
 }

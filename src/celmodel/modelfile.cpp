@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cstring>
 #include <iostream>
+#include <string>
 
 #include <fmt/format.h>
 #include <fmt/ostream.h>
@@ -84,30 +85,35 @@ enum ModelFileType
 class ModelLoader
 {
 public:
-    ModelLoader() = default;
+    explicit ModelLoader(HandleGetter& _handleGetter) : handleGetter(_handleGetter) {}
     virtual ~ModelLoader() = default;
 
     virtual Model* load() = 0;
 
     const std::string& getErrorMessage() const { return errorMessage; }
-    TextureLoader* getTextureLoader() const { return textureLoader; }
-    void setTextureLoader(TextureLoader* _textureLoader) { textureLoader = _textureLoader; }
+    ResourceHandle getHandle(const fs::path& path) { return handleGetter(path); }
 
 protected:
     virtual void reportError(const std::string& msg) { errorMessage = msg; }
 
 private:
-    std::string errorMessage;
-    TextureLoader* textureLoader{ nullptr };
+    std::string errorMessage{ };
+    HandleGetter& handleGetter;
 };
 
 
 class ModelWriter
 {
 public:
+    explicit ModelWriter(SourceGetter& _sourceGetter) : sourceGetter(_sourceGetter) {}
     virtual ~ModelWriter() = default;
 
     virtual bool write(const Model&) = 0;
+
+    fs::path getSource(ResourceHandle handle) { return sourceGetter(handle); }
+
+private:
+    SourceGetter& sourceGetter;
 };
 
 
@@ -185,7 +191,10 @@ defined here--they have the obvious definitions.
 class AsciiModelLoader : public ModelLoader
 {
 public:
-    explicit AsciiModelLoader(std::istream& _in) : tok(&_in) {}
+    AsciiModelLoader(std::istream& _in, HandleGetter& _handleGetter) :
+        ModelLoader(_handleGetter),
+        tok(&_in)
+    {}
     ~AsciiModelLoader() override = default;
 
     Model* load() override;
@@ -243,16 +252,7 @@ AsciiModelLoader::loadMaterial()
 
             std::string textureName = tok.getStringValue();
 
-            Material::TextureResource* tex = nullptr;
-            if (getTextureLoader())
-            {
-                tex = getTextureLoader()->loadTexture(textureName);
-            }
-            else
-            {
-                tex = new Material::DefaultTextureResource(textureName);
-            }
-
+            ResourceHandle tex = getHandle(textureName);
             material->maps[texType] = tex;
         }
         else if (property == "blend")
@@ -689,7 +689,10 @@ AsciiModelLoader::load()
 class AsciiModelWriter : public ModelWriter
 {
 public:
-    explicit AsciiModelWriter(std::ostream& _out) : out(_out) {}
+    AsciiModelWriter(std::ostream& _out, SourceGetter& _sourceGetter) :
+        ModelWriter(_sourceGetter),
+        out(_out)
+    {}
     ~AsciiModelWriter() override = default;
 
     bool write(const Model& /*model*/) override;
@@ -1011,9 +1014,9 @@ AsciiModelWriter::writeMaterial(const Material& material)
     for (int i = 0; i < Material::TextureSemanticMax; i++)
     {
         fs::path texSource;
-        if (material.maps[i] != nullptr)
+        if (material.maps[i] != InvalidResource)
         {
-            texSource = material.maps[i]->source();
+            texSource = getSource(material.maps[i]);
         }
 
         if (!texSource.empty())
@@ -1165,7 +1168,10 @@ bool ignoreValue(std::istream& in)
 class BinaryModelLoader : public ModelLoader
 {
 public:
-    explicit BinaryModelLoader(std::istream& _in) : in(_in) {}
+    BinaryModelLoader(std::istream& _in, HandleGetter& _handleGetter) :
+        ModelLoader(_handleGetter),
+        in(_in)
+    {}
     ~BinaryModelLoader() override = default;
 
     Model* load() override;
@@ -1359,16 +1365,7 @@ BinaryModelLoader::loadMaterial()
                     return nullptr;
                 }
 
-                Material::TextureResource* tex = nullptr;
-                if (getTextureLoader() != nullptr)
-                {
-                    tex = getTextureLoader()->loadTexture(texfile);
-                }
-                else
-                {
-                    tex = new Material::DefaultTextureResource(texfile);
-                }
-
+                ResourceHandle tex = getHandle(texfile);
                 material->maps[texType] = tex;
             }
             break;
@@ -1676,7 +1673,10 @@ bool writeTypeString(std::ostream& out, const std::string& s)
 class BinaryModelWriter : public ModelWriter
 {
 public:
-    explicit BinaryModelWriter(std::ostream& _out) : out(_out) {}
+    BinaryModelWriter(std::ostream& _out, SourceGetter& _sourceGetter) :
+        ModelWriter(_sourceGetter),
+        out(_out)
+    {}
     ~BinaryModelWriter() override = default;
 
     bool write(const Model& /*model*/) override;
@@ -1877,9 +1877,9 @@ BinaryModelWriter::writeMaterial(const Material& material)
 
     for (int i = 0; i < Material::TextureSemanticMax; i++)
     {
-        if (material.maps[i])
+        if (material.maps[i] != InvalidResource)
         {
-            fs::path texSource = material.maps[i]->source();
+            fs::path texSource = getSource(material.maps[i]);
             if (!texSource.empty()
                 && (!writeToken(out, CMOD_Texture)
                     || !celutil::writeLE<std::int16_t>(out, i)
@@ -1894,7 +1894,7 @@ BinaryModelWriter::writeMaterial(const Material& material)
 }
 
 
-ModelLoader* OpenModel(std::istream& in)
+ModelLoader* OpenModel(std::istream& in, HandleGetter& getHandle)
 {
     char header[CEL_MODEL_HEADER_LENGTH];
     if (!in.read(header, CEL_MODEL_HEADER_LENGTH).good())
@@ -1905,11 +1905,11 @@ ModelLoader* OpenModel(std::istream& in)
 
     if (std::strncmp(header, CEL_MODEL_HEADER_ASCII, CEL_MODEL_HEADER_LENGTH) == 0)
     {
-        return new AsciiModelLoader(in);
+        return new AsciiModelLoader(in, getHandle);
     }
     if (std::strncmp(header, CEL_MODEL_HEADER_BINARY, CEL_MODEL_HEADER_LENGTH) == 0)
     {
-        return new BinaryModelLoader(in);
+        return new BinaryModelLoader(in, getHandle);
     }
     else
     {
@@ -1922,13 +1922,11 @@ ModelLoader* OpenModel(std::istream& in)
 } // end unnamed namespace
 
 
-Model* LoadModel(std::istream& in, TextureLoader* textureLoader)
+Model* LoadModel(std::istream& in, HandleGetter handleGetter)
 {
-    ModelLoader* loader = OpenModel(in);
+    ModelLoader* loader = OpenModel(in, handleGetter);
     if (loader == nullptr)
         return nullptr;
-
-    loader->setTextureLoader(textureLoader);
 
     Model* model = loader->load();
     if (model == nullptr)
@@ -1943,17 +1941,19 @@ Model* LoadModel(std::istream& in, TextureLoader* textureLoader)
 
 
 bool
-SaveModelAscii(const Model* model, std::ostream& out)
+SaveModelAscii(const Model* model, std::ostream& out, SourceGetter sourceGetter)
 {
     if (model == nullptr) { return false; }
-    return AsciiModelWriter(out).write(*model);
+    AsciiModelWriter writer(out, sourceGetter);
+    return writer.write(*model);
 }
 
 
 bool
-SaveModelBinary(const Model* model, std::ostream& out)
+SaveModelBinary(const Model* model, std::ostream& out, SourceGetter sourceGetter)
 {
     if (model == nullptr) { return false; }
-    return BinaryModelWriter(out).write(*model);
+    BinaryModelWriter writer(out, sourceGetter);
+    return writer.write(*model);
 }
 } // end namespace cmod

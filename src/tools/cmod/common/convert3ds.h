@@ -13,12 +13,14 @@
 #define _CONVERT3DS_H_
 
 #include <celmodel/model.h>
+#include <celmodel/modelfile.h>
 #include <cel3ds/3dsmodel.h>
 
 extern void Convert3DSMesh(cmod::Model& model,
                            M3DTriangleMesh& mesh3ds,
                            const M3DScene& scene,
                            const std::string& meshName);
-extern cmod::Model* Convert3DSModel(const M3DScene& scene);
+extern cmod::Model* Convert3DSModel(const M3DScene& scene,
+                                    cmod::HandleGetter handleGetter);
 
 #endif // _CONVERT3DS_H_

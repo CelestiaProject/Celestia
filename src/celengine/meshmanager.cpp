@@ -56,27 +56,6 @@ static GeometryManager* geometryManager = nullptr;
 constexpr const fs::path::value_type UniqueSuffixChar = '!';
 
 
-class CelestiaTextureLoader : public cmod::TextureLoader
-{
-public:
-    CelestiaTextureLoader(const fs::path& texturePath) :
-        m_texturePath(texturePath)
-    {
-    }
-
-    ~CelestiaTextureLoader() = default;
-
-    Material::TextureResource* loadTexture(const std::string& name)
-    {
-        ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(name, m_texturePath, TextureInfo::WrapTexture));
-        return new CelestiaTextureResource(tex);
-    }
-
-private:
-    fs::path m_texturePath;
-};
-
-
 GeometryManager* GetGeometryManager()
 {
     if (geometryManager == nullptr)
@@ -145,9 +124,12 @@ Geometry* GeometryInfo::load(const fs::path& resolvedFilename)
         ifstream in(filename.string(), ios::binary);
         if (in.good())
         {
-            CelestiaTextureLoader textureLoader(path);
-
-            model = LoadModel(in, &textureLoader);
+            model = LoadModel(in,
+                              [&](const fs::path& name)
+                              {
+                                  return GetTextureManager()
+                                         ->getHandle(TextureInfo(name, path, TextureInfo::WrapTexture));
+                              });
             if (model != nullptr)
             {
                 if (isNormalized)
@@ -569,7 +551,7 @@ Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
         if (!material->getTextureMap().empty())
         {
             ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap(), texPath, TextureInfo::WrapTexture));
-            newMaterial->maps[Material::DiffuseMap] = new CelestiaTextureResource(tex);
+            newMaterial->maps[Material::DiffuseMap] = tex;
         }
 
         model->addMaterial(newMaterial);

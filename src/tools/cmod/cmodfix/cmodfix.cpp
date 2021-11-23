@@ -21,6 +21,7 @@
 #include <celmodel/modelfile.h>
 
 #include "cmodops.h"
+#include "pathmanager.h"
 
 
 std::string inputFilename;
@@ -148,6 +149,8 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    PathManager pathManager;
+
     cmod::Model* model = nullptr;
     if (!inputFilename.empty())
     {
@@ -157,11 +160,11 @@ int main(int argc, char* argv[])
             std::cerr << "Error opening " << inputFilename << "\n";
             return 1;
         }
-        model = cmod::LoadModel(in);
+        model = cmod::LoadModel(in, GetPathManager()->getHandle);
     }
     else
     {
-        model = cmod::LoadModel(std::cin);
+        model = cmod::LoadModel(std::cin, GetPathManager()->getHandle);
     }
 
     if (model == nullptr)
@@ -246,9 +249,9 @@ int main(int argc, char* argv[])
     if (outputFilename.empty())
     {
         if (outputBinary)
-            SaveModelBinary(model, std::cout);
+            SaveModelBinary(model, std::cout, GetPathManager()->getSource);
         else
-            SaveModelAscii(model, std::cout);
+            SaveModelAscii(model, std::cout, GetPathManager()->getSource);
     }
     else
     {
@@ -267,9 +270,9 @@ int main(int argc, char* argv[])
         }
 
         if (outputBinary)
-            SaveModelBinary(model, out);
+            SaveModelBinary(model, out, GetPathManager()->getSource);
         else
-            SaveModelAscii(model, out);
+            SaveModelAscii(model, out, GetPathManager()->getSource);
     }
 
     return 0;

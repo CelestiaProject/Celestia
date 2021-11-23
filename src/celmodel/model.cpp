@@ -8,10 +8,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "model.h"
+#include <algorithm>
 #include <cassert>
 #include <functional>
-#include <algorithm>
+
+#include <celutil/reshandle.h>
+#include "model.h"
 
 using namespace cmod;
 using namespace Eigen;
@@ -58,7 +60,7 @@ Model::addMaterial(const Material* m)
     // if it forces multipass rendering when it's not required.
     for (int i = 0; i < Material::TextureSemanticMax; i++)
     {
-        if (m->maps[i] != nullptr)
+        if (m->maps[i] != InvalidResource)
         {
             textureUsage[i] = true;
         }

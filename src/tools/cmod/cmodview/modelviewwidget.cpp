@@ -11,6 +11,7 @@
 #include "glsupport.h"
 #include "modelviewwidget.h"
 #include "glframebuffer.h"
+#include "pathmanager.h"
 #include <QFileInfo>
 #include <QGLWidget>
 #include <QMouseEvent>
@@ -171,30 +172,30 @@ ShaderKey::Create(const Material* material, const LightingEnvironment* lighting,
     // Bits 8-15 are texture map info
     if (hasTexCoords)
     {
-        if (material->maps[Material::DiffuseMap])
+        if (material->maps[Material::DiffuseMap] != InvalidResource)
         {
             info |= DiffuseMapMask;
         }
 
-        if (material->maps[Material::SpecularMap])
+        if (material->maps[Material::SpecularMap] != InvalidResource)
         {
             info |= SpecularMapMask;
         }
 
-        if (material->maps[Material::NormalMap])
+        if (material->maps[Material::NormalMap] != InvalidResource)
         {
             info |= NormalMapMask;
         }
 
-        if (material->maps[Material::EmissiveMap])
+        if (material->maps[Material::EmissiveMap] != InvalidResource)
         {
             info |= EmissiveMapMask;
         }
 
         // Bit 16 is set if the normal map is compressed
-        if (material->maps[Material::NormalMap] && hasTangents)
+        if (material->maps[Material::NormalMap] != InvalidResource && hasTangents)
         {
-            if (material->maps[Material::NormalMap]->source().extension() == ".dxt5nm")
+            if (GetPathManager()->getSource(material->maps[Material::NormalMap]).extension() == ".dxt5nm")
             {
                 info |= CompressedNormalMapMask;
             }
@@ -294,21 +295,25 @@ ModelViewWidget::setModel(cmod::Model* model, const QString& modelDirPath)
         for (unsigned int i = 0; i < m_model->getMaterialCount(); ++i)
         {
             const Material* material = m_model->getMaterial(i);
-            if (material->maps[Material::DiffuseMap])
+            if (material->maps[Material::DiffuseMap] != InvalidResource)
             {
-                m_materialLibrary->getTexture(toQString(material->maps[Material::DiffuseMap]->source().c_str()));
+                m_materialLibrary->getTexture(
+                    toQString(GetPathManager()->getSource(material->maps[Material::DiffuseMap]).c_str()));
             }
-            if (material->maps[Material::NormalMap])
+            if (material->maps[Material::NormalMap] != InvalidResource)
             {
-                m_materialLibrary->getTexture(toQString(material->maps[Material::NormalMap]->source().c_str()));
+                m_materialLibrary->getTexture(
+                    toQString(GetPathManager()->getSource(material->maps[Material::NormalMap]).c_str()));
             }
-            if (material->maps[Material::SpecularMap])
+            if (material->maps[Material::SpecularMap] != InvalidResource)
             {
-                m_materialLibrary->getTexture(toQString(material->maps[Material::SpecularMap]->source().c_str()));
+                m_materialLibrary->getTexture(
+                    toQString(GetPathManager()->getSource(material->maps[Material::SpecularMap]).c_str()));
             }
-            if (material->maps[Material::EmissiveMap])
+            if (material->maps[Material::EmissiveMap] != InvalidResource)
             {
-                m_materialLibrary->getTexture(toQString(material->maps[Material::EmissiveMap]->source().c_str()));
+                m_materialLibrary->getTexture(
+                    toQString(GetPathManager()->getSource(material->maps[Material::EmissiveMap]).c_str()));
             }
         }
     }
@@ -515,31 +520,10 @@ ModelViewWidget::setMaterial(unsigned int index, const cmod::Material& material)
     modelMaterial->opacity = material.opacity;
     modelMaterial->specularPower = material.specularPower;
 
-    delete modelMaterial->maps[Material::DiffuseMap];
-    modelMaterial->maps[Material::DiffuseMap] = nullptr;
-    delete modelMaterial->maps[Material::SpecularMap];
-    modelMaterial->maps[Material::SpecularMap] = nullptr;
-    delete modelMaterial->maps[Material::NormalMap];
-    modelMaterial->maps[Material::NormalMap] = nullptr;
-    delete modelMaterial->maps[Material::EmissiveMap];
-    modelMaterial->maps[Material::EmissiveMap] = nullptr;
-
-    if (material.maps[Material::DiffuseMap])
-    {
-        modelMaterial->maps[Material::DiffuseMap] = new Material::DefaultTextureResource(material.maps[Material::DiffuseMap]->source());
-    }
-    if (material.maps[Material::SpecularMap])
-    {
-        modelMaterial->maps[Material::SpecularMap] = new Material::DefaultTextureResource(material.maps[Material::SpecularMap]->source());
-    }
-    if (material.maps[Material::NormalMap])
-    {
-        modelMaterial->maps[Material::NormalMap] = new Material::DefaultTextureResource(material.maps[Material::NormalMap]->source());
-    }
-    if (material.maps[Material::EmissiveMap])
-    {
-        modelMaterial->maps[Material::EmissiveMap] = new Material::DefaultTextureResource(material.maps[Material::EmissiveMap]->source());
-    }
+    modelMaterial->maps[Material::DiffuseMap] = material.maps[Material::DiffuseMap];
+    modelMaterial->maps[Material::SpecularMap] = material.maps[Material::SpecularMap];
+    modelMaterial->maps[Material::NormalMap] = material.maps[Material::NormalMap];
+    modelMaterial->maps[Material::EmissiveMap] = material.maps[Material::EmissiveMap];
 
     update();
 }
@@ -953,7 +937,8 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         if (shaderKey.hasDiffuseMap())
         {
-            GLuint diffuseMapId = m_materialLibrary->getTexture(toQString(material->maps[Material::DiffuseMap]->source().c_str()));
+            GLuint diffuseMapId = m_materialLibrary->getTexture(
+                toQString(GetPathManager()->getSource(material->maps[Material::DiffuseMap]).c_str()));
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, diffuseMapId);
             shader->setSampler("diffuseMap", 0);
@@ -961,7 +946,8 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         if (shaderKey.hasNormalMap())
         {
-            GLuint normalMapId = m_materialLibrary->getTexture(toQString(material->maps[Material::NormalMap]->source().c_str()));
+            GLuint normalMapId = m_materialLibrary->getTexture(
+                toQString(GetPathManager()->getSource(material->maps[Material::NormalMap]).c_str()));
             glActiveTexture(GL_TEXTURE1);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, normalMapId);
@@ -971,7 +957,8 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         if (shaderKey.hasSpecularMap())
         {
-            GLuint specularMapId = m_materialLibrary->getTexture(toQString(material->maps[Material::SpecularMap]->source().c_str()));
+            GLuint specularMapId = m_materialLibrary->getTexture(
+                toQString(GetPathManager()->getSource(material->maps[Material::SpecularMap]).c_str()));
             glActiveTexture(GL_TEXTURE2);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, specularMapId);
@@ -981,7 +968,8 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         if (shaderKey.hasEmissiveMap())
         {
-            GLuint emissiveMapId = m_materialLibrary->getTexture(toQString(material->maps[Material::EmissiveMap]->source().c_str()));
+            GLuint emissiveMapId = m_materialLibrary->getTexture(
+                toQString(GetPathManager()->getSource(material->maps[Material::EmissiveMap]).c_str()));
             glActiveTexture(GL_TEXTURE3);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, emissiveMapId);
@@ -1080,9 +1068,10 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         // Set up the diffuse (base) texture
         GLuint baseTexId = 0;
-        if (material->maps[Material::DiffuseMap])
+        if (material->maps[Material::DiffuseMap] != InvalidResource)
         {
-            baseTexId = m_materialLibrary->getTexture(toQString(material->maps[Material::DiffuseMap]->source().c_str()));
+            baseTexId = m_materialLibrary->getTexture(
+                toQString(GetPathManager()->getSource(material->maps[Material::DiffuseMap]).c_str()));
         }
 
         if (baseTexId != 0)

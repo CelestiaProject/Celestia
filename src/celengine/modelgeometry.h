@@ -19,25 +19,6 @@
 #include "geometry.h"
 
 
-class CelestiaTextureResource : public cmod::Material::TextureResource
-{
-public:
-    CelestiaTextureResource(ResourceHandle textureHandle) :
-        m_textureHandle(textureHandle)
-    {
-    }
-
-    ResourceHandle textureHandle() const
-    {
-        return m_textureHandle;
-    }
-
-    fs::path source() const;
-
-private:
-    ResourceHandle m_textureHandle;
-};
-
 class ModelOpenGLData;
 
 class ModelGeometry : public Geometry
