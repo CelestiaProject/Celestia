@@ -10,30 +10,22 @@
 
 #pragma once
 
+#include <functional>
 #include <iosfwd>
-#include <string>
 
+#include <celcompat/filesystem.h>
+#include <celutil/reshandle.h>
 #include "material.h"
 
 namespace cmod
 {
 class Model;
 
-/** Texture loading interface. Applications which want custom behavor for
-  * texture loading should pass an instance of a TextureLoader subclass to
-  * one of the model loading functions.
-  */
-class TextureLoader
-{
-public:
-    virtual ~TextureLoader() {};
-    virtual Material::TextureResource* loadTexture(const std::string& name) = 0;
-};
+using HandleGetter = std::function<ResourceHandle(const fs::path&)>;
+using SourceGetter = std::function<fs::path(ResourceHandle)>;
 
+Model* LoadModel(std::istream& in, HandleGetter getHandle);
 
-Model* LoadModel(std::istream& in, TextureLoader* textureLoader = nullptr);
-
-bool SaveModelAscii(const Model* model, std::ostream& out);
-bool SaveModelBinary(const Model* model, std::ostream& out);
-
+bool SaveModelAscii(const Model* model, std::ostream& out, SourceGetter getSource);
+bool SaveModelBinary(const Model* model, std::ostream& out, SourceGetter getSource);
 }

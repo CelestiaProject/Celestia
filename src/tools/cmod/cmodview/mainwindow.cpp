@@ -15,6 +15,7 @@
 #include "convert3ds.h"
 #include "convertobj.h"
 #include "cmodops.h"
+#include "pathmanager.h"
 #include <cel3ds/3dsread.h>
 #include <celmodel/modelfile.h>
 #include <QStatusBar>
@@ -223,13 +224,7 @@ cloneMaterial(const Material* other)
     material->specularPower = other->specularPower;
     material->opacity  = other->opacity;
     material->blend    = other->blend;
-    for (int i = 0; i < Material::TextureSemanticMax; ++i)
-    {
-        if (other->maps[i])
-        {
-            material->maps[i] = new Material::DefaultTextureResource(other->maps[i]->source());
-        }
-    }
+    material->maps     = other->maps;
 
     return material;
 }
@@ -381,6 +376,7 @@ MainWindow::openModel(const QString& fileName)
         string fileNameStd = string(fileName.toUtf8().data());
 
         QFileInfo info(fileName);
+        GetPathManager()->reset();
 
         if (info.suffix().toLower() == "3ds")
         {
@@ -391,7 +387,7 @@ MainWindow::openModel(const QString& fileName)
                 return;
             }
 
-            Model* model = Convert3DSModel(*scene);
+            Model* model = Convert3DSModel(*scene, GetPathManager()->getHandle);
             if (model == nullptr)
             {
                 QMessageBox::warning(this, "Load error", tr("Internal error converting 3DS file %1").arg(fileName));
@@ -460,7 +456,7 @@ MainWindow::openModel(const QString& fileName)
                 return;
             }
 
-            model = LoadModel(in);
+            model = LoadModel(in, GetPathManager()->getHandle);
             if (model == nullptr)
             {
                 QMessageBox::warning(this, "Load error", tr("Error reading CMOD file %1").arg(fileName));
@@ -508,7 +504,7 @@ MainWindow::saveModel(const QString& saveFileName)
     bool ok = false;
     if (out.good())
     {
-        ok = SaveModelBinary(m_modelView->model(), out);
+        ok = SaveModelBinary(m_modelView->model(), out, GetPathManager()->getSource);
     }
 
     if (!ok)

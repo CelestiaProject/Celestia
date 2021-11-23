@@ -9,8 +9,11 @@
 //
 // Functions for converting a 3DS scene into a Celestia model (cmod)
 
-#include "convert3ds.h"
 #include <Eigen/Core>
+
+#include "convert3ds.h"
+#include "pathmanager.h"
+
 
 using namespace cmod;
 using namespace Eigen;
@@ -18,7 +21,7 @@ using namespace std;
 
 
 static Material*
-convert3dsMaterial(const M3DMaterial* material3ds)
+convert3dsMaterial(const M3DMaterial* material3ds, cmod::HandleGetter& handleGetter)
 {
     Material* newMaterial = new Material();
 
@@ -41,7 +44,7 @@ convert3dsMaterial(const M3DMaterial* material3ds)
 
     if (!material3ds->getTextureMap().empty())
     {
-        newMaterial->maps[Material::DiffuseMap] = new Material::DefaultTextureResource(material3ds->getTextureMap());
+        newMaterial->maps[Material::DiffuseMap] = handleGetter(material3ds->getTextureMap());
 
     }
 
@@ -169,7 +172,7 @@ Convert3DSMesh(Model& model,
 
 
 Model*
-Convert3DSModel(const M3DScene& scene)
+Convert3DSModel(const M3DScene& scene, cmod::HandleGetter handleGetter)
 {
     Model* model = new Model();
 
@@ -177,7 +180,7 @@ Convert3DSModel(const M3DScene& scene)
     for (unsigned int i = 0; i < scene.getMaterialCount(); i++)
     {
         M3DMaterial* material = scene.getMaterial(i);
-        model->addMaterial(convert3dsMaterial(material));
+        model->addMaterial(convert3dsMaterial(material, handleGetter));
     }
 
     // Convert meshes

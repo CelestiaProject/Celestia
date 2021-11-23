@@ -5,6 +5,8 @@ set(CMODCOMMON_SOURCES
   convert3ds.h
   convertobj.cpp
   convertobj.h
+  pathmanager.cpp
+  pathmanager.h
 )
 
 add_library(cmodcommon STATIC ${CMODCOMMON_SOURCES})

@@ -8,13 +8,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELMODEL_MATERIAL_H_
-#define _CELMODEL_MATERIAL_H_
+#pragma once
 
 #include <Eigen/Core>
 #include <string>
 #include <array>
 #include <celutil/color.h>
+#include <celutil/reshandle.h>
 #include <celcompat/filesystem.h>
 
 
@@ -25,7 +25,7 @@ class Material
 {
 public:
     Material();
-    ~Material();
+    ~Material() = default;
 
     class Color
     {
@@ -87,23 +87,6 @@ public:
         float m_blue;
     };
 
-    class TextureResource
-    {
-    public:
-        virtual ~TextureResource() = default;
-        virtual fs::path source() const = 0;
-    };
-
-    class DefaultTextureResource : public TextureResource
-    {
-    public:
-        DefaultTextureResource(const fs::path& source) : m_source(source) {};
-        fs::path source() const override { return m_source; }
-
-    private:
-        fs::path m_source;
-    };
-
     enum BlendMode
     {
         NormalBlend             = 0,
@@ -129,10 +112,7 @@ public:
     float specularPower{ 1.0f };
     float opacity{ 1.0f };
     BlendMode blend{ NormalBlend };
-    std::array<TextureResource*, TextureSemanticMax> maps;
+    std::array<ResourceHandle, TextureSemanticMax> maps;
 };
 
 } // namespace cmod
-
-#endif // _CELMODEL_MATERIAL_H_
-

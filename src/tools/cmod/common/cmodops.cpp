@@ -1234,9 +1234,9 @@ cloneMaterial(const Material* other)
     material->blend    = other->blend;
     for (int i = 0; i < Material::TextureSemanticMax; ++i)
     {
-        if (other->maps[i])
+        if (other->maps[i] != InvalidResource)
         {
-            material->maps[i] = new Material::DefaultTextureResource(other->maps[i]->source());
+            material->maps[i] = other->maps[i];
         }
     }
 
