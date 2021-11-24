@@ -109,6 +109,11 @@ class Observer
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+    static constexpr const double JourneyDuration    = 5.0;
+    static constexpr const double StartInterpolation = 0.25;
+    static constexpr const double EndInterpolation   = 0.75;
+    static constexpr const double AccelerationTime   = 0.5;
+
     Observer();
     Observer(const Observer &o);
     ~Observer() = default;
@@ -161,12 +166,11 @@ public:
                        double gotoTime,
                        double startInter,
                        double endInter,
+                       double accelTime,
                        const Eigen::Vector3f &up,
                        ObserverFrame::CoordinateSystem upFrame);
     void gotoSelectionGC(const Selection&,
                          double gotoTime,
-                         double startInter,
-                         double endInter,
                          const Eigen::Vector3f &up,
                          ObserverFrame::CoordinateSystem upFrame);
     void gotoSelection(const Selection&,
@@ -259,6 +263,7 @@ public:
                                double gotoTime,
                                double startInter,
                                double endInter,
+                               double accelTime,
                                const Eigen::Vector3d &offset,
                                ObserverFrame::CoordinateSystem offsetFrame,
                                const Eigen::Vector3f &up,
@@ -266,8 +271,6 @@ public:
     void computeGotoParametersGC(const Selection &sel,
                                  JourneyParams &jparams,
                                  double gotoTime,
-                                 double startInter,
-                                 double endInter,
                                  const Eigen::Vector3d &offset,
                                  ObserverFrame::CoordinateSystem offsetFrame,
                                  const Eigen::Vector3f &up,
@@ -289,8 +292,8 @@ public:
     // Position, orientation, and velocity in the observer's reference frame
     UniversalCoord      position{ 0.0, 0.0, 0.0 };
     Eigen::Quaterniond  orientation{ Eigen::Quaternionf::Identity() };
-    Eigen::Vector3d     velocity{ 0.0, 0.0, 0.0 };
-    Eigen::Vector3d     angularVelocity{ 0.0, 0.0, 0.0 };
+    Eigen::Vector3d     velocity{ Eigen::Vector3d::Zero() };
+    Eigen::Vector3d     angularVelocity{ Eigen::Vector3d::Zero() };
 
     // Position and orientation in universal coordinates, derived from the
     // equivalent quantities in the observer reference frame.
@@ -302,8 +305,8 @@ public:
     double              realTime{ 0.0 };
 
     double          	targetSpeed{ 0.0 };
-    Eigen::Vector3d 	targetVelocity{ 0.0, 0.0, 0.0 };
-    Eigen::Vector3d 	initialVelocity{ 0.0, 0.0, 0.0 };
+    Eigen::Vector3d 	targetVelocity{ Eigen::Vector3d::Zero() };
+    Eigen::Vector3d 	initialVelocity{ Eigen::Vector3d::Zero() };
     double          	beginAccelTime{ 0.0 };
 
     ObserverMode     	observerMode{ Free };

@@ -278,7 +278,7 @@ void Simulation::gotoSelection(double gotoTime,
     if (selection.getType() == Selection::Type_Location)
     {
         activeObserver->gotoSelectionGC(selection,
-                                        gotoTime, 0.0, 0.5,
+                                        gotoTime,
                                         up, upFrame);
     }
     else
