@@ -555,6 +555,9 @@ static int object_localname(lua_State* l)
             lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
                            ->getStarCatalog()->getStarName(*(sel->star()), true).c_str());
             break;
+        case Selection::Type_Location:
+            lua_pushstring(l, sel->location()->getName(true).c_str());
+            break;
         default:
             lua_pushstring(l, "?");
             break;
