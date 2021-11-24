@@ -239,19 +239,19 @@ static int observer_gototable(lua_State* l)
     }
 
     Observer::JourneyParams jparams;
-    jparams.duration = 5.0;
+    jparams.duration = Observer::JourneyDuration;
     jparams.from = o->getPosition();
     jparams.to = o->getPosition();
     jparams.initialOrientation = o->getOrientation();
     jparams.finalOrientation = o->getOrientation();
-    jparams.startInterpolation = 0.25;
-    jparams.endInterpolation = 0.75;
-    jparams.accelTime = 0.5;
+    jparams.startInterpolation = Observer::StartInterpolation;
+    jparams.endInterpolation = Observer::EndInterpolation;
+    jparams.accelTime = Observer::AccelerationTime;
     jparams.traj = Observer::Linear;
 
     lua_pushstring(l, "duration");
     lua_gettable(l, 2);
-    jparams.duration = celx.safeGetNumber(3, NoErrors, "", 5.0);
+    jparams.duration = celx.safeGetNumber(3, NoErrors, "", Observer::JourneyDuration);
     lua_settop(l, 2);
 
     lua_pushstring(l, "from");
@@ -284,17 +284,17 @@ static int observer_gototable(lua_State* l)
 
     lua_pushstring(l, "startInterpolation");
     lua_gettable(l, 2);
-    jparams.startInterpolation = celx.safeGetNumber(3, NoErrors, "", 0.25);
+    jparams.startInterpolation = celx.safeGetNumber(3, NoErrors, "", Observer::StartInterpolation);
     lua_settop(l, 2);
 
     lua_pushstring(l, "endInterpolation");
     lua_gettable(l, 2);
-    jparams.endInterpolation = celx.safeGetNumber(3, NoErrors, "", 0.75);
+    jparams.endInterpolation = celx.safeGetNumber(3, NoErrors, "", Observer::EndInterpolation);
     lua_settop(l, 2);
 
     lua_pushstring(l, "accelTime");
     lua_gettable(l, 2);
-    jparams.accelTime = celx.safeGetNumber(3, NoErrors, "", 0.5);
+    jparams.accelTime = celx.safeGetNumber(3, NoErrors, "", Observer::AccelerationTime);
     lua_settop(l, 2);
 
     jparams.duration = max(0.0, jparams.duration);
@@ -321,7 +321,7 @@ static int observer_goto(lua_State* l)
         // handle this in own function
         return observer_gototable(l);
     }
-    celx.checkArgs(1, 5, "One to four arguments expected to observer:goto");
+    celx.checkArgs(1, 6, "One to five arguments expected to observer:goto");
 
     Observer* o = this_observer(l);
 
@@ -329,20 +329,38 @@ static int observer_goto(lua_State* l)
     UniversalCoord* uc = celx.toPosition(2);
     if (sel == nullptr && uc == nullptr)
     {
-        celx.doError("First arg to observer:goto must be object or position");
+        celx.doError("First arg to observer:gotoobject must be object or position");
         return 0;
     }
 
-    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:goto must be a number", 5.0);
-    double startInter = celx.safeGetNumber(4, WrongType, "Third arg to observer:goto must be a number", 0.25);
-    double endInter = celx.safeGetNumber(5, WrongType, "Fourth arg to observer:goto must be a number", 0.75);
-    if (startInter < 0 || startInter > 1) startInter = 0.25;
-    if (endInter < 0 || endInter > 1) endInter = 0.75;
+    double travelTime, startInter, endInter, accelTime;
+    travelTime = celx.safeGetNumber(3, WrongType,
+                                    "Second arg to observer:gotoobject must be a number",
+                                    Observer::JourneyDuration);
+    startInter = celx.safeGetNumber(4, WrongType,
+                                    "Third arg to observer:gotoobject must be a number",
+                                    Observer::StartInterpolation);
+    endInter = celx.safeGetNumber(5, WrongType,
+                                  "Fourth arg to observer:gotoobject must be a number",
+                                  Observer::EndInterpolation);
+    accelTime = celx.safeGetNumber(6, WrongType,
+                                   "Fifth arg to observer:goto must be a number",
+                                   Observer::AccelerationTime);
+    if (startInter < 0.0 || startInter > 1.0)
+        startInter = Observer::StartInterpolation;
+    if (endInter < 0.0 || endInter > 1.0)
+        endInter = Observer::EndInterpolation;
 
     // The first argument may be either an object or a position
     if (sel != nullptr)
     {
-        o->gotoSelection(*sel, travelTime, startInter, endInter, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
+        o->gotoSelection(*sel,
+                         travelTime,
+                         startInter,
+                         endInter,
+                         accelTime,
+                         Vector3f::UnitY(),
+                         ObserverFrame::ObserverLocal);
     }
     else
     {

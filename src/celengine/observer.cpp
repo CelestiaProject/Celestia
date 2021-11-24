@@ -518,6 +518,7 @@ void Observer::computeGotoParameters(const Selection& destination,
                                      double gotoTime,
                                      double startInter,
                                      double endInter,
+                                     double accelTime,
                                      const Vector3d& offset,
                                      ObserverFrame::CoordinateSystem offsetCoordSys,
                                      const Vector3f& up,
@@ -570,7 +571,7 @@ void Observer::computeGotoParameters(const Selection& destination,
     jparams.startInterpolation = min(startInter, endInter);
     jparams.endInterpolation   = max(startInter, endInter);
 
-    jparams.accelTime = 0.5;
+    jparams.accelTime = accelTime;
     double distance = jparams.from.offsetFromKm(jparams.to).norm() / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
                                                0.0001, 100.0,
@@ -588,8 +589,6 @@ void Observer::computeGotoParameters(const Selection& destination,
 void Observer::computeGotoParametersGC(const Selection& destination,
                                        JourneyParams& jparams,
                                        double gotoTime,
-                                       double startInter,
-                                       double endInter,
                                        const Vector3d& offset,
                                        ObserverFrame::CoordinateSystem offsetCoordSys,
                                        const Vector3f& up,
@@ -629,10 +628,10 @@ void Observer::computeGotoParametersGC(const Selection& destination,
     jparams.initialOrientation = getOrientation();
     Vector3d focus = targetPosition.offsetFromKm(jparams.to);
     jparams.finalOrientation = LookAt<double>(Vector3d::Zero(), focus, upd);
-    jparams.startInterpolation = min(startInter, endInter);
-    jparams.endInterpolation   = max(startInter, endInter);
+    jparams.startInterpolation = min(StartInterpolation, EndInterpolation);
+    jparams.endInterpolation   = max(StartInterpolation, EndInterpolation);
 
-    jparams.accelTime = 0.5;
+    jparams.accelTime = AccelerationTime;
     double distance = jparams.from.offsetFromKm(jparams.to).norm() / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
                                                0.0001, 100.0,
@@ -962,7 +961,7 @@ void Observer::gotoSelection(const Selection& selection,
                              const Vector3f& up,
                              ObserverFrame::CoordinateSystem upFrame)
 {
-    gotoSelection(selection, gotoTime, 0.0, 0.5, up, upFrame);
+    gotoSelection(selection, gotoTime, 0.0, 0.5, AccelerationTime, up, upFrame);
 }
 
 
@@ -1049,6 +1048,7 @@ void Observer::gotoSelection(const Selection& selection,
                              double gotoTime,
                              double startInter,
                              double endInter,
+                             double accelTime,
                              const Vector3f& up,
                              ObserverFrame::CoordinateSystem upFrame)
 {
@@ -1061,7 +1061,7 @@ void Observer::gotoSelection(const Selection& selection,
         double orbitDistance = getOrbitDistance(selection, distance);
 
         computeGotoParameters(selection, journey, gotoTime,
-                              startInter, endInter,
+                              startInter, endInter, accelTime,
                               v * -(orbitDistance / distance),
                               ObserverFrame::Universal,
                               up, upFrame);
@@ -1076,8 +1076,6 @@ void Observer::gotoSelection(const Selection& selection,
  */
 void Observer::gotoSelectionGC(const Selection& selection,
                                double gotoTime,
-                               double /*startInter*/,       //TODO: remove parameter??
-                               double /*endInter*/,         //TODO: remove parameter??
                                const Vector3f& up,
                                ObserverFrame::CoordinateSystem upFrame)
 {
@@ -1105,8 +1103,6 @@ void Observer::gotoSelectionGC(const Selection& selection,
         }
 
         computeGotoParametersGC(selection, journey, gotoTime,
-                                //startInter, endInter,
-                                0.25, 0.75,
                                 v * (orbitDistance / distanceToCenter),
                                 ObserverFrame::Universal,
                                 up, upFrame,
@@ -1130,7 +1126,10 @@ void Observer::gotoSelection(const Selection& selection,
         Vector3d v = pos.offsetFromKm(getPosition());
         v.normalize();
 
-        computeGotoParameters(selection, journey, gotoTime, 0.25, 0.75,
+        computeGotoParameters(selection, journey, gotoTime,
+                              StartInterpolation,
+                              EndInterpolation,
+                              AccelerationTime,
                               v * -distance, ObserverFrame::Universal,
                               up, upFrame);
         observerMode = Travelling;
@@ -1154,7 +1153,7 @@ void Observer::gotoSelectionGC(const Selection& selection,
 
         // The destination position lies along a line extended from the center
         // object to the target object
-        computeGotoParametersGC(selection, journey, gotoTime, 0.25, 0.75,
+        computeGotoParametersGC(selection, journey, gotoTime,
                                 v * -distance, ObserverFrame::Universal,
                                 up, upFrame,
                                 centerObj);
@@ -1184,8 +1183,12 @@ void Observer::gotoSelectionLongLat(const Selection& selection,
         double x = cos(theta) * sin(phi);
         double y = cos(phi);
         double z = -sin(theta) * sin(phi);
-        computeGotoParameters(selection, journey, gotoTime, 0.25, 0.75,
-                              Vector3d(x, y, z) * distance, ObserverFrame::BodyFixed,
+        computeGotoParameters(selection, journey, gotoTime,
+                              StartInterpolation,
+                              EndInterpolation,
+                              AccelerationTime,
+                              Vector3d(x, y, z) * distance,
+                              ObserverFrame::BodyFixed,
                               up, ObserverFrame::BodyFixed);
         observerMode = Travelling;
     }
@@ -1204,10 +1207,10 @@ void Observer::gotoLocation(const UniversalCoord& toPosition,
     journey.to = toPosition;
     journey.finalOrientation = toOrientation;
 
-    journey.startInterpolation = 0.25f;
-    journey.endInterpolation   = 0.75f;
+    journey.startInterpolation = StartInterpolation;
+    journey.endInterpolation   = EndInterpolation;
 
-    journey.accelTime = 0.5;
+    journey.accelTime = AccelerationTime;
     double distance = journey.from.offsetFromKm(journey.to).norm() / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, journey.accelTime),
                                                0.0001, 100.0,
