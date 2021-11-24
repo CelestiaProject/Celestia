@@ -81,6 +81,8 @@ public:
             return !(*this == other);
         }
 
+        friend bool operator<(const Color& c0, const Color& c1);
+
     private:
         float m_red;
         float m_green;
@@ -114,5 +116,11 @@ public:
     BlendMode blend{ NormalBlend };
     std::array<ResourceHandle, TextureSemanticMax> maps;
 };
+
+bool operator<(const Material::Color& c0, const Material::Color& c1);
+
+// Define an ordering for materials; required for elimination of duplicate
+// materials.
+bool operator<(const Material& m0, const Material& m1);
 
 } // namespace cmod
