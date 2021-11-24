@@ -97,6 +97,8 @@ static string readString(ifstream& in)
             break;
     }
 
+    s[maxLength - 1] = '\0'; // prevent out-of-bounds read
+
     return string(s);
 }
 
