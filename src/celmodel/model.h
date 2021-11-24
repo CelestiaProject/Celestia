@@ -8,12 +8,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELMODEL_MODEL_H_
-#define _CELMODEL_MODEL_H_
+#pragma once
 
-#include "mesh.h"
-#include <memory>
 #include <array>
+#include <vector>
+
+#include <Eigen/Core>
+
+#include "material.h"
+#include "mesh.h"
 
 
 namespace cmod
@@ -159,5 +162,3 @@ class Model
 };
 
 } // namespace
-
-#endif // !_CELMODEL_MODEL_H_
