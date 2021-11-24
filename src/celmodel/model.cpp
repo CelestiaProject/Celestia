@@ -9,15 +9,125 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include <cassert>
-#include <functional>
 
-#include <celutil/reshandle.h>
+#include <Eigen/Geometry>
+
 #include "model.h"
 
-using namespace cmod;
-using namespace Eigen;
-using namespace std;
+
+namespace cmod
+{
+namespace
+{
+bool
+operator<(const Material::Color& c0, const Material::Color& c1)
+{
+    if (c0.red() < c1.red())
+        return true;
+    if (c0.red() > c1.red())
+        return false;
+
+    if (c0.green() < c1.green())
+        return true;
+    if (c0.green() > c1.green())
+        return false;
+
+    return c0.blue() < c1.blue();
+}
+
+
+// Define an ordering for materials; required for elimination of duplicate
+// materials.
+bool
+operator<(const Material& m0, const Material& m1)
+{
+    // Checking opacity first and doing it backwards is deliberate. It means
+    // that after sorting, translucent materials will end up with higher
+    // material indices than opaque ones. Ultimately, after sorting
+    // mesh primitive groups by material, translucent groups will end up
+    // rendered after opaque ones.
+    if (m0.opacity < m1.opacity)
+        return true;
+    if (m0.opacity > m1.opacity)
+        return false;
+
+    // Reverse sense of comparison here--additive blending is 1, normal
+    // blending is 0, and we'd prefer to render additively blended submeshes
+    // last.
+    if (m0.blend > m1.blend)
+        return true;
+    if (m0.blend < m1.blend)
+        return false;
+
+    if (m0.diffuse < m1.diffuse)
+        return true;
+    if (m1.diffuse < m0.diffuse)
+        return false;
+
+    if (m0.emissive < m1.emissive)
+        return true;
+    if (m1.emissive < m0.emissive)
+        return false;
+
+    if (m0.specular < m1.specular)
+        return true;
+    if (m1.specular < m0.specular)
+        return false;
+
+    if (m0.specularPower < m1.specularPower)
+        return true;
+    if (m0.specularPower > m1.specularPower)
+        return false;
+
+    for (unsigned int i = 0; i < Material::TextureSemanticMax; i++)
+    {
+        if (m0.maps[i] < m1.maps[i])
+            return true;
+        if (m0.maps[i] > m1.maps[i])
+            return false;
+    }
+
+    // Materials are identical
+    return false;
+}
+
+
+// Simple struct that pairs an index with a material; the index is used to
+// keep track of the original material index after sorting.
+struct IndexedMaterial
+{
+    int originalIndex;
+    const Material* material;
+};
+
+
+bool
+operator<(const IndexedMaterial& im0, const IndexedMaterial& im1)
+{
+    return *(im0.material) < *(im1.material);
+}
+
+
+bool
+operator!=(const IndexedMaterial& im0, const IndexedMaterial& im1)
+{
+    return im0 < im1 || im1 < im0;
+}
+
+
+// Look at the material used by last primitive group in the mesh for the
+// opacity of the whole model.  This is a very crude way to check the opacity
+// of a mesh and misses many cases.
+unsigned int
+getMeshMaterialIndex(const Mesh& mesh)
+{
+    if (mesh.getGroupCount() == 0)
+        return 0;
+
+    return mesh.getGroup(mesh.getGroupCount() - 1)->materialIndex;
+}
+
+} // end unnamed namespace
 
 
 Model::Model()
@@ -164,7 +274,7 @@ Model::pick(const Eigen::Vector3d& rayOrigin,
 
 
 bool
-Model::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, double& distance) const
+Model::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection, double& distance) const
 {
     Mesh::PickResult result;
     bool hit = pick(rayOrigin, rayDirection, &result);
@@ -182,7 +292,7 @@ Model::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, double& dis
  *     v' = (v + translation) * scale
  */
 void
-Model::transform(const Vector3f& translation, float scale)
+Model::transform(const Eigen::Vector3f& translation, float scale)
 {
     for (const auto mesh : meshes)
         mesh->transform(translation, scale);
@@ -190,116 +300,20 @@ Model::transform(const Vector3f& translation, float scale)
 
 
 void
-Model::normalize(const Vector3f& centerOffset)
+Model::normalize(const Eigen::Vector3f& centerOffset)
 {
-    AlignedBox<float, 3> bbox;
+    Eigen::AlignedBox<float, 3> bbox;
 
     for (const auto mesh : meshes)
         bbox.extend(mesh->getBoundingBox());
 
-    Vector3f center = (bbox.min() + bbox.max()) * 0.5f + centerOffset;
-    Vector3f extents = bbox.max() - bbox.min();
+    Eigen::Vector3f center = (bbox.min() + bbox.max()) * 0.5f + centerOffset;
+    Eigen::Vector3f extents = bbox.max() - bbox.min();
     float maxExtent = extents.maxCoeff();
 
     transform(-center, 2.0f / maxExtent);
 
     normalized = true;
-}
-
-
-static bool
-operator<(const Material::Color& c0, const Material::Color& c1)
-{
-    if (c0.red() < c1.red())
-        return true;
-    if (c0.red() > c1.red())
-        return false;
-
-    if (c0.green() < c1.green())
-        return true;
-    if (c0.green() > c1.green())
-        return false;
-
-    return c0.blue() < c1.blue();
-}
-
-
-// Define an ordering for materials; required for elimination of duplicate
-// materials.
-static bool
-operator<(const Material& m0, const Material& m1)
-{
-    // Checking opacity first and doing it backwards is deliberate. It means
-    // that after sorting, translucent materials will end up with higher
-    // material indices than opaque ones. Ultimately, after sorting
-    // mesh primitive groups by material, translucent groups will end up
-    // rendered after opaque ones.
-    if (m0.opacity < m1.opacity)
-        return true;
-    if (m0.opacity > m1.opacity)
-        return false;
-
-    // Reverse sense of comparison here--additive blending is 1, normal
-    // blending is 0, and we'd prefer to render additively blended submeshes
-    // last.
-    if (m0.blend > m1.blend)
-        return true;
-    if (m0.blend < m1.blend)
-        return false;
-
-    if (m0.diffuse < m1.diffuse)
-        return true;
-    if (m1.diffuse < m0.diffuse)
-        return false;
-
-    if (m0.emissive < m1.emissive)
-        return true;
-    if (m1.emissive < m0.emissive)
-        return false;
-
-    if (m0.specular < m1.specular)
-        return true;
-    if (m1.specular < m0.specular)
-        return false;
-
-    if (m0.specularPower < m1.specularPower)
-        return true;
-    if (m0.specularPower > m1.specularPower)
-        return false;
-
-    for (unsigned int i = 0; i < Material::TextureSemanticMax; i++)
-    {
-        if (m0.maps[i] < m1.maps[i])
-            return true;
-        if (m0.maps[i] > m1.maps[i])
-            return false;
-    }
-
-    // Materials are identical
-    return false;
-}
-
-
-// Simple struct that pairs an index with a material; the index is used to
-// keep track of the original material index after sorting.
-struct IndexedMaterial
-{
-    int originalIndex;
-    const Material* material;
-};
-
-
-static bool
-operator<(const IndexedMaterial& im0, const IndexedMaterial& im1)
-{
-    return *(im0.material) < *(im1.material);
-}
-
-
-static bool
-operator!=(const IndexedMaterial& im0, const IndexedMaterial& im1)
-{
-    return im0 < im1 || im1 < im0;
 }
 
 
@@ -311,7 +325,7 @@ Model::uniquifyMaterials()
         return;
 
     // Create an array of materials with the indices attached
-    vector<IndexedMaterial> indexedMaterials;
+    std::vector<IndexedMaterial> indexedMaterials;
     unsigned int i;
     for (i = 0; i < materials.size(); i++)
     {
@@ -322,11 +336,11 @@ Model::uniquifyMaterials()
     }
 
     // Sort the indexed materials so that we can uniquify them
-    sort(indexedMaterials.begin(), indexedMaterials.end());
+    std::sort(indexedMaterials.begin(), indexedMaterials.end());
 
-    vector<const Material*> uniqueMaterials;
-    vector<unsigned int> materialMap(materials.size());
-    vector<unsigned int> duplicateMaterials;
+    std::vector<const Material*> uniqueMaterials;
+    std::vector<unsigned int> materialMap(materials.size());
+    std::vector<unsigned int> duplicateMaterials;
 
     // From the sorted material list construct the list of unique materials
     // and a map to convert old material indices into indices that can be
@@ -383,37 +397,6 @@ Model::usesTextureType(Material::TextureSemantic t) const
 }
 
 
-class MeshComparatorAdapter
-{
-public:
-    MeshComparatorAdapter(const Model::MeshComparator& c) :
-        comparator(c)
-    {
-    }
-
-    bool operator()(const Mesh* a, const Mesh* b) const
-    {
-        return comparator(*a, *b);
-    }
-
-private:
-    const Model::MeshComparator& comparator;
-};
-
-
-// Look at the material used by last primitive group in the mesh for the
-// opacity of the whole model.  This is a very crude way to check the opacity
-// of a mesh and misses many cases.
-static unsigned int
-getMeshMaterialIndex(const Mesh& mesh)
-{
-    if (mesh.getGroupCount() == 0)
-        return 0;
-
-    return mesh.getGroup(mesh.getGroupCount() - 1)->materialIndex;
-}
-
-
 
 bool
 Model::OpacityComparator::operator()(const Mesh& a, const Mesh& b) const
@@ -433,5 +416,8 @@ Model::sortMeshes(const MeshComparator& comparator)
         mesh->aggregateByMaterial();
 
     // Sort the meshes so that completely opaque ones are first
-    sort(meshes.begin(), meshes.end(), MeshComparatorAdapter(comparator));
+    std::sort(meshes.begin(), meshes.end(),
+              [&](const Mesh* a, const Mesh* b) { return comparator(*a, *b); });
 }
+
+} // end namespace cmod
