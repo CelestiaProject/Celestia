@@ -145,7 +145,7 @@ gtk_widget_set_egl_capability(GtkWidget *widget)
         return TRUE;
 
 #if !GTK_CHECK_VERSION(3, 10, 0)
-    // No double buffering as we might have triple buffering
+    /* No double buffering as we might have triple buffering */
     gtk_widget_set_double_buffered(widget, FALSE);
 #endif
 
@@ -157,18 +157,19 @@ gtk_widget_set_egl_capability(GtkWidget *widget)
         egl_property_quark = g_quark_from_static_string("egl-drawable-private");
     g_object_set_qdata(G_OBJECT(widget), egl_property_quark, private);
 
-    // Connect signal handlers to realize OpenGL-capable widget.
+    /* Connect signal handlers to realize OpenGL-capable widget. */
     g_signal_connect(G_OBJECT(widget), "realize",
                      G_CALLBACK(gtk_egl_widget_realize),
                      private);
 
-    // gtk_widget sends configure_event when it is realized.
+    /* gtk_widget sends configure_event when it is realized. */
     g_signal_connect(G_OBJECT(widget), "configure_event",
                      G_CALLBACK(gtk_egl_widget_configure_event),
                      private);
 
-    // Connect "size_allocate" signal handler to synchronize OpenGL
-    // and window resizing request streams.
+    /* Connect "size_allocate" signal handler to synchronize OpenGL
+     * and window resizing request streams.
+     */
     g_signal_connect(G_OBJECT(widget), "size_allocate",
                      G_CALLBACK(gtk_egl_widget_size_allocate),
                      private);
@@ -435,7 +436,7 @@ gtk_egl_widget_configure_event(GtkWidget     *widget,
                                GdkEvent      *ev,
                                GtkEGLPrivate *private)
 {
-    // Realize if OpenGL-capable window is not realized yet
+    /* Realize if OpenGL-capable window is not realized yet */
     if (!private->realized)
         gtk_egl_widget_realize(widget, private);
 
@@ -447,7 +448,7 @@ gtk_egl_widget_size_allocate(GtkWidget     *widget,
                              GtkAllocation *allocation,
                              GtkEGLPrivate *private)
 {
-    // Synchronize OpenGL and window resizing request streams.
+    /* Synchronize OpenGL and window resizing request streams. */
     if (gtk_widget_get_realized(widget) && private->realized)
         eglWaitNative(EGL_CORE_NATIVE_ENGINE);
 }
