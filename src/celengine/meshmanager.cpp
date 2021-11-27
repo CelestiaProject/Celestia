@@ -298,7 +298,7 @@ Model* LoadCelestiaMesh(const fs::path& filename)
 
 
 static Mesh*
-ConvertTriangleMesh(M3DTriangleMesh& mesh,
+ConvertTriangleMesh(const M3DTriangleMesh& mesh,
                     const M3DScene& scene)
 {
     int nFaces     = mesh.getFaceCount();
@@ -468,7 +468,7 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
 
     for (uint32_t i = 0; i < mesh.getMeshMaterialGroupCount(); ++i)
     {
-        M3DMeshMaterialGroup* matGroup = mesh.getMeshMaterialGroup(i);
+        const M3DMeshMaterialGroup* matGroup = mesh.getMeshMaterialGroup(i);
 
         // Vertex lists are not indexed, so the conversion to an indexed format is
         // trivial (although much space is wasted storing unnecessary indices.)
@@ -528,7 +528,7 @@ Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
     // Convert the materials
     for (uint32_t i = 0; i < scene.getMaterialCount(); i++)
     {
-        M3DMaterial* material = scene.getMaterial(i);
+        const M3DMaterial* material = scene.getMaterial(i);
         Material* newMaterial = new Material();
 
         M3DColor diffuse = material->getDiffuseColor();
@@ -561,12 +561,12 @@ Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
     // as a Celestia model, and a 3ds 'model' is the same as a Celestia mesh.
     for (uint32_t i = 0; i < scene.getModelCount(); i++)
     {
-        M3DModel* model3ds = scene.getModel(i);
+        const M3DModel* model3ds = scene.getModel(i);
         if (model3ds)
         {
             for (unsigned int j = 0; j < model3ds->getTriMeshCount(); j++)
             {
-                M3DTriangleMesh* mesh = model3ds->getTriMesh(j);
+                const M3DTriangleMesh* mesh = model3ds->getTriMesh(j);
                 if (mesh)
                 {
                     Mesh* newMesh = ConvertTriangleMesh(*mesh, scene);

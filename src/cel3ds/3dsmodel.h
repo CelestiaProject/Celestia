@@ -10,7 +10,6 @@
 #pragma once
 
 #include <cstdint>
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -30,8 +29,15 @@ class M3DColor
 class M3DMaterial
 {
  public:
+    M3DMaterial() = default;
+    ~M3DMaterial() = default;
+    M3DMaterial(const M3DMaterial&) = delete;
+    M3DMaterial& operator=(const M3DMaterial&) = delete;
+    M3DMaterial(M3DMaterial&&) = default;
+    M3DMaterial& operator=(M3DMaterial&&) = default;
+
     std::string getName() const;
-    void setName(std::string);
+    void setName(std::string&&);
     M3DColor getAmbientColor() const;
     void setAmbientColor(M3DColor);
     M3DColor getDiffuseColor() const;
@@ -58,7 +64,14 @@ class M3DMaterial
 
 class M3DMeshMaterialGroup
 {
-public:
+ public:
+    M3DMeshMaterialGroup() = default;
+    ~M3DMeshMaterialGroup() = default;
+    M3DMeshMaterialGroup(const M3DMeshMaterialGroup&) = delete;
+    M3DMeshMaterialGroup& operator=(const M3DMeshMaterialGroup&) = delete;
+    M3DMeshMaterialGroup(M3DMeshMaterialGroup&&) = default;
+    M3DMeshMaterialGroup& operator=(M3DMeshMaterialGroup&&) = default;
+
     std::string materialName;
     std::vector<std::uint16_t> faces;
 };
@@ -68,6 +81,13 @@ class M3DTriangleMesh
 {
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    M3DTriangleMesh() = default;
+    ~M3DTriangleMesh() = default;
+    M3DTriangleMesh(const M3DTriangleMesh&) = delete;
+    M3DTriangleMesh& operator=(const M3DTriangleMesh&) = delete;
+    M3DTriangleMesh(M3DTriangleMesh&&) = default;
+    M3DTriangleMesh& operator=(M3DTriangleMesh&&) = default;
 
     Eigen::Matrix4f getMatrix() const;
     void setMatrix(const Eigen::Matrix4f&);
@@ -88,8 +108,8 @@ class M3DTriangleMesh
     std::uint32_t getSmoothingGroups(std::uint16_t) const;
     std::uint16_t getSmoothingGroupCount() const;
 
-    void addMeshMaterialGroup(std::unique_ptr<M3DMeshMaterialGroup> matGroup);
-    M3DMeshMaterialGroup* getMeshMaterialGroup(std::uint32_t) const;
+    void addMeshMaterialGroup(M3DMeshMaterialGroup&& matGroup);
+    const M3DMeshMaterialGroup* getMeshMaterialGroup(std::uint32_t) const;
     std::uint32_t getMeshMaterialGroupCount() const;
 
  private:
@@ -97,7 +117,7 @@ class M3DTriangleMesh
     std::vector<Eigen::Vector2f, Eigen::aligned_allocator<Eigen::Vector2f>> texCoords{};
     std::vector<std::uint16_t> faces{};
     std::vector<std::uint32_t> smoothingGroups{};
-    std::vector<std::unique_ptr<M3DMeshMaterialGroup>> meshMaterialGroups{};
+    std::vector<M3DMeshMaterialGroup> meshMaterialGroups{};
     Eigen::Matrix4f matrix{ Eigen::Matrix4f::Identity() };
 };
 
@@ -105,34 +125,48 @@ class M3DTriangleMesh
 class M3DModel
 {
  public:
-    M3DTriangleMesh* getTriMesh(std::uint32_t);
-    std::uint32_t getTriMeshCount();
-    void addTriMesh(std::unique_ptr<M3DTriangleMesh>);
+    M3DModel() = default;
+    ~M3DModel() = default;
+    M3DModel(const M3DModel&) = delete;
+    M3DModel& operator=(const M3DModel&) = delete;
+    M3DModel(M3DModel&&) = default;
+    M3DModel& operator=(M3DModel&&) = default;
+
+    const M3DTriangleMesh* getTriMesh(std::uint32_t) const;
+    std::uint32_t getTriMeshCount() const;
+    void addTriMesh(M3DTriangleMesh&&);
     void setName(const std::string&);
-    const std::string getName() const;
+    std::string getName() const;
 
  private:
     std::string name{};
-    std::vector<std::unique_ptr<M3DTriangleMesh>> triMeshes{};
+    std::vector<M3DTriangleMesh> triMeshes{};
 };
 
 
 class M3DScene
 {
  public:
-    M3DModel* getModel(std::uint32_t) const;
-    std::uint32_t getModelCount() const;
-    void addModel(std::unique_ptr<M3DModel>);
+    M3DScene() = default;
+    ~M3DScene() = default;
+    M3DScene(const M3DScene&) = delete;
+    M3DScene& operator=(const M3DScene&) = delete;
+    M3DScene(M3DScene&&) = default;
+    M3DScene& operator=(M3DScene&&) = default;
 
-    M3DMaterial* getMaterial(std::uint32_t) const;
+    const M3DModel* getModel(std::uint32_t) const;
+    std::uint32_t getModelCount() const;
+    void addModel(M3DModel&&);
+
+    const M3DMaterial* getMaterial(std::uint32_t) const;
     std::uint32_t getMaterialCount() const;
-    void addMaterial(std::unique_ptr<M3DMaterial>);
+    void addMaterial(M3DMaterial&&);
 
     M3DColor getBackgroundColor() const;
     void setBackgroundColor(M3DColor);
 
  private:
-    std::vector<std::unique_ptr<M3DModel>> models{};
-    std::vector<std::unique_ptr<M3DMaterial>> materials{};
+    std::vector<M3DModel> models{};
+    std::vector<M3DMaterial> materials{};
     M3DColor backgroundColor{};
 };
