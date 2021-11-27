@@ -1,5 +1,4 @@
 set(CEL3DS_SOURCES
-  3dschunk.h
   3dsmodel.cpp
   3dsmodel.h
   3dsread.cpp

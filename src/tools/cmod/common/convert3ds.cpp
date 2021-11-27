@@ -54,7 +54,7 @@ convert3dsMaterial(const M3DMaterial* material3ds, cmod::HandleGetter& handleGet
 
 void
 Convert3DSMesh(Model& model,
-               M3DTriangleMesh& mesh3ds,
+               const M3DTriangleMesh& mesh3ds,
                const M3DScene& scene,
                const string& meshName)
 {
@@ -133,7 +133,7 @@ Convert3DSMesh(Model& model,
         // each material group in th 3ds mesh.
         for (uint32_t groupIndex = 0; groupIndex < mesh3ds.getMeshMaterialGroupCount(); ++groupIndex)
         {
-            M3DMeshMaterialGroup* matGroup = mesh3ds.getMeshMaterialGroup(groupIndex);
+            const M3DMeshMaterialGroup* matGroup = mesh3ds.getMeshMaterialGroup(groupIndex);
 
             uint32_t nMatGroupFaces = matGroup->faces.size();
             auto* indices = new uint32_t[nMatGroupFaces * 3];
@@ -155,7 +155,7 @@ Convert3DSMesh(Model& model,
             {
                 for (unsigned int i = 0; i < scene.getMaterialCount(); i++)
                 {
-                    M3DMaterial* material3ds = scene.getMaterial(i);
+                    const M3DMaterial* material3ds = scene.getMaterial(i);
                     if (material3dsName == material3ds->getName())
                     {
                         materialIndex = i;
@@ -179,19 +179,19 @@ Convert3DSModel(const M3DScene& scene, cmod::HandleGetter handleGetter)
     // Convert materials
     for (unsigned int i = 0; i < scene.getMaterialCount(); i++)
     {
-        M3DMaterial* material = scene.getMaterial(i);
+        const M3DMaterial* material = scene.getMaterial(i);
         model->addMaterial(convert3dsMaterial(material, handleGetter));
     }
 
     // Convert meshes
     for (unsigned int i = 0; i < scene.getModelCount(); i++)
     {
-        M3DModel* model3ds = scene.getModel(i);
+        const M3DModel* model3ds = scene.getModel(i);
         if (model3ds != nullptr)
         {
             for (unsigned int j = 0; j < model3ds->getTriMeshCount(); j++)
             {
-                M3DTriangleMesh* mesh = model3ds->getTriMesh(j);
+                const M3DTriangleMesh* mesh = model3ds->getTriMesh(j);
 
                 if (mesh != nullptr && mesh->getFaceCount() > 0)
                 {
