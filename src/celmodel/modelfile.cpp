@@ -12,6 +12,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <utility>
 
 #include <fmt/format.h>
 #include <fmt/ostream.h>
@@ -283,7 +284,7 @@ public:
     void reportError(const std::string& /*msg*/) override;
 
     Material* loadMaterial();
-    VertexDescription* loadVertexDescription();
+    VertexDescription loadVertexDescription();
     Mesh* loadMesh();
     char* loadVertices(const VertexDescription& vertexDesc,
                        unsigned int& vertexCount);
@@ -424,19 +425,20 @@ AsciiModelLoader::loadMaterial()
 }
 
 
-VertexDescription*
+VertexDescription
 AsciiModelLoader::loadVertexDescription()
 {
     if (tok.nextToken() != Tokenizer::TokenName || tok.getNameValue() != VertexDescToken)
     {
         reportError("Vertex description expected");
-        return nullptr;
+        return {};
     }
 
     int maxAttributes = 16;
     int nAttributes = 0;
     unsigned int offset = 0;
-    auto* attributes = new VertexAttribute[maxAttributes];
+    std::vector<VertexAttribute> attributes;
+    attributes.reserve(maxAttributes);
 
     while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndVertexDescToken)
     {
@@ -449,8 +451,7 @@ AsciiModelLoader::loadVertexDescription()
             // TODO: Should eliminate the attribute limit, though no real vertex
             // will ever exceed it.
             reportError("Attribute limit exceeded in vertex description");
-            delete[] attributes;
-            return nullptr;
+            return {};
         }
 
         semanticName = tok.getStringValue();
@@ -464,29 +465,24 @@ AsciiModelLoader::loadVertexDescription()
         if (!valid)
         {
             reportError("Invalid vertex description");
-            delete[] attributes;
-            return nullptr;
+            return {};
         }
 
         VertexAttributeSemantic semantic = parseVertexAttributeSemantic(semanticName);
         if (semantic == VertexAttributeSemantic::InvalidSemantic)
         {
             reportError(fmt::format("Invalid vertex attribute semantic '{}'", semanticName));
-            delete[] attributes;
-            return nullptr;
+            return {};
         }
 
         VertexAttributeFormat format = parseVertexAttributeFormat(formatName);
         if (format == VertexAttributeFormat::InvalidFormat)
         {
             reportError(fmt::format("Invalid vertex attribute format '{}'", formatName));
-            delete[] attributes;
-            return nullptr;
+            return {};
         }
 
-        attributes[nAttributes].semantic = semantic;
-        attributes[nAttributes].format = format;
-        attributes[nAttributes].offset = offset;
+        attributes.emplace_back(semantic, format, offset);
 
         offset += VertexAttribute::getFormatSize(format);
         nAttributes++;
@@ -495,20 +491,16 @@ AsciiModelLoader::loadVertexDescription()
     if (tok.getTokenType() != Tokenizer::TokenName)
     {
         reportError("Invalid vertex description");
-        delete[] attributes;
-        return nullptr;
+        return {};
     }
 
     if (nAttributes == 0)
     {
         reportError("Vertex definitition cannot be empty");
-        delete[] attributes;
-        return nullptr;
+        return {};
     }
 
-    auto *vertexDesc = new VertexDescription(offset, nAttributes, attributes);
-    delete[] attributes;
-    return vertexDesc;
+    return VertexDescription(offset, std::move(attributes));
 }
 
 
@@ -535,7 +527,7 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
         return nullptr;
     }
 
-    vertexCount = (unsigned int) num;
+    vertexCount = static_cast<unsigned int>(num);
     unsigned int vertexDataSize = vertexDesc.stride * vertexCount;
     auto* vertexData = new char[vertexDataSize];
 
@@ -544,9 +536,9 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
     for (unsigned int i = 0; i < vertexCount; i++, offset += vertexDesc.stride)
     {
         assert(offset < vertexDataSize);
-        for (unsigned int attr = 0; attr < vertexDesc.nAttributes; attr++)
+        for (const auto& attr : vertexDesc.attributes)
         {
-            VertexAttributeFormat vfmt = vertexDesc.attributes[attr].format;
+            VertexAttributeFormat vfmt = attr.format;
             /*unsigned int nBytes = Mesh::getVertexAttributeSize(fmt);    Unused*/
             int readCount = 0;
             switch (vfmt)
@@ -584,7 +576,7 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
                 // TODO: range check unsigned byte values
             }
 
-            unsigned int base = offset + vertexDesc.attributes[attr].offset;
+            unsigned int base = offset + attr.offset;
             if (vfmt == VertexAttributeFormat::UByte4)
             {
                 for (int k = 0; k < readCount; k++)
@@ -616,22 +608,20 @@ AsciiModelLoader::loadMesh()
         return nullptr;
     }
 
-    VertexDescription* vertexDesc = loadVertexDescription();
-    if (vertexDesc == nullptr)
+    VertexDescription vertexDesc = loadVertexDescription();
+    if (vertexDesc.attributes.empty())
         return nullptr;
 
     unsigned int vertexCount = 0;
-    char* vertexData = loadVertices(*vertexDesc, vertexCount);
+    char* vertexData = loadVertices(vertexDesc, vertexCount);
     if (vertexData == nullptr)
     {
-        delete vertexDesc;
         return nullptr;
     }
 
     auto* mesh = new Mesh();
-    mesh->setVertexDescription(*vertexDesc);
+    mesh->setVertexDescription(std::move(vertexDesc));
     mesh->setVertices(vertexCount, vertexData);
-    delete vertexDesc;
 
     while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndMeshToken)
     {
@@ -669,14 +659,14 @@ AsciiModelLoader::loadMesh()
 
         unsigned int indexCount = (unsigned int) tok.getIntegerValue();
 
-        auto* indices = new index32[indexCount];
+        std::vector<index32> indices;
+        indices.reserve(indexCount);
 
         for (unsigned int i = 0; i < indexCount; i++)
         {
             if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
             {
                 reportError("Incomplete index list in primitive group");
-                delete[] indices;
                 delete mesh;
                 return nullptr;
             }
@@ -685,15 +675,14 @@ AsciiModelLoader::loadMesh()
             if (index >= vertexCount)
             {
                 reportError("Index out of range");
-                delete[] indices;
                 delete mesh;
                 return nullptr;
             }
 
-            indices[i] = index;
+            indices.push_back(index);
         }
 
-        mesh->addGroup(type, materialIndex, indexCount, indices);
+        mesh->addGroup(type, materialIndex, std::move(indices));
     }
 
     return mesh;
@@ -843,15 +832,15 @@ AsciiModelWriter::writeGroup(const PrimitiveGroup& group)
         fmt::print(out, " {}", group.materialIndex);
     if (!out.good()) { return false; }
 
-    fmt::print(out, " {}\n", group.nIndices);
+    fmt::print(out, " {}\n", group.indices.size());
     if (!out.good()) { return false;}
 
     // Print the indices, twelve per line
-    for (unsigned int i = 0; i < group.nIndices; i++)
+    for (unsigned int i = 0; i < group.indices.size(); i++)
     {
         fmt::print(out, "{}{}",
             group.indices[i],
-            i % 12 == 11 || i == group.nIndices - 1 ? '\n' : ' ');
+            i % 12 == 11 || i == group.indices.size() - 1 ? '\n' : ' ');
         if (!out.good()) { return false; }
     }
 
@@ -909,13 +898,13 @@ AsciiModelWriter::writeVertices(const void* vertexData,
 
     for (unsigned int i = 0; i < nVertices; i++, vertex += stride)
     {
-        for (unsigned int attr = 0; attr < desc.nAttributes; attr++)
+        for (const auto& attr : desc.attributes)
         {
-            const unsigned char* ubdata = vertex + desc.attributes[attr].offset;
+            const unsigned char* ubdata = vertex + attr.offset;
             //const auto* fdata = reinterpret_cast<const float*>(ubdata);
             float fdata[4];
 
-            switch (desc.attributes[attr].format)
+            switch (attr.format)
             {
             case VertexAttributeFormat::Float1:
                 std::memcpy(fdata, ubdata, sizeof(float));
@@ -954,12 +943,12 @@ bool
 AsciiModelWriter::writeVertexDescription(const VertexDescription& desc)
 {
     if (!(out << "vertexdesc\n").good()) { return false; }
-    for (unsigned int attr = 0; attr < desc.nAttributes; attr++)
+    for (const auto& attr : desc.attributes)
     {
         // We should never have a vertex description with invalid
         // fields . . .
 
-        switch (desc.attributes[attr].semantic)
+        switch (attr.semantic)
         {
         case VertexAttributeSemantic::Position:
             out << "position";
@@ -998,7 +987,7 @@ AsciiModelWriter::writeVertexDescription(const VertexDescription& desc)
 
         if (!out.good() || !(out << ' ').good()) { return false; }
 
-        switch (desc.attributes[attr].format)
+        switch (attr.format)
         {
         case VertexAttributeFormat::Float1:
             out << "f1";
@@ -1258,7 +1247,7 @@ public:
     void reportError(const std::string& /*msg*/) override;
 
     Material* loadMaterial();
-    VertexDescription* loadVertexDescription();
+    VertexDescription loadVertexDescription();
     Mesh* loadMesh();
     char* loadVertices(const VertexDescription& vertexDesc,
                        unsigned int& vertexCount);
@@ -1465,20 +1454,21 @@ BinaryModelLoader::loadMaterial()
 }
 
 
-VertexDescription*
+VertexDescription
 BinaryModelLoader::loadVertexDescription()
 {
     ModelFileToken tok;
     if (!readToken(in, tok) || tok != CMOD_VertexDesc)
     {
         reportError("Vertex description expected");
-        return nullptr;
+        return {};
     }
 
     int maxAttributes = 16;
     int nAttributes = 0;
     unsigned int offset = 0;
-    auto* attributes = new VertexAttribute[maxAttributes];
+    std::vector<VertexAttribute> attributes;
+    attributes.reserve(maxAttributes);
 
     for (;;)
     {
@@ -1486,8 +1476,7 @@ BinaryModelLoader::loadVertexDescription()
         if (!celutil::readLE<std::int16_t>(in, tok))
         {
             reportError("Could not read token");
-            delete[] attributes;
-            return nullptr;
+            return {};
         }
 
         if (tok == CMOD_EndVertexDesc)
@@ -1501,22 +1490,18 @@ BinaryModelLoader::loadVertexDescription()
                 || vfmt < 0 || vfmt >= static_cast<std::int16_t>(VertexAttributeFormat::FormatMax))
             {
                 reportError("Invalid vertex attribute type");
-                delete[] attributes;
-                return nullptr;
+                return {};
             }
 
             if (nAttributes == maxAttributes)
             {
                 reportError("Too many attributes in vertex description");
-                delete[] attributes;
-                return nullptr;
+                return {};
             }
 
-            attributes[nAttributes].semantic =
-                static_cast<VertexAttributeSemantic>(tok);
-            attributes[nAttributes].format =
-                static_cast<VertexAttributeFormat>(vfmt);
-            attributes[nAttributes].offset = offset;
+            attributes.emplace_back(static_cast<VertexAttributeSemantic>(tok),
+                                    static_cast<VertexAttributeFormat>(vfmt),
+                                    offset);
 
             offset += VertexAttribute::getFormatSize(attributes[nAttributes].format);
             nAttributes++;
@@ -1524,44 +1509,37 @@ BinaryModelLoader::loadVertexDescription()
         else
         {
             reportError("Invalid semantic in vertex description");
-            delete[] attributes;
-            return nullptr;
+            return {};
         }
     }
 
     if (nAttributes == 0)
     {
         reportError("Vertex definitition cannot be empty");
-        delete[] attributes;
-        return nullptr;
+        return {};
     }
 
-    auto *vertexDesc =
-        new VertexDescription(offset, nAttributes, attributes);
-    delete[] attributes;
-    return vertexDesc;
+    return VertexDescription(offset, std::move(attributes));
 }
 
 
 Mesh*
 BinaryModelLoader::loadMesh()
 {
-    VertexDescription* vertexDesc = loadVertexDescription();
-    if (vertexDesc == nullptr)
+    VertexDescription vertexDesc = loadVertexDescription();
+    if (vertexDesc.attributes.empty())
         return nullptr;
 
     unsigned int vertexCount = 0;
-    char* vertexData = loadVertices(*vertexDesc, vertexCount);
+    char* vertexData = loadVertices(vertexDesc, vertexCount);
     if (vertexData == nullptr)
     {
-        delete vertexDesc;
         return nullptr;
     }
 
     auto* mesh = new Mesh();
-    mesh->setVertexDescription(*vertexDesc);
+    mesh->setVertexDescription(std::move(vertexDesc));
     mesh->setVertices(vertexCount, vertexData);
-    delete vertexDesc;
 
     for (;;)
     {
@@ -1594,7 +1572,8 @@ BinaryModelLoader::loadMesh()
             return nullptr;
         }
 
-        auto* indices = new uint32_t[indexCount];
+        std::vector<index32> indices;
+        indices.reserve(indexCount);
 
         for (unsigned int i = 0; i < indexCount; i++)
         {
@@ -1602,15 +1581,14 @@ BinaryModelLoader::loadMesh()
             if (!celutil::readLE<std::uint32_t>(in, index) || index >= vertexCount)
             {
                 reportError("Index out of range");
-                delete[] indices;
                 delete mesh;
                 return nullptr;
             }
 
-            indices[i] = index;
+            indices.push_back(index);
         }
 
-        mesh->addGroup(type, materialIndex, indexCount, indices);
+        mesh->addGroup(type, materialIndex, std::move(indices));
     }
 
     return mesh;
@@ -1641,13 +1619,13 @@ BinaryModelLoader::loadVertices(const VertexDescription& vertexDesc,
     for (unsigned int i = 0; i < vertexCount; i++, offset += vertexDesc.stride)
     {
         assert(offset < vertexDataSize);
-        for (unsigned int attr = 0; attr < vertexDesc.nAttributes; attr++)
+        for (const auto& attr : vertexDesc.attributes)
         {
-            unsigned int base = offset + vertexDesc.attributes[attr].offset;
-            VertexAttributeFormat fmt = vertexDesc.attributes[attr].format;
+            unsigned int base = offset + attr.offset;
+            VertexAttributeFormat vfmt = attr.format;
             float f[4];
             /*int readCount = 0;    Unused*/
-            switch (fmt)
+            switch (vfmt)
             {
             case VertexAttributeFormat::Float1:
                 if (!celutil::readLE<float>(in, f[0]))
@@ -1798,14 +1776,14 @@ BinaryModelWriter::writeGroup(const PrimitiveGroup& group)
 {
     if (!celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(group.prim))
         || !celutil::writeLE<std::uint32_t>(out, group.materialIndex)
-        || !celutil::writeLE<std::uint32_t>(out, group.nIndices))
+        || !celutil::writeLE<std::uint32_t>(out, group.indices.size()))
     {
         return false;
     }
 
-    for (unsigned int i = 0; i < group.nIndices; i++)
+    for (auto index : group.indices)
     {
-        if (!celutil::writeLE<std::uint32_t>(out, group.indices[i])) { return false; }
+        if (!celutil::writeLE<std::uint32_t>(out, index)) { return false; }
     }
 
     return true;
@@ -1849,13 +1827,13 @@ BinaryModelWriter::writeVertices(const void* vertexData,
 
     for (unsigned int i = 0; i < nVertices; i++, vertex += stride)
     {
-        for (unsigned int attr = 0; attr < desc.nAttributes; attr++)
+        for (const auto& attr : desc.attributes)
         {
-            const char* cdata = vertex + desc.attributes[attr].offset;
+            const char* cdata = vertex + attr.offset;
             float fdata[4];
 
             bool result;
-            switch (desc.attributes[attr].format)
+            switch (attr.format)
             {
             case VertexAttributeFormat::Float1:
                 std::memcpy(fdata, cdata, sizeof(float));
@@ -1900,10 +1878,10 @@ BinaryModelWriter::writeVertexDescription(const VertexDescription& desc)
 {
     if (!writeToken(out, CMOD_VertexDesc)) { return false; }
 
-    for (unsigned int attr = 0; attr < desc.nAttributes; attr++)
+    for (const auto& attr : desc.attributes)
     {
-        if (!celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(desc.attributes[attr].semantic))
-            || !celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(desc.attributes[attr].format)))
+        if (!celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(attr.semantic))
+            || !celutil::writeLE<std::int16_t>(out, static_cast<std::int16_t>(attr.format)))
         {
             return false;
         }

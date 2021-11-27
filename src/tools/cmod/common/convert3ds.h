@@ -21,6 +21,6 @@
 extern void Convert3DSMesh(cmod::Model& model,
                            M3DTriangleMesh& mesh3ds,
                            const M3DScene& scene,
-                           const std::string& meshName);
+                           std::string&& meshName);
 extern cmod::Model* Convert3DSModel(const M3DScene& scene,
                                     cmod::HandleGetter handleGetter);

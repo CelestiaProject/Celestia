@@ -316,11 +316,11 @@ MainWindow::showModelStatistics()
                 switch (group->prim)
                 {
                 case cmod::PrimitiveGroupType::TriList:
-                    triangleCount += group->nIndices / 3;
+                    triangleCount += group->indices.size() / 3;
                     break;
                 case cmod::PrimitiveGroupType::TriFan:
                 case cmod::PrimitiveGroupType::TriStrip:
-                    triangleCount += group->nIndices - 2;
+                    triangleCount += group->indices.size() - 2;
                     break;
                 default:
                     break;

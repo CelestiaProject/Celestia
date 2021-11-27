@@ -14,6 +14,8 @@
 
 #include <cmath>
 #include <cstdint>
+#include <utility>
+#include <vector>
 
 #include <celmodel/mesh.h>
 #include "spheremesh.h"
@@ -336,20 +338,21 @@ void SphereMesh::displace(DisplacementMapFunc func, void* info)
 cmod::Mesh* SphereMesh::convertToMesh() const
 {
     std::uint32_t stride = 32;
-    cmod::VertexAttribute attributes[3];
-    attributes[0] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Position,
-                                          cmod::VertexAttributeFormat::Float3,
-                                          0);
-    attributes[1] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Normal,
-                                          cmod::VertexAttributeFormat::Float3,
-                                          12);
-    attributes[2] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Texture0,
-                                          cmod::VertexAttributeFormat::Float2,
-                                          24);
+    std::vector<cmod::VertexAttribute> attributes{
+        cmod::VertexAttribute(cmod::VertexAttributeSemantic::Position,
+                              cmod::VertexAttributeFormat::Float3,
+                              0),
+        cmod::VertexAttribute(cmod::VertexAttributeSemantic::Normal,
+                              cmod::VertexAttributeFormat::Float3,
+                              12),
+        cmod::VertexAttribute(cmod::VertexAttributeSemantic::Texture0,
+                              cmod::VertexAttributeFormat::Float2,
+                              24),
+    };
 
     cmod::Mesh* mesh = new cmod::Mesh();
 
-    mesh->setVertexDescription(cmod::VertexDescription(stride, 3, attributes));
+    mesh->setVertexDescription(cmod::VertexDescription(stride, std::move(attributes)));
 
     // Copy the vertex data from the separate position, normal, and texture coordinate
     // arrays into a single array.
@@ -372,14 +375,15 @@ cmod::Mesh* SphereMesh::convertToMesh() const
 
     for (int i = 0; i < nRings - 1; i++)
     {
-        auto* indexData = new std::uint32_t[(nSlices + 1) * 2];
+        std::vector<cmod::index32> indexData;
+        indexData.reserve((nSlices + 1) * 2);
         for (int j = 0; j <= nSlices; j++)
         {
-            indexData[j * 2 + 0] = i * (nSlices + 1) + j;
-            indexData[j * 2 + 1] = (i + 1) * (nSlices + 1) + j;
+            indexData.push_back(i * (nSlices + 1) + j);
+            indexData.push_back((i + 1) * (nSlices + 1) + j);
         }
 
-        mesh->addGroup(cmod::PrimitiveGroupType::TriStrip, ~0u, (nSlices + 1) * 2, indexData);
+        mesh->addGroup(cmod::PrimitiveGroupType::TriStrip, ~0u, std::move(indexData));
     }
 
     return mesh;

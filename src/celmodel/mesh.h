@@ -114,31 +114,35 @@ struct VertexAttribute
     unsigned int            offset;
 };
 
+bool operator==(const VertexAttribute& a, const VertexAttribute& b);
+bool operator<(const VertexAttribute& a, const VertexAttribute& b);
+
 
 struct VertexDescription
 {
+    VertexDescription() = default;
     VertexDescription(unsigned int _stride,
-                      unsigned int _nAttributes,
-                      VertexAttribute* _attributes);
-    VertexDescription(const VertexDescription& desc);
-    ~VertexDescription();
+                      std::vector<VertexAttribute>&& attributes);
+    ~VertexDescription() = default;
+    VertexDescription(VertexDescription&&) = default;
+    VertexDescription& operator=(VertexDescription&&) = default;
+
+    VertexDescription clone() const { return *this; }
 
     inline const VertexAttribute& getAttribute(VertexAttributeSemantic semantic) const
     {
         return semanticMap[static_cast<std::size_t>(semantic)];
     }
 
-    VertexDescription appendingAttributes(const VertexAttribute* newAttributes, int count) const;
-
     bool validate() const;
 
-    VertexDescription& operator=(const VertexDescription&);
-
-    unsigned int stride;
-    unsigned int nAttributes;
-    VertexAttribute* attributes;
+    unsigned int stride{ 0 };
+    std::vector<VertexAttribute> attributes{ };
 
  private:
+    VertexDescription(const VertexDescription&) = default;
+    VertexDescription& operator=(const VertexDescription&) = default;
+
     void clearSemanticMap();
     void buildSemanticMap();
 
@@ -147,24 +151,27 @@ struct VertexDescription
 };
 
 
-class PrimitiveGroup
+bool operator==(const VertexDescription& a, const VertexDescription& b);
+bool operator<(const VertexDescription& a, const VertexDescription& b);
+
+
+struct PrimitiveGroup
 {
- public:
     PrimitiveGroup() = default;
     ~PrimitiveGroup() = default;
+    PrimitiveGroup(const PrimitiveGroup&) = delete;
+    PrimitiveGroup& operator=(const PrimitiveGroup&) = delete;
 
     unsigned int getPrimitiveCount() const;
 
-    PrimitiveGroupType prim;
-    unsigned int materialIndex;
-    index32* indices;
-    unsigned int nIndices;
-    PrimitiveGroupType primOverride;
-    void* vertexOverride;
-    unsigned int vertexCountOverride;
-    index32* indicesOverride;
-    unsigned int nIndicesOverride;
-    VertexDescription vertexDescriptionOverride { 0, 0, nullptr };
+    PrimitiveGroupType prim{ PrimitiveGroupType::InvalidPrimitiveGroupType };
+    unsigned int materialIndex{ 0 };
+    std::vector<index32> indices{ };
+    PrimitiveGroupType primOverride{ PrimitiveGroupType::InvalidPrimitiveGroupType };
+    void* vertexOverride{ nullptr };
+    unsigned int vertexCountOverride{ 0 };
+    std::vector<index32> indicesOverride{ };
+    VertexDescription vertexDescriptionOverride{ };
 };
 
 
@@ -186,17 +193,16 @@ class Mesh
     ~Mesh();
 
     void setVertices(unsigned int _nVertices, void* vertexData);
-    bool setVertexDescription(const VertexDescription& desc);
+    bool setVertexDescription(VertexDescription&& desc);
     const VertexDescription& getVertexDescription() const;
 
-    PrimitiveGroup* createLinePrimitiveGroup(bool lineStrip, unsigned int nIndices, index32* indices);
+    PrimitiveGroup* createLinePrimitiveGroup(bool lineStrip, const std::vector<index32>& indices);
     const PrimitiveGroup* getGroup(unsigned int index) const;
     PrimitiveGroup* getGroup(unsigned int index);
     unsigned int addGroup(PrimitiveGroup* group);
     unsigned int addGroup(PrimitiveGroupType prim,
                           unsigned int materialIndex,
-                          unsigned int nIndices,
-                          index32* indices);
+                          std::vector<index32>&& indices);
     unsigned int getGroupCount() const;
     void remapIndices(const std::vector<index32>& indexMap);
     void clearGroups();
@@ -210,7 +216,7 @@ class Mesh
     void aggregateByMaterial();
 
     const std::string& getName() const;
-    void setName(const std::string&);
+    void setName(std::string&&);
 
     bool pick(const Eigen::Vector3d& origin, const Eigen::Vector3d& direction, PickResult* result) const;
     bool pick(const Eigen::Vector3d& origin, const Eigen::Vector3d& direction, double& distance) const;
@@ -226,7 +232,7 @@ class Mesh
  private:
     void recomputeBoundingBox();
 
-    VertexDescription vertexDesc{ 0, 0, nullptr };
+    VertexDescription vertexDesc{ };
 
     unsigned int nVertices{ 0 };
     void* vertices{ nullptr };

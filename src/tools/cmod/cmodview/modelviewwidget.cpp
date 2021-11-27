@@ -1178,7 +1178,7 @@ ModelViewWidget::renderModel(cmod::Model* model)
                     bindMaterial(material, &lighting, &mesh->getVertexDescription());
 
                     GLenum primitiveMode = getGLMode(group->prim);
-                    glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
+                    glDrawElements(primitiveMode, group->indices.size(), GL_UNSIGNED_INT, group->indices.data());
                 }
             }
         }
@@ -1221,7 +1221,7 @@ ModelViewWidget::renderSelection(cmod::Model* model)
             if (m_selection.contains(group))
             {
                 GLenum primitiveMode = getGLMode(group->prim);
-                glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
+                glDrawElements(primitiveMode, group->indices.size(), GL_UNSIGNED_INT, group->indices.data());
             }
         }
     }
@@ -1247,7 +1247,7 @@ ModelViewWidget::renderDepthOnly(cmod::Model* model)
         {
             cmod::PrimitiveGroup* group = mesh->getGroup(groupIndex);
             GLenum primitiveMode = getGLMode(group->prim);
-            glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
+            glDrawElements(primitiveMode, group->indices.size(), GL_UNSIGNED_INT, group->indices.data());
         }
     }
 }

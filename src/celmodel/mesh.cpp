@@ -8,68 +8,62 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
 #include <array>
 #include <cstring>
-
+#include <iterator>
+#include <tuple>
+#include <utility>
 
 #include "mesh.h"
 
 
 namespace cmod
 {
+namespace
+{
+
+template<typename It>
+VertexDescription appendingAttributes(const VertexDescription& desc, It begin, It end)
+{
+    std::vector<VertexAttribute> allAttributes;
+    allAttributes.reserve(desc.attributes.size() + (end - begin));
+
+    std::copy(desc.attributes.cbegin(), desc.attributes.cend(), std::back_inserter(allAttributes));
+    unsigned int newStride = desc.stride;
+    for (auto it = begin; it != end; ++it)
+    {
+        allAttributes.push_back(*it);
+        newStride += VertexAttribute::getFormatSize(it->format);
+    }
+
+    return VertexDescription(newStride, std::move(allAttributes));
+}
+
+} // end unnamed namespace
+
+
+bool operator==(const VertexAttribute& a, const VertexAttribute& b)
+{
+    return std::tie(a.semantic, a.format, a.offset) == std::tie(b.semantic, b.format, b.offset);
+}
+
+
+bool operator<(const VertexAttribute& a, const VertexAttribute& b)
+{
+    return std::tie(a.semantic, a.format, a.offset) < std::tie(b.semantic, b.format, b.offset);
+}
+
 
 VertexDescription::VertexDescription(unsigned int _stride,
-                                     unsigned int _nAttributes,
-                                     VertexAttribute* _attributes) :
+                                     std::vector<VertexAttribute>&& _attributes) :
     stride(_stride),
-    nAttributes(_nAttributes),
-    attributes(nullptr)
+    attributes(std::move(_attributes))
 {
-    if (nAttributes != 0)
+    if (!attributes.empty())
     {
-        attributes = new VertexAttribute[nAttributes];
-        for (unsigned int i = 0; i < nAttributes; i++)
-            attributes[i] = _attributes[i];
         buildSemanticMap();
     }
-}
-
-
-VertexDescription::VertexDescription(const VertexDescription& desc) :
-    stride(desc.stride),
-    nAttributes(desc.nAttributes),
-    attributes(nullptr)
-{
-    if (nAttributes != 0)
-    {
-        attributes = new VertexAttribute[nAttributes];
-        for (unsigned int i = 0; i < nAttributes; i++)
-            attributes[i] = desc.attributes[i];
-        buildSemanticMap();
-    }
-}
-
-
-VertexDescription&
-VertexDescription::operator=(const VertexDescription& desc)
-{
-    if (this == &desc)
-        return *this;
-
-    if (nAttributes < desc.nAttributes)
-    {
-        delete[] attributes;
-        attributes = new VertexAttribute[desc.nAttributes];
-    }
-
-    nAttributes = desc.nAttributes;
-    stride = desc.stride;
-    for (unsigned int i = 0; i < nAttributes; i++)
-        attributes[i] = desc.attributes[i];
-    clearSemanticMap();
-    buildSemanticMap();
-
-    return *this;
 }
 
 
@@ -78,10 +72,8 @@ VertexDescription::operator=(const VertexDescription& desc)
 bool
 VertexDescription::validate() const
 {
-    for (unsigned int i = 0; i < nAttributes; i++)
+    for (const VertexAttribute& attr : attributes)
     {
-        VertexAttribute& attr = attributes[i];
-
         // Validate the attribute
         if (attr.offset % 4 != 0 || attr.offset + VertexAttribute::getFormatSize(attr.format) > stride)
             return false;
@@ -93,35 +85,14 @@ VertexDescription::validate() const
     return true;
 }
 
-VertexDescription VertexDescription::appendingAttributes(const VertexAttribute* newAttributes, int count) const
-{
-    unsigned int totalAttributeCount = nAttributes + count;
-    VertexAttribute* allAttributes = new VertexAttribute[totalAttributeCount];
-    std::memcpy(allAttributes, attributes, sizeof(VertexAttribute) * nAttributes);
-    unsigned int newStride = stride;
-    for (int i = 0; i < count; ++i)
-    {
-        VertexAttribute attribute = newAttributes[i];
-        allAttributes[nAttributes + i] = attribute;
-        newStride += VertexAttribute::getFormatSize(attribute.format);
-    }
-    std::memcpy(allAttributes + nAttributes, newAttributes, sizeof(VertexAttribute) * count);
-    VertexDescription desc = VertexDescription(newStride, totalAttributeCount, allAttributes);
-    delete[] allAttributes;
-    return desc;
-}
-
-VertexDescription::~VertexDescription()
-{
-    delete[] attributes;
-}
-
 
 void
 VertexDescription::buildSemanticMap()
 {
-    for (unsigned int i = 0; i < nAttributes; i++)
-        semanticMap[static_cast<std::size_t>(attributes[i].semantic)] = attributes[i];
+    for (const VertexAttribute& attr : attributes)
+    {
+        semanticMap[static_cast<std::size_t>(attr.semantic)] = attr;
+    }
 }
 
 
@@ -133,23 +104,35 @@ VertexDescription::clearSemanticMap()
 }
 
 
+bool operator==(const VertexDescription& a, const VertexDescription& b)
+{
+    return std::tie(a.stride, a.attributes) == std::tie(b.stride, b.attributes);
+}
+
+
+bool operator<(const VertexDescription& a, const VertexDescription& b)
+{
+    return std::tie(a.stride, a.attributes) < std::tie(b.stride, b.attributes);
+}
+
+
 unsigned int
 PrimitiveGroup::getPrimitiveCount() const
 {
     switch (prim)
     {
     case PrimitiveGroupType::TriList:
-        return nIndices / 3;
+        return indices.size() / 3;
     case PrimitiveGroupType::TriStrip:
     case PrimitiveGroupType::TriFan:
-        return nIndices - 2;
+        return indices.size() - 2;
     case PrimitiveGroupType::LineList:
-        return nIndices / 2;
+        return indices.size() / 2;
     case PrimitiveGroupType::LineStrip:
-        return nIndices - 2;
+        return indices.size() - 2;
     case PrimitiveGroupType::PointList:
     case PrimitiveGroupType::SpriteList:
-        return nIndices;
+        return indices.size();
     default:
         // Invalid value
         return 0;
@@ -184,13 +167,12 @@ Mesh::setVertices(unsigned int _nVertices, void* vertexData)
 
 
 bool
-Mesh::setVertexDescription(const VertexDescription& desc)
+Mesh::setVertexDescription(VertexDescription&& desc)
 {
     if (!desc.validate())
         return false;
 
-    vertexDesc = desc;
-
+    vertexDesc = std::move(desc);
     return true;
 }
 
@@ -230,10 +212,10 @@ Mesh::addGroup(PrimitiveGroup* group)
 
 
 PrimitiveGroup*
-Mesh::createLinePrimitiveGroup(bool lineStrip, unsigned int nIndices, index32* indices)
+Mesh::createLinePrimitiveGroup(bool lineStrip, const std::vector<index32>& indices)
 {
     // Transform LINE_STRIP/LINES to triangle vertices
-    int transformedVertCount = lineStrip ? (nIndices - 1) * 4 : nIndices * 2;
+    int transformedVertCount = lineStrip ? (indices.size() - 1) * 4 : indices.size() * 2;
     // Get information of the position attributes
     auto positionAttributes = vertexDesc.getAttribute(VertexAttributeSemantic::Position);
     int positionSize = VertexAttribute::getFormatSize(positionAttributes.format);
@@ -245,13 +227,14 @@ Mesh::createLinePrimitiveGroup(bool lineStrip, unsigned int nIndices, index32* i
     int stride = originalStride + positionSize + sizeof(float);
 
     // Get line count
-    int lineCount = lineStrip ? nIndices - 1 : nIndices / 2;
+    int lineCount = lineStrip ? indices.size() - 1 : indices.size() / 2;
     int lineIndexCount = 6 * lineCount;
     int lineVertexCount = 4 * lineCount;
 
     // Create buffer to hold the transformed vertices/indices
     unsigned char* data = new unsigned char[stride * lineVertexCount];
-    index32* newIndices = new index32[lineIndexCount];
+    std::vector<index32> newIndices;
+    newIndices.reserve(lineIndexCount);
 
     unsigned char* originalData = (unsigned char *)vertices;
     auto ptr = data;
@@ -290,12 +273,12 @@ Mesh::createLinePrimitiveGroup(bool lineStrip, unsigned int nIndices, index32* i
         index32 newIndex = 4 * i;
 
         // Fill info for the 6 indices
-        newIndices[lineIndex] = newIndex;
-        newIndices[lineIndex + 1] = newIndex + 1;
-        newIndices[lineIndex + 2] = newIndex + 2;
-        newIndices[lineIndex + 3] = newIndex + 2;
-        newIndices[lineIndex + 4] = newIndex + 3;
-        newIndices[lineIndex + 5] = newIndex;
+        newIndices.push_back(newIndex);
+        newIndices.push_back(newIndex + 1);
+        newIndices.push_back(newIndex + 2);
+        newIndices.push_back(newIndex + 2);
+        newIndices.push_back(newIndex + 3);
+        newIndices.push_back(newIndex);
     }
 
     std::array<VertexAttribute, 2> newAttributes = {
@@ -305,9 +288,8 @@ Mesh::createLinePrimitiveGroup(bool lineStrip, unsigned int nIndices, index32* i
     auto* g = new PrimitiveGroup();
     g->vertexOverride = data;
     g->vertexCountOverride = lineVertexCount;
-    g->vertexDescriptionOverride = vertexDesc.appendingAttributes(newAttributes.data(), 2);
-    g->indicesOverride = newIndices;
-    g->nIndicesOverride = lineIndexCount;
+    g->vertexDescriptionOverride = appendingAttributes(vertexDesc, newAttributes.cbegin(), newAttributes.cend());
+    g->indicesOverride = std::move(newIndices);
     g->primOverride = PrimitiveGroupType::TriList;
     return g;
 }
@@ -316,25 +298,19 @@ Mesh::createLinePrimitiveGroup(bool lineStrip, unsigned int nIndices, index32* i
 unsigned int
 Mesh::addGroup(PrimitiveGroupType prim,
                unsigned int materialIndex,
-               unsigned int nIndices,
-               index32* indices)
+               std::vector<index32>&& indices)
 {
     PrimitiveGroup* g;
     if (prim == PrimitiveGroupType::LineStrip || prim == PrimitiveGroupType::LineList)
     {
-        g = createLinePrimitiveGroup(prim == PrimitiveGroupType::LineStrip, nIndices, indices);
+        g = createLinePrimitiveGroup(prim == PrimitiveGroupType::LineStrip, indices);
     }
     else
     {
-        g = new PrimitiveGroup;
-        g->vertexOverride = nullptr;
-        g->vertexCountOverride = 0;
-        g->indicesOverride = nullptr;
-        g->nIndicesOverride = 0;
+        g = new PrimitiveGroup();
         g->primOverride = prim;
     }
-    g->nIndices = nIndices;
-    g->indices = indices;
+    g->indices = std::move(indices);
     g->prim = prim;
     g->materialIndex = materialIndex;
 
@@ -367,9 +343,9 @@ Mesh::getName() const
 
 
 void
-Mesh::setName(const std::string& _name)
+Mesh::setName(std::string&& _name)
 {
-    name = _name;
+    name = std::move(_name);
 }
 
 
@@ -378,9 +354,9 @@ Mesh::remapIndices(const std::vector<index32>& indexMap)
 {
     for (auto group : groups)
     {
-        for (index32 i = 0; i < group->nIndices; i++)
+        for (auto& index : group->indices)
         {
-            group->indices[i] = indexMap[group->indices[i]];
+            index = indexMap[index];
         }
     }
 }
@@ -426,7 +402,7 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
     for (const auto group : groups)
     {
         PrimitiveGroupType primType = group->prim;
-        index32 nIndices = group->nIndices;
+        index32 nIndices = group->indices.size();
 
         // Only attempt to compute the intersection of the ray with triangle
         // groups.
@@ -613,7 +589,7 @@ Mesh::transform(const Eigen::Vector3f& translation, float scale)
         if (!vdata)
             continue;
 
-        auto vertexDesc = group->vertexDescriptionOverride;
+        const auto& vertexDesc = group->vertexDescriptionOverride;
         int positionOffset = vertexDesc.getAttribute(VertexAttributeSemantic::Position).offset;
         int nextPositionOffset = vertexDesc.getAttribute(VertexAttributeSemantic::NextPosition).offset;
         for (unsigned int j = 0; j < group->vertexCountOverride; j++, vdata += vertexDesc.stride)

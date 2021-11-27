@@ -136,7 +136,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             bool useOverrideValue = group->vertexOverride != nullptr && rc.shouldDrawLineAsTriangles();
 
             const void* data = useOverrideValue ? group->vertexOverride : mesh->getVertexData();
-            auto vertexDescription = useOverrideValue ? group->vertexDescriptionOverride : mesh->getVertexDescription();
+            const auto& vertexDescription = useOverrideValue ? group->vertexDescriptionOverride : mesh->getVertexDescription();
 
             if (currentData != data)
             {
