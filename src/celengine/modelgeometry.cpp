@@ -38,7 +38,7 @@ public:
         }
     }
 
-    std::map<const void*, GLuint> vbos; // vertex buffer objects
+    std::map<const cmod::VWord*, GLuint> vbos; // vertex buffer objects
 };
 
 
@@ -82,16 +82,16 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             const cmod::VertexDescription& vertexDesc = mesh->getVertexDescription();
 
             GLuint vboId = 0;
-            if (mesh->getVertexCount() * vertexDesc.stride > MinVBOSize)
+            if (mesh->getVertexCount() * vertexDesc.strideBytes > MinVBOSize)
             {
                 glGenBuffers(1, &vboId);
                 if (vboId != 0)
                 {
                     glBindBuffer(GL_ARRAY_BUFFER, vboId);
                     glBufferData(GL_ARRAY_BUFFER,
-                                    mesh->getVertexCount() * vertexDesc.stride,
-                                    mesh->getVertexData(),
-                                    GL_STATIC_DRAW);
+                                 mesh->getVertexCount() * vertexDesc.strideBytes,
+                                 mesh->getVertexData(),
+                                 GL_STATIC_DRAW);
                     glBindBuffer(GL_ARRAY_BUFFER, 0);
                     m_glData->vbos[mesh->getVertexData()] = vboId;
                 }
@@ -100,18 +100,18 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
             {
                 const cmod::PrimitiveGroup* group = mesh->getGroup(groupIndex);
-                if (group->vertexOverride != nullptr
-                    && group->vertexCountOverride * group->vertexDescriptionOverride.stride > MinVBOSize)
+                if (!group->vertexOverride.empty()
+                    && group->vertexCountOverride * group->vertexDescriptionOverride.strideBytes > MinVBOSize)
                 {
                     glGenBuffers(1, &vboId);
                     if (vboId != 0)
                     {
                         glBindBuffer(GL_ARRAY_BUFFER, vboId);
                         glBufferData(GL_ARRAY_BUFFER,
-                                     group->vertexCountOverride * group->vertexDescriptionOverride.stride,
-                                     group->vertexOverride, GL_STATIC_DRAW);
+                                     group->vertexCountOverride * group->vertexDescriptionOverride.strideBytes,
+                                     group->vertexOverride.data(), GL_STATIC_DRAW);
                         glBindBuffer(GL_ARRAY_BUFFER, 0);
-                        m_glData->vbos[group->vertexOverride] = vboId;
+                        m_glData->vbos[group->vertexOverride.data()] = vboId;
                     }
                 }
             }
@@ -133,9 +133,9 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
         {
             const cmod::PrimitiveGroup* group = mesh->getGroup(groupIndex);
-            bool useOverrideValue = group->vertexOverride != nullptr && rc.shouldDrawLineAsTriangles();
+            bool useOverrideValue = !group->vertexOverride.empty() && rc.shouldDrawLineAsTriangles();
 
-            const void* data = useOverrideValue ? group->vertexOverride : mesh->getVertexData();
+            const cmod::VWord* data = useOverrideValue ? group->vertexOverride.data() : mesh->getVertexData();
             const auto& vertexDescription = useOverrideValue ? group->vertexDescriptionOverride : mesh->getVertexDescription();
 
             if (currentData != data)

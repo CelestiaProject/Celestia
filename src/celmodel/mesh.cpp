@@ -30,14 +30,12 @@ VertexDescription appendingAttributes(const VertexDescription& desc, It begin, I
     allAttributes.reserve(desc.attributes.size() + (end - begin));
 
     std::copy(desc.attributes.cbegin(), desc.attributes.cend(), std::back_inserter(allAttributes));
-    unsigned int newStride = desc.stride;
     for (auto it = begin; it != end; ++it)
     {
         allAttributes.push_back(*it);
-        newStride += VertexAttribute::getFormatSize(it->format);
     }
 
-    return VertexDescription(newStride, std::move(allAttributes));
+    return VertexDescription(std::move(allAttributes));
 }
 
 } // end unnamed namespace
@@ -45,21 +43,25 @@ VertexDescription appendingAttributes(const VertexDescription& desc, It begin, I
 
 bool operator==(const VertexAttribute& a, const VertexAttribute& b)
 {
-    return std::tie(a.semantic, a.format, a.offset) == std::tie(b.semantic, b.format, b.offset);
+    return std::tie(a.semantic, a.format, a.offsetWords) == std::tie(b.semantic, b.format, b.offsetWords);
 }
 
 
 bool operator<(const VertexAttribute& a, const VertexAttribute& b)
 {
-    return std::tie(a.semantic, a.format, a.offset) < std::tie(b.semantic, b.format, b.offset);
+    return std::tie(a.semantic, a.format, a.offsetWords) < std::tie(b.semantic, b.format, b.offsetWords);
 }
 
 
-VertexDescription::VertexDescription(unsigned int _stride,
-                                     std::vector<VertexAttribute>&& _attributes) :
-    stride(_stride),
+VertexDescription::VertexDescription(std::vector<VertexAttribute>&& _attributes) :
+    strideBytes(0),
     attributes(std::move(_attributes))
 {
+    for (const auto& attr : attributes)
+    {
+        strideBytes += VertexAttribute::getFormatSizeWords(attr.format) * sizeof(VWord);
+    }
+
     if (!attributes.empty())
     {
         buildSemanticMap();
@@ -72,10 +74,11 @@ VertexDescription::VertexDescription(unsigned int _stride,
 bool
 VertexDescription::validate() const
 {
+    unsigned int stride = strideBytes / sizeof(VWord);
     for (const VertexAttribute& attr : attributes)
     {
         // Validate the attribute
-        if (attr.offset % 4 != 0 || attr.offset + VertexAttribute::getFormatSize(attr.format) > stride)
+        if (attr.offsetWords + VertexAttribute::getFormatSizeWords(attr.format) > stride)
             return false;
         // TODO: check for repetition of attributes
         // if (vertexAttributeMap[attr->semantic].format != InvalidFormat)
@@ -106,13 +109,13 @@ VertexDescription::clearSemanticMap()
 
 bool operator==(const VertexDescription& a, const VertexDescription& b)
 {
-    return std::tie(a.stride, a.attributes) == std::tie(b.stride, b.attributes);
+    return std::tie(a.strideBytes, a.attributes) == std::tie(b.strideBytes, b.attributes);
 }
 
 
 bool operator<(const VertexDescription& a, const VertexDescription& b)
 {
-    return std::tie(a.stride, a.attributes) < std::tie(b.stride, b.attributes);
+    return std::tie(a.strideBytes, a.attributes) < std::tie(b.strideBytes, b.attributes);
 }
 
 
@@ -144,25 +147,14 @@ Mesh::~Mesh()
 {
     for (const auto group : groups)
         delete group;
-
-    // TODO: this is just to cast away void* and shut up GCC warnings;
-    // should probably be static_cast<VertexList::VertexPart*>
-    delete[] static_cast<char*>(vertices);
 }
 
 
 void
-Mesh::setVertices(unsigned int _nVertices, void* vertexData)
+Mesh::setVertices(unsigned int _nVertices, std::vector<VWord>&& vertexData)
 {
-    if (vertexData == vertices)
-        return;
-
-    // TODO: this is just to cast away void* and shut up GCC warnings;
-    // should probably be static_cast<VertexList::VertexPart*>
-    delete[] static_cast<char*>(vertices);
-
     nVertices = _nVertices;
-    vertices = vertexData;
+    vertices = std::move(vertexData);
 }
 
 
@@ -212,19 +204,20 @@ Mesh::addGroup(PrimitiveGroup* group)
 
 
 PrimitiveGroup*
-Mesh::createLinePrimitiveGroup(bool lineStrip, const std::vector<index32>& indices)
+Mesh::createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indices)
 {
     // Transform LINE_STRIP/LINES to triangle vertices
-    int transformedVertCount = lineStrip ? (indices.size() - 1) * 4 : indices.size() * 2;
     // Get information of the position attributes
     auto positionAttributes = vertexDesc.getAttribute(VertexAttributeSemantic::Position);
-    int positionSize = VertexAttribute::getFormatSize(positionAttributes.format);
-    int positionOffset = positionAttributes.offset;
+    int positionSize = VertexAttribute::getFormatSizeWords(positionAttributes.format);
+    int positionSizeBytes = positionSize * sizeof(VWord);
+    int positionOffset = positionAttributes.offsetWords;
 
-    int originalStride = vertexDesc.stride;
+    int originalStrideBytes = vertexDesc.strideBytes;
+    int originalStride = originalStrideBytes / sizeof(VWord);
     // Add another position (next line end), and scale factor
     // ORIGINAL ATTRIBUTES | NextVCoordAttributeIndex | ScaleFactorAttributeIndex
-    int stride = originalStride + positionSize + sizeof(float);
+    int stride = originalStride + positionSize + 1;
 
     // Get line count
     int lineCount = lineStrip ? indices.size() - 1 : indices.size() / 2;
@@ -232,45 +225,48 @@ Mesh::createLinePrimitiveGroup(bool lineStrip, const std::vector<index32>& indic
     int lineVertexCount = 4 * lineCount;
 
     // Create buffer to hold the transformed vertices/indices
-    unsigned char* data = new unsigned char[stride * lineVertexCount];
-    std::vector<index32> newIndices;
+    std::vector<VWord> data(stride * lineVertexCount);
+    std::vector<Index32> newIndices;
     newIndices.reserve(lineIndexCount);
 
-    unsigned char* originalData = (unsigned char *)vertices;
-    auto ptr = data;
+    VWord* ptr = data.data();
     for (int i = 0; i < lineCount; ++i)
     {
         int thisIndex = indices[lineStrip ? i : i * 2];
         int nextIndex = indices[lineStrip ? i + 1 : i * 2 + 1];
 
-        unsigned char* origThisVertLoc = originalData + thisIndex * originalStride;
-        unsigned char* origNextVertLoc = originalData + nextIndex * originalStride;
+        const VWord* origThisVertLoc = vertices.data() + thisIndex * originalStride;
+        const VWord* origNextVertLoc = vertices.data() + nextIndex * originalStride;
         float *ff = (float *)origThisVertLoc;
         float *ffn = (float *)origNextVertLoc;
 
         // Fill the info for the 4 vertices
-        std::memcpy(ptr, origThisVertLoc, originalStride);
-        std::memcpy(ptr + originalStride, origNextVertLoc + positionOffset, positionSize);
-        *(float *)&ptr[originalStride + positionSize] = -0.5f;
+        std::memcpy(ptr, origThisVertLoc, originalStrideBytes);
+        std::memcpy(ptr + originalStride, origNextVertLoc + positionOffset, positionSizeBytes);
+        float scaleFactor = -0.5f;
+        std::memcpy(ptr + originalStride + positionSize, &scaleFactor, sizeof(float));
         ptr += stride;
 
-        std::memcpy(ptr, origThisVertLoc, originalStride);
-        std::memcpy(ptr + originalStride, origNextVertLoc + positionOffset, positionSize);
-        *(float *)&ptr[originalStride + positionSize] = 0.5f;
+        std::memcpy(ptr, origThisVertLoc, originalStrideBytes);
+        std::memcpy(ptr + originalStride, origNextVertLoc + positionOffset, positionSizeBytes);
+        scaleFactor = 0.5f;
+        std::memcpy(ptr + originalStride + positionSize, &scaleFactor, sizeof(float));
         ptr += stride;
 
-        std::memcpy(ptr, origNextVertLoc, originalStride);
-        std::memcpy(ptr + originalStride, origThisVertLoc + positionOffset, positionSize);
-        *(float *)&ptr[originalStride + positionSize] = -0.5f;
+        std::memcpy(ptr, origNextVertLoc, originalStrideBytes);
+        std::memcpy(ptr + originalStride, origThisVertLoc + positionOffset, positionSizeBytes);
+        scaleFactor = -0.5f;
+        std::memcpy(ptr + originalStride + positionSize, &scaleFactor, sizeof(float));
         ptr += stride;
 
-        std::memcpy(ptr, origNextVertLoc, originalStride);
-        std::memcpy(ptr + originalStride, origThisVertLoc + positionOffset, positionSize);
-        *(float *)&ptr[originalStride + positionSize] = 0.5f;
+        std::memcpy(ptr, origNextVertLoc, originalStrideBytes);
+        std::memcpy(ptr + originalStride, origThisVertLoc + positionOffset, positionSizeBytes);
+        scaleFactor = 0.5f;
+        std::memcpy(ptr + originalStride + positionSize, &scaleFactor, sizeof(float));
         ptr += stride;
 
         int lineIndex = 6 * i;
-        index32 newIndex = 4 * i;
+        Index32 newIndex = 4 * i;
 
         // Fill info for the 6 indices
         newIndices.push_back(newIndex);
@@ -298,7 +294,7 @@ Mesh::createLinePrimitiveGroup(bool lineStrip, const std::vector<index32>& indic
 unsigned int
 Mesh::addGroup(PrimitiveGroupType prim,
                unsigned int materialIndex,
-               std::vector<index32>&& indices)
+               std::vector<Index32>&& indices)
 {
     PrimitiveGroup* g;
     if (prim == PrimitiveGroupType::LineStrip || prim == PrimitiveGroupType::LineList)
@@ -350,7 +346,7 @@ Mesh::setName(std::string&& _name)
 
 
 void
-Mesh::remapIndices(const std::vector<index32>& indexMap)
+Mesh::remapIndices(const std::vector<Index32>& indexMap)
 {
     for (auto group : groups)
     {
@@ -395,14 +391,15 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
         return false;
     }
 
-    unsigned int posOffset = vertexDesc.getAttribute(VertexAttributeSemantic::Position).offset;
-    auto* vdata = reinterpret_cast<char*>(vertices);
+    unsigned int stride = vertexDesc.strideBytes / sizeof(VWord);
+    unsigned int posOffset = vertexDesc.getAttribute(VertexAttributeSemantic::Position).offsetWords;
+    const VWord* vdata = vertices.data();
 
     // Iterate over all primitive groups in the mesh
     for (const auto group : groups)
     {
         PrimitiveGroupType primType = group->prim;
-        index32 nIndices = group->indices.size();
+        Index32 nIndices = group->indices.size();
 
         // Only attempt to compute the intersection of the ray with triangle
         // groups.
@@ -413,18 +410,22 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
             !(primType == PrimitiveGroupType::TriList && nIndices % 3 != 0))
         {
             unsigned int primitiveIndex = 0;
-            index32 index = 0;
-            index32 i0 = group->indices[0];
-            index32 i1 = group->indices[1];
-            index32 i2 = group->indices[2];
+            Index32 index = 0;
+            Index32 i0 = group->indices[0];
+            Index32 i1 = group->indices[1];
+            Index32 i2 = group->indices[2];
 
             // Iterate over the triangles in the primitive group
             do
             {
                 // Get the triangle vertices v0, v1, and v2
-                Eigen::Vector3d v0 = Eigen::Map<Eigen::Vector3f>(reinterpret_cast<float*>(vdata + i0 * vertexDesc.stride + posOffset)).cast<double>();
-                Eigen::Vector3d v1 = Eigen::Map<Eigen::Vector3f>(reinterpret_cast<float*>(vdata + i1 * vertexDesc.stride + posOffset)).cast<double>();
-                Eigen::Vector3d v2 = Eigen::Map<Eigen::Vector3f>(reinterpret_cast<float*>(vdata + i2 * vertexDesc.stride + posOffset)).cast<double>();
+                float fv[3];
+                std::memcpy(fv, vdata + i0 * stride + posOffset, sizeof(float) * 3);
+                Eigen::Vector3d v0 = Eigen::Map<Eigen::Vector3f>(fv).cast<double>();
+                std::memcpy(fv, vdata + i1 * stride + posOffset, sizeof(float) * 3);
+                Eigen::Vector3d v1 = Eigen::Map<Eigen::Vector3f>(fv).cast<double>();
+                std::memcpy(fv, vdata + i2 * stride + posOffset, sizeof(float) * 3);
+                Eigen::Vector3d v2 = Eigen::Map<Eigen::Vector3f>(fv).cast<double>();
 
                 // Compute the edge vectors e0 and e1, and the normal n
                 Eigen::Vector3d e0 = v1 - v0;
@@ -536,19 +537,23 @@ Mesh::getBoundingBox() const
     if (vertexDesc.getAttribute(VertexAttributeSemantic::Position).format != VertexAttributeFormat::Float3)
         return bbox;
 
-    char* vdata = reinterpret_cast<char*>(vertices) + vertexDesc.getAttribute(VertexAttributeSemantic::Position).offset;
+    const VWord* vdata = vertices.data() + vertexDesc.getAttribute(VertexAttributeSemantic::Position).offsetWords;
 
+    unsigned int stride = vertexDesc.strideBytes / sizeof(VWord);
     if (vertexDesc.getAttribute(VertexAttributeSemantic::PointSize).format == VertexAttributeFormat::Float1)
     {
         // Handle bounding box calculation for point sprites. Unlike other
         // primitives, point sprite vertices have a non-zero size.
-        int pointSizeOffset = (int) vertexDesc.getAttribute(VertexAttributeSemantic::PointSize).offset -
-            (int) vertexDesc.getAttribute(VertexAttributeSemantic::Position).offset;
+        int pointSizeOffset = (int) vertexDesc.getAttribute(VertexAttributeSemantic::PointSize).offsetWords -
+            (int) vertexDesc.getAttribute(VertexAttributeSemantic::Position).offsetWords;
 
-        for (unsigned int i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
+        for (unsigned int i = 0; i < nVertices; i++, vdata += stride)
         {
-            Eigen::Vector3f center = Eigen::Map<Eigen::Vector3f>(reinterpret_cast<float*>(vdata));
-            float pointSize = (reinterpret_cast<float*>(vdata + pointSizeOffset))[0];
+            float fv[3];
+            std::memcpy(fv, vdata, sizeof(float) * 3);
+            Eigen::Vector3f center = Eigen::Map<Eigen::Vector3f>(fv);
+            float pointSize;
+            std::memcpy(&pointSize, vdata + pointSizeOffset, sizeof(float));
             Eigen::Vector3f offsetVec = Eigen::Vector3f::Constant(pointSize);
 
             Eigen::AlignedBox<float, 3> pointbox(center - offsetVec, center + offsetVec);
@@ -557,8 +562,12 @@ Mesh::getBoundingBox() const
     }
     else
     {
-        for (unsigned int i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
-            bbox.extend(Eigen::Map<Eigen::Vector3f>(reinterpret_cast<float*>(vdata)));
+        for (unsigned int i = 0; i < nVertices; i++, vdata += stride)
+        {
+            float fv[3];
+            std::memcpy(fv, vdata, sizeof(float) * 3);
+            bbox.extend(Eigen::Map<Eigen::Vector3f>(fv));
+        }
     }
 
     return bbox;
@@ -571,43 +580,55 @@ Mesh::transform(const Eigen::Vector3f& translation, float scale)
     if (vertexDesc.getAttribute(VertexAttributeSemantic::Position).format != VertexAttributeFormat::Float3)
         return;
 
-    char* vdata = reinterpret_cast<char*>(vertices) + vertexDesc.getAttribute(VertexAttributeSemantic::Position).offset;
+    VWord* vdata = vertices.data() + vertexDesc.getAttribute(VertexAttributeSemantic::Position).offsetWords;
     unsigned int i;
 
+    unsigned int stride = vertexDesc.strideBytes / sizeof(VWord);
+
     // Scale and translate the vertex positions
-    for (i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
+    for (i = 0; i < nVertices; i++, vdata += stride)
     {
-        const Eigen::Vector3f tv = (Eigen::Map<Eigen::Vector3f>(reinterpret_cast<float*>(vdata)) + translation) * scale;
-        Eigen::Map<Eigen::Vector3f>(reinterpret_cast<float*>(vdata)) = tv;
+        float fv[3];
+        std::memcpy(fv, vdata, sizeof(float) * 3);
+        const Eigen::Vector3f tv = (Eigen::Map<Eigen::Vector3f>(fv) + translation) * scale;
+        std::memcpy(vdata, tv.data(), sizeof(float) * 3);
     }
 
     // Scale and translate the overriden vertex values
     for (i = 0; i < getGroupCount(); i++)
     {
         PrimitiveGroup* group = getGroup(i);
-        char* vdata = reinterpret_cast<char*>(group->vertexOverride);
-        if (!vdata)
-            continue;
+        if (group->vertexOverride.empty()) { continue; }
+        VWord* vdataOverride = group->vertexOverride.data();
 
-        const auto& vertexDesc = group->vertexDescriptionOverride;
-        int positionOffset = vertexDesc.getAttribute(VertexAttributeSemantic::Position).offset;
-        int nextPositionOffset = vertexDesc.getAttribute(VertexAttributeSemantic::NextPosition).offset;
-        for (unsigned int j = 0; j < group->vertexCountOverride; j++, vdata += vertexDesc.stride)
+        const auto& vertexDescOverride = group->vertexDescriptionOverride;
+        unsigned int strideOverride = vertexDescOverride.strideBytes / sizeof(VWord);
+        int positionOffset = vertexDescOverride.getAttribute(VertexAttributeSemantic::Position).offsetWords;
+        int nextPositionOffset = vertexDescOverride.getAttribute(VertexAttributeSemantic::NextPosition).offsetWords;
+        for (unsigned int j = 0; j < group->vertexCountOverride; j++, vdataOverride += strideOverride)
         {
-            Eigen::Vector3f tv = (Eigen::Map<Eigen::Vector3f>(reinterpret_cast<float*>(vdata + positionOffset)) + translation) * scale;
-            Eigen::Map<Eigen::Vector3f>(reinterpret_cast<float*>(vdata + positionOffset)) = tv;
+            float fv[3];
+            std::memcpy(fv, vdataOverride + positionOffset, sizeof(float) * 3);
+            Eigen::Vector3f tv = (Eigen::Map<Eigen::Vector3f>(fv) + translation) * scale;
+            std::memcpy(vdataOverride + positionOffset, tv.data(), sizeof(float) * 3);
 
-            tv = (Eigen::Map<Eigen::Vector3f>(reinterpret_cast<float*>(vdata + nextPositionOffset)) + translation) * scale;
-            Eigen::Map<Eigen::Vector3f>(reinterpret_cast<float*>(vdata + nextPositionOffset)) = tv;
+            std::memcpy(fv, vdataOverride + nextPositionOffset, sizeof(float) * 3);
+            tv = (Eigen::Map<Eigen::Vector3f>(fv) + translation) * scale;
+            std::memcpy(vdataOverride + nextPositionOffset, tv.data(), sizeof(float) * 3);
         }
     }
 
     // Point sizes need to be scaled as well
     if (vertexDesc.getAttribute(VertexAttributeSemantic::PointSize).format == VertexAttributeFormat::Float1)
     {
-        vdata = reinterpret_cast<char*>(vertices) + vertexDesc.getAttribute(VertexAttributeSemantic::PointSize).offset;
-        for (i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
-            reinterpret_cast<float*>(vdata)[0] *= scale;
+        vdata = vertices.data() + vertexDesc.getAttribute(VertexAttributeSemantic::PointSize).offsetWords;
+        for (i = 0; i < nVertices; i++, vdata += stride)
+        {
+            float f;
+            std::memcpy(&f, vdata, sizeof(float));
+            f *= scale;
+            std::memcpy(vdata, &f, sizeof(float));
+        }
     }
 }
 

@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -166,29 +167,27 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
     // are optional.
     std::vector<cmod::VertexAttribute> attributes;
     attributes.reserve(3);
-    std::uint32_t offset = 0;
+    std::uint32_t vertexSize = 0;
 
     // Position attribute are required
     attributes.emplace_back(cmod::VertexAttributeSemantic::Position,
                             cmod::VertexAttributeFormat::Float3,
-                            0);
-    offset += 12;
+                            vertexSize);
+    vertexSize += 3;
 
     // Normals are always generated
     attributes.emplace_back(cmod::VertexAttributeSemantic::Normal,
                             cmod::VertexAttributeFormat::Float3,
-                            offset);
-    offset += 12;
+                            vertexSize);
+    vertexSize += 3;
 
     if (hasTextureCoords)
     {
         attributes.emplace_back(cmod::VertexAttributeSemantic::Texture0,
                                 cmod::VertexAttributeFormat::Float2,
-                                offset);
-        offset += 8;
+                                vertexSize);
+        vertexSize += 2;
     }
-
-    std::uint32_t vertexSize = offset;
 
     // bool smooth = (mesh.getSmoothingGroupCount() == nFaces);
 
@@ -288,8 +287,8 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
     }
 
     // Create the vertex data
-    unsigned int floatsPerVertex = vertexSize / sizeof(float);
-    auto* vertexData = new float[nFaces * 3 * floatsPerVertex];
+    static_assert(sizeof(float) == sizeof(cmod::VWord), "Float does not match vertex data word size");
+    std::vector<cmod::VWord> vertexData(nFaces * 3 * vertexSize);
 
     for (int i = 0; i < nFaces; i++)
     {
@@ -301,26 +300,21 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
             Eigen::Vector3f position = mesh.getVertex(triVert[j]);
             Eigen::Vector3f normal = vertexNormals[i * 3 + j];
 
-            int dataOffset = (i * 3 + j) * floatsPerVertex;
-            vertexData[dataOffset + 0] = position.x();
-            vertexData[dataOffset + 1] = position.y();
-            vertexData[dataOffset + 2] = position.z();
-            vertexData[dataOffset + 3] = normal.x();
-            vertexData[dataOffset + 4] = normal.y();
-            vertexData[dataOffset + 5] = normal.z();
+            int dataOffset = (i * 3 + j) * vertexSize;
+            std::memcpy(vertexData.data() + dataOffset, position.data(), sizeof(float) * 3);
+            std::memcpy(vertexData.data() + dataOffset + 3, normal.data(), sizeof(float) * 3);
             if (hasTextureCoords)
             {
                 Eigen::Vector2f texCoord = mesh.getTexCoord(triVert[j]);
-                vertexData[dataOffset + 6] = texCoord.x();
-                vertexData[dataOffset + 7] = texCoord.y();
+                std::memcpy(vertexData.data() + dataOffset + 6, texCoord.data(), sizeof(float) * 2);
             }
         }
     }
 
     // Create the mesh
     cmod::Mesh* newMesh = new cmod::Mesh();
-    newMesh->setVertexDescription(cmod::VertexDescription(vertexSize, std::move(attributes)));
-    newMesh->setVertices(nFaces * 3, vertexData);
+    newMesh->setVertexDescription(cmod::VertexDescription(std::move(attributes)));
+    newMesh->setVertices(nFaces * 3, std::move(vertexData));
 
     for (uint32_t i = 0; i < mesh.getMeshMaterialGroupCount(); ++i)
     {
@@ -330,7 +324,7 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
         // trivial (although much space is wasted storing unnecessary indices.)
         std::uint32_t nMatGroupFaces = matGroup->faces.size();
 
-        std::vector<cmod::index32> indices;
+        std::vector<cmod::Index32> indices;
         indices.reserve(nMatGroupFaces * 3);
         for (std::uint32_t j = 0; j < nMatGroupFaces; ++j)
         {

@@ -36,7 +36,7 @@ class RenderContext
 
     virtual void makeCurrent(const cmod::Material&) = 0;
     virtual void setVertexArrays(const cmod::VertexDescription& desc,
-                                 const void* vertexData);
+                                 const cmod::VWord* vertexData);
     virtual void updateShader(const cmod::VertexDescription& desc, cmod::PrimitiveGroupType primType);
     virtual void drawGroup(const cmod::PrimitiveGroup& group, bool useOverride);
 

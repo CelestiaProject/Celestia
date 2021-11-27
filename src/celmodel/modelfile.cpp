@@ -8,6 +8,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
 #include <cassert>
 #include <cstring>
 #include <iostream>
@@ -286,8 +287,8 @@ public:
     Material* loadMaterial();
     VertexDescription loadVertexDescription();
     Mesh* loadMesh();
-    char* loadVertices(const VertexDescription& vertexDesc,
-                       unsigned int& vertexCount);
+    std::vector<VWord> loadVertices(const VertexDescription& vertexDesc,
+                                    unsigned int& vertexCount);
 
 private:
     Tokenizer tok;
@@ -484,7 +485,7 @@ AsciiModelLoader::loadVertexDescription()
 
         attributes.emplace_back(semantic, format, offset);
 
-        offset += VertexAttribute::getFormatSize(format);
+        offset += VertexAttribute::getFormatSizeWords(format);
         nAttributes++;
     }
 
@@ -500,40 +501,41 @@ AsciiModelLoader::loadVertexDescription()
         return {};
     }
 
-    return VertexDescription(offset, std::move(attributes));
+    return VertexDescription(std::move(attributes));
 }
 
 
-char*
+std::vector<VWord>
 AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
                                unsigned int& vertexCount)
 {
     if (tok.nextToken() != Tokenizer::TokenName && tok.getNameValue() != VerticesToken)
     {
         reportError("Vertex data expected");
-        return nullptr;
+        return {};
     }
 
     if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
     {
         reportError("Vertex count expected");
-        return nullptr;
+        return {};
     }
 
     std::int32_t num = tok.getIntegerValue();
     if (num <= 0)
     {
         reportError("Bad vertex count for mesh");
-        return nullptr;
+        return {};
     }
 
     vertexCount = static_cast<unsigned int>(num);
-    unsigned int vertexDataSize = vertexDesc.stride * vertexCount;
-    auto* vertexData = new char[vertexDataSize];
+    unsigned int stride = vertexDesc.strideBytes / sizeof(VWord);
+    unsigned int vertexDataSize = stride * vertexCount;
+    std::vector<VWord> vertexData(vertexDataSize);
 
     unsigned int offset = 0;
     double data[4];
-    for (unsigned int i = 0; i < vertexCount; i++, offset += vertexDesc.stride)
+    for (unsigned int i = 0; i < vertexCount; i++, offset += stride)
     {
         assert(offset < vertexDataSize);
         for (const auto& attr : vertexDesc.attributes)
@@ -558,8 +560,7 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
                 break;
             default:
                 assert(0);
-                delete[] vertexData;
-                return nullptr;
+                return {};
             }
 
             for (int j = 0; j < readCount; j++)
@@ -576,20 +577,19 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
                 // TODO: range check unsigned byte values
             }
 
-            unsigned int base = offset + attr.offset;
+            unsigned int base = offset + attr.offsetWords;
             if (vfmt == VertexAttributeFormat::UByte4)
             {
-                for (int k = 0; k < readCount; k++)
-                {
-                    *(vertexData + base + k) = static_cast<char>(static_cast<unsigned char>(data[k]));
-                }
+                std::uint8_t c[4];
+                std::transform(data, data + readCount, c, [](double d) { return static_cast<std::uint8_t>(d); });
+                std::memcpy(vertexData.data() + base, c, readCount);
             }
             else
             {
                 for (int k = 0; k < readCount; k++)
                 {
                     float value = static_cast<float>(data[k]);
-                    std::memcpy(vertexData + base + sizeof(float) * k, &value, sizeof(float));
+                    std::memcpy(vertexData.data() + base + k, &value, sizeof(float));
                 }
             }
         }
@@ -613,15 +613,15 @@ AsciiModelLoader::loadMesh()
         return nullptr;
 
     unsigned int vertexCount = 0;
-    char* vertexData = loadVertices(vertexDesc, vertexCount);
-    if (vertexData == nullptr)
+    std::vector<VWord> vertexData = loadVertices(vertexDesc, vertexCount);
+    if (vertexData.empty())
     {
         return nullptr;
     }
 
     auto* mesh = new Mesh();
     mesh->setVertexDescription(std::move(vertexDesc));
-    mesh->setVertices(vertexCount, vertexData);
+    mesh->setVertices(vertexCount, std::move(vertexData));
 
     while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndMeshToken)
     {
@@ -659,7 +659,7 @@ AsciiModelLoader::loadMesh()
 
         unsigned int indexCount = (unsigned int) tok.getIntegerValue();
 
-        std::vector<index32> indices;
+        std::vector<Index32> indices;
         indices.reserve(indexCount);
 
         for (unsigned int i = 0; i < indexCount; i++)
@@ -771,9 +771,9 @@ private:
     bool writeMaterial(const Material& /*material*/);
     bool writeGroup(const PrimitiveGroup& /*group*/);
     bool writeVertexDescription(const VertexDescription& /*desc*/);
-    bool writeVertices(const void* vertexData,
+    bool writeVertices(const VWord* vertexData,
                        unsigned int nVertices,
-                       unsigned int stride,
+                       unsigned int strideWords,
                        const VertexDescription& desc);
 
     std::ostream& out;
@@ -864,7 +864,7 @@ AsciiModelWriter::writeMesh(const Mesh& mesh)
 
     if (!writeVertices(mesh.getVertexData(),
                        mesh.getVertexCount(),
-                       mesh.getVertexStride(),
+                       mesh.getVertexStrideWords(),
                        mesh.getVertexDescription()))
     {
         return false;
@@ -886,44 +886,41 @@ AsciiModelWriter::writeMesh(const Mesh& mesh)
 
 
 bool
-AsciiModelWriter::writeVertices(const void* vertexData,
+AsciiModelWriter::writeVertices(const VWord* vertexData,
                                 unsigned int nVertices,
-                                unsigned int stride,
+                                unsigned int strideWords,
                                 const VertexDescription& desc)
 {
-    const auto* vertex = reinterpret_cast<const unsigned char*>(vertexData);
-
     fmt::print(out, "vertices {}\n", nVertices);
     if (!out.good()) { return false; }
 
-    for (unsigned int i = 0; i < nVertices; i++, vertex += stride)
+    for (unsigned int i = 0; i < nVertices; i++, vertexData += strideWords)
     {
         for (const auto& attr : desc.attributes)
         {
-            const unsigned char* ubdata = vertex + attr.offset;
-            //const auto* fdata = reinterpret_cast<const float*>(ubdata);
+            const VWord* data = vertexData + attr.offsetWords;
             float fdata[4];
 
             switch (attr.format)
             {
             case VertexAttributeFormat::Float1:
-                std::memcpy(fdata, ubdata, sizeof(float));
+                std::memcpy(fdata, data, sizeof(float));
                 fmt::print(out, "{}", fdata[0]);
                 break;
             case VertexAttributeFormat::Float2:
-                std::memcpy(fdata, ubdata, sizeof(float) * 2);
+                std::memcpy(fdata, data, sizeof(float) * 2);
                 fmt::print(out, "{} {}", fdata[0], fdata[1]);
                 break;
             case VertexAttributeFormat::Float3:
-                std::memcpy(fdata, ubdata, sizeof(float) * 3);
+                std::memcpy(fdata, data, sizeof(float) * 3);
                 fmt::print(out, "{} {} {}", fdata[0], fdata[1], fdata[2]);
                 break;
             case VertexAttributeFormat::Float4:
-                std::memcpy(fdata, ubdata, sizeof(float) * 4);
+                std::memcpy(fdata, data, sizeof(float) * 4);
                 fmt::print(out, "{} {} {} {}", fdata[0], fdata[1], fdata[2], fdata[3]);
                 break;
             case VertexAttributeFormat::UByte4:
-                fmt::print(out, "{} {} {} {}", +ubdata[0], +ubdata[1], +ubdata[2], +ubdata[3]);
+                fmt::print(out, "{} {} {} {}", +data[0], +data[1], +data[2], +data[3]);
                 break;
             default:
                 assert(0);
@@ -1249,8 +1246,8 @@ public:
     Material* loadMaterial();
     VertexDescription loadVertexDescription();
     Mesh* loadMesh();
-    char* loadVertices(const VertexDescription& vertexDesc,
-                       unsigned int& vertexCount);
+    std::vector<VWord> loadVertices(const VertexDescription& vertexDesc,
+                                    unsigned int& vertexCount);
 
 private:
     std::istream& in;
@@ -1503,7 +1500,7 @@ BinaryModelLoader::loadVertexDescription()
                                     static_cast<VertexAttributeFormat>(vfmt),
                                     offset);
 
-            offset += VertexAttribute::getFormatSize(attributes[nAttributes].format);
+            offset += VertexAttribute::getFormatSizeWords(attributes[nAttributes].format);
             nAttributes++;
         }
         else
@@ -1519,7 +1516,7 @@ BinaryModelLoader::loadVertexDescription()
         return {};
     }
 
-    return VertexDescription(offset, std::move(attributes));
+    return VertexDescription(std::move(attributes));
 }
 
 
@@ -1531,15 +1528,15 @@ BinaryModelLoader::loadMesh()
         return nullptr;
 
     unsigned int vertexCount = 0;
-    char* vertexData = loadVertices(vertexDesc, vertexCount);
-    if (vertexData == nullptr)
+    std::vector<VWord> vertexData = loadVertices(vertexDesc, vertexCount);
+    if (vertexData.empty())
     {
         return nullptr;
     }
 
     auto* mesh = new Mesh();
     mesh->setVertexDescription(std::move(vertexDesc));
-    mesh->setVertices(vertexCount, vertexData);
+    mesh->setVertices(vertexCount, std::move(vertexData));
 
     for (;;)
     {
@@ -1572,7 +1569,7 @@ BinaryModelLoader::loadMesh()
             return nullptr;
         }
 
-        std::vector<index32> indices;
+        std::vector<Index32> indices;
         indices.reserve(indexCount);
 
         for (unsigned int i = 0; i < indexCount; i++)
@@ -1595,7 +1592,7 @@ BinaryModelLoader::loadMesh()
 }
 
 
-char*
+std::vector<VWord>
 BinaryModelLoader::loadVertices(const VertexDescription& vertexDesc,
                                 unsigned int& vertexCount)
 {
@@ -1603,25 +1600,26 @@ BinaryModelLoader::loadVertices(const VertexDescription& vertexDesc,
     if (!readToken(in, tok) || tok != CMOD_Vertices)
     {
         reportError("Vertex data expected");
-        return nullptr;
+        return {};
     }
 
     if (!celutil::readLE<std::uint32_t>(in, vertexCount))
     {
         reportError("Vertex count expected");
-        return nullptr;
+        return {};
     }
-    unsigned int vertexDataSize = vertexDesc.stride * vertexCount;
-    auto* vertexData = new char[vertexDataSize];
+
+    unsigned int stride = vertexDesc.strideBytes / sizeof(VWord);
+    unsigned int vertexDataSize = stride * vertexCount;
+    std::vector<VWord> vertexData(vertexDataSize);
 
     unsigned int offset = 0;
-
-    for (unsigned int i = 0; i < vertexCount; i++, offset += vertexDesc.stride)
+    for (unsigned int i = 0; i < vertexCount; i++, offset += stride)
     {
         assert(offset < vertexDataSize);
         for (const auto& attr : vertexDesc.attributes)
         {
-            unsigned int base = offset + attr.offset;
+            unsigned int base = offset + attr.offsetWords;
             VertexAttributeFormat vfmt = attr.format;
             float f[4];
             /*int readCount = 0;    Unused*/
@@ -1631,20 +1629,18 @@ BinaryModelLoader::loadVertices(const VertexDescription& vertexDesc,
                 if (!celutil::readLE<float>(in, f[0]))
                 {
                     reportError("Failed to read Float1");
-                    delete[] vertexData;
-                    return nullptr;
+                    return {};
                 }
-                std::memcpy(vertexData + base, f, sizeof(float));
+                std::memcpy(vertexData.data() + base, f, sizeof(float));
                 break;
             case VertexAttributeFormat::Float2:
                 if (!celutil::readLE<float>(in, f[0])
                     || !celutil::readLE<float>(in, f[1]))
                 {
                     reportError("Failed to read Float2");
-                    delete[] vertexData;
-                    return nullptr;
+                    return {};
                 }
-                std::memcpy(vertexData + base, f, sizeof(float) * 2);
+                std::memcpy(vertexData.data() + base, f, sizeof(float) * 2);
                 break;
             case VertexAttributeFormat::Float3:
                 if (!celutil::readLE<float>(in, f[0])
@@ -1652,10 +1648,9 @@ BinaryModelLoader::loadVertices(const VertexDescription& vertexDesc,
                     || !celutil::readLE<float>(in, f[2]))
                 {
                     reportError("Failed to read Float3");
-                    delete[] vertexData;
-                    return nullptr;
+                    return {};
                 }
-                std::memcpy(vertexData + base, f, sizeof(float) * 3);
+                std::memcpy(vertexData.data() + base, f, sizeof(float) * 3);
                 break;
             case VertexAttributeFormat::Float4:
                 if (!celutil::readLE<float>(in, f[0])
@@ -1664,23 +1659,20 @@ BinaryModelLoader::loadVertices(const VertexDescription& vertexDesc,
                     || !celutil::readLE<float>(in, f[3]))
                 {
                     reportError("Failed to read Float4");
-                    delete[] vertexData;
-                    return nullptr;
+                    return {};
                 }
-                std::memcpy(vertexData + base, f, sizeof(float) * 4);
+                std::memcpy(vertexData.data() + base, f, sizeof(float) * 4);
                 break;
             case VertexAttributeFormat::UByte4:
-                if (!in.get(reinterpret_cast<char*>(vertexData + base), 4).good())
+                if (!celutil::readNative<std::uint32_t>(in, vertexData[base]))
                 {
                     reportError("failed to read UByte4");
-                    delete[] vertexData;
-                    return nullptr;
+                    return {};
                 }
                 break;
             default:
                 assert(0);
-                delete[] vertexData;
-                return nullptr;
+                return {};
             }
         }
     }
@@ -1743,9 +1735,9 @@ private:
     bool writeMaterial(const Material& /*material*/);
     bool writeGroup(const PrimitiveGroup& /*group*/);
     bool writeVertexDescription(const VertexDescription& /*desc*/);
-    bool writeVertices(const void* vertexData,
+    bool writeVertices(const VWord* vertexData,
                        unsigned int nVertices,
-                       unsigned int stride,
+                       unsigned int strideWords,
                        const VertexDescription& desc);
 
     std::ostream& out;
@@ -1797,7 +1789,7 @@ BinaryModelWriter::writeMesh(const Mesh& mesh)
         || !writeVertexDescription(mesh.getVertexDescription())
         || !writeVertices(mesh.getVertexData(),
                           mesh.getVertexCount(),
-                          mesh.getVertexStride(),
+                          mesh.getVertexStrideWords(),
                           mesh.getVertexDescription()))
     {
         return false;
@@ -1813,23 +1805,21 @@ BinaryModelWriter::writeMesh(const Mesh& mesh)
 
 
 bool
-BinaryModelWriter::writeVertices(const void* vertexData,
+BinaryModelWriter::writeVertices(const VWord* vertexData,
                                  unsigned int nVertices,
-                                 unsigned int stride,
+                                 unsigned int strideWords,
                                  const VertexDescription& desc)
 {
-    const auto* vertex = reinterpret_cast<const char*>(vertexData);
-
     if (!writeToken(out, CMOD_Vertices) || !celutil::writeLE<std::uint32_t>(out, nVertices))
     {
         return false;
     }
 
-    for (unsigned int i = 0; i < nVertices; i++, vertex += stride)
+    for (unsigned int i = 0; i < nVertices; i++, vertexData += strideWords)
     {
         for (const auto& attr : desc.attributes)
         {
-            const char* cdata = vertex + attr.offset;
+            const VWord* cdata = vertexData + attr.offsetWords;
             float fdata[4];
 
             bool result;
@@ -1858,7 +1848,7 @@ BinaryModelWriter::writeVertices(const void* vertexData,
                     && celutil::writeLE<float>(out, fdata[3]);
                 break;
             case VertexAttributeFormat::UByte4:
-                result = out.write(cdata, 4).good();
+                result = celutil::writeNative<std::uint32_t>(out, *cdata);
                 break;
             default:
                 assert(0);

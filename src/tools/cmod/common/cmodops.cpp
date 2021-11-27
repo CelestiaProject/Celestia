@@ -9,12 +9,16 @@
 //
 // Perform various adjustments to a Celestia mesh.
 
+#include <algorithm>
+#include <array>
+#include <cassert>
 #include <cmath>
 #include <cstring>
 #include <iostream>
 #include <iterator>
 #include <numeric>
 #include <utility>
+#include <vector>
 
 #include <celmodel/model.h>
 
@@ -23,6 +27,31 @@
 
 namespace
 {
+struct Vertex
+{
+    Vertex() :
+        index(0),
+        attributes(nullptr)
+    {};
+
+    Vertex(std::uint32_t _index, const cmod::VWord* _attributes) :
+        index(_index),
+        attributes(_attributes)
+    {};
+
+    std::uint32_t index;
+    const cmod::VWord* attributes;
+};
+
+
+struct Face
+{
+    Eigen::Vector3f normal;
+    std::uint32_t i[3];    // vertex attribute indices
+    std::uint32_t vi[3];   // vertex point indices -- same as above unless welding
+};
+
+
 struct VertexComparator
 {
     virtual bool compare(const Vertex& a, const Vertex& b) const = 0;
@@ -45,17 +74,8 @@ public:
 
     bool compare(const Vertex& a, const Vertex& b) const override
     {
-        const auto* s0 = reinterpret_cast<const char*>(a.attributes);
-        const auto* s1 = reinterpret_cast<const char*>(b.attributes);
-        for (int i = 0; i < vertexSize; i++)
-        {
-            if (s0[i] < s1[i])
-                return true;
-            if (s0[i] > s1[i])
-                return false;
-        }
-
-        return false;
+        return std::lexicographical_compare(a.attributes, a.attributes + vertexSize,
+                                            b.attributes, b.attributes + vertexSize);
     }
 
 private:
@@ -68,26 +88,13 @@ class PointOrderingPredicate : public VertexComparator
 public:
     bool compare(const Vertex& a, const Vertex& b) const override
     {
-        const Eigen::Vector3f* p0 = reinterpret_cast<const Eigen::Vector3f*>(a.attributes);
-        const Eigen::Vector3f* p1 = reinterpret_cast<const Eigen::Vector3f*>(b.attributes);
+        std::array<float, 3> p0;
+        std::memcpy(p0.data(), a.attributes, sizeof(float) * 3);
 
-        if (p0->x() < p1->x())
-        {
-            return true;
-        }
-        if (p0->x() > p1->x())
-        {
-            return false;
-        }
-        else
-        {
-            if (p0->y() < p1->y())
-                return true;
-            if (p0->y() > p1->y())
-                return false;
-            else
-                return p0->z() < p1->z();
-        }
+        std::array<float, 3> p1;
+        std::memcpy(p1.data(), b.attributes, sizeof(float) * 3);
+
+        return p0 < p1;
     }
 
 private:
@@ -109,51 +116,15 @@ public:
 
     bool compare(const Vertex& a, const Vertex& b) const override
     {
-        const auto* adata = reinterpret_cast<const char*>(a.attributes);
-        const auto* bdata = reinterpret_cast<const char*>(b.attributes);
-        const Eigen::Vector3f* p0 = reinterpret_cast<const Eigen::Vector3f*>(adata + posOffset);
-        const Eigen::Vector3f* p1 = reinterpret_cast<const Eigen::Vector3f*>(bdata + posOffset);
-        const Eigen::Vector2f* tc0 = reinterpret_cast<const Eigen::Vector2f*>(adata + texCoordOffset);
-        const Eigen::Vector2f* tc1 = reinterpret_cast<const Eigen::Vector2f*>(bdata + texCoordOffset);
-        if (p0->x() < p1->x())
-        {
-            return true;
-        }
-        if (p0->x() > p1->x())
-        {
-            return false;
-        }
-        else
-        {
-            if (p0->y() < p1->y())
-            {
-                return true;
-            }
-            if (p0->y() > p1->y())
-            {
-                return false;
-            }
-            else
-            {
-                if (p0->z() < p1->z())
-                {
-                    return true;
-                }
-                if (p0->z() > p1->z())
-                {
-                    return false;
-                }
-                else
-                {
-                    if (tc0->x() < tc1->x())
-                        return true;
-                    if (tc0->x() > tc1->x())
-                        return false;
-                    else
-                        return tc0->y() < tc1->y();
-                }
-            }
-        }
+        std::array<float, 5> ptc0;
+        std::memcpy(ptc0.data(), a.attributes + posOffset, sizeof(float) * 3);
+        std::memcpy(ptc0.data() + 3, a.attributes + texCoordOffset, sizeof(float) * 2);
+
+        std::array<float, 5> ptc1;
+        std::memcpy(ptc1.data(), b.attributes + posOffset, sizeof(float) * 3);
+        std::memcpy(ptc1.data() + 3, b.attributes + texCoordOffset, sizeof(float) * 2);
+
+        return ptc0 < ptc1;
     }
 
 private:
@@ -181,14 +152,14 @@ public:
 
     bool compare(const Vertex& a, const Vertex& b) const override
     {
-        const auto* adata = reinterpret_cast<const char*>(a.attributes);
-        const auto* bdata = reinterpret_cast<const char*>(b.attributes);
-        const Eigen::Vector3f* p0 = reinterpret_cast<const Eigen::Vector3f*>(adata + posOffset);
-        const Eigen::Vector3f* p1 = reinterpret_cast<const Eigen::Vector3f*>(bdata + posOffset);
+        std::array<float, 3> p0;
+        std::memcpy(p0.data(), a.attributes + posOffset, sizeof(float) * 3);
 
-        return (approxEqual(p0->x(),  p1->x(), tolerance) &&
-                approxEqual(p0->y(),  p1->y(), tolerance) &&
-                approxEqual(p0->z(),  p1->z(), tolerance));
+        std::array<float, 3> p1;
+        std::memcpy(p1.data(), b.attributes + posOffset, sizeof(float) * 3);
+
+        return std::equal(p0.cbegin(), p0.cend(), p1.cbegin(),
+                          [&](float f0, float f1) { return approxEqual(f0, f1, tolerance); });
     }
 
 private:
@@ -213,18 +184,16 @@ public:
 
     bool compare(const Vertex& a, const Vertex& b) const override
     {
-        const auto* adata = reinterpret_cast<const char*>(a.attributes);
-        const auto* bdata = reinterpret_cast<const char*>(b.attributes);
-        const Eigen::Vector3f* p0 = reinterpret_cast<const Eigen::Vector3f*>(adata + posOffset);
-        const Eigen::Vector3f* p1 = reinterpret_cast<const Eigen::Vector3f*>(bdata + posOffset);
-        const Eigen::Vector2f* tc0 = reinterpret_cast<const Eigen::Vector2f*>(adata + texCoordOffset);
-        const Eigen::Vector2f* tc1 = reinterpret_cast<const Eigen::Vector2f*>(bdata + texCoordOffset);
+        std::array<float, 5> ptc0;
+        std::memcpy(ptc0.data(), a.attributes + posOffset, sizeof(float) * 3);
+        std::memcpy(ptc0.data() + 3, a.attributes + texCoordOffset, sizeof(float) * 2);
 
-        return (approxEqual(p0->x(),  p1->x(), tolerance) &&
-                approxEqual(p0->y(),  p1->y(), tolerance) &&
-                approxEqual(p0->z(),  p1->z(), tolerance) &&
-                approxEqual(tc0->x(), tc1->x(), tolerance) &&
-                approxEqual(tc0->y(), tc1->y(), tolerance));
+        std::array<float, 5> ptc1;
+        std::memcpy(ptc1.data(), b.attributes + posOffset, sizeof(float) * 3);
+        std::memcpy(ptc1.data() + 3, b.attributes + texCoordOffset, sizeof(float) * 2);
+
+        return std::equal(ptc0.cbegin(), ptc0.cend(), ptc1.cbegin(),
+                          [&](float f0, float f1) { return approxEqual(f0, f1, tolerance); });
     }
 
 private:
@@ -237,58 +206,43 @@ private:
 
 bool equal(const Vertex& a, const Vertex& b, std::uint32_t vertexSize)
 {
-    const auto* s0 = reinterpret_cast<const char*>(a.attributes);
-    const auto* s1 = reinterpret_cast<const char*>(b.attributes);
-
-    for (std::uint32_t i = 0; i < vertexSize; i++)
-    {
-        if (s0[i] != s1[i])
-            return false;
-    }
-
-    return true;
+    return std::equal(a.attributes, a.attributes + vertexSize, b.attributes);
 }
 
 
 bool equalPoint(const Vertex& a, const Vertex& b)
 {
-    const Eigen::Vector3f* p0 = reinterpret_cast<const Eigen::Vector3f*>(a.attributes);
-    const Eigen::Vector3f* p1 = reinterpret_cast<const Eigen::Vector3f*>(b.attributes);
+    std::array<float, 3> p0;
+    std::memcpy(p0.data(), a.attributes, sizeof(float) * 3);
 
-    return *p0 == *p1;
+    std::array<float, 3> p1;
+    std::memcpy(p1.data(), b.attributes, sizeof(float) * 3);
+
+    return p0 == p1;
 }
 
 
-struct MeshVertexDescComparator
-{
-    bool operator()(const cmod::Mesh* a, const cmod::Mesh* b) const
-    {
-        return a->getVertexDescription() < b->getVertexDescription();
-    }
-};
-
-
 Eigen::Vector3f
-getVertex(const void* vertexData,
+getVertex(const cmod::VWord* vertexData,
           int positionOffset,
-          std::uint32_t stride,
+          std::uint32_t strideWords,
           std::uint32_t index)
 {
-    const float* fdata = reinterpret_cast<const float*>(reinterpret_cast<const char*>(vertexData) + stride * index + positionOffset);
-
-    return Eigen::Vector3f(fdata[0], fdata[1], fdata[2]);
+    float fdata[3];
+    std::memcpy(fdata, vertexData + strideWords * index + positionOffset, sizeof(float) * 3);
+    return Eigen::Vector3f(fdata);
 }
 
 
 Eigen::Vector2f
-getTexCoord(const void* vertexData,
+getTexCoord(const cmod::VWord* vertexData,
             int texCoordOffset,
-            uint32_t stride,
+            uint32_t strideWords,
             uint32_t index)
 {
-    const float* fdata = reinterpret_cast<const float*>(reinterpret_cast<const char*>(vertexData) + stride * index + texCoordOffset);
-
-    return Eigen::Vector2f(fdata[0], fdata[1]);
+    float fdata[2];
+    std::memcpy(fdata, vertexData + strideWords * index + texCoordOffset, sizeof(float) * 2);
+    return Eigen::Vector2f(fdata);
 }
 
 
@@ -320,24 +274,23 @@ averageFaceVectors(const std::vector<Face>& faces,
 
 
 void
-copyVertex(void* newVertexData,
+copyVertex(cmod::VWord* newVertexData,
            const cmod::VertexDescription& newDesc,
-           const void* oldVertexData,
+           const cmod::VWord* oldVertexData,
            const cmod::VertexDescription& oldDesc,
            std::uint32_t oldIndex,
            const std::uint32_t fromOffsets[])
 {
-    const char* oldVertex = reinterpret_cast<const char*>(oldVertexData) +
-        oldDesc.stride * oldIndex;
-    auto* newVertex = reinterpret_cast<char*>(newVertexData);
+    unsigned int stride = oldDesc.strideBytes / sizeof(cmod::VWord);
+    const cmod::VWord* oldVertex = oldVertexData + stride * oldIndex;
 
     for (std::size_t i = 0; i < newDesc.attributes.size(); i++)
     {
         if (fromOffsets[i] != ~0u)
         {
-            std::memcpy(newVertex + newDesc.attributes[i].offset,
+            std::memcpy(newVertexData + newDesc.attributes[i].offsetWords,
                         oldVertex + fromOffsets[i],
-                        cmod::VertexAttribute::getFormatSize(newDesc.attributes[i].format));
+                        cmod::VertexAttribute::getFormatSizeWords(newDesc.attributes[i].format) * sizeof(cmod::VWord));
         }
     }
 }
@@ -363,8 +316,8 @@ augmentVertexDescription(cmod::VertexDescription& desc,
         }
 
         foundMatch |= (semantic == i->semantic);
-        i->offset = stride;
-        stride += cmod::VertexAttribute::getFormatSize(i->format);
+        i->offsetWords = stride;
+        stride += cmod::VertexAttribute::getFormatSizeWords(i->format);
         *it++ = std::move(*i);
     }
 
@@ -373,10 +326,10 @@ augmentVertexDescription(cmod::VertexDescription& desc,
     if (!foundMatch)
     {
         desc.attributes.emplace_back(semantic, format, stride);
-        stride += cmod::VertexAttribute::getFormatSize(format);
+        stride += cmod::VertexAttribute::getFormatSizeWords(format);
     }
 
-    desc.stride = stride;
+    desc.strideBytes = stride * sizeof(cmod::VWord);
 }
 
 
@@ -388,11 +341,11 @@ addGroupWithOffset(cmod::Mesh& mesh,
     if (group.indices.empty())
         return;
 
-    std::vector<cmod::index32> newIndices;
+    std::vector<cmod::Index32> newIndices;
     newIndices.reserve(group.indices.size());
     std::transform(group.indices.cbegin(), group.indices.cend(),
                    std::back_inserter(newIndices),
-                   [=](cmod::index32 idx) { return idx + offset; });
+                   [=](cmod::Index32 idx) { return idx + offset; });
 
     mesh.addGroup(group.prim, group.materialIndex, std::move(newIndices));
 }
@@ -418,6 +371,68 @@ cloneMaterial(const cmod::Material* other)
 
     return material;
 }
+
+
+template<typename T, typename U> void
+joinVertices(std::vector<Face>& faces,
+             const cmod::VWord* vertexData,
+             const cmod::VertexDescription& desc,
+             const T& orderingPredicate,
+             const U& equivalencePredicate)
+{
+    // Don't do anything if we're given no data
+    if (faces.size() == 0)
+        return;
+
+    // Must have a position
+    assert(desc.getAttribute(cmod::Mesh::Position).format == cmod::Mesh::Float3);
+
+    std::uint32_t posOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Position).offsetWords;
+    const cmod::VWord* vertexPoints = vertexData + posOffset;
+    std::uint32_t nVertices = faces.size() * 3;
+
+    // Initialize the array of vertices
+    std::vector<Vertex> vertices(nVertices);
+    std::uint32_t f;
+    unsigned int stride = desc.strideBytes / sizeof(cmod::VWord);
+    for (f = 0; f < faces.size(); f++)
+    {
+        for (std::uint32_t j = 0; j < 3; j++)
+        {
+            std::uint32_t index = faces[f].i[j];
+            vertices[f * 3 + j] = Vertex(index, vertexPoints + stride * index);
+
+        }
+    }
+
+    // Sort the vertices so that identical ones will be ordered consecutively
+    std::sort(vertices.begin(), vertices.end(), orderingPredicate);
+
+    // Build the vertex merge map
+    std::vector<std::uint32_t> mergeMap(nVertices);
+    std::uint32_t lastUnique = 0;
+    std::uint32_t uniqueCount = 0;
+    for (std::uint32_t i = 0; i < nVertices; i++)
+    {
+        if (i == 0 || !equivalencePredicate(vertices[i - 1], vertices[i]))
+        {
+            lastUnique = i;
+            uniqueCount++;
+        }
+
+        mergeMap[vertices[i].index] = vertices[lastUnique].index;
+    }
+
+    // Remap the vertex indices
+    for (f = 0; f < faces.size(); f++)
+    {
+        for (std::uint32_t k= 0; k < 3; k++)
+        {
+            faces[f].vi[k] = mergeMap[faces[f].i[k]];
+        }
+    }
+}
+
 
 } // end unnamed namespace
 
@@ -447,7 +462,8 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
         return nullptr;
     }
 
-    std::uint32_t posOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Position).offset;
+    std::uint32_t posOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Position).offsetWords;
+    unsigned int stride = desc.strideBytes / sizeof(cmod::VWord);
 
     std::uint32_t nFaces = 0;
     std::uint32_t i;
@@ -548,15 +564,15 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     }
     assert(f == nFaces);
 
-    const void* vertexData = mesh.getVertexData();
+    const cmod::VWord* vertexData = mesh.getVertexData();
 
     // Compute normals for the faces
     for (f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
-        Eigen::Vector3f p0 = getVertex(vertexData, posOffset, desc.stride, face.i[0]);
-        Eigen::Vector3f p1 = getVertex(vertexData, posOffset, desc.stride, face.i[1]);
-        Eigen::Vector3f p2 = getVertex(vertexData, posOffset, desc.stride, face.i[2]);
+        Eigen::Vector3f p0 = getVertex(vertexData, posOffset, stride, face.i[0]);
+        Eigen::Vector3f p1 = getVertex(vertexData, posOffset, stride, face.i[1]);
+        Eigen::Vector3f p2 = getVertex(vertexData, posOffset, stride, face.i[2]);
         face.normal = (p1 - p0).cross(p2 - p1);
         if (face.normal.squaredNorm() > 0.0f)
         {
@@ -580,7 +596,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     // as the attribute indices.
     if (weld)
     {
-        JoinVertices(faces, vertexData, desc,
+        joinVertices(faces, vertexData, desc,
                      PointOrderingPredicate(),
                      PointEquivalencePredicate(0, weldTolerance));
     }
@@ -655,7 +671,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
 
         if (newDesc.attributes[i].semantic == cmod::VertexAttributeSemantic::Normal)
         {
-            normalOffset = newDesc.attributes[i].offset;
+            normalOffset = newDesc.attributes[i].offsetWords;
         }
         else
         {
@@ -664,7 +680,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
                 if (oldAttr.semantic == newDesc.attributes[i].semantic)
                 {
                     assert(oldAttr.format == newDesc.attributes[i].format);
-                    fromOffsets[i] = oldAttr.offset;
+                    fromOffsets[i] = oldAttr.offsetWords;
                     break;
                 }
             }
@@ -673,28 +689,28 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
 
     // Copy the old vertex data along with the generated normals to the
     // new vertex data buffer.
-    void* newVertexData = new char[newDesc.stride * nFaces * 3];
+    unsigned int newStride = newDesc.strideBytes / sizeof(cmod::VWord);
+    std::vector<cmod::VWord> newVertexData(newStride * nFaces * 3);
     for (f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
 
         for (std::uint32_t j = 0; j < 3; j++)
         {
-            char* newVertex = reinterpret_cast<char*>(newVertexData) +
-                (f * 3 + j) * newDesc.stride;
+            cmod::VWord* newVertex = newVertexData.data() + (f * 3 + j) * newStride;
             copyVertex(newVertex, newDesc,
                        vertexData, desc,
                        face.i[j],
                        fromOffsets);
             std::memcpy(newVertex + normalOffset, &vertexNormals[f * 3 + j],
-                        cmod::VertexAttribute::getFormatSize(cmod::VertexAttributeFormat::Float3));
+                        cmod::VertexAttribute::getFormatSizeWords(cmod::VertexAttributeFormat::Float3) * sizeof(cmod::VWord));
         }
     }
 
     // Create the Celestia mesh
     cmod::Mesh* newMesh = new cmod::Mesh();
     newMesh->setVertexDescription(std::move(newDesc));
-    newMesh->setVertices(nFaces * 3, newVertexData);
+    newMesh->setVertices(nFaces * 3, std::move(newVertexData));
 
     std::uint32_t firstIndex = 0;
     for (std::uint32_t groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
@@ -717,7 +733,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
         }
 
         // Create a trivial index list
-        std::vector<cmod::index32> indices(faceCount * 3);
+        std::vector<cmod::Index32> indices(faceCount * 3);
         std::iota(indices.begin(), indices.end(), firstIndex);
 
         newMesh->addGroup(cmod::PrimitiveGroupType::TriList,
@@ -819,21 +835,22 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
         }
     }
 
-    std::uint32_t posOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Position).offset;
-    std::uint32_t texCoordOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Texture0).offset;
+    unsigned int stride = desc.strideBytes / sizeof(cmod::VWord);
+    std::uint32_t posOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Position).offsetWords;
+    std::uint32_t texCoordOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Texture0).offsetWords;
 
-    const void* vertexData = mesh.getVertexData();
+    const cmod::VWord* vertexData = mesh.getVertexData();
 
     // Compute tangents for faces
     for (f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
-        Eigen::Vector3f p0 = getVertex(vertexData, posOffset, desc.stride, face.i[0]);
-        Eigen::Vector3f p1 = getVertex(vertexData, posOffset, desc.stride, face.i[1]);
-        Eigen::Vector3f p2 = getVertex(vertexData, posOffset, desc.stride, face.i[2]);
-        Eigen::Vector2f tc0 = getTexCoord(vertexData, texCoordOffset, desc.stride, face.i[0]);
-        Eigen::Vector2f tc1 = getTexCoord(vertexData, texCoordOffset, desc.stride, face.i[1]);
-        Eigen::Vector2f tc2 = getTexCoord(vertexData, texCoordOffset, desc.stride, face.i[2]);
+        Eigen::Vector3f p0 = getVertex(vertexData, posOffset, stride, face.i[0]);
+        Eigen::Vector3f p1 = getVertex(vertexData, posOffset, stride, face.i[1]);
+        Eigen::Vector3f p2 = getVertex(vertexData, posOffset, stride, face.i[2]);
+        Eigen::Vector2f tc0 = getTexCoord(vertexData, texCoordOffset, stride, face.i[0]);
+        Eigen::Vector2f tc1 = getTexCoord(vertexData, texCoordOffset, stride, face.i[1]);
+        Eigen::Vector2f tc2 = getTexCoord(vertexData, texCoordOffset, stride, face.i[2]);
         float s1 = tc1.x() - tc0.x();
         float s2 = tc2.x() - tc0.x();
         float t1 = tc1.y() - tc0.y();
@@ -861,7 +878,7 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
     // as the attribute indices.
     if (weld)
     {
-        JoinVertices(faces, vertexData, desc,
+        joinVertices(faces, vertexData, desc,
                      PointTexCoordOrderingPredicate(posOffset, texCoordOffset, true),
                      PointTexCoordEquivalencePredicate(posOffset, texCoordOffset, true, 1.0e-5f));
     }
@@ -934,7 +951,7 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
 
         if (newDesc.attributes[i].semantic == cmod::VertexAttributeSemantic::Tangent)
         {
-            tangentOffset = newDesc.attributes[i].offset;
+            tangentOffset = newDesc.attributes[i].offsetWords;
         }
         else
         {
@@ -943,7 +960,7 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
                 if (oldAttr.semantic == newDesc.attributes[i].semantic)
                 {
                     assert(oldAttr.format == newDesc.attributes[i].format);
-                    fromOffsets[i] = oldAttr.offset;
+                    fromOffsets[i] = oldAttr.offsetWords;
                     break;
                 }
             }
@@ -952,28 +969,27 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
 
     // Copy the old vertex data along with the generated tangents to the
     // new vertex data buffer.
-    void* newVertexData = new char[newDesc.stride * nFaces * 3];
+    unsigned int newStride = newDesc.strideBytes / sizeof(cmod::VWord);
+    std::vector<cmod::VWord> newVertexData(newStride * nFaces * 3);
     for (f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
 
         for (std::uint32_t j = 0; j < 3; j++)
         {
-            char* newVertex = reinterpret_cast<char*>(newVertexData) +
-                (f * 3 + j) * newDesc.stride;
+            cmod::VWord* newVertex = newVertexData.data() + (f * 3 + j) * newStride;
             copyVertex(newVertex, newDesc,
                        vertexData, desc,
                        face.i[j],
                        fromOffsets);
-            std::memcpy(newVertex + tangentOffset, &vertexTangents[f * 3 + j],
-                        cmod::VertexAttribute::getFormatSize(cmod::VertexAttributeFormat::Float3));
+            std::memcpy(newVertex + tangentOffset, &vertexTangents[f * 3 + j], 3 * sizeof(float));
         }
     }
 
     // Create the Celestia mesh
     cmod::Mesh* newMesh = new cmod::Mesh();
     newMesh->setVertexDescription(std::move(newDesc));
-    newMesh->setVertices(nFaces * 3, newVertexData);
+    newMesh->setVertices(nFaces * 3, std::move(newVertexData));
 
     std::uint32_t firstIndex = 0;
     for (std::uint32_t groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
@@ -996,7 +1012,7 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
         }
 
         // Create a trivial index list
-        std::vector<cmod::index32> indices(faceCount * 3);
+        std::vector<cmod::Index32> indices(faceCount * 3);
         std::iota(indices.begin(), indices.end(), firstIndex);
 
         newMesh->addGroup(cmod::PrimitiveGroupType::TriList,
@@ -1027,26 +1043,27 @@ UniquifyVertices(cmod::Mesh& mesh)
     if (nVertices == 0)
         return false;
 
-    const char* vertexData = reinterpret_cast<const char*>(mesh.getVertexData());
+    const cmod::VWord* vertexData = mesh.getVertexData();
     if (vertexData == nullptr)
         return false;
 
     // Initialize the array of vertices
+    unsigned int stride = desc.strideBytes / sizeof(cmod::VWord);
     std::vector<Vertex> vertices(nVertices);
     std::uint32_t i;
     for (i = 0; i < nVertices; i++)
     {
-        vertices[i] = Vertex(i, vertexData + i * desc.stride);
+        vertices[i] = Vertex(i, vertexData + i * stride);
     }
 
     // Sort the vertices so that identical ones will be ordered consecutively
-    std::sort(vertices.begin(), vertices.end(), FullComparator(desc.stride));
+    std::sort(vertices.begin(), vertices.end(), FullComparator(stride));
 
     // Count the number of unique vertices
     std::uint32_t uniqueVertexCount = 0;
     for (i = 0; i < nVertices; i++)
     {
-        if (i == 0 || !equal(vertices[i - 1], vertices[i], desc.stride))
+        if (i == 0 || !equal(vertices[i - 1], vertices[i], stride))
             uniqueVertexCount++;
     }
 
@@ -1056,25 +1073,25 @@ UniquifyVertices(cmod::Mesh& mesh)
 
     // Build the vertex map and the uniquified vertex data
     std::vector<std::uint32_t> vertexMap(nVertices);
-    auto* newVertexData = new char[uniqueVertexCount * desc.stride];
-    const char* oldVertexData = reinterpret_cast<const char*>(mesh.getVertexData());
+    std::vector<cmod::VWord> newVertexData(uniqueVertexCount * stride);
+    const cmod::VWord* oldVertexData = mesh.getVertexData();
     std::uint32_t j = 0;
     for (i = 0; i < nVertices; i++)
     {
-        if (i == 0 || !equal(vertices[i - 1], vertices[i], desc.stride))
+        if (i == 0 || !equal(vertices[i - 1], vertices[i], stride))
         {
             if (i != 0)
                 j++;
             assert(j < uniqueVertexCount);
-            std::memcpy(newVertexData + j * desc.stride,
-                        oldVertexData + vertices[i].index * desc.stride,
-                        desc.stride);
+            std::memcpy(newVertexData.data() + j * stride,
+                        oldVertexData + vertices[i].index * stride,
+                        desc.strideBytes);
         }
         vertexMap[vertices[i].index] = j;
     }
 
     // Replace the vertex data with the compacted data
-    mesh.setVertices(uniqueVertexCount, newVertexData);
+    mesh.setVertices(uniqueVertexCount, std::move(newVertexData));
 
     mesh.remapIndices(vertexMap);
 
@@ -1094,7 +1111,8 @@ MergeModelMeshes(const cmod::Model& model)
     }
 
     // Sort the meshes by vertex description
-    std::sort(meshes.begin(), meshes.end(), MeshVertexDescComparator());
+    std::sort(meshes.begin(), meshes.end(),
+              [](const cmod::Mesh* a, const cmod::Mesh* b) { return a->getVertexDescription() < b->getVertexDescription(); });
 
     cmod::Model* newModel = new cmod::Model();
 
@@ -1129,22 +1147,30 @@ MergeModelMeshes(const cmod::Model& model)
             totalVertices += meshes[j]->getVertexCount();
         }
 
-        char* vertexData = new char[totalVertices * desc.stride];
+        unsigned int stride = desc.strideBytes / sizeof(cmod::VWord);
+        std::vector<cmod::VWord> vertexData(totalVertices * stride);
+
+        // Copy the vertex data
+        std::uint32_t vertexCount = 0;
+        for (j = meshIndex; j < meshIndex + nMatchingMeshes; ++j)
+        {
+            const cmod::Mesh* mesh = meshes[j];
+            std::memcpy(vertexData.data() + vertexCount * stride,
+                        mesh->getVertexData(),
+                        mesh->getVertexCount() * desc.strideBytes);
+            vertexCount += mesh->getVertexCount();
+        }
 
         // Create the new empty mesh
         cmod::Mesh* mergedMesh = new cmod::Mesh();
         mergedMesh->setVertexDescription(desc.clone());
-        mergedMesh->setVertices(totalVertices, vertexData);
+        mergedMesh->setVertices(totalVertices, std::move(vertexData));
 
-        // Copy the vertex data and reindex and add primitive groups
-        std::uint32_t vertexCount = 0;
+        // Reindex and add primitive groups
+        vertexCount = 0;
         for (j = meshIndex; j < meshIndex + nMatchingMeshes; j++)
         {
             const cmod::Mesh* mesh = meshes[j];
-            std::memcpy(vertexData + vertexCount * desc.stride,
-                        mesh->getVertexData(),
-                        mesh->getVertexCount() * desc.stride);
-
             for (std::uint32_t k = 0; mesh->getGroup(k) != nullptr; k++)
             {
                 addGroupWithOffset(*mergedMesh, *mesh->getGroup(k),

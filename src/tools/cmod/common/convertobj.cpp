@@ -11,6 +11,7 @@
 // Celestia model (cmod)
 
 #include <cstdio>
+#include <cstring>
 #include <sstream>
 #include <utility>
 
@@ -337,14 +338,14 @@ WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int verte
     attributes.emplace_back(cmod::VertexAttributeSemantic::Position,
                             cmod::VertexAttributeFormat::Float3,
                             0);
-    offset += 12;
+    offset += 3;
 
     if (vertexType == ObjVertex::PointNormal || vertexType == ObjVertex::PointTexNormal)
     {
         attributes.emplace_back(cmod::VertexAttributeSemantic::Normal,
                                 cmod::VertexAttributeFormat::Float3,
                                 offset);
-        offset += 12;
+        offset += 3;
     }
 
     if (vertexType == ObjVertex::PointTex || vertexType == ObjVertex::PointTexNormal)
@@ -352,16 +353,16 @@ WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int verte
         attributes.emplace_back(cmod::VertexAttributeSemantic::Texture0,
                                 cmod::VertexAttributeFormat::Float2,
                                 offset);
-        offset += 8;
+        offset += 2;
     }
 
-    auto* vertexDataCopy = new float[m_vertexData.size()];
-    std::copy(m_vertexData.begin(), m_vertexData.end(), vertexDataCopy);
+    std::vector<cmod::VWord> vertexDataCopy(m_vertexData.size());
+    std::memcpy(vertexDataCopy.data(), m_vertexData.data(), m_vertexData.size() * sizeof(cmod::VWord));
 
     // Create the Celestia mesh
     cmod::Mesh* mesh = new cmod::Mesh();
-    mesh->setVertexDescription(cmod::VertexDescription(offset, std::move(attributes)));
-    mesh->setVertices(vertexCount, vertexDataCopy);
+    mesh->setVertexDescription(cmod::VertexDescription(std::move(attributes)));
+    mesh->setVertices(vertexCount, std::move(vertexDataCopy));
 
     // Add primitive groups
     for (unsigned int i = 0; i < m_materialGroups.size(); ++i)
@@ -382,7 +383,7 @@ WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int verte
             auto copyStart = m_indexData.begin() + firstIndex;
             mesh->addGroup(cmod::PrimitiveGroupType::TriList,
                            m_materialGroups[i].materialIndex,
-                           std::vector<cmod::index32>(copyStart, copyStart + indexCount));
+                           std::vector<cmod::Index32>(copyStart, copyStart + indexCount));
         }
     }
 

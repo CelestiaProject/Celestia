@@ -721,7 +721,7 @@ static int GLComponentCounts[static_cast<std::size_t>(cmod::VertexAttributeForma
 
 
 static void
-setVertexArrays(const cmod::VertexDescription& desc, const void* vertexData)
+setVertexArrays(const cmod::VertexDescription& desc, const cmod::VWord* vertexData)
 {
     const cmod::VertexAttribute& position  = desc.getAttribute(cmod::VertexAttributeSemantic::Position);
     const cmod::VertexAttribute& normal    = desc.getAttribute(cmod::VertexAttributeSemantic::Normal);
@@ -735,8 +735,7 @@ setVertexArrays(const cmod::VertexDescription& desc, const void* vertexData)
 
     // Set up the vertex arrays
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, desc.stride,
-                    reinterpret_cast<const char*>(vertexData) + position.offset);
+    glVertexPointer(3, GL_FLOAT, desc.strideBytes, vertexData + position.offsetWords);
 
     // Set up the normal array
     switch (normal.format)
@@ -744,8 +743,7 @@ setVertexArrays(const cmod::VertexDescription& desc, const void* vertexData)
     case cmod::VertexAttributeFormat::Float3:
         glEnableClientState(GL_NORMAL_ARRAY);
         glNormalPointer(GLComponentTypes[static_cast<std::size_t>(normal.format)],
-                        desc.stride,
-                        reinterpret_cast<const char*>(vertexData) + normal.offset);
+                        desc.strideBytes, vertexData + normal.offsetWords);
         break;
     default:
         glDisableClientState(GL_NORMAL_ARRAY);
@@ -761,8 +759,7 @@ setVertexArrays(const cmod::VertexDescription& desc, const void* vertexData)
         glEnableClientState(GL_COLOR_ARRAY);
         glColorPointer(GLComponentCounts[static_cast<std::size_t>(color0.format)],
                        GLComponentTypes[static_cast<std::size_t>(color0.format)],
-                       desc.stride,
-                       reinterpret_cast<const char*>(vertexData) + color0.offset);
+                       desc.strideBytes, vertexData + color0.offsetWords);
         break;
     default:
         glDisableClientState(GL_COLOR_ARRAY);
@@ -779,8 +776,7 @@ setVertexArrays(const cmod::VertexDescription& desc, const void* vertexData)
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(GLComponentCounts[static_cast<std::size_t>(texCoord0.format)],
                           GLComponentTypes[static_cast<std::size_t>(texCoord0.format)],
-                          desc.stride,
-                          reinterpret_cast<const char*>(vertexData) + texCoord0.offset);
+                          desc.strideBytes, vertexData + texCoord0.offsetWords);
         break;
     default:
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -795,8 +791,8 @@ setVertexArrays(const cmod::VertexDescription& desc, const void* vertexData)
                                       GLComponentCounts[static_cast<std::size_t>(tangent.format)],
                                       GLComponentTypes[static_cast<std::size_t>(tangent.format)],
                                       GL_FALSE,
-                                      desc.stride,
-                                      reinterpret_cast<const char*>(vertexData) + tangent.offset);
+                                      desc.strideBytes,
+                                      vertexData + tangent.offsetWords);
         break;
     default:
         glDisableVertexAttribArrayARB(TangentAttributeIndex);
@@ -808,7 +804,7 @@ setVertexArrays(const cmod::VertexDescription& desc, const void* vertexData)
 
 // Set just the vertex pointer
 void
-setVertexPointer(const cmod::VertexDescription& desc, const void* vertexData)
+setVertexPointer(const cmod::VertexDescription& desc, const cmod::VWord* vertexData)
 {
     const cmod::VertexAttribute& position  = desc.getAttribute(cmod::VertexAttributeSemantic::Position);
 
@@ -818,8 +814,8 @@ setVertexPointer(const cmod::VertexDescription& desc, const void* vertexData)
 
     // Set up the vertex arrays
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, desc.stride,
-                    reinterpret_cast<const char*>(vertexData) + position.offset);
+    glVertexPointer(3, GL_FLOAT, desc.strideBytes,
+                    vertexData + position.offsetWords);
 
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);

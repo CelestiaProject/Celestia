@@ -57,7 +57,7 @@ constexpr int GLComponentCounts[static_cast<std::size_t>(cmod::VertexAttributeFo
 
 void
 setStandardVertexArrays(const cmod::VertexDescription& desc,
-                        const void* vertexData)
+                        const cmod::VWord* vertexData)
 {
     const cmod::VertexAttribute& position  = desc.getAttribute(cmod::VertexAttributeSemantic::Position);
     const cmod::VertexAttribute& normal    = desc.getAttribute(cmod::VertexAttributeSemantic::Normal);
@@ -71,8 +71,8 @@ setStandardVertexArrays(const cmod::VertexDescription& desc,
     // Set up the vertex arrays
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, desc.stride,
-                          reinterpret_cast<const char*>(vertexData) + position.offset);
+                          3, GL_FLOAT, GL_FALSE, desc.strideBytes,
+                          vertexData + position.offsetWords);
 
     // Set up the normal array
     switch (normal.format)
@@ -81,8 +81,8 @@ setStandardVertexArrays(const cmod::VertexDescription& desc,
         glEnableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
         glVertexAttribPointer(CelestiaGLProgram::NormalAttributeIndex,
                               3, GLComponentTypes[static_cast<std::size_t>(normal.format)],
-                              GL_FALSE, desc.stride,
-                              reinterpret_cast<const char*>(vertexData) + normal.offset);
+                              GL_FALSE, desc.strideBytes,
+                              vertexData + normal.offsetWords);
         break;
     default:
         glDisableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
@@ -101,8 +101,8 @@ setStandardVertexArrays(const cmod::VertexDescription& desc,
         glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
                               GLComponentCounts[static_cast<std::size_t>(color0.format)],
                               GLComponentTypes[static_cast<std::size_t>(color0.format)],
-                              normalized, desc.stride,
-                              reinterpret_cast<const char*>(vertexData) + color0.offset);
+                              normalized, desc.strideBytes,
+                              vertexData + color0.offsetWords);
         break;
     default:
         glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
@@ -121,8 +121,8 @@ setStandardVertexArrays(const cmod::VertexDescription& desc,
                               GLComponentCounts[static_cast<std::size_t>(texCoord0.format)],
                               GLComponentTypes[static_cast<std::size_t>(texCoord0.format)],
                               GL_FALSE,
-                              desc.stride,
-                              reinterpret_cast<const char*>(vertexData) + texCoord0.offset);
+                              desc.strideBytes,
+                              vertexData + texCoord0.offsetWords);
         break;
     default:
         glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
@@ -133,11 +133,9 @@ setStandardVertexArrays(const cmod::VertexDescription& desc,
 
 void
 setExtendedVertexArrays(const cmod::VertexDescription& desc,
-                        const void* vertexData)
+                        const cmod::VWord* vertexData)
 {
     const cmod::VertexAttribute& tangent  = desc.getAttribute(cmod::VertexAttributeSemantic::Tangent);
-    const auto* vertices = reinterpret_cast<const char*>(vertexData);
-
     switch (tangent.format)
     {
     case cmod::VertexAttributeFormat::Float3:
@@ -146,8 +144,8 @@ setExtendedVertexArrays(const cmod::VertexDescription& desc,
                                       GLComponentCounts[static_cast<std::size_t>(tangent.format)],
                                       GLComponentTypes[static_cast<std::size_t>(tangent.format)],
                                       GL_FALSE,
-                                      desc.stride,
-                                      vertices + tangent.offset);
+                                      desc.strideBytes,
+                                      vertexData + tangent.offsetWords);
         break;
     default:
         glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
@@ -163,8 +161,8 @@ setExtendedVertexArrays(const cmod::VertexDescription& desc,
                                       GLComponentCounts[static_cast<std::size_t>(pointsize.format)],
                                       GLComponentTypes[static_cast<std::size_t>(pointsize.format)],
                                       GL_FALSE,
-                                      desc.stride,
-                                      vertices + pointsize.offset);
+                                      desc.strideBytes,
+                                      vertexData + pointsize.offsetWords);
         break;
     default:
         glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
@@ -180,8 +178,8 @@ setExtendedVertexArrays(const cmod::VertexDescription& desc,
                                       GLComponentCounts[static_cast<std::size_t>(nextPos.format)],
                                       GLComponentTypes[static_cast<std::size_t>(nextPos.format)],
                                       GL_FALSE,
-                                      desc.stride,
-                                      vertices + nextPos.offset);
+                                      desc.strideBytes,
+                                      vertexData + nextPos.offsetWords);
         break;
     default:
         glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
@@ -197,8 +195,8 @@ setExtendedVertexArrays(const cmod::VertexDescription& desc,
                                       GLComponentCounts[static_cast<std::size_t>(scaleFac.format)],
                                       GLComponentTypes[static_cast<std::size_t>(scaleFac.format)],
                                       GL_FALSE,
-                                      desc.stride,
-                                      vertices + scaleFac.offset);
+                                      desc.strideBytes,
+                                      vertexData + scaleFac.offsetWords);
         break;
     default:
         glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
@@ -339,7 +337,7 @@ RenderContext::drawGroup(const cmod::PrimitiveGroup& group, bool useOverride)
 
 void
 RenderContext::setVertexArrays(const cmod::VertexDescription& desc,
-                               const void* vertexData)
+                               const cmod::VWord* vertexData)
 {
     setStandardVertexArrays(desc, vertexData);
     setExtendedVertexArrays(desc, vertexData);
