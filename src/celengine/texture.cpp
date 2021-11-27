@@ -79,7 +79,7 @@ static const TextureCaps& GetTextureCaps()
 }
 
 
-static int getInternalFormat(PixelFormat format)
+static GLenum getInternalFormat(PixelFormat format)
 {
 #ifdef GL_ES
     switch (format)
@@ -92,9 +92,9 @@ static int getInternalFormat(PixelFormat format)
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
-        return (int) format;
+        return static_cast<GLenum>(format);
     default:
-        return 0;
+        return GL_NONE;
     }
 #else
     switch (format)
@@ -109,13 +109,58 @@ static int getInternalFormat(PixelFormat format)
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
-        return (int) format;
+    case PixelFormat::SLUM_ALPHA:
+    case PixelFormat::SLUMINANCE:
+    case PixelFormat::SRGB:
+    case PixelFormat::SRGBA:
+    case PixelFormat::DXT1_SRGBA:
+    case PixelFormat::DXT3_SRGBA:
+    case PixelFormat::DXT5_SRGBA:
+        return static_cast<GLenum>(format);
     default:
-        return 0;
+        return GL_NONE;
     }
 #endif
 }
 
+
+static GLenum getExternalFormat(PixelFormat format)
+{
+#ifdef GL_ES
+    return getInternalFormat(format);
+#else
+    switch (format)
+    {
+    case PixelFormat::RGBA:
+    case PixelFormat::BGRA:
+    case PixelFormat::RGB:
+    case PixelFormat::BGR:
+    case PixelFormat::LUM_ALPHA:
+    case PixelFormat::ALPHA:
+    case PixelFormat::LUMINANCE:
+    case PixelFormat::DXT1:
+    case PixelFormat::DXT3:
+    case PixelFormat::DXT5:
+        return static_cast<GLenum>(format);
+    case PixelFormat::SLUM_ALPHA:
+        return static_cast<GLenum>(PixelFormat::LUM_ALPHA);
+    case PixelFormat::SLUMINANCE:
+        return static_cast<GLenum>(PixelFormat::LUMINANCE);
+    case PixelFormat::SRGB:
+        return static_cast<GLenum>(PixelFormat::RGB);
+    case PixelFormat::SRGBA:
+        return static_cast<GLenum>(PixelFormat::RGBA);
+    case PixelFormat::DXT1_SRGBA:
+        return static_cast<GLenum>(PixelFormat::DXT1);
+    case PixelFormat::DXT3_SRGBA:
+        return static_cast<GLenum>(PixelFormat::DXT3);
+    case PixelFormat::DXT5_SRGBA:
+        return static_cast<GLenum>(PixelFormat::DXT5);
+    default:
+        return GL_NONE;
+    }
+#endif
+}
 
 #if 0
 // Required in order to support on-the-fly compression; currently, this
@@ -151,7 +196,14 @@ static int getCompressedInternalFormat(int format)
 
 static int getCompressedBlockSize(PixelFormat format)
 {
-    return format == PixelFormat::DXT1 ? 8 : 16;
+    switch (format)
+    {
+    case PixelFormat::DXT1:
+    case PixelFormat::DXT1_SRGBA:
+        return 8;
+    default:
+        return 16;
+    }
 }
 
 
@@ -220,7 +272,7 @@ static void LoadMipmapSet(const Image& img, GLenum target)
                          internalFormat,
                          mipWidth, mipHeight,
                          0,
-                         (GLenum) img.getFormat(),
+                         getExternalFormat(img.getFormat()),
                          GL_UNSIGNED_BYTE,
                          img.getMipLevel(mip));
         }
@@ -250,7 +302,7 @@ static void LoadMiplessTexture(const Image& img, GLenum target)
                      internalFormat,
                      img.getWidth(), img.getHeight(),
                      0,
-                     (GLenum) img.getFormat(),
+                     getExternalFormat(img.getFormat()),
                      GL_UNSIGNED_BYTE,
                      img.getMipLevel(0));
     }
