@@ -98,8 +98,6 @@ Texture* TextureInfo::load(const fs::path& name)
 
     if (flags & NoMipMaps)
         mipMode = Texture::NoMipMaps;
-    else if (flags & AutoMipMaps)
-        mipMode = Texture::AutoMipMaps;
 
     if (bumpHeight == 0.0f)
     {

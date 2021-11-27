@@ -94,7 +94,6 @@ class Texture
     {
         DefaultMipMaps = 0,
         NoMipMaps      = 1,
-        AutoMipMaps    = 2,
     };
 
     // Format option flags
