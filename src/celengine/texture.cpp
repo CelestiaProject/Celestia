@@ -30,12 +30,8 @@ using namespace celestia;
 using namespace Eigen;
 using namespace std;
 
-static bool texCapsInitialized = false;
-
 struct TextureCaps
 {
-    bool maxLevelSupported;
-    GLint maxTextureSize;
     GLint preferredAnisotropy;
 };
 
@@ -92,23 +88,19 @@ static bool testMaxLevel()
 
 static const TextureCaps& GetTextureCaps()
 {
+    static bool texCapsInitialized = false;
+
     if (!texCapsInitialized)
     {
         texCapsInitialized = true;
-
-        texCaps.maxLevelSupported = testMaxLevel();
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texCaps.maxTextureSize);
 
         texCaps.preferredAnisotropy = 1;
 #ifndef GL_ES
         if (gl::EXT_texture_filter_anisotropic)
         {
-            GLint maxAnisotropy = 1;
-            glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
-
             // Cap the preferred level texture anisotropy to 8; eventually, we should allow
             // the user to control this.
-            texCaps.preferredAnisotropy = min(8, maxAnisotropy);
+            texCaps.preferredAnisotropy = min(8, gl::maxTextureAnisotropy);
         }
 #endif
     }
@@ -1006,8 +998,8 @@ static Texture* CreateTextureFromImage(Image& img,
     bool splittingAllowed = true;
     Texture* tex = nullptr;
 
-    int maxDim = GetTextureCaps().maxTextureSize;
-    if ((img.getWidth() > maxDim || img.getHeight() > maxDim) &&
+    const int maxDim = gl::maxTextureSize;
+    if ((img.getWidth() > maxDim || img.getHeight() > maxDim)
         splittingAllowed)
     {
         // The texture is too large; we need to split it.
