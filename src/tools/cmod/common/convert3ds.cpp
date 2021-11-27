@@ -74,22 +74,18 @@ Convert3DSMesh(cmod::Model& model,
         vertexSize += 2;
     }
 
-    auto* vertices = new float[mesh3ds.getVertexCount() * vertexSize];
+    std::vector<cmod::VWord> vertices(mesh3ds.getVertexCount() * vertexSize);
 
     // Build the vertex list
     for (int i = 0; i < mesh3ds.getVertexCount(); ++i)
     {
         int k = i * vertexSize;
         Eigen::Vector3f pos = mesh3ds.getVertex(i);
-        vertices[k + 0] = pos.x();
-        vertices[k + 1] = pos.y();
-        vertices[k + 2] = pos.z();
-
+        std::memcpy(vertices.data() + k, pos.data(), sizeof(float) * 3);
         if (hasTexCoords)
         {
             Eigen::Vector2f texCoord = mesh3ds.getTexCoord(i);
-            vertices[k + 3] = texCoord.x();
-            vertices[k + 4] = texCoord.y();
+            std::memcpy(vertices.data() + k + 3, texCoord.data(), sizeof(float) * 2);
         }
     }
 
@@ -101,20 +97,20 @@ Convert3DSMesh(cmod::Model& model,
     attributes.emplace_back(cmod::VertexAttributeSemantic::Position,
                             cmod::VertexAttributeFormat::Float3,
                             0);
-    offset += 12;
+    offset += 3;
 
     if (hasTexCoords)
     {
         attributes.emplace_back(cmod::VertexAttributeSemantic::Texture0,
                                 cmod::VertexAttributeFormat::Float2,
                                 offset);
-        offset += 8;
+        offset += 2;
     }
 
     // Create the Celestia mesh
     cmod::Mesh* mesh = new cmod::Mesh();
-    mesh->setVertexDescription(cmod::VertexDescription(offset, std::move(attributes)));
-    mesh->setVertices(nVertices, vertices);
+    mesh->setVertexDescription(cmod::VertexDescription(std::move(attributes)));
+    mesh->setVertices(nVertices, std::move(vertices));
 
     mesh->setName(std::move(meshName));
 
@@ -123,7 +119,7 @@ Convert3DSMesh(cmod::Model& model,
         // No material groups in the 3DS file. This is allowed. We'll create a single
         // primitive group with the default material.
         unsigned int faceCount = mesh3ds.getFaceCount();
-        std::vector<cmod::index32> indices;
+        std::vector<cmod::Index32> indices;
         indices.reserve(faceCount * 3);
 
         for (unsigned int i = 0; i < faceCount; i++)
@@ -146,7 +142,7 @@ Convert3DSMesh(cmod::Model& model,
             const M3DMeshMaterialGroup* matGroup = mesh3ds.getMeshMaterialGroup(groupIndex);
 
             std::uint32_t nMatGroupFaces = matGroup->faces.size();
-            std::vector<cmod::index32> indices;
+            std::vector<cmod::Index32> indices;
             indices.reserve(nMatGroupFaces * 3);
 
             for (unsigned int i = 0; i < nMatGroupFaces; i++)

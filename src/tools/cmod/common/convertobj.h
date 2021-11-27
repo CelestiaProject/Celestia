@@ -97,7 +97,7 @@ private:
     std::vector<Eigen::Vector2f> m_texCoords;
 
     std::vector<float> m_vertexData;
-    std::vector<cmod::index32> m_indexData;
+    std::vector<cmod::Index32> m_indexData;
     std::vector<MaterialGroup> m_materialGroups;
 
     cmod::Model* m_model;

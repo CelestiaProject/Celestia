@@ -25,8 +25,9 @@
 namespace cmod
 {
 // 32-bit index type
-using index32 = std::uint32_t;
+using Index32 = std::uint32_t;
 
+using VWord = std::uint32_t;
 
 enum class VertexAttributeSemantic : std::int16_t
 {
@@ -78,32 +79,32 @@ struct VertexAttribute
     VertexAttribute() :
         semantic(VertexAttributeSemantic::InvalidSemantic),
         format(VertexAttributeFormat::InvalidFormat),
-        offset(0)
+        offsetWords(0)
     {
     }
 
     VertexAttribute(VertexAttributeSemantic _semantic,
                     VertexAttributeFormat _format,
-                    unsigned int _offset) :
+                    unsigned int _offsetWords) :
         semantic(_semantic),
         format(_format),
-        offset(_offset)
+        offsetWords(_offsetWords)
     {
     }
 
-    static constexpr unsigned int getFormatSize(VertexAttributeFormat fmt)
+    static constexpr unsigned int getFormatSizeWords(VertexAttributeFormat fmt)
     {
         switch (fmt)
         {
         case VertexAttributeFormat::Float1:
         case VertexAttributeFormat::UByte4:
-            return 4;
+            return 1;
         case VertexAttributeFormat::Float2:
-            return 8;
+            return 2;
         case VertexAttributeFormat::Float3:
-            return 12;
+            return 3;
         case VertexAttributeFormat::Float4:
-            return 16;
+            return 4;
         default:
             return 0;
         }
@@ -111,7 +112,7 @@ struct VertexAttribute
 
     VertexAttributeSemantic semantic;
     VertexAttributeFormat   format;
-    unsigned int            offset;
+    unsigned int            offsetWords;
 };
 
 bool operator==(const VertexAttribute& a, const VertexAttribute& b);
@@ -121,8 +122,7 @@ bool operator<(const VertexAttribute& a, const VertexAttribute& b);
 struct VertexDescription
 {
     VertexDescription() = default;
-    VertexDescription(unsigned int _stride,
-                      std::vector<VertexAttribute>&& attributes);
+    explicit VertexDescription(std::vector<VertexAttribute>&& attributes);
     ~VertexDescription() = default;
     VertexDescription(VertexDescription&&) = default;
     VertexDescription& operator=(VertexDescription&&) = default;
@@ -136,7 +136,7 @@ struct VertexDescription
 
     bool validate() const;
 
-    unsigned int stride{ 0 };
+    unsigned int strideBytes{ 0 };
     std::vector<VertexAttribute> attributes{ };
 
  private:
@@ -166,11 +166,11 @@ struct PrimitiveGroup
 
     PrimitiveGroupType prim{ PrimitiveGroupType::InvalidPrimitiveGroupType };
     unsigned int materialIndex{ 0 };
-    std::vector<index32> indices{ };
+    std::vector<Index32> indices{ };
     PrimitiveGroupType primOverride{ PrimitiveGroupType::InvalidPrimitiveGroupType };
-    void* vertexOverride{ nullptr };
+    std::vector<VWord> vertexOverride{ };
     unsigned int vertexCountOverride{ 0 };
-    std::vector<index32> indicesOverride{ };
+    std::vector<Index32> indicesOverride{ };
     VertexDescription vertexDescriptionOverride{ };
 };
 
@@ -191,20 +191,22 @@ class Mesh
 
     Mesh() = default;
     ~Mesh();
+    Mesh(const Mesh&) = delete;
+    Mesh& operator=(const Mesh&) = delete;
 
-    void setVertices(unsigned int _nVertices, void* vertexData);
+    void setVertices(unsigned int _nVertices, std::vector<VWord>&& vertexData);
     bool setVertexDescription(VertexDescription&& desc);
     const VertexDescription& getVertexDescription() const;
 
-    PrimitiveGroup* createLinePrimitiveGroup(bool lineStrip, const std::vector<index32>& indices);
+    PrimitiveGroup* createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indices);
     const PrimitiveGroup* getGroup(unsigned int index) const;
     PrimitiveGroup* getGroup(unsigned int index);
     unsigned int addGroup(PrimitiveGroup* group);
     unsigned int addGroup(PrimitiveGroupType prim,
                           unsigned int materialIndex,
-                          std::vector<index32>&& indices);
+                          std::vector<Index32>&& indices);
     unsigned int getGroupCount() const;
-    void remapIndices(const std::vector<index32>& indexMap);
+    void remapIndices(const std::vector<Index32>& indexMap);
     void clearGroups();
 
     void remapMaterials(const std::vector<unsigned int>& materialMap);
@@ -224,9 +226,9 @@ class Mesh
     Eigen::AlignedBox<float, 3> getBoundingBox() const;
     void transform(const Eigen::Vector3f& translation, float scale);
 
-    const void* getVertexData() const { return vertices; }
+    const VWord* getVertexData() const { return vertices.data(); }
     unsigned int getVertexCount() const { return nVertices; }
-    unsigned int getVertexStride() const { return vertexDesc.stride; }
+    unsigned int getVertexStrideWords() const { return vertexDesc.strideBytes / sizeof(cmod::VWord); }
     unsigned int getPrimitiveCount() const;
 
  private:
@@ -235,7 +237,7 @@ class Mesh
     VertexDescription vertexDesc{ };
 
     unsigned int nVertices{ 0 };
-    void* vertices{ nullptr };
+    std::vector<VWord> vertices{ };
 
     std::vector<PrimitiveGroup*> groups;
 

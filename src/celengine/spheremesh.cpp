@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <cstring>
 #include <utility>
 #include <vector>
 
@@ -337,45 +338,42 @@ void SphereMesh::displace(DisplacementMapFunc func, void* info)
 
 cmod::Mesh* SphereMesh::convertToMesh() const
 {
-    std::uint32_t stride = 32;
+    static_assert(sizeof(float) == sizeof(cmod::VWord), "Float size mismatch with vertex data word size");
+    constexpr std::uint32_t stride = 8;
+
     std::vector<cmod::VertexAttribute> attributes{
         cmod::VertexAttribute(cmod::VertexAttributeSemantic::Position,
                               cmod::VertexAttributeFormat::Float3,
                               0),
         cmod::VertexAttribute(cmod::VertexAttributeSemantic::Normal,
                               cmod::VertexAttributeFormat::Float3,
-                              12),
+                              3),
         cmod::VertexAttribute(cmod::VertexAttributeSemantic::Texture0,
                               cmod::VertexAttributeFormat::Float2,
-                              24),
+                              6),
     };
 
     cmod::Mesh* mesh = new cmod::Mesh();
 
-    mesh->setVertexDescription(cmod::VertexDescription(stride, std::move(attributes)));
+    mesh->setVertexDescription(cmod::VertexDescription(std::move(attributes)));
 
     // Copy the vertex data from the separate position, normal, and texture coordinate
     // arrays into a single array.
-    auto* vertexData = new char[stride * nVertices];
+    std::vector<cmod::VWord> vertexData(stride * nVertices);
 
     for (int i = 0; i < nVertices; i++)
     {
-        float* vertex = reinterpret_cast<float*>(vertexData + stride * i);
-        vertex[0] = vertices[i * 3];
-        vertex[1] = vertices[i * 3 + 1];
-        vertex[2] = vertices[i * 3 + 2];
-        vertex[3] = normals[i * 3];
-        vertex[4] = normals[i * 3 + 1];
-        vertex[5] = normals[i * 3 + 2];
-        vertex[6] = texCoords[i * 2];
-        vertex[7] = texCoords[i * 2 + 1];
+        cmod::VWord* vertex = vertexData.data() + stride * i;
+        std::memcpy(vertex, vertices + (i * 3), sizeof(float) * 3);
+        std::memcpy(vertex + 3, normals + (i * 3), sizeof(float) * 3);
+        std::memcpy(vertex + 6, texCoords + (i * 2), sizeof(float) * 2);
     }
 
-    mesh->setVertices(nVertices, vertexData);
+    mesh->setVertices(nVertices, std::move(vertexData));
 
     for (int i = 0; i < nRings - 1; i++)
     {
-        std::vector<cmod::index32> indexData;
+        std::vector<cmod::Index32> indexData;
         indexData.reserve((nSlices + 1) * 2);
         for (int j = 0; j <= nSlices; j++)
         {
