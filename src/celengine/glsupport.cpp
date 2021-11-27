@@ -18,7 +18,9 @@ bool EXT_texture_compression_s3tc   = false;
 bool EXT_texture_filter_anisotropic = false;
 bool MESA_pack_invert               = false;
 GLint maxPointSize                  = 0;
+GLint maxTextureSize                = 0;
 GLfloat maxLineWidth                = 0.0f;
+GLint maxTextureAnisotropy          = 0;
 
 namespace
 {
@@ -58,6 +60,13 @@ bool init(util::array_view<std::string> ignore) noexcept
 #endif
     maxPointSize = pointSizeRange[1];
     maxLineWidth = lineWidthRange[1];
+
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+
+#ifndef GL_ES
+    if (gl::EXT_texture_filter_anisotropic)
+        glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxTextureAnisotropy);
+#endif
 
     return true;
 }

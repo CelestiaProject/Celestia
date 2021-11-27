@@ -49,7 +49,9 @@ extern bool ARB_vertex_array_object;
 extern bool EXT_framebuffer_object;
 #endif
 extern GLint maxPointSize;
+extern GLint maxTextureSize;
 extern GLfloat maxLineWidth;
+extern GLint maxTextureAnisotropy;
 
 bool init(util::array_view<std::string> = {}) noexcept;
 bool checkVersion(int) noexcept;
