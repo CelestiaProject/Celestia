@@ -939,12 +939,10 @@ static Texture* CreateTextureFromImage(Image& img,
     if (mipMode == Texture::DefaultMipMaps)
          mipMode = Texture::AutoMipMaps;
 
-    bool splittingAllowed = true;
     Texture* tex = nullptr;
 
     const int maxDim = gl::maxTextureSize;
-    if ((img.getWidth() > maxDim || img.getHeight() > maxDim)
-        splittingAllowed)
+    if ((img.getWidth() > maxDim || img.getHeight() > maxDim))
     {
         // The texture is too large; we need to split it.
         int uSplit = max(1, img.getWidth() / maxDim);
@@ -955,9 +953,6 @@ static Texture* CreateTextureFromImage(Image& img,
     else
     {
         clog << fmt::sprintf(_("Creating ordinary texture: %ix%i\n"), img.getWidth(), img.getHeight());
-        // The image is small enough to fit in a single texture; or, splitting
-        // was disallowed so we'll scale the large image down to fit in
-        // an ordinary texture.
         tex = new ImageTexture(img, addressMode, mipMode);
     }
 
