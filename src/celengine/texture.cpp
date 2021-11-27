@@ -411,13 +411,7 @@ ImageTexture::ImageTexture(Image& img,
     }
 #endif
 
-#ifndef GL_ES
-    if (mipMapMode == AutoMipMaps)
-        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-#endif
-
     bool genMipmaps = mipmap && !precomputedMipMaps;
-
 #if !defined(GL_ES)
     if (genMipmaps && !FramebufferObject::isSupported())
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
@@ -426,18 +420,9 @@ ImageTexture::ImageTexture(Image& img,
     if (mipmap)
     {
         if (precomputedMipMaps)
-        {
             LoadMipmapSet(img, GL_TEXTURE_2D);
-        }
         else if (mipMapMode == DefaultMipMaps)
-        {
             LoadMiplessTexture(img, GL_TEXTURE_2D);
-        }
-        else
-        {
-            assert(mipMapMode == AutoMipMaps);
-            LoadMiplessTexture(img, GL_TEXTURE_2D);
-        }
     }
     else
     {
@@ -932,13 +917,6 @@ static Texture* CreateTextureFromImage(Image& img,
                                        Texture::AddressMode addressMode,
                                        Texture::MipMapMode mipMode)
 {
-    // If non power of two textures are supported switch mipmap generation to
-    // automatic. gluBuildMipMaps may rescale the texture to a power of two
-    // on some drivers even when the hardware supports non power of two textures,
-    // whereas auto mipmap generation will properly deal with the dimensions.
-    if (mipMode == Texture::DefaultMipMaps)
-         mipMode = Texture::AutoMipMaps;
-
     Texture* tex = nullptr;
 
     const int maxDim = gl::maxTextureSize;
