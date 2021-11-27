@@ -7,6 +7,18 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#pragma once
+
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
+#include <celutil/color.h>
+
+
+class LODSphereMesh;
+class Texture;
+
+
 struct RenderInfo
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

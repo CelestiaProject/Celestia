@@ -9,28 +9,21 @@
 //
 // Convert a 3DS file to a Celestia mesh (.cmod) file
 
-#include "convert3ds.h"
-#include "cmodops.h"
-#include <celmodel/modelfile.h>
-#include <cel3ds/3dsread.h>
-#include <celmath/mathlib.h>
-#include <cstring>
-#include <cassert>
-#include <cmath>
-#include <cstdio>
 #include <iostream>
 #include <memory>
+#include <string>
 
+#include <cel3ds/3dsread.h>
+#include <celmath/mathlib.h>
+
+#include "cmodops.h"
+#include "convert3ds.h"
 #include "pathmanager.h"
-
-using namespace cmod;
-using namespace std;
-using namespace celmath;
 
 
 void usage()
 {
-    cerr << "Usage: 3dstocmod <input 3ds file>\n";
+    std::cerr << "Usage: 3dstocmod <input 3ds file>\n";
 }
 
 
@@ -42,60 +35,48 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    string inputFileName = argv[1];
+    std::string inputFileName = argv[1];
 
-    cerr << "Reading...\n";
+    std::cerr << "Reading...\n";
     std::unique_ptr<M3DScene> scene = Read3DSFile(inputFileName);
     if (scene == nullptr)
     {
-        cerr << "Error reading 3DS file '" << inputFileName << "'\n";
+        std::cerr << "Error reading 3DS file '" << inputFileName << "'\n";
         return 1;
     }
 
-    cerr << "Converting...\n";
-    Model* model = Convert3DSModel(*scene, GetPathManager()->getHandle);
+    std::cerr << "Converting...\n";
+    cmod::Model* model = Convert3DSModel(*scene, GetPathManager()->getHandle);
     if (!model)
     {
-        cerr << "Error converting 3DS file to Celestia model\n";
+        std::cerr << "Error converting 3DS file to Celestia model\n";
         return 1;
     }
 
     // Generate normals for the model
-    double smoothAngle = 45.0; // degrees
+    float smoothAngle = 45.0; // degrees
     double weldTolerance = 1.0e-6;
     bool weldVertices = true;
 
-    Model* newModel = GenerateModelNormals(*model, (float)degToRad(smoothAngle), weldVertices, weldTolerance);
+    cmod::Model* newModel = GenerateModelNormals(*model, celmath::degToRad(smoothAngle), weldVertices, weldTolerance);
     delete model;
 
     if (!newModel)
     {
-        cerr << "Ran out of memory while generating surface normals.\n";
+        std::cerr << "Ran out of memory while generating surface normals.\n";
         return 1;
     }
 
     // Automatically uniquify vertices
     for (unsigned int i = 0; newModel->getMesh(i) != nullptr; i++)
     {
-        Mesh* mesh = newModel->getMesh(i);
+        cmod::Mesh* mesh = newModel->getMesh(i);
         UniquifyVertices(*mesh);
     }
 
     model = newModel;
 
-#if 0
-    // Print information about primitive groups
-    for (uint32_t i = 0; model->getMesh(i); i++)
-    {
-        const Mesh* mesh = model->getMesh(i);
-        for (uint32_t j = 0; mesh->getGroup(j); j++)
-        {
-            const Mesh::PrimitiveGroup* group = mesh->getGroup(j);
-        }
-    }
-#endif
-
-    SaveModelAscii(model, cout, GetPathManager()->getSource);
+    SaveModelAscii(model, std::cout, GetPathManager()->getSource);
 
     return 0;
 }

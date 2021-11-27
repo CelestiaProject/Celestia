@@ -9,12 +9,21 @@
 //
 // Perform various adjustments to a Celestia mesh.
 
-#ifndef _CMODOPS_H_
-#define _CMODOPS_H_
+#pragma once
 
-#include <celmodel/model.h>
-#include <Eigen/Core>
+#include <algorithm>
+#include <cassert>
+#include <cstdint>
 #include <vector>
+
+#include <Eigen/Core>
+
+#include <celmodel/mesh.h>
+
+namespace cmod
+{
+class Model;
+}
 
 
 struct Vertex
@@ -22,10 +31,10 @@ struct Vertex
     Vertex() :
         index(0), attributes(nullptr) {};
 
-    Vertex(uint32_t _index, const void* _attributes) :
+    Vertex(std::uint32_t _index, const void* _attributes) :
         index(_index), attributes(_attributes) {};
 
-    uint32_t index;
+    std::uint32_t index;
     const void* attributes;
 };
 
@@ -33,8 +42,8 @@ struct Vertex
 struct Face
 {
     Eigen::Vector3f normal;
-    uint32_t i[3];    // vertex attribute indices
-    uint32_t vi[3];   // vertex point indices -- same as above unless welding
+    std::uint32_t i[3];    // vertex attribute indices
+    std::uint32_t vi[3];   // vertex point indices -- same as above unless welding
 };
 
 
@@ -53,7 +62,7 @@ extern bool ConvertToStrips(cmod::Mesh& mesh);
 template<typename T, typename U> void
 JoinVertices(std::vector<Face>& faces,
              const void* vertexData,
-             const cmod::Mesh::VertexDescription& desc,
+             const cmod::VertexDescription& desc,
              const T& orderingPredicate,
              const U& equivalencePredicate)
 {
@@ -64,19 +73,18 @@ JoinVertices(std::vector<Face>& faces,
     // Must have a position
     assert(desc.getAttribute(cmod::Mesh::Position).format == cmod::Mesh::Float3);
 
-    uint32_t posOffset = desc.getAttribute(cmod::Mesh::Position).offset;
-    const char* vertexPoints = reinterpret_cast<const char*>(vertexData) +
-        posOffset;
-    uint32_t nVertices = faces.size() * 3;
+    std::uint32_t posOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Position).offset;
+    const char* vertexPoints = reinterpret_cast<const char*>(vertexData) + posOffset;
+    std::uint32_t nVertices = faces.size() * 3;
 
     // Initialize the array of vertices
     std::vector<Vertex> vertices(nVertices);
-    uint32_t f;
+    std::uint32_t f;
     for (f = 0; f < faces.size(); f++)
     {
-        for (uint32_t j = 0; j < 3; j++)
+        for (std::uint32_t j = 0; j < 3; j++)
         {
-            uint32_t index = faces[f].i[j];
+            std::uint32_t index = faces[f].i[j];
             vertices[f * 3 + j] = Vertex(index,
                                          vertexPoints + desc.stride * index);
 
@@ -84,13 +92,13 @@ JoinVertices(std::vector<Face>& faces,
     }
 
     // Sort the vertices so that identical ones will be ordered consecutively
-    sort(vertices.begin(), vertices.end(), orderingPredicate);
+    std::sort(vertices.begin(), vertices.end(), orderingPredicate);
 
     // Build the vertex merge map
-    std::vector<uint32_t> mergeMap(nVertices);
-    uint32_t lastUnique = 0;
-    uint32_t uniqueCount = 0;
-    for (uint32_t i = 0; i < nVertices; i++)
+    std::vector<std::uint32_t> mergeMap(nVertices);
+    std::uint32_t lastUnique = 0;
+    std::uint32_t uniqueCount = 0;
+    for (std::uint32_t i = 0; i < nVertices; i++)
     {
         if (i == 0 || !equivalencePredicate(vertices[i - 1], vertices[i]))
         {
@@ -104,11 +112,9 @@ JoinVertices(std::vector<Face>& faces,
     // Remap the vertex indices
     for (f = 0; f < faces.size(); f++)
     {
-        for (uint32_t k= 0; k < 3; k++)
+        for (std::uint32_t k= 0; k < 3; k++)
         {
             faces[f].vi[k] = mergeMap[faces[f].i[k]];
         }
     }
 }
-
-#endif // _CMODOPS_H_

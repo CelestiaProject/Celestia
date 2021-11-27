@@ -8,16 +8,20 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_SPHEREMESH_H_
-#define _CELENGINE_SPHEREMESH_H_
+#pragma once
 
 // IMPORTANT: This file is a relic from the early days of Celestia.
 // Its sole function now is to handle the now-deprecated .cms mesh files;
 // it will eventually be removed from Celestia.
 
-#include <celengine/dispmap.h>
-#include <celmodel/mesh.h>
+#include <Eigen/Core>
 
+#include <celengine/dispmap.h>
+
+namespace cmod
+{
+class Mesh;
+}
 
 /*! The SphereMesh class is used to generate displacement mapped
  *  spheres when loading the now-deprecated .cms geometry files.
@@ -59,5 +63,3 @@ public:
     int nIndices;
     unsigned short* indices{ nullptr };
 };
-
-#endif // _CELENGINE_SPHEREMESH_H_

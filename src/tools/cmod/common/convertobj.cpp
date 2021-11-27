@@ -10,28 +10,22 @@
 // Functions for converting a Wavefront .obj file into a
 // Celestia model (cmod)
 
-#include "convertobj.h"
-#include <algorithm>
-#include <sstream>
 #include <cstdio>
+#include <sstream>
 
-using namespace cmod;
-using namespace Eigen;
-using namespace std;
+#include <celmodel/material.h>
+#include <celmodel/mesh.h>
+#include <celmodel/model.h>
+
+#include "convertobj.h"
 
 
-
-WavefrontLoader::WavefrontLoader(istream& in) :
-    m_in(in),
-    m_lineNumber(0),
-    m_model(nullptr)
+namespace
 {
-}
 
-
-string::size_type getToken(const string& s, string::size_type start, string& token)
+std::string::size_type getToken(const std::string& s, std::string::size_type start, std::string& token)
 {
-    string::size_type pos = start;
+    std::string::size_type pos = start;
     token.clear();
 
     while (pos < s.size() && isspace(s[pos]))
@@ -48,7 +42,6 @@ string::size_type getToken(const string& s, string::size_type start, string& tok
     return pos;
 }
 
-
 // Convert a 1-based array index to a zero based index. Negative
 // indices are relative to the top of the end of the array. Return
 // -1 if the index is invalid.
@@ -56,51 +49,65 @@ int convertIndex(int index, unsigned int maxValue)
 {
     if (index > 0)
     {
-        if (index <= (int) maxValue)
+        if (index <= static_cast<int>(maxValue))
             return index - 1;
         return -1;
 
     }
     if (index < 0)
     {
-        if (-index <= (int) maxValue)
-            return (int) maxValue + index;
+        if (-index <= static_cast<int>(maxValue))
+            return static_cast<int>(maxValue) + index;
         return -1;
 
     }
     return -1;
 }
 
+} // end unnamed namespace
+
+
+
+WavefrontLoader::WavefrontLoader(std::istream& in) :
+    m_in(in),
+    m_lineNumber(0),
+    m_model(nullptr)
+{
+}
+
+
+
+
 
 cmod::Model*
 WavefrontLoader::load()
 {
-    string line;
-    string keyword;
+    std::string line;
+    std::string keyword;
     unsigned int vertexCount = 0;
     ObjVertex::VertexType lastVertexType = ObjVertex::Point;
     int currentMaterialIndex = -1;
 
-    m_model = new Model();
+    m_model = new cmod::Model();
 
     while (getline(m_in, line))
     {
         m_lineNumber++;
 
         // strip comments
-        string::size_type commentPos = line.find('#');
-        if (commentPos != string::npos)
+        std::string::size_type commentPos = line.find('#');
+        if (commentPos != std::string::npos)
         {
             line = line.substr(0, commentPos);
         }
 
-        string::size_type pos = getToken(line, 0, keyword);
+        std::string::size_type pos = getToken(line, 0, keyword);
         if (!keyword.empty())
         {
             if (keyword == "v")
             {
-                Vector3f v(Vector3f::Zero());
-                if (sscanf(line.c_str() + pos, "%f %f %f", &v.x(), &v.y(), &v.z()) != 3)
+                Eigen::Vector3f v(Eigen::Vector3f::Zero());
+                if (std::sscanf(line.c_str() + pos, "%f %f %f", &v.x(), &v.y(), &v.z()) != 3)
                 {
                     reportError("Bad vertex");
                     return nullptr;
@@ -109,8 +116,8 @@ WavefrontLoader::load()
             }
             else if (keyword == "vn")
             {
-                Vector3f v(Vector3f::Zero());
-                if (sscanf(line.c_str() + pos, "%f %f %f", &v.x(), &v.y(), &v.z()) != 3)
+                Eigen::Vector3f v(Eigen::Vector3f::Zero());
+                if (std::sscanf(line.c_str() + pos, "%f %f %f", &v.x(), &v.y(), &v.z()) != 3)
                 {
                     reportError("Bad normal");
                     return nullptr;
@@ -119,8 +126,8 @@ WavefrontLoader::load()
             }
             else if (keyword == "vt")
             {
-                Vector2f v(Vector2f::Zero());
-                if (sscanf(line.c_str() + pos, "%f %f", &v.x(), &v.y()) != 2)
+                Eigen::Vector2f v(Eigen::Vector2f::Zero());
+                if (std::sscanf(line.c_str() + pos, "%f %f", &v.x(), &v.y()) != 2)
                 {
                     reportError("Bad texture coordinate");
                     return nullptr;
@@ -129,8 +136,8 @@ WavefrontLoader::load()
             }
             else if (keyword == "usemtl")
             {
-                Material* material = new Material();
-                material->diffuse = Material::Color(1.0f, 1.0f, 1.0f);
+                cmod::Material* material = new cmod::Material();
+                material->diffuse = cmod::Color(1.0f, 1.0f, 1.0f);
                 currentMaterialIndex = m_model->addMaterial(material) - 1;
                 if (!m_materialGroups.empty())
                 {
@@ -149,27 +156,27 @@ WavefrontLoader::load()
             }
             else if (keyword == "f")
             {
-                vector<ObjVertex> faceVertices;
+                std::vector<ObjVertex> faceVertices;
                 while (pos < line.size())
                 {
-                    string vertexString;
+                    std::string vertexString;
                     pos = getToken(line, pos, vertexString);
                     if (!vertexString.empty())
                     {
                         ObjVertex vertex;
-                        if (sscanf(vertexString.c_str(), "%d/%d/%d", &vertex.vertexIndex, &vertex.texCoordIndex, &vertex.normalIndex) == 3)
+                        if (std::sscanf(vertexString.c_str(), "%d/%d/%d", &vertex.vertexIndex, &vertex.texCoordIndex, &vertex.normalIndex) == 3)
                         {
                             // Vertex, texture coordinate, and normal
                         }
-                        else if (sscanf(vertexString.c_str(), "%d//%d", &vertex.vertexIndex, &vertex.normalIndex) == 2)
+                        else if (std::sscanf(vertexString.c_str(), "%d//%d", &vertex.vertexIndex, &vertex.normalIndex) == 2)
                         {
                             // Vertex + normal
                         }
-                        else if (sscanf(vertexString.c_str(), "%d/%d", &vertex.vertexIndex, &vertex.texCoordIndex) == 2)
+                        else if (std::sscanf(vertexString.c_str(), "%d/%d", &vertex.vertexIndex, &vertex.texCoordIndex) == 2)
                         {
                             // Vertex + texture coordinate
                         }
-                        else if (sscanf(vertexString.c_str(), "%d", &vertex.vertexIndex) == 1)
+                        else if (std::sscanf(vertexString.c_str(), "%d", &vertex.vertexIndex) == 1)
                         {
                             // Vertex only
                         }
@@ -292,10 +299,10 @@ WavefrontLoader::load()
 
 
 void
-WavefrontLoader::reportError(const string& message)
+WavefrontLoader::reportError(const std::string& message)
 {
     //cerr << message << endl;
-    ostringstream os;
+    std::ostringstream os;
     os << "Line " << m_lineNumber << ": " << message;
     m_errorMessage = os.str();
 
@@ -324,25 +331,31 @@ WavefrontLoader::addVertexData(const Eigen::Vector3f& v)
 void
 WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int vertexCount)
 {
-    Mesh::VertexAttribute attributes[8];
+    cmod::VertexAttribute attributes[8];
     unsigned int nAttributes = 0;
     unsigned int offset = 0;
 
     // Position attribute is always present
-    attributes[nAttributes] = Mesh::VertexAttribute(Mesh::Position, Mesh::Float3, 0);
+    attributes[nAttributes] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Position,
+                                                    cmod::VertexAttributeFormat::Float3,
+                                                    0);
     nAttributes++;
     offset += 12;
 
     if (vertexType == ObjVertex::PointNormal || vertexType == ObjVertex::PointTexNormal)
     {
-        attributes[nAttributes] = Mesh::VertexAttribute(Mesh::Normal, Mesh::Float3, offset);
+        attributes[nAttributes] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Normal,
+                                                        cmod::VertexAttributeFormat::Float3,
+                                                        offset);
         nAttributes++;
         offset += 12;
     }
 
     if (vertexType == ObjVertex::PointTex || vertexType == ObjVertex::PointTexNormal)
     {
-        attributes[nAttributes] = Mesh::VertexAttribute(Mesh::Texture0, Mesh::Float2, offset);
+        attributes[nAttributes] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Texture0,
+                                                        cmod::VertexAttributeFormat::Float2,
+                                                        offset);
         nAttributes++;
         offset += 8;
     }
@@ -351,8 +364,8 @@ WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int verte
     copy(m_vertexData.begin(), m_vertexData.end(), vertexDataCopy);
 
     // Create the Celestia mesh
-    Mesh* mesh = new Mesh();
-    mesh->setVertexDescription(Mesh::VertexDescription(offset, nAttributes, attributes));
+    cmod::Mesh* mesh = new cmod::Mesh();
+    mesh->setVertexDescription(cmod::VertexDescription(offset, nAttributes, attributes));
     mesh->setVertices(vertexCount, vertexDataCopy);
 
     // Add primitive groups
@@ -371,9 +384,9 @@ WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int verte
 
         if (indexCount > 0)
         {
-            Mesh::index32* indexDataCopy = new Mesh::index32[indexCount];
+            cmod::index32* indexDataCopy = new cmod::index32[indexCount];
             copy(m_indexData.begin() + firstIndex, m_indexData.begin() + firstIndex + indexCount, indexDataCopy);
-            mesh->addGroup(Mesh::TriList, m_materialGroups[i].materialIndex, indexCount, indexDataCopy);
+            mesh->addGroup(cmod::PrimitiveGroupType::TriList, m_materialGroups[i].materialIndex, indexCount, indexDataCopy);
         }
     }
 

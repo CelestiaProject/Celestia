@@ -8,30 +8,37 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "glsupport.h"
-#include "modelviewwidget.h"
-#include "glframebuffer.h"
-#include "pathmanager.h"
-#include <QFileInfo>
-#include <QGLWidget>
-#include <QMouseEvent>
-#include <QTextStream>
-#include <Eigen/LU>
 #include <algorithm>
+#include <cmath>
+#include <cstddef>
 #include <iostream>
 
-using namespace celestia;
-using namespace cmod;
-using namespace Eigen;
+#include <QFileInfo>
+#include <QIODevice>
+#include <QMap>
+#include <QPixmap>
+#include <QTextStream>
+
+#include <celmath/mathlib.h>
+#include <celmodel/model.h>
+
+#include "pathmanager.h"
+
+#include "glframebuffer.h"
+#include "glshader.h"
+#include "glsupport.h"
+#include "modelviewwidget.h"
 
 
 #define DEBUG_SHADOWS 0
 
-static const float VIEWPORT_FOV = 45.0;
-//static const double PI = 3.1415926535897932;
+namespace
+{
 
-static const int ShadowBufferSize = 1024;
-static const int ShadowSampleKernelWidth = 2;
+constexpr float VIEWPORT_FOV = 45.0;
+
+constexpr int ShadowBufferSize = 1024;
+constexpr int ShadowSampleKernelWidth = 2;
 
 
 enum {
@@ -45,10 +52,58 @@ inline QString toQString(const wchar_t *s)
     return QString::fromWCharArray(s);
 }
 
+
 inline QString toQString(const char *s)
 {
     return QString::fromLocal8Bit(s);
 }
+
+
+// Calculate the matrix used to render the model from the
+// perspective of the light.
+Eigen::Matrix4f
+directionalLightMatrix(const Eigen::Vector3f& lightDirection)
+{
+    Eigen::Vector3f viewDir = lightDirection;
+    Eigen::Vector3f upDir = viewDir.unitOrthogonal();
+    Eigen::Vector3f rightDir = upDir.cross(viewDir);
+    Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
+    m.row(0).head(3) = rightDir;
+    m.row(1).head(3) = upDir;
+    m.row(2).head(3) = viewDir;
+
+    return m;
+}
+
+
+Eigen::Matrix4f
+parallelProjectionMatrix(float left, float right, float bottom, float top, float zNear, float zFar)
+{
+    // Duplicates OpenGL's glOrtho() function
+    Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
+    m.diagonal() = Eigen::Vector4f(2.0f / (right - left),
+                                   2.0f / (top - bottom),
+                                   -2.0f / (zFar - zNear),
+                                   1.0f);
+    m.col(3) = Eigen::Vector4f(-(right + left) / (right - left),
+                               -(top + bottom) / (top - bottom),
+                               -(zFar + zNear) / (zFar - zNear),
+                               1.0f);
+
+    return m;
+}
+
+
+Eigen::Matrix4f
+shadowProjectionMatrix(float objectRadius)
+{
+    return parallelProjectionMatrix(-objectRadius, objectRadius,
+                                    -objectRadius, objectRadius,
+                                    -objectRadius, objectRadius);
+}
+
+} // end unnamed namespace
+
 
 class MaterialLibrary
 {
@@ -141,7 +196,7 @@ private:
 
 
 ShaderKey
-ShaderKey::Create(const Material* material, const LightingEnvironment* lighting, const Mesh::VertexDescription* vertexDesc)
+ShaderKey::Create(const cmod::Material* material, const LightingEnvironment* lighting, const cmod::VertexDescription* vertexDesc)
 {
     // Compute the shader key for a particular material and lighting setup
     unsigned int info = 0;
@@ -150,8 +205,8 @@ ShaderKey::Create(const Material* material, const LightingEnvironment* lighting,
     bool hasTexCoords = false;
     if (vertexDesc)
     {
-        hasTangents = vertexDesc->getAttribute(Mesh::Tangent).format == Mesh::Float3;
-        hasTexCoords = vertexDesc->getAttribute(Mesh::Texture0).format == Mesh::Float2;
+        hasTangents = vertexDesc->getAttribute(cmod::VertexAttributeSemantic::Tangent).format == cmod::VertexAttributeFormat::Float3;
+        hasTexCoords = vertexDesc->getAttribute(cmod::VertexAttributeSemantic::Texture0).format == cmod::VertexAttributeFormat::Float2;
     }
 
     // Bits 0-3 are the number of light sources
@@ -172,30 +227,30 @@ ShaderKey::Create(const Material* material, const LightingEnvironment* lighting,
     // Bits 8-15 are texture map info
     if (hasTexCoords)
     {
-        if (material->maps[Material::DiffuseMap] != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
         {
             info |= DiffuseMapMask;
         }
 
-        if (material->maps[Material::SpecularMap] != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::SpecularMap) != InvalidResource)
         {
             info |= SpecularMapMask;
         }
 
-        if (material->maps[Material::NormalMap] != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource)
         {
             info |= NormalMapMask;
         }
 
-        if (material->maps[Material::EmissiveMap] != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::EmissiveMap) != InvalidResource)
         {
             info |= EmissiveMapMask;
         }
 
         // Bit 16 is set if the normal map is compressed
-        if (material->maps[Material::NormalMap] != InvalidResource && hasTangents)
+        if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource && hasTangents)
         {
-            if (GetPathManager()->getSource(material->maps[Material::NormalMap]).extension() == ".dxt5nm")
+            if (GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).extension() == ".dxt5nm")
             {
                 info |= CompressedNormalMapMask;
             }
@@ -206,60 +261,16 @@ ShaderKey::Create(const Material* material, const LightingEnvironment* lighting,
 }
 
 
-// Calculate the matrix used to render the model from the
-// perspective of the light.
-static
-Matrix4f directionalLightMatrix(const Vector3f& lightDirection)
-{
-    Vector3f viewDir = lightDirection;
-    Vector3f upDir = viewDir.unitOrthogonal();
-    Vector3f rightDir = upDir.cross(viewDir);
-    Matrix4f m = Matrix4f::Identity();
-    m.row(0).head(3) = rightDir;
-    m.row(1).head(3) = upDir;
-    m.row(2).head(3) = viewDir;
-
-    return m;
-}
-
-
-static
-Matrix4f parallelProjectionMatrix(float left, float right, float bottom, float top, float zNear, float zFar)
-{
-    // Duplicates OpenGL's glOrtho() function
-    Matrix4f m = Matrix4f::Identity();
-    m.diagonal() = Vector4f(2.0f / (right - left),
-                            2.0f / (top - bottom),
-                            -2.0f / (zFar - zNear),
-                            1.0f);
-    m.col(3) = Vector4f(-(right + left) / (right - left),
-                        -(top + bottom) / (top - bottom),
-                        -(zFar + zNear) / (zFar - zNear),
-                        1.0f);
-
-    return m;
-}
-
-
-static
-Matrix4f shadowProjectionMatrix(float objectRadius)
-{
-    return parallelProjectionMatrix(-objectRadius, objectRadius,
-                                    -objectRadius, objectRadius,
-                                    -objectRadius, objectRadius);
-}
-
-
 ModelViewWidget::ModelViewWidget(QWidget *parent) :
    QGLWidget(parent),
    m_model(nullptr),
    m_modelBoundingRadius(1.0),
-   m_cameraPosition(Vector3d::Zero()),
-   m_cameraOrientation(Quaterniond::Identity()),
+   m_cameraPosition(Eigen::Vector3d::Zero()),
+   m_cameraOrientation(Eigen::Quaterniond::Identity()),
    m_renderStyle(NormalStyle),
    m_renderPath(FixedFunctionPath),
    m_materialLibrary(nullptr),
-   m_lightOrientation(Quaterniond::Identity()),
+   m_lightOrientation(Eigen::Quaterniond::Identity()),
    m_lightingEnabled(true),
    m_ambientLightEnabled(true),
    m_shadowsEnabled(false)
@@ -294,26 +305,26 @@ ModelViewWidget::setModel(cmod::Model* model, const QString& modelDirPath)
     {
         for (unsigned int i = 0; i < m_model->getMaterialCount(); ++i)
         {
-            const Material* material = m_model->getMaterial(i);
-            if (material->maps[Material::DiffuseMap] != InvalidResource)
+            const cmod::Material* material = m_model->getMaterial(i);
+            if (material->getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(GetPathManager()->getSource(material->maps[Material::DiffuseMap]).c_str()));
+                    toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
             }
-            if (material->maps[Material::NormalMap] != InvalidResource)
+            if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(GetPathManager()->getSource(material->maps[Material::NormalMap]).c_str()));
+                    toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).c_str()));
             }
-            if (material->maps[Material::SpecularMap] != InvalidResource)
+            if (material->getMap(cmod::TextureSemantic::SpecularMap) != InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(GetPathManager()->getSource(material->maps[Material::SpecularMap]).c_str()));
+                    toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap)).c_str()));
             }
-            if (material->maps[Material::EmissiveMap] != InvalidResource)
+            if (material->getMap(cmod::TextureSemantic::EmissiveMap) != InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(GetPathManager()->getSource(material->maps[Material::EmissiveMap]).c_str()));
+                    toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap)).c_str()));
             }
         }
     }
@@ -327,7 +338,7 @@ ModelViewWidget::setModel(cmod::Model* model, const QString& modelDirPath)
 void
 ModelViewWidget::resetCamera()
 {
-    AlignedBox<float, 3> bbox;
+    Eigen::AlignedBox<float, 3> bbox;
     if (m_model != nullptr)
     {
         for (unsigned int i = 0; i < m_model->getMeshCount(); ++i)
@@ -337,8 +348,8 @@ ModelViewWidget::resetCamera()
     }
 
     m_modelBoundingRadius = std::max(bbox.max().norm(), bbox.min().norm());
-    m_cameraPosition = m_modelBoundingRadius * Vector3d::UnitZ() * 2.0;
-    m_cameraOrientation = Quaterniond::Identity();
+    m_cameraPosition = m_modelBoundingRadius * Eigen::Vector3d::UnitZ() * 2.0;
+    m_cameraOrientation = Eigen::Quaterniond::Identity();
 }
 
 
@@ -378,9 +389,9 @@ ModelViewWidget::mouseReleaseEvent(QMouseEvent* event)
     int moveDistance = (event->pos() - m_mouseDownPosition).manhattanLength();
     if (moveDistance < 3)
     {
-        float x = (float) event->pos().x() / (float) size().width() * 2.0f - 1.0f;
-        float y = (float) event->pos().y() / (float) size().height() * -2.0f + 1.0f;
-        select(Vector2f(x, y));
+        float x = static_cast<float>(event->pos().x()) / static_cast<float>(size().width()) * 2.0f - 1.0f;
+        float y = static_cast<float>(event->pos().y()) / static_cast<float>(size().height()) * -2.0f + 1.0f;
+        select(Eigen::Vector2f(x, y));
     }
 }
 
@@ -412,20 +423,20 @@ ModelViewWidget::mouseMoveEvent(QMouseEvent *event)
     int dx = event->x() - m_lastMousePosition.x();
     int dy = event->y() - m_lastMousePosition.y();
 
-    double xrotation = (double) dy / 100.0;
-    double yrotation = (double) dx / 100.0;
-    Quaterniond q = AngleAxis<double>(-xrotation, Vector3d::UnitX()) *
-                    AngleAxis<double>(-yrotation, Vector3d::UnitY());
+    double xrotation = static_cast<double>(dy) / 100.0;
+    double yrotation = static_cast<double>(dx) / 100.0;
+    Eigen::Quaterniond q = Eigen::AngleAxis<double>(-xrotation, Eigen::Vector3d::UnitX()) *
+                           Eigen::AngleAxis<double>(-yrotation, Eigen::Vector3d::UnitY());
 
     if (rotateLights)
     {
-        Quaterniond r = m_lightOrientation * q * m_lightOrientation.conjugate();
+        Eigen::Quaterniond r = m_lightOrientation * q * m_lightOrientation.conjugate();
         r.normalize();
         m_lightOrientation = r * m_lightOrientation;
     }
     else if (rotateCamera)
     {
-        Quaterniond r = m_cameraOrientation * q * m_cameraOrientation.conjugate();
+        Eigen::Quaterniond r = m_cameraOrientation * q * m_cameraOrientation.conjugate();
         r.normalize();  // guard against accumulating rounding errors
 
         m_cameraPosition    = r * m_cameraPosition;
@@ -461,22 +472,22 @@ ModelViewWidget::wheelEvent(QWheelEvent* event)
 
 
 void
-ModelViewWidget::select(const Vector2f& viewportPoint)
+ModelViewWidget::select(const Eigen::Vector2f& viewportPoint)
 {
     if (!m_model)
     {
         return;
     }
 
-    float aspectRatio = (float) size().width() / (float) size().height();
-    auto fovRad = float(VIEWPORT_FOV * PI / 180.0f);
-    float h = (float) tan(fovRad / 2.0f);
-    Vector3d direction(h * aspectRatio * viewportPoint.x(), h * viewportPoint.y(), -1.0f);
+    float aspectRatio = static_cast<float>(size().width()) / static_cast<float>(size().height());
+    auto fovRad = celmath::degToRad(VIEWPORT_FOV);
+    float h = std::tan(fovRad / 2.0f);
+    Eigen::Vector3d direction(h * aspectRatio * viewportPoint.x(), h * viewportPoint.y(), -1.0f);
     direction.normalize();
-    Vector3d origin = Vector3d::Zero();
-    Affine3d camera(cameraTransform().inverse());
+    Eigen::Vector3d origin = Eigen::Vector3d::Zero();
+    Eigen::Affine3d camera(cameraTransform().inverse());
 
-    Mesh::PickResult pickResult;
+    cmod::Mesh::PickResult pickResult;
     bool hit = m_model->pick(camera * origin, camera.linear() * direction, &pickResult);
     if (hit)
     {
@@ -494,10 +505,10 @@ ModelViewWidget::select(const Vector2f& viewportPoint)
 }
 
 
-Affine3d
+Eigen::Affine3d
 ModelViewWidget::cameraTransform() const
 {
-    Affine3d t(m_cameraOrientation.conjugate());
+    Eigen::Affine3d t(m_cameraOrientation.conjugate());
     t.translate(-m_cameraPosition);
     return t;
 }
@@ -513,17 +524,17 @@ ModelViewWidget::setMaterial(unsigned int index, const cmod::Material& material)
 
     // Copy material parameters
     // TODO: eliminate const cast when Model::setMaterial() is implemented
-    Material* modelMaterial = const_cast<Material*>(m_model->getMaterial(index));
+    cmod::Material* modelMaterial = const_cast<cmod::Material*>(m_model->getMaterial(index));
     modelMaterial->diffuse = material.diffuse;
     modelMaterial->specular = material.specular;
     modelMaterial->emissive = material.emissive;
     modelMaterial->opacity = material.opacity;
     modelMaterial->specularPower = material.specularPower;
 
-    modelMaterial->maps[Material::DiffuseMap] = material.maps[Material::DiffuseMap];
-    modelMaterial->maps[Material::SpecularMap] = material.maps[Material::SpecularMap];
-    modelMaterial->maps[Material::NormalMap] = material.maps[Material::NormalMap];
-    modelMaterial->maps[Material::EmissiveMap] = material.maps[Material::EmissiveMap];
+    modelMaterial->setMap(cmod::TextureSemantic::DiffuseMap, material.getMap(cmod::TextureSemantic::DiffuseMap));
+    modelMaterial->setMap(cmod::TextureSemantic::SpecularMap, material.getMap(cmod::TextureSemantic::SpecularMap));
+    modelMaterial->setMap(cmod::TextureSemantic::NormalMap, material.getMap(cmod::TextureSemantic::NormalMap));
+    modelMaterial->setMap(cmod::TextureSemantic::EmissiveMap, material.getMap(cmod::TextureSemantic::EmissiveMap));
 
     update();
 }
@@ -539,7 +550,7 @@ ModelViewWidget::setBackgroundColor(const QColor& color)
 void
 ModelViewWidget::initializeGL()
 {
-    gl::init();
+    celestia::gl::init();
     emit contextCreated();
 }
 
@@ -550,8 +561,8 @@ ModelViewWidget::paintGL()
     // Generate the shadow buffers for each light source
     if (m_shadowsEnabled && m_shadowBuffers.size() > 0)
     {
-        Material defaultMaterial;
-        defaultMaterial.diffuse = Material::Color(1.0f, 1.0f, 1.0f);
+        cmod::Material defaultMaterial;
+        defaultMaterial.diffuse = cmod::Color(1.0f, 1.0f, 1.0f);
         LightingEnvironment lightingOff;
         bindMaterial(&defaultMaterial, &lightingOff, nullptr);
         glEnable(GL_CULL_FACE);
@@ -588,7 +599,7 @@ ModelViewWidget::paintGL()
     {
         ambientLightLevel = 0.2f;
     }
-    Vector4f ambientLight = Vector4f::Constant(ambientLightLevel);
+    Eigen::Vector4f ambientLight = Eigen::Vector4f::Constant(ambientLightLevel);
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight.data());
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT, GL_SEPARATE_SPECULAR_COLOR_EXT);
 
@@ -603,10 +614,10 @@ ModelViewWidget::paintGL()
         GLenum glLight = GL_LIGHT0 + lightIndex;
         lightIndex++;
 
-        Vector3d direction = m_lightOrientation * lightSource.direction;
-        Vector4f lightColor = Vector4f::Zero();
+        Eigen::Vector3d direction = m_lightOrientation * lightSource.direction;
+        Eigen::Vector4f lightColor = Eigen::Vector4f::Zero();
         lightColor.head(3) = lightSource.color * lightSource.intensity;
-        Vector4f lightPosition = Vector4f::Zero();
+        Eigen::Vector4f lightPosition = Eigen::Vector4f::Zero();
         lightPosition.head(3) = direction.cast<float>();
 
         glEnable(glLight);
@@ -690,7 +701,7 @@ ModelViewWidget::resizeGL(int width, int height)
 }
 
 
-static GLenum GLComponentTypes[Mesh::FormatMax] =
+static GLenum GLComponentTypes[static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax)] =
 {
      GL_FLOAT,          // Float1
      GL_FLOAT,          // Float2
@@ -699,7 +710,7 @@ static GLenum GLComponentTypes[Mesh::FormatMax] =
      GL_UNSIGNED_BYTE,  // UByte4
 };
 
-static int GLComponentCounts[Mesh::FormatMax] =
+static int GLComponentCounts[static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax)] =
 {
      1,  // Float1
      2,  // Float2
@@ -710,16 +721,16 @@ static int GLComponentCounts[Mesh::FormatMax] =
 
 
 static void
-setVertexArrays(const Mesh::VertexDescription& desc, const void* vertexData)
+setVertexArrays(const cmod::VertexDescription& desc, const void* vertexData)
 {
-    const Mesh::VertexAttribute& position  = desc.getAttribute(Mesh::Position);
-    const Mesh::VertexAttribute& normal    = desc.getAttribute(Mesh::Normal);
-    const Mesh::VertexAttribute& color0    = desc.getAttribute(Mesh::Color0);
-    const Mesh::VertexAttribute& texCoord0 = desc.getAttribute(Mesh::Texture0);
-    const Mesh::VertexAttribute& tangent   = desc.getAttribute(Mesh::Tangent);
+    const cmod::VertexAttribute& position  = desc.getAttribute(cmod::VertexAttributeSemantic::Position);
+    const cmod::VertexAttribute& normal    = desc.getAttribute(cmod::VertexAttributeSemantic::Normal);
+    const cmod::VertexAttribute& color0    = desc.getAttribute(cmod::VertexAttributeSemantic::Color0);
+    const cmod::VertexAttribute& texCoord0 = desc.getAttribute(cmod::VertexAttributeSemantic::Texture0);
+    const cmod::VertexAttribute& tangent   = desc.getAttribute(cmod::VertexAttributeSemantic::Tangent);
 
     // Can't render anything unless we have positions
-    if (position.format != Mesh::Float3)
+    if (position.format != cmod::VertexAttributeFormat::Float3)
         return;
 
     // Set up the vertex arrays
@@ -730,9 +741,9 @@ setVertexArrays(const Mesh::VertexDescription& desc, const void* vertexData)
     // Set up the normal array
     switch (normal.format)
     {
-    case Mesh::Float3:
+    case cmod::VertexAttributeFormat::Float3:
         glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GLComponentTypes[(int) normal.format],
+        glNormalPointer(GLComponentTypes[static_cast<std::size_t>(normal.format)],
                         desc.stride,
                         reinterpret_cast<const char*>(vertexData) + normal.offset);
         break;
@@ -744,12 +755,12 @@ setVertexArrays(const Mesh::VertexDescription& desc, const void* vertexData)
     // Set up the color array
     switch (color0.format)
     {
-    case Mesh::Float3:
-    case Mesh::Float4:
-    case Mesh::UByte4:
+    case cmod::VertexAttributeFormat::Float3:
+    case cmod::VertexAttributeFormat::Float4:
+    case cmod::VertexAttributeFormat::UByte4:
         glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(GLComponentCounts[color0.format],
-                       GLComponentTypes[color0.format],
+        glColorPointer(GLComponentCounts[static_cast<std::size_t>(color0.format)],
+                       GLComponentTypes[static_cast<std::size_t>(color0.format)],
                        desc.stride,
                        reinterpret_cast<const char*>(vertexData) + color0.offset);
         break;
@@ -761,13 +772,13 @@ setVertexArrays(const Mesh::VertexDescription& desc, const void* vertexData)
     // Set up the texture coordinate array
     switch (texCoord0.format)
     {
-    case Mesh::Float1:
-    case Mesh::Float2:
-    case Mesh::Float3:
-    case Mesh::Float4:
+    case cmod::VertexAttributeFormat::Float1:
+    case cmod::VertexAttributeFormat::Float2:
+    case cmod::VertexAttributeFormat::Float3:
+    case cmod::VertexAttributeFormat::Float4:
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(GLComponentCounts[(int) texCoord0.format],
-                          GLComponentTypes[(int) texCoord0.format],
+        glTexCoordPointer(GLComponentCounts[static_cast<std::size_t>(texCoord0.format)],
+                          GLComponentTypes[static_cast<std::size_t>(texCoord0.format)],
                           desc.stride,
                           reinterpret_cast<const char*>(vertexData) + texCoord0.offset);
         break;
@@ -778,11 +789,11 @@ setVertexArrays(const Mesh::VertexDescription& desc, const void* vertexData)
 
     switch (tangent.format)
     {
-    case Mesh::Float3:
+    case cmod::VertexAttributeFormat::Float3:
         glEnableVertexAttribArrayARB(TangentAttributeIndex);
         glVertexAttribPointerARB(TangentAttributeIndex,
-                                      GLComponentCounts[(int) tangent.format],
-                                      GLComponentTypes[(int) tangent.format],
+                                      GLComponentCounts[static_cast<std::size_t>(tangent.format)],
+                                      GLComponentTypes[static_cast<std::size_t>(tangent.format)],
                                       GL_FALSE,
                                       desc.stride,
                                       reinterpret_cast<const char*>(vertexData) + tangent.offset);
@@ -797,12 +808,12 @@ setVertexArrays(const Mesh::VertexDescription& desc, const void* vertexData)
 
 // Set just the vertex pointer
 void
-setVertexPointer(const Mesh::VertexDescription& desc, const void* vertexData)
+setVertexPointer(const cmod::VertexDescription& desc, const void* vertexData)
 {
-    const Mesh::VertexAttribute& position  = desc.getAttribute(Mesh::Position);
+    const cmod::VertexAttribute& position  = desc.getAttribute(cmod::VertexAttributeSemantic::Position);
 
     // Can't render anything unless we have positions
-    if (position.format != Mesh::Float3)
+    if (position.format != cmod::VertexAttributeFormat::Float3)
         return;
 
     // Set up the vertex arrays
@@ -818,21 +829,21 @@ setVertexPointer(const Mesh::VertexDescription& desc, const void* vertexData)
 
 
 static GLenum
-getGLMode(Mesh::PrimitiveGroupType primitive)
+getGLMode(cmod::PrimitiveGroupType primitive)
 {
     switch (primitive)
     {
-    case Mesh::TriList:
+    case cmod::PrimitiveGroupType::TriList:
         return GL_TRIANGLES;
-    case Mesh::TriStrip:
+    case cmod::PrimitiveGroupType::TriStrip:
         return GL_TRIANGLE_STRIP;
-    case Mesh::TriFan:
+    case cmod::PrimitiveGroupType::TriFan:
         return GL_TRIANGLE_FAN;
-    case Mesh::LineList:
+    case cmod::PrimitiveGroupType::LineList:
         return GL_LINES;
-    case Mesh::LineStrip:
+    case cmod::PrimitiveGroupType::LineStrip:
         return GL_LINE_STRIP;
-    case Mesh::PointList:
+    case cmod::PrimitiveGroupType::PointList:
         return GL_POINTS;
     default:
         return GL_POINTS;
@@ -872,7 +883,7 @@ ModelViewWidget::setAmbientLight(bool enable)
 void
 ModelViewWidget::setShadows(bool enable)
 {
-    if (!gl::EXT_framebuffer_object)
+    if (!celestia::gl::EXT_framebuffer_object)
     {
         return;
     }
@@ -897,9 +908,9 @@ ModelViewWidget::setShadows(bool enable)
 
 
 void
-ModelViewWidget::bindMaterial(const Material* material,
+ModelViewWidget::bindMaterial(const cmod::Material* material,
                               const LightingEnvironment* lighting,
-                              const Mesh::VertexDescription* vertexDesc)
+                              const cmod::VertexDescription* vertexDesc)
 {
     GLShaderProgram* shader = nullptr;
 
@@ -930,15 +941,15 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         shader->setUniformValue("modelView", cameraTransform().matrix().cast<float>());
 
-        shader->setUniformValue("diffuseColor", Vector3f(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue()));
-        shader->setUniformValue("specularColor", Vector3f(material->specular.red(), material->specular.green(), material->specular.blue()));
+        shader->setUniformValue("diffuseColor", Eigen::Vector3f(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue()));
+        shader->setUniformValue("specularColor", Eigen::Vector3f(material->specular.red(), material->specular.green(), material->specular.blue()));
         shader->setUniformValue("opacity", material->opacity);
         shader->setUniformValue("specularPower", material->specularPower);
 
         if (shaderKey.hasDiffuseMap())
         {
             GLuint diffuseMapId = m_materialLibrary->getTexture(
-                toQString(GetPathManager()->getSource(material->maps[Material::DiffuseMap]).c_str()));
+                toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, diffuseMapId);
             shader->setSampler("diffuseMap", 0);
@@ -947,7 +958,7 @@ ModelViewWidget::bindMaterial(const Material* material,
         if (shaderKey.hasNormalMap())
         {
             GLuint normalMapId = m_materialLibrary->getTexture(
-                toQString(GetPathManager()->getSource(material->maps[Material::NormalMap]).c_str()));
+                toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).c_str()));
             glActiveTexture(GL_TEXTURE1);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, normalMapId);
@@ -958,7 +969,7 @@ ModelViewWidget::bindMaterial(const Material* material,
         if (shaderKey.hasSpecularMap())
         {
             GLuint specularMapId = m_materialLibrary->getTexture(
-                toQString(GetPathManager()->getSource(material->maps[Material::SpecularMap]).c_str()));
+                toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap)).c_str()));
             glActiveTexture(GL_TEXTURE2);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, specularMapId);
@@ -969,7 +980,7 @@ ModelViewWidget::bindMaterial(const Material* material,
         if (shaderKey.hasEmissiveMap())
         {
             GLuint emissiveMapId = m_materialLibrary->getTexture(
-                toQString(GetPathManager()->getSource(material->maps[Material::EmissiveMap]).c_str()));
+                toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap)).c_str()));
             glActiveTexture(GL_TEXTURE3);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, emissiveMapId);
@@ -978,15 +989,15 @@ ModelViewWidget::bindMaterial(const Material* material,
         }
 
         unsigned int lightIndex = 0;
-        Matrix3d lightMatrix = m_lightOrientation.toRotationMatrix();
+        Eigen::Matrix3d lightMatrix = m_lightOrientation.toRotationMatrix();
 
-        Vector3f lightDirections[8];
-        Vector3f lightColors[8];
+        Eigen::Vector3f lightDirections[8];
+        Eigen::Vector3f lightColors[8];
 
         foreach (LightSource lightSource, m_lightSources)
         {
-            Vector3d direction = lightMatrix * lightSource.direction;
-            Vector3f color = lightSource.color * lightSource.intensity;
+            Eigen::Vector3d direction = lightMatrix * lightSource.direction;
+            Eigen::Vector3f color = lightSource.color * lightSource.intensity;
 
             lightDirections[lightIndex] = direction.cast<float>();
             lightColors[lightIndex] = color;
@@ -1005,10 +1016,10 @@ ModelViewWidget::bindMaterial(const Material* material,
         {
             ambientLightLevel = 0.2f;
         }
-        shader->setUniformValue("ambientLightColor", Vector3f::Constant(ambientLightLevel));
+        shader->setUniformValue("ambientLightColor", Eigen::Vector3f::Constant(ambientLightLevel));
 
         // Get the eye position in model space
-        Vector4f eyePosition = cameraTransform().inverse().cast<float>() * Vector4f::UnitW();
+        Eigen::Vector4f eyePosition = cameraTransform().inverse().cast<float>() * Eigen::Vector4f::UnitW();
         shader->setUniformValue("eyePosition", eyePosition.head(3));
 
         // Set all shadow related values
@@ -1030,15 +1041,15 @@ ModelViewWidget::bindMaterial(const Material* material,
                 glActiveTexture(GL_TEXTURE0);
             }
 
-            Matrix4f shadowMatrixes[MaxShadows];
-            Matrix4f bias = Matrix4f::Zero();
-            bias.diagonal() = Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
-            bias.col(3) = Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
+            Eigen::Matrix4f shadowMatrixes[MaxShadows];
+            Eigen::Matrix4f bias = Eigen::Matrix4f::Zero();
+            bias.diagonal() = Eigen::Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
+            bias.col(3) = Eigen::Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
 
             for (unsigned int i = 0; i < shaderKey.shadowCount(); ++i)
             {
-                Matrix4f modelView = directionalLightMatrix(lightDirections[i]);
-                Matrix4f projection = shadowProjectionMatrix(m_modelBoundingRadius);
+                Eigen::Matrix4f modelView = directionalLightMatrix(lightDirections[i]);
+                Eigen::Matrix4f projection = shadowProjectionMatrix(m_modelBoundingRadius);
                 shadowMatrixes[i] = bias * projection * modelView;
 
                 // TESTING ONLY:
@@ -1056,9 +1067,9 @@ ModelViewWidget::bindMaterial(const Material* material,
             glUseProgram(0);
         }
 
-        Vector4f diffuse(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue(), material->opacity);
-        Vector4f specular(material->specular.red(), material->specular.green(), material->specular.blue(), 1.0f);
-        Vector4f emissive(material->emissive.red(), material->emissive.green(), material->emissive.blue(), 1.0f);
+        Eigen::Vector4f diffuse(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue(), material->opacity);
+        Eigen::Vector4f specular(material->specular.red(), material->specular.green(), material->specular.blue(), 1.0f);
+        Eigen::Vector4f emissive(material->emissive.red(), material->emissive.green(), material->emissive.blue(), 1.0f);
         glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse.data());
         glMaterialfv(GL_FRONT, GL_AMBIENT, diffuse.data());
         glColor4fv(diffuse.data());
@@ -1068,10 +1079,10 @@ ModelViewWidget::bindMaterial(const Material* material,
 
         // Set up the diffuse (base) texture
         GLuint baseTexId = 0;
-        if (material->maps[Material::DiffuseMap] != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
         {
             baseTexId = m_materialLibrary->getTexture(
-                toQString(GetPathManager()->getSource(material->maps[Material::DiffuseMap]).c_str()));
+                toQString(GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
         }
 
         if (baseTexId != 0)
@@ -1100,10 +1111,10 @@ ModelViewWidget::bindMaterial(const Material* material,
 
 
 void
-ModelViewWidget::renderModel(Model* model)
+ModelViewWidget::renderModel(cmod::Model* model)
 {
-    Material defaultMaterial;
-    defaultMaterial.diffuse = Material::Color(1.0f, 1.0f, 1.0f);
+    cmod::Material defaultMaterial;
+    defaultMaterial.diffuse = cmod::Color(1.0f, 1.0f, 1.0f);
 
     glEnable(GL_CULL_FACE);
     if (m_renderStyle == WireFrameStyle)
@@ -1138,10 +1149,10 @@ ModelViewWidget::renderModel(Model* model)
         // Render all meshes
         for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
         {
-            const Mesh* mesh = model->getMesh(meshIndex);
+            const cmod::Mesh* mesh = model->getMesh(meshIndex);
 
             setVertexArrays(mesh->getVertexDescription(), mesh->getVertexData());
-            if (mesh->getVertexDescription().getAttribute(Mesh::Normal).format == Mesh::Float3)
+            if (mesh->getVertexDescription().getAttribute(cmod::VertexAttributeSemantic::Normal).format == cmod::VertexAttributeFormat::Float3)
             {
                 setLighting(true);
             }
@@ -1152,8 +1163,8 @@ ModelViewWidget::renderModel(Model* model)
 
             for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
             {
-                const Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
-                const Material* material = &defaultMaterial;
+                const cmod::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+                const cmod::Material* material = &defaultMaterial;
                 if (group->materialIndex < model->getMaterialCount())
                 {
                      material = model->getMaterial(group->materialIndex);
@@ -1178,7 +1189,7 @@ ModelViewWidget::renderModel(Model* model)
 
 
 void
-ModelViewWidget::renderSelection(Model* model)
+ModelViewWidget::renderSelection(cmod::Model* model)
 {
     glEnable(GL_CULL_FACE);
     glPolygonMode(GL_FRONT, GL_LINE);
@@ -1191,8 +1202,8 @@ ModelViewWidget::renderSelection(Model* model)
 
     if (renderPath() == OpenGL2Path)
     {
-        Material selectionMaterial;
-        selectionMaterial.diffuse = Material::Color(0.0f, 1.0f, 0.0f);
+        cmod::Material selectionMaterial;
+        selectionMaterial.diffuse = cmod::Color(0.0f, 1.0f, 0.0f);
         selectionMaterial.opacity = 0.5f;
 
         LightingEnvironment lightsOff;
@@ -1201,12 +1212,12 @@ ModelViewWidget::renderSelection(Model* model)
 
     for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
     {
-        Mesh* mesh = model->getMesh(meshIndex);
+        cmod::Mesh* mesh = model->getMesh(meshIndex);
         setVertexPointer(mesh->getVertexDescription(), mesh->getVertexData());
 
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
         {
-            Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+            cmod::PrimitiveGroup* group = mesh->getGroup(groupIndex);
             if (m_selection.contains(group))
             {
                 GLenum primitiveMode = getGLMode(group->prim);
@@ -1223,18 +1234,18 @@ ModelViewWidget::renderSelection(Model* model)
 
 
 void
-ModelViewWidget::renderDepthOnly(Model* model)
+ModelViewWidget::renderDepthOnly(cmod::Model* model)
 {
     glDepthMask(GL_TRUE);
 
     for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
     {
-        Mesh* mesh = model->getMesh(meshIndex);
+        cmod::Mesh* mesh = model->getMesh(meshIndex);
         setVertexPointer(mesh->getVertexDescription(), mesh->getVertexData());
 
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
         {
-            Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+            cmod::PrimitiveGroup* group = mesh->getGroup(groupIndex);
             GLenum primitiveMode = getGLMode(group->prim);
             glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
         }
@@ -1248,14 +1259,14 @@ ModelViewWidget::setupDefaultLightSources()
     m_lightSources.clear();
 
     LightSource light1;
-    light1.color = Vector3f(1.0f, 1.0f, 1.0f);
+    light1.color = Eigen::Vector3f(1.0f, 1.0f, 1.0f);
     light1.intensity = 1.0f;
-    light1.direction = Vector3d(1.0, 1.0, 5.0).normalized();
+    light1.direction = Eigen::Vector3d(1.0, 1.0, 5.0).normalized();
 
     LightSource light2;
-    light2.color = Vector3f(1.0f, 1.0f, 1.0f);
+    light2.color = Eigen::Vector3f(1.0f, 1.0f, 1.0f);
     light2.intensity = 1.0f;
-    light2.direction = Vector3d(3.0, -3.0, -1.0).normalized();
+    light2.direction = Eigen::Vector3d(3.0, -3.0, -1.0).normalized();
 
     m_lightSources << light1;// << light2;
 }
@@ -1559,7 +1570,7 @@ ModelViewWidget::renderShadow(unsigned int lightIndex)
     }
 
     GLFrameBufferObject* shadowBuffer = m_shadowBuffers[lightIndex];
-    Vector3f lightDirection = (m_lightOrientation * m_lightSources[lightIndex].direction).cast<float>();
+    Eigen::Vector3f lightDirection = (m_lightOrientation * m_lightSources[lightIndex].direction).cast<float>();
 
     shadowBuffer->bind();
     glViewport(0, 0, shadowBuffer->width(), shadowBuffer->height());

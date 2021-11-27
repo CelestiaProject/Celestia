@@ -8,13 +8,21 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_RENDCONTEXT_H_
-#define _CELENGINE_RENDCONTEXT_H_
+#pragma once
 
-#include "shadermanager.h"
-#include <celmodel/mesh.h>
+#include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <celmodel/material.h>
+#include <celmodel/mesh.h>
+
+#include "glsupport.h"
+#include "shadermanager.h"
+
+
+class Atmosphere;
+class Color;
+class LightingState;
 class Renderer;
 
 class RenderContext
@@ -27,10 +35,10 @@ class RenderContext
     virtual ~RenderContext() = default;
 
     virtual void makeCurrent(const cmod::Material&) = 0;
-    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
+    virtual void setVertexArrays(const cmod::VertexDescription& desc,
                                  const void* vertexData);
-    virtual void updateShader(const cmod::Mesh::VertexDescription& desc, cmod::Mesh::PrimitiveGroupType primType);
-    virtual void drawGroup(const cmod::Mesh::PrimitiveGroup& group, bool useOverride);
+    virtual void updateShader(const cmod::VertexDescription& desc, cmod::PrimitiveGroupType primType);
+    virtual void drawGroup(const cmod::PrimitiveGroup& group, bool useOverride);
 
     const cmod::Material* getMaterial() const;
     void setMaterial(const cmod::Material*);
@@ -57,13 +65,6 @@ class RenderContext
     void setModelViewMatrix(const Eigen::Matrix4f *m);
     void setProjectionMatrix(const Eigen::Matrix4f *m);
 
- private:
-    const cmod::Material* material{ nullptr };
-    bool locked{ false };
-    RenderPass renderPass{ PrimaryPass };
-    float pointScale{ 1.0f };
-    Eigen::Quaternionf cameraOrientation;  // required for drawing billboards
-
  protected:
     Renderer* renderer { nullptr };
     bool usePointSize{ false };
@@ -74,6 +75,13 @@ class RenderContext
     bool drawLine { false };
     const Eigen::Matrix4f *modelViewMatrix;
     const Eigen::Matrix4f *projectionMatrix;
+
+ private:
+    const cmod::Material* material{ nullptr };
+    bool locked{ false };
+    RenderPass renderPass{ PrimaryPass };
+    float pointScale{ 1.0f };
+    Eigen::Quaternionf cameraOrientation;  // required for drawing billboards
 };
 
 
@@ -105,14 +113,13 @@ class GLSL_RenderContext : public RenderContext
     void setShadowMap(GLuint, GLuint, const Eigen::Matrix4f*);
 
  private:
-     void initLightingEnvironment();
-     void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
-     void setShadowParameters(CelestiaGLProgram& prog);
+    void initLightingEnvironment();
+    void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
+    void setShadowParameters(CelestiaGLProgram& prog);
 
- private:
     const LightingState& lightingState;
     const Atmosphere* atmosphere{ nullptr };
-    cmod::Material::BlendMode blendMode{ cmod::Material::InvalidBlend };
+    cmod::BlendMode blendMode{ cmod::BlendMode::InvalidBlend };
     float objRadius;
     Eigen::Vector3f objScale;
     Eigen::Quaternionf objOrientation;
@@ -139,12 +146,8 @@ class GLSLUnlit_RenderContext : public RenderContext
     void initLightingEnvironment();
     void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
 
- private:
-    cmod::Material::BlendMode blendMode;
+    cmod::BlendMode blendMode;
     float objRadius;
 
     ShaderProperties shaderProps;
 };
-
-
-#endif // _CELENGINE_RENDCONTEXT_H_

@@ -95,7 +95,6 @@ std::ofstream hdrlog;
 #endif
 #endif
 
-using namespace cmod;
 using namespace Eigen;
 using namespace std;
 using namespace celestia;

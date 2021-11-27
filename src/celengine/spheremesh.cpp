@@ -12,12 +12,11 @@
 // It's sole function now is to handle the now-deprecated .cms mesh files;
 // it will eventually be removed from Celestia.
 
-#include "spheremesh.h"
-#include <celmath/mathlib.h>
-#include "glsupport.h"
 #include <cmath>
+#include <cstdint>
 
-using namespace Eigen;
+#include <celmodel/mesh.h>
+#include "spheremesh.h"
 
 
 SphereMesh::SphereMesh(float radius, int _nRings, int _nSlices)
@@ -25,13 +24,13 @@ SphereMesh::SphereMesh(float radius, int _nRings, int _nSlices)
     createSphere(radius, _nRings, _nSlices);
 }
 
-SphereMesh::SphereMesh(const Vector3f& size, int _nRings, int _nSlices)
+SphereMesh::SphereMesh(const Eigen::Vector3f& size, int _nRings, int _nSlices)
 {
     createSphere(1.0f, _nRings, _nSlices);
     scale(size);
 }
 
-SphereMesh::SphereMesh(const Vector3f& size,
+SphereMesh::SphereMesh(const Eigen::Vector3f& size,
                        const DisplacementMap& dispmap,
                        float height)
 {
@@ -42,7 +41,7 @@ SphereMesh::SphereMesh(const Vector3f& size,
     fixNormals();
 }
 
-SphereMesh::SphereMesh(const Vector3f& size,
+SphereMesh::SphereMesh(const Eigen::Vector3f& size,
                        int _nRings, int _nSlices,
                        DisplacementMapFunc func,
                        void* info)
@@ -79,27 +78,27 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
     int i;
     for (i = 0; i < nRings; i++)
     {
-        float phi = ((float) i / (float) (nRings - 1) - 0.5f) * (float) PI;
+        float phi = (static_cast<float>(i) / static_cast<float>(nRings - 1) - 0.5f) * static_cast<float>(PI);
         for (int j = 0; j <= nSlices; j++)
         {
-            float theta = (float) j / (float) nSlices * (float) PI * 2;
+            float theta = static_cast<float>(j) / static_cast<float>(nSlices) * static_cast<float>(PI * 2.0);
             int n = i * (nSlices + 1) + j;
-            auto x = (float) (std::cos(phi) * std::cos(theta));
-            auto y = (float) std::sin(phi);
-            auto z = (float) (std::cos(phi) * std::sin(theta));
+            auto x = std::cos(phi) * std::cos(theta);
+            auto y = std::sin(phi);
+            auto z = std::cos(phi) * std::sin(theta);
             vertices[n * 3]      = x * radius;
             vertices[n * 3 + 1]  = y * radius;
             vertices[n * 3 + 2]  = z * radius;
             normals[n * 3]       = x;
             normals[n * 3 + 1]   = y;
             normals[n * 3 + 2]   = z;
-            texCoords[n * 2]     = 1.0f - (float) j / (float) nSlices;
-            texCoords[n * 2 + 1] = 1.0f - (float) i / (float) (nRings - 1);
+            texCoords[n * 2]     = 1.0f - static_cast<float>(j) / static_cast<float>(nSlices);
+            texCoords[n * 2 + 1] = 1.0f - static_cast<float>(i) / static_cast<float>(nRings - 1);
 
             // Compute the tangent--required for bump mapping
-            auto tx = (float) (std::sin(phi) * std::sin(theta));
-            auto ty = (float) -std::cos(phi);
-            auto tz = (float) (std::sin(phi) * std::cos(theta));
+            auto tx = std::sin(phi) * std::sin(theta);
+            auto ty = -std::cos(phi);
+            auto tz = std::sin(phi) * std::cos(theta);
             tangents[n * 3]      = tx;
             tangents[n * 3 + 1]  = ty;
             tangents[n * 3 + 2]  = tz;
@@ -122,7 +121,7 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
 void SphereMesh::generateNormals()
 {
     int nQuads = nSlices * (nRings - 1);
-    Vector3f* faceNormals = new Vector3f[nQuads];
+    Eigen::Vector3f* faceNormals = new Eigen::Vector3f[nQuads];
     int i;
 
     // Compute face normals for the mesh
@@ -138,20 +137,20 @@ void SphereMesh::generateNormals()
             // Compute the face normal.  Watch out for degenerate (zero-length)
             // edges.  If there are two degenerate edges, the entire face must
             // be degenerate and we'll handle that later
-            Vector3f v0(p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]);
-            Vector3f v1(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
+            Eigen::Vector3f v0 = Eigen::Map<Eigen::Vector3f>(p1) - Eigen::Map<Eigen::Vector3f>(p0);
+            Eigen::Vector3f v1 = Eigen::Map<Eigen::Vector3f>(p2) - Eigen::Map<Eigen::Vector3f>(p1);
             if (v0.norm() < 1e-6f)
             {
-                v0 = Vector3f(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
-                v1 = Vector3f(p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]);
+                v0 = Eigen::Map<Eigen::Vector3f>(p2) - Eigen::Map<Eigen::Vector3f>(p1);
+                v1 = Eigen::Map<Eigen::Vector3f>(p3) - Eigen::Map<Eigen::Vector3f>(p2);
             }
             else if (v1.norm() < 1e-6f)
             {
-                v0 = Vector3f(p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]);
-                v1 = Vector3f(p0[0] - p3[0], p0[1] - p3[1], p0[2] - p3[2]);
+                v0 = Eigen::Map<Eigen::Vector3f>(p3) - Eigen::Map<Eigen::Vector3f>(p2);
+                v1 = Eigen::Map<Eigen::Vector3f>(p0) - Eigen::Map<Eigen::Vector3f>(p3);
             }
 
-            Vector3f faceNormal = v0.cross(v1);
+            Eigen::Vector3f faceNormal = v0.cross(v1);
             float length = faceNormal.norm();
             if (length != 0)
                 faceNormal *= (1 / length);
@@ -224,11 +223,11 @@ void SphereMesh::generateNormals()
     {
         if (faceCounts[i] > 0)
         {
-            float s = 1.0f / (float) faceCounts[i];
+            float s = 1.0f / static_cast<float>(faceCounts[i]);
             float nx = normals[i * 3] * s;
             float ny = normals[i * 3 + 1] * s;
             float nz = normals[i * 3 + 2] * s;
-            auto length = (float) std::sqrt(nx * nx + ny * ny + nz * nz);
+            auto length = std::sqrt(nx * nx + ny * ny + nz * nz);
             if (length > 0)
             {
                 length = 1 / length;
@@ -251,9 +250,9 @@ void SphereMesh::fixNormals()
     {
         float* v0 = normals + (i * (nSlices + 1)) * 3;
         float* v1 = normals + ((i + 1) * (nSlices + 1) - 1) * 3;
-        Vector3f n0(v0[0], v0[1], v0[2]);
-        Vector3f n1(v0[0], v0[1], v0[2]);
-        Vector3f normal = n0 + n1;
+        Eigen::Map<Eigen::Vector3f> n0(v0);
+        Eigen::Map<Eigen::Vector3f> n1(v1);
+        Eigen::Vector3f normal = n0 + n1;
         normal.normalize();
         v0[0] = normal.x();
         v0[1] = normal.y();
@@ -265,7 +264,7 @@ void SphereMesh::fixNormals()
 }
 
 
-void SphereMesh::scale(const Vector3f& s)
+void SphereMesh::scale(const Eigen::Vector3f& s)
 {
     int i;
     for (i = 0; i < nVertices; i++)
@@ -280,11 +279,11 @@ void SphereMesh::scale(const Vector3f& s)
     {
         // TODO: Make a fast special case for uniform scale factors, where
         // renormalization is not required.
-        Vector3f is = s.cwiseInverse();
+        Eigen::Vector3f is = s.cwiseInverse();
         for (i = 0; i < nVertices; i++)
         {
             int n = i * 3;
-            Vector3f normal(normals[n] * is.x(), normals[n + 1] * is.y(), normals[n + 2] * is.z());
+            Eigen::Vector3f normal = Eigen::Map<Eigen::Vector3f>(normals).cwiseProduct(is);
             normal.normalize();
             normals[n]     = normal.x();
             normals[n + 1] = normal.y();
@@ -297,24 +296,16 @@ void SphereMesh::scale(const Vector3f& s)
 void SphereMesh::displace(const DisplacementMap& dispmap,
                           float height)
 {
-    // assert(dispMap.getWidth() == nSlices);
-    // assert(dispMap.getHeight() == nRings);
-
     for (int i = 0; i < nRings; i++)
     {
         for (int j = 0; j <= nSlices; j++)
         {
             int n = (i * (nSlices + 1) + j) * 3;
-            /*
-            float theta = (float) j / (float) nSlices * (float) PI * 2;
-            float x = (float) (cos(phi) * cos(theta));
-            float y = (float) sin(phi);
-            float z = (float) (cos(phi) * sin(theta));
-            */
-            Vector3f normal(normals[n], normals[n + 1], normals[n + 2]);
+
+            Eigen::Map<Eigen::Vector3f> normal(normals);
 
             int k = (j == nSlices) ? 0 : j;
-            Vector3f v = normal * dispmap.getDisplacement(k, i) * height;
+            Eigen::Vector3f v = normal * dispmap.getDisplacement(k, i) * height;
             vertices[n]     += v.x();
             vertices[n + 1] += v.y();
             vertices[n + 2] += v.z();
@@ -332,8 +323,8 @@ void SphereMesh::displace(DisplacementMapFunc func, void* info)
         {
             float u = (float) j / (float) nSlices;
             int n = (i * (nSlices + 1) + j) * 3;
-            Vector3f normal(normals[n], normals[n + 1], normals[n + 2]);
-            Vector3f vert = normal * func(u, v, info);
+            Eigen::Map<Eigen::Vector3f> normal(normals);
+            Eigen::Vector3f vert = normal * func(u, v, info);
             vertices[n]     += vert.x();
             vertices[n + 1] += vert.y();
             vertices[n + 2] += vert.z();
@@ -344,15 +335,21 @@ void SphereMesh::displace(DisplacementMapFunc func, void* info)
 
 cmod::Mesh* SphereMesh::convertToMesh() const
 {
-    uint32_t stride = 32;
-    cmod::Mesh::VertexAttribute attributes[3];
-    attributes[0] = cmod::Mesh::VertexAttribute(cmod::Mesh::Position, cmod::Mesh::Float3, 0);
-    attributes[1] = cmod::Mesh::VertexAttribute(cmod::Mesh::Normal, cmod::Mesh::Float3, 12);
-    attributes[2] = cmod::Mesh::VertexAttribute(cmod::Mesh::Texture0, cmod::Mesh::Float2, 24);
+    std::uint32_t stride = 32;
+    cmod::VertexAttribute attributes[3];
+    attributes[0] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Position,
+                                          cmod::VertexAttributeFormat::Float3,
+                                          0);
+    attributes[1] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Normal,
+                                          cmod::VertexAttributeFormat::Float3,
+                                          12);
+    attributes[2] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Texture0,
+                                          cmod::VertexAttributeFormat::Float2,
+                                          24);
 
     cmod::Mesh* mesh = new cmod::Mesh();
 
-    mesh->setVertexDescription(cmod::Mesh::VertexDescription(stride, 3, attributes));
+    mesh->setVertexDescription(cmod::VertexDescription(stride, 3, attributes));
 
     // Copy the vertex data from the separate position, normal, and texture coordinate
     // arrays into a single array.
@@ -375,14 +372,14 @@ cmod::Mesh* SphereMesh::convertToMesh() const
 
     for (int i = 0; i < nRings - 1; i++)
     {
-        auto* indexData = new uint32_t[(nSlices + 1) * 2];
+        auto* indexData = new std::uint32_t[(nSlices + 1) * 2];
         for (int j = 0; j <= nSlices; j++)
         {
             indexData[j * 2 + 0] = i * (nSlices + 1) + j;
             indexData[j * 2 + 1] = (i + 1) * (nSlices + 1) + j;
         }
 
-        mesh->addGroup(cmod::Mesh::TriStrip, ~0u, (nSlices + 1) * 2, indexData);
+        mesh->addGroup(cmod::PrimitiveGroupType::TriStrip, ~0u, (nSlices + 1) * 2, indexData);
     }
 
     return mesh;

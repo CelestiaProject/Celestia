@@ -9,8 +9,7 @@
 //
 // C++ wrapper for OpenGL framebuffer objects.
 
-#ifndef _GLFRAMEBUFFER_H_
-#define _GLFRAMEBUFFER_H_
+#pragma once
 
 #include "glsupport.h"
 
@@ -57,5 +56,3 @@ private:
     GLuint m_fboId;
     GLenum m_status;
 };
-
-#endif // _GLFRAMEBUFFER_H_

@@ -10,59 +10,117 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <config.h>
 #include <algorithm>
+#include <array>
+#include <cmath>
+#include <cstddef>
 #include <memory>
+
+#include <celmath/geomutil.h>
+#include <celmath/mathlib.h>
+#include <celmodel/material.h>
+#include <celutil/color.h>
+#include "body.h"
 #include "framebuffer.h"
 #include "geometry.h"
+#include "glsupport.h"
 #include "lodspheremesh.h"
-#include "meshmanager.h"
-#include "modelgeometry.h"
+#include "rendcontext.h"
 #include "render.h"
-#include "renderinfo.h"
 #include "renderglsl.h"
+#include "renderinfo.h"
 #include "shadermanager.h"
-#include "texmanager.h"
+#include "texture.h"
 #include "vecgl.h"
-#include <celengine/astro.h>
-#include <celmath/frustum.h>
-#include <celmath/distance.h>
-#include <celmath/geomutil.h>
-#include <celmath/intersect.h>
-#include <celutil/utf8.h>
-#include <celutil/util.h>
-#include "shadowmap.h"
 
-using namespace cmod;
-using namespace Eigen;
-using namespace std;
-using namespace celmath;
 using namespace celestia;
 
-static
+
+namespace
+{
+
+// Calculate the matrix used to render the model from the
+// perspective of the light.
+Eigen::Matrix4f directionalLightMatrix(const Eigen::Vector3f& lightDirection)
+{
+    const Eigen::Vector3f &viewDir = lightDirection;
+    Eigen::Vector3f upDir = viewDir.unitOrthogonal();
+    Eigen::Vector3f rightDir = upDir.cross(viewDir);
+    Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
+
+    m.row(0).head(3) = rightDir;
+    m.row(1).head(3) = upDir;
+    m.row(2).head(3) = viewDir;
+
+    return m;
+}
+
+
+/*! Render a mesh object
+ *  Parameters:
+ *    tsec : animation clock time in seconds
+ */
 void renderGeometryShadow_GLSL(Geometry* geometry,
                                FramebufferObject* shadowFbo,
                                const LightingState& ls,
                                int lightIndex,
                                double tsec,
                                Renderer* renderer,
-                               Matrix4f *lightMatrix);
+                               Eigen::Matrix4f *lightMatrix)
+{
+    auto *prog = renderer->getShaderManager().getShader("depth");
+    if (prog == nullptr)
+        return;
 
-static
-Matrix4f directionalLightMatrix(const Vector3f& lightDirection);
+    GLint oldFboId;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFboId);
+    shadowFbo->bind();
+    glViewport(0, 0, shadowFbo->width(), shadowFbo->height());
+
+    // Write only to the depth buffer
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    renderer->enableDepthMask();
+    renderer->enableDepthTest();
+    glClear(GL_DEPTH_BUFFER_BIT);
+    // Render backfaces only in order to reduce self-shadowing artifacts
+    glCullFace(GL_FRONT);
+
+    Shadow_RenderContext rc(renderer);
+
+    prog->use();
+
+    // Enable poligon offset to decrease "shadow acne"
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(.001f, .001f);
+
+    Eigen::Matrix4f projMat = celmath::Ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
+    Eigen::Matrix4f modelViewMat = directionalLightMatrix(ls.lights[lightIndex].direction_obj);
+    *lightMatrix = projMat * modelViewMat;
+    prog->setMVPMatrices(projMat, modelViewMat);
+    geometry->render(rc, tsec);
+
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    // Re-enable the color buffer
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glCullFace(GL_BACK);
+    shadowFbo->unbind(oldFboId);
+}
+
+} // end unnamed namespace
+
 
 // Render a planet sphere with GLSL shaders
 void renderEllipsoid_GLSL(const RenderInfo& ri,
-                       const LightingState& ls,
-                       Atmosphere* atmosphere,
-                       float cloudTexOffset,
-                       const Vector3f& semiAxes,
-                       unsigned int textureRes,
-                       uint64_t renderFlags,
-                       const Quaternionf& planetOrientation,
-                       const Frustum& frustum,
-                       const Matrices &m,
-                       Renderer* renderer)
+                          const LightingState& ls,
+                          Atmosphere* atmosphere,
+                          float cloudTexOffset,
+                          const Eigen::Vector3f& semiAxes,
+                          unsigned int textureRes,
+                          std::uint64_t renderFlags,
+                          const Eigen::Quaternionf& planetOrientation,
+                          const celmath::Frustum& frustum,
+                          const Matrices &m,
+                          Renderer* renderer)
 {
     float radius = semiAxes.maxCoeff();
 
@@ -71,7 +129,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     unsigned int nTextures = 0;
 
     ShaderProperties shadprop;
-    shadprop.nLights = min(ls.nLights, MaxShaderLights);
+    shadprop.nLights = std::min(ls.nLights, MaxShaderLights);
 
     // Set up the textures used by this object
     if (ri.baseTex != nullptr)
@@ -189,7 +247,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     {
         if (ls.shadows[li] && !ls.shadows[li]->empty())
         {
-            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderEclipseShadows, ls.shadows[li]->size());
+            unsigned int nShadows = static_cast<unsigned int>(std::min(static_cast<std::size_t>(MaxShaderEclipseShadows),
+                                                                       ls.shadows[li]->size()));
             shadprop.setEclipseShadowCountForLight(li, nShadows);
             totalShadows += nShadows;
         }
@@ -262,7 +321,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         float ringWidth = ls.shadowingRingSystem->outerRadius - ls.shadowingRingSystem->innerRadius;
         prog->ringRadius = ls.shadowingRingSystem->innerRadius / radius;
         prog->ringWidth = radius / ringWidth;
-        prog->ringPlane = Hyperplane<float, 3>(ls.ringPlaneNormal, ls.ringCenter / radius).coeffs();
+        prog->ringPlane = Eigen::Hyperplane<float, 3>(ls.ringPlaneNormal, ls.ringCenter / radius).coeffs();
         prog->ringCenter = ls.ringCenter / radius;
         for (unsigned int lightIndex = 0; lightIndex < ls.nLights; ++lightIndex)
         {
@@ -311,14 +370,14 @@ void renderGeometry_GLSL(Geometry* geometry,
                          const LightingState& ls,
                          const Atmosphere* atmosphere,
                          float geometryScale,
-                         uint64_t renderFlags,
-                         const Quaternionf& planetOrientation,
+                         std::uint64_t renderFlags,
+                         const Eigen::Quaternionf& planetOrientation,
                          double tsec,
                          const Matrices &m,
                          Renderer* renderer)
 {
     auto *shadowBuffer = renderer->getShadowFBO(0);
-    Matrix4f lightMatrix(Matrix4f::Identity());
+    Eigen::Matrix4f lightMatrix(Eigen::Matrix4f::Identity());
 
     if (shadowBuffer != nullptr && shadowBuffer->isValid())
     {
@@ -407,12 +466,12 @@ void renderGeometry_GLSL(Geometry* geometry,
     // override all materials specified in the geometry file.
     if (texOverride != InvalidResource)
     {
-        Material m;
-        m.diffuse = Material::Color(ri.color);
-        m.specular = Material::Color(ri.specularColor);
+        cmod::Material m;
+        m.diffuse = cmod::Color(ri.color);
+        m.specular = cmod::Color(ri.specularColor);
         m.specularPower = ri.specularPower;
 
-        m.maps[Material::DiffuseMap] = texOverride;
+        m.setMap(cmod::TextureSemantic::DiffuseMap, texOverride);
         rc.setMaterial(&m);
         rc.lock();
         geometry->render(rc, tsec);
@@ -432,8 +491,8 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                const RenderInfo& ri,
                                ResourceHandle texOverride,
                                float geometryScale,
-                               uint64_t /* renderFlags */,
-                               const Quaternionf& /* planetOrientation */,
+                               std::uint64_t /* renderFlags */,
+                               const Eigen::Quaternionf& /* planetOrientation */,
                                double tsec,
                                const Matrices &m,
                                Renderer* renderer)
@@ -448,12 +507,12 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
     // override all materials specified in the model file.
     if (texOverride != InvalidResource)
     {
-        Material m;
-        m.diffuse = Material::Color(ri.color);
-        m.specular = Material::Color(ri.specularColor);
+        cmod::Material m;
+        m.diffuse = cmod::Color(ri.color);
+        m.specular = cmod::Color(ri.specularColor);
         m.specularPower = ri.specularPower;
 
-        m.maps[Material::DiffuseMap] = texOverride;
+        m.setMap(cmod::TextureSemantic::DiffuseMap, texOverride);
         rc.setMaterial(&m);
         rc.lock();
         geometry->render(rc, tsec);
@@ -472,11 +531,11 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        Texture* cloudTex,
                        Texture* cloudNormalMap,
                        float texOffset,
-                       const Vector3f& semiAxes,
+                       const Eigen::Vector3f& semiAxes,
                        unsigned int /*textureRes*/,
-                       uint64_t renderFlags,
-                       const Quaternionf& planetOrientation,
-                       const Frustum& frustum,
+                       std::uint64_t renderFlags,
+                       const Eigen::Quaternionf& planetOrientation,
+                       const celmath::Frustum& frustum,
                        const Matrices &m,
                        Renderer* renderer)
 {
@@ -546,7 +605,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
     {
         if (ls.shadows[li] && !ls.shadows[li]->empty())
         {
-            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderEclipseShadows, ls.shadows[li]->size());
+            unsigned int nShadows = static_cast<unsigned int>(std::min(static_cast<std::size_t>(MaxShaderEclipseShadows),
+                                                                       ls.shadows[li]->size()));
             shadprop.setEclipseShadowCountForLight(li, nShadows);
             totalShadows += nShadows;
         }
@@ -604,8 +664,8 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
                       const LightingState& ls,
                       Atmosphere* atmosphere,
                       float radius,
-                      const Quaternionf& /*planetOrientation*/,
-                      const Frustum& frustum,
+                      const Eigen::Quaternionf& /*planetOrientation*/,
+                      const celmath::Frustum& frustum,
                       const Matrices &m,
                       Renderer* renderer)
 {
@@ -629,9 +689,9 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     prog->use();
 
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
-    prog->ambientColor = Vector3f::Zero();
+    prog->ambientColor = Eigen::Vector3f::Zero();
 
-    float atmosphereRadius = radius + -atmosphere->mieScaleHeight * log(AtmosphereExtinctionThreshold);
+    float atmosphereRadius = radius + -atmosphere->mieScaleHeight * std::log(AtmosphereExtinctionThreshold);
     float atmScale = atmosphereRadius / radius;
 
     prog->eyePosition = ls.eyePos_obj / atmScale;
@@ -671,19 +731,19 @@ static void renderRingSystem(GLuint *vboId,
         GLshort tex[2];
     };
 
-    constexpr const float angle = 2*static_cast<float>(PI);
+    constexpr const float angle = 2.0f * static_cast<float>(PI);
 
     if (*vboId == 0)
     {
         struct RingVertex vertex;
-        vector<struct RingVertex> ringCoord;
+        std::vector<struct RingVertex> ringCoord;
         ringCoord.reserve(2 * nSections);
         for (unsigned i = 0; i <= nSections; i++)
         {
-            float t = (float) i / (float) nSections;
+            float t = static_cast<float>(i) / static_cast<float>(nSections);
             float theta = t * angle;
-            float s = (float) sin(theta);
-            float c = (float) cos(theta);
+            float s = std::sin(theta);
+            float c = std::cos(theta);
 
             // inner point
             vertex.pos[0] = c * innerRadius;
@@ -717,7 +777,7 @@ static void renderRingSystem(GLuint *vboId,
     glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
                           2, GL_SHORT, GL_FALSE,
                           sizeof(struct RingVertex),
-                          (GLvoid*) offsetof(struct RingVertex, tex));
+                          reinterpret_cast<GLvoid*>(offsetof(struct RingVertex, tex)));
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
@@ -768,7 +828,7 @@ void renderRings_GLSL(RingSystem& rings,
     // Set up the shader properties for ring rendering
     {
         shadprop.lightModel = ShaderProperties::RingIllumModel;
-        shadprop.nLights = min(ls.nLights, MaxShaderLights);
+        shadprop.nLights = std::min(ls.nLights, MaxShaderLights);
 
         if (renderShadow)
         {
@@ -804,8 +864,8 @@ void renderRings_GLSL(RingSystem& rings,
         // planet would ever orbit underneath its sun (an orbital
         // inclination of 90 degrees), but this should be made
         // more robust anyway.
-        Vector3f axis = Vector3f::UnitY().cross(light.direction_obj);
-        float cosAngle = Vector3f::UnitY().dot(light.direction_obj);
+        Eigen::Vector3f axis = Eigen::Vector3f::UnitY().cross(light.direction_obj);
+        float cosAngle = Eigen::Vector3f::UnitY().dot(light.direction_obj);
         axis.normalize();
 
         float tScale = 1.0f;
@@ -821,20 +881,20 @@ void renderRings_GLSL(RingSystem& rings,
 
             // Calculate the radius of the ellipse at the incident angle of the
             // light on the ring plane + 90 degrees.
-            float r = a * (float) sqrt((1.0f - ecc2) /
-                                       (1.0f - ecc2 * square(cosAngle)));
+            float r = a * std::sqrt((1.0f - ecc2) /
+                                    (1.0f - ecc2 * celmath::square(cosAngle)));
 
             tScale *= a / r;
         }
 
         // The s axis is perpendicular to the shadow axis in the plane of the
         // of the rings, and the t axis completes the orthonormal basis.
-        Vector3f sAxis = axis * 0.5f;
-        Vector3f tAxis = (axis.cross(light.direction_obj)) * 0.5f * tScale;
-        Vector4f texGenS;
+        Eigen::Vector3f sAxis = axis * 0.5f;
+        Eigen::Vector3f tAxis = (axis.cross(light.direction_obj)) * 0.5f * tScale;
+        Eigen::Vector4f texGenS;
         texGenS.head(3) = sAxis;
         texGenS[3] = 0.5f;
-        Vector4f texGenT;
+        Eigen::Vector4f texGenT;
         texGenT.head(3) = tAxis;
         texGenT[3] = 0.5f;
 
@@ -862,11 +922,11 @@ void renderRings_GLSL(RingSystem& rings,
         ringsTex->bind();
 
     if (rings.renderData == nullptr)
-        rings.renderData = shared_ptr<GLRingRenderData>(new GLRingRenderData);
+        rings.renderData = std::make_shared<GLRingRenderData>();
     auto data = reinterpret_cast<GLRingRenderData*>(rings.renderData.get());
 
     unsigned nSections = 180;
-    size_t i = 0;
+    std::size_t i = 0;
     for (i = 0; i < data->vboId.size() - 1; i++)
     {
         float s = segmentSizeInPixels * tan(PI / nSections);
@@ -877,72 +937,4 @@ void renderRings_GLSL(RingSystem& rings,
     renderRingSystem(&data->vboId[i], inner, outer, nSections);
 
     renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
-}
-
-// Calculate the matrix used to render the model from the
-// perspective of the light.
-static
-Matrix4f directionalLightMatrix(const Vector3f& lightDirection)
-{
-    const Vector3f &viewDir = lightDirection;
-    Vector3f upDir = viewDir.unitOrthogonal();
-    Vector3f rightDir = upDir.cross(viewDir);
-    Matrix4f m = Matrix4f::Identity();
-
-    m.row(0).head(3) = rightDir;
-    m.row(1).head(3) = upDir;
-    m.row(2).head(3) = viewDir;
-
-    return m;
-}
-
-/*! Render a mesh object
- *  Parameters:
- *    tsec : animation clock time in seconds
- */
-static
-void renderGeometryShadow_GLSL(Geometry* geometry,
-                              FramebufferObject* shadowFbo,
-                              const LightingState& ls,
-                              int lightIndex,
-                              double tsec,
-                              Renderer* renderer,
-                              Eigen::Matrix4f *lightMatrix)
-{
-    auto *prog = renderer->getShaderManager().getShader("depth");
-    if (prog == nullptr)
-        return;
-
-    GLint oldFboId;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFboId);
-    shadowFbo->bind();
-    glViewport(0, 0, shadowFbo->width(), shadowFbo->height());
-
-    // Write only to the depth buffer
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    renderer->enableDepthMask();
-    renderer->enableDepthTest();
-    glClear(GL_DEPTH_BUFFER_BIT);
-    // Render backfaces only in order to reduce self-shadowing artifacts
-    glCullFace(GL_FRONT);
-
-    Shadow_RenderContext rc(renderer);
-
-    prog->use();
-
-    // Enable poligon offset to decrease "shadow acne"
-    glEnable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(.001f, .001f);
-
-    Matrix4f projMat = Ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
-    Matrix4f modelViewMat = directionalLightMatrix(ls.lights[lightIndex].direction_obj);
-    *lightMatrix = projMat * modelViewMat;
-    prog->setMVPMatrices(projMat, modelViewMat);
-    geometry->render(rc, tsec);
-
-    glDisable(GL_POLYGON_OFFSET_FILL);
-    // Re-enable the color buffer
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glCullFace(GL_BACK);
-    shadowFbo->unbind(oldFboId);
 }

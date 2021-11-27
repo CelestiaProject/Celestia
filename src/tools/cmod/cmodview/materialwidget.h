@@ -7,14 +7,17 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CMODVIEW_MATERIAL_WIDGET_H_
-#define _CMODVIEW_MATERIAL_WIDGET_H_
+#pragma once
 
-#include <celmodel/material.h>
-#include <QWidget>
+#include <QColor>
+#include <QComboBox>
 #include <QLabel>
 #include <QLineEdit>
-#include <QComboBox>
+#include <QObject>
+#include <QString>
+#include <QWidget>
+
+#include <celmodel/material.h>
 
 
 class MaterialWidget : public QWidget
@@ -66,5 +69,3 @@ private:
 
     cmod::Material m_material;
 };
-
-#endif // _CMODVIEW_MATERIAL_WIDGET_H_

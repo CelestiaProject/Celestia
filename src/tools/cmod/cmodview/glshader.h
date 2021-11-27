@@ -9,10 +9,13 @@
 //
 // C++ wrapper for OpenGL shaders and shader programs
 
-#include "glsupport.h"
-#include <Eigen/Core>
+#pragma once
+
 #include <string>
 
+#include <Eigen/Core>
+
+#include "glsupport.h"
 
 class GLVertexShader;
 class GLFragmentShader;

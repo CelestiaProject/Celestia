@@ -8,18 +8,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <map>
+#include <utility>
+
+#include "glsupport.h"
 #include "modelgeometry.h"
 #include "rendcontext.h"
-#include "texmanager.h"
-#include <Eigen/Core>
-#include <functional>
-#include <algorithm>
-#include <cassert>
-
-using namespace cmod;
-using namespace Eigen;
-using namespace std;
-using namespace celmath;
 
 
 // Vertex buffer object support
@@ -51,9 +45,9 @@ public:
 /** Create a new ModelGeometry wrapping the specified model.
   * The ModelGeoemtry takes ownership of the model.
   */
-ModelGeometry::ModelGeometry(unique_ptr<cmod::Model>&& model) :
-    m_model(move(model)),
-    m_glData(unique_ptr<ModelOpenGLData>(new ModelOpenGLData()))
+ModelGeometry::ModelGeometry(std::unique_ptr<cmod::Model>&& model) :
+    m_model(std::move(model)),
+    m_glData(std::make_unique<ModelOpenGLData>())
 {
 }
 
@@ -84,8 +78,8 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
 
         for (unsigned int i = 0; i < m_model->getMeshCount(); ++i)
         {
-            Mesh* mesh = m_model->getMesh(i);
-            const Mesh::VertexDescription& vertexDesc = mesh->getVertexDescription();
+            cmod::Mesh* mesh = m_model->getMesh(i);
+            const cmod::VertexDescription& vertexDesc = mesh->getVertexDescription();
 
             GLuint vboId = 0;
             if (mesh->getVertexCount() * vertexDesc.stride > MinVBOSize)
@@ -105,8 +99,9 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
 
             for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
             {
-                const Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
-                if (group->vertexOverride != nullptr && group->vertexCountOverride * group->vertexDescriptionOverride.stride > MinVBOSize)
+                const cmod::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+                if (group->vertexOverride != nullptr
+                    && group->vertexCountOverride * group->vertexDescriptionOverride.stride > MinVBOSize)
                 {
                     glGenBuffers(1, &vboId);
                     if (vboId != 0)
@@ -129,7 +124,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
     // Iterate over all meshes in the model
     for (unsigned int meshIndex = 0; meshIndex < m_model->getMeshCount(); ++meshIndex)
     {
-        Mesh* mesh = m_model->getMesh(meshIndex);
+        cmod::Mesh* mesh = m_model->getMesh(meshIndex);
 
         const void* currentData = nullptr;
         GLuint currentVboId = 0;
@@ -137,7 +132,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
         // Iterate over all primitive groups in the mesh
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
         {
-            const Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+            const cmod::PrimitiveGroup* group = mesh->getGroup(groupIndex);
             bool useOverrideValue = group->vertexOverride != nullptr && rc.shouldDrawLineAsTriangles();
 
             const void* data = useOverrideValue ? group->vertexOverride : mesh->getVertexData();
@@ -168,7 +163,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
             rc.updateShader(vertexDescription, group->prim);
 
             // Set up the material
-            const Material* material = nullptr;
+            const cmod::Material* material = nullptr;
             unsigned int materialIndex = group->materialIndex;
             if (materialIndex != lastMaterial && materialIndex < materialCount)
             {
@@ -203,7 +198,7 @@ ModelGeometry::isNormalized() const
 
 
 bool
-ModelGeometry::usesTextureType(Material::TextureSemantic t) const
+ModelGeometry::usesTextureType(cmod::TextureSemantic t) const
 {
     return m_model->usesTextureType(t);
 }
