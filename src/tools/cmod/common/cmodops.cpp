@@ -12,6 +12,9 @@
 #include <cmath>
 #include <cstring>
 #include <iostream>
+#include <iterator>
+#include <numeric>
+#include <utility>
 
 #include <celmodel/model.h>
 
@@ -256,79 +259,6 @@ bool equalPoint(const Vertex& a, const Vertex& b)
 }
 
 
-bool operator==(const cmod::VertexAttribute& a,
-                const cmod::VertexAttribute& b)
-{
-    return (a.semantic == b.semantic &&
-            a.format   == b.format &&
-            a.offset   == b.offset);
-}
-
-
-bool operator<(const cmod::VertexAttribute& a,
-               const cmod::VertexAttribute& b)
-{
-    if (a.semantic < b.semantic)
-    {
-        return true;
-    }
-    if (b.semantic < a.semantic)
-    {
-        return false;
-    }
-    else
-    {
-        if (a.format < b.format)
-            return true;
-        if (b.format < a.format)
-            return false;
-        else
-            return a.offset < b.offset;
-    }
-}
-
-
-bool operator==(const cmod::VertexDescription& a,
-                const cmod::VertexDescription& b)
-{
-    if (a.stride != b.stride || a.nAttributes != b.nAttributes)
-        return false;
-
-    for (uint32_t i = 0; i < a.nAttributes; i++)
-    {
-        if (!(a.attributes[i] == b.attributes[i]))
-            return false;
-    }
-
-    return true;
-}
-
-
-bool operator<(const cmod::VertexDescription& a,
-               const cmod::VertexDescription& b)
-{
-    if (a.stride < b.stride)
-        return true;
-    if (b.stride < a.stride)
-        return false;
-
-    if (a.nAttributes < b.nAttributes)
-        return true;
-    if (b.nAttributes < a.nAttributes)
-        return false;
-
-    for (std::uint32_t i = 0; i < a.nAttributes; i++)
-    {
-        if (a.attributes[i] < b.attributes[i])
-            return true;
-        else if (b.attributes[i] < a.attributes[i])
-            return false;
-    }
-
-    return false;
-}
-
-
 struct MeshVertexDescComparator
 {
     bool operator()(const cmod::Mesh* a, const cmod::Mesh* b) const
@@ -336,6 +266,7 @@ struct MeshVertexDescComparator
         return a->getVertexDescription() < b->getVertexDescription();
     }
 };
+
 
 Eigen::Vector3f
 getVertex(const void* vertexData,
@@ -400,7 +331,7 @@ copyVertex(void* newVertexData,
         oldDesc.stride * oldIndex;
     auto* newVertex = reinterpret_cast<char*>(newVertexData);
 
-    for (std::uint32_t i = 0; i < newDesc.nAttributes; i++)
+    for (std::size_t i = 0; i < newDesc.attributes.size(); i++)
     {
         if (fromOffsets[i] != ~0u)
         {
@@ -417,42 +348,34 @@ augmentVertexDescription(cmod::VertexDescription& desc,
                          cmod::VertexAttributeSemantic semantic,
                          cmod::VertexAttributeFormat format)
 {
-    cmod::VertexAttribute* attributes = new cmod::VertexAttribute[desc.nAttributes + 1];
     std::uint32_t stride = 0;
-    std::uint32_t nAttributes = 0;
     bool foundMatch = false;
 
-    for (std::uint32_t i = 0; i < desc.nAttributes; i++)
+    auto it = desc.attributes.begin();
+    auto end = desc.attributes.end();
+    for (auto i = desc.attributes.begin(); i != end; ++i)
     {
-        if (semantic == desc.attributes[i].semantic &&
-            format != desc.attributes[i].format)
+        if (semantic == i->semantic && format != i->format)
         {
             // The semantic matches, but the format does not; skip this
             // item.
+            continue;
         }
-        else
-        {
-            if (semantic == desc.attributes[i].semantic)
-                foundMatch = true;
 
-            attributes[nAttributes] = desc.attributes[i];
-            attributes[nAttributes].offset = stride;
-            stride += cmod::VertexAttribute::getFormatSize(desc.attributes[i].format);
-            nAttributes++;
-        }
+        foundMatch |= (semantic == i->semantic);
+        i->offset = stride;
+        stride += cmod::VertexAttribute::getFormatSize(i->format);
+        *it++ = std::move(*i);
     }
+
+    desc.attributes.erase(it, end);
 
     if (!foundMatch)
     {
-        attributes[nAttributes++] = cmod::VertexAttribute(semantic,
-                                                          format,
-                                                          stride);
+        desc.attributes.emplace_back(semantic, format, stride);
         stride += cmod::VertexAttribute::getFormatSize(format);
     }
 
-    delete[] desc.attributes;
-    desc.attributes = attributes;
-    desc.nAttributes = nAttributes;
     desc.stride = stride;
 }
 
@@ -462,15 +385,16 @@ addGroupWithOffset(cmod::Mesh& mesh,
                    const cmod::PrimitiveGroup& group,
                    std::uint32_t offset)
 {
-    if (group.nIndices == 0)
+    if (group.indices.empty())
         return;
 
-    std::uint32_t* newIndices = new std::uint32_t[group.nIndices];
-    for (std::uint32_t i = 0; i < group.nIndices; i++)
-        newIndices[i] = group.indices[i] + offset;
+    std::vector<cmod::index32> newIndices;
+    newIndices.reserve(group.indices.size());
+    std::transform(group.indices.cbegin(), group.indices.cend(),
+                   std::back_inserter(newIndices),
+                   [=](cmod::index32 idx) { return idx + offset; });
 
-    mesh.addGroup(group.prim, group.materialIndex,
-                  group.nIndices, newIndices);
+    mesh.addGroup(group.prim, group.materialIndex, std::move(newIndices));
 }
 
 
@@ -534,22 +458,22 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
         switch (group->prim)
         {
         case cmod::PrimitiveGroupType::TriList:
-            if (group->nIndices < 3 || group->nIndices % 3 != 0)
+            if (group->indices.size() < 3 || group->indices.size() % 3 != 0)
             {
                 std::cerr << "Triangle list has invalid number of indices\n";
                 return nullptr;
             }
-            nFaces += group->nIndices / 3;
+            nFaces += group->indices.size() / 3;
             break;
 
         case cmod::PrimitiveGroupType::TriStrip:
         case cmod::PrimitiveGroupType::TriFan:
-            if (group->nIndices < 3)
+            if (group->indices.size() < 3)
             {
                 std::cerr << "Error: tri strip or fan has less than three indices\n";
                 return nullptr;
             }
-            nFaces += group->nIndices - 2;
+            nFaces += group->indices.size() - 2;
             break;
 
         default:
@@ -571,7 +495,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
         {
         case cmod::PrimitiveGroupType::TriList:
             {
-                for (std::uint32_t j = 0; j < group->nIndices / 3; j++)
+                for (std::uint32_t j = 0; j < group->indices.size() / 3; j++)
                 {
                     assert(f < nFaces);
                     faces[f].i[0] = group->indices[j * 3];
@@ -584,7 +508,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
 
         case cmod::PrimitiveGroupType::TriStrip:
             {
-                for (std::uint32_t j = 2; j < group->nIndices; j++)
+                for (std::uint32_t j = 2; j < group->indices.size(); j++)
                 {
                     assert(f < nFaces);
                     if (j % 2 == 0)
@@ -606,7 +530,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
 
         case cmod::PrimitiveGroupType::TriFan:
             {
-                for (std::uint32_t j = 2; j < group->nIndices; j++)
+                for (std::uint32_t j = 2; j < group->indices.size(); j++)
                 {
                     assert(f < nFaces);
                     faces[f].i[0] = group->indices[0];
@@ -716,7 +640,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     // Finally, create a new mesh with normals included
 
     // Create the new vertex description
-    cmod::VertexDescription newDesc(desc);
+    cmod::VertexDescription newDesc = desc.clone();
     augmentVertexDescription(newDesc, cmod::VertexAttributeSemantic::Normal, cmod::VertexAttributeFormat::Float3);
 
     // We need to convert the copy the old vertex attributes to the new
@@ -725,7 +649,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     // this mapping.
     std::uint32_t normalOffset = 0;
     std::uint32_t fromOffsets[16];
-    for (i = 0; i < newDesc.nAttributes; i++)
+    for (i = 0; i < newDesc.attributes.size(); i++)
     {
         fromOffsets[i] = ~0;
 
@@ -735,12 +659,12 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
         }
         else
         {
-            for (std::uint32_t j = 0; j < desc.nAttributes; j++)
+            for (const auto& oldAttr : desc.attributes)
             {
-                if (desc.attributes[j].semantic == newDesc.attributes[i].semantic)
+                if (oldAttr.semantic == newDesc.attributes[i].semantic)
                 {
-                    assert(desc.attributes[j].format == newDesc.attributes[i].format);
-                    fromOffsets[i] = desc.attributes[j].offset;
+                    assert(oldAttr.format == newDesc.attributes[i].format);
+                    fromOffsets[i] = oldAttr.offset;
                     break;
                 }
             }
@@ -769,15 +693,8 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
 
     // Create the Celestia mesh
     cmod::Mesh* newMesh = new cmod::Mesh();
-    newMesh->setVertexDescription(newDesc);
+    newMesh->setVertexDescription(std::move(newDesc));
     newMesh->setVertices(nFaces * 3, newVertexData);
-
-    // Create a trivial index list
-    std::uint32_t* indices = new std::uint32_t[nFaces * 3];
-    for (i = 0; i < nFaces * 3; i++)
-    {
-        indices[i] = i;
-    }
 
     std::uint32_t firstIndex = 0;
     for (std::uint32_t groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
@@ -788,21 +705,24 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
         switch (group->prim)
         {
         case cmod::PrimitiveGroupType::TriList:
-            faceCount = group->nIndices / 3;
+            faceCount = group->indices.size() / 3;
             break;
         case cmod::PrimitiveGroupType::TriStrip:
         case cmod::PrimitiveGroupType::TriFan:
-            faceCount = group->nIndices - 2;
+            faceCount = group->indices.size() - 2;
             break;
         default:
             assert(0);
             break;
         }
 
+        // Create a trivial index list
+        std::vector<cmod::index32> indices(faceCount * 3);
+        std::iota(indices.begin(), indices.end(), firstIndex);
+
         newMesh->addGroup(cmod::PrimitiveGroupType::TriList,
                           mesh.getGroup(groupIndex)->materialIndex,
-                          faceCount * 3,
-                          indices + firstIndex);
+                          std::move(indices));
         firstIndex += faceCount * 3;
     }
 
@@ -860,8 +780,8 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
         const cmod::PrimitiveGroup* group = mesh.getGroup(i);
         if (group->prim == cmod::PrimitiveGroupType::TriList)
         {
-            assert(group->nIndices % 3 == 0);
-            nFaces += group->nIndices / 3;
+            assert(group->indices.size() % 3 == 0);
+            nFaces += group->indices.size() / 3;
         }
         else
         {
@@ -883,7 +803,7 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
         {
         case cmod::PrimitiveGroupType::TriList:
             {
-                for (uint32_t j = 0; j < group->nIndices / 3; j++)
+                for (uint32_t j = 0; j < group->indices.size() / 3; j++)
                 {
                     assert(f < nFaces);
                     faces[f].i[0] = group->indices[j * 3];
@@ -999,7 +919,7 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
     }
 
     // Create the new vertex description
-    cmod::VertexDescription newDesc(desc);
+    cmod::VertexDescription newDesc = desc.clone();
     augmentVertexDescription(newDesc, cmod::VertexAttributeSemantic::Tangent, cmod::VertexAttributeFormat::Float3);
 
     // We need to convert the copy the old vertex attributes to the new
@@ -1008,7 +928,7 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
     // this mapping.
     std::uint32_t tangentOffset = 0;
     std::uint32_t fromOffsets[16];
-    for (i = 0; i < newDesc.nAttributes; i++)
+    for (i = 0; i < newDesc.attributes.size(); i++)
     {
         fromOffsets[i] = ~0;
 
@@ -1018,12 +938,12 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
         }
         else
         {
-            for (std::uint32_t j = 0; j < desc.nAttributes; j++)
+            for (const auto& oldAttr : desc.attributes)
             {
-                if (desc.attributes[j].semantic == newDesc.attributes[i].semantic)
+                if (oldAttr.semantic == newDesc.attributes[i].semantic)
                 {
-                    assert(desc.attributes[j].format == newDesc.attributes[i].format);
-                    fromOffsets[i] = desc.attributes[j].offset;
+                    assert(oldAttr.format == newDesc.attributes[i].format);
+                    fromOffsets[i] = oldAttr.offset;
                     break;
                 }
             }
@@ -1052,13 +972,8 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
 
     // Create the Celestia mesh
     cmod::Mesh* newMesh = new cmod::Mesh();
-    newMesh->setVertexDescription(newDesc);
+    newMesh->setVertexDescription(std::move(newDesc));
     newMesh->setVertices(nFaces * 3, newVertexData);
-
-    // Create a trivial index list
-    std::uint32_t* indices = new std::uint32_t[nFaces * 3];
-    for (i = 0; i < nFaces * 3; i++)
-        indices[i] = i;
 
     std::uint32_t firstIndex = 0;
     for (std::uint32_t groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
@@ -1069,21 +984,24 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
         switch (group->prim)
         {
         case cmod::PrimitiveGroupType::TriList:
-            faceCount = group->nIndices / 3;
+            faceCount = group->indices.size() / 3;
             break;
         case cmod::PrimitiveGroupType::TriStrip:
         case cmod::PrimitiveGroupType::TriFan:
-            faceCount = group->nIndices - 2;
+            faceCount = group->indices.size() - 2;
             break;
         default:
             assert(0);
             break;
         }
 
+        // Create a trivial index list
+        std::vector<cmod::index32> indices(faceCount * 3);
+        std::iota(indices.begin(), indices.end(), firstIndex);
+
         newMesh->addGroup(cmod::PrimitiveGroupType::TriList,
                           mesh.getGroup(groupIndex)->materialIndex,
-                          faceCount * 3,
-                          indices + firstIndex);
+                          std::move(indices));
         firstIndex += faceCount * 3;
     }
 
@@ -1189,8 +1107,7 @@ MergeModelMeshes(const cmod::Model& model)
     std::uint32_t meshIndex = 0;
     while (meshIndex < meshes.size())
     {
-        const cmod::VertexDescription& desc =
-            meshes[meshIndex]->getVertexDescription();
+        const cmod::VertexDescription& desc = meshes[meshIndex]->getVertexDescription();
 
         // Count the number of matching meshes
         std::uint32_t nMatchingMeshes;
@@ -1216,7 +1133,7 @@ MergeModelMeshes(const cmod::Model& model)
 
         // Create the new empty mesh
         cmod::Mesh* mergedMesh = new cmod::Mesh();
-        mergedMesh->setVertexDescription(desc);
+        mergedMesh->setVertexDescription(desc.clone());
         mergedMesh->setVertices(totalVertices, vertexData);
 
         // Copy the vertex data and reindex and add primitive groups

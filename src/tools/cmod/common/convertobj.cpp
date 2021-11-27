@@ -12,6 +12,7 @@
 
 #include <cstdio>
 #include <sstream>
+#include <utility>
 
 #include <celmodel/material.h>
 #include <celmodel/mesh.h>
@@ -42,6 +43,7 @@ std::string::size_type getToken(const std::string& s, std::string::size_type sta
     return pos;
 }
 
+
 // Convert a 1-based array index to a zero based index. Negative
 // indices are relative to the top of the end of the array. Return
 // -1 if the index is invalid.
@@ -67,16 +69,12 @@ int convertIndex(int index, unsigned int maxValue)
 } // end unnamed namespace
 
 
-
 WavefrontLoader::WavefrontLoader(std::istream& in) :
     m_in(in),
     m_lineNumber(0),
     m_model(nullptr)
 {
 }
-
-
-
 
 
 cmod::Model*
@@ -90,7 +88,7 @@ WavefrontLoader::load()
 
     m_model = new cmod::Model();
 
-    while (getline(m_in, line))
+    while (std::getline(m_in, line))
     {
         m_lineNumber++;
 
@@ -331,41 +329,38 @@ WavefrontLoader::addVertexData(const Eigen::Vector3f& v)
 void
 WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int vertexCount)
 {
-    cmod::VertexAttribute attributes[8];
-    unsigned int nAttributes = 0;
+    std::vector<cmod::VertexAttribute> attributes;
+    attributes.reserve(3);
     unsigned int offset = 0;
 
     // Position attribute is always present
-    attributes[nAttributes] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Position,
-                                                    cmod::VertexAttributeFormat::Float3,
-                                                    0);
-    nAttributes++;
+    attributes.emplace_back(cmod::VertexAttributeSemantic::Position,
+                            cmod::VertexAttributeFormat::Float3,
+                            0);
     offset += 12;
 
     if (vertexType == ObjVertex::PointNormal || vertexType == ObjVertex::PointTexNormal)
     {
-        attributes[nAttributes] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Normal,
-                                                        cmod::VertexAttributeFormat::Float3,
-                                                        offset);
-        nAttributes++;
+        attributes.emplace_back(cmod::VertexAttributeSemantic::Normal,
+                                cmod::VertexAttributeFormat::Float3,
+                                offset);
         offset += 12;
     }
 
     if (vertexType == ObjVertex::PointTex || vertexType == ObjVertex::PointTexNormal)
     {
-        attributes[nAttributes] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Texture0,
-                                                        cmod::VertexAttributeFormat::Float2,
-                                                        offset);
-        nAttributes++;
+        attributes.emplace_back(cmod::VertexAttributeSemantic::Texture0,
+                                cmod::VertexAttributeFormat::Float2,
+                                offset);
         offset += 8;
     }
 
     auto* vertexDataCopy = new float[m_vertexData.size()];
-    copy(m_vertexData.begin(), m_vertexData.end(), vertexDataCopy);
+    std::copy(m_vertexData.begin(), m_vertexData.end(), vertexDataCopy);
 
     // Create the Celestia mesh
     cmod::Mesh* mesh = new cmod::Mesh();
-    mesh->setVertexDescription(cmod::VertexDescription(offset, nAttributes, attributes));
+    mesh->setVertexDescription(cmod::VertexDescription(offset, std::move(attributes)));
     mesh->setVertices(vertexCount, vertexDataCopy);
 
     // Add primitive groups
@@ -384,9 +379,10 @@ WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int verte
 
         if (indexCount > 0)
         {
-            cmod::index32* indexDataCopy = new cmod::index32[indexCount];
-            copy(m_indexData.begin() + firstIndex, m_indexData.begin() + firstIndex + indexCount, indexDataCopy);
-            mesh->addGroup(cmod::PrimitiveGroupType::TriList, m_materialGroups[i].materialIndex, indexCount, indexDataCopy);
+            auto copyStart = m_indexData.begin() + firstIndex;
+            mesh->addGroup(cmod::PrimitiveGroupType::TriList,
+                           m_materialGroups[i].materialIndex,
+                           std::vector<cmod::index32>(copyStart, copyStart + indexCount));
         }
     }
 

@@ -11,6 +11,8 @@
 
 #include <cmath>
 #include <cstdint>
+#include <utility>
+#include <vector>
 
 #include <Eigen/Core>
 
@@ -61,7 +63,7 @@ void
 Convert3DSMesh(cmod::Model& model,
                const M3DTriangleMesh& mesh3ds,
                const M3DScene& scene,
-               const std::string& meshName)
+               std::string&& meshName)
 {
     int nVertices = mesh3ds.getVertexCount();
     int nTexCoords = mesh3ds.getTexCoordCount();
@@ -91,50 +93,49 @@ Convert3DSMesh(cmod::Model& model,
         }
     }
 
-    cmod::VertexAttribute attributes[8];
-    std::uint32_t nAttributes = 0;
+    std::vector<cmod::VertexAttribute> attributes;
+    attributes.reserve(2);
     std::uint32_t offset = 0;
 
     // Position attribute is always present
-    attributes[nAttributes] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Position,
-                                                    cmod::VertexAttributeFormat::Float3,
-                                                    0);
-    nAttributes++;
+    attributes.emplace_back(cmod::VertexAttributeSemantic::Position,
+                            cmod::VertexAttributeFormat::Float3,
+                            0);
     offset += 12;
 
     if (hasTexCoords)
     {
-        attributes[nAttributes] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Texture0,
-                                                        cmod::VertexAttributeFormat::Float2,
-                                                        offset);
-        nAttributes++;
+        attributes.emplace_back(cmod::VertexAttributeSemantic::Texture0,
+                                cmod::VertexAttributeFormat::Float2,
+                                offset);
         offset += 8;
     }
 
     // Create the Celestia mesh
     cmod::Mesh* mesh = new cmod::Mesh();
-    mesh->setVertexDescription(cmod::VertexDescription(offset, nAttributes, attributes));
+    mesh->setVertexDescription(cmod::VertexDescription(offset, std::move(attributes)));
     mesh->setVertices(nVertices, vertices);
 
-    mesh->setName(meshName);
+    mesh->setName(std::move(meshName));
 
     if (mesh3ds.getMeshMaterialGroupCount() == 0)
     {
         // No material groups in the 3DS file. This is allowed. We'll create a single
         // primitive group with the default material.
         unsigned int faceCount = mesh3ds.getFaceCount();
-        auto* indices = new std::uint32_t[faceCount * 3];
+        std::vector<cmod::index32> indices;
+        indices.reserve(faceCount * 3);
 
         for (unsigned int i = 0; i < faceCount; i++)
         {
             std::uint16_t v0 = 0, v1 = 0, v2 = 0;
             mesh3ds.getFace(i, v0, v1, v2);
-            indices[i * 3 + 0] = v0;
-            indices[i * 3 + 1] = v1;
-            indices[i * 3 + 2] = v2;
+            indices.push_back(v0);
+            indices.push_back(v1);
+            indices.push_back(v2);
         }
 
-        mesh->addGroup(cmod::PrimitiveGroupType::TriList, ~0, faceCount * 3, indices);
+        mesh->addGroup(cmod::PrimitiveGroupType::TriList, ~0, std::move(indices));
     }
     else
     {
@@ -145,16 +146,17 @@ Convert3DSMesh(cmod::Model& model,
             const M3DMeshMaterialGroup* matGroup = mesh3ds.getMeshMaterialGroup(groupIndex);
 
             std::uint32_t nMatGroupFaces = matGroup->faces.size();
-            auto* indices = new std::uint32_t[nMatGroupFaces * 3];
+            std::vector<cmod::index32> indices;
+            indices.reserve(nMatGroupFaces * 3);
 
             for (unsigned int i = 0; i < nMatGroupFaces; i++)
             {
                 std::uint16_t v0 = 0, v1 = 0, v2 = 0;
                 std::uint16_t faceIndex = matGroup->faces[i];
                 mesh3ds.getFace(faceIndex, v0, v1, v2);
-                indices[i * 3 + 0] = v0;
-                indices[i * 3 + 1] = v1;
-                indices[i * 3 + 2] = v2;
+                indices.push_back(v0);
+                indices.push_back(v1);
+                indices.push_back(v2);
             }
 
             // Get the material index
@@ -172,7 +174,7 @@ Convert3DSMesh(cmod::Model& model,
                 }
             }
 
-            mesh->addGroup(cmod::PrimitiveGroupType::TriList, materialIndex, nMatGroupFaces * 3, indices);
+            mesh->addGroup(cmod::PrimitiveGroupType::TriList, materialIndex, std::move(indices));
         }
     }
 

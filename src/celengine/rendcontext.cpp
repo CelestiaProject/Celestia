@@ -324,9 +324,9 @@ RenderContext::drawGroup(const cmod::PrimitiveGroup& group, bool useOverride)
     }
 
     glDrawElements(GLPrimitiveModes[(int)(useOverride ? group.primOverride : group.prim)],
-                   useOverride ? group.nIndicesOverride :  group.nIndices,
+                   useOverride ? group.indicesOverride.size() :  group.indices.size(),
                    GL_UNSIGNED_INT,
-                   useOverride ? group.indicesOverride : group.indices);
+                   useOverride ? group.indicesOverride.data() : group.indices.data());
 #ifndef GL_ES
     if (drawPoints)
     {

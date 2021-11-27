@@ -16,6 +16,8 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <utility>
+#include <vector>
 
 #include <fmt/ostream.h>
 #include <fmt/printf.h>
@@ -162,30 +164,27 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
 
     // Create the attribute set. Always include positions and normals, texture coords
     // are optional.
-    cmod::VertexAttribute attributes[8];
-    std::uint32_t nAttributes = 0;
+    std::vector<cmod::VertexAttribute> attributes;
+    attributes.reserve(3);
     std::uint32_t offset = 0;
 
     // Position attribute are required
-    attributes[nAttributes] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Position,
-                                                    cmod::VertexAttributeFormat::Float3,
-                                                    0);
-    nAttributes++;
+    attributes.emplace_back(cmod::VertexAttributeSemantic::Position,
+                            cmod::VertexAttributeFormat::Float3,
+                            0);
     offset += 12;
 
     // Normals are always generated
-    attributes[nAttributes] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Normal,
-                                                    cmod::VertexAttributeFormat::Float3,
-                                                    offset);
-    nAttributes++;
+    attributes.emplace_back(cmod::VertexAttributeSemantic::Normal,
+                            cmod::VertexAttributeFormat::Float3,
+                            offset);
     offset += 12;
 
     if (hasTextureCoords)
     {
-        attributes[nAttributes] = cmod::VertexAttribute(cmod::VertexAttributeSemantic::Texture0,
-                                                        cmod::VertexAttributeFormat::Float2,
-                                                        offset);
-        nAttributes++;
+        attributes.emplace_back(cmod::VertexAttributeSemantic::Texture0,
+                                cmod::VertexAttributeFormat::Float2,
+                                offset);
         offset += 8;
     }
 
@@ -320,7 +319,7 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
 
     // Create the mesh
     cmod::Mesh* newMesh = new cmod::Mesh();
-    newMesh->setVertexDescription(cmod::VertexDescription(vertexSize, nAttributes, attributes));
+    newMesh->setVertexDescription(cmod::VertexDescription(vertexSize, std::move(attributes)));
     newMesh->setVertices(nFaces * 3, vertexData);
 
     for (uint32_t i = 0; i < mesh.getMeshMaterialGroupCount(); ++i)
@@ -331,13 +330,14 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
         // trivial (although much space is wasted storing unnecessary indices.)
         std::uint32_t nMatGroupFaces = matGroup->faces.size();
 
-        auto indices = new std::uint32_t[nMatGroupFaces * 3];
+        std::vector<cmod::index32> indices;
+        indices.reserve(nMatGroupFaces * 3);
         for (std::uint32_t j = 0; j < nMatGroupFaces; ++j)
         {
             std::uint16_t faceIndex = matGroup->faces[j];
-            indices[j * 3 + 0] = faceIndex * 3 + 0;
-            indices[j * 3 + 1] = faceIndex * 3 + 1;
-            indices[j * 3 + 2] = faceIndex * 3 + 2;
+            indices.push_back(faceIndex * 3 + 0);
+            indices.push_back(faceIndex * 3 + 1);
+            indices.push_back(faceIndex * 3 + 2);
         }
 
         // Lookup the material index
@@ -351,7 +351,7 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
             }
         }
 
-        newMesh->addGroup(cmod::PrimitiveGroupType::TriList, materialIndex, nMatGroupFaces * 3, indices);
+        newMesh->addGroup(cmod::PrimitiveGroupType::TriList, materialIndex, std::move(indices));
     }
 
     // clean up
