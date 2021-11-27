@@ -34,21 +34,28 @@ int formatComponents(PixelFormat fmt)
     {
     case PixelFormat::RGBA:
     case PixelFormat::BGRA:
+    case PixelFormat::SRGBA:
         return 4;
     case PixelFormat::RGB:
     case PixelFormat::BGR:
+    case PixelFormat::SRGB:
         return 3;
     case PixelFormat::LUM_ALPHA:
+    case PixelFormat::SLUM_ALPHA:
         return 2;
     case PixelFormat::ALPHA:
     case PixelFormat::LUMINANCE:
+    case PixelFormat::SLUMINANCE:
         return 1;
 
     // Compressed formats
     case PixelFormat::DXT1:
+    case PixelFormat::DXT1_SRGBA:
         return 3;
     case PixelFormat::DXT3:
+    case PixelFormat::DXT3_SRGBA:
     case PixelFormat::DXT5:
+    case PixelFormat::DXT5_SRGBA:
         return 4;
 
     // Unknown format
@@ -65,13 +72,17 @@ int calcMipLevelSize(PixelFormat fmt, int w, int h, int mip)
     switch (fmt)
     {
     case PixelFormat::DXT1:
+    case PixelFormat::DXT1_SRGBA:
         // 4x4 blocks, 8 bytes per block
         return ((w + 3) / 4) * ((h + 3) / 4) * 8;
     case PixelFormat::DXT3:
+    case PixelFormat::DXT3_SRGBA:
     case PixelFormat::DXT5:
+    case PixelFormat::DXT5_SRGBA:
         // 4x4 blocks, 16 bytes per block
         return ((w + 3) / 4) * ((h + 3) / 4) * 16;
     default:
+        assert(formatComponents(fmt) != 0);
         return h * pad(w * formatComponents(fmt));
     }
 }
@@ -202,6 +213,9 @@ bool Image::isCompressed() const
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
+    case PixelFormat::DXT1_SRGBA:
+    case PixelFormat::DXT3_SRGBA:
+    case PixelFormat::DXT5_SRGBA:
         return true;
     default:
         return false;
@@ -213,10 +227,13 @@ bool Image::hasAlpha() const
     switch (format)
     {
     case PixelFormat::DXT3:
+    case PixelFormat::DXT3_SRGBA:
     case PixelFormat::DXT5:
+    case PixelFormat::DXT5_SRGBA:
     case PixelFormat::RGBA:
     case PixelFormat::BGRA:
     case PixelFormat::LUM_ALPHA:
+    case PixelFormat::SLUM_ALPHA:
     case PixelFormat::ALPHA:
         return true;
     default:
