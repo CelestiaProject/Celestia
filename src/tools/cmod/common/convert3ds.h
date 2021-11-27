@@ -9,12 +9,14 @@
 //
 // Functions for converting a 3DS scene into a Celestia model (cmod)
 
-#ifndef _CONVERT3DS_H_
-#define _CONVERT3DS_H_
+#pragma once
 
+#include <string>
+
+#include <cel3ds/3dsmodel.h>
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>
-#include <cel3ds/3dsmodel.h>
+
 
 extern void Convert3DSMesh(cmod::Model& model,
                            M3DTriangleMesh& mesh3ds,
@@ -22,5 +24,3 @@ extern void Convert3DSMesh(cmod::Model& model,
                            const std::string& meshName);
 extern cmod::Model* Convert3DSModel(const M3DScene& scene,
                                     cmod::HandleGetter handleGetter);
-
-#endif // _CONVERT3DS_H_

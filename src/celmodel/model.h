@@ -11,6 +11,7 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
 #include <vector>
 
 #include <Eigen/Core>
@@ -99,15 +100,15 @@ class Model
      *  all within a mesh. This information is used to decide
      *  if multiple rendering passes are required.
      */
-    virtual bool usesTextureType(Material::TextureSemantic) const;
+    bool usesTextureType(TextureSemantic) const;
 
     /** Return true if the model has no translucent components. */
-    virtual bool isOpaque() const
+    bool isOpaque() const
     {
         return opaque;
     }
 
-    virtual bool isNormalized() const
+    bool isNormalized() const
     {
         return normalized;
     }
@@ -118,7 +119,7 @@ class Model
 
     class MeshComparator
     {
-     public:
+    public:
         virtual ~MeshComparator() = default;
 
         virtual bool operator()(const Mesh&, const Mesh&) const = 0;
@@ -145,7 +146,7 @@ class Model
      */
     class OpacityComparator : public MeshComparator
     {
-     public:
+    public:
         OpacityComparator() = default;
         virtual ~OpacityComparator() = default;
 
@@ -156,7 +157,7 @@ class Model
     std::vector<const Material*> materials;
     std::vector<Mesh*> meshes;
 
-    std::array<bool, Material::TextureSemanticMax> textureUsage;
+    std::array<bool, static_cast<std::size_t>(TextureSemantic::TextureSemanticMax)> textureUsage;
     bool opaque{ true };
     bool normalized{ false };
 };

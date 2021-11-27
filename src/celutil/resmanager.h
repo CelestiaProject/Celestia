@@ -47,7 +47,7 @@ template<class T> class ResourceManager
  public:
     ResourceManager();
     ResourceManager(const fs::path& _baseDir) : baseDir(_baseDir) {};
-    ~ResourceManager();
+    ~ResourceManager() = default;
 
     typedef typename T::ResourceType ResourceType;
 

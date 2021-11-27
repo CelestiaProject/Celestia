@@ -8,22 +8,24 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <vector>
-#include <celmath/geomutil.h>
+#include <algorithm>
+#include <cstddef>
+
+#include <celutil/color.h>
 #include "body.h"
-#include "modelgeometry.h"
+#include "lightenv.h"
 #include "rendcontext.h"
 #include "render.h"
-#include "shadowmap.h"
 #include "texmanager.h"
+#include "texture.h"
 
-using namespace cmod;
-using namespace Eigen;
-using namespace std;
 
-static Material defaultMaterial;
+namespace
+{
 
-static GLenum GLPrimitiveModes[Mesh::PrimitiveTypeMax] =
+const cmod::Material defaultMaterial;
+
+constexpr GLenum GLPrimitiveModes[static_cast<std::size_t>(cmod::PrimitiveGroupType::PrimitiveTypeMax)] =
 {
     GL_TRIANGLES,
     GL_TRIANGLE_STRIP,
@@ -34,7 +36,7 @@ static GLenum GLPrimitiveModes[Mesh::PrimitiveTypeMax] =
     GL_POINTS,
 };
 
-static GLenum GLComponentTypes[Mesh::FormatMax] =
+constexpr GLenum GLComponentTypes[static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax)] =
 {
      GL_FLOAT,          // Float1
      GL_FLOAT,          // Float2
@@ -43,7 +45,7 @@ static GLenum GLComponentTypes[Mesh::FormatMax] =
      GL_UNSIGNED_BYTE,  // UByte4
 };
 
-static int GLComponentCounts[Mesh::FormatMax] =
+constexpr int GLComponentCounts[static_cast<std::size_t>(cmod::VertexAttributeFormat::FormatMax)] =
 {
      1,  // Float1
      2,  // Float2
@@ -53,13 +55,160 @@ static int GLComponentCounts[Mesh::FormatMax] =
 };
 
 
+void
+setStandardVertexArrays(const cmod::VertexDescription& desc,
+                        const void* vertexData)
+{
+    const cmod::VertexAttribute& position  = desc.getAttribute(cmod::VertexAttributeSemantic::Position);
+    const cmod::VertexAttribute& normal    = desc.getAttribute(cmod::VertexAttributeSemantic::Normal);
+    const cmod::VertexAttribute& color0    = desc.getAttribute(cmod::VertexAttributeSemantic::Color0);
+    const cmod::VertexAttribute& texCoord0 = desc.getAttribute(cmod::VertexAttributeSemantic::Texture0);
 
-static void
-setStandardVertexArrays(const Mesh::VertexDescription& desc,
-                        const void* vertexData);
-static void
-setExtendedVertexArrays(const Mesh::VertexDescription& desc,
-                        const void* vertexData);
+    // Can't render anything unless we have positions
+    if (position.format != cmod::VertexAttributeFormat::Float3)
+        return;
+
+    // Set up the vertex arrays
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE, desc.stride,
+                          reinterpret_cast<const char*>(vertexData) + position.offset);
+
+    // Set up the normal array
+    switch (normal.format)
+    {
+    case cmod::VertexAttributeFormat::Float3:
+        glEnableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::NormalAttributeIndex,
+                              3, GLComponentTypes[static_cast<std::size_t>(normal.format)],
+                              GL_FALSE, desc.stride,
+                              reinterpret_cast<const char*>(vertexData) + normal.offset);
+        break;
+    default:
+        glDisableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
+        break;
+    }
+
+    GLint normalized = GL_TRUE;
+    // Set up the color array
+    switch (color0.format)
+    {
+    case cmod::VertexAttributeFormat::Float3:
+    case cmod::VertexAttributeFormat::Float4:
+        normalized = GL_FALSE;
+    case cmod::VertexAttributeFormat::UByte4:
+        glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
+                              GLComponentCounts[static_cast<std::size_t>(color0.format)],
+                              GLComponentTypes[static_cast<std::size_t>(color0.format)],
+                              normalized, desc.stride,
+                              reinterpret_cast<const char*>(vertexData) + color0.offset);
+        break;
+    default:
+        glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+        break;
+    }
+
+    // Set up the texture coordinate array
+    switch (texCoord0.format)
+    {
+    case cmod::VertexAttributeFormat::Float1:
+    case cmod::VertexAttributeFormat::Float2:
+    case cmod::VertexAttributeFormat::Float3:
+    case cmod::VertexAttributeFormat::Float4:
+        glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                              GLComponentCounts[static_cast<std::size_t>(texCoord0.format)],
+                              GLComponentTypes[static_cast<std::size_t>(texCoord0.format)],
+                              GL_FALSE,
+                              desc.stride,
+                              reinterpret_cast<const char*>(vertexData) + texCoord0.offset);
+        break;
+    default:
+        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+        break;
+    }
+}
+
+
+void
+setExtendedVertexArrays(const cmod::VertexDescription& desc,
+                        const void* vertexData)
+{
+    const cmod::VertexAttribute& tangent  = desc.getAttribute(cmod::VertexAttributeSemantic::Tangent);
+    const auto* vertices = reinterpret_cast<const char*>(vertexData);
+
+    switch (tangent.format)
+    {
+    case cmod::VertexAttributeFormat::Float3:
+        glEnableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::TangentAttributeIndex,
+                                      GLComponentCounts[static_cast<std::size_t>(tangent.format)],
+                                      GLComponentTypes[static_cast<std::size_t>(tangent.format)],
+                                      GL_FALSE,
+                                      desc.stride,
+                                      vertices + tangent.offset);
+        break;
+    default:
+        glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
+        break;
+    }
+
+    const cmod::VertexAttribute& pointsize = desc.getAttribute(cmod::VertexAttributeSemantic::PointSize);
+    switch (pointsize.format)
+    {
+    case cmod::VertexAttributeFormat::Float1:
+        glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
+                                      GLComponentCounts[static_cast<std::size_t>(pointsize.format)],
+                                      GLComponentTypes[static_cast<std::size_t>(pointsize.format)],
+                                      GL_FALSE,
+                                      desc.stride,
+                                      vertices + pointsize.offset);
+        break;
+    default:
+        glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
+        break;
+    }
+
+    const cmod::VertexAttribute& nextPos = desc.getAttribute(cmod::VertexAttributeSemantic::NextPosition);
+    switch (nextPos.format)
+    {
+    case cmod::VertexAttributeFormat::Float3:
+        glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
+                                      GLComponentCounts[static_cast<std::size_t>(nextPos.format)],
+                                      GLComponentTypes[static_cast<std::size_t>(nextPos.format)],
+                                      GL_FALSE,
+                                      desc.stride,
+                                      vertices + nextPos.offset);
+        break;
+    default:
+        glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
+        break;
+    }
+
+    const cmod::VertexAttribute& scaleFac = desc.getAttribute(cmod::VertexAttributeSemantic::ScaleFactor);
+    switch (scaleFac.format)
+    {
+    case cmod::VertexAttributeFormat::Float1:
+        glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
+                                      GLComponentCounts[static_cast<std::size_t>(scaleFac.format)],
+                                      GLComponentTypes[static_cast<std::size_t>(scaleFac.format)],
+                                      GL_FALSE,
+                                      desc.stride,
+                                      vertices + scaleFac.offset);
+        break;
+    default:
+        glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
+        break;
+    }
+}
+
+} // end unnamed namespace
+
+
 
 
 RenderContext::RenderContext(Renderer* _renderer) :
@@ -69,7 +218,7 @@ RenderContext::RenderContext(Renderer* _renderer) :
 }
 
 
-RenderContext::RenderContext(const Material* _material)
+RenderContext::RenderContext(const cmod::Material* _material)
 {
     if (_material == nullptr)
         material = &defaultMaterial;
@@ -78,7 +227,7 @@ RenderContext::RenderContext(const Material* _material)
 }
 
 
-const Material*
+const cmod::Material*
 RenderContext::getMaterial() const
 {
     return material;
@@ -86,7 +235,7 @@ RenderContext::getMaterial() const
 
 
 void
-RenderContext::setMaterial(const Material* newMaterial)
+RenderContext::setMaterial(const cmod::Material* newMaterial)
 {
     if (!locked)
     {
@@ -103,8 +252,8 @@ RenderContext::setMaterial(const Material* newMaterial)
         }
         else if (renderPass == EmissivePass)
         {
-            if (material->maps[Material::EmissiveMap] !=
-                newMaterial->maps[Material::EmissiveMap])
+            if (material->getMap(cmod::TextureSemantic::EmissiveMap) !=
+                newMaterial->getMap(cmod::TextureSemantic::EmissiveMap))
             {
                 material = newMaterial;
                 makeCurrent(*material);
@@ -136,13 +285,13 @@ RenderContext::getPointScale() const
 
 
 void
-RenderContext::setCameraOrientation(const Quaternionf& q)
+RenderContext::setCameraOrientation(const Eigen::Quaternionf& q)
 {
     cameraOrientation = q;
 }
 
 
-Quaternionf
+Eigen::Quaternionf
 RenderContext::getCameraOrientation() const
 {
     return cameraOrientation;
@@ -150,11 +299,11 @@ RenderContext::getCameraOrientation() const
 
 
 void
-RenderContext::drawGroup(const Mesh::PrimitiveGroup& group, bool useOverride)
+RenderContext::drawGroup(const cmod::PrimitiveGroup& group, bool useOverride)
 {
     // Skip rendering if this is the emissive pass but there's no
     // emissive texture.
-    ResourceHandle emissiveMap = material->maps[Material::EmissiveMap];
+    ResourceHandle emissiveMap = material->getMap(cmod::TextureSemantic::EmissiveMap);
 
     if (renderPass == EmissivePass && emissiveMap == InvalidResource)
     {
@@ -162,10 +311,10 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group, bool useOverride)
     }
 
     bool drawPoints = false;
-    if (group.prim == Mesh::SpriteList || group.prim == Mesh::PointList)
+    if (group.prim == cmod::PrimitiveGroupType::SpriteList || group.prim == cmod::PrimitiveGroupType::PointList)
     {
         drawPoints = true;
-        if (group.prim == Mesh::PointList)
+        if (group.prim == cmod::PrimitiveGroupType::PointList)
             glVertexAttrib1f(CelestiaGLProgram::PointSizeAttributeIndex, 1.0f);
 #ifndef GL_ES
         glEnable(GL_POINT_SPRITE);
@@ -189,7 +338,7 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group, bool useOverride)
 
 
 void
-RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
+RenderContext::setVertexArrays(const cmod::VertexDescription& desc,
                                const void* vertexData)
 {
     setStandardVertexArrays(desc, vertexData);
@@ -197,18 +346,23 @@ RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
 }
 
 void
-RenderContext::updateShader(const cmod::Mesh::VertexDescription& desc, Mesh::PrimitiveGroupType primType)
+RenderContext::updateShader(const cmod::VertexDescription& desc, cmod::PrimitiveGroupType primType)
 {
     // Normally, the shader that will be used depends only on the material.
     // But the presence of point size and normals can also affect the
     // shader, so force an update of the material if those attributes appear
     // or disappear in the new set of vertex arrays.
-    bool usePointSizeNow = (desc.getAttribute(Mesh::PointSize).format == Mesh::Float1);
-    bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
-    bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
-    bool useTexCoordsNow = (desc.getAttribute(Mesh::Texture0).format != Mesh::InvalidFormat);
-    bool drawLineNow = (desc.getAttribute(Mesh::NextPosition).format == Mesh::Float3);
-    bool useStaticPointSizeNow = primType == Mesh::PointList;
+    bool usePointSizeNow = (desc.getAttribute(cmod::VertexAttributeSemantic::PointSize).format
+                            == cmod::VertexAttributeFormat::Float1);
+    bool useNormalsNow = (desc.getAttribute(cmod::VertexAttributeSemantic::Normal).format
+                          == cmod::VertexAttributeFormat::Float3);
+    bool useColorsNow = (desc.getAttribute(cmod::VertexAttributeSemantic::Color0).format
+                         != cmod::VertexAttributeFormat::InvalidFormat);
+    bool useTexCoordsNow = (desc.getAttribute(cmod::VertexAttributeSemantic::Texture0).format
+                            != cmod::VertexAttributeFormat::InvalidFormat);
+    bool drawLineNow = (desc.getAttribute(cmod::VertexAttributeSemantic::NextPosition).format
+                        == cmod::VertexAttributeFormat::Float3);
+    bool useStaticPointSizeNow = primType == cmod::PrimitiveGroupType::PointList;
 
     if (usePointSizeNow         != usePointSize       ||
         useStaticPointSizeNow   != useStaticPointSize ||
@@ -240,168 +394,17 @@ RenderContext::setModelViewMatrix(const Eigen::Matrix4f *m)
     modelViewMatrix = m;
 }
 
-void
-setStandardVertexArrays(const Mesh::VertexDescription& desc,
-                        const void* vertexData)
-{
-    const Mesh::VertexAttribute& position  = desc.getAttribute(Mesh::Position);
-    const Mesh::VertexAttribute& normal    = desc.getAttribute(Mesh::Normal);
-    const Mesh::VertexAttribute& color0    = desc.getAttribute(Mesh::Color0);
-    const Mesh::VertexAttribute& texCoord0 = desc.getAttribute(Mesh::Texture0);
-
-    // Can't render anything unless we have positions
-    if (position.format != Mesh::Float3)
-        return;
-
-    // Set up the vertex arrays
-    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3, GL_FLOAT, GL_FALSE, desc.stride,
-                          reinterpret_cast<const char*>(vertexData) + position.offset);
-
-    // Set up the normal array
-    switch (normal.format)
-    {
-    case Mesh::Float3:
-        glEnableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::NormalAttributeIndex,
-                              3, GLComponentTypes[(int) normal.format],
-                              GL_FALSE, desc.stride,
-                              reinterpret_cast<const char*>(vertexData) + normal.offset);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
-        break;
-    }
-
-    GLint normalized = GL_TRUE;
-    // Set up the color array
-    switch (color0.format)
-    {
-    case Mesh::Float3:
-    case Mesh::Float4:
-        normalized = GL_FALSE;
-    case Mesh::UByte4:
-        glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::ColorAttributeIndex,
-                              GLComponentCounts[color0.format],
-                              GLComponentTypes[color0.format],
-                              normalized, desc.stride,
-                              reinterpret_cast<const char*>(vertexData) + color0.offset);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
-        break;
-    }
-
-    // Set up the texture coordinate array
-    switch (texCoord0.format)
-    {
-    case Mesh::Float1:
-    case Mesh::Float2:
-    case Mesh::Float3:
-    case Mesh::Float4:
-        glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
-                              GLComponentCounts[(int) texCoord0.format],
-                              GLComponentTypes[(int) texCoord0.format],
-                              GL_FALSE,
-                              desc.stride,
-                              reinterpret_cast<const char*>(vertexData) + texCoord0.offset);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-        break;
-    }
-}
-
-
-void
-setExtendedVertexArrays(const Mesh::VertexDescription& desc,
-                        const void* vertexData)
-{
-    const Mesh::VertexAttribute& tangent  = desc.getAttribute(Mesh::Tangent);
-    const auto* vertices = reinterpret_cast<const char*>(vertexData);
-
-    switch (tangent.format)
-    {
-    case Mesh::Float3:
-        glEnableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::TangentAttributeIndex,
-                                      GLComponentCounts[(int) tangent.format],
-                                      GLComponentTypes[(int) tangent.format],
-                                      GL_FALSE,
-                                      desc.stride,
-                                      vertices + tangent.offset);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
-        break;
-    }
-
-    const Mesh::VertexAttribute& pointsize = desc.getAttribute(Mesh::PointSize);
-    switch (pointsize.format)
-    {
-    case Mesh::Float1:
-        glEnableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::PointSizeAttributeIndex,
-                                      GLComponentCounts[(int) pointsize.format],
-                                      GLComponentTypes[(int) pointsize.format],
-                                      GL_FALSE,
-                                      desc.stride,
-                                      vertices + pointsize.offset);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::PointSizeAttributeIndex);
-        break;
-    }
-
-    const Mesh::VertexAttribute& nextPos = desc.getAttribute(Mesh::NextPosition);
-    switch (nextPos.format)
-    {
-    case Mesh::Float3:
-        glEnableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::NextVCoordAttributeIndex,
-                                      GLComponentCounts[(int) nextPos.format],
-                                      GLComponentTypes[(int) nextPos.format],
-                                      GL_FALSE,
-                                      desc.stride,
-                                      vertices + nextPos.offset);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::NextVCoordAttributeIndex);
-        break;
-    }
-
-    const Mesh::VertexAttribute& scaleFac = desc.getAttribute(Mesh::ScaleFactor);
-    switch (scaleFac.format)
-    {
-    case Mesh::Float1:
-        glEnableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::ScaleFactorAttributeIndex,
-                                      GLComponentCounts[(int) scaleFac.format],
-                                      GLComponentTypes[(int) scaleFac.format],
-                                      GL_FALSE,
-                                      desc.stride,
-                                      vertices + scaleFac.offset);
-        break;
-    default:
-        glDisableVertexAttribArray(CelestiaGLProgram::ScaleFactorAttributeIndex);
-        break;
-    }
-}
-
 
 /***** GLSL render context ******/
 
 GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
                                        const LightingState& ls,
                                        float _objRadius,
-                                       const Quaternionf& orientation) :
+                                       const Eigen::Quaternionf& orientation) :
     RenderContext(renderer),
     lightingState(ls),
     objRadius(_objRadius),
-    objScale(Vector3f::Constant(_objRadius)),
+    objScale(Eigen::Vector3f::Constant(_objRadius)),
     objOrientation(orientation)
 {
     initLightingEnvironment();
@@ -411,7 +414,7 @@ GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
 GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
                                        const LightingState& ls,
                                        const Eigen::Vector3f& _objScale,
-                                       const Quaternionf& orientation) :
+                                       const Eigen::Quaternionf& orientation) :
     RenderContext(renderer),
     lightingState(ls),
     objRadius(_objScale.maxCoeff()),
@@ -438,7 +441,7 @@ GLSL_RenderContext::initLightingEnvironment()
 {
     // Set the light and shadow environment, which is constant for the entire model.
     // The material properties will be set per mesh.
-    shaderProps.nLights = min(lightingState.nLights, MaxShaderLights);
+    shaderProps.nLights = std::min(lightingState.nLights, MaxShaderLights);
 
     // Set the shadow information.
     // Track the total number of shadows; if there are too many, we'll have
@@ -448,7 +451,8 @@ GLSL_RenderContext::initLightingEnvironment()
     {
         if (lightingState.shadows[li] && !lightingState.shadows[li]->empty())
         {
-            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderEclipseShadows, lightingState.shadows[li]->size());
+            unsigned int nShadows = static_cast<unsigned int>(std::min(static_cast<std::size_t>(MaxShaderEclipseShadows),
+                                                                       lightingState.shadows[li]->size()));
             shaderProps.setEclipseShadowCountForLight(li, nShadows);
             totalShadows += nShadows;
         }
@@ -457,7 +461,7 @@ GLSL_RenderContext::initLightingEnvironment()
 }
 
 void
-GLSL_RenderContext::makeCurrent(const Material& m)
+GLSL_RenderContext::makeCurrent(const cmod::Material& m)
 {
     Texture* textures[4] = { nullptr, nullptr, nullptr, nullptr };
     unsigned int nTextures = 0;
@@ -490,10 +494,10 @@ GLSL_RenderContext::makeCurrent(const Material& m)
             shaderProps.lightModel = ShaderProperties::ParticleDiffuseModel;
     }
 
-    ResourceHandle diffuseMap  = m.maps[Material::DiffuseMap];
-    ResourceHandle normalMap   = m.maps[Material::NormalMap];
-    ResourceHandle specularMap = m.maps[Material::SpecularMap];
-    ResourceHandle emissiveMap = m.maps[Material::EmissiveMap];
+    ResourceHandle diffuseMap  = m.getMap(cmod::TextureSemantic::DiffuseMap);
+    ResourceHandle normalMap   = m.getMap(cmod::TextureSemantic::NormalMap);
+    ResourceHandle specularMap = m.getMap(cmod::TextureSemantic::SpecularMap);
+    ResourceHandle emissiveMap = m.getMap(cmod::TextureSemantic::EmissiveMap);
 
     if (diffuseMap != InvalidResource && (useTexCoords || usePointSize))
     {
@@ -519,7 +523,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
         }
     }
 
-    if (m.specular != Material::Color(0.0f, 0.0f, 0.0f) && useNormals)
+    if (m.specular != cmod::Color(0.0f, 0.0f, 0.0f) && useNormals)
     {
         shaderProps.lightModel = ShaderProperties::PerPixelSpecularModel;
         specTex = GetTextureManager()->find(specularMap);
@@ -634,9 +638,9 @@ GLSL_RenderContext::makeCurrent(const Material& m)
 #if GL_ONLY_SHADOWS
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 #endif
-        Matrix4f shadowBias(Matrix4f::Zero());
-        shadowBias.diagonal() = Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
-        shadowBias.col(3) = Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
+        Eigen::Matrix4f shadowBias(Eigen::Matrix4f::Zero());
+        shadowBias.diagonal() = Eigen::Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
+        shadowBias.col(3) = Eigen::Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
         prog->ShadowMatrix0 = shadowBias * (*lightMatrix);
         prog->floatParam("shadowMapSize") = static_cast<float>(shadowMapWidth);
     }
@@ -698,7 +702,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
         float ringWidth = rings->outerRadius - rings->innerRadius;
         prog->ringRadius = rings->innerRadius / objRadius;
         prog->ringWidth = objRadius / ringWidth;
-        prog->ringPlane = Hyperplane<float, 3>(lightingState.ringPlaneNormal, lightingState.ringCenter / objRadius).coeffs();
+        prog->ringPlane = Eigen::Hyperplane<float, 3>(lightingState.ringPlaneNormal, lightingState.ringCenter / objRadius).coeffs();
         prog->ringCenter = lightingState.ringCenter / objRadius;
 
         for (unsigned int lightIndex = 0; lightIndex < lightingState.nLights; ++lightIndex)
@@ -710,9 +714,9 @@ GLSL_RenderContext::makeCurrent(const Material& m)
         }
     }
 
-    Material::BlendMode newBlendMode = Material::InvalidBlend;
+    cmod::BlendMode newBlendMode = cmod::BlendMode::InvalidBlend;
     if (m.opacity != 1.0f ||
-        m.blend == Material::AdditiveBlend ||
+        m.blend == cmod::BlendMode::AdditiveBlend ||
         (baseTex != nullptr && baseTex->hasAlpha()))
     {
         newBlendMode = m.blend;
@@ -723,7 +727,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
         blendMode = newBlendMode;
         switch (blendMode)
         {
-        case Material::NormalBlend:
+        case cmod::BlendMode::NormalBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             if (disableDepthWriteOnBlend)
@@ -731,7 +735,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
             else
                 renderer->enableDepthMask();
             break;
-        case Material::AdditiveBlend:
+        case cmod::BlendMode::AdditiveBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
             if (disableDepthWriteOnBlend)
@@ -739,7 +743,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
             else
                 renderer->enableDepthMask();
             break;
-        case Material::PremultipliedAlphaBlend:
+        case cmod::BlendMode::PremultipliedAlphaBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             if (disableDepthWriteOnBlend)
@@ -781,7 +785,7 @@ GLSL_RenderContext::setShadowMap(GLuint _shadowMap, GLuint _width, const Eigen::
 
 GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(Renderer* renderer, float _objRadius) :
     RenderContext(renderer),
-    blendMode(Material::InvalidBlend),
+    blendMode(cmod::BlendMode::InvalidBlend),
     objRadius(_objRadius)
 {
     initLightingEnvironment();
@@ -809,7 +813,7 @@ GLSLUnlit_RenderContext::initLightingEnvironment()
 
 
 void
-GLSLUnlit_RenderContext::makeCurrent(const Material& m)
+GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
 {
     Texture* textures[4] = { nullptr, nullptr, nullptr, nullptr };
     unsigned int nTextures = 0;
@@ -820,7 +824,7 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
     shaderProps.lightModel = ShaderProperties::EmissiveModel;
     shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
 
-    ResourceHandle diffuseMap = m.maps[Material::DiffuseMap];
+    ResourceHandle diffuseMap = m.getMap(cmod::TextureSemantic::DiffuseMap);
     if (diffuseMap != InvalidResource && (useTexCoords || usePointSize))
     {
         baseTex = GetTextureManager()->find(diffuseMap);
@@ -879,9 +883,9 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
         prog->lineWidthY = renderer->getLineWidthY();
     }
 
-    Material::BlendMode newBlendMode = Material::InvalidBlend;
+    cmod::BlendMode newBlendMode = cmod::BlendMode::InvalidBlend;
     if (m.opacity != 1.0f ||
-        m.blend == Material::AdditiveBlend ||
+        m.blend == cmod::BlendMode::AdditiveBlend ||
         (baseTex != nullptr && baseTex->hasAlpha()))
     {
         newBlendMode = m.blend;
@@ -892,17 +896,17 @@ GLSLUnlit_RenderContext::makeCurrent(const Material& m)
         blendMode = newBlendMode;
         switch (blendMode)
         {
-        case Material::NormalBlend:
+        case cmod::BlendMode::NormalBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             renderer->disableDepthMask();
             break;
-        case Material::AdditiveBlend:
+        case cmod::BlendMode::AdditiveBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_SRC_ALPHA, GL_ONE);
             renderer->disableDepthMask();
             break;
-        case Material::PremultipliedAlphaBlend:
+        case cmod::BlendMode::PremultipliedAlphaBlend:
             renderer->enableBlending();
             renderer->setBlendingFactors(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             renderer->disableDepthMask();

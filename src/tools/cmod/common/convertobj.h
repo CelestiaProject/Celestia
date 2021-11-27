@@ -10,14 +10,18 @@
 // Functions for converting a Wavefront .obj file into a
 // Celestia model (cmod)
 
-#ifndef _CMOD_CONVERTOBJ_H_
-#define _CMOD_CONVERTOBJ_H_
+#pragma once
 
-#include <celmodel/model.h>
-#include <Eigen/Core>
-#include <iostream>
-#include <vector>
+#include <iosfwd>
 #include <string>
+#include <vector>
+
+#include <Eigen/Core>
+
+namespace cmod
+{
+class Model;
+}
 
 
 class WavefrontLoader
@@ -93,12 +97,10 @@ private:
     std::vector<Eigen::Vector2f> m_texCoords;
 
     std::vector<float> m_vertexData;
-    std::vector<cmod::Mesh::index32> m_indexData;
+    std::vector<cmod::index32> m_indexData;
     std::vector<MaterialGroup> m_materialGroups;
 
     cmod::Model* m_model;
 
     std::string m_errorMessage;
 };
-
-#endif // _CMOD_CONVERTOBJ_H_

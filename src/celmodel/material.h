@@ -10,16 +10,102 @@
 
 #pragma once
 
-#include <Eigen/Core>
-#include <string>
 #include <array>
+#include <cstdint>
+#include <cstddef>
+
+#include <Eigen/Core>
+
 #include <celutil/color.h>
 #include <celutil/reshandle.h>
-#include <celcompat/filesystem.h>
 
 
 namespace cmod
 {
+
+class Color
+{
+public:
+    constexpr Color() :
+        m_red(0.0f),
+        m_green(0.0f),
+        m_blue(0.0f)
+    {
+    }
+
+    constexpr Color(float r, float g, float b) :
+        m_red(r),
+        m_green(g),
+        m_blue(b)
+    {
+    }
+
+    Color(const ::Color& color) :
+        m_red(color.red()),
+        m_green(color.green()),
+        m_blue(color.blue())
+    {
+    }
+
+    constexpr float red() const
+    {
+        return m_red;
+    }
+
+    constexpr float green() const
+    {
+        return m_green;
+    }
+
+    constexpr float blue() const
+    {
+        return m_blue;
+    }
+
+    Eigen::Vector3f toVector3() const
+    {
+        return Eigen::Vector3f(m_red, m_green, m_blue);
+    }
+
+    constexpr bool operator==(const Color& other) const
+    {
+        return m_red == other.m_red && m_green == other.m_green && m_blue == other.m_blue;
+    }
+
+    constexpr bool operator!=(const Color& other) const
+    {
+        return !(*this == other);
+    }
+
+    friend bool operator<(const Color& c0, const Color& c1);
+
+private:
+    float m_red;
+    float m_green;
+    float m_blue;
+};
+
+
+enum class BlendMode : std::int16_t
+{
+    NormalBlend             = 0,
+    AdditiveBlend           = 1,
+    PremultipliedAlphaBlend = 2,
+    BlendMax                = 3,
+    InvalidBlend            = -1,
+};
+
+
+enum class TextureSemantic : std::int16_t
+{
+    DiffuseMap             =  0,
+    NormalMap              =  1,
+    SpecularMap            =  2,
+    EmissiveMap            =  3,
+    TextureSemanticMax     =  4,
+    InvalidTextureSemantic = -1,
+};
+
 
 class Material
 {
@@ -27,97 +113,28 @@ public:
     Material();
     ~Material() = default;
 
-    class Color
+    inline ResourceHandle getMap(TextureSemantic semantic) const
     {
-    public:
-        constexpr Color() :
-            m_red(0.0f),
-            m_green(0.0f),
-            m_blue(0.0f)
-        {
-        }
+        return maps[static_cast<std::size_t>(semantic)];
+    }
 
-        constexpr Color(float r, float g, float b) :
-            m_red(r),
-            m_green(g),
-            m_blue(b)
-        {
-        }
-
-        Color(const ::Color& color) :
-            m_red(color.red()),
-            m_green(color.green()),
-            m_blue(color.blue())
-        {
-        }
-
-        constexpr float red() const
-        {
-            return m_red;
-        }
-
-        constexpr float green() const
-        {
-            return m_green;
-        }
-
-        constexpr float blue() const
-        {
-            return m_blue;
-        }
-
-        Eigen::Vector3f toVector3() const
-        {
-            return Eigen::Vector3f(m_red, m_green, m_blue);
-        }
-
-        constexpr bool operator==(const Color& other) const
-        {
-            return m_red == other.m_red && m_green == other.m_green && m_blue == other.m_blue;
-        }
-
-        constexpr bool operator!=(const Color& other) const
-        {
-            return !(*this == other);
-        }
-
-        friend bool operator<(const Color& c0, const Color& c1);
-
-    private:
-        float m_red;
-        float m_green;
-        float m_blue;
-    };
-
-    enum BlendMode
+    inline void setMap(TextureSemantic semantic, ResourceHandle handle)
     {
-        NormalBlend             = 0,
-        AdditiveBlend           = 1,
-        PremultipliedAlphaBlend = 2,
-        BlendMax                = 3,
-        InvalidBlend            = -1,
-    };
-
-    enum TextureSemantic
-    {
-        DiffuseMap             =  0,
-        NormalMap              =  1,
-        SpecularMap            =  2,
-        EmissiveMap            =  3,
-        TextureSemanticMax     =  4,
-        InvalidTextureSemantic = -1,
-    };
+        maps[static_cast<std::size_t>(semantic)] = handle;
+    }
 
     Color diffuse{ 0.0f, 0.0f, 0.0f };
     Color emissive{ 0.0f, 0.0f, 0.0f };
     Color specular{ 0.0f, 0.0f, 0.0f };
     float specularPower{ 1.0f };
     float opacity{ 1.0f };
-    BlendMode blend{ NormalBlend };
-    std::array<ResourceHandle, TextureSemanticMax> maps;
+    BlendMode blend{ BlendMode::NormalBlend };
+    std::array<ResourceHandle, static_cast<std::size_t>(TextureSemantic::TextureSemanticMax)> maps;
 };
 
-bool operator<(const Material::Color& c0, const Material::Color& c1);
+
+bool operator<(const Color& c0, const Color& c1);
+
 
 // Define an ordering for materials; required for elimination of duplicate
 // materials.

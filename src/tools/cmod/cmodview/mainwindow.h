@@ -8,16 +8,25 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CMODVIEW_MAINWINDOW_H_
-#define _CMODVIEW_MAINWINDOW_H_
+#pragma once
 
-#include "modelviewwidget.h"
-#include "materialwidget.h"
-#include <QMainWindow>
-#include <QString>
-#include <QLabel>
 #include <QAction>
+#include <QCloseEvent>
+#include <QEvent>
+#include <QLabel>
+#include <QMainWindow>
+#include <QObject>
+#include <QString>
 
+
+class MaterialWidget;
+class ModelViewWidget;
+
+namespace cmod
+{
+class Material;
+class Model;
+}
 
 class MainWindow : public QMainWindow
 {
@@ -73,6 +82,3 @@ private:
     QAction* m_saveAsAction;
     QAction* m_gl2Action;
 };
-
-#endif // _CMODVIEW_MAINWINDOW_H_
-

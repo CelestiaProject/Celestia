@@ -44,7 +44,7 @@ public:
      *  all within this geometry object. This information is used
      *  to decide whether multiple rendering passes are required.
      */
-    virtual bool usesTextureType(cmod::Material::TextureSemantic) const
+    virtual bool usesTextureType(cmod::TextureSemantic) const
     {
         return false;
     }

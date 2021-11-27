@@ -7,14 +7,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_MESHMANAGER_H_
-#define _CELENGINE_MESHMANAGER_H_
+#pragma once
 
-#include <string>
-#include <map>
-#include <celutil/resmanager.h>
-#include <celengine/geometry.h>
+#include <Eigen/Core>
+
 #include <celcompat/filesystem.h>
+#include <celutil/resmanager.h>
+#include "geometry.h"
 
 
 class GeometryInfo : public ResourceInfo<Geometry>
@@ -75,6 +74,3 @@ inline bool operator<(const GeometryInfo& g0, const GeometryInfo& g1)
 typedef ResourceManager<GeometryInfo> GeometryManager;
 
 extern GeometryManager* GetGeometryManager();
-
-#endif // _CELENGINE_MESHMANAGER_H_
-

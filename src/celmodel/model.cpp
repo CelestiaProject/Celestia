@@ -95,7 +95,7 @@ Model::addMaterial(const Material* m)
     // the model, we could potentially end up with false positives--this
     // won't cause any rendering troubles, but could hurt performance
     // if it forces multipass rendering when it's not required.
-    for (int i = 0; i < Material::TextureSemanticMax; i++)
+    for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); i++)
     {
         if (m->maps[i] != InvalidResource)
         {
@@ -306,7 +306,7 @@ Model::determineOpacity()
     for (unsigned int i = 0; i < materials.size(); i++)
     {
         if ((materials[i]->opacity > 0.01f && materials[i]->opacity < 1.0f) ||
-            materials[i]->blend == Material::AdditiveBlend)
+            materials[i]->blend == BlendMode::AdditiveBlend)
         {
             opaque = false;
             return;
@@ -318,9 +318,9 @@ Model::determineOpacity()
 
 
 bool
-Model::usesTextureType(Material::TextureSemantic t) const
+Model::usesTextureType(TextureSemantic t) const
 {
-    return textureUsage[static_cast<int>(t)];
+    return textureUsage[static_cast<std::size_t>(t)];
 }
 
 

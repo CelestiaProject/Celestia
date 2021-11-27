@@ -15,11 +15,11 @@
 #include <Eigen/Geometry>
 
 #include <celmodel/model.h>
-#include <celutil/resmanager.h>
 #include "geometry.h"
 
 
 class ModelOpenGLData;
+class RenderContext;
 
 class ModelGeometry : public Geometry
 {
@@ -32,14 +32,14 @@ class ModelGeometry : public Geometry
      *  and set distance; otherwise return false and leave
      *  distance unmodified.
      */
-    virtual bool pick(const Eigen::ParametrizedLine<double, 3>& r, double& distance) const;
+    bool pick(const Eigen::ParametrizedLine<double, 3>& r, double& distance) const override;
 
     //! Render the model in the current OpenGL context
-    virtual void render(RenderContext&, double t = 0.0);
+    void render(RenderContext&, double t = 0.0) override;
 
-    virtual bool usesTextureType(cmod::Material::TextureSemantic) const;
-    virtual bool isOpaque() const;
-    virtual bool isNormalized() const;
+    bool usesTextureType(cmod::TextureSemantic) const override;
+    bool isOpaque() const override;
+    bool isNormalized() const override;
 
     void loadTextures();
 

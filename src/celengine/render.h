@@ -8,14 +8,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_RENDER_H_
-#define _CELENGINE_RENDER_H_
+#pragma once
 
 #include <list>
 #include <memory>
 #include <string>
 #include <vector>
+
 #include <Eigen/Core>
+
 #include <celengine/universe.h>
 #include <celengine/selection.h>
 #include <celengine/starcolors.h>
@@ -965,6 +966,3 @@ class RendererWatcher
 
     virtual void notifyRenderSettingsChanged(const Renderer*) = 0;
 };
-
-
-#endif // _CELENGINE_RENDER_H_

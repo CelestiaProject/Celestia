@@ -14,6 +14,7 @@
 
 namespace cmod
 {
+
 Material::Material()
 {
     maps.fill(InvalidResource);
@@ -21,7 +22,7 @@ Material::Material()
 
 
 bool
-operator<(const Material::Color& c0, const Material::Color& c1)
+operator<(const Color& c0, const Color& c1)
 {
     return std::tie(c0.m_red, c0.m_green, c0.m_blue)
         < std::tie(c1.m_red, c1.m_green, c1.m_blue);

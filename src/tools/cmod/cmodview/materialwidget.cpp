@@ -7,31 +7,36 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "glsupport.h"
-#include "materialwidget.h"
-#include "pathmanager.h"
-#include <celmodel/material.h>
-#include <QGridLayout>
-#include <QPushButton>
 #include <QColorDialog>
 #include <QDir>
+#include <QGridLayout>
+#include <QPushButton>
 #include <QSet>
+#include <QStringList>
 
-using namespace cmod;
+#include "pathmanager.h"
 
+#include "materialwidget.h"
 
-static QColor toQtColor(const Material::Color& color)
+namespace
 {
-    return QColor((int) (color.red() * 255.99f), (int) (color.green() * 255.99f), (int) (color.blue() * 255.99f));
+
+QColor toQtColor(const cmod::Color& color)
+{
+    return QColor(static_cast<int>(color.red() * 255.99f),
+                  static_cast<int>(color.green() * 255.99f),
+                  static_cast<int>(color.blue() * 255.99f));
 }
 
-static Material::Color fromQtColor(const QColor& color)
+
+cmod::Color fromQtColor(const QColor& color)
 {
-    return Material::Color(color.redF(), color.greenF(), color.blueF());
+    return cmod::Color(color.redF(), color.greenF(), color.blueF());
 }
+
 
 // TODO: implement a copy constructor and assignment operator for materials
-static void copyMaterial(Material& dest, const Material& src)
+void copyMaterial(cmod::Material& dest, const cmod::Material& src)
 {
     dest.diffuse       = src.diffuse;
     dest.specular      = src.specular;
@@ -43,12 +48,60 @@ static void copyMaterial(Material& dest, const Material& src)
 }
 
 
-static void setWidgetColor(QLabel* widget, const Material::Color& color)
+static void setWidgetColor(QLabel* widget, const cmod::Color& color)
 {
     widget->setPalette(QPalette(toQtColor(color)));
     widget->setAutoFillBackground(true);
     widget->setText(QString("%1, %2, %3").arg(color.red(), 0, 'g', 3).arg(color.green(), 0, 'g', 3).arg(color.blue(), 0, 'g', 3));
 }
+
+
+inline QString toQString(const wchar_t *s)
+{
+    return QString::fromWCharArray(s);
+}
+
+
+inline QString toQString(const char *s)
+{
+    return QString::fromLocal8Bit(s);
+}
+
+
+void selectComboBoxItem(QComboBox* combo, const QString &text)
+{
+    int itemIndex = combo->findText(text);
+    if (itemIndex < 0)
+    {
+        combo->addItem(text, text);
+        itemIndex = combo->count() - 1;
+    }
+
+    combo->setCurrentIndex(itemIndex);
+}
+
+
+void selectComboBoxItem(QComboBox* combo, const fs::path &path)
+{
+    selectComboBoxItem(combo, toQString(path.c_str()));
+}
+
+
+// Return a list of all texture filenames in the specified folder
+QSet<QString> listTextures(QDir& dir)
+{
+    QStringList filters;
+    filters << "*.png" << "*.jpg" << "*.dds" << "*.dxt5nm";
+    QStringList textureFileNames = dir.entryList(filters, QDir::Files);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    return QSet<QString>(textureFileNames.begin(), textureFileNames.end());
+#else
+    return QSet<QString>::fromList(textureFileNames);
+#endif
+}
+
+} // end unnamed namespace
 
 
 MaterialWidget::MaterialWidget(QWidget* parent) :
@@ -131,40 +184,14 @@ MaterialWidget::MaterialWidget(QWidget* parent) :
     connect(m_normalMap, SIGNAL(activated(int)), this, SLOT(changeMaterialParameters()));
     connect(m_emissiveMap, SIGNAL(activated(int)), this, SLOT(changeMaterialParameters()));
 
-    setMaterial(Material());
+    setMaterial(cmod::Material());
 
     this->setLayout(layout);
 }
 
-inline QString toQString(const wchar_t *s)
-{
-    return QString::fromWCharArray(s);
-}
-
-inline QString toQString(const char *s)
-{
-    return QString::fromLocal8Bit(s);
-}
-
-static void selectComboBoxItem(QComboBox* combo, const QString &text)
-{
-    int itemIndex = combo->findText(text);
-    if (itemIndex < 0)
-    {
-        combo->addItem(text, text);
-        itemIndex = combo->count() - 1;
-    }
-
-    combo->setCurrentIndex(itemIndex);
-}
-
-static void selectComboBoxItem(QComboBox* combo, const fs::path &path)
-{
-    selectComboBoxItem(combo, toQString(path.c_str()));
-}
 
 void
-MaterialWidget::setMaterial(const Material& material)
+MaterialWidget::setMaterial(const cmod::Material& material)
 {
     copyMaterial(m_material, material);
 
@@ -174,20 +201,20 @@ MaterialWidget::setMaterial(const Material& material)
     m_opacity->setText(QString::number(m_material.opacity));
     m_specularPower->setText(QString::number(m_material.specularPower));
 
-    if (m_material.maps[Material::DiffuseMap] != InvalidResource)
-        selectComboBoxItem(m_baseTexture, GetPathManager()->getSource(m_material.maps[Material::DiffuseMap]));
+    if (m_material.getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
+        selectComboBoxItem(m_baseTexture, GetPathManager()->getSource(m_material.getMap(cmod::TextureSemantic::DiffuseMap)));
     else
         m_baseTexture->setCurrentIndex(0);
-    if (m_material.maps[Material::SpecularMap] != InvalidResource)
-        selectComboBoxItem(m_specularMap, GetPathManager()->getSource(m_material.maps[Material::SpecularMap]));
+    if (m_material.getMap(cmod::TextureSemantic::SpecularMap) != InvalidResource)
+        selectComboBoxItem(m_specularMap, GetPathManager()->getSource(m_material.getMap(cmod::TextureSemantic::SpecularMap)));
     else
         m_specularMap->setCurrentIndex(0);
-    if (m_material.maps[Material::EmissiveMap] != InvalidResource)
-        selectComboBoxItem(m_emissiveMap, GetPathManager()->getSource(m_material.maps[Material::EmissiveMap]));
+    if (m_material.getMap(cmod::TextureSemantic::EmissiveMap) != InvalidResource)
+        selectComboBoxItem(m_emissiveMap, GetPathManager()->getSource(m_material.getMap(cmod::TextureSemantic::EmissiveMap)));
     else
         m_emissiveMap->setCurrentIndex(0);
-    if (m_material.maps[Material::NormalMap] != InvalidResource)
-        selectComboBoxItem(m_normalMap, GetPathManager()->getSource(m_material.maps[Material::NormalMap]));
+    if (m_material.getMap(cmod::TextureSemantic::NormalMap) != InvalidResource)
+        selectComboBoxItem(m_normalMap, GetPathManager()->getSource(m_material.getMap(cmod::TextureSemantic::NormalMap)));
     else
         m_normalMap->setCurrentIndex(0);
 
@@ -279,47 +306,33 @@ MaterialWidget::changeMaterialParameters()
     m_material.opacity = m_opacity->text().toFloat();
     m_material.specularPower = m_specularPower->text().toFloat();
 
-    m_material.maps[Material::DiffuseMap] = InvalidResource;
+    m_material.setMap(cmod::TextureSemantic::DiffuseMap, InvalidResource);
     if (!m_baseTexture->itemData(m_baseTexture->currentIndex()).isNull())
     {
-        m_material.maps[Material::DiffuseMap] = GetPathManager()->getHandle(m_baseTexture->currentText().toStdString());
+        m_material.setMap(cmod::TextureSemantic::DiffuseMap, GetPathManager()->getHandle(m_baseTexture->currentText().toStdString()));
     }
 
-    m_material.maps[Material::SpecularMap] = InvalidResource;
+    m_material.setMap(cmod::TextureSemantic::SpecularMap, InvalidResource);
     if (!m_specularMap->itemData(m_specularMap->currentIndex()).isNull())
     {
-        m_material.maps[Material::SpecularMap] = GetPathManager()->getHandle(m_specularMap->currentText().toStdString());
+        m_material.setMap(cmod::TextureSemantic::SpecularMap, GetPathManager()->getHandle(m_specularMap->currentText().toStdString()));
     }
 
-    m_material.maps[Material::NormalMap] = InvalidResource;
+    m_material.setMap(cmod::TextureSemantic::NormalMap, InvalidResource);
     if (!m_normalMap->itemData(m_normalMap->currentIndex()).isNull())
     {
-        m_material.maps[Material::NormalMap] = GetPathManager()->getHandle(m_normalMap->currentText().toStdString());
+        m_material.setMap(cmod::TextureSemantic::NormalMap, GetPathManager()->getHandle(m_normalMap->currentText().toStdString()));
     }
 
-    m_material.maps[Material::EmissiveMap] = InvalidResource;
+    m_material.setMap(cmod::TextureSemantic::EmissiveMap, InvalidResource);
     if (!m_emissiveMap->itemData(m_emissiveMap->currentIndex()).isNull())
     {
-        m_material.maps[Material::EmissiveMap] = GetPathManager()->getHandle(m_emissiveMap->currentText().toStdString());
+        m_material.setMap(cmod::TextureSemantic::EmissiveMap, GetPathManager()->getHandle(m_emissiveMap->currentText().toStdString()));
     }
 
     emit materialEdited(m_material);
 }
 
-
-// Return a list of all texture filenames in the specified folder
-static QSet<QString> listTextures(QDir& dir)
-{
-    QStringList filters;
-    filters << "*.png" << "*.jpg" << "*.dds" << "*.dxt5nm";
-    QStringList textureFileNames = dir.entryList(filters, QDir::Files);
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-    return QSet<QString>(textureFileNames.begin(), textureFileNames.end());
-#else
-    return QSet<QString>::fromList(textureFileNames);
-#endif
-}
 
 void
 MaterialWidget::setTextureSearchPath(const QString& path)
