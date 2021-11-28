@@ -13,6 +13,7 @@
 #include <array>
 #include <cstdint>
 #include <cstddef>
+#include <tuple>
 
 #include <Eigen/Core>
 
@@ -69,7 +70,7 @@ public:
 
     constexpr bool operator==(const Color& other) const
     {
-        return m_red == other.m_red && m_green == other.m_green && m_blue == other.m_blue;
+        return std::tie(m_red, m_green, m_blue) == std::tie(other.m_red, other.m_green, other.m_blue);
     }
 
     constexpr bool operator!=(const Color& other) const
@@ -77,7 +78,10 @@ public:
         return !(*this == other);
     }
 
-    friend bool operator<(const Color& c0, const Color& c1);
+    constexpr bool operator<(const Color& other) const
+    {
+        return std::tie(m_red, m_green, m_blue) < std::tie(other.m_red, other.m_green, other.m_blue);
+    }
 
 private:
     float m_red;
@@ -130,14 +134,13 @@ public:
     float opacity{ 1.0f };
     BlendMode blend{ BlendMode::NormalBlend };
     std::array<ResourceHandle, static_cast<std::size_t>(TextureSemantic::TextureSemanticMax)> maps;
+
+    bool operator==(const Material& other) const;
+    bool operator!=(const Material& other) const;
+
+    // Define an ordering for materials; required for elimination of duplicate
+    // materials.
+    bool operator<(const Material& other) const;
 };
-
-
-bool operator<(const Color& c0, const Color& c1);
-
-
-// Define an ordering for materials; required for elimination of duplicate
-// materials.
-bool operator<(const Material& m0, const Material& m1);
 
 } // namespace cmod

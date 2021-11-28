@@ -22,15 +22,22 @@ Material::Material()
 
 
 bool
-operator<(const Color& c0, const Color& c1)
+Material::operator==(const Material& other) const
 {
-    return std::tie(c0.m_red, c0.m_green, c0.m_blue)
-        < std::tie(c1.m_red, c1.m_green, c1.m_blue);
+    return std::tie(opacity, blend, diffuse, emissive, specular, specularPower, maps)
+        == std::tie(other.opacity, other.blend, other.diffuse, other.emissive, other.specular, other.specularPower, other.maps);
 }
 
 
 bool
-operator<(const Material& m0, const Material& m1)
+Material::operator!=(const Material& other) const
+{
+    return !(*this == other);
+}
+
+
+bool
+Material::operator<(const Material& other) const
 {
     // Checking opacity first and doing it backwards is deliberate. It means
     // that after sorting, translucent materials will end up with higher
@@ -42,8 +49,8 @@ operator<(const Material& m0, const Material& m1)
     // blending is 0, and we'd prefer to render additively blended submeshes
     // last.
 
-    return std::tie(m0.opacity, m1.blend, m0.diffuse, m0.emissive, m0.specular, m0.specularPower, m0.maps)
-        < std::tie(m1.opacity, m0.blend, m1.diffuse, m1.emissive, m1.specular, m1.specularPower, m1.maps);
+    return std::tie(opacity, other.blend, diffuse, emissive, specular, specularPower, maps)
+        < std::tie(other.opacity, blend, other.diffuse, other.emissive, other.specular, other.specularPower, other.maps);
 }
 
 }
