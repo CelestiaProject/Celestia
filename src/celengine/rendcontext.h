@@ -62,9 +62,6 @@ class RenderContext
     void setCameraOrientation(const Eigen::Quaternionf& q);
     Eigen::Quaternionf getCameraOrientation() const;
 
-    void setModelViewMatrix(const Eigen::Matrix4f *m);
-    void setProjectionMatrix(const Eigen::Matrix4f *m);
-
  protected:
     Renderer* renderer { nullptr };
     bool usePointSize{ false };
@@ -73,8 +70,6 @@ class RenderContext
     bool useColors{ false };
     bool useTexCoords{ true };
     bool drawLine { false };
-    const Eigen::Matrix4f *modelViewMatrix;
-    const Eigen::Matrix4f *projectionMatrix;
 
  private:
     const cmod::Material* material{ nullptr };
@@ -103,8 +98,18 @@ class GLSL_RenderContext : public RenderContext
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    GLSL_RenderContext(Renderer* r, const LightingState& ls, float _objRadius, const Eigen::Quaternionf& orientation);
-    GLSL_RenderContext(Renderer* r, const LightingState& ls, const Eigen::Vector3f& _objScale, const Eigen::Quaternionf& orientation);
+    GLSL_RenderContext(Renderer* r,
+                       const LightingState& ls,
+                       float _objRadius,
+                       const Eigen::Quaternionf& orientation,
+                       const Eigen::Matrix4f *_modelViewMatrix,
+                       const Eigen::Matrix4f *_projectionMatrix);
+    GLSL_RenderContext(Renderer* r,
+                       const LightingState& ls,
+                       const Eigen::Vector3f& _objScale,
+                       const Eigen::Quaternionf& orientation,
+                       const Eigen::Matrix4f *_modelViewMatrix,
+                       const Eigen::Matrix4f *_projectionMatrix);
     ~GLSL_RenderContext() override;
 
     void makeCurrent(const cmod::Material&) override;
@@ -128,6 +133,8 @@ class GLSL_RenderContext : public RenderContext
     float lunarLambert{ 0.0f };
 
     ShaderProperties shaderProps;
+    const Eigen::Matrix4f *modelViewMatrix;
+    const Eigen::Matrix4f *projectionMatrix;
     const Eigen::Matrix4f *lightMatrix { nullptr };
     GLuint shadowMap { 0 };
     GLuint shadowMapWidth { 0 };
@@ -137,7 +144,10 @@ class GLSL_RenderContext : public RenderContext
 class GLSLUnlit_RenderContext : public RenderContext
 {
  public:
-    GLSLUnlit_RenderContext(Renderer* r, float _objRadius);
+    GLSLUnlit_RenderContext(Renderer* r,
+                            float _objRadius,
+                            const Eigen::Matrix4f *_modelViewMatrix,
+                            const Eigen::Matrix4f *_projectionMatrix);
     ~GLSLUnlit_RenderContext() override;
 
     void makeCurrent(const cmod::Material&) override;
@@ -150,4 +160,7 @@ class GLSLUnlit_RenderContext : public RenderContext
     float objRadius;
 
     ShaderProperties shaderProps;
+
+    const Eigen::Matrix4f *modelViewMatrix;
+    const Eigen::Matrix4f *projectionMatrix;
 };

@@ -442,9 +442,7 @@ void renderGeometry_GLSL(Geometry* geometry,
         glDepthRange(range[0], range[1]);
     }
 
-    GLSL_RenderContext rc(renderer, ls, geometryScale, planetOrientation);
-    rc.setModelViewMatrix(m.modelview);
-    rc.setProjectionMatrix(m.projection);
+    GLSL_RenderContext rc(renderer, ls, geometryScale, planetOrientation, m.modelview, m.projection);
 
     if ((renderFlags & Renderer::ShowAtmospheres) != 0)
     {
@@ -497,10 +495,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                const Matrices &m,
                                Renderer* renderer)
 {
-    GLSLUnlit_RenderContext rc(renderer, geometryScale);
-
-    rc.setModelViewMatrix(m.modelview);
-    rc.setProjectionMatrix(m.projection);
+    GLSLUnlit_RenderContext rc(renderer, geometryScale, m.modelview, m.projection);
     rc.setPointScale(ri.pointScale);
 
     // Handle material override; a texture specified in an ssc file will

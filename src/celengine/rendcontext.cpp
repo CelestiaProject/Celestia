@@ -380,30 +380,22 @@ RenderContext::updateShader(const cmod::VertexDescription& desc, cmod::Primitive
     }
 }
 
-void
-RenderContext::setProjectionMatrix(const Eigen::Matrix4f *m)
-{
-    projectionMatrix = m;
-}
-
-void
-RenderContext::setModelViewMatrix(const Eigen::Matrix4f *m)
-{
-    modelViewMatrix = m;
-}
-
 
 /***** GLSL render context ******/
 
 GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
                                        const LightingState& ls,
                                        float _objRadius,
-                                       const Eigen::Quaternionf& orientation) :
+                                       const Eigen::Quaternionf& orientation,
+                                       const Eigen::Matrix4f* _modelViewMatrix,
+                                       const Eigen::Matrix4f* _projectionMatrix) :
     RenderContext(renderer),
     lightingState(ls),
     objRadius(_objRadius),
     objScale(Eigen::Vector3f::Constant(_objRadius)),
-    objOrientation(orientation)
+    objOrientation(orientation),
+    modelViewMatrix(_modelViewMatrix),
+    projectionMatrix(_projectionMatrix)
 {
     initLightingEnvironment();
 }
@@ -412,12 +404,16 @@ GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
 GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
                                        const LightingState& ls,
                                        const Eigen::Vector3f& _objScale,
-                                       const Eigen::Quaternionf& orientation) :
+                                       const Eigen::Quaternionf& orientation,
+                                       const Eigen::Matrix4f* _modelViewMatrix,
+                                       const Eigen::Matrix4f* _projectionMatrix) :
     RenderContext(renderer),
     lightingState(ls),
     objRadius(_objScale.maxCoeff()),
     objScale(_objScale),
-    objOrientation(orientation)
+    objOrientation(orientation),
+    modelViewMatrix(_modelViewMatrix),
+    projectionMatrix(_projectionMatrix)
 {
     initLightingEnvironment();
 }
@@ -781,10 +777,15 @@ GLSL_RenderContext::setShadowMap(GLuint _shadowMap, GLuint _width, const Eigen::
 
 /***** GLSL-Unlit render context ******/
 
-GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(Renderer* renderer, float _objRadius) :
+GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(Renderer* renderer,
+                                                 float _objRadius,
+                                                 const Eigen::Matrix4f* _modelViewMatrix,
+                                                 const Eigen::Matrix4f* _projectionMatrix) :
     RenderContext(renderer),
     blendMode(cmod::BlendMode::InvalidBlend),
-    objRadius(_objRadius)
+    objRadius(_objRadius),
+    modelViewMatrix(_modelViewMatrix),
+    projectionMatrix(_projectionMatrix)
 {
     initLightingEnvironment();
 }
