@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <numeric>
 
 #include <Eigen/Geometry>
 
@@ -19,28 +20,6 @@ namespace cmod
 {
 namespace
 {
-// Simple struct that pairs an index with a material; the index is used to
-// keep track of the original material index after sorting.
-struct IndexedMaterial
-{
-    int originalIndex;
-    const Material* material;
-};
-
-
-bool
-operator<(const IndexedMaterial& im0, const IndexedMaterial& im1)
-{
-    return *(im0.material) < *(im1.material);
-}
-
-
-bool
-operator!=(const IndexedMaterial& im0, const IndexedMaterial& im1)
-{
-    return im0 < im1 || im1 < im0;
-}
-
 
 // Look at the material used by last primitive group in the mesh for the
 // opacity of the whole model.  This is a very crude way to check the opacity
@@ -251,52 +230,42 @@ Model::uniquifyMaterials()
     if (materials.size() <= 1)
         return;
 
-    // Create an array of materials with the indices attached
-    std::vector<IndexedMaterial> indexedMaterials;
-    unsigned int i;
-    for (i = 0; i < materials.size(); i++)
-    {
-        IndexedMaterial im;
-        im.originalIndex = i;
-        im.material = materials[i];
-        indexedMaterials.push_back(im);
-    }
+    // Create an array of material indices
+    std::vector<unsigned int> indices(materials.size());
+    std::iota(indices.begin(), indices.end(), 0U);
 
-    // Sort the indexed materials so that we can uniquify them
-    std::sort(indexedMaterials.begin(), indexedMaterials.end());
+    // Sort the material indices so that we can uniquify the materials
+    std::sort(indices.begin(), indices.end(),
+              [&](unsigned int a, unsigned int b) { return *materials[a] < *materials[b]; });
 
-    std::vector<const Material*> uniqueMaterials;
-    std::vector<unsigned int> materialMap(materials.size());
-    std::vector<unsigned int> duplicateMaterials;
-
-    // From the sorted material list construct the list of unique materials
+    // From the sorted index list construct the list of unique materials
     // and a map to convert old material indices into indices that can be
     // used with the uniquified material list.
-    unsigned int uniqueMaterialCount = 0;
-    for (i = 0; i < indexedMaterials.size(); i++)
+    std::vector<unsigned int> materialMap(materials.size());
+
+    std::vector<const Material*> uniqueMaterials;
+    uniqueMaterials.reserve(materials.size());
+
+    for (std::size_t i = 0; i < indices.size(); ++i)
     {
-        if (i == 0 || indexedMaterials[i] != indexedMaterials[i - 1])
+        unsigned int index = indices[i];
+        if (i == 0 || *materials[index] != *uniqueMaterials.back())
         {
-            uniqueMaterialCount++;
-            uniqueMaterials.push_back(indexedMaterials[i].material);
+            uniqueMaterials.push_back(materials[index]);
         }
-        else
-        {
-            duplicateMaterials.push_back(i);
-        }
-        materialMap[indexedMaterials[i].originalIndex] = uniqueMaterialCount - 1;
+
+        materialMap[index] = uniqueMaterials.size() - 1;
     }
 
     // Remap all the material indices in the model. Even if no materials have
     // been eliminated we've still sorted them by opacity, which is useful
     // when reordering meshes so that translucent ones are rendered last.
-    for (const auto mesh : meshes)
+    for (Mesh* mesh : meshes)
+    {
         mesh->remapMaterials(materialMap);
+    }
 
-    for (const auto i : duplicateMaterials)
-        delete indexedMaterials[i].material;
-
-    materials = uniqueMaterials;
+    materials = std::move(uniqueMaterials);
 }
 
 
