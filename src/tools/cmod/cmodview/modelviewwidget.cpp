@@ -12,6 +12,7 @@
 #include <cmath>
 #include <cstddef>
 #include <iostream>
+#include <utility>
 
 #include <QFileInfo>
 #include <QIODevice>
@@ -282,18 +283,13 @@ ModelViewWidget::ModelViewWidget(QWidget *parent) :
 ModelViewWidget::~ModelViewWidget()
 {
     delete m_materialLibrary;
-    delete m_model;
 }
 
 
 void
-ModelViewWidget::setModel(cmod::Model* model, const QString& modelDirPath)
+ModelViewWidget::setModel(std::unique_ptr<cmod::Model>&& model, const QString& modelDirPath)
 {
-    if (m_model && m_model != model)
-    {
-        delete m_model;
-    }
-    m_model = model;
+    m_model = std::move(model);
     delete m_materialLibrary;
 
     m_materialLibrary = new MaterialLibrary(this, modelDirPath);
@@ -634,12 +630,12 @@ ModelViewWidget::paintGL()
 
     if (m_model)
     {
-        renderModel(m_model);
+        renderModel(m_model.get());
         if (!m_selection.isEmpty())
         {
             glEnable(GL_POLYGON_OFFSET_FILL);
             glPolygonOffset(-0.0f, -1.0f);
-            renderSelection(m_model);
+            renderSelection(m_model.get());
         }
     }
 
@@ -1589,7 +1585,7 @@ ModelViewWidget::renderShadow(unsigned int lightIndex)
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(directionalLightMatrix(lightDirection).data());
 
-    renderDepthOnly(m_model);
+    renderDepthOnly(m_model.get());
 
     shadowBuffer->unbind();
 

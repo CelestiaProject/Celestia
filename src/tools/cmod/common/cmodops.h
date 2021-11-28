@@ -12,6 +12,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
 #include <Eigen/Core>
 
@@ -25,13 +26,16 @@ class Model;
 
 
 // Mesh operations
-extern cmod::Mesh* GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weldTolerance = 0.0f);
-extern cmod::Mesh* GenerateTangents(const cmod::Mesh& mesh, bool weld);
+extern cmod::Mesh GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weldTolerance = 0.0f);
+extern cmod::Mesh GenerateTangents(const cmod::Mesh& mesh, bool weld);
 extern bool UniquifyVertices(cmod::Mesh& mesh);
 
 // Model operations
-extern cmod::Model* MergeModelMeshes(const cmod::Model& model);
-extern cmod::Model* GenerateModelNormals(const cmod::Model& model, float smoothAngle, bool weldVertices, float weldTolerance);
+extern std::unique_ptr<cmod::Model> MergeModelMeshes(const cmod::Model& model);
+extern std::unique_ptr<cmod::Model> GenerateModelNormals(const cmod::Model& model,
+                                                         float smoothAngle,
+                                                         bool weldVertices,
+                                                         float weldTolerance);
 #ifdef TRISTRIP
 extern bool ConvertToStrips(cmod::Mesh& mesh);
 #endif

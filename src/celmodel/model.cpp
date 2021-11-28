@@ -9,7 +9,9 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <functional>
 #include <numeric>
+#include <utility>
 
 #include <Eigen/Geometry>
 
@@ -42,13 +44,6 @@ Model::Model()
 }
 
 
-Model::~Model()
-{
-    for (const auto mesh : meshes)
-        delete mesh;
-}
-
-
 /*! Return the material with the specified index, or nullptr if
  *  the index is out of range. The returned material pointer
  *  is const.
@@ -57,7 +52,7 @@ const Material*
 Model::getMaterial(unsigned int index) const
 {
     if (index < materials.size())
-        return materials[index];
+        return &materials[index];
     else
         return nullptr;
 }
@@ -67,7 +62,7 @@ Model::getMaterial(unsigned int index) const
  *  return value is the number of materials in the model.
  */
 unsigned int
-Model::addMaterial(const Material* m)
+Model::addMaterial(Material&& m)
 {
     // Update the texture map usage information for the model.  Since
     // the material being added isn't necessarily used by a mesh within
@@ -76,13 +71,13 @@ Model::addMaterial(const Material* m)
     // if it forces multipass rendering when it's not required.
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); i++)
     {
-        if (m->maps[i] != InvalidResource)
+        if (m.maps[i] != InvalidResource)
         {
             textureUsage[i] = true;
         }
     }
 
-    materials.push_back(m);
+    materials.push_back(std::move(m));
     return materials.size();
 }
 
@@ -99,8 +94,8 @@ Model::getVertexCount() const
 {
     unsigned int count = 0;
 
-    for (const auto mesh : meshes)
-        count += mesh->getVertexCount();
+    for (const auto& mesh : meshes)
+        count += mesh.getVertexCount();
 
     return count;
 }
@@ -111,8 +106,8 @@ Model::getPrimitiveCount() const
 {
     unsigned int count = 0;
 
-    for (const auto mesh : meshes)
-        count += mesh->getPrimitiveCount();
+    for (const auto& mesh : meshes)
+        count += mesh.getPrimitiveCount();
 
     return count;
 }
@@ -126,19 +121,29 @@ Model::getMeshCount() const
 
 
 Mesh*
+Model::getMesh(unsigned int index)
+{
+    if (index < meshes.size())
+        return &meshes[index];
+    else
+        return nullptr;
+}
+
+
+const Mesh*
 Model::getMesh(unsigned int index) const
 {
     if (index < meshes.size())
-        return meshes[index];
+        return &meshes[index];
     else
         return nullptr;
 }
 
 
 unsigned int
-Model::addMesh(Mesh* m)
+Model::addMesh(Mesh&& m)
 {
-    meshes.push_back(m);
+    meshes.push_back(std::move(m));
     return meshes.size();
 }
 
@@ -152,15 +157,15 @@ Model::pick(const Eigen::Vector3d& rayOrigin,
     double closest = maxDistance;
     Mesh::PickResult closestResult;
 
-    for (const auto mesh : meshes)
+    for (const auto& mesh : meshes)
     {
         Mesh::PickResult result;
-        if (mesh->pick(rayOrigin, rayDirection, &result))
+        if (mesh.pick(rayOrigin, rayDirection, &result))
         {
             if (result.distance < closest)
             {
                 closestResult = result;
-                closestResult.mesh = mesh;
+                closestResult.mesh = &mesh;
                 closest = result.distance;
             }
         }
@@ -200,8 +205,8 @@ Model::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirectio
 void
 Model::transform(const Eigen::Vector3f& translation, float scale)
 {
-    for (const auto mesh : meshes)
-        mesh->transform(translation, scale);
+    for (auto& mesh : meshes)
+        mesh.transform(translation, scale);
 }
 
 
@@ -210,8 +215,8 @@ Model::normalize(const Eigen::Vector3f& centerOffset)
 {
     Eigen::AlignedBox<float, 3> bbox;
 
-    for (const auto mesh : meshes)
-        bbox.extend(mesh->getBoundingBox());
+    for (const auto& mesh : meshes)
+        bbox.extend(mesh.getBoundingBox());
 
     Eigen::Vector3f center = (bbox.min() + bbox.max()) * 0.5f + centerOffset;
     Eigen::Vector3f extents = bbox.max() - bbox.min();
@@ -236,22 +241,22 @@ Model::uniquifyMaterials()
 
     // Sort the material indices so that we can uniquify the materials
     std::sort(indices.begin(), indices.end(),
-              [&](unsigned int a, unsigned int b) { return *materials[a] < *materials[b]; });
+              [&](unsigned int a, unsigned int b) { return materials[a] < materials[b]; });
 
     // From the sorted index list construct the list of unique materials
     // and a map to convert old material indices into indices that can be
     // used with the uniquified material list.
     std::vector<unsigned int> materialMap(materials.size());
 
-    std::vector<const Material*> uniqueMaterials;
+    std::vector<Material> uniqueMaterials;
     uniqueMaterials.reserve(materials.size());
 
     for (std::size_t i = 0; i < indices.size(); ++i)
     {
         unsigned int index = indices[i];
-        if (i == 0 || *materials[index] != *uniqueMaterials.back())
+        if (i == 0 || materials[index] != uniqueMaterials.back())
         {
-            uniqueMaterials.push_back(materials[index]);
+            uniqueMaterials.push_back(std::move(materials[index]));
         }
 
         materialMap[index] = uniqueMaterials.size() - 1;
@@ -260,9 +265,9 @@ Model::uniquifyMaterials()
     // Remap all the material indices in the model. Even if no materials have
     // been eliminated we've still sorted them by opacity, which is useful
     // when reordering meshes so that translucent ones are rendered last.
-    for (Mesh* mesh : meshes)
+    for (auto& mesh : meshes)
     {
-        mesh->remapMaterials(materialMap);
+        mesh.remapMaterials(materialMap);
     }
 
     materials = std::move(uniqueMaterials);
@@ -274,8 +279,8 @@ Model::determineOpacity()
 {
     for (unsigned int i = 0; i < materials.size(); i++)
     {
-        if ((materials[i]->opacity > 0.01f && materials[i]->opacity < 1.0f) ||
-            materials[i]->blend == BlendMode::AdditiveBlend)
+        if ((materials[i].opacity > 0.01f && materials[i].opacity < 1.0f) ||
+            materials[i].blend == BlendMode::AdditiveBlend)
         {
             opaque = false;
             return;
@@ -308,12 +313,11 @@ Model::sortMeshes(const MeshComparator& comparator)
 {
     // Sort submeshes by material; if materials have been uniquified,
     // then the submeshes will be ordered so that opaque ones are first.
-    for (const auto mesh : meshes)
-        mesh->aggregateByMaterial();
+    for (auto& mesh : meshes)
+        mesh.aggregateByMaterial();
 
     // Sort the meshes so that completely opaque ones are first
-    std::sort(meshes.begin(), meshes.end(),
-              [&](const Mesh* a, const Mesh* b) { return comparator(*a, *b); });
+    std::sort(meshes.begin(), meshes.end(), std::ref(comparator));
 }
 
 } // end namespace cmod

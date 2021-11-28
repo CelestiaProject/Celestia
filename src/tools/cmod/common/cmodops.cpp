@@ -351,28 +351,6 @@ addGroupWithOffset(cmod::Mesh& mesh,
 }
 
 
-cmod::Material*
-cloneMaterial(const cmod::Material* other)
-{
-    cmod::Material* material = new cmod::Material();
-    material->diffuse  = other->diffuse;
-    material->specular = other->specular;
-    material->emissive = other->emissive;
-    material->specularPower = other->specularPower;
-    material->opacity  = other->opacity;
-    material->blend    = other->blend;
-    for (int i = 0; i < static_cast<int>(cmod::TextureSemantic::TextureSemanticMax); ++i)
-    {
-        if (other->maps[i] != InvalidResource)
-        {
-            material->maps[i] = other->maps[i];
-        }
-    }
-
-    return material;
-}
-
-
 template<typename T, typename U> void
 joinVertices(std::vector<Face>& faces,
              const cmod::VWord* vertexData,
@@ -448,7 +426,7 @@ joinVertices(std::vector<Face>& faces,
   * @param weldTolerance maximum difference between positions that should be
   *             considered identical during the weld step.
   */
-cmod::Mesh*
+cmod::Mesh
 GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weldTolerance)
 {
     std::uint32_t nVertices = mesh.getVertexCount();
@@ -459,7 +437,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     if (desc.getAttribute(cmod::VertexAttributeSemantic::Position).format != cmod::VertexAttributeFormat::Float3)
     {
         std::cerr << "Vertex position must be a float3\n";
-        return nullptr;
+        return cmod::Mesh();
     }
 
     std::uint32_t posOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Position).offsetWords;
@@ -477,7 +455,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
             if (group->indices.size() < 3 || group->indices.size() % 3 != 0)
             {
                 std::cerr << "Triangle list has invalid number of indices\n";
-                return nullptr;
+                return cmod::Mesh();
             }
             nFaces += group->indices.size() / 3;
             break;
@@ -487,14 +465,14 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
             if (group->indices.size() < 3)
             {
                 std::cerr << "Error: tri strip or fan has less than three indices\n";
-                return nullptr;
+                return cmod::Mesh();
             }
             nFaces += group->indices.size() - 2;
             break;
 
         default:
             std::cerr << "Cannot generate normals for non-triangle primitives\n";
-            return nullptr;
+            return cmod::Mesh();
         }
     }
 
@@ -581,15 +559,8 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     }
 
     // For each vertex, create a list of faces that contain it
-    std::uint32_t* faceCounts = new std::uint32_t[nVertices];
-    std::uint32_t** vertexFaces = new std::uint32_t*[nVertices];
-
-    // Initialize the lists
-    for (i = 0; i < nVertices; i++)
-    {
-        faceCounts[i] = 0;
-        vertexFaces[i] = nullptr;
-    }
+    std::vector<std::uint32_t> faceCounts(nVertices, 0);
+    std::vector<std::vector<std::uint32_t>> vertexFaces(nVertices);
 
     // If we're welding vertices before generating normals, find identical
     // points and merge them.  Otherwise, the point indices will be the same
@@ -624,7 +595,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     {
         if (faceCounts[i] > 0)
         {
-            vertexFaces[i] = new uint32_t[faceCounts[i] + 1];
+            vertexFaces[i].resize(faceCounts[i] + 1);
             vertexFaces[i][0] = faceCounts[i];
         }
     }
@@ -708,9 +679,9 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     }
 
     // Create the Celestia mesh
-    cmod::Mesh* newMesh = new cmod::Mesh();
-    newMesh->setVertexDescription(std::move(newDesc));
-    newMesh->setVertices(nFaces * 3, std::move(newVertexData));
+    cmod::Mesh newMesh;
+    newMesh.setVertexDescription(std::move(newDesc));
+    newMesh.setVertices(nFaces * 3, std::move(newVertexData));
 
     std::uint32_t firstIndex = 0;
     for (std::uint32_t groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
@@ -736,26 +707,17 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
         std::vector<cmod::Index32> indices(faceCount * 3);
         std::iota(indices.begin(), indices.end(), firstIndex);
 
-        newMesh->addGroup(cmod::PrimitiveGroupType::TriList,
-                          mesh.getGroup(groupIndex)->materialIndex,
-                          std::move(indices));
+        newMesh.addGroup(cmod::PrimitiveGroupType::TriList,
+                         mesh.getGroup(groupIndex)->materialIndex,
+                         std::move(indices));
         firstIndex += faceCount * 3;
     }
-
-    // Clean up
-    delete[] faceCounts;
-    for (i = 0; i < nVertices; i++)
-    {
-        if (vertexFaces[i] != nullptr)
-            delete[] vertexFaces[i];
-    }
-    delete[] vertexFaces;
 
     return newMesh;
 }
 
 
-cmod::Mesh*
+cmod::Mesh
 GenerateTangents(const cmod::Mesh& mesh, bool weld)
 {
     uint32_t nVertices = mesh.getVertexCount();
@@ -766,25 +728,25 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
     if (desc.getAttribute(cmod::VertexAttributeSemantic::Position).format != cmod::VertexAttributeFormat::Float3)
     {
         std::cerr << "Vertex position must be a float3\n";
-        return nullptr;
+        return cmod::Mesh();
     }
 
     if (desc.getAttribute(cmod::VertexAttributeSemantic::Normal).format != cmod::VertexAttributeFormat::Float3)
     {
         std::cerr << "float3 format vertex normal required\n";
-        return nullptr;
+        return cmod::Mesh();
     }
 
     if (desc.getAttribute(cmod::VertexAttributeSemantic::Texture0).format == cmod::VertexAttributeFormat::InvalidFormat)
     {
         std::cerr << "Texture coordinates must be present in mesh to generate tangents\n";
-        return nullptr;
+        return cmod::Mesh();
     }
 
     if (desc.getAttribute(cmod::VertexAttributeSemantic::Texture0).format != cmod::VertexAttributeFormat::Float2)
     {
         std::cerr << "Texture coordinate must be a float2\n";
-        return nullptr;
+        return cmod::Mesh();
     }
 
     // Count the number of faces in the mesh.
@@ -802,7 +764,7 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
         else
         {
             std::cerr << "Mesh should contain just triangle lists\n";
-            return nullptr;
+            return cmod::Mesh();
         }
     }
 
@@ -987,9 +949,9 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
     }
 
     // Create the Celestia mesh
-    cmod::Mesh* newMesh = new cmod::Mesh();
-    newMesh->setVertexDescription(std::move(newDesc));
-    newMesh->setVertices(nFaces * 3, std::move(newVertexData));
+    cmod::Mesh newMesh;
+    newMesh.setVertexDescription(std::move(newDesc));
+    newMesh.setVertices(nFaces * 3, std::move(newVertexData));
 
     std::uint32_t firstIndex = 0;
     for (std::uint32_t groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
@@ -1015,9 +977,9 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
         std::vector<cmod::Index32> indices(faceCount * 3);
         std::iota(indices.begin(), indices.end(), firstIndex);
 
-        newMesh->addGroup(cmod::PrimitiveGroupType::TriList,
-                          mesh.getGroup(groupIndex)->materialIndex,
-                          std::move(indices));
+        newMesh.addGroup(cmod::PrimitiveGroupType::TriList,
+                         mesh.getGroup(groupIndex)->materialIndex,
+                         std::move(indices));
         firstIndex += faceCount * 3;
     }
 
@@ -1100,10 +1062,10 @@ UniquifyVertices(cmod::Mesh& mesh)
 
 
 // Merge all meshes that share the same vertex description
-cmod::Model*
+std::unique_ptr<cmod::Model>
 MergeModelMeshes(const cmod::Model& model)
 {
-    std::vector<cmod::Mesh*> meshes;
+    std::vector<const cmod::Mesh*> meshes;
 
     for (std::uint32_t i = 0; model.getMesh(i) != nullptr; i++)
     {
@@ -1114,12 +1076,12 @@ MergeModelMeshes(const cmod::Model& model)
     std::sort(meshes.begin(), meshes.end(),
               [](const cmod::Mesh* a, const cmod::Mesh* b) { return a->getVertexDescription() < b->getVertexDescription(); });
 
-    cmod::Model* newModel = new cmod::Model();
+    auto newModel = std::make_unique<cmod::Model>();
 
     // Copy materials into the new model
     for (std::uint32_t i = 0; model.getMaterial(i) != nullptr; i++)
     {
-        newModel->addMaterial(model.getMaterial(i));
+        newModel->addMaterial(model.getMaterial(i)->clone());
     }
 
     std::uint32_t meshIndex = 0;
@@ -1162,9 +1124,9 @@ MergeModelMeshes(const cmod::Model& model)
         }
 
         // Create the new empty mesh
-        cmod::Mesh* mergedMesh = new cmod::Mesh();
-        mergedMesh->setVertexDescription(desc.clone());
-        mergedMesh->setVertices(totalVertices, std::move(vertexData));
+        cmod::Mesh mergedMesh;
+        mergedMesh.setVertexDescription(desc.clone());
+        mergedMesh.setVertices(totalVertices, std::move(vertexData));
 
         // Reindex and add primitive groups
         vertexCount = 0;
@@ -1173,7 +1135,7 @@ MergeModelMeshes(const cmod::Model& model)
             const cmod::Mesh* mesh = meshes[j];
             for (std::uint32_t k = 0; mesh->getGroup(k) != nullptr; k++)
             {
-                addGroupWithOffset(*mergedMesh, *mesh->getGroup(k),
+                addGroupWithOffset(mergedMesh, *mesh->getGroup(k),
                                    vertexCount);
             }
 
@@ -1181,7 +1143,7 @@ MergeModelMeshes(const cmod::Model& model)
         }
         assert(vertexCount == totalVertices);
 
-        newModel->addMesh(mergedMesh);
+        newModel->addMesh(std::move(mergedMesh));
 
         meshIndex += nMatchingMeshes;
     }
@@ -1193,31 +1155,29 @@ MergeModelMeshes(const cmod::Model& model)
 /*! Generate normals for an entire model. Return the new model, or null if
  *  normal generation failed due to an out of memory error.
  */
-cmod::Model*
+std::unique_ptr<cmod::Model>
 GenerateModelNormals(const cmod::Model& model, float smoothAngle, bool weldVertices, float weldTolerance)
 {
-    cmod::Model* newModel = new cmod::Model();
+    auto newModel = std::make_unique<cmod::Model>();
 
     // Copy materials
     for (unsigned int i = 0; model.getMaterial(i) != nullptr; i++)
     {
-        newModel->addMaterial(cloneMaterial(model.getMaterial(i)));
+        newModel->addMaterial(model.getMaterial(i)->clone());
     }
 
     bool ok = true;
     for (unsigned int i = 0; model.getMesh(i) != nullptr; i++)
     {
-        cmod::Mesh* mesh = model.getMesh(i);
-        cmod::Mesh* newMesh = nullptr;
-
-        newMesh = GenerateNormals(*mesh, smoothAngle, weldVertices, weldTolerance);
-        if (newMesh == nullptr)
+        const cmod::Mesh* mesh = model.getMesh(i);
+        cmod::Mesh newMesh = GenerateNormals(*mesh, smoothAngle, weldVertices, weldTolerance);
+        if (newMesh.getVertexCount() == 0)
         {
             ok = false;
         }
         else
         {
-            newModel->addMesh(newMesh);
+            newModel->addMesh(std::move(newMesh));
         }
     }
 
@@ -1226,8 +1186,7 @@ GenerateModelNormals(const cmod::Model& model, float smoothAngle, bool weldVerti
         // If all of the meshes weren't processed due to an out of memory error,
         // delete the new model and return nullptr rather than a partially processed
         // model.
-        delete newModel;
-        newModel = nullptr;
+        return nullptr;
     }
 
     return newModel;

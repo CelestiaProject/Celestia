@@ -13,15 +13,13 @@
 #pragma once
 
 #include <iosfwd>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <Eigen/Core>
 
-namespace cmod
-{
-class Model;
-}
+#include <celmodel/model.h>
 
 
 class WavefrontLoader
@@ -30,7 +28,7 @@ public:
     WavefrontLoader(std::istream& in);
     ~WavefrontLoader() = default;
 
-    cmod::Model* load();
+    std::unique_ptr<cmod::Model> load();
     std::string errorMessage() const
     {
         return m_errorMessage;
@@ -100,7 +98,7 @@ private:
     std::vector<cmod::Index32> m_indexData;
     std::vector<MaterialGroup> m_materialGroups;
 
-    cmod::Model* m_model;
+    std::unique_ptr<cmod::Model> m_model;
 
     std::string m_errorMessage;
 };

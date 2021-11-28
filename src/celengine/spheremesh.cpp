@@ -336,7 +336,7 @@ void SphereMesh::displace(DisplacementMapFunc func, void* info)
 }
 
 
-cmod::Mesh* SphereMesh::convertToMesh() const
+cmod::Mesh SphereMesh::convertToMesh() const
 {
     static_assert(sizeof(float) == sizeof(cmod::VWord), "Float size mismatch with vertex data word size");
     constexpr std::uint32_t stride = 8;
@@ -353,9 +353,9 @@ cmod::Mesh* SphereMesh::convertToMesh() const
                               6),
     };
 
-    cmod::Mesh* mesh = new cmod::Mesh();
+    cmod::Mesh mesh;
 
-    mesh->setVertexDescription(cmod::VertexDescription(std::move(attributes)));
+    mesh.setVertexDescription(cmod::VertexDescription(std::move(attributes)));
 
     // Copy the vertex data from the separate position, normal, and texture coordinate
     // arrays into a single array.
@@ -369,7 +369,7 @@ cmod::Mesh* SphereMesh::convertToMesh() const
         std::memcpy(vertex + 6, texCoords + (i * 2), sizeof(float) * 2);
     }
 
-    mesh->setVertices(nVertices, std::move(vertexData));
+    mesh.setVertices(nVertices, std::move(vertexData));
 
     for (int i = 0; i < nRings - 1; i++)
     {
@@ -381,7 +381,7 @@ cmod::Mesh* SphereMesh::convertToMesh() const
             indexData.push_back((i + 1) * (nSlices + 1) + j);
         }
 
-        mesh->addGroup(cmod::PrimitiveGroupType::TriStrip, ~0u, std::move(indexData));
+        mesh.addGroup(cmod::PrimitiveGroupType::TriStrip, ~0u, std::move(indexData));
     }
 
     return mesh;

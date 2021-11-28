@@ -119,6 +119,22 @@ bool operator<(const VertexDescription& a, const VertexDescription& b)
 }
 
 
+PrimitiveGroup
+PrimitiveGroup::clone() const
+{
+    PrimitiveGroup newGroup;
+    newGroup.prim = prim;
+    newGroup.materialIndex = materialIndex;
+    newGroup.indices = indices;
+    newGroup.primOverride = primOverride;
+    newGroup.vertexOverride = vertexOverride;
+    newGroup.vertexCountOverride = vertexCountOverride;
+    newGroup.indicesOverride = indicesOverride;
+    newGroup.vertexDescriptionOverride = vertexDescriptionOverride.clone();
+    return newGroup;
+}
+
+
 unsigned int
 PrimitiveGroup::getPrimitiveCount() const
 {
@@ -143,10 +159,18 @@ PrimitiveGroup::getPrimitiveCount() const
 }
 
 
-Mesh::~Mesh()
+Mesh
+Mesh::clone() const
 {
-    for (const auto group : groups)
-        delete group;
+    Mesh newMesh;
+    newMesh.vertexDesc = vertexDesc.clone();
+    newMesh.nVertices = nVertices;
+    newMesh.vertices = vertices;
+    newMesh.groups.reserve(groups.size());
+    std::transform(groups.cbegin(), groups.cend(), std::back_inserter(newMesh.groups),
+                   [](const PrimitiveGroup& group) { return group.clone(); });
+    newMesh.name = name;
+    return newMesh;
 }
 
 
@@ -181,7 +205,7 @@ Mesh::getGroup(unsigned int index) const
     if (index >= groups.size())
         return nullptr;
 
-    return groups[index];
+    return &groups[index];
 }
 
 
@@ -191,19 +215,19 @@ Mesh::getGroup(unsigned int index)
     if (index >= groups.size())
         return nullptr;
 
-    return groups[index];
+    return &groups[index];
 }
 
 
 unsigned int
-Mesh::addGroup(PrimitiveGroup* group)
+Mesh::addGroup(PrimitiveGroup&& group)
 {
-    groups.push_back(group);
+    groups.push_back(std::move(group));
     return groups.size();
 }
 
 
-PrimitiveGroup*
+PrimitiveGroup
 Mesh::createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indices)
 {
     // Transform LINE_STRIP/LINES to triangle vertices
@@ -281,12 +305,13 @@ Mesh::createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indic
         VertexAttribute(VertexAttributeSemantic::NextPosition, positionAttributes.format, originalStride),
         VertexAttribute(VertexAttributeSemantic::ScaleFactor, VertexAttributeFormat::Float1, originalStride + positionSize),
     };
-    auto* g = new PrimitiveGroup();
-    g->vertexOverride = data;
-    g->vertexCountOverride = lineVertexCount;
-    g->vertexDescriptionOverride = appendingAttributes(vertexDesc, newAttributes.cbegin(), newAttributes.cend());
-    g->indicesOverride = std::move(newIndices);
-    g->primOverride = PrimitiveGroupType::TriList;
+
+    PrimitiveGroup g;
+    g.vertexOverride = std::move(data);
+    g.vertexCountOverride = lineVertexCount;
+    g.vertexDescriptionOverride = appendingAttributes(vertexDesc, newAttributes.cbegin(), newAttributes.cend());
+    g.indicesOverride = std::move(newIndices);
+    g.primOverride = PrimitiveGroupType::TriList;
     return g;
 }
 
@@ -296,21 +321,21 @@ Mesh::addGroup(PrimitiveGroupType prim,
                unsigned int materialIndex,
                std::vector<Index32>&& indices)
 {
-    PrimitiveGroup* g;
+    PrimitiveGroup g;
     if (prim == PrimitiveGroupType::LineStrip || prim == PrimitiveGroupType::LineList)
     {
         g = createLinePrimitiveGroup(prim == PrimitiveGroupType::LineStrip, indices);
     }
     else
     {
-        g = new PrimitiveGroup();
-        g->primOverride = prim;
+        g.primOverride = prim;
     }
-    g->indices = std::move(indices);
-    g->prim = prim;
-    g->materialIndex = materialIndex;
 
-    return addGroup(g);
+    g.indices = std::move(indices);
+    g.prim = prim;
+    g.materialIndex = materialIndex;
+
+    return addGroup(std::move(g));
 }
 
 
@@ -324,9 +349,6 @@ Mesh::getGroupCount() const
 void
 Mesh::clearGroups()
 {
-    for (const auto group : groups)
-        delete group;
-
     groups.clear();
 }
 
@@ -348,9 +370,9 @@ Mesh::setName(std::string&& _name)
 void
 Mesh::remapIndices(const std::vector<Index32>& indexMap)
 {
-    for (auto group : groups)
+    for (auto& group : groups)
     {
-        for (auto& index : group->indices)
+        for (auto& index : group.indices)
         {
             index = indexMap[index];
         }
@@ -361,8 +383,8 @@ Mesh::remapIndices(const std::vector<Index32>& indexMap)
 void
 Mesh::remapMaterials(const std::vector<unsigned int>& materialMap)
 {
-    for (auto group : groups)
-        group->materialIndex = materialMap[group->materialIndex];
+    for (auto& group : groups)
+        group.materialIndex = materialMap[group.materialIndex];
 }
 
 
@@ -370,9 +392,9 @@ void
 Mesh::aggregateByMaterial()
 {
     std::sort(groups.begin(), groups.end(),
-              [](const PrimitiveGroup* g0, const PrimitiveGroup* g1)
+              [](const PrimitiveGroup& g0, const PrimitiveGroup& g1)
               {
-                  return g0->materialIndex < g1->materialIndex;
+                  return g0.materialIndex < g1.materialIndex;
               });
 }
 
@@ -396,10 +418,10 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
     const VWord* vdata = vertices.data();
 
     // Iterate over all primitive groups in the mesh
-    for (const auto group : groups)
+    for (const auto& group : groups)
     {
-        PrimitiveGroupType primType = group->prim;
-        Index32 nIndices = group->indices.size();
+        PrimitiveGroupType primType = group.prim;
+        Index32 nIndices = group.indices.size();
 
         // Only attempt to compute the intersection of the ray with triangle
         // groups.
@@ -411,9 +433,9 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
         {
             unsigned int primitiveIndex = 0;
             Index32 index = 0;
-            Index32 i0 = group->indices[0];
-            Index32 i1 = group->indices[1];
-            Index32 i2 = group->indices[2];
+            Index32 i0 = group.indices[0];
+            Index32 i1 = group.indices[1];
+            Index32 i2 = group.indices[2];
 
             // Iterate over the triangles in the primitive group
             do
@@ -462,7 +484,7 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
                                 closest = t;
                                 if (result)
                                 {
-                                    result->group = group;
+                                    result->group = &group;
                                     result->primitiveIndex = primitiveIndex;
                                     result->distance = closest;
                                 }
@@ -477,9 +499,9 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
                     index += 3;
                     if (index < nIndices)
                     {
-                        i0 = group->indices[index + 0];
-                        i1 = group->indices[index + 1];
-                        i2 = group->indices[index + 2];
+                        i0 = group.indices[index + 0];
+                        i1 = group.indices[index + 1];
+                        i2 = group.indices[index + 2];
                     }
                 }
                 else if (primType == PrimitiveGroupType::TriStrip)
@@ -489,7 +511,7 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
                     {
                         i0 = i1;
                         i1 = i2;
-                        i2 = group->indices[index];
+                        i2 = group.indices[index];
                         // TODO: alternate orientation of triangles in a strip
                     }
                 }
@@ -500,7 +522,7 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
                     {
                         index += 1;
                         i1 = i2;
-                        i2 = group->indices[index];
+                        i2 = group.indices[index];
                     }
                 }
 
@@ -638,8 +660,8 @@ Mesh::getPrimitiveCount() const
 {
     unsigned int count = 0;
 
-    for (const auto group : groups)
-        count += group->getPrimitiveCount();
+    for (const auto& group : groups)
+        count += group.getPrimitiveCount();
 
     return count;
 }

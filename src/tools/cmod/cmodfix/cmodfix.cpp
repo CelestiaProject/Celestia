@@ -14,7 +14,9 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <string>
+#include <utility>
 
 #include <celmodel/mesh.h>
 #include <celmodel/model.h>
@@ -151,7 +153,7 @@ int main(int argc, char* argv[])
 
     PathManager pathManager;
 
-    cmod::Model* model = nullptr;
+    std::unique_ptr<cmod::Model> model = nullptr;
     if (!inputFilename.empty())
     {
         std::ifstream in(inputFilename, std::ios::in | std::ios::binary);
@@ -172,52 +174,50 @@ int main(int argc, char* argv[])
 
     if (genNormals || genTangents)
     {
-        cmod::Model* newModel = new cmod::Model();
+        auto newModel = std::make_unique<cmod::Model>();
         std::uint32_t i;
 
         // Copy materials
         for (i = 0; model->getMaterial(i) != nullptr; i++)
         {
-            newModel->addMaterial(model->getMaterial(i));
+            newModel->addMaterial(model->getMaterial(i)->clone());
         }
 
         // Generate normals and/or tangents for each model in the mesh
         for (i = 0; model->getMesh(i) != nullptr; i++)
         {
-            cmod::Mesh* mesh = model->getMesh(i);
-            cmod::Mesh* newMesh = nullptr;
+            cmod::Mesh mesh = model->getMesh(i)->clone();
 
             if (genNormals)
             {
-                newMesh = GenerateNormals(*mesh,
-                                          celmath::degToRad(smoothAngle),
-                                          weldVertices);
-                if (newMesh == nullptr)
+                cmod::Mesh newMesh = GenerateNormals(mesh,
+                                                     celmath::degToRad(smoothAngle),
+                                                     weldVertices);
+                if (newMesh.getVertexCount() == 0)
                 {
                     std::cerr << "Error generating normals!\n";
                     return 1;
                 }
-                // TODO: clean up old mesh
-                mesh = newMesh;
+
+                mesh = std::move(newMesh);
             }
 
             if (genTangents)
             {
-                newMesh = GenerateTangents(*mesh, weldVertices);
-                if (newMesh == nullptr)
+                cmod::Mesh newMesh = GenerateTangents(mesh, weldVertices);
+                if (newMesh.getVertexCount() == 0)
                 {
                     std::cerr << "Error generating tangents!\n";
                     return 1;
                 }
                 // TODO: clean up old mesh
-                mesh = newMesh;
+                mesh = std::move(newMesh);
             }
 
-            newModel->addMesh(mesh);
+            newModel->addMesh(std::move(mesh));
         }
 
-        // delete model;
-        model = newModel;
+        model = std::move(newModel);
     }
 
     if (mergeMeshes)
@@ -249,9 +249,9 @@ int main(int argc, char* argv[])
     if (outputFilename.empty())
     {
         if (outputBinary)
-            SaveModelBinary(model, std::cout, GetPathManager()->getSource);
+            SaveModelBinary(model.get(), std::cout, GetPathManager()->getSource);
         else
-            SaveModelAscii(model, std::cout, GetPathManager()->getSource);
+            SaveModelAscii(model.get(), std::cout, GetPathManager()->getSource);
     }
     else
     {
@@ -270,9 +270,9 @@ int main(int argc, char* argv[])
         }
 
         if (outputBinary)
-            SaveModelBinary(model, out, GetPathManager()->getSource);
+            SaveModelBinary(model.get(), out, GetPathManager()->getSource);
         else
-            SaveModelAscii(model, out, GetPathManager()->getSource);
+            SaveModelAscii(model.get(), out, GetPathManager()->getSource);
     }
 
     return 0;

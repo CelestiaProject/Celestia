@@ -78,7 +78,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
 
         for (unsigned int i = 0; i < m_model->getMeshCount(); ++i)
         {
-            cmod::Mesh* mesh = m_model->getMesh(i);
+            const cmod::Mesh* mesh = m_model->getMesh(i);
             const cmod::VertexDescription& vertexDesc = mesh->getVertexDescription();
 
             GLuint vboId = 0;
@@ -124,7 +124,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
     // Iterate over all meshes in the model
     for (unsigned int meshIndex = 0; meshIndex < m_model->getMeshCount(); ++meshIndex)
     {
-        cmod::Mesh* mesh = m_model->getMesh(meshIndex);
+        const cmod::Mesh* mesh = m_model->getMesh(meshIndex);
 
         const void* currentData = nullptr;
         GLuint currentVboId = 0;

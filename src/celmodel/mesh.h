@@ -161,7 +161,10 @@ struct PrimitiveGroup
     ~PrimitiveGroup() = default;
     PrimitiveGroup(const PrimitiveGroup&) = delete;
     PrimitiveGroup& operator=(const PrimitiveGroup&) = delete;
+    PrimitiveGroup(PrimitiveGroup&&) = default;
+    PrimitiveGroup& operator=(PrimitiveGroup&&) = default;
 
+    PrimitiveGroup clone() const;
     unsigned int getPrimitiveCount() const;
 
     PrimitiveGroupType prim{ PrimitiveGroupType::InvalidPrimitiveGroupType };
@@ -183,25 +186,28 @@ class Mesh
     public:
         PickResult() = default;
 
-        Mesh* mesh{ nullptr };
-        PrimitiveGroup* group{ nullptr };
+        const Mesh* mesh{ nullptr };
+        const PrimitiveGroup* group{ nullptr };
         unsigned int primitiveIndex{ 0 };
         double distance{ -1.0 };
     };
 
     Mesh() = default;
-    ~Mesh();
+    ~Mesh() = default;
     Mesh(const Mesh&) = delete;
     Mesh& operator=(const Mesh&) = delete;
+    Mesh(Mesh&&) = default;
+    Mesh& operator=(Mesh&&) = default;
+
+    Mesh clone() const;
 
     void setVertices(unsigned int _nVertices, std::vector<VWord>&& vertexData);
     bool setVertexDescription(VertexDescription&& desc);
     const VertexDescription& getVertexDescription() const;
 
-    PrimitiveGroup* createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indices);
     const PrimitiveGroup* getGroup(unsigned int index) const;
     PrimitiveGroup* getGroup(unsigned int index);
-    unsigned int addGroup(PrimitiveGroup* group);
+    unsigned int addGroup(PrimitiveGroup&& group);
     unsigned int addGroup(PrimitiveGroupType prim,
                           unsigned int materialIndex,
                           std::vector<Index32>&& indices);
@@ -232,14 +238,14 @@ class Mesh
     unsigned int getPrimitiveCount() const;
 
  private:
-    void recomputeBoundingBox();
+    PrimitiveGroup createLinePrimitiveGroup(bool lineStrip, const std::vector<Index32>& indices);
 
     VertexDescription vertexDesc{ };
 
     unsigned int nVertices{ 0 };
     std::vector<VWord> vertices{ };
 
-    std::vector<PrimitiveGroup*> groups;
+    std::vector<PrimitiveGroup> groups;
 
     std::string name;
 };

@@ -12,19 +12,19 @@
 
 #include <functional>
 #include <iosfwd>
+#include <memory>
 
 #include <celcompat/filesystem.h>
 #include <celutil/reshandle.h>
-#include "material.h"
+#include "model.h"
 
 namespace cmod
 {
-class Model;
 
 using HandleGetter = std::function<ResourceHandle(const fs::path&)>;
 using SourceGetter = std::function<fs::path(ResourceHandle)>;
 
-Model* LoadModel(std::istream& in, HandleGetter getHandle);
+std::unique_ptr<Model> LoadModel(std::istream& in, HandleGetter getHandle);
 
 bool SaveModelAscii(const Model* model, std::ostream& out, SourceGetter getSource);
 bool SaveModelBinary(const Model* model, std::ostream& out, SourceGetter getSource);

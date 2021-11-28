@@ -17,7 +17,6 @@
 
 #include <celmodel/material.h>
 #include <celmodel/mesh.h>
-#include <celmodel/model.h>
 
 #include "convertobj.h"
 
@@ -78,7 +77,7 @@ WavefrontLoader::WavefrontLoader(std::istream& in) :
 }
 
 
-cmod::Model*
+std::unique_ptr<cmod::Model>
 WavefrontLoader::load()
 {
     std::string line;
@@ -87,7 +86,7 @@ WavefrontLoader::load()
     ObjVertex::VertexType lastVertexType = ObjVertex::Point;
     int currentMaterialIndex = -1;
 
-    m_model = new cmod::Model();
+    m_model = std::make_unique<cmod::Model>();
 
     while (std::getline(m_in, line))
     {
@@ -135,12 +134,12 @@ WavefrontLoader::load()
             }
             else if (keyword == "usemtl")
             {
-                cmod::Material* material = new cmod::Material();
-                material->diffuse = cmod::Color(1.0f, 1.0f, 1.0f);
-                currentMaterialIndex = m_model->addMaterial(material) - 1;
+                cmod::Material material;
+                material.diffuse = cmod::Color(1.0f, 1.0f, 1.0f);
+                currentMaterialIndex = m_model->addMaterial(std::move(material)) - 1;
                 if (!m_materialGroups.empty())
                 {
-                    if (m_materialGroups.back().firstIndex == (int) m_indexData.size())
+                    if (m_materialGroups.back().firstIndex == static_cast<int>(m_indexData.size()))
                     {
                         m_materialGroups.back().materialIndex = currentMaterialIndex;
                     }
@@ -293,7 +292,7 @@ WavefrontLoader::load()
         createMesh(lastVertexType, vertexCount);
     }
 
-    return m_model;
+    return std::move(m_model);
 }
 
 
@@ -305,7 +304,6 @@ WavefrontLoader::reportError(const std::string& message)
     os << "Line " << m_lineNumber << ": " << message;
     m_errorMessage = os.str();
 
-    delete m_model;
     m_model = nullptr;
 }
 
@@ -360,9 +358,9 @@ WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int verte
     std::memcpy(vertexDataCopy.data(), m_vertexData.data(), m_vertexData.size() * sizeof(cmod::VWord));
 
     // Create the Celestia mesh
-    cmod::Mesh* mesh = new cmod::Mesh();
-    mesh->setVertexDescription(cmod::VertexDescription(std::move(attributes)));
-    mesh->setVertices(vertexCount, std::move(vertexDataCopy));
+    cmod::Mesh mesh;
+    mesh.setVertexDescription(cmod::VertexDescription(std::move(attributes)));
+    mesh.setVertices(vertexCount, std::move(vertexDataCopy));
 
     // Add primitive groups
     for (unsigned int i = 0; i < m_materialGroups.size(); ++i)
@@ -381,9 +379,9 @@ WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int verte
         if (indexCount > 0)
         {
             auto copyStart = m_indexData.begin() + firstIndex;
-            mesh->addGroup(cmod::PrimitiveGroupType::TriList,
-                           m_materialGroups[i].materialIndex,
-                           std::vector<cmod::Index32>(copyStart, copyStart + indexCount));
+            mesh.addGroup(cmod::PrimitiveGroupType::TriList,
+                          m_materialGroups[i].materialIndex,
+                          std::vector<cmod::Index32>(copyStart, copyStart + indexCount));
         }
     }
 
@@ -391,5 +389,5 @@ WavefrontLoader::createMesh(ObjVertex::VertexType vertexType, unsigned int verte
     m_indexData.clear();
     m_materialGroups.clear();
 
-    m_model->addMesh(mesh);
+    m_model->addMesh(std::move(mesh));
 }
