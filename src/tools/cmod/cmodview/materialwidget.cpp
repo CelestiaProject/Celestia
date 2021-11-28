@@ -35,19 +35,6 @@ cmod::Color fromQtColor(const QColor& color)
 }
 
 
-// TODO: implement a copy constructor and assignment operator for materials
-void copyMaterial(cmod::Material& dest, const cmod::Material& src)
-{
-    dest.diffuse       = src.diffuse;
-    dest.specular      = src.specular;
-    dest.emissive      = src.emissive;
-    dest.opacity       = src.opacity;
-    dest.specularPower = src.specularPower;
-    dest.blend         = src.blend;
-    dest.maps          = src.maps;
-}
-
-
 static void setWidgetColor(QLabel* widget, const cmod::Color& color)
 {
     widget->setPalette(QPalette(toQtColor(color)));
@@ -193,7 +180,7 @@ MaterialWidget::MaterialWidget(QWidget* parent) :
 void
 MaterialWidget::setMaterial(const cmod::Material& material)
 {
-    copyMaterial(m_material, material);
+    m_material = material.clone();
 
     setWidgetColor(m_diffuseColor, m_material.diffuse);
     setWidgetColor(m_specularColor, m_material.specular);

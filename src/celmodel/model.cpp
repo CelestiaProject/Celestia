@@ -69,7 +69,7 @@ Model::addMaterial(Material&& m)
     // the model, we could potentially end up with false positives--this
     // won't cause any rendering troubles, but could hurt performance
     // if it forces multipass rendering when it's not required.
-    for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); i++)
+    for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); ++i)
     {
         if (m.maps[i] != InvalidResource)
         {
@@ -79,6 +79,23 @@ Model::addMaterial(Material&& m)
 
     materials.push_back(std::move(m));
     return materials.size();
+}
+
+
+bool
+Model::setMaterial(unsigned int index, Material&& m)
+{
+    if (index >= materials.size()) { return false; }
+    materials[index] = std::move(m);
+
+    // Regenerate the texture map usage for the model by rescanning all the meshes.
+    for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); ++i)
+    {
+        textureUsage[i] = std::any_of(materials.cbegin(), materials.cend(),
+                                      [&](const Material& mat) { return mat.maps[i] != InvalidResource; });
+    }
+
+    return true;
 }
 
 
