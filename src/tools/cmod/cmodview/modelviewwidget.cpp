@@ -1243,12 +1243,7 @@ ModelViewWidget::setupDefaultLightSources()
     light1.intensity = 1.0f;
     light1.direction = Eigen::Vector3d(1.0, 1.0, 5.0).normalized();
 
-    LightSource light2;
-    light2.color = Eigen::Vector3f(1.0f, 1.0f, 1.0f);
-    light2.intensity = 1.0f;
-    light2.direction = Eigen::Vector3d(3.0, -3.0, -1.0).normalized();
-
-    m_lightSources << light1;// << light2;
+    m_lightSources << light1;
 }
 
 

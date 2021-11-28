@@ -100,10 +100,8 @@ void Nebula::render(const Vector3f& /*offset*/,
     Matrix4f mv = vecgl::rotate(vecgl::scale(*m.modelview, getRadius()),
                                 getOrientation());
 
-    GLSLUnlit_RenderContext rc(renderer, getRadius());
+    GLSLUnlit_RenderContext rc(renderer, getRadius(), &mv, m.projection);
     rc.setPointScale(2.0f * getRadius() / pixelSize * renderer->getScreenDpi() / 96.0f);
-    rc.setProjectionMatrix(m.projection);
-    rc.setModelViewMatrix(&mv);
     g->render(rc);
 
     renderer->enableBlending();
