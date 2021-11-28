@@ -11,15 +11,14 @@
 
 #include "scriptmenu.h"
 #include <iostream>
-#include <fmt/printf.h>
-#include <fmt/ostream.h>
 #include <celcompat/filesystem.h>
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
+#include <celutil/logger.h>
 #include <fstream>
 
 using namespace std;
-
+using celestia::util::GetLogger;
 
 static const char TitleTag[] = "Title:";
 
@@ -85,7 +84,7 @@ ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
     std::error_code ec;
     if (!fs::is_directory(scriptsDir, ec))
     {
-        cerr << fmt::sprintf(_("Path %s doesn't exist or isn't a directory\n"), scriptsDir);
+        GetLogger()->warn(_("Path {} doesn't exist or isn't a directory\n"), scriptsDir);
         return scripts;
     }
 

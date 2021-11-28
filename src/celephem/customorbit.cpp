@@ -13,15 +13,15 @@
 #include <celengine/astro.h>
 #include <celmath/mathlib.h>
 #include <celmath/geomutil.h>
+#include <celutil/logger.h>
 #include <cassert>
 #include <vector>
 #include <fstream>
-#include <celutil/debug.h>
-#include <fmt/ostream.h>
 
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+using celestia::util::GetLogger;
 
 
 #define TWOPI 6.28318530717958647692
@@ -3164,11 +3164,11 @@ Orbit* GetCustomOrbit(const string& name)
                 ephemType = fmt::format("DE{}", jpleph->getDENumber());
             else
                 ephemType = "INPOP";
-            fmt::print(clog, "Loaded {} ephemeris. Valid from JD {:.8f} to JD {:.8f}\n",
-                             ephemType, jpleph->getStartDate(), jpleph->getEndDate());
-            fmt::print(clog, "Ephemeris record size: {} doubles, with {} endianess.\n",
-                             jpleph->getRecordSize(),
-                             jpleph->getByteSwap() ? "non-native" : "native");
+            GetLogger()->debug("Loaded {} ephemeris. Valid from JD {:.8f} to JD {:.8f}\n",
+                               ephemType, jpleph->getStartDate(), jpleph->getEndDate());
+            GetLogger()->debug("Ephemeris record size: {} doubles, with {} endianess.\n",
+                               jpleph->getRecordSize(),
+                               jpleph->getByteSwap() ? "non-native" : "native");
         }
     }
 

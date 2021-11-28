@@ -9,13 +9,14 @@
 // of the License, or (at your option) any later version.
 
 #include <celengine/image.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 
 extern "C" {
 #include <avif/avif.h>
 }
 
 using celestia::PixelFormat;
+using celestia::util::GetLogger;
 
 Image* LoadAVIFImage(const fs::path& filename)
 {
@@ -23,7 +24,7 @@ Image* LoadAVIFImage(const fs::path& filename)
     avifResult result = avifDecoderSetIOFile(decoder, filename.string().c_str());
     if (result != AVIF_RESULT_OK)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Cannot open file for read: '%s'\n", filename);
+        GetLogger()->error("Cannot open file for read: '{}'\n", filename);
         avifDecoderDestroy(decoder);
         return nullptr;
     }
@@ -31,14 +32,14 @@ Image* LoadAVIFImage(const fs::path& filename)
     result = avifDecoderParse(decoder);
     if (result != AVIF_RESULT_OK)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Failed to decode image: %s\n", avifResultToString(result));
+        GetLogger()->error("Failed to decode image: {}\n", avifResultToString(result));
         avifDecoderDestroy(decoder);
         return nullptr;
     }
 
     if (avifDecoderNextImage(decoder) != AVIF_RESULT_OK)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "No image available: %s\n", filename);
+        GetLogger()->error("No image available: {}\n", filename);
         avifDecoderDestroy(decoder);
         return nullptr;
     }
@@ -53,7 +54,7 @@ Image* LoadAVIFImage(const fs::path& filename)
 
     if (avifImageYUVToRGB(decoder->image, &rgb) != AVIF_RESULT_OK)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Conversion from YUV failed: %s\n", filename);
+        GetLogger()->error("Conversion from YUV failed: {}\n", filename);
         delete image;
         avifDecoderDestroy(decoder);
         return nullptr;

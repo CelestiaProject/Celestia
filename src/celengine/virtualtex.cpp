@@ -15,17 +15,17 @@
 #include <string>
 #include <utility>
 #include <fmt/format.h>
-#include <celutil/debug.h>
-#include "glsupport.h"
-#include <celutil/debug.h>
 #include <celcompat/filesystem.h>
 #include <celutil/filetype.h>
-#include "parser.h"
+#include <celutil/logger.h>
 #include <celutil/tokenizer.h>
+#include "glsupport.h"
+#include "parser.h"
 #include "virtualtex.h"
 
 
 using namespace std;
+using celestia::util::GetLogger;
 
 static const int MaxResolutionLevels = 13;
 
@@ -317,7 +317,7 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
     string imageDirectory;
     if (!texParams->getString("ImageDirectory", imageDirectory))
     {
-        DPRINTF(LOG_LEVEL_ERROR, "ImageDirectory missing in virtual texture.\n");
+        GetLogger()->error("ImageDirectory missing in virtual texture.\n");
         return nullptr;
     }
 
@@ -325,14 +325,14 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
     if (!texParams->getNumber("BaseSplit", baseSplit) ||
         baseSplit < 0.0 || baseSplit != floor(baseSplit))
     {
-        DPRINTF(LOG_LEVEL_ERROR, "BaseSplit in virtual texture missing or has bad value\n");
+        GetLogger()->error("BaseSplit in virtual texture missing or has bad value\n");
         return nullptr;
     }
 
     double tileSize = 0.0;
     if (!texParams->getNumber("TileSize", tileSize))
     {
-        DPRINTF(LOG_LEVEL_ERROR, "TileSize is missing from virtual texture\n");
+        GetLogger()->error("TileSize is missing from virtual texture\n");
         return nullptr;
     }
 
@@ -340,7 +340,7 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
         tileSize < 64.0 ||
         !isPow2((int) tileSize))
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Virtual texture tile size must be a power of two >= 64\n");
+        GetLogger()->error("Virtual texture tile size must be a power of two >= 64\n");
         return nullptr;
     }
 
@@ -379,7 +379,7 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const fs::path& path)
     Value* texParamsValue = parser.readValue();
     if (texParamsValue == nullptr || texParamsValue->getType() != Value::HashType)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Error parsing virtual texture\n");
+        GetLogger()->error("Error parsing virtual texture\n");
         delete texParamsValue;
         return nullptr;
     }
@@ -399,7 +399,7 @@ VirtualTexture* LoadVirtualTexture(const fs::path& filename)
 
     if (!in.good())
     {
-        //DPRINTF(LOG_LEVEL_ERROR, "Error opening virtual texture file: %s\n", filename.c_str());
+        GetLogger()->error("Error opening virtual texture file: {}\n", filename);
         return nullptr;
     }
 

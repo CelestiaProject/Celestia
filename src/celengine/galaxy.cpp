@@ -18,7 +18,6 @@
 #include <celmath/ray.h>
 #include <celmath/randutils.h>
 #include <celutil/gettext.h>
-#include <celutil/debug.h>
 #include <celcompat/filesystem.h>
 #include <fstream>
 #include <algorithm>

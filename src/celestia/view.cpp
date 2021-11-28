@@ -11,9 +11,11 @@
 #include <celengine/render.h>
 #include <celengine/framebuffer.h>
 #include <celutil/color.h>
+#include <celutil/logger.h>
 #include "view.h"
 
 using namespace std;
+using celestia::util::GetLogger;
 
 View::View(View::Type _type,
            Renderer *_renderer,
@@ -271,7 +273,7 @@ void View::updateFBO(int gWidth, int gHeight)
                                                               FramebufferObject::ColorAttachment | FramebufferObject::DepthAttachment));
     if (!fbo->isValid())
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Error creating view FBO.\n");
+        GetLogger()->error("Error creating view FBO.\n");
         fbo = nullptr;
     }
 }

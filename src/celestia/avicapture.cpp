@@ -10,10 +10,12 @@
 #include <windowsx.h>
 #include <celengine/pixelformat.h>
 #include <celengine/render.h>
+#include <celutil/logger.h>
 #include "avicapture.h"
 
 using namespace std;
 using namespace celestia;
+using celestia::util::GetLogger;
 
 AVICapture::AVICapture(const Renderer *r) :
     MovieCapture(r)
@@ -57,7 +59,7 @@ bool AVICapture::start(const fs::path& filename,
                               nullptr);
     if (hr != AVIERR_OK)
     {
-        DPRINTF(0, "Erroring creating avi file for capture.\n");
+        GetLogger()->error("Erroring creating avi file for capture.\n");
         return false;
     }
 
@@ -72,7 +74,7 @@ bool AVICapture::start(const fs::path& filename,
     hr = AVIFileCreateStream(aviFile, &aviStream, &info);
     if (hr != AVIERR_OK)
     {
-        DPRINTF(0, "Error %08x creating AVI stream.\n", hr);
+        GetLogger()->error("Error {:08x} creating AVI stream.\n", hr);
         cleanup();
         return false;
     }
@@ -93,7 +95,7 @@ bool AVICapture::start(const fs::path& filename,
     hr = AVIMakeCompressedStream(&compAviStream, aviStream, &options, nullptr);
     if (hr != AVIERR_OK)
     {
-        DPRINTF(0, "Error %08x creating compressed AVI stream.\n", hr);
+        GetLogger()->error("Error {:08x} creating compressed AVI stream.\n", hr);
         cleanup();
         return false;
     }
@@ -115,7 +117,7 @@ bool AVICapture::start(const fs::path& filename,
     hr = AVIStreamSetFormat(compAviStream, 0, &bi, sizeof bi);
     if (hr != AVIERR_OK)
     {
-        DPRINTF(0, "AVIStreamSetFormat failed: %08x\n", hr);
+        GetLogger()->error("AVIStreamSetFormat failed: {:08x}\n", hr);
         cleanup();
         return false;
     }
@@ -165,7 +167,7 @@ bool AVICapture::captureFrame()
                                 &bytesWritten);
     if (hr != AVIERR_OK)
     {
-        DPRINTF(0, "AVIStreamWrite failed on frame %d\n", frameCounter);
+        GetLogger()->error("AVIStreamWrite failed on frame {}\n", frameCounter);
         return false;
     }
 

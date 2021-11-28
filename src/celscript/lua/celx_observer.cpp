@@ -16,11 +16,13 @@
 //#include <celengine/body.h>
 //#include <celengine/timelinephase.h>
 #include <celestia/celestiacore.h>
+#include <celutil/logger.h>
 #include <Eigen/Geometry>
 
 using namespace std;
 using namespace Eigen;
 using namespace celmath;
+using celestia::util::GetLogger;
 
 
 // ==================== Observer ====================
@@ -898,7 +900,7 @@ static int observer_setlocationflags(lua_State* l)
         auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps()->LocationFlagMap;
         if (LocationFlagMap.count(key) == 0)
         {
-            cerr << "Unknown key: " << key << "\n";
+            GetLogger()->warn("Unknown key: {}\n", key);
         }
         else
         {

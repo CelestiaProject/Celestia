@@ -13,12 +13,12 @@
 #include <iomanip>
 #include <celengine/parser.h>
 #include <celutil/tokenizer.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include "favorites.h"
 
 using namespace Eigen;
 using namespace std;
-
+using celestia::util::GetLogger;
 
 FavoritesList* ReadFavoritesList(istream& in)
 {
@@ -30,7 +30,7 @@ FavoritesList* ReadFavoritesList(istream& in)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Error parsing favorites file.\n");
+            GetLogger()->error("Error parsing favorites file.\n");
             for_each(favorites->begin(), favorites->end(), [](FavoritesEntry* fav) { delete fav; });
             delete favorites;
             return nullptr;
@@ -42,7 +42,7 @@ FavoritesList* ReadFavoritesList(istream& in)
         Value* favParamsValue = parser.readValue();
         if (favParamsValue == nullptr || favParamsValue->getType() != Value::HashType)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Error parsing favorites entry %s\n", fav->name.c_str());
+            GetLogger()->error("Error parsing favorites entry {}\n", fav->name);
             for_each(favorites->begin(), favorites->end(), [](FavoritesEntry* fav) { delete fav; });
             delete favorites;
             if (favParamsValue != nullptr)

@@ -22,8 +22,8 @@
 #include <celscript/legacy/execution.h>
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
-#include <celutil/debug.h>
 #include <celutil/gettext.h>
+#include <celutil/logger.h>
 #include <celestia/celestiacore.h>
 #include <celestia/url.h>
 
@@ -43,6 +43,7 @@
 
 using namespace Eigen;
 using namespace std;
+using celestia::util::GetLogger;
 
 const char* CelxLua::ClassNames[] =
 {
@@ -255,7 +256,7 @@ static void checkTimeslice(lua_State* l, lua_Debug* /*ar*/)
     if (luastate->timesliceExpired())
     {
         const char* errormsg = "Timeout: script hasn't returned control to celestia (forgot to call wait()?)";
-        cerr << errormsg << "\n";
+        GetLogger()->error("{}\n", errormsg);
         lua_pushstring(l, errormsg);
         lua_error(l);
     }
@@ -291,7 +292,10 @@ void LuaState::cleanup()
 
     timeout = getTime() + 1.0;
     if (lua_pcall(costate, 0, 0, 0) != 0)
-        cerr << "Error while executing cleanup-callback: " << lua_tostring(costate, -1) << "\n";
+    {
+        GetLogger()->error("Error while executing cleanup-callback: {}\n",
+                           lua_tostring(costate, -1));
+    }
 }
 
 
@@ -429,7 +433,7 @@ bool LuaState::charEntered(const char* c_p)
         CelestiaCore* appCore = getAppCore(costate, NoErrors);
         if (appCore == nullptr)
         {
-            cerr << "ERROR: appCore not found\n";
+            GetLogger()->error("ERROR: appCore not found\n");
             return true;
         }
         appCore->setTextEnterMode(appCore->getTextEnterMode() & ~CelestiaCore::KbPassToScript);
@@ -448,7 +452,7 @@ bool LuaState::charEntered(const char* c_p)
         }
         else
         {
-            cerr << "Oops, expected savedrenderflags to be userdata\n";
+            GetLogger()->warn("Oops, expected savedrenderflags to be userdata\n");
         }
         lua_settop(costate,stackTop);
         return true;
@@ -459,7 +463,8 @@ bool LuaState::charEntered(const char* c_p)
     timeout = getTime() + 1.0;
     if (lua_pcall(costate, 1, 1, 0) != 0)
     {
-        cerr << "Error while executing keyboard-callback: " << lua_tostring(costate, -1) << "\n";
+        GetLogger()->error("Error while executing keyboard-callback: {}\n",
+                           lua_tostring(costate, -1));
         result = false;
     }
     else
@@ -486,7 +491,7 @@ bool LuaState::handleKeyEvent(const char* key)
     lua_getfield(costate, LUA_REGISTRYINDEX, EventHandlers);
     if (!lua_istable(costate, -1))
     {
-        cerr << "Missing event handler table";
+        GetLogger()->error("Missing event handler table");
         lua_pop(costate, 1);
         return false;
     }
@@ -505,7 +510,8 @@ bool LuaState::handleKeyEvent(const char* key)
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 1, 1, 0) != 0)
         {
-            cerr << "Error while executing keyboard callback: " << lua_tostring(costate, -1) << "\n";
+            GetLogger()->error("Error while executing keyboard callback: {}\n",
+                               lua_tostring(costate, -1));
         }
         else
         {
@@ -533,7 +539,7 @@ bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
     lua_getfield(costate, LUA_REGISTRYINDEX, EventHandlers);
     if (!lua_istable(costate, -1))
     {
-        cerr << "Missing event handler table";
+        GetLogger()->error("Missing event handler table");
         lua_pop(costate, 1);
         return false;
     }
@@ -558,7 +564,8 @@ bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 1, 1, 0) != 0)
         {
-            cerr << "Error while executing keyboard callback: " << lua_tostring(costate, -1) << "\n";
+            GetLogger()->error("Error while executing keyboard callback: {}\n",
+                               lua_tostring(costate, -1));
         }
         else
         {
@@ -589,7 +596,7 @@ bool LuaState::handleTickEvent(double dt)
     lua_getfield(costate, LUA_REGISTRYINDEX, EventHandlers);
     if (!lua_istable(costate, -1))
     {
-        cerr << "Missing event handler table";
+        GetLogger()->error("Missing event handler table");
         lua_pop(costate, 1);
         return false;
     }
@@ -608,7 +615,8 @@ bool LuaState::handleTickEvent(double dt)
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 1, 1, 0) != 0)
         {
-            cerr << "Error while executing tick callback: " << lua_tostring(costate, -1) << "\n";
+            GetLogger()->error("Error while executing tick callback: {}\n",
+                               lua_tostring(costate, -1));
         }
         else
         {
@@ -742,7 +750,7 @@ bool LuaState::tick(double dt)
         CelestiaCore* appCore = getAppCore(costate, NoErrors);
         if (appCore == nullptr)
         {
-            cerr << "ERROR: appCore not found\n";
+            GetLogger()->error("ERROR: appCore not found\n");
             return true;
         }
         lua_pushstring(state, "celestia-savedrenderflags");
@@ -931,7 +939,7 @@ const char* Celx_SafeGetString(lua_State* l,
 {
     if (l == nullptr)
     {
-        cerr << "Error: LuaState invalid in Celx_SafeGetString\n";
+        GetLogger()->error("Error: LuaState invalid in Celx_SafeGetString\n");
         return nullptr;
     }
     int argc = lua_gettop(l);
@@ -958,7 +966,7 @@ lua_Number Celx_SafeGetNumber(lua_State* l, int index, FatalErrors fatalErrors,
 {
     if (l == nullptr)
     {
-        cerr << "Error: LuaState invalid in Celx_SafeGetNumber\n";
+        GetLogger()->error("Error: LuaState invalid in Celx_SafeGetNumber\n");
         return 0.0;
     }
     int argc = lua_gettop(l);
@@ -991,7 +999,7 @@ bool Celx_SafeGetBoolean(lua_State* l, int index, FatalErrors fatalErrors,
 {
     if (l == nullptr)
     {
-        cerr << "Error: LuaState invalid in Celx_SafeGetBoolean\n";
+        GetLogger()->error("Error: LuaState invalid in Celx_SafeGetBoolean\n");
         return false;
     }
     int argc = lua_gettop(l);
@@ -1187,7 +1195,8 @@ bool LuaState::callLuaHook(void* obj, const char* method)
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 1, 1, 0) != 0)
         {
-            cerr << "Error while executing Lua Hook: " << lua_tostring(costate, -1) << "\n";
+            GetLogger()->error("Error while executing Lua Hook: {}\n",
+                               lua_tostring(costate, -1));
         }
         else
         {
@@ -1230,7 +1239,8 @@ bool LuaState::callLuaHook(void* obj, const char* method, const char* keyName)
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 2, 1, 0) != 0)
         {
-            cerr << "Error while executing Lua Hook: " << lua_tostring(costate, -1) << "\n";
+            GetLogger()->error("Error while executing Lua Hook: {}\n",
+                               lua_tostring(costate, -1));
         }
         else
         {
@@ -1274,7 +1284,8 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y)
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 3, 1, 0) != 0)
         {
-            cerr << "Error while executing Lua Hook: " << lua_tostring(costate, -1) << "\n";
+            GetLogger()->error("Error while executing Lua Hook: {}\n",
+                               lua_tostring(costate, -1));
         }
         else
         {
@@ -1319,11 +1330,12 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y, int 
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 4, 1, 0) != 0)
         {
-            cerr << "Error while executing Lua Hook: " << lua_tostring(costate, -1) << "\n";
+            GetLogger()->error("Error while executing Lua Hook: {}\n",
+                               lua_tostring(costate, -1));
         }
         else
         {
-           handled = lua_toboolean(costate, -1) == 1 ? true : false;
+           handled = lua_toboolean(costate, -1) == 1;
         }
         lua_pop(costate, 1);             // pop the return value
     }
@@ -1361,11 +1373,12 @@ bool LuaState::callLuaHook(void* obj, const char* method, double dt)
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 2, 1, 0) != 0)
         {
-            cerr << "Error while executing Lua Hook: " << lua_tostring(costate, -1) << "\n";
+            GetLogger()->error("Error while executing Lua Hook: {}\n",
+                               lua_tostring(costate, -1));
         }
         else
         {
-           handled = lua_toboolean(costate, -1) == 1 ? true : false;
+           handled = lua_toboolean(costate, -1) == 1;
         }
         lua_pop(costate, 1);             // pop the return value
     }

@@ -15,6 +15,7 @@
 #include <celengine/astro.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
+#include <celutil/logger.h>
 #include "SpiceUsr.h"
 #include <iostream>
 #include <cstdio>
@@ -23,7 +24,7 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
-
+using celestia::util::GetLogger;
 
 static const double MILLISEC = astro::secsToDays(0.001);
 static const Quaterniond Rx90 = XRotation(PI / 2.0);
@@ -124,7 +125,7 @@ SpiceRotation::init(const fs::path& path,
         // Print the error message
         char errMsg[1024];
         getmsg_c("long", sizeof(errMsg), errMsg);
-        clog << errMsg << "\n";
+        GetLogger()->error("{}\n", errMsg);
         m_spiceErr = true;
 
         reset_c();
@@ -159,7 +160,7 @@ SpiceRotation::computeSpin(double jd) const
             // Print the error message
             char errMsg[1024];
             getmsg_c("long", sizeof(errMsg), errMsg);
-            clog << errMsg << "\n";
+            GetLogger()->error("{}\n", errMsg);
 
             // Reset the error state
             reset_c();

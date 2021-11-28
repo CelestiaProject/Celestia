@@ -1,13 +1,14 @@
-
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include "parseobject.h"
 #include "astroobj.h"
 #include "category.h"
 
+using celestia::util::GetLogger;
+
 void AstroObject::setIndex(AstroCatalog::IndexNumber nr)
 {
     if (m_mainIndexNumber != AstroCatalog::InvalidIndex)
-        DPRINTF(LOG_LEVEL_WARNING, "AstroObject::setIndex(%u) on object with already set index: %u!\n", nr, m_mainIndexNumber);
+        GetLogger()->warn("AstroObject::setIndex({}) on object with already set index: {}!\n", nr, m_mainIndexNumber);
     m_mainIndexNumber = nr;
 }
 

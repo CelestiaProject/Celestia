@@ -7,7 +7,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celutil/debug.h>
 #include "celx_misc.h"
 #include "celx_internal.h"
 #include <celscript/legacy/cmdparser.h>

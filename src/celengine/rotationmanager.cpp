@@ -10,12 +10,12 @@
 #include "rotationmanager.h"
 #include <config.h>
 #include <celephem/samporient.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <iostream>
 #include <fstream>
 
 using namespace std;
-
+using celestia::util::GetLogger;
 
 static RotationModelManager* rotationModelManager = nullptr;
 
@@ -44,7 +44,7 @@ fs::path RotationModelInfo::resolve(const fs::path& baseDir)
 
 RotationModel* RotationModelInfo::load(const fs::path& filename)
 {
-    DPRINTF(LOG_LEVEL_INFO, "Loading rotation model: %s\n", filename);
+    GetLogger()->verbose("Loading rotation model: {}\n", filename);
 
     return LoadSampledOrientation(filename);
 }

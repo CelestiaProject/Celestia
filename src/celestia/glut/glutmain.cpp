@@ -29,7 +29,7 @@
 #endif
 #include <fmt/printf.h>
 #include <celutil/gettext.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/tzutil.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
@@ -40,6 +40,7 @@
 
 using namespace celestia;
 using namespace std;
+using celestia::util::GetLogger;
 
 
 char AppName[] = "Celestia";
@@ -464,31 +465,32 @@ int main(int argc, char* argv[])
     ready = false;
 
     char c;
-    int startfile = 0;
-    while ((c = getopt(argc, argv, "v::f")) > -1)
+    const char* startfile = nullptr;
+    Level verbosity = Level::Info;
+    while ((c = getopt(argc, argv, "vdf:")) > -1)
     {
         switch (c)
         {
         case '?':
-            cout << "Usage: celestia [-v] [-f <filename>]\n";
+            cout << "Usage: celestia [-v] [-d] [-f <filename>]\n";
             exit(1);
         case 'v':
-            if(optarg)
-                SetDebugVerbosity(atoi(optarg));
-            else
-                SetDebugVerbosity(0);
+            verbosity = Level::Verbose;
             break;
+        case 'd':
+            verbosity = Level::Debug;
         case 'f':
-            startfile = 1;
+            if (optarg == nullptr)
+            {
+                cerr << "Missing Filename.\n";
+                return 1;
+            }
+            startfile = optarg;
         }
     }
 
     appCore = new CelestiaCore();
-    if (appCore == nullptr)
-    {
-        cerr << "Out of memory.\n";
-        return 1;
-    }
+    GetLogger()->setLevel(verbosity);
 
     if (!appCore->initSimulation())
     {
@@ -519,7 +521,7 @@ int main(int argc, char* argv[])
 
     if (!gl::init(appCore->getConfig()->ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
     {
-        cout << _("Celestia was unable to initialize OpenGL 2.1.\n");
+        cerr << _("Celestia was unable to initialize OpenGL 2.1.\n");
         return 1;
     }
 
@@ -540,14 +542,9 @@ int main(int argc, char* argv[])
         appCore->setTimeZoneBias(dstBias);
     }
 
-    if (startfile == 1) {
-        if (argv[argc - 1][0] == '-') {
-            cout << "Missing Filename.\n";
-            return 1;
-        }
-
-        cout << "*** Using CEL File: " << argv[argc - 1] << endl;
-        appCore->runScript(argv[argc - 1]);
+    if (startfile != nullptr) {
+        cout << "*** Using CEL File: " << startfile << endl;
+        appCore->runScript(startfile);
     }
 
     ready = true;

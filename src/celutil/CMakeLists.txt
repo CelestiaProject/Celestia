@@ -7,14 +7,14 @@ set(CELUTIL_SOURCES
   bytes.h
   color.cpp
   color.h
-  debug.cpp
-  debug.h
   filetype.cpp
   filetype.h
   formatnum.cpp
   formatnum.h
   fsutils.cpp
   fsutils.h
+  logger.cpp
+  logger.h
   #memorypool.cpp
   #memorypool.h
   reshandle.h

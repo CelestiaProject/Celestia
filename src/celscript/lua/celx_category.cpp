@@ -2,7 +2,6 @@
 
 #include <fmt/printf.h>
 
-#include <celutil/debug.h>
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_category.h"

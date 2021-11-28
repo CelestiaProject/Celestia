@@ -11,7 +11,7 @@
 #include <array>
 #include <iostream>
 #include <vector>
-#include <fmt/ostream.h>
+#include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
@@ -26,6 +26,7 @@
 #endif
 
 using namespace std;
+using celestia::util::GetLogger;
 
 static FT_Library ft = nullptr;
 
@@ -173,7 +174,7 @@ void TextureFontPrivate::initCommonGlyphs()
         {
             Glyph c;
             if (!loadGlyphInfo(ch, c))
-                fmt::print(cerr, "Loading character {:x} failed!\n", (unsigned)ch);
+                GetLogger()->warn("Loading character {:x} failed!\n", static_cast<unsigned>(ch));
             m_glyphs.push_back(c); // still pushing empty
         }
     }
@@ -250,7 +251,7 @@ bool TextureFontPrivate::buildAtlas()
 
         if (FT_Load_Char(m_face, c.ch, FT_LOAD_RENDER))
         {
-           fmt::print(cerr, "Loading character {:x} failed!\n", (unsigned)c.ch);
+           GetLogger()->warn("Loading character {:x} failed!\n", static_cast<unsigned>(c.ch));
            c.ch = 0;
            continue;
         }
@@ -640,19 +641,19 @@ TextureFont* TextureFont::load(const Renderer *r, const fs::path &path, int inde
 
     if (FT_New_Face(ft, path.string().c_str(), index, &face) != 0)
     {
-        fmt::print(cerr, "Could not open font {}\n", path);
+        GetLogger()->error("Could not open font {}\n", path);
         return nullptr;
     }
 
     if (!FT_IS_SCALABLE(face))
     {
-        fmt::print(cerr, "Font is not scalable: {}\n", path);
+        GetLogger()->error("Font is not scalable: {}\n", path);
         return nullptr;
     }
 
     if (FT_Set_Char_Size(face, 0, size << 6, dpi, dpi) != 0)
     {
-        fmt::print(cerr, "Could not font size {}\n", size);
+        GetLogger()->error("Could not set font size {}\n", size);
         return nullptr;
     }
 
@@ -703,7 +704,7 @@ std::shared_ptr<TextureFont> LoadTextureFont(const Renderer *r, const fs::path &
     {
         if (FT_Init_FreeType(&ft))
         {
-            cerr << "Could not init freetype library\n";
+            GetLogger()->error("Could not init freetype library\n");
             return nullptr;
         }
     }

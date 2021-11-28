@@ -14,9 +14,10 @@
 
 #include <cmath>
 #include <iostream>
-#include "debug.h"
+#include "logger.h"
 #include "bigfix.h"
 
+using celestia::util::GetLogger;
 
 static const double POW2_31 = 2147483648.0;
 static const double POW2_32 = 4294967296.0;
@@ -79,7 +80,7 @@ BigFix::BigFix(double d)
     {
       // Not a good idea but at least they are initialized
       // if too big (>= 2**63) value is passed
-      std::cerr << "Too big value " << d <<" passed to BigFix::BigFix()\n";
+      GetLogger()->error("Too big value {} passed to BigFix::BigFix()\n", d);
       hi = lo = 0;
     }
 }
@@ -255,8 +256,8 @@ int BigFix::sign() const
 // For debugging
 void BigFix::dump()
 {
-    DPRINTF(LOG_LEVEL_INFO,
-            "%08x %08x %08x %08x",
+    GetLogger()->info(
+            "{:08x} {:08x} {:08x} {:08x}",
             (uint32_t) (hi >> 32),
             (uint32_t) (hi & 0xffffffff),
             (uint32_t) (lo >> 32),
@@ -278,10 +279,10 @@ int main(int argc, char* argv[])
     if (sscanf(argv[2], "%lf", &b) != 1)
         return 1;
 
-    DPRINTF(LOG_LEVEL_INFO, "    sum:\n%f\n%f\n", a + b, (double) (BigFix(a) + BigFix(b)));
-    DPRINTF(LOG_LEVEL_INFO, "   diff:\n%f\n%f\n", a - b, (double) (BigFix(a) - BigFix(b)));
-    DPRINTF(LOG_LEVEL_INFO, "product:\n%f\n%f\n", a * b, (double) (BigFix(a) * BigFix(b)));
-    DPRINTF(LOG_LEVEL_INFO, "     lt: %u %u\n", a < b, BigFix(a) < BigFix(b));
+    GetLogger()->info("    sum:\n{}\n{}\n", a + b, (double) (BigFix(a) + BigFix(b)));
+    GetLogger()->info("   diff:\n{}\n{}\n", a - b, (double) (BigFix(a) - BigFix(b)));
+    GetLogger()->info("product:\n{}\n{}\n", a * b, (double) (BigFix(a) * BigFix(b)));
+    GetLogger()->info("     lt: {} {}\n", a < b, BigFix(a) < BigFix(b));
 
     return 0;
 }

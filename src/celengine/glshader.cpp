@@ -8,9 +8,11 @@
 // of the License, or (at your option) any later version.
 
 #include <iostream>
+#include <celutil/logger.h>
 #include "glshader.h"
 
 using namespace std;
+using celestia::util::GetLogger;
 
 
 static const string GetInfoLog(GLuint obj);
@@ -392,7 +394,7 @@ GetInfoLog(GLuint obj)
     }
     else
     {
-        cerr << "Unknown object passed to GetInfoLog()!\n";
+        GetLogger()->error("Unknown object passed to GetInfoLog()!\n");
         return string();
     }
 

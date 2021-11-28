@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <celmath/mathlib.h>
 #include <celutil/binaryread.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/gettext.h>
 #include <celutil/tokenizer.h>
 #include "stardb.h"
@@ -31,6 +31,7 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+using celestia::util::GetLogger;
 
 namespace celutil = celestia::util;
 
@@ -580,7 +581,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
         if (!in.read(header, headerLength).good()
             || strncmp(header, CROSSINDEX_FILE_HEADER, headerLength))
         {
-            cerr << _("Bad header for cross index\n");
+            GetLogger()->error(_("Bad header for cross index\n"));
             delete[] header;
             return false;
         }
@@ -592,7 +593,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
         std::uint16_t version;
         if (!celutil::readLE<std::uint16_t>(in, version) || version != 0x0100)
         {
-            std::cerr << _("Bad version for cross index\n");
+            GetLogger()->error(_("Bad version for cross index\n"));
             return false;
         }
     }
@@ -606,14 +607,14 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
         if (!celutil::readLE<AstroCatalog::IndexNumber>(in, ent.catalogNumber))
         {
             if (in.eof()) { break; }
-            std::cerr << _("Loading cross index failed\n");
+            GetLogger()->error(_("Loading cross index failed\n"));
             delete xindex;
             return false;
         }
 
         if (!celutil::readLE<AstroCatalog::IndexNumber>(in, ent.celCatalogNumber))
         {
-            std::cerr << fmt::sprintf(_("Loading cross index failed at record %u\n"), record);
+            GetLogger()->error(_("Loading cross index failed at record {}\n"), record);
             delete xindex;
             return false;
         }
@@ -691,7 +692,7 @@ bool StarDatabase::loadBinary(istream& in)
 
         if (details == nullptr)
         {
-            cerr << fmt::sprintf(_("Bad spectral type in star database, star #%u\n"), nStars);
+            GetLogger()->error(_("Bad spectral type in star database, star #{}\n"), nStars);
             return false;
         }
 
@@ -705,8 +706,8 @@ bool StarDatabase::loadBinary(istream& in)
     if (in.bad())
         return false;
 
-    DPRINTF(LOG_LEVEL_ERROR, "StarDatabase::read: nStars = %d\n", nStarsInFile);
-    clog << fmt::sprintf(_("%d stars in binary database\n"), nStars);
+    GetLogger()->debug("StarDatabase::read: nStars = {}\n", nStarsInFile);
+    GetLogger()->info(_("{} stars in binary database\n"), nStars);
 
     // Create the temporary list of stars sorted by catalog number; this
     // will be used to lookup stars during file loading. After loading is
@@ -730,7 +731,7 @@ bool StarDatabase::loadBinary(istream& in)
 
 void StarDatabase::finish()
 {
-    clog << fmt::sprintf(_("Total star count: %d\n"), nStars);
+    GetLogger()->info(_("Total star count: {}\n"), nStars);
 
     buildOctree();
     buildIndexes();
@@ -764,7 +765,7 @@ void StarDatabase::finish()
 static void stcError(const Tokenizer& tok,
                      const string& msg)
 {
-    cerr << fmt::sprintf( _("Error in .stc file (line %i): %s\n"), tok.getLineNumber(), msg);
+    GetLogger()->error(_("Error in .stc file (line {}): {}\n"), tok.getLineNumber(), msg);
 }
 
 
@@ -794,7 +795,7 @@ bool StarDatabase::createStar(Star* star,
             details = StarDetails::GetStarDetails(sc);
             if (details == nullptr)
             {
-                cerr << _("Invalid star: bad spectral type.\n");
+                GetLogger()->error(_("Invalid star: bad spectral type.\n"));
                 return false;
             }
         }
@@ -803,7 +804,7 @@ bool StarDatabase::createStar(Star* star,
             // Spectral type is required for new stars
             if (disposition != DataDisposition::Modify)
             {
-                cerr << _("Invalid star: missing spectral type.\n");
+                GetLogger()->error(_("Invalid star: missing spectral type.\n"));
                 return false;
             }
         }
@@ -990,7 +991,7 @@ bool StarDatabase::createStar(Star* star,
 
                 if (!hasBarycenter)
                 {
-                    cerr << fmt::sprintf(_("Barycenter %s does not exist.\n"), barycenterName);
+                    GetLogger()->error(_("Barycenter {} does not exist.\n"), barycenterName);
                     delete rm;
                     if (free_details)
                         delete details;
@@ -1046,7 +1047,7 @@ bool StarDatabase::createStar(Star* star,
         {
             if (disposition != DataDisposition::Modify)
             {
-                cerr << _("Invalid star: missing right ascension\n");
+                GetLogger()->error(_("Invalid star: missing right ascension\n"));
                 return false;
             }
         }
@@ -1059,7 +1060,7 @@ bool StarDatabase::createStar(Star* star,
         {
             if (disposition != DataDisposition::Modify)
             {
-                cerr << _("Invalid star: missing declination.\n");
+                GetLogger()->error(_("Invalid star: missing declination.\n"));
                 return false;
             }
         }
@@ -1072,7 +1073,7 @@ bool StarDatabase::createStar(Star* star,
         {
             if (disposition != DataDisposition::Modify)
             {
-                cerr << _("Invalid star: missing distance.\n");
+                GetLogger()->error(_("Invalid star: missing distance.\n"));
                 return false;
             }
         }
@@ -1106,7 +1107,7 @@ bool StarDatabase::createStar(Star* star,
             {
                 if (disposition != DataDisposition::Modify)
                 {
-                    clog << _("Invalid star: missing magnitude.\n");
+                    GetLogger()->error(_("Invalid star: missing magnitude.\n"));
                     return false;
                 }
                 else
@@ -1123,7 +1124,7 @@ bool StarDatabase::createStar(Star* star,
                 // origin.
                 if (distance < 1e-5f)
                 {
-                    clog << _("Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n");
+                    GetLogger()->error(_("Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n"));
                     return false;
                 }
                 magnitude = astro::appToAbsMag(magnitude, distance);
@@ -1320,13 +1321,13 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
         Value* starDataValue = parser.readValue();
         if (starDataValue == nullptr)
         {
-            clog << "Error reading star.\n";
+            GetLogger()->error("Error reading star.\n");
             return false;
         }
 
         if (starDataValue->getType() != Value::HashType)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Bad star definition.\n");
+            GetLogger()->error("Bad star definition.\n");
             delete starDataValue;
             return false;
         }
@@ -1338,7 +1339,7 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
         bool ok = false;
         if (isNewStar && disposition == DataDisposition::Modify)
         {
-            clog << "Modify requested for nonexistent star.\n";
+            GetLogger()->warn("Modify requested for nonexistent star.\n");
         }
         else
         {
@@ -1388,7 +1389,7 @@ bool StarDatabase::load(istream& in, const fs::path& resourcePath)
         {
             if (isNewStar)
                 delete star;
-            DPRINTF(LOG_LEVEL_INFO, "Bad star definition--will continue parsing file.\n");
+            GetLogger()->info("Bad star definition--will continue parsing file.\n");
         }
     }
 
@@ -1401,7 +1402,7 @@ void StarDatabase::buildOctree()
     // This should only be called once for the database
     // ASSERT(octreeRoot == nullptr);
 
-    DPRINTF(LOG_LEVEL_INFO, "Sorting stars into octree . . .\n");
+    GetLogger()->debug("Sorting stars into octree . . .\n");
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
                                       STAR_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
     DynamicStarOctree* root = new DynamicStarOctree(Vector3f(1000.0f, 1000.0f, 1000.0f),
@@ -1411,15 +1412,15 @@ void StarDatabase::buildOctree()
         root->insertObject(unsortedStars[i], STAR_OCTREE_ROOT_SIZE);
     }
 
-    DPRINTF(LOG_LEVEL_INFO, "Spatially sorting stars for improved locality of reference . . .\n");
+    GetLogger()->debug("Spatially sorting stars for improved locality of reference . . .\n");
     Star* sortedStars    = new Star[nStars];
     Star* firstStar      = sortedStars;
     root->rebuildAndSort(octreeRoot, firstStar);
 
     // ASSERT((int) (firstStar - sortedStars) == nStars);
-    DPRINTF(LOG_LEVEL_INFO, "%d stars total\n", (int) (firstStar - sortedStars));
-    DPRINTF(LOG_LEVEL_INFO, "Octree has %d nodes and %d stars.\n",
-            1 + octreeRoot->countChildren(), octreeRoot->countObjects());
+    GetLogger()->debug("{} stars total\nOctree has {} nodes and {} stars.\n",
+                       static_cast<int>(firstStar - sortedStars),
+                       1 + octreeRoot->countChildren(), octreeRoot->countObjects());
 #ifdef PROFILE_OCTREE
     vector<OctreeLevelStatistics> stats;
     octreeRoot->computeStatistics(stats);
@@ -1450,7 +1451,7 @@ void StarDatabase::buildIndexes()
     // This should only be called once for the database
     // assert(catalogNumberIndexes[0] == nullptr);
 
-    DPRINTF(LOG_LEVEL_INFO, "Building catalog number indexes . . .\n");
+    GetLogger()->info("Building catalog number indexes . . .\n");
 
     catalogNumberIndex = new Star*[nStars];
     for (int i = 0; i < nStars; ++i)

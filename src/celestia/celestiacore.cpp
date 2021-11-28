@@ -37,7 +37,7 @@
 #include <celutil/filetype.h>
 #include <celutil/formatnum.h>
 #include <celutil/fsutils.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/gettext.h>
 #include <celutil/utf8.h>
 #include <celcompat/filesystem.h>
@@ -90,10 +90,6 @@ static const double OneFtInKm = 0.0003048;
 static const double OneLbInKg = 0.45359237;
 static const double OneLbPerFt3InKgPerM3 = OneLbInKg / pow(OneFtInKm * 1000.0, 3);
 
-static void warning(string s)
-{
-    cout << s;
-}
 
 static bool is_valid_directory(const fs::path& dir)
 {
@@ -103,7 +99,7 @@ static bool is_valid_directory(const fs::path& dir)
     std::error_code ec;
     if (!fs::is_directory(dir, ec))
     {
-        cerr << fmt::sprintf(_("Path %s doesn't exist or isn't a directory\n"), dir);
+        GetLogger()->error(_("Path {} doesn't exist or isn't a directory\n"), dir);
         return false;
     }
 
@@ -156,6 +152,8 @@ CelestiaCore::CelestiaCore() :
     m_tee(std::cout, std::cerr)
 {
 
+    CreateLogger();
+
     for (int i = 0; i < KeyCount; i++)
     {
         keysPressed[i] = false;
@@ -179,6 +177,8 @@ CelestiaCore::~CelestiaCore()
 
     if (m_logfile.good())
         m_logfile.close();
+
+    DestroyLogger();
 }
 
 void CelestiaCore::readFavoritesFile()
@@ -200,7 +200,7 @@ void CelestiaCore::readFavoritesFile()
     {
         favorites = ReadFavoritesList(in);
         if (favorites == nullptr)
-            warning(fmt::format(_("Error reading favorites file {}.\n"), path));
+            GetLogger()->error(_("Error reading favorites file {}.\n"), path);
     }
 }
 
@@ -221,7 +221,7 @@ void CelestiaCore::writeFavoritesFile()
     bool isDir = fs::is_directory(path.parent_path(), ec);
     if (ec)
     {
-        warning(fmt::format(_("Failed to check directory existance for favorites file {}\n"), path));
+        GetLogger()->error(_("Failed to check directory existance for favorites file {}\n"), path);
         return;
     }
     if (!isDir)
@@ -229,7 +229,7 @@ void CelestiaCore::writeFavoritesFile()
         fs::create_directory(path.parent_path(), ec);
         if (ec)
         {
-            warning(fmt::format(_("Failed to create a directory for favorites file {}\n"), path));
+            GetLogger()->error(_("Failed to create a directory for favorites file {}\n"), path);
             return;
         }
     }
@@ -312,7 +312,7 @@ void showSelectionInfo(const Selection& sel)
 
     AngleAxisf aa(orientation);
 
-    DPRINTF(LOG_LEVEL_VERBOSE, "%s\nOrientation: [%f, %f, %f], %.1f\n", sel.getName(), aa.axis().x(), aa.axis().y(), aa.axis().z(), radToDeg(aa.angle()));
+    GetLogger()->info("{}\nOrientation: [{}, {}, {}], {:.1f}\n", sel.getName(), aa.axis().x(), aa.axis().y(), aa.axis().z(), radToDeg(aa.angle()));
 }
 
 
@@ -2210,7 +2210,7 @@ void CelestiaCore::draw(View* view)
         if (viewportEffect->render(renderer, fbo, viewWidth, viewHeight))
             viewportEffectUsed = true;
         else
-            DPRINTF(LOG_LEVEL_ERROR, "Unable to render viewport effect.\n");
+            GetLogger()->error("Unable to render viewport effect.\n");
     }
     isViewportEffectUsed = viewportEffectUsed;
 }
@@ -3638,10 +3638,10 @@ class SolarSystemLoader
 
         if (find(begin(skip), end(skip), filepath) != end(skip))
         {
-            clog << fmt::sprintf(_("Skipping solar system catalog: %s\n"), filepath);
+            GetLogger()->info(_("Skipping solar system catalog: {}\n"), filepath);
             return;
         }
-        clog << fmt::sprintf(_("Loading solar system catalog: %s\n"), filepath);
+        GetLogger()->info(_("Loading solar system catalog: {}\n"), filepath);
         if (notifier != nullptr)
             notifier->update(filepath.filename().string());
 
@@ -3684,10 +3684,10 @@ template <class OBJDB> class CatalogLoader
 
         if (find(begin(skip), end(skip), filepath) != end(skip))
         {
-            clog << fmt::sprintf(_("Skipping %s catalog: %s\n"), typeDesc, filepath);
+            GetLogger()->info(_("Skipping {} catalog: {}\n"), typeDesc, filepath);
             return;
         }
-        clog << fmt::sprintf(_("Loading %s catalog: %s\n"), typeDesc, filepath);
+        GetLogger()->info(_("Loading {} catalog: {}\n"), typeDesc, filepath);
         if (notifier != nullptr)
             notifier->update(filepath.filename().string());
 
@@ -3695,7 +3695,7 @@ template <class OBJDB> class CatalogLoader
         if (catalogFile.good())
         {
             if (!objDB->load(catalogFile, filepath.parent_path()))
-                DPRINTF(LOG_LEVEL_ERROR, "Error reading %s catalog file: %s\n", typeDesc, filepath);
+                GetLogger()->error(_("Error reading {} catalog file: {}\n"), typeDesc, filepath);
         }
     }
 };
@@ -3798,11 +3798,11 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         ifstream dsoFile(file.string(), ios::in);
         if (!dsoFile.good())
         {
-            warning(fmt::sprintf(_("Error opening deepsky catalog file %s.\n"), file));
+            GetLogger()->error(_("Error opening deepsky catalog file {}.\n"), file);
         }
         if (!dsoDB->load(dsoFile, ""))
         {
-            warning(fmt::sprintf(_("Cannot read Deep Sky Objects database %s.\n"), file));
+            GetLogger()->error(_("Cannot read Deep Sky Objects database {}.\n"), file);
         }
     }
 
@@ -3851,7 +3851,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
             ifstream solarSysFile(file.string(), ios::in);
             if (!solarSysFile.good())
             {
-                warning(fmt::sprintf(_("Error opening solar system catalog %s.\n"), file));
+                GetLogger()->error(_("Error opening solar system catalog {}.\n"), file);
             }
             else
             {
@@ -3891,8 +3891,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         ifstream asterismsFile(config->asterismsFile.string(), ios::in);
         if (!asterismsFile.good())
         {
-            warning(fmt::sprintf(_("Error opening asterisms file %s.\n"),
-                                 config->asterismsFile));
+            GetLogger()->error(_("Error opening asterisms file {}.\n"),
+                               config->asterismsFile);
         }
         else
         {
@@ -3907,8 +3907,8 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         ifstream boundariesFile(config->boundariesFile.string(), ios::in);
         if (!boundariesFile.good())
         {
-            warning(fmt::sprintf(_("Error opening constellation boundaries file %s.\n"),
-                                 config->boundariesFile));
+            GetLogger()->error(_("Error opening constellation boundaries file {}.\n"),
+                               config->boundariesFile);
         }
         else
         {
@@ -3935,7 +3935,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         else if (config->projectionMode == "fisheye")
             renderer->setProjectionMode(Renderer::ProjectionMode::FisheyeMode);
         else
-            DPRINTF(LOG_LEVEL_WARNING, "Unknown projection mode %s\n", config->projectionMode);
+            GetLogger()->warn("Unknown projection mode {}\n", config->projectionMode);
     }
 
     if (!config->viewportEffect.empty() && config->viewportEffect != "none")
@@ -3946,7 +3946,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         {
             if (config->warpMeshFile.empty())
             {
-                DPRINTF(LOG_LEVEL_WARNING, "No warp mesh file specified for this effect\n");
+                GetLogger()->warn("No warp mesh file specified for this effect\n");
             }
             else
             {
@@ -3955,11 +3955,13 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
                 if (mesh != nullptr)
                     viewportEffect = unique_ptr<ViewportEffect>(new WarpMeshViewportEffect(mesh));
                 else
-                    DPRINTF(LOG_LEVEL_WARNING, "Failed to read warp mesh file %s\n", config->warpMeshFile);
+                    GetLogger()->error("Failed to read warp mesh file {}\n", config->warpMeshFile);
             }
         }
         else
-            DPRINTF(LOG_LEVEL_WARNING, "Unknown viewport effect %s\n", config->viewportEffect);
+        {
+            GetLogger()->warn("Unknown viewport effect {}\n", config->viewportEffect);
+        }
     }
 
     if (!config->measurementSystem.empty())
@@ -3969,7 +3971,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
         else if (compareIgnoringCase(config->measurementSystem, "metric") == 0)
             measurement = Metric;
         else
-            DPRINTF(LOG_LEVEL_WARNING, "Unknown measurement system %s\n", config->measurementSystem);
+            GetLogger()->warn("Unknown measurement system {}\n", config->measurementSystem);
     }
 
     sim = new Simulation(universe);
@@ -4022,7 +4024,7 @@ bool CelestiaCore::initRenderer()
     context->init(config->ignoreGLExtensions);
     // Choose the render path, starting with the least desirable
     context->setRenderPath(GLContext::GLPath_GLSL);
-    //DPRINTF(LOG_LEVEL_VERBOSE, "render path: %i\n", context->getRenderPath());
+    //GetLogger()->verbose("render path: {}\n", context->getRenderPath());
 #endif
 
     Renderer::DetailOptions detailOptions;
@@ -4104,9 +4106,9 @@ static void loadCrossIndex(StarDatabase* starDB,
         if (xrefFile.good())
         {
             if (!starDB->loadCrossIndex(catalog, xrefFile))
-                cerr << fmt::sprintf(_("Error reading cross index %s\n"), filename);
+                GetLogger()->error(_("Error reading cross index {}\n"), filename);
             else
-                clog << fmt::sprintf(_("Loaded cross index %s\n"), filename);
+                GetLogger()->info(_("Loaded cross index {}\n"), filename);
         }
     }
 }
@@ -4123,11 +4125,11 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     {
         starNameDB = StarNameDatabase::readNames(starNamesFile);
         if (starNameDB == nullptr)
-            cerr << _("Error reading star names file\n");
+            GetLogger()->error(_("Error reading star names file\n"));
     }
     else
     {
-        cerr << fmt::sprintf(_("Error opening %s\n"), cfg.starNamesFile);
+        GetLogger()->error(_("Error opening {}\n"), cfg.starNamesFile);
     }
 
     // First load the binary star database file.  The majority of stars
@@ -4141,7 +4143,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         ifstream starFile(cfg.starDatabaseFile.string(), ios::in | ios::binary);
         if (!starFile.good())
         {
-            cerr << fmt::sprintf(_("Error opening %s\n"), cfg.starDatabaseFile);
+            GetLogger()->error(_("Error opening {}\n"), cfg.starDatabaseFile);
             delete starDB;
             delete starNameDB;
             return false;
@@ -4149,7 +4151,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
 
         if (!starDB->loadBinary(starFile))
         {
-            cerr << _("Error reading stars file\n");
+            GetLogger()->error(_("Error reading stars file\n"));
             delete starDB;
             delete starNameDB;
             return false;
@@ -4175,7 +4177,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
         if (starFile.good())
             starDB->load(starFile);
         else
-            cerr << fmt::sprintf(_("Error opening star catalog %s\n"), file);
+            GetLogger()->error(_("Error opening star catalog {}\n"), file);
     }
 
     // Now, read supplemental star files from the extras directories
@@ -4235,12 +4237,16 @@ void CelestiaCore::setFaintestAutoMag()
 void CelestiaCore::fatalError(const string& msg, bool visual)
 {
     if (alerter == nullptr)
+    {
         if (visual)
             flash(msg);
         else
-            cerr << msg;
+            GetLogger()->error(msg.c_str());
+    }
     else
+    {
         alerter->fatalError(msg);
+    }
 }
 
 void CelestiaCore::setAlerter(Alerter* a)
@@ -4758,7 +4764,7 @@ Image CelestiaCore::captureImage() const
                                 viewport[2], viewport[3],
                                 format, image.getPixels()))
     {
-        fmt::print(cerr, _("Unable to capture a frame!\n"));
+        GetLogger()->error(_("Unable to capture a frame!\n"));
     }
     return image;
 }
@@ -4770,7 +4776,7 @@ bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) co
 
     if (type != Content_JPEG && type != Content_PNG)
     {
-        fmt::print(cerr, _("Unsupported image type: {}!\n"), filename);
+        GetLogger()->error(_("Unsupported image type: {}!\n"), filename);
         return false;
     }
 
@@ -4815,6 +4821,6 @@ void CelestiaCore::setLogFile(const fs::path &fn)
     }
     else
     {
-        fmt::print(cerr, "Unable to open log file {}\n", fn);
+        GetLogger()->error("Unable to open log file {}\n", fn);
     }
 }

@@ -15,12 +15,11 @@
 #include <sstream>
 #include <iomanip>
 #include <tuple>
-#include <fmt/ostream.h>
 #include <fmt/printf.h>
 #include <Eigen/Geometry>
 #include <celcompat/filesystem.h>
 #include <celmath/geomutil.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include "glsupport.h"
 #include "vecgl.h"
 #include "shadermanager.h"
@@ -29,6 +28,7 @@
 using namespace celestia;
 using namespace Eigen;
 using namespace std;
+using celestia::util::GetLogger;
 
 // GLSL on Mac OS X appears to have a bug that precludes us from using structs
 #define USE_GLSL_STRUCTS
@@ -410,21 +410,21 @@ ShaderManager::getShader(const string& name)
     uintmax_t fsSize = fs::file_size(fsName, ecf);
     if (ecv || ecf)
     {
-        fmt::print(cerr, "Failed to get file size of {} or {}\n", vsName, fsName);
+        GetLogger()->error("Failed to get file size of {} or {}\n", vsName, fsName);
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
     }
 
     ifstream vsf(vsName.string());
     if (!vsf.good())
     {
-        fmt::print(cerr, "Failed to open {}\n", vsName);
+        GetLogger()->error("Failed to open {}\n", vsName);
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
     }
 
     ifstream fsf(fsName.string());
     if (!fsf.good())
     {
-        fmt::print(cerr, "Failed to open {}\n", fsName);
+        GetLogger()->error("Failed to open {}\n", fsName);
         return getShader(name, errorVertexShaderSource, errorFragmentShaderSource);
     }
 

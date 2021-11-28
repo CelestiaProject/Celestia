@@ -14,13 +14,12 @@
 #include <fstream>
 #include <iostream>
 
-#include <fmt/printf.h>
 #include <Eigen/Core>
 #include "glsupport.h"
 
 #include <celutil/filetype.h>
-#include <celutil/debug.h>
 #include <celutil/gettext.h>
+#include <celutil/logger.h>
 #include "framebuffer.h"
 #include "texture.h"
 #include "virtualtex.h"
@@ -29,6 +28,7 @@
 using namespace celestia;
 using namespace Eigen;
 using namespace std;
+using celestia::util::GetLogger;
 
 struct TextureCaps
 {
@@ -925,12 +925,14 @@ static Texture* CreateTextureFromImage(Image& img,
         // The texture is too large; we need to split it.
         int uSplit = max(1, img.getWidth() / maxDim);
         int vSplit = max(1, img.getHeight() / maxDim);
-        clog << fmt::sprintf(_("Creating tiled texture. Width=%i, max=%i\n"), img.getWidth(), maxDim);
+        GetLogger()->info(_("Creating tiled texture. Width={}, max={}\n"),
+                          img.getWidth(), maxDim);
         tex = new TiledTexture(img, uSplit, vSplit, mipMode);
     }
     else
     {
-        clog << fmt::sprintf(_("Creating ordinary texture: %ix%i\n"), img.getWidth(), img.getHeight());
+        GetLogger()->info(_("Creating ordinary texture: {}x{}\n"),
+                          img.getWidth(), img.getHeight());
         tex = new ImageTexture(img, addressMode, mipMode);
     }
 

@@ -15,9 +15,10 @@ extern "C" {
 #include <jpeglib.h>
 }
 #include <celengine/image.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 
 using celestia::PixelFormat;
+using celestia::util::GetLogger;
 
 namespace
 {
@@ -190,7 +191,7 @@ bool SaveJPEGImage(const fs::path& filename,
 #endif
     if (out == nullptr)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Can't open screen capture file '%s'\n", filename);
+        GetLogger()->error("Can't open screen capture file '{}'\n", filename);
         return false;
     }
 

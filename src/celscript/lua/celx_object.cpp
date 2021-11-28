@@ -22,9 +22,11 @@
 #include <celengine/multitexture.h>
 #include <celestia/celestiacore.h>
 #include <celscript/common/scriptmaps.h>
+#include <celutil/logger.h>
 
 using namespace Eigen;
 using namespace std;
+using celestia::util::GetLogger;
 
 
 static const char* bodyTypeName(int cl)
@@ -264,7 +266,7 @@ static int object_setorbitvisibility(lua_State* l)
     auto &OrbitVisibilityMap = celx.appCore(AllErrors)->scriptMaps()->OrbitVisibilityMap;
     if (OrbitVisibilityMap.count(key) == 0)
     {
-        cerr << "Unknown visibility policy: " << key << endl;
+        GetLogger()->warn("Unknown visibility policy: {}\n", key);
     }
     else
     {

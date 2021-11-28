@@ -14,12 +14,13 @@
 #include <utility>
 #include "SpiceUsr.h"
 #include <celengine/astro.h>
+#include <celutil/logger.h>
 #include "spiceorbit.h"
 #include "spiceinterface.h"
 
 using namespace Eigen;
 using namespace std;
-
+using celestia::util::GetLogger;
 
 static const double MILLISEC = astro::secsToDays(0.001);
 
@@ -105,14 +106,14 @@ SpiceOrbit::init(const fs::path& path,
     // Get the ID codes for the target
     if (!GetNaifId(targetBodyName, &targetID))
     {
-        clog << "Couldn't find SPICE ID for " << targetBodyName << "\n";
+        GetLogger()->error("Couldn't find SPICE ID for {}\n", targetBodyName);
         spiceErr = true;
         return false;
     }
 
     if (!GetNaifId(originName, &originID))
     {
-        clog << "Couldn't find SPICE ID for " << originName << "\n";
+        GetLogger()->error("Couldn't find SPICE ID for {}", originName);
         spiceErr = true;
         return false;
     }
@@ -151,7 +152,7 @@ SpiceOrbit::init(const fs::path& path,
     SpiceInt nIntervals = card_c(&targetCoverage) / 2;
     if (nIntervals <= 0 && targetID != 0)
     {
-        clog << "Couldn't find object " << targetBodyName << " in SPICE kernel pool.\n";
+        GetLogger()->error("Couldn't find object {} in SPICE kernel pool.\n", targetBodyName);
         spiceErr = true;
         if (failed_c())
         {
@@ -202,7 +203,7 @@ SpiceOrbit::init(const fs::path& path,
         if (targetID != 0 &&
             !wnincd_c(beginningSecondsJ2000, endingSecondsJ2000, &targetCoverage))
         {
-            clog << "Specified time interval for target " << targetBodyName << " not available.\n";
+            GetLogger()->error("Specified time interval for target {} not available.\n", targetBodyName);
             return false;
         }
     }
@@ -222,7 +223,7 @@ SpiceOrbit::init(const fs::path& path,
         // Print the error message
         char errMsg[1024];
         getmsg_c("long", sizeof(errMsg), errMsg);
-        clog << errMsg << "\n";
+        GetLogger()->error("{}\n", errMsg);
         spiceErr = true;
 
         reset_c();
@@ -265,7 +266,7 @@ SpiceOrbit::computePosition(double jd) const
             // Print the error message
             char errMsg[1024];
             getmsg_c("long", sizeof(errMsg), errMsg);
-            clog << errMsg << "\n";
+            GetLogger()->warn("{}\n", errMsg);
 
             // Reset the error state
             reset_c();
@@ -310,7 +311,7 @@ SpiceOrbit::computeVelocity(double jd) const
             // Print the error message
             char errMsg[1024];
             getmsg_c("long", sizeof(errMsg), errMsg);
-            clog << errMsg << "\n";
+            GetLogger()->warn("{}\n", errMsg);
 
             // Reset the error state
             reset_c();

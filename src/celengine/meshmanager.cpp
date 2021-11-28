@@ -30,9 +30,9 @@
 #include <celmodel/mesh.h>
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>
-#include <celutil/debug.h>
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
+#include <celutil/logger.h>
 #include <celutil/tokenizer.h>
 #include "meshmanager.h"
 #include "modelgeometry.h"
@@ -44,6 +44,8 @@
 #include "particlesystem.h"
 #include "particlesystemfile.h"
 #endif
+
+using celestia::util::GetLogger;
 
 namespace
 {
@@ -83,7 +85,7 @@ LoadCelestiaMesh(const fs::path& filename)
     std::ifstream meshFile(filename.string(), std::ios::in);
     if (!meshFile.good())
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Error opening mesh file: %s\n", filename);
+        GetLogger()->error("Error opening mesh file: {}\n", filename);
         return nullptr;
     }
 
@@ -92,13 +94,13 @@ LoadCelestiaMesh(const fs::path& filename)
 
     if (tokenizer.nextToken() != Tokenizer::TokenName)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Mesh file %s is invalid.\n", filename);
+        GetLogger()->error("Mesh file {} is invalid.\n", filename);
         return nullptr;
     }
 
     if (tokenizer.getStringValue() != "SphereDisplacementMesh")
     {
-        DPRINTF(LOG_LEVEL_ERROR, "%s: Unrecognized mesh type %s.\n",
+        GetLogger()->error("{}: Unrecognized mesh type {}.\n",
                 filename, tokenizer.getStringValue());
         return nullptr;
     }
@@ -106,13 +108,13 @@ LoadCelestiaMesh(const fs::path& filename)
     Value* meshDefValue = parser.readValue();
     if (meshDefValue == nullptr)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "%s: Bad mesh file.\n", filename);
+        GetLogger()->error("{}: Bad mesh file.\n", filename);
         return nullptr;
     }
 
     if (meshDefValue->getType() != Value::HashType)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "%s: Bad mesh file.\n", filename);
+        GetLogger()->error("{}: Bad mesh file.\n", filename);
         delete meshDefValue;
         return nullptr;
     }

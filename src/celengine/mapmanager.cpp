@@ -12,12 +12,13 @@
 #include <cmath>
 #include <cstring>
 #include <fstream>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/fsutils.h>
 #include "mapmanager.h"
 
 using namespace std;
 using namespace celestia;
+using celestia::util::GetLogger;
 
 static std::array<const char*, 1> extensions = {"map"};
 
@@ -147,25 +148,25 @@ WarpMesh* WarpMeshInfo::load(const fs::path& name)
     int type, nx, ny;
     if (!(f >> type))
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Failed to read mesh header\n");
+        GetLogger()->error("Failed to read mesh header\n");
         return nullptr;
     }
 
     if (type != MESHTYPE_RECT)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Unsupported mesh type found: %d\n", type);
+        GetLogger()->error("Unsupported mesh type found: {}\n", type);
         return nullptr;
     }
 
     if (!(f >> nx >> ny))
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Failed to read mesh header\n");
+        GetLogger()->error("Failed to read mesh header\n");
         return nullptr;
     }
 
     if (nx < 2 || ny < 2)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Row and column numbers should be larger than 2\n");
+        GetLogger()->error("Row and column numbers should be larger than 2\n");
         return nullptr;
     }
 
@@ -177,12 +178,12 @@ WarpMesh* WarpMeshInfo::load(const fs::path& name)
             float *base = &data[(y * nx + x) * 5];
             if (!(f >> base[0] >> base[1] >> base[2] >> base[3] >> base[4]))
             {
-                DPRINTF(LOG_LEVEL_ERROR, "Failed to read mesh data\n");
+                GetLogger()->error("Failed to read mesh data\n");
                 delete[] data;
                 return nullptr;
             }
         }
     }
-    DPRINTF(LOG_LEVEL_INFO, "Read a mesh of %d * %d\n", nx, ny);
+    GetLogger()->info("Read a mesh of {} x {}\n", nx, ny);
     return new WarpMesh(nx, ny, data);
 }

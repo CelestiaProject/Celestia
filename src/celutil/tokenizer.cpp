@@ -9,13 +9,15 @@
 // of the License, or (at your option) any later version.
 
 #include <cctype>
-#include <cerrno>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 
+#include "logger.h"
 #include "utf8.h"
 #include "tokenizer.h"
+
+using celestia::util::GetLogger;
 
 namespace
 {
@@ -38,12 +40,6 @@ enum class State
 };
 
 
-void reportError(const char* message)
-{
-    std::cerr << message << '\n';
-}
-
-
 bool isSeparator(char c)
 {
     return !std::isdigit(c) && !std::isalpha(c) && c != '.';
@@ -58,7 +54,7 @@ bool tryPushBack(std::string& s, char c)
         return true;
     }
 
-    reportError("Token too long");
+    GetLogger()->error("Token too long\n");
     return false;
 }
 
@@ -84,7 +80,7 @@ bool handleUtf8Error(std::string& s, UTF8Status status)
         return true;
     }
 
-    reportError("Token too long");
+    GetLogger()->error("Token too long\n");
     return false;
 }
 } // end unnamed namespace
@@ -141,7 +137,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else if (in->fail())
             {
-                reportError("Unexpected error reading stream");
+                GetLogger()->error("Unexpected error reading stream\n");
                 newToken = TokenError;
                 break;
             }
@@ -150,7 +146,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 utf8Status = validator.check(nextChar);
                 if (utf8Status != UTF8Status::Ok && !hasUtf8Errors)
                 {
-                    reportError("Invalid UTF-8 sequence detected");
+                    GetLogger()->error("Invalid UTF-8 sequence detected\n");
                     hasUtf8Errors = true;
                 }
                 else if (nextChar == '\n')
@@ -237,7 +233,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else
             {
-                reportError("Bad character in stream");
+                GetLogger()->error("Bad character in stream\n");
                 newToken = TokenError;
             }
             break;
@@ -245,7 +241,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         case State::NumberSigned:
             if (isEof)
             {
-                reportError("Unexpected EOF in number");
+                GetLogger()->error("Unexpected EOF in number\n");
                 newToken = TokenError;
             }
             else if (std::isdigit(nextChar))
@@ -262,13 +258,13 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 }
                 else
                 {
-                    reportError("Token too long");
+                    GetLogger()->error("Token too long\n");
                     newToken = TokenError;
                 }
             }
             else
             {
-                reportError("Bad character in number");
+                GetLogger()->error("Bad character in number\n");
                 newToken = TokenError;
             }
             break;
@@ -299,7 +295,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else
             {
-                reportError("Bad character in number");
+                GetLogger()->error("Bad character in number\n");
                 newToken = TokenError;
             }
             break;
@@ -325,7 +321,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else
             {
-                reportError("Bad character in number");
+                GetLogger()->error("Bad character in number\n");
                 newToken = TokenError;
             }
             break;
@@ -333,7 +329,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         case State::ExponentStart:
             if (isEof)
             {
-                reportError("Unexpected EOF in number");
+                GetLogger()->error("Unexpected EOF in number\n");
                 newToken = TokenError;
             }
             else if (std::isdigit(nextChar))
@@ -348,7 +344,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else
             {
-                reportError("Bad character in number");
+                GetLogger()->error("Bad character in number\n");
                 newToken = TokenError;
             }
             break;
@@ -356,7 +352,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         case State::ExponentSigned:
             if (isEof)
             {
-                reportError("Unexpected EOF in number");
+                GetLogger()->error("Unexpected EOF in number\n");
                 newToken = TokenError;
             }
             else if (std::isdigit(nextChar))
@@ -366,7 +362,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else
             {
-                reportError("Bad character in number");
+                GetLogger()->error("Bad character in number\n");
                 newToken = TokenError;
             }
             break;
@@ -387,7 +383,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else
             {
-                reportError("Bad character in number");
+                GetLogger()->error("Bad character in number\n");
                 newToken = TokenError;
             }
             break;
@@ -411,7 +407,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         case State::String:
             if (isEof)
             {
-                reportError("Unexpected EOF in string");
+                GetLogger()->error("Unexpected EOF in string\n");
                 newToken = TokenError;
             }
             else if (utf8Status != UTF8Status::Ok)
@@ -435,7 +431,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         case State::StringEscape:
             if (isEof)
             {
-                reportError("Unexpected EOF in string");
+                GetLogger()->error("Unexpected EOF in string\n");
                 newToken = TokenError;
             }
             else if (nextChar == '\\')
@@ -460,7 +456,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             }
             else
             {
-                reportError("Invalid string escape sequence");
+                GetLogger()->error("Invalid string escape sequence\n");
                 newToken = TokenError;
             }
             break;
@@ -468,7 +464,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         case State::UnicodeEscape:
             if (isEof)
             {
-                reportError("Unexpected EOF in string");
+                GetLogger()->error("Unexpected EOF in string\n");
                 newToken = TokenError;
             }
             else if (std::isxdigit(nextChar))
@@ -484,14 +480,14 @@ Tokenizer::TokenType Tokenizer::nextToken()
                     }
                     else
                     {
-                        reportError("Token too long");
+                        GetLogger()->error("Token too long\n");
                         newToken = TokenError;
                     }
                 }
             }
             else
             {
-                reportError("Bad character in Unicode escape");
+                GetLogger()->error("Bad character in Unicode escape\n");
                 newToken = TokenError;
             }
             break;
@@ -517,12 +513,12 @@ Tokenizer::TokenType Tokenizer::nextToken()
         double value = std::strtod(start, &end);
         if (end == start)
         {
-            reportError("Could not parse number");
+            GetLogger()->error("Could not parse number\n");
             newToken = TokenError;
         }
         else if (errno == ERANGE)
         {
-            reportError("Number out of range");
+            GetLogger()->error("Number out of range\n");
             newToken = TokenError;
             errno = 0;
         }
@@ -599,12 +595,12 @@ bool Tokenizer::skipUtf8Bom()
                 return true;
             }
 
-            reportError("Incomplete UTF-8 sequence");
+            GetLogger()->error("Incomplete UTF-8 sequence\n");
             return false;
         }
         else if (in->fail())
         {
-            reportError("Unexpected error reading stream");
+            GetLogger()->error("Unexpected error reading stream\n");
             return false;
         }
         else if (i == 0)
@@ -618,7 +614,7 @@ bool Tokenizer::skipUtf8Bom()
         }
         else if ((i == 1 && nextChar != '\273') || (i == 2 && nextChar != '\277'))
         {
-            reportError("Bad character in stream");
+            GetLogger()->error("Bad character in stream\n");
             return false;
         }
     }

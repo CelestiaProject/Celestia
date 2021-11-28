@@ -14,10 +14,12 @@
 #include <celcompat/charconv.h>
 #include <celutil/bigfix.h>
 #include <celutil/gettext.h>
+#include <celutil/logger.h>
 #include <celutil/stringutils.h>
 #include "celestiacore.h"
 #include "url.h"
 
+using celestia::util::GetLogger;
 
 namespace
 {
@@ -309,7 +311,7 @@ Url::decodeString(celestia::compat::string_view str)
         }
         else
         {
-            fmt::print(std::cerr, _("Incorrect hex value \"{}\"\n"), c_code);
+            GetLogger()->warn(_("Incorrect hex value \"{}\"\n"), c_code);
             out += '%';
             out.append(c_code.data(), c_code.length());
         }
@@ -392,7 +394,7 @@ bool Url::parse(celestia::compat::string_view urlStr)
     // proper URL string must start with protocol (cel://)
     if (urlStr.compare(0, Url::proto().length(), Url::proto()) != 0)
     {
-        std::cerr << fmt::sprintf(_("URL must start with \"%s\"!\n"), Url::proto());
+        GetLogger()->error(_("URL must start with \"{}\"!\n"), Url::proto());
         return false;
     }
 
@@ -408,7 +410,7 @@ bool Url::parse(celestia::compat::string_view urlStr)
     pos = pathStr.find('/');
     if (pos == npos)
     {
-        std::cerr << _("URL must have at least mode and time!\n");
+        GetLogger()->error(_("URL must have at least mode and time!\n"));
         return false;
     }
     auto modeStr = pathStr.substr(0, pos);
@@ -419,7 +421,7 @@ bool Url::parse(celestia::compat::string_view urlStr)
     auto it = std::find_if(std::begin(modes), std::end(modes), lambda);
     if (it == std::end(modes))
     {
-        std::cerr << fmt::sprintf(_("Unsupported URL mode \"%s\"!\n"), modeStr);
+        GetLogger()->error(_("Unsupported URL mode \"{}\"!\n"), modeStr);
         return false;
     }
     state.m_coordSys = it->mode;
@@ -437,7 +439,7 @@ bool Url::parse(celestia::compat::string_view urlStr)
         {
             if (pos != npos)
             {
-                std::cerr << _("URL must contain only one body\n");
+                GetLogger()->error(_("URL must contain only one body\n"));
                 return false;
             }
             auto body = Url::decodeString(bodiesStr);
@@ -449,7 +451,7 @@ bool Url::parse(celestia::compat::string_view urlStr)
         {
             if (pos == npos || bodiesStr.find('/', pos + 1) != npos)
             {
-                std::cerr << _("URL must contain 2 bodies\n");
+                GetLogger()->error(_("URL must contain 2 bodies\n"));
                 return false;
             }
             auto body = Url::decodeString(bodiesStr.substr(0, pos));
@@ -490,14 +492,14 @@ bool Url::parse(celestia::compat::string_view urlStr)
         auto &p = params["ver"];
         if (!to_number(p, version))
         {
-            std::cerr << fmt::sprintf(_("Invalid URL version \"%s\"!\n"), p);
+            GetLogger()->error(_("Invalid URL version \"{}\"!\n"), p);
             return false;
         }
     }
 
     if (version != 3 && version != 4)
     {
-        std::cerr << fmt::sprintf(_("Unsupported URL version: %i\n"), version);
+        GetLogger()->error(_("Unsupported URL version: {}\n"), version);
         return false;
     }
 
@@ -529,7 +531,7 @@ auto ParseURLParams(celestia::compat::string_view paramsStr)
         auto vpos = kv.find('=');
         if (vpos == npos)
         {
-            std::cerr << _("URL parameter must look like key=value\n");
+            GetLogger()->error(_("URL parameter must look like key=value\n"));
             break;
         }
         params[kv.substr(0, vpos)] = Url::decodeString(kv.substr(vpos + 1));

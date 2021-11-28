@@ -11,7 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/fsutils.h>
 #include <celengine/texmanager.h>
 #include <celutil/tokenizer.h>
@@ -37,7 +37,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     ifstream configFile(filename.string());
     if (!configFile.good())
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Error opening config file '%s'.\n", filename);
+        GetLogger()->error("Error opening config file '{}'.\n", filename);
         return config;
     }
 
@@ -46,22 +46,22 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
 
     if (tokenizer.nextToken() != Tokenizer::TokenName)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "%s:%d 'Configuration' expected.\n", filename,
-                tokenizer.getLineNumber());
+        GetLogger()->error("{}:{} 'Configuration' expected.\n", filename,
+                           tokenizer.getLineNumber());
         return config;
     }
 
     if (tokenizer.getStringValue() != "Configuration")
     {
-        DPRINTF(LOG_LEVEL_ERROR, "%s:%d 'Configuration' expected.\n", filename,
-                tokenizer.getLineNumber());
+        GetLogger()->error("{}:{} 'Configuration' expected.\n", filename,
+                           tokenizer.getLineNumber());
         return config;
     }
 
     Value* configParamsValue = parser.readValue();
     if (configParamsValue == nullptr || configParamsValue->getType() != Value::HashType)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "%s: Bad configuration file.\n", filename);
+        GetLogger()->error("{}: Bad configuration file.\n", filename);
         return config;
     }
 
@@ -141,7 +141,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     {
         if (solarSystemsVal->getType() != Value::ArrayType)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "%s: SolarSystemCatalogs must be an array.\n", filename);
+            GetLogger()->error("{}: SolarSystemCatalogs must be an array.\n", filename);
         }
         else
         {
@@ -157,7 +157,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                 }
                 else
                 {
-                    DPRINTF(LOG_LEVEL_ERROR, "%s: Solar system catalog name must be a string.\n", filename);
+                    GetLogger()->error("{}: Solar system catalog name must be a string.\n", filename);
                 }
             }
         }
@@ -168,7 +168,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     {
         if (starCatalogsVal->getType() != Value::ArrayType)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "%s: StarCatalogs must be an array.\n", filename);
+            GetLogger()->error("{}: StarCatalogs must be an array.\n", filename);
         }
         else
         {
@@ -185,7 +185,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                 }
                 else
                 {
-                    DPRINTF(LOG_LEVEL_ERROR, "%s: Star catalog name must be a string.\n", filename);
+                    GetLogger()->error("{}: Star catalog name must be a string.\n", filename);
                 }
             }
         }
@@ -196,7 +196,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     {
         if (dsoCatalogsVal->getType() != Value::ArrayType)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "%s: DeepSkyCatalogs must be an array.\n", filename);
+            GetLogger()->error("{}: DeepSkyCatalogs must be an array.\n", filename);
         }
         else
         {
@@ -213,7 +213,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                 }
                 else
                 {
-                    DPRINTF(LOG_LEVEL_ERROR, "%s: DeepSky catalog name must be a string.\n", filename);
+                    GetLogger()->error("{}: DeepSky catalog name must be a string.\n", filename);
                 }
             }
         }
@@ -235,7 +235,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                 }
                 else
                 {
-                    DPRINTF(LOG_LEVEL_ERROR, "%s: Extras directory name must be a string.\n", filename);
+                    GetLogger()->error("{}: Extras directory name must be a string.\n", filename);
                 }
             }
         }
@@ -245,7 +245,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            DPRINTF(LOG_LEVEL_ERROR, "%s: ExtrasDirectories must be an array or a string.\n", filename);
+            GetLogger()->error("{}: ExtrasDirectories must be an array or a string.\n", filename);
         }
     }
 
@@ -265,7 +265,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                 }
                 else
                 {
-                    DPRINTF(LOG_LEVEL_ERROR, "%s: Skipped file name must be a string.\n", filename);
+                    GetLogger()->error("{}: Skipped file name must be a string.\n", filename);
                 }
             }
         }
@@ -275,7 +275,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
         }
         else
         {
-            DPRINTF(LOG_LEVEL_ERROR, "%s: SkipExtras must be an array or a string.\n", filename);
+            GetLogger()->error("{}: SkipExtras must be an array or a string.\n", filename);
         }
     }
 
@@ -284,7 +284,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     {
         if (ignoreExtVal->getType() != Value::ArrayType)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "%s: IgnoreGLExtensions must be an array.\n", filename);
+            GetLogger()->error("{}: IgnoreGLExtensions must be an array.\n", filename);
         }
         else
         {
@@ -298,7 +298,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
                 }
                 else
                 {
-                    DPRINTF(LOG_LEVEL_ERROR, "%s: extension name must be a string.\n", filename);
+                    GetLogger()->error("{}: extension name must be a string.\n", filename);
                 }
             }
         }
@@ -309,7 +309,7 @@ CelestiaConfig* ReadCelestiaConfig(const fs::path& filename, CelestiaConfig *con
     {
         if (starTexValue->getType() != Value::HashType)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "%s: StarTextures must be a property list.\n", filename);
+            GetLogger()->error("{}: StarTextures must be a property list.\n", filename);
         }
         else
         {

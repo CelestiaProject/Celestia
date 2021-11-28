@@ -16,9 +16,10 @@
 
 #include <celengine/image.h>
 #include <celutil/binaryread.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 
 namespace celutil = celestia::util;
+using celestia::util::GetLogger;
 
 namespace
 {
@@ -84,7 +85,7 @@ Image* LoadBMPImage(std::istream& in)
     std::vector<uint8_t> palette;
     if (imageHeader.bpp == 8)
     {
-        DPRINTF(LOG_LEVEL_DEBUG, "Reading %u color palette\n", imageHeader.colorsUsed);
+        GetLogger()->debug("Reading {} color palette\n", imageHeader.colorsUsed);
         palette.resize(imageHeader.colorsUsed * 4);
         if (!in.read(reinterpret_cast<char*>(palette.data()), imageHeader.colorsUsed * 4).good())
         {

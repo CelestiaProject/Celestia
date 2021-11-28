@@ -13,7 +13,7 @@
 #include <iostream>
 #include <sstream>
 #include <Eigen/Geometry>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include <celengine/parser.h>
@@ -26,6 +26,7 @@
 using namespace std;
 using namespace celmath;
 using namespace celestia::scripts;
+using celestia::util::GetLogger;
 
 
 static uint64_t parseRenderFlags(const string&, const FlagMap64&);
@@ -872,7 +873,7 @@ uint64_t parseRenderFlags(const string &s, const FlagMap64& RenderFlagMap)
             string name = tokenizer.getNameValue();
 
             if (RenderFlagMap.count(name) == 0)
-                cerr << "Unknown render flag: " << name << "\n";
+                GetLogger()->warn("Unknown render flag: {}\n", name);
             else
                 flags |= RenderFlagMap.at(name);
 
@@ -901,7 +902,7 @@ int parseLabelFlags(const string &s, const FlagMap &LabelFlagMap)
             string name = tokenizer.getNameValue();
 
             if (LabelFlagMap.count(name) == 0)
-                cerr << "Unknown label flag: " << name << "\n";
+                GetLogger()->warn("Unknown label flag: {}\n", name);
             else
                 flags |= LabelFlagMap.at(name);
 
@@ -931,7 +932,7 @@ int parseOrbitFlags(const string &s, const FlagMap &BodyTypeMap)
             name[0] = toupper(name[0]);
 
             if (BodyTypeMap.count(name) == 0)
-                cerr << "Unknown orbit flag: " << name << "\n";
+                GetLogger()->warn("Unknown orbit flag: {}\n", name);
             else
                 flags |= BodyTypeMap.at(name);
 
@@ -971,7 +972,7 @@ int parseConstellations(CommandConstellations* cmd, const string &s, int act)
         }
         else
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Command Parser: error parsing render flags\n");
+            GetLogger()->error("Command Parser: error parsing render flags\n");
             return 0;
         }
     }
@@ -1011,7 +1012,7 @@ int parseConstellationColor(CommandConstellationColor* cmd, const string &s, Eig
         }
         else
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Command Parser: error parsing render flags\n");
+            GetLogger()->error("Command Parser: error parsing render flags\n");
             return 0;
         }
     }

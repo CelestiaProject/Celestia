@@ -9,7 +9,6 @@
 
 #include <algorithm>
 #include <celmath/mathlib.h>
-#include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include "astro.h"
 #include "meshmanager.h"
