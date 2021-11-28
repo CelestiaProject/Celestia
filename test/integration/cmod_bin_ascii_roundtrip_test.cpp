@@ -2,12 +2,14 @@
 #include <fstream>
 #include <ios>
 #include <iterator>
+#include <memory>
 #include <sstream>
 #include <vector>
 
 #include <catch.hpp>
 
 #include <celcompat/filesystem.h>
+#include <celmodel/model.h>
 #include <celmodel/modelfile.h>
 #include <celutil/reshandle.h>
 
@@ -35,17 +37,17 @@ TEST_CASE("CMOD binary to ASCII roundtrip", "[cmod] [integration]")
     std::stringstream sourceData;
     sourceData << f.rdbuf();
 
-    cmod::Model* modelFromBinary = cmod::LoadModel(sourceData, handleGetter);
+    std::unique_ptr<cmod::Model> modelFromBinary = cmod::LoadModel(sourceData, handleGetter);
     REQUIRE(modelFromBinary != nullptr);
 
     std::stringstream asciiData;
-    REQUIRE(cmod::SaveModelAscii(modelFromBinary, asciiData, sourceGetter));
+    REQUIRE(cmod::SaveModelAscii(modelFromBinary.get(), asciiData, sourceGetter));
 
-    cmod::Model* modelFromAscii = cmod::LoadModel(asciiData, handleGetter);
+    std::unique_ptr<cmod::Model> modelFromAscii = cmod::LoadModel(asciiData, handleGetter);
     REQUIRE(modelFromAscii != nullptr);
 
     std::stringstream roundtrippedData;
-    REQUIRE(cmod::SaveModelBinary(modelFromAscii, roundtrippedData, sourceGetter));
+    REQUIRE(cmod::SaveModelBinary(modelFromAscii.get(), roundtrippedData, sourceGetter));
 
     sourceData.clear();
     REQUIRE(sourceData.seekg(0, std::ios_base::beg).good());

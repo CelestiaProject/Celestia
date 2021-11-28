@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     }
 
     std::cerr << "Converting...\n";
-    cmod::Model* model = Convert3DSModel(*scene, GetPathManager()->getHandle);
+    std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, GetPathManager()->getHandle);
     if (!model)
     {
         std::cerr << "Error converting 3DS file to Celestia model\n";
@@ -58,25 +58,22 @@ int main(int argc, char* argv[])
     double weldTolerance = 1.0e-6;
     bool weldVertices = true;
 
-    cmod::Model* newModel = GenerateModelNormals(*model, celmath::degToRad(smoothAngle), weldVertices, weldTolerance);
-    delete model;
+    model = GenerateModelNormals(*model, celmath::degToRad(smoothAngle), weldVertices, weldTolerance);
 
-    if (!newModel)
+    if (!model)
     {
         std::cerr << "Ran out of memory while generating surface normals.\n";
         return 1;
     }
 
     // Automatically uniquify vertices
-    for (unsigned int i = 0; newModel->getMesh(i) != nullptr; i++)
+    for (unsigned int i = 0; model->getMesh(i) != nullptr; i++)
     {
-        cmod::Mesh* mesh = newModel->getMesh(i);
+        cmod::Mesh* mesh = model->getMesh(i);
         UniquifyVertices(*mesh);
     }
 
-    model = newModel;
-
-    SaveModelAscii(model, std::cout, GetPathManager()->getSource);
+    SaveModelAscii(model.get(), std::cout, GetPathManager()->getSource);
 
     return 0;
 }

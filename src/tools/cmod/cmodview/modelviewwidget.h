@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QColor>
 #include <QGLWidget>
 #include <QHash>
@@ -146,11 +148,9 @@ public:
     ModelViewWidget(QWidget *parent);
     ~ModelViewWidget();
 
-    void setModel(cmod::Model* model, const QString& modelDir);
-    cmod::Model* model() const
-    {
-        return m_model;
-    }
+    void setModel(std::unique_ptr<cmod::Model>&& model, const QString& modelDir);
+    cmod::Model* model() { return m_model.get(); }
+    const cmod::Model* model() const { return m_model.get(); }
 
     void resetCamera();
 
@@ -172,7 +172,7 @@ public:
     void wheelEvent(QWheelEvent* event);
 
     void select(const Eigen::Vector2f& point);
-    QSet<cmod::PrimitiveGroup*> selection()
+    QSet<const cmod::PrimitiveGroup*> selection()
     {
         return m_selection;
     }
@@ -238,7 +238,7 @@ private:
     GLShaderProgram* createShader(const ShaderKey& shaderKey);
 
 private:
-    cmod::Model* m_model;
+    std::unique_ptr<cmod::Model> m_model;
     double m_modelBoundingRadius;
     Eigen::Vector3d m_cameraPosition;
     Eigen::Quaterniond m_cameraOrientation;
@@ -249,7 +249,7 @@ private:
 
     MaterialLibrary* m_materialLibrary;
 
-    QSet<cmod::PrimitiveGroup*> m_selection;
+    QSet<const cmod::PrimitiveGroup*> m_selection;
     QHash<ShaderKey, GLShaderProgram*> m_shaderCache;
 
     QColor m_backgroundColor;

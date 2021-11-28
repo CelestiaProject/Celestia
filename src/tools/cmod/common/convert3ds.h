@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <cel3ds/3dsmodel.h>
@@ -22,5 +23,6 @@ extern void Convert3DSMesh(cmod::Model& model,
                            M3DTriangleMesh& mesh3ds,
                            const M3DScene& scene,
                            std::string&& meshName);
-extern cmod::Model* Convert3DSModel(const M3DScene& scene,
-                                    cmod::HandleGetter handleGetter);
+
+extern std::unique_ptr<cmod::Model> Convert3DSModel(const M3DScene& scene,
+                                                    cmod::HandleGetter handleGetter);

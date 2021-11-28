@@ -90,7 +90,7 @@ public:
     explicit ModelLoader(HandleGetter& _handleGetter) : handleGetter(_handleGetter) {}
     virtual ~ModelLoader() = default;
 
-    virtual Model* load() = 0;
+    virtual std::unique_ptr<Model> load() = 0;
 
     const std::string& getErrorMessage() const { return errorMessage; }
     ResourceHandle getHandle(const fs::path& path) { return handleGetter(path); }
@@ -281,12 +281,12 @@ public:
     {}
     ~AsciiModelLoader() override = default;
 
-    Model* load() override;
-    void reportError(const std::string& /*msg*/) override;
+    std::unique_ptr<Model> load() override;
+    void reportError(const std::string& msg) override;
 
-    Material* loadMaterial();
+    bool loadMaterial(Material& material);
     VertexDescription loadVertexDescription();
-    Mesh* loadMesh();
+    bool loadMesh(Mesh& mesh);
     std::vector<VWord> loadVertices(const VertexDescription& vertexDesc,
                                     unsigned int& vertexCount);
 
@@ -303,22 +303,20 @@ AsciiModelLoader::reportError(const std::string& msg)
 }
 
 
-Material*
-AsciiModelLoader::loadMaterial()
+bool
+AsciiModelLoader::loadMaterial(Material& material)
 {
     if (tok.nextToken() != Tokenizer::TokenName || tok.getNameValue() != MaterialToken)
     {
         reportError("Material definition expected");
-        return nullptr;
+        return false;
     }
 
-    auto* material = new Material();
-
-    material->diffuse = DefaultDiffuse;
-    material->specular = DefaultSpecular;
-    material->emissive = DefaultEmissive;
-    material->specularPower = DefaultSpecularPower;
-    material->opacity = DefaultOpacity;
+    material.diffuse = DefaultDiffuse;
+    material.specular = DefaultSpecular;
+    material.emissive = DefaultEmissive;
+    material.specularPower = DefaultSpecularPower;
+    material.opacity = DefaultOpacity;
 
     while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndMaterialToken)
     {
@@ -330,14 +328,13 @@ AsciiModelLoader::loadMaterial()
             if (tok.nextToken() != Tokenizer::TokenString)
             {
                 reportError("Texture name expected");
-                delete material;
-                return nullptr;
+                return false;
             }
 
             std::string textureName = tok.getStringValue();
 
             ResourceHandle tex = getHandle(textureName);
-            material->setMap(texType, tex);
+            material.setMap(texType, tex);
         }
         else if (property == "blend")
         {
@@ -357,11 +354,10 @@ AsciiModelLoader::loadMaterial()
             if (blendMode == BlendMode::InvalidBlend)
             {
                 reportError("Bad blend mode in material");
-                delete material;
-                return nullptr;
+                return false;
             }
 
-            material->blend = blendMode;
+            material.blend = blendMode;
         }
         else
         {
@@ -379,8 +375,7 @@ AsciiModelLoader::loadMaterial()
                 if (tok.nextToken() != Tokenizer::TokenNumber)
                 {
                     reportError("Bad property value in material");
-                    delete material;
-                    return nullptr;
+                    return false;
                 }
                 data[i] = tok.getNumberValue();
             }
@@ -395,34 +390,33 @@ AsciiModelLoader::loadMaterial()
 
             if (property == "diffuse")
             {
-                material->diffuse = colorVal;
+                material.diffuse = colorVal;
             }
             else if (property == "specular")
             {
-                material->specular = colorVal;
+                material.specular = colorVal;
             }
             else if (property == "emissive")
             {
-                material->emissive = colorVal;
+                material.emissive = colorVal;
             }
             else if (property == "opacity")
             {
-                material->opacity = (float) data[0];
+                material.opacity = static_cast<float>(data[0]);
             }
             else if (property == "specpower")
             {
-                material->specularPower = (float) data[0];
+                material.specularPower = static_cast<float>(data[0]);
             }
         }
     }
 
     if (tok.getTokenType() != Tokenizer::TokenName)
     {
-        delete material;
-        return nullptr;
+        return false;
     }
 
-    return material;
+    return true;
 }
 
 
@@ -599,29 +593,28 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
 }
 
 
-Mesh*
-AsciiModelLoader::loadMesh()
+bool
+AsciiModelLoader::loadMesh(Mesh& mesh)
 {
     if (tok.nextToken() != Tokenizer::TokenName && tok.getNameValue() != MeshToken)
     {
         reportError("Mesh definition expected");
-        return nullptr;
+        return false;
     }
 
     VertexDescription vertexDesc = loadVertexDescription();
     if (vertexDesc.attributes.empty())
-        return nullptr;
+        return false;
 
     unsigned int vertexCount = 0;
     std::vector<VWord> vertexData = loadVertices(vertexDesc, vertexCount);
     if (vertexData.empty())
     {
-        return nullptr;
+        return false;
     }
 
-    auto* mesh = new Mesh();
-    mesh->setVertexDescription(std::move(vertexDesc));
-    mesh->setVertices(vertexCount, std::move(vertexData));
+    mesh.setVertexDescription(std::move(vertexDesc));
+    mesh.setVertices(vertexCount, std::move(vertexData));
 
     while (tok.nextToken() == Tokenizer::TokenName && tok.getNameValue() != EndMeshToken)
     {
@@ -629,15 +622,13 @@ AsciiModelLoader::loadMesh()
         if (type == PrimitiveGroupType::InvalidPrimitiveGroupType)
         {
             reportError("Bad primitive group type: " + tok.getStringValue());
-            delete mesh;
-            return nullptr;
+            return false;
         }
 
         if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
         {
             reportError("Material index expected in primitive group");
-            delete mesh;
-            return nullptr;
+            return false;
         }
 
         unsigned int materialIndex;
@@ -653,8 +644,7 @@ AsciiModelLoader::loadMesh()
         if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
         {
             reportError("Index count expected in primitive group");
-            delete mesh;
-            return nullptr;
+            return false;
         }
 
         unsigned int indexCount = (unsigned int) tok.getIntegerValue();
@@ -667,32 +657,30 @@ AsciiModelLoader::loadMesh()
             if (tok.nextToken() != Tokenizer::TokenNumber || !tok.isInteger())
             {
                 reportError("Incomplete index list in primitive group");
-                delete mesh;
-                return nullptr;
+                return false;
             }
 
             unsigned int index = (unsigned int) tok.getIntegerValue();
             if (index >= vertexCount)
             {
                 reportError("Index out of range");
-                delete mesh;
-                return nullptr;
+                return false;
             }
 
             indices.push_back(index);
         }
 
-        mesh->addGroup(type, materialIndex, std::move(indices));
+        mesh.addGroup(type, materialIndex, std::move(indices));
     }
 
-    return mesh;
+    return true;
 }
 
 
-Model*
+std::unique_ptr<Model>
 AsciiModelLoader::load()
 {
-    auto* model = new Model();
+    auto model = std::make_unique<Model>();
     bool seenMeshes = false;
 
     // Parse material and mesh definitions
@@ -708,43 +696,38 @@ AsciiModelLoader::load()
                 if (seenMeshes)
                 {
                     reportError("Materials must be defined before meshes");
-                    delete model;
                     return nullptr;
                 }
 
-                Material* material = loadMaterial();
-                if (material == nullptr)
+                Material material;
+                if (!loadMaterial(material))
                 {
-                    delete model;
                     return nullptr;
                 }
 
-                model->addMaterial(material);
+                model->addMaterial(std::move(material));
             }
             else if (name == "mesh")
             {
                 seenMeshes = true;
 
-                Mesh* mesh = loadMesh();
-                if (mesh == nullptr)
+                Mesh mesh;
+                if (!loadMesh(mesh))
                 {
-                    delete model;
                     return nullptr;
                 }
 
-                model->addMesh(mesh);
+                model->addMesh(std::move(mesh));
             }
             else
             {
                 reportError(fmt::format("Error: Unknown block type {}", name));
-                delete model;
                 return nullptr;
             }
         }
         else
         {
             reportError("Block name expected");
-            delete model;
             return nullptr;
         }
     }
@@ -1240,12 +1223,12 @@ public:
     {}
     ~BinaryModelLoader() override = default;
 
-    Model* load() override;
+    std::unique_ptr<Model> load() override;
     void reportError(const std::string& /*msg*/) override;
 
-    Material* loadMaterial();
+    bool loadMaterial(Material& material);
     VertexDescription loadVertexDescription();
-    Mesh* loadMesh();
+    bool loadMesh(Mesh& mesh);
     std::vector<VWord> loadVertices(const VertexDescription& vertexDesc,
                                     unsigned int& vertexCount);
 
@@ -1262,10 +1245,10 @@ BinaryModelLoader::reportError(const std::string& msg)
 }
 
 
-Model*
+std::unique_ptr<Model>
 BinaryModelLoader::load()
 {
-    auto* model = new Model();
+    auto model = std::make_unique<Model>();
     bool seenMeshes = false;
 
     // Parse material and mesh definitions
@@ -1276,7 +1259,6 @@ BinaryModelLoader::load()
         {
             if (in.eof()) { break; }
             reportError("Failed to read token");
-            delete model;
             return nullptr;
         }
 
@@ -1285,36 +1267,32 @@ BinaryModelLoader::load()
             if (seenMeshes)
             {
                 reportError("Materials must be defined before meshes");
-                delete model;
                 return nullptr;
             }
 
-            Material* material = loadMaterial();
-            if (material == nullptr)
+            Material material;
+            if (!loadMaterial(material))
             {
-                delete model;
                 return nullptr;
             }
 
-            model->addMaterial(material);
+            model->addMaterial(std::move(material));
         }
         else if (tok == CMOD_Mesh)
         {
             seenMeshes = true;
 
-            Mesh* mesh = loadMesh();
-            if (mesh == nullptr)
+            Mesh mesh;
+            if (!loadMesh(mesh))
             {
-                delete model;
                 return nullptr;
             }
 
-            model->addMesh(mesh);
+            model->addMesh(std::move(mesh));
         }
         else
         {
             reportError("Error: Unknown block type in model");
-            delete model;
             return nullptr;
         }
     }
@@ -1323,16 +1301,14 @@ BinaryModelLoader::load()
 }
 
 
-Material*
-BinaryModelLoader::loadMaterial()
+bool
+BinaryModelLoader::loadMaterial(Material& material)
 {
-    auto* material = new Material();
-
-    material->diffuse = DefaultDiffuse;
-    material->specular = DefaultSpecular;
-    material->emissive = DefaultEmissive;
-    material->specularPower = DefaultSpecularPower;
-    material->opacity = DefaultOpacity;
+    material.diffuse = DefaultDiffuse;
+    material.specular = DefaultSpecular;
+    material.emissive = DefaultEmissive;
+    material.specularPower = DefaultSpecularPower;
+    material.opacity = DefaultOpacity;
 
     for (;;)
     {
@@ -1340,54 +1316,48 @@ BinaryModelLoader::loadMaterial()
         if (!readToken(in, tok))
         {
             reportError("Error reading token type");
-            delete material;
-            return nullptr;
+            return false;
         }
 
         switch (tok)
         {
         case CMOD_Diffuse:
-            if (!readTypeColor(in, material->diffuse))
+            if (!readTypeColor(in, material.diffuse))
             {
                 reportError("Incorrect type for diffuse color");
-                delete material;
-                return nullptr;
+                return false;
             }
             break;
 
         case CMOD_Specular:
-            if (!readTypeColor(in, material->specular))
+            if (!readTypeColor(in, material.specular))
             {
                 reportError("Incorrect type for specular color");
-                delete material;
-                return nullptr;
+                return false;
             }
             break;
 
         case CMOD_Emissive:
-            if (!readTypeColor(in, material->emissive))
+            if (!readTypeColor(in, material.emissive))
             {
                 reportError("Incorrect type for emissive color");
-                delete material;
-                return nullptr;
+                return false;
             }
             break;
 
         case CMOD_SpecularPower:
-            if (!readTypeFloat1(in, material->specularPower))
+            if (!readTypeFloat1(in, material.specularPower))
             {
                 reportError("Float expected for specularPower");
-                delete material;
-                return nullptr;
+                return false;
             }
             break;
 
         case CMOD_Opacity:
-            if (!readTypeFloat1(in, material->opacity))
+            if (!readTypeFloat1(in, material.opacity))
             {
                 reportError("Float expected for opacity");
-                delete material;
-                return nullptr;
+                return false;
             }
             break;
 
@@ -1398,10 +1368,9 @@ BinaryModelLoader::loadMaterial()
                     || blendMode < 0 || blendMode >= static_cast<std::int16_t>(BlendMode::BlendMax))
                 {
                     reportError("Bad blend mode");
-                    delete material;
-                    return nullptr;
+                    return false;
                 }
-                material->blend = static_cast<BlendMode>(blendMode);
+                material.blend = static_cast<BlendMode>(blendMode);
             }
             break;
 
@@ -1412,39 +1381,35 @@ BinaryModelLoader::loadMaterial()
                     || texType < 0 || texType >= static_cast<std::int16_t>(TextureSemantic::TextureSemanticMax))
                 {
                     reportError("Bad texture type");
-                    delete material;
-                    return nullptr;
+                    return false;
                 }
 
                 std::string texfile;
                 if (!readTypeString(in, texfile))
                 {
                     reportError("String expected for texture filename");
-                    delete material;
-                    return nullptr;
+                    return false;
                 }
 
                 if (texfile.empty())
                 {
                     reportError("Zero length texture name in material definition");
-                    delete material;
-                    return nullptr;
+                    return false;
                 }
 
                 ResourceHandle tex = getHandle(texfile);
-                material->maps[texType] = tex;
+                material.maps[texType] = tex;
             }
             break;
 
         case CMOD_EndMaterial:
-            return material;
+            return true;
 
         default:
             // Skip unrecognized tokens
             if (!ignoreValue(in))
             {
-                delete material;
-                return nullptr;
+                return false;
             }
         } // switch
     } // for
@@ -1520,23 +1485,18 @@ BinaryModelLoader::loadVertexDescription()
 }
 
 
-Mesh*
-BinaryModelLoader::loadMesh()
+bool
+BinaryModelLoader::loadMesh(Mesh& mesh)
 {
     VertexDescription vertexDesc = loadVertexDescription();
-    if (vertexDesc.attributes.empty())
-        return nullptr;
+    if (vertexDesc.attributes.empty()) { return false; }
 
     unsigned int vertexCount = 0;
     std::vector<VWord> vertexData = loadVertices(vertexDesc, vertexCount);
-    if (vertexData.empty())
-    {
-        return nullptr;
-    }
+    if (vertexData.empty()) { return false; }
 
-    auto* mesh = new Mesh();
-    mesh->setVertexDescription(std::move(vertexDesc));
-    mesh->setVertices(vertexCount, std::move(vertexData));
+    mesh.setVertexDescription(std::move(vertexDesc));
+    mesh.setVertices(vertexCount, std::move(vertexData));
 
     for (;;)
     {
@@ -1544,8 +1504,7 @@ BinaryModelLoader::loadMesh()
         if (!celutil::readLE<std::int16_t>(in, tok))
         {
             reportError("Failed to read token type");
-            delete mesh;
-            return nullptr;
+            return false;
         }
 
         if (tok == CMOD_EndMesh)
@@ -1555,8 +1514,7 @@ BinaryModelLoader::loadMesh()
         if (tok < 0 || tok >= static_cast<std::int16_t>(PrimitiveGroupType::PrimitiveTypeMax))
         {
             reportError("Bad primitive group type");
-            delete mesh;
-            return nullptr;
+            return false;
         }
 
         PrimitiveGroupType type = static_cast<PrimitiveGroupType>(tok);
@@ -1565,8 +1523,7 @@ BinaryModelLoader::loadMesh()
             || !celutil::readLE<std::uint32_t>(in, indexCount))
         {
             reportError("Could not read primitive indices");
-            delete mesh;
-            return nullptr;
+            return false;
         }
 
         std::vector<Index32> indices;
@@ -1578,17 +1535,16 @@ BinaryModelLoader::loadMesh()
             if (!celutil::readLE<std::uint32_t>(in, index) || index >= vertexCount)
             {
                 reportError("Index out of range");
-                delete mesh;
-                return nullptr;
+                return false;
             }
 
             indices.push_back(index);
         }
 
-        mesh->addGroup(type, materialIndex, std::move(indices));
+        mesh.addGroup(type, materialIndex, std::move(indices));
     }
 
-    return mesh;
+    return true;
 }
 
 
@@ -1942,7 +1898,8 @@ BinaryModelWriter::writeMaterial(const Material& material)
 }
 
 
-ModelLoader* OpenModel(std::istream& in, HandleGetter& getHandle)
+std::unique_ptr<ModelLoader>
+OpenModel(std::istream& in, HandleGetter& getHandle)
 {
     char header[CEL_MODEL_HEADER_LENGTH];
     if (!in.read(header, CEL_MODEL_HEADER_LENGTH).good())
@@ -1953,11 +1910,11 @@ ModelLoader* OpenModel(std::istream& in, HandleGetter& getHandle)
 
     if (std::strncmp(header, CEL_MODEL_HEADER_ASCII, CEL_MODEL_HEADER_LENGTH) == 0)
     {
-        return new AsciiModelLoader(in, getHandle);
+        return std::make_unique<AsciiModelLoader>(in, getHandle);
     }
     if (std::strncmp(header, CEL_MODEL_HEADER_BINARY, CEL_MODEL_HEADER_LENGTH) == 0)
     {
-        return new BinaryModelLoader(in, getHandle);
+        return std::make_unique<BinaryModelLoader>(in, getHandle);
     }
     else
     {
@@ -1970,19 +1927,18 @@ ModelLoader* OpenModel(std::istream& in, HandleGetter& getHandle)
 } // end unnamed namespace
 
 
-Model* LoadModel(std::istream& in, HandleGetter handleGetter)
+std::unique_ptr<Model>
+LoadModel(std::istream& in, HandleGetter handleGetter)
 {
-    ModelLoader* loader = OpenModel(in, handleGetter);
+    std::unique_ptr<ModelLoader> loader = OpenModel(in, handleGetter);
     if (loader == nullptr)
         return nullptr;
 
-    Model* model = loader->load();
+    std::unique_ptr<Model> model = loader->load();
     if (model == nullptr)
     {
         std::cerr << "Error in model file: " << loader->getErrorMessage() << '\n';
     }
-
-    delete loader;
 
     return model;
 }

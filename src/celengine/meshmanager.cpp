@@ -77,7 +77,7 @@ NoiseDisplacementFunc(float u, float v, void* info)
 
 
 // TODO: The Celestia mesh format is deprecated
-cmod::Model*
+std::unique_ptr<cmod::Model>
 LoadCelestiaMesh(const fs::path& filename)
 {
     std::ifstream meshFile(filename.string(), std::ios::in);
@@ -137,21 +137,19 @@ LoadCelestiaMesh(const fs::path& filename)
 
     delete meshDefValue;
 
-    cmod::Model* model = new cmod::Model();
-    SphereMesh* sphereMesh = new SphereMesh(params.size,
-                                            static_cast<int>(params.rings),
-                                            static_cast<int>(params.slices),
-                                            NoiseDisplacementFunc,
-                                            (void*) &params);
-    cmod::Mesh* mesh = sphereMesh->convertToMesh();
-    model->addMesh(mesh);
-    delete sphereMesh;
+    auto model = std::make_unique<cmod::Model>();
+    SphereMesh sphereMesh(params.size,
+                          static_cast<int>(params.rings),
+                          static_cast<int>(params.slices),
+                          NoiseDisplacementFunc,
+                          (void*) &params);
+    model->addMesh(sphereMesh.convertToMesh());
 
     return model;
 }
 
 
-cmod::Mesh*
+cmod::Mesh
 ConvertTriangleMesh(const M3DTriangleMesh& mesh,
                     const M3DScene& scene)
 {
@@ -191,16 +189,12 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
 
     // bool smooth = (mesh.getSmoothingGroupCount() == nFaces);
 
-    Eigen::Vector3f* faceNormals = new Eigen::Vector3f[nFaces];
-    Eigen::Vector3f* vertexNormals = new Eigen::Vector3f[nFaces * 3];
-    auto* faceCounts = new int[nVertices];
-    auto** vertexFaces = new int*[nVertices];
-
-    for (int i = 0; i < nVertices; i++)
-    {
-        faceCounts[i] = 0;
-        vertexFaces[i] = nullptr;
-    }
+    std::vector<Eigen::Vector3f> faceNormals;
+    faceNormals.reserve(nFaces);
+    std::vector<Eigen::Vector3f> vertexNormals;
+    vertexNormals.reserve(nFaces * 3);
+    std::vector<int> faceCounts(nVertices, 0);
+    std::vector<std::vector<int>> vertexFaces(nVertices);
 
     // generate face normals
     for (int i = 0; i < nFaces; i++)
@@ -215,7 +209,7 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
         Eigen::Vector3f p0 = mesh.getVertex(v0);
         Eigen::Vector3f p1 = mesh.getVertex(v1);
         Eigen::Vector3f p2 = mesh.getVertex(v2);
-        faceNormals[i] = (p1 - p0).cross(p2 - p1).normalized();
+        faceNormals.push_back((p1 - p0).cross(p2 - p1).normalized());
     }
 
 #if 0
@@ -223,9 +217,9 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
     {
         for (int i = 0; i < nFaces; i++)
         {
-            vertexNormals[i * 3] = faceNormals[i];
-            vertexNormals[i * 3 + 1] = faceNormals[i];
-            vertexNormals[i * 3 + 2] = faceNormals[i];
+            vertexNormals.push_back(faceNormals[i]);
+            vertexNormals.push_back(faceNormals[i]);
+            vertexNormals.push_back(faceNormals[i]);
         }
     }
     else
@@ -234,7 +228,7 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
         // allocate space for vertex face indices
         for (int i = 0; i < nVertices; i++)
         {
-            vertexFaces[i] = new int[faceCounts[i] + 1];
+            vertexFaces[i].resize(faceCounts[i] + 1);
             vertexFaces[i][0] = faceCounts[i];
         }
 
@@ -262,7 +256,7 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
                 if (faceNormals[i].dot(faceNormals[k]) > 0.5f)
                     v += faceNormals[k];
             }
-            vertexNormals[i * 3] = v.normalized();
+            vertexNormals.push_back(v.normalized());
 
             v = Eigen::Vector3f::Zero();
             for (int j = 1; j <= vertexFaces[v1][0]; j++)
@@ -272,7 +266,7 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
                 if (faceNormals[i].dot(faceNormals[k]) > 0.5f)
                     v += faceNormals[k];
             }
-            vertexNormals[i * 3 + 1] = v.normalized();
+            vertexNormals.push_back(v.normalized());
 
             v = Eigen::Vector3f::Zero();
             for (int j = 1; j <= vertexFaces[v2][0]; j++)
@@ -282,7 +276,7 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
                 if (faceNormals[i].dot(faceNormals[k]) > 0.5f)
                     v += faceNormals[k];
             }
-            vertexNormals[i * 3 + 2] = v.normalized();
+            vertexNormals.push_back(v.normalized());
         }
     }
 
@@ -312,9 +306,9 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
     }
 
     // Create the mesh
-    cmod::Mesh* newMesh = new cmod::Mesh();
-    newMesh->setVertexDescription(cmod::VertexDescription(std::move(attributes)));
-    newMesh->setVertices(nFaces * 3, std::move(vertexData));
+    cmod::Mesh newMesh;
+    newMesh.setVertexDescription(cmod::VertexDescription(std::move(attributes)));
+    newMesh.setVertices(nFaces * 3, std::move(vertexData));
 
     for (uint32_t i = 0; i < mesh.getMeshMaterialGroupCount(); ++i)
     {
@@ -345,40 +339,30 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
             }
         }
 
-        newMesh->addGroup(cmod::PrimitiveGroupType::TriList, materialIndex, std::move(indices));
+        newMesh.addGroup(cmod::PrimitiveGroupType::TriList, materialIndex, std::move(indices));
     }
-
-    // clean up
-    delete[] faceNormals;
-    delete[] vertexNormals;
-    delete[] faceCounts;
-    for (int i = 0; i < nVertices; i++)
-    {
-        delete[] vertexFaces[i];
-    }
-    delete[] vertexFaces;
 
     return newMesh;
 }
 
 
-cmod::Model*
+std::unique_ptr<cmod::Model>
 Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
 {
-    cmod::Model* model = new cmod::Model();
+    auto model = std::make_unique<cmod::Model>();
 
     // Convert the materials
     for (std::uint32_t i = 0; i < scene.getMaterialCount(); i++)
     {
         const M3DMaterial* material = scene.getMaterial(i);
-        cmod::Material* newMaterial = new cmod::Material();
+        cmod::Material newMaterial;
 
         M3DColor diffuse = material->getDiffuseColor();
-        newMaterial->diffuse = cmod::Color(diffuse.red, diffuse.green, diffuse.blue);
-        newMaterial->opacity = material->getOpacity();
+        newMaterial.diffuse = cmod::Color(diffuse.red, diffuse.green, diffuse.blue);
+        newMaterial.opacity = material->getOpacity();
 
         M3DColor specular = material->getSpecularColor();
-        newMaterial->specular = cmod::Color(specular.red, specular.green, specular.blue);
+        newMaterial.specular = cmod::Color(specular.red, specular.green, specular.blue);
 
         float shininess = material->getShininess();
 
@@ -386,17 +370,17 @@ Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
         // range that OpenGL uses for the specular exponent. The
         // current equation is just a guess at the mapping that
         // 3DS actually uses.
-        newMaterial->specularPower = std::pow(2.0f, 1.0f + 0.1f * shininess);
-        if (newMaterial->specularPower > 128.0f)
-            newMaterial->specularPower = 128.0f;
+        newMaterial.specularPower = std::pow(2.0f, 1.0f + 0.1f * shininess);
+        if (newMaterial.specularPower > 128.0f)
+            newMaterial.specularPower = 128.0f;
 
         if (!material->getTextureMap().empty())
         {
             ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap(), texPath, TextureInfo::WrapTexture));
-            newMaterial->setMap(cmod::TextureSemantic::DiffuseMap, tex);
+            newMaterial.setMap(cmod::TextureSemantic::DiffuseMap, tex);
         }
 
-        model->addMaterial(newMaterial);
+        model->addMaterial(std::move(newMaterial));
     }
 
     // Convert all models in the scene. Some confusing terminology: a 3ds 'scene' is the same
@@ -411,8 +395,7 @@ Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
                 const M3DTriangleMesh* mesh = model3ds->getTriMesh(j);
                 if (mesh)
                 {
-                    cmod::Mesh* newMesh = ConvertTriangleMesh(*mesh, scene);
-                    model->addMesh(newMesh);
+                    model->addMesh(ConvertTriangleMesh(*mesh, scene));
                 }
             }
         }
@@ -474,7 +457,7 @@ GeometryInfo::load(const fs::path& resolvedFilename)
     fs::path filename = resolvedFilename.native().substr(0, uniquifyingSuffixStart);
 
     std::clog << fmt::sprintf(_("Loading model: %s\n"), filename);
-    cmod::Model* model = nullptr;
+    std::unique_ptr<cmod::Model> model = nullptr;
     ContentType fileType = DetermineFileType(filename);
 
     if (fileType == Content_3DStudio)
@@ -561,7 +544,7 @@ GeometryInfo::load(const fs::path& resolvedFilename)
                         originalMaterialCount,
                         model->getMaterialCount());
 
-        return new ModelGeometry(std::unique_ptr<cmod::Model>(model));
+        return new ModelGeometry(std::move(model));
     }
     else
     {

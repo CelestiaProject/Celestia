@@ -23,17 +23,18 @@
 
 namespace
 {
-cmod::Material*
+
+cmod::Material
 convert3dsMaterial(const M3DMaterial* material3ds, cmod::HandleGetter& handleGetter)
 {
-    cmod::Material* newMaterial = new cmod::Material();
+    cmod::Material newMaterial;
 
     M3DColor diffuse = material3ds->getDiffuseColor();
-    newMaterial->diffuse = cmod::Color(diffuse.red, diffuse.green, diffuse.blue);
-    newMaterial->opacity = material3ds->getOpacity();
+    newMaterial.diffuse = cmod::Color(diffuse.red, diffuse.green, diffuse.blue);
+    newMaterial.opacity = material3ds->getOpacity();
 
     M3DColor specular = material3ds->getSpecularColor();
-    newMaterial->specular = cmod::Color(specular.red, specular.green, specular.blue);
+    newMaterial.specular = cmod::Color(specular.red, specular.green, specular.blue);
 
     float shininess = material3ds->getShininess();
 
@@ -41,22 +42,20 @@ convert3dsMaterial(const M3DMaterial* material3ds, cmod::HandleGetter& handleGet
     // range that OpenGL uses for the specular exponent. The
     // current equation is just a guess at the mapping that
     // 3DS actually uses.
-    newMaterial->specularPower = std::pow(2.0f, 1.0f + 0.1f * shininess);
-    if (newMaterial->specularPower > 128.0f)
-        newMaterial->specularPower = 128.0f;
+    newMaterial.specularPower = std::pow(2.0f, 1.0f + 0.1f * shininess);
+    if (newMaterial.specularPower > 128.0f)
+        newMaterial.specularPower = 128.0f;
 
     if (!material3ds->getTextureMap().empty())
     {
-        newMaterial->setMap(cmod::TextureSemantic::DiffuseMap, handleGetter(material3ds->getTextureMap()));
+        newMaterial.setMap(cmod::TextureSemantic::DiffuseMap, handleGetter(material3ds->getTextureMap()));
 
     }
 
     return newMaterial;
 }
+
 } // end unnamed namespace
-
-
-
 
 
 void
@@ -108,11 +107,11 @@ Convert3DSMesh(cmod::Model& model,
     }
 
     // Create the Celestia mesh
-    cmod::Mesh* mesh = new cmod::Mesh();
-    mesh->setVertexDescription(cmod::VertexDescription(std::move(attributes)));
-    mesh->setVertices(nVertices, std::move(vertices));
+    cmod::Mesh mesh;
+    mesh.setVertexDescription(cmod::VertexDescription(std::move(attributes)));
+    mesh.setVertices(nVertices, std::move(vertices));
 
-    mesh->setName(std::move(meshName));
+    mesh.setName(std::move(meshName));
 
     if (mesh3ds.getMeshMaterialGroupCount() == 0)
     {
@@ -131,7 +130,7 @@ Convert3DSMesh(cmod::Model& model,
             indices.push_back(v2);
         }
 
-        mesh->addGroup(cmod::PrimitiveGroupType::TriList, ~0, std::move(indices));
+        mesh.addGroup(cmod::PrimitiveGroupType::TriList, ~0, std::move(indices));
     }
     else
     {
@@ -170,18 +169,18 @@ Convert3DSMesh(cmod::Model& model,
                 }
             }
 
-            mesh->addGroup(cmod::PrimitiveGroupType::TriList, materialIndex, std::move(indices));
+            mesh.addGroup(cmod::PrimitiveGroupType::TriList, materialIndex, std::move(indices));
         }
     }
 
-    model.addMesh(mesh);
+    model.addMesh(std::move(mesh));
 }
 
 
-cmod::Model*
+std::unique_ptr<cmod::Model>
 Convert3DSModel(const M3DScene& scene, cmod::HandleGetter handleGetter)
 {
-    cmod::Model* model = new cmod::Model();
+    auto model = std::make_unique<cmod::Model>();
 
     // Convert materials
     for (unsigned int i = 0; i < scene.getMaterialCount(); i++)

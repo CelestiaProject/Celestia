@@ -116,6 +116,10 @@ class Material
 public:
     Material();
     ~Material() = default;
+    Material(Material&&) = default;
+    Material& operator=(Material&&) = default;
+
+    Material clone() const { return *this; }
 
     inline ResourceHandle getMap(TextureSemantic semantic) const
     {
@@ -141,6 +145,10 @@ public:
     // Define an ordering for materials; required for elimination of duplicate
     // materials.
     bool operator<(const Material& other) const;
+
+private:
+    Material(const Material&) = default;
+    Material& operator=(const Material&) = default;
 };
 
 } // namespace cmod

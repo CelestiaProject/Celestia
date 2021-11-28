@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QAction>
 #include <QCloseEvent>
 #include <QEvent>
@@ -34,7 +36,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
-    void setModel(const QString& filename, cmod::Model* model);
+    void setModel(const QString& filename, std::unique_ptr<cmod::Model>&& model);
     void setModelFileName(const QString& fileName);
     QString modelFileName() const
     {

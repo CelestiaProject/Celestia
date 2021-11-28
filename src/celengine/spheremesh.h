@@ -43,7 +43,7 @@ public:
     ~SphereMesh();
 
     //! Convert this object into a standard Celestia mesh.
-    cmod::Mesh* convertToMesh() const;
+    cmod::Mesh convertToMesh() const;
 
  private:
     void createSphere(float radius, int _nRings, int _nSlices);
