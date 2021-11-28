@@ -13,13 +13,11 @@
 #include "orbit.h"
 #include "samporbit.h"
 #include "xyzvbinary.h"
-#include <fmt/ostream.h>
-#include <fmt/printf.h>
 #include <celengine/astro.h>
 #include <celmath/mathlib.h>
 #include <celutil/bytes.h>
 #include <celutil/gettext.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <cmath>
 #include <string>
 #include <algorithm>
@@ -32,6 +30,7 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+using celestia::util::GetLogger;
 
 // Trajectories are sampled adaptively for rendering.  MaxSampleInterval
 // is the maximum time (in days) between samples.  The threshold angle
@@ -832,35 +831,35 @@ LoadSampledOrbitXYZVBinary(const fs::path& filename, TrajectoryInterpolation int
     ifstream in(filename.string(), ios::binary);
     if (!in.good())
     {
-        cerr << fmt::sprintf(_("Error opening %s.\n"), filename);
+        GetLogger()->error(_("Error opening {}.\n"), filename);
         return nullptr;
     }
 
     XYZVBinaryHeader header;
     if (!in.read(reinterpret_cast<char*>(&header), sizeof(header)))
     {
-        cerr << fmt::sprintf(_("Error reading header of %s.\n"), filename);
+        GetLogger()->error(_("Error reading header of {}.\n"), filename);
         return nullptr;
     }
 
     if (string(header.magic) != "CELXYZV")
     {
-        cerr << fmt::sprintf(_("Bad binary xyzv file %s.\n"), filename);
+        GetLogger()->error(_("Bad binary xyzv file {}.\n"), filename);
         return nullptr;
     }
 
     if (header.byteOrder != __BYTE_ORDER__)
     {
-        cerr << fmt::sprintf(_("Unsupported byte order %i, expected %i.\n"),
-                             header.byteOrder, __BYTE_ORDER__);
+        GetLogger()->error(_("Unsupported byte order {}, expected {}.\n"),
+                           header.byteOrder, __BYTE_ORDER__);
         return nullptr;
     }
 
 
     if (header.digits != std::numeric_limits<double>::digits)
     {
-        cerr << fmt::sprintf(_("Unsupported digits number %i, expected %i.\n"),
-                             header.digits, std::numeric_limits<double>::digits);
+        GetLogger()->error(_("Unsupported digits number {}, expected {}.\n"),
+                           header.digits, std::numeric_limits<double>::digits);
         return nullptr;
     }
 

@@ -11,10 +11,12 @@
 
 #include "winbookmarks.h"
 #include "res/resource.h"
+#include <celutil/logger.h>
 #include <celutil/winutil.h>
 #include <iostream>
 
 using namespace std;
+using celestia::util::GetLogger;
 
 bool dragging;
 HTREEITEM hDragItem;
@@ -295,7 +297,7 @@ void BuildFavoritesMenu(HMENU menuBar,
                             if (!child->isFolder &&
                                 child->parentFolder == folderName)
                             {
-                                clog << "  " << child->name << '\n';
+                                GetLogger()->debug("  {}\n", child->name);
                                 // Add item to sub menu
                                 menuInfo.cbSize = sizeof(MENUITEMINFO);
                                 menuInfo.fMask = MIIM_TYPE | MIIM_ID;

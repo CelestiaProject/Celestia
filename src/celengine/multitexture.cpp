@@ -9,7 +9,6 @@
 
 #include "multitexture.h"
 #include "texmanager.h"
-#include <celutil/debug.h>
 
 using namespace std;
 

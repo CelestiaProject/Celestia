@@ -7,7 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/fsutils.h>
 #include <fstream>
 #include <array>
@@ -16,6 +16,7 @@
 
 using namespace std;
 using namespace celestia;
+using celestia::util::GetLogger;
 
 static TextureManager* textureManager = nullptr;
 
@@ -101,14 +102,10 @@ Texture* TextureInfo::load(const fs::path& name)
 
     if (bumpHeight == 0.0f)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Loading texture: %s\n", name);
-        // cout << "Loading texture: " << name << '\n';
-
+        GetLogger()->debug("Loading texture: {}\n", name);
         return LoadTextureFromFile(name, addressMode, mipMode);
     }
 
-    DPRINTF(LOG_LEVEL_ERROR, "Loading bump map: %s\n", name);
-    // cout << "Loading texture: " << name << '\n';
-
+    GetLogger()->debug("Loading bump map: {}\n", name);
     return LoadHeightMapFromFile(name, bumpHeight, addressMode);
 }

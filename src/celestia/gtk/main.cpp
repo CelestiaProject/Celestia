@@ -36,7 +36,6 @@
 #include <celengine/glsupport.h>
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
-#include <celutil/debug.h>
 #include <celutil/gettext.h>
 
 /* Includes for the GNOME front-end */
@@ -381,14 +380,7 @@ int main(int argc, char* argv[])
     SplashData* ss = splashStart(app, !noSplash);
     splashSetText(ss, "Initializing...");
 
-    SetDebugVerbosity(0);
-
     app->core = new CelestiaCore();
-    if (app->core == NULL)
-    {
-        cerr << "Failed to initialize Celestia core.\n";
-        return 1;
-    }
 
     app->renderer = app->core->getRenderer();
     g_assert(app->renderer);

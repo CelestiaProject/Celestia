@@ -19,7 +19,6 @@
 #include "nebula.h"
 #include "opencluster.h"
 #include <celengine/selection.h>
-#include <celutil/debug.h>
 #include <celmath/intersect.h>
 
 using namespace Eigen;

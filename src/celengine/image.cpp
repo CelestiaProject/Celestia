@@ -11,10 +11,8 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include <fmt/ostream.h>
-#include <fmt/printf.h>
 #include <celengine/glsupport.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
 #include <celimage/imageformats.h>
@@ -22,6 +20,7 @@
 
 using namespace std;
 using celestia::PixelFormat;
+using celestia::util::GetLogger;
 
 namespace
 {
@@ -288,7 +287,7 @@ Image* LoadImageFromFile(const fs::path& filename)
     ContentType type = DetermineFileType(filename);
     Image* img = nullptr;
 
-    clog << fmt::sprintf(_("Loading image from file %s\n"), filename);
+    GetLogger()->verbose(_("Loading image from file {}\n"), filename);
 
     switch (type)
     {
@@ -311,7 +310,7 @@ Image* LoadImageFromFile(const fs::path& filename)
         img = LoadDDSImage(filename);
         break;
     default:
-        DPRINTF(LOG_LEVEL_ERROR, "%s: unrecognized or unsupported image file type.\n", filename);
+        GetLogger()->error("{}: unrecognized or unsupported image file type.\n", filename);
         break;
     }
 

@@ -1,11 +1,13 @@
 #include <iostream>
 #include <celutil/gettext.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celengine/astroobj.h>
 #include "category.h"
 
+using celestia::util::GetLogger;
+
 UserCategory::UserCategory(const std::string &n, UserCategory *p, const std::string &domain) :
-        m_name(n), 
+        m_name(n),
         m_parent(p)
 {
 #ifdef ENABLE_NLS
@@ -95,19 +97,19 @@ bool UserCategory::hasChild(const std::string &n) const
 
 void UserCategory::cleanup()
 {
-    DPRINTF(LOG_LEVEL_INFO, "UserCategory::cleanup()\n");
-    DPRINTF(LOG_LEVEL_INFO, "  Objects: %i\n", m_objlist.size());
-    DPRINTF(LOG_LEVEL_INFO, "  Categories: %i\n", m_catlist.size());
+    GetLogger()->debug("UserCategory::cleanup()\n  Objects: {}\n  Categories: {}\n",
+                       m_objlist.size(), m_catlist.size());
+
     while(!m_objlist.empty())
     {
         auto it = m_objlist.begin();
-        DPRINTF(LOG_LEVEL_INFO, "Removing object: %s\n", it->getName());
+        GetLogger()->debug("Removing object: {}\n", it->getName());
         removeObject(*it);
     }
     while(!m_catlist.empty())
     {
         auto it = m_catlist.begin();
-        DPRINTF(LOG_LEVEL_INFO, "Removing category: %s\n", (*it)->name());
+        GetLogger()->debug("Removing category: {}\n", (*it)->name());
         deleteChild(*it);
     }
 }
@@ -137,7 +139,7 @@ UserCategory *UserCategory::find(const std::string &s)
 {
     if (m_allcats.count(s) == 0)
         return nullptr;
-    DPRINTF(LOG_LEVEL_INFO, "UserCategory::find(%s): exists\n", s.c_str());
+    GetLogger()->info("UserCategory::find({}): exists\n", s.c_str());
     return m_allcats.find(s)->second;
 }
 

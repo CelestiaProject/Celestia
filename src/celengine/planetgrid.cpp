@@ -13,7 +13,6 @@
 #include <cmath>
 #include <Eigen/Geometry>
 #include <celmath/intersect.h>
-#include <celutil/debug.h>
 #include "body.h"
 #include "planetgrid.h"
 #include "render.h"

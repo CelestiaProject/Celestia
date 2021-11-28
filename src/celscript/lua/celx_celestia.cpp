@@ -9,8 +9,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celutil/debug.h>
 #include <celutil/gettext.h>
+#include <celutil/logger.h>
 #include "celttf/truetypefont.h"
 #include <fmt/printf.h>
 #include <celengine/category.h>
@@ -35,6 +35,7 @@
 using namespace std;
 using namespace Eigen;
 using namespace celestia::scripts;
+using celestia::util::GetLogger;
 
 extern const char* KbdCallback;
 extern const char* CleanupCallback;
@@ -263,7 +264,7 @@ static int celestia_setrenderflags(lua_State* l)
         }
         else
         {
-            cerr << "Unknown key: " << key << "\n";
+            GetLogger()->warn("Unknown key: {}\n", key);
         }
         lua_pop(l,1);
     }
@@ -387,7 +388,7 @@ static int celestia_setlabelflags(lua_State* l)
         }
         if (LabelFlagMap.count(key) == 0)
         {
-            cerr << "Unknown key: " << key << "\n";
+            GetLogger()->warn("Unknown key: {}\n", key);
         }
         else
         {
@@ -458,7 +459,7 @@ static int celestia_setorbitflags(lua_State* l)
         }
         if (BodyTypeMap.count(key) == 0)
         {
-            cerr << "Unknown key: " << key << "\n";
+            GetLogger()->warn("Unknown key: {}\n", key);
         }
         else
         {
@@ -664,7 +665,7 @@ static int celestia_setoverlayelements(lua_State* l)
         }
         if (OverlayElementMap.count(key) == 0)
         {
-            cerr << "Unknown key: " << key << "\n";
+            GetLogger()->warn("Unknown key: {}\n", key);
         }
         else
         {
@@ -745,7 +746,7 @@ static int celestia_setlabelcolor(lua_State* l)
     auto &LabelColorMap = this_celestia(l)->scriptMaps()->LabelColorMap;
     if (LabelColorMap.count(key) == 0)
     {
-        cerr << "Unknown label style: " << key << "\n";
+        GetLogger()->warn("Unknown label style: {}\n", key);
     }
     else
     {
@@ -777,7 +778,7 @@ static int celestia_getlabelcolor(lua_State* l)
     auto &LabelColorMap = this_celestia(l)->scriptMaps()->LabelColorMap;
     if (LabelColorMap.count(key) == 0)
     {
-        cerr << "Unknown label style: " << key << "\n";
+        GetLogger()->error("Unknown label style: {}\n", key);
         return 0;
     }
 
@@ -805,7 +806,7 @@ static int celestia_setlinecolor(lua_State* l)
     auto &LineColorMap = this_celestia(l)->scriptMaps()->LineColorMap;
     if (LineColorMap.count(key) == 0)
     {
-        cerr << "Unknown line style: " << key << "\n";
+        GetLogger()->warn("Unknown line style: {}\n", key);
     }
     else
     {
@@ -836,7 +837,7 @@ static int celestia_getlinecolor(lua_State* l)
     auto &LineColorMap = this_celestia(l)->scriptMaps()->LineColorMap;
     if (LineColorMap.count(key) == 0)
     {
-        cerr << "Unknown line style: " << key << "\n";
+        GetLogger()->error("Unknown line style: {}\n", key);
         return 0;
     }
 

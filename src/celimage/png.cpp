@@ -11,15 +11,12 @@
 #include <iostream>
 #include <png.h>
 #include <zlib.h>
-#include <fmt/ostream.h>
-#include <fmt/printf.h>
 #include <celengine/image.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/gettext.h>
 
-using std::cerr;
-using std::clog;
 using celestia::PixelFormat;
+using celestia::util::GetLogger;
 
 namespace
 {
@@ -27,7 +24,7 @@ void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
     auto* fp = (FILE*) png_get_io_ptr(png_ptr);
     if (fread((void*) data, 1, length, fp) != length)
-        cerr << "Error reading PNG data";
+        GetLogger()->error("Error reading PNG data");
 }
 
 void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
@@ -54,7 +51,7 @@ Image* LoadPNGImage(const fs::path& filename)
 #endif
     if (fp == nullptr)
     {
-        clog << fmt::sprintf(_("Error opening image file %s\n"), filename);
+        GetLogger()->error(_("Error opening image file {}.\n"), filename);
         return nullptr;
     }
 
@@ -62,7 +59,7 @@ Image* LoadPNGImage(const fs::path& filename)
     elements_read = fread(header, 1, sizeof(header), fp);
     if (elements_read == 0 || png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
     {
-        clog << fmt::sprintf(_("Error: %s is not a PNG file.\n"), filename);
+        GetLogger()->error(_("Error: {} is not a PNG file.\n"), filename);
         fclose(fp);
         return nullptr;
     }
@@ -88,7 +85,7 @@ Image* LoadPNGImage(const fs::path& filename)
         fclose(fp);
         delete img;
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) nullptr);
-        clog << fmt::sprintf(_("Error reading PNG image file %s\n"), filename);
+        GetLogger()->error(_("Error reading PNG image file {}\n"), filename);
         return nullptr;
     }
 
@@ -178,7 +175,7 @@ bool SavePNGImage(const fs::path& filename,
 #endif
     if (out == nullptr)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Can't open screen capture file '%s'\n", filename);
+        GetLogger()->error(_("Can't open screen capture file '{}'\n"), filename);
         return false;
     }
 
@@ -209,7 +206,7 @@ bool SavePNGImage(const fs::path& filename,
 
     if (png_ptr == nullptr)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Screen capture: error allocating png_ptr\n");
+        GetLogger()->error("Error allocating png_ptr\n");
         fclose(out);
         delete[] row_pointers;
         return false;
@@ -218,7 +215,7 @@ bool SavePNGImage(const fs::path& filename,
     info_ptr = png_create_info_struct(png_ptr);
     if (info_ptr == nullptr)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Screen capture: error allocating info_ptr\n");
+        GetLogger()->error("Error allocating info_ptr\n");
         fclose(out);
         delete[] row_pointers;
         png_destroy_write_struct(&png_ptr, (png_infopp) nullptr);
@@ -227,7 +224,7 @@ bool SavePNGImage(const fs::path& filename,
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Error writing PNG file '%s'\n", filename);
+        GetLogger()->error(_("Error writing PNG file '{}'\n"), filename);
         fclose(out);
         delete[] row_pointers;
         png_destroy_write_struct(&png_ptr, &info_ptr);

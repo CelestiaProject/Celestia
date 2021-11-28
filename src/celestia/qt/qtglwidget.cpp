@@ -32,7 +32,6 @@
 
 #include "celengine/astro.h"
 #include "celutil/filetype.h"
-#include "celutil/debug.h"
 #include "celutil/gettext.h"
 #include "celestia/celestiacore.h"
 #include "celengine/simulation.h"

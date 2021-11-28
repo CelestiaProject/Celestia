@@ -8,18 +8,16 @@
 // of the License, or (at your option) any later version.
 
 #include <config.h>
-#include "trajmanager.h"
-#include <celephem/samporbit.h>
-#include <celutil/debug.h>
-#include <celutil/filetype.h>
-#include <iostream>
 #include <fstream>
 #include <cassert>
-#include <celutil/debug.h>
 #include <fmt/printf.h>
+#include <celephem/samporbit.h>
+#include <celutil/logger.h>
+#include <celutil/filetype.h>
+#include "trajmanager.h"
 
 using namespace std;
-
+using celestia::util::GetLogger;
 
 static TrajectoryManager* trajectoryManager = nullptr;
 
@@ -65,7 +63,7 @@ Orbit* TrajectoryInfo::load(const fs::path& filename)
     fs::path strippedFilename = filename.string().substr(0, uniquifyingSuffixStart);
     ContentType filetype = DetermineFileType(strippedFilename);
 
-    DPRINTF(LOG_LEVEL_INFO, "Loading trajectory: %s\n", strippedFilename);
+    GetLogger()->debug("Loading trajectory: {}\n", strippedFilename);
 
     Orbit* sampTrajectory = nullptr;
 

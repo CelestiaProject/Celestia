@@ -8,7 +8,6 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include <celutil/debug.h>
 #include "glcontext.h"
 #include "glsupport.h"
 

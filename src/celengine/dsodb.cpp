@@ -17,21 +17,19 @@
 
 #include <fmt/printf.h>
 
-#include <celutil/debug.h>
 #include <celmath/mathlib.h>
+#include <celutil/logger.h>
 #include <celutil/gettext.h>
 #include <celutil/bytes.h>
 #include <celutil/utf8.h>
-#include <celengine/dsodb.h>
-#include <config.h>
+#include <celutil/tokenizer.h>
 #include "astro.h"
 #include "parser.h"
 #include "parseobject.h"
 #include "multitexture.h"
 #include "meshmanager.h"
-#include <celutil/tokenizer.h>
-#include <celutil/debug.h>
 
+#include <celengine/dsodb.h>
 #include <celengine/galaxy.h>
 #include <celengine/globular.h>
 #include <celengine/opencluster.h>
@@ -42,7 +40,7 @@
 
 using namespace Eigen;
 using namespace std;
-
+using celestia::util::GetLogger;
 
 constexpr const float DSO_OCTREE_MAGNITUDE   = 8.0f;
 //constexpr const float DSO_EXTRA_ROOM         = 0.01f; // Reserve 1% capacity for extra DSOs
@@ -241,7 +239,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
 
         if (tokenizer.getTokenType() != Tokenizer::TokenName)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Error parsing deep sky catalog file.\n");
+            GetLogger()->error("Error parsing deep sky catalog file.\n");
             return false;
         }
         objType = tokenizer.getNameValue();
@@ -262,7 +260,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
 
         if (tokenizer.nextToken() != Tokenizer::TokenString)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Error parsing deep sky catalog file: bad name.\n");
+            GetLogger()->error("Error parsing deep sky catalog file: bad name.\n");
             return false;
         }
         objName = tokenizer.getStringValue();
@@ -271,7 +269,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
         if (objParamsValue == nullptr ||
             objParamsValue->getType() != Value::HashType)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Error parsing deep sky catalog entry %s\n", objName.c_str());
+            GetLogger()->error("Error parsing deep sky catalog entry {}\n", objName.c_str());
             return false;
         }
 
@@ -347,7 +345,7 @@ bool DSODatabase::load(istream& in, const fs::path& resourcePath)
         }
         else
         {
-            DPRINTF(LOG_LEVEL_WARNING, "Bad Deep Sky Object definition--will continue parsing file.\n");
+            GetLogger()->warn("Bad Deep Sky Object definition--will continue parsing file.\n");
             delete objParamsValue;
             return false;
         }
@@ -376,13 +374,13 @@ void DSODatabase::finish()
             DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
     }
     */
-    clog << fmt::sprintf(_("Loaded %i deep space objects\n"), nDSOs);
+    GetLogger()->info(_("Loaded {} deep space objects\n"), nDSOs);
 }
 
 
 void DSODatabase::buildOctree()
 {
-    DPRINTF(LOG_LEVEL_INFO, "Sorting DSOs into octree . . .\n");
+    GetLogger()->debug("Sorting DSOs into octree . . .\n");
     float absMag             = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
 
     // TODO: investigate using a different center--it's possible that more
@@ -394,7 +392,7 @@ void DSODatabase::buildOctree()
         root->insertObject(DSOs[i], DSO_OCTREE_ROOT_SIZE);
     }
 
-    DPRINTF(LOG_LEVEL_INFO, "Spatially sorting DSOs for improved locality of reference . . .\n");
+    GetLogger()->debug("Spatially sorting DSOs for improved locality of reference . . .\n");
     DeepSkyObject** sortedDSOs    = new DeepSkyObject*[nDSOs];
     DeepSkyObject** firstDSO      = sortedDSOs;
 
@@ -402,11 +400,11 @@ void DSODatabase::buildOctree()
     // are storing pointers to objects and not the objects themselves:
     root->rebuildAndSort(octreeRoot, firstDSO);
 
-    DPRINTF(LOG_LEVEL_INFO, "%d DSOs total\n", (int) (firstDSO - sortedDSOs));
-    DPRINTF(LOG_LEVEL_INFO, "Octree has %d nodes and %d DSOs.\n",
-            1 + octreeRoot->countChildren(), octreeRoot->countObjects());
-    //cout<<"DSOs:  "<< octreeRoot->countObjects()<<"   Nodes:"
-    //    <<octreeRoot->countChildren() <<endl;
+    GetLogger()->debug("{} DSOs total.\nOctree has {} nodes and {} DSOs.\n",
+                       static_cast<int>(firstDSO - sortedDSOs),
+                       1 + octreeRoot->countChildren(),
+                       octreeRoot->countObjects());
+
     // Clean up . . .
     delete[] DSOs;
     delete   root;
@@ -439,7 +437,7 @@ void DSODatabase::buildIndexes()
     // This should only be called once for the database
     // assert(catalogNumberIndexes[0] == nullptr);
 
-    DPRINTF(LOG_LEVEL_INFO, "Building catalog number indexes . . .\n");
+    GetLogger()->debug("Building catalog number indexes . . .\n");
 
     catalogNumberIndex = new DeepSkyObject*[nDSOs];
     for (int i = 0; i < nDSOs; ++i)

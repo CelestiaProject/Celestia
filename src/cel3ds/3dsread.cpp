@@ -16,13 +16,14 @@
 #include <utility>
 
 #include <Eigen/Core>
-#include <fmt/ostream.h>
 
 #include <celutil/binaryread.h>
+#include <celutil/logger.h>
 #include "3dsmodel.h"
 #include "3dsread.h"
 
 namespace celutil = celestia::util;
+using celestia::util::GetLogger;
 
 namespace
 {
@@ -133,7 +134,8 @@ std::int32_t read3DSChunk(std::istream& in,
     default:
         if (processedSize != contentSize)
         {
-            fmt::print(std::clog, "Chunk type {:04x}, expected {} bytes but read {}\n", chunkType, contentSize, processedSize);
+            GetLogger()->error("Chunk type {:04x}, expected {} bytes but read {}\n",
+                               static_cast<int>(chunkType), contentSize, processedSize);
             return READ_FAILURE;
         }
         return chunkSize;
@@ -153,7 +155,7 @@ std::int32_t read3DSChunks(std::istream& in,
     {
         std::int32_t chunkSize = read3DSChunk(in, chunkFunc, obj);
         if (chunkSize < 0) {
-            fmt::print(std::clog, "Failed to read 3DS chunk\n");
+            GetLogger()->error("Failed to read 3DS chunk\n");
             return READ_FAILURE;
         }
         bytesRead += chunkSize;
@@ -161,7 +163,7 @@ std::int32_t read3DSChunks(std::istream& in,
 
     if (bytesRead != nBytes)
     {
-        fmt::print(std::clog, "Multiple chunks, expected {} bytes but read {}\n", nBytes, bytesRead);
+        GetLogger()->error("Multiple chunks, expected {} bytes but read {}\n", nBytes, bytesRead);
         return READ_FAILURE;
     }
 
@@ -573,18 +575,18 @@ std::unique_ptr<M3DScene> Read3DSFile(std::istream& in)
     M3DChunkType chunkType;
     if (!readChunkType(in, chunkType) || chunkType != M3DChunkType::Magic)
     {
-        fmt::print(std::clog, "Read3DSFile: Wrong magic number in header\n");
+        GetLogger()->error("Read3DSFile: Wrong magic number in header\n");
         return nullptr;
     }
 
     std::int32_t chunkSize;
     if (!celutil::readLE<std::int32_t>(in, chunkSize) || chunkSize < 6)
     {
-        fmt::print(std::clog, "Read3DSFile: Error reading 3DS file top level chunk size\n");
+        GetLogger()->error("Read3DSFile: Error reading 3DS file top level chunk size\n");
         return nullptr;
     }
 
-    fmt::print(std::clog, "3DS file, {} bytes\n", chunkSize + 6);
+    GetLogger()->verbose("3DS file, {} bytes\n", chunkSize + 6);
 
     auto scene = std::make_unique<M3DScene>();
     std::int32_t contentSize = chunkSize - 6;
@@ -605,7 +607,7 @@ std::unique_ptr<M3DScene> Read3DSFile(const fs::path& filename)
     std::ifstream in(filename.string(), std::ios::in | std::ios::binary);
     if (!in.good())
     {
-        fmt::print(std::clog, "Read3DSFile: Error opening {}\n", filename);
+        GetLogger()->error("Read3DSFile: Error opening {}\n", filename);
         return nullptr;
     }
 

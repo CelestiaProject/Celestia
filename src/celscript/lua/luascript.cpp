@@ -16,6 +16,7 @@
 #include <celestia/configfile.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
+#include <celutil/logger.h>
 #include "celx_internal.h"
 #include "luascript.h"
 
@@ -23,6 +24,8 @@ using namespace std;
 
 namespace celestia
 {
+using util::GetLogger;
+
 namespace scripts
 {
 
@@ -167,7 +170,7 @@ static string lua_path(const CelestiaConfig *config)
         std::error_code ec;
         if (!fs::is_directory(dir, ec))
         {
-            cerr << fmt::sprintf(_("Path %s doesn't exist or isn't a directory\n"), dir);
+            GetLogger()->warn(_("Path {} doesn't exist or isn't a directory\n"), dir);
             continue;
         }
 
@@ -222,7 +225,7 @@ bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, P
 
     if (status != 0)
     {
-        cerr << "lua hook load failed\n";
+        GetLogger()->debug("lua hook load failed\n");
         string errMsg = luaHook->getErrorMessage();
         if (errMsg.empty())
             errMsg = _("Unknown error loading hook script");
@@ -235,7 +238,7 @@ bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, P
         // script and Celestia's event loop
         if (!luaHook->createThread())
         {
-            cerr << "hook thread failed\n";
+            GetLogger()->debug("hook thread failed\n");
             appCore->fatalError(_("Script coroutine initialization failed"));
             luaHook = nullptr;
         }

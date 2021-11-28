@@ -14,6 +14,7 @@
 #include <celestia/celestiacore.h>
 #include <celengine/astro.h>
 #include <celutil/gettext.h>
+#include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include <celengine/universe.h>
 #include <QTextBrowser>
@@ -24,6 +25,7 @@
 using namespace std;
 using namespace Eigen;
 using namespace celmath;
+using celestia::util::GetLogger;
 
 // TODO: This should be moved to astro.cpp
 struct OrbitalElements
@@ -431,10 +433,10 @@ static void CalculateOsculatingElements(const Orbit& orbit,
         double beginTime = 0.0;
         double endTime = 0.0;
         orbit.getValidRange(beginTime, endTime);
-        clog << "t+dt: " << t + dt << ", endTime: " << endTime << endl;
+        GetLogger()->debug("t+dt: {}, endTime: {}\n", t + dt, endTime);
         if (t + dt > endTime)
         {
-            clog << "REVERSE\n";
+            GetLogger()->debug("REVERSE\n");
             sdt = -dt;
         }
     }
@@ -448,9 +450,9 @@ static void CalculateOsculatingElements(const Orbit& orbit,
     Vector3d r = p0;
     double GM = accel * r.squaredNorm();
 
-    clog << "vel: " << v0.norm() / 86400.0 << endl;
-    clog << "vel (est): " << (p1 - p0).norm() / sdt / 86400 << endl;
-    clog << "osc: " << t << ", " << dt << ", " << accel << ", GM=" << GM << endl;
+    GetLogger()->debug("vel: {}\n", v0.norm() / 86400.0);
+    GetLogger()->debug("vel (est): {}\n", (p1 - p0).norm() / sdt / 86400);
+    GetLogger()->debug("osc: {}, {}, {}, GM={}\n", t, dt, accel, GM);
 
     StateVectorToElements(p0, v0, GM, elements);
 }

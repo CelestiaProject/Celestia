@@ -12,8 +12,6 @@
 
 #include <gtk/gtk.h>
 
-#include <celutil/debug.h>
-
 #include "dialog-options.h"
 #include "common.h"
 #include "ui.h"

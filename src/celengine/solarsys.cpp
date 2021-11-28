@@ -15,13 +15,12 @@
 #include <limits>
 #include <fmt/format.h>
 #include <fmt/printf.h>
-#include <fmt/ostream.h>
 #include <celmath/mathlib.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/gettext.h>
+#include <celutil/tokenizer.h>
 #include "astro.h"
 #include "parser.h"
-#include <celutil/tokenizer.h>
 #include "texmanager.h"
 #include "meshmanager.h"
 #include "universe.h"
@@ -35,6 +34,7 @@
 using namespace Eigen;
 using namespace std;
 using namespace celmath;
+using celestia::util::GetLogger;
 
 enum BodyType
 {
@@ -78,16 +78,11 @@ enum BodyType
   The name and parent name are both mandatory.
 */
 
-static void errorMessagePrelude(const Tokenizer& tok)
-{
-    cerr << fmt::sprintf(_("Error in .ssc file (line %d): "), tok.getLineNumber());
-}
-
 static void sscError(const Tokenizer& tok,
                      const string& msg)
 {
-    errorMessagePrelude(tok);
-    cerr << msg << '\n';
+    GetLogger()->error(_("Error in .ssc file (line {}): {}\n"),
+                      tok.getLineNumber(), msg);
 }
 
 
@@ -296,7 +291,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
     bool hasBeginning = ParseDate(phaseData, "Beginning", beginning);
     if (!isFirstPhase && hasBeginning)
     {
-        clog << "Error: Beginning can only be specified for initial phase of timeline.\n";
+        GetLogger()->error("Error: Beginning can only be specified for initial phase of timeline.\n");
         return nullptr;
     }
 
@@ -304,7 +299,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
     bool hasEnding = ParseDate(phaseData, "Ending", ending);
     if (!isLastPhase && !hasEnding)
     {
-        clog << "Error: Ending is required for all timeline phases other than the final one.\n";
+        GetLogger()->error("Error: Ending is required for all timeline phases other than the final one.\n");
         return nullptr;
     }
 
@@ -350,7 +345,7 @@ TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
     Orbit* orbit = CreateOrbit(orbitFrame->getCenter(), phaseData, path, usePlanetUnits);
     if (!orbit)
     {
-        clog << "Error: missing orbit in timeline phase.\n";
+        GetLogger()->error("Error: missing orbit in timeline phase.\n");
         return nullptr;
     }
 
@@ -395,7 +390,7 @@ Timeline* CreateTimelineFromArray(Body* body,
         Hash* phaseData = (*iter)->getHash();
         if (phaseData == nullptr)
         {
-            clog << "Error in timeline of '" << body->getName() << "': phase " << iter - timelineArray->begin() + 1 << " is not a property group.\n";
+            GetLogger()->error("Error in timeline of '{}': phase {} is not a property group.\n", body->getName(), iter - timelineArray->begin() + 1);
             delete timeline;
             return nullptr;
         }
@@ -410,7 +405,9 @@ Timeline* CreateTimelineFromArray(Body* body,
                                          isFirstPhase, isLastPhase, previousEnding);
         if (phase == nullptr)
         {
-            clog << "Error in timeline of '" << body->getName() << "', phase " << iter - timelineArray->begin() + 1 << endl;
+            GetLogger()->error("Error in timeline of '{}', phase {}.\n",
+                               body->getName(),
+                               iter - timelineArray->begin() + 1);
             delete timeline;
             return nullptr;
         }
@@ -473,7 +470,7 @@ static bool CreateTimeline(Body* body,
     {
         if (value->getType() != Value::ArrayType)
         {
-            clog << "Error: Timeline must be an array\n";
+            GetLogger()->error("Error: Timeline must be an array\n");
             return false;
         }
 
@@ -573,7 +570,7 @@ static bool CreateTimeline(Body* body,
         }
         else
         {
-            clog << "No valid orbit specified for object '" << body->getName() << "'. Skipping.\n";
+            GetLogger()->error("No valid orbit specified for object '{}'. Skipping.\n", body->getName());
             return false;
         }
     }
@@ -619,7 +616,7 @@ static bool CreateTimeline(Body* body,
     {
         if (beginning >= ending)
         {
-            clog << "Beginning time must be before Ending time.\n";
+            GetLogger()->error("Beginning time must be before Ending time.\n");
             delete rotationModel;
             return false;
         }
@@ -639,7 +636,7 @@ static bool CreateTimeline(Body* body,
         assert(phase != nullptr);
         if (phase == nullptr)
         {
-            clog << "Internal error creating TimelinePhase.\n";
+            GetLogger()->error("Internal error creating TimelinePhase.\n");
             return false;
         }
 
@@ -654,13 +651,13 @@ static bool CreateTimeline(Body* body,
         // multiphase timelines.
         if (newOrbitFrame && isFrameCircular(*body->getOrbitFrame(0.0), ReferenceFrame::PositionFrame))
         {
-            clog << "Orbit frame for " << body->getName() << " is nested too deep (probably circular)\n";
+            GetLogger()->error("Orbit frame for '{}' is nested too deep (probably circular)\n", body->getName());
             return false;
         }
 
         if (newBodyFrame && isFrameCircular(*body->getBodyFrame(0.0), ReferenceFrame::OrientationFrame))
         {
-            clog << "Body frame for " << body->getName() << " is nested too deep (probably circular)\n";
+            GetLogger()->error("Body frame for '{}' is nested too deep (probably circular)\n", body->getName());
             return false;
         }
     }
@@ -799,7 +796,7 @@ static Body* CreateBody(const string& name,
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory
-            const string &p = path.string();
+            string p = path.string();
             if (p[1] == ':')
                 // Absolute Windows path, file:/// is required
                 infoURL = "file:///" + p + "/" + infoURL;
@@ -812,7 +809,8 @@ static Body* CreateBody(const string& name,
     double t;
     if (planetData->getNumber("Albedo", t))
     {
-        DPRINTF(LOG_LEVEL_WARNING, "Deprecated parameter Albedo used in %s definition.\nUse GeomAlbedo & BondAlbedo instead.\n", name);
+        // TODO: make this warn 
+        GetLogger()->verbose("Deprecated parameter Albedo used in {} definition.\nUse GeomAlbedo & BondAlbedo instead.\n", name);
         body->setGeomAlbedo((float) t);
     }
 
@@ -829,7 +827,7 @@ static Body* CreateBody(const string& name,
         }
         else
         {
-            fmt::print(cerr, _("Incorrect GeomAlbedo value: {}\n"), t);
+            GetLogger()->error(_("Incorrect GeomAlbedo value: {}\n"), t);
         }
     }
 
@@ -838,7 +836,7 @@ static Body* CreateBody(const string& name,
         if (t >= 0.0 && t <= 1.0)
             body->setReflectivity((float) t);
         else
-            fmt::print(cerr, _("Incorrect Reflectivity value: {}\n"), t);
+            GetLogger()->error(_("Incorrect Reflectivity value: {}\n"), t);
     }
 
     if (planetData->getNumber("BondAlbedo", t))
@@ -846,7 +844,7 @@ static Body* CreateBody(const string& name,
         if (t >= 0.0 && t <= 1.0)
             body->setBondAlbedo((float) t);
         else
-            fmt::print(cerr, _("Incorrect BondAlbedo value: {}\n"), t);
+            GetLogger()->error(_("Incorrect BondAlbedo value: {}\n"), t);
     }
 
     if (planetData->getNumber("Temperature", t))
@@ -1249,8 +1247,7 @@ bool LoadSolarSystemObjects(istream& in,
             }
             else
             {
-                errorMessagePrelude(tokenizer);
-                cerr << fmt::sprintf(_("parent body '%s' of '%s' not found.\n"), parentName, primaryName);
+                sscError(tokenizer, fmt::sprintf(_("parent body '%s' of '%s' not found.\n"), parentName, primaryName));
             }
 
             if (parentSystem != nullptr)
@@ -1260,8 +1257,7 @@ bool LoadSolarSystemObjects(istream& in,
                 {
                     if (disposition == DataDisposition::Add)
                     {
-                        errorMessagePrelude(tokenizer);
-                        cerr << fmt::sprintf(_("warning duplicate definition of %s %s\n"), parentName, primaryName);
+                        sscError(tokenizer, fmt::sprintf(_("warning duplicate definition of %s %s\n"), parentName, primaryName));
                     }
                     else if (disposition == DataDisposition::Replace)
                     {
@@ -1312,8 +1308,7 @@ bool LoadSolarSystemObjects(istream& in,
             }
             else
             {
-                errorMessagePrelude(tokenizer);
-                cerr << fmt::sprintf(_("parent body '%s' of '%s' not found.\n"), parentName, primaryName);
+                sscError(tokenizer, fmt::sprintf(_("parent body '%s' of '%s' not found.\n"), parentName, primaryName));
             }
         }
         delete objectDataValue;

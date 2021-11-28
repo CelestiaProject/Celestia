@@ -19,7 +19,6 @@
 #include <celmath/intersect.h>
 #include <celmath/ray.h>
 #include <celmath/randutils.h>
-#include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include "astro.h"
 #include "globular.h"

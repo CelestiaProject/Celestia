@@ -8,7 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <celutil/gettext.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/tokenizer.h>
 #include "stardb.h"
 #include "asterism.h"
@@ -16,7 +16,7 @@
 
 
 using namespace std;
-
+using celestia::util::GetLogger;
 
 Asterism::Asterism(string _name) :
     name(std::move(_name))
@@ -115,7 +115,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Error parsing asterism file.\n");
+            GetLogger()->error("Error parsing asterism file.\n");
             for_each(asterisms->begin(), asterisms->end(), [](Asterism* ast) { delete ast; });
             delete asterisms;
             return nullptr;
@@ -127,7 +127,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
         Value* chainsValue = parser.readValue();
         if (chainsValue == nullptr || chainsValue->getType() != Value::ArrayType)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Error parsing asterism %s\n", name.c_str());
+            GetLogger()->error("Error parsing asterism {}\n", name);
             for_each(asterisms->begin(), asterisms->end(), [](Asterism* ast) { delete ast; });
             delete ast;
             delete asterisms;
@@ -157,7 +157,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
                         if (star != nullptr)
                             new_chain->push_back(star->getPosition());
                         else
-                            DPRINTF(LOG_LEVEL_ERROR, "Error loading star \"%s\" for asterism \"%s\".\n", name.c_str(), i->getString().c_str());
+                            GetLogger()->error("Error loading star \"{}\" for asterism \"{}\".\n", name, i->getString());
                     }
                 }
 

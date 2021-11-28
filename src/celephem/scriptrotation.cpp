@@ -9,13 +9,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cstdio>
-#include <cassert>
+#include <celutil/logger.h>
 #include "scriptobject.h"
 #include "scriptrotation.h"
 
 using namespace Eigen;
 using namespace std;
+using celestia::util::GetLogger;
 
 
 /*! Initialize the script rotation
@@ -51,7 +51,7 @@ ScriptedRotation::initialize(const std::string& moduleName,
     luaState = GetScriptedObjectContext();
     if (luaState == nullptr)
     {
-        clog << "ScriptedRotations are currently disabled.\n";
+        GetLogger()->warn("ScriptedRotations are currently disabled.\n");
         return false;
     }
 
@@ -60,7 +60,7 @@ ScriptedRotation::initialize(const std::string& moduleName,
         lua_getglobal(luaState, "require");
         if (!lua_isfunction(luaState, -1))
         {
-            clog << "Cannot load ScriptedRotation package: 'require' function is unavailable\n";
+            GetLogger()->error("Cannot load ScriptedRotation package: 'require' function is unavailable\n");
             lua_pop(luaState, 1);
             return false;
         }
@@ -68,7 +68,7 @@ ScriptedRotation::initialize(const std::string& moduleName,
         lua_pushstring(luaState, moduleName.c_str());
         if (lua_pcall(luaState, 1, 1, 0) != 0)
         {
-            clog << "Failed to load module for ScriptedRotation: " << lua_tostring(luaState, -1) << "\n";
+            GetLogger()->error("Failed to load module for ScriptedRotation: {}\n", lua_tostring(luaState, -1));
             lua_pop(luaState, 1);
             return false;
         }
@@ -82,7 +82,7 @@ ScriptedRotation::initialize(const std::string& moduleName,
         // No function with the requested name; pop whatever value we
         // did receive along with the table of arguments.
         lua_pop(luaState, 1);
-        clog << "No Lua function named " << funcName << " found.\n";
+        GetLogger()->error("No Lua function named {} found.\n", funcName);
         return false;
     }
 
@@ -95,8 +95,8 @@ ScriptedRotation::initialize(const std::string& moduleName,
     if (lua_pcall(luaState, 1, 1, 0) != 0)
     {
         // Some sort of error occurred--the error message is atop the stack
-        clog << "Error calling ScriptedRotation generator function: " <<
-            lua_tostring(luaState, -1) << "\n";
+        GetLogger()->error("Error calling ScriptedRotation generator function: {}\n",
+                           lua_tostring(luaState, -1));
         lua_pop(luaState, 1);
         return false;
     }
@@ -105,7 +105,7 @@ ScriptedRotation::initialize(const std::string& moduleName,
     {
         // We have an object, but it's not a table. Pop it off the
         // stack and report failure.
-        clog << "ScriptedRotation generator function returned bad value.\n";
+        GetLogger()->error("ScriptedRotation generator function returned bad value.\n");
         lua_pop(luaState, 1);
         return false;
     }
@@ -126,7 +126,7 @@ ScriptedRotation::initialize(const std::string& moduleName,
     // Perform some sanity checks on the rotation parameters
     if (validRangeEnd < validRangeBegin)
     {
-        clog << "Bad script rotation: valid range end < begin\n";
+        GetLogger()->error("Bad script rotation: valid range end < begin\n");
         return false;
     }
 
@@ -161,7 +161,7 @@ ScriptedRotation::spin(double tjd) const
                 else
                 {
                     // Function call failed for some reason
-                    //clog << "ScriptedRotation failed: " << lua_tostring(luaState, -1) << "\n";
+                    GetLogger()->warn("ScriptedRotation failed: {}\n", lua_tostring(luaState, -1));
                     lua_pop(luaState, 1);
                 }
             }

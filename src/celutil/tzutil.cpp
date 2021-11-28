@@ -10,12 +10,10 @@
 // of the License, or (at your option) any later version.
 
 #ifdef _WIN32
-#include <iostream>
-
 #include <windows.h>
-
-#include <celutil/winutil.h>
+#include "winutil.h"
 #include "gettext.h"
+#include "logger.h"
 #else
 // we need the C version of this header to get the POSIX function localtime_r
 #include <time.h>
@@ -26,6 +24,8 @@
 bool GetTZInfo(std::string& tzName, int& dstBias)
 {
 #ifdef _WIN32
+    using celestia::util::GetLogger;
+
     TIME_ZONE_INFORMATION tzi;
     DWORD dst = GetTimeZoneInformation(&tzi);
     if (dst == TIME_ZONE_ID_INVALID)
@@ -45,7 +45,7 @@ bool GetTZInfo(std::string& tzName, int& dstBias)
         name = tzi.DaylightName;
         break;
     default:
-        std::cerr << _("Unknown value returned by GetTimeZoneInformation()\n");
+        GetLogger()->warn(_("Unknown value returned by GetTimeZoneInformation()\n"));
         return false;
     }
 

@@ -17,6 +17,7 @@
 #include <celestia/celestiacore.h>
 #include <celengine/multitexture.h>
 #include <celutil/filetype.h>
+#include <celutil/logger.h>
 #include <celmath/mathlib.h>
 #include <iostream>
 #include <utility>
@@ -26,6 +27,7 @@
 using namespace std;
 using namespace Eigen;
 using namespace celmath;
+using celestia::util::GetLogger;
 
 
 double InstantaneousCommand::getDuration() const
@@ -840,7 +842,7 @@ void CommandSetLineColor::process(ExecutionEnvironment& env)
     auto &LineColorMap = env.getCelestiaCore()->scriptMaps()->LineColorMap;
     if (LineColorMap.count(item) == 0)
     {
-        cerr << "Unknown line style: " << item << "\n";
+        GetLogger()->warn("Unknown line style: {}\n", item);
     }
     else
     {
@@ -863,7 +865,7 @@ void CommandSetLabelColor::process(ExecutionEnvironment& env)
     auto &LabelColorMap = env.getCelestiaCore()->scriptMaps()->LabelColorMap;
     if (LabelColorMap.count(item) == 0)
     {
-        cerr << "Unknown label style: " << item << "\n";
+        GetLogger()->error("Unknown label style: {}\n", item);
     }
     else
     {

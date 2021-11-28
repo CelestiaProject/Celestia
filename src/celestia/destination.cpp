@@ -9,7 +9,7 @@
 
 #include <config.h>
 #include <algorithm>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/stringutils.h>
 #include <celengine/astro.h>
 #include <celengine/parser.h>
@@ -17,7 +17,7 @@
 #include "destination.h"
 
 using namespace std;
-
+using celestia::util::GetLogger;
 
 DestinationList* ReadDestinationList(istream& in)
 {
@@ -29,7 +29,7 @@ DestinationList* ReadDestinationList(istream& in)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenBeginGroup)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Error parsing destinations file.\n");
+            GetLogger()->error("Error parsing destinations file.\n");
             for_each(destinations->begin(), destinations->end(), [](Destination* dest) { delete dest; });
             delete destinations;
             return nullptr;
@@ -39,7 +39,7 @@ DestinationList* ReadDestinationList(istream& in)
         Value* destValue = parser.readValue();
         if (destValue == nullptr || destValue->getType() != Value::HashType)
         {
-            DPRINTF(LOG_LEVEL_ERROR, "Error parsing destination.\n");
+            GetLogger()->error("Error parsing destination.\n");
             for_each(destinations->begin(), destinations->end(), [](Destination* dest) { delete dest; });
             delete destinations;
             if (destValue != nullptr)
@@ -52,7 +52,7 @@ DestinationList* ReadDestinationList(istream& in)
 
         if (!destParams->getString("Name", dest->name))
         {
-            DPRINTF(LOG_LEVEL_INFO, "Skipping unnamed destination\n");
+            GetLogger()->warn("Skipping unnamed destination\n");
             delete dest;
         }
         else

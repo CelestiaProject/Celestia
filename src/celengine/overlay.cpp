@@ -13,7 +13,6 @@
 #include <celmath/geomutil.h>
 #include <celttf/truetypefont.h>
 #include <celutil/color.h>
-#include <celutil/debug.h>
 #include <celutil/utf8.h>
 #include "overlay.h"
 #include "rectangle.h"

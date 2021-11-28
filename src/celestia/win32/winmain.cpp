@@ -31,12 +31,12 @@
 
 #include <celmath/mathlib.h>
 #include <celutil/array_view.h>
-#include <celutil/debug.h>
 #include <celutil/gettext.h>
 #include <celutil/fsutils.h>
 #include <celutil/winutil.h>
 #include <celutil/tzutil.h>
 #include <celutil/filetype.h>
+#include <celutil/logger.h>
 #include <celengine/astro.h>
 #include <celscript/legacy/cmdparser.h>
 
@@ -170,7 +170,9 @@ static LRESULT CALLBACK MainWindowProc(HWND hWnd,
 #define MENU_CHOOSE_SURFACE  31000
 
 
-bool ignoreOldFavorites = false;
+static bool ignoreOldFavorites = false;
+
+static Level verbosity = Level::Info;
 
 struct AppPreferences
 {
@@ -2766,7 +2768,10 @@ static void HandleCaptureMovie(HWND hWnd)
         if (nFileType != 1)
         {
             // Invalid file extension specified.
-            DPRINTF(0, "Unknown file extension specified for movie capture.\n");
+            MessageBox(hWnd,
+                       _("Unknown file extension specified for movie capture."),
+                       _("Error"),
+                       MB_OK | MB_ICONERROR);
         }
         else
         {
@@ -2996,7 +3001,11 @@ static bool parseCommandLine(int argc, char* argv[])
         bool isLastArg = (i == argc - 1);
         if (strcmp(argv[i], "--verbose") == 0)
         {
-            SetDebugVerbosity(1);
+            verbosity = Level::Verbose;
+        }
+        else if (strcmp(argv[i], "--debug") == 0)
+        {
+            verbosity = Level::Debug;
         }
         else if (strcmp(argv[i], "--fullscreen") == 0)
         {
@@ -3233,6 +3242,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     appCore = new CelestiaCore();
+    GetLogger()->setLevel(verbosity);
 
     // Gettext integration
     setlocale(LC_ALL, "");

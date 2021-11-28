@@ -11,7 +11,6 @@
 #include <celmath/mathlib.h>
 #include <celengine/selection.h>
 #include <cassert>
-#include <celutil/debug.h>
 #include <config.h>
 #include "astro.h"
 #include "star.h"

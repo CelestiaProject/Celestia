@@ -14,8 +14,10 @@
 #include <iostream>
 #include <cstdio>
 #include <set>
+#include <celutil/logger.h>
 
 using namespace std;
+using celestia::util::GetLogger;
 
 
 // Track loaded SPICE kernels in order to avoid loading the same kernel
@@ -99,7 +101,7 @@ bool LoadSpiceKernel(const fs::path& filepath)
     {
         char errMsg[1024];
         getmsg_c("long", sizeof(errMsg), errMsg);
-        clog << errMsg << "\n";
+        GetLogger()->error("{}\n", errMsg);
 
         // Reset the SPICE error state so that future calls to
         // SPICE can still succeed.
@@ -108,6 +110,6 @@ bool LoadSpiceKernel(const fs::path& filepath)
         return false;
     }
 
-     clog << "Loaded SPK file " << filepath << "\n";
+     GetLogger()->info("Loaded SPK file {}\n", filepath);
      return true;
 }

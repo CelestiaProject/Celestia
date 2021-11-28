@@ -15,12 +15,13 @@
 #include <memory>
 #include <celengine/glsupport.h>
 #include <celengine/image.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/bytes.h>
 #include "dds_decompress.h"
 
 using namespace celestia;
 using namespace std;
+using celestia::util::GetLogger;
 
 
 struct DDPixelFormat
@@ -139,7 +140,7 @@ Image* LoadDDSImage(const fs::path& filename)
     ifstream in(filename.string(), ios::in | ios::binary);
     if (!in.good())
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Error opening DDS texture file %s.\n", filename);
+        GetLogger()->error("Error opening DDS texture file {}.\n", filename);
         return nullptr;
     }
 
@@ -148,14 +149,14 @@ Image* LoadDDSImage(const fs::path& filename)
         || header[0] != 'D' || header[1] != 'D'
         || header[2] != 'S' || header[3] != ' ')
     {
-        DPRINTF(LOG_LEVEL_ERROR, "DDS texture file %s has bad header.\n", filename);
+        GetLogger()->error("DDS texture file {} has bad header.\n", filename);
         return nullptr;
     }
 
     DDSurfaceDesc ddsd;
     if (!in.read(reinterpret_cast<char*>(&ddsd), sizeof ddsd).good())
     {
-        DPRINTF(LOG_LEVEL_ERROR, "DDS file %s has bad surface desc.\n", filename);
+        GetLogger()->error("DDS file {} has bad surface desc.\n", filename);
         return nullptr;
     }
     LE_TO_CPU_INT32(ddsd.size, ddsd.size);
@@ -189,12 +190,12 @@ Image* LoadDDSImage(const fs::path& filename)
         }
         else
         {
-            cerr << "Unknown FourCC in DDS file: " << ddsd.format.fourCC;
+            GetLogger()->error("Unknown FourCC in DDS file: {}\n", ddsd.format.fourCC);
         }
     }
     else
     {
-        clog << "DDS Format: " << ddsd.format.fourCC << '\n';
+        GetLogger()->debug("DDS Format: {}\n", ddsd.format.fourCC);
         if (ddsd.format.bpp == 32)
         {
             if (ddsd.format.redMask   == 0x00ff0000 &&
@@ -233,7 +234,7 @@ Image* LoadDDSImage(const fs::path& filename)
 
     if (format == -1)
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Unsupported format for DDS texture file %s.\n", filename);
+        GetLogger()->error("Unsupported format for DDS texture file {}.\n", filename);
         return nullptr;
     }
 
@@ -268,7 +269,7 @@ Image* LoadDDSImage(const fs::path& filename)
 
             if (pixels == nullptr)
             {
-                DPRINTF(LOG_LEVEL_ERROR, "Failed to decompress DDS texture file %s.\n", filename);
+                GetLogger()->error("Failed to decompress DDS texture file {}.\n", filename);
                 return nullptr;
             }
 
@@ -302,7 +303,7 @@ Image* LoadDDSImage(const fs::path& filename)
     in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize());
     if (!in.eof() && !in.good())
     {
-        DPRINTF(LOG_LEVEL_ERROR, "Failed reading data from DDS texture file %s.\n", filename);
+        GetLogger()->error("Failed reading data from DDS texture file {}.\n", filename);
         delete img;
         return nullptr;
     }

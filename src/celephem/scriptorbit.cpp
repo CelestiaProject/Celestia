@@ -9,13 +9,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cstdio>
-#include <cassert>
+#include <celutil/logger.h>
 #include "scriptobject.h"
 #include "scriptorbit.h"
 
 using namespace Eigen;
 using namespace std;
+using celestia::util::GetLogger;
 
 
 /*! Initialize the script orbit.
@@ -53,7 +53,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     luaState = GetScriptedObjectContext();
     if (luaState == nullptr)
     {
-        clog << "ScriptedOrbits are currently disabled.\n";
+        GetLogger()->warn("ScriptedOrbits are currently disabled.\n");
         return false;
     }
 
@@ -62,7 +62,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
         lua_getglobal(luaState, "require");
         if (!lua_isfunction(luaState, -1))
         {
-            clog << "Cannot load ScriptedOrbit package: 'require' function is unavailable\n";
+            GetLogger()->error("Cannot load ScriptedOrbit package: 'require' function is unavailable\n");
             lua_pop(luaState, 1);
             return false;
         }
@@ -70,7 +70,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
         lua_pushstring(luaState, moduleName.c_str());
         if (lua_pcall(luaState, 1, 1, 0) != 0)
         {
-            clog << "Failed to load module for ScriptedOrbit: " << lua_tostring(luaState, -1) << "\n";
+            GetLogger()->error("Failed to load module for ScriptedOrbit: {}\n", lua_tostring(luaState, -1));
             lua_pop(luaState, 1);
             return false;
         }
@@ -84,7 +84,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
         // No function with the requested name; pop whatever value we
         // did receive along with the table of arguments.
         lua_pop(luaState, 1);
-        clog << "No Lua function named " << funcName << " found.\n";
+        GetLogger()->error("No Lua function named {} found.\n", funcName);
         return false;
     }
 
@@ -97,8 +97,8 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     if (lua_pcall(luaState, 1, 1, 0) != 0)
     {
         // Some sort of error occurred--the error message is atop the stack
-        clog << "Error calling ScriptedOrbit generator function: " <<
-            lua_tostring(luaState, -1) << "\n";
+        GetLogger()->error("Error calling ScriptedOrbit generator function: {}\n",
+                           lua_tostring(luaState, -1));
         lua_pop(luaState, 1);
         return false;
     }
@@ -107,7 +107,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     {
         // We have an object, but it's not a table. Pop it off the
         // stack and report failure.
-        clog << "ScriptedOrbit generator function returned bad value.\n";
+        GetLogger()->error("ScriptedOrbit generator function returned bad value.\n");
         lua_pop(luaState, 1);
         return false;
     }
@@ -124,7 +124,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     lua_gettable(luaState, -2);
     if (lua_isnumber(luaState, -1) == 0)
     {
-        clog << "Bad or missing boundingRadius for ScriptedOrbit object\n";
+        GetLogger()->error("Bad or missing boundingRadius for ScriptedOrbit object\n");
         lua_pop(luaState, 1);
         return false;
     }
@@ -143,13 +143,13 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     // Perform some sanity checks on the orbit parameters
     if (validRangeEnd < validRangeBegin)
     {
-        clog << "Bad script orbit: valid range end < begin\n";
+        GetLogger()->error("Bad script orbit: valid range end < begin\n");
         return false;
     }
 
     if (boundingRadius <= 0.0)
     {
-        clog << "Bad script object: bounding radius must be positive\n";
+        GetLogger()->error("Bad script object: bounding radius must be positive\n");
         return false;
     }
 

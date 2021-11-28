@@ -73,7 +73,7 @@ std::ofstream hdrlog;
 #include <celmath/distance.h>
 #include <celmath/intersect.h>
 #include <celmath/geomutil.h>
-#include <celutil/debug.h>
+#include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include <celutil/timer.h>
 #include <celttf/truetypefont.h>
@@ -98,6 +98,7 @@ using namespace Eigen;
 using namespace std;
 using namespace celestia;
 using namespace celmath;
+using celestia::util::GetLogger;
 
 #define FOV           45.0f
 #define NEAR_DIST      0.5f
@@ -5802,7 +5803,7 @@ Renderer::createShadowFBO()
                                                                       FramebufferObject::DepthAttachment));
     if (!m_shadowFBO->isValid())
     {
-        clog << "Error creating shadow FBO.\n";
+        GetLogger()->warn("Error creating shadow FBO.\n");
         m_shadowFBO = nullptr;
     }
 }
