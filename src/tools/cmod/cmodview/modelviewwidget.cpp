@@ -519,19 +519,7 @@ ModelViewWidget::setMaterial(unsigned int index, const cmod::Material& material)
     }
 
     // Copy material parameters
-    // TODO: eliminate const cast when Model::setMaterial() is implemented
-    cmod::Material* modelMaterial = const_cast<cmod::Material*>(m_model->getMaterial(index));
-    modelMaterial->diffuse = material.diffuse;
-    modelMaterial->specular = material.specular;
-    modelMaterial->emissive = material.emissive;
-    modelMaterial->opacity = material.opacity;
-    modelMaterial->specularPower = material.specularPower;
-
-    modelMaterial->setMap(cmod::TextureSemantic::DiffuseMap, material.getMap(cmod::TextureSemantic::DiffuseMap));
-    modelMaterial->setMap(cmod::TextureSemantic::SpecularMap, material.getMap(cmod::TextureSemantic::SpecularMap));
-    modelMaterial->setMap(cmod::TextureSemantic::NormalMap, material.getMap(cmod::TextureSemantic::NormalMap));
-    modelMaterial->setMap(cmod::TextureSemantic::EmissiveMap, material.getMap(cmod::TextureSemantic::EmissiveMap));
-
+    m_model->setMaterial(index, material.clone());
     update();
 }
 

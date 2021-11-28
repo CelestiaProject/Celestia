@@ -39,7 +39,7 @@ class Model
     ~Model() = default;
 
     const Material* getMaterial(unsigned int index) const;
-    void setMaterial(unsigned int index, const Material* material);
+    bool setMaterial(unsigned int index, Material&& material);
     unsigned int addMaterial(Material&& material);
 
     /*! Return the number of materials in the model
