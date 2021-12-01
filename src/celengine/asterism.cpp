@@ -19,10 +19,10 @@ using namespace std;
 
 
 Asterism::Asterism(string _name) :
-    name(_name)
+    name(std::move(_name))
 {
 #ifdef ENABLE_NLS
-    i18nName = dgettext("celestia_constellations", _name.c_str());
+    i18nName = D_(name.c_str());
 #endif
 }
 

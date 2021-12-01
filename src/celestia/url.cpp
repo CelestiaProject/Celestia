@@ -57,10 +57,10 @@ std::string getBodyShortName(const std::string &body)
     if (!body.empty())
     {
         auto pos = body.rfind(":");
-        if (pos != celestia::compat::string_view::npos)
-            return body.substr(pos + 1);
+        if (pos != std::string::npos)
+            return D_(body.substr(pos + 1).c_str());
     }
-    return body;
+    return D_(body.c_str());
 }
 
 celestia::compat::string_view
@@ -650,12 +650,12 @@ void Url::evalName()
 {
     std::string name;
     if (!m_state.m_refBodyName.empty())
-        name += fmt::sprintf(" %s", _(getBodyShortName(m_state.m_refBodyName).c_str()));
+        name += fmt::sprintf(" %s", getBodyShortName(m_state.m_refBodyName));
     if (!m_state.m_targetBodyName.empty())
-        name += fmt::sprintf(" %s", _(getBodyShortName(m_state.m_targetBodyName).c_str()));
+        name += fmt::sprintf(" %s", getBodyShortName(m_state.m_targetBodyName));
     if (!m_state.m_trackedBodyName.empty())
-        name += fmt::sprintf(" -> %s", _(getBodyShortName(m_state.m_trackedBodyName).c_str()));
+        name += fmt::sprintf(" -> %s", getBodyShortName(m_state.m_trackedBodyName));
     if (!m_state.m_selectedBodyName.empty())
-        name += fmt::sprintf(" [%s]", _(getBodyShortName(m_state.m_selectedBodyName).c_str()));
+        name += fmt::sprintf(" [%s]", getBodyShortName(m_state.m_selectedBodyName));
     m_name = std::move(name);
 }

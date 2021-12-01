@@ -125,14 +125,17 @@ string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) cons
         DSONameDatabase::NumberIndex::const_iterator iter   = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
-            if (i18n && iter->second != _(iter->second.c_str()))
-                return _(iter->second.c_str());
-            else
-                return iter->second;
+            if (i18n)
+            {
+                const char *local = D_(iter->second.c_str());
+                if (iter->second != local)
+                    return local;
+            }
+            return iter->second;
         }
     }
 
-    return "";
+    return {};
 }
 
 
@@ -148,9 +151,9 @@ string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsig
     while (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber && count < maxNames)
     {
         if (count != 0)
-            dsoNames   += " / ";
+            dsoNames.append(" / ");
 
-        dsoNames   += _(iter->second.c_str());
+        dsoNames.append(D_(iter->second.c_str()));
         ++iter;
         ++count;
     }

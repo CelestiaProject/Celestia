@@ -21,7 +21,7 @@ void NameDatabase::add(const AstroCatalog::IndexNumber catalogNumber, const std:
         std::string fname = ReplaceGreekLetterAbbr(name);
 
         nameIndex[fname] = catalogNumber;
-        std::string lname = _(fname.c_str());
+        std::string lname = D_(fname.c_str());
         if (lname != fname)
             localizedNameIndex[lname] = catalogNumber;
         numberIndex.insert(NumberIndex::value_type(catalogNumber, fname));

@@ -109,7 +109,7 @@ string Location::getName(bool i18n) const
 void Location::setName(const string& _name)
 {
     name = _name;
-    i18nName = _(_name.c_str());
+    i18nName = D_(_name.c_str());
     if (name == i18nName) i18nName = "";
 }
 
