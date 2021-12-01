@@ -386,7 +386,6 @@ endif()
 
 add_subdirectory(src)
 add_subdirectory(po)
-add_subdirectory(po2)
 add_subdirectory(fonts)
 add_subdirectory(images)
 add_subdirectory(locale)

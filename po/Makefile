@@ -7,7 +7,6 @@ all: po-update
 $(pot_file): $(pot_file)-update
 
 $(pot_file)-update:
-	PATH=${PATH}:$(shell pwd) make -f Rules-data $@
 	PATH=${PATH}:$(shell pwd) make -f Rules-win-resource $@
 	PATH=${PATH}:$(shell pwd) make -f Rules-qt $@
 	xgettext --keyword=_ --keyword=i18n \
@@ -18,7 +17,6 @@ $(pot_file)-update:
 	         --copyright-holder="Celestia Development Team" \
 	         --output=$(pot_file) \
 	         --from-code=utf-8 \
-	         ../data/data.cpp \
 	         $$(find ../src -path ../src/celestia/kde -prune -path ../src/tools -prune -o -name \*.cpp -o -name \*.h -o -name \*.m -o -name \*.mm)
 
 po-update: $(po_files)
@@ -27,6 +25,5 @@ po-update: $(po_files)
 	msgmerge --update $@ $(pot_file)
 
 clean:
-	make -f Rules-data $@
 	make -f Rules-win-resource $@
 	make -f Rules-qt $@
